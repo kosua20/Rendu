@@ -15,7 +15,7 @@ BUILDDIR = build
 SRCDIR = src
 
 #Paths to the source files
-SOURCES = main.cpp Renderer.cpp helpers/lodepng/lodepng.cpp
+SOURCES = main.cpp Renderer.cpp helpers/ProgramUtilities.cpp helpers/lodepng/lodepng.cpp
 #Paths to the objects files (generated from the sources)
 OBJECTS = $(SOURCES:%.cpp=$(BUILDDIR)/%.o)
 

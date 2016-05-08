@@ -1,36 +1,37 @@
-#include <GLFW/glfw3.h> // to set up the OpenGL context and manage window lifecycle and inputs
+#ifndef Renderer_h
+#define Renderer_h
 
 class Renderer {
 
 public:
 
-Renderer();
+	Renderer();
 
-~Renderer();
+	~Renderer();
 
-/// Init function
-void init(int width, int height);
+	/// Init function
+	void init(int width, int height);
 
-/// Draw function
-void draw();
+	/// Draw function
+	void draw();
 
-/// Clean function
-void clean();
+	/// Clean function
+	void clean();
 
-/// Handle screen resizing
-void resize(int width, int height);
+	/// Handle screen resizing
+	void resize(int width, int height);
 
-/// Handle keyboard inputs
-void keyPressed(int key, int action);
+	/// Handle keyboard inputs
+	void keyPressed(int key, int action);
 
-/// Handle mouse inputs
-void buttonPressed(int button, int action);
+	/// Handle mouse inputs
+	void buttonPressed(int button, int action);
 
 private:
 
-int _width;
-int _height;
+	int _width;
+	int _height;
 
 };
 
-
+#endif
