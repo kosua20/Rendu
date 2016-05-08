@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <iostream>
 
+#include "helpers/ProgramUtilities.h"
+
 #include "Renderer.h"
 
 #define INITIAL_SIZE_WIDTH 800
@@ -78,6 +80,7 @@ int main () {
 	#endif
 	// Initialize GLEW, for loading modern OpenGL extensions.
 	glewInit();
+	checkGLError();
 
 	// Create the renderer.
 	renderer.init(INITIAL_SIZE_WIDTH,INITIAL_SIZE_HEIGHT);

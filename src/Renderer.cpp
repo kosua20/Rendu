@@ -1,6 +1,9 @@
-#include <GLFW/glfw3.h> // Contains GL functions prototypes.
+#include <GL/glew.h>
+
 #include <stdio.h>
 #include <iostream>
+
+#include "helpers/ProgramUtilities.h"
 
 #include "Renderer.h"
 
@@ -16,6 +19,7 @@ void Renderer::init(int width, int height){
 	const GLubyte* version = glGetString(GL_VERSION);
 	std::cout << "Renderer: " << renderer << std::endl;
 	std::cout << "OpenGL version supported: " << version << std::endl;
+	checkGLError();
 }
 
 

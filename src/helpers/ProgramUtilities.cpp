@@ -5,6 +5,42 @@
 #include <sstream>
 #include <vector>
 
+std::string getGLErrorString(GLenum error) {
+	std::string msg;
+	switch (error) {
+		case GL_INVALID_ENUM:
+			msg = "GL_INVALID_ENUM";
+			break;
+		case GL_INVALID_VALUE:
+			msg = "GL_INVALID_VALUE";
+			break;
+		case GL_INVALID_OPERATION:
+			msg = "GL_INVALID_OPERATION";
+			break;
+		case GL_INVALID_FRAMEBUFFER_OPERATION:
+			msg = "GL_INVALID_FRAMEBUFFER_OPERATION";
+			break;
+		case GL_NO_ERROR:
+			msg = "GL_NO_ERROR";
+			break;
+		case GL_OUT_OF_MEMORY:
+			msg = "GL_OUT_OF_MEMORY";
+			break;
+		default:
+			msg = "UNKNOWN_GL_ERROR";
+	}
+	return msg;
+}
+
+int _checkGLError(const char *file, int line){
+	GLenum glErr = glGetError();
+	if (glErr != GL_NO_ERROR){
+		std::cerr << "glError in " << file << " (" << line << ") : " << getGLErrorString(glErr) << std::endl;
+		return 1;
+	}
+	return 0;
+}
+
 std::string loadStringFromFile(const std::string & filename) {
 	std::ifstream in;
 	// Open a stream to the file.
@@ -26,12 +62,14 @@ GLuint loadShader(const std::string & prog, GLuint type){
 	GLuint id;
 	// Create shader object.
 	id = glCreateShader(type);
-
+	checkGLError();
 	// Setup string as source.
 	const char * shaderProg = prog.c_str();
 	glShaderSource(id,1,&shaderProg,(const GLint*)NULL);
 	// Compile the shader on the GPU.
 	glCompileShader(id);
+	checkGLError();
+
 	GLint success;
 	glGetShaderiv(id,GL_COMPILE_STATUS, &success);
 	
@@ -58,7 +96,7 @@ GLuint loadShader(const std::string & prog, GLuint type){
 GLuint createGLProgram(const std::string & vertexPath, const std::string & fragmentPath, const std::string & geometryPath){
 	GLuint vp, fp, gp, id;
 	id = glCreateProgram();
-	
+	checkGLError();
 	std::string vertexCode = loadStringFromFile(vertexPath);
 	std::string fragmentCode = loadStringFromFile(fragmentPath);
 
@@ -83,7 +121,7 @@ GLuint createGLProgram(const std::string & vertexPath, const std::string & fragm
 
 	// Link everything
 	glLinkProgram(id);
-
+	checkGLError();
 	//Check linking status.
 	GLint success = GL_FALSE;
 	glGetProgramiv(id, GL_LINK_STATUS, &success);
