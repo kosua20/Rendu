@@ -28,6 +28,14 @@ void draw(){
 	
 }
 
+
+/// Clean function
+
+void clean(){
+
+}
+
+
 /// Callbacks
 
 /// Window resize callback
@@ -36,6 +44,8 @@ static void resize_callback(GLFWwindow* window, int width, int height){
 	//Update the size of the viewport
 	glViewport(0, 0, width, height);
 }
+
+/// Key pressed callback
 
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
 	// Handle quitting
@@ -46,14 +56,20 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 	std::cout << "Key: " << key << " (" << char(key) << "), action: " << action << ", modes: " << mods << std::endl;	
 }
 
+/// Mouse button pressed callback
+
 static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods){
 	std::cout << "Button: " << button << ", action: " << action << std::endl;
 }
+
+/// Cursor position callback
 
 static void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos){
 	// Do nothing for now
 	// ...
 }
+
+/// Scrolling callback
 
 static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset){
 	// Do nothing for now
@@ -121,6 +137,8 @@ int main () {
 
 	// Remove the window.
 	glfwDestroyWindow(window);
+	// Clean other ressources
+	clean();
 	// Close GL context and any other GLFW resources.
 	glfwTerminate();
 	return 0;
