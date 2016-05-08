@@ -9,7 +9,9 @@ Renderer::Renderer(){}
 
 Renderer::~Renderer(){}
 
-void Renderer::init(){
+void Renderer::init(int width, int height){
+	_width = width;
+	_height = height;
 	// Query the renderer identifier, and the supported OpenGL version.
 	const GLubyte* renderer = glGetString(GL_RENDERER);
 	const GLubyte* version = glGetString(GL_VERSION);
@@ -33,6 +35,8 @@ void Renderer::clean(){
 
 
 void Renderer::resize(int width, int height){
+	_width = width;
+	_height = height;
 	//Update the size of the viewport
 	glViewport(0, 0, width, height);
 }

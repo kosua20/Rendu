@@ -9,7 +9,7 @@ Renderer();
 ~Renderer();
 
 /// Init function
-void init();
+void init(int width, int height);
 
 /// Draw function
 void draw();
@@ -28,6 +28,8 @@ void buttonPressed(int button, int action);
 
 private:
 
+int _width;
+int _height;
 
 };
 
