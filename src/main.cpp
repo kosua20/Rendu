@@ -45,6 +45,13 @@ int main () {
 	// Bind the OpenGL context and the new window.
 	glfwMakeContextCurrent(window);
 
+	// On OS X, GLEW needs the experimental flag, else some extensions won't be loaded.
+	#ifdef __APPLE__
+	glewExperimental = GL_TRUE;
+	#endif
+	// Initialize GLEW, for loading modern OpenGL extensions.
+	glewInit();
+
 	// Start the display/interaction loop.
 	while (!glfwWindowShouldClose(window)) {
 
