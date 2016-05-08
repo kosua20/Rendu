@@ -32,4 +32,18 @@ void Renderer::clean(){
 }
 
 
+void Renderer::resize(int width, int height){
+	//Update the size of the viewport
+	glViewport(0, 0, width, height);
+}
+
+void Renderer::keyPressed(int key, int action){
+	std::cout << "Key: " << key << " (" << char(key) << "), action: " << action << "." << std::endl;
+}
+
+void Renderer::buttonPressed(int button, int action){
+	std::cout << "Button: " << button << ", action: " << action << std::endl;
+}
+
+
 
