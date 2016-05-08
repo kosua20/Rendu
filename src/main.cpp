@@ -4,77 +4,12 @@
 #include <stdio.h>
 #include <iostream>
 
+#include "Renderer.h"
+
 #define INITIAL_SIZE_WIDTH 800
 #define INITIAL_SIZE_HEIGHT 600
 
-/// Init function
-
-void init(){
-	// Query the renderer identifier, and the supported OpenGL version.
-	const GLubyte* renderer = glGetString(GL_RENDERER);
-	const GLubyte* version = glGetString(GL_VERSION);
-	std::cout << "Renderer: " << renderer << std::endl;
-	std::cout << "OpenGL version supported: " << version << std::endl;
-}
-
-
-/// Draw function
-
-void draw(){
-	// Set the clear color to white.
-	glClearColor(1.0f,1.0f,1.0f,0.0f);
-	// Clear the color and depth buffers.
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
-}
-
-
-/// Clean function
-
-void clean(){
-
-}
-
-
-/// Callbacks
-
-/// Window resize callback
-
-static void resize_callback(GLFWwindow* window, int width, int height){
-	//Update the size of the viewport
-	glViewport(0, 0, width, height);
-}
-
-/// Key pressed callback
-
-static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
-	// Handle quitting
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS){ 
-		glfwSetWindowShouldClose(window, GL_TRUE);
-		return;
-	} 
-	std::cout << "Key: " << key << " (" << char(key) << "), action: " << action << ", modes: " << mods << std::endl;	
-}
-
-/// Mouse button pressed callback
-
-static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods){
-	std::cout << "Button: " << button << ", action: " << action << std::endl;
-}
-
-/// Cursor position callback
-
-static void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos){
-	// Do nothing for now
-	// ...
-}
-
-/// Scrolling callback
-
-static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset){
-	// Do nothing for now
-	// ...
-}
+Renderer renderer;
 
 /// The main function
 
@@ -104,14 +39,6 @@ int main () {
 	// Bind the OpenGL context and the new window.
 	glfwMakeContextCurrent(window);
 
-	// Setup callbacks for various interactions and inputs
-	glfwSetFramebufferSizeCallback(window, resize_callback);	// Resizing the window
-	glfwSetKeyCallback(window,key_callback);					// Pressing a key
-	glfwSetMouseButtonCallback(window,mouse_button_callback);	// Clicking the mouse buttons
-	glfwSetCursorPosCallback(window,cursor_pos_callback);		// Moving the cursor
-	glfwSetScrollCallback(window,scroll_callback);				// Scrolling
-	
-
 	// On OS X, GLEW needs the experimental flag, else some extensions won't be loaded.
 	#ifdef __APPLE__
 	glewExperimental = GL_TRUE;
@@ -119,14 +46,16 @@ int main () {
 	// Initialize GLEW, for loading modern OpenGL extensions.
 	glewInit();
 
-	// Initialization function
-	init();
+	// Create the renderer.
+	
+	renderer.init();
+	
 
 	// Start the display/interaction loop.
 	while (!glfwWindowShouldClose(window)) {
 
 		// Update the content of the window.
-		draw();
+		renderer.draw();
 		
 		//Display the result fo the current rendering loop.
 		glfwSwapBuffers(window);
@@ -138,7 +67,7 @@ int main () {
 	// Remove the window.
 	glfwDestroyWindow(window);
 	// Clean other ressources
-	clean();
+	renderer.clean();
 	// Close GL context and any other GLFW resources.
 	glfwTerminate();
 	return 0;
