@@ -7,6 +7,17 @@
 #define INITIAL_SIZE_WIDTH 800
 #define INITIAL_SIZE_HEIGHT 600
 
+/// Init function
+
+void init(){
+	// Query the renderer identifier, and the supported OpenGL version.
+	const GLubyte* renderer = glGetString(GL_RENDERER);
+	const GLubyte* version = glGetString(GL_VERSION);
+	std::cout << "Renderer: " << renderer << std::endl;
+	std::cout << "OpenGL version supported: " << version << std::endl;
+}
+
+
 /// Draw function
 
 void draw(){
@@ -51,6 +62,9 @@ int main () {
 	#endif
 	// Initialize GLEW, for loading modern OpenGL extensions.
 	glewInit();
+
+	// Initialization function
+	init();
 
 	// Start the display/interaction loop.
 	while (!glfwWindowShouldClose(window)) {
