@@ -1,5 +1,4 @@
-
-
+#include <GLFW/glfw3.h> // Contains GL functions prototypes.
 #include <stdio.h>
 #include <iostream>
 
