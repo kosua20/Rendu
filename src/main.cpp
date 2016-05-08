@@ -7,6 +7,16 @@
 #define INITIAL_SIZE_WIDTH 800
 #define INITIAL_SIZE_HEIGHT 600
 
+/// Draw function
+
+void draw(){
+	// Set the clear color to white.
+	glClearColor(1.0f,1.0f,1.0f,0.0f);
+	// Clear the color and depth buffers.
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
+}
+
 /// The main function
 
 int main () {
@@ -37,9 +47,12 @@ int main () {
 
 	// Start the display/interaction loop.
 	while (!glfwWindowShouldClose(window)) {
-		
+
 		// Update the content of the window.
-		// ...
+		draw();
+		
+		//Display the result fo the current rendering loop.
+		glfwSwapBuffers(window);
 
 		// Update events (inputs,...).
 		glfwPollEvents();
@@ -51,3 +64,5 @@ int main () {
 	glfwTerminate();
 	return 0;
 }
+
+
