@@ -28,6 +28,38 @@ void draw(){
 	
 }
 
+/// Callbacks
+
+/// Window resize callback
+
+static void resize_callback(GLFWwindow* window, int width, int height){
+	//Update the size of the viewport
+	glViewport(0, 0, width, height);
+}
+
+static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
+	// Handle quitting
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS){ 
+		glfwSetWindowShouldClose(window, GL_TRUE);
+		return;
+	} 
+	std::cout << "Key: " << key << " (" << char(key) << "), action: " << action << ", modes: " << mods << std::endl;	
+}
+
+static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods){
+	std::cout << "Button: " << button << ", action: " << action << std::endl;
+}
+
+static void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos){
+	// Do nothing for now
+	// ...
+}
+
+static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset){
+	// Do nothing for now
+	// ...
+}
+
 /// The main function
 
 int main () {
@@ -55,6 +87,14 @@ int main () {
 
 	// Bind the OpenGL context and the new window.
 	glfwMakeContextCurrent(window);
+
+	// Setup callbacks for various interactions and inputs
+	glfwSetFramebufferSizeCallback(window, resize_callback);	// Resizing the window
+	glfwSetKeyCallback(window,key_callback);					// Pressing a key
+	glfwSetMouseButtonCallback(window,mouse_button_callback);	// Clicking the mouse buttons
+	glfwSetCursorPosCallback(window,cursor_pos_callback);		// Moving the cursor
+	glfwSetScrollCallback(window,scroll_callback);				// Scrolling
+	
 
 	// On OS X, GLEW needs the experimental flag, else some extensions won't be loaded.
 	#ifdef __APPLE__
