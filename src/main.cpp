@@ -80,7 +80,7 @@ int main () {
 	glewInit();
 
 	// Create the renderer.
-	renderer.init();
+	renderer.init(INITIAL_SIZE_WIDTH,INITIAL_SIZE_HEIGHT);
 
 	// Setup callbacks for various interactions and inputs.
 	glfwSetFramebufferSizeCallback(window, resize_callback);	// Resizing the window
