@@ -9,7 +9,40 @@
 #define INITIAL_SIZE_WIDTH 800
 #define INITIAL_SIZE_HEIGHT 600
 
+/// The shared renderer
+
 Renderer renderer;
+
+/// Callbacks
+
+void resize_callback(GLFWwindow* window, int width, int height){
+	renderer.resize(width, height);
+}
+
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
+	// Handle quitting
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS){ 
+		glfwSetWindowShouldClose(window, GL_TRUE);
+		return;
+	} 
+	renderer.keyPressed(key, action);	
+}
+
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods){
+	renderer.buttonPressed(button, action);
+}
+
+
+void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos){
+	// Do nothing for now
+	// ...
+}
+
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset){
+	// Do nothing for now
+	// ...
+}
+
 
 /// The main function
 
@@ -47,8 +80,14 @@ int main () {
 	glewInit();
 
 	// Create the renderer.
-	
 	renderer.init();
+
+	// Setup callbacks for various interactions and inputs.
+	glfwSetFramebufferSizeCallback(window, resize_callback);	// Resizing the window
+	glfwSetKeyCallback(window,key_callback);					// Pressing a key
+	glfwSetMouseButtonCallback(window,mouse_button_callback);	// Clicking the mouse buttons
+	glfwSetCursorPosCallback(window,cursor_pos_callback);		// Moving the cursor
+	glfwSetScrollCallback(window,scroll_callback);				// Scrolling
 	
 
 	// Start the display/interaction loop.

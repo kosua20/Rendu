@@ -17,6 +17,14 @@ void draw();
 /// Clean function
 void clean();
 
+/// Handle screen resizing
+void resize(int width, int height);
+
+/// Handle keyboard inputs
+void keyPressed(int key, int action);
+
+/// Handle mouse inputs
+void buttonPressed(int button, int action);
 
 private:
 
