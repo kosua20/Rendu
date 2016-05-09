@@ -1,6 +1,8 @@
 #ifndef Renderer_h
 #define Renderer_h
 
+#include <GL/glew.h>
+
 class Renderer {
 
 public:
@@ -31,6 +33,8 @@ private:
 
 	int _width;
 	int _height;
+
+	GLuint _programId;
 
 };
 
