@@ -35,6 +35,7 @@ private:
 	int _height;
 
 	GLuint _programId;
+	GLuint _vao;
 
 };
 
