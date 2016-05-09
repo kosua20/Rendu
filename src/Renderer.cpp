@@ -1,5 +1,3 @@
-#include <GL/glew.h>
-
 #include <stdio.h>
 #include <iostream>
 
@@ -20,6 +18,7 @@ void Renderer::init(int width, int height){
 	std::cout << "Renderer: " << renderer << std::endl;
 	std::cout << "OpenGL version supported: " << version << std::endl;
 	checkGLError();
+	_programId = createGLProgram("ressources/shaders/prog1.vert","ressources/shaders/prog1.frag");
 }
 
 
