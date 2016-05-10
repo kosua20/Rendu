@@ -1,6 +1,6 @@
 #ifndef Renderer_h
 #define Renderer_h
-
+#include <GLFW/glfw3.h>
 #include <GL/glew.h>
 
 class Renderer {
@@ -33,6 +33,8 @@ private:
 
 	int _width;
 	int _height;
+
+	float _timer;
 
 	GLuint _programId;
 	GLuint _vao;
