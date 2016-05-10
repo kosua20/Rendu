@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 
+
 #include "helpers/ProgramUtilities.h"
 
 #include "Renderer.h"
@@ -13,6 +14,10 @@ Renderer::~Renderer(){}
 void Renderer::init(int width, int height){
 	_width = width;
 	_height = height;
+
+	// initialize the timer
+	_timer = glfwGetTime();
+
 	// Query the renderer identifier, and the supported OpenGL version.
 	const GLubyte* renderer = glGetString(GL_RENDERER);
 	const GLubyte* version = glGetString(GL_VERSION);
@@ -61,11 +66,21 @@ void Renderer::draw(){
 
 	// Select the program (and shaders).
 	glUseProgram(_programId);
+
+	// Compute the time elapsed since last frame
+	float elapsed = glfwGetTime() - _timer;
+	_timer = glfwGetTime();
+	// Upload the time as a uniform
+	GLuint timeID  = glGetUniformLocation(_programId, "time");
+	glUniform1f(timeID, _timer);
+
 	// Select the geometry.
 	glBindVertexArray(_vao);
 	// Draw!
 	glDrawArrays(GL_TRIANGLES, 0, 2*3);
 	
+	// Update timer
+	_timer = glfwGetTime();
 }
 
 
