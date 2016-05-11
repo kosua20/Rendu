@@ -4,6 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <algorithm>
 
 std::string getGLErrorString(GLenum error) {
 	std::string msg;
@@ -141,3 +142,25 @@ GLuint createGLProgram(const std::string & vertexPath, const std::string & fragm
 	// Return the id to the succesfuly linked GLProgram.
 	return id;
 }
+
+void flipImage(std::vector<unsigned char> & image, const int width, const int height){
+	// Compute the number of components per pixel.
+	int components = image.size() / (width * height);
+	// The width in bytes.
+	int widthInBytes = width * components;
+	int halfHeight = height/2;
+
+	// For each line of the first half, we swap it with the mirroring line, starting from the end of the image.
+	for(int h=0; h < halfHeight; h++){
+		std::swap_ranges(image.begin() + h * widthInBytes, image.begin() + (h+1) * widthInBytes , image.begin() + (height - h - 1) * widthInBytes);
+	}
+}
+
+
+
+
+
+
+
+
+
