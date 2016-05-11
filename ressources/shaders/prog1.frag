@@ -5,6 +5,8 @@ in vec2 position;
 
 // Uniform: time
 uniform float time;
+// Uniform: texture sampler
+uniform sampler2D texture1;
 
 // Output: the fragment color
 out vec3 fragColor;
@@ -13,5 +15,5 @@ void main(){
 	// The output color is based on the position of the fragment.
 	// We scale/translate it from [-1,1] to [0,1] 
 	vec2 positionScaled = 0.5*position+0.5;
-	fragColor = vec3(positionScaled,abs(sin(time)));
+	fragColor = texture(texture1, positionScaled).rgb;
 }

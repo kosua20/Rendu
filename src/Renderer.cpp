@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <vector>
-
+#include <lodepng/lodepng.h>
 
 #include "helpers/ProgramUtilities.h"
 
@@ -36,7 +36,7 @@ void Renderer::init(int width, int height){
 									   1.0, -1.0, 0.0,
 									   1.0,  1.0, 0.0
 									};
-	// Create an array buffer to host the geometry data
+	// Create an array buffer to host the geometry data.
 	GLuint vbo = 0;
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -54,6 +54,28 @@ void Renderer::init(int width, int height){
 
 	glBindVertexArray(0);
 
+	// Load and upload the texture.
+	std::vector<unsigned char> image;
+	unsigned imwidth, imheight;
+  	unsigned error = lodepng::decode(image, imwidth, imheight, "ressources/grid.png");
+  	if(error != 0){
+  		std::cerr << "Unable to load the texture." << std::endl;
+  		return;
+  	}
+
+  	flipImage(image,imwidth, imheight);
+	
+	glUseProgram(_programId);
+	glActiveTexture(GL_TEXTURE0);
+	glGenTextures(1, &_tex);
+	glBindTexture(GL_TEXTURE_2D, _tex);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imwidth , imheight, 0, GL_RGBA, GL_UNSIGNED_BYTE, &(image[0]));
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+
+    GLuint texID  = glGetUniformLocation(_programId, "texture1");
+	glUniform1i(texID, 0);
+
 
 }
 
@@ -66,6 +88,10 @@ void Renderer::draw(){
 
 	// Select the program (and shaders).
 	glUseProgram(_programId);
+
+	// Bin the texture.
+	glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, _tex);
 
 	// Compute the time elapsed since last frame
 	float elapsed = glfwGetTime() - _timer;
