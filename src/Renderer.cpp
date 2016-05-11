@@ -64,15 +64,16 @@ void Renderer::init(int width, int height){
   	}
 
   	flipImage(image,imwidth, imheight);
-	
+	// Active a texture slot and storage for the desired program.
 	glUseProgram(_programId);
 	glActiveTexture(GL_TEXTURE0);
 	glGenTextures(1, &_tex);
 	glBindTexture(GL_TEXTURE_2D, _tex);
+	// Upload data to the GPU, with the correct settings: texture slot 0, pixel format, size, miplevel, internal format, type of each component, and pointer to the data. 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imwidth , imheight, 0, GL_RGBA, GL_UNSIGNED_BYTE, &(image[0]));
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-
+    // Setup a uniform to use the texture (as a sampler2D) in the shaders, through a handle. 
     GLuint texID  = glGetUniformLocation(_programId, "texture1");
 	glUniform1i(texID, 0);
 
@@ -89,7 +90,7 @@ void Renderer::draw(){
 	// Select the program (and shaders).
 	glUseProgram(_programId);
 
-	// Bin the texture.
+	// Bind the texture.
 	glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, _tex);
 
@@ -111,14 +112,16 @@ void Renderer::draw(){
 
 
 void Renderer::clean(){
-
+	glDeleteVertexArrays(1, &_vao);
+	glDeleteTextures(1, &_tex);
+	glDeleteProgram(_programId);
 }
 
 
 void Renderer::resize(int width, int height){
 	_width = width;
 	_height = height;
-	//Update the size of the viewport
+	//Update the size of the viewport.
 	glViewport(0, 0, width, height);
 }
 
