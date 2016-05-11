@@ -6,7 +6,7 @@ INCLUDEDIR = -I/usr/include/ -I/usr/local/include/ -Isrc/helpers/
 #Libraries needed: OpenGL, GLEW and glfw3. glfw3 requires Cocoa, IOKit and CoreVideo.
 LIBS =  -framework OpenGL -lGLEW -lglfw3 -framework Cocoa -framework IOKit -framework CoreVideo
 
-#Compiler flags: we accept C code (needed by some libraries), we use the C++11 standard, and display 'all' warnings.
+#Compiler flags: compile, we use the C++11 standard, and display 'all' warnings.
 COMPFLAGS = -c -std=c++11 -Wall
 
 #Build directory

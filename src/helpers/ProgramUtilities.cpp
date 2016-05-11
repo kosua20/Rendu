@@ -137,8 +137,24 @@ GLuint createGLProgram(const std::string & vertexPath, const std::string & fragm
 		std::cerr << "Failed loading program: " << &infoLog[0] << std::endl;
 		return 0;
 	}
+	// We can now clean the shaders objects, by first detaching them
+	if (vp != 0) {
+		glDetachShader(id,vp);
+	}
+	if (fp != 0) {
+		glDetachShader(id,fp);
+	}
+	if (gp != 0) {
+		glDetachShader(id,gp);
+	}
+	checkGLError();
+	//And deleting them
+	glDeleteShader(vp);
+	glDeleteShader(fp);
+	glDeleteShader(gp);
 
 	glUseProgram(id);
+	checkGLError();
 	// Return the id to the succesfuly linked GLProgram.
 	return id;
 }
