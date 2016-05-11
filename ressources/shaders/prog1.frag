@@ -1,7 +1,7 @@
 #version 330
 
-// Input: 2D position coming from the vertex shader
-in vec2 position; 
+// Input: UV coordinates coming from the vertex shader
+in vec2 uv; 
 
 // Uniform: time
 uniform float time;
@@ -12,8 +12,6 @@ uniform sampler2D texture1;
 out vec3 fragColor;
 
 void main(){
-	// The output color is based on the position of the fragment.
-	// We scale/translate it from [-1,1] to [0,1] 
-	vec2 positionScaled = 0.5*position+0.5;
-	fragColor = texture(texture1, positionScaled).rgb;
+	// The output color is read from the texture, suing the UV coordinates.
+	fragColor = texture(texture1, uv).rgb;
 }

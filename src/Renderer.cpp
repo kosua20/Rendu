@@ -36,12 +36,25 @@ void Renderer::init(int width, int height){
 									   1.0, -1.0, 0.0,
 									   1.0,  1.0, 0.0
 									};
+	std::vector<float> planeUVs{ 0.0, 0.0,
+								 1.0, 0.0,
+								 0.0, 1.0,
+								 0.0, 1.0,
+								 1.0, 0.0,
+								 1.0, 1.0,
+								};
 	// Create an array buffer to host the geometry data.
 	GLuint vbo = 0;
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	// Upload the data to the Array buffer.
 	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*planeVertices.size(), &(planeVertices[0]), GL_STATIC_DRAW);
+
+	GLuint vbo_uv = 0;
+	glGenBuffers(1, &vbo_uv);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_uv);
+	// Upload the data to the Array buffer.
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*planeUVs.size(), &(planeUVs[0]), GL_STATIC_DRAW);
 
 	// Generate a vertex array (useful when we will add other attributes to the geometry).
 	_vao = 0;
@@ -51,6 +64,11 @@ void Renderer::init(int width, int height){
 	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+
+	// The second attribute will be the uv coordinates.
+	glEnableVertexAttribArray(1);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_uv);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, NULL);
 
 	glBindVertexArray(0);
 
