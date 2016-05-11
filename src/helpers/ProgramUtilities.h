@@ -3,6 +3,7 @@
 
 #include <GL/glew.h>
 #include <string>
+#include <vector>
 
 /// This macro is used to check for OpenGL errors with access to the file and line number where the error is detected.
 #define checkGLError() _checkGLError(__FILE__, __LINE__)
@@ -19,8 +20,10 @@ std::string loadStringFromFile(const std::string & path);
 /// Load a shader of the given type from a string
 GLuint loadShader(const std::string & prog, GLuint type);
 
-/// create a GLProgram using the hader code contained in the given files.
+/// Create a GLProgram using the hader code contained in the given files.
 GLuint createGLProgram(const std::string & vertexPath, const std::string & fragmentPath, const std::string & geometryPath = "");
 
+/// Flip an image vertically (line by line).
+void flipImage(std::vector<unsigned char> & image, const int width, const int height);
 
 #endif
