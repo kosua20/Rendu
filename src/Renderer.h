@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 #include <GL/glew.h>
 
+
 class Renderer {
 
 public:
@@ -38,6 +39,7 @@ private:
 
 	GLuint _programId;
 	GLuint _vao;
+	GLuint _tex;
 
 };
 
