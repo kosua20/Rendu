@@ -2,7 +2,7 @@
 #define Renderer_h
 #include <GLFW/glfw3.h>
 #include <GL/glew.h>
-
+#include <glm/glm.hpp>
 
 class Renderer {
 
@@ -30,6 +30,9 @@ public:
 	/// Handle mouse inputs
 	void buttonPressed(int button, int action);
 
+	/// Update projection matrix
+	void updateProjectionMatrix();
+
 private:
 
 	int _width;
@@ -40,6 +43,8 @@ private:
 	GLuint _programId;
 	GLuint _vao;
 	GLuint _tex;
+
+	glm::mat4 _projection;
 
 };
 
