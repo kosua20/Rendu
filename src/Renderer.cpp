@@ -2,6 +2,9 @@
 #include <iostream>
 #include <vector>
 #include <lodepng/lodepng.h>
+// glm header, and additional header to generate transformation matrices directly.
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include "helpers/ProgramUtilities.h"
 
@@ -95,11 +98,20 @@ void Renderer::init(int width, int height){
     GLuint texID  = glGetUniformLocation(_programId, "texture1");
 	glUniform1i(texID, 0);
 
-
 }
 
 
 void Renderer::draw(){
+
+	// Scale the model by 0.5.
+	glm::mat4 model = glm::scale(glm::mat4(1.0f),glm::vec3(0.5f));
+	// Translate it in (0.0,0.0,-1.0), and rotate it along its vertical axis, using the timer as an angle.
+	glm::mat4 view = glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f,0.0f,-1.0f)), _timer, glm::vec3(0.0f,1.0f,0.0f));
+	// Perspective projection.
+	glm::mat4 projection = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 100.f);
+	// Combine the three matrices.
+	glm::mat4 MVP = projection * view * model;
+
 	// Set the clear color to white.
 	glClearColor(1.0f,1.0f,1.0f,0.0f);
 	// Clear the color and depth buffers.
@@ -118,6 +130,9 @@ void Renderer::draw(){
 	// Upload the time as a uniform
 	GLuint timeID  = glGetUniformLocation(_programId, "time");
 	glUniform1f(timeID, _timer);
+	// Upload the MVP matrix.
+	GLuint mvpID  = glGetUniformLocation(_programId, "mvp");
+	glUniformMatrix4fv(mvpID, 1, GL_FALSE, &MVP[0][0]);
 
 	// Select the geometry.
 	glBindVertexArray(_vao);
