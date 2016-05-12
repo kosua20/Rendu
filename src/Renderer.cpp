@@ -2,8 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <lodepng/lodepng.h>
-// glm header, and additional header to generate transformation matrices directly.
-#include <glm/glm.hpp>
+// glm additional header to generate transformation matrices directly.
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "helpers/ProgramUtilities.h"
@@ -17,6 +16,8 @@ Renderer::~Renderer(){}
 void Renderer::init(int width, int height){
 	_width = width;
 	_height = height;
+
+	updateProjectionMatrix();
 
 	// initialize the timer
 	_timer = glfwGetTime();
@@ -107,10 +108,9 @@ void Renderer::draw(){
 	glm::mat4 model = glm::scale(glm::mat4(1.0f),glm::vec3(0.5f));
 	// Translate it in (0.0,0.0,-1.0), and rotate it along its vertical axis, using the timer as an angle.
 	glm::mat4 view = glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f,0.0f,-1.0f)), _timer, glm::vec3(0.0f,1.0f,0.0f));
-	// Perspective projection.
-	glm::mat4 projection = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 100.f);
+	
 	// Combine the three matrices.
-	glm::mat4 MVP = projection * view * model;
+	glm::mat4 MVP = _projection * view * model;
 
 	// Set the clear color to white.
 	glClearColor(1.0f,1.0f,1.0f,0.0f);
@@ -156,6 +156,7 @@ void Renderer::resize(int width, int height){
 	_height = height;
 	//Update the size of the viewport.
 	glViewport(0, 0, width, height);
+	updateProjectionMatrix();
 }
 
 void Renderer::keyPressed(int key, int action){
@@ -164,6 +165,11 @@ void Renderer::keyPressed(int key, int action){
 
 void Renderer::buttonPressed(int button, int action){
 	std::cout << "Button: " << button << ", action: " << action << std::endl;
+}
+
+void Renderer::updateProjectionMatrix(){
+	// Perspective projection.
+	_projection = glm::perspective(45.0f, float(_width) / float(_height), 0.1f, 100.f);
 }
 
 
