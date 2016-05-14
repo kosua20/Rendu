@@ -22,6 +22,7 @@ void Renderer::init(int width, int height){
 	// initialize the timer
 	_timer = glfwGetTime();
 
+
 	// Query the renderer identifier, and the supported OpenGL version.
 	const GLubyte* renderer = glGetString(GL_RENDERER);
 	const GLubyte* version = glGetString(GL_VERSION);
@@ -104,13 +105,18 @@ void Renderer::init(int width, int height){
 
 void Renderer::draw(){
 
+	// Compute the time elapsed since last frame
+	float elapsed = glfwGetTime() - _timer;
+	_timer = glfwGetTime();
+
+	// Physics simulation
+	physics(elapsed);
+
 	// Scale the model by 0.5.
 	glm::mat4 model = glm::scale(glm::mat4(1.0f),glm::vec3(0.5f));
-	// Translate it in (0.0,0.0,-1.0), and rotate it along its vertical axis, using the timer as an angle.
-	glm::mat4 view = glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f,0.0f,-1.0f)), _timer, glm::vec3(0.0f,1.0f,0.0f));
-	
+
 	// Combine the three matrices.
-	glm::mat4 MVP = _projection * view * model;
+	glm::mat4 MVP = _projection * _camera._view * model;
 
 	// Set the clear color to white.
 	glClearColor(1.0f,1.0f,1.0f,0.0f);
@@ -124,9 +130,7 @@ void Renderer::draw(){
 	glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, _tex);
 
-	// Compute the time elapsed since last frame
-	float elapsed = glfwGetTime() - _timer;
-	_timer = glfwGetTime();
+	
 	// Upload the time as a uniform
 	GLuint timeID  = glGetUniformLocation(_programId, "time");
 	glUniform1f(timeID, _timer);
@@ -139,8 +143,13 @@ void Renderer::draw(){
 	// Draw!
 	glDrawArrays(GL_TRIANGLES, 0, 2*3);
 	
+
 	// Update timer
 	_timer = glfwGetTime();
+}
+
+void Renderer::physics(float elapsedTime){
+	_camera.update(elapsedTime);
 }
 
 
@@ -160,11 +169,15 @@ void Renderer::resize(int width, int height){
 }
 
 void Renderer::keyPressed(int key, int action){
-	std::cout << "Key: " << key << " (" << char(key) << "), action: " << action << "." << std::endl;
+	std::cout << "Key: " << key << " (" << char(key) << ")." << std::endl;
 }
 
-void Renderer::buttonPressed(int button, int action){
-	std::cout << "Button: " << button << ", action: " << action << std::endl;
+void Renderer::buttonPressed(int button, int action, double x, double y){
+	std::cout << "Button: " << button << ", action: " << action << std::endl;            
+}
+
+void Renderer::mousePosition(int x, int y, bool leftPress, bool rightPress){
+	
 }
 
 void Renderer::updateProjectionMatrix(){

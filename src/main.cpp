@@ -31,13 +31,16 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 }
 
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods){
-	renderer.buttonPressed(button, action);
+	double x, y;
+    glfwGetCursorPos(window, &x, &y);
+	renderer.buttonPressed(button, action, x, y);
 }
 
 
 void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos){
-	// Do nothing for now
-	// ...
+	bool left = glfwGetMouseButton(window,GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
+	bool right = glfwGetMouseButton(window,GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS;
+	renderer.mousePosition(xpos,ypos, left, right);
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset){
