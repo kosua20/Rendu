@@ -18,7 +18,7 @@ void Camera::reset(){
 	_right = glm::vec3(1.0,0.0,0.0);
 
 	_view = glm::lookAt(_eye, _center, _up);
-	_keys[0] = _keys[1] = _keys[2] = _keys[3] = false;
+	_keys[0] = _keys[1] = _keys[2] = _keys[3] = _keys[4] = _keys[5] = false;
 	_speed = 1.2;
 }
 
@@ -27,8 +27,10 @@ void Camera::update(float elapsedTime){
 	glm::vec3 look = normalize(_center - _eye);
 	// One step forward or backward.
 	glm::vec3 deltaLook =  _speed * elapsedTime * look;
-	// One step laterally.
+	// One step laterally horizontal.
 	glm::vec3 deltaLateral = _speed * elapsedTime * _right;
+	// One step laterally vertical.
+	glm::vec3 deltaVertical = _speed * elapsedTime * _up;
 
 	
 	if(_keys[0]){ // Forward
@@ -46,6 +48,16 @@ void Camera::update(float elapsedTime){
 	if(_keys[3]){ // Right
   		_eye = _eye + deltaLateral;
 	}
+
+	if(_keys[4]){ // Down
+  		_eye = _eye - deltaVertical;
+	}
+
+	if(_keys[5]){ // Up
+  		_eye = _eye + deltaVertical;
+	}
+
+
 
 	// Update center (eye-center stays constant).
 	_center = _eye + look;
@@ -74,6 +86,12 @@ void Camera::registerMove(int direction, bool flag){
 			break;
 		case GLFW_KEY_D:
 			_keys[3] = flag;
+			break;
+		case GLFW_KEY_Q:
+			_keys[4] = flag;
+			break;
+		case GLFW_KEY_E:
+			_keys[5] = flag;
 			break;
 		default:
 			break;

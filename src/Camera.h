@@ -29,7 +29,7 @@ private:
 	glm::vec3 _up;
 	glm::vec3 _right;
 
-	bool _keys[4];
+	bool _keys[6];
 
 	float _speed;
 
