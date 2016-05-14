@@ -169,7 +169,21 @@ void Renderer::resize(int width, int height){
 }
 
 void Renderer::keyPressed(int key, int action){
-	std::cout << "Key: " << key << " (" << char(key) << ")." << std::endl;
+	if(action == GLFW_PRESS){
+		if (key == GLFW_KEY_W || key == GLFW_KEY_A || key == GLFW_KEY_S || key == GLFW_KEY_D){
+			_camera.registerMove(key, true);
+
+		} else if(key == GLFW_KEY_R) {
+			_camera.reset();
+
+		} else {
+			std::cout << "Key: " << key << " (" << char(key) << ")." << std::endl;
+		}
+	} else if(action == GLFW_RELEASE) {
+		if (key == GLFW_KEY_W || key == GLFW_KEY_A || key == GLFW_KEY_S || key == GLFW_KEY_D){
+			_camera.registerMove(key, false);
+		}
+	}
 }
 
 void Renderer::buttonPressed(int button, int action, double x, double y){

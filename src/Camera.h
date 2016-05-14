@@ -11,8 +11,12 @@ public:
 
 	~Camera();
 
+	void reset();
+
 	void update(float elapsedTime);
 
+	void registerMove(int direction, bool flag);
+	
 	glm::mat4 _view;
 
 private:
