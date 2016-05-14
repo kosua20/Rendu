@@ -4,6 +4,8 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 
+#include "Camera.h"
+
 class Renderer {
 
 public:
@@ -18,6 +20,8 @@ public:
 	/// Draw function
 	void draw();
 
+	void physics(float elapsedTime);
+
 	/// Clean function
 	void clean();
 
@@ -28,7 +32,9 @@ public:
 	void keyPressed(int key, int action);
 
 	/// Handle mouse inputs
-	void buttonPressed(int button, int action);
+	void buttonPressed(int button, int action, double x, double y);
+
+	void mousePosition(int x, int y, bool leftPress, bool rightPress);
 
 	/// Update projection matrix
 	void updateProjectionMatrix();
@@ -45,6 +51,8 @@ private:
 	GLuint _tex;
 
 	glm::mat4 _projection;
+
+	Camera _camera;
 
 };
 

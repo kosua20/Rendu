@@ -9,7 +9,7 @@ LIBDIR = -L/usr/local/lib
 #Libraries needed: OpenGL, GLEW and glfw3. GLEW requires GLU, glfw3 require X11, Xi, and so on...
 LIBS = -lGLEW -lglfw3 -lGL -lGLU -lX11 -lXi -lXrandr -lXxf86vm -lXinerama -lXcursor -lrt -lm -pthread -ldl
 
-#Compiler flags: we accept C code (needed by some libraries), we use the C++11 standard, and display 'all' warnings.
+#Compiler flags: compile, we use the C++11 standard, and display 'all' warnings.
 COMPFLAGS = -c -std=c++11 -Wall
 
 #Build directory
@@ -18,7 +18,7 @@ BUILDDIR = build
 SRCDIR = src
 
 #Paths to the source files
-SOURCES = main.cpp Renderer.cpp helpers/ProgramUtilities.cpp helpers/lodepng/lodepng.cpp
+SOURCES = main.cpp Renderer.cpp Camera.cpp helpers/ProgramUtilities.cpp helpers/lodepng/lodepng.cpp
 #Paths to the objects files (generated from the sources)
 OBJECTS = $(SOURCES:%.cpp=$(BUILDDIR)/%.o)
 
