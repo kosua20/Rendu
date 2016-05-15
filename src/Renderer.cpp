@@ -30,6 +30,12 @@ void Renderer::init(int width, int height){
 	std::cout << "OpenGL version supported: " << version << std::endl;
 	checkGLError();
 
+	// GL options
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+	glFrontFace(GL_CCW);
+	glCullFace(GL_BACK);
+	checkGLError();
 	
 	// Load the shaders
 	_programId = createGLProgram("ressources/shaders/prog2.vert","ressources/shaders/prog2.frag");
@@ -162,8 +168,9 @@ void Renderer::draw(){
 	// Select the geometry.
 	glBindVertexArray(_vao);
 	// Draw!
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
+	glDrawElements(GL_TRIANGLES, _count, GL_UNSIGNED_INT, (void*)0);
 	
-	//glDrawArrays(GL_TRIANGLES, 0, 2*3);
 	
 
 	// Update timer
