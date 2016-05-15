@@ -104,29 +104,6 @@ void Renderer::init(int width, int height){
 
 	glBindVertexArray(0);
 
-	// Load and upload the texture.
-	std::vector<unsigned char> image;
-	unsigned imwidth, imheight;
-  	unsigned error = lodepng::decode(image, imwidth, imheight, "ressources/grid.png");
-  	if(error != 0){
-  		std::cerr << "Unable to load the texture." << std::endl;
-  		return;
-  	}
-
-  	flipImage(image,imwidth, imheight);
-	// Active a texture slot and storage for the desired program.
-	glUseProgram(_programId);
-	glActiveTexture(GL_TEXTURE0);
-	glGenTextures(1, &_tex);
-	glBindTexture(GL_TEXTURE_2D, _tex);
-	// Upload data to the GPU, with the correct settings: texture slot 0, pixel format, size, miplevel, internal format, type of each component, and pointer to the data. 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imwidth , imheight, 0, GL_RGBA, GL_UNSIGNED_BYTE, &(image[0]));
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-    // Setup a uniform to use the texture (as a sampler2D) in the shaders, through a handle. 
-    GLuint texID  = glGetUniformLocation(_programId, "texture1");
-	glUniform1i(texID, 0);
-
 }
 
 
@@ -153,14 +130,6 @@ void Renderer::draw(){
 	// Select the program (and shaders).
 	glUseProgram(_programId);
 
-	// Bind the texture.
-	glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, _tex);
-
-	
-	// Upload the time as a uniform
-	GLuint timeID  = glGetUniformLocation(_programId, "time");
-	glUniform1f(timeID, _timer);
 	// Upload the MVP matrix.
 	GLuint mvpID  = glGetUniformLocation(_programId, "mvp");
 	glUniformMatrix4fv(mvpID, 1, GL_FALSE, &MVP[0][0]);
@@ -170,8 +139,6 @@ void Renderer::draw(){
 	// Draw!
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
 	glDrawElements(GL_TRIANGLES, _count, GL_UNSIGNED_INT, (void*)0);
-	
-	
 
 	// Update timer
 	_timer = glfwGetTime();
