@@ -43,11 +43,13 @@ private:
 
 	int _width;
 	int _height;
+	int _count;
 
 	float _timer;
 
 	GLuint _programId;
 	GLuint _vao;
+	GLuint _ebo;
 	GLuint _tex;
 
 	glm::mat4 _projection;
