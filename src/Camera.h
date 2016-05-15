@@ -20,6 +20,10 @@ public:
 	/// Register a pressed or release movement key.
 	void registerMove(int direction, bool flag);
 
+	void startLeftMouse(double x, double y);
+	void leftMouseTo(double x, double y);
+	void endLeftMouse();
+
 	/// The view matrix.
 	glm::mat4 _view;
 
@@ -29,9 +33,13 @@ private:
 	glm::vec3 _up;
 	glm::vec3 _right;
 
-	bool _keys[6];
+	bool _keys[7];
 
 	float _speed;
+	float _angularSpeed;
+	
+	glm::vec2 _previousPosition;
+	glm::vec2 _deltaPosition;
 
 };
 

@@ -6,6 +6,8 @@
 #include "Camera.h"
 
 Camera::Camera(){
+	_speed = 1.2;
+	_angularSpeed = 75.0f;
 	reset();
 } 
 
@@ -18,8 +20,10 @@ void Camera::reset(){
 	_right = glm::vec3(1.0,0.0,0.0);
 
 	_view = glm::lookAt(_eye, _center, _up);
-	_keys[0] = _keys[1] = _keys[2] = _keys[3] = _keys[4] = _keys[5] = false;
-	_speed = 1.2;
+	_keys[0] = _keys[1] = _keys[2] = _keys[3] = _keys[4] = _keys[5] = _keys[6] = false;
+	_previousPosition = glm::vec2(0.0);
+	_deltaPosition = glm::vec2(0.0);
+	
 }
 
 void Camera::update(float elapsedTime){
@@ -56,8 +60,10 @@ void Camera::update(float elapsedTime){
 	if(_keys[5]){ // Up
   		_eye = _eye + deltaVertical;
 	}
-
-
+	if(_keys[6]){
+  		_center = _center + (_deltaPosition.x * _right + _deltaPosition.y * _up) * elapsedTime * _angularSpeed;
+  		look = normalize(_center - _eye);
+	}
 
 	// Update center (eye-center stays constant).
 	_center = _eye + look;
@@ -98,6 +104,18 @@ void Camera::registerMove(int direction, bool flag){
 	}
 }
 
+void Camera::startLeftMouse(double x, double y){
+	_previousPosition = glm::vec2(x,-y);
+}
 
+void Camera::leftMouseTo(double x, double y){
+	_keys[6] = true;
+	_deltaPosition = glm::vec2(x, -y) - _previousPosition;
+	_previousPosition =  glm::vec2(x, -y) ;
+}
+
+void Camera::endLeftMouse(){
+	_keys[6] = false;
+}
 
 
