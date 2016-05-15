@@ -6,6 +6,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "helpers/ProgramUtilities.h"
+#include "helpers/MeshUtilities.h"
 
 #include "Renderer.h"
 
@@ -40,48 +41,25 @@ void Renderer::init(int width, int height){
 	// Load the shaders
 	_programId = createGLProgram("ressources/shaders/prog2.vert","ressources/shaders/prog2.frag");
 
-	// Create geometry : a cube, with position and color attributes.
-	std::vector<float> cubeVertices{ -0.5, -0.5,  0.5,
-									  0.5, -0.5,  0.5,
-									 -0.5,  0.5,  0.5,
-									  0.5,  0.5,  0.5,
-									 -0.5, -0.5, -0.5,
-									  0.5, -0.5, -0.5,
-									 -0.5,  0.5, -0.5,
-									  0.5,  0.5, -0.5
-									};
-	std::vector<float> cubeColors{ 	1.0, 0.0,  0.0,
-									1.0, 1.0,  0.0,
-								    0.5,  0.0,  0.5,
-								    0.0,  1.0,  0.0,
-							        1.0,  0.0, 0.5,
-									0.0,  1.0,  1.0,
-								    0.5,  0.1, 0.0,
-									0.0,  0.0,  1.0
-									};
-	// Array to store the indices of the vertices to use.
-	std::vector<unsigned int> cubeIndices{0, 1, 2, 2, 1, 3, // Front face
-									  1, 5, 3, 3, 5, 7, // Right face
-									  5, 4, 7, 7, 4, 6, // Back face
-									  4, 0, 6, 6, 0, 2, // Left face
-									  0, 4, 1, 1, 4, 5, // Bottom face
-									  2, 3, 6, 6, 3, 7  // Top face  
-	 };
+	// Load geometry.
+	mesh_t mesh;
+	loadObj("ressources/suzanne.obj",mesh,Indexed);
+	centerAndUnitMesh(mesh);
 
-	 _count = cubeIndices.size();
+	_count = mesh.indices.size();
 
 	// Create an array buffer to host the geometry data.
 	GLuint vbo = 0;
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	// Upload the data to the Array buffer.
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*cubeVertices.size(), &(cubeVertices[0]), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*mesh.positions.size(), &(mesh.positions[0]), GL_STATIC_DRAW);
 
-	GLuint vbo_col = 0;
-	glGenBuffers(1, &vbo_col);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo_col);
+	GLuint vbo_nor = 0;
+	glGenBuffers(1, &vbo_nor);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_nor);
 	// Upload the data to the Array buffer.
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*cubeColors.size(), &(cubeColors[0]), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*mesh.normals.size(), &(mesh.normals[0]), GL_STATIC_DRAW);
 
 	// Generate a vertex array (useful when we add other attributes to the geometry).
 	_vao = 0;
@@ -92,15 +70,15 @@ void Renderer::init(int width, int height){
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
-	// The second attribute will be the colors.
+	// The second attribute will be the normals.
 	glEnableVertexAttribArray(1);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo_col);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_nor);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
 	// We load the indices data
 	glGenBuffers(1, &_ebo);
  	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
- 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * cubeIndices.size(), &(cubeIndices[0]), GL_STATIC_DRAW);
+ 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * mesh.indices.size(), &(mesh.indices[0]), GL_STATIC_DRAW);
 
 	glBindVertexArray(0);
 
