@@ -30,38 +30,54 @@ void Renderer::init(int width, int height){
 	std::cout << "OpenGL version supported: " << version << std::endl;
 	checkGLError();
 
+	
 	// Load the shaders
-	_programId = createGLProgram("ressources/shaders/prog1.vert","ressources/shaders/prog1.frag");
+	_programId = createGLProgram("ressources/shaders/prog2.vert","ressources/shaders/prog2.frag");
 
-	// Create geometry : a plane covering the screen.
-	std::vector<float> planeVertices{ -1.0, -1.0, 0.0,
-									   1.0, -1.0, 0.0,
-									  -1.0,  1.0, 0.0,
-									  -1.0,  1.0, 0.0,
-									   1.0, -1.0, 0.0,
-									   1.0,  1.0, 0.0
+	// Create geometry : a cube, with position and color attributes.
+	std::vector<float> cubeVertices{ -0.5, -0.5,  0.5,
+									  0.5, -0.5,  0.5,
+									 -0.5,  0.5,  0.5,
+									  0.5,  0.5,  0.5,
+									 -0.5, -0.5, -0.5,
+									  0.5, -0.5, -0.5,
+									 -0.5,  0.5, -0.5,
+									  0.5,  0.5, -0.5
 									};
-	std::vector<float> planeUVs{ 0.0, 0.0,
-								 1.0, 0.0,
-								 0.0, 1.0,
-								 0.0, 1.0,
-								 1.0, 0.0,
-								 1.0, 1.0,
-								};
+	std::vector<float> cubeColors{ 	1.0, 0.0,  0.0,
+									1.0, 1.0,  0.0,
+								    0.5,  0.0,  0.5,
+								    0.0,  1.0,  0.0,
+							        1.0,  0.0, 0.5,
+									0.0,  1.0,  1.0,
+								    0.5,  0.1, 0.0,
+									0.0,  0.0,  1.0
+									};
+	// Array to store the indices of the vertices to use.
+	std::vector<unsigned int> cubeIndices{0, 1, 2, 2, 1, 3, // Front face
+									  1, 5, 3, 3, 5, 7, // Right face
+									  5, 4, 7, 7, 4, 6, // Back face
+									  4, 0, 6, 6, 0, 2, // Left face
+									  0, 4, 1, 1, 4, 5, // Bottom face
+									  2, 3, 6, 6, 3, 7  // Top face  
+	 };
+
+	 _count = cubeIndices.size();
+
 	// Create an array buffer to host the geometry data.
 	GLuint vbo = 0;
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	// Upload the data to the Array buffer.
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*planeVertices.size(), &(planeVertices[0]), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*cubeVertices.size(), &(cubeVertices[0]), GL_STATIC_DRAW);
 
-	GLuint vbo_uv = 0;
-	glGenBuffers(1, &vbo_uv);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo_uv);
+	GLuint vbo_col = 0;
+	glGenBuffers(1, &vbo_col);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_col);
 	// Upload the data to the Array buffer.
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*planeUVs.size(), &(planeUVs[0]), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*cubeColors.size(), &(cubeColors[0]), GL_STATIC_DRAW);
 
-	// Generate a vertex array (useful when we will add other attributes to the geometry).
+	// Generate a vertex array (useful when we add other attributes to the geometry).
 	_vao = 0;
 	glGenVertexArrays (1, &_vao);
 	glBindVertexArray(_vao);
@@ -70,10 +86,15 @@ void Renderer::init(int width, int height){
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
-	// The second attribute will be the uv coordinates.
+	// The second attribute will be the colors.
 	glEnableVertexAttribArray(1);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo_uv);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, NULL);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_col);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+
+	// We load the indices data
+	glGenBuffers(1, &_ebo);
+ 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
+ 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * cubeIndices.size(), &(cubeIndices[0]), GL_STATIC_DRAW);
 
 	glBindVertexArray(0);
 
@@ -141,7 +162,8 @@ void Renderer::draw(){
 	// Select the geometry.
 	glBindVertexArray(_vao);
 	// Draw!
-	glDrawArrays(GL_TRIANGLES, 0, 2*3);
+	
+	//glDrawArrays(GL_TRIANGLES, 0, 2*3);
 	
 
 	// Update timer
