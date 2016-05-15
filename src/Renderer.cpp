@@ -187,11 +187,27 @@ void Renderer::keyPressed(int key, int action){
 }
 
 void Renderer::buttonPressed(int button, int action, double x, double y){
+	if (button == GLFW_MOUSE_BUTTON_LEFT) {
+		if (action == GLFW_PRESS) {
+			// We normalize the x and y values to the [-1, 1] range.
+			float xPosition =  fmax(fmin(1.0f,2.0f * (float)x / _width - 1.0),-1.0f);
+			float yPosition =  fmax(fmin(1.0f,2.0f * (float)y / _height - 1.0),-1.0f);
+			_camera.startLeftMouse(xPosition, yPosition);
+			return;
+		} else if (action == GLFW_RELEASE) {
+			_camera.endLeftMouse();
+		}
+	}
 	std::cout << "Button: " << button << ", action: " << action << std::endl;            
 }
 
 void Renderer::mousePosition(int x, int y, bool leftPress, bool rightPress){
-	
+	if (leftPress){
+		// We normalize the x and y values to the [-1, 1] range.
+        float xPosition =  fmax(fmin(1.0f,2.0f * (float)x / _width - 1.0),-1.0f);
+		float yPosition =  fmax(fmin(1.0f,2.0f * (float)y / _height - 1.0),-1.0f);
+		_camera.leftMouseTo(xPosition, yPosition); 
+    }
 }
 
 void Renderer::updateProjectionMatrix(){
