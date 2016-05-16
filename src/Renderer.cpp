@@ -53,13 +53,13 @@ void Renderer::init(int width, int height){
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	// Upload the data to the Array buffer.
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*mesh.positions.size(), &(mesh.positions[0]), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * mesh.positions.size() * 3, &(mesh.positions[0]), GL_STATIC_DRAW);
 
 	GLuint vbo_nor = 0;
 	glGenBuffers(1, &vbo_nor);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_nor);
 	// Upload the data to the Array buffer.
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*mesh.normals.size(), &(mesh.normals[0]), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * mesh.normals.size() * 3, &(mesh.normals[0]), GL_STATIC_DRAW);
 
 	// Generate a vertex array (useful when we add other attributes to the geometry).
 	_vao = 0;
