@@ -15,9 +15,21 @@ void main(){
 	// Compute the direction from the point to the light
 	vec3 d = normalize(light.xyz - position);
 
+	// The ambient factor
+	float ambient = 0.1;
+	
 	// Compute the diffuse factor
 	float diffuse = max(0.0, dot(d,n));
 
-	fragColor = vec3(diffuse);
+	// Compute the specular factor
+	float specular = 0.0;
+	if(diffuse > 0.0){
+		vec3 v = normalize(-position);
+		vec3 r = reflect(-d,n);
+		specular = pow(max(dot(r,v),0.0),64);
+	}
+
+	float shading = ambient + diffuse + specular;
+	fragColor = vec3(shading);
 
 }
