@@ -184,7 +184,7 @@ void loadObj(const std::string & filename, mesh_t & mesh, LoadMode mode){
 		}
 		indices_used.clear();
 	}
-	
+
 	positions_temp.clear();
 	normals_temp.clear();
 	texcoords_temp.clear();
@@ -194,5 +194,26 @@ void loadObj(const std::string & filename, mesh_t & mesh, LoadMode mode){
 }
 
 void centerAndUnitMesh(mesh_t & mesh){
+	// Compute the centroid.
+	glm::vec3 centroid = glm::vec3(0.0);
+	float maxi = mesh.positions[0].x;
+	for(int i = 0; i < mesh.positions.size(); i++){
+		centroid += mesh.positions[i];
+	}
+	centroid /= mesh.positions.size();
 
+	for(int i = 0; i < mesh.positions.size(); i++){
+		// Translate  the vertex.
+		mesh.positions[i] -= centroid;
+		// Find the maximal distance from a vertex to the center.
+		maxi = abs(mesh.positions[i].x) > maxi ? abs(mesh.positions[i].x) : maxi;
+		maxi = abs(mesh.positions[i].y) > maxi ? abs(mesh.positions[i].y) : maxi;
+		maxi = abs(mesh.positions[i].z) > maxi ? abs(mesh.positions[i].z) : maxi;
+	}
+	maxi = maxi == 0.0 ? 1.0 : maxi;
+	
+	// Scale the mesh.
+	for(int i = 0; i < mesh.positions.size(); i++){
+		mesh.positions[i] /= maxi;
+	}
 }
