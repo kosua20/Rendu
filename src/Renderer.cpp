@@ -98,7 +98,14 @@ void Renderer::draw(){
 	glm::mat4 model = glm::scale(glm::mat4(1.0f),glm::vec3(0.5f));
 
 	// Combine the three matrices.
-	glm::mat4 MVP = _projection * _camera._view * model;
+	glm::mat4 MV = _camera._view * model;
+	glm::mat4 MVP = _projection * MV;
+
+	// Compute the normal matrix
+	glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(MV)));
+
+	// Compute the light position in view space
+	glm::vec4 lightPosition = MV * glm::vec4(4.0f,4.0f,1.0f,1.0f);
 
 	// Set the clear color to white.
 	glClearColor(1.0f,1.0f,1.0f,0.0f);
@@ -111,6 +118,15 @@ void Renderer::draw(){
 	// Upload the MVP matrix.
 	GLuint mvpID  = glGetUniformLocation(_programId, "mvp");
 	glUniformMatrix4fv(mvpID, 1, GL_FALSE, &MVP[0][0]);
+	// Upload the MV matrix.
+	GLuint mvID  = glGetUniformLocation(_programId, "mv");
+	glUniformMatrix4fv(mvID, 1, GL_FALSE, &MV[0][0]);
+	// Upload the normal matrix.
+	GLuint normalMatrixID  = glGetUniformLocation(_programId, "normalMatrix");
+	glUniformMatrix3fv(normalMatrixID, 1, GL_FALSE, &normalMatrix[0][0]);
+	// Upload the light position in view space.
+	GLuint lightID  = glGetUniformLocation(_programId, "light");
+	glUniform4fv(lightID, 1, &lightPosition[0]);
 
 	// Select the geometry.
 	glBindVertexArray(_vao);
