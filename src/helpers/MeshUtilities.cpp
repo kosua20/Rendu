@@ -111,6 +111,7 @@ void loadObj(const std::string & filename, mesh_t & mesh, LoadMode mode){
 	} else if(mode == Expanded){
 		// Mode: Expanded
 		// In this mode, vertices are all duplicated. Each face has its set of 3 vertices, not shared with any other face.
+		
 		// For each face, query the needed positions, normals and uvs, and add them to the mesh structure.
 		for(int i = 0; i < faces_temp.size(); i++){
 			string str = faces_temp[i];
@@ -136,7 +137,60 @@ void loadObj(const std::string & filename, mesh_t & mesh, LoadMode mode){
 			//Indices (simply a vector of increasing integers).
 			mesh.indices.push_back(i);
 		}
+
+	} else if (mode == Indexed){
+		// Mode: Indexed
+		// In this mode, vertices are only duplicated if they were already used in a previous face with a different set of uv/normal coordinates.
+		
+		// Keep track of previously encountered (position,uv,normal).
+		map<string,long> indices_used;
+
+		//Positions
+		long maxInd = 0;
+		for(int i = 0; i < faces_temp.size(); i++){
+			
+			string str = faces_temp[i];
+
+			//Does the association of attributs already exists ?
+			if(indices_used.count(str)>0){
+				// Just store the index in the indices vector.
+				mesh.indices.push_back(indices_used[str]);
+				// Go to next face.
+				continue;
+			}
+
+			// else, query the associated position/uv/normal, store it, update the indices vector and the list of used elements.
+			size_t foundF = str.find_first_of("/");
+			size_t foundL = str.find_last_of("/");
+			
+			//Positions (we are sure they exist)
+			long ind1 = stol(str.substr(0,foundF))-1;
+			mesh.positions.push_back(positions_temp[ind1]);
+
+			//UVs (second index)
+			if(hasUV){
+				long ind2 = stol(str.substr(foundF+1,foundL))-1;
+				mesh.texcoords.push_back(texcoords_temp[ind2]);
+			}
+			//Normals (third index, in all cases)
+			if(hasNormals){
+				long ind3 = stol(str.substr(foundL+1))-1;
+				mesh.normals.push_back(normals_temp[ind3]);
+			}
+
+			mesh.indices.push_back(maxInd);
+			indices_used[str] = maxInd;
+			maxInd++;
+		}
+		indices_used.clear();
 	}
+	
+	positions_temp.clear();
+	normals_temp.clear();
+	texcoords_temp.clear();
+	faces_temp.clear();
+	cout << "OBJ loaded. " << mesh.indices.size()/3 << " faces, " << mesh.positions.size() << " vertices, " << mesh.normals.size() << " normals, " << mesh.texcoords.size() << " texcoords." <<  endl;
+	return;
 }
 
 void centerAndUnitMesh(mesh_t & mesh){
