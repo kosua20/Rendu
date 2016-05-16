@@ -1,7 +1,7 @@
 #version 330
 
 // Input: normal, position coming from the vertex shader
-in vec3 normal; 
+flat in vec3 normal; 
 in vec3 position; 
 
 // Uniform: the light position in view space
@@ -29,7 +29,7 @@ void main(){
 		specular = pow(max(dot(r,v),0.0),64);
 	}
 
-	float shading = ambient + diffuse + specular;
+	float shading = ambient + diffuse;// + specular;
 	fragColor = vec3(shading);
 
 }

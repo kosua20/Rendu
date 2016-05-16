@@ -11,7 +11,7 @@ uniform mat4 mv;
 uniform mat3 normalMatrix;
 
 // Output: normal and position both in eye space
-out vec3 normal;
+flat out vec3 normal;
 out vec3 position; 
 
 
