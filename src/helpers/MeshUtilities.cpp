@@ -96,16 +96,45 @@ void loadObj(const std::string & filename, mesh_t & mesh, LoadMode mode){
 	bool hasNormals = normals_temp.size()>0;
 
 	// Depending on the chosen extraction mode, we fill the mesh arrays accordingly.
-
-	// Mode: Points
-	// In this mode, we don't care about faces. We simply associate each vertex/normal/uv in the same order.
 	if (mode == Points){
+		// Mode: Points
+		// In this mode, we don't care about faces. We simply associate each vertex/normal/uv in the same order.
+		
 		mesh.positions = positions_temp;
 		if(hasNormals){
 			mesh.normals = normals_temp;
 		}
 		if(hasUV){
 			mesh.texcoords = texcoords_temp;
+		}
+
+	} else if(mode == Expanded){
+		// Mode: Expanded
+		// In this mode, vertices are all duplicated. Each face has its set of 3 vertices, not shared with any other face.
+		// For each face, query the needed positions, normals and uvs, and add them to the mesh structure.
+		for(int i = 0; i < faces_temp.size(); i++){
+			string str = faces_temp[i];
+			size_t foundF = str.find_first_of("/");
+			size_t foundL = str.find_last_of("/");
+			
+			// Positions (we are sure they exist).
+			long ind1 = stol(str.substr(0,foundF))-1;
+			mesh.positions.push_back(positions_temp[ind1]);
+
+			// UVs (second index).
+			if(hasUV){
+				long ind2 = stol(str.substr(foundF+1,foundL))-1;
+				mesh.texcoords.push_back(texcoords_temp[ind2]);
+			}
+
+			// Normals (third index, in all cases).
+			if(hasNormals){
+				long ind3 = stol(str.substr(foundL+1))-1;
+				mesh.normals.push_back(normals_temp[ind3]);
+			}
+			
+			//Indices (simply a vector of increasing integers).
+			mesh.indices.push_back(i);
 		}
 	}
 }
