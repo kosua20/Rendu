@@ -85,6 +85,29 @@ void loadObj(const std::string & filename, mesh_t & mesh, LoadMode mode){
 		}
 	}
 	in.close();
+
+	// If no vertices, end.
+	if(positions_temp.size() == 0){
+			return;
+	}
+
+	// Does the mesh have UV or normal coordinates ?
+	bool hasUV = texcoords_temp.size()>0;
+	bool hasNormals = normals_temp.size()>0;
+
+	// Depending on the chosen extraction mode, we fill the mesh arrays accordingly.
+
+	// Mode: Points
+	// In this mode, we don't care about faces. We simply associate each vertex/normal/uv in the same order.
+	if (mode == Points){
+		mesh.positions = positions_temp;
+		if(hasNormals){
+			mesh.normals = normals_temp;
+		}
+		if(hasUV){
+			mesh.texcoords = texcoords_temp;
+		}
+	}
 }
 
 void centerAndUnitMesh(mesh_t & mesh){
