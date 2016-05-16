@@ -1,13 +1,23 @@
 #version 330
 
-// Input: normal coming from the vertex shader
+// Input: normal, position coming from the vertex shader
 in vec3 normal; 
+in vec3 position; 
+
+// Uniform: the light position in view space
+uniform vec4 light;
 
 // Output: the fragment color
 out vec3 fragColor;
 
 void main(){
-	// The output color is, for now, the normal scale in [0,1].
-	// The interpolation between the vertex and fragment shader does not guarantee the normalization of the normal.
-	fragColor = normalize(normal) * 0.5 + 0.5;
+	vec3 n = normalize(normal);
+	// Compute the direction from the point to the light
+	vec3 d = normalize(light.xyz - position);
+
+	// Compute the diffuse factor
+	float diffuse = max(0.0, dot(d,n));
+
+	fragColor = vec3(diffuse);
+
 }
