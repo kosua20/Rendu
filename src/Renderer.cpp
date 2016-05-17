@@ -105,7 +105,7 @@ void Renderer::draw(){
 	glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(MV)));
 
 	// Compute the light position in view space
-	glm::vec4 lightPosition = MV * glm::vec4(4.0f,4.0f,1.0f,1.0f);
+	glm::vec4 lightPosition = _camera._view * glm::vec4(4.0f,4.0f,1.0f,1.0f);
 
 	// Set the clear color to white.
 	glClearColor(1.0f,1.0f,1.0f,0.0f);
