@@ -6,6 +6,15 @@
 
 #include "Camera.h"
 
+struct Light
+{
+	glm::vec4 position;
+	glm::vec4 Ia;
+	glm::vec4 Id;
+	glm::vec4 Is;
+	float shininess;
+};
+
 class Renderer {
 
 public:
@@ -51,10 +60,13 @@ private:
 	GLuint _vao;
 	GLuint _ebo;
 	GLuint _tex;
+	GLuint _ubo;
 
 	glm::mat4 _projection;
 
 	Camera _camera;
+
+	Light _light;
 
 };
 
