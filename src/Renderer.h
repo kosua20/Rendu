@@ -15,6 +15,13 @@ struct Light
 	float shininess;
 };
 
+struct Material
+{
+	glm::vec4 Ka;
+	glm::vec4 Kd;
+	glm::vec4 Ks;
+};
+
 class Renderer {
 
 public:
@@ -67,6 +74,7 @@ private:
 	Camera _camera;
 
 	Light _light;
+	Material _material;
 
 };
 

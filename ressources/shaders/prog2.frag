@@ -13,6 +13,12 @@ layout (std140) uniform Light {
   float shininess;
 } light;
 
+layout (std140) uniform Material {
+  vec4 Ka;
+  vec4 Kd;
+  vec4 Ks;
+} material;
+
 // Output: the fragment color
 out vec3 fragColor;
 
@@ -35,7 +41,7 @@ void main(){
 		specular = pow(max(dot(r,v),0.0),light.shininess);
 	}
 
-	vec3 shading = ambient * light.Ia.rgb + diffuse * light.Id.rgb + specular * light.Is.rgb;
+	vec3 shading = ambient * light.Ia.rgb * material.Ka.rgb + diffuse * light.Id.rgb * material.Kd.rgb + specular * light.Is.rgb * material.Ks.rgb ;
 	fragColor = shading;
 
 }

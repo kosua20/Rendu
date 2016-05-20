@@ -85,25 +85,49 @@ void Renderer::init(int width, int height){
 	// Setup light
 	_light.position = glm::vec4(0.0f); // position will be updated at each frame
 	_light.shininess = 200.0f;
-	_light.Ia = glm::vec4(0.1f,0.1f,0.1f,0.0f);
-	_light.Id = glm::vec4(0.8f,0.1f,0.9f,0.0f);
-	_light.Is = glm::vec4(0.4f, 0.4f, 0.4f,0.0f);
+	_light.Ia = glm::vec4(0.1f, 0.1f, 0.1f, 0.0f);
+	_light.Id = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
+	_light.Is = glm::vec4(0.4f, 0.4f, 0.4f, 0.0f);
 
 	// Get a binding point for the Uniform buffer.
 	GLuint lightUniformId = glGetUniformBlockIndex(_programId, "Light");  
 	glUniformBlockBinding(_programId, lightUniformId, 0);
+
+	// Setup material
+	_material.Ka = glm::vec4(0.1f,0.1f,0.1f,0.0f);
+	_material.Kd = glm::vec4(1.0f, 0.5f, 0.0f, 0.0f);
+	_material.Ks = glm::vec4(1.0f, 1.0f, 1.0f,0.0f);
+
+	// Get a binding point for the Uniform buffer.
+	GLuint materialUniformId = glGetUniformBlockIndex(_programId, "Material");  
+	glUniformBlockBinding(_programId, materialUniformId, 1);
+
 	// Generate the buffer.
 	glGenBuffers(1, &_ubo);
+	// Bind the buffer.
 	glBindBuffer(GL_UNIFORM_BUFFER, _ubo);
-	// Allocate enough memory to hold the Light struvt
-	glBufferData(GL_UNIFORM_BUFFER, 4*sizeof(glm::vec4) + sizeof(float), NULL, GL_DYNAMIC_DRAW);
-	// Bind the allocated range.
+
+	// We need to know the alignment size if we want to store two uniform blocks in the same uniform buffer.
+	GLint uboAlignSize = 0;
+	glGetIntegerv(GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT, &uboAlignSize);
+	// Compute the padding for the second block, it needs to be a multiple of uboAlignSize (typically uboAlignSize will be 256.)
+	GLuint padding = 4*sizeof(glm::vec4) + 1*sizeof(float);
+	padding = ((padding/uboAlignSize)+1)*uboAlignSize;
+
+	// Allocate enough memory to hold the Light struct and Material structures.
+	glBufferData(GL_UNIFORM_BUFFER, padding + 3 * sizeof(glm::vec4), NULL, GL_DYNAMIC_DRAW);
+
+	// Bind the range allocated to the light.
   	glBindBufferRange(GL_UNIFORM_BUFFER, 0, _ubo, 0, 4*sizeof(glm::vec4) + sizeof(float));
-  	// And bind the buffer.
-  	glBindBuffer(GL_UNIFORM_BUFFER, _ubo);
   	// Submit the data.
 	glBufferSubData(GL_UNIFORM_BUFFER, 0, 4*sizeof(glm::vec4) + sizeof(float), &_light);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);  
+	
+	// Bind the range allocated to the material.
+  	glBindBufferRange(GL_UNIFORM_BUFFER, 1, _ubo, padding, 3*sizeof(glm::vec4));
+  	// Submit the data.
+	glBufferSubData(GL_UNIFORM_BUFFER, padding, 3*sizeof(glm::vec4), &_material);
+
+	glBindBuffer(GL_UNIFORM_BUFFER,0);
 	checkGLError();
 
 }
@@ -170,7 +194,7 @@ void Renderer::draw(){
 void Renderer::physics(float elapsedTime){
 	_camera.update(elapsedTime);
 	// Compute the light position in view space
-	_light.position = _camera._view * glm::vec4(4.0f,4.0f,1.0f,1.0f);
+	_light.position = _camera._view * glm::vec4(2.0f,2.0f,2.0f,1.0f);
 }
 
 
