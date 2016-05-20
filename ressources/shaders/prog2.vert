@@ -11,13 +11,15 @@ uniform mat4 mv;
 uniform mat3 normalMatrix;
 
 // Output: normal and position both in eye space
-out vec3 normal;
-out vec3 position; 
+out INTERFACE {
+    vec3 normal;
+	vec3 position; 
+} Out ;
 
 
 void main(){
 	// We multiply the coordinates by the MVP matrix, and ouput the result.
 	gl_Position = mvp * vec4(v, 1.0);
-	position = (mv * vec4(v,1.0)).xyz;
-	normal = normalMatrix * n;
+	Out.position = (mv * vec4(v,1.0)).xyz;
+	Out.normal = normalMatrix * n;
 }

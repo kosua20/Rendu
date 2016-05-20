@@ -1,12 +1,14 @@
 #version 330
 
 // Input: normal, position coming from the vertex shader
-in vec3 normal; 
-in vec3 position; 
+in INTERFACE {
+    vec3 normal;
+	vec3 position; 
+} In ;
 
 // Uniform: the light structure (position in view space)
 layout (std140) uniform Light {
-  vec4 viewPosition;
+  vec4 position;
   vec4 Ia;
   vec4 Id;
   vec4 Is;
@@ -23,9 +25,9 @@ layout (std140) uniform Material {
 out vec3 fragColor;
 
 void main(){
-	vec3 n = normalize(normal);
+	vec3 n = normalize(In.normal);
 	// Compute the direction from the point to the light
-	vec3 d = normalize(light.viewPosition.xyz - position);
+	vec3 d = normalize(light.position.xyz - In.position);
 
 	// The ambient factor
 	float ambient = 0.1;
@@ -36,7 +38,7 @@ void main(){
 	// Compute the specular factor
 	float specular = 0.0;
 	if(diffuse > 0.0){
-		vec3 v = normalize(-position);
+		vec3 v = normalize(-In.position);
 		vec3 r = reflect(-d,n);
 		specular = pow(max(dot(r,v),0.0),light.shininess);
 	}
