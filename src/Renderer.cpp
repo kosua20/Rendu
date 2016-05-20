@@ -128,9 +128,6 @@ void Renderer::draw(){
 	// Compute the normal matrix
 	glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(MV)));
 
-	// Compute the light position in view space
-	glm::vec4 lightPosition = _camera._view * glm::vec4(4.0f,4.0f,1.0f,1.0f);
-
 	// Set the clear color to white.
 	glClearColor(1.0f,1.0f,1.0f,0.0f);
 	// Clear the color and depth buffers.
@@ -148,9 +145,17 @@ void Renderer::draw(){
 	// Upload the normal matrix.
 	GLuint normalMatrixID  = glGetUniformLocation(_programId, "normalMatrix");
 	glUniformMatrix3fv(normalMatrixID, 1, GL_FALSE, &normalMatrix[0][0]);
-	// Upload the light position in view space.
-	GLuint lightID  = glGetUniformLocation(_programId, "light");
-	glUniform4fv(lightID, 1, &lightPosition[0]);
+
+	// Update the light position (in view space).
+	// Bind the buffer.
+	glBindBuffer(GL_UNIFORM_BUFFER, _ubo);
+	// Obtain a handle to the underlying memory.
+	GLvoid * ptr = glMapBuffer(GL_UNIFORM_BUFFER,GL_WRITE_ONLY);
+	// Copy the light position.
+	memcpy(ptr, &(_light.position[0]), sizeof(glm::vec4));
+	// Unmap, unbind.
+	glUnmapBuffer(GL_UNIFORM_BUFFER);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 	// Select the geometry.
 	glBindVertexArray(_vao);
@@ -164,6 +169,8 @@ void Renderer::draw(){
 
 void Renderer::physics(float elapsedTime){
 	_camera.update(elapsedTime);
+	// Compute the light position in view space
+	_light.position = _camera._view * glm::vec4(4.0f,4.0f,1.0f,1.0f);
 }
 
 
