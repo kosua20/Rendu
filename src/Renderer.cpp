@@ -82,6 +82,30 @@ void Renderer::init(int width, int height){
 
 	glBindVertexArray(0);
 
+	// Setup light
+	_light.position = glm::vec4(0.0f); // position will be updated at each frame
+	_light.shininess = 200.0f;
+	_light.Ia = glm::vec4(0.1f,0.1f,0.1f,0.0f);
+	_light.Id = glm::vec4(0.8f,0.1f,0.9f,0.0f);
+	_light.Is = glm::vec4(0.4f, 0.4f, 0.4f,0.0f);
+
+	// Get a binding point for the Uniform buffer.
+	GLuint lightUniformId = glGetUniformBlockIndex(_programId, "Light");  
+	glUniformBlockBinding(_programId, lightUniformId, 0);
+	// Generate the buffer.
+	glGenBuffers(1, &_ubo);
+	glBindBuffer(GL_UNIFORM_BUFFER, _ubo);
+	// Allocate enough memory to hold the Light struvt
+	glBufferData(GL_UNIFORM_BUFFER, 4*sizeof(glm::vec4) + sizeof(float), NULL, GL_DYNAMIC_DRAW);
+	// Bind the allocated range.
+  	glBindBufferRange(GL_UNIFORM_BUFFER, 0, _ubo, 0, 4*sizeof(glm::vec4) + sizeof(float));
+  	// And bind the buffer.
+  	glBindBuffer(GL_UNIFORM_BUFFER, _ubo);
+  	// Submit the data.
+	glBufferSubData(GL_UNIFORM_BUFFER, 0, 4*sizeof(glm::vec4) + sizeof(float), &_light);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);  
+	checkGLError();
+
 }
 
 

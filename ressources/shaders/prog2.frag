@@ -4,8 +4,14 @@
 in vec3 normal; 
 in vec3 position; 
 
-// Uniform: the light position in view space
-uniform vec4 light;
+// Uniform: the light structure (position in view space)
+layout (std140) uniform Light {
+  vec4 viewPosition;
+  vec4 Ia;
+  vec4 Id;
+  vec4 Is;
+  float shininess;
+} light;
 
 // Output: the fragment color
 out vec3 fragColor;
@@ -13,7 +19,7 @@ out vec3 fragColor;
 void main(){
 	vec3 n = normalize(normal);
 	// Compute the direction from the point to the light
-	vec3 d = normalize(light.xyz - position);
+	vec3 d = normalize(light.viewPosition.xyz - position);
 
 	// The ambient factor
 	float ambient = 0.1;
@@ -26,11 +32,10 @@ void main(){
 	if(diffuse > 0.0){
 		vec3 v = normalize(-position);
 		vec3 r = reflect(-d,n);
-		specular = pow(max(dot(r,v),0.0),64);
+		specular = pow(max(dot(r,v),0.0),light.shininess);
 	}
 
-	float shading = ambient + diffuse + specular;
-	shading = floor(shading * 4.0) / 4.0;
-	fragColor = vec3(shading);
+	vec3 shading = ambient * light.Ia.rgb + diffuse * light.Id.rgb + specular * light.Is.rgb;
+	fragColor = shading;
 
 }
