@@ -4,6 +4,7 @@
 in INTERFACE {
     vec3 normal;
 	vec3 position; 
+	vec2 uv;
 } In ;
 
 // Uniform: the light structure (position in view space)
@@ -45,5 +46,6 @@ void main(){
 
 	vec3 shading = ambient * light.Ia.rgb * material.Ka.rgb + diffuse * light.Id.rgb * material.Kd.rgb + specular * light.Is.rgb * material.Ks.rgb ;
 	fragColor = shading;
+	fragColor = vec3(In.uv,0.0);
 
 }
