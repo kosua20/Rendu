@@ -4,6 +4,8 @@
 layout(location = 0) in vec3 v;
 // Second attribute: normal
 layout(location = 1) in vec3 n;
+// Second attribute: UV
+layout(location = 2) in vec2 uv;
 
 // Uniform: the MVP, MV and normal matrices
 uniform mat4 mvp;
@@ -14,6 +16,7 @@ uniform mat3 normalMatrix;
 out INTERFACE {
     vec3 normal;
 	vec3 position; 
+	vec2 uv;
 } Out ;
 
 
@@ -22,4 +25,5 @@ void main(){
 	gl_Position = mvp * vec4(v, 1.0);
 	Out.position = (mv * vec4(v,1.0)).xyz;
 	Out.normal = normalMatrix * n;
+	Out.uv = uv;
 }
