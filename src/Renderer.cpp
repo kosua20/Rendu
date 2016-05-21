@@ -82,7 +82,7 @@ void Renderer::init(int width, int height){
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_nor);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
-	// The second attribute will be the normals.
+	// The third attribute will be the uvs.
 	glEnableVertexAttribArray(2);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_uv);
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, NULL);
@@ -140,6 +140,28 @@ void Renderer::init(int width, int height){
 	glBufferSubData(GL_UNIFORM_BUFFER, padding, 3*sizeof(glm::vec4), &_material);
 
 	glBindBuffer(GL_UNIFORM_BUFFER,0);
+
+	// Load and upload the texture.
+	std::vector<unsigned char> image;
+	unsigned imwidth, imheight;
+  	unsigned error = lodepng::decode(image, imwidth, imheight, "ressources/suzanne_texture_color.png");
+  	if(error != 0){
+  		std::cerr << "Unable to load the texture." << std::endl;
+  		return;
+  	}
+
+  	flipImage(image,imwidth, imheight);
+	
+	glUseProgram(_programId);
+	glActiveTexture(GL_TEXTURE0);
+	glGenTextures(1, &_tex);
+	glBindTexture(GL_TEXTURE_2D, _tex);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imwidth , imheight, 0, GL_RGBA, GL_UNSIGNED_BYTE, &(image[0]));
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+
+    GLuint texID  = glGetUniformLocation(_programId, "textureColor");
+	glUniform1i(texID, 0);
 	checkGLError();
 
 }
@@ -182,6 +204,10 @@ void Renderer::draw(){
 	GLuint normalMatrixID  = glGetUniformLocation(_programId, "normalMatrix");
 	glUniformMatrix3fv(normalMatrixID, 1, GL_FALSE, &normalMatrix[0][0]);
 
+	// Bind the texture.
+	glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, _tex);
+    
 	// Update the light position (in view space).
 	// Bind the buffer.
 	glBindBuffer(GL_UNIFORM_BUFFER, _ubo);
