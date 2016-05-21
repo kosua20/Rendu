@@ -22,6 +22,8 @@ layout (std140) uniform Material {
   vec4 Ks;
 } material;
 
+uniform sampler2D textureColor;
+
 // Output: the fragment color
 out vec3 fragColor;
 
@@ -43,9 +45,9 @@ void main(){
 		vec3 r = reflect(-d,n);
 		specular = pow(max(dot(r,v),0.0),light.shininess);
 	}
+	vec3 diffuseColor = texture(textureColor, In.uv).rgb;
 
-	vec3 shading = ambient * light.Ia.rgb * material.Ka.rgb + diffuse * light.Id.rgb * material.Kd.rgb + specular * light.Is.rgb * material.Ks.rgb ;
+	vec3 shading = ambient * light.Ia.rgb * material.Ka.rgb + diffuse * light.Id.rgb * diffuseColor + specular * light.Is.rgb * material.Ks.rgb ;
 	fragColor = shading;
-	fragColor = vec3(In.uv,0.0);
 
 }
