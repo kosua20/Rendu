@@ -1,20 +1,20 @@
 #version 330
 
-// First attribute: vertex position
+// Attributes
 layout(location = 0) in vec3 v;
-// Second attribute: normal
 layout(location = 1) in vec3 n;
-// Second attribute: UV
 layout(location = 2) in vec2 uv;
+layout(location = 3) in vec3 tan;
+layout(location = 4) in vec3 binor;
 
 // Uniform: the MVP, MV and normal matrices
 uniform mat4 mvp;
 uniform mat4 mv;
 uniform mat3 normalMatrix;
 
-// Output: normal and position both in eye space
+// Output: tangent space matrix, position in view space and uv.
 out INTERFACE {
-    vec3 normal;
+    mat3 tbn;
 	vec3 position; 
 	vec2 uv;
 } Out ;
@@ -23,7 +23,15 @@ out INTERFACE {
 void main(){
 	// We multiply the coordinates by the MVP matrix, and ouput the result.
 	gl_Position = mvp * vec4(v, 1.0);
+
 	Out.position = (mv * vec4(v,1.0)).xyz;
-	Out.normal = normalMatrix * n;
+
 	Out.uv = uv;
+
+	// Compute the TBN matrix (from tangent space to view space).
+	vec3 T = normalize(normalMatrix * tan);
+	vec3 B = normalize(normalMatrix * binor);
+	vec3 N = normalize(normalMatrix * n);
+	Out.tbn = mat3(T, B, N);
+	
 }
