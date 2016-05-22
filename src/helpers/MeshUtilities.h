@@ -9,6 +9,8 @@
 typedef struct {
 	std::vector<glm::vec3> positions;
 	std::vector<glm::vec3> normals;
+	std::vector<glm::vec3> tangents;
+	std::vector<glm::vec3> binormals;
 	std::vector<glm::vec2> texcoords;
 	std::vector<unsigned int> indices;
 } mesh_t;
@@ -25,5 +27,8 @@ void loadObj(const std::string & filename, mesh_t & mesh, LoadMode mode);
 
 /// Center the mesh and scale it to fit in the [-1,1] box.
 void centerAndUnitMesh(mesh_t & mesh);
+
+/// Compute the tangents and binormal vectors for each vertex.
+void computeTangentsAndBinormals(mesh_t & mesh);
 
 #endif 

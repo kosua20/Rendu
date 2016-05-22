@@ -113,7 +113,7 @@ void loadObj(const std::string & filename, mesh_t & mesh, LoadMode mode){
 		// In this mode, vertices are all duplicated. Each face has its set of 3 vertices, not shared with any other face.
 		
 		// For each face, query the needed positions, normals and uvs, and add them to the mesh structure.
-		for(int i = 0; i < faces_temp.size(); i++){
+		for(size_t i = 0; i < faces_temp.size(); i++){
 			string str = faces_temp[i];
 			size_t foundF = str.find_first_of("/");
 			size_t foundL = str.find_last_of("/");
@@ -147,7 +147,7 @@ void loadObj(const std::string & filename, mesh_t & mesh, LoadMode mode){
 
 		//Positions
 		long maxInd = 0;
-		for(int i = 0; i < faces_temp.size(); i++){
+		for(size_t i = 0; i < faces_temp.size(); i++){
 			
 			string str = faces_temp[i];
 
@@ -189,7 +189,7 @@ void loadObj(const std::string & filename, mesh_t & mesh, LoadMode mode){
 	normals_temp.clear();
 	texcoords_temp.clear();
 	faces_temp.clear();
-	cout << "OBJ loaded. " << mesh.indices.size()/3 << " faces, " << mesh.positions.size() << " vertices, " << mesh.normals.size() << " normals, " << mesh.texcoords.size() << " texcoords." <<  endl;
+	cout << "OBJ: loaded. " << mesh.indices.size()/3 << " faces, " << mesh.positions.size() << " vertices, " << mesh.normals.size() << " normals, " << mesh.texcoords.size() << " texcoords." <<  endl;
 	return;
 }
 
@@ -197,12 +197,12 @@ void centerAndUnitMesh(mesh_t & mesh){
 	// Compute the centroid.
 	glm::vec3 centroid = glm::vec3(0.0);
 	float maxi = mesh.positions[0].x;
-	for(int i = 0; i < mesh.positions.size(); i++){
+	for(size_t i = 0; i < mesh.positions.size(); i++){
 		centroid += mesh.positions[i];
 	}
 	centroid /= mesh.positions.size();
 
-	for(int i = 0; i < mesh.positions.size(); i++){
+	for(size_t i = 0; i < mesh.positions.size(); i++){
 		// Translate  the vertex.
 		mesh.positions[i] -= centroid;
 		// Find the maximal distance from a vertex to the center.
@@ -216,4 +216,56 @@ void centerAndUnitMesh(mesh_t & mesh){
 	for(int i = 0; i < mesh.positions.size(); i++){
 		mesh.positions[i] /= maxi;
 	}
+}
+
+void computeTangentsAndBinormals(mesh_t & mesh){
+	if(mesh.indices.size() * mesh.positions.size() * mesh.texcoords.size() == 0){
+		// Missing data, or not the right mode (Points).
+		return;
+	}
+	// Start by filling everything with 0 (as we want to accumulate tangents and binormals coming from different faces for each vertex).
+	for(size_t pid = 0; pid < mesh.positions.size(); ++pid){
+		mesh.tangents.push_back(glm::vec3(0.0f));
+		mesh.binormals.push_back(glm::vec3(0.0f));
+	}
+	// Then, compute both vectors for each face and accumulate them.
+	for(size_t fid = 0; fid < mesh.indices.size(); fid += 3){
+
+		// Get the vertices of the face.
+		glm::vec3 & v0 = mesh.positions[mesh.indices[fid]];
+		glm::vec3 & v1 = mesh.positions[mesh.indices[fid+1]];
+		glm::vec3 & v2 = mesh.positions[mesh.indices[fid+2]];
+		// Get the uvs of the face.
+		glm::vec2 & uv0 = mesh.texcoords[mesh.indices[fid]];
+		glm::vec2 & uv1 = mesh.texcoords[mesh.indices[fid+1]];
+		glm::vec2 & uv2 = mesh.texcoords[mesh.indices[fid+2]];
+
+		// Delta positions and uvs.
+		glm::vec3 deltaPosition1 = v1 - v0;
+		glm::vec3 deltaPosition2 = v2 - v0;
+		glm::vec2 deltaUv1 = uv1 - uv0;
+		glm::vec2 deltaUv2 = uv2 - uv0;
+
+		// Compute tangent and binormal for the face.
+		float det = 1.0f / (deltaUv1.x * deltaUv2.y - deltaUv1.y * deltaUv2.x);
+    	glm::vec3 tangent = det * (deltaPosition1 * deltaUv2.y   - deltaPosition2 * deltaUv1.y);
+    	glm::vec3 binormal = det * (deltaPosition2 * deltaUv1.x   - deltaPosition1 * deltaUv2.x);
+
+    	// Accumulate them. We don't normalize to get a free weighting based on the size of the face.
+    	mesh.tangents[mesh.indices[fid]] += tangent;
+    	mesh.tangents[mesh.indices[fid+1]] += tangent;
+    	mesh.tangents[mesh.indices[fid+2]] += tangent;
+
+    	mesh.binormals[mesh.indices[fid]] += binormal;
+    	mesh.binormals[mesh.indices[fid+1]] += binormal;
+    	mesh.binormals[mesh.indices[fid+2]] += binormal;
+	}
+	// Finally, enforce orthogonality and good orientation of the basis.
+	for(size_t tid = 0; tid < mesh.tangents.size(); ++tid){
+		mesh.tangents[tid] = normalize(mesh.tangents[tid] - mesh.normals[tid] * dot(mesh.normals[tid], mesh.tangents[tid]));
+		if(dot(cross(mesh.normals[tid], mesh.tangents[tid]), mesh.binormals[tid]) < 0.0f){
+			mesh.tangents[tid] *= -1.0f;
+ 		}
+	}
+	cout << "OBJ: " << mesh.tangents.size() << " tangents and binormals computed." << endl;
 }
