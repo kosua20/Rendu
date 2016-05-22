@@ -1,8 +1,8 @@
 #version 330
 
-// Input: normal, position coming from the vertex shader
+// Input: tangent space matrix, position (view space) and uv coming from the vertex shader
 in INTERFACE {
-    vec3 normal;
+    mat3 tbn;
 	vec3 position; 
 	vec2 uv;
 } In ;
@@ -23,12 +23,17 @@ layout (std140) uniform Material {
 } material;
 
 uniform sampler2D textureColor;
+uniform sampler2D textureNormal;
 
 // Output: the fragment color
 out vec3 fragColor;
 
 void main(){
-	vec3 n = normalize(In.normal);
+	// Compute the normal at the fragment using the tangent space matrix and the normal read in the normal map.
+	vec3 n = texture(textureNormal,In.uv).rgb;
+	n = normalize(n * 2.0 - 1.0);
+	n = normalize(In.tbn * n);
+
 	// Compute the direction from the point to the light
 	vec3 d = normalize(light.position.xyz - In.position);
 
@@ -45,6 +50,7 @@ void main(){
 		vec3 r = reflect(-d,n);
 		specular = pow(max(dot(r,v),0.0),light.shininess);
 	}
+	
 	vec3 diffuseColor = texture(textureColor, In.uv).rgb;
 
 	vec3 shading = ambient * light.Ia.rgb * material.Ka.rgb + diffuse * light.Id.rgb * diffuseColor + specular * light.Is.rgb * material.Ks.rgb ;
