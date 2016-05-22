@@ -45,6 +45,7 @@ void Renderer::init(int width, int height){
 	mesh_t mesh;
 	loadObj("ressources/suzanne.obj",mesh,Indexed);
 	centerAndUnitMesh(mesh);
+	computeTangentsAndBinormals(mesh);
 
 	_count = mesh.indices.size();
 
@@ -58,15 +59,22 @@ void Renderer::init(int width, int height){
 	GLuint vbo_nor = 0;
 	glGenBuffers(1, &vbo_nor);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_nor);
-	// Upload the data to the Array buffer.
 	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * mesh.normals.size() * 3, &(mesh.normals[0]), GL_STATIC_DRAW);
 
 	GLuint vbo_uv = 0;
 	glGenBuffers(1, &vbo_uv);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_uv);
-	// Upload the data to the Array buffer.
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * mesh.normals.size() * 2, &(mesh.texcoords[0]), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * mesh.texcoords.size() * 2, &(mesh.texcoords[0]), GL_STATIC_DRAW);
 
+	GLuint vbo_tan = 0;
+	glGenBuffers(1, &vbo_tan);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_tan);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * mesh.tangents.size() * 3, &(mesh.tangents[0]), GL_STATIC_DRAW);
+
+	GLuint vbo_binor = 0;
+	glGenBuffers(1, &vbo_binor);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_binor);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * mesh.binormals.size() * 3, &(mesh.binormals[0]), GL_STATIC_DRAW);
 
 	// Generate a vertex array (useful when we add other attributes to the geometry).
 	_vao = 0;
@@ -86,6 +94,16 @@ void Renderer::init(int width, int height){
 	glEnableVertexAttribArray(2);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_uv);
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, NULL);
+
+	// The fourth attribute will be the tangents.
+	glEnableVertexAttribArray(3);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_tan);
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+
+	// The fifth attribute will be the binormals.
+	glEnableVertexAttribArray(4);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_binor);
+	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
 	// We load the indices data
 	glGenBuffers(1, &_ebo);
@@ -141,7 +159,7 @@ void Renderer::init(int width, int height){
 
 	glBindBuffer(GL_UNIFORM_BUFFER,0);
 
-	// Load and upload the texture.
+	// Load and upload the color map texture.
 	std::vector<unsigned char> image;
 	unsigned imwidth, imheight;
   	unsigned error = lodepng::decode(image, imwidth, imheight, "ressources/suzanne_texture_color.png");
@@ -154,14 +172,36 @@ void Renderer::init(int width, int height){
 	
 	glUseProgram(_programId);
 	glActiveTexture(GL_TEXTURE0);
-	glGenTextures(1, &_tex);
-	glBindTexture(GL_TEXTURE_2D, _tex);
+	glGenTextures(1, &_texColor);
+	glBindTexture(GL_TEXTURE_2D, _texColor);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imwidth , imheight, 0, GL_RGBA, GL_UNSIGNED_BYTE, &(image[0]));
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 
     GLuint texID  = glGetUniformLocation(_programId, "textureColor");
 	glUniform1i(texID, 0);
+
+	// Load and upload the normal map texture.
+	std::vector<unsigned char> image1;
+	unsigned imwidth1, imheight1;
+  	unsigned error1 = lodepng::decode(image1, imwidth1, imheight1, "ressources/suzanne_texture_normal.png");
+  	if(error1 != 0){
+  		std::cerr << "Unable to load the texture." << std::endl;
+  		return;
+  	}
+
+  	flipImage(image1,imwidth1, imheight1);
+	
+	glUseProgram(_programId);
+	glActiveTexture(GL_TEXTURE1);
+	glGenTextures(1, &_texNormal);
+	glBindTexture(GL_TEXTURE_2D, _texNormal);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imwidth1 , imheight1, 0, GL_RGBA, GL_UNSIGNED_BYTE, &(image1[0]));
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+
+    GLuint texID1  = glGetUniformLocation(_programId, "textureNormal");
+	glUniform1i(texID1, 1);
 	checkGLError();
 
 }
@@ -204,10 +244,12 @@ void Renderer::draw(){
 	GLuint normalMatrixID  = glGetUniformLocation(_programId, "normalMatrix");
 	glUniformMatrix3fv(normalMatrixID, 1, GL_FALSE, &normalMatrix[0][0]);
 
-	// Bind the texture.
+	// Bind the textures.
 	glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, _tex);
-    
+    glBindTexture(GL_TEXTURE_2D, _texColor);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, _texNormal);
+
 	// Update the light position (in view space).
 	// Bind the buffer.
 	glBindBuffer(GL_UNIFORM_BUFFER, _ubo);
@@ -238,7 +280,8 @@ void Renderer::physics(float elapsedTime){
 
 void Renderer::clean(){
 	glDeleteVertexArrays(1, &_vao);
-	glDeleteTextures(1, &_tex);
+	glDeleteTextures(1, &_texColor);
+	glDeleteTextures(1, &_texNormal);
 	glDeleteProgram(_programId);
 }
 

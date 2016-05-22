@@ -66,7 +66,8 @@ private:
 	GLuint _programId;
 	GLuint _vao;
 	GLuint _ebo;
-	GLuint _tex;
+	GLuint _texColor;
+	GLuint _texNormal;
 	GLuint _ubo;
 
 	glm::mat4 _projection;
