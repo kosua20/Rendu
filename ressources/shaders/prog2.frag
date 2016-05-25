@@ -24,6 +24,7 @@ layout (std140) uniform Material {
 
 uniform sampler2D textureColor;
 uniform sampler2D textureNormal;
+uniform sampler2D textureEffects;
 
 // Output: the fragment color
 out vec3 fragColor;
@@ -34,11 +35,16 @@ void main(){
 	n = normalize(n * 2.0 - 1.0);
 	n = normalize(In.tbn * n);
 
+	// Read the effects values
+	vec3 effects = texture(textureEffects,In.uv).rgb;
+
 	// Compute the direction from the point to the light
 	vec3 d = normalize(light.position.xyz - In.position);
 
+	vec3 diffuseColor = texture(textureColor, In.uv).rgb;
+
 	// The ambient factor
-	float ambient = 0.1;
+	vec3 ambient = effects.r * diffuseColor;
 	
 	// Compute the diffuse factor
 	float diffuse = max(0.0, dot(d,n));
@@ -49,11 +55,12 @@ void main(){
 		vec3 v = normalize(-In.position);
 		vec3 r = reflect(-d,n);
 		specular = pow(max(dot(r,v),0.0),light.shininess);
+		specular *= effects.g;
 	}
 	
-	vec3 diffuseColor = texture(textureColor, In.uv).rgb;
 
-	vec3 shading = ambient * light.Ia.rgb * material.Ka.rgb + diffuse * light.Id.rgb * diffuseColor + specular * light.Is.rgb * material.Ks.rgb ;
+	vec3 shading =  ambient * light.Ia.rgb + diffuse * light.Id.rgb * diffuseColor + specular * light.Is.rgb * material.Ks.rgb ;
 	fragColor = shading;
+	
 
 }
