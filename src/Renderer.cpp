@@ -114,17 +114,17 @@ void Renderer::init(int width, int height){
 
 	// Setup light
 	_light.position = glm::vec4(0.0f); // position will be updated at each frame
-	_light.shininess = 200.0f;
-	_light.Ia = glm::vec4(0.1f, 0.1f, 0.1f, 0.0f);
-	_light.Id = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
-	_light.Is = glm::vec4(0.4f, 0.4f, 0.4f, 0.0f);
+	_light.shininess = 250.0f;
+	_light.Ia = glm::vec4(0.3f, 0.3f, 0.3f, 0.0f);
+	_light.Id = glm::vec4(0.7f, 0.7f, 0.7f, 0.0f);
+	_light.Is = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
 
 	// Get a binding point for the Uniform buffer.
 	GLuint lightUniformId = glGetUniformBlockIndex(_programId, "Light");  
 	glUniformBlockBinding(_programId, lightUniformId, 0);
 
 	// Setup material
-	_material.Ka = glm::vec4(0.1f,0.1f,0.1f,0.0f);
+	_material.Ka = glm::vec4(0.3f,0.2f,0.0f,0.0f);
 	_material.Kd = glm::vec4(1.0f, 0.5f, 0.0f, 0.0f);
 	_material.Ks = glm::vec4(1.0f, 1.0f, 1.0f,0.0f);
 
@@ -202,6 +202,29 @@ void Renderer::init(int width, int height){
 
     GLuint texID1  = glGetUniformLocation(_programId, "textureNormal");
 	glUniform1i(texID1, 1);
+
+	// Load and upload the effects map texture.
+	std::vector<unsigned char> image2;
+	unsigned imwidth2, imheight2;
+  	unsigned error2 = lodepng::decode(image2, imwidth2, imheight2, "ressources/suzanne_texture_ao_specular_reflection.png");
+  	if(error2 != 0){
+  		std::cerr << "Unable to load the texture." << std::endl;
+  		return;
+  	}
+
+  	flipImage(image2,imwidth2, imheight2);
+	
+	glUseProgram(_programId);
+	glActiveTexture(GL_TEXTURE2);
+	glGenTextures(1, &_texEffects);
+	glBindTexture(GL_TEXTURE_2D, _texEffects);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imwidth2 , imheight2, 0, GL_RGBA, GL_UNSIGNED_BYTE, &(image2[0]));
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+
+    GLuint texID2  = glGetUniformLocation(_programId, "textureEffects");
+	glUniform1i(texID2, 2);
+	
 	checkGLError();
 
 }
@@ -249,6 +272,8 @@ void Renderer::draw(){
     glBindTexture(GL_TEXTURE_2D, _texColor);
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, _texNormal);
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D, _texEffects);
 
 	// Update the light position (in view space).
 	// Bind the buffer.
