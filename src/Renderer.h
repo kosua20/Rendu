@@ -68,6 +68,7 @@ private:
 	GLuint _ebo;
 	GLuint _texColor;
 	GLuint _texNormal;
+	GLuint _texEffects;
 	GLuint _ubo;
 
 	glm::mat4 _projection;
