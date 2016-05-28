@@ -159,72 +159,14 @@ void Renderer::init(int width, int height){
 
 	glBindBuffer(GL_UNIFORM_BUFFER,0);
 
+	
 	// Load and upload the color map texture.
-	std::vector<unsigned char> image;
-	unsigned imwidth, imheight;
-  	unsigned error = lodepng::decode(image, imwidth, imheight, "ressources/suzanne_texture_color.png");
-  	if(error != 0){
-  		std::cerr << "Unable to load the texture." << std::endl;
-  		return;
-  	}
-
-  	flipImage(image,imwidth, imheight);
+	_texColor = loadTexture("ressources/suzanne_texture_color.png", _programId, 0,  "textureColor");
 	
-	glUseProgram(_programId);
-	glActiveTexture(GL_TEXTURE0);
-	glGenTextures(1, &_texColor);
-	glBindTexture(GL_TEXTURE_2D, _texColor);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imwidth , imheight, 0, GL_RGBA, GL_UNSIGNED_BYTE, &(image[0]));
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-
-    GLuint texID  = glGetUniformLocation(_programId, "textureColor");
-	glUniform1i(texID, 0);
-
-	// Load and upload the normal map texture.
-	std::vector<unsigned char> image1;
-	unsigned imwidth1, imheight1;
-  	unsigned error1 = lodepng::decode(image1, imwidth1, imheight1, "ressources/suzanne_texture_normal.png");
-  	if(error1 != 0){
-  		std::cerr << "Unable to load the texture." << std::endl;
-  		return;
-  	}
-
-  	flipImage(image1,imwidth1, imheight1);
+	_texNormal = loadTexture("ressources/suzanne_texture_normal.png", _programId, 1, "textureNormal");
 	
-	glUseProgram(_programId);
-	glActiveTexture(GL_TEXTURE1);
-	glGenTextures(1, &_texNormal);
-	glBindTexture(GL_TEXTURE_2D, _texNormal);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imwidth1 , imheight1, 0, GL_RGBA, GL_UNSIGNED_BYTE, &(image1[0]));
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-
-    GLuint texID1  = glGetUniformLocation(_programId, "textureNormal");
-	glUniform1i(texID1, 1);
-
-	// Load and upload the effects map texture.
-	std::vector<unsigned char> image2;
-	unsigned imwidth2, imheight2;
-  	unsigned error2 = lodepng::decode(image2, imwidth2, imheight2, "ressources/suzanne_texture_ao_specular_reflection.png");
-  	if(error2 != 0){
-  		std::cerr << "Unable to load the texture." << std::endl;
-  		return;
-  	}
-
-  	flipImage(image2,imwidth2, imheight2);
-	
-	glUseProgram(_programId);
-	glActiveTexture(GL_TEXTURE2);
-	glGenTextures(1, &_texEffects);
-	glBindTexture(GL_TEXTURE_2D, _texEffects);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imwidth2 , imheight2, 0, GL_RGBA, GL_UNSIGNED_BYTE, &(image2[0]));
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-
-    GLuint texID2  = glGetUniformLocation(_programId, "textureEffects");
-	glUniform1i(texID2, 2);
-	
+	_texEffects = loadTexture("ressources/suzanne_texture_ao_specular_reflection.png", _programId, 2, "textureEffects");
+		
 	checkGLError();
 
 }

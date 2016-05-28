@@ -5,6 +5,7 @@
 #include <sstream>
 #include <vector>
 #include <algorithm>
+#include <lodepng/lodepng.h>
 
 std::string getGLErrorString(GLenum error) {
 	std::string msg;
@@ -170,6 +171,33 @@ void flipImage(std::vector<unsigned char> & image, const int width, const int he
 	for(int h=0; h < halfHeight; h++){
 		std::swap_ranges(image.begin() + h * widthInBytes, image.begin() + (h+1) * widthInBytes , image.begin() + (height - h - 1) * widthInBytes);
 	}
+}
+
+GLuint loadTexture(const std::string& path, const GLuint program, const GLuint textureSlot, const std::string& uniformName){
+	// Load and upload the effects map texture.
+	std::vector<unsigned char> image;
+	unsigned imwidth, imheight;
+	unsigned error = lodepng::decode(image, imwidth, imheight, path);
+	if(error != 0){
+		std::cerr << "Unable to load the texture at path " << path << "." << std::endl;
+		return 0;
+	}
+	
+	flipImage(image,imwidth, imheight);
+	
+	glUseProgram(program);
+	glActiveTexture(GL_TEXTURE0 + textureSlot);
+	GLuint textureId;
+	glGenTextures(1, &textureId);
+	glBindTexture(GL_TEXTURE_2D, textureId);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imwidth , imheight, 0, GL_RGBA, GL_UNSIGNED_BYTE, &(image[0]));
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+	
+	GLuint texUniID = glGetUniformLocation(program, uniformName.c_str());
+	glUniform1i(texUniID, textureSlot);
+	
+	return textureId;
 }
 
 
