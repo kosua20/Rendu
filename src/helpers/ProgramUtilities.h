@@ -26,4 +26,7 @@ GLuint createGLProgram(const std::string & vertexPath, const std::string & fragm
 /// Flip an image vertically (line by line).
 void flipImage(std::vector<unsigned char> & image, const int width, const int height);
 
+
+GLuint loadTexture(const std::string& path, const GLuint program, const GLuint textureSlot, const std::string& uniformName);
+
 #endif
