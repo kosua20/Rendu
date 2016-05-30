@@ -1,13 +1,10 @@
 #include <stdio.h>
 #include <iostream>
 #include <vector>
-#include <lodepng/lodepng.h>
 // glm additional header to generate transformation matrices directly.
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "helpers/ProgramUtilities.h"
-#include "helpers/MeshUtilities.h"
-
 #include "Renderer.h"
 
 Renderer::Renderer(){}
@@ -23,7 +20,7 @@ void Renderer::init(int width, int height){
 	// initialize the timer
 	_timer = glfwGetTime();
 
-
+	
 	// Query the renderer identifier, and the supported OpenGL version.
 	const GLubyte* renderer = glGetString(GL_RENDERER);
 	const GLubyte* version = glGetString(GL_VERSION);
@@ -38,137 +35,52 @@ void Renderer::init(int width, int height){
 	glCullFace(GL_BACK);
 	checkGLError();
 	
-	// Load the shaders
-	_programId = createGLProgram("ressources/shaders/prog2.vert","ressources/shaders/prog2.frag");
-
-	// Load geometry.
-	mesh_t mesh;
-	loadObj("ressources/suzanne.obj",mesh,Indexed);
-	centerAndUnitMesh(mesh);
-	computeTangentsAndBinormals(mesh);
-
-	_count = mesh.indices.size();
-
-	// Create an array buffer to host the geometry data.
-	GLuint vbo = 0;
-	glGenBuffers(1, &vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	// Upload the data to the Array buffer.
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * mesh.positions.size() * 3, &(mesh.positions[0]), GL_STATIC_DRAW);
-
-	GLuint vbo_nor = 0;
-	glGenBuffers(1, &vbo_nor);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo_nor);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * mesh.normals.size() * 3, &(mesh.normals[0]), GL_STATIC_DRAW);
-
-	GLuint vbo_uv = 0;
-	glGenBuffers(1, &vbo_uv);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo_uv);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * mesh.texcoords.size() * 2, &(mesh.texcoords[0]), GL_STATIC_DRAW);
-
-	GLuint vbo_tan = 0;
-	glGenBuffers(1, &vbo_tan);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo_tan);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * mesh.tangents.size() * 3, &(mesh.tangents[0]), GL_STATIC_DRAW);
-
-	GLuint vbo_binor = 0;
-	glGenBuffers(1, &vbo_binor);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo_binor);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * mesh.binormals.size() * 3, &(mesh.binormals[0]), GL_STATIC_DRAW);
-
-	// Generate a vertex array (useful when we add other attributes to the geometry).
-	_vao = 0;
-	glGenVertexArrays (1, &_vao);
-	glBindVertexArray(_vao);
-	// The first attribute will be the vertices positions.
-	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-
-	// The second attribute will be the normals.
-	glEnableVertexAttribArray(1);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo_nor);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-
-	// The third attribute will be the uvs.
-	glEnableVertexAttribArray(2);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo_uv);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, NULL);
-
-	// The fourth attribute will be the tangents.
-	glEnableVertexAttribArray(3);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo_tan);
-	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-
-	// The fifth attribute will be the binormals.
-	glEnableVertexAttribArray(4);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo_binor);
-	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-
-	// We load the indices data
-	glGenBuffers(1, &_ebo);
- 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
- 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * mesh.indices.size(), &(mesh.indices[0]), GL_STATIC_DRAW);
-
-	glBindVertexArray(0);
-
+	
 	// Setup light
 	_light.position = glm::vec4(0.0f); // position will be updated at each frame
 	_light.shininess = 250.0f;
 	_light.Ia = glm::vec4(0.3f, 0.3f, 0.3f, 0.0f);
 	_light.Id = glm::vec4(0.7f, 0.7f, 0.7f, 0.0f);
 	_light.Is = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
-
-	// Get a binding point for the Uniform buffer.
-	GLuint lightUniformId = glGetUniformBlockIndex(_programId, "Light");  
-	glUniformBlockBinding(_programId, lightUniformId, 0);
-
+	
 	// Setup material
 	_material.Ka = glm::vec4(0.3f,0.2f,0.0f,0.0f);
 	_material.Kd = glm::vec4(1.0f, 0.5f, 0.0f, 0.0f);
 	_material.Ks = glm::vec4(1.0f, 1.0f, 1.0f,0.0f);
-
-	// Get a binding point for the Uniform buffer.
-	GLuint materialUniformId = glGetUniformBlockIndex(_programId, "Material");  
-	glUniformBlockBinding(_programId, materialUniformId, 1);
-
+	
 	// Generate the buffer.
 	glGenBuffers(1, &_ubo);
 	// Bind the buffer.
 	glBindBuffer(GL_UNIFORM_BUFFER, _ubo);
-
+	
 	// We need to know the alignment size if we want to store two uniform blocks in the same uniform buffer.
 	GLint uboAlignSize = 0;
 	glGetIntegerv(GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT, &uboAlignSize);
 	// Compute the padding for the second block, it needs to be a multiple of uboAlignSize (typically uboAlignSize will be 256.)
 	GLuint padding = 4*sizeof(glm::vec4) + 1*sizeof(float);
 	padding = ((padding/uboAlignSize)+1)*uboAlignSize;
-
+	
 	// Allocate enough memory to hold the Light struct and Material structures.
 	glBufferData(GL_UNIFORM_BUFFER, padding + 3 * sizeof(glm::vec4), NULL, GL_DYNAMIC_DRAW);
-
+	
 	// Bind the range allocated to the light.
-  	glBindBufferRange(GL_UNIFORM_BUFFER, 0, _ubo, 0, 4*sizeof(glm::vec4) + sizeof(float));
-  	// Submit the data.
+	glBindBufferRange(GL_UNIFORM_BUFFER, 0, _ubo, 0, 4*sizeof(glm::vec4) + sizeof(float));
+	// Submit the data.
 	glBufferSubData(GL_UNIFORM_BUFFER, 0, 4*sizeof(glm::vec4) + sizeof(float), &_light);
 	
+	
 	// Bind the range allocated to the material.
-  	glBindBufferRange(GL_UNIFORM_BUFFER, 1, _ubo, padding, 3*sizeof(glm::vec4));
-  	// Submit the data.
+	glBindBufferRange(GL_UNIFORM_BUFFER, 1, _ubo, padding, 3*sizeof(glm::vec4));
+	// Submit the data.
 	glBufferSubData(GL_UNIFORM_BUFFER, padding, 3*sizeof(glm::vec4), &_material);
-
+	
 	glBindBuffer(GL_UNIFORM_BUFFER,0);
-
 	
-	// Load and upload the color map texture.
-	_texColor = loadTexture("ressources/suzanne_texture_color.png", _programId, 0,  "textureColor");
+	// Initialize objects.
+	_suzanne.init();
 	
-	_texNormal = loadTexture("ressources/suzanne_texture_normal.png", _programId, 1, "textureNormal");
-	
-	_texEffects = loadTexture("ressources/suzanne_texture_ao_specular_reflection.png", _programId, 2, "textureEffects");
-		
 	checkGLError();
-
+	
 }
 
 
@@ -181,41 +93,10 @@ void Renderer::draw(){
 	// Physics simulation
 	physics(elapsed);
 
-	// Scale the model by 0.5.
-	glm::mat4 model = glm::scale(glm::mat4(1.0f),glm::vec3(0.5f));
-
-	// Combine the three matrices.
-	glm::mat4 MV = _camera._view * model;
-	glm::mat4 MVP = _projection * MV;
-
-	// Compute the normal matrix
-	glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(MV)));
-
 	// Set the clear color to white.
 	glClearColor(1.0f,1.0f,1.0f,0.0f);
 	// Clear the color and depth buffers.
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	// Select the program (and shaders).
-	glUseProgram(_programId);
-
-	// Upload the MVP matrix.
-	GLuint mvpID  = glGetUniformLocation(_programId, "mvp");
-	glUniformMatrix4fv(mvpID, 1, GL_FALSE, &MVP[0][0]);
-	// Upload the MV matrix.
-	GLuint mvID  = glGetUniformLocation(_programId, "mv");
-	glUniformMatrix4fv(mvID, 1, GL_FALSE, &MV[0][0]);
-	// Upload the normal matrix.
-	GLuint normalMatrixID  = glGetUniformLocation(_programId, "normalMatrix");
-	glUniformMatrix3fv(normalMatrixID, 1, GL_FALSE, &normalMatrix[0][0]);
-
-	// Bind the textures.
-	glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, _texColor);
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, _texNormal);
-    glActiveTexture(GL_TEXTURE2);
-    glBindTexture(GL_TEXTURE_2D, _texEffects);
 
 	// Update the light position (in view space).
 	// Bind the buffer.
@@ -228,11 +109,8 @@ void Renderer::draw(){
 	glUnmapBuffer(GL_UNIFORM_BUFFER);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
-	// Select the geometry.
-	glBindVertexArray(_vao);
-	// Draw!
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
-	glDrawElements(GL_TRIANGLES, _count, GL_UNSIGNED_INT, (void*)0);
+	// Draw objects.
+	_suzanne.draw(elapsed, _camera._view, _projection);
 
 	// Update timer
 	_timer = glfwGetTime();
@@ -240,16 +118,14 @@ void Renderer::draw(){
 
 void Renderer::physics(float elapsedTime){
 	_camera.update(elapsedTime);
-	// Compute the light position in view space
+	// Compute the light position in view space.
 	_light.position = _camera._view * glm::vec4(2.0f,2.0f,2.0f,1.0f);
 }
 
 
 void Renderer::clean(){
-	glDeleteVertexArrays(1, &_vao);
-	glDeleteTextures(1, &_texColor);
-	glDeleteTextures(1, &_texNormal);
-	glDeleteProgram(_programId);
+	// Clean objects.
+	_suzanne.clean();
 }
 
 
