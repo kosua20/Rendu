@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 
 #include "Camera.h"
+#include "Suzanne.h"
 
 struct Light
 {
@@ -21,6 +22,7 @@ struct Material
 	glm::vec4 Kd;
 	glm::vec4 Ks;
 };
+
 
 class Renderer {
 
@@ -59,24 +61,18 @@ private:
 
 	int _width;
 	int _height;
-	int _count;
-
+	
 	float _timer;
 
-	GLuint _programId;
-	GLuint _vao;
-	GLuint _ebo;
-	GLuint _texColor;
-	GLuint _texNormal;
-	GLuint _texEffects;
-	GLuint _ubo;
-
 	glm::mat4 _projection;
-
+	GLuint _ubo;
+	
 	Camera _camera;
 
 	Light _light;
 	Material _material;
+	
+	Suzanne _suzanne;
 
 };
 
