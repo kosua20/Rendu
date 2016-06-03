@@ -64,7 +64,9 @@ void Cube::init(){
  	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * cubeIndices.size(), &(cubeIndices[0]), GL_STATIC_DRAW);
 
 	glBindVertexArray(0);
-		
+	
+	_texCubeMap = loadTextureCubeMap("ressources/cubemap/cubemap", _programId, 0, "textureCubeMap");
+	
 	checkGLError();
 	
 }
@@ -83,7 +85,10 @@ void Cube::draw(float elapsed, const glm::mat4& view, const glm::mat4& projectio
 	// Upload the MVP matrix.
 	GLuint mvpID  = glGetUniformLocation(_programId, "mvp");
 	glUniformMatrix4fv(mvpID, 1, GL_FALSE, &MVP[0][0]);
-
+	
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, _texCubeMap);
+	
 	// Select the geometry.
 	glBindVertexArray(_vao);
 	// Draw!
