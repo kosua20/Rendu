@@ -78,6 +78,7 @@ void Renderer::init(int width, int height){
 	
 	// Initialize objects.
 	_suzanne.init();
+	_cube.init();
 	
 	checkGLError();
 	
@@ -111,7 +112,8 @@ void Renderer::draw(){
 
 	// Draw objects.
 	_suzanne.draw(elapsed, _camera._view, _projection);
-
+	_cube.draw(elapsed, _camera._view, _projection);
+	
 	// Update timer
 	_timer = glfwGetTime();
 }
@@ -126,6 +128,7 @@ void Renderer::physics(float elapsedTime){
 void Renderer::clean(){
 	// Clean objects.
 	_suzanne.clean();
+	_cube.clean();
 }
 
 
