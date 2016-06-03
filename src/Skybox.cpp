@@ -6,13 +6,13 @@
 
 #include "helpers/ProgramUtilities.h"
 
-#include "Cube.h"
+#include "Skybox.h"
 
-Cube::Cube(){}
+Skybox::Skybox(){}
 
-Cube::~Cube(){}
+Skybox::~Skybox(){}
 
-void Cube::init(){
+void Skybox::init(){
 	
 	// Load the shaders
 	_programId = createGLProgram("ressources/shaders/cube.vert","ressources/shaders/cube.frag");
@@ -72,11 +72,12 @@ void Cube::init(){
 }
 
 
-void Cube::draw(float elapsed, const glm::mat4& view, const glm::mat4& projection){
+void Skybox::draw(float elapsed, const glm::mat4& view, const glm::mat4& projection){
 	
 	glm::mat4 model = glm::scale(glm::mat4(1.0f),glm::vec3(5.0f));
 	// Combine the three matrices.
 	glm::mat4 MV = view * model;
+	
 	glm::mat4 MVP = projection * MV;
 	
 	// Select the program (and shaders).
@@ -101,7 +102,7 @@ void Cube::draw(float elapsed, const glm::mat4& view, const glm::mat4& projectio
 }
 
 
-void Cube::clean(){
+void Skybox::clean(){
 	glDeleteVertexArrays(1, &_vao);
 	glDeleteTextures(1, &_texCubeMap);
 }

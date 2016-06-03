@@ -6,13 +6,13 @@
 
 
 
-class Cube {
+class Skybox {
 
 public:
 
-	Cube();
+	Skybox();
 
-	~Cube();
+	~Skybox();
 
 	/// Init function
 	void init();

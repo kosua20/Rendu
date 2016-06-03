@@ -6,7 +6,7 @@
 
 #include "Camera.h"
 #include "Suzanne.h"
-#include "Cube.h"
+#include "Skybox.h"
 
 struct Light
 {
@@ -74,7 +74,7 @@ private:
 	Material _material;
 	
 	Suzanne _suzanne;
-	Cube _cube;
+	Skybox _skybox;
 
 };
 
