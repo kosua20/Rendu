@@ -29,12 +29,12 @@ void Cube::init(){
 	};
 
 	// Array to store the indices of the vertices to use.
-	std::vector<unsigned int> cubeIndices{0, 1, 2, 2, 1, 3, // Front face
-		1, 5, 3, 3, 5, 7, // Right face
-		5, 4, 7, 7, 4, 6, // Back face
-		4, 0, 6, 6, 0, 2, // Left face
-		0, 4, 1, 1, 4, 5, // Bottom face
-		2, 3, 6, 6, 3, 7  // Top face
+	std::vector<unsigned int> cubeIndices{2, 1, 0, 3, 1, 2, // Front face
+		3, 5, 1, 7, 5, 3, // Right face
+		7, 4, 5, 6, 4, 7, // Back face
+		6, 0, 4, 2, 0, 6, // Left face
+		1, 4, 0, 5, 4, 1, // Bottom face
+		6, 3, 2, 7, 3, 6  // Top face
 	};
 	
 	_count = cubeIndices.size();
@@ -74,7 +74,7 @@ void Cube::init(){
 
 void Cube::draw(float elapsed, const glm::mat4& view, const glm::mat4& projection){
 	
-	glm::mat4 model = glm::scale(glm::mat4(1.0f),glm::vec3(0.25f));
+	glm::mat4 model = glm::scale(glm::mat4(1.0f),glm::vec3(5.0f));
 	// Combine the three matrices.
 	glm::mat4 MV = view * model;
 	glm::mat4 MVP = projection * MV;
