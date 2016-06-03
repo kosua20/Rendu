@@ -105,6 +105,8 @@ void Suzanne::init(){
 	
 	_texEffects = loadTexture("ressources/suzanne_texture_ao_specular_reflection.png", _programId, 2, "textureEffects");
 	
+	_texCubeMap = loadTextureCubeMap("ressources/cubemap/cubemap", _programId, 3, "textureCubeMap");
+	
 	checkGLError();
 	
 }
@@ -142,6 +144,8 @@ void Suzanne::draw(float elapsed, const glm::mat4& view, const glm::mat4& projec
     glBindTexture(GL_TEXTURE_2D, _texNormal);
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, _texEffects);
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, _texCubeMap);
 
 	// Select the geometry.
 	glBindVertexArray(_vao);
