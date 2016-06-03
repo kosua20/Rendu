@@ -77,6 +77,8 @@ void Skybox::draw(float elapsed, const glm::mat4& view, const glm::mat4& project
 	glm::mat4 model = glm::scale(glm::mat4(1.0f),glm::vec3(5.0f));
 	// Combine the three matrices.
 	glm::mat4 MV = view * model;
+	// Prevent the skybox from translating.
+	MV[3][0] = MV[3][1] = MV[3][2] = 0.0;
 	
 	glm::mat4 MVP = projection * MV;
 	
