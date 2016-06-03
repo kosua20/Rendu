@@ -34,7 +34,9 @@ private:
 	GLuint _texEffects;
 	
 	size_t _count;
-
+	
+	
+	GLuint _texCubeMap;
 };
 
 #endif
