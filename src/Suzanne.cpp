@@ -17,7 +17,7 @@ Suzanne::~Suzanne(){}
 void Suzanne::init(){
 	
 	// Load the shaders
-	_programId = createGLProgram("ressources/shaders/prog2.vert","ressources/shaders/prog2.frag");
+	_programId = createGLProgram("ressources/shaders/suzanne.vert","ressources/shaders/suzanne.frag");
 
 	// Load geometry.
 	mesh_t mesh;
