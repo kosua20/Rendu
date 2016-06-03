@@ -5,12 +5,13 @@ in INTERFACE {
 	vec3 position; 
 } In ;
 
+uniform samplerCube textureCubeMap;
 
 // Output: the fragment color
 out vec3 fragColor;
 
 void main(){
 	
-	fragColor = In.position * 0.5 + 0.5;
+	fragColor = texture(textureCubeMap,In.position).rgb;
 
 }
