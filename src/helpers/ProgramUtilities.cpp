@@ -96,7 +96,7 @@ GLuint loadShader(const std::string & prog, GLuint type){
 }
 
 GLuint createGLProgram(const std::string & vertexPath, const std::string & fragmentPath, const std::string & geometryPath){
-	GLuint vp, fp, gp, id;
+	GLuint vp(0), fp(0), gp(0), id(0);
 	id = glCreateProgram();
 	checkGLError();
 	std::string vertexCode = loadStringFromFile(vertexPath);
