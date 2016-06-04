@@ -47,7 +47,7 @@ void main(){
 	vec3 diffuseColor = texture(textureColor, In.uv).rgb;
 
 	// The ambient factor
-	vec3 ambient = effects.r * diffuseColor;
+	vec3 ambient = effects.r * diffuseColor * 0.3;
 	
 	// Compute the diffuse factor
 	float diffuse = max(0.0, dot(d,n));

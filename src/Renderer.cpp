@@ -33,6 +33,7 @@ void Renderer::init(int width, int height){
 	glEnable(GL_CULL_FACE);
 	glFrontFace(GL_CCW);
 	glCullFace(GL_BACK);
+	glEnable(GL_FRAMEBUFFER_SRGB);
 	checkGLError();
 	
 	

@@ -65,7 +65,7 @@ void Skybox::init(){
 
 	glBindVertexArray(0);
 	
-	_texCubeMap = loadTextureCubeMap("ressources/cubemap/cubemap", _programId, 0, "textureCubeMap");
+	_texCubeMap = loadTextureCubeMap("ressources/cubemap/cubemap", _programId, 0, "textureCubeMap", true);
 	
 	checkGLError();
 	
