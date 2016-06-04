@@ -173,7 +173,7 @@ void flipImage(std::vector<unsigned char> & image, const int width, const int he
 	}
 }
 
-GLuint loadTexture(const std::string& path, const GLuint program, const GLuint textureSlot, const std::string& uniformName){
+GLuint loadTexture(const std::string& path, const GLuint program, const GLuint textureSlot, const std::string& uniformName, bool sRGB){
 	// Load and upload the effects map texture.
 	std::vector<unsigned char> image;
 	unsigned imwidth, imheight;
@@ -190,7 +190,7 @@ GLuint loadTexture(const std::string& path, const GLuint program, const GLuint t
 	GLuint textureId;
 	glGenTextures(1, &textureId);
 	glBindTexture(GL_TEXTURE_2D, textureId);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imwidth , imheight, 0, GL_RGBA, GL_UNSIGNED_BYTE, &(image[0]));
+	glTexImage2D(GL_TEXTURE_2D, 0, sRGB ? GL_SRGB8_ALPHA8 : GL_RGBA, imwidth , imheight, 0, GL_RGBA, GL_UNSIGNED_BYTE, &(image[0]));
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 	
@@ -200,7 +200,7 @@ GLuint loadTexture(const std::string& path, const GLuint program, const GLuint t
 	return textureId;
 }
 
-GLuint loadTextureCubeMap(const std::string& pathBase, const GLuint program, const GLuint textureSlot, const std::string& uniformName){
+GLuint loadTextureCubeMap(const std::string& pathBase, const GLuint program, const GLuint textureSlot, const std::string& uniformName, bool sRGB){
 	
 	std::vector<std::string> names { pathBase + "_r.png", pathBase + "_l.png",
 									 pathBase + "_u.png", pathBase + "_d.png",
@@ -235,7 +235,7 @@ GLuint loadTextureCubeMap(const std::string& pathBase, const GLuint program, con
 			return 0;
 		}
 		
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + side, 0, GL_RGBA, imwidth, imheight, 0, GL_RGBA, GL_UNSIGNED_BYTE, &(image[0]));
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + side, 0, sRGB ? GL_SRGB8_ALPHA8 : GL_RGBA, imwidth, imheight, 0, GL_RGBA, GL_UNSIGNED_BYTE, &(image[0]));
 	}
 	
 	// Bind the uniform.

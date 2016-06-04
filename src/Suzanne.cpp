@@ -99,13 +99,13 @@ void Suzanne::init(){
 	glUniformBlockBinding(_programId, materialUniformId, 1);
 	
 	// Load and upload the textures.
-	_texColor = loadTexture("ressources/suzanne_texture_color.png", _programId, 0,  "textureColor");
+	_texColor = loadTexture("ressources/suzanne_texture_color.png", _programId, 0,  "textureColor", true);
 	
 	_texNormal = loadTexture("ressources/suzanne_texture_normal.png", _programId, 1, "textureNormal");
 	
 	_texEffects = loadTexture("ressources/suzanne_texture_ao_specular_reflection.png", _programId, 2, "textureEffects");
 	
-	_texCubeMap = loadTextureCubeMap("ressources/cubemap/cubemap", _programId, 3, "textureCubeMap");
+	_texCubeMap = loadTextureCubeMap("ressources/cubemap/cubemap", _programId, 3, "textureCubeMap", true);
 	
 	checkGLError();
 	
