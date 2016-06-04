@@ -62,15 +62,15 @@ void main(){
 		specular *= effects.g;
 	}
 	
-	vec3 reflectionColor = vec3(0.0);
-	if(effects.b > 0.0){
-		vec3 rCubeMap = reflect(-v, n);
+	vec3 refractionColor = vec3(0.0);
+	if(effects.b < 1.0){
+		vec3 rCubeMap = refract(-v, n, 1.0/1.08);
 		rCubeMap = vec3(inverseV * vec4(rCubeMap,0.0));
-		reflectionColor = texture(textureCubeMap,rCubeMap).rgb;
+		refractionColor = texture(textureCubeMap,rCubeMap).rgb;
 	}
 
 	vec3 shading =  ambient * light.Ia.rgb + diffuse * light.Id.rgb * diffuseColor + specular * light.Is.rgb * material.Ks.rgb ;
-	fragColor = mix(shading,reflectionColor,0.5*effects.b);
+	fragColor = mix(shading,refractionColor,1.0-effects.b);
 	
 
 }
