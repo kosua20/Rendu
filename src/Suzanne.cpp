@@ -123,7 +123,8 @@ void Suzanne::draw(float elapsed, const glm::mat4& view, const glm::mat4& projec
 
 	// Compute the normal matrix
 	glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(MV)));
-	
+	// Compute the inverse view matrix
+	glm::mat4 invView = glm::inverse(view);
 	// Select the program (and shaders).
 	glUseProgram(_programId);
 
@@ -136,6 +137,9 @@ void Suzanne::draw(float elapsed, const glm::mat4& view, const glm::mat4& projec
 	// Upload the normal matrix.
 	GLuint normalMatrixID  = glGetUniformLocation(_programId, "normalMatrix");
 	glUniformMatrix3fv(normalMatrixID, 1, GL_FALSE, &normalMatrix[0][0]);
+	// Upload the inverse view matrix.
+	GLuint invVID  = glGetUniformLocation(_programId, "inverseV");
+	glUniformMatrix4fv(invVID, 1, GL_FALSE, &invView[0][0]);
 
 	// Bind the textures.
 	glActiveTexture(GL_TEXTURE0);
