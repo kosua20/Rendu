@@ -107,6 +107,8 @@ void Suzanne::init(){
 	
 	_texCubeMap = loadTextureCubeMap("ressources/cubemap/cubemap", _programId, 3, "textureCubeMap", true);
 	
+	_texCubeMapSmall = loadTextureCubeMap("ressources/cubemap/cubemap_diff", _programId, 4, "textureCubeMapSmall", true);
+	
 	checkGLError();
 	
 }
@@ -150,6 +152,10 @@ void Suzanne::draw(float elapsed, const glm::mat4& view, const glm::mat4& projec
     glBindTexture(GL_TEXTURE_2D, _texEffects);
 	glActiveTexture(GL_TEXTURE3);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, _texCubeMap);
+	checkGLError();
+	glActiveTexture(GL_TEXTURE4);	
+	glBindTexture(GL_TEXTURE_CUBE_MAP, _texCubeMapSmall);
+
 
 	// Select the geometry.
 	glBindVertexArray(_vao);
@@ -159,6 +165,8 @@ void Suzanne::draw(float elapsed, const glm::mat4& view, const glm::mat4& projec
 
 	glBindVertexArray(0);
 	glUseProgram(0);
+	
+	
 }
 
 
@@ -166,6 +174,9 @@ void Suzanne::clean(){
 	glDeleteVertexArrays(1, &_vao);
 	glDeleteTextures(1, &_texColor);
 	glDeleteTextures(1, &_texNormal);
+	glDeleteTextures(1, &_texEffects);
+	glDeleteTextures(1, &_texCubeMap);
+	glDeleteTextures(1, &_texCubeMapSmall);
 	glDeleteProgram(_programId);
 }
 

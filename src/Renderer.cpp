@@ -41,7 +41,7 @@ void Renderer::init(int width, int height){
 	_light.position = glm::vec4(0.0f); // position will be updated at each frame
 	_light.shininess = 250.0f;
 	_light.Ia = glm::vec4(0.3f, 0.3f, 0.3f, 0.0f);
-	_light.Id = glm::vec4(0.7f, 0.8f, 0.9f, 0.0f);
+	_light.Id = glm::vec4(0.8f, 0.8f,0.8f, 0.0f);
 	_light.Is = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
 	
 	// Setup material

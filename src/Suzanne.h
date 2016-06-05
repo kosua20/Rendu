@@ -32,11 +32,13 @@ private:
 	GLuint _texColor;
 	GLuint _texNormal;
 	GLuint _texEffects;
+
 	
 	size_t _count;
 	
 	
 	GLuint _texCubeMap;
+	GLuint _texCubeMapSmall;
 };
 
 #endif
