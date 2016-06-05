@@ -26,6 +26,7 @@ uniform sampler2D textureColor;
 uniform sampler2D textureNormal;
 uniform sampler2D textureEffects;
 uniform samplerCube textureCubeMap;
+uniform samplerCube textureCubeMapSmall;
 
 uniform mat4 inverseV;
 
@@ -45,9 +46,13 @@ void main(){
 	vec3 d = normalize(light.position.xyz - In.position);
 
 	vec3 diffuseColor = texture(textureColor, In.uv).rgb;
-
+	
+	vec3 worldNormal = vec3(inverseV * vec4(n,0.0));
+	vec3 lightColor = texture(textureCubeMapSmall,normalize(worldNormal)).rgb;
+	diffuseColor = mix(diffuseColor, diffuseColor * lightColor, 0.5);
+	
 	// The ambient factor
-	vec3 ambient = effects.r * diffuseColor * 0.3;
+	vec3 ambient = effects.r * 0.3 * diffuseColor;
 	
 	// Compute the diffuse factor
 	float diffuse = max(0.0, dot(d,n));
@@ -69,7 +74,7 @@ void main(){
 		reflectionColor = texture(textureCubeMap,rCubeMap).rgb;
 	}
 
-	vec3 shading =  ambient * light.Ia.rgb + diffuse * light.Id.rgb * diffuseColor + specular * light.Is.rgb * material.Ks.rgb ;
+	vec3 shading =  ambient * light.Ia.rgb + diffuse * diffuseColor + specular * light.Is.rgb * material.Ks.rgb ;
 	fragColor = mix(shading,reflectionColor,0.5*effects.b);
 
 }
