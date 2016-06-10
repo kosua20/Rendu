@@ -3,6 +3,7 @@
 #include <vector>
 // glm additional header to generate transformation matrices directly.
 #include <glm/gtc/matrix_transform.hpp>
+#include <cstring> // For memcopy depending on the platform.
 
 #include "helpers/ProgramUtilities.h"
 #include "Renderer.h"
@@ -106,7 +107,7 @@ void Renderer::draw(){
 	// Obtain a handle to the underlying memory.
 	GLvoid * ptr = glMapBuffer(GL_UNIFORM_BUFFER,GL_WRITE_ONLY);
 	// Copy the light position.
-	memcpy(ptr, &(_light.position[0]), sizeof(glm::vec4));
+	std::memcpy(ptr, &(_light.position[0]), sizeof(glm::vec4));
 	// Unmap, unbind.
 	glUnmapBuffer(GL_UNIFORM_BUFFER);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
