@@ -41,7 +41,6 @@ private:
 
 	GLuint _id;
 	GLuint _idColor;
-	GLuint _idDepth;
 	GLuint _idRenderbuffer;
 };
 
