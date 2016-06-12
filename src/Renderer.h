@@ -4,7 +4,7 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 
-#include "Camera.h"
+#include "camera/Camera.h"
 #include "Suzanne.h"
 #include "Skybox.h"
 
