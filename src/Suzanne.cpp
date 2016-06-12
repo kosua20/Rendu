@@ -16,9 +16,11 @@ Suzanne::~Suzanne(){}
 
 void Suzanne::init(){
 	
+	_time = 0.0;
+	
 	// Load the shaders
 	_programId = createGLProgram("ressources/shaders/suzanne.vert","ressources/shaders/suzanne.frag");
-
+	
 	// Load geometry.
 	mesh_t mesh;
 	loadObj("ressources/suzanne.obj",mesh,Indexed);
@@ -26,7 +28,7 @@ void Suzanne::init(){
 	computeTangentsAndBinormals(mesh);
 
 	_count = mesh.indices.size();
-
+	
 	// Create an array buffer to host the geometry data.
 	GLuint vbo = 0;
 	glGenBuffers(1, &vbo);
@@ -111,14 +113,17 @@ void Suzanne::init(){
 	
 	checkGLError();
 	
+	
 }
 
 
 void Suzanne::draw(float elapsed, const glm::mat4& view, const glm::mat4& projection){
-
+	
+	_time += elapsed;
+	
 	// Scale the model by 0.5.
-	glm::mat4 model = glm::scale(glm::mat4(1.0f),glm::vec3(0.5f));
-
+	glm::mat4 model = glm::scale(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(0.2,0.0,0.0)),float(_time),glm::vec3(0.0f,1.0f,0.0f)),glm::vec3(0.25f));
+	
 	// Combine the three matrices.
 	glm::mat4 MV = view * model;
 	glm::mat4 MVP = projection * MV;
