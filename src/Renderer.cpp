@@ -77,6 +77,7 @@ void Renderer::init(int width, int height){
 	
 	// Initialize objects.
 	_suzanne.init();
+	_dragon.init();
 	_skybox.init();
 	
 	checkGLError();
@@ -111,6 +112,7 @@ void Renderer::draw(){
 
 	// Draw objects.
 	_suzanne.draw(elapsed, _camera._view, _camera._projection);
+	_dragon.draw(elapsed, _camera._view, _camera._projection);
 	_skybox.draw(elapsed, _camera._view, _camera._projection);
 	
 	// Update timer
@@ -127,6 +129,7 @@ void Renderer::physics(float elapsedTime){
 void Renderer::clean(){
 	// Clean objects.
 	_suzanne.clean();
+	_dragon.clean();
 	_skybox.clean();
 }
 
