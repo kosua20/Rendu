@@ -4,10 +4,12 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 
+#include "Framebuffer.h"
 #include "camera/Camera.h"
 #include "Suzanne.h"
 #include "Skybox.h"
 #include "Dragon.h"
+#include "ScreenQuad.h"
 
 struct Light
 {
@@ -71,6 +73,9 @@ private:
 	Suzanne _suzanne;
 	Dragon _dragon;
 	Skybox _skybox;
+	ScreenQuad _screen;
+	
+	Framebuffer _framebuffer;
 
 };
 

@@ -19,6 +19,10 @@ void Renderer::init(int width, int height){
 	// Setup projection matrix.
 	_camera.screen(width, height);
 	
+	// Setup the framebuffer.
+	_framebuffer = Framebuffer(width, height);
+	_framebuffer.setup();
+	
 	// Query the renderer identifier, and the supported OpenGL version.
 	const GLubyte* renderer = glGetString(GL_RENDERER);
 	const GLubyte* version = glGetString(GL_VERSION);
@@ -79,6 +83,7 @@ void Renderer::init(int width, int height){
 	_suzanne.init();
 	_dragon.init();
 	_skybox.init();
+	_screen.init(_framebuffer.textureId());
 	
 	checkGLError();
 	
@@ -86,18 +91,13 @@ void Renderer::init(int width, int height){
 
 
 void Renderer::draw(){
-
+	
 	// Compute the time elapsed since last frame
 	float elapsed = glfwGetTime() - _timer;
 	_timer = glfwGetTime();
 
 	// Physics simulation
 	physics(elapsed);
-
-	// Set the clear color to white.
-	glClearColor(1.0f,1.0f,1.0f,0.0f);
-	// Clear the color and depth buffers.
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Update the light position (in view space).
 	// Bind the buffer.
@@ -110,10 +110,32 @@ void Renderer::draw(){
 	glUnmapBuffer(GL_UNIFORM_BUFFER);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
+	
+	// Draw the scene inside the framebuffer.
+	_framebuffer.bind();
+	
+	glViewport(0, 0, _framebuffer._width, _framebuffer._height);
+	// Set the clear color to white.
+	glClearColor(1.0f,1.0f,1.0f,0.0f);
+	// Clear the color and depth buffers.
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	// Draw objects.
 	_suzanne.draw(elapsed, _camera._view, _camera._projection);
 	_dragon.draw(elapsed, _camera._view, _camera._projection);
 	_skybox.draw(elapsed, _camera._view, _camera._projection);
+	
+	// Unbind the framebuffer, we now use the default framebuffer.
+	_framebuffer.unbind();
+	
+	// Draw the fullscreen quad
+	glViewport(0,0,_camera._screenSize[0],_camera._screenSize[1]);
+	// Set the clear color to black.
+	glClearColor(0.0f,0.0f,0.0f,0.0f);
+	// Clear the color and depth buffers.
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	// Draw the screen quad.
+	_screen.draw(_timer);
+	
 	
 	// Update timer
 	_timer = glfwGetTime();
@@ -131,6 +153,8 @@ void Renderer::clean(){
 	_suzanne.clean();
 	_dragon.clean();
 	_skybox.clean();
+	_screen.clean();
+	_framebuffer.clean();
 }
 
 
