@@ -3,30 +3,24 @@
 #include <iostream>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "Camera.h"
+#include "Keyboard.h"
 
-Camera::Camera(){
+Keyboard::Keyboard(glm::vec3 & eye, glm::vec3 & center, glm::vec3 & up, glm::vec3 & right) : _eye(eye), _center(center), _up(up), _right(right) {
 	_speed = 1.2;
 	_angularSpeed = 75.0f;
 	reset();
 } 
 
-Camera::~Camera(){}
+Keyboard::~Keyboard(){}
 
-void Camera::reset(){
-	_eye = glm::vec3(0.0,0.0,1.0);
-	_center = glm::vec3(0.0,0.0,0.0);
-	_up = glm::vec3(0.0,1.0,0.0);
-	_right = glm::vec3(1.0,0.0,0.0);
-
-	_view = glm::lookAt(_eye, _center, _up);
+void Keyboard::reset(){
 	_keys[0] = _keys[1] = _keys[2] = _keys[3] = _keys[4] = _keys[5] = _keys[6] = false;
 	_previousPosition = glm::vec2(0.0);
 	_deltaPosition = glm::vec2(0.0);
-	
 }
 
-void Camera::update(float elapsedTime){
+void Keyboard::update(float elapsedTime){
+	
 	// We need the direction of the camera, normalized.
 	glm::vec3 look = normalize(_center - _eye);
 	// One step forward or backward.
@@ -73,11 +67,9 @@ void Camera::update(float elapsedTime){
 	// Recompute up as the cross product of  right and look.
 	_up = normalize(cross(_right,look));
 
-	// Update the view matrix.
-	_view = glm::lookAt(_eye, _center, _up);
 }
 
-void Camera::registerMove(int direction, bool flag){
+void Keyboard::registerMove(int direction, bool flag){
 	// Depending on the direction, we update the corresponding flag. 
 	// This will allow for smooth movements.
 	switch(direction){
@@ -104,17 +96,17 @@ void Camera::registerMove(int direction, bool flag){
 	}
 }
 
-void Camera::startLeftMouse(double x, double y){
+void Keyboard::startLeftMouse(double x, double y){
 	_previousPosition = glm::vec2(x,-y);
 }
 
-void Camera::leftMouseTo(double x, double y){
+void Keyboard::leftMouseTo(double x, double y){
 	_keys[6] = true;
 	_deltaPosition = glm::vec2(x, -y) - _previousPosition;
 	_previousPosition =  glm::vec2(x, -y) ;
 }
 
-void Camera::endLeftMouse(){
+void Keyboard::endLeftMouse(){
 	_keys[6] = false;
 }
 

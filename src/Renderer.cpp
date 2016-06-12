@@ -144,19 +144,9 @@ void Renderer::resize(int width, int height){
 
 void Renderer::keyPressed(int key, int action){
 	if(action == GLFW_PRESS){
-		if (key == GLFW_KEY_W || key == GLFW_KEY_A || key == GLFW_KEY_S || key == GLFW_KEY_D || key == GLFW_KEY_Q || key == GLFW_KEY_E){
-			_camera.registerMove(key, true);
-
-		} else if(key == GLFW_KEY_R) {
-			_camera.reset();
-
-		} else {
-			std::cout << "Key: " << key << " (" << char(key) << ")." << std::endl;
-		}
+		_camera.key(key, true);
 	} else if(action == GLFW_RELEASE) {
-		if (key == GLFW_KEY_W || key == GLFW_KEY_A || key == GLFW_KEY_S || key == GLFW_KEY_D || key == GLFW_KEY_Q || key == GLFW_KEY_E){
-			_camera.registerMove(key, false);
-		}
+		_camera.key(key, false);
 	}
 }
 
@@ -166,13 +156,14 @@ void Renderer::buttonPressed(int button, int action, double x, double y){
 			// We normalize the x and y values to the [-1, 1] range.
 			float xPosition =  fmax(fmin(1.0f,2.0f * (float)x / _width - 1.0),-1.0f);
 			float yPosition =  fmax(fmin(1.0f,2.0f * (float)y / _height - 1.0),-1.0f);
-			_camera.startLeftMouse(xPosition, yPosition);
-			return;
+			_camera.mouse(MouseMode::Start,xPosition, yPosition);
+			
 		} else if (action == GLFW_RELEASE) {
-			_camera.endLeftMouse();
+			_camera.mouse(MouseMode::End, 0.0, 0.0);
 		}
+	} else {
+		std::cout << "Button: " << button << ", action: " << action << std::endl;
 	}
-	std::cout << "Button: " << button << ", action: " << action << std::endl;            
 }
 
 void Renderer::mousePosition(int x, int y, bool leftPress, bool rightPress){
@@ -180,7 +171,7 @@ void Renderer::mousePosition(int x, int y, bool leftPress, bool rightPress){
 		// We normalize the x and y values to the [-1, 1] range.
         float xPosition =  fmax(fmin(1.0f,2.0f * (float)x / _width - 1.0),-1.0f);
 		float yPosition =  fmax(fmin(1.0f,2.0f * (float)y / _height - 1.0),-1.0f);
-		_camera.leftMouseTo(xPosition, yPosition); 
+		_camera.mouse(MouseMode::Move, xPosition, yPosition);
     }
 }
 
