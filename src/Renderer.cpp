@@ -163,6 +163,8 @@ void Renderer::resize(int width, int height){
 	glViewport(0, 0, width, height);
 	// Update the projection matrix.
 	_camera.screen(width, height);
+	// Resize the framebuffer.
+	_framebuffer.resize(width, height);
 }
 
 void Renderer::keyPressed(int key, int action){
