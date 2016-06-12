@@ -13,14 +13,11 @@ Renderer::Renderer(){}
 Renderer::~Renderer(){}
 
 void Renderer::init(int width, int height){
-	_width = width;
-	_height = height;
 
-	updateProjectionMatrix();
-
-	// initialize the timer
+	// Initialize the timer.
 	_timer = glfwGetTime();
-
+	// Setup projection matrix.
+	_camera.screen(width, height);
 	
 	// Query the renderer identifier, and the supported OpenGL version.
 	const GLubyte* renderer = glGetString(GL_RENDERER);
@@ -113,8 +110,8 @@ void Renderer::draw(){
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 	// Draw objects.
-	_suzanne.draw(elapsed, _camera._view, _projection);
-	_skybox.draw(elapsed, _camera._view, _projection);
+	_suzanne.draw(elapsed, _camera._view, _camera._projection);
+	_skybox.draw(elapsed, _camera._view, _camera._projection);
 	
 	// Update timer
 	_timer = glfwGetTime();
@@ -135,11 +132,10 @@ void Renderer::clean(){
 
 
 void Renderer::resize(int width, int height){
-	_width = width;
-	_height = height;
 	//Update the size of the viewport.
 	glViewport(0, 0, width, height);
-	updateProjectionMatrix();
+	// Update the projection matrix.
+	_camera.screen(width, height);
 }
 
 void Renderer::keyPressed(int key, int action){
@@ -153,11 +149,7 @@ void Renderer::keyPressed(int key, int action){
 void Renderer::buttonPressed(int button, int action, double x, double y){
 	if (button == GLFW_MOUSE_BUTTON_LEFT) {
 		if (action == GLFW_PRESS) {
-			// We normalize the x and y values to the [-1, 1] range.
-			float xPosition =  fmax(fmin(1.0f,2.0f * (float)x / _width - 1.0),-1.0f);
-			float yPosition =  fmax(fmin(1.0f,2.0f * (float)y / _height - 1.0),-1.0f);
-			_camera.mouse(MouseMode::Start,xPosition, yPosition);
-			
+			_camera.mouse(MouseMode::Start,x, y);
 		} else if (action == GLFW_RELEASE) {
 			_camera.mouse(MouseMode::End, 0.0, 0.0);
 		}
@@ -168,16 +160,8 @@ void Renderer::buttonPressed(int button, int action, double x, double y){
 
 void Renderer::mousePosition(int x, int y, bool leftPress, bool rightPress){
 	if (leftPress){
-		// We normalize the x and y values to the [-1, 1] range.
-        float xPosition =  fmax(fmin(1.0f,2.0f * (float)x / _width - 1.0),-1.0f);
-		float yPosition =  fmax(fmin(1.0f,2.0f * (float)y / _height - 1.0),-1.0f);
-		_camera.mouse(MouseMode::Move, xPosition, yPosition);
+		_camera.mouse(MouseMode::Move, float(x), float(y));
     }
-}
-
-void Renderer::updateProjectionMatrix(){
-	// Perspective projection.
-	_projection = glm::perspective(45.0f, float(_width) / float(_height), 0.1f, 100.f);
 }
 
 

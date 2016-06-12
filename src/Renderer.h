@@ -55,17 +55,11 @@ public:
 
 	void mousePosition(int x, int y, bool leftPress, bool rightPress);
 
-	/// Update projection matrix
-	void updateProjectionMatrix();
 
 private:
-
-	int _width;
-	int _height;
 	
 	float _timer;
 
-	glm::mat4 _projection;
 	GLuint _ubo;
 	
 	Camera _camera;

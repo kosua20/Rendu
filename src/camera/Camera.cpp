@@ -42,13 +42,27 @@ void Camera::key(int key, bool flag){
 }
 
 void Camera::mouse(MouseMode mode, float x, float y){
-	if(mode == MouseMode::Start) {
-		_keyboard.startLeftMouse(x,y);
-	} else if (mode == MouseMode::End) {
+	if (mode == MouseMode::End) {
 		_keyboard.endLeftMouse();
 	} else {
-		_keyboard.leftMouseTo(x,y);
+		// We normalize the x and y values to the [-1, 1] range.
+		float xPosition =  fmax(fmin(1.0f,2.0f * x / _screenSize[0] - 1.0),-1.0f);
+		float yPosition =  fmax(fmin(1.0f,2.0f * y / _screenSize[1] - 1.0),-1.0f);
+		
+		if(mode == MouseMode::Start) {
+			_keyboard.startLeftMouse(xPosition,yPosition);
+		} else {
+			_keyboard.leftMouseTo(xPosition,yPosition);
+		}
 	}
+}
+
+
+void Camera::screen(int width, int height){
+	_screenSize[0] = float(width > 0 ? width : 1);
+	_screenSize[1] = float(height > 0 ? height : 1);
+	// Perspective projection.
+	_projection = glm::perspective(45.0f, _screenSize[0] / _screenSize[1], 0.1f, 100.f);
 }
 
 
