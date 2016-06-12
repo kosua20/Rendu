@@ -38,6 +38,9 @@ public:
 	/// The projection matrix.
 	glm::mat4 _projection;
 
+	// Screen size
+	glm::vec2 _screenSize;
+	
 private:
 	
 	/// Vectors defining the view frame.
@@ -49,8 +52,7 @@ private:
 	/// Input methods
 	Keyboard _keyboard;
 	
-	// Screen size
-	glm::vec2 _screenSize;
+	
 
 };
 
