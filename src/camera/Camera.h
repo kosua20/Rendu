@@ -29,8 +29,14 @@ public:
 	/// Register a mouse move or click.
 	void mouse(MouseMode mode, float x, float y);
 	
+	/// Update the screen size and projection matrix.
+	void screen(int width, int height);
+	
 	/// The view matrix.
 	glm::mat4 _view;
+	
+	/// The projection matrix.
+	glm::mat4 _projection;
 
 private:
 	
@@ -42,6 +48,9 @@ private:
 	
 	/// Input methods
 	Keyboard _keyboard;
+	
+	// Screen size
+	glm::vec2 _screenSize;
 
 };
 
