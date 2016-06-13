@@ -35,7 +35,6 @@ void Renderer::init(int width, int height){
 	glEnable(GL_CULL_FACE);
 	glFrontFace(GL_CCW);
 	glCullFace(GL_BACK);
-	glEnable(GL_FRAMEBUFFER_SRGB);
 	checkGLError();
 	
 	
@@ -111,6 +110,7 @@ void Renderer::draw(){
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 	
+
 	// Draw the scene inside the framebuffer.
 	_framebuffer.bind();
 	
@@ -126,7 +126,9 @@ void Renderer::draw(){
 	
 	// Unbind the framebuffer, we now use the default framebuffer.
 	_framebuffer.unbind();
-	
+	// Only the final target should be in the sRGB space.
+	glEnable(GL_FRAMEBUFFER_SRGB);
+
 	// Draw the fullscreen quad
 	glViewport(0,0,_camera._screenSize[0],_camera._screenSize[1]);
 	// Set the clear color to black.
@@ -136,6 +138,7 @@ void Renderer::draw(){
 	// Draw the screen quad.
 	_screen.draw(_timer);
 	
+	glDisable(GL_FRAMEBUFFER_SRGB);
 	
 	// Update timer
 	_timer = glfwGetTime();
