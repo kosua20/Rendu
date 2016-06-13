@@ -64,6 +64,9 @@ void ScreenQuad::draw(float time){
 	// Select the program (and shaders).
 	glUseProgram(_programId);
 	
+	GLuint timeId = glGetUniformLocation(_programId, "time");
+	glUniform1f(timeId, time);
+	
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, _textureId);
 	
@@ -72,7 +75,7 @@ void ScreenQuad::draw(float time){
 	// Draw!
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
 	glDrawElements(GL_TRIANGLES, _count, GL_UNSIGNED_INT, (void*)0);
-	checkGLError();
+	
 	glBindVertexArray(0);
 	glUseProgram(0);
 }
