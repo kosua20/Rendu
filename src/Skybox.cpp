@@ -98,7 +98,6 @@ void Skybox::draw(float elapsed, const glm::mat4& view, const glm::mat4& project
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
 	glDrawElements(GL_TRIANGLES, _count, GL_UNSIGNED_INT, (void*)0);
 
-	checkGLError();
 	glBindVertexArray(0);
 	glUseProgram(0);
 }

@@ -152,7 +152,6 @@ void Dragon::draw(float elapsed, const glm::mat4& view, const glm::mat4& project
     glBindTexture(GL_TEXTURE_2D, _texEffects);
 	glActiveTexture(GL_TEXTURE3);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, _texCubeMap);
-	checkGLError();
 	glActiveTexture(GL_TEXTURE4);	
 	glBindTexture(GL_TEXTURE_CUBE_MAP, _texCubeMapSmall);
 
