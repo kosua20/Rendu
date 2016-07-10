@@ -41,7 +41,7 @@ void Renderer::init(int width, int height){
 	
 	// Setup light
 	_light.position = glm::vec4(0.0f); // position will be updated at each frame
-	_light.shininess = 250.0f;
+	_light.shininess = 25.0f;
 	_light.Ia = glm::vec4(0.3f, 0.3f, 0.3f, 0.0f);
 	_light.Id = glm::vec4(0.8f, 0.8f,0.8f, 0.0f);
 	_light.Is = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
@@ -88,7 +88,7 @@ void Renderer::draw(){
 	// Compute the time elapsed since last frame
 	float elapsed = glfwGetTime() - _timer;
 	_timer = glfwGetTime();
-
+	
 	// Physics simulation
 	physics(elapsed);
 
