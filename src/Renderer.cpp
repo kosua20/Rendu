@@ -102,7 +102,10 @@ void Renderer::draw(){
 	// Bind the buffer.
 	glBindBuffer(GL_UNIFORM_BUFFER, _ubo);
 	// Obtain a handle to the underlying memory.
-	GLvoid * ptr = glMapBuffer(GL_UNIFORM_BUFFER,GL_WRITE_ONLY);
+	// We force the GPU to consider the memory region as unsynchronized:
+	// even if it is used, it will be overwritten. Here the light position
+	// evolve in a continuous manner so we can take this risk.
+	GLvoid * ptr = glMapBufferRange(GL_UNIFORM_BUFFER,0,sizeof(glm::vec4),GL_MAP_WRITE_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
 	// Copy the light position.
 	std::memcpy(ptr, &(_light.position[0]), sizeof(glm::vec4));
 	// Unmap, unbind.
