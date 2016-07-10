@@ -17,7 +17,7 @@ Dragon::~Dragon(){}
 void Dragon::init(){
 	
 	// Load the shaders
-	_programId = createGLProgram("ressources/shaders/dragon.vert","ressources/shaders/dragon.frag");
+	_programId = createGLProgram("ressources/shaders/object.vert","ressources/shaders/object.frag");
 
 	// Load geometry.
 	mesh_t mesh;

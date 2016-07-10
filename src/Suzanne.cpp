@@ -19,7 +19,7 @@ void Suzanne::init(){
 	_time = 0.0;
 	
 	// Load the shaders
-	_programId = createGLProgram("ressources/shaders/suzanne.vert","ressources/shaders/suzanne.frag");
+	_programId = createGLProgram("ressources/shaders/object.vert","ressources/shaders/object.frag");
 	
 	// Load geometry.
 	mesh_t mesh;
