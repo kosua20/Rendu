@@ -91,12 +91,7 @@ void Dragon::init(){
 	glBindVertexArray(0);
 
 	// Get a binding point for the light in Uniform buffer.
-	GLuint lightUniformId = glGetUniformBlockIndex(_programId, "Light");  
-	glUniformBlockBinding(_programId, lightUniformId, 0);
-
-	// Get a binding point for the material in Uniform buffer.
-	GLuint materialUniformId = glGetUniformBlockIndex(_programId, "Material");  
-	glUniformBlockBinding(_programId, materialUniformId, 1);
+	_lightUniformId = glGetUniformBlockIndex(_programId, "Light");
 	
 	// Load and upload the textures.
 	_texColor = loadTexture("ressources/dragon_texture_color.png", _programId, 0,  "textureColor", true);
@@ -114,7 +109,7 @@ void Dragon::init(){
 }
 
 
-void Dragon::draw(float elapsed, const glm::mat4& view, const glm::mat4& projection){
+void Dragon::draw(float elapsed, const glm::mat4& view, const glm::mat4& projection, size_t pingpong){
 
 	// Scale the model by 0.5.
 	glm::mat4 model = glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(-0.1,0.0,-0.25)),glm::vec3(0.5f));
@@ -129,7 +124,10 @@ void Dragon::draw(float elapsed, const glm::mat4& view, const glm::mat4& project
 	glm::mat4 invView = glm::inverse(view);
 	// Select the program (and shaders).
 	glUseProgram(_programId);
-
+	
+	// Select the right sub-uniform buffer to use for the light.
+	glUniformBlockBinding(_programId, _lightUniformId, pingpong);
+	
 	// Upload the MVP matrix.
 	GLuint mvpID  = glGetUniformLocation(_programId, "mvp");
 	glUniformMatrix4fv(mvpID, 1, GL_FALSE, &MVP[0][0]);

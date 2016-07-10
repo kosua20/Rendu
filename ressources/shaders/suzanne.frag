@@ -16,11 +16,6 @@ layout (std140) uniform Light {
   float shininess;
 } light;
 
-layout (std140) uniform Material {
-  vec4 Ka;
-  vec4 Kd;
-  vec4 Ks;
-} material;
 
 uniform sampler2D textureColor;
 uniform sampler2D textureNormal;
@@ -74,7 +69,7 @@ void main(){
 		reflectionColor = texture(textureCubeMap,rCubeMap).rgb;
 	}
 
-	vec3 shading =  ambient * light.Ia.rgb + diffuse * diffuseColor + specular * light.Is.rgb * material.Ks.rgb ;
+	vec3 shading =  ambient * light.Ia.rgb + diffuse * diffuseColor + specular * light.Is.rgb;
 	fragColor = mix(shading,reflectionColor,0.5*effects.b);
-
+	
 }

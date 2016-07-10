@@ -91,14 +91,9 @@ void Suzanne::init(){
  	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * mesh.indices.size(), &(mesh.indices[0]), GL_STATIC_DRAW);
 
 	glBindVertexArray(0);
-
+	
 	// Get a binding point for the light in Uniform buffer.
-	GLuint lightUniformId = glGetUniformBlockIndex(_programId, "Light");  
-	glUniformBlockBinding(_programId, lightUniformId, 0);
-
-	// Get a binding point for the material in Uniform buffer.
-	GLuint materialUniformId = glGetUniformBlockIndex(_programId, "Material");  
-	glUniformBlockBinding(_programId, materialUniformId, 1);
+	_lightUniformId = glGetUniformBlockIndex(_programId, "Light");
 	
 	// Load and upload the textures.
 	_texColor = loadTexture("ressources/suzanne_texture_color.png", _programId, 0,  "textureColor", true);
@@ -117,7 +112,7 @@ void Suzanne::init(){
 }
 
 
-void Suzanne::draw(float elapsed, const glm::mat4& view, const glm::mat4& projection){
+void Suzanne::draw(float elapsed, const glm::mat4& view, const glm::mat4& projection, size_t pingpong){
 	
 	_time += elapsed;
 	
@@ -135,6 +130,9 @@ void Suzanne::draw(float elapsed, const glm::mat4& view, const glm::mat4& projec
 	// Select the program (and shaders).
 	glUseProgram(_programId);
 
+	// Select the right sub-uniform buffer to use for the light.
+	glUniformBlockBinding(_programId, _lightUniformId, pingpong);
+	
 	// Upload the MVP matrix.
 	GLuint mvpID  = glGetUniformLocation(_programId, "mvp");
 	glUniformMatrix4fv(mvpID, 1, GL_FALSE, &MVP[0][0]);

@@ -14,8 +14,9 @@ Renderer::~Renderer(){}
 
 void Renderer::init(int width, int height){
 
-	// Initialize the timer.
+	// Initialize the timer and pingpong.
 	_timer = glfwGetTime();
+	_pingpong = 0;
 	// Setup projection matrix.
 	_camera.screen(width, height);
 	
@@ -45,11 +46,6 @@ void Renderer::init(int width, int height){
 	_light.Id = glm::vec4(0.8f, 0.8f,0.8f, 0.0f);
 	_light.Is = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
 	
-	// Setup material
-	_material.Ka = glm::vec4(0.3f,0.2f,0.0f,0.0f);
-	_material.Kd = glm::vec4(1.0f, 0.5f, 0.0f, 0.0f);
-	_material.Ks = glm::vec4(1.0f, 1.0f, 1.0f,0.0f);
-	
 	// Generate the buffer.
 	glGenBuffers(1, &_ubo);
 	// Bind the buffer.
@@ -59,22 +55,21 @@ void Renderer::init(int width, int height){
 	GLint uboAlignSize = 0;
 	glGetIntegerv(GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT, &uboAlignSize);
 	// Compute the padding for the second block, it needs to be a multiple of uboAlignSize (typically uboAlignSize will be 256.)
-	GLuint padding = 4*sizeof(glm::vec4) + 1*sizeof(float);
-	padding = ((padding/uboAlignSize)+1)*uboAlignSize;
+	GLuint lightSize = 4*sizeof(glm::vec4) + 1*sizeof(float);
+	_padding = ((lightSize/uboAlignSize)+1)*uboAlignSize;
 	
-	// Allocate enough memory to hold the Light struct and Material structures.
-	glBufferData(GL_UNIFORM_BUFFER, padding + 3 * sizeof(glm::vec4), NULL, GL_DYNAMIC_DRAW);
+	// Allocate enough memory to hold two copies of the Light struct.
+	glBufferData(GL_UNIFORM_BUFFER, _padding + lightSize, NULL, GL_DYNAMIC_DRAW);
 	
-	// Bind the range allocated to the light.
-	glBindBufferRange(GL_UNIFORM_BUFFER, 0, _ubo, 0, 4*sizeof(glm::vec4) + sizeof(float));
+	// Bind the range allocated to the first version of the light.
+	glBindBufferRange(GL_UNIFORM_BUFFER, 0, _ubo, 0, lightSize);
 	// Submit the data.
-	glBufferSubData(GL_UNIFORM_BUFFER, 0, 4*sizeof(glm::vec4) + sizeof(float), &_light);
+	glBufferSubData(GL_UNIFORM_BUFFER, 0, lightSize, &_light);
 	
-	
-	// Bind the range allocated to the material.
-	glBindBufferRange(GL_UNIFORM_BUFFER, 1, _ubo, padding, 3*sizeof(glm::vec4));
+	// Bind the range allocated to the second version of the light.
+	glBindBufferRange(GL_UNIFORM_BUFFER, 1, _ubo, _padding, lightSize);
 	// Submit the data.
-	glBufferSubData(GL_UNIFORM_BUFFER, padding, 3*sizeof(glm::vec4), &_material);
+	glBufferSubData(GL_UNIFORM_BUFFER, _padding, lightSize, &_light);
 	
 	glBindBuffer(GL_UNIFORM_BUFFER,0);
 	
@@ -83,7 +78,6 @@ void Renderer::init(int width, int height){
 	_dragon.init();
 	_skybox.init();
 	_screen.init(_framebuffer.textureId());
-	
 	checkGLError();
 	
 }
@@ -103,15 +97,15 @@ void Renderer::draw(){
 	glBindBuffer(GL_UNIFORM_BUFFER, _ubo);
 	// Obtain a handle to the underlying memory.
 	// We force the GPU to consider the memory region as unsynchronized:
-	// even if it is used, it will be overwritten. Here the light position
-	// evolve in a continuous manner so we can take this risk.
-	GLvoid * ptr = glMapBufferRange(GL_UNIFORM_BUFFER,0,sizeof(glm::vec4),GL_MAP_WRITE_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
+	// even if it is used, it will be overwritten. As we alternate between
+	// two sub-buffers indices ("ping-ponging"), we won't risk writing over
+	// a currently used value.
+	GLvoid * ptr = glMapBufferRange(GL_UNIFORM_BUFFER,_pingpong*_padding,sizeof(glm::vec4),GL_MAP_WRITE_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
 	// Copy the light position.
 	std::memcpy(ptr, &(_light.position[0]), sizeof(glm::vec4));
 	// Unmap, unbind.
 	glUnmapBuffer(GL_UNIFORM_BUFFER);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-
 	
 
 	// Draw the scene inside the framebuffer.
@@ -123,8 +117,8 @@ void Renderer::draw(){
 	// Clear the color and depth buffers.
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	// Draw objects.
-	_suzanne.draw(elapsed, _camera._view, _camera._projection);
-	_dragon.draw(elapsed, _camera._view, _camera._projection);
+	_suzanne.draw(elapsed, _camera._view, _camera._projection, _pingpong);
+	_dragon.draw(elapsed, _camera._view, _camera._projection, _pingpong);
 	_skybox.draw(elapsed, _camera._view, _camera._projection);
 	
 	// Unbind the framebuffer, we now use the default framebuffer.
@@ -145,6 +139,8 @@ void Renderer::draw(){
 	
 	// Update timer
 	_timer = glfwGetTime();
+	// Update pingpong
+	_pingpong = (_pingpong + 1)%2;
 }
 
 void Renderer::physics(float elapsedTime){
