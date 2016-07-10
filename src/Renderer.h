@@ -9,6 +9,7 @@
 #include "Suzanne.h"
 #include "Skybox.h"
 #include "Dragon.h"
+#include "Plane.h"
 #include "ScreenQuad.h"
 
 struct Light
@@ -73,7 +74,7 @@ private:
 	Dragon _dragon;
 	Skybox _skybox;
 	ScreenQuad _screen;
-	
+	Plane _plane;
 	Framebuffer _framebuffer;
 	
 	size_t _pingpong;
