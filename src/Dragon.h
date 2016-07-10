@@ -18,7 +18,7 @@ public:
 	void init();
 
 	/// Draw function
-	void draw(float elapsed, const glm::mat4& view, const glm::mat4& projection);
+	void draw(float elapsed, const glm::mat4& view, const glm::mat4& projection, size_t pingpong);
 
 	/// Clean function
 	void clean();
@@ -32,7 +32,7 @@ private:
 	GLuint _texColor;
 	GLuint _texNormal;
 	GLuint _texEffects;
-
+	GLuint _lightUniformId;
 	
 	size_t _count;
 	
