@@ -76,6 +76,7 @@ void Renderer::init(int width, int height){
 	// Initialize objects.
 	_suzanne.init();
 	_dragon.init();
+	_plane.init();
 	_skybox.init();
 	_screen.init(_framebuffer.textureId());
 	checkGLError();
@@ -119,6 +120,7 @@ void Renderer::draw(){
 	// Draw objects.
 	_suzanne.draw(elapsed, _camera._view, _camera._projection, _pingpong);
 	_dragon.draw(elapsed, _camera._view, _camera._projection, _pingpong);
+	_plane.draw(elapsed, _camera._view, _camera._projection, _pingpong);
 	_skybox.draw(elapsed, _camera._view, _camera._projection);
 	
 	// Unbind the framebuffer, we now use the default framebuffer.
@@ -154,6 +156,7 @@ void Renderer::clean(){
 	// Clean objects.
 	_suzanne.clean();
 	_dragon.clean();
+	_plane.clean();
 	_skybox.clean();
 	_screen.clean();
 	_framebuffer.clean();
