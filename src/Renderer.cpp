@@ -21,7 +21,7 @@ void Renderer::init(int width, int height){
 	_camera.screen(width, height);
 	
 	// Setup the framebuffer.
-	_framebuffer = Framebuffer(width, height);
+	_framebuffer = Framebuffer(512, 512);
 	_framebuffer.setup();
 	
 	// Query the renderer identifier, and the supported OpenGL version.
@@ -121,7 +121,7 @@ void Renderer::draw(){
 	_suzanne.draw(elapsed, _camera._view, _camera._projection, _pingpong);
 	_dragon.draw(elapsed, _camera._view, _camera._projection, _pingpong);
 	_plane.draw(elapsed, _camera._view, _camera._projection, _pingpong);
-	_skybox.draw(elapsed, _camera._view, _camera._projection);
+	//_skybox.draw(elapsed, _camera._view, _camera._projection);
 	
 	// Unbind the framebuffer, we now use the default framebuffer.
 	_framebuffer.unbind();
@@ -169,7 +169,7 @@ void Renderer::resize(int width, int height){
 	// Update the projection matrix.
 	_camera.screen(width, height);
 	// Resize the framebuffer.
-	_framebuffer.resize(width, height);
+	//_framebuffer.resize(width, height);
 }
 
 void Renderer::keyPressed(int key, int action){
