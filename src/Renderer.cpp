@@ -78,7 +78,6 @@ void Renderer::init(int width, int height){
 	_dragon.init();
 	_plane.init();
 	_skybox.init();
-	_screen.init(_framebuffer.textureId());
 	checkGLError();
 	
 	// The light is fixed: compute the light MVP matrix once.
@@ -128,25 +127,23 @@ void Renderer::draw(){
 	_dragon.drawDepth(elapsed, _mvpLight);
 	_plane.drawDepth(elapsed, _mvpLight);
 	
-	// For later.
-	//_suzanne.draw(elapsed, _camera._view, _camera._projection, _pingpong);
-	//_dragon.draw(elapsed, _camera._view, _camera._projection, _pingpong);
-	//_plane.draw(elapsed, _camera._view, _camera._projection, _pingpong);
-	//_skybox.draw(elapsed, _camera._view, _camera._projection);
-	
 	// Unbind the framebuffer, we now use the default framebuffer.
 	_framebuffer.unbind();
 	// Only the final target should be in the sRGB space.
 	glEnable(GL_FRAMEBUFFER_SRGB);
-
-	// Draw the fullscreen quad
+	
+	// Set final viewport
 	glViewport(0,0,_camera._screenSize[0],_camera._screenSize[1]);
 	// Set the clear color to black.
 	glClearColor(0.0f,0.0f,0.0f,0.0f);
 	// Clear the color and depth buffers.
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	// Draw the screen quad.
-	_screen.draw(_timer);
+	
+	// Draw objects
+	_suzanne.draw(elapsed, _camera._view, _camera._projection, _pingpong);
+	_dragon.draw(elapsed, _camera._view, _camera._projection, _pingpong);
+	_plane.draw(elapsed, _camera._view, _camera._projection, _pingpong);
+	_skybox.draw(elapsed, _camera._view, _camera._projection);
 	
 	glDisable(GL_FRAMEBUFFER_SRGB);
 	
@@ -169,7 +166,6 @@ void Renderer::clean(){
 	_dragon.clean();
 	_plane.clean();
 	_skybox.clean();
-	_screen.clean();
 	_framebuffer.clean();
 }
 
