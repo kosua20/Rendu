@@ -81,6 +81,12 @@ void Renderer::init(int width, int height){
 	_screen.init(_framebuffer.textureId());
 	checkGLError();
 	
+	// The light is fixed: compute the light MVP matrix once.
+	glm::mat4 viewLight = glm::lookAt(glm::vec3(2.0f,2.0f,2.0f), glm::vec3(0.0f), glm::vec3(0.0f,1.0f,0.0f));
+	
+	glm::mat4 projectionLight = glm::ortho(-1.,1.,-1.,1.,-1.,6.);//glm::perspective(45.0f, 1.0f, 1.0f, 5.f); depending on the type of light, one might prefer to use one or the other matrix.
+	_mvpLight = projectionLight * viewLight;
+	
 }
 
 
@@ -108,7 +114,7 @@ void Renderer::draw(){
 	glUnmapBuffer(GL_UNIFORM_BUFFER);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 	
-
+	
 	// Draw the scene inside the framebuffer.
 	_framebuffer.bind();
 	
@@ -118,9 +124,14 @@ void Renderer::draw(){
 	// Clear the color and depth buffers.
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	// Draw objects.
-	_suzanne.draw(elapsed, _camera._view, _camera._projection, _pingpong);
-	_dragon.draw(elapsed, _camera._view, _camera._projection, _pingpong);
-	_plane.draw(elapsed, _camera._view, _camera._projection, _pingpong);
+	_suzanne.drawDepth(elapsed, _mvpLight);
+	_dragon.drawDepth(elapsed, _mvpLight);
+	_plane.drawDepth(elapsed, _mvpLight);
+	
+	// For later.
+	//_suzanne.draw(elapsed, _camera._view, _camera._projection, _pingpong);
+	//_dragon.draw(elapsed, _camera._view, _camera._projection, _pingpong);
+	//_plane.draw(elapsed, _camera._view, _camera._projection, _pingpong);
 	//_skybox.draw(elapsed, _camera._view, _camera._projection);
 	
 	// Unbind the framebuffer, we now use the default framebuffer.

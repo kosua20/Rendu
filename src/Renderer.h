@@ -79,6 +79,8 @@ private:
 	
 	size_t _pingpong;
 	GLuint _padding;
+	
+	glm::mat4 _mvpLight;
 };
 
 #endif
