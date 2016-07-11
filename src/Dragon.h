@@ -21,7 +21,7 @@ public:
 	void draw(float elapsed, const glm::mat4& view, const glm::mat4& projection, const size_t pingpong);
 	
 	/// Draw depth function
-	void drawDepth(float elapsed, const glm::mat4& view, const glm::mat4& projection);
+	void drawDepth(float elapsed, const glm::mat4& vp);
 	
 	/// Clean function
 	void clean();

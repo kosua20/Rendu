@@ -115,12 +115,10 @@ void Plane::draw(float elapsed, const glm::mat4& view, const glm::mat4& projecti
 	glUseProgram(0);
 }
 
-void Plane::drawDepth(float elapsed, const glm::mat4& view, const glm::mat4& projection){
+void Plane::drawDepth(float elapsed, const glm::mat4& vp){
 	
 	glm::mat4 model = glm::scale(glm::translate(glm::mat4(1.0f),glm::vec3(0.0f,-0.35f,-0.5f)), glm::vec3(2.0f));
-	// Combine the three matrices.
-	glm::mat4 MV = view * model;
-	glm::mat4 MVP = projection * MV;
+	glm::mat4 MVP = vp * model;
 	
 	glUseProgram(_programDepthId);
 	
