@@ -16,8 +16,11 @@ public:
 	void init();
 
 	/// Draw function
-	void draw(float elapsed, const glm::mat4& view, const glm::mat4& projection, size_t pingpong);
-
+	void draw(float elapsed, const glm::mat4& view, const glm::mat4& projection, const size_t pingpong);
+	
+	/// Draw depth function
+	void drawDepth(float elapsed, const glm::mat4& view, const glm::mat4& projection);
+	
 	/// Clean function
 	void clean();
 
@@ -25,6 +28,7 @@ public:
 private:
 	
 	GLuint _programId;
+	GLuint _programDepthId;
 	GLuint _vao;
 	GLuint _ebo;
 	GLuint _lightUniformId;

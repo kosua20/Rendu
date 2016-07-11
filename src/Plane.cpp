@@ -15,6 +15,7 @@ Plane::~Plane(){}
 void Plane::init(){
 	
 	// Load the shaders
+	_programDepthId = createGLProgram("ressources/shaders/plane_depth.vert","ressources/shaders/plane_depth.frag");
 	_programId = createGLProgram("ressources/shaders/plane.vert","ressources/shaders/plane.frag");
 
 	// Load geometry.
@@ -113,6 +114,30 @@ void Plane::draw(float elapsed, const glm::mat4& view, const glm::mat4& projecti
 	glBindVertexArray(0);
 	glUseProgram(0);
 }
+
+void Plane::drawDepth(float elapsed, const glm::mat4& view, const glm::mat4& projection){
+	
+	glm::mat4 model = glm::scale(glm::translate(glm::mat4(1.0f),glm::vec3(0.0f,-0.35f,-0.5f)), glm::vec3(2.0f));
+	// Combine the three matrices.
+	glm::mat4 MV = view * model;
+	glm::mat4 MVP = projection * MV;
+	
+	glUseProgram(_programDepthId);
+	
+	// Upload the MVP matrix.
+	GLuint mvpID  = glGetUniformLocation(_programDepthId, "mvp");
+	glUniformMatrix4fv(mvpID, 1, GL_FALSE, &MVP[0][0]);
+	
+	// Select the geometry.
+	glBindVertexArray(_vao);
+	// Draw!
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
+	glDrawElements(GL_TRIANGLES, _count, GL_UNSIGNED_INT, (void*)0);
+	
+	glBindVertexArray(0);
+	glUseProgram(0);
+}
+
 
 
 void Plane::clean(){
