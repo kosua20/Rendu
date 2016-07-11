@@ -19,6 +19,7 @@ void Suzanne::init(){
 	_time = 0.0;
 	
 	// Load the shaders
+	_programDepthId = createGLProgram("ressources/shaders/object_depth.vert","ressources/shaders/object_depth.frag");
 	_programId = createGLProgram("ressources/shaders/object.vert","ressources/shaders/object.frag");
 	
 	// Load geometry.
@@ -112,7 +113,7 @@ void Suzanne::init(){
 }
 
 
-void Suzanne::draw(float elapsed, const glm::mat4& view, const glm::mat4& projection, size_t pingpong){
+void Suzanne::draw(float elapsed, const glm::mat4& view, const glm::mat4& projection, const size_t pingpong){
 	
 	_time += elapsed;
 	
@@ -165,6 +166,37 @@ void Suzanne::draw(float elapsed, const glm::mat4& view, const glm::mat4& projec
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
 	glDrawElements(GL_TRIANGLES, _count, GL_UNSIGNED_INT, (void*)0);
 
+	glBindVertexArray(0);
+	glUseProgram(0);
+	
+	
+}
+
+
+void Suzanne::drawDepth(float elapsed, const glm::mat4& view, const glm::mat4& projection){
+	
+	_time += elapsed;
+	
+	// Scale the model by 0.5.
+	glm::mat4 model = glm::scale(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(0.2,0.0,0.0)),float(_time),glm::vec3(0.0f,1.0f,0.0f)),glm::vec3(0.25f));
+	
+	// Combine the three matrices.
+	glm::mat4 MV = view * model;
+	glm::mat4 MVP = projection * MV;
+	
+	
+	glUseProgram(_programDepthId);
+	
+	// Upload the MVP matrix.
+	GLuint mvpID  = glGetUniformLocation(_programDepthId, "mvp");
+	glUniformMatrix4fv(mvpID, 1, GL_FALSE, &MVP[0][0]);
+	
+	// Select the geometry.
+	glBindVertexArray(_vao);
+	// Draw!
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
+	glDrawElements(GL_TRIANGLES, _count, GL_UNSIGNED_INT, (void*)0);
+	
 	glBindVertexArray(0);
 	glUseProgram(0);
 	
