@@ -167,14 +167,12 @@ void Dragon::draw(float elapsed, const glm::mat4& view, const glm::mat4& project
 	
 }
 
-void Dragon::drawDepth(float elapsed, const glm::mat4& view, const glm::mat4& projection){
+void Dragon::drawDepth(float elapsed, const glm::mat4& vp){
 	
 	// Scale the model by 0.5.
 	glm::mat4 model = glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(-0.1,0.0,-0.25)),glm::vec3(0.5f));
 	
-	// Combine the three matrices.
-	glm::mat4 MV = view * model;
-	glm::mat4 MVP = projection * MV;
+	glm::mat4 MVP = vp * model;
 	
 	// Select the program (and shaders).
 	glUseProgram(_programDepthId);

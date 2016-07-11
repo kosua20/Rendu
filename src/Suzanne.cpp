@@ -173,17 +173,16 @@ void Suzanne::draw(float elapsed, const glm::mat4& view, const glm::mat4& projec
 }
 
 
-void Suzanne::drawDepth(float elapsed, const glm::mat4& view, const glm::mat4& projection){
+void Suzanne::drawDepth(float elapsed, const glm::mat4& vp){
 	
 	_time += elapsed;
 	
 	// Scale the model by 0.5.
 	glm::mat4 model = glm::scale(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(0.2,0.0,0.0)),float(_time),glm::vec3(0.0f,1.0f,0.0f)),glm::vec3(0.25f));
-	
+	// Restore to avoid accumulation
+	_time -= elapsed;
 	// Combine the three matrices.
-	glm::mat4 MV = view * model;
-	glm::mat4 MVP = projection * MV;
-	
+	glm::mat4 MVP = vp * model;
 	
 	glUseProgram(_programDepthId);
 	
