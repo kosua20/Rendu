@@ -1,9 +1,10 @@
 #version 330
 
-// Input: tangent space matrix, position (view space) and uv coming from the vertex shader
+// Input: position in view space, normal in view space and position in light space
 in INTERFACE {
 	vec3 position;
 	vec3 normal;
+	vec3 lightSpacePosition;
 } In ;
 
 // Uniform: the light structure (position in view space)
@@ -16,7 +17,7 @@ layout (std140) uniform Light {
 } light;
 
 
-
+uniform sampler2D shadowMap;
 
 // Output: the fragment color
 out vec3 fragColor;
@@ -42,7 +43,16 @@ void main(){
 		specular = pow(max(dot(r,v),0.0),light.shininess);
 	}
 	
-	vec3 shading =  ambient * light.Ia.rgb + diffuse * diffuseColor + specular * light.Is.rgb;
-	fragColor = shading;
+	vec3 lightShading =  diffuse * diffuseColor + specular * light.Is.rgb;
+	
+	
+	// Shadows
+	float shadow = 0.0;
+	float depthLight = texture(shadowMap,In.lightSpacePosition.xy).r;
+	if(In.lightSpacePosition.z - depthLight > 0.0){
+		shadow = 1.0;
+	}
+	
+	fragColor = ambient * light.Ia.rgb + (1.0-shadow)*lightShading;
 	
 }
