@@ -76,7 +76,7 @@ void Renderer::init(int width, int height){
 	// Initialize objects.
 	_suzanne.init();
 	_dragon.init();
-	_plane.init();
+	_plane.init(_framebuffer.textureId());
 	_skybox.init();
 	checkGLError();
 	
