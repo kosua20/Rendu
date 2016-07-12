@@ -21,7 +21,7 @@ void Renderer::init(int width, int height){
 	_camera.screen(width, height);
 	
 	// Setup the framebuffer.
-	_framebuffer = Framebuffer(512, 512);
+	_framebuffer = Framebuffer(1024, 1024);
 	_framebuffer.setup();
 	
 	// Query the renderer identifier, and the supported OpenGL version.
@@ -83,7 +83,7 @@ void Renderer::init(int width, int height){
 	// The light is fixed: compute the light MVP matrix once.
 	glm::mat4 viewLight = glm::lookAt(glm::vec3(2.0f,2.0f,2.0f), glm::vec3(0.0f), glm::vec3(0.0f,1.0f,0.0f));
 	
-	glm::mat4 projectionLight = glm::ortho(-1.,1.,-1.,1.,-1.,6.);//glm::perspective(45.0f, 1.0f, 1.0f, 5.f); depending on the type of light, one might prefer to use one or the other matrix.
+	glm::mat4 projectionLight = glm::ortho(-0.75f,0.75f,-0.75f,0.75f,0.1f,6.0f);//glm::perspective(45.0f, 1.0f, 1.0f, 5.f); depending on the type of light, one might prefer to use one or the other matrix.
 	_mvpLight = projectionLight * viewLight;
 	
 }
