@@ -15,6 +15,7 @@ out INTERFACE {
 	vec3 position;
 	vec3 normal;
 	vec3 lightSpacePosition;
+	vec3 modelPosition;
 } Out ;
 
 
@@ -27,6 +28,8 @@ void main(){
 	Out.normal = normalize(normalMatrix * n);
 	
 	Out.lightSpacePosition = 0.5*(lightMVP * vec4(v,1.0)).xyz + 0.5;
+	
+	Out.modelPosition = v;
 	
 	
 }
