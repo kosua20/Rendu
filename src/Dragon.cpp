@@ -14,7 +14,7 @@ Dragon::Dragon(){}
 
 Dragon::~Dragon(){}
 
-void Dragon::init(){
+void Dragon::init(GLuint shadowMapTextureId){
 	
 	// Load the shaders
 	_programDepthId = createGLProgram("ressources/shaders/object_depth.vert","ressources/shaders/object_depth.frag");
@@ -105,6 +105,12 @@ void Dragon::init(){
 	
 	_texCubeMapSmall = loadTextureCubeMap("ressources/cubemap/cubemap_diff", _programId, 4, "textureCubeMapSmall", true);
 	
+	// Load the shadowMap texture
+	_shadowMapId = shadowMapTextureId;
+	glBindTexture(GL_TEXTURE_2D, _shadowMapId);
+	GLuint texUniID = glGetUniformLocation(_programId, "shadowMap");
+	glUniform1i(texUniID, 5);
+	
 	checkGLError();
 	
 }
@@ -153,7 +159,14 @@ void Dragon::draw(float elapsed, const glm::mat4& view, const glm::mat4& project
 	glBindTexture(GL_TEXTURE_CUBE_MAP, _texCubeMap);
 	glActiveTexture(GL_TEXTURE4);	
 	glBindTexture(GL_TEXTURE_CUBE_MAP, _texCubeMapSmall);
-
+	
+	// Upload the light MVP matrix.
+	GLuint lmvpID  = glGetUniformLocation(_programId, "lightMVP");
+	glUniformMatrix4fv(lmvpID, 1, GL_FALSE, &_lightMVP[0][0]);
+	
+	// Bind the shadowMap texture.
+	glActiveTexture(GL_TEXTURE5);
+	glBindTexture(GL_TEXTURE_2D, _shadowMapId);
 
 	// Select the geometry.
 	glBindVertexArray(_vao);
@@ -172,14 +185,14 @@ void Dragon::drawDepth(float elapsed, const glm::mat4& vp){
 	// Scale the model by 0.5.
 	glm::mat4 model = glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(-0.1,0.0,-0.25)),glm::vec3(0.5f));
 	
-	glm::mat4 MVP = vp * model;
+	_lightMVP = vp * model;
 	
 	// Select the program (and shaders).
 	glUseProgram(_programDepthId);
 	
 	// Upload the MVP matrix.
 	GLuint mvpID  = glGetUniformLocation(_programDepthId, "mvp");
-	glUniformMatrix4fv(mvpID, 1, GL_FALSE, &MVP[0][0]);
+	glUniformMatrix4fv(mvpID, 1, GL_FALSE, &_lightMVP[0][0]);
 	
 	// Select the geometry.
 	glBindVertexArray(_vao);

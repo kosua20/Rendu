@@ -11,12 +11,15 @@ layout(location = 4) in vec3 binor;
 uniform mat4 mvp;
 uniform mat4 mv;
 uniform mat3 normalMatrix;
+uniform mat4 lightMVP;
 
 // Output: tangent space matrix, position in view space and uv.
 out INTERFACE {
     mat3 tbn;
 	vec3 position; 
 	vec2 uv;
+	vec3 lightSpacePosition;
+	vec3 modelPosition;
 } Out ;
 
 
@@ -33,5 +36,10 @@ void main(){
 	vec3 B = normalize(normalMatrix * binor);
 	vec3 N = normalize(normalMatrix * n);
 	Out.tbn = mat3(T, B, N);
+	
+	// Compute position in light space
+	Out.lightSpacePosition = 0.5*(lightMVP * vec4(v,1.0)).xyz + 0.5;
+	
+	Out.modelPosition = v;
 	
 }

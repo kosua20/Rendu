@@ -74,8 +74,8 @@ void Renderer::init(int width, int height){
 	glBindBuffer(GL_UNIFORM_BUFFER,0);
 	
 	// Initialize objects.
-	_suzanne.init();
-	_dragon.init();
+	_suzanne.init(_framebuffer.textureId());
+	_dragon.init(_framebuffer.textureId());
 	_plane.init(_framebuffer.textureId());
 	_skybox.init();
 	checkGLError();
