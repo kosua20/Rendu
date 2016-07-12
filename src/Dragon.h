@@ -15,7 +15,7 @@ public:
 	~Dragon();
 
 	/// Init function
-	void init();
+	void init(GLuint shadowMapTextureId);
 
 	/// Draw function
 	void draw(float elapsed, const glm::mat4& view, const glm::mat4& projection, const size_t pingpong);
@@ -37,12 +37,14 @@ private:
 	GLuint _texNormal;
 	GLuint _texEffects;
 	GLuint _lightUniformId;
+	GLuint _shadowMapId;
 	
 	size_t _count;
 	
-	
 	GLuint _texCubeMap;
 	GLuint _texCubeMapSmall;
+	
+	glm::mat4 _lightMVP;
 };
 
 #endif

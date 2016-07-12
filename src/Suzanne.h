@@ -15,7 +15,7 @@ public:
 	~Suzanne();
 
 	/// Init function
-	void init();
+	void init(GLuint shadowMapTextureId);
 
 	/// Draw function
 	void draw(float elapsed, const glm::mat4& view, const glm::mat4& projection, const size_t pingpong);
@@ -39,11 +39,13 @@ private:
 	GLuint _texCubeMap;
 	GLuint _texCubeMapSmall;
 	GLuint _lightUniformId;
+	GLuint _shadowMapId;
 	
 	size_t _count;
 	
 	double _time;
 	
+	glm::mat4 _lightMVP;
 	
 };
 
