@@ -13,7 +13,7 @@ public:
 	~Plane();
 
 	/// Init function
-	void init();
+	void init(GLuint shadowMapTextureId);
 
 	/// Draw function
 	void draw(float elapsed, const glm::mat4& view, const glm::mat4& projection, const size_t pingpong);
@@ -32,8 +32,11 @@ private:
 	GLuint _vao;
 	GLuint _ebo;
 	GLuint _lightUniformId;
+	GLuint _shadowMapId;
 	
 	size_t _count;
+	
+	glm::mat4 _lightMVP;
 
 };
 

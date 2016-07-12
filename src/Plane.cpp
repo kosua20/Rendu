@@ -12,7 +12,7 @@ Plane::Plane(){}
 
 Plane::~Plane(){}
 
-void Plane::init(){
+void Plane::init(GLuint shadowMapTextureId){
 	
 	// Load the shaders
 	_programDepthId = createGLProgram("ressources/shaders/plane_depth.vert","ressources/shaders/plane_depth.frag");
@@ -73,6 +73,12 @@ void Plane::init(){
 	// Get a binding point for the light in Uniform buffer.
 	_lightUniformId = glGetUniformBlockIndex(_programId, "Light");
 	
+	// Load the shadowMap texture
+	_shadowMapId = shadowMapTextureId;
+	glBindTexture(GL_TEXTURE_2D, _shadowMapId);
+	GLuint texUniID = glGetUniformLocation(_programId, "shadowMap");
+	glUniform1i(texUniID, 0);
+	
 	checkGLError();
 	
 }
@@ -103,7 +109,14 @@ void Plane::draw(float elapsed, const glm::mat4& view, const glm::mat4& projecti
 	// Upload the normal matrix.
 	GLuint normalMatrixID  = glGetUniformLocation(_programId, "normalMatrix");
 	glUniformMatrix3fv(normalMatrixID, 1, GL_FALSE, &normalMatrix[0][0]);
-
+	
+	// Upload the light MVP matrix.
+	GLuint lmvpID  = glGetUniformLocation(_programId, "lightMVP");
+	glUniformMatrix4fv(lmvpID, 1, GL_FALSE, &_lightMVP[0][0]);
+	
+	// Bind the shadowMap texture.
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, _shadowMapId);
 	
 	// Select the geometry.
 	glBindVertexArray(_vao);
@@ -118,13 +131,13 @@ void Plane::draw(float elapsed, const glm::mat4& view, const glm::mat4& projecti
 void Plane::drawDepth(float elapsed, const glm::mat4& vp){
 	
 	glm::mat4 model = glm::scale(glm::translate(glm::mat4(1.0f),glm::vec3(0.0f,-0.35f,-0.5f)), glm::vec3(2.0f));
-	glm::mat4 MVP = vp * model;
+	_lightMVP = vp * model;
 	
 	glUseProgram(_programDepthId);
 	
 	// Upload the MVP matrix.
 	GLuint mvpID  = glGetUniformLocation(_programDepthId, "mvp");
-	glUniformMatrix4fv(mvpID, 1, GL_FALSE, &MVP[0][0]);
+	glUniformMatrix4fv(mvpID, 1, GL_FALSE, &_lightMVP[0][0]);
 	
 	// Select the geometry.
 	glBindVertexArray(_vao);
@@ -134,6 +147,8 @@ void Plane::drawDepth(float elapsed, const glm::mat4& vp){
 	
 	glBindVertexArray(0);
 	glUseProgram(0);
+	
+	
 }
 
 
