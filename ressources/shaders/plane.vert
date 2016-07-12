@@ -8,11 +8,13 @@ layout(location = 1) in vec3 n;
 uniform mat4 mvp;
 uniform mat4 mv;
 uniform mat3 normalMatrix;
+uniform mat4 lightMVP;
 
-// Output: tangent space matrix, position in view space and uv.
+// Output: position in view space, normal in view space and position in light space.
 out INTERFACE {
 	vec3 position;
 	vec3 normal;
+	vec3 lightSpacePosition;
 } Out ;
 
 
@@ -23,5 +25,8 @@ void main(){
 	Out.position = (mv * vec4(v,1.0)).xyz;
 
 	Out.normal = normalize(normalMatrix * n);
+	
+	Out.lightSpacePosition = 0.5*(lightMVP * vec4(v,1.0)).xyz + 0.5;
+	
 	
 }
