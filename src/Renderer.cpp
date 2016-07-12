@@ -116,7 +116,6 @@ void Renderer::draw(){
 	
 	// Draw the scene inside the framebuffer.
 	_framebuffer.bind();
-	
 	glViewport(0, 0, _framebuffer._width, _framebuffer._height);
 	// Set the clear color to white.
 	glClearColor(1.0f,1.0f,1.0f,0.0f);

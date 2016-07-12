@@ -48,9 +48,12 @@ void main(){
 	
 	// Shadows
 	float shadow = 0.0;
-	float depthLight = texture(shadowMap,In.lightSpacePosition.xy).r;
-	if(In.lightSpacePosition.z - depthLight > 0.0){
-		shadow = 1.0;
+	float bias = 0.005;
+	if(In.lightSpacePosition.z < 1.0){
+		float depthLight = texture(shadowMap,In.lightSpacePosition.xy).r;
+		if(In.lightSpacePosition.z - depthLight > bias){
+			shadow = 1.0;
+		}
 	}
 	
 	fragColor = ambient * light.Ia.rgb + (1.0-shadow)*lightShading;
