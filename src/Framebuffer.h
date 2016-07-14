@@ -22,7 +22,7 @@ public:
 	void unbind();
 	
 	/// Setup the framebuffer (attachments, renderbuffer, depth buffer, textures IDs,...)
-	void setup();
+	void setup(GLuint type, GLuint filtering, GLuint wrapping);
 	
 	/// Resize the framebuffer.
 	void resize(int width, int height);
