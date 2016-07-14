@@ -21,8 +21,8 @@ void Renderer::init(int width, int height){
 	_camera.screen(width, height);
 	
 	// Setup the framebuffer.
-	_framebuffer = Framebuffer(1024, 1024);
-	_framebuffer.setup();
+	_lightFramebuffer = Framebuffer(1024, 1024);
+	_lightFramebuffer.setup(GL_RGBA,GL_LINEAR,GL_CLAMP_TO_BORDER);
 	
 	// Query the renderer identifier, and the supported OpenGL version.
 	const GLubyte* renderer = glGetString(GL_RENDERER);
@@ -74,9 +74,9 @@ void Renderer::init(int width, int height){
 	glBindBuffer(GL_UNIFORM_BUFFER,0);
 	
 	// Initialize objects.
-	_suzanne.init(_framebuffer.textureId());
-	_dragon.init(_framebuffer.textureId());
-	_plane.init(_framebuffer.textureId());
+	_suzanne.init(_lightFramebuffer.textureId());
+	_dragon.init(_lightFramebuffer.textureId());
+	_plane.init(_lightFramebuffer.textureId());
 	_skybox.init();
 	checkGLError();
 	
@@ -115,8 +115,8 @@ void Renderer::draw(){
 	
 	
 	// Draw the scene inside the framebuffer.
-	_framebuffer.bind();
-	glViewport(0, 0, _framebuffer._width, _framebuffer._height);
+	_lightFramebuffer.bind();
+	glViewport(0, 0, _lightFramebuffer._width, _lightFramebuffer._height);
 	// Set the clear color to white.
 	glClearColor(1.0f,1.0f,1.0f,0.0f);
 	// Clear the color and depth buffers.
@@ -127,7 +127,7 @@ void Renderer::draw(){
 	_plane.drawDepth(elapsed, _mvpLight);
 	
 	// Unbind the framebuffer, we now use the default framebuffer.
-	_framebuffer.unbind();
+	_lightFramebuffer.unbind();
 	// Only the final target should be in the sRGB space.
 	glEnable(GL_FRAMEBUFFER_SRGB);
 	
@@ -165,7 +165,7 @@ void Renderer::clean(){
 	_dragon.clean();
 	_plane.clean();
 	_skybox.clean();
-	_framebuffer.clean();
+	_lightFramebuffer.clean();
 }
 
 

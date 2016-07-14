@@ -73,7 +73,7 @@ private:
 	Dragon _dragon;
 	Skybox _skybox;
 	Plane _plane;
-	Framebuffer _framebuffer;
+	Framebuffer _lightFramebuffer;
 	
 	size_t _pingpong;
 	GLuint _padding;
