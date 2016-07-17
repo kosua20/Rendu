@@ -217,5 +217,16 @@ void main(){
 	// Pick the biggest of the two offsets.
 	finalOffset = max(finalOffset,subPixelOffsetFinal);
 	
-	fragColor = vec3(finalOffset*100.0,0.0,0.0);
+	// Compute the final UV coordinates.
+	vec2 finalUv = In.uv;
+	if(isHorizontal){
+		finalUv.y += finalOffset * stepLength;
+	} else {
+		finalUv.x += finalOffset * stepLength;
+	}
+	
+	// Read the color at the new UV coordinates, and use it.
+	vec3 finalColor = texture(screenTexture,finalUv).rgb;
+	fragColor = finalColor;
+	
 }
