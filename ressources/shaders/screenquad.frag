@@ -13,6 +13,10 @@ uniform bool useFXAA;
 // Output: the fragment color
 out vec3 fragColor;
 
+// Return the luma value in perceptual space for a given RGB color in linear space.
+float rgb2luma(vec3 rgb){
+	return sqrt(dot(rgb, vec3(0.299, 0.587, 0.114)));
+}
 
 void main(){
 	
@@ -30,5 +34,9 @@ void main(){
 		return;
 	}
 	
-	fragColor = colorCenter;
+	// Luma at the current fragment
+	float lumaCenter = rgb2luma(colorCenter);
+
+	fragColor = vec3(lumaCenter);
+	
 }
