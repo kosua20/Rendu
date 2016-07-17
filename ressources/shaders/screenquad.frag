@@ -15,6 +15,7 @@ uniform bool useFXAA;
 #define EDGE_THRESHOLD_MAX 0.125
 #define QUALITY(q) ((q) < 5 ? 1.0 : ((q) > 5 ? ((q) < 10 ? 2.0 : ((q) < 11 ? 4.0 : 8.0)) : 1.5))
 #define ITERATIONS 12
+#define SUBPIXEL_QUALITY 0.75
 
 // Output: the fragment color
 out vec3 fragColor;
@@ -203,5 +204,18 @@ void main(){
 	
 	// If the luma variation is incorrect, do not offset.
 	float finalOffset = correctVariation ? pixelOffset : 0.0;
-	fragColor = vec3(finalOffset*100.0);
+	
+	// Sub-pixel shifting
+	// Full weighted average of the luma over the 3x3 neighborhood.
+	float lumaAverage = (1.0/12.0) * (2.0 * (lumaDownUp + lumaLeftRight) + lumaLeftCorners + lumaRightCorners);
+	// Ratio of the delta between the global average and the center luma, over the luma range in the 3x3 neighborhood.
+	float subPixelOffset1 = clamp(abs(lumaAverage - lumaCenter)/lumaRange,0.0,1.0);
+	float subPixelOffset2 = (-2.0 * subPixelOffset1 + 3.0) * subPixelOffset1 * subPixelOffset1;
+	// Compute a sub-pixel offset based on this delta.
+	float subPixelOffsetFinal = subPixelOffset2 * subPixelOffset2 * SUBPIXEL_QUALITY;
+	
+	// Pick the biggest of the two offsets.
+	finalOffset = max(finalOffset,subPixelOffsetFinal);
+	
+	fragColor = vec3(finalOffset*100.0,0.0,0.0);
 }
