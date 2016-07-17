@@ -13,6 +13,7 @@ uniform bool useFXAA;
 // Settings for FXAA.
 #define EDGE_THRESHOLD_MIN 0.0312
 #define EDGE_THRESHOLD_MAX 0.125
+#define QUALITY(q) ((q) < 5 ? 1.0 : ((q) > 5 ? ((q) < 10 ? 2.0 : ((q) < 11 ? 4.0 : 8.0)) : 1.5))
 
 // Output: the fragment color
 out vec3 fragColor;
@@ -117,5 +118,30 @@ void main(){
 		currentUv.x += stepLength * 0.5;
 	}
 	
-	fragColor = vec3(10000.0*(currentUv - In.uv), 1.0);
+	// Compute offset (for each iteration step) in the right direction.
+	vec2 offset = isHorizontal ? vec2(inverseScreenSize.x,0.0) : vec2(0.0,inverseScreenSize.y);
+	// Compute UVs to explore on each side of the edge, orthogonally. The QUALITY allows us to step faster.
+	vec2 uv1 = currentUv - offset * QUALITY(0);
+	vec2 uv2 = currentUv + offset * QUALITY(0);
+	
+	// Read the lumas at both current extremities of the exploration segment, and compute the delta wrt to the local average luma.
+	float lumaEnd1 = rgb2luma(texture(screenTexture,uv1).rgb);
+	float lumaEnd2 = rgb2luma(texture(screenTexture,uv2).rgb);
+	lumaEnd1 -= lumaLocalAverage;
+	lumaEnd2 -= lumaLocalAverage;
+	
+	// If the luma deltas at the current extremities is larger than the local gradient, we have reached the side of the edge.
+	bool reached1 = abs(lumaEnd1) >= gradientScaled;
+	bool reached2 = abs(lumaEnd2) >= gradientScaled;
+	bool reachedBoth = reached1 && reached2;
+	
+	// If the side is not reached, we continue to explore in this direction.
+	if(!reached1){
+		uv1 -= offset * QUALITY(1);
+	}
+	if(!reached2){
+		uv2 += offset * QUALITY(1);
+	}
+	
+	fragColor = isHorizontal ? vec3(uv1.x,uv2.x,0.0) : vec3(uv1.y, uv2.y,0.0);
 }
