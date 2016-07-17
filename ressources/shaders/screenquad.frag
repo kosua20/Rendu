@@ -96,5 +96,26 @@ void main(){
 	// Which direction is the steepest ?
 	bool is1Steepest = abs(gradient1) >= abs(gradient2);
 	
-	fragColor = is1Steepest ? vec3(0.0,1.0,0.0) : vec3(0.0,0.0,1.0);
+	// Gradient in the corresponding direction, normalized.
+	float gradientScaled = 0.25*max(abs(gradient1),abs(gradient2));
+	
+	// Average luma in the correct direction.
+	float lumaLocalAverage = 0.0;
+	if(is1Steepest){
+		// Switch the direction
+		stepLength = - stepLength;
+		lumaLocalAverage = 0.5*(luma1 + lumaCenter);
+	} else {
+		lumaLocalAverage = 0.5*(luma2 + lumaCenter);
+	}
+	
+	// Shift UV in the correct direction by half a pixel.
+	vec2 currentUv = In.uv;
+	if(isHorizontal){
+		currentUv.y += stepLength * 0.5;
+	} else {
+		currentUv.x += stepLength * 0.5;
+	}
+	
+	fragColor = vec3(10000.0*(currentUv - In.uv), 1.0);
 }
