@@ -60,6 +60,28 @@ void main(){
 		return;
 	}
 	
-	fragColor = vec3(1.0,0.0,0.0);
+	// Query the 4 remaining corners lumas.
+	float lumaDownLeft = rgb2luma(textureOffset(screenTexture,In.uv,ivec2(-1,-1)).rgb);
+	float lumaUpRight = rgb2luma(textureOffset(screenTexture,In.uv,ivec2(1,1)).rgb);
+	float lumaUpLeft = rgb2luma(textureOffset(screenTexture,In.uv,ivec2(-1,1)).rgb);
+	float lumaDownRight = rgb2luma(textureOffset(screenTexture,In.uv,ivec2(1,-1)).rgb);
 	
+	// Combine the four edges lumas (using intermediary variables for future computations with the same values).
+	float lumaDownUp = lumaDown + lumaUp;
+	float lumaLeftRight = lumaLeft + lumaRight;
+	
+	// Same for corners
+	float lumaLeftCorners = lumaDownLeft + lumaUpLeft;
+	float lumaDownCorners = lumaDownLeft + lumaDownRight;
+	float lumaRightCorners = lumaDownRight + lumaUpRight;
+	float lumaUpCorners = lumaUpRight + lumaUpLeft;
+	
+	// Compute an estimation of the gradient along the horizontal and vertical axis.
+	float edgeHorizontal =	abs(-2.0 * lumaLeft + lumaLeftCorners)	+ abs(-2.0 * lumaCenter + lumaDownUp ) * 2.0	+ abs(-2.0 * lumaRight + lumaRightCorners);
+	float edgeVertical =	abs(-2.0 * lumaUp + lumaUpCorners)		+ abs(-2.0 * lumaCenter + lumaLeftRight) * 2.0	+ abs(-2.0 * lumaDown + lumaDownCorners);
+	
+	// Is the local edge horizontal or vertical ?
+	bool isHorizontal = (edgeHorizontal >= edgeVertical);
+	
+	fragColor = isHorizontal ? vec3(1.0,0.5,0.0) : vec3(0.0,0.5,1.0);
 }
