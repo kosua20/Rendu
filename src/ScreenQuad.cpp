@@ -56,17 +56,25 @@ void ScreenQuad::init(GLuint textureId){
 	glUniform1i(texUniID, 0);
 	checkGLError();
 	
+	_useFXAA = false;
+	
 }
 
 
-void ScreenQuad::draw(float time){
+void ScreenQuad::draw(glm::vec2 invScreenSize){
 	
 	// Select the program (and shaders).
 	glUseProgram(_programId);
 	
-	GLuint timeId = glGetUniformLocation(_programId, "time");
-	glUniform1f(timeId, time);
+	// Inverse screen size uniform.
+	GLuint screenId = glGetUniformLocation(_programId, "inverseScreenSize");
+	glUniform2fv(screenId, 1, &(invScreenSize[0]));
 	
+	// FXAA flag.
+	GLuint useId = glGetUniformLocation(_programId, "useFXAA");
+	glUniform1i(useId,_useFXAA);
+	
+	// Active screen texture.
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, _textureId);
 	
@@ -78,6 +86,11 @@ void ScreenQuad::draw(float time){
 	
 	glBindVertexArray(0);
 	glUseProgram(0);
+}
+
+
+void ScreenQuad::switchFXAA(){
+	_useFXAA = !_useFXAA;
 }
 
 

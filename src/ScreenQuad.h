@@ -17,12 +17,13 @@ public:
 	void init(GLuint textureId);
 
 	/// Draw function
-	void draw(float time);
+	void draw(glm::vec2 invScreenSize);
 
 	/// Clean function
 	void clean();
 
-
+	void switchFXAA();
+	
 private:
 	
 	GLuint _programId;
@@ -31,6 +32,7 @@ private:
 	GLuint _textureId;
 	
 	size_t _count;
+	bool _useFXAA;
 
 };
 

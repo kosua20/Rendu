@@ -163,7 +163,7 @@ void Renderer::draw(){
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	// Draw the fullscreen quad
-	_screen.draw(elapsed);
+	_screen.draw( 1.0f / _camera._screenSize);
 	
 	glDisable(GL_FRAMEBUFFER_SRGB);
 	
@@ -203,7 +203,11 @@ void Renderer::resize(int width, int height){
 
 void Renderer::keyPressed(int key, int action){
 	if(action == GLFW_PRESS){
-		_camera.key(key, true);
+		if(key == GLFW_KEY_F){
+			_screen.switchFXAA();
+		} else {
+			_camera.key(key, true);
+		}
 	} else if(action == GLFW_RELEASE) {
 		_camera.key(key, false);
 	}
