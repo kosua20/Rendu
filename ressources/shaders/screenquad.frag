@@ -83,5 +83,18 @@ void main(){
 	// Is the local edge horizontal or vertical ?
 	bool isHorizontal = (edgeHorizontal >= edgeVertical);
 	
-	fragColor = isHorizontal ? vec3(1.0,0.5,0.0) : vec3(0.0,0.5,1.0);
+	// Choose the step size (one pixel) accordingly.
+	float stepLength = isHorizontal ? inverseScreenSize.y : inverseScreenSize.x;
+	
+	// Select the two neighboring texels lumas in the opposite direction to the local edge.
+	float luma1 = isHorizontal ? lumaDown : lumaLeft;
+	float luma2 = isHorizontal ? lumaUp : lumaRight;
+	// Compute gradients in this direction.
+	float gradient1 = luma1 - lumaCenter;
+	float gradient2 = luma2 - lumaCenter;
+	
+	// Which direction is the steepest ?
+	bool is1Steepest = abs(gradient1) >= abs(gradient2);
+	
+	fragColor = is1Steepest ? vec3(0.0,1.0,0.0) : vec3(0.0,0.0,1.0);
 }
