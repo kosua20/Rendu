@@ -177,5 +177,31 @@ void main(){
 		
 	}
 	
-	fragColor = isHorizontal ? vec3(uv1.x,uv2.x,0.0) : vec3(uv1.y, uv2.y,0.0);
+	// Compute the distances to each side edge of the edge (!).
+	float distance1 = isHorizontal ? (In.uv.x - uv1.x) : (In.uv.y - uv1.y);
+	float distance2 = isHorizontal ? (uv2.x - In.uv.x) : (uv2.y - In.uv.y);
+	
+	// In which direction is the side of the edge closer ?
+	bool isDirection1 = distance1 < distance2;
+	float distanceFinal = min(distance1, distance2);
+	
+	// Thickness of the edge.
+	float edgeThickness = (distance1 + distance2);
+	
+	// Is the luma at center smaller than the local average ?
+	bool isLumaCenterSmaller = lumaCenter < lumaLocalAverage;
+	
+	// If the luma at center is smaller than at its neighbour, the delta luma at each end should be positive (same variation).
+	bool correctVariation1 = (lumaEnd1 < 0.0) != isLumaCenterSmaller;
+	bool correctVariation2 = (lumaEnd2 < 0.0) != isLumaCenterSmaller;
+	
+	// Only keep the result in the direction of the closer side of the edge.
+	bool correctVariation = isDirection1 ? correctVariation1 : correctVariation2;
+	
+	// UV offset: read in the direction of the closest side of the edge.
+	float pixelOffset = - distanceFinal / edgeThickness + 0.5;
+	
+	// If the luma variation is incorrect, do not offset.
+	float finalOffset = correctVariation ? pixelOffset : 0.0;
+	fragColor = vec3(finalOffset*100.0);
 }
