@@ -14,6 +14,7 @@ uniform bool useFXAA;
 #define EDGE_THRESHOLD_MIN 0.0312
 #define EDGE_THRESHOLD_MAX 0.125
 #define QUALITY(q) ((q) < 5 ? 1.0 : ((q) > 5 ? ((q) < 10 ? 2.0 : ((q) < 11 ? 4.0 : 8.0)) : 1.5))
+#define ITERATIONS 12
 
 // Output: the fragment color
 out vec3 fragColor;
@@ -141,6 +142,39 @@ void main(){
 	}
 	if(!reached2){
 		uv2 += offset * QUALITY(1);
+	}
+	
+	// If both sides have not been reached, continue to explore.
+	if(!reachedBoth){
+		
+		for(int i = 2; i < ITERATIONS; i++){
+			// If needed, read luma in 1st direction, compute delta.
+			if(!reached1){
+				lumaEnd1 = rgb2luma(texture(screenTexture, uv1).rgb);
+				lumaEnd1 = lumaEnd1 - lumaLocalAverage;
+			}
+			// If needed, read luma in opposite direction, compute delta.
+			if(!reached2){
+				lumaEnd2 = rgb2luma(texture(screenTexture, uv2).rgb);
+				lumaEnd2 = lumaEnd2 - lumaLocalAverage;
+			}
+			// If the luma deltas at the current extremities is larger than the local gradient, we have reached the side of the edge.
+			reached1 = abs(lumaEnd1) >= gradientScaled;
+			reached2 = abs(lumaEnd2) >= gradientScaled;
+			reachedBoth = reached1 && reached2;
+			
+			// If the side is not reached, we continue to explore in this direction, with a variable quality.
+			if(!reached1){
+				uv1 -= offset * QUALITY(i);
+			}
+			if(!reached2){
+				uv2 += offset * QUALITY(i);
+			}
+			
+			// If both sides have been reached, stop the exploration.
+			if(reachedBoth){ break;}
+		}
+		
 	}
 	
 	fragColor = isHorizontal ? vec3(uv1.x,uv2.x,0.0) : vec3(uv1.y, uv2.y,0.0);
