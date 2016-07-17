@@ -23,7 +23,8 @@ void Renderer::init(int width, int height){
 	// Setup the framebuffer.
 	_lightFramebuffer = Framebuffer(1024, 1024);
 	_lightFramebuffer.setup(GL_RGBA,GL_LINEAR,GL_CLAMP_TO_BORDER);
-	
+	_sceneFramebuffer = Framebuffer(width,height);
+	_sceneFramebuffer.setup(GL_RGBA,GL_LINEAR,GL_CLAMP_TO_EDGE);
 	// Query the renderer identifier, and the supported OpenGL version.
 	const GLubyte* renderer = glGetString(GL_RENDERER);
 	const GLubyte* version = glGetString(GL_VERSION);
@@ -78,6 +79,7 @@ void Renderer::init(int width, int height){
 	_dragon.init(_lightFramebuffer.textureId());
 	_plane.init(_lightFramebuffer.textureId());
 	_skybox.init();
+	_screen.init(_sceneFramebuffer.textureId());
 	checkGLError();
 	
 	// The light is fixed: compute the light MVP matrix once.
@@ -126,13 +128,15 @@ void Renderer::draw(){
 	_dragon.drawDepth(elapsed, _mvpLight);
 	_plane.drawDepth(elapsed, _mvpLight);
 	
-	// Unbind the framebuffer, we now use the default framebuffer.
+	// Unbind the shadow map framebuffer.
 	_lightFramebuffer.unbind();
-	// Only the final target should be in the sRGB space.
-	glEnable(GL_FRAMEBUFFER_SRGB);
 	
-	// Set final viewport
-	glViewport(0,0,_camera._screenSize[0],_camera._screenSize[1]);
+	
+	// Bind the full scene framebuffer.
+	_sceneFramebuffer.bind();
+	
+	// Set screen viewport
+	glViewport(0,0,_sceneFramebuffer._width,_sceneFramebuffer._height);
 	// Set the clear color to black.
 	glClearColor(0.0f,0.0f,0.0f,0.0f);
 	// Clear the color and depth buffers.
@@ -143,6 +147,23 @@ void Renderer::draw(){
 	_dragon.draw(elapsed, _camera._view, _camera._projection, _pingpong);
 	_plane.draw(elapsed, _camera._view, _camera._projection, _pingpong);
 	_skybox.draw(elapsed, _camera._view, _camera._projection);
+	
+	
+	// Unbind the full scene framebuffer.
+	_sceneFramebuffer.unbind();
+	
+	// We now render a full screen quad in the default framebuffer, using sRGB space.
+	glEnable(GL_FRAMEBUFFER_SRGB);
+	
+	// Set screen viewport.
+	glViewport(0,0,_camera._screenSize[0],_camera._screenSize[1]);
+	// Set the clear color to black.
+	glClearColor(0.0f,0.0f,0.0f,0.0f);
+	// Clear the color and depth buffers.
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
+	// Draw the fullscreen quad
+	_screen.draw(elapsed);
 	
 	glDisable(GL_FRAMEBUFFER_SRGB);
 	
@@ -165,7 +186,9 @@ void Renderer::clean(){
 	_dragon.clean();
 	_plane.clean();
 	_skybox.clean();
+	_screen.clean();
 	_lightFramebuffer.clean();
+	_sceneFramebuffer.clean();
 }
 
 
@@ -175,7 +198,7 @@ void Renderer::resize(int width, int height){
 	// Update the projection matrix.
 	_camera.screen(width, height);
 	// Resize the framebuffer.
-	//_framebuffer.resize(width, height);
+	_sceneFramebuffer.resize(width, height);
 }
 
 void Renderer::keyPressed(int key, int action){

@@ -10,6 +10,7 @@
 #include "Skybox.h"
 #include "Dragon.h"
 #include "Plane.h"
+#include "ScreenQuad.h"
 
 struct Light
 {
@@ -74,7 +75,8 @@ private:
 	Skybox _skybox;
 	Plane _plane;
 	Framebuffer _lightFramebuffer;
-	
+	Framebuffer _sceneFramebuffer;
+	ScreenQuad _screen;
 	size_t _pingpong;
 	GLuint _padding;
 	
