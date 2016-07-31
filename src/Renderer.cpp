@@ -120,13 +120,17 @@ void Renderer::draw(){
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 	
 	
+	// --- Light pass -------
+	
 	// Draw the scene inside the framebuffer.
 	_lightFramebuffer.bind();
 	glViewport(0, 0, _lightFramebuffer._width, _lightFramebuffer._height);
+	
 	// Set the clear color to white.
 	glClearColor(1.0f,1.0f,1.0f,0.0f);
 	// Clear the color and depth buffers.
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
 	// Draw objects.
 	_suzanne.drawDepth(elapsed, _mvpLight);
 	_dragon.drawDepth(elapsed, _mvpLight);
@@ -134,13 +138,15 @@ void Renderer::draw(){
 	
 	// Unbind the shadow map framebuffer.
 	_lightFramebuffer.unbind();
+	// ----------------------
 	
 	
+	// --- Scene pass -------
 	// Bind the full scene framebuffer.
 	_sceneFramebuffer.bind();
-	
 	// Set screen viewport
 	glViewport(0,0,_sceneFramebuffer._width,_sceneFramebuffer._height);
+	
 	// Set the clear color to black.
 	glClearColor(0.0f,0.0f,0.0f,0.0f);
 	// Clear the color and depth buffers.
@@ -152,15 +158,17 @@ void Renderer::draw(){
 	_plane.draw(elapsed, _camera._view, _camera._projection, _pingpong);
 	_skybox.draw(elapsed, _camera._view, _camera._projection);
 	
-	
 	// Unbind the full scene framebuffer.
 	_sceneFramebuffer.unbind();
+	// ----------------------
 	
+	
+	// --- FXAA pass -------
 	// Bind the post-processing framebuffer.
 	_fxaaFramebuffer.bind();
-	
 	// Set screen viewport.
 	glViewport(0,0,_fxaaFramebuffer._width, _fxaaFramebuffer._height);
+	
 	// Set the clear color to black.
 	glClearColor(0.0f,0.0f,0.0f,0.0f);
 	// Clear the color and depth buffers.
@@ -170,13 +178,16 @@ void Renderer::draw(){
 	_fxaaScreen.draw( 1.0f / _camera._renderSize);
 	
 	_fxaaFramebuffer.unbind();
+	// ----------------------
 	
 	
+	// --- Final pass -------
 	// We now render a full screen quad in the default framebuffer, using sRGB space.
 	glEnable(GL_FRAMEBUFFER_SRGB);
 	
 	// Set screen viewport.
 	glViewport(0,0,_camera._screenSize[0],_camera._screenSize[1]);
+	
 	// Set the clear color to black.
 	glClearColor(0.0f,0.0f,0.0f,0.0f);
 	// Clear the color and depth buffers.
@@ -186,6 +197,8 @@ void Renderer::draw(){
 	_finalScreen.draw( 1.0f / _camera._screenSize);
 	
 	glDisable(GL_FRAMEBUFFER_SRGB);
+	// ----------------------
+	
 	
 	// Update timer
 	_timer = glfwGetTime();
