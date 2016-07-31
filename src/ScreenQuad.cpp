@@ -10,10 +10,10 @@ ScreenQuad::ScreenQuad(){}
 
 ScreenQuad::~ScreenQuad(){}
 
-void ScreenQuad::init(GLuint textureId){
+void ScreenQuad::init(GLuint textureId, const std::string & shaderRoot){
 	
 	// Load the shaders
-	_programId = createGLProgram("ressources/shaders/screenquad.vert","ressources/shaders/screenquad.frag");
+	_programId = createGLProgram(shaderRoot + ".vert", shaderRoot + ".frag");
 
 	// Load geometry.
 	std::vector<float> quadVertices{ -1.0, -1.0,  0.0,
@@ -56,7 +56,6 @@ void ScreenQuad::init(GLuint textureId){
 	glUniform1i(texUniID, 0);
 	checkGLError();
 	
-	_useFXAA = false;
 	
 }
 
@@ -69,10 +68,6 @@ void ScreenQuad::draw(glm::vec2 invScreenSize){
 	// Inverse screen size uniform.
 	GLuint screenId = glGetUniformLocation(_programId, "inverseScreenSize");
 	glUniform2fv(screenId, 1, &(invScreenSize[0]));
-	
-	// FXAA flag.
-	GLuint useId = glGetUniformLocation(_programId, "useFXAA");
-	glUniform1i(useId,_useFXAA);
 	
 	// Active screen texture.
 	glActiveTexture(GL_TEXTURE0);
@@ -89,9 +84,7 @@ void ScreenQuad::draw(glm::vec2 invScreenSize){
 }
 
 
-void ScreenQuad::switchFXAA(){
-	_useFXAA = !_useFXAA;
-}
+
 
 
 void ScreenQuad::clean(){

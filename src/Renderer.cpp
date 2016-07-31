@@ -79,7 +79,7 @@ void Renderer::init(int width, int height){
 	_dragon.init(_lightFramebuffer.textureId());
 	_plane.init(_lightFramebuffer.textureId());
 	_skybox.init();
-	_screen.init(_sceneFramebuffer.textureId());
+	_screen.init(_sceneFramebuffer.textureId(), "ressources/shaders/fxaa");
 	checkGLError();
 	
 	// The light is fixed: compute the light MVP matrix once.
@@ -203,11 +203,7 @@ void Renderer::resize(int width, int height){
 
 void Renderer::keyPressed(int key, int action){
 	if(action == GLFW_PRESS){
-		if(key == GLFW_KEY_F){
-			_screen.switchFXAA();
-		} else {
-			_camera.key(key, true);
-		}
+		_camera.key(key, true);
 	} else if(action == GLFW_RELEASE) {
 		_camera.key(key, false);
 	}
