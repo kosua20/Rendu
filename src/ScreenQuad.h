@@ -14,7 +14,7 @@ public:
 	~ScreenQuad();
 
 	/// Init function
-	void init(GLuint textureId);
+	void init(GLuint textureId, const std::string & shaderRoot);
 
 	/// Draw function
 	void draw(glm::vec2 invScreenSize);
@@ -32,7 +32,6 @@ private:
 	GLuint _textureId;
 	
 	size_t _count;
-	bool _useFXAA;
 
 };
 
