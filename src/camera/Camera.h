@@ -40,6 +40,8 @@ public:
 
 	// Screen size
 	glm::vec2 _screenSize;
+	// Size use for render targets.
+	glm::vec2 _renderSize;
 	
 private:
 	

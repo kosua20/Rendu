@@ -27,6 +27,8 @@ public:
 	/// Resize the framebuffer.
 	void resize(int width, int height);
 	
+	void resize(glm::vec2 size);
+	
 	/// Clean.
 	void clean();
 	

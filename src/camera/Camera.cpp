@@ -61,8 +61,9 @@ void Camera::mouse(MouseMode mode, float x, float y){
 void Camera::screen(int width, int height){
 	_screenSize[0] = float(width > 0 ? width : 1);
 	_screenSize[1] = float(height > 0 ? height : 1);
+	_renderSize = _screenSize;
 	// Perspective projection.
-	_projection = glm::perspective(45.0f, _screenSize[0] / _screenSize[1], 0.1f, 100.f);
+	_projection = glm::perspective(45.0f, _renderSize[0] / _renderSize[1], 0.1f, 100.f);
 }
 
 

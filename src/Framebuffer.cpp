@@ -68,6 +68,10 @@ void Framebuffer::resize(int width, int height){
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _width, _height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 }
 
+void Framebuffer::resize(glm::vec2 size){
+	resize(size[0],size[1]);
+}
+
 void Framebuffer::clean(){
 	glDeleteRenderbuffers(1, &_idRenderbuffer);
 	glDeleteTextures(1, &_idColor);

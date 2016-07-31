@@ -23,8 +23,9 @@ void Renderer::init(int width, int height){
 	// Setup the framebuffer.
 	_lightFramebuffer = Framebuffer(1024, 1024);
 	_lightFramebuffer.setup(GL_RGBA,GL_LINEAR,GL_CLAMP_TO_BORDER);
-	_sceneFramebuffer = Framebuffer(width,height);
+	_sceneFramebuffer = Framebuffer(_camera._renderSize[0],_camera._renderSize[1]);
 	_sceneFramebuffer.setup(GL_RGBA,GL_LINEAR,GL_CLAMP_TO_EDGE);
+	
 	// Query the renderer identifier, and the supported OpenGL version.
 	const GLubyte* renderer = glGetString(GL_RENDERER);
 	const GLubyte* version = glGetString(GL_VERSION);
@@ -198,7 +199,7 @@ void Renderer::resize(int width, int height){
 	// Update the projection matrix.
 	_camera.screen(width, height);
 	// Resize the framebuffer.
-	_sceneFramebuffer.resize(width, height);
+	_sceneFramebuffer.resize(_camera._renderSize);
 }
 
 void Renderer::keyPressed(int key, int action){
