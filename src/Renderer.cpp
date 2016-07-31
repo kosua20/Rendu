@@ -147,10 +147,8 @@ void Renderer::draw(){
 	// Set screen viewport
 	glViewport(0,0,_sceneFramebuffer._width,_sceneFramebuffer._height);
 	
-	// Set the clear color to black.
-	glClearColor(0.0f,0.0f,0.0f,0.0f);
-	// Clear the color and depth buffers.
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	// Clear the depth buffer (we know we will draw everywhere, no need to clear color.
+	glClear(GL_DEPTH_BUFFER_BIT);
 	
 	// Draw objects
 	_suzanne.draw(elapsed, _camera._view, _camera._projection, _pingpong);
@@ -162,17 +160,12 @@ void Renderer::draw(){
 	_sceneFramebuffer.unbind();
 	// ----------------------
 	
-	
+	glDisable(GL_DEPTH_TEST);
 	// --- FXAA pass -------
 	// Bind the post-processing framebuffer.
 	_fxaaFramebuffer.bind();
 	// Set screen viewport.
 	glViewport(0,0,_fxaaFramebuffer._width, _fxaaFramebuffer._height);
-	
-	// Set the clear color to black.
-	glClearColor(0.0f,0.0f,0.0f,0.0f);
-	// Clear the color and depth buffers.
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	// Draw the fullscreen quad
 	_fxaaScreen.draw( 1.0f / _camera._renderSize);
@@ -188,17 +181,12 @@ void Renderer::draw(){
 	// Set screen viewport.
 	glViewport(0,0,_camera._screenSize[0],_camera._screenSize[1]);
 	
-	// Set the clear color to black.
-	glClearColor(0.0f,0.0f,0.0f,0.0f);
-	// Clear the color and depth buffers.
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
 	// Draw the fullscreen quad
 	_finalScreen.draw( 1.0f / _camera._screenSize);
 	
 	glDisable(GL_FRAMEBUFFER_SRGB);
 	// ----------------------
-	
+	glEnable(GL_DEPTH_TEST);
 	
 	// Update timer
 	_timer = glfwGetTime();
