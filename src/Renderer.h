@@ -76,7 +76,9 @@ private:
 	Plane _plane;
 	Framebuffer _lightFramebuffer;
 	Framebuffer _sceneFramebuffer;
-	ScreenQuad _screen;
+	Framebuffer _fxaaFramebuffer;
+	ScreenQuad _fxaaScreen;
+	ScreenQuad _finalScreen;
 	size_t _pingpong;
 	GLuint _padding;
 	

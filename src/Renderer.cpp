@@ -25,6 +25,8 @@ void Renderer::init(int width, int height){
 	_lightFramebuffer.setup(GL_RGBA,GL_LINEAR,GL_CLAMP_TO_BORDER);
 	_sceneFramebuffer = Framebuffer(_camera._renderSize[0],_camera._renderSize[1]);
 	_sceneFramebuffer.setup(GL_RGBA,GL_LINEAR,GL_CLAMP_TO_EDGE);
+	_fxaaFramebuffer = Framebuffer(_camera._renderSize[0],_camera._renderSize[1]);
+	_fxaaFramebuffer.setup(GL_RGBA,GL_LINEAR,GL_CLAMP_TO_EDGE);
 	
 	// Query the renderer identifier, and the supported OpenGL version.
 	const GLubyte* renderer = glGetString(GL_RENDERER);
@@ -80,7 +82,8 @@ void Renderer::init(int width, int height){
 	_dragon.init(_lightFramebuffer.textureId());
 	_plane.init(_lightFramebuffer.textureId());
 	_skybox.init();
-	_screen.init(_sceneFramebuffer.textureId(), "ressources/shaders/fxaa");
+	_fxaaScreen.init(_sceneFramebuffer.textureId(), "ressources/shaders/fxaa");
+	_finalScreen.init(_fxaaFramebuffer.textureId(), "ressources/shaders/screenquad");
 	checkGLError();
 	
 	// The light is fixed: compute the light MVP matrix once.
@@ -153,6 +156,22 @@ void Renderer::draw(){
 	// Unbind the full scene framebuffer.
 	_sceneFramebuffer.unbind();
 	
+	// Bind the post-processing framebuffer.
+	_fxaaFramebuffer.bind();
+	
+	// Set screen viewport.
+	glViewport(0,0,_fxaaFramebuffer._width, _fxaaFramebuffer._height);
+	// Set the clear color to black.
+	glClearColor(0.0f,0.0f,0.0f,0.0f);
+	// Clear the color and depth buffers.
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
+	// Draw the fullscreen quad
+	_fxaaScreen.draw( 1.0f / _camera._renderSize);
+	
+	_fxaaFramebuffer.unbind();
+	
+	
 	// We now render a full screen quad in the default framebuffer, using sRGB space.
 	glEnable(GL_FRAMEBUFFER_SRGB);
 	
@@ -164,7 +183,7 @@ void Renderer::draw(){
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	// Draw the fullscreen quad
-	_screen.draw( 1.0f / _camera._screenSize);
+	_finalScreen.draw( 1.0f / _camera._screenSize);
 	
 	glDisable(GL_FRAMEBUFFER_SRGB);
 	
@@ -187,9 +206,11 @@ void Renderer::clean(){
 	_dragon.clean();
 	_plane.clean();
 	_skybox.clean();
-	_screen.clean();
+	_fxaaScreen.clean();
+	_finalScreen.clean();
 	_lightFramebuffer.clean();
 	_sceneFramebuffer.clean();
+	_fxaaFramebuffer.clean();
 }
 
 
@@ -200,6 +221,7 @@ void Renderer::resize(int width, int height){
 	_camera.screen(width, height);
 	// Resize the framebuffer.
 	_sceneFramebuffer.resize(_camera._renderSize);
+	_fxaaFramebuffer.resize(_camera._renderSize);
 }
 
 void Renderer::keyPressed(int key, int action){
