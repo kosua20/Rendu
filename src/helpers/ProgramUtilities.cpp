@@ -191,7 +191,8 @@ GLuint loadTexture(const std::string& path, const GLuint program, const GLuint t
 	glGenTextures(1, &textureId);
 	glBindTexture(GL_TEXTURE_2D, textureId);
 	glTexImage2D(GL_TEXTURE_2D, 0, sRGB ? GL_SRGB8_ALPHA8 : GL_RGBA, imwidth , imheight, 0, GL_RGBA, GL_UNSIGNED_BYTE, &(image[0]));
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 	
 	GLuint texUniID = glGetUniformLocation(program, uniformName.c_str());
@@ -216,7 +217,7 @@ GLuint loadTextureCubeMap(const std::string& pathBase, const GLuint program, con
 	glBindTexture(GL_TEXTURE_CUBE_MAP, textureId);
 	
 	// Texture settings.
-	glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR );
 	glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -237,6 +238,7 @@ GLuint loadTextureCubeMap(const std::string& pathBase, const GLuint program, con
 		
 		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + side, 0, sRGB ? GL_SRGB8_ALPHA8 : GL_RGBA, imwidth, imheight, 0, GL_RGBA, GL_UNSIGNED_BYTE, &(image[0]));
 	}
+	glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 	
 	// Bind the uniform.
 	GLuint texUniID = glGetUniformLocation(program, uniformName.c_str());
