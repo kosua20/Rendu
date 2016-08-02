@@ -31,10 +31,16 @@ private:
 	GLuint _programDepthId;
 	GLuint _vao;
 	GLuint _ebo;
+	GLuint _texColor;
+	GLuint _texNormal;
+	GLuint _texEffects;
 	GLuint _lightUniformId;
 	GLuint _shadowMapId;
 	
 	size_t _count;
+	
+	GLuint _texCubeMap;
+	GLuint _texCubeMapSmall;
 	
 	glm::mat4 _lightMVP;
 
