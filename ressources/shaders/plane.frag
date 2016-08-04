@@ -124,10 +124,23 @@ float shadow(vec3 lightSpacePosition){
 	return 1.0 - shadowMultiplicator;
 }
 
+
+// Compute the new UV coordinates for the parallax mapping effect.
+
+vec2 parallax(vec2 uv, vec3 vTangentDir){
+	
+	return newUV;
+}
+
+
 void main(){
+	// Combien view direction in tangent space.
+	vec3 vTangentDir = normalize(In.tangentSpaceView - In.tangentSpacePosition);
+	// Query UV offset.
+	vec2 parallaxUV = parallax(In.uv, vTangentDir);
 	
 	vec3 ambient;
-	vec3 lightShading = shading(In.uv, light.position.xyz, light.shininess, light.Is.rgb,ambient);
+	vec3 lightShading = shading(parallaxUV, light.position.xyz, light.shininess, light.Is.rgb,ambient);
 	float shadowMultiplicator = shadow(In.lightSpacePosition);
 	
 	// Mix the ambient color (always present) with the light contribution, weighted by the shadow factor.
