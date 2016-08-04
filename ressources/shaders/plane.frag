@@ -155,7 +155,14 @@ vec2 parallax(vec2 uv, vec3 vTangentDir){
 		currentLayer += layerHeight;
 	}
 	
-	return newUV;
+	// Perform interpolation between the current depth layer and the previous one to refine the UV shift.
+	vec2 previousNewUV = newUV + shiftUV;
+	// The local depth is the gap between the current depth and the current depth layer.
+	float currentLocalDepth = currentDepth - currentLayer;
+	float previousLocalDepth = texture(textureEffects,previousNewUV).z - (currentLayer - layerHeight);
+	
+	// Interpolate between the two local depths to obtain the correct UV shift.
+	return mix(newUV,previousNewUV,currentLocalDepth / (currentLocalDepth - previousLocalDepth));
 }
 
 
