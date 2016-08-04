@@ -129,7 +129,10 @@ float shadow(vec3 lightSpacePosition){
 
 vec2 parallax(vec2 uv, vec3 vTangentDir){
 	
-	float layersCount = 24.0;
+	// We can adapt the layer count based on the view direction. If we are straight above the surface, we don't need many layers.
+	const float minimalCount = 8.0;
+	const float maximalCount = 32.0;
+	float layersCount = mix(maximalCount, minimalCount, abs(vTangentDir.z));
 	// Depth will vary between 0 and 1.
 	float layerHeight = 1.0 / layersCount;
 	float currentLayer = 0.0;
