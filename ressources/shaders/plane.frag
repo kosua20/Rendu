@@ -137,12 +137,20 @@ vec2 parallax(vec2 uv, vec3 vTangentDir){
 	float currentDepth = texture(textureEffects, uv).z;
 	
 	// Step vector: in tangent space, we walk on the surface, in the (X,Y) plane.
-	vec2 shift = 0.03 * vTangentDir.xy;
+	vec2 shift = 0.04 * vTangentDir.xy;
 	// This shift corresponds to a UV shift, scaled depending on the height of a layer and the vertical coordinate of the view direction.
 	vec2 shiftUV = shift / vTangentDir.z * layerHeight;
 	vec2 newUV = uv;
 	
-	// Loop ...
+	// While the current layer is above the surface (ie smaller than depth), we march.
+	while (currentLayer < currentDepth) {
+		// We update the UV, going further away from the viewer.
+		newUV -= shiftUV;
+		// Update current depth.
+		currentDepth = texture(textureEffects,newUV).z;
+		// Update current layer.
+		currentLayer += layerHeight;
+	}
 	
 	return newUV;
 }
