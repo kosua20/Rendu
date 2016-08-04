@@ -161,6 +161,10 @@ void main(){
 	vec3 vTangentDir = normalize(In.tangentSpaceView - In.tangentSpacePosition);
 	// Query UV offset.
 	vec2 parallaxUV = parallax(In.uv, vTangentDir);
+	// If UV are outside the texture ([0,1]), we discard the fragment.
+	if(parallaxUV.x > 1.0 || parallaxUV.y  > 1.0 || parallaxUV.x < 0.0 || parallaxUV.y < 0.0){
+		discard;
+	}
 	
 	vec3 ambient;
 	vec3 lightShading = shading(parallaxUV, light.position.xyz, light.shininess, light.Is.rgb,ambient);
