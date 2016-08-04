@@ -7,6 +7,8 @@ in INTERFACE {
 	vec2 uv;
 	vec3 lightSpacePosition;
 	vec3 modelPosition;
+	vec3 tangentSpacePosition;
+	vec3 tangentSpaceView;
 } In ;
 
 // Uniform: the light structure (position in view space)
