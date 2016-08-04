@@ -129,6 +129,21 @@ float shadow(vec3 lightSpacePosition){
 
 vec2 parallax(vec2 uv, vec3 vTangentDir){
 	
+	float layersCount = 24.0;
+	// Depth will vary between 0 and 1.
+	float layerHeight = 1.0 / layersCount;
+	float currentLayer = 0.0;
+	// Initial depth at the given position.
+	float currentDepth = texture(textureEffects, uv).z;
+	
+	// Step vector: in tangent space, we walk on the surface, in the (X,Y) plane.
+	vec2 shift = 0.03 * vTangentDir.xy;
+	// This shift corresponds to a UV shift, scaled depending on the height of a layer and the vertical coordinate of the view direction.
+	vec2 shiftUV = shift / vTangentDir.z * layerHeight;
+	vec2 newUV = uv;
+	
+	// Loop ...
+	
 	return newUV;
 }
 
