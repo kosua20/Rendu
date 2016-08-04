@@ -20,6 +20,8 @@ out INTERFACE {
 	vec2 uv;
 	vec3 lightSpacePosition;
 	vec3 modelPosition;
+	vec3 tangentSpacePosition;
+	vec3 tangentSpaceView;
 } Out ;
 
 
@@ -41,5 +43,9 @@ void main(){
 	Out.lightSpacePosition = 0.5*(lightMVP * vec4(v,1.0)).xyz + 0.5;
 	
 	Out.modelPosition = v;
+	
+	Out.tangentSpacePosition = transpose(Out.tbn) * Out.position;
+	
+	Out.tangentSpaceView = transpose(Out.tbn) * vec3(0.0);
 	
 }
