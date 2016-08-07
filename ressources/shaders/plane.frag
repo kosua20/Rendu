@@ -9,6 +9,7 @@ in INTERFACE {
 	vec3 modelPosition;
 	vec3 tangentSpacePosition;
 	vec3 tangentSpaceView;
+	vec3 tangentSpaceLight;
 } In ;
 
 // Uniform: the light structure (position in view space)
@@ -167,6 +168,7 @@ vec2 parallax(vec2 uv, vec3 vTangentDir){
 
 
 void main(){
+	
 	// Combien view direction in tangent space.
 	vec3 vTangentDir = normalize(In.tangentSpaceView - In.tangentSpacePosition);
 	// Query UV offset.
@@ -178,6 +180,8 @@ void main(){
 	
 	vec3 ambient;
 	vec3 lightShading = shading(parallaxUV, light.position.xyz, light.shininess, light.Is.rgb,ambient);
+	
+	// Shadow: combine the factor from the shadow map with the factor from the parallax self-shadowing.
 	float shadowMultiplicator = shadow(In.lightSpacePosition);
 	
 	// Mix the ambient color (always present) with the light contribution, weighted by the shadow factor.
