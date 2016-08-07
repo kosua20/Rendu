@@ -56,6 +56,10 @@ const vec2 poissonDisk[16] = vec2[](
 									);
 
 
+#define PARALLAX_MIN 8
+#define PARALLAX_MAX 32
+#define PARALLAX_SCALE 0.04
+
 // Returns a random float in [0,1] based on the input vec4 seed.
 float random(vec4 p){
 	return fract(sin(dot(p, vec4(12.9898,78.233,45.164,94.673))) * 43758.5453);
@@ -131,9 +135,7 @@ float shadow(vec3 lightSpacePosition){
 vec2 parallax(vec2 uv, vec3 vTangentDir){
 	
 	// We can adapt the layer count based on the view direction. If we are straight above the surface, we don't need many layers.
-	const float minimalCount = 8.0;
-	const float maximalCount = 32.0;
-	float layersCount = mix(maximalCount, minimalCount, abs(vTangentDir.z));
+	float layersCount = mix(PARALLAX_MAX, PARALLAX_MIN, abs(vTangentDir.z));
 	// Depth will vary between 0 and 1.
 	float layerHeight = 1.0 / layersCount;
 	float currentLayer = 0.0;
@@ -141,7 +143,7 @@ vec2 parallax(vec2 uv, vec3 vTangentDir){
 	float currentDepth = texture(textureEffects, uv).z;
 	
 	// Step vector: in tangent space, we walk on the surface, in the (X,Y) plane.
-	vec2 shift = 0.04 * vTangentDir.xy;
+	vec2 shift = PARALLAX_SCALE * vTangentDir.xy;
 	// This shift corresponds to a UV shift, scaled depending on the height of a layer and the vertical coordinate of the view direction.
 	vec2 shiftUV = shift / vTangentDir.z * layerHeight;
 	vec2 newUV = uv;
@@ -167,7 +169,30 @@ vec2 parallax(vec2 uv, vec3 vTangentDir){
 }
 
 float parallaxShadow(vec2 uv, vec3 lTangentDir){
-	return 1.0;
+	
+	float shadowMultiplier = 0.0;
+	// Query the depth at the current shifted UV.
+	float initialDepth = texture(textureEffects,uv).z;
+	
+	// Compute the adaptative number of sampling depth layers.
+	float layersCount = mix(PARALLAX_MAX, PARALLAX_MIN, abs(lTangentDir.z));
+	// Depth will vary between 0 and initialDepth, and we want to sample layersCount layers.
+	float layerHeight = initialDepth / layersCount;
+	
+	// We will ray-march in the light direction, starting from the current point.
+	// This shift corresponds to a UV shift, scaled depending on the height of
+	// a layer and the vertical coordinate of the light direction.
+	vec2 shiftUV = PARALLAX_SCALE * lTangentDir.xy / lTangentDir.z / layersCount;
+	
+	// Slightly bias the initial depth layer.
+	float currentLayer = initialDepth - 0.1*layerHeight;
+	float currentDepth = initialDepth;
+	vec2 newUV = uv;
+	float stepCount = 0.0;
+	
+	
+	// Return the reversed factor, where 1 = no shadow and 0 = max shadow.
+	return 1.0 - shadowMultiplier;
 }
 
 
