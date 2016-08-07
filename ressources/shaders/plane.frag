@@ -166,6 +166,10 @@ vec2 parallax(vec2 uv, vec3 vTangentDir){
 	return mix(newUV,previousNewUV,currentLocalDepth / (currentLocalDepth - previousLocalDepth));
 }
 
+float parallaxShadow(vec2 uv, vec3 lTangentDir){
+	return 1.0;
+}
+
 
 void main(){
 	
@@ -181,8 +185,13 @@ void main(){
 	vec3 ambient;
 	vec3 lightShading = shading(parallaxUV, light.position.xyz, light.shininess, light.Is.rgb,ambient);
 	
-	// Shadow: combine the factor from the shadow map with the factor from the parallax self-shadowing.
+	// Compute parallax self-shadowing factor.
+	vec3 lTangentDir = normalize(In.tangentSpaceLight - In.tangentSpacePosition);
+	float shadowParallax = parallaxShadow(parallaxUV, lTangentDir);
+	
+	// Shadow: combine the factor from the parallax self-shadowing with the factor from the shadow map.
 	float shadowMultiplicator = shadow(In.lightSpacePosition);
+	shadowMultiplicator *= shadowParallax;
 	
 	// Mix the ambient color (always present) with the light contribution, weighted by the shadow factor.
 	fragColor = ambient * light.Ia.rgb + shadowMultiplicator * lightShading;
