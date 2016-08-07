@@ -190,6 +190,27 @@ float parallaxShadow(vec2 uv, vec3 lTangentDir){
 	vec2 newUV = uv;
 	float stepCount = 0.0;
 	
+	// While the depth is above 0.0, iterate and march along the light direction.
+	while (currentLayer > 0.0  ) {
+		
+		// If we are below the surface
+		if(currentDepth < currentLayer){
+			// Increase the shadow factor:
+			//	- the bigger the depth gap between the current sampling layer and the surface, the darker the shadow.
+			//		-> (currentLayer - currentDepth)
+			//	- the samples close to the starting point weight more than the further ones.
+			//		-> (1.0 - stepCount/layersCount)
+			shadowMultiplier += (currentLayer - currentDepth) * (1.0 - stepCount/layersCount);
+		}
+		// Increase the iteration count.
+		stepCount += 1.0;
+		// We update the UV, going further away from the viewer.
+		newUV += shiftUV;
+		// Update current depth.
+		currentDepth = texture(textureEffects,newUV).z;
+		// Update current layer.
+		currentLayer -= layerHeight;
+	}
 	
 	// Return the reversed factor, where 1 = no shadow and 0 = max shadow.
 	return 1.0 - shadowMultiplier;
