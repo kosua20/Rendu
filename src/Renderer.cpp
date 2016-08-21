@@ -83,7 +83,7 @@ void Renderer::init(int width, int height){
 	_plane.init(_lightFramebuffer.textureId());
 	_skybox.init();
 	_fxaaScreen.init(_sceneFramebuffer.textureId(), "ressources/shaders/fxaa");
-	_finalScreen.init(_fxaaFramebuffer.textureId(), "ressources/shaders/screenquad");
+	_finalScreen.init(_fxaaFramebuffer.textureId(), "ressources/shaders/final_screenquad");
 	checkGLError();
 	
 	// The light is fixed: compute the light MVP matrix once.
