@@ -21,9 +21,9 @@ void Renderer::init(int width, int height){
 	_camera.screen(width, height);
 	
 	// Setup the framebuffer.
-	_lightFramebuffer = Framebuffer(1024, 1024);
+	_lightFramebuffer = Framebuffer(512, 512);
 	_lightFramebuffer.setup(GL_RG,GL_FLOAT,GL_LINEAR,GL_CLAMP_TO_BORDER);
-	_blurFramebuffer = Framebuffer(1024, 1024);
+	_blurFramebuffer = Framebuffer(_lightFramebuffer._width, _lightFramebuffer._height);
 	_blurFramebuffer.setup(GL_RG,GL_FLOAT,GL_LINEAR,GL_CLAMP_TO_BORDER);
 	
 	_sceneFramebuffer = Framebuffer(_camera._renderSize[0],_camera._renderSize[1]);
