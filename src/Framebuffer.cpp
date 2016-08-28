@@ -18,7 +18,7 @@ void Framebuffer::unbind(){
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void Framebuffer::setup(GLuint type, GLuint filtering, GLuint wrapping){
+void Framebuffer::setup(GLuint format, GLuint type, GLuint filtering, GLuint wrapping){
 	// Create a framebuffer.
 	glGenFramebuffers(1, &_id);
 	glBindFramebuffer(GL_FRAMEBUFFER, _id);
@@ -26,7 +26,7 @@ void Framebuffer::setup(GLuint type, GLuint filtering, GLuint wrapping){
 	// Create the texture to store the result.
 	glGenTextures(1, &_idColor);
 	glBindTexture(GL_TEXTURE_2D, _idColor);
-	glTexImage2D(GL_TEXTURE_2D, 0, type, _width , _height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, format, _width , _height, 0, format, type, 0);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filtering);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filtering);
 	
