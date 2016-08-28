@@ -68,7 +68,8 @@ void main(){
 	vec3 effects = texture(textureEffects,In.uv).rgb;
 
 	// Compute the direction from the point to the light
-	vec3 d = normalize(light.position.xyz - In.position);
+	// light.position.w == 0 if the light is directional, 1 else.
+	vec3 d = normalize(light.position.xyz - light.position.w * In.position);
 
 	vec3 diffuseColor = texture(textureColor, In.uv).rgb;
 	

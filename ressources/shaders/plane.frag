@@ -75,7 +75,8 @@ vec3 shading(vec2 uv, vec3 lightPosition, float lightShininess, vec3 lightColor,
 	n = normalize(In.tbn * n);
 	
 	// Compute the direction from the point to the light
-	vec3 d = normalize(lightPosition - In.position);
+	// light.position.w == 0 if the light is directional, 1 else.
+	vec3 d = normalize(lightPosition - light.position.w * In.position);
 	
 	vec3 diffuseColor = texture(textureColor, uv).rgb;
 	
@@ -232,7 +233,8 @@ void main(){
 	vec3 lightShading = shading(parallaxUV, light.position.xyz, light.shininess, light.Is.rgb,ambient);
 	
 	// Compute parallax self-shadowing factor.
-	vec3 lTangentDir = normalize(In.tangentSpaceLight - In.tangentSpacePosition);
+	// The light direction is computed, light.position.w == 0 if the light is directional, 1 else.
+	vec3 lTangentDir = normalize(In.tangentSpaceLight - light.position.w * In.tangentSpacePosition);
 	float shadowParallax = parallaxShadow(parallaxUV, lTangentDir);
 	
 	// Shadow: combine the factor from the parallax self-shadowing with the factor from the shadow map.
