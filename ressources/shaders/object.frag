@@ -108,19 +108,10 @@ void main(){
 	
 	// If the depth at the current fragment is too high, we are necessarily out of the light frustum, no shadow. Else:
 	if(In.lightSpacePosition.z < 1.0){
-		// PCF sampling: draw eight samples at random around the current position in the shadow map.
-		for (int i=0;i<8;i++){
-			// Draw a random float in [0,1], based on the position of the fragment in world space, scaled and floored to avoid repetitions, and on the current sample index.
-			float randomValue = random(vec4(floor(In.modelPosition*7500.0), i));
-			// Compute a [0-15] index using this random float.
-			int randomIndex = int(16.0*randomValue)%16;
-			// Compute the shifted position using the poisson disk reference vectors.
-			vec2 shiftedPosition = In.lightSpacePosition.xy + poissonDisk[randomIndex]/500.0;
-			// Query the corresponding depth in the shadow map.
-			float depthLight = texture(shadowMap, shiftedPosition).r;
-			// If the fragment is in the shadow, increment the shadow value.
-			shadow += (In.lightSpacePosition.z - depthLight  > bias) ? 0.125 : 0;
-		}
+		// Query the corresponding depth in the shadow map.
+		float depthLight = texture(shadowMap, In.lightSpacePosition.xy).r;
+		// If the fragment is in the shadow, increment the shadow value.
+		shadow += (In.lightSpacePosition.z - depthLight  > bias) ? 1.0 : 0.0;
 	}
 	
 	// Mix the ambient color (always present) with the light contribution, weighted by the shadow factor.
