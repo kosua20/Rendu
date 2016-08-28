@@ -23,6 +23,9 @@ void Renderer::init(int width, int height){
 	// Setup the framebuffer.
 	_lightFramebuffer = Framebuffer(1024, 1024);
 	_lightFramebuffer.setup(GL_RG,GL_FLOAT,GL_LINEAR,GL_CLAMP_TO_BORDER);
+	_blurFramebuffer = Framebuffer(1024, 1024);
+	_blurFramebuffer.setup(GL_RG,GL_FLOAT,GL_LINEAR,GL_CLAMP_TO_BORDER);
+	
 	_sceneFramebuffer = Framebuffer(_camera._renderSize[0],_camera._renderSize[1]);
 	_sceneFramebuffer.setup(GL_RGBA,GL_UNSIGNED_BYTE,GL_LINEAR,GL_CLAMP_TO_EDGE);
 	_fxaaFramebuffer = Framebuffer(_camera._renderSize[0],_camera._renderSize[1]);
@@ -76,10 +79,11 @@ void Renderer::init(int width, int height){
 	glBindBuffer(GL_UNIFORM_BUFFER,0);
 	
 	// Initialize objects.
-	_suzanne.init(_lightFramebuffer.textureId());
-	_dragon.init(_lightFramebuffer.textureId());
-	_plane.init(_lightFramebuffer.textureId());
+	_suzanne.init(_blurFramebuffer.textureId());
+	_dragon.init(_blurFramebuffer.textureId());
+	_plane.init(_blurFramebuffer.textureId());
 	_skybox.init();
+	_blurScreen.init(_lightFramebuffer.textureId(), "ressources/shaders/boxblur");
 	_fxaaScreen.init(_sceneFramebuffer.textureId(), "ressources/shaders/fxaa");
 	_finalScreen.init(_fxaaFramebuffer.textureId(), "ressources/shaders/final_screenquad");
 	checkGLError();
@@ -134,6 +138,19 @@ void Renderer::draw(){
 	_lightFramebuffer.unbind();
 	// ----------------------
 	
+	// --- Blur pass --------
+	glDisable(GL_DEPTH_TEST);
+	// Bind the post-processing framebuffer.
+	_blurFramebuffer.bind();
+	// Set screen viewport.
+	glViewport(0,0,_blurFramebuffer._width, _blurFramebuffer._height);
+	
+	// Draw the fullscreen quad
+	_blurScreen.draw( 1.0f / _camera._renderSize);
+	
+	_blurFramebuffer.unbind();
+	glEnable(GL_DEPTH_TEST);
+	// ----------------------
 	
 	// --- Scene pass -------
 	// Bind the full scene framebuffer.
@@ -200,9 +217,11 @@ void Renderer::clean(){
 	_dragon.clean();
 	_plane.clean();
 	_skybox.clean();
+	_blurScreen.clean();
 	_fxaaScreen.clean();
 	_finalScreen.clean();
 	_lightFramebuffer.clean();
+	_blurFramebuffer.clean();
 	_sceneFramebuffer.clean();
 	_fxaaFramebuffer.clean();
 }
