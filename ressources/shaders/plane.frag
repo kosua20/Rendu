@@ -106,19 +106,18 @@ vec3 shading(vec2 uv, vec3 lightPosition, float lightShininess, vec3 lightColor,
 // Compute the shadow multiplicator based on shadow map.
 
 float shadow(vec3 lightSpacePosition){
-	// Shadows
-	float shadowMultiplicator = 0.0;
-	float bias = 0.005;
-	
-	// If the depth at the current fragment is too high, we are necessarily out of the light frustum, no shadow. Else:
-	if(lightSpacePosition.z < 1.0){
-		// Query the corresponding depth in the shadow map.
-		float depthLight = texture(shadowMap, lightSpacePosition.xy).r;
-		// If the fragment is in the shadow, increment the shadow value.
-		shadowMultiplicator += (lightSpacePosition.z - depthLight  > bias) ? 1.0 : 0.0;
-	}
-	
-	return 1.0 - shadowMultiplicator;
+	// Read first and second moment from shadow map.
+	vec2 moments = texture(shadowMap, lightSpacePosition.xy).rg;
+	// Initial probability of light.
+	float probability = float(lightSpacePosition.z <= moments.x);
+	// Compute variance.
+	float variance = moments.y - (moments.x * moments.x);
+	variance = max(variance, 0.00001);
+	// Delta of depth.
+	float d = lightSpacePosition.z - moments.x;
+	// Use Chebyshev to estimate bound on probability.
+	float probabilityMax = variance / (variance + d*d);
+	return max(probability, probabilityMax);
 }
 
 
