@@ -22,7 +22,7 @@ void Renderer::init(int width, int height){
 	
 	// Setup the framebuffer.
 	_lightFramebuffer = Framebuffer(1024, 1024);
-	_lightFramebuffer.setup(GL_RED,GL_FLOAT,GL_LINEAR,GL_CLAMP_TO_BORDER);
+	_lightFramebuffer.setup(GL_RG,GL_FLOAT,GL_LINEAR,GL_CLAMP_TO_BORDER);
 	_sceneFramebuffer = Framebuffer(_camera._renderSize[0],_camera._renderSize[1]);
 	_sceneFramebuffer.setup(GL_RGBA,GL_UNSIGNED_BYTE,GL_LINEAR,GL_CLAMP_TO_EDGE);
 	_fxaaFramebuffer = Framebuffer(_camera._renderSize[0],_camera._renderSize[1]);
