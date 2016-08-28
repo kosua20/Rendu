@@ -69,14 +69,15 @@ private:
 	Skybox _skybox;
 	Plane _plane;
 	Framebuffer _lightFramebuffer;
+	Framebuffer _blurFramebuffer;
 	Framebuffer _sceneFramebuffer;
 	Framebuffer _fxaaFramebuffer;
+	ScreenQuad _blurScreen;
 	ScreenQuad _fxaaScreen;
 	ScreenQuad _finalScreen;
 	size_t _pingpong;
 	GLuint _padding;
 	
-	glm::mat4 _mvpLight;
 };
 
 #endif
