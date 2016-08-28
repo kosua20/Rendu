@@ -117,7 +117,10 @@ float shadow(vec3 lightSpacePosition){
 	float d = lightSpacePosition.z - moments.x;
 	// Use Chebyshev to estimate bound on probability.
 	float probabilityMax = variance / (variance + d*d);
-	return max(probability, probabilityMax);
+	probabilityMax = max(probability, probabilityMax);
+	// Limit light bleeding by rescaling and clamping the probability factor.
+	probabilityMax = clamp( (probabilityMax - 0.1) / (1.0 - 0.1), 0.0, 1.0);
+	return probabilityMax;
 }
 
 
