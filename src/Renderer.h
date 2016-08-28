@@ -11,15 +11,9 @@
 #include "Dragon.h"
 #include "Plane.h"
 #include "ScreenQuad.h"
+#include "Light.h"
 
-struct Light
-{
-	glm::vec4 position;
-	glm::vec4 Ia;
-	glm::vec4 Id;
-	glm::vec4 Is;
-	float shininess;
-};
+
 
 struct Material
 {

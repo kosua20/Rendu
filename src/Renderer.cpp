@@ -44,11 +44,9 @@ void Renderer::init(int width, int height){
 	
 	
 	// Setup light
-	_light.position = glm::vec4(0.0f); // position will be updated at each frame
-	_light.shininess = 25.0f;
-	_light.Ia = glm::vec4(0.3f, 0.3f, 0.3f, 0.0f);
-	_light.Id = glm::vec4(0.8f, 0.8f,0.8f, 0.0f);
-	_light.Is = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
+	_light = Light(glm::vec4(0.0f),glm::vec4(0.3f, 0.3f, 0.3f, 0.0f), glm::vec4(0.8f, 0.8f,0.8f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 0.0f), 25.0f, glm::ortho(-0.75f,0.75f,-0.75f,0.75f,2.0f,6.0f));
+	// position will be updated at each frame
+	//glm::perspective(45.0f, 1.0f, 1.0f, 5.f); depending on the type of light, one might prefer to use one or the other matrix.
 	
 	// Generate the buffer.
 	glGenBuffers(1, &_ubo);
@@ -68,12 +66,12 @@ void Renderer::init(int width, int height){
 	// Bind the range allocated to the first version of the light.
 	glBindBufferRange(GL_UNIFORM_BUFFER, 0, _ubo, 0, lightSize);
 	// Submit the data.
-	glBufferSubData(GL_UNIFORM_BUFFER, 0, lightSize, &_light);
+	glBufferSubData(GL_UNIFORM_BUFFER, 0, lightSize, _light.getStruct());
 	
 	// Bind the range allocated to the second version of the light.
 	glBindBufferRange(GL_UNIFORM_BUFFER, 1, _ubo, _padding, lightSize);
 	// Submit the data.
-	glBufferSubData(GL_UNIFORM_BUFFER, _padding, lightSize, &_light);
+	glBufferSubData(GL_UNIFORM_BUFFER, _padding, lightSize, _light.getStruct());
 	
 	glBindBuffer(GL_UNIFORM_BUFFER,0);
 	
@@ -86,11 +84,7 @@ void Renderer::init(int width, int height){
 	_finalScreen.init(_fxaaFramebuffer.textureId(), "ressources/shaders/final_screenquad");
 	checkGLError();
 	
-	// The light is fixed: compute the light MVP matrix once.
-	glm::mat4 viewLight = glm::lookAt(glm::vec3(2.0f,2.0f,2.0f), glm::vec3(0.0f), glm::vec3(0.0f,1.0f,0.0f));
 	
-	glm::mat4 projectionLight = glm::ortho(-0.75f,0.75f,-0.75f,0.75f,0.1f,6.0f);//glm::perspective(45.0f, 1.0f, 1.0f, 5.f); depending on the type of light, one might prefer to use one or the other matrix.
-	_mvpLight = projectionLight * viewLight;
 	
 }
 
@@ -114,7 +108,7 @@ void Renderer::draw(){
 	// a currently used value.
 	GLvoid * ptr = glMapBufferRange(GL_UNIFORM_BUFFER,_pingpong*_padding,sizeof(glm::vec4),GL_MAP_WRITE_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
 	// Copy the light position.
-	std::memcpy(ptr, &(_light.position[0]), sizeof(glm::vec4));
+	std::memcpy(ptr, _light.getStruct(), sizeof(glm::vec4));
 	// Unmap, unbind.
 	glUnmapBuffer(GL_UNIFORM_BUFFER);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
@@ -132,9 +126,9 @@ void Renderer::draw(){
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	// Draw objects.
-	_suzanne.drawDepth(elapsed, _mvpLight);
-	_dragon.drawDepth(elapsed, _mvpLight);
-	_plane.drawDepth(elapsed, _mvpLight);
+	_suzanne.drawDepth(elapsed, _light._mvp);
+	_dragon.drawDepth(elapsed, _light._mvp);
+	_plane.drawDepth(elapsed, _light._mvp);
 	
 	// Unbind the shadow map framebuffer.
 	_lightFramebuffer.unbind();
@@ -196,8 +190,7 @@ void Renderer::draw(){
 
 void Renderer::physics(float elapsedTime){
 	_camera.update(elapsedTime);
-	// Compute the light position in view space.
-	_light.position = _camera._view * glm::vec4(2.0f,2.0f,2.0f,1.0f);
+	_light.update(_timer, _camera._view);
 }
 
 
