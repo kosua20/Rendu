@@ -26,8 +26,15 @@ GLuint createGLProgram(const std::string & vertexPath, const std::string & fragm
 /// Flip an image vertically (line by line).
 void flipImage(std::vector<unsigned char> & image, const int width, const int height);
 
+// Texture loading.
+
+// 2D texture.
+GLuint loadTexture(const std::string& path, bool sRGB);
 
 GLuint loadTexture(const std::string& path, const GLuint program, const GLuint textureSlot, const std::string& uniformName, bool sRGB = false);
+
+// Cubemap texture.
+GLuint loadTextureCubeMap(const std::string& pathBase, bool sRGB);
 
 GLuint loadTextureCubeMap(const std::string& pathBase, const GLuint program, const GLuint textureSlot, const std::string& uniformName, bool sRGB = false);
 
