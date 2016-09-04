@@ -174,7 +174,20 @@ void flipImage(std::vector<unsigned char> & image, const int width, const int he
 }
 
 GLuint loadTexture(const std::string& path, const GLuint program, const GLuint textureSlot, const std::string& uniformName, bool sRGB){
-	// Load and upload the effects map texture.
+	
+	GLuint textureId = loadTexture(path, sRGB);
+	
+	glUseProgram(program);
+	glActiveTexture(GL_TEXTURE0 + textureSlot);
+	GLuint texUniID = glGetUniformLocation(program, uniformName.c_str());
+	glUniform1i(texUniID, textureSlot);
+	
+	return textureId;
+}
+
+GLuint loadTexture(const std::string& path, bool sRGB){
+	
+	// Load and upload the texture.
 	std::vector<unsigned char> image;
 	unsigned imwidth, imheight;
 	unsigned error = lodepng::decode(image, imwidth, imheight, path);
@@ -184,9 +197,6 @@ GLuint loadTexture(const std::string& path, const GLuint program, const GLuint t
 	}
 	
 	flipImage(image,imwidth, imheight);
-	
-	glUseProgram(program);
-	glActiveTexture(GL_TEXTURE0 + textureSlot);
 	GLuint textureId;
 	glGenTextures(1, &textureId);
 	glBindTexture(GL_TEXTURE_2D, textureId);
@@ -195,21 +205,30 @@ GLuint loadTexture(const std::string& path, const GLuint program, const GLuint t
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 	
+	return textureId;
+}
+
+
+GLuint loadTextureCubeMap(const std::string& pathBase, const GLuint program, const GLuint textureSlot, const std::string& uniformName, bool sRGB){
+	
+	GLuint textureId = loadTextureCubeMap(pathBase, sRGB);
+	
+	// Active the slot.
+	glUseProgram(program);
+	glActiveTexture(GL_TEXTURE0 + textureSlot);
+	
+	// Bind the uniform.
 	GLuint texUniID = glGetUniformLocation(program, uniformName.c_str());
 	glUniform1i(texUniID, textureSlot);
 	
 	return textureId;
 }
 
-GLuint loadTextureCubeMap(const std::string& pathBase, const GLuint program, const GLuint textureSlot, const std::string& uniformName, bool sRGB){
+GLuint loadTextureCubeMap(const std::string& pathBase, bool sRGB){
 	
 	std::vector<std::string> names { pathBase + "_r.png", pathBase + "_l.png",
-									 pathBase + "_u.png", pathBase + "_d.png",
-									 pathBase + "_b.png", pathBase + "_f.png"};
-	
-	// Active the slot.
-	glUseProgram(program);
-	glActiveTexture(GL_TEXTURE0 + textureSlot);
+		pathBase + "_u.png", pathBase + "_d.png",
+		pathBase + "_b.png", pathBase + "_f.png"};
 	
 	// Create and bind texture.
 	GLuint textureId;
@@ -222,7 +241,7 @@ GLuint loadTextureCubeMap(const std::string& pathBase, const GLuint program, con
 	glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-
+	
 	std::vector<unsigned char> image;
 	unsigned imwidth, imheight;
 	
@@ -240,12 +259,9 @@ GLuint loadTextureCubeMap(const std::string& pathBase, const GLuint program, con
 	}
 	glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 	
-	// Bind the uniform.
-	GLuint texUniID = glGetUniformLocation(program, uniformName.c_str());
-	glUniform1i(texUniID, textureSlot);
-	
 	return textureId;
 }
+
 
 
 
