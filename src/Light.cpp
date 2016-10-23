@@ -6,7 +6,15 @@
 #include "Light.h"
 
 
-Light::Light() : _lightStruct() { }
+Light::Light() {
+	_local = glm::vec3(0.0f);
+	_type = LightType::Directional;
+	_projectionMatrix = glm::ortho(-0.75f, 0.75f, -0.75f, 0.75f, 2.0f, 6.0f);
+	_viewMatrix = glm::lookAt(_local, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	_mvp = _projectionMatrix * _viewMatrix;
+	_lightStruct = LightInternal(glm::vec4(0.0), glm::vec4(0.3f, 0.3f, 0.3f, 0.0f), glm::vec4(0.8f, 0.8f, 0.8f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 0.0f),25.0f);
+
+}
 
 
 

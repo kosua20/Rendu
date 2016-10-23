@@ -62,7 +62,7 @@ private:
 	
 	Camera _camera;
 
-	Light _light;
+	
 	
 	Suzanne _suzanne;
 	Dragon _dragon;
@@ -77,6 +77,9 @@ private:
 	ScreenQuad _finalScreen;
 	size_t _pingpong;
 	GLuint _padding;
+
+
+	Light _light;
 	
 };
 

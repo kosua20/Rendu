@@ -69,6 +69,9 @@
     <ClCompile Include="src\helpers\lodepng\lodepng.cpp">
       <Filter>Source Files\helpers\lodepng</Filter>
     </ClCompile>
+    <ClCompile Include="src\Light.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Dragon.h">
@@ -103,6 +106,9 @@
     </ClInclude>
     <ClInclude Include="src\camera\Keyboard.h">
       <Filter>Header Files\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Light.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
