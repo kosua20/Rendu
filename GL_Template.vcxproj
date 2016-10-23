@@ -135,6 +135,7 @@
     <ClCompile Include="src\helpers\lodepng\lodepng.cpp" />
     <ClCompile Include="src\helpers\MeshUtilities.cpp" />
     <ClCompile Include="src\helpers\ProgramUtilities.cpp" />
+    <ClCompile Include="src\Light.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Plane.cpp" />
     <ClCompile Include="src\Renderer.cpp" />
@@ -149,6 +150,7 @@
     <ClInclude Include="src\Framebuffer.h" />
     <ClInclude Include="src\helpers\MeshUtilities.h" />
     <ClInclude Include="src\helpers\ProgramUtilities.h" />
+    <ClInclude Include="src\Light.h" />
     <ClInclude Include="src\Plane.h" />
     <ClInclude Include="src\Renderer.h" />
     <ClInclude Include="src\ScreenQuad.h" />
