@@ -8,11 +8,10 @@
 #include "helpers/ProgramUtilities.h"
 #include "Renderer.h"
 
-Renderer::Renderer(){}
 
 Renderer::~Renderer(){}
 
-void Renderer::init(int width, int height){
+Renderer::Renderer(int width, int height){
 
 	// Initialize the timer and pingpong.
 	_timer = glfwGetTime();
@@ -21,15 +20,11 @@ void Renderer::init(int width, int height){
 	_camera.screen(width, height);
 	
 	// Setup the framebuffer.
-	_lightFramebuffer = Framebuffer(512, 512);
-	_lightFramebuffer.setup(GL_RG,GL_FLOAT,GL_LINEAR,GL_CLAMP_TO_BORDER);
-	_blurFramebuffer = Framebuffer(_lightFramebuffer._width, _lightFramebuffer._height);
-	_blurFramebuffer.setup(GL_RG,GL_FLOAT,GL_LINEAR,GL_CLAMP_TO_BORDER);
+	_lightFramebuffer = std::make_shared<Framebuffer>(512, 512, GL_RG,GL_FLOAT,GL_LINEAR,GL_CLAMP_TO_BORDER);
+	_blurFramebuffer = std::make_shared<Framebuffer>(_lightFramebuffer->_width, _lightFramebuffer->_height, GL_RG,GL_FLOAT,GL_LINEAR,GL_CLAMP_TO_BORDER);
 	
-	_sceneFramebuffer = Framebuffer(_camera._renderSize[0],_camera._renderSize[1]);
-	_sceneFramebuffer.setup(GL_RGBA,GL_UNSIGNED_BYTE,GL_LINEAR,GL_CLAMP_TO_EDGE);
-	_fxaaFramebuffer = Framebuffer(_camera._renderSize[0],_camera._renderSize[1]);
-	_fxaaFramebuffer.setup(GL_RGBA,GL_UNSIGNED_BYTE,GL_LINEAR,GL_CLAMP_TO_EDGE);
+	_sceneFramebuffer = std::make_shared<Framebuffer>(_camera._renderSize[0],_camera._renderSize[1], GL_RGBA,GL_UNSIGNED_BYTE,GL_LINEAR,GL_CLAMP_TO_EDGE);
+	_fxaaFramebuffer = std::make_shared<Framebuffer>(_camera._renderSize[0],_camera._renderSize[1], GL_RGBA,GL_UNSIGNED_BYTE,GL_LINEAR,GL_CLAMP_TO_EDGE);
 	
 	// Query the renderer identifier, and the supported OpenGL version.
 	const GLubyte* renderer = glGetString(GL_RENDERER);
@@ -46,7 +41,7 @@ void Renderer::init(int width, int height){
 	checkGLError();
 	
 	
-	// Setup light
+	// Setup light (default value)
 	//_light = Light(glm::vec4(0.0f),glm::vec4(0.3f, 0.3f, 0.3f, 0.0f), glm::vec4(0.8f, 0.8f,0.8f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 0.0f), 25.0f, glm::ortho(-0.75f,0.75f,-0.75f,0.75f,2.0f,6.0f));
 	// position will be updated at each frame
 	//glm::perspective(45.0f, 1.0f, 1.0f, 5.f); depending on the type of light, one might prefer to use one or the other matrix.
@@ -79,13 +74,13 @@ void Renderer::init(int width, int height){
 	glBindBuffer(GL_UNIFORM_BUFFER,0);
 	
 	// Initialize objects.
-	_suzanne.init(_blurFramebuffer.textureId());
-	_dragon.init(_blurFramebuffer.textureId());
-	_plane.init(_blurFramebuffer.textureId());
+	_suzanne.init(_blurFramebuffer->textureId());
+	_dragon.init(_blurFramebuffer->textureId());
+	_plane.init(_blurFramebuffer->textureId());
 	_skybox.init();
-	_blurScreen.init(_lightFramebuffer.textureId(), "ressources/shaders/boxblur");
-	_fxaaScreen.init(_sceneFramebuffer.textureId(), "ressources/shaders/fxaa");
-	_finalScreen.init(_fxaaFramebuffer.textureId(), "ressources/shaders/final_screenquad");
+	_blurScreen.init(_lightFramebuffer->textureId(), "ressources/shaders/boxblur");
+	_fxaaScreen.init(_sceneFramebuffer->textureId(), "ressources/shaders/fxaa");
+	_finalScreen.init(_fxaaFramebuffer->textureId(), "ressources/shaders/final_screenquad");
 	checkGLError();
 	
 	
@@ -121,8 +116,8 @@ void Renderer::draw(){
 	// --- Light pass -------
 	
 	// Draw the scene inside the framebuffer.
-	_lightFramebuffer.bind();
-	glViewport(0, 0, _lightFramebuffer._width, _lightFramebuffer._height);
+	_lightFramebuffer->bind();
+	glViewport(0, 0, _lightFramebuffer->_width, _lightFramebuffer->_height);
 	
 	// Set the clear color to white.
 	glClearColor(1.0f,1.0f,1.0f,0.0f);
@@ -135,28 +130,28 @@ void Renderer::draw(){
 	_plane.drawDepth(elapsed, _light._mvp);
 	
 	// Unbind the shadow map framebuffer.
-	_lightFramebuffer.unbind();
+	_lightFramebuffer->unbind();
 	// ----------------------
 	
 	// --- Blur pass --------
 	glDisable(GL_DEPTH_TEST);
 	// Bind the post-processing framebuffer.
-	_blurFramebuffer.bind();
+	_blurFramebuffer->bind();
 	// Set screen viewport.
-	glViewport(0,0,_blurFramebuffer._width, _blurFramebuffer._height);
+	glViewport(0,0,_blurFramebuffer->_width, _blurFramebuffer->_height);
 	
 	// Draw the fullscreen quad
 	_blurScreen.draw( 1.0f / _camera._renderSize);
 	
-	_blurFramebuffer.unbind();
+	_blurFramebuffer->unbind();
 	glEnable(GL_DEPTH_TEST);
 	// ----------------------
 	
 	// --- Scene pass -------
 	// Bind the full scene framebuffer.
-	_sceneFramebuffer.bind();
+	_sceneFramebuffer->bind();
 	// Set screen viewport
-	glViewport(0,0,_sceneFramebuffer._width,_sceneFramebuffer._height);
+	glViewport(0,0,_sceneFramebuffer->_width,_sceneFramebuffer->_height);
 	
 	// Clear the depth buffer (we know we will draw everywhere, no need to clear color.
 	glClear(GL_DEPTH_BUFFER_BIT);
@@ -168,20 +163,20 @@ void Renderer::draw(){
 	_skybox.draw(elapsed, _camera._view, _camera._projection);
 	
 	// Unbind the full scene framebuffer.
-	_sceneFramebuffer.unbind();
+	_sceneFramebuffer->unbind();
 	// ----------------------
 	
 	glDisable(GL_DEPTH_TEST);
 	// --- FXAA pass -------
 	// Bind the post-processing framebuffer.
-	_fxaaFramebuffer.bind();
+	_fxaaFramebuffer->bind();
 	// Set screen viewport.
-	glViewport(0,0,_fxaaFramebuffer._width, _fxaaFramebuffer._height);
+	glViewport(0,0,_fxaaFramebuffer->_width, _fxaaFramebuffer->_height);
 	
 	// Draw the fullscreen quad
 	_fxaaScreen.draw( 1.0f / _camera._renderSize);
 	
-	_fxaaFramebuffer.unbind();
+	_fxaaFramebuffer->unbind();
 	// ----------------------
 	
 	
@@ -220,10 +215,10 @@ void Renderer::clean(){
 	_blurScreen.clean();
 	_fxaaScreen.clean();
 	_finalScreen.clean();
-	_lightFramebuffer.clean();
-	_blurFramebuffer.clean();
-	_sceneFramebuffer.clean();
-	_fxaaFramebuffer.clean();
+	_lightFramebuffer->clean();
+	_blurFramebuffer->clean();
+	_sceneFramebuffer->clean();
+	_fxaaFramebuffer->clean();
 }
 
 
@@ -233,8 +228,8 @@ void Renderer::resize(int width, int height){
 	// Update the projection matrix.
 	_camera.screen(width, height);
 	// Resize the framebuffer.
-	_sceneFramebuffer.resize(_camera._renderSize);
-	_fxaaFramebuffer.resize(_camera._renderSize);
+	_sceneFramebuffer->resize(_camera._renderSize);
+	_fxaaFramebuffer->resize(_camera._renderSize);
 }
 
 void Renderer::keyPressed(int key, int action){
