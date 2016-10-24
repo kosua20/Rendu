@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 #include <GL/glew.h>
 #include <glm/glm.hpp>
+#include <memory>
 
 #include "Framebuffer.h"
 #include "camera/Camera.h"
@@ -27,12 +28,11 @@ class Renderer {
 
 public:
 
-	Renderer();
 
 	~Renderer();
 
 	/// Init function
-	void init(int width, int height);
+	Renderer(int width, int height);
 
 	/// Draw function
 	void draw();
@@ -62,22 +62,22 @@ private:
 	
 	Camera _camera;
 
-	
-	
 	Suzanne _suzanne;
 	Dragon _dragon;
 	Skybox _skybox;
 	Plane _plane;
-	Framebuffer _lightFramebuffer;
-	Framebuffer _blurFramebuffer;
-	Framebuffer _sceneFramebuffer;
-	Framebuffer _fxaaFramebuffer;
+	
+	std::shared_ptr<Framebuffer> _lightFramebuffer;
+	std::shared_ptr<Framebuffer> _blurFramebuffer;
+	std::shared_ptr<Framebuffer> _sceneFramebuffer;
+	std::shared_ptr<Framebuffer> _fxaaFramebuffer;
+	
 	ScreenQuad _blurScreen;
 	ScreenQuad _fxaaScreen;
 	ScreenQuad _finalScreen;
+	
 	size_t _pingpong;
 	GLuint _padding;
-
 
 	Light _light;
 	

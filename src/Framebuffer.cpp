@@ -4,21 +4,11 @@
 #include "helpers/ProgramUtilities.h"
 #include "Framebuffer.h"
 
-Framebuffer::Framebuffer() : _width(0),  _height(0){}
 
-Framebuffer::Framebuffer(int width, int height) : _width(width),  _height(height){}
-
-Framebuffer::~Framebuffer(){ clean(); }
-
-void Framebuffer::bind(){
-	glBindFramebuffer(GL_FRAMEBUFFER, _id);
-}
-
-void Framebuffer::unbind(){
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
-
-void Framebuffer::setup(GLuint format, GLuint type, GLuint filtering, GLuint wrapping){
+Framebuffer::Framebuffer(int width, int height, GLuint format, GLuint type, GLuint filtering, GLuint wrapping) {
+	_width = width;
+	_height = height;
+	
 	// Create a framebuffer.
 	glGenFramebuffers(1, &_id);
 	glBindFramebuffer(GL_FRAMEBUFFER, _id);
@@ -55,6 +45,18 @@ void Framebuffer::setup(GLuint format, GLuint type, GLuint filtering, GLuint wra
 	
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
+
+Framebuffer::~Framebuffer(){ clean(); }
+
+void Framebuffer::bind(){
+	glBindFramebuffer(GL_FRAMEBUFFER, _id);
+}
+
+void Framebuffer::unbind(){
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+
 
 void Framebuffer::resize(int width, int height){
 	_width = width;

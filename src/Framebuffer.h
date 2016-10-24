@@ -9,9 +9,8 @@ class Framebuffer {
 
 public:
 	
-	Framebuffer();
-	
-	Framebuffer(int width, int height);
+	/// Setup the framebuffer (attachments, renderbuffer, depth buffer, textures IDs,...)
+	Framebuffer(int width, int height, GLuint format, GLuint type, GLuint filtering, GLuint wrapping);
 
 	~Framebuffer();
 	
@@ -21,8 +20,7 @@ public:
 	/// Unbind the framebuffer.
 	void unbind();
 	
-	/// Setup the framebuffer (attachments, renderbuffer, depth buffer, textures IDs,...)
-	void setup(GLuint format, GLuint type, GLuint filtering, GLuint wrapping);
+	
 	
 	/// Resize the framebuffer.
 	void resize(int width, int height);

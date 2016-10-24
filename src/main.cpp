@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 #include <iostream>
-
+#include <memory>
 #include "helpers/ProgramUtilities.h"
 
 #include "Renderer.h"
@@ -13,12 +13,12 @@
 
 /// The shared renderer
 
-Renderer renderer;
+std::shared_ptr<Renderer> rendererPtr;
 
 /// Callbacks
 
 void resize_callback(GLFWwindow* window, int width, int height){
-	renderer.resize(width, height);
+	rendererPtr->resize(width, height);
 }
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
@@ -27,20 +27,20 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		glfwSetWindowShouldClose(window, GL_TRUE);
 		return;
 	} 
-	renderer.keyPressed(key, action);	
+	rendererPtr->keyPressed(key, action);
 }
 
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods){
 	double x, y;
     glfwGetCursorPos(window, &x, &y);
-	renderer.buttonPressed(button, action, x, y);
+	rendererPtr->buttonPressed(button, action, x, y);
 }
 
 
 void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos){
 	bool left = glfwGetMouseButton(window,GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
 	bool right = glfwGetMouseButton(window,GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS;
-	renderer.mousePosition(xpos,ypos, left, right);
+	rendererPtr->mousePosition(xpos,ypos, left, right);
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset){
@@ -86,7 +86,7 @@ int main () {
 	checkGLError();
 
 	// Create the renderer.
-	renderer.init(INITIAL_SIZE_WIDTH,INITIAL_SIZE_HEIGHT);
+	rendererPtr = std::make_shared<Renderer>(INITIAL_SIZE_WIDTH,INITIAL_SIZE_HEIGHT);
 
 	// Setup callbacks for various interactions and inputs.
 	glfwSetFramebufferSizeCallback(window, resize_callback);	// Resizing the window
@@ -98,13 +98,13 @@ int main () {
 	// On HiDPI screens, we might have to initially resize the framebuffers size.
 	int width, height;
 	glfwGetFramebufferSize(window, &width, &height);
-	renderer.resize(width, height);
+	rendererPtr->resize(width, height);
 	
 	// Start the display/interaction loop.
 	while (!glfwWindowShouldClose(window)) {
 
 		// Update the content of the window.
-		renderer.draw();
+		rendererPtr->draw();
 		
 		//Display the result fo the current rendering loop.
 		glfwSwapBuffers(window);
@@ -116,7 +116,7 @@ int main () {
 	// Remove the window.
 	glfwDestroyWindow(window);
 	// Clean other ressources
-	renderer.clean();
+	rendererPtr->clean();
 	// Close GL context and any other GLFW resources.
 	glfwTerminate();
 	return 0;
