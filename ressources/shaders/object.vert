@@ -7,6 +7,14 @@ layout(location = 2) in vec2 uv;
 layout(location = 3) in vec3 tang;
 layout(location = 4) in vec3 binor;
 
+layout (std140) uniform Light {
+	vec4 position;
+	vec4 Ia;
+	vec4 Id;
+	vec4 Is;
+	float shininess;
+} light;
+
 // Uniform: the MVP, MV and normal matrices
 uniform mat4 mvp;
 uniform mat4 mv;
@@ -20,6 +28,9 @@ out INTERFACE {
 	vec2 uv;
 	vec3 lightSpacePosition;
 	vec3 modelPosition;
+	vec3 tangentSpacePosition;
+	vec3 tangentSpaceLight;
+	
 } Out ;
 
 
@@ -41,5 +52,9 @@ void main(){
 	Out.lightSpacePosition = 0.5*(lightMVP * vec4(v,1.0)).xyz + 0.5;
 	
 	Out.modelPosition = v;
+	
+	Out.tangentSpacePosition = transpose(Out.tbn) * Out.position;
+	
+	Out.tangentSpaceLight = transpose(Out.tbn) * light.position.xyz;
 	
 }
