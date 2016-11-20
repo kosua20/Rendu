@@ -32,6 +32,15 @@ uniform mat4 lightVP;
 // Output: the fragment color
 out vec3 fragColor;
 
+vec3 positionFromDepth(float depth){
+	float depth2 = 2.0 * depth - 1.0 ;
+	vec2 ndcPos = 2.0 * In.uv - 1.0;
+	// Linearize depth -> in view space.
+	float viewDepth = - projectionMatrix.w / (depth2 + projectionMatrix.z);
+	// Compute the x and y components in view space.
+	return vec3(- ndcPos * viewDepth / projectionMatrix.xy , viewDepth);
+}
+
 
 void main(){
 	
