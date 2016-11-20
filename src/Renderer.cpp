@@ -23,7 +23,7 @@ Renderer::Renderer(int width, int height){
 	_lightFramebuffer = std::make_shared<Framebuffer>(512, 512, GL_RG,GL_FLOAT,GL_LINEAR,GL_CLAMP_TO_BORDER);
 	_blurFramebuffer = std::make_shared<Framebuffer>(_lightFramebuffer->_width, _lightFramebuffer->_height, GL_RG,GL_FLOAT,GL_LINEAR,GL_CLAMP_TO_BORDER);
 	
-	_sceneFramebuffer = std::make_shared<Framebuffer>(_camera._renderSize[0],_camera._renderSize[1], GL_RGBA,GL_UNSIGNED_BYTE,GL_LINEAR,GL_CLAMP_TO_EDGE);
+	_gbuffer = std::make_shared<Gbuffer>(_camera._renderSize[0],_camera._renderSize[1]);
 	_fxaaFramebuffer = std::make_shared<Framebuffer>(_camera._renderSize[0],_camera._renderSize[1], GL_RGBA,GL_UNSIGNED_BYTE,GL_LINEAR,GL_CLAMP_TO_EDGE);
 	
 	// Query the renderer identifier, and the supported OpenGL version.
@@ -84,8 +84,9 @@ Renderer::Renderer(int width, int height){
 	_plane.init("ressources/plane.obj", texturesPlane,  2);
 	
 	_skybox.init();
+	
 	_blurScreen.init(_lightFramebuffer->textureId(), "ressources/shaders/boxblur");
-	_fxaaScreen.init(_sceneFramebuffer->textureId(), "ressources/shaders/fxaa");
+	_fxaaScreen.init(_gbuffer->textureId(TextureType::Albedo), "ressources/shaders/fxaa");
 	_finalScreen.init(_fxaaFramebuffer->textureId(), "ressources/shaders/final_screenquad");
 	checkGLError();
 	
@@ -157,9 +158,9 @@ void Renderer::draw(){
 	
 	// --- Scene pass -------
 	// Bind the full scene framebuffer.
-	_sceneFramebuffer->bind();
+	_gbuffer->bind();
 	// Set screen viewport
-	glViewport(0,0,_sceneFramebuffer->_width,_sceneFramebuffer->_height);
+	glViewport(0,0,_gbuffer->_width,_gbuffer->_height);
 	
 	// Clear the depth buffer (we know we will draw everywhere, no need to clear color.
 	glClear(GL_DEPTH_BUFFER_BIT);
@@ -171,7 +172,7 @@ void Renderer::draw(){
 	_skybox.draw(elapsed, _camera._view, _camera._projection);
 	
 	// Unbind the full scene framebuffer.
-	_sceneFramebuffer->unbind();
+	_gbuffer->unbind();
 	// ----------------------
 	
 	glDisable(GL_DEPTH_TEST);
@@ -225,7 +226,7 @@ void Renderer::clean(){
 	_finalScreen.clean();
 	_lightFramebuffer->clean();
 	_blurFramebuffer->clean();
-	_sceneFramebuffer->clean();
+	_gbuffer->clean();
 	_fxaaFramebuffer->clean();
 }
 
@@ -236,7 +237,7 @@ void Renderer::resize(int width, int height){
 	// Update the projection matrix.
 	_camera.screen(width, height);
 	// Resize the framebuffer.
-	_sceneFramebuffer->resize(_camera._renderSize);
+	_gbuffer->resize(_camera._renderSize);
 	_fxaaFramebuffer->resize(_camera._renderSize);
 }
 
