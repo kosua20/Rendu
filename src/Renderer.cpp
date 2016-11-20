@@ -22,8 +22,8 @@ Renderer::Renderer(int width, int height){
 	// Setup the framebuffer.
 	_lightFramebuffer = std::make_shared<Framebuffer>(512, 512, GL_RG,GL_FLOAT,GL_LINEAR,GL_CLAMP_TO_BORDER);
 	_blurFramebuffer = std::make_shared<Framebuffer>(_lightFramebuffer->_width, _lightFramebuffer->_height, GL_RG,GL_FLOAT,GL_LINEAR,GL_CLAMP_TO_BORDER);
-	
 	_gbuffer = std::make_shared<Gbuffer>(_camera._renderSize[0],_camera._renderSize[1]);
+	_sceneFramebuffer = std::make_shared<Framebuffer>(_camera._renderSize[0],_camera._renderSize[1], GL_RGBA,GL_UNSIGNED_BYTE,GL_LINEAR,GL_CLAMP_TO_EDGE);
 	_fxaaFramebuffer = std::make_shared<Framebuffer>(_camera._renderSize[0],_camera._renderSize[1], GL_RGBA,GL_UNSIGNED_BYTE,GL_LINEAR,GL_CLAMP_TO_EDGE);
 	
 	// Query the renderer identifier, and the supported OpenGL version.
@@ -86,7 +86,8 @@ Renderer::Renderer(int width, int height){
 	_skybox.init();
 	
 	_blurScreen.init(_lightFramebuffer->textureId(), "ressources/shaders/boxblur");
-	_fxaaScreen.init(_gbuffer->textureId(TextureType::Albedo), "ressources/shaders/fxaa");
+	_gbufferScreen.init(_gbuffer->textureIds(), "ressources/shaders/scene_gbuffer", _blurFramebuffer->textureId());
+	_fxaaScreen.init(_sceneFramebuffer->textureId(), "ressources/shaders/fxaa");
 	_finalScreen.init(_fxaaFramebuffer->textureId(), "ressources/shaders/final_screenquad");
 	checkGLError();
 	
@@ -176,6 +177,12 @@ void Renderer::draw(){
 	// ----------------------
 	
 	glDisable(GL_DEPTH_TEST);
+	// --- Gbuffer composition pass
+	_sceneFramebuffer->bind();
+	glViewport(0,0,_sceneFramebuffer->_width, _sceneFramebuffer->_height);
+	_gbufferScreen.draw( 1.0f / _camera._renderSize, _camera._view, _camera._projection, _light._mvp, _pingpong);
+	_sceneFramebuffer->unbind();
+	
 	// --- FXAA pass -------
 	// Bind the post-processing framebuffer.
 	_fxaaFramebuffer->bind();
@@ -227,6 +234,7 @@ void Renderer::clean(){
 	_lightFramebuffer->clean();
 	_blurFramebuffer->clean();
 	_gbuffer->clean();
+	_sceneFramebuffer->clean();
 	_fxaaFramebuffer->clean();
 }
 
@@ -238,6 +246,7 @@ void Renderer::resize(int width, int height){
 	_camera.screen(width, height);
 	// Resize the framebuffer.
 	_gbuffer->resize(_camera._renderSize);
+	_sceneFramebuffer->resize(_camera._renderSize);
 	_fxaaFramebuffer->resize(_camera._renderSize);
 }
 
