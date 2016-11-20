@@ -25,6 +25,7 @@ uniform samplerCube textureCubeMapSmall;
 uniform sampler2D shadowMap;
 
 uniform vec2 inverseScreenSize;
+uniform vec4 projectionMatrix;
 uniform mat4 inverseV;
 uniform mat4 lightVP;
 
