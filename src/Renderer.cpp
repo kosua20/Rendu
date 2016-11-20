@@ -80,7 +80,8 @@ Renderer::Renderer(int width, int height){
 	const std::vector<std::string> texturesDragon = {"ressources/dragon_texture_color.png", "ressources/dragon_texture_normal.png", "ressources/dragon_texture_ao_specular_reflection.png", "ressources/cubemap/cubemap", "ressources/cubemap/cubemap_diff"  };
 	_dragon.init("ressources/dragon.obj", texturesDragon, _blurFramebuffer->textureId(), 1);
 	
-	_plane.init(_blurFramebuffer->textureId());
+	const std::vector<std::string> texturesPlane = { "ressources/plane_texture_color.png", "ressources/plane_texture_normal.png", "ressources/plane_texture_depthmap.png", "ressources/cubemap/cubemap", "ressources/cubemap/cubemap_diff" };
+	_plane.init("ressources/plane.obj", texturesPlane, _blurFramebuffer->textureId(), 2);
 	
 	_skybox.init();
 	_blurScreen.init(_lightFramebuffer->textureId(), "ressources/shaders/boxblur");
@@ -102,8 +103,8 @@ void Renderer::draw(){
 	// Physics simulation
 	physics(elapsed);
 	const glm::mat4 dragonModel = glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(-0.1,0.0,-0.25)),glm::vec3(0.5f));
-	glm::mat4 suzanneModel = glm::scale(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(0.2,0.0,0.0)),float(_timer),glm::vec3(0.0f,1.0f,0.0f)),glm::vec3(0.25f));
-	
+	const glm::mat4 suzanneModel = glm::scale(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(0.2,0.0,0.0)),float(_timer),glm::vec3(0.0f,1.0f,0.0f)),glm::vec3(0.25f));
+	const glm::mat4 planeModel = glm::scale(glm::translate(glm::mat4(1.0f),glm::vec3(0.0f,-0.35f,-0.5f)), glm::vec3(2.0f));
 	// Update the light position (in view space).
 	// Bind the buffer.
 	glBindBuffer(GL_UNIFORM_BUFFER, _ubo);
@@ -134,7 +135,7 @@ void Renderer::draw(){
 	// Draw objects.
 	_suzanne.drawDepth(suzanneModel, _light._mvp);
 	_dragon.drawDepth(dragonModel, _light._mvp);
-	_plane.drawDepth(elapsed, _light._mvp);
+	_plane.drawDepth(planeModel, _light._mvp);
 	
 	// Unbind the shadow map framebuffer.
 	_lightFramebuffer->unbind();
@@ -166,7 +167,7 @@ void Renderer::draw(){
 	// Draw objects
 	_suzanne.draw(suzanneModel, _camera._view, _camera._projection, _pingpong);
 	_dragon.draw(dragonModel, _camera._view, _camera._projection, _pingpong);
-	_plane.draw(elapsed, _camera._view, _camera._projection, _pingpong);
+	_plane.draw(planeModel, _camera._view, _camera._projection, _pingpong);
 	_skybox.draw(elapsed, _camera._view, _camera._projection);
 	
 	// Unbind the full scene framebuffer.
