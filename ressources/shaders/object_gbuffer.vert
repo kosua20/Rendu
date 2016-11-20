@@ -15,6 +15,8 @@ uniform mat3 normalMatrix;
 // Output: tangent space matrix, position in view space and uv.
 out INTERFACE {
     mat3 tbn;
+	vec3 tangentSpacePosition;
+	vec3 viewSpacePosition;
 	vec2 uv;
 } Out ;
 
@@ -30,5 +32,8 @@ void main(){
 	vec3 B = normalize(normalMatrix * binor);
 	vec3 N = normalize(normalMatrix * n);
 	Out.tbn = mat3(T, B, N);
+	
+	Out.viewSpacePosition = (mv * vec4(v,1.0)).xyz;
+	Out.tangentSpacePosition = transpose(Out.tbn) * Out.viewSpacePosition;
 	
 }
