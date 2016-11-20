@@ -9,7 +9,6 @@
 #include "camera/Camera.h"
 #include "Object.h"
 #include "Skybox.h"
-#include "Plane.h"
 #include "ScreenQuad.h"
 #include "Light.h"
 
@@ -64,7 +63,7 @@ private:
 	Object _suzanne;
 	Object _dragon;
 	Skybox _skybox;
-	Plane _plane;
+	Object _plane;
 	
 	std::shared_ptr<Framebuffer> _lightFramebuffer;
 	std::shared_ptr<Framebuffer> _blurFramebuffer;
