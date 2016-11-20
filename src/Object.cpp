@@ -13,11 +13,11 @@ Object::Object(){}
 
 Object::~Object(){}
 
-void Object::init(const std::string& meshPath, const std::vector<std::string>& texturesPaths, GLuint shadowMapTextureId, int materialId){
+void Object::init(const std::string& meshPath, const std::vector<std::string>& texturesPaths, int materialId){
 	
 	// Load the shaders
 	_programDepthId = createGLProgram("ressources/shaders/object_depth.vert","ressources/shaders/object_depth.frag");
-	_programId = createGLProgram("ressources/shaders/object.vert","ressources/shaders/object.frag");
+	_programId = createGLProgram("ressources/shaders/object_gbuffer.vert","ressources/shaders/object_gbuffer.frag");
 	
 	// Load geometry.
 	mesh_t mesh;
@@ -90,25 +90,12 @@ void Object::init(const std::string& meshPath, const std::vector<std::string>& t
 
 	glBindVertexArray(0);
 	
-	// Get a binding point for the light in Uniform buffer.
-	_lightUniformId = glGetUniformBlockIndex(_programId, "Light");
-	
 	// Load and upload the textures.
 	_texColor = loadTexture(texturesPaths[0], _programId, 0,  "textureColor", true);
 	
 	_texNormal = loadTexture(texturesPaths[1], _programId, 1, "textureNormal");
 	
 	_texEffects = loadTexture(texturesPaths[2], _programId, 2, "textureEffects");
-	
-	_texCubeMap = loadTextureCubeMap(texturesPaths[3], _programId, 3, "textureCubeMap", true);
-	
-	_texCubeMapSmall = loadTextureCubeMap(texturesPaths[4], _programId, 4, "textureCubeMapSmall", true);
-	
-	// Load the shadowMap texture
-	_shadowMapId = shadowMapTextureId;
-	glBindTexture(GL_TEXTURE_2D, _shadowMapId);
-	GLuint texUniID = glGetUniformLocation(_programId, "shadowMap");
-	glUniform1i(texUniID, 5);
 	
 	GLuint matIdID  = glGetUniformLocation(_programId, "materialId");
 	glUniform1i(matIdID, materialId);
@@ -119,7 +106,7 @@ void Object::init(const std::string& meshPath, const std::vector<std::string>& t
 }
 
 
-void Object::draw(const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection, const size_t pingpong){
+void Object::draw(const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection){
 	
 	// Combine the three matrices.
 	glm::mat4 MV = view * model;
@@ -127,13 +114,8 @@ void Object::draw(const glm::mat4& model, const glm::mat4& view, const glm::mat4
 
 	// Compute the normal matrix
 	glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(MV)));
-	// Compute the inverse view matrix
-	glm::mat4 invView = glm::inverse(view);
 	// Select the program (and shaders).
 	glUseProgram(_programId);
-
-	// Select the right sub-uniform buffer to use for the light.
-	glUniformBlockBinding(_programId, _lightUniformId, pingpong);
 	
 	// Upload the MVP matrix.
 	GLuint mvpID  = glGetUniformLocation(_programId, "mvp");
@@ -144,9 +126,7 @@ void Object::draw(const glm::mat4& model, const glm::mat4& view, const glm::mat4
 	// Upload the normal matrix.
 	GLuint normalMatrixID  = glGetUniformLocation(_programId, "normalMatrix");
 	glUniformMatrix3fv(normalMatrixID, 1, GL_FALSE, &normalMatrix[0][0]);
-	// Upload the inverse view matrix.
-	GLuint invVID  = glGetUniformLocation(_programId, "inverseV");
-	glUniformMatrix4fv(invVID, 1, GL_FALSE, &invView[0][0]);
+	
 
 	// Bind the textures.
 	glActiveTexture(GL_TEXTURE0);
@@ -155,18 +135,6 @@ void Object::draw(const glm::mat4& model, const glm::mat4& view, const glm::mat4
     glBindTexture(GL_TEXTURE_2D, _texNormal);
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, _texEffects);
-	glActiveTexture(GL_TEXTURE3);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, _texCubeMap);
-	glActiveTexture(GL_TEXTURE4);	
-	glBindTexture(GL_TEXTURE_CUBE_MAP, _texCubeMapSmall);
-
-	// Upload the light MVP matrix.
-	GLuint lmvpID  = glGetUniformLocation(_programId, "lightMVP");
-	glUniformMatrix4fv(lmvpID, 1, GL_FALSE, &_lightMVP[0][0]);
-	
-	// Bind the shadowMap texture.
-	glActiveTexture(GL_TEXTURE5);
-	glBindTexture(GL_TEXTURE_2D, _shadowMapId);
 	
 	// Select the geometry.
 	glBindVertexArray(_vao);
@@ -210,8 +178,6 @@ void Object::clean(){
 	glDeleteTextures(1, &_texColor);
 	glDeleteTextures(1, &_texNormal);
 	glDeleteTextures(1, &_texEffects);
-	glDeleteTextures(1, &_texCubeMap);
-	glDeleteTextures(1, &_texCubeMapSmall);
 	glDeleteProgram(_programId);
 }
 
