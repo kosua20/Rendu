@@ -16,12 +16,46 @@ void ScreenQuad::init(GLuint textureId, const std::string & shaderRoot){
 	_programId = createGLProgram(shaderRoot + ".vert", shaderRoot + ".frag");
 
 	// Load geometry.
+	loadGeometry();
+	
+	// Link the texture of the framebuffer for this program.
+	_textureIds.push_back(textureId);
+	glBindTexture(GL_TEXTURE_2D, _textureIds[0]);
+	GLuint texUniID = glGetUniformLocation(_programId, "screenTexture");
+	glUniform1i(texUniID, 0);
+	checkGLError();
+	
+}
+
+void ScreenQuad::init(std::map<std::string, GLuint> textureIds, const std::string & shaderRoot){
+	
+	// Load the shaders
+	_programId = createGLProgram(shaderRoot + ".vert", shaderRoot + ".frag");
+	
+	loadGeometry();
+	
+	// Link the texture of the framebuffer for this program.
+	size_t currentTextureSlot = 0;
+	for(auto& texture : textureIds){
+		_textureIds.push_back(texture.second);
+		glBindTexture(GL_TEXTURE_2D, _textureIds.back());
+		GLuint texUniID = glGetUniformLocation(_programId, (texture.first).c_str());
+		glUniform1i(texUniID, currentTextureSlot);
+		currentTextureSlot += 1;
+	}
+	
+	checkGLError();
+	
+}
+
+void ScreenQuad::loadGeometry(){
+	// Load geometry.
 	std::vector<float> quadVertices{ -1.0, -1.0,  0.0,
 		1.0, -1.0,  0.0,
 		-1.0,  1.0,  0.0,
 		1.0,  1.0,  0.0
 	};
-
+	
 	// Array to store the indices of the vertices to use.
 	std::vector<unsigned int> quadIndices{0, 1, 2, 2, 1, 3};
 	
@@ -32,7 +66,7 @@ void ScreenQuad::init(GLuint textureId, const std::string & shaderRoot){
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	// Upload the data to the Array buffer.
 	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * quadVertices.size(), &(quadVertices[0]), GL_STATIC_DRAW);
-
+	
 	// Generate a vertex array (useful when we add other attributes to the geometry).
 	_vao = 0;
 	glGenVertexArrays (1, &_vao);
@@ -44,23 +78,14 @@ void ScreenQuad::init(GLuint textureId, const std::string & shaderRoot){
 	
 	// We load the indices data
 	glGenBuffers(1, &_ebo);
- 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
- 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * quadIndices.size(), &(quadIndices[0]), GL_STATIC_DRAW);
-
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * quadIndices.size(), &(quadIndices[0]), GL_STATIC_DRAW);
+	
 	glBindVertexArray(0);
-	
-	// Link the texture of the framebuffer for this program.
-	_textureId = textureId;
-	glBindTexture(GL_TEXTURE_2D, _textureId);
-	GLuint texUniID = glGetUniformLocation(_programId, "screenTexture");
-	glUniform1i(texUniID, 0);
-	checkGLError();
-	
-	
 }
 
 
-void ScreenQuad::draw(glm::vec2 invScreenSize){
+void ScreenQuad::draw(const glm::vec2& invScreenSize){
 	
 	// Select the program (and shaders).
 	glUseProgram(_programId);
@@ -70,8 +95,11 @@ void ScreenQuad::draw(glm::vec2 invScreenSize){
 	glUniform2fv(screenId, 1, &(invScreenSize[0]));
 	
 	// Active screen texture.
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, _textureId);
+	for(GLuint i = 0;i < _textureIds.size(); ++i){
+		glActiveTexture(GL_TEXTURE0 + i);
+		glBindTexture(GL_TEXTURE_2D, _textureIds[i]);
+	}
+	
 	
 	// Select the geometry.
 	glBindVertexArray(_vao);
