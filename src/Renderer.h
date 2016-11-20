@@ -11,6 +11,7 @@
 #include "Object.h"
 #include "Skybox.h"
 #include "ScreenQuad.h"
+#include "GbufferQuad.h"
 #include "Light.h"
 
 
@@ -69,8 +70,10 @@ private:
 	std::shared_ptr<Framebuffer> _lightFramebuffer;
 	std::shared_ptr<Framebuffer> _blurFramebuffer;
 	std::shared_ptr<Gbuffer> _gbuffer;
+	std::shared_ptr<Framebuffer> _sceneFramebuffer;
 	std::shared_ptr<Framebuffer> _fxaaFramebuffer;
 	
+	GbufferQuad _gbufferScreen;
 	ScreenQuad _blurScreen;
 	ScreenQuad _fxaaScreen;
 	ScreenQuad _finalScreen;
