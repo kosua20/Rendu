@@ -7,9 +7,8 @@
 
 #include "Framebuffer.h"
 #include "camera/Camera.h"
-#include "Suzanne.h"
+#include "Object.h"
 #include "Skybox.h"
-#include "Dragon.h"
 #include "Plane.h"
 #include "ScreenQuad.h"
 #include "Light.h"
@@ -62,8 +61,8 @@ private:
 	
 	Camera _camera;
 
-	Suzanne _suzanne;
-	Dragon _dragon;
+	Object _suzanne;
+	Object _dragon;
 	Skybox _skybox;
 	Plane _plane;
 	
