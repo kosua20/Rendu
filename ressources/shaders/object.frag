@@ -208,6 +208,9 @@ void main(){
 	vec3 v = normalize(-In.position);
 	
 	vec3 effects = texture(textureEffects,localUV).rgb;
+	if(materialId == 2){
+		effects = vec3(1.0, 1.0, 0.25*(1.0-effects.r));
+	}
 	vec3 ambient;
 	vec3 lightShading = shading(localUV, n, v, light.position.xyz, light.shininess, light.Is.rgb, effects.g, ambient);
 	
