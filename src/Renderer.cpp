@@ -137,7 +137,7 @@ void Renderer::draw(){
 	// Draw objects.
 	_suzanne.drawDepth(suzanneModel, _light._mvp);
 	_dragon.drawDepth(dragonModel, _light._mvp);
-	_plane.drawDepth(planeModel, _light._mvp);
+	//_plane.drawDepth(planeModel, _light._mvp);
 	
 	// Unbind the shadow map framebuffer.
 	_lightFramebuffer->unbind();
