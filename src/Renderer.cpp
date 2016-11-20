@@ -75,13 +75,13 @@ Renderer::Renderer(int width, int height){
 	
 	// Initialize objects.
 	const std::vector<std::string> texturesSuzanne = { "ressources/suzanne_texture_color.png", "ressources/suzanne_texture_normal.png", "ressources/suzanne_texture_ao_specular_reflection.png", "ressources/cubemap/cubemap", "ressources/cubemap/cubemap_diff" };
-	_suzanne.init("ressources/suzanne.obj", texturesSuzanne, _blurFramebuffer->textureId(), 1);
+	_suzanne.init("ressources/suzanne.obj", texturesSuzanne, 1);
 	
 	const std::vector<std::string> texturesDragon = {"ressources/dragon_texture_color.png", "ressources/dragon_texture_normal.png", "ressources/dragon_texture_ao_specular_reflection.png", "ressources/cubemap/cubemap", "ressources/cubemap/cubemap_diff"  };
-	_dragon.init("ressources/dragon.obj", texturesDragon, _blurFramebuffer->textureId(), 1);
+	_dragon.init("ressources/dragon.obj", texturesDragon,  1);
 	
 	const std::vector<std::string> texturesPlane = { "ressources/plane_texture_color.png", "ressources/plane_texture_normal.png", "ressources/plane_texture_depthmap.png", "ressources/cubemap/cubemap", "ressources/cubemap/cubemap_diff" };
-	_plane.init("ressources/plane.obj", texturesPlane, _blurFramebuffer->textureId(), 2);
+	_plane.init("ressources/plane.obj", texturesPlane,  2);
 	
 	_skybox.init();
 	_blurScreen.init(_lightFramebuffer->textureId(), "ressources/shaders/boxblur");
@@ -165,9 +165,9 @@ void Renderer::draw(){
 	glClear(GL_DEPTH_BUFFER_BIT);
 	
 	// Draw objects
-	_suzanne.draw(suzanneModel, _camera._view, _camera._projection, _pingpong);
-	_dragon.draw(dragonModel, _camera._view, _camera._projection, _pingpong);
-	_plane.draw(planeModel, _camera._view, _camera._projection, _pingpong);
+	_suzanne.draw(suzanneModel, _camera._view, _camera._projection);
+	_dragon.draw(dragonModel, _camera._view, _camera._projection);
+	_plane.draw(planeModel, _camera._view, _camera._projection);
 	_skybox.draw(elapsed, _camera._view, _camera._projection);
 	
 	// Unbind the full scene framebuffer.

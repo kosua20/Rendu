@@ -15,10 +15,10 @@ public:
 	~Object();
 
 	/// Init function
-	void init(const std::string& meshPath, const std::vector<std::string>& texturesPaths, GLuint shadowMapTextureId, int materialId);
+	void init(const std::string& meshPath, const std::vector<std::string>& texturesPaths, int materialId);
 
 	/// Draw function
-	void draw(const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection, const size_t pingpong);
+	void draw(const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection);
 	
 	/// Draw depth function
 	void drawDepth(const glm::mat4& model, const glm::mat4& vp);
@@ -36,10 +36,6 @@ private:
 	GLuint _texColor;
 	GLuint _texNormal;
 	GLuint _texEffects;
-	GLuint _texCubeMap;
-	GLuint _texCubeMapSmall;
-	GLuint _lightUniformId;
-	GLuint _shadowMapId;
 	
 	size_t _count;
 	
