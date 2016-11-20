@@ -126,7 +126,9 @@ void Object::draw(const glm::mat4& model, const glm::mat4& view, const glm::mat4
 	// Upload the normal matrix.
 	GLuint normalMatrixID  = glGetUniformLocation(_programId, "normalMatrix");
 	glUniformMatrix3fv(normalMatrixID, 1, GL_FALSE, &normalMatrix[0][0]);
-	
+	// Upload the projection matrix.
+	GLuint pID  = glGetUniformLocation(_programId, "p");
+	glUniformMatrix4fv(pID, 1, GL_FALSE, &projection[0][0]);
 
 	// Bind the textures.
 	glActiveTexture(GL_TEXTURE0);
