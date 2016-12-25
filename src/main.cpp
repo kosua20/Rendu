@@ -13,11 +13,12 @@
 
 /// The shared renderer
 
-std::shared_ptr<Renderer> rendererPtr;
+
 
 /// Callbacks
 
 void resize_callback(GLFWwindow* window, int width, int height){
+	Renderer *rendererPtr = static_cast<Renderer*>(glfwGetWindowUserPointer(window));
 	rendererPtr->resize(width, height);
 }
 
@@ -26,13 +27,15 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS){ 
 		glfwSetWindowShouldClose(window, GL_TRUE);
 		return;
-	} 
+	}
+	Renderer *rendererPtr = static_cast<Renderer*>(glfwGetWindowUserPointer(window));
 	rendererPtr->keyPressed(key, action);
 }
 
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods){
 	double x, y;
     glfwGetCursorPos(window, &x, &y);
+	Renderer *rendererPtr = static_cast<Renderer*>(glfwGetWindowUserPointer(window));
 	rendererPtr->buttonPressed(button, action, x, y);
 }
 
@@ -40,6 +43,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos){
 	bool left = glfwGetMouseButton(window,GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
 	bool right = glfwGetMouseButton(window,GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS;
+	Renderer *rendererPtr = static_cast<Renderer*>(glfwGetWindowUserPointer(window));
 	rendererPtr->mousePosition(xpos,ypos, left, right);
 }
 
@@ -86,8 +90,9 @@ int main () {
 	checkGLError();
 
 	// Create the renderer.
-	rendererPtr = std::make_shared<Renderer>(INITIAL_SIZE_WIDTH,INITIAL_SIZE_HEIGHT);
-
+	Renderer renderer = Renderer(INITIAL_SIZE_WIDTH,INITIAL_SIZE_HEIGHT);
+	
+	glfwSetWindowUserPointer(window, &renderer);
 	// Setup callbacks for various interactions and inputs.
 	glfwSetFramebufferSizeCallback(window, resize_callback);	// Resizing the window
 	glfwSetKeyCallback(window,key_callback);					// Pressing a key
@@ -98,13 +103,13 @@ int main () {
 	// On HiDPI screens, we might have to initially resize the framebuffers size.
 	int width, height;
 	glfwGetFramebufferSize(window, &width, &height);
-	rendererPtr->resize(width, height);
+	renderer.resize(width, height);
 	
 	// Start the display/interaction loop.
 	while (!glfwWindowShouldClose(window)) {
 
 		// Update the content of the window.
-		rendererPtr->draw();
+		renderer.draw();
 		
 		//Display the result fo the current rendering loop.
 		glfwSwapBuffers(window);
@@ -116,7 +121,7 @@ int main () {
 	// Remove the window.
 	glfwDestroyWindow(window);
 	// Clean other ressources
-	rendererPtr->clean();
+	renderer.clean();
 	// Close GL context and any other GLFW resources.
 	glfwTerminate();
 	return 0;
