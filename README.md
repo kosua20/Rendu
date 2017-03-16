@@ -1,7 +1,7 @@
 ---
-##To do
+## To do
 - PBR
 - Clean joystick
 
-##Done
+## Done
 - Solve slow glMapBuffer
