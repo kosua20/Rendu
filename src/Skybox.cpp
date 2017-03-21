@@ -37,7 +37,7 @@ void Skybox::init(){
 		6, 3, 2, 7, 3, 6  // Top face
 	};
 	
-	_count = cubeIndices.size();
+	
 
 	// Create an array buffer to host the geometry data.
 	GLuint vbo = 0;
@@ -96,7 +96,7 @@ void Skybox::draw(float elapsed, const glm::mat4& view, const glm::mat4& project
 	glBindVertexArray(_vao);
 	// Draw!
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
-	glDrawElements(GL_TRIANGLES, _count, GL_UNSIGNED_INT, (void*)0);
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, (void*)0);
 
 	glBindVertexArray(0);
 	glUseProgram(0);

@@ -37,7 +37,7 @@ private:
 	GLuint _texNormal;
 	GLuint _texEffects;
 	
-	size_t _count;
+	GLsizei _count;
 	
 	
 	glm::mat4 _lightMVP;

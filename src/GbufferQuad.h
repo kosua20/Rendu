@@ -18,7 +18,7 @@ public:
 	void init(std::map<std::string, GLuint> textureIds, const std::string & shaderRoot, GLuint shadowMapTextureId);
 	
 	/// Draw function,
-	void draw(const glm::vec2& invScreenSize, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix, const glm::mat4& lightMatrix, size_t pingpong);
+	void draw(const glm::vec2& invScreenSize, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix, const glm::mat4& lightMatrix, GLuint pingpong);
 
 	
 private:

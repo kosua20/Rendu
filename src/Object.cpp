@@ -25,7 +25,7 @@ void Object::init(const std::string& meshPath, const std::vector<std::string>& t
 	centerAndUnitMesh(mesh);
 	computeTangentsAndBinormals(mesh);
 
-	_count = mesh.indices.size();
+	_count = (GLsizei)mesh.indices.size();
 	
 	// Create an array buffer to host the geometry data.
 	GLuint vbo = 0;

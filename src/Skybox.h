@@ -31,7 +31,6 @@ private:
 	GLuint _ebo;
 	GLuint _texCubeMap;
 	
-	size_t _count;
 
 };
 

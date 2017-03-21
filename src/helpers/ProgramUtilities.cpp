@@ -162,7 +162,7 @@ GLuint createGLProgram(const std::string & vertexPath, const std::string & fragm
 
 void flipImage(std::vector<unsigned char> & image, const int width, const int height){
 	// Compute the number of components per pixel.
-	int components = image.size() / (width * height);
+	int components = (unsigned int)image.size() / (width * height);
 	// The width in bytes.
 	int widthInBytes = width * components;
 	int halfHeight = height/2;

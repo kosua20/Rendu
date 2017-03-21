@@ -135,7 +135,7 @@ void loadObj(const std::string & filename, mesh_t & mesh, LoadMode mode){
 			}
 			
 			//Indices (simply a vector of increasing integers).
-			mesh.indices.push_back(i);
+			mesh.indices.push_back((unsigned int)i);
 		}
 
 	} else if (mode == Indexed){
@@ -143,10 +143,10 @@ void loadObj(const std::string & filename, mesh_t & mesh, LoadMode mode){
 		// In this mode, vertices are only duplicated if they were already used in a previous face with a different set of uv/normal coordinates.
 		
 		// Keep track of previously encountered (position,uv,normal).
-		map<string,long> indices_used;
+		map<string,unsigned int> indices_used;
 
 		//Positions
-		long maxInd = 0;
+		unsigned int maxInd = 0;
 		for(size_t i = 0; i < faces_temp.size(); i++){
 			
 			string str = faces_temp[i];
@@ -164,17 +164,17 @@ void loadObj(const std::string & filename, mesh_t & mesh, LoadMode mode){
 			size_t foundL = str.find_last_of("/");
 			
 			//Positions (we are sure they exist)
-			long ind1 = stol(str.substr(0,foundF))-1;
+			unsigned int ind1 = stoi(str.substr(0,foundF))-1;
 			mesh.positions.push_back(positions_temp[ind1]);
 
 			//UVs (second index)
 			if(hasUV){
-				long ind2 = stol(str.substr(foundF+1,foundL))-1;
+				unsigned int ind2 = stoi(str.substr(foundF+1,foundL))-1;
 				mesh.texcoords.push_back(texcoords_temp[ind2]);
 			}
 			//Normals (third index, in all cases)
 			if(hasNormals){
-				long ind3 = stol(str.substr(foundL+1))-1;
+				unsigned int ind3 = stoi(str.substr(foundL+1))-1;
 				mesh.normals.push_back(normals_temp[ind3]);
 			}
 
