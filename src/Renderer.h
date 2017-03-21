@@ -78,7 +78,7 @@ private:
 	ScreenQuad _fxaaScreen;
 	ScreenQuad _finalScreen;
 	
-	size_t _pingpong;
+	GLuint _pingpong;
 	GLuint _padding;
 
 	Light _light;

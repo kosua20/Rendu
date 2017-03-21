@@ -35,7 +35,7 @@ void ScreenQuad::init(std::map<std::string, GLuint> textureIds, const std::strin
 	loadGeometry();
 	
 	// Link the texture of the framebuffer for this program.
-	size_t currentTextureSlot = 0;
+	GLint currentTextureSlot = 0;
 	for(auto& texture : textureIds){
 		_textureIds.push_back(texture.second);
 		glBindTexture(GL_TEXTURE_2D, _textureIds.back());
@@ -59,7 +59,7 @@ void ScreenQuad::loadGeometry(){
 	// Array to store the indices of the vertices to use.
 	std::vector<unsigned int> quadIndices{0, 1, 2, 2, 1, 3};
 	
-	_count = quadIndices.size();
+
 	// Create an array buffer to host the geometry data.
 	GLuint vbo = 0;
 	glGenBuffers(1, &vbo);
@@ -105,7 +105,7 @@ void ScreenQuad::draw(const glm::vec2& invScreenSize){
 	glBindVertexArray(_vao);
 	// Draw!
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
-	glDrawElements(GL_TRIANGLES, _count, GL_UNSIGNED_INT, (void*)0);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)0);
 	
 	glBindVertexArray(0);
 	glUseProgram(0);

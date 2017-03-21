@@ -35,7 +35,6 @@ protected:
 	GLuint _ebo;
 	std::vector<GLuint> _textureIds;
 	
-	size_t _count;
 
 };
 

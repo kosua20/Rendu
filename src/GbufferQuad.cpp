@@ -14,18 +14,22 @@ void GbufferQuad::init(std::map<std::string, GLuint> textureIds, const std::stri
 	
 	ScreenQuad::init(textureIds, shaderRoot);
 	
-	_texCubeMap = loadTextureCubeMap("ressources/cubemap/cubemap", _programId, _textureIds.size(), "textureCubeMap", true);
-	_texCubeMapSmall = loadTextureCubeMap("ressources/cubemap/cubemap_diff", _programId, _textureIds.size()+1, "textureCubeMapSmall", true);
+	_texCubeMap = loadTextureCubeMap("ressources/cubemap/cubemap",
+									 _programId, (GLuint)_textureIds.size(),
+									 "textureCubeMap", true);
+	_texCubeMapSmall = loadTextureCubeMap("ressources/cubemap/cubemap_diff",
+										  _programId, (GLuint)_textureIds.size()+1,
+										  "textureCubeMapSmall", true);
 	
 	_shadowMapId = shadowMapTextureId;
 	glBindTexture(GL_TEXTURE_2D, _shadowMapId);
 	GLuint texUniID = glGetUniformLocation(_programId, "shadowMap");
-	glUniform1i(texUniID, _textureIds.size()+2);
+	glUniform1i(texUniID, (GLuint)_textureIds.size()+2);
 	
 	_lightUniformId = glGetUniformBlockIndex(_programId, "Light");
 }
 
-void GbufferQuad::draw(const glm::vec2& invScreenSize, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix, const glm::mat4& lightMatrix, size_t pingpong) {
+void GbufferQuad::draw(const glm::vec2& invScreenSize, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix, const glm::mat4& lightMatrix, GLuint pingpong) {
 	
 	glm::mat4 invView = glm::inverse(viewMatrix);
 	
@@ -46,11 +50,11 @@ void GbufferQuad::draw(const glm::vec2& invScreenSize, const glm::mat4& viewMatr
 	GLuint lightVPID  = glGetUniformLocation(_programId, "lightVP");
 	glUniformMatrix4fv(lightVPID, 1, GL_FALSE, &lightMatrix[0][0]);
 	
-	glActiveTexture(GL_TEXTURE0 + _textureIds.size());
+	glActiveTexture(GL_TEXTURE0 + (unsigned int)_textureIds.size());
 	glBindTexture(GL_TEXTURE_CUBE_MAP, _texCubeMap);
-	glActiveTexture(GL_TEXTURE0 + _textureIds.size()+1);
+	glActiveTexture(GL_TEXTURE0 + (unsigned int)_textureIds.size() + 1);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, _texCubeMapSmall);
-	glActiveTexture(GL_TEXTURE0 + _textureIds.size()+2);
+	glActiveTexture(GL_TEXTURE0 + (unsigned int)_textureIds.size() + 2);
 	glBindTexture(GL_TEXTURE_2D, _shadowMapId);
 	
 	ScreenQuad::draw(invScreenSize);
