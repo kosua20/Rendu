@@ -178,7 +178,7 @@ GLuint loadTexture(const std::string& path, const GLuint program, const GLuint t
 	GLuint textureId = loadTexture(path, sRGB);
 	
 	glUseProgram(program);
-	glActiveTexture(GL_TEXTURE0 + textureSlot);
+	
 	GLuint texUniID = glGetUniformLocation(program, uniformName.c_str());
 	glUniform1i(texUniID, textureSlot);
 	
@@ -215,8 +215,7 @@ GLuint loadTextureCubeMap(const std::string& pathBase, const GLuint program, con
 	
 	// Active the slot.
 	glUseProgram(program);
-	glActiveTexture(GL_TEXTURE0 + textureSlot);
-	
+
 	// Bind the uniform.
 	GLuint texUniID = glGetUniformLocation(program, uniformName.c_str());
 	glUniform1i(texUniID, textureSlot);
