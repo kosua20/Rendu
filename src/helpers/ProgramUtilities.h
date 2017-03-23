@@ -1,7 +1,7 @@
 #ifndef ProgramUtilities_h
 #define ProgramUtilities_h
 
-#include <GL/glew.h>
+#include <gl3w/gl3w.h>
 #include <string>
 #include <vector>
 
