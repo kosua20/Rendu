@@ -6,8 +6,8 @@ INCLUDEDIR = -I/usr/include/ -I/usr/local/include/ -Isrc/helpers/
 #Library directory (just in case)
 #You might have to symlink libGLEW in your standard libdir for use at runtime
 LIBDIR = -L/usr/local/lib
-#Libraries needed: OpenGL, GLEW and glfw3. GLEW requires GLU, glfw3 require X11, Xi, and so on...
-LIBS = -lGLEW -lglfw3 -lGL -lGLU -lX11 -lXi -lXrandr -lXxf86vm -lXinerama -lXcursor -lrt -lm -pthread -ldl
+#Libraries needed: OpenGL and glfw3.  glfw3 require X11, Xi, and so on...
+LIBS = -lglfw3 -lGL -lX11 -lXi -lXrandr -lXxf86vm -lXinerama -lXcursor -lrt -lm -pthread -ldl
 
 #Compiler flags: C++11 standard, and display 'all' warnings.
 CXXFLAGS = -std=c++11 -Wall
