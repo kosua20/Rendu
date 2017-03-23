@@ -1,7 +1,7 @@
 #ifndef ScreenQuad_h
 #define ScreenQuad_h
+#include <gl3w/gl3w.h>
 #include <GLFW/glfw3.h>
-#include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <vector>
 #include <map>
