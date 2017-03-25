@@ -75,9 +75,17 @@ void Gbuffer::unbind(){
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-std::map<std::string, GLuint> Gbuffer::textureIds(){
+std::map<std::string, GLuint> Gbuffer::textureIds(const std::vector<TextureType>& included){
+	
+	bool includeAll = (included.size() == 0);
+	
 	std::map<std::string, GLuint> texs;
 	for(auto& tex : _textureIds){
+		
+		// Skip if not included
+		if(!includeAll && (std::find(included.cbegin(), included.cend(), tex.first) == included.cend())){
+			continue;
+		}
 		std::string name = "albedoTexture";
 		if(tex.first == TextureType::Normal){
 			name = "normalTexture";
@@ -86,6 +94,7 @@ std::map<std::string, GLuint> Gbuffer::textureIds(){
 		} else if (tex.first == TextureType::Effects){
 			name = "effectsTexture";
 		}
+		
 		texs[name] = tex.second;
 		
 	}
