@@ -12,16 +12,7 @@
 #include "Skybox.h"
 #include "ScreenQuad.h"
 #include "GbufferQuad.h"
-#include "Light.h"
-
-
-
-struct Material
-{
-	glm::vec4 Ka;
-	glm::vec4 Kd;
-	glm::vec4 Ks;
-};
+#include "DirectionalLight.h"
 
 
 class Renderer {
@@ -73,15 +64,13 @@ private:
 	std::shared_ptr<Framebuffer> _sceneFramebuffer;
 	std::shared_ptr<Framebuffer> _fxaaFramebuffer;
 	
-	GbufferQuad _gbufferScreen;
+	//GbufferQuad _gbufferScreen;
 	ScreenQuad _blurScreen;
 	ScreenQuad _fxaaScreen;
 	ScreenQuad _finalScreen;
 	
-	GLuint _pingpong;
-	GLuint _padding;
 
-	Light _light;
+	std::shared_ptr<DirectionalLight> _light;
 	
 };
 
