@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <map>
+#include <vector>
 
 enum class TextureType {
 	Albedo,
@@ -38,7 +39,7 @@ public:
 	/// The ID to the texture containing the result of the framebuffer pass.
 	GLuint textureId(const TextureType& type) { return _textureIds[type]; }
 	
-	std::map<std::string, GLuint> textureIds();
+	std::map<std::string, GLuint> textureIds(const std::vector<TextureType>& included = std::vector<TextureType>());
 	
 	/// The framebuffer size (can be different from the default renderer size).
 	int _width;
