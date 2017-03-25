@@ -25,6 +25,7 @@ public:
 	/// Clean function
 	void clean();
 
+	GLuint program(){ return _programId; }
 	
 protected:
 	
