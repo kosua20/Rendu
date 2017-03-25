@@ -13,9 +13,8 @@ Renderer::~Renderer(){}
 
 Renderer::Renderer(int width, int height){
 
-	// Initialize the timer and pingpong.
+	// Initialize the timer.
 	_timer = glfwGetTime();
-	_pingpong = 0;
 	// Setup projection matrix.
 	_camera.screen(width, height);
 	
@@ -25,6 +24,9 @@ Renderer::Renderer(int width, int height){
 	_gbuffer = std::make_shared<Gbuffer>(_camera._renderSize[0],_camera._renderSize[1]);
 	_sceneFramebuffer = std::make_shared<Framebuffer>(_camera._renderSize[0],_camera._renderSize[1], GL_RGBA,GL_UNSIGNED_BYTE,GL_LINEAR,GL_CLAMP_TO_EDGE);
 	_fxaaFramebuffer = std::make_shared<Framebuffer>(_camera._renderSize[0],_camera._renderSize[1], GL_RGBA,GL_UNSIGNED_BYTE,GL_LINEAR,GL_CLAMP_TO_EDGE);
+	
+	_light = std::make_shared<DirectionalLight>(glm::vec3(0.0f), glm::vec3(1.0f), glm::ortho(-0.75f,0.75f,-0.75f,0.75f,2.0f,6.0f));
+
 	
 	// Query the renderer identifier, and the supported OpenGL version.
 	const GLubyte* renderer = glGetString(GL_RENDERER);
@@ -40,39 +42,7 @@ Renderer::Renderer(int width, int height){
 	glCullFace(GL_BACK);
 	checkGLError();
 	
-	
-	// Setup light (default value)
-	//_light = Light(glm::vec4(0.0f),glm::vec4(0.3f, 0.3f, 0.3f, 0.0f), glm::vec4(0.8f, 0.8f,0.8f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 0.0f), 25.0f, glm::ortho(-0.75f,0.75f,-0.75f,0.75f,2.0f,6.0f));
-	// position will be updated at each frame
-	//glm::perspective(45.0f, 1.0f, 1.0f, 5.f); depending on the type of light, one might prefer to use one or the other matrix.
-	
-	// Generate the buffer.
-	glGenBuffers(1, &_ubo);
-	// Bind the buffer.
-	glBindBuffer(GL_UNIFORM_BUFFER, _ubo);
-	
-	// We need to know the alignment size if we want to store two uniform blocks in the same uniform buffer.
-	GLint uboAlignSize = 0;
-	glGetIntegerv(GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT, &uboAlignSize);
-	// Compute the padding for the second block, it needs to be a multiple of uboAlignSize (typically uboAlignSize will be 256.)
-	GLuint lightSize = 4*sizeof(glm::vec4) + 1*sizeof(float);
-	_padding = ((lightSize/uboAlignSize)+1)*uboAlignSize;
-	
-	// Allocate enough memory to hold two copies of the Light struct.
-	glBufferData(GL_UNIFORM_BUFFER, _padding + lightSize, NULL, GL_DYNAMIC_DRAW);
-	
-	// Bind the range allocated to the first version of the light.
-	glBindBufferRange(GL_UNIFORM_BUFFER, 0, _ubo, 0, lightSize);
-	// Submit the data.
-	glBufferSubData(GL_UNIFORM_BUFFER, 0, lightSize, _light.getStruct());
-	
-	// Bind the range allocated to the second version of the light.
-	glBindBufferRange(GL_UNIFORM_BUFFER, 1, _ubo, _padding, lightSize);
-	// Submit the data.
-	glBufferSubData(GL_UNIFORM_BUFFER, _padding, lightSize, _light.getStruct());
-	
-	glBindBuffer(GL_UNIFORM_BUFFER,0);
-	
+
 	// Initialize objects.
 	const std::vector<std::string> texturesSuzanne = { "ressources/suzanne_texture_color.png", "ressources/suzanne_texture_normal.png", "ressources/suzanne_texture_ao_specular_reflection.png", "ressources/cubemap/cubemap", "ressources/cubemap/cubemap_diff" };
 	_suzanne.init("ressources/suzanne.obj", texturesSuzanne, 1);
@@ -86,12 +56,12 @@ Renderer::Renderer(int width, int height){
 	_skybox.init();
 	
 	_blurScreen.init(_lightFramebuffer->textureId(), "ressources/shaders/boxblur");
-	_gbufferScreen.init(_gbuffer->textureIds(), "ressources/shaders/scene_gbuffer", _blurFramebuffer->textureId());
+	
+	const std::vector<TextureType> excludedTextures = { TextureType::Albedo, TextureType::Depth, TextureType::Normal };
+	_light->init(_gbuffer->textureIds(excludedTextures));
 	_fxaaScreen.init(_sceneFramebuffer->textureId(), "ressources/shaders/fxaa");
 	_finalScreen.init(_fxaaFramebuffer->textureId(), "ressources/shaders/final_screenquad");
 	checkGLError();
-	
-	
 	
 }
 
@@ -104,21 +74,6 @@ void Renderer::draw(){
 	
 	// Physics simulation
 	physics(elapsed);
-	
-	// Update the light position (in view space).
-	// Bind the buffer.
-	glBindBuffer(GL_UNIFORM_BUFFER, _ubo);
-	// Obtain a handle to the underlying memory.
-	// We force the GPU to consider the memory region as unsynchronized:
-	// even if it is used, it will be overwritten. As we alternate between
-	// two sub-buffers indices ("ping-ponging"), we won't risk writing over
-	// a currently used value.
-	GLvoid * ptr = glMapBufferRange(GL_UNIFORM_BUFFER,_pingpong*_padding,sizeof(glm::vec4),GL_MAP_WRITE_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
-	// Copy the light position.
-	std::memcpy(ptr, _light.getStruct(), sizeof(glm::vec4));
-	// Unmap, unbind.
-	glUnmapBuffer(GL_UNIFORM_BUFFER);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 	
 	
 	// --- Light pass -------
@@ -133,8 +88,8 @@ void Renderer::draw(){
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	// Draw objects.
-	_suzanne.drawDepth(_light._mvp);
-	_dragon.drawDepth(_light._mvp);
+	_suzanne.drawDepth(_light->_mvp);
+	_dragon.drawDepth(_light->_mvp);
 	//_plane.drawDepth(planeModel, _light._mvp);
 	
 	// Unbind the shadow map framebuffer.
@@ -178,7 +133,8 @@ void Renderer::draw(){
 	// --- Gbuffer composition pass
 	_sceneFramebuffer->bind();
 	glViewport(0,0,_sceneFramebuffer->_width, _sceneFramebuffer->_height);
-	_gbufferScreen.draw( 1.0f / _camera._renderSize, _camera._view, _camera._projection, _light._mvp, _pingpong);
+	_light->draw(1.0f / _camera._renderSize, _camera._view, _camera._projection);
+	//_gbufferScreen.draw( 1.0f / _camera._renderSize, );
 	_sceneFramebuffer->unbind();
 	
 	// --- FXAA pass -------
@@ -210,13 +166,12 @@ void Renderer::draw(){
 	
 	// Update timer
 	_timer = glfwGetTime();
-	// Update pingpong
-	_pingpong = (_pingpong + 1)%2;
 }
 
 void Renderer::physics(float elapsedTime){
+	
 	_camera.update(elapsedTime);
-	_light.update(_timer, _camera._view);
+	_light->update(_timer, _camera._view);
 	
 	const glm::mat4 dragonModel = glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(-0.1,0.0,-0.25)),glm::vec3(0.5f));
 	const glm::mat4 suzanneModel = glm::scale(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(0.2,0.0,0.0)),float(_timer),glm::vec3(0.0f,1.0f,0.0f)),glm::vec3(0.25f));
