@@ -1,0 +1,74 @@
+#version 330
+
+// Input: UV coordinates
+in INTERFACE {
+	vec2 uv;
+} In ;
+
+// Uniforms
+uniform sampler2D albedoTexture;
+uniform sampler2D normalTexture;
+uniform sampler2D depthTexture;
+
+uniform vec2 inverseScreenSize;
+uniform vec4 projectionMatrix;
+uniform mat4 inverseV;
+
+uniform vec3 lightDirection;//(direction in view space)
+uniform vec3 lightColor;
+
+// Output: the fragment color
+out vec3 fragColor;
+
+vec3 positionFromDepth(float depth){
+	float depth2 = 2.0 * depth - 1.0 ;
+	vec2 ndcPos = 2.0 * In.uv - 1.0;
+	// Linearize depth -> in view space.
+	float viewDepth = - projectionMatrix.w / (depth2 + projectionMatrix.z);
+	// Compute the x and y components in view space.
+	return vec3(- ndcPos * viewDepth / projectionMatrix.xy , viewDepth);
+}
+
+
+// Compute the light shading.
+
+vec3 shading(vec3 diffuseColor, vec3 n, vec3 v){
+	
+	// Compute the direction from the point to the light
+	vec3 d = normalize(lightDirection);
+	vec3 worldNormal = vec3(inverseV * vec4(n,0.0));
+	
+	// Compute the diffuse factor
+	float diffuse = max(0.0, dot(d,n));
+	
+	// Compute the specular factor
+	float specular = 0.0;
+	if(diffuse > 0.0){
+		vec3 r = reflect(-d,n);
+		specular = pow(max(dot(r,v),0.0),96.0);
+	}
+	
+	return diffuse * diffuseColor * lightColor + specular * lightColor;
+}
+
+
+void main(){
+	
+	vec4 albedo =  texture(albedoTexture,In.uv);
+	// If this is the skybox, don't shade.
+	if(albedo.a == 0.0){
+		discard;
+	}
+	
+	vec3 diffuseColor = albedo.rgb;
+	vec3 n = 2.0 * texture(normalTexture,In.uv).rgb - 1.0;
+	float depth = texture(depthTexture,In.uv).r;
+	vec3 v = normalize(-positionFromDepth(depth));
+	
+	vec3 lightShading = shading(diffuseColor, n, v);
+	
+	// Mix the ambient color (always present) with the light contribution, weighted by the shadow factor.
+	fragColor = lightShading;
+	
+}
+
