@@ -16,12 +16,15 @@ public:
 
 	/// Init function
 	void init(const std::string& meshPath, const std::vector<std::string>& texturesPaths, int materialId);
-
+	
+	/// Update function
+	void update(const glm::mat4& model);
+	
 	/// Draw function
-	void draw(const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection);
+	void draw(const glm::mat4& view, const glm::mat4& projection);
 	
 	/// Draw depth function
-	void drawDepth(const glm::mat4& model, const glm::mat4& vp);
+	void drawDepth(const glm::mat4& lightVP);
 	
 	/// Clean function
 	void clean();
@@ -39,8 +42,7 @@ private:
 	
 	GLsizei _count;
 	
-	
-	glm::mat4 _lightMVP;
+	glm::mat4 _model;
 	
 };
 

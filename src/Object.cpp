@@ -105,11 +105,16 @@ void Object::init(const std::string& meshPath, const std::vector<std::string>& t
 	
 }
 
+void Object::update(const glm::mat4& model){
+	
+	_model = model;
+	
+}
 
-void Object::draw(const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection){
+void Object::draw(const glm::mat4& view, const glm::mat4& projection){
 	
 	// Combine the three matrices.
-	glm::mat4 MV = view * model;
+	glm::mat4 MV = view * _model;
 	glm::mat4 MVP = projection * MV;
 
 	// Compute the normal matrix
@@ -151,16 +156,16 @@ void Object::draw(const glm::mat4& model, const glm::mat4& view, const glm::mat4
 }
 
 
-void Object::drawDepth(const glm::mat4& model, const glm::mat4& vp){
-
+void Object::drawDepth(const glm::mat4& lightVP){
+	
 	// Combine the three matrices.
-	_lightMVP = vp * model;
+	glm::mat4 lightMVP = lightVP * _model;
 	
 	glUseProgram(_programDepthId);
 	
 	// Upload the MVP matrix.
 	GLuint mvpID  = glGetUniformLocation(_programDepthId, "mvp");
-	glUniformMatrix4fv(mvpID, 1, GL_FALSE, &_lightMVP[0][0]);
+	glUniformMatrix4fv(mvpID, 1, GL_FALSE, &lightMVP[0][0]);
 	
 	// Select the geometry.
 	glBindVertexArray(_vao);
