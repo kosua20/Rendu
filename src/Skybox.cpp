@@ -72,7 +72,7 @@ void Skybox::init(){
 }
 
 
-void Skybox::draw(float elapsed, const glm::mat4& view, const glm::mat4& projection){
+void Skybox::draw(const glm::mat4& view, const glm::mat4& projection){
 	
 	glm::mat4 model = glm::scale(glm::mat4(1.0f),glm::vec3(5.0f));
 	// Combine the three matrices.

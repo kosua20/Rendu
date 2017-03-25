@@ -18,7 +18,7 @@ public:
 	void init();
 
 	/// Draw function
-	void draw(float elapsed, const glm::mat4& view, const glm::mat4& projection);
+	void draw(const glm::mat4& view, const glm::mat4& projection);
 
 	/// Clean function
 	void clean();

@@ -104,9 +104,7 @@ void Renderer::draw(){
 	
 	// Physics simulation
 	physics(elapsed);
-	const glm::mat4 dragonModel = glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(-0.1,0.0,-0.25)),glm::vec3(0.5f));
-	const glm::mat4 suzanneModel = glm::scale(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(0.2,0.0,0.0)),float(_timer),glm::vec3(0.0f,1.0f,0.0f)),glm::vec3(0.25f));
-	const glm::mat4 planeModel = glm::scale(glm::translate(glm::mat4(1.0f),glm::vec3(0.0f,-0.35f,-0.5f)), glm::vec3(2.0f));
+	
 	// Update the light position (in view space).
 	// Bind the buffer.
 	glBindBuffer(GL_UNIFORM_BUFFER, _ubo);
@@ -135,8 +133,8 @@ void Renderer::draw(){
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	// Draw objects.
-	_suzanne.drawDepth(suzanneModel, _light._mvp);
-	_dragon.drawDepth(dragonModel, _light._mvp);
+	_suzanne.drawDepth(_light._mvp);
+	_dragon.drawDepth(_light._mvp);
 	//_plane.drawDepth(planeModel, _light._mvp);
 	
 	// Unbind the shadow map framebuffer.
@@ -167,10 +165,10 @@ void Renderer::draw(){
 	glClear(GL_DEPTH_BUFFER_BIT);
 	
 	// Draw objects
-	_suzanne.draw(suzanneModel, _camera._view, _camera._projection);
-	_dragon.draw(dragonModel, _camera._view, _camera._projection);
-	_plane.draw(planeModel, _camera._view, _camera._projection);
-	_skybox.draw(elapsed, _camera._view, _camera._projection);
+	_suzanne.draw(_camera._view, _camera._projection);
+	_dragon.draw(_camera._view, _camera._projection);
+	_plane.draw(_camera._view, _camera._projection);
+	_skybox.draw(_camera._view, _camera._projection);
 	
 	// Unbind the full scene framebuffer.
 	_gbuffer->unbind();
@@ -219,6 +217,15 @@ void Renderer::draw(){
 void Renderer::physics(float elapsedTime){
 	_camera.update(elapsedTime);
 	_light.update(_timer, _camera._view);
+	
+	const glm::mat4 dragonModel = glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(-0.1,0.0,-0.25)),glm::vec3(0.5f));
+	const glm::mat4 suzanneModel = glm::scale(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(0.2,0.0,0.0)),float(_timer),glm::vec3(0.0f,1.0f,0.0f)),glm::vec3(0.25f));
+	const glm::mat4 planeModel = glm::scale(glm::translate(glm::mat4(1.0f),glm::vec3(0.0f,-0.35f,-0.5f)), glm::vec3(2.0f));
+	
+	_dragon.update(dragonModel);
+	_suzanne.update(suzanneModel);
+	_plane.update(planeModel);
+	
 }
 
 
