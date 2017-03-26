@@ -64,7 +64,7 @@ void Camera::screen(int width, int height){
 	// The render resolution is 900 pixels high, with the same aspect ratio as the display resolution
 	_renderSize = (900.0f/_screenSize[1]) * _screenSize;
 	// Perspective projection.
-	_projection = glm::perspective(45.0f, _renderSize[0] / _renderSize[1], 0.1f, 100.f);
+	_projection = glm::perspective(45.0f, _renderSize[0] / _renderSize[1], 0.01f, 200.f);
 }
 
 
