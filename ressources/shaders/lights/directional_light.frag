@@ -10,10 +10,12 @@ uniform sampler2D albedoTexture;
 uniform sampler2D normalTexture;
 uniform sampler2D depthTexture;
 uniform sampler2D effectsTexture;
+uniform sampler2D shadowMap;
 
 uniform vec2 inverseScreenSize;
 uniform vec4 projectionMatrix;
 uniform mat4 inverseV;
+uniform mat4 viewToLight;
 
 uniform vec3 lightDirection;//(direction in view space)
 uniform vec3 lightColor;
@@ -52,6 +54,29 @@ vec3 shading(vec3 diffuseColor, vec3 n, vec3 v, float specularCoeff){
 	return diffuse * diffuseColor * lightColor + specular * lightColor;
 }
 
+// Compute the shadow multiplicator based on shadow map.
+
+float shadow(vec3 lightSpacePosition){
+	float probabilityMax = 1.0;
+	if (lightSpacePosition.z < 1.0){
+		// Read first and second moment from shadow map.
+		vec2 moments = texture(shadowMap, lightSpacePosition.xy).rg;
+		// Initial probability of light.
+		float probability = float(lightSpacePosition.z <= moments.x);
+		// Compute variance.
+		float variance = moments.y - (moments.x * moments.x);
+		variance = max(variance, 0.00001);
+		// Delta of depth.
+		float d = lightSpacePosition.z - moments.x;
+		// Use Chebyshev to estimate bound on probability.
+		probabilityMax = variance / (variance + d*d);
+		probabilityMax = max(probability, probabilityMax);
+		// Limit light bleeding by rescaling and clamping the probability factor.
+		probabilityMax = clamp( (probabilityMax - 0.1) / (1.0 - 0.1), 0.0, 1.0);
+	}
+	return probabilityMax;
+}
+
 
 void main(){
 	
@@ -65,10 +90,14 @@ void main(){
 	vec3 n = 2.0 * texture(normalTexture,In.uv).rgb - 1.0;
 	float depth = texture(depthTexture,In.uv).r;
 	float specularCoeff = texture(effectsTexture,In.uv).g;
-	
-	vec3 v = normalize(-positionFromDepth(depth));
+	vec3 position = positionFromDepth(depth);
+	vec3 v = normalize(-position);
 	
 	vec3 lightShading = shading(diffuseColor, n, v, specularCoeff);
-	fragColor.rgb = lightShading;
+	
+	vec3 lightSpacePosition = 0.5*(viewToLight * vec4(position,1.0)).xyz + 0.5;
+	float shadowMultiplicator = shadow(lightSpacePosition);
+	
+	fragColor.rgb = shadowMultiplicator*lightShading;
 }
 
