@@ -5,15 +5,16 @@
 #include <glm/glm.hpp>
 #include <memory>
 
+#include "helpers/GenerationUtilities.h"
+
 #include "Framebuffer.h"
 #include "Gbuffer.h"
 #include "camera/Camera.h"
 #include "Object.h"
 #include "Skybox.h"
 #include "ScreenQuad.h"
-#include "GbufferQuad.h"
-#include "DirectionalLight.h"
-#include "PointLight.h"
+#include "lights/DirectionalLight.h"
+#include "lights/PointLight.h"
 
 class Renderer {
 
@@ -46,30 +47,29 @@ public:
 
 
 private:
-	
+
 	float _timer;
-	
+
 	Camera _camera;
 
 	Object _suzanne;
 	Object _dragon;
 	Skybox _skybox;
 	Object _plane;
-	
+
 	std::shared_ptr<Framebuffer> _lightFramebuffer;
 	std::shared_ptr<Framebuffer> _blurFramebuffer;
 	std::shared_ptr<Gbuffer> _gbuffer;
 	std::shared_ptr<Framebuffer> _sceneFramebuffer;
 	std::shared_ptr<Framebuffer> _fxaaFramebuffer;
-	
+
 	ScreenQuad _blurScreen;
 	ScreenQuad _fxaaScreen;
 	ScreenQuad _finalScreen;
-	
 
-	std::shared_ptr<DirectionalLight> _light;
-	std::shared_ptr<PointLight> _light1;
-	
+	std::vector<DirectionalLight> _directionalLights;
+	std::vector<PointLight> _pointLights;
+
 };
 
 #endif
