@@ -8,11 +8,9 @@ in INTERFACE {
 // Uniforms: the texture, inverse of the screen size, FXAA flag.
 uniform sampler2D albedoTexture;
 uniform sampler2D normalTexture;
-uniform samplerCube textureCubeMap;
 uniform samplerCube textureCubeMapSmall;
 
 uniform vec2 inverseScreenSize;
-uniform vec4 projectionMatrix;
 uniform mat4 inverseV;
 
 // Output: the fragment color
