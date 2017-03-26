@@ -16,18 +16,21 @@ public:
 	
 	void update(const glm::vec3& worldPosition, const glm::mat4& camViewMatrix);
 	
+	void update(const glm::mat4& camViewMatrix);
+	
 	virtual void init(std::map<std::string, GLuint> textureIds)=0;
 	
 	virtual void draw(const glm::vec2& invScreenSize, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) =0;
 	
 	glm::mat4 _mvp;
 	glm::vec3 _color;
+	glm::vec3 _local;
 	
 protected:
 	
 	glm::mat4 _projectionMatrix;
 	glm::mat4 _viewMatrix;
-	glm::vec3 _local;
+	
 	
 };
 
@@ -46,6 +49,13 @@ inline Light::Light(const glm::vec3& worldPosition, const glm::vec3& color, cons
 inline void Light::update(const glm::vec3& worldPosition, const glm::mat4& camViewMatrix){
 	
 	_local = worldPosition;
+	_viewMatrix = glm::lookAt(_local, glm::vec3(0.0f,0.0f,0.0f), glm::vec3(0.0f,1.0f,0.0f));
+	_mvp = _projectionMatrix * _viewMatrix;
+	
+}
+
+inline void Light::update(const glm::mat4& camViewMatrix){
+	
 	_viewMatrix = glm::lookAt(_local, glm::vec3(0.0f,0.0f,0.0f), glm::vec3(0.0f,1.0f,0.0f));
 	_mvp = _projectionMatrix * _viewMatrix;
 	
