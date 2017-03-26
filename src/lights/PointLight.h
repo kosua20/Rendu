@@ -1,7 +1,6 @@
 #ifndef PointLight_h
 #define PointLight_h
 #include "Light.h"
-#include "ScreenQuad.h"
 
 class PointLight : public Light {
 
@@ -24,8 +23,6 @@ private:
 	static GLuint _ebo;
 	static GLuint _vao;
 	static GLsizei _count;
-	
-	
 	
 };
 

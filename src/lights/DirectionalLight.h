@@ -1,7 +1,7 @@
 #ifndef DirectionalLight_h
 #define DirectionalLight_h
 #include "Light.h"
-#include "ScreenQuad.h"
+#include "../ScreenQuad.h"
 
 class DirectionalLight : public Light {
 
