@@ -20,15 +20,13 @@ Renderer::Renderer(int width, int height){
 	// Setup projection matrix.
 	_camera.screen(width, height);
 	
-	// Setup the framebuffer.
-	_lightFramebuffer = std::make_shared<Framebuffer>(512, 512, GL_RG,GL_FLOAT,GL_LINEAR,GL_CLAMP_TO_BORDER);
-	_blurFramebuffer = std::make_shared<Framebuffer>(_lightFramebuffer->_width, _lightFramebuffer->_height, GL_RG,GL_FLOAT,GL_LINEAR,GL_CLAMP_TO_BORDER);
+	
 	_gbuffer = std::make_shared<Gbuffer>(_camera._renderSize[0],_camera._renderSize[1]);
 	_sceneFramebuffer = std::make_shared<Framebuffer>(_camera._renderSize[0],_camera._renderSize[1], GL_RGBA,GL_UNSIGNED_BYTE,GL_LINEAR,GL_CLAMP_TO_EDGE);
 	_fxaaFramebuffer = std::make_shared<Framebuffer>(_camera._renderSize[0],_camera._renderSize[1], GL_RGBA,GL_UNSIGNED_BYTE,GL_LINEAR,GL_CLAMP_TO_EDGE);
 	
 	// Create directional light.
-	_directionalLights.emplace_back(glm::vec3(0.0f), glm::vec3(1.0f), glm::ortho(-0.75f,0.75f,-0.75f,0.75f,2.0f,6.0f));
+	_directionalLights.emplace_back(glm::vec3(0.0f), glm::vec3(0.9f), glm::ortho(-0.75f,0.75f,-0.75f,0.75f,2.0f,6.0f));
 	
 	// Create point lights.
 	const float lI = 6.0; // Light intensity.
@@ -71,8 +69,6 @@ Renderer::Renderer(int width, int height){
 	
 	_skybox.init();
 	
-	_blurScreen.init(_lightFramebuffer->textureId(), "ressources/shaders/screens/boxblur");
-	
 	_ambientScreen.init(_gbuffer->textureIds({ TextureType::Albedo, TextureType::Normal }), "ressources/shaders/gbuffer/ambient");
 	
 	const std::vector<TextureType> includedTextures = { TextureType::Albedo, TextureType::Depth, TextureType::Normal, TextureType::Effects };
@@ -106,35 +102,19 @@ void Renderer::draw(){
 	// --- Light pass -------
 	
 	// Draw the scene inside the framebuffer.
-	_lightFramebuffer->bind();
-	glViewport(0, 0, _lightFramebuffer->_width, _lightFramebuffer->_height);
+	for(auto& dirLight : _directionalLights){
+		
+		dirLight.bind();
+		
+		// Draw objects.
+		_suzanne.drawDepth(dirLight._mvp);
+		_dragon.drawDepth(dirLight._mvp);
+		//_plane.drawDepth(planeModel, _light._mvp);
+		
+		dirLight.blurAndUnbind();
 	
-	// Set the clear color to white.
-	glClearColor(1.0f,1.0f,1.0f,0.0f);
-	// Clear the color and depth buffers.
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	}
 	
-	// Draw objects.
-	_suzanne.drawDepth(_directionalLights[0]._mvp);
-	_dragon.drawDepth(_directionalLights[0]._mvp);
-	//_plane.drawDepth(planeModel, _light._mvp);
-	
-	// Unbind the shadow map framebuffer.
-	_lightFramebuffer->unbind();
-	// ----------------------
-	
-	// --- Blur pass --------
-	glDisable(GL_DEPTH_TEST);
-	// Bind the post-processing framebuffer.
-	_blurFramebuffer->bind();
-	// Set screen viewport.
-	glViewport(0,0,_blurFramebuffer->_width, _blurFramebuffer->_height);
-	
-	// Draw the fullscreen quad
-	_blurScreen.draw( invRenderSize );
-	
-	_blurFramebuffer->unbind();
-	glEnable(GL_DEPTH_TEST);
 	// ----------------------
 	
 	// --- Scene pass -------
@@ -162,8 +142,6 @@ void Renderer::draw(){
 	
 	
 	glViewport(0,0,_sceneFramebuffer->_width, _sceneFramebuffer->_height);
-	//glClearColor(0.0f,0.0f,0.0f,0.0f);
-	//glClear(GL_COLOR_BUFFER_BIT);
 	
 	_ambientScreen.draw( invRenderSize, _camera._view, _camera._projection);
 	
@@ -176,7 +154,7 @@ void Renderer::draw(){
 		pointLight.draw( invRenderSize, _camera._view, _camera._projection);
 	}
 	glDisable(GL_BLEND);
-	//_gbufferScreen.draw( 1.0f / _camera._renderSize, );
+	
 	_sceneFramebuffer->unbind();
 	
 	// --- FXAA pass -------
@@ -215,7 +193,7 @@ void Renderer::physics(float elapsedTime){
 	_camera.update(elapsedTime);
 	
 	// Update lights.
-	_directionalLights[0].update(glm::vec3(2.0f,(1.5f + sin(0.5*elapsedTime)),2.0f), _camera._view);
+	_directionalLights[0].update(glm::vec3(2.0f, 1.5f + sin(0.5*_timer),2.0f), _camera._view);
 	
 	for(size_t i = 0; i <_pointLights.size(); ++i){
 		auto& pointLight = _pointLights[i];
@@ -224,7 +202,7 @@ void Renderer::physics(float elapsedTime){
 	}
 	
 	// Update objects.
-	const glm::mat4 dragonModel = glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(-0.1,0.0,-0.25)),glm::vec3(0.5f));
+	const glm::mat4 dragonModel = glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(-0.1,-0.05,-0.25)),glm::vec3(0.5f));
 	const glm::mat4 suzanneModel = glm::scale(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(0.2,0.0,0.0)),float(_timer),glm::vec3(0.0f,1.0f,0.0f)),glm::vec3(0.25f));
 	const glm::mat4 planeModel = glm::scale(glm::translate(glm::mat4(1.0f),glm::vec3(0.0f,-0.35f,-0.5f)), glm::vec3(2.0f));
 	
@@ -241,12 +219,12 @@ void Renderer::clean(){
 	_dragon.clean();
 	_plane.clean();
 	_skybox.clean();
-	_blurScreen.clean();
+	for(auto& dirLight : _directionalLights){
+		dirLight.clean();
+	}
 	_ambientScreen.clean();
 	_fxaaScreen.clean();
 	_finalScreen.clean();
-	_lightFramebuffer->clean();
-	_blurFramebuffer->clean();
 	_gbuffer->clean();
 	_sceneFramebuffer->clean();
 	_fxaaFramebuffer->clean();

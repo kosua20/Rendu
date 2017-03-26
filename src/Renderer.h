@@ -58,13 +58,10 @@ private:
 	Skybox _skybox;
 	Object _plane;
 
-	std::shared_ptr<Framebuffer> _lightFramebuffer;
-	std::shared_ptr<Framebuffer> _blurFramebuffer;
 	std::shared_ptr<Gbuffer> _gbuffer;
 	std::shared_ptr<Framebuffer> _sceneFramebuffer;
 	std::shared_ptr<Framebuffer> _fxaaFramebuffer;
 
-	ScreenQuad _blurScreen;
 	AmbientQuad _ambientScreen;
 	ScreenQuad _fxaaScreen;
 	ScreenQuad _finalScreen;
