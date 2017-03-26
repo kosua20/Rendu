@@ -15,7 +15,7 @@ Skybox::~Skybox(){}
 void Skybox::init(){
 	
 	// Load the shaders
-	_programId = createGLProgram("ressources/shaders/skybox_gbuffer.vert","ressources/shaders/skybox_gbuffer.frag");
+	_programId = createGLProgram("ressources/shaders/gbuffer/skybox_gbuffer.vert","ressources/shaders/gbuffer/skybox_gbuffer.frag");
 
 	// Load geometry.
 	std::vector<float> cubeVertices{ -1.0, -1.0,  1.0,

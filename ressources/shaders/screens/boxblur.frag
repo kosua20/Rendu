@@ -5,7 +5,7 @@ in INTERFACE {
 	vec2 uv;
 } In ;
 
-// Uniforms: the texture, inverse of the screen size, FXAA flag.
+// Uniforms: the texture, inverse of the screen size.
 uniform sampler2D screenTexture;
 uniform vec2 inverseScreenSize;
 

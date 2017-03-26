@@ -57,13 +57,13 @@ Renderer::Renderer(int width, int height){
 	
 	_skybox.init();
 	
-	_blurScreen.init(_lightFramebuffer->textureId(), "ressources/shaders/boxblur");
+	_blurScreen.init(_lightFramebuffer->textureId(), "ressources/shaders/screens/boxblur");
 	
 	const std::vector<TextureType> includedTextures = { TextureType::Albedo, TextureType::Depth, TextureType::Normal };
 	_light->init(_gbuffer->textureIds(includedTextures));
 	_light1->init(_gbuffer->textureIds(includedTextures));
-	_fxaaScreen.init(_sceneFramebuffer->textureId(), "ressources/shaders/fxaa");
-	_finalScreen.init(_fxaaFramebuffer->textureId(), "ressources/shaders/final_screenquad");
+	_fxaaScreen.init(_sceneFramebuffer->textureId(), "ressources/shaders/screens/fxaa");
+	_finalScreen.init(_fxaaFramebuffer->textureId(), "ressources/shaders/screens/final_screenquad");
 	checkGLError();
 	
 }

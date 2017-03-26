@@ -48,8 +48,6 @@ public:
 private:
 	
 	float _timer;
-
-	GLuint _ubo;
 	
 	Camera _camera;
 
@@ -64,7 +62,6 @@ private:
 	std::shared_ptr<Framebuffer> _sceneFramebuffer;
 	std::shared_ptr<Framebuffer> _fxaaFramebuffer;
 	
-	//GbufferQuad _gbufferScreen;
 	ScreenQuad _blurScreen;
 	ScreenQuad _fxaaScreen;
 	ScreenQuad _finalScreen;
