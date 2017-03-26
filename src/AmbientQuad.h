@@ -19,7 +19,8 @@ public:
 	
 	/// Draw function,
 	void draw(const glm::vec2& invScreenSize, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix);
-
+	
+	void clean();
 	
 private:
 	
