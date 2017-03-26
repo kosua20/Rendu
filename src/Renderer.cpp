@@ -26,7 +26,9 @@ Renderer::Renderer(int width, int height){
 	_fxaaFramebuffer = std::make_shared<Framebuffer>(_camera._renderSize[0],_camera._renderSize[1], GL_RGBA,GL_UNSIGNED_BYTE,GL_LINEAR,GL_CLAMP_TO_EDGE);
 	
 	_light = std::make_shared<DirectionalLight>(glm::vec3(0.0f), glm::vec3(1.0f), glm::ortho(-0.75f,0.75f,-0.75f,0.75f,2.0f,6.0f));
-
+	_light1 = std::make_shared<PointLight>(glm::vec3(0.0f), glm::vec3(3.0f, 0.0f, 0.0f), 1.0f);
+	
+	PointLight::loadProgramAndGeometry();
 	
 	// Query the renderer identifier, and the supported OpenGL version.
 	const GLubyte* renderer = glGetString(GL_RENDERER);
@@ -57,8 +59,9 @@ Renderer::Renderer(int width, int height){
 	
 	_blurScreen.init(_lightFramebuffer->textureId(), "ressources/shaders/boxblur");
 	
-	const std::vector<TextureType> excludedTextures = { TextureType::Albedo, TextureType::Depth, TextureType::Normal };
-	_light->init(_gbuffer->textureIds(excludedTextures));
+	const std::vector<TextureType> includedTextures = { TextureType::Albedo, TextureType::Depth, TextureType::Normal };
+	_light->init(_gbuffer->textureIds(includedTextures));
+	_light1->init(_gbuffer->textureIds(includedTextures));
 	_fxaaScreen.init(_sceneFramebuffer->textureId(), "ressources/shaders/fxaa");
 	_finalScreen.init(_fxaaFramebuffer->textureId(), "ressources/shaders/final_screenquad");
 	checkGLError();
@@ -132,8 +135,15 @@ void Renderer::draw(){
 	glDisable(GL_DEPTH_TEST);
 	// --- Gbuffer composition pass
 	_sceneFramebuffer->bind();
+	glEnable(GL_BLEND);
+	glBlendEquation (GL_FUNC_ADD);
+	glBlendFunc(GL_ONE, GL_ONE);
 	glViewport(0,0,_sceneFramebuffer->_width, _sceneFramebuffer->_height);
+	glClearColor(0.0f,0.0f,0.0f,0.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
 	_light->draw(1.0f / _camera._renderSize, _camera._view, _camera._projection);
+	_light1->draw(1.0f / _camera._renderSize, _camera._view, _camera._projection);
+	glDisable(GL_BLEND);
 	//_gbufferScreen.draw( 1.0f / _camera._renderSize, );
 	_sceneFramebuffer->unbind();
 	
@@ -171,7 +181,8 @@ void Renderer::draw(){
 void Renderer::physics(float elapsedTime){
 	
 	_camera.update(elapsedTime);
-	_light->update(_timer, _camera._view);
+	_light->update(glm::vec3(2.0f,(1.5f + sin(0.5*elapsedTime)),2.0f), _camera._view);
+	_light1->update(glm::vec3(0.3f, -0.35f, 0.2f), _camera._view);
 	
 	const glm::mat4 dragonModel = glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(-0.1,0.0,-0.25)),glm::vec3(0.5f));
 	const glm::mat4 suzanneModel = glm::scale(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(0.2,0.0,0.0)),float(_timer),glm::vec3(0.0f,1.0f,0.0f)),glm::vec3(0.25f));

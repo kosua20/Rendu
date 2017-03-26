@@ -13,7 +13,7 @@
 #include "ScreenQuad.h"
 #include "GbufferQuad.h"
 #include "DirectionalLight.h"
-
+#include "PointLight.h"
 
 class Renderer {
 
@@ -71,6 +71,7 @@ private:
 	
 
 	std::shared_ptr<DirectionalLight> _light;
+	std::shared_ptr<PointLight> _light1;
 	
 };
 
