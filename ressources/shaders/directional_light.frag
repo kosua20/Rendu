@@ -36,7 +36,6 @@ vec3 shading(vec3 diffuseColor, vec3 n, vec3 v){
 	
 	// Compute the direction from the point to the light
 	vec3 d = normalize(lightDirection);
-	vec3 worldNormal = vec3(inverseV * vec4(n,0.0));
 	
 	// Compute the diffuse factor
 	float diffuse = max(0.0, dot(d,n));
@@ -66,9 +65,6 @@ void main(){
 	vec3 v = normalize(-positionFromDepth(depth));
 	
 	vec3 lightShading = shading(diffuseColor, n, v);
-	
-	// Mix the ambient color (always present) with the light contribution, weighted by the shadow factor.
-	fragColor = lightShading;
-	
+	fragColor.rgb = lightShading;
 }
 
