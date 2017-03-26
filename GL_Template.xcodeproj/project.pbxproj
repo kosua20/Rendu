@@ -28,6 +28,7 @@
 		F448015B1E842A620063A07E /* gl3w.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F44801581E842A5E0063A07E /* gl3w.cpp */; };
 		F4FA2F051E87F60D007EBA57 /* DirectionalLight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4FA2F001E87F60D007EBA57 /* DirectionalLight.cpp */; };
 		F4FA2F061E87F60D007EBA57 /* PointLight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4FA2F031E87F60D007EBA57 /* PointLight.cpp */; };
+		F4FA2F091E87FA0F007EBA57 /* GenerationUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4FA2F071E87FA0F007EBA57 /* GenerationUtilities.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -242,6 +243,8 @@
 		F4FA2F021E87F60D007EBA57 /* Light.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Light.h; sourceTree = "<group>"; };
 		F4FA2F031E87F60D007EBA57 /* PointLight.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PointLight.cpp; sourceTree = "<group>"; };
 		F4FA2F041E87F60D007EBA57 /* PointLight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PointLight.h; sourceTree = "<group>"; };
+		F4FA2F071E87FA0F007EBA57 /* GenerationUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GenerationUtilities.cpp; sourceTree = "<group>"; };
+		F4FA2F081E87FA0F007EBA57 /* GenerationUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GenerationUtilities.h; sourceTree = "<group>"; };
 		F4FE353F1D0C474C00B8318A /* Joystick.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Joystick.cpp; sourceTree = "<group>"; };
 		F4FE35401D0C474C00B8318A /* Joystick.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Joystick.h; sourceTree = "<group>"; };
 		F4FE35411D0C474C00B8318A /* Keyboard.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Keyboard.cpp; sourceTree = "<group>"; };
@@ -379,6 +382,8 @@
 		F46161871CF9D5A400B22823 /* helpers */ = {
 			isa = PBXGroup;
 			children = (
+				F4FA2F071E87FA0F007EBA57 /* GenerationUtilities.cpp */,
+				F4FA2F081E87FA0F007EBA57 /* GenerationUtilities.h */,
 				F44801571E842A5E0063A07E /* gl3w */,
 				F46161881CF9D5A400B22823 /* glm */,
 				F46162151CF9D5A400B22823 /* lodepng */,
@@ -681,6 +686,7 @@
 				F41F5F601E817E4B00C18D8D /* Object.cpp in Sources */,
 				F4FA2F061E87F60D007EBA57 /* PointLight.cpp in Sources */,
 				F448015B1E842A620063A07E /* gl3w.cpp in Sources */,
+				F4FA2F091E87FA0F007EBA57 /* GenerationUtilities.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
