@@ -9,6 +9,7 @@
 
 #include "Framebuffer.h"
 #include "Gbuffer.h"
+#include "AmbientQuad.h"
 #include "camera/Camera.h"
 #include "Object.h"
 #include "Skybox.h"
@@ -64,6 +65,7 @@ private:
 	std::shared_ptr<Framebuffer> _fxaaFramebuffer;
 
 	ScreenQuad _blurScreen;
+	AmbientQuad _ambientScreen;
 	ScreenQuad _fxaaScreen;
 	ScreenQuad _finalScreen;
 
