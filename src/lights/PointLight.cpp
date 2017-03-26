@@ -47,7 +47,7 @@ void PointLight::loadProgramAndGeometry(){
 	
 }
 
-void PointLight::init(std::map<std::string, GLuint> textureIds){
+void PointLight::init(const std::map<std::string, GLuint>& textureIds){
 	_programId = createGLProgram("ressources/shaders/lights/point_light.vert", "ressources/shaders/lights/point_light.frag");
 	
 	checkGLError();
@@ -123,7 +123,9 @@ void PointLight::draw(const glm::vec2& invScreenSize, const glm::mat4& viewMatri
 	
 }
 
-
+void PointLight::clean(){
+	
+}
 
 GLuint PointLight::_ebo;
 GLuint PointLight::_vao;

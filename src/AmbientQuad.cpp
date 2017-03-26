@@ -35,3 +35,8 @@ void AmbientQuad::draw(const glm::vec2& invScreenSize, const glm::mat4& viewMatr
 	
 	ScreenQuad::draw(invScreenSize);
 }
+
+
+void AmbientQuad::clean(){
+	ScreenQuad::clean();
+}

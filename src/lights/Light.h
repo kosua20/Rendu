@@ -18,9 +18,11 @@ public:
 	
 	void update(const glm::mat4& camViewMatrix);
 	
-	virtual void init(std::map<std::string, GLuint> textureIds)=0;
+	virtual void init(const std::map<std::string, GLuint>& textureIds)=0;
 	
 	virtual void draw(const glm::vec2& invScreenSize, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) =0;
+	
+	virtual void clean() =0;
 	
 	glm::mat4 _mvp;
 	glm::vec3 _color;

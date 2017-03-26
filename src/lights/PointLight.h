@@ -8,9 +8,11 @@ public:
 	
 	PointLight(const glm::vec3& worldPosition, const glm::vec3& color, float radius, const glm::mat4& projection = glm::mat4(1.0f));
 	
-	void init(std::map<std::string, GLuint> textureIds);
+	void init(const std::map<std::string, GLuint>& textureIds);
 	
 	void draw(const glm::vec2& invScreenSize, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix);
+	
+	void clean();
 	
 	static void loadProgramAndGeometry();
 	
