@@ -12,7 +12,7 @@ DirectionalLight::DirectionalLight(const glm::vec3& worldPosition, const glm::ve
 
 
 void DirectionalLight::init(std::map<std::string, GLuint> textureIds){
-	_screenquad.init(textureIds, "ressources/shaders/directional_light");
+	_screenquad.init(textureIds, "ressources/shaders/lights/directional_light");
 }
 
 void DirectionalLight::draw(const glm::vec2& invScreenSize, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix){

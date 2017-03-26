@@ -48,7 +48,7 @@ void PointLight::loadProgramAndGeometry(){
 }
 
 void PointLight::init(std::map<std::string, GLuint> textureIds){
-	_programId = createGLProgram("ressources/shaders/point_light.vert", "ressources/shaders/point_light.frag");
+	_programId = createGLProgram("ressources/shaders/lights/point_light.vert", "ressources/shaders/lights/point_light.frag");
 	
 	checkGLError();
 	GLint currentTextureSlot = 0;
