@@ -23,7 +23,6 @@ public:
 	
 private:
 	
-	GLuint _texCubeMap;
 	GLuint _texCubeMapSmall;
 };
 
