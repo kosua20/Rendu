@@ -16,7 +16,6 @@
 		F41F5F591E817E4B00C18D8D /* Gbuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F494157A1DE1D3EC0086E191 /* Gbuffer.cpp */; };
 		F41F5F5A1E817E4B00C18D8D /* Framebuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F447FFC21D0DD2C30084E251 /* Framebuffer.cpp */; };
 		F41F5F5B1E817E4B00C18D8D /* Renderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F461621D1CF9D5A400B22823 /* Renderer.cpp */; };
-		F41F5F5C1E817E4B00C18D8D /* Light.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F43348F81D72EA8300AB1289 /* Light.cpp */; };
 		F41F5F5D1E817E4B00C18D8D /* ScreenQuad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F447FFC41D0DF6440084E251 /* ScreenQuad.cpp */; };
 		F41F5F5E1E817E4B00C18D8D /* GbufferQuad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F42B9FA11DE100F5005D88FB /* GbufferQuad.cpp */; };
 		F41F5F5F1E817E4B00C18D8D /* Skybox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4C3EE7E1D0236A3004166CD /* Skybox.cpp */; };
@@ -27,6 +26,8 @@
 		F41F5F691E817F3A00C18D8D /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F41F5F681E817F3A00C18D8D /* CoreVideo.framework */; };
 		F41F5F6B1E8180CF00C18D8D /* libglfw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F41F5F6A1E8180CF00C18D8D /* libglfw3.a */; };
 		F448015B1E842A620063A07E /* gl3w.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F44801581E842A5E0063A07E /* gl3w.cpp */; };
+		F454BE371E86F894005FA1A0 /* DirectionalLight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F454BE331E86F894005FA1A0 /* DirectionalLight.cpp */; };
+		F454BE381E86F894005FA1A0 /* PointLight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F454BE351E86F894005FA1A0 /* PointLight.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -51,7 +52,6 @@
 		F41F5F6C1E8180E100C18D8D /* libGLEW.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libGLEW.a; path = ../../../usr/local/Cellar/glew/2.0.0/lib/libGLEW.a; sourceTree = "<group>"; };
 		F42B9FA11DE100F5005D88FB /* GbufferQuad.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GbufferQuad.cpp; sourceTree = "<group>"; };
 		F42B9FA21DE100F5005D88FB /* GbufferQuad.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GbufferQuad.h; sourceTree = "<group>"; };
-		F43348F81D72EA8300AB1289 /* Light.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Light.cpp; sourceTree = "<group>"; };
 		F43348F91D72EA8300AB1289 /* Light.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Light.h; sourceTree = "<group>"; };
 		F43348FA1D7347D900AB1289 /* boxblur.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = boxblur.frag; sourceTree = "<group>"; };
 		F43348FB1D7347D900AB1289 /* boxblur.vert */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = boxblur.vert; sourceTree = "<group>"; };
@@ -66,6 +66,10 @@
 		F44801581E842A5E0063A07E /* gl3w.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = gl3w.cpp; sourceTree = "<group>"; };
 		F44801591E842A5E0063A07E /* gl3w.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gl3w.h; sourceTree = "<group>"; };
 		F448015A1E842A5E0063A07E /* glcorearb.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = glcorearb.h; sourceTree = "<group>"; };
+		F454BE331E86F894005FA1A0 /* DirectionalLight.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectionalLight.cpp; sourceTree = "<group>"; };
+		F454BE341E86F894005FA1A0 /* DirectionalLight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectionalLight.h; sourceTree = "<group>"; };
+		F454BE351E86F894005FA1A0 /* PointLight.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PointLight.cpp; sourceTree = "<group>"; };
+		F454BE361E86F894005FA1A0 /* PointLight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PointLight.h; sourceTree = "<group>"; };
 		F46161891CF9D5A400B22823 /* common.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = common.hpp; sourceTree = "<group>"; };
 		F461618B1CF9D5A400B22823 /* _features.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = _features.hpp; sourceTree = "<group>"; };
 		F461618C1CF9D5A400B22823 /* _fixes.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = _fixes.hpp; sourceTree = "<group>"; };
@@ -213,6 +217,10 @@
 		F461621C1CF9D5A400B22823 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		F461621D1CF9D5A400B22823 /* Renderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Renderer.cpp; sourceTree = "<group>"; };
 		F461621E1CF9D5A400B22823 /* Renderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Renderer.h; sourceTree = "<group>"; };
+		F4658F181E871638008A8C26 /* directional_light.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = directional_light.frag; sourceTree = "<group>"; };
+		F4658F191E871638008A8C26 /* directional_light.vert */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = directional_light.vert; sourceTree = "<group>"; };
+		F4658F1A1E87208E008A8C26 /* point_light.frag */ = {isa = PBXFileReference; explicitFileType = sourcecode.glsl; path = point_light.frag; sourceTree = "<group>"; };
+		F4658F1B1E87208E008A8C26 /* point_light.vert */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = point_light.vert; sourceTree = "<group>"; };
 		F466E7651DD9DB2400732975 /* object_gbuffer.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = object_gbuffer.frag; sourceTree = "<group>"; };
 		F466E7661DD9DB2400732975 /* object_gbuffer.vert */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = object_gbuffer.vert; sourceTree = "<group>"; };
 		F466E7671DD9DCBD00732975 /* skybox_gbuffer.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = skybox_gbuffer.frag; sourceTree = "<group>"; };
@@ -327,12 +335,16 @@
 				F49A58451D3300A0001B862C /* object_depth.vert */,
 				F466E7691DD9E13000732975 /* scene_gbuffer.frag */,
 				F466E76A1DD9E13000732975 /* scene_gbuffer.vert */,
+				F4658F181E871638008A8C26 /* directional_light.frag */,
+				F4658F191E871638008A8C26 /* directional_light.vert */,
 				F466E7651DD9DB2400732975 /* object_gbuffer.frag */,
 				F466E7661DD9DB2400732975 /* object_gbuffer.vert */,
 				F466E7671DD9DCBD00732975 /* skybox_gbuffer.frag */,
 				F466E7681DD9DCBD00732975 /* skybox_gbuffer.vert */,
 				F4E742B11D69CD140082D83E /* final_screenquad.frag */,
 				F4E742B21D69CD140082D83E /* final_screenquad.vert */,
+				F4658F1A1E87208E008A8C26 /* point_light.frag */,
+				F4658F1B1E87208E008A8C26 /* point_light.vert */,
 				F43348FA1D7347D900AB1289 /* boxblur.frag */,
 				F43348FB1D7347D900AB1289 /* boxblur.vert */,
 			);
@@ -351,16 +363,19 @@
 				F447FFC31D0DD2C30084E251 /* Framebuffer.h */,
 				F461621E1CF9D5A400B22823 /* Renderer.h */,
 				F461621D1CF9D5A400B22823 /* Renderer.cpp */,
-				F43348F81D72EA8300AB1289 /* Light.cpp */,
 				F43348F91D72EA8300AB1289 /* Light.h */,
 				F447FFC41D0DF6440084E251 /* ScreenQuad.cpp */,
 				F447FFC51D0DF6440084E251 /* ScreenQuad.h */,
 				F42B9FA11DE100F5005D88FB /* GbufferQuad.cpp */,
 				F42B9FA21DE100F5005D88FB /* GbufferQuad.h */,
-				F4C3EE7E1D0236A3004166CD /* Skybox.cpp */,
 				F447FFBE1D0D8FBD0084E251 /* Object.cpp */,
 				F447FFBF1D0D8FBD0084E251 /* Object.h */,
+				F4C3EE7E1D0236A3004166CD /* Skybox.cpp */,
 				F4C3EE7F1D0236A3004166CD /* Skybox.h */,
+				F454BE331E86F894005FA1A0 /* DirectionalLight.cpp */,
+				F454BE341E86F894005FA1A0 /* DirectionalLight.h */,
+				F454BE351E86F894005FA1A0 /* PointLight.cpp */,
+				F454BE361E86F894005FA1A0 /* PointLight.h */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -642,6 +657,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F41F5F521E817E4B00C18D8D /* Camera.cpp in Sources */,
+				F454BE381E86F894005FA1A0 /* PointLight.cpp in Sources */,
 				F41F5F541E817E4B00C18D8D /* Keyboard.cpp in Sources */,
 				F41F5F551E817E4B00C18D8D /* lodepng.cpp in Sources */,
 				F41F5F561E817E4B00C18D8D /* MeshUtilities.cpp in Sources */,
@@ -650,12 +666,12 @@
 				F41F5F591E817E4B00C18D8D /* Gbuffer.cpp in Sources */,
 				F41F5F5A1E817E4B00C18D8D /* Framebuffer.cpp in Sources */,
 				F41F5F5B1E817E4B00C18D8D /* Renderer.cpp in Sources */,
-				F41F5F5C1E817E4B00C18D8D /* Light.cpp in Sources */,
 				F41F5F5D1E817E4B00C18D8D /* ScreenQuad.cpp in Sources */,
 				F41F5F5E1E817E4B00C18D8D /* GbufferQuad.cpp in Sources */,
 				F41F5F5F1E817E4B00C18D8D /* Skybox.cpp in Sources */,
 				F41F5F601E817E4B00C18D8D /* Object.cpp in Sources */,
 				F448015B1E842A620063A07E /* gl3w.cpp in Sources */,
+				F454BE371E86F894005FA1A0 /* DirectionalLight.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
