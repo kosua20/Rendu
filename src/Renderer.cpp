@@ -75,7 +75,7 @@ Renderer::Renderer(int width, int height){
 	
 	_ambientScreen.init(_gbuffer->textureIds({ TextureType::Albedo, TextureType::Normal }), "ressources/shaders/gbuffer/ambient");
 	
-	const std::vector<TextureType> includedTextures = { TextureType::Albedo, TextureType::Depth, TextureType::Normal };
+	const std::vector<TextureType> includedTextures = { TextureType::Albedo, TextureType::Depth, TextureType::Normal, TextureType::Effects };
 	for(auto& dirLight : _directionalLights){
 		dirLight.init(_gbuffer->textureIds(includedTextures));
 	}

@@ -92,6 +92,7 @@ void main(){
 	gl_FragDepth = gl_FragCoord.z;
 	// If parallax mapping is enabled, update the depth using the heightmap and the displacement applied.
 	if(materialId == 2){
+		fragEffects.g = 1.0;
 		// Read the depth.
 		float localDepth = fragEffects.r;
 		// Convert the 3D shift applied from tangent space to view space.
