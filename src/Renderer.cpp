@@ -73,6 +73,8 @@ Renderer::Renderer(int width, int height){
 	
 	_blurScreen.init(_lightFramebuffer->textureId(), "ressources/shaders/screens/boxblur");
 	
+	_ambientScreen.init(_gbuffer->textureIds({ TextureType::Albedo, TextureType::Normal }), "ressources/shaders/gbuffer/ambient");
+	
 	const std::vector<TextureType> includedTextures = { TextureType::Albedo, TextureType::Depth, TextureType::Normal };
 	for(auto& dirLight : _directionalLights){
 		dirLight.init(_gbuffer->textureIds(includedTextures));
@@ -98,6 +100,8 @@ void Renderer::draw(){
 	// Physics simulation
 	physics(elapsed);
 	
+	
+	glm::vec2 invRenderSize = 1.0f / _camera._renderSize;
 	
 	// --- Light pass -------
 	
@@ -127,7 +131,7 @@ void Renderer::draw(){
 	glViewport(0,0,_blurFramebuffer->_width, _blurFramebuffer->_height);
 	
 	// Draw the fullscreen quad
-	_blurScreen.draw( 1.0f / _camera._renderSize);
+	_blurScreen.draw( invRenderSize );
 	
 	_blurFramebuffer->unbind();
 	glEnable(GL_DEPTH_TEST);
@@ -155,19 +159,22 @@ void Renderer::draw(){
 	glDisable(GL_DEPTH_TEST);
 	// --- Gbuffer composition pass
 	_sceneFramebuffer->bind();
-	glEnable(GL_BLEND);
+	
 	
 	glViewport(0,0,_sceneFramebuffer->_width, _sceneFramebuffer->_height);
-	glClearColor(0.0f,0.0f,0.0f,0.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
+	//glClearColor(0.0f,0.0f,0.0f,0.0f);
+	//glClear(GL_COLOR_BUFFER_BIT);
 	
+	_ambientScreen.draw( invRenderSize, _camera._view, _camera._projection);
+	
+	glEnable(GL_BLEND);
 	for(auto& dirLight : _directionalLights){
-		dirLight.draw(1.0f / _camera._renderSize, _camera._view, _camera._projection);
-	}
-	for(auto& pointLight : _pointLights){
-		pointLight.draw(1.0f / _camera._renderSize, _camera._view, _camera._projection);
+		dirLight.draw( invRenderSize, _camera._view, _camera._projection);
 	}
 	
+	for(auto& pointLight : _pointLights){
+		pointLight.draw( invRenderSize, _camera._view, _camera._projection);
+	}
 	glDisable(GL_BLEND);
 	//_gbufferScreen.draw( 1.0f / _camera._renderSize, );
 	_sceneFramebuffer->unbind();
@@ -179,7 +186,7 @@ void Renderer::draw(){
 	glViewport(0,0,_fxaaFramebuffer->_width, _fxaaFramebuffer->_height);
 	
 	// Draw the fullscreen quad
-	_fxaaScreen.draw( 1.0f / _camera._renderSize);
+	_fxaaScreen.draw( invRenderSize );
 	
 	_fxaaFramebuffer->unbind();
 	// ----------------------
@@ -235,6 +242,7 @@ void Renderer::clean(){
 	_plane.clean();
 	_skybox.clean();
 	_blurScreen.clean();
+	_ambientScreen.clean();
 	_fxaaScreen.clean();
 	_finalScreen.clean();
 	_lightFramebuffer->clean();
