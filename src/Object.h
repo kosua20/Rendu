@@ -15,7 +15,7 @@ public:
 	~Object();
 
 	/// Init function
-	void init(const std::string& meshPath, const std::vector<std::string>& texturesPaths, int materialId);
+	void init(const std::string& meshPath, const std::vector<std::string>& texturesPaths, int materialId, bool centerAndUnit = false);
 	
 	/// Update function
 	void update(const glm::mat4& model);

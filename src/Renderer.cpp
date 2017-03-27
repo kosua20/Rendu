@@ -58,14 +58,11 @@ Renderer::Renderer(int width, int height){
 	checkGLError();
 
 	// Initialize objects.
-	const std::vector<std::string> texturesSuzanne = { "ressources/suzanne_texture_color.png", "ressources/suzanne_texture_normal.png", "ressources/suzanne_texture_ao_specular_reflection.png", "ressources/cubemap/cubemap", "ressources/cubemap/cubemap_diff" };
-	_suzanne.init("ressources/suzanne.obj", texturesSuzanne, 1);
+	_suzanne.init( "ressources/suzanne.obj", {"ressources/suzanne_texture_color.png", "ressources/suzanne_texture_normal.png", "ressources/suzanne_texture_ao_specular_reflection.png"}, 1, true);
 	
-	const std::vector<std::string> texturesDragon = {"ressources/dragon_texture_color.png", "ressources/dragon_texture_normal.png", "ressources/dragon_texture_ao_specular_reflection.png", "ressources/cubemap/cubemap", "ressources/cubemap/cubemap_diff"  };
-	_dragon.init("ressources/dragon.obj", texturesDragon,  1);
+	_dragon.init("ressources/dragon.obj", {"ressources/dragon_texture_color.png", "ressources/dragon_texture_normal.png", "ressources/dragon_texture_ao_specular_reflection.png" },  1, true);
 	
-	const std::vector<std::string> texturesPlane = { "ressources/plane_texture_color.png", "ressources/plane_texture_normal.png", "ressources/plane_texture_depthmap.png", "ressources/cubemap/cubemap", "ressources/cubemap/cubemap_diff" };
-	_plane.init("ressources/plane.obj", texturesPlane,  2);
+	_plane.init("ressources/plane.obj", { "ressources/plane_texture_color.png", "ressources/plane_texture_normal.png", "ressources/plane_texture_depthmap.png" },  2);
 	
 	_skybox.init();
 	
@@ -83,6 +80,14 @@ Renderer::Renderer(int width, int height){
 	_fxaaScreen.init(_sceneFramebuffer->textureId(), "ressources/shaders/screens/fxaa");
 	_finalScreen.init(_fxaaFramebuffer->textureId(), "ressources/shaders/screens/final_screenquad");
 	checkGLError();
+	
+	
+	// Position fixed objects.
+	const glm::mat4 dragonModel = glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(-0.1,-0.05,-0.25)),glm::vec3(0.5f));
+	const glm::mat4 planeModel = glm::scale(glm::translate(glm::mat4(1.0f),glm::vec3(0.0f,-0.35f,-0.5f)), glm::vec3(2.0f));
+	
+	_dragon.update(dragonModel);
+	_plane.update(planeModel);
 	
 }
 
@@ -202,13 +207,9 @@ void Renderer::physics(float elapsedTime){
 	}
 	
 	// Update objects.
-	const glm::mat4 dragonModel = glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(-0.1,-0.05,-0.25)),glm::vec3(0.5f));
-	const glm::mat4 suzanneModel = glm::scale(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(0.2,0.0,0.0)),float(_timer),glm::vec3(0.0f,1.0f,0.0f)),glm::vec3(0.25f));
-	const glm::mat4 planeModel = glm::scale(glm::translate(glm::mat4(1.0f),glm::vec3(0.0f,-0.35f,-0.5f)), glm::vec3(2.0f));
 	
-	_dragon.update(dragonModel);
+	const glm::mat4 suzanneModel = glm::scale(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(0.2,0.0,0.0)),float(_timer),glm::vec3(0.0f,1.0f,0.0f)),glm::vec3(0.25f));
 	_suzanne.update(suzanneModel);
-	_plane.update(planeModel);
 	
 }
 

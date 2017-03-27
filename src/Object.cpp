@@ -13,7 +13,7 @@ Object::Object(){}
 
 Object::~Object(){}
 
-void Object::init(const std::string& meshPath, const std::vector<std::string>& texturesPaths, int materialId){
+void Object::init(const std::string& meshPath, const std::vector<std::string>& texturesPaths, int materialId, bool centerAndUnit){
 	
 	// Load the shaders
 	_programDepthId = createGLProgram("ressources/shaders/lights/object_depth.vert","ressources/shaders/lights/object_depth.frag");
@@ -22,7 +22,9 @@ void Object::init(const std::string& meshPath, const std::vector<std::string>& t
 	// Load geometry.
 	mesh_t mesh;
 	loadObj(meshPath,mesh,Indexed);
-	centerAndUnitMesh(mesh);
+	if(centerAndUnit){
+		centerAndUnitMesh(mesh);
+	}
 	computeTangentsAndBinormals(mesh);
 
 	_count = (GLsizei)mesh.indices.size();
