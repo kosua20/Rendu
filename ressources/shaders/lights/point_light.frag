@@ -10,7 +10,6 @@ uniform sampler2D effectsTexture;
 
 uniform vec2 inverseScreenSize;
 uniform vec4 projectionMatrix;
-uniform mat4 inverseV;
 
 uniform vec3 lightPosition;//(direction in view space)
 uniform vec3 lightColor;

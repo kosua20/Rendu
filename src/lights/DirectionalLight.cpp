@@ -26,9 +26,8 @@ void DirectionalLight::init(const std::map<std::string, GLuint>& textureIds){
 
 void DirectionalLight::draw(const glm::vec2& invScreenSize, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix){
 	
-	glm::mat4 invView = glm::inverse(viewMatrix);
 	
-	glm::mat4 viewToLight = _mvp * invView;
+	glm::mat4 viewToLight = _mvp * glm::inverse(viewMatrix);
 	// Store the four variable coefficients of the projection matrix.
 	glm::vec4 projectionVector = glm::vec4(projectionMatrix[0][0], projectionMatrix[1][1], projectionMatrix[2][2], projectionMatrix[3][2]);
 	glm::vec3 lightPositionViewSpace = glm::vec3(viewMatrix * glm::vec4(_local, 0.0));
@@ -45,15 +44,9 @@ void DirectionalLight::draw(const glm::vec2& invScreenSize, const glm::mat4& vie
 	GLuint projId = glGetUniformLocation(_screenquad.program(), "projectionMatrix");
 	glUniform4fv(projId, 1, &(projectionVector[0]));
 	
-	GLuint invVID  = glGetUniformLocation(_screenquad.program(), "inverseV");
-	glUniformMatrix4fv(invVID, 1, GL_FALSE, &invView[0][0]);
-	
 	GLuint vtolID  = glGetUniformLocation(_screenquad.program(), "viewToLight");
 	glUniformMatrix4fv(vtolID, 1, GL_FALSE, &viewToLight[0][0]);
 
-	
-	
-	
 	_screenquad.draw(invScreenSize);
 
 }
