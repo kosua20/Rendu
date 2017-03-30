@@ -25,14 +25,20 @@ void AmbientQuad::init(std::map<std::string, GLuint> textureIds){
 	std::map<std::string, GLuint> ssaoTextures = { {"depthTexture", textureIds["depthTexture"]}, {"normalTexture", textureIds["normalTexture"]}, {"noiseTexture",noiseTextureID}};
 	_ssaoScreen.init(ssaoTextures, "ressources/shaders/gbuffer/ssao");
 	
-	
-	
+	// Now that we have the program we can send the samples to the GPU too.
+	glUseProgram(_ssaoScreen.program());
+	for(int i = 0; i < 16; ++i){
+		const std::string name = "samples[" + std::to_string(i) + "]";
+		const GLuint location = glGetUniformLocation(_ssaoScreen.program(), name.c_str());
+		glUniform3fv(location, 1, &_samples[i][0] );
+	}
+	glUseProgram(0);
+	checkGLError();
 }
 
 GLuint AmbientQuad::setupSSAO(){
 	// Samples.
 	// We need random vectors in the half sphere above z, with more samples close to the center.
-	
 	for(int i = 0; i < 16; ++i){
 		glm::vec3 randVec = glm::vec3(Random::Float(-1.0f, 1.0f),
 									  Random::Float(-1.0f, 1.0f),
@@ -57,6 +63,15 @@ GLuint AmbientQuad::setupSSAO(){
 	
 	// Send the texture to the GPU.
 	GLuint textureId;
+	glGenTextures(1, &textureId);
+	glBindTexture(GL_TEXTURE_2D, textureId);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, 5 , 5, 0, GL_RGB, GL_FLOAT, &(noise[0]));
+	// Need nearest filtering and repeat.
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T, GL_REPEAT);
+	checkGLError();
 	return textureId;
 }
 
