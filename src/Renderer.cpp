@@ -22,6 +22,8 @@ Renderer::Renderer(int width, int height){
 	
 	
 	_gbuffer = std::make_shared<Gbuffer>(_camera._renderSize[0],_camera._renderSize[1]);
+	_ssaoFramebuffer = std::make_shared<Framebuffer>(_camera._renderSize[0],_camera._renderSize[1], GL_RED, GL_UNSIGNED_BYTE, GL_LINEAR, GL_CLAMP_TO_EDGE);
+	
 	_sceneFramebuffer = std::make_shared<Framebuffer>(_camera._renderSize[0],_camera._renderSize[1], GL_RGBA,GL_UNSIGNED_BYTE,GL_LINEAR,GL_CLAMP_TO_EDGE);
 	_fxaaFramebuffer = std::make_shared<Framebuffer>(_camera._renderSize[0],_camera._renderSize[1], GL_RGBA,GL_UNSIGNED_BYTE,GL_LINEAR,GL_CLAMP_TO_EDGE);
 	
@@ -66,7 +68,9 @@ Renderer::Renderer(int width, int height){
 	
 	_skybox.init();
 	
-	_ambientScreen.init(_gbuffer->textureIds({ TextureType::Albedo, TextureType::Normal }), "ressources/shaders/gbuffer/ambient");
+	std::map<std::string, GLuint> ambientTextures = _gbuffer->textureIds({ TextureType::Albedo, TextureType::Normal, TextureType::Depth });
+	ambientTextures["ssaoTexture"] = _ssaoFramebuffer->textureId();
+	_ambientScreen.init(ambientTextures);
 	
 	const std::vector<TextureType> includedTextures = { TextureType::Albedo, TextureType::Depth, TextureType::Normal, TextureType::Effects };
 	for(auto& dirLight : _directionalLights){
@@ -142,6 +146,13 @@ void Renderer::draw(){
 	// ----------------------
 	
 	glDisable(GL_DEPTH_TEST);
+	
+	// --- SSAO pass
+	_ssaoFramebuffer->bind();
+	glViewport(0,0,_ssaoFramebuffer->_width, _ssaoFramebuffer->_height);
+	_ambientScreen.drawSSAO( invRenderSize, _camera._view, _camera._projection);
+	_ssaoFramebuffer->unbind();
+	
 	// --- Gbuffer composition pass
 	_sceneFramebuffer->bind();
 	
@@ -227,6 +238,7 @@ void Renderer::clean(){
 	_fxaaScreen.clean();
 	_finalScreen.clean();
 	_gbuffer->clean();
+	_ssaoFramebuffer->clean();
 	_sceneFramebuffer->clean();
 	_fxaaFramebuffer->clean();
 }
@@ -239,6 +251,7 @@ void Renderer::resize(int width, int height){
 	_camera.screen(width, height);
 	// Resize the framebuffer.
 	_gbuffer->resize(_camera._renderSize);
+	_ssaoFramebuffer->resize(_camera._renderSize);
 	_sceneFramebuffer->resize(_camera._renderSize);
 	_fxaaFramebuffer->resize(_camera._renderSize);
 }

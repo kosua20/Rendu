@@ -46,9 +46,9 @@ public:
 
 	void mousePosition(int x, int y, bool leftPress, bool rightPress);
 
-
+	
 private:
-
+	
 	float _timer;
 
 	Camera _camera;
@@ -59,6 +59,7 @@ private:
 	Object _plane;
 
 	std::shared_ptr<Gbuffer> _gbuffer;
+	std::shared_ptr<Framebuffer> _ssaoFramebuffer;
 	std::shared_ptr<Framebuffer> _sceneFramebuffer;
 	std::shared_ptr<Framebuffer> _fxaaFramebuffer;
 
