@@ -15,16 +15,22 @@ public:
 
 	~AmbientQuad();
 	
-	void init(std::map<std::string, GLuint> textureIds, const std::string & shaderRoot);
+	void init(std::map<std::string, GLuint> textureIds);
 	
 	/// Draw function,
 	void draw(const glm::vec2& invScreenSize, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix);
 	
+	void drawSSAO(const glm::vec2& invScreenSize, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix);
+		
 	void clean();
 	
 private:
 	
+	GLuint setupSSAO();
+	
 	GLuint _texCubeMapSmall;
+	
+	ScreenQuad _ssaoScreen;
 };
 
 #endif
