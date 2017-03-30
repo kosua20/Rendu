@@ -31,6 +31,8 @@ private:
 	GLuint _texCubeMapSmall;
 	
 	ScreenQuad _ssaoScreen;
+	
+	std::vector<glm::vec3> _samples;
 };
 
 #endif

@@ -25,10 +25,39 @@ void AmbientQuad::init(std::map<std::string, GLuint> textureIds){
 	std::map<std::string, GLuint> ssaoTextures = { {"depthTexture", textureIds["depthTexture"]}, {"normalTexture", textureIds["normalTexture"]}, {"noiseTexture",noiseTextureID}};
 	_ssaoScreen.init(ssaoTextures, "ressources/shaders/gbuffer/ssao");
 	
+	
+	
 }
 
 GLuint AmbientQuad::setupSSAO(){
-	return 0;
+	// Samples.
+	// We need random vectors in the half sphere above z, with more samples close to the center.
+	
+	for(int i = 0; i < 16; ++i){
+		glm::vec3 randVec = glm::vec3(Random::Float(-1.0f, 1.0f),
+									  Random::Float(-1.0f, 1.0f),
+									  Random::Float(0.0f, 1.0f) );
+		_samples.push_back(glm::normalize(randVec));
+		_samples.back() *= Random::Float(0.0f,1.0f);
+		// Skew the distribution towards the center.
+		float scale = i/16.0;
+		scale = 0.1f+0.9f*scale*scale;
+		_samples.back() *= scale;
+	}
+	
+	// Noise texture (same size as the box blur applied after SSAO computation).
+	// We need to generate two dimensional normalized offsets.
+	std::vector<glm::vec3> noise;
+	for(int i = 0; i < 25; ++i){
+		glm::vec3 randVec = glm::vec3(Random::Float(-1.0f, 1.0f),
+									  Random::Float(-1.0f, 1.0f),
+									  0.0f);
+		noise.push_back(glm::normalize(randVec));
+	}
+	
+	// Send the texture to the GPU.
+	GLuint textureId;
+	return textureId;
 }
 
 void AmbientQuad::draw(const glm::vec2& invScreenSize, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) {
