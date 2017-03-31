@@ -214,6 +214,8 @@
 		F4C3EE7E1D0236A3004166CD /* Skybox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Skybox.cpp; sourceTree = "<group>"; };
 		F4C3EE7F1D0236A3004166CD /* Skybox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Skybox.h; sourceTree = "<group>"; };
 		F4D54A131D0F3373001274DA /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		F4D7F1FF1E8EC14000163AA2 /* ssao.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = ssao.frag; sourceTree = "<group>"; };
+		F4D7F2001E8EC14000163AA2 /* ssao.vert */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = ssao.vert; sourceTree = "<group>"; };
 		F4EDDD241CFD0047001FD2ED /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		F4EDDD251CFD0047001FD2ED /* Makefile.linux */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Makefile.linux; sourceTree = "<group>"; };
 		F4FA2F001E87F60D007EBA57 /* DirectionalLight.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectionalLight.cpp; sourceTree = "<group>"; };
@@ -558,8 +560,10 @@
 		F4FA2F0C1E881370007EBA57 /* gbuffer */ = {
 			isa = PBXGroup;
 			children = (
-				F4FA2F0D1E881370007EBA57 /* ambient.frag */,
 				F4FA2F0E1E881370007EBA57 /* ambient.vert */,
+				F4FA2F0D1E881370007EBA57 /* ambient.frag */,
+				F4D7F1FF1E8EC14000163AA2 /* ssao.frag */,
+				F4D7F2001E8EC14000163AA2 /* ssao.vert */,
 				F4FA2F0F1E881370007EBA57 /* object_gbuffer.frag */,
 				F4FA2F101E881370007EBA57 /* object_gbuffer.vert */,
 				F4FA2F111E881370007EBA57 /* scene_gbuffer.frag */,
