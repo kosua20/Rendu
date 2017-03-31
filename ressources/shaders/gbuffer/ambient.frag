@@ -38,4 +38,5 @@ void main(){
 	
 	fragColor = ao * ambientLightColor * albedo.rgb;
 	
+	fragColor = vec3(ao);
 }
