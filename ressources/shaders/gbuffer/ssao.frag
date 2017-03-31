@@ -43,5 +43,14 @@ void main(){
 		return;
 	}
 	
+	// Read the random local shift, uvs based on pixel coordinates (wrapping enabled).
+	vec3 randomOrientation = texture(noiseTexture, gl_FragCoord.xy/5.0).rgb;
+	
+	// Create tangent space to view space matrix by computing tangent and bitangent.
+	vec3 t = normalize(randomOrientation - n * dot(randomOrientation, n));
+	vec3 b = normalize(cross(n, t));
+	mat3 tbn = mat3(t, b, n);
+
+	
 	fragColor = 0.0;
 }
