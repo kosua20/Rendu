@@ -32,13 +32,10 @@ Renderer::Renderer(int width, int height){
 	
 	// Create point lights.
 	const float lI = 6.0; // Light intensity.
-	std::vector<glm::vec3> colors = { glm::vec3(lI,0.0,0.0), glm::vec3(0.0,lI,0.0), glm::vec3(0.0,0.0,lI), glm::vec3(lI,lI,0.0), glm::vec3(lI,0.0,lI), glm::vec3(0.0,lI,lI), glm::vec3(lI,lI,lI), glm::vec3(lI,lI/2.0,lI/3.0), glm::vec3(lI/3.0,lI,lI/2.0), glm::vec3(lI/2.0,lI/3.0,lI)};
-	
-	for(size_t i = 0; i < 64; ++i){
-		// 8 by 8 grid, from -2 to 2 on both axis.
-		float radius = Random::Float(0.3f, 0.6f);
-		glm::vec3 position = glm::vec3(-2.0f + 4.0*float(i%9)/8.0f, Random::Float(-0.25f, 0.0f), -2.0f + 4.0*float(i/9)/8.0f );
-		_pointLights.emplace_back(position, colors[Random::Int(0, 9)], radius);
+	std::vector<glm::vec3> colors = { glm::vec3(lI,0.0,0.0), glm::vec3(0.0,lI,0.0), glm::vec3(0.0,0.0,lI), glm::vec3(lI,lI,0.0)};
+	for(size_t i = 0; i < 4; ++i){
+		glm::vec3 position = glm::vec3(-1.0f+2.0f*(i%2),-0.1f,-1.0f+2.0f*(i/2));
+		_pointLights.emplace_back(position, colors[i], 0.7f);
 	}
 	
 	PointLight::loadProgramAndGeometry();
@@ -174,7 +171,7 @@ void Renderer::draw(){
 	}
 	
 	for(auto& pointLight : _pointLights){
-	//	pointLight.draw( invRenderSize, _camera._view, _camera._projection);
+		pointLight.draw( invRenderSize, _camera._view, _camera._projection);
 	}
 	glDisable(GL_BLEND);
 	
@@ -220,7 +217,7 @@ void Renderer::physics(float elapsedTime){
 	
 	for(size_t i = 0; i <_pointLights.size(); ++i){
 		auto& pointLight = _pointLights[i];
-		glm::vec4 newPosition = glm::rotate(glm::mat4(1.0f), (i%2==0 ? 1.0f: -1.0f) * elapsedTime, glm::vec3(0.0f, 1.0f, 0.0f))*glm::vec4(pointLight._local, 1.0f);
+		glm::vec4 newPosition = glm::rotate(glm::mat4(1.0f), elapsedTime, glm::vec3(0.0f, 1.0f, 0.0f))*glm::vec4(pointLight._local, 1.0f);
 		pointLight.update(glm::vec3(newPosition), _camera._view);
 	}
 	
