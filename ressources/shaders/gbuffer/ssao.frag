@@ -69,6 +69,8 @@ void main(){
 		// If the initial sample is further away from the camera than the surface, it is below the surface, occlusion is increased.
 		occlusion += (sampleDepth >= randomSample.z  ? 1.0 : 0.0);
 	}
-
-	fragColor = 0.0;
+	
+	// Normalize and  reverse occlusion.
+	occlusion = 1.0 - (occlusion/16.0);
+	fragColor = occlusion;
 }
