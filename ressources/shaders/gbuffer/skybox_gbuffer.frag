@@ -16,7 +16,7 @@ void main(){
 	
 	fragColor.rgb = texture(textureCubeMap,In.position).rgb;
 	fragColor.a = 0.0;
-	fragNormal = vec3(0.0);
+	fragNormal = vec3(0.5);
 	fragEffects = vec3(0.0);
 
 }
