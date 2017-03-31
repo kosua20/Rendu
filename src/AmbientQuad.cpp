@@ -97,8 +97,8 @@ void AmbientQuad::drawSSAO(const glm::vec2& invScreenSize, const glm::mat4& view
 	
 	glUseProgram(_ssaoScreen.program());
 	
-	GLuint projId = glGetUniformLocation(_ssaoScreen.program(), "projectionMatrix");
-	glUniform4fv(projId, 1, &(projectionVector[0]));
+	GLuint invPID  = glGetUniformLocation(_ssaoScreen.program(), "projectionMatrix");
+	glUniformMatrix4fv(invPID, 1, GL_FALSE, &projectionMatrix[0][0]);
 	
 	_ssaoScreen.draw(invScreenSize);
 	
