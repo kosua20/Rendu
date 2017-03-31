@@ -66,8 +66,10 @@ void main(){
 		vec2 sampleUV = (sampleClipSpace.xy / sampleClipSpace.w) * 0.5 + 0.5;
 		// Read scene depth at the corresponding UV.
 		float sampleDepth = linearizeDepth(texture(depthTexture, sampleUV).r);
+		// Check : if the depth are too different, don't take result into account.
+		float isValid = abs(position.z - sampleDepth) < RADIUS ? 1.0 : 0.0;
 		// If the initial sample is further away from the camera than the surface, it is below the surface, occlusion is increased.
-		occlusion += (sampleDepth >= randomSample.z  ? 1.0 : 0.0);
+		occlusion += (sampleDepth >= randomSample.z  ? isValid : 0.0);
 	}
 	
 	// Normalize and  reverse occlusion.
