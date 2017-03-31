@@ -23,7 +23,7 @@ Renderer::Renderer(int width, int height){
 	
 	_gbuffer = std::make_shared<Gbuffer>(_camera._renderSize[0],_camera._renderSize[1]);
 	_ssaoFramebuffer = std::make_shared<Framebuffer>(0.5f * _camera._renderSize[0], 0.5f * _camera._renderSize[1], GL_RED, GL_UNSIGNED_BYTE, GL_LINEAR, GL_CLAMP_TO_EDGE);
-	
+	_ssaoBlurFramebuffer = std::make_shared<Framebuffer>(_camera._renderSize[0], _camera._renderSize[1], GL_RED, GL_UNSIGNED_BYTE, GL_LINEAR, GL_CLAMP_TO_EDGE);
 	_sceneFramebuffer = std::make_shared<Framebuffer>(_camera._renderSize[0],_camera._renderSize[1], GL_RGBA,GL_UNSIGNED_BYTE,GL_LINEAR,GL_CLAMP_TO_EDGE);
 	_fxaaFramebuffer = std::make_shared<Framebuffer>(_camera._renderSize[0],_camera._renderSize[1], GL_RGBA,GL_UNSIGNED_BYTE,GL_LINEAR,GL_CLAMP_TO_EDGE);
 	
@@ -69,7 +69,7 @@ Renderer::Renderer(int width, int height){
 	_skybox.init();
 	
 	std::map<std::string, GLuint> ambientTextures = _gbuffer->textureIds({ TextureType::Albedo, TextureType::Normal, TextureType::Depth });
-	ambientTextures["ssaoTexture"] = _ssaoFramebuffer->textureId();
+	ambientTextures["ssaoTexture"] = _ssaoBlurFramebuffer->textureId();
 	_ambientScreen.init(ambientTextures);
 	
 	const std::vector<TextureType> includedTextures = { TextureType::Albedo, TextureType::Depth, TextureType::Normal, TextureType::Effects };
@@ -81,6 +81,7 @@ Renderer::Renderer(int width, int height){
 		pointLight.init(_gbuffer->textureIds(includedTextures));
 	}
 	
+	_ssaoBlurScreen.init(_ssaoFramebuffer->textureId(), "ressources/shaders/screens/boxblur_float");
 	_fxaaScreen.init(_sceneFramebuffer->textureId(), "ressources/shaders/screens/fxaa");
 	_finalScreen.init(_fxaaFramebuffer->textureId(), "ressources/shaders/screens/final_screenquad");
 	checkGLError();
@@ -152,7 +153,10 @@ void Renderer::draw(){
 	glViewport(0,0,_ssaoFramebuffer->_width, _ssaoFramebuffer->_height);
 	_ambientScreen.drawSSAO( 2.0f * invRenderSize, _camera._view, _camera._projection);
 	_ssaoFramebuffer->unbind();
-	
+	_ssaoBlurFramebuffer->bind();
+	glViewport(0,0,_ssaoBlurFramebuffer->_width, _ssaoBlurFramebuffer->_height);
+	_ssaoBlurScreen.draw( invRenderSize );
+	_ssaoBlurFramebuffer->unbind();
 	// --- Gbuffer composition pass
 	_sceneFramebuffer->bind();
 	
@@ -236,9 +240,11 @@ void Renderer::clean(){
 	}
 	_ambientScreen.clean();
 	_fxaaScreen.clean();
+	_ssaoBlurScreen.clean();
 	_finalScreen.clean();
 	_gbuffer->clean();
 	_ssaoFramebuffer->clean();
+	_ssaoBlurFramebuffer->clean();
 	_sceneFramebuffer->clean();
 	_fxaaFramebuffer->clean();
 }
@@ -252,6 +258,7 @@ void Renderer::resize(int width, int height){
 	// Resize the framebuffer.
 	_gbuffer->resize(_camera._renderSize);
 	_ssaoFramebuffer->resize(0.5f * _camera._renderSize);
+	_ssaoBlurFramebuffer->resize(_camera._renderSize);
 	_sceneFramebuffer->resize(_camera._renderSize);
 	_fxaaFramebuffer->resize(_camera._renderSize);
 }

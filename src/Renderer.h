@@ -60,10 +60,12 @@ private:
 
 	std::shared_ptr<Gbuffer> _gbuffer;
 	std::shared_ptr<Framebuffer> _ssaoFramebuffer;
+	std::shared_ptr<Framebuffer> _ssaoBlurFramebuffer;
 	std::shared_ptr<Framebuffer> _sceneFramebuffer;
 	std::shared_ptr<Framebuffer> _fxaaFramebuffer;
 
 	AmbientQuad _ambientScreen;
+	ScreenQuad _ssaoBlurScreen;
 	ScreenQuad _fxaaScreen;
 	ScreenQuad _finalScreen;
 
