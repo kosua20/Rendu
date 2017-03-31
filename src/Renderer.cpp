@@ -153,10 +153,13 @@ void Renderer::draw(){
 	glViewport(0,0,_ssaoFramebuffer->_width, _ssaoFramebuffer->_height);
 	_ambientScreen.drawSSAO( 2.0f * invRenderSize, _camera._view, _camera._projection);
 	_ssaoFramebuffer->unbind();
+	
+	// --- SSAO blurring pass
 	_ssaoBlurFramebuffer->bind();
 	glViewport(0,0,_ssaoBlurFramebuffer->_width, _ssaoBlurFramebuffer->_height);
 	_ssaoBlurScreen.draw( invRenderSize );
 	_ssaoBlurFramebuffer->unbind();
+	
 	// --- Gbuffer composition pass
 	_sceneFramebuffer->bind();
 	
@@ -167,11 +170,11 @@ void Renderer::draw(){
 	
 	glEnable(GL_BLEND);
 	for(auto& dirLight : _directionalLights){
-		//dirLight.draw( invRenderSize, _camera._view, _camera._projection);
+		dirLight.draw( invRenderSize, _camera._view, _camera._projection);
 	}
 	
 	for(auto& pointLight : _pointLights){
-		//pointLight.draw( invRenderSize, _camera._view, _camera._projection);
+	//	pointLight.draw( invRenderSize, _camera._view, _camera._projection);
 	}
 	glDisable(GL_BLEND);
 	
