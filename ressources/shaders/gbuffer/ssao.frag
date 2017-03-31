@@ -66,6 +66,8 @@ void main(){
 		vec2 sampleUV = (sampleClipSpace.xy / sampleClipSpace.w) * 0.5 + 0.5;
 		// Read scene depth at the corresponding UV.
 		float sampleDepth = linearizeDepth(texture(depthTexture, sampleUV).r);
+		// If the initial sample is further away from the camera than the surface, it is below the surface, occlusion is increased.
+		occlusion += (sampleDepth >= randomSample.z  ? 1.0 : 0.0);
 	}
 
 	fragColor = 0.0;
