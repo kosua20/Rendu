@@ -61,6 +61,11 @@ void main(){
 	for(int i = 0; i < 16; ++i){
 		// View space position of the sample.
 		vec3 randomSample = position + RADIUS * tbn * samples[i];
+		// Project view space point to clip space then NDC space.
+		vec4 sampleClipSpace = projectionMatrix * vec4(randomSample, 1.0);
+		vec2 sampleUV = (sampleClipSpace.xy / sampleClipSpace.w) * 0.5 + 0.5;
+		// Read scene depth at the corresponding UV.
+		float sampleDepth = linearizeDepth(texture(depthTexture, sampleUV).r);
 	}
 
 	fragColor = 0.0;
