@@ -28,7 +28,7 @@ Renderer::Renderer(int width, int height){
 	_fxaaFramebuffer = std::make_shared<Framebuffer>(_camera._renderSize[0],_camera._renderSize[1], GL_RGBA,GL_UNSIGNED_BYTE,GL_LINEAR,GL_CLAMP_TO_EDGE);
 	
 	// Create directional light.
-	_directionalLights.emplace_back(glm::vec3(0.0f), glm::vec3(0.9f), glm::ortho(-0.75f,0.75f,-0.75f,0.75f,2.0f,6.0f));
+	_directionalLights.emplace_back(glm::vec3(0.0f), glm::vec3(0.7f), glm::ortho(-0.75f,0.75f,-0.75f,0.75f,2.0f,6.0f));
 	
 	// Create point lights.
 	const float lI = 6.0; // Light intensity.
@@ -163,11 +163,11 @@ void Renderer::draw(){
 	
 	glEnable(GL_BLEND);
 	for(auto& dirLight : _directionalLights){
-		dirLight.draw( invRenderSize, _camera._view, _camera._projection);
+		//dirLight.draw( invRenderSize, _camera._view, _camera._projection);
 	}
 	
 	for(auto& pointLight : _pointLights){
-		pointLight.draw( invRenderSize, _camera._view, _camera._projection);
+		//pointLight.draw( invRenderSize, _camera._view, _camera._projection);
 	}
 	glDisable(GL_BLEND);
 	
