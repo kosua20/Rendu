@@ -22,7 +22,7 @@ Renderer::Renderer(int width, int height){
 	
 	
 	_gbuffer = std::make_shared<Gbuffer>(_camera._renderSize[0],_camera._renderSize[1]);
-	_ssaoFramebuffer = std::make_shared<Framebuffer>(_camera._renderSize[0],_camera._renderSize[1], GL_RED, GL_UNSIGNED_BYTE, GL_LINEAR, GL_CLAMP_TO_EDGE);
+	_ssaoFramebuffer = std::make_shared<Framebuffer>(0.5f * _camera._renderSize[0], 0.5f * _camera._renderSize[1], GL_RED, GL_UNSIGNED_BYTE, GL_LINEAR, GL_CLAMP_TO_EDGE);
 	
 	_sceneFramebuffer = std::make_shared<Framebuffer>(_camera._renderSize[0],_camera._renderSize[1], GL_RGBA,GL_UNSIGNED_BYTE,GL_LINEAR,GL_CLAMP_TO_EDGE);
 	_fxaaFramebuffer = std::make_shared<Framebuffer>(_camera._renderSize[0],_camera._renderSize[1], GL_RGBA,GL_UNSIGNED_BYTE,GL_LINEAR,GL_CLAMP_TO_EDGE);
@@ -150,7 +150,7 @@ void Renderer::draw(){
 	// --- SSAO pass
 	_ssaoFramebuffer->bind();
 	glViewport(0,0,_ssaoFramebuffer->_width, _ssaoFramebuffer->_height);
-	_ambientScreen.drawSSAO( invRenderSize, _camera._view, _camera._projection);
+	_ambientScreen.drawSSAO( 2.0f * invRenderSize, _camera._view, _camera._projection);
 	_ssaoFramebuffer->unbind();
 	
 	// --- Gbuffer composition pass
@@ -251,7 +251,7 @@ void Renderer::resize(int width, int height){
 	_camera.screen(width, height);
 	// Resize the framebuffer.
 	_gbuffer->resize(_camera._renderSize);
-	_ssaoFramebuffer->resize(_camera._renderSize);
+	_ssaoFramebuffer->resize(0.5f * _camera._renderSize);
 	_sceneFramebuffer->resize(_camera._renderSize);
 	_fxaaFramebuffer->resize(_camera._renderSize);
 }
