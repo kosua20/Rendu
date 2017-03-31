@@ -15,6 +15,8 @@ uniform mat4 projectionMatrix;
 uniform sampler2D noiseTexture; // 5x5 3-components texture with float precision.
 uniform vec3 samples[16];
 
+#define RADIUS 0.5
+
 // Output: the fragment color
 out float fragColor;
 
@@ -51,6 +53,15 @@ void main(){
 	vec3 b = normalize(cross(n, t));
 	mat3 tbn = mat3(t, b, n);
 
+	// Compute view space position.
+	vec3 position = positionFromUV(In.uv);
 	
+	// Occlusion accumulation.
+	float occlusion = 0.0;
+	for(int i = 0; i < 16; ++i){
+		// View space position of the sample.
+		vec3 randomSample = position + RADIUS * tbn * samples[i];
+	}
+
 	fragColor = 0.0;
 }
