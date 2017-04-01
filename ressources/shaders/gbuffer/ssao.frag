@@ -13,7 +13,7 @@ uniform vec2 inverseScreenSize;
 uniform mat4 projectionMatrix;
 
 uniform sampler2D noiseTexture; // 5x5 3-components texture with float precision.
-uniform vec3 samples[16];
+uniform vec3 samples[24];
 
 #define RADIUS 0.5
 
@@ -58,7 +58,7 @@ void main(){
 	
 	// Occlusion accumulation.
 	float occlusion = 0.0;
-	for(int i = 0; i < 16; ++i){
+	for(int i = 0; i < 24; ++i){
 		// View space position of the sample.
 		vec3 randomSample = position + RADIUS * tbn * samples[i];
 		// Project view space point to clip space then NDC space.
@@ -73,6 +73,6 @@ void main(){
 	}
 	
 	// Normalize and  reverse occlusion.
-	occlusion = 1.0 - (occlusion/16.0);
-	fragColor = occlusion;
+	occlusion = 1.0 - (occlusion/24.0);
+	fragColor = pow(occlusion,2.0);
 }
