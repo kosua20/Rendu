@@ -27,7 +27,7 @@ void AmbientQuad::init(std::map<std::string, GLuint> textureIds){
 	
 	// Now that we have the program we can send the samples to the GPU too.
 	glUseProgram(_ssaoScreen.program());
-	for(int i = 0; i < 16; ++i){
+	for(int i = 0; i < 24; ++i){
 		const std::string name = "samples[" + std::to_string(i) + "]";
 		const GLuint location = glGetUniformLocation(_ssaoScreen.program(), name.c_str());
 		glUniform3fv(location, 1, &_samples[i][0] );
@@ -39,14 +39,14 @@ void AmbientQuad::init(std::map<std::string, GLuint> textureIds){
 GLuint AmbientQuad::setupSSAO(){
 	// Samples.
 	// We need random vectors in the half sphere above z, with more samples close to the center.
-	for(int i = 0; i < 16; ++i){
+	for(int i = 0; i < 24; ++i){
 		glm::vec3 randVec = glm::vec3(Random::Float(-1.0f, 1.0f),
 									  Random::Float(-1.0f, 1.0f),
 									  Random::Float(0.0f, 1.0f) );
 		_samples.push_back(glm::normalize(randVec));
 		_samples.back() *= Random::Float(0.0f,1.0f);
 		// Skew the distribution towards the center.
-		float scale = i/16.0;
+		float scale = i/24.0;
 		scale = 0.1f+0.9f*scale*scale;
 		_samples.back() *= scale;
 	}
