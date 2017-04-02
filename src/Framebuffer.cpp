@@ -5,9 +5,12 @@
 #include "Framebuffer.h"
 
 
-Framebuffer::Framebuffer(int width, int height, GLuint format, GLuint type, GLuint filtering, GLuint wrapping) {
+Framebuffer::Framebuffer(int width, int height, GLuint format, GLuint type, GLuint preciseFormat, GLuint filtering, GLuint wrapping) {
 	_width = width;
 	_height = height;
+	_format = format;
+	_type = type;
+	_preciseFormat = preciseFormat;
 	
 	// Create a framebuffer.
 	glGenFramebuffers(1, &_id);
@@ -16,7 +19,7 @@ Framebuffer::Framebuffer(int width, int height, GLuint format, GLuint type, GLui
 	// Create the texture to store the result.
 	glGenTextures(1, &_idColor);
 	glBindTexture(GL_TEXTURE_2D, _idColor);
-	glTexImage2D(GL_TEXTURE_2D, 0, format, _width , _height, 0, format, type, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, preciseFormat, _width , _height, 0, format, type, 0);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filtering);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filtering);
 	
@@ -67,7 +70,7 @@ void Framebuffer::resize(int width, int height){
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 	// Resize the texture.
 	glBindTexture(GL_TEXTURE_2D, _idColor);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _width, _height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, _preciseFormat, _width, _height, 0, _format, _type, 0);
 }
 
 void Framebuffer::resize(glm::vec2 size){

@@ -92,9 +92,6 @@ void AmbientQuad::draw(const glm::vec2& invScreenSize, const glm::mat4& viewMatr
 
 void AmbientQuad::drawSSAO(const glm::vec2& invScreenSize, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) {
 	
-	// Projection parameter for position reconstruction.
-	glm::vec4 projectionVector = glm::vec4(projectionMatrix[0][0], projectionMatrix[1][1], projectionMatrix[2][2], projectionMatrix[3][2]);
-	
 	glUseProgram(_ssaoScreen.program());
 	
 	GLuint invPID  = glGetUniformLocation(_ssaoScreen.program(), "projectionMatrix");
