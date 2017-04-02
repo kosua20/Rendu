@@ -22,10 +22,10 @@ Renderer::Renderer(int width, int height){
 	
 	
 	_gbuffer = std::make_shared<Gbuffer>(_camera._renderSize[0],_camera._renderSize[1]);
-	_ssaoFramebuffer = std::make_shared<Framebuffer>(0.5f * _camera._renderSize[0], 0.5f * _camera._renderSize[1], GL_RED, GL_UNSIGNED_BYTE, GL_LINEAR, GL_CLAMP_TO_EDGE);
-	_ssaoBlurFramebuffer = std::make_shared<Framebuffer>(_camera._renderSize[0], _camera._renderSize[1], GL_RED, GL_UNSIGNED_BYTE, GL_LINEAR, GL_CLAMP_TO_EDGE);
-	_sceneFramebuffer = std::make_shared<Framebuffer>(_camera._renderSize[0],_camera._renderSize[1], GL_RGBA,GL_UNSIGNED_BYTE,GL_LINEAR,GL_CLAMP_TO_EDGE);
-	_fxaaFramebuffer = std::make_shared<Framebuffer>(_camera._renderSize[0],_camera._renderSize[1], GL_RGBA,GL_UNSIGNED_BYTE,GL_LINEAR,GL_CLAMP_TO_EDGE);
+	_ssaoFramebuffer = std::make_shared<Framebuffer>(0.5f * _camera._renderSize[0], 0.5f * _camera._renderSize[1], GL_RED, GL_UNSIGNED_BYTE, GL_RED, GL_LINEAR, GL_CLAMP_TO_EDGE);
+	_ssaoBlurFramebuffer = std::make_shared<Framebuffer>(_camera._renderSize[0], _camera._renderSize[1], GL_RED, GL_UNSIGNED_BYTE, GL_RED, GL_LINEAR, GL_CLAMP_TO_EDGE);
+	_sceneFramebuffer = std::make_shared<Framebuffer>(_camera._renderSize[0],_camera._renderSize[1], GL_RGBA,GL_UNSIGNED_BYTE, GL_RGBA, GL_LINEAR,GL_CLAMP_TO_EDGE);
+	_fxaaFramebuffer = std::make_shared<Framebuffer>(_camera._renderSize[0],_camera._renderSize[1], GL_RGBA,GL_UNSIGNED_BYTE, GL_RGBA, GL_LINEAR,GL_CLAMP_TO_EDGE);
 	
 	// Create directional light.
 	_directionalLights.emplace_back(glm::vec3(0.0f), glm::vec3(0.5f), glm::ortho(-0.75f,0.75f,-0.75f,0.75f,2.0f,6.0f));

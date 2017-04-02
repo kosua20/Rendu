@@ -10,7 +10,7 @@ class Framebuffer {
 public:
 	
 	/// Setup the framebuffer (attachments, renderbuffer, depth buffer, textures IDs,...)
-	Framebuffer(int width, int height, GLuint format, GLuint type, GLuint filtering, GLuint wrapping);
+	Framebuffer(int width, int height, GLuint format, GLuint type, GLuint preciseFormat, GLuint filtering, GLuint wrapping);
 
 	~Framebuffer();
 	
@@ -42,6 +42,11 @@ private:
 	GLuint _id;
 	GLuint _idColor;
 	GLuint _idRenderbuffer;
+	
+	GLuint _format;
+	GLuint _type;
+	GLuint _preciseFormat;
+	
 };
 
 #endif

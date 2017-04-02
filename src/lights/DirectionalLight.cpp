@@ -15,8 +15,8 @@ DirectionalLight::DirectionalLight(const glm::vec3& worldPosition, const glm::ve
 
 void DirectionalLight::init(const std::map<std::string, GLuint>& textureIds){
 	// Setup the framebuffer.
-	_shadowPass = std::make_shared<Framebuffer>(512, 512, GL_RG,GL_FLOAT,GL_LINEAR,GL_CLAMP_TO_BORDER);
-	_blurPass = std::make_shared<Framebuffer>(_shadowPass->_width, _shadowPass->_height, GL_RG,GL_FLOAT,GL_LINEAR,GL_CLAMP_TO_BORDER);
+	_shadowPass = std::make_shared<Framebuffer>(512, 512, GL_RG,GL_FLOAT, GL_RG16F, GL_LINEAR,GL_CLAMP_TO_BORDER);
+	_blurPass = std::make_shared<Framebuffer>(_shadowPass->_width, _shadowPass->_height, GL_RG,GL_FLOAT, GL_RG16F, GL_LINEAR,GL_CLAMP_TO_BORDER);
 	_blurScreen.init(_shadowPass->textureId(), "ressources/shaders/screens/boxblur");
 	
 	std::map<std::string, GLuint> textures = textureIds;
