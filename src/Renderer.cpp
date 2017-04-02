@@ -139,6 +139,11 @@ void Renderer::draw(){
 	_suzanne.draw(_camera._view, _camera._projection);
 	_dragon.draw(_camera._view, _camera._projection);
 	_plane.draw(_camera._view, _camera._projection);
+	
+	for(auto& pointLight : _pointLights){
+		pointLight.drawDebug(_camera._view, _camera._projection);
+	}
+	
 	_skybox.draw(_camera._view, _camera._projection);
 	
 	// Unbind the full scene framebuffer.

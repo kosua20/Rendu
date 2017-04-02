@@ -41,6 +41,6 @@ void main(){
 	fragColor = uncharted2(finalColor);
 	
 	// Test if any component is still > 1, for demo purposes.
-	fragColor = any(greaterThan(fragColor, vec3(1.0))) ? vec3(1.0,0.0,0.0) : fragColor;
+	//fragColor = any(greaterThan(fragColor, vec3(1.0))) ? vec3(1.0,0.0,0.0) : fragColor;
 	
 }
