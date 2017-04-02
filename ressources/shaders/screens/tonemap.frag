@@ -12,13 +12,20 @@ uniform vec2 inverseScreenSize;
 // Output: the fragment color
 out vec3 fragColor;
 
+vec3 reinhard(vec3 hdrColor){
+	return hdrColor / (1.0 + hdrColor);
+}
+
+vec3 simpleExposure(vec3 hdrColor, float exposure){
+	return 1.0 - exp(-hdrColor * exposure);
+}
 
 void main(){
 	
 	vec3 finalColor = texture(screenTexture,In.uv).rgb;
-	fragColor = finalColor / (1.0 + finalColor);
+	fragColor = simpleExposure(finalColor, 0.6);
 	
 	// Test if any component is still > 1, for demo purposes.
-	fragColor = any(greaterThan(fragColor, vec3(1.0))) ? vec3(1.0,0.0,0.0) : finalColor;
+	fragColor = any(greaterThan(fragColor, vec3(1.0))) ? vec3(1.0,0.0,0.0) : fragColor;
 	
 }
