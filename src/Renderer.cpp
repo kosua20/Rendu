@@ -24,11 +24,12 @@ Renderer::Renderer(int width, int height){
 	_gbuffer = std::make_shared<Gbuffer>(_camera._renderSize[0],_camera._renderSize[1]);
 	_ssaoFramebuffer = std::make_shared<Framebuffer>(0.5f * _camera._renderSize[0], 0.5f * _camera._renderSize[1], GL_RED, GL_UNSIGNED_BYTE, GL_RED, GL_LINEAR, GL_CLAMP_TO_EDGE);
 	_ssaoBlurFramebuffer = std::make_shared<Framebuffer>(_camera._renderSize[0], _camera._renderSize[1], GL_RED, GL_UNSIGNED_BYTE, GL_RED, GL_LINEAR, GL_CLAMP_TO_EDGE);
-	_sceneFramebuffer = std::make_shared<Framebuffer>(_camera._renderSize[0],_camera._renderSize[1], GL_RGBA,GL_UNSIGNED_BYTE, GL_RGBA, GL_LINEAR,GL_CLAMP_TO_EDGE);
+	_sceneFramebuffer = std::make_shared<Framebuffer>(_camera._renderSize[0],_camera._renderSize[1], GL_RGBA, GL_UNSIGNED_BYTE, GL_RGBA, GL_LINEAR,GL_CLAMP_TO_EDGE);
+	_toneMappingFramebuffer = std::make_shared<Framebuffer>(_camera._renderSize[0],_camera._renderSize[1], GL_RGBA, GL_UNSIGNED_BYTE, GL_RGBA, GL_LINEAR,GL_CLAMP_TO_EDGE);
 	_fxaaFramebuffer = std::make_shared<Framebuffer>(_camera._renderSize[0],_camera._renderSize[1], GL_RGBA,GL_UNSIGNED_BYTE, GL_RGBA, GL_LINEAR,GL_CLAMP_TO_EDGE);
 	
 	// Create directional light.
-	_directionalLights.emplace_back(glm::vec3(0.0f), glm::vec3(0.5f), glm::ortho(-0.75f,0.75f,-0.75f,0.75f,2.0f,6.0f));
+	_directionalLights.emplace_back(glm::vec3(0.0f), glm::vec3(1.0f), glm::ortho(-0.75f,0.75f,-0.75f,0.75f,2.0f,6.0f));
 	
 	// Create point lights.
 	const float lI = 6.0; // Light intensity.
@@ -79,7 +80,8 @@ Renderer::Renderer(int width, int height){
 	}
 	
 	_ssaoBlurScreen.init(_ssaoFramebuffer->textureId(), "ressources/shaders/screens/boxblur_float");
-	_fxaaScreen.init(_sceneFramebuffer->textureId(), "ressources/shaders/screens/fxaa");
+	_toneMappingScreen.init(_sceneFramebuffer->textureId(), "ressources/shaders/screens/tonemap");
+	_fxaaScreen.init(_toneMappingFramebuffer->textureId(), "ressources/shaders/screens/fxaa");
 	_finalScreen.init(_fxaaFramebuffer->textureId(), "ressources/shaders/screens/final_screenquad");
 	checkGLError();
 	
@@ -160,7 +162,6 @@ void Renderer::draw(){
 	// --- Gbuffer composition pass
 	_sceneFramebuffer->bind();
 	
-	
 	glViewport(0,0,_sceneFramebuffer->_width, _sceneFramebuffer->_height);
 	
 	_ambientScreen.draw( invRenderSize, _camera._view, _camera._projection);
@@ -176,6 +177,11 @@ void Renderer::draw(){
 	glDisable(GL_BLEND);
 	
 	_sceneFramebuffer->unbind();
+	
+	_toneMappingFramebuffer->bind();
+	glViewport(0,0,_toneMappingFramebuffer->_width, _toneMappingFramebuffer->_height);
+	_toneMappingScreen.draw( invRenderSize );
+	_toneMappingFramebuffer->unbind();
 	
 	// --- FXAA pass -------
 	// Bind the post-processing framebuffer.
@@ -241,11 +247,13 @@ void Renderer::clean(){
 	_ambientScreen.clean();
 	_fxaaScreen.clean();
 	_ssaoBlurScreen.clean();
+	_toneMappingScreen.clean();
 	_finalScreen.clean();
 	_gbuffer->clean();
 	_ssaoFramebuffer->clean();
 	_ssaoBlurFramebuffer->clean();
 	_sceneFramebuffer->clean();
+	_toneMappingFramebuffer->clean();
 	_fxaaFramebuffer->clean();
 }
 
@@ -260,6 +268,7 @@ void Renderer::resize(int width, int height){
 	_ssaoFramebuffer->resize(0.5f * _camera._renderSize);
 	_ssaoBlurFramebuffer->resize(_camera._renderSize);
 	_sceneFramebuffer->resize(_camera._renderSize);
+	_toneMappingFramebuffer->resize(_camera._renderSize);
 	_fxaaFramebuffer->resize(_camera._renderSize);
 }
 
