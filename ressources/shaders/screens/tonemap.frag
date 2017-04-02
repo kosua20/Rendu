@@ -16,7 +16,9 @@ out vec3 fragColor;
 void main(){
 	
 	vec3 finalColor = texture(screenTexture,In.uv).rgb;
+	fragColor = finalColor / (1.0 + finalColor);
 	
-	fragColor = any(greaterThan(finalColor, vec3(1.0))) ? vec3(1.0,0.0,0.0) : finalColor;
+	// Test if any component is still > 1, for demo purposes.
+	fragColor = any(greaterThan(fragColor, vec3(1.0))) ? vec3(1.0,0.0,0.0) : finalColor;
 	
 }
