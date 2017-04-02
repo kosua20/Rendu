@@ -12,6 +12,8 @@ public:
 	
 	void draw(const glm::vec2& invScreenSize, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix);
 	
+	void drawDebug(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix);
+	
 	void clean();
 	
 	static void loadProgramAndGeometry();
@@ -21,7 +23,8 @@ private:
 	float _radius;
 	std::vector<GLuint> _textureIds;
 	
-	 GLuint _programId;
+	GLuint _programId;
+	static GLuint _debugProgramId;
 	static GLuint _ebo;
 	static GLuint _vao;
 	static GLsizei _count;

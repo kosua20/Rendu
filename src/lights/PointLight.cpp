@@ -15,6 +15,7 @@ PointLight::PointLight(const glm::vec3& worldPosition, const glm::vec3& color, f
 
 void PointLight::loadProgramAndGeometry(){
 	
+	_debugProgramId = createGLProgram("ressources/shaders/lights/point_light_debug.vert", "ressources/shaders/lights/point_light_debug.frag");
 	
 	// Load geometry.
 	mesh_t mesh;
@@ -44,7 +45,7 @@ void PointLight::loadProgramAndGeometry(){
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * mesh.indices.size(), &(mesh.indices[0]), GL_STATIC_DRAW);
 	
 	glBindVertexArray(0);
-	
+	checkGLError();
 }
 
 void PointLight::init(const std::map<std::string, GLuint>& textureIds){
@@ -119,10 +120,39 @@ void PointLight::draw(const glm::vec2& invScreenSize, const glm::mat4& viewMatri
 	
 }
 
+void PointLight::drawDebug(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix){
+	glm::mat4 vp = projectionMatrix * viewMatrix;
+	
+	glUseProgram(_debugProgramId);
+	
+	// For the vertex shader
+	GLuint radiusId = glGetUniformLocation(_debugProgramId, "radius");
+	glUniform1f(radiusId,  0.1*_radius);
+	GLuint positionId = glGetUniformLocation(_debugProgramId, "lightWorldPosition");
+	glUniform3fv(positionId, 1, &_local[0]);
+	
+	GLuint MVPID  = glGetUniformLocation(_debugProgramId, "mvp");
+	glUniformMatrix4fv(MVPID, 1, GL_FALSE, &vp[0][0]);
+	
+	GLuint lightColId = glGetUniformLocation(_debugProgramId, "lightColor");
+	glUniform3fv(lightColId, 1,  &_color[0]);
+	
+	// Select the geometry.
+	glBindVertexArray(_vao);
+	// Draw!
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
+	glDrawElements(GL_TRIANGLES, _count, GL_UNSIGNED_INT, (void*)0);
+	
+	glBindVertexArray(0);
+	glUseProgram(0);
+}
+
+
 void PointLight::clean(){
 	
 }
 
+GLuint PointLight::_debugProgramId;
 GLuint PointLight::_ebo;
 GLuint PointLight::_vao;
 GLsizei PointLight::_count;
