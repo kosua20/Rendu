@@ -175,12 +175,12 @@ void Renderer::draw(){
 	for(auto& dirLight : _directionalLights){
 		dirLight.draw( invRenderSize, _camera._view, _camera._projection);
 	}
-	
+	glCullFace(GL_FRONT);
 	for(auto& pointLight : _pointLights){
 		pointLight.draw( invRenderSize, _camera._view, _camera._projection);
 	}
 	glDisable(GL_BLEND);
-	
+	glCullFace(GL_BACK);
 	_sceneFramebuffer->unbind();
 	
 	_toneMappingFramebuffer->bind();
