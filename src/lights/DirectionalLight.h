@@ -3,6 +3,7 @@
 #include "Light.h"
 #include "../ScreenQuad.h"
 #include "../Framebuffer.h"
+#include <memory>
 
 class DirectionalLight : public Light {
 
