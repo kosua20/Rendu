@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <iostream>
-
+#include <algorithm>
 #include "helpers/ProgramUtilities.h"
 #include "Gbuffer.h"
 
