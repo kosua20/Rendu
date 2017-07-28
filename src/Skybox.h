@@ -30,7 +30,7 @@ private:
 	GLuint _vao;
 	GLuint _ebo;
 	GLuint _texCubeMap;
-	
+	GLuint _mvpID;
 
 };
 

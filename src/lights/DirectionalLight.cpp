@@ -22,6 +22,14 @@ void DirectionalLight::init(const std::map<std::string, GLuint>& textureIds){
 	std::map<std::string, GLuint> textures = textureIds;
 	textures["shadowMap"] = _blurPass->textureId();
 	_screenquad.init(textures, "ressources/shaders/lights/directional_light");
+	
+	glUseProgram(_screenquad.program());
+	_vtolID  = glGetUniformLocation(_screenquad.program(), "viewToLight");
+	_lightPosId = glGetUniformLocation(_screenquad.program(), "lightDirection");
+	_lightColId = glGetUniformLocation(_screenquad.program(), "lightColor");
+	_projId = glGetUniformLocation(_screenquad.program(), "projectionMatrix");
+	glUseProgram(0);
+
 }
 
 void DirectionalLight::draw(const glm::vec2& invScreenSize, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix){
@@ -34,18 +42,11 @@ void DirectionalLight::draw(const glm::vec2& invScreenSize, const glm::mat4& vie
 	
 	glUseProgram(_screenquad.program());
 	
-	GLuint lightPosId = glGetUniformLocation(_screenquad.program(), "lightDirection");
-	glUniform3fv(lightPosId, 1,  &lightPositionViewSpace[0]);
-	
-	GLuint lightColId = glGetUniformLocation(_screenquad.program(), "lightColor");
-	glUniform3fv(lightColId, 1,  &_color[0]);
-	
+	glUniform3fv(_lightPosId, 1,  &lightPositionViewSpace[0]);
+	glUniform3fv(_lightColId, 1,  &_color[0]);
 	// Projection parameter for position reconstruction.
-	GLuint projId = glGetUniformLocation(_screenquad.program(), "projectionMatrix");
-	glUniform4fv(projId, 1, &(projectionVector[0]));
-	
-	GLuint vtolID  = glGetUniformLocation(_screenquad.program(), "viewToLight");
-	glUniformMatrix4fv(vtolID, 1, GL_FALSE, &viewToLight[0][0]);
+	glUniform4fv(_projId, 1, &(projectionVector[0]));
+	glUniformMatrix4fv(_vtolID, 1, GL_FALSE, &viewToLight[0][0]);
 
 	_screenquad.draw(invScreenSize);
 

@@ -58,10 +58,18 @@ void PointLight::init(const std::map<std::string, GLuint>& textureIds){
 		glBindTexture(GL_TEXTURE_2D, _textureIds.back());
 		GLuint texUniID = glGetUniformLocation(_programId, (texture.first).c_str());
 		glUniform1i(texUniID, currentTextureSlot);
-		
 		currentTextureSlot += 1;
-		
 	}
+	
+	glUseProgram(_programId);
+	_lightColId = glGetUniformLocation(_programId, "lightColor");
+	_projId = glGetUniformLocation(_programId, "projectionMatrix");
+	_screenId = glGetUniformLocation(_programId, "inverseScreenSize");
+	_radiusId = glGetUniformLocation(_programId, "radius");
+	_positionId = glGetUniformLocation(_programId, "lightWorldPosition");
+	_mvpId  = glGetUniformLocation(_programId, "mvp");
+	_lightPosId = glGetUniformLocation(_programId, "lightPosition");
+	glUseProgram(0);
 	
 	checkGLError();
 }
@@ -72,35 +80,20 @@ void PointLight::draw(const glm::vec2& invScreenSize, const glm::mat4& viewMatri
 	// Store the four variable coefficients of the projection matrix.
 	glm::vec4 projectionVector = glm::vec4(projectionMatrix[0][0], projectionMatrix[1][1], projectionMatrix[2][2], projectionMatrix[3][2]);
 	glm::vec3 lightPositionViewSpace = glm::vec3(viewMatrix * glm::vec4(_local, 1.0f));
-	
 	glm::mat4 vp = projectionMatrix * viewMatrix;
 	
 	glUseProgram(_programId);
 	
 	// For the vertex shader
-	GLuint radiusId = glGetUniformLocation(_programId, "radius");
-	glUniform1f(radiusId,  _radius);
-	GLuint positionId = glGetUniformLocation(_programId, "lightWorldPosition");
-	glUniform3fv(positionId, 1, &_local[0]);
-	
-	GLuint MVPID  = glGetUniformLocation(_programId, "mvp");
-	glUniformMatrix4fv(MVPID, 1, GL_FALSE, &vp[0][0]);
-
-	
-	GLuint lightPosId = glGetUniformLocation(_programId, "lightPosition");
-	glUniform3fv(lightPosId, 1,  &lightPositionViewSpace[0]);
-	
-	GLuint lightColId = glGetUniformLocation(_programId, "lightColor");
-	glUniform3fv(lightColId, 1,  &_color[0]);
-	
+	glUniform1f(_radiusId,  _radius);
+	glUniform3fv(_positionId, 1, &_local[0]);
+	glUniformMatrix4fv(_mvpId, 1, GL_FALSE, &vp[0][0]);
+	glUniform3fv(_lightPosId, 1,  &lightPositionViewSpace[0]);
+	glUniform3fv(_lightColId, 1,  &_color[0]);
 	// Projection parameter for position reconstruction.
-	GLuint projId = glGetUniformLocation(_programId, "projectionMatrix");
-	glUniform4fv(projId, 1, &(projectionVector[0]));
-	
-	
+	glUniform4fv(_projId, 1, &(projectionVector[0]));
 	// Inverse screen size uniform.
-	GLuint screenId = glGetUniformLocation(_programId, "inverseScreenSize");
-	glUniform2fv(screenId, 1, &(invScreenSize[0]));
+	glUniform2fv(_screenId, 1, &(invScreenSize[0]));
 	
 	// Active screen texture.
 	for(GLuint i = 0;i < _textureIds.size(); ++i){
@@ -126,15 +119,14 @@ void PointLight::drawDebug(const glm::mat4& viewMatrix, const glm::mat4& project
 	glUseProgram(_debugProgramId);
 	
 	// For the vertex shader
+	
 	GLuint radiusId = glGetUniformLocation(_debugProgramId, "radius");
-	glUniform1f(radiusId,  0.1*_radius);
 	GLuint positionId = glGetUniformLocation(_debugProgramId, "lightWorldPosition");
-	glUniform3fv(positionId, 1, &_local[0]);
-	
-	GLuint MVPID  = glGetUniformLocation(_debugProgramId, "mvp");
-	glUniformMatrix4fv(MVPID, 1, GL_FALSE, &vp[0][0]);
-	
+	GLuint mvpId  = glGetUniformLocation(_debugProgramId, "mvp");
 	GLuint lightColId = glGetUniformLocation(_debugProgramId, "lightColor");
+	glUniform1f(radiusId,  0.1*_radius);
+	glUniform3fv(positionId, 1, &_local[0]);
+	glUniformMatrix4fv(mvpId, 1, GL_FALSE, &vp[0][0]);
 	glUniform3fv(lightColId, 1,  &_color[0]);
 	
 	// Select the geometry.

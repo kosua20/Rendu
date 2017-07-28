@@ -32,6 +32,11 @@ void AmbientQuad::init(std::map<std::string, GLuint> textureIds){
 		const GLuint location = glGetUniformLocation(_ssaoScreen.program(), name.c_str());
 		glUniform3fv(location, 1, &_samples[i][0] );
 	}
+	
+	glUseProgram(_programId);
+	_invVId  = glGetUniformLocation(_programId, "inverseV");
+	glUseProgram(_ssaoScreen.program());
+	_invPId  = glGetUniformLocation(_ssaoScreen.program(), "projectionMatrix");
 	glUseProgram(0);
 	checkGLError();
 }
@@ -81,8 +86,7 @@ void AmbientQuad::draw(const glm::vec2& invScreenSize, const glm::mat4& viewMatr
 	
 	glUseProgram(_programId);
 	
-	GLuint invVID  = glGetUniformLocation(_programId, "inverseV");
-	glUniformMatrix4fv(invVID, 1, GL_FALSE, &invView[0][0]);
+	glUniformMatrix4fv(_invVId, 1, GL_FALSE, &invView[0][0]);
 	
 	glActiveTexture(GL_TEXTURE0 + (unsigned int)_textureIds.size());
 	glBindTexture(GL_TEXTURE_CUBE_MAP, _texCubeMapSmall);
@@ -94,8 +98,7 @@ void AmbientQuad::drawSSAO(const glm::vec2& invScreenSize, const glm::mat4& view
 	
 	glUseProgram(_ssaoScreen.program());
 	
-	GLuint invPID  = glGetUniformLocation(_ssaoScreen.program(), "projectionMatrix");
-	glUniformMatrix4fv(invPID, 1, GL_FALSE, &projectionMatrix[0][0]);
+	glUniformMatrix4fv(_invPId, 1, GL_FALSE, &projectionMatrix[0][0]);
 	
 	_ssaoScreen.draw(invScreenSize);
 	

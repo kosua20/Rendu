@@ -99,8 +99,20 @@ void Object::init(const std::string& meshPath, const std::vector<std::string>& t
 	
 	_texEffects = loadTexture(texturesPaths[2], _programId, 2, "textureEffects");
 	
+	glUseProgram(_programId);
+	_mvpId  = glGetUniformLocation(_programId, "mvp");
+	_mvId  = glGetUniformLocation(_programId, "mv");
+	_normalMatrixId  = glGetUniformLocation(_programId, "normalMatrix");
+	_pId  = glGetUniformLocation(_programId, "p");
+	// This one won't be modified, no need to keep the ID around.
 	GLuint matIdID  = glGetUniformLocation(_programId, "materialId");
 	glUniform1i(matIdID, materialId);
+	
+	glUseProgram(_programDepthId);
+	_mvpDepthId  = glGetUniformLocation(_programDepthId, "mvp");
+	glUseProgram(0);
+	
+	
 	
 	checkGLError();
 	
@@ -125,17 +137,13 @@ void Object::draw(const glm::mat4& view, const glm::mat4& projection){
 	glUseProgram(_programId);
 	
 	// Upload the MVP matrix.
-	GLuint mvpID  = glGetUniformLocation(_programId, "mvp");
-	glUniformMatrix4fv(mvpID, 1, GL_FALSE, &MVP[0][0]);
+	glUniformMatrix4fv(_mvpId, 1, GL_FALSE, &MVP[0][0]);
 	// Upload the MV matrix.
-	GLuint mvID  = glGetUniformLocation(_programId, "mv");
-	glUniformMatrix4fv(mvID, 1, GL_FALSE, &MV[0][0]);
+	glUniformMatrix4fv(_mvId, 1, GL_FALSE, &MV[0][0]);
 	// Upload the normal matrix.
-	GLuint normalMatrixID  = glGetUniformLocation(_programId, "normalMatrix");
-	glUniformMatrix3fv(normalMatrixID, 1, GL_FALSE, &normalMatrix[0][0]);
+	glUniformMatrix3fv(_normalMatrixId, 1, GL_FALSE, &normalMatrix[0][0]);
 	// Upload the projection matrix.
-	GLuint pID  = glGetUniformLocation(_programId, "p");
-	glUniformMatrix4fv(pID, 1, GL_FALSE, &projection[0][0]);
+	glUniformMatrix4fv(_pId, 1, GL_FALSE, &projection[0][0]);
 
 	// Bind the textures.
 	glActiveTexture(GL_TEXTURE0);
@@ -166,8 +174,7 @@ void Object::drawDepth(const glm::mat4& lightVP){
 	glUseProgram(_programDepthId);
 	
 	// Upload the MVP matrix.
-	GLuint mvpID  = glGetUniformLocation(_programDepthId, "mvp");
-	glUniformMatrix4fv(mvpID, 1, GL_FALSE, &lightMVP[0][0]);
+	glUniformMatrix4fv(_mvpDepthId, 1, GL_FALSE, &lightMVP[0][0]);
 	
 	// Select the geometry.
 	glBindVertexArray(_vao);
