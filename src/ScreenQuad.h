@@ -34,6 +34,7 @@ protected:
 	GLuint _programId;
 	GLuint _vao;
 	GLuint _ebo;
+	GLuint _screenId;
 	std::vector<GLuint> _textureIds;
 	
 

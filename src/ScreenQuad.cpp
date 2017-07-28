@@ -23,6 +23,7 @@ void ScreenQuad::init(GLuint textureId, const std::string & shaderRoot){
 	glBindTexture(GL_TEXTURE_2D, _textureIds[0]);
 	GLuint texUniID = glGetUniformLocation(_programId, "screenTexture");
 	glUniform1i(texUniID, 0);
+	_screenId = glGetUniformLocation(_programId, "inverseScreenSize");
 	checkGLError();
 	
 }
@@ -44,6 +45,9 @@ void ScreenQuad::init(std::map<std::string, GLuint> textureIds, const std::strin
 		currentTextureSlot += 1;
 	}
 	
+	glUseProgram(_programId);
+	_screenId = glGetUniformLocation(_programId, "inverseScreenSize");
+	glUseProgram(0);
 	checkGLError();
 	
 }
@@ -91,8 +95,7 @@ void ScreenQuad::draw(const glm::vec2& invScreenSize){
 	glUseProgram(_programId);
 	
 	// Inverse screen size uniform.
-	GLuint screenId = glGetUniformLocation(_programId, "inverseScreenSize");
-	glUniform2fv(screenId, 1, &(invScreenSize[0]));
+	glUniform2fv(_screenId, 1, &(invScreenSize[0]));
 	
 	// Active screen texture.
 	for(GLuint i = 0;i < _textureIds.size(); ++i){

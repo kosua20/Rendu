@@ -24,10 +24,20 @@ private:
 	std::vector<GLuint> _textureIds;
 	
 	GLuint _programId;
+	GLuint _projId;
+	GLuint _screenId;
+	GLuint _radiusId;
+	GLuint _positionId;
+	GLuint _mvpId;
+	GLuint _lightPosId;
+	GLuint _lightColId;
+	
 	static GLuint _debugProgramId;
 	static GLuint _ebo;
 	static GLuint _vao;
 	static GLsizei _count;
+	
+	
 	
 };
 

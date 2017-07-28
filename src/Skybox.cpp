@@ -67,6 +67,9 @@ void Skybox::init(){
 	
 	_texCubeMap = loadTextureCubeMap("ressources/cubemap/cubemap", _programId, 0, "textureCubeMap", true);
 	
+	glUseProgram(_programId);
+	_mvpID  = glGetUniformLocation(_programId, "mvp");
+	glUseProgram(0);
 	checkGLError();
 	
 }
@@ -86,8 +89,8 @@ void Skybox::draw(const glm::mat4& view, const glm::mat4& projection){
 	glUseProgram(_programId);
 
 	// Upload the MVP matrix.
-	GLuint mvpID  = glGetUniformLocation(_programId, "mvp");
-	glUniformMatrix4fv(mvpID, 1, GL_FALSE, &MVP[0][0]);
+	
+	glUniformMatrix4fv(_mvpID, 1, GL_FALSE, &MVP[0][0]);
 	
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, _texCubeMap);
