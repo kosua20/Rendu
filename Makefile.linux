@@ -10,7 +10,7 @@ LIBDIR = -L/usr/local/lib
 LIBS = -lglfw3 -lGL -lX11 -lXi -lXrandr -lXxf86vm -lXinerama -lXcursor -lrt -lm -pthread -ldl
 
 #Compiler flags: C++11 standard, and display 'all' warnings.
-CXXFLAGS = -std=c++11 -Wall
+CXXFLAGS = -std=c++11 -Wall -O3
 
 #Build directory
 BUILDDIR = build
