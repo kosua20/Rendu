@@ -8,7 +8,7 @@ INCLUDEDIR = -I/usr/include/ -I/usr/local/include/ -Isrc/helpers/
 LIBS =  -framework OpenGL -lglfw3 -framework Cocoa -framework IOKit -framework CoreVideo
 
 #Compiler flags: C++11 standard, and display 'all' warnings.
-CXXFLAGS = -std=c++11 -Wall
+CXXFLAGS = -std=c++11 -Wall -O3
 
 #Build directory
 BUILDDIR = build
