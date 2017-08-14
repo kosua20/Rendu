@@ -22,7 +22,7 @@ private:
 	static std::string loadStringFromFile(const std::string & path);
 	
 	/// Flip an image vertically (line by line).
-	static void flipImage(std::vector<unsigned char> & image, const int width, const int height);
+	static void flipImage(unsigned char * image, const int width, const int height, const int components);
 	
 public:
 	/// Load a shader of the given type from a string
