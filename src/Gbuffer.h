@@ -23,10 +23,10 @@ public:
 	~Gbuffer();
 	
 	/// Bind the framebuffer.
-	void bind();
+	void bind() const;
 	
 	/// Unbind the framebuffer.
-	void unbind();
+	void unbind() const;
 	
 	/// Resize the framebuffer.
 	void resize(int width, int height);
@@ -34,12 +34,12 @@ public:
 	void resize(glm::vec2 size);
 	
 	/// Clean.
-	void clean();
+	void clean() const;
 	
 	/// The ID to the texture containing the result of the framebuffer pass.
-	GLuint textureId(const TextureType& type) { return _textureIds[type]; }
+	const GLuint textureId(const TextureType& type) { return _textureIds[type]; }
 	
-	std::map<std::string, GLuint> textureIds(const std::vector<TextureType>& included = std::vector<TextureType>());
+	const std::map<std::string, GLuint> textureIds(const std::vector<TextureType>& included = std::vector<TextureType>()) const ;
 	
 	/// The framebuffer size (can be different from the default renderer size).
 	const int width() const { return _width; }

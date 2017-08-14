@@ -13,13 +13,13 @@ public:
 	
 	void init(const std::map<std::string, GLuint>& textureIds);
 	
-	void draw(const glm::vec2& invScreenSize, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix);
+	void draw(const glm::vec2& invScreenSize, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) const;
 	
-	void bind();
+	void bind() const;
 	
-	void blurAndUnbind();
+	void blurAndUnbind() const;
 	
-	void clean();
+	void clean() const;
 	
 private:
 	

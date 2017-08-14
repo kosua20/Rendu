@@ -51,11 +51,11 @@ Framebuffer::Framebuffer(int width, int height, GLuint format, GLuint type, GLui
 
 Framebuffer::~Framebuffer(){ clean(); }
 
-void Framebuffer::bind(){
+void Framebuffer::bind() const {
 	glBindFramebuffer(GL_FRAMEBUFFER, _id);
 }
 
-void Framebuffer::unbind(){
+void Framebuffer::unbind() const {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
@@ -77,7 +77,7 @@ void Framebuffer::resize(glm::vec2 size){
 	resize(size[0],size[1]);
 }
 
-void Framebuffer::clean(){
+void Framebuffer::clean() const {
 	glDeleteRenderbuffers(1, &_idRenderbuffer);
 	glDeleteTextures(1, &_idColor);
 	glDeleteFramebuffers(1, &_id);

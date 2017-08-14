@@ -96,7 +96,7 @@ Renderer::Renderer(int width, int height){
 }
 
 
-void Renderer::draw(){
+void Renderer::draw() {
 	
 	// Compute the time elapsed since last frame
 	float elapsed = glfwGetTime() - _timer;
@@ -240,7 +240,7 @@ void Renderer::physics(float elapsedTime){
 }
 
 
-void Renderer::clean(){
+void Renderer::clean() const {
 	// Clean objects.
 	_suzanne.clean();
 	_dragon.clean();

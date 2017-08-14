@@ -111,11 +111,9 @@ void Object::init(const std::string& meshPath, const std::vector<std::string>& t
 	glUseProgram(_programDepthId);
 	_mvpDepthId  = glGetUniformLocation(_programDepthId, "mvp");
 	glUseProgram(0);
-	
-	
+
 	
 	checkGLError();
-	
 	
 }
 
@@ -125,7 +123,8 @@ void Object::update(const glm::mat4& model){
 	
 }
 
-void Object::draw(const glm::mat4& view, const glm::mat4& projection){
+
+void Object::draw(const glm::mat4& view, const glm::mat4& projection) const {
 	
 	// Combine the three matrices.
 	glm::mat4 MV = view * _model;
@@ -166,7 +165,7 @@ void Object::draw(const glm::mat4& view, const glm::mat4& projection){
 }
 
 
-void Object::drawDepth(const glm::mat4& lightVP){
+void Object::drawDepth(const glm::mat4& lightVP) const {
 	
 	// Combine the three matrices.
 	glm::mat4 lightMVP = lightVP * _model;
@@ -189,7 +188,7 @@ void Object::drawDepth(const glm::mat4& lightVP){
 }
 
 
-void Object::clean(){
+void Object::clean() const {
 	glDeleteVertexArrays(1, &_vao);
 	glDeleteTextures(1, &_texColor);
 	glDeleteTextures(1, &_texNormal);

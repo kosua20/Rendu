@@ -89,7 +89,7 @@ void ScreenQuad::loadGeometry(){
 }
 
 
-void ScreenQuad::draw(const glm::vec2& invScreenSize){
+void ScreenQuad::draw(const glm::vec2& invScreenSize) const {
 	
 	// Select the program (and shaders).
 	glUseProgram(_programId);
@@ -116,9 +116,7 @@ void ScreenQuad::draw(const glm::vec2& invScreenSize){
 
 
 
-
-
-void ScreenQuad::clean(){
+void ScreenQuad::clean() const {
 	glDeleteVertexArrays(1, &_vao);
 }
 

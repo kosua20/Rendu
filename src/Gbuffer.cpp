@@ -67,15 +67,15 @@ Gbuffer::Gbuffer(int width, int height) {
 
 Gbuffer::~Gbuffer(){ clean(); }
 
-void Gbuffer::bind(){
+void Gbuffer::bind() const {
 	glBindFramebuffer(GL_FRAMEBUFFER, _id);
 }
 
-void Gbuffer::unbind(){
+void Gbuffer::unbind() const {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-std::map<std::string, GLuint> Gbuffer::textureIds(const std::vector<TextureType>& included){
+const std::map<std::string, GLuint> Gbuffer::textureIds(const std::vector<TextureType>& included) const {
 	
 	bool includeAll = (included.size() == 0);
 	
@@ -125,7 +125,7 @@ void Gbuffer::resize(glm::vec2 size){
 	resize(size[0],size[1]);
 }
 
-void Gbuffer::clean(){
+void Gbuffer::clean() const {
 	for(auto& tex : _textureIds){
 		glDeleteTextures(1, &(tex.second));
 	}

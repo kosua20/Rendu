@@ -33,7 +33,7 @@ public:
 	void physics(float elapsedTime);
 
 	/// Clean function
-	void clean();
+	void clean() const;
 
 	/// Handle screen resizing
 	void resize(int width, int height);

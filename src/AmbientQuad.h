@@ -18,11 +18,11 @@ public:
 	void init(std::map<std::string, GLuint> textureIds);
 	
 	/// Draw function,
-	void draw(const glm::vec2& invScreenSize, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix);
+	void draw(const glm::vec2& invScreenSize, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) const;
 	
-	void drawSSAO(const glm::vec2& invScreenSize, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix);
+	void drawSSAO(const glm::vec2& invScreenSize, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) const;
 		
-	void clean();
+	void clean() const;
 	
 private:
 	

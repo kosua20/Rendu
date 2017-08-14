@@ -15,10 +15,10 @@ public:
 	~Framebuffer();
 	
 	/// Bind the framebuffer.
-	void bind();
+	void bind() const;
 	
 	/// Unbind the framebuffer.
-	void unbind();
+	void unbind() const;
 	
 	/// Resize the framebuffer.
 	void resize(int width, int height);
@@ -26,10 +26,10 @@ public:
 	void resize(glm::vec2 size);
 	
 	/// Clean.
-	void clean();
+	void clean() const;
 	
 	/// The ID to the texture containing the result of the framebuffer pass.
-	GLuint textureId() { return _idColor; }
+	const GLuint textureId() const { return _idColor; }
 	
 	/// The framebuffer size (can be different from the default renderer size).
 	const int width() const { return _width; }

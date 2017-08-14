@@ -18,10 +18,10 @@ public:
 	void init();
 
 	/// Draw function
-	void draw(const glm::mat4& view, const glm::mat4& projection);
+	void draw(const glm::mat4& view, const glm::mat4& projection) const;
 
 	/// Clean function
-	void clean();
+	void clean() const;
 
 
 private:
