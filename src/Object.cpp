@@ -93,13 +93,15 @@ void Object::init(const std::string& meshPath, const std::vector<std::string>& t
 	glBindVertexArray(0);
 	
 	// Load and upload the textures.
-	_texColor = loadTexture(texturesPaths[0], _programId, 0,  "textureColor", true);
-	
-	_texNormal = loadTexture(texturesPaths[1], _programId, 1, "textureNormal");
-	
-	_texEffects = loadTexture(texturesPaths[2], _programId, 2, "textureEffects");
+	_texColor = loadTexture(texturesPaths[0], true);
+	_texNormal = loadTexture(texturesPaths[1], false);
+	_texEffects = loadTexture(texturesPaths[2], false);
 	
 	glUseProgram(_programId);
+	glUniform1i(glGetUniformLocation(_programId, "textureColor"), 0);
+	glUniform1i(glGetUniformLocation(_programId, "textureNormal"), 1);
+	glUniform1i(glGetUniformLocation(_programId, "textureEffects"), 2);
+	
 	_mvpId  = glGetUniformLocation(_programId, "mvp");
 	_mvId  = glGetUniformLocation(_programId, "mv");
 	_normalMatrixId  = glGetUniformLocation(_programId, "normalMatrix");
