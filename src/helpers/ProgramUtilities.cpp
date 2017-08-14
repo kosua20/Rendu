@@ -254,7 +254,7 @@ GLuint loadTextureCubeMap(const std::string& pathBase, bool sRGB){
 			return 0;
 		}
 		
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + side, 0, sRGB ? GL_SRGB8_ALPHA8 : GL_RGBA, imwidth, imheight, 0, GL_RGBA, GL_UNSIGNED_BYTE, &(image[0]));
+		glTexImage2D(GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + side), 0, sRGB ? GL_SRGB8_ALPHA8 : GL_RGBA, imwidth, imheight, 0, GL_RGBA, GL_UNSIGNED_BYTE, &(image[0]));
 	}
 	glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 	
