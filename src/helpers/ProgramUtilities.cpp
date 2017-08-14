@@ -43,7 +43,7 @@ int _checkGLError(const char *file, int line){
 	return 0;
 }
 
-std::string loadStringFromFile(const std::string & filename) {
+std::string ProgramUtilities::loadStringFromFile(const std::string & filename) {
 	std::ifstream in;
 	// Open a stream to the file.
 	in.open(filename.c_str());
@@ -60,7 +60,7 @@ std::string loadStringFromFile(const std::string & filename) {
 	return line;
 }
 
-GLuint loadShader(const std::string & prog, GLuint type){
+GLuint ProgramUtilities::loadShader(const std::string & prog, GLuint type){
 	GLuint id;
 	// Create shader object.
 	id = glCreateShader(type);
@@ -95,7 +95,7 @@ GLuint loadShader(const std::string & prog, GLuint type){
 	return id;
 }
 
-GLuint createGLProgram(const std::string & vertexPath, const std::string & fragmentPath, const std::string & geometryPath){
+GLuint ProgramUtilities::createGLProgram(const std::string & vertexPath, const std::string & fragmentPath, const std::string & geometryPath){
 	GLuint vp(0), fp(0), gp(0), id(0);
 	id = glCreateProgram();
 	checkGLError();
@@ -160,7 +160,7 @@ GLuint createGLProgram(const std::string & vertexPath, const std::string & fragm
 	return id;
 }
 
-void flipImage(std::vector<unsigned char> & image, const int width, const int height){
+void ProgramUtilities::flipImage(std::vector<unsigned char> & image, const int width, const int height){
 	// Compute the number of components per pixel.
 	int components = (unsigned int)image.size() / (width * height);
 	// The width in bytes.
@@ -174,7 +174,7 @@ void flipImage(std::vector<unsigned char> & image, const int width, const int he
 }
 
 
-GLuint loadTexture(const std::string& path, bool sRGB){
+GLuint ProgramUtilities::loadTexture(const std::string& path, bool sRGB){
 	
 	// Load and upload the texture.
 	std::vector<unsigned char> image;
@@ -200,7 +200,7 @@ GLuint loadTexture(const std::string& path, bool sRGB){
 
 
 
-GLuint loadTextureCubeMap(const std::string& pathBase, bool sRGB){
+GLuint ProgramUtilities::loadTextureCubeMap(const std::string& pathBase, bool sRGB){
 	
 	std::vector<std::string> names { pathBase + "_r.png", pathBase + "_l.png",
 		pathBase + "_u.png", pathBase + "_d.png",

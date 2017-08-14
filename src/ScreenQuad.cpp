@@ -13,7 +13,7 @@ ScreenQuad::~ScreenQuad(){}
 void ScreenQuad::init(GLuint textureId, const std::string & shaderRoot){
 	
 	// Load the shaders
-	_programId = createGLProgram(shaderRoot + ".vert", shaderRoot + ".frag");
+	_programId = ProgramUtilities::createGLProgram(shaderRoot + ".vert", shaderRoot + ".frag");
 
 	// Load geometry.
 	loadGeometry();
@@ -31,7 +31,7 @@ void ScreenQuad::init(GLuint textureId, const std::string & shaderRoot){
 void ScreenQuad::init(std::map<std::string, GLuint> textureIds, const std::string & shaderRoot){
 	
 	// Load the shaders
-	_programId = createGLProgram(shaderRoot + ".vert", shaderRoot + ".frag");
+	_programId = ProgramUtilities::createGLProgram(shaderRoot + ".vert", shaderRoot + ".frag");
 	
 	loadGeometry();
 	

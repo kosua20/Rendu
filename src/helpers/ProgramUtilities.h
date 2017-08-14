@@ -14,24 +14,31 @@ std::string getGLErrorString(GLenum error);
 /// Check if any OpenGL error has been detected and log it.
 int _checkGLError(const char *file, int line);
 
-/// Return the content of a text file at the given path, as a string.
-std::string loadStringFromFile(const std::string & path);
 
-/// Load a shader of the given type from a string
-GLuint loadShader(const std::string & prog, GLuint type);
+class ProgramUtilities {
+private:
+	
+	/// Return the content of a text file at the given path, as a string.
+	static std::string loadStringFromFile(const std::string & path);
+	
+	/// Flip an image vertically (line by line).
+	static void flipImage(std::vector<unsigned char> & image, const int width, const int height);
+	
+public:
+	/// Load a shader of the given type from a string
+	static GLuint loadShader(const std::string & prog, GLuint type);
+	
+	/// Create a GLProgram using the hader code contained in the given files.
+	static GLuint createGLProgram(const std::string & vertexPath, const std::string & fragmentPath, const std::string & geometryPath = "");
+	
+	// Texture loading.
+	
+	// 2D texture.
+	static GLuint loadTexture(const std::string& path, bool sRGB);
+	
+	// Cubemap texture.
+	static GLuint loadTextureCubeMap(const std::string& pathBase, bool sRGB);
+};
 
-/// Create a GLProgram using the hader code contained in the given files.
-GLuint createGLProgram(const std::string & vertexPath, const std::string & fragmentPath, const std::string & geometryPath = "");
-
-/// Flip an image vertically (line by line).
-void flipImage(std::vector<unsigned char> & image, const int width, const int height);
-
-// Texture loading.
-
-// 2D texture.
-GLuint loadTexture(const std::string& path, bool sRGB);
-
-// Cubemap texture.
-GLuint loadTextureCubeMap(const std::string& pathBase, bool sRGB);
 
 #endif
