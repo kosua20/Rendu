@@ -173,17 +173,6 @@ void flipImage(std::vector<unsigned char> & image, const int width, const int he
 	}
 }
 
-GLuint loadTexture(const std::string& path, const GLuint program, const GLuint textureSlot, const std::string& uniformName, bool sRGB){
-	
-	GLuint textureId = loadTexture(path, sRGB);
-	
-	glUseProgram(program);
-	
-	GLuint texUniID = glGetUniformLocation(program, uniformName.c_str());
-	glUniform1i(texUniID, textureSlot);
-	
-	return textureId;
-}
 
 GLuint loadTexture(const std::string& path, bool sRGB){
 	
@@ -209,19 +198,7 @@ GLuint loadTexture(const std::string& path, bool sRGB){
 }
 
 
-GLuint loadTextureCubeMap(const std::string& pathBase, const GLuint program, const GLuint textureSlot, const std::string& uniformName, bool sRGB){
-	
-	GLuint textureId = loadTextureCubeMap(pathBase, sRGB);
-	
-	// Active the slot.
-	glUseProgram(program);
 
-	// Bind the uniform.
-	GLuint texUniID = glGetUniformLocation(program, uniformName.c_str());
-	glUniform1i(texUniID, textureSlot);
-	
-	return textureId;
-}
 
 GLuint loadTextureCubeMap(const std::string& pathBase, bool sRGB){
 	

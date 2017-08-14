@@ -65,9 +65,11 @@ void Skybox::init(){
 
 	glBindVertexArray(0);
 	
-	_texCubeMap = loadTextureCubeMap("ressources/cubemap/cubemap", _programId, 0, "textureCubeMap", true);
-	
+	_texCubeMap = loadTextureCubeMap("ressources/cubemap/cubemap", true);
+	// Bind uniform to texture slot.
 	glUseProgram(_programId);
+	glUniform1i(glGetUniformLocation(_programId, "textureCubeMap"), 0);
+	
 	_mvpID  = glGetUniformLocation(_programId, "mvp");
 	glUseProgram(0);
 	checkGLError();

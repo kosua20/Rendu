@@ -16,9 +16,13 @@ void AmbientQuad::init(std::map<std::string, GLuint> textureIds){
 	// Ambient pass: needs the albedo, the normals and the AO result
 	std::map<std::string, GLuint> finalTextures = { {"albedoTexture", textureIds["albedoTexture"]}, {"normalTexture", textureIds["normalTexture"]}, {"ssaoTexture", textureIds["ssaoTexture"]}};
 	ScreenQuad::init(finalTextures, "ressources/shaders/gbuffer/ambient");
-	_texCubeMapSmall = loadTextureCubeMap("ressources/cubemap/cubemap_diff",
-										  _programId, (GLuint)_textureIds.size(),
-										  "textureCubeMapSmall", true);
+	
+	// Load texture.
+	_texCubeMapSmall = loadTextureCubeMap("ressources/cubemap/cubemap_diff", true);
+	// Bind uniform to texture slot.
+	glUseProgram(_programId);
+	glUniform1i(glGetUniformLocation(_programId, "textureCubeMapSmall"), (GLuint)_textureIds.size());
+	glUseProgram(0);
 	
 	// Setup SSAO data, get back noise texture id, add it to the gbuffer outputs.
 	GLuint noiseTextureID = setupSSAO();
