@@ -7,7 +7,9 @@
 
 
 Camera::Camera() : _keyboard(_eye, _center, _up, _right) {
+	_verticalResolution = 720;
 	reset();
+	
 }
 
 Camera::~Camera(){}
@@ -61,8 +63,16 @@ void Camera::mouse(MouseMode mode, float x, float y){
 void Camera::screen(int width, int height){
 	_screenSize[0] = float(width > 0 ? width : 1);
 	_screenSize[1] = float(height > 0 ? height : 1);
-	// The render resolution is 900 pixels high, with the same aspect ratio as the display resolution
-	_renderSize = (900.0f/_screenSize[1]) * _screenSize;
+	// Same aspect ratio as the display resolution
+	_renderSize = (float(_verticalResolution)/_screenSize[1]) * _screenSize;
+	// Perspective projection.
+	_projection = glm::perspective(45.0f, _renderSize[0] / _renderSize[1], 0.01f, 200.f);
+}
+
+void Camera::internalResolution(int height){
+	// No need to update the screen size.
+	// Same aspect ratio as the display resolution
+	_renderSize = (float(_verticalResolution)/_screenSize[1]) * _screenSize;
 	// Perspective projection.
 	_projection = glm::perspective(45.0f, _renderSize[0] / _renderSize[1], 0.01f, 200.f);
 }

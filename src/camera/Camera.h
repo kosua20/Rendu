@@ -32,6 +32,9 @@ public:
 	/// Update the screen size and projection matrix.
 	void screen(int width, int height);
 	
+	/// Update the internal vertical resolution.
+	void internalResolution(int height);
+	
 	/// The view matrix.
 	glm::mat4 _view;
 	
@@ -50,6 +53,8 @@ private:
 	glm::vec3 _center;
 	glm::vec3 _up;
 	glm::vec3 _right;
+	
+	int _verticalResolution;
 	
 	/// Input methods
 	Keyboard _keyboard;
