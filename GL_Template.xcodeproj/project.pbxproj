@@ -200,8 +200,6 @@
 		F46162121CF9D5A400B22823 /* vec3.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = vec3.hpp; sourceTree = "<group>"; };
 		F46162131CF9D5A400B22823 /* vec4.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = vec4.hpp; sourceTree = "<group>"; };
 		F46162141CF9D5A400B22823 /* vector_relational.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = vector_relational.hpp; sourceTree = "<group>"; };
-		F46162161CF9D5A400B22823 /* lodepng.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = lodepng.cpp; sourceTree = "<group>"; };
-		F46162171CF9D5A400B22823 /* lodepng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lodepng.h; sourceTree = "<group>"; };
 		F46162181CF9D5A400B22823 /* MeshUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MeshUtilities.cpp; sourceTree = "<group>"; };
 		F46162191CF9D5A400B22823 /* MeshUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MeshUtilities.h; sourceTree = "<group>"; };
 		F461621A1CF9D5A400B22823 /* ProgramUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProgramUtilities.cpp; sourceTree = "<group>"; };
@@ -375,7 +373,6 @@
 				F44801571E842A5E0063A07E /* gl3w */,
 				F46161881CF9D5A400B22823 /* glm */,
 				F4B42D031F42651600E485C5 /* stb_image */,
-				F46162151CF9D5A400B22823 /* lodepng */,
 				F46162181CF9D5A400B22823 /* MeshUtilities.cpp */,
 				F46162191CF9D5A400B22823 /* MeshUtilities.h */,
 				F461621A1CF9D5A400B22823 /* ProgramUtilities.cpp */,
@@ -545,15 +542,6 @@
 				F46162031CF9D5A400B22823 /* vec1.inl */,
 			);
 			path = gtc;
-			sourceTree = "<group>";
-		};
-		F46162151CF9D5A400B22823 /* lodepng */ = {
-			isa = PBXGroup;
-			children = (
-				F46162161CF9D5A400B22823 /* lodepng.cpp */,
-				F46162171CF9D5A400B22823 /* lodepng.h */,
-			);
-			path = lodepng;
 			sourceTree = "<group>";
 		};
 		F4B42D031F42651600E485C5 /* stb_image */ = {

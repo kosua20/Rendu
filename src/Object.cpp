@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <iostream>
 #include <vector>
-#include <lodepng/lodepng.h>
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "helpers/ProgramUtilities.h"
