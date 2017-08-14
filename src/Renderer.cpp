@@ -21,12 +21,12 @@ Renderer::Renderer(int width, int height){
 	_camera.screen(width, height);
 	
 	
-	_gbuffer = std::make_shared<Gbuffer>(_camera._renderSize[0],_camera._renderSize[1]);
-	_ssaoFramebuffer = std::make_shared<Framebuffer>(0.5f * _camera._renderSize[0], 0.5f * _camera._renderSize[1], GL_RED, GL_UNSIGNED_BYTE, GL_RED, GL_LINEAR, GL_CLAMP_TO_EDGE);
-	_ssaoBlurFramebuffer = std::make_shared<Framebuffer>(_camera._renderSize[0], _camera._renderSize[1], GL_RED, GL_UNSIGNED_BYTE, GL_RED, GL_LINEAR, GL_CLAMP_TO_EDGE);
-	_sceneFramebuffer = std::make_shared<Framebuffer>(_camera._renderSize[0],_camera._renderSize[1], GL_RGBA, GL_FLOAT, GL_RGBA16F, GL_LINEAR,GL_CLAMP_TO_EDGE);
-	_toneMappingFramebuffer = std::make_shared<Framebuffer>(_camera._renderSize[0],_camera._renderSize[1], GL_RGBA, GL_UNSIGNED_BYTE, GL_RGBA, GL_LINEAR,GL_CLAMP_TO_EDGE);
-	_fxaaFramebuffer = std::make_shared<Framebuffer>(_camera._renderSize[0],_camera._renderSize[1], GL_RGBA,GL_UNSIGNED_BYTE, GL_RGBA, GL_LINEAR,GL_CLAMP_TO_EDGE);
+	_gbuffer = std::make_shared<Gbuffer>(_camera.renderSize()[0],_camera.renderSize()[1]);
+	_ssaoFramebuffer = std::make_shared<Framebuffer>(0.5f * _camera.renderSize()[0], 0.5f * _camera.renderSize()[1], GL_RED, GL_UNSIGNED_BYTE, GL_RED, GL_LINEAR, GL_CLAMP_TO_EDGE);
+	_ssaoBlurFramebuffer = std::make_shared<Framebuffer>(_camera.renderSize()[0], _camera.renderSize()[1], GL_RED, GL_UNSIGNED_BYTE, GL_RED, GL_LINEAR, GL_CLAMP_TO_EDGE);
+	_sceneFramebuffer = std::make_shared<Framebuffer>(_camera.renderSize()[0],_camera.renderSize()[1], GL_RGBA, GL_FLOAT, GL_RGBA16F, GL_LINEAR,GL_CLAMP_TO_EDGE);
+	_toneMappingFramebuffer = std::make_shared<Framebuffer>(_camera.renderSize()[0],_camera.renderSize()[1], GL_RGBA, GL_UNSIGNED_BYTE, GL_RGBA, GL_LINEAR,GL_CLAMP_TO_EDGE);
+	_fxaaFramebuffer = std::make_shared<Framebuffer>(_camera.renderSize()[0],_camera.renderSize()[1], GL_RGBA,GL_UNSIGNED_BYTE, GL_RGBA, GL_LINEAR,GL_CLAMP_TO_EDGE);
 	
 	// Create directional light.
 	_directionalLights.emplace_back(glm::vec3(0.0f), glm::vec3(2.0f), glm::ortho(-0.75f,0.75f,-0.75f,0.75f,2.0f,6.0f));
@@ -106,7 +106,7 @@ void Renderer::draw(){
 	physics(elapsed);
 	
 	
-	glm::vec2 invRenderSize = 1.0f / _camera._renderSize;
+	glm::vec2 invRenderSize = 1.0f / _camera.renderSize();
 	
 	// --- Light pass -------
 	
@@ -116,8 +116,8 @@ void Renderer::draw(){
 		dirLight.bind();
 		
 		// Draw objects.
-		_suzanne.drawDepth(dirLight._mvp);
-		_dragon.drawDepth(dirLight._mvp);
+		_suzanne.drawDepth(dirLight.mvp());
+		_dragon.drawDepth(dirLight.mvp());
 		//_plane.drawDepth(planeModel, _light._mvp);
 		
 		dirLight.blurAndUnbind();
@@ -130,21 +130,21 @@ void Renderer::draw(){
 	// Bind the full scene framebuffer.
 	_gbuffer->bind();
 	// Set screen viewport
-	glViewport(0,0,_gbuffer->_width,_gbuffer->_height);
+	glViewport(0,0,_gbuffer->width(),_gbuffer->height());
 	
 	// Clear the depth buffer (we know we will draw everywhere, no need to clear color.
 	glClear(GL_DEPTH_BUFFER_BIT);
 	
 	// Draw objects
-	_suzanne.draw(_camera._view, _camera._projection);
-	_dragon.draw(_camera._view, _camera._projection);
-	_plane.draw(_camera._view, _camera._projection);
+	_suzanne.draw(_camera.view(), _camera.projection());
+	_dragon.draw(_camera.view(), _camera.projection());
+	_plane.draw(_camera.view(), _camera.projection());
 	
 	for(auto& pointLight : _pointLights){
-		pointLight.drawDebug(_camera._view, _camera._projection);
+		pointLight.drawDebug(_camera.view(), _camera.projection());
 	}
 	
-	_skybox.draw(_camera._view, _camera._projection);
+	_skybox.draw(_camera.view(), _camera.projection());
 	
 	// Unbind the full scene framebuffer.
 	_gbuffer->unbind();
@@ -154,37 +154,37 @@ void Renderer::draw(){
 	
 	// --- SSAO pass
 	_ssaoFramebuffer->bind();
-	glViewport(0,0,_ssaoFramebuffer->_width, _ssaoFramebuffer->_height);
-	_ambientScreen.drawSSAO( 2.0f * invRenderSize, _camera._view, _camera._projection);
+	glViewport(0,0,_ssaoFramebuffer->width(), _ssaoFramebuffer->height());
+	_ambientScreen.drawSSAO( 2.0f * invRenderSize, _camera.view(), _camera.projection());
 	_ssaoFramebuffer->unbind();
 	
 	// --- SSAO blurring pass
 	_ssaoBlurFramebuffer->bind();
-	glViewport(0,0,_ssaoBlurFramebuffer->_width, _ssaoBlurFramebuffer->_height);
+	glViewport(0,0,_ssaoBlurFramebuffer->width(), _ssaoBlurFramebuffer->height());
 	_ssaoBlurScreen.draw( invRenderSize );
 	_ssaoBlurFramebuffer->unbind();
 	
 	// --- Gbuffer composition pass
 	_sceneFramebuffer->bind();
 	
-	glViewport(0,0,_sceneFramebuffer->_width, _sceneFramebuffer->_height);
+	glViewport(0,0,_sceneFramebuffer->width(), _sceneFramebuffer->height());
 	
-	_ambientScreen.draw( invRenderSize, _camera._view, _camera._projection);
+	_ambientScreen.draw( invRenderSize, _camera.view(), _camera.projection());
 	
 	glEnable(GL_BLEND);
 	for(auto& dirLight : _directionalLights){
-		dirLight.draw( invRenderSize, _camera._view, _camera._projection);
+		dirLight.draw( invRenderSize, _camera.view(), _camera.projection());
 	}
 	glCullFace(GL_FRONT);
 	for(auto& pointLight : _pointLights){
-		pointLight.draw( invRenderSize, _camera._view, _camera._projection);
+		pointLight.draw( invRenderSize, _camera.view(), _camera.projection());
 	}
 	glDisable(GL_BLEND);
 	glCullFace(GL_BACK);
 	_sceneFramebuffer->unbind();
 	
 	_toneMappingFramebuffer->bind();
-	glViewport(0,0,_toneMappingFramebuffer->_width, _toneMappingFramebuffer->_height);
+	glViewport(0,0,_toneMappingFramebuffer->width(), _toneMappingFramebuffer->height());
 	_toneMappingScreen.draw( invRenderSize );
 	_toneMappingFramebuffer->unbind();
 	
@@ -192,7 +192,7 @@ void Renderer::draw(){
 	// Bind the post-processing framebuffer.
 	_fxaaFramebuffer->bind();
 	// Set screen viewport.
-	glViewport(0,0,_fxaaFramebuffer->_width, _fxaaFramebuffer->_height);
+	glViewport(0,0,_fxaaFramebuffer->width(), _fxaaFramebuffer->height());
 	
 	// Draw the fullscreen quad
 	_fxaaScreen.draw( invRenderSize );
@@ -206,10 +206,10 @@ void Renderer::draw(){
 	glEnable(GL_FRAMEBUFFER_SRGB);
 	
 	// Set screen viewport.
-	glViewport(0,0,_camera._screenSize[0],_camera._screenSize[1]);
+	glViewport(0,0,_camera.screenSize()[0],_camera.screenSize()[1]);
 	
 	// Draw the fullscreen quad
-	_finalScreen.draw( 1.0f / _camera._screenSize);
+	_finalScreen.draw( 1.0f / _camera.screenSize());
 	
 	glDisable(GL_FRAMEBUFFER_SRGB);
 	// ----------------------
@@ -224,12 +224,12 @@ void Renderer::physics(float elapsedTime){
 	_camera.update(elapsedTime);
 	
 	// Update lights.
-	_directionalLights[0].update(glm::vec3(2.0f, 1.5f + sin(0.5*_timer),2.0f), _camera._view);
+	_directionalLights[0].update(glm::vec3(2.0f, 1.5f + sin(0.5*_timer),2.0f), _camera.view());
 	
 	for(size_t i = 0; i <_pointLights.size(); ++i){
 		auto& pointLight = _pointLights[i];
-		glm::vec4 newPosition = glm::rotate(glm::mat4(1.0f), elapsedTime, glm::vec3(0.0f, 1.0f, 0.0f))*glm::vec4(pointLight._local, 1.0f);
-		pointLight.update(glm::vec3(newPosition), _camera._view);
+		glm::vec4 newPosition = glm::rotate(glm::mat4(1.0f), elapsedTime, glm::vec3(0.0f, 1.0f, 0.0f))*glm::vec4(pointLight.local(), 1.0f);
+		pointLight.update(glm::vec3(newPosition), _camera.view());
 	}
 	
 	// Update objects.
@@ -269,12 +269,12 @@ void Renderer::resize(int width, int height){
 	// Update the projection matrix.
 	_camera.screen(width, height);
 	// Resize the framebuffer.
-	_gbuffer->resize(_camera._renderSize);
-	_ssaoFramebuffer->resize(0.5f * _camera._renderSize);
-	_ssaoBlurFramebuffer->resize(_camera._renderSize);
-	_sceneFramebuffer->resize(_camera._renderSize);
-	_toneMappingFramebuffer->resize(_camera._renderSize);
-	_fxaaFramebuffer->resize(_camera._renderSize);
+	_gbuffer->resize(_camera.renderSize());
+	_ssaoFramebuffer->resize(0.5f * _camera.renderSize());
+	_ssaoBlurFramebuffer->resize(_camera.renderSize());
+	_sceneFramebuffer->resize(_camera.renderSize());
+	_toneMappingFramebuffer->resize(_camera.renderSize());
+	_fxaaFramebuffer->resize(_camera.renderSize());
 }
 
 void Renderer::keyPressed(int key, int action){

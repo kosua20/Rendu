@@ -42,11 +42,13 @@ public:
 	std::map<std::string, GLuint> textureIds(const std::vector<TextureType>& included = std::vector<TextureType>());
 	
 	/// The framebuffer size (can be different from the default renderer size).
+	const int width() const { return _width; }
+	const int height() const { return _height; }
+	
+private:
 	int _width;
 	int _height;
 	
-private:
-
 	GLuint _id;
 	std::map<TextureType, GLuint> _textureIds;
 };

@@ -20,8 +20,6 @@ public:
 	/// Unbind the framebuffer.
 	void unbind();
 	
-	
-	
 	/// Resize the framebuffer.
 	void resize(int width, int height);
 	
@@ -34,11 +32,15 @@ public:
 	GLuint textureId() { return _idColor; }
 	
 	/// The framebuffer size (can be different from the default renderer size).
+	const int width() const { return _width; }
+	const int height() const { return _height; }
+	
+	
+private:
+	
 	int _width;
 	int _height;
 	
-private:
-
 	GLuint _id;
 	GLuint _idColor;
 	GLuint _idRenderbuffer;
