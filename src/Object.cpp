@@ -16,16 +16,16 @@ Object::~Object(){}
 void Object::init(const std::string& meshPath, const std::vector<std::string>& texturesPaths, int materialId, bool centerAndUnit){
 	
 	// Load the shaders
-	_programDepthId = createGLProgram("ressources/shaders/lights/object_depth.vert","ressources/shaders/lights/object_depth.frag");
-	_programId = createGLProgram("ressources/shaders/gbuffer/object_gbuffer.vert","ressources/shaders/gbuffer/object_gbuffer.frag");
+	_programDepthId = ProgramUtilities::createGLProgram("ressources/shaders/lights/object_depth.vert","ressources/shaders/lights/object_depth.frag");
+	_programId = ProgramUtilities::createGLProgram("ressources/shaders/gbuffer/object_gbuffer.vert","ressources/shaders/gbuffer/object_gbuffer.frag");
 	
 	// Load geometry.
-	mesh_t mesh;
-	loadObj(meshPath,mesh,Indexed);
+	Mesh mesh;
+	MeshUtilities::loadObj(meshPath, mesh, MeshUtilities::Indexed);
 	if(centerAndUnit){
-		centerAndUnitMesh(mesh);
+		MeshUtilities::centerAndUnitMesh(mesh);
 	}
-	computeTangentsAndBinormals(mesh);
+	MeshUtilities::computeTangentsAndBinormals(mesh);
 
 	_count = (GLsizei)mesh.indices.size();
 	
@@ -93,9 +93,9 @@ void Object::init(const std::string& meshPath, const std::vector<std::string>& t
 	glBindVertexArray(0);
 	
 	// Load and upload the textures.
-	_texColor = loadTexture(texturesPaths[0], true);
-	_texNormal = loadTexture(texturesPaths[1], false);
-	_texEffects = loadTexture(texturesPaths[2], false);
+	_texColor = ProgramUtilities::loadTexture(texturesPaths[0], true);
+	_texNormal = ProgramUtilities::loadTexture(texturesPaths[1], false);
+	_texEffects = ProgramUtilities::loadTexture(texturesPaths[2], false);
 	
 	glUseProgram(_programId);
 	glUniform1i(glGetUniformLocation(_programId, "textureColor"), 0);

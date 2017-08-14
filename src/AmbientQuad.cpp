@@ -18,7 +18,7 @@ void AmbientQuad::init(std::map<std::string, GLuint> textureIds){
 	ScreenQuad::init(finalTextures, "ressources/shaders/gbuffer/ambient");
 	
 	// Load texture.
-	_texCubeMapSmall = loadTextureCubeMap("ressources/cubemap/cubemap_diff", true);
+	_texCubeMapSmall = ProgramUtilities::loadTextureCubeMap("ressources/cubemap/cubemap_diff", true);
 	// Bind uniform to texture slot.
 	glUseProgram(_programId);
 	glUniform1i(glGetUniformLocation(_programId, "textureCubeMapSmall"), (GLuint)_textureIds.size());

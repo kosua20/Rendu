@@ -7,7 +7,7 @@
 
 using namespace std;
 
-void loadObj(const std::string & filename, mesh_t & mesh, LoadMode mode){
+void MeshUtilities::loadObj(const std::string & filename, Mesh & mesh, MeshUtilities::LoadMode mode){
 	// Open the file.
 	ifstream in;
 	in.open(filename.c_str());
@@ -96,7 +96,7 @@ void loadObj(const std::string & filename, mesh_t & mesh, LoadMode mode){
 	bool hasNormals = normals_temp.size()>0;
 
 	// Depending on the chosen extraction mode, we fill the mesh arrays accordingly.
-	if (mode == Points){
+	if (mode == MeshUtilities::Points){
 		// Mode: Points
 		// In this mode, we don't care about faces. We simply associate each vertex/normal/uv in the same order.
 		
@@ -108,7 +108,7 @@ void loadObj(const std::string & filename, mesh_t & mesh, LoadMode mode){
 			mesh.texcoords = texcoords_temp;
 		}
 
-	} else if(mode == Expanded){
+	} else if(mode == MeshUtilities::Expanded){
 		// Mode: Expanded
 		// In this mode, vertices are all duplicated. Each face has its set of 3 vertices, not shared with any other face.
 		
@@ -138,7 +138,7 @@ void loadObj(const std::string & filename, mesh_t & mesh, LoadMode mode){
 			mesh.indices.push_back((unsigned int)i);
 		}
 
-	} else if (mode == Indexed){
+	} else if (mode == MeshUtilities::Indexed){
 		// Mode: Indexed
 		// In this mode, vertices are only duplicated if they were already used in a previous face with a different set of uv/normal coordinates.
 		
@@ -193,7 +193,7 @@ void loadObj(const std::string & filename, mesh_t & mesh, LoadMode mode){
 	return;
 }
 
-void centerAndUnitMesh(mesh_t & mesh){
+void MeshUtilities::centerAndUnitMesh(Mesh & mesh){
 	// Compute the centroid.
 	glm::vec3 centroid = glm::vec3(0.0);
 	float maxi = mesh.positions[0].x;
@@ -218,7 +218,7 @@ void centerAndUnitMesh(mesh_t & mesh){
 	}
 }
 
-void computeTangentsAndBinormals(mesh_t & mesh){
+void MeshUtilities::computeTangentsAndBinormals(Mesh & mesh){
 	if(mesh.indices.size() * mesh.positions.size() * mesh.texcoords.size() == 0){
 		// Missing data, or not the right mode (Points).
 		return;
