@@ -24,15 +24,16 @@ public:
 	
 	virtual void clean() =0;
 	
-	glm::mat4 _mvp;
-	glm::vec3 _color;
-	glm::vec3 _local;
+	const glm::mat4 mvp() const { return _mvp; }
+	const glm::vec3 local() const { return _local; }
 	
 protected:
 	
 	glm::mat4 _projectionMatrix;
 	glm::mat4 _viewMatrix;
-	
+	glm::mat4 _mvp;
+	glm::vec3 _color;
+	glm::vec3 _local;
 	
 };
 

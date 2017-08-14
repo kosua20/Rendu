@@ -16,7 +16,7 @@ DirectionalLight::DirectionalLight(const glm::vec3& worldPosition, const glm::ve
 void DirectionalLight::init(const std::map<std::string, GLuint>& textureIds){
 	// Setup the framebuffer.
 	_shadowPass = std::make_shared<Framebuffer>(512, 512, GL_RG,GL_FLOAT, GL_RG16F, GL_LINEAR,GL_CLAMP_TO_BORDER);
-	_blurPass = std::make_shared<Framebuffer>(_shadowPass->_width, _shadowPass->_height, GL_RG,GL_FLOAT, GL_RG16F, GL_LINEAR,GL_CLAMP_TO_BORDER);
+	_blurPass = std::make_shared<Framebuffer>(_shadowPass->width(), _shadowPass->height(), GL_RG,GL_FLOAT, GL_RG16F, GL_LINEAR,GL_CLAMP_TO_BORDER);
 	_blurScreen.init(_shadowPass->textureId(), "ressources/shaders/screens/boxblur");
 	
 	std::map<std::string, GLuint> textures = textureIds;
@@ -54,7 +54,7 @@ void DirectionalLight::draw(const glm::vec2& invScreenSize, const glm::mat4& vie
 
 void DirectionalLight::bind(){
 	_shadowPass->bind();
-	glViewport(0, 0, _shadowPass->_width, _shadowPass->_height);
+	glViewport(0, 0, _shadowPass->width(), _shadowPass->height());
 	
 	// Set the clear color to white.
 	glClearColor(1.0f,1.0f,1.0f,0.0f);
@@ -72,7 +72,7 @@ void DirectionalLight::blurAndUnbind(){
 	// Bind the post-processing framebuffer.
 	_blurPass->bind();
 	// Set screen viewport.
-	glViewport(0,0,_blurPass->_width, _blurPass->_height);
+	glViewport(0,0,_blurPass->width(), _blurPass->height());
 	// Draw the fullscreen quad
 	_blurScreen.draw( glm::vec2(0.0f) );
 	 
