@@ -75,7 +75,7 @@ void Skybox::init(){
 }
 
 
-void Skybox::draw(const glm::mat4& view, const glm::mat4& projection){
+void Skybox::draw(const glm::mat4& view, const glm::mat4& projection) const {
 	
 	glm::mat4 model = glm::scale(glm::mat4(1.0f),glm::vec3(10.0f));
 	// Combine the three matrices.
@@ -106,7 +106,7 @@ void Skybox::draw(const glm::mat4& view, const glm::mat4& projection){
 }
 
 
-void Skybox::clean(){
+void Skybox::clean() const {
 	glDeleteVertexArrays(1, &_vao);
 	glDeleteTextures(1, &_texCubeMap);
 }

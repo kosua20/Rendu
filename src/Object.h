@@ -21,13 +21,13 @@ public:
 	void update(const glm::mat4& model);
 	
 	/// Draw function
-	void draw(const glm::mat4& view, const glm::mat4& projection);
+	void draw(const glm::mat4& view, const glm::mat4& projection) const;
 	
 	/// Draw depth function
-	void drawDepth(const glm::mat4& lightVP);
+	void drawDepth(const glm::mat4& lightVP) const;
 	
 	/// Clean function
-	void clean();
+	void clean() const;
 
 
 private:

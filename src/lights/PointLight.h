@@ -10,11 +10,11 @@ public:
 	
 	void init(const std::map<std::string, GLuint>& textureIds);
 	
-	void draw(const glm::vec2& invScreenSize, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix);
+	void draw(const glm::vec2& invScreenSize, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) const;
 	
-	void drawDebug(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix);
+	void drawDebug(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) const;
 	
-	void clean();
+	void clean() const;
 	
 	static void loadProgramAndGeometry();
 	

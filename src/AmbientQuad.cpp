@@ -80,7 +80,7 @@ GLuint AmbientQuad::setupSSAO(){
 	return textureId;
 }
 
-void AmbientQuad::draw(const glm::vec2& invScreenSize, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) {
+void AmbientQuad::draw(const glm::vec2& invScreenSize, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) const {
 	
 	glm::mat4 invView = glm::inverse(viewMatrix);
 	
@@ -94,7 +94,7 @@ void AmbientQuad::draw(const glm::vec2& invScreenSize, const glm::mat4& viewMatr
 	ScreenQuad::draw(invScreenSize);
 }
 
-void AmbientQuad::drawSSAO(const glm::vec2& invScreenSize, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) {
+void AmbientQuad::drawSSAO(const glm::vec2& invScreenSize, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) const {
 	
 	glUseProgram(_ssaoScreen.program());
 	
@@ -106,7 +106,7 @@ void AmbientQuad::drawSSAO(const glm::vec2& invScreenSize, const glm::mat4& view
 
 
 
-void AmbientQuad::clean(){
+void AmbientQuad::clean() const {
 	ScreenQuad::clean();
 	_ssaoScreen.clean();
 }

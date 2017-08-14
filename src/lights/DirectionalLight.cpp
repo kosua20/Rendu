@@ -32,7 +32,7 @@ void DirectionalLight::init(const std::map<std::string, GLuint>& textureIds){
 
 }
 
-void DirectionalLight::draw(const glm::vec2& invScreenSize, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix){
+void DirectionalLight::draw(const glm::vec2& invScreenSize, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) const {
 	
 	
 	glm::mat4 viewToLight = _mvp * glm::inverse(viewMatrix);
@@ -52,7 +52,7 @@ void DirectionalLight::draw(const glm::vec2& invScreenSize, const glm::mat4& vie
 
 }
 
-void DirectionalLight::bind(){
+void DirectionalLight::bind() const {
 	_shadowPass->bind();
 	glViewport(0, 0, _shadowPass->width(), _shadowPass->height());
 	
@@ -62,7 +62,7 @@ void DirectionalLight::bind(){
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void DirectionalLight::blurAndUnbind(){
+void DirectionalLight::blurAndUnbind() const {
 	// Unbind the shadow map framebuffer.
 	_shadowPass->unbind();
 	// ----------------------
@@ -80,7 +80,7 @@ void DirectionalLight::blurAndUnbind(){
 	glEnable(GL_DEPTH_TEST);
 }
 
-void DirectionalLight::clean(){
+void DirectionalLight::clean() const {
 	_blurPass->clean();
 	_blurScreen.clean();
 	_shadowPass->clean();

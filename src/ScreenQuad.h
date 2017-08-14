@@ -20,12 +20,12 @@ public:
 	void init(std::map<std::string, GLuint> textureIds, const std::string & shaderRoot);
 
 	/// Draw function,
-	void draw(const glm::vec2& invScreenSize);
+	void draw(const glm::vec2& invScreenSize) const;
 
 	/// Clean function
-	void clean();
+	void clean() const;
 
-	GLuint program(){ return _programId; }
+	const GLuint program() const { return _programId; }
 	
 protected:
 	
