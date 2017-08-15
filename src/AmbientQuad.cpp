@@ -15,10 +15,10 @@ void AmbientQuad::init(std::map<std::string, GLuint> textureIds){
 	
 	// Ambient pass: needs the albedo, the normals and the AO result
 	std::map<std::string, GLuint> finalTextures = { {"albedoTexture", textureIds["albedoTexture"]}, {"normalTexture", textureIds["normalTexture"]}, {"ssaoTexture", textureIds["ssaoTexture"]}};
-	ScreenQuad::init(finalTextures, "ressources/shaders/gbuffer/ambient");
+	ScreenQuad::init(finalTextures, "resources/shaders/gbuffer/ambient");
 	
 	// Load texture.
-	_texCubeMapSmall = ProgramUtilities::loadTextureCubeMap("ressources/cubemap/cubemap_diff", true);
+	_texCubeMapSmall = ProgramUtilities::loadTextureCubeMap("resources/cubemap/cubemap_diff", true);
 	// Bind uniform to texture slot.
 	glUseProgram(_programId);
 	glUniform1i(glGetUniformLocation(_programId, "textureCubeMapSmall"), (GLuint)_textureIds.size());
@@ -27,7 +27,7 @@ void AmbientQuad::init(std::map<std::string, GLuint> textureIds){
 	// Setup SSAO data, get back noise texture id, add it to the gbuffer outputs.
 	GLuint noiseTextureID = setupSSAO();
 	std::map<std::string, GLuint> ssaoTextures = { {"depthTexture", textureIds["depthTexture"]}, {"normalTexture", textureIds["normalTexture"]}, {"noiseTexture",noiseTextureID}};
-	_ssaoScreen.init(ssaoTextures, "ressources/shaders/gbuffer/ssao");
+	_ssaoScreen.init(ssaoTextures, "resources/shaders/gbuffer/ssao");
 	
 	// Now that we have the program we can send the samples to the GPU too.
 	glUseProgram(_ssaoScreen.program());

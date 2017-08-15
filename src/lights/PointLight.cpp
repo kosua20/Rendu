@@ -15,11 +15,11 @@ PointLight::PointLight(const glm::vec3& worldPosition, const glm::vec3& color, f
 
 void PointLight::loadProgramAndGeometry(){
 	
-	_debugProgramId = ProgramUtilities::createGLProgram("ressources/shaders/lights/point_light_debug.vert", "ressources/shaders/lights/point_light_debug.frag");
+	_debugProgramId = ProgramUtilities::createGLProgram("resources/shaders/lights/point_light_debug.vert", "resources/shaders/lights/point_light_debug.frag");
 	
 	// Load geometry.
 	Mesh mesh;
-	MeshUtilities::loadObj("ressources/sphere.obj", mesh, MeshUtilities::Indexed);
+	MeshUtilities::loadObj("resources/sphere.obj", mesh, MeshUtilities::Indexed);
 	
 	_count = (GLsizei)mesh.indices.size();
 	
@@ -49,7 +49,7 @@ void PointLight::loadProgramAndGeometry(){
 }
 
 void PointLight::init(const std::map<std::string, GLuint>& textureIds){
-	_programId = ProgramUtilities::createGLProgram("ressources/shaders/lights/point_light.vert", "ressources/shaders/lights/point_light.frag");
+	_programId = ProgramUtilities::createGLProgram("resources/shaders/lights/point_light.vert", "resources/shaders/lights/point_light.frag");
 	
 	checkGLError();
 	GLint currentTextureSlot = 0;

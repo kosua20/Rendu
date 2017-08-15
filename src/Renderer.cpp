@@ -58,11 +58,11 @@ Renderer::Renderer(int width, int height){
 	checkGLError();
 
 	// Initialize objects.
-	_suzanne.init( "ressources/suzanne.obj", {"ressources/suzanne_texture_color.png", "ressources/suzanne_texture_normal.png", "ressources/suzanne_texture_ao_specular_reflection.png"}, 1, true);
+	_suzanne.init( "resources/suzanne.obj", {"resources/suzanne_texture_color.png", "resources/suzanne_texture_normal.png", "resources/suzanne_texture_ao_specular_reflection.png"}, 1, true);
 	
-	_dragon.init("ressources/dragon.obj", {"ressources/dragon_texture_color.png", "ressources/dragon_texture_normal.png", "ressources/dragon_texture_ao_specular_reflection.png" },  1, true);
+	_dragon.init("resources/dragon.obj", {"resources/dragon_texture_color.png", "resources/dragon_texture_normal.png", "resources/dragon_texture_ao_specular_reflection.png" },  1, true);
 	
-	_plane.init("ressources/plane.obj", { "ressources/plane_texture_color.png", "ressources/plane_texture_normal.png", "ressources/plane_texture_depthmap.png" },  2);
+	_plane.init("resources/plane.obj", { "resources/plane_texture_color.png", "resources/plane_texture_normal.png", "resources/plane_texture_depthmap.png" },  2);
 	
 	_skybox.init();
 	
@@ -79,10 +79,10 @@ Renderer::Renderer(int width, int height){
 		pointLight.init(_gbuffer->textureIds(includedTextures));
 	}
 	
-	_ssaoBlurScreen.init(_ssaoFramebuffer->textureId(), "ressources/shaders/screens/boxblur_float");
-	_toneMappingScreen.init(_sceneFramebuffer->textureId(), "ressources/shaders/screens/tonemap");
-	_fxaaScreen.init(_toneMappingFramebuffer->textureId(), "ressources/shaders/screens/fxaa");
-	_finalScreen.init(_fxaaFramebuffer->textureId(), "ressources/shaders/screens/final_screenquad");
+	_ssaoBlurScreen.init(_ssaoFramebuffer->textureId(), "resources/shaders/screens/boxblur_float");
+	_toneMappingScreen.init(_sceneFramebuffer->textureId(), "resources/shaders/screens/tonemap");
+	_fxaaScreen.init(_toneMappingFramebuffer->textureId(), "resources/shaders/screens/fxaa");
+	_finalScreen.init(_fxaaFramebuffer->textureId(), "resources/shaders/screens/final_screenquad");
 	checkGLError();
 	
 	
