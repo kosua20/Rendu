@@ -1,6 +1,7 @@
 #ifndef PointLight_h
 #define PointLight_h
 #include "Light.h"
+#include "../helpers/ResourcesManager.h"
 
 class PointLight : public Light {
 
@@ -33,11 +34,7 @@ private:
 	GLuint _lightColId;
 	
 	static GLuint _debugProgramId;
-	static GLuint _ebo;
-	static GLuint _vao;
-	static GLsizei _count;
-	
-	
+	static MeshInfos _debugMesh;
 	
 };
 

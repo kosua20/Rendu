@@ -5,7 +5,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <cstring> // For memcopy depending on the platform.
 
-#include "helpers/ProgramUtilities.h"
 #include "Renderer.h"
 
 
@@ -58,11 +57,11 @@ Renderer::Renderer(int width, int height){
 	checkGLError();
 
 	// Initialize objects.
-	_suzanne.init( "resources/suzanne.obj", {"suzanne_texture_color", "suzanne_texture_normal", "suzanne_texture_ao_specular_reflection"}, 1, true);
+	_suzanne.init( "suzanne", {"suzanne_texture_color", "suzanne_texture_normal", "suzanne_texture_ao_specular_reflection"}, 1);
 	
-	_dragon.init("resources/dragon.obj", {"dragon_texture_color", "dragon_texture_normal", "dragon_texture_ao_specular_reflection" },  1, true);
+	_dragon.init("dragon", {"dragon_texture_color", "dragon_texture_normal", "dragon_texture_ao_specular_reflection" },  1);
 	
-	_plane.init("resources/plane.obj", { "plane_texture_color", "plane_texture_normal", "plane_texture_depthmap" },  2);
+	_plane.init("plane", { "plane_texture_color", "plane_texture_normal", "plane_texture_depthmap" },  2);
 	
 	_skybox.init();
 	

@@ -6,16 +6,12 @@
 #include <vector>
 #include <map>
 #include "ProgramUtilities.h"
-
-struct TextureInfos {
-	GLuint id;
-	int width;
-	int height;
-	bool cubemap;
-};
+#include "MeshUtilities.h"
 
 class Resources {
 public:
+	
+	const MeshInfos getMesh(const std::string & name);
 	
 	const TextureInfos getTexture(const std::string & name, bool srgb = true);
 	
@@ -29,10 +25,14 @@ private:
 	const std::vector<std::string> getCubemapPaths(const std::string & name);
 	
 	const std::string & _rootPath;
+	
 	std::map<std::string, std::string> _files;
+	
 	std::map<std::string, TextureInfos> _textures;
 	
+	std::map<std::string, MeshInfos> _meshes;
 	
+	std::map<std::string, std::string> _shaders;
 	
 /// Singleton management.
 		

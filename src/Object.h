@@ -3,7 +3,7 @@
 #include <gl3w/gl3w.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
-
+#include "helpers/ResourcesManager.h"
 
 
 class Object {
@@ -15,7 +15,7 @@ public:
 	~Object();
 
 	/// Init function
-	void init(const std::string& meshPath, const std::vector<std::string>& texturesPaths, int materialId, bool centerAndUnit = false);
+	void init(const std::string& meshPath, const std::vector<std::string>& texturesPaths, int materialId);
 	
 	/// Update function
 	void update(const glm::mat4& model);
@@ -34,8 +34,8 @@ private:
 	
 	GLuint _programId;
 	GLuint _programDepthId;
-	GLuint _vao;
-	GLuint _ebo;
+	MeshInfos _mesh;
+	
 	GLuint _texColor;
 	GLuint _texNormal;
 	GLuint _texEffects;
@@ -44,8 +44,6 @@ private:
 	GLuint _mvId;
 	GLuint _normalMatrixId;
 	GLuint _pId;
-	
-	GLsizei _count;
 	
 	glm::mat4 _model;
 	

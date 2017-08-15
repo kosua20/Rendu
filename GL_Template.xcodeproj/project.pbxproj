@@ -324,19 +324,19 @@
 				F4EDDD241CFD0047001FD2ED /* Makefile */,
 				F4EDDD251CFD0047001FD2ED /* Makefile.linux */,
 				F4D54A131D0F3373001274DA /* README.md */,
-				F46161791CF9D5A400B22823 /* ressources */,
+				F46161791CF9D5A400B22823 /* resources */,
 				F46161841CF9D5A400B22823 /* src */,
 				F41F5F4B1E817DFC00C18D8D /* Products */,
 				F41F5F611E817F2600C18D8D /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
-		F46161791CF9D5A400B22823 /* ressources */ = {
+		F46161791CF9D5A400B22823 /* resources */ = {
 			isa = PBXGroup;
 			children = (
 				F461617B1CF9D5A400B22823 /* shaders */,
 			);
-			path = ressources;
+			path = resources;
 			sourceTree = "<group>";
 		};
 		F461617B1CF9D5A400B22823 /* shaders */ = {

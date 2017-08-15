@@ -3,7 +3,6 @@
 #include <iostream>
 #include <tinydir/tinydir.h>
 #include "ProgramUtilities.h"
-
 /// Singleton.
 Resources Resources::_resourcesManager = Resources("resources");
 
@@ -67,6 +66,35 @@ void Resources::parseDirectory(const std::string & directoryPath){
 }
 
 
+const MeshInfos Resources::getMesh(const std::string & name){
+	if(_meshes.count(name) > 0){
+		return _meshes[name];
+	}
+
+	MeshInfos infos;
+
+	std::string path;
+	// For now we only support OBJs.
+	// Check if the file exists with an OBJ extension.
+	if(_files.count(name + ".obj") > 0){
+		path = _files[name + ".obj"];
+	} else {
+		std::cerr << "Unable to find mesh named \"" << name << "\"" << std::endl;
+		// Return empty mesh.
+		return infos;
+	}
+	
+	// Load geometry.
+	Mesh mesh;
+	MeshUtilities::loadObj(path, mesh, MeshUtilities::Indexed);
+	// If uv or positions are missing, tangent/binormals won't be computed.
+	MeshUtilities::computeTangentsAndBinormals(mesh);
+	// Setup GL buffers and attributes.
+	infos = MeshUtilities::setupBuffers(mesh);
+	_meshes[name] = infos;
+	return infos;
+}
+
 const TextureInfos Resources::getTexture(const std::string & name, bool srgb){
 	// If texture already loaded, return it.
 	if(_textures.count(name) > 0){
@@ -80,12 +108,7 @@ const TextureInfos Resources::getTexture(const std::string & name, bool srgb){
 		return infos;
 	}
 	// Else, load it and store the infos.
-	int width = 0;
-	int height = 0;
-	infos.id = ProgramUtilities::loadTexture(path, width, height, srgb);
-	infos.width = width;
-	infos.height = height;
-	infos.cubemap = false;
+	infos = ProgramUtilities::loadTexture(path, srgb);
 	_textures[name] = infos;
 	return infos;
 }
@@ -103,12 +126,7 @@ const TextureInfos Resources::getCubemap(const std::string & name, bool srgb){
 		return infos;
 	}
 	// Load them and store the infos.
-	int width = 0;
-	int height = 0;
-	infos.id = ProgramUtilities::loadTextureCubemap(paths, width, height, srgb);
-	infos.width = width;
-	infos.height = height;
-	infos.cubemap = true;
+	infos = ProgramUtilities::loadTextureCubemap(paths, srgb);
 	_textures[name] = infos;
 	return infos;
 }

@@ -3,8 +3,6 @@
 #include <vector>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "helpers/MeshUtilities.h"
-#include "helpers/ResourcesManager.h"
 
 #include "Object.h"
 
@@ -12,84 +10,14 @@ Object::Object(){}
 
 Object::~Object(){}
 
-void Object::init(const std::string& meshPath, const std::vector<std::string>& texturesPaths, int materialId, bool centerAndUnit){
+void Object::init(const std::string& meshPath, const std::vector<std::string>& texturesPaths, int materialId){
 	
 	// Load the shaders
 	_programDepthId = ProgramUtilities::createGLProgram("resources/shaders/lights/object_depth.vert","resources/shaders/lights/object_depth.frag");
 	_programId = ProgramUtilities::createGLProgram("resources/shaders/gbuffer/object_gbuffer.vert","resources/shaders/gbuffer/object_gbuffer.frag");
 	
 	// Load geometry.
-	Mesh mesh;
-	MeshUtilities::loadObj(meshPath, mesh, MeshUtilities::Indexed);
-	if(centerAndUnit){
-		MeshUtilities::centerAndUnitMesh(mesh);
-	}
-	MeshUtilities::computeTangentsAndBinormals(mesh);
-
-	_count = (GLsizei)mesh.indices.size();
-	
-	// Create an array buffer to host the geometry data.
-	GLuint vbo = 0;
-	glGenBuffers(1, &vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	// Upload the data to the Array buffer.
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * mesh.positions.size() * 3, &(mesh.positions[0]), GL_STATIC_DRAW);
-
-	GLuint vbo_nor = 0;
-	glGenBuffers(1, &vbo_nor);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo_nor);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * mesh.normals.size() * 3, &(mesh.normals[0]), GL_STATIC_DRAW);
-
-	GLuint vbo_uv = 0;
-	glGenBuffers(1, &vbo_uv);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo_uv);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * mesh.texcoords.size() * 2, &(mesh.texcoords[0]), GL_STATIC_DRAW);
-
-	GLuint vbo_tan = 0;
-	glGenBuffers(1, &vbo_tan);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo_tan);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * mesh.tangents.size() * 3, &(mesh.tangents[0]), GL_STATIC_DRAW);
-
-	GLuint vbo_binor = 0;
-	glGenBuffers(1, &vbo_binor);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo_binor);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * mesh.binormals.size() * 3, &(mesh.binormals[0]), GL_STATIC_DRAW);
-
-	// Generate a vertex array (useful when we add other attributes to the geometry).
-	_vao = 0;
-	glGenVertexArrays (1, &_vao);
-	glBindVertexArray(_vao);
-	// The first attribute will be the vertices positions.
-	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-
-	// The second attribute will be the normals.
-	glEnableVertexAttribArray(1);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo_nor);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-
-	// The third attribute will be the uvs.
-	glEnableVertexAttribArray(2);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo_uv);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, NULL);
-
-	// The fourth attribute will be the tangents.
-	glEnableVertexAttribArray(3);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo_tan);
-	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-
-	// The fifth attribute will be the binormals.
-	glEnableVertexAttribArray(4);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo_binor);
-	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-
-	// We load the indices data
-	glGenBuffers(1, &_ebo);
- 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
- 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * mesh.indices.size(), &(mesh.indices[0]), GL_STATIC_DRAW);
-
-	glBindVertexArray(0);
+	_mesh = Resources::manager().getMesh(meshPath);
 	
 	// Load and upload the textures.
 	_texColor = Resources::manager().getTexture(texturesPaths[0]).id;
@@ -154,10 +82,10 @@ void Object::draw(const glm::mat4& view, const glm::mat4& projection) const {
     glBindTexture(GL_TEXTURE_2D, _texEffects);
 	
 	// Select the geometry.
-	glBindVertexArray(_vao);
+	glBindVertexArray(_mesh.vId);
 	// Draw!
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
-	glDrawElements(GL_TRIANGLES, _count, GL_UNSIGNED_INT, (void*)0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _mesh.eId);
+	glDrawElements(GL_TRIANGLES, _mesh.count, GL_UNSIGNED_INT, (void*)0);
 
 	glBindVertexArray(0);
 	glUseProgram(0);
@@ -177,20 +105,19 @@ void Object::drawDepth(const glm::mat4& lightVP) const {
 	glUniformMatrix4fv(_mvpDepthId, 1, GL_FALSE, &lightMVP[0][0]);
 	
 	// Select the geometry.
-	glBindVertexArray(_vao);
+	glBindVertexArray(_mesh.vId);
 	// Draw!
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
-	glDrawElements(GL_TRIANGLES, _count, GL_UNSIGNED_INT, (void*)0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _mesh.eId);
+	glDrawElements(GL_TRIANGLES, _mesh.count, GL_UNSIGNED_INT, (void*)0);
 	
 	glBindVertexArray(0);
 	glUseProgram(0);
-	
 	
 }
 
 
 void Object::clean() const {
-	glDeleteVertexArrays(1, &_vao);
+	glDeleteVertexArrays(1, &_mesh.vId);
 	glDeleteTextures(1, &_texColor);
 	glDeleteTextures(1, &_texNormal);
 	glDeleteTextures(1, &_texEffects);

@@ -2,8 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <glm/gtc/matrix_transform.hpp>
-#include "../helpers/ProgramUtilities.h"
-#include "../helpers/MeshUtilities.h"
+
 
 #include "PointLight.h"
 
@@ -18,33 +17,8 @@ void PointLight::loadProgramAndGeometry(){
 	_debugProgramId = ProgramUtilities::createGLProgram("resources/shaders/lights/point_light_debug.vert", "resources/shaders/lights/point_light_debug.frag");
 	
 	// Load geometry.
-	Mesh mesh;
-	MeshUtilities::loadObj("resources/sphere.obj", mesh, MeshUtilities::Indexed);
+	_debugMesh = Resources::manager().getMesh("sphere");
 	
-	_count = (GLsizei)mesh.indices.size();
-	
-	// Create an array buffer to host the geometry data.
-	GLuint vbo = 0;
-	glGenBuffers(1, &vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	// Upload the data to the Array buffer.
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * mesh.positions.size() * 3, &(mesh.positions[0]), GL_STATIC_DRAW);
-	
-	// Generate a vertex array (useful when we add other attributes to the geometry).
-	_vao = 0;
-	glGenVertexArrays (1, &_vao);
-	glBindVertexArray(_vao);
-	// The first attribute will be the vertices positions.
-	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-	
-	// We load the indices data
-	glGenBuffers(1, &_ebo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * mesh.indices.size(), &(mesh.indices[0]), GL_STATIC_DRAW);
-	
-	glBindVertexArray(0);
 	checkGLError();
 }
 
@@ -103,10 +77,10 @@ void PointLight::draw(const glm::vec2& invScreenSize, const glm::mat4& viewMatri
 	
 	
 	// Select the geometry.
-	glBindVertexArray(_vao);
+	glBindVertexArray(_debugMesh.vId);
 	// Draw!
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
-	glDrawElements(GL_TRIANGLES, _count, GL_UNSIGNED_INT, (void*)0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _debugMesh.eId);
+	glDrawElements(GL_TRIANGLES, _debugMesh.count, GL_UNSIGNED_INT, (void*)0);
 	
 	glBindVertexArray(0);
 	glUseProgram(0);
@@ -130,10 +104,10 @@ void PointLight::drawDebug(const glm::mat4& viewMatrix, const glm::mat4& project
 	glUniform3fv(lightColId, 1,  &_color[0]);
 	
 	// Select the geometry.
-	glBindVertexArray(_vao);
+	glBindVertexArray(_debugMesh.vId);
 	// Draw!
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
-	glDrawElements(GL_TRIANGLES, _count, GL_UNSIGNED_INT, (void*)0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _debugMesh.eId);
+	glDrawElements(GL_TRIANGLES, _debugMesh.count, GL_UNSIGNED_INT, (void*)0);
 	
 	glBindVertexArray(0);
 	glUseProgram(0);
@@ -145,9 +119,7 @@ void PointLight::clean() const {
 }
 
 GLuint PointLight::_debugProgramId;
-GLuint PointLight::_ebo;
-GLuint PointLight::_vao;
-GLsizei PointLight::_count;
+MeshInfos PointLight::_debugMesh;
 
 
 

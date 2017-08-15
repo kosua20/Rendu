@@ -1,6 +1,6 @@
 #ifndef MeshUtilities_h
 #define MeshUtilities_h
-
+#include <gl3w/gl3w.h>
 #include <string>
 #include <vector>
 #include <glm/glm.hpp>
@@ -14,6 +14,12 @@ typedef struct {
 	std::vector<glm::vec2> texcoords;
 	std::vector<unsigned int> indices;
 } Mesh;
+
+struct MeshInfos {
+	GLuint vId;
+	GLuint eId;
+	GLsizei count;
+};
 
 class MeshUtilities {
 
@@ -35,6 +41,7 @@ public:
 	/// Compute the tangents and binormal vectors for each vertex.
 	static void computeTangentsAndBinormals(Mesh & mesh);
 	
+	static MeshInfos setupBuffers(const Mesh & mesh);
 };
 
 #endif 
