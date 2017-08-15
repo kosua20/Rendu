@@ -34,10 +34,10 @@ public:
 	// Texture loading.
 	
 	// 2D texture.
-	static GLuint loadTexture(const std::string& path, bool sRGB);
+	static GLuint loadTexture(const std::string& path, int & width, int & height, bool sRGB);
 	
 	// Cubemap texture.
-	static GLuint loadTextureCubeMap(const std::string& pathBase, bool sRGB);
+	static GLuint loadTextureCubemap(const std::vector<std::string> & paths, int & width, int & height, bool sRGB);
 };
 
 

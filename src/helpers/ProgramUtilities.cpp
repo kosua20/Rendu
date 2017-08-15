@@ -173,15 +173,13 @@ void ProgramUtilities::flipImage(unsigned char * image, const int width, const i
 }
 
 
-GLuint ProgramUtilities::loadTexture(const std::string& path, bool sRGB){
+GLuint ProgramUtilities::loadTexture(const std::string& path, int & width, int & height, bool sRGB){
 	
 	// Load and upload the texture.
-	int imwidth = 0;
-	int imheight = 0;
 	int components = 4;
 	// We need to flip the texture.
 	stbi_set_flip_vertically_on_load(true);
-	unsigned char *image = stbi_load(path.c_str(), &imwidth, &imheight, NULL, components);
+	unsigned char *image = stbi_load(path.c_str(), &width, &height, NULL, components);
 	if(image == NULL){
 		std::cerr << "Unable to load the texture at path " << path << "." << std::endl;
 		return 0;
@@ -191,7 +189,7 @@ GLuint ProgramUtilities::loadTexture(const std::string& path, bool sRGB){
 	GLuint textureId;
 	glGenTextures(1, &textureId);
 	glBindTexture(GL_TEXTURE_2D, textureId);
-	glTexImage2D(GL_TEXTURE_2D, 0, sRGB ? GL_SRGB8_ALPHA8 : GL_RGBA, imwidth , imheight, 0, GL_RGBA, GL_UNSIGNED_BYTE, &(image[0]));
+	glTexImage2D(GL_TEXTURE_2D, 0, sRGB ? GL_SRGB8_ALPHA8 : GL_RGBA, width , height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &(image[0]));
 	glGenerateMipmap(GL_TEXTURE_2D);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
@@ -202,11 +200,12 @@ GLuint ProgramUtilities::loadTexture(const std::string& path, bool sRGB){
 
 
 
-GLuint ProgramUtilities::loadTextureCubeMap(const std::string& pathBase, bool sRGB){
+GLuint ProgramUtilities::loadTextureCubemap(const std::vector<std::string> & paths, int & width, int & height, bool sRGB){
 	
-	std::vector<std::string> names { pathBase + "_r.png", pathBase + "_l.png",
-		pathBase + "_u.png", pathBase + "_d.png",
-		pathBase + "_b.png", pathBase + "_f.png"};
+	// If not enough images, return empty texture.
+	if(paths.size() != 6){
+		return 0;
+	}
 	
 	// Create and bind texture.
 	GLuint textureId;
@@ -221,20 +220,18 @@ GLuint ProgramUtilities::loadTextureCubeMap(const std::string& pathBase, bool sR
 	glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 	
 	std::vector<unsigned char> image;
-	int imwidth = 0;
-	int imheight = 0;
 	int components = 4;
 	// For each side, load the image and upload it in the right slot.
 	// We don't need to flip them.
 	stbi_set_flip_vertically_on_load(false);
+	
 	for(size_t side = 0; side < 6; ++side){
-		
-		unsigned char *image = stbi_load(names[side].c_str(), &imwidth, &imheight, NULL, components);
+		unsigned char *image = stbi_load(paths[side].c_str(), &width, &height, NULL, components);
 		if(image == NULL){
-			std::cerr << "Unable to load the texture at path " << names[side] << "." << std::endl;
+			std::cerr << "Unable to load the texture at path " << paths[side] << "." << std::endl;
 			return 0;
 		}
-		glTexImage2D(GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + side), 0, sRGB ? GL_SRGB8_ALPHA8 : GL_RGBA, imwidth, imheight, 0, GL_RGBA, GL_UNSIGNED_BYTE, &(image[0]));
+		glTexImage2D(GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + side), 0, sRGB ? GL_SRGB8_ALPHA8 : GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &(image[0]));
 		free(image);
 	}
 	glGenerateMipmap(GL_TEXTURE_CUBE_MAP);

@@ -2,7 +2,7 @@
 #include <iostream>
 #include <vector>
 
-#include "helpers/ProgramUtilities.h"
+#include "helpers/ResourcesManager.h"
 #include "helpers/GenerationUtilities.h"
 
 #include "AmbientQuad.h"
@@ -18,7 +18,7 @@ void AmbientQuad::init(std::map<std::string, GLuint> textureIds){
 	ScreenQuad::init(finalTextures, "resources/shaders/gbuffer/ambient");
 	
 	// Load texture.
-	_texCubeMapSmall = ProgramUtilities::loadTextureCubeMap("resources/cubemap/cubemap_diff", true);
+	_texCubeMapSmall = Resources::manager().getCubemap("cubemap_diff").id;
 	// Bind uniform to texture slot.
 	glUseProgram(_programId);
 	glUniform1i(glGetUniformLocation(_programId, "textureCubeMapSmall"), (GLuint)_textureIds.size());
