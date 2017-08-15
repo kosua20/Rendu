@@ -93,7 +93,7 @@ const std::string Resources::getShader(const std::string & name, const ShaderTyp
 	if(_files.count(name + "." + extension) > 0){
 		path = _files[name + "." + extension];
 	} else {
-		std::cerr << "Unable to find shader named \"" << name << "\"" << " with type " << extension << "." << std::endl;
+		std::cerr << "Unable to find " << (type == Vertex ? "vertex" : "fragment") << " shader named \"" << name << "\"." << std::endl;
 		return "";
 	}
 	return Resources::loadStringFromFile(path);
@@ -166,6 +166,18 @@ const TextureInfos Resources::getCubemap(const std::string & name, bool srgb){
 	return infos;
 }
 
+const std::string Resources::getTextFile(const std::string & filename){
+	std::string path = "";
+	if(_files.count(filename) > 0){
+		path = _files[filename];
+	} else if(_files.count(filename + ".txt") > 0){
+		path = _files[filename + ".txt"];
+	} else {
+		std::cerr << "Unable to find text file named \"" << filename << "\"." << std::endl;
+		return "";
+	}
+	return Resources::loadStringFromFile(path);
+}
 
 const std::vector<std::string> Resources::getCubemapPaths(const std::string & name){
 	const std::vector<std::string> names { name + "_r", name + "_l", name + "_u", name + "_d", name + "_b", name + "_f" };
