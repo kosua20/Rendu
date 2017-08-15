@@ -20,6 +20,8 @@ public:
 	
 	const TextureInfos getCubemap(const std::string & name, bool srgb = true);
 	
+	const std::string getTextFile(const std::string & filename);
+	
 private:
 	
 	enum ShaderType {
