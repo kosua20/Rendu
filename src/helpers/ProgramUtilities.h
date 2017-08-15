@@ -14,17 +14,19 @@ std::string getGLErrorString(GLenum error);
 /// Check if any OpenGL error has been detected and log it.
 int _checkGLError(const char *file, int line);
 
+struct TextureInfos {
+	GLuint id;
+	int width;
+	int height;
+	bool cubemap;
+};
 
 class ProgramUtilities {
-private:
+public:
 	
 	/// Return the content of a text file at the given path, as a string.
 	static std::string loadStringFromFile(const std::string & path);
 	
-	/// Flip an image vertically (line by line).
-	static void flipImage(unsigned char * image, const int width, const int height, const int components);
-	
-public:
 	/// Load a shader of the given type from a string
 	static GLuint loadShader(const std::string & prog, GLuint type);
 	
@@ -34,10 +36,10 @@ public:
 	// Texture loading.
 	
 	// 2D texture.
-	static GLuint loadTexture(const std::string& path, int & width, int & height, bool sRGB);
+	static TextureInfos loadTexture(const std::string& path, bool sRGB);
 	
 	// Cubemap texture.
-	static GLuint loadTextureCubemap(const std::vector<std::string> & paths, int & width, int & height, bool sRGB);
+	static TextureInfos loadTextureCubemap(const std::vector<std::string> & paths, bool sRGB);
 };
 
 

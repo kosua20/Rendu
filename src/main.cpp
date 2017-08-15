@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <iostream>
 #include <memory>
-#include "helpers/ProgramUtilities.h"
 
 #include "Renderer.h"
 

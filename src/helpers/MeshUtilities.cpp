@@ -189,7 +189,7 @@ void MeshUtilities::loadObj(const std::string & filename, Mesh & mesh, MeshUtili
 	normals_temp.clear();
 	texcoords_temp.clear();
 	faces_temp.clear();
-	cout << "OBJ: loaded. " << mesh.indices.size()/3 << " faces, " << mesh.positions.size() << " vertices, " << mesh.normals.size() << " normals, " << mesh.texcoords.size() << " texcoords." <<  endl;
+	//cout << "OBJ: loaded. " << mesh.indices.size()/3 << " faces, " << mesh.positions.size() << " vertices, " << mesh.normals.size() << " normals, " << mesh.texcoords.size() << " texcoords." <<  endl;
 	return;
 }
 
@@ -216,6 +216,7 @@ void MeshUtilities::centerAndUnitMesh(Mesh & mesh){
 	for(int i = 0; i < mesh.positions.size(); i++){
 		mesh.positions[i] /= maxi;
 	}
+
 }
 
 void MeshUtilities::computeTangentsAndBinormals(Mesh & mesh){
@@ -267,5 +268,96 @@ void MeshUtilities::computeTangentsAndBinormals(Mesh & mesh){
 			mesh.tangents[tid] *= -1.0f;
  		}
 	}
-	cout << "OBJ: " << mesh.tangents.size() << " tangents and binormals computed." << endl;
+	//cout << "OBJ: " << mesh.tangents.size() << " tangents and binormals computed." << endl;
+}
+
+MeshInfos MeshUtilities::setupBuffers(const Mesh & mesh){
+	MeshInfos infos;
+	GLuint vbo = 0;
+	GLuint vbo_nor = 0;
+	GLuint vbo_uv = 0;
+	GLuint vbo_tan = 0;
+	GLuint vbo_binor = 0;
+	
+	// Create an array buffer to host the geometry data.
+	if(mesh.positions.size() > 0){
+		glGenBuffers(1, &vbo);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * mesh.positions.size() * 3, &(mesh.positions[0]), GL_STATIC_DRAW);
+	}
+	
+	if(mesh.normals.size() > 0){
+		glGenBuffers(1, &vbo_nor);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo_nor);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * mesh.normals.size() * 3, &(mesh.normals[0]), GL_STATIC_DRAW);
+	}
+	
+	if(mesh.texcoords.size() > 0){
+		glGenBuffers(1, &vbo_uv);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo_uv);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * mesh.texcoords.size() * 2, &(mesh.texcoords[0]), GL_STATIC_DRAW);
+	}
+	
+	if(mesh.tangents.size() > 0){
+		glGenBuffers(1, &vbo_tan);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo_tan);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * mesh.tangents.size() * 3, &(mesh.tangents[0]), GL_STATIC_DRAW);
+	}
+	
+	if(mesh.binormals.size() > 0){
+		glGenBuffers(1, &vbo_binor);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo_binor);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * mesh.binormals.size() * 3, &(mesh.binormals[0]), GL_STATIC_DRAW);
+	}
+	
+	// Generate a vertex array.
+	GLuint vao = 0;
+	glGenVertexArrays (1, &vao);
+	glBindVertexArray(vao);
+	
+	// Setup attributes.
+	int currentAttribute = 0;
+	if(vbo > 0){
+		glEnableVertexAttribArray(currentAttribute);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		glVertexAttribPointer(currentAttribute, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+		++currentAttribute;
+	}
+	if(vbo_nor > 0){
+		glEnableVertexAttribArray(currentAttribute);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo_nor);
+		glVertexAttribPointer(currentAttribute, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+		++currentAttribute;
+	}
+	if(vbo_uv > 0){
+		glEnableVertexAttribArray(currentAttribute);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo_uv);
+		glVertexAttribPointer(currentAttribute, 2, GL_FLOAT, GL_FALSE, 0, NULL);
+		++currentAttribute;
+	}
+	if(vbo_tan > 0){
+		glEnableVertexAttribArray(currentAttribute);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo_tan);
+		glVertexAttribPointer(currentAttribute, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+		++currentAttribute;
+	}
+	if(vbo_binor > 0){
+		glEnableVertexAttribArray(currentAttribute);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo_binor);
+		glVertexAttribPointer(currentAttribute, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+		++currentAttribute;
+	}
+	
+	// We load the indices data
+	GLuint ebo = 0;
+	glGenBuffers(1, &ebo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * mesh.indices.size(), &(mesh.indices[0]), GL_STATIC_DRAW);
+	
+	glBindVertexArray(0);
+	
+	infos.vId = vao;
+	infos.eId = ebo;
+	infos.count = (GLsizei)mesh.indices.size();
+	return infos;
 }
