@@ -10,7 +10,7 @@
 		F41F5F521E817E4B00C18D8D /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4FE35431D0C47AA00B8318A /* Camera.cpp */; };
 		F41F5F541E817E4B00C18D8D /* Keyboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4FE35411D0C474C00B8318A /* Keyboard.cpp */; };
 		F41F5F561E817E4B00C18D8D /* MeshUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F46162181CF9D5A400B22823 /* MeshUtilities.cpp */; };
-		F41F5F571E817E4B00C18D8D /* ProgramUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F461621A1CF9D5A400B22823 /* ProgramUtilities.cpp */; };
+		F41F5F571E817E4B00C18D8D /* GLUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F461621A1CF9D5A400B22823 /* GLUtilities.cpp */; };
 		F41F5F581E817E4B00C18D8D /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F461621C1CF9D5A400B22823 /* main.cpp */; };
 		F41F5F591E817E4B00C18D8D /* Gbuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F494157A1DE1D3EC0086E191 /* Gbuffer.cpp */; };
 		F41F5F5A1E817E4B00C18D8D /* Framebuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F447FFC21D0DD2C30084E251 /* Framebuffer.cpp */; };
@@ -25,6 +25,7 @@
 		F41F5F691E817F3A00C18D8D /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F41F5F681E817F3A00C18D8D /* CoreVideo.framework */; };
 		F41F5F6B1E8180CF00C18D8D /* libglfw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F41F5F6A1E8180CF00C18D8D /* libglfw3.a */; };
 		F448015B1E842A620063A07E /* gl3w.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F44801581E842A5E0063A07E /* gl3w.cpp */; };
+		F44F7F871F435AF60057CEFE /* ProgramInfos.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F44F7F861F435AF60057CEFE /* ProgramInfos.cpp */; };
 		F4B42D021F425B8100E485C5 /* ResourcesManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4B42D001F425B8100E485C5 /* ResourcesManager.cpp */; };
 		F4FA2F051E87F60D007EBA57 /* DirectionalLight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4FA2F001E87F60D007EBA57 /* DirectionalLight.cpp */; };
 		F4FA2F061E87F60D007EBA57 /* PointLight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4FA2F031E87F60D007EBA57 /* PointLight.cpp */; };
@@ -63,6 +64,8 @@
 		F44801581E842A5E0063A07E /* gl3w.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = gl3w.cpp; sourceTree = "<group>"; };
 		F44801591E842A5E0063A07E /* gl3w.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gl3w.h; sourceTree = "<group>"; };
 		F448015A1E842A5E0063A07E /* glcorearb.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = glcorearb.h; sourceTree = "<group>"; };
+		F44F7F851F435AF60057CEFE /* ProgramInfos.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProgramInfos.h; sourceTree = "<group>"; };
+		F44F7F861F435AF60057CEFE /* ProgramInfos.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ProgramInfos.cpp; sourceTree = "<group>"; };
 		F46161891CF9D5A400B22823 /* common.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = common.hpp; sourceTree = "<group>"; };
 		F461618B1CF9D5A400B22823 /* _features.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = _features.hpp; sourceTree = "<group>"; };
 		F461618C1CF9D5A400B22823 /* _fixes.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = _fixes.hpp; sourceTree = "<group>"; };
@@ -203,8 +206,8 @@
 		F46162141CF9D5A400B22823 /* vector_relational.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = vector_relational.hpp; sourceTree = "<group>"; };
 		F46162181CF9D5A400B22823 /* MeshUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MeshUtilities.cpp; sourceTree = "<group>"; };
 		F46162191CF9D5A400B22823 /* MeshUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MeshUtilities.h; sourceTree = "<group>"; };
-		F461621A1CF9D5A400B22823 /* ProgramUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProgramUtilities.cpp; sourceTree = "<group>"; };
-		F461621B1CF9D5A400B22823 /* ProgramUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProgramUtilities.h; sourceTree = "<group>"; };
+		F461621A1CF9D5A400B22823 /* GLUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GLUtilities.cpp; sourceTree = "<group>"; };
+		F461621B1CF9D5A400B22823 /* GLUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLUtilities.h; sourceTree = "<group>"; };
 		F461621C1CF9D5A400B22823 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		F461621D1CF9D5A400B22823 /* Renderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Renderer.cpp; sourceTree = "<group>"; };
 		F461621E1CF9D5A400B22823 /* Renderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Renderer.h; sourceTree = "<group>"; };
@@ -385,10 +388,12 @@
 				F4B42D031F42651600E485C5 /* stb_image */,
 				F46162181CF9D5A400B22823 /* MeshUtilities.cpp */,
 				F46162191CF9D5A400B22823 /* MeshUtilities.h */,
-				F461621A1CF9D5A400B22823 /* ProgramUtilities.cpp */,
-				F461621B1CF9D5A400B22823 /* ProgramUtilities.h */,
+				F461621A1CF9D5A400B22823 /* GLUtilities.cpp */,
+				F461621B1CF9D5A400B22823 /* GLUtilities.h */,
 				F4B42D001F425B8100E485C5 /* ResourcesManager.cpp */,
 				F4B42D011F425B8100E485C5 /* ResourcesManager.h */,
+				F44F7F861F435AF60057CEFE /* ProgramInfos.cpp */,
+				F44F7F851F435AF60057CEFE /* ProgramInfos.h */,
 			);
 			path = helpers;
 			sourceTree = "<group>";
@@ -724,7 +729,7 @@
 				F4FA2F051E87F60D007EBA57 /* DirectionalLight.cpp in Sources */,
 				F41F5F561E817E4B00C18D8D /* MeshUtilities.cpp in Sources */,
 				F4B42D021F425B8100E485C5 /* ResourcesManager.cpp in Sources */,
-				F41F5F571E817E4B00C18D8D /* ProgramUtilities.cpp in Sources */,
+				F41F5F571E817E4B00C18D8D /* GLUtilities.cpp in Sources */,
 				F41F5F581E817E4B00C18D8D /* main.cpp in Sources */,
 				F41F5F591E817E4B00C18D8D /* Gbuffer.cpp in Sources */,
 				F41F5F5A1E817E4B00C18D8D /* Framebuffer.cpp in Sources */,
@@ -734,6 +739,7 @@
 				F41F5F5F1E817E4B00C18D8D /* Skybox.cpp in Sources */,
 				F41F5F601E817E4B00C18D8D /* Object.cpp in Sources */,
 				F4FA2F061E87F60D007EBA57 /* PointLight.cpp in Sources */,
+				F44F7F871F435AF60057CEFE /* ProgramInfos.cpp in Sources */,
 				F448015B1E842A620063A07E /* gl3w.cpp in Sources */,
 				F4FA2F091E87FA0F007EBA57 /* GenerationUtilities.cpp in Sources */,
 			);

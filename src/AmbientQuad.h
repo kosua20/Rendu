@@ -34,8 +34,6 @@ private:
 	
 	std::vector<glm::vec3> _samples;
 	
-	GLuint _invVId;
-	GLuint _invPId;
 };
 
 #endif

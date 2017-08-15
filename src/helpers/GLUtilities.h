@@ -4,6 +4,7 @@
 #include <gl3w/gl3w.h>
 #include <string>
 #include <vector>
+#include "MeshUtilities.h"
 
 /// This macro is used to check for OpenGL errors with access to the file and line number where the error is detected.
 #define checkGLError() _checkGLError(__FILE__, __LINE__)
@@ -21,25 +22,33 @@ struct TextureInfos {
 	bool cubemap;
 };
 
-class ProgramUtilities {
-public:
-	
-	/// Return the content of a text file at the given path, as a string.
-	static std::string loadStringFromFile(const std::string & path);
+struct MeshInfos {
+	GLuint vId;
+	GLuint eId;
+	GLsizei count;
+};
+
+
+class GLUtilities {
 	
 	/// Load a shader of the given type from a string
 	static GLuint loadShader(const std::string & prog, GLuint type);
 	
-	/// Create a GLProgram using the hader code contained in the given files.
-	static GLuint createGLProgram(const std::string & vertexPath, const std::string & fragmentPath, const std::string & geometryPath = "");
+public:
+	
+	// Program setup.
+	/// Create a GLProgram using the shader code contained in the given strings.
+	static GLuint createProgram(const std::string & vertexContent, const std::string & fragmentContent);
 	
 	// Texture loading.
-	
-	// 2D texture.
+	/// 2D texture.
 	static TextureInfos loadTexture(const std::string& path, bool sRGB);
-	
-	// Cubemap texture.
+	/// Cubemap texture.
 	static TextureInfos loadTextureCubemap(const std::vector<std::string> & paths, bool sRGB);
+	
+	// Mesh loading.
+	static MeshInfos setupBuffers(const Mesh & mesh);
+	
 };
 
 

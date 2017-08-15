@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 #include <vector>
 #include <map>
+#include "helpers/ResourcesManager.h"
 
 class ScreenQuad {
 
@@ -25,16 +26,17 @@ public:
 	/// Clean function
 	void clean() const;
 
-	const GLuint program() const { return _programId; }
+	const ProgramInfos & program() const { return _program; }
+	
+	 ProgramInfos & program() { return _program; }
 	
 protected:
 	
 	void loadGeometry();
 	
-	GLuint _programId;
+	ProgramInfos _program;
 	GLuint _vao;
 	GLuint _ebo;
-	GLuint _screenId;
 	std::vector<GLuint> _textureIds;
 	
 

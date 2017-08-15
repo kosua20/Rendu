@@ -4,7 +4,7 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
-
+#include "helpers/ResourcesManager.h"
 
 class Skybox {
 
@@ -26,11 +26,10 @@ public:
 
 private:
 	
-	GLuint _programId;
+	ProgramInfos _program;
 	GLuint _vao;
 	GLuint _ebo;
 	GLuint _texCubeMap;
-	GLuint _mvpID;
 
 };
 

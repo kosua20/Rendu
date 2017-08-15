@@ -28,10 +28,6 @@ private:
 	std::shared_ptr<Framebuffer> _shadowPass;
 	std::shared_ptr<Framebuffer> _blurPass;
 	
-	GLuint _vtolID;
-	GLuint _lightPosId;
-	GLuint _lightColId;
-	GLuint _projId;
 };
 
 #endif

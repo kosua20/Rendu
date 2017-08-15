@@ -1,8 +1,6 @@
-#include "ProgramUtilities.h"
+#include "GLUtilities.h"
 
 #include <iostream>
-#include <fstream>
-#include <sstream>
 #include <vector>
 #include <algorithm>
 #define STB_IMAGE_IMPLEMENTATION
@@ -44,24 +42,8 @@ int _checkGLError(const char *file, int line){
 	return 0;
 }
 
-std::string ProgramUtilities::loadStringFromFile(const std::string & filename) {
-	std::ifstream in;
-	// Open a stream to the file.
-	in.open(filename.c_str());
-	if (!in) {
-		std::cerr << filename + " is not a valid file." << std::endl;
-		return "";
-	}
-	std::stringstream buffer;
-	// Read the stream in a buffer.
-	buffer << in.rdbuf();
-	// Create a string based on the content of the buffer.
-	std::string line = buffer.str();
-	in.close();
-	return line;
-}
 
-GLuint ProgramUtilities::loadShader(const std::string & prog, GLuint type){
+GLuint GLUtilities::loadShader(const std::string & prog, GLuint type){
 	GLuint id;
 	// Create shader object.
 	id = glCreateShader(type);
@@ -96,31 +78,29 @@ GLuint ProgramUtilities::loadShader(const std::string & prog, GLuint type){
 	return id;
 }
 
-GLuint ProgramUtilities::createGLProgram(const std::string & vertexPath, const std::string & fragmentPath, const std::string & geometryPath){
-	GLuint vp(0), fp(0), gp(0), id(0);
+GLuint GLUtilities::createProgram(const std::string & vertexContent, const std::string & fragmentContent){
+	GLuint vp(0), fp(0), id(0);
 	id = glCreateProgram();
 	checkGLError();
-	std::string vertexCode = loadStringFromFile(vertexPath);
-	std::string fragmentCode = loadStringFromFile(fragmentPath);
 
 	// If vertex program code is given, compile it.
-	if (!vertexCode.empty()) {
-		vp = loadShader(vertexCode,GL_VERTEX_SHADER);
+	if (!vertexContent.empty()) {
+		vp = loadShader(vertexContent,GL_VERTEX_SHADER);
 		glAttachShader(id,vp);
 	}
 	// If fragment program code is given, compile it.
-	if (!fragmentCode.empty()) {
-		fp = loadShader(fragmentCode,GL_FRAGMENT_SHADER);
+	if (!fragmentContent.empty()) {
+		fp = loadShader(fragmentContent,GL_FRAGMENT_SHADER);
 		glAttachShader(id,fp);
 	}
-	// If geometry program filepath exists, load it and compile it.
-	if(!geometryPath.empty()) {
+	// If geometry  exists, load it and compile it.
+	/*if(!geometryPath.empty()) {
 		std::string geometryCode = loadStringFromFile(geometryPath);
 		if (!geometryCode.empty()) {
 			gp = loadShader(geometryCode,GL_GEOMETRY_SHADER);
 			glAttachShader(id,gp);
 		}
-	}
+	}*/
 
 	// Link everything
 	glLinkProgram(id);
@@ -146,22 +126,21 @@ GLuint ProgramUtilities::createGLProgram(const std::string & vertexPath, const s
 	if (fp != 0) {
 		glDetachShader(id,fp);
 	}
-	if (gp != 0) {
+	/*if (gp != 0) {
 		glDetachShader(id,gp);
-	}
+	}*/
 	checkGLError();
 	//And deleting them
 	glDeleteShader(vp);
 	glDeleteShader(fp);
-	glDeleteShader(gp);
+	//glDeleteShader(gp);
 
-	glUseProgram(id);
 	checkGLError();
 	// Return the id to the succesfuly linked GLProgram.
 	return id;
 }
 
-TextureInfos ProgramUtilities::loadTexture(const std::string& path, bool sRGB){
+TextureInfos GLUtilities::loadTexture(const std::string& path, bool sRGB){
 	TextureInfos infos;
 	infos.cubemap = false;
 	// Load and upload the texture.
@@ -194,7 +173,7 @@ TextureInfos ProgramUtilities::loadTexture(const std::string& path, bool sRGB){
 
 
 
-TextureInfos ProgramUtilities::loadTextureCubemap(const std::vector<std::string> & paths, bool sRGB){
+TextureInfos GLUtilities::loadTextureCubemap(const std::vector<std::string> & paths, bool sRGB){
 	TextureInfos infos;
 	infos.cubemap = true;
 	// If not enough images, return empty texture.
@@ -239,13 +218,95 @@ TextureInfos ProgramUtilities::loadTextureCubemap(const std::vector<std::string>
 	return infos;
 }
 
-
-
-
-
-
-
-
-
+MeshInfos GLUtilities::setupBuffers(const Mesh & mesh){
+	MeshInfos infos;
+	GLuint vbo = 0;
+	GLuint vbo_nor = 0;
+	GLuint vbo_uv = 0;
+	GLuint vbo_tan = 0;
+	GLuint vbo_binor = 0;
+	
+	// Create an array buffer to host the geometry data.
+	if(mesh.positions.size() > 0){
+		glGenBuffers(1, &vbo);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * mesh.positions.size() * 3, &(mesh.positions[0]), GL_STATIC_DRAW);
+	}
+	
+	if(mesh.normals.size() > 0){
+		glGenBuffers(1, &vbo_nor);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo_nor);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * mesh.normals.size() * 3, &(mesh.normals[0]), GL_STATIC_DRAW);
+	}
+	
+	if(mesh.texcoords.size() > 0){
+		glGenBuffers(1, &vbo_uv);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo_uv);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * mesh.texcoords.size() * 2, &(mesh.texcoords[0]), GL_STATIC_DRAW);
+	}
+	
+	if(mesh.tangents.size() > 0){
+		glGenBuffers(1, &vbo_tan);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo_tan);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * mesh.tangents.size() * 3, &(mesh.tangents[0]), GL_STATIC_DRAW);
+	}
+	
+	if(mesh.binormals.size() > 0){
+		glGenBuffers(1, &vbo_binor);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo_binor);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * mesh.binormals.size() * 3, &(mesh.binormals[0]), GL_STATIC_DRAW);
+	}
+	
+	// Generate a vertex array.
+	GLuint vao = 0;
+	glGenVertexArrays (1, &vao);
+	glBindVertexArray(vao);
+	
+	// Setup attributes.
+	int currentAttribute = 0;
+	if(vbo > 0){
+		glEnableVertexAttribArray(currentAttribute);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		glVertexAttribPointer(currentAttribute, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+		++currentAttribute;
+	}
+	if(vbo_nor > 0){
+		glEnableVertexAttribArray(currentAttribute);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo_nor);
+		glVertexAttribPointer(currentAttribute, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+		++currentAttribute;
+	}
+	if(vbo_uv > 0){
+		glEnableVertexAttribArray(currentAttribute);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo_uv);
+		glVertexAttribPointer(currentAttribute, 2, GL_FLOAT, GL_FALSE, 0, NULL);
+		++currentAttribute;
+	}
+	if(vbo_tan > 0){
+		glEnableVertexAttribArray(currentAttribute);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo_tan);
+		glVertexAttribPointer(currentAttribute, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+		++currentAttribute;
+	}
+	if(vbo_binor > 0){
+		glEnableVertexAttribArray(currentAttribute);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo_binor);
+		glVertexAttribPointer(currentAttribute, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+		++currentAttribute;
+	}
+	
+	// We load the indices data
+	GLuint ebo = 0;
+	glGenBuffers(1, &ebo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * mesh.indices.size(), &(mesh.indices[0]), GL_STATIC_DRAW);
+	
+	glBindVertexArray(0);
+	
+	infos.vId = vao;
+	infos.eId = ebo;
+	infos.count = (GLsizei)mesh.indices.size();
+	return infos;
+}
 
 

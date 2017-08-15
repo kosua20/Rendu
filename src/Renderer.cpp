@@ -78,10 +78,10 @@ Renderer::Renderer(int width, int height){
 		pointLight.init(_gbuffer->textureIds(includedTextures));
 	}
 	
-	_ssaoBlurScreen.init(_ssaoFramebuffer->textureId(), "resources/shaders/screens/boxblur_float");
-	_toneMappingScreen.init(_sceneFramebuffer->textureId(), "resources/shaders/screens/tonemap");
-	_fxaaScreen.init(_toneMappingFramebuffer->textureId(), "resources/shaders/screens/fxaa");
-	_finalScreen.init(_fxaaFramebuffer->textureId(), "resources/shaders/screens/final_screenquad");
+	_ssaoBlurScreen.init(_ssaoFramebuffer->textureId(), "boxblur_float");
+	_toneMappingScreen.init(_sceneFramebuffer->textureId(), "tonemap");
+	_fxaaScreen.init(_toneMappingFramebuffer->textureId(), "fxaa");
+	_finalScreen.init(_fxaaFramebuffer->textureId(), "final_screenquad");
 	checkGLError();
 	
 	

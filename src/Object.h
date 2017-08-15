@@ -32,20 +32,17 @@ public:
 
 private:
 	
-	GLuint _programId;
-	GLuint _programDepthId;
+	ProgramInfos _program;
+	ProgramInfos _programDepth;
 	MeshInfos _mesh;
 	
 	GLuint _texColor;
 	GLuint _texNormal;
 	GLuint _texEffects;
-	GLuint _mvpId;
-	GLuint _mvpDepthId;
-	GLuint _mvId;
-	GLuint _normalMatrixId;
-	GLuint _pId;
 	
 	glm::mat4 _model;
+	
+	int _material;
 	
 };
 
