@@ -3,7 +3,7 @@
 #include <vector>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "helpers/ResourcesManager.h"
+
 
 #include "Skybox.h"
 
@@ -14,7 +14,7 @@ Skybox::~Skybox(){}
 void Skybox::init(){
 	
 	// Load the shaders
-	_programId = ProgramUtilities::createGLProgram("resources/shaders/gbuffer/skybox_gbuffer.vert","resources/shaders/gbuffer/skybox_gbuffer.frag");
+	_program = Resources::manager().getProgram("skybox_gbuffer");
 
 	// Load geometry.
 	std::vector<float> cubeVertices{ -1.0, -1.0,  1.0,
@@ -36,17 +36,13 @@ void Skybox::init(){
 		6, 3, 2, 7, 3, 6  // Top face
 	};
 	
-	
-
 	// Create an array buffer to host the geometry data.
 	GLuint vbo = 0;
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	// Upload the data to the Array buffer.
 	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * cubeVertices.size(), &(cubeVertices[0]), GL_STATIC_DRAW);
-
-
-	// Generate a vertex array (useful when we add other attributes to the geometry).
+	// Generate a vertex array
 	_vao = 0;
 	glGenVertexArrays (1, &_vao);
 	glBindVertexArray(_vao);
@@ -54,9 +50,6 @@ void Skybox::init(){
 	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-
-	
-
 	// We load the indices data
 	glGenBuffers(1, &_ebo);
  	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
@@ -66,11 +59,9 @@ void Skybox::init(){
 	
 	_texCubeMap = Resources::manager().getCubemap("cubemap").id;
 	// Bind uniform to texture slot.
-	glUseProgram(_programId);
-	glUniform1i(glGetUniformLocation(_programId, "textureCubeMap"), 0);
+	_program.registerTexture("textureCubeMap", 0);
+	_program.registerUniform("mvp");
 	
-	_mvpID  = glGetUniformLocation(_programId, "mvp");
-	glUseProgram(0);
 	checkGLError();
 	
 }
@@ -87,11 +78,11 @@ void Skybox::draw(const glm::mat4& view, const glm::mat4& projection) const {
 	glm::mat4 MVP = projection * MV;
 	
 	// Select the program (and shaders).
-	glUseProgram(_programId);
+	glUseProgram(_program.id());
 
 	// Upload the MVP matrix.
 	
-	glUniformMatrix4fv(_mvpID, 1, GL_FALSE, &MVP[0][0]);
+	glUniformMatrix4fv(_program.uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
 	
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, _texCubeMap);

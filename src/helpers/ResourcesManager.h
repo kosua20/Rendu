@@ -5,11 +5,14 @@
 #include <string>
 #include <vector>
 #include <map>
-#include "ProgramUtilities.h"
-#include "MeshUtilities.h"
+
+#include "GLUtilities.h"
+#include "ProgramInfos.h"
 
 class Resources {
 public:
+	
+	const ProgramInfos getProgram(const std::string & name);
 	
 	const MeshInfos getMesh(const std::string & name);
 	
@@ -19,10 +22,20 @@ public:
 	
 private:
 	
+	enum ShaderType {
+		Vertex, Fragment
+	};
+	
+	const std::string getShader(const std::string & name, const ShaderType & type);
+	
 	void parseDirectory(const std::string & directoryPath);
 	
 	const std::string getImagePath(const std::string & name);
+	
 	const std::vector<std::string> getCubemapPaths(const std::string & name);
+	
+	static std::string loadStringFromFile(const std::string & filename);
+	
 	
 	const std::string & _rootPath;
 	
@@ -32,7 +45,9 @@ private:
 	
 	std::map<std::string, MeshInfos> _meshes;
 	
-	std::map<std::string, std::string> _shaders;
+	std::map<std::string, ProgramInfos> _programs;
+	
+	//std::map<std::string, std::string> _shaders;
 	
 /// Singleton management.
 		

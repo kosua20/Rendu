@@ -1,8 +1,12 @@
 #include "ResourcesManager.h"
 
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include <tinydir/tinydir.h>
-#include "ProgramUtilities.h"
+#include "GLUtilities.h"
+#include "MeshUtilities.h"
+
 /// Singleton.
 Resources Resources::_resourcesManager = Resources("resources");
 
@@ -66,6 +70,36 @@ void Resources::parseDirectory(const std::string & directoryPath){
 }
 
 
+const ProgramInfos Resources::getProgram(const std::string & name){
+	if(_programs.count(name) > 0){
+		return _programs[name];
+	}
+	
+	const std::string vertexContent = getShader(name, Vertex);
+	const std::string fragmentContent = getShader(name, Fragment);
+	
+	_programs.emplace(std::piecewise_construct,
+					  std::forward_as_tuple(name),
+					  std::forward_as_tuple(vertexContent, fragmentContent));
+	
+	return _programs[name];
+}
+
+
+const std::string Resources::getShader(const std::string & name, const ShaderType & type){
+	
+	std::string path = "";
+	const std::string extension = type == Vertex ? "vert" : "frag";
+	if(_files.count(name + "." + extension) > 0){
+		path = _files[name + "." + extension];
+	} else {
+		std::cerr << "Unable to find shader named \"" << name << "\"" << " with type " << extension << "." << std::endl;
+		return "";
+	}
+	return Resources::loadStringFromFile(path);
+	
+}
+
 const MeshInfos Resources::getMesh(const std::string & name){
 	if(_meshes.count(name) > 0){
 		return _meshes[name];
@@ -90,12 +124,13 @@ const MeshInfos Resources::getMesh(const std::string & name){
 	// If uv or positions are missing, tangent/binormals won't be computed.
 	MeshUtilities::computeTangentsAndBinormals(mesh);
 	// Setup GL buffers and attributes.
-	infos = MeshUtilities::setupBuffers(mesh);
+	infos = GLUtilities::setupBuffers(mesh);
 	_meshes[name] = infos;
 	return infos;
 }
 
 const TextureInfos Resources::getTexture(const std::string & name, bool srgb){
+	
 	// If texture already loaded, return it.
 	if(_textures.count(name) > 0){
 		return _textures[name];
@@ -108,7 +143,7 @@ const TextureInfos Resources::getTexture(const std::string & name, bool srgb){
 		return infos;
 	}
 	// Else, load it and store the infos.
-	infos = ProgramUtilities::loadTexture(path, srgb);
+	infos = GLUtilities::loadTexture(path, srgb);
 	_textures[name] = infos;
 	return infos;
 }
@@ -126,7 +161,7 @@ const TextureInfos Resources::getCubemap(const std::string & name, bool srgb){
 		return infos;
 	}
 	// Load them and store the infos.
-	infos = ProgramUtilities::loadTextureCubemap(paths, srgb);
+	infos = GLUtilities::loadTextureCubemap(paths, srgb);
 	_textures[name] = infos;
 	return infos;
 }
@@ -165,6 +200,23 @@ const std::string Resources::getImagePath(const std::string & name){
 		std::cerr << "Unable to find image named \"" << name << "\"" << std::endl;
 	}
 	return path;
+}
+
+std::string Resources::loadStringFromFile(const std::string & filename) {
+	std::ifstream in;
+	// Open a stream to the file.
+	in.open(filename.c_str());
+	if (!in) {
+		std::cerr << filename + " is not a valid file." << std::endl;
+		return "";
+	}
+	std::stringstream buffer;
+	// Read the stream in a buffer.
+	buffer << in.rdbuf();
+	// Create a string based on the content of the buffer.
+	std::string line = buffer.str();
+	in.close();
+	return line;
 }
 
 

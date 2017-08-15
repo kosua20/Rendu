@@ -14,8 +14,11 @@ PointLight::PointLight(const glm::vec3& worldPosition, const glm::vec3& color, f
 
 void PointLight::loadProgramAndGeometry(){
 	
-	_debugProgramId = ProgramUtilities::createGLProgram("resources/shaders/lights/point_light_debug.vert", "resources/shaders/lights/point_light_debug.frag");
-	
+	_debugProgram = Resources::manager().getProgram("point_light_debug");
+	_debugProgram.registerUniform("radius");
+	_debugProgram.registerUniform("lightWorldPosition");
+	_debugProgram.registerUniform("mvp");
+	_debugProgram.registerUniform("lightColor");
 	// Load geometry.
 	_debugMesh = Resources::manager().getMesh("sphere");
 	
@@ -23,27 +26,25 @@ void PointLight::loadProgramAndGeometry(){
 }
 
 void PointLight::init(const std::map<std::string, GLuint>& textureIds){
-	_programId = ProgramUtilities::createGLProgram("resources/shaders/lights/point_light.vert", "resources/shaders/lights/point_light.frag");
-	
+	_program = Resources::manager().getProgram("point_light");
+	//glUseProgram(_program.id());
 	checkGLError();
 	GLint currentTextureSlot = 0;
 	for(auto& texture : textureIds){
 		_textureIds.push_back(texture.second);
-		glBindTexture(GL_TEXTURE_2D, _textureIds.back());
-		GLuint texUniID = glGetUniformLocation(_programId, (texture.first).c_str());
-		glUniform1i(texUniID, currentTextureSlot);
+		//glBindTexture(GL_TEXTURE_2D, _textureIds.back());
+		_program.registerTexture(texture.first, currentTextureSlot);
 		currentTextureSlot += 1;
 	}
 	
-	glUseProgram(_programId);
-	_lightColId = glGetUniformLocation(_programId, "lightColor");
-	_projId = glGetUniformLocation(_programId, "projectionMatrix");
-	_screenId = glGetUniformLocation(_programId, "inverseScreenSize");
-	_radiusId = glGetUniformLocation(_programId, "radius");
-	_positionId = glGetUniformLocation(_programId, "lightWorldPosition");
-	_mvpId  = glGetUniformLocation(_programId, "mvp");
-	_lightPosId = glGetUniformLocation(_programId, "lightPosition");
-	glUseProgram(0);
+	_program.registerUniform("lightColor");
+	_program.registerUniform("projectionMatrix");
+	_program.registerUniform("inverseScreenSize");
+	_program.registerUniform("radius");
+	_program.registerUniform("lightWorldPosition");
+	_program.registerUniform("mvp");
+	_program.registerUniform("lightPosition");
+	
 	
 	checkGLError();
 }
@@ -56,18 +57,18 @@ void PointLight::draw(const glm::vec2& invScreenSize, const glm::mat4& viewMatri
 	glm::vec3 lightPositionViewSpace = glm::vec3(viewMatrix * glm::vec4(_local, 1.0f));
 	glm::mat4 vp = projectionMatrix * viewMatrix;
 	
-	glUseProgram(_programId);
+	glUseProgram(_program.id());
 	
 	// For the vertex shader
-	glUniform1f(_radiusId,  _radius);
-	glUniform3fv(_positionId, 1, &_local[0]);
-	glUniformMatrix4fv(_mvpId, 1, GL_FALSE, &vp[0][0]);
-	glUniform3fv(_lightPosId, 1,  &lightPositionViewSpace[0]);
-	glUniform3fv(_lightColId, 1,  &_color[0]);
+	glUniform1f(_program.uniform("radius"),  _radius);
+	glUniform3fv(_program.uniform("lightWorldPosition"), 1, &_local[0]);
+	glUniformMatrix4fv(_program.uniform("mvp"), 1, GL_FALSE, &vp[0][0]);
+	glUniform3fv(_program.uniform("lightPosition"), 1,  &lightPositionViewSpace[0]);
+	glUniform3fv(_program.uniform("lightColor"), 1,  &_color[0]);
 	// Projection parameter for position reconstruction.
-	glUniform4fv(_projId, 1, &(projectionVector[0]));
+	glUniform4fv(_program.uniform("projectionMatrix"), 1, &(projectionVector[0]));
 	// Inverse screen size uniform.
-	glUniform2fv(_screenId, 1, &(invScreenSize[0]));
+	glUniform2fv(_program.uniform("inverseScreenSize"), 1, &(invScreenSize[0]));
 	
 	// Active screen texture.
 	for(GLuint i = 0;i < _textureIds.size(); ++i){
@@ -90,18 +91,13 @@ void PointLight::draw(const glm::vec2& invScreenSize, const glm::mat4& viewMatri
 void PointLight::drawDebug(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) const {
 	glm::mat4 vp = projectionMatrix * viewMatrix;
 	
-	glUseProgram(_debugProgramId);
+	glUseProgram(_debugProgram.id());
 	
 	// For the vertex shader
-	
-	GLuint radiusId = glGetUniformLocation(_debugProgramId, "radius");
-	GLuint positionId = glGetUniformLocation(_debugProgramId, "lightWorldPosition");
-	GLuint mvpId  = glGetUniformLocation(_debugProgramId, "mvp");
-	GLuint lightColId = glGetUniformLocation(_debugProgramId, "lightColor");
-	glUniform1f(radiusId,  0.1*_radius);
-	glUniform3fv(positionId, 1, &_local[0]);
-	glUniformMatrix4fv(mvpId, 1, GL_FALSE, &vp[0][0]);
-	glUniform3fv(lightColId, 1,  &_color[0]);
+	glUniform1f(_debugProgram.uniform("radius"),  0.1*_radius);
+	glUniform3fv(_debugProgram.uniform("lightWorldPosition"), 1, &_local[0]);
+	glUniformMatrix4fv(_debugProgram.uniform("mvp"), 1, GL_FALSE, &vp[0][0]);
+	glUniform3fv(_debugProgram.uniform("lightColor"), 1,  &_color[0]);
 	
 	// Select the geometry.
 	glBindVertexArray(_debugMesh.vId);
@@ -118,7 +114,7 @@ void PointLight::clean() const {
 	
 }
 
-GLuint PointLight::_debugProgramId;
+ProgramInfos PointLight::_debugProgram;
 MeshInfos PointLight::_debugMesh;
 
 

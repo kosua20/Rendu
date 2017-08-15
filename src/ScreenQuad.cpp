@@ -2,7 +2,7 @@
 #include <iostream>
 #include <vector>
 
-#include "helpers/ProgramUtilities.h"
+#include "helpers/ResourcesManager.h"
 
 #include "ScreenQuad.h"
 
@@ -13,17 +13,17 @@ ScreenQuad::~ScreenQuad(){}
 void ScreenQuad::init(GLuint textureId, const std::string & shaderRoot){
 	
 	// Load the shaders
-	_programId = ProgramUtilities::createGLProgram(shaderRoot + ".vert", shaderRoot + ".frag");
+	_program = Resources::manager().getProgram(shaderRoot);
 
 	// Load geometry.
 	loadGeometry();
 	
 	// Link the texture of the framebuffer for this program.
 	_textureIds.push_back(textureId);
-	glBindTexture(GL_TEXTURE_2D, _textureIds[0]);
-	GLuint texUniID = glGetUniformLocation(_programId, "screenTexture");
-	glUniform1i(texUniID, 0);
-	_screenId = glGetUniformLocation(_programId, "inverseScreenSize");
+	_program.registerTexture("screenTexture", 0);
+	//glBindTexture(GL_TEXTURE_2D, _textureIds[0]);
+	_program.registerUniform("inverseScreenSize");
+	
 	checkGLError();
 	
 }
@@ -31,7 +31,7 @@ void ScreenQuad::init(GLuint textureId, const std::string & shaderRoot){
 void ScreenQuad::init(std::map<std::string, GLuint> textureIds, const std::string & shaderRoot){
 	
 	// Load the shaders
-	_programId = ProgramUtilities::createGLProgram(shaderRoot + ".vert", shaderRoot + ".frag");
+	_program = Resources::manager().getProgram(shaderRoot);
 	
 	loadGeometry();
 	
@@ -39,15 +39,13 @@ void ScreenQuad::init(std::map<std::string, GLuint> textureIds, const std::strin
 	GLint currentTextureSlot = 0;
 	for(auto& texture : textureIds){
 		_textureIds.push_back(texture.second);
-		glBindTexture(GL_TEXTURE_2D, _textureIds.back());
-		GLuint texUniID = glGetUniformLocation(_programId, (texture.first).c_str());
-		glUniform1i(texUniID, currentTextureSlot);
+		//glBindTexture(GL_TEXTURE_2D, _textureIds.back());
+		_program.registerTexture(texture.first, currentTextureSlot);
 		currentTextureSlot += 1;
 	}
 	
-	glUseProgram(_programId);
-	_screenId = glGetUniformLocation(_programId, "inverseScreenSize");
-	glUseProgram(0);
+	_program.registerUniform("inverseScreenSize");
+
 	checkGLError();
 	
 }
@@ -92,17 +90,16 @@ void ScreenQuad::loadGeometry(){
 void ScreenQuad::draw(const glm::vec2& invScreenSize) const {
 	
 	// Select the program (and shaders).
-	glUseProgram(_programId);
+	glUseProgram(_program.id());
 	
 	// Inverse screen size uniform.
-	glUniform2fv(_screenId, 1, &(invScreenSize[0]));
+	glUniform2fv(_program.uniform("inverseScreenSize"), 1, &(invScreenSize[0]));
 	
 	// Active screen texture.
 	for(GLuint i = 0;i < _textureIds.size(); ++i){
 		glActiveTexture(GL_TEXTURE0 + i);
 		glBindTexture(GL_TEXTURE_2D, _textureIds[i]);
 	}
-	
 	
 	// Select the geometry.
 	glBindVertexArray(_vao);

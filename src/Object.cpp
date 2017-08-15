@@ -13,8 +13,8 @@ Object::~Object(){}
 void Object::init(const std::string& meshPath, const std::vector<std::string>& texturesPaths, int materialId){
 	
 	// Load the shaders
-	_programDepthId = ProgramUtilities::createGLProgram("resources/shaders/lights/object_depth.vert","resources/shaders/lights/object_depth.frag");
-	_programId = ProgramUtilities::createGLProgram("resources/shaders/gbuffer/object_gbuffer.vert","resources/shaders/gbuffer/object_gbuffer.frag");
+	_programDepth = Resources::manager().getProgram("object_depth");
+	_program = Resources::manager().getProgram("object_gbuffer");
 	
 	// Load geometry.
 	_mesh = Resources::manager().getMesh(meshPath);
@@ -24,23 +24,18 @@ void Object::init(const std::string& meshPath, const std::vector<std::string>& t
 	_texNormal = Resources::manager().getTexture(texturesPaths[1], false).id;
 	_texEffects = Resources::manager().getTexture(texturesPaths[2], false).id;
 	
-	glUseProgram(_programId);
-	glUniform1i(glGetUniformLocation(_programId, "textureColor"), 0);
-	glUniform1i(glGetUniformLocation(_programId, "textureNormal"), 1);
-	glUniform1i(glGetUniformLocation(_programId, "textureEffects"), 2);
+	_program.registerTexture("textureColor", 0);
+	_program.registerTexture("textureNormal", 1);
+	_program.registerTexture("textureEffects", 2);
+	_program.registerUniform("mvp");
+	_program.registerUniform("mv");
+	_program.registerUniform("p");
+	_program.registerUniform("normalMatrix");
+	_program.registerUniform("materialId");
 	
-	_mvpId  = glGetUniformLocation(_programId, "mvp");
-	_mvId  = glGetUniformLocation(_programId, "mv");
-	_normalMatrixId  = glGetUniformLocation(_programId, "normalMatrix");
-	_pId  = glGetUniformLocation(_programId, "p");
-	// This one won't be modified, no need to keep the ID around.
-	GLuint matIdID  = glGetUniformLocation(_programId, "materialId");
-	glUniform1i(matIdID, materialId);
+	_material = materialId;
 	
-	glUseProgram(_programDepthId);
-	_mvpDepthId  = glGetUniformLocation(_programDepthId, "mvp");
-	glUseProgram(0);
-
+	_programDepth.registerUniform("mvp");
 	
 	checkGLError();
 	
@@ -62,16 +57,19 @@ void Object::draw(const glm::mat4& view, const glm::mat4& projection) const {
 	// Compute the normal matrix
 	glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(MV)));
 	// Select the program (and shaders).
-	glUseProgram(_programId);
+	glUseProgram(_program.id());
+	
 	
 	// Upload the MVP matrix.
-	glUniformMatrix4fv(_mvpId, 1, GL_FALSE, &MVP[0][0]);
+	glUniformMatrix4fv(_program.uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
 	// Upload the MV matrix.
-	glUniformMatrix4fv(_mvId, 1, GL_FALSE, &MV[0][0]);
+	glUniformMatrix4fv(_program.uniform("mv"), 1, GL_FALSE, &MV[0][0]);
 	// Upload the normal matrix.
-	glUniformMatrix3fv(_normalMatrixId, 1, GL_FALSE, &normalMatrix[0][0]);
+	glUniformMatrix3fv(_program.uniform("normalMatrix"), 1, GL_FALSE, &normalMatrix[0][0]);
 	// Upload the projection matrix.
-	glUniformMatrix4fv(_pId, 1, GL_FALSE, &projection[0][0]);
+	glUniformMatrix4fv(_program.uniform("p"), 1, GL_FALSE, &projection[0][0]);
+	// Material id.
+	glUniform1i(_program.uniform("materialId"), _material);
 
 	// Bind the textures.
 	glActiveTexture(GL_TEXTURE0);
@@ -99,10 +97,10 @@ void Object::drawDepth(const glm::mat4& lightVP) const {
 	// Combine the three matrices.
 	glm::mat4 lightMVP = lightVP * _model;
 	
-	glUseProgram(_programDepthId);
+	glUseProgram(_programDepth.id());
 	
 	// Upload the MVP matrix.
-	glUniformMatrix4fv(_mvpDepthId, 1, GL_FALSE, &lightMVP[0][0]);
+	glUniformMatrix4fv(_programDepth.uniform("mvp"), 1, GL_FALSE, &lightMVP[0][0]);
 	
 	// Select the geometry.
 	glBindVertexArray(_mesh.vId);
@@ -121,7 +119,7 @@ void Object::clean() const {
 	glDeleteTextures(1, &_texColor);
 	glDeleteTextures(1, &_texNormal);
 	glDeleteTextures(1, &_texEffects);
-	glDeleteProgram(_programId);
+	glDeleteProgram(_program.id());
 }
 
 

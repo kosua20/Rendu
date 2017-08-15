@@ -17,18 +17,18 @@ void DirectionalLight::init(const std::map<std::string, GLuint>& textureIds){
 	// Setup the framebuffer.
 	_shadowPass = std::make_shared<Framebuffer>(512, 512, GL_RG,GL_FLOAT, GL_RG16F, GL_LINEAR,GL_CLAMP_TO_BORDER);
 	_blurPass = std::make_shared<Framebuffer>(_shadowPass->width(), _shadowPass->height(), GL_RG,GL_FLOAT, GL_RG16F, GL_LINEAR,GL_CLAMP_TO_BORDER);
-	_blurScreen.init(_shadowPass->textureId(), "resources/shaders/screens/boxblur");
+	_blurScreen.init(_shadowPass->textureId(), "boxblur");
 	
 	std::map<std::string, GLuint> textures = textureIds;
 	textures["shadowMap"] = _blurPass->textureId();
-	_screenquad.init(textures, "resources/shaders/lights/directional_light");
+	_screenquad.init(textures, "directional_light");
 	
-	glUseProgram(_screenquad.program());
-	_vtolID  = glGetUniformLocation(_screenquad.program(), "viewToLight");
-	_lightPosId = glGetUniformLocation(_screenquad.program(), "lightDirection");
-	_lightColId = glGetUniformLocation(_screenquad.program(), "lightColor");
-	_projId = glGetUniformLocation(_screenquad.program(), "projectionMatrix");
-	glUseProgram(0);
+	
+	_screenquad.program().registerUniform("viewToLight");
+	_screenquad.program().registerUniform("lightDirection");
+	_screenquad.program().registerUniform("lightColor");
+	_screenquad.program().registerUniform("projectionMatrix");
+	
 
 }
 
@@ -40,13 +40,13 @@ void DirectionalLight::draw(const glm::vec2& invScreenSize, const glm::mat4& vie
 	glm::vec4 projectionVector = glm::vec4(projectionMatrix[0][0], projectionMatrix[1][1], projectionMatrix[2][2], projectionMatrix[3][2]);
 	glm::vec3 lightPositionViewSpace = glm::vec3(viewMatrix * glm::vec4(_local, 0.0));
 	
-	glUseProgram(_screenquad.program());
+	glUseProgram(_screenquad.program().id());
 	
-	glUniform3fv(_lightPosId, 1,  &lightPositionViewSpace[0]);
-	glUniform3fv(_lightColId, 1,  &_color[0]);
+	glUniform3fv(_screenquad.program().uniform("lightDirection"), 1,  &lightPositionViewSpace[0]);
+	glUniform3fv(_screenquad.program().uniform("lightColor"), 1,  &_color[0]);
 	// Projection parameter for position reconstruction.
-	glUniform4fv(_projId, 1, &(projectionVector[0]));
-	glUniformMatrix4fv(_vtolID, 1, GL_FALSE, &viewToLight[0][0]);
+	glUniform4fv(_screenquad.program().uniform("projectionMatrix"), 1, &(projectionVector[0]));
+	glUniformMatrix4fv(_screenquad.program().uniform("viewToLight"), 1, GL_FALSE, &viewToLight[0][0]);
 
 	_screenquad.draw(invScreenSize);
 

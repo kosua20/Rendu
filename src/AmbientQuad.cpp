@@ -15,33 +15,34 @@ void AmbientQuad::init(std::map<std::string, GLuint> textureIds){
 	
 	// Ambient pass: needs the albedo, the normals and the AO result
 	std::map<std::string, GLuint> finalTextures = { {"albedoTexture", textureIds["albedoTexture"]}, {"normalTexture", textureIds["normalTexture"]}, {"ssaoTexture", textureIds["ssaoTexture"]}};
-	ScreenQuad::init(finalTextures, "resources/shaders/gbuffer/ambient");
+	
+	ScreenQuad::init(finalTextures, "ambient");
 	
 	// Load texture.
 	_texCubeMapSmall = Resources::manager().getCubemap("cubemap_diff").id;
 	// Bind uniform to texture slot.
-	glUseProgram(_programId);
-	glUniform1i(glGetUniformLocation(_programId, "textureCubeMapSmall"), (GLuint)_textureIds.size());
-	glUseProgram(0);
+	_program.registerTexture("textureCubeMapSmall", (int)_textureIds.size());
 	
 	// Setup SSAO data, get back noise texture id, add it to the gbuffer outputs.
 	GLuint noiseTextureID = setupSSAO();
 	std::map<std::string, GLuint> ssaoTextures = { {"depthTexture", textureIds["depthTexture"]}, {"normalTexture", textureIds["normalTexture"]}, {"noiseTexture",noiseTextureID}};
-	_ssaoScreen.init(ssaoTextures, "resources/shaders/gbuffer/ssao");
+	_ssaoScreen.init(ssaoTextures, "ssao");
 	
 	// Now that we have the program we can send the samples to the GPU too.
-	glUseProgram(_ssaoScreen.program());
 	for(int i = 0; i < 24; ++i){
 		const std::string name = "samples[" + std::to_string(i) + "]";
-		const GLuint location = glGetUniformLocation(_ssaoScreen.program(), name.c_str());
-		glUniform3fv(location, 1, &_samples[i][0] );
+		_ssaoScreen.program().registerUniform(name);
 	}
-	
-	glUseProgram(_programId);
-	_invVId  = glGetUniformLocation(_programId, "inverseV");
-	glUseProgram(_ssaoScreen.program());
-	_invPId  = glGetUniformLocation(_ssaoScreen.program(), "projectionMatrix");
+	glUseProgram(_ssaoScreen.program().id());
+	for(int i = 0; i < 24; ++i){
+		const std::string name = "samples[" + std::to_string(i) + "]";
+		glUseProgram(_ssaoScreen.program().id());
+		glUniform3fv(_ssaoScreen.program().uniform(name), 1, &(_samples[i][0]) );
+	}
 	glUseProgram(0);
+	
+	_program.registerUniform("inverseV");
+	_ssaoScreen.program().registerUniform("projectionMatrix");
 	checkGLError();
 }
 
@@ -88,9 +89,9 @@ void AmbientQuad::draw(const glm::vec2& invScreenSize, const glm::mat4& viewMatr
 	
 	glm::mat4 invView = glm::inverse(viewMatrix);
 	
-	glUseProgram(_programId);
+	glUseProgram(_program.id());
 	
-	glUniformMatrix4fv(_invVId, 1, GL_FALSE, &invView[0][0]);
+	glUniformMatrix4fv(_program.uniform("inverseV"), 1, GL_FALSE, &invView[0][0]);
 	
 	glActiveTexture(GL_TEXTURE0 + (unsigned int)_textureIds.size());
 	glBindTexture(GL_TEXTURE_CUBE_MAP, _texCubeMapSmall);
@@ -100,9 +101,9 @@ void AmbientQuad::draw(const glm::vec2& invScreenSize, const glm::mat4& viewMatr
 
 void AmbientQuad::drawSSAO(const glm::vec2& invScreenSize, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) const {
 	
-	glUseProgram(_ssaoScreen.program());
+	glUseProgram(_ssaoScreen.program().id());
 	
-	glUniformMatrix4fv(_invPId, 1, GL_FALSE, &projectionMatrix[0][0]);
+	glUniformMatrix4fv(_ssaoScreen.program().uniform("projectionMatrix"), 1, GL_FALSE, &projectionMatrix[0][0]);
 	
 	_ssaoScreen.draw(invScreenSize);
 	

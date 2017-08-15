@@ -24,16 +24,9 @@ private:
 	float _radius;
 	std::vector<GLuint> _textureIds;
 	
-	GLuint _programId;
-	GLuint _projId;
-	GLuint _screenId;
-	GLuint _radiusId;
-	GLuint _positionId;
-	GLuint _mvpId;
-	GLuint _lightPosId;
-	GLuint _lightColId;
+	ProgramInfos _program;
 	
-	static GLuint _debugProgramId;
+	static ProgramInfos _debugProgram;
 	static MeshInfos _debugMesh;
 	
 };
