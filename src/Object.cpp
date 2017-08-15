@@ -3,8 +3,8 @@
 #include <vector>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "helpers/ProgramUtilities.h"
 #include "helpers/MeshUtilities.h"
+#include "helpers/ResourcesManager.h"
 
 #include "Object.h"
 
@@ -92,9 +92,9 @@ void Object::init(const std::string& meshPath, const std::vector<std::string>& t
 	glBindVertexArray(0);
 	
 	// Load and upload the textures.
-	_texColor = ProgramUtilities::loadTexture(texturesPaths[0], true);
-	_texNormal = ProgramUtilities::loadTexture(texturesPaths[1], false);
-	_texEffects = ProgramUtilities::loadTexture(texturesPaths[2], false);
+	_texColor = Resources::manager().getTexture(texturesPaths[0]).id;
+	_texNormal = Resources::manager().getTexture(texturesPaths[1], false).id;
+	_texEffects = Resources::manager().getTexture(texturesPaths[2], false).id;
 	
 	glUseProgram(_programId);
 	glUniform1i(glGetUniformLocation(_programId, "textureColor"), 0);

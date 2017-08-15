@@ -3,7 +3,7 @@
 #include <vector>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "helpers/ProgramUtilities.h"
+#include "helpers/ResourcesManager.h"
 
 #include "Skybox.h"
 
@@ -64,7 +64,7 @@ void Skybox::init(){
 
 	glBindVertexArray(0);
 	
-	_texCubeMap = ProgramUtilities::loadTextureCubeMap("resources/cubemap/cubemap", true);
+	_texCubeMap = Resources::manager().getCubemap("cubemap").id;
 	// Bind uniform to texture slot.
 	glUseProgram(_programId);
 	glUniform1i(glGetUniformLocation(_programId, "textureCubeMap"), 0);
