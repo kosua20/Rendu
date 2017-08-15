@@ -17,11 +17,11 @@ void DirectionalLight::init(const std::map<std::string, GLuint>& textureIds){
 	// Setup the framebuffer.
 	_shadowPass = std::make_shared<Framebuffer>(512, 512, GL_RG,GL_FLOAT, GL_RG16F, GL_LINEAR,GL_CLAMP_TO_BORDER);
 	_blurPass = std::make_shared<Framebuffer>(_shadowPass->width(), _shadowPass->height(), GL_RG,GL_FLOAT, GL_RG16F, GL_LINEAR,GL_CLAMP_TO_BORDER);
-	_blurScreen.init(_shadowPass->textureId(), "ressources/shaders/screens/boxblur");
+	_blurScreen.init(_shadowPass->textureId(), "resources/shaders/screens/boxblur");
 	
 	std::map<std::string, GLuint> textures = textureIds;
 	textures["shadowMap"] = _blurPass->textureId();
-	_screenquad.init(textures, "ressources/shaders/lights/directional_light");
+	_screenquad.init(textures, "resources/shaders/lights/directional_light");
 	
 	glUseProgram(_screenquad.program());
 	_vtolID  = glGetUniformLocation(_screenquad.program(), "viewToLight");

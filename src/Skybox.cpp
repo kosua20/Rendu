@@ -14,7 +14,7 @@ Skybox::~Skybox(){}
 void Skybox::init(){
 	
 	// Load the shaders
-	_programId = ProgramUtilities::createGLProgram("ressources/shaders/gbuffer/skybox_gbuffer.vert","ressources/shaders/gbuffer/skybox_gbuffer.frag");
+	_programId = ProgramUtilities::createGLProgram("resources/shaders/gbuffer/skybox_gbuffer.vert","resources/shaders/gbuffer/skybox_gbuffer.frag");
 
 	// Load geometry.
 	std::vector<float> cubeVertices{ -1.0, -1.0,  1.0,
@@ -64,7 +64,7 @@ void Skybox::init(){
 
 	glBindVertexArray(0);
 	
-	_texCubeMap = ProgramUtilities::loadTextureCubeMap("ressources/cubemap/cubemap", true);
+	_texCubeMap = ProgramUtilities::loadTextureCubeMap("resources/cubemap/cubemap", true);
 	// Bind uniform to texture slot.
 	glUseProgram(_programId);
 	glUniform1i(glGetUniformLocation(_programId, "textureCubeMap"), 0);

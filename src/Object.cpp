@@ -15,8 +15,8 @@ Object::~Object(){}
 void Object::init(const std::string& meshPath, const std::vector<std::string>& texturesPaths, int materialId, bool centerAndUnit){
 	
 	// Load the shaders
-	_programDepthId = ProgramUtilities::createGLProgram("ressources/shaders/lights/object_depth.vert","ressources/shaders/lights/object_depth.frag");
-	_programId = ProgramUtilities::createGLProgram("ressources/shaders/gbuffer/object_gbuffer.vert","ressources/shaders/gbuffer/object_gbuffer.frag");
+	_programDepthId = ProgramUtilities::createGLProgram("resources/shaders/lights/object_depth.vert","resources/shaders/lights/object_depth.frag");
+	_programId = ProgramUtilities::createGLProgram("resources/shaders/gbuffer/object_gbuffer.vert","resources/shaders/gbuffer/object_gbuffer.frag");
 	
 	// Load geometry.
 	Mesh mesh;
