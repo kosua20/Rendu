@@ -12,6 +12,10 @@ public:
 
 	~Joystick();
 	
+	void activate(int id);
+	
+	void deactivate();
+	
 	/// Reset the the joystick camera parameters.
 	void reset();
 

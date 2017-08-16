@@ -17,6 +17,13 @@ Joystick::Joystick(glm::vec3 & eye, glm::vec3 & center, glm::vec3 & up, glm::vec
 
 Joystick::~Joystick(){}
 
+void Joystick::activate(int id){
+	_id = id;
+}
+
+void Joystick::deactivate(){
+	_id = -1;
+}
 
 void Joystick::reset(){
 	

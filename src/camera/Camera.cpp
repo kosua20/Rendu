@@ -8,8 +8,17 @@
 
 Camera::Camera() : _keyboard(_eye, _center, _up, _right), _joystick(_eye, _center, _up, _right) {
 	_verticalResolution = 720;
-	reset();
 	
+	// Check if any joystick is available.
+	for(int id = GLFW_JOYSTICK_1; id <= GLFW_JOYSTICK_LAST; ++id){
+		// We only register the first joystick encountered if it exists.
+		if(glfwJoystickPresent(id) == GL_TRUE){
+			_joystick.activate(id);
+			break;
+		}
+	}
+	
+	reset();
 }
 
 Camera::~Camera(){}
@@ -58,8 +67,16 @@ void Camera::key(int key, bool flag){
 void Camera::joystick(int joystick, int event){
 	if (event == GLFW_CONNECTED) {
 		std::cout << "Connected joystick " << joystick << std::endl;
+		// If there is no currently connected joystick, register the new one.
+		if(_joystick.id() == -1){
+			_joystick.activate(joystick);
+		}
 	} else if (event == GLFW_DISCONNECTED) {
 		std::cout << "Disconnected joystick " << joystick << std::endl;
+		// If the disconnected joystick is the one currently used, register this.
+		if(joystick == _joystick.id()){
+			_joystick.deactivate();
+		}
 	}
 }
 
