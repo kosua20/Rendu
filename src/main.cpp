@@ -41,7 +41,7 @@ void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos){
 	bool left = glfwGetMouseButton(window,GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
 	bool right = glfwGetMouseButton(window,GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS;
 	Renderer *rendererPtr = static_cast<Renderer*>(glfwGetWindowUserPointer(window));
-	rendererPtr->mousePosition(xpos,ypos, left, right);
+	rendererPtr->mousePosition(xpos, ypos, left, right);
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset){

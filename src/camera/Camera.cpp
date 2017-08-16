@@ -23,7 +23,7 @@ void Camera::reset(){
 	_keyboard.reset();
 }
 
-void Camera::update(float elapsedTime){
+void Camera::update(double elapsedTime){
 	
 	_keyboard.update(elapsedTime);
 	// Update the view matrix.
@@ -48,8 +48,8 @@ void Camera::mouse(MouseMode mode, float x, float y){
 		_keyboard.endLeftMouse();
 	} else {
 		// We normalize the x and y values to the [-1, 1] range.
-		float xPosition =  fmax(fmin(1.0f,2.0f * x / _screenSize[0] - 1.0),-1.0f);
-		float yPosition =  fmax(fmin(1.0f,2.0f * y / _screenSize[1] - 1.0),-1.0f);
+		float xPosition =  fmax(fmin(1.0f, 2.0f * x / _screenSize[0] - 1.0f),-1.0f);
+		float yPosition =  fmax(fmin(1.0f, 2.0f * y / _screenSize[1] - 1.0f),-1.0f);
 		
 		if(mode == MouseMode::Start) {
 			_keyboard.startLeftMouse(xPosition,yPosition);

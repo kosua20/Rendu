@@ -21,7 +21,7 @@ public:
 	void reset();
 
 	/// Update the view matrix.
-	void update(float elapsedTime);
+	void update(double elapsedTime);
 
 	/// Register a key press/release.
 	void key(int key, bool flag);

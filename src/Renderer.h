@@ -30,7 +30,7 @@ public:
 	/// Draw function
 	void draw();
 
-	void physics(float elapsedTime);
+	void physics(double elapsedTime);
 
 	/// Clean function
 	void clean() const;
@@ -44,12 +44,12 @@ public:
 	/// Handle mouse inputs
 	void buttonPressed(int button, int action, double x, double y);
 
-	void mousePosition(int x, int y, bool leftPress, bool rightPress);
+	void mousePosition(double x, double y, bool leftPress, bool rightPress);
 
 	
 private:
 	
-	float _timer;
+	double _timer;
 
 	Camera _camera;
 

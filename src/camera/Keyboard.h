@@ -15,7 +15,7 @@ public:
 	void reset();
 
 	/// Update the values of the 4 view-frame vectors.
-	void update(float elapsedTime);
+	void update(double elapsedTime);
 
 	/// Register a pressed or release movement key.
 	void registerMove(int direction, bool flag);

@@ -121,7 +121,7 @@ void Gbuffer::resize(int width, int height){
 }
 
 void Gbuffer::resize(glm::vec2 size){
-	resize(size[0],size[1]);
+	resize((int)size[0], (int)size[1]);
 }
 
 void Gbuffer::clean() const {
