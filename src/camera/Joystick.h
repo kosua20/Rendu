@@ -27,6 +27,8 @@ public:
 	
 private:
 	
+	void configure();
+	
 	/// Joystick ID (or -1 if no joystick is connected).
 	int _id;
 	
@@ -37,6 +39,12 @@ private:
 
 	float _speed;
 	float _angularSpeed;
+	
+	// References to GLFW flags.
+	int _axisCount;
+	int _buttonsCount;
+	const float * _axes;
+	const unsigned char * _buttons;
 	
 };
 
