@@ -213,7 +213,7 @@ void MeshUtilities::centerAndUnitMesh(Mesh & mesh){
 	maxi = maxi == 0.0 ? 1.0 : maxi;
 	
 	// Scale the mesh.
-	for(int i = 0; i < mesh.positions.size(); i++){
+	for(size_t i = 0; i < mesh.positions.size(); i++){
 		mesh.positions[i] /= maxi;
 	}
 
