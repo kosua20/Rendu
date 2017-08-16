@@ -6,7 +6,7 @@
 #include "Camera.h"
 
 
-Camera::Camera() : _keyboard(_eye, _center, _up, _right) {
+Camera::Camera() : _keyboard(_eye, _center, _up, _right), _joystick(_eye, _center, _up, _right) {
 	_verticalResolution = 720;
 	reset();
 	
@@ -21,17 +21,29 @@ void Camera::reset(){
 	_right = glm::vec3(1.0,0.0,0.0);
 	_view = glm::lookAt(_eye, _center, _up);
 	_keyboard.reset();
+	_joystick.reset();
 }
 
 void Camera::update(double elapsedTime){
-	
-	_keyboard.update(elapsedTime);
+
+	if(_joystick.id() >= 0){
+		// If a joystick is present, update it.
+		_joystick.update(elapsedTime);
+	} else {
+		// Else update the keyboard.
+		_keyboard.update(elapsedTime);
+	}
 	// Update the view matrix.
 	_view = glm::lookAt(_eye, _center, _up);
 }
 
 
 void Camera::key(int key, bool flag){
+	// Ignore if joystick present, for now.
+	if(_joystick.id() >= 0) {
+		return;
+	}
+	
 	if (key == GLFW_KEY_W || key == GLFW_KEY_A
 		|| key == GLFW_KEY_S || key == GLFW_KEY_D
 		|| key == GLFW_KEY_Q || key == GLFW_KEY_E) {
@@ -52,6 +64,11 @@ void Camera::joystick(int joystick, int event){
 }
 
 void Camera::mouse(MouseMode mode, float x, float y){
+	// Ignore if joystick present, for now.
+	if(_joystick.id() >= 0) {
+		return;
+	}
+	
 	if (mode == MouseMode::End) {
 		_keyboard.endLeftMouse();
 	} else {
