@@ -6,7 +6,7 @@
 #include "Keyboard.h"
 
 Keyboard::Keyboard(glm::vec3 & eye, glm::vec3 & center, glm::vec3 & up, glm::vec3 & right) : _eye(eye), _center(center), _up(up), _right(right) {
-	_speed = 1.2;
+	_speed = 1.2f;
 	_angularSpeed = 75.0f;
 	reset();
 } 
@@ -19,16 +19,16 @@ void Keyboard::reset(){
 	_deltaPosition = glm::vec2(0.0);
 }
 
-void Keyboard::update(float elapsedTime){
+void Keyboard::update(double elapsedTime){
 	
 	// We need the direction of the camera, normalized.
 	glm::vec3 look = normalize(_center - _eye);
 	// One step forward or backward.
-	glm::vec3 deltaLook =  _speed * elapsedTime * look;
+	glm::vec3 deltaLook =  _speed * (float)elapsedTime * look;
 	// One step laterally horizontal.
-	glm::vec3 deltaLateral = _speed * elapsedTime * _right;
+	glm::vec3 deltaLateral = _speed * (float)elapsedTime * _right;
 	// One step laterally vertical.
-	glm::vec3 deltaVertical = _speed * elapsedTime * _up;
+	glm::vec3 deltaVertical = _speed * (float)elapsedTime * _up;
 
 	
 	if(_keys[0]){ // Forward
@@ -55,7 +55,7 @@ void Keyboard::update(float elapsedTime){
   		_eye = _eye + deltaVertical;
 	}
 	if(_keys[6]){
-  		_center = _center + (_deltaPosition.x * _right + _deltaPosition.y * _up) * elapsedTime * _angularSpeed;
+  		_center = _center + (_deltaPosition.x * _right + _deltaPosition.y * _up) * (float)elapsedTime * _angularSpeed;
   		look = normalize(_center - _eye);
 	}
 

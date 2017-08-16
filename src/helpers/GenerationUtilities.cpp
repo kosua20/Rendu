@@ -9,14 +9,14 @@ void Random::seed(){
 	_realDist = std::uniform_real_distribution<float>(0,1);
 }
 
-void Random::seed(double seedValue){
+void Random::seed(unsigned int seedValue){
 	_seed = seedValue;
 	_mt = std::mt19937(_seed);
 	_realDist = std::uniform_real_distribution<float>(0,1);
 }
 
 int Random::Int(int min, int max){
-	return floor(Float() * (max+1 - min)) + min;
+	return (int)(floor(Float() * (max+1 - min)) + min);
 }
 
 float Random::Float(){
@@ -27,11 +27,11 @@ float Random::Float(float min, float max){
 	return _realDist(_mt)*(max-min)+min;
 }
 
-double Random::getSeed(){
+unsigned int Random::getSeed(){
 	return _seed;
 }
 
 std::mt19937 Random::_mt;
 std::uniform_real_distribution<float> Random::_realDist;
-double Random::_seed;
+unsigned int Random::_seed;
 

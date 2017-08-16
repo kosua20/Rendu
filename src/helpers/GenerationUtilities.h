@@ -8,7 +8,7 @@ public:
 	
 	static void seed();
 	
-	static void seed(double seedValue);
+	static void seed(unsigned int seedValue);
 	
 	static int Int(int min, int max);
 	
@@ -16,11 +16,11 @@ public:
 	
 	static float Float(float min, float max);
 	
-	static double getSeed();
+	static unsigned int getSeed();
 	
 private:
 	
-	static double _seed;
+	static unsigned int _seed;
 	static std::mt19937 _mt;
 	static std::uniform_real_distribution<float> _realDist;
 };

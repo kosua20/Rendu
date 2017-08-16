@@ -20,12 +20,18 @@ struct TextureInfos {
 	int width;
 	int height;
 	bool cubemap;
+
+	TextureInfos() : id(0), width(0), height(0), cubemap(false) {}
+
 };
 
 struct MeshInfos {
 	GLuint vId;
 	GLuint eId;
 	GLsizei count;
+
+	MeshInfos() : vId(0), eId(0), count(0) {}
+
 };
 
 

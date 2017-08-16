@@ -56,7 +56,7 @@ GLuint AmbientQuad::setupSSAO(){
 		_samples.push_back(glm::normalize(randVec));
 		_samples.back() *= Random::Float(0.0f,1.0f);
 		// Skew the distribution towards the center.
-		float scale = i/24.0;
+		float scale = i/24.0f;
 		scale = 0.1f+0.9f*scale*scale;
 		_samples.back() *= scale;
 	}

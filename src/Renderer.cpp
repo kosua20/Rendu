@@ -19,13 +19,16 @@ Renderer::Renderer(int width, int height){
 	// Setup projection matrix.
 	_camera.screen(width, height);
 	
-	
-	_gbuffer = std::make_shared<Gbuffer>(_camera.renderSize()[0],_camera.renderSize()[1]);
-	_ssaoFramebuffer = std::make_shared<Framebuffer>(0.5f * _camera.renderSize()[0], 0.5f * _camera.renderSize()[1], GL_RED, GL_UNSIGNED_BYTE, GL_RED, GL_LINEAR, GL_CLAMP_TO_EDGE);
-	_ssaoBlurFramebuffer = std::make_shared<Framebuffer>(_camera.renderSize()[0], _camera.renderSize()[1], GL_RED, GL_UNSIGNED_BYTE, GL_RED, GL_LINEAR, GL_CLAMP_TO_EDGE);
-	_sceneFramebuffer = std::make_shared<Framebuffer>(_camera.renderSize()[0],_camera.renderSize()[1], GL_RGBA, GL_FLOAT, GL_RGBA16F, GL_LINEAR,GL_CLAMP_TO_EDGE);
-	_toneMappingFramebuffer = std::make_shared<Framebuffer>(_camera.renderSize()[0],_camera.renderSize()[1], GL_RGBA, GL_UNSIGNED_BYTE, GL_RGBA, GL_LINEAR,GL_CLAMP_TO_EDGE);
-	_fxaaFramebuffer = std::make_shared<Framebuffer>(_camera.renderSize()[0],_camera.renderSize()[1], GL_RGBA,GL_UNSIGNED_BYTE, GL_RGBA, GL_LINEAR,GL_CLAMP_TO_EDGE);
+	const int renderWidth = (int)_camera.renderSize()[0];
+	const int renderHeight = (int)_camera.renderSize()[1];
+	const int renderHalfWidth = (int)(0.5f * _camera.renderSize()[0]);
+	const int renderHalfHeight = (int)(0.5f * _camera.renderSize()[1]);
+	_gbuffer = std::make_shared<Gbuffer>(renderWidth, renderHeight);
+	_ssaoFramebuffer = std::make_shared<Framebuffer>(renderHalfWidth, renderHalfHeight, GL_RED, GL_UNSIGNED_BYTE, GL_RED, GL_LINEAR, GL_CLAMP_TO_EDGE);
+	_ssaoBlurFramebuffer = std::make_shared<Framebuffer>(renderWidth, renderHeight, GL_RED, GL_UNSIGNED_BYTE, GL_RED, GL_LINEAR, GL_CLAMP_TO_EDGE);
+	_sceneFramebuffer = std::make_shared<Framebuffer>(renderWidth, renderHeight, GL_RGBA, GL_FLOAT, GL_RGBA16F, GL_LINEAR,GL_CLAMP_TO_EDGE);
+	_toneMappingFramebuffer = std::make_shared<Framebuffer>(renderWidth, renderHeight, GL_RGBA, GL_UNSIGNED_BYTE, GL_RGBA, GL_LINEAR,GL_CLAMP_TO_EDGE);
+	_fxaaFramebuffer = std::make_shared<Framebuffer>(renderWidth, renderHeight, GL_RGBA,GL_UNSIGNED_BYTE, GL_RGBA, GL_LINEAR,GL_CLAMP_TO_EDGE);
 	
 	// Create directional light.
 	_directionalLights.emplace_back(glm::vec3(0.0f), glm::vec3(2.0f), glm::ortho(-0.75f,0.75f,-0.75f,0.75f,2.0f,6.0f));
@@ -98,7 +101,7 @@ Renderer::Renderer(int width, int height){
 void Renderer::draw() {
 	
 	// Compute the time elapsed since last frame
-	float elapsed = glfwGetTime() - _timer;
+	double elapsed = glfwGetTime() - _timer;
 	_timer = glfwGetTime();
 	
 	// Physics simulation
@@ -205,7 +208,7 @@ void Renderer::draw() {
 	glEnable(GL_FRAMEBUFFER_SRGB);
 	
 	// Set screen viewport.
-	glViewport(0,0,_camera.screenSize()[0],_camera.screenSize()[1]);
+	glViewport(0, 0, GLsizei(_camera.screenSize()[0]), GLsizei(_camera.screenSize()[1]));
 	
 	// Draw the fullscreen quad
 	_finalScreen.draw( 1.0f / _camera.screenSize());
@@ -218,7 +221,7 @@ void Renderer::draw() {
 	_timer = glfwGetTime();
 }
 
-void Renderer::physics(float elapsedTime){
+void Renderer::physics(double elapsedTime){
 	
 	_camera.update(elapsedTime);
 	
@@ -227,7 +230,7 @@ void Renderer::physics(float elapsedTime){
 	
 	for(size_t i = 0; i <_pointLights.size(); ++i){
 		auto& pointLight = _pointLights[i];
-		glm::vec4 newPosition = glm::rotate(glm::mat4(1.0f), elapsedTime, glm::vec3(0.0f, 1.0f, 0.0f))*glm::vec4(pointLight.local(), 1.0f);
+		glm::vec4 newPosition = glm::rotate(glm::mat4(1.0f), (float)elapsedTime, glm::vec3(0.0f, 1.0f, 0.0f))*glm::vec4(pointLight.local(), 1.0f);
 		pointLight.update(glm::vec3(newPosition), _camera.view());
 	}
 	
@@ -287,7 +290,7 @@ void Renderer::keyPressed(int key, int action){
 void Renderer::buttonPressed(int button, int action, double x, double y){
 	if (button == GLFW_MOUSE_BUTTON_LEFT) {
 		if (action == GLFW_PRESS) {
-			_camera.mouse(MouseMode::Start,x, y);
+			_camera.mouse(MouseMode::Start,(float)x, (float)y);
 		} else if (action == GLFW_RELEASE) {
 			_camera.mouse(MouseMode::End, 0.0, 0.0);
 		}
@@ -296,7 +299,7 @@ void Renderer::buttonPressed(int button, int action, double x, double y){
 	}
 }
 
-void Renderer::mousePosition(int x, int y, bool leftPress, bool rightPress){
+void Renderer::mousePosition(double x, double y, bool leftPress, bool rightPress){
 	if (leftPress){
 		_camera.mouse(MouseMode::Move, float(x), float(y));
 	}
