@@ -43,6 +43,14 @@ void Camera::key(int key, bool flag){
 	}
 }
 
+void Camera::joystick(int joystick, int event){
+	if (event == GLFW_CONNECTED) {
+		std::cout << "Connected joystick " << joystick << std::endl;
+	} else if (event == GLFW_DISCONNECTED) {
+		std::cout << "Disconnected joystick " << joystick << std::endl;
+	}
+}
+
 void Camera::mouse(MouseMode mode, float x, float y){
 	if (mode == MouseMode::End) {
 		_keyboard.endLeftMouse();

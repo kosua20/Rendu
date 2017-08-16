@@ -40,12 +40,15 @@ public:
 
 	/// Handle keyboard inputs
 	void keyPressed(int key, int action);
+	
+	/// Handle joystick inputs.
+	void joystick(int joy, int event);
 
 	/// Handle mouse inputs
 	void buttonPressed(int button, int action, double x, double y);
 
 	void mousePosition(double x, double y, bool leftPress, bool rightPress);
-
+	
 	
 private:
 	
