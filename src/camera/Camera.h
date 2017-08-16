@@ -3,6 +3,7 @@
 
 #include <glm/glm.hpp>
 #include "Keyboard.h"
+#include "Joystick.h"
 
 enum class MouseMode {
 	Start, Move, End
@@ -64,7 +65,7 @@ private:
 	
 	/// Input methods
 	Keyboard _keyboard;
-	
+	Joystick _joystick;
 	
 
 };
