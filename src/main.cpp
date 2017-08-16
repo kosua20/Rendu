@@ -49,6 +49,12 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset){
 	// ...
 }
 
+Renderer *rendererGlbPtr;
+void joystick_callback(int joy, int event){
+	rendererGlbPtr->joystick(joy, event);
+}
+
+
 
 /// The main function
 
@@ -87,6 +93,8 @@ int main () {
 
 	// Create the renderer.
 	Renderer renderer = Renderer(INITIAL_SIZE_WIDTH,INITIAL_SIZE_HEIGHT);
+	// Keep a global ref to the render for some callbacks.
+	rendererGlbPtr = &renderer;
 	
 	glfwSetWindowUserPointer(window, &renderer);
 	// Setup callbacks for various interactions and inputs.
@@ -95,6 +103,7 @@ int main () {
 	glfwSetMouseButtonCallback(window,mouse_button_callback);	// Clicking the mouse buttons
 	glfwSetCursorPosCallback(window,cursor_pos_callback);		// Moving the cursor
 	glfwSetScrollCallback(window,scroll_callback);				// Scrolling
+	glfwSetJoystickCallback(joystick_callback);					// Joystick
 	
 	// On HiDPI screens, we might have to initially resize the framebuffers size.
 	int width, height;

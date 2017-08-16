@@ -259,8 +259,6 @@
 		F4FA2F221E881370007EBA57 /* fxaa.vert */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = fxaa.vert; sourceTree = "<group>"; };
 		F4FA2F231E881370007EBA57 /* screenquad.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = screenquad.frag; sourceTree = "<group>"; };
 		F4FA2F241E881370007EBA57 /* screenquad.vert */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = screenquad.vert; sourceTree = "<group>"; };
-		F4FE353F1D0C474C00B8318A /* Joystick.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Joystick.cpp; sourceTree = "<group>"; };
-		F4FE35401D0C474C00B8318A /* Joystick.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Joystick.h; sourceTree = "<group>"; };
 		F4FE35411D0C474C00B8318A /* Keyboard.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Keyboard.cpp; sourceTree = "<group>"; };
 		F4FE35421D0C474C00B8318A /* Keyboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Keyboard.h; sourceTree = "<group>"; };
 		F4FE35431D0C47AA00B8318A /* Camera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Camera.cpp; sourceTree = "<group>"; };
@@ -646,8 +644,6 @@
 			children = (
 				F4FE35431D0C47AA00B8318A /* Camera.cpp */,
 				F4FE35441D0C47AA00B8318A /* Camera.h */,
-				F4FE353F1D0C474C00B8318A /* Joystick.cpp */,
-				F4FE35401D0C474C00B8318A /* Joystick.h */,
 				F4FE35411D0C474C00B8318A /* Keyboard.cpp */,
 				F4FE35421D0C474C00B8318A /* Keyboard.h */,
 			);

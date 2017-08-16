@@ -287,6 +287,10 @@ void Renderer::keyPressed(int key, int action){
 	}
 }
 
+void Renderer::joystick(int joy, int event){
+	_camera.joystick(joy, event);
+}
+
 void Renderer::buttonPressed(int button, int action, double x, double y){
 	if (button == GLFW_MOUSE_BUTTON_LEFT) {
 		if (action == GLFW_PRESS) {
