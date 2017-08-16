@@ -23,9 +23,9 @@
 		F41F5F651E817F3100C18D8D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F41F5F641E817F3100C18D8D /* Cocoa.framework */; };
 		F41F5F671E817F3500C18D8D /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F41F5F661E817F3500C18D8D /* IOKit.framework */; };
 		F41F5F691E817F3A00C18D8D /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F41F5F681E817F3A00C18D8D /* CoreVideo.framework */; };
-		F41F5F6B1E8180CF00C18D8D /* libglfw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F41F5F6A1E8180CF00C18D8D /* libglfw3.a */; };
 		F43246721F438C3B0090FD5F /* gl3w.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F43245DD1F438BFB0090FD5F /* gl3w.cpp */; };
 		F44F7F871F435AF60057CEFE /* ProgramInfos.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F44F7F861F435AF60057CEFE /* ProgramInfos.cpp */; };
+		F47EC10D1F446D5F000960F3 /* libglfw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F47EC10C1F446D5E000960F3 /* libglfw3.a */; };
 		F4B42D021F425B8100E485C5 /* ResourcesManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4B42D001F425B8100E485C5 /* ResourcesManager.cpp */; };
 		F4FA2F051E87F60D007EBA57 /* DirectionalLight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4FA2F001E87F60D007EBA57 /* DirectionalLight.cpp */; };
 		F4FA2F061E87F60D007EBA57 /* PointLight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4FA2F031E87F60D007EBA57 /* PointLight.cpp */; };
@@ -212,6 +212,7 @@
 		F461621C1CF9D5A400B22823 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		F461621D1CF9D5A400B22823 /* Renderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Renderer.cpp; sourceTree = "<group>"; };
 		F461621E1CF9D5A400B22823 /* Renderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Renderer.h; sourceTree = "<group>"; };
+		F47EC10C1F446D5E000960F3 /* libglfw3.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libglfw3.a; path = "src/libs/glfw/lib-mac/libglfw3.a"; sourceTree = "<group>"; };
 		F494157A1DE1D3EC0086E191 /* Gbuffer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Gbuffer.cpp; sourceTree = "<group>"; };
 		F494157B1DE1D3EC0086E191 /* Gbuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Gbuffer.h; sourceTree = "<group>"; };
 		F496FD691E91319000A295A8 /* tonemap.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = tonemap.frag; sourceTree = "<group>"; };
@@ -271,7 +272,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F41F5F6B1E8180CF00C18D8D /* libglfw3.a in Frameworks */,
+				F47EC10D1F446D5F000960F3 /* libglfw3.a in Frameworks */,
 				F41F5F691E817F3A00C18D8D /* CoreVideo.framework in Frameworks */,
 				F41F5F671E817F3500C18D8D /* IOKit.framework in Frameworks */,
 				F41F5F651E817F3100C18D8D /* Cocoa.framework in Frameworks */,
@@ -293,6 +294,7 @@
 		F41F5F611E817F2600C18D8D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F47EC10C1F446D5E000960F3 /* libglfw3.a */,
 				F41F5F6C1E8180E100C18D8D /* libGLEW.a */,
 				F41F5F6A1E8180CF00C18D8D /* libglfw3.a */,
 				F41F5F681E817F3A00C18D8D /* CoreVideo.framework */,
@@ -766,10 +768,12 @@
 					/usr/local/include,
 					src/helpers/,
 					src/libs/,
+					src/libs/glfw/include/,
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/usr/local/Cellar/glew/2.0.0/lib,
+					"$(PROJECT_DIR)/src/libs/glfw/lib-mac",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -789,10 +793,12 @@
 					/usr/local/include,
 					src/helpers/,
 					src/libs/,
+					src/libs/glfw/include/,
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/usr/local/Cellar/glew/2.0.0/lib,
+					"$(PROJECT_DIR)/src/libs/glfw/lib-mac",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -848,6 +854,7 @@
 					/usr/local/include,
 					src/helpers/,
 					src/libs/,
+					src/libs/glfw/include/,
 				);
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
@@ -898,6 +905,7 @@
 					/usr/local/include,
 					src/helpers/,
 					src/libs/,
+					src/libs/glfw/include/,
 				);
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
