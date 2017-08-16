@@ -24,6 +24,7 @@
 		F41F5F671E817F3500C18D8D /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F41F5F661E817F3500C18D8D /* IOKit.framework */; };
 		F41F5F691E817F3A00C18D8D /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F41F5F681E817F3A00C18D8D /* CoreVideo.framework */; };
 		F43246721F438C3B0090FD5F /* gl3w.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F43245DD1F438BFB0090FD5F /* gl3w.cpp */; };
+		F43EF9AB1F44EDFB0073DFFB /* Joystick.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F43EF9A91F44EDFB0073DFFB /* Joystick.cpp */; };
 		F44F7F871F435AF60057CEFE /* ProgramInfos.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F44F7F861F435AF60057CEFE /* ProgramInfos.cpp */; };
 		F47EC10D1F446D5F000960F3 /* libglfw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F47EC10C1F446D5E000960F3 /* libglfw3.a */; };
 		F4B42D021F425B8100E485C5 /* ResourcesManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4B42D001F425B8100E485C5 /* ResourcesManager.cpp */; };
@@ -197,6 +198,8 @@
 		F432466C1F438BFB0090FD5F /* vector_relational.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = vector_relational.hpp; sourceTree = "<group>"; };
 		F432466E1F438BFB0090FD5F /* stb_image.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = stb_image.h; sourceTree = "<group>"; };
 		F43246701F438BFB0090FD5F /* tinydir.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tinydir.h; sourceTree = "<group>"; };
+		F43EF9A91F44EDFB0073DFFB /* Joystick.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Joystick.cpp; sourceTree = "<group>"; };
+		F43EF9AA1F44EDFB0073DFFB /* Joystick.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Joystick.h; sourceTree = "<group>"; };
 		F447FFBE1D0D8FBD0084E251 /* Object.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Object.cpp; sourceTree = "<group>"; };
 		F447FFBF1D0D8FBD0084E251 /* Object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Object.h; sourceTree = "<group>"; };
 		F447FFC21D0DD2C30084E251 /* Framebuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Framebuffer.cpp; sourceTree = "<group>"; };
@@ -644,6 +647,8 @@
 			children = (
 				F4FE35431D0C47AA00B8318A /* Camera.cpp */,
 				F4FE35441D0C47AA00B8318A /* Camera.h */,
+				F43EF9A91F44EDFB0073DFFB /* Joystick.cpp */,
+				F43EF9AA1F44EDFB0073DFFB /* Joystick.h */,
 				F4FE35411D0C474C00B8318A /* Keyboard.cpp */,
 				F4FE35421D0C474C00B8318A /* Keyboard.h */,
 			);
@@ -730,6 +735,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F43246721F438C3B0090FD5F /* gl3w.cpp in Sources */,
+				F43EF9AB1F44EDFB0073DFFB /* Joystick.cpp in Sources */,
 				F41F5F521E817E4B00C18D8D /* Camera.cpp in Sources */,
 				F41F5F541E817E4B00C18D8D /* Keyboard.cpp in Sources */,
 				F4FA2F051E87F60D007EBA57 /* DirectionalLight.cpp in Sources */,
