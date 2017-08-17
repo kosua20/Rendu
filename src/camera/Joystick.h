@@ -34,6 +34,8 @@ private:
 	
 	void configure();
 	
+	static std::string trim(const std::string & str, const std::string & del);
+	
 	/// Joystick ID (or -1 if no joystick is connected).
 	int _id;
 	
