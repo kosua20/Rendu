@@ -8,7 +8,7 @@
 #include "Joystick.h"
 
 Joystick::Joystick(glm::vec3 & eye, glm::vec3 & center, glm::vec3 & up, glm::vec3 & right) : _eye(eye), _center(center), _up(up), _right(right){
-	_speed = 2.5f;
+	_speed = 1.0f;
 	_angularSpeed = 4.0f;
 	_id = -1;
 	
@@ -52,6 +52,16 @@ void Joystick::update(float elapsedTime){
 		_up = glm::vec3(0.0,1.0,0.0);
 		_right = glm::vec3(1.0,0.0,0.0);
 		return;
+	}
+	
+	// Special actions to restore the camera orientation.
+	// Restore the up vector.
+	if(_buttons[4] == GLFW_PRESS){
+		_up = glm::vec3(0.0f,1.0f,0.0f);
+	}
+	// Look at the center of the scene
+	if( _buttons[5] == GLFW_PRESS){
+		_center[0] = _center[1] = _center[2] = 0.0f;
 	}
 	
 	// The Up and Down boutons are configured to register each press only once
