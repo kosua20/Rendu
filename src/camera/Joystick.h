@@ -2,7 +2,7 @@
 #define Joystick_h
 
 #include <glm/glm.hpp>
-
+#include <map>
 
 class Joystick {
 
@@ -45,6 +45,7 @@ private:
 	int _buttonsCount;
 	const float * _axes;
 	const unsigned char * _buttons;
+	std::map<int, bool> _recentPress;
 	
 };
 
