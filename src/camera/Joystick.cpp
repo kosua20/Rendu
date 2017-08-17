@@ -33,8 +33,9 @@ void Joystick::deactivate(){
 }
 
 void Joystick::reset(){
-	_recentPress[14] = false;
-	_recentPress[16] = false;
+	_recentPress[SPEED_UP] = false;
+	_recentPress[SPEED_DOWN] = false;
+	configure();
 }
 
 void Joystick::update(float elapsedTime){
@@ -43,10 +44,8 @@ void Joystick::update(float elapsedTime){
 	_buttons = glfwGetJoystickButtons(_id, &_buttonsCount);
 	
 	// Handle buttons
-	// PS4 codes: from 0 to 17
-	// Square, Cross, Circle, Triangle, L1, R1, L2, R2, Share, Option, L3, R3, PS button, Touchpad, Up, Right, Down, Left
 	// Reset camera when pressing the Circle button.
-	if(_buttons[2] == GLFW_PRESS){
+	if(_buttons[_codes[RESET_ALL]] == GLFW_PRESS){
 		_eye = glm::vec3(0.0,0.0,1.0);
 		_center = glm::vec3(0.0,0.0,0.0);
 		_up = glm::vec3(0.0,1.0,0.0);
@@ -56,66 +55,62 @@ void Joystick::update(float elapsedTime){
 	
 	// Special actions to restore the camera orientation.
 	// Restore the up vector.
-	if(_buttons[4] == GLFW_PRESS){
+	if(_buttons[_codes[RESET_ORIENTATION]] == GLFW_PRESS){
 		_up = glm::vec3(0.0f,1.0f,0.0f);
 	}
 	// Look at the center of the scene
-	if( _buttons[5] == GLFW_PRESS){
+	if( _buttons[_codes[RESET_CENTER]] == GLFW_PRESS){
 		_center[0] = _center[1] = _center[2] = 0.0f;
 	}
 	
 	// The Up and Down boutons are configured to register each press only once
 	// to avoid increasing/decreasing the speed for as long as the button is pressed.
-	if(_buttons[14] == GLFW_PRESS){
-		if(!_recentPress[14]){
+	if(_buttons[_codes[SPEED_UP]] == GLFW_PRESS){
+		if(!_recentPress[SPEED_UP]){
 			_speed *= 2.0f;
 			std::cout << "Speed: " << _speed << std::endl;
-			_recentPress[14] = true;
+			_recentPress[SPEED_UP] = true;
 		}
 	} else {
-		_recentPress[14] = false;
+		_recentPress[SPEED_UP] = false;
 	}
 	
-	if(_buttons[16] == GLFW_PRESS){
-		if(!_recentPress[16]){
+	if(_buttons[_codes[SPEED_DOWN]] == GLFW_PRESS){
+		if(!_recentPress[SPEED_DOWN]){
 			_speed *= 0.5f;
 			std::cout << "Speed: " << _speed << std::endl;
-			_recentPress[16] = true;
+			_recentPress[SPEED_DOWN] = true;
 		}
 	} else {
-		_recentPress[16] = false;
+		_recentPress[SPEED_DOWN] = false;
 	}
 	
-	
 	// Handle axis
-	// PS4 codes: from 0 to 5
-	// L horizontal, L vertical, R horizontal, R vertical, L2, R2
-	
 	// Left stick to move
 	// We need the direction of the camera, normalized.
 	glm::vec3 look = normalize(_center - _eye);
 	// Require a minimum deplacement between starting to register the move.
-	if(_axes[1]*_axes[1] + _axes[0]*_axes[0] > 0.1){
+	if(_axes[_codes[MOVE_FORWARD]]*_axes[_codes[MOVE_FORWARD]] + _axes[_codes[MOVE_LATERAL]]*_axes[_codes[MOVE_LATERAL]] > 0.1){
 		// Update the camera position.
-		_eye = _eye - _axes[1] * elapsedTime * _speed * look;
-		_eye = _eye + _axes[0] * elapsedTime * _speed * _right;
+		_eye = _eye - _axes[_codes[MOVE_FORWARD]] * elapsedTime * _speed * look;
+		_eye = _eye + _axes[_codes[MOVE_LATERAL]] * elapsedTime * _speed * _right;
 	}
 	
 	// L2 and R2 triggers are used to move up and down. They can be read like axis.
-	if(_axes[4] > -0.9){
-		_eye = _eye  - (_axes[4]+1.0f)* 0.5f * elapsedTime * _speed * _up;
+	if(_axes[_codes[MOVE_UP]] > -0.9){
+		_eye = _eye  - (_axes[_codes[MOVE_UP]]+1.0f)* 0.5f * elapsedTime * _speed * _up;
 	}
-	if(_axes[5] > -0.9){
-		_eye = _eye  + (_axes[5]+1.0f)* 0.5f * elapsedTime * _speed * _up;
+	if(_axes[_codes[MOVE_DOWN]] > -0.9){
+		_eye = _eye  + (_axes[_codes[MOVE_DOWN]]+1.0f)* 0.5f * elapsedTime * _speed * _up;
 	}
 	
 	// Update center (eye-center stays constant).
 	_center = _eye + look;
 	
 	// Right stick to look around.
-	if(_axes[3]*_axes[3] + _axes[2]*_axes[2] > 0.1){
-		_center = _center - _axes[3] * elapsedTime * _angularSpeed * _up;
-		_center = _center + _axes[2] * elapsedTime * _angularSpeed * _right;
+	if(_axes[_codes[LOOK_VERTICAL]]*_axes[_codes[LOOK_VERTICAL]] + _axes[_codes[LOOK_LATERAL]]*_axes[_codes[LOOK_LATERAL]] > 0.1){
+		_center = _center - _axes[_codes[LOOK_VERTICAL]] * elapsedTime * _angularSpeed * _up;
+		_center = _center + _axes[_codes[LOOK_LATERAL]] * elapsedTime * _angularSpeed * _right;
 	}
 	// Renormalize the look vector.
 	look = normalize(_center - _eye);
@@ -127,5 +122,23 @@ void Joystick::update(float elapsedTime){
 
 void Joystick::configure(){
 	
+	// Register all keys by hand for now.
+	// PS4 codes: from 0 to 5
+	// L horizontal, L vertical, R horizontal, R vertical, L2, R2
+	// PS4 codes: from 0 to 17
+	// Square, Cross, Circle, Triangle, L1, R1, L2, R2, Share, Option, L3, R3, PS button, Touchpad, Up, Right, Down, Left
+	_codes.clear();
+	_codes[MOVE_FORWARD] = 1;
+	_codes[MOVE_LATERAL] = 0;
+	_codes[LOOK_VERTICAL] = 3;
+	_codes[LOOK_LATERAL] = 2;
+	_codes[MOVE_UP] = 4;
+	_codes[MOVE_DOWN] = 5;
+	_codes[RESET_ALL] = 2;
+	_codes[RESET_CENTER] = 5;
+	_codes[RESET_ORIENTATION] = 4;
+	_codes[SPEED_UP] = 14;
+	_codes[SPEED_DOWN] = 16;
+
 }
 
