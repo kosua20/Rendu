@@ -27,6 +27,11 @@ public:
 	
 private:
 	
+	enum Inputs {
+		MOVE_FORWARD, MOVE_LATERAL, LOOK_VERTICAL, LOOK_LATERAL, MOVE_UP, MOVE_DOWN,
+		RESET_ALL, RESET_CENTER, RESET_ORIENTATION, SPEED_UP, SPEED_DOWN
+	};
+	
 	void configure();
 	
 	/// Joystick ID (or -1 if no joystick is connected).
@@ -45,7 +50,8 @@ private:
 	int _buttonsCount;
 	const float * _axes;
 	const unsigned char * _buttons;
-	std::map<int, bool> _recentPress;
+	std::map<Inputs, bool> _recentPress;
+	std::map<Inputs, int> _codes;
 	
 };
 
