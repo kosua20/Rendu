@@ -34,15 +34,15 @@
 - Variance shadow maps
 - Deferred shading
 - SSAO
- 
+- Resources managers
+- Joystick support
+
 [Code stops here]
 
 - HDR, bloom
 - Physically based rendering
 - Raymarching techniques (SSR ?)
-- UI elements, text rendering
-- Joystick support
-- Ressource catalogs
+- UI elements, text rendering (df)
 - Temporal AA ?
 - Water/terrain/noise ?
 - Particles, instanced drawing
