@@ -143,6 +143,7 @@
   <ItemGroup>
     <ClCompile Include="src\AmbientQuad.cpp" />
     <ClCompile Include="src\camera\Camera.cpp" />
+    <ClCompile Include="src\camera\Joystick.cpp" />
     <ClCompile Include="src\camera\Keyboard.cpp" />
     <ClCompile Include="src\Framebuffer.cpp" />
     <ClCompile Include="src\Gbuffer.cpp" />
@@ -163,6 +164,7 @@
   <ItemGroup>
     <ClInclude Include="src\AmbientQuad.h" />
     <ClInclude Include="src\camera\Camera.h" />
+    <ClInclude Include="src\camera\Joystick.h" />
     <ClInclude Include="src\camera\Keyboard.h" />
     <ClInclude Include="src\Framebuffer.h" />
     <ClInclude Include="src\Gbuffer.h" />

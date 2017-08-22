@@ -98,6 +98,9 @@
     <ClCompile Include="src\libs\gl3w\gl3w.cpp">
       <Filter>Source Files\libs\gl3w</Filter>
     </ClCompile>
+    <ClCompile Include="src\camera\Joystick.cpp">
+      <Filter>Source Files\camera</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\lights\DirectionalLight.h">
@@ -165,6 +168,9 @@
     </ClInclude>
     <ClInclude Include="src\libs\glm\glm.hpp">
       <Filter>Source Files\libs\glm</Filter>
+    </ClInclude>
+    <ClInclude Include="src\camera\Joystick.h">
+      <Filter>Source Files\camera</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
