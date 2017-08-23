@@ -5,6 +5,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <glm/glm.hpp>
 
 class ProgramInfos {
 public:
@@ -18,6 +19,9 @@ public:
 	const GLint uniform(const std::string & name) const { return _uniforms.at(name); }
 	
 	void registerUniform(const std::string & name);
+
+	// Version that cache the value passed for the uniform. Other types will be added when needed.
+	void registerUniform(const std::string & name, const glm::vec3 & val);
 	
 	void registerTexture(const std::string & name, int slot);
 	
@@ -32,6 +36,7 @@ private:
 	GLuint _id;
 	std::map<std::string, GLint> _uniforms;
 	std::map<std::string, int> _textures;
+	std::map<std::string, glm::vec3> _vec3s;
 	
 };
 
