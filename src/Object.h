@@ -3,6 +3,7 @@
 #include <gl3w/gl3w.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
+
 #include "helpers/ResourcesManager.h"
 
 
@@ -32,8 +33,8 @@ public:
 
 private:
 	
-	ProgramInfos _program;
-	ProgramInfos _programDepth;
+	std::shared_ptr<ProgramInfos> _program;
+	std::shared_ptr<ProgramInfos> _programDepth;
 	MeshInfos _mesh;
 	
 	GLuint _texColor;

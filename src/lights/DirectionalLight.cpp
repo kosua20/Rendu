@@ -24,10 +24,10 @@ void DirectionalLight::init(const std::map<std::string, GLuint>& textureIds){
 	_screenquad.init(textures, "directional_light");
 	
 	
-	_screenquad.program().registerUniform("viewToLight");
-	_screenquad.program().registerUniform("lightDirection");
-	_screenquad.program().registerUniform("lightColor");
-	_screenquad.program().registerUniform("projectionMatrix");
+	_screenquad.program()->registerUniform("viewToLight");
+	_screenquad.program()->registerUniform("lightDirection");
+	_screenquad.program()->registerUniform("lightColor");
+	_screenquad.program()->registerUniform("projectionMatrix");
 	
 
 }
@@ -40,13 +40,13 @@ void DirectionalLight::draw(const glm::vec2& invScreenSize, const glm::mat4& vie
 	glm::vec4 projectionVector = glm::vec4(projectionMatrix[0][0], projectionMatrix[1][1], projectionMatrix[2][2], projectionMatrix[3][2]);
 	glm::vec3 lightPositionViewSpace = glm::vec3(viewMatrix * glm::vec4(_local, 0.0));
 	
-	glUseProgram(_screenquad.program().id());
+	glUseProgram(_screenquad.program()->id());
 	
-	glUniform3fv(_screenquad.program().uniform("lightDirection"), 1,  &lightPositionViewSpace[0]);
-	glUniform3fv(_screenquad.program().uniform("lightColor"), 1,  &_color[0]);
+	glUniform3fv(_screenquad.program()->uniform("lightDirection"), 1,  &lightPositionViewSpace[0]);
+	glUniform3fv(_screenquad.program()->uniform("lightColor"), 1,  &_color[0]);
 	// Projection parameter for position reconstruction.
-	glUniform4fv(_screenquad.program().uniform("projectionMatrix"), 1, &(projectionVector[0]));
-	glUniformMatrix4fv(_screenquad.program().uniform("viewToLight"), 1, GL_FALSE, &viewToLight[0][0]);
+	glUniform4fv(_screenquad.program()->uniform("projectionMatrix"), 1, &(projectionVector[0]));
+	glUniformMatrix4fv(_screenquad.program()->uniform("viewToLight"), 1, GL_FALSE, &viewToLight[0][0]);
 
 	_screenquad.draw(invScreenSize);
 

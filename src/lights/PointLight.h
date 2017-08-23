@@ -24,9 +24,9 @@ private:
 	float _radius;
 	std::vector<GLuint> _textureIds;
 	
-	ProgramInfos _program;
+	std::shared_ptr<ProgramInfos> _program;
 	
-	static ProgramInfos _debugProgram;
+	static std::shared_ptr<ProgramInfos> _debugProgram;
 	static MeshInfos _debugMesh;
 	
 };

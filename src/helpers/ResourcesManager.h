@@ -5,14 +5,14 @@
 #include <string>
 #include <vector>
 #include <map>
-
+#include <memory>
 #include "GLUtilities.h"
 #include "ProgramInfos.h"
 
 class Resources {
 public:
 	
-	const ProgramInfos getProgram(const std::string & name);
+	const std::shared_ptr<ProgramInfos> getProgram(const std::string & name);
 	
 	const MeshInfos getMesh(const std::string & name);
 	
@@ -22,6 +22,8 @@ public:
 	
 	const std::string getTextFile(const std::string & filename);
 	
+	void reload();
+
 private:
 	
 	enum ShaderType {
@@ -47,7 +49,7 @@ private:
 	
 	std::map<std::string, MeshInfos> _meshes;
 	
-	std::map<std::string, ProgramInfos> _programs;
+	std::map<std::string, std::shared_ptr<ProgramInfos>> _programs;
 	
 	//std::map<std::string, std::string> _shaders;
 	

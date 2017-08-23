@@ -70,7 +70,7 @@ void Resources::parseDirectory(const std::string & directoryPath){
 }
 
 
-const ProgramInfos Resources::getProgram(const std::string & name){
+const std::shared_ptr<ProgramInfos> Resources::getProgram(const std::string & name){
 	if(_programs.count(name) > 0){
 		return _programs[name];
 	}
@@ -80,7 +80,7 @@ const ProgramInfos Resources::getProgram(const std::string & name){
 	
 	_programs.emplace(std::piecewise_construct,
 					  std::forward_as_tuple(name),
-					  std::forward_as_tuple(vertexContent, fragmentContent));
+					  std::forward_as_tuple(new ProgramInfos(vertexContent, fragmentContent)));
 	
 	return _programs[name];
 }
@@ -177,6 +177,14 @@ const std::string Resources::getTextFile(const std::string & filename){
 		return "";
 	}
 	return Resources::loadStringFromFile(path);
+}
+
+void Resources::reload() {
+	for (auto & prog : _programs) {
+		const std::string vertexContent = getShader(prog.first, Vertex);
+		const std::string fragmentContent = getShader(prog.first, Fragment);
+		prog.second->reload(vertexContent, fragmentContent);
+	}
 }
 
 const std::vector<std::string> Resources::getCubemapPaths(const std::string & name){

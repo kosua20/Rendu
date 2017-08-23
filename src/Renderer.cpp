@@ -283,6 +283,10 @@ void Renderer::keyPressed(int key, int action){
 	if(action == GLFW_PRESS){
 		_camera.key(key, true);
 	} else if(action == GLFW_RELEASE) {
+		if (key == GLFW_KEY_P) {
+			Resources::manager().reload();
+			return;
+		}
 		_camera.key(key, false);
 	}
 }

@@ -26,7 +26,7 @@ public:
 
 private:
 	
-	ProgramInfos _program;
+	std::shared_ptr<ProgramInfos> _program;
 	GLuint _vao;
 	GLuint _ebo;
 	GLuint _texCubeMap;

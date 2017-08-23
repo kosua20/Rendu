@@ -21,7 +21,7 @@ void AmbientQuad::init(std::map<std::string, GLuint> textureIds){
 	// Load texture.
 	_texCubeMapSmall = Resources::manager().getCubemap("cubemap_diff").id;
 	// Bind uniform to texture slot.
-	_program.registerTexture("textureCubeMapSmall", (int)_textureIds.size());
+	_program->registerTexture("textureCubeMapSmall", (int)_textureIds.size());
 	
 	// Setup SSAO data, get back noise texture id, add it to the gbuffer outputs.
 	GLuint noiseTextureID = setupSSAO();
@@ -31,18 +31,11 @@ void AmbientQuad::init(std::map<std::string, GLuint> textureIds){
 	// Now that we have the program we can send the samples to the GPU too.
 	for(int i = 0; i < 24; ++i){
 		const std::string name = "samples[" + std::to_string(i) + "]";
-		_ssaoScreen.program().registerUniform(name);
+		_ssaoScreen.program()->registerUniform(name);
 	}
-	glUseProgram(_ssaoScreen.program().id());
-	for(int i = 0; i < 24; ++i){
-		const std::string name = "samples[" + std::to_string(i) + "]";
-		glUseProgram(_ssaoScreen.program().id());
-		glUniform3fv(_ssaoScreen.program().uniform(name), 1, &(_samples[i][0]) );
-	}
-	glUseProgram(0);
 	
-	_program.registerUniform("inverseV");
-	_ssaoScreen.program().registerUniform("projectionMatrix");
+	_program->registerUniform("inverseV");
+	_ssaoScreen.program()->registerUniform("projectionMatrix");
 	checkGLError();
 }
 
@@ -89,9 +82,9 @@ void AmbientQuad::draw(const glm::vec2& invScreenSize, const glm::mat4& viewMatr
 	
 	glm::mat4 invView = glm::inverse(viewMatrix);
 	
-	glUseProgram(_program.id());
+	glUseProgram(_program->id());
 	
-	glUniformMatrix4fv(_program.uniform("inverseV"), 1, GL_FALSE, &invView[0][0]);
+	glUniformMatrix4fv(_program->uniform("inverseV"), 1, GL_FALSE, &invView[0][0]);
 	
 	glActiveTexture(GL_TEXTURE0 + (unsigned int)_textureIds.size());
 	glBindTexture(GL_TEXTURE_CUBE_MAP, _texCubeMapSmall);
@@ -101,9 +94,14 @@ void AmbientQuad::draw(const glm::vec2& invScreenSize, const glm::mat4& viewMatr
 
 void AmbientQuad::drawSSAO(const glm::vec2& invScreenSize, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) const {
 	
-	glUseProgram(_ssaoScreen.program().id());
-	
-	glUniformMatrix4fv(_ssaoScreen.program().uniform("projectionMatrix"), 1, GL_FALSE, &projectionMatrix[0][0]);
+	glUseProgram(_ssaoScreen.program()->id());
+	// Send samples.
+	// @TODO cache uniform for reload instead of re-sending them.
+	for (int i = 0; i < 24; ++i) {
+		const std::string name = "samples[" + std::to_string(i) + "]";
+		glUniform3fv(_ssaoScreen.program()->uniform(name), 1, &(_samples[i][0]));
+	}
+	glUniformMatrix4fv(_ssaoScreen.program()->uniform("projectionMatrix"), 1, GL_FALSE, &projectionMatrix[0][0]);
 	
 	_ssaoScreen.draw(invScreenSize);
 	
