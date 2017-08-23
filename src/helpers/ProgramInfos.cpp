@@ -38,6 +38,17 @@ void ProgramInfos::registerTexture(const std::string & name, int slot){
 	glUseProgram(0);
 }
 
+void ProgramInfos::registerUniform(const std::string & name, const glm::vec3 & val) {
+	
+	_vec3s[name] = val;
+	glUseProgram(_id);
+	if (_uniforms.count(name) == 0) {
+		_uniforms[name] = glGetUniformLocation(_id, name.c_str());
+	}
+	glUniform3fv(_uniforms[name], 1, &(_vec3s[name][0]));
+	glUseProgram(0);
+}
+
 void ProgramInfos::reload(const std::string & vertexContent, const std::string & fragmentContent)
 {
 	_id = GLUtilities::createProgram(vertexContent, fragmentContent);
@@ -46,6 +57,8 @@ void ProgramInfos::reload(const std::string & vertexContent, const std::string &
 		_uniforms[uni.first] = glGetUniformLocation(_id, uni.first.c_str());
 		if (_textures.count(uni.first) > 0) {
 			glUniform1i(_uniforms[uni.first], _textures[uni.first]);
+		} else if (_vec3s.count(uni.first) > 0) {
+			glUniform3fv(_uniforms[uni.first], 1, &(_vec3s[uni.first][0]));
 		}
 	}
 	glUseProgram(0);
@@ -53,5 +66,5 @@ void ProgramInfos::reload(const std::string & vertexContent, const std::string &
 
 
 ProgramInfos::~ProgramInfos(){
-	//glDeleteProgram(id);
+	glDeleteProgram(_id);
 }

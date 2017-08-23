@@ -31,7 +31,7 @@ void AmbientQuad::init(std::map<std::string, GLuint> textureIds){
 	// Now that we have the program we can send the samples to the GPU too.
 	for(int i = 0; i < 24; ++i){
 		const std::string name = "samples[" + std::to_string(i) + "]";
-		_ssaoScreen.program()->registerUniform(name);
+		_ssaoScreen.program()->registerUniform(name, _samples[i]);
 	}
 	
 	_program->registerUniform("inverseV");
@@ -95,12 +95,7 @@ void AmbientQuad::draw(const glm::vec2& invScreenSize, const glm::mat4& viewMatr
 void AmbientQuad::drawSSAO(const glm::vec2& invScreenSize, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) const {
 	
 	glUseProgram(_ssaoScreen.program()->id());
-	// Send samples.
-	// @TODO cache uniform for reload instead of re-sending them.
-	for (int i = 0; i < 24; ++i) {
-		const std::string name = "samples[" + std::to_string(i) + "]";
-		glUniform3fv(_ssaoScreen.program()->uniform(name), 1, &(_samples[i][0]));
-	}
+	
 	glUniformMatrix4fv(_ssaoScreen.program()->uniform("projectionMatrix"), 1, GL_FALSE, &projectionMatrix[0][0]);
 	
 	_ssaoScreen.draw(invScreenSize);
