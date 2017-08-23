@@ -26,15 +26,15 @@ public:
 	/// Clean function
 	void clean() const;
 
-	const ProgramInfos & program() const { return _program; }
+	const std::shared_ptr<ProgramInfos> program() const { return _program; }
 	
-	 ProgramInfos & program() { return _program; }
+	std::shared_ptr<ProgramInfos> program() { return _program; }
 	
 protected:
 	
 	void loadGeometry();
 	
-	ProgramInfos _program;
+	std::shared_ptr<ProgramInfos> _program;
 	GLuint _vao;
 	GLuint _ebo;
 	std::vector<GLuint> _textureIds;

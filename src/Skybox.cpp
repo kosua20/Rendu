@@ -59,8 +59,8 @@ void Skybox::init(){
 	
 	_texCubeMap = Resources::manager().getCubemap("cubemap").id;
 	// Bind uniform to texture slot.
-	_program.registerTexture("textureCubeMap", 0);
-	_program.registerUniform("mvp");
+	_program->registerTexture("textureCubeMap", 0);
+	_program->registerUniform("mvp");
 	
 	checkGLError();
 	
@@ -78,11 +78,11 @@ void Skybox::draw(const glm::mat4& view, const glm::mat4& projection) const {
 	glm::mat4 MVP = projection * MV;
 	
 	// Select the program (and shaders).
-	glUseProgram(_program.id());
+	glUseProgram(_program->id());
 
 	// Upload the MVP matrix.
 	
-	glUniformMatrix4fv(_program.uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
+	glUniformMatrix4fv(_program->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
 	
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, _texCubeMap);
