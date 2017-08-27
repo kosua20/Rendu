@@ -113,6 +113,7 @@ void Camera::screen(int width, int height){
 
 void Camera::internalResolution(int height){
 	// No need to update the screen size.
+	_verticalResolution = height;
 	// Same aspect ratio as the display resolution
 	_renderSize = (float(_verticalResolution)/_screenSize[1]) * _screenSize;
 	// Perspective projection.
