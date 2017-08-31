@@ -68,14 +68,12 @@ void main(){
 	vec2 localUV = In.uv;
 	vec2 positionShift;
 	
-	// If parallax mapping is enabled, compute the new uvs, and use them for the remaining steps.
-	if(materialId == 2){
-		vec3 vTangentDir = normalize(- In.tangentSpacePosition);
-		localUV = parallax(localUV, vTangentDir, positionShift);
-		// If UV are outside the texture ([0,1]), we discard the fragment.
-		if(localUV.x > 1.0 || localUV.y  > 1.0 || localUV.x < 0.0 || localUV.y < 0.0){
-			discard;
-		}
+	// Compute the new uvs, and use them for the remaining steps.
+	vec3 vTangentDir = normalize(- In.tangentSpacePosition);
+	localUV = parallax(localUV, vTangentDir, positionShift);
+	// If UV are outside the texture ([0,1]), we discard the fragment.
+	if(localUV.x > 1.0 || localUV.y  > 1.0 || localUV.x < 0.0 || localUV.y < 0.0){
+		discard;
 	}
 	
 	// Compute the normal at the fragment using the tangent space matrix and the normal read in the normal map.
@@ -90,21 +88,19 @@ void main(){
 	
 	// Store depth manually (see below).
 	gl_FragDepth = gl_FragCoord.z;
-	// If parallax mapping is enabled, update the depth using the heightmap and the displacement applied.
-	if(materialId == 2){
-		fragEffects.g = 1.0;
-		// Read the depth.
-		float localDepth = fragEffects.r;
-		// Convert the 3D shift applied from tangent space to view space.
-		vec3 shift = In.tbn * vec3(positionShift.xy, -PARALLAX_SCALE * localDepth);
-		// Update the depth in view space.
-		vec3 newViewSpacePosition = In.viewSpacePosition - vec3(0.0,0.0, shift.z);
-		// Back to clip space.
-		vec4 clipPos = p * vec4(newViewSpacePosition,1.0);
-		// Perpsective division.
-		float newDepth = clipPos.z / clipPos.w;
-		// Update the fragment depth, taking into account the depth range parameters.
-		gl_FragDepth = ((gl_DepthRange.diff * newDepth) + gl_DepthRange.near + gl_DepthRange.far)/2.0;
-	}
+	// Update the depth using the heightmap and the displacement applied.
+	fragEffects.g = 1.0;
+	// Read the depth.
+	float localDepth = fragEffects.r;
+	// Convert the 3D shift applied from tangent space to view space.
+	vec3 shift = In.tbn * vec3(positionShift.xy, -PARALLAX_SCALE * localDepth);
+	// Update the depth in view space.
+	vec3 newViewSpacePosition = In.viewSpacePosition - vec3(0.0,0.0, shift.z);
+	// Back to clip space.
+	vec4 clipPos = p * vec4(newViewSpacePosition,1.0);
+	// Perpsective division.
+	float newDepth = clipPos.z / clipPos.w;
+	// Update the fragment depth, taking into account the depth range parameters.
+	gl_FragDepth = ((gl_DepthRange.diff * newDepth) + gl_DepthRange.near + gl_DepthRange.far)/2.0;
 	
 }
