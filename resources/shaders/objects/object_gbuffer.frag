@@ -1,5 +1,7 @@
 #version 330
 
+#define MATERIAL_ID 1
+
 // Input: tangent space matrix, position (view space) and uv coming from the vertex shader
 in INTERFACE {
     mat3 tbn;
@@ -9,8 +11,6 @@ in INTERFACE {
 uniform sampler2D texture0;
 uniform sampler2D texture1;
 uniform sampler2D texture2;
-
-uniform int materialId;
 
 // Output: the fragment color
 layout (location = 0) out vec4 fragColor;
@@ -26,7 +26,7 @@ void main(){
 	
 	// Store values.
 	fragColor.rgb = texture(texture0,  In.uv).rgb;
-	fragColor.a = float(materialId)/255.0;
+	fragColor.a = float(MATERIAL_ID)/255.0;
 	fragNormal.rgb = normalize(In.tbn * n)*0.5+0.5;
 	fragEffects.rgb = texture(texture2, In.uv).rgb;
 	

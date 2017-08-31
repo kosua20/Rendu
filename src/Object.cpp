@@ -11,7 +11,7 @@ Object::Object() {}
 
 Object::~Object() {}
 
-void Object::init(const std::string& meshPath, const std::vector<std::pair<std::string, bool>>& texturesPaths, const Object::Type & type) {
+void Object::init(const Object::Type & type, const std::string& meshPath, const std::vector<std::pair<std::string, bool>>& texturesPaths, const std::vector<std::pair<std::string, bool>>& cubemapPaths) {
 
 	_material = static_cast<int>(type);
 
@@ -20,14 +20,18 @@ void Object::init(const std::string& meshPath, const std::vector<std::pair<std::
 	_programDepth->registerUniform("mvp");
 
 	switch (_material) {
+	case Object::Skybox:
+		_program = Resources::manager().getProgram("skybox_gbuffer");
+		_program->registerUniforms({ "mvp" });
+		break;
 	case Object::Parallax:
 			_program = Resources::manager().getProgram("parallax_gbuffer");
-			_program->registerUniforms({ "mvp", "mv", "p", "normalMatrix", "materialId" });
+			_program->registerUniforms({ "mvp", "mv", "p", "normalMatrix" });
 		break;
 	case Object::Regular:
 	default:
 			_program = Resources::manager().getProgram("object_gbuffer");
-			_program->registerUniforms({ "mvp", "normalMatrix", "materialId" });
+			_program->registerUniforms({ "mvp", "normalMatrix" });
 		break;
 	}
 
@@ -40,7 +44,13 @@ void Object::init(const std::string& meshPath, const std::vector<std::pair<std::
 		_textures.push_back(Resources::manager().getTexture(textureName.first, textureName.second));
 		_program->registerTexture("texture" + std::to_string(i), i);
 	}
-
+	for (unsigned int i = 0; i < cubemapPaths.size(); ++i) {
+		const auto & textureName = cubemapPaths[i];
+		_textures.push_back(Resources::manager().getCubemap(textureName.first, textureName.second));
+		_program->registerTexture("texture" + std::to_string( texturesPaths.size() + i), (int)texturesPaths.size() + i);
+	}
+	
+	_model = glm::mat4(1.0f);
 	checkGLError();
 
 }
@@ -63,23 +73,26 @@ void Object::draw(const glm::mat4& view, const glm::mat4& projection) const {
 	// Select the program (and shaders).
 	glUseProgram(_program->id());
 
-
 	// Upload the MVP matrix.
 	glUniformMatrix4fv(_program->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
-	
-	
-	// Upload the normal matrix.
-	glUniformMatrix3fv(_program->uniform("normalMatrix"), 1, GL_FALSE, &normalMatrix[0][0]);
-	
-	// Material id.
-	glUniform1i(_program->uniform("materialId"), _material);
 
-	if (_material == Type::Parallax) {
-		// Upload the projection matrix.
-		glUniformMatrix4fv(_program->uniform("p"), 1, GL_FALSE, &projection[0][0]);
-		// Upload the MV matrix.
-		glUniformMatrix4fv(_program->uniform("mv"), 1, GL_FALSE, &MV[0][0]);
+	switch (_material) {
+		case Object::Parallax:
+			// Upload the projection matrix.
+			glUniformMatrix4fv(_program->uniform("p"), 1, GL_FALSE, &projection[0][0]);
+			// Upload the MV matrix.
+			glUniformMatrix4fv(_program->uniform("mv"), 1, GL_FALSE, &MV[0][0]);
+			// Upload the normal matrix.
+			glUniformMatrix3fv(_program->uniform("normalMatrix"), 1, GL_FALSE, &normalMatrix[0][0]);
+			break;
+		case Object::Regular:
+			// Upload the normal matrix.
+			glUniformMatrix3fv(_program->uniform("normalMatrix"), 1, GL_FALSE, &normalMatrix[0][0]);
+			break;
+		default:
+			break;
 	}
+	
 
 	// Bind the textures.
 	for (unsigned int i = 0; i < _textures.size(); ++i){
