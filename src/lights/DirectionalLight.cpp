@@ -24,10 +24,7 @@ void DirectionalLight::init(const std::map<std::string, GLuint>& textureIds){
 	_screenquad.init(textures, "directional_light");
 	
 	
-	_screenquad.program()->registerUniform("viewToLight");
-	_screenquad.program()->registerUniform("lightDirection");
-	_screenquad.program()->registerUniform("lightColor");
-	_screenquad.program()->registerUniform("projectionMatrix");
+	_screenquad.program()->registerUniforms({ "viewToLight", "lightDirection", "lightColor", "projectionMatrix" });
 	
 
 }

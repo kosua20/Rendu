@@ -60,11 +60,10 @@ Renderer::Renderer(int width, int height){
 	checkGLError();
 
 	// Initialize objects.
-	_suzanne.init( "suzanne", {"suzanne_texture_color", "suzanne_texture_normal", "suzanne_texture_ao_specular_reflection"}, 1);
-	
-	_dragon.init("dragon", {"dragon_texture_color", "dragon_texture_normal", "dragon_texture_ao_specular_reflection" },  1);
-	
-	_plane.init("plane", { "plane_texture_color", "plane_texture_normal", "plane_texture_depthmap" },  2);
+
+	_suzanne.init("suzanne", { {"suzanne_texture_color", true }, {"suzanne_texture_normal", false}, {"suzanne_texture_ao_specular_reflection", false} }, Object::Type::Regular);
+	_dragon.init("dragon", { { "dragon_texture_color", true }, { "dragon_texture_normal", false }, { "dragon_texture_ao_specular_reflection", false } }, Object::Type::Regular);
+	_plane.init("plane", { { "plane_texture_color", true }, { "plane_texture_normal", false }, { "plane_texture_depthmap", false } }, Object::Type::Parallax);
 	
 	_skybox.init();
 	
@@ -146,7 +145,14 @@ void Renderer::draw() {
 		pointLight.drawDebug(_camera.view(), _camera.projection());
 	}
 	
+	// No need to write the skybox depth to the framebuffer.
+	glDepthMask(GL_FALSE);
+	// Accept a depth of 1.0 (far plane).
+	glDepthFunc(GL_LEQUAL);
 	_skybox.draw(_camera.view(), _camera.projection());
+	glDepthFunc(GL_LESS);
+	glDepthMask(GL_TRUE);
+	
 	
 	// Unbind the full scene framebuffer.
 	_gbuffer->unbind();

@@ -7,16 +7,21 @@
 #include "helpers/ResourcesManager.h"
 
 
+
 class Object {
 
 public:
+
+	enum Type {
+		Regular = 1, Parallax = 2
+	};
 
 	Object();
 
 	~Object();
 
 	/// Init function
-	void init(const std::string& meshPath, const std::vector<std::string>& texturesPaths, int materialId);
+	void init(const std::string& meshPath, const std::vector<std::pair<std::string, bool>>& texturesPaths, const Object::Type & type);
 	
 	/// Update function
 	void update(const glm::mat4& model);
@@ -37,9 +42,7 @@ private:
 	std::shared_ptr<ProgramInfos> _programDepth;
 	MeshInfos _mesh;
 	
-	GLuint _texColor;
-	GLuint _texNormal;
-	GLuint _texEffects;
+	std::vector<TextureInfos> _textures;
 	
 	glm::mat4 _model;
 	
