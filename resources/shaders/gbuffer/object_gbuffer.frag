@@ -8,9 +8,9 @@ in INTERFACE {
 	vec2 uv;
 } In ;
 
-uniform sampler2D textureColor;
-uniform sampler2D textureNormal;
-uniform sampler2D textureEffects;
+uniform sampler2D texture0;
+uniform sampler2D texture1;
+uniform sampler2D texture2;
 uniform mat4 p;
 uniform int materialId;
 
@@ -32,7 +32,7 @@ vec2 parallax(vec2 uv, vec3 vTangentDir, out vec2 positionShift){
 	float layerHeight = 1.0 / layersCount;
 	float currentLayer = 0.0;
 	// Initial depth at the given position.
-	float currentDepth = texture(textureEffects, uv).z;
+	float currentDepth = texture(texture2, uv).z;
 	
 	// Step vector: in tangent space, we walk on the surface, in the (X,Y) plane.
 	vec2 shift = PARALLAX_SCALE * vTangentDir.xy;
@@ -45,7 +45,7 @@ vec2 parallax(vec2 uv, vec3 vTangentDir, out vec2 positionShift){
 		// We update the UV, going further away from the viewer.
 		newUV -= shiftUV;
 		// Update current depth.
-		currentDepth = texture(textureEffects,newUV).z;
+		currentDepth = texture(texture2,newUV).z;
 		// Update current layer.
 		currentLayer += layerHeight;
 	}
@@ -54,7 +54,7 @@ vec2 parallax(vec2 uv, vec3 vTangentDir, out vec2 positionShift){
 	vec2 previousNewUV = newUV + shiftUV;
 	// The local depth is the gap between the current depth and the current depth layer.
 	float currentLocalDepth = currentDepth - currentLayer;
-	float previousLocalDepth = texture(textureEffects,previousNewUV).z - (currentLayer - layerHeight);
+	float previousLocalDepth = texture(texture2,previousNewUV).z - (currentLayer - layerHeight);
 	
 	
 	// Interpolate between the two local depths to obtain the correct UV shift.
@@ -79,14 +79,14 @@ void main(){
 	}
 	
 	// Compute the normal at the fragment using the tangent space matrix and the normal read in the normal map.
-	vec3 n = texture(textureNormal,localUV).rgb;
+	vec3 n = texture(texture1,localUV).rgb;
 	n = normalize(n * 2.0 - 1.0);
 	
 	// Store values.
-	fragColor.rgb = texture(textureColor, localUV).rgb;
+	fragColor.rgb = texture(texture0, localUV).rgb;
 	fragColor.a = float(materialId)/255.0;
 	fragNormal.rgb = normalize(In.tbn * n)*0.5+0.5;
-	fragEffects.rgb = texture(textureEffects,localUV).rgb;
+	fragEffects.rgb = texture(texture2,localUV).rgb;
 	
 	// Store depth manually (see below).
 	gl_FragDepth = gl_FragCoord.z;

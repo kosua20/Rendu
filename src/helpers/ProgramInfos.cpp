@@ -26,6 +26,19 @@ void ProgramInfos::registerUniform(const std::string & name){
 	glUseProgram(0);
 }
 
+void ProgramInfos::registerUniforms(const std::vector<std::string>& names)
+{
+	glUseProgram(_id);
+	for (const auto & name : names) {
+		if (_uniforms.count(name) > 0) {
+			// Already setup, ignore.
+			continue;
+		}
+		_uniforms[name] = glGetUniformLocation(_id, name.c_str());
+	}
+	glUseProgram(0);
+}
+
 void ProgramInfos::registerTexture(const std::string & name, int slot){
 	if(_uniforms.count(name) > 0){
 		// Already setup, ignore.

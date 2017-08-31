@@ -20,6 +20,8 @@ public:
 	
 	void registerUniform(const std::string & name);
 
+	void registerUniforms(const std::vector<std::string> & names);
+
 	// Version that cache the value passed for the uniform. Other types will be added when needed.
 	void registerUniform(const std::string & name, const glm::vec3 & val);
 	

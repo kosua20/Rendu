@@ -14,7 +14,10 @@ out INTERFACE {
 
 void main(){
 	// We multiply the coordinates by the MVP matrix, and ouput the result.
-	gl_Position = mvp * vec4(v, 1.0);
+	// To keep the skybox centered on the camera, we treat its vertices as directions (no translation)
+	gl_Position = mvp * vec4(v, 0.0);
+	// Ensure the skybox is sent to the maximum depth.
+	gl_Position.z = gl_Position.w; 
 	Out.position = v;
 	
 }

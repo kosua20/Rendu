@@ -21,7 +21,6 @@ void ScreenQuad::init(GLuint textureId, const std::string & shaderRoot){
 	// Link the texture of the framebuffer for this program.
 	_textureIds.push_back(textureId);
 	_program->registerTexture("screenTexture", 0);
-	//glBindTexture(GL_TEXTURE_2D, _textureIds[0]);
 	_program->registerUniform("inverseScreenSize");
 	
 	checkGLError();
@@ -39,7 +38,6 @@ void ScreenQuad::init(std::map<std::string, GLuint> textureIds, const std::strin
 	GLint currentTextureSlot = 0;
 	for(auto& texture : textureIds){
 		_textureIds.push_back(texture.second);
-		//glBindTexture(GL_TEXTURE_2D, _textureIds.back());
 		_program->registerTexture(texture.first, currentTextureSlot);
 		currentTextureSlot += 1;
 	}
