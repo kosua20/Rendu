@@ -6,15 +6,30 @@
 
 #include "Object.h"
 
+
 Object::Object() {}
 
 Object::~Object() {}
 
 void Object::init(const std::string& meshPath, const std::vector<std::pair<std::string, bool>>& texturesPaths, const Object::Type & type) {
 
+	_material = static_cast<int>(type);
+
 	// Load the shaders
 	_programDepth = Resources::manager().getProgram("object_depth");
-	_program = Resources::manager().getProgram("object_gbuffer");
+	_programDepth->registerUniform("mvp");
+
+	switch (_material) {
+	case Object::Parallax:
+			_program = Resources::manager().getProgram("parallax_gbuffer");
+			_program->registerUniforms({ "mvp", "mv", "p", "normalMatrix", "materialId" });
+		break;
+	case Object::Regular:
+	default:
+			_program = Resources::manager().getProgram("object_gbuffer");
+			_program->registerUniforms({ "mvp", "normalMatrix", "materialId" });
+		break;
+	}
 
 	// Load geometry.
 	_mesh = Resources::manager().getMesh(meshPath);
@@ -25,12 +40,6 @@ void Object::init(const std::string& meshPath, const std::vector<std::pair<std::
 		_textures.push_back(Resources::manager().getTexture(textureName.first, textureName.second));
 		_program->registerTexture("texture" + std::to_string(i), i);
 	}
-
-	_program->registerUniforms({ "mvp", "mv", "p", "normalMatrix", "materialId" });
-
-	_material = static_cast<int>(type);
-
-	_programDepth->registerUniform("mvp");
 
 	checkGLError();
 
@@ -57,14 +66,20 @@ void Object::draw(const glm::mat4& view, const glm::mat4& projection) const {
 
 	// Upload the MVP matrix.
 	glUniformMatrix4fv(_program->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
-	// Upload the MV matrix.
-	glUniformMatrix4fv(_program->uniform("mv"), 1, GL_FALSE, &MV[0][0]);
+	
+	
 	// Upload the normal matrix.
 	glUniformMatrix3fv(_program->uniform("normalMatrix"), 1, GL_FALSE, &normalMatrix[0][0]);
-	// Upload the projection matrix.
-	glUniformMatrix4fv(_program->uniform("p"), 1, GL_FALSE, &projection[0][0]);
+	
 	// Material id.
 	glUniform1i(_program->uniform("materialId"), _material);
+
+	if (_material == Type::Parallax) {
+		// Upload the projection matrix.
+		glUniformMatrix4fv(_program->uniform("p"), 1, GL_FALSE, &projection[0][0]);
+		// Upload the MV matrix.
+		glUniformMatrix4fv(_program->uniform("mv"), 1, GL_FALSE, &MV[0][0]);
+	}
 
 	// Bind the textures.
 	for (unsigned int i = 0; i < _textures.size(); ++i){

@@ -47,7 +47,7 @@ private:
 	glm::mat4 _model;
 	
 	int _material;
-	
+
 };
 
 #endif
