@@ -1,5 +1,7 @@
 #version 330
 
+#define MATERIAL_ID 2
+
 // Input: tangent space matrix, position (view space) and uv coming from the vertex shader
 in INTERFACE {
     mat3 tbn;
@@ -12,7 +14,6 @@ uniform sampler2D texture0;
 uniform sampler2D texture1;
 uniform sampler2D texture2;
 uniform mat4 p;
-uniform int materialId;
 
 #define PARALLAX_MIN 8
 #define PARALLAX_MAX 32
@@ -82,7 +83,7 @@ void main(){
 	
 	// Store values.
 	fragColor.rgb = texture(texture0, localUV).rgb;
-	fragColor.a = float(materialId)/255.0;
+	fragColor.a = float(MATERIAL_ID)/255.0;
 	fragNormal.rgb = normalize(In.tbn * n)*0.5+0.5;
 	fragEffects.rgb = texture(texture2,localUV).rgb;
 	

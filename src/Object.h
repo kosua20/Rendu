@@ -13,7 +13,7 @@ class Object {
 public:
 
 	enum Type {
-		Regular = 1, Parallax = 2
+		Skybox = 0, Regular = 1, Parallax = 2
 	};
 
 	Object();
@@ -21,7 +21,7 @@ public:
 	~Object();
 
 	/// Init function
-	void init(const std::string& meshPath, const std::vector<std::pair<std::string, bool>>& texturesPaths, const Object::Type & type);
+	void init(const Object::Type & type, const std::string& meshPath, const std::vector<std::pair<std::string, bool>>& texturesPaths, const std::vector<std::pair<std::string, bool>>& cubemapPaths = {});
 	
 	/// Update function
 	void update(const glm::mat4& model);

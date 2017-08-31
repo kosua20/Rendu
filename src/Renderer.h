@@ -12,7 +12,6 @@
 #include "AmbientQuad.h"
 #include "camera/Camera.h"
 #include "Object.h"
-#include "Skybox.h"
 #include "ScreenQuad.h"
 #include "lights/DirectionalLight.h"
 #include "lights/PointLight.h"
@@ -58,8 +57,8 @@ private:
 
 	Object _suzanne;
 	Object _dragon;
-	Skybox _skybox;
 	Object _plane;
+	Object _skybox;
 
 	std::shared_ptr<Gbuffer> _gbuffer;
 	std::shared_ptr<Framebuffer> _ssaoFramebuffer;

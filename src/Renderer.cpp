@@ -61,11 +61,10 @@ Renderer::Renderer(int width, int height){
 
 	// Initialize objects.
 
-	_suzanne.init("suzanne", { {"suzanne_texture_color", true }, {"suzanne_texture_normal", false}, {"suzanne_texture_ao_specular_reflection", false} }, Object::Type::Regular);
-	_dragon.init("dragon", { { "dragon_texture_color", true }, { "dragon_texture_normal", false }, { "dragon_texture_ao_specular_reflection", false } }, Object::Type::Regular);
-	_plane.init("plane", { { "plane_texture_color", true }, { "plane_texture_normal", false }, { "plane_texture_depthmap", false } }, Object::Type::Parallax);
-	
-	_skybox.init();
+	_suzanne.init(Object::Type::Regular, "suzanne", { {"suzanne_texture_color", true }, {"suzanne_texture_normal", false}, {"suzanne_texture_ao_specular_reflection", false} });
+	_dragon.init(Object::Type::Regular, "dragon", { { "dragon_texture_color", true }, { "dragon_texture_normal", false }, { "dragon_texture_ao_specular_reflection", false } });
+	_plane.init(Object::Type::Parallax, "plane", { { "plane_texture_color", true }, { "plane_texture_normal", false }, { "plane_texture_depthmap", false } });
+	_skybox.init(Object::Type::Skybox, "skybox", {}, {{"cubemap", true }});
 	
 	std::map<std::string, GLuint> ambientTextures = _gbuffer->textureIds({ TextureType::Albedo, TextureType::Normal, TextureType::Depth });
 	ambientTextures["ssaoTexture"] = _ssaoBlurFramebuffer->textureId();
@@ -93,7 +92,6 @@ Renderer::Renderer(int width, int height){
 	
 	_dragon.update(dragonModel);
 	_plane.update(planeModel);
-	
 }
 
 

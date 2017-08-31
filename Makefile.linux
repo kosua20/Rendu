@@ -4,7 +4,6 @@ CXX = g++
 #Include directories (for headers): standard include dirs in /usr and /usr/local, and our helper directory.
 INCLUDEDIR = -I/usr/include/ -I/usr/local/include/ -Isrc/helpers/ -Isrc/libs/
 #Library directory (just in case)
-#You might have to symlink libGLEW in your standard libdir for use at runtime
 LIBDIR = -L/usr/local/lib
 #Libraries needed: OpenGL and glfw3.  glfw3 require X11, Xi, and so on...
 LIBS = -lglfw3 -lGL -lX11 -lXi -lXrandr -lXxf86vm -lXinerama -lXcursor -lrt -lm -pthread -ldl
