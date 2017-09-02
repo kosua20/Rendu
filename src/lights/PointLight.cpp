@@ -15,8 +15,7 @@ PointLight::PointLight(const glm::vec3& worldPosition, const glm::vec3& color, f
 void PointLight::loadProgramAndGeometry() {
 
 	_debugProgram = Resources::manager().getProgram("point_light_debug");
-	_debugProgram->registerUniforms({"radius", "lightWorldPosition", "mvp", "lightColor"
-});
+
 	// Load geometry.
 	_debugMesh = Resources::manager().getMesh("sphere");
 	
@@ -34,9 +33,6 @@ void PointLight::init(const std::map<std::string, GLuint>& textureIds){
 		_program->registerTexture(texture.first, currentTextureSlot);
 		currentTextureSlot += 1;
 	}
-	
-	_program->registerUniforms({ "lightColor", "projectionMatrix", "inverseScreenSize", "radius", "lightWorldPosition", "mvp", "lightPosition" });
-	
 	
 	checkGLError();
 }

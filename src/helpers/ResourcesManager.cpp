@@ -77,7 +77,7 @@ const std::shared_ptr<ProgramInfos> Resources::getProgram(const std::string & na
 	
 	const std::string vertexContent = getShader(name, Vertex);
 	const std::string fragmentContent = getShader(name, Fragment);
-	
+
 	_programs.emplace(std::piecewise_construct,
 					  std::forward_as_tuple(name),
 					  std::forward_as_tuple(new ProgramInfos(vertexContent, fragmentContent)));
