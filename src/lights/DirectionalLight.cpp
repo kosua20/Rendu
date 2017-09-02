@@ -23,10 +23,6 @@ void DirectionalLight::init(const std::map<std::string, GLuint>& textureIds){
 	textures["shadowMap"] = _blurPass->textureId();
 	_screenquad.init(textures, "directional_light");
 	
-	
-	_screenquad.program()->registerUniforms({ "viewToLight", "lightDirection", "lightColor", "projectionMatrix" });
-	
-
 }
 
 void DirectionalLight::draw(const glm::vec2& invScreenSize, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) const {

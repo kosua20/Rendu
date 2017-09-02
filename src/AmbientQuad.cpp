@@ -29,13 +29,8 @@ void AmbientQuad::init(std::map<std::string, GLuint> textureIds){
 	_ssaoScreen.init(ssaoTextures, "ssao");
 	
 	// Now that we have the program we can send the samples to the GPU too.
-	for(int i = 0; i < 24; ++i){
-		const std::string name = "samples[" + std::to_string(i) + "]";
-		_ssaoScreen.program()->registerUniform(name, _samples[i]);
-	}
+	_ssaoScreen.program()->cacheUniformArray("samples", _samples);
 	
-	_program->registerUniform("inverseV");
-	_ssaoScreen.program()->registerUniform("projectionMatrix");
 	checkGLError();
 }
 

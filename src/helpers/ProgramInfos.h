@@ -16,14 +16,10 @@ public:
 	
 	~ProgramInfos();
 	
-	const GLint uniform(const std::string & name) const { return _uniforms.at(name); }
-	
-	void registerUniform(const std::string & name);
+	const GLint uniform(const std::string & name) const;
 
-	void registerUniforms(const std::vector<std::string> & names);
-
-	// Version that cache the value passed for the uniform. Other types will be added when needed.
-	void registerUniform(const std::string & name, const glm::vec3 & val);
+	// Version that cache the values passed for the uniform array. Other types will be added when needed.
+	void cacheUniformArray(const std::string & name, const std::vector<glm::vec3> & vals);
 	
 	void registerTexture(const std::string & name, int slot);
 	

@@ -17,21 +17,17 @@ void Object::init(const Object::Type & type, const std::string& meshPath, const 
 
 	// Load the shaders
 	_programDepth = Resources::manager().getProgram("object_depth");
-	_programDepth->registerUniform("mvp");
 
 	switch (_material) {
 	case Object::Skybox:
 		_program = Resources::manager().getProgram("skybox_gbuffer");
-		_program->registerUniforms({ "mvp" });
 		break;
 	case Object::Parallax:
-			_program = Resources::manager().getProgram("parallax_gbuffer");
-			_program->registerUniforms({ "mvp", "mv", "p", "normalMatrix" });
+		_program = Resources::manager().getProgram("parallax_gbuffer");
 		break;
 	case Object::Regular:
 	default:
-			_program = Resources::manager().getProgram("object_gbuffer");
-			_program->registerUniforms({ "mvp", "normalMatrix" });
+		_program = Resources::manager().getProgram("object_gbuffer");
 		break;
 	}
 
