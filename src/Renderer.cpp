@@ -31,7 +31,7 @@ Renderer::Renderer(int width, int height){
 	_fxaaFramebuffer = std::make_shared<Framebuffer>(renderWidth, renderHeight, GL_RGBA,GL_UNSIGNED_BYTE, GL_RGBA, GL_LINEAR,GL_CLAMP_TO_EDGE);
 	
 	// Create directional light.
-	_directionalLights.emplace_back(glm::vec3(0.0f), glm::vec3(2.0f), glm::ortho(-0.75f,0.75f,-0.75f,0.75f,2.0f,6.0f));
+	_directionalLights.emplace_back(glm::vec3(0.0f), 2.5f*glm::vec3(1.0f,1.0f, 0.92f), glm::ortho(-0.75f,0.75f,-0.75f,0.75f,1.0f,6.0f));
 	
 	// Create point lights.
 	const float lI = 6.0; // Light intensity.
@@ -64,7 +64,7 @@ Renderer::Renderer(int width, int height){
 	_suzanne.init(Object::Type::Regular, "suzanne", { {"suzanne_texture_color", true }, {"suzanne_texture_normal", false}, {"suzanne_texture_ao_specular_reflection", false} });
 	_dragon.init(Object::Type::Regular, "dragon", { { "dragon_texture_color", true }, { "dragon_texture_normal", false }, { "dragon_texture_ao_specular_reflection", false } });
 	_plane.init(Object::Type::Parallax, "plane", { { "plane_texture_color", true }, { "plane_texture_normal", false }, { "plane_texture_depthmap", false } });
-	_skybox.init(Object::Type::Skybox, "skybox", {}, {{"cubemap", true }});
+	_skybox.init(Object::Type::Skybox, "skybox", {}, {{"corsica_beach_cube", true }});
 	
 	std::map<std::string, GLuint> ambientTextures = _gbuffer->textureIds({ TextureType::Albedo, TextureType::Normal, TextureType::Depth });
 	ambientTextures["ssaoTexture"] = _ssaoBlurFramebuffer->textureId();
@@ -117,7 +117,7 @@ void Renderer::draw() {
 		// Draw objects.
 		_suzanne.drawDepth(dirLight.mvp());
 		_dragon.drawDepth(dirLight.mvp());
-		//_plane.drawDepth(planeModel, _light._mvp);
+		//_plane.drawDepth(dirLight.mvp());
 		
 		dirLight.blurAndUnbind();
 	
@@ -230,7 +230,7 @@ void Renderer::physics(double elapsedTime){
 	_camera.update(elapsedTime);
 	
 	// Update lights.
-	_directionalLights[0].update(glm::vec3(2.0f, 1.5f + sin(0.5*_timer),2.0f), _camera.view());
+	_directionalLights[0].update(glm::vec3(-2.0f, 1.5f + sin(0.5*_timer),0.0f), _camera.view());
 	
 	for(size_t i = 0; i <_pointLights.size(); ++i){
 		auto& pointLight = _pointLights[i];
