@@ -188,7 +188,7 @@ void Resources::reload() {
 }
 
 const std::vector<std::string> Resources::getCubemapPaths(const std::string & name){
-	const std::vector<std::string> names { name + "_r", name + "_l", name + "_u", name + "_d", name + "_b", name + "_f" };
+	const std::vector<std::string> names { name + "_nx", name + "_px", name + "_py", name + "_ny", name + "_nz", name + "_pz" };
 	std::vector<std::string> paths;
 	paths.reserve(6);
 	for(auto & faceName : names){
