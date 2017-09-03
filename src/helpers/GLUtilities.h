@@ -20,8 +20,8 @@ struct TextureInfos {
 	int width;
 	int height;
 	bool cubemap;
-
-	TextureInfos() : id(0), width(0), height(0), cubemap(false) {}
+	bool hdr;
+	TextureInfos() : id(0), width(0), height(0), cubemap(false), hdr(false) {}
 
 };
 
@@ -37,8 +37,11 @@ struct MeshInfos {
 
 class GLUtilities {
 	
+private:
 	/// Load a shader of the given type from a string
 	static GLuint loadShader(const std::string & prog, GLuint type);
+	
+	static int loadEXRHelper(float **out_rgba, int *width, int *height, const char * filename, const char ** err);
 	
 public:
 	
@@ -49,6 +52,7 @@ public:
 	// Texture loading.
 	/// 2D texture.
 	static TextureInfos loadTexture(const std::string& path, bool sRGB);
+	
 	/// Cubemap texture.
 	static TextureInfos loadTextureCubemap(const std::vector<std::string> & paths, bool sRGB);
 	
