@@ -5,6 +5,9 @@
 #include <algorithm>
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image/stb_image.h>
+#define TINYEXR_IMPLEMENTATION
+#include <tinyexr/tinyexr.h>
+
 
 std::string getGLErrorString(GLenum error) {
 	std::string msg;
@@ -140,38 +143,53 @@ GLuint GLUtilities::createProgram(const std::string & vertexContent, const std::
 	return id;
 }
 
+
+
 TextureInfos GLUtilities::loadTexture(const std::string& path, bool sRGB){
 	TextureInfos infos;
 	infos.cubemap = false;
+	infos.hdr = (path.substr(path.size()-4,4) == ".exr");
 	// Load and upload the texture.
-	int components = 4;
+	
 	int width = 0;
 	int height = 0;
-	// We need to flip the texture.
-	stbi_set_flip_vertically_on_load(true);
-	unsigned char *image = stbi_load(path.c_str(), &width, &height, NULL, components);
-	if(image == NULL){
-		std::cerr << "Unable to load the texture at path " << path << "." << std::endl;
-		return infos;
-	}
 	
 	GLuint textureId;
 	glGenTextures(1, &textureId);
 	glBindTexture(GL_TEXTURE_2D, textureId);
-	glTexImage2D(GL_TEXTURE_2D, 0, sRGB ? GL_SRGB8_ALPHA8 : GL_RGBA, width , height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &(image[0]));
-	glGenerateMipmap(GL_TEXTURE_2D);
+	
+	if(infos.hdr){
+		float* image;
+		const char *err;
+		int ret = loadEXRHelper(&image, &width, &height, path.c_str(), &err);
+		if (ret != 0) {
+			std::cerr << "Unable to load the texture at path " << path << "." << std::endl;
+			return infos;
+		}
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, width, height, 0, GL_RGB, GL_FLOAT, &(image[0]));
+		free(image);
+	} else {
+		// We need to flip the texture.
+		stbi_set_flip_vertically_on_load(true);
+		unsigned char *image = stbi_load(path.c_str(), &width, &height, NULL, 4);
+		if(image == NULL){
+			std::cerr << "Unable to load the texture at path " << path << "." << std::endl;
+			return infos;
+		}
+	
+		glTexImage2D(GL_TEXTURE_2D, 0, sRGB ? GL_SRGB8_ALPHA8 : GL_RGBA, width , height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &(image[0]));
+		free(image);
+	}
+	
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-	free(image);
+	glGenerateMipmap(GL_TEXTURE_2D);
 	
 	infos.id = textureId;
 	infos.width = width;
 	infos.height = height;
 	return infos;
 }
-
-
-
 
 TextureInfos GLUtilities::loadTextureCubemap(const std::vector<std::string> & paths, bool sRGB){
 	TextureInfos infos;
@@ -181,6 +199,8 @@ TextureInfos GLUtilities::loadTextureCubemap(const std::vector<std::string> & pa
 		return infos;
 	}
 	
+	infos.hdr = (paths.front().substr(paths.front().size()-4, 4) == ".exr");
+
 	// Create and bind texture.
 	GLuint textureId;
 	glGenTextures(1, &textureId);
@@ -193,22 +213,37 @@ TextureInfos GLUtilities::loadTextureCubemap(const std::vector<std::string> & pa
 	glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 	
-	std::vector<unsigned char> image;
-	int components = 4;
 	int width = 0;
 	int height = 0;
+	
+	
 	// For each side, load the image and upload it in the right slot.
 	// We don't need to flip them.
-	stbi_set_flip_vertically_on_load(false);
-	
-	for(size_t side = 0; side < 6; ++side){
-		unsigned char *image = stbi_load(paths[side].c_str(), &width, &height, NULL, components);
-		if(image == NULL){
-			std::cerr << "Unable to load the texture at path " << paths[side] << "." << std::endl;
-			return infos;
+	if(infos.hdr){
+		for(size_t side = 0; side < 6; ++side){
+			float* image;
+			const char *err;
+			int ret = loadEXRHelper(&image, &width, &height, paths[side].c_str(), &err);
+			if (ret != 0) {
+				std::cerr << "Unable to load the texture at path " << paths[side] << "." << std::endl;
+				return infos;
+			}
+			glTexImage2D(GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + side), 0, GL_RGB32F, width, height, 0, GL_RGB, GL_FLOAT, &(image[0]));
+			free(image);
 		}
-		glTexImage2D(GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + side), 0, sRGB ? GL_SRGB8_ALPHA8 : GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &(image[0]));
-		free(image);
+	} else {
+		stbi_set_flip_vertically_on_load(false);
+
+		for(size_t side = 0; side < 6; ++side){
+			int components = 4;
+			unsigned char *image = stbi_load(paths[side].c_str(), &width, &height, NULL, components);
+			if(image == NULL){
+				std::cerr << "Unable to load the texture at path " << paths[side] << "." << std::endl;
+				return infos;
+			}
+			glTexImage2D(GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + side), 0, sRGB ? GL_SRGB8_ALPHA8 : GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &(image[0]));
+			free(image);
+		}
 	}
 	glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 	
@@ -216,6 +251,92 @@ TextureInfos GLUtilities::loadTextureCubemap(const std::vector<std::string> & pa
 	infos.width = width;
 	infos.height = height;
 	return infos;
+}
+
+
+int GLUtilities::loadEXRHelper(float **out_rgb, int *width, int *height, const char * filename, const char ** err){
+	// Code adapted from tinyEXR deprecated loadEXR.
+	EXRVersion exr_version;
+	EXRImage exr_image;
+	EXRHeader exr_header;
+	InitEXRHeader(&exr_header);
+	InitEXRImage(&exr_image);
+	
+	{
+		int ret = ParseEXRVersionFromFile(&exr_version, filename);
+		if (ret != TINYEXR_SUCCESS) {
+			return ret;
+		}
+		
+		if (exr_version.multipart || exr_version.non_image) {
+			if (err) {
+				(*err) = "Loading multipart or DeepImage is not supported yet.\n";
+			}
+			return TINYEXR_ERROR_INVALID_DATA;  // @fixme.
+		}
+	}
+	{
+		int ret = ParseEXRHeaderFromFile(&exr_header, &exr_version, filename, err);
+		if (ret != TINYEXR_SUCCESS) {
+			return ret;
+		}
+	}
+	// Read HALF channel as FLOAT.
+	for (int i = 0; i < exr_header.num_channels; i++) {
+		if (exr_header.pixel_types[i] == TINYEXR_PIXELTYPE_HALF) {
+			exr_header.requested_pixel_types[i] = TINYEXR_PIXELTYPE_FLOAT;
+		}
+	}
+	{
+		int ret = LoadEXRImageFromFile(&exr_image, &exr_header, filename, err);
+		if (ret != TINYEXR_SUCCESS) {
+			return ret;
+		}
+	}
+	// RGBA
+	int idxR = -1;
+	int idxG = -1;
+	int idxB = -1;
+	int idxA = -1;
+	for (int c = 0; c < exr_header.num_channels; c++) {
+		if (strcmp(exr_header.channels[c].name, "R") == 0) {
+			idxR = c;
+		} else if (strcmp(exr_header.channels[c].name, "G") == 0) {
+			idxG = c;
+		} else if (strcmp(exr_header.channels[c].name, "B") == 0) {
+			idxB = c;
+		} else if (strcmp(exr_header.channels[c].name, "A") == 0) {
+			idxA = c;
+		}
+	}
+	
+	if (idxR == -1 || idxG == -1 || idxB == -1) {
+		if (err) {
+			(*err) = "Channel not found\n";
+		}
+		// @todo { free exr_image }
+		return TINYEXR_ERROR_INVALID_DATA;
+	}
+	
+	(*out_rgb) = reinterpret_cast<float *>(malloc(4 * sizeof(float) * static_cast<size_t>(exr_image.width) *
+													   static_cast<size_t>(exr_image.height)));
+	for (int i = 0; i < exr_image.width * exr_image.height; i++) {
+		(*out_rgb)[3 * i + 0] =
+		reinterpret_cast<float **>(exr_image.images)[idxR][i];
+		(*out_rgb)[3 * i + 1] =
+		reinterpret_cast<float **>(exr_image.images)[idxG][i];
+		(*out_rgb)[3 * i + 2] =
+		reinterpret_cast<float **>(exr_image.images)[idxB][i];
+	}
+	
+	
+	(*width) = exr_image.width;
+	(*height) = exr_image.height;
+	
+	FreeEXRHeader(&exr_header);
+	FreeEXRImage(&exr_image);
+	
+	return TINYEXR_SUCCESS;
 }
 
 MeshInfos GLUtilities::setupBuffers(const Mesh & mesh){

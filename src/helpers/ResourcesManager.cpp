@@ -216,6 +216,8 @@ const std::string Resources::getImagePath(const std::string & name){
 		path = _files[name + ".bmp"];
 	} else if(_files.count(name + ".tga") > 0){
 		path = _files[name + ".tga"];
+	} else if(_files.count(name + ".exr") > 0){
+		path = _files[name + ".exr"];
 	} else {
 		std::cerr << "Unable to find image named \"" << name << "\"" << std::endl;
 	}
