@@ -42,6 +42,9 @@
     <Filter Include="Source Files\libs\tinydir">
       <UniqueIdentifier>{cfe063bb-5d3b-4fae-9b5e-d4047e1041cf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\libs\tinyexr">
+      <UniqueIdentifier>{ddb0355c-e5ad-41d6-bea8-9d2939da56ff}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Framebuffer.cpp">
@@ -54,9 +57,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\ScreenQuad.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Skybox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\helpers\MeshUtilities.cpp">
@@ -151,9 +151,6 @@
     <ClInclude Include="src\ScreenQuad.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Skybox.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\libs\gl3w\gl3w.h">
       <Filter>Source Files\libs\gl3w</Filter>
     </ClInclude>
@@ -171,6 +168,9 @@
     </ClInclude>
     <ClInclude Include="src\camera\Joystick.h">
       <Filter>Source Files\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="src\libs\tinyexr\tinyexr.h">
+      <Filter>Source Files\libs\tinyexr</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

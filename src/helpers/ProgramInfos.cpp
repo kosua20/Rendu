@@ -24,12 +24,12 @@ ProgramInfos::ProgramInfos(const std::string & vertexContent, const std::string 
 	glUseProgram(_id);
 	for(GLuint i = 0; i < count; ++i){
 		// Get infos (name, name length, type,...) of each uniform.
-		GLchar uname[size];
+		std::vector<GLchar> uname(size);
 		GLenum utype;
 		GLint usize = 0;
 		GLsizei ulength = 0;
 		glGetActiveUniform(_id, i, size, &ulength, &usize, &utype, &uname[0]);
-		const std::string name(uname);
+		const std::string name(&uname[0]);
 		// Skip empty or default uniforms (starting with 'gl_').
 		if(usize == 0 || name.size() == 0 || (name.size() > 3 && name.substr(0,3) == "gl_")){
 			continue;
