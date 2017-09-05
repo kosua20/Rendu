@@ -10,10 +10,13 @@ Blur::~Blur(){}
 
 Blur::Blur(int width, int height, int depth){
 	_passthrough.init("passthrough");
+	_blurScreen.init("blur");
 	// Create a series of framebuffers smaller and smaller.
 	_frameBuffers = std::vector<std::shared_ptr<Framebuffer>>(depth);
+	_frameBuffersBlur = std::vector<std::shared_ptr<Framebuffer>>(depth);
 	for(size_t i = 0; i < depth; ++i){
 		_frameBuffers[i] = std::make_shared<Framebuffer>(width/std::pow(2,i), height/std::pow(2,i), GL_RGB, GL_FLOAT, GL_RGB, GL_LINEAR, GL_CLAMP_TO_EDGE);
+		_frameBuffersBlur[i] = std::make_shared<Framebuffer>(width/std::pow(2,i), height/std::pow(2,i), GL_RGB, GL_FLOAT, GL_RGB, GL_LINEAR, GL_CLAMP_TO_EDGE);
 	}
 	checkGLError();
 }
@@ -38,6 +41,25 @@ void Blur::process(const GLuint textureId) {
 		glViewport(0, 0, _frameBuffers[i]->width(), _frameBuffers[i]->height());
 		glClear(GL_COLOR_BUFFER_BIT);
 		_passthrough.draw(_frameBuffers[i-1]->textureId());
+		_frameBuffers[i]->unbind();
+	}
+	
+	// Blur vertically each framebuffer into frameBuffersBlur.
+	for(size_t i = 0; i < _frameBuffers.size(); ++i){
+		_frameBuffersBlur[i]->bind();
+		glViewport(0, 0, _frameBuffersBlur[i]->width(), _frameBuffersBlur[i]->height());
+		glClear(GL_COLOR_BUFFER_BIT);
+		const glm::vec2 invResolution(0.0f, 1.2f/(float)_frameBuffersBlur[i]->height());
+		_blurScreen.draw(_frameBuffers[i]->textureId(), invResolution);
+		_frameBuffersBlur[i]->unbind();
+	}
+	// Blur horiontally each framebufferBlur back into frameBuffers.
+	for(size_t i = 0; i < _frameBuffersBlur.size(); ++i){
+		_frameBuffers[i]->bind();
+		glViewport(0, 0, _frameBuffers[i]->width(), _frameBuffers[i]->height());
+		glClear(GL_COLOR_BUFFER_BIT);
+		const glm::vec2 invResolution(1.2f/(float)_frameBuffers[i]->width(), 0.0f);
+		_blurScreen.draw(_frameBuffersBlur[i]->textureId(), invResolution);
 		_frameBuffers[i]->unbind();
 	}
 	
