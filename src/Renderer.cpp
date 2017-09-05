@@ -29,6 +29,7 @@ Renderer::Renderer(int width, int height){
 	_sceneFramebuffer = std::make_shared<Framebuffer>(renderWidth, renderHeight, GL_RGBA, GL_FLOAT, GL_RGBA16F, GL_LINEAR,GL_CLAMP_TO_EDGE);
 	_toneMappingFramebuffer = std::make_shared<Framebuffer>(renderWidth, renderHeight, GL_RGBA, GL_UNSIGNED_BYTE, GL_RGBA, GL_LINEAR,GL_CLAMP_TO_EDGE);
 	_fxaaFramebuffer = std::make_shared<Framebuffer>(renderWidth, renderHeight, GL_RGBA,GL_UNSIGNED_BYTE, GL_RGBA, GL_LINEAR,GL_CLAMP_TO_EDGE);
+	_blurBuffer = std::make_shared<Blur>(512, 512, 1);
 	
 	// Create directional light.
 	_directionalLights.emplace_back(glm::vec3(0.0f), 2.5f*glm::vec3(1.0f,1.0f, 0.92f), glm::ortho(-0.75f,0.75f,-0.75f,0.75f,1.0f,6.0f));
@@ -189,6 +190,16 @@ void Renderer::draw() {
 	glCullFace(GL_BACK);
 	_sceneFramebuffer->unbind();
 	
+	// --- Blur pass ------
+	_blurBuffer->process(_sceneFramebuffer->textureId());
+	
+	_sceneFramebuffer->bind();
+	glViewport(0,0,_sceneFramebuffer->width(), _sceneFramebuffer->height());
+	_blurBuffer->draw();
+	_sceneFramebuffer->unbind();
+	
+	
+	// --- Tonemapping pass ------
 	_toneMappingFramebuffer->bind();
 	glViewport(0,0,_toneMappingFramebuffer->width(), _toneMappingFramebuffer->height());
 	_toneMappingScreen.draw( invRenderSize );
@@ -197,28 +208,16 @@ void Renderer::draw() {
 	// --- FXAA pass -------
 	// Bind the post-processing framebuffer.
 	_fxaaFramebuffer->bind();
-	// Set screen viewport.
 	glViewport(0,0,_fxaaFramebuffer->width(), _fxaaFramebuffer->height());
-	
-	// Draw the fullscreen quad
 	_fxaaScreen.draw( invRenderSize );
-	
 	_fxaaFramebuffer->unbind();
-	// ----------------------
-	
 	
 	// --- Final pass -------
 	// We now render a full screen quad in the default framebuffer, using sRGB space.
 	glEnable(GL_FRAMEBUFFER_SRGB);
-	
-	// Set screen viewport.
 	glViewport(0, 0, GLsizei(_camera.screenSize()[0]), GLsizei(_camera.screenSize()[1]));
-	
-	// Draw the fullscreen quad
 	_finalScreen.draw( 1.0f / _camera.screenSize());
-	
 	glDisable(GL_FRAMEBUFFER_SRGB);
-	// ----------------------
 	glEnable(GL_DEPTH_TEST);
 	
 	// Update timer
