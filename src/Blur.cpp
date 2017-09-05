@@ -63,14 +63,22 @@ void Blur::process(const GLuint textureId) {
 		_frameBuffers[i]->unbind();
 	}
 	
+	_frameBuffers[0]->bind();
+	glEnable(GL_BLEND);
+	glViewport(0, 0, _frameBuffers[0]->width(), _frameBuffers[0]->height());
+	for(size_t i = 1; i < _frameBuffers.size(); ++i){
+		_passthrough.draw(_frameBuffers[i]->textureId());
+	}
+	glDisable(GL_BLEND);
+	_frameBuffers[0]->unbind();
 }
 
 void Blur::draw() {
 	if(_frameBuffers.size() == 0){
 		return;
 	}
+	_passthrough.draw(_frameBuffers.front()->textureId());
 	
-	_passthrough.draw(_frameBuffers.back()->textureId());
 }
 
 
