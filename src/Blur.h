@@ -31,7 +31,7 @@ public:
 private:
 	
 	ScreenQuad _passthrough;
-	std::shared_ptr<Framebuffer> _frameBuffer0;
+	std::vector<std::shared_ptr<Framebuffer>> _frameBuffers;
 
 };
 
