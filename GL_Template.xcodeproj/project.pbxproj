@@ -232,6 +232,8 @@
 		F4B11E061F5F328F002E87F1 /* Blur.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Blur.h; sourceTree = "<group>"; };
 		F4B11E081F5F38E5002E87F1 /* passthrough.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = passthrough.frag; sourceTree = "<group>"; };
 		F4B11E091F5F38E5002E87F1 /* passthrough.vert */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = passthrough.vert; sourceTree = "<group>"; };
+		F4B11E0A1F5F5059002E87F1 /* blur.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = blur.frag; sourceTree = "<group>"; };
+		F4B11E0B1F5F5059002E87F1 /* blur.vert */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = blur.vert; sourceTree = "<group>"; };
 		F4B42D001F425B8100E485C5 /* ResourcesManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ResourcesManager.cpp; sourceTree = "<group>"; };
 		F4B42D011F425B8100E485C5 /* ResourcesManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ResourcesManager.h; sourceTree = "<group>"; };
 		F4B431301E8F0D580046ADC6 /* boxblur_float.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = boxblur_float.frag; sourceTree = "<group>"; };
@@ -654,6 +656,8 @@
 				F4FA2F221E881370007EBA57 /* fxaa.vert */,
 				F4FA2F231E881370007EBA57 /* screenquad.frag */,
 				F4FA2F241E881370007EBA57 /* screenquad.vert */,
+				F4B11E0A1F5F5059002E87F1 /* blur.frag */,
+				F4B11E0B1F5F5059002E87F1 /* blur.vert */,
 			);
 			path = screens;
 			sourceTree = "<group>";
