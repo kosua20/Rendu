@@ -27,6 +27,7 @@ Renderer::Renderer(int width, int height){
 	_ssaoFramebuffer = std::make_shared<Framebuffer>(renderHalfWidth, renderHalfHeight, GL_RED, GL_UNSIGNED_BYTE, GL_RED, GL_LINEAR, GL_CLAMP_TO_EDGE);
 	_ssaoBlurFramebuffer = std::make_shared<Framebuffer>(renderWidth, renderHeight, GL_RED, GL_UNSIGNED_BYTE, GL_RED, GL_LINEAR, GL_CLAMP_TO_EDGE);
 	_sceneFramebuffer = std::make_shared<Framebuffer>(renderWidth, renderHeight, GL_RGBA, GL_FLOAT, GL_RGBA16F, GL_LINEAR,GL_CLAMP_TO_EDGE);
+	_bloomFramebuffer = std::make_shared<Framebuffer>(512, 512, GL_RGB, GL_FLOAT, GL_RGB16F, GL_LINEAR,GL_CLAMP_TO_EDGE);
 	_toneMappingFramebuffer = std::make_shared<Framebuffer>(renderWidth, renderHeight, GL_RGBA, GL_UNSIGNED_BYTE, GL_RGBA, GL_LINEAR,GL_CLAMP_TO_EDGE);
 	_fxaaFramebuffer = std::make_shared<Framebuffer>(renderWidth, renderHeight, GL_RGBA,GL_UNSIGNED_BYTE, GL_RGBA, GL_LINEAR,GL_CLAMP_TO_EDGE);
 	
@@ -82,6 +83,7 @@ Renderer::Renderer(int width, int height){
 	}
 	
 	_ssaoBlurScreen.init(_ssaoFramebuffer->textureId(), "boxblur_float");
+	_bloomScreen.init(_sceneFramebuffer->textureId(), "bloom");
 	_toneMappingScreen.init(_sceneFramebuffer->textureId(), "tonemap");
 	_fxaaScreen.init(_toneMappingFramebuffer->textureId(), "fxaa");
 	_finalScreen.init(_fxaaFramebuffer->textureId(), "final_screenquad");
@@ -191,9 +193,16 @@ void Renderer::draw() {
 	glCullFace(GL_BACK);
 	_sceneFramebuffer->unbind();
 	
-	// --- Blur pass ------
-	_blurBuffer->process(_sceneFramebuffer->textureId());
+	// --- Bloom selection pass ------
+	_bloomFramebuffer->bind();
+	glViewport(0,0,_bloomFramebuffer->width(), _bloomFramebuffer->height());
+	_bloomScreen.draw();
+	_bloomFramebuffer->unbind();
 	
+	// --- Bloom blur pass ------
+	_blurBuffer->process(_bloomFramebuffer->textureId());
+	
+	// Draw the blurred bloom back into the scene framebuffer.
 	_sceneFramebuffer->bind();
 	glViewport(0,0,_sceneFramebuffer->width(), _sceneFramebuffer->height());
 	glEnable(GL_BLEND);
@@ -260,11 +269,13 @@ void Renderer::clean() const {
 	_ambientScreen.clean();
 	_fxaaScreen.clean();
 	_ssaoBlurScreen.clean();
+	_bloomScreen.clean();
 	_toneMappingScreen.clean();
 	_finalScreen.clean();
 	_gbuffer->clean();
 	_ssaoFramebuffer->clean();
 	_ssaoBlurFramebuffer->clean();
+	_bloomFramebuffer->clean();
 	_sceneFramebuffer->clean();
 	_toneMappingFramebuffer->clean();
 	_fxaaFramebuffer->clean();
