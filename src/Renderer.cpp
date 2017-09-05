@@ -196,7 +196,9 @@ void Renderer::draw() {
 	
 	_sceneFramebuffer->bind();
 	glViewport(0,0,_sceneFramebuffer->width(), _sceneFramebuffer->height());
+	glEnable(GL_BLEND);
 	_blurBuffer->draw();
+	glDisable(GL_BLEND);
 	_sceneFramebuffer->unbind();
 	
 	
