@@ -10,6 +10,19 @@ ScreenQuad::ScreenQuad(){}
 
 ScreenQuad::~ScreenQuad(){}
 
+void ScreenQuad::init(const std::string & shaderRoot){
+	
+	// Load the shaders
+	_program = Resources::manager().getProgram(shaderRoot);
+	
+	// Load geometry.
+	loadGeometry();
+	
+	_program->registerTexture("screenTexture", 0);
+	
+	checkGLError();
+}
+
 void ScreenQuad::init(GLuint textureId, const std::string & shaderRoot){
 	
 	// Load the shaders
@@ -81,14 +94,10 @@ void ScreenQuad::loadGeometry(){
 	glBindVertexArray(0);
 }
 
-
-void ScreenQuad::draw(const glm::vec2& invScreenSize) const {
+void ScreenQuad::draw() const {
 	
 	// Select the program (and shaders).
 	glUseProgram(_program->id());
-	
-	// Inverse screen size uniform.
-	glUniform2fv(_program->uniform("inverseScreenSize"), 1, &(invScreenSize[0]));
 	
 	// Active screen texture.
 	for(GLuint i = 0;i < _textureIds.size(); ++i){
@@ -105,6 +114,49 @@ void ScreenQuad::draw(const glm::vec2& invScreenSize) const {
 	glBindVertexArray(0);
 	glUseProgram(0);
 }
+
+void ScreenQuad::draw(const glm::vec2& invScreenSize) const {
+	
+	// Select the program (and shaders).
+	glUseProgram(_program->id());
+	
+	// Inverse screen size uniform.
+	glUniform2fv(_program->uniform("inverseScreenSize"), 1, &(invScreenSize[0]));
+	
+	draw();
+	
+}
+
+void ScreenQuad::draw(const GLuint textureId) const {
+	
+	// Select the program (and shaders).
+	glUseProgram(_program->id());
+	
+	// Override stored textures.
+	glActiveTexture(GL_TEXTURE0 );
+	glBindTexture(GL_TEXTURE_2D, textureId);
+	
+	// Select the geometry.
+	glBindVertexArray(_vao);
+	// Draw!
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)0);
+	
+	glBindVertexArray(0);
+	glUseProgram(0);
+}
+
+void ScreenQuad::draw(const GLuint textureId, const glm::vec2& invScreenSize) const {
+	
+	// Select the program (and shaders).
+	glUseProgram(_program->id());
+	
+	// Inverse screen size uniform.
+	glUniform2fv(_program->uniform("inverseScreenSize"), 1, &(invScreenSize[0]));
+	
+	draw(textureId);
+}
+
 
 
 
