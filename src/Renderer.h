@@ -9,6 +9,7 @@
 
 #include "Framebuffer.h"
 #include "Gbuffer.h"
+#include "Blur.h"
 #include "AmbientQuad.h"
 #include "camera/Camera.h"
 #include "Object.h"
@@ -61,12 +62,13 @@ private:
 	Object _skybox;
 
 	std::shared_ptr<Gbuffer> _gbuffer;
+	std::shared_ptr<Blur> _blurBuffer;
 	std::shared_ptr<Framebuffer> _ssaoFramebuffer;
 	std::shared_ptr<Framebuffer> _ssaoBlurFramebuffer;
 	std::shared_ptr<Framebuffer> _sceneFramebuffer;
 	std::shared_ptr<Framebuffer> _toneMappingFramebuffer;
 	std::shared_ptr<Framebuffer> _fxaaFramebuffer;
-
+	
 	AmbientQuad _ambientScreen;
 	ScreenQuad _ssaoBlurScreen;
 	ScreenQuad _toneMappingScreen;
