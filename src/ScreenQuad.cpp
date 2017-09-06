@@ -13,7 +13,7 @@ ScreenQuad::~ScreenQuad(){}
 void ScreenQuad::init(const std::string & shaderRoot){
 	
 	// Load the shaders
-	_program = Resources::manager().getProgram(shaderRoot);
+	_program = Resources::manager().getProgram(shaderRoot, "passthrough", shaderRoot);
 	
 	// Load geometry.
 	loadGeometry();
@@ -26,7 +26,7 @@ void ScreenQuad::init(const std::string & shaderRoot){
 void ScreenQuad::init(GLuint textureId, const std::string & shaderRoot){
 	
 	// Load the shaders
-	_program = Resources::manager().getProgram(shaderRoot);
+	_program = Resources::manager().getProgram(shaderRoot, "passthrough", shaderRoot);
 
 	// Load geometry.
 	loadGeometry();
@@ -42,7 +42,7 @@ void ScreenQuad::init(GLuint textureId, const std::string & shaderRoot){
 void ScreenQuad::init(std::map<std::string, GLuint> textureIds, const std::string & shaderRoot){
 	
 	// Load the shaders
-	_program = Resources::manager().getProgram(shaderRoot);
+	_program = Resources::manager().getProgram(shaderRoot, "passthrough", shaderRoot);
 	
 	loadGeometry();
 	
