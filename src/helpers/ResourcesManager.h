@@ -14,6 +14,8 @@ public:
 	
 	const std::shared_ptr<ProgramInfos> getProgram(const std::string & name);
 	
+	const std::shared_ptr<ProgramInfos> getProgram(const std::string & name, const std::string & vertexName, const std::string & fragmentName);
+
 	const MeshInfos getMesh(const std::string & name);
 	
 	const TextureInfos getTexture(const std::string & name, bool srgb = true);

@@ -45,6 +45,9 @@
     <Filter Include="Source Files\libs\tinyexr">
       <UniqueIdentifier>{ddb0355c-e5ad-41d6-bea8-9d2939da56ff}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\objects">
+      <UniqueIdentifier>{9a11aa7e-b3e2-4849-9b19-426a752d846b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Framebuffer.cpp">
@@ -100,6 +103,9 @@
     </ClCompile>
     <ClCompile Include="src\camera\Joystick.cpp">
       <Filter>Source Files\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Blur.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -172,36 +178,18 @@
     <ClInclude Include="src\libs\tinyexr\tinyexr.h">
       <Filter>Source Files\libs\tinyexr</Filter>
     </ClInclude>
+    <ClInclude Include="src\Blur.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="resources\shaders\gbuffer\object_gbuffer.frag">
-      <Filter>Resource Files\gbuffer</Filter>
-    </None>
-    <None Include="resources\shaders\gbuffer\object_gbuffer.vert">
-      <Filter>Resource Files\gbuffer</Filter>
-    </None>
     <None Include="resources\shaders\gbuffer\scene_gbuffer.frag">
-      <Filter>Resource Files\gbuffer</Filter>
-    </None>
-    <None Include="resources\shaders\gbuffer\scene_gbuffer.vert">
-      <Filter>Resource Files\gbuffer</Filter>
-    </None>
-    <None Include="resources\shaders\gbuffer\skybox_gbuffer.frag">
-      <Filter>Resource Files\gbuffer</Filter>
-    </None>
-    <None Include="resources\shaders\gbuffer\skybox_gbuffer.vert">
       <Filter>Resource Files\gbuffer</Filter>
     </None>
     <None Include="resources\shaders\gbuffer\ssao.frag">
       <Filter>Resource Files\gbuffer</Filter>
     </None>
-    <None Include="resources\shaders\gbuffer\ssao.vert">
-      <Filter>Resource Files\gbuffer</Filter>
-    </None>
     <None Include="resources\shaders\gbuffer\ambient.frag">
-      <Filter>Resource Files\gbuffer</Filter>
-    </None>
-    <None Include="resources\shaders\gbuffer\ambient.vert">
       <Filter>Resource Files\gbuffer</Filter>
     </None>
     <None Include="resources\shaders\lights\object_depth.vert">
@@ -222,47 +210,56 @@
     <None Include="resources\shaders\lights\directional_light.frag">
       <Filter>Resource Files\lights</Filter>
     </None>
-    <None Include="resources\shaders\lights\directional_light.vert">
-      <Filter>Resource Files\lights</Filter>
-    </None>
     <None Include="resources\shaders\lights\object_depth.frag">
       <Filter>Resource Files\lights</Filter>
     </None>
     <None Include="resources\shaders\screens\boxblur.frag">
       <Filter>Resource Files\screens</Filter>
     </None>
-    <None Include="resources\shaders\screens\boxblur.vert">
-      <Filter>Resource Files\screens</Filter>
-    </None>
     <None Include="resources\shaders\screens\boxblur_float.frag">
-      <Filter>Resource Files\screens</Filter>
-    </None>
-    <None Include="resources\shaders\screens\boxblur_float.vert">
       <Filter>Resource Files\screens</Filter>
     </None>
     <None Include="resources\shaders\screens\final_screenquad.frag">
       <Filter>Resource Files\screens</Filter>
     </None>
-    <None Include="resources\shaders\screens\final_screenquad.vert">
-      <Filter>Resource Files\screens</Filter>
-    </None>
     <None Include="resources\shaders\screens\fxaa.frag">
-      <Filter>Resource Files\screens</Filter>
-    </None>
-    <None Include="resources\shaders\screens\fxaa.vert">
       <Filter>Resource Files\screens</Filter>
     </None>
     <None Include="resources\shaders\screens\screenquad.frag">
       <Filter>Resource Files\screens</Filter>
     </None>
-    <None Include="resources\shaders\screens\screenquad.vert">
-      <Filter>Resource Files\screens</Filter>
-    </None>
     <None Include="resources\shaders\screens\tonemap.frag">
       <Filter>Resource Files\screens</Filter>
     </None>
-    <None Include="resources\shaders\screens\tonemap.vert">
+    <None Include="resources\shaders\screens\blur.frag">
       <Filter>Resource Files\screens</Filter>
+    </None>
+    <None Include="resources\shaders\screens\passthrough.frag">
+      <Filter>Resource Files\screens</Filter>
+    </None>
+    <None Include="resources\shaders\screens\passthrough.vert">
+      <Filter>Resource Files\screens</Filter>
+    </None>
+    <None Include="resources\shaders\screens\bloom.frag">
+      <Filter>Resource Files\screens</Filter>
+    </None>
+    <None Include="resources\shaders\objects\parallax_gbuffer.frag">
+      <Filter>Resource Files\objects</Filter>
+    </None>
+    <None Include="resources\shaders\objects\parallax_gbuffer.vert">
+      <Filter>Resource Files\objects</Filter>
+    </None>
+    <None Include="resources\shaders\objects\skybox_gbuffer.frag">
+      <Filter>Resource Files\objects</Filter>
+    </None>
+    <None Include="resources\shaders\objects\skybox_gbuffer.vert">
+      <Filter>Resource Files\objects</Filter>
+    </None>
+    <None Include="resources\shaders\objects\object_gbuffer.frag">
+      <Filter>Resource Files\objects</Filter>
+    </None>
+    <None Include="resources\shaders\objects\object_gbuffer.vert">
+      <Filter>Resource Files\objects</Filter>
     </None>
   </ItemGroup>
 </Project>

@@ -71,17 +71,21 @@ void Resources::parseDirectory(const std::string & directoryPath){
 
 
 const std::shared_ptr<ProgramInfos> Resources::getProgram(const std::string & name){
-	if(_programs.count(name) > 0){
+	return getProgram(name, name, name);
+}
+
+const std::shared_ptr<ProgramInfos> Resources::getProgram(const std::string & name, const std::string & vertexName, const std::string & fragmentName) {
+	if (_programs.count(name) > 0) {
 		return _programs[name];
 	}
-	
-	const std::string vertexContent = getShader(name, Vertex);
-	const std::string fragmentContent = getShader(name, Fragment);
+
+	const std::string vertexContent = getShader(vertexName, Vertex);
+	const std::string fragmentContent = getShader(fragmentName, Fragment);
 
 	_programs.emplace(std::piecewise_construct,
-					  std::forward_as_tuple(name),
-					  std::forward_as_tuple(new ProgramInfos(vertexContent, fragmentContent)));
-	
+		std::forward_as_tuple(name),
+		std::forward_as_tuple(new ProgramInfos(vertexContent, fragmentContent)));
+
 	return _programs[name];
 }
 
