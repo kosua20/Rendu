@@ -11,7 +11,6 @@ uniform sampler2D normalTexture;
 uniform sampler2D ssaoTexture;
 uniform samplerCube textureCubeMapSmall;
 
-uniform vec2 inverseScreenSize;
 uniform mat4 inverseV;
 
 // Output: the fragment color

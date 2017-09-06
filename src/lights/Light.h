@@ -20,7 +20,7 @@ public:
 	
 	virtual void init(const std::map<std::string, GLuint>& textureIds) =0;
 	
-	virtual void draw(const glm::vec2& invScreenSize, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) const =0;
+	virtual void draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix, const glm::vec2& invScreenSize) const =0;
 	
 	virtual void clean() const =0;
 	

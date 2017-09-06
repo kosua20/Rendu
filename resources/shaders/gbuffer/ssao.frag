@@ -9,7 +9,6 @@ in INTERFACE {
 uniform sampler2D depthTexture;
 uniform sampler2D normalTexture;
 
-uniform vec2 inverseScreenSize;
 uniform mat4 projectionMatrix;
 
 uniform sampler2D noiseTexture; // 5x5 3-components texture with float precision.

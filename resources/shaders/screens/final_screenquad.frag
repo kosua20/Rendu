@@ -7,7 +7,6 @@ in INTERFACE {
 
 // Uniforms: the texture, inverse of the screen size, FXAA flag.
 uniform sampler2D screenTexture;
-uniform vec2 inverseScreenSize;
 
 // Output: the fragment color
 out vec3 fragColor;

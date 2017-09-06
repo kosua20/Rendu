@@ -167,13 +167,13 @@ void Renderer::draw() {
 	// --- SSAO pass
 	_ssaoFramebuffer->bind();
 	glViewport(0,0,_ssaoFramebuffer->width(), _ssaoFramebuffer->height());
-	_ambientScreen.drawSSAO( 2.0f * invRenderSize, _camera.view(), _camera.projection());
+	_ambientScreen.drawSSAO(_camera.view(), _camera.projection());
 	_ssaoFramebuffer->unbind();
 	
 	// --- SSAO blurring pass
 	_ssaoBlurFramebuffer->bind();
 	glViewport(0,0,_ssaoBlurFramebuffer->width(), _ssaoBlurFramebuffer->height());
-	_ssaoBlurScreen.draw( invRenderSize );
+	_ssaoBlurScreen.draw();
 	_ssaoBlurFramebuffer->unbind();
 	
 	// --- Gbuffer composition pass
@@ -181,15 +181,15 @@ void Renderer::draw() {
 	
 	glViewport(0,0,_sceneFramebuffer->width(), _sceneFramebuffer->height());
 	
-	_ambientScreen.draw( invRenderSize, _camera.view(), _camera.projection());
+	_ambientScreen.draw(_camera.view(), _camera.projection());
 	
 	glEnable(GL_BLEND);
 	for(auto& dirLight : _directionalLights){
-		dirLight.draw( invRenderSize, _camera.view(), _camera.projection());
+		dirLight.draw(_camera.view(), _camera.projection());
 	}
 	glCullFace(GL_FRONT);
 	for(auto& pointLight : _pointLights){
-		pointLight.draw( invRenderSize, _camera.view(), _camera.projection());
+		pointLight.draw(_camera.view(), _camera.projection(), invRenderSize);
 	}
 	glDisable(GL_BLEND);
 	glCullFace(GL_BACK);
@@ -216,7 +216,7 @@ void Renderer::draw() {
 	// --- Tonemapping pass ------
 	_toneMappingFramebuffer->bind();
 	glViewport(0,0,_toneMappingFramebuffer->width(), _toneMappingFramebuffer->height());
-	_toneMappingScreen.draw( invRenderSize );
+	_toneMappingScreen.draw();
 	_toneMappingFramebuffer->unbind();
 	
 	// --- FXAA pass -------
@@ -230,7 +230,7 @@ void Renderer::draw() {
 	// We now render a full screen quad in the default framebuffer, using sRGB space.
 	glEnable(GL_FRAMEBUFFER_SRGB);
 	glViewport(0, 0, GLsizei(_camera.screenSize()[0]), GLsizei(_camera.screenSize()[1]));
-	_finalScreen.draw( 1.0f / _camera.screenSize());
+	_finalScreen.draw();
 	glDisable(GL_FRAMEBUFFER_SRGB);
 	glEnable(GL_DEPTH_TEST);
 	

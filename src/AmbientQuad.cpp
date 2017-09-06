@@ -73,7 +73,7 @@ GLuint AmbientQuad::setupSSAO(){
 	return textureId;
 }
 
-void AmbientQuad::draw(const glm::vec2& invScreenSize, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) const {
+void AmbientQuad::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) const {
 	
 	glm::mat4 invView = glm::inverse(viewMatrix);
 	
@@ -84,16 +84,16 @@ void AmbientQuad::draw(const glm::vec2& invScreenSize, const glm::mat4& viewMatr
 	glActiveTexture(GL_TEXTURE0 + (unsigned int)_textureIds.size());
 	glBindTexture(GL_TEXTURE_CUBE_MAP, _texCubeMapSmall);
 	
-	ScreenQuad::draw(invScreenSize);
+	ScreenQuad::draw();
 }
 
-void AmbientQuad::drawSSAO(const glm::vec2& invScreenSize, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) const {
+void AmbientQuad::drawSSAO(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) const {
 	
 	glUseProgram(_ssaoScreen.program()->id());
 	
 	glUniformMatrix4fv(_ssaoScreen.program()->uniform("projectionMatrix"), 1, GL_FALSE, &projectionMatrix[0][0]);
 	
-	_ssaoScreen.draw(invScreenSize);
+	_ssaoScreen.draw();
 	
 }
 
