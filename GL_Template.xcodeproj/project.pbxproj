@@ -225,7 +225,6 @@
 		F494157A1DE1D3EC0086E191 /* Gbuffer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Gbuffer.cpp; sourceTree = "<group>"; };
 		F494157B1DE1D3EC0086E191 /* Gbuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Gbuffer.h; sourceTree = "<group>"; };
 		F496FD691E91319000A295A8 /* tonemap.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = tonemap.frag; sourceTree = "<group>"; };
-		F496FD6A1E91319000A295A8 /* tonemap.vert */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = tonemap.vert; sourceTree = "<group>"; };
 		F496FD6B1E91550300A295A8 /* point_light_debug.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = point_light_debug.frag; sourceTree = "<group>"; };
 		F496FD6C1E91550300A295A8 /* point_light_debug.vert */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = point_light_debug.vert; sourceTree = "<group>"; };
 		F4B11E051F5F328F002E87F1 /* Blur.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Blur.cpp; sourceTree = "<group>"; };
@@ -233,16 +232,12 @@
 		F4B11E081F5F38E5002E87F1 /* passthrough.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = passthrough.frag; sourceTree = "<group>"; };
 		F4B11E091F5F38E5002E87F1 /* passthrough.vert */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = passthrough.vert; sourceTree = "<group>"; };
 		F4B11E0A1F5F5059002E87F1 /* blur.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = blur.frag; sourceTree = "<group>"; };
-		F4B11E0B1F5F5059002E87F1 /* blur.vert */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = blur.vert; sourceTree = "<group>"; };
 		F4B11E0C1F5F5909002E87F1 /* bloom.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = bloom.frag; sourceTree = "<group>"; };
-		F4B11E0D1F5F5909002E87F1 /* bloom.vert */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = bloom.vert; sourceTree = "<group>"; };
 		F4B42D001F425B8100E485C5 /* ResourcesManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ResourcesManager.cpp; sourceTree = "<group>"; };
 		F4B42D011F425B8100E485C5 /* ResourcesManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ResourcesManager.h; sourceTree = "<group>"; };
 		F4B431301E8F0D580046ADC6 /* boxblur_float.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = boxblur_float.frag; sourceTree = "<group>"; };
-		F4B431311E8F0D580046ADC6 /* boxblur_float.vert */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = boxblur_float.vert; sourceTree = "<group>"; };
 		F4D54A131D0F3373001274DA /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		F4D7F1FF1E8EC14000163AA2 /* ssao.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = ssao.frag; sourceTree = "<group>"; };
-		F4D7F2001E8EC14000163AA2 /* ssao.vert */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = ssao.vert; sourceTree = "<group>"; };
 		F4EDDD241CFD0047001FD2ED /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		F4EDDD251CFD0047001FD2ED /* Makefile.linux */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Makefile.linux; sourceTree = "<group>"; };
 		F4FA2F001E87F60D007EBA57 /* DirectionalLight.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectionalLight.cpp; sourceTree = "<group>"; };
@@ -253,23 +248,16 @@
 		F4FA2F071E87FA0F007EBA57 /* GenerationUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GenerationUtilities.cpp; sourceTree = "<group>"; };
 		F4FA2F081E87FA0F007EBA57 /* GenerationUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GenerationUtilities.h; sourceTree = "<group>"; };
 		F4FA2F0D1E881370007EBA57 /* ambient.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = ambient.frag; sourceTree = "<group>"; };
-		F4FA2F0E1E881370007EBA57 /* ambient.vert */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = ambient.vert; sourceTree = "<group>"; };
 		F4FA2F111E881370007EBA57 /* scene_gbuffer.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = scene_gbuffer.frag; sourceTree = "<group>"; };
-		F4FA2F121E881370007EBA57 /* scene_gbuffer.vert */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = scene_gbuffer.vert; sourceTree = "<group>"; };
 		F4FA2F161E881370007EBA57 /* directional_light.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = directional_light.frag; sourceTree = "<group>"; };
-		F4FA2F171E881370007EBA57 /* directional_light.vert */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = directional_light.vert; sourceTree = "<group>"; };
 		F4FA2F181E881370007EBA57 /* object_depth.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = object_depth.frag; sourceTree = "<group>"; };
 		F4FA2F191E881370007EBA57 /* object_depth.vert */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = object_depth.vert; sourceTree = "<group>"; };
 		F4FA2F1A1E881370007EBA57 /* point_light.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = point_light.frag; sourceTree = "<group>"; };
 		F4FA2F1B1E881370007EBA57 /* point_light.vert */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = point_light.vert; sourceTree = "<group>"; };
 		F4FA2F1D1E881370007EBA57 /* boxblur.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = boxblur.frag; sourceTree = "<group>"; };
-		F4FA2F1E1E881370007EBA57 /* boxblur.vert */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = boxblur.vert; sourceTree = "<group>"; };
 		F4FA2F1F1E881370007EBA57 /* final_screenquad.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = final_screenquad.frag; sourceTree = "<group>"; };
-		F4FA2F201E881370007EBA57 /* final_screenquad.vert */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = final_screenquad.vert; sourceTree = "<group>"; };
 		F4FA2F211E881370007EBA57 /* fxaa.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = fxaa.frag; sourceTree = "<group>"; };
-		F4FA2F221E881370007EBA57 /* fxaa.vert */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = fxaa.vert; sourceTree = "<group>"; };
 		F4FA2F231E881370007EBA57 /* screenquad.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = screenquad.frag; sourceTree = "<group>"; };
-		F4FA2F241E881370007EBA57 /* screenquad.vert */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = screenquad.vert; sourceTree = "<group>"; };
 		F4FE35411D0C474C00B8318A /* Keyboard.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Keyboard.cpp; sourceTree = "<group>"; };
 		F4FE35421D0C474C00B8318A /* Keyboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Keyboard.h; sourceTree = "<group>"; };
 		F4FE35431D0C47AA00B8318A /* Camera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Camera.cpp; sourceTree = "<group>"; };
@@ -616,12 +604,9 @@
 		F4FA2F0C1E881370007EBA57 /* gbuffer */ = {
 			isa = PBXGroup;
 			children = (
-				F4FA2F0E1E881370007EBA57 /* ambient.vert */,
 				F4FA2F0D1E881370007EBA57 /* ambient.frag */,
 				F4D7F1FF1E8EC14000163AA2 /* ssao.frag */,
-				F4D7F2001E8EC14000163AA2 /* ssao.vert */,
 				F4FA2F111E881370007EBA57 /* scene_gbuffer.frag */,
-				F4FA2F121E881370007EBA57 /* scene_gbuffer.vert */,
 			);
 			path = gbuffer;
 			sourceTree = "<group>";
@@ -630,7 +615,6 @@
 			isa = PBXGroup;
 			children = (
 				F4FA2F161E881370007EBA57 /* directional_light.frag */,
-				F4FA2F171E881370007EBA57 /* directional_light.vert */,
 				F4FA2F181E881370007EBA57 /* object_depth.frag */,
 				F4FA2F191E881370007EBA57 /* object_depth.vert */,
 				F4FA2F1A1E881370007EBA57 /* point_light.frag */,
@@ -645,23 +629,15 @@
 			isa = PBXGroup;
 			children = (
 				F4B11E0C1F5F5909002E87F1 /* bloom.frag */,
-				F4B11E0D1F5F5909002E87F1 /* bloom.vert */,
 				F4B11E081F5F38E5002E87F1 /* passthrough.frag */,
 				F4B11E091F5F38E5002E87F1 /* passthrough.vert */,
 				F4B431301E8F0D580046ADC6 /* boxblur_float.frag */,
-				F4B431311E8F0D580046ADC6 /* boxblur_float.vert */,
 				F496FD691E91319000A295A8 /* tonemap.frag */,
-				F496FD6A1E91319000A295A8 /* tonemap.vert */,
 				F4FA2F1D1E881370007EBA57 /* boxblur.frag */,
-				F4FA2F1E1E881370007EBA57 /* boxblur.vert */,
 				F4FA2F1F1E881370007EBA57 /* final_screenquad.frag */,
-				F4FA2F201E881370007EBA57 /* final_screenquad.vert */,
 				F4FA2F211E881370007EBA57 /* fxaa.frag */,
-				F4FA2F221E881370007EBA57 /* fxaa.vert */,
 				F4FA2F231E881370007EBA57 /* screenquad.frag */,
-				F4FA2F241E881370007EBA57 /* screenquad.vert */,
 				F4B11E0A1F5F5059002E87F1 /* blur.frag */,
-				F4B11E0B1F5F5059002E87F1 /* blur.vert */,
 			);
 			path = screens;
 			sourceTree = "<group>";

@@ -82,16 +82,7 @@ void Blur::process(const GLuint textureId) {
 	glClear(GL_COLOR_BUFFER_BIT);
 	_combineScreen.draw();
 	_finalFramebuffer->unbind();
-	/*
-	_frameBuffers[0]->bind();
-	glViewport(0, 0, _frameBuffers[0]->width(), _frameBuffers[0]->height());
-	for(size_t i = 1; i < _frameBuffers.size(); ++i){
-		_passthrough.draw(_frameBuffers[i]->textureId());
-	}
-	_frameBuffers[0]->unbind();
-	*/
-	
-	
+
 }
 
 void Blur::draw() {
@@ -114,6 +105,8 @@ void Blur::clean() const {
 		frameBuffer->clean();
 	}
 	_passthrough.clean();
+	_blurScreen.clean();
+	_combineScreen.clean();
 }
 
 

@@ -23,15 +23,17 @@ Renderer::Renderer(int width, int height){
 	const int renderHeight = (int)_camera.renderSize()[1];
 	const int renderHalfWidth = (int)(0.5f * _camera.renderSize()[0]);
 	const int renderHalfHeight = (int)(0.5f * _camera.renderSize()[1]);
+	// Find the closest power of 2 size.
+	const int renderPow2Size = std::pow(2,(int)floor(log2(_camera.renderSize()[0])));
 	_gbuffer = std::make_shared<Gbuffer>(renderWidth, renderHeight);
 	_ssaoFramebuffer = std::make_shared<Framebuffer>(renderHalfWidth, renderHalfHeight, GL_RED, GL_UNSIGNED_BYTE, GL_RED, GL_LINEAR, GL_CLAMP_TO_EDGE);
 	_ssaoBlurFramebuffer = std::make_shared<Framebuffer>(renderWidth, renderHeight, GL_RED, GL_UNSIGNED_BYTE, GL_RED, GL_LINEAR, GL_CLAMP_TO_EDGE);
 	_sceneFramebuffer = std::make_shared<Framebuffer>(renderWidth, renderHeight, GL_RGBA, GL_FLOAT, GL_RGBA16F, GL_LINEAR,GL_CLAMP_TO_EDGE);
-	_bloomFramebuffer = std::make_shared<Framebuffer>(512, 512, GL_RGB, GL_FLOAT, GL_RGB16F, GL_LINEAR,GL_CLAMP_TO_EDGE);
+	_bloomFramebuffer = std::make_shared<Framebuffer>(renderPow2Size, renderPow2Size, GL_RGB, GL_FLOAT, GL_RGB16F, GL_LINEAR,GL_CLAMP_TO_EDGE);
 	_toneMappingFramebuffer = std::make_shared<Framebuffer>(renderWidth, renderHeight, GL_RGBA, GL_UNSIGNED_BYTE, GL_RGBA, GL_LINEAR,GL_CLAMP_TO_EDGE);
 	_fxaaFramebuffer = std::make_shared<Framebuffer>(renderWidth, renderHeight, GL_RGBA,GL_UNSIGNED_BYTE, GL_RGBA, GL_LINEAR,GL_CLAMP_TO_EDGE);
 	
-	_blurBuffer = std::make_shared<Blur>(512, 512, 4);
+	_blurBuffer = std::make_shared<Blur>(renderPow2Size, renderPow2Size, 2);
 	
 	// Create directional light.
 	_directionalLights.emplace_back(glm::vec3(0.0f), 2.5f*glm::vec3(1.0f,1.0f, 0.92f), glm::ortho(-0.75f,0.75f,-0.75f,0.75f,1.0f,6.0f));
@@ -273,6 +275,7 @@ void Renderer::clean() const {
 	_toneMappingScreen.clean();
 	_finalScreen.clean();
 	_gbuffer->clean();
+	_blurBuffer->clean();
 	_ssaoFramebuffer->clean();
 	_ssaoBlurFramebuffer->clean();
 	_bloomFramebuffer->clean();
