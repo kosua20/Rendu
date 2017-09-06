@@ -32,8 +32,10 @@ private:
 	
 	ScreenQuad _passthrough;
 	ScreenQuad _blurScreen;
+	ScreenQuad _combineScreen;
 	std::vector<std::shared_ptr<Framebuffer>> _frameBuffers;
 	std::vector<std::shared_ptr<Framebuffer>> _frameBuffersBlur;
+	std::shared_ptr<Framebuffer> _finalFramebuffer;
 
 };
 

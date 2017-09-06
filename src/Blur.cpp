@@ -11,13 +11,22 @@ Blur::~Blur(){}
 Blur::Blur(int width, int height, int depth){
 	_passthrough.init("passthrough");
 	_blurScreen.init("blur");
+	
 	// Create a series of framebuffers smaller and smaller.
 	_frameBuffers = std::vector<std::shared_ptr<Framebuffer>>(depth);
 	_frameBuffersBlur = std::vector<std::shared_ptr<Framebuffer>>(depth);
+	std::map<std::string, GLuint> textures;
 	for(size_t i = 0; i < depth; ++i){
-		_frameBuffers[i] = std::make_shared<Framebuffer>(width/std::pow(2,i), height/std::pow(2,i), GL_RGB, GL_FLOAT, GL_RGB, GL_LINEAR, GL_CLAMP_TO_EDGE);
-		_frameBuffersBlur[i] = std::make_shared<Framebuffer>(width/std::pow(2,i), height/std::pow(2,i), GL_RGB, GL_FLOAT, GL_RGB, GL_LINEAR, GL_CLAMP_TO_EDGE);
+		_frameBuffers[i] = std::make_shared<Framebuffer>(width/std::pow(2,i), height/std::pow(2,i), GL_RGB, GL_FLOAT, GL_RGB16F, GL_LINEAR, GL_CLAMP_TO_EDGE);
+		_frameBuffersBlur[i] = std::make_shared<Framebuffer>(width/std::pow(2,i), height/std::pow(2,i), GL_RGB, GL_FLOAT, GL_RGB16F, GL_LINEAR, GL_CLAMP_TO_EDGE);
+		textures["texture" + std::to_string(i)] = _frameBuffers[i]->textureId();
 	}
+
+	// Final combining buffer.
+	if (_frameBuffers.size() > 1) {
+		_combineScreen.init(textures, "blur-combine-" + std::to_string(_frameBuffers.size()));
+	}
+	_finalFramebuffer = std::make_shared<Framebuffer>(width, height, GL_RGB, GL_FLOAT, GL_RGB16F, GL_LINEAR, GL_CLAMP_TO_EDGE);
 	checkGLError();
 }
 
@@ -63,21 +72,36 @@ void Blur::process(const GLuint textureId) {
 		_frameBuffers[i]->unbind();
 	}
 	
+	if (_frameBuffers.size() == 1) {
+		// No need to merge.
+		return;
+	}
+
+	_finalFramebuffer->bind();
+	glViewport(0, 0, _finalFramebuffer->width(), _finalFramebuffer->height());
+	glClear(GL_COLOR_BUFFER_BIT);
+	_combineScreen.draw();
+	_finalFramebuffer->unbind();
+	/*
 	_frameBuffers[0]->bind();
-	glEnable(GL_BLEND);
 	glViewport(0, 0, _frameBuffers[0]->width(), _frameBuffers[0]->height());
 	for(size_t i = 1; i < _frameBuffers.size(); ++i){
 		_passthrough.draw(_frameBuffers[i]->textureId());
 	}
-	glDisable(GL_BLEND);
 	_frameBuffers[0]->unbind();
+	*/
+	
+	
 }
 
 void Blur::draw() {
 	if(_frameBuffers.size() == 0){
 		return;
+	} else if (_frameBuffers.size() == 1) {
+		_passthrough.draw(_frameBuffers.front()->textureId());
+	} else {
+		_passthrough.draw(_finalFramebuffer->textureId());
 	}
-	_passthrough.draw(_frameBuffers.front()->textureId());
 	
 }
 
@@ -86,11 +110,14 @@ void Blur::clean() const {
 	for(auto & frameBuffer : _frameBuffers){
 		frameBuffer->clean();
 	}
+	for (auto & frameBuffer : _frameBuffersBlur) {
+		frameBuffer->clean();
+	}
 	_passthrough.clean();
 }
 
 
 void Blur::resize(int width, int height){
-	
+	// Unsupported for now.
 }
 
