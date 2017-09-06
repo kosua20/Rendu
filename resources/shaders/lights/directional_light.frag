@@ -12,7 +12,6 @@ uniform sampler2D depthTexture;
 uniform sampler2D effectsTexture;
 uniform sampler2D shadowMap;
 
-uniform vec2 inverseScreenSize;
 uniform vec4 projectionMatrix;
 uniform mat4 viewToLight;
 

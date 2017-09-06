@@ -11,7 +11,7 @@ public:
 	
 	void init(const std::map<std::string, GLuint>& textureIds);
 	
-	void draw(const glm::vec2& invScreenSize, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) const;
+	void draw( const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix, const glm::vec2& invScreenSize ) const;
 	
 	void drawDebug(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) const;
 	

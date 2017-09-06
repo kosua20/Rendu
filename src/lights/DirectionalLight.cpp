@@ -17,7 +17,7 @@ void DirectionalLight::init(const std::map<std::string, GLuint>& textureIds){
 	// Setup the framebuffer.
 	_shadowPass = std::make_shared<Framebuffer>(512, 512, GL_RG,GL_FLOAT, GL_RG16F, GL_LINEAR,GL_CLAMP_TO_BORDER);
 	_blurPass = std::make_shared<Framebuffer>(_shadowPass->width(), _shadowPass->height(), GL_RG,GL_FLOAT, GL_RG16F, GL_LINEAR,GL_CLAMP_TO_BORDER);
-	_blurScreen.init(_shadowPass->textureId(), "boxblur");
+	_blurScreen.init(_shadowPass->textureId(), "boxblur_vec2");
 	
 	std::map<std::string, GLuint> textures = textureIds;
 	textures["shadowMap"] = _blurPass->textureId();
@@ -25,7 +25,7 @@ void DirectionalLight::init(const std::map<std::string, GLuint>& textureIds){
 	
 }
 
-void DirectionalLight::draw(const glm::vec2& invScreenSize, const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) const {
+void DirectionalLight::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix, const glm::vec2& invScreenSize ) const {
 	
 	
 	glm::mat4 viewToLight = _mvp * glm::inverse(viewMatrix);
@@ -41,7 +41,7 @@ void DirectionalLight::draw(const glm::vec2& invScreenSize, const glm::mat4& vie
 	glUniform4fv(_screenquad.program()->uniform("projectionMatrix"), 1, &(projectionVector[0]));
 	glUniformMatrix4fv(_screenquad.program()->uniform("viewToLight"), 1, GL_FALSE, &viewToLight[0][0]);
 
-	_screenquad.draw(invScreenSize);
+	_screenquad.draw();
 
 }
 
@@ -67,7 +67,7 @@ void DirectionalLight::blurAndUnbind() const {
 	// Set screen viewport.
 	glViewport(0,0,_blurPass->width(), _blurPass->height());
 	// Draw the fullscreen quad
-	_blurScreen.draw( glm::vec2(0.0f) );
+	_blurScreen.draw();
 	 
 	_blurPass->unbind();
 	glEnable(GL_DEPTH_TEST);
