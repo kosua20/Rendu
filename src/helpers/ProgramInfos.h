@@ -12,7 +12,7 @@ public:
 	
 	ProgramInfos();
 	
-	ProgramInfos(const std::string & vertexContent, const std::string & fragmentContent);
+	ProgramInfos(const std::string & vertexName, const std::string & fragmentName);
 	
 	~ProgramInfos();
 	
@@ -23,7 +23,7 @@ public:
 	
 	void registerTexture(const std::string & name, int slot);
 	
-	void reload(const std::string & vertexContent, const std::string & fragmentContent);
+	void reload();
 
 	// To stay coherent with TextureInfos and MeshInfos, we keep the id public.
 	
@@ -32,6 +32,8 @@ public:
 private:
 	
 	GLuint _id;
+	std::string _vertexName;
+	std::string _fragmentName;
 	std::map<std::string, GLint> _uniforms;
 	std::map<std::string, int> _textures;
 	std::map<std::string, glm::vec3> _vec3s;

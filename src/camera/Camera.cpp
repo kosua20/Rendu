@@ -59,9 +59,7 @@ void Camera::key(int key, bool flag){
 		_keyboard.registerMove(key, flag);
 	} else if(flag && key == GLFW_KEY_R) {
 		reset();
-	} else {
-		std::cout << "Key: " << key << " (" << char(key) << ")." << std::endl;
-	}
+	} 
 }
 
 void Camera::joystick(int joystick, int event){

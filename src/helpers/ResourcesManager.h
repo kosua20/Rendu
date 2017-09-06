@@ -12,9 +12,15 @@
 class Resources {
 public:
 	
+	enum ShaderType {
+		Vertex, Fragment
+	};
+	
 	const std::shared_ptr<ProgramInfos> getProgram(const std::string & name);
 	
 	const std::shared_ptr<ProgramInfos> getProgram(const std::string & name, const std::string & vertexName, const std::string & fragmentName);
+	
+	const std::string getShader(const std::string & name, const ShaderType & type);
 
 	const MeshInfos getMesh(const std::string & name);
 	
@@ -27,12 +33,6 @@ public:
 	void reload();
 
 private:
-	
-	enum ShaderType {
-		Vertex, Fragment
-	};
-	
-	const std::string getShader(const std::string & name, const ShaderType & type);
 	
 	void parseDirectory(const std::string & directoryPath);
 	

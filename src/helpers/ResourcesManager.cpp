@@ -79,12 +79,9 @@ const std::shared_ptr<ProgramInfos> Resources::getProgram(const std::string & na
 		return _programs[name];
 	}
 
-	const std::string vertexContent = getShader(vertexName, Vertex);
-	const std::string fragmentContent = getShader(fragmentName, Fragment);
-
 	_programs.emplace(std::piecewise_construct,
 		std::forward_as_tuple(name),
-		std::forward_as_tuple(new ProgramInfos(vertexContent, fragmentContent)));
+		std::forward_as_tuple(new ProgramInfos(vertexName, fragmentName)));
 
 	return _programs[name];
 }
@@ -185,9 +182,7 @@ const std::string Resources::getTextFile(const std::string & filename){
 
 void Resources::reload() {
 	for (auto & prog : _programs) {
-		const std::string vertexContent = getShader(prog.first, Vertex);
-		const std::string fragmentContent = getShader(prog.first, Fragment);
-		prog.second->reload(vertexContent, fragmentContent);
+		prog.second->reload();
 	}
 }
 

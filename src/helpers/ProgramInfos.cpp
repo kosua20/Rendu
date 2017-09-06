@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "GLUtilities.h"
+#include "ResourcesManager.h"
 
 ProgramInfos::ProgramInfos(){
 	_id = 0;
@@ -10,7 +11,13 @@ ProgramInfos::ProgramInfos(){
 	_textures.clear();
 }
 
-ProgramInfos::ProgramInfos(const std::string & vertexContent, const std::string & fragmentContent){
+ProgramInfos::ProgramInfos(const std::string & vertexName, const std::string & fragmentName){
+	_vertexName = vertexName;
+	_fragmentName = fragmentName;
+	
+	const std::string vertexContent = Resources::manager().getShader(_vertexName, Resources::Vertex);
+	const std::string fragmentContent = Resources::manager().getShader(_fragmentName, Resources::Fragment);
+	
 	_id = GLUtilities::createProgram(vertexContent, fragmentContent);
 	_uniforms.clear();
 	_textures.clear();
@@ -82,8 +89,10 @@ void ProgramInfos::cacheUniformArray(const std::string & name, const std::vector
 	checkGLError();
 }
 
-void ProgramInfos::reload(const std::string & vertexContent, const std::string & fragmentContent)
+void ProgramInfos::reload()
 {
+	const std::string vertexContent = Resources::manager().getShader(_vertexName, Resources::Vertex);
+	const std::string fragmentContent = Resources::manager().getShader(_fragmentName, Resources::Fragment);
 	_id = GLUtilities::createProgram(vertexContent, fragmentContent);
 	// For each stored uniform, update its location, and update textures slots and cached values.
 	glUseProgram(_id);
