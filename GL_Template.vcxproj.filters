@@ -48,6 +48,12 @@
     <Filter Include="Resource Files\objects">
       <UniqueIdentifier>{9a11aa7e-b3e2-4849-9b19-426a752d846b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\screens\blur-combine">
+      <UniqueIdentifier>{2044fbdc-33a8-4f62-94b1-28c1faaaf4e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\screens\box-blur">
+      <UniqueIdentifier>{0ee90eb8-d320-4142-8b29-1140e283d56c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Framebuffer.cpp">
@@ -213,19 +219,10 @@
     <None Include="resources\shaders\lights\object_depth.frag">
       <Filter>Resource Files\lights</Filter>
     </None>
-    <None Include="resources\shaders\screens\boxblur.frag">
-      <Filter>Resource Files\screens</Filter>
-    </None>
-    <None Include="resources\shaders\screens\boxblur_float.frag">
-      <Filter>Resource Files\screens</Filter>
-    </None>
     <None Include="resources\shaders\screens\final_screenquad.frag">
       <Filter>Resource Files\screens</Filter>
     </None>
     <None Include="resources\shaders\screens\fxaa.frag">
-      <Filter>Resource Files\screens</Filter>
-    </None>
-    <None Include="resources\shaders\screens\screenquad.frag">
       <Filter>Resource Files\screens</Filter>
     </None>
     <None Include="resources\shaders\screens\tonemap.frag">
@@ -260,6 +257,30 @@
     </None>
     <None Include="resources\shaders\objects\object_gbuffer.vert">
       <Filter>Resource Files\objects</Filter>
+    </None>
+    <None Include="resources\shaders\screens\box-blur\boxblur_float.frag">
+      <Filter>Resource Files\screens\box-blur</Filter>
+    </None>
+    <None Include="resources\shaders\screens\box-blur\boxblur_vec2.frag">
+      <Filter>Resource Files\screens\box-blur</Filter>
+    </None>
+    <None Include="resources\shaders\screens\box-blur\boxblur_vec3.frag">
+      <Filter>Resource Files\screens\box-blur</Filter>
+    </None>
+    <None Include="resources\shaders\screens\blur-combine\blur-combine-3.frag">
+      <Filter>Resource Files\screens\blur-combine</Filter>
+    </None>
+    <None Include="resources\shaders\screens\blur-combine\blur-combine-4.frag">
+      <Filter>Resource Files\screens\blur-combine</Filter>
+    </None>
+    <None Include="resources\shaders\screens\blur-combine\blur-combine-5.frag">
+      <Filter>Resource Files\screens\blur-combine</Filter>
+    </None>
+    <None Include="resources\shaders\screens\blur-combine\blur-combine-6.frag">
+      <Filter>Resource Files\screens\blur-combine</Filter>
+    </None>
+    <None Include="resources\shaders\screens\blur-combine\blur-combine-2.frag">
+      <Filter>Resource Files\screens\blur-combine</Filter>
     </None>
   </ItemGroup>
 </Project>
