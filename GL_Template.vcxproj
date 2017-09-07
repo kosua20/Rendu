@@ -205,14 +205,19 @@
     <None Include="resources\shaders\objects\skybox_gbuffer.frag" />
     <None Include="resources\shaders\objects\skybox_gbuffer.vert" />
     <None Include="resources\shaders\screens\bloom.frag" />
+    <None Include="resources\shaders\screens\blur-combine\blur-combine-2.frag" />
+    <None Include="resources\shaders\screens\blur-combine\blur-combine-3.frag" />
+    <None Include="resources\shaders\screens\blur-combine\blur-combine-4.frag" />
+    <None Include="resources\shaders\screens\blur-combine\blur-combine-5.frag" />
+    <None Include="resources\shaders\screens\blur-combine\blur-combine-6.frag" />
     <None Include="resources\shaders\screens\blur.frag" />
-    <None Include="resources\shaders\screens\boxblur.frag" />
-    <None Include="resources\shaders\screens\boxblur_float.frag" />
+    <None Include="resources\shaders\screens\box-blur\boxblur_float.frag" />
+    <None Include="resources\shaders\screens\box-blur\boxblur_vec2.frag" />
+    <None Include="resources\shaders\screens\box-blur\boxblur_vec3.frag" />
     <None Include="resources\shaders\screens\final_screenquad.frag" />
     <None Include="resources\shaders\screens\fxaa.frag" />
     <None Include="resources\shaders\screens\passthrough.frag" />
     <None Include="resources\shaders\screens\passthrough.vert" />
-    <None Include="resources\shaders\screens\screenquad.frag" />
     <None Include="resources\shaders\screens\tonemap.frag" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

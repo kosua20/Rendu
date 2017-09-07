@@ -17,8 +17,8 @@ Blur::Blur(int width, int height, int depth){
 	_frameBuffersBlur = std::vector<std::shared_ptr<Framebuffer>>(depth);
 	std::map<std::string, GLuint> textures;
 	for(size_t i = 0; i < depth; ++i){
-		_frameBuffers[i] = std::make_shared<Framebuffer>(width/std::pow(2,i), height/std::pow(2,i), GL_RGB, GL_FLOAT, GL_RGB16F, GL_LINEAR, GL_CLAMP_TO_EDGE);
-		_frameBuffersBlur[i] = std::make_shared<Framebuffer>(width/std::pow(2,i), height/std::pow(2,i), GL_RGB, GL_FLOAT, GL_RGB16F, GL_LINEAR, GL_CLAMP_TO_EDGE);
+		_frameBuffers[i] = std::make_shared<Framebuffer>(width/std::pow(2,i), height/std::pow(2,i), GL_RGB, GL_FLOAT, GL_RGB16F, GL_LINEAR, GL_CLAMP_TO_EDGE, false);
+		_frameBuffersBlur[i] = std::make_shared<Framebuffer>(width/std::pow(2,i), height/std::pow(2,i), GL_RGB, GL_FLOAT, GL_RGB16F, GL_LINEAR, GL_CLAMP_TO_EDGE, false);
 		textures["texture" + std::to_string(i)] = _frameBuffers[i]->textureId();
 	}
 
@@ -26,7 +26,7 @@ Blur::Blur(int width, int height, int depth){
 	if (_frameBuffers.size() > 1) {
 		_combineScreen.init(textures, "blur-combine-" + std::to_string(_frameBuffers.size()));
 	}
-	_finalFramebuffer = std::make_shared<Framebuffer>(width, height, GL_RGB, GL_FLOAT, GL_RGB16F, GL_LINEAR, GL_CLAMP_TO_EDGE);
+	_finalFramebuffer = std::make_shared<Framebuffer>(width, height, GL_RGB, GL_FLOAT, GL_RGB16F, GL_LINEAR, GL_CLAMP_TO_EDGE, false);
 	checkGLError();
 }
 
