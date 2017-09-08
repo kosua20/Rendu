@@ -41,7 +41,7 @@ private:
 	/// Load a shader of the given type from a string
 	static GLuint loadShader(const std::string & prog, GLuint type);
 	
-	static int loadEXRHelper(float **out_rgba, int *width, int *height, const char * filename, const char ** err);
+	static int loadEXRHelper(float **out_rgb, int *width, int *height, const char * filename, const char ** err);
 	
 public:
 	

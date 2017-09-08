@@ -19,7 +19,7 @@ void AmbientQuad::init(std::map<std::string, GLuint> textureIds){
 	ScreenQuad::init(finalTextures, "ambient");
 	
 	// Load texture.
-	_texCubeMapSmall = Resources::manager().getCubemap("cubemap_diff").id;
+	_texCubeMapSmall = Resources::manager().getCubemap("corsica_beach_cube_irr").id;
 	// Bind uniform to texture slot.
 	_program->registerTexture("textureCubeMapSmall", (int)_textureIds.size());
 	
