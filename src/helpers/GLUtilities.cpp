@@ -327,6 +327,7 @@ int GLUtilities::loadEXRHelper(float **out_rgb, int *width, int *height, const c
 		reinterpret_cast<float **>(exr_image.images)[idxG][i];
 		(*out_rgb)[3 * i + 2] =
 		reinterpret_cast<float **>(exr_image.images)[idxB][i];
+		// Ignore alpha.
 	}
 	
 	
