@@ -36,10 +36,10 @@
 - SSAO
 - Resources managers
 - Joystick support
+- HDR, bloom
 
 [Code stops here]
 
-- HDR, bloom
 - Physically based rendering
 - Raymarching techniques (SSR ?)
 - UI elements, text rendering (df)
