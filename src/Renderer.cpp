@@ -12,7 +12,7 @@
 
 Renderer::~Renderer(){}
 
-Renderer::Renderer(int width, int height){
+Renderer::Renderer(int width, int height, std::shared_ptr<Scene> & scene){
 
 	// Initialize the timer.
 	_timer = glfwGetTime();
@@ -61,12 +61,13 @@ Renderer::Renderer(int width, int height){
 	
 	const std::vector<TextureType> includedTextures = { TextureType::Albedo, TextureType::Depth, TextureType::Normal, TextureType::Effects };
 	
-	_scene.init();
+	_scene = scene;
+	_scene->init();
 	
-	for(auto& dirLight : _scene.directionalLights){
+	for(auto& dirLight : _scene->directionalLights){
 		dirLight.init(_gbuffer->textureIds(includedTextures));
 	}
-	for(auto& pointLight : _scene.pointLights){
+	for(auto& pointLight : _scene->pointLights){
 		pointLight.init(_gbuffer->textureIds(includedTextures));
 	}
 	
@@ -95,10 +96,10 @@ void Renderer::draw() {
 	// --- Light pass -------
 	
 	// Draw the scene inside the framebuffer.
-	for(auto& dirLight : _scene.directionalLights){
+	for(auto& dirLight : _scene->directionalLights){
 
 		dirLight.bind();
-		for(auto& object : _scene.objects){
+		for(auto& object : _scene->objects){
 			object.drawDepth(dirLight.mvp());
 		}
 		dirLight.blurAndUnbind();
@@ -115,11 +116,11 @@ void Renderer::draw() {
 	// Clear the depth buffer (we know we will draw everywhere, no need to clear color.
 	glClear(GL_DEPTH_BUFFER_BIT);
 	
-	for(auto & object : _scene.objects){
+	for(auto & object : _scene->objects){
 		object.draw(_camera.view(), _camera.projection());
 	}
 	
-	for(auto& pointLight : _scene.pointLights){
+	for(auto& pointLight : _scene->pointLights){
 		pointLight.drawDebug(_camera.view(), _camera.projection());
 	}
 	
@@ -128,7 +129,7 @@ void Renderer::draw() {
 	// Accept a depth of 1.0 (far plane).
 	glDepthFunc(GL_LEQUAL);
 	// draw background.
-	_scene.background.draw(_camera.view(), _camera.projection());
+	_scene->background.draw(_camera.view(), _camera.projection());
 	glDepthFunc(GL_LESS);
 	glDepthMask(GL_TRUE);
 	
@@ -159,11 +160,11 @@ void Renderer::draw() {
 	_ambientScreen.draw(_camera.view(), _camera.projection());
 	
 	glEnable(GL_BLEND);
-	for(auto& dirLight : _scene.directionalLights){
+	for(auto& dirLight : _scene->directionalLights){
 		dirLight.draw(_camera.view(), _camera.projection());
 	}
 	glCullFace(GL_FRONT);
-	for(auto& pointLight : _scene.pointLights){
+	for(auto& pointLight : _scene->pointLights){
 		pointLight.draw(_camera.view(), _camera.projection(), invRenderSize);
 	}
 	
@@ -216,13 +217,13 @@ void Renderer::draw() {
 
 void Renderer::physics(double elapsedTime){
 	_camera.update(elapsedTime);
-	_scene.update(_timer, elapsedTime);
+	_scene->update(_timer, elapsedTime);
 }
 
 
 void Renderer::clean() const {
 	// Clean objects.
-	_scene.clean();
+	_scene->clean();
 	_ambientScreen.clean();
 	_fxaaScreen.clean();
 	_ssaoBlurScreen.clean();

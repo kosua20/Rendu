@@ -6,6 +6,7 @@
 #include <memory>
 
 #include "Renderer.h"
+#include "scenes/Scenes.h"
 
 #define INITIAL_SIZE_WIDTH 800
 #define INITIAL_SIZE_HEIGHT 600
@@ -91,8 +92,9 @@ int main () {
 		return -1;
 	}
 
-	// Create the renderer.
-	Renderer renderer = Renderer(INITIAL_SIZE_WIDTH,INITIAL_SIZE_HEIGHT);
+	// Create the scene and the renderer.
+	std::shared_ptr<Scene> scene(new DragonScene());
+	Renderer renderer = Renderer(INITIAL_SIZE_WIDTH,INITIAL_SIZE_HEIGHT, scene);
 	// Keep a global ref to the render for some callbacks.
 	rendererGlbPtr = &renderer;
 	
