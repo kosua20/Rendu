@@ -42,9 +42,9 @@
 
 - Physically based rendering
 - Raymarching techniques (SSR ?)
-- UI elements, text rendering (df)
-- Temporal AA ?
 - Water/terrain/noise ?
+- Temporal AA ?
+- UI elements, text rendering (df)
 - Particles, instanced drawing
 - Geometry shaders ? TFb ?
 - Tessellation ?
