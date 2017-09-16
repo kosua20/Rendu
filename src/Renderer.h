@@ -7,20 +7,17 @@
 
 #include "helpers/GenerationUtilities.h"
 
+#include "Scene.h"
 #include "Framebuffer.h"
 #include "Gbuffer.h"
 #include "Blur.h"
 #include "AmbientQuad.h"
 #include "camera/Camera.h"
-#include "Object.h"
 #include "ScreenQuad.h"
-#include "lights/DirectionalLight.h"
-#include "lights/PointLight.h"
 
 class Renderer {
 
 public:
-
 
 	~Renderer();
 
@@ -49,17 +46,11 @@ public:
 
 	void mousePosition(double x, double y, bool leftPress, bool rightPress);
 	
-	
 private:
 	
 	double _timer;
 
 	Camera _camera;
-
-	Object _suzanne;
-	Object _dragon;
-	Object _plane;
-	Object _skybox;
 
 	std::shared_ptr<Gbuffer> _gbuffer;
 	std::shared_ptr<Blur> _blurBuffer;
@@ -77,8 +68,7 @@ private:
 	ScreenQuad _fxaaScreen;
 	ScreenQuad _finalScreen;
 
-	std::vector<DirectionalLight> _directionalLights;
-	std::vector<PointLight> _pointLights;
+	Scene _scene;
 
 };
 
