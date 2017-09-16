@@ -3,15 +3,10 @@
 #include <vector>
 // glm additional header to generate transformation matrices directly.
 #include <glm/gtc/matrix_transform.hpp>
-#include "Scene.h"
+#include "DragonScene.h"
 
 
-Scene::~Scene(){}
-
-Scene::Scene(){
-}
-
-void Scene::init(){
+void DragonScene::init(){
 	
 	// Create directional light.
 	directionalLights.emplace_back(glm::vec3(0.0f), 1.2f*glm::vec3(1.0f,1.0f, 0.92f), glm::ortho(-0.75f,0.75f,-0.75f,0.75f,1.0f,6.0f));
@@ -45,7 +40,7 @@ void Scene::init(){
 	
 }
 
-void Scene::update(double timer, double elapsedTime){
+void DragonScene::update(double timer, double elapsedTime){
 	// Update lights.
 	directionalLights[0].update(glm::vec3(-2.0f, 1.5f + sin(0.5*timer),0.0f));
 	
@@ -60,13 +55,3 @@ void Scene::update(double timer, double elapsedTime){
 	objects[0].update(suzanneModel);
 }
 
-/// Clean function
-void Scene::clean() const {
-	for(auto & object : objects){
-		object.clean();
-	}
-	background.clean();
-	for(auto& dirLight : directionalLights){
-		dirLight.clean();
-	}
-}

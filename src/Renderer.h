@@ -7,7 +7,7 @@
 
 #include "helpers/GenerationUtilities.h"
 
-#include "Scene.h"
+#include "scenes/Scene.h"
 #include "Framebuffer.h"
 #include "Gbuffer.h"
 #include "Blur.h"
@@ -22,7 +22,7 @@ public:
 	~Renderer();
 
 	/// Init function
-	Renderer(int width, int height);
+	Renderer(int width, int height, std::shared_ptr<Scene> & scene);
 
 	/// Draw function
 	void draw();
@@ -68,7 +68,7 @@ private:
 	ScreenQuad _fxaaScreen;
 	ScreenQuad _finalScreen;
 
-	Scene _scene;
+	std::shared_ptr<Scene> _scene;
 
 };
 
