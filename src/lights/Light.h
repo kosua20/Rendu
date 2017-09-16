@@ -14,9 +14,7 @@ public:
 	
 	Light(const glm::vec3& worldPosition, const glm::vec3& color, const glm::mat4& projection = glm::mat4(1.0f));
 	
-	void update(const glm::vec3& worldPosition, const glm::mat4& camViewMatrix);
-	
-	void update(const glm::mat4& camViewMatrix);
+	void update(const glm::vec3& worldPosition);
 	
 	virtual void init(const std::map<std::string, GLuint>& textureIds) =0;
 	
@@ -49,16 +47,9 @@ inline Light::Light(const glm::vec3& worldPosition, const glm::vec3& color, cons
 }
 
 
-inline void Light::update(const glm::vec3& worldPosition, const glm::mat4& camViewMatrix){
+inline void Light::update(const glm::vec3& worldPosition){
 	
 	_local = worldPosition;
-	_viewMatrix = glm::lookAt(_local, glm::vec3(0.0f,0.0f,0.0f), glm::vec3(0.0f,1.0f,0.0f));
-	_mvp = _projectionMatrix * _viewMatrix;
-	
-}
-
-inline void Light::update(const glm::mat4& camViewMatrix){
-	
 	_viewMatrix = glm::lookAt(_local, glm::vec3(0.0f,0.0f,0.0f), glm::vec3(0.0f,1.0f,0.0f));
 	_mvp = _projectionMatrix * _viewMatrix;
 	
