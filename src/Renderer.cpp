@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <iostream>
 #include <vector>
-// glm additional header to generate transformation matrices directly.
-#include <glm/gtc/matrix_transform.hpp>
 #include <cstring> // For memcopy depending on the platform.
+
+#include "Object.h"
+#include "lights/DirectionalLight.h"
+#include "lights/PointLight.h"
 
 #include "Renderer.h"
 
@@ -35,17 +37,6 @@ Renderer::Renderer(int width, int height){
 	
 	_blurBuffer = std::make_shared<Blur>(renderPow2Size, renderPow2Size, 2);
 	
-	// Create directional light.
-	_directionalLights.emplace_back(glm::vec3(0.0f), 1.2f*glm::vec3(1.0f,1.0f, 0.92f), glm::ortho(-0.75f,0.75f,-0.75f,0.75f,1.0f,6.0f));
-	
-	// Create point lights.
-	const float lI = 6.0; // Light intensity.
-	std::vector<glm::vec3> colors = { glm::vec3(lI,0.0,0.0), glm::vec3(0.0,lI,0.0), glm::vec3(0.0,0.0,lI), glm::vec3(lI,lI,0.0)};
-	for(size_t i = 0; i < 4; ++i){
-		glm::vec3 position = glm::vec3(-1.0f+2.0f*(i%2),-0.1f,-1.0f+2.0f*(i/2));
-		_pointLights.emplace_back(position, colors[i], 0.7f);
-	}
-	
 	PointLight::loadProgramAndGeometry();
 	
 	// Query the renderer identifier, and the supported OpenGL version.
@@ -64,23 +55,18 @@ Renderer::Renderer(int width, int height){
 	glBlendFunc(GL_ONE, GL_ONE);
 	checkGLError();
 
-	// Initialize objects.
-
-	_suzanne.init(Object::Type::Regular, "suzanne", { {"suzanne_texture_color", true }, {"suzanne_texture_normal", false}, {"suzanne_texture_ao_specular_reflection", false} });
-	_dragon.init(Object::Type::Regular, "dragon", { { "dragon_texture_color", true }, { "dragon_texture_normal", false }, { "dragon_texture_ao_specular_reflection", false } });
-	_plane.init(Object::Type::Parallax, "plane", { { "plane_texture_color", true }, { "plane_texture_normal", false }, { "plane_texture_depthmap", false } });
-	_skybox.init(Object::Type::Skybox, "skybox", {}, {{"corsica_beach_cube", true }});
-	
 	std::map<std::string, GLuint> ambientTextures = _gbuffer->textureIds({ TextureType::Albedo, TextureType::Normal, TextureType::Depth });
 	ambientTextures["ssaoTexture"] = _ssaoBlurFramebuffer->textureId();
 	_ambientScreen.init(ambientTextures);
 	
 	const std::vector<TextureType> includedTextures = { TextureType::Albedo, TextureType::Depth, TextureType::Normal, TextureType::Effects };
-	for(auto& dirLight : _directionalLights){
+	
+	_scene.init();
+	
+	for(auto& dirLight : _scene.directionalLights){
 		dirLight.init(_gbuffer->textureIds(includedTextures));
 	}
-	
-	for(auto& pointLight : _pointLights){
+	for(auto& pointLight : _scene.pointLights){
 		pointLight.init(_gbuffer->textureIds(includedTextures));
 	}
 	
@@ -91,13 +77,6 @@ Renderer::Renderer(int width, int height){
 	_finalScreen.init(_fxaaFramebuffer->textureId(), "final_screenquad");
 	checkGLError();
 	
-	
-	// Position fixed objects.
-	const glm::mat4 dragonModel = glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(-0.1,-0.05,-0.25)),glm::vec3(0.5f));
-	const glm::mat4 planeModel = glm::scale(glm::translate(glm::mat4(1.0f),glm::vec3(0.0f,-0.35f,-0.5f)), glm::vec3(2.0f));
-	
-	_dragon.update(dragonModel);
-	_plane.update(planeModel);
 }
 
 
@@ -116,17 +95,13 @@ void Renderer::draw() {
 	// --- Light pass -------
 	
 	// Draw the scene inside the framebuffer.
-	for(auto& dirLight : _directionalLights){
-		
+	for(auto& dirLight : _scene.directionalLights){
+
 		dirLight.bind();
-		
-		// Draw objects.
-		_suzanne.drawDepth(dirLight.mvp());
-		_dragon.drawDepth(dirLight.mvp());
-		//_plane.drawDepth(dirLight.mvp());
-		
+		for(auto& object : _scene.objects){
+			object.drawDepth(dirLight.mvp());
+		}
 		dirLight.blurAndUnbind();
-	
 	}
 	
 	// ----------------------
@@ -140,12 +115,11 @@ void Renderer::draw() {
 	// Clear the depth buffer (we know we will draw everywhere, no need to clear color.
 	glClear(GL_DEPTH_BUFFER_BIT);
 	
-	// Draw objects
-	_suzanne.draw(_camera.view(), _camera.projection());
-	_dragon.draw(_camera.view(), _camera.projection());
-	_plane.draw(_camera.view(), _camera.projection());
+	for(auto & object : _scene.objects){
+		object.draw(_camera.view(), _camera.projection());
+	}
 	
-	for(auto& pointLight : _pointLights){
+	for(auto& pointLight : _scene.pointLights){
 		pointLight.drawDebug(_camera.view(), _camera.projection());
 	}
 	
@@ -153,7 +127,8 @@ void Renderer::draw() {
 	glDepthMask(GL_FALSE);
 	// Accept a depth of 1.0 (far plane).
 	glDepthFunc(GL_LEQUAL);
-	_skybox.draw(_camera.view(), _camera.projection());
+	// draw background.
+	_scene.background.draw(_camera.view(), _camera.projection());
 	glDepthFunc(GL_LESS);
 	glDepthMask(GL_TRUE);
 	
@@ -184,13 +159,14 @@ void Renderer::draw() {
 	_ambientScreen.draw(_camera.view(), _camera.projection());
 	
 	glEnable(GL_BLEND);
-	for(auto& dirLight : _directionalLights){
+	for(auto& dirLight : _scene.directionalLights){
 		dirLight.draw(_camera.view(), _camera.projection());
 	}
 	glCullFace(GL_FRONT);
-	for(auto& pointLight : _pointLights){
+	for(auto& pointLight : _scene.pointLights){
 		pointLight.draw(_camera.view(), _camera.projection(), invRenderSize);
 	}
+	
 	glDisable(GL_BLEND);
 	glCullFace(GL_BACK);
 	_sceneFramebuffer->unbind();
@@ -239,35 +215,14 @@ void Renderer::draw() {
 }
 
 void Renderer::physics(double elapsedTime){
-	
 	_camera.update(elapsedTime);
-	
-	// Update lights.
-	_directionalLights[0].update(glm::vec3(-2.0f, 1.5f + sin(0.5*_timer),0.0f), _camera.view());
-	
-	for(size_t i = 0; i <_pointLights.size(); ++i){
-		auto& pointLight = _pointLights[i];
-		glm::vec4 newPosition = glm::rotate(glm::mat4(1.0f), (float)elapsedTime, glm::vec3(0.0f, 1.0f, 0.0f))*glm::vec4(pointLight.local(), 1.0f);
-		pointLight.update(glm::vec3(newPosition), _camera.view());
-	}
-	
-	// Update objects.
-	
-	const glm::mat4 suzanneModel = glm::scale(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(0.2,0.0,0.0)),float(_timer),glm::vec3(0.0f,1.0f,0.0f)),glm::vec3(0.25f));
-	_suzanne.update(suzanneModel);
-	
+	_scene.update(_timer, elapsedTime);
 }
 
 
 void Renderer::clean() const {
 	// Clean objects.
-	_suzanne.clean();
-	_dragon.clean();
-	_plane.clean();
-	_skybox.clean();
-	for(auto& dirLight : _directionalLights){
-		dirLight.clean();
-	}
+	_scene.clean();
 	_ambientScreen.clean();
 	_fxaaScreen.clean();
 	_ssaoBlurScreen.clean();

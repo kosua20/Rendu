@@ -25,6 +25,7 @@
 		F43246721F438C3B0090FD5F /* gl3w.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F43245DD1F438BFB0090FD5F /* gl3w.cpp */; };
 		F43EF9AB1F44EDFB0073DFFB /* Joystick.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F43EF9A91F44EDFB0073DFFB /* Joystick.cpp */; };
 		F44F7F871F435AF60057CEFE /* ProgramInfos.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F44F7F861F435AF60057CEFE /* ProgramInfos.cpp */; };
+		F47851F31F6DA02E0026B306 /* Scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F47851F21F6DA02D0026B306 /* Scene.cpp */; };
 		F47EC10D1F446D5F000960F3 /* libglfw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F47EC10C1F446D5E000960F3 /* libglfw3.a */; };
 		F4B11E071F5F3290002E87F1 /* Blur.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4B11E051F5F328F002E87F1 /* Blur.cpp */; };
 		F4B42D021F425B8100E485C5 /* ResourcesManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4B42D001F425B8100E485C5 /* ResourcesManager.cpp */; };
@@ -229,6 +230,8 @@
 		F461621C1CF9D5A400B22823 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		F461621D1CF9D5A400B22823 /* Renderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Renderer.cpp; sourceTree = "<group>"; };
 		F461621E1CF9D5A400B22823 /* Renderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Renderer.h; sourceTree = "<group>"; };
+		F47851F11F6DA02D0026B306 /* Scene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Scene.h; sourceTree = "<group>"; };
+		F47851F21F6DA02D0026B306 /* Scene.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Scene.cpp; sourceTree = "<group>"; };
 		F47EC10C1F446D5E000960F3 /* libglfw3.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libglfw3.a; path = "src/libs/glfw/lib-mac/libglfw3.a"; sourceTree = "<group>"; };
 		F494157A1DE1D3EC0086E191 /* Gbuffer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Gbuffer.cpp; sourceTree = "<group>"; };
 		F494157B1DE1D3EC0086E191 /* Gbuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Gbuffer.h; sourceTree = "<group>"; };
@@ -582,6 +585,8 @@
 				F461621C1CF9D5A400B22823 /* main.cpp */,
 				F494157A1DE1D3EC0086E191 /* Gbuffer.cpp */,
 				F494157B1DE1D3EC0086E191 /* Gbuffer.h */,
+				F47851F21F6DA02D0026B306 /* Scene.cpp */,
+				F47851F11F6DA02D0026B306 /* Scene.h */,
 				F447FFC21D0DD2C30084E251 /* Framebuffer.cpp */,
 				F447FFC31D0DD2C30084E251 /* Framebuffer.h */,
 				F461621E1CF9D5A400B22823 /* Renderer.h */,
@@ -768,6 +773,7 @@
 				F41F5F561E817E4B00C18D8D /* MeshUtilities.cpp in Sources */,
 				F4B42D021F425B8100E485C5 /* ResourcesManager.cpp in Sources */,
 				F41F5F571E817E4B00C18D8D /* GLUtilities.cpp in Sources */,
+				F47851F31F6DA02E0026B306 /* Scene.cpp in Sources */,
 				F41F5F581E817E4B00C18D8D /* main.cpp in Sources */,
 				F41F5F591E817E4B00C18D8D /* Gbuffer.cpp in Sources */,
 				F41F5F5A1E817E4B00C18D8D /* Framebuffer.cpp in Sources */,
