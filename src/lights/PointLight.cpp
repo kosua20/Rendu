@@ -17,7 +17,7 @@ void PointLight::loadProgramAndGeometry() {
 	_debugProgram = Resources::manager().getProgram("point_light_debug");
 
 	// Load geometry.
-	_debugMesh = Resources::manager().getMesh("sphere");
+	_debugMesh = Resources::manager().getMesh("light_sphere");
 	
 	checkGLError();
 }
