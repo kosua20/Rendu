@@ -11,7 +11,7 @@ Object::Object() {}
 
 Object::~Object() {}
 
-void Object::init(const Object::Type & type, const std::string& meshPath, const std::vector<std::pair<std::string, bool>>& texturesPaths, const std::vector<std::pair<std::string, bool>>& cubemapPaths, bool castShadows) {
+Object::Object(const Object::Type & type, const std::string& meshPath, const std::vector<std::pair<std::string, bool>>& texturesPaths, const std::vector<std::pair<std::string, bool>>& cubemapPaths, bool castShadows) {
 
 	_material = static_cast<int>(type);
 	_castShadow = castShadows;
