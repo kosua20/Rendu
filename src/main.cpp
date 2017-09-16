@@ -93,7 +93,7 @@ int main () {
 	}
 
 	// Create the scene and the renderer.
-	std::shared_ptr<Scene> scene(new DragonScene());
+	std::shared_ptr<Scene> scene(new SphereScene());
 	Renderer renderer = Renderer(INITIAL_SIZE_WIDTH,INITIAL_SIZE_HEIGHT, scene);
 	// Keep a global ref to the render for some callbacks.
 	rendererGlbPtr = &renderer;
