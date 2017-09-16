@@ -25,7 +25,6 @@
 		F43246721F438C3B0090FD5F /* gl3w.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F43245DD1F438BFB0090FD5F /* gl3w.cpp */; };
 		F43EF9AB1F44EDFB0073DFFB /* Joystick.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F43EF9A91F44EDFB0073DFFB /* Joystick.cpp */; };
 		F44F7F871F435AF60057CEFE /* ProgramInfos.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F44F7F861F435AF60057CEFE /* ProgramInfos.cpp */; };
-		F459263A1F6DCD3600B0A05E /* DragonScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F45926391F6DCC9900B0A05E /* DragonScene.cpp */; };
 		F47EC10D1F446D5F000960F3 /* libglfw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F47EC10C1F446D5E000960F3 /* libglfw3.a */; };
 		F4B11E071F5F3290002E87F1 /* Blur.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4B11E051F5F328F002E87F1 /* Blur.cpp */; };
 		F4B42D021F425B8100E485C5 /* ResourcesManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4B42D001F425B8100E485C5 /* ResourcesManager.cpp */; };
@@ -225,7 +224,8 @@
 		F450E41D1F607DDC00B9C571 /* boxblur_vec3.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = boxblur_vec3.frag; sourceTree = "<group>"; };
 		F45926361F6DCB9400B0A05E /* Scene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Scene.h; sourceTree = "<group>"; };
 		F45926381F6DCC9900B0A05E /* DragonScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DragonScene.h; sourceTree = "<group>"; };
-		F45926391F6DCC9900B0A05E /* DragonScene.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DragonScene.cpp; sourceTree = "<group>"; };
+		F459263B1F6DD01F00B0A05E /* SphereScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SphereScene.h; sourceTree = "<group>"; };
+		F459263E1F6DD15300B0A05E /* Scenes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Scenes.h; sourceTree = "<group>"; };
 		F46162181CF9D5A400B22823 /* MeshUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MeshUtilities.cpp; sourceTree = "<group>"; };
 		F46162191CF9D5A400B22823 /* MeshUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MeshUtilities.h; sourceTree = "<group>"; };
 		F461621A1CF9D5A400B22823 /* GLUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GLUtilities.cpp; sourceTree = "<group>"; };
@@ -547,7 +547,8 @@
 		F45926341F6DCB9400B0A05E /* scenes */ = {
 			isa = PBXGroup;
 			children = (
-				F45926391F6DCC9900B0A05E /* DragonScene.cpp */,
+				F459263E1F6DD15300B0A05E /* Scenes.h */,
+				F459263B1F6DD01F00B0A05E /* SphereScene.h */,
 				F45926381F6DCC9900B0A05E /* DragonScene.h */,
 				F45926361F6DCB9400B0A05E /* Scene.h */,
 			);
@@ -787,7 +788,6 @@
 				F41F5F581E817E4B00C18D8D /* main.cpp in Sources */,
 				F41F5F591E817E4B00C18D8D /* Gbuffer.cpp in Sources */,
 				F41F5F5A1E817E4B00C18D8D /* Framebuffer.cpp in Sources */,
-				F459263A1F6DCD3600B0A05E /* DragonScene.cpp in Sources */,
 				F4B11E071F5F3290002E87F1 /* Blur.cpp in Sources */,
 				F41F5F5B1E817E4B00C18D8D /* Renderer.cpp in Sources */,
 				F41F5F5D1E817E4B00C18D8D /* ScreenQuad.cpp in Sources */,
