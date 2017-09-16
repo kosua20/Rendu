@@ -11,10 +11,11 @@ Object::Object() {}
 
 Object::~Object() {}
 
-void Object::init(const Object::Type & type, const std::string& meshPath, const std::vector<std::pair<std::string, bool>>& texturesPaths, const std::vector<std::pair<std::string, bool>>& cubemapPaths) {
+void Object::init(const Object::Type & type, const std::string& meshPath, const std::vector<std::pair<std::string, bool>>& texturesPaths, const std::vector<std::pair<std::string, bool>>& cubemapPaths, bool castShadows) {
 
 	_material = static_cast<int>(type);
-
+	_castShadow = castShadows;
+	
 	// Load the shaders
 	_programDepth = Resources::manager().getProgram("object_depth");
 
@@ -111,7 +112,9 @@ void Object::draw(const glm::mat4& view, const glm::mat4& projection) const {
 
 
 void Object::drawDepth(const glm::mat4& lightVP) const {
-	
+	if(!_castShadow){
+		return;
+	}
 	// Combine the three matrices.
 	glm::mat4 lightMVP = lightVP * _model;
 	

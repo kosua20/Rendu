@@ -21,7 +21,7 @@ public:
 	~Object();
 
 	/// Init function
-	void init(const Object::Type & type, const std::string& meshPath, const std::vector<std::pair<std::string, bool>>& texturesPaths, const std::vector<std::pair<std::string, bool>>& cubemapPaths = {});
+	void init(const Object::Type & type, const std::string& meshPath, const std::vector<std::pair<std::string, bool>>& texturesPaths, const std::vector<std::pair<std::string, bool>>& cubemapPaths = {}, bool castShadows = true);
 	
 	/// Update function
 	void update(const glm::mat4& model);
@@ -47,6 +47,7 @@ private:
 	glm::mat4 _model;
 	
 	int _material;
+	bool _castShadow;
 
 };
 
