@@ -30,7 +30,7 @@ void SphereScene::init(){
 	objects.push_back(sphere);
 	
 	// Background creation.
-	background = Object(Object::Type::Skybox, "skybox", {}, {{"corsica_beach_cube", true }});
+	background = Object(Object::Type::Skybox, "skybox", {}, {{"studio", true }});
 	
 }
 
