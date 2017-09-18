@@ -198,6 +198,7 @@
 		F432466C1F438BFB0090FD5F /* vector_relational.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = vector_relational.hpp; sourceTree = "<group>"; };
 		F432466E1F438BFB0090FD5F /* stb_image.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = stb_image.h; sourceTree = "<group>"; };
 		F43246701F438BFB0090FD5F /* tinydir.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tinydir.h; sourceTree = "<group>"; };
+		F43A76621F6E7374009DB55A /* DeskScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeskScene.h; sourceTree = "<group>"; };
 		F43EF9A91F44EDFB0073DFFB /* Joystick.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Joystick.cpp; sourceTree = "<group>"; };
 		F43EF9AA1F44EDFB0073DFFB /* Joystick.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Joystick.h; sourceTree = "<group>"; };
 		F447FFBE1D0D8FBD0084E251 /* Object.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Object.cpp; sourceTree = "<group>"; };
@@ -549,6 +550,7 @@
 			children = (
 				F459263E1F6DD15300B0A05E /* Scenes.h */,
 				F459263B1F6DD01F00B0A05E /* SphereScene.h */,
+				F43A76621F6E7374009DB55A /* DeskScene.h */,
 				F45926381F6DCC9900B0A05E /* DragonScene.h */,
 				F45926361F6DCB9400B0A05E /* Scene.h */,
 			);
