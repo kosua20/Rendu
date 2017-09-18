@@ -19,15 +19,20 @@ public:
 void SphereScene::init(){
 	
 	// Create directional light.
-	directionalLights.emplace_back(glm::vec3(-2.0f, 1.5f, 0.0f), 5.0f*glm::vec3(1.0f,1.0f, 0.92f), glm::ortho(-0.75f,0.75f,-0.75f,0.75f,1.0f,6.0f));
+	directionalLights.emplace_back(glm::vec3(-2.0f, 1.5f, 0.0f), 3.0f*glm::vec3(1.0f,1.0f, 0.92f), glm::ortho(-0.75f,0.75f,-0.75f,0.75f,1.0f,6.0f));
 	
 	pointLights.emplace_back( glm::vec3(0.5f,-0.1f,0.5f), 3.0f*glm::vec3(0.2f,0.8f,1.2f), 0.9f);
 	
 	// Objects creation.
-	Object sphere(Object::Type::Regular, "sphere", { {"sphere_wood_lacquered_albedo", true }, {"sphere_wood_lacquered_normal", false}, {"sphere_wood_lacquered_metallic", false}});
-	const glm::mat4 model = glm::scale(glm::mat4(1.0f),glm::vec3(0.35f));
-	sphere.update(model);
-	objects.push_back(sphere);
+	Object sphere1(Object::Type::Regular, "sphere", { {"sphere_wood_lacquered_albedo", true }, {"sphere_wood_lacquered_normal", false}, {"sphere_wood_lacquered_rough_met_ao", false}});
+	Object sphere2(Object::Type::Regular, "sphere", { {"sphere_gold_worn_albedo", true }, {"sphere_gold_worn_normal", false}, {"sphere_gold_worn_rough_met_ao", false}});
+	const glm::mat4 model1 = glm::translate(glm::scale(glm::mat4(1.0f),glm::vec3(0.3f)), glm::vec3(1.2f,0.0f, 0.0f));
+	const glm::mat4 model2 = glm::translate(glm::scale(glm::mat4(1.0f),glm::vec3(0.3f)), glm::vec3(-1.2f,0.0f, 0.0f));
+	sphere1.update(model1);
+	sphere2.update(model2);
+	
+	objects.push_back(sphere1);
+	objects.push_back(sphere2);
 	
 	// Background creation.
 	background = Object(Object::Type::Skybox, "skybox", {}, {{"studio", true }});
@@ -35,7 +40,7 @@ void SphereScene::init(){
 }
 
 void SphereScene::update(double timer, double elapsedTime){
-	const glm::mat4 model = glm::rotate(glm::scale(glm::mat4(1.0f),glm::vec3(0.35f)), 0.2f*float(timer), glm::vec3(0.0f,1.0f,0.0f));
+	const glm::mat4 model = glm::rotate(glm::translate(glm::scale(glm::mat4(1.0f),glm::vec3(0.3f)), glm::vec3(1.2f,0.0f, 0.0f)), 0.2f*float(timer), glm::vec3(0.0f,1.0f,0.0f));
 	objects[0].update(model);
 	
 }
