@@ -43,7 +43,7 @@ void DeskScene::init(){
 	
 	// Background creation.
 	background = Object(Object::Type::Skybox, "skybox", {}, {{"small_apartment", true }});
-	
+	backgroundIrradiance = Resources::manager().getCubemap("small_apartment_irr").id;
 }
 
 void DeskScene::update(double timer, double elapsedTime){

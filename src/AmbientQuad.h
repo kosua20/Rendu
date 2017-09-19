@@ -15,7 +15,7 @@ public:
 
 	~AmbientQuad();
 	
-	void init(std::map<std::string, GLuint> textureIds);
+	void init(std::map<std::string, GLuint> textureIds, const GLuint irradiance);
 	
 	/// Draw function,
 	void draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) const;
