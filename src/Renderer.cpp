@@ -55,14 +55,14 @@ Renderer::Renderer(int width, int height, std::shared_ptr<Scene> & scene){
 	glBlendFunc(GL_ONE, GL_ONE);
 	checkGLError();
 
-	std::map<std::string, GLuint> ambientTextures = _gbuffer->textureIds({ TextureType::Albedo, TextureType::Normal, TextureType::Depth });
-	ambientTextures["ssaoTexture"] = _ssaoBlurFramebuffer->textureId();
-	_ambientScreen.init(ambientTextures);
-	
-	const std::vector<TextureType> includedTextures = { TextureType::Albedo, TextureType::Depth, TextureType::Normal, TextureType::Effects };
-	
 	_scene = scene;
 	_scene->init();
+
+	std::map<std::string, GLuint> ambientTextures = _gbuffer->textureIds({ TextureType::Albedo, TextureType::Normal, TextureType::Depth });
+	ambientTextures["ssaoTexture"] = _ssaoBlurFramebuffer->textureId();
+	_ambientScreen.init(ambientTextures, _scene->backgroundIrradiance);
+	
+	const std::vector<TextureType> includedTextures = { TextureType::Albedo, TextureType::Depth, TextureType::Normal, TextureType::Effects };
 	
 	for(auto& dirLight : _scene->directionalLights){
 		dirLight.init(_gbuffer->textureIds(includedTextures));

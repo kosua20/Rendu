@@ -54,6 +54,9 @@
     <Filter Include="Resource Files\screens\box-blur">
       <UniqueIdentifier>{0ee90eb8-d320-4142-8b29-1140e283d56c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\scenes">
+      <UniqueIdentifier>{ba940cdc-91e0-4748-b260-4e737d4a91f8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Framebuffer.cpp">
@@ -186,6 +189,21 @@
     </ClInclude>
     <ClInclude Include="src\Blur.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scenes\Scenes.h">
+      <Filter>Source Files\scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scenes\SphereScene.h">
+      <Filter>Source Files\scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scenes\DragonScene.h">
+      <Filter>Source Files\scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scenes\Scene.h">
+      <Filter>Source Files\scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scenes\DeskScene.h">
+      <Filter>Source Files\scenes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

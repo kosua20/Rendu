@@ -185,6 +185,11 @@
     <ClInclude Include="src\lights\PointLight.h" />
     <ClInclude Include="src\Object.h" />
     <ClInclude Include="src\Renderer.h" />
+    <ClInclude Include="src\scenes\DeskScene.h" />
+    <ClInclude Include="src\scenes\DragonScene.h" />
+    <ClInclude Include="src\scenes\Scene.h" />
+    <ClInclude Include="src\scenes\Scenes.h" />
+    <ClInclude Include="src\scenes\SphereScene.h" />
     <ClInclude Include="src\ScreenQuad.h" />
   </ItemGroup>
   <ItemGroup>

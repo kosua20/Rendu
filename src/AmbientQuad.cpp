@@ -11,7 +11,7 @@ AmbientQuad::AmbientQuad(){}
 
 AmbientQuad::~AmbientQuad(){}
 
-void AmbientQuad::init(std::map<std::string, GLuint> textureIds){
+void AmbientQuad::init(std::map<std::string, GLuint> textureIds, const GLuint irradiance){
 	
 	// Ambient pass: needs the albedo, the normals and the AO result
 	std::map<std::string, GLuint> finalTextures = { {"albedoTexture", textureIds["albedoTexture"]}, {"normalTexture", textureIds["normalTexture"]}, {"ssaoTexture", textureIds["ssaoTexture"]}};
@@ -19,7 +19,7 @@ void AmbientQuad::init(std::map<std::string, GLuint> textureIds){
 	ScreenQuad::init(finalTextures, "ambient");
 	
 	// Load texture.
-	_texCubeMapSmall = Resources::manager().getCubemap("corsica_beach_cube_irr").id;
+	_texCubeMapSmall = irradiance;
 	// Bind uniform to texture slot.
 	_program->registerTexture("textureCubeMapSmall", (int)_textureIds.size());
 	

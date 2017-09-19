@@ -19,7 +19,7 @@ public:
 void SphereScene::init(){
 	
 	// Create directional light.
-	directionalLights.emplace_back(glm::vec3(-2.0f, 1.5f, 0.0f), 3.0f*glm::vec3(1.0f,1.0f, 0.92f), glm::ortho(-0.75f,0.75f,-0.75f,0.75f,1.0f,6.0f));
+	directionalLights.emplace_back(glm::vec3(-2.0f, 1.5f, 0.0f), glm::vec3(3.0f), glm::ortho(-0.75f,0.75f,-0.75f,0.75f,1.0f,6.0f));
 	
 	pointLights.emplace_back( glm::vec3(0.5f,-0.1f,0.5f), 3.0f*glm::vec3(0.2f,0.8f,1.2f), 0.9f);
 	
@@ -36,7 +36,7 @@ void SphereScene::init(){
 	
 	// Background creation.
 	background = Object(Object::Type::Skybox, "skybox", {}, {{"studio", true }});
-	
+	backgroundIrradiance = Resources::manager().getCubemap("studio_irr").id;
 }
 
 void SphereScene::update(double timer, double elapsedTime){
