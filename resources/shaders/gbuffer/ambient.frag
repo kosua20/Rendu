@@ -36,5 +36,5 @@ void main(){
 	vec3 ambientLightColor = texture(textureCubeMapSmall,normalize(worldNormal)).rgb;
 	
 	fragColor = ao * ambientLightColor * albedo.rgb;
-	
+	fragColor = vec3(0.0);
 }
