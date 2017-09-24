@@ -27,8 +27,8 @@ vec3 positionFromDepth(float depth, vec2 uv){
 }
 
 
-vec3 F(){
-	return vec3(0.0);
+vec3 F(vec3 F0, float VdotH){
+	return F0 + (1.0 - F0) * pow(1.0 - VdotH, 5.0);
 }
 
 vec3 D(){
@@ -48,7 +48,7 @@ vec3 ggx(vec3 n, vec3 v, vec3 l, vec3 F0, float roughness){
 	float NdotH = max(0.0, dot(n,h));
 	float VdotH = max(0.0, dot(v,h));
 	
-	return F()*D()*G()/(4.0 * NdotL * NdotV);
+	return F(F0, VdotH)*D()*G()/(4.0 * NdotL * NdotV);
 }
 
 void main(){
