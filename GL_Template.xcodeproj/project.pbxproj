@@ -260,7 +260,6 @@
 		F4FA2F071E87FA0F007EBA57 /* GenerationUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GenerationUtilities.cpp; sourceTree = "<group>"; };
 		F4FA2F081E87FA0F007EBA57 /* GenerationUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GenerationUtilities.h; sourceTree = "<group>"; };
 		F4FA2F0D1E881370007EBA57 /* ambient.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = ambient.frag; sourceTree = "<group>"; };
-		F4FA2F111E881370007EBA57 /* scene_gbuffer.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = scene_gbuffer.frag; sourceTree = "<group>"; };
 		F4FA2F161E881370007EBA57 /* directional_light.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = directional_light.frag; sourceTree = "<group>"; };
 		F4FA2F181E881370007EBA57 /* object_depth.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = object_depth.frag; sourceTree = "<group>"; };
 		F4FA2F191E881370007EBA57 /* object_depth.vert */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = object_depth.vert; sourceTree = "<group>"; };
@@ -652,7 +651,6 @@
 			children = (
 				F4FA2F0D1E881370007EBA57 /* ambient.frag */,
 				F4D7F1FF1E8EC14000163AA2 /* ssao.frag */,
-				F4FA2F111E881370007EBA57 /* scene_gbuffer.frag */,
 			);
 			path = gbuffer;
 			sourceTree = "<group>";
@@ -660,9 +658,9 @@
 		F4FA2F151E881370007EBA57 /* lights */ = {
 			isa = PBXGroup;
 			children = (
-				F4FA2F161E881370007EBA57 /* directional_light.frag */,
 				F4FA2F181E881370007EBA57 /* object_depth.frag */,
 				F4FA2F191E881370007EBA57 /* object_depth.vert */,
+				F4FA2F161E881370007EBA57 /* directional_light.frag */,
 				F4FA2F1A1E881370007EBA57 /* point_light.frag */,
 				F4FA2F1B1E881370007EBA57 /* point_light.vert */,
 				F496FD6B1E91550300A295A8 /* point_light_debug.frag */,
