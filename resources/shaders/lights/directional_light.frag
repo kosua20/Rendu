@@ -96,6 +96,6 @@ void main(){
 	vec3 lightSpacePosition = 0.5*(viewToLight * vec4(position,1.0)).xyz + 0.5;
 	float shadowMultiplicator = shadow(lightSpacePosition);
 	
-	fragColor.rgb = shadowMultiplicator*lightShading;
+	fragColor.rgb = vec3(0.0);//shadowMultiplicator*lightShading;
 }
 
