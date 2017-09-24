@@ -38,7 +38,7 @@ float D(float NdotH, float alpha){
 }
 
 float G1(float NdotX, float halfAlpha){
-	return NdotX / max(0.000001, (NdotX * (1.0 - halfAlpha) + halfAlpha));
+	return 1.0 / max(0.000001, (NdotX * (1.0 - halfAlpha) + halfAlpha));
 }
 
 float G(float NdotL, float NdotV, float alpha){
@@ -56,7 +56,7 @@ vec3 ggx(vec3 n, vec3 v, vec3 l, vec3 F0, float roughness){
 	float VdotH = max(0.0, dot(v,h));
 	float alpha = roughness*roughness;
 	
-	return D(NdotH, alpha) * G(NdotL, NdotV, alpha) / (4.0 * NdotL * NdotV) * F(F0, VdotH);
+	return D(NdotH, alpha) * G(NdotL, NdotV, alpha) * 0.25 * F(F0, VdotH);
 }
 
 void main(){
