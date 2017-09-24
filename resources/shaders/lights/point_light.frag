@@ -28,7 +28,8 @@ vec3 positionFromDepth(float depth, vec2 uv){
 
 
 vec3 F(vec3 F0, float VdotH){
-	return F0 + (1.0 - F0) * pow(1.0 - VdotH, 5.0);
+	float approx = pow(2.0, (-5.55473 * VdotH - 6.98316) * VdotH);
+	return F0 + approx * (1.0 - F0);
 }
 
 float D(float NdotH, float alpha){
