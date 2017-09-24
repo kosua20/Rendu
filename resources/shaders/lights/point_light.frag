@@ -1,5 +1,6 @@
 #version 330
 
+#define INV_M_PI 0.3183098862
 // Uniforms
 uniform sampler2D albedoTexture;
 uniform sampler2D normalTexture;
@@ -26,9 +27,7 @@ vec3 positionFromDepth(float depth, vec2 uv){
 }
 
 
-vec3 lambert(){
-	return vec3(0.0);
-}
+
 
 vec3 ggx(){
 	return vec3(0.0);
@@ -43,11 +42,13 @@ void main(){
 		discard;
 	}
 	
-	// Get all informationsfrom textures.
-	vec3 albedo = albedoInfo.rgb;
+	// Get all informations from textures.
+	vec3 baseColor = albedoInfo.rgb;
 	float depth = texture(depthTexture,uv).r;
 	vec3 position = positionFromDepth(depth, uv);
 	vec3 infos = texture(effectsTexture,uv).rgb;
+	float roughness = max(0.0001, infos.r);
+	float metallic = infos.g;
 	
 	vec3 n = 2.0 * texture(normalTexture,uv).rgb - 1.0;
 	vec3 v = normalize(-position);
@@ -59,7 +60,13 @@ void main(){
 	float attenuation = pow(max(0.0, 1.0 - distance(position,lightPosition)/radius),2);
 	
 	// BRDF contributions.
-	vec3 diffuse = lambert();
+	// Compute F0 (fresnel coeff).
+	// Dielectrics have a constant low coeff, metals use the baseColor (ie reflections are tinted).
+	vec3 F0 = mix(vec3(0.08), baseColor, metallic);
+	
+	// Normalized diffuse contribution. Metallic materials have no diffuse contribution.
+	vec3 diffuse = INV_M_PI * (1.0 - metallic) * baseColor * (1.0 - F0);
+	
 	vec3 specular = ggx();
 	
 	fragColor.rgb = attenuation * orientation * (diffuse + specular) * lightColor;
