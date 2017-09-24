@@ -27,10 +27,28 @@ vec3 positionFromDepth(float depth, vec2 uv){
 }
 
 
-
-
-vec3 ggx(){
+vec3 F(){
 	return vec3(0.0);
+}
+
+vec3 D(){
+	return vec3(0.0);
+}
+
+vec3 G(){
+	return vec3(0.0);
+}
+
+vec3 ggx(vec3 n, vec3 v, vec3 l, vec3 F0, float roughness){
+	// Compute half-vector.
+	vec3 h = normalize(v+l);
+	// Compute all needed dot products.
+	float NdotL = max(0.0, dot(n,l));
+	float NdotV = max(0.0, dot(n,v));
+	float NdotH = max(0.0, dot(n,h));
+	float VdotH = max(0.0, dot(v,h));
+	
+	return F()*D()*G()/(4.0 * NdotL * NdotV);
 }
 
 void main(){
@@ -67,7 +85,7 @@ void main(){
 	// Normalized diffuse contribution. Metallic materials have no diffuse contribution.
 	vec3 diffuse = INV_M_PI * (1.0 - metallic) * baseColor * (1.0 - F0);
 	
-	vec3 specular = ggx();
+	vec3 specular = ggx(n, v, l, F0, roughness);
 	
 	fragColor.rgb = attenuation * orientation * (diffuse + specular) * lightColor;
 	
