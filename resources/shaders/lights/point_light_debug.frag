@@ -11,7 +11,7 @@ void main(){
 	
 	// Store values.
 	fragColor.rgb = lightColor;
-	fragColor.a = 0.0;
+	fragColor.a = 0.0; // same ID as the background.
 	fragNormal.rgb = vec3(0.5);
 	fragEffects.rgb = vec3(0.0);
 	

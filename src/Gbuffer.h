@@ -7,10 +7,10 @@
 #include <vector>
 
 enum class TextureType {
-	Albedo,
+	Albedo, // or base color
 	Normal,
 	Depth,
-	Effects
+	Effects // roughness, metallicness, ambient occlusion, id.
 };
 
 class Gbuffer {
