@@ -31,8 +31,10 @@ vec3 F(vec3 F0, float VdotH){
 	return F0 + (1.0 - F0) * pow(1.0 - VdotH, 5.0);
 }
 
-vec3 D(){
-	return vec3(0.0);
+float D(float NdotH, float alpha){
+	float halfDenum = NdotH * NdotH * (alpha * alpha - 1.0) + 1.0;
+	float halfTerm = alpha / max(0.000001, halfDenum);
+	return halfTerm * halfTerm * INV_M_PI;;
 }
 
 vec3 G(){
@@ -47,8 +49,9 @@ vec3 ggx(vec3 n, vec3 v, vec3 l, vec3 F0, float roughness){
 	float NdotV = max(0.0, dot(n,v));
 	float NdotH = max(0.0, dot(n,h));
 	float VdotH = max(0.0, dot(v,h));
+	float alpha = roughness*roughness;
 	
-	return F(F0, VdotH)*D()*G()/(4.0 * NdotL * NdotV);
+	return F(F0, VdotH) * D(NdotH, alpha) * G() / (4.0 * NdotL * NdotV);
 }
 
 void main(){
