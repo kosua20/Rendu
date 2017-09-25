@@ -9,6 +9,7 @@ in INTERFACE {
 uniform sampler2D albedoTexture;
 uniform sampler2D normalTexture;
 uniform sampler2D ssaoTexture;
+uniform sampler2D effectsTexture;
 uniform samplerCube textureCubeMapSmall;
 
 uniform mat4 inverseV;
