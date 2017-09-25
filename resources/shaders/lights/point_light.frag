@@ -1,6 +1,8 @@
 #version 330
 
 #define INV_M_PI 0.3183098862
+#define M_PI 3.1415926536
+
 // Uniforms
 uniform sampler2D albedoTexture;
 uniform sampler2D normalTexture;
@@ -35,7 +37,7 @@ vec3 F(vec3 F0, float VdotH){
 float D(float NdotH, float alpha){
 	float halfDenum = NdotH * NdotH * (alpha * alpha - 1.0) + 1.0;
 	float halfTerm = alpha / max(0.0001, halfDenum);
-	return halfTerm * halfTerm * INV_M_PI;;
+	return halfTerm * halfTerm * INV_M_PI;
 }
 
 float G1(float NdotX, float halfAlpha){
@@ -96,7 +98,7 @@ void main(){
 	
 	vec3 specular = ggx(n, v, l, F0, roughness);
 	
-	fragColor.rgb = attenuation * orientation * (diffuse + specular) * lightColor;
+	fragColor.rgb = attenuation * orientation * (diffuse + specular) * lightColor * M_PI;
 	
 }
 
