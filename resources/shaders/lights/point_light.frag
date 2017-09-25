@@ -53,10 +53,10 @@ vec3 ggx(vec3 n, vec3 v, vec3 l, vec3 F0, float roughness){
 	// Compute half-vector.
 	vec3 h = normalize(v+l);
 	// Compute all needed dot products.
-	float NdotL = max(0.0, dot(n,l));
-	float NdotV = max(0.0, dot(n,v));
-	float NdotH = max(0.0, dot(n,h));
-	float VdotH = max(0.0, dot(v,h));
+	float NdotL = clamp(dot(n,l), 0.0, 1.0);
+	float NdotV = clamp(dot(n,v), 0.0, 1.0);
+	float NdotH = clamp(dot(n,h), 0.0, 1.0);
+	float VdotH = clamp(dot(v,h), 0.0, 1.0);
 	float alpha = max(0.0001, roughness*roughness);
 	
 	return D(NdotH, alpha) * G(NdotL, NdotV, alpha) * 0.25 * F(F0, VdotH);
