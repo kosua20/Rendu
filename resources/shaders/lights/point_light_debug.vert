@@ -10,6 +10,6 @@ uniform float radius;
 void main(){
 	
 	// We directly output the position.
-	gl_Position = mvp*vec4(radius*v+lightWorldPosition, 1.0);
+	gl_Position = mvp*vec4(radius*0.5*v+lightWorldPosition, 1.0);
 
 }
