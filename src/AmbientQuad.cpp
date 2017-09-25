@@ -13,8 +13,8 @@ AmbientQuad::~AmbientQuad(){}
 
 void AmbientQuad::init(std::map<std::string, GLuint> textureIds, const GLuint irradiance){
 	
-	// Ambient pass: needs the albedo, the normals and the AO result
-	std::map<std::string, GLuint> finalTextures = { {"albedoTexture", textureIds["albedoTexture"]}, {"normalTexture", textureIds["normalTexture"]}, {"ssaoTexture", textureIds["ssaoTexture"]}};
+	// Ambient pass: needs the albedo, the normals, the effect and the AO result
+	std::map<std::string, GLuint> finalTextures = { {"albedoTexture", textureIds["albedoTexture"]}, {"normalTexture", textureIds["normalTexture"]}, {"ssaoTexture", textureIds["ssaoTexture"]}, {"effectsTexture", textureIds["effectsTexture"]}};
 	
 	ScreenQuad::init(finalTextures, "ambient");
 	

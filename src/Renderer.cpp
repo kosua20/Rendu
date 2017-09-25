@@ -58,7 +58,7 @@ Renderer::Renderer(int width, int height, std::shared_ptr<Scene> & scene){
 	_scene = scene;
 	_scene->init();
 
-	std::map<std::string, GLuint> ambientTextures = _gbuffer->textureIds({ TextureType::Albedo, TextureType::Normal, TextureType::Depth });
+	std::map<std::string, GLuint> ambientTextures = _gbuffer->textureIds({ TextureType::Albedo, TextureType::Normal, TextureType::Depth, TextureType::Effects });
 	ambientTextures["ssaoTexture"] = _ssaoBlurFramebuffer->textureId();
 	_ambientScreen.init(ambientTextures, _scene->backgroundIrradiance);
 	
