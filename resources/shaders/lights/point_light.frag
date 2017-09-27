@@ -65,7 +65,7 @@ vec3 ggx(vec3 n, vec3 v, vec3 l, vec3 F0, float roughness){
 void main(){
 	vec2 uv = gl_FragCoord.xy*inverseScreenSize;
 	
-	vec4 albedoInfo =  texture(albedoTexture,uv);
+	vec4 albedoInfo = texture(albedoTexture,uv);
 	// If this is the skybox, don't shade.
 	if(albedoInfo.a == 0.0){
 		discard;
