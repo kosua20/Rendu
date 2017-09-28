@@ -38,6 +38,7 @@ void SphereScene::init(){
 	// Background creation.
 	background = Object(Object::Type::Skybox, "skybox", {}, {{"studio", true }});
 	backgroundIrradiance = Resources::manager().getCubemap("studio_irr").id;
+	backgroundReflection = Resources::manager().getCubemap("studio").id;
 }
 
 void SphereScene::update(double timer, double elapsedTime){

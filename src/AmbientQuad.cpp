@@ -11,17 +11,19 @@ AmbientQuad::AmbientQuad(){}
 
 AmbientQuad::~AmbientQuad(){}
 
-void AmbientQuad::init(std::map<std::string, GLuint> textureIds, const GLuint irradiance){
+void AmbientQuad::init(std::map<std::string, GLuint> textureIds, const GLuint reflection, const GLuint irradiance){
 	
 	// Ambient pass: needs the albedo, the normals, the effect and the AO result
-	std::map<std::string, GLuint> finalTextures = { {"albedoTexture", textureIds["albedoTexture"]}, {"normalTexture", textureIds["normalTexture"]}, {"ssaoTexture", textureIds["ssaoTexture"]}, {"effectsTexture", textureIds["effectsTexture"]}};
+	std::map<std::string, GLuint> finalTextures = { {"albedoTexture", textureIds["albedoTexture"]}, {"normalTexture", textureIds["normalTexture"]}, {"depthTexture", textureIds["depthTexture"]},  {"effectsTexture", textureIds["effectsTexture"]}, {"ssaoTexture", textureIds["ssaoTexture"]}};
 	
 	ScreenQuad::init(finalTextures, "ambient");
 	
 	// Load texture.
+	_texCubeMap = reflection;
 	_texCubeMapSmall = irradiance;
 	// Bind uniform to texture slot.
-	_program->registerTexture("textureCubeMapSmall", (int)_textureIds.size());
+	_program->registerTexture("textureCubeMap", (int)_textureIds.size());
+	_program->registerTexture("textureCubeMapSmall", (int)_textureIds.size()+1);
 	
 	// Setup SSAO data, get back noise texture id, add it to the gbuffer outputs.
 	GLuint noiseTextureID = setupSSAO();
@@ -76,12 +78,18 @@ GLuint AmbientQuad::setupSSAO(){
 void AmbientQuad::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) const {
 	
 	glm::mat4 invView = glm::inverse(viewMatrix);
+	// Store the four variable coefficients of the projection matrix.
+	glm::vec4 projectionVector = glm::vec4(projectionMatrix[0][0], projectionMatrix[1][1], projectionMatrix[2][2], projectionMatrix[3][2]);
 	
 	glUseProgram(_program->id());
 	
 	glUniformMatrix4fv(_program->uniform("inverseV"), 1, GL_FALSE, &invView[0][0]);
+	glUniform4fv(_program->uniform("projectionMatrix"), 1, &(projectionVector[0]));
 	
 	glActiveTexture(GL_TEXTURE0 + (unsigned int)_textureIds.size());
+	glBindTexture(GL_TEXTURE_CUBE_MAP, _texCubeMap);
+	
+	glActiveTexture(GL_TEXTURE0 + (unsigned int)_textureIds.size() + 1);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, _texCubeMapSmall);
 	
 	ScreenQuad::draw();
