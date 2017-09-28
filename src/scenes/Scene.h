@@ -28,6 +28,7 @@ public:
 	std::vector<Object> objects;
 	Object background;
 	GLuint backgroundIrradiance;
+	GLuint backgroundReflection;
 	std::vector<DirectionalLight> directionalLights;
 	std::vector<PointLight> pointLights;
 	
