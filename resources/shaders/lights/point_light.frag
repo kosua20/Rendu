@@ -81,12 +81,17 @@ void main(){
 	
 	vec3 n = 2.0 * texture(normalTexture,uv).rgb - 1.0;
 	vec3 v = normalize(-position);
-	vec3 l = normalize(lightPosition - position);
+	vec3 deltaPosition = lightPosition - position;
+	vec3 l = normalize(deltaPosition);
 	
 	// Orientation: basic diffuse shadowing.
 	float orientation = max(0.0, dot(l,n));
 	// Attenuation with increasing distance to the light.
-	float attenuation = pow(max(0.0, 1.0 - distance(position,lightPosition)/radius),2);
+	
+	float localRadius2 = dot(deltaPosition, deltaPosition);
+	float radiusRatio2 = localRadius2/(radius*radius);
+	float attenNum = clamp(1.0 - radiusRatio2*radiusRatio2, 0.0, 1.0);
+	float attenuation = attenNum*attenNum/(1.0 + localRadius2);
 	
 	// BRDF contributions.
 	// Compute F0 (fresnel coeff).
