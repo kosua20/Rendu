@@ -71,7 +71,7 @@ vec3 ggx(vec3 n, vec3 v, vec3 F0, float roughness){
 	vec3 temp = abs(n.z) < 0.999 ? vec3(0.0,0.0,1.0) : vec3(1.0,0.0,0.0);
 	vec3 tangent = normalize(cross(temp, n));
 	vec3 binormal = cross(n, tangent);
-	float alpha = roughness*roughness;
+	float alpha = max(0.0001, roughness*roughness);
 	
 	float NdotV = max(0.0001, abs(dot(v, n)));
 	vec3 sum = vec3(0.0);
@@ -88,11 +88,11 @@ vec3 ggx(vec3 n, vec3 v, vec3 F0, float roughness){
 		vec3 h = sinT*cos(angle) * tangent + sinT*sin(angle) * binormal + cosT * n;
 		vec3 l = -reflect(v,h);
 		
-		float NdotL = max(0.0, abs(dot(n,l)));
+		float NdotL = clamp(abs(dot(n,l)), 0.0001, 1.0);
 		if(NdotL > 0.0){
 			
-			float VdotH = max(0.0, abs(dot(v,h)));
-			float NdotH = max(0.0, abs(dot(n,h)));
+			float VdotH = clamp(abs(dot(v,h)), 0.0001, 1.0);
+			float NdotH = clamp(abs(dot(n,h)), 0.0001, 1.0);
 			// Transform local light direction in world space.
 			vec3 worldLight = normalize(vec3(inverseV * vec4(l,0.0)));
 			// Estimate LOD based on roughness.
