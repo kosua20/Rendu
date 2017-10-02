@@ -53,6 +53,7 @@ Renderer::Renderer(int width, int height, std::shared_ptr<Scene> & scene){
 	glCullFace(GL_BACK);
 	glBlendEquation (GL_FUNC_ADD);
 	glBlendFunc(GL_ONE, GL_ONE);
+	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 	checkGLError();
 
 	_scene = scene;
