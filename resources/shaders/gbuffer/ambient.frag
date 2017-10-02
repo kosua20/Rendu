@@ -7,6 +7,7 @@ in INTERFACE {
 
 #define INV_M_PI 0.3183098862
 #define M_PI 3.1415926536
+#define M_INV_LOG2 1.4426950408889
 
 // Uniforms: the texture, inverse of the screen size, FXAA flag.
 uniform sampler2D albedoTexture;
@@ -23,8 +24,8 @@ uniform vec4 projectionMatrix;
 // Output: the fragment color
 out vec3 fragColor;
 
-#define SAMPLES_COUNT 24u
-#define MAX_LOD 16
+#define SAMPLES_COUNT 16u
+#define MAX_LOD 12
 
 vec3 positionFromDepth(float depth){
 	float depth2 = 2.0 * depth - 1.0 ;
@@ -96,7 +97,12 @@ vec3 ggx(vec3 n, vec3 v, vec3 F0, float roughness){
 			// Transform local light direction in world space.
 			vec3 worldLight = normalize(vec3(inverseV * vec4(l,0.0)));
 			// Estimate LOD based on roughness.
-			float lodS = alpha * MAX_LOD;
+			float lodS = roughness < 0.03 ? 0.0 : max(0.0,
+												   MAX_LOD - 1.5 - 0.5 * M_INV_LOG2 *
+												   ( log(float(SAMPLES_COUNT))
+												   + log((1.0 - l.y * l.y) * D(NdotH, alpha) * NdotH / (4.0 * VdotH))
+												   ));
+			
 			// Read specular envmap.
 			vec3 envLighting = textureLod(textureCubeMap, worldLight, lodS).rgb;
 			// Add the sample contribution.
