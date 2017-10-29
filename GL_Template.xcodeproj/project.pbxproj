@@ -817,7 +817,6 @@
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					/usr/local/Cellar/glew/2.0.0/lib,
 					"$(PROJECT_DIR)/src/libs/glfw/lib-mac",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
@@ -842,7 +841,6 @@
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					/usr/local/Cellar/glew/2.0.0/lib,
 					"$(PROJECT_DIR)/src/libs/glfw/lib-mac",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
