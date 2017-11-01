@@ -1,6 +1,7 @@
 #include <GLFW/glfw3.h>
 #include <stdio.h>
 #include <iostream>
+#include <glm/gtc/quaternion.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "Keyboard.h"
@@ -15,8 +16,8 @@ Keyboard::~Keyboard(){}
 
 void Keyboard::reset(){
 	_keys[0] = _keys[1] = _keys[2] = _keys[3] = _keys[4] = _keys[5] = _keys[6] = false;
-	_previousPosition = glm::vec2(0.0);
-	_deltaPosition = glm::vec2(0.0);
+	_mousePos = glm::vec2(0.0);
+	_look = glm::vec2(0.0);
 }
 
 void Keyboard::update(double elapsedTime){
@@ -54,18 +55,15 @@ void Keyboard::update(double elapsedTime){
 	if(_keys[5]){ // Up
   		_eye = _eye + deltaVertical;
 	}
-	if(_keys[6]){
-  		_center = _center + (_deltaPosition.x * _right + _deltaPosition.y * _up) * (float)elapsedTime * _angularSpeed;
-  		look = normalize(_center - _eye);
-	}
 
-	// Update center (eye-center stays constant).
-	_center = _eye + look;
-  	
-  	// Recompute right as the cross product of look and up.
-	_right = normalize(cross(look,_up));
-	// Recompute up as the cross product of  right and look.
-	_up = normalize(cross(_right,look));
+	float radX = glm::radians(_look.x);
+	float radY = glm::radians(_look.y);
+	glm::quat rot = glm::quat(glm::vec3(0,-radX,0)) * glm::quat(glm::vec3(-radY,0,0));
+
+	glm::vec3 forward = rot * glm::vec3(0.0,0.0,-1.0);
+	_center = _eye + forward;
+	_up = rot * glm::vec3(0.0,1.0,0.0);
+	_right = rot * glm::vec3(1.0,0.0,0.0);
 
 }
 
@@ -97,13 +95,18 @@ void Keyboard::registerMove(int direction, bool flag){
 }
 
 void Keyboard::startLeftMouse(double x, double y){
-	_previousPosition = glm::vec2(x,-y);
+	//reset internal mouse position when look starts
+	_mousePos = glm::vec2(x,y);
+	_keys[6] = true;
 }
 
 void Keyboard::leftMouseTo(double x, double y){
-	_keys[6] = true;
-	_deltaPosition = glm::vec2(x, -y) - _previousPosition;
-	_previousPosition =  glm::vec2(x, -y) ;
+	glm::vec2 newPos(x,y);
+	glm::vec2 deltaPos = newPos - _mousePos;
+	_mousePos = newPos;
+
+	_look += deltaPos / _angularSpeed;
+	_look.y = fmin(fmax(_look.y,-90.0f),90.0f);
 }
 
 void Keyboard::endLeftMouse(){

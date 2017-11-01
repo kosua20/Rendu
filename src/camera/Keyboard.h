@@ -36,8 +36,8 @@ private:
 	float _speed;
 	float _angularSpeed;
 	
-	glm::vec2 _previousPosition;
-	glm::vec2 _deltaPosition;
+	glm::vec2 _mousePos;
+	glm::vec2 _look;
 
 };
 
