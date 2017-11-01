@@ -87,9 +87,9 @@ void Camera::mouse(MouseMode mode, float x, float y){
 	if (mode == MouseMode::End) {
 		_keyboard.endLeftMouse();
 	} else {
-		// We normalize the x and y values to the [-1, 1] range.
-		float xPosition =  fmax(fmin(1.0f, 2.0f * x / _screenSize[0] - 1.0f),-1.0f);
-		float yPosition =  fmax(fmin(1.0f, 2.0f * y / _screenSize[1] - 1.0f),-1.0f);
+		// We normalize the x and y values to the screen size.
+		float xPosition =  2.0f * x / _screenSize[0] - 1.0f;
+		float yPosition =  2.0f * y / _screenSize[1] - 1.0f;
 		
 		if(mode == MouseMode::Start) {
 			_keyboard.startLeftMouse(xPosition,yPosition);

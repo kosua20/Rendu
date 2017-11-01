@@ -272,12 +272,14 @@ void Renderer::joystick(int joy, int event){
 	_camera.joystick(joy, event);
 }
 
-void Renderer::buttonPressed(int button, int action, double x, double y){
+void Renderer::buttonPressed(GLFWwindow* window, int button, int action, double x, double y){
 	if (button == GLFW_MOUSE_BUTTON_LEFT) {
 		if (action == GLFW_PRESS) {
 			_camera.mouse(MouseMode::Start,(float)x, (float)y);
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		} else if (action == GLFW_RELEASE) {
 			_camera.mouse(MouseMode::End, 0.0, 0.0);
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 		}
 	} else {
 		std::cout << "Button: " << button << ", action: " << action << std::endl;

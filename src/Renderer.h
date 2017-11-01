@@ -42,7 +42,7 @@ public:
 	void joystick(int joy, int event);
 
 	/// Handle mouse inputs
-	void buttonPressed(int button, int action, double x, double y);
+	void buttonPressed(GLFWwindow* window, int button, int action, double x, double y);
 
 	void mousePosition(double x, double y, bool leftPress, bool rightPress);
 	

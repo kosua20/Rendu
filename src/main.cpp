@@ -34,7 +34,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 	double x, y;
     glfwGetCursorPos(window, &x, &y);
 	Renderer *rendererPtr = static_cast<Renderer*>(glfwGetWindowUserPointer(window));
-	rendererPtr->buttonPressed(button, action, x, y);
+	rendererPtr->buttonPressed(window, button, action, x, y);
 }
 
 
