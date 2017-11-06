@@ -57,6 +57,8 @@ ProgramInfos::ProgramInfos(const std::string & vertexName, const std::string & f
 	}
 	glUseProgram(0);
 	checkGLError();
+	
+	
 }
 
 
@@ -105,6 +107,23 @@ void ProgramInfos::reload()
 		}
 	}
 	glUseProgram(0);
+}
+
+
+void ProgramInfos::validate(){
+	glValidateProgram(_id);
+	int status = -2;
+	glGetProgramiv(_id, GL_VALIDATE_STATUS, &status);
+	std::cout << "Program with shaders: " << _vertexName << ", " << _fragmentName << " is " << (status == GL_TRUE ? "" : "not ") << "validated." << std::endl;
+	int infoLogLength = 0;
+	glGetProgramiv(_id, GL_INFO_LOG_LENGTH, &infoLogLength);
+	if(infoLogLength <= 0){
+		std::cout << "No log." << std::endl;
+		return;
+	}
+	std::vector<char> infoLog(infoLogLength);
+	glGetProgramInfoLog(_id, infoLogLength, NULL, &infoLog[0]);
+	std::cout << "Log: " << &infoLog[0] << std::endl;
 }
 
 

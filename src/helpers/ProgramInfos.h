@@ -24,7 +24,8 @@ public:
 	void registerTexture(const std::string & name, int slot);
 	
 	void reload();
-
+	
+	void validate();
 	// To stay coherent with TextureInfos and MeshInfos, we keep the id public.
 	
 	const GLuint id() const { return _id; }
