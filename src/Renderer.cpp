@@ -212,8 +212,6 @@ void Renderer::draw() {
 	glDisable(GL_FRAMEBUFFER_SRGB);
 	glEnable(GL_DEPTH_TEST);
 	
-	// Update timer
-	_timer = glfwGetTime();
 }
 
 void Renderer::physics(double elapsedTime){
