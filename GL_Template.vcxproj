@@ -194,7 +194,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\gbuffer\ambient.frag" />
-    <None Include="resources\shaders\gbuffer\scene_gbuffer.frag" />
     <None Include="resources\shaders\gbuffer\ssao.frag" />
     <None Include="resources\shaders\lights\directional_light.frag" />
     <None Include="resources\shaders\lights\object_depth.frag" />

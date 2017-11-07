@@ -207,9 +207,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="resources\shaders\gbuffer\scene_gbuffer.frag">
-      <Filter>Resource Files\gbuffer</Filter>
-    </None>
     <None Include="resources\shaders\gbuffer\ssao.frag">
       <Filter>Resource Files\gbuffer</Filter>
     </None>
