@@ -21,11 +21,8 @@ out INTERFACE {
 */
 
 void main(){
-	
-	Out.uv.x = gl_VertexID == 1 ? 2.0 : 0.0;
-	Out.uv.y = gl_VertexID == 2 ? 2.0 : 0.0;
-
-	gl_Position.xy = 2.0 * Out.uv - 1.0;
+	vec2 temp = 2.0 * vec2(gl_VertexID == 1, gl_VertexID == 2);
+	Out.uv = temp;
+	gl_Position.xy = 2.0 * temp - 1.0;
 	gl_Position.zw = vec2(1.0);
-	
 }
