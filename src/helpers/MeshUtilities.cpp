@@ -210,7 +210,7 @@ void MeshUtilities::centerAndUnitMesh(Mesh & mesh){
 		maxi = abs(mesh.positions[i].y) > maxi ? abs(mesh.positions[i].y) : maxi;
 		maxi = abs(mesh.positions[i].z) > maxi ? abs(mesh.positions[i].z) : maxi;
 	}
-	maxi = maxi == 0.0 ? 1.0 : maxi;
+	maxi = maxi == 0.0f ? 1.0f : maxi;
 	
 	// Scale the mesh.
 	for(size_t i = 0; i < mesh.positions.size(); i++){

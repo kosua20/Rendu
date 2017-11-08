@@ -82,7 +82,7 @@ void PointLight::drawDebug(const glm::mat4& viewMatrix, const glm::mat4& project
 	glUseProgram(_debugProgram->id());
 	
 	// For the vertex shader
-	glUniform1f(_debugProgram->uniform("radius"),  0.1*_radius);
+	glUniform1f(_debugProgram->uniform("radius"),  0.1f*_radius);
 	glUniform3fv(_debugProgram->uniform("lightWorldPosition"), 1, &_local[0]);
 	glUniformMatrix4fv(_debugProgram->uniform("mvp"), 1, GL_FALSE, &vp[0][0]);
 	glUniform3fv(_debugProgram->uniform("lightColor"), 1,  &_color[0]);

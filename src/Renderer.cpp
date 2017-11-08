@@ -26,7 +26,7 @@ Renderer::Renderer(int width, int height, std::shared_ptr<Scene> & scene){
 	const int renderHalfWidth = (int)(0.5f * _camera.renderSize()[0]);
 	const int renderHalfHeight = (int)(0.5f * _camera.renderSize()[1]);
 	// Find the closest power of 2 size.
-	const int renderPow2Size = std::pow(2,(int)floor(log2(_camera.renderSize()[0])));
+	const int renderPow2Size = (int)std::pow(2,(int)floor(log2(_camera.renderSize()[0])));
 	_gbuffer = std::make_shared<Gbuffer>(renderWidth, renderHeight);
 	_ssaoFramebuffer = std::make_shared<Framebuffer>(renderHalfWidth, renderHalfHeight, GL_RED, GL_UNSIGNED_BYTE, GL_RED, GL_LINEAR, GL_CLAMP_TO_EDGE, false);
 	_ssaoBlurFramebuffer = std::make_shared<Framebuffer>(renderWidth, renderHeight, GL_RED, GL_UNSIGNED_BYTE, GL_RED, GL_LINEAR, GL_CLAMP_TO_EDGE, false);

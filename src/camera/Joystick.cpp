@@ -36,7 +36,7 @@ void Joystick::reset(){
 	
 }
 
-void Joystick::update(float elapsedTime){
+void Joystick::update(double elapsedTime){
 	// Update buttons flags.
 	_axes = glfwGetJoystickAxes(_id, &_axisCount);
 	_buttons = glfwGetJoystickButtons(_id, &_buttonsCount);
@@ -90,16 +90,16 @@ void Joystick::update(float elapsedTime){
 	// Require a minimum deplacement between starting to register the move.
 	if(_axes[_codes[MOVE_FORWARD]]*_axes[_codes[MOVE_FORWARD]] + _axes[_codes[MOVE_LATERAL]]*_axes[_codes[MOVE_LATERAL]] > 0.1){
 		// Update the camera position.
-		_eye = _eye - _axes[_codes[MOVE_FORWARD]] * elapsedTime * _speed * look;
-		_eye = _eye + _axes[_codes[MOVE_LATERAL]] * elapsedTime * _speed * _right;
+		_eye = _eye - _axes[_codes[MOVE_FORWARD]] * (float)elapsedTime * _speed * look;
+		_eye = _eye + _axes[_codes[MOVE_LATERAL]] * (float)elapsedTime * _speed * _right;
 	}
 	
 	// L2 and R2 triggers are used to move up and down. They can be read like axis.
 	if(_axes[_codes[MOVE_UP]] > -0.9){
-		_eye = _eye  - (_axes[_codes[MOVE_UP]]+1.0f)* 0.5f * elapsedTime * _speed * _up;
+		_eye = _eye  - (_axes[_codes[MOVE_UP]]+1.0f)* 0.5f * (float)elapsedTime * _speed * _up;
 	}
 	if(_axes[_codes[MOVE_DOWN]] > -0.9){
-		_eye = _eye  + (_axes[_codes[MOVE_DOWN]]+1.0f)* 0.5f * elapsedTime * _speed * _up;
+		_eye = _eye  + (_axes[_codes[MOVE_DOWN]]+1.0f)* 0.5f * (float)elapsedTime * _speed * _up;
 	}
 	
 	// Update center (eye-center stays constant).
@@ -107,8 +107,8 @@ void Joystick::update(float elapsedTime){
 	
 	// Right stick to look around.
 	if(_axes[_codes[LOOK_VERTICAL]]*_axes[_codes[LOOK_VERTICAL]] + _axes[_codes[LOOK_LATERAL]]*_axes[_codes[LOOK_LATERAL]] > 0.1){
-		_center = _center - _axes[_codes[LOOK_VERTICAL]] * elapsedTime * _angularSpeed * _up;
-		_center = _center + _axes[_codes[LOOK_LATERAL]] * elapsedTime * _angularSpeed * _right;
+		_center = _center - _axes[_codes[LOOK_VERTICAL]] * (float)elapsedTime * _angularSpeed * _up;
+		_center = _center + _axes[_codes[LOOK_LATERAL]] * (float)elapsedTime * _angularSpeed * _right;
 	}
 	// Renormalize the look vector.
 	look = normalize(_center - _eye);
