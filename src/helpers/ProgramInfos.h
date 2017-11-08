@@ -26,8 +26,10 @@ public:
 	void reload();
 	
 	void validate();
+
+	void saveBinary(const std::string & outputPath);
+
 	// To stay coherent with TextureInfos and MeshInfos, we keep the id public.
-	
 	const GLuint id() const { return _id; }
 	
 private:

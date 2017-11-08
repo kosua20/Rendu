@@ -1,6 +1,7 @@
 #include "ProgramInfos.h"
 
 #include <iostream>
+#include <fstream>
 
 #include "GLUtilities.h"
 #include "ResourcesManager.h"
@@ -29,7 +30,7 @@ ProgramInfos::ProgramInfos(const std::string & vertexName, const std::string & f
 	glGetProgramiv(_id, GL_ACTIVE_UNIFORM_MAX_LENGTH, &size);
 	
 	glUseProgram(_id);
-	for(GLuint i = 0; i < count; ++i){
+	for(GLuint i = 0; i < (GLuint)count; ++i){
 		// Get infos (name, name length, type,...) of each uniform.
 		std::vector<GLchar> uname(size);
 		GLenum utype;
@@ -124,6 +125,28 @@ void ProgramInfos::validate(){
 	std::vector<char> infoLog(infoLogLength);
 	glGetProgramInfoLog(_id, infoLogLength, NULL, &infoLog[0]);
 	std::cout << "Log: " << &infoLog[0] << std::endl;
+}
+
+void ProgramInfos::saveBinary(const std::string & outputPath){
+	int count = 0;
+	glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &count);
+	if (count <= 0) {
+		std::cerr << "GL driver does not support program binary export." << std::endl;
+		return;
+	}
+	int length = 0;
+	glGetProgramiv(_id, GL_PROGRAM_BINARY_LENGTH, &length);
+	if (length <= 0) {
+		std::cerr << "No binary for program using shaders (" << _vertexName << "," << _fragmentName << ")." << std::endl;
+		return;
+	}
+	GLenum format;
+	std::vector<char>binary(length);
+	glGetProgramBinary(_id, length, NULL, &format, &binary[0]);
+
+	std::ofstream binaryFile(outputPath + "_(" + _vertexName + "," + _fragmentName + ")_" + std::to_string((unsigned int) format) + ".bin", std::ios::out | std::ios::binary);
+	binaryFile.write(&binary[0], binary.size());
+	binaryFile.close();
 }
 
 

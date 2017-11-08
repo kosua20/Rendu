@@ -12,3 +12,4 @@ x64/
 ext/
 *.xcuserstate
 */xcuserdata/*
+binaries/
