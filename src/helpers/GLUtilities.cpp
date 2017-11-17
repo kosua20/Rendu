@@ -36,10 +36,19 @@ std::string getGLErrorString(GLenum error) {
 	return msg;
 }
 
-int _checkGLError(const char *file, int line){
+int _checkGLError(const char *file, int line, const std::string & infos){
 	GLenum glErr = glGetError();
 	if (glErr != GL_NO_ERROR){
-		std::cerr << "glError in " << file << " (" << line << ") : " << getGLErrorString(glErr) << std::endl;
+		std::string filePath(file);
+		size_t pos = std::min(filePath.find_last_of("/"), filePath.find_last_of("\\"));
+		if(pos == std::string::npos){
+			pos = 0;
+		}
+		std::cerr << "Error " << getGLErrorString(glErr) << " in " << filePath.substr(pos+1) << " (" << line << ").";
+		if(infos.size() > 0){
+			std::cerr << " Infos: " << infos;
+		}
+		std::cerr << std::endl;
 		return 1;
 	}
 	return 0;

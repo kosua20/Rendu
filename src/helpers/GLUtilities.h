@@ -7,13 +7,15 @@
 #include "MeshUtilities.h"
 
 /// This macro is used to check for OpenGL errors with access to the file and line number where the error is detected.
-#define checkGLError() _checkGLError(__FILE__, __LINE__)
+
+#define checkGLError() _checkGLError(__FILE__, __LINE__, "")
+#define checkGLErrorInfos(infos) _checkGLError(__FILE__ , __LINE__, infos)
 
 /// Converts a GLenum error number into a human-readable string.
 std::string getGLErrorString(GLenum error);
 
 /// Check if any OpenGL error has been detected and log it.
-int _checkGLError(const char *file, int line);
+int _checkGLError(const char *file, int line, const std::string & infos);
 
 struct TextureInfos {
 	GLuint id;

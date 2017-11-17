@@ -77,7 +77,7 @@ void ProgramInfos::registerTexture(const std::string & name, int slot){
 	_textures[name] = slot;
 	glUniform1i(_uniforms[name], slot);
 	glUseProgram(0);
-	checkGLError();
+	checkGLErrorInfos("Texture named " + name + " in program (" + _vertexName + "," + _fragmentName + ").");
 }
 
 void ProgramInfos::cacheUniformArray(const std::string & name, const std::vector<glm::vec3> & vals) {
