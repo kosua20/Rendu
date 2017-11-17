@@ -20,6 +20,7 @@ Renderer::Renderer(int width, int height, std::shared_ptr<Scene> & scene){
 	Random::seed();
 	// Setup projection matrix.
 	_camera.screen(width, height);
+	_camera.internalResolution(720);
 	
 	const int renderWidth = (int)_camera.renderSize()[0];
 	const int renderHeight = (int)_camera.renderSize()[1];
