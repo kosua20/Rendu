@@ -5,10 +5,8 @@
 
 //#define VERBOSE_INPUT
 
-
 /// Singleton.
 Input Input::_inputManager = Input();
-
 
 Input::Input(){
 	// Check if any joystick is available.
@@ -20,7 +18,6 @@ Input::Input(){
 		}
 	}*/
 }
-
 
 Input::~Input(){ }
 
@@ -145,7 +142,7 @@ bool Input::triggered(const Mouse & mouseButton) const {
 	return _mouseButtons[mouseButton].first;
 }
 
-glm::vec2 Input::position() const {
+glm::vec2 Input::mouse() const {
 	return glm::vec2(_mouse.x, _mouse.y);
 }
 

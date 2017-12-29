@@ -7,7 +7,12 @@
 class Joystick {
 
 public:
-
+	
+	enum JoystickInput {
+		MoveForward, MoveLateral, LookVertical, LookHorizontal, MoveUp, MoveDown,
+		ResetAll, ResetCenter, ResetOrientation, SpeedUp, SpeedDown, JoystickInputCount
+	};
+	
 	Joystick();
 
 	~Joystick();
@@ -16,17 +21,18 @@ public:
 	
 	void deactivate();
 	
-
 	/// Update the values for axes and buttons.
 	void update();
 	
+	/// Queries.
+	bool pressed(const JoystickInput & input) const;
+	
+	bool triggered(const JoystickInput & input) const;
+	
+	float axis(const JoystickInput & input) const;
 	
 private:
 	
-	enum Inputs {
-		MOVE_FORWARD, MOVE_LATERAL, LOOK_VERTICAL, LOOK_LATERAL, MOVE_UP, MOVE_DOWN,
-		RESET_ALL, RESET_CENTER, RESET_ORIENTATION, SPEED_UP, SPEED_DOWN
-	};
 	
 	bool configure();
 	
@@ -36,12 +42,18 @@ private:
 	int _id;
 	
 	// References to GLFW flags.
-	int _axisCount;
-	int _buttonsCount;
-	const float * _axes;
-	const unsigned char * _buttons;
-	std::map<Inputs, bool> _recentPress;
-	std::map<Inputs, int> _codes;
+	int _rawAxesCount;
+	int _rawButtonsCount;
+	const float * _rawAxes;
+	const unsigned char * _rawButtons;
+	
+	struct JoystickButton {
+		bool pressed;
+		bool first;
+	};
+	JoystickButton _buttons[JoystickInput::JoystickInputCount];
+	
+	std::map<JoystickInput, int> _codes;
 	
 };
 

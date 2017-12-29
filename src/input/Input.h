@@ -135,6 +135,8 @@ public:
 		MouseRight = GLFW_MOUSE_BUTTON_RIGHT,
 		MouseMiddle = GLFW_MOUSE_BUTTON_MIDDLE
 	};
+	
+	
 public:
 	
 	/// Handle keyboard inputs
@@ -153,17 +155,25 @@ public:
 	
 	void update();
 	
-	bool useJoystick() const { return _activeJoystick >= 0; };
+	/// Info queries.
+	// Joystick.
 	
+	bool joystickAvailable() const { return _activeJoystick >= 0; };
+	
+	const Joystick & joystick(){ return _joysticks[_activeJoystick]; };
+
+	
+	// Keyboard.
 	bool pressed(const Key & keyboardKey) const;
 	
 	bool triggered(const Key & keyboardKey) const;
 	
+	// Mouse.
 	bool pressed(const Mouse & mouseButton) const;
 	
 	bool triggered(const Mouse & mouseButton) const;
 	
-	glm::vec2 position() const;
+	glm::vec2 mouse() const;
 	
 	glm::vec2 moved(const Mouse & mouseButton) const;
 	

@@ -9,8 +9,11 @@
 
 Joystick::Joystick() {
 	_id = -1;
-	_recentPress[SPEED_UP] = false;
-	_recentPress[SPEED_DOWN] = false;
+	// Reset pressed buttons.
+	for(uint i = 0; i < JoystickInput::JoystickInputCount; ++i){
+		_buttons[i].pressed = false;
+		_buttons[i].first = false;
+	}
 } 
 
 Joystick::~Joystick(){}
@@ -18,11 +21,12 @@ Joystick::~Joystick(){}
 bool Joystick::activate(int id){
 	_id = id;
 	// Get axes and buttons references and count from GLFW
-	_axes = glfwGetJoystickAxes(_id, &_axisCount);
-	_buttons = glfwGetJoystickButtons(_id, &_buttonsCount);
-	_recentPress[SPEED_UP] = false;
-	_recentPress[SPEED_DOWN] = false;
-
+	_rawAxes = glfwGetJoystickAxes(_id, &_rawAxesCount);
+	_rawButtons = glfwGetJoystickButtons(_id, &_rawButtonsCount);
+	for(uint i = 0; i < JoystickInput::JoystickInputCount; ++i){
+		_buttons[i].pressed = false;
+		_buttons[i].first = false;
+	}
 	return configure();
 }
 
@@ -32,44 +36,39 @@ void Joystick::deactivate(){
 
 void Joystick::update(){
 	// Update buttons flags.
-	_axes = glfwGetJoystickAxes(_id, &_axisCount);
-	_buttons = glfwGetJoystickButtons(_id, &_buttonsCount);
+	_rawAxes = glfwGetJoystickAxes(_id, &_rawAxesCount);
+	_rawButtons = glfwGetJoystickButtons(_id, &_rawButtonsCount);
 	
-	// Handle buttons
-	// Reset camera when pressing the Circle button.
-	/*if(_buttons[_codes[RESET_ALL]] == GLFW_PRESS){
-		
-		return;
-	}*/
-	
-	// The Up and Down boutons are configured to register each press only once
-	// to avoid increasing/decreasing the speed for as long as the button is pressed.
-	/*if(_buttons[_codes[SPEED_UP]] == GLFW_PRESS){
-		if(!_recentPress[SPEED_UP]){
-			
-			_recentPress[SPEED_UP] = true;
+	// Translate from raw buttons to clean buttons.
+	for(uint i = 0; i < JoystickInput::JoystickInputCount; ++i){
+		bool pressed = (_rawButtons[_codes.at(JoystickInput(i))] == GLFW_PRESS);
+		if(pressed){
+			if(_buttons[i].pressed){
+				// Already pressed.
+				_buttons[i].first = false;
+			} else {
+				_buttons[i].pressed = true;
+				_buttons[i].first = true;
+			}
+		} else {
+			_buttons[i].pressed = false;
+			_buttons[i].first = false;
 		}
-	} else {
-		_recentPress[SPEED_UP] = false;
-	}*/
+	}
 	
 	
-	
-	// Handle axis
-	// Left stick to move
-	// We need the direction of the camera, normalized.
-	/*if(_axes[_codes[MOVE_FORWARD]]*_axes[_codes[MOVE_FORWARD]] + _axes[_codes[MOVE_LATERAL]]*_axes[_codes[MOVE_LATERAL]] > 0.1){
-		// Update the camera position.
-		
-	}*/
-	
-	// L2 and R2 triggers are used to move up and down. They can be read like axis.
-	/*if(_axes[_codes[MOVE_UP]] > -0.9){
-		;
-	}*/
-	
-	
-	
+}
+
+bool Joystick::pressed(const JoystickInput & input) const {
+	return _buttons[input].pressed;
+}
+
+bool Joystick::triggered(const JoystickInput & input) const {
+	return _buttons[input].first;
+}
+
+float Joystick::axis(const JoystickInput & input) const {
+	return _rawAxes[_codes.at(input)];
 }
 
 bool Joystick::configure(){
@@ -101,27 +100,27 @@ bool Joystick::configure(){
 		const std::string key = trim(trim(line.substr(0, separatorPos), " "), "\t");
 		const int val = std::stoi(line.substr(separatorPos + 1));
 		if(key == "MOVE_FORWARD") {
-			_codes[MOVE_FORWARD] = val;
+			_codes[MoveForward] = val;
 		} else if(key == "MOVE_LATERAL") {
-			_codes[MOVE_LATERAL] = val;
+			_codes[MoveLateral] = val;
 		} else if(key == "LOOK_VERTICAL") {
-			_codes[LOOK_VERTICAL] = val;
-		} else if(key == "LOOK_LATERAL") {
-			_codes[LOOK_LATERAL] = val;
+			_codes[LookVertical] = val;
+		} else if(key == "LOOK_HORIZONTAL") {
+			_codes[LookHorizontal] = val;
 		} else if(key == "MOVE_UP") {
-			_codes[MOVE_UP] = val;
+			_codes[MoveUp] = val;
 		} else if(key == "MOVE_DOWN") {
-			_codes[MOVE_DOWN] = val;
+			_codes[MoveDown] = val;
 		} else if(key == "RESET_ALL") {
-			_codes[RESET_ALL] = val;
+			_codes[ResetAll] = val;
 		} else if(key == "RESET_CENTER") {
-			_codes[RESET_CENTER] = val;
+			_codes[ResetCenter] = val;
 		} else if(key == "RESET_ORIENTATION") {
-			_codes[RESET_ORIENTATION] = val;
+			_codes[ResetOrientation] = val;
 		} else if(key == "SPEED_UP") {
-			_codes[SPEED_UP] = val;
+			_codes[SpeedUp] = val;
 		} else if(key == "SPEED_DOWN") {
-			_codes[SPEED_DOWN] = val;
+			_codes[SpeedDown] = val;
 		} else {
 			// Unknown key, ignore.
 			std::cerr << "Unknown key: " << key << "." << std::endl;

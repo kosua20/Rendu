@@ -21,8 +21,6 @@ void Camera::reset(){
 	_up = glm::vec3(0.0,1.0,0.0);
 	_right = glm::vec3(1.0,0.0,0.0);
 	_view = glm::lookAt(_eye, _center, _up);
-	
-	
 }
 
 void Camera::update(double frameTime){
@@ -30,26 +28,87 @@ void Camera::update(double frameTime){
 		reset();
 	}
 	
-	if (Input::manager().useJoystick()){
+	if (Input::manager().joystickAvailable()){
 		updateUsingJoystick(frameTime);
 	} else {
 		updateUsingKeyboard(frameTime);
 	}
 	
 	_view = glm::lookAt(_eye, _center, _up);
-//	if(_joystick.id() >= 0){
-//		// If a joystick is present, update it.
-//		//_joystick.update(frameTime);
-//	} else {
-//		// Else update the keyboard.
-//		_keyboard.update(frameTime);
-//	}
-//	// Update the view matrix.
-//
 }
 
 void Camera::updateUsingJoystick(double frameTime){
+	const Joystick & joystick = Input::manager().joystick();
+	// Handle buttons
+	// Reset camera when pressing the Circle button.
+	if(joystick.pressed(Joystick::ResetAll)){
+		_eye = glm::vec3(0.0,0.0,1.0);
+		_center = glm::vec3(0.0,0.0,0.0);
+		_up = glm::vec3(0.0,1.0,0.0);
+		_right = glm::vec3(1.0,0.0,0.0);
+		return;
+	}
 	
+	// Special actions to restore the camera orientation.
+	// Restore the up vector.
+	if(joystick.pressed(Joystick::ResetOrientation)){
+		_up = glm::vec3(0.0f,1.0f,0.0f);
+	}
+	// Look at the center of the scene
+	if( joystick.pressed(Joystick::ResetCenter)){
+		_center[0] = _center[1] = _center[2] = 0.0f;
+	}
+	
+	// The Up and Down boutons are configured to register each press only once
+	// to avoid increasing/decreasing the speed for as long as the button is pressed.
+	if(joystick.triggered(Joystick::SpeedUp)){
+		_speed *= 2.0f;
+	}
+	
+	if(joystick.triggered(Joystick::SpeedDown)){
+		_speed *= 0.5f;
+	}
+	
+	// Handle axis
+	// Left stick to move
+	// We need the direction of the camera, normalized.
+	glm::vec3 look = normalize(_center - _eye);
+	// Require a minimum deplacement between starting to register the move.
+	const float axisForward = joystick.axis(Joystick::MoveForward);
+	const float axisLateral = joystick.axis(Joystick::MoveLateral);
+	const float axisUp = joystick.axis(Joystick::MoveUp);
+	const float axisDown = joystick.axis(Joystick::MoveDown);
+	const float axisVertical = joystick.axis(Joystick::LookVertical);
+	const float axisHorizontal = joystick.axis(Joystick::LookHorizontal);
+	
+	if(axisForward * axisForward + axisLateral * axisLateral > 0.1){
+		// Update the camera position.
+		_eye = _eye - axisForward * (float)frameTime * _speed * look;
+		_eye = _eye + axisLateral * (float)frameTime * _speed * _right;
+	}
+	
+	// L2 and R2 triggers are used to move up and down. They can be read like axis.
+	if(axisUp > -0.9){
+		_eye = _eye  - (axisUp + 1.0f)* 0.5f * (float)frameTime * _speed * _up;
+	}
+	if(axisDown > -0.9){
+		_eye = _eye  + (axisDown + 1.0f)* 0.5f * (float)frameTime * _speed * _up;
+	}
+	
+	// Update center (eye-center stays constant).
+	_center = _eye + look;
+	
+	// Right stick to look around.
+	if(axisVertical * axisVertical + axisHorizontal * axisHorizontal > 0.1){
+		_center = _center - axisVertical * (float)frameTime * _angularSpeed * _up;
+		_center = _center + axisHorizontal * (float)frameTime * _angularSpeed * _right;
+	}
+	// Renormalize the look vector.
+	look = normalize(_center - _eye);
+	// Recompute right as the cross product of look and up.
+	_right = normalize(cross(look,_up));
+	// Recompute up as the cross product of  right and look.
+	_up = normalize(cross(_right,look));
 }
 
 void Camera::updateUsingKeyboard(double frameTime){
@@ -99,59 +158,6 @@ void Camera::updateUsingKeyboard(double frameTime){
 	_right = normalize(cross(look,_up));
 	// Recompute up as the cross product of  right and look.
 	_up = normalize(cross(_right,look));
-}
-
-
-void Camera::key(int key, bool flag){
-	// Ignore if joystick present, for now.
-//	if(_joystick.id() >= 0) {
-//		return;
-//	}
-//
-//	if (key == GLFW_KEY_W || key == GLFW_KEY_A
-//		|| key == GLFW_KEY_S || key == GLFW_KEY_D
-//		|| key == GLFW_KEY_Q || key == GLFW_KEY_E) {
-//		_keyboard.registerMove(key, flag);
-//	} else if(flag && key == GLFW_KEY_R) {
-//		reset();
-//	}
-}
-
-void Camera::joystick(int joystick, int event){
-//	if (event == GLFW_CONNECTED) {
-//		std::cout << "Connected joystick " << joystick << std::endl;
-//		// If there is no currently connected joystick, register the new one.
-//		if(_joystick.id() == -1){
-//			_joystick.activate(joystick);
-//		}
-//	} else if (event == GLFW_DISCONNECTED) {
-//		std::cout << "Disconnected joystick " << joystick << std::endl;
-//		// If the disconnected joystick is the one currently used, register this.
-//		if(joystick == _joystick.id()){
-//			_joystick.deactivate();
-//		}
-//	}
-}
-
-void Camera::mouse(MouseMode mode, float x, float y){
-	// Ignore if joystick present, for now.
-//	if(_joystick.id() >= 0) {
-//		return;
-//	}
-//
-//	if (mode == MouseMode::End) {
-//		_keyboard.endLeftMouse();
-//	} else {
-//		// We normalize the x and y values to the [-1, 1] range.
-//		float xPosition =  fmax(fmin(1.0f, 2.0f * x / _screenSize[0] - 1.0f),-1.0f);
-//		float yPosition =  fmax(fmin(1.0f, 2.0f * y / _screenSize[1] - 1.0f),-1.0f);
-//
-//		if(mode == MouseMode::Start) {
-//			_keyboard.startLeftMouse(xPosition,yPosition);
-//		} else {
-//			_keyboard.leftMouseTo(xPosition,yPosition);
-//		}
-//	}
 }
 
 

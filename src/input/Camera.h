@@ -23,15 +23,6 @@ public:
 
 	/// Update the view matrix.
 	void update(double frameTime);
-
-	/// Register a key press/release.
-	void key(int key, bool flag);
-	
-	/// Register a joystick status change.
-	void joystick(int joystick, int event);
-	
-	/// Register a mouse move or click.
-	void mouse(MouseMode mode, float x, float y);
 	
 	/// Update the screen size and projection matrix.
 	void screen(int width, int height);
