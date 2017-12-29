@@ -113,16 +113,35 @@ int main () {
 	glfwGetFramebufferSize(window, &width, &height);
 	renderer.resize(width, height);
 	
-	double fullTime = glfwGetTime();
+	double timer = glfwGetTime();
+	double fullTime = 0.0;
+	double remainingTime = 0.0;
+	const double dt = 1.0/120.0; // Small physics timestep.
+	
 	// Start the display/interaction loop.
 	while (!glfwWindowShouldClose(window)) {
+		
 		// Compute the time elapsed since last frame
 		double currentTime = glfwGetTime();
-		double frameTime = currentTime - fullTime;
-		fullTime = currentTime;
+		double frameTime = currentTime - timer;
+		timer = currentTime;
 		
 		// Physics simulation
-		renderer.update(fullTime, frameTime);
+		// First avoid super high frametime by clamping.
+		if(frameTime > 0.2){ frameTime = 0.2; }
+		// Accumulate new frame time.
+		remainingTime += frameTime;
+		// Instead of bounding at dt, we lower our requirement (1 order of magnitude).
+		while(remainingTime > 0.2*dt){
+			double deltaTime = fmin(remainingTime, dt);
+			// Update physics and camera.
+			renderer.update(fullTime, deltaTime);
+			// Update timers.
+			fullTime += deltaTime;
+			remainingTime -= deltaTime;
+		}
+		
+		
 		// Update the content of the window.
 		renderer.draw();
 		
