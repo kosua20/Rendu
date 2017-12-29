@@ -2,7 +2,6 @@
 #define Camera_h
 
 #include <glm/glm.hpp>
-#include "Keyboard.h"
 #include "Joystick.h"
 
 enum class MouseMode {
@@ -38,6 +37,7 @@ public:
 private:
 	
 	void updateUsingJoystick(double frameTime);
+	
 	void updateUsingKeyboard(double frameTime);
 	
 	/// The view matrix.
@@ -59,7 +59,6 @@ private:
 	
 	float _speed;
 	float _angularSpeed;
-	
 	
 
 };

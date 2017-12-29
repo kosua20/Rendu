@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		F41F5F521E817E4B00C18D8D /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4FE35431D0C47AA00B8318A /* Camera.cpp */; };
-		F41F5F541E817E4B00C18D8D /* Keyboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4FE35411D0C474C00B8318A /* Keyboard.cpp */; };
 		F41F5F561E817E4B00C18D8D /* MeshUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F46162181CF9D5A400B22823 /* MeshUtilities.cpp */; };
 		F41F5F571E817E4B00C18D8D /* GLUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F461621A1CF9D5A400B22823 /* GLUtilities.cpp */; };
 		F41F5F581E817E4B00C18D8D /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F461621C1CF9D5A400B22823 /* main.cpp */; };
@@ -270,8 +269,6 @@
 		F4FA2F1B1E881370007EBA57 /* point_light.vert */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = point_light.vert; sourceTree = "<group>"; };
 		F4FA2F1F1E881370007EBA57 /* final_screenquad.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = final_screenquad.frag; sourceTree = "<group>"; };
 		F4FA2F211E881370007EBA57 /* fxaa.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = fxaa.frag; sourceTree = "<group>"; };
-		F4FE35411D0C474C00B8318A /* Keyboard.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Keyboard.cpp; sourceTree = "<group>"; };
-		F4FE35421D0C474C00B8318A /* Keyboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Keyboard.h; sourceTree = "<group>"; };
 		F4FE35431D0C47AA00B8318A /* Camera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Camera.cpp; sourceTree = "<group>"; };
 		F4FE35441D0C47AA00B8318A /* Camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Camera.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -697,8 +694,6 @@
 				F43EF9AA1F44EDFB0073DFFB /* Joystick.h */,
 				F4FE35431D0C47AA00B8318A /* Camera.cpp */,
 				F4FE35441D0C47AA00B8318A /* Camera.h */,
-				F4FE35411D0C474C00B8318A /* Keyboard.cpp */,
-				F4FE35421D0C474C00B8318A /* Keyboard.h */,
 			);
 			path = input;
 			sourceTree = "<group>";
@@ -785,7 +780,6 @@
 				F43246721F438C3B0090FD5F /* gl3w.cpp in Sources */,
 				F43EF9AB1F44EDFB0073DFFB /* Joystick.cpp in Sources */,
 				F41F5F521E817E4B00C18D8D /* Camera.cpp in Sources */,
-				F41F5F541E817E4B00C18D8D /* Keyboard.cpp in Sources */,
 				F4FA2F051E87F60D007EBA57 /* DirectionalLight.cpp in Sources */,
 				F41F5F561E817E4B00C18D8D /* MeshUtilities.cpp in Sources */,
 				F4B42D021F425B8100E485C5 /* ResourcesManager.cpp in Sources */,

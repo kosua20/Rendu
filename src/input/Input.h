@@ -156,12 +156,16 @@ public:
 	void update();
 	
 	/// Info queries.
-	// Joystick.
+	// Resize.
 	
+	bool resized() { return _resized; };
+	
+	glm::vec2 size() { return glm::vec2(_width, _height); };
+	
+	// Joystick.
 	bool joystickAvailable() const { return _activeJoystick >= 0; };
 	
 	const Joystick & joystick(){ return _joysticks[_activeJoystick]; };
-
 	
 	// Keyboard.
 	bool pressed(const Key & keyboardKey) const;
