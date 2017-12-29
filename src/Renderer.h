@@ -12,7 +12,7 @@
 #include "Gbuffer.h"
 #include "Blur.h"
 #include "AmbientQuad.h"
-#include "camera/Camera.h"
+#include "input/Camera.h"
 #include "ScreenQuad.h"
 
 class Renderer {
@@ -35,16 +35,6 @@ public:
 	/// Handle screen resizing
 	void resize(int width, int height);
 
-	/// Handle keyboard inputs
-	void keyPressed(int key, int action);
-	
-	/// Handle joystick inputs.
-	void joystick(int joy, int event);
-
-	/// Handle mouse inputs
-	void buttonPressed(int button, int action, double x, double y);
-
-	void mousePosition(double x, double y, bool leftPress, bool rightPress);
 	
 private:
 	

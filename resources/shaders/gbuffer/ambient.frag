@@ -24,7 +24,7 @@ uniform vec4 projectionMatrix;
 // Output: the fragment color
 out vec3 fragColor;
 
-#define SAMPLES_COUNT 16u
+#define SAMPLES_COUNT 1u
 #define MAX_LOD 12
 
 vec3 positionFromDepth(float depth){

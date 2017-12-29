@@ -46,6 +46,9 @@ public:
 	
 private:
 	
+	void updateUsingJoystick(double frameTime);
+	void updateUsingKeyboard(double frameTime);
+	
 	/// The view matrix.
 	glm::mat4 _view;
 	/// The projection matrix.
@@ -63,9 +66,9 @@ private:
 	
 	int _verticalResolution;
 	
-	/// Input methods
-	Keyboard _keyboard;
-	Joystick _joystick;
+	float _speed;
+	float _angularSpeed;
+	
 	
 
 };

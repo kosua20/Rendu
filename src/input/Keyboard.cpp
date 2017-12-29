@@ -4,7 +4,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "Keyboard.h"
-
+/*
 Keyboard::Keyboard(glm::vec3 & eye, glm::vec3 & center, glm::vec3 & up, glm::vec3 & right) : _eye(eye), _center(center), _up(up), _right(right) {
 	_speed = 1.2f;
 	_angularSpeed = 75.0f;
@@ -21,51 +21,7 @@ void Keyboard::reset(){
 
 void Keyboard::update(double frameTime){
 	
-	// We need the direction of the camera, normalized.
-	glm::vec3 look = normalize(_center - _eye);
-	// One step forward or backward.
-	glm::vec3 deltaLook =  _speed * (float)frameTime * look;
-	// One step laterally horizontal.
-	glm::vec3 deltaLateral = _speed * (float)frameTime * _right;
-	// One step laterally vertical.
-	glm::vec3 deltaVertical = _speed * (float)frameTime * _up;
-
 	
-	if(_keys[0]){ // Forward
-		_eye = _eye + deltaLook;
-	}
-
-	if(_keys[1]){ // Backward
-  		_eye = _eye - deltaLook;
-	}
-
-	if(_keys[2]){ // Left
-  		_eye = _eye - deltaLateral;
-	}
-
-	if(_keys[3]){ // Right
-  		_eye = _eye + deltaLateral;
-	}
-
-	if(_keys[4]){ // Down
-  		_eye = _eye - deltaVertical;
-	}
-
-	if(_keys[5]){ // Up
-  		_eye = _eye + deltaVertical;
-	}
-	if(_keys[6]){
-  		_center = _center + (_deltaPosition.x * _right + _deltaPosition.y * _up) * (float)frameTime * _angularSpeed;
-  		look = normalize(_center - _eye);
-	}
-
-	// Update center (eye-center stays constant).
-	_center = _eye + look;
-  	
-  	// Recompute right as the cross product of look and up.
-	_right = normalize(cross(look,_up));
-	// Recompute up as the cross product of  right and look.
-	_up = normalize(cross(_right,look));
 
 }
 
@@ -110,4 +66,4 @@ void Keyboard::endLeftMouse(){
 	_keys[6] = false;
 }
 
-
+*/

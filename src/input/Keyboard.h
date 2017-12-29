@@ -2,7 +2,7 @@
 #define Keyboard_h
 
 #include <glm/glm.hpp>
-
+/*
 class Keyboard {
 
 public:
@@ -40,5 +40,5 @@ private:
 	glm::vec2 _deltaPosition;
 
 };
-
+*/
 #endif

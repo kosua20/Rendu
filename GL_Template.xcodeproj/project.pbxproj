@@ -26,6 +26,7 @@
 		F43EF9AB1F44EDFB0073DFFB /* Joystick.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F43EF9A91F44EDFB0073DFFB /* Joystick.cpp */; };
 		F44F7F871F435AF60057CEFE /* ProgramInfos.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F44F7F861F435AF60057CEFE /* ProgramInfos.cpp */; };
 		F47EC10D1F446D5F000960F3 /* libglfw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F47EC10C1F446D5E000960F3 /* libglfw3.a */; };
+		F4AE73061FF6B3F200423A10 /* Input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4AE73051FF6B3F200423A10 /* Input.cpp */; };
 		F4B11E071F5F3290002E87F1 /* Blur.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4B11E051F5F328F002E87F1 /* Blur.cpp */; };
 		F4B42D021F425B8100E485C5 /* ResourcesManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4B42D001F425B8100E485C5 /* ResourcesManager.cpp */; };
 		F4FA2F051E87F60D007EBA57 /* DirectionalLight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4FA2F001E87F60D007EBA57 /* DirectionalLight.cpp */; };
@@ -240,6 +241,8 @@
 		F496FD691E91319000A295A8 /* tonemap.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = tonemap.frag; sourceTree = "<group>"; };
 		F496FD6B1E91550300A295A8 /* point_light_debug.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = point_light_debug.frag; sourceTree = "<group>"; };
 		F496FD6C1E91550300A295A8 /* point_light_debug.vert */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = point_light_debug.vert; sourceTree = "<group>"; };
+		F4AE73041FF6B3F200423A10 /* Input.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Input.h; sourceTree = "<group>"; };
+		F4AE73051FF6B3F200423A10 /* Input.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Input.cpp; sourceTree = "<group>"; };
 		F4B11E051F5F328F002E87F1 /* Blur.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Blur.cpp; sourceTree = "<group>"; };
 		F4B11E061F5F328F002E87F1 /* Blur.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Blur.h; sourceTree = "<group>"; };
 		F4B11E081F5F38E5002E87F1 /* passthrough.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = passthrough.frag; sourceTree = "<group>"; };
@@ -594,7 +597,7 @@
 			children = (
 				F45926341F6DCB9400B0A05E /* scenes */,
 				F43245DB1F438BFB0090FD5F /* libs */,
-				F4FE353E1D0C474C00B8318A /* camera */,
+				F4FE353E1D0C474C00B8318A /* input */,
 				F4FA2EFF1E87F60C007EBA57 /* lights */,
 				F46161871CF9D5A400B22823 /* helpers */,
 				F461621C1CF9D5A400B22823 /* main.cpp */,
@@ -685,17 +688,19 @@
 			path = screens;
 			sourceTree = "<group>";
 		};
-		F4FE353E1D0C474C00B8318A /* camera */ = {
+		F4FE353E1D0C474C00B8318A /* input */ = {
 			isa = PBXGroup;
 			children = (
-				F4FE35431D0C47AA00B8318A /* Camera.cpp */,
-				F4FE35441D0C47AA00B8318A /* Camera.h */,
+				F4AE73051FF6B3F200423A10 /* Input.cpp */,
+				F4AE73041FF6B3F200423A10 /* Input.h */,
 				F43EF9A91F44EDFB0073DFFB /* Joystick.cpp */,
 				F43EF9AA1F44EDFB0073DFFB /* Joystick.h */,
+				F4FE35431D0C47AA00B8318A /* Camera.cpp */,
+				F4FE35441D0C47AA00B8318A /* Camera.h */,
 				F4FE35411D0C474C00B8318A /* Keyboard.cpp */,
 				F4FE35421D0C474C00B8318A /* Keyboard.h */,
 			);
-			path = camera;
+			path = input;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -791,6 +796,7 @@
 				F4B11E071F5F3290002E87F1 /* Blur.cpp in Sources */,
 				F41F5F5B1E817E4B00C18D8D /* Renderer.cpp in Sources */,
 				F41F5F5D1E817E4B00C18D8D /* ScreenQuad.cpp in Sources */,
+				F4AE73061FF6B3F200423A10 /* Input.cpp in Sources */,
 				F41F5F5E1E817E4B00C18D8D /* AmbientQuad.cpp in Sources */,
 				F41F5F601E817E4B00C18D8D /* Object.cpp in Sources */,
 				F4FA2F061E87F60D007EBA57 /* PointLight.cpp in Sources */,

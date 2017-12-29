@@ -6,6 +6,7 @@
 #include <memory>
 
 #include "Renderer.h"
+#include "input/Input.h"
 #include "scenes/Scenes.h"
 
 #define INITIAL_SIZE_WIDTH 800
@@ -16,33 +17,22 @@
 /// Callbacks
 
 void resize_callback(GLFWwindow* window, int width, int height){
-	Renderer *rendererPtr = static_cast<Renderer*>(glfwGetWindowUserPointer(window));
-	rendererPtr->resize(width, height);
+	//Renderer *rendererPtr = static_cast<Renderer*>(glfwGetWindowUserPointer(window));
+	//rendererPtr->resize(width, height);
+	Input::manager().resizeEvent(width, height);
 }
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
-	// Handle quitting
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS){ 
-		glfwSetWindowShouldClose(window, GL_TRUE);
-		return;
-	}
-	Renderer *rendererPtr = static_cast<Renderer*>(glfwGetWindowUserPointer(window));
-	rendererPtr->keyPressed(key, action);
+	Input::manager().keyPressedEvent(key, action);
 }
 
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods){
-	double x, y;
-    glfwGetCursorPos(window, &x, &y);
-	Renderer *rendererPtr = static_cast<Renderer*>(glfwGetWindowUserPointer(window));
-	rendererPtr->buttonPressed(button, action, x, y);
+	Input::manager().mousePressedEvent(button, action); // Could pass mods to simplify things.
 }
 
 
 void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos){
-	bool left = glfwGetMouseButton(window,GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
-	bool right = glfwGetMouseButton(window,GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS;
-	Renderer *rendererPtr = static_cast<Renderer*>(glfwGetWindowUserPointer(window));
-	rendererPtr->mousePosition(xpos, ypos, left, right);
+	Input::manager().mouseMovedEvent(xpos, ypos);
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset){
@@ -50,9 +40,8 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset){
 	// ...
 }
 
-Renderer *rendererGlbPtr;
 void joystick_callback(int joy, int event){
-	rendererGlbPtr->joystick(joy, event);
+	Input::manager().joystickEvent(joy, event);
 }
 
 
@@ -95,8 +84,6 @@ int main () {
 	// Create the scene and the renderer.
 	std::shared_ptr<Scene> scene(new DeskScene());
 	Renderer renderer = Renderer(INITIAL_SIZE_WIDTH,INITIAL_SIZE_HEIGHT, scene);
-	// Keep a global ref to the render for some callbacks.
-	rendererGlbPtr = &renderer;
 	
 	glfwSetWindowUserPointer(window, &renderer);
 	// Setup callbacks for various interactions and inputs.
@@ -121,6 +108,9 @@ int main () {
 	// Start the display/interaction loop.
 	while (!glfwWindowShouldClose(window)) {
 		
+		// Update events (inputs,...).
+		Input::manager().update();
+		
 		// Compute the time elapsed since last frame
 		double currentTime = glfwGetTime();
 		double frameTime = currentTime - timer;
@@ -140,16 +130,13 @@ int main () {
 			fullTime += deltaTime;
 			remainingTime -= deltaTime;
 		}
-		
-		
+
 		// Update the content of the window.
 		renderer.draw();
 		
 		//Display the result fo the current rendering loop.
 		glfwSwapBuffers(window);
 
-		// Update events (inputs,...).
-		glfwPollEvents();
 	}
 
 	// Remove the window.
