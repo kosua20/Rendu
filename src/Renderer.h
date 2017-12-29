@@ -27,7 +27,7 @@ public:
 	/// Draw function
 	void draw();
 
-	void physics(double elapsedTime);
+	void update(double fullTime, double frameTime);
 
 	/// Clean function
 	void clean() const;
@@ -48,8 +48,6 @@ public:
 	
 private:
 	
-	double _timer;
-
 	Camera _camera;
 
 	std::shared_ptr<Gbuffer> _gbuffer;

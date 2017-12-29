@@ -20,7 +20,7 @@ public:
 	void reset();
 
 	/// Update the values of the 4 view-frame vectors.
-	void update(double elapsedTime);
+	void update(double frameTime);
 	
 	/// Joystick ID (or -1 if no joystick is connected).
 	int id(){ return _id; }

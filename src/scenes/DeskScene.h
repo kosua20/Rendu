@@ -12,14 +12,14 @@
 class DeskScene : public Scene {
 public:
 	void init();
-	void update(double timer, double elapsedTime);
+	void update(double fullTime, double frameTime);
 };
 
 
 void DeskScene::init(){
 	
 	// Create directional light.
-	directionalLights.emplace_back(glm::vec3(-2.0f, 1.5f, 0.0f), 4.0f*glm::vec3(1.0f,1.0f, 0.92f), glm::ortho(-2.25f,0.25f,-1.5f,0.75f,1.0f,6.0f));
+	//directionalLights.emplace_back(glm::vec3(-2.0f, 1.5f, 0.0f), 4.0f*glm::vec3(1.0f,1.0f, 0.92f), glm::ortho(-2.25f,0.25f,-1.5f,0.75f,1.0f,6.0f));
 	
 	glm::mat4 sceneMatrix = glm::translate(glm::scale(glm::mat4(1.0f), glm::vec3(0.5f)), glm::vec3(0.0f,0.0f,-2.0f));
 	// Objects creation.
@@ -47,7 +47,7 @@ void DeskScene::init(){
 	backgroundIrradiance = Resources::manager().getCubemap("small_apartment_irr").id;
 }
 
-void DeskScene::update(double timer, double elapsedTime){
+void DeskScene::update(double fullTime, double frameTime){
 	
 }
 

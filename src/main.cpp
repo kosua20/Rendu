@@ -93,7 +93,7 @@ int main () {
 	}
 
 	// Create the scene and the renderer.
-	std::shared_ptr<Scene> scene(new SphereScene());
+	std::shared_ptr<Scene> scene(new DeskScene());
 	Renderer renderer = Renderer(INITIAL_SIZE_WIDTH,INITIAL_SIZE_HEIGHT, scene);
 	// Keep a global ref to the render for some callbacks.
 	rendererGlbPtr = &renderer;
@@ -113,9 +113,16 @@ int main () {
 	glfwGetFramebufferSize(window, &width, &height);
 	renderer.resize(width, height);
 	
+	double fullTime = glfwGetTime();
 	// Start the display/interaction loop.
 	while (!glfwWindowShouldClose(window)) {
-
+		// Compute the time elapsed since last frame
+		double currentTime = glfwGetTime();
+		double frameTime = currentTime - fullTime;
+		fullTime = currentTime;
+		
+		// Physics simulation
+		renderer.update(fullTime, frameTime);
 		// Update the content of the window.
 		renderer.draw();
 		

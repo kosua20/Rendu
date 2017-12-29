@@ -22,7 +22,7 @@ public:
 	void reset();
 
 	/// Update the view matrix.
-	void update(double elapsedTime);
+	void update(double frameTime);
 
 	/// Register a key press/release.
 	void key(int key, bool flag);

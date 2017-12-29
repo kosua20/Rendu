@@ -12,7 +12,7 @@
 class DragonScene : public Scene {
 public:
 	void init();
-	void update(double timer, double elapsedTime);
+	void update(double fullTime, double frameTime);
 };
 
 
@@ -52,18 +52,18 @@ void DragonScene::init(){
 	backgroundIrradiance = Resources::manager().getCubemap("corsica_beach_cube_irr").id;
 }
 
-void DragonScene::update(double timer, double elapsedTime){
+void DragonScene::update(double fullTime, double frameTime){
 	// Update lights.
-	directionalLights[0].update(glm::vec3(-2.0f, 1.5f + sin(0.5*timer),0.0f));
+	directionalLights[0].update(glm::vec3(-2.0f, 1.5f + sin(0.5*fullTime),0.0f));
 	
 	for(size_t i = 0; i <pointLights.size(); ++i){
 		auto& pointLight = pointLights[i];
-		glm::vec4 newPosition = glm::rotate(glm::mat4(1.0f), (float)elapsedTime, glm::vec3(0.0f, 1.0f, 0.0f))*glm::vec4(pointLight.local(), 1.0f);
+		glm::vec4 newPosition = glm::rotate(glm::mat4(1.0f), (float)frameTime, glm::vec3(0.0f, 1.0f, 0.0f))*glm::vec4(pointLight.local(), 1.0f);
 		pointLight.update(glm::vec3(newPosition));
 	}
 	
 	// Update objects.
-	const glm::mat4 suzanneModel = glm::scale(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(0.2,0.0,0.0)),float(timer),glm::vec3(0.0f,1.0f,0.0f)),glm::vec3(0.25f));
+	const glm::mat4 suzanneModel = glm::scale(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(0.2,0.0,0.0)),float(fullTime),glm::vec3(0.0f,1.0f,0.0f)),glm::vec3(0.25f));
 	objects[0].update(suzanneModel);
 }
 

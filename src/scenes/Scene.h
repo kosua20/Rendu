@@ -20,7 +20,7 @@ public:
 	/// Init function
 	virtual void init() = 0;
 	
-	virtual void update(double timer, double elapsedTime) = 0;
+	virtual void update(double fullTime, double frameTime) = 0;
 
 	/// Clean function
 	void clean() const;

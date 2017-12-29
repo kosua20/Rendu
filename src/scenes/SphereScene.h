@@ -12,7 +12,7 @@
 class SphereScene : public Scene {
 public:
 	void init();
-	void update(double timer, double elapsedTime);
+	void update(double fullTime, double frameTime);
 };
 
 
@@ -41,8 +41,8 @@ void SphereScene::init(){
 	backgroundReflection = Resources::manager().getCubemap("studio").id;
 }
 
-void SphereScene::update(double timer, double elapsedTime){
-	const glm::mat4 model = glm::rotate(glm::translate(glm::scale(glm::mat4(1.0f),glm::vec3(0.3f)), glm::vec3(1.2f,0.0f, 0.0f)), 0.2f*float(timer), glm::vec3(0.0f,1.0f,0.0f));
+void SphereScene::update(double fullTime, double frameTime){
+	const glm::mat4 model = glm::rotate(glm::translate(glm::scale(glm::mat4(1.0f),glm::vec3(0.3f)), glm::vec3(1.2f,0.0f, 0.0f)), 0.2f*float(fullTime), glm::vec3(0.0f,1.0f,0.0f));
 	objects[0].update(model);
 	
 }

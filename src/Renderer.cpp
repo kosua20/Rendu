@@ -14,8 +14,6 @@ Renderer::~Renderer(){}
 
 Renderer::Renderer(int width, int height, std::shared_ptr<Scene> & scene){
 
-	// Initialize the timer.
-	_timer = glfwGetTime();
 	// Initialize random generator;
 	Random::seed();
 	// Setup projection matrix.
@@ -84,15 +82,7 @@ Renderer::Renderer(int width, int height, std::shared_ptr<Scene> & scene){
 
 
 void Renderer::draw() {
-	
-	// Compute the time elapsed since last frame
-	double elapsed = glfwGetTime() - _timer;
-	_timer = glfwGetTime();
-	
-	// Physics simulation
-	physics(elapsed);
-	
-	
+
 	glm::vec2 invRenderSize = 1.0f / _camera.renderSize();
 	
 	// --- Light pass -------
@@ -215,9 +205,9 @@ void Renderer::draw() {
 	
 }
 
-void Renderer::physics(double elapsedTime){
-	_camera.update(elapsedTime);
-	_scene->update(_timer, elapsedTime);
+void Renderer::update(double fullTime, double frameTime){
+	_camera.update(frameTime);
+	_scene->update(fullTime, frameTime);
 }
 
 

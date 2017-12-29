@@ -33,14 +33,14 @@ void Camera::reset(){
 	_joystick.reset();
 }
 
-void Camera::update(double elapsedTime){
+void Camera::update(double frameTime){
 
 	if(_joystick.id() >= 0){
 		// If a joystick is present, update it.
-		_joystick.update(elapsedTime);
+		_joystick.update(frameTime);
 	} else {
 		// Else update the keyboard.
-		_keyboard.update(elapsedTime);
+		_keyboard.update(frameTime);
 	}
 	// Update the view matrix.
 	_view = glm::lookAt(_eye, _center, _up);

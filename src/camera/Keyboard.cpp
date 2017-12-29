@@ -19,16 +19,16 @@ void Keyboard::reset(){
 	_deltaPosition = glm::vec2(0.0);
 }
 
-void Keyboard::update(double elapsedTime){
+void Keyboard::update(double frameTime){
 	
 	// We need the direction of the camera, normalized.
 	glm::vec3 look = normalize(_center - _eye);
 	// One step forward or backward.
-	glm::vec3 deltaLook =  _speed * (float)elapsedTime * look;
+	glm::vec3 deltaLook =  _speed * (float)frameTime * look;
 	// One step laterally horizontal.
-	glm::vec3 deltaLateral = _speed * (float)elapsedTime * _right;
+	glm::vec3 deltaLateral = _speed * (float)frameTime * _right;
 	// One step laterally vertical.
-	glm::vec3 deltaVertical = _speed * (float)elapsedTime * _up;
+	glm::vec3 deltaVertical = _speed * (float)frameTime * _up;
 
 	
 	if(_keys[0]){ // Forward
@@ -55,7 +55,7 @@ void Keyboard::update(double elapsedTime){
   		_eye = _eye + deltaVertical;
 	}
 	if(_keys[6]){
-  		_center = _center + (_deltaPosition.x * _right + _deltaPosition.y * _up) * (float)elapsedTime * _angularSpeed;
+  		_center = _center + (_deltaPosition.x * _right + _deltaPosition.y * _up) * (float)frameTime * _angularSpeed;
   		look = normalize(_center - _eye);
 	}
 
