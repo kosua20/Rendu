@@ -42,6 +42,8 @@ Config::Config(int argc, char** argv){
 		
 		if(key == "novsync"){
 			vsync = false;
+		} else if(key == "fullscreen"){
+			fullscreen = true;
 		} else if(key == "internal-res" || key == "ivr"){
 			internalVerticalResolution = std::stof(value);
 		} else if(key == "wxh"){

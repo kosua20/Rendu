@@ -57,9 +57,20 @@ int main(int argc, char** argv) {
 	glfwWindowHint (GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint (GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	
+	GLFWwindow* window;
+	
+	if(config.fullscreen){
+		const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+		glfwWindowHint(GLFW_RED_BITS, mode->redBits);
+		glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
+		glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
+		glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
+		window = glfwCreateWindow(mode->width, mode->height, "GL_Template", glfwGetPrimaryMonitor(), NULL);
+	} else {
+		// Create a window with a given size. Width and height are defined in the configuration.
+		window = glfwCreateWindow(config.initialWidth, config.initialHeight,"GL_Template", NULL, NULL);
+	}
 
-	// Create a window with a given size. Width and height are macros as we will need them again.
-	GLFWwindow* window = glfwCreateWindow(config.initialWidth, config.initialHeight,"GL_Template", NULL, NULL);
 	if (!window) {
 		std::cerr << "ERROR: could not open window with GLFW3" << std::endl;
 		glfwTerminate();

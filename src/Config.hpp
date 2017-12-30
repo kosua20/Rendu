@@ -23,6 +23,8 @@ public:
 	
 	bool vsync = true;
 	
+	bool fullscreen = false;
+	
 	unsigned int initialWidth = 800;
 	
 	unsigned int initialHeight = 600;
