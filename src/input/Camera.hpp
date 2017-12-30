@@ -16,8 +16,11 @@ public:
 	/// Reset the position of the camera.
 	void reset();
 
+	/// Update one-shot parameters.
+	void update();
+	
 	/// Update the view matrix.
-	void update(double frameTime);
+	void physics(double frameTime);
 	
 	/// Update the screen size and projection matrix.
 	void screen(int width, int height);
@@ -45,6 +48,8 @@ private:
 	
 	void updateUsingKeyboard(double frameTime);
 	
+	void updateUsingTurnTable(double frameTime);
+	
 	/// Update the projection matrice parameters.
 	void updateProjection();
 	
@@ -66,6 +71,16 @@ private:
 	float _speed;
 	float _angularSpeed;
 	
+	// TurnTable parameters.
+	float _verticalAngle;
+	float _horizontalAngle;
+	float _radius;
+	
+	enum CameraMode {
+		FPS, TurnTable, Trackball
+	};
+	
+	CameraMode _mode;
 };
 
 #endif

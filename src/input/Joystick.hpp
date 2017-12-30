@@ -27,7 +27,7 @@ public:
 	/// Queries.
 	bool pressed(const JoystickInput & input) const;
 	
-	bool triggered(const JoystickInput & input) const;
+	bool triggered(const JoystickInput & input, bool absorb = false);
 	
 	float axis(const JoystickInput & input) const;
 	

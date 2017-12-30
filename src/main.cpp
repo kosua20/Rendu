@@ -29,8 +29,7 @@ void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos){
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset){
-	// Do nothing for now
-	// ...
+	Input::manager().mouseScrolledEvent(xoffset, yoffset);
 }
 
 void joystick_callback(int joy, int event){
@@ -103,6 +102,8 @@ int main(int argc, char** argv) {
 	glfwGetWindowSize(window, &wwidth, &wheight);
 	config.initialWidth = wwidth;
 	config.initialHeight = wheight;
+	Input::manager().resizeEvent(wwidth, wheight);
+	
 	// On HiDPI screens, we have to consider the internal resolution for all framebuffers size.
 	int width, height;
 	glfwGetFramebufferSize(window, &width, &height);

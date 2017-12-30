@@ -150,6 +150,8 @@ public:
 	
 	void mouseMovedEvent(double x, double y);
 	
+	void mouseScrolledEvent(double xoffset, double yoffset);
+	
 	/// Handle resize events.
 	void resizeEvent(int width, int height);
 	
@@ -165,29 +167,31 @@ public:
 	// Joystick.
 	bool joystickAvailable() const { return _activeJoystick >= 0; };
 	
-	const Joystick & joystick(){ return _joysticks[_activeJoystick]; };
+	Joystick & joystick(){ return _joysticks[_activeJoystick]; };
 	
 	// Keyboard.
 	bool pressed(const Key & keyboardKey) const;
 	
-	bool triggered(const Key & keyboardKey) const;
+	bool triggered(const Key & keyboardKey, bool absorb = false);
 	
 	// Mouse.
 	bool pressed(const Mouse & mouseButton) const;
 	
-	bool triggered(const Mouse & mouseButton) const;
+	bool triggered(const Mouse & mouseButton, bool absorb = false);
 	
 	glm::vec2 mouse() const;
 	
 	glm::vec2 moved(const Mouse & mouseButton) const;
+	
+	glm::vec2 scroll() const;
 	
 private:
 	
 	/// State.
 	
 	// Resize state.
-	uint _width = 0;
-	uint _height = 0;
+	uint _width = 1;
+	uint _height = 1;
 	bool _resized;
 	
 	// Joystick state.
@@ -209,6 +213,7 @@ private:
 	struct MouseCursor {
 		double x;
 		double y;
+		glm::vec2 scroll;
 	} _mouse;
 	
 	// Keyboard state.

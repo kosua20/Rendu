@@ -202,10 +202,11 @@ void Renderer::update(){
 	if(Input::manager().resized()){
 		resize(Input::manager().size()[0], Input::manager().size()[1]);
 	}
+	_camera.update();
 }
 
 void Renderer::physics(double fullTime, double frameTime){
-	_camera.update(frameTime);
+	_camera.physics(frameTime);
 	_scene->update(fullTime, frameTime);
 }
 

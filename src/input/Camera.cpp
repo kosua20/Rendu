@@ -14,6 +14,7 @@ Camera::Camera()  {
 	_ratio = 4.0f/3.0f;
 	_near = 0.01f;
 	_far = 100.0f;
+	_mode = TurnTable;
 	reset();
 }
 
@@ -25,24 +26,39 @@ void Camera::reset(){
 	_up = glm::vec3(0.0,1.0,0.0);
 	_right = glm::vec3(1.0,0.0,0.0);
 	_view = glm::lookAt(_eye, _center, _up);
+	_verticalAngle = 0.0f;
+	_horizontalAngle = M_PI*0.5;
+	_radius = 1.0;
 }
 
-void Camera::update(double frameTime){
+void Camera::update(){
 	if(Input::manager().triggered(Input::KeyR)){
 		reset();
 	}
+	if(Input::manager().triggered(Input::KeyF)){
+		_mode = FPS;
+	}
+	if(Input::manager().triggered(Input::KeyG)){
+		_mode = TurnTable;
+		_radius = glm::length(_eye - _center);
+	}
+}
+
+void Camera::physics(double frameTime){
 	
 	if (Input::manager().joystickAvailable()){
 		updateUsingJoystick(frameTime);
-	} else {
+	} else if (_mode == FPS) {
 		updateUsingKeyboard(frameTime);
+	} else if (_mode == TurnTable){
+		updateUsingTurnTable(frameTime);
 	}
 	
 	_view = glm::lookAt(_eye, _center, _up);
 }
 
 void Camera::updateUsingJoystick(double frameTime){
-	const Joystick & joystick = Input::manager().joystick();
+	Joystick & joystick = Input::manager().joystick();
 	// Handle buttons
 	// Reset camera when pressing the Circle button.
 	if(joystick.pressed(Joystick::ResetAll)){
@@ -119,40 +135,35 @@ void Camera::updateUsingKeyboard(double frameTime){
 	// We need the direction of the camera, normalized.
 	glm::vec3 look = normalize(_center - _eye);
 	// One step forward or backward.
-	glm::vec3 deltaLook =  _speed * (float)frameTime * look;
+	const glm::vec3 deltaLook =  _speed * (float)frameTime * look;
 	// One step laterally horizontal.
-	glm::vec3 deltaLateral = _speed * (float)frameTime * _right;
+	const glm::vec3 deltaLateral = _speed * (float)frameTime * _right;
 	// One step laterally vertical.
-	glm::vec3 deltaVertical = _speed * (float)frameTime * _up;
+	const glm::vec3 deltaVertical = _speed * (float)frameTime * _up;
 	
 	
 	if(Input::manager().pressed(Input::KeyW)){ // Forward
-		_eye = _eye + deltaLook;
+		_eye += deltaLook;
 	}
 	
 	if(Input::manager().pressed(Input::KeyS)){ // Backward
-		_eye = _eye - deltaLook;
+		_eye -= deltaLook;
 	}
 	
 	if(Input::manager().pressed(Input::KeyA)){ // Left
-		_eye = _eye - deltaLateral;
+		_eye -= deltaLateral;
 	}
 	
 	if(Input::manager().pressed(Input::KeyD)){ // Right
-		_eye = _eye + deltaLateral;
+		_eye += deltaLateral;
 	}
 	
 	if(Input::manager().pressed(Input::KeyQ)){ // Down
-		_eye = _eye - deltaVertical;
+		_eye -= deltaVertical;
 	}
 	
 	if(Input::manager().pressed(Input::KeyE)){ // Up
-		_eye = _eye + deltaVertical;
-	}
-	if(Input::manager().pressed(Input::MouseLeft)){
-		/*glm::vec2 deltaPosition = Input::manager().moved(Input::MouseLeft) / screenSize();
-		_center = _center + (deltaPosition.x * _right - deltaPosition.y * _up) * (float)frameTime * _angularSpeed;
-		look = normalize(_center - _eye);*/
+		_eye += deltaVertical;
 	}
 	
 	// Update center (eye-center stays constant).
@@ -162,6 +173,63 @@ void Camera::updateUsingKeyboard(double frameTime){
 	_right = normalize(cross(look,_up));
 	// Recompute up as the cross product of  right and look.
 	_up = normalize(cross(_right,look));
+	
+}
+
+void Camera::updateUsingTurnTable(double frameTime){
+	// We need the direction of the camera, normalized.
+	const glm::vec3 look = normalize(_center - _eye);
+	// One step forward or backward.
+	const glm::vec3 deltaLook =  _speed * (float)frameTime * look;
+	// One step laterally horizontal.
+	const glm::vec3 deltaLateral = _speed * (float)frameTime * _right;
+	// One step laterally vertical.
+	const glm::vec3 deltaVertical = _speed * (float)frameTime * _up;
+	
+	
+	if(Input::manager().pressed(Input::KeyW)){ // Forward
+		_center += deltaLook;
+	}
+	
+	if(Input::manager().pressed(Input::KeyS)){ // Backward
+		_center -= deltaLook;
+	}
+	
+	if(Input::manager().pressed(Input::KeyA)){ // Left
+		_center -= deltaLateral;
+	}
+	
+	if(Input::manager().pressed(Input::KeyD)){ // Right
+		_center += deltaLateral;
+	}
+	
+	if(Input::manager().pressed(Input::KeyQ)){ // Down
+		_center -= deltaVertical;
+	}
+	
+	if(Input::manager().pressed(Input::KeyE)){ // Up
+		_center += deltaVertical;
+	}
+	
+	// Radius of the turntable.
+	float scroll = Input::manager().scroll()[1];
+	_radius = std::max(0.0001f, _radius - scroll * (float)frameTime*_speed);
+	
+	// Angles update for the turntable.
+	const glm::vec2 delta = Input::manager().moved(Input::MouseLeft);
+	_horizontalAngle += delta[0] * (float)frameTime*_angularSpeed;
+	_verticalAngle = std::max(-1.57f,std::min(1.57f, _verticalAngle + delta[1] * (float)frameTime*_angularSpeed));
+	
+	// Compute new look direction.
+	const glm::vec3 newLook = - glm::vec3( cos(_verticalAngle) * cos(_horizontalAngle), sin(_verticalAngle),  cos(_verticalAngle) * sin(_horizontalAngle));
+	
+	// Update the camera position around the center.
+	_eye =  _center - _radius * newLook;
+	
+	// Recompute right as the cross product of look and up.
+	_right = normalize(cross(newLook,glm::vec3(0.0f,1.0f,0.0f)));
+	// Recompute up as the cross product of  right and look.
+	_up = normalize(cross(_right,newLook));
 	
 }
 
@@ -193,17 +261,4 @@ void Camera::updateProjection(){
 	// Perspective projection.
 	_projection = glm::perspective(_fov, _ratio, _near, _far);
 }
-
-/*
-void Camera::internalResolution(int height){
-	// No need to update the screen size.
-	_verticalResolution = height;
-	// Same aspect ratio as the display resolution
-	_renderSize = (float(_verticalResolution)/_screenSize[1]) * _screenSize;
-	// Perspective projection.
-	_projection = glm::perspective(45.0f, _renderSize[0] / _renderSize[1], 0.01f, 200.f);
-}
-*/
-
-
 

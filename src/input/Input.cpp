@@ -91,10 +91,17 @@ void Input::mousePressedEvent(int button, int action){
 
 void Input::mouseMovedEvent(double x, double y){
 
-	_mouse.x = x;
-	_mouse.y = y;
+	_mouse.x = x/_width;
+	_mouse.y = y/_height;
 	#ifdef VERBOSE_INPUT
 	std::cout << "[Input] Mouse moved: " << x << "," << y << "." << std::endl;
+	#endif
+}
+
+void Input::mouseScrolledEvent(double xoffset, double yoffset){
+	_mouse.scroll = glm::vec2(xoffset, yoffset);
+	#ifdef VERBOSE_INPUT
+	std::cout << "[Input] Mouse scrolled: " << xoffset << "," << yoffset << "." << std::endl;
 	#endif
 }
 
@@ -117,6 +124,7 @@ void Input::update(){
 		_mouseButtons[i].first = false;
 		_mouseButtons[i].last = false;
 	}
+	_mouse.scroll = glm::vec2(0.0f,0.0f);
 	_resized = false;
 	// Update only the active joystick if it exists.
 	if(_activeJoystick >= 0){
@@ -130,16 +138,24 @@ bool Input::pressed(const Key & keyboardKey) const {
 	return _keys[keyboardKey].pressed;
 }
 
-bool Input::triggered(const Key & keyboardKey) const {
-	return _keys[keyboardKey].first;
+bool Input::triggered(const Key & keyboardKey, bool absorb) {
+	bool res = _keys[keyboardKey].first;
+	if(absorb){
+		_keys[keyboardKey].first = false;
+	}
+	return res;
 }
 
 bool Input::pressed(const Mouse & mouseButton) const {
 	return _mouseButtons[mouseButton].pressed;
 }
 
-bool Input::triggered(const Mouse & mouseButton) const {
-	return _mouseButtons[mouseButton].first;
+bool Input::triggered(const Mouse & mouseButton, bool absorb) {
+	bool res = _mouseButtons[mouseButton].first;
+	if(absorb){
+		_mouseButtons[mouseButton].first = false;
+	}
+	return res;
 }
 
 glm::vec2 Input::mouse() const {
@@ -152,5 +168,9 @@ glm::vec2 Input::moved(const Mouse & mouseButton) const {
 		return glm::vec2(_mouse.x - b.x0, _mouse.y - b.y0);
 	}
 	return glm::vec2(0.0f,0.0f);
+}
+
+glm::vec2 Input::scroll() const {
+	return _mouse.scroll;
 }
 

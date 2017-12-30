@@ -63,8 +63,12 @@ bool Joystick::pressed(const JoystickInput & input) const {
 	return _buttons[input].pressed;
 }
 
-bool Joystick::triggered(const JoystickInput & input) const {
-	return _buttons[input].first;
+bool Joystick::triggered(const JoystickInput & input, bool absorb) {
+	bool res = _buttons[input].first;
+	if(absorb){
+		_buttons[input].first = false;
+	}
+	return res;
 }
 
 float Joystick::axis(const JoystickInput & input) const {
