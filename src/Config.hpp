@@ -10,6 +10,7 @@
 #define Config_hpp
 #include <glm/glm.hpp>
 #include <stdio.h>
+#include <map>
 
 class Config {
 public:
@@ -18,7 +19,7 @@ public:
 
 public:
 	
-	size_t version = 1;
+	const size_t version = 1;
 	
 	bool vsync = true;
 	
@@ -26,9 +27,14 @@ public:
 	
 	unsigned int initialHeight = 600;
 	
-	glm::vec2 screenResolution = glm::vec2(800.0,600.0);
-	
 	float internalVerticalResolution = 720.0f;
 	
+	glm::vec2 screenResolution = glm::vec2(800.0,600.0);
+
+private:
+	
+	void parseFromFile(const char * filePath, std::map<std::string, std::string> & arguments);
+	
+	void parseFromArgs(const int argc, char** argv, std::map<std::string, std::string> & arguments);
 };
 #endif /* Config_hpp */
