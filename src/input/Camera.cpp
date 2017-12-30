@@ -161,13 +161,33 @@ void Camera::updateUsingKeyboard(double frameTime){
 	
 }
 
+void Camera::projection(float ratio, float fov, float near, float far){
+	_near = near;
+	_far = far;
+	_ratio = ratio;
+	_fov = fov;
+	updateProjection();
+}
 
-void Camera::projection(float ratio, float fov){
-	if(fov > 0.0){
-		_fov = fov;
-	}
+void Camera::frustum(float near, float far){
+	_near = near;
+	_far = far;
+	updateProjection();
+}
+
+void Camera::ratio(float ratio){
+	_ratio = ratio;
+	updateProjection();
+}
+
+void Camera::fov(float fov){
+	_fov = fov;
+	updateProjection();
+}
+
+void Camera::updateProjection(){
 	// Perspective projection.
-	_projection = glm::perspective(_fov, ratio, 0.01f, 200.f);
+	_projection = glm::perspective(_fov, _ratio, _near, _far);
 }
 
 /*

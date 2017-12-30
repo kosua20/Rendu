@@ -26,19 +26,29 @@ public:
 	/// Update the screen size and projection matrix.
 	void screen(int width, int height);
 	
-	/// Update the internal vertical resolution.
-	void projection(float aspectRatio, float fov = 0.0f);
+	/// Update all projection parameters.
+	void projection(float ratio, float fov, float near, float far);
+	
+	/// Update the frustum near and far planes.
+	void frustum(float near, float far);
+	
+	/// Update the aspect ratio.
+	void ratio(float ratio);
+	
+	/// Update the FOV (in).
+	void fov(float fov);
 	
 	const glm::mat4 view() const { return _view; }
 	const glm::mat4 projection() const { return _projection; }
-	//const glm::vec2 screenSize() const { return _screenSize; }
-	//const glm::vec2 renderSize() const { return _renderSize; }
 	
 private:
 	
 	void updateUsingJoystick(double frameTime);
 	
 	void updateUsingKeyboard(double frameTime);
+	
+	/// Update the projection matrice parameters.
+	void updateProjection();
 	
 	/// The view matrix.
 	glm::mat4 _view;
@@ -52,6 +62,9 @@ private:
 	glm::vec3 _right;
 	
 	float _fov;
+	float _ratio;
+	float _near;
+	float _far;
 	float _speed;
 	float _angularSpeed;
 	

@@ -16,8 +16,8 @@ Renderer::Renderer(Config & config, std::shared_ptr<Scene> & scene) : _config(co
 	
 	// Initial render resolution.
 	_renderResolution = (_config.internalVerticalResolution/_config.screenResolution[1]) * _config.screenResolution;
-	// Setup projection matrix.
-	_camera.projection(config.screenResolution[0]/config.screenResolution[1],55.0f);
+	// Setup camera parameters.
+	_camera.projection(config.screenResolution[0]/config.screenResolution[1], 45.0f, 0.01f, 200.0f);
 	
 	const int renderWidth = (int)_renderResolution[0];
 	const int renderHeight = (int)_renderResolution[1];
@@ -237,7 +237,7 @@ void Renderer::resize(int width, int height){
 	//Update the size of the viewport.
 	glViewport(0, 0, GLsizei(_config.screenResolution[0]), GLsizei(_config.screenResolution[1]));
 	// Update the projection matrix.
-	_camera.projection(_renderResolution[0] / _renderResolution[1]);
+	_camera.ratio(_renderResolution[0] / _renderResolution[1]);
 	// Resize the framebuffer.
 	_gbuffer->resize(_renderResolution);
 	_ssaoFramebuffer->resize(0.5f * _renderResolution);
