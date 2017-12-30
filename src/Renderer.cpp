@@ -6,7 +6,7 @@
 #include "Object.h"
 #include "lights/DirectionalLight.h"
 #include "lights/PointLight.h"
-
+#include "input/Input.h"
 #include "Renderer.h"
 
 
@@ -206,6 +206,9 @@ void Renderer::draw() {
 }
 
 void Renderer::update(double fullTime, double frameTime){
+	if(Input::manager().resized()){
+		resize(Input::manager().size()[0], Input::manager().size()[1]);
+	}
 	_camera.update(frameTime);
 	_scene->update(fullTime, frameTime);
 }

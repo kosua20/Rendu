@@ -9,7 +9,7 @@
 Camera::Camera()  {
 	_verticalResolution = 720;
 	_speed = 1.2f;
-	_angularSpeed = 0.7f;
+	_angularSpeed = 4.0f;
 	reset();
 }
 
@@ -146,9 +146,9 @@ void Camera::updateUsingKeyboard(double frameTime){
 		_eye = _eye + deltaVertical;
 	}
 	if(Input::manager().pressed(Input::MouseLeft)){
-		/*const glm::vec2 deltaPosition = Input::manager().moved(Input::MouseLeft);
-		_center = _center + (deltaPosition.x * _right + deltaPosition.y * _up) * (float)frameTime * _angularSpeed;
-		look = normalize(_center - _eye);*/
+		glm::vec2 deltaPosition = Input::manager().moved(Input::MouseLeft) / screenSize();
+		_center = _center + (deltaPosition.x * _right - deltaPosition.y * _up) * (float)frameTime * _angularSpeed;
+		look = normalize(_center - _eye);
 	}
 	
 	// Update center (eye-center stays constant).
@@ -158,6 +158,7 @@ void Camera::updateUsingKeyboard(double frameTime){
 	_right = normalize(cross(look,_up));
 	// Recompute up as the cross product of  right and look.
 	_up = normalize(cross(_right,look));
+	
 }
 
 

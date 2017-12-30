@@ -110,6 +110,13 @@ int main () {
 		
 		// Update events (inputs,...).
 		Input::manager().update();
+		// Handle quitting.
+		if(Input::manager().pressed(Input::KeyEscape)){
+			glfwSetWindowShouldClose(window, GL_TRUE);
+		}
+		if(Input::manager().triggered(Input::KeyP)){
+			Resources::manager().reload();
+		}
 		
 		// Compute the time elapsed since last frame
 		double currentTime = glfwGetTime();

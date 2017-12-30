@@ -184,6 +184,7 @@ void Resources::reload() {
 	for (auto & prog : _programs) {
 		prog.second->reload();
 	}
+	std::cout << "[Resources] Shader programs reloaded." << std::endl;
 }
 
 const std::vector<std::string> Resources::getCubemapPaths(const std::string & name){
