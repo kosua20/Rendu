@@ -97,7 +97,7 @@ bool Joystick::configure(){
 		if(separatorPos == std::string::npos){
 			continue;
 		}
-		const std::string key = trim(trim(line.substr(0, separatorPos), " "), "\t");
+		const std::string key = Resources::trim(Resources::trim(line.substr(0, separatorPos), " "), "\t");
 		const int val = std::stoi(line.substr(separatorPos + 1));
 		if(key == "MOVE_FORWARD") {
 			_codes[MoveForward] = val;
@@ -131,12 +131,5 @@ bool Joystick::configure(){
 }
 
 
-std::string Joystick::trim(const std::string & str, const std::string & del){
-	const size_t firstNotDel = str.find_first_not_of(del);
-	if(firstNotDel == std::string::npos){
-		return "";
-	}
-	const size_t lastNotDel = str.find_last_not_of(del);
-	return str.substr(firstNotDel, lastNotDel - firstNotDel + 1);
-}
+
 

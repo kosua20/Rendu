@@ -31,7 +31,11 @@ public:
 	const std::string getTextFile(const std::string & filename);
 	
 	void reload();
-
+	
+	static std::string loadStringFromFile(const std::string & filename);
+	
+	static std::string trim(const std::string & str, const std::string & del);
+	
 private:
 	
 	void parseDirectory(const std::string & directoryPath);
@@ -39,9 +43,6 @@ private:
 	const std::string getImagePath(const std::string & name);
 	
 	const std::vector<std::string> getCubemapPaths(const std::string & name);
-	
-	static std::string loadStringFromFile(const std::string & filename);
-	
 	
 	const std::string & _rootPath;
 	

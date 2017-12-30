@@ -187,6 +187,16 @@ void Resources::reload() {
 	std::cout << "[Resources] Shader programs reloaded." << std::endl;
 }
 
+std::string Resources::trim(const std::string & str, const std::string & del){
+	const size_t firstNotDel = str.find_first_not_of(del);
+	if(firstNotDel == std::string::npos){
+		return "";
+	}
+	const size_t lastNotDel = str.find_last_not_of(del);
+	return str.substr(firstNotDel, lastNotDel - firstNotDel + 1);
+}
+
+
 const std::vector<std::string> Resources::getCubemapPaths(const std::string & name){
 	const std::vector<std::string> names { name + "_nx", name + "_px", name + "_py", name + "_ny", name + "_nz", name + "_pz" };
 	std::vector<std::string> paths;
