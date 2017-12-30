@@ -19,6 +19,7 @@ public:
 
 public:
 	
+	/// Configuration properties (loaded from command-line or config file).
 	const size_t version = 1;
 	
 	bool vsync = true;
@@ -31,8 +32,11 @@ public:
 	
 	float internalVerticalResolution = 720.0f;
 	
+	/// Computed properties.
 	glm::vec2 screenResolution = glm::vec2(800.0,600.0);
-
+	
+	float screenDensity = 1.0f;
+	
 private:
 	
 	void parseFromFile(const char * filePath, std::map<std::string, std::string> & arguments);

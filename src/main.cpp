@@ -70,7 +70,7 @@ int main(int argc, char** argv) {
 		// Create a window with a given size. Width and height are defined in the configuration.
 		window = glfwCreateWindow(config.initialWidth, config.initialHeight,"GL_Template", NULL, NULL);
 	}
-
+	
 	if (!window) {
 		std::cerr << "ERROR: could not open window with GLFW3" << std::endl;
 		glfwTerminate();
@@ -98,10 +98,17 @@ int main(int argc, char** argv) {
 	glfwSetJoystickCallback(joystick_callback);					// Joystick
 	glfwSwapInterval(config.vsync ? 1 : 0);						// 60 FPS V-sync
 	
+	// Check the window size (if we are on a screen smaller than the initial size.
+	int wwidth, wheight;
+	glfwGetWindowSize(window, &wwidth, &wheight);
+	config.initialWidth = wwidth;
+	config.initialHeight = wheight;
 	// On HiDPI screens, we have to consider the internal resolution for all framebuffers size.
 	int width, height;
 	glfwGetFramebufferSize(window, &width, &height);
 	config.screenResolution = glm::vec2(width, height);
+	// Compute point density by computing the ratio.
+	config.screenDensity = (float)width/(float)config.initialWidth;
 	
 	// Initialize random generator;
 	Random::seed();
