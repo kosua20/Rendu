@@ -12,20 +12,19 @@
 
 Renderer::~Renderer(){}
 
-Renderer::Renderer(int width, int height, std::shared_ptr<Scene> & scene){
-
-	// Initialize random generator;
-	Random::seed();
-	// Setup projection matrix.
-	_camera.screen(width, height);
-	_camera.internalResolution(720);
+Renderer::Renderer(Config & config, std::shared_ptr<Scene> & scene) : _config(config) {
 	
-	const int renderWidth = (int)_camera.renderSize()[0];
-	const int renderHeight = (int)_camera.renderSize()[1];
-	const int renderHalfWidth = (int)(0.5f * _camera.renderSize()[0]);
-	const int renderHalfHeight = (int)(0.5f * _camera.renderSize()[1]);
+	// Initial render resolution.
+	_renderResolution = (_config.internalVerticalResolution/_config.screenResolution[1]) * _config.screenResolution;
+	// Setup projection matrix.
+	_camera.projection(config.screenResolution[0]/config.screenResolution[1],55.0f);
+	
+	const int renderWidth = (int)_renderResolution[0];
+	const int renderHeight = (int)_renderResolution[1];
+	const int renderHalfWidth = (int)(0.5f * _renderResolution[0]);
+	const int renderHalfHeight = (int)(0.5f * _renderResolution[1]);
 	// Find the closest power of 2 size.
-	const int renderPow2Size = (int)std::pow(2,(int)floor(log2(_camera.renderSize()[0])));
+	const int renderPow2Size = (int)std::pow(2,(int)floor(log2(_renderResolution[0])));
 	_gbuffer = std::make_shared<Gbuffer>(renderWidth, renderHeight);
 	_ssaoFramebuffer = std::make_shared<Framebuffer>(renderHalfWidth, renderHalfHeight, GL_RED, GL_UNSIGNED_BYTE, GL_RED, GL_LINEAR, GL_CLAMP_TO_EDGE, false);
 	_ssaoBlurFramebuffer = std::make_shared<Framebuffer>(renderWidth, renderHeight, GL_RED, GL_UNSIGNED_BYTE, GL_RED, GL_LINEAR, GL_CLAMP_TO_EDGE, false);
@@ -38,11 +37,6 @@ Renderer::Renderer(int width, int height, std::shared_ptr<Scene> & scene){
 	
 	PointLight::loadProgramAndGeometry();
 	
-	// Query the renderer identifier, and the supported OpenGL version.
-	const GLubyte* renderer = glGetString(GL_RENDERER);
-	const GLubyte* version = glGetString(GL_VERSION);
-	std::cout << "Renderer: " << renderer << std::endl;
-	std::cout << "OpenGL version supported: " << version << std::endl;
 	checkGLError();
 
 	// GL options
@@ -83,7 +77,7 @@ Renderer::Renderer(int width, int height, std::shared_ptr<Scene> & scene){
 
 void Renderer::draw() {
 
-	glm::vec2 invRenderSize = 1.0f / _camera.renderSize();
+	glm::vec2 invRenderSize = 1.0f / _renderResolution;
 	
 	// --- Light pass -------
 	
@@ -198,7 +192,7 @@ void Renderer::draw() {
 	// --- Final pass -------
 	// We now render a full screen quad in the default framebuffer, using sRGB space.
 	glEnable(GL_FRAMEBUFFER_SRGB);
-	glViewport(0, 0, GLsizei(_camera.screenSize()[0]), GLsizei(_camera.screenSize()[1]));
+	glViewport(0, 0, GLsizei(_config.screenResolution[0]), GLsizei(_config.screenResolution[1]));
 	_finalScreen.draw();
 	glDisable(GL_FRAMEBUFFER_SRGB);
 	glEnable(GL_DEPTH_TEST);
@@ -235,17 +229,22 @@ void Renderer::clean() const {
 
 
 void Renderer::resize(int width, int height){
+	_config.screenResolution[0] = float(width > 0 ? width : 1);
+	_config.screenResolution[1] = float(height > 0 ? height : 1);
+	// Same aspect ratio as the display resolution
+	_renderResolution = (_config.internalVerticalResolution/_config.screenResolution[1]) * _config.screenResolution;
+	
 	//Update the size of the viewport.
-	glViewport(0, 0, width, height);
+	glViewport(0, 0, GLsizei(_config.screenResolution[0]), GLsizei(_config.screenResolution[1]));
 	// Update the projection matrix.
-	_camera.screen(width, height);
+	_camera.projection(_renderResolution[0] / _renderResolution[1]);
 	// Resize the framebuffer.
-	_gbuffer->resize(_camera.renderSize());
-	_ssaoFramebuffer->resize(0.5f * _camera.renderSize());
-	_ssaoBlurFramebuffer->resize(_camera.renderSize());
-	_sceneFramebuffer->resize(_camera.renderSize());
-	_toneMappingFramebuffer->resize(_camera.renderSize());
-	_fxaaFramebuffer->resize(_camera.renderSize());
+	_gbuffer->resize(_renderResolution);
+	_ssaoFramebuffer->resize(0.5f * _renderResolution);
+	_ssaoBlurFramebuffer->resize(_renderResolution);
+	_sceneFramebuffer->resize(_renderResolution);
+	_toneMappingFramebuffer->resize(_renderResolution);
+	_fxaaFramebuffer->resize(_renderResolution);
 }
 
 

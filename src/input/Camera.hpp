@@ -27,12 +27,12 @@ public:
 	void screen(int width, int height);
 	
 	/// Update the internal vertical resolution.
-	void internalResolution(int height);
+	void projection(float aspectRatio, float fov = 0.0f);
 	
 	const glm::mat4 view() const { return _view; }
 	const glm::mat4 projection() const { return _projection; }
-	const glm::vec2 screenSize() const { return _screenSize; }
-	const glm::vec2 renderSize() const { return _renderSize; }
+	//const glm::vec2 screenSize() const { return _screenSize; }
+	//const glm::vec2 renderSize() const { return _renderSize; }
 	
 private:
 	
@@ -44,10 +44,6 @@ private:
 	glm::mat4 _view;
 	/// The projection matrix.
 	glm::mat4 _projection;
-	// Screen size
-	glm::vec2 _screenSize;
-	// Size use for render targets.
-	glm::vec2 _renderSize;
 	
 	/// Vectors defining the view frame.
 	glm::vec3 _eye;
@@ -55,12 +51,10 @@ private:
 	glm::vec3 _up;
 	glm::vec3 _right;
 	
-	int _verticalResolution;
-	
+	float _fov;
 	float _speed;
 	float _angularSpeed;
 	
-
 };
 
 #endif

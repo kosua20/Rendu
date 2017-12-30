@@ -6,7 +6,7 @@
 #include <memory>
 
 #include "helpers/GenerationUtilities.hpp"
-
+#include "Config.hpp"
 #include "scenes/Scene.hpp"
 #include "Framebuffer.hpp"
 #include "Gbuffer.hpp"
@@ -22,7 +22,7 @@ public:
 	~Renderer();
 
 	/// Init function
-	Renderer(int width, int height, std::shared_ptr<Scene> & scene);
+	Renderer(Config & config, std::shared_ptr<Scene> & scene);
 
 	/// Draw function
 	void draw();
@@ -37,6 +37,8 @@ public:
 
 	
 private:
+	
+	Config & _config;
 	
 	Camera _camera;
 
@@ -57,7 +59,8 @@ private:
 	ScreenQuad _finalScreen;
 
 	std::shared_ptr<Scene> _scene;
-
+	glm::vec2 _renderResolution;
+	
 };
 
 #endif

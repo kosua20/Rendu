@@ -7,7 +7,7 @@
 
 
 Camera::Camera()  {
-	_verticalResolution = 720;
+	//_verticalResolution = 720;
 	_speed = 1.2f;
 	_angularSpeed = 4.0f;
 	reset();
@@ -146,9 +146,9 @@ void Camera::updateUsingKeyboard(double frameTime){
 		_eye = _eye + deltaVertical;
 	}
 	if(Input::manager().pressed(Input::MouseLeft)){
-		glm::vec2 deltaPosition = Input::manager().moved(Input::MouseLeft) / screenSize();
+		/*glm::vec2 deltaPosition = Input::manager().moved(Input::MouseLeft) / screenSize();
 		_center = _center + (deltaPosition.x * _right - deltaPosition.y * _up) * (float)frameTime * _angularSpeed;
-		look = normalize(_center - _eye);
+		look = normalize(_center - _eye);*/
 	}
 	
 	// Update center (eye-center stays constant).
@@ -162,15 +162,15 @@ void Camera::updateUsingKeyboard(double frameTime){
 }
 
 
-void Camera::screen(int width, int height){
-	_screenSize[0] = float(width > 0 ? width : 1);
-	_screenSize[1] = float(height > 0 ? height : 1);
-	// Same aspect ratio as the display resolution
-	_renderSize = (float(_verticalResolution)/_screenSize[1]) * _screenSize;
+void Camera::projection(float ratio, float fov){
+	if(fov > 0.0){
+		_fov = fov;
+	}
 	// Perspective projection.
-	_projection = glm::perspective(45.0f, _renderSize[0] / _renderSize[1], 0.01f, 200.f);
+	_projection = glm::perspective(_fov, ratio, 0.01f, 200.f);
 }
 
+/*
 void Camera::internalResolution(int height){
 	// No need to update the screen size.
 	_verticalResolution = height;
@@ -179,7 +179,7 @@ void Camera::internalResolution(int height){
 	// Perspective projection.
 	_projection = glm::perspective(45.0f, _renderSize[0] / _renderSize[1], 0.01f, 200.f);
 }
-
+*/
 
 
 

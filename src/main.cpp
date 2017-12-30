@@ -9,16 +9,10 @@
 #include "input/Input.hpp"
 #include "scenes/Scenes.hpp"
 
-#define INITIAL_SIZE_WIDTH 800
-#define INITIAL_SIZE_HEIGHT 600
-
-
 
 /// Callbacks
 
 void resize_callback(GLFWwindow* window, int width, int height){
-	//Renderer *rendererPtr = static_cast<Renderer*>(glfwGetWindowUserPointer(window));
-	//rendererPtr->resize(width, height);
 	Input::manager().resizeEvent(width, height);
 }
 
@@ -29,7 +23,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods){
 	Input::manager().mousePressedEvent(button, action); // Could pass mods to simplify things.
 }
-
 
 void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos){
 	Input::manager().mouseMovedEvent(xpos, ypos);
@@ -48,7 +41,11 @@ void joystick_callback(int joy, int event){
 
 /// The main function
 
-int main () {
+int main(int argc, char** argv) {
+	
+	// First, init/parse/load configuration.
+	Config config(argc, argv); 
+	
 	// Initialize glfw, which will create and setup an OpenGL context.
 	if (!glfwInit()) {
 		std::cerr << "ERROR: could not start GLFW3" << std::endl;
@@ -62,7 +59,7 @@ int main () {
 	
 
 	// Create a window with a given size. Width and height are macros as we will need them again.
-	GLFWwindow* window = glfwCreateWindow(INITIAL_SIZE_WIDTH, INITIAL_SIZE_HEIGHT,"GL_Template", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(config.initialWidth, config.initialHeight,"GL_Template", NULL, NULL);
 	if (!window) {
 		std::cerr << "ERROR: could not open window with GLFW3" << std::endl;
 		glfwTerminate();
@@ -81,11 +78,6 @@ int main () {
 		return -1;
 	}
 
-	// Create the scene and the renderer.
-	std::shared_ptr<Scene> scene(new DeskScene());
-	Renderer renderer = Renderer(INITIAL_SIZE_WIDTH,INITIAL_SIZE_HEIGHT, scene);
-	
-	glfwSetWindowUserPointer(window, &renderer);
 	// Setup callbacks for various interactions and inputs.
 	glfwSetFramebufferSizeCallback(window, resize_callback);	// Resizing the window
 	glfwSetKeyCallback(window,key_callback);					// Pressing a key
@@ -93,12 +85,24 @@ int main () {
 	glfwSetCursorPosCallback(window,cursor_pos_callback);		// Moving the cursor
 	glfwSetScrollCallback(window,scroll_callback);				// Scrolling
 	glfwSetJoystickCallback(joystick_callback);					// Joystick
-	glfwSwapInterval(1);										// 60 FPS V-sync
+	glfwSwapInterval(config.vsync ? 1 : 0);						// 60 FPS V-sync
 	
-	// On HiDPI screens, we might have to initially resize the framebuffers size.
+	// On HiDPI screens, we have to consider the internal resolution for all framebuffers size.
 	int width, height;
 	glfwGetFramebufferSize(window, &width, &height);
-	renderer.resize(width, height);
+	config.screenResolution = glm::vec2(width, height);
+	
+	// Initialize random generator;
+	Random::seed();
+	// Query the renderer identifier, and the supported OpenGL version.
+	const GLubyte* rendererString = glGetString(GL_RENDERER);
+	const GLubyte* versionString = glGetString(GL_VERSION);
+	std::cout << "[OpenGL] Internal renderer: " << rendererString << "." << std::endl;
+	std::cout << "[OpenGL] Version supported: " << versionString << "." << std::endl;
+	
+	// Create the scene and the renderer.
+	std::shared_ptr<Scene> scene(new DeskScene());
+	Renderer renderer = Renderer(config, scene);
 	
 	double timer = glfwGetTime();
 	double fullTime = 0.0;
