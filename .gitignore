@@ -13,3 +13,4 @@ ext/
 *.xcuserstate
 */xcuserdata/*
 binaries/
+config.ini

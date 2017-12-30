@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <iostream>
 #include <vector>
-#include <cstring> // For memcopy depending on the platform.
 
 #include "Object.hpp"
 #include "lights/DirectionalLight.hpp"
