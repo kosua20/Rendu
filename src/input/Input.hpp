@@ -2,7 +2,7 @@
 #define Input_h
 
 #include <GLFW/glfw3.h>
-#include "Joystick.h"
+#include "Joystick.hpp"
 
 class Input {
 public:

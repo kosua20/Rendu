@@ -1,4 +1,4 @@
-#include "GLUtilities.h"
+#include "GLUtilities.hpp"
 
 #include <iostream>
 #include <vector>

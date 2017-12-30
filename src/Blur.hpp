@@ -4,8 +4,8 @@
 #include <glm/glm.hpp>
 #include <memory>
 
-#include "Framebuffer.h"
-#include "ScreenQuad.h"
+#include "Framebuffer.hpp"
+#include "ScreenQuad.hpp"
 
 class Blur {
 

@@ -3,7 +3,7 @@
 #include <vector>
 
 
-#include "Blur.h"
+#include "Blur.hpp"
 
 
 Blur::~Blur(){}

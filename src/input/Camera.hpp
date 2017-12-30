@@ -2,7 +2,7 @@
 #define Camera_h
 
 #include <glm/glm.hpp>
-#include "Joystick.h"
+#include "Joystick.hpp"
 
 enum class MouseMode {
 	Start, Move, End

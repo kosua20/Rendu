@@ -1,7 +1,7 @@
 
 #include <iostream>
 
-#include "Input.h"
+#include "Input.hpp"
 
 //#define VERBOSE_INPUT
 

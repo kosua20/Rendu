@@ -1,11 +1,11 @@
-#include "ResourcesManager.h"
+#include "ResourcesManager.hpp"
 
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <tinydir/tinydir.h>
-#include "GLUtilities.h"
-#include "MeshUtilities.h"
+#include "GLUtilities.hpp"
+#include "MeshUtilities.hpp"
 
 /// Singleton.
 Resources Resources::_resourcesManager = Resources("resources");

@@ -1,7 +1,7 @@
 #ifndef DeskScene_h
 #define DeskScene_h
 
-#include "Scene.h"
+#include "Scene.hpp"
 
 #include <stdio.h>
 #include <iostream>

@@ -6,8 +6,8 @@
 #include <vector>
 #include <map>
 #include <memory>
-#include "GLUtilities.h"
-#include "ProgramInfos.h"
+#include "GLUtilities.hpp"
+#include "ProgramInfos.hpp"
 
 class Resources {
 public:

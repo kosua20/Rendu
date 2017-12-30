@@ -2,10 +2,10 @@
 #include <iostream>
 #include <vector>
 
-#include "helpers/ResourcesManager.h"
-#include "helpers/GenerationUtilities.h"
+#include "helpers/ResourcesManager.hpp"
+#include "helpers/GenerationUtilities.hpp"
 
-#include "AmbientQuad.h"
+#include "AmbientQuad.hpp"
 
 AmbientQuad::AmbientQuad(){}
 

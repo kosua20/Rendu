@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <iostream>
 #include <glm/gtc/matrix_transform.hpp>
-#include "Input.h"
-#include "Camera.h"
+#include "Input.hpp"
+#include "Camera.hpp"
 
 
 Camera::Camera()  {

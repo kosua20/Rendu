@@ -5,7 +5,7 @@
 #include <glm/glm.hpp>
 #include <vector>
 #include <map>
-#include "helpers/ResourcesManager.h"
+#include "helpers/ResourcesManager.hpp"
 
 class ScreenQuad {
 

@@ -1,7 +1,7 @@
 #ifndef DragonScene_h
 #define DragonScene_h
 
-#include "Scene.h"
+#include "Scene.hpp"
 
 #include <stdio.h>
 #include <iostream>

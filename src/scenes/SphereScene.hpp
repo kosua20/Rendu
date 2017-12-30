@@ -1,7 +1,7 @@
 #ifndef SphereScene_h
 #define SphereScene_h
 
-#include "Scene.h"
+#include "Scene.hpp"
 
 #include <stdio.h>
 #include <iostream>

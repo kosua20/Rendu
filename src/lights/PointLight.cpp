@@ -4,7 +4,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 
-#include "PointLight.h"
+#include "PointLight.hpp"
 
 
 PointLight::PointLight(const glm::vec3& worldPosition, const glm::vec3& color, float radius, const glm::mat4& projection ) : Light(worldPosition, color, projection) {

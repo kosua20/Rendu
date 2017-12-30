@@ -4,7 +4,7 @@
 #include <gl3w/gl3w.h>
 #include <string>
 #include <vector>
-#include "MeshUtilities.h"
+#include "MeshUtilities.hpp"
 
 /// This macro is used to check for OpenGL errors with access to the file and line number where the error is detected.
 

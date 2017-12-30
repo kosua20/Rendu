@@ -5,9 +5,9 @@
 #include <iostream>
 #include <memory>
 
-#include "Renderer.h"
-#include "input/Input.h"
-#include "scenes/Scenes.h"
+#include "Renderer.hpp"
+#include "input/Input.hpp"
+#include "scenes/Scenes.hpp"
 
 #define INITIAL_SIZE_WIDTH 800
 #define INITIAL_SIZE_HEIGHT 600

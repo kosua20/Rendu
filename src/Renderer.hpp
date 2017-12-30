@@ -5,15 +5,15 @@
 #include <glm/glm.hpp>
 #include <memory>
 
-#include "helpers/GenerationUtilities.h"
+#include "helpers/GenerationUtilities.hpp"
 
-#include "scenes/Scene.h"
-#include "Framebuffer.h"
-#include "Gbuffer.h"
-#include "Blur.h"
-#include "AmbientQuad.h"
-#include "input/Camera.h"
-#include "ScreenQuad.h"
+#include "scenes/Scene.hpp"
+#include "Framebuffer.hpp"
+#include "Gbuffer.hpp"
+#include "Blur.hpp"
+#include "AmbientQuad.hpp"
+#include "input/Camera.hpp"
+#include "ScreenQuad.hpp"
 
 class Renderer {
 

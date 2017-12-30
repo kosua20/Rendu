@@ -5,9 +5,9 @@
 #include <glm/glm.hpp>
 #include <memory>
 
-#include "../Object.h"
-#include "../lights/DirectionalLight.h"
-#include "../lights/PointLight.h"
+#include "../Object.hpp"
+#include "../lights/DirectionalLight.hpp"
+#include "../lights/PointLight.hpp"
 
 class Scene {
 

@@ -5,7 +5,7 @@
 #include <glm/glm.hpp>
 #include <vector>
 #include <map>
-#include "ScreenQuad.h"
+#include "ScreenQuad.hpp"
 
 class AmbientQuad : public ScreenQuad {
 

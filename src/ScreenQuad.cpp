@@ -2,9 +2,9 @@
 #include <iostream>
 #include <vector>
 
-#include "helpers/ResourcesManager.h"
+#include "helpers/ResourcesManager.hpp"
 
-#include "ScreenQuad.h"
+#include "ScreenQuad.hpp"
 
 ScreenQuad::ScreenQuad(){}
 

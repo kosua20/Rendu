@@ -3,11 +3,11 @@
 #include <vector>
 #include <cstring> // For memcopy depending on the platform.
 
-#include "Object.h"
-#include "lights/DirectionalLight.h"
-#include "lights/PointLight.h"
-#include "input/Input.h"
-#include "Renderer.h"
+#include "Object.hpp"
+#include "lights/DirectionalLight.hpp"
+#include "lights/PointLight.hpp"
+#include "input/Input.hpp"
+#include "Renderer.hpp"
 
 
 Renderer::~Renderer(){}
