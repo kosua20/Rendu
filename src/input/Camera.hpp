@@ -4,10 +4,6 @@
 #include <glm/glm.hpp>
 #include "Joystick.hpp"
 
-enum class MouseMode {
-	Start, Move, End
-};
-
 
 class Camera {
 	
@@ -35,8 +31,10 @@ public:
 	/// Update the aspect ratio.
 	void ratio(float ratio);
 	
-	/// Update the FOV (in).
+	/// Update the FOV (in radians).
 	void fov(float fov);
+	
+	float fov() const { return _fov; }
 	
 	const glm::mat4 view() const { return _view; }
 	const glm::mat4 projection() const { return _projection; }

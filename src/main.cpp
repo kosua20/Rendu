@@ -121,6 +121,8 @@ int main(int argc, char** argv) {
 		if(Input::manager().triggered(Input::KeyP)){
 			Resources::manager().reload();
 		}
+		// We separate punctual events from the main phsyic/movement update loop.
+		renderer.update();
 		
 		// Compute the time elapsed since last frame
 		double currentTime = glfwGetTime();
@@ -136,7 +138,7 @@ int main(int argc, char** argv) {
 		while(remainingTime > 0.2*dt){
 			double deltaTime = fmin(remainingTime, dt);
 			// Update physics and camera.
-			renderer.update(fullTime, deltaTime);
+			renderer.physics(fullTime, deltaTime);
 			// Update timers.
 			fullTime += deltaTime;
 			remainingTime -= deltaTime;

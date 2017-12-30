@@ -10,6 +10,10 @@ Camera::Camera()  {
 	//_verticalResolution = 720;
 	_speed = 1.2f;
 	_angularSpeed = 4.0f;
+	_fov = 1.91f;
+	_ratio = 4.0f/3.0f;
+	_near = 0.01f;
+	_far = 100.0f;
 	reset();
 }
 

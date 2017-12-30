@@ -26,15 +26,17 @@ public:
 
 	/// Draw function
 	void draw();
-
-	void update(double fullTime, double frameTime);
+	
+	void update();
+	
+	void physics(double fullTime, double frameTime);
 
 	/// Clean function
 	void clean() const;
 
 	/// Handle screen resizing
 	void resize(int width, int height);
-
+	
 	
 private:
 	

@@ -17,7 +17,7 @@ Renderer::Renderer(Config & config, std::shared_ptr<Scene> & scene) : _config(co
 	// Initial render resolution.
 	_renderResolution = (_config.internalVerticalResolution/_config.screenResolution[1]) * _config.screenResolution;
 	// Setup camera parameters.
-	_camera.projection(config.screenResolution[0]/config.screenResolution[1], 45.0f, 0.01f, 200.0f);
+	_camera.projection(config.screenResolution[0]/config.screenResolution[1], 1.3f, 0.01f, 200.0f);
 	
 	const int renderWidth = (int)_renderResolution[0];
 	const int renderHeight = (int)_renderResolution[1];
@@ -199,10 +199,13 @@ void Renderer::draw() {
 	
 }
 
-void Renderer::update(double fullTime, double frameTime){
+void Renderer::update(){
 	if(Input::manager().resized()){
 		resize(Input::manager().size()[0], Input::manager().size()[1]);
 	}
+}
+
+void Renderer::physics(double fullTime, double frameTime){
 	_camera.update(frameTime);
 	_scene->update(fullTime, frameTime);
 }
@@ -235,10 +238,11 @@ void Renderer::resize(int width, int height){
 	_renderResolution = (_config.internalVerticalResolution/_config.screenResolution[1]) * _config.screenResolution;
 	
 	//Update the size of the viewport.
+	// TODO: remove call below probably.
 	glViewport(0, 0, GLsizei(_config.screenResolution[0]), GLsizei(_config.screenResolution[1]));
-	// Update the projection matrix.
+	// Update the projection aspect ratio.
 	_camera.ratio(_renderResolution[0] / _renderResolution[1]);
-	// Resize the framebuffer.
+	// Resize the framebuffers.
 	_gbuffer->resize(_renderResolution);
 	_ssaoFramebuffer->resize(0.5f * _renderResolution);
 	_ssaoBlurFramebuffer->resize(_renderResolution);
