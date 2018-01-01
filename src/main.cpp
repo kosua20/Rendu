@@ -5,10 +5,11 @@
 #include <iostream>
 #include <memory>
 
-#include "Renderer.hpp"
+#include "helpers/GenerationUtilities.hpp"
 #include "input/Input.hpp"
 #include "scenes/Scenes.hpp"
-
+#include "Renderer.hpp"
+#include "DeferredRenderer.hpp"
 
 /// Callbacks
 
@@ -121,7 +122,7 @@ int main(int argc, char** argv) {
 	
 	// Create the scene and the renderer.
 	std::shared_ptr<Scene> scene(new DeskScene());
-	Renderer renderer = Renderer(config, scene);
+	std::shared_ptr<Renderer> renderer(new DeferredRenderer(config, scene));
 	
 	double timer = glfwGetTime();
 	double fullTime = 0.0;
@@ -141,7 +142,7 @@ int main(int argc, char** argv) {
 			Resources::manager().reload();
 		}
 		// We separate punctual events from the main phsyic/movement update loop.
-		renderer.update();
+		renderer->update();
 		
 		// Compute the time elapsed since last frame
 		double currentTime = glfwGetTime();
@@ -157,14 +158,14 @@ int main(int argc, char** argv) {
 		while(remainingTime > 0.2*dt){
 			double deltaTime = fmin(remainingTime, dt);
 			// Update physics and camera.
-			renderer.physics(fullTime, deltaTime);
+			renderer->physics(fullTime, deltaTime);
 			// Update timers.
 			fullTime += deltaTime;
 			remainingTime -= deltaTime;
 		}
 
 		// Update the content of the window.
-		renderer.draw();
+		renderer->draw();
 		
 		//Display the result fo the current rendering loop.
 		glfwSwapBuffers(window);
@@ -174,7 +175,7 @@ int main(int argc, char** argv) {
 	// Remove the window.
 	glfwDestroyWindow(window);
 	// Clean other resources
-	renderer.clean();
+	renderer->clean();
 	// Close GL context and any other GLFW resources.
 	glfwTerminate();
 	return 0;
