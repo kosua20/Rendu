@@ -44,7 +44,7 @@ int _checkGLError(const char *file, int line, const std::string & infos){
 		if(pos == std::string::npos){
 			pos = 0;
 		}
-		std::cerr << "Error " << getGLErrorString(glErr) << " in " << filePath.substr(pos+1) << " (" << line << ").";
+		std::cerr << "[OpenGL] Error " << getGLErrorString(glErr) << " in " << filePath.substr(pos+1) << " (" << line << ").";
 		if(infos.size() > 0){
 			std::cerr << " Infos: " << infos;
 		}
@@ -128,7 +128,7 @@ GLuint GLUtilities::createProgram(const std::string & vertexContent, const std::
 		std::vector<char> infoLog(std::max(infoLogLength, int(1)));
 		glGetProgramInfoLog(id, infoLogLength, NULL, &infoLog[0]);
 
-		std::cerr << "Failed loading program: " << &infoLog[0] << std::endl;
+		std::cerr << "[OpenGL] Failed loading program: " << &infoLog[0] << std::endl;
 		return 0;
 	}
 	// We can now clean the shaders objects, by first detaching them
@@ -172,7 +172,7 @@ TextureInfos GLUtilities::loadTexture(const std::string& path, bool sRGB){
 		const char *err;
 		int ret = loadEXRHelper(&image, &width, &height, path.c_str(), &err);
 		if (ret != 0) {
-			std::cerr << "Unable to load the texture at path " << path << "." << std::endl;
+			std::cerr << "[Resources] Unable to load the texture at path " << path << "." << std::endl;
 			return infos;
 		}
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, width, height, 0, GL_RGB, GL_FLOAT, &(image[0]));
@@ -182,7 +182,7 @@ TextureInfos GLUtilities::loadTexture(const std::string& path, bool sRGB){
 		stbi_set_flip_vertically_on_load(true);
 		unsigned char *image = stbi_load(path.c_str(), &width, &height, NULL, 4);
 		if(image == NULL){
-			std::cerr << "Unable to load the texture at path " << path << "." << std::endl;
+			std::cerr << "[Resources] Unable to load the texture at path " << path << "." << std::endl;
 			return infos;
 		}
 	
@@ -234,7 +234,7 @@ TextureInfos GLUtilities::loadTextureCubemap(const std::vector<std::string> & pa
 			const char *err;
 			int ret = loadEXRHelper(&image, &width, &height, paths[side].c_str(), &err);
 			if (ret != 0) {
-				std::cerr << "Unable to load the texture at path " << paths[side] << "." << std::endl;
+				std::cerr << "[Resources] Unable to load the texture at path " << paths[side] << "." << std::endl;
 				return infos;
 			}
 			glTexImage2D(GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + side), 0, GL_RGB32F, width, height, 0, GL_RGB, GL_FLOAT, &(image[0]));
@@ -247,7 +247,7 @@ TextureInfos GLUtilities::loadTextureCubemap(const std::vector<std::string> & pa
 			int components = 4;
 			unsigned char *image = stbi_load(paths[side].c_str(), &width, &height, NULL, components);
 			if(image == NULL){
-				std::cerr << "Unable to load the texture at path " << paths[side] << "." << std::endl;
+				std::cerr << "[Resources] Unable to load the texture at path " << paths[side] << "." << std::endl;
 				return infos;
 			}
 			glTexImage2D(GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + side), 0, sRGB ? GL_SRGB8_ALPHA8 : GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &(image[0]));
@@ -260,6 +260,18 @@ TextureInfos GLUtilities::loadTextureCubemap(const std::vector<std::string> & pa
 	infos.width = width;
 	infos.height = height;
 	return infos;
+}
+
+void GLUtilities::saveTexture(const std::string &path, int width, int height, int channels, void *data, bool hdr) {
+	if(hdr){
+		int res = saveEXRHelper((float*)data, width, height, channels, path.c_str());
+		if(res != TINYEXR_SUCCESS){
+			std::cerr << "[Resources] Unable to export image data to path " << path << "." << std::endl;
+		}
+	} else {
+		std::cerr << "[Resources] Export to LDR images unsupported." << std::endl;
+		assert(false);
+	}
 }
 
 
@@ -347,6 +359,65 @@ int GLUtilities::loadEXRHelper(float **out_rgb, int *width, int *height, const c
 	FreeEXRImage(&exr_image);
 	
 	return TINYEXR_SUCCESS;
+}
+
+
+int GLUtilities::saveEXRHelper(const float* rgb, int width, int height, int channels, const char * path){
+	EXRHeader header;
+	InitEXRHeader(&header);
+	
+	EXRImage image;
+	InitEXRImage(&image);
+	
+	image.num_channels = 3;
+	
+	std::vector<float> images[3];
+	images[0].resize(width * height);
+	images[1].resize(width * height);
+	images[2].resize(width * height);
+	
+	// Split RGBRGBRGB... into R, G and B layer
+	for (int i = 0; i < width * height; i++) {
+		for(int j = 0; j < channels; ++j){
+			images[j][i] = rgb[channels*i+j];
+		}
+		for(int j = channels; j < 3; ++j){
+			images[j][i] = 0.0f;
+		}
+	}
+	
+	float* image_ptr[3];
+	image_ptr[0] = &(images[2].at(0)); // B
+	image_ptr[1] = &(images[1].at(0)); // G
+	image_ptr[2] = &(images[0].at(0)); // R
+	
+	image.images = (unsigned char**)image_ptr;
+	image.width = width;
+	image.height = height;
+	
+	header.num_channels = 3;
+	header.channels = (EXRChannelInfo *)malloc(sizeof(EXRChannelInfo) * header.num_channels);
+	// Must be (A)BGR order, since most of EXR viewers expect this channel order.
+	strncpy(header.channels[0].name, "B", 255); header.channels[0].name[strlen("B")] = '\0';
+	strncpy(header.channels[1].name, "G", 255); header.channels[1].name[strlen("G")] = '\0';
+	strncpy(header.channels[2].name, "R", 255); header.channels[2].name[strlen("R")] = '\0';
+	
+	header.pixel_types = (int *)malloc(sizeof(int) * header.num_channels);
+	header.requested_pixel_types = (int *)malloc(sizeof(int) * header.num_channels);
+	for (int i = 0; i < header.num_channels; i++) {
+		header.pixel_types[i] = TINYEXR_PIXELTYPE_FLOAT; // pixel type of input image
+		header.requested_pixel_types[i] = TINYEXR_PIXELTYPE_HALF; // pixel type of output image to be stored in .EXR
+	}
+	
+	const char* err;
+	int ret = SaveEXRImageToFile(&image, &header, path, &err);
+	
+	free(header.channels);
+	free(header.pixel_types);
+	free(header.requested_pixel_types);
+	
+	return ret;
+	
 }
 
 MeshInfos GLUtilities::setupBuffers(const Mesh & mesh){
@@ -439,5 +510,9 @@ MeshInfos GLUtilities::setupBuffers(const Mesh & mesh){
 	infos.count = (GLsizei)mesh.indices.size();
 	return infos;
 }
+
+
+
+
 
 

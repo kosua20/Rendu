@@ -45,6 +45,8 @@ private:
 	
 	static int loadEXRHelper(float **out_rgb, int *width, int *height, const char * filename, const char ** err);
 	
+	static int saveEXRHelper(const float* rgb, int width, int height, int channels, const char *  path);
+	
 public:
 	
 	// Program setup.
@@ -60,6 +62,8 @@ public:
 	
 	// Mesh loading.
 	static MeshInfos setupBuffers(const Mesh & mesh);
+	
+	static void saveTexture(const std::string &path, int width, int height, int channels, void *data, bool hdr);
 	
 };
 

@@ -24,7 +24,7 @@ void Resources::parseDirectory(const std::string & directoryPath){
 	tinydir_dir dir;
 	if(tinydir_open(&dir, directoryPath.c_str()) == -1){
 		tinydir_close(&dir);
-		std::cerr << "Unable to open resources directory at path \"" << directoryPath << "\"" << std::endl;
+		std::cerr << "[Resources] Unable to open resources directory at path \"" << directoryPath << "\"" << std::endl;
 	}
 	
 	// For each file in dir.
@@ -32,7 +32,7 @@ void Resources::parseDirectory(const std::string & directoryPath){
 		tinydir_file file;
 		if(tinydir_readfile(&dir, &file) == -1){
 			// Handle any read error.
-			std::cerr << "Error getting file in directory \"" << std::string(dir.path) << "\"" << std::endl;
+			std::cerr << "[Resources] Error getting file in directory \"" << std::string(dir.path) << "\"" << std::endl;
 			
 		} else if(file.is_dir){
 			// Extract subdirectory name, check that it isn't a special dir, and recursively aprse it.
@@ -54,7 +54,7 @@ void Resources::parseDirectory(const std::string & directoryPath){
 					
 				} else {
 					// If the file already exsist somewhere else in the hierarchy, warn about this.
-					std::cerr << "Error: asset named \"" << fileNameWithExt << "\" alread exists." << std::endl;
+					std::cerr << "[Resources] Error: asset named \"" << fileNameWithExt << "\" alread exists." << std::endl;
 				}
 			}
 		}
@@ -93,7 +93,7 @@ const std::string Resources::getShader(const std::string & name, const ShaderTyp
 	if(_files.count(name + "." + extension) > 0){
 		path = _files[name + "." + extension];
 	} else {
-		std::cerr << "Unable to find " << (type == Vertex ? "vertex" : "fragment") << " shader named \"" << name << "\"." << std::endl;
+		std::cerr << "[Resources] Unable to find " << (type == Vertex ? "vertex" : "fragment") << " shader named \"" << name << "\"." << std::endl;
 		return "";
 	}
 	return Resources::loadStringFromFile(path);
@@ -113,7 +113,7 @@ const MeshInfos Resources::getMesh(const std::string & name){
 	if(_files.count(name + ".obj") > 0){
 		path = _files[name + ".obj"];
 	} else {
-		std::cerr << "Unable to find mesh named \"" << name << "\"" << std::endl;
+		std::cerr << "[Resources] Unable to find mesh named \"" << name << "\"" << std::endl;
 		// Return empty mesh.
 		return infos;
 	}
@@ -173,7 +173,7 @@ const std::string Resources::getTextFile(const std::string & filename){
 	} else if(_files.count(filename + ".txt") > 0){
 		path = _files[filename + ".txt"];
 	} else {
-		std::cerr << "Unable to find text file named \"" << filename << "\"." << std::endl;
+		std::cerr << "[Resources] Unable to find text file named \"" << filename << "\"." << std::endl;
 		return "";
 	}
 	return Resources::loadStringFromFile(path);
@@ -228,7 +228,7 @@ const std::string Resources::getImagePath(const std::string & name){
 	} else if(_files.count(name + ".exr") > 0){
 		path = _files[name + ".exr"];
 	} else {
-		std::cerr << "Unable to find image named \"" << name << "\"" << std::endl;
+		std::cerr << "[Resources] Unable to find image named \"" << name << "\"" << std::endl;
 	}
 	return path;
 }
@@ -238,7 +238,7 @@ std::string Resources::loadStringFromFile(const std::string & filename) {
 	// Open a stream to the file.
 	in.open(filename.c_str());
 	if (!in) {
-		std::cerr << filename + " is not a valid file." << std::endl;
+		std::cerr << "[Resources] " << filename + " is not a valid file." << std::endl;
 		return "";
 	}
 	std::stringstream buffer;
