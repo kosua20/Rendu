@@ -1,9 +1,10 @@
+#include "Camera.hpp"
+#include "Input.hpp"
 #include <GLFW/glfw3.h>
 #include <stdio.h>
 #include <iostream>
 #include <glm/gtc/matrix_transform.hpp>
-#include "Input.hpp"
-#include "Camera.hpp"
+
 
 
 Camera::Camera()  {

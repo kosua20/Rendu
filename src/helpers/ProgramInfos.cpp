@@ -1,10 +1,11 @@
 #include "ProgramInfos.hpp"
 
+#include "GLUtilities.hpp"
+#include "ResourcesManager.hpp"
+
 #include <iostream>
 #include <fstream>
 
-#include "GLUtilities.hpp"
-#include "ResourcesManager.hpp"
 
 ProgramInfos::ProgramInfos(){
 	_id = 0;

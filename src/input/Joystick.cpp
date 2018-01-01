@@ -1,11 +1,13 @@
+#include "Joystick.hpp"
+#include "../helpers/ResourcesManager.hpp"
+#include <GLFW/glfw3.h>
 #include <stdio.h>
 #include <iostream>
 #include <sstream>
 #include <glm/gtc/matrix_transform.hpp>
-#include "../helpers/ResourcesManager.hpp"
-#include <GLFW/glfw3.h>
 
-#include "Joystick.hpp"
+
+
 
 Joystick::Joystick() {
 	_id = -1;

@@ -2,8 +2,6 @@
 #define Camera_h
 
 #include <glm/glm.hpp>
-#include "Joystick.hpp"
-
 
 class Camera {
 	

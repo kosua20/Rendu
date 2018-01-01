@@ -1,13 +1,14 @@
 #ifndef Scene_h
 #define Scene_h
+#include "../Object.hpp"
+#include "../lights/DirectionalLight.hpp"
+#include "../lights/PointLight.hpp"
+
 #include <gl3w/gl3w.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <memory>
 
-#include "../Object.hpp"
-#include "../lights/DirectionalLight.hpp"
-#include "../lights/PointLight.hpp"
 
 class Scene {
 

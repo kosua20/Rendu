@@ -1,13 +1,13 @@
 #ifndef ResourcesManager_h
 #define ResourcesManager_h
 
+#include "GLUtilities.hpp"
+#include "ProgramInfos.hpp"
 #include <gl3w/gl3w.h>
 #include <string>
 #include <vector>
 #include <map>
 #include <memory>
-#include "GLUtilities.hpp"
-#include "ProgramInfos.hpp"
 
 class Resources {
 public:

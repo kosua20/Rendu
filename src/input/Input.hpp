@@ -190,8 +190,8 @@ private:
 	/// State.
 	
 	// Resize state.
-	uint _width = 1;
-	uint _height = 1;
+	unsigned int _width = 1;
+	unsigned int _height = 1;
 	bool _resized;
 	
 	// Joystick state.

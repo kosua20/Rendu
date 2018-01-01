@@ -1,10 +1,10 @@
 #ifndef ProgramUtilities_h
 #define ProgramUtilities_h
-
+#include "MeshUtilities.hpp"
 #include <gl3w/gl3w.h>
 #include <string>
 #include <vector>
-#include "MeshUtilities.hpp"
+
 
 /// This macro is used to check for OpenGL errors with access to the file and line number where the error is detected.
 

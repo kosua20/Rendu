@@ -1,7 +1,6 @@
-
+#include "Input.hpp"
 #include <iostream>
 
-#include "Input.hpp"
 
 //#define VERBOSE_INPUT
 
