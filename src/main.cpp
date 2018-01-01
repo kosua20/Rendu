@@ -9,6 +9,7 @@
 #include "input/Input.hpp"
 #include "scenes/Scenes.hpp"
 #include "renderers/deferred/DeferredRenderer.hpp"
+#include "renderers/utils/Renderer2D.hpp"
 
 /// Callbacks
 
@@ -47,7 +48,7 @@ int main(int argc, char** argv) {
 	
 	// Initialize glfw, which will create and setup an OpenGL context.
 	if (!glfwInit()) {
-		std::cerr << "ERROR: could not start GLFW3" << std::endl;
+		std::cerr << "[OpenGL] Could not start GLFW3" << std::endl;
 		return 1;
 	}
 
@@ -71,7 +72,7 @@ int main(int argc, char** argv) {
 	}
 	
 	if (!window) {
-		std::cerr << "ERROR: could not open window with GLFW3" << std::endl;
+		std::cerr << "[OpenGL] Could not open window with GLFW3" << std::endl;
 		glfwTerminate();
 		return 1;
 	}
@@ -80,11 +81,11 @@ int main(int argc, char** argv) {
 	glfwMakeContextCurrent(window);
 
 	if (gl3wInit()) {
-		std::cerr << "Failed to initialize OpenGL" << std::endl;
+		std::cerr << "[OpenGL] Failed to initialize OpenGL" << std::endl;
 		return -1;
 	}
 	if (!gl3wIsSupported(3, 2)) {
-		std::cerr << "OpenGL 3.2 not supported\n" << std::endl;
+		std::cerr << "[OpenGL] OpenGL 3.2 not supported\n" << std::endl;
 		return -1;
 	}
 
@@ -120,8 +121,8 @@ int main(int argc, char** argv) {
 	std::cout << "[OpenGL] Version supported: " << versionString << "." << std::endl;
 	
 	// Create the scene and the renderer.
-	std::shared_ptr<Scene> scene(new DeskScene());
-	std::shared_ptr<Renderer> renderer(new DeferredRenderer(config, scene));
+	//std::shared_ptr<Scene> scene(new DeskScene());
+	std::shared_ptr<Renderer> renderer(new Renderer2D(config, "brdf_sampler", 512, 512, GL_RG, GL_FLOAT, GL_RG32F, "output-brdf.exr"));
 	
 	double timer = glfwGetTime();
 	double fullTime = 0.0;
@@ -134,7 +135,7 @@ int main(int argc, char** argv) {
 		// Update events (inputs,...).
 		Input::manager().update();
 		// Handle quitting.
-		if(Input::manager().pressed(Input::KeyEscape)){
+		if(Input::manager().pressed(Input::KeyEscape) || config.oneShot){
 			glfwSetWindowShouldClose(window, GL_TRUE);
 		}
 		if(Input::manager().triggered(Input::KeyP)){
@@ -170,13 +171,17 @@ int main(int argc, char** argv) {
 		glfwSwapBuffers(window);
 
 	}
-
+	
 	// Remove the window.
 	glfwDestroyWindow(window);
 	// Clean other resources
 	renderer->clean();
 	// Close GL context and any other GLFW resources.
 	glfwTerminate();
+	
+	if(config.oneShot){
+		std::cout << "[OpenGL] Shot done." << std::endl;
+	}
 	return 0;
 }
 

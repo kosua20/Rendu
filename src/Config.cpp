@@ -44,6 +44,8 @@ Config::Config(int argc, char** argv){
 			vsync = false;
 		} else if(key == "fullscreen"){
 			fullscreen = true;
+		} else if(key == "oneshot"){
+			oneShot = true;
 		} else if(key == "internal-res" || key == "ivr"){
 			internalVerticalResolution = std::stof(value);
 		} else if(key == "wxh"){

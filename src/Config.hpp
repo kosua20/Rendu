@@ -26,6 +26,8 @@ public:
 	
 	bool fullscreen = false;
 	
+	bool oneShot = false;
+	
 	unsigned int initialWidth = 800;
 	
 	unsigned int initialHeight = 600;
