@@ -34,7 +34,10 @@ public:
 	/// The framebuffer size (can be different from the default renderer size).
 	const int width() const { return _width; }
 	const int height() const { return _height; }
-	
+	const GLuint id() const { return _id; }
+	const GLuint format() const { return _format; }
+	const GLuint type() const { return _type; }
+	const GLuint preciseFormat() const { return _preciseFormat; }
 	
 private:
 	
