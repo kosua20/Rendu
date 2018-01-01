@@ -1,11 +1,14 @@
 #ifndef ScreenQuad_h
 #define ScreenQuad_h
+
+#include "helpers/ResourcesManager.hpp"
+
 #include <gl3w/gl3w.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <vector>
 #include <map>
-#include "helpers/ResourcesManager.hpp"
+
 
 class ScreenQuad {
 

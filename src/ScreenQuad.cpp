@@ -1,10 +1,11 @@
+#include "ScreenQuad.hpp"
+#include "helpers/ResourcesManager.hpp"
+
 #include <stdio.h>
 #include <iostream>
 #include <vector>
 
-#include "helpers/ResourcesManager.hpp"
 
-#include "ScreenQuad.hpp"
 
 ScreenQuad::ScreenQuad(){}
 

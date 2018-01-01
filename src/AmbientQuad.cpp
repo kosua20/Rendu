@@ -1,11 +1,12 @@
+#include "AmbientQuad.hpp"
+#include "helpers/ResourcesManager.hpp"
+#include "helpers/GenerationUtilities.hpp"
+
 #include <stdio.h>
 #include <iostream>
 #include <vector>
 
-#include "helpers/ResourcesManager.hpp"
-#include "helpers/GenerationUtilities.hpp"
 
-#include "AmbientQuad.hpp"
 
 AmbientQuad::AmbientQuad(){}
 

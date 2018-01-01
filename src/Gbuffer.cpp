@@ -1,7 +1,8 @@
+#include "Gbuffer.hpp"
+
 #include <stdio.h>
 #include <iostream>
 #include <algorithm>
-#include "Gbuffer.hpp"
 
 
 Gbuffer::Gbuffer(int width, int height) {

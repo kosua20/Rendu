@@ -1,11 +1,12 @@
 #ifndef Blur_h
 #define Blur_h
+#include "Framebuffer.hpp"
+#include "ScreenQuad.hpp"
+
 #include <gl3w/gl3w.h>
 #include <glm/glm.hpp>
 #include <memory>
 
-#include "Framebuffer.hpp"
-#include "ScreenQuad.hpp"
 
 class Blur {
 

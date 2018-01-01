@@ -1,10 +1,8 @@
+#include "Blur.hpp"
+
 #include <stdio.h>
 #include <iostream>
 #include <vector>
-
-
-#include "Blur.hpp"
-
 
 Blur::~Blur(){}
 

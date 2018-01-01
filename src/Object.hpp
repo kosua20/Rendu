@@ -1,11 +1,10 @@
 #ifndef Object_h
 #define Object_h
+#include "helpers/ResourcesManager.hpp"
+
 #include <gl3w/gl3w.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
-
-#include "helpers/ResourcesManager.hpp"
-
 
 
 class Object {
