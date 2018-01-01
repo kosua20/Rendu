@@ -8,8 +8,7 @@
 #include "helpers/GenerationUtilities.hpp"
 #include "input/Input.hpp"
 #include "scenes/Scenes.hpp"
-#include "Renderer.hpp"
-#include "DeferredRenderer.hpp"
+#include "renderers/deferred/DeferredRenderer.hpp"
 
 /// Callbacks
 

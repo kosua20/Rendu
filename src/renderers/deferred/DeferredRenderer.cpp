@@ -1,7 +1,7 @@
 #include "DeferredRenderer.hpp"
-#include "input/Input.hpp"
-#include "lights/DirectionalLight.hpp"
-#include "lights/PointLight.hpp"
+#include "../../input/Input.hpp"
+#include "../../lights/DirectionalLight.hpp"
+#include "../../lights/PointLight.hpp"
 
 #include <stdio.h>
 #include <iostream>

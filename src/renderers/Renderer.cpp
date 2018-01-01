@@ -1,6 +1,6 @@
 #include "Renderer.hpp"
-#include "Object.hpp"
-#include "input/Input.hpp"
+#include "../Object.hpp"
+#include "../input/Input.hpp"
 
 #include <stdio.h>
 #include <iostream>

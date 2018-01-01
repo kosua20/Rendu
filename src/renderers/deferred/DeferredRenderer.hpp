@@ -1,12 +1,14 @@
 #ifndef DeferredRenderer_h
 #define DeferredRenderer_h
-#include "Renderer.hpp"
-#include "Framebuffer.hpp"
-#include "input/Camera.hpp"
-#include "ScreenQuad.hpp"
+#include "../../Framebuffer.hpp"
+#include "../../input/Camera.hpp"
+#include "../../ScreenQuad.hpp"
+
+#include "../../Blur.hpp"
+
+#include "../Renderer.hpp"
 
 #include "Gbuffer.hpp"
-#include "Blur.hpp"
 #include "AmbientQuad.hpp"
 
 #include <gl3w/gl3w.h>

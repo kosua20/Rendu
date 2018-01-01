@@ -515,6 +515,29 @@
 			path = tinydir;
 			sourceTree = "<group>";
 		};
+		F44D0AA01FFA78330051AE3E /* deferred */ = {
+			isa = PBXGroup;
+			children = (
+				F494157B1DE1D3EC0086E191 /* Gbuffer.hpp */,
+				F494157A1DE1D3EC0086E191 /* Gbuffer.cpp */,
+				F42B9FA21DE100F5005D88FB /* AmbientQuad.hpp */,
+				F42B9FA11DE100F5005D88FB /* AmbientQuad.cpp */,
+				F44D0A9E1FFA73030051AE3E /* DeferredRenderer.hpp */,
+				F44D0A9D1FFA73030051AE3E /* DeferredRenderer.cpp */,
+			);
+			path = deferred;
+			sourceTree = "<group>";
+		};
+		F44D0AA11FFA78F40051AE3E /* renderers */ = {
+			isa = PBXGroup;
+			children = (
+				F461621E1CF9D5A400B22823 /* Renderer.hpp */,
+				F461621D1CF9D5A400B22823 /* Renderer.cpp */,
+				F44D0AA01FFA78330051AE3E /* deferred */,
+			);
+			path = renderers;
+			sourceTree = "<group>";
+		};
 		F44D0FF31F58B312000D58E3 /* objects */ = {
 			isa = PBXGroup;
 			children = (
@@ -603,25 +626,18 @@
 				F4FE353E1D0C474C00B8318A /* input */,
 				F4FA2EFF1E87F60C007EBA57 /* lights */,
 				F46161871CF9D5A400B22823 /* helpers */,
+				F44D0AA11FFA78F40051AE3E /* renderers */,
 				F461621C1CF9D5A400B22823 /* main.cpp */,
-				F494157A1DE1D3EC0086E191 /* Gbuffer.cpp */,
-				F494157B1DE1D3EC0086E191 /* Gbuffer.hpp */,
-				F447FFC21D0DD2C30084E251 /* Framebuffer.cpp */,
 				F447FFC31D0DD2C30084E251 /* Framebuffer.hpp */,
+				F447FFC21D0DD2C30084E251 /* Framebuffer.cpp */,
 				F4624D961FF7B1F600A710EB /* Config.hpp */,
 				F4624D951FF7B1F600A710EB /* Config.cpp */,
-				F461621E1CF9D5A400B22823 /* Renderer.hpp */,
-				F461621D1CF9D5A400B22823 /* Renderer.cpp */,
-				F447FFC41D0DF6440084E251 /* ScreenQuad.cpp */,
 				F447FFC51D0DF6440084E251 /* ScreenQuad.hpp */,
-				F42B9FA11DE100F5005D88FB /* AmbientQuad.cpp */,
-				F42B9FA21DE100F5005D88FB /* AmbientQuad.hpp */,
-				F44D0A9D1FFA73030051AE3E /* DeferredRenderer.cpp */,
-				F44D0A9E1FFA73030051AE3E /* DeferredRenderer.hpp */,
-				F4B11E051F5F328F002E87F1 /* Blur.cpp */,
+				F447FFC41D0DF6440084E251 /* ScreenQuad.cpp */,
 				F4B11E061F5F328F002E87F1 /* Blur.hpp */,
-				F447FFBE1D0D8FBD0084E251 /* Object.cpp */,
+				F4B11E051F5F328F002E87F1 /* Blur.cpp */,
 				F447FFBF1D0D8FBD0084E251 /* Object.hpp */,
+				F447FFBE1D0D8FBD0084E251 /* Object.cpp */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -629,16 +645,16 @@
 		F46161871CF9D5A400B22823 /* helpers */ = {
 			isa = PBXGroup;
 			children = (
-				F4FA2F071E87FA0F007EBA57 /* GenerationUtilities.cpp */,
 				F4FA2F081E87FA0F007EBA57 /* GenerationUtilities.hpp */,
-				F46162181CF9D5A400B22823 /* MeshUtilities.cpp */,
+				F4FA2F071E87FA0F007EBA57 /* GenerationUtilities.cpp */,
 				F46162191CF9D5A400B22823 /* MeshUtilities.hpp */,
-				F461621A1CF9D5A400B22823 /* GLUtilities.cpp */,
+				F46162181CF9D5A400B22823 /* MeshUtilities.cpp */,
 				F461621B1CF9D5A400B22823 /* GLUtilities.hpp */,
-				F4B42D001F425B8100E485C5 /* ResourcesManager.cpp */,
+				F461621A1CF9D5A400B22823 /* GLUtilities.cpp */,
 				F4B42D011F425B8100E485C5 /* ResourcesManager.hpp */,
-				F44F7F861F435AF60057CEFE /* ProgramInfos.cpp */,
+				F4B42D001F425B8100E485C5 /* ResourcesManager.cpp */,
 				F44F7F851F435AF60057CEFE /* ProgramInfos.hpp */,
+				F44F7F861F435AF60057CEFE /* ProgramInfos.cpp */,
 			);
 			path = helpers;
 			sourceTree = "<group>";
@@ -698,12 +714,12 @@
 		F4FE353E1D0C474C00B8318A /* input */ = {
 			isa = PBXGroup;
 			children = (
-				F4AE73051FF6B3F200423A10 /* Input.cpp */,
 				F4AE73041FF6B3F200423A10 /* Input.hpp */,
-				F43EF9A91F44EDFB0073DFFB /* Joystick.cpp */,
+				F4AE73051FF6B3F200423A10 /* Input.cpp */,
 				F43EF9AA1F44EDFB0073DFFB /* Joystick.hpp */,
-				F4FE35431D0C47AA00B8318A /* Camera.cpp */,
+				F43EF9A91F44EDFB0073DFFB /* Joystick.cpp */,
 				F4FE35441D0C47AA00B8318A /* Camera.hpp */,
+				F4FE35431D0C47AA00B8318A /* Camera.cpp */,
 			);
 			path = input;
 			sourceTree = "<group>";
