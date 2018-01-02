@@ -24,6 +24,7 @@
 		F43246721F438C3B0090FD5F /* gl3w.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F43245DD1F438BFB0090FD5F /* gl3w.cpp */; };
 		F43EF9AB1F44EDFB0073DFFB /* Joystick.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F43EF9A91F44EDFB0073DFFB /* Joystick.cpp */; };
 		F4442CC51FFA91EC005E1E24 /* Renderer2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4442CC41FFA91EC005E1E24 /* Renderer2D.cpp */; };
+		F4442CCB1FFAE306005E1E24 /* RendererCube.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4442CC91FFAE306005E1E24 /* RendererCube.cpp */; };
 		F44D0A9F1FFA73030051AE3E /* DeferredRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F44D0A9D1FFA73030051AE3E /* DeferredRenderer.cpp */; };
 		F44F7F871F435AF60057CEFE /* ProgramInfos.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F44F7F861F435AF60057CEFE /* ProgramInfos.cpp */; };
 		F4624D971FF7B1F600A710EB /* Config.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4624D951FF7B1F600A710EB /* Config.cpp */; };
@@ -207,6 +208,10 @@
 		F4442CC31FFA91EC005E1E24 /* Renderer2D.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Renderer2D.hpp; sourceTree = "<group>"; };
 		F4442CC41FFA91EC005E1E24 /* Renderer2D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Renderer2D.cpp; sourceTree = "<group>"; };
 		F4442CC81FFAAE63005E1E24 /* brdf_sampler.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = brdf_sampler.frag; sourceTree = "<group>"; };
+		F4442CC91FFAE306005E1E24 /* RendererCube.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RendererCube.cpp; sourceTree = "<group>"; };
+		F4442CCA1FFAE306005E1E24 /* RendererCube.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = RendererCube.hpp; sourceTree = "<group>"; };
+		F4442CCC1FFAE991005E1E24 /* object_basic.vert */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = object_basic.vert; sourceTree = "<group>"; };
+		F4442CCD1FFAEEBD005E1E24 /* cubemap_convo.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = cubemap_convo.frag; sourceTree = "<group>"; };
 		F447FFBE1D0D8FBD0084E251 /* Object.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Object.cpp; sourceTree = "<group>"; };
 		F447FFBF1D0D8FBD0084E251 /* Object.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Object.hpp; sourceTree = "<group>"; };
 		F447FFC21D0DD2C30084E251 /* Framebuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Framebuffer.cpp; sourceTree = "<group>"; };
@@ -524,6 +529,8 @@
 			children = (
 				F4442CC31FFA91EC005E1E24 /* Renderer2D.hpp */,
 				F4442CC41FFA91EC005E1E24 /* Renderer2D.cpp */,
+				F4442CCA1FFAE306005E1E24 /* RendererCube.hpp */,
+				F4442CC91FFAE306005E1E24 /* RendererCube.cpp */,
 			);
 			path = utils;
 			sourceTree = "<group>";
@@ -531,6 +538,7 @@
 		F4442CC71FFAAE63005E1E24 /* utils */ = {
 			isa = PBXGroup;
 			children = (
+				F4442CCD1FFAEEBD005E1E24 /* cubemap_convo.frag */,
 				F4442CC81FFAAE63005E1E24 /* brdf_sampler.frag */,
 			);
 			path = utils;
@@ -563,6 +571,7 @@
 		F44D0FF31F58B312000D58E3 /* objects */ = {
 			isa = PBXGroup;
 			children = (
+				F4442CCC1FFAE991005E1E24 /* object_basic.vert */,
 				F44D0FF41F58B312000D58E3 /* object_gbuffer.frag */,
 				F44D0FF51F58B312000D58E3 /* object_gbuffer.vert */,
 				F44D0FF61F58B312000D58E3 /* parallax_gbuffer.frag */,
@@ -838,6 +847,7 @@
 				F41F5F591E817E4B00C18D8D /* Gbuffer.cpp in Sources */,
 				F41F5F5A1E817E4B00C18D8D /* Framebuffer.cpp in Sources */,
 				F4B11E071F5F3290002E87F1 /* Blur.cpp in Sources */,
+				F4442CCB1FFAE306005E1E24 /* RendererCube.cpp in Sources */,
 				F41F5F5B1E817E4B00C18D8D /* Renderer.cpp in Sources */,
 				F41F5F5D1E817E4B00C18D8D /* ScreenQuad.cpp in Sources */,
 				F4624D971FF7B1F600A710EB /* Config.cpp in Sources */,
