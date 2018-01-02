@@ -51,6 +51,34 @@ Object::Object(const Object::Type & type, const std::string& meshPath, const std
 
 }
 
+
+Object::Object(std::shared_ptr<ProgramInfos> & program, const std::string& meshPath, const std::vector<std::pair<std::string, bool>>& texturesPaths, const std::vector<std::pair<std::string, bool>>& cubemapPaths) {
+	
+	_material = static_cast<int>(Object::Custom);
+	_castShadow = false;
+	// Load the shaders
+	_programDepth = nullptr;
+	_program = program;
+	
+	// Load geometry.
+	_mesh = Resources::manager().getMesh(meshPath);
+	
+	// Load and upload the textures.
+	for (unsigned int i = 0; i < texturesPaths.size(); ++i) {
+		const auto & textureName = texturesPaths[i];
+		_textures.push_back(Resources::manager().getTexture(textureName.first, textureName.second));
+		_program->registerTexture("texture" + std::to_string(i), i);
+	}
+	for (unsigned int i = 0; i < cubemapPaths.size(); ++i) {
+		const auto & textureName = cubemapPaths[i];
+		_textures.push_back(Resources::manager().getCubemap(textureName.first, textureName.second));
+		_program->registerTexture("texture" + std::to_string( texturesPaths.size() + i), (int)texturesPaths.size() + i);
+	}
+	_model = glm::mat4(1.0f);
+	checkGLError();
+	
+}
+
 void Object::update(const glm::mat4& model) {
 
 	_model = model;

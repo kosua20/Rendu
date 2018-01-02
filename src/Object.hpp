@@ -12,7 +12,7 @@ class Object {
 public:
 
 	enum Type {
-		Skybox = 0, Regular = 1, Parallax = 2
+		Skybox = 0, Regular = 1, Parallax = 2, Custom = 3
 	};
 
 	Object();
@@ -21,6 +21,8 @@ public:
 
 	/// Init function
 	Object(const Object::Type & type, const std::string& meshPath, const std::vector<std::pair<std::string, bool>>& texturesPaths, const std::vector<std::pair<std::string, bool>>& cubemapPaths = {}, bool castShadows = true);
+	
+	Object(std::shared_ptr<ProgramInfos> & program, const std::string& meshPath, const std::vector<std::pair<std::string, bool>>& texturesPaths, const std::vector<std::pair<std::string, bool>>& cubemapPaths = {});
 	
 	/// Update function
 	void update(const glm::mat4& model);
