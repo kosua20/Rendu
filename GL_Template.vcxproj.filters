@@ -12,9 +12,6 @@
     <Filter Include="Source Files\helpers">
       <UniqueIdentifier>{318262b6-adc0-4baa-a274-6c4d318820b1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\camera">
-      <UniqueIdentifier>{3029502e-777a-4a25-96a9-23b2bce3e715}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\lights">
       <UniqueIdentifier>{ceb99fe5-21ae-4979-8e86-e4e8feb1fe8a}</UniqueIdentifier>
     </Filter>
@@ -57,37 +54,28 @@
     <Filter Include="Source Files\scenes">
       <UniqueIdentifier>{ba940cdc-91e0-4748-b260-4e737d4a91f8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\utils">
+      <UniqueIdentifier>{b905861f-b8c0-4475-82f9-e257a467e450}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\input">
+      <UniqueIdentifier>{3029502e-777a-4a25-96a9-23b2bce3e715}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\renderers">
+      <UniqueIdentifier>{bcdf2d9d-5355-48a2-9211-88cc7f7bab95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\renderers\deferred">
+      <UniqueIdentifier>{921e656a-86ea-432b-8942-2c07f0cca28e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\renderers\utils">
+      <UniqueIdentifier>{3f63231d-e171-43c4-bb3e-9b7a5f2adb23}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Framebuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Renderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ScreenQuad.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\helpers\MeshUtilities.cpp">
       <Filter>Source Files\helpers</Filter>
-    </ClCompile>
-    <ClCompile Include="src\camera\Camera.cpp">
-      <Filter>Source Files\camera</Filter>
-    </ClCompile>
-    <ClCompile Include="src\camera\Keyboard.cpp">
-      <Filter>Source Files\camera</Filter>
-    </ClCompile>
-    <ClCompile Include="src\AmbientQuad.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Gbuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Object.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\helpers\GLUtilities.cpp">
       <Filter>Source Files\helpers</Filter>
@@ -110,62 +98,50 @@
     <ClCompile Include="src\libs\gl3w\gl3w.cpp">
       <Filter>Source Files\libs\gl3w</Filter>
     </ClCompile>
-    <ClCompile Include="src\camera\Joystick.cpp">
-      <Filter>Source Files\camera</Filter>
+    <ClCompile Include="src\input\Input.cpp">
+      <Filter>Source Files\input</Filter>
+    </ClCompile>
+    <ClCompile Include="src\input\Camera.cpp">
+      <Filter>Source Files\input</Filter>
+    </ClCompile>
+    <ClCompile Include="src\input\Joystick.cpp">
+      <Filter>Source Files\input</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Framebuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Object.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ScreenQuad.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Blur.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Config.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\renderers\deferred\AmbientQuad.cpp">
+      <Filter>Source Files\renderers\deferred</Filter>
+    </ClCompile>
+    <ClCompile Include="src\renderers\deferred\DeferredRenderer.cpp">
+      <Filter>Source Files\renderers\deferred</Filter>
+    </ClCompile>
+    <ClCompile Include="src\renderers\deferred\Gbuffer.cpp">
+      <Filter>Source Files\renderers\deferred</Filter>
+    </ClCompile>
+    <ClCompile Include="src\renderers\Renderer.cpp">
+      <Filter>Source Files\renderers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\renderers\utils\RendererCube.cpp">
+      <Filter>Source Files\renderers\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\renderers\utils\Renderer2D.cpp">
+      <Filter>Source Files\renderers\utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\lights\DirectionalLight.h">
-      <Filter>Source Files\lights</Filter>
-    </ClInclude>
-    <ClInclude Include="src\lights\Light.h">
-      <Filter>Source Files\lights</Filter>
-    </ClInclude>
-    <ClInclude Include="src\lights\PointLight.h">
-      <Filter>Source Files\lights</Filter>
-    </ClInclude>
-    <ClInclude Include="src\helpers\GenerationUtilities.h">
-      <Filter>Source Files\helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\helpers\GLUtilities.h">
-      <Filter>Source Files\helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\helpers\MeshUtilities.h">
-      <Filter>Source Files\helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\helpers\ProgramInfos.h">
-      <Filter>Source Files\helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\helpers\ResourcesManager.h">
-      <Filter>Source Files\helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\camera\Camera.h">
-      <Filter>Source Files\camera</Filter>
-    </ClInclude>
-    <ClInclude Include="src\camera\Keyboard.h">
-      <Filter>Source Files\camera</Filter>
-    </ClInclude>
-    <ClInclude Include="src\AmbientQuad.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Framebuffer.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Gbuffer.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Object.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Renderer.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ScreenQuad.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\libs\gl3w\gl3w.h">
       <Filter>Source Files\libs\gl3w</Filter>
     </ClInclude>
@@ -181,29 +157,89 @@
     <ClInclude Include="src\libs\glm\glm.hpp">
       <Filter>Source Files\libs\glm</Filter>
     </ClInclude>
-    <ClInclude Include="src\camera\Joystick.h">
-      <Filter>Source Files\camera</Filter>
-    </ClInclude>
     <ClInclude Include="src\libs\tinyexr\tinyexr.h">
       <Filter>Source Files\libs\tinyexr</Filter>
     </ClInclude>
-    <ClInclude Include="src\Blur.h">
+    <ClInclude Include="src\input\Input.hpp">
+      <Filter>Source Files\input</Filter>
+    </ClInclude>
+    <ClInclude Include="src\lights\Light.hpp">
+      <Filter>Source Files\lights</Filter>
+    </ClInclude>
+    <ClInclude Include="src\lights\PointLight.hpp">
+      <Filter>Source Files\lights</Filter>
+    </ClInclude>
+    <ClInclude Include="src\lights\DirectionalLight.hpp">
+      <Filter>Source Files\lights</Filter>
+    </ClInclude>
+    <ClInclude Include="src\input\Joystick.hpp">
+      <Filter>Source Files\input</Filter>
+    </ClInclude>
+    <ClInclude Include="src\input\Camera.hpp">
+      <Filter>Source Files\input</Filter>
+    </ClInclude>
+    <ClInclude Include="src\helpers\ProgramInfos.hpp">
+      <Filter>Source Files\helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\helpers\ResourcesManager.hpp">
+      <Filter>Source Files\helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\helpers\GenerationUtilities.hpp">
+      <Filter>Source Files\helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\helpers\GLUtilities.hpp">
+      <Filter>Source Files\helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\helpers\MeshUtilities.hpp">
+      <Filter>Source Files\helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scenes\DragonScene.hpp">
+      <Filter>Source Files\scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scenes\Scene.hpp">
+      <Filter>Source Files\scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scenes\Scenes.hpp">
+      <Filter>Source Files\scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scenes\SphereScene.hpp">
+      <Filter>Source Files\scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scenes\DeskScene.hpp">
+      <Filter>Source Files\scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Config.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\scenes\Scenes.h">
-      <Filter>Source Files\scenes</Filter>
+    <ClInclude Include="src\Framebuffer.hpp">
+      <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\scenes\SphereScene.h">
-      <Filter>Source Files\scenes</Filter>
+    <ClInclude Include="src\Object.hpp">
+      <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\scenes\DragonScene.h">
-      <Filter>Source Files\scenes</Filter>
+    <ClInclude Include="src\ScreenQuad.hpp">
+      <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\scenes\Scene.h">
-      <Filter>Source Files\scenes</Filter>
+    <ClInclude Include="src\Blur.hpp">
+      <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\scenes\DeskScene.h">
-      <Filter>Source Files\scenes</Filter>
+    <ClInclude Include="src\renderers\deferred\AmbientQuad.hpp">
+      <Filter>Source Files\renderers\deferred</Filter>
+    </ClInclude>
+    <ClInclude Include="src\renderers\deferred\DeferredRenderer.hpp">
+      <Filter>Source Files\renderers\deferred</Filter>
+    </ClInclude>
+    <ClInclude Include="src\renderers\deferred\Gbuffer.hpp">
+      <Filter>Source Files\renderers\deferred</Filter>
+    </ClInclude>
+    <ClInclude Include="src\renderers\Renderer.hpp">
+      <Filter>Source Files\renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\renderers\utils\RendererCube.hpp">
+      <Filter>Source Files\renderers\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\renderers\utils\Renderer2D.hpp">
+      <Filter>Source Files\renderers\utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -296,6 +332,15 @@
     </None>
     <None Include="resources\shaders\screens\blur-combine\blur-combine-2.frag">
       <Filter>Resource Files\screens\blur-combine</Filter>
+    </None>
+    <None Include="resources\shaders\utils\brdf_sampler.frag">
+      <Filter>Resource Files\utils</Filter>
+    </None>
+    <None Include="resources\shaders\utils\cubemap_convo.frag">
+      <Filter>Resource Files\utils</Filter>
+    </None>
+    <None Include="resources\shaders\objects\object_basic.vert">
+      <Filter>Resource Files\objects</Filter>
     </None>
   </ItemGroup>
 </Project>

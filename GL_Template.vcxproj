@@ -141,56 +141,64 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\AmbientQuad.cpp" />
     <ClCompile Include="src\Blur.cpp" />
-    <ClCompile Include="src\camera\Camera.cpp" />
-    <ClCompile Include="src\camera\Joystick.cpp" />
-    <ClCompile Include="src\camera\Keyboard.cpp" />
+    <ClCompile Include="src\Config.cpp" />
     <ClCompile Include="src\Framebuffer.cpp" />
-    <ClCompile Include="src\Gbuffer.cpp" />
     <ClCompile Include="src\helpers\GenerationUtilities.cpp" />
     <ClCompile Include="src\helpers\GLUtilities.cpp" />
     <ClCompile Include="src\helpers\MeshUtilities.cpp" />
     <ClCompile Include="src\helpers\ProgramInfos.cpp" />
     <ClCompile Include="src\helpers\ResourcesManager.cpp" />
+    <ClCompile Include="src\input\Camera.cpp" />
+    <ClCompile Include="src\input\Input.cpp" />
+    <ClCompile Include="src\input\Joystick.cpp" />
     <ClCompile Include="src\libs\gl3w\gl3w.cpp" />
     <ClCompile Include="src\lights\DirectionalLight.cpp" />
     <ClCompile Include="src\lights\PointLight.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Object.cpp" />
-    <ClCompile Include="src\Renderer.cpp" />
+    <ClCompile Include="src\renderers\deferred\AmbientQuad.cpp" />
+    <ClCompile Include="src\renderers\deferred\DeferredRenderer.cpp" />
+    <ClCompile Include="src\renderers\deferred\Gbuffer.cpp" />
+    <ClCompile Include="src\renderers\Renderer.cpp" />
+    <ClCompile Include="src\renderers\utils\Renderer2D.cpp" />
+    <ClCompile Include="src\renderers\utils\RendererCube.cpp" />
     <ClCompile Include="src\ScreenQuad.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\AmbientQuad.h" />
-    <ClInclude Include="src\Blur.h" />
-    <ClInclude Include="src\camera\Camera.h" />
-    <ClInclude Include="src\camera\Joystick.h" />
-    <ClInclude Include="src\camera\Keyboard.h" />
-    <ClInclude Include="src\Framebuffer.h" />
-    <ClInclude Include="src\Gbuffer.h" />
-    <ClInclude Include="src\helpers\GenerationUtilities.h" />
-    <ClInclude Include="src\helpers\GLUtilities.h" />
-    <ClInclude Include="src\helpers\MeshUtilities.h" />
-    <ClInclude Include="src\helpers\ProgramInfos.h" />
-    <ClInclude Include="src\helpers\ResourcesManager.h" />
+    <ClInclude Include="src\Blur.hpp" />
+    <ClInclude Include="src\Config.hpp" />
+    <ClInclude Include="src\Framebuffer.hpp" />
+    <ClInclude Include="src\helpers\GenerationUtilities.hpp" />
+    <ClInclude Include="src\helpers\GLUtilities.hpp" />
+    <ClInclude Include="src\helpers\MeshUtilities.hpp" />
+    <ClInclude Include="src\helpers\ProgramInfos.hpp" />
+    <ClInclude Include="src\helpers\ResourcesManager.hpp" />
+    <ClInclude Include="src\input\Camera.hpp" />
+    <ClInclude Include="src\input\Input.hpp" />
+    <ClInclude Include="src\input\Joystick.hpp" />
     <ClInclude Include="src\libs\gl3w\gl3w.h" />
     <ClInclude Include="src\libs\gl3w\glcorearb.h" />
     <ClInclude Include="src\libs\glm\glm.hpp" />
     <ClInclude Include="src\libs\stb_image\stb_image.h" />
     <ClInclude Include="src\libs\tinydir\tinydir.h" />
     <ClInclude Include="src\libs\tinyexr\tinyexr.h" />
-    <ClInclude Include="src\lights\DirectionalLight.h" />
-    <ClInclude Include="src\lights\Light.h" />
-    <ClInclude Include="src\lights\PointLight.h" />
-    <ClInclude Include="src\Object.h" />
-    <ClInclude Include="src\Renderer.h" />
-    <ClInclude Include="src\scenes\DeskScene.h" />
-    <ClInclude Include="src\scenes\DragonScene.h" />
-    <ClInclude Include="src\scenes\Scene.h" />
-    <ClInclude Include="src\scenes\Scenes.h" />
-    <ClInclude Include="src\scenes\SphereScene.h" />
-    <ClInclude Include="src\ScreenQuad.h" />
+    <ClInclude Include="src\lights\DirectionalLight.hpp" />
+    <ClInclude Include="src\lights\Light.hpp" />
+    <ClInclude Include="src\lights\PointLight.hpp" />
+    <ClInclude Include="src\Object.hpp" />
+    <ClInclude Include="src\renderers\deferred\AmbientQuad.hpp" />
+    <ClInclude Include="src\renderers\deferred\DeferredRenderer.hpp" />
+    <ClInclude Include="src\renderers\deferred\Gbuffer.hpp" />
+    <ClInclude Include="src\renderers\Renderer.hpp" />
+    <ClInclude Include="src\renderers\utils\Renderer2D.hpp" />
+    <ClInclude Include="src\renderers\utils\RendererCube.hpp" />
+    <ClInclude Include="src\scenes\DeskScene.hpp" />
+    <ClInclude Include="src\scenes\DragonScene.hpp" />
+    <ClInclude Include="src\scenes\Scene.hpp" />
+    <ClInclude Include="src\scenes\Scenes.hpp" />
+    <ClInclude Include="src\scenes\SphereScene.hpp" />
+    <ClInclude Include="src\ScreenQuad.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\gbuffer\ambient.frag" />
@@ -202,6 +210,7 @@
     <None Include="resources\shaders\lights\point_light.vert" />
     <None Include="resources\shaders\lights\point_light_debug.frag" />
     <None Include="resources\shaders\lights\point_light_debug.vert" />
+    <None Include="resources\shaders\objects\object_basic.vert" />
     <None Include="resources\shaders\objects\object_gbuffer.frag" />
     <None Include="resources\shaders\objects\object_gbuffer.vert" />
     <None Include="resources\shaders\objects\parallax_gbuffer.frag" />
@@ -223,6 +232,8 @@
     <None Include="resources\shaders\screens\passthrough.frag" />
     <None Include="resources\shaders\screens\passthrough.vert" />
     <None Include="resources\shaders\screens\tonemap.frag" />
+    <None Include="resources\shaders\utils\brdf_sampler.frag" />
+    <None Include="resources\shaders\utils\cubemap_convo.frag" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
