@@ -121,8 +121,8 @@ int main(int argc, char** argv) {
 	std::cout << "[OpenGL] Version supported: " << versionString << "." << std::endl;
 	
 	// Create the scene and the renderer.
-	//std::shared_ptr<Scene> scene(new DeskScene());
-	std::shared_ptr<Renderer> renderer(new RendererCube(config, "studio", "cubemap_convo", 512, 512, GL_RGB, GL_FLOAT, GL_RGB32F, "studio_convo"));
+	std::shared_ptr<Scene> scene(new DeskScene());
+	std::shared_ptr<Renderer> renderer(new DeferredRenderer(config, scene));
 	
 	double timer = glfwGetTime();
 	double fullTime = 0.0;
