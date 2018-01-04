@@ -89,7 +89,7 @@ void Config::parseFromFile(const char * filePath, std::map<std::string, std::str
 
 
 void Config::parseFromArgs(const int argc, char** argv, std::map<std::string, std::string> & arguments){
-	for(uint argi = 1; argi < argc; ){
+	for(unsigned int argi = 1; argi < argc; ){
 		// Clean the argument from any -
 		const std::string firstArg = Resources::trim(std::string(argv[argi]), "-");
 		if(argi < argc - 1){

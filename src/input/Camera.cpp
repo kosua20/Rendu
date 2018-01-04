@@ -4,8 +4,10 @@
 #include <stdio.h>
 #include <iostream>
 #include <glm/gtc/matrix_transform.hpp>
-
-
+#include <algorithm>
+#ifdef _WIN32
+#define M_PI	3.14159265358979323846
+#endif
 
 Camera::Camera()  {
 	//_verticalResolution = 720;
@@ -214,12 +216,12 @@ void Camera::updateUsingTurnTable(double frameTime){
 	
 	// Radius of the turntable.
 	float scroll = Input::manager().scroll()[1];
-	_radius = std::max(0.0001f, _radius - scroll * (float)frameTime*_speed);
+	_radius = (std::max)(0.0001f, _radius - scroll * (float)frameTime*_speed);
 	
 	// Angles update for the turntable.
 	const glm::vec2 delta = Input::manager().moved(Input::MouseLeft);
 	_horizontalAngle += delta[0] * (float)frameTime*_angularSpeed;
-	_verticalAngle = std::max(-1.57f,std::min(1.57f, _verticalAngle + delta[1] * (float)frameTime*_angularSpeed));
+	_verticalAngle = (std::max)(-1.57f, (std::min)(1.57f, _verticalAngle + delta[1] * (float)frameTime*_angularSpeed));
 	
 	// Compute new look direction.
 	const glm::vec3 newLook = - glm::vec3( cos(_verticalAngle) * cos(_horizontalAngle), sin(_verticalAngle),  cos(_verticalAngle) * sin(_horizontalAngle));

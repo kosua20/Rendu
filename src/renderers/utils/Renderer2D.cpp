@@ -45,16 +45,18 @@ void Renderer2D::draw() {
 	
 	if(type == GL_FLOAT){
 		// Get back values.
-		float data[_resultFramebuffer->width()* _resultFramebuffer->height()*components];
+		float * data = new float [_resultFramebuffer->width()* _resultFramebuffer->height()*components];
 		glReadPixels(0,0,_resultFramebuffer->width(), _resultFramebuffer->height(), format, type, &data[0]);
 		// Save data.
 		GLUtilities::saveTexture(_outputPath, _resultFramebuffer->width(), _resultFramebuffer->height(), components, (void*)data, true);
+		delete[] data; data = NULL;
 	} else if (type == GL_UNSIGNED_BYTE){
 		// Get back values.
-		GLubyte data[_resultFramebuffer->width()* _resultFramebuffer->height()*components];
+		GLubyte * data = new GLubyte[_resultFramebuffer->width()* _resultFramebuffer->height()*components];
 		glReadPixels(0,0,_resultFramebuffer->width(), _resultFramebuffer->height(), format, type, &data[0]);
 		// Save data.
 		GLUtilities::saveTexture(_outputPath, _resultFramebuffer->width(), _resultFramebuffer->height(), components, (void*)data, false);
+		delete[] data; data = NULL;
 	}
 
 	_resultFramebuffer->unbind();

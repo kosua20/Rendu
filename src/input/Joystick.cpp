@@ -12,7 +12,7 @@
 Joystick::Joystick() {
 	_id = -1;
 	// Reset pressed buttons.
-	for(uint i = 0; i < JoystickInput::JoystickInputCount; ++i){
+	for(unsigned int i = 0; i < JoystickInput::JoystickInputCount; ++i){
 		_buttons[i].pressed = false;
 		_buttons[i].first = false;
 	}
@@ -25,7 +25,7 @@ bool Joystick::activate(int id){
 	// Get axes and buttons references and count from GLFW
 	_rawAxes = glfwGetJoystickAxes(_id, &_rawAxesCount);
 	_rawButtons = glfwGetJoystickButtons(_id, &_rawButtonsCount);
-	for(uint i = 0; i < JoystickInput::JoystickInputCount; ++i){
+	for(unsigned int i = 0; i < JoystickInput::JoystickInputCount; ++i){
 		_buttons[i].pressed = false;
 		_buttons[i].first = false;
 	}
@@ -42,7 +42,7 @@ void Joystick::update(){
 	_rawButtons = glfwGetJoystickButtons(_id, &_rawButtonsCount);
 	
 	// Translate from raw buttons to clean buttons.
-	for(uint i = 0; i < JoystickInput::JoystickInputCount; ++i){
+	for(unsigned int i = 0; i < JoystickInput::JoystickInputCount; ++i){
 		bool pressed = (_rawButtons[_codes.at(JoystickInput(i))] == GLFW_PRESS);
 		if(pressed){
 			if(_buttons[i].pressed){

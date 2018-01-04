@@ -40,7 +40,7 @@ int _checkGLError(const char *file, int line, const std::string & infos){
 	GLenum glErr = glGetError();
 	if (glErr != GL_NO_ERROR){
 		std::string filePath(file);
-		size_t pos = std::min(filePath.find_last_of("/"), filePath.find_last_of("\\"));
+		size_t pos = (std::min)(filePath.find_last_of("/"), filePath.find_last_of("\\"));
 		if(pos == std::string::npos){
 			pos = 0;
 		}
@@ -74,7 +74,7 @@ GLuint GLUtilities::loadShader(const std::string & prog, GLuint type){
 	if (success != GL_TRUE) {
 		GLint infoLogLength;
 		glGetShaderiv(id, GL_INFO_LOG_LENGTH, &infoLogLength);
-		std::vector<char> infoLog(std::max(infoLogLength, int(1)));
+		std::vector<char> infoLog((std::max)(infoLogLength, int(1)));
 		glGetShaderInfoLog(id, infoLogLength, NULL, &infoLog[0]);
 
 		std::cerr << std::endl 
@@ -125,7 +125,7 @@ GLuint GLUtilities::createProgram(const std::string & vertexContent, const std::
 	if(!success) {
 		GLint infoLogLength;
 		glGetProgramiv(id, GL_INFO_LOG_LENGTH, &infoLogLength);
-		std::vector<char> infoLog(std::max(infoLogLength, int(1)));
+		std::vector<char> infoLog((std::max)(infoLogLength, int(1)));
 		glGetProgramInfoLog(id, infoLogLength, NULL, &infoLog[0]);
 
 		std::cerr << "[OpenGL] Failed loading program: " << &infoLog[0] << std::endl;
@@ -398,9 +398,9 @@ int GLUtilities::saveEXRHelper(const float* rgb, int width, int height, int chan
 	header.num_channels = 3;
 	header.channels = (EXRChannelInfo *)malloc(sizeof(EXRChannelInfo) * header.num_channels);
 	// Must be (A)BGR order, since most of EXR viewers expect this channel order.
-	strncpy(header.channels[0].name, "B", 255); header.channels[0].name[strlen("B")] = '\0';
-	strncpy(header.channels[1].name, "G", 255); header.channels[1].name[strlen("G")] = '\0';
-	strncpy(header.channels[2].name, "R", 255); header.channels[2].name[strlen("R")] = '\0';
+	strncpy_s(header.channels[0].name, "B", 255); header.channels[0].name[strlen("B")] = '\0';
+	strncpy_s(header.channels[1].name, "G", 255); header.channels[1].name[strlen("G")] = '\0';
+	strncpy_s(header.channels[2].name, "R", 255); header.channels[2].name[strlen("R")] = '\0';
 	
 	header.pixel_types = (int *)malloc(sizeof(int) * header.num_channels);
 	header.requested_pixel_types = (int *)malloc(sizeof(int) * header.num_channels);

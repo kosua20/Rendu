@@ -115,11 +115,11 @@ void Input::resizeEvent(int width, int height){
 
 void Input::update(){
 	// Reset temporary state (first, last).
-	for(uint i = 0; i < GLFW_KEY_LAST+1; ++i){
+	for(unsigned int i = 0; i < GLFW_KEY_LAST+1; ++i){
 		_keys[i].first = false;
 		_keys[i].last = false;
 	}
-	for(uint i = 0; i < GLFW_MOUSE_BUTTON_LAST+1; ++i){
+	for(unsigned int i = 0; i < GLFW_MOUSE_BUTTON_LAST+1; ++i){
 		_mouseButtons[i].first = false;
 		_mouseButtons[i].last = false;
 	}
