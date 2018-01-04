@@ -11,7 +11,7 @@ in INTERFACE {
 #define SAMPLE_COUNT 10000u // Super high sample count to avoid artifacts in bright areas.
 
 uniform samplerCube texture0;
-
+uniform float mimapRoughness;
 // Output: the fragment color
 out vec3 fragColor;
 
@@ -65,5 +65,5 @@ vec3 convo(vec3 r, float roughness){
 
 
 void main(){
-	fragColor = convo(normalize(In.pos), 0.8);
+	fragColor = convo(normalize(In.pos), mimapRoughness);
 }

@@ -39,6 +39,7 @@ public:
 private:
 	
 	std::shared_ptr<Framebuffer> _resultFramebuffer;
+	std::shared_ptr<ProgramInfos> _program;
 	Object _cubemap;
 	std::string _outputPath;
 	

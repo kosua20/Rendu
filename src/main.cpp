@@ -9,7 +9,7 @@
 #include "input/Input.hpp"
 #include "scenes/Scenes.hpp"
 #include "renderers/deferred/DeferredRenderer.hpp"
-#include "renderers/utils/Renderer2D.hpp"
+#include "renderers/utils/RendererCube.hpp"
 
 /// Callbacks
 
@@ -122,7 +122,7 @@ int main(int argc, char** argv) {
 	
 	// Create the scene and the renderer.
 	//std::shared_ptr<Scene> scene(new DeskScene());
-	std::shared_ptr<Renderer> renderer(new Renderer2D(config, "brdf_sampler", 512, 512, GL_RG, GL_FLOAT, GL_RG32F, "output-brdf.exr"));
+	std::shared_ptr<Renderer> renderer(new RendererCube(config, "studio", "cubemap_convo", 512, 512, GL_RGB, GL_FLOAT, GL_RGB32F, "studio_convo"));
 	
 	double timer = glfwGetTime();
 	double fullTime = 0.0;

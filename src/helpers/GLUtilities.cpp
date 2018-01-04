@@ -398,9 +398,19 @@ int GLUtilities::saveEXRHelper(const float* rgb, int width, int height, int chan
 	header.num_channels = 3;
 	header.channels = (EXRChannelInfo *)malloc(sizeof(EXRChannelInfo) * header.num_channels);
 	// Must be (A)BGR order, since most of EXR viewers expect this channel order.
-	strncpy_s(header.channels[0].name, "B", 255); header.channels[0].name[strlen("B")] = '\0';
-	strncpy_s(header.channels[1].name, "G", 255); header.channels[1].name[strlen("G")] = '\0';
-	strncpy_s(header.channels[2].name, "R", 255); header.channels[2].name[strlen("R")] = '\0';
+#ifdef _WIN32
+	strncpy_s(header.channels[0].name, "B", 255);
+	strncpy_s(header.channels[1].name, "G", 255);
+	strncpy_s(header.channels[2].name, "R", 255);
+#else
+	strncpy(header.channels[0].name, "B", 255);
+	strncpy(header.channels[1].name, "G", 255);
+	strncpy(header.channels[2].name, "R", 255);
+#endif
+	
+	header.channels[0].name[strlen("B")] = '\0';
+	header.channels[1].name[strlen("G")] = '\0';
+	header.channels[2].name[strlen("R")] = '\0';
 	
 	header.pixel_types = (int *)malloc(sizeof(int) * header.num_channels);
 	header.requested_pixel_types = (int *)malloc(sizeof(int) * header.num_channels);
