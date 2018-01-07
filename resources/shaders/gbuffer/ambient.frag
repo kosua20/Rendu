@@ -17,6 +17,7 @@ uniform sampler2D effectsTexture;
 uniform sampler2D ssaoTexture;
 uniform samplerCube textureCubeMap;
 uniform samplerCube textureCubeMapSmall;
+uniform sampler2D brdfPrecalc;
 
 uniform mat4 inverseV;
 uniform vec4 projectionMatrix;
@@ -25,7 +26,7 @@ uniform vec4 projectionMatrix;
 out vec3 fragColor;
 
 #define SAMPLES_COUNT 16u
-#define MAX_LOD 12
+#define MAX_LOD 5
 
 vec3 positionFromDepth(float depth){
 	float depth2 = 2.0 * depth - 1.0 ;
@@ -69,47 +70,11 @@ float G(float NdotL, float NdotV, float alpha){
 
 vec3 ggx(vec3 n, vec3 v, vec3 F0, float roughness){
 	// Compute local frame.
-	vec3 temp = abs(n.z) < 0.999 ? vec3(0.0,0.0,1.0) : vec3(1.0,0.0,0.0);
-	vec3 tangent = normalize(cross(temp, n));
-	vec3 binormal = cross(n, tangent);
-	float alpha = max(0.0001, roughness*roughness);
-	
-	float NdotV = max(0.0001, abs(dot(v, n)));
-	vec3 sum = vec3(0.0);
-	
-	for(uint i = 0u; i < SAMPLES_COUNT; ++i){
-		// Draw a sample using Van der Corput sequence.
-		vec2 sampleVec = hammersleySample(i);
-		// Compute corresponding angles.
-		float cosT2 = (1.0 - sampleVec.y)/(1.0+(alpha*alpha-1.0)*sampleVec.y);
-		float cosT = sqrt(cosT2);
-		float sinT = sqrt(1.0-cosT2);
-		float angle = 2.0*M_PI*sampleVec.x;
-		// Local half vector and light direction.
-		vec3 h = sinT*cos(angle) * tangent + sinT*sin(angle) * binormal + cosT * n;
-		vec3 l = -reflect(v,h);
-		
-		float NdotL = clamp(abs(dot(n,l)), 0.0001, 1.0);
-		if(NdotL > 0.0){
-			
-			float VdotH = clamp(abs(dot(v,h)), 0.0001, 1.0);
-			float NdotH = clamp(abs(dot(n,h)), 0.0001, 1.0);
-			// Transform local light direction in world space.
-			vec3 worldLight = normalize(vec3(inverseV * vec4(l,0.0)));
-			// Estimate LOD based on roughness.
-			float lodS = roughness < 0.03 ? 0.0 : max(0.0,
-												   MAX_LOD - 1.5 - 0.5 * M_INV_LOG2 *
-												   ( log(float(SAMPLES_COUNT))
-												   + log((1.0 - l.y * l.y) * D(NdotH, alpha) * NdotH / (4.0 * VdotH))
-												   ));
-			
-			// Read specular envmap.
-			vec3 envLighting = textureLod(textureCubeMap, worldLight, lodS).rgb;
-			// Add the sample contribution.
-			sum += G(NdotL, NdotV, alpha) * VdotH * NdotL / NdotH * F(F0, VdotH) * envLighting;
-		}
-	}
-	return sum/SAMPLES_COUNT;
+	float NdotV = max(0.0, dot(v, n));
+	vec3 r = reflect(-v,n);
+	vec2 brdfParams = texture(brdfPrecalc, vec2(NdotV, roughness)).rg;
+	vec3 specularColor = textureLod(textureCubeMap, r, MAX_LOD * roughness).rgb;
+	return specularColor * (brdfParams.x * F0 + brdfParams.y);
 }
 
 void main(){
@@ -148,7 +113,7 @@ void main(){
 	// Ambient diffuse contribution. Metallic materials have no diffuse contribution.
 	vec3 diffuse = (1.0 - metallic) * baseColor * (1.0 - F0) * envLighting;
 	
-	// Compute world normal and use it to read into the convolved envmap.
+	// Secular contribution (preintegrated).
 	vec3 specular = ggx(n, v, F0, roughness);
 
 	fragColor = ao * (diffuse + specular);

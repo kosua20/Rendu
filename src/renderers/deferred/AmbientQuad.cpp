@@ -22,9 +22,11 @@ void AmbientQuad::init(std::map<std::string, GLuint> textureIds, const GLuint re
 	// Load texture.
 	_texCubeMap = reflection;
 	_texCubeMapSmall = irradiance;
+	_texBrdfPrecalc = Resources::manager().getTexture("brdf-precomputed", false).id;
 	// Bind uniform to texture slot.
 	_program->registerTexture("textureCubeMap", (int)_textureIds.size());
 	_program->registerTexture("textureCubeMapSmall", (int)_textureIds.size()+1);
+	_program->registerTexture("brdfPrecalc", (int)_textureIds.size()+2);
 	
 	// Setup SSAO data, get back noise texture id, add it to the gbuffer outputs.
 	GLuint noiseTextureID = setupSSAO();
@@ -92,6 +94,9 @@ void AmbientQuad::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionM
 	
 	glActiveTexture(GL_TEXTURE0 + (unsigned int)_textureIds.size() + 1);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, _texCubeMapSmall);
+	
+	glActiveTexture(GL_TEXTURE0 + (unsigned int)_textureIds.size() + 2);
+	glBindTexture(GL_TEXTURE_2D, _texBrdfPrecalc);
 	
 	ScreenQuad::draw();
 }

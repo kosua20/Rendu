@@ -31,6 +31,7 @@ private:
 	
 	GLuint _texCubeMap;
 	GLuint _texCubeMapSmall;
+	GLuint _texBrdfPrecalc;
 	
 	ScreenQuad _ssaoScreen;
 	

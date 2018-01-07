@@ -16,7 +16,7 @@ layout (location = 2) out vec3 fragEffects;
 
 void main(){
 	
-	fragColor.rgb = texture(texture0, In.position).rgb;
+	fragColor.rgb = textureLod(texture0, In.position, 0.0).rgb;
 	fragColor.a = MATERIAL_ID;
 	fragNormal = vec3(0.5);
 	fragEffects = vec3(0.0);
