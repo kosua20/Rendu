@@ -138,13 +138,36 @@ const TextureInfos Resources::getTexture(const std::string & name, bool srgb){
 	// Else, find the corresponding file.
 	TextureInfos infos;
 	std::string path = getImagePath(name);
-	// If couldn't file the image, return empty texture infos.
-	if(path.empty()){
+	
+	if(!path.empty()){
+		// Else, load it and store the infos.
+		infos = GLUtilities::loadTexture({path}, srgb);
+		_textures[name] = infos;
 		return infos;
 	}
-	// Else, load it and store the infos.
-	infos = GLUtilities::loadTexture(path, srgb);
-	_textures[name] = infos;
+	// Else, maybe there are custom mipmap levels.
+	// In this case the true name is name_mipmaplevel.
+	
+	// How many mipmap levels can we accumulate?
+	std::vector<std::string> paths;
+	unsigned int lastMipmap = 0;
+	std::string mipmapPath = getImagePath(name + "_" + std::to_string(lastMipmap));
+	while(!mipmapPath.empty()) {
+		// Transfer them to the final paths vector.
+		paths.push_back(mipmapPath);
+		++lastMipmap;
+		mipmapPath = getImagePath(name + "_" + std::to_string(lastMipmap));
+	}
+	if(!paths.empty()){
+		// We found the texture files.
+		// Load them and store the infos.
+		infos = GLUtilities::loadTexture(paths, srgb);
+		_textures[name] = infos;
+		return infos;
+	}
+	
+	// If couldn't file the image, return empty texture infos.
+	std::cerr << "[Resources] Unable to find texture named \"" << name << "\"." << std::endl;
 	return infos;
 }
 
@@ -157,12 +180,35 @@ const TextureInfos Resources::getCubemap(const std::string & name, bool srgb){
 	// Else, find the corresponding files.
 	TextureInfos infos;
 	std::vector<std::string> paths = getCubemapPaths(name);
-	if(paths.empty()){
+	if(!paths.empty()){
+		// We found the texture files.
+		// Load them and store the infos.
+		infos = GLUtilities::loadTextureCubemap({paths}, srgb);
+		_textures[name] = infos;
 		return infos;
 	}
-	// Load them and store the infos.
-	infos = GLUtilities::loadTextureCubemap(paths, srgb);
-	_textures[name] = infos;
+	// Else, maybe there are custom mipmap levels.
+	// In this case the true name is name_mipmaplevel.
+	
+	// How many mipmap levels can we accumulate?
+	std::vector<std::vector<std::string>> allPaths;
+	unsigned int lastMipmap = 0;
+	std::vector<std::string> mipmapPaths = getCubemapPaths(name + "_" + std::to_string(lastMipmap));
+	while(!mipmapPaths.empty()) {
+		// Transfer them to the final paths vector.
+		allPaths.push_back(mipmapPaths);
+		++lastMipmap;
+		mipmapPaths = getCubemapPaths(name + "_" + std::to_string(lastMipmap));
+	}
+	if(!allPaths.empty()){
+		// We found the texture files.
+		// Load them and store the infos.
+		infos = GLUtilities::loadTextureCubemap(allPaths, srgb);
+		_textures[name] = infos;
+		return infos;
+	}
+	std::cerr << "[Resources] Unable to find cubemap named \"" << name << "\"." << std::endl;
+	// Nothing found, return empty texture.
 	return infos;
 }
 
@@ -227,8 +273,6 @@ const std::string Resources::getImagePath(const std::string & name){
 		path = _files[name + ".tga"];
 	} else if(_files.count(name + ".exr") > 0){
 		path = _files[name + ".exr"];
-	} else {
-		std::cerr << "[Resources] Unable to find image named \"" << name << "\"" << std::endl;
 	}
 	return path;
 }

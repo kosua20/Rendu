@@ -154,12 +154,15 @@ GLuint GLUtilities::createProgram(const std::string & vertexContent, const std::
 
 
 
-TextureInfos GLUtilities::loadTexture(const std::string& path, bool sRGB){
+TextureInfos GLUtilities::loadTexture(const std::vector<std::string>& paths, bool sRGB){
 	TextureInfos infos;
 	infos.cubemap = false;
-	infos.hdr = (path.substr(path.size()-4,4) == ".exr");
-	// Load and upload the texture.
+	if(paths.empty()){
+		return infos;
+	}
 	
+	infos.hdr = (paths[0].substr(paths[0].size()-4,4) == ".exr");
+	// Load and upload the texture.
 	int width = 0;
 	int height = 0;
 	
@@ -167,32 +170,48 @@ TextureInfos GLUtilities::loadTexture(const std::string& path, bool sRGB){
 	glGenTextures(1, &textureId);
 	glBindTexture(GL_TEXTURE_2D, textureId);
 	
-	if(infos.hdr){
-		float* image;
-		const char *err;
-		int ret = loadEXRHelper(&image, &width, &height, path.c_str(), &err);
-		if (ret != 0) {
-			std::cerr << "[Resources] Unable to load the texture at path " << path << "." << std::endl;
-			return infos;
-		}
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, width, height, 0, GL_RGB, GL_FLOAT, &(image[0]));
-		free(image);
+	// Set proper max mipmap level.
+	if(paths.size()>1){
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, (int)(paths.size())-1);
 	} else {
-		// We need to flip the texture.
-		stbi_set_flip_vertically_on_load(true);
-		unsigned char *image = stbi_load(path.c_str(), &width, &height, NULL, 4);
-		if(image == NULL){
-			std::cerr << "[Resources] Unable to load the texture at path " << path << "." << std::endl;
-			return infos;
-		}
-	
-		glTexImage2D(GL_TEXTURE_2D, 0, sRGB ? GL_SRGB8_ALPHA8 : GL_RGBA, width , height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &(image[0]));
-		free(image);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 1000);
 	}
-	
+	// Texture settings.
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-	glGenerateMipmap(GL_TEXTURE_2D);
+	
+	for(unsigned int mipid = 0; mipid < paths.size(); ++mipid){
+		
+		const std::string path = paths[mipid];
+		
+		if(infos.hdr){
+			float* image;
+			const char *err;
+			int ret = loadEXRHelper(&image, &width, &height, path.c_str(), &err);
+			if (ret != 0) {
+				std::cerr << "[Resources] Unable to load the texture at path " << path << "." << std::endl;
+				return infos;
+			}
+			glTexImage2D(GL_TEXTURE_2D, mipid, GL_RGB32F, width, height, 0, GL_RGB, GL_FLOAT, &(image[0]));
+			free(image);
+		} else {
+			// We need to flip the texture.
+			stbi_set_flip_vertically_on_load(true);
+			unsigned char *image = stbi_load(path.c_str(), &width, &height, NULL, 4);
+			if(image == NULL){
+				std::cerr << "[Resources] Unable to load the texture at path " << path << "." << std::endl;
+				return infos;
+			}
+		
+			glTexImage2D(GL_TEXTURE_2D, mipid, sRGB ? GL_SRGB8_ALPHA8 : GL_RGBA, width , height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &(image[0]));
+			free(image);
+		}
+	}
+	
+	// If only level 0 was given, generate mipmaps pyramid automatically.
+	if(paths.size() == 1){
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
 	
 	infos.id = textureId;
 	infos.width = width;
@@ -200,21 +219,34 @@ TextureInfos GLUtilities::loadTexture(const std::string& path, bool sRGB){
 	return infos;
 }
 
-TextureInfos GLUtilities::loadTextureCubemap(const std::vector<std::string> & paths, bool sRGB){
+TextureInfos GLUtilities::loadTextureCubemap(const std::vector<std::vector<std::string>> & allPaths, bool sRGB){
 	TextureInfos infos;
 	infos.cubemap = true;
-	// If not enough images, return empty texture.
-	if(paths.size() != 6){
+	if(allPaths.empty() ){
+		std::cerr << "[Resources] Unable to find cubemap." << std::endl;
 		return infos;
 	}
 	
-	infos.hdr = (paths.front().substr(paths.front().size()-4, 4) == ".exr");
-
+	// If not enough images, return empty texture.
+	if(allPaths.front().size() == 0 ){
+		std::cerr << "[Resources] Unable to find cubemap." << std::endl;
+		return infos;
+	}
+	
+	infos.hdr = (allPaths[0][0].substr(allPaths[0][0].size()-4, 4) == ".exr");
+	
+	
 	// Create and bind texture.
 	GLuint textureId;
 	glGenTextures(1, &textureId);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, textureId);
 	
+	// Set proper max mipmap level.
+	if(allPaths.size()>1){
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_LEVEL, (int)(allPaths.size())-1);
+	} else {
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_LEVEL, 1000);
+	}
 	// Texture settings.
 	glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR );
 	glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
@@ -225,36 +257,43 @@ TextureInfos GLUtilities::loadTextureCubemap(const std::vector<std::string> & pa
 	int width = 0;
 	int height = 0;
 	
-	
-	// For each side, load the image and upload it in the right slot.
-	// We don't need to flip them.
-	if(infos.hdr){
-		for(size_t side = 0; side < 6; ++side){
-			float* image;
-			const char *err;
-			int ret = loadEXRHelper(&image, &width, &height, paths[side].c_str(), &err);
-			if (ret != 0) {
-				std::cerr << "[Resources] Unable to load the texture at path " << paths[side] << "." << std::endl;
-				return infos;
+	for(unsigned int mipid = 0; mipid < allPaths.size(); ++mipid){
+		
+		const std::vector<std::string> paths = allPaths[mipid];
+		// For each side, load the image and upload it in the right slot.
+		// We don't need to flip them.
+		if(infos.hdr){
+			for(size_t side = 0; side < 6; ++side){
+				float* image;
+				const char *err;
+				int ret = loadEXRHelper(&image, &width, &height, paths[side].c_str(), &err);
+				if (ret != 0) {
+					std::cerr << "[Resources] Unable to load the texture at path " << paths[side] << "." << std::endl;
+					return infos;
+				}
+				glTexImage2D(GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + side), mipid, GL_RGB32F, width, height, 0, GL_RGB, GL_FLOAT, &(image[0]));
+				free(image);
 			}
-			glTexImage2D(GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + side), 0, GL_RGB32F, width, height, 0, GL_RGB, GL_FLOAT, &(image[0]));
-			free(image);
-		}
-	} else {
-		stbi_set_flip_vertically_on_load(false);
+		} else {
+			stbi_set_flip_vertically_on_load(false);
 
-		for(size_t side = 0; side < 6; ++side){
-			int components = 4;
-			unsigned char *image = stbi_load(paths[side].c_str(), &width, &height, NULL, components);
-			if(image == NULL){
-				std::cerr << "[Resources] Unable to load the texture at path " << paths[side] << "." << std::endl;
-				return infos;
+			for(size_t side = 0; side < 6; ++side){
+				int components = 4;
+				unsigned char *image = stbi_load(paths[side].c_str(), &width, &height, NULL, components);
+				if(image == NULL){
+					std::cerr << "[Resources] Unable to load the texture at path " << paths[side] << "." << std::endl;
+					return infos;
+				}
+				glTexImage2D(GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + side), mipid, sRGB ? GL_SRGB8_ALPHA8 : GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &(image[0]));
+				free(image);
 			}
-			glTexImage2D(GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + side), 0, sRGB ? GL_SRGB8_ALPHA8 : GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &(image[0]));
-			free(image);
 		}
 	}
-	glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+	
+	// If only level 0 was given, generate mipmaps pyramid automatically.
+	if(allPaths.size() == 1){
+		glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+	}
 	
 	infos.id = textureId;
 	infos.width = width;

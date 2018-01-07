@@ -21,9 +21,10 @@ struct TextureInfos {
 	GLuint id;
 	int width;
 	int height;
+	int mipmap;
 	bool cubemap;
 	bool hdr;
-	TextureInfos() : id(0), width(0), height(0), cubemap(false), hdr(false) {}
+	TextureInfos() : id(0), width(0), height(0), mipmap(0), cubemap(false), hdr(false) {}
 
 };
 
@@ -55,10 +56,10 @@ public:
 	
 	// Texture loading.
 	/// 2D texture.
-	static TextureInfos loadTexture(const std::string& path, bool sRGB);
+	static TextureInfos loadTexture(const std::vector<std::string>& path, bool sRGB);
 	
 	/// Cubemap texture.
-	static TextureInfos loadTextureCubemap(const std::vector<std::string> & paths, bool sRGB);
+	static TextureInfos loadTextureCubemap(const std::vector<std::vector<std::string>> & paths, bool sRGB);
 	
 	// Mesh loading.
 	static MeshInfos setupBuffers(const Mesh & mesh);
