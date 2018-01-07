@@ -71,7 +71,8 @@ float G(float NdotL, float NdotV, float alpha){
 vec3 ggx(vec3 n, vec3 v, vec3 F0, float roughness){
 	// Compute local frame.
 	float NdotV = max(0.0, dot(v, n));
-	vec3 r = reflect(-v,n);
+	vec3 r = -reflect(v,n);
+	r = normalize((inverseV * vec4(r, 0.0)).xyz);
 	vec2 brdfParams = texture(brdfPrecalc, vec2(NdotV, roughness)).rg;
 	vec3 specularColor = textureLod(textureCubeMap, r, MAX_LOD * roughness).rgb;
 	return specularColor * (brdfParams.x * F0 + brdfParams.y);
