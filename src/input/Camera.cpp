@@ -30,7 +30,7 @@ void Camera::reset(){
 	_right = glm::vec3(1.0,0.0,0.0);
 	_view = glm::lookAt(_eye, _center, _up);
 	_verticalAngle = 0.0f;
-	_horizontalAngle = M_PI*0.5;
+	_horizontalAngle = (float)M_PI*0.5f;
 	_radius = 1.0;
 }
 

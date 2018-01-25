@@ -38,7 +38,7 @@ Renderer::Renderer(Config & config, std::shared_ptr<Scene> & scene) : _config(co
 
 void Renderer::update(){
 	if(Input::manager().resized()){
-		resize(Input::manager().size()[0], Input::manager().size()[1]);
+		resize((int)Input::manager().size()[0], (int)Input::manager().size()[1]);
 	}
 }
 

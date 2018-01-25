@@ -14,7 +14,7 @@ Blur::Blur(int width, int height, int depth){
 	_frameBuffers = std::vector<std::shared_ptr<Framebuffer>>(depth);
 	_frameBuffersBlur = std::vector<std::shared_ptr<Framebuffer>>(depth);
 	std::map<std::string, GLuint> textures;
-	for(size_t i = 0; i < depth; ++i){
+	for(size_t i = 0; i < (size_t)depth; ++i){
 		_frameBuffers[i] = std::make_shared<Framebuffer>((int)(width/std::pow(2,i)), (int)(height/std::pow(2,i)), GL_RGB, GL_FLOAT, GL_RGB16F, GL_LINEAR, GL_CLAMP_TO_EDGE, false);
 		_frameBuffersBlur[i] = std::make_shared<Framebuffer>((int)(width/std::pow(2,i)), (int)(height/std::pow(2,i)), GL_RGB, GL_FLOAT, GL_RGB16F, GL_LINEAR, GL_CLAMP_TO_EDGE, false);
 		textures["texture" + std::to_string(i)] = _frameBuffers[i]->textureId();

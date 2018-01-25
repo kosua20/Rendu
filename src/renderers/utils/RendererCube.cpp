@@ -37,7 +37,7 @@ void RendererCube::draw() {
 		glUseProgram(_program->id());
 		glUniform1f(_program->uniform("mimapRoughness"), rr);
 		glUseProgram(0);
-		const int powe = std::pow(2, count);
+		const int powe = (int)std::pow(2, count);
 		const int localWidth = _resultFramebuffer->width()/powe;
 		const int localHeight = _resultFramebuffer->height()/powe;
 		
