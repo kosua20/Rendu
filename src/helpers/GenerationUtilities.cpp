@@ -4,8 +4,7 @@
 void Random::seed(){
 	std::random_device rd;
 	_seed = rd();
-	_mt = std::mt19937(_seed);
-	_realDist = std::uniform_real_distribution<float>(0,1);
+	Random::seed(_seed);
 }
 
 void Random::seed(unsigned int seedValue){

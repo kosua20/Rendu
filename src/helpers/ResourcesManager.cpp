@@ -7,8 +7,10 @@
 
 
 /// Singleton.
-Resources Resources::_resourcesManager = Resources("resources");
-
+Resources& Resources::manager(){
+	static Resources* res = new Resources("resources");
+	return *res;
+}
 
 Resources::Resources(const std::string & root) : _rootPath(root){
 	// Parse directory for all files contained in it and its subdirectory.
@@ -90,14 +92,13 @@ const std::string Resources::getShader(const std::string & name, const ShaderTyp
 	
 	std::string path = "";
 	const std::string extension = type == Vertex ? "vert" : "frag";
-	if(_files.count(name + "." + extension) > 0){
-		path = _files[name + "." + extension];
-	} else {
+	// Directly query correct shader text file with extension.
+	const std::string res = Resources::getTextFile(name + "." + extension);
+	// If the file is empty/doesn't exist, error.
+	if(res.empty()){
 		std::cerr << "[Resources] Unable to find " << (type == Vertex ? "vertex" : "fragment") << " shader named \"" << name << "\"." << std::endl;
-		return "";
 	}
-	return Resources::loadStringFromFile(path);
-	
+	return res;
 }
 
 const MeshInfos Resources::getMesh(const std::string & name){

@@ -60,7 +60,7 @@ private:
 		
 public:
 	
-	static Resources& manager(){ return _resourcesManager; }
+	static Resources& manager();
 	
 private:
 	
@@ -71,11 +71,7 @@ private:
 	Resources& operator= (const Resources&);
 	
 	Resources (const Resources&);
-
-	static Resources _resourcesManager;
 	
 };
-
-
 
 #endif
