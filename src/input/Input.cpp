@@ -5,7 +5,10 @@
 //#define VERBOSE_INPUT
 
 /// Singleton.
-Input Input::_inputManager = Input();
+Input& Input::manager(){
+	static Input* input = new Input();
+	return *input;
+}
 
 Input::Input(){
 	// Check if any joystick is available.
@@ -16,6 +19,7 @@ Input::Input(){
 			break;
 		}
 	}*/
+	
 }
 
 Input::~Input(){ }
@@ -130,6 +134,7 @@ void Input::update(){
 		_joysticks[_activeJoystick].update();
 	}
 	glfwPollEvents();
+	
 }
 
 

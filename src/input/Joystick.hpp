@@ -37,21 +37,21 @@ private:
 	bool configure();
 	
 	/// Joystick ID (or -1 if no joystick is connected).
-	int _id;
+	int _id = -1;
 	
 	// References to GLFW flags.
-	int _rawAxesCount;
-	int _rawButtonsCount;
-	const float * _rawAxes;
-	const unsigned char * _rawButtons;
+	int _rawAxesCount = 0;
+	int _rawButtonsCount = 0;
+	const float * _rawAxes = NULL;
+	const unsigned char * _rawButtons = NULL;
 	
 	struct JoystickButton {
-		bool pressed;
-		bool first;
+		bool pressed = false;
+		bool first = false;
 	};
 	JoystickButton _buttons[JoystickInput::JoystickInputCount];
 	
-	std::map<JoystickInput, int> _codes;
+	std::map<JoystickInput, int> _codes = {};
 	
 };
 

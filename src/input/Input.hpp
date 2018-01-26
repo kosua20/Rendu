@@ -192,7 +192,7 @@ private:
 	// Resize state.
 	unsigned int _width = 1;
 	unsigned int _height = 1;
-	bool _resized;
+	bool _resized = false;
 	
 	// Joystick state.
 	int _activeJoystick = -1;
@@ -200,27 +200,27 @@ private:
 	
 	// Mouse state.
 	struct MouseButton {
-		double x0;
-		double y0;
-		double x1;
-		double y1;
-		bool pressed;
-		bool first;
-		bool last;
+		double x0 = 0.0;
+		double y0 = 0.0;
+		double x1 = 0.0;
+		double y1 = 0.0;
+		bool pressed = false;
+		bool first = false;
+		bool last = false;
 	};
 	MouseButton _mouseButtons[GLFW_MOUSE_BUTTON_LAST+1];
 	
 	struct MouseCursor {
-		double x;
-		double y;
-		glm::vec2 scroll;
+		double x = 0.0;
+		double y = 0.0;
+		glm::vec2 scroll = glm::vec2(0.0);
 	} _mouse;
 	
 	// Keyboard state.
 	struct KeyboardKey {
-		bool pressed;
-		bool first;
-		bool last;
+		bool pressed = false;
+		bool first = false;
+		bool last = false;
 	};
 	KeyboardKey _keys[GLFW_KEY_LAST+1];
 	
@@ -229,7 +229,7 @@ private:
 		
 public:
 	
-	static Input& manager(){ return _inputManager; }
+	static Input& manager();
 	
 private:
 	
@@ -241,9 +241,6 @@ private:
 	
 	Input (const Input&);
 
-	static Input _inputManager;
-	
-	
 
 };
 
