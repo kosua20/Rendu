@@ -35,12 +35,19 @@ SUBDIRS = $(SUBDIRS_LIST:$(SRCDIR)%=$(BUILDDIR)%)
 EXECNAME = glprogram
 
 #Re-create the build dir if needed, compile and link.
-all: dirs $(EXECNAME)
+all: engine tools
+engine: dirs $(EXECNAME)
+tools: dirs $(TOOLS_FILTERED)
 
 #Linking phase: combine all objects files to generate the executable
-$(EXECNAME): $(OBJECTS)
+$(EXECNAME): $(BUILDDIR)/main.o $(OBJECTS_FILTERED) 
 	@echo "Linking $(EXECNAME)..."
-	@$(CXX) $(LIBDIR) $(OBJECTS) $(LIBS) -o $(BUILDDIR)/$(EXECNAME)
+	@$(CXX) $(LIBDIR) $(OBJECTS_FILTERED) $< $(LIBS) -o $(BUILDDIR)/$@
+	@echo "Done!"
+
+tools/% : $(BUILDDIR)/tools/%.o $(OBJECTS_FILTERED) 
+	@echo "Linking $@..."
+	@$(CXX) $(LIBDIR) $(OBJECTS_FILTERED) $< $(LIBS) -o $(BUILDDIR)/$@
 	@echo "Done!"
 
 #Compiling phase: generate the object files from the source files
@@ -52,14 +59,19 @@ $(BUILDDIR)/%.o : $(SRCDIR)/%.cpp
 run:
 	@./$(BUILDDIR)/$(EXECNAME)
 
+run/%:
+	@./$(BUILDDIR)/tools/$*
+
 #Create the build directory and its subdirectories
 dirs:
 	@mkdir -p $(SUBDIRS)
 
 #Remove the whole build directory
 .PHONY: clean
+
+#Disable automatic temporary files deletion.
+.SECONDARY:
+
 clean :
 	rm -r $(BUILDDIR)
-
-
 

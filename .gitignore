@@ -1,7 +1,7 @@
 build/
 .DS_Store
 GL_Template.wiki/
-tools/
+/tools/
 ressources/spheres/
 Debug/
 Release/

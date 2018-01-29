@@ -32,6 +32,34 @@
 		F4AE73061FF6B3F200423A10 /* Input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4AE73051FF6B3F200423A10 /* Input.cpp */; };
 		F4B11E071F5F3290002E87F1 /* Blur.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4B11E051F5F328F002E87F1 /* Blur.cpp */; };
 		F4B42D021F425B8100E485C5 /* ResourcesManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4B42D001F425B8100E485C5 /* ResourcesManager.cpp */; };
+		F4DE2B94201F9B5400433C21 /* gl3w.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F43245DD1F438BFB0090FD5F /* gl3w.cpp */; };
+		F4DE2B95201F9B5400433C21 /* Joystick.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F43EF9A91F44EDFB0073DFFB /* Joystick.cpp */; };
+		F4DE2B96201F9B5400433C21 /* Renderer2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4442CC41FFA91EC005E1E24 /* Renderer2D.cpp */; };
+		F4DE2B97201F9B5400433C21 /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4FE35431D0C47AA00B8318A /* Camera.cpp */; };
+		F4DE2B98201F9B5400433C21 /* DirectionalLight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4FA2F001E87F60D007EBA57 /* DirectionalLight.cpp */; };
+		F4DE2B99201F9B5400433C21 /* MeshUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F46162181CF9D5A400B22823 /* MeshUtilities.cpp */; };
+		F4DE2B9A201F9B5400433C21 /* ResourcesManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4B42D001F425B8100E485C5 /* ResourcesManager.cpp */; };
+		F4DE2B9B201F9B5400433C21 /* GLUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F461621A1CF9D5A400B22823 /* GLUtilities.cpp */; };
+		F4DE2B9D201F9B5400433C21 /* Gbuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F494157A1DE1D3EC0086E191 /* Gbuffer.cpp */; };
+		F4DE2B9E201F9B5400433C21 /* Framebuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F447FFC21D0DD2C30084E251 /* Framebuffer.cpp */; };
+		F4DE2B9F201F9B5400433C21 /* Blur.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4B11E051F5F328F002E87F1 /* Blur.cpp */; };
+		F4DE2BA0201F9B5400433C21 /* RendererCube.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4442CC91FFAE306005E1E24 /* RendererCube.cpp */; };
+		F4DE2BA1201F9B5400433C21 /* Renderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F461621D1CF9D5A400B22823 /* Renderer.cpp */; };
+		F4DE2BA2201F9B5400433C21 /* ScreenQuad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F447FFC41D0DF6440084E251 /* ScreenQuad.cpp */; };
+		F4DE2BA3201F9B5400433C21 /* Config.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4624D951FF7B1F600A710EB /* Config.cpp */; };
+		F4DE2BA4201F9B5400433C21 /* Input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4AE73051FF6B3F200423A10 /* Input.cpp */; };
+		F4DE2BA5201F9B5400433C21 /* AmbientQuad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F42B9FA11DE100F5005D88FB /* AmbientQuad.cpp */; };
+		F4DE2BA6201F9B5400433C21 /* Object.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F447FFBE1D0D8FBD0084E251 /* Object.cpp */; };
+		F4DE2BA7201F9B5400433C21 /* DeferredRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F44D0A9D1FFA73030051AE3E /* DeferredRenderer.cpp */; };
+		F4DE2BA8201F9B5400433C21 /* PointLight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4FA2F031E87F60D007EBA57 /* PointLight.cpp */; };
+		F4DE2BA9201F9B5400433C21 /* ProgramInfos.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F44F7F861F435AF60057CEFE /* ProgramInfos.cpp */; };
+		F4DE2BAA201F9B5400433C21 /* GenerationUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4FA2F071E87FA0F007EBA57 /* GenerationUtilities.cpp */; };
+		F4DE2BAC201F9B5400433C21 /* libglfw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F47EC10C1F446D5E000960F3 /* libglfw3.a */; };
+		F4DE2BAD201F9B5400433C21 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F41F5F681E817F3A00C18D8D /* CoreVideo.framework */; };
+		F4DE2BAE201F9B5400433C21 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F41F5F661E817F3500C18D8D /* IOKit.framework */; };
+		F4DE2BAF201F9B5400433C21 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F41F5F641E817F3100C18D8D /* Cocoa.framework */; };
+		F4DE2BB0201F9B5400433C21 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F41F5F621E817F2600C18D8D /* OpenGL.framework */; };
+		F4DE2BB6201F9B6D00433C21 /* SHExtractor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4DE2B91201F9B3F00433C21 /* SHExtractor.cpp */; };
 		F4FA2F051E87F60D007EBA57 /* DirectionalLight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4FA2F001E87F60D007EBA57 /* DirectionalLight.cpp */; };
 		F4FA2F061E87F60D007EBA57 /* PointLight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4FA2F031E87F60D007EBA57 /* PointLight.cpp */; };
 		F4FA2F091E87FA0F007EBA57 /* GenerationUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4FA2F071E87FA0F007EBA57 /* GenerationUtilities.cpp */; };
@@ -39,6 +67,15 @@
 
 /* Begin PBXCopyFilesBuildPhase section */
 		F41F5F481E817DFC00C18D8D /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		F4DE2BB1201F9B5400433C21 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = /usr/share/man/man1/;
@@ -267,6 +304,8 @@
 		F4B42D011F425B8100E485C5 /* ResourcesManager.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ResourcesManager.hpp; sourceTree = "<group>"; };
 		F4D54A131D0F3373001274DA /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		F4D7F1FF1E8EC14000163AA2 /* ssao.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = ssao.frag; sourceTree = "<group>"; };
+		F4DE2B91201F9B3F00433C21 /* SHExtractor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SHExtractor.cpp; sourceTree = "<group>"; };
+		F4DE2BB5201F9B5400433C21 /* SHExtractor */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = SHExtractor; sourceTree = BUILT_PRODUCTS_DIR; };
 		F4EDDD241CFD0047001FD2ED /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		F4EDDD251CFD0047001FD2ED /* Makefile.linux */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Makefile.linux; sourceTree = "<group>"; };
 		F4FA2F001E87F60D007EBA57 /* DirectionalLight.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectionalLight.cpp; sourceTree = "<group>"; };
@@ -301,6 +340,18 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F4DE2BAB201F9B5400433C21 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F4DE2BAC201F9B5400433C21 /* libglfw3.a in Frameworks */,
+				F4DE2BAD201F9B5400433C21 /* CoreVideo.framework in Frameworks */,
+				F4DE2BAE201F9B5400433C21 /* IOKit.framework in Frameworks */,
+				F4DE2BAF201F9B5400433C21 /* Cocoa.framework in Frameworks */,
+				F4DE2BB0201F9B5400433C21 /* OpenGL.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -308,6 +359,7 @@
 			isa = PBXGroup;
 			children = (
 				F41F5F4A1E817DFC00C18D8D /* Gl_template_in */,
+				F4DE2BB5201F9B5400433C21 /* SHExtractor */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -659,6 +711,7 @@
 				F4FA2EFF1E87F60C007EBA57 /* lights */,
 				F46161871CF9D5A400B22823 /* helpers */,
 				F44D0AA11FFA78F40051AE3E /* renderers */,
+				F4DE2B90201F9B3F00433C21 /* tools */,
 				F461621C1CF9D5A400B22823 /* main.cpp */,
 				F447FFC31D0DD2C30084E251 /* Framebuffer.hpp */,
 				F447FFC21D0DD2C30084E251 /* Framebuffer.cpp */,
@@ -689,6 +742,14 @@
 				F44F7F861F435AF60057CEFE /* ProgramInfos.cpp */,
 			);
 			path = helpers;
+			sourceTree = "<group>";
+		};
+		F4DE2B90201F9B3F00433C21 /* tools */ = {
+			isa = PBXGroup;
+			children = (
+				F4DE2B91201F9B3F00433C21 /* SHExtractor.cpp */,
+			);
+			path = tools;
 			sourceTree = "<group>";
 		};
 		F4FA2EFF1E87F60C007EBA57 /* lights */ = {
@@ -793,6 +854,23 @@
 			productReference = F41F5F4A1E817DFC00C18D8D /* Gl_template_in */;
 			productType = "com.apple.product-type.tool";
 		};
+		F4DE2B92201F9B5400433C21 /* SHExtractor */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F4DE2BB2201F9B5400433C21 /* Build configuration list for PBXNativeTarget "SHExtractor" */;
+			buildPhases = (
+				F4DE2B93201F9B5400433C21 /* Sources */,
+				F4DE2BAB201F9B5400433C21 /* Frameworks */,
+				F4DE2BB1201F9B5400433C21 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SHExtractor;
+			productName = Gl_template_in;
+			productReference = F4DE2BB5201F9B5400433C21 /* SHExtractor */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -810,6 +888,9 @@
 					F46160CD1CF9D54F00B22823 = {
 						CreatedOnToolsVersion = 7.3.1;
 					};
+					F4DE2B92201F9B5400433C21 = {
+						DevelopmentTeam = MM696H2U5V;
+					};
 				};
 			};
 			buildConfigurationList = F46160CC1CF9D54F00B22823 /* Build configuration list for PBXProject "GL_Template" */;
@@ -826,6 +907,7 @@
 			targets = (
 				F46160CD1CF9D54F00B22823 /* GL_Template_make */,
 				F41F5F491E817DFC00C18D8D /* GL_Template */,
+				F4DE2B92201F9B5400433C21 /* SHExtractor */,
 			);
 		};
 /* End PBXProject section */
@@ -861,16 +943,49 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F4DE2B93201F9B5400433C21 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F4DE2BB6201F9B6D00433C21 /* SHExtractor.cpp in Sources */,
+				F4DE2B94201F9B5400433C21 /* gl3w.cpp in Sources */,
+				F4DE2B95201F9B5400433C21 /* Joystick.cpp in Sources */,
+				F4DE2B96201F9B5400433C21 /* Renderer2D.cpp in Sources */,
+				F4DE2B97201F9B5400433C21 /* Camera.cpp in Sources */,
+				F4DE2B98201F9B5400433C21 /* DirectionalLight.cpp in Sources */,
+				F4DE2B99201F9B5400433C21 /* MeshUtilities.cpp in Sources */,
+				F4DE2B9A201F9B5400433C21 /* ResourcesManager.cpp in Sources */,
+				F4DE2B9B201F9B5400433C21 /* GLUtilities.cpp in Sources */,
+				F4DE2B9D201F9B5400433C21 /* Gbuffer.cpp in Sources */,
+				F4DE2B9E201F9B5400433C21 /* Framebuffer.cpp in Sources */,
+				F4DE2B9F201F9B5400433C21 /* Blur.cpp in Sources */,
+				F4DE2BA0201F9B5400433C21 /* RendererCube.cpp in Sources */,
+				F4DE2BA1201F9B5400433C21 /* Renderer.cpp in Sources */,
+				F4DE2BA2201F9B5400433C21 /* ScreenQuad.cpp in Sources */,
+				F4DE2BA3201F9B5400433C21 /* Config.cpp in Sources */,
+				F4DE2BA4201F9B5400433C21 /* Input.cpp in Sources */,
+				F4DE2BA5201F9B5400433C21 /* AmbientQuad.cpp in Sources */,
+				F4DE2BA6201F9B5400433C21 /* Object.cpp in Sources */,
+				F4DE2BA7201F9B5400433C21 /* DeferredRenderer.cpp in Sources */,
+				F4DE2BA8201F9B5400433C21 /* PointLight.cpp in Sources */,
+				F4DE2BA9201F9B5400433C21 /* ProgramInfos.cpp in Sources */,
+				F4DE2BAA201F9B5400433C21 /* GenerationUtilities.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
 		F41F5F4F1E817DFC00C18D8D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_WARN_COMMA = NO;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
 				CODE_SIGN_IDENTITY = "-";
 				DEVELOPMENT_TEAM = MM696H2U5V;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
 				HEADER_SEARCH_PATHS = (
 					/usr/local/include,
 					src/helpers/,
@@ -890,11 +1005,14 @@
 		F41F5F501E817DFC00C18D8D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_WARN_COMMA = NO;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
 				CODE_SIGN_IDENTITY = "-";
 				DEVELOPMENT_TEAM = MM696H2U5V;
 				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
 				HEADER_SEARCH_PATHS = (
 					/usr/local/include,
 					src/helpers/,
@@ -1041,6 +1159,59 @@
 			};
 			name = Release;
 		};
+		F4DE2BB3201F9B5400433C21 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CODE_SIGN_IDENTITY = "-";
+				DEVELOPMENT_TEAM = MM696H2U5V;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					src/helpers/,
+					src/libs/,
+					src/libs/glfw/include/,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/src/libs/glfw/lib-mac",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		F4DE2BB4201F9B5400433C21 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CODE_SIGN_IDENTITY = "-";
+				DEVELOPMENT_TEAM = MM696H2U5V;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					src/helpers/,
+					src/libs/,
+					src/libs/glfw/include/,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/src/libs/glfw/lib-mac",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1067,6 +1238,15 @@
 			buildConfigurations = (
 				F46160D11CF9D54F00B22823 /* Debug */,
 				F46160D21CF9D54F00B22823 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F4DE2BB2201F9B5400433C21 /* Build configuration list for PBXNativeTarget "SHExtractor" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F4DE2BB3201F9B5400433C21 /* Debug */,
+				F4DE2BB4201F9B5400433C21 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
