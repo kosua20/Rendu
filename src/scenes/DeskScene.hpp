@@ -45,7 +45,7 @@ void DeskScene::init(){
 	// Background creation.
 	background = Object(Object::Type::Skybox, "skybox", {}, {{"small_apartment", true }});
 	backgroundReflection = Resources::manager().getCubemap("small_apartment").id;
-	backgroundIrradiance = Resources::manager().getCubemap("small_apartment_irr").id;
+	loadSphericalHarmonics("small_apartment_shcoeffs");
 }
 
 void DeskScene::update(double fullTime, double frameTime){

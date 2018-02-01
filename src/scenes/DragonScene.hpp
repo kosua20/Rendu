@@ -49,7 +49,7 @@ void DragonScene::init(){
 	background = Object(Object::Type::Skybox, "skybox", {}, {{"corsica_beach_cube", true }});
 	
 	backgroundReflection = Resources::manager().getCubemap("corsica_beach_cube").id;
-	backgroundIrradiance = Resources::manager().getCubemap("corsica_beach_cube_irr").id;
+	loadSphericalHarmonics("corsica_beach_cube_shcoeffs");
 }
 
 void DragonScene::update(double fullTime, double frameTime){
