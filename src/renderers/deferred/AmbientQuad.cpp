@@ -12,7 +12,7 @@ AmbientQuad::AmbientQuad(){}
 
 AmbientQuad::~AmbientQuad(){}
 
-void AmbientQuad::init(std::map<std::string, GLuint> textureIds, const GLuint reflection, const GLuint irradiance){
+void AmbientQuad::init(std::map<std::string, GLuint> textureIds, const GLuint reflection, const std::vector<glm::vec3> & irradiance){
 	
 	// Ambient pass: needs the albedo, the normals, the effect and the AO result
 	std::map<std::string, GLuint> finalTextures = { {"albedoTexture", textureIds["albedoTexture"]}, {"normalTexture", textureIds["normalTexture"]}, {"depthTexture", textureIds["depthTexture"]},  {"effectsTexture", textureIds["effectsTexture"]}, {"ssaoTexture", textureIds["ssaoTexture"]}};
@@ -21,12 +21,12 @@ void AmbientQuad::init(std::map<std::string, GLuint> textureIds, const GLuint re
 	
 	// Load texture.
 	_texCubeMap = reflection;
-	_texCubeMapSmall = irradiance;
 	_texBrdfPrecalc = Resources::manager().getTexture("brdf-precomputed", false).id;
+	// Load Spherical Harmonics coefficients.
+	_program->cacheUniformArray("shCoeffs", irradiance);
 	// Bind uniform to texture slot.
 	_program->registerTexture("textureCubeMap", (int)_textureIds.size());
-	_program->registerTexture("textureCubeMapSmall", (int)_textureIds.size()+1);
-	_program->registerTexture("brdfPrecalc", (int)_textureIds.size()+2);
+	_program->registerTexture("brdfPrecalc", (int)_textureIds.size()+1);
 	
 	// Setup SSAO data, get back noise texture id, add it to the gbuffer outputs.
 	GLuint noiseTextureID = setupSSAO();
@@ -93,9 +93,6 @@ void AmbientQuad::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionM
 	glBindTexture(GL_TEXTURE_CUBE_MAP, _texCubeMap);
 	
 	glActiveTexture(GL_TEXTURE0 + (unsigned int)_textureIds.size() + 1);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, _texCubeMapSmall);
-	
-	glActiveTexture(GL_TEXTURE0 + (unsigned int)_textureIds.size() + 2);
 	glBindTexture(GL_TEXTURE_2D, _texBrdfPrecalc);
 	
 	ScreenQuad::draw();
