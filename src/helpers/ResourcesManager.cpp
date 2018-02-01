@@ -244,7 +244,7 @@ std::string Resources::trim(const std::string & str, const std::string & del){
 
 
 const std::vector<std::string> Resources::getCubemapPaths(const std::string & name){
-	const std::vector<std::string> names { name + "_nx", name + "_px", name + "_py", name + "_ny", name + "_nz", name + "_pz" };
+	const std::vector<std::string> names { name + "_px", name + "_nx", name + "_py", name + "_ny", name + "_pz", name + "_nz" };
 	std::vector<std::string> paths;
 	paths.reserve(6);
 	for(auto & faceName : names){
