@@ -44,8 +44,6 @@ private:
 	/// Load a shader of the given type from a string
 	static GLuint loadShader(const std::string & prog, GLuint type);
 	
-	static int loadEXRHelper(float **out_rgb, int *width, int *height, const char * filename, const char ** err);
-	
 	static int saveEXRHelper(const float* rgb, int width, int height, int channels, const char *  path);
 	
 public:
@@ -65,6 +63,8 @@ public:
 	static MeshInfos setupBuffers(const Mesh & mesh);
 	
 	static void saveTexture(const std::string &path, int width, int height, int channels, void *data, bool hdr);
+	
+	static int loadEXRHelper(float **out_rgb, int *width, int *height, const char * filename, const char ** err);
 	
 };
 
