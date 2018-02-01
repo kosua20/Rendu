@@ -16,8 +16,8 @@ uniform sampler2D depthTexture;
 uniform sampler2D effectsTexture;
 uniform sampler2D ssaoTexture;
 uniform samplerCube textureCubeMap;
-uniform samplerCube textureCubeMapSmall;
 uniform sampler2D brdfPrecalc;
+uniform vec3 shCoeffs[9];
 
 uniform mat4 inverseV;
 uniform vec4 projectionMatrix;
@@ -78,6 +78,13 @@ vec3 ggx(vec3 n, vec3 v, vec3 F0, float roughness){
 	return specularColor * (brdfParams.x * F0 + brdfParams.y);
 }
 
+vec3 applySH(vec3 wn){
+	return (shCoeffs[7] * wn.z + shCoeffs[4]  * wn.y + shCoeffs[8]  * wn.x + shCoeffs[3]) * wn.x +
+		   (shCoeffs[5] * wn.z - shCoeffs[8]  * wn.y + shCoeffs[1]) * wn.y +
+		   (shCoeffs[6] * wn.z + shCoeffs[2]) * wn.z +
+		    shCoeffs[0];
+}
+
 void main(){
 	
 	vec4 albedoInfo = texture(albedoTexture,In.uv);
@@ -102,9 +109,9 @@ void main(){
 	float realtimeAO = texture(ssaoTexture, In.uv).r;
 	float ao = min(realtimeAO, precomputedAO);
 	
-	// Sample illumination envmap using world space normal.
+	// Sample illumination envmap using world space normal and SH pre-computed coefficients.
 	vec3 worldNormal = normalize(vec3(inverseV * vec4(n,0.0)));
-	vec3 envLighting = texture(textureCubeMapSmall, worldNormal).rgb;
+	vec3 envLighting = applySH(worldNormal);
 	
 	// BRDF contributions.
 	// Compute F0 (fresnel coeff).
