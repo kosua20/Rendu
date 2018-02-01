@@ -39,10 +39,10 @@ public:
 	
 	float screenDensity = 1.0f;
 	
-private:
+public:
 	
-	void parseFromFile(const char * filePath, std::map<std::string, std::string> & arguments);
+	static void parseFromFile(const char * filePath, std::map<std::string, std::string> & arguments);
 	
-	void parseFromArgs(const int argc, char** argv, std::map<std::string, std::string> & arguments);
+	static void parseFromArgs(const int argc, char** argv, std::map<std::string, std::string> & arguments);
 };
 #endif /* Config_hpp */

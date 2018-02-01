@@ -89,10 +89,10 @@ void Config::parseFromFile(const char * filePath, std::map<std::string, std::str
 
 
 void Config::parseFromArgs(const int argc, char** argv, std::map<std::string, std::string> & arguments){
-	for(unsigned int argi = 1; argi < argc; ){
+	for(size_t argi = 1; argi < (size_t)argc; ){
 		// Clean the argument from any -
 		const std::string firstArg = Resources::trim(std::string(argv[argi]), "-");
-		if(argi < argc - 1){
+		if((int)argi < argc - 1){
 			// We need to know if this is a on/off argument (the next argument is also a flag starting with a -)
 			if(argv[argi+1][0] == '-'){
 				// This is a on/off argument.
@@ -111,5 +111,6 @@ void Config::parseFromArgs(const int argc, char** argv, std::map<std::string, st
 		}
 	}
 }
+
 
 
