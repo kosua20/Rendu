@@ -69,11 +69,11 @@
     <Filter Include="Source Files\renderers\utils">
       <UniqueIdentifier>{3f63231d-e171-43c4-bb3e-9b7a5f2adb23}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\tools">
+      <UniqueIdentifier>{51d2dadf-05a8-4b1d-86ca-13845cd74e77}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\helpers\MeshUtilities.cpp">
       <Filter>Source Files\helpers</Filter>
     </ClCompile>
@@ -139,6 +139,12 @@
     </ClCompile>
     <ClCompile Include="src\renderers\utils\Renderer2D.cpp">
       <Filter>Source Files\renderers\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tools\SHExtractor.cpp">
+      <Filter>Source Files\tools</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
