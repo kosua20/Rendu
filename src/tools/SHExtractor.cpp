@@ -19,8 +19,8 @@ int main(int argc, char** argv) {
 	std::map<std::string, std::string> arguments;
 	Config::parseFromArgs(argc, argv, arguments);
 	if(arguments.count("map") == 0){
-		std::cerr << "Specify path to envmap." << std::endl;
-		return 1;
+		std::cerr << "[SHExtractor] Specify path to envmap." << std::endl;
+		return 3;
 	}
 	const std::string rootPath = arguments["map"];
 
