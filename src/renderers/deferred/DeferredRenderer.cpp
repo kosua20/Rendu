@@ -23,13 +23,13 @@ DeferredRenderer::DeferredRenderer(Config & config, std::shared_ptr<Scene> & sce
 	const int renderPow2Size = (int)std::pow(2,(int)floor(log2(_renderResolution[0])));
 	_gbuffer = std::make_shared<Gbuffer>(renderWidth, renderHeight);
 	_ssaoFramebuffer = std::make_shared<Framebuffer>(renderHalfWidth, renderHalfHeight, GL_RED, GL_UNSIGNED_BYTE, GL_RED, GL_LINEAR, GL_CLAMP_TO_EDGE, false);
-	_ssaoBlurFramebuffer = std::make_shared<Framebuffer>(renderWidth, renderHeight, GL_RED, GL_UNSIGNED_BYTE, GL_RED, GL_LINEAR, GL_CLAMP_TO_EDGE, false);
 	_sceneFramebuffer = std::make_shared<Framebuffer>(renderWidth, renderHeight, GL_RGBA, GL_FLOAT, GL_RGBA16F, GL_LINEAR,GL_CLAMP_TO_EDGE, false);
 	_bloomFramebuffer = std::make_shared<Framebuffer>(renderPow2Size, renderPow2Size, GL_RGB, GL_FLOAT, GL_RGB16F, GL_LINEAR,GL_CLAMP_TO_EDGE, false);
 	_toneMappingFramebuffer = std::make_shared<Framebuffer>(renderWidth, renderHeight, GL_RGBA, GL_UNSIGNED_BYTE, GL_RGBA, GL_LINEAR,GL_CLAMP_TO_EDGE, false);
 	_fxaaFramebuffer = std::make_shared<Framebuffer>(renderWidth, renderHeight, GL_RGBA,GL_UNSIGNED_BYTE, GL_RGBA, GL_LINEAR,GL_CLAMP_TO_EDGE, false);
 	
-	_blurBuffer = std::make_shared<Blur>(renderPow2Size, renderPow2Size, 2);
+	_blurBuffer = std::make_shared<GaussianBlur>(renderPow2Size, renderPow2Size, 2, GL_RGB, GL_FLOAT, GL_RGB16F);
+	_blurSSAOBuffer = std::make_shared<BoxBlur>(renderHalfWidth, renderHalfHeight, true, GL_RED, GL_UNSIGNED_BYTE, GL_RED);
 	
 	PointLight::loadProgramAndGeometry();
 	
@@ -43,7 +43,7 @@ DeferredRenderer::DeferredRenderer(Config & config, std::shared_ptr<Scene> & sce
 	checkGLError();
 
 	std::map<std::string, GLuint> ambientTextures = _gbuffer->textureIds({ TextureType::Albedo, TextureType::Normal, TextureType::Depth, TextureType::Effects });
-	ambientTextures["ssaoTexture"] = _ssaoBlurFramebuffer->textureId();
+	ambientTextures["ssaoTexture"] = _blurSSAOBuffer->textureId();
 	_ambientScreen.init(ambientTextures, _scene->backgroundReflection, _scene->backgroundIrradiance);
 	
 	const std::vector<TextureType> includedTextures = { TextureType::Albedo, TextureType::Depth, TextureType::Normal, TextureType::Effects };
@@ -55,7 +55,7 @@ DeferredRenderer::DeferredRenderer(Config & config, std::shared_ptr<Scene> & sce
 		pointLight.init(_gbuffer->textureIds(includedTextures));
 	}
 	
-	_ssaoBlurScreen.init(_ssaoFramebuffer->textureId(), "boxblur_float");
+	
 	_bloomScreen.init(_sceneFramebuffer->textureId(), "bloom");
 	_toneMappingScreen.init(_sceneFramebuffer->textureId(), "tonemap");
 	_fxaaScreen.init(_toneMappingFramebuffer->textureId(), "fxaa");
@@ -123,10 +123,7 @@ void DeferredRenderer::draw() {
 	_ssaoFramebuffer->unbind();
 	
 	// --- SSAO blurring pass
-	_ssaoBlurFramebuffer->bind();
-	glViewport(0,0,_ssaoBlurFramebuffer->width(), _ssaoBlurFramebuffer->height());
-	_ssaoBlurScreen.draw();
-	_ssaoBlurFramebuffer->unbind();
+	_blurSSAOBuffer->process(_ssaoFramebuffer->textureId());
 	
 	// --- Gbuffer composition pass
 	_sceneFramebuffer->bind();
@@ -205,14 +202,13 @@ void DeferredRenderer::clean() const {
 	// Clean objects.
 	_ambientScreen.clean();
 	_fxaaScreen.clean();
-	_ssaoBlurScreen.clean();
 	_bloomScreen.clean();
 	_toneMappingScreen.clean();
 	_finalScreen.clean();
 	_gbuffer->clean();
 	_blurBuffer->clean();
+	_blurSSAOBuffer->clean();
 	_ssaoFramebuffer->clean();
-	_ssaoBlurFramebuffer->clean();
 	_bloomFramebuffer->clean();
 	_sceneFramebuffer->clean();
 	_toneMappingFramebuffer->clean();
@@ -228,7 +224,7 @@ void DeferredRenderer::resize(int width, int height){
 	// Resize the framebuffers.
 	_gbuffer->resize(_renderResolution);
 	_ssaoFramebuffer->resize(0.5f * _renderResolution);
-	_ssaoBlurFramebuffer->resize(_renderResolution);
+	_blurSSAOBuffer->resize(_ssaoFramebuffer->width(), _ssaoFramebuffer->height());
 	_sceneFramebuffer->resize(_renderResolution);
 	_toneMappingFramebuffer->resize(_renderResolution);
 	_fxaaFramebuffer->resize(_renderResolution);

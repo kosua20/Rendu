@@ -107,7 +107,7 @@ void main(){
 	// Compute AO.
 	float precomputedAO = infos.b;
 	float realtimeAO = texture(ssaoTexture, In.uv).r;
-	float ao = min(realtimeAO, precomputedAO);
+	float ao = realtimeAO*precomputedAO;
 	
 	// Sample illumination envmap using world space normal and SH pre-computed coefficients.
 	vec3 worldNormal = normalize(vec3(inverseV * vec4(n,0.0)));

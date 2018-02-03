@@ -14,6 +14,8 @@ out vec3 fragColor;
 
 void main(){
 	
+	// TODO: refine performances and effect.
+	
 	vec3 finalColor = texture(screenTexture,In.uv).rgb;
 	vec3 down = textureOffset(screenTexture,In.uv,ivec2(0,-1)).rgb;
 	vec3 up = textureOffset(screenTexture,In.uv,ivec2(0,1)).rgb;

@@ -4,7 +4,8 @@
 #include "../../input/Camera.hpp"
 #include "../../ScreenQuad.hpp"
 
-#include "../../Blur.hpp"
+#include "../../GaussianBlur.hpp"
+#include "../../BoxBlur.hpp"
 
 #include "../Renderer.hpp"
 
@@ -46,16 +47,16 @@ private:
 	Camera _camera;
 
 	std::shared_ptr<Gbuffer> _gbuffer;
-	std::shared_ptr<Blur> _blurBuffer;
+	std::shared_ptr<GaussianBlur> _blurBuffer;
+	std::shared_ptr<BoxBlur> _blurSSAOBuffer;
+	
 	std::shared_ptr<Framebuffer> _ssaoFramebuffer;
-	std::shared_ptr<Framebuffer> _ssaoBlurFramebuffer;
 	std::shared_ptr<Framebuffer> _sceneFramebuffer;
 	std::shared_ptr<Framebuffer> _bloomFramebuffer;
 	std::shared_ptr<Framebuffer> _toneMappingFramebuffer;
 	std::shared_ptr<Framebuffer> _fxaaFramebuffer;
 	
 	AmbientQuad _ambientScreen;
-	ScreenQuad _ssaoBlurScreen;
 	ScreenQuad _bloomScreen;
 	ScreenQuad _toneMappingScreen;
 	ScreenQuad _fxaaScreen;
