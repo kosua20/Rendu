@@ -14,9 +14,6 @@ public:
 
 	~Blur();
 
-	/// Init function
-	Blur(int width, int height, int depth);
-
 	/// Draw function
 	void process(const GLuint textureId);
 	
@@ -28,16 +25,14 @@ public:
 	/// Handle screen resizing
 	void resize(int width, int height);
 
+	GLuint textureId() const;
 	
-private:
+protected:
 	
+	Blur();
+	GLuint _finalTexture;
 	ScreenQuad _passthrough;
-	ScreenQuad _blurScreen;
-	ScreenQuad _combineScreen;
-	std::vector<std::shared_ptr<Framebuffer>> _frameBuffers;
-	std::vector<std::shared_ptr<Framebuffer>> _frameBuffersBlur;
-	std::shared_ptr<Framebuffer> _finalFramebuffer;
-
+	
 };
 
 #endif
