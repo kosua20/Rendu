@@ -31,6 +31,10 @@
 		F47EC10D1F446D5F000960F3 /* libglfw3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F47EC10C1F446D5E000960F3 /* libglfw3.a */; };
 		F48FDD67202642E2003679EA /* BoxBlur.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F48FDD65202642E1003679EA /* BoxBlur.cpp */; };
 		F48FDD6A20264602003679EA /* GaussianBlur.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F48FDD6820264602003679EA /* GaussianBlur.cpp */; };
+		F48FDD7720265296003679EA /* ImageUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F48FDD7620265296003679EA /* ImageUtilities.cpp */; };
+		F48FDD78202652B0003679EA /* GaussianBlur.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F48FDD6820264602003679EA /* GaussianBlur.cpp */; };
+		F48FDD79202652B5003679EA /* BoxBlur.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F48FDD65202642E1003679EA /* BoxBlur.cpp */; };
+		F48FDD7A202652C6003679EA /* ImageUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F48FDD7620265296003679EA /* ImageUtilities.cpp */; };
 		F4AE73061FF6B3F200423A10 /* Input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4AE73051FF6B3F200423A10 /* Input.cpp */; };
 		F4B11E071F5F3290002E87F1 /* Blur.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4B11E051F5F328F002E87F1 /* Blur.cpp */; };
 		F4B42D021F425B8100E485C5 /* ResourcesManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4B42D001F425B8100E485C5 /* ResourcesManager.cpp */; };
@@ -89,6 +93,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		F40A6F132027599000F8E171 /* stb_image_write.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stb_image_write.h; sourceTree = "<group>"; };
 		F41F5F4A1E817DFC00C18D8D /* Gl_template_in */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = Gl_template_in; path = GL_Template; sourceTree = BUILT_PRODUCTS_DIR; };
 		F41F5F621E817F2600C18D8D /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		F41F5F641E817F3100C18D8D /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
@@ -298,6 +303,8 @@
 		F48FDD7220264BC7003679EA /* box-blur-approx-3.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = "box-blur-approx-3.frag"; sourceTree = "<group>"; };
 		F48FDD7320264BC7003679EA /* box-blur-approx-2.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = "box-blur-approx-2.frag"; sourceTree = "<group>"; };
 		F48FDD7420264BC7003679EA /* box-blur-approx-4.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = "box-blur-approx-4.frag"; sourceTree = "<group>"; };
+		F48FDD7520265296003679EA /* ImageUtilities.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ImageUtilities.hpp; sourceTree = "<group>"; };
+		F48FDD7620265296003679EA /* ImageUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageUtilities.cpp; sourceTree = "<group>"; };
 		F494157A1DE1D3EC0086E191 /* Gbuffer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Gbuffer.cpp; sourceTree = "<group>"; };
 		F494157B1DE1D3EC0086E191 /* Gbuffer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Gbuffer.hpp; sourceTree = "<group>"; };
 		F496FD691E91319000A295A8 /* tonemap.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = tonemap.frag; sourceTree = "<group>"; };
@@ -575,6 +582,7 @@
 			isa = PBXGroup;
 			children = (
 				F432466E1F438BFB0090FD5F /* stb_image.h */,
+				F40A6F132027599000F8E171 /* stb_image_write.h */,
 			);
 			path = stb_image;
 			sourceTree = "<group>";
@@ -737,10 +745,12 @@
 			children = (
 				F4FA2F081E87FA0F007EBA57 /* GenerationUtilities.hpp */,
 				F4FA2F071E87FA0F007EBA57 /* GenerationUtilities.cpp */,
-				F46162191CF9D5A400B22823 /* MeshUtilities.hpp */,
-				F46162181CF9D5A400B22823 /* MeshUtilities.cpp */,
+				F48FDD7520265296003679EA /* ImageUtilities.hpp */,
+				F48FDD7620265296003679EA /* ImageUtilities.cpp */,
 				F461621B1CF9D5A400B22823 /* GLUtilities.hpp */,
 				F461621A1CF9D5A400B22823 /* GLUtilities.cpp */,
+				F46162191CF9D5A400B22823 /* MeshUtilities.hpp */,
+				F46162181CF9D5A400B22823 /* MeshUtilities.cpp */,
 				F4B42D011F425B8100E485C5 /* ResourcesManager.hpp */,
 				F4B42D001F425B8100E485C5 /* ResourcesManager.cpp */,
 				F44F7F851F435AF60057CEFE /* ProgramInfos.hpp */,
@@ -967,6 +977,7 @@
 				F41F5F5E1E817E4B00C18D8D /* AmbientQuad.cpp in Sources */,
 				F41F5F601E817E4B00C18D8D /* Object.cpp in Sources */,
 				F44D0A9F1FFA73030051AE3E /* DeferredRenderer.cpp in Sources */,
+				F48FDD7720265296003679EA /* ImageUtilities.cpp in Sources */,
 				F4FA2F061E87F60D007EBA57 /* PointLight.cpp in Sources */,
 				F44F7F871F435AF60057CEFE /* ProgramInfos.cpp in Sources */,
 				F4FA2F091E87FA0F007EBA57 /* GenerationUtilities.cpp in Sources */,
@@ -978,6 +989,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F4DE2BB6201F9B6D00433C21 /* SHExtractor.cpp in Sources */,
+				F48FDD78202652B0003679EA /* GaussianBlur.cpp in Sources */,
 				F4DE2B94201F9B5400433C21 /* gl3w.cpp in Sources */,
 				F4DE2B95201F9B5400433C21 /* Joystick.cpp in Sources */,
 				F4DE2B96201F9B5400433C21 /* Renderer2D.cpp in Sources */,
@@ -998,8 +1010,10 @@
 				F4DE2BA6201F9B5400433C21 /* Object.cpp in Sources */,
 				F4DE2BA7201F9B5400433C21 /* DeferredRenderer.cpp in Sources */,
 				F4DE2BA8201F9B5400433C21 /* PointLight.cpp in Sources */,
+				F48FDD7A202652C6003679EA /* ImageUtilities.cpp in Sources */,
 				F4DE2BA9201F9B5400433C21 /* ProgramInfos.cpp in Sources */,
 				F4DE2BAA201F9B5400433C21 /* GenerationUtilities.cpp in Sources */,
+				F48FDD79202652B5003679EA /* BoxBlur.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
