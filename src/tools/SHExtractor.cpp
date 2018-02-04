@@ -1,5 +1,5 @@
 #include "../Config.hpp"
-#include "../helpers/GLUtilities.hpp"
+#include "../helpers/ImageUtilities.hpp"
 
 #include <stdio.h>
 #include <iostream>
@@ -31,11 +31,12 @@ int main(int argc, char** argv) {
 	std::cout << "[SHExtractor] Loading envmap at path " << rootPath << " ..." << std::endl;
 	
 	float* sides[6];
-	int width = 0;
-	int height = 0;
+	unsigned int width = 0;
+	unsigned int height = 0;
+	unsigned int channels = 3;
 	for(size_t side = 0; side < 6; ++side){
-		const char *err;
-		int ret = GLUtilities::loadEXRHelper(&(sides[side]), &width, &height, paths[side].c_str(), &err);
+		
+		int ret = ImageUtilities::loadHDRImage(paths[side].c_str(), width, height, channels, &(sides[side]), false);
 		if (ret != 0) {
 			std::cerr << "[Resources] Unable to load the texture at path " << paths[side] << "." << std::endl;
 			return 1;
@@ -69,8 +70,8 @@ int main(int argc, char** argv) {
 	
 	float denom = 0.0f;
 	for(int i = 0; i < 6; ++i){
-		for(int y = 0; y < height; ++y){
-			for(int x = 0; x < width; ++x){
+		for(unsigned int y = 0; y < height; ++y){
+			for(unsigned int x = 0; x < width; ++x){
 				
 				const float v = -1.0f + 1.0f/float(width) + float(y) * 2.0f/float(width);
 				const float u = -1.0f + 1.0f/float(width) + float(x) * 2.0f/float(width);
