@@ -1,12 +1,8 @@
 #include "GLUtilities.hpp"
-
+#include "ImageUtilities.hpp"
 #include <iostream>
 #include <vector>
 #include <algorithm>
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image/stb_image.h>
-#define TINYEXR_IMPLEMENTATION
-#include <tinyexr/tinyexr.h>
 
 
 std::string getGLErrorString(GLenum error) {
@@ -161,11 +157,7 @@ TextureInfos GLUtilities::loadTexture(const std::vector<std::string>& paths, boo
 		return infos;
 	}
 	
-	infos.hdr = (paths[0].substr(paths[0].size()-4,4) == ".exr");
-	// Load and upload the texture.
-	int width = 0;
-	int height = 0;
-	
+	// Create 2D texture.
 	GLuint textureId;
 	glGenTextures(1, &textureId);
 	glBindTexture(GL_TEXTURE_2D, textureId);
@@ -180,32 +172,39 @@ TextureInfos GLUtilities::loadTexture(const std::vector<std::string>& paths, boo
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 	
+	// Image infos.
+	infos.hdr = (paths[0].substr(paths[0].size()-4,4) == ".exr");
+	unsigned int width = 0;
+	unsigned int height = 0;
+	unsigned int channels = 4;
+	
+	// For now, we assume HDR images to be 3-channels, LDR images to be 4.
+	const GLenum format = infos.hdr ? GL_RGB : GL_RGBA;
+	const GLenum type = infos.hdr ? GL_FLOAT : GL_UNSIGNED_BYTE;
+	const GLenum preciseFormat = (infos.hdr ? GL_RGB32F : (sRGB ? GL_SRGB8_ALPHA8 : GL_RGBA));
+	
 	for(unsigned int mipid = 0; mipid < paths.size(); ++mipid){
 		
 		const std::string path = paths[mipid];
 		
-		if(infos.hdr){
-			float* image;
-			const char *err;
-			int ret = loadEXRHelper(&image, &width, &height, path.c_str(), &err);
-			if (ret != 0) {
-				std::cerr << "[Resources] Unable to load the texture at path " << path << "." << std::endl;
-				return infos;
-			}
-			glTexImage2D(GL_TEXTURE_2D, mipid, GL_RGB32F, width, height, 0, GL_RGB, GL_FLOAT, &(image[0]));
-			free(image);
-		} else {
-			// We need to flip the texture.
-			stbi_set_flip_vertically_on_load(true);
-			unsigned char *image = stbi_load(path.c_str(), &width, &height, NULL, 4);
-			if(image == NULL){
-				std::cerr << "[Resources] Unable to load the texture at path " << path << "." << std::endl;
-				return infos;
-			}
+		void* image;
+		int ret = 0;
 		
-			glTexImage2D(GL_TEXTURE_2D, mipid, sRGB ? GL_SRGB8_ALPHA8 : GL_RGBA, width , height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &(image[0]));
-			free(image);
+		if(infos.hdr){
+			ret = ImageUtilities::loadHDRImage(path, width, height, channels, (float**)&image, false);
+		} else {
+			ret = ImageUtilities::loadLDRImage(path, width, height, channels, (unsigned char**)&image, true);
 		}
+		
+		if (ret != 0) {
+			std::cerr << "[Resources] Unable to load the texture at path " << path << "." << std::endl;
+			free(image);
+			return infos;
+		}
+		
+		glTexImage2D(GL_TEXTURE_2D, mipid, preciseFormat, width, height, 0, format, type, image);
+		free(image);
+		
 	}
 	
 	// If only level 0 was given, generate mipmaps pyramid automatically.
@@ -233,9 +232,6 @@ TextureInfos GLUtilities::loadTextureCubemap(const std::vector<std::vector<std::
 		return infos;
 	}
 	
-	infos.hdr = (allPaths[0][0].substr(allPaths[0][0].size()-4, 4) == ".exr");
-	
-	
 	// Create and bind texture.
 	GLuint textureId;
 	glGenTextures(1, &textureId);
@@ -254,40 +250,43 @@ TextureInfos GLUtilities::loadTextureCubemap(const std::vector<std::vector<std::
 	glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 	
-	int width = 0;
-	int height = 0;
+	// Image infos.
+	unsigned int width = 0;
+	unsigned int height = 0;
+	unsigned int channels = 4;
+	infos.hdr = (allPaths[0][0].substr(allPaths[0][0].size()-4, 4) == ".exr");
+	
+	// For now, we assume HDR images to be 3-channels, LDR images to be 4.
+	const GLenum format = infos.hdr ? GL_RGB : GL_RGBA;
+	const GLenum type = infos.hdr ? GL_FLOAT : GL_UNSIGNED_BYTE;
+	const GLenum preciseFormat = (infos.hdr ? GL_RGB32F : (sRGB ? GL_SRGB8_ALPHA8 : GL_RGBA));
 	
 	for(unsigned int mipid = 0; mipid < allPaths.size(); ++mipid){
 		
 		const std::vector<std::string> paths = allPaths[mipid];
 		// For each side, load the image and upload it in the right slot.
 		// We don't need to flip them.
-		if(infos.hdr){
-			for(size_t side = 0; side < 6; ++side){
-				float* image;
-				const char *err;
-				int ret = loadEXRHelper(&image, &width, &height, paths[side].c_str(), &err);
-				if (ret != 0) {
-					std::cerr << "[Resources] Unable to load the texture at path " << paths[side] << "." << std::endl;
-					return infos;
-				}
-				glTexImage2D(GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + side), mipid, GL_RGB32F, width, height, 0, GL_RGB, GL_FLOAT, &(image[0]));
-				free(image);
+		
+		for(size_t side = 0; side < 6; ++side){
+			void* image;
+			int ret = 0;
+			
+			if(infos.hdr){
+				ret = ImageUtilities::loadHDRImage(paths[side], width, height, channels, (float**)&image, false);
+			} else {
+				ret = ImageUtilities::loadLDRImage(paths[side], width, height, channels, (unsigned char**)&image, false);
 			}
-		} else {
-			stbi_set_flip_vertically_on_load(false);
-
-			for(size_t side = 0; side < 6; ++side){
-				int components = 4;
-				unsigned char *image = stbi_load(paths[side].c_str(), &width, &height, NULL, components);
-				if(image == NULL){
-					std::cerr << "[Resources] Unable to load the texture at path " << paths[side] << "." << std::endl;
-					return infos;
-				}
-				glTexImage2D(GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + side), mipid, sRGB ? GL_SRGB8_ALPHA8 : GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &(image[0]));
+			
+			if (ret != 0) {
+				std::cerr << "[Resources] Unable to load the texture at path " << paths[side] << "." << std::endl;
 				free(image);
+				return infos;
 			}
+			
+			glTexImage2D(GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + side), mipid, preciseFormat, width, height, 0, format, type, image);
+			free(image);
 		}
+		
 	}
 	
 	// If only level 0 was given, generate mipmaps pyramid automatically.
@@ -301,173 +300,6 @@ TextureInfos GLUtilities::loadTextureCubemap(const std::vector<std::vector<std::
 	return infos;
 }
 
-void GLUtilities::saveTexture(const std::string &path, int width, int height, int channels, void *data, bool hdr) {
-	if(hdr){
-		int res = saveEXRHelper((float*)data, width, height, channels, path.c_str());
-		if(res != TINYEXR_SUCCESS){
-			std::cerr << "[Resources] Unable to export image data to path " << path << "." << std::endl;
-		}
-	} else {
-		std::cerr << "[Resources] Export to LDR images unsupported." << std::endl;
-		assert(false);
-	}
-}
-
-
-int GLUtilities::loadEXRHelper(float **out_rgb, int *width, int *height, const char * filename, const char ** err){
-	// Code adapted from tinyEXR deprecated loadEXR.
-	EXRVersion exr_version;
-	EXRImage exr_image;
-	EXRHeader exr_header;
-	InitEXRHeader(&exr_header);
-	InitEXRImage(&exr_image);
-	
-	{
-		int ret = ParseEXRVersionFromFile(&exr_version, filename);
-		if (ret != TINYEXR_SUCCESS) {
-			return ret;
-		}
-		
-		if (exr_version.multipart || exr_version.non_image) {
-			if (err) {
-				(*err) = "Loading multipart or DeepImage is not supported yet.\n";
-			}
-			return TINYEXR_ERROR_INVALID_DATA;  // @fixme.
-		}
-	}
-	{
-		int ret = ParseEXRHeaderFromFile(&exr_header, &exr_version, filename, err);
-		if (ret != TINYEXR_SUCCESS) {
-			return ret;
-		}
-	}
-	// Read HALF channel as FLOAT.
-	for (int i = 0; i < exr_header.num_channels; i++) {
-		if (exr_header.pixel_types[i] == TINYEXR_PIXELTYPE_HALF) {
-			exr_header.requested_pixel_types[i] = TINYEXR_PIXELTYPE_FLOAT;
-		}
-	}
-	{
-		int ret = LoadEXRImageFromFile(&exr_image, &exr_header, filename, err);
-		if (ret != TINYEXR_SUCCESS) {
-			return ret;
-		}
-	}
-	// RGBA
-	int idxR = -1;
-	int idxG = -1;
-	int idxB = -1;
-	int idxA = -1;
-	for (int c = 0; c < exr_header.num_channels; c++) {
-		if (strcmp(exr_header.channels[c].name, "R") == 0) {
-			idxR = c;
-		} else if (strcmp(exr_header.channels[c].name, "G") == 0) {
-			idxG = c;
-		} else if (strcmp(exr_header.channels[c].name, "B") == 0) {
-			idxB = c;
-		} else if (strcmp(exr_header.channels[c].name, "A") == 0) {
-			idxA = c;
-		}
-	}
-	
-	if (idxR == -1 || idxG == -1 || idxB == -1) {
-		if (err) {
-			(*err) = "Channel not found\n";
-		}
-		// @todo { free exr_image }
-		return TINYEXR_ERROR_INVALID_DATA;
-	}
-	
-	(*out_rgb) = reinterpret_cast<float *>(malloc(4 * sizeof(float) * static_cast<size_t>(exr_image.width) *
-													   static_cast<size_t>(exr_image.height)));
-	for (int i = 0; i < exr_image.width * exr_image.height; i++) {
-		(*out_rgb)[3 * i + 0] =
-		reinterpret_cast<float **>(exr_image.images)[idxR][i];
-		(*out_rgb)[3 * i + 1] =
-		reinterpret_cast<float **>(exr_image.images)[idxG][i];
-		(*out_rgb)[3 * i + 2] =
-		reinterpret_cast<float **>(exr_image.images)[idxB][i];
-		// Ignore alpha.
-	}
-	
-	
-	(*width) = exr_image.width;
-	(*height) = exr_image.height;
-	
-	FreeEXRHeader(&exr_header);
-	FreeEXRImage(&exr_image);
-	
-	return TINYEXR_SUCCESS;
-}
-
-
-int GLUtilities::saveEXRHelper(const float* rgb, int width, int height, int channels, const char * path){
-	EXRHeader header;
-	InitEXRHeader(&header);
-	
-	EXRImage image;
-	InitEXRImage(&image);
-	
-	image.num_channels = 3;
-	
-	std::vector<float> images[3];
-	images[0].resize(width * height);
-	images[1].resize(width * height);
-	images[2].resize(width * height);
-	
-	// Split RGBRGBRGB... into R, G and B layer
-	for (int i = 0; i < width * height; i++) {
-		for(int j = 0; j < channels; ++j){
-			images[j][i] = rgb[channels*i+j];
-		}
-		for(int j = channels; j < 3; ++j){
-			images[j][i] = 0.0f;
-		}
-	}
-	
-	float* image_ptr[3];
-	image_ptr[0] = &(images[2].at(0)); // B
-	image_ptr[1] = &(images[1].at(0)); // G
-	image_ptr[2] = &(images[0].at(0)); // R
-	
-	image.images = (unsigned char**)image_ptr;
-	image.width = width;
-	image.height = height;
-	
-	header.num_channels = 3;
-	header.channels = (EXRChannelInfo *)malloc(sizeof(EXRChannelInfo) * header.num_channels);
-	// Must be (A)BGR order, since most of EXR viewers expect this channel order.
-#ifdef _WIN32
-	strncpy_s(header.channels[0].name, "B", 255);
-	strncpy_s(header.channels[1].name, "G", 255);
-	strncpy_s(header.channels[2].name, "R", 255);
-#else
-	strncpy(header.channels[0].name, "B", 255);
-	strncpy(header.channels[1].name, "G", 255);
-	strncpy(header.channels[2].name, "R", 255);
-#endif
-	
-	header.channels[0].name[strlen("B")] = '\0';
-	header.channels[1].name[strlen("G")] = '\0';
-	header.channels[2].name[strlen("R")] = '\0';
-	
-	header.pixel_types = (int *)malloc(sizeof(int) * header.num_channels);
-	header.requested_pixel_types = (int *)malloc(sizeof(int) * header.num_channels);
-	for (int i = 0; i < header.num_channels; i++) {
-		header.pixel_types[i] = TINYEXR_PIXELTYPE_FLOAT; // pixel type of input image
-		header.requested_pixel_types[i] = TINYEXR_PIXELTYPE_HALF; // pixel type of output image to be stored in .EXR
-	}
-	
-	const char* err;
-	int ret = SaveEXRImageToFile(&image, &header, path, &err);
-	
-	free(header.channels);
-	free(header.pixel_types);
-	free(header.requested_pixel_types);
-	
-	return ret;
-	
-}
 
 MeshInfos GLUtilities::setupBuffers(const Mesh & mesh){
 	MeshInfos infos;
@@ -558,6 +390,60 @@ MeshInfos GLUtilities::setupBuffers(const Mesh & mesh){
 	infos.eId = ebo;
 	infos.count = (GLsizei)mesh.indices.size();
 	return infos;
+}
+
+void GLUtilities::saveDefaultFramebuffer(const unsigned int width, const unsigned int height, const std::string & path){
+	
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	GLUtilities::savePixels(GL_UNSIGNED_BYTE, GL_RGBA, width, height, 4, path, true);
+	
+}
+
+void GLUtilities::saveFramebuffer(const std::shared_ptr<Framebuffer> & framebuffer, const unsigned int width, const unsigned int height, const std::string & path, const bool ignoreAlpha){
+	
+	const GLenum type = framebuffer->type();
+	const GLenum format = framebuffer->format();
+	const unsigned int components = (format == GL_RED ? 1 : (format == GL_RG ? 2 : (format == GL_RGB ? 3 : 4)));
+	
+	framebuffer->bind();
+	
+	GLUtilities::savePixels(type, format, width, height, components, path, ignoreAlpha);
+	
+	framebuffer->unbind();
+	
+}
+
+void GLUtilities::savePixels(const GLenum type, const GLenum format, const unsigned int width, const unsigned int height, const unsigned int components, const std::string & path, const bool ignoreAlpha){
+	
+	glFlush();
+	glFinish();
+	
+	const bool hdr = type == GL_FLOAT;
+	
+	std::cout << "[OpenGL] Saving framebuffer to file " << path << (hdr ? ".exr" : ".png") << "... " << std::flush;
+	int ret = 0;
+	if(hdr){
+		// Get back values.
+		GLfloat * data = new GLfloat[width * height * components];
+		glReadPixels(0, 0, width, height, format, type, &data[0]);
+		// Save data.
+		ret = ImageUtilities::saveHDRImage(path + ".exr", width, height, components, (float*)data, true, ignoreAlpha);
+		delete[] data;
+	} else {
+		// Get back values.
+		GLubyte * data = new GLubyte[width * height * components];
+		glReadPixels(0, 0, width, height, format, type, &data[0]);
+		// Save data.
+		ret = ImageUtilities::saveLDRImage(path + ".png", width, height, components, (unsigned char*)data, true, ignoreAlpha);
+		delete[] data;
+	}
+	
+	if(ret != 0){
+		std::cerr << "Error." << std::endl;
+	} else {
+		std::cout << "Done." << std::endl;
+	}
+	
 }
 
 

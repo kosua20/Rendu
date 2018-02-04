@@ -1,6 +1,7 @@
-#ifndef ProgramUtilities_h
-#define ProgramUtilities_h
+#ifndef GLUtilities_h
+#define GLUtilities_h
 #include "MeshUtilities.hpp"
+#include "../Framebuffer.hpp"
 #include <gl3w/gl3w.h>
 #include <string>
 #include <vector>
@@ -44,7 +45,7 @@ private:
 	/// Load a shader of the given type from a string
 	static GLuint loadShader(const std::string & prog, GLuint type);
 	
-	static int saveEXRHelper(const float* rgb, int width, int height, int channels, const char *  path);
+	static void savePixels(const GLenum type, const GLenum format, const unsigned int width, const unsigned int height, const unsigned int components, const std::string & path, const bool ignoreAlpha);
 	
 public:
 	
@@ -62,9 +63,10 @@ public:
 	// Mesh loading.
 	static MeshInfos setupBuffers(const Mesh & mesh);
 	
-	static void saveTexture(const std::string &path, int width, int height, int channels, void *data, bool hdr);
+	// Framebuffer saving to disk.
+	static void saveFramebuffer(const std::shared_ptr<Framebuffer> & framebuffer, const unsigned int width, const unsigned int height, const std::string & path, const bool ignoreAlpha = false);
 	
-	static int loadEXRHelper(float **out_rgb, int *width, int *height, const char * filename, const char ** err);
+	static void saveDefaultFramebuffer(const unsigned int width, const unsigned int height, const std::string & path);
 	
 };
 
