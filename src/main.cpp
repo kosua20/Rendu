@@ -141,7 +141,7 @@ int main(int argc, char** argv) {
 		if(Input::manager().triggered(Input::KeyP)){
 			Resources::manager().reload();
 		}
-		// We separate punctual events from the main phsyic/movement update loop.
+		// We separate punctual events from the main physics/movement update loop.
 		renderer->update();
 		
 		// Compute the time elapsed since last frame

@@ -1,6 +1,8 @@
 #include "RendererCube.hpp"
 #include "../../input/Input.hpp"
 
+#include "../../helpers/GLUtilities.hpp"
+
 #include <stdio.h>
 #include <iostream>
 #include <vector>
@@ -37,13 +39,9 @@ void RendererCube::draw() {
 		glUseProgram(_program->id());
 		glUniform1f(_program->uniform("mimapRoughness"), rr);
 		glUseProgram(0);
-		const int powe = (int)std::pow(2, count);
-		const int localWidth = _resultFramebuffer->width()/powe;
-		const int localHeight = _resultFramebuffer->height()/powe;
-		
-		const GLenum type = _resultFramebuffer->type();
-		const GLenum format = _resultFramebuffer->format();
-		const unsigned int components = (format == GL_RED ? 1 : (format == GL_RG ? 2 : (format == GL_RGB ? 3 : 4)));
+		const unsigned int powe = (int)std::pow(2, count);
+		const unsigned int localWidth = _resultFramebuffer->width()/powe;
+		const unsigned int localHeight = _resultFramebuffer->height()/powe;
 		
 		_resultFramebuffer->bind();
 		glViewport(0,0,localWidth,localHeight);
@@ -64,21 +62,9 @@ void RendererCube::draw() {
 			glFlush();
 			glFinish();
 			
-			if(type == GL_FLOAT){
-				// Get back values.
-				float * data = new float[localWidth*localHeight*components];
-				glReadPixels(0,0,localWidth,localHeight, format, type, &data[0]);
-				// Save data.
-				GLUtilities::saveTexture(_outputPath + "-" + std::to_string(rr) + "-" + suffixes[i] +  ".exr" , localWidth,localHeight, components, (void*)data, true);
-				data = NULL;
-			} else if (type == GL_UNSIGNED_BYTE){
-				// Get back values.
-				GLubyte * data = new GLubyte[localWidth*localHeight*components];
-				glReadPixels(0,0, localWidth,localHeight, format, type, &data[0]);
-				// Save data.
-				GLUtilities::saveTexture(_outputPath + "-" + std::to_string(rr) + "-" + suffixes[i] +  ".png",  localWidth,localHeight, components, (void*)data, false);
-				delete[] data; data = NULL;
-			}
+			const std::string outputPathComplete = _outputPath + "-" + std::to_string(rr) + "-" + suffixes[i];
+			GLUtilities::saveFramebuffer(_resultFramebuffer, localWidth, localHeight, outputPathComplete);
+			
 		}
 		
 		_resultFramebuffer->unbind();
