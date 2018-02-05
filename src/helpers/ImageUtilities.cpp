@@ -13,6 +13,19 @@
 #define TINYEXR_IMPLEMENTATION
 #include <tinyexr/tinyexr.h>
 
+bool ImageUtilities::isHDR(const std::string & path){
+	return path.substr(path.size()-4,4) == ".exr";
+}
+
+int ImageUtilities::loadImage(const std::string & path, unsigned int & width, unsigned int & height, unsigned int & channels, void **data, const bool flip){
+	int ret = 0;
+	if(isHDR(path)){
+		ret = ImageUtilities::loadHDRImage(path, width, height, channels, (float**)data, flip);
+	} else {
+		ret = ImageUtilities::loadLDRImage(path, width, height, channels, (unsigned char**)data, flip);
+	}
+	return ret;
+}
 
 int ImageUtilities::loadLDRImage(const std::string &path, unsigned int & width, unsigned int & height, unsigned int & channels, unsigned char **data, const bool flip){
 	

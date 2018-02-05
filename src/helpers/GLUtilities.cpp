@@ -173,7 +173,7 @@ TextureInfos GLUtilities::loadTexture(const std::vector<std::string>& paths, boo
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 	
 	// Image infos.
-	infos.hdr = (paths[0].substr(paths[0].size()-4,4) == ".exr");
+	infos.hdr = ImageUtilities::isHDR(paths[0]);
 	unsigned int width = 0;
 	unsigned int height = 0;
 	unsigned int channels = 4;
@@ -188,13 +188,7 @@ TextureInfos GLUtilities::loadTexture(const std::vector<std::string>& paths, boo
 		const std::string path = paths[mipid];
 		
 		void* image;
-		int ret = 0;
-		
-		if(infos.hdr){
-			ret = ImageUtilities::loadHDRImage(path, width, height, channels, (float**)&image, false);
-		} else {
-			ret = ImageUtilities::loadLDRImage(path, width, height, channels, (unsigned char**)&image, true);
-		}
+		int ret = ImageUtilities::loadImage(path, width, height, channels, &image, !infos.hdr);
 		
 		if (ret != 0) {
 			std::cerr << "[Resources] Unable to load the texture at path " << path << "." << std::endl;
@@ -254,7 +248,7 @@ TextureInfos GLUtilities::loadTextureCubemap(const std::vector<std::vector<std::
 	unsigned int width = 0;
 	unsigned int height = 0;
 	unsigned int channels = 4;
-	infos.hdr = (allPaths[0][0].substr(allPaths[0][0].size()-4, 4) == ".exr");
+	infos.hdr = ImageUtilities::isHDR(allPaths[0][0]);
 	
 	// For now, we assume HDR images to be 3-channels, LDR images to be 4.
 	const GLenum format = infos.hdr ? GL_RGB : GL_RGBA;
@@ -269,14 +263,7 @@ TextureInfos GLUtilities::loadTextureCubemap(const std::vector<std::vector<std::
 		
 		for(size_t side = 0; side < 6; ++side){
 			void* image;
-			int ret = 0;
-			
-			if(infos.hdr){
-				ret = ImageUtilities::loadHDRImage(paths[side], width, height, channels, (float**)&image, false);
-			} else {
-				ret = ImageUtilities::loadLDRImage(paths[side], width, height, channels, (unsigned char**)&image, false);
-			}
-			
+			int ret = ImageUtilities::loadImage(paths[side], width, height, channels, &image, false);
 			if (ret != 0) {
 				std::cerr << "[Resources] Unable to load the texture at path " << paths[side] << "." << std::endl;
 				free(image);
