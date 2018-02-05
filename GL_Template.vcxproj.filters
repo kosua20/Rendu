@@ -146,6 +146,15 @@
     <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\helpers\ImageUtilities.cpp">
+      <Filter>Source Files\helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GaussianBlur.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BoxBlur.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\libs\gl3w\gl3w.h">
@@ -246,6 +255,18 @@
     </ClInclude>
     <ClInclude Include="src\renderers\utils\Renderer2D.hpp">
       <Filter>Source Files\renderers\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\helpers\ImageUtilities.hpp">
+      <Filter>Source Files\helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BoxBlur.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GaussianBlur.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\libs\stb_image\stb_image_write.h">
+      <Filter>Source Files\libs\stb_image</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -216,10 +216,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Blur.cpp" />
+    <ClCompile Include="src\BoxBlur.cpp" />
     <ClCompile Include="src\Config.cpp" />
     <ClCompile Include="src\Framebuffer.cpp" />
+    <ClCompile Include="src\GaussianBlur.cpp" />
     <ClCompile Include="src\helpers\GenerationUtilities.cpp" />
     <ClCompile Include="src\helpers\GLUtilities.cpp" />
+    <ClCompile Include="src\helpers\ImageUtilities.cpp" />
     <ClCompile Include="src\helpers\MeshUtilities.cpp" />
     <ClCompile Include="src\helpers\ProgramInfos.cpp" />
     <ClCompile Include="src\helpers\ResourcesManager.cpp" />
@@ -250,10 +253,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Blur.hpp" />
+    <ClInclude Include="src\BoxBlur.hpp" />
     <ClInclude Include="src\Config.hpp" />
     <ClInclude Include="src\Framebuffer.hpp" />
+    <ClInclude Include="src\GaussianBlur.hpp" />
     <ClInclude Include="src\helpers\GenerationUtilities.hpp" />
     <ClInclude Include="src\helpers\GLUtilities.hpp" />
+    <ClInclude Include="src\helpers\ImageUtilities.hpp" />
     <ClInclude Include="src\helpers\MeshUtilities.hpp" />
     <ClInclude Include="src\helpers\ProgramInfos.hpp" />
     <ClInclude Include="src\helpers\ResourcesManager.hpp" />
@@ -264,6 +270,7 @@
     <ClInclude Include="src\libs\gl3w\glcorearb.h" />
     <ClInclude Include="src\libs\glm\glm.hpp" />
     <ClInclude Include="src\libs\stb_image\stb_image.h" />
+    <ClInclude Include="src\libs\stb_image\stb_image_write.h" />
     <ClInclude Include="src\libs\tinydir\tinydir.h" />
     <ClInclude Include="src\libs\tinyexr\tinyexr.h" />
     <ClInclude Include="src\lights\DirectionalLight.hpp" />

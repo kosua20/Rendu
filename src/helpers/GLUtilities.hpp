@@ -5,7 +5,7 @@
 #include <gl3w/gl3w.h>
 #include <string>
 #include <vector>
-
+#include <memory>
 
 /// This macro is used to check for OpenGL errors with access to the file and line number where the error is detected.
 

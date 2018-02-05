@@ -5,6 +5,9 @@
 #include <algorithm>
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image/stb_image.h>
+#ifdef _WIN32
+#define STBI_MSC_SECURE_CRT
+#endif
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image/stb_image_write.h>
 #define TINYEXR_IMPLEMENTATION
@@ -125,7 +128,7 @@ int ImageUtilities::saveLDRImage(const std::string &path, const unsigned int wid
 	int ret = 1;
 	if(ignoreAlpha && channels == 4){
 		unsigned char * newData = new unsigned char[width*height*4];
-		for(int i = 0; i < width*height; ++i){
+		for(unsigned int i = 0; i < width*height; ++i){
 			newData[4*i+0] = data[4*i+0];
 			newData[4*i+1] = data[4*i+1];
 			newData[4*i+2] = data[4*i+2];
@@ -181,7 +184,7 @@ int ImageUtilities::saveHDRImage(const std::string &path, const unsigned int wid
 				images[1][destIndex] = data[static_cast<size_t>(components) * sourceIndex + 1];
 				images[2][destIndex] = data[static_cast<size_t>(components) * sourceIndex + 2];
 				if (components == 4) {
-					images[3][destIndex] = ignoreAlpha ? 1.0 : data[static_cast<size_t>(components) * sourceIndex + 3];
+					images[3][destIndex] = ignoreAlpha ? 1.0f : data[static_cast<size_t>(components) * sourceIndex + 3];
 				}
 			}
 		}
