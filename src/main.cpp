@@ -1,15 +1,15 @@
 #include <gl3w/gl3w.h>
 #include <GLFW/glfw3.h> // to set up the OpenGL context and manage window lifecycle and inputs
 
-#include <stdio.h>
-#include <iostream>
-#include <memory>
-
 #include "helpers/GenerationUtilities.hpp"
 #include "input/Input.hpp"
 #include "scenes/Scenes.hpp"
 #include "renderers/deferred/DeferredRenderer.hpp"
 #include "renderers/utils/RendererCube.hpp"
+#include "helpers/Logger.hpp"
+
+#include <stdio.h>
+#include <memory>
 
 /// Callbacks
 
@@ -48,7 +48,7 @@ int main(int argc, char** argv) {
 	
 	// Initialize glfw, which will create and setup an OpenGL context.
 	if (!glfwInit()) {
-		std::cerr << "[OpenGL] Could not start GLFW3" << std::endl;
+		Log::Error() << Log::OpenGL << "Could not start GLFW3" << std::endl;
 		return 1;
 	}
 
@@ -72,7 +72,7 @@ int main(int argc, char** argv) {
 	}
 	
 	if (!window) {
-		std::cerr << "[OpenGL] Could not open window with GLFW3" << std::endl;
+		Log::Error() << Log::OpenGL << "Could not open window with GLFW3" << std::endl;
 		glfwTerminate();
 		return 1;
 	}
@@ -81,11 +81,11 @@ int main(int argc, char** argv) {
 	glfwMakeContextCurrent(window);
 
 	if (gl3wInit()) {
-		std::cerr << "[OpenGL] Failed to initialize OpenGL" << std::endl;
+		Log::Error() << Log::OpenGL << "Failed to initialize OpenGL" << std::endl;
 		return -1;
 	}
 	if (!gl3wIsSupported(3, 2)) {
-		std::cerr << "[OpenGL] OpenGL 3.2 not supported\n" << std::endl;
+		Log::Error() << Log::OpenGL << "OpenGL 3.2 not supported\n" << std::endl;
 		return -1;
 	}
 
@@ -112,13 +112,14 @@ int main(int argc, char** argv) {
 	// Compute point density by computing the ratio.
 	config.screenDensity = (float)width/(float)config.initialWidth;
 	
+	
 	// Initialize random generator;
 	Random::seed();
 	// Query the renderer identifier, and the supported OpenGL version.
 	const GLubyte* rendererString = glGetString(GL_RENDERER);
 	const GLubyte* versionString = glGetString(GL_VERSION);
-	std::cout << "[OpenGL] Internal renderer: " << rendererString << "." << std::endl;
-	std::cout << "[OpenGL] Version supported: " << versionString << "." << std::endl;
+	Log::Info() << Log::OpenGL << "Internal renderer: " << rendererString << "." << std::endl;
+	Log::Info() << Log::OpenGL << "Version supported: " << versionString << "." << std::endl;
 	
 	// Create the scene and the renderer.
 	std::shared_ptr<Scene> scene(new DeskScene());
@@ -180,7 +181,7 @@ int main(int argc, char** argv) {
 	glfwTerminate();
 	
 	if(config.oneShot){
-		std::cout << "[OpenGL] Shot done." << std::endl;
+		Log::Info() << Log::OpenGL << "Shot done." << std::endl;
 	}
 	return 0;
 }

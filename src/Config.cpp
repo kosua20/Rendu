@@ -7,9 +7,9 @@
 //
 
 #include "Config.hpp"
-#include "ResourcesManager.hpp"
+#include "helpers/ResourcesManager.hpp"
+#include "helpers/Logger.hpp"
 #include <string>
-#include <iostream>
 #include <sstream>
 
 Config::Config(int argc, char** argv){
@@ -27,7 +27,7 @@ Config::Config(int argc, char** argv){
 	if(potentialConfig == "c" || potentialConfig == "config"){
 		// Safety check.
 		if(argc < 3){
-			std::cerr << "[Config] Missing path for --config argument. Using default config." << std::endl;
+			Log::Error() << Log::Config << "Missing path for --config argument. Using default config." << std::endl;
 			return;
 		}
 		parseFromFile(argv[2], arguments);
@@ -66,7 +66,7 @@ void Config::parseFromFile(const char * filePath, std::map<std::string, std::str
 	// Load config from given file.
 	const std::string configContent = Resources::loadStringFromFile(filePath);
 	if(configContent.empty()){
-		std::cerr << "[Config] Missing/empty config file. Using default config." << std::endl;
+		Log::Error() << Log::Config << "Missing/empty config file. Using default config." << std::endl;
 		return;
 	}
 	std::istringstream lines(configContent);
