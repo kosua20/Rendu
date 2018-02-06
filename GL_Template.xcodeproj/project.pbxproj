@@ -38,6 +38,8 @@
 		F4AE73061FF6B3F200423A10 /* Input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4AE73051FF6B3F200423A10 /* Input.cpp */; };
 		F4B11E071F5F3290002E87F1 /* Blur.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4B11E051F5F328F002E87F1 /* Blur.cpp */; };
 		F4B42D021F425B8100E485C5 /* ResourcesManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4B42D001F425B8100E485C5 /* ResourcesManager.cpp */; };
+		F4BA511420290B950064C666 /* Logger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4BA511220290B950064C666 /* Logger.cpp */; };
+		F4BA511520290B950064C666 /* Logger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4BA511220290B950064C666 /* Logger.cpp */; };
 		F4DE2B94201F9B5400433C21 /* gl3w.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F43245DD1F438BFB0090FD5F /* gl3w.cpp */; };
 		F4DE2B95201F9B5400433C21 /* Joystick.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F43EF9A91F44EDFB0073DFFB /* Joystick.cpp */; };
 		F4DE2B96201F9B5400433C21 /* Renderer2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4442CC41FFA91EC005E1E24 /* Renderer2D.cpp */; };
@@ -320,6 +322,8 @@
 		F4B11E0C1F5F5909002E87F1 /* bloom.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = bloom.frag; sourceTree = "<group>"; };
 		F4B42D001F425B8100E485C5 /* ResourcesManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ResourcesManager.cpp; sourceTree = "<group>"; };
 		F4B42D011F425B8100E485C5 /* ResourcesManager.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ResourcesManager.hpp; sourceTree = "<group>"; };
+		F4BA511220290B950064C666 /* Logger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Logger.cpp; sourceTree = "<group>"; };
+		F4BA511320290B950064C666 /* Logger.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Logger.hpp; sourceTree = "<group>"; };
 		F4D54A131D0F3373001274DA /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		F4D7F1FF1E8EC14000163AA2 /* ssao.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = ssao.frag; sourceTree = "<group>"; };
 		F4DE2B91201F9B3F00433C21 /* SHExtractor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SHExtractor.cpp; sourceTree = "<group>"; };
@@ -749,6 +753,8 @@
 				F48FDD7620265296003679EA /* ImageUtilities.cpp */,
 				F461621B1CF9D5A400B22823 /* GLUtilities.hpp */,
 				F461621A1CF9D5A400B22823 /* GLUtilities.cpp */,
+				F4BA511320290B950064C666 /* Logger.hpp */,
+				F4BA511220290B950064C666 /* Logger.cpp */,
 				F46162191CF9D5A400B22823 /* MeshUtilities.hpp */,
 				F46162181CF9D5A400B22823 /* MeshUtilities.cpp */,
 				F4B42D011F425B8100E485C5 /* ResourcesManager.hpp */,
@@ -974,6 +980,7 @@
 				F41F5F5D1E817E4B00C18D8D /* ScreenQuad.cpp in Sources */,
 				F4624D971FF7B1F600A710EB /* Config.cpp in Sources */,
 				F4AE73061FF6B3F200423A10 /* Input.cpp in Sources */,
+				F4BA511420290B950064C666 /* Logger.cpp in Sources */,
 				F41F5F5E1E817E4B00C18D8D /* AmbientQuad.cpp in Sources */,
 				F41F5F601E817E4B00C18D8D /* Object.cpp in Sources */,
 				F44D0A9F1FFA73030051AE3E /* DeferredRenderer.cpp in Sources */,
@@ -1007,6 +1014,7 @@
 				F4DE2BA3201F9B5400433C21 /* Config.cpp in Sources */,
 				F4DE2BA4201F9B5400433C21 /* Input.cpp in Sources */,
 				F4DE2BA5201F9B5400433C21 /* AmbientQuad.cpp in Sources */,
+				F4BA511520290B950064C666 /* Logger.cpp in Sources */,
 				F4DE2BA6201F9B5400433C21 /* Object.cpp in Sources */,
 				F4DE2BA7201F9B5400433C21 /* DeferredRenderer.cpp in Sources */,
 				F4DE2BA8201F9B5400433C21 /* PointLight.cpp in Sources */,
@@ -1023,7 +1031,7 @@
 		F41F5F4F1E817DFC00C18D8D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_COMMA = NO;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
 				CODE_SIGN_IDENTITY = "-";
@@ -1049,7 +1057,7 @@
 		F41F5F501E817DFC00C18D8D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_COMMA = NO;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
 				CODE_SIGN_IDENTITY = "-";
@@ -1206,7 +1214,7 @@
 		F4DE2BB3201F9B5400433C21 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_COMMA = NO;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
 				CODE_SIGN_IDENTITY = "-";
@@ -1232,7 +1240,7 @@
 		F4DE2BB4201F9B5400433C21 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_COMMA = NO;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
 				CODE_SIGN_IDENTITY = "-";
