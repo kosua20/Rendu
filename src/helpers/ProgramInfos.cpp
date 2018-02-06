@@ -2,8 +2,7 @@
 
 #include "GLUtilities.hpp"
 #include "ResourcesManager.hpp"
-
-#include <iostream>
+#include "Logger.hpp"
 #include <fstream>
 
 
@@ -116,29 +115,29 @@ void ProgramInfos::validate(){
 	glValidateProgram(_id);
 	int status = -2;
 	glGetProgramiv(_id, GL_VALIDATE_STATUS, &status);
-	std::cerr << "[OpenGL] Program with shaders: " << _vertexName << ", " << _fragmentName << " is " << (status == GL_TRUE ? "" : "not ") << "validated." << std::endl;
+	Log::Error() << Log::OpenGL << "Program with shaders: " << _vertexName << ", " << _fragmentName << " is " << (status == GL_TRUE ? "" : "not ") << "validated." << std::endl;
 	int infoLogLength = 0;
 	glGetProgramiv(_id, GL_INFO_LOG_LENGTH, &infoLogLength);
 	if(infoLogLength <= 0){
-		std::cerr << "[OpenGL] No log for validation." << std::endl;
+		Log::Error() << Log::OpenGL << "No log for validation." << std::endl;
 		return;
 	}
 	std::vector<char> infoLog(infoLogLength);
 	glGetProgramInfoLog(_id, infoLogLength, NULL, &infoLog[0]);
-	std::cerr << "[OpenGL] Log for validation: " << &infoLog[0] << std::endl;
+	Log::Error() << Log::OpenGL << "Log for validation: " << &infoLog[0] << std::endl;
 }
 
 void ProgramInfos::saveBinary(const std::string & outputPath){
 	int count = 0;
 	glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &count);
 	if (count <= 0) {
-		std::cerr << "[OpenGL] GL driver does not support program binary export." << std::endl;
+		Log::Error() << Log::OpenGL << "GL driver does not support program binary export." << std::endl;
 		return;
 	}
 	int length = 0;
 	glGetProgramiv(_id, GL_PROGRAM_BINARY_LENGTH, &length);
 	if (length <= 0) {
-		std::cerr << "[OpenGL] No binary for program using shaders (" << _vertexName << "," << _fragmentName << ")." << std::endl;
+		Log::Error() << Log::OpenGL << "No binary for program using shaders (" << _vertexName << "," << _fragmentName << ")." << std::endl;
 		return;
 	}
 	GLenum format;

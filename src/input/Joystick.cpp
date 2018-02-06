@@ -1,8 +1,9 @@
 #include "Joystick.hpp"
 #include "../helpers/ResourcesManager.hpp"
+#include "../helpers/Logger.hpp"
+
 #include <GLFW/glfw3.h>
 #include <stdio.h>
-#include <iostream>
 #include <sstream>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -87,7 +88,7 @@ bool Joystick::configure(){
 	const std::string settingsContent = Resources::manager().getTextFile("Controller.map");
 	// If no mapping found, disable the controller.
 	if(settingsContent.empty()){
-		std::cerr << "[Input] No settings found for the controller." << std::endl;
+		Log::Error() << Log::Input << "No settings found for the controller." << std::endl;
 		_id = -1;
 		return false;
 	}
@@ -129,7 +130,7 @@ bool Joystick::configure(){
 			_codes[SpeedDown] = val;
 		} else {
 			// Unknown key, ignore.
-			std::cerr << "[Input] Joystick configuration file contains unknown key: " << key << "." << std::endl;
+			Log::Error() << Log::Input << "Joystick configuration file contains unknown key: " << key << "." << std::endl;
 		}
 	}
 	return true;

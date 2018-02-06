@@ -1,8 +1,7 @@
 #include "../Config.hpp"
 #include "../helpers/ImageUtilities.hpp"
-
+#include "../helpers/Logger.hpp"
 #include <stdio.h>
-#include <iostream>
 #include <memory>
 #include <string>
 #include <map>
@@ -19,7 +18,7 @@ int main(int argc, char** argv) {
 	std::map<std::string, std::string> arguments;
 	Config::parseFromArgs(argc, argv, arguments);
 	if(arguments.count("map") == 0){
-		std::cerr << "[SHExtractor] Specify path to envmap." << std::endl;
+		Log::Error() << Log::Utilities << "Specify path to envmap." << std::endl;
 		return 3;
 	}
 	const std::string rootPath = arguments["map"];
@@ -28,7 +27,7 @@ int main(int argc, char** argv) {
 	const std::vector<std::string> paths { rootPath + "_px.exr", rootPath + "_nx.exr", rootPath + "_py.exr", rootPath + "_ny.exr", rootPath + "_pz.exr", rootPath + "_nz.exr" };
 	
 	/// Load cubemap sides.
-	std::cout << "[SHExtractor] Loading envmap at path " << rootPath << " ..." << std::endl;
+	Log::Info() << Log::Utilities << "Loading envmap at path " << rootPath << " ..." << std::endl;
 	
 	float* sides[6];
 	unsigned int width = 0;
@@ -36,9 +35,13 @@ int main(int argc, char** argv) {
 	unsigned int channels = 3;
 	for(size_t side = 0; side < 6; ++side){
 		
-		int ret = ImageUtilities::loadHDRImage(paths[side].c_str(), width, height, channels, &(sides[side]), false);
+		if(!ImageUtilities::isHDR(paths[side])){
+			Log::Error() << Log::Resources << "Non HDR image at path " << paths[side] << "." << std::endl;
+			return 4;
+		}
+		int ret = ImageUtilities::loadImage(paths[side].c_str(), width, height, channels, (void**)&(sides[side]), false);
 		if (ret != 0) {
-			std::cerr << "[Resources] Unable to load the texture at path " << paths[side] << "." << std::endl;
+			Log::Error() << Log::Resources << "Unable to load the texture at path " << paths[side] << "." << std::endl;
 			return 1;
 		}
 		
@@ -56,7 +59,7 @@ int main(int argc, char** argv) {
 	
 
 	/// Spherical harmonics coefficients.
-	std::cout << "[SHExtractor] Computing SH coefficients." << std::endl;
+	Log::Info() << Log::Utilities << "Computing SH coefficients." << std::endl;
 	glm::vec3 LCoeffs[9];
 	for(int i = 0; i < 9; ++i){
 		LCoeffs[i] = glm::vec3(0.0f,0.0f,0.0f);
@@ -92,24 +95,24 @@ int main(int argc, char** argv) {
 														 sides[i][(y*width+x)*3+1],
 														 sides[i][(y*width+x)*3+2]);
 				
-				 // Y0,0  = 0.282095
-				 LCoeffs[0] += hdr * y0;
-				 // Y1,-1 = 0.488603 y
-				 LCoeffs[1] += hdr * (y1 * pos[1]);
-				 // Y1,0  = 0.488603 z
-				 LCoeffs[2] += hdr * (y1 * pos[2]);
-				 // Y1,1  = 0.488603 x
-				 LCoeffs[3] += hdr * (y1 * pos[0]);
-				 // Y2,-2 = 1.092548 xy
-				 LCoeffs[4] += hdr * (y2 * (pos[0] * pos[1]));
-				 // Y2,-1 = 1.092548 yz
-				 LCoeffs[5] += hdr * (y2 * pos[1] * pos[2]);
-				 // Y2,0  = 0.315392 (3z^2 - 1)
-				 LCoeffs[6] += hdr * (y3 * (3.0f * pos[2] * pos[2] - 1.0f));
-				 // Y2,1  = 1.092548 xz
-				 LCoeffs[7] += hdr * (y2 * pos[0] * pos[2]);
-				 // Y2,2  = 0.546274 (x^2 - y^2)
-				 LCoeffs[8] += hdr * (y4 * (pos[0] * pos[0] - pos[1] * pos[1]));
+				// Y0,0  = 0.282095
+				LCoeffs[0] += hdr * y0;
+				// Y1,-1 = 0.488603 y
+				LCoeffs[1] += hdr * (y1 * pos[1]);
+				// Y1,0  = 0.488603 z
+				LCoeffs[2] += hdr * (y1 * pos[2]);
+				// Y1,1  = 0.488603 x
+				LCoeffs[3] += hdr * (y1 * pos[0]);
+				// Y2,-2 = 1.092548 xy
+				LCoeffs[4] += hdr * (y2 * (pos[0] * pos[1]));
+				// Y2,-1 = 1.092548 yz
+				LCoeffs[5] += hdr * (y2 * pos[1] * pos[2]);
+				// Y2,0  = 0.315392 (3z^2 - 1)
+				LCoeffs[6] += hdr * (y3 * (3.0f * pos[2] * pos[2] - 1.0f));
+				// Y2,1  = 1.092548 xz
+				LCoeffs[7] += hdr * (y2 * pos[0] * pos[2]);
+				// Y2,2  = 0.546274 (x^2 - y^2)
+				LCoeffs[8] += hdr * (y4 * (pos[0] * pos[0] - pos[1] * pos[1]));
 				
 			}
 		}
@@ -121,7 +124,7 @@ int main(int argc, char** argv) {
 	}
 	
 	/// Final coefficients.
-	std::cout << "[SHExtractor] Computing final coefficients." << std::endl;
+	Log::Info() << Log::Utilities << "Computing final coefficients." << std::endl;
 	
 	// To go from radiance to irradiance, we need to apply a cosine lobe convolution on the sphere in spatial domain.
 	// This can be expressed as a product in frequency (on the SH basis) domain, with constant pre-computed coefficients.
@@ -145,13 +148,13 @@ int main(int argc, char** argv) {
 	SCoeffs[7] = 2.0f * c1 * LCoeffs[7];
 	SCoeffs[8] = c1 * LCoeffs[8];
 	
-	std::cout << "[SHExtractor] Done. " << std::endl;
+	Log::Info() << Log::Utilities << "Done. " << std::endl;
 	
 	// Output.
 	const std::string destinationPath = rootPath + "_shcoeffs.txt";
 	std::ofstream outputFile(destinationPath);
 	if(!outputFile.is_open()){
-		std::cerr << "[SHExtractor] Unable to open output file at path " << destinationPath << "." << std::endl;
+		Log::Error() << Log::Utilities << "Unable to open output file at path " << destinationPath << "." << std::endl;
 		return 2;
 	}
 	

@@ -1,6 +1,6 @@
 #include "GLUtilities.hpp"
 #include "ImageUtilities.hpp"
-#include <iostream>
+#include "Logger.hpp"
 #include <vector>
 #include <algorithm>
 
@@ -40,11 +40,11 @@ int _checkGLError(const char *file, int line, const std::string & infos){
 		if(pos == std::string::npos){
 			pos = 0;
 		}
-		std::cerr << "[OpenGL] Error " << getGLErrorString(glErr) << " in " << filePath.substr(pos+1) << " (" << line << ").";
+		Log::Error() << Log::OpenGL << "Error " << getGLErrorString(glErr) << " in " << filePath.substr(pos+1) << " (" << line << ").";
 		if(infos.size() > 0){
-			std::cerr << " Infos: " << infos;
+			Log::Error() << " Infos: " << infos;
 		}
-		std::cerr << std::endl;
+		Log::Error() << std::endl;
 		return 1;
 	}
 	return 0;
@@ -73,7 +73,7 @@ GLuint GLUtilities::loadShader(const std::string & prog, GLuint type){
 		std::vector<char> infoLog((std::max)(infoLogLength, int(1)));
 		glGetShaderInfoLog(id, infoLogLength, NULL, &infoLog[0]);
 
-		std::cerr << std::endl 
+		Log::Error() << std::endl 
 					<< "*--- " 
 					<< (type == GL_VERTEX_SHADER ? "Vertex" : (type == GL_FRAGMENT_SHADER ? "Fragment" : "Geometry (or tess.)")) 
 					<< " shader failed to compile ---*" 
@@ -124,7 +124,7 @@ GLuint GLUtilities::createProgram(const std::string & vertexContent, const std::
 		std::vector<char> infoLog((std::max)(infoLogLength, int(1)));
 		glGetProgramInfoLog(id, infoLogLength, NULL, &infoLog[0]);
 
-		std::cerr << "[OpenGL] Failed loading program: " << &infoLog[0] << std::endl;
+		Log::Error() << Log::OpenGL << "Failed loading program: " << &infoLog[0] << std::endl;
 		return 0;
 	}
 	// We can now clean the shaders objects, by first detaching them
@@ -191,7 +191,7 @@ TextureInfos GLUtilities::loadTexture(const std::vector<std::string>& paths, boo
 		int ret = ImageUtilities::loadImage(path, width, height, channels, &image, !infos.hdr);
 		
 		if (ret != 0) {
-			std::cerr << "[Resources] Unable to load the texture at path " << path << "." << std::endl;
+			Log::Error() << Log::Resources << "Unable to load the texture at path " << path << "." << std::endl;
 			free(image);
 			return infos;
 		}
@@ -216,13 +216,13 @@ TextureInfos GLUtilities::loadTextureCubemap(const std::vector<std::vector<std::
 	TextureInfos infos;
 	infos.cubemap = true;
 	if(allPaths.empty() ){
-		std::cerr << "[Resources] Unable to find cubemap." << std::endl;
+		Log::Error() << Log::Resources << "Unable to find cubemap." << std::endl;
 		return infos;
 	}
 	
 	// If not enough images, return empty texture.
 	if(allPaths.front().size() == 0 ){
-		std::cerr << "[Resources] Unable to find cubemap." << std::endl;
+		Log::Error() << Log::Resources << "Unable to find cubemap." << std::endl;
 		return infos;
 	}
 	
@@ -265,7 +265,7 @@ TextureInfos GLUtilities::loadTextureCubemap(const std::vector<std::vector<std::
 			void* image;
 			int ret = ImageUtilities::loadImage(paths[side], width, height, channels, &image, false);
 			if (ret != 0) {
-				std::cerr << "[Resources] Unable to load the texture at path " << paths[side] << "." << std::endl;
+				Log::Error() << Log::Resources << "Unable to load the texture at path " << paths[side] << "." << std::endl;
 				free(image);
 				return infos;
 			}
@@ -407,7 +407,7 @@ void GLUtilities::savePixels(const GLenum type, const GLenum format, const unsig
 	
 	const bool hdr = type == GL_FLOAT;
 	
-	std::cout << "[OpenGL] Saving framebuffer to file " << path << (hdr ? ".exr" : ".png") << "... " << std::flush;
+	Log::Info() << Log::OpenGL << "Saving framebuffer to file " << path << (hdr ? ".exr" : ".png") << "... " << std::flush;
 	int ret = 0;
 	if(hdr){
 		// Get back values.
@@ -426,9 +426,9 @@ void GLUtilities::savePixels(const GLenum type, const GLenum format, const unsig
 	}
 	
 	if(ret != 0){
-		std::cerr << "Error." << std::endl;
+		Log::Error() << "Error." << std::endl;
 	} else {
-		std::cout << "Done." << std::endl;
+		Log::Info() << "Done." << std::endl;
 	}
 	
 }

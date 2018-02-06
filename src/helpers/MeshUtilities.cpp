@@ -1,5 +1,5 @@
 #include "MeshUtilities.hpp"
-#include <iostream>
+#include "Logger.hpp"
 #include <fstream>
 #include <sstream>
 #include <cstddef>
@@ -12,7 +12,7 @@ void MeshUtilities::loadObj(const std::string & filename, Mesh & mesh, MeshUtili
 	ifstream in;
 	in.open(filename.c_str());
 	if (!in) {
-		cerr << filename + " is not a valid file." << endl;
+		Log::Error() << Log::Resources << filename + " is not a valid file." << endl;
 		return;
 	}
 	//Init the mesh.
@@ -189,7 +189,7 @@ void MeshUtilities::loadObj(const std::string & filename, Mesh & mesh, MeshUtili
 	normals_temp.clear();
 	texcoords_temp.clear();
 	faces_temp.clear();
-	//cout << "OBJ: loaded. " << mesh.indices.size()/3 << " faces, " << mesh.positions.size() << " vertices, " << mesh.normals.size() << " normals, " << mesh.texcoords.size() << " texcoords." <<  endl;
+	Log::Info() << Log::Verbose << Log::Resources << "Mesh loaded with " << mesh.indices.size()/3 << " faces, " << mesh.positions.size() << " vertices, " << mesh.normals.size() << " normals, " << mesh.texcoords.size() << " texcoords." << std::endl;
 	return;
 }
 
@@ -268,6 +268,6 @@ void MeshUtilities::computeTangentsAndBinormals(Mesh & mesh){
 			mesh.tangents[tid] *= -1.0f;
  		}
 	}
-	//cout << "OBJ: " << mesh.tangents.size() << " tangents and binormals computed." << endl;
+	Log::Info() << Log::Verbose << Log::Resources << "Mesh: " << mesh.tangents.size() << " tangents and binormals computed." << std::endl;
 }
 

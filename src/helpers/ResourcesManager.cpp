@@ -1,6 +1,6 @@
 #include "ResourcesManager.hpp"
 #include "MeshUtilities.hpp"
-#include <iostream>
+#include "Logger.hpp"
 #include <fstream>
 #include <sstream>
 #include <tinydir/tinydir.h>
@@ -26,7 +26,7 @@ void Resources::parseDirectory(const std::string & directoryPath){
 	tinydir_dir dir;
 	if(tinydir_open(&dir, directoryPath.c_str()) == -1){
 		tinydir_close(&dir);
-		std::cerr << "[Resources] Unable to open resources directory at path \"" << directoryPath << "\"" << std::endl;
+		Log::Error() << Log::Resources << "Unable to open resources directory at path \"" << directoryPath << "\"" << std::endl;
 	}
 	
 	// For each file in dir.
@@ -34,7 +34,7 @@ void Resources::parseDirectory(const std::string & directoryPath){
 		tinydir_file file;
 		if(tinydir_readfile(&dir, &file) == -1){
 			// Handle any read error.
-			std::cerr << "[Resources] Error getting file in directory \"" << std::string(dir.path) << "\"" << std::endl;
+			Log::Error() << Log::Resources << "Error getting file in directory \"" << std::string(dir.path) << "\"" << std::endl;
 			
 		} else if(file.is_dir){
 			// Extract subdirectory name, check that it isn't a special dir, and recursively aprse it.
@@ -56,7 +56,7 @@ void Resources::parseDirectory(const std::string & directoryPath){
 					
 				} else {
 					// If the file already exsist somewhere else in the hierarchy, warn about this.
-					std::cerr << "[Resources] Error: asset named \"" << fileNameWithExt << "\" alread exists." << std::endl;
+					Log::Error() << Log::Resources << "Error: asset named \"" << fileNameWithExt << "\" alread exists." << std::endl;
 				}
 			}
 		}
@@ -96,7 +96,7 @@ const std::string Resources::getShader(const std::string & name, const ShaderTyp
 	const std::string res = Resources::getTextFile(name + "." + extension);
 	// If the file is empty/doesn't exist, error.
 	if(res.empty()){
-		std::cerr << "[Resources] Unable to find " << (type == Vertex ? "vertex" : "fragment") << " shader named \"" << name << "\"." << std::endl;
+		Log::Error() << Log::Resources << "Unable to find " << (type == Vertex ? "vertex" : "fragment") << " shader named \"" << name << "\"." << std::endl;
 	}
 	return res;
 }
@@ -114,7 +114,7 @@ const MeshInfos Resources::getMesh(const std::string & name){
 	if(_files.count(name + ".obj") > 0){
 		path = _files[name + ".obj"];
 	} else {
-		std::cerr << "[Resources] Unable to find mesh named \"" << name << "\"" << std::endl;
+		Log::Error() << Log::Resources << "Unable to find mesh named \"" << name << "\"" << std::endl;
 		// Return empty mesh.
 		return infos;
 	}
@@ -168,7 +168,7 @@ const TextureInfos Resources::getTexture(const std::string & name, bool srgb){
 	}
 	
 	// If couldn't file the image, return empty texture infos.
-	std::cerr << "[Resources] Unable to find texture named \"" << name << "\"." << std::endl;
+	Log::Error() << Log::Resources << "Unable to find texture named \"" << name << "\"." << std::endl;
 	return infos;
 }
 
@@ -208,7 +208,7 @@ const TextureInfos Resources::getCubemap(const std::string & name, bool srgb){
 		_textures[name] = infos;
 		return infos;
 	}
-	std::cerr << "[Resources] Unable to find cubemap named \"" << name << "\"." << std::endl;
+	Log::Error() << Log::Resources << "Unable to find cubemap named \"" << name << "\"." << std::endl;
 	// Nothing found, return empty texture.
 	return infos;
 }
@@ -220,7 +220,7 @@ const std::string Resources::getTextFile(const std::string & filename){
 	} else if(_files.count(filename + ".txt") > 0){
 		path = _files[filename + ".txt"];
 	} else {
-		std::cerr << "[Resources] Unable to find text file named \"" << filename << "\"." << std::endl;
+		Log::Error() << Log::Resources << "Unable to find text file named \"" << filename << "\"." << std::endl;
 		return "";
 	}
 	return Resources::loadStringFromFile(path);
@@ -230,7 +230,7 @@ void Resources::reload() {
 	for (auto & prog : _programs) {
 		prog.second->reload();
 	}
-	std::cout << "[Resources] Shader programs reloaded." << std::endl;
+	Log::Info() << Log::Resources << "Shader programs reloaded." << std::endl;
 }
 
 std::string Resources::trim(const std::string & str, const std::string & del){
@@ -283,7 +283,7 @@ std::string Resources::loadStringFromFile(const std::string & filename) {
 	// Open a stream to the file.
 	in.open(filename.c_str());
 	if (!in) {
-		std::cerr << "[Resources] " << filename + " is not a valid file." << std::endl;
+		Log::Error() << Log::Resources << "" << filename + " is not a valid file." << std::endl;
 		return "";
 	}
 	std::stringstream buffer;
