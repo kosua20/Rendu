@@ -1,6 +1,5 @@
 #include "ImageUtilities.hpp"
 
-#include <iostream>
 #include <vector>
 #include <algorithm>
 #define STB_IMAGE_IMPLEMENTATION

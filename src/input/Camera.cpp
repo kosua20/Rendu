@@ -2,7 +2,6 @@
 #include "Input.hpp"
 #include <GLFW/glfw3.h>
 #include <stdio.h>
-#include <iostream>
 #include <glm/gtc/matrix_transform.hpp>
 #include <algorithm>
 #ifdef _WIN32

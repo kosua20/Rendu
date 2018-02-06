@@ -1,7 +1,6 @@
 #include "BoxBlur.hpp"
 
 #include <stdio.h>
-#include <iostream>
 #include <vector>
 
 

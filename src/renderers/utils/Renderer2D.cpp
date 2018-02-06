@@ -4,7 +4,6 @@
 #include "../../helpers/GLUtilities.hpp"
 
 #include <stdio.h>
-#include <iostream>
 #include <vector>
 
 

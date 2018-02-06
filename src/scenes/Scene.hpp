@@ -9,7 +9,6 @@
 #include <glm/glm.hpp>
 #include <memory>
 #include <sstream>
-#include <iostream>
 
 class Scene {
 

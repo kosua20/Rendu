@@ -1,7 +1,6 @@
 #include "Framebuffer.hpp"
 
 #include <stdio.h>
-#include <iostream>
 
 
 Framebuffer::Framebuffer(int width, int height, GLuint format, GLuint type, GLuint preciseFormat, GLuint filtering, GLuint wrapping, bool depthBuffer) {

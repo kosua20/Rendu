@@ -4,7 +4,6 @@
 #include "../../helpers/GLUtilities.hpp"
 
 #include <stdio.h>
-#include <iostream>
 #include <vector>
 #ifdef _WIN32
 #define M_PI_2 1.57079632679

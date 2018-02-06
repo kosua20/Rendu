@@ -1,9 +1,8 @@
 #include "Gbuffer.hpp"
 
 #include <stdio.h>
-#include <iostream>
 #include <algorithm>
-
+#include <string>
 
 Gbuffer::Gbuffer(int width, int height) {
 	_width = width;
