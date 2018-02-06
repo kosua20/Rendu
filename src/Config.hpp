@@ -11,6 +11,7 @@
 #include <glm/glm.hpp>
 #include <stdio.h>
 #include <map>
+#include <string>
 
 class Config {
 public:
@@ -28,6 +29,8 @@ public:
 	
 	bool oneShot = false;
 	
+	bool logVerbose = false;
+	
 	unsigned int initialWidth = 800;
 	
 	unsigned int initialHeight = 600;
@@ -38,6 +41,8 @@ public:
 	glm::vec2 screenResolution = glm::vec2(800.0,600.0);
 	
 	float screenDensity = 1.0f;
+	
+	std::string logPath = "";
 	
 public:
 	

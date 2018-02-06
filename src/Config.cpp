@@ -46,9 +46,13 @@ Config::Config(int argc, char** argv){
 			fullscreen = true;
 		} else if(key == "oneshot"){
 			oneShot = true;
+		} else if(key == "verbose"){
+			logVerbose = true;
 		} else if(key == "internal-res" || key == "ivr"){
 			internalVerticalResolution = std::stof(value);
-		} else if(key == "wxh"){
+		} else if(key == "log-path"){
+			logPath = value;
+		}else if(key == "wxh"){
 			const std::string::size_type split = value.find_first_of("x");
 			if(split != std::string::npos){
 				unsigned int w = std::stoi(value.substr(0,split));

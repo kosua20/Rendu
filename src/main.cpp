@@ -44,7 +44,11 @@ void joystick_callback(int joy, int event){
 int main(int argc, char** argv) {
 	
 	// First, init/parse/load configuration.
-	Config config(argc, argv); 
+	Config config(argc, argv);
+	if(!config.logPath.empty()){
+		Log::setDefaultFile(config.logPath);
+	}
+	Log::setDefaultVerbose(config.logVerbose);
 	
 	// Initialize glfw, which will create and setup an OpenGL context.
 	if (!glfwInit()) {
