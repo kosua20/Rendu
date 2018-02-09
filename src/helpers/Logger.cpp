@@ -1,4 +1,5 @@
 #include "Logger.hpp"
+#include <ctime>
 
 // We statically initialize the default logger.
 // We don't really care about its exact construction/destruction moments,
@@ -37,7 +38,7 @@ void Log::setFile(const std::string & filePath, const bool flushExisting){
 	if(_file.is_open()){
 		_file << "-- New session - " << time(NULL) << " -------------------------------" << std::endl;
 	} else {
-		std::cerr() << "[Logger] Unable to create log file at path " << filePath << "." << std::endl;
+		std::cerr << "[Logger] Unable to create log file at path " << filePath << "." << std::endl;
 	}
 }
 

@@ -223,6 +223,7 @@
     <ClCompile Include="src\helpers\GenerationUtilities.cpp" />
     <ClCompile Include="src\helpers\GLUtilities.cpp" />
     <ClCompile Include="src\helpers\ImageUtilities.cpp" />
+    <ClCompile Include="src\helpers\Logger.cpp" />
     <ClCompile Include="src\helpers\MeshUtilities.cpp" />
     <ClCompile Include="src\helpers\ProgramInfos.cpp" />
     <ClCompile Include="src\helpers\ResourcesManager.cpp" />
@@ -260,6 +261,7 @@
     <ClInclude Include="src\helpers\GenerationUtilities.hpp" />
     <ClInclude Include="src\helpers\GLUtilities.hpp" />
     <ClInclude Include="src\helpers\ImageUtilities.hpp" />
+    <ClInclude Include="src\helpers\Logger.hpp" />
     <ClInclude Include="src\helpers\MeshUtilities.hpp" />
     <ClInclude Include="src\helpers\ProgramInfos.hpp" />
     <ClInclude Include="src\helpers\ResourcesManager.hpp" />

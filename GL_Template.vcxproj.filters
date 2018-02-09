@@ -155,6 +155,9 @@
     <ClCompile Include="src\BoxBlur.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\helpers\Logger.cpp">
+      <Filter>Source Files\helpers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\libs\gl3w\gl3w.h">
@@ -267,6 +270,9 @@
     </ClInclude>
     <ClInclude Include="src\libs\stb_image\stb_image_write.h">
       <Filter>Source Files\libs\stb_image</Filter>
+    </ClInclude>
+    <ClInclude Include="src\helpers\Logger.hpp">
+      <Filter>Source Files\helpers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

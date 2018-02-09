@@ -6,7 +6,10 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
-
+// Fix for Windows headers.
+#ifdef ERROR
+#undef ERROR
+#endif
 class Log {
 	
 public:
@@ -17,7 +20,7 @@ public:
 
 private:
 	
-	const std::vector<const std::string> _domainStrings = {"OpenGL", "Resources", "Input", "Utilities", "Config", ""};
+	const std::vector<std::string> _domainStrings = {"OpenGL", "Resources", "Input", "Utilities", "Config", ""};
 	
 	enum LogLevel {
 		INFO, WARNING, ERROR
