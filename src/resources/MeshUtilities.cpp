@@ -7,14 +7,8 @@
 
 using namespace std;
 
-void MeshUtilities::loadObj(const std::string & filename, Mesh & mesh, MeshUtilities::LoadMode mode){
-	// Open the file.
-	ifstream in;
-	in.open(filename.c_str());
-	if (!in) {
-		Log::Error() << Log::Resources << filename + " is not a valid file." << endl;
-		return;
-	}
+void MeshUtilities::loadObj( std::istream & in, Mesh & mesh, MeshUtilities::LoadMode mode){
+	
 	//Init the mesh.
 	mesh.indices.clear();
 	mesh.positions.clear();
@@ -84,7 +78,6 @@ void MeshUtilities::loadObj(const std::string & filename, Mesh & mesh, MeshUtili
 			continue;
 		}
 	}
-	in.close();
 
 	// If no vertices, end.
 	if(positions_temp.size() == 0){
@@ -190,7 +183,6 @@ void MeshUtilities::loadObj(const std::string & filename, Mesh & mesh, MeshUtili
 	texcoords_temp.clear();
 	faces_temp.clear();
 	Log::Info() << Log::Verbose << Log::Resources << "Mesh loaded with " << mesh.indices.size()/3 << " faces, " << mesh.positions.size() << " vertices, " << mesh.normals.size() << " normals, " << mesh.texcoords.size() << " texcoords." << std::endl;
-	return;
 }
 
 void MeshUtilities::centerAndUnitMesh(Mesh & mesh){

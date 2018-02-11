@@ -29,7 +29,7 @@ public:
 	};
 
 	/// Load an obj file from disk into the mesh structure.
-	static void loadObj(const std::string & filename, Mesh & mesh, LoadMode mode);
+	static void loadObj(std::istream & in, Mesh & mesh, LoadMode mode);
 
 	/// Center the mesh and scale it to fit in the [-1,1] box.
 	static void centerAndUnitMesh(Mesh & mesh);

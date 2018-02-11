@@ -55,7 +55,7 @@ void Resources::parseDirectory(const std::string & directoryPath){
 					_files[fileNameWithExt] = std::string(dir.path) + "/" + fileNameWithExt;
 					
 				} else {
-					// If the file already exsist somewhere else in the hierarchy, warn about this.
+					// If the file already exists somewhere else in the hierarchy, warn about this.
 					Log::Error() << Log::Resources << "Error: asset named \"" << fileNameWithExt << "\" alread exists." << std::endl;
 				}
 			}
@@ -121,9 +121,20 @@ const MeshInfos Resources::getMesh(const std::string & name){
 	
 	// Load geometry.
 	Mesh mesh;
-	MeshUtilities::loadObj(path, mesh, MeshUtilities::Indexed);
-	// If uv or positions are missing, tangent/binormals won't be computed.
-	MeshUtilities::computeTangentsAndBinormals(mesh);
+	
+	std::ifstream infile;
+	infile.open(path.c_str());
+	if(infile.is_open()){
+		MeshUtilities::loadObj(infile, mesh, MeshUtilities::Indexed);
+		// We are done with the file.
+		infile.close();
+		// If uv or positions are missing, tangent/binormals won't be computed.
+		MeshUtilities::computeTangentsAndBinormals(mesh);
+		
+	} else {
+		Log::Error() << Log::Resources << "Unable to load mesh at path " << path << "." << std::endl;
+	}
+	
 	// Setup GL buffers and attributes.
 	infos = GLUtilities::setupBuffers(mesh);
 	_meshes[name] = infos;
