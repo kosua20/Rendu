@@ -9,6 +9,9 @@
 #endif
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image/stb_image_write.h>
+
+#include <miniz/miniz.h>
+#define TINYEXR_USE_MINIZ (0)
 #define TINYEXR_IMPLEMENTATION
 #include <tinyexr/tinyexr.h>
 

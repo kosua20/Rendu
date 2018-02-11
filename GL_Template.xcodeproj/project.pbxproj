@@ -22,6 +22,9 @@
 		F41F5F671E817F3500C18D8D /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F41F5F661E817F3500C18D8D /* IOKit.framework */; };
 		F41F5F691E817F3A00C18D8D /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F41F5F681E817F3A00C18D8D /* CoreVideo.framework */; };
 		F43246721F438C3B0090FD5F /* gl3w.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F43245DD1F438BFB0090FD5F /* gl3w.cpp */; };
+		F434B5852030B3F600E44689 /* miniz.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F434B5832030B3F500E44689 /* miniz.cpp */; };
+		F434B5862030B3F600E44689 /* miniz.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F434B5832030B3F500E44689 /* miniz.cpp */; };
+		F434B5872030B3F600E44689 /* miniz.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F434B5832030B3F500E44689 /* miniz.cpp */; };
 		F43EF9AB1F44EDFB0073DFFB /* Joystick.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F43EF9A91F44EDFB0073DFFB /* Joystick.cpp */; };
 		F4442CC51FFA91EC005E1E24 /* Renderer2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4442CC41FFA91EC005E1E24 /* Renderer2D.cpp */; };
 		F4442CCB1FFAE306005E1E24 /* RendererCube.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4442CC91FFAE306005E1E24 /* RendererCube.cpp */; };
@@ -289,6 +292,9 @@
 		F432466C1F438BFB0090FD5F /* vector_relational.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = vector_relational.hpp; sourceTree = "<group>"; };
 		F432466E1F438BFB0090FD5F /* stb_image.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = stb_image.h; sourceTree = "<group>"; };
 		F43246701F438BFB0090FD5F /* tinydir.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tinydir.h; sourceTree = "<group>"; };
+		F434B5832030B3F500E44689 /* miniz.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = miniz.cpp; sourceTree = "<group>"; };
+		F434B5842030B3F500E44689 /* miniz.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = miniz.h; sourceTree = "<group>"; };
+		F434B5892030B98B00E44689 /* tinyexr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tinyexr.h; sourceTree = "<group>"; };
 		F43A76621F6E7374009DB55A /* DeskScene.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = DeskScene.hpp; sourceTree = "<group>"; };
 		F43EF9A91F44EDFB0073DFFB /* Joystick.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Joystick.cpp; sourceTree = "<group>"; };
 		F43EF9AA1F44EDFB0073DFFB /* Joystick.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Joystick.hpp; sourceTree = "<group>"; };
@@ -372,7 +378,6 @@
 		F4DE2B91201F9B3F00433C21 /* SHExtractor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SHExtractor.cpp; sourceTree = "<group>"; };
 		F4DE2BB5201F9B5400433C21 /* SHExtractor */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = SHExtractor; sourceTree = BUILT_PRODUCTS_DIR; };
 		F4EDDD241CFD0047001FD2ED /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
-		F4EDDD251CFD0047001FD2ED /* Makefile.linux */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Makefile.linux; sourceTree = "<group>"; };
 		F4FA2F001E87F60D007EBA57 /* DirectionalLight.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectionalLight.cpp; sourceTree = "<group>"; };
 		F4FA2F011E87F60D007EBA57 /* DirectionalLight.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = DirectionalLight.hpp; sourceTree = "<group>"; };
 		F4FA2F021E87F60D007EBA57 /* Light.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Light.hpp; sourceTree = "<group>"; };
@@ -461,8 +466,10 @@
 			children = (
 				F43245DC1F438BFB0090FD5F /* gl3w */,
 				F43245E01F438BFB0090FD5F /* glm */,
+				F434B5822030B3F500E44689 /* miniz */,
 				F432466D1F438BFB0090FD5F /* stb_image */,
 				F432466F1F438BFB0090FD5F /* tinydir */,
+				F434B5882030B98B00E44689 /* tinyexr */,
 			);
 			path = libs;
 			sourceTree = "<group>";
@@ -655,6 +662,23 @@
 			path = tinydir;
 			sourceTree = "<group>";
 		};
+		F434B5822030B3F500E44689 /* miniz */ = {
+			isa = PBXGroup;
+			children = (
+				F434B5832030B3F500E44689 /* miniz.cpp */,
+				F434B5842030B3F500E44689 /* miniz.h */,
+			);
+			path = miniz;
+			sourceTree = "<group>";
+		};
+		F434B5882030B98B00E44689 /* tinyexr */ = {
+			isa = PBXGroup;
+			children = (
+				F434B5892030B98B00E44689 /* tinyexr.h */,
+			);
+			path = tinyexr;
+			sourceTree = "<group>";
+		};
 		F4442CC61FFA91F0005E1E24 /* utils */ = {
 			isa = PBXGroup;
 			children = (
@@ -742,7 +766,6 @@
 			isa = PBXGroup;
 			children = (
 				F4EDDD241CFD0047001FD2ED /* Makefile */,
-				F4EDDD251CFD0047001FD2ED /* Makefile.linux */,
 				F4D54A131D0F3373001274DA /* README.md */,
 				F46161791CF9D5A400B22823 /* resources */,
 				F46161841CF9D5A400B22823 /* src */,
@@ -774,12 +797,12 @@
 		F46161841CF9D5A400B22823 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				F4ECAEAF20307544007FC0EC /* resources */,
 				F45926341F6DCB9400B0A05E /* scenes */,
 				F43245DB1F438BFB0090FD5F /* libs */,
 				F4FE353E1D0C474C00B8318A /* input */,
 				F4FA2EFF1E87F60C007EBA57 /* lights */,
 				F46161871CF9D5A400B22823 /* helpers */,
+				F4ECAEAF20307544007FC0EC /* resources */,
 				F44D0AA11FFA78F40051AE3E /* renderers */,
 				F4DE2B90201F9B3F00433C21 /* tools */,
 				F461621C1CF9D5A400B22823 /* main.cpp */,
@@ -1062,6 +1085,7 @@
 				F4B11E071F5F3290002E87F1 /* Blur.cpp in Sources */,
 				F4442CCB1FFAE306005E1E24 /* RendererCube.cpp in Sources */,
 				F48FDD6A20264602003679EA /* GaussianBlur.cpp in Sources */,
+				F434B5852030B3F600E44689 /* miniz.cpp in Sources */,
 				F41F5F5B1E817E4B00C18D8D /* Renderer.cpp in Sources */,
 				F41F5F5D1E817E4B00C18D8D /* ScreenQuad.cpp in Sources */,
 				F4624D971FF7B1F600A710EB /* Config.cpp in Sources */,
@@ -1096,6 +1120,7 @@
 				F4BEA890202F905F00B28809 /* Blur.cpp in Sources */,
 				F4BEA891202F905F00B28809 /* RendererCube.cpp in Sources */,
 				F4BEA892202F905F00B28809 /* Renderer.cpp in Sources */,
+				F434B5872030B3F600E44689 /* miniz.cpp in Sources */,
 				F4BEA893202F905F00B28809 /* ScreenQuad.cpp in Sources */,
 				F4BEA894202F905F00B28809 /* Config.cpp in Sources */,
 				F4BEA895202F905F00B28809 /* Input.cpp in Sources */,
@@ -1130,6 +1155,7 @@
 				F4DE2B9F201F9B5400433C21 /* Blur.cpp in Sources */,
 				F4DE2BA0201F9B5400433C21 /* RendererCube.cpp in Sources */,
 				F4DE2BA1201F9B5400433C21 /* Renderer.cpp in Sources */,
+				F434B5862030B3F600E44689 /* miniz.cpp in Sources */,
 				F4DE2BA2201F9B5400433C21 /* ScreenQuad.cpp in Sources */,
 				F4DE2BA3201F9B5400433C21 /* Config.cpp in Sources */,
 				F4DE2BA4201F9B5400433C21 /* Input.cpp in Sources */,
