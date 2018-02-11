@@ -9,6 +9,7 @@ Log* Log::_defaultLogger = new Log();
 
 void Log::set(LogLevel l){
 	_level = l;
+	_appendPrefix = (l != LogLevel::INFO);
 }
 
 Log::Log(){
@@ -16,7 +17,7 @@ Log::Log(){
 	_logToStdin = true;
 	_verbose = false;
 	_ignoreUntilFlush = false;
-	//_stream << std::fixed << std::setprecision(6);
+	_appendPrefix = false;
 }
 
 Log::Log(const std::string & filePath, const bool logToStdin, const bool verbose){
@@ -24,7 +25,7 @@ Log::Log(const std::string & filePath, const bool logToStdin, const bool verbose
 	_logToStdin = logToStdin;
 	_verbose = verbose;
 	_ignoreUntilFlush = false;
-	//_stream << std::fixed << std::setprecision(6);
+	_appendPrefix = false;
 	// Create file if it doesnt exist.
 	setFile(filePath, false);
 }
@@ -92,14 +93,23 @@ void Log::flush(){
 		}
 	}
 	_ignoreUntilFlush = false;
+	_appendPrefix = false;
 	_stream.str(std::string());
 	_stream.clear();
 	_level = LogLevel::INFO;
 }
 
+void Log::appendIfNeeded(){
+	if(_appendPrefix){
+		_appendPrefix = false;
+		_stream << _levelStrings[_level];
+	}
+}
+
 Log & Log::operator<<(const LogDomain& domain){
 	if(domain != Verbose){
 		_stream << "[" << _domainStrings[domain] << "] ";
+		appendIfNeeded();
 	} else if(!_verbose){
 		// In this case, we want to ignore until the next flush.
 		_ignoreUntilFlush = true;
@@ -108,11 +118,7 @@ Log & Log::operator<<(const LogDomain& domain){
 }
 
 Log& Log::operator<<(std::ostream& (*modif)(std::ostream&)){
-	// We want to insert the warning/error indicator before any line-ending.
-   	if( modif == static_cast<std::ostream& (*)(std::ostream&)>(std::endl)){
-   		const std::string levelSuffix = (_level == LogLevel::ERROR ? " (X)" :  (_level == LogLevel::WARNING ? " (!)" : ""));
-   		_stream << levelSuffix;
-	}
+	appendIfNeeded();
 
 	modif(_stream);
 	if(modif == static_cast<std::ostream& (*)(std::ostream&)>(std::flush) ||
@@ -129,6 +135,7 @@ Log& Log::operator<<(std::ios_base& (*modif)(std::ios_base&)){
 
 // GLM types support.
 Log & Log::operator<<(const glm::mat4& input){
+	appendIfNeeded();
 	_stream << "mat4( " << input[0][0] << ", " << input[0][1] << ", " << input[0][2] << ", " << input[0][3] << " | ";
 	_stream << input[1][0] << ", " << input[1][1] << ", " << input[1][2] << ", " << input[1][3] << " | ";
 	_stream <<  input[2][0] << ", " << input[2][1] << ", " << input[2][2] << ", " << input[2][3] << " | ";
@@ -137,6 +144,7 @@ Log & Log::operator<<(const glm::mat4& input){
 }
 
 Log & Log::operator<<(const glm::mat3& input){
+	appendIfNeeded();
 	_stream << "mat3( " << input[0][0] << ", " << input[0][1] << ", " << input[0][2] << " | ";
 	_stream << input[1][0] << ", " << input[1][1] << ", " << input[1][2] << " | ";
 	_stream << input[2][0] << ", " << input[2][1] << ", " << input[2][2] << " )";
@@ -144,22 +152,26 @@ Log & Log::operator<<(const glm::mat3& input){
 }
 
 Log & Log::operator<<(const glm::mat2& input){
+	appendIfNeeded();
 	_stream << "mat2( " << input[0][0] << ", " << input[0][1] << " | ";
 	_stream << input[1][0] << ", " << input[1][1] << " )";
 	return *this;
 }
 
 Log & Log::operator<<(const glm::vec4& input){
+	appendIfNeeded();
 	_stream << "vec4( " << input[0] << ", " << input[1] << ", " << input[2] << ", " << input[3] << " )";
 	return *this;
 }
 
 Log & Log::operator<<(const glm::vec3& input){
+	appendIfNeeded();
 	_stream << "vec3( " << input[0] << ", " << input[1] << ", " << input[2] << " )";
 	return *this;
 }
 
 Log & Log::operator<<(const glm::vec2& input){
+	appendIfNeeded();
 	_stream << "vec2( " << input[0] << ", " << input[1] << " )";
 	return *this;
 }

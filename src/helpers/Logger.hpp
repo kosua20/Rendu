@@ -20,13 +20,15 @@ public:
 
 private:
 	
-	const std::vector<std::string> _domainStrings = {"OpenGL","Resources","Input","Utilities","Config",""};
-	
 	enum LogLevel {
 		INFO, WARNING, ERROR
 	};
 	
 	void set(LogLevel l);
+
+	const std::vector<std::string> _domainStrings = {"OpenGL","Resources","Input","Utilities","Config",""};
+
+	const std::vector<std::string> _levelStrings = {"","(!) ","(X) "};
 	
 public:
 	
@@ -40,6 +42,7 @@ public:
 	
 	template<class T>
 	Log & operator<<(const T& input){
+		appendIfNeeded();
 		_stream << input;
 		return *this;
 	}
@@ -79,6 +82,7 @@ private:
 	
 	void flush();
 
+	void appendIfNeeded();
 	
 	LogLevel _level;
 	bool _logToStdin;
@@ -86,6 +90,7 @@ private:
 	std::stringstream _stream;
 	bool _verbose;
 	bool _ignoreUntilFlush;
+	bool _appendPrefix;
 	
 	static Log* _defaultLogger;
 };
