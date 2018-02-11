@@ -1,5 +1,5 @@
 #include "AmbientQuad.hpp"
-#include "../../helpers/ResourcesManager.hpp"
+#include "../../resources/ResourcesManager.hpp"
 #include "../../helpers/GenerationUtilities.hpp"
 
 #include <stdio.h>

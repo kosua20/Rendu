@@ -774,6 +774,7 @@
 		F46161841CF9D5A400B22823 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				F4ECAEAF20307544007FC0EC /* resources */,
 				F45926341F6DCB9400B0A05E /* scenes */,
 				F43245DB1F438BFB0090FD5F /* libs */,
 				F4FE353E1D0C474C00B8318A /* input */,
@@ -805,16 +806,10 @@
 			children = (
 				F4FA2F081E87FA0F007EBA57 /* GenerationUtilities.hpp */,
 				F4FA2F071E87FA0F007EBA57 /* GenerationUtilities.cpp */,
-				F48FDD7520265296003679EA /* ImageUtilities.hpp */,
-				F48FDD7620265296003679EA /* ImageUtilities.cpp */,
 				F461621B1CF9D5A400B22823 /* GLUtilities.hpp */,
 				F461621A1CF9D5A400B22823 /* GLUtilities.cpp */,
 				F4BA511320290B950064C666 /* Logger.hpp */,
 				F4BA511220290B950064C666 /* Logger.cpp */,
-				F46162191CF9D5A400B22823 /* MeshUtilities.hpp */,
-				F46162181CF9D5A400B22823 /* MeshUtilities.cpp */,
-				F4B42D011F425B8100E485C5 /* ResourcesManager.hpp */,
-				F4B42D001F425B8100E485C5 /* ResourcesManager.cpp */,
 				F44F7F851F435AF60057CEFE /* ProgramInfos.hpp */,
 				F44F7F861F435AF60057CEFE /* ProgramInfos.cpp */,
 			);
@@ -850,6 +845,19 @@
 				F4BEA881202F905500B28809 /* BRDFEstimator.cpp */,
 			);
 			path = tools;
+			sourceTree = "<group>";
+		};
+		F4ECAEAF20307544007FC0EC /* resources */ = {
+			isa = PBXGroup;
+			children = (
+				F48FDD7520265296003679EA /* ImageUtilities.hpp */,
+				F48FDD7620265296003679EA /* ImageUtilities.cpp */,
+				F46162191CF9D5A400B22823 /* MeshUtilities.hpp */,
+				F46162181CF9D5A400B22823 /* MeshUtilities.cpp */,
+				F4B42D011F425B8100E485C5 /* ResourcesManager.hpp */,
+				F4B42D001F425B8100E485C5 /* ResourcesManager.cpp */,
+			);
+			path = resources;
 			sourceTree = "<group>";
 		};
 		F4FA2EFF1E87F60C007EBA57 /* lights */ = {

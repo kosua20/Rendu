@@ -1,5 +1,5 @@
 #include "ScreenQuad.hpp"
-#include "helpers/ResourcesManager.hpp"
+#include "resources/ResourcesManager.hpp"
 
 #include <stdio.h>
 #include <vector>

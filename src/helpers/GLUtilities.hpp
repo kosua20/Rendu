@@ -1,6 +1,6 @@
 #ifndef GLUtilities_h
 #define GLUtilities_h
-#include "MeshUtilities.hpp"
+#include "../resources/MeshUtilities.hpp"
 #include "../Framebuffer.hpp"
 #include <gl3w/gl3w.h>
 #include <string>

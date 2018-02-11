@@ -1,5 +1,5 @@
 #include "GLUtilities.hpp"
-#include "ImageUtilities.hpp"
+#include "../resources/ImageUtilities.hpp"
 #include "Logger.hpp"
 #include <vector>
 #include <algorithm>

@@ -7,7 +7,7 @@
 //
 
 #include "Config.hpp"
-#include "helpers/ResourcesManager.hpp"
+#include "resources/ResourcesManager.hpp"
 #include "helpers/Logger.hpp"
 #include <string>
 #include <sstream>

@@ -3,7 +3,7 @@
 #include "../Object.hpp"
 #include "../lights/DirectionalLight.hpp"
 #include "../lights/PointLight.hpp"
-#include "../helpers/ResourcesManager.hpp"
+#include "../resources/ResourcesManager.hpp"
 #include <gl3w/gl3w.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>

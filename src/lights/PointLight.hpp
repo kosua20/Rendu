@@ -1,7 +1,7 @@
 #ifndef PointLight_h
 #define PointLight_h
 #include "Light.hpp"
-#include "../helpers/ResourcesManager.hpp"
+#include "../resources/ResourcesManager.hpp"
 
 class PointLight : public Light {
 

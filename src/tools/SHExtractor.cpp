@@ -1,5 +1,5 @@
 #include "../Config.hpp"
-#include "../helpers/ImageUtilities.hpp"
+#include "../resources/ImageUtilities.hpp"
 #include "../helpers/Logger.hpp"
 #include <stdio.h>
 #include <memory>

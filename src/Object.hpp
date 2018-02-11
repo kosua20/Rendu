@@ -1,6 +1,6 @@
 #ifndef Object_h
 #define Object_h
-#include "helpers/ResourcesManager.hpp"
+#include "resources/ResourcesManager.hpp"
 
 #include <gl3w/gl3w.h>
 #include <GLFW/glfw3.h>
