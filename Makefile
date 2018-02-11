@@ -1,12 +1,35 @@
 #Compiler: g++
 CXX = g++
 
-#Include directories (for headers): standard include dirs in /usr and /usr/local, and our helper directory.
-INCLUDEDIR = -I/usr/include/ -I/usr/local/include/ -Isrc/helpers/ -Isrc/libs/ -Isrc/libs/glfw/include/
+#PLatform
+PLATFORM :=
+ifeq ($(OS),Windows_NT)
+	PLATFORM = WIN32
+else
+	UNAME_S := $(shell uname -s)
+	ifeq ($(UNAME_S),Linux)
+		PLATFORM = LINUX
+	endif
+	ifeq ($(UNAME_S),Darwin)
+		PLATFORM = MAC
+	endif
+endif
 
-LIBDIR = -Lsrc/libs/glfw/lib-mac/
-#Libraries needed: OpenGL and glfw3. glfw3 requires Cocoa, IOKit and CoreVideo.
-LIBS = $(LIBDIR) -lglfw3 -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo
+# Directories.
+ifeq ($(PLATFORM),MAC)
+	#Include directories (for headers): standard include dirs in /usr and /usr/local, and our helper directory.
+	INCLUDEDIR = -I/usr/include/ -I/usr/local/include/ -Isrc/helpers/ -Isrc/libs/ -Isrc/libs/glfw/include/
+	LIBDIR = -Lsrc/libs/glfw/lib-mac/
+	#Libraries needed: OpenGL and glfw3. glfw3 requires Cocoa, IOKit and CoreVideo.
+	LIBS = $(LIBDIR) -lglfw3 -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo
+else
+	#Assume linux or cygwin with a similar setup.
+	#Include directories (for headers): standard include dirs in /usr and /usr/local, and our helper directory.
+	INCLUDEDIR = -I/usr/include/ -I/usr/local/include/ -Isrc/helpers/ -Isrc/libs/
+	LIBDIR = -L/usr/local/lib
+	#Libraries needed: OpenGL and glfw3.  glfw3 require X11, Xi, and so on...
+	LIBS = -lglfw3 -lGL -lX11 -lXi -lXrandr -lXxf86vm -lXinerama -lXcursor -lrt -lm -pthread -ldl
+endif
 
 #Compiler flags: C++11 standard, and display 'all' warnings.
 CXXFLAGS = -std=c++11 -Wall -O3
