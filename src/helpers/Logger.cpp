@@ -1,6 +1,7 @@
 #include "Logger.hpp"
 #include <ctime>
-
+#include <iomanip>
+#include <iostream>
 // We statically initialize the default logger.
 // We don't really care about its exact construction/destruction moments,
 // but we want it to always be created.
@@ -15,6 +16,7 @@ Log::Log(){
 	_logToStdin = true;
 	_verbose = false;
 	_ignoreUntilFlush = false;
+	//_stream << std::fixed << std::setprecision(6);
 }
 
 Log::Log(const std::string & filePath, const bool logToStdin, const bool verbose){
@@ -22,6 +24,7 @@ Log::Log(const std::string & filePath, const bool logToStdin, const bool verbose
 	_logToStdin = logToStdin;
 	_verbose = verbose;
 	_ignoreUntilFlush = false;
+	//_stream << std::fixed << std::setprecision(6);
 	// Create file if it doesnt exist.
 	setFile(filePath, false);
 }
@@ -75,8 +78,7 @@ Log& Log::Error(){
 void Log::flush(){
 	if(!_ignoreUntilFlush){
 		
-		const std::string levelPrefix = (_level == LogLevel::ERROR ? "(X) " :  (_level == LogLevel::WARNING ? "(!) " : ""));
-		const std::string finalStr = levelPrefix + _stream.str();
+		const std::string finalStr =  _stream.str();
 		
 		if(_logToStdin){
 			if(_level == LogLevel::INFO){
@@ -93,4 +95,71 @@ void Log::flush(){
 	_stream.str(std::string());
 	_stream.clear();
 	_level = LogLevel::INFO;
+}
+
+Log & Log::operator<<(const LogDomain& domain){
+	if(domain != Verbose){
+		_stream << "[" << _domainStrings[domain] << "] ";
+	} else if(!_verbose){
+		// In this case, we want to ignore until the next flush.
+		_ignoreUntilFlush = true;
+	}
+	return *this;
+}
+
+Log& Log::operator<<(std::ostream& (*modif)(std::ostream&)){
+	// We want to insert the warning/error indicator before any line-ending.
+   	if( modif == static_cast<std::ostream& (*)(std::ostream&)>(std::endl)){
+   		const std::string levelSuffix = (_level == LogLevel::ERROR ? " (X)" :  (_level == LogLevel::WARNING ? " (!)" : ""));
+   		_stream << levelSuffix;
+	}
+
+	modif(_stream);
+	if(modif == static_cast<std::ostream& (*)(std::ostream&)>(std::flush) ||
+	   modif == static_cast<std::ostream& (*)(std::ostream&)>(std::endl)){
+		flush();
+	}
+	return *this;
+}
+
+Log& Log::operator<<(std::ios_base& (*modif)(std::ios_base&)){
+	modif(_stream);
+	return *this;
+}
+
+// GLM types support.
+Log & Log::operator<<(const glm::mat4& input){
+	_stream << "mat4( " << input[0][0] << ", " << input[0][1] << ", " << input[0][2] << ", " << input[0][3] << " | ";
+	_stream << input[1][0] << ", " << input[1][1] << ", " << input[1][2] << ", " << input[1][3] << " | ";
+	_stream <<  input[2][0] << ", " << input[2][1] << ", " << input[2][2] << ", " << input[2][3] << " | ";
+	_stream << input[3][0] << ", " << input[3][1] << ", " << input[3][2] << ", " << input[3][3] << " )";
+	return *this;
+}
+
+Log & Log::operator<<(const glm::mat3& input){
+	_stream << "mat3( " << input[0][0] << ", " << input[0][1] << ", " << input[0][2] << " | ";
+	_stream << input[1][0] << ", " << input[1][1] << ", " << input[1][2] << " | ";
+	_stream << input[2][0] << ", " << input[2][1] << ", " << input[2][2] << " )";
+	return *this;
+}
+
+Log & Log::operator<<(const glm::mat2& input){
+	_stream << "mat2( " << input[0][0] << ", " << input[0][1] << " | ";
+	_stream << input[1][0] << ", " << input[1][1] << " )";
+	return *this;
+}
+
+Log & Log::operator<<(const glm::vec4& input){
+	_stream << "vec4( " << input[0] << ", " << input[1] << ", " << input[2] << ", " << input[3] << " )";
+	return *this;
+}
+
+Log & Log::operator<<(const glm::vec3& input){
+	_stream << "vec3( " << input[0] << ", " << input[1] << ", " << input[2] << " )";
+	return *this;
+}
+
+Log & Log::operator<<(const glm::vec2& input){
+	_stream << "vec2( " << input[0] << ", " << input[1] << " )";
+	return *this;
 }

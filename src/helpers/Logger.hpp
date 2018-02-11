@@ -3,9 +3,9 @@
 
 #include <string>
 #include <fstream>
-#include <iostream>
 #include <sstream>
 #include <vector>
+#include <glm/glm.hpp>
 // Fix for Windows headers.
 #ifdef ERROR
 #undef ERROR
@@ -20,7 +20,7 @@ public:
 
 private:
 	
-	const std::vector<std::string> _domainStrings = {"OpenGL", "Resources", "Input", "Utilities", "Config", ""};
+	const std::vector<std::string> _domainStrings = {"OpenGL","Resources","Input","Utilities","Config",""};
 	
 	enum LogLevel {
 		INFO, WARNING, ERROR
@@ -44,30 +44,24 @@ public:
 		return *this;
 	}
 	
-	Log & operator<<(const LogDomain& domain){
-		if(domain != Verbose){
-			_stream << "[" << _domainStrings[domain] << "] ";
-		} else if(!_verbose){
-			// In this case, we want to ignore until the next flush.
-			_ignoreUntilFlush = true;
-		}
-		return *this;
-	}
+	Log & operator<<(const LogDomain& domain);
 	
-	Log& operator<<(std::ostream& (*modif)(std::ostream&)){
-		modif(_stream);
-		if(modif == static_cast<std::ostream& (*)(std::ostream&)>(std::flush) ||
-		   modif == static_cast<std::ostream& (*)(std::ostream&)>(std::endl)){
-			flush();
-		}
-		return *this;
-	}
+	Log& operator<<(std::ostream& (*modif)(std::ostream&));
 	
-	Log& operator<<(std::ios_base& (*modif)(std::ios_base&)){
-		modif(_stream);
-		return *this;
-	}
+	Log& operator<<(std::ios_base& (*modif)(std::ios_base&));
 	
+	// GLM types support.
+	Log & operator<<(const glm::mat4& input);
+	
+	Log & operator<<(const glm::mat3& input);
+	
+	Log & operator<<(const glm::mat2& input);
+	
+	Log & operator<<(const glm::vec4& input);
+	
+	Log & operator<<(const glm::vec3& input);
+	
+	Log & operator<<(const glm::vec2& input);
 	
 public:
 	
