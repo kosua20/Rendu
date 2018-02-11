@@ -27,8 +27,6 @@ public:
 	
 	bool fullscreen = false;
 	
-	bool oneShot = false;
-	
 	bool logVerbose = false;
 	
 	unsigned int initialWidth = 800;
@@ -49,5 +47,11 @@ public:
 	static void parseFromFile(const char * filePath, std::map<std::string, std::string> & arguments);
 	
 	static void parseFromArgs(const int argc, char** argv, std::map<std::string, std::string> & arguments);
+		
+	void processArguments();
+
+protected:
+	
+	std::map<std::string, std::string> _rawArguments;
 };
 #endif /* Config_hpp */

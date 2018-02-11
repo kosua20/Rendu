@@ -20,10 +20,12 @@ public:
 	~RendererCube();
 
 	/// Init function
-	RendererCube(Config & config, const std::string & cubemapName, const std::string & shaderName, const int width, const int height, const GLenum format, const GLenum type, const GLenum preciseFormat, const std::string & outputPath);
+	RendererCube(Config & config, const std::string & cubemapName, const std::string & shaderName, const int width, const int height, const GLenum format, const GLenum type, const GLenum preciseFormat);
 
 	/// Draw function
 	void draw();
+	
+	void drawCube(const int localWidth, const int localHeight, const std::string & localOutputPath);
 	
 	void update();
 	
@@ -37,6 +39,8 @@ public:
 	
 	
 private:
+	
+	
 	
 	std::shared_ptr<Framebuffer> _resultFramebuffer;
 	std::shared_ptr<ProgramInfos> _program;

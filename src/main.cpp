@@ -140,7 +140,7 @@ int main(int argc, char** argv) {
 		// Update events (inputs,...).
 		Input::manager().update();
 		// Handle quitting.
-		if(Input::manager().pressed(Input::KeyEscape) || config.oneShot){
+		if(Input::manager().pressed(Input::KeyEscape)){
 			glfwSetWindowShouldClose(window, GL_TRUE);
 		}
 		if(Input::manager().triggered(Input::KeyP)){
@@ -184,9 +184,6 @@ int main(int argc, char** argv) {
 	// Close GL context and any other GLFW resources.
 	glfwTerminate();
 	
-	if(config.oneShot){
-		Log::Info() << Log::OpenGL << "Shot done." << std::endl;
-	}
 	return 0;
 }
 

@@ -9,10 +9,8 @@
 
 Renderer2D::~Renderer2D(){}
 
-Renderer2D::Renderer2D(Config & config, const std::string & shaderName, const int width, const int height, const GLenum format, const GLenum type, const GLenum preciseFormat, const std::string & outputPath) : Renderer(config) {
-	
-	_outputPath = outputPath;
-	
+Renderer2D::Renderer2D(Config & config, const std::string & shaderName, const int width, const int height, const GLenum format, const GLenum type, const GLenum preciseFormat) : Renderer(config) {
+
 	_resultFramebuffer = std::make_shared<Framebuffer>(width, height, format, type, preciseFormat, GL_LINEAR, GL_CLAMP_TO_EDGE, false);
 	
 	checkGLError();
@@ -28,7 +26,7 @@ Renderer2D::Renderer2D(Config & config, const std::string & shaderName, const in
 
 
 void Renderer2D::draw() {
-
+	glDisable(GL_DEPTH_TEST);
 	_resultFramebuffer->bind();
 	
 	glViewport(0,0,_resultFramebuffer->width(), _resultFramebuffer->height());
@@ -39,10 +37,13 @@ void Renderer2D::draw() {
 	
 	glFlush();
 	glFinish();
-	
-	GLUtilities::saveFramebuffer(_resultFramebuffer, (unsigned int)_resultFramebuffer->width(), (unsigned int)_resultFramebuffer->height(), _outputPath);
 
 	_resultFramebuffer->unbind();
+	glEnable(GL_DEPTH_TEST);
+}
+
+void Renderer2D::save(const std::string & outputPath){
+	GLUtilities::saveFramebuffer(_resultFramebuffer, (unsigned int)_resultFramebuffer->width(), (unsigned int)_resultFramebuffer->height(), outputPath, false);
 }
 
 void Renderer2D::update(){

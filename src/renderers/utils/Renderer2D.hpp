@@ -20,7 +20,7 @@ public:
 	~Renderer2D();
 
 	/// Init function
-	Renderer2D(Config & config, const std::string & shaderName, const int width, const int height, const GLenum format, const GLenum type, const GLenum preciseFormat, const std::string & outputPath);
+	Renderer2D(Config & config, const std::string & shaderName, const int width, const int height, const GLenum format, const GLenum type, const GLenum preciseFormat);
 
 	/// Draw function
 	void draw();
@@ -28,6 +28,9 @@ public:
 	void update();
 	
 	void physics(double fullTime, double frameTime);
+	
+	/// Save result to disk.
+	void save(const std::string & outputPath);
 
 	/// Clean function
 	void clean() const;
@@ -40,7 +43,6 @@ private:
 	
 	std::shared_ptr<Framebuffer> _resultFramebuffer;
 	ScreenQuad _resultScreen;
-	std::string _outputPath;
 	
 };
 

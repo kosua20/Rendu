@@ -19,8 +19,6 @@ Config::Config(int argc, char** argv){
 		return;
 	}
 	
-	std::map<std::string, std::string> arguments;
-	
 	// Have we received a config file as argument?
 	const std::string potentialConfig = Resources::trim(std::string(argv[1]), "-");
 	
@@ -30,13 +28,19 @@ Config::Config(int argc, char** argv){
 			Log::Error() << Log::Config << "Missing path for --config argument. Using default config." << std::endl;
 			return;
 		}
-		parseFromFile(argv[2], arguments);
+		parseFromFile(argv[2], _rawArguments);
 	} else {
 		// Directly parse arguments.
-		parseFromArgs(argc, argv, arguments);
+		parseFromArgs(argc, argv, _rawArguments);
 	}
 	
-	for(const auto & arg : arguments){
+	processArguments();
+	
+}
+
+void Config::processArguments(){
+	
+	for(const auto & arg : _rawArguments){
 		const std::string key = arg.first;
 		const std::string value = arg.second;
 		
@@ -44,8 +48,6 @@ Config::Config(int argc, char** argv){
 			vsync = false;
 		} else if(key == "fullscreen"){
 			fullscreen = true;
-		} else if(key == "oneshot"){
-			oneShot = true;
 		} else if(key == "verbose"){
 			logVerbose = true;
 		} else if(key == "internal-res" || key == "ivr"){
@@ -62,7 +64,6 @@ Config::Config(int argc, char** argv){
 			}
 		}
 	}
-	
 }
 
 
