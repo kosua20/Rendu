@@ -381,26 +381,31 @@ MeshInfos GLUtilities::setupBuffers(const Mesh & mesh){
 
 void GLUtilities::saveDefaultFramebuffer(const unsigned int width, const unsigned int height, const std::string & path){
 	
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	GLUtilities::savePixels(GL_UNSIGNED_BYTE, GL_RGBA, width, height, 4, path, true);
+	GLint currentBoundFB = 0;
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentBoundFB);
 	
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	GLUtilities::savePixels(GL_UNSIGNED_BYTE, GL_RGBA, width, height, 4, path, true, true);
+	
+	glBindFramebuffer(GL_FRAMEBUFFER, currentBoundFB);
 }
 
-void GLUtilities::saveFramebuffer(const std::shared_ptr<Framebuffer> & framebuffer, const unsigned int width, const unsigned int height, const std::string & path, const bool ignoreAlpha){
+void GLUtilities::saveFramebuffer(const std::shared_ptr<Framebuffer> & framebuffer, const unsigned int width, const unsigned int height, const std::string & path, const bool flip, const bool ignoreAlpha){
 	
+	GLint currentBoundFB = 0;
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentBoundFB);
+	
+	framebuffer->bind();
 	const GLenum type = framebuffer->type();
 	const GLenum format = framebuffer->format();
 	const unsigned int components = (format == GL_RED ? 1 : (format == GL_RG ? 2 : (format == GL_RGB ? 3 : 4)));
+
+	GLUtilities::savePixels(type, format, width, height, components, path, flip, ignoreAlpha);
 	
-	framebuffer->bind();
-	
-	GLUtilities::savePixels(type, format, width, height, components, path, ignoreAlpha);
-	
-	framebuffer->unbind();
-	
+	glBindFramebuffer(GL_FRAMEBUFFER, currentBoundFB);
 }
 
-void GLUtilities::savePixels(const GLenum type, const GLenum format, const unsigned int width, const unsigned int height, const unsigned int components, const std::string & path, const bool ignoreAlpha){
+void GLUtilities::savePixels(const GLenum type, const GLenum format, const unsigned int width, const unsigned int height, const unsigned int components, const std::string & path, const bool flip, const bool ignoreAlpha){
 	
 	glFlush();
 	glFinish();
@@ -413,15 +418,15 @@ void GLUtilities::savePixels(const GLenum type, const GLenum format, const unsig
 		// Get back values.
 		GLfloat * data = new GLfloat[width * height * components];
 		glReadPixels(0, 0, width, height, format, type, &data[0]);
-		// Save data.
-		ret = ImageUtilities::saveHDRImage(path + ".exr", width, height, components, (float*)data, true, ignoreAlpha);
+		// Save data. We don't flip HDR images because we don't flip them when loading...
+		ret = ImageUtilities::saveHDRImage(path + ".exr", width, height, components, (float*)data, flip, ignoreAlpha);
 		delete[] data;
 	} else {
 		// Get back values.
 		GLubyte * data = new GLubyte[width * height * components];
 		glReadPixels(0, 0, width, height, format, type, &data[0]);
 		// Save data.
-		ret = ImageUtilities::saveLDRImage(path + ".png", width, height, components, (unsigned char*)data, true, ignoreAlpha);
+		ret = ImageUtilities::saveLDRImage(path + ".png", width, height, components, (unsigned char*)data, flip, ignoreAlpha);
 		delete[] data;
 	}
 	

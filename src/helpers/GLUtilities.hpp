@@ -45,7 +45,7 @@ private:
 	/// Load a shader of the given type from a string
 	static GLuint loadShader(const std::string & prog, GLuint type);
 	
-	static void savePixels(const GLenum type, const GLenum format, const unsigned int width, const unsigned int height, const unsigned int components, const std::string & path, const bool ignoreAlpha);
+	static void savePixels(const GLenum type, const GLenum format, const unsigned int width, const unsigned int height, const unsigned int components, const std::string & path, const bool flip, const bool ignoreAlpha);
 	
 public:
 	
@@ -64,7 +64,7 @@ public:
 	static MeshInfos setupBuffers(const Mesh & mesh);
 	
 	// Framebuffer saving to disk.
-	static void saveFramebuffer(const std::shared_ptr<Framebuffer> & framebuffer, const unsigned int width, const unsigned int height, const std::string & path, const bool ignoreAlpha = false);
+	static void saveFramebuffer(const std::shared_ptr<Framebuffer> & framebuffer, const unsigned int width, const unsigned int height, const std::string & path, const bool flip = true, const bool ignoreAlpha = false);
 	
 	static void saveDefaultFramebuffer(const unsigned int width, const unsigned int height, const std::string & path);
 	

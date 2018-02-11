@@ -155,13 +155,6 @@ int ImageUtilities::saveLDRImage(const std::string &path, const unsigned int wid
 }
 
 int ImageUtilities::saveHDRImage(const std::string &path, const unsigned int width, const unsigned int height, const unsigned int channels, const float *data, const bool flip, const bool ignoreAlpha){
-
-	if ((channels == 1) || channels == 3 || channels == 4) {
-		// TODO: support 2 channels by filling B with 0s.
-	} else {
-		return TINYEXR_ERROR_INVALID_ARGUMENT;
-	}
-	int components = channels;
 	
 	// Assume at least 16x16 pixels.
 	if (width < 16) return TINYEXR_ERROR_INVALID_ARGUMENT;
@@ -173,6 +166,8 @@ int ImageUtilities::saveHDRImage(const std::string &path, const unsigned int wid
 	EXRImage image;
 	InitEXRImage(&image);
 	
+	// Components: 1, 3, 3, 4
+	int components = channels == 2 ? 3 : channels;
 	image.num_channels = components;
 	
 	std::vector<float> images[4];
@@ -188,15 +183,22 @@ int ImageUtilities::saveHDRImage(const std::string &path, const unsigned int wid
 		images[3].resize(static_cast<size_t>(width * height));
 		
 		// Split RGB(A)RGB(A)RGB(A)... into R, G and B(and A) layers
+		// By default we try to always fill at least three channels.
 		for (size_t y = 0; y < height; y++) {
 			for (size_t x = 0; x < width; x++) {
 				const size_t destIndex = y * width + x;
 				const size_t sourceIndex = flip ? ((height-1-y)*width+x) : destIndex;
-				images[0][destIndex] = data[static_cast<size_t>(components) * sourceIndex + 0];
-				images[1][destIndex] = data[static_cast<size_t>(components) * sourceIndex + 1];
-				images[2][destIndex] = data[static_cast<size_t>(components) * sourceIndex + 2];
+				//images[0][destIndex] = data[static_cast<size_t>(components) * sourceIndex + 0];
+				//images[1][destIndex] = data[static_cast<size_t>(components) * sourceIndex + 1];
+				//images[2][destIndex] = data[static_cast<size_t>(components) * sourceIndex + 2];
+				for(unsigned int j = 0; j < channels; ++j){
+					images[j][destIndex] = data[static_cast<size_t>(channels) * sourceIndex + j];
+				}
+				for(unsigned int j = channels; j < 3; ++j){
+					images[j][destIndex] = 0.0f;
+				}
 				if (components == 4) {
-					images[3][destIndex] = ignoreAlpha ? 1.0f : data[static_cast<size_t>(components) * sourceIndex + 3];
+					images[3][destIndex] = ignoreAlpha ? 1.0f : data[static_cast<size_t>(channels) * sourceIndex + 3];
 				}
 			}
 		}
