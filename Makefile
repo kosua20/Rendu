@@ -21,7 +21,7 @@ ifeq ($(PLATFORM),MAC)
 	INCLUDEDIR = -I/usr/include/ -I/usr/local/include/ -Isrc/helpers/ -Isrc/libs/ -Isrc/libs/glfw/include/
 	LIBDIR = -Lsrc/libs/glfw/lib-mac/
 	#Libraries needed: OpenGL and glfw3. glfw3 requires Cocoa, IOKit and CoreVideo.
-	LIBS = $(LIBDIR) -lglfw3 -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo
+	LIBS = -lglfw3 -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo
 else
 	#Assume linux or cygwin with a similar setup.
 	#Include directories (for headers): standard include dirs in /usr and /usr/local, and our helper directory.
