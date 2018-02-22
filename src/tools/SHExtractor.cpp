@@ -39,7 +39,7 @@ int main(int argc, char** argv) {
 			Log::Error() << Log::Resources << "Non HDR image at path " << paths[side] << "." << std::endl;
 			return 4;
 		}
-		int ret = ImageUtilities::loadImage(paths[side].c_str(), width, height, channels, (void**)&(sides[side]), false);
+		int ret = ImageUtilities::loadImage(paths[side].c_str(), width, height, channels, (void**)&(sides[side]), false, true);
 		if (ret != 0) {
 			Log::Error() << Log::Resources << "Unable to load the texture at path " << paths[side] << "." << std::endl;
 			return 1;

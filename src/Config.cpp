@@ -69,7 +69,7 @@ void Config::processArguments(){
 
 void Config::parseFromFile(const char * filePath, std::map<std::string, std::string> & arguments){
 	// Load config from given file.
-	const std::string configContent = Resources::loadStringFromFile(filePath);
+	const std::string configContent = Resources::loadStringFromExternalFile(filePath);
 	if(configContent.empty()){
 		Log::Error() << Log::Config << "Missing/empty config file. Using default config." << std::endl;
 		return;

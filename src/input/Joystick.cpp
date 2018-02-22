@@ -85,7 +85,7 @@ bool Joystick::configure(){
 	// L horizontal, L vertical, R horizontal, R vertical, L2, R2
 	// PS4 codes: from 0 to 17
 	// Square, Cross, Circle, Triangle, L1, R1, L2, R2, Share, Option, L3, R3, PS button, Touchpad, Up, Right, Down, Left
-	const std::string settingsContent = Resources::manager().getTextFile("Controller.map");
+	const std::string settingsContent = Resources::loadStringFromExternalFile("Controller.map");
 	// If no mapping found, disable the controller.
 	if(settingsContent.empty()){
 		Log::Error() << Log::Input << "No settings found for the controller." << std::endl;
