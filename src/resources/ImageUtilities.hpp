@@ -12,7 +12,7 @@ public:
 	
 	static bool isHDR(const std::string & path);
 	
-	static int loadImage(const std::string & path, unsigned int & width, unsigned int & height, unsigned int & channels, void **data, const bool flip);
+	static int loadImage(const std::string & path, unsigned int & width, unsigned int & height, unsigned int & channels, void **data, const bool flip, const bool externalFile = false);
 	
 	static int saveLDRImage(const std::string & path, const unsigned int width, const unsigned int height, const unsigned int channels, const unsigned char *data, const bool flip, const bool ignoreAlpha = false);
 	
@@ -20,9 +20,9 @@ public:
 	
 private:
 	
-	static int loadLDRImage(const std::string & path, unsigned int & width, unsigned int & height, unsigned int & channels, unsigned char **data, const bool flip);
+	static int loadLDRImage(const std::string & path, unsigned int & width, unsigned int & height, unsigned int & channels, unsigned char **data, const bool flip, const bool externalFile);
 	
-	static int loadHDRImage(const std::string & path, unsigned int & width, unsigned int & height, unsigned int & channels, float **data, const bool flip);
+	static int loadHDRImage(const std::string & path, unsigned int & width, unsigned int & height, unsigned int & channels, float **data, const bool flip, const bool externalFile);
 	
 };
 

@@ -101,14 +101,6 @@ GLuint GLUtilities::createProgram(const std::string & vertexContent, const std::
 		fp = loadShader(fragmentContent,GL_FRAGMENT_SHADER);
 		glAttachShader(id,fp);
 	}
-	// If geometry  exists, load it and compile it.
-	/*if(!geometryPath.empty()) {
-		std::string geometryCode = loadStringFromFile(geometryPath);
-		if (!geometryCode.empty()) {
-			gp = loadShader(geometryCode,GL_GEOMETRY_SHADER);
-			glAttachShader(id,gp);
-		}
-	}*/
 
 	// Link everything
 	glLinkProgram(id);
@@ -134,14 +126,10 @@ GLuint GLUtilities::createProgram(const std::string & vertexContent, const std::
 	if (fp != 0) {
 		glDetachShader(id,fp);
 	}
-	/*if (gp != 0) {
-		glDetachShader(id,gp);
-	}*/
 	checkGLError();
 	//And deleting them
 	glDeleteShader(vp);
 	glDeleteShader(fp);
-	//glDeleteShader(gp);
 
 	checkGLError();
 	// Return the id to the succesfuly linked GLProgram.

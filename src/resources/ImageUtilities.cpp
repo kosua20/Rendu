@@ -1,4 +1,5 @@
 #include "ImageUtilities.hpp"
+#include "ResourcesManager.hpp"
 
 #include <vector>
 #include <algorithm>
@@ -19,24 +20,38 @@ bool ImageUtilities::isHDR(const std::string & path){
 	return path.substr(path.size()-4,4) == ".exr";
 }
 
-int ImageUtilities::loadImage(const std::string & path, unsigned int & width, unsigned int & height, unsigned int & channels, void **data, const bool flip){
+int ImageUtilities::loadImage(const std::string & path, unsigned int & width, unsigned int & height, unsigned int & channels, void **data, const bool flip, const bool externalFile){
 	int ret = 0;
 	if(isHDR(path)){
-		ret = ImageUtilities::loadHDRImage(path, width, height, channels, (float**)data, flip);
+		ret = ImageUtilities::loadHDRImage(path, width, height, channels, (float**)data, flip, externalFile);
 	} else {
-		ret = ImageUtilities::loadLDRImage(path, width, height, channels, (unsigned char**)data, flip);
+		ret = ImageUtilities::loadLDRImage(path, width, height, channels, (unsigned char**)data, flip, externalFile);
 	}
 	return ret;
 }
 
-int ImageUtilities::loadLDRImage(const std::string &path, unsigned int & width, unsigned int & height, unsigned int & channels, unsigned char **data, const bool flip){
+int ImageUtilities::loadLDRImage(const std::string &path, unsigned int & width, unsigned int & height, unsigned int & channels, unsigned char **data, const bool flip, const bool externalFile){
+	
+	size_t rawSize = 0;
+	unsigned char * rawData;
+	if(externalFile){
+		rawData = (unsigned char*)(Resources::loadRawDataFromExternalFile(path, rawSize));
+	} else {
+		rawData = (unsigned char*)(Resources::manager().getRawData(path, rawSize));
+	}
+	
+	if(rawData == NULL || rawSize == 0){
+		return 1;
+	}
 	
 	stbi_set_flip_vertically_on_load(flip);
 	
 	channels = 4;
 	int localWidth = 0;
 	int localHeight = 0;
-	*data = stbi_load(path.c_str(), &localWidth, &localHeight, NULL, channels);
+	// Beware: the size has to be cast to int, imposing a limit on big file sizes.
+	*data = stbi_load_from_memory(rawData, (int)rawSize, &localWidth, &localHeight, NULL, channels);
+	free(rawData);
 	
 	if(*data == NULL){
 		return 1;
@@ -48,7 +63,7 @@ int ImageUtilities::loadLDRImage(const std::string &path, unsigned int & width, 
 	return 0;
 }
 
-int ImageUtilities::loadHDRImage(const std::string &path, unsigned int & width, unsigned int & height, unsigned int & channels, float **data, const bool flip){
+int ImageUtilities::loadHDRImage(const std::string &path, unsigned int & width, unsigned int & height, unsigned int & channels, float **data, const bool flip, const bool externalFile){
 	
 	// Code adapted from tinyEXR deprecated loadEXR.
 	EXRVersion exr_version;
@@ -57,8 +72,20 @@ int ImageUtilities::loadHDRImage(const std::string &path, unsigned int & width, 
 	InitEXRHeader(&exr_header);
 	InitEXRImage(&exr_image);
 	
+	size_t rawSize = 0;
+	unsigned char * rawData;
+	if(externalFile){
+		rawData = (unsigned char*)(Resources::loadRawDataFromExternalFile(path, rawSize));
+	} else {
+		rawData = (unsigned char*)(Resources::manager().getRawData(path, rawSize));
+	}
+	
+	if(rawData == NULL || rawSize == 0){
+		return 1;
+	}
+	
 	{
-		int ret = ParseEXRVersionFromFile(&exr_version, path.c_str());
+		int ret = ParseEXRVersionFromMemory(&exr_version, rawData, tinyexr::kEXRVersionSize);
 		if (ret != TINYEXR_SUCCESS) {
 			return ret;
 		}
@@ -68,11 +95,12 @@ int ImageUtilities::loadHDRImage(const std::string &path, unsigned int & width, 
 		}
 	}
 	{
-		int ret = ParseEXRHeaderFromFile(&exr_header, &exr_version, path.c_str(), NULL);
+		int ret = ParseEXRHeaderFromMemory(&exr_header, &exr_version, rawData, rawSize, NULL);
 		if (ret != TINYEXR_SUCCESS) {
 			return ret;
 		}
 	}
+	
 	// Read HALF channel as FLOAT.
 	for (int i = 0; i < exr_header.num_channels; i++) {
 		if (exr_header.pixel_types[i] == TINYEXR_PIXELTYPE_HALF) {
@@ -80,11 +108,13 @@ int ImageUtilities::loadHDRImage(const std::string &path, unsigned int & width, 
 		}
 	}
 	{
-		int ret = LoadEXRImageFromFile(&exr_image, &exr_header, path.c_str(), NULL);
+		int ret = LoadEXRImageFromMemory(&exr_image, &exr_header, rawData, rawSize, NULL);
 		if (ret != TINYEXR_SUCCESS) {
 			return ret;
 		}
 	}
+	free(rawData);
+	
 	// RGBA
 	int idxR = -1;
 	int idxG = -1;
@@ -271,8 +301,7 @@ int ImageUtilities::saveHDRImage(const std::string &path, const unsigned int wid
 	header.requested_pixel_types = static_cast<int *>( malloc(sizeof(int) * static_cast<size_t>(header.num_channels)));
 	for (int i = 0; i < header.num_channels; i++) {
 		header.pixel_types[i] = TINYEXR_PIXELTYPE_FLOAT;  // pixel type of input image
-		header.requested_pixel_types[i] = TINYEXR_PIXELTYPE_HALF;  // pixel type of output image to be stored in
-								 // .EXR
+		header.requested_pixel_types[i] = TINYEXR_PIXELTYPE_HALF;  // pixel type of output image to be stored in .EXR
 	}
 	
 	int ret = SaveEXRImageToFile(&image, &header, path.c_str(), NULL);

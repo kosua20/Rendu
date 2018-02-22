@@ -47,7 +47,7 @@ inline void Scene::loadSphericalHarmonics(const std::string & name){
 	backgroundIrradiance.clear();
 	backgroundIrradiance.resize(9);
 	
-	const std::string coeffsRaw = Resources::manager().getTextFile(name);
+	const std::string coeffsRaw = Resources::manager().getString(name);
 	std::stringstream coeffsStream(coeffsRaw);
 	
 	float x = 0.0f;
