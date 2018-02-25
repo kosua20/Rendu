@@ -37,10 +37,10 @@
 - Resources managers
 - Joystick support
 - HDR, bloom
+- Physically based rendering
 
 [Code stops here]
 
-- Physically based rendering
 - Raymarching techniques (SSR ?)
 - Water/terrain/noise ?
 - Temporal AA ?
