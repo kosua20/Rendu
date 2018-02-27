@@ -72,18 +72,18 @@
     <Filter Include="Source Files\tools">
       <UniqueIdentifier>{51d2dadf-05a8-4b1d-86ca-13845cd74e77}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\resources">
+      <UniqueIdentifier>{064170d4-a07a-4410-ad4f-418dcd57c6fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\libs\miniz">
+      <UniqueIdentifier>{46f6aab2-d723-4c2f-a285-6435e4009282}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\helpers\MeshUtilities.cpp">
-      <Filter>Source Files\helpers</Filter>
-    </ClCompile>
     <ClCompile Include="src\helpers\GLUtilities.cpp">
       <Filter>Source Files\helpers</Filter>
     </ClCompile>
     <ClCompile Include="src\helpers\ProgramInfos.cpp">
-      <Filter>Source Files\helpers</Filter>
-    </ClCompile>
-    <ClCompile Include="src\helpers\ResourcesManager.cpp">
       <Filter>Source Files\helpers</Filter>
     </ClCompile>
     <ClCompile Include="src\helpers\GenerationUtilities.cpp">
@@ -146,9 +146,6 @@
     <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\helpers\ImageUtilities.cpp">
-      <Filter>Source Files\helpers</Filter>
-    </ClCompile>
     <ClCompile Include="src\GaussianBlur.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -157,6 +154,18 @@
     </ClCompile>
     <ClCompile Include="src\helpers\Logger.cpp">
       <Filter>Source Files\helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\resources\ResourcesManager.cpp">
+      <Filter>Source Files\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\resources\ImageUtilities.cpp">
+      <Filter>Source Files\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\resources\MeshUtilities.cpp">
+      <Filter>Source Files\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\libs\miniz\miniz.cpp">
+      <Filter>Source Files\libs\miniz</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -199,16 +208,10 @@
     <ClInclude Include="src\helpers\ProgramInfos.hpp">
       <Filter>Source Files\helpers</Filter>
     </ClInclude>
-    <ClInclude Include="src\helpers\ResourcesManager.hpp">
-      <Filter>Source Files\helpers</Filter>
-    </ClInclude>
     <ClInclude Include="src\helpers\GenerationUtilities.hpp">
       <Filter>Source Files\helpers</Filter>
     </ClInclude>
     <ClInclude Include="src\helpers\GLUtilities.hpp">
-      <Filter>Source Files\helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\helpers\MeshUtilities.hpp">
       <Filter>Source Files\helpers</Filter>
     </ClInclude>
     <ClInclude Include="src\scenes\DragonScene.hpp">
@@ -259,9 +262,6 @@
     <ClInclude Include="src\renderers\utils\Renderer2D.hpp">
       <Filter>Source Files\renderers\utils</Filter>
     </ClInclude>
-    <ClInclude Include="src\helpers\ImageUtilities.hpp">
-      <Filter>Source Files\helpers</Filter>
-    </ClInclude>
     <ClInclude Include="src\BoxBlur.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -273,6 +273,18 @@
     </ClInclude>
     <ClInclude Include="src\helpers\Logger.hpp">
       <Filter>Source Files\helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\resources\MeshUtilities.hpp">
+      <Filter>Source Files\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="src\resources\ResourcesManager.hpp">
+      <Filter>Source Files\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="src\resources\ImageUtilities.hpp">
+      <Filter>Source Files\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="src\libs\miniz\miniz.h">
+      <Filter>Source Files\libs\miniz</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

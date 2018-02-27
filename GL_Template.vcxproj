@@ -222,15 +222,13 @@
     <ClCompile Include="src\GaussianBlur.cpp" />
     <ClCompile Include="src\helpers\GenerationUtilities.cpp" />
     <ClCompile Include="src\helpers\GLUtilities.cpp" />
-    <ClCompile Include="src\helpers\ImageUtilities.cpp" />
     <ClCompile Include="src\helpers\Logger.cpp" />
-    <ClCompile Include="src\helpers\MeshUtilities.cpp" />
     <ClCompile Include="src\helpers\ProgramInfos.cpp" />
-    <ClCompile Include="src\helpers\ResourcesManager.cpp" />
     <ClCompile Include="src\input\Camera.cpp" />
     <ClCompile Include="src\input\Input.cpp" />
     <ClCompile Include="src\input\Joystick.cpp" />
     <ClCompile Include="src\libs\gl3w\gl3w.cpp" />
+    <ClCompile Include="src\libs\miniz\miniz.cpp" />
     <ClCompile Include="src\lights\DirectionalLight.cpp" />
     <ClCompile Include="src\lights\PointLight.cpp" />
     <ClCompile Include="src\main.cpp">
@@ -244,6 +242,9 @@
     <ClCompile Include="src\renderers\Renderer.cpp" />
     <ClCompile Include="src\renderers\utils\Renderer2D.cpp" />
     <ClCompile Include="src\renderers\utils\RendererCube.cpp" />
+    <ClCompile Include="src\resources\ImageUtilities.cpp" />
+    <ClCompile Include="src\resources\MeshUtilities.cpp" />
+    <ClCompile Include="src\resources\ResourcesManager.cpp" />
     <ClCompile Include="src\ScreenQuad.cpp" />
     <ClCompile Include="src\tools\SHExtractor.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -260,17 +261,15 @@
     <ClInclude Include="src\GaussianBlur.hpp" />
     <ClInclude Include="src\helpers\GenerationUtilities.hpp" />
     <ClInclude Include="src\helpers\GLUtilities.hpp" />
-    <ClInclude Include="src\helpers\ImageUtilities.hpp" />
     <ClInclude Include="src\helpers\Logger.hpp" />
-    <ClInclude Include="src\helpers\MeshUtilities.hpp" />
     <ClInclude Include="src\helpers\ProgramInfos.hpp" />
-    <ClInclude Include="src\helpers\ResourcesManager.hpp" />
     <ClInclude Include="src\input\Camera.hpp" />
     <ClInclude Include="src\input\Input.hpp" />
     <ClInclude Include="src\input\Joystick.hpp" />
     <ClInclude Include="src\libs\gl3w\gl3w.h" />
     <ClInclude Include="src\libs\gl3w\glcorearb.h" />
     <ClInclude Include="src\libs\glm\glm.hpp" />
+    <ClInclude Include="src\libs\miniz\miniz.h" />
     <ClInclude Include="src\libs\stb_image\stb_image.h" />
     <ClInclude Include="src\libs\stb_image\stb_image_write.h" />
     <ClInclude Include="src\libs\tinydir\tinydir.h" />
@@ -285,6 +284,9 @@
     <ClInclude Include="src\renderers\Renderer.hpp" />
     <ClInclude Include="src\renderers\utils\Renderer2D.hpp" />
     <ClInclude Include="src\renderers\utils\RendererCube.hpp" />
+    <ClInclude Include="src\resources\ImageUtilities.hpp" />
+    <ClInclude Include="src\resources\MeshUtilities.hpp" />
+    <ClInclude Include="src\resources\ResourcesManager.hpp" />
     <ClInclude Include="src\scenes\DeskScene.hpp" />
     <ClInclude Include="src\scenes\DragonScene.hpp" />
     <ClInclude Include="src\scenes\Scene.hpp" />
