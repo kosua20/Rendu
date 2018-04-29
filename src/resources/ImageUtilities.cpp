@@ -13,6 +13,9 @@
 
 #include <miniz/miniz.h>
 #define TINYEXR_USE_MINIZ (0)
+#ifdef _WIN32
+#pragma warning(disable:4996)
+#endif
 #define TINYEXR_IMPLEMENTATION
 #include <tinyexr/tinyexr.h>
 
