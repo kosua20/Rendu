@@ -6,6 +6,7 @@
 #include "scenes/Scenes.hpp"
 #include "renderers/deferred/DeferredRenderer.hpp"
 #include "renderers/utils/RendererCube.hpp"
+#include "renderers/utils/TestRenderer.hpp"
 #include "helpers/Logger.hpp"
 
 #include <stdio.h>

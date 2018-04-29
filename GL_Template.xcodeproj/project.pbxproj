@@ -25,6 +25,7 @@
 		F434B5852030B3F600E44689 /* miniz.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F434B5832030B3F500E44689 /* miniz.cpp */; };
 		F434B5862030B3F600E44689 /* miniz.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F434B5832030B3F500E44689 /* miniz.cpp */; };
 		F434B5872030B3F600E44689 /* miniz.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F434B5832030B3F500E44689 /* miniz.cpp */; };
+		F43AA60D2094E992008C49AE /* TestRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F43AA60C2094E992008C49AE /* TestRenderer.cpp */; };
 		F43EF9AB1F44EDFB0073DFFB /* Joystick.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F43EF9A91F44EDFB0073DFFB /* Joystick.cpp */; };
 		F4442CC51FFA91EC005E1E24 /* Renderer2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4442CC41FFA91EC005E1E24 /* Renderer2D.cpp */; };
 		F4442CCB1FFAE306005E1E24 /* RendererCube.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4442CC91FFAE306005E1E24 /* RendererCube.cpp */; };
@@ -75,6 +76,8 @@
 		F4BEA8A3202F905F00B28809 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F41F5F641E817F3100C18D8D /* Cocoa.framework */; };
 		F4BEA8A4202F905F00B28809 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F41F5F621E817F2600C18D8D /* OpenGL.framework */; };
 		F4BEA8AA202F907800B28809 /* BRDFEstimator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4BEA881202F905500B28809 /* BRDFEstimator.cpp */; };
+		F4CC49D22095B7D4001E536B /* TestRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F43AA60C2094E992008C49AE /* TestRenderer.cpp */; };
+		F4CC49D32095B7D4001E536B /* TestRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F43AA60C2094E992008C49AE /* TestRenderer.cpp */; };
 		F4DE2B94201F9B5400433C21 /* gl3w.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F43245DD1F438BFB0090FD5F /* gl3w.cpp */; };
 		F4DE2B95201F9B5400433C21 /* Joystick.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F43EF9A91F44EDFB0073DFFB /* Joystick.cpp */; };
 		F4DE2B96201F9B5400433C21 /* Renderer2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4442CC41FFA91EC005E1E24 /* Renderer2D.cpp */; };
@@ -296,6 +299,8 @@
 		F434B5842030B3F500E44689 /* miniz.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = miniz.h; sourceTree = "<group>"; };
 		F434B5892030B98B00E44689 /* tinyexr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tinyexr.h; sourceTree = "<group>"; };
 		F43A76621F6E7374009DB55A /* DeskScene.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = DeskScene.hpp; sourceTree = "<group>"; };
+		F43AA60B2094E992008C49AE /* TestRenderer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TestRenderer.hpp; sourceTree = "<group>"; };
+		F43AA60C2094E992008C49AE /* TestRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestRenderer.cpp; sourceTree = "<group>"; };
 		F43EF9A91F44EDFB0073DFFB /* Joystick.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Joystick.cpp; sourceTree = "<group>"; };
 		F43EF9AA1F44EDFB0073DFFB /* Joystick.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Joystick.hpp; sourceTree = "<group>"; };
 		F4442CC31FFA91EC005E1E24 /* Renderer2D.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Renderer2D.hpp; sourceTree = "<group>"; };
@@ -686,6 +691,8 @@
 				F4442CC41FFA91EC005E1E24 /* Renderer2D.cpp */,
 				F4442CCA1FFAE306005E1E24 /* RendererCube.hpp */,
 				F4442CC91FFAE306005E1E24 /* RendererCube.cpp */,
+				F43AA60C2094E992008C49AE /* TestRenderer.cpp */,
+				F43AA60B2094E992008C49AE /* TestRenderer.hpp */,
 			);
 			path = utils;
 			sourceTree = "<group>";
@@ -1094,6 +1101,7 @@
 				F41F5F5E1E817E4B00C18D8D /* AmbientQuad.cpp in Sources */,
 				F41F5F601E817E4B00C18D8D /* Object.cpp in Sources */,
 				F44D0A9F1FFA73030051AE3E /* DeferredRenderer.cpp in Sources */,
+				F43AA60D2094E992008C49AE /* TestRenderer.cpp in Sources */,
 				F48FDD7720265296003679EA /* ImageUtilities.cpp in Sources */,
 				F4FA2F061E87F60D007EBA57 /* PointLight.cpp in Sources */,
 				F44F7F871F435AF60057CEFE /* ProgramInfos.cpp in Sources */,
@@ -1129,6 +1137,7 @@
 				F4BEA898202F905F00B28809 /* Object.cpp in Sources */,
 				F4BEA899202F905F00B28809 /* DeferredRenderer.cpp in Sources */,
 				F4BEA89A202F905F00B28809 /* PointLight.cpp in Sources */,
+				F4CC49D32095B7D4001E536B /* TestRenderer.cpp in Sources */,
 				F4BEA89B202F905F00B28809 /* ImageUtilities.cpp in Sources */,
 				F4BEA89C202F905F00B28809 /* ProgramInfos.cpp in Sources */,
 				F4BEA89D202F905F00B28809 /* GenerationUtilities.cpp in Sources */,
@@ -1164,6 +1173,7 @@
 				F4DE2BA6201F9B5400433C21 /* Object.cpp in Sources */,
 				F4DE2BA7201F9B5400433C21 /* DeferredRenderer.cpp in Sources */,
 				F4DE2BA8201F9B5400433C21 /* PointLight.cpp in Sources */,
+				F4CC49D22095B7D4001E536B /* TestRenderer.cpp in Sources */,
 				F48FDD7A202652C6003679EA /* ImageUtilities.cpp in Sources */,
 				F4DE2BA9201F9B5400433C21 /* ProgramInfos.cpp in Sources */,
 				F4DE2BAA201F9B5400433C21 /* GenerationUtilities.cpp in Sources */,
