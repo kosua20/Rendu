@@ -2,7 +2,7 @@
 #define Input_h
 
 #include <GLFW/glfw3.h>
-#include "Joystick.hpp"
+#include "controller/Controller.hpp"
 
 class Input {
 public:
@@ -165,9 +165,9 @@ public:
 	glm::vec2 size() { return glm::vec2(_width, _height); };
 	
 	// Joystick.
-	bool joystickAvailable() const { return _activeJoystick >= 0; };
+	bool controllerAvailable() const { return _activeController >= 0; };
 	
-	Joystick & joystick(){ return _joysticks[_activeJoystick]; };
+	Controller & controller(){ return *_controllers[_activeController]; };
 	
 	// Keyboard.
 	bool pressed(const Key & keyboardKey) const;
@@ -195,8 +195,8 @@ private:
 	bool _resized = false;
 	
 	// Joystick state.
-	int _activeJoystick = -1;
-	Joystick _joysticks[GLFW_JOYSTICK_LAST+1];
+	int _activeController = -1;
+	std::shared_ptr<Controller> _controllers[GLFW_JOYSTICK_LAST+1];
 	
 	// Mouse state.
 	struct MouseButton {

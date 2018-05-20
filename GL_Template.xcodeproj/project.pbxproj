@@ -26,7 +26,6 @@
 		F434B5862030B3F600E44689 /* miniz.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F434B5832030B3F500E44689 /* miniz.cpp */; };
 		F434B5872030B3F600E44689 /* miniz.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F434B5832030B3F500E44689 /* miniz.cpp */; };
 		F43AA60D2094E992008C49AE /* TestRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F43AA60C2094E992008C49AE /* TestRenderer.cpp */; };
-		F43EF9AB1F44EDFB0073DFFB /* Joystick.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F43EF9A91F44EDFB0073DFFB /* Joystick.cpp */; };
 		F4442CC51FFA91EC005E1E24 /* Renderer2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4442CC41FFA91EC005E1E24 /* Renderer2D.cpp */; };
 		F4442CCB1FFAE306005E1E24 /* RendererCube.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4442CC91FFAE306005E1E24 /* RendererCube.cpp */; };
 		F44D0A9F1FFA73030051AE3E /* DeferredRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F44D0A9D1FFA73030051AE3E /* DeferredRenderer.cpp */; };
@@ -39,6 +38,15 @@
 		F48FDD78202652B0003679EA /* GaussianBlur.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F48FDD6820264602003679EA /* GaussianBlur.cpp */; };
 		F48FDD79202652B5003679EA /* BoxBlur.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F48FDD65202642E1003679EA /* BoxBlur.cpp */; };
 		F48FDD7A202652C6003679EA /* ImageUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F48FDD7620265296003679EA /* ImageUtilities.cpp */; };
+		F499FF0220B1E8D2001499BC /* CustomController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F499FEFE20B1E8D1001499BC /* CustomController.cpp */; };
+		F499FF0320B1E8D2001499BC /* CustomController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F499FEFE20B1E8D1001499BC /* CustomController.cpp */; };
+		F499FF0420B1E8D2001499BC /* CustomController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F499FEFE20B1E8D1001499BC /* CustomController.cpp */; };
+		F499FF0820B1E8D2001499BC /* ControllableCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F499FF0120B1E8D2001499BC /* ControllableCamera.cpp */; };
+		F499FF0920B1E8D2001499BC /* ControllableCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F499FF0120B1E8D2001499BC /* ControllableCamera.cpp */; };
+		F499FF0A20B1E8D2001499BC /* ControllableCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F499FF0120B1E8D2001499BC /* ControllableCamera.cpp */; };
+		F499FF0C20B1EC0B001499BC /* Controller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F499FF0B20B1EC0B001499BC /* Controller.cpp */; };
+		F499FF0D20B1EC0B001499BC /* Controller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F499FF0B20B1EC0B001499BC /* Controller.cpp */; };
+		F499FF0E20B1EC0B001499BC /* Controller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F499FF0B20B1EC0B001499BC /* Controller.cpp */; };
 		F4AE73061FF6B3F200423A10 /* Input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4AE73051FF6B3F200423A10 /* Input.cpp */; };
 		F4B11E071F5F3290002E87F1 /* Blur.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4B11E051F5F328F002E87F1 /* Blur.cpp */; };
 		F4B42D021F425B8100E485C5 /* ResourcesManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4B42D001F425B8100E485C5 /* ResourcesManager.cpp */; };
@@ -46,7 +54,6 @@
 		F4BA511520290B950064C666 /* Logger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4BA511220290B950064C666 /* Logger.cpp */; };
 		F4BEA885202F905F00B28809 /* GaussianBlur.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F48FDD6820264602003679EA /* GaussianBlur.cpp */; };
 		F4BEA886202F905F00B28809 /* gl3w.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F43245DD1F438BFB0090FD5F /* gl3w.cpp */; };
-		F4BEA887202F905F00B28809 /* Joystick.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F43EF9A91F44EDFB0073DFFB /* Joystick.cpp */; };
 		F4BEA888202F905F00B28809 /* Renderer2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4442CC41FFA91EC005E1E24 /* Renderer2D.cpp */; };
 		F4BEA889202F905F00B28809 /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4FE35431D0C47AA00B8318A /* Camera.cpp */; };
 		F4BEA88A202F905F00B28809 /* DirectionalLight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4FA2F001E87F60D007EBA57 /* DirectionalLight.cpp */; };
@@ -79,7 +86,6 @@
 		F4CC49D22095B7D4001E536B /* TestRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F43AA60C2094E992008C49AE /* TestRenderer.cpp */; };
 		F4CC49D32095B7D4001E536B /* TestRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F43AA60C2094E992008C49AE /* TestRenderer.cpp */; };
 		F4DE2B94201F9B5400433C21 /* gl3w.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F43245DD1F438BFB0090FD5F /* gl3w.cpp */; };
-		F4DE2B95201F9B5400433C21 /* Joystick.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F43EF9A91F44EDFB0073DFFB /* Joystick.cpp */; };
 		F4DE2B96201F9B5400433C21 /* Renderer2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4442CC41FFA91EC005E1E24 /* Renderer2D.cpp */; };
 		F4DE2B97201F9B5400433C21 /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4FE35431D0C47AA00B8318A /* Camera.cpp */; };
 		F4DE2B98201F9B5400433C21 /* DirectionalLight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4FA2F001E87F60D007EBA57 /* DirectionalLight.cpp */; };
@@ -301,8 +307,6 @@
 		F43A76621F6E7374009DB55A /* DeskScene.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = DeskScene.hpp; sourceTree = "<group>"; };
 		F43AA60B2094E992008C49AE /* TestRenderer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TestRenderer.hpp; sourceTree = "<group>"; };
 		F43AA60C2094E992008C49AE /* TestRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestRenderer.cpp; sourceTree = "<group>"; };
-		F43EF9A91F44EDFB0073DFFB /* Joystick.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Joystick.cpp; sourceTree = "<group>"; };
-		F43EF9AA1F44EDFB0073DFFB /* Joystick.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Joystick.hpp; sourceTree = "<group>"; };
 		F4442CC31FFA91EC005E1E24 /* Renderer2D.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Renderer2D.hpp; sourceTree = "<group>"; };
 		F4442CC41FFA91EC005E1E24 /* Renderer2D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Renderer2D.cpp; sourceTree = "<group>"; };
 		F4442CC81FFAAE63005E1E24 /* brdf_sampler.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = brdf_sampler.frag; sourceTree = "<group>"; };
@@ -364,6 +368,12 @@
 		F496FD691E91319000A295A8 /* tonemap.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = tonemap.frag; sourceTree = "<group>"; };
 		F496FD6B1E91550300A295A8 /* point_light_debug.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = point_light_debug.frag; sourceTree = "<group>"; };
 		F496FD6C1E91550300A295A8 /* point_light_debug.vert */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = point_light_debug.vert; sourceTree = "<group>"; };
+		F499FEFB20B1E8D1001499BC /* Controller.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Controller.hpp; sourceTree = "<group>"; };
+		F499FEFD20B1E8D1001499BC /* CustomController.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = CustomController.hpp; sourceTree = "<group>"; };
+		F499FEFE20B1E8D1001499BC /* CustomController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CustomController.cpp; sourceTree = "<group>"; };
+		F499FF0020B1E8D2001499BC /* ControllableCamera.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ControllableCamera.hpp; sourceTree = "<group>"; };
+		F499FF0120B1E8D2001499BC /* ControllableCamera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ControllableCamera.cpp; sourceTree = "<group>"; };
+		F499FF0B20B1EC0B001499BC /* Controller.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Controller.cpp; sourceTree = "<group>"; };
 		F4AE73041FF6B3F200423A10 /* Input.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Input.hpp; sourceTree = "<group>"; };
 		F4AE73051FF6B3F200423A10 /* Input.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Input.cpp; sourceTree = "<group>"; };
 		F4B11E051F5F328F002E87F1 /* Blur.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Blur.cpp; sourceTree = "<group>"; };
@@ -868,6 +878,17 @@
 			path = "box-blur-approx";
 			sourceTree = "<group>";
 		};
+		F499FEFA20B1E8D1001499BC /* controller */ = {
+			isa = PBXGroup;
+			children = (
+				F499FEFB20B1E8D1001499BC /* Controller.hpp */,
+				F499FF0B20B1EC0B001499BC /* Controller.cpp */,
+				F499FEFD20B1E8D1001499BC /* CustomController.hpp */,
+				F499FEFE20B1E8D1001499BC /* CustomController.cpp */,
+			);
+			path = controller;
+			sourceTree = "<group>";
+		};
 		F4DE2B90201F9B3F00433C21 /* tools */ = {
 			isa = PBXGroup;
 			children = (
@@ -946,10 +967,11 @@
 		F4FE353E1D0C474C00B8318A /* input */ = {
 			isa = PBXGroup;
 			children = (
+				F499FF0120B1E8D2001499BC /* ControllableCamera.cpp */,
+				F499FF0020B1E8D2001499BC /* ControllableCamera.hpp */,
+				F499FEFA20B1E8D1001499BC /* controller */,
 				F4AE73041FF6B3F200423A10 /* Input.hpp */,
 				F4AE73051FF6B3F200423A10 /* Input.cpp */,
-				F43EF9AA1F44EDFB0073DFFB /* Joystick.hpp */,
-				F43EF9A91F44EDFB0073DFFB /* Joystick.cpp */,
 				F4FE35441D0C47AA00B8318A /* Camera.hpp */,
 				F4FE35431D0C47AA00B8318A /* Camera.cpp */,
 			);
@@ -1078,7 +1100,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				F43246721F438C3B0090FD5F /* gl3w.cpp in Sources */,
-				F43EF9AB1F44EDFB0073DFFB /* Joystick.cpp in Sources */,
 				F48FDD67202642E2003679EA /* BoxBlur.cpp in Sources */,
 				F4442CC51FFA91EC005E1E24 /* Renderer2D.cpp in Sources */,
 				F41F5F521E817E4B00C18D8D /* Camera.cpp in Sources */,
@@ -1087,11 +1108,14 @@
 				F4B42D021F425B8100E485C5 /* ResourcesManager.cpp in Sources */,
 				F41F5F571E817E4B00C18D8D /* GLUtilities.cpp in Sources */,
 				F41F5F581E817E4B00C18D8D /* main.cpp in Sources */,
+				F499FF0220B1E8D2001499BC /* CustomController.cpp in Sources */,
 				F41F5F591E817E4B00C18D8D /* Gbuffer.cpp in Sources */,
 				F41F5F5A1E817E4B00C18D8D /* Framebuffer.cpp in Sources */,
 				F4B11E071F5F3290002E87F1 /* Blur.cpp in Sources */,
 				F4442CCB1FFAE306005E1E24 /* RendererCube.cpp in Sources */,
 				F48FDD6A20264602003679EA /* GaussianBlur.cpp in Sources */,
+				F499FF0820B1E8D2001499BC /* ControllableCamera.cpp in Sources */,
+				F499FF0C20B1EC0B001499BC /* Controller.cpp in Sources */,
 				F434B5852030B3F600E44689 /* miniz.cpp in Sources */,
 				F41F5F5B1E817E4B00C18D8D /* Renderer.cpp in Sources */,
 				F41F5F5D1E817E4B00C18D8D /* ScreenQuad.cpp in Sources */,
@@ -1116,18 +1140,20 @@
 				F4BEA8AA202F907800B28809 /* BRDFEstimator.cpp in Sources */,
 				F4BEA885202F905F00B28809 /* GaussianBlur.cpp in Sources */,
 				F4BEA886202F905F00B28809 /* gl3w.cpp in Sources */,
-				F4BEA887202F905F00B28809 /* Joystick.cpp in Sources */,
 				F4BEA888202F905F00B28809 /* Renderer2D.cpp in Sources */,
 				F4BEA889202F905F00B28809 /* Camera.cpp in Sources */,
 				F4BEA88A202F905F00B28809 /* DirectionalLight.cpp in Sources */,
 				F4BEA88B202F905F00B28809 /* MeshUtilities.cpp in Sources */,
 				F4BEA88C202F905F00B28809 /* ResourcesManager.cpp in Sources */,
 				F4BEA88D202F905F00B28809 /* GLUtilities.cpp in Sources */,
+				F499FF0420B1E8D2001499BC /* CustomController.cpp in Sources */,
 				F4BEA88E202F905F00B28809 /* Gbuffer.cpp in Sources */,
 				F4BEA88F202F905F00B28809 /* Framebuffer.cpp in Sources */,
 				F4BEA890202F905F00B28809 /* Blur.cpp in Sources */,
 				F4BEA891202F905F00B28809 /* RendererCube.cpp in Sources */,
 				F4BEA892202F905F00B28809 /* Renderer.cpp in Sources */,
+				F499FF0A20B1E8D2001499BC /* ControllableCamera.cpp in Sources */,
+				F499FF0E20B1EC0B001499BC /* Controller.cpp in Sources */,
 				F434B5872030B3F600E44689 /* miniz.cpp in Sources */,
 				F4BEA893202F905F00B28809 /* ScreenQuad.cpp in Sources */,
 				F4BEA894202F905F00B28809 /* Config.cpp in Sources */,
@@ -1152,18 +1178,20 @@
 				F4DE2BB6201F9B6D00433C21 /* SHExtractor.cpp in Sources */,
 				F48FDD78202652B0003679EA /* GaussianBlur.cpp in Sources */,
 				F4DE2B94201F9B5400433C21 /* gl3w.cpp in Sources */,
-				F4DE2B95201F9B5400433C21 /* Joystick.cpp in Sources */,
 				F4DE2B96201F9B5400433C21 /* Renderer2D.cpp in Sources */,
 				F4DE2B97201F9B5400433C21 /* Camera.cpp in Sources */,
 				F4DE2B98201F9B5400433C21 /* DirectionalLight.cpp in Sources */,
 				F4DE2B99201F9B5400433C21 /* MeshUtilities.cpp in Sources */,
 				F4DE2B9A201F9B5400433C21 /* ResourcesManager.cpp in Sources */,
 				F4DE2B9B201F9B5400433C21 /* GLUtilities.cpp in Sources */,
+				F499FF0320B1E8D2001499BC /* CustomController.cpp in Sources */,
 				F4DE2B9D201F9B5400433C21 /* Gbuffer.cpp in Sources */,
 				F4DE2B9E201F9B5400433C21 /* Framebuffer.cpp in Sources */,
 				F4DE2B9F201F9B5400433C21 /* Blur.cpp in Sources */,
 				F4DE2BA0201F9B5400433C21 /* RendererCube.cpp in Sources */,
 				F4DE2BA1201F9B5400433C21 /* Renderer.cpp in Sources */,
+				F499FF0920B1E8D2001499BC /* ControllableCamera.cpp in Sources */,
+				F499FF0D20B1EC0B001499BC /* Controller.cpp in Sources */,
 				F434B5862030B3F600E44689 /* miniz.cpp in Sources */,
 				F4DE2BA2201F9B5400433C21 /* ScreenQuad.cpp in Sources */,
 				F4DE2BA3201F9B5400433C21 /* Config.cpp in Sources */,

@@ -48,7 +48,7 @@ void Camera::update(){
 
 void Camera::physics(double frameTime){
 	
-	if (Input::manager().joystickAvailable()){
+	if (Input::manager().controllerAvailable()){
 		updateUsingJoystick(frameTime);
 	} else if (_mode == FPS) {
 		updateUsingKeyboard(frameTime);
@@ -60,10 +60,10 @@ void Camera::physics(double frameTime){
 }
 
 void Camera::updateUsingJoystick(double frameTime){
-	Joystick & joystick = Input::manager().joystick();
+	Controller & joystick = Input::manager().controller();
 	// Handle buttons
 	// Reset camera when pressing the Circle button.
-	if(joystick.pressed(Joystick::ResetAll)){
+	if(joystick.pressed(Controller::ButtonB)){
 		_eye = glm::vec3(0.0,0.0,1.0);
 		_center = glm::vec3(0.0,0.0,0.0);
 		_up = glm::vec3(0.0,1.0,0.0);
@@ -73,21 +73,21 @@ void Camera::updateUsingJoystick(double frameTime){
 	
 	// Special actions to restore the camera orientation.
 	// Restore the up vector.
-	if(joystick.pressed(Joystick::ResetOrientation)){
+	if(joystick.pressed(Controller::BumperL1)){
 		_up = glm::vec3(0.0f,1.0f,0.0f);
 	}
 	// Look at the center of the scene
-	if( joystick.pressed(Joystick::ResetCenter)){
+	if( joystick.pressed(Controller::BumperR1)){
 		_center[0] = _center[1] = _center[2] = 0.0f;
 	}
 	
 	// The Up and Down boutons are configured to register each press only once
 	// to avoid increasing/decreasing the speed for as long as the button is pressed.
-	if(joystick.triggered(Joystick::SpeedUp)){
+	if(joystick.triggered(Controller::ButtonUp)){
 		_speed *= 2.0f;
 	}
 	
-	if(joystick.triggered(Joystick::SpeedDown)){
+	if(joystick.triggered(Controller::ButtonDown)){
 		_speed *= 0.5f;
 	}
 	
@@ -96,12 +96,12 @@ void Camera::updateUsingJoystick(double frameTime){
 	// We need the direction of the camera, normalized.
 	glm::vec3 look = normalize(_center - _eye);
 	// Require a minimum deplacement between starting to register the move.
-	const float axisForward = joystick.axis(Joystick::MoveForward);
-	const float axisLateral = joystick.axis(Joystick::MoveLateral);
-	const float axisUp = joystick.axis(Joystick::MoveUp);
-	const float axisDown = joystick.axis(Joystick::MoveDown);
-	const float axisVertical = joystick.axis(Joystick::LookVertical);
-	const float axisHorizontal = joystick.axis(Joystick::LookHorizontal);
+	const float axisForward = joystick.axis(Controller::PadLeftY);
+	const float axisLateral = joystick.axis(Controller::PadLeftX);
+	const float axisUp = joystick.axis(Controller::TriggerL2);
+	const float axisDown = joystick.axis(Controller::TriggerR2);
+	const float axisVertical = joystick.axis(Controller::PadRightY);
+	const float axisHorizontal = joystick.axis(Controller::PadRightX);
 	
 	if(axisForward * axisForward + axisLateral * axisLateral > 0.1){
 		// Update the camera position.

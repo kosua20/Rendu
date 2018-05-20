@@ -1,5 +1,6 @@
 #include "Input.hpp"
 #include "Logger.hpp"
+#include "controller/CustomController.hpp"
 
 /// Singleton.
 Input& Input::manager(){
@@ -9,13 +10,15 @@ Input& Input::manager(){
 
 Input::Input(){
 	// Check if any joystick is available.
-	/*for(int id = GLFW_JOYSTICK_1; id <= GLFW_JOYSTICK_LAST; ++id){
+	bool first = true;
+	for(int id = GLFW_JOYSTICK_1; id <= GLFW_JOYSTICK_LAST; ++id){
+		_controllers[id] = nullptr;
 		// We only register the first joystick encountered if it exists.
-		if(glfwJoystickPresent(id) == GL_TRUE){
-			_joysticks[id].activate(id);
-			break;
+		if(glfwJoystickPresent(id) == GL_TRUE && first){
+			joystickEvent(id, GLFW_CONNECTED);
+			first = false;
 		}
-	}*/
+	}
 	
 }
 
@@ -45,9 +48,12 @@ void Input::joystickEvent(int joy, int event){
 		Log::Info() << Log::Verbose << Log::Input << "Joystick: connected joystick " << joy << "." << std::endl;
 
 		// Register the new one, if no joystick was activated consider this one as the active one.
-		bool res = _joysticks[joy].activate(joy);
-		if(res && _activeJoystick == -1){
-			_activeJoystick = joy;
+		if(!_controllers[joy]){
+			_controllers[joy] = std::shared_ptr<Controller>(new CustomController());
+		}
+		bool res = _controllers[joy]->activate(joy);
+		if(res && _activeController == -1){
+			_activeController = joy;
 		}
 		
 	} else if (event == GLFW_DISCONNECTED) {
@@ -55,9 +61,11 @@ void Input::joystickEvent(int joy, int event){
 		Log::Info() << Log::Verbose << Log::Input << "Joystick: disconnected joystick " << joy << "." << std::endl;
 
 		// If the disconnected joystick is the one currently used, register this.
-		_joysticks[joy].deactivate();
-		if(joy == _activeJoystick){
-			_activeJoystick = -1;
+		if(_controllers[joy]){
+			_controllers[joy]->deactivate();
+			if(joy == _activeController){
+				_activeController = -1;
+			}
 		}
 		// Here we could also try to fall back on any other (still) connected joystick.
 	}
@@ -120,8 +128,8 @@ void Input::update(){
 	_mouse.scroll = glm::vec2(0.0f,0.0f);
 	_resized = false;
 	// Update only the active joystick if it exists.
-	if(_activeJoystick >= 0){
-		_joysticks[_activeJoystick].update();
+	if(_activeController >= 0){
+		_controllers[_activeController]->update();
 	}
 	glfwPollEvents();
 	
