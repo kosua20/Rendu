@@ -1,7 +1,7 @@
 #ifndef DeferredRenderer_h
 #define DeferredRenderer_h
 #include "../../Framebuffer.hpp"
-#include "../../input/Camera.hpp"
+#include "../../input/ControllableCamera.hpp"
 #include "../../ScreenQuad.hpp"
 
 #include "../../GaussianBlur.hpp"
@@ -44,7 +44,7 @@ public:
 	
 private:
 	
-	Camera _camera;
+	ControllableCamera _userCamera;
 
 	std::shared_ptr<Gbuffer> _gbuffer;
 	std::shared_ptr<GaussianBlur> _blurBuffer;

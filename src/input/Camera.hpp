@@ -11,12 +11,6 @@ public:
 
 	~Camera();
 	
-	/// Reset the position of the camera.
-	void reset();
-
-	/// Update one-shot parameters.
-	void update();
-	
 	/// Update the view matrix.
 	void physics(double frameTime);
 	
@@ -40,16 +34,11 @@ public:
 	const glm::mat4 view() const { return _view; }
 	const glm::mat4 projection() const { return _projection; }
 	
-private:
-	
-	void updateUsingJoystick(double frameTime);
-	
-	void updateUsingKeyboard(double frameTime);
-	
-	void updateUsingTurnTable(double frameTime);
+protected:
 	
 	/// Update the projection matrice parameters.
 	void updateProjection();
+	void updateView();
 	
 	/// The view matrix.
 	glm::mat4 _view;
@@ -66,19 +55,7 @@ private:
 	float _ratio;
 	float _near;
 	float _far;
-	float _speed;
-	float _angularSpeed;
 	
-	// TurnTable parameters.
-	float _verticalAngle;
-	float _horizontalAngle;
-	float _radius;
-	
-	enum CameraMode {
-		FPS, TurnTable, Trackball
-	};
-	
-	CameraMode _mode;
 };
 
 #endif

@@ -12,7 +12,7 @@ DeferredRenderer::~DeferredRenderer(){}
 DeferredRenderer::DeferredRenderer(Config & config, std::shared_ptr<Scene> & scene) : Renderer(config, scene) {
 	
 	// Setup camera parameters.
-	_camera.projection(config.screenResolution[0]/config.screenResolution[1], 1.3f, 0.01f, 200.0f);
+	_userCamera.projection(config.screenResolution[0]/config.screenResolution[1], 1.3f, 0.01f, 200.0f);
 	
 	const int renderWidth = (int)_renderResolution[0];
 	const int renderHeight = (int)_renderResolution[1];
@@ -92,11 +92,11 @@ void DeferredRenderer::draw() {
 	glClear(GL_DEPTH_BUFFER_BIT);
 	
 	for(auto & object : _scene->objects){
-		object.draw(_camera.view(), _camera.projection());
+		object.draw(_userCamera.view(), _userCamera.projection());
 	}
 	
 	for(auto& pointLight : _scene->pointLights){
-		pointLight.drawDebug(_camera.view(), _camera.projection());
+		pointLight.drawDebug(_userCamera.view(), _userCamera.projection());
 	}
 	
 	// No need to write the skybox depth to the framebuffer.
@@ -104,7 +104,7 @@ void DeferredRenderer::draw() {
 	// Accept a depth of 1.0 (far plane).
 	glDepthFunc(GL_LEQUAL);
 	// draw background.
-	_scene->background.draw(_camera.view(), _camera.projection());
+	_scene->background.draw(_userCamera.view(), _userCamera.projection());
 	glDepthFunc(GL_LESS);
 	glDepthMask(GL_TRUE);
 	
@@ -118,7 +118,7 @@ void DeferredRenderer::draw() {
 	// --- SSAO pass
 	_ssaoFramebuffer->bind();
 	glViewport(0,0,_ssaoFramebuffer->width(), _ssaoFramebuffer->height());
-	_ambientScreen.drawSSAO(_camera.view(), _camera.projection());
+	_ambientScreen.drawSSAO(_userCamera.view(), _userCamera.projection());
 	_ssaoFramebuffer->unbind();
 	
 	// --- SSAO blurring pass
@@ -129,15 +129,15 @@ void DeferredRenderer::draw() {
 	
 	glViewport(0,0,_sceneFramebuffer->width(), _sceneFramebuffer->height());
 	
-	_ambientScreen.draw(_camera.view(), _camera.projection());
+	_ambientScreen.draw(_userCamera.view(), _userCamera.projection());
 	
 	glEnable(GL_BLEND);
 	for(auto& dirLight : _scene->directionalLights){
-		dirLight.draw(_camera.view(), _camera.projection());
+		dirLight.draw(_userCamera.view(), _userCamera.projection());
 	}
 	glCullFace(GL_FRONT);
 	for(auto& pointLight : _scene->pointLights){
-		pointLight.draw(_camera.view(), _camera.projection(), invRenderSize);
+		pointLight.draw(_userCamera.view(), _userCamera.projection(), invRenderSize);
 	}
 	
 	glDisable(GL_BLEND);
@@ -187,7 +187,7 @@ void DeferredRenderer::draw() {
 
 void DeferredRenderer::update(){
 	Renderer::update();
-	_camera.update();
+	_userCamera.update();
 	
 	if(Input::manager().triggered(Input::KeyO)){
 		GLUtilities::saveDefaultFramebuffer((unsigned int)_config.screenResolution[0], (unsigned int)_config.screenResolution[1], "./test-default");
@@ -195,7 +195,7 @@ void DeferredRenderer::update(){
 }
 
 void DeferredRenderer::physics(double fullTime, double frameTime){
-	_camera.physics(frameTime);
+	_userCamera.physics(frameTime);
 	_scene->update(fullTime, frameTime);
 }
 
@@ -223,7 +223,7 @@ void DeferredRenderer::resize(int width, int height){
 	Renderer::updateResolution(width, height);
 	
 	// Update the projection aspect ratio.
-	_camera.ratio(_renderResolution[0] / _renderResolution[1]);
+	_userCamera.ratio(_renderResolution[0] / _renderResolution[1]);
 	// Resize the framebuffers.
 	_gbuffer->resize(_renderResolution);
 	_ssaoFramebuffer->resize(0.5f * _renderResolution);
