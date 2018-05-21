@@ -30,9 +30,6 @@ private:
 	
 	void updateUsingTurnTable(double frameTime);
 	
-	/// Update the projection matrice parameters.
-	void updateProjection();
-	
 	float _speed;
 	float _angularSpeed;
 	

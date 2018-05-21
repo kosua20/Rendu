@@ -27,7 +27,8 @@ bool CustomController::activate(int id){
 	_rawAxes = glfwGetJoystickAxes(_id, &_rawAxesCount);
 	_rawButtons = glfwGetJoystickButtons(_id, &_rawButtonsCount);
 	
-	return configure();
+	Log::Info() << Log::Input << "Joystick named " << std::string(glfwGetJoystickName(_id)) << "." << std::endl;
+	return configure("controller_ps4.map");
 }
 
 void CustomController::deactivate(){
@@ -66,9 +67,9 @@ void CustomController::update(){
 }
 
 
-bool CustomController::configure(){
+bool CustomController::configure(const std::string & mapFile){
 	
-	const std::string settingsContent = Resources::loadStringFromExternalFile("Controller.map");
+	const std::string settingsContent = Resources::manager().getString(mapFile);
 	// If no mapping found, disable the controller.
 	if(settingsContent.empty()){
 		Log::Error() << Log::Input << "No settings found for the controller." << std::endl;

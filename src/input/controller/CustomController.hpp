@@ -22,7 +22,7 @@ public:
 	
 private:
 	
-	bool configure();
+	bool configure(const std::string & mapFile);
 	
 	// References to GLFW flags.
 	int _rawAxesCount = 0;
