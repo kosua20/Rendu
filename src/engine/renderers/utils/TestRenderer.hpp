@@ -9,8 +9,8 @@
 
 #include "../Renderer.hpp"
 
-#include "Gbuffer.hpp"
-#include "AmbientQuad.hpp"
+#include "../deferred/Gbuffer.hpp"
+#include "../deferred/AmbientQuad.hpp"
 
 #include <gl3w/gl3w.h>
 #include <GLFW/glfw3.h>

@@ -1,6 +1,6 @@
-#include "../Config.hpp"
-#include "../resources/ImageUtilities.hpp"
-#include "../helpers/Logger.hpp"
+#include "Config.hpp"
+#include "resources/ImageUtilities.hpp"
+#include "helpers/Logger.hpp"
 #include <stdio.h>
 #include <memory>
 #include <string>

@@ -1,6 +1,6 @@
 #include "ResourcesManager.hpp"
 #include "MeshUtilities.hpp"
-#include "Logger.hpp"
+#include "../helpers/Logger.hpp"
 #include <fstream>
 #include <sstream>
 #include <tinydir/tinydir.h>
@@ -15,7 +15,7 @@
 
 /// Singleton.
 Resources& Resources::manager(){
-	static Resources* res = new Resources("resources");
+	static Resources* res = new Resources("../../../resources");
 	return *res;
 }
 
@@ -75,7 +75,6 @@ void Resources::parseDirectory(const std::string & directoryPath){
 		tinydir_close(&dir);
 		Log::Error() << Log::Resources << "Unable to open resources directory at path \"" << directoryPath << "\"" << std::endl;
 	}
-	
 	// For each file in dir.
 	while (dir.has_next) {
 		tinydir_file file;

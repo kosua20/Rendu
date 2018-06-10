@@ -1,13 +1,15 @@
 #include <gl3w/gl3w.h>
 #include <GLFW/glfw3.h> // to set up the OpenGL context and manage window lifecycle and inputs
 
+
 #include "helpers/GenerationUtilities.hpp"
 #include "input/Input.hpp"
-#include "scenes/Scenes.hpp"
 #include "renderers/deferred/DeferredRenderer.hpp"
 #include "renderers/utils/RendererCube.hpp"
 #include "renderers/utils/TestRenderer.hpp"
 #include "helpers/Logger.hpp"
+
+#include "scenes/Scenes.hpp"
 
 #include <stdio.h>
 #include <memory>

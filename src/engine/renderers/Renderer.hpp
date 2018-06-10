@@ -1,7 +1,7 @@
 #ifndef Renderer_h
 #define Renderer_h
 #include "../Config.hpp"
-#include "../scenes/Scene.hpp"
+#include "../Scene.hpp"
 
 #include <gl3w/gl3w.h>
 #include <GLFW/glfw3.h>

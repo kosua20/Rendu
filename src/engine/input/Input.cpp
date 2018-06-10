@@ -1,5 +1,5 @@
 #include "Input.hpp"
-#include "Logger.hpp"
+#include "../helpers/Logger.hpp"
 #include "controller/CustomController.hpp"
 
 /// Singleton.
