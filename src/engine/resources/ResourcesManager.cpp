@@ -13,6 +13,31 @@
 //#define RESOURCES_PACKAGED
 
 
+int tinydir_open_wrap(tinydir_dir *dir, const std::string & path) {
+#ifdef _WIN32
+	const int size = MultiByteToWideChar(CP_ACP, 0, path.c_str(), -1, NULL, 0);
+	TCHAR *arr = new TCHAR[size];
+	MultiByteToWideChar(CP_ACP, 0, path.c_str(), -1, (LPWSTR)arr, size);
+	const int result = tinydir_open(dir, arr);
+	delete [] arr;
+	return result;
+#else
+	return tinydir_open(dir, path.c_str());
+#endif
+}
+
+std::string TCHARToString(_tinydir_char_t * str) {
+#ifdef _WIN32
+	const int size = WideCharToMultiByte(CP_ACP, 0, str, -1, NULL, 0, NULL, NULL);
+	std::string res(size-1, 0);
+	WideCharToMultiByte(CP_ACP, 0, str, -1, &res[0], size, NULL, NULL);
+	return res;
+#else
+	return std::string(str);
+#endif
+}
+
+
 /// Singleton.
 Resources& Resources::manager(){
 	static Resources* res = new Resources("../../../resources");
@@ -71,7 +96,8 @@ void Resources::parseArchive(const std::string & archivePath){
 void Resources::parseDirectory(const std::string & directoryPath){
 	// Open directory.
 	tinydir_dir dir;
-	if(tinydir_open(&dir, directoryPath.c_str()) == -1){
+	
+	if(tinydir_open_wrap(&dir, directoryPath) == -1){
 		tinydir_close(&dir);
 		Log::Error() << Log::Resources << "Unable to open resources directory at path \"" << directoryPath << "\"" << std::endl;
 	}
@@ -80,11 +106,11 @@ void Resources::parseDirectory(const std::string & directoryPath){
 		tinydir_file file;
 		if(tinydir_readfile(&dir, &file) == -1){
 			// Handle any read error.
-			Log::Error() << Log::Resources << "Error getting file in directory \"" << std::string(dir.path) << "\"" << std::endl;
+			Log::Error() << Log::Resources << "Error getting file in directory \"" << TCHARToString(dir.path) << "\"" << std::endl;
 			
 		} else if(file.is_dir){
 			// Extract subdirectory name, check that it isn't a special dir, and recursively aprse it.
-			const std::string dirName(file.name);
+			const std::string dirName = TCHARToString(file.name);
 			if(dirName.size() > 0 && dirName != "." && dirName != ".."){
 				// @CHECK: "/" separator on Windows.
 				parseDirectory(directoryPath + "/" + dirName);
@@ -92,13 +118,13 @@ void Resources::parseDirectory(const std::string & directoryPath){
 			
 		} else {
 			// Else, we have a regular file.
-			const std::string fileNameWithExt(file.name);
+			const std::string fileNameWithExt = TCHARToString(file.name);
 			// Filter empty files and system files.
 			if(fileNameWithExt.size() > 0 && fileNameWithExt.at(0) != '.' ){
 				if(_files.count(fileNameWithExt) == 0){
 					// Store the file and its path.
 					// @CHECK: "/" separator on Windows.
-					_files[fileNameWithExt] = std::string(dir.path) + "/" + fileNameWithExt;
+					_files[fileNameWithExt] = TCHARToString(dir.path) + "/" + fileNameWithExt;
 					
 				} else {
 					// If the file already exists somewhere else in the hierarchy, warn about this.

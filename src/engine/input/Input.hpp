@@ -3,6 +3,7 @@
 
 #include <GLFW/glfw3.h>
 #include "controller/Controller.hpp"
+#include <memory>
 
 class Input {
 public:

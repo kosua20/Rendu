@@ -5,6 +5,8 @@ workspace("GL_Template")
 	configurations({ "Debug", "Release"})
 	location("build")
 	targetdir ("build/%{prj.name}/%{cfg.longname}")
+	debugdir ("build/%{prj.name}/%{cfg.longname}")
+	architecture("x64")
 
 	-- Configuration specific settings.
 	filter("configurations:Debug")
@@ -34,11 +36,9 @@ function GraphicsSetup()
 		libdirs({"src/libs/glfw/lib-mac/"})
 		links({"glfw3", "OpenGL.framework", "Cocoa.framework", "IOKit.framework", "CoreVideo.framework"})
 	elseif os.istarget("windows") then
-		libdirs({"src/libs/glfw/lib-win-vc2015/"})
+		libdirs({"src/libs/glfw/lib-win-vc2015-64/"})
 		links({"glfw3", "opengl32"})
-		-- Might also need : kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;
-	else 
-		-- Assume linux
+	else -- Assume linux
 		-- Libraries needed: OpenGL and glfw3.  glfw3 require X11, Xi, and so on...	
 		libdirs({ os.findlib("glfw3") })
 		links({"glfw3", "GL", "X11", "Xi", "Xrandr", "Xxf86vm", "Xinerama", "Xcursor", "rt", "m", "pthread", "dl"})
