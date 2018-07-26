@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <string>
 
-Gbuffer::Gbuffer(int width, int height) {
+Gbuffer::Gbuffer(unsigned int width, unsigned int height) {
 	_width = width;
 	_height = height;
 	
@@ -18,7 +18,7 @@ Gbuffer::Gbuffer(int width, int height) {
 	
 	glGenTextures(1, &albedoId);
 	glBindTexture(GL_TEXTURE_2D, albedoId);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, _width , _height, 0, GL_RGBA, GL_FLOAT, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, (GLsizei)_width , (GLsizei)_height, 0, GL_RGBA, GL_FLOAT, 0);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -28,7 +28,7 @@ Gbuffer::Gbuffer(int width, int height) {
 	
 	glGenTextures(1, &normalId);
 	glBindTexture(GL_TEXTURE_2D, normalId);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, _width , _height, 0, GL_RGB, GL_FLOAT, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, (GLsizei)_width , (GLsizei)_height, 0, GL_RGB, GL_FLOAT, 0);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -38,7 +38,7 @@ Gbuffer::Gbuffer(int width, int height) {
 	
 	glGenTextures(1, &effectsId);
 	glBindTexture(GL_TEXTURE_2D, effectsId);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, _width , _height, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, (GLsizei)_width , (GLsizei)_height, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -48,7 +48,7 @@ Gbuffer::Gbuffer(int width, int height) {
 	
 	glGenTextures(1, &depthId);
 	glBindTexture(GL_TEXTURE_2D, depthId);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32F, _width , _height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32F, (GLsizei)_width , (GLsizei)_height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -101,27 +101,27 @@ const std::map<std::string, GLuint> Gbuffer::textureIds(const std::vector<Textur
 }
 
 
-void Gbuffer::resize(int width, int height){
+void Gbuffer::resize(unsigned int width, unsigned int height){
 	_width = width;
 	_height = height;
 	
 	
 	// Resize the texture.
 	glBindTexture(GL_TEXTURE_2D, _textureIds[TextureType::Albedo]);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, _width , _height, 0, GL_RGBA, GL_FLOAT, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, (GLsizei)_width , (GLsizei)_height, 0, GL_RGBA, GL_FLOAT, 0);
 	
 	glBindTexture(GL_TEXTURE_2D, _textureIds[TextureType::Normal]);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, _width , _height, 0, GL_RGB, GL_FLOAT, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, (GLsizei)_width , (GLsizei)_height, 0, GL_RGB, GL_FLOAT, 0);
 	
 	glBindTexture(GL_TEXTURE_2D, _textureIds[TextureType::Effects]);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _width , _height, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, (GLsizei)_width , (GLsizei)_height, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
 	
 	glBindTexture(GL_TEXTURE_2D, _textureIds[TextureType::Depth]);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32F, _width , _height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32F, (GLsizei)_width , (GLsizei)_height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
 }
 
 void Gbuffer::resize(glm::vec2 size){
-	resize((int)size[0], (int)size[1]);
+	resize((unsigned int)size[0], (unsigned int)size[1]);
 }
 
 void Gbuffer::clean() const {

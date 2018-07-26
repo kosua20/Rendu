@@ -20,7 +20,7 @@ public:
 	~Renderer2D();
 
 	/// Init function
-	Renderer2D(Config & config, const std::string & shaderName, const int width, const int height, const GLenum format, const GLenum type, const GLenum preciseFormat);
+	Renderer2D(Config & config, const std::string & shaderName, const unsigned int width, const unsigned int height, const GLenum format, const GLenum type, const GLenum preciseFormat);
 
 	/// Draw function
 	void draw();
@@ -36,7 +36,7 @@ public:
 	void clean() const;
 
 	/// Handle screen resizing
-	void resize(int width, int height);
+	void resize(unsigned int width, unsigned int height);
 	
 	
 private:

@@ -71,7 +71,7 @@ const GLint ProgramInfos::uniform(const std::string & name) const {
 	return -1;
 }
 
-void ProgramInfos::registerTexture(const std::string & name, int slot){
+void ProgramInfos::registerTexture(const std::string & name, unsigned int slot){
 	// Store the slot to which the texture will be associated.
 	glUseProgram(_id);
 	_textures[name] = slot;

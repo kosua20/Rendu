@@ -57,8 +57,8 @@ void Config::processArguments(){
 		}else if(key == "wxh"){
 			const std::string::size_type split = value.find_first_of("x");
 			if(split != std::string::npos){
-				unsigned int w = std::stoi(value.substr(0,split));
-				unsigned int h = std::stoi(value.substr(split+1));
+				const unsigned int w = (unsigned int)std::stoi(value.substr(0,split));
+				const unsigned int h = (unsigned int)std::stoi(value.substr(split+1));
 				initialWidth = w;
 				initialHeight = h;
 			}

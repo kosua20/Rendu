@@ -10,18 +10,20 @@ class Framebuffer {
 public:
 	
 	/// Setup the framebuffer (attachments, renderbuffer, depth buffer, textures IDs,...)
-	Framebuffer(int width, int height, GLuint format, GLuint type, GLuint preciseFormat, GLuint filtering, GLuint wrapping, bool depthBuffer);
+	Framebuffer(unsigned int width, unsigned int height, GLuint format, GLuint type, GLuint preciseFormat, GLuint filtering, GLuint wrapping, bool depthBuffer);
 
 	~Framebuffer();
 	
 	/// Bind the framebuffer.
 	void bind() const;
-	
+
+	void setViewport() const;
+
 	/// Unbind the framebuffer.
 	void unbind() const;
 	
 	/// Resize the framebuffer.
-	void resize(int width, int height);
+	void resize(unsigned int width, unsigned int height);
 	
 	void resize(glm::vec2 size);
 	
@@ -32,8 +34,8 @@ public:
 	const GLuint textureId() const { return _idColor; }
 	
 	/// The framebuffer size (can be different from the default renderer size).
-	const int width() const { return _width; }
-	const int height() const { return _height; }
+	const unsigned int width() const { return _width; }
+	const unsigned int height() const { return _height; }
 	const GLuint id() const { return _id; }
 	const GLuint format() const { return _format; }
 	const GLuint type() const { return _type; }
@@ -41,8 +43,8 @@ public:
 	
 private:
 	
-	int _width;
-	int _height;
+	unsigned int _width;
+	unsigned int _height;
 	
 	GLuint _id;
 	GLuint _idColor;

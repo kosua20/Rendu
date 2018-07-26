@@ -86,7 +86,7 @@ void DeferredRenderer::draw() {
 	// Bind the full scene framebuffer.
 	_gbuffer->bind();
 	// Set screen viewport
-	glViewport(0,0,_gbuffer->width(),_gbuffer->height());
+	glViewport(0,0, (GLsizei)_gbuffer->width(), (GLsizei)_gbuffer->height());
 	
 	// Clear the depth buffer (we know we will draw everywhere, no need to clear color.
 	glClear(GL_DEPTH_BUFFER_BIT);
@@ -117,8 +117,8 @@ void DeferredRenderer::draw() {
 	
 	// --- SSAO pass
 	_ssaoFramebuffer->bind();
-	glViewport(0,0,_ssaoFramebuffer->width(), _ssaoFramebuffer->height());
-	_ambientScreen.drawSSAO(_userCamera.view(), _userCamera.projection());
+	_ssaoFramebuffer->setViewport();
+	_ambientScreen.drawSSAO(_userCamera.projection());
 	_ssaoFramebuffer->unbind();
 	
 	// --- SSAO blurring pass
@@ -126,8 +126,7 @@ void DeferredRenderer::draw() {
 	
 	// --- Gbuffer composition pass
 	_sceneFramebuffer->bind();
-	
-	glViewport(0,0,_sceneFramebuffer->width(), _sceneFramebuffer->height());
+	_sceneFramebuffer->setViewport();
 	
 	_ambientScreen.draw(_userCamera.view(), _userCamera.projection());
 	
@@ -146,7 +145,7 @@ void DeferredRenderer::draw() {
 	
 	// --- Bloom selection pass ------
 	_bloomFramebuffer->bind();
-	glViewport(0,0,_bloomFramebuffer->width(), _bloomFramebuffer->height());
+	_bloomFramebuffer->setViewport();
 	_bloomScreen.draw();
 	_bloomFramebuffer->unbind();
 	
@@ -155,7 +154,7 @@ void DeferredRenderer::draw() {
 	
 	// Draw the blurred bloom back into the scene framebuffer.
 	_sceneFramebuffer->bind();
-	glViewport(0,0,_sceneFramebuffer->width(), _sceneFramebuffer->height());
+	_sceneFramebuffer->setViewport();
 	glEnable(GL_BLEND);
 	_blurBuffer->draw();
 	glDisable(GL_BLEND);
@@ -164,14 +163,14 @@ void DeferredRenderer::draw() {
 	
 	// --- Tonemapping pass ------
 	_toneMappingFramebuffer->bind();
-	glViewport(0,0,_toneMappingFramebuffer->width(), _toneMappingFramebuffer->height());
+	_toneMappingFramebuffer->setViewport();
 	_toneMappingScreen.draw();
 	_toneMappingFramebuffer->unbind();
 	
 	// --- FXAA pass -------
 	// Bind the post-processing framebuffer.
 	_fxaaFramebuffer->bind();
-	glViewport(0,0,_fxaaFramebuffer->width(), _fxaaFramebuffer->height());
+	_fxaaFramebuffer->setViewport();
 	_fxaaScreen.draw( invRenderSize );
 	_fxaaFramebuffer->unbind();
 	
@@ -219,7 +218,7 @@ void DeferredRenderer::clean() const {
 }
 
 
-void DeferredRenderer::resize(int width, int height){
+void DeferredRenderer::resize(unsigned int width, unsigned int height){
 	Renderer::updateResolution(width, height);
 	
 	// Update the projection aspect ratio.

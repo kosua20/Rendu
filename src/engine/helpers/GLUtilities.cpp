@@ -70,7 +70,7 @@ GLuint GLUtilities::loadShader(const std::string & prog, GLuint type){
 	if (success != GL_TRUE) {
 		GLint infoLogLength;
 		glGetShaderiv(id, GL_INFO_LOG_LENGTH, &infoLogLength);
-		std::vector<char> infoLog((std::max)(infoLogLength, int(1)));
+		std::vector<char> infoLog((size_t)(std::max)(infoLogLength, int(1)));
 		glGetShaderInfoLog(id, infoLogLength, NULL, &infoLog[0]);
 
 		Log::Error() << std::endl 
@@ -113,7 +113,7 @@ GLuint GLUtilities::createProgram(const std::string & vertexContent, const std::
 	if(!success) {
 		GLint infoLogLength;
 		glGetProgramiv(id, GL_INFO_LOG_LENGTH, &infoLogLength);
-		std::vector<char> infoLog((std::max)(infoLogLength, int(1)));
+		std::vector<char> infoLog((size_t)(std::max)(infoLogLength, int(1)));
 		glGetProgramInfoLog(id, infoLogLength, NULL, &infoLog[0]);
 
 		Log::Error() << Log::OpenGL << "Failed loading program: " << &infoLog[0] << std::endl;
@@ -167,9 +167,9 @@ TextureInfos GLUtilities::loadTexture(const std::vector<std::string>& paths, boo
 	unsigned int channels = 4;
 	
 	// For now, we assume HDR images to be 3-channels, LDR images to be 4.
-	const GLenum format = infos.hdr ? GL_RGB : GL_RGBA;
-	const GLenum type = infos.hdr ? GL_FLOAT : GL_UNSIGNED_BYTE;
-	const GLenum preciseFormat = (infos.hdr ? GL_RGB32F : (sRGB ? GL_SRGB8_ALPHA8 : GL_RGBA));
+	const GLenum format = GLenum(infos.hdr ? GL_RGB : GL_RGBA);
+	const GLenum type = GLenum(infos.hdr ? GL_FLOAT : GL_UNSIGNED_BYTE);
+	const GLenum preciseFormat = GLenum(infos.hdr ? GL_RGB32F : (sRGB ? GL_SRGB8_ALPHA8 : GL_RGBA));
 	
 	for(unsigned int mipid = 0; mipid < paths.size(); ++mipid){
 		
@@ -184,7 +184,7 @@ TextureInfos GLUtilities::loadTexture(const std::vector<std::string>& paths, boo
 			return infos;
 		}
 		
-		glTexImage2D(GL_TEXTURE_2D, mipid, preciseFormat, width, height, 0, format, type, image);
+		glTexImage2D(GL_TEXTURE_2D, (GLint)mipid, preciseFormat, (GLsizei)width, (GLsizei)height, 0, format, type, image);
 		free(image);
 		
 	}
@@ -239,9 +239,9 @@ TextureInfos GLUtilities::loadTextureCubemap(const std::vector<std::vector<std::
 	infos.hdr = ImageUtilities::isHDR(allPaths[0][0]);
 	
 	// For now, we assume HDR images to be 3-channels, LDR images to be 4.
-	const GLenum format = infos.hdr ? GL_RGB : GL_RGBA;
-	const GLenum type = infos.hdr ? GL_FLOAT : GL_UNSIGNED_BYTE;
-	const GLenum preciseFormat = (infos.hdr ? GL_RGB32F : (sRGB ? GL_SRGB8_ALPHA8 : GL_RGBA));
+	const GLenum format = GLenum(infos.hdr ? GL_RGB : GL_RGBA);
+	const GLenum type = GLenum(infos.hdr ? GL_FLOAT : GL_UNSIGNED_BYTE);
+	const GLenum preciseFormat = GLenum(infos.hdr ? GL_RGB32F : (sRGB ? GL_SRGB8_ALPHA8 : GL_RGBA));
 	
 	for(unsigned int mipid = 0; mipid < allPaths.size(); ++mipid){
 		
@@ -258,7 +258,7 @@ TextureInfos GLUtilities::loadTextureCubemap(const std::vector<std::vector<std::
 				return infos;
 			}
 			
-			glTexImage2D(GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + side), mipid, preciseFormat, width, height, 0, format, type, image);
+			glTexImage2D(GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + side), (GLint)mipid, preciseFormat, (GLsizei)width, (GLsizei)height, 0, format, type, image);
 			free(image);
 		}
 		
@@ -321,7 +321,7 @@ MeshInfos GLUtilities::setupBuffers(const Mesh & mesh){
 	glBindVertexArray(vao);
 	
 	// Setup attributes.
-	int currentAttribute = 0;
+	unsigned int currentAttribute = 0;
 	if(vbo > 0){
 		glEnableVertexAttribArray(currentAttribute);
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -375,7 +375,7 @@ void GLUtilities::saveDefaultFramebuffer(const unsigned int width, const unsigne
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	GLUtilities::savePixels(GL_UNSIGNED_BYTE, GL_RGBA, width, height, 4, path, true, true);
 	
-	glBindFramebuffer(GL_FRAMEBUFFER, currentBoundFB);
+	glBindFramebuffer(GL_FRAMEBUFFER, (GLuint)currentBoundFB);
 }
 
 void GLUtilities::saveFramebuffer(const std::shared_ptr<Framebuffer> & framebuffer, const unsigned int width, const unsigned int height, const std::string & path, const bool flip, const bool ignoreAlpha){
@@ -386,11 +386,11 @@ void GLUtilities::saveFramebuffer(const std::shared_ptr<Framebuffer> & framebuff
 	framebuffer->bind();
 	const GLenum type = framebuffer->type();
 	const GLenum format = framebuffer->format();
-	const unsigned int components = (format == GL_RED ? 1 : (format == GL_RG ? 2 : (format == GL_RGB ? 3 : 4)));
+	const unsigned int components = (unsigned int)(format == GL_RED ? 1 : (format == GL_RG ? 2 : (format == GL_RGB ? 3 : 4)));
 
 	GLUtilities::savePixels(type, format, width, height, components, path, flip, ignoreAlpha);
 	
-	glBindFramebuffer(GL_FRAMEBUFFER, currentBoundFB);
+	glBindFramebuffer(GL_FRAMEBUFFER, (GLuint)currentBoundFB);
 }
 
 void GLUtilities::savePixels(const GLenum type, const GLenum format, const unsigned int width, const unsigned int height, const unsigned int components, const std::string & path, const bool flip, const bool ignoreAlpha){
@@ -405,14 +405,14 @@ void GLUtilities::savePixels(const GLenum type, const GLenum format, const unsig
 	if(hdr){
 		// Get back values.
 		GLfloat * data = new GLfloat[width * height * components];
-		glReadPixels(0, 0, width, height, format, type, &data[0]);
+		glReadPixels(0, 0, (GLsizei)width, (GLsizei)height, format, type, &data[0]);
 		// Save data. We don't flip HDR images because we don't flip them when loading...
 		ret = ImageUtilities::saveHDRImage(path + ".exr", width, height, components, (float*)data, flip, ignoreAlpha);
 		delete[] data;
 	} else {
 		// Get back values.
 		GLubyte * data = new GLubyte[width * height * components];
-		glReadPixels(0, 0, width, height, format, type, &data[0]);
+		glReadPixels(0, 0, (GLsizei)width, (GLsizei)height, format, type, &data[0]);
 		// Save data.
 		ret = ImageUtilities::saveLDRImage(path + ".png", width, height, components, (unsigned char*)data, flip, ignoreAlpha);
 		delete[] data;

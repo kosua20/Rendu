@@ -20,9 +20,9 @@ int _checkGLError(const char *file, int line, const std::string & infos);
 
 struct TextureInfos {
 	GLuint id;
-	int width;
-	int height;
-	int mipmap;
+	unsigned int width;
+	unsigned int height;
+	unsigned int mipmap;
 	bool cubemap;
 	bool hdr;
 	TextureInfos() : id(0), width(0), height(0), mipmap(0), cubemap(false), hdr(false) {}

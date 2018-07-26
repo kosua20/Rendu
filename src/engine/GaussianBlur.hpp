@@ -8,7 +8,7 @@ class GaussianBlur : public Blur {
 public:
 
 	/// Init function
-	GaussianBlur(int width, int height, int depth, GLuint format, GLuint type, GLuint preciseFormat);
+	GaussianBlur(unsigned int width, unsigned int height, unsigned int depth, GLuint format, GLuint type, GLuint preciseFormat);
 
 	/// Draw function
 	void process(const GLuint textureId);
@@ -17,7 +17,7 @@ public:
 	void clean() const;
 
 	/// Handle screen resizing
-	void resize(int width, int height);
+	void resize(unsigned int width, unsigned int height);
 	
 private:
 	

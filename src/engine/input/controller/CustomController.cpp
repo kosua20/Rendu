@@ -42,7 +42,7 @@ void CustomController::update(){
 	
 	// Translate from raw buttons to clean buttons.
 	for(unsigned int i = 0; i < ControllerInput::ControllerInputCount; ++i){
-		int bcode = _buttonCodes[i];
+		const int bcode = _buttonCodes[i];
 		if(bcode >= 0){
 			bool pressed = (_rawButtons[bcode] == GLFW_PRESS);
 			if(pressed){

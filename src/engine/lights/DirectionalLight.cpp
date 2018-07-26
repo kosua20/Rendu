@@ -48,7 +48,7 @@ void DirectionalLight::draw(const glm::mat4& viewMatrix, const glm::mat4& projec
 
 void DirectionalLight::bind() const {
 	_shadowPass->bind();
-	glViewport(0, 0, _shadowPass->width(), _shadowPass->height());
+	_shadowPass->setViewport();
 	
 	// Set the clear color to white.
 	glClearColor(1.0f,1.0f,1.0f,0.0f);
@@ -58,6 +58,7 @@ void DirectionalLight::bind() const {
 
 void DirectionalLight::blurAndUnbind() const {
 	// Unbind the shadow map framebuffer.
+	// TODO: hidden state, remove.
 	_shadowPass->unbind();
 	// ----------------------
 	
@@ -66,7 +67,7 @@ void DirectionalLight::blurAndUnbind() const {
 	// Bind the post-processing framebuffer.
 	_blurPass->bind();
 	// Set screen viewport.
-	glViewport(0,0,_blurPass->width(), _blurPass->height());
+	_blurPass->setViewport();
 	// Draw the fullscreen quad
 	_blurScreen.draw();
 	 

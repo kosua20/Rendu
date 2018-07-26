@@ -32,12 +32,12 @@ public:
 	virtual void clean() const;
 	
 	/// Handle screen resizing
-	virtual void resize(int width, int height) = 0;
+	virtual void resize(unsigned int width, unsigned int height) = 0;
 	
 	
 protected:
 	
-	void updateResolution(int width, int height);
+	void updateResolution(unsigned int width, unsigned int height);
 	
 	Config & _config;
 	std::shared_ptr<Scene> _scene;

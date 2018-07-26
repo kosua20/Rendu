@@ -37,7 +37,7 @@ Renderer::Renderer(Config & config, std::shared_ptr<Scene> & scene) : _config(co
 
 void Renderer::update(){
 	if(Input::manager().resized()){
-		resize((int)Input::manager().size()[0], (int)Input::manager().size()[1]);
+		resize((unsigned int)Input::manager().size()[0], (unsigned int)Input::manager().size()[1]);
 	}
 }
 
@@ -50,7 +50,7 @@ void Renderer::clean() const {
 }
 
 
-void Renderer::updateResolution(int width, int height){
+void Renderer::updateResolution(unsigned int width, unsigned int height){
 	_config.screenResolution[0] = float(width > 0 ? width : 1);
 	_config.screenResolution[1] = float(height > 0 ? height : 1);
 	// Same aspect ratio as the display resolution

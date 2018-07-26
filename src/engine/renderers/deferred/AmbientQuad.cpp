@@ -24,8 +24,8 @@ void AmbientQuad::init(std::map<std::string, GLuint> textureIds, const GLuint re
 	// Load Spherical Harmonics coefficients.
 	_program->cacheUniformArray("shCoeffs", irradiance);
 	// Bind uniform to texture slot.
-	_program->registerTexture("textureCubeMap", (int)_textureIds.size());
-	_program->registerTexture("brdfPrecalc", (int)_textureIds.size()+1);
+	_program->registerTexture("textureCubeMap", (unsigned int)_textureIds.size());
+	_program->registerTexture("brdfPrecalc", (unsigned int)_textureIds.size()+1);
 	
 	// Setup SSAO data, get back noise texture id, add it to the gbuffer outputs.
 	GLuint noiseTextureID = setupSSAO();
@@ -97,7 +97,7 @@ void AmbientQuad::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionM
 	ScreenQuad::draw();
 }
 
-void AmbientQuad::drawSSAO(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) const {
+void AmbientQuad::drawSSAO(const glm::mat4& projectionMatrix) const {
 	
 	glUseProgram(_ssaoScreen.program()->id());
 	

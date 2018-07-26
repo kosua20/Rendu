@@ -9,7 +9,7 @@
 
 Renderer2D::~Renderer2D(){}
 
-Renderer2D::Renderer2D(Config & config, const std::string & shaderName, const int width, const int height, const GLenum format, const GLenum type, const GLenum preciseFormat) : Renderer(config) {
+Renderer2D::Renderer2D(Config & config, const std::string & shaderName, const unsigned int width, const unsigned int height, const GLenum format, const GLenum type, const GLenum preciseFormat) : Renderer(config) {
 
 	_resultFramebuffer = std::make_shared<Framebuffer>(width, height, format, type, preciseFormat, GL_LINEAR, GL_CLAMP_TO_EDGE, false);
 	
@@ -65,7 +65,7 @@ void Renderer2D::clean() const {
 }
 
 
-void Renderer2D::resize(int width, int height){
+void Renderer2D::resize(unsigned int width, unsigned int height){
 	// Do nothing.
 }
 

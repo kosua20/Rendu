@@ -7,7 +7,7 @@ class BoxBlur : public Blur {
 
 public:
 	
-	BoxBlur(int width, int height, bool approximate, GLuint format, GLuint type, GLuint preciseFormat);
+	BoxBlur(unsigned int width, unsigned int height, bool approximate, GLuint format, GLuint type, GLuint preciseFormat);
 
 	/// Draw function
 	void process(const GLuint textureId);
@@ -16,7 +16,7 @@ public:
 	void clean() const;
 
 	/// Handle screen resizing
-	void resize(int width, int height);
+	void resize(unsigned int width, unsigned int height);
 
 private:
 	

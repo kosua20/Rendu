@@ -140,8 +140,8 @@ int ImageUtilities::loadHDRImage(const std::string &path, unsigned int & width, 
 		return TINYEXR_ERROR_INVALID_DATA;
 	}
 	
-	width = exr_image.width;
-	height = exr_image.height;
+	width = (unsigned int)exr_image.width;
+	height = (unsigned int)exr_image.height;
 	channels = 3;
 	
 	*data = reinterpret_cast<float *>(malloc(channels * sizeof(float) * static_cast<size_t>(width) *
@@ -149,8 +149,8 @@ int ImageUtilities::loadHDRImage(const std::string &path, unsigned int & width, 
 	
 	for(int y = 0; y < exr_image.height; ++y){
 		for (int x = 0; x < exr_image.width; ++x){
-			const int destIndex = y * width + x;
-			const int sourceIndex = flip ? ((height-1-y)*width+x) : destIndex;
+			const int destIndex = y * (int)width + x;
+			const int sourceIndex = flip ? (((int)height-1-y)*(int)width+x) : destIndex;
 			
 			(*data)[channels * destIndex + 0] = reinterpret_cast<float **>(exr_image.images)[idxR][sourceIndex];
 			(*data)[channels * destIndex + 1] = reinterpret_cast<float **>(exr_image.images)[idxG][sourceIndex];
@@ -171,7 +171,7 @@ int ImageUtilities::saveLDRImage(const std::string &path, const unsigned int wid
 	// Temporary fix for stb_image_write issue with flipped PNGs when computing filters>2.
 	stbi_write_force_png_filter = 1;
 	
-	int stride_in_bytes = width*channels;
+	int stride_in_bytes = (int)width*(int)channels;
 	
 	int ret = 1;
 	if(ignoreAlpha && channels == 4){
@@ -203,7 +203,7 @@ int ImageUtilities::saveHDRImage(const std::string &path, const unsigned int wid
 	InitEXRImage(&image);
 	
 	// Components: 1, 3, 3, 4
-	int components = channels == 2 ? 3 : channels;
+	int components =int(channels == 2 ? 3 : channels);
 	image.num_channels = components;
 	
 	std::vector<float> images[4];
@@ -255,8 +255,8 @@ int ImageUtilities::saveHDRImage(const std::string &path, const unsigned int wid
 	}
 	
 	image.images = reinterpret_cast<unsigned char **>(image_ptr);
-	image.width = width;
-	image.height = height;
+	image.width = (int)width;
+	image.height = (int)height;
 	
 	header.num_channels = components;
 	header.channels = static_cast<EXRChannelInfo *>(malloc(sizeof(EXRChannelInfo) * static_cast<size_t>(header.num_channels)));

@@ -18,7 +18,7 @@ class Gbuffer {
 public:
 	
 	/// Setup the framebuffer (attachments, renderbuffer, depth buffer, textures IDs,...)
-	Gbuffer(int width, int height);
+	Gbuffer(unsigned int width, unsigned int height);
 
 	~Gbuffer();
 	
@@ -29,7 +29,7 @@ public:
 	void unbind() const;
 	
 	/// Resize the framebuffer.
-	void resize(int width, int height);
+	void resize(unsigned int width, unsigned int height);
 	
 	void resize(glm::vec2 size);
 	
@@ -42,12 +42,12 @@ public:
 	const std::map<std::string, GLuint> textureIds(const std::vector<TextureType>& included = std::vector<TextureType>()) const ;
 	
 	/// The framebuffer size (can be different from the default renderer size).
-	const int width() const { return _width; }
-	const int height() const { return _height; }
+	const unsigned int width() const { return _width; }
+	const unsigned int height() const { return _height; }
 	
 private:
-	int _width;
-	int _height;
+	unsigned int _width;
+	unsigned int _height;
 	
 	GLuint _id;
 	std::map<TextureType, GLuint> _textureIds;

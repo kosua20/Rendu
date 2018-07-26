@@ -9,7 +9,7 @@ Blur::Blur(){
 	_passthrough.init("passthrough");
 }
 
-void Blur::process(const GLuint textureId) {
+void Blur::process(const GLuint ) {
 
 }
 
@@ -26,6 +26,6 @@ void Blur::clean() const {
 }
 
 
-void Blur::resize(int width, int height){
+void Blur::resize(unsigned int , unsigned int ){
 }
 

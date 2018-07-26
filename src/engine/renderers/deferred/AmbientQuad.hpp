@@ -21,7 +21,7 @@ public:
 	/// Draw function,
 	void draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) const;
 	
-	void drawSSAO(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) const;
+	void drawSSAO(const glm::mat4& projectionMatrix) const;
 		
 	void clean() const;
 	

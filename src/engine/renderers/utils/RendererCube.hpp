@@ -20,12 +20,12 @@ public:
 	~RendererCube();
 
 	/// Init function
-	RendererCube(Config & config, const std::string & cubemapName, const std::string & shaderName, const int width, const int height, const GLenum format, const GLenum type, const GLenum preciseFormat);
+	RendererCube(Config & config, const std::string & cubemapName, const std::string & shaderName, const unsigned int width, const unsigned int height, const GLenum format, const GLenum type, const GLenum preciseFormat);
 
 	/// Draw function
 	void draw();
 	
-	void drawCube(const int localWidth, const int localHeight, const std::string & localOutputPath);
+	void drawCube(const unsigned int localWidth, const unsigned int localHeight, const std::string & localOutputPath);
 	
 	void update();
 	
@@ -35,7 +35,7 @@ public:
 	void clean() const;
 
 	/// Handle screen resizing
-	void resize(int width, int height);
+	void resize(unsigned int width, unsigned  int height);
 	
 	
 private:

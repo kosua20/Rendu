@@ -4,7 +4,7 @@
 #include <vector>
 
 
-BoxBlur::BoxBlur(int width, int height,  bool approximate, GLuint format, GLuint type, GLuint preciseFormat) : Blur() {
+BoxBlur::BoxBlur(unsigned int width, unsigned int height, bool approximate, GLuint format, GLuint type, GLuint preciseFormat) : Blur() {
 	
 	std::string blur_type_name = "box-blur-" + (approximate ? std::string("approx-") : "");
 	switch (format) {
@@ -35,7 +35,7 @@ BoxBlur::BoxBlur(int width, int height,  bool approximate, GLuint format, GLuint
 /// Draw function
 void BoxBlur::process(const GLuint textureId){
 	_finalFramebuffer->bind();
-	glViewport(0, 0, _finalFramebuffer->width(), _finalFramebuffer->height());
+	_finalFramebuffer->setViewport();
 	glClear(GL_COLOR_BUFFER_BIT);
 	_blurScreen.draw(textureId);
 	_finalFramebuffer->unbind();
@@ -50,6 +50,6 @@ void BoxBlur::clean() const {
 }
 
 /// Handle screen resizing
-void BoxBlur::resize(int width, int height){
+void BoxBlur::resize(unsigned int width, unsigned int height){
 	_finalFramebuffer->resize(width, height);
 }

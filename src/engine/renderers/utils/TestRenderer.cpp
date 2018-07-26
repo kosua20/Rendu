@@ -32,7 +32,7 @@ void TestRenderer::draw() {
 	glClearColor(1.0f,0.0f,0.0f,1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glDisable(GL_DEPTH_TEST);
-	glViewport(0,0,_framebuffer->width(), _framebuffer->height());
+	_framebuffer->setViewport();
 	_screenQuad.draw(Resources::manager().getTexture("desk_albedo").id);
 	_framebuffer->unbind();
 	
@@ -66,7 +66,7 @@ void TestRenderer::clean() const {
 }
 
 
-void TestRenderer::resize(int width, int height){
+void TestRenderer::resize(unsigned int width, unsigned int height){
 	Renderer::updateResolution(width, height);
 	_framebuffer->resize(_renderResolution);
 }

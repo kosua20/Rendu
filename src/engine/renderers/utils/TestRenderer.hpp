@@ -39,7 +39,7 @@ public:
 	void clean() const;
 
 	/// Handle screen resizing
-	void resize(int width, int height);
+	void resize(unsigned int width, int unsigned height);
 	
 	
 private:

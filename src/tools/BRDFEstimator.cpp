@@ -80,7 +80,7 @@ int main(int argc, char** argv) {
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_VISIBLE, GL_FALSE); // We hide the window as all processing willbe done in offscreen framebuffers.
 	
-	GLFWwindow* window = glfwCreateWindow(config.initialWidth, config.initialHeight,"GL_Template", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow((int)config.initialWidth, (int)config.initialHeight,"GL_Template", NULL, NULL);
 	
 	if (!window) {
 		Log::Error() << Log::OpenGL << "Could not open window with GLFW3" << std::endl;
@@ -115,8 +115,8 @@ int main(int argc, char** argv) {
 	// - compute the two coefficients of the BRDF linear approximation.
 	// - apply BRDF convolution to an existing envmap.
 	const bool precomputeBRDF = config.precomputeBRDF;
-	const int outputWidth = config.initialWidth;
-	const int outputHeight = config.initialHeight;
+	const unsigned int outputWidth = config.initialWidth;
+	const unsigned int outputHeight = config.initialHeight;
 	
 	if(precomputeBRDF){
 		std::shared_ptr<Renderer2D> renderer(new Renderer2D(config, "brdf_sampler", outputWidth, outputHeight, GL_RG, GL_FLOAT, GL_RG32F));
@@ -133,13 +133,13 @@ int main(int argc, char** argv) {
 		renderer->update();
 		
 		// Generate convolution map for increments of roughness.
-		int count = 0;
+		unsigned int count = 0;
 		for(float rr = 0.0f; rr < 1.1f; rr += 0.2f){
 			glUseProgram(Resources::manager().getProgram("cubemap_convo")->id());
 			glUniform1f(Resources::manager().getProgram("cubemap_convo")->uniform("mimapRoughness"), rr);
 			glUseProgram(0);
 			
-			const unsigned int powe = (int)std::pow(2, count);
+			const unsigned int powe = (unsigned int)std::pow(2, count);
 			const unsigned int localWidth = outputWidth/powe;
 			const unsigned int localHeight = outputHeight/powe;
 			
