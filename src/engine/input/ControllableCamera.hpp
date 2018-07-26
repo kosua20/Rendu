@@ -33,9 +33,8 @@ private:
 	float _speed;
 	float _angularSpeed;
 	
-	// TurnTable parameters.
-	float _verticalAngle;
-	float _horizontalAngle;
+	// Camera additional state.
+	glm::vec2 _angles;
 	float _radius;
 	
 	enum CameraMode {

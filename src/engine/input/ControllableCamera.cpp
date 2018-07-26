@@ -9,7 +9,6 @@
 #endif
 
 ControllableCamera::ControllableCamera() : Camera() {
-	//_verticalResolution = 720;
 	_speed = 1.2f;
 	_angularSpeed = 4.0f;
 	_mode = TurnTable;
@@ -24,9 +23,8 @@ void ControllableCamera::reset(){
 	_up = glm::vec3(0.0,1.0,0.0);
 	_right = glm::vec3(1.0,0.0,0.0);
 	_view = glm::lookAt(_eye, _center, _up);
-	_verticalAngle = 0.0f;
-	_horizontalAngle = (float)M_PI*0.5f;
 	_radius = 1.0;
+	_angles = glm::vec2((float)M_PI*0.5f, 0.0f);
 }
 
 void ControllableCamera::update(){
@@ -164,13 +162,20 @@ void ControllableCamera::updateUsingKeyboard(double frameTime){
 		_eye += deltaVertical;
 	}
 	
-	// Update center (eye-center stays constant).
-	_center = _eye + look;
 	
-	// Recompute right as the cross product of look and up.
-	_right = normalize(cross(look,_up));
-	// Recompute up as the cross product of  right and look.
-	_up = normalize(cross(_right,look));
+	const glm::vec2 delta = Input::manager().moved(Input::MouseLeft);
+	_angles += delta* (float)frameTime*_angularSpeed;
+	_angles[1] = (std::max)(-1.57f, (std::min)(1.57f, _angles[1]));
+	// Right stick to look around.
+	const glm::mat4 rotY = glm::rotate(glm::mat4(1.0f), (float)M_PI*0.5f-_angles[0], glm::vec3(0.0,1.0,0.0));
+	const glm::mat4 rotX = glm::rotate(glm::mat4(1.0f), -_angles[1], glm::vec3(1.0,0.0,0.0));
+	const glm::mat3 rot = glm::mat3(rotY * rotX);
+	
+	look = rot * glm::vec3(0.0,0.0,-1.0);
+	_center = _eye + look;
+	_up = rot * glm::vec3(0.0,1.0,0.0);
+	_right = rot * glm::vec3(1.0,0.0,0.0);
+
 	
 }
 
@@ -215,11 +220,11 @@ void ControllableCamera::updateUsingTurnTable(double frameTime){
 	
 	// Angles update for the turntable.
 	const glm::vec2 delta = Input::manager().moved(Input::MouseLeft);
-	_horizontalAngle += delta[0] * (float)frameTime*_angularSpeed;
-	_verticalAngle = (std::max)(-1.57f, (std::min)(1.57f, _verticalAngle + delta[1] * (float)frameTime*_angularSpeed));
+	_angles += delta* (float)frameTime*_angularSpeed;
+	_angles[1] = (std::max)(-1.57f, (std::min)(1.57f, _angles[1]));
 	
 	// Compute new look direction.
-	const glm::vec3 newLook = - glm::vec3( cos(_verticalAngle) * cos(_horizontalAngle), sin(_verticalAngle),  cos(_verticalAngle) * sin(_horizontalAngle));
+	const glm::vec3 newLook = - glm::vec3( cos(_angles[1]) * cos(_angles[0]), sin(_angles[1]),  cos(_angles[1]) * sin(_angles[0]));
 	
 	// Update the camera position around the center.
 	_eye =  _center - _radius * newLook;
