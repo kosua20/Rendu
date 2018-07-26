@@ -15,13 +15,13 @@
 int main(int argc, char** argv) {
 	
 	// Arguments parsing.
-	std::map<std::string, std::string> arguments;
+	std::map<std::string, std::vector<std::string>> arguments;
 	Config::parseFromArgs(argc, argv, arguments);
 	if(arguments.count("map") == 0){
 		Log::Error() << Log::Utilities << "Specify path to envmap." << std::endl;
 		return 3;
 	}
-	const std::string rootPath = arguments["map"];
+	const std::string rootPath = arguments["map"][0];
 
 	// Paths for each side.
 	const std::vector<std::string> paths { rootPath + "_px.exr", rootPath + "_nx.exr", rootPath + "_py.exr", rootPath + "_ny.exr", rootPath + "_pz.exr", rootPath + "_nz.exr" };

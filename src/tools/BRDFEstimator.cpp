@@ -24,12 +24,12 @@ public:
 		
 		for(const auto & arg : _rawArguments){
 			const std::string key = arg.first;
-			const std::string value = arg.second;
+			const std::vector<std::string> & values = arg.second;
 			
 			if(key == "cubemap-name"){
-				cubemapName = value;
+				cubemapName = values[0];
 			} else if(key == "output-path"){
-				outputPath = value;
+				outputPath = values[0];
 			} else if(key == "brdf"){
 				precomputeBRDF = true;
 			}

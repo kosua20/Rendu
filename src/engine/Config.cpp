@@ -42,7 +42,7 @@ void Config::processArguments(){
 	
 	for(const auto & arg : _rawArguments){
 		const std::string key = arg.first;
-		const std::string value = arg.second;
+		const std::vector<std::string> & values = arg.second;
 		
 		if(key == "novsync"){
 			vsync = false;
@@ -51,23 +51,20 @@ void Config::processArguments(){
 		} else if(key == "verbose"){
 			logVerbose = true;
 		} else if(key == "internal-res" || key == "ivr"){
-			internalVerticalResolution = std::stof(value);
+			internalVerticalResolution = std::stof(values[0]);
 		} else if(key == "log-path"){
-			logPath = value;
-		}else if(key == "wxh"){
-			const std::string::size_type split = value.find_first_of("x");
-			if(split != std::string::npos){
-				const unsigned int w = (unsigned int)std::stoi(value.substr(0,split));
-				const unsigned int h = (unsigned int)std::stoi(value.substr(split+1));
-				initialWidth = w;
-				initialHeight = h;
-			}
+			logPath = values[0];
+		} else if(key == "wxh"){
+			const unsigned int w = (unsigned int)std::stoi(values[0]);
+			const unsigned int h = (unsigned int)std::stoi(values[1]);
+			initialWidth = w;
+			initialHeight = h;
 		}
 	}
 }
 
 
-void Config::parseFromFile(const char * filePath, std::map<std::string, std::string> & arguments){
+void Config::parseFromFile(const char * filePath, std::map<std::string, std::vector<std::string>> & arguments){
 	// Load config from given file.
 	const std::string configContent = Resources::loadStringFromExternalFile(filePath);
 	if(configContent.empty()){
@@ -79,41 +76,56 @@ void Config::parseFromFile(const char * filePath, std::map<std::string, std::str
 	while(std::getline(lines,line)){
 		// Clean line.
 		const std::string lineClean = Resources::trim(line, " ");
+		if(lineClean.empty()) {
+			continue;
+		}
 		// Split at first space.
 		const std::string::size_type spacePos = lineClean.find_first_of(" ");
+		std::vector<std::string> values;
+		std::string firstArg = "";
 		if(spacePos == std::string::npos){
 			// This is a on/off argument.
-			arguments[Resources::trim(lineClean, "-")] = "true";
+			firstArg = Resources::trim(lineClean, "-");
 		} else {
-			const std::string firstArg = Resources::trim(lineClean.substr(0, spacePos), "-");
-			const std::string secondArg = Resources::trim(lineClean.substr(spacePos+1), " ");
-			arguments[firstArg] = secondArg;
+			// We need to split the whole line.
+			firstArg = Resources::trim(lineClean.substr(0, spacePos), "-");
+			
+			std::string::size_type beginPos = spacePos+1;
+			std::string::size_type afterEndPos = lineClean.find_first_of(" ", beginPos);
+			while (afterEndPos != std::string::npos) {
+				const std::string value = lineClean.substr(beginPos, afterEndPos - beginPos);
+				values.push_back(value);
+				beginPos = afterEndPos + 1;
+				afterEndPos = lineClean.find_first_of(" ", beginPos);
+			}
+			// There is one remaining value, the last one.
+			const std::string value = lineClean.substr(beginPos);
+			values.push_back(value);
+			
+		}
+		if(!firstArg.empty()) {
+			arguments[firstArg] = values;
 		}
 	}
 }
 
 
-void Config::parseFromArgs(const int argc, char** argv, std::map<std::string, std::string> & arguments){
+void Config::parseFromArgs(const int argc, char** argv, std::map<std::string, std::vector<std::string>> & arguments){
 	for(size_t argi = 1; argi < (size_t)argc; ){
 		// Clean the argument from any -
 		const std::string firstArg = Resources::trim(std::string(argv[argi]), "-");
-		if((int)argi < argc - 1){
-			// We need to know if this is a on/off argument (the next argument is also a flag starting with a -)
-			if(argv[argi+1][0] == '-'){
-				// This is a on/off argument.
-				arguments[firstArg] = "true";
-				++argi;
-			} else {
-				const std::string secondArg = std::string(argv[argi+1]);
-				arguments[firstArg] = secondArg;
-				argi += 2;
-			}
-			
-		} else {
-			// If this was the last argument, there is no other after, so this is a on/off argument.
-			arguments[firstArg] = "true";
-			break;
+		if (firstArg.empty()) {
+			continue;
 		}
+		std::vector<std::string> values;
+		++argi;
+		// While we do not encounter a dash, the values are associated to the current argument.
+		while (argi < (size_t)argc && argv[argi][0] != '-') {
+			values.emplace_back(argv[argi]);
+			++argi;
+		}
+		arguments[firstArg] = values;
+
 	}
 }
 

@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <map>
 #include <string>
+#include <vector>
 
 class Config {
 public:
@@ -44,14 +45,14 @@ public:
 	
 public:
 	
-	static void parseFromFile(const char * filePath, std::map<std::string, std::string> & arguments);
+	static void parseFromFile(const char* filePath, std::map<std::string, std::vector<std::string>>& arguments);
 	
-	static void parseFromArgs(const int argc, char** argv, std::map<std::string, std::string> & arguments);
+	static void parseFromArgs(const int argc, char** argv, std::map<std::string, std::vector<std::string>> & arguments);
 		
 	void processArguments();
 
 protected:
 	
-	std::map<std::string, std::string> _rawArguments;
+	std::map<std::string, std::vector<std::string>> _rawArguments;
 };
 #endif /* Config_hpp */
