@@ -18,7 +18,7 @@ public:
 void DragonScene::init(){
 	
 	// Create directional light.
-	directionalLights.emplace_back(glm::vec3(0.0f), 1.2f*glm::vec3(1.0f,1.0f, 0.92f), glm::ortho(-0.75f,0.75f,-0.75f,0.75f,1.0f,6.0f));
+	directionalLights.emplace_back(glm::vec3(-2.0f,0.0f,0.0f), 1.2f*glm::vec3(1.0f,1.0f, 0.92f), 0.75f, 1.0f, 6.0f);
 	
 	// Create point lights.
 	const float lI = 6.0; // Light intensity.
@@ -53,11 +53,11 @@ void DragonScene::init(){
 
 void DragonScene::update(double fullTime, double frameTime){
 	// Update lights.
-	directionalLights[0].update(glm::vec3(-2.0f, 1.5f + sin(0.5*fullTime),0.0f));
+	directionalLights[0].update(glm::vec3(-2.0f, -1.5f + sin(0.5*fullTime),0.0f));
 	
 	for(size_t i = 0; i <pointLights.size(); ++i){
 		auto& pointLight = pointLights[i];
-		glm::vec4 newPosition = glm::rotate(glm::mat4(1.0f), (float)frameTime, glm::vec3(0.0f, 1.0f, 0.0f))*glm::vec4(pointLight.local(), 1.0f);
+		glm::vec4 newPosition = glm::rotate(glm::mat4(1.0f), (float)frameTime, glm::vec3(0.0f, 1.0f, 0.0f))*glm::vec4(pointLight.position(), 1.0f);
 		pointLight.update(glm::vec3(newPosition));
 	}
 	

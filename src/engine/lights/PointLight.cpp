@@ -8,8 +8,9 @@
 
 
 
-PointLight::PointLight(const glm::vec3& worldPosition, const glm::vec3& color, float radius, const glm::mat4& projection ) : Light(worldPosition, color, projection) {
+PointLight::PointLight(const glm::vec3& worldPosition, const glm::vec3& color, float radius) : Light(color) {
 	_radius = radius;
+	_lightPosition = worldPosition;
 }
 
 
@@ -43,14 +44,14 @@ void PointLight::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMa
 	
 	// Store the four variable coefficients of the projection matrix.
 	glm::vec4 projectionVector = glm::vec4(projectionMatrix[0][0], projectionMatrix[1][1], projectionMatrix[2][2], projectionMatrix[3][2]);
-	glm::vec3 lightPositionViewSpace = glm::vec3(viewMatrix * glm::vec4(_local, 1.0f));
+	glm::vec3 lightPositionViewSpace = glm::vec3(viewMatrix * glm::vec4(_lightPosition, 1.0f));
 	glm::mat4 vp = projectionMatrix * viewMatrix;
 	
 	glUseProgram(_program->id());
 	
 	// For the vertex shader
 	glUniform1f(_program->uniform("radius"),  _radius);
-	glUniform3fv(_program->uniform("lightWorldPosition"), 1, &_local[0]);
+	glUniform3fv(_program->uniform("lightWorldPosition"), 1, &_lightPosition[0]);
 	glUniformMatrix4fv(_program->uniform("mvp"), 1, GL_FALSE, &vp[0][0]);
 	glUniform3fv(_program->uniform("lightPosition"), 1,  &lightPositionViewSpace[0]);
 	glUniform3fv(_program->uniform("lightColor"), 1,  &_color[0]);
@@ -84,7 +85,7 @@ void PointLight::drawDebug(const glm::mat4& viewMatrix, const glm::mat4& project
 	
 	// For the vertex shader
 	glUniform1f(_debugProgram->uniform("radius"),  0.1f*_radius);
-	glUniform3fv(_debugProgram->uniform("lightWorldPosition"), 1, &_local[0]);
+	glUniform3fv(_debugProgram->uniform("lightWorldPosition"), 1, &_lightPosition[0]);
 	glUniformMatrix4fv(_debugProgram->uniform("mvp"), 1, GL_FALSE, &vp[0][0]);
 	glUniform3fv(_debugProgram->uniform("lightColor"), 1,  &_color[0]);
 	
@@ -98,6 +99,10 @@ void PointLight::drawDebug(const glm::mat4& viewMatrix, const glm::mat4& project
 	glUseProgram(0);
 }
 
+
+void PointLight::update(const glm::vec3 & newPosition){
+	_lightPosition = newPosition;
+}
 
 void PointLight::clean() const {
 	

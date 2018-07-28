@@ -8,9 +8,12 @@
 
 
 
-DirectionalLight::DirectionalLight(const glm::vec3& worldPosition, const glm::vec3& color, const glm::mat4& projection) : Light(worldPosition, color, projection) {
+DirectionalLight::DirectionalLight(const glm::vec3& worldDirection, const glm::vec3& color, const float extent, const float near, const float far) : Light(color) {
 	
-	
+	_lightDirection = worldDirection;
+	_projectionMatrix = glm::ortho(-extent,extent,-extent,extent,near,far);
+	_viewMatrix = glm::lookAt(-_lightDirection, glm::vec3(0.0f,0.0f,0.0f), glm::vec3(0.0f,1.0f,0.0f));
+	_mvp = _projectionMatrix * _viewMatrix;
 }
 
 
@@ -32,11 +35,11 @@ void DirectionalLight::draw(const glm::mat4& viewMatrix, const glm::mat4& projec
 	glm::mat4 viewToLight = _mvp * glm::inverse(viewMatrix);
 	// Store the four variable coefficients of the projection matrix.
 	glm::vec4 projectionVector = glm::vec4(projectionMatrix[0][0], projectionMatrix[1][1], projectionMatrix[2][2], projectionMatrix[3][2]);
-	glm::vec3 lightPositionViewSpace = glm::vec3(viewMatrix * glm::vec4(_local, 0.0));
+	glm::vec3 lightDirectionViewSpace = glm::vec3(viewMatrix * glm::vec4(_lightDirection, 0.0));
 	
 	glUseProgram(_screenquad.program()->id());
 	
-	glUniform3fv(_screenquad.program()->uniform("lightDirection"), 1,  &lightPositionViewSpace[0]);
+	glUniform3fv(_screenquad.program()->uniform("lightDirection"), 1,  &lightDirectionViewSpace[0]);
 	glUniform3fv(_screenquad.program()->uniform("lightColor"), 1,  &_color[0]);
 	// Projection parameter for position reconstruction.
 	glUniform4fv(_screenquad.program()->uniform("projectionMatrix"), 1, &(projectionVector[0]));
@@ -58,7 +61,6 @@ void DirectionalLight::bind() const {
 
 void DirectionalLight::blurAndUnbind() const {
 	// Unbind the shadow map framebuffer.
-	// TODO: hidden state, remove.
 	_shadowPass->unbind();
 	// ----------------------
 	
@@ -73,6 +75,12 @@ void DirectionalLight::blurAndUnbind() const {
 	 
 	_blurPass->unbind();
 	glEnable(GL_DEPTH_TEST);
+}
+
+void DirectionalLight::update(const glm::vec3 & newDirection){
+	_lightDirection = newDirection;
+	_viewMatrix = glm::lookAt(-_lightDirection, glm::vec3(0.0f,0.0f,0.0f), glm::vec3(0.0f,1.0f,0.0f));
+	_mvp = _projectionMatrix * _viewMatrix;
 }
 
 void DirectionalLight::clean() const {

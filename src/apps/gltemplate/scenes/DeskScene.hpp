@@ -17,9 +17,9 @@ public:
 
 void DeskScene::init(){
 	
-	// Create directional light.
-	//directionalLights.emplace_back(glm::vec3(-2.0f, 1.5f, -1.0f), glm::vec3(0.5f,0.65f, 1.3f), glm::ortho(-2.25f,0.25f,-1.5f,0.75f,1.0f,6.0f));
-	//directionalLights.emplace_back(glm::vec3(2.0f, 3.5f, -2.0f), glm::vec3(1.2f,0.9f, 0.2f), glm::ortho(-2.5f,2.5f,-2.5f,2.5f,1.0f,6.0f));
+	// Create directional lights.
+	//directionalLights.emplace_back(glm::vec3(-2.0f, -1.5f, -1.0f), glm::vec3(0.5f,0.65f, 1.3f), 2.0f,1.0f,6.0f);
+	//directionalLights.emplace_back(glm::vec3(2.0f, -3.5f, -2.0f), glm::vec3(1.2f,0.9f, 0.2f), 2.0f,1.0f,6.0f);
 	
 	glm::mat4 sceneMatrix = glm::translate(glm::scale(glm::mat4(1.0f), glm::vec3(0.5f)), glm::vec3(0.0f,0.0f,-2.0f));
 	// Objects creation.

@@ -9,7 +9,7 @@ class DirectionalLight : public Light {
 
 public:
 	
-	DirectionalLight(const glm::vec3& worldPosition, const glm::vec3& color, const glm::mat4& projection = glm::mat4(1.0f));
+	DirectionalLight(const glm::vec3& worldDirection, const glm::vec3& color, const float extent, const float near, const float far);
 	
 	void init(const std::map<std::string, GLuint>& textureIds);
 	
@@ -21,13 +21,17 @@ public:
 	
 	void clean() const;
 	
+	void update(const glm::vec3 & newDirection);
+	
 private:
 	
 	ScreenQuad _screenquad;
 	ScreenQuad _blurScreen;
 	std::shared_ptr<Framebuffer> _shadowPass;
 	std::shared_ptr<Framebuffer> _blurPass;
-	
+	glm::mat4 _projectionMatrix;
+	glm::mat4 _viewMatrix;
+	glm::vec3 _lightDirection;
 };
 
 #endif

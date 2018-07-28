@@ -108,7 +108,7 @@ void main(){
 	
 	vec3 n = 2.0 * texture(normalTexture,uv).rgb - 1.0;
 	vec3 v = normalize(-position);
-	vec3 l = normalize(lightDirection);
+	vec3 l = normalize(-lightDirection);
 	
 
 	// Orientation: basic diffuse shadowing.
