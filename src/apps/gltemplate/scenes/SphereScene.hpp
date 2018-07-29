@@ -16,6 +16,10 @@ public:
 
 
 void SphereScene::init(){
+	if(_loaded){
+		return;
+	}
+	_loaded = true;
 	
 	// Create directional light.
 	directionalLights.emplace_back(glm::vec3(-2.0f, -1.5f, 0.0f), glm::vec3(3.0f), 0.75f, 1.0f, 6.0f);

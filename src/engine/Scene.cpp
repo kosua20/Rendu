@@ -30,4 +30,7 @@ void Scene::clean() const {
 	for(auto& dirLight : directionalLights){
 		dirLight.clean();
 	}
+	for(auto& pointLight : pointLights){
+		pointLight.clean();
+	}
 };

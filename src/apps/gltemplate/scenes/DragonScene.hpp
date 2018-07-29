@@ -16,6 +16,10 @@ public:
 
 
 void DragonScene::init(){
+	if(_loaded){
+		return;
+	}
+	_loaded = true;
 	
 	// Create directional light.
 	directionalLights.emplace_back(glm::vec3(-2.0f,0.0f,0.0f), 1.2f*glm::vec3(1.0f,1.0f, 0.92f), 0.75f, 1.0f, 6.0f);
@@ -49,6 +53,7 @@ void DragonScene::init(){
 	
 	backgroundReflection = Resources::manager().getCubemap("corsica_beach_cube").id;
 	loadSphericalHarmonics("corsica_beach_cube_shcoeffs");
+	
 }
 
 void DragonScene::update(double fullTime, double frameTime){

@@ -23,8 +23,6 @@ public:
 	
 	virtual void update(double fullTime, double frameTime) = 0;
 	
-	void loadSphericalHarmonics(const std::string & name);
-	
 	/// Clean function
 	void clean() const;
 	
@@ -35,6 +33,11 @@ public:
 	std::vector<DirectionalLight> directionalLights;
 	std::vector<PointLight> pointLights;
 	
+protected:
+	
+	void loadSphericalHarmonics(const std::string & name);
+	
+	bool _loaded = false;
 
 };
 #endif

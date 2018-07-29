@@ -16,6 +16,10 @@ public:
 
 
 void DeskScene::init(){
+	if(_loaded){
+		return;
+	}
+	_loaded = true;
 	
 	// Create directional lights.
 	//directionalLights.emplace_back(glm::vec3(-2.0f, -1.5f, -1.0f), glm::vec3(0.5f,0.65f, 1.3f), 2.0f,1.0f,6.0f);
