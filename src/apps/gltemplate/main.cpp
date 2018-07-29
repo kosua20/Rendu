@@ -128,18 +128,21 @@ int main(int argc, char** argv) {
 	Log::Info() << Log::OpenGL << "Internal renderer: " << rendererString << "." << std::endl;
 	Log::Info() << Log::OpenGL << "Version supported: " << versionString << "." << std::endl;
 	
-	// Create the scene and the renderer.
-	std::shared_ptr<Scene> scene(new DeskScene());
-	std::shared_ptr<Renderer> renderer(new DeferredRenderer(config, scene));
+	// Create the renderer.
+	std::shared_ptr<DeferredRenderer> renderer(new DeferredRenderer(config));
 	
 	double timer = glfwGetTime();
 	double fullTime = 0.0;
 	double remainingTime = 0.0;
 	const double dt = 1.0/120.0; // Small physics timestep.
 	
+	std::vector<std::shared_ptr<Scene>> scenes;
+	scenes.emplace_back(new DeskScene());
+	scenes.emplace_back(new SphereScene());
+	scenes.emplace_back(new DragonScene());
+	
 	// Start the display/interaction loop.
 	while (!glfwWindowShouldClose(window)) {
-		
 		// Update events (inputs,...).
 		Input::manager().update();
 		// Handle quitting.
@@ -148,6 +151,17 @@ int main(int argc, char** argv) {
 		}
 		if(Input::manager().triggered(Input::KeyP)){
 			Resources::manager().reload();
+		}
+		// Handle scene switching.
+		if(Input::manager().triggered(Input::Key1)){
+			Log::Info() << "Showing scene 1" << std::endl;
+			renderer->setScene(scenes[0]);
+		} else if(Input::manager().triggered(Input::Key2)){
+			Log::Info() << "Showing scene 2" << std::endl;
+			renderer->setScene(scenes[1]);
+		} else if(Input::manager().triggered(Input::Key3)){
+			Log::Info() << "Showing scene 3" << std::endl;
+			renderer->setScene(scenes[2]);
 		}
 		// We separate punctual events from the main physics/movement update loop.
 		renderer->update();
@@ -175,7 +189,7 @@ int main(int argc, char** argv) {
 		// Update the content of the window.
 		renderer->draw();
 		
-		//Display the result fo the current rendering loop.
+		//Display the result for the current rendering loop.
 		glfwSwapBuffers(window);
 
 	}
