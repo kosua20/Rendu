@@ -16,7 +16,9 @@ public:
 
 	~AmbientQuad();
 	
-	void init(std::map<std::string, GLuint> textureIds, const GLuint reflection, const std::vector<glm::vec3> & irradiance);
+	void init(std::map<std::string, GLuint> textureIds);
+	
+	void setSceneParameters(const GLuint reflectionMap, const std::vector<glm::vec3> & irradiance);
 	
 	/// Draw function,
 	void draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) const;

@@ -15,24 +15,7 @@ Renderer::Renderer(Config & config) : _config(config) {
 	
 	defaultGLSetup();
 	
-	_scene = nullptr;
-	
 }
-
-Renderer::Renderer(Config & config, std::shared_ptr<Scene> & scene) : _config(config) {
-	
-	// Initial render resolution.
-	_renderResolution = (_config.internalVerticalResolution/_config.screenResolution[1]) * _config.screenResolution;
-	
-	defaultGLSetup();
-	
-	_scene = scene;
-	if(_scene){
-		_scene->init();
-	}
-	
-}
-
 
 
 void Renderer::update(){
@@ -43,10 +26,7 @@ void Renderer::update(){
 
 
 void Renderer::clean() const {
-	// Clean objects.
-	if(_scene){
-		_scene->clean();
-	}
+	
 }
 
 

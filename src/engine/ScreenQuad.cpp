@@ -32,6 +32,7 @@ void ScreenQuad::init(GLuint textureId, const std::string & shaderRoot){
 	loadGeometry();
 	
 	// Link the texture of the framebuffer for this program.
+	_textureIds.clear();
 	_textureIds.push_back(textureId);
 	_program->registerTexture("screenTexture", 0);
 	
@@ -48,6 +49,7 @@ void ScreenQuad::init(std::map<std::string, GLuint> textureIds, const std::strin
 	
 	// Link the texture of the framebuffer for this program.
 	GLint currentTextureSlot = 0;
+	_textureIds.clear();
 	for(auto& texture : textureIds){
 		_textureIds.push_back(texture.second);
 		_program->registerTexture(texture.first, currentTextureSlot);

@@ -11,7 +11,7 @@ AmbientQuad::AmbientQuad(){}
 
 AmbientQuad::~AmbientQuad(){}
 
-void AmbientQuad::init(std::map<std::string, GLuint> textureIds, const GLuint reflection, const std::vector<glm::vec3> & irradiance){
+void AmbientQuad::init(std::map<std::string, GLuint> textureIds){
 	
 	// Ambient pass: needs the albedo, the normals, the effect and the AO result
 	std::map<std::string, GLuint> finalTextures = { {"albedoTexture", textureIds["albedoTexture"]}, {"normalTexture", textureIds["normalTexture"]}, {"depthTexture", textureIds["depthTexture"]},  {"effectsTexture", textureIds["effectsTexture"]}, {"ssaoTexture", textureIds["ssaoTexture"]}};
@@ -19,10 +19,8 @@ void AmbientQuad::init(std::map<std::string, GLuint> textureIds, const GLuint re
 	ScreenQuad::init(finalTextures, "ambient");
 	
 	// Load texture.
-	_texCubeMap = reflection;
 	_texBrdfPrecalc = Resources::manager().getTexture("brdf-precomputed", false).id;
 	// Load Spherical Harmonics coefficients.
-	_program->cacheUniformArray("shCoeffs", irradiance);
 	// Bind uniform to texture slot.
 	_program->registerTexture("textureCubeMap", (unsigned int)_textureIds.size());
 	_program->registerTexture("brdfPrecalc", (unsigned int)_textureIds.size()+1);
@@ -38,8 +36,14 @@ void AmbientQuad::init(std::map<std::string, GLuint> textureIds, const GLuint re
 	checkGLError();
 }
 
+void AmbientQuad::setSceneParameters(const GLuint reflectionMap, const std::vector<glm::vec3> & irradiance){
+	_texCubeMap = reflectionMap;
+	_program->cacheUniformArray("shCoeffs", irradiance);
+}
+
 GLuint AmbientQuad::setupSSAO(){
 	// Samples.
+	_samples.clear();
 	// We need random vectors in the half sphere above z, with more samples close to the center.
 	for(int i = 0; i < 24; ++i){
 		glm::vec3 randVec = glm::vec3(Random::Float(-1.0f, 1.0f),

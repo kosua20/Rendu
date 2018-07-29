@@ -26,8 +26,10 @@ public:
 	~DeferredRenderer();
 
 	/// Init function
-	DeferredRenderer(Config & config, std::shared_ptr<Scene> & scene);
+	DeferredRenderer(Config & config);
 
+	void setScene(std::shared_ptr<Scene> & scene);
+	
 	/// Draw function
 	void draw();
 	
@@ -61,6 +63,8 @@ private:
 	ScreenQuad _toneMappingScreen;
 	ScreenQuad _fxaaScreen;
 	ScreenQuad _finalScreen;
+	
+	std::shared_ptr<Scene> _scene;
 	
 };
 

@@ -16,10 +16,8 @@ public:
 	
 	~Renderer();
 	
-	Renderer(Config & config);
-	
 	/// Init function
-	Renderer(Config & config, std::shared_ptr<Scene> & scene);
+	Renderer(Config & config);
 	
 	/// Draw function
 	virtual void draw() = 0;
@@ -40,7 +38,6 @@ protected:
 	void updateResolution(unsigned int width, unsigned int height);
 	
 	Config & _config;
-	std::shared_ptr<Scene> _scene;
 	glm::vec2 _renderResolution;
 	
 private:

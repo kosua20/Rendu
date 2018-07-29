@@ -29,6 +29,7 @@ void PointLight::init(const std::map<std::string, GLuint>& textureIds){
 	//glUseProgram(_program->id());
 	checkGLError();
 	GLint currentTextureSlot = 0;
+	_textureIds.clear();
 	for(auto& texture : textureIds){
 		_textureIds.push_back(texture.second);
 		//glBindTexture(GL_TEXTURE_2D, _textureIds.back());

@@ -9,7 +9,7 @@
 
 DeferredRenderer::~DeferredRenderer(){}
 
-DeferredRenderer::DeferredRenderer(Config & config, std::shared_ptr<Scene> & scene) : Renderer(config, scene) {
+DeferredRenderer::DeferredRenderer(Config & config) : Renderer(config) {
 	
 	// Setup camera parameters.
 	_userCamera.projection(config.screenResolution[0]/config.screenResolution[1], 1.3f, 0.01f, 200.0f);
@@ -39,33 +39,47 @@ DeferredRenderer::DeferredRenderer(Config & config, std::shared_ptr<Scene> & sce
 	glEnable(GL_CULL_FACE);
 	glBlendEquation (GL_FUNC_ADD);
 	glBlendFunc(GL_ONE, GL_ONE);
-	checkGLError();
-
+	
+	_bloomScreen.init(_sceneFramebuffer->textureId(), "bloom");
+	_toneMappingScreen.init(_sceneFramebuffer->textureId(), "tonemap");
+	_fxaaScreen.init(_toneMappingFramebuffer->textureId(), "fxaa");
+	_finalScreen.init(_fxaaFramebuffer->textureId(), "final_screenquad");
+	
 	std::map<std::string, GLuint> ambientTextures = _gbuffer->textureIds({ TextureType::Albedo, TextureType::Normal, TextureType::Depth, TextureType::Effects });
 	ambientTextures["ssaoTexture"] = _blurSSAOBuffer->textureId();
-	_ambientScreen.init(ambientTextures, _scene->backgroundReflection, _scene->backgroundIrradiance);
+	_ambientScreen.init(ambientTextures);
+	
+	checkGLError();
+	
+}
+
+void DeferredRenderer::setScene(std::shared_ptr<Scene> & scene){
+	_scene = scene;
+	if(!scene){
+		return;
+	}
+	_scene->init();
+	
+	_ambientScreen.setSceneParameters(_scene->backgroundReflection, _scene->backgroundIrradiance);
 	
 	const std::vector<TextureType> includedTextures = { TextureType::Albedo, TextureType::Depth, TextureType::Normal, TextureType::Effects };
-	
 	for(auto& dirLight : _scene->directionalLights){
 		dirLight.init(_gbuffer->textureIds(includedTextures));
 	}
 	for(auto& pointLight : _scene->pointLights){
 		pointLight.init(_gbuffer->textureIds(includedTextures));
 	}
-	
-	
-	_bloomScreen.init(_sceneFramebuffer->textureId(), "bloom");
-	_toneMappingScreen.init(_sceneFramebuffer->textureId(), "tonemap");
-	_fxaaScreen.init(_toneMappingFramebuffer->textureId(), "fxaa");
-	_finalScreen.init(_fxaaFramebuffer->textureId(), "final_screenquad");
 	checkGLError();
-	
 }
 
-
 void DeferredRenderer::draw() {
-
+	
+	if(!_scene){
+		glClearColor(0.2f,0.2,0.2f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		return;
+	}
+	
 	glm::vec2 invRenderSize = 1.0f / _renderResolution;
 	
 	// --- Light pass -------
@@ -182,6 +196,7 @@ void DeferredRenderer::draw() {
 	glDisable(GL_FRAMEBUFFER_SRGB);
 	glEnable(GL_DEPTH_TEST);
 	
+	checkGLError();
 }
 
 void DeferredRenderer::update(){
@@ -195,7 +210,9 @@ void DeferredRenderer::update(){
 
 void DeferredRenderer::physics(double fullTime, double frameTime){
 	_userCamera.physics(frameTime);
-	_scene->update(fullTime, frameTime);
+	if(_scene){
+		_scene->update(fullTime, frameTime);
+	}
 }
 
 
@@ -215,6 +232,9 @@ void DeferredRenderer::clean() const {
 	_sceneFramebuffer->clean();
 	_toneMappingFramebuffer->clean();
 	_fxaaFramebuffer->clean();
+	if(_scene){
+		_scene->clean();
+	}
 }
 
 
@@ -227,9 +247,12 @@ void DeferredRenderer::resize(unsigned int width, unsigned int height){
 	_gbuffer->resize(_renderResolution);
 	_ssaoFramebuffer->resize(0.5f * _renderResolution);
 	_blurSSAOBuffer->resize(_ssaoFramebuffer->width(), _ssaoFramebuffer->height());
-	_sceneFramebuffer->resize(_renderResolution);
 	_toneMappingFramebuffer->resize(_renderResolution);
 	_fxaaFramebuffer->resize(_renderResolution);
+	if(_scene){
+		_sceneFramebuffer->resize(_renderResolution);
+	}
+	checkGLError();
 }
 
 
