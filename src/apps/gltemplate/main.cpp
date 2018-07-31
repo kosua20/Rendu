@@ -8,7 +8,7 @@
 #include "renderers/utils/RendererCube.hpp"
 #include "renderers/utils/TestRenderer.hpp"
 #include "helpers/Logger.hpp"
-
+#include "helpers/InterfaceUtilities.hpp"
 #include "scenes/Scenes.hpp"
 
 #include <stdio.h>
@@ -21,19 +21,29 @@ void resize_callback(GLFWwindow* window, int width, int height){
 }
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
-	Input::manager().keyPressedEvent(key, action);
+	if(!ImGui::GetIO().WantCaptureKeyboard){
+		Input::manager().keyPressedEvent(key, action);
+	}
+	ImGui_ImplGlfw_KeyCallback(window, key, scancode, action, mods);
 }
 
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods){
-	Input::manager().mousePressedEvent(button, action); // Could pass mods to simplify things.
+	if(!ImGui::GetIO().WantCaptureMouse){
+		Input::manager().mousePressedEvent(button, action);
+	}
 }
 
 void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos){
-	Input::manager().mouseMovedEvent(xpos, ypos);
+	if(!ImGui::GetIO().WantCaptureMouse){
+		Input::manager().mouseMovedEvent(xpos, ypos);
+	}
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset){
-	Input::manager().mouseScrolledEvent(xoffset, yoffset);
+	if(!ImGui::GetIO().WantCaptureMouse){
+		Input::manager().mouseScrolledEvent(xoffset, yoffset);
+	}
+	ImGui_ImplGlfw_ScrollCallback(window, xoffset, yoffset);
 }
 
 void joystick_callback(int joy, int event){
@@ -105,6 +115,8 @@ int main(int argc, char** argv) {
 	glfwSetJoystickCallback(joystick_callback);					// Joystick
 	glfwSwapInterval(config.vsync ? 1 : 0);						// 60 FPS V-sync
 	
+	ImGui::setup(window);
+	
 	// Check the window size (if we are on a screen smaller than the initial size.
 	int wwidth, wheight;
 	glfwGetWindowSize(window, &wwidth, &wheight);
@@ -140,6 +152,8 @@ int main(int argc, char** argv) {
 	scenes.emplace_back(new DeskScene());
 	scenes.emplace_back(new SphereScene());
 	scenes.emplace_back(new DragonScene());
+	char const * sceneNames[] = {"Desk", "Spheres", "Dragon", "None"};
+	int selected_scene = scenes.size();
 	
 	// Start the display/interaction loop.
 	while (!glfwWindowShouldClose(window)) {
@@ -149,20 +163,26 @@ int main(int argc, char** argv) {
 		if(Input::manager().pressed(Input::KeyEscape)){
 			glfwSetWindowShouldClose(window, GL_TRUE);
 		}
+		// Start a new frame for the interface.
+		ImGui::beginFrame();
+		// Reload resources.
 		if(Input::manager().triggered(Input::KeyP)){
 			Resources::manager().reload();
 		}
+		
 		// Handle scene switching.
-		if(Input::manager().triggered(Input::Key1)){
-			Log::Info() << "Showing scene 1" << std::endl;
-			renderer->setScene(scenes[0]);
-		} else if(Input::manager().triggered(Input::Key2)){
-			Log::Info() << "Showing scene 2" << std::endl;
-			renderer->setScene(scenes[1]);
-		} else if(Input::manager().triggered(Input::Key3)){
-			Log::Info() << "Showing scene 3" << std::endl;
-			renderer->setScene(scenes[2]);
+		if(ImGui::Begin("Renderer")){
+			if(ImGui::Combo("Scene", &selected_scene, sceneNames, scenes.size()+1)){
+				if(selected_scene == scenes.size()){
+					renderer->setScene(nullptr);
+				} else {
+					Log::Info() << Log::Resources << "Loading scene " << sceneNames[selected_scene] << "." << std::endl;
+					renderer->setScene(scenes[selected_scene]);
+				}
+			}
 		}
+		ImGui::End();
+		
 		// We separate punctual events from the main physics/movement update loop.
 		renderer->update();
 		
@@ -185,15 +205,17 @@ int main(int argc, char** argv) {
 			fullTime += deltaTime;
 			remainingTime -= deltaTime;
 		}
-
 		// Update the content of the window.
 		renderer->draw();
-		
+		// Then render the interface.
+		ImGui::endFrame();
 		//Display the result for the current rendering loop.
 		glfwSwapBuffers(window);
 
 	}
 	
+	// Clean the interface.
+	ImGui::clean();
 	// Remove the window.
 	glfwDestroyWindow(window);
 	// Clean other resources

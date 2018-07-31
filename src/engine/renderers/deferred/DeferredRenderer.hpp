@@ -28,7 +28,7 @@ public:
 	/// Init function
 	DeferredRenderer(Config & config);
 
-	void setScene(std::shared_ptr<Scene> & scene);
+	void setScene(std::shared_ptr<Scene> scene);
 	
 	/// Draw function
 	void draw();

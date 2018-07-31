@@ -53,7 +53,7 @@ DeferredRenderer::DeferredRenderer(Config & config) : Renderer(config) {
 	
 }
 
-void DeferredRenderer::setScene(std::shared_ptr<Scene> & scene){
+void DeferredRenderer::setScene(std::shared_ptr<Scene> scene){
 	_scene = scene;
 	if(!scene){
 		return;
