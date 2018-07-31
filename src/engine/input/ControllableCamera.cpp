@@ -38,6 +38,10 @@ void ControllableCamera::update(){
 		_mode = TurnTable;
 		_radius = glm::length(_eye - _center);
 	}
+	if(Input::manager().resized()){
+		const glm::vec2 screenSize = Input::manager().size();
+		ratio(screenSize[0]/screenSize[1]);
+	}
 }
 
 void ControllableCamera::physics(double frameTime){

@@ -240,9 +240,6 @@ void DeferredRenderer::clean() const {
 
 void DeferredRenderer::resize(unsigned int width, unsigned int height){
 	Renderer::updateResolution(width, height);
-	
-	// Update the projection aspect ratio.
-	_userCamera.ratio(_renderResolution[0] / _renderResolution[1]);
 	// Resize the framebuffers.
 	_gbuffer->resize(_renderResolution);
 	_ssaoFramebuffer->resize(0.5f * _renderResolution);
