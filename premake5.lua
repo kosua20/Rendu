@@ -76,6 +76,10 @@ project("PBRDemo")
 	AppSetup()
 	files({ "src/apps/gltemplate/**.hpp", "src/apps/gltemplate/**.cpp", })
 
+project("Playground")
+	AppSetup()
+	files({ "src/apps/playground/**.hpp", "src/apps/playground/**.cpp", })
+
 
 group("Tools")
 
