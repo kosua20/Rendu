@@ -169,7 +169,7 @@ int main(int argc, char** argv) {
 		}
 		
 		// Compute the time elapsed since last frame
-		double currentTime = glfwGetTime();
+		const double currentTime = glfwGetTime();
 		double frameTime = currentTime - timer;
 		timer = currentTime;
 		camera.update();
@@ -190,7 +190,9 @@ int main(int argc, char** argv) {
 		}
 		
 		// Render.
+		const glm::vec2 screenSize = Input::manager().size();
 		const glm::mat4 MVP = camera.projection() * camera.view();
+		glViewport(0, 0, (GLsizei)screenSize[0], (GLsizei)screenSize[1]);
 		glClearColor(0.2f, 0.3f, 0.25f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glUseProgram(program->id());

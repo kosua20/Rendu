@@ -6,7 +6,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <map>
 #include <string>
-
+#undef near
+#undef far
 
 class Light {
 

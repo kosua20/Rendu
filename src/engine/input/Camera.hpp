@@ -11,12 +11,6 @@ public:
 
 	~Camera();
 	
-	/// Update the view matrix.
-	void physics(double frameTime);
-	
-	/// Update the screen size and projection matrix.
-	void screen(int width, int height);
-	
 	/// Update all projection parameters.
 	void projection(float ratio, float fov, float near, float far);
 	
