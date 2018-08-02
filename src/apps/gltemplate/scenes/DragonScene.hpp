@@ -22,7 +22,7 @@ void DragonScene::init(){
 	_loaded = true;
 	
 	// Create directional light.
-	directionalLights.emplace_back(glm::vec3(-2.0f,0.0f,0.0f), 1.2f*glm::vec3(1.0f,1.0f, 0.92f), 0.75f, 1.0f, 6.0f);
+	directionalLights.emplace_back(glm::vec3(-2.0f,0.0f,0.0f), glm::vec3(1.0f,1.0f, 0.92f), 0.75f, 1.0f, 6.0f);
 	
 	// Create point lights.
 	const float lI = 6.0; // Light intensity.
@@ -37,9 +37,9 @@ void DragonScene::init(){
 	const glm::mat4 planeModel = glm::scale(glm::translate(glm::mat4(1.0f),glm::vec3(0.0f,-0.35f,-0.5f)), glm::vec3(2.0f));
 	
 	// Objects creation.
-	Object suzanne(Object::Type::Regular, "suzanne", { {"suzanne_texture_color", true }, {"suzanne_texture_normal", false}, {"suzanne_texture_ao_specular_reflection", false} });
-	Object dragon(Object::Type::Regular, "dragon", { { "dragon_texture_color", true }, { "dragon_texture_normal", false }, { "dragon_texture_ao_specular_reflection", false } });
-	Object plane(Object::Type::Parallax, "plane", { { "plane_texture_color", true }, { "plane_texture_normal", false }, { "plane_texture_depthmap", false } }, {}, false);
+	Object suzanne(Object::Type::Regular, "suzanne", { {"suzanne_texture_color", true }, {"suzanne_texture_normal", false}, {"suzanne_texture_rough_met_ao", false} });
+	Object dragon(Object::Type::Regular, "dragon", { { "dragon_texture_color", true }, { "dragon_texture_normal", false }, { "dragon_texture_rough_met_ao", false } });
+	Object plane(Object::Type::Parallax, "plane", { { "plane_texture_color", true }, { "plane_texture_normal", false }, { "plane_texture_rough_met_ao", false }, { "plane_texture_depth", false } }, {}, false);
 	
 	dragon.update(dragonModel);
 	plane.update(planeModel);

@@ -13,6 +13,7 @@ in INTERFACE {
 uniform sampler2D texture0;
 uniform sampler2D texture1;
 uniform sampler2D texture2;
+uniform sampler2D texture3;
 uniform mat4 p;
 
 #define PARALLAX_MIN 8
@@ -33,7 +34,7 @@ vec2 parallax(vec2 uv, vec3 vTangentDir, out vec2 positionShift){
 	float layerHeight = 1.0 / layersCount;
 	float currentLayer = 0.0;
 	// Initial depth at the given position.
-	float currentDepth = texture(texture2, uv).z;
+	float currentDepth = texture(texture3, uv).r;
 	
 	// Step vector: in tangent space, we walk on the surface, in the (X,Y) plane.
 	vec2 shift = PARALLAX_SCALE * vTangentDir.xy;
@@ -46,7 +47,7 @@ vec2 parallax(vec2 uv, vec3 vTangentDir, out vec2 positionShift){
 		// We update the UV, going further away from the viewer.
 		newUV -= shiftUV;
 		// Update current depth.
-		currentDepth = texture(texture2,newUV).z;
+		currentDepth = texture(texture3,newUV).r;
 		// Update current layer.
 		currentLayer += layerHeight;
 	}
@@ -55,7 +56,7 @@ vec2 parallax(vec2 uv, vec3 vTangentDir, out vec2 positionShift){
 	vec2 previousNewUV = newUV + shiftUV;
 	// The local depth is the gap between the current depth and the current depth layer.
 	float currentLocalDepth = currentDepth - currentLayer;
-	float previousLocalDepth = texture(texture2,previousNewUV).z - (currentLayer - layerHeight);
+	float previousLocalDepth = texture(texture3,previousNewUV).r - (currentLayer - layerHeight);
 	
 	
 	// Interpolate between the two local depths to obtain the correct UV shift.
@@ -90,9 +91,8 @@ void main(){
 	// Store depth manually (see below).
 	gl_FragDepth = gl_FragCoord.z;
 	// Update the depth using the heightmap and the displacement applied.
-	fragEffects.g = 1.0;
 	// Read the depth.
-	float localDepth = fragEffects.r;
+	float localDepth = texture(texture3,localUV).r;
 	// Convert the 3D shift applied from tangent space to view space.
 	vec3 shift = In.tbn * vec3(positionShift.xy, -PARALLAX_SCALE * localDepth);
 	// Update the depth in view space.
