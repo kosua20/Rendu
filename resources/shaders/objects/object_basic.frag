@@ -1,9 +1,5 @@
 #version 330
 
-in INTERFACE {
-	vec3 pos;
-} In ;
-
 out vec4 fragColor;
 
 vec3 hash31(int x);

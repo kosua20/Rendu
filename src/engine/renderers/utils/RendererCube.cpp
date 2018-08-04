@@ -19,7 +19,7 @@ RendererCube::RendererCube(Config & config, const std::string & cubemapName, con
 	
 	_resultFramebuffer = std::make_shared<Framebuffer>(width, height, format, type, preciseFormat, GL_LINEAR, GL_CLAMP_TO_EDGE, false);
 	
-	_program = Resources::manager().getProgram(shaderName, "object_basic", shaderName);
+	_program = Resources::manager().getProgram(shaderName, "skybox_basic", shaderName);
 	_cubemap = Object(_program, "skybox", {}, {{cubemapName, true }});
 	
 	checkGLError();

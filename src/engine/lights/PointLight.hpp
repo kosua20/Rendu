@@ -29,7 +29,6 @@ private:
 	std::vector<GLuint> _textureIds;
 	
 	std::shared_ptr<ProgramInfos> _program;
-	//glm::mt4 _view;
 	glm::vec3 _lightPosition;
 	
 	static std::shared_ptr<ProgramInfos> _debugProgram;
