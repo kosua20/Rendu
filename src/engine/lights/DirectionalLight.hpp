@@ -15,6 +15,8 @@ public:
 	
 	void draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix, const glm::vec2& invScreenSize = glm::vec2(0.0f)) const;
 	
+	void drawDebug(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) const;
+	
 	void bind() const;
 	
 	void blurAndUnbind() const;
@@ -22,6 +24,8 @@ public:
 	void clean() const;
 	
 	void update(const glm::vec3 & newDirection);
+	
+	static void loadProgramAndGeometry();
 	
 private:
 	
@@ -32,6 +36,9 @@ private:
 	glm::mat4 _projectionMatrix;
 	glm::mat4 _viewMatrix;
 	glm::vec3 _lightDirection;
+	
+	static std::shared_ptr<ProgramInfos> _debugProgram;
+	static MeshInfos _debugMesh;
 };
 
 #endif

@@ -29,6 +29,12 @@ void DirectionalLight::init(const std::map<std::string, GLuint>& textureIds){
 	
 }
 
+void DirectionalLight::loadProgramAndGeometry() {
+	_debugProgram = Resources::manager().getProgram("directional_light_debug", "object_basic", "light_debug");
+	_debugMesh = Resources::manager().getMesh("light_arrow");
+	checkGLError();
+}
+
 void DirectionalLight::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix, const glm::vec2& invScreenSize ) const {
 	
 	
@@ -77,6 +83,24 @@ void DirectionalLight::blurAndUnbind() const {
 	glEnable(GL_DEPTH_TEST);
 }
 
+void DirectionalLight::drawDebug(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) const {
+	glm::mat4 vp = projectionMatrix * viewMatrix * glm::inverse(_viewMatrix) * glm::scale(glm::mat4(1.0f), glm::vec3(0.2f));
+	
+	glUseProgram(_debugProgram->id());
+	
+	glUniformMatrix4fv(_debugProgram->uniform("mvp"), 1, GL_FALSE, &vp[0][0]);
+	glUniform3fv(_debugProgram->uniform("lightColor"), 1,  &_color[0]);
+	
+	// Select the geometry.
+	glBindVertexArray(_debugMesh.vId);
+	// Draw!
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _debugMesh.eId);
+	glDrawElements(GL_TRIANGLES, _debugMesh.count, GL_UNSIGNED_INT, (void*)0);
+	
+	glBindVertexArray(0);
+	glUseProgram(0);
+}
+
 void DirectionalLight::update(const glm::vec3 & newDirection){
 	_lightDirection = newDirection;
 	_viewMatrix = glm::lookAt(-_lightDirection, glm::vec3(0.0f,0.0f,0.0f), glm::vec3(0.0f,1.0f,0.0f));
@@ -89,4 +113,5 @@ void DirectionalLight::clean() const {
 	_shadowPass->clean();
 }
 
-
+std::shared_ptr<ProgramInfos> DirectionalLight::_debugProgram;
+MeshInfos DirectionalLight::_debugMesh;

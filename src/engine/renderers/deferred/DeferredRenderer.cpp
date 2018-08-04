@@ -31,6 +31,7 @@ DeferredRenderer::DeferredRenderer(Config & config) : Renderer(config) {
 	_blurSSAOBuffer = std::make_shared<BoxBlur>(renderHalfWidth, renderHalfHeight, true, GL_RED, GL_UNSIGNED_BYTE, GL_RED);
 	
 	PointLight::loadProgramAndGeometry();
+	DirectionalLight::loadProgramAndGeometry();
 	
 	checkGLError();
 
@@ -111,6 +112,9 @@ void DeferredRenderer::draw() {
 	
 	for(auto& pointLight : _scene->pointLights){
 		pointLight.drawDebug(_userCamera.view(), _userCamera.projection());
+	}
+	for(auto& dirLight : _scene->directionalLights){
+		dirLight.drawDebug(_userCamera.view(), _userCamera.projection());
 	}
 	
 	// No need to write the skybox depth to the framebuffer.
