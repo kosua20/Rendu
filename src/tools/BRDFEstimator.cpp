@@ -18,6 +18,8 @@ public:
 	
 	BRDFEstimatorConfig(int argc, char** argv) : Config(argc, argv) {
 		processArguments();
+		initialWidth = 512;
+		initialHeight = 512;
 	}
 	
 	void processArguments(){

@@ -122,7 +122,6 @@ int main(int argc, char** argv) {
 	glfwGetWindowSize(window, &wwidth, &wheight);
 	config.initialWidth = wwidth;
 	config.initialHeight = wheight;
-	Input::manager().resizeEvent(wwidth, wheight);
 	
 	// On HiDPI screens, we have to consider the internal resolution for all framebuffers size.
 	int width, height;
@@ -130,7 +129,8 @@ int main(int argc, char** argv) {
 	config.screenResolution = glm::vec2(width, height);
 	// Compute point density by computing the ratio.
 	config.screenDensity = (float)width/(float)config.initialWidth;
-	
+	// Update the resolution.
+	Input::manager().resizeEvent(width, height);
 	
 	// Initialize random generator;
 	Random::seed();
