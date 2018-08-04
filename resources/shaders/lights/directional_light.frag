@@ -103,7 +103,7 @@ void main(){
 	float depth = texture(depthTexture,uv).r;
 	vec3 position = positionFromDepth(depth);
 	vec3 infos = texture(effectsTexture,uv).rgb;
-	float roughness = max(0.0001, infos.r);
+	float roughness = max(0.045, infos.r);
 	float metallic = infos.g;
 	
 	vec3 n = 2.0 * texture(normalTexture,uv).rgb - 1.0;

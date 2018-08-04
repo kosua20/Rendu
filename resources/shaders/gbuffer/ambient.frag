@@ -97,7 +97,7 @@ void main(){
 	
 	vec3 baseColor = albedoInfo.rgb;
 	vec3 infos = texture(effectsTexture,In.uv).rgb;
-	float roughness = max(0.0001, infos.r);
+	float roughness = max(0.045, infos.r);
 	float metallic = infos.g;
 	float depth = texture(depthTexture,In.uv).r;
 	vec3 position = positionFromDepth(depth);
