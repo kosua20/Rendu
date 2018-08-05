@@ -38,7 +38,7 @@ void SphereScene::init(){
 	loadSphericalHarmonics("studio_shcoeffs");
 	
 	// Compute the bounding box of the shadow casters.
-	const BoundingBox bbox = computeBoundingBox(true);
+	//const BoundingBox bbox = computeBoundingBox(true);
 	// Lights creation.
 	// Create directional light.
 	//directionalLights.emplace_back(glm::vec3(-2.0f, -1.5f, 0.0f), glm::vec3(3.0f), bbox);

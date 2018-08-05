@@ -4,6 +4,7 @@
 #include "../ScreenQuad.hpp"
 #include "../Framebuffer.hpp"
 #include "../Object.hpp"
+#include "../processing/BoxBlur.hpp"
 
 #include <memory>
 
@@ -28,9 +29,8 @@ public:
 private:
 	
 	ScreenQuad _screenquad;
-	ScreenQuad _blurScreen;
 	std::shared_ptr<Framebuffer> _shadowPass;
-	std::shared_ptr<Framebuffer> _blurPass;
+	std::shared_ptr<BoxBlur> _blur;
 	glm::mat4 _projectionMatrix;
 	glm::mat4 _viewMatrix;
 	glm::vec3 _lightDirection;

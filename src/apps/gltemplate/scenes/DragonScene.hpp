@@ -51,9 +51,9 @@ void DragonScene::init(){
 	
 	// Lights creation.
 	// Create directional light.
-	directionalLights.emplace_back(glm::vec3(-2.0f,-1.5f,0.0f), 2.0f*glm::vec3(1.0f,1.0f, 0.92f), bbox);
+	directionalLights.emplace_back(glm::vec3(-2.0f,-1.5f,0.0f), glm::vec3(1.0f,1.0f, 0.92f), bbox);
 	// Create spotlight.
-	spotLights.emplace_back(glm::vec3(2.0f,2.0f,2.0), glm::vec3(-1.0f,-1.0f,-1.0f), glm::vec3(0.0f,10.0f,10.0f), 0.5f, 0.6f, 5.0f, 1.0f, 6.0f);
+	spotLights.emplace_back(glm::vec3(2.0f,2.0f,2.0), glm::vec3(-1.0f,-1.0f,-1.0f), glm::vec3(0.0f,10.0f,10.0f), 0.5f, 0.6f, 5.0f, bbox);
 	// Create point lights.
 	const float lI = 4.0; // Light intensity.
 	const std::vector<glm::vec3> colors = { glm::vec3(lI,0.0,0.0), glm::vec3(0.0,lI,0.0), glm::vec3(0.0,0.0,lI), glm::vec3(lI,lI,0.0)};

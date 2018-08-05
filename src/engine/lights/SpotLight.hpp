@@ -4,6 +4,7 @@
 #include "../ScreenQuad.hpp"
 #include "../Framebuffer.hpp"
 #include "../Object.hpp"
+#include "../processing/BoxBlur.hpp"
 
 #include <memory>
 
@@ -34,9 +35,8 @@ private:
 	std::vector<GLuint> _textureIds;
 	std::shared_ptr<ProgramInfos> _program;
 	MeshInfos _cone;
-	ScreenQuad _blurScreen;
 	std::shared_ptr<Framebuffer> _shadowPass;
-	std::shared_ptr<Framebuffer> _blurPass;
+	std::shared_ptr<BoxBlur> _blur;
 	
 	glm::mat4 _projectionMatrix;
 	glm::mat4 _viewMatrix;

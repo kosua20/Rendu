@@ -20,13 +20,12 @@ SpotLight::SpotLight(const glm::vec3& worldPosition, const glm::vec3& worldDirec
 void SpotLight::init(const std::map<std::string, GLuint>& textureIds){
 	// Setup the framebuffer.
 	_shadowPass = std::make_shared<Framebuffer>(512, 512, GL_RG,GL_FLOAT, GL_RG16F, GL_LINEAR, GL_CLAMP_TO_BORDER, true);
-	_blurPass = std::make_shared<Framebuffer>(_shadowPass->width(), _shadowPass->height(), GL_RG,GL_FLOAT, GL_RG16F, GL_LINEAR,GL_CLAMP_TO_BORDER, false);
-	_blurScreen.init(_shadowPass->textureId(), "box-blur-2");
+	_blur = std::make_shared<BoxBlur>(512, 512, false, GL_RG, GL_FLOAT, GL_RG16F, GL_CLAMP_TO_BORDER);
 	
 	_program = Resources::manager().getProgram("spot_light", "object_basic", "spot_light");
 	_cone = Resources::manager().getMesh("light_cone");
 	std::map<std::string, GLuint> textures = textureIds;
-	textures["shadowMap"] = _blurPass->textureId();
+	textures["shadowMap"] = _blur->textureId();
 	
 	GLint currentTextureSlot = 0;
 	_textureIds.clear();
@@ -93,10 +92,7 @@ void SpotLight::drawShadow(const std::vector<Object> & objects) const {
 	
 	// --- Blur pass --------
 	glDisable(GL_DEPTH_TEST);
-	_blurPass->bind();
-	_blurPass->setViewport();
-	_blurScreen.draw();
-	_blurPass->unbind();
+	_blur->process(_shadowPass->textureId());
 	glEnable(GL_DEPTH_TEST);
 }
 
@@ -143,8 +139,7 @@ void SpotLight::update(const glm::vec3 & newPosition, const glm::vec3 & newDirec
 }
 
 void SpotLight::clean() const {
-	_blurPass->clean();
-	_blurScreen.clean();
+	_blur->clean();
 	_shadowPass->clean();
 }
 
