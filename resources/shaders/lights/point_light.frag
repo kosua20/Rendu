@@ -12,9 +12,9 @@ uniform sampler2D effectsTexture;
 uniform vec2 inverseScreenSize;
 uniform vec4 projectionMatrix;
 
-uniform vec3 lightPosition;//(direction in view space)
+uniform vec3 lightPosition;
 uniform vec3 lightColor;
-uniform float radius;
+uniform float lightRadius;
 
 // Output: the fragment color
 out vec3 fragColor;
@@ -63,6 +63,7 @@ vec3 ggx(vec3 n, vec3 v, vec3 l, vec3 F0, float roughness){
 }
 
 void main(){
+	
 	vec2 uv = gl_FragCoord.xy*inverseScreenSize;
 	
 	vec4 albedoInfo = texture(albedoTexture,uv);
@@ -70,7 +71,6 @@ void main(){
 	if(albedoInfo.a == 0.0){
 		discard;
 	}
-	
 	// Get all informations from textures.
 	vec3 baseColor = albedoInfo.rgb;
 	float depth = texture(depthTexture,uv).r;
@@ -83,15 +83,18 @@ void main(){
 	vec3 v = normalize(-position);
 	vec3 deltaPosition = lightPosition - position;
 	vec3 l = normalize(deltaPosition);
-	
+	// Early exit if we are outside the sphere of influence.
+	if(length(deltaPosition) > lightRadius){
+		discard;
+	}
 	// Orientation: basic diffuse shadowing.
 	float orientation = max(0.0, dot(l,n));
 	// Attenuation with increasing distance to the light.
 	
 	float localRadius2 = dot(deltaPosition, deltaPosition);
-	float radiusRatio2 = localRadius2/(radius*radius);
-	float attenNum = clamp(1.0 - radiusRatio2*radiusRatio2, 0.0, 1.0);
-	float attenuation = attenNum*attenNum/(1.0 + localRadius2);
+	float radiusRatio2 = localRadius2/(lightRadius*lightRadius);
+	float attenNum = clamp(1.0 - radiusRatio2, 0.0, 1.0);
+	float attenuation = attenNum*attenNum;
 	
 	// BRDF contributions.
 	// Compute F0 (fresnel coeff).

@@ -15,7 +15,7 @@ Object::Object(const Object::Type & type, const std::string& meshPath, const std
 	_castShadow = castShadows;
 	
 	// Load the shaders
-	_programDepth = Resources::manager().getProgram("object_depth");
+	_programDepth = Resources::manager().getProgram("object_depth", "object_basic", "light_shadow");
 
 	switch (_material) {
 	case Object::Skybox:

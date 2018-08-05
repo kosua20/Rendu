@@ -30,9 +30,6 @@ DeferredRenderer::DeferredRenderer(Config & config) : Renderer(config) {
 	_blurBuffer = std::make_shared<GaussianBlur>(renderPow2Size, renderPow2Size, 2, GL_RGB, GL_FLOAT, GL_RGB16F);
 	_blurSSAOBuffer = std::make_shared<BoxBlur>(renderHalfWidth, renderHalfHeight, true, GL_RED, GL_UNSIGNED_BYTE, GL_RED);
 	
-	PointLight::loadProgramAndGeometry();
-	DirectionalLight::loadProgramAndGeometry();
-	
 	checkGLError();
 
 	// GL options

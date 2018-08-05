@@ -21,18 +21,15 @@ public:
 	
 	glm::vec3 position() const { return _lightPosition; }
 	
-	static void loadProgramAndGeometry();
-	
 private:
 	
 	float _radius;
 	std::vector<GLuint> _textureIds;
 	
 	std::shared_ptr<ProgramInfos> _program;
+	MeshInfos _sphere;
 	glm::vec3 _lightPosition;
 	
-	static std::shared_ptr<ProgramInfos> _debugProgram;
-	static MeshInfos _debugMesh;
 	
 };
 

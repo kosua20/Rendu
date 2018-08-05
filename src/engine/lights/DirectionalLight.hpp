@@ -25,8 +25,6 @@ public:
 	
 	void update(const glm::vec3 & newDirection);
 	
-	static void loadProgramAndGeometry();
-	
 private:
 	
 	ScreenQuad _screenquad;
@@ -36,9 +34,7 @@ private:
 	glm::mat4 _projectionMatrix;
 	glm::mat4 _viewMatrix;
 	glm::vec3 _lightDirection;
-	
-	static std::shared_ptr<ProgramInfos> _debugProgram;
-	static MeshInfos _debugMesh;
+
 };
 
 #endif
