@@ -149,11 +149,13 @@ int main(int argc, char** argv) {
 	const double dt = 1.0/120.0; // Small physics timestep.
 	
 	std::vector<std::shared_ptr<Scene>> scenes;
-	scenes.emplace_back(new DeskScene());
-	scenes.emplace_back(new SphereScene());
 	scenes.emplace_back(new DragonScene());
-	char const * sceneNames[] = {"Desk", "Spheres", "Dragon", "None"};
-	int selected_scene = scenes.size();
+	scenes.emplace_back(new SphereScene());
+	scenes.emplace_back(new DeskScene());
+	char const * sceneNames[] = {"Dragon", "Spheres", "Desk", "None"};
+	// Load the first scene by default.
+	int selected_scene = 0;
+	renderer->setScene(scenes[selected_scene]);
 	
 	// Start the display/interaction loop.
 	while (!glfwWindowShouldClose(window)) {
