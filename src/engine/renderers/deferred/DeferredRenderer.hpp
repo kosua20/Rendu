@@ -66,6 +66,7 @@ private:
 	
 	std::shared_ptr<Scene> _scene;
 	
+	bool _debugVisualization = false;
 };
 
 #endif

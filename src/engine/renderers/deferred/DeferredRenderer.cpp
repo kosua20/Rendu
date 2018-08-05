@@ -2,7 +2,8 @@
 #include "../../input/Input.hpp"
 #include "../../lights/DirectionalLight.hpp"
 #include "../../lights/PointLight.hpp"
-
+#include "../../lights/SpotLight.hpp"
+#include "../../helpers/InterfaceUtilities.hpp"
 #include <stdio.h>
 #include <vector>
 
@@ -67,6 +68,9 @@ void DeferredRenderer::setScene(std::shared_ptr<Scene> scene){
 	for(auto& pointLight : _scene->pointLights){
 		pointLight.init(_gbuffer->textureIds(includedTextures));
 	}
+	for(auto& spotLight : _scene->spotLights){
+		spotLight.init(_gbuffer->textureIds(includedTextures));
+	}
 	checkGLError();
 }
 
@@ -77,6 +81,13 @@ void DeferredRenderer::draw() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		return;
 	}
+	
+	// Interface.
+	// TODO: move to a separate function maybe?
+	if(ImGui::Begin("Renderer")){
+		ImGui::Checkbox("Show debug", &_debugVisualization);
+	}
+	ImGui::End();
 	
 	glm::vec2 invRenderSize = 1.0f / _renderResolution;
 	
@@ -107,11 +118,20 @@ void DeferredRenderer::draw() {
 		object.draw(_userCamera.view(), _userCamera.projection());
 	}
 	
-	for(auto& pointLight : _scene->pointLights){
-		pointLight.drawDebug(_userCamera.view(), _userCamera.projection());
-	}
-	for(auto& dirLight : _scene->directionalLights){
-		dirLight.drawDebug(_userCamera.view(), _userCamera.projection());
+	if(_debugVisualization){
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		glDisable(GL_CULL_FACE);
+		for(auto& pointLight : _scene->pointLights){
+			pointLight.drawDebug(_userCamera.view(), _userCamera.projection());
+		}
+		for(auto& dirLight : _scene->directionalLights){
+			dirLight.drawDebug(_userCamera.view(), _userCamera.projection());
+		}
+		for(auto& spotLight : _scene->spotLights){
+			spotLight.drawDebug(_userCamera.view(), _userCamera.projection());
+		}
+		glEnable(GL_CULL_FACE);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 	
 	// No need to write the skybox depth to the framebuffer.
@@ -153,9 +173,12 @@ void DeferredRenderer::draw() {
 	for(auto& pointLight : _scene->pointLights){
 		pointLight.draw(_userCamera.view(), _userCamera.projection(), invRenderSize);
 	}
-	
-	glDisable(GL_BLEND);
+	for(auto& spotLight : _scene->spotLights){
+		spotLight.draw(_userCamera.view(), _userCamera.projection(), invRenderSize);
+	}
 	glCullFace(GL_BACK);
+	glDisable(GL_BLEND);
+	
 	_sceneFramebuffer->unbind();
 	
 	// --- Bloom selection pass ------
