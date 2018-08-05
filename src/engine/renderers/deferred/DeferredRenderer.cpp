@@ -95,12 +95,7 @@ void DeferredRenderer::draw() {
 	
 	// Draw the scene inside the framebuffer.
 	for(auto& dirLight : _scene->directionalLights){
-
-		dirLight.bind();
-		for(auto& object : _scene->objects){
-			object.drawDepth(dirLight.mvp());
-		}
-		dirLight.blurAndUnbind();
+		dirLight.drawShadow(_scene->objects);
 	}
 	
 	// ----------------------

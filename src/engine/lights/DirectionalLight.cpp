@@ -3,23 +3,21 @@
 #include <stdio.h>
 #include <vector>
 #include <glm/gtc/matrix_transform.hpp>
+#include "../helpers/Logger.hpp"
 
 
 
 
-
-DirectionalLight::DirectionalLight(const glm::vec3& worldDirection, const glm::vec3& color, const float extent, const float near, const float far) : Light(color) {
+DirectionalLight::DirectionalLight(const glm::vec3& worldDirection, const glm::vec3& color, const BoundingBox & sceneBox) : Light(color) {
 	
-	_lightDirection = glm::normalize(worldDirection);
-	_projectionMatrix = glm::ortho(-extent,extent,-extent,extent,near,far);
-	_viewMatrix = glm::lookAt(-_lightDirection, glm::vec3(0.0f,0.0f,0.0f), glm::vec3(0.0f,1.0f,0.0f));
-	_mvp = _projectionMatrix * _viewMatrix;
+	_sceneBox = sceneBox;
+	update(worldDirection);
 }
 
 
 void DirectionalLight::init(const std::map<std::string, GLuint>& textureIds){
 	// Setup the framebuffer.
-	_shadowPass = std::make_shared<Framebuffer>(512, 512, GL_RG,GL_FLOAT, GL_RG16F, GL_LINEAR,GL_CLAMP_TO_BORDER, true);
+	_shadowPass = std::make_shared<Framebuffer>(512, 512, GL_RG,GL_FLOAT, GL_RG16F, GL_LINEAR, GL_CLAMP_TO_BORDER, true);
 	_blurPass = std::make_shared<Framebuffer>(_shadowPass->width(), _shadowPass->height(), GL_RG,GL_FLOAT, GL_RG16F, GL_LINEAR,GL_CLAMP_TO_BORDER, false);
 	_blurScreen.init(_shadowPass->textureId(), "box-blur-2");
 	
@@ -49,17 +47,17 @@ void DirectionalLight::draw(const glm::mat4& viewMatrix, const glm::mat4& projec
 
 }
 
-void DirectionalLight::bind() const {
+void DirectionalLight::drawShadow(const std::vector<Object> & objects) const {
 	_shadowPass->bind();
 	_shadowPass->setViewport();
-	
 	// Set the clear color to white.
 	glClearColor(1.0f,1.0f,1.0f,0.0f);
 	// Clear the color and depth buffers.
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-}
-
-void DirectionalLight::blurAndUnbind() const {
+	for(auto& object : objects){
+		object.drawDepth(_mvp);
+	}
+	
 	// Unbind the shadow map framebuffer.
 	_shadowPass->unbind();
 	// ----------------------
@@ -97,10 +95,22 @@ void DirectionalLight::drawDebug(const glm::mat4& viewMatrix, const glm::mat4& p
 }
 
 void DirectionalLight::update(const glm::vec3 & newDirection){
-	// TODO: this should be normalized, but we steel need an origin for the view matrix. Use scene bounding box?
-	_lightDirection = newDirection;
-	_viewMatrix = glm::lookAt(-_lightDirection, glm::vec3(0.0f,0.0f,0.0f), glm::vec3(0.0f,1.0f,0.0f));
+	_lightDirection = glm::normalize(newDirection);
+	const BoundingSphere sceneSphere = _sceneBox.getSphere();
+	const glm::vec3 lightPosition = sceneSphere.center - sceneSphere.radius*1.1f*_lightDirection;
+	const glm::vec3 lightTarget = sceneSphere.center;
+	
+	_viewMatrix = glm::lookAt(lightPosition, lightTarget, glm::vec3(0.0f,1.0f,0.0f));
+	
+	const BoundingBox lightSpacebox = _sceneBox.transformed(_viewMatrix);
+	const float absz1 = abs(lightSpacebox.minis[2]);
+	const float absz2 = abs(lightSpacebox.maxis[2]);
+	const float near = std::min(absz1, absz2);
+	const float far = std::max(absz1, absz2);
+	const float scaleMargin = 1.1f;
+	_projectionMatrix = glm::ortho(scaleMargin*lightSpacebox.minis[0], scaleMargin*lightSpacebox.maxis[0], scaleMargin*lightSpacebox.minis[1], scaleMargin*lightSpacebox.maxis[1], (1.0f/scaleMargin)*near, scaleMargin*far);
 	_mvp = _projectionMatrix * _viewMatrix;
+	
 }
 
 void DirectionalLight::clean() const {
