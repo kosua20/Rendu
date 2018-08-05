@@ -7,7 +7,7 @@ class BoxBlur : public Blur {
 
 public:
 	
-	BoxBlur(unsigned int width, unsigned int height, bool approximate, GLuint format, GLuint type, GLuint preciseFormat);
+	BoxBlur(unsigned int width, unsigned int height, bool approximate, GLuint format, GLuint type, GLuint preciseFormat, GLuint wrapping);
 
 	/// Draw function
 	void process(const GLuint textureId);

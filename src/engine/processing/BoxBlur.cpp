@@ -4,7 +4,7 @@
 #include <vector>
 
 
-BoxBlur::BoxBlur(unsigned int width, unsigned int height, bool approximate, GLuint format, GLuint type, GLuint preciseFormat) : Blur() {
+BoxBlur::BoxBlur(unsigned int width, unsigned int height, bool approximate, GLuint format, GLuint type, GLuint preciseFormat, GLuint wrapping) : Blur() {
 	
 	std::string blur_type_name = "box-blur-" + (approximate ? std::string("approx-") : "");
 	switch (format) {
@@ -24,7 +24,7 @@ BoxBlur::BoxBlur(unsigned int width, unsigned int height, bool approximate, GLui
 	
 	_blurScreen.init(blur_type_name);
 	// Create one framebuffer.
-	_finalFramebuffer = std::make_shared<Framebuffer>(width, height, format, type, preciseFormat, GL_LINEAR, GL_CLAMP_TO_EDGE, false);
+	_finalFramebuffer = std::make_shared<Framebuffer>(width, height, format, type, preciseFormat, GL_LINEAR, wrapping, false);
 	// Final combining buffer.
 	_finalTexture = _finalFramebuffer->textureId();
 	

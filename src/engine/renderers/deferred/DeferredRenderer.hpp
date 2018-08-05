@@ -4,8 +4,8 @@
 #include "../../input/ControllableCamera.hpp"
 #include "../../ScreenQuad.hpp"
 
-#include "../../GaussianBlur.hpp"
-#include "../../BoxBlur.hpp"
+#include "../../processing/GaussianBlur.hpp"
+#include "../../processing/BoxBlur.hpp"
 
 #include "../Renderer.hpp"
 
