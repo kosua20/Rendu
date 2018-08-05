@@ -38,22 +38,24 @@ vec3 positionFromDepth(float depth){
 
 float shadow(vec3 lightSpacePosition){
 	float probabilityMax = 1.0;
-	if (lightSpacePosition.z < 1.0){
-		// Read first and second moment from shadow map.
-		vec2 moments = texture(shadowMap, lightSpacePosition.xy).rg;
-		// Initial probability of light.
-		float probability = float(lightSpacePosition.z <= moments.x);
-		// Compute variance.
-		float variance = moments.y - (moments.x * moments.x);
-		variance = max(variance, 0.00001);
-		// Delta of depth.
-		float d = lightSpacePosition.z - moments.x;
-		// Use Chebyshev to estimate bound on probability.
-		probabilityMax = variance / (variance + d*d);
-		probabilityMax = max(probability, probabilityMax);
-		// Limit light bleeding by rescaling and clamping the probability factor.
-		probabilityMax = clamp( (probabilityMax - 0.1) / (1.0 - 0.1), 0.0, 1.0);
+	// Read first and second moment from shadow map.
+	vec2 moments = texture(shadowMap, lightSpacePosition.xy).rg;
+	if(moments.x >= 1.0){
+		// No information in the depthmap: no occluder.
+		return 1.0;
 	}
+	// Initial probability of light.
+	float probability = float(lightSpacePosition.z <= moments.x);
+	// Compute variance.
+	float variance = moments.y - (moments.x * moments.x);
+	variance = max(variance, 0.00001);
+	// Delta of depth.
+	float d = lightSpacePosition.z - moments.x;
+	// Use Chebyshev to estimate bound on probability.
+	probabilityMax = variance / (variance + d*d);
+	probabilityMax = max(probability, probabilityMax);
+	// Limit light bleeding by rescaling and clamping the probability factor.
+	probabilityMax = clamp( (probabilityMax - 0.1) / (1.0 - 0.1), 0.0, 1.0);
 	return probabilityMax;
 }
 
