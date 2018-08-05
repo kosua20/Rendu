@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <vector>
 
-
+GLuint ScreenQuad::_vao = 0;
 
 ScreenQuad::ScreenQuad(){}
 
@@ -61,20 +61,12 @@ void ScreenQuad::init(std::map<std::string, GLuint> textureIds, const std::strin
 }
 
 void ScreenQuad::loadGeometry(){
-
-	// Create an array buffer to host the geometry data.
-	//GLuint vbo = 0;
-	//glGenBuffers(1, &vbo);
-	//glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	//glBufferData(GL_ARRAY_BUFFER, 0, nullptr, GL_STATIC_DRAW);
-	
-	// Generate an empty VAO (imposed by the OpenGL spec).
-	_vao = 0;
-	glGenVertexArrays (1, &_vao);
-	glBindVertexArray(_vao);
-
-	glBindVertexArray(0);
-	
+	if(_vao == 0){
+		// Generate an empty VAO (imposed by the OpenGL spec).
+		glGenVertexArrays (1, &_vao);
+		glBindVertexArray(_vao);
+		glBindVertexArray(0);
+	}
 }
 
 void ScreenQuad::draw() const {

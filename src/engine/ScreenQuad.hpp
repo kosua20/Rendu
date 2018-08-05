@@ -43,14 +43,12 @@ public:
 	
 protected:
 	
-	void loadGeometry();
+	static void loadGeometry();
 	
 	std::shared_ptr<ProgramInfos> _program;
-	GLuint _vao;
-	GLuint _ebo;
 	std::vector<GLuint> _textureIds;
 	
-
+	static GLuint _vao;
 };
 
 #endif
