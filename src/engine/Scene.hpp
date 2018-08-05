@@ -3,6 +3,7 @@
 #include "Object.hpp"
 #include "lights/DirectionalLight.hpp"
 #include "lights/PointLight.hpp"
+#include "lights/SpotLight.hpp"
 #include "resources/ResourcesManager.hpp"
 #include <gl3w/gl3w.h>
 #include <GLFW/glfw3.h>
@@ -32,6 +33,7 @@ public:
 	GLuint backgroundReflection;
 	std::vector<DirectionalLight> directionalLights;
 	std::vector<PointLight> pointLights;
+	std::vector<SpotLight> spotLights;
 	
 protected:
 	

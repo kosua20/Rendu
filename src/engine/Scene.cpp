@@ -33,4 +33,7 @@ void Scene::clean() const {
 	for(auto& pointLight : pointLights){
 		pointLight.clean();
 	}
+	for(auto& spotLight : spotLights){
+		spotLight.clean();
+	}
 };
