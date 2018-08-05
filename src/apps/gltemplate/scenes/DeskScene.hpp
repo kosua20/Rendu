@@ -21,10 +21,6 @@ void DeskScene::init(){
 	}
 	_loaded = true;
 	
-	// Create directional lights.
-	//directionalLights.emplace_back(glm::vec3(-2.0f, -1.5f, -1.0f), glm::vec3(0.5f,0.65f, 1.3f), 2.0f,1.0f,6.0f);
-	//directionalLights.emplace_back(glm::vec3(2.0f, -3.5f, -2.0f), glm::vec3(1.2f,0.9f, 0.2f), 2.0f,1.0f,6.0f);
-	
 	glm::mat4 sceneMatrix = glm::translate(glm::scale(glm::mat4(1.0f), glm::vec3(0.5f)), glm::vec3(0.0f,0.0f,-2.0f));
 	// Objects creation.
 	Object candle(Object::Type::Regular, "candle", { {"candle_albedo", true }, {"candle_normal", false}, {"candle_rough_met_ao", false}});
@@ -49,6 +45,14 @@ void DeskScene::init(){
 	background = Object(Object::Type::Skybox, "skybox", {}, {{"small_apartment", true }});
 	backgroundReflection = Resources::manager().getCubemap("small_apartment").id;
 	loadSphericalHarmonics("small_apartment_shcoeffs");
+	
+	// Compute the bounding box of the shadow casters.
+	const BoundingBox bbox = computeBoundingBox(true);
+	
+	// Lights creation.
+	// Create directional lights.
+	directionalLights.emplace_back(glm::vec3(-2.0f, -1.5f, -1.0f), glm::vec3(0.5f,0.65f, 1.3f), bbox);
+	directionalLights.emplace_back(glm::vec3(2.0f, -3.5f, -2.0f), glm::vec3(1.2f,0.9f, 0.2f), bbox);
 }
 
 void DeskScene::update(double fullTime, double frameTime){
