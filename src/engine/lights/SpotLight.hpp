@@ -3,17 +3,21 @@
 #include "Light.hpp"
 #include "../ScreenQuad.hpp"
 #include "../Framebuffer.hpp"
+#include "../Object.hpp"
+
 #include <memory>
 
 class SpotLight : public Light {
 
 public:
 	
-	SpotLight(const glm::vec3& worldPosition, const glm::vec3& worldDirection, const glm::vec3& color, const float innerAngle, const float outerAngle, const float radius, const float near, const float far);
+	SpotLight(const glm::vec3& worldPosition, const glm::vec3& worldDirection, const glm::vec3& color, const float innerAngle, const float outerAngle, const float radius, const BoundingBox & sceneBox);
 	
 	void init(const std::map<std::string, GLuint>& textureIds);
 	
 	void draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix, const glm::vec2& invScreenSize = glm::vec2(0.0f)) const;
+	
+	void drawShadow(const std::vector<Object> & objects) const;
 	
 	void drawDebug(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) const;
 	
@@ -30,12 +34,17 @@ private:
 	std::vector<GLuint> _textureIds;
 	std::shared_ptr<ProgramInfos> _program;
 	MeshInfos _cone;
+	ScreenQuad _blurScreen;
+	std::shared_ptr<Framebuffer> _shadowPass;
+	std::shared_ptr<Framebuffer> _blurPass;
 	
 	glm::mat4 _projectionMatrix;
 	glm::mat4 _viewMatrix;
 	glm::vec3 _lightDirection;
 	glm::vec3 _lightPosition;
 	float _innerHalfAngle, _outerHalfAngle, _radius;
+	
+	BoundingBox _sceneBox;
 	
 };
 

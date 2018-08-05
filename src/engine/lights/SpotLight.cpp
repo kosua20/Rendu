@@ -5,26 +5,32 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "../helpers/InterfaceUtilities.hpp"
 
-SpotLight::SpotLight(const glm::vec3& worldPosition, const glm::vec3& worldDirection, const glm::vec3& color, const float innerAngle, const float outerAngle, const float radius, const float near, const float far) : Light(color) {
+SpotLight::SpotLight(const glm::vec3& worldPosition, const glm::vec3& worldDirection, const glm::vec3& color, const float innerAngle, const float outerAngle, const float radius, const BoundingBox & sceneBox) : Light(color) {
 	
-	_lightDirection = glm::normalize(worldDirection);
-	_lightPosition = worldPosition;
 	_innerHalfAngle = 0.5f*innerAngle;
 	_outerHalfAngle = 0.5f*outerAngle;
 	_radius = radius;
+	_sceneBox = sceneBox;
 	
-	_projectionMatrix = glm::perspective(outerAngle, 1.0f, near, far);
-	_viewMatrix = glm::lookAt(_lightPosition, _lightPosition+_lightDirection, glm::vec3(0.0f,1.0f,0.0f));
-	_mvp = _projectionMatrix * _viewMatrix;
+	update(worldPosition, worldDirection);
+
 }
 
 
 void SpotLight::init(const std::map<std::string, GLuint>& textureIds){
+	// Setup the framebuffer.
+	_shadowPass = std::make_shared<Framebuffer>(512, 512, GL_RG,GL_FLOAT, GL_RG16F, GL_LINEAR, GL_CLAMP_TO_BORDER, true);
+	_blurPass = std::make_shared<Framebuffer>(_shadowPass->width(), _shadowPass->height(), GL_RG,GL_FLOAT, GL_RG16F, GL_LINEAR,GL_CLAMP_TO_BORDER, false);
+	_blurScreen.init(_shadowPass->textureId(), "box-blur-2");
+	
 	_program = Resources::manager().getProgram("spot_light", "object_basic", "spot_light");
 	_cone = Resources::manager().getMesh("light_cone");
+	std::map<std::string, GLuint> textures = textureIds;
+	textures["shadowMap"] = _blurPass->textureId();
+	
 	GLint currentTextureSlot = 0;
 	_textureIds.clear();
-	for(auto& texture : textureIds){
+	for(auto& texture : textures){
 		_textureIds.push_back(texture.second);
 		_program->registerTexture(texture.first, currentTextureSlot);
 		currentTextureSlot += 1;
@@ -43,6 +49,7 @@ void SpotLight::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMat
 	const float width = 2.0f*std::tan(_outerHalfAngle);
 	const glm::mat4 modelMatrix = glm::inverse(_viewMatrix) * glm::scale(glm::mat4(1.0f), _radius*glm::vec3(width,width,1.0f));
 	const glm::mat4 mvp = projectionMatrix * viewMatrix * modelMatrix;
+	const glm::mat4 viewToLight = _mvp * glm::inverse(viewMatrix);
 	
 	glUseProgram(_program->id());
 	glUniformMatrix4fv(_program->uniform("mvp"), 1, GL_FALSE, &mvp[0][0]);
@@ -56,6 +63,7 @@ void SpotLight::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMat
 	glUniform4fv(_program->uniform("projectionMatrix"), 1, &(projectionVector[0]));
 	// Inverse screen size uniform.
 	glUniform2fv(_program->uniform("inverseScreenSize"), 1, &(invScreenSize[0]));
+	glUniformMatrix4fv(_program->uniform("viewToLight"), 1, GL_FALSE, &viewToLight[0][0]);
 	
 	// Active screen texture.
 	for(GLuint i = 0;i < _textureIds.size(); ++i){
@@ -71,6 +79,25 @@ void SpotLight::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMat
 	glBindVertexArray(0);
 	glUseProgram(0);
 
+}
+
+void SpotLight::drawShadow(const std::vector<Object> & objects) const {
+	_shadowPass->bind();
+	_shadowPass->setViewport();
+	glClearColor(1.0f,1.0f,1.0f,0.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	for(auto& object : objects){
+		object.drawDepth(_mvp);
+	}
+	_shadowPass->unbind();
+	
+	// --- Blur pass --------
+	glDisable(GL_DEPTH_TEST);
+	_blurPass->bind();
+	_blurPass->setViewport();
+	_blurScreen.draw();
+	_blurPass->unbind();
+	glEnable(GL_DEPTH_TEST);
 }
 
 
@@ -97,19 +124,27 @@ void SpotLight::drawDebug(const glm::mat4& viewMatrix, const glm::mat4& projecti
 
 
 void SpotLight::update(const glm::vec3 & newPosition){
-	_lightPosition = newPosition;
-	_viewMatrix = glm::lookAt(_lightPosition, _lightPosition+_lightDirection, glm::vec3(0.0f,1.0f,0.0f));
-	_mvp = _projectionMatrix * _viewMatrix;
+	update(newPosition, _lightDirection);
 }
 
 void SpotLight::update(const glm::vec3 & newPosition, const glm::vec3 & newDirection){
 	_lightPosition = newPosition;
 	_lightDirection = glm::normalize(newDirection);
 	_viewMatrix = glm::lookAt(_lightPosition, _lightPosition+_lightDirection, glm::vec3(0.0f,1.0f,0.0f));
+	// Compute the projection matrix, automatically finding the near and far.
+	const BoundingBox lightSpacebox = _sceneBox.transformed(_viewMatrix);
+	const float absz1 = abs(lightSpacebox.minis[2]);
+	const float absz2 = abs(lightSpacebox.maxis[2]);
+	const float near = std::min(absz1, absz2);
+	const float far = std::max(absz1, absz2);
+	const float scaleMargin = 1.1f;
+	_projectionMatrix = glm::perspective(2.0f*_outerHalfAngle, 1.0f, (1.0f/scaleMargin)*near, scaleMargin*far);
 	_mvp = _projectionMatrix * _viewMatrix;
 }
 
 void SpotLight::clean() const {
-	
+	_blurPass->clean();
+	_blurScreen.clean();
+	_shadowPass->clean();
 }
 

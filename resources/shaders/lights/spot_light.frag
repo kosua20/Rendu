@@ -8,9 +8,11 @@ uniform sampler2D albedoTexture;
 uniform sampler2D normalTexture;
 uniform sampler2D depthTexture;
 uniform sampler2D effectsTexture;
+uniform sampler2D shadowMap;
 
 uniform vec2 inverseScreenSize;
 uniform vec4 projectionMatrix;
+uniform mat4 viewToLight;
 
 uniform vec3 lightPosition;
 uniform vec3 lightDirection;
@@ -31,6 +33,30 @@ vec3 positionFromDepth(float depth, vec2 uv){
 	return vec3(- ndcPos * viewDepth / projectionMatrix.xy , viewDepth);
 }
 
+// Compute the shadow multiplicator based on shadow map.
+
+float shadow(vec3 lightSpacePosition){
+	float probabilityMax = 1.0;
+	// Read first and second moment from shadow map.
+	vec2 moments = texture(shadowMap, lightSpacePosition.xy).rg;
+	if(moments.x >= 1.0){
+		// No information in the depthmap: no occluder.
+		return 1.0;
+	}
+	// Initial probability of light.
+	float probability = float(lightSpacePosition.z <= moments.x);
+	// Compute variance.
+	float variance = moments.y - (moments.x * moments.x);
+	variance = max(variance, 0.00001);
+	// Delta of depth.
+	float d = lightSpacePosition.z - moments.x;
+	// Use Chebyshev to estimate bound on probability.
+	probabilityMax = variance / (variance + d*d);
+	probabilityMax = max(probability, probabilityMax);
+	// Limit light bleeding by rescaling and clamping the probability factor.
+	probabilityMax = clamp( (probabilityMax - 0.1) / (1.0 - 0.1), 0.0, 1.0);
+	return probabilityMax;
+}
 
 vec3 F(vec3 F0, float VdotH){
 	float approx = pow(2.0, (-5.55473 * VdotH - 6.98316) * VdotH);
@@ -100,6 +126,10 @@ void main(){
 	
 	// Orientation: basic diffuse shadowing.
 	float orientation = max(0.0, dot(l,n));
+	// Shadowing
+	vec4 lightSpacePosition = viewToLight * vec4(position,1.0);
+	lightSpacePosition /= lightSpacePosition.w;
+	float shadowing = shadow(0.5*lightSpacePosition.xyz+0.5);
 	// Attenuation with increasing distance to the light.
 	float localRadius2 = dot(deltaPosition, deltaPosition);
 	float radiusRatio2 = localRadius2/(lightRadius*lightRadius);
@@ -121,7 +151,7 @@ void main(){
 	
 	vec3 specular = ggx(n, v, l, F0, roughness);
 	
-	fragColor.rgb = attenuation * orientation * (diffuse + specular) * lightColor * M_PI;
+	fragColor.rgb = shadowing * attenuation * orientation * (diffuse + specular) * lightColor * M_PI;
 	
 }
 

@@ -97,6 +97,9 @@ void DeferredRenderer::draw() {
 	for(auto& dirLight : _scene->directionalLights){
 		dirLight.drawShadow(_scene->objects);
 	}
+	for(auto& shadowLight : _scene->spotLights){
+		shadowLight.drawShadow(_scene->objects);
+	}
 	
 	// ----------------------
 	
