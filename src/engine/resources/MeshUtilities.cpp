@@ -240,7 +240,9 @@ void MeshUtilities::computeTangentsAndBinormals(Mesh & mesh){
 		glm::vec2 deltaUv2 = uv2 - uv0;
 
 		// Compute tangent and binormal for the face.
-		float det = 1.0f / (deltaUv1.x * deltaUv2.y - deltaUv1.y * deltaUv2.x);
+		const float denom = deltaUv1.x * deltaUv2.y - deltaUv1.y * deltaUv2.x;
+		// Avoid divide-by-zero if same UVs.
+		float det = (abs(denom) < 0.001f) ? 1.0f : (1.0f / denom);
     	glm::vec3 tangent = det * (deltaPosition1 * deltaUv2.y   - deltaPosition2 * deltaUv1.y);
     	glm::vec3 binormal = det * (deltaPosition2 * deltaUv1.x   - deltaPosition1 * deltaUv2.x);
 
