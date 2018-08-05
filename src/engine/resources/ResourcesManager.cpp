@@ -252,6 +252,8 @@ const MeshInfos Resources::getMesh(const std::string & name){
 	
 	// Setup GL buffers and attributes.
 	infos = GLUtilities::setupBuffers(mesh);
+	// Compute bounding box.
+	infos.bbox = MeshUtilities::computeBoundingBox(mesh);
 	_meshes[name] = infos;
 	return infos;
 }

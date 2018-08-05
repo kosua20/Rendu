@@ -169,4 +169,8 @@ void Object::clean() const {
 	glDeleteProgram(_program->id());
 }
 
+BoundingBox Object::getBoundingBox() const {
+	return _mesh.bbox.transformed(_model);
+}
+
 

@@ -33,8 +33,9 @@ struct MeshInfos {
 	GLuint vId;
 	GLuint eId;
 	GLsizei count;
-
-	MeshInfos() : vId(0), eId(0), count(0) {}
+	BoundingBox bbox;
+	
+	MeshInfos() : vId(0), eId(0), count(0), bbox() {}
 
 };
 

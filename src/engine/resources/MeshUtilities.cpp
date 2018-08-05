@@ -14,6 +14,7 @@ void MeshUtilities::loadObj( std::istream & in, Mesh & mesh, MeshUtilities::Load
 	mesh.positions.clear();
 	mesh.normals.clear();
 	mesh.texcoords.clear();
+	
 	// Init temporary vectors.
 	vector<glm::vec3> positions_temp;
 	vector<glm::vec3> normals_temp;
@@ -183,6 +184,21 @@ void MeshUtilities::loadObj( std::istream & in, Mesh & mesh, MeshUtilities::Load
 	texcoords_temp.clear();
 	faces_temp.clear();
 	Log::Info() << Log::Verbose << Log::Resources << "Mesh loaded with " << mesh.indices.size()/3 << " faces, " << mesh.positions.size() << " vertices, " << mesh.normals.size() << " normals, " << mesh.texcoords.size() << " texcoords." << std::endl;
+
+}
+
+BoundingBox MeshUtilities::computeBoundingBox(Mesh & mesh){
+	BoundingBox bbox;
+	if(mesh.positions.empty()){
+		return bbox;
+	}
+	bbox.minis = bbox.maxis = mesh.positions[0];
+	const size_t numVertices = mesh.positions.size();
+	for(size_t vid = 1; vid < numVertices; ++vid){
+		bbox.minis = glm::min(bbox.minis, mesh.positions[vid]);
+		bbox.maxis = glm::max(bbox.maxis, mesh.positions[vid]);
+	}
+	return bbox;
 }
 
 void MeshUtilities::centerAndUnitMesh(Mesh & mesh){
@@ -208,7 +224,6 @@ void MeshUtilities::centerAndUnitMesh(Mesh & mesh){
 	for(size_t i = 0; i < mesh.positions.size(); i++){
 		mesh.positions[i] /= maxi;
 	}
-
 }
 
 void MeshUtilities::computeTangentsAndBinormals(Mesh & mesh){

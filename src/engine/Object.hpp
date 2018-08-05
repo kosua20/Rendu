@@ -36,7 +36,10 @@ public:
 	/// Clean function
 	void clean() const;
 
-
+	BoundingBox getBoundingBox() const;
+	
+	bool castsShadow() const { return _castShadow; }
+	
 private:
 	
 	std::shared_ptr<ProgramInfos> _program;

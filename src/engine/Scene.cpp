@@ -1,4 +1,5 @@
 #include "Scene.hpp"
+#include "helpers/Logger.hpp"
 
 Scene::Scene(){};
 
@@ -20,6 +21,27 @@ void Scene::loadSphericalHarmonics(const std::string & name){
 		backgroundIrradiance[i] = glm::vec3(x,y,z);
 	}
 	
+}
+
+BoundingBox Scene::computeBoundingBox(bool onlyShadowCasters){
+	BoundingBox bbox;
+	if(objects.empty()){
+		return bbox;
+	}
+	bool first = true;
+	for(size_t oid = 0; oid < objects.size(); ++oid){
+		if(onlyShadowCasters && !objects[oid].castsShadow()){
+			continue;
+		}
+		if(first){
+			first = false;
+			bbox = objects[oid].getBoundingBox();
+			continue;
+		}
+		bbox.merge(objects[oid].getBoundingBox());
+	}
+	Log::Info() << Log::Resources << "Scene bounding box: [" << bbox.minis << ", " << bbox.maxis << "]." << std::endl;
+	return bbox;
 }
 
 void Scene::clean() const {

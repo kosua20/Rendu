@@ -39,6 +39,8 @@ protected:
 	
 	void loadSphericalHarmonics(const std::string & name);
 	
+	BoundingBox computeBoundingBox(bool onlyShadowCasters = false);
+	
 	bool _loaded = false;
 
 };
