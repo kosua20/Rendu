@@ -4,6 +4,7 @@
 #include <vector>
 #include <glm/gtc/matrix_transform.hpp>
 #include "../helpers/InterfaceUtilities.hpp"
+#include <algorithm>
 
 SpotLight::SpotLight(const glm::vec3& worldPosition, const glm::vec3& worldDirection, const glm::vec3& color, const float innerAngle, const float outerAngle, const float radius, const BoundingBox & sceneBox) : Light(color) {
 	
@@ -105,7 +106,7 @@ void SpotLight::drawDebug(const glm::mat4& viewMatrix, const glm::mat4& projecti
 	const float width = 2.0f*std::tan(_outerHalfAngle);
 	const glm::mat4 modelMatrix = glm::inverse(_viewMatrix) * glm::scale(glm::mat4(1.0f), _radius*glm::vec3(width,width,1.0f));
 	const glm::mat4 mvp = projectionMatrix * viewMatrix * modelMatrix;
-	const glm::vec3 colorLow = _color/std::max(_color[0], std::max(_color[1], _color[2]));
+	const glm::vec3 colorLow = _color/(std::max)(_color[0], (std::max)(_color[1], _color[2]));
 	
 	glUseProgram(debugProgram->id());
 	glUniformMatrix4fv(debugProgram->uniform("mvp"), 1, GL_FALSE, &mvp[0][0]);
@@ -131,8 +132,8 @@ void SpotLight::update(const glm::vec3 & newPosition, const glm::vec3 & newDirec
 	const BoundingBox lightSpacebox = _sceneBox.transformed(_viewMatrix);
 	const float absz1 = abs(lightSpacebox.minis[2]);
 	const float absz2 = abs(lightSpacebox.maxis[2]);
-	const float near = std::min(absz1, absz2);
-	const float far = std::max(absz1, absz2);
+	const float near = (std::min)(absz1, absz2);
+	const float far = (std::max)(absz1, absz2);
 	const float scaleMargin = 1.1f;
 	_projectionMatrix = glm::perspective(2.0f*_outerHalfAngle, 1.0f, (1.0f/scaleMargin)*near, scaleMargin*far);
 	_mvp = _projectionMatrix * _viewMatrix;

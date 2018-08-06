@@ -4,8 +4,7 @@
 #include <vector>
 #include <glm/gtc/matrix_transform.hpp>
 #include "../helpers/Logger.hpp"
-
-
+#include <algorithm>
 
 
 DirectionalLight::DirectionalLight(const glm::vec3& worldDirection, const glm::vec3& color, const BoundingBox & sceneBox) : Light(color) {
@@ -64,7 +63,7 @@ void DirectionalLight::drawDebug(const glm::mat4& viewMatrix, const glm::mat4& p
 	const MeshInfos debugMesh = Resources::manager().getMesh("light_arrow");
 	
 	glm::mat4 vp = projectionMatrix * viewMatrix * glm::inverse(_viewMatrix) * glm::scale(glm::mat4(1.0f), glm::vec3(0.2f));
-	const glm::vec3 colorLow = _color/std::max(_color[0], std::max(_color[1], _color[2]));
+	const glm::vec3 colorLow = _color/(std::max)(_color[0], (std::max)(_color[1], _color[2]));
 	
 	glUseProgram(debugProgram->id());
 	glUniformMatrix4fv(debugProgram->uniform("mvp"), 1, GL_FALSE, &vp[0][0]);
@@ -88,8 +87,8 @@ void DirectionalLight::update(const glm::vec3 & newDirection){
 	const BoundingBox lightSpacebox = _sceneBox.transformed(_viewMatrix);
 	const float absz1 = abs(lightSpacebox.minis[2]);
 	const float absz2 = abs(lightSpacebox.maxis[2]);
-	const float near = std::min(absz1, absz2);
-	const float far = std::max(absz1, absz2);
+	const float near = (std::min)(absz1, absz2);
+	const float far = (std::max)(absz1, absz2);
 	const float scaleMargin = 1.1f;
 	_projectionMatrix = glm::ortho(scaleMargin*lightSpacebox.minis[0], scaleMargin*lightSpacebox.maxis[0], scaleMargin*lightSpacebox.minis[1], scaleMargin*lightSpacebox.maxis[1], (1.0f/scaleMargin)*near, scaleMargin*far);
 	_mvp = _projectionMatrix * _viewMatrix;

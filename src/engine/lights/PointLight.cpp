@@ -3,9 +3,7 @@
 #include <stdio.h>
 #include <vector>
 #include <glm/gtc/matrix_transform.hpp>
-
-
-
+#include <algorithm>
 
 
 PointLight::PointLight(const glm::vec3& worldPosition, const glm::vec3& color, float radius) : Light(color) {
@@ -68,7 +66,7 @@ void PointLight::drawDebug(const glm::mat4& viewMatrix, const glm::mat4& project
 	// Compute the model matrix to scale the sphere based on the radius.
 	const glm::mat4 modelMatrix = glm::scale(glm::translate(glm::mat4(1.0f), _lightPosition), glm::vec3(_radius));
 	const glm::mat4 mvp = projectionMatrix * viewMatrix * modelMatrix;
-	const glm::vec3 colorLow = _color/std::max(_color[0], std::max(_color[1], _color[2]));
+	const glm::vec3 colorLow = _color/(std::max)(_color[0], (std::max)(_color[1], _color[2]));
 	
 	glUseProgram(debugProgram->id());
 	glUniformMatrix4fv(debugProgram->uniform("mvp"), 1, GL_FALSE, &mvp[0][0]);
