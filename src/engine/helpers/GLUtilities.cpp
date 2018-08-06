@@ -86,20 +86,25 @@ GLuint GLUtilities::loadShader(const std::string & prog, GLuint type){
 	return id;
 }
 
-GLuint GLUtilities::createProgram(const std::string & vertexContent, const std::string & fragmentContent){
-	GLuint vp(0), fp(0), id(0);
+GLuint GLUtilities::createProgram(const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent){
+	GLuint vp(0), fp(0), gp(0), id(0);
 	id = glCreateProgram();
 	checkGLError();
 
 	// If vertex program code is given, compile it.
 	if (!vertexContent.empty()) {
-		vp = loadShader(vertexContent,GL_VERTEX_SHADER);
+		vp = loadShader(vertexContent, GL_VERTEX_SHADER);
 		glAttachShader(id,vp);
 	}
 	// If fragment program code is given, compile it.
 	if (!fragmentContent.empty()) {
-		fp = loadShader(fragmentContent,GL_FRAGMENT_SHADER);
+		fp = loadShader(fragmentContent, GL_FRAGMENT_SHADER);
 		glAttachShader(id,fp);
+	}
+	// If geometry program code is given, compile it.
+	if (!geometryContent.empty()) {
+		gp = loadShader(geometryContent, GL_GEOMETRY_SHADER);
+		glAttachShader(id,gp);
 	}
 
 	// Link everything
@@ -126,13 +131,17 @@ GLuint GLUtilities::createProgram(const std::string & vertexContent, const std::
 	if (fp != 0) {
 		glDetachShader(id,fp);
 	}
+	if (gp != 0) {
+		glDetachShader(id,gp);
+	}
 	checkGLError();
 	//And deleting them
 	glDeleteShader(vp);
 	glDeleteShader(fp);
+	glDeleteShader(gp);
 
 	checkGLError();
-	// Return the id to the succesfuly linked GLProgram.
+	// Return the id to the successfuly linked GLProgram.
 	return id;
 }
 

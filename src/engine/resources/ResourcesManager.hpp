@@ -16,7 +16,7 @@ class Resources {
 public:
 	
 	enum ShaderType {
-		Vertex, Fragment
+		Vertex, Fragment, Geometry
 	};
 	
 	/// Singleton management.
@@ -48,9 +48,9 @@ public:
 	
 	const std::string getShader(const std::string & name, const ShaderType & type);
 	
-	const std::shared_ptr<ProgramInfos> getProgram(const std::string & name);
+	const std::shared_ptr<ProgramInfos> getProgram(const std::string & name, const bool useGeometryShader = false);
 	
-	const std::shared_ptr<ProgramInfos> getProgram(const std::string & name, const std::string & vertexName, const std::string & fragmentName);
+	const std::shared_ptr<ProgramInfos> getProgram(const std::string & name, const std::string & vertexName, const std::string & fragmentName, const std::string & geometryName = "");
 	
 	void reload();
 	

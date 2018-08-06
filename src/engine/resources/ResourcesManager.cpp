@@ -349,28 +349,28 @@ const TextureInfos Resources::getCubemap(const std::string & name, bool srgb){
 const std::string Resources::getShader(const std::string & name, const ShaderType & type){
 	
 	std::string path = "";
-	const std::string extension = type == Vertex ? "vert" : "frag";
+	const std::string extension = (type == Vertex ? "vert" : (type == Geometry ? "geom" : "frag"));
 	// Directly query correct shader text file with extension.
 	const std::string res = Resources::getString(name + "." + extension);
 	// If the file is empty/doesn't exist, error.
 	if(res.empty()){
-		Log::Error() << Log::Resources << "Unable to find " << (type == Vertex ? "vertex" : "fragment") << " shader named \"" << name << "\"." << std::endl;
+		Log::Error() << Log::Resources << "Unable to find " << (type == Vertex ? "vertex" : (type == Geometry ? "geometry" : "fragment")) << " shader named \"" << name << "\"." << std::endl;
 	}
 	return res;
 }
 
-const std::shared_ptr<ProgramInfos> Resources::getProgram(const std::string & name){
-	return getProgram(name, name, name);
+const std::shared_ptr<ProgramInfos> Resources::getProgram(const std::string & name, const bool useGeometryShader){
+	return getProgram(name, name, name, useGeometryShader ? name : "");
 }
 
-const std::shared_ptr<ProgramInfos> Resources::getProgram(const std::string & name, const std::string & vertexName, const std::string & fragmentName) {
+const std::shared_ptr<ProgramInfos> Resources::getProgram(const std::string & name, const std::string & vertexName, const std::string & fragmentName, const std::string & geometryName) {
 	if (_programs.count(name) > 0) {
 		return _programs[name];
 	}
 	
 	_programs.emplace(std::piecewise_construct,
 					  std::forward_as_tuple(name),
-					  std::forward_as_tuple(new ProgramInfos(vertexName, fragmentName)));
+					  std::forward_as_tuple(new ProgramInfos(vertexName, fragmentName, geometryName)));
 	
 	return _programs[name];
 }

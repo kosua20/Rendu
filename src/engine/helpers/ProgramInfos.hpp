@@ -12,7 +12,7 @@ public:
 	
 	ProgramInfos();
 	
-	ProgramInfos(const std::string & vertexName, const std::string & fragmentName);
+	ProgramInfos(const std::string & vertexName, const std::string & fragmentName, const std::string & geometryName);
 	
 	~ProgramInfos();
 	
@@ -37,6 +37,7 @@ private:
 	GLuint _id;
 	std::string _vertexName;
 	std::string _fragmentName;
+	std::string _geometryName;
 	std::map<std::string, GLint> _uniforms;
 	std::map<std::string, unsigned int> _textures;
 	std::map<std::string, glm::vec3> _vec3s;

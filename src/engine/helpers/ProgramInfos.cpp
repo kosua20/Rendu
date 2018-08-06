@@ -12,14 +12,15 @@ ProgramInfos::ProgramInfos(){
 	_textures.clear();
 }
 
-ProgramInfos::ProgramInfos(const std::string & vertexName, const std::string & fragmentName){
+ProgramInfos::ProgramInfos(const std::string & vertexName, const std::string & fragmentName, const std::string & geometryName){
 	_vertexName = vertexName;
 	_fragmentName = fragmentName;
+	_geometryName = geometryName;
 	
 	const std::string vertexContent = Resources::manager().getShader(_vertexName, Resources::Vertex);
 	const std::string fragmentContent = Resources::manager().getShader(_fragmentName, Resources::Fragment);
-	
-	_id = GLUtilities::createProgram(vertexContent, fragmentContent);
+	const std::string geometryContent = _geometryName.empty() ? "" : Resources::manager().getShader(_geometryName, Resources::Geometry);
+	_id = GLUtilities::createProgram(vertexContent, fragmentContent, geometryContent);
 	_uniforms.clear();
 	_textures.clear();
 	
@@ -96,7 +97,8 @@ void ProgramInfos::reload()
 {
 	const std::string vertexContent = Resources::manager().getShader(_vertexName, Resources::Vertex);
 	const std::string fragmentContent = Resources::manager().getShader(_fragmentName, Resources::Fragment);
-	_id = GLUtilities::createProgram(vertexContent, fragmentContent);
+	const std::string geometryContent = _geometryName.empty() ? "" : Resources::manager().getShader(_geometryName, Resources::Geometry);
+	_id = GLUtilities::createProgram(vertexContent, fragmentContent, geometryContent);
 	// For each stored uniform, update its location, and update textures slots and cached values.
 	glUseProgram(_id);
 	for (auto & uni : _uniforms) {
