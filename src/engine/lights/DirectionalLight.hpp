@@ -36,7 +36,7 @@ private:
 	glm::vec3 _lightDirection;
 	
 	BoundingBox _sceneBox;
-
+	std::shared_ptr<ProgramInfos> _programDepth;
 };
 
 #endif

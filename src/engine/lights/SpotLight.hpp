@@ -45,6 +45,7 @@ private:
 	float _innerHalfAngle, _outerHalfAngle, _radius;
 	
 	BoundingBox _sceneBox;
+	std::shared_ptr<ProgramInfos> _programDepth;
 	
 };
 

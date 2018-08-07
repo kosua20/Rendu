@@ -14,9 +14,6 @@ Object::Object(const Object::Type & type, const std::string& meshPath, const std
 	_material = static_cast<int>(type);
 	_castShadow = castShadows;
 	
-	// Load the shaders
-	_programDepth = Resources::manager().getProgram("object_depth", "object_basic", "light_shadow");
-
 	switch (_material) {
 	case Object::Skybox:
 		_program = Resources::manager().getProgram("skybox_gbuffer");
@@ -56,7 +53,6 @@ Object::Object(std::shared_ptr<ProgramInfos> & program, const std::string& meshP
 	_material = static_cast<int>(Object::Custom);
 	_castShadow = false;
 	// Load the shaders
-	_programDepth = nullptr;
 	_program = program;
 	
 	// Load geometry.
@@ -122,42 +118,16 @@ void Object::draw(const glm::mat4& view, const glm::mat4& projection) const {
 		glActiveTexture(GL_TEXTURE0 + i);
 		glBindTexture(_textures[i].cubemap ? GL_TEXTURE_CUBE_MAP : GL_TEXTURE_2D, _textures[i].id);
 	}
-	
-	
-	// Select the geometry.
-	glBindVertexArray(_mesh.vId);
-	// Draw!
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _mesh.eId);
-	glDrawElements(GL_TRIANGLES, _mesh.count, GL_UNSIGNED_INT, (void*)0);
-
-	glBindVertexArray(0);
+	drawGeometry();
 	glUseProgram(0);
-	
-	
 }
 
 
-void Object::drawDepth(const glm::mat4& lightVP) const {
-	if(!_castShadow){
-		return;
-	}
-	// Combine the three matrices.
-	glm::mat4 lightMVP = lightVP * _model;
-	
-	glUseProgram(_programDepth->id());
-	
-	// Upload the MVP matrix.
-	glUniformMatrix4fv(_programDepth->uniform("mvp"), 1, GL_FALSE, &lightMVP[0][0]);
-	
-	// Select the geometry.
+void Object::drawGeometry() const {
 	glBindVertexArray(_mesh.vId);
-	// Draw!
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _mesh.eId);
 	glDrawElements(GL_TRIANGLES, _mesh.count, GL_UNSIGNED_INT, (void*)0);
-	
 	glBindVertexArray(0);
-	glUseProgram(0);
-	
 }
 
 
@@ -166,7 +136,6 @@ void Object::clean() const {
 	for (auto & texture : _textures) {
 		glDeleteTextures(1, &(texture.id));
 	}
-	glDeleteProgram(_program->id());
 }
 
 BoundingBox Object::getBoundingBox() const {

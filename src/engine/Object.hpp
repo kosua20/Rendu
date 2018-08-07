@@ -30,8 +30,8 @@ public:
 	/// Draw function
 	void draw(const glm::mat4& view, const glm::mat4& projection) const;
 	
-	/// Draw depth function
-	void drawDepth(const glm::mat4& lightVP) const;
+	/// Just bind and draw the geometry
+	void drawGeometry() const;
 	
 	/// Clean function
 	void clean() const;
@@ -40,10 +40,11 @@ public:
 	
 	bool castsShadow() const { return _castShadow; }
 	
+	const glm::mat4 & model() const { return _model; }
+	
 private:
 	
 	std::shared_ptr<ProgramInfos> _program;
-	std::shared_ptr<ProgramInfos> _programDepth;
 	MeshInfos _mesh;
 	
 	std::vector<TextureInfos> _textures;

@@ -35,6 +35,8 @@ void SpotLight::init(const std::map<std::string, GLuint>& textureIds){
 		_program->registerTexture(texture.first, currentTextureSlot);
 		currentTextureSlot += 1;
 	}
+	// Load the shaders.
+	_programDepth = Resources::manager().getProgram("object_depth", "object_basic", "light_shadow");
 	checkGLError();
 }
 
@@ -86,9 +88,18 @@ void SpotLight::drawShadow(const std::vector<Object> & objects) const {
 	_shadowPass->setViewport();
 	glClearColor(1.0f,1.0f,1.0f,0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
+	glUseProgram(_programDepth->id());
 	for(auto& object : objects){
-		object.drawDepth(_mvp);
+		if(!object.castsShadow()){
+			continue;
+		}
+		const glm::mat4 lightMVP = _mvp * object.model();
+		glUniformMatrix4fv(_programDepth->uniform("mvp"), 1, GL_FALSE, &lightMVP[0][0]);
+		object.drawGeometry();
 	}
+	glUseProgram(0);
+	
 	_shadowPass->unbind();
 	
 	// --- Blur pass --------
