@@ -1,4 +1,5 @@
 #include "Framebuffer.hpp"
+#include "helpers/GLUtilities.hpp"
 
 #include <stdio.h>
 
@@ -46,8 +47,9 @@ Framebuffer::Framebuffer(unsigned int width, unsigned int height, GLuint format,
 	//Register which color attachments to draw to.
 	GLenum drawBuffers[1] = {GL_COLOR_ATTACHMENT0};
 	glDrawBuffers(1, drawBuffers);
-	
+	checkGLFramebufferError();
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	checkGLError();
 }
 
 Framebuffer::~Framebuffer(){ clean(); }

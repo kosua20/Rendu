@@ -18,6 +18,9 @@ std::string getGLErrorString(GLenum error);
 /// Check if any OpenGL error has been detected and log it.
 int _checkGLError(const char *file, int line, const std::string & infos);
 
+/// Check if any OpenGL has been detected after setting up a framebuffer.
+int checkGLFramebufferError();
+
 struct TextureInfos {
 	GLuint id;
 	unsigned int width;

@@ -32,6 +32,43 @@ std::string getGLErrorString(GLenum error) {
 	return msg;
 }
 
+int checkGLFramebufferError(){
+	const GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+	if (status != GL_FRAMEBUFFER_COMPLETE){
+		switch(status){
+		case GL_FRAMEBUFFER_UNDEFINED:
+			Log::Error() << Log::OpenGL << "Error GL_FRAMEBUFFER_UNDEFINED" << std::endl;
+			break;
+		case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
+			Log::Error() << Log::OpenGL << "Error GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT" << std::endl;
+			break;
+		case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
+			Log::Error() << Log::OpenGL << "Error GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT" << std::endl;
+			break;
+		case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
+			Log::Error() << Log::OpenGL << "Error GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER" << std::endl;
+			break;
+		case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
+			Log::Error() << Log::OpenGL << "Error GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER" << std::endl;
+			break;
+		case GL_FRAMEBUFFER_UNSUPPORTED:
+			Log::Error() << Log::OpenGL << "Error GL_FRAMEBUFFER_UNSUPPORTED" << std::endl;
+			break;
+		case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE:
+			Log::Error() << Log::OpenGL << "Error GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE" << std::endl;
+			break;
+		case GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS:
+			Log::Error() << Log::OpenGL << "Error GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS" << std::endl;
+			break;
+		default:
+			Log::Error() << Log::OpenGL << "Unknown framebuffer error." << std::endl;
+			break;
+		}
+		return 1;
+	}
+	return 0;
+}
+
 int _checkGLError(const char *file, int line, const std::string & infos){
 	GLenum glErr = glGetError();
 	if (glErr != GL_NO_ERROR){
