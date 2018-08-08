@@ -151,15 +151,23 @@ void PointLight::update(const glm::vec3 & newPosition){
 	const glm::mat4 model = glm::translate(glm::mat4(1.0f), -_lightPosition);
 	
 	// Compute the projection matrix based on the scene bounding box.
-	// Get the greatest distance from the light to a corner of the box.
-	const auto corners = _sceneBox.getCorners();
-	float near = glm::distance(corners[0], _lightPosition);
-	float far = near;
-	for(size_t i = 1; i < 8; ++i){
-		const float distance = glm::distance(corners[i], _lightPosition);
-		near = (std::min)(near, distance);
-		far = (std::max)(far, distance);
+	// As both the view matrices and the bounding boxe are axis aligned, we can avoid costly transformations.
+	const glm::vec3 deltaMini = _lightPosition - _sceneBox.minis;
+	const glm::vec3 deltaMaxi =  _lightPosition - _sceneBox.maxis;
+	// Absolute value of each min/max  distance on each axis.
+	const glm::vec3 candidatesNear = glm::min(glm::abs(deltaMini), glm::abs(deltaMaxi));
+	const glm::vec3 candidatesFar = glm::max(glm::abs(deltaMini), glm::abs(deltaMaxi));
+	
+	float far = candidatesFar[0];
+	float near = candidatesNear[0];
+	for(size_t i = 0; i < 3; ++i){
+		// The light is inside the bbox along the axis i if the two delta have different signs.
+		const bool isInside = (std::signbit(deltaMini[i]) != std::signbit(deltaMaxi[i]));
+		// In this case we enforce a small near.
+		near = isInside ? 0.01f : (std::min)(near, candidatesNear[i]);
+		far = (std::max)(far, candidatesFar[i]);
 	}
+	
 	const float scaleMargin = 1.5f;
 	_farPlane = scaleMargin*far;
 	const glm::mat4 projection = glm::perspective(float(M_PI_2), 1.0f, (1.0f/scaleMargin)*near, _farPlane);
