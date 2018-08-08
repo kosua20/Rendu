@@ -1,8 +1,6 @@
 #include "ImageUtilities.hpp"
 #include "ResourcesManager.hpp"
 
-#include <vector>
-#include <algorithm>
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image/stb_image.h>
 #ifdef _WIN32

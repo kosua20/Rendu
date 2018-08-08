@@ -1,5 +1,5 @@
 #include "InterfaceUtilities.hpp"
-#include "Logger.hpp"
+#include "Common.hpp"
 
 namespace ImGui {
 	

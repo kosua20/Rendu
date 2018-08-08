@@ -1,11 +1,5 @@
 #include "DirectionalLight.hpp"
 
-#include <stdio.h>
-#include <vector>
-#include <glm/gtc/matrix_transform.hpp>
-#include "../helpers/Logger.hpp"
-#include <algorithm>
-
 
 DirectionalLight::DirectionalLight(const glm::vec3& worldDirection, const glm::vec3& color, const BoundingBox & sceneBox) : Light(color) {
 	_sceneBox = sceneBox;

@@ -1,12 +1,14 @@
 #ifndef DirectionalLight_h
 #define DirectionalLight_h
+
+
 #include "Light.hpp"
+#include "../Common.hpp"
 #include "../ScreenQuad.hpp"
 #include "../Framebuffer.hpp"
 #include "../Object.hpp"
 #include "../processing/BoxBlur.hpp"
 
-#include <memory>
 
 class DirectionalLight : public Light {
 

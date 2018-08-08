@@ -1,17 +1,7 @@
 #include "RendererCube.hpp"
 #include "../../input/Input.hpp"
-
 #include "../../helpers/GLUtilities.hpp"
-#include "../../helpers/Logger.hpp"
 
-#include <stdio.h>
-#include <vector>
-#ifdef _WIN32
-#define M_PI_2 1.57079632679
-#endif
-
-#include <chrono>
-#include <thread>
 
 RendererCube::~RendererCube(){}
 

@@ -1,11 +1,6 @@
 #include "CustomController.hpp"
 #include "../../resources/ResourcesManager.hpp"
-#include "../../helpers/Logger.hpp"
-
-#include <GLFW/glfw3.h>
-#include <stdio.h>
 #include <sstream>
-#include <glm/gtc/matrix_transform.hpp>
 
 
 

@@ -1,7 +1,5 @@
 #include "TestRenderer.hpp"
 #include "../../input/Input.hpp"
-#include <stdio.h>
-#include <vector>
 
 
 TestRenderer::~TestRenderer(){}

@@ -2,7 +2,6 @@
 
 #include "GLUtilities.hpp"
 #include "../resources/ResourcesManager.hpp"
-#include "Logger.hpp"
 #include <fstream>
 
 

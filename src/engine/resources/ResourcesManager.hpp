@@ -1,13 +1,8 @@
 #ifndef ResourcesManager_h
 #define ResourcesManager_h
-
+#include "../Common.hpp"
 #include "../helpers/GLUtilities.hpp"
 #include "../helpers/ProgramInfos.hpp"
-#include <gl3w/gl3w.h>
-#include <string>
-#include <vector>
-#include <map>
-#include <memory>
 
 class Resources {
 	

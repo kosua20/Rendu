@@ -1,8 +1,6 @@
 #include "ScreenQuad.hpp"
 #include "resources/ResourcesManager.hpp"
 
-#include <stdio.h>
-#include <vector>
 
 GLuint ScreenQuad::_vao = 0;
 

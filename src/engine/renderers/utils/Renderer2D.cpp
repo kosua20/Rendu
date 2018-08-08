@@ -1,10 +1,7 @@
 #include "Renderer2D.hpp"
 #include "../../input/Input.hpp"
-
 #include "../../helpers/GLUtilities.hpp"
 
-#include <stdio.h>
-#include <vector>
 
 
 Renderer2D::~Renderer2D(){}

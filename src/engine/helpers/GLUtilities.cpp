@@ -1,8 +1,5 @@
 #include "GLUtilities.hpp"
 #include "../resources/ImageUtilities.hpp"
-#include "Logger.hpp"
-#include <vector>
-#include <algorithm>
 
 
 std::string getGLErrorString(GLenum error) {

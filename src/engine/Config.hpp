@@ -8,11 +8,8 @@
 
 #ifndef Config_hpp
 #define Config_hpp
-#include <glm/glm.hpp>
-#include <stdio.h>
+#include "Common.hpp"
 #include <map>
-#include <string>
-#include <vector>
 
 class Config {
 public:

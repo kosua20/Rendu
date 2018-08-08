@@ -4,8 +4,6 @@
 #include "../../lights/PointLight.hpp"
 #include "../../lights/SpotLight.hpp"
 #include "../../helpers/InterfaceUtilities.hpp"
-#include <stdio.h>
-#include <vector>
 
 
 DeferredRenderer::~DeferredRenderer(){}

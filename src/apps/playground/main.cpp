@@ -1,11 +1,7 @@
-#include <gl3w/gl3w.h>
-#include <GLFW/glfw3.h> // to set up the OpenGL context and manage window lifecycle and inputs
-#include <memory>
-
+#include "Common.hpp"
 #include "helpers/GenerationUtilities.hpp"
 #include "input/Input.hpp"
 #include "input/ControllableCamera.hpp"
-#include "helpers/Logger.hpp"
 #include "helpers/InterfaceUtilities.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "Config.hpp"

@@ -3,11 +3,6 @@
 #include "../Config.hpp"
 #include "../Scene.hpp"
 
-#include <gl3w/gl3w.h>
-#include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-#include <memory>
-
 
 
 class Renderer {

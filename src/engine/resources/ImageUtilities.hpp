@@ -1,8 +1,6 @@
 #ifndef ImageUtilities_h
 #define ImageUtilities_h
-#include <gl3w/gl3w.h>
-#include <string>
-#include <vector>
+#include "../Common.hpp"
 
 
 class ImageUtilities {

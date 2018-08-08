@@ -1,6 +1,5 @@
 #include "ResourcesManager.hpp"
 #include "MeshUtilities.hpp"
-#include "../helpers/Logger.hpp"
 #include <fstream>
 #include <sstream>
 #include <tinydir/tinydir.h>

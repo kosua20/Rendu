@@ -2,7 +2,7 @@
 #define ControllableCamera_h
 
 #include "Camera.hpp"
-#include <glm/glm.hpp>
+#include "../Common.hpp"
 
 class ControllableCamera : public Camera {
 	

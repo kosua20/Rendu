@@ -1,5 +1,7 @@
 #ifndef DeferredRenderer_h
 #define DeferredRenderer_h
+
+#include "../../Common.hpp"
 #include "../../Framebuffer.hpp"
 #include "../../input/ControllableCamera.hpp"
 #include "../../ScreenQuad.hpp"
@@ -11,11 +13,6 @@
 
 #include "Gbuffer.hpp"
 #include "AmbientQuad.hpp"
-
-#include <gl3w/gl3w.h>
-#include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-#include <memory>
 
 
 

@@ -2,10 +2,6 @@
 #include "../../resources/ResourcesManager.hpp"
 #include "../../helpers/GenerationUtilities.hpp"
 
-#include <stdio.h>
-#include <vector>
-
-
 
 AmbientQuad::AmbientQuad(){}
 

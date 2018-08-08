@@ -1,8 +1,5 @@
 #include "BoxBlur.hpp"
 
-#include <stdio.h>
-#include <vector>
-
 
 BoxBlur::BoxBlur(unsigned int width, unsigned int height, bool approximate, GLuint format, GLuint type, GLuint preciseFormat, GLuint wrapping) : Blur() {
 	

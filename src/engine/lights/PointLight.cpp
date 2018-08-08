@@ -1,9 +1,5 @@
 #include "PointLight.hpp"
-
-#include <stdio.h>
-#include <vector>
-#include <glm/gtc/matrix_transform.hpp>
-#include <algorithm>
+#include "../Common.hpp"
 
 
 PointLight::PointLight(const glm::vec3& worldPosition, const glm::vec3& color, float radius, const BoundingBox & sceneBox) : Light(color) {

@@ -1,9 +1,7 @@
 #ifndef MeshUtilities_h
 #define MeshUtilities_h
 
-#include <string>
-#include <vector>
-#include <glm/glm.hpp>
+#include "../Common.hpp"
 
 struct BoundingSphere {
 	glm::vec3 center;

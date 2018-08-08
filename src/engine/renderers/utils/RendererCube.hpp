@@ -1,15 +1,10 @@
 #ifndef RendererCube_h
 #define RendererCube_h
+
+#include "../../Common.hpp"
 #include "../../Framebuffer.hpp"
 #include "../../Object.hpp"
-
-
 #include "../Renderer.hpp"
-
-#include <gl3w/gl3w.h>
-#include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-#include <memory>
 
 
 

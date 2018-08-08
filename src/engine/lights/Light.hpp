@@ -1,13 +1,7 @@
 #ifndef Light_h
 #define Light_h
-#include <gl3w/gl3w.h>
-#include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#include "../Common.hpp"
 #include <map>
-#include <string>
-#undef near
-#undef far
 
 class Light {
 

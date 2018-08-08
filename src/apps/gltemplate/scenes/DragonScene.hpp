@@ -3,10 +3,6 @@
 
 #include "Scene.hpp"
 
-#include <stdio.h>
-#include <vector>
-#include <glm/gtc/matrix_transform.hpp>
-
 
 class DragonScene : public Scene {
 public:

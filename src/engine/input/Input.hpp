@@ -1,9 +1,8 @@
 #ifndef Input_h
 #define Input_h
 
-#include <GLFW/glfw3.h>
+#include "../Common.hpp"
 #include "controller/Controller.hpp"
-#include <memory>
 
 class Input {
 public:

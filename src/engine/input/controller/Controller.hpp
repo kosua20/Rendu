@@ -1,7 +1,7 @@
 #ifndef Controller_h
 #define Controller_h
 
-#include <glm/glm.hpp>
+#include "Common.hpp"
 #include <map>
 
 class Controller {

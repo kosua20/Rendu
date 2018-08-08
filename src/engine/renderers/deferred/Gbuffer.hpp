@@ -1,10 +1,7 @@
 #ifndef Gbuffer_h
 #define Gbuffer_h
-#include <gl3w/gl3w.h>
-#include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
+#include "../../Common.hpp"
 #include <map>
-#include <vector>
 
 enum class TextureType {
 	Albedo, // or base color

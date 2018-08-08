@@ -1,10 +1,6 @@
 #include "SpotLight.hpp"
 
-#include <stdio.h>
-#include <vector>
-#include <glm/gtc/matrix_transform.hpp>
 #include "../helpers/InterfaceUtilities.hpp"
-#include <algorithm>
 
 SpotLight::SpotLight(const glm::vec3& worldPosition, const glm::vec3& worldDirection, const glm::vec3& color, const float innerAngle, const float outerAngle, const float radius, const BoundingBox & sceneBox) : Light(color) {
 	

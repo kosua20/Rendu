@@ -1,9 +1,5 @@
 #include "GaussianBlur.hpp"
 
-#include <stdio.h>
-#include <vector>
-
-
 
 GaussianBlur::GaussianBlur(unsigned int width, unsigned int height, unsigned int depth, GLuint format, GLuint type, GLuint preciseFormat) : Blur() {
 	_passthrough.init("passthrough");

@@ -1,11 +1,8 @@
 #ifndef ProgramInfos_h
 #define ProgramInfos_h
 
-#include <gl3w/gl3w.h>
-#include <string>
+#include "../Common.hpp"
 #include <map>
-#include <vector>
-#include <glm/glm.hpp>
 
 class ProgramInfos {
 public:

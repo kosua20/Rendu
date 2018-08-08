@@ -1,5 +1,5 @@
 #include "Scene.hpp"
-#include "helpers/Logger.hpp"
+#include "Common.hpp"
 
 Scene::Scene(){};
 

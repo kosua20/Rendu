@@ -1,12 +1,13 @@
 #ifndef SpotLight_h
 #define SpotLight_h
+
 #include "Light.hpp"
+#include "../Common.hpp"
 #include "../ScreenQuad.hpp"
 #include "../Framebuffer.hpp"
 #include "../Object.hpp"
 #include "../processing/BoxBlur.hpp"
 
-#include <memory>
 
 class SpotLight : public Light {
 

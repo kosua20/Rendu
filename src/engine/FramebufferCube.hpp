@@ -1,8 +1,8 @@
 #ifndef FramebufferCube_h
 #define FramebufferCube_h
-#include <gl3w/gl3w.h>
-#include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
+
+#include "Common.hpp"
+
 
 
 class FramebufferCube {

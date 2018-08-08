@@ -1,5 +1,6 @@
 #ifndef BoxBlur_h
 #define BoxBlur_h
+#include "../Common.hpp"
 #include "Blur.hpp"
 
 

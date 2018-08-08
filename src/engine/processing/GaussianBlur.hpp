@@ -1,5 +1,6 @@
 #ifndef GaussianBlur_h
 #define GaussianBlur_h
+#include "../Common.hpp"
 #include "Blur.hpp"
 
 

@@ -1,12 +1,5 @@
 #include "Camera.hpp"
 #include "Input.hpp"
-#include <GLFW/glfw3.h>
-#include <stdio.h>
-#include <glm/gtc/matrix_transform.hpp>
-#include <algorithm>
-#ifdef _WIN32
-#define M_PI	3.14159265358979323846
-#endif
 
 Camera::Camera()  {
 	_fov = 1.91f;

@@ -1,8 +1,5 @@
 #include "FramebufferCube.hpp"
 #include "helpers/GLUtilities.hpp"
-#include "helpers/Logger.hpp"
-
-#include <stdio.h>
 
 
 FramebufferCube::FramebufferCube(unsigned int side, GLuint format, GLuint type, GLuint preciseFormat, GLuint filtering, bool depthBuffer) {

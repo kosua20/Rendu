@@ -1,11 +1,7 @@
+#include "Common.hpp"
 #include "Config.hpp"
 #include "resources/ImageUtilities.hpp"
-#include "helpers/Logger.hpp"
-#include <stdio.h>
-#include <memory>
-#include <string>
 #include <map>
-#include <vector>
 #include <fstream>
 
 /// Spherical harmonics coefficients extractor for a HDR cubemap.
