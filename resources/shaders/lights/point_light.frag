@@ -8,6 +8,7 @@ uniform sampler2D albedoTexture;
 uniform sampler2D normalTexture;
 uniform sampler2D depthTexture;
 uniform sampler2D effectsTexture;
+uniform samplerCube shadowMap;
 
 uniform vec2 inverseScreenSize;
 uniform vec4 projectionMatrix;
@@ -15,6 +16,8 @@ uniform vec4 projectionMatrix;
 uniform vec3 lightPosition;
 uniform vec3 lightColor;
 uniform float lightRadius;
+uniform mat3 viewToLight;
+uniform float lightFarPlane;
 
 // Output: the fragment color
 out vec3 fragColor;
@@ -26,6 +29,34 @@ vec3 positionFromDepth(float depth, vec2 uv){
 	float viewDepth = - projectionMatrix.w / (depth2 + projectionMatrix.z);
 	// Compute the x and y components in view space.
 	return vec3(- ndcPos * viewDepth / projectionMatrix.xy , viewDepth);
+}
+
+// Compute the shadow multiplicator based on shadow map.
+
+float shadow(vec3 lightToPosDir){
+	float probabilityMax = 1.0;
+	// Read first and second moment from shadow map.
+	vec2 moments = texture(shadowMap, lightToPosDir).rg;
+	if(moments.x >= 1.0){
+		// No information in the depthmap: no occluder.
+		return 1.0;
+	}
+	// We have to scale by the frustum size.
+	moments *= vec2(lightFarPlane, lightFarPlane*lightFarPlane);
+	// Initial probability of light.
+	float dist = length(lightToPosDir);
+	float probability = float(dist <= moments.x);
+	// Compute variance.
+	float variance = moments.y - (moments.x * moments.x);
+	variance = max(variance, 0.00001);
+	// Delta of depth.
+	float d = dist - moments.x;
+	// Use Chebyshev to estimate bound on probability.
+	probabilityMax = variance / (variance + d*d);
+	probabilityMax = max(probability, probabilityMax);
+	// Limit light bleeding by rescaling and clamping the probability factor.
+	probabilityMax = clamp( (probabilityMax - 0.1) / (1.0 - 0.1), 0.0, 1.0);
+	return probabilityMax;
 }
 
 
@@ -90,11 +121,15 @@ void main(){
 	// Orientation: basic diffuse shadowing.
 	float orientation = max(0.0, dot(l,n));
 	// Attenuation with increasing distance to the light.
-	
 	float localRadius2 = dot(deltaPosition, deltaPosition);
 	float radiusRatio2 = localRadius2/(lightRadius*lightRadius);
 	float attenNum = clamp(1.0 - radiusRatio2, 0.0, 1.0);
 	float attenuation = attenNum*attenNum;
+	
+	// Compute the light to surface vector in light centered space.
+	// We only care about the direction, so we don't need the translation.
+	vec3 deltaPositionWorld = -viewToLight*deltaPosition;
+	float shadowing = shadow(deltaPositionWorld);
 	
 	// BRDF contributions.
 	// Compute F0 (fresnel coeff).
@@ -106,7 +141,7 @@ void main(){
 	
 	vec3 specular = ggx(n, v, l, F0, roughness);
 	
-	fragColor.rgb = attenuation * orientation * (diffuse + specular) * lightColor * M_PI;
+	fragColor.rgb = shadowing * attenuation * orientation * (diffuse + specular) * lightColor * M_PI;
 	
 }
 
