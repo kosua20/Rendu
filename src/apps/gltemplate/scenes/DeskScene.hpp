@@ -12,6 +12,7 @@ class DeskScene : public Scene {
 public:
 	void init();
 	void update(double fullTime, double frameTime);
+	
 };
 
 
@@ -50,14 +51,29 @@ void DeskScene::init(){
 	const BoundingBox bbox = computeBoundingBox(true);
 	
 	// Lights creation.
+	
 	// Create directional lights.
-	directionalLights.emplace_back(glm::vec3(-2.0f, -1.5f, -1.0f), glm::vec3(0.5f,0.65f, 1.3f), bbox);
-	directionalLights.emplace_back(glm::vec3(2.0f, -3.5f, -2.0f), glm::vec3(1.2f,0.9f, 0.2f), bbox);
-	directionalLights[0].castShadow(true);
-	directionalLights[1].castShadow(true);
+	//directionalLights.emplace_back(glm::vec3(-2.0f, -1.5f, -1.0f), glm::vec3(0.5f,0.65f, 1.3f), bbox);
+	//directionalLights.emplace_back(glm::vec3(2.0f, -3.5f, -2.0f), glm::vec3(1.2f,0.9f, 0.2f), bbox);
+	//directionalLights[0].castShadow(true);
+	//directionalLights[1].castShadow(true);
+	
+	// Create point candle light.
+	const glm::vec3 candleLightPosition = glm::vec3(0.09f,0.52f,-0.36f);
+	pointLights.emplace_back(candleLightPosition, glm::vec3(3.0f, 2.0f, 0.2f), 2.5f, bbox);
+	pointLights[0].castShadow(true);
 }
 
 void DeskScene::update(double fullTime, double frameTime){
+	// Quick tentative of mimicking a flickering light.
+	/*_frameCount = (_frameCount+Random::Int(1,2))%10;
+	if(_frameCount == 0){
+		const float delta = 0.0006f;
+		const glm::vec3 randomShift(Random::Float(-delta, delta), 0.0f, Random::Float(-delta, delta));
+		pointLights[0].update(_candleLightPosition + randomShift);
+		pointLights[0].setIntensity(Random::Float(0.8f,1.1f)*glm::vec3(3.0f, 2.0f, 0.2f));
+	}
+	 */
 	
 }
 
