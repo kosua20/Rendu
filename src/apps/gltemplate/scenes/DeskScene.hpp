@@ -53,6 +53,8 @@ void DeskScene::init(){
 	// Create directional lights.
 	directionalLights.emplace_back(glm::vec3(-2.0f, -1.5f, -1.0f), glm::vec3(0.5f,0.65f, 1.3f), bbox);
 	directionalLights.emplace_back(glm::vec3(2.0f, -3.5f, -2.0f), glm::vec3(1.2f,0.9f, 0.2f), bbox);
+	directionalLights[0].castShadow(true);
+	directionalLights[1].castShadow(true);
 }
 
 void DeskScene::update(double fullTime, double frameTime){

@@ -20,6 +20,7 @@ uniform vec3 lightColor;
 uniform float lightRadius;
 uniform float outerAngleCos;
 uniform float innerAngleCos;
+uniform bool castShadow;
 
 // Output: the fragment color
 out vec3 fragColor;
@@ -127,9 +128,12 @@ void main(){
 	// Orientation: basic diffuse shadowing.
 	float orientation = max(0.0, dot(l,n));
 	// Shadowing
-	vec4 lightSpacePosition = viewToLight * vec4(position,1.0);
-	lightSpacePosition /= lightSpacePosition.w;
-	float shadowing = shadow(0.5*lightSpacePosition.xyz+0.5);
+	float shadowing = 1.0;
+	if(castShadow){
+		vec4 lightSpacePosition = viewToLight * vec4(position,1.0);
+		lightSpacePosition /= lightSpacePosition.w;
+		shadowing = shadow(0.5*lightSpacePosition.xyz+0.5);
+	}
 	// Attenuation with increasing distance to the light.
 	float localRadius2 = dot(deltaPosition, deltaPosition);
 	float radiusRatio2 = localRadius2/(lightRadius*lightRadius);

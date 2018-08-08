@@ -28,6 +28,7 @@ void PointLight::init(const std::map<std::string, GLuint>& textureIds){
 	_program = Resources::manager().getProgram("point_light", "object_basic", "point_light");
 	_sphere = Resources::manager().getMesh("light_sphere");
 	// Setup the framebuffer.
+	// TODO: enable only if the light is a shadow caster.
 	_shadowFramebuffer = std::make_shared<FramebufferCube>(512, GL_RG,GL_FLOAT, GL_RG16F, GL_LINEAR, true);
 	
 	std::map<std::string, GLuint> textures = textureIds;
@@ -67,6 +68,7 @@ void PointLight::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMa
 	glUniform2fv(_program->uniform("inverseScreenSize"), 1, &(invScreenSize[0]));
 	glUniformMatrix3fv(_program->uniform("viewToLight"), 1, GL_FALSE, &viewToLight[0][0]);
 	glUniform1f(_program->uniform("lightFarPlane"), _farPlane);
+	glUniform1i(_program->uniform("castShadow"), _castShadows);
 	
 	// Active screen texture.
 	for(GLuint i = 0;i < _textureIds.size()-1; ++i){
@@ -74,9 +76,10 @@ void PointLight::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMa
 		glBindTexture(GL_TEXTURE_2D, _textureIds[i]);
 	}
 	// Activate the shadow cubemap.
-	glActiveTexture(GL_TEXTURE0 + _textureIds.size()-1);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, _textureIds[_textureIds.size()-1]);
-	
+	if(_castShadows){
+		glActiveTexture(GL_TEXTURE0 + _textureIds.size()-1);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, _textureIds[_textureIds.size()-1]);
+	}
 	// Select the geometry.
 	glBindVertexArray(_sphere.vId);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _sphere.eId);
@@ -87,6 +90,10 @@ void PointLight::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMa
 }
 
 void PointLight::drawShadow(const std::vector<Object> & objects) const {
+	if(!_castShadows){
+		return;
+	}
+	
 	static const char* uniformNames[6] = {"vps[0]", "vps[1]", "vps[2]", "vps[3]", "vps[4]", "vps[5]"};
 	
 	_shadowFramebuffer->bind();

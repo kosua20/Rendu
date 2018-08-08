@@ -38,12 +38,16 @@ void DirectionalLight::draw(const glm::mat4& viewMatrix, const glm::mat4& projec
 	// Projection parameter for position reconstruction.
 	glUniform4fv(_screenquad.program()->uniform("projectionMatrix"), 1, &(projectionVector[0]));
 	glUniformMatrix4fv(_screenquad.program()->uniform("viewToLight"), 1, GL_FALSE, &viewToLight[0][0]);
+	glUniform1i(_screenquad.program()->uniform("castShadow"), _castShadows);
 
 	_screenquad.draw();
 
 }
 
 void DirectionalLight::drawShadow(const std::vector<Object> & objects) const {
+	if(!_castShadows){
+		return;
+	}
 	_shadowPass->bind();
 	_shadowPass->setViewport();
 	glClearColor(1.0f,1.0f,1.0f,0.0f);
@@ -100,7 +104,7 @@ void DirectionalLight::update(const glm::vec3 & newDirection){
 	const float absz2 = abs(lightSpacebox.maxis[2]);
 	const float near = (std::min)(absz1, absz2);
 	const float far = (std::max)(absz1, absz2);
-	const float scaleMargin = 1.1f;
+	const float scaleMargin = 1.5f;
 	_projectionMatrix = glm::ortho(scaleMargin*lightSpacebox.minis[0], scaleMargin*lightSpacebox.maxis[0], scaleMargin*lightSpacebox.minis[1], scaleMargin*lightSpacebox.maxis[1], (1.0f/scaleMargin)*near, scaleMargin*far);
 	_mvp = _projectionMatrix * _viewMatrix;
 	

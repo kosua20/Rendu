@@ -23,19 +23,20 @@ public:
 	
 	const glm::mat4 mvp() const { return _mvp; }
 	
+	void castShadow(const bool shouldCast){ _castShadows = shouldCast; }
+	
 protected:
 	
 	glm::mat4 _mvp;
 	glm::vec3 _color;
-	
+	bool _castShadows;
 };
 
 
 inline Light::Light(const glm::vec3& color){
-	
+	_castShadows = false;
 	_color = color;
 	_mvp = glm::mat4(1.0f);
-	
 }
 
 #endif

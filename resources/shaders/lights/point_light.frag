@@ -18,6 +18,7 @@ uniform vec3 lightColor;
 uniform float lightRadius;
 uniform mat3 viewToLight;
 uniform float lightFarPlane;
+uniform bool castShadow;
 
 // Output: the fragment color
 out vec3 fragColor;
@@ -128,8 +129,12 @@ void main(){
 	
 	// Compute the light to surface vector in light centered space.
 	// We only care about the direction, so we don't need the translation.
-	vec3 deltaPositionWorld = -viewToLight*deltaPosition;
-	float shadowing = shadow(deltaPositionWorld);
+	float shadowing = 1.0;
+	if(castShadow){
+		vec3 deltaPositionWorld = -viewToLight*deltaPosition;
+		shadowing = shadow(deltaPositionWorld);
+	}
+	
 	
 	// BRDF contributions.
 	// Compute F0 (fresnel coeff).

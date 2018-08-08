@@ -66,6 +66,7 @@ void SpotLight::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMat
 	// Inverse screen size uniform.
 	glUniform2fv(_program->uniform("inverseScreenSize"), 1, &(invScreenSize[0]));
 	glUniformMatrix4fv(_program->uniform("viewToLight"), 1, GL_FALSE, &viewToLight[0][0]);
+	glUniform1i(_program->uniform("castShadow"), _castShadows);
 	
 	// Active screen texture.
 	for(GLuint i = 0;i < _textureIds.size(); ++i){
@@ -84,6 +85,9 @@ void SpotLight::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMat
 }
 
 void SpotLight::drawShadow(const std::vector<Object> & objects) const {
+	if(!_castShadows){
+		return;
+	}
 	_shadowPass->bind();
 	_shadowPass->setViewport();
 	glClearColor(1.0f,1.0f,1.0f,0.0f);
@@ -145,7 +149,7 @@ void SpotLight::update(const glm::vec3 & newPosition, const glm::vec3 & newDirec
 	const float absz2 = abs(lightSpacebox.maxis[2]);
 	const float near = (std::min)(absz1, absz2);
 	const float far = (std::max)(absz1, absz2);
-	const float scaleMargin = 1.1f;
+	const float scaleMargin = 1.5f;
 	_projectionMatrix = glm::perspective(2.0f*_outerHalfAngle, 1.0f, (1.0f/scaleMargin)*near, scaleMargin*far);
 	_mvp = _projectionMatrix * _viewMatrix;
 }

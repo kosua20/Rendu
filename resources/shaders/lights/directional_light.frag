@@ -20,6 +20,7 @@ uniform mat4 viewToLight;
 
 uniform vec3 lightDirection;//(direction in view space)
 uniform vec3 lightColor;
+uniform bool castShadow;
 
 // Output: the fragment color
 out vec3 fragColor;
@@ -116,9 +117,11 @@ void main(){
 	// Orientation: basic diffuse shadowing.
 	float orientation = max(0.0, dot(l,n));
 	// Shadowing
-	vec3 lightSpacePosition = 0.5*(viewToLight * vec4(position,1.0)).xyz + 0.5;
-	float shadowing = shadow(lightSpacePosition);
-	
+	float shadowing = 1.0;
+	if(castShadow){
+		vec3 lightSpacePosition = 0.5*(viewToLight * vec4(position,1.0)).xyz + 0.5;
+		shadowing = shadow(lightSpacePosition);
+	}
 	// BRDF contributions.
 	// Compute F0 (fresnel coeff).
 	// Dielectrics have a constant low coeff, metals use the baseColor (ie reflections are tinted).
