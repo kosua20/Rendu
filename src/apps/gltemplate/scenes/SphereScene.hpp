@@ -38,13 +38,13 @@ void SphereScene::init(){
 	loadSphericalHarmonics("studio_shcoeffs");
 	
 	// Compute the bounding box of the shadow casters.
-	//const BoundingBox bbox = computeBoundingBox(true);
+	const BoundingBox bbox = computeBoundingBox(true);
 	// Lights creation.
 	// Create directional light.
 	//directionalLights.emplace_back(glm::vec3(-2.0f, -1.5f, 0.0f), glm::vec3(3.0f), bbox);
 	// Create point lights.
-	pointLights.emplace_back( glm::vec3(0.5f,-0.1f,0.5f), 6.0f*glm::vec3(0.2f,0.8f,1.2f), 0.9f);
-	pointLights.emplace_back( glm::vec3(-0.5f,-0.1f,0.5f), 6.0f*glm::vec3(2.1f,0.3f,0.6f), 0.9f);
+	pointLights.emplace_back( glm::vec3(0.5f,-0.1f,0.5f), 6.0f*glm::vec3(0.2f,0.8f,1.2f), 0.9f, bbox);
+	pointLights.emplace_back( glm::vec3(-0.5f,-0.1f,0.5f), 6.0f*glm::vec3(2.1f,0.3f,0.6f), 0.9f, bbox);
 	
 }
 

@@ -59,7 +59,7 @@ void DragonScene::init(){
 	const std::vector<glm::vec3> colors = { glm::vec3(lI,0.0,0.0), glm::vec3(0.0,lI,0.0), glm::vec3(0.0,0.0,lI), glm::vec3(lI,lI,0.0)};
 	for(size_t i = 0; i < 4; ++i){
 		const glm::vec3 position = glm::vec3(-1.0f+2.0f*(i%2),-0.1f,-1.0f+2.0f*(i/2));
-		pointLights.emplace_back(position, colors[i], 1.0f);
+		pointLights.emplace_back(position, colors[i], 2.0f, bbox);
 	}
 }
 

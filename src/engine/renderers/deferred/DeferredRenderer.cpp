@@ -100,7 +100,9 @@ void DeferredRenderer::draw() {
 	for(auto& shadowLight : _scene->spotLights){
 		shadowLight.drawShadow(_scene->objects);
 	}
-	
+	for(auto& pointLight : _scene->pointLights){
+		pointLight.drawShadow(_scene->objects);
+	}
 	// ----------------------
 	
 	// --- Scene pass -------
