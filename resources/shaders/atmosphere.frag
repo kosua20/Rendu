@@ -12,9 +12,19 @@ uniform vec3 lightDirection;
 
 const float groundRadius = 6371e3;
 const float topRadius = 6471e3;
+const float sunIntensity = 20.0;
+const vec3 kRayleigh = vec3(5.5e-6, 13.0e-6, 22.4e-6);
+const float heightRayleigh = 8000.0;
+const float heightMie = 1200.0;
+const float kMie = 21e-6;
+const float gMie = 0.758;
+
+const float sunAngularRadius = 0.04675;
+const float sunAngularRadiusCos = 0.998;
 
 out vec3 fragColor;
 
+#define SAMPLES_COUNT 16
 #define M_PI 3.14159265358979323846
 
 
@@ -34,14 +44,63 @@ bool intersects(vec3 rayOrigin, vec3 rayDir, float radius, out vec2 roots){
 	return true;
 }
 
+float rayleighPhase(float cosAngle){
+	const float k = 1.0/(4.0*M_PI);
+	return k * 3.0/4.0 * (1.0 + cosAngle*cosAngle);
+}
+
+float miePhase(float cosAngle){
+	const float k = 1.0/(4.0*M_PI);
+	float g2 = gMie*gMie;
+	return k * 3.0 * (1.0-g2) / (2.0 * (2.0 + g2)) * (1.0 + cosAngle*cosAngle) / pow(1 + g2 - 2.0 * gMie * cosAngle, 3.0/2.0);
+}
+
 vec3 computeRadiance(vec3 rayOrigin, vec3 rayDir, vec3 sunDir){
-	// Check intersection with planet.
-	vec2 interPlanet;
-	bool didHit = intersects(rayOrigin, rayDir, groundRadius, interPlanet);
-	// The intersection can be in front or behind the camera.
-	// To only keep the forward intersection, a root should be positive.
-	bool didHitForward = didHit && interPlanet.y >= 0.0;
-	return vec3(float(didHitForward));
+	// Check intersection with atmosphere.
+	vec2 interTop, interGround;
+	bool didHitTop = intersects(rayOrigin, rayDir, topRadius, interTop);
+	// If no intersection with the atmosphere, it's the dark void of space.
+	if(!didHitTop){
+		return vec3(0.0);
+	}
+	// Now intersect with the planet.
+	bool didHitGround = intersects(rayOrigin, rayDir, groundRadius, interGround);
+	// Distance to the closest intersection.
+	float distanceToInter = min(interTop.y, didHitGround ? interGround.x : 0.0);
+	// Divide the distance traveled through the atmosphere in SAMPLES_COUNT parts.
+	float stepSize = (distanceToInter - interTop.x)/SAMPLES_COUNT;
+	// Angle between the sun direction and the ray.
+	float cosViewSun = dot(rayDir, sunDir);
+	
+	// Accumulate optical distance for both scatterings.
+	float rayleighDist = 0.0;
+	float mieDist = 0.0;
+	// Accumulate contributions for both scatterings.
+	vec3 rayleighScatt = vec3(0.0);
+	vec3 mieScatt = vec3(0.0);
+	
+	// March along the ray.
+	for(int i = 0; i < SAMPLES_COUNT; ++i){
+		// Compute the current position along the ray, ...
+		vec3 currPos = rayOrigin + (i+0.5) * stepSize * rayDir;
+		// ...and its distance to the ground (as we are in planet space).
+		float currHeight = length(currPos) - groundRadius;
+		// Compute density based on the characteristic height of Rayleigh and Mie.
+		float rayleighStep = exp(-currHeight/heightRayleigh) * stepSize;
+		float mieStep = exp(-currHeight/heightMie) * stepSize;
+		// Accumulate optical distances.
+		rayleighDist += rayleighStep;
+		mieDist += mieStep;
+		// Compute associated attenuation.
+		vec3 attenuation = exp(-(kMie * mieDist + kRayleigh * rayleighDist));
+		// Accumulate scatterings.
+		rayleighScatt += rayleighStep * attenuation;
+		mieScatt += mieStep * attenuation;
+	}
+	// Final scattering participations.
+	vec3 rayleighParticipation = kRayleigh * rayleighPhase(cosViewSun) * rayleighScatt;
+	vec3 mieParticipation = kMie * miePhase(cosViewSun) * mieScatt;
+	return sunIntensity * (rayleighParticipation + mieParticipation);
 }
 
 void main(){
