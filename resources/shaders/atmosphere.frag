@@ -80,6 +80,7 @@ vec3 computeRadiance(vec3 rayOrigin, vec3 rayDir, vec3 sunDir){
 	// Accumulate contributions for both scatterings.
 	vec3 rayleighScatt = vec3(0.0);
 	vec3 mieScatt = vec3(0.0);
+	vec3 transmittance = vec3(0.0);
 	
 	// March along the ray.
 	for(int i = 0; i < SAMPLES_COUNT; ++i){
@@ -125,11 +126,21 @@ vec3 computeRadiance(vec3 rayOrigin, vec3 rayDir, vec3 sunDir){
 		// Accumulate scatterings.
 		rayleighScatt += rayleighStep * attenuation;
 		mieScatt += mieStep * attenuation;
+		transmittance += directAttenuation;
 	}
+	
 	// Final scattering participations.
 	vec3 rayleighParticipation = kRayleigh * rayleighPhase(cosViewSun) * rayleighScatt;
 	vec3 mieParticipation = kMie * miePhase(cosViewSun) * mieScatt;
-	return sunIntensity * (rayleighParticipation + mieParticipation);
+	
+	// The sun itself if we're looking at it.
+	vec3 sunRadiance = vec3(0.0);
+	bool didHitGroundForward = didHitGround && interGround.y >= 0;
+	if(!didHitGroundForward && dot(rayDir, sunDir) > sunAngularRadiusCos){
+		sunRadiance = sunColor / (M_PI * sunAngularRadius * sunAngularRadius);
+	}
+	
+	return sunIntensity * (rayleighParticipation + mieParticipation) + transmittance * sunRadiance;
 }
 
 void main(){
