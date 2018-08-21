@@ -24,6 +24,8 @@ Framebuffer::Framebuffer(unsigned int width, unsigned int height, GLuint format,
 	
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, (GLint)wrapping);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, (GLint)wrapping);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
+
 	if(wrapping == GL_CLAMP_TO_BORDER){
 		// Setup the border value for the shadow map
 		GLfloat border[] = { 1.0, 1.0, 1.0, 1.0 };

@@ -27,6 +27,7 @@ public:
 	
 	const glm::mat4 view() const { return _view; }
 	const glm::mat4 projection() const { return _projection; }
+	const glm::vec3 & position() const { return _eye; }
 	
 protected:
 	

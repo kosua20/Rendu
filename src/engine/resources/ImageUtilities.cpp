@@ -201,7 +201,7 @@ int ImageUtilities::saveHDRImage(const std::string &path, const unsigned int wid
 	InitEXRImage(&image);
 	
 	// Components: 1, 3, 3, 4
-	int components =int(channels == 2 ? 3 : channels);
+	int components = int(channels == 2 ? 3 : channels);
 	image.num_channels = components;
 	
 	std::vector<float> images[4];
