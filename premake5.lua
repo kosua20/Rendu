@@ -80,6 +80,10 @@ project("Playground")
 	AppSetup()
 	files({ "src/apps/playground/**.hpp", "src/apps/playground/**.cpp", })
 
+project("Atmosphere")
+	AppSetup()
+	files({ "src/apps/atmosphere/**.hpp", "src/apps/atmosphere/**.cpp", })
+
 
 group("Tools")
 
