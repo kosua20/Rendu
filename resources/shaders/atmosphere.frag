@@ -13,6 +13,7 @@ uniform vec3 lightDirection;
 const float groundRadius = 6371e3;
 const float topRadius = 6471e3;
 const float sunIntensity = 20.0;
+const vec3 sunColor = vec3(1.474, 1.8504, 1.91198);
 const vec3 kRayleigh = vec3(5.5e-6, 13.0e-6, 22.4e-6);
 const float heightRayleigh = 8000.0;
 const float heightMie = 1200.0;
@@ -25,6 +26,7 @@ const float sunAngularRadiusCos = 0.998;
 out vec3 fragColor;
 
 #define SAMPLES_COUNT 16
+#define SAMPLES_COUNT_INNER 8
 #define M_PI 3.14159265358979323846
 
 
@@ -91,8 +93,35 @@ vec3 computeRadiance(vec3 rayOrigin, vec3 rayDir, vec3 sunDir){
 		// Accumulate optical distances.
 		rayleighDist += rayleighStep;
 		mieDist += mieStep;
+		
+		// We then march along the secondary ray going towards the sun.
+		// Check when the ray leaves the atmosphere.
+		vec2 interSecondTop;
+		bool didHitSecondTop = intersects(currPos, sunDir, topRadius, interSecondTop);
+		// Divide the distance traveled through the atmosphere in SAMPLES_COUNT_INNER parts.
+		float secondStepSize = didHitSecondTop ? interSecondTop.y/SAMPLES_COUNT_INNER : 0.0;
+		// Accumulate optical distance for both scatterings.
+		float rayleighSecondDist = 0.0;
+		float mieSecondDist = 0.0;
+		
+		// March along the secondary ray.
+		for(int j = 0; j < SAMPLES_COUNT_INNER; ++j){
+			// Compute the current position along the ray, ...
+			vec3 currSecondPos = currPos + (j+0.5) * secondStepSize * sunDir;
+			// ...and its distance to the ground (as we are in planet space).
+			float currSecondHeight = length(currSecondPos) - groundRadius;
+			// Compute density based on the characteristic height of Rayleigh and Mie.
+			float rayleighSecondStep = exp(-currSecondHeight/heightRayleigh) * secondStepSize;
+			float mieSecondStep = exp(-currSecondHeight/heightMie) * secondStepSize;
+			// Accumulate optical distances.
+			rayleighSecondDist += rayleighSecondStep;
+			mieSecondDist += mieSecondStep;
+		}
+		
 		// Compute associated attenuation.
-		vec3 attenuation = exp(-(kMie * mieDist + kRayleigh * rayleighDist));
+		vec3 directAttenuation = exp(-(kMie * (mieDist) + kRayleigh * (rayleighDist)));
+		vec3 secondaryAttenuation = exp(-(kMie * (mieSecondDist) + kRayleigh * (rayleighSecondDist)));
+		vec3 attenuation = directAttenuation * secondaryAttenuation;
 		// Accumulate scatterings.
 		rayleighScatt += rayleighStep * attenuation;
 		mieScatt += mieStep * attenuation;
