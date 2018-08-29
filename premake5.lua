@@ -87,6 +87,10 @@ project("Atmosphere")
 
 group("Tools")
 
+project("AtmosphericScatteringEstimator")
+	ToolSetup()
+	files({ "src/tools/AtmosphericScatteringEstimator.cpp" })
+
 project("BRDFEstimator")
 	ToolSetup()
 	includedirs({ "src/apps/gltemplate" })
