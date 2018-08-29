@@ -5,8 +5,7 @@ in INTERFACE {
 	vec2 uv;
 } In ;
 
-uniform mat4 camToWorld;
-uniform mat4 clipToCam;
+uniform mat4 clipToWorld;
 uniform vec3 viewPos;
 uniform vec3 lightDirection;
 
@@ -15,18 +14,20 @@ const float topRadius = 6471e3;
 const float sunIntensity = 20.0;
 const vec3 sunColor = vec3(1.474, 1.8504, 1.91198);
 const vec3 kRayleigh = vec3(5.5e-6, 13.0e-6, 22.4e-6);
+const float kMie = 21e-6;
 const float heightRayleigh = 8000.0;
 const float heightMie = 1200.0;
-const float kMie = 21e-6;
 const float gMie = 0.758;
 
 const float sunAngularRadius = 0.04675;
 const float sunAngularRadiusCos = 0.998;
 
+
+uniform sampler2D screenTexture;
+
 out vec3 fragColor;
 
 #define SAMPLES_COUNT 16
-#define SAMPLES_COUNT_INNER 8
 #define M_PI 3.14159265358979323846
 
 
@@ -88,6 +89,10 @@ vec3 computeRadiance(vec3 rayOrigin, vec3 rayDir, vec3 sunDir){
 		vec3 currPos = rayOrigin + (i+0.5) * stepSize * rayDir;
 		// ...and its distance to the ground (as we are in planet space).
 		float currHeight = length(currPos) - groundRadius;
+		// ... there is an artifact similar to clipping when close to the planet surface if we allow for negative heights.
+		if(i == SAMPLES_COUNT-1 && currHeight < 0.0){
+			currHeight = 0.0;
+		}
 		// Compute density based on the characteristic height of Rayleigh and Mie.
 		float rayleighStep = exp(-currHeight/heightRayleigh) * stepSize;
 		float mieStep = exp(-currHeight/heightMie) * stepSize;
@@ -95,33 +100,17 @@ vec3 computeRadiance(vec3 rayOrigin, vec3 rayDir, vec3 sunDir){
 		rayleighDist += rayleighStep;
 		mieDist += mieStep;
 		
-		// We then march along the secondary ray going towards the sun.
-		// Check when the ray leaves the atmosphere.
-		vec2 interSecondTop;
-		bool didHitSecondTop = intersects(currPos, sunDir, topRadius, interSecondTop);
-		// Divide the distance traveled through the atmosphere in SAMPLES_COUNT_INNER parts.
-		float secondStepSize = didHitSecondTop ? interSecondTop.y/SAMPLES_COUNT_INNER : 0.0;
-		// Accumulate optical distance for both scatterings.
-		float rayleighSecondDist = 0.0;
-		float mieSecondDist = 0.0;
-		
-		// March along the secondary ray.
-		for(int j = 0; j < SAMPLES_COUNT_INNER; ++j){
-			// Compute the current position along the ray, ...
-			vec3 currSecondPos = currPos + (j+0.5) * secondStepSize * sunDir;
-			// ...and its distance to the ground (as we are in planet space).
-			float currSecondHeight = length(currSecondPos) - groundRadius;
-			// Compute density based on the characteristic height of Rayleigh and Mie.
-			float rayleighSecondStep = exp(-currSecondHeight/heightRayleigh) * secondStepSize;
-			float mieSecondStep = exp(-currSecondHeight/heightMie) * secondStepSize;
-			// Accumulate optical distances.
-			rayleighSecondDist += rayleighSecondStep;
-			mieSecondDist += mieSecondStep;
-		}
-		
-		// Compute associated attenuation.
 		vec3 directAttenuation = exp(-(kMie * (mieDist) + kRayleigh * (rayleighDist)));
-		vec3 secondaryAttenuation = exp(-(kMie * (mieSecondDist) + kRayleigh * (rayleighSecondDist)));
+		
+		// The secondary attenuation lookup table is parametrized by
+		// the height in the atmosphere, and the cosine of the vertical angle with the sun.
+		float relativeHeight = (length(currPos) - groundRadius) / (topRadius - groundRadius);
+		float relativeCosAngle = -0.5*sunDir.y+0.5;
+		// Compute UVs, scaled to read at the center of pixels.
+		vec2 attenuationUVs = (1.0-1.0/512.0)*vec2(relativeHeight, relativeCosAngle)+0.5/512.0;
+		vec3 secondaryAttenuation = texture(screenTexture, attenuationUVs).rgb;
+		
+		// Final attenuation.
 		vec3 attenuation = directAttenuation * secondaryAttenuation;
 		// Accumulate scatterings.
 		rayleighScatt += rayleighStep * attenuation;
@@ -135,7 +124,7 @@ vec3 computeRadiance(vec3 rayOrigin, vec3 rayDir, vec3 sunDir){
 	
 	// The sun itself if we're looking at it.
 	vec3 sunRadiance = vec3(0.0);
-	bool didHitGroundForward = didHitGround && interGround.y >= 0;
+	bool didHitGroundForward = didHitGround && interGround.y > 0;
 	if(!didHitGroundForward && dot(rayDir, sunDir) > sunAngularRadiusCos){
 		sunRadiance = sunColor / (M_PI * sunAngularRadius * sunAngularRadius);
 	}
@@ -147,9 +136,9 @@ void main(){
 	// Move to -1,1
 	vec4 clipVertex = vec4(-1.0+2.0*In.uv, 0.0, 1.0);
 	// Then to world space.
-	vec3 viewRay = normalize((camToWorld*vec4((clipToCam*clipVertex).xyz, 0.0)).xyz);
+	vec3 viewRay = normalize((clipToWorld * clipVertex).xyz);
 	// We then move to the planet model space, where its center is in (0,0,0).
-	vec3 planetSpaceViewPos = viewPos + vec3(0,6372e3,0);
+	vec3 planetSpaceViewPos = viewPos + vec3(0,6371e3,0) + vec3(0.0,1.0,0.0);
 	vec3 atmosphereColor = computeRadiance(planetSpaceViewPos, viewRay, lightDirection);
 	fragColor = atmosphereColor;
 }

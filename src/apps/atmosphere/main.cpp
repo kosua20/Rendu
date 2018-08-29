@@ -152,11 +152,13 @@ int main(int argc, char** argv) {
 	// Camera.
 	ControllableCamera camera;
 	camera.projection(config.screenResolution[0]/config.screenResolution[1], 1.34f, 0.1f, 100.0f);
+	const glm::vec2 renderResolution = (config.internalVerticalResolution/config.screenResolution[1]) * config.screenResolution;
+	
 	// Framebuffer to store the rendered atmosphere result before tonemapping and upscaling to the window size.
-	std::shared_ptr<Framebuffer> atmosphereFramebuffer(new Framebuffer(config.screenResolution[0], config.screenResolution[1], GL_RGB, GL_FLOAT, GL_RGB32F, GL_LINEAR, GL_CLAMP_TO_EDGE, true));
+	std::shared_ptr<Framebuffer> atmosphereFramebuffer(new Framebuffer(renderResolution[0], renderResolution[1], GL_RGB, GL_FLOAT, GL_RGB32F, GL_LINEAR, GL_CLAMP_TO_EDGE, true));
 	// Atmosphere screen quad.
 	std::shared_ptr<ScreenQuad> atmosphereQuad(new ScreenQuad());
-	atmosphereQuad->init("atmosphere");
+	atmosphereQuad->init(Resources::manager().getTexture("scattering-precomputed", false).id, "atmosphere");
 	// Final tonemapping screen quad.
 	std::shared_ptr<ScreenQuad> tonemapQuad(new ScreenQuad());
 	tonemapQuad->init(atmosphereFramebuffer->textureId(), "tonemap");
@@ -164,6 +166,12 @@ int main(int argc, char** argv) {
 	// Sun direction.
 	glm::vec3 lightDirection(0.437f,0.082f,-0.896f);
 	lightDirection = glm::normalize(lightDirection);
+	
+	// Timing.
+	const unsigned int frameCount = 20;
+	std::vector<double> timings(frameCount, 0.0);
+	unsigned int currentTiming = 0;
+	double smoothedFrameTime = 0.0;
 	
 	// Start the display/interaction loop.
 	while (!glfwWindowShouldClose(window)) {
@@ -185,6 +193,14 @@ int main(int argc, char** argv) {
 		double frameTime = currentTime - timer;
 		timer = currentTime;
 		camera.update();
+		
+		// Timing.
+		smoothedFrameTime -= timings[currentTiming];
+		timings[currentTiming] = 1000.0*frameTime;
+		smoothedFrameTime += timings[currentTiming];
+		currentTiming = (currentTiming+1)%frameCount;
+		const double sft = smoothedFrameTime/frameCount;
+		ImGui::Text("%2.2f ms (%2.0f fps)", sft, 1.0/sft*1000.0);
 		
 		// Physics simulation
 		// First avoid super high frametime by clamping.
@@ -218,8 +234,9 @@ int main(int argc, char** argv) {
 		glClear(GL_COLOR_BUFFER_BIT);
 		
 		glUseProgram(atmosphereQuad->program()->id());
-		glUniformMatrix4fv(atmosphereQuad->program()->uniform("camToWorld"), 1, GL_FALSE, &camToWorld[0][0]);
-		glUniformMatrix4fv(atmosphereQuad->program()->uniform("clipToCam"), 1, GL_FALSE, &clipToCam[0][0]);
+		const glm::mat4 camToWorldNoT = glm::mat4(glm::mat3(camToWorld));
+		const glm::mat4 clipToWorld = camToWorldNoT * clipToCam;
+		glUniformMatrix4fv(atmosphereQuad->program()->uniform("clipToWorld"), 1, GL_FALSE, &clipToWorld[0][0]);
 		glUniform3fv(atmosphereQuad->program()->uniform("viewPos"), 1, &camera.position()[0]);
 		glUniform3fv(atmosphereQuad->program()->uniform("lightDirection"), 1, &lightDirection[0]);
 		atmosphereQuad->draw();
