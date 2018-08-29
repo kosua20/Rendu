@@ -130,7 +130,8 @@ void ScreenQuad::draw(const GLuint textureId, const glm::vec2& invScreenSize) co
 
 
 void ScreenQuad::clean() const {
-	glDeleteVertexArrays(1, &_vao);
+	// The vao is shared.
+	//glDeleteVertexArrays(1, &_vao);
 }
 
 
