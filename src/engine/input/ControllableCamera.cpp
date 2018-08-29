@@ -31,6 +31,13 @@ void ControllableCamera::update(){
 		_mode = TurnTable;
 		_radius = glm::length(_eye - _center);
 	}
+	if(Input::manager().triggered(Input::KeyJ)){
+		if(Input::manager().controllerAvailable()){
+			_mode = Joystick;
+		} else {
+			Log::Warning() << Log::Input << "No joystick connected." << std::endl;
+		}
+	}
 	if(Input::manager().resized()){
 		const glm::vec2 screenSize = Input::manager().size();
 		ratio(screenSize[0]/screenSize[1]);
@@ -39,7 +46,7 @@ void ControllableCamera::update(){
 
 void ControllableCamera::physics(double frameTime){
 	
-	if (Input::manager().controllerAvailable()){
+	if (_mode == Joystick){
 		updateUsingJoystick(frameTime);
 	} else if (_mode == FPS) {
 		updateUsingKeyboard(frameTime);
@@ -51,6 +58,12 @@ void ControllableCamera::physics(double frameTime){
 }
 
 void ControllableCamera::updateUsingJoystick(double frameTime){
+	// Check that the controller is available.
+	if(!Input::manager().controllerAvailable()){
+		// Else do nothing.
+		return;
+	}
+	
 	Controller & joystick = Input::manager().controller();
 	// Handle buttons
 	// Reset camera when pressing the Circle button.

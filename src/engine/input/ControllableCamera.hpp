@@ -38,7 +38,7 @@ private:
 	float _radius;
 	
 	enum CameraMode {
-		FPS, TurnTable, Trackball
+		FPS, TurnTable, Trackball, Joystick
 	};
 	
 	CameraMode _mode;
