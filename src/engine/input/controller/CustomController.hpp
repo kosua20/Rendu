@@ -2,7 +2,7 @@
 #define CustomController_h
 
 #include "Controller.hpp"
-#include "Common.hpp"
+#include "../../Common.hpp"
 #include <map>
 
 class CustomController : public Controller {

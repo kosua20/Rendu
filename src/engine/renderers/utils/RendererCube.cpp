@@ -34,7 +34,7 @@ void RendererCube::drawCube(const unsigned int localWidth, const unsigned int lo
 
 	glViewport(0,0,localWidth,localHeight);
 	
-	const glm::mat4 projection = glm::perspective((float)M_PI_2, (float)_resultFramebuffer->width()/(float)_resultFramebuffer->height(), 0.1f, 200.0f);
+	const glm::mat4 projection = glm::perspective(float(M_PI/2.0), (float)_resultFramebuffer->width()/(float)_resultFramebuffer->height(), 0.1f, 200.0f);
 	const glm::vec3 ups[6] = { glm::vec3(0.0,-1.0,0.0), glm::vec3(0.0,-1.0,0.0),glm::vec3(0.0,-1.0,0.0), glm::vec3(0.0,-1.0,0.0), glm::vec3(0.0,0.0,1.0), glm::vec3(0.0,0.0,-1.0) };
 	const glm::vec3 centers[6] = { glm::vec3(1.0,0.0,0.0), glm::vec3(-1.0,0.0,0.0), glm::vec3(0.0,0.0,1.0), glm::vec3(0.0,0.0,-1.0), glm::vec3(0.0,1.0,0.0), glm::vec3(0.0,-1.0,0.0) };
 	const std::string suffixes[6] = { "px", "nx", "pz", "nz", "py", "ny"};

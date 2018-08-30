@@ -166,7 +166,7 @@ void PointLight::update(const glm::vec3 & newPosition){
 	
 	const float scaleMargin = 1.5f;
 	_farPlane = scaleMargin*far;
-	const glm::mat4 projection = glm::perspective(float(M_PI_2), 1.0f, (1.0f/scaleMargin)*near, _farPlane);
+	const glm::mat4 projection = glm::perspective(float(M_PI/2.0), 1.0f, (1.0f/scaleMargin)*near, _farPlane);
 	
 	// Udpate the mvps.
 	for(size_t mid = 0; mid < 6; ++mid){
