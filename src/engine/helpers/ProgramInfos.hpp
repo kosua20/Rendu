@@ -20,6 +20,8 @@ public:
 	
 	void registerTexture(const std::string & name, unsigned int slot);
 	
+	void registerTextures(const std::vector<std::string> & textures);
+	
 	void reload();
 	
 	void validate();
@@ -38,6 +40,7 @@ private:
 	std::map<std::string, GLint> _uniforms;
 	std::map<std::string, unsigned int> _textures;
 	std::map<std::string, glm::vec3> _vec3s;
+	GLuint _nextTextureSlot = 0;
 	
 };
 

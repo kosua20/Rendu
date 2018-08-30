@@ -78,6 +78,18 @@ void ProgramInfos::registerTexture(const std::string & name, unsigned int slot){
 	glUniform1i(_uniforms[name], slot);
 	glUseProgram(0);
 	checkGLErrorInfos("Unused texture \"" + name + "\" in program (" + _vertexName + "," + _fragmentName + ").");
+	_nextTextureSlot = std::max((GLuint)slot+1, _nextTextureSlot);
+}
+
+void ProgramInfos::registerTextures(const std::vector<std::string> & textures){
+	glUseProgram(_id);
+	for(auto& texture : textures){
+		_textures[texture] = _nextTextureSlot;
+		glUniform1i(_uniforms[texture], _nextTextureSlot);
+		checkGLErrorInfos("Unused texture \"" + texture + "\" in program (" + _vertexName + "," + _fragmentName + ").");
+		_nextTextureSlot += 1;
+	}
+	glUseProgram(0);
 }
 
 void ProgramInfos::cacheUniformArray(const std::string & name, const std::vector<glm::vec3> & vals) {
