@@ -101,6 +101,13 @@ project("SHExtractor")
 	files({ "src/tools/SHExtractor.cpp" })
 
 
+group("Meta")
+
+project("ALL")
+	CPPSetup()
+	kind("ConsoleApp")
+	dependson( {"Engine", "PBRDemo", "Playground", "Atmosphere", "AtmosphericScatteringEstimator", "BRDFEstimator", "SHExtractor" })
+
 -- Actions
 
 newaction {
