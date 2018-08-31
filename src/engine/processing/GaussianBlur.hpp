@@ -22,11 +22,12 @@ public:
 	
 private:
 	
-	ScreenQuad _blurScreen;
+	std::shared_ptr<ProgramInfos> _blurProgram;
 	std::shared_ptr<Framebuffer> _finalFramebuffer;
-	ScreenQuad _combineScreen;
+	std::shared_ptr<ProgramInfos> _combineProgram;
 	std::vector<std::shared_ptr<Framebuffer>> _frameBuffers;
 	std::vector<std::shared_ptr<Framebuffer>> _frameBuffersBlur;
+	std::vector<GLuint> _textures;
 	
 };
 

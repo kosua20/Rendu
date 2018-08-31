@@ -30,7 +30,6 @@ public:
 	
 private:
 	
-	ScreenQuad _screenquad;
 	std::shared_ptr<Framebuffer> _shadowPass;
 	std::shared_ptr<BoxBlur> _blur;
 	glm::mat4 _projectionMatrix;
@@ -38,7 +37,10 @@ private:
 	glm::vec3 _lightDirection;
 	
 	BoundingBox _sceneBox;
+	std::shared_ptr<ProgramInfos> _program;
 	std::shared_ptr<ProgramInfos> _programDepth;
+	
+	std::vector<GLuint> _textures;
 };
 
 #endif

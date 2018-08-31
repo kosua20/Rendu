@@ -9,31 +9,32 @@ AmbientQuad::~AmbientQuad(){}
 
 void AmbientQuad::init(std::map<std::string, GLuint> textureIds){
 	
-	// Ambient pass: needs the albedo, the normals, the effect and the AO result
-	std::map<std::string, GLuint> finalTextures = { {"albedoTexture", textureIds["albedoTexture"]}, {"normalTexture", textureIds["normalTexture"]}, {"depthTexture", textureIds["depthTexture"]},  {"effectsTexture", textureIds["effectsTexture"]}, {"ssaoTexture", textureIds["ssaoTexture"]}};
 	
-	ScreenQuad::init(finalTextures, "ambient");
-	
+	_program = Resources::manager().getProgram2D("ambient");
 	// Load texture.
-	_texBrdfPrecalc = Resources::manager().getTexture("brdf-precomputed", false).id;
-	// Load Spherical Harmonics coefficients.
-	// Bind uniform to texture slot.
-	_program->registerTexture("textureCubeMap", (unsigned int)_textureIds.size());
-	_program->registerTexture("brdfPrecalc", (unsigned int)_textureIds.size()+1);
+	_textureBrdf = Resources::manager().getTexture("brdf-precomputed", false).id;
+	
+	// Ambient pass: needs the albedo, the normals, the effect and the AO result
+	const std::vector<std::string> textureNames = { "albedoTexture", "normalTexture", "depthTexture", "effectsTexture", "ssaoTexture"};
+	_textures = { textureIds["albedoTexture"], textureIds["normalTexture"], textureIds["depthTexture"], textureIds["effectsTexture"], textureIds["ssaoTexture"]};
+	_program->registerTextures(textureNames);
+	_program->registerTexture("textureCubeMap", _textures.size());
+	_program->registerTexture("brdfPrecalc", _textures.size()+1);
 	
 	// Setup SSAO data, get back noise texture id, add it to the gbuffer outputs.
 	GLuint noiseTextureID = setupSSAO();
-	std::map<std::string, GLuint> ssaoTextures = { {"depthTexture", textureIds["depthTexture"]}, {"normalTexture", textureIds["normalTexture"]}, {"noiseTexture",noiseTextureID}};
-	_ssaoScreen.init(ssaoTextures, "ssao");
-	
+	_programSSAO = Resources::manager().getProgram2D("ssao");
+	std::vector<std::string> ssaoTextureNames = { "depthTexture", "normalTexture", "noiseTexture" };
+	_texturesSSAO = { textureIds["depthTexture"], textureIds["normalTexture"], noiseTextureID };
+	_programSSAO->registerTextures(ssaoTextureNames);
 	// Now that we have the program we can send the samples to the GPU too.
-	_ssaoScreen.program()->cacheUniformArray("samples", _samples);
+	_programSSAO->cacheUniformArray("samples", _samples);
 	
 	checkGLError();
 }
 
 void AmbientQuad::setSceneParameters(const GLuint reflectionMap, const std::vector<glm::vec3> & irradiance){
-	_texCubeMap = reflectionMap;
+	_textureEnv = reflectionMap;
 	_program->cacheUniformArray("shCoeffs", irradiance);
 }
 
@@ -87,29 +88,28 @@ void AmbientQuad::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionM
 	
 	glUniformMatrix4fv(_program->uniform("inverseV"), 1, GL_FALSE, &invView[0][0]);
 	glUniform4fv(_program->uniform("projectionMatrix"), 1, &(projectionVector[0]));
+	// Cubrmaps.
+	glActiveTexture(GL_TEXTURE0 + (unsigned int)_textures.size());
+	glBindTexture(GL_TEXTURE_CUBE_MAP, _textureEnv);
+	glActiveTexture(GL_TEXTURE0 + (unsigned int)_textures.size() + 1);
+	glBindTexture(GL_TEXTURE_2D, _textureBrdf);
 	
-	glActiveTexture(GL_TEXTURE0 + (unsigned int)_textureIds.size());
-	glBindTexture(GL_TEXTURE_CUBE_MAP, _texCubeMap);
-	
-	glActiveTexture(GL_TEXTURE0 + (unsigned int)_textureIds.size() + 1);
-	glBindTexture(GL_TEXTURE_2D, _texBrdfPrecalc);
-	
-	ScreenQuad::draw();
+	ScreenQuad::draw(_textures);
+	checkGLError();
 }
 
 void AmbientQuad::drawSSAO(const glm::mat4& projectionMatrix) const {
 	
-	glUseProgram(_ssaoScreen.program()->id());
+	glUseProgram(_programSSAO->id());
 	
-	glUniformMatrix4fv(_ssaoScreen.program()->uniform("projectionMatrix"), 1, GL_FALSE, &projectionMatrix[0][0]);
+	glUniformMatrix4fv(_programSSAO->uniform("projectionMatrix"), 1, GL_FALSE, &projectionMatrix[0][0]);
 	
-	_ssaoScreen.draw();
+	ScreenQuad::draw(_texturesSSAO);
 	
 }
 
 
 
 void AmbientQuad::clean() const {
-	ScreenQuad::clean();
-	_ssaoScreen.clean();
+	
 }

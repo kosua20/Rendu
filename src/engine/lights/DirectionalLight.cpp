@@ -11,9 +11,18 @@ void DirectionalLight::init(const std::map<std::string, GLuint>& textureIds){
 	// Setup the framebuffer.
 	_shadowPass = std::make_shared<Framebuffer>(512, 512, GL_RG,GL_FLOAT, GL_RG16F, GL_LINEAR, GL_CLAMP_TO_BORDER, true);
 	_blur = std::make_shared<BoxBlur>(512, 512, false, GL_RG, GL_FLOAT, GL_RG16F, GL_CLAMP_TO_BORDER);
-	std::map<std::string, GLuint> textures = textureIds;
-	textures["shadowMap"] = _blur->textureId();
-	_screenquad.init(textures, "directional_light");
+	
+	std::vector<std::string> textureNames;
+	_textures.clear();
+	for(const auto & textureId : textureIds){
+		textureNames.emplace_back(textureId.first);
+		_textures.emplace_back(textureId.second);
+	}
+	
+	textureNames.emplace_back("shadowMap");
+	_textures.emplace_back(_blur->textureId());
+	_program = Resources::manager().getProgram2D("directional_light");
+	_program->registerTextures(textureNames);
 	// Load the shaders
 	_programDepth = Resources::manager().getProgram("object_depth", "object_basic", "light_shadow");
 
@@ -26,15 +35,15 @@ void DirectionalLight::draw(const glm::mat4& viewMatrix, const glm::mat4& projec
 	glm::vec4 projectionVector = glm::vec4(projectionMatrix[0][0], projectionMatrix[1][1], projectionMatrix[2][2], projectionMatrix[3][2]);
 	glm::vec3 lightDirectionViewSpace = glm::vec3(viewMatrix * glm::vec4(_lightDirection, 0.0));
 	
-	glUseProgram(_screenquad.program()->id());
-	glUniform3fv(_screenquad.program()->uniform("lightDirection"), 1,  &lightDirectionViewSpace[0]);
-	glUniform3fv(_screenquad.program()->uniform("lightColor"), 1,  &_color[0]);
+	glUseProgram(_program->id());
+	glUniform3fv(_program->uniform("lightDirection"), 1,  &lightDirectionViewSpace[0]);
+	glUniform3fv(_program->uniform("lightColor"), 1,  &_color[0]);
 	// Projection parameter for position reconstruction.
-	glUniform4fv(_screenquad.program()->uniform("projectionMatrix"), 1, &(projectionVector[0]));
-	glUniformMatrix4fv(_screenquad.program()->uniform("viewToLight"), 1, GL_FALSE, &viewToLight[0][0]);
-	glUniform1i(_screenquad.program()->uniform("castShadow"), _castShadows);
+	glUniform4fv(_program->uniform("projectionMatrix"), 1, &(projectionVector[0]));
+	glUniformMatrix4fv(_program->uniform("viewToLight"), 1, GL_FALSE, &viewToLight[0][0]);
+	glUniform1i(_program->uniform("castShadow"), _castShadows);
 
-	_screenquad.draw();
+	ScreenQuad::draw(_textures);
 
 }
 

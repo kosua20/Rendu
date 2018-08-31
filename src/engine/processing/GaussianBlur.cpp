@@ -2,22 +2,32 @@
 
 
 GaussianBlur::GaussianBlur(unsigned int width, unsigned int height, unsigned int depth, GLuint format, GLuint type, GLuint preciseFormat) : Blur() {
-	_passthrough.init("passthrough");
-	_blurScreen.init("blur");
+	_passthroughProgram = Resources::manager().getProgram("passthrough");
+	_passthroughProgram->registerTexture("screenTexture", 0);
+	_blurProgram = Resources::manager().getProgram2D("blur");
+	_blurProgram->registerTexture("screenTexture", 0);
 	
 	// Create a series of framebuffers smaller and smaller.
 	_frameBuffers = std::vector<std::shared_ptr<Framebuffer>>(depth);
 	_frameBuffersBlur = std::vector<std::shared_ptr<Framebuffer>>(depth);
-	std::map<std::string, GLuint> textures;
+	
+	std::vector<std::string> textureNames(depth);
+	_textures.resize(depth);
+	
 	for(size_t i = 0; i < (size_t)depth; ++i){
 		_frameBuffers[i] = std::make_shared<Framebuffer>((unsigned int)(width/std::pow(2,i)), (unsigned int)(height/std::pow(2,i)), format, type, preciseFormat, GL_LINEAR, GL_CLAMP_TO_EDGE, false);
 		_frameBuffersBlur[i] = std::make_shared<Framebuffer>((unsigned int)(width/std::pow(2,i)), (unsigned int)(height/std::pow(2,i)), format, type, preciseFormat, GL_LINEAR, GL_CLAMP_TO_EDGE, false);
-		textures["texture" + std::to_string(i)] = _frameBuffers[i]->textureId();
+		_textures[i] = _frameBuffers[i]->textureId();
+		textureNames[i] = "texture" + std::to_string(i);
+		
 	}
 
 	// Final combining buffer.
 	if (_frameBuffers.size() > 1) {
-		_combineScreen.init(textures, "blur-combine-" + std::to_string(_frameBuffers.size()));
+		const std::string combineProgramName = "blur-combine-" + std::to_string(_frameBuffers.size());
+		_combineProgram = Resources::manager().getProgram2D(combineProgramName);
+		_combineProgram->registerTextures(textureNames);
+		
 		_finalFramebuffer = std::make_shared<Framebuffer>(width, height, format, type, preciseFormat, GL_LINEAR, GL_CLAMP_TO_EDGE, false);
 		_finalTexture = _finalFramebuffer->textureId();
 	} else {
@@ -38,7 +48,8 @@ void GaussianBlur::process(const GLuint textureId) {
 	_frameBuffers[0]->bind();
 	_frameBuffers[0]->setViewport();
 	glClear(GL_COLOR_BUFFER_BIT);
-	_passthrough.draw(textureId);
+	glUseProgram(_passthroughProgram->id());
+	ScreenQuad::draw(textureId);
 	_frameBuffers[0]->unbind();
 	
 	// Then iterate over all framebuffers, cascading down the texture.
@@ -46,7 +57,8 @@ void GaussianBlur::process(const GLuint textureId) {
 		_frameBuffers[i]->bind();
 		_frameBuffers[i]->setViewport();
 		glClear(GL_COLOR_BUFFER_BIT);
-		_passthrough.draw(_frameBuffers[i-1]->textureId());
+		glUseProgram(_passthroughProgram->id());
+		ScreenQuad::draw(_frameBuffers[i-1]->textureId());
 		_frameBuffers[i]->unbind();
 	}
 	
@@ -55,8 +67,9 @@ void GaussianBlur::process(const GLuint textureId) {
 		_frameBuffersBlur[i]->bind();
 		_frameBuffersBlur[i]->setViewport();
 		glClear(GL_COLOR_BUFFER_BIT);
-		const glm::vec2 invResolution(0.0f, 1.2f/(float)_frameBuffersBlur[i]->height());
-		_blurScreen.draw(_frameBuffers[i]->textureId(), invResolution);
+		glUseProgram(_blurProgram->id());
+		glUniform2f(_blurProgram->uniform("fetchOffset"), 0.0f, 1.2f/(float)_frameBuffersBlur[i]->height());
+		ScreenQuad::draw(_frameBuffers[i]->textureId());
 		_frameBuffersBlur[i]->unbind();
 	}
 	// Blur horizontally each framebufferBlur back into frameBuffers.
@@ -64,8 +77,9 @@ void GaussianBlur::process(const GLuint textureId) {
 		_frameBuffers[i]->bind();
 		_frameBuffers[i]->setViewport();
 		glClear(GL_COLOR_BUFFER_BIT);
-		const glm::vec2 invResolution(1.2f/(float)_frameBuffers[i]->width(), 0.0f);
-		_blurScreen.draw(_frameBuffersBlur[i]->textureId(), invResolution);
+		glUseProgram(_blurProgram->id());
+		glUniform2f(_blurProgram->uniform("fetchOffset"), 1.2f/(float)_frameBuffers[i]->width(), 0.0f);
+		ScreenQuad::draw(_frameBuffersBlur[i]->textureId());
 		_frameBuffers[i]->unbind();
 	}
 	
@@ -77,7 +91,8 @@ void GaussianBlur::process(const GLuint textureId) {
 	_finalFramebuffer->bind();
 	_finalFramebuffer->setViewport();
 	glClear(GL_COLOR_BUFFER_BIT);
-	_combineScreen.draw();
+	glUseProgram(_combineProgram->id());
+	ScreenQuad::draw(_textures);
 	_finalFramebuffer->unbind();
 
 }
@@ -90,8 +105,6 @@ void GaussianBlur::clean() const {
 	for (auto & frameBuffer : _frameBuffersBlur) {
 		frameBuffer->clean();
 	}
-	_blurScreen.clean();
-	_combineScreen.clean();
 	Blur::clean();
 }
 

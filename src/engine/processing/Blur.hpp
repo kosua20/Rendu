@@ -28,7 +28,7 @@ protected:
 	
 	Blur();
 	GLuint _finalTexture;
-	ScreenQuad _passthrough;
+	std::shared_ptr<ProgramInfos> _passthroughProgram;
 	
 };
 

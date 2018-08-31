@@ -4,7 +4,7 @@
 #include "../../ScreenQuad.hpp"
 #include <map>
 
-class AmbientQuad : public ScreenQuad {
+class AmbientQuad {
 
 public:
 
@@ -27,11 +27,13 @@ private:
 	
 	GLuint setupSSAO();
 	
-	GLuint _texCubeMap;
-	GLuint _texBrdfPrecalc;
-	
-	ScreenQuad _ssaoScreen;
-	
+	std::shared_ptr<ProgramInfos> _program;
+	std::shared_ptr<ProgramInfos> _programSSAO;
+
+	std::vector<GLuint> _textures;
+	GLuint _textureEnv;
+	GLuint _textureBrdf;
+	std::vector<GLuint> _texturesSSAO;
 	std::vector<glm::vec3> _samples;
 	
 };

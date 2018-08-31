@@ -21,7 +21,7 @@ public:
 
 private:
 	
-	ScreenQuad _blurScreen;
+	std::shared_ptr<ProgramInfos> _blurProgram;
 	std::shared_ptr<Framebuffer> _finalFramebuffer;
 	
 };

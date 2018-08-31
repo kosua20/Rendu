@@ -3,7 +3,8 @@
 Blur::~Blur(){}
 
 Blur::Blur(){
-	_passthrough.init("passthrough");
+	_passthroughProgram = Resources::manager().getProgram("passthrough");
+	_passthroughProgram->registerTexture("screenTexture", 0);
 }
 
 void Blur::process(const GLuint ) {
@@ -11,7 +12,8 @@ void Blur::process(const GLuint ) {
 }
 
 void Blur::draw() {
-	_passthrough.draw(_finalTexture);
+	glUseProgram(_passthroughProgram->id());
+	ScreenQuad::draw(_finalTexture);
 }
 
 GLuint Blur::textureId() const {
@@ -19,7 +21,6 @@ GLuint Blur::textureId() const {
 }
 
 void Blur::clean() const {
-	_passthrough.clean();
 }
 
 

@@ -19,7 +19,8 @@ BoxBlur::BoxBlur(unsigned int width, unsigned int height, bool approximate, GLui
 			break;
 	}
 	
-	_blurScreen.init(blur_type_name);
+	_blurProgram = Resources::manager().getProgram2D(blur_type_name);
+	_blurProgram->registerTexture("screenTexture", 0);
 	// Create one framebuffer.
 	_finalFramebuffer = std::make_shared<Framebuffer>(width, height, format, type, preciseFormat, GL_LINEAR, wrapping, false);
 	// Final combining buffer.
@@ -34,14 +35,14 @@ void BoxBlur::process(const GLuint textureId){
 	_finalFramebuffer->bind();
 	_finalFramebuffer->setViewport();
 	glClear(GL_COLOR_BUFFER_BIT);
-	_blurScreen.draw(textureId);
+	glUseProgram(_blurProgram->id());
+	ScreenQuad::draw(textureId);
 	_finalFramebuffer->unbind();
 }
 
 
 /// Clean function
 void BoxBlur::clean() const {
-	_blurScreen.clean();
 	_finalFramebuffer->clean();
 	Blur::clean();
 }
