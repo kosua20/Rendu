@@ -37,10 +37,14 @@ DeferredRenderer::DeferredRenderer(Config & config) : Renderer(config) {
 	glBlendEquation (GL_FUNC_ADD);
 	glBlendFunc(GL_ONE, GL_ONE);
 	
-	_bloomScreen.init(_sceneFramebuffer->textureId(), "bloom");
-	_toneMappingScreen.init(_sceneFramebuffer->textureId(), "tonemap");
-	_fxaaScreen.init(_toneMappingFramebuffer->textureId(), "fxaa");
-	_finalScreen.init(_fxaaFramebuffer->textureId(), "final_screenquad");
+	_bloomProgram = Resources::manager().getProgram2D("bloom");
+	_bloomProgram->registerTexture("screenTexture", 0);
+	_toneMappingProgram = Resources::manager().getProgram2D("tonemap");
+	_toneMappingProgram->registerTexture("screenTexture", 0);
+	_fxaaProgram = Resources::manager().getProgram2D("fxaa");
+	_fxaaProgram->registerTexture("screenTexture", 0);
+	_finalProgram = Resources::manager().getProgram2D("final_screenquad");
+	_finalProgram->registerTexture("screenTexture", 0);
 	
 	std::map<std::string, GLuint> ambientTextures = _gbuffer->textureIds({ TextureType::Albedo, TextureType::Normal, TextureType::Depth, TextureType::Effects });
 	ambientTextures["ssaoTexture"] = _blurSSAOBuffer->textureId();
@@ -182,7 +186,8 @@ void DeferredRenderer::draw() {
 	// --- Bloom selection pass ------
 	_bloomFramebuffer->bind();
 	_bloomFramebuffer->setViewport();
-	_bloomScreen.draw();
+	glUseProgram(_bloomProgram->id());
+	ScreenQuad::draw(_sceneFramebuffer->textureId());
 	_bloomFramebuffer->unbind();
 	
 	// --- Bloom blur pass ------
@@ -200,21 +205,25 @@ void DeferredRenderer::draw() {
 	// --- Tonemapping pass ------
 	_toneMappingFramebuffer->bind();
 	_toneMappingFramebuffer->setViewport();
-	_toneMappingScreen.draw();
+	glUseProgram(_toneMappingProgram->id());
+	ScreenQuad::draw(_sceneFramebuffer->textureId());
 	_toneMappingFramebuffer->unbind();
 	
 	// --- FXAA pass -------
 	// Bind the post-processing framebuffer.
 	_fxaaFramebuffer->bind();
 	_fxaaFramebuffer->setViewport();
-	_fxaaScreen.draw( invRenderSize );
+	glUseProgram(_fxaaProgram->id());
+	glUniform2fv(_fxaaProgram->uniform("inverseScreenSize"), 1, &(invRenderSize[0]));
+	ScreenQuad::draw(_toneMappingFramebuffer->textureId());
 	_fxaaFramebuffer->unbind();
 	
 	// --- Final pass -------
 	// We now render a full screen quad in the default framebuffer, using sRGB space.
 	glEnable(GL_FRAMEBUFFER_SRGB);
 	glViewport(0, 0, GLsizei(_config.screenResolution[0]), GLsizei(_config.screenResolution[1]));
-	_finalScreen.draw();
+	glUseProgram(_finalProgram->id());
+	ScreenQuad::draw(_fxaaFramebuffer->textureId());
 	glDisable(GL_FRAMEBUFFER_SRGB);
 	glEnable(GL_DEPTH_TEST);
 	
@@ -242,10 +251,6 @@ void DeferredRenderer::clean() const {
 	Renderer::clean();
 	// Clean objects.
 	_ambientScreen.clean();
-	_fxaaScreen.clean();
-	_bloomScreen.clean();
-	_toneMappingScreen.clean();
-	_finalScreen.clean();
 	_gbuffer->clean();
 	_blurBuffer->clean();
 	_blurSSAOBuffer->clean();

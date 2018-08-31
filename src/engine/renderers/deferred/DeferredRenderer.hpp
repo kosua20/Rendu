@@ -56,10 +56,10 @@ private:
 	std::shared_ptr<Framebuffer> _fxaaFramebuffer;
 	
 	AmbientQuad _ambientScreen;
-	ScreenQuad _bloomScreen;
-	ScreenQuad _toneMappingScreen;
-	ScreenQuad _fxaaScreen;
-	ScreenQuad _finalScreen;
+	std::shared_ptr<ProgramInfos> _bloomProgram;
+	std::shared_ptr<ProgramInfos> _toneMappingProgram;
+	std::shared_ptr<ProgramInfos> _fxaaProgram;
+	std::shared_ptr<ProgramInfos> _finalProgram;
 	
 	std::shared_ptr<Scene> _scene;
 	

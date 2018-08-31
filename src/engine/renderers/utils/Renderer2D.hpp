@@ -37,7 +37,7 @@ public:
 private:
 	
 	std::shared_ptr<Framebuffer> _resultFramebuffer;
-	ScreenQuad _resultScreen;
+	std::shared_ptr<ProgramInfos> _resultProgram;
 	
 };
 

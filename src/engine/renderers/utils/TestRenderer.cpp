@@ -17,8 +17,9 @@ TestRenderer::TestRenderer(Config & config) : Renderer(config) {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glDisable(GL_BLEND);
 	checkGLError();
-
-	_screenQuad.init("passthrough");
+	
+	_program = Resources::manager().getProgram("passthrough");
+	_program->registerTexture("screenTexture", 0);
 	checkGLError();
 	
 }
@@ -31,13 +32,15 @@ void TestRenderer::draw() {
 	glClear(GL_COLOR_BUFFER_BIT);
 	glDisable(GL_DEPTH_TEST);
 	_framebuffer->setViewport();
-	_screenQuad.draw(Resources::manager().getTexture("desk_albedo").id);
+	glUseProgram(_program->id());
+	ScreenQuad::draw(Resources::manager().getTexture("desk_albedo").id);
 	_framebuffer->unbind();
 	
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glEnable(GL_FRAMEBUFFER_SRGB);
 	glViewport(0, 0, GLsizei(_config.screenResolution[0]), GLsizei(_config.screenResolution[1]));
-	_screenQuad.draw(_framebuffer->textureId());
+	glUseProgram(_program->id());
+	ScreenQuad::draw(_framebuffer->textureId());
 	glDisable(GL_FRAMEBUFFER_SRGB);
 	
 }
@@ -60,7 +63,6 @@ void TestRenderer::clean() const {
 	Renderer::clean();
 	// Clean objects.
 	_framebuffer->clean();
-	_screenQuad.clean();
 }
 
 

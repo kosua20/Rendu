@@ -43,9 +43,7 @@ private:
 	Camera _camera;
 
 	std::shared_ptr<Framebuffer> _framebuffer;
-	
-	
-	ScreenQuad _screenQuad;
+	std::shared_ptr<ProgramInfos> _program;
 	
 };
 
