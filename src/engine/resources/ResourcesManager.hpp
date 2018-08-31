@@ -47,6 +47,8 @@ public:
 	
 	const std::shared_ptr<ProgramInfos> getProgram(const std::string & name, const std::string & vertexName, const std::string & fragmentName, const std::string & geometryName = "");
 	
+	const std::shared_ptr<ProgramInfos> getProgram2D(const std::string & name);
+	
 	void reload();
 	
 	static char * loadRawDataFromExternalFile(const std::string & path, size_t & size);

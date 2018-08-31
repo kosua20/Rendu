@@ -374,6 +374,11 @@ const std::shared_ptr<ProgramInfos> Resources::getProgram(const std::string & na
 	return _programs[name];
 }
 
+
+const std::shared_ptr<ProgramInfos> Resources::getProgram2D(const std::string & name){
+	return getProgram(name, "passthrough", name);
+}
+
 void Resources::reload() {
 	for (auto & prog : _programs) {
 		prog.second->reload();
