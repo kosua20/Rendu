@@ -36,7 +36,7 @@ public:
 	/// The ID to the texture containing the result of the framebuffer pass.
 	const GLuint textureId(const TextureType& type) { return _textureIds[type]; }
 	
-	const std::map<std::string, GLuint> textureIds(const std::vector<TextureType>& included = std::vector<TextureType>()) const ;
+	const std::vector<GLuint> textureIds(const std::vector<TextureType>& included = std::vector<TextureType>()) const ;
 	
 	/// The framebuffer size (can be different from the default renderer size).
 	const unsigned int width() const { return _width; }

@@ -11,7 +11,7 @@ public:
 	
 	PointLight(const glm::vec3& worldPosition, const glm::vec3& color, float radius, const BoundingBox & sceneBox);
 	
-	void init(const std::map<std::string, GLuint>& textureIds);
+	void init(const std::vector<GLuint>& textureIds);
 	
 	void draw( const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix, const glm::vec2& invScreenSize ) const;
 	

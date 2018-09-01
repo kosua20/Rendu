@@ -70,28 +70,19 @@ void Gbuffer::unbind() const {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-const std::map<std::string, GLuint> Gbuffer::textureIds(const std::vector<TextureType>& included) const {
+const std::vector<GLuint> Gbuffer::textureIds(const std::vector<TextureType>& included) const {
 	
-	bool includeAll = (included.size() == 0);
+	//bool includeAll = (included.size() == 0);
+	std::vector<GLuint> texs;
+	texs.reserve(included.size());
 	
-	std::map<std::string, GLuint> texs;
-	for(auto& tex : _textureIds){
-		
-		// Skip if not included
-		if(!includeAll && (std::find(included.cbegin(), included.cend(), tex.first) == included.cend())){
-			continue;
+	for(const auto & texRequest : included){
+		if(_textureIds.count(texRequest) > 0){
+			texs.push_back(_textureIds.at(texRequest));
+		} else {
+			Log::Warning() << "Missing texture in Gbuffer." << std::endl;
+			texs.push_back(0);
 		}
-		std::string name = "albedoTexture";
-		if(tex.first == TextureType::Normal){
-			name = "normalTexture";
-		} else if (tex.first == TextureType::Depth){
-			name = "depthTexture";
-		} else if (tex.first == TextureType::Effects){
-			name = "effectsTexture";
-		}
-		
-		texs[name] = tex.second;
-		
 	}
 	return texs;
 }

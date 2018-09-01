@@ -20,23 +20,15 @@ PointLight::PointLight(const glm::vec3& worldPosition, const glm::vec3& color, f
 	
 }
 
-void PointLight::init(const std::map<std::string, GLuint>& textureIds){
+void PointLight::init(const std::vector<GLuint>& textureIds){
 	_program = Resources::manager().getProgram("point_light", "object_basic", "point_light");
 	_sphere = Resources::manager().getMesh("light_sphere");
 	// Setup the framebuffer.
 	// TODO: enable only if the light is a shadow caster.
 	_shadowFramebuffer = std::make_shared<FramebufferCube>(512, GL_RG,GL_FLOAT, GL_RG16F, GL_LINEAR, true);
 	
-	std::map<std::string, GLuint> textures = textureIds;
-	textures["shadowMap"] = _shadowFramebuffer->textureId();
-	
-	GLint currentTextureSlot = 0;
-	_textureIds.clear();
-	for(auto& texture : textures){
-		_textureIds.push_back(texture.second);
-		_program->registerTexture(texture.first, currentTextureSlot);
-		currentTextureSlot += 1;
-	}
+	_textureIds = textureIds;
+	_textureIds.emplace_back(_shadowFramebuffer->textureId());
 	// Load the shaders
 	_programDepth = Resources::manager().getProgram("object_layer_depth", "object_layer", "light_shadow_linear", "object_layer");
 	checkGLError();

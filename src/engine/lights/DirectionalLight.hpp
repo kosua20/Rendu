@@ -16,7 +16,7 @@ public:
 	
 	DirectionalLight(const glm::vec3& worldDirection, const glm::vec3& color, const BoundingBox & sceneBox);
 	
-	void init(const std::map<std::string, GLuint>& textureIds);
+	void init(const std::vector<GLuint>& textureIds);
 	
 	void draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix, const glm::vec2& invScreenSize = glm::vec2(0.0f)) const;
 	

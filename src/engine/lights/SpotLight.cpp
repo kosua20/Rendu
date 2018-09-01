@@ -14,24 +14,17 @@ SpotLight::SpotLight(const glm::vec3& worldPosition, const glm::vec3& worldDirec
 }
 
 
-void SpotLight::init(const std::map<std::string, GLuint>& textureIds){
+void SpotLight::init(const std::vector<GLuint>& textureIds){
 	// Setup the framebuffer.
 	_shadowPass = std::make_shared<Framebuffer>(512, 512, GL_RG,GL_FLOAT, GL_RG16F, GL_LINEAR, GL_CLAMP_TO_BORDER, true);
 	_blur = std::make_shared<BoxBlur>(512, 512, false, GL_RG, GL_FLOAT, GL_RG16F, GL_CLAMP_TO_BORDER);
 	
-	_program = Resources::manager().getProgram("spot_light", "object_basic", "spot_light");
 	_cone = Resources::manager().getMesh("light_cone");
-	std::map<std::string, GLuint> textures = textureIds;
-	textures["shadowMap"] = _blur->textureId();
+	_textureIds = textureIds;
+	_textureIds.emplace_back(_blur->textureId());
 	
-	GLint currentTextureSlot = 0;
-	_textureIds.clear();
-	for(auto& texture : textures){
-		_textureIds.push_back(texture.second);
-		_program->registerTexture(texture.first, currentTextureSlot);
-		currentTextureSlot += 1;
-	}
 	// Load the shaders.
+	_program = Resources::manager().getProgram("spot_light", "object_basic", "spot_light");
 	_programDepth = Resources::manager().getProgram("object_depth", "object_basic", "light_shadow");
 	checkGLError();
 }

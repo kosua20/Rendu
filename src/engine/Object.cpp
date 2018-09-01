@@ -30,12 +30,10 @@ Object::Object(const Object::Type & type, const std::string& meshPath, const std
 	for (unsigned int i = 0; i < texturesPaths.size(); ++i) {
 		const auto & textureName = texturesPaths[i];
 		_textures.push_back(Resources::manager().getTexture(textureName.first, textureName.second));
-		_program->registerTexture("texture" + std::to_string(i), i);
 	}
 	for (unsigned int i = 0; i < cubemapPaths.size(); ++i) {
 		const auto & textureName = cubemapPaths[i];
 		_textures.push_back(Resources::manager().getCubemap(textureName.first, textureName.second));
-		_program->registerTexture("texture" + std::to_string( texturesPaths.size() + i), (unsigned int)texturesPaths.size() + i);
 	}
 	
 	_model = glm::mat4(1.0f);
@@ -58,12 +56,10 @@ Object::Object(std::shared_ptr<ProgramInfos> & program, const std::string& meshP
 	for (unsigned int i = 0; i < texturesPaths.size(); ++i) {
 		const auto & textureName = texturesPaths[i];
 		_textures.push_back(Resources::manager().getTexture(textureName.first, textureName.second));
-		_program->registerTexture("texture" + std::to_string(i), i);
 	}
 	for (unsigned int i = 0; i < cubemapPaths.size(); ++i) {
 		const auto & textureName = cubemapPaths[i];
 		_textures.push_back(Resources::manager().getCubemap(textureName.first, textureName.second));
-		_program->registerTexture("texture" + std::to_string( texturesPaths.size() + i), (unsigned int)texturesPaths.size() + i);
 	}
 	_model = glm::mat4(1.0f);
 	checkGLError();

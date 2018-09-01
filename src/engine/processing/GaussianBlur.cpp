@@ -3,9 +3,7 @@
 
 GaussianBlur::GaussianBlur(unsigned int width, unsigned int height, unsigned int depth, GLuint format, GLuint type, GLuint preciseFormat) : Blur() {
 	_passthroughProgram = Resources::manager().getProgram("passthrough");
-	_passthroughProgram->registerTexture("screenTexture", 0);
 	_blurProgram = Resources::manager().getProgram2D("blur");
-	_blurProgram->registerTexture("screenTexture", 0);
 	
 	// Create a series of framebuffers smaller and smaller.
 	_frameBuffers = std::vector<std::shared_ptr<Framebuffer>>(depth);
@@ -26,8 +24,6 @@ GaussianBlur::GaussianBlur(unsigned int width, unsigned int height, unsigned int
 	if (_frameBuffers.size() > 1) {
 		const std::string combineProgramName = "blur-combine-" + std::to_string(_frameBuffers.size());
 		_combineProgram = Resources::manager().getProgram2D(combineProgramName);
-		_combineProgram->registerTextures(textureNames);
-		
 		_finalFramebuffer = std::make_shared<Framebuffer>(width, height, format, type, preciseFormat, GL_LINEAR, GL_CLAMP_TO_EDGE, false);
 		_finalTexture = _finalFramebuffer->textureId();
 	} else {

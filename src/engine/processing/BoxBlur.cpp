@@ -20,7 +20,6 @@ BoxBlur::BoxBlur(unsigned int width, unsigned int height, bool approximate, GLui
 	}
 	
 	_blurProgram = Resources::manager().getProgram2D(blur_type_name);
-	_blurProgram->registerTexture("screenTexture", 0);
 	// Create one framebuffer.
 	_finalFramebuffer = std::make_shared<Framebuffer>(width, height, format, type, preciseFormat, GL_LINEAR, wrapping, false);
 	// Final combining buffer.

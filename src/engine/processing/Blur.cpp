@@ -4,7 +4,6 @@ Blur::~Blur(){}
 
 Blur::Blur(){
 	_passthroughProgram = Resources::manager().getProgram("passthrough");
-	_passthroughProgram->registerTexture("screenTexture", 0);
 }
 
 void Blur::process(const GLuint ) {
