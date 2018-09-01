@@ -7,26 +7,20 @@ AmbientQuad::AmbientQuad(){}
 
 AmbientQuad::~AmbientQuad(){}
 
-void AmbientQuad::init(std::map<std::string, GLuint> textureIds){
+void AmbientQuad::init(std::vector<GLuint> textureIds){
 	
 	
 	_program = Resources::manager().getProgram2D("ambient");
 	// Load texture.
 	_textureBrdf = Resources::manager().getTexture("brdf-precomputed", false).id;
 	
-	// Ambient pass: needs the albedo, the normals, the effect and the AO result
-	const std::vector<std::string> textureNames = { "albedoTexture", "normalTexture", "depthTexture", "effectsTexture", "ssaoTexture"};
-	_textures = { textureIds["albedoTexture"], textureIds["normalTexture"], textureIds["depthTexture"], textureIds["effectsTexture"], textureIds["ssaoTexture"]};
-	_program->registerTextures(textureNames);
-	_program->registerTexture("textureCubeMap", _textures.size());
-	_program->registerTexture("brdfPrecalc", _textures.size()+1);
+	// Ambient pass: needs the albedo, the normals, the depth, the effects and the AO result
+	_textures = textureIds;
 	
 	// Setup SSAO data, get back noise texture id, add it to the gbuffer outputs.
 	GLuint noiseTextureID = setupSSAO();
 	_programSSAO = Resources::manager().getProgram2D("ssao");
-	std::vector<std::string> ssaoTextureNames = { "depthTexture", "normalTexture", "noiseTexture" };
-	_texturesSSAO = { textureIds["depthTexture"], textureIds["normalTexture"], noiseTextureID };
-	_programSSAO->registerTextures(ssaoTextureNames);
+	_texturesSSAO = { _textures[2], _textures[1], noiseTextureID };
 	// Now that we have the program we can send the samples to the GPU too.
 	_programSSAO->cacheUniformArray("samples", _samples);
 	
@@ -88,7 +82,7 @@ void AmbientQuad::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionM
 	
 	glUniformMatrix4fv(_program->uniform("inverseV"), 1, GL_FALSE, &invView[0][0]);
 	glUniform4fv(_program->uniform("projectionMatrix"), 1, &(projectionVector[0]));
-	// Cubrmaps.
+	// Cubemaps.
 	glActiveTexture(GL_TEXTURE0 + (unsigned int)_textures.size());
 	glBindTexture(GL_TEXTURE_CUBE_MAP, _textureEnv);
 	glActiveTexture(GL_TEXTURE0 + (unsigned int)_textures.size() + 1);

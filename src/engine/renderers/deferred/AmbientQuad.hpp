@@ -12,7 +12,7 @@ public:
 
 	~AmbientQuad();
 	
-	void init(std::map<std::string, GLuint> textureIds);
+	void init(std::vector<GLuint> textureIds);
 	
 	void setSceneParameters(const GLuint reflectionMap, const std::vector<glm::vec3> & irradiance);
 	
