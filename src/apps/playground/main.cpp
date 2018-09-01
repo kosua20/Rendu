@@ -4,6 +4,7 @@
 #include "input/ControllableCamera.hpp"
 #include "helpers/InterfaceUtilities.hpp"
 #include "resources/ResourcesManager.hpp"
+#include "ScreenQuad.hpp"
 #include "Config.hpp"
 
 /// Callbacks
@@ -127,10 +128,25 @@ int main(int argc, char** argv) {
 	// Initialize random generator;
 	Random::seed();
 	// Query the renderer identifier, and the supported OpenGL version.
+	const GLubyte* vendorString = glGetString(GL_VENDOR);
 	const GLubyte* rendererString = glGetString(GL_RENDERER);
 	const GLubyte* versionString = glGetString(GL_VERSION);
+	const GLubyte* glslVersionString = glGetString(GL_SHADING_LANGUAGE_VERSION);
+	Log::Info() << Log::OpenGL << "Vendor: " << vendorString << "." << std::endl;
 	Log::Info() << Log::OpenGL << "Internal renderer: " << rendererString << "." << std::endl;
-	Log::Info() << Log::OpenGL << "Version supported: " << versionString << "." << std::endl;
+	Log::Info() << Log::OpenGL << "Versions: Driver: " << versionString << ", GLSL: " << glslVersionString << "." << std::endl;
+	
+	// Query the extensions.
+	int extensionCount = 0;
+	glGetIntegerv(GL_NUM_EXTENSIONS, &extensionCount);
+	if(extensionCount>0){
+		Log::Info() << Log::OpenGL << "Extensions detected (" << extensionCount << ")" << std::flush;
+		for(int i = 0; i < extensionCount; ++i){
+			const GLubyte* rendererString = glGetStringi(GL_EXTENSIONS, i);
+			Log::Info() << (i == 0 ? ": " : ", ") << rendererString << std::flush;
+		}
+		Log::Info() << std::endl;
+	}
 	
 	// Default OpenGL state.
 	glEnable(GL_DEPTH_TEST);

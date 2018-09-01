@@ -19,7 +19,6 @@ TestRenderer::TestRenderer(Config & config) : Renderer(config) {
 	checkGLError();
 	
 	_program = Resources::manager().getProgram("passthrough");
-	_program->registerTexture("screenTexture", 0);
 	checkGLError();
 	
 }

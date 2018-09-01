@@ -160,11 +160,9 @@ int main(int argc, char** argv) {
 	
 	// Atmosphere screen quad.
 	std::shared_ptr<ProgramInfos> atmosphereProgram = Resources::manager().getProgram2D("atmosphere");
-	atmosphereProgram->registerTexture("screenTexture", 0);
 	
 	// Final tonemapping screen quad.
 	std::shared_ptr<ProgramInfos> tonemapProgram = Resources::manager().getProgram2D("tonemap");
-	tonemapProgram->registerTexture("screenTexture", 0);
 	
 	// Sun direction.
 	glm::vec3 lightDirection(0.437f,0.082f,-0.896f);

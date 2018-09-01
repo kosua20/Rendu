@@ -38,16 +38,13 @@ DeferredRenderer::DeferredRenderer(Config & config) : Renderer(config) {
 	glBlendFunc(GL_ONE, GL_ONE);
 	
 	_bloomProgram = Resources::manager().getProgram2D("bloom");
-	_bloomProgram->registerTexture("screenTexture", 0);
 	_toneMappingProgram = Resources::manager().getProgram2D("tonemap");
-	_toneMappingProgram->registerTexture("screenTexture", 0);
 	_fxaaProgram = Resources::manager().getProgram2D("fxaa");
-	_fxaaProgram->registerTexture("screenTexture", 0);
 	_finalProgram = Resources::manager().getProgram2D("final_screenquad");
-	_finalProgram->registerTexture("screenTexture", 0);
 	
-	std::map<std::string, GLuint> ambientTextures = _gbuffer->textureIds({ TextureType::Albedo, TextureType::Normal, TextureType::Depth, TextureType::Effects });
-	ambientTextures["ssaoTexture"] = _blurSSAOBuffer->textureId();
+	std::vector<GLuint> ambientTextures = _gbuffer->textureIds({ TextureType::Albedo, TextureType::Normal, TextureType::Depth, TextureType::Effects });
+	// Add the SSAO result.
+	ambientTextures.push_back(_blurSSAOBuffer->textureId());
 	_ambientScreen.init(ambientTextures);
 	
 	checkGLError();
@@ -63,7 +60,7 @@ void DeferredRenderer::setScene(std::shared_ptr<Scene> scene){
 	
 	_ambientScreen.setSceneParameters(_scene->backgroundReflection, _scene->backgroundIrradiance);
 	
-	const std::vector<TextureType> includedTextures = { TextureType::Albedo, TextureType::Depth, TextureType::Normal, TextureType::Effects };
+	const std::vector<TextureType> includedTextures = { TextureType::Albedo, TextureType::Normal, TextureType::Depth, TextureType::Effects };
 	for(auto& dirLight : _scene->directionalLights){
 		dirLight.init(_gbuffer->textureIds(includedTextures));
 	}
