@@ -95,13 +95,90 @@ void replace(std::string & source, const std::string& fromString, const std::str
 	}
 }
 
-GLuint GLUtilities::loadShader(const std::string & prog, GLuint type){
-	GLuint id;
+GLuint GLUtilities::loadShader(const std::string & prog, GLuint type, std::map<std::string, int> & bindings){
+	// We need to detect texture slots and store them, to avoid having to register them in
+	// the rest of the code (object, renderer), while not having support for 'layout(binding=n)' in OpenGL <4.2.
+	std::stringstream inputLines(prog);
+	std::vector<std::string> outputLines;
+	std::string line;
+	bool isInMultiLineComment = false;
+	while(std::getline(inputLines, line)){
+		
+		// Comment handling.
+		const std::string::size_type commentPosBegin = line.find("/*");
+		const std::string::size_type commentPosEnd = line.rfind("*/");
+		const std::string::size_type commentMonoPos = line.find("//");
+		// We suppose no multi-line comment nesting, that way we can tackle them linearly.
+		if(commentPosBegin != std::string::npos && commentPosEnd != std::string::npos){
+			// Both token exist.
+			// Either this is "end begin", in which case we are still in a comment.
+			// Or this is "begin end", ie a single ligne comment.
+			isInMultiLineComment = commentPosBegin > commentPosEnd;
+		} else if(commentPosEnd != std::string::npos){
+			// Only an end token.
+			isInMultiLineComment = false;
+		} else if(commentPosBegin != std::string::npos){
+			// Only a begin token.
+			isInMultiLineComment = true;
+		}
+		
+		// Find a line containing "layout...binding...uniform...sampler..."
+		const std::string::size_type layoutPos = line.find("layout");
+		const std::string::size_type bindingPos = line.find("binding");
+		const std::string::size_type uniformPos = line.find("uniform");
+		const std::string::size_type samplerPos = line.find("sampler");
+		
+		const bool isNotALayoutBindingUniformSampler = (layoutPos == std::string::npos || bindingPos == std::string::npos || uniformPos == std::string::npos || samplerPos == std::string::npos);
+		const bool isALayoutInsideAMultiLineComment = isInMultiLineComment && (layoutPos > commentPosBegin || samplerPos < commentPosEnd);
+		const bool isALayoutInsideASingleLineComment = commentMonoPos != std::string::npos && layoutPos > commentMonoPos;
+		
+		// Detect sampler with no bindings.
+		const bool isAUniformSamplerWithNoBinding = samplerPos != std::string::npos && uniformPos != std::string::npos && bindingPos == std::string::npos;
+		if(isAUniformSamplerWithNoBinding){
+			const std::string::size_type endPosName  = line.find_first_of(";")-1;
+			const std::string::size_type startPosName  = line.find_last_of(" ", endPosName)+1;
+			const std::string name = line.substr(startPosName, endPosName - startPosName + 1);
+			Log::Warning() << Log::OpenGL << "Missing binding info for sampler \"" << name << "\"." << std::endl;
+			outputLines.push_back(line);
+			continue;
+		}
+		
+		if(isNotALayoutBindingUniformSampler || isALayoutInsideAMultiLineComment || isALayoutInsideASingleLineComment) {
+			// We don't modify the line.
+			outputLines.push_back(line);
+			continue;
+		}
+		
+		// Layout on basic uniforms is not really used < 4.2, so we can be quite aggressive in our extraction.
+		const std::string::size_type firstSlotPos = line.find_first_of("0123456789", bindingPos);
+		const std::string::size_type lastSlotPos = line.find_first_not_of("0123456789", firstSlotPos)-1;
+		const unsigned int slot = std::stoi(line.substr(firstSlotPos, lastSlotPos - firstSlotPos + 1));
+			
+		const std::string::size_type endPosName  = line.find_first_of(";", lastSlotPos)-1;
+		const std::string::size_type startPosName  = line.find_last_of(" ", endPosName)+1;
+		const std::string name = line.substr(startPosName, endPosName - startPosName + 1);
+		
+		const std::string::size_type endSamplerPos = line.find_first_of(" ", samplerPos) - 1;
+		const std::string samplerType = line.substr(samplerPos, endSamplerPos - samplerPos + 1);
+		const std::string outputLine = "uniform " + samplerType + " " + name + ";";
+		outputLines.push_back(outputLine);
+		
+		if(bindings.count(name) > 0 && bindings[name] != slot){
+			Log::Warning() << Log::OpenGL << "Inconsistent sampler location between linked shaders for \"" << name << "\"." << std::endl;
+		}
+		bindings[name] = slot;
+		Log::Info() << Log::Verbose << Log::OpenGL << "Detected texture (" << name << ", " << slot << ") => " << outputLine << std::endl;
+	}
+	std::string outputProg;
+	for(const auto & outputLine : outputLines){
+		outputProg.append(outputLine + "\n");
+	}
+	
 	// Create shader object.
-	id = glCreateShader(type);
+	GLuint id = glCreateShader(type);
 	checkGLError();
 	// Setup string as source.
-	const char * shaderProg = prog.c_str();
+	const char * shaderProg = outputProg.c_str();
 	glShaderSource(id,1,&shaderProg,(const GLint*)NULL);
 	// Compile the shader on the GPU.
 	glCompileShader(id);
@@ -128,28 +205,30 @@ GLuint GLUtilities::loadShader(const std::string & prog, GLuint type){
 			<< " shader failed to compile:" << std::endl
 			<< infoLogString << std::endl;
 	}
-	// Return the id to the successfuly compiled  shader program.
+	// Return the id to the successfuly compiled shader program.
 	return id;
 }
 
-GLuint GLUtilities::createProgram(const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, const std::string & debugInfos){
+GLuint GLUtilities::createProgram(const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, std::map<std::string, int> & bindings, const std::string & debugInfos){
 	GLuint vp(0), fp(0), gp(0), id(0);
 	id = glCreateProgram();
 	checkGLError();
-
+	
+	Log::Info() << Log::Verbose << Log::OpenGL << "Compiling " << debugInfos << "." << std::endl;
+	
 	// If vertex program code is given, compile it.
 	if (!vertexContent.empty()) {
-		vp = loadShader(vertexContent, GL_VERTEX_SHADER);
+		vp = loadShader(vertexContent, GL_VERTEX_SHADER, bindings);
 		glAttachShader(id,vp);
 	}
 	// If fragment program code is given, compile it.
 	if (!fragmentContent.empty()) {
-		fp = loadShader(fragmentContent, GL_FRAGMENT_SHADER);
+		fp = loadShader(fragmentContent, GL_FRAGMENT_SHADER, bindings);
 		glAttachShader(id,fp);
 	}
 	// If geometry program code is given, compile it.
 	if (!geometryContent.empty()) {
-		gp = loadShader(geometryContent, GL_GEOMETRY_SHADER);
+		gp = loadShader(geometryContent, GL_GEOMETRY_SHADER, bindings);
 		glAttachShader(id,gp);
 	}
 

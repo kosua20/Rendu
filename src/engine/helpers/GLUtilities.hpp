@@ -1,5 +1,7 @@
 #ifndef GLUtilities_h
 #define GLUtilities_h
+#include <map>
+
 #include "../Common.hpp"
 #include "../resources/MeshUtilities.hpp"
 #include "../Framebuffer.hpp"
@@ -44,7 +46,7 @@ class GLUtilities {
 	
 private:
 	/// Load a shader of the given type from a string
-	static GLuint loadShader(const std::string & prog, GLuint type);
+	static GLuint loadShader(const std::string & prog, GLuint type, std::map<std::string, int> & bindings);
 	
 	static void savePixels(const GLenum type, const GLenum format, const unsigned int width, const unsigned int height, const unsigned int components, const std::string & path, const bool flip, const bool ignoreAlpha);
 	
@@ -52,7 +54,7 @@ public:
 	
 	// Program setup.
 	/// Create a GLProgram using the shader code contained in the given strings.
-	static GLuint createProgram(const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, const std::string & debugInfos);
+	static GLuint createProgram(const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, std::map<std::string, int> & bindings, const std::string & debugInfos);
 	
 	// Texture loading.
 	/// 2D texture.

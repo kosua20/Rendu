@@ -8,7 +8,6 @@
 ProgramInfos::ProgramInfos(){
 	_id = 0;
 	_uniforms.clear();
-	_textures.clear();
 }
 
 ProgramInfos::ProgramInfos(const std::string & vertexName, const std::string & fragmentName, const std::string & geometryName){
@@ -16,13 +15,14 @@ ProgramInfos::ProgramInfos(const std::string & vertexName, const std::string & f
 	_fragmentName = fragmentName;
 	_geometryName = geometryName;
 	
+	std::map<std::string, int> bindings;
 	const std::string vertexContent = Resources::manager().getShader(_vertexName, Resources::Vertex);
 	const std::string fragmentContent = Resources::manager().getShader(_fragmentName, Resources::Fragment);
 	const std::string geometryContent = _geometryName.empty() ? "" : Resources::manager().getShader(_geometryName, Resources::Geometry);
 	const std::string debugName = "(" + _vertexName + ", " + (_geometryName.empty() ? "" : (_geometryName + ", ")) + _fragmentName + ")";
-	_id = GLUtilities::createProgram(vertexContent, fragmentContent, geometryContent, debugName);
+	
+	_id = GLUtilities::createProgram(vertexContent, fragmentContent, geometryContent, bindings, debugName);
 	_uniforms.clear();
-	_textures.clear();
 	
 	// Get the number of active uniforms and their maximum length.
 	GLint count = 0;
@@ -57,10 +57,14 @@ ProgramInfos::ProgramInfos(const std::string & vertexName, const std::string & f
 			}
 		}
 	}
+	// Register texture slots.
+	for(auto& texture : bindings){
+		glUniform1i(_uniforms[texture.first], texture.second);
+		checkGLErrorInfos("Unused texture \"" + texture.first + "\" in program " + debugName + ".");
+	}
+	
 	glUseProgram(0);
 	checkGLError();
-	
-	
 }
 
 
@@ -70,27 +74,6 @@ const GLint ProgramInfos::uniform(const std::string & name) const {
 	}
 	// glUniform*(-1,...) won't trigger any error and will simply be ignored.
 	return -1;
-}
-
-void ProgramInfos::registerTexture(const std::string & name, unsigned int slot){
-	// Store the slot to which the texture will be associated.
-	glUseProgram(_id);
-	_textures[name] = slot;
-	glUniform1i(_uniforms[name], slot);
-	glUseProgram(0);
-	checkGLErrorInfos("Unused texture \"" + name + "\" in program (" + _vertexName + "," + _fragmentName + ").");
-	_nextTextureSlot = std::max((GLuint)slot+1, _nextTextureSlot);
-}
-
-void ProgramInfos::registerTextures(const std::vector<std::string> & textures){
-	glUseProgram(_id);
-	for(auto& texture : textures){
-		_textures[texture] = _nextTextureSlot;
-		glUniform1i(_uniforms[texture], _nextTextureSlot);
-		checkGLErrorInfos("Unused texture \"" + texture + "\" in program (" + _vertexName + "," + _fragmentName + ").");
-		_nextTextureSlot += 1;
-	}
-	glUseProgram(0);
 }
 
 void ProgramInfos::cacheUniformArray(const std::string & name, const std::vector<glm::vec3> & vals) {
@@ -107,20 +90,25 @@ void ProgramInfos::cacheUniformArray(const std::string & name, const std::vector
 
 void ProgramInfos::reload()
 {
+	std::map<std::string, int> bindings;
 	const std::string vertexContent = Resources::manager().getShader(_vertexName, Resources::Vertex);
 	const std::string fragmentContent = Resources::manager().getShader(_fragmentName, Resources::Fragment);
 	const std::string geometryContent = _geometryName.empty() ? "" : Resources::manager().getShader(_geometryName, Resources::Geometry);
 	const std::string debugName = "(" + _vertexName + ", " + (_geometryName.empty() ? "" : (_geometryName + ", ")) + _fragmentName + ")";
-	_id = GLUtilities::createProgram(vertexContent, fragmentContent, geometryContent, debugName);
+	_id = GLUtilities::createProgram(vertexContent, fragmentContent, geometryContent, bindings, debugName);
+	
 	// For each stored uniform, update its location, and update textures slots and cached values.
 	glUseProgram(_id);
 	for (auto & uni : _uniforms) {
 		_uniforms[uni.first] = glGetUniformLocation(_id, uni.first.c_str());
-		if (_textures.count(uni.first) > 0) {
-			glUniform1i(_uniforms[uni.first], _textures[uni.first]);
-		} else if (_vec3s.count(uni.first) > 0) {
+		if (_vec3s.count(uni.first) > 0) {
 			glUniform3fv(_uniforms[uni.first], 1, &(_vec3s[uni.first][0]));
 		}
+	}
+	// Register texture slots.
+	for(auto& texture : bindings){
+		glUniform1i(_uniforms[texture.first], texture.second);
+		checkGLErrorInfos("Unused texture \"" + texture.first + "\" in program " + debugName + ".");
 	}
 	glUseProgram(0);
 }
