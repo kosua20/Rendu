@@ -10,7 +10,7 @@ in INTERFACE {
 #define M_INV_LOG2 1.4426950408889
 #define SAMPLE_COUNT 10000u // Super high sample count to avoid artifacts in bright areas.
 
-uniform samplerCube texture0;
+layout(binding = 0) uniform samplerCube texture0;
 uniform float mimapRoughness;
 // Output: the fragment color
 out vec3 fragColor;

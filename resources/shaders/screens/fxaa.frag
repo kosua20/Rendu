@@ -6,7 +6,7 @@ in INTERFACE {
 } In ;
 
 // Uniforms: the texture, inverse of the screen size, FXAA flag.
-uniform sampler2D screenTexture;
+layout(binding = 0) uniform sampler2D screenTexture;
 uniform vec2 inverseScreenSize;
 
 // Settings for FXAA.

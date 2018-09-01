@@ -6,7 +6,7 @@ in INTERFACE {
 } In ;
 
 // Uniforms: the texture, inverse of the screen size.
-uniform sampler2D screenTexture;
+layout(binding = 0) uniform sampler2D screenTexture;
 
 // Output: the fragment color
 out vec3 fragColor;

@@ -6,10 +6,10 @@ in INTERFACE {
 } In ;
 
 // Uniforms: the textures.
-uniform sampler2D texture0;
-uniform sampler2D texture1;
-uniform sampler2D texture2;
-uniform sampler2D texture3;
+layout(binding = 0) uniform sampler2D texture0;
+layout(binding = 1) uniform sampler2D texture1;
+layout(binding = 2) uniform sampler2D texture2;
+layout(binding = 3) uniform sampler2D texture3;
 
 // Output: the fragment color
 out vec3 fragColor;

@@ -4,11 +4,11 @@
 #define M_PI 3.1415926536
 
 // Uniforms
-uniform sampler2D albedoTexture;
-uniform sampler2D normalTexture;
-uniform sampler2D depthTexture;
-uniform sampler2D effectsTexture;
-uniform samplerCube shadowMap;
+layout(binding = 0) uniform sampler2D albedoTexture;
+layout(binding = 1) uniform sampler2D normalTexture;
+layout(binding = 2) uniform sampler2D depthTexture;
+layout(binding = 3) uniform sampler2D effectsTexture;
+layout(binding = 4) uniform samplerCube shadowMap;
 
 uniform vec2 inverseScreenSize;
 uniform vec4 projectionMatrix;

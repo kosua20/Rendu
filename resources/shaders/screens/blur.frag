@@ -6,7 +6,7 @@ in INTERFACE {
 } In ;
 
 // Uniforms: the texture, inverse of the screen size.
-uniform sampler2D screenTexture;
+layout(binding = 0) uniform sampler2D screenTexture;
 uniform vec2 fetchOffset; // contains the texture coordinates offset along the correct axis.
 
 // Output: the fragment color

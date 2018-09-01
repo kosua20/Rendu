@@ -6,12 +6,12 @@ in INTERFACE {
 } In ;
 
 // Uniforms.
-uniform sampler2D depthTexture;
-uniform sampler2D normalTexture;
+layout(binding = 0) uniform sampler2D depthTexture;
+layout(binding = 1) uniform sampler2D normalTexture;
 
 uniform mat4 projectionMatrix;
 
-uniform sampler2D noiseTexture; // 5x5 3-components texture with float precision.
+layout(binding = 2) uniform sampler2D noiseTexture; // 5x5 3-components texture with float precision.
 uniform vec3 samples[24];
 
 #define RADIUS 0.5

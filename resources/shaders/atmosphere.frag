@@ -23,7 +23,7 @@ const float sunAngularRadius = 0.04675;
 const float sunAngularRadiusCos = 0.998;
 
 
-uniform sampler2D screenTexture;
+layout(binding = 0) uniform sampler2D screenTexture;
 
 out vec3 fragColor;
 

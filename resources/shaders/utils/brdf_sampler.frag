@@ -10,8 +10,6 @@ in INTERFACE {
 #define M_PI 3.1415926536
 #define M_INV_LOG2 1.4426950408889
 #define SAMPLE_COUNT 1024u
-// Uniforms: the texture, inverse of the screen size, FXAA flag.
-uniform sampler2D screenTexture;
 
 // Output: the fragment color
 out vec2 fragColor;

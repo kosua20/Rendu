@@ -10,13 +10,13 @@ in INTERFACE {
 #define M_INV_LOG2 1.4426950408889
 
 // Uniforms: the texture, inverse of the screen size, FXAA flag.
-uniform sampler2D albedoTexture;
-uniform sampler2D normalTexture;
-uniform sampler2D depthTexture;
-uniform sampler2D effectsTexture;
-uniform sampler2D ssaoTexture;
-uniform samplerCube textureCubeMap;
-uniform sampler2D brdfPrecalc;
+layout(binding = 0) uniform sampler2D albedoTexture;
+layout(binding = 1) uniform sampler2D normalTexture;
+layout(binding = 2) uniform sampler2D depthTexture;
+layout(binding = 3) uniform sampler2D effectsTexture;
+layout(binding = 4) uniform sampler2D ssaoTexture;
+layout(binding = 5) uniform samplerCube textureCubeMap;
+layout(binding = 6) uniform sampler2D brdfPrecalc;
 uniform vec3 shCoeffs[9];
 
 uniform mat4 inverseV;

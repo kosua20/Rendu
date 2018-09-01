@@ -10,10 +10,10 @@ in INTERFACE {
 	vec2 uv;
 } In ;
 
-uniform sampler2D texture0;
-uniform sampler2D texture1;
-uniform sampler2D texture2;
-uniform sampler2D texture3;
+layout(binding = 0) uniform sampler2D texture0;
+layout(binding = 1) uniform sampler2D texture1;
+layout(binding = 2) uniform sampler2D texture2;
+layout(binding = 3) uniform sampler2D texture3;
 uniform mat4 p;
 
 #define PARALLAX_MIN 8

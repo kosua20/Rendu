@@ -7,7 +7,7 @@ in INTERFACE {
 	vec3 position; 
 } In ;
 
-uniform samplerCube texture0;
+layout(binding = 0) uniform samplerCube texture0;
 
 // Output: the fragment color
 layout (location = 0) out vec4 fragColor;
