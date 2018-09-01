@@ -85,6 +85,16 @@ int _checkGLError(const char *file, int line, const std::string & infos){
 }
 
 
+void replace(std::string & source, const std::string& fromString, const std::string & toString){
+	std::string::size_type nextPos = 0;
+	const size_t fromSize = fromString.size();
+	const size_t toSize = toString.size();
+	while((nextPos = source.find(fromString, nextPos)) != std::string::npos){
+		source.replace(nextPos, fromSize, toString);
+		nextPos += toSize;
+	}
+}
+
 GLuint GLUtilities::loadShader(const std::string & prog, GLuint type){
 	GLuint id;
 	// Create shader object.
@@ -102,25 +112,27 @@ GLuint GLUtilities::loadShader(const std::string & prog, GLuint type){
 	
 	// If compilation failed, get information and display it.
 	if (success != GL_TRUE) {
+		// Get the log string length for allocation.
 		GLint infoLogLength;
 		glGetShaderiv(id, GL_INFO_LOG_LENGTH, &infoLogLength);
+		// Get the log string.
 		std::vector<char> infoLog((size_t)(std::max)(infoLogLength, int(1)));
 		glGetShaderInfoLog(id, infoLogLength, NULL, &infoLog[0]);
-
-		Log::Error() << std::endl 
-					<< "*--- " 
-					<< (type == GL_VERTEX_SHADER ? "Vertex" : (type == GL_FRAGMENT_SHADER ? "Fragment" : "Geometry (or tess.)")) 
-					<< " shader failed to compile ---*" 
-					<< std::endl
-					<< &infoLog[0]
-					<< "*---------------------------------*" 
-					<< std::endl << std::endl;
+		// Indent and clean.
+		std::string infoLogString(infoLog.data(), infoLogLength);
+		replace(infoLogString, "\n", "\n\t");
+		infoLogString.insert(0, "\t");
+		// Output.
+		Log::Error() << Log::OpenGL
+			<< (type == GL_VERTEX_SHADER ? "Vertex" : (type == GL_FRAGMENT_SHADER ? "Fragment" : "Geometry"))
+			<< " shader failed to compile:" << std::endl
+			<< infoLogString << std::endl;
 	}
 	// Return the id to the successfuly compiled  shader program.
 	return id;
 }
 
-GLuint GLUtilities::createProgram(const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent){
+GLuint GLUtilities::createProgram(const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, const std::string & debugInfos){
 	GLuint vp(0), fp(0), gp(0), id(0);
 	id = glCreateProgram();
 	checkGLError();
@@ -150,12 +162,20 @@ GLuint GLUtilities::createProgram(const std::string & vertexContent, const std::
 
 	// If linking failed, query info and display it.
 	if(!success) {
+		// Get the log string length for allocation.
 		GLint infoLogLength;
 		glGetProgramiv(id, GL_INFO_LOG_LENGTH, &infoLogLength);
+		// Get the log string.
 		std::vector<char> infoLog((size_t)(std::max)(infoLogLength, int(1)));
 		glGetProgramInfoLog(id, infoLogLength, NULL, &infoLog[0]);
-
-		Log::Error() << Log::OpenGL << "Failed loading program: " << &infoLog[0] << std::endl;
+		// Indent and clean.
+		std::string infoLogString(infoLog.data(), infoLogLength);
+		replace(infoLogString, "\n", "\n\t");
+		infoLogString.insert(0, "\t");
+		// Output.
+		Log::Error() << Log::OpenGL
+			<< "Failed linking program " << debugInfos << ": " << std::endl
+			<< infoLogString << std::endl;
 		return 0;
 	}
 	// We can now clean the shaders objects, by first detaching them

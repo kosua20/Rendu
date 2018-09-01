@@ -52,7 +52,7 @@ public:
 	
 	// Program setup.
 	/// Create a GLProgram using the shader code contained in the given strings.
-	static GLuint createProgram(const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent);
+	static GLuint createProgram(const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, const std::string & debugInfos);
 	
 	// Texture loading.
 	/// 2D texture.
