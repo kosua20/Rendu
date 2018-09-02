@@ -1,3 +1,10 @@
+local sep = "/"
+local ext = ""
+if os.ishost("windows") then
+	sep = "\\"
+	ext = ".exe"
+end
+
 -- Workspace definition.
 
 workspace("GL_Template")
@@ -19,6 +26,20 @@ workspace("GL_Template")
 
 
 -- Helper functions for the projects.
+
+function InstallProject(projectName, destination)
+	filter("configurations:Debug")
+		postbuildcommands({
+			path.translate( "{CHDIR} "..os.getcwd(), sep),
+			path.translate( "{COPY} build/"..projectName.."/Debug/"..projectName..ext.." "..destination, sep)
+		})
+	filter("configurations:Release")
+		postbuildcommands({
+			path.translate( "{CHDIR} "..os.getcwd(), sep),
+			path.translate( "{COPY} build/"..projectName.."/Release/"..projectName..ext.." "..destination, sep)
+		})
+	filter({})
+end
 
 function CPPSetup()
 	language("C++")
@@ -46,18 +67,34 @@ function GraphicsSetup()
 
 end
 
+
+function ShaderValidation()
+	-- Run the shader validator on all existing shaders.
+	-- Output IDE compatible error messages.
+	dependson({"ShaderValidator"})
+	prebuildcommands({ 
+		-- Move to the build directory.
+		path.translate("{CHDIR} "..os.getcwd().."/build", sep),
+		-- Run the shader validator on the resources directory.
+		path.translate( "./shader_validator"..ext.." ../resources", sep)
+	})
+end	
+
 function AppSetup()
 	GraphicsSetup()
 	includedirs({ "src/engine" })
 	links({"Engine"})
 	kind("ConsoleApp")
+	ShaderValidation()
 end	
 
 function ToolSetup()
-	AppSetup()
-	location("build/tools")
+	GraphicsSetup()
+	includedirs({ "src/engine" })
+	links({"Engine"})
+	kind("ConsoleApp")
+	--location("build/tools")
 end	
-
 
 -- Projects
 
@@ -99,6 +136,13 @@ project("BRDFEstimator")
 project("SHExtractor")
 	ToolSetup()	
 	files({ "src/tools/SHExtractor.cpp" })
+
+project("ShaderValidator")
+	ToolSetup()	
+	files({ "src/tools/ShaderValidator.cpp" })
+	-- Install the shader validition utility in the root build directory.
+	InstallProject("%{prj.name}", "build/shader_validator"..ext)
+	filter({})
 
 
 group("Meta")
