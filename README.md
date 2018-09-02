@@ -40,6 +40,7 @@
 - Physically based rendering
 - Spotlights, point lights shadow maps
 - Atmospheric scattering
+- Shader offline validation
 
 [Code stops here]
 

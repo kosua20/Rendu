@@ -111,7 +111,7 @@ group("Apps")
 
 project("PBRDemo")
 	AppSetup()
-	files({ "src/apps/gltemplate/**.hpp", "src/apps/gltemplate/**.cpp", })
+	files({ "src/apps/pbrdemo/**.hpp", "src/apps/pbrdemo/**.cpp", })
 
 project("Playground")
 	AppSetup()
@@ -130,7 +130,7 @@ project("AtmosphericScatteringEstimator")
 
 project("BRDFEstimator")
 	ToolSetup()
-	includedirs({ "src/apps/gltemplate" })
+	includedirs({ "src/apps/pbrdemo" })
 	files({ "src/tools/BRDFEstimator.cpp" })
 
 project("SHExtractor")
