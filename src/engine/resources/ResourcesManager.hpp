@@ -17,6 +17,8 @@ public:
 	/// Singleton management.
 	static Resources& manager();
 	
+	static std::string defaultPath;
+	
 private:
 	
 	Resources(const std::string & root);
@@ -56,6 +58,8 @@ public:
 	static std::string loadStringFromExternalFile(const std::string & filename);
 	
 	static std::string trim(const std::string & str, const std::string & del);
+	
+	void getFiles(const std::string & extension, std::map<std::string, std::string> & files) const;
 	
 private:
 	

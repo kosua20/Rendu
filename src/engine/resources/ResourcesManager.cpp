@@ -36,10 +36,11 @@ std::string TCHARToString(_tinydir_char_t * str) {
 #endif
 }
 
+std::string Resources::defaultPath = "../../../resources";
 
 /// Singleton.
 Resources& Resources::manager(){
-	static Resources* res = new Resources("../../../resources");
+	static Resources* res = new Resources(Resources::defaultPath);
 	return *res;
 }
 
@@ -386,6 +387,25 @@ void Resources::reload() {
 	Log::Info() << Log::Resources << "Shader programs reloaded." << std::endl;
 }
 
+void Resources::getFiles(const std::string & extension, std::map<std::string, std::string> & files) const {
+	files.clear();
+	for(const auto & file : _files){
+		const std::string & fileName = file.first;
+		const size_t lastPoint = fileName.find_last_of(".");
+		if(lastPoint == std::string::npos){
+			//No extension, ext should be empty.
+			if(extension.empty()){
+				files[fileName] = file.second;
+			}
+			continue;
+		}
+		const std::string fileExt = fileName.substr(lastPoint+1);
+		if(extension == fileExt){
+			// Obtain the name without the extension.
+			files[fileName.substr(0, lastPoint)] = file.second;
+		}
+	}
+}
 
 /// Static utilities methods.
 
