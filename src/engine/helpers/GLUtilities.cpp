@@ -95,7 +95,7 @@ void replace(std::string & source, const std::string& fromString, const std::str
 	}
 }
 
-GLuint GLUtilities::loadShader(const std::string & prog, GLuint type, std::map<std::string, int> & bindings){
+GLuint GLUtilities::loadShader(const std::string & prog, GLuint type, std::map<std::string, int> & bindings, std::string & finalLog){
 	// We need to detect texture slots and store them, to avoid having to register them in
 	// the rest of the code (object, renderer), while not having support for 'layout(binding=n)' in OpenGL <4.2.
 	std::stringstream inputLines(prog);
@@ -186,7 +186,7 @@ GLuint GLUtilities::loadShader(const std::string & prog, GLuint type, std::map<s
 
 	GLint success;
 	glGetShaderiv(id,GL_COMPILE_STATUS, &success);
-	
+	finalLog = "";
 	// If compilation failed, get information and display it.
 	if (success != GL_TRUE) {
 		// Get the log string length for allocation.
@@ -197,13 +197,10 @@ GLuint GLUtilities::loadShader(const std::string & prog, GLuint type, std::map<s
 		glGetShaderInfoLog(id, infoLogLength, NULL, &infoLog[0]);
 		// Indent and clean.
 		std::string infoLogString(infoLog.data(), infoLogLength);
+		
 		replace(infoLogString, "\n", "\n\t");
 		infoLogString.insert(0, "\t");
-		// Output.
-		Log::Error() << Log::OpenGL
-			<< (type == GL_VERTEX_SHADER ? "Vertex" : (type == GL_FRAGMENT_SHADER ? "Fragment" : "Geometry"))
-			<< " shader failed to compile:" << std::endl
-			<< infoLogString << std::endl;
+		finalLog = infoLogString;
 	}
 	// Return the id to the successfuly compiled shader program.
 	return id;
@@ -216,20 +213,33 @@ GLuint GLUtilities::createProgram(const std::string & vertexContent, const std::
 	
 	Log::Info() << Log::Verbose << Log::OpenGL << "Compiling " << debugInfos << "." << std::endl;
 	
+	std::string compilationLog;
 	// If vertex program code is given, compile it.
 	if (!vertexContent.empty()) {
-		vp = loadShader(vertexContent, GL_VERTEX_SHADER, bindings);
+		vp = loadShader(vertexContent, GL_VERTEX_SHADER, bindings, compilationLog);
 		glAttachShader(id,vp);
+		if(!compilationLog.empty()){
+			Log::Error() << Log::OpenGL << "Vertex shader failed to compile:" << std::endl
+			<< compilationLog << std::endl;
+		}
 	}
 	// If fragment program code is given, compile it.
 	if (!fragmentContent.empty()) {
-		fp = loadShader(fragmentContent, GL_FRAGMENT_SHADER, bindings);
+		fp = loadShader(fragmentContent, GL_FRAGMENT_SHADER, bindings, compilationLog);
 		glAttachShader(id,fp);
+		if(!compilationLog.empty()){
+			Log::Error() << Log::OpenGL << "Fragment shader failed to compile:" << std::endl
+			<< compilationLog << std::endl;
+		}
 	}
 	// If geometry program code is given, compile it.
 	if (!geometryContent.empty()) {
-		gp = loadShader(geometryContent, GL_GEOMETRY_SHADER, bindings);
+		gp = loadShader(geometryContent, GL_GEOMETRY_SHADER, bindings, compilationLog);
 		glAttachShader(id,gp);
+		if(!compilationLog.empty()){
+			Log::Error() << Log::OpenGL << "Geometry shader failed to compile:" << std::endl
+			<< compilationLog << std::endl;
+		}
 	}
 
 	// Link everything

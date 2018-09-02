@@ -45,12 +45,13 @@ struct MeshInfos {
 class GLUtilities {
 	
 private:
-	/// Load a shader of the given type from a string
-	static GLuint loadShader(const std::string & prog, GLuint type, std::map<std::string, int> & bindings);
 	
 	static void savePixels(const GLenum type, const GLenum format, const unsigned int width, const unsigned int height, const unsigned int components, const std::string & path, const bool flip, const bool ignoreAlpha);
 	
 public:
+	
+	/// Load a shader of the given type from a string
+	static GLuint loadShader(const std::string & prog, GLuint type, std::map<std::string, int> & bindings, std::string & finalLog);
 	
 	// Program setup.
 	/// Create a GLProgram using the shader code contained in the given strings.
