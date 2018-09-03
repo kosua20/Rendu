@@ -697,7 +697,6 @@ table.memberdecls {
 	//text-shadow: 0px 1px 1px rgba(255, 255, 255, 0.9);
 	//text-shadow: 0px 1px 1px rgba(0, 0, 0, 0.3);
 	text-shadow: none;
-	//background-image:url('nav_f.png');
 	background-image: none;
 	//background-repeat:repeat-x;
 	//background-color: #E2E8F2;
@@ -734,7 +733,6 @@ table.memberdecls {
         padding: 6px;
         background-color: #fafafa;
         border-top-width: 0;
-        //background-image:url('nav_g.png');
 	   background-image: none;
         //background-repeat:repeat-x;
         /* opera specific markup */
@@ -1014,7 +1012,8 @@ table.directory {
 }
 
 .fieldtable th {
-        background-image:url('nav_f.png');
+        background-image: none;
+        background-color: #f0f0f0;
         background-repeat:repeat-x;
         background-color: #E2E8F2;
         font-size: 90%;
@@ -1036,11 +1035,30 @@ table.directory {
 	top: 0px;
 	left: 10px;
 	height: 40px;
-	background-image: url('tab_b.png');
+	background-image: none;
+	background-color: #f0f0f0;
 	z-index: 101;
 	overflow: hidden;
 	font-size: 13px;
 }
+
+.icondoc, .iconfopen, .iconfclosed {
+	width:20px;
+    height: 20px;
+	margin-bottom: 0px;
+    background-position: 0px 0px;
+    background-repeat: no-repeat;
+    vertical-align: top;
+    display: inline-block;
+   }
+
+.icondoc {
+ 	background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='16' viewBox='0 0 15 16' aria-hidden='true'%3E%3Cg fill='%23666' fill-rule='evenodd'%3E%3Cpath fill-rule='nonzero' d='M0 0h15v15H0V0zm1 14h13V1H1v13z'/%3E%3Cpath d='M4 11H3v-1h1zM4 8H3V7h1zM4 5H3V4h1zM12 11H5v-1h7zM12 8H5V7h7zM12 5H5V4h7z'/%3E%3C/g%3E%3C/svg%3E");
+}
+.iconfopen, .iconfclosed {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='16' viewBox='0 0 15 16' aria-hidden='true'%3E%3Cpath fill='none' d='M-1-1h32v32H-1z'/%3E%3Cg%3E%3Cpath stroke='%23666' fill='none' d='M.7 3.9h13.6v9.3H.7z'/%3E%3Cpath stroke='%23666' d='M1.8 4L3 1.6h5.6L10 4' stroke-width='1' fill='none'/%3E%3C/g%3E%3C/svg%3E");
+}
+
 
 .navpath ul
 {
@@ -1063,10 +1081,10 @@ table.directory {
 	float:left;
 	padding-left:10px;
 	padding-right:15px;
-	background-image:url('bc_s.png');
+	background-image:none;
 	background-repeat:no-repeat;
 	background-position:right;
-	color:#364D7C;
+	color:#333;
 }
 
 .navpath li.navelem a
@@ -1075,15 +1093,16 @@ table.directory {
 	display:block;
 	text-decoration: none;
 	outline: none;
-	color: #283A5D;
+	color: #333;
 	font-family: "SF Pro Text", "SF Pro Icons", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
-	text-shadow: 0px 1px 1px rgba(255, 255, 255, 0.9);
+	text-shadow: none;
 	text-decoration: none;        
 }
 
 .navpath li.navelem a:hover
 {
-	color:#6884BD;
+	color:#555;
+	text-decoration: underline;
 }
 
 .navpath li.footer
@@ -1095,7 +1114,7 @@ table.directory {
         background-image:none;
         background-repeat:no-repeat;
         background-position:right;
-        color:#364D7C;
+        color:#333;
         font-size: 8pt;
 }
 
@@ -1128,7 +1147,6 @@ div.ingroups a
 
 div.header
 {
-	//background-image:url('nav_h.png');
 	//background-repeat:repeat-x;
 	background-color: white;
 	background-image: none;
@@ -1493,23 +1511,6 @@ tr.heading h2 {
 
 
 
-.navpath li {
-	background-image: none;
-}
-
-
-.navpath li.navelem a {
-	background-image: none;
-	color: white;
-	text-shadow: none;
-}
-
-
-.navpath li.navelem a:hover {
-	background-image: none;
-	color: white;
-	text-shadow: none;
-}
 
 .ui-resizable-e {
 background-image: none;
