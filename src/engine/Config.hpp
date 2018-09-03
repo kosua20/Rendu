@@ -48,14 +48,6 @@ public:
 	
 	/// \brief Internal vertical rendering resolution.
 	/// \note The width should be computed based on the window aspect ratio.
-	/// \warning The Wwidth should be computed based on the window aspect ratio.
-	/// \todo The TDwidth should be computed based on the window aspect ratio.
-	/// \test The Twidth should be computed based on the window aspect ratio.
-	/// \bug The Bwidth should be computed based on the window aspect ratio.
-	/// \deprecated The Dwidth should be computed based on the window aspect ratio.
-	/// \pre The Prewidth should be computed based on the window aspect ratio.
-	/// \post The Postwidth should be computed based on the window aspect ratio.
-	/// \invariant babdainv
 	float internalVerticalResolution = 720.0f;
 	
 	/// Size of the window in raw pixels, updated at launch based on screen density.
@@ -87,7 +79,7 @@ public:
 protected:
 	
 	/**
-	 Read the internal (key, [values]) populated dictionary, and transfer their values to the object attributes.
+	 Read the internal (key, [values]) populated dictionary, and transfer their values to the configuration attributes.
 	 */
 	void processArguments();
 	

@@ -1,4 +1,6 @@
-## Steps
+[TOC]
+
+# Features
 
 - Theoretical introduction
 - Technical introduction
@@ -42,15 +44,17 @@
 - Atmospheric scattering
 - Shader offline validation
 
-[Code stops here]
+# Planned
 
-- Raymarching techniques (SSR ?)
-- Water/terrain/noise ?
-- Temporal AA ?
+## Graphics techniques
+
+- Raymarching techniques (SSR)
+- Water/terrain/noise
+- Temporal AA
 - UI elements, text rendering (df)
 - Particles, instanced drawing
-- Geometry shaders ? TFb ?
-- Tessellation ?
+- Geometry shaders/TFb
+- Tessellation
 
 ## Engineering
 

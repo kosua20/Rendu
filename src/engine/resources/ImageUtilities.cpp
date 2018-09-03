@@ -134,7 +134,7 @@ int ImageUtilities::loadHDRImage(const std::string &path, unsigned int & width, 
 	}
 	
 	if (idxR == -1 || idxG == -1 || idxB == -1) {
-		// @todo { free exr_image }
+		/// \todo Free exr_image
 		return TINYEXR_ERROR_INVALID_DATA;
 	}
 	
@@ -209,7 +209,7 @@ int ImageUtilities::saveHDRImage(const std::string &path, const unsigned int wid
 	if (components == 1) {
 		images[0].resize(static_cast<size_t>(width * height));
 		memcpy(images[0].data(), data, sizeof(float) * size_t(width * height));
-		// TODO: support flipping.
+		/// \todo Support flipping.
 	} else {
 		images[0].resize(static_cast<size_t>(width * height));
 		images[1].resize(static_cast<size_t>(width * height));

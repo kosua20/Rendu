@@ -34,7 +34,6 @@ bool processLog(const std::string & compilationLog, const std::string & filePath
 			}
 			
 			// The path should be relative to the root build directory.
-			// TODO: check this is the same on all platforms.
 			const std::string adjustedPath = filePath;
 			
 			// Output in an IDE compatible format, to display warning and errors properly.

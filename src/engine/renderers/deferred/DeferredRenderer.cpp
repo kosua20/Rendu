@@ -82,7 +82,7 @@ void DeferredRenderer::draw() {
 	}
 	
 	// Interface.
-	// TODO: move to a separate function maybe?
+	/// \todo Move to a separate function maybe?
 	if(ImGui::Begin("Renderer")){
 		ImGui::Checkbox("Show debug", &_debugVisualization);
 	}
