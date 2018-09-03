@@ -15,3 +15,5 @@ ext/
 binaries/
 config.ini
 resources.zip
+docs/html
+docs/sphinx
