@@ -902,6 +902,7 @@ div.directory {
 	border-left: 1px solid rgba(0,0,0,0.05);
 }
 
+
 .directory tr.even {
 	padding-left: 6px;
 	background-color: white;
@@ -1115,14 +1116,14 @@ table.directory {
         background-repeat:no-repeat;
         background-position:right;
         color:#333;
-        font-size: 8pt;
+        font-size: 11px;
 }
 
 
 div.summary
 {
 	float: right;
-	font-size: 8pt;
+	font-size: 11px;
 	padding-right: 5px;
 	width: 50%;
 	text-align: right;
@@ -1135,9 +1136,10 @@ div.summary a
 
 div.ingroups
 {
-	font-size: 8pt;
+	font-size: 11px;
 	width: 50%;
 	text-align: left;
+	margin-top: 8px;
 }
 
 div.ingroups a

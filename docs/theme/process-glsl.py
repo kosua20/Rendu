@@ -31,13 +31,14 @@ doxyClass = fileName.capitalize().replace("-", "_")
 
 # Main comment block
 # Namespace and group
-printout("/** \\namespace " + doxyNamespace + "::" + doxySubnamespace + "\n")
-printout("  * \\addtogroup " + doxyGroup + "\n @{ */\n")
+printout("/** \\namespace " + doxyNamespace + "::" + doxySubnamespace + "\n*/")
+
 # C++ namespaces
 printout("namespace " + doxyNamespace + "{\n")
 printout("namespace " + doxySubnamespace + "{\n")
 # Class
-printout("/** \\class " + doxyClass + " */\n")
+printout("/** \\class " + doxyClass + "\n")
+printout("  * \\addtogroup " + doxyGroup + "\n @{ */\n")
 printout("public class " + doxyClass + " {" + "\n")
 printout("public:" + "\n")
 # Content of the shader
