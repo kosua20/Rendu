@@ -1,8 +1,10 @@
 local sep = "/"
 local ext = ""
+local copyFix = ""
 if os.ishost("windows") then
 	sep = "\\"
 	ext = ".exe"
+	copyFix = "*"
 end
 
 -- Workspace definition.
@@ -31,12 +33,12 @@ function InstallProject(projectName, destination)
 	filter("configurations:Debug")
 		postbuildcommands({
 			path.translate( "{CHDIR} "..os.getcwd(), sep),
-			path.translate( "{COPY} build/"..projectName.."/Debug/"..projectName..ext.." "..destination, sep)
+			path.translate( "{COPY} build/"..projectName.."/Debug/"..projectName..ext.." "..destination..copyFix, sep)
 		})
 	filter("configurations:Release")
 		postbuildcommands({
 			path.translate( "{CHDIR} "..os.getcwd(), sep),
-			path.translate( "{COPY} build/"..projectName.."/Release/"..projectName..ext.." "..destination, sep)
+			path.translate( "{COPY} build/"..projectName.."/Release/"..projectName..ext.." "..destination..copyFix, sep)
 		})
 	filter({})
 end
