@@ -1359,9 +1359,9 @@ dl.citelist dd {
 
 div.toc {
         padding: 14px 25px;
-        background-color: #F4F6FA;
-        border: 1px solid #D8DFEE;
-        border-radius: 7px 7px 7px 7px;
+        background-color: #fafafa;
+        border: 1px solid #eee;
+        border-radius: 0px 0px 0px 0px;
         float: right;
         height: auto;
         margin: 0 20px 10px 10px;
@@ -1369,18 +1369,27 @@ div.toc {
 }
 
 div.toc li {
-        background: url("bdwn.png") no-repeat scroll 0 5px transparent;
-        font: 10px/1.2 "SF Pro Text", "SF Pro Icons", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+		background: none;
+		background-image: url("data:image/svg+xml;charset=utf8,%3Csvg width='10' height='10' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='none' d='M-1-1h12v12H-1z'/%3E%3Cg%3E%3Cellipse ry='4' rx='4' cy='5' cx='5' fill='%23555'/%3E%3C/g%3E%3C/svg%3E");
+		background-position: 0px 6px;
+        background-repeat: no-repeat;
+        font: 16px/1.2 "SF Pro Text", "SF Pro Icons", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
         margin-top: 5px;
-        padding-left: 10px;
+        padding-left: 15px;
         padding-top: 2px;
 }
 
 div.toc h3 {
-        font: bold 12px/1.2 "SF Pro Text", "SF Pro Icons", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
-	color: #4665A2;
+		font-family: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+		font-size: 18px;
+		font-weight:bold;
+       color: #333;
         border-bottom: 0 none;
         margin: 0;
+}
+
+div.toc a, div.toc a:visited {
+	font-weight: 400;
 }
 
 div.toc ul {
