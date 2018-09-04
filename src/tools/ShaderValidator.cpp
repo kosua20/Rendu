@@ -1,8 +1,21 @@
 #include "Common.hpp"
 
 #include "resources/ResourcesManager.hpp"
+#include <iostream>
 
+/**
+ \defgroup ShaderValidator Shader Validation
+ \brief Validate shaders compilation on the GPU and output IDE-compatible errors. Can be integrated to the build preprocess.
+ \ingroup Tools
+ */
 
+/**  Convert a shader compilation log into a IDE-compatible error reporting format and output it to stderr.
+ 	\param compilationLog the compilation log to process.
+ 	\param filePath the path to the shader file, relative to the directory containing the IDE project.
+ 	\return a boolean denoting if at least one error was reported by the log.
+ 	\warning If filePath is not expressed relative to the direcotry containing the IDE project, error links (for instance "src/foo/bar.frag:18") won't be functional.
+ 	\ingroup ShaderValidator
+ */
 bool processLog(const std::string & compilationLog, const std::string & filePath){
 	if(!compilationLog.empty()){
 		std::stringstream str(compilationLog);
@@ -38,9 +51,9 @@ bool processLog(const std::string & compilationLog, const std::string & filePath
 			
 			// Output in an IDE compatible format, to display warning and errors properly.
 #ifdef _WIN32
-			Log::Info() << adjustedPath << "(" << lineId << "): error: " << errorMessage << std::endl;
+			std::cerr << adjustedPath << "(" << lineId << "): error: " << errorMessage << std::endl;
 #else
-			Log::Info() << adjustedPath << ":" << lineId << ": error: " << errorMessage << std::endl;
+			std::cerr << adjustedPath << ":" << lineId << ": error: " << errorMessage << std::endl;
 #endif
 		}
 		// At least one issue was encountered.
@@ -50,8 +63,13 @@ bool processLog(const std::string & compilationLog, const std::string & filePath
 	return false;
 }
 
-/// The main function
-
+/**
+ Perform shader validation: load all shaders in the resources directory, compile them on the GPU and output error logs.
+ \param argc the number of input arguments.
+ \param argv a pointer to the raw input arguments.
+ \return a boolean denoting if at least one shader failed to compile.
+ \ingroup ShaderValidator
+ */
 int main(int argc, char** argv) {
 	
 	Log::setDefaultVerbose(false);

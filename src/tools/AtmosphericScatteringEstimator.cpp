@@ -2,16 +2,35 @@
 #include "Config.hpp"
 #include "resources/ImageUtilities.hpp"
 
-/// Specialized Config subclass.
+/**
+ 	\defgroup AtmosphericScattering Atmospheric Scattering
+ 	\brief Real-time atmospheric scattering preprocess.
+ 	\ingroup Tools
+*/
+
+/** \brief Configuration for the atmospheric scattering precomputations.
+ 	\ingroup AtmosphericScattering
+ */
 class AtmosphericScatteringConfig : public Config {
 public:
 	
+	/** Initialize a new config object, parsing the input arguments and filling the attributes with their values.
+	 \param argc the number of input arguments.
+	 \param argv a pointer to the raw input arguments.
+	 \note Sets the initial width and height to 512px.
+	 */
 	AtmosphericScatteringConfig(int argc, char** argv) : Config(argc, argv) {
 		processArguments();
 		initialWidth = 512;
 		initialHeight = 512;
 	}
 	
+	/**
+	 Helper to extract (key, [values]) from the given command-line raw C-style arguments.
+	 \param argc the number of input arguments.
+	 \param argv a pointer to the raw input arguments.
+	 \param arguments a dictionary that will be populated with (key, [values]).
+	 */
 	void processArguments(){
 		
 		for(const auto & arg : _rawArguments){
@@ -29,14 +48,22 @@ public:
 	
 public:
 	
-	std::string outputPath = "./scattering.exr";
+	std::string outputPath = "./scattering.exr"; ///< Lookup table output path.
 	
-	unsigned int samples = 256;
+	unsigned int samples = 256; ///< Number of samples for iterative sampling.
 
 };
 
-/// Perform intersection test with a centered sphere.
 
+/** Perform intersection test with a centered sphere.
+ \param rayOrigin the ray origin position with respect to the center of the sphere.
+ \param rayDir the ray normalized direction.
+ \param radius the radius of the sphere.
+ \param roots if the ray intersects the sphere, stores the two roots of the associated polynomial, such that roots[0]<=roots[1].
+ \return a boolean denoting if the ray intersected the sphere.
+ \warning The intersection can be behind the viewer (ie in the opposite orientation along the ray direction).
+ \ingroup AtmosphericScattering
+ */
 bool intersects(const glm::vec3 & rayOrigin, const glm::vec3 & rayDir, float radius,  glm::vec2 & roots){
 	float a = glm::dot(rayDir,rayDir);
 	float b = glm::dot(rayOrigin, rayDir);
@@ -52,8 +79,14 @@ bool intersects(const glm::vec3 & rayOrigin, const glm::vec3 & rayDir, float rad
 	return true;
 }
 
-/// The main function
 
+/**
+ Compute a scattering lookup table for real-time atmosphere rendering and saves it on disk.
+ \param argc the number of input arguments.
+ \param argv a pointer to the raw input arguments.
+ \return a general error code.
+ \ingroup AtmosphericScattering
+ */
 int main(int argc, char** argv) {
 	
 	// First, init/parse/load configuration.

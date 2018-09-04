@@ -4,14 +4,27 @@
 #include <map>
 #include <fstream>
 
-/// Spherical harmonics coefficients extractor for a HDR cubemap.
+///
 
-/// The main function
+/**
+ \defgroup SphericalHarmonics Spherical Harmonics Estimation
+ \brief Decompose an existing cubemap irradiance onto the nine first elements of the spherical harmonic basis.
+ \details Perform approximated convolution as described in Ramamoorthi, Ravi, and Pat Hanrahan. "An efficient representation for irradiance environment maps.", Proceedings of the 28th annual conference on Computer graphics and interactive techniques. ACM, 2001.
+ \ingroup Tools
+ */
 
+/** Irradiance spherical harmonics coefficients extractor for a radiance HDR cubemap.
+ Expects "-map path/to/envmap" (without the suffixes and extension) and output a txt with the SH coefficients in the same directory.
+ \param argc the number of input arguments.
+ \param argv a pointer to the raw input arguments.
+ \return a general error code.
+ \ingroup SphericalHarmonics
+ */
 int main(int argc, char** argv) {
 	
 	// Arguments parsing.
 	std::map<std::string, std::vector<std::string>> arguments;
+	/// \todo Create a specialized configuration subclass.
 	Config::parseFromArgs(argc, argv, arguments);
 	if(arguments.count("map") == 0){
 		Log::Error() << Log::Utilities << "Specify path to envmap." << std::endl;
@@ -22,7 +35,7 @@ int main(int argc, char** argv) {
 	// Paths for each side.
 	const std::vector<std::string> paths { rootPath + "_px.exr", rootPath + "_nx.exr", rootPath + "_py.exr", rootPath + "_ny.exr", rootPath + "_pz.exr", rootPath + "_nz.exr" };
 	
-	/// Load cubemap sides.
+	// Load cubemap sides.
 	Log::Info() << Log::Utilities << "Loading envmap at path " << rootPath << " ..." << std::endl;
 	
 	float* sides[6];
@@ -43,7 +56,7 @@ int main(int argc, char** argv) {
 		
 	}
 	
-	/// Indices conversions from cubemap UVs to direction.
+	// Indices conversions from cubemap UVs to direction.
 	const std::vector<int> axisIndices = { 0, 0, 1, 1, 2, 2 };
 	const std::vector<float> axisMul = { 1.0f, -1.0f, 1.0f, -1.0f, 1.0f, -1.0f};
 	
@@ -54,7 +67,7 @@ int main(int argc, char** argv) {
 	const std::vector<float> vertMul = { -1.0f, -1.0f, 1.0f, -1.0f, -1.0f, -1.0f};
 	
 
-	/// Spherical harmonics coefficients.
+	// Spherical harmonics coefficients.
 	Log::Info() << Log::Utilities << "Computing SH coefficients." << std::endl;
 	glm::vec3 LCoeffs[9];
 	for(int i = 0; i < 9; ++i){
@@ -119,7 +132,7 @@ int main(int argc, char** argv) {
 		LCoeffs[i] *= 4.0/denom;
 	}
 	
-	/// Final coefficients.
+	// Final coefficients.
 	Log::Info() << Log::Utilities << "Computing final coefficients." << std::endl;
 	
 	// To go from radiance to irradiance, we need to apply a cosine lobe convolution on the sphere in spatial domain.

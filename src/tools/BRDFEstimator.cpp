@@ -6,16 +6,37 @@
 #include "scenes/Scenes.hpp"
 
 
-/// Specialized Config subclass.
+/**
+ \defgroup BRDFEstimator BRDF Estimation
+ \brief Perform cubemap GGX convolution, precompute BRDF lookup table.
+ \see GLSL::Frag::Cubemap_convo
+ \see GLSL::Frag::Brdf_sampler
+ \ingroup Tools
+ */
+
+/** \brief Configuration for the BRDF preprocess tool.
+ \ingroup BRDFEstimator
+ */
 class BRDFEstimatorConfig : public Config {
 public:
 	
+	/** Initialize a new config object, parsing the input arguments and filling the attributes with their values.
+	 \param argc the number of input arguments.
+	 \param argv a pointer to the raw input arguments.
+	 \note The initial width and height are set to 512px.
+	 */
 	BRDFEstimatorConfig(int argc, char** argv) : Config(argc, argv) {
 		processArguments();
 		initialWidth = 512;
 		initialHeight = 512;
 	}
 	
+	/**
+	 Helper to extract (key, [values]) from the given command-line raw C-style arguments.
+	 \param argc the number of input arguments.
+	 \param argv a pointer to the raw input arguments.
+	 \param arguments a dictionary that will be populated with (key, [values]).
+	 */
 	void processArguments(){
 		
 		for(const auto & arg : _rawArguments){
@@ -35,16 +56,21 @@ public:
 	
 public:
 	
-	std::string cubemapName = "";
+	std::string cubemapName = ""; ///< Base name of the cubemap to process.
 	
-	std::string outputPath = "";
+	std::string outputPath = ""; ///< Result output path.
 	
-	bool precomputeBRDF = false;
+	bool precomputeBRDF = false; ///< Toggles the computation of the BRDF lookup table.
 
 };
 
-/// The main function
-
+/**
+ Compute either a series of cubemaps convolved with a BRDF using increasing roughness values, or generate a linearized BRDF lookup table.
+ \param argc the number of input arguments.
+ \param argv a pointer to the raw input arguments.
+ \return a general error code.
+ \ingroup BRDFEstimator
+ */
 int main(int argc, char** argv) {
 	
 	// First, init/parse/load configuration.
