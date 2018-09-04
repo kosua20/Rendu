@@ -1,7 +1,6 @@
 /* The standard CSS for doxygen 1.8.4 */
 
 body, table, div, p, dl {
-	// font: 400 14px/22px Roboto,sans-serif;
 	font: 14px "SF Pro Text", "SF Pro Icons", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
 }
 
@@ -9,11 +8,9 @@ body, table, div, p, dl {
 
 h1.groupheader {
 	font-size: 28px;
-	//font-size: 150%;
 }
 
 .title {
-	//font: 400 14px/28px Roboto,sans-serif;
 	font-family: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
 	font-size: 35px;
 	font-weight: 400;
@@ -22,17 +19,12 @@ h1.groupheader {
 }
 
 h2.groupheader {
-	//border-bottom: 1px solid #333;
-	border-bottom: none;
-	//color: #354C7B;
+	border-bottom: 0px;
 	color: #333;
 	font-size: 24px;
 	font-weight: 500;
-	//margin-top: 1.75em;
 	margin: 32px 0px 20px 0px;
 	margin-bottom: 20px;
-	//padding-top: 8px;
-	//padding-bottom: 4px;
 	padding: 0px;
 	width: 100%;
 }
@@ -47,8 +39,6 @@ h1, h2, h3, h4, h5, h6 {
 	-ms-transition: text-shadow 0.5s linear;
 	-o-transition: text-shadow 0.5s linear;
 	transition: text-shadow 0.5s linear;
-	//margin-right: 15px;
-	//margin: 42px 0px 20px 0px;
 }
 
 h1 {
@@ -103,13 +93,13 @@ caption {
 }
 
 span.legend {
-        font-size: 70%;
-        text-align: center;
+	font-size: 70%;
+	text-align: center;
 }
 
 h3.version {
-        font-size: 90%;
-        text-align: center;
+	font-size: 90%;
+	text-align: center;
 }
 
 div.qindex, div.navtab{
@@ -130,20 +120,17 @@ div.navtab {
 /* @group Link Styling */
 
 a {
-	//color: #3D578C;
 	color: #0070c9;
 	font-weight: normal;
 	text-decoration: none;
 }
 
 .contents a:visited {
-	//color: #4665A2;
 	color: #0070c9;
 }
 
 
 .contents ul {
-	/*margin:2px;*/
 	line-height: 23px;
 }
 
@@ -172,13 +159,11 @@ a.qindexHL {
 }
 
 .contents a.qindexHL:visited {
-        color: #ffffff;
+	color: #ffffff;
 }
 
 a.el {
-	//font-family: "Courier New", courier, monospace;
 	font-family: 'SF Mono', Menlo, monospace;
-	//font-weight: bold;
 	font-weight: normal;
 }
 
@@ -186,12 +171,10 @@ a.elRef {
 }
 
 a.code, a.code:visited {
-	//color: #4665A2; 
 	color: rgb(51, 102, 204);
 }
 
 a.codeRef, a.codeRef:visited {
-	//color: #4665A2; 
 	color: rgb(51, 102, 204);
 }
 
@@ -202,22 +185,17 @@ dl.el {
 }
 
 pre.fragment {
-        //border: 1px solid #C4CFE5;
 	border: solid 1px rgb(221, 221, 221);
 	border-radius: 3px;
-        //background-color: #FBFCFD;
 	background-color: rgb(248, 248, 248);
-        //padding: 4px 6px;
 	padding: 6px 10px;
-        //margin: 4px 8px 4px 2px;
 	margin: 15px 0px;
-        overflow: auto;
-        word-wrap: break-word;
-        font-size:  9pt;
-        line-height: 125%;
-        //font-family: monospace, fixed;
+	overflow: auto;
+	word-wrap: break-word;
+	font-size:  9pt;
+	line-height: 125%;
 	font-family: 'SF Mono', Menlo, monospace;
-        font-size: 105%;
+	font-size: 105%;
 }
 
 
@@ -233,9 +211,8 @@ div.fragment {
 }
 
 div.line {
-	//font-family: monospace, fixed;
 	font-family: 'SF Mono', Menlo, monospace;
-        font-size: 13px;
+	font-size: 13px;
 	min-height: 13px;
 	line-height: 1.0;
 	text-wrap: unrestricted;
@@ -281,13 +258,13 @@ span.lineno {
 	text-align: right;
 	border-right: 2px solid #aaa;
 	background-color: #E8E8E8;
-        white-space: pre;
-        color: #333;
+	white-space: pre;
+	color: #333;
 }
 span.lineno a, span.lineno a:visited {
 	background-color: #E8E8E8;
-        color: #333;
-        font-weight: bold;
+	color: #333;
+	font-weight: bold;
 }
 
 span.lineno a:hover {
@@ -305,9 +282,9 @@ div.ah {
 	padding-top: 0.3em;
 	padding-bottom: 0.3em;
 	border: none;
-	border-radius: none;
-	-webkit-border-radius: none;
-	-moz-border-radius: none;
+	border-radius: 0px;
+	-webkit-border-radius: 0px;
+	-moz-border-radius: 0px;
 	box-shadow: none;
 	-webkit-box-shadow: none;
 	-moz-box-shadow: none;
@@ -316,14 +293,11 @@ div.ah {
 }
 
 div.groupHeader {
-	//margin-left: 16px;
-	//margin-top: 12px;
 	margin-left: 0px;
 	margin-top: 9px;
 	margin-bottom: 4.7px;
 	
 	font-size: 19px;
-	//font-weight: bold;
 	font-weight: normal;
 }
 
@@ -335,7 +309,7 @@ div.groupText {
 body {
 	background-color: white;
 	color: #333;
-    margin: 0;
+	margin: 0;
 }
 
 div.contents {
@@ -350,8 +324,8 @@ td.indexkey {
 	border: 1px solid #C4CFE5;
 	margin: 2px 0px 2px 0;
 	padding: 2px 10px;
-        white-space: nowrap;
-        vertical-align: top;
+	white-space: nowrap;
+	vertical-align: top;
 }
 
 td.indexvalue {
@@ -379,9 +353,9 @@ img.formulaInl {
 
 div.center {
 	text-align: center;
-        margin-top: 0px;
-        margin-bottom: 0px;
-        padding: 0px;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	padding: 0px;
 }
 
 div.center img {
@@ -445,10 +419,10 @@ span.vhdllogic {
 }
 
 blockquote {
-        background-color: #F7F8FB;
-        border-left: 2px solid #9CAFD4;
-        margin: 0 24px 0 4px;
-        padding: 0 12px 0 16px;
+	background-color: #F7F8FB;
+	border-left: 2px solid #9CAFD4;
+	margin: 0 24px 0 4px;
+	padding: 0 12px 0 16px;
 }
 
 /* @end */
@@ -490,13 +464,12 @@ th.dirtab {
 hr {
 	height: 0px;
 	border: none;
-	//border-top: 1px solid #4A6AAA;
 	border-top: 1px solid #444;
 }
 
 hr.footer {
 	height: 0px;
-	border-top: none;/*3px solid #444;*/
+	border-top: 0px;
 }
 
 /* @group Member Descriptions */
@@ -535,38 +508,30 @@ table.memberdecls {
 .mdescLeft, .mdescRight,
 .memItemLeft, .memItemRight,
 .memTemplItemLeft, .memTemplItemRight, .memTemplParams {
-	//background-color: #F9FAFC;
 	background-color: #fafafa;
 	border: none;
 	margin: 4px;
 	padding: 1px 0 0 8px;
-
-	//font-family: "Courier New", courier, monospace;
 	font-family: 'SF Mono', Menlo, monospace;
 }
 
 .mdescLeft, .mdescRight {
-	//padding: 0px 8px 4px 8px;
 	padding: 0px 8px 4px 24px;
-	//color: #555;
 	color: black;
-	
 	font-family: "SF Pro Text", "SF Pro Icons", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
-	//font-style: italic;
 	font-style: normal;
 }
 
 .memSeparator {
-        //border-bottom: 1px solid #DEE4F0;
-	   border-bottom: none;
-        line-height: 8px;
-        margin: 0px;
-        padding: 0px;
-        background-color: #fafafa;
+	border-bottom: 0px;
+	line-height: 8px;
+	margin: 0px;
+	padding: 0px;
+	background-color: #fafafa;
 }
 
 .memItemLeft, .memTemplItemLeft {
-        white-space: nowrap;
+	white-space: nowrap;
 }
 
 .memItemRight {
@@ -575,13 +540,13 @@ table.memberdecls {
 
 .memTemplParams {
 	color: #4665A2;
-        white-space: nowrap;
+	white-space: nowrap;
 	font-size: 80%;
 }
 
 .memItemLeft, .memItemRight {
 
-    font-size: 15px;
+	font-size: 15px;
 }
 
 /* @end */
@@ -593,11 +558,11 @@ table.memberdecls {
 .memtitle {
 	padding: 20px;
 	padding-bottom: 0px;
-	border-top: none;
-	border-left: none;
-	border-right: none;
-	border-top-right-radius: none;
-	border-top-left-radius: none;
+	border-top: 0px;
+	border-left: 0px;
+	border-right: 0px;
+	border-top-right-radius: 0px;
+	border-top-left-radius: 0px;
 	margin-bottom: -1px;
 	background-image: none;
 	background-repeat: none;
@@ -612,9 +577,9 @@ table.memberdecls {
 
 .permalink
 {
-        font-size: 65%;
-        display: none;
-        vertical-align: middle;
+	font-size: 65%;
+	display: none;
+	vertical-align: middle;
 }
 
 
@@ -622,11 +587,8 @@ table.memberdecls {
 .memtemplate {
 	font-family: 'SF Mono', Menlo, monospace;
 	font-size: 100%;
-	//font-size: 80%;
-	//color: #4665A2;
 	color: #333;
 	font-weight: normal;
-	//margin-left: 9px;
 	margin-left: 1px;
 }
 
@@ -648,30 +610,25 @@ table.memberdecls {
 	padding-top: 0px;
 	margin-bottom: 10px;
 	margin-right: 5px;
-        -webkit-transition: box-shadow 0.5s linear;
-        -moz-transition: box-shadow 0.5s linear;
-        -ms-transition: box-shadow 0.5s linear;
-        -o-transition: box-shadow 0.5s linear;
-        transition: box-shadow 0.5s linear;
-        display: table !important;
-        width: 95%;
- 	background-color: #fafafa;
+	-webkit-transition: box-shadow 0.5s linear;
+	-moz-transition: box-shadow 0.5s linear;
+	-ms-transition: box-shadow 0.5s linear;
+	-o-transition: box-shadow 0.5s linear;
+	transition: box-shadow 0.5s linear;
+	display: table !important;
+	width: 95%;
+	background-color: #fafafa;
 }
 
 .memitem.glow {
-         box-shadow: 0 0 15px cyan;
+	box-shadow: 0 0 15px cyan;
 }
 
 .memname {
-	   //font-family: "Courier New", courier, monospace;
-	   //font-family: Courier, Consolas, monospace;
-	   font-family: 'SF Mono', Menlo, monospace;
-	   font-weight: 400;
-	   //font-size: 15px;
-	   font-size: 15px;
-        //font-weight: bold;
-        //margin-left: 6px;
-	   margin-left: 0px;
+	font-family: 'SF Mono', Menlo, monospace;
+	font-weight: 400;
+	font-size: 15px;
+	margin-left: 0px;
 }
 
 .memname td {
@@ -681,45 +638,22 @@ table.memberdecls {
 .memproto, dl.reflist dt {
 	margin-top: 1.5em;
 	border: none;
-	//border-top: 1px solid #ccc;
-	//border-top: 1px solid #A8B8D9;
-	//border-left: 1px solid #A8B8D9;
-	//border-right: 1px solid #A8B8D9;
-	//border-bottom: 1px solid rgb(172, 172, 172);
-	border-bottom: none;
-	//padding: 6px 0px 6px 0px;
-	//padding: 6px;
+	border-bottom: 0px;
 	padding: 0px;
-	//color: #253555;
 	color: black;
-	//font-family: Courier, Consolas, monospace;
 	font-weight: bold;
-	//text-shadow: 0px 1px 1px rgba(255, 255, 255, 0.9);
-	//text-shadow: 0px 1px 1px rgba(0, 0, 0, 0.3);
 	text-shadow: none;
 	background-image: none;
-	//background-repeat:repeat-x;
-	//background-color: #E2E8F2;
 	background-color: #fafafa;
-	//background-color: #ccc;
-	//background-color: white;
 	/* opera specific markup */
 	box-shadow: none;
-	//border-top-right-radius: 4px;
-	//border-top-left-radius: 4px;
 	border-top-right-radius: 0px;
 	border-top-left-radius: 0px;
 	/* firefox specific markup */
-	//-moz-box-shadow: rgba(0, 0, 0, 0.15) 5px 5px 5px;
-	//-moz-border-radius-topright: 4px;
-	//-moz-border-radius-topleft: 4px;
 	-moz-box-shadow: none;
 	-moz-border-radius-topright: 0px;
 	-moz-border-radius-topleft: 0px;
 	/* webkit specific markup */
-	//-webkit-box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.15);
-	//-webkit-border-top-right-radius: 4px;
-	//-webkit-border-top-left-radius: 4px;
 	-webkit-box-shadow: none;
 	-webkit-border-top-right-radius: 0px;
 	-webkit-border-top-left-radius: 0px;
@@ -727,44 +661,31 @@ table.memberdecls {
 
 .memdoc, dl.reflist dd {
 	border: none;
-        //border-bottom: 1px solid #A8B8D9;      
-        //border-left: 1px solid #A8B8D9;      
-        //border-right: 1px solid #A8B8D9; 
-        padding: 6px;
-        background-color: #fafafa;
-        border-top-width: 0;
-	   background-image: none;
-        //background-repeat:repeat-x;
-        /* opera specific markup */
-        //border-bottom-left-radius: 4px;
-        //border-bottom-right-radius: 4px;
-        //box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.15);
-        border-bottom-left-radius: 0px;
-	   border-bottom-right-radius: 0px;
-        box-shadow: none;
-        /* firefox specific markup */
-        //-moz-border-radius-bottomleft: 4px;
-        //-moz-border-radius-bottomright: 4px;
-        //-moz-box-shadow: rgba(0, 0, 0, 0.15) 5px 5px 5px;
-        -moz-border-radius-bottomleft: 0px;
-        -moz-border-radius-bottomright: 0px;
-        -moz-box-shadow: none;
-        /* webkit specific markup */
-        //-webkit-border-bottom-left-radius: 4px;
-        //-webkit-border-bottom-right-radius: 4px;
-        //-webkit-box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.15);
-        -webkit-border-bottom-left-radius: 0px;
-        -webkit-border-bottom-right-radius: 0px;
-        -webkit-box-shadow: none;
+	padding: 6px;
+	background-color: #fafafa;
+	border-top-width: 0;
+	background-image: none;
+	/* opera specific markup */
+	border-bottom-left-radius: 0px;
+	border-bottom-right-radius: 0px;
+	box-shadow: none;
+	/* firefox specific markup */
+	-moz-border-radius-bottomleft: 0px;
+	-moz-border-radius-bottomright: 0px;
+	-moz-box-shadow: none;
+	/* webkit specific markup */
+	-webkit-border-bottom-left-radius: 0px;
+	-webkit-border-bottom-right-radius: 0px;
+	-webkit-box-shadow: none;
 }
 
 dl.reflist dt {
-        padding: 5px;
+	padding: 5px;
 }
 
 dl.reflist dd {
-        margin: 0px 0px 10px 0px;
-        padding: 5px;
+	margin: 0px 0px 10px 0px;
+	padding: 5px;
 }
 
 .paramkey {
@@ -776,41 +697,37 @@ dl.reflist dd {
 }
 
 .paramname {
-	//color: #602020;
 	color: rgb(37, 53, 85);
 	white-space: nowrap;
 }
 .paramname em {
 	font-style: italic;
 	font-weight: normal;
-	//font-style: normal;
 }
 .paramname code {
-        line-height: 14px;
+	line-height: 14px;
 }
 
 .params, .retval, .exception, .tparams {
-        margin-left: 0px;
-        padding-left: 0px;
+	margin-left: 0px;
+	padding-left: 0px;
 }       
 
 .params .paramname, .retval .paramname {
-        //font-weight: bold;
-	   //font-family: "Courier New", courier, monospace;
-	   font-family: 'SF Mono', Menlo, monospace;
-	   font-style: italic;
-	   font-weight: normal;
-	   text-shadow: none;
+	font-family: 'SF Mono', Menlo, monospace;
+	font-style: italic;
+	font-weight: normal;
+	text-shadow: none;
 }
 
 .params .paramtype {
-        font-style: italic;
-        vertical-align: top;
+	font-style: italic;
+	vertical-align: top;
 }       
-        
+	
 .params .paramdir {
-        font-family: 'SF Mono', Menlo, monospace;
-        vertical-align: top;
+	font-family: 'SF Mono', Menlo, monospace;
+	vertical-align: top;
 }
 
 table.mlabels {
@@ -829,25 +746,17 @@ td.mlabels-right {
 }
 
 span.mlabels {
-        margin-left: 8px;
+	margin-left: 8px;
 }
 
 span.mlabel {
-	//background-color: #728DC1;
 	background-color: rgb(172, 172, 172);;
-	//border-top:1px solid #5373B4;
-	//border-left:1px solid #5373B4;
-	//border-right:1px solid #C4CFE5;
-	//border-bottom:1px solid #C4CFE5;
 	border: none;
 	text-shadow: none;
 	color: white;
 	margin-right: 4px;
 	padding: 2px 3px;
-	//padding: 4px 8px;
-	//border-radius: 3px;
 	border-radius: 4px;
-	//font-size: 7pt;
 	font-size: 9pt;
 	white-space: nowrap;
 	vertical-align: middle;
@@ -860,34 +769,34 @@ span.mlabel {
 /* these are for tree view when not used as main index */
 
 div.directory {
-        margin: 10px 0px;
-        border-top: 1px solid #CCC;
-        border-bottom: 1px solid #CCC;
-        width: 100%;
+	margin: 10px 0px;
+	border-top: 1px solid #CCC;
+	border-bottom: 1px solid #CCC;
+	width: 100%;
 }
 
 .directory table {
-        border-collapse:collapse;
+	border-collapse:collapse;
 }
 
 .directory td {
-        margin: 0px;
-        padding: 0px;
+	margin: 0px;
+	padding: 0px;
 	vertical-align: top;
 }
 
 .directory td.entry {
-        white-space: nowrap;
-        padding-right: 6px;
+	white-space: nowrap;
+	padding-right: 6px;
 	padding-top: 3px;
 }
 
 .directory td.entry a {
-        outline:none;
+	outline:none;
 }
 
 .directory td.entry a img {
-        border: none;
+	border: none;
 }
 
 .directory td.entry b {
@@ -895,8 +804,8 @@ div.directory {
 }
 
 .directory td.desc {
-        width: 100%;
-        padding-left: 6px;
+	width: 100%;
+	padding-left: 6px;
 	padding-right: 6px;
 	padding-top: 3px;
 	border-left: 1px solid rgba(0,0,0,0.05);
@@ -913,21 +822,21 @@ div.directory {
 }
 
 .directory .levels {
-        white-space: nowrap;
-        width: 100%;
-        text-align: right;
-        font-size: 9pt;
+	white-space: nowrap;
+	width: 100%;
+	text-align: right;
+	font-size: 9pt;
 }
 
 .directory .levels span {
-        cursor: pointer;
-        padding-left: 2px;
-        padding-right: 2px;
+	cursor: pointer;
+	padding-left: 2px;
+	padding-right: 2px;
 	color: #3D578C;
 }
 
 div.dynheader {
-        margin-top: 8px;
+	margin-top: 8px;
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;
 	-khtml-user-select: none;
@@ -943,8 +852,8 @@ address {
 
 table.doxtable {
 	border-collapse:collapse;
-        margin-top: 4px;
-        margin-bottom: 4px;
+	margin-top: 4px;
+	margin-bottom: 4px;
 }
 
 table.doxtable td, table.doxtable th {
@@ -961,16 +870,15 @@ table.doxtable th {
 }
 
 table.fieldtable {
-        /*width: 100%;*/
-        margin-bottom: 10px;
-        border: 1px solid #A8B8D9;
-        border-spacing: 0px;
-        -moz-border-radius: 4px;
-        -webkit-border-radius: 4px;
-        border-radius: 4px;
-        -moz-box-shadow: rgba(0, 0, 0, 0.15) 2px 2px 2px;
-        -webkit-box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.15);
-        box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.15);
+	margin-bottom: 10px;
+	border: 1px solid #A8B8D9;
+	border-spacing: 0px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	border-radius: 4px;
+	-moz-box-shadow: rgba(0, 0, 0, 0.15) 2px 2px 2px;
+	-webkit-box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.15);
+	box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.15);
 }
 
 table.directory {
@@ -981,54 +889,53 @@ table.directory {
 }
 
 .fieldtable td, .fieldtable th {
-        padding: 3px 7px 2px;
+	padding: 3px 7px 2px;
 }
 
 .fieldtable td.fieldtype, .fieldtable td.fieldname {
-        white-space: nowrap;
-        border-right: 1px solid #A8B8D9;
-        border-bottom: 1px solid #A8B8D9;
-        vertical-align: top;
+	white-space: nowrap;
+	border-right: 1px solid #A8B8D9;
+	border-bottom: 1px solid #A8B8D9;
+	vertical-align: top;
 }
 
 .fieldtable td.fieldname {
-        padding-top: 3px;
+	padding-top: 3px;
 }
 
 .fieldtable td.fielddoc {
-        border-bottom: 1px solid #A8B8D9;
-        /*width: 100%;*/
+	border-bottom: 1px solid #A8B8D9;
 }
 
 .fieldtable td.fielddoc p:first-child {
-        margin-top: 0px;
+	margin-top: 0px;
 }       
-        
+	
 .fieldtable td.fielddoc p:last-child {
-        margin-bottom: 2px;
+	margin-bottom: 2px;
 }
 
 .fieldtable tr:last-child td {
-        border-bottom: none;
+	border-bottom: 0px;
 }
 
 .fieldtable th {
-        background-image: none;
-        background-color: #f0f0f0;
-        background-repeat:repeat-x;
-        background-color: #E2E8F2;
-        font-size: 90%;
-        color: #253555;
-        padding-bottom: 4px;
-        padding-top: 5px;
-        text-align:left;
-        -moz-border-radius-topleft: 4px;
-        -moz-border-radius-topright: 4px;
-        -webkit-border-top-left-radius: 4px;
-        -webkit-border-top-right-radius: 4px;
-        border-top-left-radius: 4px;
-        border-top-right-radius: 4px;
-        border-bottom: 1px solid #A8B8D9;
+	background-image: none;
+	background-color: #f0f0f0;
+	background-repeat:repeat-x;
+	background-color: #E2E8F2;
+	font-size: 90%;
+	color: #253555;
+	padding-bottom: 4px;
+	padding-top: 5px;
+	text-align:left;
+	-moz-border-radius-topleft: 4px;
+	-moz-border-radius-topright: 4px;
+	-webkit-border-top-left-radius: 4px;
+	-webkit-border-top-right-radius: 4px;
+	border-top-left-radius: 4px;
+	border-top-right-radius: 4px;
+	border-bottom: 1px solid #A8B8D9;
 }
 
 
@@ -1045,19 +952,19 @@ table.directory {
 
 .icondoc, .iconfopen, .iconfclosed {
 	width:20px;
-    height: 20px;
+	height: 20px;
 	margin-bottom: 0px;
-    background-position: 0px 0px;
-    background-repeat: no-repeat;
-    vertical-align: top;
-    display: inline-block;
+	background-position: 0px 0px;
+	background-repeat: no-repeat;
+	vertical-align: top;
+	display: inline-block;
    }
 
 .icondoc {
- 	background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='16' viewBox='0 0 15 16' aria-hidden='true'%3E%3Cg fill='%23666' fill-rule='evenodd'%3E%3Cpath fill-rule='nonzero' d='M0 0h15v15H0V0zm1 14h13V1H1v13z'/%3E%3Cpath d='M4 11H3v-1h1zM4 8H3V7h1zM4 5H3V4h1zM12 11H5v-1h7zM12 8H5V7h7zM12 5H5V4h7z'/%3E%3C/g%3E%3C/svg%3E");
+	background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='16' viewBox='0 0 15 16' aria-hidden='true'%3E%3Cg fill='%23666' fill-rule='evenodd'%3E%3Cpath fill-rule='nonzero' d='M0 0h15v15H0V0zm1 14h13V1H1v13z'/%3E%3Cpath d='M4 11H3v-1h1zM4 8H3V7h1zM4 5H3V4h1zM12 11H5v-1h7zM12 8H5V7h7zM12 5H5V4h7z'/%3E%3C/g%3E%3C/svg%3E");
 }
 .iconfopen, .iconfclosed {
-    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='16' viewBox='0 0 15 16' aria-hidden='true'%3E%3Cpath fill='none' d='M-1-1h32v32H-1z'/%3E%3Cg%3E%3Cpath stroke='%23666' fill='none' d='M.7 3.9h13.6v9.3H.7z'/%3E%3Cpath stroke='%23666' d='M1.8 4L3 1.6h5.6L10 4' stroke-width='1' fill='none'/%3E%3C/g%3E%3C/svg%3E");
+	background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='16' viewBox='0 0 15 16' aria-hidden='true'%3E%3Cpath fill='none' d='M-1-1h32v32H-1z'/%3E%3Cg%3E%3Cpath stroke='%23666' fill='none' d='M.7 3.9h13.6v9.3H.7z'/%3E%3Cpath stroke='%23666' d='M1.8 4L3 1.6h5.6L10 4' stroke-width='1' fill='none'/%3E%3C/g%3E%3C/svg%3E");
 }
 
 
@@ -1108,15 +1015,15 @@ table.directory {
 
 .navpath li.footer
 {
-        list-style-type:none;
-        float:right;
-        padding-left:10px;
-        padding-right:15px;
-        background-image:none;
-        background-repeat:no-repeat;
-        background-position:right;
-        color:#333;
-        font-size: 11px;
+	list-style-type:none;
+	float:right;
+	padding-left:10px;
+	padding-right:15px;
+	background-image:none;
+	background-repeat:no-repeat;
+	background-position:right;
+	color:#333;
+	font-size: 11px;
 }
 
 
@@ -1149,11 +1056,9 @@ div.ingroups a
 
 div.header
 {
-	//background-repeat:repeat-x;
 	background-color: white;
 	background-image: none;
 	margin:  0px;
-	//border-bottom: 1px solid #C4CFE5;
 	border: none;
 }
 
@@ -1164,7 +1069,7 @@ div.headertitle
 
 dl
 {
-        padding: 0 0 0 10px;
+	padding: 0 0 0 10px;
 }
 
 
@@ -1175,7 +1080,6 @@ dl.todo a, dl.todo a:visited, dl.test a, dl.test a:visited, dl.bug a, dl.bug a:v
 	color: #333;
 }
 
-/* dl.note, dl.warning, dl.attention, dl.pre, dl.post, dl.invariant, dl.deprecated, dl.todo, dl.test, dl.bug */
 dl.section
 {
 	margin-left: 0px;
@@ -1184,23 +1088,18 @@ dl.section
 
 dl.note
 {
-        //margin-left:-7px;
-	   margin-left: 0px;
-	   padding: 6px 0px 3px 8px;
-        //padding-left: 8px;
-        border-left:  6px solid;
-        border-color: #ffff9e;
-	   background-color: #fffdcf;
+	margin-left: 0px;
+	padding: 6px 0px 3px 8px;
+	border-left:  6px solid;
+	border-color: #ffff9e;
+	background-color: #fffdcf;
 }
 
 dl.warning, dl.attention
 {
-	//margin-left:-7px;
-	//padding-left: 3px;
 	margin-left: 0px;
 	padding: 6px 0px 3px 8px;
 	
-	//border-left:4px solid;
 	border-left: 6px solid;
 	border-color: #ff9e9e;
 	background-color: #ffcfcf;
@@ -1208,20 +1107,20 @@ dl.warning, dl.attention
 
 dl.pre, dl.post, dl.invariant
 {
-        margin-left: 0px;
-		padding: 6px 0px 3px 8px;
-        border-left:6px solid;
-        border-color: #aaa;
-      	background-color: #eee;
+	margin-left: 0px;
+	padding: 6px 0px 3px 8px;
+	border-left:6px solid;
+	border-color: #aaa;
+	background-color: #eee;
 }
 
 dl.deprecated
 {
-        margin-left: 0px;
-		padding: 6px 0px 3px 8px;
-        border-left:6px solid;
-        border-color: #333;
-      	background-color: #ccc;
+	margin-left: 0px;
+	padding: 6px 0px 3px 8px;
+	border-left:6px solid;
+	border-color: #333;
+	background-color: #ccc;
 }
 
 dl.deprecated dt a.el
@@ -1233,29 +1132,29 @@ dl.deprecated dt a.el
 
 dl.todo
 {
-        margin-left: 0px;
-		padding: 6px 0px 3px 8px;
-        border-left:6px solid;
-        border-color: #82eb6f;
-        background-color: #cefacf;
+	margin-left: 0px;
+	padding: 6px 0px 3px 8px;
+	border-left:6px solid;
+	border-color: #82eb6f;
+	background-color: #cefacf;
 }
 
 dl.test
 {
-        margin-left: 0px;
-		padding: 6px 0px 3px 8px;
-        border-left:6px solid;
-        border-color: #00C0E0;
-        background-color: #CCECFC;
+	margin-left: 0px;
+	padding: 6px 0px 3px 8px;
+	border-left:6px solid;
+	border-color: #00C0E0;
+	background-color: #CCECFC;
 }
 
 dl.bug
 {
-        margin-left: 0px;
-		padding: 6px 0px 3px 8px;
-        border-left:6px solid;
-        border-color: #ffbf3d;
-      	background-color: #ffddb7;
+	margin-left: 0px;
+	padding: 6px 0px 3px 8px;
+	border-left:6px solid;
+	border-color: #ffbf3d;
+	background-color: #ffddb7;
 }
 
 dl.section dd {
@@ -1285,7 +1184,7 @@ dl.section dd {
 	font-weight:400;
 	float: left;
 }
-    
+	
 #projectbrief
 {
 	font: 190% "SF Pro Display", "SF Pro Icons", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
@@ -1313,23 +1212,23 @@ dl.section dd {
 	padding: 0px;
 	margin: 0px;
 	width: 100%;
-	border-bottom: none;
+	border-bottom: 0px;
 	background-color: #f0f0f0;
 }
 
 .image
 {
-        text-align: center;
+	text-align: center;
 }
 
 .dotgraph
 {
-        text-align: center;
+	text-align: center;
 }
 
 .mscgraph
 {
-        text-align: center;
+	text-align: center;
 }
 
 .caption
@@ -1343,51 +1242,51 @@ div.zoom
 }
 
 dl.citelist {
-        margin-bottom:50px;
+	margin-bottom:50px;
 }
 
 dl.citelist dt {
-        color:#334975;
-        float:left;
-        font-weight:bold;
-        margin-right:10px;
-        padding:5px;
+	color:#334975;
+	float:left;
+	font-weight:bold;
+	margin-right:10px;
+	padding:5px;
 }
 
 dl.citelist dd {
-        margin:2px 0;
-        padding:5px 0;
+	margin:2px 0;
+	padding:5px 0;
 }
 
 div.toc {
-        padding: 14px 25px;
-        background-color: #fafafa;
-        border: 1px solid #eee;
-        border-radius: 0px 0px 0px 0px;
-        float: right;
-        height: auto;
-        margin: 0 20px 10px 10px;
-        width: 200px;
+	padding: 14px 25px;
+	background-color: #fafafa;
+	border: 1px solid #eee;
+	border-radius: 0px 0px 0px 0px;
+	float: right;
+	height: auto;
+	margin: 0 20px 10px 10px;
+	width: 200px;
 }
 
 div.toc li {
-		background: none;
-		background-image: url("data:image/svg+xml;charset=utf8,%3Csvg width='10' height='10' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='none' d='M-1-1h12v12H-1z'/%3E%3Cg%3E%3Cellipse ry='4' rx='4' cy='5' cx='5' fill='%23555'/%3E%3C/g%3E%3C/svg%3E");
-		background-position: 0px 6px;
-        background-repeat: no-repeat;
-        font: 16px/1.2 "SF Pro Text", "SF Pro Icons", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
-        margin-top: 5px;
-        padding-left: 15px;
-        padding-top: 2px;
+	background: none;
+	background-image: url("data:image/svg+xml;charset=utf8,%3Csvg width='10' height='10' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='none' d='M-1-1h12v12H-1z'/%3E%3Cg%3E%3Cellipse ry='4' rx='4' cy='5' cx='5' fill='%23555'/%3E%3C/g%3E%3C/svg%3E");
+	background-position: 0px 6px;
+	background-repeat: no-repeat;
+	font: 16px/1.2 "SF Pro Text", "SF Pro Icons", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+	margin-top: 5px;
+	padding-left: 15px;
+	padding-top: 2px;
 }
 
 div.toc h3 {
-		font-family: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
-		font-size: 18px;
-		font-weight:bold;
-       color: #333;
-        border-bottom: 0 none;
-        margin: 0;
+	font-family: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+	font-size: 18px;
+	font-weight:bold;
+	color: #333;
+	border-bottom: 0 none;
+	margin: 0;
 }
 
 div.toc a, div.toc a:visited {
@@ -1395,31 +1294,31 @@ div.toc a, div.toc a:visited {
 }
 
 div.toc ul {
-        list-style: none outside none;
-        border: medium none;
-        padding: 0px;
+	list-style: none outside none;
+	border: medium none;
+	padding: 0px;
 }       
 
 div.toc li.level1 {
-        margin-left: 0px;
+	margin-left: 0px;
 }
 
 div.toc li.level2 {
-        margin-left: 15px;
+	margin-left: 15px;
 }
 
 div.toc li.level3 {
-        margin-left: 30px;
+	margin-left: 30px;
 }
 
 div.toc li.level4 {
-        margin-left: 45px;
+	margin-left: 45px;
 }
 
 .inherit_header {
-        font-weight: bold;
-        color: gray;
-        cursor: pointer;
+	font-weight: bold;
+	color: gray;
+	cursor: pointer;
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;
 	-khtml-user-select: none;
@@ -1429,19 +1328,19 @@ div.toc li.level4 {
 }
 
 .inherit_header td {
-        padding: 6px 0px 2px 5px;
+	padding: 6px 0px 2px 5px;
 }
 
 .inherit {
-        display: none;
+	display: none;
 }
 
 tr.heading h2 {
-    margin-top: 12px;
-    margin-bottom: 20px;
-    padding-left: 10px;
-    border-left: 2px solid #bbb;
-    font-weight: normal;;
+	margin-top: 12px;
+	margin-bottom: 20px;
+	padding-left: 10px;
+	border-left: 2px solid #bbb;
+	font-weight: normal;;
 }
 
 @media print
@@ -1455,11 +1354,11 @@ tr.heading h2 {
   .memitem { page-break-inside: avoid; }
   #doc-content
   {
-    margin-left:0 !important;
-    height:auto !important;
-    width:auto !important;
-    overflow:inherit;
-    display:inline;
+	margin-left:0 !important;
+	height:auto !important;
+	width:auto !important;
+	overflow:inherit;
+	display:inline;
   }
 }
 
@@ -1487,8 +1386,7 @@ tr.heading h2 {
 .tablist a {
 	background-image: none;
 	color: white;
-	//text-shadow: none;
-	text-shadow: none;//rgba(0, 0, 0, 0.6) 0px 2px 2px;
+	text-shadow: none;
 	font-weight:300;
 }
 
@@ -1501,7 +1399,6 @@ tr.heading h2 {
 
 .tablist li.current a {
 	background-image: none;
-	//color: #ccc;
 	text-shadow: none;
 }
 

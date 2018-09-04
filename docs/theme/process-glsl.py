@@ -38,13 +38,13 @@ printout("namespace " + doxyNamespace + "{\n")
 printout("namespace " + doxySubnamespace + "{\n")
 # Class
 printout("/** \\class " + doxyClass + "\n")
-printout("  * \\addtogroup " + doxyGroup + "\n @{ */\n")
+printout("  * \\ingroup " + doxyGroup + "*/\n")
 printout("public class " + doxyClass + " {" + "\n")
 printout("public:" + "\n")
 # Content of the shader
 for line in fileLines:
 	printout(line)
 # Close the class, the namespaces, the group.
-printout("}" + "\n}\n}\n/**@}*/\n")
+printout("}" + "\n}\n}\n")
 
 sys.exit(0)
