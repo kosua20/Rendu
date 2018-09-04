@@ -12,8 +12,8 @@
 #include <map>
 
 /**
- \class Config
  \brief Contains configurable elements as attributes, populated from the command line, a configuration file or default values.
+ \ingroup Engine
  */
 class Config {
 public:

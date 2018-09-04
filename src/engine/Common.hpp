@@ -6,14 +6,15 @@
 //  Copyright © 2017 Simon Rodriguez. All rights reserved.
 //
 /**
- 	\defgroup Shaders
- 	\brief Module containing all OpenGL GLSL shaders. Those shaders are small programs compiled at runtime and executed by the GPU cores. They can process vertices (vertex shader), primitives (geometry shader) and compute per-pixel values (fragment shader).
  
  	\defgroup Engine
  	\brief Module containing the general rendering code.
  
 	\defgroup Renderers
 	\brief Module containing the renderer-specific objects.
+ 
+	\defgroup Lights
+	\brief Module containing classes representing light objects.
  
 	\defgroup Processing
 	\brief Module containing general image processing utilities.
@@ -27,8 +28,15 @@
 	\defgroup Helpers
 	\brief Module containing various helpers.
  
-	\defgroup Lights
- 	\brief Module containing classes representing light objects.
+ 	\defgroup Shaders
+ 	\brief Module containing all OpenGL GLSL shaders.
+ 	\details Those shaders are small programs compiled at runtime and executed by the GPU cores. They can process vertices (vertex shader), primitives (geometry shader) and compute per-pixel values (fragment shader).
+ 
+ 	\defgroup Applications
+ 	\brief Applications built with GL_Template.
+ 
+ 	\defgroup Tools
+ 	\brief Preprocess tools for shader validation, data precomputations, etc.
  
  */
 

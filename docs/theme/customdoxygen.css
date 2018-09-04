@@ -63,6 +63,10 @@ dt {
 	font-weight: bold;
 }
 
+div.memdoc dt {
+	margin-bottom: 8px;
+}
+
 div.multicol {
 	-moz-column-gap: 1em;
 	-webkit-column-gap: 1em;
@@ -282,9 +286,9 @@ div.ah {
 	padding-top: 0.3em;
 	padding-bottom: 0.3em;
 	border: none;
-	border-radius: 0px;
-	-webkit-border-radius: 0px;
-	-moz-border-radius: 0px;
+	border-radius: 7px;
+	-webkit-border-radius: 7px;
+	-moz-border-radius: 7px;
 	box-shadow: none;
 	-webkit-box-shadow: none;
 	-moz-box-shadow: none;
@@ -788,7 +792,7 @@ div.directory {
 .directory td.entry {
 	white-space: nowrap;
 	padding-right: 6px;
-	padding-top: 3px;
+	padding-top: 5px;
 }
 
 .directory td.entry a {
