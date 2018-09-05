@@ -32,10 +32,7 @@ public:
 	}
 	
 	/**
-	 Helper to extract (key, [values]) from the given command-line raw C-style arguments.
-	 \param argc the number of input arguments.
-	 \param argv a pointer to the raw input arguments.
-	 \param arguments a dictionary that will be populated with (key, [values]).
+	 Read the internal (key, [values]) populated dictionary, and transfer their values to the configuration attributes.
 	 */
 	void processArguments(){
 		
