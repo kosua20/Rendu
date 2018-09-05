@@ -57,7 +57,9 @@ h1.glow, h2.glow, h3.glow, h4.glow, h5.glow, h6.glow {
 	text-shadow: 0 0 15px black;
 }
 
-
+.arrow {
+	height:0px;
+}
 
 dt {
 	font-weight: bold;
@@ -1050,7 +1052,7 @@ div.ingroups
 	font-size: 11px;
 	width: 50%;
 	text-align: left;
-	margin-top: 8px;
+	margin-top: 12px;
 }
 
 div.ingroups a
