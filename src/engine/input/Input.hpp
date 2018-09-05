@@ -4,9 +4,13 @@
 #include "../Common.hpp"
 #include "controller/Controller.hpp"
 
+/**
+ \brief The input manager is responsible for updating the internal input states (keyboard, mouse, window size). It can also be use to query back these states.
+ \ingroup Input
+ */
 class Input {
 public:
-	/// Keycodes
+	/// Keys codes.
 	enum Key {
 		KeySpace = GLFW_KEY_SPACE,
 		KeyApostrophe = GLFW_KEY_APOSTROPHE,
@@ -130,6 +134,7 @@ public:
 		KeyMenu = GLFW_KEY_MENU
 	};
 	
+	/// Mouse buttons codes.
 	enum Mouse {
 		MouseLeft = GLFW_MOUSE_BUTTON_LEFT,
 		MouseRight = GLFW_MOUSE_BUTTON_RIGHT,
@@ -139,106 +144,207 @@ public:
 	
 public:
 	
-	/// Handle keyboard inputs
+	/**
+	 \name Input updates
+	 @{*/
+	
+	/**
+	 Register a keyboard event.
+	 \param key the key code
+	 \param action the action code (pressed/released)
+	 */
 	void keyPressedEvent(int key, int action);
 	
-	/// Handle joystick inputs.
+	/**
+	 Register a joystick event.
+	 \param joy the ID of the joystick
+	 \param event the joystick event
+	 */
 	void joystickEvent(int joy, int event);
 	
-	/// Handle mouse inputs
+	/**
+	 Register a mouse button event.
+	 \param button the button code
+	 \param action the action code (pressed/released)
+	 */
 	void mousePressedEvent(int button, int action);
 	
+	/**
+	 Register a mouse move event.
+	 \param x the horizontal position of the cursor, in pixels
+	 \param y the vertical position of the cursor, in pixels
+	 */
 	void mouseMovedEvent(double x, double y);
 	
+	/**
+	 Register a mouse scroll event.
+	 \param xoffset the horizontal amount of scrolling
+	 \param yoffset the vertical amount of scrolling
+	 */
 	void mouseScrolledEvent(double xoffset, double yoffset);
 	
-	/// Handle resize events.
+	/**
+	 Register a window size change event.
+	 \param width the new width of the window
+	 \param height the new height of the window
+	 */
 	void resizeEvent(int width, int height);
 	
+	/**
+	 Trigger an update of the internal state
+	 */
 	void update();
 	
-	/// Info queries.
-	// Resize.
+	/**@}*/
 	
+	
+	/**
+	 \name Input queries
+	 @{*/
+	
+	/**
+	 Query if the window has been resized at this frame.
+	 \return true if the window was resized
+	 */
 	bool resized() { return _resized; };
 	
+	/**
+	 Query the current window size.
+	 \return the size of the window, in pixels
+	 */
 	glm::vec2 size() { return glm::vec2(_width, _height); };
 	
-	// Joystick.
+	/**
+	 Query if a controller (joystick) is available.
+	 \return true if a controller is available
+	 */
 	bool controllerAvailable() const { return _activeController >= 0; };
 	
+	/**
+	 Query the current controller (joystick).
+	 \return a reference to the current controller
+	 \warning Make sure a controller is available before calling this method.
+	 */
 	Controller & controller(){ return *_controllers[_activeController]; };
 	
-	// Keyboard.
+	/**
+	 Query if a given key is held at this frame.
+	 \param keyboardKey the key code
+	 \return true if the key is currently pressed.
+	 */
 	bool pressed(const Key & keyboardKey) const;
 	
+	/**
+	 Query if a given key was pressed at this frame precisely.
+	 \param keyboardKey the key code
+	 \param absorb should the press event be hidden from future queries during the current frame
+	 \return true if the key was triggered at this frame.
+	 */
 	bool triggered(const Key & keyboardKey, bool absorb = false);
 	
-	// Mouse.
+	/**
+	 Query if a given mouse button is held at this frame.
+	 \param mouseButton the mouse button code
+	 \return true if the button is currently pressed.
+	 */
 	bool pressed(const Mouse & mouseButton) const;
 	
+	/**
+	 Query if a given mouse button was pressed at this frame precisely.
+	 \param mouseButton the mouse button code
+	 \param absorb should the press event be hidden from future queries during the current frame
+	 \return true if the mouse button was triggered at this frame.
+	 */
 	bool triggered(const Mouse & mouseButton, bool absorb = false);
 	
+	/**
+	 Query the current mouse position.
+	 \return the current mouse position in unit coordinates
+	 \note The mouse position will be expressed in the [0,1] range.
+	 */
 	glm::vec2 mouse() const;
 	
+	/**
+	 Query the amount of cursor displacement since a given mouse button started to be held. If the button is not currently pressed, is returns a null displacement.
+	 \param mouseButton the mouse button to track
+	 \return the amount of displacement on both axis in unit coordinates.
+	 \note The displacement will be expressed in the [0,1] range.
+	 */
 	glm::vec2 moved(const Mouse & mouseButton) const;
 	
+	/**
+	 Query the current scroll amount.
+	 \return the current scrolling amount on both axis
+	 \note The scroll amount is in arbitrary units.
+	 */
 	glm::vec2 scroll() const;
+	
+	/**@}*/
 	
 private:
 	
-	/// State.
+	// State.
 	
 	// Resize state.
-	unsigned int _width = 1;
-	unsigned int _height = 1;
-	bool _resized = false;
+	unsigned int _width = 1; ///< Internal window width in pixels.
+	unsigned int _height = 1; ///< Internal window height in pixels.
+	bool _resized = false; ///< Denote if the window was resized at the current frame.
 	
 	// Joystick state.
-	int _activeController = -1;
-	std::shared_ptr<Controller> _controllers[GLFW_JOYSTICK_LAST+1];
+	int _activeController = -1; ///< The active joystick ID, or -1 if no controller active.
+	std::shared_ptr<Controller> _controllers[GLFW_JOYSTICK_LAST+1]; ///< States of all possible controllers.
 	
-	// Mouse state.
+	/// Mouse state.
 	struct MouseButton {
-		double x0 = 0.0;
-		double y0 = 0.0;
-		double x1 = 0.0;
-		double y1 = 0.0;
-		bool pressed = false;
-		bool first = false;
-		bool last = false;
+		double x0 = 0.0; ///< Horizontal coordinate at the beginning of the last press.
+		double y0 = 0.0; ///< Vertical coordinate at the beginning of the last press.
+		double x1 = 0.0; ///< Horizontal coordinate at the end of the last press.
+		double y1 = 0.0; ///< Vertical coordinate at the end of the last press.
+		bool pressed = false; ///< Is the button currently held.
+		bool first = false; ///< Is it the first frame it is held.
+		bool last = false; ///< Is is the first frame since it was released.
 	};
-	MouseButton _mouseButtons[GLFW_MOUSE_BUTTON_LAST+1];
+	MouseButton _mouseButtons[GLFW_MOUSE_BUTTON_LAST+1]; ///< States of all possible mouse buttons.
 	
+	/// Mouse cursor state.
 	struct MouseCursor {
-		double x = 0.0;
-		double y = 0.0;
-		glm::vec2 scroll = glm::vec2(0.0);
-	} _mouse;
-	
-	// Keyboard state.
-	struct KeyboardKey {
-		bool pressed = false;
-		bool first = false;
-		bool last = false;
+		double x = 0.0; ///< Current cursor horizontal position.
+		double y = 0.0; ///< Current cursor vertical position.
+		glm::vec2 scroll = glm::vec2(0.0); ///< Current amount of scroll.
 	};
-	KeyboardKey _keys[GLFW_KEY_LAST+1];
+	MouseCursor _mouse; ///< State of the mouse cursor.
+	
+	/// Keyboard state.
+	struct KeyboardKey {
+		bool pressed = false; ///< Is the key currently held.
+		bool first = false; ///< Is it the first frame it is held.
+		bool last = false; ///< Is is the first since frame it was released.
+	};
+	KeyboardKey _keys[GLFW_KEY_LAST+1]; ///< States of all possible keyboard keys.
 	
 	
-/// Singleton management.
+// Singleton management.
 		
 public:
 	
+	/**
+	 Accessor to the Input manager singleton.
+	 \return the Input manager
+	 */
 	static Input& manager();
 	
 private:
 	
+	/// Constructor (disabled).
 	Input();
 	
+	/// Destructor (disabled).
 	~Input();
 	
+	/// Copy operator (disabled).
 	Input& operator= (const Input&);
 	
+	/// Copy constructor (disabled).
 	Input (const Input&);
 
 
