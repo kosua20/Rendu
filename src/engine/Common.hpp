@@ -5,40 +5,6 @@
 //  Created by Simon Rodriguez on 08/08/2018.
 //  Copyright © 2017 Simon Rodriguez. All rights reserved.
 //
-/**
- 
- 	\defgroup Engine
- 	\brief Module containing the general rendering code.
- 
-	\defgroup Renderers
-	\brief Module containing the renderer-specific objects.
- 
-	\defgroup Lights
-	\brief Module containing classes representing light objects.
- 
-	\defgroup Processing
-	\brief Module containing general image processing utilities.
- 
-	\defgroup Input
-	\brief Module containing the input handling code.
- 
-	\defgroup Resources
-	\brief Module containing all resources loading/saving functions.
- 
-	\defgroup Helpers
-	\brief Module containing various helpers.
- 
- 	\defgroup Shaders
- 	\brief Module containing all OpenGL GLSL shaders.
- 	\details Those shaders are small programs compiled at runtime and executed by the GPU cores. They can process vertices (vertex shader), primitives (geometry shader) and compute per-pixel values (fragment shader).
- 
- 	\defgroup Applications
- 	\brief Applications built with GL_Template.
- 
- 	\defgroup Tools
- 	\brief Preprocess tools for shader validation, data precomputations, etc.
- 
- */
 
 #ifndef Common_hpp
 #define Common_hpp
@@ -67,3 +33,38 @@
 #endif
 
 #endif /* Common_hpp */
+
+/**
+ 
+ \defgroup Engine Engine
+ \brief General rendering code.
+ 
+ \defgroup Renderers Renderers
+ \brief Renderer-specific implementations.
+ 
+ \defgroup Lights Lights
+ \brief Contain light objects used in 3D scene rendering.
+ 
+ \defgroup Processing Processing
+ \brief General image processing utilities.
+ 
+ \defgroup Input Input
+ \brief Handle user input through keyboard, mouse and controllers and provide controllable cameras.
+ 
+ \defgroup Resources Resources
+ \brief Handle all resources loading/saving tasks.
+ 
+ \defgroup Helpers Helpers
+ \brief Various utility helpers.
+ 
+ \defgroup Shaders Shaders
+ \brief OpenGL GLSL shaders.
+ \details Those shaders are small programs compiled at runtime and executed by the GPU cores. They can process vertices (vertex shader), primitives (geometry shader) and compute per-pixel values (fragment shader).
+ 
+ \defgroup Applications Applications
+ \brief Applications built with GL_Template.
+ 
+ \defgroup Tools Tools
+ \brief Preprocess tools for shader validation, data precomputations, etc.
+ 
+ */
