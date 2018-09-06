@@ -3,21 +3,44 @@
 #include "../Common.hpp"
 #include "Blur.hpp"
 
-
+/**
+ \brief Applies an approximate gaussian blur.
+ \details Use a downscaled pyramid approach to approximate a gaussian blur with a large radius. 
+ The input texture is downscaled a number of times, and each level is blurred with the same kernel.
+ The levels are then combined again in a unique texture, the blurred result.
+ It uses a simplified gaussian sampling kernel, as described in Efficient Gaussian blur with linear sampling (http://rastergrid.com/blog/2010/09/efficient-gaussian-blur-with-linear-sampling/).
+ \see GLSL::Frag::Blur
+ \see GLSL::Frag::Blur_combine_2, GLSL::Frag::Blur_combine_3, GLSL::Frag::Blur_combine_4, GLSL::Frag::Blur_combine_5, GLSL::Frag::Blur_combine_6
+ \ingroup Processing
+ */
 class GaussianBlur : public Blur {
 
 public:
 
-	/// Init function
+	/**
+	 Constructor. The depth of the gaussian pyramid will determine the strength of the blur, and the computational cost.
+	 \param width the internal initial resolution width
+	 \param height the internal initial resolution height
+	 \param depth the number of levels in the downscaling pyramid
+	 \param format the OpenGL format of the internal famebuffers
+	 \param type the OpenGL type of the internal famebuffers
+	 \param preciseFormat the OpenGL precise format of the internal famebuffers
+	 */
 	GaussianBlur(unsigned int width, unsigned int height, unsigned int depth, GLuint format, GLuint type, GLuint preciseFormat);
 
-	/// Draw function
+	/**
+	 \copydoc Blur::process
+	 */
 	void process(const GLuint textureId);
 	
-	/// Clean function
+	/**
+	 \copydoc Blur::clean
+	 */
 	void clean() const;
 
-	/// Handle screen resizing
+	/**
+	 \copydoc Blur::resize
+	 */
 	void resize(unsigned int width, unsigned int height);
 	
 private:
