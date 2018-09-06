@@ -863,7 +863,7 @@ table.doxtable {
 }
 
 table.doxtable td, table.doxtable th {
-	border: 1px solid #2D4068;
+	border: 2px solid #eee;
 	padding: 3px 7px 2px;
 }
 
@@ -877,14 +877,14 @@ table.doxtable th {
 
 table.fieldtable {
 	margin-bottom: 10px;
-	border: 1px solid #A8B8D9;
+	border: 2px solid #eee;
 	border-spacing: 0px;
-	-moz-border-radius: 4px;
-	-webkit-border-radius: 4px;
-	border-radius: 4px;
-	-moz-box-shadow: rgba(0, 0, 0, 0.15) 2px 2px 2px;
-	-webkit-box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.15);
-	box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.15);
+	-moz-border-radius: 0px;
+	-webkit-border-radius: 0px;
+	border-radius: 0px;
+	-moz-box-shadow: none;
+	-webkit-box-shadow: none;
+	box-shadow: none;
 }
 
 table.directory {
@@ -900,8 +900,8 @@ table.directory {
 
 .fieldtable td.fieldtype, .fieldtable td.fieldname {
 	white-space: nowrap;
-	border-right: 1px solid #A8B8D9;
-	border-bottom: 1px solid #A8B8D9;
+	border-right: 2px solid #eee;
+	border-bottom: 2px solid #eee;
 	vertical-align: top;
 }
 
@@ -910,7 +910,7 @@ table.directory {
 }
 
 .fieldtable td.fielddoc {
-	border-bottom: 1px solid #A8B8D9;
+	border-bottom: 2px solid #eee;
 }
 
 .fieldtable td.fielddoc p:first-child {
@@ -927,21 +927,21 @@ table.directory {
 
 .fieldtable th {
 	background-image: none;
-	background-color: #f0f0f0;
+	background-color: #eee;
 	background-repeat:repeat-x;
-	background-color: #E2E8F2;
-	font-size: 90%;
-	color: #253555;
+	font-size: 14px;
+	font-weight:600;
+	color: #333;
 	padding-bottom: 4px;
 	padding-top: 5px;
 	text-align:left;
-	-moz-border-radius-topleft: 4px;
-	-moz-border-radius-topright: 4px;
-	-webkit-border-top-left-radius: 4px;
-	-webkit-border-top-right-radius: 4px;
-	border-top-left-radius: 4px;
-	border-top-right-radius: 4px;
-	border-bottom: 1px solid #A8B8D9;
+	-moz-border-radius-topleft: 0px;
+	-moz-border-radius-topright: 0px;
+	-webkit-border-top-left-radius: 0px;
+	-webkit-border-top-right-radius: 0px;
+	border-top-left-radius: 0px;
+	border-top-right-radius: 0px;
+	border-bottom: 2px solid #eee;
 }
 
 
