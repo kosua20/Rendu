@@ -45,12 +45,12 @@ public:
 	
 private:
 	
-	std::shared_ptr<ProgramInfos> _blurProgram;
-	std::shared_ptr<Framebuffer> _finalFramebuffer;
-	std::shared_ptr<ProgramInfos> _combineProgram;
-	std::vector<std::shared_ptr<Framebuffer>> _frameBuffers;
-	std::vector<std::shared_ptr<Framebuffer>> _frameBuffersBlur;
-	std::vector<GLuint> _textures;
+	std::shared_ptr<ProgramInfos> _blurProgram; ///< The approximate gaussian blurring kernel shader.
+	std::shared_ptr<Framebuffer> _finalFramebuffer; ///< Final result framebuffer.
+	std::shared_ptr<ProgramInfos> _combineProgram;  ///< Program to merge pyramid levels.
+	std::vector<std::shared_ptr<Framebuffer>> _frameBuffers; ///< Downscaled pyramid framebuffers.
+	std::vector<std::shared_ptr<Framebuffer>> _frameBuffersBlur; ///< Blurred pyramid framebuffers.
+	std::vector<GLuint> _textures; ///< Downscaled pyramid framebuffers.
 	
 };
 

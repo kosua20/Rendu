@@ -9,15 +9,12 @@ GaussianBlur::GaussianBlur(unsigned int width, unsigned int height, unsigned int
 	_frameBuffers = std::vector<std::shared_ptr<Framebuffer>>(depth);
 	_frameBuffersBlur = std::vector<std::shared_ptr<Framebuffer>>(depth);
 	
-	std::vector<std::string> textureNames(depth);
 	_textures.resize(depth);
 	
 	for(size_t i = 0; i < (size_t)depth; ++i){
 		_frameBuffers[i] = std::make_shared<Framebuffer>((unsigned int)(width/std::pow(2,i)), (unsigned int)(height/std::pow(2,i)), format, type, preciseFormat, GL_LINEAR, GL_CLAMP_TO_EDGE, false);
 		_frameBuffersBlur[i] = std::make_shared<Framebuffer>((unsigned int)(width/std::pow(2,i)), (unsigned int)(height/std::pow(2,i)), format, type, preciseFormat, GL_LINEAR, GL_CLAMP_TO_EDGE, false);
 		_textures[i] = _frameBuffers[i]->textureId();
-		textureNames[i] = "texture" + std::to_string(i);
-		
 	}
 
 	// Final combining buffer.

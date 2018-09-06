@@ -45,7 +45,7 @@ public:
 	
 	/**
 	 Query if a given button is currently held.
-	 \input input the button
+	 \param input the button
 	 \return true if the button is pressed
 	 */
 	bool pressed(const ControllerInput & input) const;

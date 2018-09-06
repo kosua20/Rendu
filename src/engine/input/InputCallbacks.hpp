@@ -55,7 +55,6 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
 /**
  Callback for joystick (de)connection events.
- \param window the GLFW window pointer
  \param joy the index of the joystick
  \param event the event GLFW code
  \ingroup Input
