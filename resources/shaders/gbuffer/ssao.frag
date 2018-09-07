@@ -17,7 +17,7 @@ uniform vec3 samples[24];
 #define RADIUS 0.5
 
 // Output: the fragment color
-out float fragColor;
+layout(location = 0) out float fragColor;
 
 float linearizeDepth(float depth){
 	float depth2 = 2.0*depth-1.0; // Move from [0,1] to [-1,1].

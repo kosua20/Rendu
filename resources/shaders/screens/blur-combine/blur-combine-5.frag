@@ -13,7 +13,7 @@ layout(binding = 3) uniform sampler2D texture3;
 layout(binding = 4) uniform sampler2D texture4;
 
 // Output: the fragment color
-out vec3 fragColor;
+layout(location = 0) out vec3 fragColor;
 
 
 void main(){

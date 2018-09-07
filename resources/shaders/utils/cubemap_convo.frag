@@ -12,8 +12,9 @@ in INTERFACE {
 
 layout(binding = 0) uniform samplerCube texture0;
 uniform float mimapRoughness;
+
 // Output: the fragment color
-out vec3 fragColor;
+layout(location = 0) out vec3 fragColor;
 
 vec2 hammersleySample(uint i) {
 	uint bits = i;

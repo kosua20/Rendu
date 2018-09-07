@@ -23,7 +23,7 @@ uniform vec3 lightColor;
 uniform bool castShadow;
 
 // Output: the fragment color
-out vec3 fragColor;
+layout(location = 0) out vec3 fragColor;
 
 vec3 positionFromDepth(float depth){
 	float depth2 = 2.0 * depth - 1.0 ;

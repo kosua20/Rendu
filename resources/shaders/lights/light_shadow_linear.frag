@@ -3,7 +3,7 @@
 in vec3 worldPos;
 uniform vec3 lightPositionWorld;
 uniform float lightFarPlane;
-out vec2 fragColor;
+layout(location = 0) out vec2 fragColor;
 
 void main(){
 	// We compute the distance in world space (or equivalently view space).

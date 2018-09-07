@@ -12,7 +12,8 @@ in INTERFACE {
 #define SAMPLE_COUNT 1024u
 
 // Output: the fragment color
-out vec2 fragColor;
+layout(location = 0) out vec2 fragColor;
+
 vec2 hammersleySample(uint i) {
 	uint bits = i;
 	bits = (bits << 16u) | (bits >> 16u);

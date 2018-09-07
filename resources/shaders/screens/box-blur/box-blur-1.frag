@@ -9,7 +9,7 @@ in INTERFACE {
 layout(binding = 0) uniform sampler2D screenTexture;
 
 // Output: the fragment color
-out float fragColor;
+layout(location = 0) out float fragColor;
 
 
 void main(){

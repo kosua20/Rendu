@@ -1,6 +1,6 @@
 #version 330
 
-out vec4 fragColor;
+layout(location = 0) out vec4 fragColor;
 
 vec3 hash31(int x);
 

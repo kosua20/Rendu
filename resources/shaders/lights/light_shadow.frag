@@ -2,7 +2,7 @@
 
 
 // Output: the fragment color
-out vec2 fragColor;
+layout(location = 0) out vec2 fragColor;
 
 void main(){
 	

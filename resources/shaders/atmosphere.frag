@@ -25,7 +25,7 @@ const float sunAngularRadiusCos = 0.998;
 
 layout(binding = 0) uniform sampler2D screenTexture;
 
-out vec3 fragColor;
+layout(location = 0) out vec3 fragColor;
 
 #define SAMPLES_COUNT 16
 #define M_PI 3.14159265358979323846

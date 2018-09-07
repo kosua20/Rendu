@@ -17,7 +17,7 @@ uniform vec2 inverseScreenSize;
 #define SUBPIXEL_QUALITY 0.75
 
 // Output: the fragment color
-out vec3 fragColor;
+layout(location = 0) out vec3 fragColor;
 
 // Return the luma value in perceptual space for a given RGB color in linear space.
 float rgb2luma(vec3 rgb){

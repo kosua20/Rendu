@@ -23,7 +23,7 @@ uniform mat4 inverseV;
 uniform vec4 projectionMatrix;
 
 // Output: the fragment color
-out vec3 fragColor;
+layout(location = 0) out vec3 fragColor;
 
 #define SAMPLES_COUNT 16u
 #define MAX_LOD 5

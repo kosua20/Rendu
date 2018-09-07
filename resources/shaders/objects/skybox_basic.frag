@@ -8,7 +8,7 @@ in INTERFACE {
 layout(binding = 0) uniform samplerCube texture0;
 
 // Output: the fragment color
-out vec4 fragColor;
+layout(location = 0) out vec4 fragColor;
 
 
 void main(){
