@@ -5,7 +5,7 @@
 // Input: position in model space
 in INTERFACE {
 	vec3 position; 
-} In ;
+} In ; ///< vec3 position;
 
 layout(binding = 0) uniform samplerCube texture0;
 

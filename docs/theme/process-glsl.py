@@ -28,12 +28,14 @@ doxyNamespace = "GLSL"
 doxyGroup = "Shaders"
 doxySubnamespace = fileExt.lower()[1:].capitalize()
 doxyClass = fileName.capitalize().replace("-", "_")
-
+doxyFullNames = {"Vert" : "vertex", "Frag" : "fragment", "Geom" : "geometry" }
+doxyClassDetail = doxyClass.replace("_", " ")
 # C++ namespaces
 printout("namespace " + doxyNamespace + "{\n")
 printout("namespace " + doxySubnamespace + "{\n")
 # Class
 printout("/** \\class " + doxyClass + "\n")
+printout("  * \\brief \"" + doxyClassDetail + "\" " + doxyFullNames[doxySubnamespace] + " shader." + "\n")
 printout("  * \\ingroup " + doxyGroup + "*/\n")
 printout("public class " + doxyClass + " {" + "\n")
 printout("public:" + "\n")
