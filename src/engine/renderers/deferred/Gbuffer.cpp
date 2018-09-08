@@ -60,8 +60,6 @@ Gbuffer::Gbuffer(unsigned int width, unsigned int height) {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-Gbuffer::~Gbuffer(){ clean(); }
-
 void Gbuffer::bind() const {
 	glBindFramebuffer(GL_FRAMEBUFFER, _id);
 }

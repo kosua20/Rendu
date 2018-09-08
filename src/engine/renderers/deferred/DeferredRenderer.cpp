@@ -6,8 +6,6 @@
 #include "../../helpers/InterfaceUtilities.hpp"
 
 
-DeferredRenderer::~DeferredRenderer(){}
-
 DeferredRenderer::DeferredRenderer(Config & config) : Renderer(config) {
 	
 	// Setup camera parameters.

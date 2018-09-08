@@ -3,7 +3,6 @@
 #include "../../helpers/GLUtilities.hpp"
 
 
-RendererCube::~RendererCube(){}
 
 RendererCube::RendererCube(Config & config, const std::string & cubemapName, const std::string & shaderName, const unsigned int width, const unsigned int height, const GLenum format, const GLenum type, const GLenum preciseFormat) : Renderer(config) {
 	

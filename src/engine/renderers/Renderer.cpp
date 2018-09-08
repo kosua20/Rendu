@@ -3,8 +3,6 @@
 #include "../input/Input.hpp"
 
 
-Renderer::~Renderer(){}
-
 Renderer::Renderer(Config & config) : _config(config) {
 	
 	// Initial render resolution.

@@ -2,8 +2,6 @@
 #include "../../input/Input.hpp"
 
 
-TestRenderer::~TestRenderer(){}
-
 TestRenderer::TestRenderer(Config & config) : Renderer(config) {
 	
 	

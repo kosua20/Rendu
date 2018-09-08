@@ -5,10 +5,7 @@
 
 AmbientQuad::AmbientQuad(){}
 
-AmbientQuad::~AmbientQuad(){}
-
 void AmbientQuad::init(std::vector<GLuint> textureIds){
-	
 	
 	_program = Resources::manager().getProgram2D("ambient");
 	// Load texture.
