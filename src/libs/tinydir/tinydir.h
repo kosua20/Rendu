@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2013-2017, tinydir authors:
+Copyright (c) 2013-2018, tinydir authors:
 - Cong Xu
 - Lautis Sun
 - Baudouin Feildel
@@ -65,32 +65,40 @@ extern "C" {
 
 /* Windows UNICODE wide character support */
 #if defined _MSC_VER || defined __MINGW32__
-#define _tinydir_char_t TCHAR
-#define TINYDIR_STRING(s) _TEXT(s)
-#define _tinydir_strlen _tcslen
-#define _tinydir_strcpy _tcscpy
-#define _tinydir_strcat _tcscat
-#define _tinydir_strcmp _tcscmp
-#define _tinydir_strrchr _tcsrchr
-#define _tinydir_strncmp _tcsncmp
+# define _tinydir_char_t TCHAR
+# define TINYDIR_STRING(s) _TEXT(s)
+# define _tinydir_strlen _tcslen
+# define _tinydir_strcpy _tcscpy
+# define _tinydir_strcat _tcscat
+# define _tinydir_strcmp _tcscmp
+# define _tinydir_strrchr _tcsrchr
+# define _tinydir_strncmp _tcsncmp
 #else
-#define _tinydir_char_t char
-#define TINYDIR_STRING(s) s
-#define _tinydir_strlen strlen
-#define _tinydir_strcpy strcpy
-#define _tinydir_strcat strcat
-#define _tinydir_strcmp strcmp
-#define _tinydir_strrchr strrchr
-#define _tinydir_strncmp strncmp
+# define _tinydir_char_t char
+# define TINYDIR_STRING(s) s
+# define _tinydir_strlen strlen
+# define _tinydir_strcpy strcpy
+# define _tinydir_strcat strcat
+# define _tinydir_strcmp strcmp
+# define _tinydir_strrchr strrchr
+# define _tinydir_strncmp strncmp
 #endif
 
 #if (defined _MSC_VER || defined __MINGW32__)
-#include <windows.h>
-#define _TINYDIR_PATH_MAX MAX_PATH
+# include <windows.h>
+# define _TINYDIR_PATH_MAX MAX_PATH
 #elif defined  __linux__
-#include <linux/limits.h>
-#define _TINYDIR_PATH_MAX PATH_MAX
-#else
+# include <limits.h>
+# define _TINYDIR_PATH_MAX PATH_MAX
+#elif defined(__unix__) || (defined(__APPLE__) && defined(__MACH__))
+# include <sys/param.h>
+# if defined(BSD)
+#  include <limits.h>
+#  define _TINYDIR_PATH_MAX PATH_MAX
+# endif
+#endif
+
+#ifndef _TINYDIR_PATH_MAX
 #define _TINYDIR_PATH_MAX 4096
 #endif
 
@@ -357,7 +365,7 @@ int tinydir_open_sorted(tinydir_dir *dir, const _tinydir_char_t *path)
 	}
 	tinydir_close(dir);
 
-	if (tinydir_open(dir, path) == -1)
+	if (n_files == 0 || tinydir_open(dir, path) == -1)
 	{
 		return -1;
 	}
@@ -650,7 +658,7 @@ int tinydir_file_open(tinydir_file *file, const _tinydir_char_t *path)
 	/* Get the parent path */
 #if (defined _MSC_VER || defined __MINGW32__)
 #if ((defined _MSC_VER) && (_MSC_VER >= 1400))
-		_tsplitpath_s(
+		errno = _tsplitpath_s(
 			path,
 			drive_buf, _TINYDIR_DRIVE_MAX,
 			dir_name_buf, _TINYDIR_FILENAME_MAX,
@@ -665,6 +673,11 @@ int tinydir_file_open(tinydir_file *file, const _tinydir_char_t *path)
 			ext_buf);
 #endif
 
+if (errno)
+{
+	return -1;
+}
+
 /* _splitpath_s not work fine with only filename and widechar support */
 #ifdef _UNICODE
 		if (drive_buf[0] == L'\xFEFE')
@@ -673,11 +686,6 @@ int tinydir_file_open(tinydir_file *file, const _tinydir_char_t *path)
 			dir_name_buf[0] = '\0';
 #endif
 
-	if (errno)
-	{
-		errno = EINVAL;
-		return -1;
-	}
 	/* Emulate the behavior of dirname by returning "." for dir name if it's
 	empty */
 	if (drive_buf[0] == '\0' && dir_name_buf[0] == '\0')
