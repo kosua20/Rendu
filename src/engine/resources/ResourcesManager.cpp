@@ -5,10 +5,9 @@
 #include <tinydir/tinydir.h>
 #include <miniz/miniz.h>
 
-// By enabling RESOURCES_PACKAGED, the resources will be loaded from a zip archive
-// instead of the resources directory. Basic text files can still be read from disk
-// (for configuration, settings,...) by using Resources::loadStringFromExternalFile.
-
+/** By enabling RESOURCES_PACKAGED, the resources will be loaded from a zip archive
+ instead of the resources directory. Basic text files can still be read from disk
+ (for configuration, settings,...) by using Resources::loadStringFromExternalFile. */
 //#define RESOURCES_PACKAGED
 
 
@@ -38,7 +37,7 @@ std::string TCHARToString(_tinydir_char_t * str) {
 
 std::string Resources::defaultPath = "../../../resources";
 
-/// Singleton.
+// Singleton.
 Resources& Resources::manager(){
 	static Resources* res = new Resources(Resources::defaultPath);
 	return *res;
@@ -143,7 +142,7 @@ void Resources::parseDirectory(const std::string & directoryPath){
 }
 
 
-/// Image path utilities.
+// Image path utilities.
 
 const std::vector<std::string> Resources::getCubemapPaths(const std::string & name){
 	const std::vector<std::string> names { name + "_px", name + "_nx", name + "_py", name + "_ny", name + "_pz", name + "_nz" };
@@ -181,7 +180,7 @@ const std::string Resources::getImagePath(const std::string & name){
 }
 
 
-/// Base methods.
+// Base methods.
 
 #ifdef RESOURCES_PACKAGED
 
@@ -225,7 +224,7 @@ const std::string Resources::getString(const std::string & filename){
 	return content;
 }
 
-/// Mesh method.
+// Mesh method.
 
 const MeshInfos Resources::getMesh(const std::string & name){
 	if(_meshes.count(name) > 0){
@@ -259,7 +258,7 @@ const MeshInfos Resources::getMesh(const std::string & name){
 }
 
 
-/// Texture methods.
+// Texture methods.
 
 const TextureInfos Resources::getTexture(const std::string & name, bool srgb){
 	
@@ -344,7 +343,7 @@ const TextureInfos Resources::getCubemap(const std::string & name, bool srgb){
 	return infos;
 }
 
-/// Program/shaders methods.
+// Program/shaders methods.
 
 const std::string Resources::getShader(const std::string & name, const ShaderType & type){
 	
@@ -407,7 +406,7 @@ void Resources::getFiles(const std::string & extension, std::map<std::string, st
 	}
 }
 
-/// Static utilities methods.
+// Static utilities methods.
 
 char * Resources::loadRawDataFromExternalFile(const std::string & path, size_t & size) {
 	char * rawContent;
@@ -425,12 +424,12 @@ char * Resources::loadRawDataFromExternalFile(const std::string & path, size_t &
 	return rawContent;
 }
 
-std::string Resources::loadStringFromExternalFile(const std::string & filename) {
+std::string Resources::loadStringFromExternalFile(const std::string & path) {
 	std::ifstream in;
 	// Open a stream to the file.
-	in.open(filename.c_str());
+	in.open(path.c_str());
 	if (!in) {
-		Log::Error() << Log::Resources << "" << filename + " is not a valid file." << std::endl;
+		Log::Error() << Log::Resources << "" << path + " is not a valid file." << std::endl;
 		return "";
 	}
 	std::stringstream buffer;
