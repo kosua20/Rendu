@@ -9,7 +9,9 @@
 #include "../processing/BoxBlur.hpp"
 
 /**
- \brief A directional light, where all light rays have the same direction. It can be associated with a shadow 2D map with orthogonal projection, generated using Variance shadow mapping. It is rendered as a fullscreen squad in deferred rendering.
+ \brief A directional light, where all light rays have the same direction.
+ \details It can be associated with a shadow 2D map with orthogonal projection, generated using Variance shadow mapping. It is rendered as a fullscreen squad in deferred rendering.
+ \see GLSL::Frag::Directional_light, GLSL::Frag::Light_shadow, GLSL::Frag::Light_debug
  \ingroup Lights
  */
 class DirectionalLight : public Light {

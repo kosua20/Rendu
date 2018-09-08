@@ -67,4 +67,16 @@
  \defgroup Tools Tools
  \brief Preprocess tools for shader validation, data precomputations, etc.
  
+ \namespace GLSL
+ \brief GLSL shaders
+ 
+ \namespace GLSL::Vert
+ \brief Contains all vertex shaders
+ 
+ \namespace GLSL::Frag
+ \brief Contains all fragment shaders
+ 
+ \namespace GLSL::Geom
+ \brief Contains all geometry shaders
+ 
  */

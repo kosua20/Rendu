@@ -29,10 +29,6 @@ doxyGroup = "Shaders"
 doxySubnamespace = fileExt.lower()[1:].capitalize()
 doxyClass = fileName.capitalize().replace("-", "_")
 
-# Main comment block
-# Namespace and group
-printout("/** \\namespace " + doxyNamespace + "::" + doxySubnamespace + "\n*/")
-
 # C++ namespaces
 printout("namespace " + doxyNamespace + "{\n")
 printout("namespace " + doxySubnamespace + "{\n")

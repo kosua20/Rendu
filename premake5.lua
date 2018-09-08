@@ -104,7 +104,7 @@ project("Engine")
 	GraphicsSetup()
 	kind("StaticLib")
 	files({ "src/engine/**.hpp", "src/engine/**.cpp",
-			"resources/shaders/**.vert", "resources/shaders/**.frag",
+			"resources/shaders/**.vert", "resources/shaders/**.frag", "resources/shaders/**.geom",
 			"src/libs/*/*.hpp", "src/libs/*/*.cpp", "src/libs/*/*.h"
 	})
 

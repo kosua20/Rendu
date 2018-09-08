@@ -6,7 +6,9 @@
 #include "../Object.hpp"
 
 /**
- \brief An omnidirectional punctual light, where light is radiating in all directions from a single point in space. Implements distance attenuation. It can be associated with a shadow cubemap with six orthogonal projections, and is rendered as a sphere in deferred rendering.
+ \brief An omnidirectional punctual light, where light is radiating in all directions from a single point in space. Implements distance attenuation.
+ \details It can be associated with a shadow cubemap with six orthogonal projections, and is rendered as a sphere in deferred rendering.
+ \see GLSL::Frag::Point_light, GLSL::Frag::Light_shadow_linear, GLSL::Frag::Light_debug
  \ingroup Lights
  */
 class PointLight : public Light {

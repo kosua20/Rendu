@@ -13,7 +13,10 @@ public:
 
 	/// \brief Type of shading/effects.
 	enum Type {
-		Skybox = 0, Regular = 1, Parallax = 2, Custom = 3
+		Skybox = 0, ///< \see GLSL::Vert::Skybox_gbuffer, GLSL::Frag::Skybox_gbuffer
+		Regular = 1, ///< \see GLSL::Vert::Object_gbuffer, GLSL::Frag::Object_gbuffer
+		Parallax = 2, ///< \see GLSL::Vert::Parallax_gbuffer, GLSL::Frag::Parallax_gbuffer
+		Custom = 3  ///< \see GLSL::Vert::Object_basic, GLSL::Frag::Object_basic, GLSL::Vert::Skybox_basic, GLSL::Frag::Skybox_basic
 	};
 
 	/** Constructor */

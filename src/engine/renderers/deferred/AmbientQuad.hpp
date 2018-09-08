@@ -7,6 +7,7 @@
 
 /**
  \brief Renders the ambient lighting contribution of a scene, including irradiance and ambient occlusion.
+ \see GLSL::Frag::Ambient, GLSL::Frag::Ssao
  \ingroup DeferredRendering
  */
 class AmbientQuad {

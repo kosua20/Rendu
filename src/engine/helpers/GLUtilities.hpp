@@ -108,10 +108,10 @@ public:
 	static TextureInfos loadTexture(const std::vector<std::string>& path, bool sRGB);
 	 
 	/** Send a cubemap texture to the GPU.
-	 \param path a list of series of paths, six (one per face) for each mipmap level of the texture
+	 \param paths a list of lists of paths, six (one per face) for each mipmap level of the texture
 	 \param sRGB denotes if gamma conversion should be applied to the texture when used
 	 \return the texture informations, including the OpenGL ID
-	 \note If only one path is present, the mipmaps will be generated automatically.
+	 \note If only one list of paths is present, the mipmaps will be generated automatically.
 	 */
 	static TextureInfos loadTextureCubemap(const std::vector<std::vector<std::string>> & paths, bool sRGB);
 	

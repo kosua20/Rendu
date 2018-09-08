@@ -8,6 +8,8 @@
  \brief Helper used to draw a fullscreen quad for texture processing.
  \details Instead of story two-triangles geometry, it uses an empty vertex array. At renderer time, three invocations of the vertex shader are made.
  The position of each is directly computed from the vertex ID in the shader, so that they generate a triangle covering the screen.
+ \see GLSL::Vert::Passthrough
+ \see GLSL::Frag::Passthrough, GLSL::Frag::Passthrough_pixelperfect
  \ingroup Engine
  */
 class ScreenQuad {

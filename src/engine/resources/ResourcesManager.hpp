@@ -119,6 +119,7 @@ public:
 	/** Get an OpenGL program resource for 2D screen processing. It will use GLSL::Vert::Passthrough as a vertex shader.
 	 \param name the name of the fragment shader
 	 \return the program informations
+	 \see GLSL::Vert::Passthrough
 	 */
 	const std::shared_ptr<ProgramInfos> getProgram2D(const std::string & name);
 	
