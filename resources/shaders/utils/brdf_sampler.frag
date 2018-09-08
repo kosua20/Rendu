@@ -3,7 +3,7 @@
 // Input: UV coordinates
 in INTERFACE {
 	vec2 uv;
-} In ;
+} In ; ///< vec2 uv;
 
 
 #define INV_M_PI 0.3183098862
@@ -11,9 +11,12 @@ in INTERFACE {
 #define M_INV_LOG2 1.4426950408889
 #define SAMPLE_COUNT 1024u
 
-// Output: the fragment color
-layout(location = 0) out vec2 fragColor;
+layout(location = 0) out vec2 fragColor; ///< BRDF linear coefficients.
 
+/** Compute an arbitrary sample of the 2D Hammersley sequence.
+\param i the index in the hammersley sequence
+\return the i-th 2D sample
+*/
 vec2 hammersleySample(uint i) {
 	uint bits = i;
 	bits = (bits << 16u) | (bits >> 16u);
@@ -25,16 +28,31 @@ vec2 hammersleySample(uint i) {
 	return vec2(float(i)/float(SAMPLE_COUNT), y);
 }
 
-
+/** Geometric half-term of GGX BRDF.
+\param NdotX dot product of either the light or the view direction with the surface normal
+\param halfAlpha half squared roughness
+\return the value of the half-term
+*/
 float G1(float NdotX, float halfAlpha){
 	return 1.0 / (NdotX * (1.0 - halfAlpha) + halfAlpha);
 }
 
+/** Geometric term of GGX BRDF, G.
+\param NdotL dot product of the light direction with the surface normal
+\param NdotV dot product of the view direction with the surface normal
+\param alpha squared roughness
+\return the value of G
+*/
 float G(float NdotL, float NdotV, float alpha){
 	float halfAlpha = alpha * 0.5;
 	return G1(NdotL, halfAlpha)*G1(NdotV, halfAlpha);
 }
 
+/** Evaluated the GGX BRDF for a given surface normal, view direction and roughness.
+\param NdotV dot product of the view direction with the surface normal
+\param roughness the roughness of the surface
+\return the corresponding value of the BRDF
+*/
 vec2 ggx(float NdotV, float roughness){
 	
 	vec3 v = vec3(sqrt( 1.0f - NdotV * NdotV ), 0.0, NdotV);
@@ -78,7 +96,8 @@ vec2 ggx(float NdotV, float roughness){
 	return sum/float(SAMPLE_COUNT);
 }
 
-
+/** Compute a linear approximation of the GGX BRDF in two coefficients.
+*/
 void main(){
 	fragColor = ggx(In.uv.x,In.uv.y);
 }

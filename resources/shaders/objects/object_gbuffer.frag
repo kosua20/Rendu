@@ -1,23 +1,23 @@
 #version 330
 
-#define MATERIAL_ID 1
+#define MATERIAL_ID 1 ///< The material ID.
 
 // Input: tangent space matrix, position (view space) and uv coming from the vertex shader
 in INTERFACE {
     mat3 tbn;
 	vec2 uv;
-} In ;
+} In ; ///< mat3 tbn; vec2 uv;
 
-layout(binding = 0) uniform sampler2D texture0;
-layout(binding = 1) uniform sampler2D texture1;
-layout(binding = 2) uniform sampler2D texture2;
+layout(binding = 0) uniform sampler2D texture0; ///< Albedo.
+layout(binding = 1) uniform sampler2D texture1; ///< Normal map.
+layout(binding = 2) uniform sampler2D texture2; ///< Effects map.
 
-// Output: the fragment color
-layout (location = 0) out vec4 fragColor;
-layout (location = 1) out vec3 fragNormal;
-layout (location = 2) out vec3 fragEffects;
+layout (location = 0) out vec4 fragColor; ///< Color.
+layout (location = 1) out vec3 fragNormal; ///< View space normal.
+layout (location = 2) out vec3 fragEffects; ///< Effects.
 
-
+/** Transfer albedo and effects along with the material ID, and output the final normal 
+	(combining geometry normal and normal map) in view space. */
 void main(){
 	
 	// Compute the normal at the fragment using the tangent space matrix and the normal read in the normal map.

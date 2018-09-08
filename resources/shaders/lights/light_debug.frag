@@ -1,12 +1,13 @@
 #version 330
 
-uniform vec3 lightColor;
+uniform vec3 lightColor; ///< The color of the light.
 
 // Output: the fragment color
-layout (location = 0) out vec4 fragColor;
-layout (location = 1) out vec3 fragNormal;
-layout (location = 2) out vec3 fragEffects;
+layout (location = 0) out vec4 fragColor; ///< Color.
+layout (location = 1) out vec3 fragNormal; ///< Normal (view space).
+layout (location = 2) out vec3 fragEffects; ///< Effects (roughness, etc.).
 
+/** Simply output the light color, and identify as background (no additional processing) */
 void main(){
 	
 	// Store values.

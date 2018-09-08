@@ -3,31 +3,33 @@
 // Input: UV coordinates
 in INTERFACE {
 	vec2 uv;
-} In ;
+} In ; ///< vec2 uv;
 
 #define INV_M_PI 0.3183098862
 #define M_PI 3.1415926536
 #define M_INV_LOG2 1.4426950408889
 
-// Uniforms: the texture, inverse of the screen size, FXAA flag.
-layout(binding = 0) uniform sampler2D albedoTexture;
-layout(binding = 1) uniform sampler2D normalTexture;
-layout(binding = 2) uniform sampler2D depthTexture;
-layout(binding = 3) uniform sampler2D effectsTexture;
-layout(binding = 4) uniform sampler2D ssaoTexture;
-layout(binding = 5) uniform samplerCube textureCubeMap;
-layout(binding = 6) uniform sampler2D brdfPrecalc;
-uniform vec3 shCoeffs[9];
+layout(binding = 0) uniform sampler2D albedoTexture; ///< The albedo texture.
+layout(binding = 1) uniform sampler2D normalTexture; ///< The normal texture.
+layout(binding = 2) uniform sampler2D depthTexture; ///< The depth texture.
+layout(binding = 3) uniform sampler2D effectsTexture; ///< The effects texture.
+layout(binding = 4) uniform sampler2D ssaoTexture; ///< The SSAO texture.
+layout(binding = 5) uniform samplerCube textureCubeMap; ///< Background environment cubemap (with preconvoluted versions of increasing roughness in mipmap levels).
+layout(binding = 6) uniform sampler2D brdfPrecalc; ///< Preintegrated BRDF lookup table.
 
-uniform mat4 inverseV;
-uniform vec4 projectionMatrix;
+uniform vec3 shCoeffs[9]; ///< SH approximation of the environment irradiance.
+uniform mat4 inverseV; ///< The view to world transformation matrix.
+uniform vec4 projectionMatrix; ///< The camera projection matrix.
 
-// Output: the fragment color
-layout(location = 0) out vec3 fragColor;
+layout(location = 0) out vec3 fragColor; ///< Color.
 
 #define SAMPLES_COUNT 16u
 #define MAX_LOD 5
 
+/** Estimate the position of the current fragment in view space based on its depth and camera parameters.
+\param depth the depth of the fragment
+\return the view space position
+*/
 vec3 positionFromDepth(float depth){
 	float depth2 = 2.0 * depth - 1.0 ;
 	vec2 ndcPos = 2.0 * In.uv - 1.0;
@@ -37,37 +39,14 @@ vec3 positionFromDepth(float depth){
 	return vec3(- ndcPos * viewDepth / projectionMatrix.xy , viewDepth);
 }
 
-vec2 hammersleySample(uint i) {
-	uint bits = i;
-	bits = (bits << 16u) | (bits >> 16u);
-	bits = ((bits & 0x55555555u) << 1u) | ((bits & 0xAAAAAAAAu) >> 1u);
-	bits = ((bits & 0x33333333u) << 2u) | ((bits & 0xCCCCCCCCu) >> 2u);
-	bits = ((bits & 0x0F0F0F0Fu) << 4u) | ((bits & 0xF0F0F0F0u) >> 4u);
-	bits = ((bits & 0x00FF00FFu) << 8u) | ((bits & 0xFF00FF00u) >> 8u);
-	float y = float(bits) * 2.3283064365386963e-10; // / 0x100000000
-	return vec2(float(i)/SAMPLES_COUNT, y);
-}
-
-vec3 F(vec3 F0, float VdotH){
-	float approx = pow(2.0, (-5.55473 * VdotH - 6.98316) * VdotH);
-	return F0 + approx * (1.0 - F0);
-}
-
-float D(float NdotH, float alpha){
-	float halfDenum = NdotH * NdotH * (alpha * alpha - 1.0) + 1.0;
-	float halfTerm = alpha / max(0.0001, halfDenum);
-	return halfTerm * halfTerm * INV_M_PI;
-}
-
-float G1(float NdotX, float halfAlpha){
-	return 1.0 / max(0.0001, (NdotX * (1.0 - halfAlpha) + halfAlpha));
-}
-
-float G(float NdotL, float NdotV, float alpha){
-	float halfAlpha = alpha * 0.5;
-	return G1(NdotL, halfAlpha)*G1(NdotV, halfAlpha);
-}
-
+/** Evaluate the GGX BRDF for a given normal, view direction and 
+	material parameters using a preintegrated BRDF (linear approximation).
+	\param n the surface normal
+	\param v the view direction
+	\param F0 the Fresnel coefficient
+	\param roughness the surface roughness
+	return the BRDF value
+	*/
 vec3 ggx(vec3 n, vec3 v, vec3 F0, float roughness){
 	// Compute local frame.
 	float NdotV = max(0.0, dot(v, n));
@@ -78,6 +57,10 @@ vec3 ggx(vec3 n, vec3 v, vec3 F0, float roughness){
 	return specularColor * (brdfParams.x * F0 + brdfParams.y);
 }
 
+/** Evaluate the ambient irradiance (as SH coefficients) in a given direction. 
+	\param wn the direction (normalized)
+	\return the ambient irradiance
+	*/
 vec3 applySH(vec3 wn){
 	return (shCoeffs[7] * wn.z + shCoeffs[4]  * wn.y + shCoeffs[8]  * wn.x + shCoeffs[3]) * wn.x +
 		   (shCoeffs[5] * wn.z - shCoeffs[8]  * wn.y + shCoeffs[1]) * wn.y +
@@ -85,6 +68,7 @@ vec3 applySH(vec3 wn){
 		    shCoeffs[0];
 }
 
+/** Compute the environment ambient lighting contribution on the scene. */
 void main(){
 	
 	vec4 albedoInfo = texture(albedoTexture,In.uv);

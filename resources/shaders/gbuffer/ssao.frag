@@ -3,28 +3,33 @@
 // Input: UV coordinates
 in INTERFACE {
 	vec2 uv;
-} In ;
+} In ; ///< vec2 uv;
 
-// Uniforms.
-layout(binding = 0) uniform sampler2D depthTexture;
-layout(binding = 1) uniform sampler2D normalTexture;
+layout(binding = 0) uniform sampler2D depthTexture; ///< Depth texture.
+layout(binding = 1) uniform sampler2D normalTexture; ///< Normal texture.
+layout(binding = 2) uniform sampler2D noiseTexture; ///< 5x5 3-components noise texture with float precision.
 
-uniform mat4 projectionMatrix;
+uniform mat4 projectionMatrix; ///< The camera projection parameters.
+uniform vec3 samples[24]; ///< Unique sample directions on a sphere.
 
-layout(binding = 2) uniform sampler2D noiseTexture; // 5x5 3-components texture with float precision.
-uniform vec3 samples[24];
+#define RADIUS 0.5 ///< The sampling radius.
 
-#define RADIUS 0.5
+layout(location = 0) out float fragColor; ///< SSAO.
 
-// Output: the fragment color
-layout(location = 0) out float fragColor;
-
+/** Linearize a NDC space to view space using the camera projection parameters. 
+\param depth the non-linear depth
+\return the linear depth
+*/
 float linearizeDepth(float depth){
 	float depth2 = 2.0*depth-1.0; // Move from [0,1] to [-1,1].
 	float viewDepth = - projectionMatrix[3][2] / (depth2 + projectionMatrix[2][2] );
 	return viewDepth;
 }
 
+/** Estimate the view space position of a given fragment.
+\param uv The texture coordinates of the fragment
+\return the view space position
+*/
 vec3 positionFromUV(vec2 uv){
 	// Linearize depth -> in view space.
 	float depth = texture(depthTexture, uv).r;
@@ -34,6 +39,7 @@ vec3 positionFromUV(vec2 uv){
 	return vec3(- ndcPos * viewDepth / vec2(projectionMatrix[0][0], projectionMatrix[1][1] ) , viewDepth);
 }
 
+/** Estimate the screen space ambient occlusion in the scene. */
 void main(){
 	
 	vec3 n = normalize(2.0 * texture(normalTexture,In.uv).rgb - 1.0);

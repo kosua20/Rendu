@@ -4,25 +4,29 @@
 #define M_PI 3.1415926536
 
 // Uniforms
-layout(binding = 0) uniform sampler2D albedoTexture;
-layout(binding = 1) uniform sampler2D normalTexture;
-layout(binding = 2) uniform sampler2D depthTexture;
-layout(binding = 3) uniform sampler2D effectsTexture;
-layout(binding = 4) uniform samplerCube shadowMap;
+layout(binding = 0) uniform sampler2D albedoTexture; ///< Albedo.
+layout(binding = 1) uniform sampler2D normalTexture; ///< Normal.
+layout(binding = 2) uniform sampler2D depthTexture; ///< Depth.
+layout(binding = 3) uniform sampler2D effectsTexture;///< Effects.
+layout(binding = 4) uniform samplerCube shadowMap; ///< Shadow map.
 
-uniform vec2 inverseScreenSize;
-uniform vec4 projectionMatrix;
+uniform vec2 inverseScreenSize; ///< Size of a pixel in uv space.
+uniform vec4 projectionMatrix; ///< Camera projection matrix
+uniform mat3 viewToLight; ///< Light direction in view space.
 
-uniform vec3 lightPosition;
-uniform vec3 lightColor;
-uniform float lightRadius;
-uniform mat3 viewToLight;
-uniform float lightFarPlane;
-uniform bool castShadow;
+uniform vec3 lightPosition; ///< Light position in view space.
+uniform vec3 lightColor; ///< Light intensity.
+uniform float lightRadius; ///< Attenuation radius.
+uniform float lightFarPlane; ///< Light projection far plane.
+uniform bool castShadow; ///< Should the shadow map be used.
 
-// Output: the fragment color
-layout(location = 0) out vec3 fragColor;
+layout(location = 0) out vec3 fragColor; ///< Color.
 
+/** Estimate the position of the current fragment in view space based on its depth and camera parameters.
+\param depth the depth of the fragment
+\param uv the uv coordinates of the fragment
+\return the view space position
+*/
 vec3 positionFromDepth(float depth, vec2 uv){
 	float depth2 = 2.0 * depth - 1.0 ;
 	vec2 ndcPos = 2.0 * uv - 1.0;
@@ -32,8 +36,10 @@ vec3 positionFromDepth(float depth, vec2 uv){
 	return vec3(- ndcPos * viewDepth / projectionMatrix.xy , viewDepth);
 }
 
-// Compute the shadow multiplicator based on shadow map.
-
+/** Compute the shadow multiplicator based on shadow map.
+	\param lightToPosDir direction from the light to the fragment position, in world space.
+	\return the shadowing factor
+*/
 float shadow(vec3 lightToPosDir){
 	float probabilityMax = 1.0;
 	// Read first and second moment from shadow map.
@@ -60,27 +66,56 @@ float shadow(vec3 lightToPosDir){
 	return probabilityMax;
 }
 
-
+/** Fresnel approximation.
+	\param F0 fresnel based coefficient
+	\param VdotH angle between the half and view directions
+	\return the Fresnel term
+*/
 vec3 F(vec3 F0, float VdotH){
 	float approx = pow(2.0, (-5.55473 * VdotH - 6.98316) * VdotH);
 	return F0 + approx * (1.0 - F0);
 }
 
+/** GGX Distribution term.
+	\param NdotH angle between the half and normal directions
+	\param alpha the roughness squared
+	\return the distribution term
+*/
 float D(float NdotH, float alpha){
 	float halfDenum = NdotH * NdotH * (alpha * alpha - 1.0) + 1.0;
 	float halfTerm = alpha / max(0.0001, halfDenum);
 	return halfTerm * halfTerm * INV_M_PI;
 }
 
+/** Geometric half-term of GGX BRDF.
+\param NdotX dot product of either the light or the view direction with the surface normal
+\param halfAlpha half squared roughness
+\return the value of the half-term
+*/
 float G1(float NdotX, float halfAlpha){
 	return 1.0 / max(0.0001, (NdotX * (1.0 - halfAlpha) + halfAlpha));
 }
 
+/** Geometric term of GGX BRDF, G.
+\param NdotL dot product of the light direction with the surface normal
+\param NdotV dot product of the view direction with the surface normal
+\param alpha squared roughness
+\return the value of G
+*/
 float G(float NdotL, float NdotV, float alpha){
 	float halfAlpha = alpha * 0.5;
 	return G1(NdotL, halfAlpha)*G1(NdotV, halfAlpha);
 }
 
+/** Evaluate the GGX BRDF for a given normal, view direction and 
+	material parameters.
+	\param n the surface normal
+	\param v the view direction
+	\param l the light direction
+	\param F0 the Fresnel coefficient
+	\param roughness the surface roughness
+	\return the BRDF value
+*/
 vec3 ggx(vec3 n, vec3 v, vec3 l, vec3 F0, float roughness){
 	// Compute half-vector.
 	vec3 h = normalize(v+l);
@@ -94,6 +129,7 @@ vec3 ggx(vec3 n, vec3 v, vec3 l, vec3 F0, float roughness){
 	return D(NdotH, alpha) * G(NdotL, NdotV, alpha) * 0.25 * F(F0, VdotH);
 }
 
+/** Compute the lighting contribution of a point light using the GGX BRDF. */
 void main(){
 	
 	vec2 uv = gl_FragCoord.xy*inverseScreenSize;

@@ -3,11 +3,10 @@
 // Input: UV coordinates
 in INTERFACE {
 	vec2 uv;
-} In ;
+} In ; ///< vec2 uv;
 
-// Uniforms: the texture, inverse of the screen size, FXAA flag.
-layout(binding = 0) uniform sampler2D screenTexture;
-uniform vec2 inverseScreenSize;
+layout(binding = 0) uniform sampler2D screenTexture; ///< Image to filter.
+uniform vec2 inverseScreenSize; ///< Size of one-pixel in UV space.
 
 // Settings for FXAA.
 #define EDGE_THRESHOLD_MIN 0.0312
@@ -17,13 +16,18 @@ uniform vec2 inverseScreenSize;
 #define SUBPIXEL_QUALITY 0.75
 
 // Output: the fragment color
-layout(location = 0) out vec3 fragColor;
+layout(location = 0) out vec3 fragColor; ///< Color.
 
-// Return the luma value in perceptual space for a given RGB color in linear space.
+/** Evalute the luma value in perceptual space for a given RGB color in linear space.
+\param rgb the input RGB color
+\return the perceptual luma
+*/
 float rgb2luma(vec3 rgb){
 	return sqrt(dot(rgb, vec3(0.299, 0.587, 0.114)));
 }
 
+/** Performs FXAA post-process anti-aliasing as described in the Nvidia FXAA white paper and the associated shader code.
+*/
 void main(){
 	
 	vec3 colorCenter = texture(screenTexture,In.uv).rgb;

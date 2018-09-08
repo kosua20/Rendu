@@ -8,24 +8,30 @@ in INTERFACE {
 	vec3 tangentSpacePosition;
 	vec3 viewSpacePosition;
 	vec2 uv;
-} In ;
+} In ; ///< mat3 tbn; vec3 tangentSpacePosition; vec3 viewSpacePosition; vec2 uv;
 
-layout(binding = 0) uniform sampler2D texture0;
-layout(binding = 1) uniform sampler2D texture1;
-layout(binding = 2) uniform sampler2D texture2;
-layout(binding = 3) uniform sampler2D texture3;
-uniform mat4 p;
+layout(binding = 0) uniform sampler2D texture0; ///< Albedo.
+layout(binding = 1) uniform sampler2D texture1; ///< Normal map.
+layout(binding = 2) uniform sampler2D texture2; ///< Effects map.
+layout(binding = 3) uniform sampler2D texture3; ///< Local depth map.
+uniform mat4 p; ///< Projection matrix.
 
 #define PARALLAX_MIN 8
 #define PARALLAX_MAX 32
 #define PARALLAX_SCALE 0.04
 
 // Output: the fragment color
-layout (location = 0) out vec4 fragColor;
-layout (location = 1) out vec3 fragNormal;
-layout (location = 2) out vec3 fragEffects;
+layout (location = 0) out vec4 fragColor; ///< Color.
+layout (location = 1) out vec3 fragNormal; ///< View space normal.
+layout (location = 2) out vec3 fragEffects; ///< Effects.
 
-
+/**
+	Perform parallax mapping by marching against the local depth map, and output the final UV to use.
+	\param uv the initial texture coordinates
+	\param vTangentDir the view direction in tangent space
+	\param positionShift will contain the final position shift
+	\return the final texture coordinates to use to query the material maps
+*/
 vec2 parallax(vec2 uv, vec3 vTangentDir, out vec2 positionShift){
 	
 	// We can adapt the layer count based on the view direction. If we are straight above the surface, we don't need many layers.
@@ -65,6 +71,8 @@ vec2 parallax(vec2 uv, vec3 vTangentDir, out vec2 positionShift){
 	return finalUV;
 }
 
+/** Transfer albedo and effects along with the material ID, and output the final normal 
+	(combining geometry normal and normal map) in view space. Apply parallax mapping effect. */
 void main(){
 	
 	vec2 localUV = In.uv;

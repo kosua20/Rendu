@@ -3,14 +3,13 @@
 // Input: UV coordinates
 in INTERFACE {
 	vec2 uv;
-} In ;
+} In ; ///< vec2 uv;
 
-// Uniforms: the texture, inverse of the screen size.
-layout(binding = 0) uniform sampler2D screenTexture;
-// Output: the fragment color
-layout(location = 0) out vec3 fragColor;
+layout(binding = 0) uniform sampler2D screenTexture; ///< Image to output.
 
+layout(location = 0) out vec3 fragColor; ///< Color.
 
+/** Just pass the input image as-is, potentially performing up/down scaling. */
 void main(){
 	
 	fragColor = texture(screenTexture, In.uv).rgb;

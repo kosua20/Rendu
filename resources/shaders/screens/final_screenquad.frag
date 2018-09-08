@@ -3,19 +3,16 @@
 // Input: UV coordinates
 in INTERFACE {
 	vec2 uv;
-} In ;
+} In ; ///< vec2 uv;
 
-// Uniforms: the texture, inverse of the screen size, FXAA flag.
-layout(binding = 0) uniform sampler2D screenTexture;
+layout(binding = 0) uniform sampler2D screenTexture; ///< The input image.
 
-// Output: the fragment color
-layout(location = 0) out vec3 fragColor;
+layout(location = 0) out vec3 fragColor; ///< Final color.
 
-
+/** Apply a sharpening filter to the image (based on Uncharted 2 presentation). */
 void main(){
 	
-	// TODO: refine performances and effect.
-	
+	/// \todo Refine performances and effect.
 	vec3 finalColor = texture(screenTexture,In.uv).rgb;
 	vec3 down = textureOffset(screenTexture,In.uv,ivec2(0,-1)).rgb;
 	vec3 up = textureOffset(screenTexture,In.uv,ivec2(0,1)).rgb;

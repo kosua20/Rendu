@@ -3,15 +3,13 @@
 // Input: UV coordinates
 in INTERFACE {
 	vec2 uv;
-} In ;
+} In ; ///< vec2 uv;
 
-// Uniforms: the texture, inverse of the screen size.
-layout(binding = 0) uniform sampler2D screenTexture;
+layout(binding = 0) uniform sampler2D screenTexture; ///< Lighting buffer to filter. 
 
-// Output: the fragment color
-layout(location = 0) out vec3 fragColor;
+layout(location = 0) out vec3 fragColor; ///< Scene color.
 
-
+/** Extract the areas of the image where the luminance is higher than 1.0. */
 void main(){
 	fragColor = vec3(0.0);
 	

@@ -3,19 +3,15 @@
 // Input: UV coordinates
 in INTERFACE {
 	vec2 uv;
-} In ;
+} In ; ///< vec2 uv;
 
-// Uniforms: the texture, inverse of the screen size, FXAA flag.
-layout(binding = 0) uniform sampler2D screenTexture;
+layout(binding = 0) uniform sampler2D screenTexture; ///< Image to output.
 
-// Output: the fragment color
-layout(location = 0) out vec3 fragColor;
+layout(location = 0) out vec3 fragColor; ///< Color.
 
-
+/** Just pass the input image as-is, without any resizing. */
 void main(){
 	
-	
 	fragColor = texelFetch(screenTexture,ivec2(gl_FragCoord.xy-0.5),0).rgb;
-	
 
 }

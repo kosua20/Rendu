@@ -3,20 +3,19 @@
 // Input: UV coordinates
 in INTERFACE {
 	vec2 uv;
-} In ;
+} In ; ///< vec2 uv;
 
 // Uniforms: the textures.
-layout(binding = 0) uniform sampler2D texture0;
-layout(binding = 1) uniform sampler2D texture1;
-layout(binding = 2) uniform sampler2D texture2;
-layout(binding = 3) uniform sampler2D texture3;
-layout(binding = 4) uniform sampler2D texture4;
-layout(binding = 5) uniform sampler2D texture5;
+layout(binding = 0) uniform sampler2D texture0; ///< Blur level.
+layout(binding = 1) uniform sampler2D texture1; ///< Blur level.
+layout(binding = 2) uniform sampler2D texture2; ///< Blur level.
+layout(binding = 3) uniform sampler2D texture3; ///< Blur level.
+layout(binding = 4) uniform sampler2D texture4; ///< Blur level.
+layout(binding = 5) uniform sampler2D texture5; ///< Blur level.
 
-// Output: the fragment color
-layout(location = 0) out vec3 fragColor;
+layout(location = 0) out vec3 fragColor; ///< Color.
 
-
+/** Merge multiple versions of the same image, blurred at different scales. */
 void main(){
 	vec3 col = texture(texture0, In.uv).rgb;
 	col += texture(texture1, In.uv).rgb;

@@ -3,15 +3,13 @@
 // Input: UV coordinates
 in INTERFACE {
 	vec2 uv;
-} In ;
+} In ; ///< vec2 uv;
 
-// Uniforms: the texture, inverse of the screen size.
-layout(binding = 0) uniform sampler2D screenTexture;
+layout(binding = 0) uniform sampler2D screenTexture; ///< Image to blur.
 
-// Output: the fragment color
-layout(location = 0) out vec2 fragColor;
+layout(location = 0) out vec2 fragColor; ///< Color.
 
-
+/** Perform a 5x5 box blur on the input image. */
 void main(){
 	
 	// We have to unroll the box blur loop manually.

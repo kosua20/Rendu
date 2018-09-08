@@ -3,35 +3,43 @@
 // Input: UV coordinates
 in INTERFACE {
 	vec2 uv;
-} In ;
+} In ; ///< vec2 uv;
 
-uniform mat4 clipToWorld;
-uniform vec3 viewPos;
-uniform vec3 lightDirection;
+uniform mat4 clipToWorld; ///< Clip-to-world space transformation matrix.
+uniform vec3 viewPos; ///< The position in view space.
+uniform vec3 lightDirection; ///< The light direction in world space.
 
-const float groundRadius = 6371e3;
-const float topRadius = 6471e3;
-const float sunIntensity = 20.0;
-const vec3 sunColor = vec3(1.474, 1.8504, 1.91198);
-const vec3 kRayleigh = vec3(5.5e-6, 13.0e-6, 22.4e-6);
-const float kMie = 21e-6;
-const float heightRayleigh = 8000.0;
-const float heightMie = 1200.0;
-const float gMie = 0.758;
+const float groundRadius = 6371e3; ///< Radius of the planet.
+const float topRadius = 6471e3; ///< Radius of the atmosphere.
+const float sunIntensity = 20.0; ///< Sun intensity.
+const vec3 sunColor = vec3(1.474, 1.8504, 1.91198); ///< Sun direct color.
+const vec3 kRayleigh = vec3(5.5e-6, 13.0e-6, 22.4e-6); ///< Rayleigh coefficients.
+const float kMie = 21e-6; ///< Mie coefficients.
+const float heightRayleigh = 8000.0; ///< Mie characteristic height.
+const float heightMie = 1200.0; ///< Mie characteristic height.
+const float gMie = 0.758; ///< Mie g constant.
 
-const float sunAngularRadius = 0.04675;
-const float sunAngularRadiusCos = 0.998;
+const float sunAngularRadius = 0.04675; ///< Sun angular radius.
+const float sunAngularRadiusCos = 0.998; ///< Cosine of the sun angular radius.
 
 
-layout(binding = 0) uniform sampler2D screenTexture;
+layout(binding = 0) uniform sampler2D precomputedScattering; ///< Secondary scattering lookup table.
 
-layout(location = 0) out vec3 fragColor;
+layout(location = 0) out vec3 fragColor; ///< Atmosphere color.
 
 #define SAMPLES_COUNT 16
 #define M_PI 3.14159265358979323846
 
 
-// Check if a sphere of a given radius is intersected by a ray defined by an origin wrt to the sphere center and a normalized direction.
+/** Check if a sphere of a given radius is intersected by a ray defined by an 
+	origin wrt to the sphere center and a normalized direction.
+	\param rayOrigin the origin of the ray
+	\param rayDir the direction of the ray (normalized)
+	\param radius the radius of the sphere to intersect
+	\param roots will contain the two roots of the associated polynomial, ordered.
+	\return true if there is intersection.
+	\warning The intersection can be in the negative direction along the ray. Check the sign of the roots to know.
+*/
 bool intersects(vec3 rayOrigin, vec3 rayDir, float radius, out vec2 roots){
 	float a = dot(rayDir,rayDir);
 	float b = dot(rayOrigin, rayDir);
@@ -47,17 +55,31 @@ bool intersects(vec3 rayOrigin, vec3 rayDir, float radius, out vec2 roots){
 	return true;
 }
 
+/** Compute the Rayleigh phase.
+	\param cosAngle Cosine of the angle between the ray and the light directions
+	\return the phase
+*/
 float rayleighPhase(float cosAngle){
 	const float k = 1.0/(4.0*M_PI);
 	return k * 3.0/4.0 * (1.0 + cosAngle*cosAngle);
 }
 
+/** Compute the Mie phase.
+	\param cosAngle Cosine of the angle between the ray and the light directions
+	\return the phase
+*/
 float miePhase(float cosAngle){
 	const float k = 1.0/(4.0*M_PI);
 	float g2 = gMie*gMie;
 	return k * 3.0 * (1.0-g2) / (2.0 * (2.0 + g2)) * (1.0 + cosAngle*cosAngle) / pow(1 + g2 - 2.0 * gMie * cosAngle, 3.0/2.0);
 }
 
+/** Compute the radiance for a given ray, based on the atmosphere scattering model.
+	\param rayOrigin the ray origin
+	\param rayDir the ray direction
+	\param sunDir the light direction
+	\return the estimated radiance
+*/
 vec3 computeRadiance(vec3 rayOrigin, vec3 rayDir, vec3 sunDir){
 	// Check intersection with atmosphere.
 	vec2 interTop, interGround;
@@ -108,7 +130,7 @@ vec3 computeRadiance(vec3 rayOrigin, vec3 rayDir, vec3 sunDir){
 		float relativeCosAngle = -0.5*sunDir.y+0.5;
 		// Compute UVs, scaled to read at the center of pixels.
 		vec2 attenuationUVs = (1.0-1.0/512.0)*vec2(relativeHeight, relativeCosAngle)+0.5/512.0;
-		vec3 secondaryAttenuation = texture(screenTexture, attenuationUVs).rgb;
+		vec3 secondaryAttenuation = texture(precomputedScattering, attenuationUVs).rgb;
 		
 		// Final attenuation.
 		vec3 attenuation = directAttenuation * secondaryAttenuation;
@@ -132,6 +154,7 @@ vec3 computeRadiance(vec3 rayOrigin, vec3 rayDir, vec3 sunDir){
 	return sunIntensity * (rayleighParticipation + mieParticipation) + transmittance * sunRadiance;
 }
 
+/** Simulate sky color based on an atmospheric scattering approximate model. */
 void main(){
 	// Move to -1,1
 	vec4 clipVertex = vec4(-1.0+2.0*In.uv, 0.0, 1.0);

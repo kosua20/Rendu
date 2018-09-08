@@ -3,19 +3,22 @@
 // Input: UV coordinates
 in INTERFACE {
 	vec3 pos;
-} In ;
+} In ; ///< vec3 pos;
 
 #define INV_M_PI 0.3183098862
 #define M_PI 3.1415926536
 #define M_INV_LOG2 1.4426950408889
 #define SAMPLE_COUNT 10000u // Super high sample count to avoid artifacts in bright areas.
 
-layout(binding = 0) uniform samplerCube texture0;
-uniform float mimapRoughness;
+layout(binding = 0) uniform samplerCube texture0; ///< Input cubemap to process.
+uniform float mimapRoughness; ///< The roughness to use for the convolution lobe.
 
-// Output: the fragment color
-layout(location = 0) out vec3 fragColor;
+layout(location = 0) out vec3 fragColor; ///< Color.
 
+/** Compute an arbitrary sample of the 2D Hammersley sequence.
+\param i the index in the hammersley sequence
+\return the i-th 2D sample
+*/
 vec2 hammersleySample(uint i) {
 	uint bits = i;
 	bits = (bits << 16u) | (bits >> 16u);
@@ -27,6 +30,11 @@ vec2 hammersleySample(uint i) {
 	return vec2(float(i)/float(SAMPLE_COUNT), y);
 }
 
+/** Perform convolution with the BRDF specular lobe, evaluated in a given direction. 
+\param r the reflection direction
+\param roughness the roughness to evalute the BRDF at
+\return the result of the convolution
+*/
 vec3 convo(vec3 r, float roughness){
 	// Fix view and normal as in the Unreal white paper.
 	vec3 v = r;
@@ -64,7 +72,9 @@ vec3 convo(vec3 r, float roughness){
 	return sum/denom;
 }
 
-
+/** Perform convolution of the cubemap with the BRDF lobe at a given roughness, using a high number of samples 
+  and importance sampling. This is done in the direction in world space of the current fragment.
+*/
 void main(){
 	fragColor = convo(normalize(In.pos), mimapRoughness);
 }
