@@ -15,9 +15,6 @@ public:
 	/// Constructor
 	Camera();
 	
-	/// Destructor
-	~Camera();
-	
 	/** Update all projection parameters.
 	 \param ratio the aspect ratio
 	 \param fov the vertical field of view

@@ -19,9 +19,6 @@ public:
 	/** Constructor */
 	Object();
 
-	/** Destructor */
-	~Object();
-
 	/** Construct a new object.
 	 \param type the type of shading and effects to use when rendering this object
 	 \param meshPath name of the geometric mesh to use

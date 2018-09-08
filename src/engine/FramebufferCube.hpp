@@ -22,11 +22,6 @@ public:
 	FramebufferCube(unsigned int side, GLuint format, GLuint type, GLuint preciseFormat, GLuint filtering, bool depthBuffer);
 	
 	/**
-	 Destructor
-	 */
-	~FramebufferCube();
-	
-	/**
 	 Bind the framebuffer.
 	 */
 	void bind() const;

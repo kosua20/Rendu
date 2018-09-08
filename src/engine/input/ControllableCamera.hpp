@@ -14,9 +14,6 @@ public:
 	
 	/// Constructor
 	ControllableCamera();
-
-	/// Destructor
-	~ControllableCamera();
 	
 	/// Reset the position of the camera.
 	void reset();

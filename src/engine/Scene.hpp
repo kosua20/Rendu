@@ -19,9 +19,6 @@ public:
 	/** Constructor */
 	Scene();
 	
-	/** Destructor */
-	~Scene();
-	
 	/** Performs initialization against the graphics API.
 	 */
 	virtual void init() = 0;

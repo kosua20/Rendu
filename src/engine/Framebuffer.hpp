@@ -57,7 +57,7 @@ public:
 	void clean() const;
 	
 	/**
-	 Query the ID to the 2D texture backing the framebuffer.
+	 Query the ID of the 2D texture backing the framebuffer.
 	 \return the texture ID
 	 */
 	const GLuint textureId() const { return _idColor; }

@@ -12,8 +12,6 @@ CustomController::CustomController() : Controller() {
 	}
 } 
 
-CustomController::~CustomController(){}
-
 bool CustomController::activate(int id){
 	reset();
 	

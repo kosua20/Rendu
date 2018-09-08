@@ -15,9 +15,6 @@ public:
 	
 	/// Constructor
 	CustomController();
-
-	/// Destructor
-	~CustomController();
 	
 	/**
 	 \copydoc Controller::activate

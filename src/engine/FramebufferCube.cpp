@@ -52,8 +52,6 @@ FramebufferCube::FramebufferCube(unsigned int side, GLuint format, GLuint type, 
 	checkGLError();
 }
 
-FramebufferCube::~FramebufferCube(){ clean(); }
-
 void FramebufferCube::bind() const {
 	glBindFramebuffer(GL_FRAMEBUFFER, _id);
 }

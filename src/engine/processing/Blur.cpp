@@ -1,7 +1,5 @@
 #include "Blur.hpp"
 
-Blur::~Blur(){}
-
 Blur::Blur(){
 	_passthroughProgram = Resources::manager().getProgram("passthrough");
 }

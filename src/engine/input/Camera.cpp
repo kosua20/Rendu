@@ -14,8 +14,6 @@ Camera::Camera()  {
 	updateProjection();
 }
 
-Camera::~Camera(){}
-
 void Camera::projection(float ratio, float fov, float near, float far){
 	_near = near;
 	_far = far;

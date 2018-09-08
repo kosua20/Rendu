@@ -21,8 +21,6 @@ Input::Input(){
 	
 }
 
-Input::~Input(){ }
-
 void Input::keyPressedEvent(int key, int action){
 	if(key == GLFW_KEY_UNKNOWN){
 		return;

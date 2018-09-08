@@ -4,7 +4,6 @@
 #include "input/InputCallbacks.hpp"
 #include "renderers/deferred/DeferredRenderer.hpp"
 #include "renderers/utils/RendererCube.hpp"
-#include "renderers/utils/TestRenderer.hpp"
 #include "helpers/InterfaceUtilities.hpp"
 #include "scenes/Scenes.hpp"
 

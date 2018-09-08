@@ -17,8 +17,6 @@ void DragonScene::init(){
 	}
 	_loaded = true;
 	
-	
-	
 	//Position fixed objects.
 	const glm::mat4 dragonModel = glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(-0.1,-0.05,-0.25)),glm::vec3(0.5f));
 	const glm::mat4 planeModel = glm::scale(glm::translate(glm::mat4(1.0f),glm::vec3(0.0f,-0.35f,-0.5f)), glm::vec3(2.0f));

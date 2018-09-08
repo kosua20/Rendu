@@ -450,6 +450,3 @@ std::string Resources::trim(const std::string & str, const std::string & del){
 	return str.substr(firstNotDel, lastNotDel - firstNotDel + 1);
 }
 
-
-Resources::~Resources(){ }
-

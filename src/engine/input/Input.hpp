@@ -339,13 +339,13 @@ private:
 	Input();
 	
 	/// Destructor (disabled).
-	~Input();
+	~Input(){};
 	
 	/// Copy operator (disabled).
-	Input& operator= (const Input&);
+	Input& operator= (const Input&) = delete;
 	
 	/// Copy constructor (disabled).
-	Input (const Input&);
+	Input (const Input&) = delete;
 
 
 };

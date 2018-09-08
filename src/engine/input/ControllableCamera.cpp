@@ -8,8 +8,6 @@ ControllableCamera::ControllableCamera() : Camera() {
 	reset();
 }
 
-ControllableCamera::~ControllableCamera(){}
-
 void ControllableCamera::reset(){
 	_eye = glm::vec3(0.0,0.0,1.0);
 	_center = glm::vec3(0.0,0.0,0.0);

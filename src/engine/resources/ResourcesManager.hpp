@@ -157,13 +157,13 @@ public:
 private:
 	
 	/** Destructor (disabled). */
-	~Resources();
+	~Resources(){};
 	
 	/** Assignment operator (disabled). */
-	Resources& operator= (const Resources&);
+	Resources& operator= (const Resources&) = delete;
 	
 	/** Copy constructor (disabled). */
-	Resources (const Resources&);
+	Resources (const Resources&) = delete;
 	
 	
 	const std::string _rootPath; ///< The resources root path.

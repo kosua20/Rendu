@@ -3,8 +3,6 @@
 
 Scene::Scene(){};
 
-Scene::~Scene(){};
-
 void Scene::loadSphericalHarmonics(const std::string & name){
 	backgroundIrradiance.clear();
 	backgroundIrradiance.resize(9);

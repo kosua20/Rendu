@@ -11,9 +11,6 @@
 class Blur {
 
 public:
-	
-	/// Destructor.
-	~Blur();
 
 	/**
 	 Apply the blurring process to a given texture.

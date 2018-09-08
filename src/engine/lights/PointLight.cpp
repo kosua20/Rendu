@@ -167,5 +167,5 @@ void PointLight::update(const glm::vec3 & newPosition){
 }
 
 void PointLight::clean() const {
-	
+	_shadowFramebuffer->clean();
 }
