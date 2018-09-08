@@ -14,7 +14,7 @@ void Log::set(LogLevel l){
 
 Log::Log(){
 	_level = LogLevel::INFO;
-	_logToStdin = true;
+	_logToStdOut = true;
 	_verbose = false;
 	_ignoreUntilFlush = false;
 	_appendPrefix = false;
@@ -22,7 +22,7 @@ Log::Log(){
 
 Log::Log(const std::string & filePath, const bool logToStdin, const bool verbose){
 	_level = LogLevel::INFO;
-	_logToStdin = logToStdin;
+	_logToStdOut = logToStdin;
 	_verbose = verbose;
 	_ignoreUntilFlush = false;
 	_appendPrefix = false;
@@ -81,7 +81,7 @@ void Log::flush(){
 		
 		const std::string finalStr =  _stream.str();
 		
-		if(_logToStdin){
+		if(_logToStdOut){
 			if(_level == LogLevel::INFO){
 				std::cout << finalStr << std::flush;
 			} else {

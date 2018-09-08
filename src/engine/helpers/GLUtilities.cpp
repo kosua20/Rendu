@@ -560,7 +560,7 @@ void GLUtilities::savePixels(const GLenum type, const GLenum format, const unsig
 		// Get back values.
 		GLfloat * data = new GLfloat[width * height * components];
 		glReadPixels(0, 0, (GLsizei)width, (GLsizei)height, format, type, &data[0]);
-		// Save data. We don't flip HDR images because we don't flip them when loading...
+		// Save data.
 		ret = ImageUtilities::saveHDRImage(path + ".exr", width, height, components, (float*)data, flip, ignoreAlpha);
 		delete[] data;
 	} else {
