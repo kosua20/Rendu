@@ -29,7 +29,7 @@ BoxBlur::BoxBlur(unsigned int width, unsigned int height, bool approximate, GLui
 	
 }
 
-/// Draw function
+// Draw function
 void BoxBlur::process(const GLuint textureId){
 	_finalFramebuffer->bind();
 	_finalFramebuffer->setViewport();
@@ -40,13 +40,13 @@ void BoxBlur::process(const GLuint textureId){
 }
 
 
-/// Clean function
+// Clean function
 void BoxBlur::clean() const {
 	_finalFramebuffer->clean();
 	Blur::clean();
 }
 
-/// Handle screen resizing
+// Handle screen resizing
 void BoxBlur::resize(unsigned int width, unsigned int height){
 	_finalFramebuffer->resize(width, height);
 }

@@ -1,7 +1,7 @@
 #include "Input.hpp"
 #include "controller/CustomController.hpp"
 
-/// Singleton.
+// Singleton.
 Input& Input::manager(){
 	static Input* input = new Input();
 	return *input;

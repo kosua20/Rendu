@@ -11,7 +11,7 @@ class Object {
 
 public:
 
-	/// Type of shading/effects.
+	/// \brief Type of shading/effects.
 	enum Type {
 		Skybox = 0, Regular = 1, Parallax = 2, Custom = 3
 	};
