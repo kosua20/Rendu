@@ -53,7 +53,6 @@ Framebuffer::Framebuffer(unsigned int width, unsigned int height, GLuint format,
 	checkGLError();
 }
 
-Framebuffer::~Framebuffer(){ clean(); }
 
 void Framebuffer::bind() const {
 	glBindFramebuffer(GL_FRAMEBUFFER, _id);
