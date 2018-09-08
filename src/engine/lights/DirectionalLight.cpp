@@ -21,7 +21,7 @@ void DirectionalLight::init(const std::vector<GLuint>& textureIds){
 
 }
 
-void DirectionalLight::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix, const glm::vec2& invScreenSize ) const {
+void DirectionalLight::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) const {
 	
 	glm::mat4 viewToLight = _mvp * glm::inverse(viewMatrix);
 	// Store the four variable coefficients of the projection matrix.
