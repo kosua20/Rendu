@@ -1,7 +1,6 @@
 #include "GLUtilities.hpp"
 #include "../resources/ImageUtilities.hpp"
 
-
 std::string getGLErrorString(GLenum error) {
 	std::string msg;
 	switch (error) {
@@ -538,14 +537,16 @@ void GLUtilities::saveFramebuffer(const std::shared_ptr<Framebuffer> & framebuff
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentBoundFB);
 	
 	framebuffer->bind();
-	const GLenum type = framebuffer->type();
-	const GLenum format = framebuffer->format();
+	GLenum type, format;
+	GLUtilities::getTypeAndFormat(framebuffer->typedFormat(), type, format);
+	
 	const unsigned int components = (unsigned int)(format == GL_RED ? 1 : (format == GL_RG ? 2 : (format == GL_RGB ? 3 : 4)));
 
 	GLUtilities::savePixels(type, format, width, height, components, path, flip, ignoreAlpha);
 	
 	glBindFramebuffer(GL_FRAMEBUFFER, (GLuint)currentBoundFB);
 }
+
 
 void GLUtilities::savePixels(const GLenum type, const GLenum format, const unsigned int width, const unsigned int height, const unsigned int components, const std::string & path, const bool flip, const bool ignoreAlpha){
 	
@@ -584,4 +585,51 @@ void GLUtilities::savePixels(const GLenum type, const GLenum format, const unsig
 
 
 
+void GLUtilities::getTypeAndFormat(const GLuint typedFormat, GLuint & type, GLuint & format){
+	
+	struct FormatAndType {
+		GLuint format;
+		GLuint type;
+	};
+	
+	static std::map<GLuint, FormatAndType> formatInfos = {  { GL_R8, { GL_RED, GL_UNSIGNED_BYTE } },
+		{ GL_RG8, { GL_RG, GL_UNSIGNED_BYTE } },
+		{ GL_RGB8, { GL_RGB, GL_UNSIGNED_BYTE } },
+		{ GL_RGBA8, { GL_RGBA, GL_UNSIGNED_BYTE } },
+		{ GL_R16, { GL_RED, GL_UNSIGNED_SHORT } },
+		{ GL_RG16, { GL_RG, GL_UNSIGNED_SHORT } },
+		{ GL_RGBA16, { GL_RGBA, GL_UNSIGNED_SHORT } },
+		{ GL_R8_SNORM, { GL_RED, GL_BYTE } },
+		{ GL_RG8_SNORM, { GL_RG, GL_BYTE } },
+		{ GL_RGB8_SNORM, { GL_RGB, GL_BYTE } },
+		{ GL_RGBA8_SNORM, { GL_RGBA, GL_BYTE } },
+		{ GL_R16_SNORM, { GL_RED, GL_SHORT } },
+		{ GL_RG16_SNORM, { GL_RG, GL_SHORT } },
+		{ GL_RGB16_SNORM, { GL_RGB, GL_SHORT } },
+		{ GL_R16F, { GL_RED, GL_HALF_FLOAT } },
+		{ GL_RG16F, { GL_RG, GL_HALF_FLOAT } },
+		{ GL_RGB16F, { GL_RGB, GL_HALF_FLOAT } },
+		{ GL_RGBA16F, { GL_RGBA, GL_HALF_FLOAT } },
+		{ GL_R32F, { GL_RED, GL_FLOAT } },
+		{ GL_RG32F, { GL_RG, GL_FLOAT } },
+		{ GL_RGB32F, { GL_RGB, GL_FLOAT } },
+		{ GL_RGBA32F, { GL_RGBA, GL_FLOAT } },
+		{ GL_RGB5_A1, { GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1 } },
+		{ GL_RGB10_A2, { GL_RGBA, GL_UNSIGNED_INT_2_10_10_10_REV } },
+		{ GL_R11F_G11F_B10F, { GL_RGB, GL_UNSIGNED_INT_10F_11F_11F_REV } },
+		{ GL_DEPTH_COMPONENT16, { GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT } },
+		{ GL_DEPTH_COMPONENT24, { GL_DEPTH_COMPONENT, GL_UNSIGNED_INT } },
+		{ GL_DEPTH_COMPONENT32F, { GL_DEPTH_COMPONENT, GL_FLOAT } },
+		{ GL_DEPTH24_STENCIL8, { GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8 } },
+		{ GL_DEPTH32F_STENCIL8, { GL_DEPTH_STENCIL, GL_FLOAT_32_UNSIGNED_INT_24_8_REV } }  };
+	
+	if(formatInfos.count(typedFormat)>0){
+		const auto & infos = formatInfos[typedFormat];
+		type = infos.type;
+		format = infos.format;
+		return;
+	}
+	
+	Log::Error() << Log::OpenGL << "Unable to find type and format (typed format " << typedFormat << ")." << std::endl;
+}
 

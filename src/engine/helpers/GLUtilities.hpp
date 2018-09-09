@@ -141,6 +141,8 @@ public:
 	 */
 	static void saveDefaultFramebuffer(const unsigned int width, const unsigned int height, const std::string & path);
 	
+	static void getTypeAndFormat(const GLuint typedFormat, GLuint & type, GLuint & format);
+	
 private:
 	
 	/** Read back the currently bound framebuffer to the CPU and save it in the best possible format on disk.
