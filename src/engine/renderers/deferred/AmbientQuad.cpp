@@ -17,6 +17,7 @@ void AmbientQuad::init(std::vector<GLuint> textureIds){
 	// Setup SSAO data, get back noise texture id, add it to the gbuffer outputs.
 	GLuint noiseTextureID = setupSSAO();
 	_programSSAO = Resources::manager().getProgram2D("ssao");
+	/// \todo Reorder so that depth is appended at the end, clarify indices.
 	_texturesSSAO = { _textures[2], _textures[1], noiseTextureID };
 	// Now that we have the program we can send the samples to the GPU too.
 	_programSSAO->cacheUniformArray("samples", _samples);

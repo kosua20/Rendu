@@ -10,7 +10,6 @@
 
 #include "../Renderer.hpp"
 
-#include "../deferred/Gbuffer.hpp"
 #include "../deferred/AmbientQuad.hpp"
 
 /**

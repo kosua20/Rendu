@@ -18,7 +18,15 @@ DeferredRenderer::DeferredRenderer(Config & config) : Renderer(config) {
 	// Find the closest power of 2 size.
 	const int renderPow2Size = (int)std::pow(2,(int)floor(log2(_renderResolution[0])));
 	
-	_gbuffer = std::make_shared<Gbuffer>(renderWidth, renderHeight);
+	// G-buffer setup.
+	const Framebuffer::Descriptor albedoDesc = { GL_RGBA16F, GL_NEAREST, GL_CLAMP_TO_EDGE };
+	const Framebuffer::Descriptor normalDesc = { GL_RGB16F, GL_NEAREST, GL_CLAMP_TO_EDGE };
+	const Framebuffer::Descriptor effectsDesc = { GL_RGB8, GL_NEAREST, GL_CLAMP_TO_EDGE };
+	const Framebuffer::Descriptor depthDesc = { GL_DEPTH_COMPONENT32F, GL_NEAREST, GL_CLAMP_TO_EDGE };
+	const std::vector<Framebuffer::Descriptor> descs = {albedoDesc, normalDesc, effectsDesc, depthDesc};
+	_gbuffer = std::make_shared<Framebuffer>(renderWidth, renderWidth, descs, false);
+	
+	// Other framebuffers.
 	_ssaoFramebuffer = std::make_shared<Framebuffer>(renderHalfWidth, renderHalfHeight, GL_R8, false);
 	_sceneFramebuffer = std::make_shared<Framebuffer>(renderWidth, renderHeight, GL_RGBA16F, false);
 	_bloomFramebuffer = std::make_shared<Framebuffer>(renderPow2Size, renderPow2Size, GL_RGB16F, false);
@@ -42,7 +50,10 @@ DeferredRenderer::DeferredRenderer(Config & config) : Renderer(config) {
 	_fxaaProgram = Resources::manager().getProgram2D("fxaa");
 	_finalProgram = Resources::manager().getProgram2D("final_screenquad");
 	
-	std::vector<GLuint> ambientTextures = _gbuffer->textureIds({ TextureType::Albedo, TextureType::Normal, TextureType::Depth, TextureType::Effects });
+	/// \todo Reorder in shader so that depth is appended at the end.
+	std::vector<GLuint> ambientTextures = _gbuffer->textureIds();
+	ambientTextures.insert(ambientTextures.begin()+2, _gbuffer->depthId());
+	
 	// Add the SSAO result.
 	ambientTextures.push_back(_blurSSAOBuffer->textureId());
 	_ambientScreen.init(ambientTextures);
@@ -60,15 +71,17 @@ void DeferredRenderer::setScene(std::shared_ptr<Scene> scene){
 	
 	_ambientScreen.setSceneParameters(_scene->backgroundReflection, _scene->backgroundIrradiance);
 	
-	const std::vector<TextureType> includedTextures = { TextureType::Albedo, TextureType::Normal, TextureType::Depth, TextureType::Effects };
+	std::vector<GLuint> includedTextures = _gbuffer->textureIds();
+	includedTextures.insert(includedTextures.begin()+2, _gbuffer->depthId());
+	
 	for(auto& dirLight : _scene->directionalLights){
-		dirLight.init(_gbuffer->textureIds(includedTextures));
+		dirLight.init(includedTextures);
 	}
 	for(auto& pointLight : _scene->pointLights){
-		pointLight.init(_gbuffer->textureIds(includedTextures));
+		pointLight.init(includedTextures);
 	}
 	for(auto& spotLight : _scene->spotLights){
-		spotLight.init(_gbuffer->textureIds(includedTextures));
+		spotLight.init(includedTextures);
 	}
 	checkGLError();
 }
@@ -108,7 +121,7 @@ void DeferredRenderer::draw() {
 	// Bind the full scene framebuffer.
 	_gbuffer->bind();
 	// Set screen viewport
-	glViewport(0,0, (GLsizei)_gbuffer->width(), (GLsizei)_gbuffer->height());
+	_gbuffer->setViewport();
 	
 	// Clear the depth buffer (we know we will draw everywhere, no need to clear color.
 	glClear(GL_DEPTH_BUFFER_BIT);

@@ -11,7 +11,7 @@
 
 #include "../Renderer.hpp"
 
-#include "Gbuffer.hpp"
+
 #include "AmbientQuad.hpp"
 
 /**
@@ -21,6 +21,17 @@
  \see GLSL::Frag::Bloom, GLSL::Frag::Tonemap, GLSL::Frag::FXAA, GLSL::Frag::Final_screenquad
  \ingroup Renderers
  */
+
+/**
+ \brief Available G-buffer layers.
+ \ingroup DeferredRendering
+ */
+enum class TextureType {
+	Albedo = 0, ///< (or base color)
+	Normal = 1,
+	Effects = 2, ///< Roughness, metallicness, ambient occlusion factor, ID.
+	Depth = 3
+};
 
 /**
  \brief Performs deferred rendering of a scene.
@@ -67,7 +78,7 @@ private:
 	
 	ControllableCamera _userCamera; ///< The interactive camera.
 
-	std::shared_ptr<Gbuffer> _gbuffer; ///< G-buffer.
+	std::shared_ptr<Framebuffer> _gbuffer; ///< G-buffer.
 	std::shared_ptr<GaussianBlur> _blurBuffer; ///< Bloom blur processing.
 	std::shared_ptr<BoxBlur> _blurSSAOBuffer; ///< SSAO blur processing.
 	
