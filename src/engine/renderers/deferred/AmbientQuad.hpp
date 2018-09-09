@@ -1,7 +1,7 @@
 #ifndef AmbientQuad_h
 #define AmbientQuad_h
 #include "../../Common.hpp"
-#include "../../ScreenQuad.hpp"
+#include "../../graphics/ScreenQuad.hpp"
 #include <map>
 
 

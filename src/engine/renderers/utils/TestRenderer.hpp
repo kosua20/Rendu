@@ -1,9 +1,9 @@
 #ifndef TestRenderer_h
 #define TestRenderer_h
 #include "../../Common.hpp"
-#include "../../Framebuffer.hpp"
+#include "../../graphics/Framebuffer.hpp"
 #include "../../input/Camera.hpp"
-#include "../../ScreenQuad.hpp"
+#include "../../graphics/ScreenQuad.hpp"
 
 #include "../../processing/GaussianBlur.hpp"
 #include "../../processing/BoxBlur.hpp"

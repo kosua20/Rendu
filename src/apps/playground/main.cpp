@@ -5,7 +5,7 @@
 #include "input/ControllableCamera.hpp"
 #include "helpers/InterfaceUtilities.hpp"
 #include "resources/ResourcesManager.hpp"
-#include "ScreenQuad.hpp"
+#include "graphics/ScreenQuad.hpp"
 #include "Config.hpp"
 
 /**

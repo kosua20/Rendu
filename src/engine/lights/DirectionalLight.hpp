@@ -3,8 +3,8 @@
 
 #include "Light.hpp"
 #include "../Common.hpp"
-#include "../ScreenQuad.hpp"
-#include "../Framebuffer.hpp"
+#include "../graphics/ScreenQuad.hpp"
+#include "../graphics/Framebuffer.hpp"
 #include "../Object.hpp"
 #include "../processing/BoxBlur.hpp"
 

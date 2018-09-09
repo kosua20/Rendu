@@ -1,8 +1,8 @@
 #ifndef ResourcesManager_h
 #define ResourcesManager_h
 #include "../Common.hpp"
-#include "../helpers/GLUtilities.hpp"
-#include "../helpers/ProgramInfos.hpp"
+#include "../graphics/GLUtilities.hpp"
+#include "../graphics/ProgramInfos.hpp"
 
 /**
  \brief The Resources manager is responsible for all resources loading and setup.

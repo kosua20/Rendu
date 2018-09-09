@@ -1,6 +1,6 @@
 #include "RendererCube.hpp"
 #include "../../input/Input.hpp"
-#include "../../helpers/GLUtilities.hpp"
+#include "../../graphics/GLUtilities.hpp"
 
 
 

@@ -2,7 +2,7 @@
 #define RendererCube_h
 
 #include "../../Common.hpp"
-#include "../../Framebuffer.hpp"
+#include "../../graphics/Framebuffer.hpp"
 #include "../../Object.hpp"
 #include "../Renderer.hpp"
 

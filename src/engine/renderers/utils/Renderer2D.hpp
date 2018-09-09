@@ -2,8 +2,8 @@
 #define Renderer2D_h
 
 #include "../../Common.hpp"
-#include "../../Framebuffer.hpp"
-#include "../../ScreenQuad.hpp"
+#include "../../graphics/Framebuffer.hpp"
+#include "../../graphics/ScreenQuad.hpp"
 #include "../Renderer.hpp"
 
 /**

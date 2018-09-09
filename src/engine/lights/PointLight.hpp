@@ -2,7 +2,7 @@
 #define PointLight_h
 #include "Light.hpp"
 #include "../resources/ResourcesManager.hpp"
-#include "../FramebufferCube.hpp"
+#include "../graphics/FramebufferCube.hpp"
 #include "../Object.hpp"
 
 /**
