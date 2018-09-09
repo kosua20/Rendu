@@ -4,9 +4,9 @@
 
 
 
-RendererCube::RendererCube(Config & config, const std::string & cubemapName, const std::string & shaderName, const unsigned int width, const unsigned int height, const GLenum format, const GLenum type, const GLenum preciseFormat) : Renderer(config) {
+RendererCube::RendererCube(Config & config, const std::string & cubemapName, const std::string & shaderName, const unsigned int width, const unsigned int height, const GLenum preciseFormat) : Renderer(config) {
 	
-	_resultFramebuffer = std::make_shared<Framebuffer>(width, height, format, type, preciseFormat, GL_LINEAR, GL_CLAMP_TO_EDGE, false);
+	_resultFramebuffer = std::make_shared<Framebuffer>(width, height, preciseFormat, false);
 	
 	_program = Resources::manager().getProgram(shaderName, "skybox_basic", shaderName);
 	_cubemap = Object(_program, "skybox", {}, {{cubemapName, true }});

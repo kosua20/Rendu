@@ -1,7 +1,12 @@
 #include "BoxBlur.hpp"
 
 
-BoxBlur::BoxBlur(unsigned int width, unsigned int height, bool approximate, GLuint format, GLuint type, GLuint preciseFormat, GLuint wrapping) : Blur() {
+BoxBlur::BoxBlur(unsigned int width, unsigned int height, bool approximate, const Framebuffer::Descriptor & descriptor) : Blur() {
+	
+	Framebuffer::Descriptor linearDescriptor = descriptor;
+	linearDescriptor.filtering = GL_LINEAR;
+	GLenum format, type;
+	GLUtilities::getTypeAndFormat(linearDescriptor.typedFormat, type, format);
 	
 	std::string blur_type_name = "box-blur-" + (approximate ? std::string("approx-") : "");
 	switch (format) {
@@ -18,10 +23,9 @@ BoxBlur::BoxBlur(unsigned int width, unsigned int height, bool approximate, GLui
 			blur_type_name += "4";
 			break;
 	}
-	
 	_blurProgram = Resources::manager().getProgram2D(blur_type_name);
 	// Create one framebuffer.
-	_finalFramebuffer = std::make_shared<Framebuffer>(width, height, format, type, preciseFormat, GL_LINEAR, wrapping, false);
+	_finalFramebuffer = std::make_shared<Framebuffer>(width, height, linearDescriptor, false);
 	// Final combining buffer.
 	_finalTexture = _finalFramebuffer->textureId();
 	

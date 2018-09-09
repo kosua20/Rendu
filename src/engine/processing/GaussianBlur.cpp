@@ -1,7 +1,7 @@
 #include "GaussianBlur.hpp"
 
 
-GaussianBlur::GaussianBlur(unsigned int width, unsigned int height, unsigned int depth, GLuint format, GLuint type, GLuint preciseFormat) : Blur() {
+GaussianBlur::GaussianBlur(unsigned int width, unsigned int height, unsigned int depth, GLuint preciseFormat) : Blur() {
 	_passthroughProgram = Resources::manager().getProgram("passthrough");
 	_blurProgram = Resources::manager().getProgram2D("blur");
 	
@@ -12,8 +12,8 @@ GaussianBlur::GaussianBlur(unsigned int width, unsigned int height, unsigned int
 	_textures.resize(depth);
 	
 	for(size_t i = 0; i < (size_t)depth; ++i){
-		_frameBuffers[i] = std::make_shared<Framebuffer>((unsigned int)(width/std::pow(2,i)), (unsigned int)(height/std::pow(2,i)), format, type, preciseFormat, GL_LINEAR, GL_CLAMP_TO_EDGE, false);
-		_frameBuffersBlur[i] = std::make_shared<Framebuffer>((unsigned int)(width/std::pow(2,i)), (unsigned int)(height/std::pow(2,i)), format, type, preciseFormat, GL_LINEAR, GL_CLAMP_TO_EDGE, false);
+		_frameBuffers[i] = std::make_shared<Framebuffer>((unsigned int)(width/std::pow(2,i)), (unsigned int)(height/std::pow(2,i)), preciseFormat , false);
+		_frameBuffersBlur[i] = std::make_shared<Framebuffer>((unsigned int)(width/std::pow(2,i)), (unsigned int)(height/std::pow(2,i)), preciseFormat, false);
 		_textures[i] = _frameBuffers[i]->textureId();
 	}
 
@@ -21,7 +21,7 @@ GaussianBlur::GaussianBlur(unsigned int width, unsigned int height, unsigned int
 	if (_frameBuffers.size() > 1) {
 		const std::string combineProgramName = "blur-combine-" + std::to_string(_frameBuffers.size());
 		_combineProgram = Resources::manager().getProgram2D(combineProgramName);
-		_finalFramebuffer = std::make_shared<Framebuffer>(width, height, format, type, preciseFormat, GL_LINEAR, GL_CLAMP_TO_EDGE, false);
+		_finalFramebuffer = std::make_shared<Framebuffer>(width, height, preciseFormat, false);
 		_finalTexture = _finalFramebuffer->textureId();
 	} else {
 		_finalTexture = _frameBuffers[0]->textureId();

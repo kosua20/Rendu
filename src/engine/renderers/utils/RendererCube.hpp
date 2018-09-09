@@ -20,11 +20,9 @@ public:
 	 \param shaderName the name of shader to use
 	 \param width the rendering width
 	 \param height the rendering height
-	 \param format the format to use for the internal famebuffer
-	 \param type the type to use for the internal famebuffer
 	 \param preciseFormat the combine type+format to use for the internal famebuffer
 	 */
-	RendererCube(Config & config, const std::string & cubemapName, const std::string & shaderName, const unsigned int width, const unsigned int height, const GLenum format, const GLenum type, const GLenum preciseFormat);
+	RendererCube(Config & config, const std::string & cubemapName, const std::string & shaderName, const unsigned int width, const unsigned int height, const GLenum preciseFormat);
 
 	/** Draw the scene and effects */
 	void draw();

@@ -18,12 +18,9 @@ public:
 	 \param width the internal resolution width
 	 \param height the internal resolution height
 	 \param approximate toggles the approximate box blur
-	 \param format the OpenGL format of the internal famebuffer
-	 \param type the OpenGL type of the internal famebuffer
-	 \param preciseFormat the OpenGL precise format of the internal famebuffer
-	 \param wrapping the texture coordinates wrapping mode of the internal framebuffer
+	 \param descriptor the framebuffer format and wrapping descriptor
 	 */
-	BoxBlur(unsigned int width, unsigned int height, bool approximate, GLuint format, GLuint type, GLuint preciseFormat, GLuint wrapping);
+	BoxBlur(unsigned int width, unsigned int height, bool approximate, const Framebuffer::Descriptor & descriptor);
 
 	/**
 	 \copydoc Blur::process

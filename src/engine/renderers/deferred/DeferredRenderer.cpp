@@ -17,15 +17,17 @@ DeferredRenderer::DeferredRenderer(Config & config) : Renderer(config) {
 	const int renderHalfHeight = (int)(0.5f * _renderResolution[1]);
 	// Find the closest power of 2 size.
 	const int renderPow2Size = (int)std::pow(2,(int)floor(log2(_renderResolution[0])));
-	_gbuffer = std::make_shared<Gbuffer>(renderWidth, renderHeight);
-	_ssaoFramebuffer = std::make_shared<Framebuffer>(renderHalfWidth, renderHalfHeight, GL_RED, GL_UNSIGNED_BYTE, GL_RED, GL_LINEAR, GL_CLAMP_TO_EDGE, false);
-	_sceneFramebuffer = std::make_shared<Framebuffer>(renderWidth, renderHeight, GL_RGBA, GL_FLOAT, GL_RGBA16F, GL_LINEAR,GL_CLAMP_TO_EDGE, false);
-	_bloomFramebuffer = std::make_shared<Framebuffer>(renderPow2Size, renderPow2Size, GL_RGB, GL_FLOAT, GL_RGB16F, GL_LINEAR,GL_CLAMP_TO_EDGE, false);
-	_toneMappingFramebuffer = std::make_shared<Framebuffer>(renderWidth, renderHeight, GL_RGBA, GL_UNSIGNED_BYTE, GL_RGBA, GL_LINEAR,GL_CLAMP_TO_EDGE, false);
-	_fxaaFramebuffer = std::make_shared<Framebuffer>(renderWidth, renderHeight, GL_RGBA,GL_UNSIGNED_BYTE, GL_RGBA, GL_LINEAR,GL_CLAMP_TO_EDGE, false);
 	
-	_blurBuffer = std::make_shared<GaussianBlur>(renderPow2Size, renderPow2Size, 2, GL_RGB, GL_FLOAT, GL_RGB16F);
-	_blurSSAOBuffer = std::make_shared<BoxBlur>(renderHalfWidth, renderHalfHeight, true, GL_RED, GL_UNSIGNED_BYTE, GL_RED, GL_CLAMP_TO_EDGE);
+	_gbuffer = std::make_shared<Gbuffer>(renderWidth, renderHeight);
+	_ssaoFramebuffer = std::make_shared<Framebuffer>(renderHalfWidth, renderHalfHeight, GL_R8, false);
+	_sceneFramebuffer = std::make_shared<Framebuffer>(renderWidth, renderHeight, GL_RGBA16F, false);
+	_bloomFramebuffer = std::make_shared<Framebuffer>(renderPow2Size, renderPow2Size, GL_RGB16F, false);
+	
+	_toneMappingFramebuffer = std::make_shared<Framebuffer>(renderWidth, renderHeight, GL_RGBA8, false);
+	_fxaaFramebuffer = std::make_shared<Framebuffer>(renderWidth, renderHeight, GL_RGBA8, false);
+	
+	_blurBuffer = std::make_shared<GaussianBlur>(renderPow2Size, renderPow2Size, 2, GL_RGB16F);
+	_blurSSAOBuffer = std::make_shared<BoxBlur>(renderHalfWidth, renderHalfHeight, true, Framebuffer::Descriptor(GL_R8));
 	
 	checkGLError();
 

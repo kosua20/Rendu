@@ -4,8 +4,7 @@
 
 TestRenderer::TestRenderer(Config & config) : Renderer(config) {
 	
-	
-	_framebuffer = std::make_shared<Framebuffer>(_renderResolution[0], _renderResolution[1], GL_RGBA, GL_UNSIGNED_BYTE, GL_RGBA, GL_LINEAR,GL_CLAMP_TO_EDGE, false);
+	_framebuffer = std::make_shared<Framebuffer>(_renderResolution[0], _renderResolution[1], GL_RGBA8, false);
 	checkGLError();
 	
 	// GL options

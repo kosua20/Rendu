@@ -22,11 +22,9 @@ public:
 	 \param width the internal initial resolution width
 	 \param height the internal initial resolution height
 	 \param depth the number of levels in the downscaling pyramid
-	 \param format the OpenGL format of the internal famebuffers
-	 \param type the OpenGL type of the internal famebuffers
 	 \param preciseFormat the OpenGL precise format of the internal famebuffers
 	 */
-	GaussianBlur(unsigned int width, unsigned int height, unsigned int depth, GLuint format, GLuint type, GLuint preciseFormat);
+	GaussianBlur(unsigned int width, unsigned int height, unsigned int depth, GLuint preciseFormat);
 
 	/**
 	 \copydoc Blur::process

@@ -138,7 +138,7 @@ int main(int argc, char** argv) {
 	const unsigned int outputHeight = config.initialHeight;
 	
 	if(precomputeBRDF){
-		std::shared_ptr<Renderer2D> renderer(new Renderer2D(config, "brdf_sampler", outputWidth, outputHeight, GL_RG, GL_FLOAT, GL_RG32F));
+		std::shared_ptr<Renderer2D> renderer(new Renderer2D(config, "brdf_sampler", outputWidth, outputHeight, GL_RG32F));
 		renderer->update();
 		renderer->draw();
 		renderer->save(config.outputPath);
@@ -148,7 +148,7 @@ int main(int argc, char** argv) {
 		
 		const std::string cubemapName = config.cubemapName;
 		
-		std::shared_ptr<RendererCube> renderer(new RendererCube(config, cubemapName, "cubemap_convo", outputWidth, outputHeight, GL_RGB, GL_FLOAT, GL_RGB32F));
+		std::shared_ptr<RendererCube> renderer(new RendererCube(config, cubemapName, "cubemap_convo", outputWidth, outputHeight, GL_RGB32F));
 		renderer->update();
 		
 		// Generate convolution map for increments of roughness.
