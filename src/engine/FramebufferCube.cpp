@@ -2,12 +2,15 @@
 #include "helpers/GLUtilities.hpp"
 
 
-FramebufferCube::FramebufferCube(unsigned int side, GLuint format, GLuint type, GLuint preciseFormat, GLuint filtering, bool depthBuffer) {
+FramebufferCube::FramebufferCube(unsigned int side, const Framebuffer::Descriptor & descriptor, bool depthBuffer) {
+
+	_descriptor = descriptor;
 	_side = side;
-	_format = format;
-	_type = type;
-	_preciseFormat = preciseFormat;
 	_useDepth = depthBuffer;
+	
+	GLenum type, format;
+	GLUtilities::getTypeAndFormat(_descriptor.typedFormat, type, format);
+	
 	// Create a framebuffer.
 	glGenFramebuffers(1, &_id);
 	glBindFramebuffer(GL_FRAMEBUFFER, _id);
@@ -17,11 +20,11 @@ FramebufferCube::FramebufferCube(unsigned int side, GLuint format, GLuint type, 
 	
 	// Allocate all 6 layers.
 	for(unsigned int i = 0; i < 6; ++i){
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X+i, 0, _preciseFormat, (GLsizei)_side , (GLsizei)_side, 0, _format, _type, 0);
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X+i, 0, _descriptor.typedFormat, (GLsizei)_side , (GLsizei)_side, 0, format, type, 0);
 	}
 	
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, (GLint)filtering);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, (GLint)filtering);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, (GLint)_descriptor.filtering);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, (GLint)_descriptor.filtering);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -66,7 +69,6 @@ void FramebufferCube::unbind() const {
 }
 
 
-
 void FramebufferCube::resize(unsigned int side){
 	_side = side;
 	// Resize the renderbuffer.
@@ -78,10 +80,13 @@ void FramebufferCube::resize(unsigned int side){
 		}
 	}
 	// Resize the texture.
+	GLenum type, format;
+	GLUtilities::getTypeAndFormat(_descriptor.typedFormat, type, format);
+	
 	glBindTexture(GL_TEXTURE_CUBE_MAP, _idColor);
 	// Reallocate all 6 layers.
 	for(unsigned int i = 0; i < 6; ++i){
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X+i, 0, _preciseFormat, (GLsizei)_side , (GLsizei)_side, 0, _format, _type, 0);
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X+i, 0, _descriptor.typedFormat, (GLsizei)_side , (GLsizei)_side, 0, format, type, 0);
 	}
 }
 

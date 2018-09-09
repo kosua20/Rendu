@@ -3,25 +3,59 @@
 
 #include "Common.hpp"
 
+
 /**
  \brief Represent a 2D rendering target, of any size, format and type, backed by an OpenGL framebuffer.
  \ingroup Engine
  */
 class Framebuffer {
-
+public:
+	
+	/** \brief Regroups format, type, filtering and wrapping informations for a color buffer. */
+	struct Descriptor {
+		
+		GLuint typedFormat; ///< The precise typed format.
+		GLuint filtering; ///< Filtering mode.
+		GLuint wrapping; ///< Wrapping mode.
+		
+		/** Default constructor. RGB8, linear, clamp. */
+		Descriptor(){
+			typedFormat = GL_RGB8; filtering = GL_LINEAR; wrapping = GL_CLAMP_TO_EDGE;
+		}
+		/** Convenience constructor. Custom typed format, linear, clamp.
+		 \param typedFormat_ the precise typed format to use
+		*/
+		Descriptor(const GLuint typedFormat_){
+			typedFormat = typedFormat_; filtering = GL_LINEAR; wrapping = GL_CLAMP_TO_EDGE;
+		}
+		
+		/** Constructor.
+		\param typedFormat_ the precise typed format to use
+		\param filtering_ the texture filtering (GL_LINEAR,...) to use
+		\param wrapping_ the texture wrapping mode (GL_CLAMP_TO_EDGE) to use
+		 */
+		Descriptor(const GLuint typedFormat_, const GLuint filtering_, const GLuint wrapping_){
+			typedFormat = typedFormat_; filtering = filtering_; wrapping = wrapping_;
+		}
+	};
+	
 public:
 	
 	/** Setup the framebuffer (attachments, renderbuffer, depth buffer, textures IDs,...)
 	 \param width the width of the framebuffer
 	 \param height the height of the framebuffer
-	 \param format the OpenGL enum format (GL_RGB,...) to use
-	 \param type the OpenGL enum type (GL_UNSIGNED_BYTE,...) to use
-	 \param preciseFormat the precise format, combining format and type (GL_RGB8,...) to use
-	 \param filtering the texture filtering (GL_LINEAR,...) to use
-	 \param wrapping the texture wrapping mode (GL_CLAMP_TO_EDGE) to use
+	 \param typedFormat the precise typed format, combining format and type (GL_RGB8,...) to use
 	 \param depthBuffer should the framebuffer contain a depth buffer to properly handle 3D geometry
 	 */
-	Framebuffer(unsigned int width, unsigned int height, GLuint format, GLuint type, GLuint preciseFormat, GLuint filtering, GLuint wrapping, bool depthBuffer);
+	Framebuffer(unsigned int width, unsigned int height, const GLenum typedFormat, bool depthBuffer);
+	
+	/** Setup the framebuffer (attachments, renderbuffer, depth buffer, textures IDs,...)
+	 \param width the width of the framebuffer
+	 \param height the height of the framebuffer
+	 \param descriptor the color attachment texture descriptor (format, filtering,...)
+	 \param depthBuffer should the framebuffer contain a depth buffer to properly handle 3D geometry
+	 */
+	Framebuffer(unsigned int width, unsigned int height, const Descriptor & descriptor, bool depthBuffer);
 	
 	/**
 	 Bind the framebuffer.
@@ -81,24 +115,20 @@ public:
 	const GLuint id() const { return _id; }
 	
 	/**
-	 Query the framebuffer OpenGL format.
-	 \return the format
+	 Query the framebuffer OpenGL type and format.
+	 \return the typed format
 	 */
-	const GLuint format() const { return _format; }
-	
-	/**
-	 Query the framebuffer OpenGL type.
-	 \return the type
-	 */
-	const GLuint type() const { return _type; }
-	
-	/**
-	 Query the framebuffer precise OpenGL format.
-	 \return the precise format
-	 */
-	const GLuint preciseFormat() const { return _preciseFormat; }
+	const GLuint typedFormat() const { return _descriptor.typedFormat; }
 	
 private:
+	
+	/** Setup the framebuffer (attachments, renderbuffer, depth buffer, textures IDs,...)
+	 \param width the width of the framebuffer
+	 \param height the height of the framebuffer
+	 \param descriptors the color attachments texture descriptors (format, filtering,...)
+	 \param depthBuffer should the framebuffer contain a depth buffer to properly handle 3D geometry
+	 */
+	Framebuffer(unsigned int width, unsigned int height, const std::vector<Descriptor> & descriptors, bool depthBuffer);
 	
 	unsigned int _width; ///< The framebuffer width.
 	unsigned int _height; ///< The framebuffer height.
@@ -107,9 +137,7 @@ private:
 	GLuint _idColor; ///< The color texture ID.
 	GLuint _idRenderbuffer; ///< The depth renderbuffer ID.
 	
-	GLuint _format; ///< OpenGL format (GL_RGB,...).
-	GLuint _type; ///< OpenGL type (GL_FLOAT,...).
-	GLuint _preciseFormat; ///< OpenGL precise format (GL_RGB32F,...).
+	Descriptor _descriptor;
 
 	bool _useDepth; ///< Denotes if the framebuffer is backed by a depth renderbuffer.
 	

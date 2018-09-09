@@ -1,16 +1,28 @@
 #include "Framebuffer.hpp"
 #include "helpers/GLUtilities.hpp"
 
+Framebuffer::Framebuffer(unsigned int width, unsigned int height, const GLenum typedFormat, bool depthBuffer) : Framebuffer(width, height, {Descriptor(typedFormat)}, depthBuffer) {
+	
+}
 
+Framebuffer::Framebuffer(unsigned int width, unsigned int height, const Framebuffer::Descriptor & descriptor, bool depthBuffer) : Framebuffer(width, height, std::vector<Descriptor>(1, descriptor) , depthBuffer){
+	
+}
 
-Framebuffer::Framebuffer(unsigned int width, unsigned int height, GLuint format, GLuint type, GLuint preciseFormat, GLuint filtering, GLuint wrapping, bool depthBuffer) {
+Framebuffer::Framebuffer(unsigned int width, unsigned int height, const std::vector<Framebuffer::Descriptor> & descriptors, bool depthBuffer) {
+	if(descriptors.size() > 1){
+		Log::Warning() << "Unimplemented: only the first descriptor will be used." << std::endl;
+	}
+	
+	const auto & descriptor = descriptors[0];
 	_width = width;
 	_height = height;
-	_format = format;
-	_type = type;
-	_preciseFormat = preciseFormat;
+	_descriptor = descriptor;
 	_useDepth = depthBuffer;
-
+	
+	GLuint type, format;
+	GLUtilities::getTypeAndFormat(_descriptor.typedFormat, type, format);
+	
 	// Create a framebuffer.
 	glGenFramebuffers(1, &_id);
 	glBindFramebuffer(GL_FRAMEBUFFER, _id);
@@ -18,15 +30,15 @@ Framebuffer::Framebuffer(unsigned int width, unsigned int height, GLuint format,
 	// Create the.texture to store the result.
 	glGenTextures(1, &_idColor);
 	glBindTexture(GL_TEXTURE_2D, _idColor);
-	glTexImage2D(GL_TEXTURE_2D, 0, preciseFormat, (GLsizei)_width , (GLsizei)_height, 0, format, type, 0);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, (GLint)filtering);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, (GLint)filtering);
+	glTexImage2D(GL_TEXTURE_2D, 0, _descriptor.typedFormat, (GLsizei)_width , (GLsizei)_height, 0, format, type, 0);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, (GLint)_descriptor.filtering);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, (GLint)_descriptor.filtering);
 	
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, (GLint)wrapping);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, (GLint)wrapping);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, (GLint)_descriptor.wrapping);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, (GLint)_descriptor.wrapping);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
-
-	if(wrapping == GL_CLAMP_TO_BORDER){
+	
+	if(_descriptor.wrapping == GL_CLAMP_TO_BORDER){
 		// Setup the border value for the shadow map
 		GLfloat border[] = { 1.0, 1.0, 1.0, 1.0 };
 		glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, border);
@@ -44,13 +56,14 @@ Framebuffer::Framebuffer(unsigned int width, unsigned int height, GLuint format,
 		// Link the renderbuffer to the framebuffer.
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _idRenderbuffer);
 	}
-
+	
 	//Register which color attachments to draw to.
 	GLenum drawBuffers[1] = {GL_COLOR_ATTACHMENT0};
 	glDrawBuffers(1, drawBuffers);
 	checkGLFramebufferError();
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	checkGLError();
+
 }
 
 
@@ -67,11 +80,11 @@ void Framebuffer::unbind() const {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-
-
 void Framebuffer::resize(unsigned int width, unsigned int height){
 	_width = width;
 	_height = height;
+	GLuint type, format;
+	GLUtilities::getTypeAndFormat(_descriptor.typedFormat, type, format);
 	// Resize the renderbuffer.
 	if (_useDepth) {
 		glBindRenderbuffer(GL_RENDERBUFFER, _idRenderbuffer);
@@ -80,7 +93,7 @@ void Framebuffer::resize(unsigned int width, unsigned int height){
 	}
 	// Resize the texture.
 	glBindTexture(GL_TEXTURE_2D, _idColor);
-	glTexImage2D(GL_TEXTURE_2D, 0, _preciseFormat, (GLsizei)_width, (GLsizei)_height, 0, _format, _type, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, _descriptor.typedFormat, (GLsizei)_width, (GLsizei)_height, 0, format, type, 0);
 }
 
 void Framebuffer::resize(glm::vec2 size){
@@ -94,4 +107,6 @@ void Framebuffer::clean() const {
 	glDeleteTextures(1, &_idColor);
 	glDeleteFramebuffers(1, &_id);
 }
+
+
 

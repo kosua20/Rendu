@@ -2,6 +2,7 @@
 #define FramebufferCube_h
 
 #include "Common.hpp"
+#include "Framebuffer.hpp"
 
 /**
  \brief Represent a cubemap rendering target, of any size, format and type, backed by an OpenGL framebuffer composed of six layers.
@@ -14,13 +15,10 @@ public:
 	
 	/** Setup the framebuffer (attachments, renderbuffer, depth buffer, textures IDs,...)
 	 \param side the width and height of each face of the framebuffer
-	 \param format the OpenGL enum format (GL_RGB,...) to use
-	 \param type the OpenGL enum type (GL_UNSIGNED_BYTE,...) to use
-	 \param preciseFormat the precise format, combining format and type (GL_RGB8,...) to use
-	 \param filtering the texture filtering (GL_LINEAR,...) to use
+	 \param descriptor contains the precise format and filtering to use
 	 \param depthBuffer should the framebuffer contain a depth buffer to properly handle 3D geometry
 	 */
-	FramebufferCube(unsigned int side, GLuint format, GLuint type, GLuint preciseFormat, GLuint filtering, bool depthBuffer);
+	FramebufferCube(unsigned int side, const Framebuffer::Descriptor & descriptor, bool depthBuffer);
 	
 	/**
 	 Bind the framebuffer.
@@ -67,22 +65,10 @@ public:
 	const GLuint id() const { return _id; }
 	
 	/**
-	 Query the framebuffer OpenGL format.
-	 \return the format
+	 Query the framebuffer OpenGL type and format.
+	 \return the typed format
 	 */
-	const GLuint format() const { return _format; }
-	
-	/**
-	 Query the framebuffer OpenGL type.
-	 \return the type
-	 */
-	const GLuint type() const { return _type; }
-	
-	/**
-	 Query the framebuffer precise OpenGL format.
-	 \return the precise format
-	 */
-	const GLuint preciseFormat() const { return _preciseFormat; }
+	const GLuint typedFormat() const { return _descriptor.typedFormat; }
 	
 private:
 	
@@ -92,9 +78,7 @@ private:
 	GLuint _idColor; ///< The color texture ID.
 	GLuint _idRenderbuffer; ///< The depth buffer ID.
 	
-	GLuint _format; ///< OpenGL format (GL_RGB,...).
-	GLuint _type; ///< OpenGL type (GL_FLOAT,...).
-	GLuint _preciseFormat; ///< OpenGL precise format (GL_RGB32F,...).
+	Framebuffer::Descriptor _descriptor; ///< The color target descriptor.
 
 	bool _useDepth; ///< Denotes if the framebuffer is backed by a depth buffer.
 	
