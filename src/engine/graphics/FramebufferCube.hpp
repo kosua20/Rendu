@@ -1,7 +1,7 @@
 #ifndef FramebufferCube_h
 #define FramebufferCube_h
 
-#include "Common.hpp"
+#include "../Common.hpp"
 #include "Framebuffer.hpp"
 
 /**

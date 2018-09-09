@@ -1,8 +1,8 @@
 #ifndef ScreenQuad_h
 #define ScreenQuad_h
 
-#include "Common.hpp"
-#include "resources/ResourcesManager.hpp"
+#include "../Common.hpp"
+#include "../resources/ResourcesManager.hpp"
 
 /**
  \brief Helper used to draw a fullscreen quad for texture processing.

@@ -1,15 +1,15 @@
 #include "Framebuffer.hpp"
-#include "helpers/GLUtilities.hpp"
+#include "GLUtilities.hpp"
 
 Framebuffer::Framebuffer(unsigned int width, unsigned int height, const GLenum typedFormat, bool depthBuffer) : Framebuffer(width, height, {Descriptor(typedFormat)}, depthBuffer) {
 	
 }
 
-Framebuffer::Framebuffer(unsigned int width, unsigned int height, const Framebuffer::Descriptor & descriptor, bool depthBuffer) : Framebuffer(width, height, std::vector<Descriptor>(1, descriptor) , depthBuffer){
+Framebuffer::Framebuffer(unsigned int width, unsigned int height, const Descriptor & descriptor, bool depthBuffer) : Framebuffer(width, height, std::vector<Descriptor>(1, descriptor) , depthBuffer){
 	
 }
 
-Framebuffer::Framebuffer(unsigned int width, unsigned int height, const std::vector<Framebuffer::Descriptor> & descriptors, bool depthBuffer) {
+Framebuffer::Framebuffer(unsigned int width, unsigned int height, const std::vector<Descriptor> & descriptors, bool depthBuffer) {
 	
 	_width = width;
 	_height = height;

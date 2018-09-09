@@ -4,7 +4,7 @@
 
 #include "../Common.hpp"
 #include "../resources/MeshUtilities.hpp"
-#include "../Framebuffer.hpp"
+#include "Framebuffer.hpp"
 
 /**
  \addtogroup Helpers
