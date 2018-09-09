@@ -7,7 +7,7 @@
 #include "Framebuffer.hpp"
 
 /**
- \addtogroup Helpers
+ \addtogroup Graphics
  @{
  */
 
@@ -40,7 +40,7 @@ int checkGLFramebufferError();
 
 /**
  \brief Store texture informations.
- \ingroup Helpers
+ \ingroup Graphics
  */
 struct TextureInfos {
 	GLuint id; ///< The OpenGL texture ID.
@@ -57,7 +57,7 @@ struct TextureInfos {
 
 /**
  \brief Store geometry informations.
- \ingroup Helpers
+ \ingroup Graphics
  */
 struct MeshInfos {
 	GLuint vId; ///< The vertex array OpenGL ID.
@@ -73,7 +73,7 @@ struct MeshInfos {
 
 /**
  \brief Provide utility functions to communicate with the driver and GPU.
- \ingroup Helpers
+ \ingroup Graphics
  */
 class GLUtilities {
 	

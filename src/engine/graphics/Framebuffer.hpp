@@ -6,7 +6,7 @@
 
 /**
  \brief Represent a 2D rendering target, of any size, format and type, backed by an OpenGL framebuffer.
- \ingroup Engine
+ \ingroup Graphics
  */
 class Framebuffer {
 public:

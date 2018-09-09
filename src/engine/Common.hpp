@@ -37,7 +37,10 @@
 /**
  
  \defgroup Engine Engine
- \brief General rendering code.
+ \brief General code.
+ 
+ \defgroup Graphics Graphics
+ \brief Contain items and functions interacting with the graphics API.
  
  \defgroup Renderers Renderers
  \brief Renderer-specific implementations.

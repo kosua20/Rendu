@@ -7,7 +7,7 @@
 /**
  \brief Represent a cubemap rendering target, of any size, format and type, backed by an OpenGL framebuffer composed of six layers.
  \see GLSL::Vert::Object_layer, GLSL::Geom::Object_layer
- \ingroup Engine
+ \ingroup Graphics
  */
 class FramebufferCube {
 

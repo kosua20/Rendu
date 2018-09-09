@@ -7,7 +7,7 @@
 /**
  \brief Represents a group of shaders used for rendering.
  \details Internally responsible for handling uniforms locations, shaders reloading and values caching.
- \ingroup Helpers
+ \ingroup Graphics
  */
 class ProgramInfos {
 public:
