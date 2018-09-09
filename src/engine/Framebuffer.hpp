@@ -57,6 +57,14 @@ public:
 	 */
 	Framebuffer(unsigned int width, unsigned int height, const Descriptor & descriptor, bool depthBuffer);
 	
+	/** Setup the framebuffer (attachments, renderbuffer, depth buffer, textures IDs,...)
+	 \param width the width of the framebuffer
+	 \param height the height of the framebuffer
+	 \param descriptors the color attachments texture descriptors (format, filtering,...)
+	 \param depthBuffer should the framebuffer contain a depth buffer to properly handle 3D geometry
+	 */
+	Framebuffer(unsigned int width, unsigned int height, const std::vector<Descriptor> & descriptors, bool depthBuffer);
+	
 	/**
 	 Bind the framebuffer.
 	 */
@@ -91,10 +99,23 @@ public:
 	void clean() const;
 	
 	/**
-	 Query the ID of the 2D texture backing the framebuffer.
+	 Query the ID of the 2D texture backing one of the color attachments.
+	 \param i the color attachment index (or 0 by default)
 	 \return the texture ID
 	 */
-	const GLuint textureId() const { return _idColor; }
+	const GLuint textureId(uint i = 0) const { return _idColors[i]; }
+	
+	/**
+	 Query the ID of the 2D textures backing all color attachments.
+	 \return the texture IDs
+	 */
+	const std::vector<GLuint> textureIds() const { return _idColors; }
+	
+	/**
+	 Query the ID of the 2D texture or renderbuffer backing the depth attachment.
+	 \return the depth texture/renderbuffer ID
+	 */
+	const GLuint depthId() const { return _depthUse == NONE ? 0 : _idDepth; }
 	
 	/**
 	 Query the framebuffer width.
@@ -115,31 +136,29 @@ public:
 	const GLuint id() const { return _id; }
 	
 	/**
-	 Query the framebuffer OpenGL type and format.
+	 Query a color attachment OpenGL type and format.
+	 \param i the color attachment index (or 0 by default)
 	 \return the typed format
 	 */
-	const GLuint typedFormat() const { return _descriptor.typedFormat; }
+	const GLuint typedFormat(uint i = 0) const { return _colorDescriptors[i].typedFormat; }
 	
 private:
-	
-	/** Setup the framebuffer (attachments, renderbuffer, depth buffer, textures IDs,...)
-	 \param width the width of the framebuffer
-	 \param height the height of the framebuffer
-	 \param descriptors the color attachments texture descriptors (format, filtering,...)
-	 \param depthBuffer should the framebuffer contain a depth buffer to properly handle 3D geometry
-	 */
-	Framebuffer(unsigned int width, unsigned int height, const std::vector<Descriptor> & descriptors, bool depthBuffer);
 	
 	unsigned int _width; ///< The framebuffer width.
 	unsigned int _height; ///< The framebuffer height.
 	
 	GLuint _id; ///< The framebuffer ID.
-	GLuint _idColor; ///< The color texture ID.
-	GLuint _idRenderbuffer; ///< The depth renderbuffer ID.
+	std::vector<GLuint> _idColors; ///< The color textures IDs.
+	GLuint _idDepth; ///< The depth renderbuffer ID.
 	
-	Descriptor _descriptor;
-
-	bool _useDepth; ///< Denotes if the framebuffer is backed by a depth renderbuffer.
+	std::vector<Descriptor> _colorDescriptors; ///< The color buffer descriptors.
+	Descriptor _depthDescriptor; ///< The depth buffer descriptor.
+	
+	/// \brief Type of depth storage structure used.
+	enum DepthBuffer {
+		NONE, RENDERBUFFER, TEXTURE
+	};
+	DepthBuffer _depthUse; ///< The type of depth backing the framebuffer.
 	
 };
 
