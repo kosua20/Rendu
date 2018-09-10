@@ -56,15 +56,15 @@ function GraphicsSetup()
 
 	-- Libraries for each platform.
 	if os.istarget("macosx") then
-		libdirs({"src/libs/glfw/lib-mac/"})
-		links({"glfw3", "OpenGL.framework", "Cocoa.framework", "IOKit.framework", "CoreVideo.framework"})
+		libdirs({"src/libs/glfw/lib-mac/", "src/libs/nfd/lib-mac/"})
+		links({"glfw3", "nfd", "OpenGL.framework", "Cocoa.framework", "IOKit.framework", "CoreVideo.framework", "AppKit.framework"})
 	elseif os.istarget("windows") then
-		libdirs({"src/libs/glfw/lib-win-vc2015-64/"})
-		links({"glfw3", "opengl32"})
+		libdirs({"src/libs/glfw/lib-win-vc2015-64/", "src/libs/nfd/lib-win-vc2017-64/"})
+		links({"glfw3", "nfd", "opengl32", "comctl32"})
 	else -- Assume linux
 		-- Libraries needed: OpenGL and glfw3.  glfw3 require X11, Xi, and so on...	
-		libdirs({ os.findlib("glfw3") })
-		links({"glfw3", "GL", "X11", "Xi", "Xrandr", "Xxf86vm", "Xinerama", "Xcursor", "rt", "m", "pthread", "dl"})
+		libdirs({ os.findlib("glfw3"), os.findlib("nfd") })
+		links({"glfw3", "nfd", "GL", "X11", "Xi", "Xrandr", "Xxf86vm", "Xinerama", "Xcursor", "rt", "m", "pthread", "dl", "gtk+-3.0"})
 	end
 
 end
