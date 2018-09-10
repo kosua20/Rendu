@@ -88,7 +88,7 @@ int main(int argc, char** argv) {
 	glfwSetJoystickCallback(joystick_callback);					// Joystick
 	glfwSwapInterval(config.vsync ? 1 : 0);						// 60 FPS V-sync
 	
-	ImGui::setup(window);
+	Interface::setup(window);
 	
 	// Check the window size (if we are on a screen smaller than the initial size.
 	int wwidth, wheight;
@@ -139,7 +139,7 @@ int main(int argc, char** argv) {
 			glfwSetWindowShouldClose(window, GL_TRUE);
 		}
 		// Start a new frame for the interface.
-		ImGui::beginFrame();
+		Interface::beginFrame();
 		// Reload resources.
 		if(Input::manager().triggered(Input::KeyP)){
 			Resources::manager().reload();
@@ -183,14 +183,14 @@ int main(int argc, char** argv) {
 		// Update the content of the window.
 		renderer->draw();
 		// Then render the interface.
-		ImGui::endFrame();
+		Interface::endFrame();
 		//Display the result for the current rendering loop.
 		glfwSwapBuffers(window);
 
 	}
 	
 	// Clean the interface.
-	ImGui::clean();
+	Interface::clean();
 	// Remove the window.
 	glfwDestroyWindow(window);
 	// Clean other resources
