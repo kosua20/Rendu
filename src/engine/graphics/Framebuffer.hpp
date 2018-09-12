@@ -103,7 +103,7 @@ public:
 	 \param i the color attachment index (or 0 by default)
 	 \return the texture ID
 	 */
-	const GLuint textureId(uint i = 0) const { return _idColors[i]; }
+	const GLuint textureId(unsigned int i = 0) const { return _idColors[i]; }
 	
 	/**
 	 Query the ID of the 2D textures backing all color attachments.
@@ -140,7 +140,7 @@ public:
 	 \param i the color attachment index (or 0 by default)
 	 \return the typed format
 	 */
-	const GLuint typedFormat(uint i = 0) const { return _colorDescriptors[i].typedFormat; }
+	const GLuint typedFormat(unsigned int i = 0) const { return _colorDescriptors[i].typedFormat; }
 	
 private:
 	

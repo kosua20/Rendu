@@ -1,7 +1,7 @@
 #ifndef InputCallbacks_h
 #define InputCallbacks_h
 
-#include "Common.hpp"
+#include "../Common.hpp"
 
 /**
  Callback for window resizing events.
