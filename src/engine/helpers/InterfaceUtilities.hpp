@@ -2,6 +2,8 @@
 #define InterfaceUtilities_h
 
 #include "../Common.hpp"
+#include "../Config.hpp"
+
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
@@ -14,10 +16,10 @@ struct GLFWwindow;
  */
 namespace Interface {
 	
-	/** Setup the GUI, including interaction callbacks.
+	/** Initialize ImGui, including interaction callbacks.
 	 \param window the GLFW window
 	 */
-	void setup(GLFWwindow * window);
+	void setupImGui(GLFWwindow * window);
 	
 	/** Start registering GUI items. */
 	void beginFrame();
@@ -27,6 +29,13 @@ namespace Interface {
 	
 	/** Clean internal resources. */
 	void clean();
+	
+	/** Create a new window backed by an OpenGL context.
+	 \param name the name of the window
+	 \param config the configuration to use (additional info will be added to it)
+	 \return a pointer to the OS window
+	 */
+	GLFWwindow* initWindow(const std::string & name, Config & config);
 	
 	/** The file picker mode. */
 	enum PickerMode {
