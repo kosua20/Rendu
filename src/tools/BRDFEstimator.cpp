@@ -97,7 +97,7 @@ int main(int argc, char** argv) {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	glfwWindowHint(GLFW_VISIBLE, GL_FALSE); // We hide the window as all processing willbe done in offscreen framebuffers.
+	glfwWindowHint(GLFW_VISIBLE, GL_FALSE); // We hide the window as all processing will be done in offscreen framebuffers.
 	
 	GLFWwindow* window = glfwCreateWindow((int)config.initialWidth, (int)config.initialHeight,"GL_Template", NULL, NULL);
 	
