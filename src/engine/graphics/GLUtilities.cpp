@@ -333,7 +333,9 @@ TextureInfos GLUtilities::loadTexture(const std::vector<std::string>& paths, boo
 		
 		if (ret != 0) {
 			Log::Error() << Log::Resources << "Unable to load the texture at path " << path << "." << std::endl;
-			free(image);
+			if(image != NULL){
+				free(image);
+			}
 			return infos;
 		}
 		
