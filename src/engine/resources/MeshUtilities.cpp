@@ -182,7 +182,7 @@ void MeshUtilities::loadObj( std::istream & in, Mesh & mesh, MeshUtilities::Load
 	normals_temp.clear();
 	texcoords_temp.clear();
 	faces_temp.clear();
-	Log::Info() << Log::Verbose << Log::Resources << "Mesh loaded with " << mesh.indices.size()/3 << " faces, " << mesh.positions.size() << " vertices, " << mesh.normals.size() << " normals, " << mesh.texcoords.size() << " texcoords." << std::endl;
+	Log::Verbose() << Log::Resources << "Mesh loaded with " << mesh.indices.size()/3 << " faces, " << mesh.positions.size() << " vertices, " << mesh.normals.size() << " normals, " << mesh.texcoords.size() << " texcoords." << std::endl;
 
 }
 
@@ -276,6 +276,6 @@ void MeshUtilities::computeTangentsAndBinormals(Mesh & mesh){
 			mesh.tangents[tid] *= -1.0f;
  		}
 	}
-	Log::Info() << Log::Verbose << Log::Resources << "Mesh: " << mesh.tangents.size() << " tangents and binormals computed." << std::endl;
+	Log::Verbose() << Log::Resources << "Mesh: " << mesh.tangents.size() << " tangents and binormals computed." << std::endl;
 }
 

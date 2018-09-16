@@ -35,14 +35,14 @@ void Input::keyPressedEvent(int key, int action){
 		_keys[key].first = false;
 		_keys[key].last = true;
 	}
-	Log::Info() << Log::Verbose << Log::Input << "Key " << key << ", " << (action == GLFW_PRESS ? "pressed" : (action == GLFW_RELEASE ? "released" : "held")) << "." << std::endl;
+	Log::Verbose() << Log::Input << "Key " << key << ", " << (action == GLFW_PRESS ? "pressed" : (action == GLFW_RELEASE ? "released" : "held")) << "." << std::endl;
 }
 
 void Input::joystickEvent(int joy, int event){
 	
 	if (event == GLFW_CONNECTED) {
 		
-		Log::Info() << Log::Verbose << Log::Input << "Joystick: connected joystick " << joy << "." << std::endl;
+		Log::Verbose() << Log::Input << "Joystick: connected joystick " << joy << "." << std::endl;
 
 		// Register the new one, if no joystick was activated consider this one as the active one.
 		if(!_controllers[joy]){
@@ -55,7 +55,7 @@ void Input::joystickEvent(int joy, int event){
 		
 	} else if (event == GLFW_DISCONNECTED) {
 
-		Log::Info() << Log::Verbose << Log::Input << "Joystick: disconnected joystick " << joy << "." << std::endl;
+		Log::Verbose() << Log::Input << "Joystick: disconnected joystick " << joy << "." << std::endl;
 
 		// If the disconnected joystick is the one currently used, register this.
 		if(_controllers[joy]){
@@ -87,20 +87,20 @@ void Input::mousePressedEvent(int button, int action){
 		_mouseButtons[button].x1 = _mouse.x;
 		_mouseButtons[button].y1 = _mouse.y;
 	}
-	Log::Info() << Log::Verbose << Log::Input << "Mouse pressed: " << button << ", " << action << " at " << _mouse.x << "," << _mouse.y << "." << std::endl;
+	Log::Verbose() << Log::Input << "Mouse pressed: " << button << ", " << action << " at " << _mouse.x << "," << _mouse.y << "." << std::endl;
 }
 
 void Input::mouseMovedEvent(double x, double y){
 
 	_mouse.x = x/_width;
 	_mouse.y = y/_height;
-	Log::Info() << Log::Verbose << Log::Input << "Mouse moved: " << x << "," << y << "." << std::endl;
+	Log::Verbose() << Log::Input << "Mouse moved: " << x << "," << y << "." << std::endl;
 
 }
 
 void Input::mouseScrolledEvent(double xoffset, double yoffset){
 	_mouse.scroll = glm::vec2(xoffset, yoffset);
-	Log::Info() << Log::Verbose << Log::Input << "Mouse scrolled: " << xoffset << "," << yoffset << "." << std::endl;
+	Log::Verbose() << Log::Input << "Mouse scrolled: " << xoffset << "," << yoffset << "." << std::endl;
 
 }
 
@@ -108,7 +108,7 @@ void Input::resizeEvent(int width, int height){
 	_width = width > 0 ? width : 1;
 	_height = height > 0 ? height : 1;
 	_resized = true;
-	Log::Info() << Log::Verbose << Log::Input << "Resize event: " << width << "," << height << "." << std::endl;
+	Log::Verbose() << Log::Input << "Resize event: " << width << "," << height << "." << std::endl;
 
 }
 

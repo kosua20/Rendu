@@ -166,7 +166,7 @@ GLuint GLUtilities::loadShader(const std::string & prog, GLuint type, std::map<s
 			Log::Warning() << Log::OpenGL << "Inconsistent sampler location between linked shaders for \"" << name << "\"." << std::endl;
 		}
 		bindings[name] = slot;
-		Log::Info() << Log::Verbose << Log::OpenGL << "Detected texture (" << name << ", " << slot << ") => " << outputLine << std::endl;
+		Log::Verbose() << Log::OpenGL << "Detected texture (" << name << ", " << slot << ") => " << outputLine << std::endl;
 	}
 	std::string outputProg;
 	for(const auto & outputLine : outputLines){
@@ -210,7 +210,7 @@ GLuint GLUtilities::createProgram(const std::string & vertexContent, const std::
 	id = glCreateProgram();
 	checkGLError();
 	
-	Log::Info() << Log::Verbose << Log::OpenGL << "Compiling " << debugInfos << "." << std::endl;
+	Log::Verbose() << Log::OpenGL << "Compiling " << debugInfos << "." << std::endl;
 	
 	std::string compilationLog;
 	// If vertex program code is given, compile it.

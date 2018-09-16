@@ -22,15 +22,14 @@ public:
 	
 	/// \brief Domain prefix that will be appended before a line.
 	enum LogDomain {
-		OpenGL, Resources, Input, Utilities, Config,
-		Verbose ///< Will only be logged if verbose is enabled.
+		OpenGL, Resources, Input, Utilities, Config
 	};
 
 private:
 	
 	/// \brief Criticality level
 	enum LogLevel {
-		INFO, WARNING, ERROR
+		INFO, WARNING, ERROR, VERBOSE ///< Will only be logged if verbose is enabled.
 	};
 	
 	/** Set the criticality level.
@@ -39,9 +38,11 @@ private:
 	 */
 	void set(LogLevel l);
 
-	const std::vector<std::string> _domainStrings = {"OpenGL","Resources","Input","Utilities","Config",""}; ///< Domain prefix strings.
+	const std::vector<std::string> _domainStrings = {"OpenGL","Resources","Input","Utilities","Config"}; ///< Domain prefix strings.
 
-	const std::vector<std::string> _levelStrings = {"","(!) ","(X) "}; ///< Levels prefix strings.
+	const std::vector<std::string> _levelStrings = {"","(!) ","(X) ", ""}; ///< Levels prefix strings.
+	
+	const std::vector<std::string> _colorStrings = {"\e[0m\e[39m","\e[0m\e[33m","\e[0m\e[31m", "\e[2m\e[37m"}; ///< Colors prefix strings.
 	
 public:
 	
@@ -160,6 +161,11 @@ public:
 	 */
 	static Log& Error();
 	
+	/** The default logger with a verbose level.
+	 \return itself for chaining
+	 */
+	static Log& Verbose();
+	
 	/** @} */
 	
 private:
@@ -185,6 +191,7 @@ private:
 	bool _verbose; ///< Is the logger verbose.
 	bool _ignoreUntilFlush; ///< Internal flag to ignore the current line if it is verbose.
 	bool _appendPrefix; ///< Should a domain or level prefix be appended to the current line.
+	bool _useColors; ///< Should color formatting be used.
 	
 	static Log* _defaultLogger; ///< Default static logger.
 };

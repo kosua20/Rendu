@@ -9,7 +9,12 @@ Log* Log::_defaultLogger = new Log();
 
 void Log::set(LogLevel l){
 	_level = l;
-	_appendPrefix = (l != LogLevel::INFO);
+	_appendPrefix = true;
+	if(_level == LogLevel::VERBOSE && !_verbose){
+		// In this case, we want to ignore until the next flush.
+		_ignoreUntilFlush = true;
+		_appendPrefix = false;
+	}
 }
 
 Log::Log(){
@@ -18,6 +23,20 @@ Log::Log(){
 	_verbose = false;
 	_ignoreUntilFlush = false;
 	_appendPrefix = false;
+	_useColors = false;
+	
+	// Check if the output support colors.
+	/// \todo Also check if the output is indeed a terminal.
+	if(const char *env_p = std::getenv("TERM")) {
+		const std::vector<std::string> terms = { "xterm", "xterm-256", "xterm-256color", "vt100", "color", "ansi", "cygwin", "linux"};
+		const std::string term(env_p);
+		for(const auto & possibleTerm : terms){
+			if(term == possibleTerm){
+				_useColors = true;
+				break;
+			}
+		}
+	}
 }
 
 Log::Log(const std::string & filePath, const bool logToStdin, const bool verbose){
@@ -26,6 +45,7 @@ Log::Log(const std::string & filePath, const bool logToStdin, const bool verbose
 	_verbose = verbose;
 	_ignoreUntilFlush = false;
 	_appendPrefix = false;
+	_useColors = false;
 	// Create file if it doesnt exist.
 	setFile(filePath, false);
 }
@@ -41,6 +61,7 @@ void Log::setFile(const std::string & filePath, const bool flushExisting){
 	_file.open(filePath, std::ofstream::app);
 	if(_file.is_open()){
 		_file << "-- New session - " << time(NULL) << " -------------------------------" << std::endl;
+		_useColors = false;
 	} else {
 		std::cerr << "[Logger] Unable to create log file at path " << filePath << "." << std::endl;
 	}
@@ -76,13 +97,18 @@ Log& Log::Error(){
 	return *_defaultLogger;
 }
 
+Log& Log::Verbose(){
+	_defaultLogger->set(LogLevel::VERBOSE);
+	return *_defaultLogger;
+}
+
 void Log::flush(){
 	if(!_ignoreUntilFlush){
 		
 		const std::string finalStr =  _stream.str();
 		
 		if(_logToStdOut){
-			if(_level == LogLevel::INFO){
+			if(_level == LogLevel::INFO || _level == LogLevel::VERBOSE){
 				std::cout << finalStr << std::flush;
 			} else {
 				std::cerr << finalStr << std::flush;
@@ -102,17 +128,23 @@ void Log::flush(){
 void Log::appendIfNeeded(){
 	if(_appendPrefix){
 		_appendPrefix = false;
+		if(_useColors){
+			_stream << _colorStrings[_level];
+		}
 		_stream << _levelStrings[_level];
 	}
 }
 
 Log & Log::operator<<(const LogDomain& domain){
-	if(domain != Verbose){
-		_stream << "[" << _domainStrings[domain] << "] ";
-		appendIfNeeded();
-	} else if(!_verbose){
-		// In this case, we want to ignore until the next flush.
-		_ignoreUntilFlush = true;
+	
+	if(_appendPrefix && _useColors){
+		_stream << _colorStrings[_level];
+	}
+	_stream << "[" << _domainStrings[domain] << "] ";
+	
+	if(_appendPrefix){
+		_stream << _levelStrings[_level];
+		_appendPrefix = false;
 	}
 	return *this;
 }
