@@ -208,6 +208,39 @@ int main(int argc, char** argv) {
 				currentAngle=(currentAngle+1)%4;
 			}
 			
+			// Save the image in its current flip/rotation/channels/exposure/gamma settings.
+			if(ImGui::Button("Save")){
+				std::string destinationPath;
+				// Export either in LDR or HDR.
+				bool res = Interface::showPicker(Interface::Save, "../../../resources", destinationPath, "png;exr");
+				if(res && !destinationPath.empty()){
+					const GLenum typedFormat = ImageUtilities::isHDR(destinationPath) ? GL_RGBA32F : GL_RGBA8;
+					// Create a framebuffer at the right size and format, and render in it.
+					const unsigned int outputWidth = isHorizontal ? imageInfos.height : imageInfos.width;
+					const unsigned int outputHeight = isHorizontal ? imageInfos.width : imageInfos.height;
+					std::shared_ptr<Framebuffer> framebuffer = std::make_shared<Framebuffer>(outputWidth, outputHeight, typedFormat, false);
+					framebuffer->bind();
+					framebuffer->setViewport();
+					
+					// Render the image in it.
+					glEnable(GL_BLEND);
+					glUseProgram(program->id());
+					// No scaling or translation.
+					glUniform1f(program->uniform("screenRatio"), 1.0f);
+					glUniform1f(program->uniform("imageRatio"), 1.0f);
+					glUniform1f(program->uniform("widthRatio"), 1.0f);
+					glUniform1f(program->uniform("pixelScale"), 1.0f);
+					glUniform2f(program->uniform("mouseShift"), 0.0f, 0.0f);
+					ScreenQuad::draw(imageInfos.id);
+					glDisable(GL_BLEND);
+					
+					framebuffer->unbind();
+					
+					// Then save it to the given path.
+					GLUtilities::saveFramebuffer(framebuffer, outputWidth, outputHeight, destinationPath.substr(0, destinationPath.size()-4), true, false);
+				}
+			}
+			
 			// Scale and position.
 			ImGui::Text("%.1f%%, (%d,%d)", 100.0f/pixelScale, int((-mouseShift.x+0.5)*imageInfos.width), int((mouseShift.y+0.5)*imageInfos.height));
 			ImGui::SameLine();
