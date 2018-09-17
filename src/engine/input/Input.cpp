@@ -112,7 +112,15 @@ void Input::resizeEvent(int width, int height){
 
 }
 
+void Input::minimizedEvent(bool minimized){
+	_minimized = minimized;
+}
+
 void Input::update(){
+	if(_minimized){
+		glfwWaitEvents();
+	}
+	
 	// Reset temporary state (first, last).
 	for(unsigned int i = 0; i < GLFW_KEY_LAST+1; ++i){
 		_keys[i].first = false;
@@ -128,6 +136,7 @@ void Input::update(){
 	if(_activeController >= 0){
 		_controllers[_activeController]->update();
 	}
+	
 	glfwPollEvents();
 	
 }

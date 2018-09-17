@@ -191,6 +191,12 @@ public:
 	void resizeEvent(int width, int height);
 	
 	/**
+	 Register a window minification event.
+	 \param minimized the current state of the window
+	 */
+	void minimizedEvent(bool minimized);
+	
+	/**
 	 Trigger an update of the internal state
 	 */
 	void update();
@@ -207,6 +213,12 @@ public:
 	 \return true if the window was resized
 	 */
 	bool resized() { return _resized; };
+	
+	/**
+	 Query if the window has been minimized.
+	 \return true if the window is minimized
+	 */
+	bool minimized() { return _minimized; };
 	
 	/**
 	 Query the current window size.
@@ -289,6 +301,7 @@ private:
 	unsigned int _width = 1; ///< Internal window width in pixels.
 	unsigned int _height = 1; ///< Internal window height in pixels.
 	bool _resized = false; ///< Denote if the window was resized at the current frame.
+	bool _minimized = false; ///< Is the window minimized and thus hidden.
 	
 	// Joystick state.
 	int _activeController = -1; ///< The active joystick ID, or -1 if no controller active.

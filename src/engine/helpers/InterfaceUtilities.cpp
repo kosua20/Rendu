@@ -81,12 +81,15 @@ namespace Interface {
 		// Setup callbacks for various interactions and inputs.
 		glfwSetFramebufferSizeCallback(window, resize_callback);	// Resizing the window
 		glfwSetKeyCallback(window, key_callback);					// Pressing a key
+		glfwSetCharCallback(window, char_callback);					// Outputing a text char (for ImGui)
 		glfwSetMouseButtonCallback(window, mouse_button_callback);	// Clicking the mouse buttons
 		glfwSetCursorPosCallback(window, cursor_pos_callback);		// Moving the cursor
 		glfwSetScrollCallback(window, scroll_callback);				// Scrolling
 		glfwSetJoystickCallback(joystick_callback);					// Joystick
+		glfwSetWindowIconifyCallback(window, iconify_callback); 	// Window minimization
 		glfwSwapInterval(config.vsync ? 1 : 0);						// 60 FPS V-sync
 		
+		/// \todo Rethink the way we can enable/disable ImGui?
 		setupImGui(window);
 		
 		// Check the window size (if we are on a screen smaller than the initial size).

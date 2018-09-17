@@ -24,6 +24,14 @@ void resize_callback(GLFWwindow* window, int width, int height);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 /**
+ Callback for text characters.
+ \param window the GLFW window pointer
+ \param codepoint the character codepoint
+ \ingroup Input
+ */
+void char_callback(GLFWwindow* window, unsigned int codepoint);
+
+/**
  Callback for mouse buttons press/release events.
  \param window the GLFW window pointer
  \param button the button GLFW code
@@ -52,6 +60,14 @@ void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos);
  \ingroup Input
  */
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+
+/**
+ Callback for window minimizing events.
+ \param window the GLFW window pointer
+ \param state the new state of the window
+ \ingroup Input
+ */
+void iconify_callback(GLFWwindow* window, int state);
 
 /**
  Callback for joystick (de)connection events.
