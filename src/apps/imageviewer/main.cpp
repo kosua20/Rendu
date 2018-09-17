@@ -60,6 +60,8 @@ int main(int argc, char** argv) {
 	// Orientation.
 	glm::bvec2 flipAxis(false);
 	int currentAngle = 0;
+	// Scale.
+	float pixelScale = 1.0f;
 	
 	// Start the display/interaction loop.
 	while (!glfwWindowShouldClose(window)) {
@@ -75,6 +77,11 @@ int main(int argc, char** argv) {
 		if(Input::manager().triggered(Input::KeyP)){
 			Resources::manager().reload();
 		}
+		
+		// Update scale.
+		// Scale when scrolling, with safety bounds.
+		pixelScale += Input::manager().scroll().y * 0.01f;
+		pixelScale = std::max(0.001f,std::min(1000.0f,pixelScale));
 		
 		// Screen infos.
 		const glm::vec2 screenSize = Input::manager().size();
@@ -110,6 +117,7 @@ int main(int argc, char** argv) {
 			glUniform4f(program->uniform("channelsFilter"), channelsFilter[0], channelsFilter[1], channelsFilter[2], channelsFilter[3]);
 			glUniform2f(program->uniform("flipAxis"), flipAxis[0], flipAxis[1]);
 			glUniform2f(program->uniform("angleTrig"), std::cos(currentAngle*M_PI_2), std::sin(currentAngle*M_PI_2));
+			glUniform1f(program->uniform("pixelScale"), pixelScale);
 			
 			// Draw.
 			ScreenQuad::draw(imageInfos.id);
