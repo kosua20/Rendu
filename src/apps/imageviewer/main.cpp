@@ -51,6 +51,7 @@ int main(int argc, char** argv) {
 	glm::vec3 bgColor(0.6f);
 	float exposure = 1.0f;
 	bool applyGamma = true;
+	glm::bvec4 channelsFilter(true);
 	
 	// Start the display/interaction loop.
 	while (!glfwWindowShouldClose(window)) {
@@ -94,6 +95,7 @@ int main(int argc, char** argv) {
 			glUniform1i(program->uniform("isHDR"), imageInfos.hdr);
 			glUniform1f(program->uniform("exposure"), exposure);
 			glUniform1i(program->uniform("gammaOutput"), applyGamma);
+			glUniform4f(program->uniform("channelsFilter"), channelsFilter[0], channelsFilter[1], channelsFilter[2], channelsFilter[3]);
 			// Draw.
 			ScreenQuad::draw(imageInfos.id);
 			
@@ -124,6 +126,12 @@ int main(int argc, char** argv) {
 				ImGui::SliderFloat("Exposure", &exposure, 0.0f, 10.0f);
 				ImGui::PopItemWidth();
 			}
+			
+			// Channels.
+			ImGui::Checkbox("R", &channelsFilter[0]); ImGui::SameLine();
+			ImGui::Checkbox("G", &channelsFilter[1]); ImGui::SameLine();
+			ImGui::Checkbox("B", &channelsFilter[2]); ImGui::SameLine();
+			ImGui::Checkbox("A", &channelsFilter[3]);
 			
 			// Background color.
 			ImGui::ColorEdit3("Background", &bgColor[0]);

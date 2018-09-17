@@ -10,6 +10,7 @@ layout(binding = 0) uniform sampler2D screenTexture; ///< Image to output.
 uniform bool isHDR;
 uniform float exposure;
 uniform bool gammaOutput;
+uniform vec4 channelsFilter;
 
 layout(location = 0) out vec4 fragColor; ///< Color.
 
@@ -47,4 +48,11 @@ void main(){
 		fragColor.rgb = gamma(fragColor.rgb);
 	}
 	
+	// Apply channels filters.
+	fragColor *= channelsFilter;
+	
+	// If alpha layer is disabled, set it to 1 instead of 0.
+	if(channelsFilter[3] == 0.0){
+		fragColor.a = 1.0;
+	}
 }
