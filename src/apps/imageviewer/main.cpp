@@ -52,6 +52,11 @@ int main(int argc, char** argv) {
 	float exposure = 1.0f;
 	bool applyGamma = true;
 	glm::bvec4 channelsFilter(true);
+	// Filtering mode.
+	enum FilteringMode {
+		Nearest = 0, Linear = 1
+	};
+	FilteringMode imageInterp = Linear;
 	
 	// Start the display/interaction loop.
 	while (!glfwWindowShouldClose(window)) {
@@ -112,6 +117,12 @@ int main(int argc, char** argv) {
 				if(res && !newImagePath.empty()){
 					Log::Info() << "Loading " << newImagePath << "." << std::endl;
 					imageInfos = GLUtilities::loadTexture({newImagePath}, true);
+					// Apply the proper filtering.
+					const GLenum filteringSetting = (imageInterp == Nearest) ? GL_NEAREST : GL_LINEAR;
+					glBindTexture(GL_TEXTURE_2D, imageInfos.id);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filteringSetting);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filteringSetting);
+					glBindTexture(GL_TEXTURE_2D, 0);
 				}
 			}
 			// Infos.
@@ -132,6 +143,15 @@ int main(int argc, char** argv) {
 			ImGui::Checkbox("G", &channelsFilter[1]); ImGui::SameLine();
 			ImGui::Checkbox("B", &channelsFilter[2]); ImGui::SameLine();
 			ImGui::Checkbox("A", &channelsFilter[3]);
+			
+			// Filtering.
+			if(ImGui::Combo("Filtering", (int*)(&imageInterp), "Nearest\0Linear\0\0")){
+				const GLenum filteringSetting = (imageInterp == Nearest) ? GL_NEAREST : GL_LINEAR;
+				glBindTexture(GL_TEXTURE_2D, imageInfos.id);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filteringSetting);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filteringSetting);
+				glBindTexture(GL_TEXTURE_2D, 0);
+			}
 			
 			// Background color.
 			ImGui::ColorEdit3("Background", &bgColor[0]);
