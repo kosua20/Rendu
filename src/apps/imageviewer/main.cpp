@@ -153,6 +153,12 @@ int main(int argc, char** argv) {
 					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filteringSetting);
 					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filteringSetting);
 					glBindTexture(GL_TEXTURE_2D, 0);
+					// Reset display settings.
+					pixelScale = 1.0f;
+					mouseShift = glm::vec2(0.0f);
+					currentAngle = 0;
+					flipAxis = glm::bvec2(false);
+					channelsFilter = glm::vec4(true);
 				}
 			}
 			// Infos.
@@ -202,6 +208,13 @@ int main(int argc, char** argv) {
 				currentAngle=(currentAngle+1)%4;
 			}
 			
+			// Scale and position.
+			ImGui::Text("%.1f%%, (%d,%d)", 100.0f/pixelScale, int((-mouseShift.x+0.5)*imageInfos.width), int((mouseShift.y+0.5)*imageInfos.height));
+			ImGui::SameLine();
+			if(ImGui::Button("Reset")){
+				pixelScale = 1.0f;
+				mouseShift = glm::vec2(0.0f);
+			}
 			// Background color.
 			ImGui::ColorEdit3("Background", &bgColor[0]);
 			
