@@ -60,8 +60,10 @@ int main(int argc, char** argv) {
 	// Orientation.
 	glm::bvec2 flipAxis(false);
 	int currentAngle = 0;
-	// Scale.
+	// Scale and position.
 	float pixelScale = 1.0f;
+	glm::vec2 mouseShift = glm::vec2(0.0f,0.0f);
+	glm::vec2 mousePrev = glm::vec2(0.0f,0.0f);
 	
 	// Start the display/interaction loop.
 	while (!glfwWindowShouldClose(window)) {
@@ -78,10 +80,19 @@ int main(int argc, char** argv) {
 			Resources::manager().reload();
 		}
 		
-		// Update scale.
+		// Update scale and position.
 		// Scale when scrolling, with safety bounds.
 		pixelScale += Input::manager().scroll().y * 0.01f;
 		pixelScale = std::max(0.001f,std::min(1000.0f,pixelScale));
+		// Register left-click and drag.
+		if(Input::manager().triggered(Input::MouseLeft)){
+			mousePrev = Input::manager().mouse();
+		}
+		if(Input::manager().pressed(Input::MouseLeft)){
+			const glm::vec2 mouseNew = Input::manager().mouse();
+			mouseShift += config.screenDensity * pixelScale * (mouseNew - mousePrev);
+			mousePrev = mouseNew;
+		}
 		
 		// Screen infos.
 		const glm::vec2 screenSize = Input::manager().size();
@@ -118,6 +129,7 @@ int main(int argc, char** argv) {
 			glUniform2f(program->uniform("flipAxis"), flipAxis[0], flipAxis[1]);
 			glUniform2f(program->uniform("angleTrig"), std::cos(currentAngle*M_PI_2), std::sin(currentAngle*M_PI_2));
 			glUniform1f(program->uniform("pixelScale"), pixelScale);
+			glUniform2fv(program->uniform("mouseShift"), 1, &mouseShift[0]);
 			
 			// Draw.
 			ScreenQuad::draw(imageInfos.id);

@@ -12,6 +12,7 @@ uniform bool isHDR;
 uniform vec2 flipAxis;
 uniform vec2 angleTrig;
 uniform float pixelScale;
+uniform vec2 mouseShift;
 
 /**
  Generate one triangle covering the whole screen
@@ -29,9 +30,9 @@ void main(){
 	vec2 temp = 2.0 * vec2(gl_VertexID == 1, gl_VertexID == 2);
 	gl_Position.xy = 2.0 * temp - 1.0;
 	gl_Position.zw = vec2(1.0);
-	// Center uvs and scale.
-	vec2 uv = pixelScale * gl_Position.xy;
-
+	// Center uvs and scale/translate.
+	vec2 uv = pixelScale * gl_Position.xy - mouseShift*vec2(2.0,-2.0);
+	
 	// Image and screen ratio corrections.
 	float HDRflip = (isHDR ? -1.0 : 1.0);
 	uv *= vec2(imageRatio, HDRflip*screenRatio);
