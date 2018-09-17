@@ -49,6 +49,7 @@ int main(int argc, char** argv) {
 	
 	// Settings.
 	glm::vec3 bgColor(0.6f);
+	float exposure = 1.0f;
 	
 	// Start the display/interaction loop.
 	while (!glfwWindowShouldClose(window)) {
@@ -89,6 +90,8 @@ int main(int argc, char** argv) {
 			glUniform1f(program->uniform("screenRatio"), screenRatio);
 			glUniform1f(program->uniform("imageRatio"), imageRatio);
 			glUniform1f(program->uniform("widthRatio"), widthRatio);
+			glUniform1i(program->uniform("isHDR"), imageInfos.hdr);
+			glUniform1f(program->uniform("exposure"), exposure);
 			// Draw.
 			ScreenQuad::draw(imageInfos.id);
 			
@@ -110,6 +113,12 @@ int main(int argc, char** argv) {
 			// Infos.
 			if(hasImage){
 				ImGui::Text(imageInfos.hdr ? "HDR image (%dx%d)." : "LDR image (%dx%d).", imageInfos.width, imageInfos.height);
+			}
+			
+			if(imageInfos.hdr){
+				ImGui::PushItemWidth(50);
+				ImGui::SliderFloat("Exposure", &exposure, 0.0f, 10.0f);
+				ImGui::PopItemWidth();
 			}
 			
 			// Background color.

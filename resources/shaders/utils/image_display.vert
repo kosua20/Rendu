@@ -8,6 +8,7 @@ out INTERFACE {
 uniform float screenRatio;
 uniform float imageRatio;
 uniform float widthRatio;
+uniform bool isHDR;
 
 /**
  Generate one triangle covering the whole screen
@@ -28,7 +29,8 @@ void main(){
 	// Center uvs.
 	vec2 uv = gl_Position.xy;
 	// Image and screen ratio corrections.
-	uv *= vec2(imageRatio, screenRatio);
+	float HDRflip = (isHDR ? -1.0 : 1.0);
+	uv *= vec2(imageRatio, HDRflip*screenRatio);
 	uv *= widthRatio;
 	Out.uv = uv * 0.5 + 0.5;
 }
