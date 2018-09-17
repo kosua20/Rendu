@@ -75,10 +75,21 @@ int main(int argc, char** argv) {
 		// Render the image if non empty.
 		bool hasImage = imageInfos.width > 0 && imageInfos.height > 0;
 		if(hasImage){
+			// Compute image and screen infos.
+			const glm::vec2 imageSize(imageInfos.width, imageInfos.height);
+			float screenRatio = std::max(screenSize[1], 1.0f) / std::max(screenSize[0], 1.0f);
+			float imageRatio = imageSize[1] / imageSize[0];
+			float widthRatio = screenSize[0] / imageSize[0];
+			
 			glEnable(GL_BLEND);
 			
 			// Render the image.
 			glUseProgram(program->id());
+			// Pass settings.
+			glUniform1f(program->uniform("screenRatio"), screenRatio);
+			glUniform1f(program->uniform("imageRatio"), imageRatio);
+			glUniform1f(program->uniform("widthRatio"), widthRatio);
+			// Draw.
 			ScreenQuad::draw(imageInfos.id);
 			
 			glDisable(GL_BLEND);
