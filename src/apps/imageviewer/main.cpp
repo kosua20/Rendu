@@ -50,6 +50,7 @@ int main(int argc, char** argv) {
 	// Settings.
 	glm::vec3 bgColor(0.6f);
 	float exposure = 1.0f;
+	bool applyGamma = true;
 	
 	// Start the display/interaction loop.
 	while (!glfwWindowShouldClose(window)) {
@@ -92,6 +93,7 @@ int main(int argc, char** argv) {
 			glUniform1f(program->uniform("widthRatio"), widthRatio);
 			glUniform1i(program->uniform("isHDR"), imageInfos.hdr);
 			glUniform1f(program->uniform("exposure"), exposure);
+			glUniform1i(program->uniform("gammaOutput"), applyGamma);
 			// Draw.
 			ScreenQuad::draw(imageInfos.id);
 			
@@ -115,6 +117,8 @@ int main(int argc, char** argv) {
 				ImGui::Text(imageInfos.hdr ? "HDR image (%dx%d)." : "LDR image (%dx%d).", imageInfos.width, imageInfos.height);
 			}
 			
+			// Gamma and exposure.
+			ImGui::Checkbox("Gamma", &applyGamma);
 			if(imageInfos.hdr){
 				ImGui::PushItemWidth(50);
 				ImGui::SliderFloat("Exposure", &exposure, 0.0f, 10.0f);

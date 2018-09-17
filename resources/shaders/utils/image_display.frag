@@ -9,6 +9,7 @@ layout(binding = 0) uniform sampler2D screenTexture; ///< Image to output.
 
 uniform bool isHDR;
 uniform float exposure;
+uniform bool gammaOutput;
 
 layout(location = 0) out vec4 fragColor; ///< Color.
 
@@ -19,6 +20,14 @@ layout(location = 0) out vec4 fragColor; ///< Color.
  */
 vec3 simpleExposure(vec3 hdrColor, float exposure){
 	return 1.0 - exp(-hdrColor * exposure);
+}
+
+/** Apply a standard gamma correction.
+ \param color the color to correct
+ \return gamma correct color for screens
+ */
+vec3 gamma(vec3 color){
+	return pow(color, vec3(1.0/2.2));
 }
 
 void main(){
@@ -33,4 +42,9 @@ void main(){
 		vec3 exposedColor = simpleExposure(fragColor.rgb, exposure);
 		fragColor.rgb = exposedColor;
 	}
+	
+	if(gammaOutput){
+		fragColor.rgb = gamma(fragColor.rgb);
+	}
+	
 }
