@@ -2,6 +2,15 @@
 #include <ctime>
 #include <iomanip>
 #include <iostream>
+
+
+#ifdef _WIN32
+#include <io.h>
+#include <stdio.h>
+#else
+#include <unistd.h>
+#endif
+
 // We statically initialize the default logger.
 // We don't really care about its exact construction/destruction moments,
 // but we want it to always be created.
@@ -25,15 +34,22 @@ Log::Log(){
 	_appendPrefix = false;
 	_useColors = false;
 	
-	// Check if the output support colors.
-	/// \todo Also check if the output is indeed a terminal.
-	if(const char *env_p = std::getenv("TERM")) {
-		const std::vector<std::string> terms = { "xterm", "xterm-256", "xterm-256color", "vt100", "color", "ansi", "cygwin", "linux"};
-		const std::string term(env_p);
-		for(const auto & possibleTerm : terms){
-			if(term == possibleTerm){
-				_useColors = true;
-				break;
+	// Check if the output is indeed a terminal, and not piped.
+#ifdef _WIN32
+	const bool isTerminal = _isatty(_fileno(stdout));
+#else
+	const bool isTerminal = isatty(fileno(stdout));
+#endif
+	if(isTerminal){
+		// Check if the output support colors.
+		if(const char *env_p = std::getenv("TERM")) {
+			const std::vector<std::string> terms = { "xterm", "xterm-256", "xterm-256color", "vt100", "color", "ansi", "cygwin", "linux"};
+			const std::string term(env_p);
+			for(const auto & possibleTerm : terms){
+				if(term == possibleTerm){
+					_useColors = true;
+					break;
+				}
 			}
 		}
 	}

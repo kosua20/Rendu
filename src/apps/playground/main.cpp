@@ -53,7 +53,7 @@ int main(int argc, char** argv) {
 		Log::Info() << Log::OpenGL << "Extensions detected (" << extensionCount << ")" << std::flush;
 		for(int i = 0; i < extensionCount; ++i){
 			const GLubyte* rendererString = glGetStringi(GL_EXTENSIONS, i);
-			Log::Info() << (i == 0 ? ": " : ", ") << rendererString << std::flush;
+			Log::Verbose() << (i == 0 ? ": " : ", ") << rendererString << std::flush;
 		}
 		Log::Info() << std::endl;
 	}
