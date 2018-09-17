@@ -57,6 +57,8 @@ int main(int argc, char** argv) {
 		Nearest = 0, Linear = 1
 	};
 	FilteringMode imageInterp = Linear;
+	// Orientation.
+	glm::bvec2 flipAxis(false);
 	
 	// Start the display/interaction loop.
 	while (!glfwWindowShouldClose(window)) {
@@ -101,6 +103,8 @@ int main(int argc, char** argv) {
 			glUniform1f(program->uniform("exposure"), exposure);
 			glUniform1i(program->uniform("gammaOutput"), applyGamma);
 			glUniform4f(program->uniform("channelsFilter"), channelsFilter[0], channelsFilter[1], channelsFilter[2], channelsFilter[3]);
+			glUniform2f(program->uniform("flipAxis"), flipAxis[0], flipAxis[1]);
+			
 			// Draw.
 			ScreenQuad::draw(imageInfos.id);
 			
@@ -152,6 +156,11 @@ int main(int argc, char** argv) {
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filteringSetting);
 				glBindTexture(GL_TEXTURE_2D, 0);
 			}
+			
+			// Image modifications.
+			ImGui::Text("Flip axis"); ImGui::SameLine();
+			ImGui::Checkbox("X", &flipAxis[1]); ImGui::SameLine();
+			ImGui::Checkbox("Y", &flipAxis[0]);
 			
 			// Background color.
 			ImGui::ColorEdit3("Background", &bgColor[0]);

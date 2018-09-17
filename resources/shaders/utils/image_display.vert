@@ -9,6 +9,7 @@ uniform float screenRatio;
 uniform float imageRatio;
 uniform float widthRatio;
 uniform bool isHDR;
+uniform vec2 flipAxis;
 
 /**
  Generate one triangle covering the whole screen
@@ -32,5 +33,8 @@ void main(){
 	float HDRflip = (isHDR ? -1.0 : 1.0);
 	uv *= vec2(imageRatio, HDRflip*screenRatio);
 	uv *= widthRatio;
+	
+	// Flipping
+	uv  *= 1.0 - flipAxis * 2.0;
 	Out.uv = uv * 0.5 + 0.5;
 }
