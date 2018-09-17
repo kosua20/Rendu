@@ -59,6 +59,7 @@ int main(int argc, char** argv) {
 	FilteringMode imageInterp = Linear;
 	// Orientation.
 	glm::bvec2 flipAxis(false);
+	int currentAngle = 0;
 	
 	// Start the display/interaction loop.
 	while (!glfwWindowShouldClose(window)) {
@@ -84,12 +85,16 @@ int main(int argc, char** argv) {
 		
 		// Render the image if non empty.
 		bool hasImage = imageInfos.width > 0 && imageInfos.height > 0;
+		const bool isHorizontal = currentAngle == 1 || currentAngle == 3;
+		
 		if(hasImage){
+			// Depending on the current rotation, the horizontal dimension of the image is the width or the height.
+			const unsigned int widthIndex = isHorizontal ? 1 : 0;
 			// Compute image and screen infos.
 			const glm::vec2 imageSize(imageInfos.width, imageInfos.height);
 			float screenRatio = std::max(screenSize[1], 1.0f) / std::max(screenSize[0], 1.0f);
-			float imageRatio = imageSize[1] / imageSize[0];
-			float widthRatio = screenSize[0] / imageSize[0];
+			float imageRatio = imageSize[1-widthIndex] / imageSize[widthIndex];
+			float widthRatio = screenSize[0] / imageSize[0] * imageSize[widthIndex] / imageSize[0];
 			
 			glEnable(GL_BLEND);
 			
@@ -104,6 +109,7 @@ int main(int argc, char** argv) {
 			glUniform1i(program->uniform("gammaOutput"), applyGamma);
 			glUniform4f(program->uniform("channelsFilter"), channelsFilter[0], channelsFilter[1], channelsFilter[2], channelsFilter[3]);
 			glUniform2f(program->uniform("flipAxis"), flipAxis[0], flipAxis[1]);
+			glUniform2f(program->uniform("angleTrig"), std::cos(currentAngle*M_PI_2), std::sin(currentAngle*M_PI_2));
 			
 			// Draw.
 			ScreenQuad::draw(imageInfos.id);
@@ -161,6 +167,20 @@ int main(int argc, char** argv) {
 			ImGui::Text("Flip axis"); ImGui::SameLine();
 			ImGui::Checkbox("X", &flipAxis[1]); ImGui::SameLine();
 			ImGui::Checkbox("Y", &flipAxis[0]);
+			
+			// Rotation.
+			ImGui::Text("Rotate");
+			ImGui::SameLine();
+			if(ImGui::Button("<")){
+				currentAngle--;
+				if(currentAngle < 0){
+					currentAngle += 4;
+				}
+			}
+			ImGui::SameLine();
+			if(ImGui::Button(">")){
+				currentAngle=(currentAngle+1)%4;
+			}
 			
 			// Background color.
 			ImGui::ColorEdit3("Background", &bgColor[0]);
