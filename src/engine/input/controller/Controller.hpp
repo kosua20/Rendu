@@ -65,6 +65,8 @@ public:
 	 */
 	float axis(const ControllerInput & input) const;
 	
+	/// Destructor;
+	virtual ~Controller();
 	
 protected:
 	

@@ -49,7 +49,9 @@ float Controller::axis(const ControllerInput & input) const {
 	return _axes[input];
 }
 
-
+Controller::~Controller(){
+	
+}
 
 
 

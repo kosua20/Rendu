@@ -32,6 +32,10 @@ public:
 	/** Clean internal resources. */
 	void clean() const;
 	
+	/// Destructor
+	virtual ~Scene();
+	
+	
 	std::vector<Object> objects; ///< The objects in the scene.
 	Object background; ///< Background object. \todo Make more flexible, to be able to use a screenquad or a color.
 	std::vector<glm::vec3> backgroundIrradiance; ///< RGB SH-coefficients of the background irradiance, computed using SHExtractor. \see SphericalHarmonics

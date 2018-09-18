@@ -43,5 +43,7 @@ void Renderer::defaultGLSetup(){
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 }
 
-
+Renderer::~Renderer(){
+	
+}
 
