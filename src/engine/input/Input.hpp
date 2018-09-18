@@ -197,6 +197,12 @@ public:
 	void minimizedEvent(bool minimized);
 	
 	/**
+	 Register a screen density change event.
+	 \param density the new density of the screen
+	 */
+	void densityEvent(float density);
+	
+	/**
 	 Trigger an update of the internal state
 	 */
 	void update();
@@ -271,10 +277,11 @@ public:
 	
 	/**
 	 Query the current mouse position.
-	 \return the current mouse position in unit coordinates
-	 \note The mouse position will be expressed in the [0,1] range.
+	 \param inFramebuffer should the position be expressed in an OpenGL compatible fashion
+	 \return the current mouse position in unit coordinates or pixels
+	 \note The mouse position will be expressed by default in the [0,1] range, from the bottom left corner. If inFramebuffer is set to true, the position will be expressed in pixels, from the top left corner, clamped to the window size.
 	 */
-	glm::vec2 mouse() const;
+	glm::vec2 mouse(bool inFramebuffer = false) const;
 	
 	/**
 	 Query the amount of cursor displacement since a given mouse button started to be held. If the button is not currently pressed, is returns a null displacement.
@@ -302,6 +309,7 @@ private:
 	unsigned int _height = 1; ///< Internal window height in pixels.
 	bool _resized = false; ///< Denote if the window was resized at the current frame.
 	bool _minimized = false; ///< Is the window minimized and thus hidden.
+	float _density = 1.0f; ///< The screen density.
 	
 	// Joystick state.
 	int _activeController = -1; ///< The active joystick ID, or -1 if no controller active.

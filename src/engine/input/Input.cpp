@@ -91,10 +91,9 @@ void Input::mousePressedEvent(int button, int action){
 }
 
 void Input::mouseMovedEvent(double x, double y){
-
-	_mouse.x = x/_width;
-	_mouse.y = y/_height;
-	Log::Verbose() << Log::Input << "Mouse moved: " << x << "," << y << "." << std::endl;
+	_mouse.x = x/_width * _density;
+	_mouse.y = y/_height * _density;
+	Log::Verbose() << Log::Input << "Mouse moved: " << x << "," << y << " (" << _mouse.x << "," << _mouse.y << ")." << std::endl;
 
 }
 
@@ -114,6 +113,10 @@ void Input::resizeEvent(int width, int height){
 
 void Input::minimizedEvent(bool minimized){
 	_minimized = minimized;
+}
+
+void Input::densityEvent(float density){
+	_density = density;
 }
 
 void Input::update(){
@@ -166,7 +169,11 @@ bool Input::triggered(const Mouse & mouseButton, bool absorb) {
 	return res;
 }
 
-glm::vec2 Input::mouse() const {
+glm::vec2 Input::mouse(bool inFramebuffer) const {
+	if(inFramebuffer){
+		const glm::vec2 mousePosition = glm::floor(glm::vec2(_mouse.x*_width, (1.0f-_mouse.y)*_height));
+		return glm::clamp(mousePosition, glm::vec2(0.0f), glm::vec2(_width, _height));
+	}
 	return glm::vec2(_mouse.x, _mouse.y);
 }
 

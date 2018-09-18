@@ -90,7 +90,7 @@ int main(int argc, char** argv) {
 		}
 		if(Input::manager().pressed(Input::MouseLeft)){
 			const glm::vec2 mouseNew = Input::manager().mouse();
-			mouseShift += config.screenDensity * pixelScale * (mouseNew - mousePrev);
+			mouseShift += pixelScale * (mouseNew - mousePrev);
 			mousePrev = mouseNew;
 		}
 		

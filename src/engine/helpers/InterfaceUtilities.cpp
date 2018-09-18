@@ -104,6 +104,7 @@ namespace Interface {
 		config.screenResolution = glm::vec2(width, height);
 		// Compute point density by computing the ratio.
 		config.screenDensity = (float)width/(float)config.initialWidth;
+		Input::manager().densityEvent(config.screenDensity);
 		// Update the resolution.
 		Input::manager().resizeEvent(width, height);
 		
