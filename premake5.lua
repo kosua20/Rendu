@@ -6,6 +6,7 @@ if os.ishost("windows") then
 	ext = ".exe"
 	copyFix = "*"
 end
+cwd = os.getcwd()
 
 -- Workspace definition.
 
@@ -78,7 +79,7 @@ function ShaderValidation()
 		-- Move to the build directory.
 		path.translate("{CHDIR} "..os.getcwd().."/build", sep),
 		-- Run the shader validator on the resources directory.
-		path.translate( "./shader_validator"..ext.." ../resources", sep)
+		path.translate( "./shader_validator"..ext.." "..cwd.."/resources", sep)
 	})
 end	
 
