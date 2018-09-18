@@ -15,18 +15,18 @@
 #ifdef _WIN32
 
 wchar * widen(const std::string & str){
-	const int size = MultiByteToWideChar(CP_ACP, 0, str.c_str(), -1, NULL, 0);
+	const int size = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, NULL, 0, NULL, NULL);
 	wchar *arr = new wchar[size];
-	MultiByteToWideChar(CP_ACP, 0, path.c_str(), -1, (LPWSTR)arr, size);
+	MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, (LPWSTR)arr, size, NULL, NULL);
 	// Will leak on Windows.
 	/// \todo Stop leaking.
 	return arr;
 }
 
 std::string narrow(wchar * str){
-	const int size = WideCharToMultiByte(CP_ACP, 0, str, -1, NULL, 0, NULL, NULL);
+	const int size = WideCharToMultiByte(CP_UTF8, 0, str, -1, NULL, 0, NULL, NULL);
 	std::string res(size-1, 0);
-	WideCharToMultiByte(CP_ACP, 0, str, -1, &res[0], size, NULL, NULL);
+	WideCharToMultiByte(CP_UTF8, 0, str, -1, &res[0], size, NULL, NULL);
 	return res;
 }
 
