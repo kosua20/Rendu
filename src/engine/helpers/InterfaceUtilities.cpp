@@ -124,12 +124,17 @@ namespace Interface {
 		nfdresult_t result = NFD_CANCEL;
 		outPath = "";
 		
+#ifdef _WIN32
+		const std::string internalStartPath = "";
+#else
+		const std::string internalStartPath = startPath;
+#endif
 		if(mode == Load){
-			result = NFD_OpenDialog(extensions.empty() ? NULL : extensions.c_str(), startPath.c_str(), &outPathRaw);
+			result = NFD_OpenDialog(extensions.empty() ? NULL : extensions.c_str(), internalStartPath.c_str(), &outPathRaw);
 		} else if(mode == Save){
-			result = NFD_SaveDialog(extensions.empty() ? NULL : extensions.c_str(), startPath.c_str(), &outPathRaw);
+			result = NFD_SaveDialog(extensions.empty() ? NULL : extensions.c_str(), internalStartPath.c_str(), &outPathRaw);
 		} else if(mode == Directory){
-			result = NFD_PickFolder(startPath.c_str(), &outPathRaw);
+			result = NFD_PickFolder(internalStartPath.c_str(), &outPathRaw);
 		}
 		
 		if (result == NFD_OKAY) {
