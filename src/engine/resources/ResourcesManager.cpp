@@ -13,17 +13,16 @@
 
 
 #ifdef _WIN32
-
-wchar * widen(const std::string & str){
-	const int size = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, NULL, 0, NULL, NULL);
-	wchar *arr = new wchar[size];
-	MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, (LPWSTR)arr, size, NULL, NULL);
+WCHAR * widen(const std::string & str){
+	const int size = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, NULL, 0);
+	WCHAR *arr = new WCHAR[size];
+	MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, (LPWSTR)arr, size);
 	// Will leak on Windows.
 	/// \todo Stop leaking.
 	return arr;
 }
 
-std::string narrow(wchar * str){
+std::string narrow(WCHAR * str){
 	const int size = WideCharToMultiByte(CP_UTF8, 0, str, -1, NULL, 0, NULL, NULL);
 	std::string res(size-1, 0);
 	WideCharToMultiByte(CP_UTF8, 0, str, -1, &res[0], size, NULL, NULL);
@@ -417,7 +416,7 @@ void Resources::getFiles(const std::string & extension, std::map<std::string, st
 
 char * Resources::loadRawDataFromExternalFile(const std::string & path, size_t & size) {
 	char * rawContent;
-	std::ifstream inputFile(path, std::ios::binary|std::ios::ate);
+	std::ifstream inputFile(widen(path), std::ios::binary|std::ios::ate);
 	if (inputFile.bad() || inputFile.fail()){
 		Log::Error() << Log::Resources << "Unable to load file at path \"" << path << "\"." << std::endl;
 		return NULL;
@@ -434,7 +433,7 @@ char * Resources::loadRawDataFromExternalFile(const std::string & path, size_t &
 std::string Resources::loadStringFromExternalFile(const std::string & path) {
 	std::ifstream in;
 	// Open a stream to the file.
-	in.open(path.c_str());
+	in.open(widen(path));
 	if (!in) {
 		Log::Error() << Log::Resources << "" << path + " is not a valid file." << std::endl;
 		return "";
