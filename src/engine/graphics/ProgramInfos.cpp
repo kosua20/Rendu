@@ -2,7 +2,6 @@
 
 #include "GLUtilities.hpp"
 #include "../resources/ResourcesManager.hpp"
-#include <fstream>
 
 
 ProgramInfos::ProgramInfos(){
@@ -146,10 +145,9 @@ void ProgramInfos::saveBinary(const std::string & outputPath){
 	GLenum format;
 	std::vector<char>binary(length);
 	glGetProgramBinary(_id, length, NULL, &format, &binary[0]);
-
-	std::ofstream binaryFile(outputPath + "_(" + _vertexName + "," + _fragmentName + ")_" + std::to_string((unsigned int) format) + ".bin", std::ios::out | std::ios::binary);
-	binaryFile.write(&binary[0], binary.size());
-	binaryFile.close();
+	
+	Resources::saveRawDataToExternalFile(outputPath + "_(" + _vertexName + "," + _fragmentName + ")_" + std::to_string((unsigned int) format) + ".bin", &binary[0], binary.size());
+	
 }
 
 

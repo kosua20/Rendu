@@ -1,8 +1,8 @@
 #include "Common.hpp"
 #include "Config.hpp"
 #include "resources/ImageUtilities.hpp"
+#include "resources/ResourcesManager.hpp"
 #include <map>
-#include <fstream>
 
 ///
 
@@ -160,17 +160,13 @@ int main(int argc, char** argv) {
 	Log::Info() << Log::Utilities << "Done. " << std::endl;
 	
 	// Output.
-	const std::string destinationPath = rootPath + "_shcoeffs.txt";
-	std::ofstream outputFile(destinationPath);
-	if(!outputFile.is_open()){
-		Log::Error() << Log::Utilities << "Unable to open output file at path " << destinationPath << "." << std::endl;
-		return 2;
-	}
-	
+	std::stringstream outputStr;
 	for(int i = 0; i < 9; ++i){
-		outputFile << SCoeffs[i][0] << " " << SCoeffs[i][1] << " " << SCoeffs[i][2] << std::endl;
- 	}
-	outputFile.close();
+		outputStr << SCoeffs[i][0] << " " << SCoeffs[i][1] << " " << SCoeffs[i][2] << std::endl;
+	}
+	const std::string destinationPath = rootPath + "_shcoeffsll.txt";
+	Resources::saveStringToExternalFile(destinationPath, outputStr.str());
+	
 	return 0;
 }
 
