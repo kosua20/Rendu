@@ -65,6 +65,7 @@ int main(int argc, char** argv) {
 	float zoomSpeed = 0.01f;
 	glm::vec2 mouseShift = glm::vec2(0.0f,0.0f);
 	glm::vec2 mousePrev = glm::vec2(0.0f,0.0f);
+	glm::vec3 fgColor(0.6f);
 	
 	// Start the display/interaction loop.
 	while (!glfwWindowShouldClose(window)) {
@@ -136,11 +137,16 @@ int main(int argc, char** argv) {
 			ScreenQuad::draw(imageInfos.id);
 			
 			glDisable(GL_BLEND);
+			
+			// Read back color under cursor.
+			const glm::vec2 mousePosition = Input::manager().mouse(true);
+			glReadPixels(int(mousePosition.x), int(mousePosition.y), 1, 1, GL_RGB, GL_FLOAT, &fgColor[0]);
+		
 		}
 		
 		// Interface.
 		ImGui::SetNextWindowPos(ImVec2(10,10));
-		ImGui::SetNextWindowSize(ImVec2(285, 240));
+		ImGui::SetNextWindowSize(ImVec2(285, 260), ImGuiCond_Appearing);
 		if(ImGui::Begin("Image viewer")){
 			
 			// Infos.
@@ -220,7 +226,8 @@ int main(int argc, char** argv) {
 			ImGui::Checkbox("X", &flipAxis[1]); ImGui::SameLine();
 			ImGui::Checkbox("Y", &flipAxis[0]);
 			
-			// Background color.
+			// Colors.
+			ImGui::ColorEdit3("Foreground", &fgColor[0]);
 			ImGui::ColorEdit3("Background", &bgColor[0]);
 			
 			// Scaling speed.
