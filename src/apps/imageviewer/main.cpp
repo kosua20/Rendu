@@ -62,6 +62,7 @@ int main(int argc, char** argv) {
 	int currentAngle = 0;
 	// Scale and position.
 	float pixelScale = 1.0f;
+	float zoomSpeed = 0.01f;
 	glm::vec2 mouseShift = glm::vec2(0.0f,0.0f);
 	glm::vec2 mousePrev = glm::vec2(0.0f,0.0f);
 	
@@ -82,7 +83,7 @@ int main(int argc, char** argv) {
 		
 		// Update scale and position.
 		// Scale when scrolling, with safety bounds.
-		pixelScale += Input::manager().scroll().y * 0.01f;
+		pixelScale += Input::manager().scroll().y * zoomSpeed;
 		pixelScale = std::max(0.001f,std::min(1000.0f,pixelScale));
 		// Register left-click and drag.
 		if(Input::manager().triggered(Input::MouseLeft)){
@@ -138,7 +139,17 @@ int main(int argc, char** argv) {
 		}
 		
 		// Interface.
-		if(ImGui::Begin("Options")){
+		ImGui::SetNextWindowPos(ImVec2(10,10));
+		ImGui::SetNextWindowSize(ImVec2(285, 240));
+		if(ImGui::Begin("Image viewer")){
+			
+			// Infos.
+			if(hasImage){
+				ImGui::Text(imageInfos.hdr ? "HDR image (%dx%d)." : "LDR image (%dx%d).", imageInfos.width, imageInfos.height);
+			} else {
+				ImGui::Text("No image.");
+			}
+			
 			// Image loader.
 			if(ImGui::Button("Load image...")){
 				std::string newImagePath;
@@ -161,15 +172,15 @@ int main(int argc, char** argv) {
 					channelsFilter = glm::vec4(true);
 				}
 			}
-			// Infos.
-			if(hasImage){
-				ImGui::Text(imageInfos.hdr ? "HDR image (%dx%d)." : "LDR image (%dx%d).", imageInfos.width, imageInfos.height);
-			}
+			ImGui::SameLine();
+			// Save button.
+			const bool saveImage = ImGui::Button("Save image");
 			
 			// Gamma and exposure.
 			ImGui::Checkbox("Gamma", &applyGamma);
 			if(imageInfos.hdr){
-				ImGui::PushItemWidth(50);
+				ImGui::SameLine();
+				ImGui::PushItemWidth(120);
 				ImGui::SliderFloat("Exposure", &exposure, 0.0f, 10.0f);
 				ImGui::PopItemWidth();
 			}
@@ -190,10 +201,6 @@ int main(int argc, char** argv) {
 			}
 			
 			// Image modifications.
-			ImGui::Text("Flip axis"); ImGui::SameLine();
-			ImGui::Checkbox("X", &flipAxis[1]); ImGui::SameLine();
-			ImGui::Checkbox("Y", &flipAxis[0]);
-			
 			// Rotation.
 			ImGui::Text("Rotate");
 			ImGui::SameLine();
@@ -207,9 +214,27 @@ int main(int argc, char** argv) {
 			if(ImGui::Button(">")){
 				currentAngle=(currentAngle+1)%4;
 			}
+			ImGui::SameLine();
+			// Mirror.
+			ImGui::Text("Flip"); ImGui::SameLine();
+			ImGui::Checkbox("X", &flipAxis[1]); ImGui::SameLine();
+			ImGui::Checkbox("Y", &flipAxis[0]);
+			
+			// Background color.
+			ImGui::ColorEdit3("Background", &bgColor[0]);
+			
+			// Scaling speed.
+			ImGui::SliderFloat("Zoom speed", &zoomSpeed, 0.001f, 0.1f, "%.3f", 4.0f);
+			// Position
+			if(ImGui::Button("Reset pos.")){
+				pixelScale = 1.0f;
+				mouseShift = glm::vec2(0.0f);
+			}
+			ImGui::SameLine();
+			ImGui::Text("%.1f%%, (%d,%d)", 100.0f/pixelScale, int((-mouseShift.x+0.5)*imageInfos.width), int((mouseShift.y+0.5)*imageInfos.height));
 			
 			// Save the image in its current flip/rotation/channels/exposure/gamma settings.
-			if(ImGui::Button("Save")){
+			if(saveImage){
 				std::string destinationPath;
 				// Export either in LDR or HDR.
 				bool res = Interface::showPicker(Interface::Save, "../../../resources", destinationPath, "png;exr");
@@ -241,18 +266,7 @@ int main(int argc, char** argv) {
 				}
 			}
 			
-			// Scale and position.
-			ImGui::Text("%.1f%%, (%d,%d)", 100.0f/pixelScale, int((-mouseShift.x+0.5)*imageInfos.width), int((mouseShift.y+0.5)*imageInfos.height));
-			ImGui::SameLine();
-			if(ImGui::Button("Reset")){
-				pixelScale = 1.0f;
-				mouseShift = glm::vec2(0.0f);
-			}
-			// Background color.
-			ImGui::ColorEdit3("Background", &bgColor[0]);
-			
 		}
-		
 		ImGui::End();
 		
 		// Then render the interface.
