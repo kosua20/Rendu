@@ -131,16 +131,28 @@ public:
 	 \param path the path to the file on disk
 	 \param size will contain the number of bytes loaded from the file
 	 \return a pointer to the file binary data
-	 \note This method is mainly used to load configuration and user-dependent data.
 	 */
 	static char * loadRawDataFromExternalFile(const std::string & path, size_t & size);
 	
 	/** Load text data from an external file
 	 \param path the  path to the file on disk
 	 \return the file string content
-	 \note This method is mainly used to load configuration and user-dependent data.
+	 \note Mainly used to load configuration or user selected files.
 	 */
 	static std::string loadStringFromExternalFile(const std::string & path);
+	
+	/** Write raw binary data to an external file
+	 \param path the  path to the file on disk
+	 \param rawContent a pointer to the file binary data
+	 \param size will contain the number of bytes loaded from the file
+	 */
+	static void saveRawDataToExternalFile(const std::string & path, char * rawContent, const size_t size);
+	
+	/** Write text data to an external file
+	 \param path the  path to the file on disk
+	 \param content the string to save
+	 */
+	static void saveStringToExternalFile(const std::string & path, const std::string & content);
 	
 	/** Trim characters from both ends of a string.
 	 \param str the string to trim from

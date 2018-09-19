@@ -31,12 +31,11 @@ std::string narrow(WCHAR * str){
 
 #else
 
-std::string narrow(char * str) {
-	return std::string(str);
-}
-
 const char * widen(const std::string & str){
 	return str.c_str();
+}
+std::string narrow(char * str) {
+	return std::string(str);
 }
 
 #endif
@@ -431,20 +430,38 @@ char * Resources::loadRawDataFromExternalFile(const std::string & path, size_t &
 }
 
 std::string Resources::loadStringFromExternalFile(const std::string & path) {
-	std::ifstream in;
-	// Open a stream to the file.
-	in.open(widen(path));
-	if (!in) {
-		Log::Error() << Log::Resources << "" << path + " is not a valid file." << std::endl;
+	std::ifstream inputFile(widen(path));
+	if (inputFile.bad() || inputFile.fail()){
+		Log::Error() << Log::Resources << "Unable to load file at path \"" << path << "\"." << std::endl;
 		return "";
 	}
 	std::stringstream buffer;
 	// Read the stream in a buffer.
-	buffer << in.rdbuf();
+	buffer << inputFile.rdbuf();
 	// Create a string based on the content of the buffer.
 	std::string line = buffer.str();
-	in.close();
+	inputFile.close();
 	return line;
+}
+
+void Resources::saveRawDataToExternalFile(const std::string & path, char * rawContent, const size_t size) {
+	std::ofstream outputFile(widen(path), std::ios::binary);
+	if (outputFile.bad() || outputFile.fail()){
+		Log::Error() << Log::Resources << "Unable to save file at path \"" << path << "\"." << std::endl;
+		return;
+	}
+	outputFile.write(rawContent, size);
+	outputFile.close();
+}
+
+void Resources::saveStringToExternalFile(const std::string & path, const std::string & content) {
+	std::ofstream outputFile(widen(path));
+	if (outputFile.bad() || outputFile.fail()){
+		Log::Error() << Log::Resources << "Unable to save file at path \"" << path << "\"." << std::endl;
+		return;
+	}
+	outputFile << content;
+	outputFile.close();
 }
 
 std::string Resources::trim(const std::string & str, const std::string & del){
