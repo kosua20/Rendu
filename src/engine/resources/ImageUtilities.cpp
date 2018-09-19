@@ -163,15 +163,19 @@ int ImageUtilities::loadHDRImage(const std::string &path, unsigned int & width, 
 	return 0;
 }
 
+void write_stbi_to_disk(void *context, void *data, int size){
+	const std::string * path = static_cast<std::string *>(context);
+	Resources::saveRawDataToExternalFile(*path, static_cast<char *>(data), size);
+}
+
 int ImageUtilities::saveLDRImage(const std::string &path, const unsigned int width, const unsigned int height, const unsigned int channels, const unsigned char * data, const bool flip, const bool ignoreAlpha){
 	
 	stbi_flip_vertically_on_write(flip);
-	// Temporary fix for stb_image_write issue with flipped PNGs when computing filters>2.
-	stbi_write_force_png_filter = 1;
 	
 	int stride_in_bytes = (int)width*(int)channels;
+	std::string pathCopy(path);
 	
-	int ret = 1;
+	int ret = 0;
 	if(ignoreAlpha && channels == 4){
 		unsigned char * newData = new unsigned char[width*height*4];
 		for(unsigned int i = 0; i < width*height; ++i){
@@ -180,12 +184,15 @@ int ImageUtilities::saveLDRImage(const std::string &path, const unsigned int wid
 			newData[4*i+2] = data[4*i+2];
 			newData[4*i+3] = 255;
 		}
-		ret = stbi_write_png(path.c_str(), (int)width, (int)height, (int)channels, (const void*)newData, stride_in_bytes);
+		
+		// Write to an array in memory, then to the disk.
+		stbi_write_png_to_func(write_stbi_to_disk, static_cast<void*>(&pathCopy), (int)width, (int)height, (int)channels, static_cast<const void*>(newData), stride_in_bytes);
 		delete [] newData;
 	} else {
-		ret = stbi_write_png(path.c_str(), (int)width, (int)height, (int)channels, (const void*)data, stride_in_bytes);
+		// Write to an array in memory, then to the disk.
+		stbi_write_png_to_func(write_stbi_to_disk, static_cast<void*>(&pathCopy), (int)width, (int)height, (int)channels, static_cast<const void*>(data), stride_in_bytes);
 	}
-	return ret == 0 ? 1 : 0; //...
+	return ret;
 }
 
 int ImageUtilities::saveHDRImage(const std::string &path, const unsigned int width, const unsigned int height, const unsigned int channels, const float *data, const bool flip, const bool ignoreAlpha){
@@ -300,14 +307,24 @@ int ImageUtilities::saveHDRImage(const std::string &path, const unsigned int wid
 	
 	header.pixel_types = static_cast<int *>( malloc(sizeof(int) * static_cast<size_t>(header.num_channels)));
 	header.requested_pixel_types = static_cast<int *>( malloc(sizeof(int) * static_cast<size_t>(header.num_channels)));
+	
+	int ret = 0;
 	for (int i = 0; i < header.num_channels; i++) {
 		header.pixel_types[i] = TINYEXR_PIXELTYPE_FLOAT;  // pixel type of input image
 		header.requested_pixel_types[i] = TINYEXR_PIXELTYPE_HALF;  // pixel type of output image to be stored in .EXR
 	}
-	
-	int ret = SaveEXRImageToFile(&image, &header, path.c_str(), NULL);
-	if (ret != TINYEXR_SUCCESS) {
-		return ret;
+	// Here
+	if (header.compression_type == TINYEXR_COMPRESSIONTYPE_ZFP) {
+		// Not supported.
+		ret = 1;
+	}
+	unsigned char *exrData = NULL;
+	size_t exrSize = SaveEXRImageToMemory(&image, &header, &exrData, NULL);
+	if(exrSize > 0 && exrData){
+		Resources::saveRawDataToExternalFile(path, reinterpret_cast<char *>(exrData), exrSize);
+		free(exrData);
+	} else {
+		ret = 1;
 	}
 	
 	free(header.channels);
