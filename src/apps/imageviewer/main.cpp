@@ -137,10 +137,12 @@ int main(int argc, char** argv) {
 			ScreenQuad::draw(imageInfos.id);
 			
 			glDisable(GL_BLEND);
-			
-			// Read back color under cursor.
-			const glm::vec2 mousePosition = Input::manager().mouse(true);
-			glReadPixels(int(mousePosition.x), int(mousePosition.y), 1, 1, GL_RGB, GL_FLOAT, &fgColor[0]);
+
+			// Read back color under cursor when right-clicking.
+			if(Input::manager().pressed(Input::MouseRight)){
+				const glm::vec2 mousePosition = Input::manager().mouse(true);
+				glReadPixels(int(mousePosition.x), int(mousePosition.y), 1, 1, GL_RGB, GL_FLOAT, &fgColor[0]);
+			}
 		
 		}
 		
