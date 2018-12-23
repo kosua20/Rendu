@@ -13,6 +13,46 @@
  \ingroup Tools
  */
 
+
+/** \brief Configuration for the spherical harmonics extraction tool.
+ \ingroup SHExtractor
+ */
+class SHExtractorConfig : public Config {
+public:
+	
+	/** Initialize a new config object, parsing the input arguments and filling the attributes with their values.
+	 \param argc the number of input arguments.
+	 \param argv a pointer to the raw input arguments.
+	 */
+	SHExtractorConfig(int argc, char** argv) : Config(argc, argv) {
+		processArguments();
+	}
+	
+	/**
+	 Read the internal (key, [values]) populated dictionary, and transfer their values to the configuration attributes.
+	 */
+	void processArguments(){
+		
+		for(const auto & arg : _rawArguments){
+			const std::string key = arg.first;
+			const std::vector<std::string> & values = arg.second;
+			
+			if(key == "cubemap-path"){
+				cubemapPath = values[0];
+			} else if(key == "output-path"){
+				outputPath = values[0];
+			}
+		}
+	}
+	
+public:
+	
+	std::string cubemapPath = ""; ///< Base name of the cubemap to process.
+	
+	std::string outputPath = ""; ///< Result output path.
+	
+};
+
 /** Irradiance spherical harmonics coefficients extractor for a radiance HDR cubemap.
  Expects "-map path/to/envmap" (without the suffixes and extension) and output a txt with the SH coefficients in the same directory.
  \param argc the number of input arguments.
@@ -22,15 +62,19 @@
  */
 int main(int argc, char** argv) {
 	
-	// Arguments parsing.
-	std::map<std::string, std::vector<std::string>> arguments;
-	/// \todo Create a specialized configuration subclass.
-	Config::parseFromArgs(argc, argv, arguments);
-	if(arguments.count("map") == 0){
-		Log::Error() << Log::Utilities << "Specify path to envmap." << std::endl;
-		return 3;
+	SHExtractorConfig config(argc, argv);
+	
+	if(config.cubemapPath.empty()){
+		Log::Error() << Log::Utilities << "Need a cubemap base path." << std::endl;
+		return 2;
 	}
-	const std::string rootPath = arguments["map"][0];
+	if(config.outputPath.empty()){
+		Log::Error() << Log::Utilities << "Need an output path." << std::endl;
+		return 2;
+	}
+	
+	
+	const std::string rootPath = config.cubemapPath;
 
 	// Paths for each side.
 	const std::vector<std::string> paths { rootPath + "_px.exr", rootPath + "_nx.exr", rootPath + "_py.exr", rootPath + "_ny.exr", rootPath + "_pz.exr", rootPath + "_nz.exr" };
@@ -164,7 +208,7 @@ int main(int argc, char** argv) {
 	for(int i = 0; i < 9; ++i){
 		outputStr << SCoeffs[i][0] << " " << SCoeffs[i][1] << " " << SCoeffs[i][2] << std::endl;
 	}
-	const std::string destinationPath = rootPath + "_shcoeffsll.txt";
+	const std::string destinationPath = config.outputPath + "_shcoeffsll.txt";
 	Resources::saveStringToExternalFile(destinationPath, outputStr.str());
 	
 	return 0;

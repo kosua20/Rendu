@@ -17,7 +17,7 @@
 /** \brief Configuration for the BRDF preprocess tool.
  \ingroup BRDFEstimator
  */
-class BRDFEstimatorConfig : public Config {
+class BRDFEstimatorConfig : public RenderingConfig {
 public:
 	
 	/** Initialize a new config object, parsing the input arguments and filling the attributes with their values.
@@ -25,7 +25,7 @@ public:
 	 \param argv a pointer to the raw input arguments.
 	 \note The initial width and height are set to 512px.
 	 */
-	BRDFEstimatorConfig(int argc, char** argv) : Config(argc, argv) {
+	BRDFEstimatorConfig(int argc, char** argv) : RenderingConfig(argc, argv) {
 		processArguments();
 		initialWidth = 512;
 		initialHeight = 512;
@@ -72,10 +72,6 @@ int main(int argc, char** argv) {
 	
 	// First, init/parse/load configuration.
 	BRDFEstimatorConfig config(argc, argv);
-	if(!config.logPath.empty()){
-		Log::setDefaultFile(config.logPath);
-	}
-	Log::setDefaultVerbose(config.logVerbose);
 	
 	// Coherent config state check.
 	if(!config.precomputeBRDF && config.cubemapName.empty()){

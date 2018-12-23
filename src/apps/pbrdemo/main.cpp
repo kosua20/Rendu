@@ -30,11 +30,7 @@
 int main(int argc, char** argv) {
 	
 	// First, init/parse/load configuration.
-	Config config(argc, argv);
-	if(!config.logPath.empty()){
-		Log::setDefaultFile(config.logPath);
-	}
-	Log::setDefaultVerbose(config.logVerbose);
+	RenderingConfig config(argc, argv);
 	
 	GLFWwindow* window = Interface::initWindow("PBR demo", config);
 	if(!window){
