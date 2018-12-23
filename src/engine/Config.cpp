@@ -33,33 +33,26 @@ Config::Config(int argc, char** argv){
 		parseFromArgs(argc, argv, _rawArguments);
 	}
 	
-	processArguments();
-	
-}
-
-void Config::processArguments(){
+	// Extract logging settings;
+	std::string logPath;
+	bool logVerbose = false;
 	
 	for(const auto & arg : _rawArguments){
 		const std::string key = arg.first;
 		const std::vector<std::string> & values = arg.second;
 		
-		if(key == "novsync"){
-			vsync = false;
-		} else if(key == "fullscreen"){
-			fullscreen = true;
-		} else if(key == "verbose"){
+		if(key == "verbose"){
 			logVerbose = true;
-		} else if(key == "internal-res" || key == "ivr"){
-			internalVerticalResolution = std::stof(values[0]);
 		} else if(key == "log-path"){
 			logPath = values[0];
-		} else if(key == "wxh"){
-			const unsigned int w = (unsigned int)std::stoi(values[0]);
-			const unsigned int h = (unsigned int)std::stoi(values[1]);
-			initialWidth = w;
-			initialHeight = h;
 		}
 	}
+	
+	if(!logPath.empty()){
+		Log::setDefaultFile(logPath);
+	}
+	Log::setDefaultVerbose(logVerbose);
+	
 }
 
 
@@ -125,6 +118,32 @@ void Config::parseFromArgs(const int argc, char** argv, std::map<std::string, st
 		}
 		arguments[firstArg] = values;
 
+	}
+}
+
+RenderingConfig::RenderingConfig(int argc, char** argv) : Config(argc, argv){
+	processArguments();
+}
+
+
+void RenderingConfig::processArguments(){
+	
+	for(const auto & arg : _rawArguments){
+		const std::string key = arg.first;
+		const std::vector<std::string> & values = arg.second;
+		
+		if(key == "novsync"){
+			vsync = false;
+		} else if(key == "fullscreen"){
+			fullscreen = true;
+		} else if(key == "internal-res" || key == "ivr"){
+			internalVerticalResolution = std::stof(values[0]);
+		} else if(key == "wxh"){
+			const unsigned int w = (unsigned int)std::stoi(values[0]);
+			const unsigned int h = (unsigned int)std::stoi(values[1]);
+			initialWidth = w;
+			initialHeight = h;
+		}
 	}
 }
 

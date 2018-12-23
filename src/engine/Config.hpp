@@ -23,43 +23,8 @@ public:
 	 	\param argv a pointer to the raw input arguments.
 	 */
 	Config(int argc, char** argv);
-
-public:
 	
-	// Configuration properties (loaded from command-line or config file).
-	
-	/// The configuration version number (unused).
-	const size_t version = 1;
-	
-	/// Toggle V-Sync.
-	bool vsync = true;
-	
-	/// Toggle fullscreen window.
-	bool fullscreen = false;
-	
-	/// Toggle log verbose level.
-	bool logVerbose = false;
-	
-	/// Initial width of the window in relative pixels.
-	unsigned int initialWidth = 800;
-	
-	/// Initial height of the window in relative pixels.
-	unsigned int initialHeight = 600;
-	
-	/// \brief Internal vertical rendering resolution.
-	/// \note The width should be computed based on the window aspect ratio.
-	float internalVerticalResolution = 720.0f;
-	
-	/// Size of the window in raw pixels, updated at launch based on screen density.
-	glm::vec2 screenResolution = glm::vec2(800.0,600.0);
-	
-	/// Screen density, udpated at launch.
-	float screenDensity = 1.0f;
-	
-	/// Output log file path.
-	std::string logPath = "";
-	
-public:
+private:
 	
 	/**
 	 Helper to extract (key, [values]) from a configuration file on disk.
@@ -78,12 +43,59 @@ public:
 
 protected:
 	
+	/// Store the internal parsed (keys, [values]) extracted from a file or the command-line.
+	std::map<std::string, std::vector<std::string>> _rawArguments;
+};
+
+
+/**
+ \brief Configuration containing parameters for windows and renderers.
+ \ingroup Engine
+ */
+class RenderingConfig: public Config {
+public:
+	
+	/** Initialize a new rendering config object, parsing the input arguments and filling the attributes with their values.
+	 \param argc the number of input arguments.
+	 \param argv a pointer to the raw input arguments.
+	 */
+	RenderingConfig(int argc, char** argv);
+
+public:
+	// Configuration properties (loaded from command-line or config file).
+	
+	/// The configuration version number (unused).
+	const size_t version = 1;
+	
+	/// Toggle V-Sync.
+	bool vsync = true;
+	
+	/// Toggle fullscreen window.
+	bool fullscreen = false;
+	
+	/// Initial width of the window in relative pixels.
+	unsigned int initialWidth = 800;
+	
+	/// Initial height of the window in relative pixels.
+	unsigned int initialHeight = 600;
+	
+	/// \brief Internal vertical rendering resolution.
+	/// \note The width should be computed based on the window aspect ratio.
+	float internalVerticalResolution = 720.0f;
+	
+	/// Size of the window in raw pixels, updated at launch based on screen density.
+	glm::vec2 screenResolution = glm::vec2(800.0,600.0);
+	
+	/// Screen density, udpated at launch.
+	float screenDensity = 1.0f;
+	
+protected:
+	
 	/**
 	 Read the internal (key, [values]) populated dictionary, and transfer their values to the configuration attributes.
 	 */
 	void processArguments();
 	
-	/// Store the internal parsed (keys, [values]) extracted from a file or the command-line.
-	std::map<std::string, std::vector<std::string>> _rawArguments;
 };
+
 #endif /* Config_hpp */
