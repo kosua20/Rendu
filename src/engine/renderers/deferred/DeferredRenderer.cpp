@@ -50,13 +50,12 @@ DeferredRenderer::DeferredRenderer(RenderingConfig & config) : Renderer(config) 
 	_fxaaProgram = Resources::manager().getProgram2D("fxaa");
 	_finalProgram = Resources::manager().getProgram2D("final_screenquad");
 	
-	/// \todo Reorder in shader so that depth is appended at the end.
-	std::vector<GLuint> ambientTextures = _gbuffer->textureIds();
-	ambientTextures.insert(ambientTextures.begin()+2, _gbuffer->depthId());
+	const std::vector<GLuint> ambientTextures = _gbuffer->textureIds();
 	
 	// Add the SSAO result.
-	ambientTextures.push_back(_blurSSAOBuffer->textureId());
-	_ambientScreen.init(ambientTextures);
+	const GLuint texDepth = _gbuffer->depthId();
+	const GLuint texSSAO = _blurSSAOBuffer->textureId();
+	_ambientScreen.init(ambientTextures[0], ambientTextures[1], ambientTextures[2], texDepth, texSSAO);
 	
 	checkGLError();
 	

@@ -11,8 +11,8 @@ in INTERFACE {
 
 layout(binding = 0) uniform sampler2D albedoTexture; ///< The albedo texture.
 layout(binding = 1) uniform sampler2D normalTexture; ///< The normal texture.
-layout(binding = 2) uniform sampler2D depthTexture; ///< The depth texture.
-layout(binding = 3) uniform sampler2D effectsTexture; ///< The effects texture.
+layout(binding = 2) uniform sampler2D effectsTexture; ///< The effects texture.
+layout(binding = 3) uniform sampler2D depthTexture; ///< The depth texture.
 layout(binding = 4) uniform sampler2D ssaoTexture; ///< The SSAO texture.
 layout(binding = 5) uniform samplerCube textureCubeMap; ///< Background environment cubemap (with preconvoluted versions of increasing roughness in mipmap levels).
 layout(binding = 6) uniform sampler2D brdfPrecalc; ///< Preintegrated BRDF lookup table.

@@ -27,7 +27,6 @@ public:
 	/** Draw a full screen quad.
 	 \param textureIds the textures to pass to the shader.
 	 \warning Do not support cubemaps for now.
-	 \todo Add 2D/cubemap texture distinction.
 	 */
 	static void draw(const std::vector<GLuint> & textureIds);
 	

@@ -18,9 +18,13 @@ public:
 	AmbientQuad();
 	
 	/** Setup against the graphics API, register the textures needed.
-	 \param textureIds the IDs of the required textures: albedo, normals, depth, effects and SSAO.
+	 \param texAlbedo the index of the texture containing the albedo
+	 \param texNormals the index of the texture containing the surface normals
+	 \param texEffects the index of the texture containing the material properties
+	 \param texDepth the index of the texture containing the depth
+	 \param texSSAO the index of the texture containing the SSAO result
 	 */
-	void init(std::vector<GLuint> textureIds);
+	void init(const GLuint texAlbedo, const GLuint texNormals, const GLuint texEffects, const GLuint texDepth, const GLuint texSSAO);
 	
 	/** Register the scene-specific lighting informations.
 	 \param reflectionMap the ID of the background cubemap, containing radiance convolved with increasing roughness lobes in the mipmap levels

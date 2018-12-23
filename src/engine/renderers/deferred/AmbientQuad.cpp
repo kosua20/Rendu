@@ -5,20 +5,19 @@
 
 AmbientQuad::AmbientQuad(){}
 
-void AmbientQuad::init(std::vector<GLuint> textureIds){
+void AmbientQuad::init(const GLuint texAlbedo, const GLuint texNormals, const GLuint texEffects, const GLuint texDepth, const GLuint texSSAO){
 	
 	_program = Resources::manager().getProgram2D("ambient");
 	// Load texture.
 	_textureBrdf = Resources::manager().getTexture("brdf-precomputed", false).id;
 	
 	// Ambient pass: needs the albedo, the normals, the depth, the effects and the AO result
-	_textures = textureIds;
+	_textures = { texAlbedo, texNormals, texEffects, texDepth, texSSAO };
 	
 	// Setup SSAO data, get back noise texture id, add it to the gbuffer outputs.
 	GLuint noiseTextureID = setupSSAO();
 	_programSSAO = Resources::manager().getProgram2D("ssao");
-	/// \todo Reorder so that depth is appended at the end, clarify indices.
-	_texturesSSAO = { _textures[2], _textures[1], noiseTextureID };
+	_texturesSSAO = { texDepth, texNormals, noiseTextureID };
 	// Now that we have the program we can send the samples to the GPU too.
 	_programSSAO->cacheUniformArray("samples", _samples);
 	
