@@ -115,7 +115,6 @@ void Object::draw(const glm::mat4& view, const glm::mat4& projection) const {
 
 void Object::drawGeometry() const {
 	glBindVertexArray(_mesh.vId);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _mesh.eId);
 	glDrawElements(GL_TRIANGLES, _mesh.count, GL_UNSIGNED_INT, (void*)0);
 	glBindVertexArray(0);
 }
