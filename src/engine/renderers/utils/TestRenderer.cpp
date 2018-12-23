@@ -2,7 +2,7 @@
 #include "../../input/Input.hpp"
 
 
-TestRenderer::TestRenderer(Config & config) : Renderer(config) {
+TestRenderer::TestRenderer(RenderingConfig & config) : Renderer(config) {
 	
 	_framebuffer = std::make_shared<Framebuffer>(_renderResolution[0], _renderResolution[1], GL_RGBA8, false);
 	checkGLError();

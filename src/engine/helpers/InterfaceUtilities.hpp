@@ -35,7 +35,7 @@ namespace Interface {
 	 \param config the configuration to use (additional info will be added to it)
 	 \return a pointer to the OS window
 	 */
-	GLFWwindow* initWindow(const std::string & name, Config & config);
+	GLFWwindow* initWindow(const std::string & name, RenderingConfig & config);
 	
 	/** The file picker mode. */
 	enum PickerMode {

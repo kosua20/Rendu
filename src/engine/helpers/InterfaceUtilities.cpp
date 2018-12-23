@@ -34,7 +34,7 @@ namespace Interface {
 		ImGui::DestroyContext();
 	}
 	
-	GLFWwindow* initWindow(const std::string & name, Config & config){
+	GLFWwindow* initWindow(const std::string & name, RenderingConfig & config){
 		// Initialize glfw, which will create and setup an OpenGL context.
 		if (!glfwInit()) {
 			Log::Error() << Log::OpenGL << "Could not start GLFW3" << std::endl;

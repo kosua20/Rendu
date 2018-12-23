@@ -6,7 +6,7 @@
 #include "../../helpers/InterfaceUtilities.hpp"
 
 
-DeferredRenderer::DeferredRenderer(Config & config) : Renderer(config) {
+DeferredRenderer::DeferredRenderer(RenderingConfig & config) : Renderer(config) {
 	
 	// Setup camera parameters.
 	_userCamera.projection(config.screenResolution[0]/config.screenResolution[1], 1.3f, 0.01f, 200.0f);

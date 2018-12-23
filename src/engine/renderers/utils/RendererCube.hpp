@@ -22,7 +22,7 @@ public:
 	 \param height the rendering height
 	 \param preciseFormat the combine type+format to use for the internal famebuffer
 	 */
-	RendererCube(Config & config, const std::string & cubemapName, const std::string & shaderName, const unsigned int width, const unsigned int height, const GLenum preciseFormat);
+	RendererCube(RenderingConfig & config, const std::string & cubemapName, const std::string & shaderName, const unsigned int width, const unsigned int height, const GLenum preciseFormat);
 
 	/** Draw the scene and effects */
 	void draw();

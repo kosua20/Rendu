@@ -4,7 +4,7 @@
 
 
 
-RendererCube::RendererCube(Config & config, const std::string & cubemapName, const std::string & shaderName, const unsigned int width, const unsigned int height, const GLenum preciseFormat) : Renderer(config) {
+RendererCube::RendererCube(RenderingConfig & config, const std::string & cubemapName, const std::string & shaderName, const unsigned int width, const unsigned int height, const GLenum preciseFormat) : Renderer(config) {
 	
 	_resultFramebuffer = std::make_shared<Framebuffer>(width, height, preciseFormat, false);
 	

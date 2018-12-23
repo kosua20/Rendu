@@ -21,7 +21,7 @@ public:
 	 \param height the rendering height
 	 \param preciseFormat the combine type+format to use for the internal famebuffer
 	 */
-	Renderer2D(Config & config, const std::string & shaderName, const unsigned int width, const unsigned int height, const GLenum preciseFormat);
+	Renderer2D(RenderingConfig & config, const std::string & shaderName, const unsigned int width, const unsigned int height, const GLenum preciseFormat);
 
 	/** Draw the scene and effects */
 	void draw();

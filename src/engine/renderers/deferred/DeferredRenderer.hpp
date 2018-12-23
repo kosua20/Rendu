@@ -44,7 +44,7 @@ public:
 	/** Constructor.
 	 \param config the configuration to apply when setting up
 	 */
-	DeferredRenderer(Config & config);
+	DeferredRenderer(RenderingConfig & config);
 
 	/** Set the scene to render.
 	 \param scene the new scene

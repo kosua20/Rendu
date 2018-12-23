@@ -23,7 +23,7 @@ public:
 	/** Constructor.
 	 \param config the configuration to apply when setting up
 	 */
-	TestRenderer(Config & config);
+	TestRenderer(RenderingConfig & config);
 
 	/** Draw the scene and effects */
 	void draw();

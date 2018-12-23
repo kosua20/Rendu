@@ -14,7 +14,7 @@ public:
 	/** Constructor.
 	 \param config the configuration to apply when setting up
 	 */
-	Renderer(Config & config);
+	Renderer(RenderingConfig & config);
 	
 	/** Draw the scene and effects */
 	virtual void draw() = 0;
@@ -49,7 +49,7 @@ protected:
 	 */
 	void updateResolution(unsigned int width, unsigned int height);
 	
-	Config & _config; ///< The current configuration.
+	RenderingConfig & _config; ///< The current configuration.
 	glm::vec2 _renderResolution; ///< The internal rendering resolution.
 	
 private:

@@ -4,7 +4,7 @@
 
 
 
-Renderer2D::Renderer2D(Config & config, const std::string & shaderName, const unsigned int width, const unsigned int height, const GLenum preciseFormat) : Renderer(config) {
+Renderer2D::Renderer2D(RenderingConfig & config, const std::string & shaderName, const unsigned int width, const unsigned int height, const GLenum preciseFormat) : Renderer(config) {
 	glDisable(GL_DEPTH_TEST);
 	_resultFramebuffer = std::make_shared<Framebuffer>(width, height, preciseFormat, false);
 	_resultProgram = Resources::manager().getProgram2D(shaderName);

@@ -3,7 +3,7 @@
 #include "../input/Input.hpp"
 
 
-Renderer::Renderer(Config & config) : _config(config) {
+Renderer::Renderer(RenderingConfig & config) : _config(config) {
 	
 	// Initial render resolution.
 	_renderResolution = (_config.internalVerticalResolution/_config.screenResolution[1]) * _config.screenResolution;
