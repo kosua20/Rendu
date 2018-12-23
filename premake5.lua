@@ -46,7 +46,8 @@ end
 
 function CPPSetup()
 	language("C++")
-	buildoptions({ "-std=c++11","-Wall" })
+	cppdialect("C++11")
+	buildoptions({ "-Wall" })
 end	
 
 function GraphicsSetup()
