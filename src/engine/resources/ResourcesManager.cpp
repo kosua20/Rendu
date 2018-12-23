@@ -17,8 +17,7 @@ WCHAR * widen(const std::string & str){
 	const int size = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, NULL, 0);
 	WCHAR *arr = new WCHAR[size];
 	MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, (LPWSTR)arr, size);
-	// Will leak on Windows.
-	/// \todo Stop leaking.
+	// \warn Will leak on Windows.
 	return arr;
 }
 

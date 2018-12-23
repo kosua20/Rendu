@@ -111,6 +111,7 @@ int ImageUtilities::loadHDRImage(const std::string &path, unsigned int & width, 
 	{
 		int ret = LoadEXRImageFromMemory(&exr_image, &exr_header, rawData, rawSize, NULL);
 		if (ret != TINYEXR_SUCCESS) {
+			FreeEXRHeader(&exr_header);
 			return ret;
 		}
 	}
@@ -134,7 +135,8 @@ int ImageUtilities::loadHDRImage(const std::string &path, unsigned int & width, 
 	}
 	
 	if (idxR == -1 || idxG == -1 || idxB == -1) {
-		/// \todo Free exr_image
+		FreeEXRHeader(&exr_header);
+		FreeEXRImage(&exr_image);
 		return TINYEXR_ERROR_INVALID_DATA;
 	}
 	
@@ -215,8 +217,14 @@ int ImageUtilities::saveHDRImage(const std::string &path, const unsigned int wid
 	
 	if (components == 1) {
 		images[0].resize(static_cast<size_t>(width * height));
-		memcpy(images[0].data(), data, sizeof(float) * size_t(width * height));
-		/// \todo Support flipping.
+		for (size_t y = 0; y < height; y++) {
+			for (size_t x = 0; x < width; x++) {
+				const size_t destIndex = y * width + x;
+				const size_t sourceIndex = flip ? ((height-1-y)*width+x) : destIndex;
+				images[0][destIndex] = data[sourceIndex];
+			}
+		}
+		
 	} else {
 		images[0].resize(static_cast<size_t>(width * height));
 		images[1].resize(static_cast<size_t>(width * height));
@@ -229,9 +237,6 @@ int ImageUtilities::saveHDRImage(const std::string &path, const unsigned int wid
 			for (size_t x = 0; x < width; x++) {
 				const size_t destIndex = y * width + x;
 				const size_t sourceIndex = flip ? ((height-1-y)*width+x) : destIndex;
-				//images[0][destIndex] = data[static_cast<size_t>(components) * sourceIndex + 0];
-				//images[1][destIndex] = data[static_cast<size_t>(components) * sourceIndex + 1];
-				//images[2][destIndex] = data[static_cast<size_t>(components) * sourceIndex + 2];
 				for(unsigned int j = 0; j < channels; ++j){
 					images[j][destIndex] = data[static_cast<size_t>(channels) * sourceIndex + j];
 				}
