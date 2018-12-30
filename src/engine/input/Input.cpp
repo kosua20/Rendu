@@ -48,7 +48,7 @@ void Input::joystickEvent(int joy, int event){
 		if(!_controllers[joy]){
 			_controllers[joy] = std::shared_ptr<Controller>(new CustomController());
 		}
-		bool res = _controllers[joy]->activate(joy);
+		const bool res = _controllers[joy]->activate(joy);
 		if(res && _activeController == -1){
 			_activeController = joy;
 		}

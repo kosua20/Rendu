@@ -62,7 +62,7 @@ void ControllableCamera::updateUsingJoystick(double frameTime){
 		return;
 	}
 	
-	Controller & joystick = Input::manager().controller();
+	Controller & joystick = *Input::manager().controller();
 	// Handle buttons
 	// Reset camera when pressing the Circle button.
 	if(joystick.pressed(Controller::ButtonB)){

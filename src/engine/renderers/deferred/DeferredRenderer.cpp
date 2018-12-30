@@ -71,6 +71,7 @@ void DeferredRenderer::setScene(std::shared_ptr<Scene> scene){
 	_ambientScreen.setSceneParameters(_scene->backgroundReflection, _scene->backgroundIrradiance);
 	
 	std::vector<GLuint> includedTextures = _gbuffer->textureIds();
+	// TODO: clarify this.
 	includedTextures.insert(includedTextures.begin()+2, _gbuffer->depthId());
 	
 	for(auto& dirLight : _scene->directionalLights){

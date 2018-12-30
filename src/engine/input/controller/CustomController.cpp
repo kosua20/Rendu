@@ -37,7 +37,7 @@ void CustomController::update(){
 	for(unsigned int i = 0; i < ControllerInput::ControllerInputCount; ++i){
 		const int bcode = _buttonCodes[i];
 		if(bcode >= 0){
-			bool pressed = (_rawButtons[bcode] == GLFW_PRESS);
+			const bool pressed = (_rawButtons[bcode] == GLFW_PRESS);
 			if(pressed){
 				if(_buttons[i].pressed){
 					// Already pressed.
@@ -53,7 +53,10 @@ void CustomController::update(){
 		}
 		int acode = _axisCodes[i];
 		if(acode >= 0){
-		_axes[i] = _rawAxes[acode];
+			_axes[i] = _rawAxes[acode];
+		} else if(i == TriggerL2 || i == TriggerR2){
+			// Hack to support both button and axis triggers in all cases.
+			_axes[i] = float(_buttons[i].pressed);
 		}
 	}
 	

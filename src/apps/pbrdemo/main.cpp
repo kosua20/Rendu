@@ -72,25 +72,12 @@ int main(int argc, char** argv) {
 		if(Input::manager().pressed(Input::KeyEscape)){
 			glfwSetWindowShouldClose(window, GL_TRUE);
 		}
-		// Start a new frame for the interface.
-		Interface::beginFrame();
 		// Reload resources.
 		if(Input::manager().triggered(Input::KeyP)){
 			Resources::manager().reload();
 		}
 		
-		// Handle scene switching.
-		if(ImGui::Begin("Renderer")){
-			if(ImGui::Combo("Scene", &selected_scene, sceneNames, scenes.size()+1)){
-				if(selected_scene == scenes.size()){
-					renderer->setScene(nullptr);
-				} else {
-					Log::Info() << Log::Resources << "Loading scene " << sceneNames[selected_scene] << "." << std::endl;
-					renderer->setScene(scenes[selected_scene]);
-				}
-			}
-		}
-		ImGui::End();
+		
 		
 		// We separate punctual events from the main physics/movement update loop.
 		renderer->update();
@@ -114,6 +101,23 @@ int main(int argc, char** argv) {
 			fullTime += deltaTime;
 			remainingTime -= deltaTime;
 		}
+		
+		// Start a new frame for the interface.
+		Interface::beginFrame();
+		
+		// Handle scene switching.
+		if(ImGui::Begin("Renderer")){
+			if(ImGui::Combo("Scene", &selected_scene, sceneNames, scenes.size()+1)){
+				if(selected_scene == scenes.size()){
+					renderer->setScene(nullptr);
+				} else {
+					Log::Info() << Log::Resources << "Loading scene " << sceneNames[selected_scene] << "." << std::endl;
+					renderer->setScene(scenes[selected_scene]);
+				}
+			}
+		}
+		ImGui::End();
+		
 		// Update the content of the window.
 		renderer->draw();
 		// Then render the interface.

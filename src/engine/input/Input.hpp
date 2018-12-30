@@ -243,7 +243,7 @@ public:
 	 \return a reference to the current controller
 	 \warning Make sure a controller is available before calling this method.
 	 */
-	Controller & controller(){ return *_controllers[_activeController]; };
+	std::shared_ptr<Controller> controller(){ return _controllers[_activeController]; };
 	
 	/**
 	 Query if a given key is held at this frame.

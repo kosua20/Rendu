@@ -75,8 +75,7 @@ int main(int argc, char** argv) {
 		if(Input::manager().pressed(Input::KeyEscape)){
 			glfwSetWindowShouldClose(window, GL_TRUE);
 		}
-		// Start a new frame for the interface.
-		Interface::beginFrame();
+		
 		// Reload resources.
 		if(Input::manager().triggered(Input::KeyP)){
 			Resources::manager().reload();
@@ -86,6 +85,7 @@ int main(int argc, char** argv) {
 		const double currentTime = glfwGetTime();
 		double frameTime = currentTime - timer;
 		timer = currentTime;
+		
 		camera.update();
 		
 		// Physics simulation
@@ -103,6 +103,8 @@ int main(int argc, char** argv) {
 			remainingTime -= deltaTime;
 		}
 		
+		// Start a new frame for the interface.
+		Interface::beginFrame();
 		// Render.
 		const glm::vec2 screenSize = Input::manager().size();
 		const glm::mat4 MVP = camera.projection() * camera.view();
@@ -117,7 +119,7 @@ int main(int argc, char** argv) {
 		glBindVertexArray(0);
 		glUseProgram(0);
 		ImGui::Text("ImGui is functional!");
-		
+		ImGui::Text("%.1f FPS / %.1f ms", ImGui::GetIO().Framerate, ImGui::GetIO().DeltaTime*1000.0f);
 		// Then render the interface.
 		Interface::endFrame();
 		//Display the result for the current rendering loop.
