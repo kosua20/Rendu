@@ -141,6 +141,10 @@ project("BRDFEstimator")
 	includedirs({ "src/apps/pbrdemo" })
 	files({ "src/tools/BRDFEstimator.cpp" })
 
+project("ControllerTest")
+	ToolSetup()
+	files({ "src/tools/controllertest/**.hpp", "src/tools/controllertest/**.cpp", })
+
 project("SHExtractor")
 	ToolSetup()	
 	files({ "src/tools/SHExtractor.cpp" })
@@ -158,7 +162,7 @@ group("Meta")
 project("ALL")
 	CPPSetup()
 	kind("ConsoleApp")
-	dependson( {"Engine", "PBRDemo", "Playground", "Atmosphere", "ImageViewer", "AtmosphericScatteringEstimator", "BRDFEstimator", "SHExtractor" })
+	dependson( {"Engine", "PBRDemo", "Playground", "Atmosphere", "ImageViewer", "AtmosphericScatteringEstimator", "BRDFEstimator", "SHExtractor", "ControllerTest" })
 
 -- Actions
 
