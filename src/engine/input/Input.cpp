@@ -1,5 +1,6 @@
 #include "Input.hpp"
 #include "controller/CustomController.hpp"
+#include "controller/DebugController.hpp"
 
 // Singleton.
 Input& Input::manager(){
@@ -16,9 +17,21 @@ Input::Input(){
 		if(glfwJoystickPresent(id) == GL_TRUE && first){
 			joystickEvent(id, GLFW_CONNECTED);
 			first = false;
+			_joystickConnected = true;
 		}
 	}
 	
+}
+
+void Input::debug(const bool isDebug){
+	_debugController = isDebug;
+	// Reset existing controllers.
+	for(int id = GLFW_JOYSTICK_1; id <= GLFW_JOYSTICK_LAST; ++id){
+		_controllers[id] = nullptr;
+		if(glfwJoystickPresent(id) == GL_TRUE){
+			joystickEvent(id, GLFW_CONNECTED);
+		}
+	}
 }
 
 void Input::keyPressedEvent(int key, int action){
@@ -46,11 +59,17 @@ void Input::joystickEvent(int joy, int event){
 
 		// Register the new one, if no joystick was activated consider this one as the active one.
 		if(!_controllers[joy]){
-			_controllers[joy] = std::shared_ptr<Controller>(new CustomController());
+			if(_debugController){
+				_controllers[joy] = std::shared_ptr<Controller>(new DebugController());
+			} else {
+				_controllers[joy] = std::shared_ptr<Controller>(new CustomController());
+			}
+			
 		}
 		const bool res = _controllers[joy]->activate(joy);
 		if(res && _activeController == -1){
 			_activeController = joy;
+			_joystickConnected = true;
 		}
 		
 	} else if (event == GLFW_DISCONNECTED) {
@@ -62,9 +81,11 @@ void Input::joystickEvent(int joy, int event){
 			_controllers[joy]->deactivate();
 			if(joy == _activeController){
 				_activeController = -1;
+				_joystickDisconnected = true;
 			}
 		}
 		// Here we could also try to fall back on any other (still) connected joystick.
+		
 	}
 	
 }
@@ -136,6 +157,8 @@ void Input::update(){
 	_mouse.scroll = glm::vec2(0.0f,0.0f);
 	_resized = false;
 	// Update only the active joystick if it exists.
+	_joystickConnected = false;
+	_joystickDisconnected = false;
 	if(_activeController >= 0){
 		_controllers[_activeController]->update();
 	}

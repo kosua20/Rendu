@@ -145,6 +145,14 @@ public:
 public:
 	
 	/**
+	 \name Input settings
+	 @{*/
+	void debug(const bool isDebug);
+	
+	
+	/**@}*/
+	
+	/**
 	 \name Input updates
 	 @{*/
 	
@@ -239,6 +247,18 @@ public:
 	bool controllerAvailable() const { return _activeController >= 0; };
 	
 	/**
+	 Query if a controller (joystick) was connected at this frame.
+	 \return true if a controller has just been connected
+	 */
+	bool controllerConnected() const { return _joystickConnected; };
+	
+	/**
+	 Query if a controller (joystick) was disconnected at this frame.
+	 \return true if a controller has just been disconnected
+	 */
+	bool controllerDisconnected() const { return _joystickDisconnected; };
+	
+	/**
 	 Query the current controller (joystick).
 	 \return a reference to the current controller
 	 \warning Make sure a controller is available before calling this method.
@@ -298,6 +318,7 @@ public:
 	 */
 	glm::vec2 scroll() const;
 	
+	
 	/**@}*/
 	
 private:
@@ -314,6 +335,9 @@ private:
 	// Joystick state.
 	int _activeController = -1; ///< The active joystick ID, or -1 if no controller active.
 	std::shared_ptr<Controller> _controllers[GLFW_JOYSTICK_LAST+1]; ///< States of all possible controllers.
+	bool _debugController = false;
+	bool _joystickConnected = false;
+	bool _joystickDisconnected = false;
 	
 	/// Mouse state.
 	struct MouseButton {
