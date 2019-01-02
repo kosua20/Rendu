@@ -7,10 +7,10 @@ in INTERFACE {
 
 layout(binding = 0) uniform sampler2D screenTexture; ///< Image to output.
 
-uniform bool isHDR;
-uniform float exposure;
-uniform bool gammaOutput;
-uniform vec4 channelsFilter;
+uniform bool isHDR; ///< Is the image an HDR one.
+uniform float exposure; ///< User selected exposure.
+uniform bool gammaOutput; ///< Should gamma correction be applied.
+uniform vec4 channelsFilter; ///< Which channels should be displayed.
 
 layout(location = 0) out vec4 fragColor; ///< Color.
 
@@ -31,6 +31,9 @@ vec3 gamma(vec3 color){
 	return pow(color, vec3(1.0/2.2));
 }
 
+/**
+ Render the image, applying user-defined postprocessing.
+ */
 void main(){
 	vec2 uv = In.uv;
 	if(any(greaterThan(uv, vec2(1.0))) || any(lessThan(uv, vec2(0.0)))){

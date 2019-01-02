@@ -5,26 +5,17 @@ out INTERFACE {
 	vec2 uv;
 } Out ; ///< vec2 uv;
 
-uniform float screenRatio;
-uniform float imageRatio;
-uniform float widthRatio;
-uniform bool isHDR;
-uniform vec2 flipAxis;
-uniform vec2 angleTrig;
-uniform float pixelScale;
-uniform vec2 mouseShift;
+uniform float screenRatio; ///< Screen h/v ratio.
+uniform float imageRatio; ///< Image h/v ratio.
+uniform float widthRatio; ///< Image/screen width ratio.
+uniform bool isHDR; ///< Is the image an HDR image.
+uniform vec2 flipAxis; ///< Denotes if a flipping has been applied on each axis.
+uniform vec2 angleTrig; ///< Applied rotation precomputed cosine and sine.
+uniform float pixelScale; ///< Scaling.
+uniform vec2 mouseShift; ///< Translation.
 
 /**
- Generate one triangle covering the whole screen
- 2: (-1,3),(0,2)
- *
- | \
- |	 \
- |	   \
- |		 \
- |		   \
- *-----------*  1: (3,-1), (2,0)
- 0: (-1,-1), (0,0)
+ Generate one triangle covering the whole screen and compute UV coordinates based on scaling/position/rotation.
  */
 void main(){
 	vec2 temp = 2.0 * vec2(gl_VertexID == 1, gl_VertexID == 2);
