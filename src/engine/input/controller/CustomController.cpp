@@ -6,10 +6,8 @@
 
 
 CustomController::CustomController() : Controller() {
-	for(unsigned int i = 0; i < ControllerInput::ControllerInputCount; ++i){
-		_buttonCodes[i] = -1;
-		_axisCodes[i] = -1;
-	}
+	_buttonCodes.resize(ControllerInput::ControllerInputCount, -1);
+	_axisCodes.resize(ControllerInput::ControllerInputCount, -1);
 } 
 
 bool CustomController::activate(int id){
@@ -21,7 +19,13 @@ bool CustomController::activate(int id){
 	_rawButtons = glfwGetJoystickButtons(_id, &_rawButtonsCount);
 	
 	Log::Info() << Log::Input << "Joystick named " << std::string(glfwGetJoystickName(_id)) << "." << std::endl;
-	return configure("controller_ps4.map");
+	
+	const std::string settingsContent = Resources::manager().getString("controller_test.map");
+	const bool parseStatus = CustomController::parseConfiguration(settingsContent, _axisCodes, _buttonCodes);
+	if(!parseStatus){
+		_id = -1;
+	}
+	return parseStatus;
 }
 
 void CustomController::deactivate(){
@@ -62,28 +66,57 @@ void CustomController::update(){
 	
 }
 
-
-bool CustomController::configure(const std::string & mapFile){
+void CustomController::saveConfiguration(const std::string & outputPath, const std::vector<int> & axesMapping, const std::vector<int> & buttonsMapping){
+	std::stringstream outputStr;
 	
-	const std::string settingsContent = Resources::manager().getString(mapFile);
-	// If no mapping found, disable the controller.
+	// Read the first line to know the number of buttons and axes.
+	std::vector<std::string> inputNames = {
+		"ButtonX", "ButtonY", "ButtonA", "ButtonB", "BumperL1", "TriggerL2", "ButtonL3",
+		"BumperR1", "TriggerR2", "ButtonR3", "ButtonUp", "ButtonLeft", "ButtonDown", "ButtonRight",
+		"ButtonLogo", "ButtonMenu", "ButtonView", "PadLeftX", "PadLeftY", "PadRightX", "PadRightY",
+	};
+	for(int i = 0; i < Controller::ControllerInputCount; ++i){
+		outputStr << inputNames[i] << " : ";
+		const int bid = buttonsMapping[i];
+		const int aid = axesMapping[i];
+		if(aid >= 0){
+			outputStr << "A" << aid;
+		}
+		if(bid >= 0){
+			if(aid >= 0){
+				outputStr << ",";
+			}
+			outputStr << "B" << bid;
+		}
+		outputStr << std::endl;
+	}
+	Resources::saveStringToExternalFile(outputPath, outputStr.str());
+}
+
+bool CustomController::parseConfiguration(const std::string & settingsContent, std::vector<int> & axesMapping, std::vector<int> & buttonsMapping){
+	
+	// If no mapping found, return. \todo disable cotroller
 	if(settingsContent.empty()){
 		Log::Error() << Log::Input << "No settings found for the controller." << std::endl;
-		_id = -1;
 		return false;
 	}
-	// Parse the config file and update the map with it.
-	for(unsigned int i = 0; i < ControllerInput::ControllerInputCount; ++i){
-		_buttonCodes[i] = -1;
-		_axisCodes[i] = -1;
-	}
+	axesMapping.clear();
+	buttonsMapping.clear();
+	axesMapping.resize(Controller::ControllerInputCount, -1);
+	buttonsMapping.resize(Controller::ControllerInputCount, -1);
 	
+	// Parse the config file and update the map with it.
 	std::istringstream lines(settingsContent);
 	std::string line;
+	// Read the first line to know the number of buttons and axes.
 	while(std::getline(lines,line)){
+		// Skip comments.
+		if(line.empty() || line[0] == '#'){
+			continue;
+		}
 		// Split line at colon.
 		const size_t separatorPos = line.find_first_of(":");
-		// If no colon, skip line.
+		// If no colon, skip.
 		if(separatorPos == std::string::npos){
 			continue;
 		}
@@ -117,78 +150,74 @@ bool CustomController::configure(const std::string & mapFile){
 		}
 		
 		if(key == "ButtonX") {
-			_buttonCodes[ButtonX] = bval;
-			_axisCodes[ButtonX] = aval;
+			buttonsMapping[Controller::ButtonX] = bval;
+			axesMapping[Controller::ButtonX] = aval;
 		} else if(key == "ButtonY"){
-			_buttonCodes[ButtonY] = bval;
-			_axisCodes[ButtonY] = aval;
+			buttonsMapping[Controller::ButtonY] = bval;
+			axesMapping[Controller::ButtonY] = aval;
 		} else if(key == "ButtonA"){
-			_buttonCodes[ButtonA] = bval;
-			_axisCodes[ButtonA] = aval;
+			buttonsMapping[Controller::ButtonA] = bval;
+			axesMapping[Controller::ButtonA] = aval;
 		} else if(key == "ButtonB"){
-			_buttonCodes[ButtonB] = bval;
-			_axisCodes[ButtonB] = aval;
+			buttonsMapping[Controller::ButtonB] = bval;
+			axesMapping[Controller::ButtonB] = aval;
 		} else if(key == "BumperL1"){
-			_buttonCodes[BumperL1] = bval;
-			_axisCodes[BumperL1] = aval;
+			buttonsMapping[Controller::BumperL1] = bval;
+			axesMapping[Controller::BumperL1] = aval;
 		} else if(key == "TriggerL2"){
-			_buttonCodes[TriggerL2] = bval;
-			_axisCodes[TriggerL2] = aval;
+			buttonsMapping[Controller::TriggerL2] = bval;
+			axesMapping[Controller::TriggerL2] = aval;
 		} else if(key == "ButtonL3"){
-			_buttonCodes[ButtonL3] = bval;
-			_axisCodes[ButtonL3] = aval;
+			buttonsMapping[Controller::ButtonL3] = bval;
+			axesMapping[Controller::ButtonL3] = aval;
 		} else if(key == "BumperR1"){
-			_buttonCodes[BumperR1] = bval;
-			_axisCodes[BumperR1] = aval;
+			buttonsMapping[Controller::BumperR1] = bval;
+			axesMapping[Controller::BumperR1] = aval;
 		} else if(key == "TriggerR2"){
-			_buttonCodes[TriggerR2] = bval;
-			_axisCodes[TriggerR2] = aval;
+			buttonsMapping[Controller::TriggerR2] = bval;
+			axesMapping[Controller::TriggerR2] = aval;
 		} else if(key == "ButtonR3"){
-			_buttonCodes[ButtonR3] = bval;
-			_axisCodes[ButtonR3] = aval;
+			buttonsMapping[Controller::ButtonR3] = bval;
+			axesMapping[Controller::ButtonR3] = aval;
 		} else if(key == "ButtonUp"){
-			_buttonCodes[ButtonUp] = bval;
-			_axisCodes[ButtonUp] = aval;
+			buttonsMapping[Controller::ButtonUp] = bval;
+			axesMapping[Controller::ButtonUp] = aval;
 		} else if(key == "ButtonLeft"){
-			_buttonCodes[ButtonLeft] = bval;
-			_axisCodes[ButtonLeft] = aval;
+			buttonsMapping[Controller::ButtonLeft] = bval;
+			axesMapping[Controller::ButtonLeft] = aval;
 		} else if(key == "ButtonDown"){
-			_buttonCodes[ButtonDown] = bval;
-			_axisCodes[ButtonDown] = aval;
+			buttonsMapping[Controller::ButtonDown] = bval;
+			axesMapping[Controller::ButtonDown] = aval;
 		} else if(key == "ButtonRight"){
-			_buttonCodes[ButtonRight] = bval;
-			_axisCodes[ButtonRight] = aval;
+			buttonsMapping[Controller::ButtonRight] = bval;
+			axesMapping[Controller::ButtonRight] = aval;
 		} else if(key == "ButtonLogo"){
-			_buttonCodes[ButtonLogo] = bval;
-			_axisCodes[ButtonLogo] = aval;
+			buttonsMapping[Controller::ButtonLogo] = bval;
+			axesMapping[Controller::ButtonLogo] = aval;
 		} else if(key == "ButtonMenu"){
-			_buttonCodes[ButtonMenu] = bval;
-			_axisCodes[ButtonMenu] = aval;
+			buttonsMapping[Controller::ButtonMenu] = bval;
+			axesMapping[Controller::ButtonMenu] = aval;
 		} else if(key == "ButtonView"){
-			_buttonCodes[ButtonView] = bval;
-			_axisCodes[ButtonView] = aval;
+			buttonsMapping[Controller::ButtonView] = bval;
+			axesMapping[Controller::ButtonView] = aval;
 		} else if(key == "PadLeftX"){
-			_buttonCodes[PadLeftX] = bval;
-			_axisCodes[PadLeftX] = aval;
+			buttonsMapping[Controller::PadLeftX] = bval;
+			axesMapping[Controller::PadLeftX] = aval;
 		} else if(key == "PadLeftY"){
-			_buttonCodes[PadLeftY] = bval;
-			_axisCodes[PadLeftY] = aval;
+			buttonsMapping[Controller::PadLeftY] = bval;
+			axesMapping[Controller::PadLeftY] = aval;
 		} else if(key == "PadRightX"){
-			_buttonCodes[PadRightX] = bval;
-			_axisCodes[PadRightX] = aval;
+			buttonsMapping[Controller::PadRightX] = bval;
+			axesMapping[Controller::PadRightX] = aval;
 		} else if(key == "PadRightY"){
-			_buttonCodes[PadRightY] = bval;
-			_axisCodes[PadRightY] = aval;
+			buttonsMapping[Controller::PadRightY] = bval;
+			axesMapping[Controller::PadRightY] = aval;
 		} else {
 			// Unknown key, ignore.
 			Log::Error() << Log::Input << "Controller configuration file contains unknown key: " << key << "." << std::endl;
 		}
 	}
-	
 	return true;
-
+	
 }
-
-
-
 

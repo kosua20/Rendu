@@ -105,7 +105,7 @@ void ControllableCamera::updateUsingJoystick(double frameTime){
 	const float axisVertical = joystick.axis(Controller::PadRightY);
 	const float axisHorizontal = joystick.axis(Controller::PadRightX);
 	
-	if(axisForward * axisForward + axisLateral * axisLateral > 0.1){
+	if(axisForward * axisForward + axisLateral * axisLateral > 0.02f){
 		// Update the camera position.
 		_eye = _eye - axisForward * (float)frameTime * _speed * look;
 		_eye = _eye + axisLateral * (float)frameTime * _speed * _right;
@@ -123,7 +123,7 @@ void ControllableCamera::updateUsingJoystick(double frameTime){
 	_center = _eye + look;
 	
 	// Right stick to look around.
-	if(axisVertical * axisVertical + axisHorizontal * axisHorizontal > 0.1){
+	if(axisVertical * axisVertical + axisHorizontal * axisHorizontal > 0.02f){
 		_center = _center - axisVertical * (float)frameTime * _angularSpeed * _up;
 		_center = _center + axisHorizontal * (float)frameTime * _angularSpeed * _right;
 	}

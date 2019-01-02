@@ -31,23 +31,32 @@ public:
 	 */
 	void update();
 	
-private:
+	/**
+	 Parse a buttons/axes mapping configuration from the given string.
+	 \param settingsContent the string containing the configuration to parse
+	 \param axesMapping the axes mapping to populate
+	 \param buttonsMapping the buttons mapping to populate
+	 \return true if the configuration was properly parsed
+	 */
+	static bool parseConfiguration(const std::string & settingsContent, std::vector<int> & axesMapping, std::vector<int> & buttonsMapping);
 	
 	/**
-	 Load a buttons mapping configuration file from the given path.
-	 \param mapFile the path to the mapping file
-	 \return true if the controller was properly setup
+	 Save a configuration to a file on disk.
+	 \param outputPath the file to write the configuration to
+	 \param axesMapping the axes mapping to save
+	 \param buttonsMapping the buttons mapping to save
 	 */
-	bool configure(const std::string & mapFile);
+	static void saveConfiguration(const std::string & outputPath, const std::vector<int> & axesMapping, const std::vector<int> & buttonsMapping);
 	
+private:
 	
 	int _rawAxesCount = 0; ///< Number of axes returned by GLFW
 	int _rawButtonsCount = 0; ///< Number of buttons returned by GLFW
 	const float * _rawAxes = NULL; ///< Pointer to the axes returned by GLFW
 	const unsigned char * _rawButtons = NULL; ///< Pointer to the buttons returned by GLFW
 	
-	int _buttonCodes[ControllerInput::ControllerInputCount]; ///< Mapping from each ControllerInput to a raw GLFW button ID.
-	int _axisCodes[ControllerInput::ControllerInputCount]; ///< Mapping from each ControllerInput to a raw GLFW axis ID.
+	std::vector<int> _buttonCodes; ///< Mapping from each ControllerInput to a raw GLFW button ID.
+	std::vector<int> _axisCodes; ///< Mapping from each ControllerInput to a raw GLFW axis ID.
 	
 };
 
