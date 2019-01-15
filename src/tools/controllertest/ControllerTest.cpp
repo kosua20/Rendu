@@ -141,7 +141,7 @@ int main(int argc, char** argv) {
 	// Override window dimensions.
 	
 	config.initialWidth = 800;
-	config.initialHeight = 750;
+	config.initialHeight = 800;
 	GLFWwindow* window = Interface::initWindow("Controller test", config);
 	if(!window){
 		return -1;

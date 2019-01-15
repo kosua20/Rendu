@@ -20,7 +20,7 @@ bool CustomController::activate(int id){
 	
 	Log::Info() << Log::Input << "Joystick named " << std::string(glfwGetJoystickName(_id)) << "." << std::endl;
 	
-	const std::string settingsContent = Resources::manager().getString("controller_test.map");
+	const std::string settingsContent = Resources::manager().getString("controller_ps4.map");
 	const bool parseStatus = CustomController::parseConfiguration(settingsContent, _axisCodes, _buttonCodes);
 	if(!parseStatus){
 		_id = -1;
