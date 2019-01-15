@@ -61,7 +61,7 @@ function GraphicsSetup()
 		libdirs({"src/libs/glfw/lib-mac/", "src/libs/nfd/lib-mac/"})
 		links({"glfw3", "nfd", "OpenGL.framework", "Cocoa.framework", "IOKit.framework", "CoreVideo.framework", "AppKit.framework"})
 	elseif os.istarget("windows") then
-		libdirs({"src/libs/glfw/lib-win-vc2015-64/", "src/libs/nfd/lib-win-vc2017-64/"})
+		libdirs({"src/libs/glfw/lib-win-x64/"})
 		links({"glfw3", "nfd", "opengl32", "comctl32"})
 	else -- Assume linux
 		-- Libraries needed: OpenGL and glfw3.  glfw3 require X11, Xi, and so on...	
