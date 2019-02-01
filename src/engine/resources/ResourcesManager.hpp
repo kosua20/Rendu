@@ -66,7 +66,13 @@ private:
 	char * getRawData(const std::string & path, size_t & size);
 	
 public:
-
+	
+	
+	/** Add another resources directory/archive.
+	 \param path the path to the additional directory/archive to parse
+	 */
+	void addResources(const std::string & path);
+	
 	/** Get a text file resource.
 	 \param filename the file name
 	 \return the string content of the file
@@ -179,7 +185,6 @@ private:
 	Resources (const Resources&) = delete;
 	
 	
-	const std::string _rootPath; ///< The resources root path.
 	std::map<std::string, std::string> _files; ///< Listing of available files and their paths.
 	std::map<std::string, TextureInfos> _textures; ///< Loaded textures, identified by name.
 	std::map<std::string, MeshInfos> _meshes; ///< Loaded meshes, identified by name.
