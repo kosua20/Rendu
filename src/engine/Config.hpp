@@ -70,6 +70,9 @@ public:
 	/// Toggle V-Sync.
 	bool vsync = true;
 	
+	/// Prefered framerate.
+	int rate = 60;
+	
 	/// Toggle fullscreen window.
 	bool fullscreen = false;
 	

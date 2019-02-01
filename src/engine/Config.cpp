@@ -134,6 +134,8 @@ void RenderingConfig::processArguments(){
 		
 		if(key == "novsync"){
 			vsync = false;
+		} else if(key == "half-rate"){
+			rate = 30;
 		} else if(key == "fullscreen"){
 			fullscreen = true;
 		} else if(key == "internal-res" || key == "ivr"){
