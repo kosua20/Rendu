@@ -37,6 +37,7 @@ int main(int argc, char** argv) {
 		return -1;
 	}
 	
+	Resources::manager().addResources("../../../resources/pbrdemo");
 	// Initialize random generator;
 	Random::seed();
 	// Query the renderer identifier, and the supported OpenGL version.
@@ -107,6 +108,8 @@ int main(int argc, char** argv) {
 		
 		// Handle scene switching.
 		if(ImGui::Begin("Renderer")){
+			ImGui::Text("%.1f ms, %.1f fps", ImGui::GetIO().DeltaTime*1000.0f, ImGui::GetIO().Framerate);
+			
 			if(ImGui::Combo("Scene", &selected_scene, sceneNames, scenes.size()+1)){
 				if(selected_scene == scenes.size()){
 					renderer->setScene(nullptr);

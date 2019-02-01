@@ -80,7 +80,7 @@ function ShaderValidation()
 		-- Move to the build directory.
 		path.translate("{CHDIR} "..os.getcwd().."/build", sep),
 		-- Run the shader validator on the resources directory.
-		path.translate( "./shader_validator"..ext.." "..cwd.."/resources", sep)
+		path.translate( "./shader_validator"..ext.." "..cwd.."/resources/", sep)
 	})
 end	
 
@@ -106,7 +106,7 @@ project("Engine")
 	GraphicsSetup()
 	kind("StaticLib")
 	files({ "src/engine/**.hpp", "src/engine/**.cpp",
-			"resources/shaders/**.vert", "resources/shaders/**.frag", "resources/shaders/**.geom",
+			"resources/**.vert", "resources/**.frag", "resources/**.geom",
 			"src/libs/*/*.hpp", "src/libs/*/*.cpp", "src/libs/*/*.h"
 	})
 
