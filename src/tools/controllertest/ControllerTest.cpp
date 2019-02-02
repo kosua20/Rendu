@@ -13,180 +13,6 @@
  */
 
 
-/**
- Parse a buttons/axes mapping configuration from the given string.
- \param settingsContent the string containing the configuration to parse
- \param axesMapping the axes mapping to populate
- \param buttonsMapping the buttons mapping to populate
- \return true if the configuration was properly parsed
- \todo Update for SDL mappings.
- \ingroup ControllerTest
- */
-void saveConfiguration(const std::string & outputPath, const std::vector<int> & axesMapping, const std::vector<int> & buttonsMapping){
-	std::stringstream outputStr;
-	
-	// Read the first line to know the number of buttons and axes.
-	std::vector<std::string> inputNames = {
-		"ButtonX", "ButtonY", "ButtonA", "ButtonB", "BumperL1", "TriggerL2", "ButtonL3",
-		"BumperR1", "TriggerR2", "ButtonR3", "ButtonUp", "ButtonLeft", "ButtonDown", "ButtonRight",
-		"ButtonLogo", "ButtonMenu", "ButtonView", "PadLeftX", "PadLeftY", "PadRightX", "PadRightY",
-	};
-	for(int i = 0; i < Controller::ControllerInputCount; ++i){
-		outputStr << inputNames[i] << " : ";
-		const int bid = buttonsMapping[i];
-		const int aid = axesMapping[i];
-		if(aid >= 0){
-			outputStr << "A" << aid;
-		}
-		if(bid >= 0){
-			if(aid >= 0){
-				outputStr << ",";
-			}
-			outputStr << "B" << bid;
-		}
-		outputStr << std::endl;
-	}
-	Resources::saveStringToExternalFile(outputPath, outputStr.str());
-}
-
-/**
- Save a configuration to a file on disk.
- \param outputPath the file to write the configuration to
- \param axesMapping the axes mapping to save
- \param buttonsMapping the buttons mapping to save
- \todo Update for SDL mappings.
- \ingroup ControllerTest
- */
-bool parseConfiguration(const std::string & settingsContent, std::vector<int> & axesMapping, std::vector<int> & buttonsMapping){
-	
-	// If no mapping found, return. \todo disable cotroller
-	if(settingsContent.empty()){
-		Log::Error() << Log::Input << "No settings found for the controller." << std::endl;
-		return false;
-	}
-	axesMapping.clear();
-	buttonsMapping.clear();
-	axesMapping.resize(Controller::ControllerInputCount, -1);
-	buttonsMapping.resize(Controller::ControllerInputCount, -1);
-	
-	// Parse the config file and update the map with it.
-	std::istringstream lines(settingsContent);
-	std::string line;
-	// Read the first line to know the number of buttons and axes.
-	while(std::getline(lines,line)){
-		// Skip comments.
-		if(line.empty() || line[0] == '#'){
-			continue;
-		}
-		// Split line at colon.
-		const size_t separatorPos = line.find_first_of(":");
-		// If no colon, skip.
-		if(separatorPos == std::string::npos){
-			continue;
-		}
-		const std::string key = Resources::trim(Resources::trim(line.substr(0, separatorPos), " "), "\t");
-		
-		int bval = -1;
-		int aval = -1;
-		
-		const std::string codes = Resources::trim(Resources::trim(line.substr(separatorPos + 1), " "), "\t");
-		const size_t separator2Pos = codes.find_first_of(",");
-		std::vector<std::string> codeStrings;
-		if(separator2Pos == std::string::npos){
-			codeStrings.push_back(codes);
-		} else {
-			// Split.
-			codeStrings.push_back(codes.substr(0, separator2Pos));
-			codeStrings.push_back(codes.substr(separator2Pos+1));
-		}
-		
-		for(const auto & codeStr : codeStrings){
-			if(codeStr.size() < 2){
-				continue;
-			}
-			if(codeStr[0] == 'B'){
-				bval = std::stoi(codeStr.substr(1));
-			} else if(codeStr[0] == 'A'){
-				aval = std::stoi(codeStr.substr(1));
-			} else {
-				Log::Warning() << Log::Input << "Controller configuration file contains erroneous code." << std::endl;
-			}
-		}
-		
-		if(key == "ButtonX") {
-			buttonsMapping[Controller::ButtonX] = bval;
-			axesMapping[Controller::ButtonX] = aval;
-		} else if(key == "ButtonY"){
-			buttonsMapping[Controller::ButtonY] = bval;
-			axesMapping[Controller::ButtonY] = aval;
-		} else if(key == "ButtonA"){
-			buttonsMapping[Controller::ButtonA] = bval;
-			axesMapping[Controller::ButtonA] = aval;
-		} else if(key == "ButtonB"){
-			buttonsMapping[Controller::ButtonB] = bval;
-			axesMapping[Controller::ButtonB] = aval;
-		} else if(key == "BumperL1"){
-			buttonsMapping[Controller::BumperL1] = bval;
-			axesMapping[Controller::BumperL1] = aval;
-		} else if(key == "TriggerL2"){
-			buttonsMapping[Controller::TriggerL2] = bval;
-			axesMapping[Controller::TriggerL2] = aval;
-		} else if(key == "ButtonL3"){
-			buttonsMapping[Controller::ButtonL3] = bval;
-			axesMapping[Controller::ButtonL3] = aval;
-		} else if(key == "BumperR1"){
-			buttonsMapping[Controller::BumperR1] = bval;
-			axesMapping[Controller::BumperR1] = aval;
-		} else if(key == "TriggerR2"){
-			buttonsMapping[Controller::TriggerR2] = bval;
-			axesMapping[Controller::TriggerR2] = aval;
-		} else if(key == "ButtonR3"){
-			buttonsMapping[Controller::ButtonR3] = bval;
-			axesMapping[Controller::ButtonR3] = aval;
-		} else if(key == "ButtonUp"){
-			buttonsMapping[Controller::ButtonUp] = bval;
-			axesMapping[Controller::ButtonUp] = aval;
-		} else if(key == "ButtonLeft"){
-			buttonsMapping[Controller::ButtonLeft] = bval;
-			axesMapping[Controller::ButtonLeft] = aval;
-		} else if(key == "ButtonDown"){
-			buttonsMapping[Controller::ButtonDown] = bval;
-			axesMapping[Controller::ButtonDown] = aval;
-		} else if(key == "ButtonRight"){
-			buttonsMapping[Controller::ButtonRight] = bval;
-			axesMapping[Controller::ButtonRight] = aval;
-		} else if(key == "ButtonLogo"){
-			buttonsMapping[Controller::ButtonLogo] = bval;
-			axesMapping[Controller::ButtonLogo] = aval;
-		} else if(key == "ButtonMenu"){
-			buttonsMapping[Controller::ButtonMenu] = bval;
-			axesMapping[Controller::ButtonMenu] = aval;
-		} else if(key == "ButtonView"){
-			buttonsMapping[Controller::ButtonView] = bval;
-			axesMapping[Controller::ButtonView] = aval;
-		} else if(key == "PadLeftX"){
-			buttonsMapping[Controller::PadLeftX] = bval;
-			axesMapping[Controller::PadLeftX] = aval;
-		} else if(key == "PadLeftY"){
-			buttonsMapping[Controller::PadLeftY] = bval;
-			axesMapping[Controller::PadLeftY] = aval;
-		} else if(key == "PadRightX"){
-			buttonsMapping[Controller::PadRightX] = bval;
-			axesMapping[Controller::PadRightX] = aval;
-		} else if(key == "PadRightY"){
-			buttonsMapping[Controller::PadRightY] = bval;
-			axesMapping[Controller::PadRightY] = aval;
-		} else {
-			// Unknown key, ignore.
-			Log::Error() << Log::Input << "Controller configuration file contains unknown key: " << key << "." << std::endl;
-		}
-	}
-	return true;
-	
-}
-
-
-
 /** \brief Display a numbered combo list for a given button or axis mapping.
  \param label title of the combo
  \param count number of items
@@ -303,6 +129,67 @@ void drawButton(ImDrawList * drawList, const Controller::ControllerInput bid, co
 }
 
 /**
+ Draw a target circle and threshold along with the current pad position.
+ \param idX the ID of the horizontal axis
+ \param idY the ID of the vertical axis
+ \param axesValues the axes raw values
+ \param threshRadius the radius of the filtering threshold
+ \ingroup ControllerTest
+ */
+void drawPadTarget(const int idX, const int idY, const std::vector<float> & axesValues, const float threshRadius){
+	const ImU32 whiteColor = IM_COL32(255,255,255, 255);
+	const int aidRX = idX;
+	const int aidRY = idY;
+	const float magRX = aidRX >= 0 ? axesValues[aidRX] : 0.0f;
+	const float magRY = aidRY >= 0 ? axesValues[aidRY] : 0.0f;
+	// Detect overflow on each axis.
+	const bool overflow = (std::abs(magRX) > 1.0) || (std::abs(magRY) > 1.0);
+	// Get current rendering position on screen.
+	const ImVec2 posR = ImGui::GetCursorScreenPos();
+	ImDrawList * drawListR = ImGui::GetWindowDrawList();
+	// Draw "safe" region.
+	drawListR->AddRectFilled(posR, ImVec2(posR.x + 200, posR.y + 200), overflow ? IM_COL32(30,0,0,255) : IM_COL32(0,30,0, 255));
+	drawListR->AddCircleFilled(ImVec2(posR.x + 100, posR.y + 100), threshRadius, IM_COL32(0, 0, 0, 255), 32);
+	// Draw frame and cross lines.
+	drawListR->AddRect(posR, ImVec2(posR.x + 200, posR.y + 200), overflow ? IM_COL32(255,0,0, 255) : whiteColor);
+	drawListR->AddLine(ImVec2(posR.x + 100, posR.y), ImVec2(posR.x + 100, posR.y+200), whiteColor);
+	drawListR->AddLine(ImVec2(posR.x, posR.y + 100), ImVec2(posR.x + 200, posR.y+100), whiteColor);
+	// Draw threshold and unit radius circles.
+	drawListR->AddCircle(ImVec2(posR.x + 100, posR.y + 100), threshRadius, IM_COL32(0, 255, 0, 255), 32);
+	drawListR->AddCircle(ImVec2(posR.x + 100, posR.y + 100), 100, whiteColor, 32);
+	// Current axis position.
+	drawListR->AddCircleFilled(ImVec2(posR.x + magRX * 100 + 100, posR.y + magRY * 100 + 100), 10, whiteColor);
+}
+
+/**
+ Draw a target circle and threshold along with the current pad position.
+ \param idT the ID of the trigger axis
+ \param axesValues the axes raw values
+ \param threshRadius the radius of the filtering threshold
+ \ingroup ControllerTest
+ */
+void drawTriggerTarget(const int idT, const std::vector<float> & axesValues, const float threshRadius){
+	const ImU32 whiteColor = IM_COL32(255,255,255, 255);
+	const int aidLT = idT;
+	const float magLT = aidLT >= 0 ? axesValues[aidLT]*0.5+0.5f : 0.0f;
+	// Detect overflow.
+	const bool overflow = (magLT > 1.0f || magLT < 0.0f);
+	// Get current rendering position on screen.
+	const ImVec2 posR = ImGui::GetCursorScreenPos();
+	ImDrawList * drawListR = ImGui::GetWindowDrawList();
+	const float thresholdY = (200.0f-2.0f*threshRadius);
+	const float currentY = 200*(1.0f-magLT);
+	// Draw "safe" region.
+	drawListR->AddRectFilled(posR, ImVec2(posR.x+40, posR.y+thresholdY), overflow ? IM_COL32(30,0,0,255) : IM_COL32(0,30,0, 255));
+	// Draw threshold line.
+	drawListR->AddLine(ImVec2(posR.x, posR.y + thresholdY), ImVec2(posR.x + 40, posR.y+thresholdY), IM_COL32(0, 255, 0, 255));
+	// Draw frame.
+	drawListR->AddRect(posR, ImVec2(posR.x + 40, posR.y + 200), overflow ? IM_COL32(255,0,0, 255) : whiteColor);
+	// Current axis position.
+	drawListR->AddLine(ImVec2(posR.x, posR.y + currentY), ImVec2(posR.x + 40, posR.y + currentY), whiteColor, 4.0f);
+}
+
+/**
  The main function of the controller tester.
  \param argc the number of input arguments.
  \param argv a pointer to the raw input arguments.
@@ -333,7 +220,7 @@ int main(int argc, char** argv) {
 	
 	bool firstFrame = true;
 	const ImU32 highlightColor = IM_COL32(172, 172, 172, 255);
-	const ImU32 whiteColor = IM_COL32(255,255,255, 255);
+	
 	float threshold = 0.02f;
 	
 	// Start the display/interaction loop.
@@ -385,6 +272,10 @@ int main(int argc, char** argv) {
 				// Start from the end for the axes.
 				for(int i = 0; i < std::min(int(axesMapping.size()), axesCount); ++i){
 					const int actionId = axesMapping.size() - 1 - i;
+					// Avoid double mappings.
+					if(buttonsMapping[actionId] >= 0){
+						continue;
+					}
 					axesMapping[actionId] = i;
 				}
 			}
@@ -415,7 +306,7 @@ int main(int argc, char** argv) {
 					const bool res = Interface::showPicker(Interface::Load, "", inputPath);
 					if(res && !inputPath.empty()){
 						const std::string settingsContent = Resources::manager().loadStringFromExternalFile(inputPath);
-						GamepadController::parseConfiguration(settingsContent, axesMapping, buttonsMapping);
+						Controller::parseConfiguration(settingsContent, axesMapping, buttonsMapping);
 					}
 				}
 				ImGui::SameLine();
@@ -423,7 +314,8 @@ int main(int argc, char** argv) {
 					std::string outputPath;
 					const bool res = Interface::showPicker(Interface::Save, "", outputPath);
 					if(res && !outputPath.empty()){
-						GamepadController::saveConfiguration(outputPath, axesMapping, buttonsMapping);
+						const auto controller = Input::manager().controller();
+						Controller::saveConfiguration(outputPath, controller->guid(), controller->name(), axesMapping, buttonsMapping);
 					}
 				}
 				ImGui::Separator();
@@ -482,6 +374,18 @@ int main(int argc, char** argv) {
 						drawList->AddCircleFilled(ImVec2(pos.x+296, pos.y+179), 26, IM_COL32(0, 0, 0, 255));
 					}
 					
+					// Render the left trigger (assuming its default value is -1.0).
+					const int aidLT = axesMapping[Controller::TriggerL2];
+					const float magLT = aidLT >= 0 ? controller->allAxes[aidLT]*0.5+0.5f : 0.0f;
+					if(aidLT >= 0 && (magLT*magLT > threshold)){
+						drawButton(drawList, Controller::TriggerL2, pos, highlightColor);
+					}
+					// And the right trigger (assuming its default value is -1.0).
+					const int aidRT = axesMapping[Controller::TriggerR2];
+					const float magRT = aidRT >= 0 ? controller->allAxes[aidRT]*0.5+0.5f : 0.0f;
+					if(aidRT >= 0 && (magRT*magRT > threshold)){
+						drawButton(drawList, Controller::TriggerR2, pos, highlightColor);
+					}
 					
 					// Render each button if active.
 					for(int bid = 0; bid < buttonsMapping.size(); ++bid){
@@ -528,7 +432,13 @@ int main(int argc, char** argv) {
 					showCombo("Left Y", axesCount, "A", axesMapping[Controller::PadLeftY]);
 					showCombo("Right X", axesCount, "A", axesMapping[Controller::PadRightX]);  ImGui::SameLine(spacing);
 					showCombo("Right Y", axesCount, "A", axesMapping[Controller::PadRightY]);
+					showCombo("L. trigger", axesCount, "A", axesMapping[Controller::TriggerL2]); ImGui::SameLine(spacing);
+					showCombo("R. trigger", axesCount, "A", axesMapping[Controller::TriggerR2]);
 					
+					ImGui::PopItemWidth();
+					// Add threshold setup slider.
+					ImGui::PushItemWidth(240);
+					ImGui::SliderFloat("Threshold", &threshold, 0.0f, 0.3f);
 					ImGui::PopItemWidth();
 					ImGui::EndChild();
 				}
@@ -537,67 +447,33 @@ int main(int argc, char** argv) {
 				if(ImGui::CollapsingHeader("Calibration##HEADER", ImGuiTreeNodeFlags_DefaultOpen)){
 					
 					const float threshRadius = sqrt(threshold) * 100;
+					// Titles.
+					ImGui::Text("Left pad & trigger"); ImGui::SameLine(300); ImGui::Text("Right pad & trigger");
 					
 					// Left pad.
-					ImGui::Text("Left pad");ImGui::SameLine(220); ImGui::Text("Right pad");
 					ImGui::BeginChild("PadLeftTarget", ImVec2(200, 200));
-					{
-						const int aidLX = axesMapping[Controller::PadLeftX];
-						const int aidLY = axesMapping[Controller::PadLeftY];
-						const float magLX = aidLX >= 0 ? controller->allAxes[aidLX] : 0.0f;
-						const float magLY = aidLY >= 0 ? controller->allAxes[aidLY] : 0.0f;
-						// Detect overflow on each axis.
-						const bool overflow = (std::abs(magLX) > 1.0) || (std::abs(magLY) > 1.0);
-						// Get current rendering position on screen.
-						const ImVec2 posL = ImGui::GetCursorScreenPos();
-						ImDrawList * drawListL = ImGui::GetWindowDrawList();
-						// Draw "safe" region.
-						drawListL->AddRectFilled(posL, ImVec2(posL.x + 200, posL.y + 200), overflow ? IM_COL32(30,0,0,255) : IM_COL32(0,30,0, 255));
-						drawListL->AddCircleFilled(ImVec2(posL.x + 100, posL.y + 100), threshRadius, IM_COL32(0, 0, 0, 255), 32);
-						// Draw frame and cross lines.
-						drawListL->AddRect(posL, ImVec2(posL.x + 200, posL.y + 200), overflow ? IM_COL32(255,0,0, 255) : whiteColor);
-						drawListL->AddLine(ImVec2(posL.x + 100, posL.y),ImVec2(posL.x + 100, posL.y+200), whiteColor);
-						drawListL->AddLine(ImVec2(posL.x, posL.y + 100),ImVec2(posL.x + 200, posL.y+100), whiteColor);
-						// Draw threshold and unit radius circles.
-						drawListL->AddCircle(ImVec2(posL.x + 100, posL.y + 100), threshRadius, IM_COL32(0, 255,0, 255), 32);
-						drawListL->AddCircle(ImVec2(posL.x + 100, posL.y + 100), 100, whiteColor, 32);
-						// Current axis position.
-						drawListL->AddCircleFilled(ImVec2(posL.x + magLX * 100 + 100, posL.y + magLY * 100 + 100), 10, whiteColor);
-					}
+					drawPadTarget(axesMapping[Controller::PadLeftX], axesMapping[Controller::PadLeftY], controller->allAxes, threshRadius);
 					ImGui::EndChild();
 					ImGui::SameLine(220);
+					// Left trigger
+					ImGui::BeginChild("TriggerL2", ImVec2(40, 200));
+					drawTriggerTarget(axesMapping[Controller::TriggerL2], controller->allAxes, threshRadius);
+					ImGui::EndChild();
 					
+					ImGui::SameLine(300);
 					// Right pad.
 					ImGui::BeginChild("PadRightTarget", ImVec2(200, 200));
-					{
-						const int aidRX = axesMapping[Controller::PadRightX];
-						const int aidRY = axesMapping[Controller::PadRightY];
-						const float magRX = aidRX >= 0 ? controller->allAxes[aidRX] : 0.0f;
-						const float magRY = aidRY >= 0 ? controller->allAxes[aidRY] : 0.0f;
-						// Detect overflow on each axis.
-						const bool overflow = (std::abs(magRX) > 1.0) || (std::abs(magRY) > 1.0);
-						// Get current rendering position on screen.
-						const ImVec2 posR = ImGui::GetCursorScreenPos();
-						ImDrawList * drawListR = ImGui::GetWindowDrawList();
-						// Draw "safe" region.
-						drawListR->AddRectFilled(posR, ImVec2(posR.x + 200, posR.y + 200), overflow ? IM_COL32(30,0,0,255) : IM_COL32(0,30,0, 255));
-						drawListR->AddCircleFilled(ImVec2(posR.x + 100, posR.y + 100), threshRadius, IM_COL32(0, 0, 0, 255), 32);
-						// Draw frame and cross lines.
-						drawListR->AddRect(posR, ImVec2(posR.x + 200, posR.y + 200), overflow ? IM_COL32(255,0,0, 255) : whiteColor);
-						drawListR->AddLine(ImVec2(posR.x + 100, posR.y), ImVec2(posR.x + 100, posR.y+200), whiteColor);
-						drawListR->AddLine(ImVec2(posR.x, posR.y + 100), ImVec2(posR.x + 200, posR.y+100), whiteColor);
-						// Draw threshold and unit radius circles.
-						drawListR->AddCircle(ImVec2(posR.x + 100, posR.y + 100), threshRadius, IM_COL32(0, 255, 0, 255), 32);
-						drawListR->AddCircle(ImVec2(posR.x + 100, posR.y + 100), 100, whiteColor, 32);
-						// Current axis position.
-						drawListR->AddCircleFilled(ImVec2(posR.x + magRX * 100 + 100, posR.y + magRY * 100 + 100), 10, whiteColor);
-					}
+					drawPadTarget(axesMapping[Controller::PadRightX], axesMapping[Controller::PadRightY], controller->allAxes, threshRadius);
 					ImGui::EndChild();
-					// Add threshold setup slider.
-					ImGui::SameLine();
-					ImGui::PushItemWidth(200);
-					ImGui::SliderFloat("Threshold", &threshold, 0.0f, 0.3f);
-					ImGui::PopItemWidth();
+					
+					// Right trigger
+					ImGui::SameLine(520);
+					ImGui::BeginChild("TriggerR2", ImVec2(40, 200));
+					drawTriggerTarget(axesMapping[Controller::TriggerR2], controller->allAxes, threshRadius);
+					ImGui::EndChild();
+					
+					
+					
 				}
 			}
 		}
