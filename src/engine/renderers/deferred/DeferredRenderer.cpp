@@ -243,10 +243,6 @@ void DeferredRenderer::draw() {
 void DeferredRenderer::update(){
 	Renderer::update();
 	_userCamera.update();
-	
-	if(Input::manager().triggered(Input::KeyO)){
-		GLUtilities::saveDefaultFramebuffer((unsigned int)_config.screenResolution[0], (unsigned int)_config.screenResolution[1], "./test-default");
-	}
 }
 
 void DeferredRenderer::physics(double fullTime, double frameTime){

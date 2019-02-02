@@ -40,7 +40,7 @@
 - Joystick support
 - HDR, bloom
 - Physically based rendering
-- Spotlights, point lights shadow maps
+- Spot lights and point lights shadow maps
 - Atmospheric scattering
 - Shader offline validation
 
@@ -58,7 +58,6 @@
 
 ## Engineering
 
-- Framebuffers with multiple attachments using descriptors
 - Support PS4 controller fully
 - Additional controllers support
 - Separate backgrounds and objects
