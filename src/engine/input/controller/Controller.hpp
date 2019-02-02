@@ -98,7 +98,7 @@ public:
 	 \param settingsContent the string containing the configuration to parse
 	 \param axesMapping the axes mapping to populate
 	 \param buttonsMapping the buttons mapping to populate
-	 \return true if the configuration was properly saved
+	 \return true if the configuration was properly parsed
 	 */
 	static bool parseConfiguration(const std::string & settingsContent, std::vector<int> & axesMapping, std::vector<int> & buttonsMapping);
 	

@@ -129,7 +129,7 @@ void drawButton(ImDrawList * drawList, const Controller::ControllerInput bid, co
 }
 
 /**
- Draw a target circle and threshold along with the current pad position.
+ \brief Draw a target circle and threshold along with the current pad position.
  \param idX the ID of the horizontal axis
  \param idY the ID of the vertical axis
  \param axesValues the axes raw values
@@ -162,10 +162,10 @@ void drawPadTarget(const int idX, const int idY, const std::vector<float> & axes
 }
 
 /**
- Draw a target circle and threshold along with the current pad position.
+ \brief Draw a target line and threshold along with the current trigger position.
  \param idT the ID of the trigger axis
  \param axesValues the axes raw values
- \param threshRadius the radius of the filtering threshold
+ \param threshRadius the value of the filtering threshold
  \ingroup ControllerTest
  */
 void drawTriggerTarget(const int idT, const std::vector<float> & axesValues, const float threshRadius){

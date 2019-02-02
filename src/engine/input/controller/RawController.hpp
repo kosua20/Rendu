@@ -32,7 +32,7 @@ public:
 	void update();
 		
 	std::vector<float> allAxes; ///< Raw intensity values on all axes.
-	std::vector<Controller::ControllerButton> allButtons; ///< Mapping of each button.
+	std::vector<Controller::ControllerButton> allButtons; ///< State of each button.
 	
 private:
 	
