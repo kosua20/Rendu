@@ -147,8 +147,11 @@ public:
 	/**
 	 \name Input settings
 	 @{*/
-	void debug(const bool isDebug);
 	
+	/** Disable the GLFW/SDL available controller mappings.
+	 \param prefer should the input only use raw controllers
+	 */
+	void preferRawControllers(bool prefer);
 	
 	/**@}*/
 	
@@ -335,7 +338,7 @@ private:
 	// Joystick state.
 	int _activeController = -1; ///< The active joystick ID, or -1 if no controller active.
 	std::shared_ptr<Controller> _controllers[GLFW_JOYSTICK_LAST+1]; ///< States of all possible controllers.
-	bool _debugController = false;
+	bool _preferRawControllers = false;
 	bool _joystickConnected = false;
 	bool _joystickDisconnected = false;
 	

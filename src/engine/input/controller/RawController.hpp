@@ -1,5 +1,5 @@
-#ifndef DebugController_h
-#define DebugController_h
+#ifndef RawController_h
+#define RawController_h
 
 #include "Controller.hpp"
 #include "../../Common.hpp"
@@ -9,12 +9,12 @@
  \brief Represents a controller used for debug, where all raw buttons are shown.
  \ingroup Input
  */
-class DebugController : public Controller {
+class RawController : public Controller {
 
 public:
 	
 	/// Constructor
-	DebugController();
+	RawController();
 	
 	/**
 	 \copydoc Controller::activate
@@ -31,18 +31,18 @@ public:
 	 */
 	void update();
 	
+	/** Query the name of the controller.
+	 \return the name
+	 */
 	std::string name() const { return _name; }
-	int id() const { return _id; }
 	
-	std::vector<float> allAxes;
-	std::vector<Controller::ControllerButton> allButtons;
+	std::vector<float> allAxes; ///< Raw intensity values on all axes.
+	std::vector<Controller::ControllerButton> allButtons; ///< Mapping of each button.
 	
 private:
 	std::string _name; ///< Name of the joystick
 	int _rawAxesCount = 0; ///< Number of axes returned by GLFW
 	int _rawButtonsCount = 0; ///< Number of buttons returned by GLFW
-//	const float * _rawAxes = NULL; ///< Pointer to the axes returned by GLFW
-//	const unsigned char * _rawButtons = NULL; ///< Pointer to the buttons returned by GLFW
 	
 	
 };

@@ -65,6 +65,11 @@ public:
 	 */
 	float axis(const ControllerInput & input) const;
 	
+	/** Query the controller ID.
+	 \return the id
+	 */
+	int id() const { return _id; }
+	
 	/// Destructor;
 	virtual ~Controller();
 	
