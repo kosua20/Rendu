@@ -30,20 +30,14 @@ public:
 	 \copydoc Controller::update
 	 */
 	void update();
-	
-	/** Query the name of the controller.
-	 \return the name
-	 */
-	std::string name() const { return _name; }
-	
+		
 	std::vector<float> allAxes; ///< Raw intensity values on all axes.
 	std::vector<Controller::ControllerButton> allButtons; ///< Mapping of each button.
 	
 private:
-	std::string _name; ///< Name of the joystick
+	
 	int _rawAxesCount = 0; ///< Number of axes returned by GLFW
 	int _rawButtonsCount = 0; ///< Number of buttons returned by GLFW
-	
 	
 };
 

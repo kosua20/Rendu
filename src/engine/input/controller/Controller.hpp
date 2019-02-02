@@ -70,8 +70,37 @@ public:
 	 */
 	int id() const { return _id; }
 	
+	/** Query the name of the controller.
+	 \return the name
+	 */
+	std::string name() const { return _name; }
+	
+	/** Query the SDL/GLFW GUID of the controller.
+	 \return the guid
+	 */
+	std::string guid() const { return _name; }
+	
 	/// Destructor;
 	virtual ~Controller();
+	
+	/**
+	 Save a configuration to a file on disk.
+	 \param outputPath the file to write the configuration to
+	 \param guid the GLFW/SDL GUID
+	 \param name the user-readable name
+	 \param axesMapping the axes mapping to save
+	 \param buttonsMapping the buttons mapping to save
+	 */
+	static void saveConfiguration(const std::string & outputPath, const std::string & guid, const std::string & name, const std::vector<int> & axesMapping, const std::vector<int> & buttonsMapping);
+	
+	/**
+	 Parse a buttons/axes mapping configuration from the given string.
+	 \param settingsContent the string containing the configuration to parse
+	 \param axesMapping the axes mapping to populate
+	 \param buttonsMapping the buttons mapping to populate
+	 \return true if the configuration was properly saved
+	 */
+	static bool parseConfiguration(const std::string & settingsContent, std::vector<int> & axesMapping, std::vector<int> & buttonsMapping);
 	
 protected:
 	
@@ -90,7 +119,8 @@ protected:
 	float _axes[ControllerInput::ControllerInputCount]; ///< States of all possible axis.
 	
 	int _id = -1;///< Joystick ID (or -1 if no joystick is connected).
-	
+	std::string _name = "Unknown"; ///< Name of the joystick
+	std::string _guid = "0x0"; ///< GUID of the joystick
 	
 };
 

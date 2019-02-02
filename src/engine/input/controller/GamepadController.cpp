@@ -13,7 +13,9 @@ bool GamepadController::activate(int id){
 	
 	reset();
 	_id = id;
-	Log::Info() << Log::Input << "Gamepad named " << std::string(glfwGetGamepadName(_id)) << "." << std::endl;
+	_name = std::string(glfwGetGamepadName(_id));
+	_guid = std::string(glfwGetJoystickGUID(_id));
+	Log::Info() << Log::Input << "Gamepad named " << _name << "." << std::endl;
 	return true;
 }
 

@@ -9,6 +9,7 @@ bool RawController::activate(int id){
 	
 	_id = id;
 	_name = std::string(glfwGetJoystickName(_id));
+	_guid = std::string(glfwGetJoystickGUID(_id));
 	Log::Info() << Log::Input << "Raw joystick named " << _name << "." << std::endl;
 	
 	return true;
@@ -51,4 +52,3 @@ void RawController::update(){
 	}
 	
 }
-
