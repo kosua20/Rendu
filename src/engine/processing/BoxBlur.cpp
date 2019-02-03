@@ -54,3 +54,11 @@ void BoxBlur::clean() const {
 void BoxBlur::resize(unsigned int width, unsigned int height){
 	_finalFramebuffer->resize(width, height);
 }
+
+void BoxBlur::clear(){
+	_finalFramebuffer->bind();
+	_finalFramebuffer->setViewport();
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+	_finalFramebuffer->unbind();
+}
