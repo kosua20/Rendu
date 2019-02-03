@@ -19,7 +19,7 @@ void Renderer::update(){
 		resize((unsigned int)Input::manager().size()[0], (unsigned int)Input::manager().size()[1]);
 	}
 	// Perform screenshot capture in the current working directory.
-	if(Input::manager().triggered(Input::KeyO) || (Input::manager().controller() && Input::manager().controller()->triggered(Controller::ButtonView))){
+	if(Input::manager().triggered(Input::KeyO) || (Input::manager().controllerAvailable() && Input::manager().controller()->triggered(Controller::ButtonView))){
 		GLUtilities::saveDefaultFramebuffer((unsigned int)_config.screenResolution[0], (unsigned int)_config.screenResolution[1], "./test-default");
 	}
 }
