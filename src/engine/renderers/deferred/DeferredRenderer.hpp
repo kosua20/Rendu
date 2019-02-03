@@ -97,6 +97,11 @@ private:
 	std::shared_ptr<Scene> _scene; ///< The scene to render
 	
 	bool _debugVisualization = false; ///< Toggle the rendering of debug informations.
+	bool _applyBloom = true;
+	bool _applyTonemapping = true;
+	bool _applyFXAA = true;
+	bool _applySSAO = true;
+	bool _updateShadows = true;
 };
 
 #endif

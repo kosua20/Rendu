@@ -79,6 +79,23 @@ int main(int argc, char** argv) {
 		}
 		
 		
+		// Start a new frame for the interface.
+		Interface::beginFrame();
+		
+		// Handle scene switching.
+		if(ImGui::Begin("Renderer")){
+			ImGui::Text("%.1f ms, %.1f fps", ImGui::GetIO().DeltaTime*1000.0f, ImGui::GetIO().Framerate);
+			
+			if(ImGui::Combo("Scene", &selected_scene, sceneNames, scenes.size()+1)){
+				if(selected_scene == scenes.size()){
+					renderer->setScene(nullptr);
+				} else {
+					Log::Info() << Log::Resources << "Loading scene " << sceneNames[selected_scene] << "." << std::endl;
+					renderer->setScene(scenes[selected_scene]);
+				}
+			}
+		}
+		ImGui::End();
 		
 		// We separate punctual events from the main physics/movement update loop.
 		renderer->update();
@@ -102,24 +119,6 @@ int main(int argc, char** argv) {
 			fullTime += deltaTime;
 			remainingTime -= deltaTime;
 		}
-		
-		// Start a new frame for the interface.
-		Interface::beginFrame();
-		
-		// Handle scene switching.
-		if(ImGui::Begin("Renderer")){
-			ImGui::Text("%.1f ms, %.1f fps", ImGui::GetIO().DeltaTime*1000.0f, ImGui::GetIO().Framerate);
-			
-			if(ImGui::Combo("Scene", &selected_scene, sceneNames, scenes.size()+1)){
-				if(selected_scene == scenes.size()){
-					renderer->setScene(nullptr);
-				} else {
-					Log::Info() << Log::Resources << "Loading scene " << sceneNames[selected_scene] << "." << std::endl;
-					renderer->setScene(scenes[selected_scene]);
-				}
-			}
-		}
-		ImGui::End();
 		
 		// Update the content of the window.
 		renderer->draw();
