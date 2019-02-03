@@ -349,6 +349,8 @@ TextureInfos GLUtilities::loadTexture(const std::vector<std::string>& paths, boo
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
 	
+	glBindTexture(GL_TEXTURE_2D, 0);
+	
 	infos.id = textureId;
 	infos.width = width;
 	infos.height = height;
@@ -423,6 +425,7 @@ TextureInfos GLUtilities::loadTextureCubemap(const std::vector<std::vector<std::
 	if(allPaths.size() == 1){
 		glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 	}
+	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 	
 	infos.id = textureId;
 	infos.width = width;
@@ -515,6 +518,8 @@ MeshInfos GLUtilities::setupBuffers(const Mesh & mesh){
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * mesh.indices.size(), &(mesh.indices[0]), GL_STATIC_DRAW);
 	
 	glBindVertexArray(0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	
 	infos.vId = vao;
 	infos.eId = ebo;
