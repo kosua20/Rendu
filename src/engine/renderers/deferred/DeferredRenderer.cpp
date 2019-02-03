@@ -257,11 +257,14 @@ void DeferredRenderer::update(){
 	
 	if(ImGui::Begin("Renderer")){
 		ImGui::Separator();
-		ImGui::PushItemWidth(120);
+		ImGui::PushItemWidth(100);
 		ImGui::InputFloat("Camera speed", &_userCamera.speed(), 0.1f, 1.0f);
 		ImGui::Combo("Camera mode", (int*)(&_userCamera.mode()), "FPS\0Turntable\0Joystick\0\0", 3);
-		ImGui::PopItemWidth();
 		ImGui::Separator();
+		if(ImGui::InputInt("Vertical res.", &_config.internalVerticalResolution, 50, 200)){
+			resize(int(_config.screenResolution[0]), int(_config.screenResolution[1]));
+		}
+		ImGui::PopItemWidth();
 		ImGui::Checkbox("SSAO", &_applySSAO); ImGui::SameLine(120);
 		ImGui::Checkbox("Bloom", &_applyBloom);
 		ImGui::Checkbox("Tonemapping ", &_applyTonemapping); ImGui::SameLine(120);
