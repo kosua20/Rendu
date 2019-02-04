@@ -70,6 +70,9 @@ public:
 	/// Toggle V-Sync.
 	bool vsync = true;
 	
+	/// Prefered framerate.
+	int rate = 60;
+	
 	/// Toggle fullscreen window.
 	bool fullscreen = false;
 	
@@ -81,7 +84,7 @@ public:
 	
 	/// \brief Internal vertical rendering resolution.
 	/// \note The width should be computed based on the window aspect ratio.
-	float internalVerticalResolution = 720.0f;
+	int internalVerticalResolution = 720;
 	
 	/// Size of the window in raw pixels, updated at launch based on screen density.
 	glm::vec2 screenResolution = glm::vec2(800.0,600.0);

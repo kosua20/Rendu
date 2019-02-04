@@ -1,24 +1,25 @@
-#include "DebugController.hpp"
+#include "RawController.hpp"
 
-DebugController::DebugController() : Controller() {
+RawController::RawController() : Controller() {
 	
 } 
 
-bool DebugController::activate(int id){
+bool RawController::activate(int id){
 	reset();
 	
 	_id = id;
 	_name = std::string(glfwGetJoystickName(_id));
-	Log::Info() << Log::Input << "Joystick named " << _name << "." << std::endl;
+	_guid = std::string(glfwGetJoystickGUID(_id));
+	Log::Info() << Log::Input << "Raw joystick named " << _name << "." << std::endl;
 	
 	return true;
 }
 
-void DebugController::deactivate(){
+void RawController::deactivate(){
 	_id = -1;
 }
 
-void DebugController::update(){
+void RawController::update(){
 	// Update buttons flags.
 	const float * rawAxes = glfwGetJoystickAxes(_id, &_rawAxesCount);
 	const unsigned char * rawButtons = glfwGetJoystickButtons(_id, &_rawButtonsCount);
@@ -51,4 +52,3 @@ void DebugController::update(){
 	}
 	
 }
-

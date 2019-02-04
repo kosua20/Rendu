@@ -22,14 +22,14 @@ void ControllableCamera::update(){
 	if(Input::manager().triggered(Input::KeyR)){
 		reset();
 	}
-	if(Input::manager().triggered(Input::KeyF)){
+	if(Input::manager().triggered(Input::KeyF) ){
 		_mode = FPS;
 	}
-	if(Input::manager().triggered(Input::KeyG)){
+	if(Input::manager().triggered(Input::KeyG) || Input::manager().controllerDisconnected()){
 		_mode = TurnTable;
 		_radius = glm::length(_eye - _center);
 	}
-	if(Input::manager().triggered(Input::KeyJ)){
+	if(Input::manager().triggered(Input::KeyJ) || Input::manager().controllerConnected()){
 		if(Input::manager().controllerAvailable()){
 			_mode = Joystick;
 		} else {
@@ -85,11 +85,11 @@ void ControllableCamera::updateUsingJoystick(double frameTime){
 	
 	// The Up and Down boutons are configured to register each press only once
 	// to avoid increasing/decreasing the speed for as long as the button is pressed.
-	if(joystick.triggered(Controller::ButtonUp)){
+	if(joystick.triggered(Controller::ButtonUp, true)){
 		_speed *= 2.0f;
 	}
 	
-	if(joystick.triggered(Controller::ButtonDown)){
+	if(joystick.triggered(Controller::ButtonDown, true)){
 		_speed *= 0.5f;
 	}
 	

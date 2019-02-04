@@ -47,6 +47,7 @@ Framebuffer::Framebuffer(unsigned int width, unsigned int height, const std::vec
 			depthBufferSetup = true;
 			_depthUse = TEXTURE;
 			_depthDescriptor = descriptor;
+			glBindTexture(GL_TEXTURE_2D, 0);
 			
 		} else {
 			GLuint idColor = 0;
@@ -70,6 +71,7 @@ Framebuffer::Framebuffer(unsigned int width, unsigned int height, const std::vec
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + GLuint(_idColors.size()), GL_TEXTURE_2D, idColor, 0);
 			_idColors.push_back(idColor);
 			_colorDescriptors.push_back(descriptor);
+			glBindTexture(GL_TEXTURE_2D, 0);
 		}
 	}
 	
@@ -128,6 +130,7 @@ void Framebuffer::resize(unsigned int width, unsigned int height){
 		GLUtilities::getTypeAndFormat(_depthDescriptor.typedFormat, type, format);
 		glBindTexture(GL_TEXTURE_2D, _idDepth);
 		glTexImage2D(GL_TEXTURE_2D, 0, _depthDescriptor.typedFormat, (GLsizei)_width , (GLsizei)_height, 0, format, type, 0);
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 	// Resize the textures.
 	for(size_t i = 0; i < _idColors.size(); ++i){
@@ -136,6 +139,7 @@ void Framebuffer::resize(unsigned int width, unsigned int height){
 		GLUtilities::getTypeAndFormat(descriptor.typedFormat, type, format);
 		glBindTexture(GL_TEXTURE_2D, _idColors[i]);
 		glTexImage2D(GL_TEXTURE_2D, 0, descriptor.typedFormat, (GLsizei)_width, (GLsizei)_height, 0, format, type, 0);
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 	
 }

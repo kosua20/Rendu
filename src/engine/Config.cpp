@@ -134,10 +134,12 @@ void RenderingConfig::processArguments(){
 		
 		if(key == "novsync"){
 			vsync = false;
+		} else if(key == "half-rate"){
+			rate = 30;
 		} else if(key == "fullscreen"){
 			fullscreen = true;
 		} else if(key == "internal-res" || key == "ivr"){
-			internalVerticalResolution = std::stof(values[0]);
+			internalVerticalResolution = std::stoi(values[0]);
 		} else if(key == "wxh"){
 			const unsigned int w = (unsigned int)std::stoi(values[0]);
 			const unsigned int h = (unsigned int)std::stoi(values[1]);

@@ -36,7 +36,12 @@ public:
 	 \copydoc Blur::resize
 	 */
 	void resize(unsigned int width, unsigned int height);
-
+	
+	/**
+	 Clear the final framebuffer texture.
+	 */
+	void clear();
+	
 private:
 	
 	std::shared_ptr<ProgramInfos> _blurProgram; ///< Box blur program

@@ -20,7 +20,7 @@ DeferredRenderer::DeferredRenderer(RenderingConfig & config) : Renderer(config) 
 	
 	// G-buffer setup.
 	const Framebuffer::Descriptor albedoDesc = { GL_RGBA16F, GL_NEAREST, GL_CLAMP_TO_EDGE };
-	const Framebuffer::Descriptor normalDesc = { GL_RGB16F, GL_NEAREST, GL_CLAMP_TO_EDGE };
+	const Framebuffer::Descriptor normalDesc = { GL_RGB32F, GL_NEAREST, GL_CLAMP_TO_EDGE };
 	const Framebuffer::Descriptor effectsDesc = { GL_RGB8, GL_NEAREST, GL_CLAMP_TO_EDGE };
 	const Framebuffer::Descriptor depthDesc = { GL_DEPTH_COMPONENT32F, GL_NEAREST, GL_CLAMP_TO_EDGE };
 	const std::vector<Framebuffer::Descriptor> descs = {albedoDesc, normalDesc, effectsDesc, depthDesc};
@@ -71,7 +71,7 @@ void DeferredRenderer::setScene(std::shared_ptr<Scene> scene){
 	_ambientScreen.setSceneParameters(_scene->backgroundReflection, _scene->backgroundIrradiance);
 	
 	std::vector<GLuint> includedTextures = _gbuffer->textureIds();
-	// TODO: clarify this.
+	// \todo clarify this.
 	includedTextures.insert(includedTextures.begin()+2, _gbuffer->depthId());
 	
 	for(auto& dirLight : _scene->directionalLights){
@@ -94,26 +94,19 @@ void DeferredRenderer::draw() {
 		return;
 	}
 	
-	// Interface.
-	/// \todo Move to a separate function maybe?
-	if(ImGui::Begin("Renderer")){
-		ImGui::Checkbox("Show debug", &_debugVisualization);
-	}
-	ImGui::End();
-	
 	glm::vec2 invRenderSize = 1.0f / _renderResolution;
 	
 	// --- Light pass -------
-	
-	// Draw the scene inside the framebuffer.
-	for(auto& dirLight : _scene->directionalLights){
-		dirLight.drawShadow(_scene->objects);
-	}
-	for(auto& shadowLight : _scene->spotLights){
-		shadowLight.drawShadow(_scene->objects);
-	}
-	for(auto& pointLight : _scene->pointLights){
-		pointLight.drawShadow(_scene->objects);
+	if(_updateShadows){
+		for(auto& dirLight : _scene->directionalLights){
+			dirLight.drawShadow(_scene->objects);
+		}
+		for(auto& shadowLight : _scene->spotLights){
+			shadowLight.drawShadow(_scene->objects);
+		}
+		for(auto& pointLight : _scene->pointLights){
+			pointLight.drawShadow(_scene->objects);
+		}
 	}
 	// ----------------------
 	
@@ -162,14 +155,18 @@ void DeferredRenderer::draw() {
 	
 	glDisable(GL_DEPTH_TEST);
 	
-	// --- SSAO pass
-	_ssaoFramebuffer->bind();
-	_ssaoFramebuffer->setViewport();
-	_ambientScreen.drawSSAO(_userCamera.projection());
-	_ssaoFramebuffer->unbind();
+	if(_applySSAO){
+		// --- SSAO pass
+		_ssaoFramebuffer->bind();
+		_ssaoFramebuffer->setViewport();
+		_ambientScreen.drawSSAO(_userCamera.projection());
+		_ssaoFramebuffer->unbind();
 	
-	// --- SSAO blurring pass
-	_blurSSAOBuffer->process(_ssaoFramebuffer->textureId());
+		// --- SSAO blurring pass
+		_blurSSAOBuffer->process(_ssaoFramebuffer->textureId());
+	} else {
+		_blurSSAOBuffer->clear();
+	}
 	
 	// --- Gbuffer composition pass
 	_sceneFramebuffer->bind();
@@ -193,47 +190,57 @@ void DeferredRenderer::draw() {
 	
 	_sceneFramebuffer->unbind();
 	
-	// --- Bloom selection pass ------
-	_bloomFramebuffer->bind();
-	_bloomFramebuffer->setViewport();
-	glUseProgram(_bloomProgram->id());
-	ScreenQuad::draw(_sceneFramebuffer->textureId());
-	_bloomFramebuffer->unbind();
 	
-	// --- Bloom blur pass ------
-	_blurBuffer->process(_bloomFramebuffer->textureId());
+	if(_applyBloom){
+		// --- Bloom selection pass ------
+		_bloomFramebuffer->bind();
+		_bloomFramebuffer->setViewport();
+		glUseProgram(_bloomProgram->id());
+		ScreenQuad::draw(_sceneFramebuffer->textureId());
+		_bloomFramebuffer->unbind();
 	
-	// Draw the blurred bloom back into the scene framebuffer.
-	_sceneFramebuffer->bind();
-	_sceneFramebuffer->setViewport();
-	glEnable(GL_BLEND);
-	_blurBuffer->draw();
-	glDisable(GL_BLEND);
-	_sceneFramebuffer->unbind();
+		// --- Bloom blur pass ------
+		_blurBuffer->process(_bloomFramebuffer->textureId());
 	
+		// Draw the blurred bloom back into the scene framebuffer.
+		_sceneFramebuffer->bind();
+		_sceneFramebuffer->setViewport();
+		glEnable(GL_BLEND);
+		_blurBuffer->draw();
+		glDisable(GL_BLEND);
+		_sceneFramebuffer->unbind();
+	}
 	
+	GLuint currentResult = _sceneFramebuffer->textureId();
+	
+	if(_applyTonemapping){
 	// --- Tonemapping pass ------
-	_toneMappingFramebuffer->bind();
-	_toneMappingFramebuffer->setViewport();
-	glUseProgram(_toneMappingProgram->id());
-	ScreenQuad::draw(_sceneFramebuffer->textureId());
-	_toneMappingFramebuffer->unbind();
+		_toneMappingFramebuffer->bind();
+		_toneMappingFramebuffer->setViewport();
+		glUseProgram(_toneMappingProgram->id());
+		ScreenQuad::draw(currentResult);
+		_toneMappingFramebuffer->unbind();
+		currentResult = _toneMappingFramebuffer->textureId();
+	}
 	
+	if(_applyFXAA){
 	// --- FXAA pass -------
 	// Bind the post-processing framebuffer.
-	_fxaaFramebuffer->bind();
-	_fxaaFramebuffer->setViewport();
-	glUseProgram(_fxaaProgram->id());
-	glUniform2fv(_fxaaProgram->uniform("inverseScreenSize"), 1, &(invRenderSize[0]));
-	ScreenQuad::draw(_toneMappingFramebuffer->textureId());
-	_fxaaFramebuffer->unbind();
+		_fxaaFramebuffer->bind();
+		_fxaaFramebuffer->setViewport();
+		glUseProgram(_fxaaProgram->id());
+		glUniform2fv(_fxaaProgram->uniform("inverseScreenSize"), 1, &(invRenderSize[0]));
+		ScreenQuad::draw(currentResult);
+		_fxaaFramebuffer->unbind();
+		currentResult = _fxaaFramebuffer->textureId();
+	}
 	
 	// --- Final pass -------
 	// We now render a full screen quad in the default framebuffer, using sRGB space.
 	glEnable(GL_FRAMEBUFFER_SRGB);
 	glViewport(0, 0, GLsizei(_config.screenResolution[0]), GLsizei(_config.screenResolution[1]));
 	glUseProgram(_finalProgram->id());
-	ScreenQuad::draw(_fxaaFramebuffer->textureId());
+	ScreenQuad::draw(currentResult);
 	glDisable(GL_FRAMEBUFFER_SRGB);
 	glEnable(GL_DEPTH_TEST);
 	
@@ -242,11 +249,32 @@ void DeferredRenderer::draw() {
 
 void DeferredRenderer::update(){
 	Renderer::update();
+	// If no scene, no need to udpate the camera or the scene-specific UI.
+	if(!_scene){
+		return;
+	}
 	_userCamera.update();
 	
-	if(Input::manager().triggered(Input::KeyO)){
-		GLUtilities::saveDefaultFramebuffer((unsigned int)_config.screenResolution[0], (unsigned int)_config.screenResolution[1], "./test-default");
+	if(ImGui::Begin("Renderer")){
+		ImGui::Separator();
+		ImGui::PushItemWidth(100);
+		ImGui::InputFloat("Camera speed", &_userCamera.speed(), 0.1f, 1.0f);
+		ImGui::Combo("Camera mode", (int*)(&_userCamera.mode()), "FPS\0Turntable\0Joystick\0\0", 3);
+		ImGui::Separator();
+		if(ImGui::InputInt("Vertical res.", &_config.internalVerticalResolution, 50, 200)){
+			resize(int(_config.screenResolution[0]), int(_config.screenResolution[1]));
+		}
+		ImGui::PopItemWidth();
+		ImGui::Checkbox("SSAO", &_applySSAO); ImGui::SameLine(120);
+		ImGui::Checkbox("Bloom", &_applyBloom);
+		ImGui::Checkbox("Tonemapping ", &_applyTonemapping); ImGui::SameLine(120);
+		ImGui::Checkbox("FXAA", &_applyFXAA);
+		ImGui::Separator();
+		ImGui::Checkbox("Show debug lights", &_debugVisualization);
+		ImGui::Checkbox("Update shadows", &_updateShadows);
+		
 	}
+	ImGui::End();
 }
 
 void DeferredRenderer::physics(double fullTime, double frameTime){

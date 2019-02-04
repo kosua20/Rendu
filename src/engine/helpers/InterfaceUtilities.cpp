@@ -87,7 +87,7 @@ namespace Interface {
 		glfwSetScrollCallback(window, scroll_callback);				// Scrolling
 		glfwSetJoystickCallback(joystick_callback);					// Joystick
 		glfwSetWindowIconifyCallback(window, iconify_callback); 	// Window minimization
-		glfwSwapInterval(config.vsync ? 1 : 0);						// 60 FPS V-sync
+		glfwSwapInterval(config.vsync ? (config.rate == 30 ? 2 : 1) : 0);						// 60 FPS V-sync
 		
 		/// \todo Rethink the way we can enable/disable ImGui?
 		setupImGui(window);

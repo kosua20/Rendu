@@ -39,7 +39,7 @@ std::string narrow(char * str) {
 
 #endif
 
-std::string Resources::defaultPath = "../../../resources";
+std::string Resources::defaultPath = "../../../resources/common/";
 
 // Singleton.
 Resources& Resources::manager(){
@@ -47,15 +47,20 @@ Resources& Resources::manager(){
 	return *res;
 }
 
+Resources::Resources(const std::string & root) {
+	addResources(root);
+}
+
 #ifdef RESOURCES_PACKAGED
-Resources::Resources(const std::string & root) : _rootPath(root + ".zip"){
-	Log::Info() << Log::Resources << "Loading resources from archive (" << _rootPath << ")." << std::endl;
-	parseArchive(_rootPath);
+void Resources::addResources(const std::string & path){
+	Log::Info() << Log::Resources << "Loading resources from archive (" << path + ".zip" << ")." << std::endl;
+	parseArchive(path + ".zip");
 }
 #else
-Resources::Resources(const std::string & root) : _rootPath(root){
-	Log::Info() << Log::Resources << "Loading resources from disk (" << _rootPath << ")." << std::endl;
-	parseDirectory(_rootPath);
+
+void Resources::addResources(const std::string & path){
+	Log::Info() << Log::Resources << "Loading resources from disk (" << path << ")." << std::endl;
+	parseDirectory(path);
 }
 #endif
 
@@ -86,7 +91,7 @@ void Resources::parseArchive(const std::string & archivePath){
 		// Filter empty files and system files.
 		if(fileNameWithExt.size() > 0 && fileNameWithExt.at(0) != '.' ){
 			if(_files.count(fileNameWithExt) == 0){
-				_files[fileNameWithExt] = filePath;
+				_files[fileNameWithExt] = archivePath + "/" + filePath;
 			} else {
 				// If the file already exists somewhere else in the hierarchy, warn about this.
 				Log::Error() << Log::Resources << "Error: asset named \"" << fileNameWithExt << "\" alread exists." << std::endl;
@@ -191,12 +196,21 @@ const std::string Resources::getImagePath(const std::string & name){
 char * Resources::getRawData(const std::string & path, size_t & size) {
 	char * rawContent;
 	mz_zip_archive zip_archive = {0};
-	int status = mz_zip_reader_init_file(&zip_archive, _rootPath.c_str(), 0);
-	if (!status){
-		Log::Error() << Log::Resources << "Unable to load zip file at path \"" << _rootPath << "\" (" << mz_zip_get_error_string(mz_zip_get_last_error(&zip_archive)) << ")." << std::endl;
+	// Extract the archive path and the file internal path.
+	const auto extensionPos = path.find(".zip/");
+	if(extensionPos == std::string::npos){
+		Log::Error() << Log::Resources << "Unable to find archive for path \"" << path << "\"." << std::endl;
 		return NULL;
 	}
-	rawContent = (char*)mz_zip_reader_extract_file_to_heap(&zip_archive, path.c_str(), &size, 0);
+	const std::string archivePath = path.substr(0, extensionPos + 4);
+	const std::string filePath = path.substr(extensionPos + 5);
+	
+	int status = mz_zip_reader_init_file(&zip_archive, archivePath.c_str(), 0);
+	if (!status){
+		Log::Error() << Log::Resources << "Unable to load zip file at path \"" << archivePath << "\" (" << mz_zip_get_error_string(mz_zip_get_last_error(&zip_archive)) << ")." << std::endl;
+		return NULL;
+	}
+	rawContent = (char*)mz_zip_reader_extract_file_to_heap(&zip_archive, filePath.c_str(), &size, 0);
 	mz_zip_reader_end(&zip_archive);
 	return rawContent;
 }

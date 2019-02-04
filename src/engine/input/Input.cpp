@@ -1,6 +1,6 @@
 #include "Input.hpp"
-#include "controller/CustomController.hpp"
-#include "controller/DebugController.hpp"
+#include "controller/GamepadController.hpp"
+#include "controller/RawController.hpp"
 
 // Singleton.
 Input& Input::manager(){
@@ -23,13 +23,15 @@ Input::Input(){
 	
 }
 
-void Input::debug(const bool isDebug){
-	_debugController = isDebug;
-	// Reset existing controllers.
+void Input::preferRawControllers(bool prefer){
+	_preferRawControllers = prefer;
+	
 	for(int id = GLFW_JOYSTICK_1; id <= GLFW_JOYSTICK_LAST; ++id){
 		_controllers[id] = nullptr;
+		// We only register the first joystick encountered if it exists.
 		if(glfwJoystickPresent(id) == GL_TRUE){
 			joystickEvent(id, GLFW_CONNECTED);
+			_joystickConnected = true;
 		}
 	}
 }
@@ -59,12 +61,18 @@ void Input::joystickEvent(int joy, int event){
 
 		// Register the new one, if no joystick was activated consider this one as the active one.
 		if(!_controllers[joy]){
-			if(_debugController){
-				_controllers[joy] = std::shared_ptr<Controller>(new DebugController());
-			} else {
-				_controllers[joy] = std::shared_ptr<Controller>(new CustomController());
-			}
 			
+			if(!_preferRawControllers && glfwJoystickIsGamepad(joy)){
+				// If this is a gamepad, GLFW has a mapping, all is good.
+				_controllers[joy] = std::shared_ptr<Controller>(new GamepadController());
+			} else {
+				// Fallback on a raw controller.
+				_controllers[joy] = std::shared_ptr<Controller>(new RawController());
+			}
+		}
+		// Ignore non-configured controllers.
+		if(!_controllers[joy]){
+			return;
 		}
 		const bool res = _controllers[joy]->activate(joy);
 		if(res && _activeController == -1){

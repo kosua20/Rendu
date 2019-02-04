@@ -45,6 +45,7 @@ FramebufferCube::FramebufferCube(unsigned int side, const Framebuffer::Descripto
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, _idRenderbuffer, 0);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 	}
 	
 	//Register which color attachments to draw to.
@@ -52,6 +53,7 @@ FramebufferCube::FramebufferCube(unsigned int side, const Framebuffer::Descripto
 	glDrawBuffers(1, drawBuffers);
 	checkGLFramebufferError();
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 	checkGLError();
 }
 
@@ -78,6 +80,7 @@ void FramebufferCube::resize(unsigned int side){
 		for(unsigned int i = 0; i < 6; ++i){
 			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X+i, 0, GL_DEPTH_COMPONENT32F, (GLsizei)_side , (GLsizei)_side, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
 		}
+		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 	}
 	// Resize the texture.
 	GLenum type, format;
@@ -88,6 +91,7 @@ void FramebufferCube::resize(unsigned int side){
 	for(unsigned int i = 0; i < 6; ++i){
 		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X+i, 0, _descriptor.typedFormat, (GLsizei)_side , (GLsizei)_side, 0, format, type, 0);
 	}
+	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 }
 
 

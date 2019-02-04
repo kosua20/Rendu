@@ -12,6 +12,14 @@ class ControllableCamera : public Camera {
 	
 public:
 	
+	/// The interaction mode of the controllable camera.
+	enum CameraMode {
+		FPS,
+		TurnTable,
+		//Trackball, ///< Currently not supported.
+		Joystick
+	};
+	
 	/// Constructor
 	ControllableCamera();
 	
@@ -25,7 +33,17 @@ public:
 	 \param frameTime the time elapsed since the last frame, in seconds.
 	 */
 	void physics(double frameTime);
-
+	
+	/** Access the speed parameter.
+	 \return reference to the speed.
+	 */
+	float & speed(){ return _speed; };
+	
+	/** Obtain the mode the camera is currently using.
+	 \return the current mode
+	 */
+	CameraMode & mode(){ return _mode; };
+	
 	
 private:
 	
@@ -50,14 +68,6 @@ private:
 	// Camera additional state.
 	glm::vec2 _angles; ///< Orientation angles
 	float _radius; ///< Turntable radius
-	
-	/// The interaction mode of the controllable camera.
-	enum CameraMode {
-		FPS,
-		TurnTable,
-		Trackball, ///< Currently not supported.
-		Joystick
-	};
 	
 	CameraMode _mode; ///< The current interaction mode
 };
