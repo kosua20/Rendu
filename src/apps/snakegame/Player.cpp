@@ -59,6 +59,17 @@ void Player::physics(double fullTime, const double frameTime) {
 	glm::vec2 pos2d(_position);
 	
 	
+	// Are we intersecting any item ?
+	for(int i = _items.size() - 1; i >= 0; --i){
+		if(glm::distance(_items[i], _position) < 1.5f*_radius){
+			// Eat the element.
+			_positions.push_back(_items[i]);
+			_items.erase(_items.begin() + i);
+		}
+	}
+	
+	
+	
 	if(!_positions.empty()){
 		int id = 0;
 		float targetDistance = (id+1) * _radius * 2.0f;
@@ -135,6 +146,21 @@ void Player::physics(double fullTime, const double frameTime) {
 		}
 		
 	}
+	
+	// Are we intersecting OURSELVES ?
+	bool boom = false;
+	for(int i = _positions.size() - 1; i >= 0; --i){
+		if(glm::distance(_positions[i], _position) < 1.5f*_radius){
+			// Noooooo
+			boom = true;
+			break;
+		}
+	}
+	if(boom){
+		Log::Info() << "BOOOOOM I'm dead :(" << std::endl;
+	}
+	
+	
 }
 void Player::resize(const glm::vec2 & newRes){
 	//_maxPos[0] = _maxPos[1]*newRes[0]/std::max(1.0f, newRes[1]);
