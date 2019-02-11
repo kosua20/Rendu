@@ -54,6 +54,7 @@ namespace Interface {
 			glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
 			glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
 			glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
+			// \todo We might want to impose the aspect ratio here.
 			window = glfwCreateWindow(mode->width, mode->height, name.c_str(), glfwGetPrimaryMonitor(), NULL);
 		} else {
 			// Create a window with a given size. Width and height are defined in the configuration.
@@ -66,6 +67,9 @@ namespace Interface {
 			return nullptr;
 		}
 		
+		if(config.forceAspectRatio){
+			glfwSetWindowAspectRatio(window, config.initialWidth, config.initialHeight);
+		}
 		// Bind the OpenGL context and the new window.
 		glfwMakeContextCurrent(window);
 		

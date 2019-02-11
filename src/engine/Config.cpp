@@ -145,6 +145,8 @@ void RenderingConfig::processArguments(){
 			const unsigned int h = (unsigned int)std::stoi(values[1]);
 			initialWidth = w;
 			initialHeight = h;
+		} else if(key == "force-aspect-ratio" || key == "far"){
+			forceAspectRatio = true;
 		}
 	}
 }

@@ -92,6 +92,8 @@ public:
 	/// Screen density, udpated at launch.
 	float screenDensity = 1.0f;
 	
+	bool forceAspectRatio = false;
+	
 protected:
 	
 	/**
