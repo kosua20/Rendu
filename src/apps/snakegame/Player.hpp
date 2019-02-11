@@ -28,8 +28,9 @@ private:
 	glm::vec3 _position = glm::vec3(0.0f);
 	float _angle = 0.0f;
 	
-	std::vector<glm::vec3> _positions;
-	std::vector<glm::vec3> _items;
+	std::vector<glm::vec2> _positions;
+	std::vector<float> _angles;
+	std::vector<glm::vec2> _items;
 	
 	struct PathPoint {
 		glm::vec2 pos;

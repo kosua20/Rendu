@@ -56,14 +56,15 @@ void Player::physics(double fullTime, const double frameTime) {
 	
 	_position += translation;
 	_position = glm::clamp(_position, -_maxPos, _maxPos);
-	glm::vec2 pos2d(_position);
+	glm::vec2 headPos(_position);
 	
 	
 	// Are we intersecting any item ?
 	for(int i = _items.size() - 1; i >= 0; --i){
-		if(glm::distance(_items[i], _position) < 1.5f*_radius){
+		if(glm::distance(_items[i], headPos) < 1.5f*_radius){
 			// Eat the element.
 			_positions.push_back(_items[i]);
+			_angles.push_back(0.0f);
 			_items.erase(_items.begin() + i);
 		}
 	}
@@ -75,7 +76,7 @@ void Player::physics(double fullTime, const double frameTime) {
 		float targetDistance = (id+1) * _radius * 2.0f;
 		// Initialize with the segment between the head and the current segment.
 		glm::vec2 nextPoint = _path[_currentSample].pos;
-		glm::vec2 previousPoint = pos2d;
+		glm::vec2 previousPoint = headPos;
 		// Add an extra shift to add some space while keeping the head centered for collision tests.
 		float newDist = glm::distance(nextPoint, previousPoint) - 0.2f;
 		float totalDistance = newDist;
@@ -83,8 +84,10 @@ void Player::physics(double fullTime, const double frameTime) {
 		for(int sid = 0; sid < _numSamplesPath; ++sid){
 			while(totalDistance >= targetDistance && (id < _positions.size())){
 				const float fraction1 = 1.0f-(totalDistance - targetDistance)/(newDist);
-				const glm::vec2 newPos1 = glm::mix(previousPoint, nextPoint, fraction1);
-				_positions[id] = glm::vec3(newPos1, 0.0f);
+				_positions[id] = glm::mix(previousPoint, nextPoint, fraction1);
+				const glm::vec2 dir = glm::normalize((id > 0 ? _positions[id-1] : previousPoint) - nextPoint);
+				// \todo Cleanup angle estimation.
+				_angles[id] = std::atan2(dir[1], dir[0]);
 				++id;
 				targetDistance = (id+1) * _radius * 2.0f;
 				
@@ -112,12 +115,14 @@ void Player::physics(double fullTime, const double frameTime) {
 		_lastSpawn = fullTime;
 		
 		bool found = false;
-		glm::vec3 newPos;
+		glm::vec2 newPos;
 		int tests = 0;
+		const float maxX = _maxPos[0] - _radius;
+		const float maxY = _maxPos[1] - _radius;
 		do {
 			found = true;
-			newPos = glm::vec3(Random::Float(-_maxPos[0], _maxPos[0]), Random::Float(-_maxPos[1], _maxPos[1]), 0.0f);
-			if(glm::distance(_position, newPos) < 3.0*_radius){
+			newPos = glm::vec2(Random::Float(-maxX, maxX), Random::Float(-maxY, maxY));
+			if(glm::distance(headPos, newPos) < 3.0*_radius){
 				found = false;
 			}
 			
@@ -150,7 +155,7 @@ void Player::physics(double fullTime, const double frameTime) {
 	// Are we intersecting OURSELVES ?
 	bool boom = false;
 	for(int i = _positions.size() - 1; i >= 0; --i){
-		if(glm::distance(_positions[i], _position) < 1.5f*_radius){
+		if(glm::distance(_positions[i], headPos) < 1.5f*_radius){
 			// Noooooo
 			boom = true;
 			break;
@@ -163,7 +168,6 @@ void Player::physics(double fullTime, const double frameTime) {
 	
 }
 void Player::resize(const glm::vec2 & newRes){
-	//_maxPos[0] = _maxPos[1]*newRes[0]/std::max(1.0f, newRes[1]);
 }
 
 
@@ -189,7 +193,7 @@ void Player::draw(const glm::mat4& view, const glm::mat4& projection)  {
 	
 	glBindVertexArray(_bodyElement.vId);
 	for(int i = 0; i < _positions.size();++i){
-		_model = glm::scale(glm::translate(glm::mat4(1.0f), _positions[i]), glm::vec3(_radius));
+		_model = glm::scale(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(_positions[i], 0.0f)), _angles[i], glm::vec3(0.0f, 0.0f, 1.0f)), glm::vec3(_radius));
 		const glm::mat4 MVP1 = VP * _model;
 		glUniformMatrix4fv(_headProgram->uniform("mvp"), 1, GL_FALSE, &MVP1[0][0]);
 		glDrawElements(GL_TRIANGLES, _bodyElement.count, GL_UNSIGNED_INT, (void*)0);
@@ -197,7 +201,7 @@ void Player::draw(const glm::mat4& view, const glm::mat4& projection)  {
 	
 	glBindVertexArray(_bodyElement.vId);
 	for(int i = 0; i < _items.size();++i){
-		_model = glm::scale(glm::translate(glm::mat4(1.0f), _items[i]), glm::vec3(_radius));
+		_model = glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(_items[i], 0.0f)), glm::vec3(_radius));
 		const glm::mat4 MVP1 = VP * _model;
 		glUniformMatrix4fv(_headProgram->uniform("mvp"), 1, GL_FALSE, &MVP1[0][0]);
 		glDrawElements(GL_TRIANGLES, _bodyElement.count, GL_UNSIGNED_INT, (void*)0);
@@ -211,15 +215,5 @@ void Player::draw(const glm::mat4& view, const glm::mat4& projection)  {
 void Player::clean() const {
 	glDeleteVertexArrays(1, &_head.vId);
 	glDeleteVertexArrays(1, &_bodyElement.vId);
-//	for (auto & texture : _textures) {
-//		glDeleteTextures(1, &(texture.id));
-//	}
+
 }
-//
-//BoundingBox Player::getBoundingBoxWorld() const {
-//	return _mesh.bbox.transformed(_model);
-//}
-//
-//BoundingBox Player::getBoundingBoxModel() const {
-//	return _mesh.bbox;
-//}
