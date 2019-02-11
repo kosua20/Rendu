@@ -9,7 +9,7 @@ public:
 	
 	void update();
 	
-	void physics(double frameTime);
+	void physics(double fullTime, double frameTime);
 	
 	void draw(const glm::mat4& view, const glm::mat4& projection) ;
 	
@@ -29,6 +29,7 @@ private:
 	float _angle = 0.0f;
 	
 	std::vector<glm::vec3> _positions;
+	std::vector<glm::vec3> _items;
 	
 	struct PathPoint {
 		glm::vec2 pos;
@@ -38,6 +39,7 @@ private:
 	unsigned int _currentSample = 0;
 	unsigned int _currentFrame = 0;
 	glm::vec3 _maxPos = glm::vec3(8.6f, 5.0f, 0.0f);
+	double _lastSpawn = 0.0;
 	
 	const size_t _numSamplesPath = 512;
 	const size_t _samplingPeriod = 15;

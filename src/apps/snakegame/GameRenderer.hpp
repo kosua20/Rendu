@@ -30,6 +30,7 @@ private:
 	
 	Camera _playerCamera;
 	Player _player;
+	double _startTime;
 };
 
 #endif

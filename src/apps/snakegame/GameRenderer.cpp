@@ -23,7 +23,7 @@ GameRenderer::GameRenderer(RenderingConfig & config) : Renderer(config){
 	_fxaaProgram = Resources::manager().getProgram2D("fxaa");
 	_finalProgram = Resources::manager().getProgram2D("final_screenquad");
 	
-	
+	_startTime = 0.0;
 }
 
 void GameRenderer::draw(){
@@ -82,7 +82,11 @@ void GameRenderer::update(){
 }
 
 void GameRenderer::physics(double fullTime, double frameTime){
-	_player.physics(frameTime);
+	if(_startTime == 0.0){
+		_startTime = fullTime;
+	}
+	
+	_player.physics(fullTime - _startTime, frameTime);
 	
 	
 }

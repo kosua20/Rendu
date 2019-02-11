@@ -1,6 +1,6 @@
 #include "Player.hpp"
 #include "input/Input.hpp"
-
+#include "helpers/GenerationUtilities.hpp"
 
 Player::Player() {
 	
@@ -27,12 +27,10 @@ void Player::update(){
 	// Increase frame count.
 	_currentFrame = (_currentFrame + 1) % _samplingPeriod;
 	
-	if(Input::manager().triggered(Input::KeyQ, true)){
-		_positions.emplace_back(_positions.empty() ? _position : _positions.back());
-	}
+	
 }
 
-void Player::physics(const double frameTime) {
+void Player::physics(double fullTime, const double frameTime) {
 	
 	
 	
@@ -96,6 +94,47 @@ void Player::physics(const double frameTime) {
 		}
 		
 	}
+	
+	// Spawn new elements
+	const double spawnPeriod = 1.5;
+	if(fullTime > _lastSpawn + spawnPeriod && _items.size() < 20){
+		_lastSpawn = fullTime;
+		
+		bool found = false;
+		glm::vec3 newPos;
+		int tests = 0;
+		do {
+			found = true;
+			newPos = glm::vec3(Random::Float(-_maxPos[0], _maxPos[0]), Random::Float(-_maxPos[1], _maxPos[1]), 0.0f);
+			if(glm::distance(_position, newPos) < 3.0*_radius){
+				found = false;
+			}
+			
+			if(found){
+				for(const auto & pos : _positions){
+					if(glm::distance(pos, newPos) < 3.0*_radius){
+						found = false;
+						break;
+					}
+				}
+			}
+			
+			if(found){
+				for(const auto & pos : _items){
+					if(glm::distance(pos, newPos) < 3.0*_radius){
+						found = false;
+						break;
+					}
+				}
+			}
+			++tests;
+		} while(!found && tests < 50);
+		
+		if(found){
+			_items.push_back(newPos);
+		}
+		
+	}
 }
 void Player::resize(const glm::vec2 & newRes){
 	//_maxPos[0] = _maxPos[1]*newRes[0]/std::max(1.0f, newRes[1]);
@@ -122,14 +161,21 @@ void Player::draw(const glm::mat4& view, const glm::mat4& projection)  {
 	glBindVertexArray(_head.vId);
 	glDrawElements(GL_TRIANGLES, _head.count, GL_UNSIGNED_INT, (void*)0);
 	
+	glBindVertexArray(_bodyElement.vId);
 	for(int i = 0; i < _positions.size();++i){
 		_model = glm::scale(glm::translate(glm::mat4(1.0f), _positions[i]), glm::vec3(_radius));
 		const glm::mat4 MVP1 = VP * _model;
 		glUniformMatrix4fv(_headProgram->uniform("mvp"), 1, GL_FALSE, &MVP1[0][0]);
-		glBindVertexArray(_bodyElement.vId);
 		glDrawElements(GL_TRIANGLES, _bodyElement.count, GL_UNSIGNED_INT, (void*)0);
 	}
 	
+	glBindVertexArray(_bodyElement.vId);
+	for(int i = 0; i < _items.size();++i){
+		_model = glm::scale(glm::translate(glm::mat4(1.0f), _items[i]), glm::vec3(_radius));
+		const glm::mat4 MVP1 = VP * _model;
+		glUniformMatrix4fv(_headProgram->uniform("mvp"), 1, GL_FALSE, &MVP1[0][0]);
+		glDrawElements(GL_TRIANGLES, _bodyElement.count, GL_UNSIGNED_INT, (void*)0);
+	}
 	
 	glBindVertexArray(0);
 	glUseProgram(0);

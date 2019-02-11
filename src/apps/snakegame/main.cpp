@@ -25,6 +25,7 @@ int main(int argc, char** argv) {
 	
 	// First, init/parse/load configuration.
 	RenderingConfig config(argc, argv);
+	config.forceAspectRatio = true;
 	
 	GLFWwindow* window = Interface::initWindow("SnakeGame", config);
 	if(!window){
