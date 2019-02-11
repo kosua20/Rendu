@@ -129,7 +129,10 @@ project("ImageViewer")
 	AppSetup()
 	files({ "src/apps/imageviewer/**.hpp", "src/apps/imageviewer/**.cpp", })
 
-
+project("SnakeGame")
+	AppSetup()
+	files({ "src/apps/snakegame/**.hpp", "src/apps/snakegame/**.cpp", })
+	
 group("Tools")
 
 project("AtmosphericScatteringEstimator")
@@ -162,7 +165,7 @@ group("Meta")
 project("ALL")
 	CPPSetup()
 	kind("ConsoleApp")
-	dependson( {"Engine", "PBRDemo", "Playground", "Atmosphere", "ImageViewer", "AtmosphericScatteringEstimator", "BRDFEstimator", "SHExtractor", "ControllerTest" })
+	dependson( {"Engine", "PBRDemo", "Playground", "Atmosphere", "ImageViewer", "AtmosphericScatteringEstimator", "BRDFEstimator", "SHExtractor", "ControllerTest", "SnakeGame", })
 
 -- Actions
 
