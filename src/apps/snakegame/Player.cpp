@@ -4,9 +4,11 @@
 
 Player::Player() {
 	
-	_headProgram = Resources::manager().getProgram("object_basic");
+	_coloredProgram = Resources::manager().getProgram("colored_object");
+	
 	_head = Resources::manager().getMesh("head");
 	_bodyElement = Resources::manager().getMesh("body");
+	
 	checkGLError();
 	
 	_path.resize(_numSamplesPath, {glm::vec2(0.0f), 0.0f } );
@@ -206,24 +208,26 @@ void Player::draw(const glm::mat4& view, const glm::mat4& projection)  {
 	// \todo Update model lazily.
 	_model = glm::scale(glm::rotate(glm::translate(glm::mat4(1.0f), _position), _angle, glm::vec3(0.0f, 0.0f, 1.0f)), glm::vec3(_radius));
 	const glm::mat4 VP = projection * view;
-
 	const glm::mat4 MVP = VP * _model;
-	
+	const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(_model)));
 	// Compute the normal matrix
-	//glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(MV)));
+	//
 	// Select the program (and shaders).
-	glUseProgram(_headProgram->id());
-	
-	// Upload the MVP matrix.
-	glUniformMatrix4fv(_headProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
+	glUseProgram(_coloredProgram->id());
+	glUniformMatrix4fv(_coloredProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
+	glUniformMatrix3fv(_coloredProgram->uniform("normalMat"), 1, GL_FALSE, &normalMatrix[0][0]);
 	glBindVertexArray(_head.vId);
+	glUniform3f(_coloredProgram->uniform("baseColor"), 0.1f, 0.6f, 0.9f);
 	glDrawElements(GL_TRIANGLES, _head.count, GL_UNSIGNED_INT, (void*)0);
 	
 	glBindVertexArray(_bodyElement.vId);
 	for(int i = 0; i < _positions.size();++i){
 		_model = glm::scale(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(_positions[i], 0.0f)), _angles[i], glm::vec3(0.0f, 0.0f, 1.0f)), glm::vec3(_radius));
 		const glm::mat4 MVP1 = VP * _model;
-		glUniformMatrix4fv(_headProgram->uniform("mvp"), 1, GL_FALSE, &MVP1[0][0]);
+		const glm::mat3 normalMatrix1 = glm::transpose(glm::inverse(glm::mat3(_model)));
+		glUniformMatrix4fv(_coloredProgram->uniform("mvp"), 1, GL_FALSE, &MVP1[0][0]);
+		glUniformMatrix3fv(_coloredProgram->uniform("normalMat"), 1, GL_FALSE, &normalMatrix1[0][0]);
+		glUniform3f(_coloredProgram->uniform("baseColor"), 0.1f, 0.9f, 0.2f);
 		glDrawElements(GL_TRIANGLES, _bodyElement.count, GL_UNSIGNED_INT, (void*)0);
 	}
 	
@@ -231,7 +235,10 @@ void Player::draw(const glm::mat4& view, const glm::mat4& projection)  {
 	for(int i = 0; i < _items.size();++i){
 		_model = glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(_items[i], 0.0f)), glm::vec3(_radius));
 		const glm::mat4 MVP1 = VP * _model;
-		glUniformMatrix4fv(_headProgram->uniform("mvp"), 1, GL_FALSE, &MVP1[0][0]);
+		const glm::mat3 normalMatrix1 = glm::transpose(glm::inverse(glm::mat3(_model)));
+		glUniformMatrix4fv(_coloredProgram->uniform("mvp"), 1, GL_FALSE, &MVP1[0][0]);
+		glUniformMatrix3fv(_coloredProgram->uniform("normalMat"), 1, GL_FALSE, &normalMatrix1[0][0]);
+		glUniform3f(_coloredProgram->uniform("baseColor"), 0.9f, 0.1f, 0.1f);
 		glDrawElements(GL_TRIANGLES, _bodyElement.count, GL_UNSIGNED_INT, (void*)0);
 	}
 	

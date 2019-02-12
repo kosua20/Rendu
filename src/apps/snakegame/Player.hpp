@@ -18,7 +18,8 @@ public:
 	void resize(const glm::vec2 & newRes);
 	
 private:
-	std::shared_ptr<ProgramInfos> _headProgram;
+	std::shared_ptr<ProgramInfos> _coloredProgram;
+	
 	MeshInfos _head;
 	MeshInfos _bodyElement;
 	
