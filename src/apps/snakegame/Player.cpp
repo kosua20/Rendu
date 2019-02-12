@@ -55,6 +55,18 @@ void Player::physics(double fullTime, const double frameTime) {
 	const glm::vec3 translation = float(frameTime) * deltaSpeed * _momentum;
 	
 	_position += translation;
+	if(std::abs(_position[0]) > _maxPos[0]){
+		_momentum[0] *= -1.0f;
+		_angle = M_PI - _angle + M_PI;
+		// Add a few frames of invicibility for acute angles.
+		_invicibility += 0.5f;
+	}
+	if(std::abs(_position[1]) > _maxPos[1]){
+		_momentum[1] *= -1.0f;
+		_angle = -_angle + M_PI;
+		// Add a few frames of invicibility for acute angles.
+		_invicibility += 0.5f;
+	}
 	_position = glm::clamp(_position, -_maxPos, _maxPos);
 	glm::vec2 headPos(_position);
 	
@@ -69,8 +81,7 @@ void Player::physics(double fullTime, const double frameTime) {
 		}
 	}
 	
-	
-	
+	// Animate snake segments.
 	if(!_positions.empty()){
 		int id = 0;
 		float targetDistance = (id+1) * _radius * 2.0f;
@@ -87,10 +98,23 @@ void Player::physics(double fullTime, const double frameTime) {
 				_positions[id] = glm::mix(previousPoint, nextPoint, fraction1);
 				const glm::vec2 dir = glm::normalize((id > 0 ? _positions[id-1] : previousPoint) - nextPoint);
 				// \todo Cleanup angle estimation.
-				_angles[id] = std::atan2(dir[1], dir[0]);
+				float newAngle = std::atan2(dir[1], dir[0]);
+				// Ensure that the angle is not too far from the current one.
+				if(std::abs(_angles[id] - newAngle) > std::abs(_angles[id] + newAngle)){
+					newAngle *= -1.0f;
+				}
+				// Blend between the current angle and the target one for a smooth animation.
+				_angles[id] = glm::mix(_angles[id], newAngle, frameTime);
+				// Bring back into the -pi,pi range to avoid accumulation.
+				if(_angles[id] > M_PI){
+					_angles[id] -= 2*M_PI;
+				}
+				if(_angles[id] < -M_PI){
+					_angles[id] += 2*M_PI;
+				}
+				
 				++id;
 				targetDistance = (id+1) * _radius * 2.0f;
-				
 			}
 			if(id >= _positions.size()){
 				break;
@@ -154,15 +178,19 @@ void Player::physics(double fullTime, const double frameTime) {
 	
 	// Are we intersecting OURSELVES ?
 	bool boom = false;
-	for(int i = _positions.size() - 1; i >= 0; --i){
-		if(glm::distance(_positions[i], headPos) < 1.5f*_radius){
-			// Noooooo
-			boom = true;
-			break;
+	if(_invicibility <= 0.0f){
+		for(int i = _positions.size() - 1; i >= 0; --i){
+			if(glm::distance(_positions[i], headPos) < 1.5f*_radius){
+				// Noooooo
+				boom = true;
+				break;
+			}
 		}
+	} else {
+		_invicibility = std::max(0.0f, _invicibility - float(frameTime));
 	}
 	if(boom){
-		Log::Info() << "BOOOOOM I'm dead :(" << std::endl;
+		Log::Info() << "BOOOOOM I'm dead (" << fullTime << "s.) :(" << std::endl;
 	}
 	
 	

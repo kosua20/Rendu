@@ -41,6 +41,7 @@ private:
 	unsigned int _currentFrame = 0;
 	glm::vec3 _maxPos = glm::vec3(8.6f, 5.0f, 0.0f);
 	double _lastSpawn = 0.0;
+	float _invicibility = 0.0f;
 	
 	const size_t _numSamplesPath = 512;
 	const size_t _samplingPeriod = 15;
