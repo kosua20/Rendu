@@ -33,19 +33,26 @@ void GameRenderer::draw(){
 	_sceneFramebuffer->bind();
 	_sceneFramebuffer->setViewport();
 	glEnable(GL_DEPTH_TEST);
-	glClearColor(1.0f, 0.8f, 0.3f, 1.0f);
+	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
-	const auto groundProgram = Resources::manager().getProgram("object_basic");
+	// Render the ground.
+	const auto groundProgram = Resources::manager().getProgram("colored_object");
 	glUseProgram(groundProgram->id());
 	const auto mesh  = Resources::manager().getMesh("ground");
 	// Upload the MVP matrix.
-	const glm::mat4 MVP = _playerCamera.projection() * _playerCamera.view() * glm::rotate(glm::mat4(1.0f), float(M_PI_2), glm::vec3(1.0f,0.0f,0.0f));
-	
+	const glm::mat4 groundModel = glm::rotate(glm::mat4(1.0f), float(M_PI_2), glm::vec3(1.0f,0.0f,0.0f));
+	const glm::mat4 MVP = _playerCamera.projection() * _playerCamera.view() * groundModel;
+	const glm::mat3 normalMatrix = glm::inverse(glm::transpose(glm::mat3(groundModel)));
 	glUniformMatrix4fv(groundProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
+	glUniformMatrix3fv(groundProgram->uniform("normalMat"), 1, GL_FALSE, &normalMatrix[0][0]);
+	glUniform3f(groundProgram->uniform("baseColor"), 0.5f, 0.4f, 0.2f);
 	glBindVertexArray(mesh.vId);
 	glDrawElements(GL_TRIANGLES, mesh.count, GL_UNSIGNED_INT, (void*)0);
+	glBindVertexArray(0);
+	glUseProgram(0);
 	
+	// Render the items and player.
 	_player.draw(_playerCamera.view(), _playerCamera.projection());
 	_sceneFramebuffer->unbind();
 	
@@ -59,12 +66,11 @@ void GameRenderer::draw(){
 	_fxaaFramebuffer->unbind();
 	
 	// --- Final pass -------
-	//glEnable(GL_FRAMEBUFFER_SRGB);
+	
 	glViewport(0, 0, GLsizei(_config.screenResolution[0]), GLsizei(_config.screenResolution[1]));
 	glUseProgram(_finalProgram->id());
 	ScreenQuad::draw(_fxaaFramebuffer->textureId());
 	glEnable(GL_DEPTH_TEST);
-	//glDisable(GL_FRAMEBUFFER_SRGB);
 	
 	checkGLError();
 	
