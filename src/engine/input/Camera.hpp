@@ -15,6 +15,13 @@ public:
 	/// Constructor
 	Camera();
 	
+	/** Update all view parameters
+	 \param position the camera position
+	 \param center the camera center of interest
+	 \param up the camera vertical orientation
+	 */
+	void pose(const glm::vec3 & position, const glm::vec3 & center, const glm::vec3 & up);
+	
 	/** Update all projection parameters.
 	 \param ratio the aspect ratio
 	 \param fov the vertical field of view

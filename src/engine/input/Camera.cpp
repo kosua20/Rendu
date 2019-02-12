@@ -14,6 +14,14 @@ Camera::Camera()  {
 	updateProjection();
 }
 
+void Camera::pose(const glm::vec3 & position, const glm::vec3 & center, const glm::vec3 & up){
+	_eye = position;
+	_center = center;
+	_up = glm::normalize(up);
+	_right = glm::cross(glm::normalize(_center - _eye), _up);
+	updateView();
+}
+
 void Camera::projection(float ratio, float fov, float near, float far){
 	_near = near;
 	_far = far;
