@@ -19,7 +19,7 @@ void Player::update(){
 		// Check if current head position is different from last recorded.
 		const glm::vec2 pos2d(_position);
 		const float distance = glm::distance(pos2d, _path[_currentSample].pos);
-		if(distance > 0.02f){
+		if(distance > _minSamplingDistance){
 			// Move to the next position in the cyclic buffer.
 			_currentSample = (_currentSample + 1) % _numSamplesPath;
 			_path[_currentSample].pos = pos2d;
@@ -33,8 +33,6 @@ void Player::update(){
 }
 
 void Player::physics(double fullTime, const double frameTime) {
-	
-	
 	
 	const float deltaSpeed = frameTime * _headAccel;
 	const float deltaAngle = frameTime  * _angleSpeed;
@@ -67,7 +65,7 @@ void Player::physics(double fullTime, const double frameTime) {
 		_momentum[1] *= -1.0f;
 		_angle = -_angle + M_PI;
 		// Add a few frames of invicibility for acute angles.
-		_invicibility += 0.5f;
+		_invicibility += _invicibilityIncrease;
 	}
 	_position = glm::clamp(_position, -_maxPos, _maxPos);
 	glm::vec2 headPos(_position);
@@ -75,11 +73,13 @@ void Player::physics(double fullTime, const double frameTime) {
 	
 	// Are we intersecting any item ?
 	for(int i = _items.size() - 1; i >= 0; --i){
-		if(glm::distance(_items[i], headPos) < 1.5f*_radius){
+		if(glm::distance(_items[i], headPos) < _eatingDistance*_radius){
 			// Eat the element.
 			_positions.push_back(_items[i]);
 			_angles.push_back(0.0f);
 			_items.erase(_items.begin() + i);
+			_score += _itemValue;
+			Log::Info() << "Score: " << _score << "!" << std::endl;
 		}
 	}
 	
@@ -136,8 +136,7 @@ void Player::physics(double fullTime, const double frameTime) {
 	}
 	
 	// Spawn new elements
-	const double spawnPeriod = 1.5;
-	if(fullTime > _lastSpawn + spawnPeriod && _items.size() < 20){
+	if(fullTime > _lastSpawn + _spawnPeriod && _items.size() < _maxItems){
 		_lastSpawn = fullTime;
 		
 		bool found = false;
@@ -145,16 +144,17 @@ void Player::physics(double fullTime, const double frameTime) {
 		int tests = 0;
 		const float maxX = _maxPos[0] - _radius;
 		const float maxY = _maxPos[1] - _radius;
+		const float minDistance = _minSpawnDistance*_radius;
 		do {
 			found = true;
 			newPos = glm::vec2(Random::Float(-maxX, maxX), Random::Float(-maxY, maxY));
-			if(glm::distance(headPos, newPos) < 3.0*_radius){
+			if(glm::distance(headPos, newPos) < minDistance){
 				found = false;
 			}
 			
 			if(found){
 				for(const auto & pos : _positions){
-					if(glm::distance(pos, newPos) < 3.0*_radius){
+					if(glm::distance(pos, newPos) < minDistance){
 						found = false;
 						break;
 					}
@@ -163,14 +163,14 @@ void Player::physics(double fullTime, const double frameTime) {
 			
 			if(found){
 				for(const auto & pos : _items){
-					if(glm::distance(pos, newPos) < 3.0*_radius){
+					if(glm::distance(pos, newPos) < minDistance){
 						found = false;
 						break;
 					}
 				}
 			}
 			++tests;
-		} while(!found && tests < 50);
+		} while(!found && tests < _spawnTentatives);
 		
 		if(found){
 			_items.push_back(newPos);
@@ -182,7 +182,7 @@ void Player::physics(double fullTime, const double frameTime) {
 	bool boom = false;
 	if(_invicibility <= 0.0f){
 		for(int i = _positions.size() - 1; i >= 0; --i){
-			if(glm::distance(_positions[i], headPos) < 1.5f*_radius){
+			if(glm::distance(_positions[i], headPos) < _collisionDistance*_radius){
 				// Noooooo
 				boom = true;
 				break;
@@ -197,45 +197,44 @@ void Player::physics(double fullTime, const double frameTime) {
 	
 	
 }
-void Player::resize(const glm::vec2 & newRes){
-}
 
 
 
 void Player::draw(const glm::mat4& view, const glm::mat4& projection)  {
-	
-	// Combine the three matrices.
-	// \todo Update model lazily.
-	_model = glm::scale(glm::rotate(glm::translate(glm::mat4(1.0f), _position), _angle, glm::vec3(0.0f, 0.0f, 1.0f)), glm::vec3(_radius));
-	const glm::mat4 VP = projection * view;
-	const glm::mat4 MVP = VP * _model;
-	const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(_model)));
-	// Compute the normal matrix
-	//
-	// Select the program (and shaders).
 	glUseProgram(_coloredProgram->id());
-	glUniformMatrix4fv(_coloredProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
-	glUniformMatrix3fv(_coloredProgram->uniform("normalMat"), 1, GL_FALSE, &normalMatrix[0][0]);
-	glBindVertexArray(_head.vId);
-	glUniform3f(_coloredProgram->uniform("baseColor"), 0.1f, 0.6f, 0.9f);
-	glDrawElements(GL_TRIANGLES, _head.count, GL_UNSIGNED_INT, (void*)0);
+	
+	const glm::mat4 VP = projection * view;
+	
+	{
+		// Combine the three matrices.
+		const glm::mat4 model = glm::scale(glm::rotate(glm::translate(glm::mat4(1.0f), _position), _angle, glm::vec3(0.0f, 0.0f, 1.0f)), glm::vec3(_radius));
+		const glm::mat4 MVP = VP * model;
+		// \todo If no sheering, can avoid the inverse transpose.
+		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(model)));
+		
+		glUniformMatrix4fv(_coloredProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
+		glUniformMatrix3fv(_coloredProgram->uniform("normalMat"), 1, GL_FALSE, &normalMatrix[0][0]);
+		glBindVertexArray(_head.vId);
+		glUniform3f(_coloredProgram->uniform("baseColor"), 0.1f, 0.6f, 0.9f);
+		glDrawElements(GL_TRIANGLES, _head.count, GL_UNSIGNED_INT, (void*)0);
+	}
 	
 	glBindVertexArray(_bodyElement.vId);
 	for(int i = 0; i < _positions.size();++i){
-		_model = glm::scale(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(_positions[i], 0.0f)), _angles[i], glm::vec3(0.0f, 0.0f, 1.0f)), glm::vec3(_radius));
-		const glm::mat4 MVP1 = VP * _model;
-		const glm::mat3 normalMatrix1 = glm::transpose(glm::inverse(glm::mat3(_model)));
-		glUniformMatrix4fv(_coloredProgram->uniform("mvp"), 1, GL_FALSE, &MVP1[0][0]);
-		glUniformMatrix3fv(_coloredProgram->uniform("normalMat"), 1, GL_FALSE, &normalMatrix1[0][0]);
+		const glm::mat4 model = glm::scale(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(_positions[i], 0.0f)), _angles[i], glm::vec3(0.0f, 0.0f, 1.0f)), glm::vec3(_radius));
+		const glm::mat4 MVP = VP * model;
+		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(model)));
+		glUniformMatrix4fv(_coloredProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
+		glUniformMatrix3fv(_coloredProgram->uniform("normalMat"), 1, GL_FALSE, &normalMatrix[0][0]);
 		glUniform3f(_coloredProgram->uniform("baseColor"), 0.1f, 0.9f, 0.2f);
 		glDrawElements(GL_TRIANGLES, _bodyElement.count, GL_UNSIGNED_INT, (void*)0);
 	}
 	
 	glBindVertexArray(_bodyElement.vId);
 	for(int i = 0; i < _items.size();++i){
-		_model = glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(_items[i], 0.0f)), glm::vec3(_radius));
-		const glm::mat4 MVP1 = VP * _model;
-		const glm::mat3 normalMatrix1 = glm::transpose(glm::inverse(glm::mat3(_model)));
+		const glm::mat4 model = glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(_items[i], 0.0f)), glm::vec3(_radius));
+		const glm::mat4 MVP1 = VP * model;
+		const glm::mat3 normalMatrix1 = glm::transpose(glm::inverse(glm::mat3(model)));
 		glUniformMatrix4fv(_coloredProgram->uniform("mvp"), 1, GL_FALSE, &MVP1[0][0]);
 		glUniformMatrix3fv(_coloredProgram->uniform("normalMat"), 1, GL_FALSE, &normalMatrix1[0][0]);
 		glUniform3f(_coloredProgram->uniform("baseColor"), 0.9f, 0.1f, 0.1f);

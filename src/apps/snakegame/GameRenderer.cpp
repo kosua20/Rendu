@@ -8,7 +8,7 @@ GameRenderer::GameRenderer(RenderingConfig & config) : Renderer(config){
 	
 	_playerCamera.pose(glm::vec3(0.0f, 0.0f, 25.0f), glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	_playerCamera.projection(config.screenResolution[0]/config.screenResolution[1], 0.6f, 1.0f, 30.0f);
-	_player.resize(_renderResolution);
+	
 	// GL options
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
@@ -103,7 +103,6 @@ void GameRenderer::resize(unsigned int width, unsigned int height){
 	_playerCamera.ratio(aspectRatio);
 	_fxaaFramebuffer->resize(_renderResolution);
 	_sceneFramebuffer->resize(_renderResolution);
-	_player.resize(_renderResolution);
 }
 
 void GameRenderer::clean() const {
