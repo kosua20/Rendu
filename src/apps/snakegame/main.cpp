@@ -4,12 +4,11 @@
 #include "input/Input.hpp"
 #include "helpers/InterfaceUtilities.hpp"
 #include "resources/ResourcesManager.hpp"
-#include "GameRenderer.hpp"
-#include "GameConfig.hpp"
+#include "Game.hpp"
 
 
 /**
- \defgroup SnakeGame A small 3D game demo
+ \defgroup SnakeGame Snake Game
  \brief A small 3D game demo.
  \ingroup Applications
  */
@@ -36,8 +35,8 @@ int main(int argc, char** argv) {
 	// Initialize random generator;
 	Random::seed();
 	
-	// Create the renderer.
-	std::shared_ptr<GameRenderer> renderer(new GameRenderer(config));
+	// Create the game main handler..
+	Game game(config);
 	
 	double timer = glfwGetTime();
 	double fullTime = 0.0;
@@ -48,20 +47,16 @@ int main(int argc, char** argv) {
 	while (!glfwWindowShouldClose(window)) {
 		// Update events (inputs,...).
 		Input::manager().update();
-		// Handle quitting.
-		if(Input::manager().pressed(Input::KeyEscape)){
-			glfwSetWindowShouldClose(window, GL_TRUE);
-		}
-		// Reload resources.
-		if(Input::manager().triggered(Input::KeyP)){
-			Resources::manager().reload();
-		}
+		
 		
 		// Start a new frame for the interface.
 		Interface::beginFrame();
 		
 		// We separate punctual events from the main physics/movement update loop.
-		renderer->update();
+		const bool shoudClose = game.update();
+		if(shoudClose){
+			glfwSetWindowShouldClose(window, GLFW_TRUE);
+		}
 		
 		// Compute the time elapsed since last frame
 		double currentTime = glfwGetTime();
@@ -77,14 +72,14 @@ int main(int argc, char** argv) {
 		while(remainingTime > 0.2*dt){
 			double deltaTime = fmin(remainingTime, dt);
 			// Update physics and camera.
-			renderer->physics(fullTime, deltaTime);
+			game.physics(fullTime, deltaTime);
 			// Update timers.
 			fullTime += deltaTime;
 			remainingTime -= deltaTime;
 		}
 		
 		// Update the content of the window.
-		renderer->draw();
+		game.draw();
 		// Then render the interface.
 		Interface::endFrame();
 		//Display the result for the current rendering loop.
@@ -97,7 +92,7 @@ int main(int argc, char** argv) {
 	// Remove the window.
 	glfwDestroyWindow(window);
 	// Clean other resources
-	renderer->clean();
+	game.clean();
 	// Close GL context and any other GLFW resources.
 	glfwTerminate();
 	
