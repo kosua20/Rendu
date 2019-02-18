@@ -18,26 +18,28 @@ GameRenderer::GameRenderer(RenderingConfig & config) : Renderer(config){
 	
 	const int renderWidth = (int)_renderResolution[0];
 	const int renderHeight = (int)_renderResolution[1];
-	_sceneFramebuffer = std::make_shared<Framebuffer>(renderWidth, renderHeight, GL_RGBA8, true);
-	_fxaaFramebuffer = std::make_shared<Framebuffer>(renderWidth, renderHeight, GL_RGBA8, false);
+	_sceneFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, GL_RGBA8, true));
+	_fxaaFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, GL_RGBA8, false));
 	_fxaaProgram = Resources::manager().getProgram2D("fxaa");
 	_finalProgram = Resources::manager().getProgram2D("final_screenquad");
 	
-	_startTime = 0.0;
+	_coloredProgram = Resources::manager().getProgram("colored_object");
+	_head = Resources::manager().getMesh("head");
+	_bodyElement = Resources::manager().getMesh("body");
 }
 
-void GameRenderer::draw(){
+void GameRenderer::draw(const Player & player){
+	
 	const glm::vec2 invRenderSize = 1.0f/_renderResolution;
 	
 	
 	_sceneFramebuffer->bind();
 	_sceneFramebuffer->setViewport();
-	glEnable(GL_DEPTH_TEST);
 	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+	glEnable(GL_DEPTH_TEST);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
 	// Render the ground.
-	const auto groundProgram = Resources::manager().getProgram("colored_object");
+	const auto & groundProgram = _coloredProgram;
 	glUseProgram(groundProgram->id());
 	const auto mesh  = Resources::manager().getMesh("ground");
 	// Upload the MVP matrix.
@@ -51,12 +53,53 @@ void GameRenderer::draw(){
 	glDrawElements(GL_TRIANGLES, mesh.count, GL_UNSIGNED_INT, (void*)0);
 	glBindVertexArray(0);
 	glUseProgram(0);
-	
+		
 	// Render the items and player.
-	_player.draw(_playerCamera.view(), _playerCamera.projection());
+	glUseProgram(_coloredProgram->id());
+	const glm::mat4 VP = _playerCamera.projection() * _playerCamera.view();
+	
+	{
+		
+		const glm::mat4 MVP = VP * player.modelHead;
+		// \todo If no sheering, can avoid the inverse transpose.
+		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(player.modelHead)));
+		
+		glUniformMatrix4fv(_coloredProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
+		glUniformMatrix3fv(_coloredProgram->uniform("normalMat"), 1, GL_FALSE, &normalMatrix[0][0]);
+		glBindVertexArray(_head.vId);
+		glUniform3f(_coloredProgram->uniform("baseColor"), 0.1f, 0.6f, 0.9f);
+		glDrawElements(GL_TRIANGLES, _head.count, GL_UNSIGNED_INT, (void*)0);
+	}
+	
+	glBindVertexArray(_bodyElement.vId);
+	for(int i = 0; i < player.modelsBody.size();++i){
+		
+		const glm::mat4 MVP = VP * player.modelsBody[i];
+		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(player.modelsBody[i])));
+		glUniformMatrix4fv(_coloredProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
+		glUniformMatrix3fv(_coloredProgram->uniform("normalMat"), 1, GL_FALSE, &normalMatrix[0][0]);
+		glUniform3f(_coloredProgram->uniform("baseColor"), 0.1f, 0.9f, 0.2f);
+		glDrawElements(GL_TRIANGLES, _bodyElement.count, GL_UNSIGNED_INT, (void*)0);
+	}
+	
+	glBindVertexArray(_bodyElement.vId);
+	for(int i = 0; i < player.modelsItem.size();++i){
+		const glm::mat4 MVP1 = VP * player.modelsItem[i];
+		const glm::mat3 normalMatrix1 = glm::transpose(glm::inverse(glm::mat3(player.modelsItem[i])));
+		glUniformMatrix4fv(_coloredProgram->uniform("mvp"), 1, GL_FALSE, &MVP1[0][0]);
+		glUniformMatrix3fv(_coloredProgram->uniform("normalMat"), 1, GL_FALSE, &normalMatrix1[0][0]);
+		glUniform3f(_coloredProgram->uniform("baseColor"), 0.9f, 0.1f, 0.1f);
+		glDrawElements(GL_TRIANGLES, _bodyElement.count, GL_UNSIGNED_INT, (void*)0);
+	}
+	
+	glBindVertexArray(0);
+	glUseProgram(0);
+	
+	
 	_sceneFramebuffer->unbind();
 	
 	glDisable(GL_DEPTH_TEST);
+	
 	// --- FXAA pass -------
 	_fxaaFramebuffer->bind();
 	_fxaaFramebuffer->setViewport();
@@ -66,35 +109,15 @@ void GameRenderer::draw(){
 	_fxaaFramebuffer->unbind();
 	
 	// --- Final pass -------
-	
 	glViewport(0, 0, GLsizei(_config.screenResolution[0]), GLsizei(_config.screenResolution[1]));
 	glUseProgram(_finalProgram->id());
 	ScreenQuad::draw(_fxaaFramebuffer->textureId());
-	glEnable(GL_DEPTH_TEST);
 	
 	checkGLError();
-	
-	
 }
 
 void GameRenderer::update(){
 	Renderer::update();
-	if(ImGui::Begin("Infos")){
-		ImGui::Text("%.1f ms, %.1f fps", ImGui::GetIO().DeltaTime*1000.0f, ImGui::GetIO().Framerate);
-	}
-	ImGui::End();
-	
-	_player.update();
-}
-
-void GameRenderer::physics(double fullTime, double frameTime){
-	if(_startTime == 0.0){
-		_startTime = fullTime;
-	}
-	
-	_player.physics(fullTime - _startTime, frameTime);
-	
-	
 }
 
 void GameRenderer::resize(unsigned int width, unsigned int height){
@@ -109,5 +132,8 @@ void GameRenderer::clean() const {
 	Renderer::clean();
 	_fxaaFramebuffer->clean();
 	_sceneFramebuffer->clean();
-	_player.clean();
+	glDeleteVertexArrays(1, &_head.vId);
+	glDeleteVertexArrays(1, &_bodyElement.vId);
 }
+
+

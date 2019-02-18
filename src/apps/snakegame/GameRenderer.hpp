@@ -1,6 +1,5 @@
+#pragma once
 
-#ifndef GameRenderer_h
-#define GameRenderer_h
 #include "renderers/Renderer.hpp"
 #include "input/Camera.hpp"
 #include "Player.hpp"
@@ -10,27 +9,32 @@ public:
 	
 	GameRenderer(RenderingConfig & config);
 	
-	void draw();
+	void draw(const Player & player);
+	
+	void draw(){};
 	
 	void update();
 	
-	void physics(double fullTime, double frameTime);
+	void physics(double fullTime, double frameTime){};
 	
 	void resize(unsigned int width, unsigned int height);
 	
 	void clean() const;
 	
 private:
-	std::shared_ptr<Framebuffer> _sceneFramebuffer;
-	std::shared_ptr<Framebuffer> _fxaaFramebuffer;
+	std::unique_ptr<Framebuffer> _sceneFramebuffer;
+	std::unique_ptr<Framebuffer> _fxaaFramebuffer;
 	
 	
-	std::shared_ptr<ProgramInfos> _fxaaProgram; ///< FXAA program
-	std::shared_ptr<ProgramInfos> _finalProgram; ///< Final output program
+	std::shared_ptr<ProgramInfos> _fxaaProgram;
+	std::shared_ptr<ProgramInfos> _finalProgram;
+	std::shared_ptr<ProgramInfos> _coloredProgram;
+	
+	MeshInfos _head;
+	MeshInfos _bodyElement;
 	
 	Camera _playerCamera;
-	Player _player;
-	double _startTime;
+	
 };
 
-#endif
+

@@ -2,15 +2,7 @@
 #include "input/Input.hpp"
 #include "helpers/GenerationUtilities.hpp"
 
-Player::Player() {
-	
-	_coloredProgram = Resources::manager().getProgram("colored_object");
-	
-	_head = Resources::manager().getMesh("head");
-	_bodyElement = Resources::manager().getMesh("body");
-	
-	checkGLError();
-	
+Player::Player() {	
 	_path.resize(_numSamplesPath, {glm::vec2(0.0f), 0.0f } );
 }
 
@@ -28,8 +20,6 @@ void Player::update(){
 	}
 	// Increase frame count.
 	_currentFrame = (_currentFrame + 1) % _samplingPeriod;
-	
-	
 }
 
 void Player::physics(double fullTime, const double frameTime) {
@@ -77,7 +67,9 @@ void Player::physics(double fullTime, const double frameTime) {
 			// Eat the element.
 			_positions.push_back(_items[i]);
 			_angles.push_back(0.0f);
+			modelsBody.emplace_back(1.0f);
 			_items.erase(_items.begin() + i);
+			modelsItem.erase(modelsItem.begin() + i);
 			_score += _itemValue;
 			Log::Info() << "Score: " << _score << "!" << std::endl;
 		}
@@ -174,6 +166,7 @@ void Player::physics(double fullTime, const double frameTime) {
 		
 		if(found){
 			_items.push_back(newPos);
+			modelsItem.emplace_back(1.0f);
 		}
 		
 	}
@@ -192,62 +185,21 @@ void Player::physics(double fullTime, const double frameTime) {
 		_invicibility = std::max(0.0f, _invicibility - float(frameTime));
 	}
 	if(boom){
-		Log::Info() << "BOOOOOM I'm dead (" << fullTime << "s.) :(" << std::endl;
+		_alive = false;
 	}
 	
 	
 }
 
 
-
-void Player::draw(const glm::mat4& view, const glm::mat4& projection)  {
-	glUseProgram(_coloredProgram->id());
+void Player::updateModels(){
 	
-	const glm::mat4 VP = projection * view;
+	modelHead = glm::scale(glm::rotate(glm::translate(glm::mat4(1.0f), _position), _angle, glm::vec3(0.0f, 0.0f, 1.0f)), glm::vec3(_radius));
 	
-	{
-		// Combine the three matrices.
-		const glm::mat4 model = glm::scale(glm::rotate(glm::translate(glm::mat4(1.0f), _position), _angle, glm::vec3(0.0f, 0.0f, 1.0f)), glm::vec3(_radius));
-		const glm::mat4 MVP = VP * model;
-		// \todo If no sheering, can avoid the inverse transpose.
-		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(model)));
-		
-		glUniformMatrix4fv(_coloredProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
-		glUniformMatrix3fv(_coloredProgram->uniform("normalMat"), 1, GL_FALSE, &normalMatrix[0][0]);
-		glBindVertexArray(_head.vId);
-		glUniform3f(_coloredProgram->uniform("baseColor"), 0.1f, 0.6f, 0.9f);
-		glDrawElements(GL_TRIANGLES, _head.count, GL_UNSIGNED_INT, (void*)0);
-	}
-	
-	glBindVertexArray(_bodyElement.vId);
 	for(int i = 0; i < _positions.size();++i){
-		const glm::mat4 model = glm::scale(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(_positions[i], 0.0f)), _angles[i], glm::vec3(0.0f, 0.0f, 1.0f)), glm::vec3(_radius));
-		const glm::mat4 MVP = VP * model;
-		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(model)));
-		glUniformMatrix4fv(_coloredProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
-		glUniformMatrix3fv(_coloredProgram->uniform("normalMat"), 1, GL_FALSE, &normalMatrix[0][0]);
-		glUniform3f(_coloredProgram->uniform("baseColor"), 0.1f, 0.9f, 0.2f);
-		glDrawElements(GL_TRIANGLES, _bodyElement.count, GL_UNSIGNED_INT, (void*)0);
+		modelsBody[i] = glm::scale(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(_positions[i], 0.0f)), _angles[i], glm::vec3(0.0f, 0.0f, 1.0f)), glm::vec3(_radius));
 	}
-	
-	glBindVertexArray(_bodyElement.vId);
 	for(int i = 0; i < _items.size();++i){
-		const glm::mat4 model = glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(_items[i], 0.0f)), glm::vec3(_radius));
-		const glm::mat4 MVP1 = VP * model;
-		const glm::mat3 normalMatrix1 = glm::transpose(glm::inverse(glm::mat3(model)));
-		glUniformMatrix4fv(_coloredProgram->uniform("mvp"), 1, GL_FALSE, &MVP1[0][0]);
-		glUniformMatrix3fv(_coloredProgram->uniform("normalMat"), 1, GL_FALSE, &normalMatrix1[0][0]);
-		glUniform3f(_coloredProgram->uniform("baseColor"), 0.9f, 0.1f, 0.1f);
-		glDrawElements(GL_TRIANGLES, _bodyElement.count, GL_UNSIGNED_INT, (void*)0);
+		modelsItem[i] = glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(_items[i], 0.0f)), glm::vec3(_radius));
 	}
-	
-	glBindVertexArray(0);
-	glUseProgram(0);
-}
-
-
-void Player::clean() const {
-	glDeleteVertexArrays(1, &_head.vId);
-	glDeleteVertexArrays(1, &_bodyElement.vId);
-
 }
