@@ -4,8 +4,19 @@
 #include "input/Input.hpp"
 #include "helpers/InterfaceUtilities.hpp"
 
-Game::Game(RenderingConfig & config) : _inGameRenderer(config), _config(config) {
+Game::Game(RenderingConfig & config) : _config(config), _inGameRenderer(config), _menuRenderer(config) {
+	// Create menus.
+	_menus[Status::START] = GameMenu();
+	_menus[Status::START].backgroundColor = glm::vec3(0.0f, 1.0f, 0.0f);
 	
+	_menus[Status::PAUSE] = GameMenu();
+	_menus[Status::PAUSE].backgroundColor = glm::vec3(0.0f, 0.0f, 1.0f);
+	
+	_menus[Status::OPTIONS] = GameMenu();
+	_menus[Status::OPTIONS].backgroundColor = glm::vec3(0.0f, 1.0f, 1.0f);
+	
+	_menus[Status::DEAD] = GameMenu();
+	_menus[Status::DEAD].backgroundColor = glm::vec3(1.0f, 0.0f, 0.0f);
 }
 
 void Game::draw(){
@@ -13,26 +24,9 @@ void Game::draw(){
 	if(_status == Status::INGAME){
 		_player.updateModels();
 		_inGameRenderer.draw(_player);
-	} else if(_status == Status::DEAD){
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glViewport(0.0f, 0.0f, _config.screenResolution[0], _config.screenResolution[1]);
-		glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
-		glDisable(GL_DEPTH_TEST);
-		glClear(GL_COLOR_BUFFER_BIT);
-	} else if(_status == Status::START){
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glViewport(0.0f, 0.0f, _config.screenResolution[0], _config.screenResolution[1]);
-		glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
-		glDisable(GL_DEPTH_TEST);
-		glClear(GL_COLOR_BUFFER_BIT);
 	} else {
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glViewport(0.0f, 0.0f, _config.screenResolution[0], _config.screenResolution[1]);
-		glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
-		glDisable(GL_DEPTH_TEST);
-		glClear(GL_COLOR_BUFFER_BIT);
+		_menuRenderer.draw(_menus[_status]);
 	}
-	
 	
 	checkGLError();
 }
@@ -40,7 +34,7 @@ void Game::draw(){
 bool Game::update(){
 	
 	if(Input::manager().resized()){
-		_inGameRenderer.resize((unsigned int)Input::manager().size()[0], (unsigned int)Input::manager().size()[1]);
+		resize((unsigned int)Input::manager().size()[0], (unsigned int)Input::manager().size()[1]);
 	}
 	
 	// Handle quitting.
@@ -72,10 +66,11 @@ bool Game::update(){
 		if(!_player.alive()){
 			_status = Status::DEAD;
 		}
+	} else {
+		const GameMenu & currentMenu = _menus[_status];
+		// Do something with it.
 	}
 
-	
-	
 	return false;
 	
 }
@@ -87,12 +82,16 @@ void Game::physics(double fullTime, double frameTime){
 		_playTime = _playTime + frameTime;
 		_player.physics(_playTime, frameTime);
 	}
+	
+	// No physics in menus.
 }
 
 void Game::resize(unsigned int width, unsigned int height){
 	_inGameRenderer.resize(width, height);
+	_menuRenderer.resize(width, height);
 }
 
 void Game::clean() const {
 	_inGameRenderer.clean();
+	_menuRenderer.clean();
 }

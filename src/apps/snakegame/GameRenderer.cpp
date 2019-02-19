@@ -1,8 +1,6 @@
 
 #include "GameRenderer.hpp"
 #include "Common.hpp"
-#include "helpers/InterfaceUtilities.hpp"
-#include "input/Input.hpp"
 
 GameRenderer::GameRenderer(RenderingConfig & config) : Renderer(config){
 	

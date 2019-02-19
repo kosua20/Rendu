@@ -1,6 +1,8 @@
 #pragma once
-#include "GameRenderer.hpp"
 #include "Config.hpp"
+#include "GameMenu.hpp"
+#include "GameMenuRenderer.hpp"
+#include "GameRenderer.hpp"
 
 class Game {
 public:
@@ -18,14 +20,19 @@ public:
 	void clean() const;
 	
 private:
+	RenderingConfig & _config;
 	GameRenderer _inGameRenderer;
-	RenderingConfig & _config; ///< The current configuration.
+	GameMenuRenderer _menuRenderer;
+	
 	Player _player;
 	double _playTime = 0.0;
 	
 	enum class Status {
-		START, INGAME, PAUSE, DEAD, OPTIONS, TUTORIAL
+		START, INGAME, PAUSE, DEAD, OPTIONS
 	};
 	
 	Status _status = Status::START;
+	
+	std::map<Status, GameMenu> _menus;
+	
 };
