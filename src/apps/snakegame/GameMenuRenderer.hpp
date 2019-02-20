@@ -22,6 +22,9 @@ public:
 	
 private:
 	
+	std::shared_ptr<ProgramInfos> _buttonProgram;
+	MeshInfos _button;
+	
 };
 
 
