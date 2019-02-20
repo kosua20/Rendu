@@ -6,16 +6,14 @@
 
 Game::Game(RenderingConfig & config) : _config(config), _inGameRenderer(config), _menuRenderer(config) {
 	// Create menus.
-	_menus[Status::START] = GameMenu();
 	_menus[Status::START].backgroundColor = glm::vec3(0.0f, 1.0f, 0.0f);
+	_menus[Status::START].buttons.emplace_back(glm::vec2(0.0f, 0.0f), glm::vec2(200.0f, 100.0f));
+	_menus[Status::START].buttons.emplace_back(glm::vec2(0.0f, 0.5f), glm::vec2(200.0f, 100.0f));
 	
-	_menus[Status::PAUSE] = GameMenu();
 	_menus[Status::PAUSE].backgroundColor = glm::vec3(0.0f, 0.0f, 1.0f);
 	
-	_menus[Status::OPTIONS] = GameMenu();
 	_menus[Status::OPTIONS].backgroundColor = glm::vec3(0.0f, 1.0f, 1.0f);
 	
-	_menus[Status::DEAD] = GameMenu();
 	_menus[Status::DEAD].backgroundColor = glm::vec3(1.0f, 0.0f, 0.0f);
 }
 

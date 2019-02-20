@@ -11,7 +11,12 @@ public:
 	struct Button {
 		glm::vec2 pos = glm::vec2(0.0f);
 		glm::vec2 size = glm::vec2(100.0f);
-		GLuint texture;
+		GLuint texture = 0;
+		
+		Button(const glm::vec2 & apos, const glm::vec2 & asize){
+			pos = apos;
+			size = asize;
+		}
 	};
 	
 	std::vector<Button> buttons;
