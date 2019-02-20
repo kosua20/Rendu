@@ -25,7 +25,7 @@ void DragonScene::init(){
 	// Objects creation.
 	Object suzanne(Object::Type::Regular, "suzanne", { {"suzanne_texture_color", true }, {"suzanne_texture_normal", false}, {"suzanne_texture_rough_met_ao", false} });
 	Object dragon(Object::Type::Regular, "dragon", { { "dragon_texture_color", true }, { "dragon_texture_normal", false }, { "dragon_texture_rough_met_ao", false } });
-	Object plane(Object::Type::Parallax, "plane", { { "plane_texture_color", true }, { "plane_texture_normal", false }, { "plane_texture_rough_met_ao", false }, { "plane_texture_depth", false } }, {}, false);
+	Object plane(Object::Type::Parallax, "groundplane", { { "groundplane_texture_color", true }, { "groundplane_texture_normal", false }, { "groundplane_texture_rough_met_ao", false }, { "groundplane_texture_depth", false } }, {}, false);
 	
 	suzanne.update(suzanneModel);
 	dragon.update(dragonModel);
