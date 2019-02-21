@@ -284,6 +284,14 @@ public:
 	bool triggered(const Key & keyboardKey, bool absorb = false);
 	
 	/**
+	 Query if a given key was released at this frame precisely.
+	 \param keyboardKey the key code
+	 \param absorb should the press event be hidden from future queries during the current frame
+	 \return true if the key was released at this frame.
+	 */
+	bool released(const Key & keyboardKey, bool absorb = false);
+	
+	/**
 	 Query if a given mouse button is held at this frame.
 	 \param mouseButton the mouse button code
 	 \return true if the button is currently pressed.
@@ -297,6 +305,14 @@ public:
 	 \return true if the mouse button was triggered at this frame.
 	 */
 	bool triggered(const Mouse & mouseButton, bool absorb = false);
+	
+	/**
+	 Query if a given mouse button was released at this frame precisely.
+	 \param mouseButton the mouse button code
+	 \param absorb should the press event be hidden from future queries during the current frame
+	 \return true if the mouse button was released at this frame.
+	 */
+	bool released(const Mouse & mouseButton, bool absorb = false);
 	
 	/**
 	 Query the current mouse position.

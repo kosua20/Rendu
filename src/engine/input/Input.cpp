@@ -188,6 +188,14 @@ bool Input::triggered(const Key & keyboardKey, bool absorb) {
 	return res;
 }
 
+bool Input::released(const Key & keyboardKey, bool absorb) {
+	bool res = _keys[keyboardKey].last;
+	if(absorb){
+		_keys[keyboardKey].last = false;
+	}
+	return res;
+}
+
 bool Input::pressed(const Mouse & mouseButton) const {
 	return _mouseButtons[mouseButton].pressed;
 }
@@ -196,6 +204,14 @@ bool Input::triggered(const Mouse & mouseButton, bool absorb) {
 	bool res = _mouseButtons[mouseButton].first;
 	if(absorb){
 		_mouseButtons[mouseButton].first = false;
+	}
+	return res;
+}
+
+bool Input::released(const Mouse & mouseButton, bool absorb) {
+	bool res = _mouseButtons[mouseButton].last;
+	if(absorb){
+		_mouseButtons[mouseButton].last = false;
 	}
 	return res;
 }
