@@ -71,7 +71,6 @@ void Player::physics(double fullTime, const double frameTime) {
 			_items.erase(_items.begin() + i);
 			modelsItem.erase(modelsItem.begin() + i);
 			_score += _itemValue;
-			Log::Info() << "Score: " << _score << "!" << std::endl;
 		}
 	}
 	
@@ -90,8 +89,8 @@ void Player::physics(double fullTime, const double frameTime) {
 			while(totalDistance >= targetDistance && (id < _positions.size())){
 				const float fraction1 = 1.0f-(totalDistance - targetDistance)/(newDist);
 				_positions[id] = glm::mix(previousPoint, nextPoint, fraction1);
+				// Angle update.
 				const glm::vec2 dir = glm::normalize((id > 0 ? _positions[id-1] : previousPoint) - nextPoint);
-				// \todo Cleanup angle estimation.
 				float newAngle = std::atan2(dir[1], dir[0]);
 				// Ensure that the angle is not too far from the current one.
 				if(std::abs(_angles[id] - newAngle) > std::abs(_angles[id] + newAngle)){

@@ -55,9 +55,12 @@ int main(int argc, char** argv) {
 		Interface::beginFrame();
 		
 		// We separate punctual events from the main physics/movement update loop.
-		const bool shoudClose = game.update();
-		if(shoudClose){
-			glfwSetWindowShouldClose(window, GLFW_TRUE);
+		const Interface::Action actionToTake = game.update();
+		if(actionToTake != Interface::Action::None){
+			Interface::performWindowAction(window, config, actionToTake);
+			if(actionToTake == Interface::Action::Fullscreen){
+				game.resize((unsigned int)Input::manager().size()[0], (unsigned int)Input::manager().size()[1]);
+			}
 		}
 		
 		// Compute the time elapsed since last frame

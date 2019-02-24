@@ -1,6 +1,7 @@
 
 #include "GameMenuRenderer.hpp"
 #include "Common.hpp"
+#include "input/Input.hpp"
 
 GameMenuRenderer::GameMenuRenderer(RenderingConfig & config) : Renderer(config){
 	
@@ -24,7 +25,7 @@ void GameMenuRenderer::draw(const GameMenu & menu){
 	const float currentRatio = _config.screenResolution[0] / _config.screenResolution[1];
 	const float ratioFix =  currentRatio / initialRatio;
 	for(const auto & button : menu.buttons){
-		const glm::vec2 finalScale =  _config.screenDensity * button.size * glm::vec2(1.0/ratioFix, 1.0f);
+		const glm::vec2 finalScale = Input::manager().density() * button.size * glm::vec2(1.0/ratioFix, 1.0f);
 		glUniform2fv(_buttonProgram->uniform("position"), 1, &button.pos[0]);
 		glUniform2fv(_buttonProgram->uniform("scale"), 1, &finalScale[0]);
 		glUniform3f(_buttonProgram->uniform("color"), button.state == MenuButton::OFF, button.state == MenuButton::HOVER, button.state == MenuButton::ON);
