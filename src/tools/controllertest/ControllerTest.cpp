@@ -303,7 +303,7 @@ int main(int argc, char** argv) {
 				// Load/save configuration files.
 				if(ImGui::Button("Load...")){
 					std::string inputPath;
-					const bool res = Interface::showPicker(Interface::Load, "", inputPath);
+					const bool res = Interface::showPicker(Interface::Picker::Load, "", inputPath);
 					if(res && !inputPath.empty()){
 						const std::string settingsContent = Resources::manager().loadStringFromExternalFile(inputPath);
 						Controller::parseConfiguration(settingsContent, axesMapping, buttonsMapping);
@@ -312,7 +312,7 @@ int main(int argc, char** argv) {
 				ImGui::SameLine();
 				if(ImGui::Button("Save...")){
 					std::string outputPath;
-					const bool res = Interface::showPicker(Interface::Save, "", outputPath);
+					const bool res = Interface::showPicker(Interface::Picker::Save, "", outputPath);
 					if(res && !outputPath.empty()){
 						const auto controller = Input::manager().controller();
 						Controller::saveConfiguration(outputPath, controller->guid(), controller->name(), axesMapping, buttonsMapping);

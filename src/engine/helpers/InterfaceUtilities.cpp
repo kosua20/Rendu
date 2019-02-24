@@ -123,7 +123,7 @@ namespace Interface {
 	}
 	
 	
-	bool showPicker(const PickerMode mode, const std::string & startPath, std::string & outPath, const std::string & extensions){
+	bool showPicker(const Picker mode, const std::string & startPath, std::string & outPath, const std::string & extensions){
 		nfdchar_t *outPathRaw = NULL;
 		nfdresult_t result = NFD_CANCEL;
 		outPath = "";
@@ -133,11 +133,11 @@ namespace Interface {
 #else
 		const std::string internalStartPath = startPath;
 #endif
-		if(mode == Load){
+		if(mode == Picker::Load){
 			result = NFD_OpenDialog(extensions.empty() ? NULL : extensions.c_str(), internalStartPath.c_str(), &outPathRaw);
-		} else if(mode == Save){
+		} else if(mode == Picker::Save){
 			result = NFD_SaveDialog(extensions.empty() ? NULL : extensions.c_str(), internalStartPath.c_str(), &outPathRaw);
-		} else if(mode == Directory){
+		} else if(mode == Picker::Directory){
 			result = NFD_PickFolder(internalStartPath.c_str(), &outPathRaw);
 		}
 		

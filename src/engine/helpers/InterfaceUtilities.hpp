@@ -38,20 +38,20 @@ namespace Interface {
 	GLFWwindow* initWindow(const std::string & name, RenderingConfig & config);
 	
 	/** The file picker mode. */
-	enum PickerMode {
+	enum class Picker {
 		Load, ///< Load an existing file.
 		Directory, ///< open or create a directory.
 		Save ///< Save to a new or existing file.
 	};
 	
 	/** Present a filesystem document picker to the user, using native controls.
-	 \param mode the type of item to ask to the user
+	 \param mode the type of item to ask to the user (load, save, directory)
 	 \param startDir the initial directory when the picker is opended
 	 \param outPath the path to the item selected by the user
 	 \param extensions (optional) the extensions allowed, separated by "," or ";"
 	 \return true if the user picked an item, false if cancelled.
 	 */
-	bool showPicker(const PickerMode mode, const std::string & startDir, std::string & outPath, const std::string & extensions = "");
+	bool showPicker(const Picker mode, const std::string & startDir, std::string & outPath, const std::string & extensions = "");
 	
 }
 

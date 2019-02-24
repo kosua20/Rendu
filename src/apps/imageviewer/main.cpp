@@ -157,7 +157,7 @@ int main(int argc, char** argv) {
 			// Image loader.
 			if(ImGui::Button("Load image...")){
 				std::string newImagePath;
-				bool res = Interface::showPicker(Interface::Load, "../../../resources", newImagePath, "jpg,bmp,png,tga;exr");
+				bool res = Interface::showPicker(Interface::Picker::Load, "../../../resources", newImagePath, "jpg,bmp,png,tga;exr");
 				// If user picked a path, load the texture from disk.
 				if(res && !newImagePath.empty()){
 					Log::Info() << "Loading " << newImagePath << "." << std::endl;
@@ -242,7 +242,7 @@ int main(int argc, char** argv) {
 			if(saveImage){
 				std::string destinationPath;
 				// Export either in LDR or HDR.
-				bool res = Interface::showPicker(Interface::Save, "../../../resources", destinationPath, "png;exr");
+				bool res = Interface::showPicker(Interface::Picker::Save, "../../../resources", destinationPath, "png;exr");
 				if(res && !destinationPath.empty()){
 					const GLenum typedFormat = ImageUtilities::isHDR(destinationPath) ? GL_RGBA32F : GL_RGBA8;
 					// Create a framebuffer at the right size and format, and render in it.
