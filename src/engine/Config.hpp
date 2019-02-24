@@ -86,13 +86,14 @@ public:
 	/// \note The width should be computed based on the window aspect ratio.
 	int internalVerticalResolution = 720;
 	
-	/// Size of the window in raw pixels, updated at launch based on screen density.
-	glm::vec2 screenResolution = glm::vec2(800.0,600.0);
-	
-	/// Screen density, udpated at launch.
-	float screenDensity = 1.0f;
-	
+	/// Should the aspect ratio of the window be constrained.
 	bool forceAspectRatio = false;
+	
+	/// Size of the window in raw pixels, updated at launch based on screen density.
+	glm::vec2 screenResolution = glm::vec2(800.0f,600.0f);
+	
+	/// The last recorded window position and size on screen.
+	glm::ivec4 windowFrame = glm::vec4(0, 0, 800, 600);
 	
 protected:
 	

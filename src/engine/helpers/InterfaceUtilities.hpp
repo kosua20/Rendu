@@ -37,6 +37,21 @@ namespace Interface {
 	 */
 	GLFWwindow* initWindow(const std::string & name, RenderingConfig & config);
 	
+	/** System actions that can be executed by the window. */
+	enum class Action {
+		None, ///< Do nothing.
+		Quit, ///< Quit the application.
+		Fullscreen ///< Switch the window from/to fullscreen mode.
+	};
+	
+	/** Execute an action related to the windowing system.
+	 \param window the window
+	 \param config the current window configuration
+	 \param action the system action to perform
+	 */
+	void performWindowAction(GLFWwindow * window, RenderingConfig & config, const Action action);
+	
+	
 	/** The file picker mode. */
 	enum class Picker {
 		Load, ///< Load an existing file.

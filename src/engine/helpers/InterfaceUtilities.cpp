@@ -54,7 +54,7 @@ namespace Interface {
 			glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
 			glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
 			glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
-			// \todo We might want to impose the aspect ratio here.
+			// \todo We might want to impose the configured size here.
 			window = glfwCreateWindow(mode->width, mode->height, name.c_str(), glfwGetPrimaryMonitor(), NULL);
 		} else {
 			// Create a window with a given size. Width and height are defined in the configuration.
@@ -96,19 +96,21 @@ namespace Interface {
 		/// \todo Rethink the way we can enable/disable ImGui?
 		setupImGui(window);
 		
-		// Check the window size (if we are on a screen smaller than the initial size).
-		int wwidth, wheight;
-		glfwGetWindowSize(window, &wwidth, &wheight);
-		config.initialWidth = wwidth;
-		config.initialHeight = wheight;
+		// Check the window position and size (if we are on a screen smaller than the initial size).
+		glfwGetWindowPos(window, &config.windowFrame[0], &config.windowFrame[1]);
+		glfwGetWindowSize(window, &config.windowFrame[2], &config.windowFrame[3]);
+		config.initialWidth = config.windowFrame[2];
+		config.initialHeight = config.windowFrame[3];
 		
 		// On HiDPI screens, we have to consider the internal resolution for all framebuffers size.
 		int width, height;
 		glfwGetFramebufferSize(window, &width, &height);
 		config.screenResolution = glm::vec2(width, height);
+		
 		// Compute point density by computing the ratio.
-		config.screenDensity = (float)width/(float)config.initialWidth;
-		Input::manager().densityEvent(config.screenDensity);
+		const float screenDensity = (float)width/(float)config.windowFrame[2];
+		Input::manager().densityEvent(screenDensity);
+		
 		// Update the resolution.
 		Input::manager().resizeEvent(width, height);
 		
@@ -122,6 +124,51 @@ namespace Interface {
 		return window;
 	}
 	
+	void performWindowAction(GLFWwindow * window, RenderingConfig & config, const Action action){
+		switch (action) {
+		case Action::Quit :
+			glfwSetWindowShouldClose(window, GLFW_TRUE);
+			break;
+		case Action::Fullscreen:
+			{
+				// Are we currently fullscreen?
+				const bool fullscreen = glfwGetWindowMonitor(window) != nullptr;
+				
+				if(fullscreen){
+					// Restore the window position and size.
+					glfwSetWindowMonitor(window, NULL, config.windowFrame[0], config.windowFrame[1], config.windowFrame[2], config.windowFrame[3], 0);
+					// Check the window position and size (if we are on a screen smaller than the initial size).
+					glfwGetWindowPos(window, &config.windowFrame[0], &config.windowFrame[1]);
+					glfwGetWindowSize(window, &config.windowFrame[2], &config.windowFrame[3]);
+				} else {
+					// Backup the window current frame.
+					glfwGetWindowPos(window, &config.windowFrame[0], &config.windowFrame[1]);
+					glfwGetWindowSize(window, &config.windowFrame[2], &config.windowFrame[3]);
+					// Move to fullscreen on the primary monitor.
+					GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+					const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+					glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+				}
+				
+				// On HiDPI screens, we have to consider the internal resolution for all framebuffers size.
+				int width, height;
+				glfwGetFramebufferSize(window, &width, &height);
+				config.screenResolution = glm::vec2(width, height);
+				
+				int wwidth, hheight;
+				glfwGetWindowSize(window, &wwidth, &hheight);
+				// Compute point density by computing the ratio.
+				const float screenDensity = (float)width/(float)wwidth;
+				Input::manager().densityEvent(screenDensity);
+				
+				// Update the resolution.
+				Input::manager().resizeEvent(width, height);
+			}
+			break;
+		default:
+			break;
+		}
+	}
 	
 	bool showPicker(const Picker mode, const std::string & startPath, std::string & outPath, const std::string & extensions){
 		nfdchar_t *outPathRaw = NULL;
