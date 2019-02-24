@@ -337,6 +337,10 @@ public:
 	 */
 	glm::vec2 scroll() const;
 	
+	/** Query the current screen density.
+	 \return The screen density.
+	 */
+	float density() const;
 	
 	/**@}*/
 	

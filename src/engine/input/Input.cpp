@@ -236,3 +236,7 @@ glm::vec2 Input::scroll() const {
 	return _mouse.scroll;
 }
 
+float Input::density() const {
+	return _density;
+}
+
