@@ -21,13 +21,9 @@ void GameMenuRenderer::draw(const GameMenu & menu){
 	
 	// Buttons
 	glUseProgram(_buttonProgram->id());
-	const float initialRatio = _config.initialWidth / float(_config.initialHeight);
-	const float currentRatio = _config.screenResolution[0] / _config.screenResolution[1];
-	const float ratioFix =  currentRatio / initialRatio;
 	for(const auto & button : menu.buttons){
-		const glm::vec2 finalScale = 2.0f * button.size * glm::vec2(1.0/ratioFix, 1.0f);
 		glUniform2fv(_buttonProgram->uniform("position"), 1, &button.pos[0]);
-		glUniform2fv(_buttonProgram->uniform("scale"), 1, &finalScale[0]);
+		glUniform2fv(_buttonProgram->uniform("scale"), 1, &button.scale[0]);
 		glUniform3f(_buttonProgram->uniform("color"), button.state == MenuButton::OFF, button.state == MenuButton::HOVER, button.state == MenuButton::ON);
 		glBindVertexArray(_button.vId);
 		glDrawElements(GL_TRIANGLES, _button.count, GL_UNSIGNED_INT, (void*)0);
@@ -39,6 +35,7 @@ void GameMenuRenderer::draw(const GameMenu & menu){
 
 void GameMenuRenderer::update(){
 	Renderer::update();
+	
 }
 
 void GameMenuRenderer::resize(unsigned int width, unsigned int height){

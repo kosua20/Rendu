@@ -5,24 +5,20 @@
 
 struct MenuButton {
 	
+public:
 	
-	glm::vec2 pos = glm::vec2(0.0f);
-	glm::vec2 size = glm::vec2(100.0f);
-	GLuint texture = 0;
-	int tag = -1;
+	MenuButton(const glm::vec2 & apos, const glm::vec2 & asize, const int atag);
 	
 	enum State {
 		OFF, HOVER, ON
 	};
-	
 	State state = OFF;
 	
-	MenuButton(const glm::vec2 & apos, const glm::vec2 & asize, const int atag){
-		pos = apos;
-		size = asize;
-		tag = atag;
-	}
+	glm::vec2 pos = glm::vec2(0.0f);
+	glm::vec2 size = glm::vec2(100.0f);
+	glm::vec2 scale = glm::vec2(1.0f);
 	
+	int tag = -1;
 	
 };
 
@@ -30,6 +26,8 @@ struct MenuButton {
 class GameMenu {
 	
 public:
+	
+	void update(const glm::vec2 & screenResolution, const float initialRatio);
 	
 	std::vector<MenuButton> buttons;
 	
