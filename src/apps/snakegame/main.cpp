@@ -58,6 +58,8 @@ int main(int argc, char** argv) {
 		const Interface::Action actionToTake = game.update();
 		if(actionToTake != Interface::Action::None){
 			Interface::performWindowAction(window, config, actionToTake);
+			// Due to the ordering between the update function and the fullscreen activation, we have to manually call resize here.
+			// Another solution would be to check resizing before rendering, in the Game object.
 			if(actionToTake == Interface::Action::Fullscreen){
 				game.resize((unsigned int)Input::manager().size()[0], (unsigned int)Input::manager().size()[1]);
 			}

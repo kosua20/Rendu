@@ -93,7 +93,7 @@ Interface::Action Game::update(){
 		// \todo Update buttons properties when resizing only.
 		for( MenuButton & button : currentMenu.buttons){
 			button.state = MenuButton::OFF;
-			const glm::vec2 finalScale =  Input::manager().density() * button.size * glm::vec2(1.0/ratioFix, 1.0f) * 0.5f;
+			const glm::vec2 finalScale =  2.0f * button.size * glm::vec2(1.0/ratioFix, 1.0f) * 0.5f;
 			const glm::vec2 finalPos = button.pos * glm::vec2(1.0f, -1.0f) * 0.5f + 0.5f;
 			// Check if mouse inside.
 			if(glm::all(glm::greaterThanEqual(mousePos, finalPos - finalScale))
