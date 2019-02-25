@@ -149,7 +149,9 @@ namespace Interface {
 					const GLFWvidmode* mode = glfwGetVideoMode(monitor);
 					glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
 				}
-				
+				// On some hardware, V-sync options can be lost.
+				glfwSwapInterval(config.vsync ? (config.rate == 30 ? 2 : 1) : 0);
+
 				// On HiDPI screens, we have to consider the internal resolution for all framebuffers size.
 				int width, height;
 				glfwGetFramebufferSize(window, &width, &height);
