@@ -59,10 +59,9 @@ void GameRenderer::draw(const Player & player){
 	{
 		
 		const glm::mat4 MVP = VP * player.modelHead;
-		// \todo If no sheering, can avoid the inverse transpose.
 		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(player.modelHead)));
-		
 		glUniformMatrix4fv(_coloredProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
+		
 		glUniformMatrix3fv(_coloredProgram->uniform("normalMat"), 1, GL_FALSE, &normalMatrix[0][0]);
 		glBindVertexArray(_head.vId);
 		glUniform3f(_coloredProgram->uniform("baseColor"), 0.1f, 0.6f, 0.9f);

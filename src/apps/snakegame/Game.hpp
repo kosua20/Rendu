@@ -5,6 +5,18 @@
 #include "GameRenderer.hpp"
 #include "helpers/InterfaceUtilities.hpp"
 
+
+// *** Current todo list: ***
+// \todo Support button text and textures.
+// \todo Support menu background textures.
+// \todo Support menu images.
+// \todo Support checkboxes and sliders.
+// \todo Display score in-game and recap text.
+
+// *** Later improvements: ***
+// \todo Fancier rendering of the game scene.
+// \todo Implement match-3 mechanics.
+
 class Game {
 public:
 	
