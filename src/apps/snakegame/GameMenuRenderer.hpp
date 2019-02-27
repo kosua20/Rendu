@@ -20,10 +20,14 @@ public:
 	
 	void clean() const;
 	
+	glm::vec2 getButtonSize();
+	
 private:
 	
+	std::shared_ptr<ProgramInfos> _backgroundProgram;
 	std::shared_ptr<ProgramInfos> _buttonProgram;
-	MeshInfos _button;
+	std::shared_ptr<ProgramInfos> _imageProgram;
+	MeshInfos _button, _buttonIn, _quad;
 	
 };
 
