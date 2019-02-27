@@ -7,22 +7,25 @@
 Game::Game(RenderingConfig & config) : _config(config), _inGameRenderer(config), _menuRenderer(config) {
 	// Create menus.
 	
-	_menus[Status::MAINMENU].backgroundColor = glm::vec3(1.0f, 1.0f, 0.0f);
-	_menus[Status::MAINMENU].buttons.emplace_back(glm::vec2(0.0f,  0.10f), glm::vec2(0.28f, 0.14f), NEWGAME);
-	_menus[Status::MAINMENU].buttons.emplace_back(glm::vec2(0.0f, -0.25f), glm::vec2(0.28f, 0.14f), OPTIONS);
-	_menus[Status::MAINMENU].buttons.emplace_back(glm::vec2(0.0f, -0.60f), glm::vec2(0.28f, 0.14f), QUIT);
+	const glm::vec2 meshSize = _menuRenderer.getButtonSize();
+	const float displayScale = 0.3f;
+	_menus[Status::MAINMENU].backgroundImage = Resources::manager().getTexture("menu1", true).id;
+	_menus[Status::MAINMENU].buttons.emplace_back(glm::vec2(0.0f,  0.10f), meshSize, displayScale, NEWGAME);
+	_menus[Status::MAINMENU].buttons.emplace_back(glm::vec2(0.0f, -0.25f), meshSize, displayScale, OPTIONS);
+	_menus[Status::MAINMENU].buttons.emplace_back(glm::vec2(0.0f, -0.60f), meshSize, displayScale, QUIT);
+	_menus[Status::MAINMENU].images.emplace_back(glm::vec2(0.0f, 0.50f), 0.2f, Resources::manager().getTexture("menu3"));
 	
-	_menus[Status::PAUSED].backgroundColor = glm::vec3(1.0f, 0.0f, 1.0f);
-	_menus[Status::PAUSED].buttons.emplace_back(glm::vec2(0.0f,  0.10f), glm::vec2(0.28f, 0.14f), RESUME);
-	_menus[Status::PAUSED].buttons.emplace_back(glm::vec2(0.0f, -0.25f), glm::vec2(0.28f, 0.14f), BACKTOMENU);
+	_menus[Status::PAUSED].backgroundImage = _inGameRenderer.finalImage();
+	_menus[Status::PAUSED].buttons.emplace_back(glm::vec2(0.0f,  0.10f), meshSize, displayScale, RESUME);
+	_menus[Status::PAUSED].buttons.emplace_back(glm::vec2(0.0f, -0.25f), meshSize, displayScale, BACKTOMENU);
 	
-	_menus[Status::OPTIONS].backgroundColor = glm::vec3(0.0f, 1.0f, 1.0f);
-	_menus[Status::OPTIONS].buttons.emplace_back(glm::vec2(0.0f,  0.10f), glm::vec2(0.28f, 0.14f), OPTION_FULLSCREEN);
-	_menus[Status::OPTIONS].buttons.emplace_back(glm::vec2(0.0f, -0.25f), glm::vec2(0.28f, 0.14f), BACKTOMENU);
+	_menus[Status::OPTIONS].backgroundImage = Resources::manager().getTexture("menu2", true).id;
+	_menus[Status::OPTIONS].buttons.emplace_back(glm::vec2(0.0f,  0.10f), meshSize, displayScale, OPTION_FULLSCREEN);
+	_menus[Status::OPTIONS].buttons.emplace_back(glm::vec2(0.0f, -0.25f), meshSize, displayScale, BACKTOMENU);
 	
-	_menus[Status::DEAD].backgroundColor = glm::vec3(1.0f, 1.0f, 0.0f);
-	_menus[Status::DEAD].buttons.emplace_back(glm::vec2(0.0f,  0.10f), glm::vec2(0.28f, 0.14f), NEWGAME);
-	_menus[Status::DEAD].buttons.emplace_back(glm::vec2(0.0f, -0.25f), glm::vec2(0.28f, 0.14f), BACKTOMENU);
+	_menus[Status::DEAD].backgroundImage = _inGameRenderer.finalImage();
+	_menus[Status::DEAD].buttons.emplace_back(glm::vec2(0.0f,  0.10f), meshSize, displayScale, NEWGAME);
+	_menus[Status::DEAD].buttons.emplace_back(glm::vec2(0.0f, -0.25f), meshSize, displayScale, BACKTOMENU);
 	
 	// Initialize each menu buttons sizes.
 	const float initialRatio = _config.initialWidth / float(_config.initialHeight);
@@ -96,8 +99,8 @@ Interface::Action Game::update(){
 		for( MenuButton & button : currentMenu.buttons){
 			button.state = MenuButton::OFF;
 			// Check if mouse inside.
-			if(glm::all(glm::greaterThanEqual(mousePos, button.pos - button.scale))
-			   && glm::all(glm::lessThanEqual(mousePos, button.pos + button.scale))){
+			if(glm::all(glm::greaterThanEqual(mousePos, button.pos - button.size * 0.5f))
+			   && glm::all(glm::lessThanEqual(mousePos, button.pos + button.size * 0.5f))){
 				button.state = Input::manager().pressed(Input::MouseLeft) ? MenuButton::ON : MenuButton::HOVER;
 				// If the mouse was released, trigger the action.
 				if(Input::manager().released(Input::MouseLeft)){
