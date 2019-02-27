@@ -21,6 +21,8 @@ public:
 	
 	void clean() const;
 	
+	GLuint finalImage() const ;
+	
 private:
 	std::unique_ptr<Framebuffer> _sceneFramebuffer;
 	std::unique_ptr<Framebuffer> _fxaaFramebuffer;

@@ -117,6 +117,10 @@ void GameRenderer::update(){
 	Renderer::update();
 }
 
+GLuint GameRenderer::finalImage() const {
+	return _fxaaFramebuffer->textureId();
+}
+
 void GameRenderer::resize(unsigned int width, unsigned int height){
 	Renderer::updateResolution(width, height);
 	const float aspectRatio = _renderResolution[0]/_renderResolution[1];
