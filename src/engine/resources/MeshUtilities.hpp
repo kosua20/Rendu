@@ -57,6 +57,13 @@ struct BoundingBox {
 		return {center, radius};
 	}
 	
+	/** Query the size of this box.
+	 \return the size
+	 */
+	glm::vec3 getSize() const {
+		return maxis - minis;
+	}
+	
 	/** Query the positions of the eight corners of the box.
 	 \return a vector containing the box corners
 	 */
