@@ -1,9 +1,9 @@
 #include "BoxBlur.hpp"
 
 
-BoxBlur::BoxBlur(unsigned int width, unsigned int height, bool approximate, const Framebuffer::Descriptor & descriptor) : Blur() {
+BoxBlur::BoxBlur(unsigned int width, unsigned int height, bool approximate, const Descriptor & descriptor) : Blur() {
 	
-	Framebuffer::Descriptor linearDescriptor = descriptor;
+	Descriptor linearDescriptor = descriptor;
 	linearDescriptor.filtering = GL_LINEAR;
 	GLenum format, type;
 	GLUtilities::getTypeAndFormat(linearDescriptor.typedFormat, type, format);

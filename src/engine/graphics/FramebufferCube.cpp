@@ -2,7 +2,7 @@
 #include "GLUtilities.hpp"
 
 
-FramebufferCube::FramebufferCube(unsigned int side, const Framebuffer::Descriptor & descriptor, bool depthBuffer) {
+FramebufferCube::FramebufferCube(unsigned int side, const Descriptor & descriptor, bool depthBuffer) {
 
 	_descriptor = descriptor;
 	_side = side;

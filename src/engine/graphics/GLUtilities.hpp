@@ -4,7 +4,7 @@
 
 #include "../Common.hpp"
 #include "../resources/MeshUtilities.hpp"
-#include "Framebuffer.hpp"
+
 
 /**
  \addtogroup Graphics
@@ -37,6 +37,35 @@ int checkGLFramebufferError();
 
 /**@}*/
 
+/** \brief Regroups format, type, filtering and wrapping informations for a color buffer.
+  \ingroup Graphics
+ */
+struct Descriptor {
+	
+	GLuint typedFormat; ///< The precise typed format.
+	GLuint filtering; ///< Filtering mode.
+	GLuint wrapping; ///< Wrapping mode.
+	
+	/** Default constructor. RGB8, linear, clamp. */
+	Descriptor(){
+		typedFormat = GL_RGB8; filtering = GL_LINEAR; wrapping = GL_CLAMP_TO_EDGE;
+	}
+	/** Convenience constructor. Custom typed format, linear, clamp.
+	 \param typedFormat_ the precise typed format to use
+	 */
+	Descriptor(const GLuint typedFormat_){
+		typedFormat = typedFormat_; filtering = GL_LINEAR; wrapping = GL_CLAMP_TO_EDGE;
+	}
+	
+	/** Constructor.
+	 \param typedFormat_ the precise typed format to use
+	 \param filtering_ the texture filtering (GL_LINEAR,...) to use
+	 \param wrapping_ the texture wrapping mode (GL_CLAMP_TO_EDGE) to use
+	 */
+	Descriptor(const GLuint typedFormat_, const GLuint filtering_, const GLuint wrapping_){
+		typedFormat = typedFormat_; filtering = filtering_; wrapping = wrapping_;
+	}
+};
 
 /**
  \brief Store texture informations.
@@ -70,6 +99,8 @@ struct MeshInfos {
 
 };
 
+
+class Framebuffer;
 
 /**
  \brief Provide utility functions to communicate with the driver and GPU.

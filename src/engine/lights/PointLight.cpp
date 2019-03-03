@@ -25,7 +25,7 @@ void PointLight::init(const std::vector<GLuint>& textureIds){
 	_sphere = Resources::manager().getMesh("light_sphere");
 	// Setup the framebuffer.
 	/// \todo Enable only if the light is a shadow caster.
-	const Framebuffer::Descriptor descriptor = {GL_RG16F, GL_LINEAR, GL_CLAMP_TO_EDGE};
+	const Descriptor descriptor = {GL_RG16F, GL_LINEAR, GL_CLAMP_TO_EDGE};
 	_shadowFramebuffer = std::make_shared<FramebufferCube>(512, descriptor, true);
 	
 	_textureIds = textureIds;

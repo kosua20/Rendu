@@ -20,7 +20,7 @@ public:
 	 \param approximate toggles the approximate box blur
 	 \param descriptor the framebuffer format and wrapping descriptor
 	 */
-	BoxBlur(unsigned int width, unsigned int height, bool approximate, const Framebuffer::Descriptor & descriptor);
+	BoxBlur(unsigned int width, unsigned int height, bool approximate, const Descriptor & descriptor);
 
 	/**
 	 \copydoc Blur::process

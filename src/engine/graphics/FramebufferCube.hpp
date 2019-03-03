@@ -2,6 +2,7 @@
 #define FramebufferCube_h
 
 #include "../Common.hpp"
+#include "GLUtilities.hpp"
 #include "Framebuffer.hpp"
 
 /**
@@ -18,7 +19,7 @@ public:
 	 \param descriptor contains the precise format and filtering to use
 	 \param depthBuffer should the framebuffer contain a depth buffer to properly handle 3D geometry
 	 */
-	FramebufferCube(unsigned int side, const Framebuffer::Descriptor & descriptor, bool depthBuffer);
+	FramebufferCube(unsigned int side, const Descriptor & descriptor, bool depthBuffer);
 	
 	/**
 	 Bind the framebuffer.
@@ -78,7 +79,7 @@ private:
 	GLuint _idColor; ///< The color texture ID.
 	GLuint _idRenderbuffer; ///< The depth buffer ID.
 	
-	Framebuffer::Descriptor _descriptor; ///< The color target descriptor.
+	Descriptor _descriptor; ///< The color target descriptor.
 
 	bool _useDepth; ///< Denotes if the framebuffer is backed by a depth buffer.
 	
