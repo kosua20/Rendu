@@ -28,6 +28,7 @@ void GameMenuRenderer::draw(const GameMenu & menu){
 	};
 	
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glEnable(GL_FRAMEBUFFER_SRGB);
 	glViewport(0, 0, GLsizei(_config.screenResolution[0]), GLsizei(_config.screenResolution[1]));
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
@@ -74,6 +75,7 @@ void GameMenuRenderer::draw(const GameMenu & menu){
 	glUseProgram(0);
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
+	glDisable(GL_FRAMEBUFFER_SRGB);
 	checkGLError();
 }
 

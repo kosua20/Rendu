@@ -23,6 +23,8 @@ public:
 	
 	GLuint finalImage() const ;
 	
+	glm::vec2 renderingResolution() const;
+	
 private:
 	std::unique_ptr<Framebuffer> _sceneFramebuffer;
 	std::unique_ptr<Framebuffer> _fxaaFramebuffer;
