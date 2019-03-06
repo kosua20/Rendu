@@ -1,11 +1,12 @@
 #include "GameMenu.hpp"
 
 
-MenuButton::MenuButton(const glm::vec2 & screenPos, const glm::vec2 & meshSize, const float screenScale, const int actionTag){
+MenuButton::MenuButton(const glm::vec2 & screenPos, const glm::vec2 & meshSize, const float screenScale, const int actionTag, const TextureInfos & texture){
 	pos = screenPos;
 	size = screenScale * meshSize;
 	displayScale = screenScale;
 	tag = actionTag;
+	tid = texture.id;
 }
 
 MenuImage::MenuImage(const glm::vec2 & screenPos, const float screenScale, const TextureInfos & texture){

@@ -9,7 +9,7 @@ struct MenuButton {
 	
 public:
 	
-	MenuButton(const glm::vec2 & screenPos, const glm::vec2 & meshSize, const float screenScale, const int actionTag);
+	MenuButton(const glm::vec2 & screenPos, const glm::vec2 & meshSize, const float screenScale, const int actionTag, const TextureInfos & texture);
 	
 	enum State {
 		OFF, HOVER, ON
@@ -22,6 +22,7 @@ public:
 	float displayScale;
 	
 	int tag;
+	GLuint tid;
 };
 
 struct MenuImage {
