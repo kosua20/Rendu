@@ -42,7 +42,7 @@ void Player::physics(double fullTime, const double frameTime) {
 	}
 	
 	
-	const glm::vec3 translation = float(frameTime) * deltaSpeed * _momentum;
+	const glm::vec3 translation = deltaSpeed * _momentum;
 	
 	_position += translation;
 	if(std::abs(_position[0]) > _maxPos[0]){

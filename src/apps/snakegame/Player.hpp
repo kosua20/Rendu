@@ -50,7 +50,7 @@ private:
 	const size_t _numSamplesPath = 512;
 	const size_t _samplingPeriod = 15;
 	const float _radius = 0.5f;
-	const float _headAccel = 400.0f;
+	const float _headAccel = 4.0f;
 	const float _angleSpeed = 6.0f;
 	const float _minSamplingDistance = 0.02f;
 	const float _invicibilityIncrease = 0.5f;
