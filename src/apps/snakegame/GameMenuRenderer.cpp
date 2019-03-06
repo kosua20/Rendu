@@ -55,9 +55,9 @@ void GameMenuRenderer::draw(const GameMenu & menu){
 	}
 	
 	// Buttons
-	glUseProgram(_buttonProgram->id());
+	
 	for(const auto & button : menu.buttons){
-		
+		glUseProgram(_buttonProgram->id());
 		glUniform2fv(_buttonProgram->uniform("position"), 1, &button.pos[0]);
 		glUniform2fv(_buttonProgram->uniform("scale"), 1, &button.scale[0]);
 		
@@ -70,6 +70,18 @@ void GameMenuRenderer::draw(const GameMenu & menu){
 		glUniform4fv(_buttonProgram->uniform("color"), 1, &borderColors.at(button.state)[0]);
 		glBindVertexArray(_button.vId);
 		glDrawElements(GL_TRIANGLES, _button.count, GL_UNSIGNED_INT, (void*)0);
+		
+		glUseProgram(_imageProgram->id());
+		glUniform2fv(_imageProgram->uniform("position"), 1, &button.pos[0]);
+		const glm::vec2 newScale = button.scale * 0.7f* glm::vec2(1.0f, button.size[1]/button.size[0]);
+		glUniform2fv(_imageProgram->uniform("scale"), 1, &newScale[0]);
+		
+		glUniform1f(_imageProgram->uniform("depth"), 0.2f);
+		glActiveTexture(GL_TEXTURE0 );
+		glBindTexture(GL_TEXTURE_2D, button.tid);
+		
+		glBindVertexArray(_quad.vId);
+		glDrawElements(GL_TRIANGLES, _quad.count, GL_UNSIGNED_INT, (void*)0);
 		
 	}
 	glUseProgram(0);
