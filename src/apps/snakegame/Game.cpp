@@ -5,6 +5,9 @@
 #include "helpers/InterfaceUtilities.hpp"
 
 Game::Game(RenderingConfig & config) : _config(config), _inGameRenderer(config), _menuRenderer(config) {
+	
+	_bgBlur = std::unique_ptr<GaussianBlur>(new GaussianBlur(_config.initialWidth, _config.initialHeight, 3, GL_RGB8));
+	
 	// Create menus.
 	
 	const glm::vec2 meshSize = _menuRenderer.getButtonSize();
@@ -98,6 +101,10 @@ Interface::Action Game::update(){
 		_player->update();
 		if(!_player->alive()){
 			_status = Status::DEAD;
+			// Make sure the blur effect buffer is the right size.
+			const glm::vec2 gameRes = _inGameRenderer.renderingResolution();
+			_bgBlur->resize(gameRes[0], gameRes[1]);
+			_bgBlur->process(_inGameRenderer.finalImage());
 			Log::Info() << "Final score: " << _player->score() << "!" << std::endl;
 		}
 	} else {
@@ -144,8 +151,13 @@ Interface::Action Game::handleButton(const ButtonAction tag){
 			_status = Status::OPTIONS;
 			break;
 		case PAUSE:
+		{
+			const glm::vec2 gameRes = _inGameRenderer.renderingResolution();
+			_bgBlur->resize(gameRes[0], gameRes[1]);
+			_bgBlur->process(_inGameRenderer.finalImage());
 			_status = Status::PAUSED;
 			break;
+		}
 		case RESUME:
 			_status = Status::INGAME;
 			break;
@@ -186,4 +198,5 @@ void Game::resize(unsigned int width, unsigned int height){
 void Game::clean() const {
 	_inGameRenderer.clean();
 	_menuRenderer.clean();
+	_bgBlur->clean();
 }

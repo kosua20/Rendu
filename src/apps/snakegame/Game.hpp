@@ -4,13 +4,13 @@
 #include "GameMenuRenderer.hpp"
 #include "GameRenderer.hpp"
 #include "helpers/InterfaceUtilities.hpp"
-
+#include "processing/GaussianBlur.hpp"
 
 // *** Current todo list: ***
 // \todo Support button text and textures.
 // \todo Support menu background textures.
-// \todo Support menu images.
 // \todo Support checkboxes and sliders.
+// \todo Support menu images.
 // \todo Display score in-game and recap text.
 
 // *** Later improvements: ***
@@ -48,7 +48,7 @@ private:
 	RenderingConfig & _config;
 	GameRenderer _inGameRenderer;
 	GameMenuRenderer _menuRenderer;
-	
+	std::unique_ptr<GaussianBlur> _bgBlur;
 	std::unique_ptr<Player> _player;
 	double _playTime = 0.0;
 	
