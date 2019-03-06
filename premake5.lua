@@ -106,7 +106,7 @@ project("Engine")
 	GraphicsSetup()
 	kind("StaticLib")
 	files({ "src/engine/**.hpp", "src/engine/**.cpp",
-			"resources/**.vert", "resources/**.frag", "resources/**.geom",
+			"resources/common/**.vert", "resources/common/**.frag", "resources/common/**.geom",
 			"src/libs/*/*.hpp", "src/libs/*/*.cpp", "src/libs/*/*.h"
 	})
 
@@ -131,7 +131,9 @@ project("ImageViewer")
 
 project("SnakeGame")
 	AppSetup()
-	files({ "src/apps/snakegame/**.hpp", "src/apps/snakegame/**.cpp", })
+	files({ "src/apps/snakegame/**.hpp", "src/apps/snakegame/**.cpp", 
+			"resources/snakegame/**.vert", "resources/snakegame/**.frag", "resources/snakegame/**.geom",
+			})
 	
 group("Tools")
 
