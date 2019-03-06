@@ -54,7 +54,7 @@ namespace Interface {
 			glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
 			glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
 			glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
-			// \todo We might want to impose the configured size here.
+			// \note We might want to impose the configured size here. This means the monitor could be set in a non-native mode.
 			window = glfwCreateWindow(mode->width, mode->height, name.c_str(), glfwGetPrimaryMonitor(), NULL);
 		} else {
 			// Create a window with a given size. Width and height are defined in the configuration.
@@ -99,8 +99,6 @@ namespace Interface {
 		// Check the window position and size (if we are on a screen smaller than the initial size).
 		glfwGetWindowPos(window, &config.windowFrame[0], &config.windowFrame[1]);
 		glfwGetWindowSize(window, &config.windowFrame[2], &config.windowFrame[3]);
-		config.initialWidth = config.windowFrame[2];
-		config.initialHeight = config.windowFrame[3];
 		
 		// On HiDPI screens, we have to consider the internal resolution for all framebuffers size.
 		int width, height;
