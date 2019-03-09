@@ -88,7 +88,9 @@ int main(int argc, char** argv) {
 		Log::Error() << Log::OpenGL << "Could not start GLFW3" << std::endl;
 		return 1;
 	}
-
+	
+	Resources::manager().addResources("../../../resources/");
+	
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);

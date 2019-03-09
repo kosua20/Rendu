@@ -88,11 +88,11 @@ int main(int argc, char** argv) {
 	unsigned int channels = 3;
 	for(size_t side = 0; side < 6; ++side){
 		
-		if(!ImageUtilities::isHDR(paths[side])){
+		if(!ImageUtilities::isFloat(paths[side])){
 			Log::Error() << Log::Resources << "Non HDR image at path " << paths[side] << "." << std::endl;
 			return 4;
 		}
-		int ret = ImageUtilities::loadImage(paths[side].c_str(), width, height, channels, (void**)&(sides[side]), false, true);
+		int ret = ImageUtilities::loadImage(paths[side].c_str(), width, height, (void**)&(sides[side]), channels, false, true);
 		if (ret != 0) {
 			Log::Error() << Log::Resources << "Unable to load the texture at path " << paths[side] << "." << std::endl;
 			return 1;

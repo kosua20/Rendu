@@ -150,7 +150,7 @@ int main(int argc, char** argv) {
 		}
 	}
 	
-	ImageUtilities::saveHDRImage(config.outputPath, config.resolution, config.resolution, 3, reinterpret_cast<float*>(&transmittanceTable[0]), false);
+	ImageUtilities::saveHDRImage(config.outputPath, config.resolution, config.resolution, 3, reinterpret_cast<float*>(&transmittanceTable[0]), true);
 	
 	Log::Info() << Log::Utilities << "Done." << std::endl;
 	
