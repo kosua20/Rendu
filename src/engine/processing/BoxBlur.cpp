@@ -6,23 +6,11 @@ BoxBlur::BoxBlur(unsigned int width, unsigned int height, bool approximate, cons
 	Descriptor linearDescriptor = descriptor;
 	linearDescriptor.filtering = GL_LINEAR;
 	GLenum format, type;
-	GLUtilities::getTypeAndFormat(linearDescriptor.typedFormat, type, format);
+	const int channels = GLUtilities::getTypeAndFormat(linearDescriptor.typedFormat, type, format);
 	
 	std::string blur_type_name = "box-blur-" + (approximate ? std::string("approx-") : "");
-	switch (format) {
-		case GL_RED:
-			blur_type_name += "1";
-			break;
-		case GL_RG:
-			blur_type_name += "2";
-			break;
-		case GL_RGB:
-			blur_type_name += "3";
-			break;
-		default:
-			blur_type_name += "4";
-			break;
-	}
+	blur_type_name.append(std::to_string(channels));
+	
 	_blurProgram = Resources::manager().getProgram2D(blur_type_name);
 	// Create one framebuffer.
 	_finalFramebuffer = std::make_shared<Framebuffer>(width, height, linearDescriptor, false);
