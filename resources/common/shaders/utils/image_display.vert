@@ -8,7 +8,6 @@ out INTERFACE {
 uniform float screenRatio; ///< Screen h/v ratio.
 uniform float imageRatio; ///< Image h/v ratio.
 uniform float widthRatio; ///< Image/screen width ratio.
-uniform bool isHDR; ///< Is the image an HDR image.
 uniform vec2 flipAxis; ///< Denotes if a flipping has been applied on each axis.
 uniform vec2 angleTrig; ///< Applied rotation precomputed cosine and sine.
 uniform float pixelScale; ///< Scaling.
@@ -25,13 +24,12 @@ void main(){
 	vec2 uv = pixelScale * gl_Position.xy - mouseShift*vec2(2.0,-2.0);
 	
 	// Image and screen ratio corrections.
-	float HDRflip = (isHDR ? -1.0 : 1.0);
-	uv *= vec2(imageRatio, HDRflip*screenRatio);
+	uv *= vec2(imageRatio, screenRatio);
 	uv *= widthRatio;
 	
 	// Rotation.
-	float nx = angleTrig.x*uv.x-HDRflip*angleTrig.y*uv.y;
-	float ny = angleTrig.x*uv.y+HDRflip*angleTrig.y*uv.x;
+	float nx = angleTrig.x*uv.x-angleTrig.y*uv.y;
+	float ny = angleTrig.x*uv.y+angleTrig.y*uv.x;
 	uv = vec2(nx,ny);
 	
 	// Flipping

@@ -6,6 +6,7 @@
 #include "helpers/InterfaceUtilities.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "graphics/ScreenQuad.hpp"
+#include "graphics/Framebuffer.hpp"
 #include "Config.hpp"
 
 /**
@@ -56,7 +57,7 @@ int main(int argc, char** argv) {
 	
 	// Framebuffer to store the rendered atmosphere result before tonemapping and upscaling to the window size.
 	std::shared_ptr<Framebuffer> atmosphereFramebuffer(new Framebuffer(renderResolution[0], renderResolution[1], GL_RGB32F, true));
-	const GLuint precomputedScattering = Resources::manager().getTexture("scattering-precomputed", false).id;
+	const GLuint precomputedScattering = Resources::manager().getTexture("scattering-precomputed", {GL_RGB32F, GL_LINEAR, GL_CLAMP_TO_EDGE}).id;
 	
 	// Atmosphere screen quad.
 	std::shared_ptr<ProgramInfos> atmosphereProgram = Resources::manager().getProgram2D("atmosphere");

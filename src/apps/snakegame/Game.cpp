@@ -12,35 +12,37 @@ Game::Game(RenderingConfig & config) : _config(config), _inGameRenderer(config),
 	
 	const glm::vec2 meshSize = _menuRenderer.getButtonSize();
 	const float displayScale = 0.3f;
-	_menus[Status::MAINMENU].backgroundImage = Resources::manager().getTexture("menubg", true).id;
+	
+	const GLuint backgroundTexture = Resources::manager().getTexture("menubg", {GL_SRGB8_ALPHA8}).id;
+	_menus[Status::MAINMENU].backgroundImage = backgroundTexture;
 	_menus[Status::MAINMENU].buttons.emplace_back(glm::vec2(0.0f,  0.10f), meshSize, displayScale, NEWGAME,
-												  Resources::manager().getTexture("button-newgame", true));
+												  Resources::manager().getTexture("button-newgame", {GL_SRGB8_ALPHA8}));
 	_menus[Status::MAINMENU].buttons.emplace_back(glm::vec2(0.0f, -0.25f), meshSize, displayScale, OPTIONS,
-												  Resources::manager().getTexture("button-options", true));
+												  Resources::manager().getTexture("button-options", {GL_SRGB8_ALPHA8}));
 	_menus[Status::MAINMENU].buttons.emplace_back(glm::vec2(0.0f, -0.60f), meshSize, displayScale, QUIT,
-												  Resources::manager().getTexture("button-quit", true));
-	_menus[Status::MAINMENU].images.emplace_back(glm::vec2(0.0f, 0.47f), 0.5f, Resources::manager().getTexture("title", true));
+												  Resources::manager().getTexture("button-quit", {GL_SRGB8_ALPHA8}));
+	_menus[Status::MAINMENU].images.emplace_back(glm::vec2(0.0f, 0.47f), 0.5f, Resources::manager().getTexture("title", {GL_SRGB8_ALPHA8}));
 	
 	_menus[Status::PAUSED].backgroundImage = _bgBlur->textureId();
 	_menus[Status::PAUSED].buttons.emplace_back(glm::vec2(0.0f,  0.10f), meshSize, displayScale, RESUME,
-												Resources::manager().getTexture("button-resume", true));
+												Resources::manager().getTexture("button-resume", {GL_SRGB8_ALPHA8}));
 	_menus[Status::PAUSED].buttons.emplace_back(glm::vec2(0.0f, -0.25f), meshSize, displayScale, BACKTOMENU,
-												Resources::manager().getTexture("button-menu", true));
-	_menus[Status::PAUSED].images.emplace_back(glm::vec2(0.0f, 0.47f), 0.5f, Resources::manager().getTexture("title-pause", true));
+												Resources::manager().getTexture("button-menu", {GL_SRGB8_ALPHA8}));
+	_menus[Status::PAUSED].images.emplace_back(glm::vec2(0.0f, 0.47f), 0.5f, Resources::manager().getTexture("title-pause", {GL_SRGB8_ALPHA8}));
 	
-	_menus[Status::OPTIONS].backgroundImage = Resources::manager().getTexture("menubg", true).id;
+	_menus[Status::OPTIONS].backgroundImage = backgroundTexture;
 	_menus[Status::OPTIONS].buttons.emplace_back(glm::vec2(0.0f,  0.10f), meshSize, displayScale, OPTION_FULLSCREEN,
-												 Resources::manager().getTexture("button-fullscreen", true));
+												 Resources::manager().getTexture("button-fullscreen", {GL_SRGB8_ALPHA8}));
 	_menus[Status::OPTIONS].buttons.emplace_back(glm::vec2(0.0f, -0.25f), meshSize, displayScale, BACKTOMENU,
-												 Resources::manager().getTexture("button-back", true));
-	_menus[Status::OPTIONS].images.emplace_back(glm::vec2(0.0f, 0.47f), 0.5f, Resources::manager().getTexture("title-options", true));
+												 Resources::manager().getTexture("button-back", {GL_SRGB8_ALPHA8}));
+	_menus[Status::OPTIONS].images.emplace_back(glm::vec2(0.0f, 0.47f), 0.5f, Resources::manager().getTexture("title-options", {GL_SRGB8_ALPHA8}));
 	
 	_menus[Status::DEAD].backgroundImage = _bgBlur->textureId();
 	_menus[Status::DEAD].buttons.emplace_back(glm::vec2(0.0f,  0.10f), meshSize, displayScale, NEWGAME,
-											  Resources::manager().getTexture("button-newgame", true));
+											  Resources::manager().getTexture("button-newgame"));
 	_menus[Status::DEAD].buttons.emplace_back(glm::vec2(0.0f, -0.25f), meshSize, displayScale, BACKTOMENU,
-											  Resources::manager().getTexture("button-menu", true));
-	_menus[Status::DEAD].images.emplace_back(glm::vec2(0.0f, 0.47f), 0.5f, Resources::manager().getTexture("title-dead", true));
+											  Resources::manager().getTexture("button-menu"));
+	_menus[Status::DEAD].images.emplace_back(glm::vec2(0.0f, 0.47f), 0.5f, Resources::manager().getTexture("title-dead", {GL_SRGB8_ALPHA8}));
 	
 	// Initialize each menu buttons sizes.
 	const float initialRatio = _config.initialWidth / float(_config.initialHeight);

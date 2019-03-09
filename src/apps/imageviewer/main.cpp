@@ -8,6 +8,7 @@
 #include "graphics/ScreenQuad.hpp"
 #include "graphics/GLUtilities.hpp"
 #include "resources/ImageUtilities.hpp"
+#include "graphics/Framebuffer.hpp"
 #include "Config.hpp"
 
 /**
@@ -42,6 +43,7 @@ int main(int argc, char** argv) {
 	
 	// Infos on the current texture.
 	TextureInfos imageInfos;
+	bool isFloat = false;
 	
 	// Settings.
 	glm::vec3 bgColor(0.6f);
@@ -120,7 +122,7 @@ int main(int argc, char** argv) {
 			glUniform1f(program->uniform("screenRatio"), screenRatio);
 			glUniform1f(program->uniform("imageRatio"), imageRatio);
 			glUniform1f(program->uniform("widthRatio"), widthRatio);
-			glUniform1i(program->uniform("isHDR"), imageInfos.hdr);
+			glUniform1i(program->uniform("isHDR"), isFloat);
 			glUniform1f(program->uniform("exposure"), exposure);
 			glUniform1i(program->uniform("gammaOutput"), applyGamma);
 			glUniform4f(program->uniform("channelsFilter"), channelsFilter[0], channelsFilter[1], channelsFilter[2], channelsFilter[3]);
@@ -149,7 +151,7 @@ int main(int argc, char** argv) {
 			
 			// Infos.
 			if(hasImage){
-				ImGui::Text(imageInfos.hdr ? "HDR image (%dx%d)." : "LDR image (%dx%d).", imageInfos.width, imageInfos.height);
+				ImGui::Text(isFloat ? "HDR image (%dx%d)." : "LDR image (%dx%d).", imageInfos.width, imageInfos.height);
 			} else {
 				ImGui::Text("No image.");
 			}
@@ -161,13 +163,12 @@ int main(int argc, char** argv) {
 				// If user picked a path, load the texture from disk.
 				if(res && !newImagePath.empty()){
 					Log::Info() << "Loading " << newImagePath << "." << std::endl;
-					imageInfos = GLUtilities::loadTexture({newImagePath}, true);
-					// Apply the proper filtering.
-					const GLenum filteringSetting = (imageInterp == Nearest) ? GL_NEAREST : GL_LINEAR;
-					glBindTexture(GL_TEXTURE_2D, imageInfos.id);
-					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filteringSetting);
-					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filteringSetting);
-					glBindTexture(GL_TEXTURE_2D, 0);
+					isFloat = ImageUtilities::isFloat(newImagePath);
+					// Apply the proper format and filtering.
+					const GLenum typedFormat = isFloat ? GL_RGBA32F : GL_SRGB8_ALPHA8;
+					const GLenum filtering = (imageInterp == Nearest) ? GL_NEAREST : GL_LINEAR;
+					imageInfos = GLUtilities::loadTexture({newImagePath}, {typedFormat, filtering, GL_CLAMP_TO_EDGE});
+					
 					// Reset display settings.
 					pixelScale = 1.0f;
 					mouseShift = glm::vec2(0.0f);
@@ -182,7 +183,7 @@ int main(int argc, char** argv) {
 			
 			// Gamma and exposure.
 			ImGui::Checkbox("Gamma", &applyGamma);
-			if(imageInfos.hdr){
+			if(isFloat){
 				ImGui::SameLine();
 				ImGui::PushItemWidth(120);
 				ImGui::SliderFloat("Exposure", &exposure, 0.0f, 10.0f);
@@ -197,10 +198,10 @@ int main(int argc, char** argv) {
 			
 			// Filtering.
 			if(ImGui::Combo("Filtering", (int*)(&imageInterp), "Nearest\0Linear\0\0")){
-				const GLenum filteringSetting = (imageInterp == Nearest) ? GL_NEAREST : GL_LINEAR;
+				imageInfos.descriptor.filtering = (imageInterp == Nearest) ? GL_NEAREST : GL_LINEAR;
 				glBindTexture(GL_TEXTURE_2D, imageInfos.id);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filteringSetting);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filteringSetting);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, imageInfos.descriptor.filtering);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, imageInfos.descriptor.filtering);
 				glBindTexture(GL_TEXTURE_2D, 0);
 			}
 			
@@ -244,7 +245,7 @@ int main(int argc, char** argv) {
 				// Export either in LDR or HDR.
 				bool res = Interface::showPicker(Interface::Picker::Save, "../../../resources", destinationPath, "png;exr");
 				if(res && !destinationPath.empty()){
-					const GLenum typedFormat = ImageUtilities::isHDR(destinationPath) ? GL_RGBA32F : GL_RGBA8;
+					const GLenum typedFormat = ImageUtilities::isFloat(destinationPath) ? GL_RGBA32F : GL_RGBA8;
 					// Create a framebuffer at the right size and format, and render in it.
 					const unsigned int outputWidth = isHorizontal ? imageInfos.height : imageInfos.width;
 					const unsigned int outputHeight = isHorizontal ? imageInfos.width : imageInfos.height;

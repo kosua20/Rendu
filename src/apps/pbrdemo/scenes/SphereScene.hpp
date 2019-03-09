@@ -29,8 +29,8 @@ void SphereScene::init(){
 	objects.push_back(sphere2);
 	
 	// Background creation.
-	background = Object(Object::Type::Skybox, "skybox", {}, {{"studio", true }});
-	backgroundReflection = Resources::manager().getCubemap("studio").id;
+	backgroundReflection = Resources::manager().getCubemap("studio", {GL_RGB32F}).id;
+	background = Object(Object::Type::Skybox, "skybox", {}, {{"studio", false }});
 	loadSphericalHarmonics("studio_shcoeffs");
 	
 	// Compute the bounding box of the shadow casters.
