@@ -278,10 +278,19 @@ const MeshInfos Resources::getMesh(const std::string & name){
 
 // Texture methods.
 
-const TextureInfos Resources::getTexture(const std::string & name, bool srgb){
+const TextureInfos Resources::getTexture(const std::string & name){
+	if(_textures.count(name) > 0){
+		return _textures[name];
+	}
+	Log::Error() << Log::Resources << "Unable to find existing texture \"" << name << "\"" << std::endl;
+	return TextureInfos();
+}
+
+const TextureInfos Resources::getTexture(const std::string & name, const Descriptor & descriptor){
 	
 	// If texture already loaded, return it.
 	if(_textures.count(name) > 0){
+		Log::Warning() << Log::Resources << "Texture already exist, the descriptor might be different." << std::endl;
 		return _textures[name];
 	}
 	// Else, find the corresponding file.
@@ -290,7 +299,7 @@ const TextureInfos Resources::getTexture(const std::string & name, bool srgb){
 	
 	if(!path.empty()){
 		// Else, load it and store the infos.
-		infos = GLUtilities::loadTexture({path}, srgb);
+		infos = GLUtilities::loadTexture({path}, descriptor);
 		_textures[name] = infos;
 		return infos;
 	}
@@ -310,7 +319,7 @@ const TextureInfos Resources::getTexture(const std::string & name, bool srgb){
 	if(!paths.empty()){
 		// We found the texture files.
 		// Load them and store the infos.
-		infos = GLUtilities::loadTexture(paths, srgb);
+		infos = GLUtilities::loadTexture(paths, descriptor);
 		_textures[name] = infos;
 		return infos;
 	}
@@ -320,10 +329,19 @@ const TextureInfos Resources::getTexture(const std::string & name, bool srgb){
 	return infos;
 }
 
+const TextureInfos Resources::getCubemap(const std::string & name){
+	// If cubemap already loaded, return it.
+	if(_textures.count(name) > 0){
+		return _textures[name];
+	}
+	Log::Error() << Log::Resources << "Unable to find existing cubemap \"" << name << "\"" << std::endl;
+	return TextureInfos();
+}
 
-const TextureInfos Resources::getCubemap(const std::string & name, bool srgb){
+const TextureInfos Resources::getCubemap(const std::string & name, const Descriptor & descriptor){
 	// If texture already loaded, return it.
 	if(_textures.count(name) > 0){
+		Log::Warning() << "Texture already exist, the descriptor might be different." << std::endl;
 		return _textures[name];
 	}
 	// Else, find the corresponding files.
@@ -332,7 +350,7 @@ const TextureInfos Resources::getCubemap(const std::string & name, bool srgb){
 	if(!paths.empty()){
 		// We found the texture files.
 		// Load them and store the infos.
-		infos = GLUtilities::loadTextureCubemap({paths}, srgb);
+		infos = GLUtilities::loadTextureCubemap({paths}, descriptor);
 		_textures[name] = infos;
 		return infos;
 	}
@@ -352,7 +370,7 @@ const TextureInfos Resources::getCubemap(const std::string & name, bool srgb){
 	if(!allPaths.empty()){
 		// We found the texture files.
 		// Load them and store the infos.
-		infos = GLUtilities::loadTextureCubemap(allPaths, srgb);
+		infos = GLUtilities::loadTextureCubemap(allPaths, descriptor);
 		_textures[name] = infos;
 		return infos;
 	}

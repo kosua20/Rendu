@@ -87,17 +87,29 @@ public:
 	
 	/** Get a 2D texture resource. Automatically handle custom mipmaps if present.
 	 \param name the texture base name
-	 \param srgb should the texture be gamma corrected
+	 \param descriptor the texture layout to use
 	 \return the texture informations
 	 */
-	const TextureInfos getTexture(const std::string & name, bool srgb = true);
+	const TextureInfos getTexture(const std::string & name, const Descriptor & descriptor);
+	
+	/** Get an existing 2D texture resource.
+	 \param name the texture base name
+	 \return the texture informations
+	 */
+	const TextureInfos getTexture(const std::string & name);
 	
 	/** Get a cubemap texture resource. Automatically handle custom mipmaps if present.
 	 \param name the texture base name
-	 \param srgb should the texture be gamma corrected
+	 \param descriptor the texture layout to use
 	 \return the texture informations
 	 */
-	const TextureInfos getCubemap(const std::string & name, bool srgb = true);
+	const TextureInfos getCubemap(const std::string & name, const Descriptor & descriptor);
+	
+	/** Get an existing cubemap texture resource.
+	 \param name the texture base name
+	 \return the texture informations
+	 */
+	const TextureInfos getCubemap(const std::string & name);
 	
 	/** Get a shader text resource.
 	 \param name the shader file name
