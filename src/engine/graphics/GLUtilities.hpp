@@ -47,24 +47,20 @@ struct Descriptor {
 	GLuint wrapping; ///< Wrapping mode.
 	
 	/** Default constructor. RGB8, linear, clamp. */
-	Descriptor(){
-		typedFormat = GL_RGB8; filtering = GL_LINEAR; wrapping = GL_CLAMP_TO_EDGE;
-	}
+	Descriptor();
+	
 	/** Convenience constructor. Custom typed format, linear, clamp.
 	 \param typedFormat_ the precise typed format to use
 	 */
-	Descriptor(const GLuint typedFormat_){
-		typedFormat = typedFormat_; filtering = GL_LINEAR; wrapping = GL_CLAMP_TO_EDGE;
-	}
+	Descriptor(const GLuint typedFormat_);
 	
 	/** Constructor.
 	 \param typedFormat_ the precise typed format to use
 	 \param filtering_ the texture filtering (GL_LINEAR,...) to use
 	 \param wrapping_ the texture wrapping mode (GL_CLAMP_TO_EDGE) to use
 	 */
-	Descriptor(const GLuint typedFormat_, const GLuint filtering_, const GLuint wrapping_){
-		typedFormat = typedFormat_; filtering = filtering_; wrapping = wrapping_;
-	}
+	Descriptor(const GLuint typedFormat_, const GLuint filtering_, const GLuint wrapping_);
+	
 };
 
 /**
@@ -72,15 +68,16 @@ struct Descriptor {
  \ingroup Graphics
  */
 struct TextureInfos {
+	Descriptor descriptor; ///< The texture format, type, filtering.
 	GLuint id; ///< The OpenGL texture ID.
 	unsigned int width; ///< The texture width.
 	unsigned int height; ///< The texture height.
 	unsigned int mipmap; ///< The number of mipmaps.
 	bool cubemap; ///< Denote if the texture is a cubemap.
-	bool hdr; ///< Denote if the texture is HDR (float values).
+	
 	
 	/** Default constructor. */
-	TextureInfos() : id(0), width(0), height(0), mipmap(0), cubemap(false), hdr(false) {}
+	TextureInfos() : descriptor(), id(0), width(0), height(0), mipmap(0), cubemap(false) {}
 
 };
 
@@ -132,19 +129,19 @@ public:
 	// Texture loading.
 	/** Send a 2D texture to the GPU.
 	 \param path a list of paths, one for each mipmap level of the texture
-	 \param sRGB denotes if gamma conversion should be applied to the texture when used
+	 \param descriptor
 	 \return the texture informations, including the OpenGL ID
 	 \note If only one path is present, the mipmaps will be generated automatically.
 	 */
-	static TextureInfos loadTexture(const std::vector<std::string>& path, bool sRGB);
+	static TextureInfos loadTexture(const std::vector<std::string>& path, const Descriptor & descriptor);
 	 
 	/** Send a cubemap texture to the GPU.
 	 \param paths a list of lists of paths, six (one per face) for each mipmap level of the texture
-	 \param sRGB denotes if gamma conversion should be applied to the texture when used
+	 \param descriptor
 	 \return the texture informations, including the OpenGL ID
 	 \note If only one list of paths is present, the mipmaps will be generated automatically.
 	 */
-	static TextureInfos loadTextureCubemap(const std::vector<std::vector<std::string>> & paths, bool sRGB);
+	static TextureInfos loadTextureCubemap(const std::vector<std::vector<std::string>> & paths, const Descriptor & descriptor);
 	
 	/** Mesh loading: send a mesh data to the GPU.
 	 \param mesh the mesh to upload
@@ -158,9 +155,10 @@ public:
 	 \param width the width of the region to save
 	 \param height the height of the region to save
 	 \param path the output image path
-	 \param flip should the image be vertically fliped before saving.
-	 \param ignoreAlpha should the alpha channel be ignored if it exists.
+	 \param flip should the image be vertically fliped before saving
+	 \param ignoreAlpha should the alpha channel be ignored if it exists
 	 \note The output image extension will be automatically added based on the framebuffer type and format.
+	 \warn Export of small size GL_FLOAT framebuffers can create artifacts.
 	 */
 	static void saveFramebuffer(const std::shared_ptr<Framebuffer> & framebuffer, const unsigned int width, const unsigned int height, const std::string & path, const bool flip = true, const bool ignoreAlpha = false);
 	
@@ -172,7 +170,13 @@ public:
 	 */
 	static void saveDefaultFramebuffer(const unsigned int width, const unsigned int height, const std::string & path);
 	
-	static void getTypeAndFormat(const GLuint typedFormat, GLuint & type, GLuint & format);
+	/** Obtain the separate type, format and channel count of a texture typed format.
+	 \param typeFormat the precise format to detail
+	 \param type will contain the type (GL_FLOAT,...)
+	 \param format will contain the general layout (GL_RG,...)
+	 \return the number of channels
+	 */
+	static unsigned int getTypeAndFormat(const GLuint typedFormat, GLuint & type, GLuint & format);
 	
 private:
 	
@@ -183,12 +187,32 @@ private:
 	 \param height the height of the framebuffer
 	 \param components the number of components of the framebuffer
 	 \param path the output image path
-	 \param flip should the image be vertically fliped before saving.
-	 \param ignoreAlpha should the alpha channel be ignored if it exists.
+	 \param flip should the image be vertically fliped before saving
+	 \param ignoreAlpha should the alpha channel be ignored if it exists
 	 \note The output image extension will be automatically added based on the framebuffer type and format.
 	 */
 	static void savePixels(const GLenum type, const GLenum format, const unsigned int width, const unsigned int height, const unsigned int components, const std::string & path, const bool flip, const bool ignoreAlpha);
 	
+	/** Create a GPU texture with a given layout and mip map count.
+	 \param destination the kind of texture to create: 2D, cubemap,...
+	 \param descriptor type and format information
+	 \param mipmapCount the number of mipmap levels.
+	 \return the handle of the created texture.
+	 */
+	static GLuint createTexture(const GLenum destination, const Descriptor & descriptor, const int mipmapCount);
+	
+	/** Upload data to a GPU texture.
+	 \param destination the kind of texture to target: 2D, cubemap...
+	 \param texId the handle of the texture
+	 \param sourceType the OpenGL type of the input data
+	 \param destTypedFormat the detailed format of the texture
+	 \param mipid the mipmap level to populate
+	 \param mipWidth the width of the targeted mipmap level
+	 \param mipHeight the height of the targeted mipmap level
+	 \param sourceChannels the number of input channels
+	 \param data the raw data to upload to the GPU
+	 */
+	static void uploadTexture(const GLenum destination, const GLuint texId, const GLenum sourceType, const GLenum destTypedFormat, const unsigned int mipid, const unsigned int mipWidth, const unsigned int mipHeight, const unsigned int sourceChannels, void * data);
 };
 
 

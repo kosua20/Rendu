@@ -84,6 +84,25 @@ int _checkGLError(const char *file, int line, const std::string & infos){
 	return 0;
 }
 
+/** Default constructor. RGB8, linear, clamp. */
+Descriptor::Descriptor(){
+	typedFormat = GL_RGB8; filtering = GL_LINEAR; wrapping = GL_CLAMP_TO_EDGE;
+}
+/** Convenience constructor. Custom typed format, linear, clamp.
+ \param typedFormat_ the precise typed format to use
+ */
+Descriptor::Descriptor(const GLuint typedFormat_){
+	typedFormat = typedFormat_; filtering = GL_LINEAR; wrapping = GL_CLAMP_TO_EDGE;
+}
+
+/** Constructor.
+ \param typedFormat_ the precise typed format to use
+ \param filtering_ the texture filtering (GL_LINEAR,...) to use
+ \param wrapping_ the texture wrapping mode (GL_CLAMP_TO_EDGE) to use
+ */
+Descriptor::Descriptor(const GLuint typedFormat_, const GLuint filtering_, const GLuint wrapping_){
+	typedFormat = typedFormat_; filtering = filtering_; wrapping = wrapping_;
+}
 
 void replace(std::string & source, const std::string& fromString, const std::string & toString){
 	std::string::size_type nextPos = 0;
@@ -288,149 +307,186 @@ GLuint GLUtilities::createProgram(const std::string & vertexContent, const std::
 	return id;
 }
 
-
-
-TextureInfos GLUtilities::loadTexture(const std::vector<std::string>& paths, bool sRGB){
-	TextureInfos infos;
-	infos.cubemap = false;
-	if(paths.empty()){
-		return infos;
-	}
-	
-	// Create 2D texture.
+GLuint GLUtilities::createTexture(const GLenum destination, const Descriptor & descriptor, const int mipmapCount){
 	GLuint textureId;
 	glGenTextures(1, &textureId);
-	glBindTexture(GL_TEXTURE_2D, textureId);
+	glBindTexture(destination, textureId);
 	
 	// Set proper max mipmap level.
-	if(paths.size()>1){
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, (int)(paths.size())-1);
+	if(mipmapCount>1){
+		glTexParameteri(destination, GL_TEXTURE_MAX_LEVEL, mipmapCount-1);
 	} else {
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 1000);
+		glTexParameteri(destination, GL_TEXTURE_MAX_LEVEL, 1000);
 	}
 	// Texture settings.
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	const GLenum minFiltering = descriptor.filtering == GL_LINEAR ? GL_LINEAR_MIPMAP_LINEAR : GL_NEAREST_MIPMAP_NEAREST;
+	glTexParameteri(destination, GL_TEXTURE_MIN_FILTER, minFiltering);
+	glTexParameteri(destination, GL_TEXTURE_MAG_FILTER, descriptor.filtering);
+	glTexParameteri(destination, GL_TEXTURE_WRAP_R, descriptor.wrapping);
+	glTexParameteri(destination, GL_TEXTURE_WRAP_S, descriptor.wrapping);
+	glTexParameteri(destination, GL_TEXTURE_WRAP_T, descriptor.wrapping);
+	glBindTexture(destination, 0);
+	return textureId;
+}
+
+void GLUtilities::uploadTexture(const GLenum destination, const GLuint texId, const GLenum sourceType, const GLenum destTypedFormat, const unsigned int mipid, const unsigned int mipWidth, const unsigned int mipHeight, const unsigned int sourceChannels, void * data){
+	
+	// Sanity check the texture destination format.
+	GLenum destType, destFormat;
+	const unsigned int destChannels = getTypeAndFormat(destTypedFormat, destType, destFormat);
+	const size_t destSize = destChannels * mipHeight * mipWidth;
+	if(destChannels != sourceChannels){
+		Log::Error() << Log::OpenGL << "Not enough values in source data for texture upload." << std::endl;
+		return;
+	}
+	
+	//Perform conversion if needed.
+	unsigned char * finalData = reinterpret_cast<unsigned char*>(data);
+	if(sourceType == GL_FLOAT && destType == GL_UNSIGNED_BYTE) {
+		GLubyte *finalImage = reinterpret_cast<GLubyte *>(malloc(destSize * sizeof(GLubyte)));
+		// Handle the conversion by hand.
+		for(size_t pid = 0; pid < destSize; ++pid){
+			const float newValue = std::min(255.0f, std::max(0.0f, (reinterpret_cast<float*>(data))[pid] * 255.0f));
+			finalImage[pid] = GLubyte(newValue);
+		}
+		finalData = reinterpret_cast<unsigned char*>(finalImage);
+	} else if(sourceType == GL_UNSIGNED_BYTE && destType == GL_FLOAT){
+		GLfloat *finalImage = reinterpret_cast<GLfloat *>(malloc(destSize * sizeof(GLfloat)));
+		// Handle the conversion by hand.
+		for(size_t pid = 0; pid < destSize; ++pid){
+			const float newValue = float((reinterpret_cast<unsigned char*>(data))[pid]) / 255.0f;
+			finalImage[pid] = GLfloat(newValue);
+		}
+		finalData = reinterpret_cast<unsigned char*>(finalImage);
+	} else if(sourceType != destType){
+		Log::Error() << "Unable to convert file data to requested texture format." << std::endl;
+		return;
+	}
+	
+	// Upload.
+	const GLenum baseDestination = destination == GL_TEXTURE_2D ? destination : GL_TEXTURE_CUBE_MAP;
+	glBindTexture(baseDestination, texId);
+	glTexImage2D(destination, (GLint)mipid, destTypedFormat, (GLsizei)mipWidth, (GLsizei)mipHeight, 0, destFormat, destType, finalData);
+	glBindTexture(baseDestination, 0);
+	
+	// Free if needed.
+	if(sourceType != destType){
+		free(finalData);
+	}
+}
+
+TextureInfos GLUtilities::loadTexture(const std::vector<std::string>& paths, const Descriptor & descriptor){
+	TextureInfos infos;
+	infos.descriptor = descriptor;
+	infos.cubemap = false;
+	infos.mipmap = paths.size();
+	if(paths.empty()){
+		Log::Error() << Log::Resources << "Unable to find texture." << std::endl;
+		return infos;
+	}
+	// Check that the descriptor type is valid.
+	GLenum format, type;
+	const unsigned int channels = getTypeAndFormat(descriptor.typedFormat, type, format);
+	const bool validType = type == GL_FLOAT || type == GL_UNSIGNED_BYTE;
+	const bool validFormat = format == GL_RED || format == GL_RG || format == GL_RGB || format == GL_RGBA;
+	if(!validType || !validFormat){
+		Log::Error() << "Invalid descriptor for creating texture from file." << std::endl;
+		return infos;
+	}
 	// Image infos.
-	infos.hdr = ImageUtilities::isHDR(paths[0]);
-	unsigned int width = 0;
-	unsigned int height = 0;
-	unsigned int channels = 4;
+	const GLenum sourceType = ImageUtilities::isFloat(paths[0]) ? GL_FLOAT : GL_UNSIGNED_BYTE;
 	
-	// For now, we assume HDR images to be 3-channels, LDR images to be 4.
-	const GLenum format = GLenum(infos.hdr ? GL_RGB : GL_RGBA);
-	const GLenum type = GLenum(infos.hdr ? GL_FLOAT : GL_UNSIGNED_BYTE);
-	const GLenum preciseFormat = GLenum(infos.hdr ? GL_RGB32F : (sRGB ? GL_SRGB8_ALPHA8 : GL_RGBA));
+	// Create 2D texture.
+	infos.id = createTexture(GL_TEXTURE_2D, descriptor, infos.mipmap);
 	
+	// Load and upload each mip level.
 	for(unsigned int mipid = 0; mipid < paths.size(); ++mipid){
-		
-		const std::string path = paths[mipid];
-		
 		void* image;
-		int ret = ImageUtilities::loadImage(path, width, height, channels, &image, !infos.hdr);
-		
+		unsigned int width, height;
+		int ret = ImageUtilities::loadImage(paths[mipid], width, height, &image, channels, true);
 		if (ret != 0) {
-			Log::Error() << Log::Resources << "Unable to load the texture at path " << path << "." << std::endl;
+			Log::Error() << Log::Resources << "Unable to load the texture at path " << paths[mipid] << "." << std::endl;
 			if(image != NULL){
 				free(image);
 			}
 			return infos;
 		}
+		// Obtain the reference size of the image.
+		if(mipid == 0){
+			infos.width = width;
+			infos.height = height;
+		}
+		// Send data to the gpu.
+		uploadTexture(GL_TEXTURE_2D, infos.id, sourceType, descriptor.typedFormat, mipid, width, height, channels, image);
 		
-		glTexImage2D(GL_TEXTURE_2D, (GLint)mipid, preciseFormat, (GLsizei)width, (GLsizei)height, 0, format, type, image);
 		free(image);
-		
 	}
 	
 	// If only level 0 was given, generate mipmaps pyramid automatically.
-	if(paths.size() == 1){
+	if(infos.mipmap == 1){
+		glBindTexture(GL_TEXTURE_2D, infos.id);
 		glGenerateMipmap(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}
-	
-	glBindTexture(GL_TEXTURE_2D, 0);
-	
-	infos.id = textureId;
-	infos.width = width;
-	infos.height = height;
 	return infos;
 }
 
-TextureInfos GLUtilities::loadTextureCubemap(const std::vector<std::vector<std::string>> & allPaths, bool sRGB){
+TextureInfos GLUtilities::loadTextureCubemap(const std::vector<std::vector<std::string>> & allPaths, const Descriptor & descriptor){
 	TextureInfos infos;
+	infos.descriptor = descriptor;
 	infos.cubemap = true;
-	if(allPaths.empty() ){
-		Log::Error() << Log::Resources << "Unable to find cubemap." << std::endl;
-		return infos;
-	}
-	
+	infos.mipmap = allPaths.size();
 	// If not enough images, return empty texture.
-	if(allPaths.front().size() == 0 ){
+	if(allPaths.empty() || allPaths[0].size() == 0 ){
 		Log::Error() << Log::Resources << "Unable to find cubemap." << std::endl;
 		return infos;
 	}
-	
-	// Create and bind texture.
-	GLuint textureId;
-	glGenTextures(1, &textureId);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, textureId);
-	
-	// Set proper max mipmap level.
-	if(allPaths.size()>1){
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_LEVEL, (int)(allPaths.size())-1);
-	} else {
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_LEVEL, 1000);
+	// Check that the descriptor type is valid.
+	GLenum format, type;
+	const unsigned int channels = getTypeAndFormat(descriptor.typedFormat, type, format);
+	const bool validType = type == GL_FLOAT || type == GL_UNSIGNED_BYTE;
+	const bool validFormat = format == GL_RED || format == GL_RG || format == GL_RGB || format == GL_RGBA;
+	if(!validType || !validFormat){
+		Log::Error() << "Invalid descriptor for creating texture from file." << std::endl;
+		return infos;
 	}
-	// Texture settings.
-	glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR );
-	glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-	
 	// Image infos.
-	unsigned int width = 0;
-	unsigned int height = 0;
-	unsigned int channels = 4;
-	infos.hdr = ImageUtilities::isHDR(allPaths[0][0]);
+	const GLenum sourceType = ImageUtilities::isFloat(allPaths[0][0]) ? GL_FLOAT : GL_UNSIGNED_BYTE;
 	
-	// For now, we assume HDR images to be 3-channels, LDR images to be 4.
-	const GLenum format = GLenum(infos.hdr ? GL_RGB : GL_RGBA);
-	const GLenum type = GLenum(infos.hdr ? GL_FLOAT : GL_UNSIGNED_BYTE);
-	const GLenum preciseFormat = GLenum(infos.hdr ? GL_RGB32F : (sRGB ? GL_SRGB8_ALPHA8 : GL_RGBA));
+	// Create cubemap texture.
+	infos.id = createTexture(GL_TEXTURE_CUBE_MAP, descriptor, infos.mipmap);
 	
+	// Load and upload each mip level.
 	for(unsigned int mipid = 0; mipid < allPaths.size(); ++mipid){
-		
 		const std::vector<std::string> paths = allPaths[mipid];
-		// For each side, load the image and upload it in the right slot.
-		// We don't need to flip them.
-		
 		for(size_t side = 0; side < 6; ++side){
+			// No need to flip cubemaps.
 			void* image;
-			int ret = ImageUtilities::loadImage(paths[side], width, height, channels, &image, false);
+			unsigned int width, height;
+			int ret = ImageUtilities::loadImage(paths[side], width, height, &image, channels, false);
 			if (ret != 0) {
 				Log::Error() << Log::Resources << "Unable to load the texture at path " << paths[side] << "." << std::endl;
-				free(image);
+				if(image != NULL){
+					free(image);
+				}
 				return infos;
 			}
-			
-			glTexImage2D(GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + side), (GLint)mipid, preciseFormat, (GLsizei)width, (GLsizei)height, 0, format, type, image);
+			// Obtain the reference size of the image.
+			if(mipid == 0 && side == 0){
+				infos.width = width;
+				infos.height = height;
+			}
+			uploadTexture(GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + side), infos.id, sourceType, descriptor.typedFormat, mipid, width, height, channels, image);
 			free(image);
 		}
-		
 	}
 	
 	// If only level 0 was given, generate mipmaps pyramid automatically.
 	if(allPaths.size() == 1){
+		glBindTexture(GL_TEXTURE_CUBE_MAP, infos.id);
 		glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 	}
-	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-	
-	infos.id = textureId;
-	infos.width = width;
-	infos.height = height;
 	return infos;
 }
 
@@ -546,10 +602,7 @@ void GLUtilities::saveFramebuffer(const std::shared_ptr<Framebuffer> & framebuff
 	
 	framebuffer->bind();
 	GLenum type, format;
-	GLUtilities::getTypeAndFormat(framebuffer->typedFormat(), type, format);
-	
-	const unsigned int components = (unsigned int)(format == GL_RED ? 1 : (format == GL_RG ? 2 : (format == GL_RGB ? 3 : 4)));
-
+	const unsigned int components = GLUtilities::getTypeAndFormat(framebuffer->typedFormat(), type, format);
 	GLUtilities::savePixels(type, format, width, height, components, path, flip, ignoreAlpha);
 	
 	glBindFramebuffer(GL_FRAMEBUFFER, (GLuint)currentBoundFB);
@@ -593,17 +646,20 @@ void GLUtilities::savePixels(const GLenum type, const GLenum format, const unsig
 
 
 
-void GLUtilities::getTypeAndFormat(const GLuint typedFormat, GLuint & type, GLuint & format){
+unsigned int GLUtilities::getTypeAndFormat(const GLuint typedFormat, GLuint & type, GLuint & format){
 	
 	struct FormatAndType {
 		GLuint format;
 		GLuint type;
 	};
 	
-	static std::map<GLuint, FormatAndType> formatInfos = {  { GL_R8, { GL_RED, GL_UNSIGNED_BYTE } },
+	static std::map<GLuint, FormatAndType> formatInfos = {
+		{ GL_R8, { GL_RED, GL_UNSIGNED_BYTE } },
 		{ GL_RG8, { GL_RG, GL_UNSIGNED_BYTE } },
 		{ GL_RGB8, { GL_RGB, GL_UNSIGNED_BYTE } },
 		{ GL_RGBA8, { GL_RGBA, GL_UNSIGNED_BYTE } },
+		{ GL_SRGB8, {GL_RGB, GL_UNSIGNED_BYTE} },
+		{ GL_SRGB8_ALPHA8, {GL_RGBA, GL_UNSIGNED_BYTE} },
 		{ GL_R16, { GL_RED, GL_UNSIGNED_SHORT } },
 		{ GL_RG16, { GL_RG, GL_UNSIGNED_SHORT } },
 		{ GL_RGBA16, { GL_RGBA, GL_UNSIGNED_SHORT } },
@@ -635,9 +691,11 @@ void GLUtilities::getTypeAndFormat(const GLuint typedFormat, GLuint & type, GLui
 		const auto & infos = formatInfos[typedFormat];
 		type = infos.type;
 		format = infos.format;
-		return;
+		const bool oneChannel = (format == GL_RED || format == GL_DEPTH_COMPONENT || format == GL_DEPTH_STENCIL);
+		return (oneChannel ? 1 : (format == GL_RG ? 2 : (format == GL_RGB ? 3 : 4)));
 	}
 	
 	Log::Error() << Log::OpenGL << "Unable to find type and format (typed format " << typedFormat << ")." << std::endl;
+	return 0;
 }
 
