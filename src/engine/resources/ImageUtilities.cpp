@@ -17,21 +17,22 @@
 #define TINYEXR_IMPLEMENTATION
 #include <tinyexr/tinyexr.h>
 
-bool ImageUtilities::isHDR(const std::string & path){
+bool ImageUtilities::isFloat(const std::string & path){
 	return path.substr(path.size()-4,4) == ".exr";
 }
 
-int ImageUtilities::loadImage(const std::string & path, unsigned int & width, unsigned int & height, unsigned int & channels, void **data, const bool flip, const bool externalFile){
+int ImageUtilities::loadImage(const std::string & path, unsigned int & width, unsigned int & height, void **data, const unsigned int channels, const bool flip, const bool externalFile){
 	int ret = 0;
-	if(isHDR(path)){
-		ret = ImageUtilities::loadHDRImage(path, width, height, channels, (float**)data, flip, externalFile);
+	if(isFloat(path)){
+		ret = ImageUtilities::loadHDRImage(path, width, height, (float**)data, channels, flip, externalFile);
 	} else {
-		ret = ImageUtilities::loadLDRImage(path, width, height, channels, (unsigned char**)data, flip, externalFile);
+		ret = ImageUtilities::loadLDRImage(path, width, height, (unsigned char**)data, channels, flip, externalFile);
 	}
 	return ret;
 }
 
-int ImageUtilities::loadLDRImage(const std::string &path, unsigned int & width, unsigned int & height, unsigned int & channels, unsigned char **data, const bool flip, const bool externalFile){
+int ImageUtilities::loadLDRImage(const std::string &path, unsigned int & width, unsigned int & height, unsigned char **data, const unsigned int channels, const bool flip, const bool externalFile){
+	const int finalChannels = channels > 0 ? channels : 4;
 	
 	size_t rawSize = 0;
 	unsigned char * rawData;
@@ -47,11 +48,10 @@ int ImageUtilities::loadLDRImage(const std::string &path, unsigned int & width, 
 	
 	stbi_set_flip_vertically_on_load(flip);
 	
-	channels = 4;
 	int localWidth = 0;
 	int localHeight = 0;
 	// Beware: the size has to be cast to int, imposing a limit on big file sizes.
-	*data = stbi_load_from_memory(rawData, (int)rawSize, &localWidth, &localHeight, NULL, channels);
+	*data = stbi_load_from_memory(rawData, (int)rawSize, &localWidth, &localHeight, NULL, finalChannels);
 	free(rawData);
 	
 	if(*data == NULL){
@@ -64,7 +64,8 @@ int ImageUtilities::loadLDRImage(const std::string &path, unsigned int & width, 
 	return 0;
 }
 
-int ImageUtilities::loadHDRImage(const std::string &path, unsigned int & width, unsigned int & height, unsigned int & channels, float **data, const bool flip, const bool externalFile){
+int ImageUtilities::loadHDRImage(const std::string &path, unsigned int & width, unsigned int & height, float **data, const unsigned int channels, const bool flip, const bool externalFile){
+	const int finalChannels = channels > 0 ? channels : 3;
 	
 	// Code adapted from tinyEXR deprecated loadEXR.
 	EXRVersion exr_version;
@@ -108,6 +109,7 @@ int ImageUtilities::loadHDRImage(const std::string &path, unsigned int & width, 
 			exr_header.requested_pixel_types[i] = TINYEXR_PIXELTYPE_FLOAT;
 		}
 	}
+	
 	{
 		int ret = LoadEXRImageFromMemory(&exr_image, &exr_header, rawData, rawSize, NULL);
 		if (ret != TINYEXR_SUCCESS) {
@@ -118,33 +120,24 @@ int ImageUtilities::loadHDRImage(const std::string &path, unsigned int & width, 
 	free(rawData);
 	
 	// RGBA
-	int idxR = -1;
-	int idxG = -1;
-	int idxB = -1;
-	int idxA = -1;
+	int idxsRGBA[] = {-1, -1, -1, -1};
 	for (int c = 0; c < exr_header.num_channels; c++) {
 		if (strcmp(exr_header.channels[c].name, "R") == 0) {
-			idxR = c;
+			idxsRGBA[0] = c;
 		} else if (strcmp(exr_header.channels[c].name, "G") == 0) {
-			idxG = c;
+			idxsRGBA[1] = c;
 		} else if (strcmp(exr_header.channels[c].name, "B") == 0) {
-			idxB = c;
+			idxsRGBA[2] = c;
 		} else if (strcmp(exr_header.channels[c].name, "A") == 0) {
-			idxA = c;
+			idxsRGBA[3] = c;
 		}
-	}
-	
-	if (idxR == -1 || idxG == -1 || idxB == -1) {
-		FreeEXRHeader(&exr_header);
-		FreeEXRImage(&exr_image);
-		return TINYEXR_ERROR_INVALID_DATA;
 	}
 	
 	width = (unsigned int)exr_image.width;
 	height = (unsigned int)exr_image.height;
-	channels = 3;
 	
-	*data = reinterpret_cast<float *>(malloc(channels * sizeof(float) * static_cast<size_t>(width) *
+	// Allocate final storage.
+	*data = reinterpret_cast<float *>(malloc(finalChannels * sizeof(float) * static_cast<size_t>(width) *
 												  static_cast<size_t>(height)));
 	
 	for(int y = 0; y < exr_image.height; ++y){
@@ -152,10 +145,15 @@ int ImageUtilities::loadHDRImage(const std::string &path, unsigned int & width, 
 			const int destIndex = y * (int)width + x;
 			const int sourceIndex = flip ? (((int)height-1-y)*(int)width+x) : destIndex;
 			
-			(*data)[channels * destIndex + 0] = reinterpret_cast<float **>(exr_image.images)[idxR][sourceIndex];
-			(*data)[channels * destIndex + 1] = reinterpret_cast<float **>(exr_image.images)[idxG][sourceIndex];
-			(*data)[channels * destIndex + 2] = reinterpret_cast<float **>(exr_image.images)[idxB][sourceIndex];
-			// Ignore alpha.
+			for(int cid = 0; cid < finalChannels; ++cid){
+				const int chanIdx = idxsRGBA[cid];
+				if(chanIdx > -1){
+					(*data)[finalChannels * destIndex + cid] = reinterpret_cast<float **>(exr_image.images)[chanIdx][sourceIndex];
+				} else {
+					(*data)[finalChannels * destIndex + cid] = cid == 3 ? 1.0f : 0.0f;
+				}
+			}
+			
 		}
 	}
 	

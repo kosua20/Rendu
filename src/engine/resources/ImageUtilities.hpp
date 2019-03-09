@@ -10,24 +10,24 @@ class ImageUtilities {
 
 public:
 	
-	/** Query if a path points to a HDR image, based on the extension.
+	/** Query if a path points to an image loaded in floating point, based on the extension.
 	 \param path the path to the image
-	 \return true if the file is a HDR image
+	 \return true if the file is loaded as a floating point numbers image
 	 \note Extensions checked: .exr
 	 */
-	static bool isHDR(const std::string & path);
+	static bool isFloat(const std::string & path);
 	
 	/** Load an image from disk.
 	 \param path the path to the image
 	 \param width will contain the width of the loaded image
 	 \param height will contain the height of the loaded image
-	 \param channels will contain the number of channels of the loaded image
 	 \param data will contain the image raw data (unsigned char for LDR, float for HDR)
+	 \param channels the number of channels to load from the image
 	 \param flip should the image be vertically flipped
 	 \param externalFile if true, skip the resources manager and load directly from disk
 	 \return a success/error flag
 	 */
-	static int loadImage(const std::string & path, unsigned int & width, unsigned int & height, unsigned int & channels, void **data, const bool flip, const bool externalFile = false);
+	static int loadImage(const std::string & path, unsigned int & width, unsigned int & height, void **data, const unsigned int channels, const bool flip, const bool externalFile = false);
 	
 	/** Save a LDR image to disk using stb_image.
 	 \param path the path to the image
@@ -59,25 +59,25 @@ private:
 	 \param path the path to the image
 	 \param width will contain the width of the loaded image
 	 \param height will contain the height of the loaded image
-	 \param channels will contain the number of channels of the loaded image
 	 \param data will contain the image raw data
+	 \param channels the number of channels to load from the image
 	 \param flip should the image be vertically flipped
 	 \param externalFile if true, skip the resources manager and load directly from disk
 	 \return a success/error flag
 	 */
-	static int loadLDRImage(const std::string & path, unsigned int & width, unsigned int & height, unsigned int & channels, unsigned char **data, const bool flip, const bool externalFile);
+	static int loadLDRImage(const std::string & path, unsigned int & width, unsigned int & height, unsigned char **data, const unsigned int channels, const bool flip, const bool externalFile);
 	
-	/** Load a HDR image from disk using tiny_exr.
+	/** Load a HDR image from disk using tiny_exr, assuming 3-channels.
 	 \param path the path to the image
 	 \param width will contain the width of the loaded image
 	 \param height will contain the height of the loaded image
-	 \param channels will contain the number of channels of the loaded image
 	 \param data will contain the image raw data
+	 \param channels will contain the number of channels of the loaded image
 	 \param flip should the image be vertically flipped
 	 \param externalFile if true, skip the resources manager and load directly from disk
 	 \return a success/error flag
 	 */
-	static int loadHDRImage(const std::string & path, unsigned int & width, unsigned int & height, unsigned int & channels, float **data, const bool flip, const bool externalFile);
+	static int loadHDRImage(const std::string & path, unsigned int & width, unsigned int & height, float **data, const unsigned int channels, const bool flip, const bool externalFile);
 	
 };
 
