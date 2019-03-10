@@ -69,9 +69,9 @@ public:
  \ingroup BRDFEstimator
  */
 int main(int argc, char** argv) {
-	
 	// First, init/parse/load configuration.
 	BRDFEstimatorConfig config(argc, argv);
+	Resources::defaultPath = "../../../resources/";
 	
 	// Coherent config state check.
 	if(!config.precomputeBRDF && config.cubemapName.empty()){
@@ -89,7 +89,7 @@ int main(int argc, char** argv) {
 		return 1;
 	}
 	
-	Resources::manager().addResources("../../../resources/");
+
 	
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);

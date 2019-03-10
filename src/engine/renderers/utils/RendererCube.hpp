@@ -3,11 +3,12 @@
 
 #include "../../Common.hpp"
 #include "../../graphics/Framebuffer.hpp"
-#include "../../Object.hpp"
+#include "../../resources/ResourcesManager.hpp"
 #include "../Renderer.hpp"
 
 /**
  \brief Renders each face of a cubemap with a given shader, for preprocessing.
+ \todo Refactor to pass texture directly at processing time.
  \ingroup Renderers
  */
 class RendererCube : public Renderer {
@@ -58,8 +59,8 @@ private:
 	
 	std::shared_ptr<Framebuffer> _resultFramebuffer; ///< The internal render framebuffer.
 	std::shared_ptr<ProgramInfos> _program; ///< The rendering program to use for each face.
-	Object _cubemap; ///< The cubemap object to render for processing.
-	
+	MeshInfos _mesh;  ///< The cubemap mesh.
+	TextureInfos _texture; ///< The texture to process.
 };
 
 #endif

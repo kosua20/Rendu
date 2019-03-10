@@ -9,14 +9,12 @@ RendererCube::RendererCube(RenderingConfig & config, const std::string & cubemap
 	_resultFramebuffer = std::make_shared<Framebuffer>(width, height, preciseFormat, false);
 	
 	_program = Resources::manager().getProgram(shaderName, "skybox_basic", shaderName);
-	_cubemap = Object(_program, "skybox", {}, {{cubemapName, true }});
-	
+	_mesh = Resources::manager().getMesh("skybox");
+	_texture = Resources::manager().getCubemap(cubemapName, {GL_RGB32F, GL_LINEAR, GL_CLAMP_TO_EDGE});
 	checkGLError();
 
 	// GL options
 	glEnable(GL_DEPTH_TEST);
-	checkGLError();
-	
 	checkGLError();
 	
 }
@@ -39,14 +37,24 @@ void RendererCube::drawCube(const unsigned int localWidth, const unsigned int lo
 	const std::string suffixes[6] = { "px", "nx", "pz", "nz", "py", "ny"};
 
 	// Loop over the faces. Instead we could use a geometry shader and multiple output layers, one for each face with the corresponding view transformation.
-	
 	for(size_t i = 0; i < 6; ++i){
 		
 		const glm::mat4 view = glm::lookAt(glm::vec3(0.0f,0.0f,0.0f), centers[i], ups[i]);
 		
 		glClearColor(0.0f,0.0f,i,0.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
-		_cubemap.draw(view, projection);
+		
+		const glm::mat4 MVP = projection * view;
+		
+		// Select the program (and shaders).
+		glUseProgram(_program->id());
+		glUniformMatrix4fv(_program->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(_texture.cubemap ? GL_TEXTURE_CUBE_MAP : GL_TEXTURE_2D, _texture.id);
+		glBindVertexArray(_mesh.vId);
+		glDrawElements(GL_TRIANGLES, _mesh.count, GL_UNSIGNED_INT, (void*)0);
+		glBindVertexArray(0);
+		
 		glFlush();
 		glFinish();
 		
@@ -74,7 +82,8 @@ void RendererCube::physics(double fullTime, double frameTime){
 void RendererCube::clean() const {
 	Renderer::clean();
 	// Clean objects.
-	_cubemap.clean();
+	glDeleteVertexArrays(1, &_mesh.vId);
+	glDeleteTextures(1, &(_texture.id));
 	_resultFramebuffer->clean();
 	
 }
