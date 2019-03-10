@@ -3,7 +3,6 @@
 #include "input/Input.hpp"
 #include "input/InputCallbacks.hpp"
 #include "renderers/deferred/DeferredRenderer.hpp"
-#include "renderers/utils/RendererCube.hpp"
 #include "helpers/InterfaceUtilities.hpp"
 #include "scenes/Scenes.hpp"
 

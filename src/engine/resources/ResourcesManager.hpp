@@ -88,9 +88,10 @@ public:
 	/** Get a 2D texture resource. Automatically handle custom mipmaps if present.
 	 \param name the texture base name
 	 \param descriptor the texture layout to use
+	 \param refName the name to use for the texture in future calls
 	 \return the texture informations
 	 */
-	const TextureInfos getTexture(const std::string & name, const Descriptor & descriptor);
+	const TextureInfos getTexture(const std::string & name, const Descriptor & descriptor, const std::string & refName = "");
 	
 	/** Get an existing 2D texture resource.
 	 \param name the texture base name
@@ -101,9 +102,10 @@ public:
 	/** Get a cubemap texture resource. Automatically handle custom mipmaps if present.
 	 \param name the texture base name
 	 \param descriptor the texture layout to use
+	 \param refName the name to use for the texture in future calls
 	 \return the texture informations
 	 */
-	const TextureInfos getCubemap(const std::string & name, const Descriptor & descriptor);
+	const TextureInfos getCubemap(const std::string & name, const Descriptor & descriptor, const std::string & refName = "");
 	
 	/** Get an existing cubemap texture resource.
 	 \param name the texture base name

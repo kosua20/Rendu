@@ -286,12 +286,19 @@ const TextureInfos Resources::getTexture(const std::string & name){
 	return TextureInfos();
 }
 
-const TextureInfos Resources::getTexture(const std::string & name, const Descriptor & descriptor){
+const TextureInfos Resources::getTexture(const std::string & name, const Descriptor & descriptor, const std::string & refName){
+	const std::string & keyName = refName.empty() ? name : refName;
 	
 	// If texture already loaded, return it.
-	if(_textures.count(name) > 0){
-		Log::Warning() << Log::Resources << "Texture already exist, the descriptor might be different." << std::endl;
-		return _textures[name];
+	if(_textures.count(keyName) > 0){
+		const auto & infos = _textures[keyName];
+		// Check if this is the same descriptor.
+		if(descriptor.filtering != infos.descriptor.filtering ||
+		   descriptor.typedFormat != infos.descriptor.typedFormat ||
+		   descriptor.wrapping != infos.descriptor.wrapping){
+			Log::Warning() << Log::Resources << "Texture \"" << keyName << "\"already exist with a different descriptor." << std::endl;
+		}
+		return infos;
 	}
 	// Else, find the corresponding file.
 	TextureInfos infos;
@@ -300,7 +307,7 @@ const TextureInfos Resources::getTexture(const std::string & name, const Descrip
 	if(!path.empty()){
 		// Else, load it and store the infos.
 		infos = GLUtilities::loadTexture({path}, descriptor);
-		_textures[name] = infos;
+		_textures[keyName] = infos;
 		return infos;
 	}
 	// Else, maybe there are custom mipmap levels.
@@ -320,7 +327,7 @@ const TextureInfos Resources::getTexture(const std::string & name, const Descrip
 		// We found the texture files.
 		// Load them and store the infos.
 		infos = GLUtilities::loadTexture(paths, descriptor);
-		_textures[name] = infos;
+		_textures[keyName] = infos;
 		return infos;
 	}
 	
@@ -338,11 +345,18 @@ const TextureInfos Resources::getCubemap(const std::string & name){
 	return TextureInfos();
 }
 
-const TextureInfos Resources::getCubemap(const std::string & name, const Descriptor & descriptor){
+const TextureInfos Resources::getCubemap(const std::string & name, const Descriptor & descriptor, const std::string & refName){
+	const std::string & keyName = refName.empty() ? name : refName;
 	// If texture already loaded, return it.
-	if(_textures.count(name) > 0){
-		Log::Warning() << "Texture already exist, the descriptor might be different." << std::endl;
-		return _textures[name];
+	if(_textures.count(keyName) > 0){
+		const auto & infos = _textures[keyName];
+		// Check if this is the same descriptor.
+		if(descriptor.filtering != infos.descriptor.filtering ||
+		   descriptor.typedFormat != infos.descriptor.typedFormat ||
+		   descriptor.wrapping != infos.descriptor.wrapping){
+			Log::Warning() << "Cubemap \"" << keyName << "\" already exist with a different descriptor." << std::endl;
+		}
+		return infos;
 	}
 	// Else, find the corresponding files.
 	TextureInfos infos;
@@ -351,7 +365,7 @@ const TextureInfos Resources::getCubemap(const std::string & name, const Descrip
 		// We found the texture files.
 		// Load them and store the infos.
 		infos = GLUtilities::loadTextureCubemap({paths}, descriptor);
-		_textures[name] = infos;
+		_textures[keyName] = infos;
 		return infos;
 	}
 	// Else, maybe there are custom mipmap levels.
@@ -371,7 +385,7 @@ const TextureInfos Resources::getCubemap(const std::string & name, const Descrip
 		// We found the texture files.
 		// Load them and store the infos.
 		infos = GLUtilities::loadTextureCubemap(allPaths, descriptor);
-		_textures[name] = infos;
+		_textures[keyName] = infos;
 		return infos;
 	}
 	Log::Error() << Log::Resources << "Unable to find cubemap named \"" << name << "\"." << std::endl;

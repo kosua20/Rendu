@@ -158,7 +158,7 @@ public:
 	 \param flip should the image be vertically fliped before saving
 	 \param ignoreAlpha should the alpha channel be ignored if it exists
 	 \note The output image extension will be automatically added based on the framebuffer type and format.
-	 \warn Export of small size GL_FLOAT framebuffers can create artifacts.
+	 \warning Export of small size GL_FLOAT framebuffers can create artifacts.
 	 */
 	static void saveFramebuffer(const std::shared_ptr<Framebuffer> & framebuffer, const unsigned int width, const unsigned int height, const std::string & path, const bool flip = true, const bool ignoreAlpha = false);
 	
@@ -171,7 +171,7 @@ public:
 	static void saveDefaultFramebuffer(const unsigned int width, const unsigned int height, const std::string & path);
 	
 	/** Obtain the separate type, format and channel count of a texture typed format.
-	 \param typeFormat the precise format to detail
+	 \param typedFormat the precise format to detail
 	 \param type will contain the type (GL_FLOAT,...)
 	 \param format will contain the general layout (GL_RG,...)
 	 \return the number of channels
