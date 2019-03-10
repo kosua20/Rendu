@@ -15,10 +15,9 @@ class AtmosphericScatteringConfig : public Config {
 public:
 	
 	/** Initialize a new config object, parsing the input arguments and filling the attributes with their values.
-	 \param argc the number of input arguments.
-	 \param argv a pointer to the raw input arguments.
+	 	\param argv the raw input arguments
 	 */
-	AtmosphericScatteringConfig(int argc, char** argv) : Config(argc, argv) {
+	AtmosphericScatteringConfig(const std::vector<std::string> & argv) : Config(argv) {
 		processArguments();
 	}
 	
@@ -87,7 +86,7 @@ bool intersects(const glm::vec3 & rayOrigin, const glm::vec3 & rayDir, float rad
 int main(int argc, char** argv) {
 	
 	// First, init/parse/load configuration.
-	AtmosphericScatteringConfig config(argc, argv);
+	AtmosphericScatteringConfig config(std::vector<std::string>(argv, argv+argc));
 	
 	if(config.outputPath.empty()){
 		Log::Error() << Log::Utilities << "Need an output path." << std::endl;

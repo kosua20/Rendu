@@ -21,10 +21,9 @@ class SHExtractorConfig : public Config {
 public:
 	
 	/** Initialize a new config object, parsing the input arguments and filling the attributes with their values.
-	 \param argc the number of input arguments.
-	 \param argv a pointer to the raw input arguments.
+	 	\param argv the raw input arguments
 	 */
-	SHExtractorConfig(int argc, char** argv) : Config(argc, argv) {
+	SHExtractorConfig(const std::vector<std::string> & argv) : Config(argv) {
 		processArguments();
 	}
 	
@@ -62,7 +61,7 @@ public:
  */
 int main(int argc, char** argv) {
 	
-	SHExtractorConfig config(argc, argv);
+	SHExtractorConfig config(std::vector<std::string>(argv, argv+argc));
 	
 	if(config.cubemapPath.empty()){
 		Log::Error() << Log::Utilities << "Need a cubemap base path." << std::endl;

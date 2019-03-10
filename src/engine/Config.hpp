@@ -19,10 +19,9 @@ class Config {
 public:
 	
 	/** Initialize a new config object, parsing the input arguments and filling the attributes with their values.
-	 	\param argc the number of input arguments.
-	 	\param argv a pointer to the raw input arguments.
+	 	\param argv the raw input arguments
 	 */
-	Config(int argc, char** argv);
+	Config(const std::vector<std::string> & argv);
 	
 private:
 	
@@ -31,15 +30,14 @@ private:
 	 \param filePath the path to the configuration file.
 	 \param arguments a dictionary that will be populated with (key, [values]).
 	 */
-	static void parseFromFile(const char* filePath, std::map<std::string, std::vector<std::string>>& arguments);
+	static void parseFromFile(const std::string & filePath, std::map<std::string, std::vector<std::string>>& arguments);
 	
 	/**
-	 Helper to extract (key, [values]) from the given command-line raw C-style arguments.
-	 \param argc the number of input arguments.
-	 \param argv a pointer to the raw input arguments.
+	 Helper to extract (key, [values]) from the given command-line arguments.
+	 \param argv the raw input arguments
 	 \param arguments a dictionary that will be populated with (key, [values]).
 	 */
-	static void parseFromArgs(const int argc, char** argv, std::map<std::string, std::vector<std::string>> & arguments);
+	static void parseFromArgs(const std::vector<std::string> & argv, std::map<std::string, std::vector<std::string>> & arguments);
 
 protected:
 	
@@ -56,10 +54,9 @@ class RenderingConfig: public Config {
 public:
 	
 	/** Initialize a new rendering config object, parsing the input arguments and filling the attributes with their values.
-	 \param argc the number of input arguments.
-	 \param argv a pointer to the raw input arguments.
+	 \param argv the raw input arguments
 	 */
-	RenderingConfig(int argc, char** argv);
+	RenderingConfig(const std::vector<std::string> & argv);
 
 public:
 	// Configuration properties (loaded from command-line or config file).

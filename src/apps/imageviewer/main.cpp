@@ -27,7 +27,7 @@
 int main(int argc, char** argv) {
 	
 	// First, init/parse/load configuration.
-	RenderingConfig config(argc, argv);
+	RenderingConfig config(std::vector<std::string>(argv, argv+argc));
 	
 	GLFWwindow* window = Interface::initWindow("Image viewer", config);
 	if(!window){

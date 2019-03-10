@@ -21,11 +21,10 @@ class BRDFEstimatorConfig : public RenderingConfig {
 public:
 	
 	/** Initialize a new config object, parsing the input arguments and filling the attributes with their values.
-	 \param argc the number of input arguments.
-	 \param argv a pointer to the raw input arguments.
+	 \param argv the raw input arguments
 	 \note The initial width and height are set to 512px.
 	 */
-	BRDFEstimatorConfig(int argc, char** argv) : RenderingConfig(argc, argv) {
+	BRDFEstimatorConfig(const std::vector<std::string> & argv) : RenderingConfig(argv) {
 		processArguments();
 		initialWidth = 512;
 		initialHeight = 512;
@@ -70,7 +69,7 @@ public:
  */
 int main(int argc, char** argv) {
 	// First, init/parse/load configuration.
-	BRDFEstimatorConfig config(argc, argv);
+	BRDFEstimatorConfig config(std::vector<std::string>(argv, argv+argc));
 	Resources::defaultPath = "../../../resources/";
 	
 	// Coherent config state check.

@@ -11,26 +11,26 @@
 
 #include <sstream>
 
-Config::Config(int argc, char** argv){
+Config::Config(const std::vector<std::string> & argv){
 	
-	if(argc < 2){
+	if(argv.size() < 2){
 		// Nothing to do, keep using default values.
 		return;
 	}
 	
 	// Have we received a config file as argument?
-	const std::string potentialConfig = Resources::trim(std::string(argv[1]), "-");
+	const std::string potentialConfig = Resources::trim(argv[1], "-");
 	
 	if(potentialConfig == "c" || potentialConfig == "config"){
 		// Safety check.
-		if(argc < 3){
+		if(argv.size() < 3){
 			Log::Error() << Log::Config << "Missing path for --config argument. Using default config." << std::endl;
 			return;
 		}
 		parseFromFile(argv[2], _rawArguments);
 	} else {
 		// Directly parse arguments.
-		parseFromArgs(argc, argv, _rawArguments);
+		parseFromArgs(argv, _rawArguments);
 	}
 	
 	// Extract logging settings;
@@ -56,7 +56,7 @@ Config::Config(int argc, char** argv){
 }
 
 
-void Config::parseFromFile(const char * filePath, std::map<std::string, std::vector<std::string>> & arguments){
+void Config::parseFromFile(const std::string & filePath, std::map<std::string, std::vector<std::string>> & arguments){
 	// Load config from given file.
 	const std::string configContent = Resources::loadStringFromExternalFile(filePath);
 	if(configContent.empty()){
@@ -102,17 +102,17 @@ void Config::parseFromFile(const char * filePath, std::map<std::string, std::vec
 }
 
 
-void Config::parseFromArgs(const int argc, char** argv, std::map<std::string, std::vector<std::string>> & arguments){
-	for(size_t argi = 1; argi < (size_t)argc; ){
+void Config::parseFromArgs(const std::vector<std::string> & argv, std::map<std::string, std::vector<std::string>> & arguments){
+	for(size_t argi = 1; argi < argv.size(); ){
 		// Clean the argument from any -
-		const std::string firstArg = Resources::trim(std::string(argv[argi]), "-");
+		const std::string firstArg = Resources::trim(argv[argi], "-");
 		if (firstArg.empty()) {
 			continue;
 		}
 		std::vector<std::string> values;
 		++argi;
 		// While we do not encounter a dash, the values are associated to the current argument.
-		while (argi < (size_t)argc && argv[argi][0] != '-') {
+		while (argi < argv.size() && argv[argi][0] != '-') {
 			values.emplace_back(argv[argi]);
 			++argi;
 		}
@@ -121,7 +121,7 @@ void Config::parseFromArgs(const int argc, char** argv, std::map<std::string, st
 	}
 }
 
-RenderingConfig::RenderingConfig(int argc, char** argv) : Config(argc, argv){
+RenderingConfig::RenderingConfig(const std::vector<std::string> & argv) : Config(argv){
 	processArguments();
 }
 
@@ -132,7 +132,7 @@ void RenderingConfig::processArguments(){
 		const std::string key = arg.first;
 		const std::vector<std::string> & values = arg.second;
 		
-		if(key == "novsync"){
+		if(key == "novsync" || key == "no-vsync"){
 			vsync = false;
 		} else if(key == "half-rate"){
 			rate = 30;

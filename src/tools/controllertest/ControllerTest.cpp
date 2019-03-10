@@ -199,7 +199,7 @@ void drawTriggerTarget(const int idT, const std::vector<float> & axesValues, con
 int main(int argc, char** argv) {
 	
 	// First, init/parse/load configuration.
-	RenderingConfig config(argc, argv);
+	RenderingConfig config(std::vector<std::string>(argv, argv+argc));
 	// Override window dimensions.
 	
 	config.initialWidth = 800;
