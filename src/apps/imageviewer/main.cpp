@@ -33,6 +33,8 @@ int main(int argc, char** argv) {
 	if(!window){
 		return -1;
 	}
+	Resources::manager().addResources("../../../resources/imageviewer");
+	
 	// Initialize random generator;
 	Random::seed();
 	

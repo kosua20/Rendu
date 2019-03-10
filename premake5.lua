@@ -71,7 +71,6 @@ function GraphicsSetup()
 
 end
 
-
 function ShaderValidation()
 	-- Run the shader validator on all existing shaders.
 	-- Output IDE compatible error messages.
@@ -84,15 +83,29 @@ function ShaderValidation()
 	})
 end	
 
-function AppSetup()
+function RegisterSourcesAndResources(srcPath, rscPath)
+	files({ srcPath, rscPath })
+	removefiles({"**.DS_STORE", "**.thumbs"})
+	-- Reorganize file hierarchy in the IDE project.
+	vpaths({
+	   ["*"] = {srcPath},
+	   ["resources/*"] = {rscPath}
+	})
+end
+
+function AppSetup(appName)
 	GraphicsSetup()
 	includedirs({ "src/engine" })
 	links({"Engine"})
 	kind("ConsoleApp")
 	ShaderValidation()
+	-- Declare src and resources files.
+	srcPath = "src/apps/"..appName.."/**"
+	rscPath = "resources/"..appName.."/**"
+	RegisterSourcesAndResources(srcPath, rscPath)
 end	
 
-function ToolSetup()
+function ToolSetup(toolName)
 	GraphicsSetup()
 	includedirs({ "src/engine" })
 	links({"Engine"})
@@ -106,34 +119,36 @@ project("Engine")
 	GraphicsSetup()
 	kind("StaticLib")
 	files({ "src/engine/**.hpp", "src/engine/**.cpp",
-			"resources/common/**.vert", "resources/common/**.frag", "resources/common/**.geom",
+			"resources/common/**", "resources/common/**", "resources/common/**",
 			"src/libs/*/*.hpp", "src/libs/*/*.cpp", "src/libs/*/*.h"
+	})
+	removefiles({"**.DS_STORE", "**.thumbs"})
+	-- Virtual path allow us to get rid of the on-disk hierarchy.
+	vpaths({
+	   ["engine/*"] = {"src/engine/**"},
+	   ["resources/*"] = {"resources/common/**"},
+	   ["libs/*"] = {"src/libs/**"},
 	})
 
 
 group("Apps")
 
 project("PBRDemo")
-	AppSetup()
-	files({ "src/apps/pbrdemo/**.hpp", "src/apps/pbrdemo/**.cpp", })
-
+	AppSetup("pbrdemo")
+	
 project("Playground")
-	AppSetup()
-	files({ "src/apps/playground/**.hpp", "src/apps/playground/**.cpp", })
+	AppSetup("playground")
 
 project("Atmosphere")
-	AppSetup()
-	files({ "src/apps/atmosphere/**.hpp", "src/apps/atmosphere/**.cpp", })
-
+	AppSetup("atmosphere")
+	
 project("ImageViewer")
-	AppSetup()
-	files({ "src/apps/imageviewer/**.hpp", "src/apps/imageviewer/**.cpp", })
+	AppSetup("imageviewer")
 
 project("SnakeGame")
-	AppSetup()
-	files({ "src/apps/snakegame/**.hpp", "src/apps/snakegame/**.cpp", 
-			"resources/snakegame/**.vert", "resources/snakegame/**.frag", "resources/snakegame/**.geom",
-			})
+	AppSetup("snakegame")
+
+	
 	
 group("Tools")
 
@@ -157,7 +172,7 @@ project("SHExtractor")
 project("ShaderValidator")
 	ToolSetup()	
 	files({ "src/tools/ShaderValidator.cpp" })
-	-- Install the shader validition utility in the root build directory.
+	-- Install the shader validation utility in the root build directory.
 	InstallProject("%{prj.name}", "build/shader_validator"..ext)
 	filter({})
 
