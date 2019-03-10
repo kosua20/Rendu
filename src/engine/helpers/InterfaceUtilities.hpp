@@ -41,7 +41,8 @@ namespace Interface {
 	enum class Action {
 		None, ///< Do nothing.
 		Quit, ///< Quit the application.
-		Fullscreen ///< Switch the window from/to fullscreen mode.
+		Fullscreen, ///< Switch the window from/to fullscreen mode.
+		Vsync ///< Switch the v-sync on/off.
 	};
 	
 	/** Execute an action related to the windowing system.

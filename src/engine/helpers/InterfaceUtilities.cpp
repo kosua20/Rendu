@@ -127,6 +127,16 @@ namespace Interface {
 		case Action::Quit :
 			glfwSetWindowShouldClose(window, GLFW_TRUE);
 			break;
+		case Action::Vsync:
+			{
+				if(config.vsync){
+					glfwSwapInterval(0);
+				} else {
+					glfwSwapInterval(config.rate == 30 ? 2 : 1);
+				}
+				config.vsync = !config.vsync;
+				break;
+			}
 		case Action::Fullscreen:
 			{
 				// Are we currently fullscreen?
@@ -147,6 +157,7 @@ namespace Interface {
 					const GLFWvidmode* mode = glfwGetVideoMode(monitor);
 					glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
 				}
+				config.fullscreen = !fullscreen;
 				// On some hardware, V-sync options can be lost.
 				glfwSwapInterval(config.vsync ? (config.rate == 30 ? 2 : 1) : 0);
 
