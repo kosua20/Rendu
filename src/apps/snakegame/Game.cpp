@@ -33,7 +33,9 @@ Game::Game(RenderingConfig & config) : _config(config), _inGameRenderer(config),
 	_menus[Status::OPTIONS].backgroundImage = backgroundTexture;
 	_menus[Status::OPTIONS].buttons.emplace_back(glm::vec2(0.0f,  0.10f), meshSize, displayScale, OPTION_FULLSCREEN,
 												 Resources::manager().getTexture("button-fullscreen", {GL_SRGB8_ALPHA8}));
-	_menus[Status::OPTIONS].buttons.emplace_back(glm::vec2(0.0f, -0.25f), meshSize, displayScale, BACKTOMENU,
+	_menus[Status::OPTIONS].buttons.emplace_back(glm::vec2(0.0f,  -0.25f), meshSize, displayScale, OPTION_VSYNC,
+												 Resources::manager().getTexture("button-fullscreen", {GL_SRGB8_ALPHA8}));
+	_menus[Status::OPTIONS].buttons.emplace_back(glm::vec2(0.0f, -0.60f), meshSize, displayScale, BACKTOMENU,
 												 Resources::manager().getTexture("button-back", {GL_SRGB8_ALPHA8}));
 	_menus[Status::OPTIONS].images.emplace_back(glm::vec2(0.0f, 0.47f), 0.5f, Resources::manager().getTexture("title-options", {GL_SRGB8_ALPHA8}));
 	
@@ -171,6 +173,9 @@ Interface::Action Game::handleButton(const ButtonAction tag){
 			break;
 		case OPTION_FULLSCREEN:
 			return Interface::Action::Fullscreen;
+			break;
+		case OPTION_VSYNC:
+			return Interface::Action::Vsync;
 			break;
 		default:
 			break;

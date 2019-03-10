@@ -40,7 +40,7 @@ private:
 	};
 	
 	enum ButtonAction : int {
-		NEWGAME, OPTIONS, QUIT, PAUSE, RESUME, BACKTOMENU, OPTION_FULLSCREEN
+		NEWGAME, OPTIONS, QUIT, PAUSE, RESUME, BACKTOMENU, OPTION_FULLSCREEN, OPTION_VSYNC
 	};
 	
 	Interface::Action handleButton(const ButtonAction tag);
