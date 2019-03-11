@@ -9,6 +9,17 @@ MenuButton::MenuButton(const glm::vec2 & screenPos, const glm::vec2 & meshSize, 
 	tid = texture.id;
 }
 
+bool MenuButton::contains(const glm::vec2 & mousePos){
+	return glm::all(glm::greaterThanEqual(mousePos, pos - size * 0.5f))
+	&& glm::all(glm::lessThanEqual(mousePos, pos + size * 0.5f));
+}
+
+MenuToggle::MenuToggle(const glm::vec2 & screenPos, const glm::vec2 & meshSize, const float screenScale, const int actionTag, const TextureInfos & texture) : MenuButton(screenPos, meshSize, screenScale, actionTag, texture){
+	posBox = this->pos + glm::vec2(2.0f/3.0f, 0.0f)*screenScale;
+	posImg = this->pos - glm::vec2(0.4f, 0.0f)*screenScale;
+	scaleBox = checkBoxScale * this->scale;
+}
+
 MenuImage::MenuImage(const glm::vec2 & screenPos, const float screenScale, const TextureInfos & texture){
 	pos = screenPos;
 	size = screenScale * glm::vec2(1.0f, float(texture.height) / float(texture.width));
@@ -16,13 +27,16 @@ MenuImage::MenuImage(const glm::vec2 & screenPos, const float screenScale, const
 }
 
 void GameMenu::update(const glm::vec2 & screenResolution, const float initialRatio){
-	// Update the scaling of each button based on the screen ratio.
+	// Update the scaling of each button/toggle/image based on the screen ratio.
 	const float currentRatio = screenResolution[0] / screenResolution[1];
 	const float ratioFix = initialRatio / currentRatio;
 	for( MenuButton & button : buttons){
-		button.scale = button.displayScale * glm::vec2(ratioFix, 1.0f);
+		button.scale = button.displayScale * glm::vec2(ratioFix, initialRatio);
 	}
-	
+	for( MenuToggle & toggle : toggles){
+		toggle.scale = toggle.displayScale * glm::vec2(ratioFix, initialRatio);
+		toggle.scaleBox = toggle.checkBoxScale * toggle.scale;
+	}
 	for( MenuImage & image : images){
 		image.scale = image.size * glm::vec2(ratioFix, initialRatio);
 	}
