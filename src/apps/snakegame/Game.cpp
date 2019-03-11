@@ -31,10 +31,13 @@ Game::Game(RenderingConfig & config) : _config(config), _inGameRenderer(config),
 	_menus[Status::PAUSED].images.emplace_back(glm::vec2(0.0f, 0.47f), 0.5f, Resources::manager().getTexture("title-pause", {GL_SRGB8_ALPHA8}));
 	
 	_menus[Status::OPTIONS].backgroundImage = backgroundTexture;
-	_menus[Status::OPTIONS].buttons.emplace_back(glm::vec2(0.0f,  0.10f), meshSize, displayScale, OPTION_FULLSCREEN,
+	_menus[Status::OPTIONS].toggles.emplace_back(glm::vec2(0.0f,  0.10f), meshSize, displayScale, OPTION_FULLSCREEN,
 												 Resources::manager().getTexture("button-fullscreen", {GL_SRGB8_ALPHA8}));
-	_menus[Status::OPTIONS].buttons.emplace_back(glm::vec2(0.0f,  -0.25f), meshSize, displayScale, OPTION_VSYNC,
-												 Resources::manager().getTexture("button-fullscreen", {GL_SRGB8_ALPHA8}));
+	_menus[Status::OPTIONS].toggles.back().state = config.fullscreen ? MenuButton::ON : MenuButton::OFF;
+	_menus[Status::OPTIONS].toggles.emplace_back(glm::vec2(0.0f,  -0.25f), meshSize, displayScale, OPTION_VSYNC,
+												 Resources::manager().getTexture("button-vsync", {GL_SRGB8_ALPHA8}));
+	_menus[Status::OPTIONS].toggles.back().state = config.vsync ? MenuButton::ON : MenuButton::OFF;
+	
 	_menus[Status::OPTIONS].buttons.emplace_back(glm::vec2(0.0f, -0.60f), meshSize, displayScale, BACKTOMENU,
 												 Resources::manager().getTexture("button-back", {GL_SRGB8_ALPHA8}));
 	_menus[Status::OPTIONS].images.emplace_back(glm::vec2(0.0f, 0.47f), 0.5f, Resources::manager().getTexture("title-options", {GL_SRGB8_ALPHA8}));
@@ -122,8 +125,7 @@ Interface::Action Game::update(){
 		for( MenuButton & button : currentMenu.buttons){
 			button.state = MenuButton::OFF;
 			// Check if mouse inside.
-			if(glm::all(glm::greaterThanEqual(mousePos, button.pos - button.size * 0.5f))
-			   && glm::all(glm::lessThanEqual(mousePos, button.pos + button.size * 0.5f))){
+			if(button.contains(mousePos)){
 				button.state = Input::manager().pressed(Input::MouseLeft) ? MenuButton::ON : MenuButton::HOVER;
 				// If the mouse was released, trigger the action.
 				if(Input::manager().released(Input::MouseLeft)){
@@ -133,6 +135,19 @@ Interface::Action Game::update(){
 						finalAction = result;
 					}
 				}
+			}
+		}
+		// Check if any checkbox was checked.
+		for( MenuButton & toggle : currentMenu.toggles){
+			// Check if mouse inside, and if the click was validated through release.
+			if(toggle.contains(mousePos) && Input::manager().released(Input::MouseLeft)){
+				// Do the action.
+				const Interface::Action result = handleButton(ButtonAction(toggle.tag));
+				if(finalAction == Interface::Action::None){
+					finalAction = result;
+				}
+				// Update the display state.
+				toggle.state = (toggle.state == MenuButton::ON ? MenuButton::OFF : MenuButton::ON);
 			}
 		}
 	}
