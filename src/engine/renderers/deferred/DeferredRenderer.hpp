@@ -8,7 +8,7 @@
 
 #include "../../processing/GaussianBlur.hpp"
 #include "../../processing/BoxBlur.hpp"
-
+#include "../../processing/SSAO.hpp"
 #include "../Renderer.hpp"
 
 
@@ -80,9 +80,8 @@ private:
 
 	std::shared_ptr<Framebuffer> _gbuffer; ///< G-buffer.
 	std::shared_ptr<GaussianBlur> _blurBuffer; ///< Bloom blur processing.
-	std::shared_ptr<BoxBlur> _blurSSAOBuffer; ///< SSAO blur processing.
+	std::shared_ptr<SSAO> _ssaoPass; ///< SSAO processing.
 	
-	std::shared_ptr<Framebuffer> _ssaoFramebuffer; ///< SSAO framebuffer
 	std::shared_ptr<Framebuffer> _sceneFramebuffer; ///< Lighting framebuffer
 	std::shared_ptr<Framebuffer> _bloomFramebuffer; ///< Bloom framebuffer
 	std::shared_ptr<Framebuffer> _toneMappingFramebuffer; ///< Tonemapping framebuffer

@@ -27,7 +27,7 @@ DeferredRenderer::DeferredRenderer(RenderingConfig & config) : Renderer(config) 
 	_gbuffer = std::make_shared<Framebuffer>(renderWidth, renderWidth, descs, false);
 	
 	// Other framebuffers.
-	_ssaoFramebuffer = std::make_shared<Framebuffer>(renderHalfWidth, renderHalfHeight, GL_R8, false);
+	_ssaoPass = std::make_shared<SSAO>(renderHalfWidth, renderHalfHeight, 0.5f);
 	_sceneFramebuffer = std::make_shared<Framebuffer>(renderWidth, renderHeight, GL_RGBA16F, false);
 	_bloomFramebuffer = std::make_shared<Framebuffer>(renderPow2Size, renderPow2Size, GL_RGB16F, false);
 	
@@ -35,7 +35,7 @@ DeferredRenderer::DeferredRenderer(RenderingConfig & config) : Renderer(config) 
 	_fxaaFramebuffer = std::make_shared<Framebuffer>(renderWidth, renderHeight, GL_RGBA8, false);
 	
 	_blurBuffer = std::make_shared<GaussianBlur>(renderPow2Size, renderPow2Size, 2, GL_RGB16F);
-	_blurSSAOBuffer = std::make_shared<BoxBlur>(renderHalfWidth, renderHalfHeight, true, Descriptor(GL_R8));
+	
 	
 	checkGLError();
 
@@ -53,9 +53,7 @@ DeferredRenderer::DeferredRenderer(RenderingConfig & config) : Renderer(config) 
 	const std::vector<GLuint> ambientTextures = _gbuffer->textureIds();
 	
 	// Add the SSAO result.
-	const GLuint texDepth = _gbuffer->depthId();
-	const GLuint texSSAO = _blurSSAOBuffer->textureId();
-	_ambientScreen.init(ambientTextures[0], ambientTextures[1], ambientTextures[2], texDepth, texSSAO);
+	_ambientScreen.init(ambientTextures[0], ambientTextures[1], ambientTextures[2], _gbuffer->depthId(), _ssaoPass->textureId());
 	
 	checkGLError();
 	
@@ -157,15 +155,10 @@ void DeferredRenderer::draw() {
 	
 	if(_applySSAO){
 		// --- SSAO pass
-		_ssaoFramebuffer->bind();
-		_ssaoFramebuffer->setViewport();
-		_ambientScreen.drawSSAO(_userCamera.projection());
-		_ssaoFramebuffer->unbind();
-	
-		// --- SSAO blurring pass
-		_blurSSAOBuffer->process(_ssaoFramebuffer->textureId());
+		_ssaoPass->process(_userCamera.projection(), _gbuffer->depthId(), _gbuffer->textureId(int(TextureType::Normal)));
+		
 	} else {
-		_blurSSAOBuffer->clear();
+		_ssaoPass->clear();
 	}
 	
 	// --- Gbuffer composition pass
@@ -291,8 +284,7 @@ void DeferredRenderer::clean() const {
 	_ambientScreen.clean();
 	_gbuffer->clean();
 	_blurBuffer->clean();
-	_blurSSAOBuffer->clean();
-	_ssaoFramebuffer->clean();
+	_ssaoPass->clean();
 	_bloomFramebuffer->clean();
 	_sceneFramebuffer->clean();
 	_toneMappingFramebuffer->clean();
@@ -307,8 +299,7 @@ void DeferredRenderer::resize(unsigned int width, unsigned int height){
 	Renderer::updateResolution(width, height);
 	// Resize the framebuffers.
 	_gbuffer->resize(_renderResolution);
-	_ssaoFramebuffer->resize(0.5f * _renderResolution);
-	_blurSSAOBuffer->resize(_ssaoFramebuffer->width(), _ssaoFramebuffer->height());
+	_ssaoPass->resize(_renderResolution[0] / 2.0f, _renderResolution[1] / 2.0f);
 	_toneMappingFramebuffer->resize(_renderResolution);
 	_fxaaFramebuffer->resize(_renderResolution);
 	if(_scene){
