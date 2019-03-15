@@ -6,13 +6,13 @@ in INTERFACE {
 } In ; ///< vec2 uv;
 
 layout(binding = 0) uniform sampler2D depthTexture; ///< Depth texture.
-layout(binding = 1) uniform sampler2D normalTexture; ///< Normal texture.
+layout(binding = 1) uniform sampler2D normalTexture; ///< Normal texture, in [0,1].
 layout(binding = 2) uniform sampler2D noiseTexture; ///< 5x5 3-components noise texture with float precision.
 
 uniform mat4 projectionMatrix; ///< The camera projection parameters.
 uniform vec3 samples[24]; ///< Unique sample directions on a sphere.
 
-#define RADIUS 0.5 ///< The sampling radius.
+uniform float radius = 0.5; ///< The sampling radius.
 
 layout(location = 0) out float fragColor; ///< SSAO.
 
@@ -66,14 +66,14 @@ void main(){
 	float occlusion = 0.0;
 	for(int i = 0; i < 24; ++i){
 		// View space position of the sample.
-		vec3 randomSample = position + RADIUS * tbn * samples[i];
+		vec3 randomSample = position + radius * tbn * samples[i];
 		// Project view space point to clip space then NDC space.
 		vec4 sampleClipSpace = projectionMatrix * vec4(randomSample, 1.0);
 		vec2 sampleUV = (sampleClipSpace.xy / sampleClipSpace.w) * 0.5 + 0.5;
 		// Read scene depth at the corresponding UV.
 		float sampleDepth = linearizeDepth(texture(depthTexture, sampleUV).r);
 		// Check : if the depth are too different, don't take result into account.
-		float isValid = abs(position.z - sampleDepth) < RADIUS ? 1.0 : 0.0;
+		float isValid = abs(position.z - sampleDepth) < radius ? 1.0 : 0.0;
 		// If the initial sample is further away from the camera than the surface, it is below the surface, occlusion is increased.
 		occlusion += (sampleDepth >= randomSample.z  ? isValid : 0.0);
 	}
