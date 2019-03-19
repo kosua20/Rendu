@@ -1,19 +1,17 @@
 #version 330
 
-layout(location = 0) out vec4 fragColor; ///< Color.
+layout(location = 0) out vec3 fragNormal; ///< Color.
+layout(location = 1) out vec4 fragPosId; ///< Color.
 
 in INTERFACE {
 	vec3 n;
+	vec3 pos;
 } In;
 
-uniform vec3 baseColor;
-uniform float ambientFactor = 0.2;
+uniform int matID;
 
 void main(){
-	// Two directional ligths.
-	const vec3 lightDir1 = normalize(vec3(1.0,1.0,1.0));
-	const vec3 lightDir2 = normalize(vec3(-1.0,-0.8,1.0));
-	vec3 nWorld = normalize(In.n);
-	fragColor.rgb = pow(baseColor, vec3(2.2)) * (max(0, dot(lightDir1, nWorld)) + 0.3*max(0, dot(lightDir2, nWorld)));
-	fragColor.a = 1.0;
+	fragNormal = normalize(In.n)*0.5+0.5;
+	fragPosId.xyz = In.pos;
+	fragPosId.w = float(matID)/255.0;
 }
