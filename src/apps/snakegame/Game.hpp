@@ -55,5 +55,5 @@ private:
 	Status _status = Status::MAINMENU;
 	
 	std::map<Status, GameMenu> _menus;
-	
+	bool _overrideTime = false;
 };

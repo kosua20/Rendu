@@ -18,8 +18,8 @@ GameMenuRenderer::GameMenuRenderer(RenderingConfig & config) : Renderer(config){
 void GameMenuRenderer::draw(const GameMenu & menu){
 	
 	static const std::map<MenuButton::State, glm::vec4> borderColors = {
-		{ MenuButton::OFF, glm::vec4(0.9f, 0.9f, 0.9f, 1.0f) },
-		{ MenuButton::HOVER, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f) },
+		{ MenuButton::OFF, glm::vec4(0.8f, 0.8f, 0.8f, 1.0f) },
+		{ MenuButton::HOVER, glm::vec4(0.7f, 0.7f, 0.7f, 1.0f) },
 		{ MenuButton::ON, glm::vec4(0.95f, 0.95f , 0.95f, 1.0f) }
 	};
 	

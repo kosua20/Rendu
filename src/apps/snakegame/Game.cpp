@@ -102,6 +102,8 @@ Interface::Action Game::update(){
 		}
 		if(ImGui::Begin("Infos")){
 			ImGui::Text("%.1f ms, %.1f fps", ImGui::GetIO().DeltaTime*1000.0f, ImGui::GetIO().Framerate);
+			ImGui::Separator();
+			ImGui::Checkbox("Force pause", &_overrideTime);
 		}
 		ImGui::End();
 	}
@@ -201,7 +203,7 @@ Interface::Action Game::handleButton(const ButtonAction tag){
 
 void Game::physics(double fullTime, double frameTime){
 	
-	if(_status == Status::INGAME){
+	if(_status == Status::INGAME && !_overrideTime){
 		_playTime = _playTime + frameTime;
 		_player->physics(_playTime, frameTime);
 	}

@@ -28,7 +28,7 @@ private:
 	std::shared_ptr<ProgramInfos> _buttonProgram;
 	std::shared_ptr<ProgramInfos> _imageProgram;
 	MeshInfos _button, _buttonIn, _toggle, _toggleIn, _quad;
-	
+
 };
 
 
