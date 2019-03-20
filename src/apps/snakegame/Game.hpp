@@ -7,15 +7,11 @@
 #include "processing/GaussianBlur.hpp"
 
 // *** Current todo list: ***
-// \todo Support button text and textures.
-// \todo Support menu background textures.
-// \todo Support checkboxes and sliders.
-// \todo Support menu images.
-// \todo Display score in-game and recap text.
+// \todo Display score in-game and game over screen.
 
 // *** Later improvements: ***
-// \todo Fancier rendering of the game scene.
 // \todo Implement match-3 mechanics.
+// \todo Keep score list in savefile.
 
 class Game {
 public:
