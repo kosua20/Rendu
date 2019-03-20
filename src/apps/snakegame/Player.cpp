@@ -68,8 +68,10 @@ void Player::physics(double fullTime, const double frameTime) {
 			_positions.push_back(_items[i]);
 			_angles.push_back(0.0f);
 			modelsBody.emplace_back(1.0f);
+			looksBody.emplace_back(looksItem[i]);
 			_items.erase(_items.begin() + i);
 			modelsItem.erase(modelsItem.begin() + i);
+			looksItem.erase(looksItem.begin() + i);
 			_score += _itemValue;
 		}
 	}
@@ -166,6 +168,7 @@ void Player::physics(double fullTime, const double frameTime) {
 		if(found){
 			_items.push_back(newPos);
 			modelsItem.emplace_back(1.0f);
+			looksItem.emplace_back(Random::Int(3, 5));
 		}
 		
 	}

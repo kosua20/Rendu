@@ -20,6 +20,8 @@ public:
 	glm::mat4 modelHead;
 	std::vector<glm::mat4> modelsBody;
 	std::vector<glm::mat4> modelsItem;
+	std::vector<int> looksBody;
+	std::vector<int> looksItem;
 	
 private:
 	

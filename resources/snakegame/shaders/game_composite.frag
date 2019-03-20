@@ -17,13 +17,13 @@ void main(){
 	vec4 posInd = texture(materialMap, In.uv);
 	float matId = 255.0*posInd.w;
 	vec3 n = normalize(2.0f * texture(normalMap, In.uv).rgb - 1.0f);
+	float ao = texture(ssaoMap, In.uv).r;
 	
 	// Ground is white.
 	vec3 baseColor = vec3(1.0);
-	
-	
 	if(matId > 1.5){
-		baseColor = vec3(0.9, 0.0, 0.0);
+		// Head is grey, body and items are red.
+		baseColor = matId > 4.5  ? vec3(0.1) : (matId > 3.5 ? vec3(0.9) : vec3(0.9, 0.0, 0.0));
 		// Computation for the reflection.
 		// Intersect ray with sphere surrounding scene.
 		vec3 pos = posInd.xyz;
@@ -32,14 +32,13 @@ void main(){
 		float relativeRadius = dot(pos, pos) - radius*radius;
 		float abscisse = -nDotPos + sqrt(nDotPos*nDotPos - relativeRadius);
 		vec3 intersec = pos + abscisse * n;
-		float atten = 1.0-pow(dot(n, vec3(0.0, 0.0, 1.0)), 16.0);
+		float atten = 1.0-pow(n.z, 16.0);
+		// Composite reflection.
 		baseColor *= mix(vec3(1.0), textureLod(envMap, intersec.xyz, 3.0).rgb, atten);
-	} else {
-		float ao = texture(ssaoMap, In.uv).r;
-		float light0 = max(0, 0.5*dot(n, normalize(vec3(0.0, 1.0, 1.0))) + 0.8);
-		float adjustedAO = 0.7*ao + 0.3;
-		baseColor *= light0 * adjustedAO;
 	}
+	float light0 = max(0, 0.5*dot(n, normalize(vec3(0.0, 1.0, 1.0))) + 0.8);
+	float adjustedAO = 0.7*ao + 0.3;
+	baseColor *= light0 * adjustedAO;
 	fragColor.rgb = baseColor;
 	fragColor.a = 1.0f;
 }

@@ -91,7 +91,7 @@ void GameRenderer::draw(const Player & player){
 		glUniformMatrix4fv(_coloredProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
 		glUniformMatrix4fv(_coloredProgram->uniform("model"), 1, GL_FALSE, &player.modelsBody[i][0][0]);
 		glUniformMatrix3fv(_coloredProgram->uniform("normalMat"), 1, GL_FALSE, &normalMatrix[0][0]);
-		glUniform1i(_coloredProgram->uniform("matID"), 3);
+		glUniform1i(_coloredProgram->uniform("matID"), player.looksBody[i]);
 		glDrawElements(GL_TRIANGLES, _bodyElement.count, GL_UNSIGNED_INT, (void*)0);
 	}
 	
@@ -102,7 +102,7 @@ void GameRenderer::draw(const Player & player){
 		glUniformMatrix4fv(_coloredProgram->uniform("mvp"), 1, GL_FALSE, &MVP1[0][0]);
 		glUniformMatrix4fv(_coloredProgram->uniform("model"), 1, GL_FALSE, &player.modelsItem[i][0][0]);
 		glUniformMatrix3fv(_coloredProgram->uniform("normalMat"), 1, GL_FALSE, &normalMatrix1[0][0]);
-		glUniform1i(_coloredProgram->uniform("matID"), 3);
+		glUniform1i(_coloredProgram->uniform("matID"), player.looksItem[i]);
 		glDrawElements(GL_TRIANGLES, _bodyElement.count, GL_UNSIGNED_INT, (void*)0);
 	}
 	
