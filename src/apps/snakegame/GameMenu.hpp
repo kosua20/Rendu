@@ -5,65 +5,107 @@
 #include "graphics/GLUtilities.hpp"
 
 
+/**
+ \brief Represents a button in a menu.
+ \ingroup SnakeGame
+ */
 struct MenuButton {
 	
 public:
 	
+	/** Creates a new momentaneous button.
+	 \param screenPos position on screen in absolute units
+	 \param meshSize the size of the button mesh
+	 \param screenScale scaling to apply to the toggle on the X axis
+	 \param actionTag the ID of the action associated to this button
+	 \param texture the text texture on the button
+	 */
 	MenuButton(const glm::vec2 & screenPos, const glm::vec2 & meshSize, const float screenScale, const int actionTag, const TextureInfos & texture);
 	
+	/** Check if a position is inside the button.
+	 \param mousePos the position to test (in absolute units)
+	 \return a boolean denoting if the tested position falls inside the button on screen.
+	 */
 	bool contains(const glm::vec2 & mousePos);
 	
+	/**
+	 \brief Button state.
+	 */
 	enum State {
 		OFF, HOVER, ON
 	};
-	State state = OFF;
+	State state = OFF; ///< The button interaction state.
 	
-	glm::vec2 pos;
-	glm::vec2 size;
-	glm::vec2 scale;
-	float displayScale;
-	
-	int tag;
-	GLuint tid;
+	glm::vec2 pos; ///< Screen position.
+	glm::vec2 size; ///< Screen size.
+	glm::vec2 scale; ///< Screen scale.
+	float displayScale; ///< Initial display scale.
+	int tag; ///< Action ID.
+	GLuint tid; ///< Text texture ID.
 };
 
+
+/**
+ \brief Represents a toggle in a menu.
+ \ingroup SnakeGame
+ */
 struct MenuToggle: public MenuButton {
-	
 public:
 	
+	/** Creates a new toggle button which can be either on or off.
+	 \param screenPos position on screen in absolute units
+	 \param meshSize the size of the checkbox mesh
+	 \param screenScale scaling to apply to the toggle on the X axis
+	 \param actionTag the ID of the action associated to this button
+	 \param texture the text texture accompanying the checkbox
+	 */
 	MenuToggle(const glm::vec2 & screenPos, const glm::vec2 & meshSize, const float screenScale, const int actionTag, const TextureInfos & texture);
 	
-	glm::vec2 posBox;
-	glm::vec2 posImg;
-	glm::vec2 scaleBox;
-	
-	const float checkBoxScale = 0.65f;
+	glm::vec2 posBox; ///< Screen position of the toggle box.
+	glm::vec2 posImg; ///< Screen position of the text.
+	glm::vec2 scaleBox; ///< Scaling of the toggle box.
+	const float checkBoxScale = 0.65f; ///< Scaling of checkboxes compared to regular buttons.
 };
 
+
+/**
+ \brief Represents a fixed image displayed in a menu.
+ \ingroup SnakeGame
+ */
 struct MenuImage {
-	
 public:
 	
+	/** Creates a menu image.
+	 \param screenPos position on screen in absolute units
+	 \param screenScale scaling to apply to the image on the X axis
+	 \param texture the texture to display
+	 */
 	MenuImage(const glm::vec2 & screenPos, const float screenScale, const TextureInfos & texture);
 	
-	glm::vec2 pos;
-	glm::vec2 size;
-	glm::vec2 scale;
-	
-	GLuint tid;
+	glm::vec2 pos; ///< Image position.
+	glm::vec2 size; ///< Screen size.
+	glm::vec2 scale; ///< Scaling.
+	GLuint tid; ///< Texture id.
 	
 };
 
 
+/**
+ \brief A game menu containing buttons, toggles and images.
+ \ingroup SnakeGame
+ */
 class GameMenu {
-	
 public:
 	
+	/** Update dimensions of element based on the current window size.
+	 \param screenResolution the current window resolution
+	 \param initialRatio the window ratio used to describe the initial layout
+	 */
 	void update(const glm::vec2 & screenResolution, const float initialRatio);
 	
-	std::vector<MenuButton> buttons;
-	std::vector<MenuToggle> toggles;
-	std::vector<MenuImage> images;
+	std::vector<MenuButton> buttons; ///< The menu buttons.
+	std::vector<MenuToggle> toggles; ///< The menu toggles.
+	std::vector<MenuImage> images; ///< The menu images.
 	
-	GLuint backgroundImage = 0;
+	GLuint backgroundImage = 0; ///< The background texure.
 };

@@ -1,7 +1,9 @@
 
 #include "GameMenuRenderer.hpp"
-#include "Common.hpp"
+#include "resources/ResourcesManager.hpp"
+#include "graphics/ScreenQuad.hpp"
 #include "input/Input.hpp"
+#include "Common.hpp"
 
 GameMenuRenderer::GameMenuRenderer(RenderingConfig & config) : Renderer(config){
 	
