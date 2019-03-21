@@ -1,7 +1,6 @@
 #include "MeshUtilities.hpp"
 #include <sstream>
 #include <cstddef>
-#include <map>
 
 using namespace std;
 

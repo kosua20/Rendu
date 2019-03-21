@@ -1,9 +1,9 @@
 #include "DeferredRenderer.hpp"
-#include "../../input/Input.hpp"
-#include "../../lights/DirectionalLight.hpp"
-#include "../../lights/PointLight.hpp"
-#include "../../lights/SpotLight.hpp"
-#include "../../helpers/InterfaceUtilities.hpp"
+#include "input/Input.hpp"
+#include "lights/DirectionalLight.hpp"
+#include "lights/PointLight.hpp"
+#include "lights/SpotLight.hpp"
+#include "helpers/InterfaceUtilities.hpp"
 
 
 DeferredRenderer::DeferredRenderer(RenderingConfig & config) : Renderer(config) {

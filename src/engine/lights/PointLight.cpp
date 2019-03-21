@@ -1,5 +1,5 @@
 #include "PointLight.hpp"
-#include "../Common.hpp"
+#include "Common.hpp"
 
 
 PointLight::PointLight(const glm::vec3& worldPosition, const glm::vec3& color, float radius, const BoundingBox & sceneBox) : Light(color) {

@@ -1,18 +1,19 @@
 #ifndef DeferredRenderer_h
 #define DeferredRenderer_h
 
-#include "../../Common.hpp"
-#include "../../graphics/Framebuffer.hpp"
-#include "../../input/ControllableCamera.hpp"
-#include "../../graphics/ScreenQuad.hpp"
+#include "Scene.hpp"
+#include "renderers/Renderer.hpp"
+#include "renderers/deferred/AmbientQuad.hpp"
 
-#include "../../processing/GaussianBlur.hpp"
-#include "../../processing/BoxBlur.hpp"
-#include "../../processing/SSAO.hpp"
-#include "../Renderer.hpp"
+#include "graphics/Framebuffer.hpp"
+#include "input/ControllableCamera.hpp"
+#include "graphics/ScreenQuad.hpp"
 
+#include "processing/GaussianBlur.hpp"
+#include "processing/BoxBlur.hpp"
+#include "processing/SSAO.hpp"
 
-#include "AmbientQuad.hpp"
+#include "Common.hpp"
 
 /**
  \defgroup DeferredRendering Deferred rendering

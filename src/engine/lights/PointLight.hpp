@@ -1,9 +1,9 @@
 #ifndef PointLight_h
 #define PointLight_h
-#include "Light.hpp"
-#include "../resources/ResourcesManager.hpp"
-#include "../graphics/FramebufferCube.hpp"
-#include "../Object.hpp"
+#include "lights/Light.hpp"
+#include "Object.hpp"
+#include "resources/ResourcesManager.hpp"
+#include "graphics/FramebufferCube.hpp"
 
 /**
  \brief An omnidirectional punctual light, where light is radiating in all directions from a single point in space. Implements distance attenuation.

@@ -1,8 +1,8 @@
 #ifndef Framebuffer_h
 #define Framebuffer_h
 
-#include "../Common.hpp"
-#include "GLUtilities.hpp"
+#include "graphics/GLUtilities.hpp"
+#include "Common.hpp"
 
 /**
  \brief Represent a 2D rendering target, of any size, format and type, backed by an OpenGL framebuffer.

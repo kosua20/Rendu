@@ -1,10 +1,8 @@
 #ifndef GLUtilities_h
 #define GLUtilities_h
-#include <map>
 
-#include "../Common.hpp"
-#include "../resources/MeshUtilities.hpp"
-
+#include "resources/MeshUtilities.hpp"
+#include "Common.hpp"
 
 /**
  \addtogroup Graphics

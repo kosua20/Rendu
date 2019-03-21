@@ -1,12 +1,12 @@
 #ifndef DirectionalLight_h
 #define DirectionalLight_h
 
-#include "Light.hpp"
-#include "../Common.hpp"
-#include "../graphics/ScreenQuad.hpp"
-#include "../graphics/Framebuffer.hpp"
-#include "../Object.hpp"
-#include "../processing/BoxBlur.hpp"
+#include "lights/Light.hpp"
+#include "Object.hpp"
+#include "graphics/ScreenQuad.hpp"
+#include "graphics/Framebuffer.hpp"
+#include "processing/BoxBlur.hpp"
+#include "Common.hpp"
 
 /**
  \brief A directional light, where all light rays have the same direction.

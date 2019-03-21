@@ -1,8 +1,8 @@
 #ifndef Input_h
 #define Input_h
 
-#include "../Common.hpp"
-#include "controller/Controller.hpp"
+#include "Common.hpp"
+#include "input/controller/Controller.hpp"
 
 /**
  \brief The input manager is responsible for updating the internal input states (keyboard, mouse, window size). It can also be use to query back these states.

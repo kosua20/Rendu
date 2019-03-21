@@ -1,8 +1,7 @@
 #ifndef Controller_h
 #define Controller_h
 
-#include "../../Common.hpp"
-#include <map>
+#include "Common.hpp"
 
 /**
  \brief Represents a joystick or any additional controller.

@@ -1,8 +1,8 @@
 #ifndef SSAO_h
 #define SSAO_h
-#include "../Common.hpp"
-#include "../graphics/Framebuffer.hpp"
-#include "BoxBlur.hpp"
+#include "processing/BoxBlur.hpp"
+#include "graphics/Framebuffer.hpp"
+#include "Common.hpp"
 
 /**
  \brief Computes screen space ambient occlusion.

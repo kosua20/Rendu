@@ -1,5 +1,6 @@
 #include "Renderer.hpp"
-#include "../input/Input.hpp"
+#include "input/Input.hpp"
+#include "graphics/GLUtilities.hpp"
 
 
 Renderer::Renderer(RenderingConfig & config) : _config(config) {

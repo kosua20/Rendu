@@ -1,9 +1,8 @@
 #ifndef RawController_h
 #define RawController_h
 
-#include "Controller.hpp"
-#include "../../Common.hpp"
-#include <map>
+#include "input/controller/Controller.hpp"
+#include "Common.hpp"
 
 /**
  \brief Represents a controller used for debug, where all raw buttons are shown.

@@ -1,7 +1,7 @@
 #ifndef Camera_h
 #define Camera_h
 
-#include "../Common.hpp"
+#include "Common.hpp"
 
 /**
  \brief This class represents a camera as used in real-time rendering APIs.

@@ -8,8 +8,8 @@
 
 #ifndef Config_hpp
 #define Config_hpp
+
 #include "Common.hpp"
-#include <map>
 
 /**
  \brief Contains configurable elements as attributes, populated from the command line, a configuration file or default values.

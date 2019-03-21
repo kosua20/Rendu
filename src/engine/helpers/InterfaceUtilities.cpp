@@ -1,9 +1,9 @@
 #include "InterfaceUtilities.hpp"
-#include "../Common.hpp"
-#include "../input/InputCallbacks.hpp"
-#include "../input/Input.hpp"
+#include "input/InputCallbacks.hpp"
+#include "input/Input.hpp"
 
 #include <nfd/nfd.h>
+#include <imgui/imgui_impl_opengl3.h>
 
 
 namespace Interface {

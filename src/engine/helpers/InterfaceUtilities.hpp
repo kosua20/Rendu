@@ -1,12 +1,11 @@
 #ifndef InterfaceUtilities_h
 #define InterfaceUtilities_h
 
-#include "../Common.hpp"
-#include "../Config.hpp"
+#include "Config.hpp"
+#include "Common.hpp"
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_glfw.h>
-#include <imgui/imgui_impl_opengl3.h>
 
 struct GLFWwindow;
 

@@ -1,7 +1,7 @@
 #include "ProgramInfos.hpp"
 
 #include "GLUtilities.hpp"
-#include "../resources/ResourcesManager.hpp"
+#include "resources/ResourcesManager.hpp"
 
 
 ProgramInfos::ProgramInfos(){

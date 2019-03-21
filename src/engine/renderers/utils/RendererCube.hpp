@@ -1,10 +1,10 @@
 #ifndef RendererCube_h
 #define RendererCube_h
 
-#include "../../Common.hpp"
-#include "../../graphics/Framebuffer.hpp"
-#include "../../resources/ResourcesManager.hpp"
-#include "../Renderer.hpp"
+#include "renderers/Renderer.hpp"
+#include "graphics/Framebuffer.hpp"
+#include "resources/ResourcesManager.hpp"
+#include "Common.hpp"
 
 /**
  \brief Renders each face of a cubemap with a given shader, for preprocessing.

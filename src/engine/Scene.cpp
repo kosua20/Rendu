@@ -1,5 +1,6 @@
 #include "Scene.hpp"
 #include "Common.hpp"
+#include <sstream>
 
 Scene::Scene(){};
 

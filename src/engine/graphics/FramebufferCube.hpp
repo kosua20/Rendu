@@ -1,9 +1,9 @@
 #ifndef FramebufferCube_h
 #define FramebufferCube_h
 
-#include "../Common.hpp"
-#include "GLUtilities.hpp"
-#include "Framebuffer.hpp"
+#include "graphics/Framebuffer.hpp"
+#include "graphics/GLUtilities.hpp"
+#include "Common.hpp"
 
 /**
  \brief Represent a cubemap rendering target, of any size, format and type, backed by an OpenGL framebuffer composed of six layers.

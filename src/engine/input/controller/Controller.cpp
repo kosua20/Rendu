@@ -1,5 +1,5 @@
 #include "Controller.hpp"
-#include "../../resources/ResourcesManager.hpp"
+#include "resources/ResourcesManager.hpp"
 #include <sstream>
 
 

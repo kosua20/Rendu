@@ -1,12 +1,12 @@
 #ifndef SpotLight_h
 #define SpotLight_h
 
-#include "Light.hpp"
-#include "../Common.hpp"
-#include "../graphics/ScreenQuad.hpp"
-#include "../graphics/Framebuffer.hpp"
-#include "../Object.hpp"
-#include "../processing/BoxBlur.hpp"
+#include "lights/Light.hpp"
+#include "Object.hpp"
+#include "graphics/ScreenQuad.hpp"
+#include "graphics/Framebuffer.hpp"
+#include "processing/BoxBlur.hpp"
+#include "Common.hpp"
 
 /**
  \brief A spotlight, where light rays in a given cone are radiating from a single point in space. Implements distance attenuation and cone soft transition.

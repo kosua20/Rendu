@@ -1,7 +1,6 @@
 #ifndef MeshUtilities_h
 #define MeshUtilities_h
-
-#include "../Common.hpp"
+#include "Common.hpp"
 
 /**
  \brief Represent the sphere of smallest radius containing a given object or region of space.

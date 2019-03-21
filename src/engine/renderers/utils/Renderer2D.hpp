@@ -1,10 +1,10 @@
 #ifndef Renderer2D_h
 #define Renderer2D_h
 
-#include "../../Common.hpp"
-#include "../../graphics/Framebuffer.hpp"
-#include "../../graphics/ScreenQuad.hpp"
-#include "../Renderer.hpp"
+#include "renderers/Renderer.hpp"
+#include "graphics/Framebuffer.hpp"
+#include "graphics/ScreenQuad.hpp"
+#include "Common.hpp"
 
 /**
  \brief Renders a 2D texture with a given shader, for preprocessing.

@@ -1,5 +1,6 @@
 #ifndef Object_h
 #define Object_h
+
 #include "resources/ResourcesManager.hpp"
 #include "Common.hpp"
 

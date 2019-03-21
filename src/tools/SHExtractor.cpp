@@ -2,7 +2,6 @@
 #include "Config.hpp"
 #include "resources/ImageUtilities.hpp"
 #include "resources/ResourcesManager.hpp"
-#include <map>
 
 ///
 

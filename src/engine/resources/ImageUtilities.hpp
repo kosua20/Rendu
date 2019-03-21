@@ -1,6 +1,6 @@
 #ifndef ImageUtilities_h
 #define ImageUtilities_h
-#include "../Common.hpp"
+#include "Common.hpp"
 
 /**
  \brief Provide image loading/saving utilities, for both LDR and HDR images.

@@ -1,8 +1,7 @@
 #ifndef ProgramInfos_h
 #define ProgramInfos_h
 
-#include "../Common.hpp"
-#include <map>
+#include "Common.hpp"
 
 /**
  \brief Represents a group of shaders used for rendering.

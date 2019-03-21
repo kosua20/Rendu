@@ -1,8 +1,8 @@
 #ifndef ControllableCamera_h
 #define ControllableCamera_h
 
-#include "Camera.hpp"
-#include "../Common.hpp"
+#include "input/Camera.hpp"
+#include "Common.hpp"
 
 /** \brief This camera can be controlled through the inputs received from the user.
  \details It support turntable, fps and josytick based navigation methods, and handles their synchronization.

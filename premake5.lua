@@ -117,6 +117,7 @@ end
 
 project("Engine")
 	GraphicsSetup()
+	includedirs({ "src/engine" })
 	kind("StaticLib")
 	files({ "src/engine/**.hpp", "src/engine/**.cpp",
 			"resources/common/**", "resources/common/**", "resources/common/**",

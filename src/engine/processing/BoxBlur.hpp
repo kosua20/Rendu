@@ -1,7 +1,7 @@
 #ifndef BoxBlur_h
 #define BoxBlur_h
-#include "../Common.hpp"
-#include "Blur.hpp"
+#include "processing/Blur.hpp"
+#include "Common.hpp"
 
 /**
  \brief Applies a box blur of fixed radius 2. Correspond to uniformly averaging values over a square window.

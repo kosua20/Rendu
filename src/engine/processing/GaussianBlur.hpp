@@ -1,7 +1,7 @@
 #ifndef GaussianBlur_h
 #define GaussianBlur_h
-#include "../Common.hpp"
-#include "Blur.hpp"
+#include "processing/Blur.hpp"
+#include "Common.hpp"
 
 /**
  \brief Applies an approximate gaussian blur.

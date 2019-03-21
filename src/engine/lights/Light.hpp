@@ -1,7 +1,7 @@
 #ifndef Light_h
 #define Light_h
-#include "../Common.hpp"
-#include <map>
+
+#include "Common.hpp"
 
 /**
  \brief A general light with adjustable color intensity, that can cast shadows.

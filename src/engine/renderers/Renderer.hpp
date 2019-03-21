@@ -1,7 +1,6 @@
 #ifndef Renderer_h
 #define Renderer_h
-#include "../Config.hpp"
-#include "../Scene.hpp"
+#include "Config.hpp"
 
 /**
  \brief Base structure of a renderer.

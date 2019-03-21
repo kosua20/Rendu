@@ -1,9 +1,8 @@
 #ifndef GamepadController_h
 #define GamepadController_h
 
-#include "Controller.hpp"
-#include "../../Common.hpp"
-#include <map>
+#include "input/controller/Controller.hpp"
+#include "Common.hpp"
 
 /**
  \brief Represents a controller with a predefined mapping provided by GLFW/SDL.

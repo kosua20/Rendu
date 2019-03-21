@@ -1,8 +1,8 @@
 #ifndef Blur_h
 #define Blur_h
-#include "../Common.hpp"
-#include "../graphics/Framebuffer.hpp"
-#include "../graphics/ScreenQuad.hpp"
+#include "graphics/Framebuffer.hpp"
+#include "graphics/ScreenQuad.hpp"
+#include "Common.hpp"
 
 /**
  \brief A general Blur interface. Can be used to blur a given OpenGL texture and return/draw the result texture.

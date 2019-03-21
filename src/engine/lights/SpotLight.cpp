@@ -1,6 +1,6 @@
 #include "SpotLight.hpp"
 
-#include "../helpers/InterfaceUtilities.hpp"
+#include "helpers/InterfaceUtilities.hpp"
 
 SpotLight::SpotLight(const glm::vec3& worldPosition, const glm::vec3& worldDirection, const glm::vec3& color, const float innerAngle, const float outerAngle, const float radius, const BoundingBox & sceneBox) : Light(color) {
 	

@@ -1,12 +1,12 @@
 #ifndef Scene_h
 #define Scene_h
-#include "Common.hpp"
+
 #include "Object.hpp"
 #include "lights/DirectionalLight.hpp"
 #include "lights/PointLight.hpp"
 #include "lights/SpotLight.hpp"
 #include "resources/ResourcesManager.hpp"
-#include <sstream>
+#include "Common.hpp"
 
 /**
  \brief Represents a 2D environment composed of objects, a background and additional environment lighting informations.
