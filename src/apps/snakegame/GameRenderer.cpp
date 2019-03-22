@@ -17,7 +17,7 @@ GameRenderer::GameRenderer(RenderingConfig & config) : Renderer(config){
 	
 	const int renderWidth = (int)_renderResolution[0];
 	const int renderHeight = (int)_renderResolution[1];
-	_sceneFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, {{GL_RGB16F, GL_LINEAR, GL_CLAMP_TO_EDGE}, {GL_RGBA16F, GL_NEAREST, GL_CLAMP_TO_EDGE}, {GL_DEPTH_COMPONENT32F, GL_NEAREST, GL_CLAMP_TO_EDGE}}, true));
+	_sceneFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, {{GL_RGB16F, GL_NEAREST, GL_CLAMP_TO_EDGE}, {GL_R8, GL_NEAREST, GL_CLAMP_TO_EDGE}, {GL_DEPTH_COMPONENT32F, GL_NEAREST, GL_CLAMP_TO_EDGE}}, true));
 	_lightingFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, GL_RGB8, false));
 	_fxaaFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, GL_RGBA8, false));
 	
@@ -44,9 +44,9 @@ void GameRenderer::draw(const Player & player){
 	
 	_sceneFramebuffer->bind();
 	_sceneFramebuffer->setViewport();
-	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glEnable(GL_DEPTH_TEST);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_DEPTH_BUFFER_BIT);
 	// Render the ground.
 	{
 		const auto & groundProgram = _coloredProgram;
@@ -57,7 +57,6 @@ void GameRenderer::draw(const Player & player){
 		const glm::mat4 MVP = _playerCamera.projection() * _playerCamera.view() * groundModel;
 		const glm::mat3 normalMatrix = glm::inverse(glm::transpose(glm::mat3(_playerCamera.view()*groundModel)));
 		glUniformMatrix4fv(groundProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
-		glUniformMatrix4fv(groundProgram->uniform("model"), 1, GL_FALSE, &groundModel[0][0]);
 		glUniformMatrix3fv(groundProgram->uniform("normalMat"), 1, GL_FALSE, &normalMatrix[0][0]);
 		//glUniform3f(groundProgram->uniform("baseColor"), 1.0f, 1.0f, 1.0f);
 		glUniform1i(groundProgram->uniform("matID"), 1);
@@ -76,7 +75,6 @@ void GameRenderer::draw(const Player & player){
 		const glm::mat4 MVP = VP * player.modelHead;
 		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(_playerCamera.view()*player.modelHead)));
 		glUniformMatrix4fv(_coloredProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
-		glUniformMatrix4fv(_coloredProgram->uniform("model"), 1, GL_FALSE, &player.modelHead[0][0]);
 		glUniformMatrix3fv(_coloredProgram->uniform("normalMat"), 1, GL_FALSE, &normalMatrix[0][0]);
 		glUniform1i(_coloredProgram->uniform("matID"), 2);
 		glBindVertexArray(_head.vId);
@@ -89,7 +87,6 @@ void GameRenderer::draw(const Player & player){
 		const glm::mat4 MVP = VP * player.modelsBody[i];
 		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(_playerCamera.view()*player.modelsBody[i])));
 		glUniformMatrix4fv(_coloredProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
-		glUniformMatrix4fv(_coloredProgram->uniform("model"), 1, GL_FALSE, &player.modelsBody[i][0][0]);
 		glUniformMatrix3fv(_coloredProgram->uniform("normalMat"), 1, GL_FALSE, &normalMatrix[0][0]);
 		glUniform1i(_coloredProgram->uniform("matID"), player.looksBody[i]);
 		glDrawElements(GL_TRIANGLES, _bodyElement.count, GL_UNSIGNED_INT, (void*)0);
@@ -100,7 +97,6 @@ void GameRenderer::draw(const Player & player){
 		const glm::mat4 MVP1 = VP * player.modelsItem[i];
 		const glm::mat3 normalMatrix1 = glm::transpose(glm::inverse(glm::mat3(_playerCamera.view()*player.modelsItem[i])));
 		glUniformMatrix4fv(_coloredProgram->uniform("mvp"), 1, GL_FALSE, &MVP1[0][0]);
-		glUniformMatrix4fv(_coloredProgram->uniform("model"), 1, GL_FALSE, &player.modelsItem[i][0][0]);
 		glUniformMatrix3fv(_coloredProgram->uniform("normalMat"), 1, GL_FALSE, &normalMatrix1[0][0]);
 		glUniform1i(_coloredProgram->uniform("matID"), player.looksItem[i]);
 		glDrawElements(GL_TRIANGLES, _bodyElement.count, GL_UNSIGNED_INT, (void*)0);
