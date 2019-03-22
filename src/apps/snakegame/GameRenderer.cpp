@@ -151,6 +151,7 @@ void GameRenderer::resize(unsigned int width, unsigned int height){
 	_playerCamera.ratio(aspectRatio);
 	_fxaaFramebuffer->resize(_renderResolution);
 	_sceneFramebuffer->resize(_renderResolution);
+	_lightingFramebuffer->resize(_renderResolution);
 	_ssaoPass->resize(_renderResolution[0]/2.0f, _renderResolution[1]/2.0f);
 }
 

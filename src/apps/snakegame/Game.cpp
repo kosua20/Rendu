@@ -212,6 +212,7 @@ void Game::physics(double fullTime, double frameTime){
 }
 
 void Game::resize(unsigned int width, unsigned int height){
+	_config.internalVerticalResolution = height / Input::manager().density();
 	_inGameRenderer.resize(width, height);
 	_menuRenderer.resize(width, height);
 	// Update each menu buttons sizes.
