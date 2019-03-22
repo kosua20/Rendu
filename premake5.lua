@@ -121,7 +121,8 @@ project("Engine")
 	kind("StaticLib")
 	files({ "src/engine/**.hpp", "src/engine/**.cpp",
 			"resources/common/**", "resources/common/**", "resources/common/**",
-			"src/libs/*/*.hpp", "src/libs/*/*.cpp", "src/libs/*/*.h"
+			"src/libs/*/*.hpp", "src/libs/*/*.cpp", "src/libs/*/*.h",
+			"premake5.lua"
 	})
 	removefiles({"**.DS_STORE", "**.thumbs"})
 	-- Virtual path allow us to get rid of the on-disk hierarchy.
