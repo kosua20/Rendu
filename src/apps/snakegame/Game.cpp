@@ -120,6 +120,9 @@ Interface::Action Game::update(){
 			_bgBlur->resize(gameRes[0], gameRes[1]);
 			_bgBlur->process(_inGameRenderer.finalImage());
 			Log::Info() << "Final score: " << _player->score() << "!" << std::endl;
+			// Save the final score.
+			const std::string scores = Resources::loadStringFromExternalFile("./scores.sav");
+			Resources::saveStringToExternalFile("./scores.sav", std::to_string(_player->score()) + "\n" + scores);
 		}
 	} else {
 		// We are in a menu.

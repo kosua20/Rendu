@@ -42,6 +42,10 @@ int main(int argc, char** argv) {
 	
 	// Create the game main handler..
 	Game game(config);
+	// Make sure the score file exists.
+	if(!Resources::externalFileExists("./scores.sav")){
+		Resources::saveStringToExternalFile("./scores.sav", "\n");
+	}
 	
 	double timer = glfwGetTime();
 	double fullTime = 0.0;
