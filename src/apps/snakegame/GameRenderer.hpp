@@ -5,44 +5,78 @@
 #include "Player.hpp"
 #include "processing/SSAO.hpp"
 
+
+/**
+ \brief Renders the main game scene.
+ \ingroup SnakeGame
+ */
 class GameRenderer: public Renderer {
 public:
 	
+	/** Constructor
+	 \param config the shared game config
+	 */
 	GameRenderer(RenderingConfig & config);
 	
+	/** Draw the game scene
+	 \param player the state of the game and player
+	 */
 	void draw(const Player & player);
 	
-	void draw(){};
-	
+	/** Perform once-per-frame update (buttons, GUI,...) */
 	void update();
 	
-	void physics(double fullTime, double frameTime){};
-	
+	/** Resize internal buffers based on new window size.
+	 \param width new width
+	 \param height new height
+	 */
 	void resize(unsigned int width, unsigned int height);
 	
+	/** Clean up rendering resources.*/
 	void clean() const;
 	
+	/** Empty draw */
+	void draw(){};
+	
+	/** Perform physics simulation update (none here).
+	 \param fullTime the time elapsed since the beginning of the render loop
+	 \param frameTime the duration of the last frame
+	 */
+	void physics(double fullTime, double frameTime){};
+	
+	/** Texture ID of the final rendered game.
+	 \return the texture ID
+	 */
 	GLuint finalImage() const ;
 	
+	/** Current rendering resolution.
+	 \return the internal resolution
+	 */
 	glm::vec2 renderingResolution() const;
 	
 private:
-	std::unique_ptr<Framebuffer> _sceneFramebuffer;
-	std::unique_ptr<Framebuffer> _lightingFramebuffer;
-	std::unique_ptr<Framebuffer> _fxaaFramebuffer;
-	std::unique_ptr<SSAO> _ssaoPass;
 	
+	/** Draw the scene to the current bound framebuffer.
+	 \param player the player state
+	 */
+	void drawScene(const Player & player);
 	
-	std::shared_ptr<ProgramInfos> _fxaaProgram;
-	std::shared_ptr<ProgramInfos> _finalProgram;
-	std::shared_ptr<ProgramInfos> _coloredProgram;
-	std::shared_ptr<ProgramInfos> _compositingProgram;
+	std::unique_ptr<Framebuffer> _sceneFramebuffer; ///< Scene framebuffer.
+	std::unique_ptr<Framebuffer> _lightingFramebuffer; ///< Framebuffer containing the lit result.
+	std::unique_ptr<Framebuffer> _fxaaFramebuffer; ///< Framebuffer for postprocess.
+	std::unique_ptr<SSAO> _ssaoPass; ///< Screen space ambient occlusion pass.
 	
-	MeshInfos _head;
-	MeshInfos _bodyElement;
+	std::shared_ptr<ProgramInfos> _fxaaProgram; ///< Antialiasing program.
+	std::shared_ptr<ProgramInfos> _finalProgram; ///< Final upscaling program.
+	std::shared_ptr<ProgramInfos> _coloredProgram; ///< Base scene rendering program.
+	std::shared_ptr<ProgramInfos> _compositingProgram; ///< Lighting program.
 	
-	Camera _playerCamera;
-	TextureInfos _cubemap;
+	MeshInfos _ground; ///< Terrain mesh.
+	MeshInfos _head; ///< Snake head mesh.
+	MeshInfos _bodyElement; ///< Body elements and items mesh.
+	
+	Camera _playerCamera; ///< The player camera (fixed).
+	TextureInfos _cubemap; ///< Environment map for reflections.
 };
 
 

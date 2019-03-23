@@ -33,6 +33,8 @@ int main(int argc, char** argv) {
 	if(!window){
 		return -1;
 	}
+	// Disable Imgui saving.
+	ImGui::GetIO().IniFilename = NULL;
 	
 	Resources::manager().addResources("../../../resources/snakegame");
 	// Initialize random generator;

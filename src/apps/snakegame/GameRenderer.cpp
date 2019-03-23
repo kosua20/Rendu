@@ -28,6 +28,7 @@ GameRenderer::GameRenderer(RenderingConfig & config) : Renderer(config){
 	_ssaoPass = std::unique_ptr<SSAO>(new SSAO(renderWidth/2, renderHeight/2, 1.5f));
 	
 	_coloredProgram = Resources::manager().getProgram("colored_object");
+	_ground = Resources::manager().getMesh("ground");
 	_head = Resources::manager().getMesh("head");
 	_bodyElement = Resources::manager().getMesh("body");
 	_cubemap = Resources::manager().getCubemap("env", {GL_RGB8, GL_LINEAR, GL_CLAMP_TO_EDGE});
@@ -37,80 +38,22 @@ GameRenderer::GameRenderer(RenderingConfig & config) : Renderer(config){
 
 void GameRenderer::draw(const Player & player){
 	
-	// \todo The camera is fixed above the world's origin, so no rotational/scaling component.
-	// Thus normal matrix (3x3) is the same in both frame, and we can skip the view matrix multiplication.
-	
 	const glm::vec2 invRenderSize = 1.0f/_renderResolution;
 	
+	// --- Scene pass ------
 	_sceneFramebuffer->bind();
 	_sceneFramebuffer->setViewport();
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glEnable(GL_DEPTH_TEST);
 	glClear(GL_DEPTH_BUFFER_BIT);
-	// Render the ground.
-	{
-		const auto & groundProgram = _coloredProgram;
-		glUseProgram(groundProgram->id());
-		const auto mesh  = Resources::manager().getMesh("ground");
-		// Upload the MVP matrix.
-		const glm::mat4 groundModel = glm::rotate(glm::mat4(1.0f), float(M_PI_2), glm::vec3(1.0f,0.0f,0.0f));
-		const glm::mat4 MVP = _playerCamera.projection() * _playerCamera.view() * groundModel;
-		const glm::mat3 normalMatrix = glm::inverse(glm::transpose(glm::mat3(_playerCamera.view()*groundModel)));
-		glUniformMatrix4fv(groundProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
-		glUniformMatrix3fv(groundProgram->uniform("normalMat"), 1, GL_FALSE, &normalMatrix[0][0]);
-		//glUniform3f(groundProgram->uniform("baseColor"), 1.0f, 1.0f, 1.0f);
-		glUniform1i(groundProgram->uniform("matID"), 1);
-		glBindVertexArray(mesh.vId);
-		glDrawElements(GL_TRIANGLES, mesh.count, GL_UNSIGNED_INT, (void*)0);
-		glBindVertexArray(0);
-		glUseProgram(0);
-	}
-		
-	// Render the items and player.
-	glUseProgram(_coloredProgram->id());
-	const glm::mat4 VP = _playerCamera.projection() * _playerCamera.view();
-	
-	{
-		
-		const glm::mat4 MVP = VP * player.modelHead;
-		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(_playerCamera.view()*player.modelHead)));
-		glUniformMatrix4fv(_coloredProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
-		glUniformMatrix3fv(_coloredProgram->uniform("normalMat"), 1, GL_FALSE, &normalMatrix[0][0]);
-		glUniform1i(_coloredProgram->uniform("matID"), 2);
-		glBindVertexArray(_head.vId);
-		glDrawElements(GL_TRIANGLES, _head.count, GL_UNSIGNED_INT, (void*)0);
-	}
-	
-	glBindVertexArray(_bodyElement.vId);
-	for(int i = 0; i < player.modelsBody.size();++i){
-		
-		const glm::mat4 MVP = VP * player.modelsBody[i];
-		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(_playerCamera.view()*player.modelsBody[i])));
-		glUniformMatrix4fv(_coloredProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
-		glUniformMatrix3fv(_coloredProgram->uniform("normalMat"), 1, GL_FALSE, &normalMatrix[0][0]);
-		glUniform1i(_coloredProgram->uniform("matID"), player.looksBody[i]);
-		glDrawElements(GL_TRIANGLES, _bodyElement.count, GL_UNSIGNED_INT, (void*)0);
-	}
-	
-	glBindVertexArray(_bodyElement.vId);
-	for(int i = 0; i < player.modelsItem.size();++i){
-		const glm::mat4 MVP1 = VP * player.modelsItem[i];
-		const glm::mat3 normalMatrix1 = glm::transpose(glm::inverse(glm::mat3(_playerCamera.view()*player.modelsItem[i])));
-		glUniformMatrix4fv(_coloredProgram->uniform("mvp"), 1, GL_FALSE, &MVP1[0][0]);
-		glUniformMatrix3fv(_coloredProgram->uniform("normalMat"), 1, GL_FALSE, &normalMatrix1[0][0]);
-		glUniform1i(_coloredProgram->uniform("matID"), player.looksItem[i]);
-		glDrawElements(GL_TRIANGLES, _bodyElement.count, GL_UNSIGNED_INT, (void*)0);
-	}
-	
-	glBindVertexArray(0);
-	glUseProgram(0);
-	
+	drawScene(player);
 	_sceneFramebuffer->unbind();
 	glDisable(GL_DEPTH_TEST);
 	
+	// --- SSAO pass ------
 	_ssaoPass->process(_playerCamera.projection(), _sceneFramebuffer->depthId(), _sceneFramebuffer->textureId(0));
 	
-	// --- Compositing pass ------
+	// --- Lighting pass ------
 	_lightingFramebuffer->bind();
 	_lightingFramebuffer->setViewport();
 	glUseProgram(_compositingProgram->id());
@@ -137,12 +80,57 @@ void GameRenderer::draw(const Player & player){
 	checkGLError();
 }
 
-void GameRenderer::update(){
-	Renderer::update();
+void GameRenderer::drawScene(const Player & player){
+	// \todo The camera is fixed above the world's origin, so no rotational/scaling component.
+	// Thus normal matrix (3x3) is the same in both frame, and we can skip the view matrix multiplication.
+	const glm::mat4 VP = _playerCamera.projection() * _playerCamera.view();
+	glUseProgram(_coloredProgram->id());
+	// Render the ground.
+	{
+		const glm::mat4 groundModel = glm::rotate(glm::mat4(1.0f), float(M_PI_2), glm::vec3(1.0f,0.0f,0.0f));
+		const glm::mat4 MVP = VP * groundModel;
+		const glm::mat3 normalMatrix = glm::inverse(glm::transpose(glm::mat3(_playerCamera.view()*groundModel)));
+		glUniformMatrix4fv(_coloredProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
+		glUniformMatrix3fv(_coloredProgram->uniform("normalMat"), 1, GL_FALSE, &normalMatrix[0][0]);
+		glUniform1i(_coloredProgram->uniform("matID"), 1);
+		glBindVertexArray(_ground.vId);
+		glDrawElements(GL_TRIANGLES, _ground.count, GL_UNSIGNED_INT, (void*)0);
+	}
+	// Render the head.
+	{
+		const glm::mat4 MVP = VP * player.modelHead;
+		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(_playerCamera.view()*player.modelHead)));
+		glUniformMatrix4fv(_coloredProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
+		glUniformMatrix3fv(_coloredProgram->uniform("normalMat"), 1, GL_FALSE, &normalMatrix[0][0]);
+		glUniform1i(_coloredProgram->uniform("matID"), 2);
+		glBindVertexArray(_head.vId);
+		glDrawElements(GL_TRIANGLES, _head.count, GL_UNSIGNED_INT, (void*)0);
+	}
+	// Render body elements and items.
+	glBindVertexArray(_bodyElement.vId);
+	for(int i = 0; i < player.modelsBody.size();++i){
+		const glm::mat4 MVP = VP * player.modelsBody[i];
+		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(_playerCamera.view()*player.modelsBody[i])));
+		glUniformMatrix4fv(_coloredProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
+		glUniformMatrix3fv(_coloredProgram->uniform("normalMat"), 1, GL_FALSE, &normalMatrix[0][0]);
+		glUniform1i(_coloredProgram->uniform("matID"), player.looksBody[i]);
+		glDrawElements(GL_TRIANGLES, _bodyElement.count, GL_UNSIGNED_INT, (void*)0);
+	}
+	for(int i = 0; i < player.modelsItem.size();++i){
+		const glm::mat4 MVP = VP * player.modelsItem[i];
+		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(_playerCamera.view()*player.modelsItem[i])));
+		glUniformMatrix4fv(_coloredProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
+		glUniformMatrix3fv(_coloredProgram->uniform("normalMat"), 1, GL_FALSE, &normalMatrix[0][0]);
+		glUniform1i(_coloredProgram->uniform("matID"), player.looksItem[i]);
+		glDrawElements(GL_TRIANGLES, _bodyElement.count, GL_UNSIGNED_INT, (void*)0);
+	}
+	// Reset.
+	glBindVertexArray(0);
+	glUseProgram(0);
 }
 
-GLuint GameRenderer::finalImage() const {
-	return _fxaaFramebuffer->textureId();
+void GameRenderer::update(){
+	Renderer::update();
 }
 
 void GameRenderer::resize(unsigned int width, unsigned int height){
@@ -164,9 +152,11 @@ void GameRenderer::clean() const {
 	glDeleteVertexArrays(1, &_bodyElement.vId);
 }
 
-
-
+GLuint GameRenderer::finalImage() const {
+	return _fxaaFramebuffer->textureId();
+}
 
 glm::vec2 GameRenderer::renderingResolution() const {
 	return _renderResolution;
 }
+

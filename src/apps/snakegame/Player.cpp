@@ -49,7 +49,7 @@ void Player::physics(double fullTime, const double frameTime) {
 		_momentum[0] *= -1.0f;
 		_angle = M_PI - _angle + M_PI;
 		// Add a few frames of invicibility for acute angles.
-		_invicibility += 0.5f;
+		_invicibility += _invicibilityIncrease;
 	}
 	if(std::abs(_position[1]) > _maxPos[1]){
 		_momentum[1] *= -1.0f;

@@ -73,26 +73,9 @@ void Game::draw(){
 
 Interface::Action Game::update(){
 	
+	// Check if we need to resize.
 	if(Input::manager().resized()){
 		resize((unsigned int)Input::manager().size()[0], (unsigned int)Input::manager().size()[1]);
-	}
-	
-	Interface::Action finalAction = Interface::Action::None;
-	
-	// Handle quitting.
-	if(Input::manager().triggered(Input::KeyEscape)){
-		if(_status == Status::MAINMENU){
-			// Special case.
-			finalAction = handleButton(ButtonAction::QUIT);
-		} else if(_status == Status::INGAME){
-			finalAction = handleButton(ButtonAction::PAUSE);
-		} else if(_status == Status::PAUSED){
-			finalAction = handleButton(ButtonAction::RESUME);
-		} else if(_status == Status::OPTIONS || _status == Status::DEAD){
-			// If paused, dead or in options menu, go back to main menu.
-			finalAction = handleButton(ButtonAction::BACKTOMENU);
-		}
-		
 	}
 	
 	// Debug: Reload resources.
@@ -108,6 +91,25 @@ Interface::Action Game::update(){
 		ImGui::End();
 	}
 	
+	// Decide which action should (maybe) be performed.
+	Interface::Action finalAction = Interface::Action::None;
+	
+	// Handle quitting.
+	if(Input::manager().triggered(Input::KeyEscape)){
+		if(_status == Status::MAINMENU){
+			// Special case.
+			finalAction = handleButton(ButtonAction::QUIT);
+		} else if(_status == Status::INGAME){
+			finalAction = handleButton(ButtonAction::PAUSE);
+		} else if(_status == Status::PAUSED){
+			finalAction = handleButton(ButtonAction::RESUME);
+		} else if(_status == Status::OPTIONS || _status == Status::DEAD){
+			// If paused, dead or in options menu, go back to main menu.
+			finalAction = handleButton(ButtonAction::BACKTOMENU);
+		}
+	}
+	
+	// Handle in-game updates and transition to death menu.
 	if(_status == Status::INGAME){
 		_inGameRenderer.update();
 		_player->update();
