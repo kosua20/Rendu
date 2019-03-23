@@ -81,7 +81,7 @@ void GameRenderer::draw(const Player & player){
 }
 
 void GameRenderer::drawScene(const Player & player){
-	// \todo The camera is fixed above the world's origin, so no rotational/scaling component.
+	// The camera is fixed above the world's origin, so no rotational/scaling component.
 	// Thus normal matrix (3x3) is the same in both frame, and we can skip the view matrix multiplication.
 	const glm::mat4 VP = _playerCamera.projection() * _playerCamera.view();
 	glUseProgram(_coloredProgram->id());
@@ -89,7 +89,7 @@ void GameRenderer::drawScene(const Player & player){
 	{
 		const glm::mat4 groundModel = glm::rotate(glm::mat4(1.0f), float(M_PI_2), glm::vec3(1.0f,0.0f,0.0f));
 		const glm::mat4 MVP = VP * groundModel;
-		const glm::mat3 normalMatrix = glm::inverse(glm::transpose(glm::mat3(_playerCamera.view()*groundModel)));
+		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(groundModel)));
 		glUniformMatrix4fv(_coloredProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
 		glUniformMatrix3fv(_coloredProgram->uniform("normalMat"), 1, GL_FALSE, &normalMatrix[0][0]);
 		glUniform1i(_coloredProgram->uniform("matID"), 1);
@@ -99,7 +99,7 @@ void GameRenderer::drawScene(const Player & player){
 	// Render the head.
 	{
 		const glm::mat4 MVP = VP * player.modelHead;
-		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(_playerCamera.view()*player.modelHead)));
+		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(player.modelHead)));
 		glUniformMatrix4fv(_coloredProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
 		glUniformMatrix3fv(_coloredProgram->uniform("normalMat"), 1, GL_FALSE, &normalMatrix[0][0]);
 		glUniform1i(_coloredProgram->uniform("matID"), 2);
@@ -110,7 +110,7 @@ void GameRenderer::drawScene(const Player & player){
 	glBindVertexArray(_bodyElement.vId);
 	for(int i = 0; i < player.modelsBody.size();++i){
 		const glm::mat4 MVP = VP * player.modelsBody[i];
-		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(_playerCamera.view()*player.modelsBody[i])));
+		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(player.modelsBody[i])));
 		glUniformMatrix4fv(_coloredProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
 		glUniformMatrix3fv(_coloredProgram->uniform("normalMat"), 1, GL_FALSE, &normalMatrix[0][0]);
 		glUniform1i(_coloredProgram->uniform("matID"), player.looksBody[i]);
@@ -118,7 +118,7 @@ void GameRenderer::drawScene(const Player & player){
 	}
 	for(int i = 0; i < player.modelsItem.size();++i){
 		const glm::mat4 MVP = VP * player.modelsItem[i];
-		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(_playerCamera.view()*player.modelsItem[i])));
+		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(player.modelsItem[i])));
 		glUniformMatrix4fv(_coloredProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
 		glUniformMatrix3fv(_coloredProgram->uniform("normalMat"), 1, GL_FALSE, &normalMatrix[0][0]);
 		glUniform1i(_coloredProgram->uniform("matID"), player.looksItem[i]);
@@ -148,8 +148,6 @@ void GameRenderer::clean() const {
 	_fxaaFramebuffer->clean();
 	_sceneFramebuffer->clean();
 	_ssaoPass->clean();
-	glDeleteVertexArrays(1, &_head.vId);
-	glDeleteVertexArrays(1, &_bodyElement.vId);
 }
 
 GLuint GameRenderer::finalImage() const {

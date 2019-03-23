@@ -34,11 +34,13 @@ void GameMenuRenderer::draw(const GameMenu & menu){
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glEnable(GL_FRAMEBUFFER_SRGB);
 	glViewport(0, 0, GLsizei(_config.screenResolution[0]), GLsizei(_config.screenResolution[1]));
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_DEPTH_BUFFER_BIT);
 	
 	// Background image.
-	glUseProgram(_backgroundProgram->id());
-	ScreenQuad::draw(menu.backgroundImage);
+	if(menu.backgroundImage > 0){
+		glUseProgram(_backgroundProgram->id());
+		ScreenQuad::draw(menu.backgroundImage);
+	}
 	
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
