@@ -174,6 +174,12 @@ public:
 	 */
 	static void saveStringToExternalFile(const std::string & path, const std::string & content);
 	
+	/** Check if a file exists on disk.
+	 \param path the  path to the file on disk
+	 \return true if the file exists.
+	 */
+	static bool externalFileExists(const std::string & path);
+	
 	/** Trim characters from both ends of a string.
 	 \param str the string to trim from
 	 \param del the characters to delete

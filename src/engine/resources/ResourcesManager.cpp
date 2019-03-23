@@ -463,6 +463,7 @@ char * Resources::loadRawDataFromExternalFile(const std::string & path, size_t &
 	std::ifstream inputFile(widen(path), std::ios::binary|std::ios::ate);
 	if (inputFile.bad() || inputFile.fail()){
 		Log::Error() << Log::Resources << "Unable to load file at path \"" << path << "\"." << std::endl;
+		size = 0;
 		return NULL;
 	}
 	std::ifstream::pos_type fileSize = inputFile.tellg();
@@ -507,6 +508,15 @@ void Resources::saveStringToExternalFile(const std::string & path, const std::st
 	}
 	outputFile << content;
 	outputFile.close();
+}
+
+
+bool Resources::externalFileExists(const std::string & path){
+	// Just try to open the file.
+	std::ifstream file(path);
+	const bool opened = file.is_open();
+	file.close();
+	return opened;
 }
 
 std::string Resources::trim(const std::string & str, const std::string & del){
