@@ -84,24 +84,29 @@ int _checkGLError(const char *file, int line, const std::string & infos){
 	return 0;
 }
 
-/** Default constructor. RGB8, linear, clamp. */
 Descriptor::Descriptor(){
 	typedFormat = GL_RGB8; filtering = GL_LINEAR; wrapping = GL_CLAMP_TO_EDGE;
 }
-/** Convenience constructor. Custom typed format, linear, clamp.
- \param typedFormat_ the precise typed format to use
- */
+
 Descriptor::Descriptor(const GLuint typedFormat_){
 	typedFormat = typedFormat_; filtering = GL_LINEAR; wrapping = GL_CLAMP_TO_EDGE;
 }
 
-/** Constructor.
- \param typedFormat_ the precise typed format to use
- \param filtering_ the texture filtering (GL_LINEAR,...) to use
- \param wrapping_ the texture wrapping mode (GL_CLAMP_TO_EDGE) to use
- */
 Descriptor::Descriptor(const GLuint typedFormat_, const GLuint filtering_, const GLuint wrapping_){
 	typedFormat = typedFormat_; filtering = filtering_; wrapping = wrapping_;
+}
+
+MeshInfos::MeshInfos() : vId(0), eId(0), count(0), bbox() {
+	vbos[0] = vbos[1] = vbos[2] = vbos[3] = vbos[4] = 0;
+}
+
+void MeshInfos::clean(){
+	glDeleteBuffers(1, &eId);
+	glDeleteVertexArrays(1, &vId);
+	glDeleteBuffers(5, &vbos[0]);
+	count = 0;
+	eId = vId = vbos[0] = vbos[1] = vbos[2] = vbos[3] = vbos[4] = 0;
+	bbox = BoundingBox();
 }
 
 void replace(std::string & source, const std::string& fromString, const std::string & toString){
@@ -581,6 +586,11 @@ MeshInfos GLUtilities::setupBuffers(const Mesh & mesh){
 	infos.vId = vao;
 	infos.eId = ebo;
 	infos.count = (GLsizei)mesh.indices.size();
+	infos.vbos[0] = vbo;
+	infos.vbos[1] = vbo_nor;
+	infos.vbos[2] = vbo_uv;
+	infos.vbos[3] = vbo_tan;
+	infos.vbos[4] = vbo_binor;
 	return infos;
 }
 

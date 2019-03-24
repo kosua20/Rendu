@@ -79,10 +79,10 @@ void RendererCube::physics(double fullTime, double frameTime){
 }
 
 
-void RendererCube::clean() const {
+void RendererCube::clean() {
 	Renderer::clean();
 	// Clean objects.
-	glDeleteVertexArrays(1, &_mesh.vId);
+	_mesh.clean();
 	glDeleteTextures(1, &(_texture.id));
 	_resultFramebuffer->clean();
 	

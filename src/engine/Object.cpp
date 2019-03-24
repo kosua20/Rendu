@@ -124,8 +124,8 @@ void Object::drawGeometry() const {
 }
 
 
-void Object::clean() const {
-	glDeleteVertexArrays(1, &_mesh.vId);
+void Object::clean() {
+	_mesh.clean();
 	for (auto & texture : _textures) {
 		glDeleteTextures(1, &(texture.id));
 	}

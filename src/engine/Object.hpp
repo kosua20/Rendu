@@ -59,7 +59,7 @@ public:
 	void drawGeometry() const;
 	
 	/** Clean internal data */
-	void clean() const;
+	void clean();
 	
 	/** Query the bounding box of the object.
 	 \return the bounding box

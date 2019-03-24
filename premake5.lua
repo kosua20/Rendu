@@ -89,7 +89,7 @@ function RegisterSourcesAndResources(srcPath, rscPath)
 	-- Reorganize file hierarchy in the IDE project.
 	vpaths({
 	   ["*"] = {srcPath},
-	   ["resources/*"] = {rscPath}
+	   ["Resources/*"] = {rscPath}
 	})
 end
 
@@ -128,8 +128,8 @@ project("Engine")
 	-- Virtual path allow us to get rid of the on-disk hierarchy.
 	vpaths({
 	   ["engine/*"] = {"src/engine/**"},
-	   ["resources/*"] = {"resources/common/**"},
-	   ["libs/*"] = {"src/libs/**"},
+	   ["Resources/*"] = {"resources/common/**"},
+	   ["Libraries/*"] = {"src/libs/**"},
 	})
 
 

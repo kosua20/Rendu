@@ -250,7 +250,6 @@ const MeshInfos Resources::getMesh(const std::string & name){
 	}
 
 	MeshInfos infos;
-	std::string completeName;
 	
 	// Load geometry. For now we only support OBJs.
 	Mesh mesh;
