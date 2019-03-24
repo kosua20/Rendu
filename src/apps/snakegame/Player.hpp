@@ -17,8 +17,9 @@ public:
 	/** Update the physic state of the player snake and items
 	 \param fullTime time elapsed since the beginning of the game
 	 \param frameTime delta time since last physics update
+	 \return a boolean denoting if any item has been eaten.
 	 */
-	void physics(double fullTime, double frameTime);
+	bool physics(double fullTime, double frameTime);
 	
 	/** Update the model matrices of all items
 	 This is so that we avoid updating them at each physics step.

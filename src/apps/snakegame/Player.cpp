@@ -22,7 +22,7 @@ void Player::update(){
 	_currentFrame = (_currentFrame + 1) % _samplingPeriod;
 }
 
-void Player::physics(double fullTime, const double frameTime) {
+bool Player::physics(double fullTime, const double frameTime) {
 	
 	const float deltaSpeed = frameTime * _headAccel;
 	const float deltaAngle = frameTime  * _angleSpeed;
@@ -60,7 +60,7 @@ void Player::physics(double fullTime, const double frameTime) {
 	_position = glm::clamp(_position, -_maxPos, _maxPos);
 	glm::vec2 headPos(_position);
 	
-	
+	bool hasEaten = false;
 	// Are we intersecting any item ?
 	for(int i = _items.size() - 1; i >= 0; --i){
 		if(glm::distance(_items[i], headPos) < _eatingDistance*_radius){
@@ -73,6 +73,7 @@ void Player::physics(double fullTime, const double frameTime) {
 			modelsItem.erase(modelsItem.begin() + i);
 			looksItem.erase(looksItem.begin() + i);
 			_score += _itemValue;
+			hasEaten = true;
 		}
 	}
 	
@@ -190,7 +191,7 @@ void Player::physics(double fullTime, const double frameTime) {
 		_alive = false;
 	}
 	
-	
+	return hasEaten;
 }
 
 
