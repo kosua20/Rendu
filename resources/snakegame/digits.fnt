@@ -1,0 +1,19 @@
+# Atlas name
+digits_font_atlas
+# First supported char
+0
+# Last supported char
+9
+# Margins around each glyph
+4 8
+# Glyphs bounding boxes
+16 190 101 336
+125 190 170 336
+210 190 295 336
+305 190 390 336
+402 190 497 336
+18 19 98 164
+114 19 200 164
+214 19 298 164
+308 19 394 164
+405 19 491 164
