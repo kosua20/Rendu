@@ -53,7 +53,7 @@ Game::Game(RenderingConfig & config) : _config(config), _inGameRenderer(config),
 	
 	_menus[Status::DEAD].labels.emplace_back(glm::vec2(0.0f, 0.05f), 0.25f, font, TextUtilities::CENTER);
 	
-	_menus[Status::INGAME].labels.emplace_back(glm::vec2(0.0f, 0.75f), 0.2f, font, TextUtilities::CENTER);
+	_menus[Status::INGAME].labels.emplace_back(glm::vec2(0.0f, 0.70f), 0.2f, font, TextUtilities::CENTER);
 	
 	// Initialize each menu buttons sizes.
 	const float initialRatio = _config.initialWidth / float(_config.initialHeight);

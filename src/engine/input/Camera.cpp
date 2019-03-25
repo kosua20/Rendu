@@ -18,7 +18,9 @@ void Camera::pose(const glm::vec3 & position, const glm::vec3 & center, const gl
 	_eye = position;
 	_center = center;
 	_up = glm::normalize(up);
-	_right = glm::cross(glm::normalize(_center - _eye), _up);
+	const glm::vec3 viewDir = glm::normalize(_center - _eye);
+	_right = glm::cross(viewDir, _up);
+	_up = glm::cross(_right, viewDir);
 	updateView();
 }
 
