@@ -3,7 +3,7 @@
 #include "Common.hpp"
 #include "GameMenu.hpp"
 #include "graphics/GLUtilities.hpp"
-
+#include "resources/TextUtilities.hpp"
 
 /**
  \brief Represents a button in a menu.
@@ -89,6 +89,27 @@ public:
 	
 };
 
+/**
+ \brief A dynamic text label.
+ \ingroup SnakeGame
+ */
+struct MenuLabel {
+public:
+	
+	MenuLabel(const glm::vec2 & screenPos, const float verticalScale, const FontInfos & font, const TextUtilities::Alignment alignment);
+	
+	void update(const std::string & text);
+	
+	MeshInfos mesh;
+	glm::vec2 pos;
+	GLuint tid;
+	
+private:
+	float _vScale; ///< Vertical size on screen.
+	const FontInfos _font; ///< Font atlas. \todo Avoid duplicating glyphs data.
+	TextUtilities::Alignment _align;
+};
+
 
 /**
  \brief A game menu containing buttons, toggles and images.
@@ -106,6 +127,6 @@ public:
 	std::vector<MenuButton> buttons; ///< The menu buttons.
 	std::vector<MenuToggle> toggles; ///< The menu toggles.
 	std::vector<MenuImage> images; ///< The menu images.
-	
+	std::vector<MenuLabel> labels; ///< The menu custom labels.
 	GLuint backgroundImage = 0; ///< The background texure.
 };

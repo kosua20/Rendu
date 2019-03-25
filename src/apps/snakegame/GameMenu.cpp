@@ -26,6 +26,19 @@ MenuImage::MenuImage(const glm::vec2 & screenPos, const float screenScale, const
 	tid = texture.id;
 }
 
+MenuLabel::MenuLabel(const glm::vec2 & screenPos, const float verticalScale, const FontInfos & font, const TextUtilities::Alignment alignment)  : _font(font){
+	pos = screenPos;
+	tid = _font.atlas.id;
+	_vScale = verticalScale;
+	_align = alignment;
+	update("0");
+}
+
+void MenuLabel::update(const std::string & text){
+	mesh.clean();
+	mesh = TextUtilities::generateLabel(text, _font, _vScale, _align);
+}
+
 void GameMenu::update(const glm::vec2 & screenResolution, const float initialRatio){
 	// Update the scaling of each button/toggle/image based on the screen ratio.
 	const float currentRatio = screenResolution[0] / screenResolution[1];
