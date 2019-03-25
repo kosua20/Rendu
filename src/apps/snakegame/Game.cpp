@@ -12,6 +12,7 @@ Game::Game(RenderingConfig & config) : _config(config), _inGameRenderer(config),
 	
 	const glm::vec2 meshSize = _menuRenderer.getButtonSize();
 	const float displayScale = 0.3f;
+	const FontInfos font = Resources::manager().getFont("digits");
 	
 	const GLuint backgroundTexture = Resources::manager().getTexture("menubg", {GL_SRGB8_ALPHA8}).id;
 	_menus[Status::MAINMENU].backgroundImage = backgroundTexture;
@@ -22,6 +23,7 @@ Game::Game(RenderingConfig & config) : _config(config), _inGameRenderer(config),
 	_menus[Status::MAINMENU].buttons.emplace_back(glm::vec2(0.0f, -0.60f), meshSize, displayScale, QUIT,
 												  Resources::manager().getTexture("button-quit", {GL_SRGB8_ALPHA8}));
 	_menus[Status::MAINMENU].images.emplace_back(glm::vec2(0.0f, 0.47f), 0.5f, Resources::manager().getTexture("title", {GL_SRGB8_ALPHA8}));
+	
 	
 	_menus[Status::PAUSED].backgroundImage = _bgBlur->textureId();
 	_menus[Status::PAUSED].buttons.emplace_back(glm::vec2(0.0f,  0.10f), meshSize, displayScale, RESUME,
@@ -43,11 +45,15 @@ Game::Game(RenderingConfig & config) : _config(config), _inGameRenderer(config),
 	_menus[Status::OPTIONS].images.emplace_back(glm::vec2(0.0f, 0.47f), 0.5f, Resources::manager().getTexture("title-options", {GL_SRGB8_ALPHA8}));
 	
 	_menus[Status::DEAD].backgroundImage = _bgBlur->textureId();
-	_menus[Status::DEAD].buttons.emplace_back(glm::vec2(0.0f,  0.10f), meshSize, displayScale, NEWGAME,
+	_menus[Status::DEAD].buttons.emplace_back(glm::vec2(0.0f, -0.20f), meshSize, displayScale, NEWGAME,
 											  Resources::manager().getTexture("button-newgame"));
-	_menus[Status::DEAD].buttons.emplace_back(glm::vec2(0.0f, -0.25f), meshSize, displayScale, BACKTOMENU,
+	_menus[Status::DEAD].buttons.emplace_back(glm::vec2(0.0f, -0.55f), meshSize, displayScale, BACKTOMENU,
 											  Resources::manager().getTexture("button-menu"));
 	_menus[Status::DEAD].images.emplace_back(glm::vec2(0.0f, 0.47f), 0.5f, Resources::manager().getTexture("title-dead", {GL_SRGB8_ALPHA8}));
+	
+	_menus[Status::DEAD].labels.emplace_back(glm::vec2(0.0f, 0.05f), 0.25f, font, TextUtilities::CENTER);
+	
+	_menus[Status::INGAME].labels.emplace_back(glm::vec2(0.0f, 0.75f), 0.2f, font, TextUtilities::CENTER);
 	
 	// Initialize each menu buttons sizes.
 	const float initialRatio = _config.initialWidth / float(_config.initialHeight);
@@ -58,16 +64,15 @@ Game::Game(RenderingConfig & config) : _config(config), _inGameRenderer(config),
 }
 
 void Game::draw(){
-	// before drawing, prepare the model matrices.
+	// If ingame, render the game.
 	if(_status == Status::INGAME){
+		// Before drawing, prepare the model matrices.
 		_player->updateModels();
 		_inGameRenderer.draw(*_player);
-	} else {
-		_menuRenderer.draw(_menus[_status]);
 	}
 	
-	// \todo Draw everything to a final framebuffer and then handle writing to the window from here.
-	// Especially if we need to preserve aspect ratio in fullscreen mode.
+	_menuRenderer.draw(_menus[_status]);
+	
 	checkGLError();
 }
 
@@ -79,7 +84,7 @@ Interface::Action Game::update(){
 	}
 	
 	// Debug: Reload resources.
-	{
+	/*{
 		if(Input::manager().triggered(Input::KeyP)){
 			Resources::manager().reload();
 		}
@@ -89,7 +94,7 @@ Interface::Action Game::update(){
 			ImGui::Checkbox("Force pause", &_overrideTime);
 		}
 		ImGui::End();
-	}
+	}*/
 	
 	// Decide which action should (maybe) be performed.
 	Interface::Action finalAction = Interface::Action::None;
@@ -113,13 +118,15 @@ Interface::Action Game::update(){
 	if(_status == Status::INGAME){
 		_inGameRenderer.update();
 		_player->update();
+		
 		if(!_player->alive()){
 			_status = Status::DEAD;
 			// Make sure the blur effect buffer is the right size.
 			const glm::vec2 gameRes = _inGameRenderer.renderingResolution();
 			_bgBlur->resize(gameRes[0], gameRes[1]);
 			_bgBlur->process(_inGameRenderer.finalImage());
-			Log::Info() << "Final score: " << _player->score() << "!" << std::endl;
+			_menus[Status::DEAD].labels[0].update(std::to_string(_player->score()));
+			
 			// Save the final score.
 			const std::string scores = Resources::loadStringFromExternalFile("./scores.sav");
 			Resources::saveStringToExternalFile("./scores.sav", std::to_string(_player->score()) + "\n" + scores);
@@ -167,6 +174,7 @@ Interface::Action Game::handleButton(const ButtonAction tag){
 	switch (tag) {
 		case NEWGAME:
 			_player = std::unique_ptr<Player>(new Player());
+			_menus[Status::INGAME].labels[0].update("0");
 			_status = Status::INGAME;
 			break;
 		case BACKTOMENU:
@@ -210,7 +218,11 @@ void Game::physics(double fullTime, double frameTime){
 	
 	if(_status == Status::INGAME && !_overrideTime){
 		_playTime = _playTime + frameTime;
-		_player->physics(_playTime, frameTime);
+		const bool hasEaten = _player->physics(_playTime, frameTime);
+		// Update the ingame score label.
+		if(hasEaten){
+			_menus[Status::INGAME].labels[0].update(std::to_string(_player->score()));
+		}
 	}
 	
 	// No physics in menus.
