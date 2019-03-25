@@ -10,6 +10,7 @@ GameMenuRenderer::GameMenuRenderer(RenderingConfig & config) : Renderer(config){
 	_buttonProgram = Resources::manager().getProgram("menu_button");
 	_backgroundProgram = Resources::manager().getProgram2D("passthrough");
 	_imageProgram = Resources::manager().getProgram("menu_image");
+	_fontProgram = Resources::manager().getProgram("font_sdf");
 	_button = Resources::manager().getMesh("rounded-button-out");
 	_buttonIn = Resources::manager().getMesh("rounded-button-in");
 	_toggle = Resources::manager().getMesh("rounded-checkbox-out");
@@ -30,6 +31,10 @@ void GameMenuRenderer::draw(const GameMenu & menu){
 		{ MenuButton::HOVER, glm::vec4(1.0f, 1.0f, 1.0f, 0.5f) },
 		{ MenuButton::ON, glm::vec4(0.95f, 0.95f , 0.95f, 0.5f) }
 	};
+	
+	static const glm::vec4 labelsColor = glm::vec4(0.3f, 0.0f, 0.0f, 1.0f);
+	static const glm::vec4 labelsEdgeColor = glm::vec4(1.0f);
+	static const float labelsEdgeWidth = 0.25f;
 	
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glEnable(GL_FRAMEBUFFER_SRGB);
@@ -59,6 +64,7 @@ void GameMenuRenderer::draw(const GameMenu & menu){
 		glBindVertexArray(_quad.vId);
 		glDrawElements(GL_TRIANGLES, _quad.count, GL_UNSIGNED_INT, (void*)0);
 	}
+	glUseProgram(0);
 	
 	// Buttons.
 	for(const auto & button : menu.buttons){
@@ -85,7 +91,7 @@ void GameMenuRenderer::draw(const GameMenu & menu){
 		glBindTexture(GL_TEXTURE_2D, button.tid);
 		glBindVertexArray(_quad.vId);
 		glDrawElements(GL_TRIANGLES, _quad.count, GL_UNSIGNED_INT, (void*)0);
-		
+		glUseProgram(0);
 	}
 	
 	// Toggles.
@@ -114,10 +120,25 @@ void GameMenuRenderer::draw(const GameMenu & menu){
 		glBindTexture(GL_TEXTURE_2D, toggle.tid);
 		glBindVertexArray(_quad.vId);
 		glDrawElements(GL_TRIANGLES, _quad.count, GL_UNSIGNED_INT, (void*)0);
-		
+		glUseProgram(0);
+	}
+	glDisable(GL_DEPTH_TEST);
+	
+	// Labels
+	glUseProgram(_fontProgram->id());
+	for(const auto & label : menu.labels){
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, label.tid);
+		glUniform1f(_fontProgram->uniform("ratio"), _config.screenResolution[1] / _config.screenResolution[0]);
+		glUniform2fv(_fontProgram->uniform("position"), 1, &label.pos[0]);
+		glUniform4fv(_fontProgram->uniform("color"), 1, &labelsColor[0]);
+		glUniform4fv(_fontProgram->uniform("edgeColor"), 1, &labelsEdgeColor[0]);
+		glUniform1f(_fontProgram->uniform("edgeWidth"), labelsEdgeWidth);
+		glBindVertexArray(label.mesh.vId);
+		glDrawElements(GL_TRIANGLES, label.mesh.count, GL_UNSIGNED_INT, (void*)0);
 	}
 	glUseProgram(0);
-	glDisable(GL_DEPTH_TEST);
+	
 	glDisable(GL_BLEND);
 	glDisable(GL_FRAMEBUFFER_SRGB);
 	checkGLError();

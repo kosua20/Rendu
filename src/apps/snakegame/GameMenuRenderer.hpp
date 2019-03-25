@@ -52,6 +52,7 @@ private:
 	std::shared_ptr<ProgramInfos> _backgroundProgram; //< Background images rendering.
 	std::shared_ptr<ProgramInfos> _buttonProgram; //< Buttons rendering.
 	std::shared_ptr<ProgramInfos> _imageProgram; //< Fixed images rendering.
+	std::shared_ptr<ProgramInfos> _fontProgram; //< Labels font rendering.
 	MeshInfos _button, _buttonIn, _toggle, _toggleIn, _quad; //< Meshes.
 
 };
