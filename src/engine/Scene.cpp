@@ -45,8 +45,8 @@ BoundingBox Scene::computeBoundingBox(bool onlyShadowCasters){
 	return bbox;
 }
 
-void Scene::clean() const {
-	for(auto & object : objects){
+void Scene::clean() {
+	for(Object & object : objects){
 		object.clean();
 	}
 	background.clean();

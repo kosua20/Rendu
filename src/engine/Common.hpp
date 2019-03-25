@@ -22,6 +22,7 @@
 #include <vector>
 #include <memory>
 #include <map>
+#include <algorithm>
 
 #ifdef _WIN32
 

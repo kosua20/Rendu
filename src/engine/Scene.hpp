@@ -30,7 +30,7 @@ public:
 	virtual void update(double fullTime, double frameTime) = 0;
 	
 	/** Clean internal resources. */
-	void clean() const;
+	void clean();
 	
 	/// Destructor
 	virtual ~Scene();
