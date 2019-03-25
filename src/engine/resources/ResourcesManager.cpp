@@ -435,6 +435,27 @@ void Resources::reload() {
 	Log::Info() << Log::Resources << "Shader programs reloaded." << std::endl;
 }
 
+
+const FontInfos Resources::getFont(const std::string & name){
+	if(_fonts.count(name) > 0){
+		return _fonts[name];
+	}
+	
+	FontInfos infos;
+	// Load the font descriptor and associated atlas.
+	const std::string fontInfosText = getString(name + ".fnt");
+	if(!fontInfosText.empty()){
+		std::stringstream fontStream(fontInfosText);
+		TextUtilities::loadFont(fontStream, infos);
+	} else {
+		Log::Error() << Log::Resources << "Unable to load font named " << name << "." << std::endl;
+		return infos;
+	}
+	
+	_fonts[name] = infos;
+	return infos;
+}
+
 void Resources::getFiles(const std::string & extension, std::map<std::string, std::string> & files) const {
 	files.clear();
 	for(const auto & file : _files){

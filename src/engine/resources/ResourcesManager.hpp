@@ -2,6 +2,7 @@
 #define ResourcesManager_h
 #include "graphics/GLUtilities.hpp"
 #include "graphics/ProgramInfos.hpp"
+#include "resources/TextUtilities.hpp"
 #include "Common.hpp"
 
 /**
@@ -147,6 +148,9 @@ public:
 	 */
 	void reload();
 	
+	const FontInfos getFont(const std::string & name);
+	
+	
 	/** Load raw binary data from an external file
 	 \param path the path to the file on disk
 	 \param size will contain the number of bytes loaded from the file
@@ -208,6 +212,7 @@ private:
 	std::map<std::string, std::string> _files; ///< Listing of available files and their paths.
 	std::map<std::string, TextureInfos> _textures; ///< Loaded textures, identified by name.
 	std::map<std::string, MeshInfos> _meshes; ///< Loaded meshes, identified by name.
+	std::map<std::string, FontInfos> _fonts; ///< Loaded font infos, identified by name.
 	std::map<std::string, std::shared_ptr<ProgramInfos>> _programs; ///< Loaded shader programs, identified by name.
 	
 };
