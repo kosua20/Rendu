@@ -6,15 +6,12 @@
 #include "helpers/InterfaceUtilities.hpp"
 #include "processing/GaussianBlur.hpp"
 
-// *** Current todo list: ***
-// \todo Display score in-game and game over screen.
-
 // *** Later improvements: ***
 // \todo Add match-3 mechanics.
 // \todo High score list or best score display.
 
 /**
- \brief Handles communication between the different game components (renderers, player, menus).
+ \brief Handles communication between the different game components (renderers, player, menus) and the player actions.
  \ingroup SnakeGame
  */
 class Game {

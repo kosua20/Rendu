@@ -148,6 +148,10 @@ public:
 	 */
 	void reload();
 	
+	/** Load a font metadata and texture atlas from the resources.
+	 \param name the font base name
+	 \return the font informations
+	 */
 	const FontInfos getFont(const std::string & name);
 	
 	

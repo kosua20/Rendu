@@ -15,12 +15,10 @@
 
 /**
  The main function of the game demo. Handles the setup and main loop.
- \param argc the number of input arguments.
- \param argv a pointer to the raw input arguments.
  \return a general error code.
  \ingroup SnakeGame
  */
-int main(int argc, char** argv) {
+int main() {
 	
 	// First, init/parse/load configuration.
 	const std::vector<std::string> forceArgv = {"SnakeGame", "-c", "config.ini"};

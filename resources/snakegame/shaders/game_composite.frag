@@ -12,6 +12,7 @@ layout(binding = 3) uniform samplerCube envMap; ///< Environment map.
 
 layout(location = 0) out vec4 fragColor; ///< Color.
 
+/** Apply lighting, ambient occlusion and reflections to each fragment based on material info. */
 void main(){
 	
 	float matId  = texelFetch(materialMap, ivec2(gl_FragCoord.xy), 0).x * 255.0;

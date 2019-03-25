@@ -96,18 +96,28 @@ public:
 struct MenuLabel {
 public:
 	
+	/** Creates a label. The position is in the bottom left corner if the alignment is LEFT,
+	 the bottom right if the alignment is RIGHT, and in the middle of the label if it is CENTER.
+	 \param screenPos position on screen in absolute units
+	 \param verticalScale height of the characters in absolute units
+	 \param font the font to use
+	 \param alignment the text alignment to use
+	 */
 	MenuLabel(const glm::vec2 & screenPos, const float verticalScale, const FontInfos & font, const TextUtilities::Alignment alignment);
 	
+	/** Update the string displayed by the label.
+	 \param text the new text to display
+	 */
 	void update(const std::string & text);
 	
-	MeshInfos mesh;
-	glm::vec2 pos;
-	GLuint tid;
+	MeshInfos mesh; ///< Label mesh.
+	glm::vec2 pos; ///< Label position.
+	GLuint tid; ///< Font texture shortcut.
 	
 private:
 	float _vScale; ///< Vertical size on screen.
 	const FontInfos _font; ///< Font atlas. \todo Avoid duplicating glyphs data.
-	TextUtilities::Alignment _align;
+	TextUtilities::Alignment _align; ///< Text alignement.
 };
 
 
