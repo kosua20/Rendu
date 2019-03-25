@@ -81,8 +81,9 @@ void GameRenderer::draw(const Player & player){
 }
 
 void GameRenderer::drawScene(const Player & player){
-	// The camera is fixed above the world's origin, so no rotational/scaling component.
-	// Thus normal matrix (3x3) is the same in both frame, and we can skip the view matrix multiplication.
+	// Lighting and reflections will be computed in world space in the shaders.
+	// So the normal matrix only takes the model matrix into account.
+	
 	const glm::mat4 VP = _playerCamera.projection() * _playerCamera.view();
 	glUseProgram(_coloredProgram->id());
 	// Render the ground.

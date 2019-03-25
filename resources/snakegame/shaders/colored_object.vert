@@ -5,11 +5,11 @@ layout(location = 0) in vec3 v;///< Position.
 layout(location = 1) in vec3 n; ///< Normal.
 
 uniform mat4 mvp; ///< The transformation matrix.
-uniform mat3 normalMat; ///< Model to view space for normals.
+uniform mat3 normalMat; ///< Model to world space for normals.
 
 out INTERFACE {
 	vec3 n;
-} Out; ///< The view space normal.
+} Out; ///< The world space normal.
 
 /** Apply the MVP transformation to the input vertex. */
 void main(){
