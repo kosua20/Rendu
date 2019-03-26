@@ -1,9 +1,9 @@
 #ifndef DeferredRenderer_h
 #define DeferredRenderer_h
 
+#include "AmbientQuad.hpp"
 #include "Scene.hpp"
 #include "renderers/Renderer.hpp"
-#include "renderers/deferred/AmbientQuad.hpp"
 
 #include "graphics/Framebuffer.hpp"
 #include "input/ControllableCamera.hpp"

@@ -71,6 +71,7 @@ int main(int argc, char** argv) {
 	// First, init/parse/load configuration.
 	BRDFEstimatorConfig config(std::vector<std::string>(argv, argv+argc));
 	Resources::defaultPath = "../../../resources/";
+	Resources::manager().addResources("../../../resources/pbrdemo");
 	
 	// Coherent config state check.
 	if(!config.precomputeBRDF && config.cubemapName.empty()){

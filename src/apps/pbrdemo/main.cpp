@@ -1,10 +1,10 @@
-#include "Common.hpp"
+#include "DeferredRenderer.hpp"
 #include "helpers/GenerationUtilities.hpp"
 #include "input/Input.hpp"
 #include "input/InputCallbacks.hpp"
-#include "renderers/deferred/DeferredRenderer.hpp"
 #include "helpers/InterfaceUtilities.hpp"
 #include "scenes/Scenes.hpp"
+#include "Common.hpp"
 
 /**
  \defgroup PBRDemo Physically-based rendering demo
