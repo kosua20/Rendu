@@ -124,13 +124,6 @@ void Object::drawGeometry() const {
 }
 
 
-void Object::clean() {
-	_mesh.clean();
-	for (auto & texture : _textures) {
-		glDeleteTextures(1, &(texture.id));
-	}
-}
-
 BoundingBox Object::getBoundingBox() const {
 	return _mesh.bbox.transformed(_model);
 }

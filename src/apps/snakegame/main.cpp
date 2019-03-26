@@ -103,11 +103,11 @@ int main() {
 	
 	// Clean the interface.
 	Interface::clean();
-	// Remove the window.
-	glfwDestroyWindow(window);
 	// Clean other resources
 	game.clean();
+	Resources::manager().clean();
 	// Close GL context and any other GLFW resources.
+	glfwDestroyWindow(window);
 	glfwTerminate();
 	
 	return 0;

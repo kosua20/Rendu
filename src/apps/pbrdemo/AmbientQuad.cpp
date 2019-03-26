@@ -43,6 +43,3 @@ void AmbientQuad::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionM
 	checkGLError();
 }
 
-void AmbientQuad::clean() const {
-	
-}

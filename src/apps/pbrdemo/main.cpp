@@ -130,11 +130,11 @@ int main(int argc, char** argv) {
 	
 	// Clean the interface.
 	Interface::clean();
-	// Remove the window.
-	glfwDestroyWindow(window);
 	// Clean other resources
 	renderer->clean();
+	Resources::manager().clean();
 	// Close GL context and any other GLFW resources.
+	glfwDestroyWindow(window);
 	glfwTerminate();
 	
 	return 0;

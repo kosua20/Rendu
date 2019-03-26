@@ -77,7 +77,7 @@ int main(int argc, char** argv) {
 		Log::Error() << "Missing resource path." << std::endl;
 		return 1;
 	}
-	Resources::defaultPath = std::string(argv[1]);
+	Resources::manager().addResources(std::string(argv[1]));
 
 	// Initialize glfw, which will create and setup an OpenGL context.
 	if (!glfwInit()) {

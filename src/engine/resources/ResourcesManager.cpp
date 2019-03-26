@@ -548,3 +548,23 @@ std::string Resources::trim(const std::string & str, const std::string & del){
 	return str.substr(firstNotDel, lastNotDel - firstNotDel + 1);
 }
 
+
+void Resources::clean(){
+	Log::Info() << Log::Resources << "Cleaning up." << std::endl;
+	
+	for(auto & tex : _textures){
+		glDeleteTextures(1, &tex.second.id);
+	}
+	for(auto & mesh : _meshes){
+		mesh.second.clean();
+	}
+	for(auto & prog : _programs){
+		prog.second.reset();
+	}
+	_textures.clear();
+	_meshes.clear();
+	_fonts.clear();
+	_programs.clear();
+	_files.clear();
+	
+}

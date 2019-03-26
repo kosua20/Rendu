@@ -281,7 +281,6 @@ void DeferredRenderer::physics(double fullTime, double frameTime){
 void DeferredRenderer::clean() const {
 	Renderer::clean();
 	// Clean objects.
-	_ambientScreen.clean();
 	_gbuffer->clean();
 	_blurBuffer->clean();
 	_ssaoPass->clean();

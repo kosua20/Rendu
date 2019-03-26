@@ -82,8 +82,6 @@ void RendererCube::physics(double fullTime, double frameTime){
 void RendererCube::clean() {
 	Renderer::clean();
 	// Clean objects.
-	_mesh.clean();
-	glDeleteTextures(1, &(_texture.id));
 	_resultFramebuffer->clean();
 	
 }

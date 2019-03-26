@@ -70,8 +70,9 @@ public:
 int main(int argc, char** argv) {
 	// First, init/parse/load configuration.
 	BRDFEstimatorConfig config(std::vector<std::string>(argv, argv+argc));
-	Resources::defaultPath = "../../../resources/";
 	Resources::manager().addResources("../../../resources/pbrdemo");
+	// \todo Load from disk instead, through GUI.
+	Resources::manager().addResources("../../../resources/");
 	
 	// Coherent config state check.
 	if(!config.precomputeBRDF && config.cubemapName.empty()){
@@ -170,10 +171,10 @@ int main(int argc, char** argv) {
 	// Handle quitting.
 	glfwSetWindowShouldClose(window, GL_TRUE);
 	
-	// Remove the window.
-	glfwDestroyWindow(window);
-	
+	// Clean resources.
+	Resources::manager().clean();
 	// Close GL context and any other GLFW resources.
+	glfwDestroyWindow(window);
 	glfwTerminate();
 	
 	Log::Info() << Log::Utilities << "Done." << std::endl;

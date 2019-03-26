@@ -26,9 +26,6 @@ public:
 	 */
 	static Resources& manager();
 	
-	/** Default resources root path or archive path.
-	 */
-	static std::string defaultPath;
 	
 private:
 	
@@ -201,8 +198,10 @@ public:
 	 */
 	void getFiles(const std::string & extension, std::map<std::string, std::string> & files) const;
 	
-private:
+	/** Clean all loaded resources, both CPU and GPU side. */
+	void clean();
 	
+private:
 	/** Destructor (disabled). */
 	~Resources(){};
 	
@@ -212,6 +211,10 @@ private:
 	/** Copy constructor (disabled). */
 	Resources (const Resources&) = delete;
 	
+	
+	/** Default resources root path or archive path.
+	 */
+	static std::string defaultPath;
 	
 	std::map<std::string, std::string> _files; ///< Listing of available files and their paths.
 	std::map<std::string, TextureInfos> _textures; ///< Loaded textures, identified by name.

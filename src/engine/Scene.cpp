@@ -46,10 +46,7 @@ BoundingBox Scene::computeBoundingBox(bool onlyShadowCasters){
 }
 
 void Scene::clean() {
-	for(Object & object : objects){
-		object.clean();
-	}
-	background.clean();
+	
 	for(auto& dirLight : directionalLights){
 		dirLight.clean();
 	}

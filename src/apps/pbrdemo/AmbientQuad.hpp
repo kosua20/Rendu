@@ -38,9 +38,6 @@ public:
 	void draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) const;
 	
 	
-	/** Clean internal resources. */
-	void clean() const;
-	
 private:
 	
 	
