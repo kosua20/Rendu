@@ -79,7 +79,7 @@ void RendererCube::physics(double fullTime, double frameTime){
 }
 
 
-void RendererCube::clean() {
+void RendererCube::clean() const {
 	Renderer::clean();
 	// Clean objects.
 	_resultFramebuffer->clean();

@@ -94,7 +94,7 @@ Framebuffer::Framebuffer(unsigned int width, unsigned int height, const std::vec
 	for(size_t i = 0; i < _idColors.size(); ++i){
 		drawBuffers[i] = GL_COLOR_ATTACHMENT0 + GLuint(i);
 	}
-	glDrawBuffers(drawBuffers.size(), &drawBuffers[0]);
+	glDrawBuffers(GLsizei(drawBuffers.size()), &drawBuffers[0]);
 	checkGLFramebufferError();
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	checkGLError();

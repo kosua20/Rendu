@@ -46,7 +46,7 @@ public:
 	void physics(double fullTime, double frameTime);
 
 	/** Clean internal resources. */
-	void clean();
+	void clean() const;
 
 	/** Handle a window resize event.
 	 \param width the new width

@@ -66,7 +66,7 @@ void PointLight::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMa
 	}
 	// Activate the shadow cubemap.
 	if(_castShadows){
-		glActiveTexture(GL_TEXTURE0 + _textureIds.size()-1);
+		glActiveTexture(GLenum(GL_TEXTURE0 + _textureIds.size()-1));
 		glBindTexture(GL_TEXTURE_CUBE_MAP, _textureIds[_textureIds.size()-1]);
 	}
 	// Select the geometry.
@@ -149,7 +149,7 @@ void PointLight::update(const glm::vec3 & newPosition){
 	
 	float far = candidatesFar[0];
 	float near = candidatesNear[0];
-	for(size_t i = 0; i < 3; ++i){
+	for(int i = 0; i < 3; ++i){
 		// The light is inside the bbox along the axis i if the two delta have different signs.
 		const bool isInside = (std::signbit(deltaMini[i]) != std::signbit(deltaMaxi[i]));
 		// In this case we enforce a small near.

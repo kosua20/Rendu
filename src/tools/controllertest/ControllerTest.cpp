@@ -76,7 +76,7 @@ void drawButton(ImDrawList * drawList, const Controller::ControllerInput bid, co
 				ImVec2(pos.x + 137, pos.y + 36)
 			};
 			
-			drawList->AddConvexPolyFilled(&pointsL2[0], pointsL2.size(), highlightColor);
+			drawList->AddConvexPolyFilled(&pointsL2[0], int(pointsL2.size()), highlightColor);
 			break;
 		}
 		case Controller::ButtonL3:
@@ -96,7 +96,7 @@ void drawButton(ImDrawList * drawList, const Controller::ControllerInput bid, co
 				ImVec2(pos.x + 137 + 248, pos.y + 36)
 			};
 			
-			drawList->AddConvexPolyFilled(&pointsR2[0], pointsR2.size(), highlightColor);
+			drawList->AddConvexPolyFilled(&pointsR2[0], int(pointsR2.size()), highlightColor);
 		}
 			break;
 		case Controller::ButtonR3:
@@ -241,8 +241,8 @@ int main(int argc, char** argv) {
 		if(Input::manager().controllerConnected() || (firstFrame && Input::manager().controllerAvailable())){
 			firstFrame = false;
 			const RawController * controller = static_cast<RawController*>(Input::manager().controller().get());
-			const int axesCount = controller->allAxes.size();
-			const int buttonsCount = controller->allButtons.size();
+			const int axesCount = int(controller->allAxes.size());
+			const int buttonsCount = int(controller->allButtons.size());
 			
 			// Check if some elements were already modified.
 			bool wereEmpty = true;
@@ -271,7 +271,7 @@ int main(int argc, char** argv) {
 				}
 				// Start from the end for the axes.
 				for(int i = 0; i < std::min(int(axesMapping.size()), axesCount); ++i){
-					const int actionId = axesMapping.size() - 1 - i;
+					const int actionId = int(axesMapping.size()) - 1 - i;
 					// Avoid double mappings.
 					if(buttonsMapping[actionId] >= 0){
 						continue;
@@ -322,8 +322,8 @@ int main(int argc, char** argv) {
 				
 				// Infos on the controller.
 				RawController * controller = static_cast<RawController*>(Input::manager().controller().get());
-				const int axesCount = controller->allAxes.size();
-				const int buttonsCount = controller->allButtons.size();
+				const int axesCount = int(controller->allAxes.size());
+				const int buttonsCount = int(controller->allButtons.size());
 				ImGui::Text("%s, id: %d, axes: %d, buttons: %d", controller->name().c_str(), controller->id(), axesCount, buttonsCount);
 				
 				// Display raw axes and buttons and update their display when the user interacts with them.

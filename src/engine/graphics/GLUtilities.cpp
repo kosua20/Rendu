@@ -384,7 +384,7 @@ TextureInfos GLUtilities::loadTexture(const std::vector<std::string>& paths, con
 	TextureInfos infos;
 	infos.descriptor = descriptor;
 	infos.cubemap = false;
-	infos.mipmap = paths.size();
+	infos.mipmap = int(paths.size());
 	if(paths.empty()){
 		Log::Error() << Log::Resources << "Unable to find texture." << std::endl;
 		return infos;
@@ -440,7 +440,7 @@ TextureInfos GLUtilities::loadTextureCubemap(const std::vector<std::vector<std::
 	TextureInfos infos;
 	infos.descriptor = descriptor;
 	infos.cubemap = true;
-	infos.mipmap = allPaths.size();
+	infos.mipmap = int(allPaths.size());
 	// If not enough images, return empty texture.
 	if(allPaths.empty() || allPaths[0].size() == 0 ){
 		Log::Error() << Log::Resources << "Unable to find cubemap." << std::endl;

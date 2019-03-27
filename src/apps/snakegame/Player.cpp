@@ -62,7 +62,7 @@ bool Player::physics(double fullTime, const double frameTime) {
 	
 	bool hasEaten = false;
 	// Are we intersecting any item ?
-	for(int i = _items.size() - 1; i >= 0; --i){
+	for(int i = int(_items.size()) - 1; i >= 0; --i){
 		if(glm::distance(_items[i], headPos) < _eatingDistance*_radius){
 			// Eat the element.
 			_positions.push_back(_items[i]);
@@ -177,7 +177,7 @@ bool Player::physics(double fullTime, const double frameTime) {
 	// Are we intersecting OURSELVES ?
 	bool boom = false;
 	if(_invicibility <= 0.0f){
-		for(int i = _positions.size() - 1; i >= 0; --i){
+		for(int i = int(_positions.size()) - 1; i >= 0; --i){
 			if(glm::distance(_positions[i], headPos) < _collisionDistance*_radius){
 				// Noooooo
 				boom = true;

@@ -85,7 +85,7 @@ int main(int argc, char** argv) {
 		if(ImGui::Begin("Renderer")){
 			ImGui::Text("%.1f ms, %.1f fps", ImGui::GetIO().DeltaTime*1000.0f, ImGui::GetIO().Framerate);
 			
-			if(ImGui::Combo("Scene", &selected_scene, sceneNames, scenes.size()+1)){
+			if(ImGui::Combo("Scene", &selected_scene, sceneNames, int(scenes.size())+1)){
 				if(selected_scene == scenes.size()){
 					renderer->setScene(nullptr);
 				} else {
