@@ -548,6 +548,15 @@ std::string Resources::trim(const std::string & str, const std::string & del){
 	return str.substr(firstNotDel, lastNotDel - firstNotDel + 1);
 }
 
+std::string Resources::removeExtension(std::string & str){
+	const std::string::size_type pos = str.find_last_of(".");
+	if(pos == std::string::npos){
+		return "";
+	}
+	const std::string ext(str.substr(pos));
+	str.erase(str.begin() + pos, str.end());
+	return ext;
+}
 
 void Resources::clean(){
 	Log::Info() << Log::Resources << "Cleaning up." << std::endl;
