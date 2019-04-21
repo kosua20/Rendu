@@ -23,6 +23,13 @@ public:
 	/// Constructor
 	ControllableCamera();
 	
+	/** Update all view parameters
+	 \param position the camera position
+	 \param center the camera center of interest
+	 \param up the camera vertical orientation
+	 */
+	void pose(const glm::vec3 & position, const glm::vec3 & center, const glm::vec3 & up);
+	
 	/// Reset the position of the camera.
 	void reset();
 

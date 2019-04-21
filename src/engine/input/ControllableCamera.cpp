@@ -18,6 +18,17 @@ void ControllableCamera::reset(){
 	_angles = glm::vec2((float)M_PI*0.5f, 0.0f);
 }
 
+void ControllableCamera::pose(const glm::vec3 & position, const glm::vec3 & center, const glm::vec3 & up){
+	Camera::pose(position, center, up);
+	_radius = glm::length(_eye - _center);
+	// Update angles.
+	const glm::vec3 dir = glm::normalize(_center - _eye);
+	const float axisH = std::atan2(dir[2], dir[0]);
+	const float axisV = std::asin(dir[1]);
+	_angles = glm::vec2(axisH, axisV);
+	
+}
+
 void ControllableCamera::update(){
 	if(Input::manager().triggered(Input::KeyR)){
 		reset();
