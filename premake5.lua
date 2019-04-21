@@ -167,10 +167,6 @@ project("ControllerTest")
 	ToolSetup()
 	files({ "src/tools/controllertest/**.hpp", "src/tools/controllertest/**.cpp", })
 
-project("SHExtractor")
-	ToolSetup()	
-	files({ "src/tools/SHExtractor.cpp" })
-
 project("ShaderValidator")
 	ToolSetup()	
 	files({ "src/tools/ShaderValidator.cpp" })
@@ -184,7 +180,7 @@ group("Meta")
 project("ALL")
 	CPPSetup()
 	kind("ConsoleApp")
-	dependson( {"Engine", "PBRDemo", "Playground", "Atmosphere", "ImageViewer", "AtmosphericScatteringEstimator", "BRDFEstimator", "SHExtractor", "ControllerTest", "SnakeGame", })
+	dependson( {"Engine", "PBRDemo", "Playground", "Atmosphere", "ImageViewer", "AtmosphericScatteringEstimator", "BRDFEstimator", "ControllerTest", "SnakeGame", })
 
 -- Actions
 
