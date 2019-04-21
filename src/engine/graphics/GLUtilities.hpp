@@ -180,6 +180,14 @@ public:
 	 */
 	static unsigned int getTypeAndFormat(const GLuint typedFormat, GLuint & type, GLuint & format);
 	
+	/** Create a GPU texture with a given layout and mip map count.
+	 \param destination the kind of texture to create: 2D, cubemap,...
+	 \param descriptor type and format information
+	 \param mipmapCount the number of mipmap levels. If null, default value will be used.
+	 \return the handle of the created texture.
+	 */
+	static GLuint createTexture(const GLenum destination, const Descriptor & descriptor, const int mipmapCount);
+	
 private:
 	
 	/** Read back the currently bound framebuffer to the CPU and save it in the best possible format on disk.
@@ -194,14 +202,6 @@ private:
 	 \note The output image extension will be automatically added based on the framebuffer type and format.
 	 */
 	static void savePixels(const GLenum type, const GLenum format, const unsigned int width, const unsigned int height, const unsigned int components, const std::string & path, const bool flip, const bool ignoreAlpha);
-	
-	/** Create a GPU texture with a given layout and mip map count.
-	 \param destination the kind of texture to create: 2D, cubemap,...
-	 \param descriptor type and format information
-	 \param mipmapCount the number of mipmap levels.
-	 \return the handle of the created texture.
-	 */
-	static GLuint createTexture(const GLenum destination, const Descriptor & descriptor, const int mipmapCount);
 	
 	/** Upload data to a GPU texture.
 	 \param destination the kind of texture to target: 2D, cubemap...

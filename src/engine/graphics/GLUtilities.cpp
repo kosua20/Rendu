@@ -318,7 +318,7 @@ GLuint GLUtilities::createTexture(const GLenum destination, const Descriptor & d
 	glBindTexture(destination, textureId);
 	
 	// Set proper max mipmap level.
-	if(mipmapCount>1){
+	if(mipmapCount>=1){
 		glTexParameteri(destination, GL_TEXTURE_MAX_LEVEL, mipmapCount-1);
 	} else {
 		glTexParameteri(destination, GL_TEXTURE_MAX_LEVEL, 1000);
@@ -401,8 +401,8 @@ TextureInfos GLUtilities::loadTexture(const std::vector<std::string>& paths, con
 	// Image infos.
 	const GLenum sourceType = ImageUtilities::isFloat(paths[0]) ? GL_FLOAT : GL_UNSIGNED_BYTE;
 	
-	// Create 2D texture.
-	infos.id = createTexture(GL_TEXTURE_2D, descriptor, infos.mipmap);
+	// Create 2D texture, if only one path, automatically generate mipmaps.
+	infos.id = createTexture(GL_TEXTURE_2D, descriptor, infos.mipmap == 1 ? 0 : infos.mipmap);
 	
 	// Load and upload each mip level.
 	for(unsigned int mipid = 0; mipid < paths.size(); ++mipid){
@@ -458,8 +458,8 @@ TextureInfos GLUtilities::loadTextureCubemap(const std::vector<std::vector<std::
 	// Image infos.
 	const GLenum sourceType = ImageUtilities::isFloat(allPaths[0][0]) ? GL_FLOAT : GL_UNSIGNED_BYTE;
 	
-	// Create cubemap texture.
-	infos.id = createTexture(GL_TEXTURE_CUBE_MAP, descriptor, infos.mipmap);
+	// Create cubemap texture, automatically generate mipmaps if one level only.
+	infos.id = createTexture(GL_TEXTURE_CUBE_MAP, descriptor, infos.mipmap == 1 ? 0 : infos.mipmap);
 	
 	// Load and upload each mip level.
 	for(unsigned int mipid = 0; mipid < allPaths.size(); ++mipid){
