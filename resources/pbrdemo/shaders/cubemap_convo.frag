@@ -9,7 +9,7 @@ in INTERFACE {
 #define M_PI 3.1415926536
 #define M_INV_LOG2 1.4426950408889
 
-uniform int samplesCount = 32768; // Super high sample count to avoid artifacts in bright areas.
+uniform int samplesCount = 32768; ///< Number of samples to take, higher count helps avoiding artifacts in bright areas.
 
 layout(binding = 0) uniform samplerCube texture0; ///< Input cubemap to process.
 uniform float mimapRoughness; ///< The roughness to use for the convolution lobe.

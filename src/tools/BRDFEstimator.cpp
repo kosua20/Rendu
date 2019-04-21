@@ -12,14 +12,23 @@
 
 /**
  \defgroup BRDFEstimator BRDF Estimation
- \brief Perform cubemap GGX convolution, precompute BRDF lookup table.
+ \brief Perform cubemap GGX convolution, irradiance SH coefficients computation, and linearized BRDF look-up table pre-computation.
  \see GLSL::Frag::Cubemap_convo
  \see GLSL::Frag::Brdf_sampler
+ \see GLSL::Frag::Skybox_shcoeffs
  \ingroup Tools
  */
 
+/// Cubemap default prefixes.
 const std::vector<std::string> suffixes = {"_px", "_nx", "_py", "_ny", "_pz", "_nz"};
 
+/**
+ Load a cubemap on both the CPU and GPU from an input path.
+ \param inputPath the base path on disk
+ \param cubemapInfos will contain the cubemap infos once sent to the GPU
+ \param cubemapSides float arrays that will contain raw CPU-side cubemap values
+ \ingroup BRDFEstimator
+ */
 void loadCubemap(const std::string & inputPath, TextureInfos & cubemapInfos, float* cubemapSides[6]){
 	std::string cubemapPath = inputPath;
 	const bool isFloat = ImageUtilities::isFloat(cubemapPath);
@@ -57,8 +66,8 @@ void loadCubemap(const std::string & inputPath, TextureInfos & cubemapInfos, flo
 /**
 \brief Decompose an existing cubemap irradiance onto the nine first elements of the spherical harmonic basis.
 \details Perform approximated convolution as described in Ramamoorthi, Ravi, and Pat Hanrahan. "An efficient representation for irradiance environment maps.", Proceedings of the 28th annual conference on Computer graphics and interactive techniques. ACM, 2001.
-\param siders float arrays containing each cubemap side
-\param width the cubemap side dimension
+\param sides float arrays containing each cubemap side
+\param side the cubemap side dimension
 \return the 9 RGB coefficients of the SH decomposition
 \ingroup BRDFEstimator
 */
@@ -164,6 +173,15 @@ std::vector<glm::vec3> computeSHCoeffs(float* sides[6], const int side){
 	return SCoeffs;
 }
 
+/**
+ Compute a series of cubemaps convolved with a BRDF using increasing roughness values. The cubemaps form a mipmap pyramid.
+ \note We choose to keep the levels in separate textures for easier visualisation. This could be revisited.
+ \param cubemapInfos the source HDR cubemap
+ \param lvelsCount the number of mipmap levels to generate
+ \param outputSide the side size of the lvel 0 cubemap faces
+ \param samplesCount the number of samples to use in the convolution
+ \param cubeLevels will contain the texture infos for each level
+ */
 void computeCubemapConvolution(const TextureInfos & cubemapInfos, int levelsCount, int outputSide, int samplesCount, std::vector<TextureInfos> & cubeLevels){
 	
 	cubeLevels.clear();
@@ -256,6 +274,10 @@ void computeCubemapConvolution(const TextureInfos & cubemapInfos, int levelsCoun
 	glEnable(GL_DEPTH_TEST);
 }
 
+/** Export the pre-convolved cubemap levels.
+ \param cubeLevels the textures to export as mipmap levels
+ \param outputPath the based destination path
+ */
 void exportCubemapConvolution(const std::vector<TextureInfos> &cubeLevels, const std::string & outputPath){
 	
 	for(int level = 0; level < cubeLevels.size(); ++level){
@@ -276,6 +298,10 @@ void exportCubemapConvolution(const std::vector<TextureInfos> &cubeLevels, const
 	}
 }
 
+/** Compute and export a linearized BRDF look-up table.
+ \param outputSide the side size of the 2D output map
+ \param outputPath the destination path
+ */
 void computeAndExportLookupTable(const int outputSide, const std::string & outputPath){
 	// Render the lookup table.
 	const auto bakingFramebuffer = std::make_shared<Framebuffer>(outputSide, outputSide, GL_RG32F, false);
@@ -293,7 +319,7 @@ void computeAndExportLookupTable(const int outputSide, const std::string & outpu
 }
 
 /**
- Compute either a series of cubemaps convolved with a BRDF using increasing roughness values, or generate a linearized BRDF lookup table.
+ Compute either a series of cubemaps convolved with a BRDF using increasing roughness values, irradiance spherical harmonics coefficients, or generate a linearized BRDF look-up table.
  \param argc the number of input arguments.
  \param argv a pointer to the raw input arguments.
  \return a general error code.
@@ -522,5 +548,3 @@ int main(int argc, char** argv) {
 	
 	return 0;
 }
-
-
