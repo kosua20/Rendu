@@ -19,7 +19,7 @@ Config::Config(const std::vector<std::string> & argv){
 	}
 	
 	// Have we received a config file as argument?
-	const std::string potentialConfig = Resources::trim(argv[1], "-");
+	const std::string potentialConfig = TextUtilities::trim(argv[1], "-");
 	
 	if(potentialConfig == "c" || potentialConfig == "config"){
 		// Safety check.
@@ -67,7 +67,7 @@ void Config::parseFromFile(const std::string & filePath, std::map<std::string, s
 	std::string line;
 	while(std::getline(lines,line)){
 		// Clean line.
-		const std::string lineClean = Resources::trim(line, " ");
+		const std::string lineClean = TextUtilities::trim(line, " ");
 		if(lineClean.empty()) {
 			continue;
 		}
@@ -77,10 +77,10 @@ void Config::parseFromFile(const std::string & filePath, std::map<std::string, s
 		std::string firstArg = "";
 		if(spacePos == std::string::npos){
 			// This is a on/off argument.
-			firstArg = Resources::trim(lineClean, "-");
+			firstArg = TextUtilities::trim(lineClean, "-");
 		} else {
 			// We need to split the whole line.
-			firstArg = Resources::trim(lineClean.substr(0, spacePos), "-");
+			firstArg = TextUtilities::trim(lineClean.substr(0, spacePos), "-");
 			
 			std::string::size_type beginPos = spacePos+1;
 			std::string::size_type afterEndPos = lineClean.find_first_of(" ", beginPos);
@@ -105,7 +105,7 @@ void Config::parseFromFile(const std::string & filePath, std::map<std::string, s
 void Config::parseFromArgs(const std::vector<std::string> & argv, std::map<std::string, std::vector<std::string>> & arguments){
 	for(size_t argi = 1; argi < argv.size(); ){
 		// Clean the argument from any -
-		const std::string firstArg = Resources::trim(argv[argi], "-");
+		const std::string firstArg = TextUtilities::trim(argv[argi], "-");
 		if (firstArg.empty()) {
 			continue;
 		}

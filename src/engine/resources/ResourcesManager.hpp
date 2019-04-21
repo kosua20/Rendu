@@ -185,21 +185,6 @@ public:
 	 */
 	static bool externalFileExists(const std::string & path);
 	
-	/** Trim characters from both ends of a string.
-	 \param str the string to trim from
-	 \param del the characters to delete
-	 \return the trimmed string
-	 \todo Move somewhere else.
-	 */
-	static std::string trim(const std::string & str, const std::string & del);
-	
-	/** Remove file extension from the end of a string.
-	 \param str the string to remove the extension from
-	 \return the extension string
-	 \todo Move somewhere else.
-	 */
-	static std::string removeExtension(std::string & str);
-	
 	/** Query all resource files with a given extension.
 	 \param extension the extension of the files to list
 	 \param files will contain the file names and their paths

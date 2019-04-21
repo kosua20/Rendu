@@ -32,7 +32,7 @@ const std::vector<std::string> suffixes = {"_px", "_nx", "_py", "_ny", "_pz", "_
 void loadCubemap(const std::string & inputPath, TextureInfos & cubemapInfos, float* cubemapSides[6]){
 	std::string cubemapPath = inputPath;
 	const bool isFloat = ImageUtilities::isFloat(cubemapPath);
-	const std::string ext = Resources::removeExtension(cubemapPath);
+	const std::string ext = TextUtilities::removeExtension(cubemapPath);
 	cubemapPath = cubemapPath.substr(0, cubemapPath.size()-3);
 	Log::Info() << "Loading " << cubemapPath << "..." << std::endl;
 	// Apply the proper format and filtering.
@@ -181,6 +181,7 @@ std::vector<glm::vec3> computeSHCoeffs(float* sides[6], const int side){
  \param outputSide the side size of the lvel 0 cubemap faces
  \param samplesCount the number of samples to use in the convolution
  \param cubeLevels will contain the texture infos for each level
+ \ingroup BRDFEstimator
  */
 void computeCubemapConvolution(const TextureInfos & cubemapInfos, int levelsCount, int outputSide, int samplesCount, std::vector<TextureInfos> & cubeLevels){
 	
@@ -277,6 +278,7 @@ void computeCubemapConvolution(const TextureInfos & cubemapInfos, int levelsCoun
 /** Export the pre-convolved cubemap levels.
  \param cubeLevels the textures to export as mipmap levels
  \param outputPath the based destination path
+ \ingroup BRDFEstimator
  */
 void exportCubemapConvolution(const std::vector<TextureInfos> &cubeLevels, const std::string & outputPath){
 	
@@ -301,6 +303,7 @@ void exportCubemapConvolution(const std::vector<TextureInfos> &cubeLevels, const
 /** Compute and export a linearized BRDF look-up table.
  \param outputSide the side size of the 2D output map
  \param outputPath the destination path
+ \ingroup BRDFEstimator
  */
 void computeAndExportLookupTable(const int outputSide, const std::string & outputPath){
 	// Render the lookup table.
@@ -457,9 +460,7 @@ int main(int argc, char** argv) {
 			if(ImGui::Button("Export convolved BRDF maps...")){
 				std::string outputPath;
 				if(Interface::showPicker(Interface::Picker::Save, ".", outputPath, "exr") && !outputPath.empty()){
-					if(outputPath.size() > 4 && outputPath.substr(outputPath.size()-4) == ".exr"){
-						outputPath = outputPath.substr(0, outputPath.size()-4);
-					}
+					TextUtilities::removeExtension(outputPath);
 					exportCubemapConvolution(cubeLevels, outputPath);
 				}
 			}
@@ -468,9 +469,7 @@ int main(int argc, char** argv) {
 			if(ImGui::Button("Export BRDF look-up table...")){
 				std::string outputPath;
 				if(Interface::showPicker(Interface::Picker::Save, ".", outputPath, "exr") && !outputPath.empty()){
-					if(outputPath.size() > 4 && outputPath.substr(outputPath.size()-4) == ".exr"){
-						outputPath = outputPath.substr(0, outputPath.size()-4);
-					}
+					TextUtilities::removeExtension(outputPath);
 					computeAndExportLookupTable(outputSide, outputPath);
 				}
 			}

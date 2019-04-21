@@ -54,6 +54,18 @@ public:
 	 */
 	static MeshInfos generateLabel(const std::string & text, const FontInfos & font, const float scale, const Alignment align = LEFT );
 	
+	/** Trim characters from both ends of a string.
+	 \param str the string to trim from
+	 \param del the characters to delete
+	 \return the trimmed string
+	 */
+	static std::string trim(const std::string & str, const std::string & del);
+	
+	/** Remove file extension from the end of a string.
+	 \param str the string to remove the extension from
+	 \return the extension string
+	 */
+	static std::string removeExtension(std::string & str);
 };
 
 #endif 
