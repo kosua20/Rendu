@@ -27,10 +27,10 @@ public:
 	void updateModels();
 	
 	/// Status of the player.
-	const bool alive(){ return _alive; }
+	bool alive(){ return _alive; }
 	
 	/// Score of the player.
-	const int score(){ return _score; }
+	int score(){ return _score; }
 	
 	glm::mat4 modelHead; ///< The snake head model matrix.
 	std::vector<glm::mat4> modelsBody; ///< The snake body elements model matrices.

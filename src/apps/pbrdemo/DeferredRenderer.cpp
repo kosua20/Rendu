@@ -24,17 +24,17 @@ DeferredRenderer::DeferredRenderer(RenderingConfig & config) : Renderer(config) 
 	const Descriptor effectsDesc = { GL_RGB8, GL_NEAREST, GL_CLAMP_TO_EDGE };
 	const Descriptor depthDesc = { GL_DEPTH_COMPONENT32F, GL_NEAREST, GL_CLAMP_TO_EDGE };
 	const std::vector<Descriptor> descs = {albedoDesc, normalDesc, effectsDesc, depthDesc};
-	_gbuffer = std::make_shared<Framebuffer>(renderWidth, renderWidth, descs, false);
+	_gbuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderWidth, descs, false));
 	
 	// Other framebuffers.
-	_ssaoPass = std::make_shared<SSAO>(renderHalfWidth, renderHalfHeight, 0.5f);
-	_sceneFramebuffer = std::make_shared<Framebuffer>(renderWidth, renderHeight, GL_RGBA16F, false);
-	_bloomFramebuffer = std::make_shared<Framebuffer>(renderPow2Size, renderPow2Size, GL_RGB16F, false);
+	_ssaoPass = std::unique_ptr<SSAO>(new SSAO(renderHalfWidth, renderHalfHeight, 0.5f));
+	_sceneFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, GL_RGBA16F, false));
+	_bloomFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderPow2Size, renderPow2Size, GL_RGB16F, false));
 	
-	_toneMappingFramebuffer = std::make_shared<Framebuffer>(renderWidth, renderHeight, GL_RGBA8, false);
-	_fxaaFramebuffer = std::make_shared<Framebuffer>(renderWidth, renderHeight, GL_RGBA8, false);
+	_toneMappingFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, GL_RGBA8, false));
+	_fxaaFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, GL_RGBA8, false));
 	
-	_blurBuffer = std::make_shared<GaussianBlur>(renderPow2Size, renderPow2Size, 2, GL_RGB16F);
+	_blurBuffer = std::unique_ptr<GaussianBlur>(new GaussianBlur(renderPow2Size, renderPow2Size, 2, GL_RGB16F));
 	
 	
 	checkGLError();

@@ -47,7 +47,7 @@ end
 function CPPSetup()
 	language("C++")
 	cppdialect("C++11")
-	buildoptions({ "-Wall" })
+	buildoptions({ "-Wall", "-Wextra", "-Wno-unused-parameter" })
 end	
 
 function GraphicsSetup()

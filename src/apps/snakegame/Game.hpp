@@ -31,10 +31,9 @@ public:
 	Interface::Action update();
 	
 	/** Update the physic state of the player snake and items
-	 \param fullTime time elapsed since the beginning of the game
 	 \param frameTime delta time since last physics update
 	 */
-	void physics(double fullTime, double frameTime);
+	void physics(double frameTime);
 	
 	/** Resize renderers based on new window size.
 	 \param width new width

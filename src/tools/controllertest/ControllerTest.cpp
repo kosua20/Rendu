@@ -240,13 +240,13 @@ int main(int argc, char** argv) {
 		// Detect either a new connected controller or a first frame with an already connected controller.
 		if(Input::manager().controllerConnected() || (firstFrame && Input::manager().controllerAvailable())){
 			firstFrame = false;
-			const RawController * controller = static_cast<RawController*>(Input::manager().controller().get());
+			const RawController * controller = static_cast<RawController*>(Input::manager().controller());
 			const int axesCount = int(controller->allAxes.size());
 			const int buttonsCount = int(controller->allButtons.size());
 			
 			// Check if some elements were already modified.
 			bool wereEmpty = true;
-			for(int i = 0; i < buttonsMapping.size(); ++i){
+			for(int i = 0; i < int(buttonsMapping.size()); ++i){
 				if(wereEmpty && buttonsMapping[i] >= 0){
 					wereEmpty = false;
 				}
@@ -255,7 +255,7 @@ int main(int argc, char** argv) {
 					buttonsMapping[i] = -1;
 				}
 			}
-			for(int i = 0; i < axesMapping.size(); ++i){
+			for(int i = 0; i < int(axesMapping.size()); ++i){
 				if(wereEmpty && axesMapping[i] >= 0){
 					wereEmpty = false;
 				}
@@ -314,14 +314,14 @@ int main(int argc, char** argv) {
 					std::string outputPath;
 					const bool res = Interface::showPicker(Interface::Picker::Save, "", outputPath);
 					if(res && !outputPath.empty()){
-						const auto controller = Input::manager().controller();
+						const Controller * controller = Input::manager().controller();
 						Controller::saveConfiguration(outputPath, controller->guid(), controller->name(), axesMapping, buttonsMapping);
 					}
 				}
 				ImGui::Separator();
 				
 				// Infos on the controller.
-				RawController * controller = static_cast<RawController*>(Input::manager().controller().get());
+				RawController * controller = static_cast<RawController*>(Input::manager().controller());
 				const int axesCount = int(controller->allAxes.size());
 				const int buttonsCount = int(controller->allButtons.size());
 				ImGui::Text("%s, id: %d, axes: %d, buttons: %d", controller->name().c_str(), controller->id(), axesCount, buttonsCount);
@@ -388,7 +388,7 @@ int main(int argc, char** argv) {
 					}
 					
 					// Render each button if active.
-					for(int bid = 0; bid < buttonsMapping.size(); ++bid){
+					for(int bid = 0; bid < int(buttonsMapping.size()); ++bid){
 						const int bmid = buttonsMapping[bid];
 						if(bmid >= 0 && controller->allButtons[bmid].pressed){
 							drawButton(drawList, Controller::ControllerInput(bid), pos, highlightColor);

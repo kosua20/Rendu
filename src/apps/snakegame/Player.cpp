@@ -79,7 +79,7 @@ bool Player::physics(double fullTime, const double frameTime) {
 	
 	// Animate snake segments.
 	if(!_positions.empty()){
-		int id = 0;
+		size_t id = 0;
 		float targetDistance = (id+1) * _radius * 2.0f;
 		// Initialize with the segment between the head and the current segment.
 		glm::vec2 nextPoint = _path[_currentSample].pos;
@@ -88,7 +88,7 @@ bool Player::physics(double fullTime, const double frameTime) {
 		float newDist = glm::distance(nextPoint, previousPoint) - 0.2f;
 		float totalDistance = newDist;
 		// Then iterate over each sample segment of the path.
-		for(int sid = 0; sid < _numSamplesPath; ++sid){
+		for(size_t sid = 0; sid < _numSamplesPath; ++sid){
 			while(totalDistance >= targetDistance && (id < _positions.size())){
 				const float fraction1 = 1.0f-(totalDistance - targetDistance)/(newDist);
 				_positions[id] = glm::mix(previousPoint, nextPoint, fraction1);
@@ -130,7 +130,7 @@ bool Player::physics(double fullTime, const double frameTime) {
 	}
 	
 	// Spawn new elements
-	if(fullTime > _lastSpawn + _spawnPeriod && _items.size() < _maxItems){
+	if(fullTime > _lastSpawn + _spawnPeriod && int(_items.size()) < _maxItems){
 		_lastSpawn = fullTime;
 		
 		bool found = false;
@@ -199,10 +199,10 @@ void Player::updateModels(){
 	
 	modelHead = glm::scale(glm::rotate(glm::translate(glm::mat4(1.0f), _position), _angle, glm::vec3(0.0f, 0.0f, 1.0f)), glm::vec3(_radius));
 	
-	for(int i = 0; i < _positions.size();++i){
+	for(int i = 0; i < int(_positions.size());++i){
 		modelsBody[i] = glm::scale(glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(_positions[i], 0.0f)), _angles[i], glm::vec3(0.0f, 0.0f, 1.0f)), glm::vec3(_radius));
 	}
-	for(int i = 0; i < _items.size();++i){
+	for(int i = 0; i < int(_items.size());++i){
 		modelsItem[i] = glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(_items[i], 0.0f)), glm::vec3(_radius));
 	}
 }

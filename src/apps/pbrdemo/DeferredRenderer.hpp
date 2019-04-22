@@ -79,14 +79,14 @@ private:
 	
 	ControllableCamera _userCamera; ///< The interactive camera.
 
-	std::shared_ptr<Framebuffer> _gbuffer; ///< G-buffer.
-	std::shared_ptr<GaussianBlur> _blurBuffer; ///< Bloom blur processing.
-	std::shared_ptr<SSAO> _ssaoPass; ///< SSAO processing.
+	std::unique_ptr<Framebuffer> _gbuffer; ///< G-buffer.
+	std::unique_ptr<GaussianBlur> _blurBuffer; ///< Bloom blur processing.
+	std::unique_ptr<SSAO> _ssaoPass; ///< SSAO processing.
 	
-	std::shared_ptr<Framebuffer> _sceneFramebuffer; ///< Lighting framebuffer
-	std::shared_ptr<Framebuffer> _bloomFramebuffer; ///< Bloom framebuffer
-	std::shared_ptr<Framebuffer> _toneMappingFramebuffer; ///< Tonemapping framebuffer
-	std::shared_ptr<Framebuffer> _fxaaFramebuffer; ///< FXAA framebuffer
+	std::unique_ptr<Framebuffer> _sceneFramebuffer; ///< Lighting framebuffer
+	std::unique_ptr<Framebuffer> _bloomFramebuffer; ///< Bloom framebuffer
+	std::unique_ptr<Framebuffer> _toneMappingFramebuffer; ///< Tonemapping framebuffer
+	std::unique_ptr<Framebuffer> _fxaaFramebuffer; ///< FXAA framebuffer
 	
 	AmbientQuad _ambientScreen; ///< Ambient lighting contribution rendering.
 	const ProgramInfos * _bloomProgram; ///< Bloom program

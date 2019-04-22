@@ -218,7 +218,7 @@ Interface::Action Game::handleButton(const ButtonAction tag){
 	return Interface::Action::None;
 }
 
-void Game::physics(double fullTime, double frameTime){
+void Game::physics(double frameTime){
 	
 	if(_status == Status::INGAME && !_overrideTime){
 		_playTime = _playTime + frameTime;

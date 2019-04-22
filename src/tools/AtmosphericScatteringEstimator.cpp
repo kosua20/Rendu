@@ -130,7 +130,7 @@ int main(int argc, char** argv) {
 			float mieSecondDist = 0.0;
 			
 			// March along the secondary ray.
-			for(int j = 0; j < samplesCount; ++j){
+			for(unsigned int j = 0; j < samplesCount; ++j){
 				// Compute the current position along the ray, ...
 				const glm::vec3 currSecondPos = currPos + (j+0.5f) * secondStepSize * sunDir;
 				// ...and its distance to the ground (as we are in planet space).

@@ -46,7 +46,6 @@ int main() {
 	}
 	
 	double timer = glfwGetTime();
-	double fullTime = 0.0;
 	double remainingTime = 0.0;
 	const double dt = 1.0/120.0; // Small physics timestep.
 	
@@ -86,9 +85,8 @@ int main() {
 		while(remainingTime > 0.2*dt){
 			double deltaTime = fmin(remainingTime, dt);
 			// Update physics and camera.
-			game.physics(fullTime, deltaTime);
+			game.physics(deltaTime);
 			// Update timers.
-			fullTime += deltaTime;
 			remainingTime -= deltaTime;
 		}
 		

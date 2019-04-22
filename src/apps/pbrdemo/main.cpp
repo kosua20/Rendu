@@ -48,7 +48,7 @@ int main(int argc, char** argv) {
 	
 	
 	// Create the renderer.
-	std::shared_ptr<DeferredRenderer> renderer(new DeferredRenderer(config));
+	std::unique_ptr<DeferredRenderer> renderer(new DeferredRenderer(config));
 	
 	double timer = glfwGetTime();
 	double fullTime = 0.0;
@@ -86,7 +86,7 @@ int main(int argc, char** argv) {
 			ImGui::Text("%.1f ms, %.1f fps", ImGui::GetIO().DeltaTime*1000.0f, ImGui::GetIO().Framerate);
 			
 			if(ImGui::Combo("Scene", &selected_scene, sceneNames, int(scenes.size())+1)){
-				if(selected_scene == scenes.size()){
+				if(selected_scene == int(scenes.size())){
 					renderer->setScene(nullptr);
 				} else {
 					Log::Info() << Log::Resources << "Loading scene " << sceneNames[selected_scene] << "." << std::endl;

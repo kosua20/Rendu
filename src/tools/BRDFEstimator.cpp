@@ -1,11 +1,12 @@
 #include "Common.hpp"
 #include "helpers/GenerationUtilities.hpp"
 #include "resources/ImageUtilities.hpp"
+#include "resources/TextUtilities.hpp"
+#include "resources/ResourcesManager.hpp"
 #include "graphics/GLUtilities.hpp"
+#include "graphics/Framebuffer.hpp"
+#include "graphics/ScreenQuad.hpp"
 #include "input/Input.hpp"
-#include "renderers/utils/Renderer2D.hpp"
-#include "renderers/utils/RendererCube.hpp"
-#include "scenes/Scenes.hpp"
 #include "helpers/InterfaceUtilities.hpp"
 #include "input/ControllableCamera.hpp"
 
@@ -55,7 +56,7 @@ void loadCubemap(const std::string & inputPath, TextureInfos & cubemapInfos, flo
 			unsigned char * vals;
 			ImageUtilities::loadImage(pathSides[side], dwidth, dheight, (void**)(&(vals)), 3, false, true);
 			cubemapSides[side] = reinterpret_cast<float *>(malloc(3 * sizeof(float) * static_cast<size_t>(dwidth) *  static_cast<size_t>(dheight)));
-			for(int j = 0; j < dheight*dheight*3; ++j){
+			for(unsigned int j = 0; j < dheight*dheight*3; ++j){
 				cubemapSides[side][j] = float(vals[j])/255.0f;
 			}
 			free(vals);
@@ -98,8 +99,8 @@ std::vector<glm::vec3> computeSHCoeffs(float* sides[6], const int side){
 
 	float denom = 0.0f;
 	for(int i = 0; i < 6; ++i){
-		for(unsigned int y = 0; y < side; ++y){
-			for(unsigned int x = 0; x < side; ++x){
+		for(int y = 0; y < side; ++y){
+			for(int x = 0; x < side; ++x){
 				
 				const float v = -1.0f + 1.0f/float(side) + float(y) * 2.0f/float(side);
 				const float u = -1.0f + 1.0f/float(side) + float(x) * 2.0f/float(side);
@@ -281,7 +282,7 @@ void computeCubemapConvolution(const TextureInfos & cubemapInfos, int levelsCoun
  */
 void exportCubemapConvolution(const std::vector<TextureInfos> &cubeLevels, const std::string & outputPath){
 	
-	for(int level = 0; level < cubeLevels.size(); ++level){
+	for(int level = 0; level < int(cubeLevels.size()); ++level){
 		const std::string levelPath = outputPath + "_" + std::to_string(level);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, cubeLevels[level].id);
 		GLenum type, format;

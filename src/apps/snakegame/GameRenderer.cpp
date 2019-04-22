@@ -106,7 +106,7 @@ void GameRenderer::drawScene(const Player & player){
 		GLUtilities::drawMesh(*_head);
 	}
 	// Render body elements and items.
-	for(int i = 0; i < player.modelsBody.size();++i){
+	for(int i = 0; i < int(player.modelsBody.size());++i){
 		const glm::mat4 MVP = VP * player.modelsBody[i];
 		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(player.modelsBody[i])));
 		glUniformMatrix4fv(_coloredProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
@@ -114,7 +114,7 @@ void GameRenderer::drawScene(const Player & player){
 		glUniform1i(_coloredProgram->uniform("matID"), player.looksBody[i]);
 		GLUtilities::drawMesh(*_bodyElement);
 	}
-	for(int i = 0; i < player.modelsItem.size();++i){
+	for(int i = 0; i < int(player.modelsItem.size());++i){
 		const glm::mat4 MVP = VP * player.modelsItem[i];
 		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(player.modelsItem[i])));
 		glUniformMatrix4fv(_coloredProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
