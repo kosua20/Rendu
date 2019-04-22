@@ -81,7 +81,7 @@ public:
 	 \param name the mesh file name
 	 \return the mesh informations
 	 */
-	const MeshInfos getMesh(const std::string & name);
+	const MeshInfos * getMesh(const std::string & name);
 	
 	/** Get a 2D texture resource. Automatically handle custom mipmaps if present.
 	 \param name the texture base name
@@ -123,7 +123,7 @@ public:
 	 \param useGeometryShader should the program use a geometry shader
 	 \return the program informations
 	 */
-	const std::shared_ptr<ProgramInfos> getProgram(const std::string & name, const bool useGeometryShader = false);
+	ProgramInfos * getProgram(const std::string & name, const bool useGeometryShader = false);
 	
 	/** Get an OpenGL program resource.
 	 \param name the name to represent the program
@@ -132,14 +132,14 @@ public:
 	 \param geometryName the name of the optional geometry shader
 	 \return the program informations
 	 */
-	const std::shared_ptr<ProgramInfos> getProgram(const std::string & name, const std::string & vertexName, const std::string & fragmentName, const std::string & geometryName = "");
+	ProgramInfos * getProgram(const std::string & name, const std::string & vertexName, const std::string & fragmentName, const std::string & geometryName = "");
 	
 	/** Get an OpenGL program resource for 2D screen processing. It will use GLSL::Vert::Passthrough as a vertex shader.
 	 \param name the name of the fragment shader
 	 \return the program informations
 	 \see GLSL::Vert::Passthrough
 	 */
-	const std::shared_ptr<ProgramInfos> getProgram2D(const std::string & name);
+	ProgramInfos * getProgram2D(const std::string & name);
 	
 	/** Reload all shader programs.
 	 */
@@ -213,7 +213,7 @@ private:
 	std::map<std::string, TextureInfos> _textures; ///< Loaded textures, identified by name.
 	std::map<std::string, MeshInfos> _meshes; ///< Loaded meshes, identified by name.
 	std::map<std::string, FontInfos> _fonts; ///< Loaded font infos, identified by name.
-	std::map<std::string, std::shared_ptr<ProgramInfos>> _programs; ///< Loaded shader programs, identified by name.
+	std::map<std::string, ProgramInfos> _programs; ///< Loaded shader programs, identified by name.
 	
 };
 

@@ -244,9 +244,9 @@ const std::string Resources::getString(const std::string & filename){
 
 // Mesh method.
 
-const MeshInfos Resources::getMesh(const std::string & name){
+const MeshInfos * Resources::getMesh(const std::string & name){
 	if(_meshes.count(name) > 0){
-		return _meshes[name];
+		return &_meshes[name];
 	}
 
 	MeshInfos infos;
@@ -263,7 +263,7 @@ const MeshInfos Resources::getMesh(const std::string & name){
 		
 	} else {
 		Log::Error() << Log::Resources << "Unable to load mesh named " << name << "." << std::endl;
-		return infos;
+		return nullptr;
 	}
 	
 	// Setup GL buffers and attributes.
@@ -271,7 +271,7 @@ const MeshInfos Resources::getMesh(const std::string & name){
 	// Compute bounding box.
 	infos.bbox = MeshUtilities::computeBoundingBox(mesh);
 	_meshes[name] = infos;
-	return infos;
+	return &_meshes[name];
 }
 
 
@@ -407,30 +407,30 @@ const std::string Resources::getShader(const std::string & name, const ShaderTyp
 	return res;
 }
 
-const std::shared_ptr<ProgramInfos> Resources::getProgram(const std::string & name, const bool useGeometryShader){
+ProgramInfos * Resources::getProgram(const std::string & name, const bool useGeometryShader){
 	return getProgram(name, name, name, useGeometryShader ? name : "");
 }
 
-const std::shared_ptr<ProgramInfos> Resources::getProgram(const std::string & name, const std::string & vertexName, const std::string & fragmentName, const std::string & geometryName) {
+ProgramInfos * Resources::getProgram(const std::string & name, const std::string & vertexName, const std::string & fragmentName, const std::string & geometryName) {
 	if (_programs.count(name) > 0) {
-		return _programs[name];
+		return &_programs[name];
 	}
 	
 	_programs.emplace(std::piecewise_construct,
 					  std::forward_as_tuple(name),
-					  std::forward_as_tuple(new ProgramInfos(vertexName, fragmentName, geometryName)));
+					  std::forward_as_tuple(vertexName, fragmentName, geometryName));
 	
-	return _programs[name];
+	return &_programs[name];
 }
 
 
-const std::shared_ptr<ProgramInfos> Resources::getProgram2D(const std::string & name){
+ProgramInfos * Resources::getProgram2D(const std::string & name){
 	return getProgram(name, "passthrough", name);
 }
 
 void Resources::reload() {
 	for (auto & prog : _programs) {
-		prog.second->reload();
+		prog.second.reload();
 	}
 	Log::Info() << Log::Resources << "Shader programs reloaded." << std::endl;
 }
@@ -549,7 +549,7 @@ void Resources::clean(){
 		mesh.second.clean();
 	}
 	for(auto & prog : _programs){
-		glDeleteProgram(prog.second->id());
+		glDeleteProgram(prog.second.id());
 	}
 	_textures.clear();
 	_meshes.clear();
