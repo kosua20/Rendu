@@ -66,17 +66,17 @@ private:
 	std::unique_ptr<Framebuffer> _fxaaFramebuffer; ///< Framebuffer for postprocess.
 	std::unique_ptr<SSAO> _ssaoPass; ///< Screen space ambient occlusion pass.
 	
-	std::shared_ptr<ProgramInfos> _fxaaProgram; ///< Antialiasing program.
-	std::shared_ptr<ProgramInfos> _finalProgram; ///< Final upscaling program.
-	std::shared_ptr<ProgramInfos> _coloredProgram; ///< Base scene rendering program.
-	std::shared_ptr<ProgramInfos> _compositingProgram; ///< Lighting program.
+	const ProgramInfos * _fxaaProgram; ///< Antialiasing program.
+	const ProgramInfos * _finalProgram; ///< Final upscaling program.
+	const ProgramInfos * _coloredProgram; ///< Base scene rendering program.
+	const ProgramInfos * _compositingProgram; ///< Lighting program.
 	
-	MeshInfos _ground; ///< Terrain mesh.
-	MeshInfos _head; ///< Snake head mesh.
-	MeshInfos _bodyElement; ///< Body elements and items mesh.
+	const MeshInfos * _ground; ///< Terrain mesh.
+	const MeshInfos * _head; ///< Snake head mesh.
+	const MeshInfos * _bodyElement; ///< Body elements and items mesh.
 	
 	Camera _playerCamera; ///< The player camera (fixed).
-	TextureInfos _cubemap; ///< Environment map for reflections.
+	const TextureInfos * _cubemap; ///< Environment map for reflections.
 };
 
 

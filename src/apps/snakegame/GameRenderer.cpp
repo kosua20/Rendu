@@ -58,7 +58,7 @@ void GameRenderer::draw(const Player & player){
 	_lightingFramebuffer->setViewport();
 	glUseProgram(_compositingProgram->id());
 	glActiveTexture(GL_TEXTURE0 + 3);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, _cubemap.id);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, _cubemap->id);
 	ScreenQuad::draw({_sceneFramebuffer->textureId(0), _sceneFramebuffer->textureId(1), _ssaoPass->textureId()});
 	_lightingFramebuffer->unbind();
 	
@@ -94,8 +94,7 @@ void GameRenderer::drawScene(const Player & player){
 		glUniformMatrix4fv(_coloredProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
 		glUniformMatrix3fv(_coloredProgram->uniform("normalMat"), 1, GL_FALSE, &normalMatrix[0][0]);
 		glUniform1i(_coloredProgram->uniform("matID"), 1);
-		glBindVertexArray(_ground.vId);
-		glDrawElements(GL_TRIANGLES, _ground.count, GL_UNSIGNED_INT, (void*)0);
+		GLUtilities::drawMesh(*_ground);
 	}
 	// Render the head.
 	{
@@ -104,18 +103,16 @@ void GameRenderer::drawScene(const Player & player){
 		glUniformMatrix4fv(_coloredProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
 		glUniformMatrix3fv(_coloredProgram->uniform("normalMat"), 1, GL_FALSE, &normalMatrix[0][0]);
 		glUniform1i(_coloredProgram->uniform("matID"), 2);
-		glBindVertexArray(_head.vId);
-		glDrawElements(GL_TRIANGLES, _head.count, GL_UNSIGNED_INT, (void*)0);
+		GLUtilities::drawMesh(*_head);
 	}
 	// Render body elements and items.
-	glBindVertexArray(_bodyElement.vId);
 	for(int i = 0; i < player.modelsBody.size();++i){
 		const glm::mat4 MVP = VP * player.modelsBody[i];
 		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(player.modelsBody[i])));
 		glUniformMatrix4fv(_coloredProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
 		glUniformMatrix3fv(_coloredProgram->uniform("normalMat"), 1, GL_FALSE, &normalMatrix[0][0]);
 		glUniform1i(_coloredProgram->uniform("matID"), player.looksBody[i]);
-		glDrawElements(GL_TRIANGLES, _bodyElement.count, GL_UNSIGNED_INT, (void*)0);
+		GLUtilities::drawMesh(*_bodyElement);
 	}
 	for(int i = 0; i < player.modelsItem.size();++i){
 		const glm::mat4 MVP = VP * player.modelsItem[i];
@@ -123,7 +120,7 @@ void GameRenderer::drawScene(const Player & player){
 		glUniformMatrix4fv(_coloredProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
 		glUniformMatrix3fv(_coloredProgram->uniform("normalMat"), 1, GL_FALSE, &normalMatrix[0][0]);
 		glUniform1i(_coloredProgram->uniform("matID"), player.looksItem[i]);
-		glDrawElements(GL_TRIANGLES, _bodyElement.count, GL_UNSIGNED_INT, (void*)0);
+		GLUtilities::drawMesh(*_bodyElement);
 	}
 	// Reset.
 	glBindVertexArray(0);
