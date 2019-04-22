@@ -605,14 +605,14 @@ void GLUtilities::saveDefaultFramebuffer(const unsigned int width, const unsigne
 	glBindFramebuffer(GL_FRAMEBUFFER, (GLuint)currentBoundFB);
 }
 
-void GLUtilities::saveFramebuffer(const std::shared_ptr<Framebuffer> & framebuffer, const unsigned int width, const unsigned int height, const std::string & path, const bool flip, const bool ignoreAlpha){
+void GLUtilities::saveFramebuffer(const Framebuffer & framebuffer, const unsigned int width, const unsigned int height, const std::string & path, const bool flip, const bool ignoreAlpha){
 	
 	GLint currentBoundFB = 0;
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentBoundFB);
 	
-	framebuffer->bind();
+	framebuffer.bind();
 	GLenum type, format;
-	const unsigned int components = GLUtilities::getTypeAndFormat(framebuffer->typedFormat(), type, format);
+	const unsigned int components = GLUtilities::getTypeAndFormat(framebuffer.typedFormat(), type, format);
 	GLUtilities::savePixels(type, format, width, height, components, path, flip, ignoreAlpha);
 	
 	glBindFramebuffer(GL_FRAMEBUFFER, (GLuint)currentBoundFB);
@@ -707,5 +707,10 @@ unsigned int GLUtilities::getTypeAndFormat(const GLuint typedFormat, GLuint & ty
 	
 	Log::Error() << Log::OpenGL << "Unable to find type and format (typed format " << typedFormat << ")." << std::endl;
 	return 0;
+}
+
+void GLUtilities::drawMesh(const MeshInfos & mesh){
+	glBindVertexArray(mesh.vId);
+	glDrawElements(GL_TRIANGLES, mesh.count, GL_UNSIGNED_INT, (void*)0);
 }
 

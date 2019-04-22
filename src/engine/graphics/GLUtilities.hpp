@@ -162,7 +162,7 @@ public:
 	 \note The output image extension will be automatically added based on the framebuffer type and format.
 	 \warning Export of small size GL_FLOAT framebuffers can create artifacts.
 	 */
-	static void saveFramebuffer(const std::shared_ptr<Framebuffer> & framebuffer, const unsigned int width, const unsigned int height, const std::string & path, const bool flip = true, const bool ignoreAlpha = false);
+	static void saveFramebuffer(const Framebuffer & framebuffer, const unsigned int width, const unsigned int height, const std::string & path, const bool flip = true, const bool ignoreAlpha = false);
 	
 	/** Save the window framebuffer content to the disk.
 	 \param width the width of the region to save
@@ -187,6 +187,9 @@ public:
 	 \return the handle of the created texture.
 	 */
 	static GLuint createTexture(const GLenum destination, const Descriptor & descriptor, const int mipmapCount);
+	
+	static void drawMesh(const MeshInfos & mesh);
+	
 	
 private:
 	
