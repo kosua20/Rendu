@@ -21,6 +21,18 @@ public:
 	 */
 	static Resources& manager();
 	
+	/** Add another resources directory/archive.
+	 \param path the path to the additional directory/archive to parse
+	 */
+	void addResources(const std::string & path);
+	
+	/** Reload all shader programs.
+	 */
+	void reload();
+	
+	/** Clean all loaded resources, both CPU and GPU side. */
+	void clean();
+	
 private:
 	
 	/** Constructor. Parse the directory or archive structure at the given path.
@@ -67,17 +79,19 @@ public:
 	
 	/** Get a geometric mesh resource.
 	 \param name the mesh file name
+	 \param mode denote if data will be available in the CPU and/or GPU memory
 	 \return the mesh informations
 	 */
-	const MeshInfos * getMesh(const std::string & name);
+	const MeshInfos * getMesh(const std::string & name, Storage mode = GPU);
 	
 	/** Get a 2D texture resource. Automatically handle custom mipmaps if present.
 	 \param name the texture base name
 	 \param descriptor the texture layout to use
+	 \param mode denote if data will be available in the CPU and/or GPU memory
 	 \param refName the name to use for the texture in future calls
 	 \return the texture informations
 	 */
-	TextureInfos * getTexture(const std::string & name, const Descriptor & descriptor, const std::string & refName = "");
+	TextureInfos * getTexture(const std::string & name, const Descriptor & descriptor, Storage mode = GPU, const std::string & refName = "");
 	
 	/** Get an existing 2D texture resource.
 	 \param name the texture base name
@@ -88,10 +102,11 @@ public:
 	/** Get a cubemap texture resource. Automatically handle custom mipmaps if present.
 	 \param name the texture base name
 	 \param descriptor the texture layout to use
+	 \param mode denote if data will be available in the CPU and/or GPU memory
 	 \param refName the name to use for the texture in future calls
 	 \return the texture informations
 	 */
-	TextureInfos * getCubemap(const std::string & name, const Descriptor & descriptor, const std::string & refName = "");
+	TextureInfos * getCubemap(const std::string & name, const Descriptor & descriptor, Storage mode = GPU, const std::string & refName = "");
 	
 	/** Get an existing cubemap texture resource.
 	 \param name the texture base name
@@ -167,17 +182,6 @@ public:
 	 */
 	void getFiles(const std::string & extension, std::map<std::string, std::string> & files) const;
 	
-	/** Reload all shader programs.
-	 */
-	void reload();
-	
-	/** Add another resources directory/archive.
-	 \param path the path to the additional directory/archive to parse
-	 */
-	void addResources(const std::string & path);
-	
-	/** Clean all loaded resources, both CPU and GPU side. */
-	void clean();
 	
 private:
 	/** Destructor (disabled). */

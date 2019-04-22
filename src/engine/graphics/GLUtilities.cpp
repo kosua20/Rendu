@@ -335,53 +335,50 @@ GLuint GLUtilities::createTexture(const GLenum destination, const Descriptor & d
 	return textureId;
 }
 
-void GLUtilities::uploadTexture(const GLenum destination, const GLuint texId, const GLenum sourceType, const GLenum destTypedFormat, const unsigned int mipid, const unsigned int mipWidth, const unsigned int mipHeight, const unsigned int sourceChannels, void * data){
+void GLUtilities::uploadTexture(const GLenum destination, const GLuint texId, const GLenum destTypedFormat, const unsigned int mipid, const Image & image){
 	
 	// Sanity check the texture destination format.
 	GLenum destType, destFormat;
 	const unsigned int destChannels = getTypeAndFormat(destTypedFormat, destType, destFormat);
-	const size_t destSize = destChannels * mipHeight * mipWidth;
-	if(destChannels != sourceChannels){
+	if(destChannels != image.components){
 		Log::Error() << Log::OpenGL << "Not enough values in source data for texture upload." << std::endl;
 		return;
 	}
 	
+	const size_t destSize = destChannels * image.height * image.width;
 	//Perform conversion if needed.
-	unsigned char * finalData = reinterpret_cast<unsigned char*>(data);
-	if(sourceType == GL_FLOAT && destType == GL_UNSIGNED_BYTE) {
-		GLubyte *finalImage = reinterpret_cast<GLubyte *>(malloc(destSize * sizeof(GLubyte)));
+	std::vector<GLubyte> finalData;
+	if(destType == GL_UNSIGNED_BYTE) {
+		// If we want a uchar image, we convert and scale from [0,1] float to [0, 255] uchars.
+		finalData.resize(destSize);
 		// Handle the conversion by hand.
 		for(size_t pid = 0; pid < destSize; ++pid){
-			const float newValue = std::min(255.0f, std::max(0.0f, (reinterpret_cast<float*>(data))[pid] * 255.0f));
-			finalImage[pid] = GLubyte(newValue);
+			const float newValue = std::min(255.0f, std::max(0.0f, image.pixels[pid] * 255.0f));
+			finalData[pid] = GLubyte(newValue);
 		}
-		finalData = reinterpret_cast<unsigned char*>(finalImage);
-	} else if(sourceType == GL_UNSIGNED_BYTE && destType == GL_FLOAT){
-		GLfloat *finalImage = reinterpret_cast<GLfloat *>(malloc(destSize * sizeof(GLfloat)));
+	} else {
+		// Just do the transfer.
+		int sizeFloat = sizeof(float);
+		finalData.resize(destSize*sizeFloat);
 		// Handle the conversion by hand.
 		for(size_t pid = 0; pid < destSize; ++pid){
-			const float newValue = float((reinterpret_cast<unsigned char*>(data))[pid]) / 255.0f;
-			finalImage[pid] = GLfloat(newValue);
+			const unsigned char *newValue = reinterpret_cast<const unsigned char*>(&image.pixels[pid]);
+			for(int i = 0; i < sizeFloat; ++i){
+				finalData[4*pid+i] = GLubyte(newValue[i]);
+			}
 		}
-		finalData = reinterpret_cast<unsigned char*>(finalImage);
-	} else if(sourceType != destType){
-		Log::Error() << "Unable to convert file data to requested texture format." << std::endl;
-		return;
 	}
 	
 	// Upload.
 	const GLenum baseDestination = destination == GL_TEXTURE_2D ? destination : GL_TEXTURE_CUBE_MAP;
 	glBindTexture(baseDestination, texId);
-	glTexImage2D(destination, (GLint)mipid, destTypedFormat, (GLsizei)mipWidth, (GLsizei)mipHeight, 0, destFormat, destType, finalData);
+	glTexImage2D(destination, (GLint)mipid, destTypedFormat, (GLsizei)image.width, (GLsizei)image.height, 0, destFormat, destType, &finalData[0]);
 	glBindTexture(baseDestination, 0);
 	
-	// Free if needed.
-	if(sourceType != destType){
-		free(finalData);
-	}
+	finalData.clear();
 }
 
-TextureInfos GLUtilities::loadTexture(const std::vector<std::string>& paths, const Descriptor & descriptor){
+TextureInfos GLUtilities::loadTexture(const std::vector<std::string>& paths, const Descriptor & descriptor, Storage mode){
 	TextureInfos infos;
 	infos.descriptor = descriptor;
 	infos.cubemap = false;
@@ -399,37 +396,36 @@ TextureInfos GLUtilities::loadTexture(const std::vector<std::string>& paths, con
 		Log::Error() << "Invalid descriptor for creating texture from file." << std::endl;
 		return infos;
 	}
-	// Image infos.
-	const GLenum sourceType = ImageUtilities::isFloat(paths[0]) ? GL_FLOAT : GL_UNSIGNED_BYTE;
 	
-	// Create 2D texture, if only one path, automatically generate mipmaps.
-	infos.id = createTexture(GL_TEXTURE_2D, descriptor, infos.mipmap == 1 ? 0 : infos.mipmap);
+	if(mode & Storage::GPU){
+		// Create 2D texture, if only one path, automatically generate mipmaps.
+		infos.id = createTexture(GL_TEXTURE_2D, descriptor, infos.mipmap == 1 ? 0 : infos.mipmap);
+	}
 	
 	// Load and upload each mip level.
 	for(unsigned int mipid = 0; mipid < paths.size(); ++mipid){
-		void* image;
-		unsigned int width, height;
-		int ret = ImageUtilities::loadImage(paths[mipid], width, height, &image, channels, true);
+		Image image;
+		int ret = ImageUtilities::loadImage(paths[mipid], channels, true, false, image);
 		if (ret != 0) {
 			Log::Error() << Log::Resources << "Unable to load the texture at path " << paths[mipid] << "." << std::endl;
-			if(image != NULL){
-				free(image);
-			}
 			return infos;
 		}
 		// Obtain the reference size of the image.
 		if(mipid == 0){
-			infos.width = width;
-			infos.height = height;
+			infos.width = image.width;
+			infos.height = image.height;
 		}
 		// Send data to the gpu.
-		uploadTexture(GL_TEXTURE_2D, infos.id, sourceType, descriptor.typedFormat, mipid, width, height, channels, image);
-		
-		free(image);
+		if(mode & Storage::GPU){
+			uploadTexture(GL_TEXTURE_2D, infos.id, descriptor.typedFormat, mipid, image);
+		}
+		if(mipid == 0 && (mode & Storage::CPU)){
+			infos.images.push_back(std::move(image));
+		}
 	}
 	
 	// If only level 0 was given, generate mipmaps pyramid automatically.
-	if(infos.mipmap == 1){
+	if((mode & Storage::GPU) && infos.mipmap == 1){
 		glBindTexture(GL_TEXTURE_2D, infos.id);
 		glGenerateMipmap(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, 0);
@@ -437,7 +433,7 @@ TextureInfos GLUtilities::loadTexture(const std::vector<std::string>& paths, con
 	return infos;
 }
 
-TextureInfos GLUtilities::loadTextureCubemap(const std::vector<std::vector<std::string>> & allPaths, const Descriptor & descriptor){
+TextureInfos GLUtilities::loadTextureCubemap(const std::vector<std::vector<std::string>> & allPaths, const Descriptor & descriptor, Storage mode){
 	TextureInfos infos;
 	infos.descriptor = descriptor;
 	infos.cubemap = true;
@@ -457,38 +453,39 @@ TextureInfos GLUtilities::loadTextureCubemap(const std::vector<std::vector<std::
 		return infos;
 	}
 	// Image infos.
-	const GLenum sourceType = ImageUtilities::isFloat(allPaths[0][0]) ? GL_FLOAT : GL_UNSIGNED_BYTE;
 	
-	// Create cubemap texture, automatically generate mipmaps if one level only.
-	infos.id = createTexture(GL_TEXTURE_CUBE_MAP, descriptor, infos.mipmap == 1 ? 0 : infos.mipmap);
+	if(mode & Storage::GPU){
+		// Create cubemap texture, automatically generate mipmaps if one level only.
+		infos.id = createTexture(GL_TEXTURE_CUBE_MAP, descriptor, infos.mipmap == 1 ? 0 : infos.mipmap);
+	}
 	
 	// Load and upload each mip level.
 	for(unsigned int mipid = 0; mipid < allPaths.size(); ++mipid){
 		const std::vector<std::string> paths = allPaths[mipid];
 		for(size_t side = 0; side < 6; ++side){
 			// No need to flip cubemaps.
-			void* image;
-			unsigned int width, height;
-			int ret = ImageUtilities::loadImage(paths[side], width, height, &image, channels, false);
+			Image image;
+			int ret = ImageUtilities::loadImage(paths[side], channels, false, false, image);
 			if (ret != 0) {
 				Log::Error() << Log::Resources << "Unable to load the texture at path " << paths[side] << "." << std::endl;
-				if(image != NULL){
-					free(image);
-				}
 				return infos;
 			}
 			// Obtain the reference size of the image.
 			if(mipid == 0 && side == 0){
-				infos.width = width;
-				infos.height = height;
+				infos.width = image.width;
+				infos.height = image.height;
 			}
-			uploadTexture(GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + side), infos.id, sourceType, descriptor.typedFormat, mipid, width, height, channels, image);
-			free(image);
+			if(mode & Storage::GPU){
+				uploadTexture(GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + side), infos.id, descriptor.typedFormat, mipid, image);
+			}
+			if(mipid == 0 && (mode & Storage::CPU)){
+				infos.images.push_back(std::move(image));
+			}
 		}
 	}
 	
 	// If only level 0 was given, generate mipmaps pyramid automatically.
-	if(allPaths.size() == 1){
+	if((mode & Storage::GPU) && infos.mipmap == 1){
 		glBindTexture(GL_TEXTURE_CUBE_MAP, infos.id);
 		glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
@@ -629,19 +626,25 @@ void GLUtilities::savePixels(const GLenum type, const GLenum format, const unsig
 	
 	Log::Info() << Log::OpenGL << "Saving framebuffer to file " << path << (hdr ? ".exr" : ".png") << "... " << std::flush;
 	int ret = 0;
+	Image image(width, height, components);
+	
+	const size_t fullSize = image.width*image.height*image.components;
 	if(hdr){
 		// Get back values.
-		GLfloat * data = new GLfloat[width * height * components];
-		glReadPixels(0, 0, (GLsizei)width, (GLsizei)height, format, type, &data[0]);
+		glReadPixels(0, 0, (GLsizei)image.width, (GLsizei)image.height, format, type, &image.pixels[0]);
 		// Save data.
-		ret = ImageUtilities::saveHDRImage(path + ".exr", width, height, components, (float*)data, flip, ignoreAlpha);
-		delete[] data;
+		ret = ImageUtilities::saveHDRImage(path + ".exr", image, flip, ignoreAlpha);
+		
 	} else {
 		// Get back values.
-		GLubyte * data = new GLubyte[width * height * components];
-		glReadPixels(0, 0, (GLsizei)width, (GLsizei)height, format, type, &data[0]);
+		GLubyte * data = new GLubyte[fullSize];
+		glReadPixels(0, 0, (GLsizei)image.width, (GLsizei)image.height, format, type, &data[0]);
+		// Convert to image float format.
+		for(size_t pid = 0; pid < fullSize; ++pid){
+			image.pixels[pid] = float(data[pid])/255.0f;
+		}
 		// Save data.
-		ret = ImageUtilities::saveLDRImage(path + ".png", width, height, components, (unsigned char*)data, flip, ignoreAlpha);
+		ret = ImageUtilities::saveLDRImage(path + ".png", image, flip, ignoreAlpha);
 		delete[] data;
 	}
 	

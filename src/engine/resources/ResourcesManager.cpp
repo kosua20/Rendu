@@ -244,7 +244,7 @@ const std::string Resources::getString(const std::string & filename){
 
 // Mesh method.
 
-const MeshInfos * Resources::getMesh(const std::string & name){
+const MeshInfos * Resources::getMesh(const std::string & name, Storage mode){
 	if(_meshes.count(name) > 0){
 		return &_meshes[name];
 	}
@@ -266,10 +266,18 @@ const MeshInfos * Resources::getMesh(const std::string & name){
 		return nullptr;
 	}
 	
-	// Setup GL buffers and attributes.
-	infos = GLUtilities::setupBuffers(mesh);
+	if(mode & Storage::GPU){
+		// Setup GL buffers and attributes.
+		infos = GLUtilities::setupBuffers(mesh);
+	}
 	// Compute bounding box.
 	infos.bbox = MeshUtilities::computeBoundingBox(mesh);
+	
+	// Move at the very end.
+	if(mode & Storage::CPU){
+		infos.geometry = std::move(mesh);
+	}
+	
 	_meshes[name] = infos;
 	return &_meshes[name];
 }
@@ -285,7 +293,7 @@ TextureInfos * Resources::getTexture(const std::string & name){
 	return nullptr;
 }
 
-TextureInfos * Resources::getTexture(const std::string & name, const Descriptor & descriptor, const std::string & refName){
+TextureInfos * Resources::getTexture(const std::string & name, const Descriptor & descriptor, Storage mode, const std::string & refName){
 	const std::string & keyName = refName.empty() ? name : refName;
 	
 	// If texture already loaded, return it.
@@ -305,7 +313,7 @@ TextureInfos * Resources::getTexture(const std::string & name, const Descriptor 
 	
 	if(!path.empty()){
 		// Else, load it and store the infos.
-		infos = GLUtilities::loadTexture({path}, descriptor);
+		infos = GLUtilities::loadTexture({path}, descriptor, mode);
 		_textures[keyName] = infos;
 		return &_textures[keyName];
 	}
@@ -325,7 +333,7 @@ TextureInfos * Resources::getTexture(const std::string & name, const Descriptor 
 	if(!paths.empty()){
 		// We found the texture files.
 		// Load them and store the infos.
-		infos = GLUtilities::loadTexture(paths, descriptor);
+		infos = GLUtilities::loadTexture(paths, descriptor, mode);
 		_textures[keyName] = infos;
 		return &_textures[keyName];
 	}
@@ -344,7 +352,7 @@ TextureInfos * Resources::getCubemap(const std::string & name){
 	return nullptr;
 }
 
-TextureInfos * Resources::getCubemap(const std::string & name, const Descriptor & descriptor, const std::string & refName){
+TextureInfos * Resources::getCubemap(const std::string & name, const Descriptor & descriptor, Storage mode, const std::string & refName){
 	const std::string & keyName = refName.empty() ? name : refName;
 	// If texture already loaded, return it.
 	if(_textures.count(keyName) > 0){
@@ -363,7 +371,7 @@ TextureInfos * Resources::getCubemap(const std::string & name, const Descriptor 
 	if(!paths.empty()){
 		// We found the texture files.
 		// Load them and store the infos.
-		infos = GLUtilities::loadTextureCubemap({paths}, descriptor);
+		infos = GLUtilities::loadTextureCubemap({paths}, descriptor, mode);
 		_textures[keyName] = infos;
 		return &_textures[keyName];
 	}
@@ -383,7 +391,7 @@ TextureInfos * Resources::getCubemap(const std::string & name, const Descriptor 
 	if(!allPaths.empty()){
 		// We found the texture files.
 		// Load them and store the infos.
-		infos = GLUtilities::loadTextureCubemap(allPaths, descriptor);
+		infos = GLUtilities::loadTextureCubemap(allPaths, descriptor, mode);
 		_textures[keyName] = infos;
 		return &_textures[keyName];
 	}

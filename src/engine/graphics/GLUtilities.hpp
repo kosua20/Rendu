@@ -2,6 +2,7 @@
 #define GLUtilities_h
 
 #include "resources/MeshUtilities.hpp"
+#include "resources/ImageUtilities.hpp"
 #include "Common.hpp"
 
 /**
@@ -62,6 +63,15 @@ struct Descriptor {
 };
 
 /**
+ \brief Denote if data is stored on the GPU or CPU.
+ */
+enum Storage : int {
+	GPU = 1, ///< On the GPU
+	CPU = 2, ///< On the CPU
+	BOTH = (GPU | CPU)  ///< On both the CPU and GPU
+};
+
+/**
  \brief Store texture informations.
  \ingroup Graphics
  */
@@ -72,10 +82,10 @@ struct TextureInfos {
 	unsigned int height; ///< The texture height.
 	unsigned int mipmap; ///< The number of mipmaps.
 	bool cubemap; ///< Denote if the texture is a cubemap.
-	
+	std::vector<Image> images; ///< The image data (optional)
 	
 	/** Default constructor. */
-	TextureInfos() : descriptor(), id(0), width(0), height(0), mipmap(0), cubemap(false) {}
+	TextureInfos() : descriptor(), id(0), width(0), height(0), mipmap(0), cubemap(false), images() {}
 
 };
 
@@ -89,6 +99,7 @@ struct MeshInfos {
 	GLsizei count; ///< The number of vertices.
 	BoundingBox bbox; ///< The mesh bounding box in model space.
 	GLuint vbos[5]; ///< The vertex buffer objects openGL IDs.
+	Mesh geometry; ///< The geometry data (optional)
 	
 	/** Default constructor. */
 	MeshInfos();
@@ -131,19 +142,21 @@ public:
 	// Texture loading.
 	/** Send a 2D texture to the GPU.
 	 \param path a list of paths, one for each mipmap level of the texture
-	 \param descriptor
+	 \param descriptor the texture format descriptor
+	 \param mode denote if data will be available in the CPU and/or GPU memory
 	 \return the texture informations, including the OpenGL ID
 	 \note If only one path is present, the mipmaps will be generated automatically.
 	 */
-	static TextureInfos loadTexture(const std::vector<std::string>& path, const Descriptor & descriptor);
+	static TextureInfos loadTexture(const std::vector<std::string>& path, const Descriptor & descriptor, Storage mode);
 	 
 	/** Send a cubemap texture to the GPU.
 	 \param paths a list of lists of paths, six (one per face) for each mipmap level of the texture
-	 \param descriptor
+	 \param descriptor the texture format descriptor
+	 \param mode denote if data will be available in the CPU and/or GPU memory
 	 \return the texture informations, including the OpenGL ID
 	 \note If only one list of paths is present, the mipmaps will be generated automatically.
 	 */
-	static TextureInfos loadTextureCubemap(const std::vector<std::vector<std::string>> & paths, const Descriptor & descriptor);
+	static TextureInfos loadTextureCubemap(const std::vector<std::vector<std::string>> & paths, const Descriptor & descriptor, Storage mode);
 	
 	/** Mesh loading: send a mesh data to the GPU.
 	 \param mesh the mesh to upload
@@ -209,15 +222,11 @@ private:
 	/** Upload data to a GPU texture.
 	 \param destination the kind of texture to target: 2D, cubemap...
 	 \param texId the handle of the texture
-	 \param sourceType the OpenGL type of the input data
 	 \param destTypedFormat the detailed format of the texture
 	 \param mipid the mipmap level to populate
-	 \param mipWidth the width of the targeted mipmap level
-	 \param mipHeight the height of the targeted mipmap level
-	 \param sourceChannels the number of input channels
-	 \param data the raw data to upload to the GPU
+	 \param image the image data to upload to the GPU
 	 */
-	static void uploadTexture(const GLenum destination, const GLuint texId, const GLenum sourceType, const GLenum destTypedFormat, const unsigned int mipid, const unsigned int mipWidth, const unsigned int mipHeight, const unsigned int sourceChannels, void * data);
+	static void uploadTexture(const GLenum destination, const GLuint texId, const GLenum destTypedFormat, const unsigned int mipid, const Image & image);
 };
 
 
