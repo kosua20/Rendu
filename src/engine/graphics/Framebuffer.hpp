@@ -74,7 +74,7 @@ public:
 	 \param i the color attachment index (or 0 by default)
 	 \return the texture ID
 	 */
-	const GLuint textureId(unsigned int i = 0) const { return _idColors[i]; }
+	GLuint textureId(unsigned int i = 0) const { return _idColors[i]; }
 	
 	/**
 	 Query the ID of the 2D textures backing all color attachments.
@@ -86,32 +86,32 @@ public:
 	 Query the ID of the 2D texture or renderbuffer backing the depth attachment.
 	 \return the depth texture/renderbuffer ID
 	 */
-	const GLuint depthId() const { return _depthUse == NONE ? 0 : _idDepth; }
+	GLuint depthId() const { return _depthUse == NONE ? 0 : _idDepth; }
 	
 	/**
 	 Query the framebuffer width.
 	 \return the width
 	 */
-	const unsigned int width() const { return _width; }
+	unsigned int width() const { return _width; }
 	
 	/**
 	 Query the framebuffer height.
 	 \return the height
 	 */
-	const unsigned int height() const { return _height; }
+	unsigned int height() const { return _height; }
 	
 	/**
 	 Query the framebuffer ID.
 	 \return the ID
 	 */
-	const GLuint id() const { return _id; }
+	GLuint id() const { return _id; }
 	
 	/**
 	 Query a color attachment OpenGL type and format.
 	 \param i the color attachment index (or 0 by default)
 	 \return the typed format
 	 */
-	const GLuint typedFormat(unsigned int i = 0) const { return _colorDescriptors[i].typedFormat; }
+	GLuint typedFormat(unsigned int i = 0) const { return _colorDescriptors[i].typedFormat; }
 	
 private:
 	

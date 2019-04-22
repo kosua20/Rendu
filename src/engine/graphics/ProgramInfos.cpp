@@ -67,7 +67,7 @@ ProgramInfos::ProgramInfos(const std::string & vertexName, const std::string & f
 }
 
 
-const GLint ProgramInfos::uniform(const std::string & name) const {
+GLint ProgramInfos::uniform(const std::string & name) const {
 	if(_uniforms.count(name) > 0) {
 		return _uniforms.at(name);
 	}

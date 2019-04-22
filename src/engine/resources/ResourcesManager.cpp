@@ -67,7 +67,7 @@ void Resources::addResources(const std::string & path){
 
 void Resources::parseArchive(const std::string & archivePath){
 	
-	mz_zip_archive zip_archive = {0};
+	mz_zip_archive zip_archive = {0, 0, 0, MZ_ZIP_MODE_INVALID, MZ_ZIP_TYPE_INVALID, MZ_ZIP_NO_ERROR, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	int status = mz_zip_reader_init_file(&zip_archive, archivePath.c_str(), 0);
 	if (!status){
 		Log::Error() << Log::Resources << "Unable to load zip file \"" << archivePath << "\" (" << mz_zip_get_error_string(mz_zip_get_last_error(&zip_archive)) << ")." << std::endl;

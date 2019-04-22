@@ -1,6 +1,7 @@
 #include "GLUtilities.hpp"
-#include "resources/ImageUtilities.hpp"
 #include "Framebuffer.hpp"
+#include "resources/ImageUtilities.hpp"
+#include "resources/TextUtilities.hpp"
 
 std::string getGLErrorString(GLenum error) {
 	std::string msg;
@@ -176,7 +177,7 @@ GLuint GLUtilities::loadShader(const std::string & prog, GLuint type, std::map<s
 		// Layout on basic uniforms is not really used < 4.2, so we can be quite aggressive in our extraction.
 		const std::string::size_type firstSlotPos = line.find_first_of("0123456789", bindingPos);
 		const std::string::size_type lastSlotPos = line.find_first_not_of("0123456789", firstSlotPos)-1;
-		const unsigned int slot = std::stoi(line.substr(firstSlotPos, lastSlotPos - firstSlotPos + 1));
+		const int slot = std::stoi(line.substr(firstSlotPos, lastSlotPos - firstSlotPos + 1));
 			
 		const std::string::size_type endPosName  = line.find_first_of(";", lastSlotPos)-1;
 		const std::string::size_type startPosName  = line.find_last_of(" ", endPosName)+1;
@@ -222,7 +223,7 @@ GLuint GLUtilities::loadShader(const std::string & prog, GLuint type, std::map<s
 		// Indent and clean.
 		std::string infoLogString(infoLog.data(), infoLogLength);
 		
-		replace(infoLogString, "\n", "\n\t");
+		TextUtilities::replace(infoLogString, "\n", "\n\t");
 		infoLogString.insert(0, "\t");
 		finalLog = infoLogString;
 	}
@@ -283,7 +284,7 @@ GLuint GLUtilities::createProgram(const std::string & vertexContent, const std::
 		glGetProgramInfoLog(id, infoLogLength, NULL, &infoLog[0]);
 		// Indent and clean.
 		std::string infoLogString(infoLog.data(), infoLogLength);
-		replace(infoLogString, "\n", "\n\t");
+		TextUtilities::replace(infoLogString, "\n", "\n\t");
 		infoLogString.insert(0, "\t");
 		// Output.
 		Log::Error() << Log::OpenGL

@@ -27,7 +27,7 @@ public:
 	 \return the uniform location in the program
 	 \note If the uniform is not present, will return -1, conviniently ignored by glUniform(...) calls.
 	 */
-	const GLint uniform(const std::string & name) const;
+	GLint uniform(const std::string & name) const;
 
 	/** Cache the values passed for the uniform array.
 	 \param name the uniform array name
@@ -56,7 +56,7 @@ public:
 	/** Query the program ID.
 	 \return the OpenGL ID
 	 */
-	const GLuint id() const { return _id; }
+	GLuint id() const { return _id; }
 	
 private:
 	

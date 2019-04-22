@@ -51,25 +51,25 @@ public:
 	 Query the ID to the cubemap texture backing the framebuffer.
 	 \return the texture ID
 	 */
-	const GLuint textureId() const { return _idColor; }
+	GLuint textureId() const { return _idColor; }
 	
 	/**
 	 Query the framebuffer side size.
 	 \return the width/height of each face
 	 */
-	const unsigned int side() const { return _side; }
+	unsigned int side() const { return _side; }
 	
 	/**
 	 Query the framebuffer ID.
 	 \return the ID
 	 */
-	const GLuint id() const { return _id; }
+	GLuint id() const { return _id; }
 	
 	/**
 	 Query the framebuffer OpenGL type and format.
 	 \return the typed format
 	 */
-	const GLuint typedFormat() const { return _descriptor.typedFormat; }
+	GLuint typedFormat() const { return _descriptor.typedFormat; }
 	
 private:
 	

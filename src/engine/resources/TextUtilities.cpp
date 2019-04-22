@@ -26,7 +26,7 @@ void TextUtilities::loadFont(std::istream & in, FontInfos & font){
 	font.lastCodepoint = int(lines[2][0]);
 	// Compute expected number of glyphs.
 	const int expectedCount = font.lastCodepoint - font.firstCodepoint + 1;
-	if(lines.size() < 4 + expectedCount){
+	if(int(lines.size()) < 4 + expectedCount){
 		Log::Error() << Log::Resources << "Unable to parse glyphs." << std::endl;
 		return;
 	}
@@ -117,4 +117,16 @@ std::string TextUtilities::removeExtension(std::string & str){
 	const std::string ext(str.substr(pos));
 	str.erase(str.begin() + pos, str.end());
 	return ext;
+}
+
+
+
+void TextUtilities::replace(std::string & source, const std::string& fromString, const std::string & toString){
+	std::string::size_type nextPos = 0;
+	const size_t fromSize = fromString.size();
+	const size_t toSize = toString.size();
+	while((nextPos = source.find(fromString, nextPos)) != std::string::npos){
+		source.replace(nextPos, fromSize, toString);
+		nextPos += toSize;
+	}
 }

@@ -66,6 +66,13 @@ public:
 	 \return the extension string
 	 */
 	static std::string removeExtension(std::string & str);
+	
+	/** Replace all occurences of a substring in a string by another string.
+	 \param source the string in which substitutions should happen
+	 \param fromString substring to replace
+	 \param toString new substring to insert
+	 */
+	static void replace(std::string & source, const std::string& fromString, const std::string & toString);
 };
 
 #endif 
