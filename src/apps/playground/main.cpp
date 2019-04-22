@@ -62,8 +62,8 @@ int main(int argc, char** argv) {
 	double remainingTime = 0.0;
 	const double dt = 1.0/120.0; // Small physics timestep.
 	
-	std::shared_ptr<ProgramInfos> program = Resources::manager().getProgram("object_basic");
-	MeshInfos mesh = Resources::manager().getMesh("light_sphere");
+	const ProgramInfos * program = Resources::manager().getProgram("object_basic");
+	const MeshInfos * mesh = Resources::manager().getMesh("light_sphere");
 	ControllableCamera camera;
 	camera.projection(config.screenResolution[0]/config.screenResolution[1], 1.34f, 0.1f, 100.0f);
 	
@@ -113,9 +113,7 @@ int main(int argc, char** argv) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glUseProgram(program->id());
 		glUniformMatrix4fv(program->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
-		glBindVertexArray(mesh.vId);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.eId);
-		glDrawElements(GL_TRIANGLES, mesh.count, GL_UNSIGNED_INT, (void*)0);
+		GLUtilities::drawMesh(*mesh);
 		glBindVertexArray(0);
 		glUseProgram(0);
 		ImGui::Text("ImGui is functional!");

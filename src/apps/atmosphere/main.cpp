@@ -57,13 +57,13 @@ int main(int argc, char** argv) {
 	
 	// Framebuffer to store the rendered atmosphere result before tonemapping and upscaling to the window size.
 	std::shared_ptr<Framebuffer> atmosphereFramebuffer(new Framebuffer(renderResolution[0], renderResolution[1], GL_RGB32F, true));
-	const GLuint precomputedScattering = Resources::manager().getTexture("scattering-precomputed", {GL_RGB32F, GL_LINEAR, GL_CLAMP_TO_EDGE}).id;
+	const GLuint precomputedScattering = Resources::manager().getTexture("scattering-precomputed", {GL_RGB32F, GL_LINEAR, GL_CLAMP_TO_EDGE})->id;
 	
 	// Atmosphere screen quad.
-	std::shared_ptr<ProgramInfos> atmosphereProgram = Resources::manager().getProgram2D("atmosphere");
+	const ProgramInfos * atmosphereProgram = Resources::manager().getProgram2D("atmosphere");
 	
 	// Final tonemapping screen quad.
-	std::shared_ptr<ProgramInfos> tonemapProgram = Resources::manager().getProgram2D("tonemap");
+	const ProgramInfos * tonemapProgram = Resources::manager().getProgram2D("tonemap");
 	
 	// Sun direction.
 	glm::vec3 lightDirection(0.437f,0.082f,-0.896f);

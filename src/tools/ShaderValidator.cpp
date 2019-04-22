@@ -129,7 +129,7 @@ int main(int argc, char** argv) {
 		std::map<std::string, int> bindings;
 		std::string compilationLog;
 		// Load and compile the shader.
-		const std::string shader = Resources::manager().getShader(vert.first, Resources::Vertex);
+		const std::string shader = Resources::manager().getString(vert.first + ".vert");
 		GLUtilities::loadShader(shader, GL_VERTEX_SHADER, bindings, compilationLog);
 		// Process the log.
 		encounteredIssues = encounteredIssues || processLog(compilationLog, vert.second);
@@ -142,7 +142,7 @@ int main(int argc, char** argv) {
 		std::map<std::string, int> bindings;
 		std::string compilationLog;
 		// Load and compile the shader.
-		const std::string shader = Resources::manager().getShader(geom.first, Resources::Geometry);
+		const std::string shader = Resources::manager().getString(geom.first + ".geom");
 		GLUtilities::loadShader(shader, GL_GEOMETRY_SHADER, bindings, compilationLog);
 		// Process the log.
 		encounteredIssues = encounteredIssues || processLog(compilationLog, geom.second);
@@ -155,7 +155,7 @@ int main(int argc, char** argv) {
 		std::map<std::string, int> bindings;
 		std::string compilationLog;
 		// Load and compile the shader.
-		const std::string shader = Resources::manager().getShader(frag.first, Resources::Fragment);
+		const std::string shader = Resources::manager().getString(frag.first + ".frag");
 		GLUtilities::loadShader(shader, GL_FRAGMENT_SHADER, bindings, compilationLog);
 		// Process the log.
 		encounteredIssues = encounteredIssues || processLog(compilationLog, frag.second);

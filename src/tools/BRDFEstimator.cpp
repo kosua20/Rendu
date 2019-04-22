@@ -257,8 +257,7 @@ void computeCubemapConvolution(const TextureInfos & cubemapInfos, int levelsCoun
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapInfos.id);
 			// Draw.
-			glBindVertexArray(mesh.vId);
-			glDrawElements(GL_TRIANGLES, mesh.count, GL_UNSIGNED_INT, (void*)0);
+			GLUtilities::drawMesh(*mesh);
 			resultFramebuffer->unbind();
 			glDisable(GL_DEPTH_TEST);
 			// Force synchronization.
@@ -318,7 +317,7 @@ void computeAndExportLookupTable(const int outputSide, const std::string & outpu
 	ScreenQuad::draw();
 	bakingFramebuffer->unbind();
 	glEnable(GL_DEPTH_TEST);
-	GLUtilities::saveFramebuffer(bakingFramebuffer, (unsigned int)outputSide, (unsigned int)outputSide, outputPath, true);
+	GLUtilities::saveFramebuffer(*bakingFramebuffer, (unsigned int)outputSide, (unsigned int)outputSide, outputPath, true);
 }
 
 /**
@@ -347,7 +346,7 @@ int main(int argc, char** argv) {
 	const auto program = Resources::manager().getProgram("skybox_basic");
 	const auto programSH = Resources::manager().getProgram("skybox_shcoeffs", "skybox_basic", "skybox_shcoeffs");
 	const auto mesh = Resources::manager().getMesh("skybox");
-	TextureInfos cubemapInfosDefault = Resources::manager().getCubemap("debug-cube", {GL_RGB8, GL_LINEAR, GL_CLAMP_TO_EDGE});
+	const TextureInfos * cubemapInfosDefault = Resources::manager().getCubemap("debug-cube", {GL_RGB8, GL_LINEAR, GL_CLAMP_TO_EDGE});
 	
 	TextureInfos cubemapInfos;
 	float* cubemapSides[6];
@@ -510,8 +509,7 @@ int main(int argc, char** argv) {
 				glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapInfos.id);
 			}
 			glUniformMatrix4fv(programToUse->uniform("mvp"), 1, GL_FALSE,  &mvp[0][0]);
-			glBindVertexArray(mesh.vId);
-			glDrawElements(GL_TRIANGLES, mesh.count, GL_UNSIGNED_INT, (void*)0);
+			GLUtilities::drawMesh(*mesh);
 			glUseProgram(0);
 			glDisable(GL_DEPTH_TEST);
 		}
@@ -525,10 +523,9 @@ int main(int argc, char** argv) {
 		glUseProgram(program->id());
 		glDisable(GL_CULL_FACE);
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapInfosDefault.id);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapInfosDefault->id);
 		glUniformMatrix4fv(program->uniform("mvp"), 1, GL_FALSE,  &mvp[0][0]);
-		glBindVertexArray(mesh.vId);
-		glDrawElements(GL_TRIANGLES, mesh.count, GL_UNSIGNED_INT, (void*)0);
+		GLUtilities::drawMesh(*mesh);
 		glUseProgram(0);
 		glDisable(GL_DEPTH_TEST);
 		glViewport(0,0, screenSize[0], screenSize[1]);

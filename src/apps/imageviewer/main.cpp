@@ -41,7 +41,7 @@ int main(int argc, char** argv) {
 	glEnable(GL_CULL_FACE);
 	
 	// Create the rendering program.
-	std::shared_ptr<ProgramInfos> program = Resources::manager().getProgram("image_display");
+	const ProgramInfos * program = Resources::manager().getProgram("image_display");
 	
 	// Infos on the current texture.
 	TextureInfos imageInfos;
@@ -270,7 +270,7 @@ int main(int argc, char** argv) {
 					framebuffer->unbind();
 					
 					// Then save it to the given path.
-					GLUtilities::saveFramebuffer(framebuffer, outputWidth, outputHeight, destinationPath.substr(0, destinationPath.size()-4), true, false);
+					GLUtilities::saveFramebuffer(*framebuffer, outputWidth, outputHeight, destinationPath.substr(0, destinationPath.size()-4), true, false);
 				}
 			}
 			
