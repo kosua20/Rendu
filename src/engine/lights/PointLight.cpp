@@ -26,7 +26,7 @@ void PointLight::init(const std::vector<GLuint>& textureIds){
 	// Setup the framebuffer.
 	/// \todo Enable only if the light is a shadow caster.
 	const Descriptor descriptor = {GL_RG16F, GL_LINEAR, GL_CLAMP_TO_EDGE};
-	_shadowFramebuffer = std::make_shared<FramebufferCube>(512, descriptor, true);
+	_shadowFramebuffer = std::unique_ptr<FramebufferCube>(new FramebufferCube(512, descriptor, true));
 	
 	_textureIds = textureIds;
 	_textureIds.emplace_back(_shadowFramebuffer->textureId());
@@ -70,9 +70,7 @@ void PointLight::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMa
 		glBindTexture(GL_TEXTURE_CUBE_MAP, _textureIds[_textureIds.size()-1]);
 	}
 	// Select the geometry.
-	glBindVertexArray(_sphere.vId);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _sphere.eId);
-	glDrawElements(GL_TRIANGLES, _sphere.count, GL_UNSIGNED_INT, (void*)0);
+	GLUtilities::drawMesh(*_sphere);
 	
 	glBindVertexArray(0);
 	glUseProgram(0);
@@ -115,7 +113,7 @@ void PointLight::drawShadow(const std::vector<Object> & objects) const {
 
 void PointLight::drawDebug(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) const {
 	
-	const std::shared_ptr<ProgramInfos> debugProgram = Resources::manager().getProgram("light_debug", "object_basic", "light_debug");
+	const ProgramInfos * debugProgram = Resources::manager().getProgram("light_debug", "object_basic", "light_debug");
 	
 	// Compute the model matrix to scale the sphere based on the radius.
 	const glm::mat4 modelMatrix = glm::scale(glm::translate(glm::mat4(1.0f), _lightPosition), glm::vec3(_radius));
@@ -125,10 +123,7 @@ void PointLight::drawDebug(const glm::mat4& viewMatrix, const glm::mat4& project
 	glUseProgram(debugProgram->id());
 	glUniformMatrix4fv(debugProgram->uniform("mvp"), 1, GL_FALSE, &mvp[0][0]);
 	glUniform3fv(debugProgram->uniform("lightColor"), 1,  &colorLow[0]);
-	
-	glBindVertexArray(_sphere.vId);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _sphere.eId);
-	glDrawElements(GL_TRIANGLES, _sphere.count, GL_UNSIGNED_INT, (void*)0);
+	GLUtilities::drawMesh(*_sphere);
 	glBindVertexArray(0);
 	glUseProgram(0);
 

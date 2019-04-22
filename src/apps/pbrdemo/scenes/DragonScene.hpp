@@ -36,7 +36,7 @@ void DragonScene::init(){
 	objects.push_back(plane);
 	
 	// Background creation.
-	backgroundReflection = Resources::manager().getCubemap("corsica_beach_cube", {GL_RGB32F, GL_LINEAR, GL_CLAMP_TO_EDGE}).id;
+	backgroundReflection = Resources::manager().getCubemap("corsica_beach_cube", {GL_RGB32F, GL_LINEAR, GL_CLAMP_TO_EDGE})->id;
 	// \todo Find a way to avoid passing the gamma flag to the object.
 	background = Object(Object::Type::Skybox, "skybox", {}, {{"corsica_beach_cube", false }});
 	loadSphericalHarmonics("corsica_beach_cube_shcoeffs");

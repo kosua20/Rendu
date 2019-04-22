@@ -85,9 +85,9 @@ private:
 	float _outerHalfAngle; ///< The outer cone attenuation angle.
 	float _radius; ///< The attenuation radius.
 	
-	MeshInfos _cone; ///< The supporting geometry.
-	std::shared_ptr<ProgramInfos> _program; ///< Light rendering program.
-	std::shared_ptr<ProgramInfos> _programDepth; ///< Shadow map program.
+	const MeshInfos * _cone; ///< The supporting geometry.
+	const ProgramInfos * _program; ///< Light rendering program.
+	const ProgramInfos * _programDepth; ///< Shadow map program.
 	std::vector<GLuint> _textureIds; ///< The G-buffer textures.
 	
 };

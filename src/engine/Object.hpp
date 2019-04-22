@@ -40,7 +40,7 @@ public:
 	 \param cubemapPaths names and SRGB flags of the cubemap textures to use
 	 \warning The textures sRGB flag will only be honored if they are loaded from disk for the first time.
 	 */
-	Object(std::shared_ptr<ProgramInfos> & program, const std::string& meshPath, const std::vector<std::pair<std::string, bool>>& texturesPaths, const std::vector<std::pair<std::string, bool>>& cubemapPaths = {});
+	Object(const ProgramInfos * program, const std::string& meshPath, const std::vector<std::pair<std::string, bool>>& texturesPaths, const std::vector<std::pair<std::string, bool>>& cubemapPaths = {});
 	
 	/** Update the object transformation matrix.
 	 \param model the new model matrix
@@ -76,10 +76,10 @@ public:
 	
 private:
 	
-	std::shared_ptr<ProgramInfos> _program; ///< Shader responsible for the object rendering.
-	MeshInfos _mesh; ///< Geometry of the object.
+	const ProgramInfos * _program; ///< Shader responsible for the object rendering.
+	const MeshInfos * _mesh; ///< Geometry of the object.
 	
-	std::vector<TextureInfos> _textures; ///< Textures used by the object.
+	std::vector<TextureInfos *> _textures; ///< Textures used by the object.
 	
 	glm::mat4 _model; ///< The transformation matrix of the 3D model.
 	

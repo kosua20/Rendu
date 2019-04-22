@@ -71,8 +71,8 @@ void DirectionalLight::drawShadow(const std::vector<Object> & objects) const {
 
 void DirectionalLight::drawDebug(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) const {
 	
-	const std::shared_ptr<ProgramInfos> debugProgram = Resources::manager().getProgram("light_debug", "object_basic", "light_debug");
-	const MeshInfos debugMesh = Resources::manager().getMesh("light_arrow");
+	const ProgramInfos * debugProgram = Resources::manager().getProgram("light_debug", "object_basic", "light_debug");
+	const MeshInfos * debugMesh = Resources::manager().getMesh("light_arrow");
 	
 	glm::mat4 vp = projectionMatrix * viewMatrix * glm::inverse(_viewMatrix) * glm::scale(glm::mat4(1.0f), glm::vec3(0.2f));
 	const glm::vec3 colorLow = _color/(std::max)(_color[0], (std::max)(_color[1], _color[2]));
@@ -80,10 +80,7 @@ void DirectionalLight::drawDebug(const glm::mat4& viewMatrix, const glm::mat4& p
 	glUseProgram(debugProgram->id());
 	glUniformMatrix4fv(debugProgram->uniform("mvp"), 1, GL_FALSE, &vp[0][0]);
 	glUniform3fv(debugProgram->uniform("lightColor"), 1,  &colorLow[0]);
-	
-	glBindVertexArray(debugMesh.vId);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, debugMesh.eId);
-	glDrawElements(GL_TRIANGLES, debugMesh.count, GL_UNSIGNED_INT, (void*)0);
+	GLUtilities::drawMesh(*debugMesh);
 	glBindVertexArray(0);
 	glUseProgram(0);
 }

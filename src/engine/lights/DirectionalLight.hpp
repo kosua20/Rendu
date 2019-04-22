@@ -65,8 +65,8 @@ private:
 	glm::mat4 _viewMatrix; ///< Light view matrix.
 	glm::vec3 _lightDirection; ///< Light direction.
 	
-	std::shared_ptr<ProgramInfos> _program; ///< Light rendering program.
-	std::shared_ptr<ProgramInfos> _programDepth; ///< Shadow map program.
+	const ProgramInfos * _program; ///< Light rendering program.
+	const ProgramInfos * _programDepth; ///< Shadow map program.
 	std::vector<GLuint> _textures; ///< The G-buffer textures.
 };
 

@@ -61,7 +61,7 @@ public:
 	
 private:
 	
-	std::shared_ptr<FramebufferCube> _shadowFramebuffer;///< The shadow cubemap framebuffer.
+	std::unique_ptr<FramebufferCube> _shadowFramebuffer;///< The shadow cubemap framebuffer.
 	BoundingBox _sceneBox; ///< The scene bounding box, to fit the shadow map.
 	
 	std::vector<glm::mat4> _mvps; ///< Light mvp matrices for each face.
@@ -70,9 +70,9 @@ private:
 	float _radius; ///< The attenuation radius.
 	float _farPlane; ///< The projection matrices far plane.
 	
-	MeshInfos _sphere; ///< The supporting geometry.
-	std::shared_ptr<ProgramInfos> _program; ///< Light rendering program.
-	std::shared_ptr<ProgramInfos> _programDepth; ///< Shadow map program.
+	const MeshInfos * _sphere; ///< The supporting geometry.
+	const ProgramInfos * _program; ///< Light rendering program.
+	const ProgramInfos * _programDepth; ///< Shadow map program.
 	std::vector<GLuint> _textureIds; ///< The G-buffer textures.
 	
 };

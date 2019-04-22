@@ -42,7 +42,7 @@ Object::Object(const Object::Type & type, const std::string& meshPath, const std
 }
 
 
-Object::Object(std::shared_ptr<ProgramInfos> & program, const std::string& meshPath, const std::vector<std::pair<std::string, bool>>& texturesPaths, const std::vector<std::pair<std::string, bool>>& cubemapPaths) {
+Object::Object(const ProgramInfos * program, const std::string& meshPath, const std::vector<std::pair<std::string, bool>>& texturesPaths, const std::vector<std::pair<std::string, bool>>& cubemapPaths) {
 	
 	_material = static_cast<int>(Object::Custom);
 	_castShadow = false;
@@ -110,7 +110,7 @@ void Object::draw(const glm::mat4& view, const glm::mat4& projection) const {
 	// Bind the textures.
 	for (unsigned int i = 0; i < _textures.size(); ++i){
 		glActiveTexture(GL_TEXTURE0 + i);
-		glBindTexture(_textures[i].cubemap ? GL_TEXTURE_CUBE_MAP : GL_TEXTURE_2D, _textures[i].id);
+		glBindTexture(_textures[i]->cubemap ? GL_TEXTURE_CUBE_MAP : GL_TEXTURE_2D, _textures[i]->id);
 	}
 	drawGeometry();
 	glUseProgram(0);
@@ -118,14 +118,13 @@ void Object::draw(const glm::mat4& view, const glm::mat4& projection) const {
 
 
 void Object::drawGeometry() const {
-	glBindVertexArray(_mesh.vId);
-	glDrawElements(GL_TRIANGLES, _mesh.count, GL_UNSIGNED_INT, (void*)0);
+	GLUtilities::drawMesh(*_mesh);
 	glBindVertexArray(0);
 }
 
 
 BoundingBox Object::getBoundingBox() const {
-	return _mesh.bbox.transformed(_model);
+	return _mesh->bbox.transformed(_model);
 }
 
 

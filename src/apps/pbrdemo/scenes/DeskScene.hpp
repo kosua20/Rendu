@@ -39,7 +39,7 @@ void DeskScene::init(){
 	}
 	
 	// Background creation.
-	backgroundReflection = Resources::manager().getCubemap("small_apartment", {GL_SRGB8_ALPHA8}).id;
+	backgroundReflection = Resources::manager().getCubemap("small_apartment", {GL_SRGB8_ALPHA8})->id;
 	background = Object(Object::Type::Skybox, "skybox", {}, {{"small_apartment", false }});
 	loadSphericalHarmonics("small_apartment_shcoeffs");
 	

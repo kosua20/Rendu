@@ -89,10 +89,10 @@ private:
 	std::shared_ptr<Framebuffer> _fxaaFramebuffer; ///< FXAA framebuffer
 	
 	AmbientQuad _ambientScreen; ///< Ambient lighting contribution rendering.
-	std::shared_ptr<ProgramInfos> _bloomProgram; ///< Bloom program
-	std::shared_ptr<ProgramInfos> _toneMappingProgram; ///< Tonemapping program
-	std::shared_ptr<ProgramInfos> _fxaaProgram; ///< FXAA program
-	std::shared_ptr<ProgramInfos> _finalProgram; ///< Final output program
+	const ProgramInfos * _bloomProgram; ///< Bloom program
+	const ProgramInfos * _toneMappingProgram; ///< Tonemapping program
+	const ProgramInfos * _fxaaProgram; ///< FXAA program
+	const ProgramInfos * _finalProgram; ///< Final output program
 	
 	std::shared_ptr<Scene> _scene; ///< The scene to render
 	

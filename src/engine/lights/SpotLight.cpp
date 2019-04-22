@@ -65,9 +65,7 @@ void SpotLight::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMat
 	}
 	
 	// Select the geometry.
-	glBindVertexArray(_cone.vId);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _cone.eId);
-	glDrawElements(GL_TRIANGLES, _cone.count, GL_UNSIGNED_INT, (void*)0);
+	GLUtilities::drawMesh(*_cone);
 	
 	glBindVertexArray(0);
 	glUseProgram(0);
@@ -105,7 +103,7 @@ void SpotLight::drawShadow(const std::vector<Object> & objects) const {
 
 void SpotLight::drawDebug(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) const {
 	
-	const std::shared_ptr<ProgramInfos> debugProgram = Resources::manager().getProgram("light_debug", "object_basic", "light_debug");
+	const ProgramInfos * debugProgram = Resources::manager().getProgram("light_debug", "object_basic", "light_debug");
 	
 	// Compute the model matrix to scale the cone based on the outer angle and the radius.
 	const float width = 2.0f*std::tan(_outerHalfAngle);
@@ -117,9 +115,7 @@ void SpotLight::drawDebug(const glm::mat4& viewMatrix, const glm::mat4& projecti
 	glUniformMatrix4fv(debugProgram->uniform("mvp"), 1, GL_FALSE, &mvp[0][0]);
 	glUniform3fv(debugProgram->uniform("lightColor"), 1,  &colorLow[0]);
 	
-	glBindVertexArray(_cone.vId);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _cone.eId);
-	glDrawElements(GL_TRIANGLES, _cone.count, GL_UNSIGNED_INT, (void*)0);
+	GLUtilities::drawMesh(*_cone);
 	glBindVertexArray(0);
 	glUseProgram(0);
 }
