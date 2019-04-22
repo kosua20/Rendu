@@ -549,7 +549,7 @@ void Resources::clean(){
 		mesh.second.clean();
 	}
 	for(auto & prog : _programs){
-		prog.second.reset();
+		glDeleteProgram(prog.second->id());
 	}
 	_textures.clear();
 	_meshes.clear();

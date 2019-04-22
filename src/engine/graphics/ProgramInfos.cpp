@@ -149,8 +149,3 @@ void ProgramInfos::saveBinary(const std::string & outputPath){
 	Resources::saveRawDataToExternalFile(outputPath + "_(" + _vertexName + "," + _fragmentName + ")_" + std::to_string((unsigned int) format) + ".bin", &binary[0], binary.size());
 	
 }
-
-
-ProgramInfos::~ProgramInfos(){
-	glDeleteProgram(_id);
-}

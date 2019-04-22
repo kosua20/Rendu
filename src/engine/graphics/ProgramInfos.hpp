@@ -22,9 +22,6 @@ public:
 	 */
 	ProgramInfos(const std::string & vertexName, const std::string & fragmentName, const std::string & geometryName);
 	
-	/** Destructor */
-	~ProgramInfos();
-	
 	/** Query the location of a given uniform.
 	 \param name the uniform name
 	 \return the uniform location in the program
