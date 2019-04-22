@@ -27,52 +27,33 @@ const std::vector<std::string> suffixes = {"_px", "_nx", "_py", "_ny", "_pz", "_
  Load a cubemap on both the CPU and GPU from an input path.
  \param inputPath the base path on disk
  \param cubemapInfos will contain the cubemap infos once sent to the GPU
- \param cubemapSides float arrays that will contain raw CPU-side cubemap values
  \ingroup BRDFEstimator
  */
-void loadCubemap(const std::string & inputPath, TextureInfos & cubemapInfos, float* cubemapSides[6]){
+void loadCubemap(const std::string & inputPath, TextureInfos & cubemapInfos){
 	std::string cubemapPath = inputPath;
-	const bool isFloat = ImageUtilities::isFloat(cubemapPath);
 	const std::string ext = TextUtilities::removeExtension(cubemapPath);
 	cubemapPath = cubemapPath.substr(0, cubemapPath.size()-3);
 	Log::Info() << "Loading " << cubemapPath << "..." << std::endl;
 	// Apply the proper format and filtering.
-	const GLenum typedFormat = isFloat ? GL_RGBA32F : GL_SRGB8_ALPHA8;
+	const GLenum typedFormat = ImageUtilities::isFloat(inputPath) ? GL_RGBA32F : GL_SRGB8_ALPHA8;
 	std::vector<std::string> pathSides;
 	for(int i = 0; i < 6; ++i){
 		pathSides.push_back(cubemapPath + suffixes[i] + ext);
 	}
 	
-	cubemapInfos = GLUtilities::loadTextureCubemap({pathSides}, {typedFormat, GL_LINEAR, GL_CLAMP_TO_EDGE});
-	
-	// Reload on the CPU.
-	// \todo Design a way to load either CPU, GPU or both data from Resources and have them easily accessible.
-	for(size_t side = 0; side < 6; ++side){
-		unsigned int dwidth, dheight;
-		if(isFloat){
-			ImageUtilities::loadImage(pathSides[side], dwidth, dheight, (void**)&(cubemapSides[side]), 3, false, true);
-		} else {
-			// Roundtrip to convert from uchar to float.
-			unsigned char * vals;
-			ImageUtilities::loadImage(pathSides[side], dwidth, dheight, (void**)(&(vals)), 3, false, true);
-			cubemapSides[side] = reinterpret_cast<float *>(malloc(3 * sizeof(float) * static_cast<size_t>(dwidth) *  static_cast<size_t>(dheight)));
-			for(unsigned int j = 0; j < dheight*dheight*3; ++j){
-				cubemapSides[side][j] = float(vals[j])/255.0f;
-			}
-			free(vals);
-		}
-	}
+	cubemapInfos = GLUtilities::loadTextureCubemap({pathSides}, {typedFormat, GL_LINEAR, GL_CLAMP_TO_EDGE}, Storage::BOTH);
+	Log::Info() << "Info:" << cubemapInfos.images.size() << std::endl;
+
 }
 
 /**
 \brief Decompose an existing cubemap irradiance onto the nine first elements of the spherical harmonic basis.
 \details Perform approximated convolution as described in Ramamoorthi, Ravi, and Pat Hanrahan. "An efficient representation for irradiance environment maps.", Proceedings of the 28th annual conference on Computer graphics and interactive techniques. ACM, 2001.
-\param sides float arrays containing each cubemap side
-\param side the cubemap side dimension
+\param cubemap the cubemap to extract SH coefficients from
 \return the 9 RGB coefficients of the SH decomposition
 \ingroup BRDFEstimator
 */
-std::vector<glm::vec3> computeSHCoeffs(float* sides[6], const int side){
+std::vector<glm::vec3> computeSHCoeffs(const TextureInfos & cubemap){
 	// Indices conversions from cubemap UVs to direction.
 	const std::vector<int> axisIndices = { 0, 0, 1, 1, 2, 2 };
 	const std::vector<float> axisMul = { 1.0f, -1.0f, 1.0f, -1.0f, 1.0f, -1.0f};
@@ -98,9 +79,17 @@ std::vector<glm::vec3> computeSHCoeffs(float* sides[6], const int side){
 	const float y4 = 0.546274f;
 
 	float denom = 0.0f;
-	for(int i = 0; i < 6; ++i){
-		for(int y = 0; y < side; ++y){
-			for(int x = 0; x < side; ++x){
+	const unsigned int side = cubemap.width;
+	
+	if(cubemap.width != cubemap.height){
+		Log::Error() <<  Log::Utilities << "Expecting squared size cubemap." << std::endl;
+		return {};
+	}
+	
+	for(unsigned int i = 0; i < 6; ++i){
+		const auto & currentSide = cubemap.images[i];
+		for(unsigned int y = 0; y < side; ++y){
+			for(unsigned int x = 0; x < side; ++x){
 				
 				const float v = -1.0f + 1.0f/float(side) + float(y) * 2.0f/float(side);
 				const float u = -1.0f + 1.0f/float(side) + float(x) * 2.0f/float(side);
@@ -117,9 +106,10 @@ std::vector<glm::vec3> computeSHCoeffs(float* sides[6], const int side){
 				denom += weight;
 				
 				// HDR color.
-				const glm::vec3 hdr = weight * glm::vec3(sides[i][(y*side+x)*3+0],
-														 sides[i][(y*side+x)*3+1],
-														 sides[i][(y*side+x)*3+2]);
+				const size_t pixelPos = (y*side+x)*currentSide.components;
+				const glm::vec3 hdr = weight * glm::vec3(currentSide.pixels[pixelPos+0],
+														 currentSide.pixels[pixelPos+1],
+														 currentSide.pixels[pixelPos+2]);
 				
 				// Y0,0  = 0.282095
 				LCoeffs[0] += hdr * y0;
@@ -178,7 +168,7 @@ std::vector<glm::vec3> computeSHCoeffs(float* sides[6], const int side){
  Compute a series of cubemaps convolved with a BRDF using increasing roughness values. The cubemaps form a mipmap pyramid.
  \note We choose to keep the levels in separate textures for easier visualisation. This could be revisited.
  \param cubemapInfos the source HDR cubemap
- \param lvelsCount the number of mipmap levels to generate
+ \param levelsCount the number of mipmap levels to generate
  \param outputSide the side size of the lvel 0 cubemap faces
  \param samplesCount the number of samples to use in the convolution
  \param cubeLevels will contain the texture infos for each level
@@ -290,9 +280,9 @@ void exportCubemapConvolution(const std::vector<TextureInfos> &cubeLevels, const
 		const int levelSide = cubeLevels[level].width;
 		for(int i = 0; i < 6; ++i){
 			const std::string faceLevelPath = levelPath + suffixes[i];
-			GLfloat * data = new GLfloat[levelSide * levelSide * 3];
-			glGetTexImage(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, format, type, &data[0]);
-			const int ret = ImageUtilities::saveHDRImage(faceLevelPath + ".exr", levelSide, levelSide, 3, (float*)data, false, true);
+			Image image(levelSide, levelSide, 3);
+			glGetTexImage(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, format, type, &image.pixels[0]);
+			const int ret = ImageUtilities::saveHDRImage(faceLevelPath + ".exr", image, false, true);
 			if(ret != 0){
 				Log::Error() << "Unable to save cubemap face to path \"" << faceLevelPath << "\"." << std::endl;
 			}
@@ -350,9 +340,9 @@ int main(int argc, char** argv) {
 	const TextureInfos * cubemapInfosDefault = Resources::manager().getCubemap("debug-cube", {GL_RGB8, GL_LINEAR, GL_CLAMP_TO_EDGE});
 	
 	TextureInfos cubemapInfos;
-	float* cubemapSides[6];
 	std::vector<glm::vec3> SCoeffs(9);
 	std::vector<TextureInfos> cubeLevels;
+	//std::vector<Image> cubemapSides;
 	
 	double timer = glfwGetTime();
 	
@@ -393,7 +383,7 @@ int main(int argc, char** argv) {
 			if(ImGui::Button("Load cubemap...")){
 				std::string cubemapPath;
 				if(Interface::showPicker(Interface::Picker::Load, "../../../resources/pbrdemo/cubemaps/", cubemapPath, "jpg,bmp,png,tga;exr") && !cubemapPath.empty()){
-					loadCubemap(cubemapPath, cubemapInfos, cubemapSides);
+					loadCubemap(cubemapPath, cubemapInfos);
 					// Reset state.
 					SCoeffs.clear();
 					SCoeffs.resize(9, glm::vec3(0.0f));
@@ -428,7 +418,7 @@ int main(int argc, char** argv) {
 			
 			// Compute SH irradiance coefficients for the cubemap.
 			if(ImGui::Button("Compute SH coefficients")){
-				SCoeffs = computeSHCoeffs(cubemapSides, cubemapInfos.width);
+				SCoeffs = computeSHCoeffs(cubemapInfos);
 				std::stringstream outputStr;
 				for(int i = 0; i < 9; ++i){
 					outputStr << "\t" << SCoeffs[i][0] << " " << SCoeffs[i][1] << " " << SCoeffs[i][2] << std::endl;

@@ -60,7 +60,7 @@ public:
  \warning The intersection can be behind the viewer (ie in the opposite orientation along the ray direction).
  \ingroup AtmosphericScattering
  */
-bool intersects(const glm::vec3 & rayOrigin, const glm::vec3 & rayDir, float radius,  glm::vec2 & roots){
+bool intersects(const glm::vec3 & rayOrigin, const glm::vec3 & rayDir, float radius, glm::vec2 & roots){
 	float a = glm::dot(rayDir,rayDir);
 	float b = glm::dot(rayOrigin, rayDir);
 	float c = glm::dot(rayOrigin, rayOrigin) - radius*radius;
@@ -103,7 +103,7 @@ int main(int argc, char** argv) {
 	const float heightMie = 1200.0;
 	const float kMie = 21e-6;
 	
-	std::vector<glm::vec3> transmittanceTable(config.resolution * config.resolution);
+	Image transmittanceTable(config.resolution, config.resolution, 3);
 	const unsigned int samplesCount = config.samples;
 	
 	for(size_t y = 0; y < config.resolution; ++y){
@@ -145,11 +145,15 @@ int main(int argc, char** argv) {
 			
 			// Compute associated attenuation.
 			const glm::vec3 secondaryAttenuation = exp(-(kMie * (mieSecondDist) + kRayleigh * (rayleighSecondDist)));
-			transmittanceTable[config.resolution*y+x] = secondaryAttenuation;
+			const unsigned int pixelPos = config.resolution*y+x;
+			transmittanceTable.pixels[3*pixelPos+0] = secondaryAttenuation[0];
+			transmittanceTable.pixels[3*pixelPos+1] = secondaryAttenuation[1];
+			transmittanceTable.pixels[3*pixelPos+2] = secondaryAttenuation[2];
+			
 		}
 	}
 	
-	ImageUtilities::saveHDRImage(config.outputPath, config.resolution, config.resolution, 3, reinterpret_cast<float*>(&transmittanceTable[0]), true);
+	ImageUtilities::saveHDRImage(config.outputPath,transmittanceTable, true);
 	
 	Log::Info() << Log::Utilities << "Done." << std::endl;
 	

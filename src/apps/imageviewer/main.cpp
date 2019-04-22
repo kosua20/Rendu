@@ -169,7 +169,7 @@ int main(int argc, char** argv) {
 					// Apply the proper format and filtering.
 					const GLenum typedFormat = isFloat ? GL_RGBA32F : GL_SRGB8_ALPHA8;
 					const GLenum filtering = (imageInterp == Nearest) ? GL_NEAREST : GL_LINEAR;
-					imageInfos = GLUtilities::loadTexture({newImagePath}, {typedFormat, filtering, GL_CLAMP_TO_EDGE});
+					imageInfos = GLUtilities::loadTexture({newImagePath}, {typedFormat, filtering, GL_CLAMP_TO_EDGE}, Storage::GPU);
 					
 					// Reset display settings.
 					pixelScale = 1.0f;
