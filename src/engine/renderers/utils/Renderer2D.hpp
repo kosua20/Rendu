@@ -53,8 +53,8 @@ public:
 	
 private:
 	
-	std::shared_ptr<Framebuffer> _resultFramebuffer; ///< The render framebuffer.
-	std::shared_ptr<ProgramInfos> _resultProgram; ///< The rendering program.
+	std::unique_ptr<Framebuffer> _resultFramebuffer; ///< The render framebuffer.
+	const ProgramInfos * _resultProgram; ///< The rendering program.
 	
 };
 

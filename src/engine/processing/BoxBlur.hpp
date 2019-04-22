@@ -44,7 +44,7 @@ public:
 	
 private:
 	
-	std::shared_ptr<ProgramInfos> _blurProgram; ///< Box blur program
+	const ProgramInfos * _blurProgram; ///< Box blur program
 	std::shared_ptr<Framebuffer> _finalFramebuffer; ///< Final framebuffer.
 	
 };

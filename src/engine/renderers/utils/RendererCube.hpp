@@ -57,10 +57,10 @@ public:
 	
 private:
 	
-	std::shared_ptr<Framebuffer> _resultFramebuffer; ///< The internal render framebuffer.
-	std::shared_ptr<ProgramInfos> _program; ///< The rendering program to use for each face.
-	MeshInfos _mesh;  ///< The cubemap mesh.
-	TextureInfos _texture; ///< The texture to process.
+	std::unique_ptr<Framebuffer> _resultFramebuffer; ///< The internal render framebuffer.
+	const ProgramInfos * _program; ///< The rendering program to use for each face.
+	const MeshInfos * _mesh;  ///< The cubemap mesh.
+	const TextureInfos * _texture; ///< The texture to process.
 };
 
 #endif

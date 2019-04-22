@@ -46,7 +46,7 @@ protected:
 	Blur();
 	
 	GLuint _finalTexture; ///< The texture holding the blurred result
-	std::shared_ptr<ProgramInfos> _passthroughProgram; ///< Default passthrough utility program
+	const ProgramInfos * _passthroughProgram; ///< Default passthrough utility program
 	
 };
 

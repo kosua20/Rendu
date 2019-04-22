@@ -20,7 +20,7 @@ void TextUtilities::loadFont(std::istream & in, FontInfos & font){
 		return;
 	}
 	font.atlas = Resources::manager().getTexture(lines[0], {GL_R8});
-	const glm::vec2 textureSize(font.atlas.width, font.atlas.height);
+	const glm::vec2 textureSize(font.atlas->width, font.atlas->height);
 	
 	font.firstCodepoint = int(lines[1][0]);
 	font.lastCodepoint = int(lines[2][0]);
@@ -80,7 +80,7 @@ MeshInfos TextUtilities::generateLabel(const std::string & text, const FontInfos
 		// We want the vertical height to be scale, X to follow based on aspect ratio in font atlas.
 		const glm::vec2 uvSize = (glyph.max - glyph.min);
 		float deltaY = scale;
-		float deltaX = deltaY * (uvSize.x / uvSize.y) * (font.atlas.width / float(font.atlas.height));
+		float deltaX = deltaY * (uvSize.x / uvSize.y) * (font.atlas->width / float(font.atlas->height));
 		mesh.positions.push_back(currentOrigin);
 		mesh.positions.push_back(currentOrigin + glm::vec3(deltaX, 0.0f, 0.0f));
 		mesh.positions.push_back(currentOrigin + glm::vec3(deltaX, deltaY, 0.0f));

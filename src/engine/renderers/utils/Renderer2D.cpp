@@ -6,7 +6,7 @@
 
 Renderer2D::Renderer2D(RenderingConfig & config, const std::string & shaderName, const unsigned int width, const unsigned int height, const GLenum preciseFormat) : Renderer(config) {
 	glDisable(GL_DEPTH_TEST);
-	_resultFramebuffer = std::make_shared<Framebuffer>(width, height, preciseFormat, false);
+	_resultFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, preciseFormat, false));
 	_resultProgram = Resources::manager().getProgram2D(shaderName);
 	checkGLError();
 }
@@ -30,7 +30,7 @@ void Renderer2D::draw() {
 }
 
 void Renderer2D::save(const std::string & outputPath){
-	GLUtilities::saveFramebuffer(_resultFramebuffer, (unsigned int)_resultFramebuffer->width(), (unsigned int)_resultFramebuffer->height(), outputPath, false);
+	GLUtilities::saveFramebuffer(*_resultFramebuffer, (unsigned int)_resultFramebuffer->width(), (unsigned int)_resultFramebuffer->height(), outputPath, false);
 }
 
 void Renderer2D::update(){

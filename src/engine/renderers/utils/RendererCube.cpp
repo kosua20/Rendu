@@ -6,7 +6,7 @@
 
 RendererCube::RendererCube(RenderingConfig & config, const std::string & cubemapName, const std::string & shaderName, const unsigned int width, const unsigned int height, const GLenum preciseFormat) : Renderer(config) {
 	
-	_resultFramebuffer = std::make_shared<Framebuffer>(width, height, preciseFormat, false);
+	_resultFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, preciseFormat, false));
 	
 	_program = Resources::manager().getProgram(shaderName, "skybox_basic", shaderName);
 	_mesh = Resources::manager().getMesh("skybox");
@@ -50,16 +50,15 @@ void RendererCube::drawCube(const unsigned int localWidth, const unsigned int lo
 		glUseProgram(_program->id());
 		glUniformMatrix4fv(_program->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(_texture.cubemap ? GL_TEXTURE_CUBE_MAP : GL_TEXTURE_2D, _texture.id);
-		glBindVertexArray(_mesh.vId);
-		glDrawElements(GL_TRIANGLES, _mesh.count, GL_UNSIGNED_INT, (void*)0);
+		glBindTexture(_texture->cubemap ? GL_TEXTURE_CUBE_MAP : GL_TEXTURE_2D, _texture->id);
+		GLUtilities::drawMesh(*_mesh);
 		glBindVertexArray(0);
 		
 		glFlush();
 		glFinish();
 		
 		const std::string outputPathComplete = localOutputPath + "-" + suffixes[i];
-		GLUtilities::saveFramebuffer(_resultFramebuffer, localWidth, localHeight, outputPathComplete, false);
+		GLUtilities::saveFramebuffer(*_resultFramebuffer, localWidth, localHeight, outputPathComplete, false);
 		
 	}
 	
