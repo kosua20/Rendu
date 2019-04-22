@@ -24,10 +24,10 @@ void RawController::update(){
 	const float * rawAxes = glfwGetJoystickAxes(_id, &_rawAxesCount);
 	const unsigned char * rawButtons = glfwGetJoystickButtons(_id, &_rawButtonsCount);
 	
-	if(_rawAxesCount != allAxes.size()){
+	if(_rawAxesCount != int(allAxes.size())){
 		allAxes.resize(_rawAxesCount);
 	}
-	if(_rawButtonsCount != allButtons.size()){
+	if(_rawButtonsCount != int(allButtons.size())){
 		allButtons.resize(_rawButtonsCount);
 	}
 	

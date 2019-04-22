@@ -64,10 +64,10 @@ void Input::joystickEvent(int joy, int event){
 			
 			if(!_preferRawControllers && glfwJoystickIsGamepad(joy)){
 				// If this is a gamepad, GLFW has a mapping, all is good.
-				_controllers[joy] = std::shared_ptr<Controller>(new GamepadController());
+				_controllers[joy] = std::unique_ptr<Controller>(new GamepadController());
 			} else {
 				// Fallback on a raw controller.
-				_controllers[joy] = std::shared_ptr<Controller>(new RawController());
+				_controllers[joy] = std::unique_ptr<Controller>(new RawController());
 			}
 		}
 		// Ignore non-configured controllers.

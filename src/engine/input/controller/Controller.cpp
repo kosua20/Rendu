@@ -42,7 +42,7 @@ void Controller::saveConfiguration(const std::string & outputPath, const std::st
 	// Build hexadecimal representation of the GUID.
 	static const char* digits = "0123456789ABCDEF";
 	std::string hexGUID;
-	for(int i = 0; i < guid.size(); ++i){
+	for(int i = 0; i < int(guid.size()); ++i){
 		const unsigned char c = guid[i];
 		hexGUID.push_back(digits[(c>>4) & 0x0F]);
 		hexGUID.push_back(digits[c & 0x0F]);
@@ -115,7 +115,7 @@ bool Controller::parseConfiguration(const std::string & settingsContent, std::ve
 	}
 	
 	// Skip the first three tokens, containing the GUID, the name and platform.
-	for(int tid = 3; tid < tokens.size(); ++tid){
+	for(int tid = 3; tid < int(tokens.size()); ++tid){
 		const std::string & token = tokens[tid];
 		const size_t separatorPos = token.find(":");
 		if(separatorPos == std::string::npos){

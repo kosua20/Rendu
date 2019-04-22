@@ -266,7 +266,7 @@ public:
 	 \return a reference to the current controller
 	 \warning Make sure a controller is available before calling this method.
 	 */
-	std::shared_ptr<Controller> controller(){ return _controllers[_activeController]; };
+	Controller * controller(){ return _controllers[_activeController].get(); };
 	
 	/**
 	 Query if a given key is held at this frame.
@@ -357,7 +357,7 @@ private:
 	
 	// Joystick state.
 	int _activeController = -1; ///< The active joystick ID, or -1 if no controller active.
-	std::shared_ptr<Controller> _controllers[GLFW_JOYSTICK_LAST+1]; ///< States of all possible controllers.
+	std::unique_ptr<Controller> _controllers[GLFW_JOYSTICK_LAST+1]; ///< States of all possible controllers.
 	bool _preferRawControllers = false;
 	bool _joystickConnected = false;
 	bool _joystickDisconnected = false;
