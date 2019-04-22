@@ -57,8 +57,8 @@ public:
 	
 private:
 	
-	std::shared_ptr<Framebuffer> _shadowPass; ///< The shadow map framebuffer.
-	std::shared_ptr<BoxBlur> _blur; ///< Blur processing for variance shadow mapping.
+	std::unique_ptr<Framebuffer> _shadowPass; ///< The shadow map framebuffer.
+	std::unique_ptr<BoxBlur> _blur; ///< Blur processing for variance shadow mapping.
 	BoundingBox _sceneBox; ///< The scene bounding box, to fit the shadow map.
 	
 	glm::mat4 _projectionMatrix; ///< Light projection matrix.

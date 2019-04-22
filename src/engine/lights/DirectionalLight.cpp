@@ -10,8 +10,8 @@ DirectionalLight::DirectionalLight(const glm::vec3& worldDirection, const glm::v
 void DirectionalLight::init(const std::vector<GLuint>& textureIds){
 	// Setup the framebuffer.
 	const Descriptor descriptor = { GL_RG16F, GL_LINEAR, GL_CLAMP_TO_BORDER };
-	_shadowPass = std::make_shared<Framebuffer>(512, 512, descriptor, true);
-	_blur = std::make_shared<BoxBlur>(512, 512, false, descriptor);
+	_shadowPass = std::unique_ptr<Framebuffer>(new Framebuffer(512, 512, descriptor, true));
+	_blur = std::unique_ptr<BoxBlur>(new BoxBlur(512, 512, false, descriptor));
 	
 	_textures = textureIds;
 	_textures.emplace_back(_blur->textureId());
