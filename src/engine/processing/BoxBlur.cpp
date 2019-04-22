@@ -13,7 +13,7 @@ BoxBlur::BoxBlur(unsigned int width, unsigned int height, bool approximate, cons
 	
 	_blurProgram = Resources::manager().getProgram2D(blur_type_name);
 	// Create one framebuffer.
-	_finalFramebuffer = std::make_shared<Framebuffer>(width, height, linearDescriptor, false);
+	_finalFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, linearDescriptor, false));
 	// Final combining buffer.
 	_finalTexture = _finalFramebuffer->textureId();
 	
