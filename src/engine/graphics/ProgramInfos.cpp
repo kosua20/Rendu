@@ -15,9 +15,9 @@ ProgramInfos::ProgramInfos(const std::string & vertexName, const std::string & f
 	_geometryName = geometryName;
 	
 	std::map<std::string, int> bindings;
-	const std::string vertexContent = Resources::manager().getShader(_vertexName, Resources::Vertex);
-	const std::string fragmentContent = Resources::manager().getShader(_fragmentName, Resources::Fragment);
-	const std::string geometryContent = _geometryName.empty() ? "" : Resources::manager().getShader(_geometryName, Resources::Geometry);
+	const std::string vertexContent = Resources::manager().getString(_vertexName + ".vert");
+	const std::string fragmentContent = Resources::manager().getString(_fragmentName + ".frag");
+	const std::string geometryContent = _geometryName.empty() ? "" : Resources::manager().getString(_geometryName + ".geom");
 	const std::string debugName = "(" + _vertexName + ", " + (_geometryName.empty() ? "" : (_geometryName + ", ")) + _fragmentName + ")";
 	
 	_id = GLUtilities::createProgram(vertexContent, fragmentContent, geometryContent, bindings, debugName);
@@ -90,9 +90,9 @@ void ProgramInfos::cacheUniformArray(const std::string & name, const std::vector
 void ProgramInfos::reload()
 {
 	std::map<std::string, int> bindings;
-	const std::string vertexContent = Resources::manager().getShader(_vertexName, Resources::Vertex);
-	const std::string fragmentContent = Resources::manager().getShader(_fragmentName, Resources::Fragment);
-	const std::string geometryContent = _geometryName.empty() ? "" : Resources::manager().getShader(_geometryName, Resources::Geometry);
+	const std::string vertexContent = Resources::manager().getString(_vertexName + ".vert");
+	const std::string fragmentContent = Resources::manager().getString(_fragmentName + ".frag");
+	const std::string geometryContent = _geometryName.empty() ? "" : Resources::manager().getString(_geometryName + ".geom");
 	const std::string debugName = "(" + _vertexName + ", " + (_geometryName.empty() ? "" : (_geometryName + ", ")) + _fragmentName + ")";
 	_id = GLUtilities::createProgram(vertexContent, fragmentContent, geometryContent, bindings, debugName);
 	

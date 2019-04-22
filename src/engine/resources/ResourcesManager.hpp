@@ -16,16 +16,10 @@ class Resources {
 	
 public:
 	
-	/// \brief Shader types
-	enum ShaderType {
-		Vertex, Fragment, Geometry
-	};
-	
 	/** Singleton accessor.
 	 \return the resources manager singleton
 	 */
 	static Resources& manager();
-	
 	
 private:
 	
@@ -65,12 +59,6 @@ private:
 	
 public:
 	
-	
-	/** Add another resources directory/archive.
-	 \param path the path to the additional directory/archive to parse
-	 */
-	void addResources(const std::string & path);
-	
 	/** Get a text file resource.
 	 \param filename the file name
 	 \return the string content of the file
@@ -89,13 +77,13 @@ public:
 	 \param refName the name to use for the texture in future calls
 	 \return the texture informations
 	 */
-	const TextureInfos getTexture(const std::string & name, const Descriptor & descriptor, const std::string & refName = "");
+	TextureInfos * getTexture(const std::string & name, const Descriptor & descriptor, const std::string & refName = "");
 	
 	/** Get an existing 2D texture resource.
 	 \param name the texture base name
 	 \return the texture informations
 	 */
-	const TextureInfos getTexture(const std::string & name);
+	TextureInfos * getTexture(const std::string & name);
 	
 	/** Get a cubemap texture resource. Automatically handle custom mipmaps if present.
 	 \param name the texture base name
@@ -103,20 +91,13 @@ public:
 	 \param refName the name to use for the texture in future calls
 	 \return the texture informations
 	 */
-	const TextureInfos getCubemap(const std::string & name, const Descriptor & descriptor, const std::string & refName = "");
+	TextureInfos * getCubemap(const std::string & name, const Descriptor & descriptor, const std::string & refName = "");
 	
 	/** Get an existing cubemap texture resource.
 	 \param name the texture base name
 	 \return the texture informations
 	 */
-	const TextureInfos getCubemap(const std::string & name);
-	
-	/** Get a shader text resource.
-	 \param name the shader file name
-	 \param type the type of shader (detemrines the extension)
-	 \return the shader content
-	 */
-	const std::string getShader(const std::string & name, const ShaderType & type);
+	TextureInfos * getCubemap(const std::string & name);
 	
 	/** Get an OpenGL program resource.
 	 \param name the name of all the program shaders
@@ -141,16 +122,11 @@ public:
 	 */
 	ProgramInfos * getProgram2D(const std::string & name);
 	
-	/** Reload all shader programs.
-	 */
-	void reload();
-	
 	/** Load a font metadata and texture atlas from the resources.
 	 \param name the font base name
 	 \return the font informations
 	 */
-	const FontInfos getFont(const std::string & name);
-	
+	FontInfos * getFont(const std::string & name);
 	
 	/** Load raw binary data from an external file
 	 \param path the path to the file on disk
@@ -191,6 +167,15 @@ public:
 	 */
 	void getFiles(const std::string & extension, std::map<std::string, std::string> & files) const;
 	
+	/** Reload all shader programs.
+	 */
+	void reload();
+	
+	/** Add another resources directory/archive.
+	 \param path the path to the additional directory/archive to parse
+	 */
+	void addResources(const std::string & path);
+	
 	/** Clean all loaded resources, both CPU and GPU side. */
 	void clean();
 	
@@ -203,7 +188,6 @@ private:
 	
 	/** Copy constructor (disabled). */
 	Resources (const Resources&) = delete;
-	
 	
 	/** Default resources root path or archive path.
 	 */

@@ -277,15 +277,15 @@ const MeshInfos * Resources::getMesh(const std::string & name){
 
 // Texture methods.
 
-const TextureInfos Resources::getTexture(const std::string & name){
+TextureInfos * Resources::getTexture(const std::string & name){
 	if(_textures.count(name) > 0){
-		return _textures[name];
+		return &_textures[name];
 	}
 	Log::Error() << Log::Resources << "Unable to find existing texture \"" << name << "\"" << std::endl;
-	return TextureInfos();
+	return nullptr;
 }
 
-const TextureInfos Resources::getTexture(const std::string & name, const Descriptor & descriptor, const std::string & refName){
+TextureInfos * Resources::getTexture(const std::string & name, const Descriptor & descriptor, const std::string & refName){
 	const std::string & keyName = refName.empty() ? name : refName;
 	
 	// If texture already loaded, return it.
@@ -297,7 +297,7 @@ const TextureInfos Resources::getTexture(const std::string & name, const Descrip
 		   descriptor.wrapping != infos.descriptor.wrapping){
 			Log::Warning() << Log::Resources << "Texture \"" << keyName << "\"already exist with a different descriptor." << std::endl;
 		}
-		return infos;
+		return &_textures[keyName];
 	}
 	// Else, find the corresponding file.
 	TextureInfos infos;
@@ -307,7 +307,7 @@ const TextureInfos Resources::getTexture(const std::string & name, const Descrip
 		// Else, load it and store the infos.
 		infos = GLUtilities::loadTexture({path}, descriptor);
 		_textures[keyName] = infos;
-		return infos;
+		return &_textures[keyName];
 	}
 	// Else, maybe there are custom mipmap levels.
 	// In this case the true name is name_mipmaplevel.
@@ -327,24 +327,24 @@ const TextureInfos Resources::getTexture(const std::string & name, const Descrip
 		// Load them and store the infos.
 		infos = GLUtilities::loadTexture(paths, descriptor);
 		_textures[keyName] = infos;
-		return infos;
+		return &_textures[keyName];
 	}
 	
 	// If couldn't file the image, return empty texture infos.
 	Log::Error() << Log::Resources << "Unable to find texture named \"" << name << "\"." << std::endl;
-	return infos;
+	return nullptr;
 }
 
-const TextureInfos Resources::getCubemap(const std::string & name){
+TextureInfos * Resources::getCubemap(const std::string & name){
 	// If cubemap already loaded, return it.
 	if(_textures.count(name) > 0){
-		return _textures[name];
+		return &_textures[name];
 	}
 	Log::Error() << Log::Resources << "Unable to find existing cubemap \"" << name << "\"" << std::endl;
-	return TextureInfos();
+	return nullptr;
 }
 
-const TextureInfos Resources::getCubemap(const std::string & name, const Descriptor & descriptor, const std::string & refName){
+TextureInfos * Resources::getCubemap(const std::string & name, const Descriptor & descriptor, const std::string & refName){
 	const std::string & keyName = refName.empty() ? name : refName;
 	// If texture already loaded, return it.
 	if(_textures.count(keyName) > 0){
@@ -355,7 +355,7 @@ const TextureInfos Resources::getCubemap(const std::string & name, const Descrip
 		   descriptor.wrapping != infos.descriptor.wrapping){
 			Log::Warning() << "Cubemap \"" << keyName << "\" already exist with a different descriptor." << std::endl;
 		}
-		return infos;
+		return &_textures[keyName];;
 	}
 	// Else, find the corresponding files.
 	TextureInfos infos;
@@ -365,7 +365,7 @@ const TextureInfos Resources::getCubemap(const std::string & name, const Descrip
 		// Load them and store the infos.
 		infos = GLUtilities::loadTextureCubemap({paths}, descriptor);
 		_textures[keyName] = infos;
-		return infos;
+		return &_textures[keyName];
 	}
 	// Else, maybe there are custom mipmap levels.
 	// In this case the true name is name_mipmaplevel.
@@ -385,27 +385,14 @@ const TextureInfos Resources::getCubemap(const std::string & name, const Descrip
 		// Load them and store the infos.
 		infos = GLUtilities::loadTextureCubemap(allPaths, descriptor);
 		_textures[keyName] = infos;
-		return infos;
+		return &_textures[keyName];
 	}
 	Log::Error() << Log::Resources << "Unable to find cubemap named \"" << name << "\"." << std::endl;
 	// Nothing found, return empty texture.
-	return infos;
+	return nullptr;
 }
 
 // Program/shaders methods.
-
-const std::string Resources::getShader(const std::string & name, const ShaderType & type){
-	
-	std::string path = "";
-	const std::string extension = (type == Vertex ? "vert" : (type == Geometry ? "geom" : "frag"));
-	// Directly query correct shader text file with extension.
-	const std::string res = Resources::getString(name + "." + extension);
-	// If the file is empty/doesn't exist, error.
-	if(res.empty()){
-		Log::Error() << Log::Resources << "Unable to find " << (type == Vertex ? "vertex" : (type == Geometry ? "geometry" : "fragment")) << " shader named \"" << name << "\"." << std::endl;
-	}
-	return res;
-}
 
 ProgramInfos * Resources::getProgram(const std::string & name, const bool useGeometryShader){
 	return getProgram(name, name, name, useGeometryShader ? name : "");
@@ -436,9 +423,9 @@ void Resources::reload() {
 }
 
 
-const FontInfos Resources::getFont(const std::string & name){
+FontInfos * Resources::getFont(const std::string & name){
 	if(_fonts.count(name) > 0){
-		return _fonts[name];
+		return &_fonts[name];
 	}
 	
 	FontInfos infos;
@@ -449,11 +436,11 @@ const FontInfos Resources::getFont(const std::string & name){
 		TextUtilities::loadFont(fontStream, infos);
 	} else {
 		Log::Error() << Log::Resources << "Unable to load font named " << name << "." << std::endl;
-		return infos;
+		return nullptr;
 	}
 	
 	_fonts[name] = infos;
-	return infos;
+	return &_fonts[name];
 }
 
 void Resources::getFiles(const std::string & extension, std::map<std::string, std::string> & files) const {
