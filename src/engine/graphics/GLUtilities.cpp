@@ -347,10 +347,10 @@ void GLUtilities::uploadTexture(const GLenum destination, const GLuint texId, co
 	
 	const size_t destSize = destChannels * image.height * image.width;
 	//Perform conversion if needed.
-	std::vector<GLubyte> finalData;
+	const GLubyte* finalDataPtr;
 	if(destType == GL_UNSIGNED_BYTE) {
 		// If we want a uchar image, we convert and scale from [0,1] float to [0, 255] uchars.
-		finalData.resize(destSize);
+		std::vector<GLubyte> finalData(destSize);
 		// Handle the conversion by hand.
 		for(size_t pid = 0; pid < destSize; ++pid){
 			const float newValue = std::min(255.0f, std::max(0.0f, image.pixels[pid] * 255.0f));
@@ -372,10 +372,8 @@ void GLUtilities::uploadTexture(const GLenum destination, const GLuint texId, co
 	// Upload.
 	const GLenum baseDestination = destination == GL_TEXTURE_2D ? destination : GL_TEXTURE_CUBE_MAP;
 	glBindTexture(baseDestination, texId);
-	glTexImage2D(destination, (GLint)mipid, destTypedFormat, (GLsizei)image.width, (GLsizei)image.height, 0, destFormat, destType, &finalData[0]);
+	glTexImage2D(destination, (GLint)mipid, destTypedFormat, (GLsizei)image.width, (GLsizei)image.height, 0, destFormat, destType, finalDataPtr);
 	glBindTexture(baseDestination, 0);
-	
-	finalData.clear();
 }
 
 TextureInfos GLUtilities::loadTexture(const std::vector<std::string>& paths, const Descriptor & descriptor, Storage mode){
@@ -404,7 +402,13 @@ TextureInfos GLUtilities::loadTexture(const std::vector<std::string>& paths, con
 	
 	// Load and upload each mip level.
 	for(unsigned int mipid = 0; mipid < paths.size(); ++mipid){
-		Image image;
+		Image localImage;
+		const bool storedImage = (mipid == 0) && (mode & Storage::CPU);
+		if(storedImage){
+			infos.images.emplace_back();
+		}
+		Image & image = storedImage ? infos.images.back() : localImage;
+		
 		int ret = ImageUtilities::loadImage(paths[mipid], channels, true, false, image);
 		if (ret != 0) {
 			Log::Error() << Log::Resources << "Unable to load the texture at path " << paths[mipid] << "." << std::endl;
@@ -419,9 +423,7 @@ TextureInfos GLUtilities::loadTexture(const std::vector<std::string>& paths, con
 		if(mode & Storage::GPU){
 			uploadTexture(GL_TEXTURE_2D, infos.id, descriptor.typedFormat, mipid, image);
 		}
-		if(mipid == 0 && (mode & Storage::CPU)){
-			infos.images.push_back(std::move(image));
-		}
+		
 	}
 	
 	// If only level 0 was given, generate mipmaps pyramid automatically.
@@ -464,7 +466,12 @@ TextureInfos GLUtilities::loadTextureCubemap(const std::vector<std::vector<std::
 		const std::vector<std::string> paths = allPaths[mipid];
 		for(size_t side = 0; side < 6; ++side){
 			// No need to flip cubemaps.
-			Image image;
+			Image localImage;
+			const bool storedImage = (mipid == 0) && (mode & Storage::CPU);
+			if(storedImage){
+				infos.images.emplace_back();
+			}
+			Image & image = storedImage ? infos.images.back() : localImage;
 			int ret = ImageUtilities::loadImage(paths[side], channels, false, false, image);
 			if (ret != 0) {
 				Log::Error() << Log::Resources << "Unable to load the texture at path " << paths[side] << "." << std::endl;
@@ -478,9 +485,7 @@ TextureInfos GLUtilities::loadTextureCubemap(const std::vector<std::vector<std::
 			if(mode & Storage::GPU){
 				uploadTexture(GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + side), infos.id, descriptor.typedFormat, mipid, image);
 			}
-			if(mipid == 0 && (mode & Storage::CPU)){
-				infos.images.push_back(std::move(image));
-			}
+			
 		}
 	}
 	

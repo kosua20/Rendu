@@ -16,13 +16,54 @@ struct Image {
 	 \param awidth the width of the image
 	 \param aheight the height of the image
 	 \param acomponents the number of components of the image
+	 \param value the default value to use
 	 */
-	Image(int awidth, int aheight, int acomponents);
+	Image(int awidth, int aheight, int acomponents, float value = 0.0f);
 	
 	unsigned int width; //< The width of the image
 	unsigned int height; //< The height of the image
 	unsigned int components; //< Number of components/channels
 	std::vector<float> pixels; //< The pixels values of the image
+	
+	/** Accessor to a RGBA pixel
+	 \param x horizontal coordinate
+	 \param y vertical coordinate
+	 \return reference to the given pixel
+	 \warn no access or component check is done
+	 */
+	glm::vec4 & rgba(int x, int y);
+	
+	/** Accessor to the RGB part of a pixel
+	 \param x horizontal coordinate
+	 \param y vertical coordinate
+	 \return reference to the given pixel
+	 \warn no access or component check is done
+	 */
+	glm::vec3 & rgb(int x, int y);
+	
+	/** Accessor to the RG part of a pixel
+	 \param x horizontal coordinate
+	 \param y vertical coordinate
+	 \return reference to the given pixel
+	 \warn no access or component check is done
+	 */
+	glm::vec2 & rg(int x, int y);
+	
+	/** Accessor to the red/first component of a pixel
+	 \param x horizontal coordinate
+	 \param y vertical coordinate
+	 \return reference to the given pixel first component
+	 \warn no access or component check is done
+	 */
+	float & r(int x, int y);
+	
+	/** Accessor to the alpha/last component of a pixel
+	 \param x horizontal coordinate
+	 \param y vertical coordinate
+	 \return reference to the given pixel last component
+	 \warn no access or component check is done
+	 */
+	float & a(int x, int y);
 	
 };
 

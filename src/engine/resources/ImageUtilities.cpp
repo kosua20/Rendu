@@ -22,11 +22,31 @@ Image::Image(){
 	pixels.clear();
 }
 
-Image::Image(int awidth, int aheight, int acomponents){
+Image::Image(int awidth, int aheight, int acomponents, float value){
 	width = awidth;
 	height = aheight;
 	components = acomponents;
-	pixels.resize(width*height*components);
+	pixels.resize(width*height*components, value);
+}
+
+glm::vec4 & Image::rgba(int x, int y){
+	return reinterpret_cast<glm::vec4*>(&pixels[(y*width+x)*components])[0];
+}
+
+glm::vec3 & Image::rgb(int x, int y){
+	return reinterpret_cast<glm::vec3*>(&pixels[(y*width+x)*components])[0];
+}
+
+glm::vec2 & Image::rg(int x, int y){
+	return reinterpret_cast<glm::vec2*>(&pixels[(y*width+x)*components])[0];
+}
+
+float & Image::r(int x, int y){
+	return pixels[(y*width+x)*components];
+}
+
+float & Image::a(int x, int y){
+	return pixels[(y*width+x+1)*components-1];
 }
 
 bool ImageUtilities::isFloat(const std::string & path){
