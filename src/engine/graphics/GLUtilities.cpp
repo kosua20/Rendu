@@ -335,7 +335,7 @@ GLuint GLUtilities::createTexture(const GLenum destination, const Descriptor & d
 	return textureId;
 }
 
-void GLUtilities::uploadTexture(const GLenum destination, const GLuint texId, const GLenum destTypedFormat, const unsigned int mipid, const Image & image){
+void GLUtilities::uploadTexture(const GLenum destination, const GLuint texId, const GLenum destTypedFormat, const unsigned int mipid, const unsigned int lid, const Image & image){
 	
 	// Sanity check the texture destination format.
 	GLenum destType, destFormat;
@@ -363,18 +363,26 @@ void GLUtilities::uploadTexture(const GLenum destination, const GLuint texId, co
 	}
 	
 	// Upload.
-	const GLenum baseDestination = destination == GL_TEXTURE_2D ? destination : GL_TEXTURE_CUBE_MAP;
-	glBindTexture(baseDestination, texId);
-	glTexImage2D(destination, (GLint)mipid, destTypedFormat, (GLsizei)image.width, (GLsizei)image.height, 0, destFormat, destType, finalDataPtr);
-	glBindTexture(baseDestination, 0);
+	glBindTexture(destination, texId);
+	if(destination == GL_TEXTURE_2D){
+		glTexImage2D(destination, (GLint)mipid, destTypedFormat, (GLsizei)image.width, (GLsizei)image.height, 0, destFormat, destType, finalDataPtr);
+	} else if(destination == GL_TEXTURE_CUBE_MAP){
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + lid, (GLint)mipid, destTypedFormat, (GLsizei)image.width, (GLsizei)image.height, 0, destFormat, destType, finalDataPtr);
+	} else if(destination == GL_TEXTURE_2D_ARRAY){
+		glTexSubImage3D(GL_TEXTURE_2D_ARRAY, (GLint)mipid, 0, 0, lid, (GLsizei)image.width, (GLsizei)image.height, 1, destFormat, destType, finalDataPtr);
+	} else {
+		Log::Error() << Log::OpenGL << "Unsupported texture upload destination." << std::endl;
+	}
+	glBindTexture(destination, 0);
 }
 
-TextureInfos GLUtilities::loadTexture(const std::vector<std::string>& paths, const Descriptor & descriptor, Storage mode){
+TextureInfos GLUtilities::loadTexture(const GLenum target, const std::vector<std::vector<std::string>>& mipsList, const Descriptor & descriptor, Storage mode){
 	TextureInfos infos;
 	infos.descriptor = descriptor;
-	infos.cubemap = false;
-	infos.mipmap = int(paths.size());
-	if(paths.empty()){
+	infos.cubemap = target == GL_TEXTURE_CUBE_MAP;
+	infos.array = target == GL_TEXTURE_2D_ARRAY;
+	infos.mipmap = int(mipsList.size());
+	if(mipsList.empty() || mipsList[0].empty()){
 		Log::Error() << Log::Resources << "Unable to find texture." << std::endl;
 		return infos;
 	}
@@ -389,108 +397,58 @@ TextureInfos GLUtilities::loadTexture(const std::vector<std::string>& paths, con
 	}
 	
 	if(mode & Storage::GPU){
-		// Create 2D texture, if only one path, automatically generate mipmaps.
-		infos.id = createTexture(GL_TEXTURE_2D, descriptor, infos.mipmap == 1 ? 0 : infos.mipmap);
+		// Create texture, if only one path, automatically generate mipmaps.
+		infos.id = createTexture(target, descriptor, infos.mipmap == 1 ? 0 : infos.mipmap);
 	}
+	checkGLError();
+	
+	// Cubemaps don't need to be flipped.
+	const bool shouldFlip = (target != GL_TEXTURE_CUBE_MAP);
 	
 	// Load and upload each mip level.
-	for(unsigned int mipid = 0; mipid < paths.size(); ++mipid){
-		Image localImage;
-		const bool storedImage = (mipid == 0) && (mode & Storage::CPU);
-		if(storedImage){
-			infos.images.emplace_back();
-		}
-		Image & image = storedImage ? infos.images.back() : localImage;
+	for(unsigned int mipid = 0; mipid < mipsList.size(); ++mipid){
+		const auto & layersList = mipsList[mipid];
+		const bool shouldStoreImage = (mipid == 0) && (mode & Storage::CPU);
 		
-		int ret = ImageUtilities::loadImage(paths[mipid], channels, true, false, image);
-		if (ret != 0) {
-			Log::Error() << Log::Resources << "Unable to load the texture at path " << paths[mipid] << "." << std::endl;
-			return infos;
-		}
-		// Obtain the reference size of the image.
-		if(mipid == 0){
-			infos.width = image.width;
-			infos.height = image.height;
-		}
-		// Send data to the gpu.
-		if(mode & Storage::GPU){
-			uploadTexture(GL_TEXTURE_2D, infos.id, descriptor.typedFormat, mipid, image);
-		}
-		
-	}
-	
-	// If only level 0 was given, generate mipmaps pyramid automatically.
-	if((mode & Storage::GPU) && infos.mipmap == 1){
-		glBindTexture(GL_TEXTURE_2D, infos.id);
-		glGenerateMipmap(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, 0);
-	}
-	return infos;
-}
-
-TextureInfos GLUtilities::loadTextureCubemap(const std::vector<std::vector<std::string>> & allPaths, const Descriptor & descriptor, Storage mode){
-	TextureInfos infos;
-	infos.descriptor = descriptor;
-	infos.cubemap = true;
-	infos.mipmap = int(allPaths.size());
-	// If not enough images, return empty texture.
-	if(allPaths.empty() || allPaths[0].size() == 0 ){
-		Log::Error() << Log::Resources << "Unable to find cubemap." << std::endl;
-		return infos;
-	}
-	// Check that the descriptor type is valid.
-	GLenum format, type;
-	const unsigned int channels = getTypeAndFormat(descriptor.typedFormat, type, format);
-	const bool validType = type == GL_FLOAT || type == GL_UNSIGNED_BYTE;
-	const bool validFormat = format == GL_RED || format == GL_RG || format == GL_RGB || format == GL_RGBA;
-	if(!validType || !validFormat){
-		Log::Error() << "Invalid descriptor for creating texture from file." << std::endl;
-		return infos;
-	}
-	// Image infos.
-	
-	if(mode & Storage::GPU){
-		// Create cubemap texture, automatically generate mipmaps if one level only.
-		infos.id = createTexture(GL_TEXTURE_CUBE_MAP, descriptor, infos.mipmap == 1 ? 0 : infos.mipmap);
-	}
-	
-	// Load and upload each mip level.
-	for(unsigned int mipid = 0; mipid < allPaths.size(); ++mipid){
-		const std::vector<std::string> paths = allPaths[mipid];
-		for(size_t side = 0; side < 6; ++side){
-			// No need to flip cubemaps.
+		for(unsigned int lid = 0; lid < layersList.size(); ++lid){
 			Image localImage;
-			const bool storedImage = (mipid == 0) && (mode & Storage::CPU);
-			if(storedImage){
+			if(shouldStoreImage){
 				infos.images.emplace_back();
 			}
-			Image & image = storedImage ? infos.images.back() : localImage;
-			int ret = ImageUtilities::loadImage(paths[side], channels, false, false, image);
+			Image & image = shouldStoreImage ? infos.images.back() : localImage;
+			
+			int ret = ImageUtilities::loadImage(layersList[lid], channels, shouldFlip, false, image);
 			if (ret != 0) {
-				Log::Error() << Log::Resources << "Unable to load the texture at path " << paths[side] << "." << std::endl;
-				return infos;
+				Log::Error() << Log::Resources << "Unable to load the texture at path " << layersList[lid] << "." << std::endl;
+				continue;
 			}
 			// Obtain the reference size of the image.
-			if(mipid == 0 && side == 0){
+			if(mipid == 0){
 				infos.width = image.width;
 				infos.height = image.height;
 			}
-			if(mode & Storage::GPU){
-				uploadTexture(GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + side), infos.id, descriptor.typedFormat, mipid, image);
+			// Texture arrays are filled by subcopies, and have to be initialized first.
+			// \todo Test in practice.
+			if(mipid == 0 && lid == 0 && target == GL_TEXTURE_2D_ARRAY){
+				glTexStorage3D(GL_TEXTURE_2D_ARRAY, infos.mipmap, descriptor.typedFormat, infos.width, infos.height, layersList.size());
 			}
-			
+			checkGLError();
+			// Send data to the gpu.
+			if(mode & Storage::GPU){
+				uploadTexture(target, infos.id, descriptor.typedFormat, mipid, lid, image);
+			}
+			checkGLError();
 		}
 	}
 	
 	// If only level 0 was given, generate mipmaps pyramid automatically.
 	if((mode & Storage::GPU) && infos.mipmap == 1){
-		glBindTexture(GL_TEXTURE_CUBE_MAP, infos.id);
-		glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+		glBindTexture(target, infos.id);
+		glGenerateMipmap(target);
+		glBindTexture(target, 0);
 	}
 	return infos;
 }
-
 
 MeshInfos GLUtilities::setupBuffers(const Mesh & mesh){
 	MeshInfos infos;

@@ -41,7 +41,7 @@ void loadCubemap(const std::string & inputPath, TextureInfos & cubemapInfos){
 		pathSides.push_back(cubemapPath + suffixes[i] + ext);
 	}
 	
-	cubemapInfos = GLUtilities::loadTextureCubemap({pathSides}, {typedFormat, GL_LINEAR, GL_CLAMP_TO_EDGE}, Storage::BOTH);
+	cubemapInfos = GLUtilities::loadTexture(GL_TEXTURE_CUBE_MAP, {pathSides}, {typedFormat, GL_LINEAR, GL_CLAMP_TO_EDGE}, Storage::BOTH);
 	Log::Info() << "Info:" << cubemapInfos.images.size() << std::endl;
 
 }

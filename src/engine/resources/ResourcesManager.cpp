@@ -313,7 +313,7 @@ TextureInfos * Resources::getTexture(const std::string & name, const Descriptor 
 	
 	if(!path.empty()){
 		// Else, load it and store the infos.
-		infos = GLUtilities::loadTexture({path}, descriptor, mode);
+		infos = GLUtilities::loadTexture(GL_TEXTURE_2D, {{path}}, descriptor, mode);
 		_textures[keyName] = infos;
 		return &_textures[keyName];
 	}
@@ -321,19 +321,19 @@ TextureInfos * Resources::getTexture(const std::string & name, const Descriptor 
 	// In this case the true name is name_mipmaplevel.
 	
 	// How many mipmap levels can we accumulate?
-	std::vector<std::string> paths;
+	std::vector<std::vector<std::string>> paths;
 	unsigned int lastMipmap = 0;
 	std::string mipmapPath = getImagePath(name + "_" + std::to_string(lastMipmap));
 	while(!mipmapPath.empty()) {
 		// Transfer them to the final paths vector.
-		paths.push_back(mipmapPath);
+		paths.push_back({mipmapPath});
 		++lastMipmap;
 		mipmapPath = getImagePath(name + "_" + std::to_string(lastMipmap));
 	}
 	if(!paths.empty()){
 		// We found the texture files.
 		// Load them and store the infos.
-		infos = GLUtilities::loadTexture(paths, descriptor, mode);
+		infos = GLUtilities::loadTexture(GL_TEXTURE_2D, paths, descriptor, mode);
 		_textures[keyName] = infos;
 		return &_textures[keyName];
 	}
@@ -371,7 +371,7 @@ TextureInfos * Resources::getCubemap(const std::string & name, const Descriptor 
 	if(!paths.empty()){
 		// We found the texture files.
 		// Load them and store the infos.
-		infos = GLUtilities::loadTextureCubemap({paths}, descriptor, mode);
+		infos = GLUtilities::loadTexture(GL_TEXTURE_CUBE_MAP, {paths}, descriptor, mode);
 		_textures[keyName] = infos;
 		return &_textures[keyName];
 	}
@@ -391,7 +391,7 @@ TextureInfos * Resources::getCubemap(const std::string & name, const Descriptor 
 	if(!allPaths.empty()){
 		// We found the texture files.
 		// Load them and store the infos.
-		infos = GLUtilities::loadTextureCubemap(allPaths, descriptor, mode);
+		infos = GLUtilities::loadTexture(GL_TEXTURE_CUBE_MAP, allPaths, descriptor, mode);
 		_textures[keyName] = infos;
 		return &_textures[keyName];
 	}
