@@ -356,17 +356,13 @@ void GLUtilities::uploadTexture(const GLenum destination, const GLuint texId, co
 			const float newValue = std::min(255.0f, std::max(0.0f, image.pixels[pid] * 255.0f));
 			finalData[pid] = GLubyte(newValue);
 		}
-	} else {
-		// Just do the transfer.
-		int sizeFloat = sizeof(float);
-		finalData.resize(destSize*sizeFloat);
-		// Handle the conversion by hand.
 		for(size_t pid = 0; pid < destSize; ++pid){
-			const unsigned char *newValue = reinterpret_cast<const unsigned char*>(&image.pixels[pid]);
-			for(int i = 0; i < sizeFloat; ++i){
-				finalData[4*pid+i] = GLubyte(newValue[i]);
-			}
 		}
+		finalDataPtr = &finalData[0];
+		
+	} else {
+		// Just reinterpret the data.
+		finalDataPtr = reinterpret_cast<const GLubyte*>(&image.pixels[0]);
 	}
 	
 	// Upload.
