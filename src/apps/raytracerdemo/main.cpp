@@ -1,0 +1,89 @@
+#include "Common.hpp"
+#include "raycaster/Raycaster.hpp"
+#include "helpers/GenerationUtilities.hpp"
+#include "input/Input.hpp"
+#include "input/InputCallbacks.hpp"
+#include "input/ControllableCamera.hpp"
+#include "helpers/InterfaceUtilities.hpp"
+#include "resources/ResourcesManager.hpp"
+#include "graphics/ScreenQuad.hpp"
+#include "Config.hpp"
+
+/**
+ \defgroup RaytracerDemo Raytracer demo app
+ \brief A basic ray tracing demo
+ \ingroup Applications
+ */
+
+/**
+ The main function of the demo.
+ \param argc the number of input arguments.
+ \param argv a pointer to the raw input arguments.
+ \return a general error code.
+ \ingroup RaytracerDemo
+ */
+int main(int argc, char** argv) {
+	
+	// Initialize random generator;
+	Random::seed();
+	Resources::manager().addResources("../../../resources/pbrdemo");
+	
+	// Load geometry and create raycaster.
+	const MeshInfos * mesh = Resources::manager().getMesh("suzanne", Storage::CPU);
+	Log::Info() << mesh->geometry.positions.size() << " vertices, " << mesh->geometry.indices.size()/3 << " triangles." << std::endl;
+	Raycaster raycaster;
+	raycaster.addMesh(mesh->geometry);
+	
+	// Load model texture.
+	TextureInfos *texture = Resources::manager().getTexture("suzanne_texture_color", {}, Storage::CPU);
+	Image & image = texture->images[0];
+	// Light direction.
+	const glm::vec3 l = glm::normalize(glm::vec3(1.0));
+	
+	
+	Image render(512, 512, 3);
+	auto start = std::chrono::steady_clock::now();
+	
+	for(unsigned int y = 0; y < render.width; ++y){
+		for(unsigned int x = 0; x < render.width; ++x){
+			// Derive a position from the pixel. For now we do orthographic rendering.
+			const glm::vec3 origin(1.0f*((x/float(render.width))*2.0f - 1.0f) ,1.0f*((y/float(render.height))*2.0f - 1.0f), 2.0f);
+			const glm::vec3 dir(0.0, 0.0, -1.0f);
+			
+			// Query closest intersection.
+			const Raycaster::RayHit hit = raycaster.intersects(origin, dir);
+			// If no hit, background.
+			if(!hit.hit){
+				render.rgb(x,y) = glm::vec3(0.0f, 0.0f, 0.0f);
+				continue;
+			}
+			
+			// Else, compute third barycentric coordinates...
+			const float w = 1.0f - hit.u - hit.v;
+			// Fetch geometry infos...
+			const unsigned long triangleId = hit.localId;
+			const unsigned long i0 = mesh->geometry.indices[triangleId];
+			const unsigned long i1 = mesh->geometry.indices[triangleId+1];
+			const unsigned long i2 = mesh->geometry.indices[triangleId+2];
+			// And interpolate the UVs and normal.
+			const glm::vec2 uv  = w * mesh->geometry.texcoords[i0]
+								+ hit.u * mesh->geometry.texcoords[i1]
+								+ hit.v * mesh->geometry.texcoords[i2];
+			const glm::vec3 n = glm::normalize(w * mesh->geometry.normals[i0] + hit.u * mesh->geometry.normals[i1] + hit.v * mesh->geometry.normals[i2]);
+			// Compute lighting.
+			const float diffuse = std::max(0.0f, glm::dot(n, l));
+			// Fetch base color from texture.
+			const glm::vec3 baseColor = image.rgb(std::floor(uv.x * image.width), std::floor(uv.y * image.height));
+			// Done.
+			render.rgb(x,y) = diffuse * baseColor;
+		}
+	}
+	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start);
+	Log::Info() << "Generation took " << duration.count() << " ms at " << render.width << "x" << render.height << "." << std::endl;
+	
+	// Save image.
+	ImageUtilities::saveLDRImage("./test.png", render, true);
+	return 0;
+}
+
+

@@ -150,6 +150,8 @@ project("ImageViewer")
 project("SnakeGame")
 	AppSetup("snakegame")
 
+project("RaytracerDemo")
+	AppSetup("raytracerdemo")
 	
 	
 group("Tools")
@@ -180,7 +182,7 @@ group("Meta")
 project("ALL")
 	CPPSetup()
 	kind("ConsoleApp")
-	dependson( {"Engine", "PBRDemo", "Playground", "Atmosphere", "ImageViewer", "AtmosphericScatteringEstimator", "BRDFEstimator", "ControllerTest", "SnakeGame", })
+	dependson( {"Engine", "PBRDemo", "Playground", "Atmosphere", "ImageViewer", "AtmosphericScatteringEstimator", "BRDFEstimator", "ControllerTest", "SnakeGame", "RaytracerDemo"})
 
 -- Actions
 
