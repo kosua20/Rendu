@@ -399,8 +399,9 @@ TextureInfos GLUtilities::loadTexture(const GLenum target, const std::vector<std
 	if(mode & Storage::GPU){
 		// Create texture, if only one path, automatically generate mipmaps.
 		infos.id = createTexture(target, descriptor, infos.mipmap == 1 ? 0 : infos.mipmap);
+		checkGLError();
 	}
-	checkGLError();
+	
 	
 	// Cubemaps don't need to be flipped.
 	const bool shouldFlip = (target != GL_TEXTURE_CUBE_MAP);
@@ -427,17 +428,18 @@ TextureInfos GLUtilities::loadTexture(const GLenum target, const std::vector<std
 				infos.width = image.width;
 				infos.height = image.height;
 			}
-			// Texture arrays are filled by subcopies, and have to be initialized first.
-			// \todo Test in practice.
-			if(mipid == 0 && lid == 0 && target == GL_TEXTURE_2D_ARRAY){
-				glTexStorage3D(GL_TEXTURE_2D_ARRAY, infos.mipmap, descriptor.typedFormat, infos.width, infos.height, layersList.size());
-			}
-			checkGLError();
+			
 			// Send data to the gpu.
 			if(mode & Storage::GPU){
+				// Texture arrays are filled by subcopies, and have to be initialized first.
+				// \todo Test in practice.
+				if(mipid == 0 && lid == 0 && target == GL_TEXTURE_2D_ARRAY){
+					glTexStorage3D(GL_TEXTURE_2D_ARRAY, infos.mipmap, descriptor.typedFormat, infos.width, infos.height, layersList.size());
+				}
 				uploadTexture(target, infos.id, descriptor.typedFormat, mipid, lid, image);
+				checkGLError();
 			}
-			checkGLError();
+			
 		}
 	}
 	
@@ -446,6 +448,7 @@ TextureInfos GLUtilities::loadTexture(const GLenum target, const std::vector<std
 		glBindTexture(target, infos.id);
 		glGenerateMipmap(target);
 		glBindTexture(target, 0);
+		checkGLError();
 	}
 	return infos;
 }
