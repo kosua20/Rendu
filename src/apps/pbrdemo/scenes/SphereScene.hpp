@@ -1,7 +1,7 @@
 #ifndef SphereScene_h
 #define SphereScene_h
 
-#include "Scene.hpp"
+#include "scene/Scene.hpp"
 
 
 class SphereScene : public Scene {

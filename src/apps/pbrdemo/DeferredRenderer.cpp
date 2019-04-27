@@ -1,8 +1,8 @@
 #include "DeferredRenderer.hpp"
 #include "input/Input.hpp"
-#include "lights/DirectionalLight.hpp"
-#include "lights/PointLight.hpp"
-#include "lights/SpotLight.hpp"
+#include "scene/lights/DirectionalLight.hpp"
+#include "scene/lights/PointLight.hpp"
+#include "scene/lights/SpotLight.hpp"
 #include "helpers/InterfaceUtilities.hpp"
 
 

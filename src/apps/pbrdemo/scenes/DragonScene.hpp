@@ -1,7 +1,7 @@
 #ifndef DragonScene_h
 #define DragonScene_h
 
-#include "Scene.hpp"
+#include "scene/Scene.hpp"
 
 
 class DragonScene : public Scene {

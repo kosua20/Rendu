@@ -1,7 +1,7 @@
 #ifndef PointLight_h
 #define PointLight_h
-#include "lights/Light.hpp"
-#include "Object.hpp"
+#include "scene/lights/Light.hpp"
+#include "scene/Object.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "graphics/FramebufferCube.hpp"
 

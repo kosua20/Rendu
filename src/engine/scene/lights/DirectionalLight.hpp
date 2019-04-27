@@ -1,8 +1,8 @@
 #ifndef DirectionalLight_h
 #define DirectionalLight_h
 
-#include "lights/Light.hpp"
-#include "Object.hpp"
+#include "scene/lights/Light.hpp"
+#include "scene/Object.hpp"
 #include "graphics/ScreenQuad.hpp"
 #include "graphics/Framebuffer.hpp"
 #include "processing/BoxBlur.hpp"

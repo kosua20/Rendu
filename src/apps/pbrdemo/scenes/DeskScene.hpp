@@ -1,7 +1,7 @@
 #ifndef DeskScene_h
 #define DeskScene_h
 
-#include "Scene.hpp"
+#include "scene/Scene.hpp"
 
 
 class DeskScene : public Scene {

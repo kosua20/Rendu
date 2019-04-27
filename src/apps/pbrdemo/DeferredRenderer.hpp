@@ -2,7 +2,7 @@
 #define DeferredRenderer_h
 
 #include "AmbientQuad.hpp"
-#include "Scene.hpp"
+#include "scene/Scene.hpp"
 #include "renderers/Renderer.hpp"
 
 #include "graphics/Framebuffer.hpp"
