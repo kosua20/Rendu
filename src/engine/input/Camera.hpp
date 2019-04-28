@@ -24,7 +24,7 @@ public:
 	
 	/** Update all projection parameters.
 	 \param ratio the aspect ratio
-	 \param fov the vertical field of view
+	 \param fov the vertical field of view in radians
 	 \param near the near plane distance
 	 \param far the far plane distance
 	 */
