@@ -39,6 +39,16 @@ struct BoundingBox {
 		maxis = glm::vec3(0.0f);
 	}
 	
+	/** Triangle-based box constructor.
+	 \param v0 first triangle vertex
+	 \param v1 second triangle vertex
+	 \param v2 third triangle vertex
+	 */
+	BoundingBox(const glm::vec3 & v0, const glm::vec3 & v1, const glm::vec3 & v2){
+		minis = glm::min(glm::min(v0, v1), v2);
+		maxis = glm::max(glm::max(v0, v1), v2);
+	}
+	
 	/** Extends the current box by another one. The result is the bounding box of the two boxes union.
 	 \param box the bounding box to include
 	 */
