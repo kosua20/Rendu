@@ -12,6 +12,8 @@ public:
 
 	void addMesh(const Mesh & mesh);
 	
+	void updateHierarchy();
+	
 	struct RayHit {
 		bool hit;
 		float dist;
@@ -46,10 +48,23 @@ private:
 		
 	};
 	
+	struct Node {
+		BoundingBox box;
+		int left;
+		int right;
+		bool leaf;
+	};
+	
+	int updateSubHierarchy(const int begin, const int count);
+	
 	const RayHit intersects(const Ray & ray, const TriangleInfos & tri) const;
+	const RayHit intersects(const Raycaster::Ray & ray, const Raycaster::Node & node) const;
+	
+	static bool intersects(const Ray & ray, const BoundingBox & box);
 	
 	std::vector<TriangleInfos> _triangles;
 	std::vector<glm::vec3> _vertices;
+	std::vector<Node> _hierarchy;
 	
 	unsigned int _meshCount = 0;
 };

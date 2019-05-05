@@ -1,5 +1,5 @@
 #include "Raycaster.hpp"
-
+#include "helpers/GenerationUtilities.hpp"
 
 Raycaster::Ray::Ray(const glm::vec3 & origin, const glm::vec3 & direction) : pos(origin), dir(glm::normalize(direction)){
 }
@@ -39,20 +39,81 @@ void Raycaster::addMesh(const Mesh & mesh){
 	++_meshCount;
 }
 
-const Raycaster::RayHit Raycaster::intersects(const glm::vec3 & origin, const glm::vec3 & direction) const {
-	// For now, bruteforce check all triangles.
-	Ray ray(origin, direction);
-	RayHit finalHit;
-	for(const auto & tri : _triangles){
-		const RayHit hit = intersects(ray, tri);
-		if(hit.hit && hit.dist < finalHit.dist){
-			finalHit = hit;
-		}
-	}
-	return finalHit;
+void Raycaster::updateHierarchy(){
+	Log::Info() << "Building hierarchy... " << std::flush;
+	updateSubHierarchy(0, _triangles.size());
+	Log::Info() << "Done." << std::endl;
 }
 
-#define EPSILON 0.00001f
+int Raycaster::updateSubHierarchy(const int begin, const int count){
+	// Pick a random axis for sorting.
+	const int axis = Random::Int(0, 2);
+	// Sort all triangles along the picked axis.
+	std::sort(_triangles.begin()+begin, _triangles.begin()+begin+count, [this, axis](const TriangleInfos & t0, const TriangleInfos & t1){
+		// Compute both bounding boxes.
+		BoundingBox b0(_vertices[t0.v0], _vertices[t0.v1], _vertices[t0.v2]);
+		BoundingBox b1(_vertices[t0.v0], _vertices[t0.v1], _vertices[t0.v2]);
+		return b0.minis[axis] < b1.minis[axis];
+	});
+	// Create the node.
+	_hierarchy.emplace_back();
+	const int nodeId = _hierarchy.size()-1;
+	Node currentNode;
+	// If the triangles count is low enough, we have a leaf.
+	if(count <= 3){
+		currentNode.leaf = true;
+		currentNode.left = begin;
+		currentNode.right = count;
+		// Compute node bounding box as the union of each triangle box.
+		const TriangleInfos & t0 = _triangles[begin];;
+		currentNode.box = BoundingBox(_vertices[t0.v0], _vertices[t0.v1], _vertices[t0.v2]);
+		for(int tid = 1; tid < count; ++tid){
+			const TriangleInfos & t = _triangles[begin+tid];;
+			const BoundingBox tbox(_vertices[t.v0], _vertices[t.v1], _vertices[t.v2]);
+			currentNode.box.merge(tbox);
+		}
+	} else {
+		currentNode.leaf = false;
+		// Create the two sub-nodes.
+		currentNode.left = updateSubHierarchy(begin, count/2);
+		currentNode.right = updateSubHierarchy(begin+count/2, count-count/2);
+		currentNode.box = BoundingBox(_hierarchy[currentNode.left].box);
+		currentNode.box.merge(_hierarchy[currentNode.right].box);
+	}
+	_hierarchy[nodeId] = currentNode;
+	return nodeId;
+}
+
+const Raycaster::RayHit Raycaster::intersects(const glm::vec3 & origin, const glm::vec3 & direction) const {
+	const Ray ray(origin, direction);
+	return intersects(ray, _hierarchy[0]);
+}
+
+const Raycaster::RayHit Raycaster::intersects(const Raycaster::Ray & ray, const Raycaster::Node & node) const {
+	if(!Raycaster::intersects(ray, node.box)){
+		return RayHit();
+	}
+	// If the node is a leaf, test all included triangles.
+	if(node.leaf){
+		RayHit finalHit;
+		for(int tid = 0; tid < node.right; ++tid){
+			const auto & tri = _triangles[node.left + tid];
+			const RayHit hit = intersects(ray, tri);
+			if(hit.hit && hit.dist < finalHit.dist){
+				finalHit = hit;
+			}
+		}
+		return finalHit;
+	}
+	// Else, intersect both child nodes.
+	const RayHit left = intersects(ray, _hierarchy[node.left]);
+	const RayHit right = intersects(ray, _hierarchy[node.right]);
+	// Return the closest hit if it exists.
+	if(!left.hit || right.dist < left.dist){
+		return right;
+	}
+	return left;
+}
 
 const Raycaster::RayHit Raycaster::intersects(const Raycaster::Ray & ray, const TriangleInfos & tri) const {
 	// Implement Moller-Trumbore intersection test.
@@ -62,7 +123,7 @@ const Raycaster::RayHit Raycaster::intersects(const Raycaster::Ray & ray, const 
 	const glm::vec3 p = glm::cross(ray.dir, v02);
 	const float det = glm::dot(v01, p);
 	
-	if(std::abs(det) < EPSILON){
+	if(std::abs(det) < 0.00001f){
 		return RayHit();
 	}
 	
@@ -82,4 +143,16 @@ const Raycaster::RayHit Raycaster::intersects(const Raycaster::Ray & ray, const 
 	const float t = invDet * glm::dot(v02, r);
 	
 	return RayHit(t, u, v, tri.localId, tri.meshId);
+}
+
+bool Raycaster::intersects(const Raycaster::Ray & ray, const BoundingBox & box){
+	const glm::vec3 minRatio = (box.minis - ray.pos) / ray.dir;
+	const glm::vec3 maxRatio = (box.maxis - ray.pos) / ray.dir;
+	const glm::vec3 minFinal = glm::min(minRatio, maxRatio);
+	const glm::vec3 maxFinal = glm::max(minRatio, maxRatio);
+	
+	const float closest  = std::max(minFinal[0], std::max(minFinal[1], minFinal[2]));
+	const float furthest = std::min(maxFinal[0], std::min(maxFinal[1], maxFinal[2]));
+	
+	return closest <= furthest;
 }
