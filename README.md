@@ -1,4 +1,22 @@
-[TOC]
+# GL_Template Documentation
+# Building
+
+This project use `premake` ([premake.github.io](https://premake.github.io)) for generating the workspace and projects files.
+Run
+
+	premake5.exe [vs2017 | xcode | make | ...]
+	
+To generate the desired workspace in the `build` directory.
+
+The documentation (access it at `docs/index.html`) relies on Doxygen being installed. Generate it with 
+
+	premake5 docs
+
+You can clean the build directory with
+
+	premake5 clean
+
+Two non-system dependencies are required by this framework: `glfw3` and `nfd`, binaries for both are provided for macOS and Windows. All other dependencies are compiled along with the projects.
 
 # Features
 
@@ -9,14 +27,10 @@
 - Interactions
 - Programs and shaders compilation
 - Errors and tips, debugging
-- Rendering basic geometry
-- Simple shaders
-- Uniforms
-
-[Explanations stop here]
-
+- Rendering basic geometry 
+- Shaders and uniforms *[Explanations stop here]*
 - Textures
-- Attributes
+- Vertex attributes
 - Moving to 3D using matrix
 - Camera
 - Element arrays
@@ -43,6 +57,9 @@
 - Spot lights and point lights shadow maps
 - Atmospheric scattering
 - Shader offline validation
+- Basic game demo
+- Irradiance precomputation utility
+- CPU raycaster
 
 # Planned
 
@@ -59,6 +76,8 @@
 ## Engineering
 
 - Support PS4 controller fully
-- Additional controllers support
 - Separate backgrounds and objects
-- Realtime cubmaps for reflections?
+- Realtime cubmaps for reflections, using culling instead of layered rendering
+- Isolate OpenGL calls
+- Imrpove resources handling
+- Avoid binary dependencies
