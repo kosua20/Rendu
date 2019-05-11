@@ -33,6 +33,7 @@ int main(int argc, char** argv) {
 	Log::Info() << mesh->geometry.positions.size() << " vertices, " << mesh->geometry.indices.size()/3 << " triangles." << std::endl;
 	Raycaster raycaster;
 	raycaster.addMesh(mesh->geometry);
+	raycaster.updateHierarchy();
 	
 	// Load model texture.
 	TextureInfos *texture = Resources::manager().getTexture("suzanne_texture_color", {}, Storage::CPU);
@@ -41,7 +42,7 @@ int main(int argc, char** argv) {
 	const glm::vec3 l = glm::normalize(glm::vec3(1.0));
 	
 	// Result image.
-	Image render(256, 256, 3);
+	Image render(512, 512, 3);
 	// Setup camera.
 	Camera camera;
 	camera.pose(glm::vec3(0.0f, 0.0f, 2.0f), glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
