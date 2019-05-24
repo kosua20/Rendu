@@ -1,4 +1,4 @@
-# GL_Template Documentation
+# Rendu Engine Documentation
 # Building
 
 This project use `premake` ([premake.github.io](https://premake.github.io)) for generating the workspace and projects files.

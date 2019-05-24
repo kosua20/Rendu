@@ -1,6 +1,5 @@
 //
 //  Common.hpp
-//  GL_Template
 //
 //  Created by Simon Rodriguez on 08/08/2018.
 //  Copyright © 2017 Simon Rodriguez. All rights reserved.
@@ -66,7 +65,7 @@
  \details Those shaders are small programs compiled at runtime and executed by the GPU cores. They can process vertices (vertex shader), primitives (geometry shader) and compute per-pixel values (fragment shader).
  
  \defgroup Applications Applications
- \brief Applications built with GL_Template.
+ \brief Applications built with Rendu.
  
  \defgroup Tools Tools
  \brief Preprocess tools for shader validation, data precomputations, etc.

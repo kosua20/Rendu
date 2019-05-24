@@ -10,7 +10,7 @@ cwd = os.getcwd()
 
 -- Workspace definition.
 
-workspace("GL_Template")
+workspace("Rendu")
 	-- Configurations
 	configurations({ "Debug", "Release"})
 	location("build")
