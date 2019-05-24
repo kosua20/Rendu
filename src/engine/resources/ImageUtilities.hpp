@@ -29,7 +29,7 @@ struct Image {
 	 \param x horizontal coordinate
 	 \param y vertical coordinate
 	 \return reference to the given pixel
-	 \warn no access or component check is done
+	 \warning no access or component check is done
 	 */
 	glm::vec4 & rgba(int x, int y);
 	
@@ -37,7 +37,7 @@ struct Image {
 	 \param x horizontal coordinate
 	 \param y vertical coordinate
 	 \return reference to the given pixel
-	 \warn no access or component check is done
+	 \warning no access or component check is done
 	 */
 	glm::vec3 & rgb(int x, int y);
 	
@@ -45,7 +45,7 @@ struct Image {
 	 \param x horizontal coordinate
 	 \param y vertical coordinate
 	 \return reference to the given pixel
-	 \warn no access or component check is done
+	 \warning no access or component check is done
 	 */
 	glm::vec2 & rg(int x, int y);
 	
@@ -53,7 +53,7 @@ struct Image {
 	 \param x horizontal coordinate
 	 \param y vertical coordinate
 	 \return reference to the given pixel first component
-	 \warn no access or component check is done
+	 \warning no access or component check is done
 	 */
 	float & r(int x, int y);
 	
@@ -61,7 +61,7 @@ struct Image {
 	 \param x horizontal coordinate
 	 \param y vertical coordinate
 	 \return reference to the given pixel last component
-	 \warn no access or component check is done
+	 \warning no access or component check is done
 	 */
 	float & a(int x, int y);
 	

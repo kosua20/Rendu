@@ -216,7 +216,7 @@ private:
 	 \param texId the handle of the texture
 	 \param destTypedFormat the detailed format of the texture
 	 \param mipid the mipmap level to populate
-	 \param mipid the layer to populate for arrays and cubemaps
+	 \param lid the layer to populate for arrays and cubemaps
 	 \param image the image data to upload to the GPU
 	 */
 	static void uploadTexture(const GLenum destination, const GLuint texId, const GLenum destTypedFormat, const unsigned int mipid, const unsigned int lid, const Image & image);
