@@ -11,7 +11,7 @@
 #include <thread>
 /**
  \defgroup RaytracerDemo Raytracer demo app
- \brief A basic ray tracing demo
+ \brief A basic ray tracing demo.
  \ingroup Applications
  */
 
