@@ -237,7 +237,8 @@ const std::string Resources::getString(const std::string & filename){
 	
 	size_t rawSize = 0;
 	char* rawContent = Resources::manager().getRawData(path, rawSize);
-	const std::string content(rawContent, rawSize);
+	std::string content(rawContent, rawSize);
+	TextUtilities::replace(content, "\r\n", "\n");
 	free(rawContent);
 	return content;
 }
@@ -502,6 +503,7 @@ std::string Resources::loadStringFromExternalFile(const std::string & path) {
 	// Create a string based on the content of the buffer.
 	std::string line = buffer.str();
 	inputFile.close();
+	TextUtilities::replace(line, "\r\n", "\n");
 	return line;
 }
 

@@ -12,6 +12,8 @@ void TextUtilities::loadFont(std::istream & in, FontInfos & font){
 		if(line.empty() || line[0] == '#'){
 			continue;
 		}
+		// Filter potential carriage returns.
+		line = TextUtilities::trim(line, "\r");
 		lines.push_back(line);
 	}
 	// We expect at least 4 lines.

@@ -1,6 +1,7 @@
 #include "MeshUtilities.hpp"
 #include <sstream>
 #include <cstddef>
+#include "TextUtilities.hpp"
 
 using namespace std;
 
@@ -29,6 +30,7 @@ void MeshUtilities::loadObj( std::istream & in, Mesh & mesh, MeshUtilities::Load
 			continue;
 		}
 		//We want to split the content of the line at spaces, use a stringstream directly
+		res = TextUtilities::trim(res, "\r");
 		stringstream ss(res);
 		vector<string> tokens;
 		string token;
