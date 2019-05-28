@@ -348,9 +348,10 @@ void GLUtilities::uploadTexture(const GLenum destination, const GLuint texId, co
 	const size_t destSize = destChannels * image.height * image.width;
 	//Perform conversion if needed.
 	const GLubyte* finalDataPtr;
+	GLubyte * finalData = nullptr;
 	if(destType == GL_UNSIGNED_BYTE) {
 		// If we want a uchar image, we convert and scale from [0,1] float to [0, 255] uchars.
-		std::vector<GLubyte> finalData(destSize);
+		finalData = new GLubyte[destSize];
 		// Handle the conversion by hand.
 		for(size_t pid = 0; pid < destSize; ++pid){
 			const float newValue = std::min(255.0f, std::max(0.0f, image.pixels[pid] * 255.0f));
@@ -374,6 +375,7 @@ void GLUtilities::uploadTexture(const GLenum destination, const GLuint texId, co
 		Log::Error() << Log::OpenGL << "Unsupported texture upload destination." << std::endl;
 	}
 	glBindTexture(destination, 0);
+	delete[] finalData;
 }
 
 TextureInfos GLUtilities::loadTexture(const GLenum target, const std::vector<std::vector<std::string>>& mipsList, const Descriptor & descriptor, Storage mode){
