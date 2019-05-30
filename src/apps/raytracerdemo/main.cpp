@@ -9,8 +9,9 @@
 #include "graphics/ScreenQuad.hpp"
 #include "Config.hpp"
 #include <thread>
+
 /**
- \defgroup RaytracerDemo Raytracer demo app
+ \defgroup RaytracerDemo Raytracer demo
  \brief A basic ray tracing demo.
  \ingroup Applications
  */
@@ -29,14 +30,14 @@ int main(int argc, char** argv) {
 	Resources::manager().addResources("../../../resources/pbrdemo");
 	
 	// Load geometry and create raycaster.
-	const MeshInfos * mesh = Resources::manager().getMesh("suzanne", Storage::CPU);
+	const MeshInfos * mesh = Resources::manager().getMesh("dragon", Storage::CPU);
 	Log::Info() << mesh->geometry.positions.size() << " vertices, " << mesh->geometry.indices.size()/3 << " triangles." << std::endl;
 	Raycaster raycaster;
 	raycaster.addMesh(mesh->geometry);
 	raycaster.updateHierarchy();
 	
 	// Load model texture.
-	TextureInfos *texture = Resources::manager().getTexture("suzanne_texture_color", {}, Storage::CPU);
+	TextureInfos *texture = Resources::manager().getTexture("dragon_texture_color", {}, Storage::CPU);
 	Image & image = texture->images[0];
 	// Light direction.
 	const glm::vec3 l = glm::normalize(glm::vec3(1.0));

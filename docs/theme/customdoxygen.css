@@ -18,6 +18,11 @@ h1.groupheader {
 	margin-top:18px;
 }
 
+img {
+	max-width: 800px;
+	width:100%;
+}
+
 h2.groupheader {
 	border-bottom: 0px;
 	color: #333;
