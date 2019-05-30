@@ -16,3 +16,4 @@ binaries/
 config.ini
 resources.zip
 src/internal/
+resources/internal/
