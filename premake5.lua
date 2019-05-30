@@ -50,18 +50,19 @@ function CPPSetup()
 	buildoptions({ "-Wall" })
 end	
 
-function GraphicsSetup()
+function GraphicsSetup(srcDir)
 	CPPSetup()
 
+	libDir = srcDir.."/libs/"
 	-- To support angled brackets in Xcode.
-	sysincludedirs({ "src/libs/", "src/libs/glfw/include/" })
+	sysincludedirs({ libDir, libDir.."glfw/include/" })
 
 	-- Libraries for each platform.
 	if os.istarget("macosx") then
-		libdirs({"src/libs/glfw/lib-mac/", "src/libs/nfd/lib-mac/"})
+		libdirs({libDir.."glfw/lib-mac/", libDir.."nfd/lib-mac/"})
 		links({"glfw3", "nfd", "OpenGL.framework", "Cocoa.framework", "IOKit.framework", "CoreVideo.framework", "AppKit.framework"})
 	elseif os.istarget("windows") then
-		libdirs({"src/libs/glfw/lib-win-x64/", "src/libs/nfd/lib-win-x64/"})
+		libdirs({libDir.."glfw/lib-win-x64/", libDir.."nfd/lib-win-x64/"})
 		links({"glfw3", "nfd", "opengl32", "comctl32"})
 	else -- Assume linux
 		-- Libraries needed: OpenGL and glfw3.  glfw3 require X11, Xi, and so on...	
@@ -94,7 +95,7 @@ function RegisterSourcesAndResources(srcPath, rscPath)
 end
 
 function AppSetup(appName)
-	GraphicsSetup()
+	GraphicsSetup("src")
 	includedirs({ "src/engine" })
 	links({"Engine"})
 	kind("ConsoleApp")
@@ -106,7 +107,7 @@ function AppSetup(appName)
 end	
 
 function ToolSetup(toolName)
-	GraphicsSetup()
+	GraphicsSetup("src")
 	includedirs({ "src/engine" })
 	links({"Engine"})
 	kind("ConsoleApp")
@@ -116,7 +117,7 @@ end
 -- Projects
 
 project("Engine")
-	GraphicsSetup()
+	GraphicsSetup("src")
 	includedirs({ "src/engine" })
 	kind("StaticLib")
 	files({ "src/engine/**.hpp", "src/engine/**.cpp",
@@ -152,8 +153,7 @@ project("SnakeGame")
 
 project("RaytracerDemo")
 	AppSetup("raytracerdemo")
-	
-	
+
 group("Tools")
 
 project("AtmosphericScatteringEstimator")
@@ -206,5 +206,8 @@ newaction {
    end
 }
 
--- TODO: package resources automatically.
+-- Internal private projects can be added here.
+if os.isfile("src/internal/premake5.lua") then
+	include("src/internal/premake5.lua")
+end
 	
