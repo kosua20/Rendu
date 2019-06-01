@@ -1,6 +1,6 @@
 #include "Framebuffer.hpp"
 
-Framebuffer::Framebuffer(unsigned int width, unsigned int height, const GLenum typedFormat, bool depthBuffer) : Framebuffer(width, height, {Descriptor(typedFormat)}, depthBuffer) {
+Framebuffer::Framebuffer(unsigned int width, unsigned int height, const GLenum typedFormat, bool depthBuffer) : Framebuffer(width, height, {Descriptor(typedFormat, GL_LINEAR, GL_CLAMP_TO_EDGE)}, depthBuffer) {
 	
 }
 

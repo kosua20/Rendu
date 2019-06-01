@@ -4,7 +4,7 @@
 SSAO::SSAO(unsigned int width, unsigned int height, float radius) {
 	_radius = radius;
 	_ssaoFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, GL_R8, false));
-	_blurSSAOBuffer = std::unique_ptr<BoxBlur>(new BoxBlur(width, height, true, Descriptor(GL_R8)));
+	_blurSSAOBuffer = std::unique_ptr<BoxBlur>(new BoxBlur(width, height, true, Descriptor(GL_R8, GL_LINEAR, GL_CLAMP_TO_EDGE)));
 	_programSSAO = Resources::manager().getProgram2D("ssao");
 	
 	// Generate samples.

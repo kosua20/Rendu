@@ -29,7 +29,7 @@ void SphereScene::init(){
 	objects.push_back(sphere2);
 	
 	// Background creation.
-	backgroundReflection = Resources::manager().getCubemap("studio", {GL_RGB32F})->id;
+	backgroundReflection = Resources::manager().getCubemap("studio", {GL_RGB32F, GL_LINEAR, GL_CLAMP_TO_EDGE})->id;
 	background = Object(Object::Type::Skybox, "skybox", {}, {{"studio", false }});
 	loadSphericalHarmonics("studio_shcoeffs");
 	

@@ -89,10 +89,6 @@ Descriptor::Descriptor(){
 	typedFormat = GL_RGB8; filtering = GL_LINEAR; wrapping = GL_CLAMP_TO_EDGE;
 }
 
-Descriptor::Descriptor(const GLuint typedFormat_){
-	typedFormat = typedFormat_; filtering = GL_LINEAR; wrapping = GL_CLAMP_TO_EDGE;
-}
-
 Descriptor::Descriptor(const GLuint typedFormat_, const GLuint filtering_, const GLuint wrapping_){
 	typedFormat = typedFormat_; filtering = filtering_; wrapping = wrapping_;
 }

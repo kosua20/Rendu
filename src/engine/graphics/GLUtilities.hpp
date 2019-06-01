@@ -48,11 +48,6 @@ struct Descriptor {
 	/** Default constructor. RGB8, linear, clamp. */
 	Descriptor();
 	
-	/** Convenience constructor. Custom typed format, linear, clamp.
-	 \param typedFormat_ the precise typed format to use
-	 */
-	Descriptor(const GLuint typedFormat_);
-	
 	/** Constructor.
 	 \param typedFormat_ the precise typed format to use
 	 \param filtering_ the texture filtering (GL_LINEAR,...) to use

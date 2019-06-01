@@ -12,7 +12,8 @@ class Framebuffer {
 	
 public:
 	
-	/** Setup the framebuffer (attachments, renderbuffer, depth buffer, textures IDs,...)
+	/** Setup the framebuffer (attachments, renderbuffer, depth buffer, textures IDs,...).
+	 Will use linear filtering and edge clamping.
 	 \param width the width of the framebuffer
 	 \param height the height of the framebuffer
 	 \param typedFormat the precise typed format, combining format and type (GL_RGB8,...) to use

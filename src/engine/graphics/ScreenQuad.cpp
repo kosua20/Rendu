@@ -16,7 +16,6 @@ void ScreenQuad::draw() {
 	glBindVertexArray(_vao);
 	glDrawArrays(GL_TRIANGLES, 0, 3);
 	glBindVertexArray(0);
-	glUseProgram(0);
 }
 
 void ScreenQuad::draw(const GLuint textureId) {
