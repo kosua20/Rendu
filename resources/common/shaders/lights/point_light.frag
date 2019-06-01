@@ -43,7 +43,7 @@ vec3 positionFromDepth(float depth, vec2 uv){
 float shadow(vec3 lightToPosDir){
 	float probabilityMax = 1.0;
 	// Read first and second moment from shadow map.
-	vec2 moments = texture(shadowMap, lightToPosDir).rg;
+	vec2 moments = texture(shadowMap, lightToPosDir, -1000.0).rg;
 	if(moments.x >= 1.0){
 		// No information in the depthmap: no occluder.
 		return 1.0;
@@ -134,20 +134,20 @@ void main(){
 	
 	vec2 uv = gl_FragCoord.xy*inverseScreenSize;
 	
-	vec4 albedoInfo = texture(albedoTexture,uv);
+	vec4 albedoInfo = texture(albedoTexture,uv, -1000.0);
 	// If this is the skybox, don't shade.
 	if(albedoInfo.a == 0.0){
 		discard;
 	}
 	// Get all informations from textures.
 	vec3 baseColor = albedoInfo.rgb;
-	float depth = texture(depthTexture,uv).r;
+	float depth = texture(depthTexture,uv, -1000.0).r;
 	vec3 position = positionFromDepth(depth, uv);
-	vec3 infos = texture(effectsTexture,uv).rgb;
+	vec3 infos = texture(effectsTexture,uv, -1000.0).rgb;
 	float roughness = max(0.045, infos.r);
 	float metallic = infos.g;
 	
-	vec3 n = 2.0 * texture(normalTexture,uv).rgb - 1.0;
+	vec3 n = 2.0 * texture(normalTexture,uv, -1000.0).rgb - 1.0;
 	vec3 v = normalize(-position);
 	vec3 deltaPosition = lightPosition - position;
 	vec3 l = normalize(deltaPosition);

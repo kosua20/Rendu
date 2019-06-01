@@ -14,8 +14,8 @@ out vec3 fragColor; ///< Blurred color.
 void main(){
 	// 3 taps only are required for a 5x5 gaussian blur, thanks to separation into
 	// an horizontal and vertical 1D blurs, and to bilinear interpolation.
-	vec3 col = texture(screenTexture, In.uv).rgb * 6.0/16.0;
-	col += texture(screenTexture, In.uv - fetchOffset).rgb * 5.0/16.0;
-	col += texture(screenTexture, In.uv + fetchOffset).rgb * 5.0/16.0;
+	vec3 col = texture(screenTexture, In.uv, -1000.0).rgb * 6.0/16.0;
+	col += texture(screenTexture, In.uv - fetchOffset, -1000.0).rgb * 5.0/16.0;
+	col += texture(screenTexture, In.uv + fetchOffset, -1000.0).rgb * 5.0/16.0;
 	fragColor = col;
 }

@@ -14,35 +14,35 @@ void main(){
 	
 	// We have to unroll the box blur loop manually.
 	
-	float color = textureOffset(screenTexture, In.uv, ivec2(-2,-2)).r;
-	color += textureOffset(screenTexture, In.uv, ivec2(-2,-1)).r;
-	color += textureOffset(screenTexture, In.uv, ivec2(-2,0)).r;
-	color += textureOffset(screenTexture, In.uv, ivec2(-2,1)).r;
-	color += textureOffset(screenTexture, In.uv, ivec2(-2,2)).r;
-	
-	color += textureOffset(screenTexture, In.uv, ivec2(-1,-2)).r;
-	color += textureOffset(screenTexture, In.uv, ivec2(-1,-1)).r;
-	color += textureOffset(screenTexture, In.uv, ivec2(-1,0)).r;
-	color += textureOffset(screenTexture, In.uv, ivec2(-1,1)).r;
-	color += textureOffset(screenTexture, In.uv, ivec2(-1,2)).r;
-	
-	color += textureOffset(screenTexture, In.uv, ivec2(0,-2)).r;
-	color += textureOffset(screenTexture, In.uv, ivec2(0,-1)).r;
-	color += textureOffset(screenTexture, In.uv, ivec2(0,0)).r;
-	color += textureOffset(screenTexture, In.uv, ivec2(0,1)).r;
-	color += textureOffset(screenTexture, In.uv, ivec2(0,2)).r;
-	
-	color += textureOffset(screenTexture, In.uv, ivec2(1,-2)).r;
-	color += textureOffset(screenTexture, In.uv, ivec2(1,-1)).r;
-	color += textureOffset(screenTexture, In.uv, ivec2(1,0)).r;
-	color += textureOffset(screenTexture, In.uv, ivec2(1,1)).r;
-	color += textureOffset(screenTexture, In.uv, ivec2(1,2)).r;
-	
-	color += textureOffset(screenTexture, In.uv, ivec2(2,-2)).r;
-	color += textureOffset(screenTexture, In.uv, ivec2(2,-1)).r;
-	color += textureOffset(screenTexture, In.uv, ivec2(2,0)).r;
-	color += textureOffset(screenTexture, In.uv, ivec2(2,1)).r;
-	color += textureOffset(screenTexture, In.uv, ivec2(2,2)).r;
+	float color = textureOffset(screenTexture, In.uv, ivec2(-2,-2), -1000.0).r;
+	color += textureOffset(screenTexture, In.uv, ivec2(-2,-1), -1000.0).r;
+	color += textureOffset(screenTexture, In.uv, ivec2(-2, 0), -1000.0).r;
+	color += textureOffset(screenTexture, In.uv, ivec2(-2, 1), -1000.0).r;
+	color += textureOffset(screenTexture, In.uv, ivec2(-2, 2), -1000.0).r;
+
+	color += textureOffset(screenTexture, In.uv, ivec2(-1,-2), -1000.0).r;
+	color += textureOffset(screenTexture, In.uv, ivec2(-1,-1), -1000.0).r;
+	color += textureOffset(screenTexture, In.uv, ivec2(-1, 0), -1000.0).r;
+	color += textureOffset(screenTexture, In.uv, ivec2(-1, 1), -1000.0).r;
+	color += textureOffset(screenTexture, In.uv, ivec2(-1, 2), -1000.0).r;
+
+	color += textureOffset(screenTexture, In.uv, ivec2( 0,-2), -1000.0).r;
+	color += textureOffset(screenTexture, In.uv, ivec2( 0,-1), -1000.0).r;
+	color += textureOffset(screenTexture, In.uv, ivec2( 0, 0), -1000.0).r;
+	color += textureOffset(screenTexture, In.uv, ivec2( 0, 1), -1000.0).r;
+	color += textureOffset(screenTexture, In.uv, ivec2( 0, 2), -1000.0).r;
+
+	color += textureOffset(screenTexture, In.uv, ivec2( 1,-2), -1000.0).r;
+	color += textureOffset(screenTexture, In.uv, ivec2( 1,-1), -1000.0).r;
+	color += textureOffset(screenTexture, In.uv, ivec2( 1, 0), -1000.0).r;
+	color += textureOffset(screenTexture, In.uv, ivec2( 1, 1), -1000.0).r;
+	color += textureOffset(screenTexture, In.uv, ivec2( 1, 2), -1000.0).r;
+
+	color += textureOffset(screenTexture, In.uv, ivec2( 2,-2), -1000.0).r;
+	color += textureOffset(screenTexture, In.uv, ivec2( 2,-1), -1000.0).r;
+	color += textureOffset(screenTexture, In.uv, ivec2( 2, 0), -1000.0).r;
+	color += textureOffset(screenTexture, In.uv, ivec2( 2, 1), -1000.0).r;
+	color += textureOffset(screenTexture, In.uv, ivec2( 2, 2), -1000.0).r;
 	
 	fragColor = color / 13.0;
 }
