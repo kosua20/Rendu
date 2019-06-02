@@ -5,17 +5,21 @@ in INTERFACE {
 	vec2 uv;
 } In ; ///< vec2 uv;
 
-layout(binding = 0) uniform sampler2D screenTexture; ///< Image to output.
+layout(binding = 0) uniform sampler2D screenTexture; ///< Image to process.
 
 layout(location = 0) out vec4 fragColor; ///< Color.
 
+/** Denotes if UV coordinates falls outside an image.
+ \param pos the UV coordinates
+ \return true if the UV are outside of the image
+ */
 bool isOutside(vec2 pos){
 	return (pos.x < 0.0 || pos.y < 0.0 || pos.x > 1.0 || pos.y > 1.0);
 }
 
-uniform int scale = 1;
+uniform int scale = 1; ///< The downscaling applied to the input image.
 
-/**  */
+/** Compute the Laplacian field of an input RGB image, adding a 1px black border around it before computing the gradients and divergence. */
 void main(){
 
 	vec3 div = vec3(0.0);

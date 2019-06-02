@@ -5,15 +5,20 @@ in INTERFACE {
 	vec2 uv;
 } In ; ///< vec2 uv;
 
-layout(binding = 0) uniform sampler2D screenTexture; ///< Image to output.
+layout(binding = 0) uniform sampler2D screenTexture; ///< Image to process.
 
 layout(location = 0) out vec4 fragColor; ///< Color.
 
+/** Denotes if a pixel falls outside an image.
+ \param pos the pixel position
+ \param size the image size
+ \return true if the pixel is outside of the image
+ */
 bool isOutside(ivec2 pos, ivec2 size){
 	return (pos.x < 0 || pos.y < 0 || pos.x >= size.x || pos.y >= size.y);
 }
 
-/**  */
+/**  Output color only on the edges of the black regions in the input image, along with a 1.0 alpha. */
 void main(){
 
 	fragColor = vec4(0.0);

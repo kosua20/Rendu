@@ -5,13 +5,13 @@ in INTERFACE {
 	vec2 uv;
 } In ; ///< vec2 uv;
 
-layout(binding = 0) uniform sampler2D screenTexture; ///< Image to output.
-layout(binding = 1) uniform sampler2D inputTexture; ///< Image to output.
+layout(binding = 0) uniform sampler2D screenTexture; ///< Filled image.
+layout(binding = 1) uniform sampler2D inputTexture; ///< Initial image.
 
 layout(location = 0) out vec4 fragColor; ///< Color.
 
 
-/** Just pass the input image as-is, without any resizing. */
+/** Composite the initial image and the filled image in the regions where the initial image is black. */
 void main(){
 	
 	vec3 inputColor = texture(inputTexture, In.uv, -1000.0).rgb;

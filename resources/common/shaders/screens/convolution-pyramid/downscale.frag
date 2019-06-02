@@ -5,17 +5,22 @@ in INTERFACE {
 	vec2 uv;
 } In ; ///< vec2 uv;
 
-layout(binding = 0) uniform sampler2D screenTexture; ///< Image to output.
+layout(binding = 0) uniform sampler2D screenTexture; ///< Input level to filter and downscale.
 
 layout(location = 0) out vec4 fragColor; ///< Color.
 
-uniform float h1[5];
+uniform float h1[5]; ///< h1 filter parameters.
 
+/** Denotes if a pixel falls outside an image.
+ \param pos the pixel position
+ \param size the image size
+ \return true if the pixel is outside of the image
+ */
 bool isOutside(ivec2 pos, ivec2 size){
 	return (pos.x < 0 || pos.y < 0 || pos.x >= size.x || pos.y >= size.y);
 }
 
-/**  */
+/** Apply the h1 filter and downscale the input data by a factor of 2. */
 void main(){
 	
 	vec4 accum = vec4(0.0);
