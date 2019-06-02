@@ -154,6 +154,9 @@ project("SnakeGame")
 project("RaytracerDemo")
 	AppSetup("raytracerdemo")
 
+project("ImageFiltering")
+	AppSetup("imagefiltering")
+
 group("Tools")
 
 project("AtmosphericScatteringEstimator")
