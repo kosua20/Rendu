@@ -4,6 +4,7 @@
 #include "processing/LaplacianIntegrator.hpp"
 #include "processing/GaussianBlur.hpp"
 #include "processing/BoxBlur.hpp"
+#include "processing/FloodFill.hpp"
 
 #include "graphics/Framebuffer.hpp"
 #include "input/ControllableCamera.hpp"
@@ -55,7 +56,7 @@ private:
 	
 	/** \brief The filter to apply. */
 	enum FilterMode : int {
-		INPUT = 0, FILL, INTEGRATE, BOXBLUR, GAUSSBLUR
+		INPUT = 0, FILL, INTEGRATE, BOXBLUR, GAUSSBLUR, FLOODFILL
 	};
 	
 	/** \brief The viewing mode: either a rendering or a still image. */
@@ -70,6 +71,7 @@ private:
 	std::unique_ptr<LaplacianIntegrator> _pyramidIntegrator; ///< Laplacian integration.
 	std::unique_ptr<GaussianBlur> _gaussianBlur; ///< Gaussian blur processing.
 	std::unique_ptr<BoxBlur> _boxBlur; ///< Box blur processing.
+	std::unique_ptr<FloodFill> _floodFill; 
 	
 	const ProgramInfos * _passthrough; ///< Basic blit shader.
 	const ProgramInfos * _sceneShader; ///< Object rendering shader.

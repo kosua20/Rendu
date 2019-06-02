@@ -23,6 +23,7 @@ FilteringRenderer::FilteringRenderer(RenderingConfig & config) : Renderer(config
 	_pyramidIntegrator = std::unique_ptr<LaplacianIntegrator>( new LaplacianIntegrator(renderWidth, renderHeight, _intDownscale));
 	_gaussianBlur = std::unique_ptr<GaussianBlur>(new GaussianBlur(renderWidth, renderHeight, _blurLevel, GL_RGB8));
 	_boxBlur = std::unique_ptr<BoxBlur>(new BoxBlur(renderWidth, renderHeight, false, {GL_RGB8, GL_NEAREST, GL_CLAMP_TO_EDGE}));
+	_floodFill = std::unique_ptr<FloodFill>(new FloodFill(renderWidth, renderHeight));
 	
 	// GL options
 	glEnable(GL_DEPTH_TEST);
@@ -79,6 +80,9 @@ void FilteringRenderer::draw() {
 			_boxBlur->process(srcTexID);
 			finalTexID = _boxBlur->textureId();
 			break;
+		case FLOODFILL:
+			_floodFill->process(srcTexID);
+			finalTexID = _floodFill->textureId();
 		default:
 			break;
 	}
@@ -126,7 +130,7 @@ void FilteringRenderer::update(){
 		
 		// Filter mode.
 		ImGui::Separator();
-		ImGui::Combo("Mode", (int*)&_mode, "Input\0Fill\0Integrate\0Box blur\0Gaussian blur\0\0");
+		ImGui::Combo("Mode", (int*)&_mode, "Input\0Poisson fill\0Integrate\0Box blur\0Gaussian blur\0Flood fill\0\0");
 		
 		// Mode specific option
 		switch(_mode){
@@ -174,6 +178,7 @@ void FilteringRenderer::clean() const {
 	_pyramidIntegrator->clean();
 	_gaussianBlur->clean();
 	_boxBlur->clean();
+	_floodFill->clean();
 }
 
 
@@ -185,5 +190,6 @@ void FilteringRenderer::resize(unsigned int width, unsigned int height){
 	_pyramidIntegrator->resize(_renderResolution[0], _renderResolution[1]);
 	_gaussianBlur->resize(_renderResolution[0], _renderResolution[1]);
 	_boxBlur->resize(_renderResolution[0], _renderResolution[1]);
+	_floodFill->resize(_renderResolution[0], _renderResolution[1]);
 	checkGLError();
 }
