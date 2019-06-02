@@ -180,7 +180,8 @@ GLuint GLUtilities::loadShader(const std::string & prog, GLuint type, std::map<s
 		const std::string name = line.substr(startPosName, endPosName - startPosName + 1);
 		
 		const std::string::size_type endSamplerPos = line.find_first_of(" ", samplerPos) - 1;
-		const std::string samplerType = line.substr(samplerPos, endSamplerPos - samplerPos + 1);
+		const std::string::size_type startSamplerPos = line.find_last_of(" ", samplerPos) + 1;
+		const std::string samplerType = line.substr(startSamplerPos, endSamplerPos - startSamplerPos + 1);
 		const std::string outputLine = "uniform " + samplerType + " " + name + ";";
 		outputLines.push_back(outputLine);
 		
@@ -656,7 +657,31 @@ unsigned int GLUtilities::getTypeAndFormat(const GLuint typedFormat, GLuint & ty
 		{ GL_DEPTH_COMPONENT24, { GL_DEPTH_COMPONENT, GL_UNSIGNED_INT } },
 		{ GL_DEPTH_COMPONENT32F, { GL_DEPTH_COMPONENT, GL_FLOAT } },
 		{ GL_DEPTH24_STENCIL8, { GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8 } },
-		{ GL_DEPTH32F_STENCIL8, { GL_DEPTH_STENCIL, GL_FLOAT_32_UNSIGNED_INT_24_8_REV } }  };
+		{ GL_DEPTH32F_STENCIL8, { GL_DEPTH_STENCIL, GL_FLOAT_32_UNSIGNED_INT_24_8_REV } },
+		{ GL_R8UI, { GL_RED_INTEGER, GL_UNSIGNED_BYTE } },
+		{ GL_R16I, { GL_RED_INTEGER, GL_SHORT } },
+		{ GL_R16UI, { GL_RED_INTEGER, GL_UNSIGNED_SHORT } },
+		{ GL_R32I, { GL_RED_INTEGER, GL_INT } },
+		{ GL_R32UI, { GL_RED_INTEGER, GL_UNSIGNED_INT } },
+		{ GL_RG8I, { GL_RG_INTEGER, GL_BYTE } },
+		{ GL_RG8UI, { GL_RG_INTEGER, GL_UNSIGNED_BYTE } },
+		{ GL_RG16I, { GL_RG_INTEGER, GL_SHORT } },
+		{ GL_RG16UI, { GL_RG_INTEGER, GL_UNSIGNED_SHORT } },
+		{ GL_RG32I, { GL_RG_INTEGER, GL_INT } },
+		{ GL_RG32UI, { GL_RG_INTEGER, GL_UNSIGNED_INT } },
+		{ GL_RGB8I, { GL_RGB_INTEGER, GL_BYTE } },
+		{ GL_RGB8UI, { GL_RGB_INTEGER, GL_UNSIGNED_BYTE } },
+		{ GL_RGB16I, { GL_RGB_INTEGER, GL_SHORT } },
+		{ GL_RGB16UI, { GL_RGB_INTEGER, GL_UNSIGNED_SHORT } },
+		{ GL_RGB32I, { GL_RGB_INTEGER, GL_INT } },
+		{ GL_RGB32UI, { GL_RGB_INTEGER, GL_UNSIGNED_INT } },
+		{ GL_RGBA8I, { GL_RGBA_INTEGER, GL_BYTE } },
+		{ GL_RGBA8UI, { GL_RGBA_INTEGER ,GL_UNSIGNED_BYTE } },
+		{ GL_RGBA16I, { GL_RGBA_INTEGER, GL_SHORT } },
+		{ GL_RGBA16UI, { GL_RGBA_INTEGER, GL_UNSIGNED_SHORT } },
+		{ GL_RGBA32I, { GL_RGBA_INTEGER, GL_INT } },
+		{ GL_RGBA32UI, { GL_RGBA_INTEGER, GL_UNSIGNED_INT } }
+	};
 	
 	if(formatInfos.count(typedFormat)>0){
 		const auto & infos = formatInfos[typedFormat];
