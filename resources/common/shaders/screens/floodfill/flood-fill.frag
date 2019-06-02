@@ -1,0 +1,52 @@
+#version 330
+
+// Input: UV coordinates
+in INTERFACE {
+	vec2 uv;
+} In ; ///< vec2 uv;
+
+layout(binding = 0) uniform usampler2D screenTexture; ///< Image to output.
+
+layout(location = 0) out uvec2 fragCoords; ///< Color.
+
+/** Denotes if a pixel falls outside an image.
+ \param pos the pixel position
+ \param size the image size
+ \return true if the pixel is outside of the image
+ */
+bool isOutside(ivec2 pos, ivec2 size){
+	return (pos.x < 0 || pos.y < 0 || pos.x >= size.x || pos.y >= size.y);
+}
+
+uniform int stepDist;
+
+/** Just pass the input image as-is, potentially performing up/down scaling. */
+void main(){
+	
+	vec2 currentPixel = vec2(floor(gl_FragCoord.xy));
+	ivec2 baseCoords = ivec2(currentPixel);
+	ivec2 size = ivec2(textureSize(screenTexture, 0));
+	
+	// Fetch the current seed for the pixel.
+	uvec2 bestSeed = texelFetch(screenTexture, baseCoords, 0).xy;
+	float bestDist = length(vec2(bestSeed) - currentPixel);
+	
+	// Fetch the 8 neighbours, at a distance stepDist, and find the closest one.
+	int d = stepDist;
+	ivec2 deltas[8] = ivec2[8](ivec2(-d,-d), ivec2(-d, 0), ivec2(-d, d),
+							   ivec2( 0,-d), 			   ivec2( 0, d),
+							   ivec2( d,-d), ivec2( d, 0), ivec2( d, d));
+	for(int i = 0; i < 8; ++i){
+		ivec2 coords = baseCoords + deltas[i];
+		if(isOutside(coords, size)){
+			continue;
+		}
+		uvec2 seed = texelFetch(screenTexture, coords, 0).xy;
+		float dist = length(vec2(seed) - currentPixel);
+		if(dist <= bestDist){
+			bestDist = dist;
+			bestSeed = seed;
+		}
+	}
+	fragCoords = bestSeed;
+}
