@@ -16,6 +16,7 @@ FilteringRenderer::FilteringRenderer(RenderingConfig & config) : Renderer(config
 	_mesh = Resources::manager().getMesh("light_sphere");
 	
 	_sceneBuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, {GL_RGB8, GL_NEAREST, GL_CLAMP_TO_EDGE}, true));
+	_image = *Resources::manager().getTexture("debug-grid", {GL_RGB8, GL_NEAREST, GL_CLAMP_TO_EDGE});
 	
 	// Create the Poisson filling and Laplacian integration pyramids, with a lowered internal resolution to speed things up.
 	_pyramidFiller = std::unique_ptr<PoissonFiller>(new PoissonFiller(renderWidth, renderHeight, _fillDownscale));
@@ -33,38 +34,49 @@ FilteringRenderer::FilteringRenderer(RenderingConfig & config) : Renderer(config
 void FilteringRenderer::draw() {
 	
 	// Render the scene.
-	glEnable(GL_DEPTH_TEST);
-	_sceneBuffer->bind();
-	_sceneBuffer->setViewport();
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	const glm::mat4 MVP = _userCamera.projection() * _userCamera.view();
-	glUseProgram(_sceneShader->id());
-	glUniformMatrix4fv(_sceneShader->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
-	GLUtilities::drawMesh(*_mesh);
-	glBindVertexArray(0);
-	glUseProgram(0);
-	_sceneBuffer->unbind();
+	if(_viewMode == SCENE){
+		glEnable(GL_DEPTH_TEST);
+		_sceneBuffer->bind();
+		_sceneBuffer->setViewport();
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		const glm::mat4 MVP = _userCamera.projection() * _userCamera.view();
+		glUseProgram(_sceneShader->id());
+		glUniformMatrix4fv(_sceneShader->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
+		GLUtilities::drawMesh(*_mesh);
+		glBindVertexArray(0);
+		glUseProgram(0);
+		_sceneBuffer->unbind();
+	} else {
+		glDisable(GL_DEPTH_TEST);
+		_sceneBuffer->bind();
+		_sceneBuffer->setViewport();
+		glUseProgram(_passthrough->id());
+		ScreenQuad::draw(_image.id);
+		glUseProgram(0);
+		_sceneBuffer->unbind();
+	}
 	
 	glDisable(GL_DEPTH_TEST);
 	
-	GLuint finalTexID = _sceneBuffer->textureId();
+	const GLuint srcTexID = _sceneBuffer->textureId();
+	GLuint finalTexID = srcTexID;
 	
 	switch(_mode){
 		case FILL:
-			_pyramidFiller->process(_sceneBuffer->textureId());
+			_pyramidFiller->process(srcTexID);
 			finalTexID = _showProcInput ? _pyramidFiller->preprocId() : _pyramidFiller->textureId();
 			break;
 		case INTEGRATE:
-			_pyramidIntegrator->process(_sceneBuffer->textureId());
+			_pyramidIntegrator->process(srcTexID);
 			finalTexID = _showProcInput ? _pyramidIntegrator->preprocId() :_pyramidIntegrator->textureId();
 			break;
 		case GAUSSBLUR:
-			_gaussianBlur->process(_sceneBuffer->textureId());
+			_gaussianBlur->process(srcTexID);
 			finalTexID = _gaussianBlur->textureId();
 			break;
 		case BOXBLUR:
-			_boxBlur->process(_sceneBuffer->textureId());
+			_boxBlur->process(srcTexID);
 			finalTexID = _boxBlur->textureId();
 			break;
 		default:
@@ -84,14 +96,38 @@ void FilteringRenderer::update(){
 	_userCamera.update();
 	
 	if(ImGui::Begin("Filtering")){
+		// Infos.
 		ImGui::Text("%.2f ms, %.1f fps", ImGui::GetIO().DeltaTime * 1000.0f, 1.0f/ImGui::GetIO().DeltaTime);
-		ImGui::Text("Scene res: %ix%i", _sceneBuffer->width(), _sceneBuffer->height());
+		ImGui::Text("Input resolution: %ix%i", _sceneBuffer->width(), _sceneBuffer->height());
 		ImGui::Separator();
+		
+		// View settings.
+		ImGui::Text("View:"); ImGui::SameLine();
+		ImGui::RadioButton("Scene", (int*)&_viewMode, SCENE);
+		ImGui::SameLine();
+		ImGui::RadioButton("Image", (int*)&_viewMode, IMAGE);
+		
+		if(_viewMode == IMAGE){
+			if(ImGui::Button("Load image...")){
+				std::string newImagePath;
+				const bool res = Interface::showPicker(Interface::Picker::Load, "../../../resources", newImagePath, "jpg,bmp,png,tga;exr");
+				// If user picked a path, load the texture from disk.
+				if(res && !newImagePath.empty()){
+					Log::Info() << "Loading " << newImagePath << "." << std::endl;
+					_image = GLUtilities::loadTexture(GL_TEXTURE_2D, {{newImagePath}}, {GL_RGBA8, GL_NEAREST, GL_CLAMP_TO_EDGE}, Storage::GPU);
+					resize(_image.width, _image.height);
+				}
+			}
+		}
+		
 		if(ImGui::InputInt("Vertical res.", &_config.internalVerticalResolution, 50, 200)){
 			resize(int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 		}
-		ImGui::Combo("Mode", (int*)&_mode, "Input\0Fill\0Integrate\0Box blur\0Gaussian blur\0\0");
+		
+		// Filter mode.
 		ImGui::Separator();
+		ImGui::Combo("Mode", (int*)&_mode, "Input\0Fill\0Integrate\0Box blur\0Gaussian blur\0\0");
+		
 		// Mode specific option
 		switch(_mode){
 			case GAUSSBLUR:

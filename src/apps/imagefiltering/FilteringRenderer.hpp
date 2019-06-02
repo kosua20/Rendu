@@ -58,6 +58,11 @@ private:
 		INPUT = 0, FILL, INTEGRATE, BOXBLUR, GAUSSBLUR
 	};
 	
+	/** \brief The viewing mode: either a rendering or a still image. */
+	enum ViewMode : int {
+		SCENE = 0, IMAGE
+	};
+	
 	ControllableCamera _userCamera; ///< The interactive camera.
 	std::unique_ptr<Framebuffer> _sceneBuffer; ///< Scene rendering buffer.
 	
@@ -71,6 +76,9 @@ private:
 	const MeshInfos * _mesh; ///< Basic sphere mesh.
 	
 	FilterMode _mode = INPUT; ///< Current filter mode.
+	ViewMode _viewMode = SCENE; ///< Current view mode.
+	TextureInfos _image; ///< The image to display in Image view mode.
+	
 	int _blurLevel = 3; ///< Gaussian blur level.
 	int _intDownscale = 1; ///< Integrator internal resolution downscaling.
 	int _fillDownscale = 1; ///< Poisson filling internal resolution downscaling.
