@@ -1,7 +1,7 @@
-#include "FloodFill.hpp"
+#include "FloodFiller.hpp"
 #include "graphics/ScreenQuad.hpp"
 
-FloodFilling::FloodFilling(unsigned int width, unsigned int height) {
+FloodFiller::FloodFiller(unsigned int width, unsigned int height) {
 	
 	_iterations = std::ceil(std::log2(std::max(width, height)));
 	
@@ -15,7 +15,7 @@ FloodFilling::FloodFilling(unsigned int width, unsigned int height) {
 	_composite = Resources::manager().getProgram2D("color-seeds"); // distance-seeds
 }
 
-void FloodFilling::process(const GLuint textureId) {
+void FloodFiller::process(const GLuint textureId) {
 	// Render seed positions in a 2 channels framebuffer (each non-black pixel is a seed).
 	glDisable(GL_DEPTH_TEST);
 	_ping->bind();
@@ -46,14 +46,14 @@ void FloodFilling::process(const GLuint textureId) {
 	checkGLError();
 }
 
-void FloodFilling::clean() const {
+void FloodFiller::clean() const {
 	_ping->clean();
 	_pong->clean();
 	_final->clean();
 }
 
 
-void FloodFilling::resize(unsigned int width, unsigned int height){
+void FloodFiller::resize(unsigned int width, unsigned int height){
 	_iterations = std::ceil(std::log2(std::max(width, height)));
 	_ping->resize(width, height);
 	_pong->resize(width, height);

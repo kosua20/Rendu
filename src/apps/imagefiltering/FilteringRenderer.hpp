@@ -4,7 +4,7 @@
 #include "processing/LaplacianIntegrator.hpp"
 #include "processing/GaussianBlur.hpp"
 #include "processing/BoxBlur.hpp"
-#include "processing/FloodFill.hpp"
+#include "processing/FloodFiller.hpp"
 
 #include "graphics/Framebuffer.hpp"
 #include "input/ControllableCamera.hpp"
@@ -71,7 +71,7 @@ private:
 	std::unique_ptr<LaplacianIntegrator> _pyramidIntegrator; ///< Laplacian integration.
 	std::unique_ptr<GaussianBlur> _gaussianBlur; ///< Gaussian blur processing.
 	std::unique_ptr<BoxBlur> _boxBlur; ///< Box blur processing.
-	std::unique_ptr<FloodFilling> _floodFill;
+	std::unique_ptr<FloodFiller> _floodFill;
 	
 	const ProgramInfos * _passthrough; ///< Basic blit shader.
 	const ProgramInfos * _sceneShader; ///< Object rendering shader.

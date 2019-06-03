@@ -7,7 +7,7 @@
  \brief
  \ingroup Processing
  */
-class FloodFilling {
+class FloodFiller {
 
 public:
 
@@ -15,7 +15,7 @@ public:
 	 \param width internal processing width
 	 \param height internal processing height
 	 */
-	FloodFilling(unsigned int width, unsigned int height);
+	FloodFiller(unsigned int width, unsigned int height);
 	
 	/** Filter a given input texture.
 	 \param textureId the GPU ID of the texture
