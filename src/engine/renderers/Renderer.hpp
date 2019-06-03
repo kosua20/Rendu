@@ -4,7 +4,7 @@
 
 /**
  \brief Base structure of a renderer.
- \ingroup Renderers
+ \ingroup Engine
  */
 class Renderer {
 	

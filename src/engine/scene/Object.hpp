@@ -6,7 +6,7 @@
 
 /**
  \brief Represent a 3D textured object.
- \ingroup Engine
+ \ingroup Scene
  */
 class Object {
 

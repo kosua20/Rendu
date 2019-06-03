@@ -9,8 +9,8 @@
 #include "Common.hpp"
 
 /**
- \brief Represents a 2D environment composed of objects, a background and additional environment lighting informations.
- \ingroup Engine
+ \brief Represents a 3D environment composed of objects, a background and additional environment lighting informations.
+ \ingroup Scene
  */
 class Scene {
 

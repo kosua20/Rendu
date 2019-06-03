@@ -10,7 +10,7 @@
 #include "Config.hpp"
 
 /**
- \defgroup Atmosphere Atmospheric scattering demo
+ \defgroup AtmosphericScattering Atmospheric scattering
  \brief Demonstrate real-time approximate atmospheric scattering simulation.
  \see GLSL::Frag::Atmosphere
  \ingroup Applications
@@ -22,7 +22,7 @@
  \param argc the number of input arguments.
  \param argv a pointer to the raw input arguments.
  \return a general error code.
- \ingroup Atmosphere
+ \ingroup AtmosphericScattering
  */
 int main(int argc, char** argv) {
 	

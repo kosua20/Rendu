@@ -17,6 +17,7 @@
  \see GLSL::Frag::Cubemap_convo
  \see GLSL::Frag::Brdf_sampler
  \see GLSL::Frag::Skybox_shcoeffs
+ \see DeferredRendering
  \ingroup Tools
  */
 

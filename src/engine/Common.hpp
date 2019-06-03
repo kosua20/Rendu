@@ -42,11 +42,8 @@
  \defgroup Graphics Graphics
  \brief Contain items and functions interacting with the graphics API.
  
- \defgroup Renderers Renderers
- \brief Renderer-specific implementations.
- 
- \defgroup Lights Lights
- \brief Contain light objects used in 3D scene rendering.
+ \defgroup Scene Scene
+ \brief Contain objects, lights and environment representations used in 3D scene rendering.
  
  \defgroup Processing Processing
  \brief General image processing utilities.

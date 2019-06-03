@@ -16,14 +16,6 @@
 #include "Common.hpp"
 
 /**
- \defgroup DeferredRendering Deferred rendering
- \brief Performs deferred rendering, where geometry and lighting are decoupled by using an intermediate g-buffer.
- \details All scene informations (albedo, normals, material ID, roughness) are rendered to a G-Buffer before being used to render each light contribution using simple geometric proxies.
- \see GLSL::Frag::Bloom, GLSL::Frag::Tonemap, GLSL::Frag::FXAA, GLSL::Frag::Final_screenquad
- \ingroup PBRDemo
- */
-
-/**
  \brief Available G-buffer layers.
  \ingroup DeferredRendering
  */

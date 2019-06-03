@@ -5,7 +5,7 @@
 
 /**
  \brief A general light with adjustable color intensity, that can cast shadows.
- \ingroup Lights
+ \ingroup Scene
  */
 class Light {
 

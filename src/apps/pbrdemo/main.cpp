@@ -7,15 +7,10 @@
 #include "Common.hpp"
 
 /**
- \defgroup PBRDemo Physically-based rendering demo
- \brief Render a scene using the GGX BRDF model, image-based ambient lighting, ambient occlusion, HDR and tonemapping, antialiasing.
- \see GLSL::Frag::Ambient
- \see GLSL::Frag::Ssao
- \see GLSL::Frag::Tonemap
- \see GLSL::Frag::Fxaa
- \see GLSL::Frag::Point_light
- \see GLSL::Frag::Directional_light
- \see GLSL::Frag::Spot_light
+ \defgroup DeferredRendering Deferred rendering
+ \brief Render a scene using a PBR approach, image-based ambient lighting, ambient occlusion, HDR and tonemapping, antialiasing, and deferred rendering.
+ \details All scene informations (albedo, normals, material ID, roughness) are rendered to a G-Buffer before being used to render each light contribution using simple geometric proxies. The scene is rendered using the GGX BRDF model.
+ \see GLSL::Frag::Bloom, GLSL::Frag::Tonemap, GLSL::Frag::Fxaa, GLSL::Frag::Final_screenquad, GLSL::Frag::Ambient, GLSL::Frag::Ssao, GLSL::Frag::Point_light, GLSL::Frag::Directional_light, GLSL::Frag::Spot_light
  \ingroup Applications
  */
 
@@ -24,7 +19,7 @@
  \param argc the number of input arguments.
  \param argv a pointer to the raw input arguments.
  \return a general error code.
- \ingroup PBRDemo
+ \ingroup DeferredRendering
  */
 int main(int argc, char** argv) {
 	
