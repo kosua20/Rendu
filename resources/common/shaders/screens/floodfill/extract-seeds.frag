@@ -5,16 +5,16 @@ in INTERFACE {
 	vec2 uv;
 } In ; ///< vec2 uv;
 
-layout(binding = 0) uniform sampler2D screenTexture; ///< Image to output.
+layout(binding = 0) uniform sampler2D screenTexture; ///< Color image.
 
-layout(location = 0) out uvec2 fragCoords; ///< Color.
+layout(location = 0) out uvec2 fragCoords; ///< Seeds coordinates.
 
-const int unknownCoord = 65500;
+const int unknownCoord = 65500; // Arbitrary high number.
 
-/** Just pass the input image as-is, potentially performing up/down scaling. */
+/** For each non-black pixel, consider it as a seed and store its coordinates. */
 void main(){
 	vec3 col = texture(screenTexture, In.uv, -1000.0).rgb;
-	
+	// If a pixel is black, it's not a seed.
 	if(all(equal(col, vec3(0.0)))){
 		fragCoords = uvec2(unknownCoord);
 		return;

@@ -9,7 +9,8 @@
 /**
  \defgroup ImageFiltering Image Filtering
  \brief Apply a variety of image space filters and processings to an image.
- See the description of FilteringRenderer for the available filters.
+ \details See the description of FilteringRenderer for the available filters.
+ \see FilteringRenderer
  \ingroup Applications
  */
 

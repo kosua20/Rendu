@@ -81,7 +81,7 @@ void FilteringRenderer::draw() {
 			finalTexID = _boxBlur->textureId();
 			break;
 		case FLOODFILL:
-			_floodFill->process(srcTexID);
+			_floodFill->process(srcTexID, _showProcInput ? FloodFiller::DISTANCE : FloodFiller::COLOR);
 			finalTexID = _floodFill->textureId();
 		default:
 			break;
@@ -156,6 +156,9 @@ void FilteringRenderer::update(){
 					_pyramidIntegrator->clean();
 					_pyramidIntegrator = std::unique_ptr<LaplacianIntegrator>(new LaplacianIntegrator(_renderResolution[0], _renderResolution[1], _intDownscale));
 				}
+				break;
+			case FLOODFILL:
+				ImGui::Checkbox("Show distance", &_showProcInput);
 				break;
 			default:
 				break;

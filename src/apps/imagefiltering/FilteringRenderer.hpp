@@ -17,7 +17,8 @@
 
 /**
  \brief Apply multiple image filters on an interactive rendering of a scene.
- Filters available: Box blur of fixed radius, Gaussian blur, Poisson filling, Laplacian integration.
+ 
+ Filters available: Box blur of fixed radius, Gaussian blur, Poisson filling, Laplacian integration, Flood filling.
  \ingroup ImageFiltering
  */
 class FilteringRenderer : public Renderer {
