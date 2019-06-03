@@ -23,7 +23,7 @@ FilteringRenderer::FilteringRenderer(RenderingConfig & config) : Renderer(config
 	_pyramidIntegrator = std::unique_ptr<LaplacianIntegrator>( new LaplacianIntegrator(renderWidth, renderHeight, _intDownscale));
 	_gaussianBlur = std::unique_ptr<GaussianBlur>(new GaussianBlur(renderWidth, renderHeight, _blurLevel, GL_RGB8));
 	_boxBlur = std::unique_ptr<BoxBlur>(new BoxBlur(renderWidth, renderHeight, false, {GL_RGB8, GL_NEAREST, GL_CLAMP_TO_EDGE}));
-	_floodFill = std::unique_ptr<FloodFill>(new FloodFill(renderWidth, renderHeight));
+	_floodFill = std::unique_ptr<FloodFilling>(new FloodFilling(renderWidth, renderHeight));
 	
 	// GL options
 	glEnable(GL_DEPTH_TEST);

@@ -71,7 +71,7 @@ private:
 	std::unique_ptr<LaplacianIntegrator> _pyramidIntegrator; ///< Laplacian integration.
 	std::unique_ptr<GaussianBlur> _gaussianBlur; ///< Gaussian blur processing.
 	std::unique_ptr<BoxBlur> _boxBlur; ///< Box blur processing.
-	std::unique_ptr<FloodFill> _floodFill; 
+	std::unique_ptr<FloodFilling> _floodFill;
 	
 	const ProgramInfos * _passthrough; ///< Basic blit shader.
 	const ProgramInfos * _sceneShader; ///< Object rendering shader.
