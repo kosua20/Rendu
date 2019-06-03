@@ -12,10 +12,30 @@ FloodFiller::FloodFiller(unsigned int width, unsigned int height) {
 	
 	_extract = Resources::manager().getProgram2D("extract-seeds");
 	_floodfill = Resources::manager().getProgram2D("flood-fill");
-	_composite = Resources::manager().getProgram2D("color-seeds"); // distance-seeds
+	_compositeDist = Resources::manager().getProgram2D("distance-seeds");
+	_compositeColor = Resources::manager().getProgram2D("color-seeds");
 }
 
-void FloodFiller::process(const GLuint textureId) {
+void FloodFiller::process(const GLuint textureId, const OutputMode mode) {
+	
+	extractAndPropagate(textureId);
+	
+	_final->bind();
+	_final->setViewport();
+	
+	if(mode == COLOR){
+		glUseProgram(_compositeColor->id());
+		ScreenQuad::draw({_ping->textureId(), textureId });
+	} else if(mode == DISTANCE){
+		glUseProgram(_compositeDist->id());
+		ScreenQuad::draw(_ping->textureId());
+	}
+	
+	_final->unbind();
+}
+
+
+void FloodFiller::extractAndPropagate(const GLuint textureId){
 	// Render seed positions in a 2 channels framebuffer (each non-black pixel is a seed).
 	glDisable(GL_DEPTH_TEST);
 	_ping->bind();
@@ -25,7 +45,7 @@ void FloodFiller::process(const GLuint textureId) {
 	glUseProgram(0);
 	_ping->unbind();
 	
-	//
+	// Propagate closest seeds with decreasing step size.
 	glUseProgram(_floodfill->id());
 	for(int i = 0; i < _iterations; ++i){
 		const int step = std::pow(2, std::max(0, _iterations - i - 1));
@@ -36,14 +56,6 @@ void FloodFiller::process(const GLuint textureId) {
 		_pong->unbind();
 		std::swap(_ping, _pong);
 	}
-	
-	// The result is now in ping again.
-	_final->bind();
-	_final->setViewport();
-	glUseProgram(_composite->id());
-	ScreenQuad::draw({_ping->textureId(), textureId });
-	_final->unbind();
-	checkGLError();
 }
 
 void FloodFiller::clean() const {
