@@ -118,6 +118,8 @@ Public Member Functions</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_l_s_l_1_1_frag_1_1_passthrough__pixelperfect.html#ad9b45ca87e709f03eb35653466489a76">layout</a> (location=0) out vec3 fragColor</td></tr>
 <tr class="memdesc:ad9b45ca87e709f03eb35653466489a76"><td class="mdescLeft">&#160;</td><td class="mdescRight">Color. <br /></td></tr>
 <tr class="separator:ad9b45ca87e709f03eb35653466489a76"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1ab9603b84e9eca71ffdf407b96a1f2f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_l_s_l_1_1_frag_1_1_passthrough__pixelperfect.html#a1ab9603b84e9eca71ffdf407b96a1f2f">isOutside</a> (ivec2 pos, ivec2 size)</td></tr>
+<tr class="separator:a1ab9603b84e9eca71ffdf407b96a1f2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1b108f94931679ab6c961e423bb3e494"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_l_s_l_1_1_frag_1_1_passthrough__pixelperfect.html#a1b108f94931679ab6c961e423bb3e494">main</a> ()</td></tr>
 <tr class="separator:a1b108f94931679ab6c961e423bb3e494"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -131,6 +133,50 @@ Public Attributes</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>"Passthrough pixelperfect" fragment shader. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="a1ab9603b84e9eca71ffdf407b96a1f2f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1ab9603b84e9eca71ffdf407b96a1f2f">&#9670;&nbsp;</a></span>isOutside()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool GLSL::Frag::Passthrough_pixelperfect::isOutside </td>
+          <td>(</td>
+          <td class="paramtype">ivec2&#160;</td>
+          <td class="paramname"><em>pos</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ivec2&#160;</td>
+          <td class="paramname"><em>size</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Denotes if a pixel falls outside an image. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pos</td><td>the pixel position </td></tr>
+    <tr><td class="paramname">size</td><td>the image size </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the pixel is outside of the image </dd></dl>
+
+</div>
+</div>
 <a id="a1b108f94931679ab6c961e423bb3e494"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a1b108f94931679ab6c961e423bb3e494">&#9670;&nbsp;</a></span>main()</h2>
 

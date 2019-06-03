@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.15"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Rendu: Physically-based rendering demo</title>
+<title>Rendu: resources/common/shaders/screens/convolution-pyramid Directory Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -45,10 +45,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li class="current"><a href="modules.html"><span>Modules</span></a></li>
+      <li><a href="modules.html"><span>Modules</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
-      <li><a href="files.html"><span>Files</span></a></li>
+      <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li>
         <div id="MSearchBox" class="MSearchBoxInactive">
@@ -68,7 +68,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       </li>
     </ul>
   </div>
-</div><!-- top -->
+  <div id="navrow2" class="tabs2">
+    <ul class="tablist">
+      <li class="current"><a href="files.html"><span>File&#160;List</span></a></li>
+    </ul>
+  </div>
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -83,74 +87,16 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="dir_0fc3f8f3ef96ce2d45d66d6e29832317.html">resources</a></li><li class="navelem"><a class="el" href="dir_4941aa794877de032eb8a43fda08ce21.html">common</a></li><li class="navelem"><a class="el" href="dir_aaaa6117677872147725cded7241508b.html">shaders</a></li><li class="navelem"><a class="el" href="dir_d8ae03cf2c3f5f4aa09460c7e97092e1.html">screens</a></li><li class="navelem"><a class="el" href="dir_61a095235976e75d989eccc4438c71d4.html">convolution-pyramid</a></li>  </ul>
+</div>
+</div><!-- top -->
 <div class="header">
-  <div class="summary">
-<a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
-<div class="title">Physically-based rendering demo<div class="ingroups"><a class="el" href="group___applications.html">Applications</a></div></div>  </div>
+<div class="title">convolution-pyramid Directory Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-
-<p>Render a scene using the GGX BRDF model, image-based ambient lighting, ambient occlusion, HDR and tonemapping, antialiasing.  
-<a href="#details">More...</a></p>
-<table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
-Functions</h2></td></tr>
-<tr class="memitem:ga3c04138a5bfe5d72780bb7e82a18e627"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___p_b_r_demo.html#ga3c04138a5bfe5d72780bb7e82a18e627">main</a> (int argc, char **argv)</td></tr>
-<tr class="separator:ga3c04138a5bfe5d72780bb7e82a18e627"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table>
-<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<p>Render a scene using the GGX BRDF model, image-based ambient lighting, ambient occlusion, HDR and tonemapping, antialiasing. </p>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_g_l_s_l_1_1_frag_1_1_ambient.html" title="&quot;Ambient&quot; fragment shader.">GLSL::Frag::Ambient</a> </dd>
-<dd>
-<a class="el" href="class_g_l_s_l_1_1_frag_1_1_ssao.html" title="&quot;Ssao&quot; fragment shader.">GLSL::Frag::Ssao</a> </dd>
-<dd>
-<a class="el" href="class_g_l_s_l_1_1_frag_1_1_tonemap.html" title="&quot;Tonemap&quot; fragment shader.">GLSL::Frag::Tonemap</a> </dd>
-<dd>
-<a class="el" href="class_g_l_s_l_1_1_frag_1_1_fxaa.html" title="&quot;Fxaa&quot; fragment shader.">GLSL::Frag::Fxaa</a> </dd>
-<dd>
-<a class="el" href="class_g_l_s_l_1_1_frag_1_1_point__light.html" title="&quot;Point light&quot; fragment shader.">GLSL::Frag::Point_light</a> </dd>
-<dd>
-<a class="el" href="class_g_l_s_l_1_1_frag_1_1_directional__light.html" title="&quot;Directional light&quot; fragment shader.">GLSL::Frag::Directional_light</a> </dd>
-<dd>
-<a class="el" href="class_g_l_s_l_1_1_frag_1_1_spot__light.html" title="&quot;Spot light&quot; fragment shader.">GLSL::Frag::Spot_light</a> </dd></dl>
-<h2 class="groupheader">Function Documentation</h2>
-<a id="ga3c04138a5bfe5d72780bb7e82a18e627"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga3c04138a5bfe5d72780bb7e82a18e627">&#9670;&nbsp;</a></span>main()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int main </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>argc</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">char **&#160;</td>
-          <td class="paramname"><em>argv</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>The main function of the physically-based rendering demo. Handles the setup and main loop. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">argc</td><td>the number of input arguments. </td></tr>
-    <tr><td class="paramname">argv</td><td>a pointer to the raw input arguments. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>a general error code. </dd></dl>
-
-</div>
-</div>
 </div><!-- contents -->
 <!-- HTML footer for doxygen 1.8.14-->
 <!-- start footer part -->

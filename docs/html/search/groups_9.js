@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['physically_2dbased_20rendering_20demo',['Physically-based rendering demo',['../group___p_b_r_demo.html',1,'']]],
-  ['playground',['Playground',['../group___playground.html',1,'']]],
-  ['processing',['Processing',['../group___processing.html',1,'']]]
+  ['raytracer_20demo',['Raytracer demo',['../group___raytracer_demo.html',1,'']]],
+  ['resources',['Resources',['../group___resources.html',1,'']]]
 ];

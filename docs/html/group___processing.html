@@ -90,9 +90,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">Processing</div>  </div>
 </div><!--header-->
 <div class="contents">
-
-<p>General image processing utilities.  
-<a href="#details">More...</a></p>
+<a name="details" id="details"></a><h2 class="groupheader"> </h2>
+<p>General image processing utilities. </p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
@@ -102,15 +101,25 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_box_blur.html">BoxBlur</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies a box blur of fixed radius 2. Correspond to uniformly averaging values over a square window.  <a href="class_box_blur.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_convolution_pyramid.html">ConvolutionPyramid</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Implements a multiscale scheme for approximating convolution with large filters. This is the basis of the technique described in Convolution Pyramids, Farbman et al., 2011. A set of filter parameters can be estimated through an offline optimization for each desired task: gradient field integration, seamless image cloning, background filling, or scattered data interpolation.  <a href="class_convolution_pyramid.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_flood_filler.html">FloodFiller</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform an approximate flood fill on the GPU, outputing a color filled image or a distance map. Implement the method described in Jump Flooding in GPU with Applications to Voronoi Diagram and Distance Transform, Rong et al., 2006.  <a href="class_flood_filler.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_gaussian_blur.html">GaussianBlur</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies an approximate gaussian blur.  <a href="class_gaussian_blur.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_laplacian_integrator.html">LaplacianIntegrator</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute the laplacian field of a RGB image before reconstructing the initial image through integration, using a filter as described in Convolution Pyramids, Farbman et al., 2011.  <a href="class_laplacian_integrator.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_poisson_filler.html">PoissonFiller</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Solve a membrane interpolation ("Poisson filling") problem, using a filter as described in Convolution Pyramids, Farbman et al., 2011.  <a href="class_poisson_filler.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_s_s_a_o.html">SSAO</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes screen space ambient occlusion from a depth and view-space normal buffer (brought to [0,1]).  <a href="class_s_s_a_o.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<p>General image processing utilities. </p>
 </div><!-- contents -->
 <!-- HTML footer for doxygen 1.8.14-->
 <!-- start footer part -->

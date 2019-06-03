@@ -19,8 +19,9 @@ var searchData=
   ['applysh',['applySH',['../class_g_l_s_l_1_1_frag_1_1_skybox__shcoeffs.html#a43d701758d418e2b6a13a4526825405a',1,'GLSL::Frag::Skybox_shcoeffs::applySH()'],['../class_g_l_s_l_1_1_frag_1_1_ambient.html#aa8238128029d10821ae514d067212860',1,'GLSL::Frag::Ambient::applySH()']]],
   ['array',['array',['../struct_texture_infos.html#a1c00b79403efc68c20594512730c4420',1,'TextureInfos']]],
   ['atlas',['atlas',['../struct_font_infos.html#a7db0959fdedc8e19ac682e120cd6f107',1,'FontInfos']]],
-  ['atmosphere',['Atmosphere',['../class_g_l_s_l_1_1_frag_1_1_atmosphere.html',1,'GLSL::Frag::Atmosphere'],['../group___atmosphere.html',1,'(Global Namespace)']]],
-  ['atmospheric_20scattering',['Atmospheric Scattering',['../group___atmospheric_scattering.html',1,'']]],
+  ['atmosphere',['Atmosphere',['../class_g_l_s_l_1_1_frag_1_1_atmosphere.html',1,'GLSL::Frag']]],
+  ['atmospheric_20scattering',['Atmospheric scattering',['../group___atmospheric_scattering.html',1,'']]],
   ['atmosphericscatteringconfig',['AtmosphericScatteringConfig',['../class_atmospheric_scattering_config.html',1,'AtmosphericScatteringConfig'],['../class_atmospheric_scattering_config.html#a1490c8e23fa9fabaf1561ca6b5111400',1,'AtmosphericScatteringConfig::AtmosphericScatteringConfig()']]],
+  ['atmospheric_20scattering_20estimator',['Atmospheric Scattering Estimator',['../group___atmospheric_scattering_estimator.html',1,'']]],
   ['axis',['axis',['../class_controller.html#acea40eeebfe94c1b58ab55bebf9eb536',1,'Controller']]]
 ];

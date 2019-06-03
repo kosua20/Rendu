@@ -1,11 +1,7 @@
 var searchData=
 [
-  ['parallax_5fgbuffer',['Parallax_gbuffer',['../class_g_l_s_l_1_1_vert_1_1_parallax__gbuffer.html',1,'GLSL::Vert::Parallax_gbuffer'],['../class_g_l_s_l_1_1_frag_1_1_parallax__gbuffer.html',1,'GLSL::Frag::Parallax_gbuffer']]],
-  ['passthrough',['Passthrough',['../class_g_l_s_l_1_1_vert_1_1_passthrough.html',1,'GLSL::Vert::Passthrough'],['../class_g_l_s_l_1_1_frag_1_1_passthrough.html',1,'GLSL::Frag::Passthrough']]],
-  ['passthrough_5fpixelperfect',['Passthrough_pixelperfect',['../class_g_l_s_l_1_1_frag_1_1_passthrough__pixelperfect.html',1,'GLSL::Frag']]],
-  ['pathpoint',['PathPoint',['../struct_player_1_1_path_point.html',1,'Player']]],
-  ['player',['Player',['../class_player.html',1,'']]],
-  ['point_5flight',['Point_light',['../class_g_l_s_l_1_1_frag_1_1_point__light.html',1,'GLSL::Frag']]],
-  ['pointlight',['PointLight',['../class_point_light.html',1,'']]],
-  ['programinfos',['ProgramInfos',['../class_program_infos.html',1,'']]]
+  ['object',['Object',['../class_object.html',1,'']]],
+  ['object_5fbasic',['Object_basic',['../class_g_l_s_l_1_1_frag_1_1_object__basic.html',1,'GLSL::Frag::Object_basic'],['../class_g_l_s_l_1_1_vert_1_1_object__basic.html',1,'GLSL::Vert::Object_basic']]],
+  ['object_5fgbuffer',['Object_gbuffer',['../class_g_l_s_l_1_1_vert_1_1_object__gbuffer.html',1,'GLSL::Vert::Object_gbuffer'],['../class_g_l_s_l_1_1_frag_1_1_object__gbuffer.html',1,'GLSL::Frag::Object_gbuffer']]],
+  ['object_5flayer',['Object_layer',['../class_g_l_s_l_1_1_vert_1_1_object__layer.html',1,'GLSL::Vert::Object_layer'],['../class_g_l_s_l_1_1_geom_1_1_object__layer.html',1,'GLSL::Geom::Object_layer']]]
 ];

@@ -19,6 +19,7 @@ var searchData=
   ['setdefaultfile',['setDefaultFile',['../class_log.html#aadbfaa4b2838990e064f37d70dacdc0d',1,'Log']]],
   ['setdefaultverbose',['setDefaultVerbose',['../class_log.html#a53d96dc5b83f28f6cff273aefc2ab53b',1,'Log']]],
   ['setfile',['setFile',['../class_log.html#a71b1d684da3c9cf41a864e6c7f796c8d',1,'Log']]],
+  ['setfilters',['setFilters',['../class_convolution_pyramid.html#ae9dca10be4c6adb740e6a2787b1e5986',1,'ConvolutionPyramid']]],
   ['setintensity',['setIntensity',['../class_light.html#a91e1c518722138557e2733c2e474ee1f',1,'Light']]],
   ['setscene',['setScene',['../class_deferred_renderer.html#a61dea9bf1883606d8afd09381aaa846d',1,'DeferredRenderer']]],
   ['setsceneparameters',['setSceneParameters',['../class_ambient_quad.html#ab57cec30770a7b1340bc6c2ff138aa28',1,'AmbientQuad']]],
