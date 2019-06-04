@@ -12,34 +12,35 @@ cwd = os.getcwd()
 
 workspace("Rendu")
 	-- Configurations
-	configurations({ "Debug", "Release"})
+	configurations({ "Release", "Dev"})
 	location("build")
 	targetdir ("build/%{prj.name}/%{cfg.longname}")
 	debugdir ("build/%{prj.name}/%{cfg.longname}")
 	architecture("x64")
 
 	-- Configuration specific settings.
-	filter("configurations:Debug")
-		defines({ "DEBUG" })
-		symbols("On")
 	filter("configurations:Release")
 		defines({ "NDEBUG" })
 		optimize("On")
+	filter("configurations:Dev")
+		defines({ "DEBUG" })
+		symbols("On")
 	filter({})
+	startproject("ALL")
 
 
 -- Helper functions for the projects.
 
 function InstallProject(projectName, destination)
-	filter("configurations:Debug")
-		postbuildcommands({
-			path.translate( "{CHDIR} "..os.getcwd(), sep),
-			path.translate( "{COPY} build/"..projectName.."/Debug/"..projectName..ext.." "..destination..copyFix, sep)
-		})
 	filter("configurations:Release")
 		postbuildcommands({
 			path.translate( "{CHDIR} "..os.getcwd(), sep),
 			path.translate( "{COPY} build/"..projectName.."/Release/"..projectName..ext.." "..destination..copyFix, sep)
+		})
+	filter("configurations:Dev")
+		postbuildcommands({
+			path.translate( "{CHDIR} "..os.getcwd(), sep),
+			path.translate( "{COPY} build/"..projectName.."/Dev/"..projectName..ext.." "..destination..copyFix, sep)
 		})
 	filter({})
 end
@@ -48,6 +49,7 @@ function CPPSetup()
 	language("C++")
 	cppdialect("C++11")
 	buildoptions({ "-Wall" })
+	systemversion("latest")
 end	
 
 function GraphicsSetup(srcDir)
@@ -185,7 +187,7 @@ group("Meta")
 project("ALL")
 	CPPSetup()
 	kind("ConsoleApp")
-	dependson( {"Engine", "PBRDemo", "Playground", "Atmosphere", "ImageViewer", "AtmosphericScatteringEstimator", "BRDFEstimator", "ControllerTest", "SnakeGame", "RaytracerDemo"})
+	dependson( {"Engine", "PBRDemo", "Playground", "Atmosphere", "ImageViewer", "ImageFiltering", "AtmosphericScatteringEstimator", "BRDFEstimator", "ControllerTest", "SnakeGame", "RaytracerDemo"})
 
 -- Actions
 
