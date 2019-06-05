@@ -32,7 +32,7 @@ uint baseHash(uint p) {
 	\return a random vec3
 */
 vec3 hash31(int x) {
-	uint n = baseHash(uint(x));
+	uint n = baseHash(uint(x+1));
 	uvec3 rz = uvec3(n, n*16807U, n*48271U);
 	return vec3(rz & uvec3(0x7fffffffU))/float(0x7fffffff);
 }
