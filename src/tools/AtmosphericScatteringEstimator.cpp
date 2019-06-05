@@ -2,15 +2,8 @@
 #include "Config.hpp"
 #include "resources/ImageUtilities.hpp"
 
-/**
- 	\defgroup AtmosphericScatteringEstimator Atmospheric Scattering Estimator
- 	\brief Real-time atmospheric scattering preprocess.
- 	\see AtmosphericScattering
- 	\ingroup Tools
-*/
-
 /** \brief Configuration for the atmospheric scattering precomputations.
- 	\ingroup AtmosphericScatteringEstimator
+ 	\ingroup AtmosphericScattering
  */
 class AtmosphericScatteringConfig : public Config {
 public:
@@ -59,7 +52,7 @@ public:
  \param roots if the ray intersects the sphere, stores the two roots of the associated polynomial, such that roots[0]<=roots[1].
  \return a boolean denoting if the ray intersected the sphere.
  \warning The intersection can be behind the viewer (ie in the opposite orientation along the ray direction).
- \ingroup AtmosphericScatteringEstimator
+ \ingroup AtmosphericScattering
  */
 bool intersects(const glm::vec3 & rayOrigin, const glm::vec3 & rayDir, float radius, glm::vec2 & roots){
 	float a = glm::dot(rayDir,rayDir);
@@ -82,9 +75,9 @@ bool intersects(const glm::vec3 & rayOrigin, const glm::vec3 & rayDir, float rad
  \param argc the number of input arguments.
  \param argv a pointer to the raw input arguments.
  \return a general error code.
- \ingroup AtmosphericScatteringEstimator
+ \ingroup AtmosphericScattering
  */
-int main(int argc, char** argv) {
+int preprocess(int argc, char** argv) {
 	
 	// First, init/parse/load configuration.
 	AtmosphericScatteringConfig config(std::vector<std::string>(argv, argv+argc));
@@ -161,4 +154,14 @@ int main(int argc, char** argv) {
 	return 0;
 }
 
-
+/// \cond SKIP_DOXYGEN
+/** The main function of the preprocessing utility.
+ \param argc the number of input arguments.
+ \param argv a pointer to the raw input arguments.
+ \return a general error code.
+ \ingroup AtmosphericScattering
+ */
+int main(int argc, char* argv[]) {
+	return preprocess(argc, argv);
+}
+/// \endcond
