@@ -154,7 +154,7 @@ int preprocess(int argc, char** argv) {
 	return 0;
 }
 
-/// \cond SKIP_DOXYGEN
+/// \cond 
 /** The main function of the preprocessing utility.
  \param argc the number of input arguments.
  \param argv a pointer to the raw input arguments.
