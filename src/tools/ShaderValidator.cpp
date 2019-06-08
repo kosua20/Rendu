@@ -13,7 +13,7 @@
  	\param compilationLog the compilation log to process.
  	\param filePath the path to the shader file, relative to the directory containing the IDE project.
  	\return a boolean denoting if at least one error was reported by the log.
- 	\warning If filePath is not expressed relative to the direcotry containing the IDE project, error links (for instance "src/foo/bar.frag:18") won't be functional.
+ 	\warning If filePath is not expressed relative to the directory containing the IDE project, error links (for instance "src/foo/bar.frag:18") won't be functional.
  	\ingroup ShaderValidator
  */
 bool processLog(const std::string & compilationLog, const std::string & filePath){
@@ -132,7 +132,8 @@ int main(int argc, char** argv) {
 		const std::string shader = Resources::manager().getString(vert.first + ".vert");
 		GLUtilities::loadShader(shader, GL_VERTEX_SHADER, bindings, compilationLog);
 		// Process the log.
-		encounteredIssues = encounteredIssues || processLog(compilationLog, vert.second);
+		const bool newIssues = processLog(compilationLog, vert.second);
+		encounteredIssues = encounteredIssues || newIssues;
 	}
 	
 	// Load all geometry shaders from disk.
@@ -145,7 +146,8 @@ int main(int argc, char** argv) {
 		const std::string shader = Resources::manager().getString(geom.first + ".geom");
 		GLUtilities::loadShader(shader, GL_GEOMETRY_SHADER, bindings, compilationLog);
 		// Process the log.
-		encounteredIssues = encounteredIssues || processLog(compilationLog, geom.second);
+		const bool newIssues = processLog(compilationLog, geom.second);
+		encounteredIssues = encounteredIssues || newIssues;
 	}
 	
 	// Load all fragment shaders from disk.
@@ -158,7 +160,8 @@ int main(int argc, char** argv) {
 		const std::string shader = Resources::manager().getString(frag.first + ".frag");
 		GLUtilities::loadShader(shader, GL_FRAGMENT_SHADER, bindings, compilationLog);
 		// Process the log.
-		encounteredIssues = encounteredIssues || processLog(compilationLog, frag.second);
+		const bool newIssues = processLog(compilationLog, frag.second);
+		encounteredIssues = encounteredIssues || newIssues;
 	}
 	
 	// Remove the window.
