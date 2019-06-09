@@ -12,7 +12,7 @@ Rendu is a rendering engine designed for experimentation. The computer graphics 
 
 Name  | Description
 ------------- | -------------
-[Deferred Physically based rendering](\ref DeferredRendering) | ![](docs/img/pbrdemo.png)Real-time rendering of a scene with 'physically-based' materials (GGX BRDF introduced in *Microfacet Models for Refraction through Rough Surfaces*, Walter et al., 2007), using deferred rendering and an HDR pipeline with bloom and SSAO.
+[Deferred Physically based rendering](group___deferred_rendering.html) | ![](docs/img/pbrdemo.png)Real-time rendering of a scene with 'physically-based' materials (GGX BRDF introduced in *Microfacet Models for Refraction through Rough Surfaces*, Walter et al., 2007), using deferred rendering and an HDR pipeline with bloom and SSAO.
 [Image Filtering](@ref ImageFiltering)  | ![](docs/img/imagefiltering.png) Apply filters to an image, such as gaussian blur, approximate flood-fill (*Jump Flooding in GPU with Applications to Voronoi Diagram and Distance Transform*, Rong et al., 2006) and poisson filling (*Convolution Pyramids*, Farbman et al., 2011), etc.
 [Atmospheric scattering](@ref AtmosphericScattering)  | ![](docs/img/atmosphere.png) Realistic atmosphere rendering with Rayleigh and Mie scattering (*Precomputed Atmospheric Scattering*, Bruneton et al., 2008).
 [Snake Game](@ref SnakeGame)  | ![](docs/img/snake.png) A basic game of snake, demonstrating game menus, player state, batched rendering.
