@@ -22,6 +22,5 @@ var searchData=
   ['atmosphere',['Atmosphere',['../class_g_l_s_l_1_1_frag_1_1_atmosphere.html',1,'GLSL::Frag']]],
   ['atmospheric_20scattering',['Atmospheric scattering',['../group___atmospheric_scattering.html',1,'']]],
   ['atmosphericscatteringconfig',['AtmosphericScatteringConfig',['../class_atmospheric_scattering_config.html',1,'AtmosphericScatteringConfig'],['../class_atmospheric_scattering_config.html#a1490c8e23fa9fabaf1561ca6b5111400',1,'AtmosphericScatteringConfig::AtmosphericScatteringConfig()']]],
-  ['atmospheric_20scattering_20estimator',['Atmospheric Scattering Estimator',['../group___atmospheric_scattering_estimator.html',1,'']]],
   ['axis',['axis',['../class_controller.html#acea40eeebfe94c1b58ab55bebf9eb536',1,'Controller']]]
 ];

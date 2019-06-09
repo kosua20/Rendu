@@ -22,5 +22,6 @@ var searchData=
   ['box_5fblur_5fapprox_5f3',['Box_blur_approx_3',['../class_g_l_s_l_1_1_frag_1_1_box__blur__approx__3.html',1,'GLSL::Frag']]],
   ['box_5fblur_5fapprox_5f4',['Box_blur_approx_4',['../class_g_l_s_l_1_1_frag_1_1_box__blur__approx__4.html',1,'GLSL::Frag']]],
   ['boxblur',['BoxBlur',['../class_box_blur.html',1,'']]],
-  ['brdf_5fsampler',['Brdf_sampler',['../class_g_l_s_l_1_1_frag_1_1_brdf__sampler.html',1,'GLSL::Frag']]]
+  ['brdf_5fsampler',['Brdf_sampler',['../class_g_l_s_l_1_1_frag_1_1_brdf__sampler.html',1,'GLSL::Frag']]],
+  ['brush_5fcolor',['Brush_color',['../class_g_l_s_l_1_1_vert_1_1_brush__color.html',1,'GLSL::Vert::Brush_color'],['../class_g_l_s_l_1_1_frag_1_1_brush__color.html',1,'GLSL::Frag::Brush_color']]]
 ];

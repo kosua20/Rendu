@@ -6,5 +6,5 @@ var searchData=
   ['dir',['dir',['../struct_raycaster_1_1_ray.html#aab23fcd8c8205b56044b84d386112925',1,'Raycaster::Ray']]],
   ['directionallights',['directionalLights',['../class_scene.html#ab4e0885c188fe3ea73665b60b572b31d',1,'Scene']]],
   ['displayscale',['displayScale',['../struct_menu_button.html#a61c709d4079ea1e06435dcdbb7bfd3cb',1,'MenuButton']]],
-  ['dist',['dist',['../struct_player_1_1_path_point.html#add8732d8408d2b0d01eecdf5230c88f8',1,'Player::PathPoint::dist()'],['../struct_raycaster_1_1_ray_hit.html#a4fd4c5fe5c03b12ce6c92417ca2138f1',1,'Raycaster::RayHit::dist()']]]
+  ['dist',['dist',['../struct_player_1_1_path_point.html#add8732d8408d2b0d01eecdf5230c88f8',1,'Player::PathPoint::dist()'],['../struct_raycaster_1_1_ray_hit.html#a4fd4c5fe5c03b12ce6c92417ca2138f1',1,'Raycaster::RayHit::dist()'],['../class_g_l_s_l_1_1_frag_1_1_brush__color.html#a5705490f9a56d30ca142e551cdbbc074',1,'GLSL::Frag::Brush_color::dist()'],['../class_g_l_s_l_1_1_vert_1_1_brush__color.html#a6aa99a12c28e741b9354dea81f3694b7',1,'GLSL::Vert::Brush_color::dist()']]]
 ];

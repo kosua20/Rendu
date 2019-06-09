@@ -71,7 +71,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow2" class="tabs2">
     <ul class="tablist">
       <li><a href="annotated.html"><span>Class&#160;List</span></a></li>
-      <li><a href="classes.html"><span>Class&#160;Index</span></a></li>
       <li><a href="hierarchy.html"><span>Class&#160;Hierarchy</span></a></li>
       <li><a href="functions.html"><span>Class&#160;Members</span></a></li>
     </ul>
@@ -131,12 +130,12 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-types"></a>
 Private Types</h2></td></tr>
-<tr class="memitem:aa7ee9569b5d45686bd9290e00ab862bd"><td class="memItemLeft" align="right" valign="top"><a id="aa7ee9569b5d45686bd9290e00ab862bd"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_filtering_renderer.html#aa7ee9569b5d45686bd9290e00ab862bd">FilterMode</a> : int </td></tr>
-<tr class="memdesc:aa7ee9569b5d45686bd9290e00ab862bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">The filter to apply. <br /></td></tr>
-<tr class="separator:aa7ee9569b5d45686bd9290e00ab862bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7def3314666071264c9e3cdc4dae84b2"><td class="memItemLeft" align="right" valign="top"><a id="a7def3314666071264c9e3cdc4dae84b2"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_filtering_renderer.html#a7def3314666071264c9e3cdc4dae84b2">ViewMode</a> : int </td></tr>
-<tr class="memdesc:a7def3314666071264c9e3cdc4dae84b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">The viewing mode: either a rendering or a still image. <br /></td></tr>
-<tr class="separator:a7def3314666071264c9e3cdc4dae84b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad65c3a8580f3349497261c5914d62373"><td class="memItemLeft" align="right" valign="top"><a id="ad65c3a8580f3349497261c5914d62373"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_filtering_renderer.html#ad65c3a8580f3349497261c5914d62373">Filter</a> : int </td></tr>
+<tr class="memdesc:ad65c3a8580f3349497261c5914d62373"><td class="mdescLeft">&#160;</td><td class="mdescRight">The filter to apply. <br /></td></tr>
+<tr class="separator:ad65c3a8580f3349497261c5914d62373"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8c88c688f5591183c5b8ef7ce14cefa1"><td class="memItemLeft" align="right" valign="top"><a id="a8c88c688f5591183c5b8ef7ce14cefa1"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_filtering_renderer.html#a8c88c688f5591183c5b8ef7ce14cefa1">View</a> : int </td></tr>
+<tr class="memdesc:a8c88c688f5591183c5b8ef7ce14cefa1"><td class="mdescLeft">&#160;</td><td class="mdescRight">The viewing mode: either a rendering, a still image or a painting canvas. <br /></td></tr>
+<tr class="separator:a8c88c688f5591183c5b8ef7ce14cefa1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
@@ -164,6 +163,10 @@ std::unique_ptr&lt; <a class="el" href="class_gaussian_blur.html">GaussianBlur</
 std::unique_ptr&lt; <a class="el" href="class_box_blur.html">BoxBlur</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_filtering_renderer.html#a3725d0c5466d1b0ce917e458f7980d8b">_boxBlur</a></td></tr>
 <tr class="memdesc:a3725d0c5466d1b0ce917e458f7980d8b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Box blur processing. <br /></td></tr>
 <tr class="separator:a3725d0c5466d1b0ce917e458f7980d8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3268a07f96691ecf26bac3d4239ab696"><td class="memItemLeft" align="right" valign="top"><a id="a3268a07f96691ecf26bac3d4239ab696"></a>
+std::unique_ptr&lt; <a class="el" href="class_flood_filler.html">FloodFiller</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_filtering_renderer.html#a3268a07f96691ecf26bac3d4239ab696">_floodFill</a></td></tr>
+<tr class="memdesc:a3268a07f96691ecf26bac3d4239ab696"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flood filling. <br /></td></tr>
+<tr class="separator:a3268a07f96691ecf26bac3d4239ab696"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9a75cc3c26e65de4f41f21213f56cf6d"><td class="memItemLeft" align="right" valign="top"><a id="a9a75cc3c26e65de4f41f21213f56cf6d"></a>
 const <a class="el" href="class_program_infos.html">ProgramInfos</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_filtering_renderer.html#a9a75cc3c26e65de4f41f21213f56cf6d">_passthrough</a></td></tr>
 <tr class="memdesc:a9a75cc3c26e65de4f41f21213f56cf6d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Basic blit shader. <br /></td></tr>
@@ -176,14 +179,14 @@ const <a class="el" href="class_program_infos.html">ProgramInfos</a> *&#160;</td
 const <a class="el" href="struct_mesh_infos.html">MeshInfos</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_filtering_renderer.html#a482f6e4d0d061637c80f546a232ad688">_mesh</a></td></tr>
 <tr class="memdesc:a482f6e4d0d061637c80f546a232ad688"><td class="mdescLeft">&#160;</td><td class="mdescRight">Basic sphere mesh. <br /></td></tr>
 <tr class="separator:a482f6e4d0d061637c80f546a232ad688"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab225eaee2760bbeb95db96b5499c9f35"><td class="memItemLeft" align="right" valign="top"><a id="ab225eaee2760bbeb95db96b5499c9f35"></a>
-<a class="el" href="class_filtering_renderer.html#aa7ee9569b5d45686bd9290e00ab862bd">FilterMode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_filtering_renderer.html#ab225eaee2760bbeb95db96b5499c9f35">_mode</a> = INPUT</td></tr>
-<tr class="memdesc:ab225eaee2760bbeb95db96b5499c9f35"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current filter mode. <br /></td></tr>
-<tr class="separator:ab225eaee2760bbeb95db96b5499c9f35"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a853e8b7570f7b8be06938c6890435445"><td class="memItemLeft" align="right" valign="top"><a id="a853e8b7570f7b8be06938c6890435445"></a>
-<a class="el" href="class_filtering_renderer.html#a7def3314666071264c9e3cdc4dae84b2">ViewMode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_filtering_renderer.html#a853e8b7570f7b8be06938c6890435445">_viewMode</a> = SCENE</td></tr>
-<tr class="memdesc:a853e8b7570f7b8be06938c6890435445"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current view mode. <br /></td></tr>
-<tr class="separator:a853e8b7570f7b8be06938c6890435445"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a57f86bcf10fd5e13f186991fff39b087"><td class="memItemLeft" align="right" valign="top"><a id="a57f86bcf10fd5e13f186991fff39b087"></a>
+<a class="el" href="class_filtering_renderer.html#ad65c3a8580f3349497261c5914d62373">Filter</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_filtering_renderer.html#a57f86bcf10fd5e13f186991fff39b087">_mode</a> = Filter::INPUT</td></tr>
+<tr class="memdesc:a57f86bcf10fd5e13f186991fff39b087"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current filter mode. <br /></td></tr>
+<tr class="separator:a57f86bcf10fd5e13f186991fff39b087"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6440ed25213c87562087d4aa7430a98b"><td class="memItemLeft" align="right" valign="top"><a id="a6440ed25213c87562087d4aa7430a98b"></a>
+<a class="el" href="class_filtering_renderer.html#a8c88c688f5591183c5b8ef7ce14cefa1">View</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_filtering_renderer.html#a6440ed25213c87562087d4aa7430a98b">_viewMode</a> = View::SCENE</td></tr>
+<tr class="memdesc:a6440ed25213c87562087d4aa7430a98b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current view mode. <br /></td></tr>
+<tr class="separator:a6440ed25213c87562087d4aa7430a98b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa7913b16d89d6ebc2380740c8183d1e4"><td class="memItemLeft" align="right" valign="top"><a id="aa7913b16d89d6ebc2380740c8183d1e4"></a>
 <a class="el" href="struct_texture_infos.html">TextureInfos</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_filtering_renderer.html#aa7913b16d89d6ebc2380740c8183d1e4">_image</a></td></tr>
 <tr class="memdesc:aa7913b16d89d6ebc2380740c8183d1e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">The image to display in <a class="el" href="struct_image.html" title="Represents an image composed of pixels with values in [0,1].">Image</a> view mode. <br /></td></tr>

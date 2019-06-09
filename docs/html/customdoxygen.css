@@ -4,6 +4,9 @@ body, table, div, p, dl {
 	font: 14px "SF Pro Text", "SF Pro Icons", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
 }
 
+p {
+	line-height: 180%;
+}
 /* @group Heading Levels */
 
 h1.groupheader {
@@ -14,7 +17,7 @@ h1.groupheader {
 	font-family: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
 	font-size: 35px;
 	font-weight: 400;
-	margin: 15px 12px;
+	margin: 15px 12px 15px 0px;
 	margin-top:18px;
 }
 
@@ -100,7 +103,8 @@ p.endtd {
 /* @end */
 
 caption {
-	font-weight: bold;
+	font-style: italic;
+	font-weight: normal;
 }
 
 span.legend {
@@ -146,7 +150,7 @@ a {
 }
 
 .contents li {
-	list-style: none;
+	list-style: disc;
 }
 
 a:hover {
@@ -321,12 +325,15 @@ body {
 	background-color: white;
 	color: #333;
 	margin: 0;
+	line-height: 180%;
 }
 
 div.contents {
 	margin-top: 15px;
-	margin-left: 22px;
-	margin-right: 12px;
+	margin-left: auto;
+	margin-right: auto;
+	width: 90%;
+	max-width: 1000px;
 }
 
 td.indexkey {
@@ -375,7 +382,11 @@ div.center img {
 
 address.footer {
 	text-align: right;
-	padding-right: 12px;
+	padding-right: 0px;
+	margin-left: auto;
+	margin-right: auto;
+	width: 90%;
+	max-width: 1000px;
 }
 
 img.footer {
@@ -1071,11 +1082,16 @@ div.header
 	background-image: none;
 	margin:  0px;
 	border: none;
+	width: 90%;
+	max-width: 1000px;
+	margin-left: auto;
+	margin-right: auto;
+	
 }
 
 div.headertitle
 {
-	padding: 5px 5px 5px 10px;
+	padding: 5px 5px 5px 0px;
 }
 
 dl
@@ -1100,7 +1116,7 @@ dl.section
 dl.note
 {
 	margin-left: 0px;
-	padding: 6px 0px 3px 8px;
+	padding: 6px 0px 12px 8px;
 	border-left:  6px solid;
 	border-color: #ffff9e;
 	background-color: #fffdcf;
@@ -1109,7 +1125,7 @@ dl.note
 dl.warning, dl.attention
 {
 	margin-left: 0px;
-	padding: 6px 0px 3px 8px;
+	padding: 6px 0px 12px 8px;
 	
 	border-left: 6px solid;
 	border-color: #ff9e9e;
@@ -1119,7 +1135,7 @@ dl.warning, dl.attention
 dl.pre, dl.post, dl.invariant
 {
 	margin-left: 0px;
-	padding: 6px 0px 3px 8px;
+	padding: 6px 0px 12px 8px;
 	border-left:6px solid;
 	border-color: #aaa;
 	background-color: #eee;
@@ -1128,7 +1144,7 @@ dl.pre, dl.post, dl.invariant
 dl.deprecated
 {
 	margin-left: 0px;
-	padding: 6px 0px 3px 8px;
+	padding: 6px 0px 12px 8px;
 	border-left:6px solid;
 	border-color: #333;
 	background-color: #ccc;
@@ -1144,7 +1160,7 @@ dl.deprecated dt a.el
 dl.todo
 {
 	margin-left: 0px;
-	padding: 6px 0px 3px 8px;
+	padding: 6px 0px 12px 8px;
 	border-left:6px solid;
 	border-color: #82eb6f;
 	background-color: #cefacf;
@@ -1153,7 +1169,7 @@ dl.todo
 dl.test
 {
 	margin-left: 0px;
-	padding: 6px 0px 3px 8px;
+	padding: 6px 0px 12px 8px;
 	border-left:6px solid;
 	border-color: #00C0E0;
 	background-color: #CCECFC;
@@ -1162,7 +1178,7 @@ dl.test
 dl.bug
 {
 	margin-left: 0px;
-	padding: 6px 0px 3px 8px;
+	padding: 6px 0px 12px 8px;
 	border-left:6px solid;
 	border-color: #ffbf3d;
 	background-color: #ffddb7;
@@ -1244,7 +1260,9 @@ dl.section dd {
 
 .caption
 {
-	font-weight: bold;
+	font-style: italic;
+	font-weight: normal;
+	margin-top: 10px;
 }
 
 div.zoom
@@ -1453,4 +1471,9 @@ background-color: #f0f0f0;
 #nav-tree {
 	background-image: none;
 	background-color:white;
+}
+
+table.markdownTable td, table.markdownTable th {
+	border: 1px solid #4A4A4A;
+	padding: 10px 10px 12px 12px;
 }

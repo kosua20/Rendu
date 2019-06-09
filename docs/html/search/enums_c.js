@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['viewmode',['ViewMode',['../class_filtering_renderer.html#a7def3314666071264c9e3cdc4dae84b2',1,'FilteringRenderer']]]
+  ['view',['View',['../class_filtering_renderer.html#a8c88c688f5591183c5b8ef7ce14cefa1',1,'FilteringRenderer']]]
 ];

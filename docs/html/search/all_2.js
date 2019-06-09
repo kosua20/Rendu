@@ -34,6 +34,7 @@ var searchData=
   ['boxblur',['BoxBlur',['../class_box_blur.html',1,'BoxBlur'],['../class_box_blur.html#af9b1be7389ebd1321536da3906e87959',1,'BoxBlur::BoxBlur()']]],
   ['brdf_5fsampler',['Brdf_sampler',['../class_g_l_s_l_1_1_frag_1_1_brdf__sampler.html',1,'GLSL::Frag']]],
   ['brdf_20estimation',['BRDF Estimation',['../group___b_r_d_f_estimator.html',1,'']]],
+  ['brush_5fcolor',['Brush_color',['../class_g_l_s_l_1_1_vert_1_1_brush__color.html',1,'GLSL::Vert::Brush_color'],['../class_g_l_s_l_1_1_frag_1_1_brush__color.html',1,'GLSL::Frag::Brush_color']]],
   ['buttonaction',['ButtonAction',['../class_game.html#a2999de25fbbb113485295c51b3b47646',1,'Game']]],
   ['buttons',['buttons',['../class_game_menu.html#aa71a50182cfe6433c0f7548f3ac762ab',1,'GameMenu']]]
 ];

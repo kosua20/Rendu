@@ -71,7 +71,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow2" class="tabs2">
     <ul class="tablist">
       <li><a href="annotated.html"><span>Class&#160;List</span></a></li>
-      <li><a href="classes.html"><span>Class&#160;Index</span></a></li>
       <li><a href="hierarchy.html"><span>Class&#160;Hierarchy</span></a></li>
       <li class="current"><a href="functions.html"><span>Class&#160;Members</span></a></li>
     </ul>
@@ -168,6 +167,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li>_bgBlur
 : <a class="el" href="class_game.html#a49d353d230d80cc48551909da4031c26">Game</a>
 </li>
+<li>_bgColor
+: <a class="el" href="class_painting_tool.html#a08cb02410148a5f1d96d5d43be69bd2a">PaintingTool</a>
+</li>
 <li>_bloomFramebuffer
 : <a class="el" href="class_deferred_renderer.html#a7c371dfffee917a3b41251aced0a624f">DeferredRenderer</a>
 </li>
@@ -197,8 +199,17 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li>_boxBlur
 : <a class="el" href="class_filtering_renderer.html#a3725d0c5466d1b0ce917e458f7980d8b">FilteringRenderer</a>
 </li>
+<li>_brushes
+: <a class="el" href="class_painting_tool.html#a9d3f871aa3b2d4ed6f4ead28df2b81ba">PaintingTool</a>
+</li>
+<li>_brushShader
+: <a class="el" href="class_painting_tool.html#ace18df7eae0aa519fd2e0db64b143698">PaintingTool</a>
+</li>
 <li>_buttons
 : <a class="el" href="class_controller.html#a7b86c4cece20b574892cc384d6c8954e">Controller</a>
+</li>
+<li>_canvas
+: <a class="el" href="class_painting_tool.html#a0baec59e2072f9237b0652784748e064">PaintingTool</a>
 </li>
 <li>_castShadow
 : <a class="el" href="class_object.html#abd69fd796f180e9ea454ed12151e8e99">Object</a>
@@ -287,6 +298,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li>_downscale
 : <a class="el" href="class_convolution_pyramid.html#a771ff6d4b36b855a5c472a72db6e5b22">ConvolutionPyramid</a>
 </li>
+<li>_drawPos
+: <a class="el" href="class_painting_tool.html#a8e1622bd52b29b9b3e386524d0b8cdb3">PaintingTool</a>
+</li>
 <li>_eatingDistance
 : <a class="el" href="class_player.html#a1ea562bc67b2d8235cae45bf85eda7f9">Player</a>
 </li>
@@ -301,6 +315,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </li>
 <li>_farPlane
 : <a class="el" href="class_point_light.html#afddde3565e7d7d484cbfbaef54d9fcfe">PointLight</a>
+</li>
+<li>_fgColor
+: <a class="el" href="class_painting_tool.html#a73b1ec2a98703fd30f4cc6fa2d3700c6">PaintingTool</a>
 </li>
 <li>_file
 : <a class="el" href="class_log.html#a9a0f5484f0aa40f66b67f5d6674467d5">Log</a>
@@ -327,6 +344,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </li>
 <li>_finalTexture
 : <a class="el" href="class_blur.html#a369df4a704fc653d4a7f8132b1f64bf9">Blur</a>
+</li>
+<li>_floodFill
+: <a class="el" href="class_filtering_renderer.html#a3268a07f96691ecf26bac3d4239ab696">FilteringRenderer</a>
 </li>
 <li>_floodfill
 : <a class="el" href="class_flood_filler.html#afeca448fa29b83d4e5ae19553615614a">FloodFiller</a>
@@ -513,7 +533,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </li>
 <li>_mode
 : <a class="el" href="class_controllable_camera.html#a1b26119c80e8e41f364b564b8a66bd38">ControllableCamera</a>
-, <a class="el" href="class_filtering_renderer.html#ab225eaee2760bbeb95db96b5499c9f35">FilteringRenderer</a>
+, <a class="el" href="class_filtering_renderer.html#a57f86bcf10fd5e13f186991fff39b087">FilteringRenderer</a>
+, <a class="el" href="class_painting_tool.html#ab369cbc568d7ffe74445d2b74f463ab7">PaintingTool</a>
 </li>
 <li>_model
 : <a class="el" href="class_object.html#a2e27dc7e4eb5eca7a8db7da31340ec07">Object</a>
@@ -635,6 +656,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </li>
 <li>_radius
 : <a class="el" href="class_controllable_camera.html#afb4dd6bc8cadcf516cdc0e2991f2612f">ControllableCamera</a>
+, <a class="el" href="class_painting_tool.html#a71f6eb803646afd2ebf379843cc8bb04">PaintingTool</a>
 , <a class="el" href="class_player.html#a4c674305ca877af47e4fb94f153e4300">Player</a>
 , <a class="el" href="class_point_light.html#a60b435b6c141281436e8b2cfb621b139">PointLight</a>
 , <a class="el" href="class_spot_light.html#a7c21f079f0be1589a2bf2357005b620b">SpotLight</a>
@@ -705,8 +727,17 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 : <a class="el" href="class_directional_light.html#af910c44926bfc81b15dc8b3fd223e4aa">DirectionalLight</a>
 , <a class="el" href="class_spot_light.html#af73e7f75755590f621ddc79699cdb37e">SpotLight</a>
 </li>
+<li>_shape
+: <a class="el" href="class_painting_tool.html#aa67d73cbc74f4be7d406feafccd282bc">PaintingTool</a>
+</li>
 <li>_shifted
 : <a class="el" href="class_convolution_pyramid.html#a40289419ff58bb59ad457fdd398d802c">ConvolutionPyramid</a>
+</li>
+<li>_shoudClear
+: <a class="el" href="class_painting_tool.html#addbb3d41054f8a65a0e6d7b69d499abd">PaintingTool</a>
+</li>
+<li>_shouldDraw
+: <a class="el" href="class_painting_tool.html#adf0e235ea9a6fb0b139c110ad5cd421f">PaintingTool</a>
 </li>
 <li>_showProcInput
 : <a class="el" href="class_filtering_renderer.html#a3d523eaf242b6ace6e095b8774b58e23">FilteringRenderer</a>
@@ -810,10 +841,13 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 , <a class="el" href="class_spot_light.html#a08cc161a5a3ba9d49fe5e59a74fd0f59">SpotLight</a>
 </li>
 <li>_viewMode
-: <a class="el" href="class_filtering_renderer.html#a853e8b7570f7b8be06938c6890435445">FilteringRenderer</a>
+: <a class="el" href="class_filtering_renderer.html#a6440ed25213c87562087d4aa7430a98b">FilteringRenderer</a>
 </li>
 <li>_views
 : <a class="el" href="class_point_light.html#a984cba185ed2b3be4373ed9bd222e314">PointLight</a>
+</li>
+<li>_visu
+: <a class="el" href="class_painting_tool.html#a54052fbe93362bfc754188b578cd8e97">PaintingTool</a>
 </li>
 <li>_vScale
 : <a class="el" href="struct_menu_label.html#a18880f14baef1e98dc88b8c0e61686e1">MenuLabel</a>
