@@ -14,7 +14,7 @@
 /**
  \defgroup ImageViewer Image Viewer
  \brief A basic image viewer, supports LDR and HDR images.
- \ingroup Applications
+ \ingroup Tools
  */
 
 /**

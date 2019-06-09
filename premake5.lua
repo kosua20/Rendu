@@ -113,7 +113,7 @@ function ToolSetup(toolName)
 	includedirs({ "src/engine" })
 	links({"Engine"})
 	kind("ConsoleApp")
-	--location("build/tools")
+	ShaderValidation()
 end	
 
 -- Projects
@@ -146,9 +146,6 @@ project("Playground")
 
 project("Atmosphere")
 	AppSetup("atmosphere")
-	
-project("ImageViewer")
-	AppSetup("imageviewer")
 
 project("SnakeGame")
 	AppSetup("snakegame")
@@ -172,7 +169,11 @@ project("BRDFEstimator")
 
 project("ControllerTest")
 	ToolSetup()
-	files({ "src/tools/controllertest/**.hpp", "src/tools/controllertest/**.cpp", })
+	files({ "src/tools/ControllerTest.cpp" })
+
+project("ImageViewer")
+	ToolSetup()
+	RegisterSourcesAndResources("src/tools/ImageViewer.cpp", "resources/imageviewer/**")
 
 project("ShaderValidator")
 	ToolSetup()	
