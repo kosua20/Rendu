@@ -8,31 +8,44 @@ Rendu is a rendering engine designed for experimentation. The computer graphics 
 
 # Projects
 
-## Physically based rendering
+## Applications
 
-Deferred rendering and PBR demo. *Description to come.*
-
-## Atmospheric scattering
-
-Atmospheric scattering demo. *Description to come.*
-
-## Snake game
-
-A small game. *Description to come.*
-
-## Image Filtering
-
-Image processing filters. *Description to come.*
+Name  | Description
+------------- | -------------
+[Deferred Physically based rendering](@ref DeferredRendering) | ![](docs/img/pbrdemo.png)Real-time rendering of a scene with 'physically-based' materials (GGX BRDF introduced in *Microfacet Models for Refraction through Rough Surfaces*, Walter et al., 2007), using deferred rendering and an HDR pipeline with bloom and SSAO.
+[Image Filtering](@ref ImageFiltering)  | ![](docs/img/imagefiltering.png) Apply filters to an image, such as gaussian blur, approximate flood-fill (*Jump Flooding in GPU with Applications to Voronoi Diagram and Distance Transform*, Rong et al., 2006) and poisson filling (*Convolution Pyramids*, Farbman et al., 2011), etc.
+[Atmospheric scattering](@ref AtmosphericScattering)  | ![](docs/img/atmosphere.png) Realistic atmosphere rendering with Rayleigh and Mie scattering (*Precomputed Atmospheric Scattering*, Bruneton et al., 2008).
+[Snake Game](@ref SnakeGame)  | ![](docs/img/snake.png) A basic game of snake, demonstrating game menus, player state, batched rendering.
 
 ## Tools
 
-Name  | Function
+Name  | Description
 ------------- | -------------
-Image viewer  |  ![](docs/img/imageviewer.png) Basic image viewer and editor for LDR and HDR images, supporting rotations, channels toggling, color picking.
-BRDF Estimator  | ![](docs/img/brdfpreproc.png) Compute data for image-based lighting from an environment map: pre-convolved irradiance, BRDF look-up table, ambient lighting spherical harmonics decomposition. 
-Controller mapper |  ![](docs/img/controllermap.png) Interface to create and edit controller button/stick mappings.
-Shader validator |  ![](docs/img/shadervalidator.png) Perform per-shader compilation against the GPU driver and reports errors in an IDE-compatible fashion.
-Atmospheric scattering preprocess | ![](docs/img/atmopreproc.png)  Compute the atmosphere coefficients look-up table for the Atmospheric Scattering project.
+[Image viewer](@ref ImageViewer)  |  ![](docs/img/imageviewer.png) Basic image viewer and editor for LDR and HDR images, supporting rotations, channels toggling, color picking.
+[BRDF Estimator](@ref BRDFEstimator)  | ![](docs/img/brdfpreproc.png) Compute data for image-based lighting from an environment map: pre-convolved irradiance, BRDF look-up table, ambient lighting spherical harmonics decomposition. 
+[Controller mapper](@ref ControllerTest)  |  ![](docs/img/controllermap.png) Interface to create and edit controller button/stick mappings.
+[Shader validator](@ref ShaderValidator)  |  ![](docs/img/shadervalidator.png) Perform per-shader compilation against the GPU driver and reports errors in an IDE-compatible fashion.
+[Atmospheric scattering preprocess](@ref AtmosphericScattering)  | ![](docs/img/atmopreproc.png)  Compute the atmosphere coefficients look-up table for the Atmospheric Scattering project.
+[Playground](@ref Playground)  | ![](docs/img/playground.png) Simple application setting up a rendering context for small experimentations.
+
+# Building
+
+This project use `premake` ([premake.github.io](https://premake.github.io)) for generating the workspace and projects files.
+Run
+
+	premake5.exe [vs2017 | xcode | make | ...]
+	
+To generate the desired workspace in the `build` directory.
+
+The documentation (access it at `docs/index.html`) relies on Doxygen being installed. Generate it with 
+
+	premake5 docs
+
+You can clean the build directory with
+
+	premake5 clean
+
+Two non-system dependencies are required by this framework: `glfw3` and `nfd`, binaries for both are provided for macOS and Windows. All other dependencies are compiled along with the projects.
 
 # Features
 
@@ -70,22 +83,3 @@ On a more down-to-earth level, some engineering tasks could also help improve th
 - Avoid binary dependencies by integrating GLFW3 and NativeFileDialog as subprojects.
 - Real-time cube maps could be rendered in multiple calls after culling objects, instead of layered rendering.
 - Abstract interactions with OpenGL and/or move to Vulkan.
-
-# Building
-
-This project use `premake` ([premake.github.io](https://premake.github.io)) for generating the workspace and projects files.
-Run
-
-	premake5.exe [vs2017 | xcode | make | ...]
-	
-To generate the desired workspace in the `build` directory.
-
-The documentation (access it at `docs/index.html`) relies on Doxygen being installed. Generate it with 
-
-	premake5 docs
-
-You can clean the build directory with
-
-	premake5 clean
-
-Two non-system dependencies are required by this framework: `glfw3` and `nfd`, binaries for both are provided for macOS and Windows. All other dependencies are compiled along with the projects.

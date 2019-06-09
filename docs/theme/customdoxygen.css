@@ -1472,3 +1472,8 @@ background-color: #f0f0f0;
 	background-image: none;
 	background-color:white;
 }
+
+table.markdownTable td, table.markdownTable th {
+	border: 1px solid #4A4A4A;
+	padding: 10px 10px 12px 12px;
+}
