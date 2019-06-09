@@ -3,14 +3,14 @@
 #include "input/Input.hpp"
 #include "helpers/InterfaceUtilities.hpp"
 
-PaintingTool::PaintingTool(unsigned int w, unsigned int h) {
+PaintingTool::PaintingTool(unsigned int width, unsigned int height) {
 	
 	_bgColor = glm::vec3(0.0f);
 	_fgColor = glm::vec3(1.0f);
 	
 	_brushShader = Resources::manager().getProgram("brush_color");
-	_canvas = std::unique_ptr<Framebuffer>(new Framebuffer(w, h, {GL_RGB8, GL_LINEAR, GL_CLAMP_TO_EDGE}, false));
-	_visu = std::unique_ptr<Framebuffer>(new Framebuffer(w, h, {GL_RGB8, GL_LINEAR, GL_CLAMP_TO_EDGE}, false));
+	_canvas = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, {GL_RGB8, GL_LINEAR, GL_CLAMP_TO_EDGE}, false));
+	_visu = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, {GL_RGB8, GL_LINEAR, GL_CLAMP_TO_EDGE}, false));
 	
 	// Generate a disk mesh.
 	Mesh disk;

@@ -25,6 +25,8 @@ FilteringRenderer::FilteringRenderer(RenderingConfig & config) : Renderer(config
 	_boxBlur = std::unique_ptr<BoxBlur>(new BoxBlur(renderWidth, renderHeight, false, {GL_RGB8, GL_NEAREST, GL_CLAMP_TO_EDGE}));
 	_floodFill = std::unique_ptr<FloodFiller>(new FloodFiller(renderWidth, renderHeight));
 	
+	_painter = std::unique_ptr<PaintingTool>(new PaintingTool(renderWidth, renderHeight));
+	
 	// GL options
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
@@ -34,8 +36,9 @@ FilteringRenderer::FilteringRenderer(RenderingConfig & config) : Renderer(config
 
 void FilteringRenderer::draw() {
 	
+	GLuint srcTexID = _sceneBuffer->textureId();
 	// Render the scene.
-	if(_viewMode == SCENE){
+	if(_viewMode == View::SCENE){
 		glEnable(GL_DEPTH_TEST);
 		_sceneBuffer->bind();
 		_sceneBuffer->setViewport();
@@ -48,7 +51,7 @@ void FilteringRenderer::draw() {
 		glBindVertexArray(0);
 		glUseProgram(0);
 		_sceneBuffer->unbind();
-	} else {
+	} else if(_viewMode == View::IMAGE){
 		glDisable(GL_DEPTH_TEST);
 		_sceneBuffer->bind();
 		_sceneBuffer->setViewport();
@@ -56,34 +59,41 @@ void FilteringRenderer::draw() {
 		ScreenQuad::draw(_image.id);
 		glUseProgram(0);
 		_sceneBuffer->unbind();
+	} else {
+		glDisable(GL_DEPTH_TEST);
+		_painter->draw();
+		// If we are in INPUT mode, we want to display the frame with the brush outline visible.
+		// On the other hand, if we apply any processing, hide the brush and use the canvas frame.
+		srcTexID = (_mode == Filter::INPUT) ? _painter->visuId() : _painter->textureId();
 	}
 	
 	glDisable(GL_DEPTH_TEST);
 	
-	const GLuint srcTexID = _sceneBuffer->textureId();
+	
 	GLuint finalTexID = srcTexID;
 	
 	switch(_mode){
-		case FILL:
+		case Filter::FILL:
 			_pyramidFiller->process(srcTexID);
 			finalTexID = _showProcInput ? _pyramidFiller->preprocId() : _pyramidFiller->textureId();
 			break;
-		case INTEGRATE:
+		case Filter::INTEGRATE:
 			_pyramidIntegrator->process(srcTexID);
 			finalTexID = _showProcInput ? _pyramidIntegrator->preprocId() :_pyramidIntegrator->textureId();
 			break;
-		case GAUSSBLUR:
+		case Filter::GAUSSBLUR:
 			_gaussianBlur->process(srcTexID);
 			finalTexID = _gaussianBlur->textureId();
 			break;
-		case BOXBLUR:
+		case Filter::BOXBLUR:
 			_boxBlur->process(srcTexID);
 			finalTexID = _boxBlur->textureId();
 			break;
-		case FLOODFILL:
+		case Filter::FLOODFILL:
 			_floodFill->process(srcTexID, _showProcInput ? FloodFiller::DISTANCE : FloodFiller::COLOR);
 			finalTexID = _floodFill->textureId();
 		default:
+			// Show the input.
 			break;
 	}
 	
@@ -99,6 +109,7 @@ void FilteringRenderer::update(){
 	Renderer::update();
 	_userCamera.update();
 	
+	ImGui::SetNextWindowPos(ImVec2(10,10), ImGuiCond_Once);
 	if(ImGui::Begin("Filtering")){
 		// Infos.
 		ImGui::Text("%.2f ms, %.1f fps", ImGui::GetIO().DeltaTime * 1000.0f, 1.0f/ImGui::GetIO().DeltaTime);
@@ -107,11 +118,14 @@ void FilteringRenderer::update(){
 		
 		// View settings.
 		ImGui::Text("View:"); ImGui::SameLine();
-		ImGui::RadioButton("Scene", (int*)&_viewMode, SCENE);
+		ImGui::RadioButton("Scene", (int*)&_viewMode, int(View::SCENE));
 		ImGui::SameLine();
-		ImGui::RadioButton("Image", (int*)&_viewMode, IMAGE);
+		ImGui::RadioButton("Image", (int*)&_viewMode, int(View::IMAGE));
+		ImGui::SameLine();
+		ImGui::RadioButton("Paint", (int*)&_viewMode, int(View::PAINT));
 		
-		if(_viewMode == IMAGE){
+		// Image loading options for the image mode.
+		if(_viewMode == View::IMAGE){
 			if(ImGui::Button("Load image...")){
 				std::string newImagePath;
 				const bool res = Interface::showPicker(Interface::Picker::Load, "../../../resources", newImagePath, "jpg,bmp,png,tga;exr");
@@ -134,14 +148,14 @@ void FilteringRenderer::update(){
 		
 		// Mode specific option
 		switch(_mode){
-			case GAUSSBLUR:
+			case Filter::GAUSSBLUR:
 				if(ImGui::InputInt("Levels", &_blurLevel, 1, 2)){
 					_blurLevel = std::min(std::max(1, _blurLevel), 10);
 					_gaussianBlur->clean();
 					_gaussianBlur = std::unique_ptr<GaussianBlur>(new GaussianBlur(_renderResolution[0], _renderResolution[1], _blurLevel, GL_RGB8));
 				}
 				break;
-			case FILL:
+			case Filter::FILL:
 				ImGui::Checkbox("Show colored border", &_showProcInput);
 				if(ImGui::InputInt("Pyramid downscale", &_fillDownscale, 1, 2)){
 					_fillDownscale = std::max(_fillDownscale, 1);
@@ -149,7 +163,7 @@ void FilteringRenderer::update(){
 					_pyramidFiller = std::unique_ptr<PoissonFiller>(new PoissonFiller(_renderResolution[0], _renderResolution[1], _fillDownscale));
 				}
 				break;
-			case INTEGRATE:
+			case Filter::INTEGRATE:
 				ImGui::Checkbox("Show Laplacian", &_showProcInput);
 				if(ImGui::InputInt("Pyramid downscale", &_intDownscale, 1, 2)){
 					_intDownscale = std::max(_intDownscale, 1);
@@ -157,7 +171,7 @@ void FilteringRenderer::update(){
 					_pyramidIntegrator = std::unique_ptr<LaplacianIntegrator>(new LaplacianIntegrator(_renderResolution[0], _renderResolution[1], _intDownscale));
 				}
 				break;
-			case FLOODFILL:
+			case Filter::FLOODFILL:
 				ImGui::Checkbox("Show distance", &_showProcInput);
 				break;
 			default:
@@ -166,10 +180,19 @@ void FilteringRenderer::update(){
 		
 	}
 	ImGui::End();
+	
+	// Place the painter window below, if we are in painting mode.
+	if(_viewMode == View::PAINT){
+		ImGui::SetNextWindowPos(ImVec2(10,200), ImGuiCond_Once);
+		_painter->update();
+	}
 }
 
 void FilteringRenderer::physics(double fullTime, double frameTime){
-	_userCamera.physics(frameTime);
+	// Only update the user camera if we are in Scene mode, to avoid moving accidentally while in other modes.
+	if(_viewMode == View::SCENE){
+		_userCamera.physics(frameTime);
+	}
 }
 
 
@@ -182,6 +205,7 @@ void FilteringRenderer::clean() const {
 	_gaussianBlur->clean();
 	_boxBlur->clean();
 	_floodFill->clean();
+	_painter->clean();
 }
 
 
@@ -194,5 +218,7 @@ void FilteringRenderer::resize(unsigned int width, unsigned int height){
 	_gaussianBlur->resize(_renderResolution[0], _renderResolution[1]);
 	_boxBlur->resize(_renderResolution[0], _renderResolution[1]);
 	_floodFill->resize(_renderResolution[0], _renderResolution[1]);
+	_painter->resize(_renderResolution[0], _renderResolution[1]);
+	
 	checkGLError();
 }

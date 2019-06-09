@@ -20,7 +20,7 @@ public:
 	 \param width the canvas width
 	 \param height the canvas height
 	 */
-	PaintingTool(unsigned int w, unsigned int h);
+	PaintingTool(unsigned int width, unsigned int height);
 	
 	/** Draw the scene and effects */
 	void draw();

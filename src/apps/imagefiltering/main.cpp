@@ -10,7 +10,6 @@
  \defgroup ImageFiltering Image Filtering
  \brief Apply a variety of image space filters and processings to an image.
  \details See the description of FilteringRenderer for the available filters.
- \see FilteringRenderer
  \ingroup Applications
  */
 
@@ -31,6 +30,8 @@ int main(int argc, char** argv) {
 	if(!window){
 		return -1;
 	}
+	
+	Resources::manager().addResources("../../../resources/imagefiltering");
 	
 	// Initialize random generator;
 	Random::seed();

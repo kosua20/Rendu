@@ -1,5 +1,7 @@
 #pragma once
 
+#include "PaintingTool.hpp"
+
 #include "processing/PoissonFiller.hpp"
 #include "processing/LaplacianIntegrator.hpp"
 #include "processing/GaussianBlur.hpp"
@@ -56,13 +58,13 @@ public:
 private:
 	
 	/** \brief The filter to apply. */
-	enum FilterMode : int {
+	enum class Filter : int {
 		INPUT = 0, FILL, INTEGRATE, BOXBLUR, GAUSSBLUR, FLOODFILL
 	};
 	
-	/** \brief The viewing mode: either a rendering or a still image. */
-	enum ViewMode : int {
-		SCENE = 0, IMAGE
+	/** \brief The viewing mode: either a rendering, a still image or a painting canvas. */
+	enum class View : int {
+		SCENE = 0, IMAGE, PAINT
 	};
 	
 	ControllableCamera _userCamera; ///< The interactive camera.
@@ -72,14 +74,15 @@ private:
 	std::unique_ptr<LaplacianIntegrator> _pyramidIntegrator; ///< Laplacian integration.
 	std::unique_ptr<GaussianBlur> _gaussianBlur; ///< Gaussian blur processing.
 	std::unique_ptr<BoxBlur> _boxBlur; ///< Box blur processing.
-	std::unique_ptr<FloodFiller> _floodFill;
+	std::unique_ptr<FloodFiller> _floodFill; ///< Flood filling.
+	std::unique_ptr<PaintingTool> _painter;
 	
 	const ProgramInfos * _passthrough; ///< Basic blit shader.
 	const ProgramInfos * _sceneShader; ///< Object rendering shader.
 	const MeshInfos * _mesh; ///< Basic sphere mesh.
 	
-	FilterMode _mode = INPUT; ///< Current filter mode.
-	ViewMode _viewMode = SCENE; ///< Current view mode.
+	Filter _mode = Filter::INPUT; ///< Current filter mode.
+	View _viewMode = View::SCENE; ///< Current view mode.
 	TextureInfos _image; ///< The image to display in Image view mode.
 	
 	int _blurLevel = 3; ///< Gaussian blur level.
