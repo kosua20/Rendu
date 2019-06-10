@@ -12,21 +12,21 @@ Rendu is a rendering engine designed for experimentation. The computer graphics 
 
 Name  | Description
 ------------- | -------------
-[Deferred Physically based rendering](group___deferred_rendering.html) | ![](docs/img/pbrdemo.png)Real-time rendering of a scene with 'physically-based' materials (GGX BRDF introduced in *Microfacet Models for Refraction through Rough Surfaces*, Walter et al., 2007), using deferred rendering and an HDR pipeline with bloom and SSAO.
-[Image Filtering](@ref ImageFiltering)  | ![](docs/img/imagefiltering.png) Apply filters to an image, such as gaussian blur, approximate flood-fill (*Jump Flooding in GPU with Applications to Voronoi Diagram and Distance Transform*, Rong et al., 2006) and poisson filling (*Convolution Pyramids*, Farbman et al., 2011), etc.
-[Atmospheric scattering](@ref AtmosphericScattering)  | ![](docs/img/atmosphere.png) Realistic atmosphere rendering with Rayleigh and Mie scattering (*Precomputed Atmospheric Scattering*, Bruneton et al., 2008).
-[Snake Game](@ref SnakeGame)  | ![](docs/img/snake.png) A basic game of snake, demonstrating game menus, player state, batched rendering.
+[Deferred Physically based rendering](http://kosua20.github.io/Rendu/html/group___deferred_rendering.html) | ![](docs/img/pbrdemo.png)Real-time rendering of a scene with 'physically-based' materials (GGX BRDF introduced in *Microfacet Models for Refraction through Rough Surfaces*, Walter et al., 2007), using deferred rendering and an HDR pipeline with bloom and SSAO.
+[Image Filtering](http://kosua20.github.io/Rendu/html/group___image_filtering.html)  | ![](docs/img/imagefiltering.png) Apply filters to an image, such as gaussian blur, approximate flood-fill (*Jump Flooding in GPU with Applications to Voronoi Diagram and Distance Transform*, Rong et al., 2006) and poisson filling (*Convolution Pyramids*, Farbman et al., 2011), etc.
+[Atmospheric scattering](http://kosua20.github.io/Rendu/html/group___atmospheric_scattering.html)  | ![](docs/img/atmosphere.png) Realistic atmosphere rendering with Rayleigh and Mie scattering (*Precomputed Atmospheric Scattering*, Bruneton et al., 2008).
+[Snake Game](http://kosua20.github.io/Rendu/html/group___snake_game.html)  | ![](docs/img/snake.png) A basic game of snake, demonstrating game menus, player state, batched rendering.
 
 ## Tools
 
 Name  | Description
 ------------- | -------------
-[Image viewer](@ref ImageViewer)  |  ![](docs/img/imageviewer.png) Basic image viewer and editor for LDR and HDR images, supporting rotations, channels toggling, color picking.
-[BRDF Estimator](@ref BRDFEstimator)  | ![](docs/img/brdfpreproc.png) Compute data for image-based lighting from an environment map: pre-convolved irradiance, BRDF look-up table, ambient lighting spherical harmonics decomposition. 
-[Controller mapper](@ref ControllerTest)  |  ![](docs/img/controllermap.png) Interface to create and edit controller button/stick mappings.
-[Shader validator](@ref ShaderValidator)  |  ![](docs/img/shadervalidator.png) Perform per-shader compilation against the GPU driver and reports errors in an IDE-compatible fashion.
-[Atmospheric scattering preprocess](@ref AtmosphericScattering)  | ![](docs/img/atmopreproc.png)  Compute the atmosphere coefficients look-up table for the Atmospheric Scattering project.
-[Playground](@ref Playground)  | ![](docs/img/playground.png) Simple application setting up a rendering context for small experimentations.
+[Image viewer](http://kosua20.github.io/Rendu/html/group___image_viewer.html)  |  ![](docs/img/imageviewer.png) Basic image viewer and editor for LDR and HDR images, supporting rotations, channels toggling, color picking.
+[BRDF Estimator](http://kosua20.github.io/Rendu/html/group___b_r_d_f_estimator.html)  | ![](docs/img/brdfpreproc.png) Compute data for image-based lighting from an environment map: pre-convolved irradiance, BRDF look-up table, ambient lighting spherical harmonics decomposition. 
+[Controller mapper](http://kosua20.github.io/Rendu/html/group___controller_test.html)  |  ![](docs/img/controllermap.png) Interface to create and edit controller button/stick mappings.
+[Shader validator](http://kosua20.github.io/Rendu/html/group___shader_validator.html)  |  ![](docs/img/shadervalidator.png) Perform per-shader compilation against the GPU driver and reports errors in an IDE-compatible fashion.
+[Atmospheric scattering preprocess](http://kosua20.github.io/Rendu/html/group___atmospheric_scattering.html)  | ![](docs/img/atmopreproc.png)  Compute the atmosphere coefficients look-up table for the Atmospheric Scattering project.
+[Playground](http://kosua20.github.io/Rendu/html/group___playground.html)  | ![](docs/img/playground.png) Simple application setting up a rendering context for small experimentations.
 
 # Building
 
