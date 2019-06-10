@@ -45,11 +45,13 @@ int main(int argc, char** argv) {
 	// Query the extensions.
 	int extensionCount = 0;
 	glGetIntegerv(GL_NUM_EXTENSIONS, &extensionCount);
+	std::vector<const GLubyte*> extensionStrings(extensionCount);
+	const std::string titleHeader = "Extensions (" + std::to_string(extensionCount) + ")";
 	if(extensionCount>0){
 		Log::Info() << Log::OpenGL << "Extensions detected (" << extensionCount << ")" << std::flush;
 		for(int i = 0; i < extensionCount; ++i){
-			const GLubyte* rendererString = glGetStringi(GL_EXTENSIONS, i);
-			Log::Verbose() << (i == 0 ? ": " : ", ") << rendererString << std::flush;
+			extensionStrings[i] = glGetStringi(GL_EXTENSIONS, i);
+			Log::Verbose() << (i == 0 ? ": " : ", ") << extensionStrings[i] << std::flush;
 		}
 		Log::Info() << std::endl;
 	}
@@ -66,6 +68,7 @@ int main(int argc, char** argv) {
 	const MeshInfos * mesh = Resources::manager().getMesh("light_sphere");
 	ControllableCamera camera;
 	camera.projection(config.screenResolution[0]/config.screenResolution[1], 1.34f, 0.1f, 100.0f);
+	bool showImGuiDemo = false;
 	
 	// Start the display/interaction loop.
 	while (!glfwWindowShouldClose(window)) {
@@ -116,8 +119,24 @@ int main(int argc, char** argv) {
 		GLUtilities::drawMesh(*mesh);
 		glBindVertexArray(0);
 		glUseProgram(0);
-		ImGui::Text("ImGui is functional!");
+		
+		ImGui::Text("ImGui is functional!"); ImGui::SameLine(); ImGui::Checkbox("Show demo", &showImGuiDemo);
 		ImGui::Text("%.1f FPS / %.1f ms", ImGui::GetIO().Framerate, ImGui::GetIO().DeltaTime*1000.0f);
+		ImGui::Separator();
+		
+		ImGui::Text("OpengGL vendor: %s", vendorString);
+		ImGui::Text("Internal renderer: %s", rendererString);
+		ImGui::Text("Versions: Driver: %s, GLSL: %s", versionString, glslVersionString);
+		if(ImGui::CollapsingHeader(titleHeader.c_str())) {
+			for(int i = 0; i < extensionCount; ++i){
+				ImGui::Text("%s", extensionStrings[i]);
+			}
+		}
+		
+		if(showImGuiDemo){
+			ImGui::ShowDemoWindow();
+		}
+		
 		// Then render the interface.
 		Interface::endFrame();
 		//Display the result for the current rendering loop.
