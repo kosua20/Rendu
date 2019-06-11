@@ -94,23 +94,29 @@ private:
 	/** Test a ray and triangle intersection using the Muller-Trumbore test.
 	 \param ray the ray
 	 \param tri the triangle infos
+	 \param mini the minimum allowed distance along the ray
+	 \param maxi the maximum allowed distance along the ray
 	 \return a hit object containg the potential hit informations
 	 */
-	const RayHit intersects(const Ray & ray, const TriangleInfos & tri) const;
+	const RayHit intersects(const Ray & ray, const TriangleInfos & tri, float mini, float maxi) const;
 	
 	/** Test a ray against a node of the acceleration structure, recursively.
 	 \param ray the ray
 	 \param node the node to test intersections against
+	 \param mini the minimum allowed distance along the ray
+	 \param maxi the maximum allowed distance along the ray
 	 \return a hit object containg the potential closest hit informations
 	 */
-	const RayHit intersects(const Raycaster::Ray & ray, const Raycaster::Node & node) const;
+	const RayHit intersects(const Raycaster::Ray & ray, const Raycaster::Node & node, float mini, float maxi) const;
 	
 	/** Test a ray and bounding box intersection.
 	 \param ray the ray
 	 \param box the bounding box
+	 \param mini the minimum allowed distance along the ray
+	 \param maxi the maximum allowed distance along the ray
 	 \return a boolean denoting intersection
 	 */
-	static bool intersects(const Ray & ray, const BoundingBox & box);
+	static bool intersects(const Ray & ray, const BoundingBox & box, float mini, float maxi);
 	
 	std::vector<TriangleInfos> _triangles; ///< Merged triangles informations.
 	std::vector<glm::vec3> _vertices; ///< Merged vertices.

@@ -60,7 +60,7 @@ int Raycaster::updateSubHierarchy(const int begin, const int count){
 	const int nodeId = _hierarchy.size()-1;
 	Node currentNode;
 	// If the triangles count is low enough, we have a leaf.
-	if(count <= 3){
+	if(count < 3){
 		currentNode.leaf = true;
 		currentNode.left = begin;
 		currentNode.right = count;
@@ -86,11 +86,11 @@ int Raycaster::updateSubHierarchy(const int begin, const int count){
 
 const Raycaster::RayHit Raycaster::intersects(const glm::vec3 & origin, const glm::vec3 & direction) const {
 	const Ray ray(origin, direction);
-	return intersects(ray, _hierarchy[0]);
+	return intersects(ray, _hierarchy[0], 0.0001f, 1e8f);
 }
 
-const Raycaster::RayHit Raycaster::intersects(const Raycaster::Ray & ray, const Raycaster::Node & node) const {
-	if(!Raycaster::intersects(ray, node.box)){
+const Raycaster::RayHit Raycaster::intersects(const Raycaster::Ray & ray, const Raycaster::Node & node, float mini, float maxi) const {
+	if(!Raycaster::intersects(ray, node.box, mini, maxi)){
 		return RayHit();
 	}
 	// If the node is a leaf, test all included triangles.
@@ -98,7 +98,7 @@ const Raycaster::RayHit Raycaster::intersects(const Raycaster::Ray & ray, const 
 		RayHit finalHit;
 		for(int tid = 0; tid < node.right; ++tid){
 			const auto & tri = _triangles[node.left + tid];
-			const RayHit hit = intersects(ray, tri);
+			const RayHit hit = intersects(ray, tri, mini, maxi);
 			if(hit.hit && hit.dist < finalHit.dist){
 				finalHit = hit;
 			}
@@ -106,16 +106,19 @@ const Raycaster::RayHit Raycaster::intersects(const Raycaster::Ray & ray, const 
 		return finalHit;
 	}
 	// Else, intersect both child nodes.
-	const RayHit left = intersects(ray, _hierarchy[node.left]);
-	const RayHit right = intersects(ray, _hierarchy[node.right]);
-	// Return the closest hit if it exists.
-	if(!left.hit || right.dist < left.dist){
-		return right;
+	const RayHit left = intersects(ray, _hierarchy[node.left], mini, maxi);
+	// If left was hit, check if right is hit closer.
+	if(left.hit){
+		const RayHit right = intersects(ray, _hierarchy[node.right], mini, left.dist);
+		return right.hit ? right : left;
 	}
-	return left;
+	// Check if right is hit.
+	// Return the closest hit if it exists.
+	const RayHit right = intersects(ray, _hierarchy[node.right], mini, maxi);
+	return right;
 }
 
-const Raycaster::RayHit Raycaster::intersects(const Raycaster::Ray & ray, const TriangleInfos & tri) const {
+const Raycaster::RayHit Raycaster::intersects(const Raycaster::Ray & ray, const TriangleInfos & tri, float mini, float maxi) const {
 	// Implement Moller-Trumbore intersection test.
 	const glm::vec3 & v0 = _vertices[tri.v0];
 	const glm::vec3 v01 = _vertices[tri.v1] - v0;
@@ -141,11 +144,13 @@ const Raycaster::RayHit Raycaster::intersects(const Raycaster::Ray & ray, const 
 	}
 	
 	const float t = invDet * glm::dot(v02, r);
-	
-	return RayHit(t, u, v, tri.localId, tri.meshId);
+	if(t > mini && t < maxi){
+		return RayHit(t, u, v, tri.localId, tri.meshId);
+	}
+	return RayHit();
 }
 
-bool Raycaster::intersects(const Raycaster::Ray & ray, const BoundingBox & box){
+bool Raycaster::intersects(const Raycaster::Ray & ray, const BoundingBox & box, float mini, float maxi){
 	const glm::vec3 minRatio = (box.minis - ray.pos) / ray.dir;
 	const glm::vec3 maxRatio = (box.maxis - ray.pos) / ray.dir;
 	const glm::vec3 minFinal = glm::min(minRatio, maxRatio);
@@ -154,5 +159,5 @@ bool Raycaster::intersects(const Raycaster::Ray & ray, const BoundingBox & box){
 	const float closest  = std::max(minFinal[0], std::max(minFinal[1], minFinal[2]));
 	const float furthest = std::min(maxFinal[0], std::min(maxFinal[1], maxFinal[2]));
 	
-	return closest <= furthest;
+	return std::max(closest, mini) <= std::min(furthest, maxi);
 }
