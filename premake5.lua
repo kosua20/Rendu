@@ -176,7 +176,10 @@ project("ImageViewer")
 	RegisterSourcesAndResources("src/tools/ImageViewer.cpp", "resources/imageviewer/**")
 
 project("ShaderValidator")
-	ToolSetup()	
+	GraphicsSetup("src")
+	includedirs({ "src/engine" })
+	links({"Engine"})
+	kind("ConsoleApp")
 	files({ "src/tools/ShaderValidator.cpp" })
 	-- Install the shader validation utility in the root build directory.
 	InstallProject("%{prj.name}", "build/shader_validator"..ext)
