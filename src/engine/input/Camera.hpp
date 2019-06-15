@@ -56,13 +56,13 @@ public:
 	 Obtain the current view matrix.
 	 \return the view matrix
 	 */
-	const glm::mat4 view() const { return _view; }
+	const glm::mat4 & view() const { return _view; }
 	
 	/**
 	 Obtain the current projection matrix.
 	 \return the projection matrix
 	 */
-	const glm::mat4 projection() const { return _projection; }
+	const glm::mat4 & projection() const { return _projection; }
 	
 	/**
 	 Obtain the current world space camera position.

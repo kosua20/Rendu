@@ -188,8 +188,13 @@ public:
 	 */
 	static GLuint createTexture(const GLenum destination, const Descriptor & descriptor, const int mipmapCount);
 	
+	/**
+	 Draw indexed geometry.
+	 \param mesh the mesh to draw
+	 */
 	static void drawMesh(const MeshInfos & mesh);
 	
+	static void bindTextures(const std::vector<TextureInfos*> & textures, int startingSlot = GL_TEXTURE0);
 	
 private:
 	

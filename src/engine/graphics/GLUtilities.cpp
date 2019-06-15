@@ -695,8 +695,16 @@ unsigned int GLUtilities::getTypeAndFormat(const GLuint typedFormat, GLuint & ty
 	return 0;
 }
 
-void GLUtilities::drawMesh(const MeshInfos & mesh){
+void GLUtilities::drawMesh(const MeshInfos & mesh) {
 	glBindVertexArray(mesh.vId);
 	glDrawElements(GL_TRIANGLES, mesh.count, GL_UNSIGNED_INT, (void*)0);
 }
 
+void GLUtilities::bindTextures(const std::vector<TextureInfos*> & textures, int startingSlot){
+	for (unsigned int i = 0; i < textures.size(); ++i){
+		const TextureInfos * infos = textures[i];
+		glActiveTexture(startingSlot + i);
+		const GLenum textureType = infos->cubemap ? (infos->array ? GL_TEXTURE_CUBE_MAP_ARRAY : GL_TEXTURE_CUBE_MAP) : (infos->array ? GL_TEXTURE_2D_ARRAY : GL_TEXTURE_2D);
+		glBindTexture(textureType, infos->id);
+	}
+}
