@@ -700,7 +700,7 @@ void GLUtilities::drawMesh(const MeshInfos & mesh) {
 	glDrawElements(GL_TRIANGLES, mesh.count, GL_UNSIGNED_INT, (void*)0);
 }
 
-void GLUtilities::bindTextures(const std::vector<TextureInfos*> & textures, int startingSlot){
+void GLUtilities::bindTextures(const std::vector<const TextureInfos*> & textures, int startingSlot){
 	for (unsigned int i = 0; i < textures.size(); ++i){
 		const TextureInfos * infos = textures[i];
 		glActiveTexture(startingSlot + i);

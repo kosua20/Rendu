@@ -25,13 +25,15 @@ public:
 
 	/** Construct a new object.
 	 \param type the type of shading and effects to use when rendering this object
-	 \param meshPath name of the geometric mesh to use
-	 \param texturesPaths names and SRGB flags of the 2D textures to use
-	 \param cubemapPaths names and SRGB flags of the cubemap textures to use
+	 \param mesh the geometric mesh infos
 	 \param castShadows denote if the object should cast shadows
-	 \warning The textures sRGB flag will only be honored if they are loaded from disk for the first time.
 	 */
-	Object(const Object::Type & type, const std::string& meshPath, const std::vector<std::pair<std::string, bool>>& texturesPaths, const std::vector<std::pair<std::string, bool>>& cubemapPaths = {}, bool castShadows = true);
+	Object(const Object::Type type, const MeshInfos * mesh, bool castShadows);
+	
+	/** Register a texture.
+	 \param infos the texture infos to ass
+	 */
+	void addTexture(const TextureInfos * infos);
 	
 	/** Update the object transformation matrix.
 	 \param model the new model matrix
@@ -44,21 +46,36 @@ public:
 	 */
 	BoundingBox getBoundingBox() const;
 	
-	
+	/** Mesh getter.
+	 \return the mesh infos
+	 */
 	const MeshInfos * mesh() const { return _mesh; }
 	
-	const std::vector<TextureInfos *> & textures() const { return _textures; }
+	/** Textures array getter.
+	 \return a vector containing the infos of the textures associated to the object
+	 */
+	const std::vector<const TextureInfos *> & textures() const { return _textures; }
 	
+	/** Object pose getter.
+	 \return the model matrix
+	 */
 	const glm::mat4 & model() const { return _model; }
 	
+	/** Type getter.
+	 \return the type of the object
+	 \note This can be used in different way by different applications.
+	 */
 	const Type & type() const { return _material; }
 	
+	/** Is the object casting a shadow.
+	 \return a boolean denoting if the object is a caster
+	 */
 	bool castsShadow() const { return _castShadow; }
 	
 private:
 	
 	const MeshInfos * _mesh; ///< Geometry of the object.
-	std::vector<TextureInfos *> _textures; ///< Textures used by the object.
+	std::vector<const TextureInfos *> _textures; ///< Textures used by the object.
 	glm::mat4 _model; ///< The transformation matrix of the 3D model.
 	Type _material; ///< The material type.
 	bool _castShadow; ///< Can the object casts shadows.

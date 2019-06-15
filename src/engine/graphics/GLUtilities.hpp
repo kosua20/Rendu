@@ -194,7 +194,7 @@ public:
 	 */
 	static void drawMesh(const MeshInfos & mesh);
 	
-	static void bindTextures(const std::vector<TextureInfos*> & textures, int startingSlot = GL_TEXTURE0);
+	static void bindTextures(const std::vector<const TextureInfos*> & textures, int startingSlot = GL_TEXTURE0);
 	
 private:
 	
