@@ -23,9 +23,9 @@ void DragonScene::init(){
 	const glm::mat4 suzanneModel = glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(0.2,0.0,0.0)),glm::vec3(0.25f));
 	
 	// Objects creation.
-	Object suzanne(Object::Type::Regular, "suzanne", { {"suzanne_texture_color", true }, {"suzanne_texture_normal", false}, {"suzanne_texture_rough_met_ao", false} });
-	Object dragon(Object::Type::Regular, "dragon", { { "dragon_texture_color", true }, { "dragon_texture_normal", false }, { "dragon_texture_rough_met_ao", false } });
-	Object plane(Object::Type::Parallax, "groundplane", { { "groundplane_texture_color", true }, { "groundplane_texture_normal", false }, { "groundplane_texture_rough_met_ao", false }, { "groundplane_texture_depth", false } }, {}, false);
+	Object suzanne(Object::Type::PBRRegular, "suzanne", { {"suzanne_texture_color", true }, {"suzanne_texture_normal", false}, {"suzanne_texture_rough_met_ao", false} });
+	Object dragon(Object::Type::PBRRegular, "dragon", { { "dragon_texture_color", true }, { "dragon_texture_normal", false }, { "dragon_texture_rough_met_ao", false } });
+	Object plane(Object::Type::PBRParallax, "groundplane", { { "groundplane_texture_color", true }, { "groundplane_texture_normal", false }, { "groundplane_texture_rough_met_ao", false }, { "groundplane_texture_depth", false } }, {}, false);
 	
 	suzanne.update(suzanneModel);
 	dragon.update(dragonModel);

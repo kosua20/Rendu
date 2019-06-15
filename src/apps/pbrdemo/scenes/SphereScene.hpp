@@ -18,8 +18,8 @@ void SphereScene::init(){
 	_loaded = true;
 	
 	// Objects creation.
-	Object sphere1(Object::Type::Regular, "sphere", { {"sphere_wood_lacquered_albedo", true }, {"sphere_wood_lacquered_normal", false}, {"sphere_wood_lacquered_rough_met_ao", false}});
-	Object sphere2(Object::Type::Regular, "sphere", { {"sphere_gold_worn_albedo", true }, {"sphere_gold_worn_normal", false}, {"sphere_gold_worn_rough_met_ao", false}});
+	Object sphere1(Object::Type::PBRRegular, "sphere", { {"sphere_wood_lacquered_albedo", true }, {"sphere_wood_lacquered_normal", false}, {"sphere_wood_lacquered_rough_met_ao", false}});
+	Object sphere2(Object::Type::PBRRegular, "sphere", { {"sphere_gold_worn_albedo", true }, {"sphere_gold_worn_normal", false}, {"sphere_gold_worn_rough_met_ao", false}});
 	const glm::mat4 model1 = glm::translate(glm::scale(glm::mat4(1.0f),glm::vec3(0.3f)), glm::vec3(1.2f,0.0f, 0.0f));
 	const glm::mat4 model2 = glm::translate(glm::scale(glm::mat4(1.0f),glm::vec3(0.3f)), glm::vec3(-1.2f,0.0f, 0.0f));
 	sphere1.update(model1);
@@ -45,7 +45,7 @@ void SphereScene::init(){
 }
 
 void SphereScene::update(double fullTime, double frameTime){
-	const glm::mat4 model = glm::rotate(glm::translate(glm::scale(glm::mat4(1.0f),glm::vec3(0.3f)), glm::vec3(1.2f,0.0f, 0.0f)), 0.2f*float(fullTime), glm::vec3(0.0f,1.0f,0.0f));
+	const glm::mat4 model = glm::rotate(objects[0].model(), 0.1f*float(frameTime), glm::vec3(0.0f,1.0f,0.0f));
 	objects[0].update(model);
 	
 }
