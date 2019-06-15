@@ -17,9 +17,20 @@ void SphereScene::init(){
 	}
 	_loaded = true;
 	
+	const Descriptor rgbaTex(GL_RGBA8, GL_LINEAR, GL_CLAMP_TO_EDGE);
+	const Descriptor srgbaTex(GL_SRGB8_ALPHA8, GL_LINEAR, GL_CLAMP_TO_EDGE);
+	
 	// Objects creation.
-	Object sphere1(Object::Type::PBRRegular, "sphere", { {"sphere_wood_lacquered_albedo", true }, {"sphere_wood_lacquered_normal", false}, {"sphere_wood_lacquered_rough_met_ao", false}});
-	Object sphere2(Object::Type::PBRRegular, "sphere", { {"sphere_gold_worn_albedo", true }, {"sphere_gold_worn_normal", false}, {"sphere_gold_worn_rough_met_ao", false}});
+	Object sphere1(Object::Type::PBRRegular, Resources::manager().getMesh("sphere"), true);
+	sphere1.addTexture(Resources::manager().getTexture("sphere_wood_lacquered_albedo", srgbaTex));
+	sphere1.addTexture(Resources::manager().getTexture("sphere_wood_lacquered_normal", rgbaTex));
+	sphere1.addTexture(Resources::manager().getTexture("sphere_wood_lacquered_rough_met_ao", rgbaTex));
+	
+	Object sphere2(Object::Type::PBRRegular, Resources::manager().getMesh("sphere"), true);
+	sphere2.addTexture(Resources::manager().getTexture("sphere_gold_worn_albedo", srgbaTex));
+	sphere2.addTexture(Resources::manager().getTexture("sphere_gold_worn_normal", rgbaTex));
+	sphere2.addTexture(Resources::manager().getTexture("sphere_gold_worn_rough_met_ao", rgbaTex));
+	
 	const glm::mat4 model1 = glm::translate(glm::scale(glm::mat4(1.0f),glm::vec3(0.3f)), glm::vec3(1.2f,0.0f, 0.0f));
 	const glm::mat4 model2 = glm::translate(glm::scale(glm::mat4(1.0f),glm::vec3(0.3f)), glm::vec3(-1.2f,0.0f, 0.0f));
 	sphere1.update(model1);
@@ -29,15 +40,15 @@ void SphereScene::init(){
 	objects.push_back(sphere2);
 	
 	// Background creation.
-	backgroundReflection = Resources::manager().getCubemap("studio", {GL_RGB32F, GL_LINEAR, GL_CLAMP_TO_EDGE})->id;
-	background = Object(Object::Type::Skybox, "skybox", {}, {{"studio", false }});
+	const TextureInfos * cubemapEnv = Resources::manager().getCubemap("studio", {GL_RGB32F, GL_LINEAR, GL_CLAMP_TO_EDGE});
+	backgroundReflection = cubemapEnv->id;
+	background = Object(Object::Type::Skybox, Resources::manager().getMesh("skybox"), false);
+	background.addTexture(cubemapEnv);
 	loadSphericalHarmonics("studio_shcoeffs");
 	
 	// Compute the bounding box of the shadow casters.
 	const BoundingBox bbox = computeBoundingBox(true);
-	// Lights creation.
-	// Create directional light.
-	//directionalLights.emplace_back(glm::vec3(-2.0f, -1.5f, 0.0f), glm::vec3(3.0f), bbox);
+	
 	// Create point lights.
 	pointLights.emplace_back( glm::vec3(0.5f,-0.1f,0.5f), 6.0f*glm::vec3(0.2f,0.8f,1.2f), 0.9f, bbox);
 	pointLights.emplace_back( glm::vec3(-0.5f,-0.1f,0.5f), 6.0f*glm::vec3(2.1f,0.3f,0.6f), 0.9f, bbox);

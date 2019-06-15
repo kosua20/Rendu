@@ -22,23 +22,35 @@ void DragonScene::init(){
 	const glm::mat4 planeModel = glm::scale(glm::translate(glm::mat4(1.0f),glm::vec3(0.0f,-0.35f,-0.5f)), glm::vec3(2.0f));
 	const glm::mat4 suzanneModel = glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(0.2,0.0,0.0)),glm::vec3(0.25f));
 	
+	const Descriptor rgbaTex(GL_RGBA8, GL_LINEAR, GL_CLAMP_TO_EDGE);
+	const Descriptor srgbaTex(GL_SRGB8_ALPHA8, GL_LINEAR, GL_CLAMP_TO_EDGE);
+	
 	// Objects creation.
-	Object suzanne(Object::Type::PBRRegular, "suzanne", { {"suzanne_texture_color", true }, {"suzanne_texture_normal", false}, {"suzanne_texture_rough_met_ao", false} });
-	Object dragon(Object::Type::PBRRegular, "dragon", { { "dragon_texture_color", true }, { "dragon_texture_normal", false }, { "dragon_texture_rough_met_ao", false } });
-	Object plane(Object::Type::PBRParallax, "groundplane", { { "groundplane_texture_color", true }, { "groundplane_texture_normal", false }, { "groundplane_texture_rough_met_ao", false }, { "groundplane_texture_depth", false } }, {}, false);
+	Object suzanne(Object::Type::PBRRegular, Resources::manager().getMesh("suzanne"), true);
+	suzanne.addTexture(Resources::manager().getTexture("suzanne_texture_color", srgbaTex));
+	suzanne.addTexture(Resources::manager().getTexture("suzanne_texture_normal", rgbaTex));
+	suzanne.addTexture(Resources::manager().getTexture("suzanne_texture_rough_met_ao", rgbaTex));
 	
-	suzanne.update(suzanneModel);
-	dragon.update(dragonModel);
-	plane.update(planeModel);
+	Object dragon(Object::Type::PBRRegular, Resources::manager().getMesh("dragon"), true);
+	dragon.addTexture(Resources::manager().getTexture("dragon_texture_color", srgbaTex));
+	dragon.addTexture(Resources::manager().getTexture("dragon_texture_normal", rgbaTex));
+	dragon.addTexture(Resources::manager().getTexture("dragon_texture_rough_met_ao", rgbaTex));
 	
-	objects.push_back(suzanne);
-	objects.push_back(dragon);
-	objects.push_back(plane);
+	Object plane(Object::Type::PBRParallax, Resources::manager().getMesh("groundplane"), false);
+	plane.addTexture(Resources::manager().getTexture("groundplane_texture_color", srgbaTex));
+	plane.addTexture(Resources::manager().getTexture("groundplane_texture_normal", rgbaTex));
+	plane.addTexture(Resources::manager().getTexture("groundplane_texture_rough_met_ao", rgbaTex));
+	plane.addTexture(Resources::manager().getTexture("groundplane_texture_depth", rgbaTex));
+	
+	objects.push_back(suzanne); objects[0].update(suzanneModel);
+	objects.push_back(dragon); objects[1].update(dragonModel);
+	objects.push_back(plane); objects[2].update(planeModel);
 	
 	// Background creation.
-	backgroundReflection = Resources::manager().getCubemap("corsica_beach_cube", {GL_RGB32F, GL_LINEAR, GL_CLAMP_TO_EDGE})->id;
-	// \todo Find a way to avoid passing the gamma flag to the object.
-	background = Object(Object::Type::Skybox, "skybox", {}, {{"corsica_beach_cube", false }});
+	const TextureInfos * cubemapEnv = Resources::manager().getCubemap("corsica_beach_cube", {GL_RGB32F, GL_LINEAR, GL_CLAMP_TO_EDGE});
+	backgroundReflection = cubemapEnv->id;
+	background = Object(Object::Type::Skybox, Resources::manager().getMesh("skybox"), false);
+	background.addTexture(cubemapEnv);
 	loadSphericalHarmonics("corsica_beach_cube_shcoeffs");
 	
 	// Compute the bounding box of the shadow casters.
