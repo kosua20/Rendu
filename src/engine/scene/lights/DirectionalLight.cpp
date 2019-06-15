@@ -57,7 +57,7 @@ void DirectionalLight::drawShadow(const std::vector<Object> & objects) const {
 		}
 		const glm::mat4 lightMVP = _mvp * object.model();
 		glUniformMatrix4fv(_programDepth->uniform("mvp"), 1, GL_FALSE, &lightMVP[0][0]);
-		object.drawGeometry();
+		GLUtilities::drawMesh(*(object.mesh()));
 	}
 	glUseProgram(0);
 	

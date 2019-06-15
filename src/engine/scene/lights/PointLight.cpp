@@ -102,7 +102,7 @@ void PointLight::drawShadow(const std::vector<Object> & objects) const {
 			continue;
 		}
 		glUniformMatrix4fv(_programDepth->uniform("model"), 1, GL_FALSE, &(object.model()[0][0]));
-		object.drawGeometry();
+		GLUtilities::drawMesh(*(object.mesh()));
 	}
 	glUseProgram(0);
 	

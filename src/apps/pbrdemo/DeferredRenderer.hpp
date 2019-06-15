@@ -85,6 +85,10 @@ private:
 	const ProgramInfos * _toneMappingProgram; ///< Tonemapping program
 	const ProgramInfos * _fxaaProgram; ///< FXAA program
 	const ProgramInfos * _finalProgram; ///< Final output program
+	const ProgramInfos * _objectProgram;
+	const ProgramInfos * _parallaxProgram;
+	const ProgramInfos * _skyboxProgram;
+	
 	
 	std::shared_ptr<Scene> _scene; ///< The scene to render
 	

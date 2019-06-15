@@ -50,6 +50,10 @@ DeferredRenderer::DeferredRenderer(RenderingConfig & config) : Renderer(config) 
 	_fxaaProgram = Resources::manager().getProgram2D("fxaa");
 	_finalProgram = Resources::manager().getProgram2D("final_screenquad");
 	
+	_skyboxProgram = Resources::manager().getProgram("skybox_gbuffer");
+	_parallaxProgram = Resources::manager().getProgram("parallax_gbuffer");
+	_objectProgram = Resources::manager().getProgram("object_gbuffer");
+	
 	const std::vector<GLuint> ambientTextures = _gbuffer->textureIds();
 	
 	// Add the SSAO result.
@@ -121,8 +125,52 @@ void DeferredRenderer::draw() {
 	// Clear the depth buffer (we know we will draw everywhere, no need to clear color.
 	glClear(GL_DEPTH_BUFFER_BIT);
 	
+	const glm::mat4 & view = _userCamera.view();
+	const glm::mat4 & proj = _userCamera.projection();
 	for(auto & object : _scene->objects){
-		object.draw(_userCamera.view(), _userCamera.projection());
+		// Combine the three matrices.
+		const glm::mat4 MV = view * object.model();
+		const glm::mat4 MVP = proj * MV;
+		// Compute the normal matrix
+		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(MV)));
+		
+		// Select the program (and shaders).
+		
+		
+		switch (object.type()) {
+			case Object::PBRParallax:
+				glUseProgram(_parallaxProgram->id());
+				
+				// Upload the MVP matrix.
+				glUniformMatrix4fv(_parallaxProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
+				// Upload the projection matrix.
+				glUniformMatrix4fv(_parallaxProgram->uniform("p"), 1, GL_FALSE, &proj[0][0]);
+				// Upload the MV matrix.
+				glUniformMatrix4fv(_parallaxProgram->uniform("mv"), 1, GL_FALSE, &MV[0][0]);
+				// Upload the normal matrix.
+				glUniformMatrix3fv(_parallaxProgram->uniform("normalMatrix"), 1, GL_FALSE, &normalMatrix[0][0]);
+				break;
+			case Object::PBRRegular:
+				glUseProgram(_objectProgram->id());
+				// Upload the MVP matrix.
+				glUniformMatrix4fv(_objectProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
+				// Upload the normal matrix.
+				glUniformMatrix3fv(_objectProgram->uniform("normalMatrix"), 1, GL_FALSE, &normalMatrix[0][0]);
+				break;
+			case Object::Skybox:
+				glUseProgram(_skyboxProgram->id());
+				// Upload the MVP matrix.
+				glUniformMatrix4fv(_skyboxProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
+				break;
+			default:
+				
+				break;
+		}
+		
+		// Bind the textures.
+		GLUtilities::bindTextures(object.textures());
+		GLUtilities::drawMesh(*object.mesh());
+		glUseProgram(0);
 	}
 	
 	if(_debugVisualization){
@@ -145,8 +193,14 @@ void DeferredRenderer::draw() {
 	glDepthMask(GL_FALSE);
 	// Accept a depth of 1.0 (far plane).
 	glDepthFunc(GL_LEQUAL);
+	const Object & background = _scene->background;
+	const glm::mat4 backgroundMVP = proj * view * background.model();
 	// draw background.
-	_scene->background.draw(_userCamera.view(), _userCamera.projection());
+	glUseProgram(_skyboxProgram->id());
+	// Upload the MVP matrix.
+	glUniformMatrix4fv(_skyboxProgram->uniform("mvp"), 1, GL_FALSE, &backgroundMVP[0][0]);
+	GLUtilities::bindTextures(background.textures());
+	GLUtilities::drawMesh(*background.mesh());
 	glDepthFunc(GL_LESS);
 	glDepthMask(GL_TRUE);
 	
