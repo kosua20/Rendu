@@ -23,14 +23,13 @@ void DeskScene::init(){
 	
 	glm::mat4 sceneMatrix = glm::translate(glm::scale(glm::mat4(1.0f), glm::vec3(0.5f)), glm::vec3(0.0f,0.0f,-2.0f));
 	
-	
 	const std::vector<std::string> objectNames = {"candle", "desk", "hammer", "lighter", "rock", "screwdriver", "spyglass"};
 	for(const auto& name : objectNames){
 		Object obj(Object::Type::PBRRegular, Resources::manager().getMesh(name), true);
 		obj.addTexture(Resources::manager().getTexture(name + "_albedo", srgbaTex));
 		obj.addTexture(Resources::manager().getTexture(name + "_normal", rgbaTex));
 		obj.addTexture(Resources::manager().getTexture(name + "_rough_met_ao", rgbaTex));
-		obj.update(sceneMatrix);
+		obj.set(sceneMatrix);
 		objects.push_back(obj);
 	}
 	
@@ -50,8 +49,5 @@ void DeskScene::init(){
 	pointLights[0].castShadow(true);
 }
 
-void DeskScene::update(double fullTime, double frameTime){
-	
-}
 
 #endif

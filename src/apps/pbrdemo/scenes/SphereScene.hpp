@@ -33,9 +33,11 @@ void SphereScene::init(){
 	
 	const glm::mat4 model1 = glm::translate(glm::scale(glm::mat4(1.0f),glm::vec3(0.3f)), glm::vec3(1.2f,0.0f, 0.0f));
 	const glm::mat4 model2 = glm::translate(glm::scale(glm::mat4(1.0f),glm::vec3(0.3f)), glm::vec3(-1.2f,0.0f, 0.0f));
-	sphere1.update(model1);
-	sphere2.update(model2);
+	sphere1.set(model1);
+	sphere2.set(model2);
 	
+	Animation * rot = new Rotation(glm::vec3(0.0f, 1.0f, 0.0f), 0.2f, Animation::Frame::MODEL);
+	sphere1.addAnimation(rot);
 	objects.push_back(sphere1);
 	objects.push_back(sphere2);
 	
@@ -55,10 +57,5 @@ void SphereScene::init(){
 	
 }
 
-void SphereScene::update(double fullTime, double frameTime){
-	const glm::mat4 model = glm::rotate(objects[0].model(), 0.1f*float(frameTime), glm::vec3(0.0f,1.0f,0.0f));
-	objects[0].update(model);
-	
-}
 
 #endif
