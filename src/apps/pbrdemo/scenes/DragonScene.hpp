@@ -49,7 +49,7 @@ void DragonScene::init(){
 	
 	// Background creation.
 	const TextureInfos * cubemapEnv = Resources::manager().getCubemap("corsica_beach_cube", {GL_RGB32F, GL_LINEAR, GL_CLAMP_TO_EDGE});
-	backgroundReflection = cubemapEnv->id;
+	backgroundReflection = cubemapEnv;
 	background = Object(Object::Type::Skybox, Resources::manager().getMesh("skybox"), false);
 	background.addTexture(cubemapEnv);
 	loadSphericalHarmonics("corsica_beach_cube_shcoeffs");

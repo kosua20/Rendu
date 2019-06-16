@@ -52,15 +52,14 @@ public:
 	 */
 	void drawDebug(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) const;
 	
-	/** Clean internal resources. */
-	void clean() const;
-	
+	/** Apply the animations for a frame duration.
+	 \param fullTime the time since the launch of the application
+	 \param frameTime the time elapsed since the last frame
+	 */
 	void update(double fullTime, double frameTime);
 	
-	/** Query the current light world space position.
-	 \return the current position
-	 */
-	glm::vec3 position() const { return _lightPosition; }
+	/** Clean internal resources. */
+	void clean() const;
 	
 private:
 	

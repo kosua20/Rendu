@@ -35,12 +35,10 @@ public:
 	/// Destructor
 	virtual ~Scene();
 	
-	
 	std::vector<Object> objects; ///< The objects in the scene.
 	Object background; ///< Background object. \todo Make more flexible, to be able to use a screenquad or a color.
 	std::vector<glm::vec3> backgroundIrradiance; ///< RGB SH-coefficients of the background irradiance, computed using SHExtractor. \see SphericalHarmonics
-	
-	GLuint backgroundReflection; ///< Cubemap texture ID of the background radiance.
+	const TextureInfos * backgroundReflection; ///< Cubemap texture ID of the background radiance.
 	std::vector<DirectionalLight> directionalLights; ///< Directional lights present in the scene.
 	std::vector<PointLight> pointLights; ///< Omni-directional lights present in the scene.
 	std::vector<SpotLight> spotLights; ///< Spotlights present in the scene.

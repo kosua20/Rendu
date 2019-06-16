@@ -33,15 +33,23 @@ public:
 	Object(const Object::Type type, const MeshInfos * mesh, bool castShadows);
 	
 	/** Register a texture.
-	 \param infos the texture infos to ass
+	 \param infos the texture infos to add
 	 */
 	void addTexture(const TextureInfos * infos);
-	void addAnimation(std::shared_ptr<Animation> anim);
 	
-	void set(const glm::mat4 & model){ _model = model; }
+	/** Add an animation to apply at each frame.
+	 \param anim the animation to add
+	 */
+	void addAnimation(std::shared_ptr<Animation> anim);
 	
 	/** Update the object transformation matrix.
 	 \param model the new model matrix
+	 */
+	void set(const glm::mat4 & model){ _model = model; }
+	
+	/** Apply the animations for a frame duration.
+	 \param fullTime the time since the launch of the application
+	 \param frameTime the time elapsed since the last frame
 	 */
 	void update(double fullTime, double frameTime);
 	
@@ -84,5 +92,5 @@ private:
 	glm::mat4 _model; ///< The transformation matrix of the 3D model.
 	Type _material; ///< The material type.
 	bool _castShadow; ///< Can the object casts shadows.
-	std::vector<std::shared_ptr<Animation>> _animations;
+	std::vector<std::shared_ptr<Animation>> _animations; ///< Animations list (applied in order).
 };

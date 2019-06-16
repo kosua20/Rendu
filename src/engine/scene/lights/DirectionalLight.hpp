@@ -47,10 +47,14 @@ public:
 	 */
 	void drawDebug(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) const;
 	
+	/** Apply the animations for a frame duration.
+	 \param fullTime the time since the launch of the application
+	 \param frameTime the time elapsed since the last frame
+	 */
+	void update(double fullTime, double frameTime);
+	
 	/** Clean internal resources. */
 	void clean() const;
-	
-	void update(double fullTime, double frameTime);
 	
 private:
 	

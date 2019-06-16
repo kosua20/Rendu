@@ -74,7 +74,7 @@ void DeferredRenderer::setScene(std::shared_ptr<Scene> scene){
 	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start);
 	Log::Info() << "Loading took " << duration.count() << "ms." << std::endl;
 	
-	_ambientScreen.setSceneParameters(_scene->backgroundReflection, _scene->backgroundIrradiance);
+	_ambientScreen.setSceneParameters(_scene->backgroundReflection->id, _scene->backgroundIrradiance);
 	
 	std::vector<GLuint> includedTextures = _gbuffer->textureIds();
 	// \todo clarify this.

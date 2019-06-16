@@ -1,6 +1,6 @@
 #include "Animation.hpp"
 
-Rotation::Rotation(const glm::vec3 & axis, float speed, const Frame frame){
+Rotation::Rotation(const glm::vec3 & axis, float speed, Frame frame){
 	_axis = glm::normalize(axis);
 	_speed = speed;
 	_frame = frame;
@@ -16,8 +16,7 @@ glm::vec4 Rotation::apply(const glm::vec4 & v, double fullTime, double frameTime
 	return r*v;
 }
 
-
-BackAndForth::BackAndForth(const glm::vec3 & axis, float speed, float amplitude, const Frame frame){
+BackAndForth::BackAndForth(const glm::vec3 & axis, float speed, float amplitude, Frame frame){
 	_axis = glm::normalize(axis);
 	_speed = speed;
 	_amplitude = amplitude;

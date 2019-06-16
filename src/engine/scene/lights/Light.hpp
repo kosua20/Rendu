@@ -26,6 +26,9 @@ public:
 	 */
 	void setIntensity(const glm::vec3 & color){ _color = color; }
 	
+	/** Add an animation to the light.
+	 \param anim the animation to apply
+	 */
 	void addAnimation(std::shared_ptr<Animation> anim);
 	
 protected:
@@ -33,7 +36,7 @@ protected:
 	glm::mat4 _mvp; ///< MVP matrix for shadow casting.
 	glm::vec3 _color; ///< Colored intensity.
 	bool _castShadows; ///< Is the light casting shadows (and thus use a shadow map).
-	std::vector<std::shared_ptr<Animation>> _animations;
+	std::vector<std::shared_ptr<Animation>> _animations; ///< Animations list (will be applied in order).
 };
 
 
