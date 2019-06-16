@@ -36,7 +36,7 @@ void SphereScene::init(){
 	sphere1.set(model1);
 	sphere2.set(model2);
 	
-	Animation * rot = new Rotation(glm::vec3(0.0f, 1.0f, 0.0f), 0.2f, Animation::Frame::MODEL);
+	auto rot = std::shared_ptr<Animation>(new Rotation(glm::vec3(0.0f, 1.0f, 0.0f), 0.2f, Animation::Frame::MODEL));
 	sphere1.addAnimation(rot);
 	objects.push_back(sphere1);
 	objects.push_back(sphere2);

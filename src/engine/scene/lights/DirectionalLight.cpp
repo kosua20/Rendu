@@ -87,7 +87,7 @@ void DirectionalLight::drawDebug(const glm::mat4& viewMatrix, const glm::mat4& p
 
 void DirectionalLight::update(double fullTime, double frameTime){
 	glm::vec4 direction = glm::vec4(_lightDirection, 0.0f);
-	for(Animation * anim : _animations){
+	for(auto & anim : _animations){
 		direction = anim->apply(direction, fullTime, frameTime);
 	}
 	set(glm::vec3(direction));

@@ -30,7 +30,7 @@ void DragonScene::init(){
 	suzanne.addTexture(Resources::manager().getTexture("suzanne_texture_color", srgbaTex));
 	suzanne.addTexture(Resources::manager().getTexture("suzanne_texture_normal", rgbaTex));
 	suzanne.addTexture(Resources::manager().getTexture("suzanne_texture_rough_met_ao", rgbaTex));
-	Animation * rot = new Rotation(glm::vec3(0.0f, 1.0f, 0.0f), 1.0f, Animation::Frame::MODEL);
+	auto rot = std::shared_ptr<Animation>(new Rotation(glm::vec3(0.0f, 1.0f, 0.0f), 1.0f, Animation::Frame::MODEL));
 	suzanne.addAnimation(rot);
 	Object dragon(Object::Type::PBRRegular, Resources::manager().getMesh("dragon"), true);
 	dragon.addTexture(Resources::manager().getTexture("dragon_texture_color", srgbaTex));
@@ -62,18 +62,18 @@ void DragonScene::init(){
 	directionalLights.emplace_back(glm::vec3(-2.0f,-1.5f,0.0f), glm::vec3(1.0f,1.0f, 0.92f), bbox);
 	directionalLights[0].castShadow(true);
 	// This is a trick: the light is going to renormalize the direction vector, so moving along a vertical range is akin to doing a partial rotation around an horizontal axis.
-	Animation * moveDir = new BackAndForth(glm::vec3(0.0f, 1.0f, 0.0f), 0.75f, 1.0f,Animation::Frame::WORLD);
+	auto moveDir = std::shared_ptr<Animation>(new BackAndForth(glm::vec3(0.0f, 1.0f, 0.0f), 0.75f, 1.0f,Animation::Frame::WORLD));
 	directionalLights[0].addAnimation(moveDir);
 	// Create spotlight.
 	spotLights.emplace_back(glm::vec3(1.1f,2.0f,1.1f), glm::vec3(-1.0f,-1.0f,-1.0f), glm::vec3(0.0f,10.0f,10.0f), 0.5f, 0.6f, 5.0f, bbox);
 	spotLights[0].castShadow(true);
-	Animation * trans = new BackAndForth(glm::vec3(1.0f, 0.0f, 1.0f), 0.5f, 2.0f, Animation::Frame::WORLD);
+	auto trans = std::shared_ptr<Animation>(new BackAndForth(glm::vec3(1.0f, 0.0f, 1.0f), 0.5f, 2.0f, Animation::Frame::WORLD));
 	spotLights[0].addAnimation(trans);
 	
 	// Create point lights.
 	const float lI = 4.0; // Light intensity.
 	const std::vector<glm::vec3> colors = { glm::vec3(lI,0.0,0.0), glm::vec3(0.0,lI,0.0), glm::vec3(0.0,0.0,lI), glm::vec3(lI,lI,0.0)};
-	Animation * anim = new Rotation(glm::vec3(0.0f, 1.0f, 0.0f), 0.8f, Animation::Frame::WORLD);
+	auto anim = std::shared_ptr<Animation>(new Rotation(glm::vec3(0.0f, 1.0f, 0.0f), 0.8f, Animation::Frame::WORLD));
 	for(size_t i = 0; i < 4; ++i){
 		const glm::vec3 position = glm::vec3(-1.0f+2.0f*(i%2),-0.1f,-1.0f+2.0f*(i/2));
 		pointLights.emplace_back(position, colors[i], 1.2f, bbox);

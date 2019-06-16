@@ -14,6 +14,7 @@ public:
 	
 	virtual glm::vec4 apply(const glm::vec4 & v, double fullTime, double frameTime) = 0;
 	
+	virtual ~Animation(){};
 };
 
 class Rotation : public Animation {

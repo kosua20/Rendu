@@ -16,13 +16,13 @@ void Object::addTexture(const TextureInfos * infos){
 	_textures.push_back(infos);
 }
 
-void Object::addAnimation(Animation * anim){
+void Object::addAnimation(std::shared_ptr<Animation> anim){
 	_animations.push_back(anim);
 }
 
 void Object::update(double fullTime, double frameTime) {
 	glm::mat4 model = _model;
-	for(Animation * anim : _animations){
+	for(auto anim : _animations){
 		model = anim->apply(model, fullTime, frameTime);
 	}
 	_model = model;

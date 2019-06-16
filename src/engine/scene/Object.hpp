@@ -36,7 +36,7 @@ public:
 	 \param infos the texture infos to ass
 	 */
 	void addTexture(const TextureInfos * infos);
-	void addAnimation( Animation * anim);
+	void addAnimation(std::shared_ptr<Animation> anim);
 	
 	void set(const glm::mat4 & model){ _model = model; }
 	
@@ -84,5 +84,5 @@ private:
 	glm::mat4 _model; ///< The transformation matrix of the 3D model.
 	Type _material; ///< The material type.
 	bool _castShadow; ///< Can the object casts shadows.
-	std::vector<Animation*> _animations;
+	std::vector<std::shared_ptr<Animation>> _animations;
 };

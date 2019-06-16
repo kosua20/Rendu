@@ -26,14 +26,14 @@ public:
 	 */
 	void setIntensity(const glm::vec3 & color){ _color = color; }
 	
-	void addAnimation(Animation * anim);
+	void addAnimation(std::shared_ptr<Animation> anim);
 	
 protected:
 	
 	glm::mat4 _mvp; ///< MVP matrix for shadow casting.
 	glm::vec3 _color; ///< Colored intensity.
 	bool _castShadows; ///< Is the light casting shadows (and thus use a shadow map).
-	std::vector<Animation*> _animations;
+	std::vector<std::shared_ptr<Animation>> _animations;
 };
 
 
@@ -43,7 +43,7 @@ inline Light::Light(const glm::vec3& color){
 	_mvp = glm::mat4(1.0f);
 }
 
-inline void Light::addAnimation(Animation * anim){
+inline void Light::addAnimation(std::shared_ptr<Animation> anim){
 	_animations.push_back(anim);
 }
 

@@ -132,7 +132,7 @@ void PointLight::drawDebug(const glm::mat4& viewMatrix, const glm::mat4& project
 
 void PointLight::update(double fullTime, double frameTime){
 	glm::vec4 position = glm::vec4(_lightPosition, 0.0);
-	for(Animation * anim : _animations){
+	for(auto & anim : _animations){
 		position = anim->apply(position, fullTime, frameTime);
 	}
 	set(glm::vec3(position));
