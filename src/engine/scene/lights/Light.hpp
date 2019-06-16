@@ -1,6 +1,6 @@
-#ifndef Light_h
-#define Light_h
+#pragma once
 
+#include "scene/Animation.hpp"
 #include "Common.hpp"
 
 /**
@@ -26,11 +26,14 @@ public:
 	 */
 	void setIntensity(const glm::vec3 & color){ _color = color; }
 	
+	void addAnimation(Animation * anim);
+	
 protected:
 	
 	glm::mat4 _mvp; ///< MVP matrix for shadow casting.
 	glm::vec3 _color; ///< Colored intensity.
 	bool _castShadows; ///< Is the light casting shadows (and thus use a shadow map).
+	std::vector<Animation*> _animations;
 };
 
 
@@ -40,6 +43,8 @@ inline Light::Light(const glm::vec3& color){
 	_mvp = glm::mat4(1.0f);
 }
 
-#endif
+inline void Light::addAnimation(Animation * anim){
+	_animations.push_back(anim);
+}
 
 

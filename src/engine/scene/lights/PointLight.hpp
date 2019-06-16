@@ -52,7 +52,7 @@ public:
 	/** Update the light position. All internal parameters are updated.
 	 \param newPosition the new light position
 	 */
-	void update(const glm::vec3 & newPosition);
+	void update(double fullTime, double frameTime);
 	
 	/** Query the current light world space position.
 	 \return the current position
@@ -60,6 +60,8 @@ public:
 	glm::vec3 position() const { return _lightPosition; }
 	
 private:
+	
+	void set(const glm::vec3 & newPosition);
 	
 	std::unique_ptr<FramebufferCube> _shadowFramebuffer;///< The shadow cubemap framebuffer.
 	BoundingBox _sceneBox; ///< The scene bounding box, to fit the shadow map.

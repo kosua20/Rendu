@@ -50,12 +50,14 @@ public:
 	/** Clean internal resources. */
 	void clean() const;
 	
+	void update(double fullTime, double frameTime);
+	
+private:
+	
 	/** Update the light direction. All internal parameters are updated.
 	 \param newDirection the new light direction
 	 */
-	void update(const glm::vec3 & newDirection);
-	
-private:
+	void set(const glm::vec3 & newDirection);
 	
 	std::unique_ptr<Framebuffer> _shadowPass; ///< The shadow map framebuffer.
 	std::unique_ptr<BoxBlur> _blur; ///< Blur processing for variance shadow mapping.

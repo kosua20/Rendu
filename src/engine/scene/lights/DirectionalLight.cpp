@@ -3,7 +3,7 @@
 
 DirectionalLight::DirectionalLight(const glm::vec3& worldDirection, const glm::vec3& color, const BoundingBox & sceneBox) : Light(color) {
 	_sceneBox = sceneBox;
-	update(worldDirection);
+	set(worldDirection);
 }
 
 
@@ -85,7 +85,15 @@ void DirectionalLight::drawDebug(const glm::mat4& viewMatrix, const glm::mat4& p
 	glUseProgram(0);
 }
 
-void DirectionalLight::update(const glm::vec3 & newDirection){
+void DirectionalLight::update(double fullTime, double frameTime){
+	glm::vec4 direction = glm::vec4(_lightDirection, 0.0f);
+	for(Animation * anim : _animations){
+		direction = anim->apply(direction, fullTime, frameTime);
+	}
+	set(glm::vec3(direction));
+}
+
+void DirectionalLight::set(const glm::vec3 & newDirection){
 	_lightDirection = glm::normalize(newDirection);
 	const BoundingSphere sceneSphere = _sceneBox.getSphere();
 	const glm::vec3 lightPosition = sceneSphere.center - sceneSphere.radius*1.1f*_lightDirection;

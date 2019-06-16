@@ -1,8 +1,10 @@
-#ifndef Object_h
-#define Object_h
+#pragma once
 
+#include "scene/Animation.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "Common.hpp"
+
+
 
 /**
  \brief Represent a 3D textured object.
@@ -34,11 +36,14 @@ public:
 	 \param infos the texture infos to ass
 	 */
 	void addTexture(const TextureInfos * infos);
+	void addAnimation( Animation * anim);
+	
+	void set(const glm::mat4 & model){ _model = model; }
 	
 	/** Update the object transformation matrix.
 	 \param model the new model matrix
 	 */
-	void update(const glm::mat4& model);
+	void update(double fullTime, double frameTime);
 	
 	/** Query the bounding box of the object.
 	 \return the bounding box
@@ -79,7 +84,5 @@ private:
 	glm::mat4 _model; ///< The transformation matrix of the 3D model.
 	Type _material; ///< The material type.
 	bool _castShadow; ///< Can the object casts shadows.
-
+	std::vector<Animation*> _animations;
 };
-
-#endif

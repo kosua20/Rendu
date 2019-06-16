@@ -55,16 +55,7 @@ public:
 	/** Clean internal resources. */
 	void clean() const;
 	
-	/** Update the light position. All internal parameters are updated.
-	 \param newPosition the new light position
-	 */
-	void update(const glm::vec3 & newPosition);
-	
-	/** Update the light position and direction. All internal parameters are updated.
-	 \param newPosition the new light position
-	 \param newDirection the new light position
-	 */
-	void update(const glm::vec3 & newPosition, const glm::vec3 & newDirection);
+	void update(double fullTime, double frameTime);
 	
 	/** Query the current light world space position.
 	 \return the current position
@@ -72,6 +63,12 @@ public:
 	glm::vec3 position() const { return _lightPosition; }
 	
 private:
+	
+	/** Update the light position and direction. All internal parameters are updated.
+	 \param newPosition the new light position
+	 \param newDirection the new light position
+	 */
+	void set(const glm::vec3 & newPosition, const glm::vec3 & newDirection);
 	
 	std::unique_ptr<Framebuffer> _shadowPass; ///< The shadow map framebuffer.
 	std::unique_ptr<BoxBlur> _blur; ///< Blur processing for variance shadow mapping.

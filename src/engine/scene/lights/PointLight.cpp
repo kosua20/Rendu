@@ -16,7 +16,7 @@ PointLight::PointLight(const glm::vec3& worldPosition, const glm::vec3& color, f
 		_views[mid] = view;
 	}
 	
-	update(worldPosition);
+	set(worldPosition);
 	
 }
 
@@ -130,10 +130,18 @@ void PointLight::drawDebug(const glm::mat4& viewMatrix, const glm::mat4& project
 }
 
 
-void PointLight::update(const glm::vec3 & newPosition){
+void PointLight::update(double fullTime, double frameTime){
+	glm::vec4 position = glm::vec4(_lightPosition, 0.0);
+	for(Animation * anim : _animations){
+		position = anim->apply(position, fullTime, frameTime);
+	}
+	set(glm::vec3(position));
+}
+
+void PointLight::set(const glm::vec3 & newPosition){
 	_lightPosition = newPosition;
-	const glm::mat4 model = glm::translate(glm::mat4(1.0f), -_lightPosition);
 	
+	const glm::mat4 model = glm::translate(glm::mat4(1.0f), -_lightPosition);
 	// Compute the projection matrix based on the scene bounding box.
 	// As both the view matrices and the bounding boxe are axis aligned, we can avoid costly transformations.
 	const glm::vec3 deltaMini = _lightPosition - _sceneBox.minis;

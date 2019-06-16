@@ -9,7 +9,7 @@ SpotLight::SpotLight(const glm::vec3& worldPosition, const glm::vec3& worldDirec
 	_radius = radius;
 	_sceneBox = sceneBox;
 	
-	update(worldPosition, worldDirection);
+	set(worldPosition, worldDirection);
 
 }
 
@@ -121,11 +121,15 @@ void SpotLight::drawDebug(const glm::mat4& viewMatrix, const glm::mat4& projecti
 }
 
 
-void SpotLight::update(const glm::vec3 & newPosition){
-	update(newPosition, _lightDirection);
+void SpotLight::update(double fullTime, double frameTime){
+	glm::vec4 position = glm::vec4(_lightPosition, 1.0f);
+	for(Animation * anim : _animations){
+		position = anim->apply(position, fullTime, frameTime);
+	}
+	set(glm::vec3(position), _lightDirection);
 }
 
-void SpotLight::update(const glm::vec3 & newPosition, const glm::vec3 & newDirection){
+void SpotLight::set(const glm::vec3 & newPosition, const glm::vec3 & newDirection){
 	_lightPosition = newPosition;
 	_lightDirection = glm::normalize(newDirection);
 	_viewMatrix = glm::lookAt(_lightPosition, _lightPosition+_lightDirection, glm::vec3(0.0f,1.0f,0.0f));
