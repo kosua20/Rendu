@@ -45,6 +45,23 @@ BoundingBox Scene::computeBoundingBox(bool onlyShadowCasters){
 	return bbox;
 }
 
+void Scene::update(double fullTime, double frameTime){
+	
+	for(auto & light : pointLights){
+		light.update(fullTime, frameTime);
+	}
+	for(auto & light : spotLights){
+		light.update(fullTime, frameTime);
+	}
+	for(auto & light : directionalLights){
+		light.update(fullTime, frameTime);
+	}
+	for(auto & object : objects){
+		object.update(fullTime, frameTime);
+	}
+	
+}
+
 void Scene::clean() {
 	
 	for(auto& dirLight : directionalLights){

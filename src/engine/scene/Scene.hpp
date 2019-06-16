@@ -27,7 +27,7 @@ public:
 	 \param fullTime the time elapsed since the beginning of the render loop
 	 \param frameTime the duration of the last frame
 	 */
-	virtual void update(double fullTime, double frameTime) = 0;
+	void update(double fullTime, double frameTime);
 	
 	/** Clean internal resources. */
 	void clean();
