@@ -42,7 +42,7 @@ void loadCubemap(const std::string & inputPath, TextureInfos & cubemapInfos){
 		pathSides.push_back(cubemapPath + suffixes[i] + ext);
 	}
 	
-	cubemapInfos = GLUtilities::loadTexture(GL_TEXTURE_CUBE_MAP, {pathSides}, {typedFormat, GL_LINEAR, GL_CLAMP_TO_EDGE}, Storage::BOTH);
+	cubemapInfos = GLUtilities::loadTexture(GL_TEXTURE_CUBE_MAP, {pathSides}, {typedFormat, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE}, Storage::BOTH);
 	Log::Info() << "Info:" << cubemapInfos.images.size() << std::endl;
 
 }
@@ -208,7 +208,7 @@ void computeCubemapConvolution(const TextureInfos & cubemapInfos, int levelsCoun
 		TextureInfos levelInfos;
 		levelInfos.cubemap = true;
 		levelInfos.mipmap = 1;
-		levelInfos.descriptor = {GL_RGB32F, GL_LINEAR, GL_CLAMP_TO_EDGE};
+		levelInfos.descriptor = {GL_RGB32F, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE};
 		levelInfos.width = w;
 		levelInfos.height = h;
 		levelInfos.id = GLUtilities::createTexture(GL_TEXTURE_CUBE_MAP, levelInfos.descriptor, levelInfos.mipmap);
@@ -338,7 +338,7 @@ int main(int argc, char** argv) {
 	const auto program = Resources::manager().getProgram("skybox_basic");
 	const auto programSH = Resources::manager().getProgram("skybox_shcoeffs", "skybox_basic", "skybox_shcoeffs");
 	const auto mesh = Resources::manager().getMesh("skybox");
-	const TextureInfos * cubemapInfosDefault = Resources::manager().getCubemap("debug-cube", {GL_RGB8, GL_LINEAR, GL_CLAMP_TO_EDGE});
+	const TextureInfos * cubemapInfosDefault = Resources::manager().getCubemap("debug-cube", {GL_RGB8, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE});
 	
 	TextureInfos cubemapInfos;
 	std::vector<glm::vec3> SCoeffs(9);

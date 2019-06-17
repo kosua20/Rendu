@@ -168,7 +168,7 @@ int main(int argc, char** argv) {
 					isFloat = ImageUtilities::isFloat(newImagePath);
 					// Apply the proper format and filtering.
 					const GLenum typedFormat = isFloat ? GL_RGBA32F : GL_SRGB8_ALPHA8;
-					const GLenum filtering = (imageInterp == Nearest) ? GL_NEAREST : GL_LINEAR;
+					const GLenum filtering = (imageInterp == Nearest) ? GL_NEAREST_MIPMAP_LINEAR : GL_LINEAR_MIPMAP_LINEAR;
 					imageInfos = GLUtilities::loadTexture(GL_TEXTURE_2D, {{newImagePath}}, {typedFormat, filtering, GL_CLAMP_TO_EDGE}, Storage::GPU);
 					
 					// Reset display settings.
@@ -200,9 +200,9 @@ int main(int argc, char** argv) {
 			
 			// Filtering.
 			if(ImGui::Combo("Filtering", (int*)(&imageInterp), "Nearest\0Linear\0\0")){
-				imageInfos.descriptor.filtering = (imageInterp == Nearest) ? GL_NEAREST : GL_LINEAR;
+				imageInfos.descriptor.filtering = (imageInterp == Nearest) ? GL_NEAREST_MIPMAP_LINEAR : GL_LINEAR_MIPMAP_LINEAR;
 				glBindTexture(GL_TEXTURE_2D, imageInfos.id);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, imageInfos.descriptor.filtering);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GLUtilities::getMagnificationFilter(imageInfos.descriptor.filtering));
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, imageInfos.descriptor.filtering);
 				glBindTexture(GL_TEXTURE_2D, 0);
 			}
