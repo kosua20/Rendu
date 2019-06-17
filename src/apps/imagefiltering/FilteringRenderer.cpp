@@ -15,14 +15,14 @@ FilteringRenderer::FilteringRenderer(RenderingConfig & config) : Renderer(config
 	_sceneShader = Resources::manager().getProgram("object_basic");
 	_mesh = Resources::manager().getMesh("light_sphere");
 	
-	_sceneBuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, {GL_RGB8, GL_NEAREST, GL_CLAMP_TO_EDGE}, true));
-	_image = *Resources::manager().getTexture("debug-grid", {GL_RGB8, GL_NEAREST, GL_CLAMP_TO_EDGE});
+	_sceneBuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, {GL_RGB8, GL_NEAREST_MIPMAP_NEAREST, GL_CLAMP_TO_EDGE}, true));
+	_image = *Resources::manager().getTexture("debug-grid", {GL_RGB8, GL_NEAREST_MIPMAP_NEAREST, GL_CLAMP_TO_EDGE});
 	
 	// Create the Poisson filling and Laplacian integration pyramids, with a lowered internal resolution to speed things up.
 	_pyramidFiller = std::unique_ptr<PoissonFiller>(new PoissonFiller(renderWidth, renderHeight, _fillDownscale));
 	_pyramidIntegrator = std::unique_ptr<LaplacianIntegrator>( new LaplacianIntegrator(renderWidth, renderHeight, _intDownscale));
 	_gaussianBlur = std::unique_ptr<GaussianBlur>(new GaussianBlur(renderWidth, renderHeight, _blurLevel, GL_RGB8));
-	_boxBlur = std::unique_ptr<BoxBlur>(new BoxBlur(renderWidth, renderHeight, false, {GL_RGB8, GL_NEAREST, GL_CLAMP_TO_EDGE}));
+	_boxBlur = std::unique_ptr<BoxBlur>(new BoxBlur(renderWidth, renderHeight, false, {GL_RGB8, GL_NEAREST_MIPMAP_NEAREST, GL_CLAMP_TO_EDGE}));
 	_floodFill = std::unique_ptr<FloodFiller>(new FloodFiller(renderWidth, renderHeight));
 	
 	_painter = std::unique_ptr<PaintingTool>(new PaintingTool(renderWidth, renderHeight));
@@ -132,7 +132,7 @@ void FilteringRenderer::update(){
 				// If user picked a path, load the texture from disk.
 				if(res && !newImagePath.empty()){
 					Log::Info() << "Loading " << newImagePath << "." << std::endl;
-					_image = GLUtilities::loadTexture(GL_TEXTURE_2D, {{newImagePath}}, {GL_RGBA8, GL_NEAREST, GL_CLAMP_TO_EDGE}, Storage::GPU);
+					_image = GLUtilities::loadTexture(GL_TEXTURE_2D, {{newImagePath}}, {GL_RGBA8, GL_NEAREST_MIPMAP_NEAREST, GL_CLAMP_TO_EDGE}, Storage::GPU);
 					resize(_image.width, _image.height);
 				}
 			}

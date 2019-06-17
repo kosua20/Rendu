@@ -22,8 +22,8 @@ void DragonScene::init(){
 	const glm::mat4 planeModel = glm::scale(glm::translate(glm::mat4(1.0f),glm::vec3(0.0f,-0.35f,-0.5f)), glm::vec3(2.0f));
 	const glm::mat4 suzanneModel = glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(0.2,0.0,0.0)),glm::vec3(0.25f));
 	
-	const Descriptor rgbaTex(GL_RGBA8, GL_LINEAR, GL_CLAMP_TO_EDGE);
-	const Descriptor srgbaTex(GL_SRGB8_ALPHA8, GL_LINEAR, GL_CLAMP_TO_EDGE);
+	const Descriptor rgbaTex(GL_RGBA8, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE);
+	const Descriptor srgbaTex(GL_SRGB8_ALPHA8, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE);
 	
 	// Objects creation.
 	Object suzanne(Object::Type::PBRRegular, Resources::manager().getMesh("suzanne"), true);
@@ -48,7 +48,7 @@ void DragonScene::init(){
 	objects.push_back(plane); objects[2].set(planeModel);
 	
 	// Background creation.
-	const TextureInfos * cubemapEnv = Resources::manager().getCubemap("corsica_beach_cube", {GL_RGB32F, GL_LINEAR, GL_CLAMP_TO_EDGE});
+	const TextureInfos * cubemapEnv = Resources::manager().getCubemap("corsica_beach_cube", {GL_RGB32F, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE});
 	backgroundReflection = cubemapEnv;
 	background = Object(Object::Type::Skybox, Resources::manager().getMesh("skybox"), false);
 	background.addTexture(cubemapEnv);

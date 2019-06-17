@@ -17,7 +17,7 @@ GameRenderer::GameRenderer(RenderingConfig & config) : Renderer(config){
 	
 	const int renderWidth = (int)_renderResolution[0];
 	const int renderHeight = (int)_renderResolution[1];
-	_sceneFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, {{GL_RGB16F, GL_NEAREST, GL_CLAMP_TO_EDGE}, {GL_R8, GL_NEAREST, GL_CLAMP_TO_EDGE}, {GL_DEPTH_COMPONENT32F, GL_NEAREST, GL_CLAMP_TO_EDGE}}, true));
+	_sceneFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, {{GL_RGB16F, GL_NEAREST_MIPMAP_NEAREST, GL_CLAMP_TO_EDGE}, {GL_R8, GL_NEAREST_MIPMAP_NEAREST, GL_CLAMP_TO_EDGE}, {GL_DEPTH_COMPONENT32F, GL_NEAREST_MIPMAP_NEAREST, GL_CLAMP_TO_EDGE}}, true));
 	_lightingFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, GL_RGB8, false));
 	_fxaaFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, GL_RGBA8, false));
 	
@@ -31,7 +31,7 @@ GameRenderer::GameRenderer(RenderingConfig & config) : Renderer(config){
 	_ground = Resources::manager().getMesh("ground");
 	_head = Resources::manager().getMesh("head");
 	_bodyElement = Resources::manager().getMesh("body");
-	_cubemap = Resources::manager().getCubemap("env", {GL_RGB8, GL_LINEAR, GL_CLAMP_TO_EDGE});
+	_cubemap = Resources::manager().getCubemap("env", {GL_RGB8, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE});
 	
 	checkGLError();
 }

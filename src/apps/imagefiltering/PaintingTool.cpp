@@ -9,8 +9,8 @@ PaintingTool::PaintingTool(unsigned int width, unsigned int height) {
 	_fgColor = glm::vec3(1.0f);
 	
 	_brushShader = Resources::manager().getProgram("brush_color");
-	_canvas = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, {GL_RGB8, GL_LINEAR, GL_CLAMP_TO_EDGE}, false));
-	_visu = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, {GL_RGB8, GL_LINEAR, GL_CLAMP_TO_EDGE}, false));
+	_canvas = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, {GL_RGB8, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE}, false));
+	_visu = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, {GL_RGB8, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE}, false));
 	
 	// Generate a disk mesh.
 	Mesh disk;
@@ -165,7 +165,7 @@ void PaintingTool::resize(unsigned int width, unsigned int height){
 	// We first copy the canvas to a temp framebuffer.
 	const unsigned int w = _canvas->width();
 	const unsigned int h = _canvas->height();
-	Framebuffer tempCanvas(w, h,  {GL_RGB8, GL_LINEAR, GL_CLAMP_TO_EDGE}, false);
+	Framebuffer tempCanvas(w, h,  {GL_RGB8, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE}, false);
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, _canvas->id());
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, tempCanvas.id());
 	glBlitFramebuffer(0, 0, w, h, 0, 0, w, h, GL_COLOR_BUFFER_BIT, GL_NEAREST);

@@ -18,8 +18,8 @@ void DeskScene::init(){
 	}
 	_loaded = true;
 	
-	const Descriptor rgbaTex(GL_RGBA8, GL_LINEAR, GL_CLAMP_TO_EDGE);
-	const Descriptor srgbaTex(GL_SRGB8_ALPHA8, GL_LINEAR, GL_CLAMP_TO_EDGE);
+	const Descriptor rgbaTex(GL_RGBA8, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE);
+	const Descriptor srgbaTex(GL_SRGB8_ALPHA8, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE);
 	
 	glm::mat4 sceneMatrix = glm::translate(glm::scale(glm::mat4(1.0f), glm::vec3(0.5f)), glm::vec3(0.0f,0.0f,-2.0f));
 	
@@ -34,7 +34,7 @@ void DeskScene::init(){
 	}
 	
 	// Background creation.
-	const TextureInfos * cubemapEnv = Resources::manager().getCubemap("small_apartment", {GL_RGB32F, GL_LINEAR, GL_CLAMP_TO_EDGE});
+	const TextureInfos * cubemapEnv = Resources::manager().getCubemap("small_apartment", {GL_RGB32F, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE});
 	backgroundReflection = cubemapEnv;
 	background = Object(Object::Type::Skybox, Resources::manager().getMesh("skybox"), false);
 	background.addTexture(cubemapEnv);

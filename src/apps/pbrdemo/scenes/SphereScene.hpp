@@ -17,8 +17,8 @@ void SphereScene::init(){
 	}
 	_loaded = true;
 	
-	const Descriptor rgbaTex(GL_RGBA8, GL_LINEAR, GL_CLAMP_TO_EDGE);
-	const Descriptor srgbaTex(GL_SRGB8_ALPHA8, GL_LINEAR, GL_CLAMP_TO_EDGE);
+	const Descriptor rgbaTex(GL_RGBA8, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE);
+	const Descriptor srgbaTex(GL_SRGB8_ALPHA8, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE);
 	
 	// Objects creation.
 	Object sphere1(Object::Type::PBRRegular, Resources::manager().getMesh("sphere"), true);
@@ -42,7 +42,7 @@ void SphereScene::init(){
 	objects.push_back(sphere2);
 	
 	// Background creation.
-	const TextureInfos * cubemapEnv = Resources::manager().getCubemap("studio", {GL_RGB32F, GL_LINEAR, GL_CLAMP_TO_EDGE});
+	const TextureInfos * cubemapEnv = Resources::manager().getCubemap("studio", {GL_RGB32F, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE});
 	backgroundReflection = cubemapEnv;
 	background = Object(Object::Type::Skybox, Resources::manager().getMesh("skybox"), false);
 	background.addTexture(cubemapEnv);

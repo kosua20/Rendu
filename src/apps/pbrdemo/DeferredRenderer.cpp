@@ -19,10 +19,10 @@ DeferredRenderer::DeferredRenderer(RenderingConfig & config) : Renderer(config) 
 	const int renderPow2Size = (int)std::pow(2,(int)floor(log2(_renderResolution[0])));
 	
 	// G-buffer setup.
-	const Descriptor albedoDesc = { GL_RGBA16F, GL_NEAREST, GL_CLAMP_TO_EDGE };
-	const Descriptor normalDesc = { GL_RGB32F, GL_NEAREST, GL_CLAMP_TO_EDGE };
-	const Descriptor effectsDesc = { GL_RGB8, GL_NEAREST, GL_CLAMP_TO_EDGE };
-	const Descriptor depthDesc = { GL_DEPTH_COMPONENT32F, GL_NEAREST, GL_CLAMP_TO_EDGE };
+	const Descriptor albedoDesc = { GL_RGBA16F, GL_NEAREST_MIPMAP_NEAREST, GL_CLAMP_TO_EDGE };
+	const Descriptor normalDesc = { GL_RGB32F, GL_NEAREST_MIPMAP_NEAREST, GL_CLAMP_TO_EDGE };
+	const Descriptor effectsDesc = { GL_RGB8, GL_NEAREST_MIPMAP_NEAREST, GL_CLAMP_TO_EDGE };
+	const Descriptor depthDesc = { GL_DEPTH_COMPONENT32F, GL_NEAREST_MIPMAP_NEAREST, GL_CLAMP_TO_EDGE };
 	const std::vector<Descriptor> descs = {albedoDesc, normalDesc, effectsDesc, depthDesc};
 	_gbuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderWidth, descs, false));
 	
