@@ -4,7 +4,7 @@
 BoxBlur::BoxBlur(unsigned int width, unsigned int height, bool approximate, const Descriptor & descriptor) : Blur() {
 	
 	Descriptor linearDescriptor = descriptor;
-	linearDescriptor.filtering = GL_LINEAR;
+	linearDescriptor.filtering = GL_LINEAR_MIPMAP_NEAREST;
 	GLenum format, type;
 	const int channels = GLUtilities::getTypeAndFormat(linearDescriptor.typedFormat, type, format);
 	

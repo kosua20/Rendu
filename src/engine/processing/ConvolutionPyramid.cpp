@@ -16,7 +16,7 @@ ConvolutionPyramid::ConvolutionPyramid(unsigned int width, unsigned int height, 
 	_g[0] = _g[1] = _g[2] = 0.0f;
 	
 	// Pre and post process framebuffers.
-	const Descriptor desc = {GL_RGBA32F, GL_NEAREST, GL_CLAMP_TO_EDGE};
+	const Descriptor desc = {GL_RGBA32F, GL_NEAREST_MIPMAP_NEAREST, GL_CLAMP_TO_EDGE};
 	// Output is as the basic required size.
 	_shifted = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, GL_RGBA32F , false));
 	// Resolution of the pyramid takes into account the filter padding.
@@ -135,7 +135,7 @@ void ConvolutionPyramid::resize(unsigned int width, unsigned int height){
 	
 	const int newDepth = std::ceil(std::log2(std::min(_resolution[0], _resolution[1])));
 	// Create a series of framebuffers smaller and smaller.
-	const Descriptor desc = {GL_RGBA32F, GL_NEAREST, GL_CLAMP_TO_EDGE};
+	const Descriptor desc = {GL_RGBA32F, GL_NEAREST_MIPMAP_NEAREST, GL_CLAMP_TO_EDGE};
 	_levelsIn.resize(newDepth);
 	_levelsOut.resize(newDepth);
 	// Initial padded size.

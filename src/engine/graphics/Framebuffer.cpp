@@ -1,6 +1,6 @@
 #include "Framebuffer.hpp"
 
-Framebuffer::Framebuffer(unsigned int width, unsigned int height, const GLenum typedFormat, bool depthBuffer) : Framebuffer(width, height, {Descriptor(typedFormat, GL_LINEAR, GL_CLAMP_TO_EDGE)}, depthBuffer) {
+Framebuffer::Framebuffer(unsigned int width, unsigned int height, const GLenum typedFormat, bool depthBuffer) : Framebuffer(width, height, {Descriptor(typedFormat, GL_LINEAR_MIPMAP_NEAREST, GL_CLAMP_TO_EDGE)}, depthBuffer) {
 	
 }
 
@@ -28,7 +28,7 @@ Framebuffer::Framebuffer(unsigned int width, unsigned int height, const std::vec
 			glGenTextures(1, &_idDepth);
 			glBindTexture(GL_TEXTURE_2D, _idDepth);
 			glTexImage2D(GL_TEXTURE_2D, 0, descriptor.typedFormat, (GLsizei)_width , (GLsizei)_height, 0, format, type, 0);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, (GLint)descriptor.filtering);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GLUtilities::getMagnificationFilter(descriptor.filtering));
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, (GLint)descriptor.filtering);
 			
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, (GLint)descriptor.wrapping);
@@ -53,7 +53,7 @@ Framebuffer::Framebuffer(unsigned int width, unsigned int height, const std::vec
 			glGenTextures(1, &idColor);
 			glBindTexture(GL_TEXTURE_2D, idColor);
 			glTexImage2D(GL_TEXTURE_2D, 0, descriptor.typedFormat, (GLsizei)_width , (GLsizei)_height, 0, format, type, 0);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, (GLint)descriptor.filtering);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GLUtilities::getMagnificationFilter(descriptor.filtering));
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, (GLint)descriptor.filtering);
 		
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, (GLint)descriptor.wrapping);

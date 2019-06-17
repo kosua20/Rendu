@@ -5,10 +5,10 @@ FloodFiller::FloodFiller(unsigned int width, unsigned int height) {
 	
 	_iterations = std::ceil(std::log2(std::max(width, height)));
 	
-	const Descriptor desc = {GL_RG16UI, GL_NEAREST, GL_REPEAT};
+	const Descriptor desc = {GL_RG16UI, GL_NEAREST_MIPMAP_NEAREST, GL_REPEAT};
 	_ping = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, desc, false));
 	_pong = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, desc, false));
-	_final = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, {GL_RGBA8, GL_NEAREST, GL_CLAMP_TO_EDGE}, false));
+	_final = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, {GL_RGBA8, GL_NEAREST_MIPMAP_NEAREST, GL_CLAMP_TO_EDGE}, false));
 	
 	_extract = Resources::manager().getProgram2D("extract-seeds");
 	_floodfill = Resources::manager().getProgram2D("flood-fill");

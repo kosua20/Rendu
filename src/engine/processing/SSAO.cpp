@@ -4,7 +4,7 @@
 SSAO::SSAO(unsigned int width, unsigned int height, float radius) {
 	_radius = radius;
 	_ssaoFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, GL_R8, false));
-	_blurSSAOBuffer = std::unique_ptr<BoxBlur>(new BoxBlur(width, height, true, Descriptor(GL_R8, GL_LINEAR, GL_CLAMP_TO_EDGE)));
+	_blurSSAOBuffer = std::unique_ptr<BoxBlur>(new BoxBlur(width, height, true, Descriptor(GL_R8, GL_LINEAR_MIPMAP_NEAREST, GL_CLAMP_TO_EDGE)));
 	_programSSAO = Resources::manager().getProgram2D("ssao");
 	
 	// Generate samples.
@@ -39,8 +39,8 @@ SSAO::SSAO(unsigned int width, unsigned int height, float radius) {
 	glBindTexture(GL_TEXTURE_2D, _noiseTextureID);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, 5 , 5, 0, GL_RGB, GL_FLOAT, &(noise[0]));
 	// Need nearest filtering and repeat.
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T, GL_REPEAT);
 	

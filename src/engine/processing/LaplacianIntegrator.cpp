@@ -7,7 +7,7 @@ LaplacianIntegrator::LaplacianIntegrator(unsigned int width, unsigned int height
 	_prepare = Resources::manager().getProgram2D("laplacian");
 	_composite = Resources::manager().getProgram2D("passthrough");
 	
-	const Descriptor desc = {GL_RGBA32F, GL_NEAREST, GL_CLAMP_TO_EDGE};
+	const Descriptor desc = {GL_RGBA32F, GL_NEAREST_MIPMAP_NEAREST, GL_CLAMP_TO_EDGE};
 	_preproc = std::unique_ptr<Framebuffer>(new Framebuffer(_pyramid.width(), _pyramid.height(), desc , false));
 	_compo   = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, GL_RGBA8, false));
 	_scale = downscaling;
