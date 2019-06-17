@@ -86,7 +86,7 @@ int _checkGLError(const char *file, int line, const std::string & infos){
 }
 
 Descriptor::Descriptor(){
-	typedFormat = GL_RGB8; filtering = GL_LINEAR; wrapping = GL_CLAMP_TO_EDGE;
+	typedFormat = GL_RGB8; filtering = GL_LINEAR_MIPMAP_LINEAR; wrapping = GL_CLAMP_TO_EDGE;
 }
 
 Descriptor::Descriptor(const GLuint typedFormat_, const GLuint filtering_, const GLuint wrapping_){
@@ -322,9 +322,8 @@ GLuint GLUtilities::createTexture(const GLenum destination, const Descriptor & d
 		glTexParameteri(destination, GL_TEXTURE_MAX_LEVEL, 1000);
 	}
 	// Texture settings.
-	const GLenum minFiltering = descriptor.filtering == GL_LINEAR ? GL_LINEAR_MIPMAP_LINEAR : GL_NEAREST_MIPMAP_NEAREST;
-	glTexParameteri(destination, GL_TEXTURE_MIN_FILTER, minFiltering);
-	glTexParameteri(destination, GL_TEXTURE_MAG_FILTER, descriptor.filtering);
+	glTexParameteri(destination, GL_TEXTURE_MIN_FILTER, descriptor.filtering);
+	glTexParameteri(destination, GL_TEXTURE_MAG_FILTER, GLUtilities::getMagnificationFilter(descriptor.filtering));
 	glTexParameteri(destination, GL_TEXTURE_WRAP_R, descriptor.wrapping);
 	glTexParameteri(destination, GL_TEXTURE_WRAP_S, descriptor.wrapping);
 	glTexParameteri(destination, GL_TEXTURE_WRAP_T, descriptor.wrapping);
@@ -693,6 +692,16 @@ unsigned int GLUtilities::getTypeAndFormat(const GLuint typedFormat, GLuint & ty
 	
 	Log::Error() << Log::OpenGL << "Unable to find type and format (typed format " << typedFormat << ")." << std::endl;
 	return 0;
+}
+
+GLuint GLUtilities::getMagnificationFilter(const GLuint minificationFilter){
+	if(minificationFilter == GL_NEAREST_MIPMAP_NEAREST || minificationFilter == GL_NEAREST_MIPMAP_LINEAR){
+		return GL_NEAREST;
+	}
+	if(minificationFilter == GL_LINEAR_MIPMAP_NEAREST || minificationFilter == GL_LINEAR_MIPMAP_LINEAR){
+		return GL_LINEAR;
+	}
+	return minificationFilter;
 }
 
 void GLUtilities::drawMesh(const MeshInfos & mesh) {

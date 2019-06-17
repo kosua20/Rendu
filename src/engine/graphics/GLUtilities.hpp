@@ -42,7 +42,7 @@ int checkGLFramebufferError();
 struct Descriptor {
 	
 	GLuint typedFormat; ///< The precise typed format.
-	GLuint filtering; ///< Filtering mode.
+	GLuint filtering; ///< Minification filtering mode.
 	GLuint wrapping; ///< Wrapping mode.
 	
 	/** Default constructor. RGB8, linear, clamp. */
@@ -50,7 +50,7 @@ struct Descriptor {
 	
 	/** Constructor.
 	 \param typedFormat_ the precise typed format to use
-	 \param filtering_ the texture filtering (GL_LINEAR,...) to use
+	 \param filtering_ the texture minification filtering (GL_LINEAR_MIPMAP_NEAREST,...) to use
 	 \param wrapping_ the texture wrapping mode (GL_CLAMP_TO_EDGE) to use
 	 */
 	Descriptor(const GLuint typedFormat_, const GLuint filtering_, const GLuint wrapping_);
@@ -180,6 +180,12 @@ public:
 	 */
 	static unsigned int getTypeAndFormat(const GLuint typedFormat, GLuint & type, GLuint & format);
 	
+	/** Obtain the texture magnification filter associated to a minification filter, removing the mipmaping qualifier.
+	 \param minificationFilter the minification filter to convert
+	 \return the magnification filter
+	 */
+	static GLuint getMagnificationFilter(const GLuint minificationFilter);
+	
 	/** Create a GPU texture with a given layout and mip map count.
 	 \param destination the kind of texture to create: 2D, cubemap,...
 	 \param descriptor type and format information
@@ -188,12 +194,15 @@ public:
 	 */
 	static GLuint createTexture(const GLenum destination, const Descriptor & descriptor, const int mipmapCount);
 	
-	/**
-	 Draw indexed geometry.
+	/** Draw indexed geometry.
 	 \param mesh the mesh to draw
 	 */
 	static void drawMesh(const MeshInfos & mesh);
 	
+	/** Bind a series of textures to some texture slots, in order.
+	 \param textures the infos of the textures to bind
+	 \param startingSlot the optional shift of the first binding slot
+	 */
 	static void bindTextures(const std::vector<const TextureInfos*> & textures, int startingSlot = GL_TEXTURE0);
 	
 private:
