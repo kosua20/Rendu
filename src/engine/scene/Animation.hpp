@@ -46,13 +46,17 @@ public:
 	 */
 	Rotation(const glm::vec3 & axis, float speed, Frame frame);
 	
-	/**
-	 \copydoc Animation::apply
+	/** Apply the animation transformation to the input matrix.
+	 \param m the matrix to transform
+	 \param fullTime the time elapsed since the beginning of the rendering loop
+	 \param frameTime the time elapsed since last frame
 	 */
 	glm::mat4 apply(const glm::mat4 & m, double fullTime, double frameTime);
 	
-	/**
-	 \copydoc Animation::apply
+	/** Apply the animation transformation to the input vector.
+	 \param v the vector to transform
+	 \param fullTime the time elapsed since the beginning of the rendering loop
+	 \param frameTime the time elapsed since last frame
 	 */
 	glm::vec4 apply(const glm::vec4 & v, double fullTime, double frameTime);
 	
@@ -77,13 +81,17 @@ public:
 	 */
 	BackAndForth(const glm::vec3 & axis, float speed, float amplitude, Frame frame);
 	
-	/**
-	 \copydoc Animation::apply
+	/** Apply the animation transformation to the input matrix.
+	 \param m the matrix to transform
+	 \param fullTime the time elapsed since the beginning of the rendering loop
+	 \param frameTime the time elapsed since last frame
 	 */
 	glm::mat4 apply(const glm::mat4 & m, double fullTime, double frameTime);
 	
-	/**
-	 \copydoc Animation::apply
+	/** Apply the animation transformation to the input vector.
+	 \param v the vector to transform
+	 \param fullTime the time elapsed since the beginning of the rendering loop
+	 \param frameTime the time elapsed since last frame
 	 */
 	glm::vec4 apply(const glm::vec4 & v, double fullTime, double frameTime);
 	
