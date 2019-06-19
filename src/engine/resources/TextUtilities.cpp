@@ -49,7 +49,6 @@ void TextUtilities::loadFont(std::istream & in, FontInfos & font){
 	}
 }
 
-
 MeshInfos TextUtilities::generateLabel(const std::string & text, const FontInfos & font, const float scale, const Alignment align){
 	Mesh mesh;
 	glm::vec3 currentOrigin(0.0f);
@@ -101,7 +100,6 @@ MeshInfos TextUtilities::generateLabel(const std::string & text, const FontInfos
 	
 }
 
-
 std::string TextUtilities::trim(const std::string & str, const std::string & del){
 	const size_t firstNotDel = str.find_first_not_of(del);
 	if(firstNotDel == std::string::npos){
@@ -121,8 +119,6 @@ std::string TextUtilities::removeExtension(std::string & str){
 	return ext;
 }
 
-
-
 void TextUtilities::replace(std::string & source, const std::string& fromString, const std::string & toString){
 	std::string::size_type nextPos = 0;
 	const size_t fromSize = fromString.size();
@@ -131,4 +127,26 @@ void TextUtilities::replace(std::string & source, const std::string& fromString,
 		source.replace(nextPos, fromSize, toString);
 		nextPos += toSize;
 	}
+}
+
+bool TextUtilities::hasPrefix(const std::string & source, const std::string & prefix){
+	if(prefix.empty() || source.empty()){
+		return false;
+	}
+	if(prefix.size() > source.size()){
+		return false;
+	}
+	const std::string sourcePrefix = source.substr(0, prefix.size());
+	return sourcePrefix == prefix;
+}
+
+bool TextUtilities::hasSuffix(const std::string & source, const std::string & suffix){
+	if(suffix.empty() || source.empty()){
+		return false;
+	}
+	if(suffix.size() > source.size()){
+		return false;
+	}
+	const std::string sourceSuffix = source.substr(source.size() - suffix.size(), suffix.size());
+	return sourceSuffix == suffix;
 }

@@ -73,6 +73,21 @@ public:
 	 \param toString new substring to insert
 	 */
 	static void replace(std::string & source, const std::string& fromString, const std::string & toString);
+	
+	/** Test if a string is a prefix of another string.
+	 \param source the string to examine
+	 \param prefix the prefix string to test
+	 \return true if the prefix is here
+	 */
+	static bool hasPrefix(const std::string & source, const std::string & prefix);
+	
+	/** Test if a string is a suffix of another string.
+	 \param source the string to examine
+	 \param suffix the suffix string to test
+	 \return true if the suffix is here
+	 */
+	static bool hasSuffix(const std::string & source, const std::string & suffix);
+	
 };
 
 #endif 
