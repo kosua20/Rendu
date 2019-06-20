@@ -1,9 +1,12 @@
 #include "DirectionalLight.hpp"
 
 
-DirectionalLight::DirectionalLight(const glm::vec3& worldDirection, const glm::vec3& color, const BoundingBox & sceneBox) : Light(color) {
-	_sceneBox = sceneBox;
-	set(worldDirection);
+DirectionalLight::DirectionalLight() : Light() {
+	_lightDirection = glm::vec3(1.0f, 0.0f, 0.0f);
+}
+
+DirectionalLight::DirectionalLight(const glm::vec3& worldDirection, const glm::vec3& color) : Light(color) {
+	_lightDirection = glm::normalize(worldDirection);
 }
 
 
@@ -90,11 +93,12 @@ void DirectionalLight::update(double fullTime, double frameTime){
 	for(auto & anim : _animations){
 		direction = anim->apply(direction, fullTime, frameTime);
 	}
-	set(glm::vec3(direction));
+	_lightDirection = glm::normalize(glm::vec3(direction));
+	setScene(_sceneBox);
 }
 
-void DirectionalLight::set(const glm::vec3 & newDirection){
-	_lightDirection = glm::normalize(newDirection);
+void DirectionalLight::setScene(const BoundingBox & sceneBox){
+	_sceneBox = sceneBox;
 	const BoundingSphere sceneSphere = _sceneBox.getSphere();
 	const glm::vec3 lightPosition = sceneSphere.center - sceneSphere.radius*1.1f*_lightDirection;
 	const glm::vec3 lightTarget = sceneSphere.center;
@@ -109,11 +113,21 @@ void DirectionalLight::set(const glm::vec3 & newDirection){
 	const float scaleMargin = 1.5f;
 	_projectionMatrix = glm::ortho(scaleMargin*lightSpacebox.minis[0], scaleMargin*lightSpacebox.maxis[0], scaleMargin*lightSpacebox.minis[1], scaleMargin*lightSpacebox.maxis[1], (1.0f/scaleMargin)*near, scaleMargin*far);
 	_mvp = _projectionMatrix * _viewMatrix;
-	
 }
 
 void DirectionalLight::clean() const {
 	_blur->clean();
 	_shadowPass->clean();
+}
+
+void DirectionalLight::decode(const std::vector<KeyValues> & params){
+	Light::decode(params);
+	glm::vec3 worldDirection(0.0f);
+	for(const auto & param : params){
+		if(param.key == "direction"){
+			worldDirection = Codable::decodeVec3(param);
+		}
+	}
+	_lightDirection = glm::normalize(worldDirection);
 }
 

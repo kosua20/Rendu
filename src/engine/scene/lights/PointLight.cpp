@@ -2,22 +2,14 @@
 #include "Common.hpp"
 
 
-PointLight::PointLight(const glm::vec3& worldPosition, const glm::vec3& color, float radius, const BoundingBox & sceneBox) : Light(color) {
+PointLight::PointLight(): Light() {
+	_radius = 1.0f;
+	_lightPosition = glm::vec3(0.0f);
+}
+
+PointLight::PointLight(const glm::vec3& worldPosition, const glm::vec3& color, float radius) : Light(color) {
 	_radius = radius;
-	_sceneBox = sceneBox;
-	
-	_views.resize(6);
-	_mvps.resize(6);
-	// Create the constant view matrices for the 6 faces.
-	const glm::vec3 ups[6] = { glm::vec3(0.0,-1.0,0.0), glm::vec3(0.0,-1.0,0.0), glm::vec3(0.0,0.0,1.0), glm::vec3(0.0,0.0,-1.0), glm::vec3(0.0,-1.0,0.0), glm::vec3(0.0,-1.0,0.0) };
-	const glm::vec3 centers[6] = { glm::vec3(1.0,0.0,0.0), glm::vec3(-1.0,0.0,0.0), glm::vec3(0.0,1.0,0.0), glm::vec3(0.0,-1.0,0.0) , glm::vec3(0.0,0.0,1.0), glm::vec3(0.0,0.0,-1.0)};
-	for(size_t mid = 0; mid < 6; ++mid){
-		const glm::mat4 view = glm::lookAt(glm::vec3(0.0f), centers[mid], ups[mid]);
-		_views[mid] = view;
-	}
-	
-	set(worldPosition);
-	
+	_lightPosition = worldPosition;
 }
 
 void PointLight::init(const std::vector<GLuint>& textureIds){
@@ -135,11 +127,12 @@ void PointLight::update(double fullTime, double frameTime){
 	for(auto & anim : _animations){
 		position = anim->apply(position, fullTime, frameTime);
 	}
-	set(glm::vec3(position));
+	_lightPosition = glm::vec3(position);
+	setScene(_sceneBox);
 }
 
-void PointLight::set(const glm::vec3 & newPosition){
-	_lightPosition = newPosition;
+void PointLight::setScene(const BoundingBox & sceneBox){
+	_sceneBox = sceneBox;
 	
 	const glm::mat4 model = glm::translate(glm::mat4(1.0f), -_lightPosition);
 	// Compute the projection matrix based on the scene bounding box.
@@ -164,10 +157,31 @@ void PointLight::set(const glm::vec3 & newPosition){
 	_farPlane = scaleMargin*far;
 	const glm::mat4 projection = glm::perspective(float(M_PI/2.0), 1.0f, (1.0f/scaleMargin)*near, _farPlane);
 	
+	// Create the constant view matrices for the 6 faces.
+	const glm::vec3 ups[6] = { glm::vec3(0.0,-1.0,0.0), glm::vec3(0.0,-1.0,0.0), glm::vec3(0.0,0.0,1.0), glm::vec3(0.0,0.0,-1.0), glm::vec3(0.0,-1.0,0.0), glm::vec3(0.0,-1.0,0.0) };
+	const glm::vec3 centers[6] = { glm::vec3(1.0,0.0,0.0), glm::vec3(-1.0,0.0,0.0), glm::vec3(0.0,1.0,0.0), glm::vec3(0.0,-1.0,0.0) , glm::vec3(0.0,0.0,1.0), glm::vec3(0.0,0.0,-1.0)};
+	
 	// Udpate the mvps.
+	_mvps.resize(6);
 	for(size_t mid = 0; mid < 6; ++mid){
-		_mvps[mid] = projection * _views[mid] * model;
+		const glm::mat4 view = glm::lookAt(glm::vec3(0.0f), centers[mid], ups[mid]);
+		_mvps[mid] = projection * view * model;
 	}
+}
+
+void PointLight::decode(const std::vector<KeyValues> & params){
+	Light::decode(params);
+	glm::vec3 worldPosition(0.0f);
+	float radius = 1.0f;
+	for(const auto & param : params){
+		if(param.key == "position"){
+			worldPosition = Codable::decodeVec3(param);
+		} else if(param.key == "radius" && !param.values.empty()){
+			radius = std::stof(param.values[0]);
+		}
+	}
+	_lightPosition = glm::normalize(worldPosition);
+	_radius = radius;
 }
 
 void PointLight::clean() const {

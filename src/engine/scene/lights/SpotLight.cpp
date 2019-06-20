@@ -2,15 +2,23 @@
 
 #include "helpers/InterfaceUtilities.hpp"
 
-SpotLight::SpotLight(const glm::vec3& worldPosition, const glm::vec3& worldDirection, const glm::vec3& color, const float innerAngle, const float outerAngle, const float radius, const BoundingBox & sceneBox) : Light(color) {
+
+SpotLight::SpotLight() : Light() {
+	_innerHalfAngle = M_PI/4.0f;
+	_outerHalfAngle = M_PI/2.0f;
+	_radius = 1.0f;
+	
+	_lightPosition = glm::vec3(0.0f);
+	_lightDirection = glm::vec3(1.0f, 0.0f, 0.0f);
+}
+
+SpotLight::SpotLight(const glm::vec3& worldPosition, const glm::vec3& worldDirection, const glm::vec3& color, const float innerAngle, const float outerAngle, const float radius) : Light(color) {
 	
 	_innerHalfAngle = 0.5f*innerAngle;
 	_outerHalfAngle = 0.5f*outerAngle;
 	_radius = radius;
-	_sceneBox = sceneBox;
-	
-	set(worldPosition, worldDirection);
-
+	_lightPosition = worldPosition;
+	_lightDirection = glm::normalize(worldDirection);
 }
 
 
@@ -126,12 +134,12 @@ void SpotLight::update(double fullTime, double frameTime){
 	for(auto & anim : _animations){
 		position = anim->apply(position, fullTime, frameTime);
 	}
-	set(glm::vec3(position), _lightDirection);
+	_lightPosition = glm::vec3(position);
+	setScene(_sceneBox);
 }
 
-void SpotLight::set(const glm::vec3 & newPosition, const glm::vec3 & newDirection){
-	_lightPosition = newPosition;
-	_lightDirection = glm::normalize(newDirection);
+void SpotLight::setScene(const BoundingBox & sceneBox){
+	_sceneBox = sceneBox;
 	_viewMatrix = glm::lookAt(_lightPosition, _lightPosition+_lightDirection, glm::vec3(0.0f,1.0f,0.0f));
 	// Compute the projection matrix, automatically finding the near and far.
 	const BoundingBox lightSpacebox = _sceneBox.transformed(_viewMatrix);
@@ -143,6 +151,29 @@ void SpotLight::set(const glm::vec3 & newPosition, const glm::vec3 & newDirectio
 	_projectionMatrix = glm::perspective(2.0f*_outerHalfAngle, 1.0f, (1.0f/scaleMargin)*near, scaleMargin*far);
 	_mvp = _projectionMatrix * _viewMatrix;
 }
+
+void SpotLight::decode(const std::vector<KeyValues> & params){
+	Light::decode(params);
+	glm::vec3 worldDirection(0.0f);
+	glm::vec3 worldPosition(0.0f);
+	for(const auto & param : params){
+		if(param.key == "direction"){
+			worldDirection = Codable::decodeVec3(param);
+		} else if(param.key == "position"){
+			worldPosition = Codable::decodeVec3(param);
+		} else if(param.key == "cone" && param.values.size() >= 3){
+			const float innerAngle = std::stof(param.values[0]);
+			const float outerAngle = std::stof(param.values[1]);
+			const float radius = std::stof(param.values[2]);
+			_innerHalfAngle = 0.5f*innerAngle;
+			_outerHalfAngle = 0.5f*outerAngle;
+			_radius = radius;
+		}
+	}
+	_lightPosition = worldPosition;
+	_lightDirection = glm::normalize(worldDirection);
+}
+
 
 void SpotLight::clean() const {
 	_blur->clean();

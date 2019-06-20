@@ -11,6 +11,9 @@ class Light {
 
 public:
 	
+	/** Default constructor. */
+	Light();
+	
 	/** Constructor
 	 \param color the light color intensity
 	 */
@@ -33,12 +36,17 @@ public:
 	
 protected:
 	
+	void decode(const std::vector<KeyValues> & params);
+	
 	glm::mat4 _mvp; ///< MVP matrix for shadow casting.
 	glm::vec3 _color; ///< Colored intensity.
 	bool _castShadows; ///< Is the light casting shadows (and thus use a shadow map).
 	std::vector<std::shared_ptr<Animation>> _animations; ///< Animations list (will be applied in order).
 };
 
+inline Light::Light(){
+	
+}
 
 inline Light::Light(const glm::vec3& color){
 	_castShadows = false;
@@ -48,6 +56,34 @@ inline Light::Light(const glm::vec3& color){
 
 inline void Light::addAnimation(std::shared_ptr<Animation> anim){
 	_animations.push_back(anim);
+}
+
+inline void Light::decode(const std::vector<KeyValues> & params){
+	for(int pid = 0; pid < params.size();){
+		const auto & param = params[pid];
+		if(param.key == "intensity"){
+			_color = Codable::decodeVec3(param);
+			
+		} else if(param.key == "shadows" && !param.values.empty()){
+			const std::string shadowString = param.values[0];
+			_castShadows = (shadowString == "true");
+			
+		} else if(param.key == "animations"){
+			// Move to the next parameter.
+			++pid;
+			while(pid < params.size()){
+				const std::shared_ptr<Animation> anim = Animation::decode(params[pid]);
+				if(anim == nullptr) {
+					// In this case, decrement pid again, this is something else.
+					--pid;
+					break;
+				}
+				addAnimation(anim);
+				++pid;
+			}
+		}
+		++pid;
+	}
 }
 
 

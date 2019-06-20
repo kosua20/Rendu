@@ -15,13 +15,15 @@ class PointLight : public Light {
 
 public:
 	
+	PointLight();
+	
 	/** Constructor.
 	 \param worldPosition the light position in world space
 	 \param color the colored intensity of the light
 	 \param radius the distance at which the light is completely attenuated
 	 \param sceneBox the scene bounding box, for shadow map projection setup
 	 */
-	PointLight(const glm::vec3& worldPosition, const glm::vec3& color, float radius, const BoundingBox & sceneBox);
+	PointLight(const glm::vec3& worldPosition, const glm::vec3& color, float radius);
 	
 	/** Perform initialization against the graphics API and register textures for deferred rendering.
 	 \param textureIds the IDs of the albedo, normal, depth and effects G-buffer textures
@@ -55,18 +57,20 @@ public:
 	/** Clean internal resources. */
 	void clean() const;
 	
-private:
+	void decode(const std::vector<KeyValues> & params);
 	
 	/** Update the light position. All internal parameters are updated.
 	 \param newPosition the new light position
 	 */
-	void set(const glm::vec3 & newPosition);
+	void setScene(const BoundingBox & sceneBox);
+	
+private:
+	
 	
 	std::unique_ptr<FramebufferCube> _shadowFramebuffer;///< The shadow cubemap framebuffer.
 	BoundingBox _sceneBox; ///< The scene bounding box, to fit the shadow map.
 	
 	std::vector<glm::mat4> _mvps; ///< Light mvp matrices for each face.
-	std::vector<glm::mat4> _views; ///< Light view matrices for each face.
 	glm::vec3 _lightPosition; ///< Light position.
 	float _radius; ///< The attenuation radius.
 	float _farPlane; ///< The projection matrices far plane.
