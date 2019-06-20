@@ -1,0 +1,89 @@
+object: #suzanne
+	type: PBRRegular
+	mesh: suzanne
+	translation: 0.2,0.0,0.0
+	#orientation
+	scaling: 0.25
+	textures:
+		srgb: suzanne_texture_color
+		rgb: suzanne_texture_normal
+		rgb: suzanne_texture_rough_met_ao
+	animations:
+		rotation: 1.0 model 0.0,1.0,0.0 
+	shadows: true
+
+object: #dragon
+	type: PBRRegular
+	mesh: dragon
+	translation: -0.1,-0.05,-0.25
+	scaling: 0.5
+	textures:
+		srgb: dragon_texture_color
+		rgb: dragon_texture_normal
+		rgb: dragon_texture_rough_met_ao 
+	shadows: true
+
+object: #plane
+	type: PBRParallax
+	mesh: groundplane
+	translation: 0.0,-0.35,-0.5
+	scaling: 2.0
+	textures:
+		srgb: groundplane_texture_color 
+		rgb: groundplane_texture_normal 
+		rgb: groundplane_texture_rough_met_ao 
+		rgb: groundplane_texture_depth 
+	shadows: false
+
+background:
+	type: cubemap #implies skybox mesh
+	texture: rgb32cube: corsica_beach_cube
+
+scene:
+	probe: rgb32cube: corsica_beach_cube
+	irradiance: corsica_beach_cube_shcoeffs
+
+
+	directional:
+		direction: -2.0,-1.5,0.0
+		intensity: 1.0,1.0,0.92
+		shadows: true
+		animations:
+			backandforth: 0.75 world 0.0,1.0,0.0 1.0
+		
+	spot:
+		position: 1.1,2.0,1.1
+		direction: -1.0,-1.0,-1.0
+		intensity: 0.0,10.0,10.0
+		cone: 0.5 0.6 5.0
+		shadows: true
+		animations:
+			backandforth: 0.5 world 1.0,0.0,1.0 2.0
+	point:
+		position: -1.0,-0.1,-1.0
+		intensity: 4.0,0.0,0.0
+		radius: 1.2
+		shadows: false
+		animations:
+			rotation: 0.8 world 0.0,1.0,0.0
+	point:
+		position: 1.0,-0.1,-1.0
+		intensity: 0.0,4.0,0.0
+		radius: 1.2
+		shadows: false
+		animations:
+			rotation: 0.8 world 0.0,1.0,0.0
+	point:
+		position: -1.0,-0.1,1.0
+		intensity: 0.0,0.0,4.0
+		radius: 1.2
+		shadows: false
+		animations:
+			rotation: 0.8 world 0.0,1.0,0.0
+	point:
+		position: 1.0,-0.1,1.0
+		intensity: 4.0,4.0,0.0
+		radius: 1.2
+		shadows: false
+		animations:
+			rotation: 0.8 world 0.0,1.0,0.0

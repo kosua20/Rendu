@@ -1,0 +1,45 @@
+#test
+  # test
+object: #sphere1
+	type: PBRRegular
+	mesh: sphere
+	translation: 1.2,0.0,0.0
+	scaling: 1.0
+	textures:
+		srgb: sphere_wood_lacquered_albedo
+		rgb: sphere_wood_lacquered_normal
+		rgb: sphere_wood_lacquered_rough_met_ao
+	animations:
+		rotation: 0.2 model 0.0,1.0,0.0
+	shadows: true
+
+object: #sphere2
+	type: PBRRegular
+	mesh: sphere
+	translation: -1.2,0.0,0.0
+	scaling: 1.0
+	textures:
+		srgb: sphere_gold_worn_albedo
+		rgb: sphere_gold_worn_normal
+		rgb: sphere_gold_worn_rough_met_ao 
+	shadows: true
+
+background:
+	type: cubemap
+	texture: rgb32cube: studio
+
+scene:
+	probe: rgb32cube: studio
+	irradiance: studio_shcoeffs
+
+
+	point:
+		position: 0.5,-0.1,0.5
+		intensity: 1.2,4.8,7.2
+		shadows: false
+		radius: 0.9
+point:
+		position: -0.5,-0.1,0.5
+		intensity: 12.6,1.8,3.6
+		shadows: false
+		radius: 0.9

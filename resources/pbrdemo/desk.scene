@@ -1,0 +1,80 @@
+scene:
+	translation: 0.0,0.0,-2.0
+	scale: 0.5
+	probe: rgb32cube: small_apartment
+	irradiance: small_apartment_shcoeffs
+
+object:
+	type: PBRRegular
+	mesh: candle
+	textures:
+		srgb: candle_albedo
+		rgb: candle_normal
+		rgb: candle_rough_met_ao
+	shadows: true
+
+object:
+	type: PBRRegular
+	mesh: desk
+	textures:
+		srgb: desk_albedo
+		rgb: desk_normal
+		rgb: desk_rough_met_ao
+	shadows: true
+
+object:
+	type: PBRRegular
+	mesh: hammer
+	textures:
+		srgb: hammer_albedo
+		rgb: hammer_normal
+		rgb: hammer_rough_met_ao
+	shadows: true
+
+object:
+	type: PBRRegular
+	mesh: lighter
+	textures:
+		srgb: lighter_albedo
+		rgb: lighter_normal
+		rgb: lighter_rough_met_ao
+	shadows: true
+
+object:
+	type: PBRRegular
+	mesh: rock
+	textures:
+		srgb: rock_albedo
+		rgb: rock_normal
+		rgb: rock_rough_met_ao
+	shadows: true
+
+object:
+	type: PBRRegular
+	mesh: screwdriver
+	textures:
+		srgb: screwdriver_albedo
+		rgb: screwdriver_normal
+		rgb: screwdriver_rough_met_ao
+	shadows: true
+
+object:
+	type: PBRRegular
+	mesh: spyglass
+	textures:
+		srgb: spyglass_albedo
+		rgb: spyglass_normal
+		rgb: spyglass_rough_met_ao
+	shadows: true
+
+point:
+	position: 0.09,0.52,-0.36
+	intensity: 3.0,2.0,0.2
+	radius: 3.0
+	shadows: true
+
+background:
+	type: cubemap
+	texture: rgb32cube: small_apartment
+
+	
