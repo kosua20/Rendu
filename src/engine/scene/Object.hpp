@@ -1,10 +1,9 @@
 #pragma once
 
+#include "scene/Codable.hpp"
 #include "scene/Animation.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "Common.hpp"
-
-
 
 /**
  \brief Represent a 3D textured object.
@@ -85,12 +84,14 @@ public:
 	 */
 	bool castsShadow() const { return _castShadow; }
 	
+	void decode(const std::vector<KeyValues>& params);
+	
 private:
 	
 	const MeshInfos * _mesh; ///< Geometry of the object.
 	std::vector<const TextureInfos *> _textures; ///< Textures used by the object.
-	glm::mat4 _model; ///< The transformation matrix of the 3D model.
-	Type _material; ///< The material type.
-	bool _castShadow; ///< Can the object casts shadows.
 	std::vector<std::shared_ptr<Animation>> _animations; ///< Animations list (applied in order).
+	glm::mat4 _model = glm::mat4(1.0f); ///< The transformation matrix of the 3D model.
+	Type _material = Type::Common; ///< The material type.
+	bool _castShadow = true; ///< Can the object casts shadows.
 };
