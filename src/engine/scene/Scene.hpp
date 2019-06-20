@@ -1,12 +1,13 @@
-#ifndef Scene_h
-#define Scene_h
-
-#include "Object.hpp"
-#include "lights/DirectionalLight.hpp"
-#include "lights/PointLight.hpp"
-#include "lights/SpotLight.hpp"
+#pragma once
+#include "scene/Codable.hpp"
+#include "scene/Object.hpp"
+#include "scene/lights/DirectionalLight.hpp"
+#include "scene/lights/PointLight.hpp"
+#include "scene/lights/SpotLight.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "Common.hpp"
+
+
 
 /**
  \brief Represents a 3D environment composed of objects, a background and additional environment lighting informations.
@@ -17,11 +18,11 @@ class Scene {
 public:
 
 	/** Constructor */
-	Scene();
+	Scene(const std::string & name);
 	
 	/** Performs initialization against the graphics API.
 	 */
-	virtual void init() = 0;
+	void init();
 	
 	/** Update the animations in the scene.
 	 \param fullTime the time elapsed since the beginning of the render loop
@@ -45,6 +46,20 @@ public:
 	
 protected:
 	
+	
+	std::vector<KeyValues> parse(const std::string & sceneFile);
+	
+	void loadObject(const std::vector<KeyValues> & params);
+	
+	void loadPointLight(const std::vector<KeyValues> & params);
+	
+	void loadDirectionalLight(const std::vector<KeyValues> & params);
+	
+	void loadSpotLight(const std::vector<KeyValues> & params);
+	
+	void loadBackground(const std::vector<KeyValues> & params);
+		
+		
 	/** Load a file containing some SH coefficients approximating background irradiance.
 	 \param name the name of the text file
 	 \see SphericalHarmonics
@@ -58,6 +73,6 @@ protected:
 	BoundingBox computeBoundingBox(bool onlyShadowCasters = false);
 	
 	bool _loaded = false; ///< Has the scene already been loaded from disk.
-
+	
+	std::string _name;
 };
-#endif
