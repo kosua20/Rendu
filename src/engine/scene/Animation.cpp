@@ -1,5 +1,31 @@
 #include "Animation.hpp"
 
+
+void Animation::decodeBase(const KeyValues & params){
+	if(params.values.size() >= 2){
+		const float speed  = std::stof(params.values[0]);
+		const Animation::Frame frame = (params.values[1] == "model" ? Animation::Frame::MODEL : Animation::Frame::WORLD);
+		_speed = speed;
+		_frame = frame;
+	}
+}
+
+std::shared_ptr<Animation> Animation::decode(const KeyValues & params){
+	if(params.key == "rotation"){
+		auto anim = std::shared_ptr<Rotation>(new Rotation());
+		anim->decode(params);
+		return anim;
+	} else if(params.key == "backandforth"){
+		auto anim = std::shared_ptr<BackAndForth>(new BackAndForth());
+		anim->decode(params);
+		return anim;
+	}
+	return std::shared_ptr<Animation>();
+}
+
+Rotation::Rotation(){
+}
+
 Rotation::Rotation(const glm::vec3 & axis, float speed, Frame frame){
 	_axis = glm::normalize(axis);
 	_speed = speed;
@@ -14,6 +40,16 @@ glm::mat4 Rotation::apply(const glm::mat4 & m, double fullTime, double frameTime
 glm::vec4 Rotation::apply(const glm::vec4 & v, double fullTime, double frameTime){
 	const glm::mat4 r = glm::rotate(glm::mat4(1.0f), _speed*float(frameTime), _axis);
 	return r*v;
+}
+
+void Rotation::decode(const KeyValues & params){
+	Animation::decodeBase(params);
+	_axis = Codable::decodeVec3(params, 2);
+	_axis = glm::normalize(_axis);
+}
+
+BackAndForth::BackAndForth(){
+	
 }
 
 BackAndForth::BackAndForth(const glm::vec3 & axis, float speed, float amplitude, Frame frame){
@@ -39,6 +75,14 @@ glm::vec4 BackAndForth::apply(const glm::vec4 & v, double fullTime, double frame
 	_previousAbscisse = currentAbscisse;
 	
 	const glm::vec3 trans = delta * _amplitude * _axis;
-	
 	return v + glm::vec4(trans, 0.0f);
+}
+
+void BackAndForth::decode(const KeyValues & params){
+	Animation::decodeBase(params);
+	_axis = Codable::decodeVec3(params, 2);
+	_axis = glm::normalize(_axis);
+	if(params.values.size() >= 6){
+		_amplitude = std::stof(params.values[5]);
+	}
 }

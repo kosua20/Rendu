@@ -1,4 +1,6 @@
 #pragma once
+
+#include "scene/Codable.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "Common.hpp"
 
@@ -31,6 +33,14 @@ public:
 	/** Virtual destructor. */
 	virtual ~Animation(){};
 	
+	static std::shared_ptr<Animation> decode(const KeyValues & params);
+	
+protected:
+	
+	void decodeBase(const KeyValues & params);
+	
+	Frame _frame = Frame::WORLD; ///< The frame of transformation.
+	float _speed = 0.0f; ///< Speed of the animation.
 };
 
 /** \brief Rotate an object around an axis.
@@ -38,6 +48,9 @@ public:
  */
 class Rotation : public Animation {
 public:
+	
+	/** Default constructor. */
+	Rotation();
 	
 	/** Setup a rotation animation.
 	 \param axis the rotation axis
@@ -60,11 +73,11 @@ public:
 	 */
 	glm::vec4 apply(const glm::vec4 & v, double fullTime, double frameTime);
 	
+	void decode(const KeyValues & params);
+	
 private:
 	
 	glm::vec3 _axis = glm::vec3(1.0f, 0.0f, 0.0f); ///< Rotation axis.
-	float _speed = 0.0f; ///< Speed of the animation.
-	Frame _frame = Frame::WORLD; ///< The frame of transformation.
 };
 
 /** \brief Translate an object back and forth along a direction.
@@ -72,6 +85,9 @@ private:
  */
 class BackAndForth : public Animation {
 public:
+	
+	/** Default constructor. */
+	BackAndForth();
 	
 	/** Setup a back and forth animation.
 	 \param axis the translation direction
@@ -95,11 +111,11 @@ public:
 	 */
 	glm::vec4 apply(const glm::vec4 & v, double fullTime, double frameTime);
 	
+	void decode(const KeyValues & params);
+	
 private:
 	
 	glm::vec3 _axis = glm::vec3(1.0f, 0.0f, 0.0f); ///< Translation direction.
-	float _speed = 0.0f; ///< Speed of the animation.
 	float _amplitude = 0.0f; ///< Amplitude of the translation (maximum distance).
-	Frame _frame = Frame::WORLD; ///< The frame of transformation.
 	float _previousAbscisse = 0.0f; ///< Position on the path at the previous frame.
 };
