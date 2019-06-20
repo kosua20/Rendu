@@ -51,9 +51,9 @@ int main(int argc, char** argv) {
 	const double dt = 1.0/120.0; // Small physics timestep.
 	
 	std::vector<std::shared_ptr<Scene>> scenes;
-	scenes.emplace_back(new DragonScene());
-	scenes.emplace_back(new SphereScene());
-	scenes.emplace_back(new DeskScene());
+	scenes.emplace_back(new Scene("dragon.scene"));
+	scenes.emplace_back(new Scene("spheres.scene"));
+	scenes.emplace_back(new Scene("desk.scene"));
 	char const * sceneNames[] = {"Dragon", "Spheres", "Desk", "None"};
 	// Load the first scene by default.
 	int selected_scene = 0;
