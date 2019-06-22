@@ -10,6 +10,21 @@
 
 #include "Common.hpp"
 
+/** \brief Represent a key-values tuple.
+  	\ingroup Engine
+ */
+struct KeyValues {
+	
+	std::string key; ///< The key.
+	std::vector<std::string> values; ///< A vector of values.
+	
+	/** Constructor from a key.
+	 \param aKey the key of the new tuple
+	 */
+	KeyValues(const std::string & aKey);
+};
+
+
 /**
  \brief Contains configurable elements as attributes, populated from the command line, a configuration file or default values.
  \ingroup Engine
@@ -27,21 +42,21 @@ private:
 	/**
 	 Helper to extract (key, [values]) from a configuration file on disk.
 	 \param filePath the path to the configuration file.
-	 \param arguments a dictionary that will be populated with (key, [values]).
+	 \param arguments a vector will be populated with (key, [values]) tuples.
 	 */
-	static void parseFromFile(const std::string & filePath, std::map<std::string, std::vector<std::string>>& arguments);
+	static void parseFromFile(const std::string & filePath, std::vector<KeyValues>& arguments);
 	
 	/**
 	 Helper to extract (key, [values]) from the given command-line arguments.
 	 \param argv the raw input arguments
-	 \param arguments a dictionary that will be populated with (key, [values]).
+	 \param arguments  a vector will be populated with (key, [values]) tuples.
 	 */
-	static void parseFromArgs(const std::vector<std::string> & argv, std::map<std::string, std::vector<std::string>> & arguments);
+	static void parseFromArgs(const std::vector<std::string> & argv, std::vector<KeyValues> & arguments);
 
 protected:
 	
 	/// Store the internal parsed (keys, [values]) extracted from a file or the command-line.
-	std::map<std::string, std::vector<std::string>> _rawArguments;
+	std::vector<KeyValues> _rawArguments;
 };
 
 

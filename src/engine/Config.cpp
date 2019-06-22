@@ -10,6 +10,11 @@
 
 #include <sstream>
 
+
+KeyValues::KeyValues(const std::string & aKey){
+	key = aKey;
+}
+
 Config::Config(const std::vector<std::string> & argv){
 	
 	if(argv.size() < 2){
@@ -37,13 +42,10 @@ Config::Config(const std::vector<std::string> & argv){
 	bool logVerbose = false;
 	
 	for(const auto & arg : _rawArguments){
-		const std::string key = arg.first;
-		const std::vector<std::string> & values = arg.second;
-		
-		if(key == "verbose"){
+		if(arg.key == "verbose"){
 			logVerbose = true;
-		} else if(key == "log-path"){
-			logPath = values[0];
+		} else if(arg.key == "log-path" && !arg.values.empty()){
+			logPath = arg.values[0];
 		}
 	}
 	
@@ -55,7 +57,7 @@ Config::Config(const std::vector<std::string> & argv){
 }
 
 
-void Config::parseFromFile(const std::string & filePath, std::map<std::string, std::vector<std::string>> & arguments){
+void Config::parseFromFile(const std::string & filePath, std::vector<KeyValues> & arguments){
 	// Load config from given file.
 	const std::string configContent = Resources::loadStringFromExternalFile(filePath);
 	if(configContent.empty()){
@@ -95,13 +97,14 @@ void Config::parseFromFile(const std::string & filePath, std::map<std::string, s
 			
 		}
 		if(!firstArg.empty()) {
-			arguments[firstArg] = values;
+			arguments.emplace_back(firstArg);
+			arguments.back().values = values;
 		}
 	}
 }
 
 
-void Config::parseFromArgs(const std::vector<std::string> & argv, std::map<std::string, std::vector<std::string>> & arguments){
+void Config::parseFromArgs(const std::vector<std::string> & argv, std::vector<KeyValues> & arguments){
 	for(size_t argi = 1; argi < argv.size(); ){
 		// Clean the argument from any -
 		const std::string firstArg = TextUtilities::trim(argv[argi], "-");
@@ -115,7 +118,8 @@ void Config::parseFromArgs(const std::vector<std::string> & argv, std::map<std::
 			values.emplace_back(argv[argi]);
 			++argi;
 		}
-		arguments[firstArg] = values;
+		arguments.emplace_back(firstArg);
+		arguments.back().values = values;
 
 	}
 }
@@ -128,18 +132,18 @@ RenderingConfig::RenderingConfig(const std::vector<std::string> & argv) : Config
 void RenderingConfig::processArguments(){
 	
 	for(const auto & arg : _rawArguments){
-		const std::string key = arg.first;
-		const std::vector<std::string> & values = arg.second;
+		const std::string key = arg.key;
+		const std::vector<std::string> & values = arg.values;
 		
-		if(key == "novsync" || key == "no-vsync"){
+		if(arg.key == "novsync" || key == "no-vsync"){
 			vsync = false;
 		} else if(key == "half-rate"){
 			rate = 30;
 		} else if(key == "fullscreen"){
 			fullscreen = true;
-		} else if(key == "internal-res" || key == "ivr"){
+		} else if((key == "internal-res" || key == "ivr") && !values.empty()){
 			internalVerticalResolution = std::stoi(values[0]);
-		} else if(key == "wxh"){
+		} else if(key == "wxh" && values.size() >= 2){
 			const unsigned int w = (unsigned int)std::stoi(values[0]);
 			const unsigned int h = (unsigned int)std::stoi(values[1]);
 			initialWidth = w;

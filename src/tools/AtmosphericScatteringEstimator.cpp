@@ -21,14 +21,14 @@ public:
 	void processArguments(){
 		
 		for(const auto & arg : _rawArguments){
-			const std::string key = arg.first;
-			const std::vector<std::string> & values = arg.second;
+			const std::string key = arg.key;
+			const std::vector<std::string> & values = arg.values;
 			
-			if(key == "output-path"){
+			if(key == "output-path" && !values.empty()){
 				outputPath = values[0];
-			} else if(key == "samples"){
+			} else if(key == "samples" && !values.empty()){
 				samples = std::stoi(values[0]);
-			}  else if(key == "resolution"){
+			}  else if(key == "resolution" && !values.empty()){
 				resolution = std::stoi(values[0]);
 			}
 		}
