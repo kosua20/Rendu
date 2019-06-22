@@ -14,10 +14,9 @@ void Object::decode(const std::vector<KeyValues> & params){
 	/// \todo Find a way to easily expand types list.
 #define REGISTER_TYPE(type) {#type, Type::type}
 	const std::map<std::string, Object::Type> types = {
+		REGISTER_TYPE(Common),
 		REGISTER_TYPE(PBRRegular),
-		REGISTER_TYPE(PBRParallax),
-		REGISTER_TYPE(Skybox),
-		REGISTER_TYPE(Common)
+		REGISTER_TYPE(PBRParallax)
 	};
 #undef REGISTER_TYPE
 	

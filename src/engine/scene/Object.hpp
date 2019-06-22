@@ -15,10 +15,9 @@ public:
 
 	/// \brief Type of shading/effects.
 	enum Type : int {
-		Skybox = 0, ///< \see GLSL::Vert::Skybox_gbuffer, GLSL::Frag::Skybox_gbuffer
-		PBRRegular = 1, ///< \see GLSL::Vert::Object_gbuffer, GLSL::Frag::Object_gbuffer
-		PBRParallax = 2, ///< \see GLSL::Vert::Parallax_gbuffer, GLSL::Frag::Parallax_gbuffer
-		Common = 3
+		Common = 0, ///< Any type of shading.
+		PBRRegular, ///< PBR shading. \see GLSL::Vert::Object_gbuffer, GLSL::Frag::Object_gbuffer
+		PBRParallax ///< PBR with parallax mapping. \see GLSL::Vert::Parallax_gbuffer, GLSL::Frag::Parallax_gbuffer
 	};
 
 	/** Constructor */
