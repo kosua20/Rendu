@@ -2,7 +2,6 @@ object: #suzanne
 	type: PBRRegular
 	mesh: suzanne
 	translation: 0.2,0.0,0.0
-	#orientation
 	scaling: 0.25
 	textures:
 		srgb: suzanne_texture_color
@@ -36,7 +35,6 @@ object: #plane
 	shadows: false
 
 background:
-	type: cubemap #implies skybox mesh
 	texture: rgb32cube: corsica_beach_cube
 
 scene:
@@ -54,36 +52,37 @@ scene:
 	spot:
 		position: 1.1,2.0,1.1
 		direction: -1.0,-1.0,-1.0
-		intensity: 0.0,10.0,10.0
-		cone: 0.5 0.6 5.0
+		radius: 5.0
+		cone: 0.5 0.6
 		shadows: true
 		animations:
 			backandforth: 0.5 world 1.0,0.0,1.0 2.0
+		intensity: 0.0,10.0,10.0
 	point:
 		position: -1.0,-0.1,-1.0
 		intensity: 4.0,0.0,0.0
-		radius: 1.2
+		radius: 3.0
 		shadows: false
 		animations:
 			rotation: 0.8 world 0.0,1.0,0.0
 	point:
 		position: 1.0,-0.1,-1.0
 		intensity: 0.0,4.0,0.0
-		radius: 1.2
+		radius: 3.0
 		shadows: false
 		animations:
 			rotation: 0.8 world 0.0,1.0,0.0
 	point:
 		position: -1.0,-0.1,1.0
 		intensity: 0.0,0.0,4.0
-		radius: 1.2
+		radius: 3.0
 		shadows: false
 		animations:
 			rotation: 0.8 world 0.0,1.0,0.0
 	point:
 		position: 1.0,-0.1,1.0
 		intensity: 4.0,4.0,0.0
-		radius: 1.2
+		radius: 3.0
 		shadows: false
 		animations:
 			rotation: 0.8 world 0.0,1.0,0.0

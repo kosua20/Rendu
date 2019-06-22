@@ -4,7 +4,7 @@ object: #sphere1
 	type: PBRRegular
 	mesh: sphere
 	translation: 1.2,0.0,0.0
-	scaling: 1.0
+	scaling: 0.9
 	textures:
 		srgb: sphere_wood_lacquered_albedo
 		rgb: sphere_wood_lacquered_normal
@@ -17,7 +17,7 @@ object: #sphere2
 	type: PBRRegular
 	mesh: sphere
 	translation: -1.2,0.0,0.0
-	scaling: 1.0
+	scaling: 0.9
 	textures:
 		srgb: sphere_gold_worn_albedo
 		rgb: sphere_gold_worn_normal
@@ -25,7 +25,6 @@ object: #sphere2
 	shadows: true
 
 background:
-	type: cubemap
 	texture: rgb32cube: studio
 
 scene:
@@ -33,13 +32,13 @@ scene:
 	irradiance: studio_shcoeffs
 
 
-	point:
-		position: 0.5,-0.1,0.5
+point:
+		position: 0.5,-0.1,1.0
 		intensity: 1.2,4.8,7.2
 		shadows: false
-		radius: 0.9
+		radius: 1.0
 point:
-		position: -0.5,-0.1,0.5
+		position: -0.5,-0.1,1.0
 		intensity: 12.6,1.8,3.6
 		shadows: false
-		radius: 0.9
+		radius: 1.0

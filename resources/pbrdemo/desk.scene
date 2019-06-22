@@ -1,6 +1,6 @@
 scene:
 	translation: 0.0,0.0,-2.0
-	scale: 0.5
+	scaling: 0.5
 	probe: rgb32cube: small_apartment
 	irradiance: small_apartment_shcoeffs
 
@@ -68,13 +68,12 @@ object:
 	shadows: true
 
 point:
-	position: 0.09,0.52,-0.36
-	intensity: 3.0,2.0,0.2
-	radius: 3.0
+	position: 0.09,0.52,-1.36
+	intensity: 10.0,6.0,0.2
+	radius: 2.0
 	shadows: true
 
 background:
-	type: cubemap
 	texture: rgb32cube: small_apartment
 
 	
