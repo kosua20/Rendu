@@ -201,7 +201,7 @@ public:
 	
 	/** Bind a series of textures to some texture slots, in order.
 	 \param textures the infos of the textures to bind
-	 \param startingSlot the optional shift of the first binding slot
+	 \param startingSlot the optional index of the first binding slot
 	 */
 	static void bindTextures(const std::vector<const TextureInfos*> & textures, int startingSlot = GL_TEXTURE0);
 	

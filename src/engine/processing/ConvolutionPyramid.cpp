@@ -56,7 +56,7 @@ void ConvolutionPyramid::process(const GLuint textureId) {
 	_levelsIn[0]->unbind();
 	
 	// Then iterate over all framebuffers, cascading down the filtered results.
-	// \todo Those filters are separable, and could be applied in two passes (vertical and horizontal) to reduce the texture fetches count.
+	/// \todo Those filters are separable, and could be applied in two passes (vertical and horizontal) to reduce the texture fetches count.
 	// Send parameters.
 	glUseProgram(_downscale->id());
 	glUniform1fv(_downscale->uniform("h1[0]"), 5, &_h1[0]);
