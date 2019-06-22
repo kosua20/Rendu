@@ -1,4 +1,10 @@
-object: #suzanne
+scene:
+	probe: rgb32cube: corsica_beach_cube
+	irradiance: corsica_beach_cube_shcoeffs
+	bgsky: rgb32cube: corsica_beach_cube
+
+# Objects
+object:
 	type: PBRRegular
 	mesh: suzanne
 	translation: 0.2,0.0,0.0
@@ -11,7 +17,7 @@ object: #suzanne
 		rotation: 1.0 model 0.0,1.0,0.0 
 	shadows: true
 
-object: #dragon
+object:
 	type: PBRRegular
 	mesh: dragon
 	translation: -0.1,-0.05,-0.25
@@ -22,7 +28,7 @@ object: #dragon
 		rgb: dragon_texture_rough_met_ao 
 	shadows: true
 
-object: #plane
+object:
 	type: PBRParallax
 	mesh: groundplane
 	translation: 0.0,-0.35,-0.5
@@ -34,55 +40,48 @@ object: #plane
 		rgb: groundplane_texture_depth 
 	shadows: false
 
-background:
-	texture: rgb32cube: corsica_beach_cube
-
-scene:
-	probe: rgb32cube: corsica_beach_cube
-	irradiance: corsica_beach_cube_shcoeffs
-
-
-	directional:
-		direction: -2.0,-1.5,0.0
-		intensity: 1.0,1.0,0.92
-		shadows: true
-		animations:
-			backandforth: 0.75 world 0.0,1.0,0.0 1.0
+# Lights
+directional:
+	direction: -2.0,-1.5,0.0
+	intensity: 1.0,1.0,0.92
+	shadows: true
+	animations:
+		backandforth: 0.75 world 0.0,1.0,0.0 1.0
 		
-	spot:
-		position: 1.1,2.0,1.1
-		direction: -1.0,-1.0,-1.0
-		radius: 5.0
-		cone: 0.5 0.6
-		shadows: true
-		animations:
-			backandforth: 0.5 world 1.0,0.0,1.0 2.0
-		intensity: 0.0,10.0,10.0
-	point:
-		position: -1.0,-0.1,-1.0
-		intensity: 4.0,0.0,0.0
-		radius: 3.0
-		shadows: false
-		animations:
-			rotation: 0.8 world 0.0,1.0,0.0
-	point:
-		position: 1.0,-0.1,-1.0
-		intensity: 0.0,4.0,0.0
-		radius: 3.0
-		shadows: false
-		animations:
-			rotation: 0.8 world 0.0,1.0,0.0
-	point:
-		position: -1.0,-0.1,1.0
-		intensity: 0.0,0.0,4.0
-		radius: 3.0
-		shadows: false
-		animations:
-			rotation: 0.8 world 0.0,1.0,0.0
-	point:
-		position: 1.0,-0.1,1.0
-		intensity: 4.0,4.0,0.0
-		radius: 3.0
-		shadows: false
-		animations:
-			rotation: 0.8 world 0.0,1.0,0.0
+spot:
+	position: 1.1,2.0,1.1
+	direction: -1.0,-1.0,-1.0
+	radius: 5.0
+	cone: 0.5 0.6
+	shadows: true
+	animations:
+		backandforth: 0.5 world 1.0,0.0,1.0 2.0
+	intensity: 0.0,10.0,10.0
+point:
+	position: -1.0,-0.1,-1.0
+	intensity: 4.0,0.0,0.0
+	radius: 1.5
+	shadows: false
+	animations:
+		rotation: 0.8 world 0.0,1.0,0.0
+point:
+	position: 1.0,-0.1,-1.0
+	intensity: 0.0,4.0,0.0
+	radius: 1.5
+	shadows: false
+	animations:
+		rotation: 0.8 world 0.0,1.0,0.0
+point:
+	position: -1.0,-0.1,1.0
+	intensity: 0.0,0.0,4.0
+	radius: 1.5
+	shadows: false
+	animations:
+		rotation: 0.8 world 0.0,1.0,0.0
+point:
+	position: 1.0,-0.1,1.0
+	intensity: 4.0,4.0,0.0
+	radius: 1.5
+	shadows: false
+	animations:
+		rotation: 0.8 world 0.0,1.0,0.0

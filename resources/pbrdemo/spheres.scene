@@ -1,6 +1,10 @@
-#test
-  # test
-object: #sphere1
+scene:
+	probe: rgb32cube: studio
+	irradiance: studio_shcoeffs
+	bgsky: rgb32cube: studio
+
+# Objects
+object:
 	type: PBRRegular
 	mesh: sphere
 	translation: 1.2,0.0,0.0
@@ -13,7 +17,7 @@ object: #sphere1
 		rotation: 0.2 model 0.0,1.0,0.0
 	shadows: true
 
-object: #sphere2
+object:
 	type: PBRRegular
 	mesh: sphere
 	translation: -1.2,0.0,0.0
@@ -22,16 +26,9 @@ object: #sphere2
 		srgb: sphere_gold_worn_albedo
 		rgb: sphere_gold_worn_normal
 		rgb: sphere_gold_worn_rough_met_ao 
-	shadows: true
+	shadows: true 
 
-background:
-	texture: rgb32cube: studio
-
-scene:
-	probe: rgb32cube: studio
-	irradiance: studio_shcoeffs
-
-
+# Lights
 point:
 		position: 0.5,-0.1,1.0
 		intensity: 1.2,4.8,7.2
