@@ -116,6 +116,13 @@ void PointLight::drawDebug(const glm::mat4& viewMatrix, const glm::mat4& project
 	glUniformMatrix4fv(debugProgram->uniform("mvp"), 1, GL_FALSE, &mvp[0][0]);
 	glUniform3fv(debugProgram->uniform("lightColor"), 1,  &colorLow[0]);
 	GLUtilities::drawMesh(*_sphere);
+	
+	const glm::mat4 modelMatrix1 = glm::scale(glm::translate(glm::mat4(1.0f), _lightPosition), glm::vec3(0.02f*_radius));
+	const glm::mat4 mvp1 = projectionMatrix * viewMatrix * modelMatrix1;
+	glUniformMatrix4fv(debugProgram->uniform("mvp"), 1, GL_FALSE, &mvp1[0][0]);
+	glUniform3fv(debugProgram->uniform("lightColor"), 1,  &_color[0]);
+	GLUtilities::drawMesh(*_sphere);
+	
 	glBindVertexArray(0);
 	glUseProgram(0);
 
@@ -171,17 +178,13 @@ void PointLight::setScene(const BoundingBox & sceneBox){
 
 void PointLight::decode(const std::vector<KeyValues> & params){
 	Light::decode(params);
-	glm::vec3 worldPosition(0.0f);
-	float radius = 1.0f;
 	for(const auto & param : params){
 		if(param.key == "position"){
-			worldPosition = Codable::decodeVec3(param);
+			_lightPosition = Codable::decodeVec3(param);
 		} else if(param.key == "radius" && !param.values.empty()){
-			radius = std::stof(param.values[0]);
+			_radius = std::stof(param.values[0]);
 		}
 	}
-	_lightPosition = glm::normalize(worldPosition);
-	_radius = radius;
 }
 
 void PointLight::clean() const {

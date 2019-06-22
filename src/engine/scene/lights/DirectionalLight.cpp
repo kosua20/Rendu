@@ -122,12 +122,10 @@ void DirectionalLight::clean() const {
 
 void DirectionalLight::decode(const std::vector<KeyValues> & params){
 	Light::decode(params);
-	glm::vec3 worldDirection(0.0f);
 	for(const auto & param : params){
 		if(param.key == "direction"){
-			worldDirection = Codable::decodeVec3(param);
+			_lightDirection = glm::normalize(Codable::decodeVec3(param));
 		}
 	}
-	_lightDirection = glm::normalize(worldDirection);
 }
 

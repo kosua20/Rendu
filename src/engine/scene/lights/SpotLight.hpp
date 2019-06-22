@@ -18,6 +18,7 @@ class SpotLight : public Light {
 
 public:
 	
+	/** Default constructor. */
 	SpotLight();
 	
 	/** Constructor.
@@ -62,8 +63,25 @@ public:
 	/** Clean internal resources. */
 	void clean() const;
 	
+	/** Setup a spot light parameters from a list of key-value tuples. The following keywords will be searched for:
+	 \verbatim
+	 direction: dirX,dirY,dirZ
+	 position: X,Y,Z
+	 radius: radius
+	 cone: innerAngle outerAngle
+	 intensity: R,G,B
+	 shadows: bool
+	 animations:
+	 	animationtype: ...
+	 	...
+	 \endverbatim
+	 \param params the parameters tuples list
+	 */
 	void decode(const std::vector<KeyValues> & params);
 	
+	/** Update the scene bounding box used for internal setup (shadow map,...).
+	 \param sceneBox the new bounding box
+	 */
 	void setScene(const BoundingBox & sceneBox);
 	
 private:

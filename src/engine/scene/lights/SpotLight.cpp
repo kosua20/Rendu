@@ -154,24 +154,24 @@ void SpotLight::setScene(const BoundingBox & sceneBox){
 
 void SpotLight::decode(const std::vector<KeyValues> & params){
 	Light::decode(params);
-	glm::vec3 worldDirection(0.0f);
-	glm::vec3 worldPosition(0.0f);
 	for(const auto & param : params){
 		if(param.key == "direction"){
-			worldDirection = Codable::decodeVec3(param);
+			_lightDirection = glm::normalize(Codable::decodeVec3(param));
+			
 		} else if(param.key == "position"){
-			worldPosition = Codable::decodeVec3(param);
-		} else if(param.key == "cone" && param.values.size() >= 3){
+			_lightPosition = Codable::decodeVec3(param);
+			
+		} else if(param.key == "cone" && param.values.size() >= 2){
 			const float innerAngle = std::stof(param.values[0]);
 			const float outerAngle = std::stof(param.values[1]);
-			const float radius = std::stof(param.values[2]);
 			_innerHalfAngle = 0.5f*innerAngle;
 			_outerHalfAngle = 0.5f*outerAngle;
-			_radius = radius;
+			
+		} else if(param.key == "radius" && !param.values.empty()){
+			_radius = std::stof(param.values[0]);
+			
 		}
 	}
-	_lightPosition = worldPosition;
-	_lightDirection = glm::normalize(worldDirection);
 }
 
 

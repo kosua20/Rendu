@@ -15,13 +15,13 @@ class PointLight : public Light {
 
 public:
 	
+	/** Default constructor. */
 	PointLight();
 	
 	/** Constructor.
 	 \param worldPosition the light position in world space
 	 \param color the colored intensity of the light
 	 \param radius the distance at which the light is completely attenuated
-	 \param sceneBox the scene bounding box, for shadow map projection setup
 	 */
 	PointLight(const glm::vec3& worldPosition, const glm::vec3& color, float radius);
 	
@@ -57,10 +57,22 @@ public:
 	/** Clean internal resources. */
 	void clean() const;
 	
+	/** Setup a point light parameters from a list of key-value tuples. The following keywords will be searched for:
+	 \verbatim
+	 position: X,Y,Z
+	 radius: radius
+	 intensity: R,G,B
+	 shadows: bool
+	 animations:
+	 	animationtype: ...
+	 	...
+	 \endverbatim
+	 \param params the parameters tuples list
+	 */
 	void decode(const std::vector<KeyValues> & params);
 	
-	/** Update the light position. All internal parameters are updated.
-	 \param newPosition the new light position
+	/** Update the scene bounding box used for internal setup (shadow map,...).
+	 \param sceneBox the new bounding box
 	 */
 	void setScene(const BoundingBox & sceneBox);
 	

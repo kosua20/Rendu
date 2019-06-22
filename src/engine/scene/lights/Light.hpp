@@ -36,6 +36,16 @@ public:
 	
 protected:
 	
+	/** Setup a light common parameters from a list of key-value tuples. The following keywords will be searched for:
+	 \verbatim
+	 intensity: R,G,B
+	 shadows: bool
+	 animations:
+	 	animationtype: ...
+	 	...
+	 \endverbatim
+	 \param params the parameters tuples list
+	 */
 	void decode(const std::vector<KeyValues> & params);
 	
 	glm::mat4 _mvp; ///< MVP matrix for shadow casting.
@@ -45,7 +55,9 @@ protected:
 };
 
 inline Light::Light(){
-	
+	_castShadows = false;
+	_color = glm::vec3(1.0f);
+	_mvp = glm::mat4(1.0f);
 }
 
 inline Light::Light(const glm::vec3& color){
@@ -59,30 +71,19 @@ inline void Light::addAnimation(std::shared_ptr<Animation> anim){
 }
 
 inline void Light::decode(const std::vector<KeyValues> & params){
-	for(int pid = 0; pid < params.size();){
+	for(int pid = 0; pid < params.size(); ++pid){
 		const auto & param = params[pid];
+		
 		if(param.key == "intensity"){
 			_color = Codable::decodeVec3(param);
 			
-		} else if(param.key == "shadows" && !param.values.empty()){
-			const std::string shadowString = param.values[0];
-			_castShadows = (shadowString == "true");
+		} else if(param.key == "shadows"){
+			_castShadows = Codable::decodeBool(param);
 			
 		} else if(param.key == "animations"){
-			// Move to the next parameter.
-			++pid;
-			while(pid < params.size()){
-				const std::shared_ptr<Animation> anim = Animation::decode(params[pid]);
-				if(anim == nullptr) {
-					// In this case, decrement pid again, this is something else.
-					--pid;
-					break;
-				}
-				addAnimation(anim);
-				++pid;
-			}
+			_animations = Animation::decode(params, pid);
+			--pid;
 		}
-		++pid;
 	}
 }
 

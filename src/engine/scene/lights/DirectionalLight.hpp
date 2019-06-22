@@ -18,12 +18,12 @@ class DirectionalLight : public Light {
 
 public:
 	
+	/** Default constructor. */
 	DirectionalLight();
 	
 	/** Constructor.
 	 \param worldDirection the light direction in world space
 	 \param color the colored intensity of the light
-	 \param sceneBox the scene bounding box, for shadow map projection setup
 	 */
 	DirectionalLight(const glm::vec3& worldDirection, const glm::vec3& color);
 	
@@ -58,14 +58,25 @@ public:
 	/** Clean internal resources. */
 	void clean() const;
 	
+	/** Setup a directional light parameters from a list of key-value tuples. The following keywords will be searched for:
+	 \verbatim
+	 direction: dirX,dirY,dirZ
+	 intensity: R,G,B
+	 shadows: bool
+	 animations:
+	 	animationtype: ...
+	 	...
+	 \endverbatim
+	 \param params the parameters tuples list
+	 */
 	void decode(const std::vector<KeyValues> & params);
 	
-	/** Update the light direction. All internal parameters are updated.
-	 \param newDirection the new light direction
+	/** Update the scene bounding box used for internal setup (shadow map,...).
+	 \param sceneBox the new bounding box
 	 */
 	void setScene(const BoundingBox & sceneBox);
-private:
 	
+private:
 	
 	std::unique_ptr<Framebuffer> _shadowPass; ///< The shadow map framebuffer.
 	std::unique_ptr<BoxBlur> _blur; ///< Blur processing for variance shadow mapping.
