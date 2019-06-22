@@ -69,6 +69,15 @@ public:
 	
 private:
 	
+	/** Render the scene to the G-buffer. */
+	void renderScene();
+	
+	/** Apply the postprocess stack.
+	 \param invRenderSize the inverse of the rendering resolution
+	 \return the ID of the texture containing the result
+	 */
+	GLuint renderPostprocess(const glm::vec2 & invRenderSize);
+	
 	ControllableCamera _userCamera; ///< The interactive camera.
 
 	std::unique_ptr<Framebuffer> _gbuffer; ///< G-buffer.
@@ -85,14 +94,17 @@ private:
 	const ProgramInfos * _toneMappingProgram; ///< Tonemapping program
 	const ProgramInfos * _fxaaProgram; ///< FXAA program
 	const ProgramInfos * _finalProgram; ///< Final output program
-	const ProgramInfos * _objectProgram;
-	const ProgramInfos * _parallaxProgram;
-	const ProgramInfos * _skyboxProgram;
+	const ProgramInfos * _objectProgram; ///< Basic PBR program
+	const ProgramInfos * _parallaxProgram;///< Parallax mapping PBR program
+	
+	const ProgramInfos * _skyboxProgram; ///< Skybox program.
+	const ProgramInfos * _bgProgram; ///< Planar background program.
 	
 	
 	std::shared_ptr<Scene> _scene; ///< The scene to render
 	
-	bool _debugVisualization = false; ///< Toggle the rendering of debug informations.
+	float _cameraFOV;
+	bool _debugVisualization = false; ///< Toggle the rendering of debug informations in the scene.
 	bool _applyBloom = true;
 	bool _applyTonemapping = true;
 	bool _applyFXAA = true;

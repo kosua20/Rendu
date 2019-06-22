@@ -10,6 +10,7 @@ DeferredRenderer::DeferredRenderer(RenderingConfig & config) : Renderer(config) 
 	
 	// Setup camera parameters.
 	_userCamera.projection(config.screenResolution[0]/config.screenResolution[1], 1.3f, 0.01f, 200.0f);
+	_cameraFOV = _userCamera.fov() * 180.0f / float(M_PI);
 	
 	const int renderWidth = (int)_renderResolution[0];
 	const int renderHeight = (int)_renderResolution[1];
@@ -51,6 +52,7 @@ DeferredRenderer::DeferredRenderer(RenderingConfig & config) : Renderer(config) 
 	_finalProgram = Resources::manager().getProgram2D("final_screenquad");
 	
 	_skyboxProgram = Resources::manager().getProgram("skybox_gbuffer");
+	_bgProgram = Resources::manager().getProgram("background_gbuffer");
 	_parallaxProgram = Resources::manager().getProgram("parallax_gbuffer");
 	_objectProgram = Resources::manager().getProgram("object_gbuffer");
 	
@@ -92,31 +94,7 @@ void DeferredRenderer::setScene(std::shared_ptr<Scene> scene){
 	checkGLError();
 }
 
-void DeferredRenderer::draw() {
-	
-	if(!_scene){
-		glClearColor(0.2f,0.2,0.2f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		return;
-	}
-	
-	glm::vec2 invRenderSize = 1.0f / _renderResolution;
-	
-	// --- Light pass -------
-	if(_updateShadows){
-		for(auto& dirLight : _scene->directionalLights){
-			dirLight.drawShadow(_scene->objects);
-		}
-		for(auto& shadowLight : _scene->spotLights){
-			shadowLight.drawShadow(_scene->objects);
-		}
-		for(auto& pointLight : _scene->pointLights){
-			pointLight.drawShadow(_scene->objects);
-		}
-	}
-	// ----------------------
-	
-	// --- Scene pass -------
+void DeferredRenderer::renderScene(){
 	// Bind the full scene framebuffer.
 	_gbuffer->bind();
 	// Set screen viewport
@@ -135,36 +113,28 @@ void DeferredRenderer::draw() {
 		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(MV)));
 		
 		// Select the program (and shaders).
-		
-		
 		switch (object.type()) {
 			case Object::PBRParallax:
-				glUseProgram(_parallaxProgram->id());
-				
-				// Upload the MVP matrix.
-				glUniformMatrix4fv(_parallaxProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
-				// Upload the projection matrix.
-				glUniformMatrix4fv(_parallaxProgram->uniform("p"), 1, GL_FALSE, &proj[0][0]);
-				// Upload the MV matrix.
-				glUniformMatrix4fv(_parallaxProgram->uniform("mv"), 1, GL_FALSE, &MV[0][0]);
-				// Upload the normal matrix.
-				glUniformMatrix3fv(_parallaxProgram->uniform("normalMatrix"), 1, GL_FALSE, &normalMatrix[0][0]);
-				break;
+			glUseProgram(_parallaxProgram->id());
+			// Upload the MVP matrix.
+			glUniformMatrix4fv(_parallaxProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
+			// Upload the projection matrix.
+			glUniformMatrix4fv(_parallaxProgram->uniform("p"), 1, GL_FALSE, &proj[0][0]);
+			// Upload the MV matrix.
+			glUniformMatrix4fv(_parallaxProgram->uniform("mv"), 1, GL_FALSE, &MV[0][0]);
+			// Upload the normal matrix.
+			glUniformMatrix3fv(_parallaxProgram->uniform("normalMatrix"), 1, GL_FALSE, &normalMatrix[0][0]);
+			break;
 			case Object::PBRRegular:
-				glUseProgram(_objectProgram->id());
-				// Upload the MVP matrix.
-				glUniformMatrix4fv(_objectProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
-				// Upload the normal matrix.
-				glUniformMatrix3fv(_objectProgram->uniform("normalMatrix"), 1, GL_FALSE, &normalMatrix[0][0]);
-				break;
-			case Object::Skybox:
-				glUseProgram(_skyboxProgram->id());
-				// Upload the MVP matrix.
-				glUniformMatrix4fv(_skyboxProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
-				break;
+			glUseProgram(_objectProgram->id());
+			// Upload the MVP matrix.
+			glUniformMatrix4fv(_objectProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
+			// Upload the normal matrix.
+			glUniformMatrix3fv(_objectProgram->uniform("normalMatrix"), 1, GL_FALSE, &normalMatrix[0][0]);
+			break;
 			default:
-				
-				break;
+			
+			break;
 		}
 		
 		// Bind the textures.
@@ -189,35 +159,123 @@ void DeferredRenderer::draw() {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 	
+	
 	// No need to write the skybox depth to the framebuffer.
 	glDepthMask(GL_FALSE);
 	// Accept a depth of 1.0 (far plane).
 	glDepthFunc(GL_LEQUAL);
 	const Object & background = _scene->background;
-	const glm::mat4 backgroundMVP = proj * view * background.model();
-	// draw background.
-	glUseProgram(_skyboxProgram->id());
-	// Upload the MVP matrix.
-	glUniformMatrix4fv(_skyboxProgram->uniform("mvp"), 1, GL_FALSE, &backgroundMVP[0][0]);
-	GLUtilities::bindTextures(background.textures());
-	GLUtilities::drawMesh(*background.mesh());
+	if(_scene->backgroundMode == Scene::Background::SKYBOX){
+		const glm::mat4 backgroundMVP = proj * view * background.model();
+		// draw background.
+		glUseProgram(_skyboxProgram->id());
+		// Upload the MVP matrix.
+		glUniformMatrix4fv(_skyboxProgram->uniform("mvp"), 1, GL_FALSE, &backgroundMVP[0][0]);
+		GLUtilities::bindTextures(background.textures());
+		GLUtilities::drawMesh(*background.mesh());
+	} else {
+		glUseProgram(_bgProgram->id());
+		if(_scene->backgroundMode == Scene::Background::IMAGE){
+			glUniform1i(_bgProgram->uniform("useTexture"), 1);
+			GLUtilities::bindTextures(background.textures());
+		} else {
+			glUniform1i(_bgProgram->uniform("useTexture"), 0);
+			glUniform3fv(_bgProgram->uniform("bgColor"), 1, &_scene->backgroundColor[0]);
+		}
+		GLUtilities::drawMesh(*background.mesh());
+	}
 	glDepthFunc(GL_LESS);
 	glDepthMask(GL_TRUE);
 	
 	
 	// Unbind the full scene framebuffer.
 	_gbuffer->unbind();
-	// ----------------------
+}
+
+GLuint DeferredRenderer::renderPostprocess(const glm::vec2 & invRenderSize){
 	
-	glDisable(GL_DEPTH_TEST);
-	
-	if(_applySSAO){
-		// --- SSAO pass
-		_ssaoPass->process(_userCamera.projection(), _gbuffer->depthId(), _gbuffer->textureId(int(TextureType::Normal)));
+	if(_applyBloom){
+		// --- Bloom selection pass ------
+		_bloomFramebuffer->bind();
+		_bloomFramebuffer->setViewport();
+		glUseProgram(_bloomProgram->id());
+		ScreenQuad::draw(_sceneFramebuffer->textureId());
+		_bloomFramebuffer->unbind();
 		
+		// --- Bloom blur pass ------
+		_blurBuffer->process(_bloomFramebuffer->textureId());
+		
+		// Draw the blurred bloom back into the scene framebuffer.
+		_sceneFramebuffer->bind();
+		_sceneFramebuffer->setViewport();
+		glEnable(GL_BLEND);
+		_blurBuffer->draw();
+		glDisable(GL_BLEND);
+		_sceneFramebuffer->unbind();
+	}
+	
+	GLuint currentResult = _sceneFramebuffer->textureId();
+	
+	if(_applyTonemapping){
+		// --- Tonemapping pass ------
+		_toneMappingFramebuffer->bind();
+		_toneMappingFramebuffer->setViewport();
+		glUseProgram(_toneMappingProgram->id());
+		ScreenQuad::draw(currentResult);
+		_toneMappingFramebuffer->unbind();
+		currentResult = _toneMappingFramebuffer->textureId();
+	}
+	
+	if(_applyFXAA){
+		// --- FXAA pass -------
+		// Bind the post-processing framebuffer.
+		_fxaaFramebuffer->bind();
+		_fxaaFramebuffer->setViewport();
+		glUseProgram(_fxaaProgram->id());
+		glUniform2fv(_fxaaProgram->uniform("inverseScreenSize"), 1, &(invRenderSize[0]));
+		ScreenQuad::draw(currentResult);
+		_fxaaFramebuffer->unbind();
+		currentResult = _fxaaFramebuffer->textureId();
+	}
+	
+	return currentResult;
+}
+
+void DeferredRenderer::draw() {
+	
+	if(!_scene){
+		glClearColor(0.2f,0.2,0.2f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		return;
+	}
+	const glm::vec2 invRenderSize = 1.0f / _renderResolution;
+	
+	// --- Light pass -------
+	if(_updateShadows){
+		for(auto& dirLight : _scene->directionalLights){
+			dirLight.drawShadow(_scene->objects);
+		}
+		for(auto& shadowLight : _scene->spotLights){
+			shadowLight.drawShadow(_scene->objects);
+		}
+		for(auto& pointLight : _scene->pointLights){
+			pointLight.drawShadow(_scene->objects);
+		}
+	}
+	
+	
+	// --- Scene pass -------
+	renderScene();
+	
+	
+	// --- SSAO pass
+	glDisable(GL_DEPTH_TEST);
+	if(_applySSAO){
+		_ssaoPass->process(_userCamera.projection(), _gbuffer->depthId(), _gbuffer->textureId(int(TextureType::Normal)));
 	} else {
 		_ssaoPass->clear();
 	}
+	
 	
 	// --- Gbuffer composition pass
 	_sceneFramebuffer->bind();
@@ -242,49 +300,9 @@ void DeferredRenderer::draw() {
 	_sceneFramebuffer->unbind();
 	
 	
-	if(_applyBloom){
-		// --- Bloom selection pass ------
-		_bloomFramebuffer->bind();
-		_bloomFramebuffer->setViewport();
-		glUseProgram(_bloomProgram->id());
-		ScreenQuad::draw(_sceneFramebuffer->textureId());
-		_bloomFramebuffer->unbind();
+	// --- Post process passes -----
+	const GLuint currentResult = renderPostprocess(invRenderSize);
 	
-		// --- Bloom blur pass ------
-		_blurBuffer->process(_bloomFramebuffer->textureId());
-	
-		// Draw the blurred bloom back into the scene framebuffer.
-		_sceneFramebuffer->bind();
-		_sceneFramebuffer->setViewport();
-		glEnable(GL_BLEND);
-		_blurBuffer->draw();
-		glDisable(GL_BLEND);
-		_sceneFramebuffer->unbind();
-	}
-	
-	GLuint currentResult = _sceneFramebuffer->textureId();
-	
-	if(_applyTonemapping){
-	// --- Tonemapping pass ------
-		_toneMappingFramebuffer->bind();
-		_toneMappingFramebuffer->setViewport();
-		glUseProgram(_toneMappingProgram->id());
-		ScreenQuad::draw(currentResult);
-		_toneMappingFramebuffer->unbind();
-		currentResult = _toneMappingFramebuffer->textureId();
-	}
-	
-	if(_applyFXAA){
-	// --- FXAA pass -------
-	// Bind the post-processing framebuffer.
-		_fxaaFramebuffer->bind();
-		_fxaaFramebuffer->setViewport();
-		glUseProgram(_fxaaProgram->id());
-		glUniform2fv(_fxaaProgram->uniform("inverseScreenSize"), 1, &(invRenderSize[0]));
-		ScreenQuad::draw(currentResult);
-		_fxaaFramebuffer->unbind();
-		currentResult = _fxaaFramebuffer->textureId();
-	}
 	
 	// --- Final pass -------
 	// We now render a full screen quad in the default framebuffer, using sRGB space.
@@ -307,9 +325,11 @@ void DeferredRenderer::update(){
 	_userCamera.update();
 	
 	if(ImGui::Begin("Renderer")){
-		ImGui::Separator();
 		ImGui::PushItemWidth(100);
 		ImGui::InputFloat("Camera speed", &_userCamera.speed(), 0.1f, 1.0f);
+		if(ImGui::InputFloat("Camera FOV", &_cameraFOV, 1.0f, 10.0f)){
+			_userCamera.fov(_cameraFOV*float(M_PI)/180.0f);
+		}
 		ImGui::Combo("Camera mode", (int*)(&_userCamera.mode()), "FPS\0Turntable\0Joystick\0\0", 3);
 		ImGui::Separator();
 		if(ImGui::InputInt("Vertical res.", &_config.internalVerticalResolution, 50, 200)){
@@ -321,6 +341,7 @@ void DeferredRenderer::update(){
 		ImGui::Checkbox("Tonemapping ", &_applyTonemapping); ImGui::SameLine(120);
 		ImGui::Checkbox("FXAA", &_applyFXAA);
 		ImGui::Separator();
+		ImGui::ColorEdit3("Background color", &_scene->backgroundColor[0]);
 		ImGui::Checkbox("Show debug lights", &_debugVisualization);
 		ImGui::Checkbox("Update shadows", &_updateShadows);
 		
