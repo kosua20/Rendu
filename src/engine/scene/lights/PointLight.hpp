@@ -11,7 +11,7 @@
  \see GLSL::Frag::Point_light, GLSL::Frag::Light_shadow_linear, GLSL::Frag::Light_debug
  \ingroup Scene
  */
-class PointLight : public Light {
+class PointLight final : public Light {
 
 public:
 	
@@ -25,37 +25,40 @@ public:
 	 */
 	PointLight(const glm::vec3& worldPosition, const glm::vec3& color, float radius);
 	
-	/** Perform initialization against the graphics API and register textures for deferred rendering.
-	 \param textureIds the IDs of the albedo, normal, depth and effects G-buffer textures
+	/**
+	 \copydoc Light::init
 	 */
 	void init(const std::vector<GLuint>& textureIds);
 	
-	/** Render the light contribution to the scene.
-	 \param viewMatrix the current camera view matrix
-	 \param projectionMatrix the current camera projection matrix
-	 \param invScreenSize the inverse of the textures size
+	/**
+	 \copydoc Light::draw
 	 */
 	void draw( const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix, const glm::vec2& invScreenSize ) const;
 	
-	/** Render the light shadow map.
-	 \param objects list of shadow casting objects to render
+	/**
+	 \copydoc Light::drawShadow
 	 */
 	void drawShadow(const std::vector<Object> & objects) const;
 	
-	/** Render the light debug wireframe visualisation
-	 \param viewMatrix the current camera view matrix
-	 \param projectionMatrix the current camera projection matrix
+	/**
+	 \copydoc Light::drawDebug
 	 */
 	void drawDebug(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) const;
 	
-	/** Apply the animations for a frame duration.
-	 \param fullTime the time since the launch of the application
-	 \param frameTime the time elapsed since the last frame
+	/**
+	 \copydoc Light::update
 	 */
 	void update(double fullTime, double frameTime);
 	
-	/** Clean internal resources. */
+	/**
+	 \copydoc Light::clean
+	 */
 	void clean() const;
+	
+	/**
+	 \copydoc Light::setScene
+	 */
+	void setScene(const BoundingBox & sceneBox);
 	
 	/** Setup a point light parameters from a list of key-value tuples. The following keywords will be searched for:
 	 \verbatim
@@ -71,16 +74,9 @@ public:
 	 */
 	void decode(const std::vector<KeyValues> & params);
 	
-	/** Update the scene bounding box used for internal setup (shadow map,...).
-	 \param sceneBox the new bounding box
-	 */
-	void setScene(const BoundingBox & sceneBox);
-	
 private:
 	
-	
 	std::unique_ptr<FramebufferCube> _shadowFramebuffer;///< The shadow cubemap framebuffer.
-	BoundingBox _sceneBox; ///< The scene bounding box, to fit the shadow map.
 	
 	std::vector<glm::mat4> _mvps; ///< Light mvp matrices for each face.
 	glm::vec3 _lightPosition; ///< Light position.
@@ -88,10 +84,7 @@ private:
 	float _farPlane; ///< The projection matrices far plane.
 	
 	const MeshInfos * _sphere; ///< The supporting geometry.
-	const ProgramInfos * _program; ///< Light rendering program.
-	const ProgramInfos * _programDepth; ///< Shadow map program.
-	std::vector<GLuint> _textureIds; ///< The G-buffer textures.
-	
+
 };
 
 #endif

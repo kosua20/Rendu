@@ -82,14 +82,8 @@ void DeferredRenderer::setScene(std::shared_ptr<Scene> scene){
 	/// \todo clarify this.
 	includedTextures.insert(includedTextures.begin()+2, _gbuffer->depthId());
 	
-	for(auto& dirLight : _scene->directionalLights){
-		dirLight.init(includedTextures);
-	}
-	for(auto& pointLight : _scene->pointLights){
-		pointLight.init(includedTextures);
-	}
-	for(auto& spotLight : _scene->spotLights){
-		spotLight.init(includedTextures);
+	for(auto& light : _scene->lights){
+		light->init(includedTextures);
 	}
 	checkGLError();
 }
@@ -146,15 +140,10 @@ void DeferredRenderer::renderScene(){
 	if(_debugVisualization){
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		glDisable(GL_CULL_FACE);
-		for(auto& pointLight : _scene->pointLights){
-			pointLight.drawDebug(_userCamera.view(), _userCamera.projection());
+		for(auto & light : _scene->lights){
+			light->drawDebug(_userCamera.view(), _userCamera.projection());
 		}
-		for(auto& dirLight : _scene->directionalLights){
-			dirLight.drawDebug(_userCamera.view(), _userCamera.projection());
-		}
-		for(auto& spotLight : _scene->spotLights){
-			spotLight.drawDebug(_userCamera.view(), _userCamera.projection());
-		}
+		
 		glEnable(GL_CULL_FACE);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
@@ -253,21 +242,13 @@ void DeferredRenderer::draw() {
 	
 	// --- Light pass -------
 	if(_updateShadows){
-		for(auto& dirLight : _scene->directionalLights){
-			dirLight.drawShadow(_scene->objects);
-		}
-		for(auto& shadowLight : _scene->spotLights){
-			shadowLight.drawShadow(_scene->objects);
-		}
-		for(auto& pointLight : _scene->pointLights){
-			pointLight.drawShadow(_scene->objects);
+		for(auto& light : _scene->lights){
+			light->drawShadow(_scene->objects);
 		}
 	}
 	
-	
 	// --- Scene pass -------
 	renderScene();
-	
 	
 	// --- SSAO pass
 	glDisable(GL_DEPTH_TEST);
@@ -277,33 +258,19 @@ void DeferredRenderer::draw() {
 		_ssaoPass->clear();
 	}
 	
-	
 	// --- Gbuffer composition pass
 	_sceneFramebuffer->bind();
 	_sceneFramebuffer->setViewport();
-	
 	_ambientScreen.draw(_userCamera.view(), _userCamera.projection());
-	
 	glEnable(GL_BLEND);
-	for(auto& dirLight : _scene->directionalLights){
-		dirLight.draw(_userCamera.view(), _userCamera.projection());
+	for(auto& light : _scene->lights){
+		light->draw(_userCamera.view(), _userCamera.projection(), invRenderSize);
 	}
-	glCullFace(GL_FRONT);
-	for(auto& pointLight : _scene->pointLights){
-		pointLight.draw(_userCamera.view(), _userCamera.projection(), invRenderSize);
-	}
-	for(auto& spotLight : _scene->spotLights){
-		spotLight.draw(_userCamera.view(), _userCamera.projection(), invRenderSize);
-	}
-	glCullFace(GL_BACK);
 	glDisable(GL_BLEND);
-	
 	_sceneFramebuffer->unbind();
-	
 	
 	// --- Post process passes -----
 	const GLuint currentResult = renderPostprocess(invRenderSize);
-	
 	
 	// --- Final pass -------
 	// We now render a full screen quad in the default framebuffer, using sRGB space.

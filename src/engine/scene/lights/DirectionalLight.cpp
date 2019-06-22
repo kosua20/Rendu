@@ -25,7 +25,7 @@ void DirectionalLight::init(const std::vector<GLuint>& textureIds){
 
 }
 
-void DirectionalLight::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) const {
+void DirectionalLight::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix, const glm::vec2& invScreenSize) const {
 	
 	glm::mat4 viewToLight = _mvp * glm::inverse(viewMatrix);
 	// Store the four variable coefficients of the projection matrix.
@@ -121,7 +121,7 @@ void DirectionalLight::clean() const {
 }
 
 void DirectionalLight::decode(const std::vector<KeyValues> & params){
-	Light::decode(params);
+	Light::decodeBase(params);
 	for(const auto & param : params){
 		if(param.key == "direction"){
 			_lightDirection = glm::normalize(Codable::decodeVec3(param));

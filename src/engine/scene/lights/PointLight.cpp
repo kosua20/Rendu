@@ -20,8 +20,8 @@ void PointLight::init(const std::vector<GLuint>& textureIds){
 	const Descriptor descriptor = {GL_RG16F, GL_LINEAR, GL_CLAMP_TO_EDGE};
 	_shadowFramebuffer = std::unique_ptr<FramebufferCube>(new FramebufferCube(512, descriptor, true));
 	
-	_textureIds = textureIds;
-	_textureIds.emplace_back(_shadowFramebuffer->textureId());
+	_textures = textureIds;
+	_textures.emplace_back(_shadowFramebuffer->textureId());
 	// Load the shaders
 	_programDepth = Resources::manager().getProgram("object_layer_depth", "object_layer", "light_shadow_linear", "object_layer");
 	checkGLError();
@@ -38,6 +38,7 @@ void PointLight::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMa
 	const glm::mat4 mvp = projectionMatrix * viewMatrix * modelMatrix;
 	const glm::mat3 viewToLight = glm::mat3(glm::inverse(viewMatrix));
 	
+	glCullFace(GL_FRONT);
 	glUseProgram(_program->id());
 	glUniformMatrix4fv(_program->uniform("mvp"), 1, GL_FALSE, &mvp[0][0]);
 	glUniform3fv(_program->uniform("lightPosition"), 1,  &lightPositionViewSpace[0]);
@@ -52,20 +53,21 @@ void PointLight::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMa
 	glUniform1i(_program->uniform("castShadow"), _castShadows);
 	
 	// Active screen texture.
-	for(GLuint i = 0;i < _textureIds.size()-1; ++i){
+	for(GLuint i = 0;i < _textures.size()-1; ++i){
 		glActiveTexture(GL_TEXTURE0 + i);
-		glBindTexture(GL_TEXTURE_2D, _textureIds[i]);
+		glBindTexture(GL_TEXTURE_2D, _textures[i]);
 	}
 	// Activate the shadow cubemap.
 	if(_castShadows){
-		glActiveTexture(GLenum(GL_TEXTURE0 + _textureIds.size()-1));
-		glBindTexture(GL_TEXTURE_CUBE_MAP, _textureIds[_textureIds.size()-1]);
+		glActiveTexture(GLenum(GL_TEXTURE0 + _textures.size()-1));
+		glBindTexture(GL_TEXTURE_CUBE_MAP, _textures[_textures.size()-1]);
 	}
 	// Select the geometry.
 	GLUtilities::drawMesh(*_sphere);
 	
 	glBindVertexArray(0);
 	glUseProgram(0);
+	glCullFace(GL_BACK);
 }
 
 void PointLight::drawShadow(const std::vector<Object> & objects) const {
@@ -177,7 +179,7 @@ void PointLight::setScene(const BoundingBox & sceneBox){
 }
 
 void PointLight::decode(const std::vector<KeyValues> & params){
-	Light::decode(params);
+	Light::decodeBase(params);
 	for(const auto & param : params){
 		if(param.key == "position"){
 			_lightPosition = Codable::decodeVec3(param);

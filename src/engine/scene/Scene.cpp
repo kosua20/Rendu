@@ -18,7 +18,7 @@ void Scene::init(){
 	
 	// Define loaders for each keyword.
 	std::map<std::string, void (Scene::*)(const std::vector<KeyValues> &)> loaders = {
-		{"scene", &Scene::loadScene}, {"object", &Scene::loadObject}, {"point", &Scene::loadPointLight}, {"directional", &Scene::loadDirectionalLight}, {"spot", &Scene::loadSpotLight}
+		{"scene", &Scene::loadScene}, {"object", &Scene::loadObject}, {"point", &Scene::loadLight}, {"directional", &Scene::loadLight}, {"spot", &Scene::loadLight}
 	};
 	
 	// Parse the file.
@@ -56,16 +56,9 @@ void Scene::init(){
 	_sceneModel = glm::mat4(1.0f);
 	// Update all lights bounding box infos.
 	const BoundingBox sceneBox = computeBoundingBox(true);
-	for(auto & light : directionalLights){
-		light.setScene(sceneBox);
+	for(auto & light : lights){
+		light->setScene(sceneBox);
 	}
-	for(auto & light : spotLights){
-		light.setScene(sceneBox);
-	}
-	for(auto & light : pointLights){
-		light.setScene(sceneBox);
-	}
-
 	_loaded = true;
 };
 
@@ -74,19 +67,11 @@ void Scene::loadObject(const std::vector<KeyValues> & params){
 	objects.back().decode(params);
 }
 
-void Scene::loadPointLight(const std::vector<KeyValues> & params){
-	pointLights.emplace_back();
-	pointLights.back().decode(params);
-}
-
-void Scene::loadDirectionalLight(const std::vector<KeyValues> & params){
-	directionalLights.emplace_back();
-	directionalLights.back().decode(params);
-}
-
-void Scene::loadSpotLight(const std::vector<KeyValues> & params){
-	spotLights.emplace_back();
-	spotLights.back().decode(params);
+void Scene::loadLight(const std::vector<KeyValues> & params){
+	auto light = Light::decode(params);
+	if(light){
+		lights.push_back(light);
+	}
 }
 
 void Scene::loadScene(const std::vector<KeyValues> & params){
@@ -170,14 +155,8 @@ BoundingBox Scene::computeBoundingBox(bool onlyShadowCasters){
 }
 
 void Scene::update(double fullTime, double frameTime){
-	for(auto & light : pointLights){
-		light.update(fullTime, frameTime);
-	}
-	for(auto & light : spotLights){
-		light.update(fullTime, frameTime);
-	}
-	for(auto & light : directionalLights){
-		light.update(fullTime, frameTime);
+	for(auto & light : lights){
+		light->update(fullTime, frameTime);
 	}
 	for(auto & object : objects){
 		object.update(fullTime, frameTime);
@@ -185,13 +164,7 @@ void Scene::update(double fullTime, double frameTime){
 }
 
 void Scene::clean() {
-	for(auto& dirLight : directionalLights){
-		dirLight.clean();
-	}
-	for(auto& pointLight : pointLights){
-		pointLight.clean();
-	}
-	for(auto& spotLight : spotLights){
-		spotLight.clean();
+	for(auto& light : lights){
+		light->clean();
 	}
 };

@@ -58,16 +58,17 @@ public:
 	void clean();
 	
 	std::vector<Object> objects; ///< The objects in the scene.
-	std::vector<DirectionalLight> directionalLights; ///< Directional lights present in the scene.
-	std::vector<PointLight> pointLights; ///< Omni-directional lights present in the scene.
-	std::vector<SpotLight> spotLights; ///< Spotlights present in the scene.
+	std::vector<std::shared_ptr<Light>> lights; ///< Lights present in the scene.
 	
+	/** \brief The background mode to use for a scene. */
 	enum class Background {
-		COLOR, IMAGE, SKYBOX
+		COLOR, ///< Use a unique color as background.
+		IMAGE, ///< Use a 2D texture image as background (will be stretched).
+		SKYBOX ///< Use a skybox/cubemap as background.
 	};
-	Background backgroundMode = Background::COLOR;
-	glm::vec3 backgroundColor = glm::vec3(0.0f);
-	Object background; ///< Background object.
+	Background backgroundMode = Background::COLOR; ///< The background mode (see enum).
+	glm::vec3 backgroundColor = glm::vec3(0.0f); ///< Color to use if the background mode is COLOR.
+	Object background; ///< Background object, containing the geometry and optional textures to use.
 	
 	std::vector<glm::vec3> backgroundIrradiance; ///< RGB SH-coefficients of the background irradiance, computed using SHExtractor. \see SphericalHarmonics
 	const TextureInfos * backgroundReflection = nullptr; ///< Cubemap texture ID of the background radiance.
@@ -82,17 +83,7 @@ private:
 	/** Load a point light in the scene from its serialized representation.
 	 \param params the point light parameters
 	 */
-	void loadPointLight(const std::vector<KeyValues> & params);
-	
-	/** Load a directional ligjt in the scene from its serialized representation.
-	 \param params the directional light parameters
-	 */
-	void loadDirectionalLight(const std::vector<KeyValues> & params);
-	
-	/** Load a spot light in the scene from its serialized representation.
-	 \param params the spot light parameters
-	 */
-	void loadSpotLight(const std::vector<KeyValues> & params);
+	void loadLight(const std::vector<KeyValues> & params);
 	
 	/** Load the scene environment informations from its serialized representation.
 	 \param params the scene parameters

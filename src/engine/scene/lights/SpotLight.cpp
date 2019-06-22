@@ -29,8 +29,8 @@ void SpotLight::init(const std::vector<GLuint>& textureIds){
 	_blur = std::unique_ptr<BoxBlur>(new BoxBlur(512, 512, false, descriptor));
 	
 	_cone = Resources::manager().getMesh("light_cone");
-	_textureIds = textureIds;
-	_textureIds.emplace_back(_blur->textureId());
+	_textures = textureIds;
+	_textures.emplace_back(_blur->textureId());
 	
 	// Load the shaders.
 	_program = Resources::manager().getProgram("spot_light", "object_basic", "spot_light");
@@ -67,9 +67,9 @@ void SpotLight::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMat
 	glUniform1i(_program->uniform("castShadow"), _castShadows);
 	
 	// Active screen texture.
-	for(GLuint i = 0;i < _textureIds.size(); ++i){
+	for(GLuint i = 0;i < _textures.size(); ++i){
 		glActiveTexture(GL_TEXTURE0 + i);
-		glBindTexture(GL_TEXTURE_2D, _textureIds[i]);
+		glBindTexture(GL_TEXTURE_2D, _textures[i]);
 	}
 	
 	// Select the geometry.
@@ -153,7 +153,7 @@ void SpotLight::setScene(const BoundingBox & sceneBox){
 }
 
 void SpotLight::decode(const std::vector<KeyValues> & params){
-	Light::decode(params);
+	Light::decodeBase(params);
 	for(const auto & param : params){
 		if(param.key == "direction"){
 			_lightDirection = glm::normalize(Codable::decodeVec3(param));
