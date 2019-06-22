@@ -1,19 +1,31 @@
 #include "scene/Codable.hpp"
 
-KeyValues::KeyValues(const std::string & aKey){
-	key = aKey;
+
+bool Codable::decodeBool(const KeyValues & param, unsigned int position){
+	if(param.values.size() < position + 1){
+		return false;
+	}
+	const std::string boolString = param.values[position];
+	
+	const std::vector<std::string> allowedTrues = {"true", "True", "yes", "Yes", "1"};
+	for(const auto & term : allowedTrues){
+		if(boolString == term){
+			return true;
+		}
+	}
+	return false;
 }
 
-glm::vec3 Codable::decodeVec3(const KeyValues & param, unsigned int start){
+glm::vec3 Codable::decodeVec3(const KeyValues & param, unsigned int position){
 	// Filter erroneous case.
-	if(param.values.size() < start + 3){
+	if(param.values.size() < position + 3){
 		Log::Error() << "Unable to decode vec3 from string." << std::endl;
 		return glm::vec3(0.0f);
 	}
 	glm::vec3 vec(0.0f);
-	vec[0] = std::stof(param.values[start + 0]);
-	vec[1] = std::stof(param.values[start + 1]);
-	vec[2] = std::stof(param.values[start + 2]);
+	vec[0] = std::stof(param.values[position + 0]);
+	vec[1] = std::stof(param.values[position + 1]);
+	vec[2] = std::stof(param.values[position + 2]);
 	return vec;
 }
 
@@ -56,11 +68,10 @@ TextureInfos * Codable::decodeTexture(const KeyValues & param){
 		{"rgbcube", {GL_RGBA8, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE}},
 		{"rgb32cube", {GL_RGB32F, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE}},
 	};
-	
+	// Check if the required format exists.
 	if(descriptors.count(param.key) == 0 || param.values.empty()){
 		return nullptr;
 	}
-	
 	// This is indeed a texture.
 	const std::string textureString = param.values[0];
 	// Handle cubemap case.
@@ -68,4 +79,58 @@ TextureInfos * Codable::decodeTexture(const KeyValues & param){
 		return Resources::manager().getCubemap(textureString, descriptors.at(param.key));
 	}
 	return Resources::manager().getTexture(textureString, descriptors.at(param.key));
+}
+
+
+
+std::vector<KeyValues> Codable::parse(const std::string & codableFile){
+	std::vector<KeyValues> tokens;
+	std::stringstream sstr(codableFile);
+	std::string line;
+	
+	while(std::getline(sstr, line)){
+		if(line.empty()){
+			continue;
+		}
+		// Check if the line contains a comment, remove evrything after.
+		const std::string::size_type hashPos = line.find("#");
+		if(hashPos != std::string::npos){
+			line = line.substr(0, hashPos);
+		}
+		// Cleanup.
+		line = TextUtilities::trim(line, " \t\r");
+		if(line.empty()){
+			continue;
+		}
+		// Find the first colon.
+		const std::string::size_type firstColon = line.find(":");
+		// If no colon, ignore the line.
+		if(firstColon == std::string::npos){
+			Log::Warning() << "Line with no colon encountered while parsing file. Skipping line." << std::endl;
+			continue;
+		}
+		
+		// We can have multiple colons on the same line, when nesting (a texture for a specific attribute for instance).
+		std::string::size_type previousColon = 0;
+		std::string::size_type nextColon = firstColon;
+		while (nextColon != std::string::npos) {
+			std::string key = line.substr(previousColon, nextColon-previousColon);
+			key = TextUtilities::trim(key, " \t");
+			tokens.emplace_back(key);
+			previousColon = nextColon+1;
+			nextColon = line.find(":", previousColon);
+		}
+		
+		// Everything after the last colon are values, separated by either spaces or commas.
+		std::string values = line.substr(previousColon);
+		TextUtilities::replace(values, ",", " ");
+		values = TextUtilities::trim(values, " \t");
+		// Split in value tokens.
+		std::stringstream valuesSstr(values);
+		std::string value;
+		while(std::getline(valuesSstr, value, ' ')){
+			tokens.back().values.push_back(value);
+		}
+	}
+	return tokens;
 }
