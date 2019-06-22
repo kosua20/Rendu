@@ -8,6 +8,7 @@
 #include "Common.hpp"
 
 
+
 /**
  \brief Represents a 3D environment composed of objects, a background and additional environment lighting informations.
  \ingroup Scene
@@ -15,9 +16,8 @@
 class Scene {
 
 public:
-
+	
 	/** Constructor from a scene description file. The expected format is as follow:
-	 
 	 \verbatim
 	 scene:
 	 	probe: texturetype: texturename (see Codable::decodeTexture for details)
@@ -25,8 +25,7 @@ public:
 		translation: X,Y,Z
 		scaling: scale
 		orientation: axisX,axisY,axisZ angle
-	 background:
-		texture: texturetype: texturename
+		background: ...
 	 object:
 		... (see Object::decode documentation)
 	 ...
@@ -34,8 +33,13 @@ public:
 		... (see Light::decode documentation)
 	 ...
 	 \endverbatim
+	  where lighttype is one of point, directional, spot and background is one of
+	 \verbatim
+	 bgcolor: R,G,B
+	 bgimage: texturetype: texturename
+	 bgskybox: texturetype: texturename
+	 \endverbatim
 	
-	 where lighttype is one of point, directional, spot.
 	 \param name the name of the scene description file
 	 */
 	Scene(const std::string & name);
@@ -54,14 +58,21 @@ public:
 	void clean();
 	
 	std::vector<Object> objects; ///< The objects in the scene.
-	Object background; ///< Background object.
-	std::vector<glm::vec3> backgroundIrradiance; ///< RGB SH-coefficients of the background irradiance, computed using SHExtractor. \see SphericalHarmonics
-	const TextureInfos * backgroundReflection; ///< Cubemap texture ID of the background radiance.
 	std::vector<DirectionalLight> directionalLights; ///< Directional lights present in the scene.
 	std::vector<PointLight> pointLights; ///< Omni-directional lights present in the scene.
 	std::vector<SpotLight> spotLights; ///< Spotlights present in the scene.
 	
-protected:
+	enum class Background {
+		COLOR, IMAGE, SKYBOX
+	};
+	Background backgroundMode = Background::COLOR;
+	glm::vec3 backgroundColor = glm::vec3(0.0f);
+	Object background; ///< Background object.
+	
+	std::vector<glm::vec3> backgroundIrradiance; ///< RGB SH-coefficients of the background irradiance, computed using SHExtractor. \see SphericalHarmonics
+	const TextureInfos * backgroundReflection = nullptr; ///< Cubemap texture ID of the background radiance.
+	
+private:
 	
 	/** Load an object in the scene from its serialized representation.
 	 \param params the object parameters
@@ -82,11 +93,6 @@ protected:
 	 \param params the spot light parameters
 	 */
 	void loadSpotLight(const std::vector<KeyValues> & params);
-	
-	/** Load the scene background object from its serialized representation.
-	 \param params the background parameters
-	 */
-	void loadBackground(const std::vector<KeyValues> & params);
 	
 	/** Load the scene environment informations from its serialized representation.
 	 \param params the scene parameters

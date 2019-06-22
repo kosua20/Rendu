@@ -18,7 +18,7 @@ void Scene::init(){
 	
 	// Define loaders for each keyword.
 	std::map<std::string, void (Scene::*)(const std::vector<KeyValues> &)> loaders = {
-		{"scene", &Scene::loadScene}, {"object", &Scene::loadObject}, { "background", &Scene::loadBackground}, {"point", &Scene::loadPointLight}, {"directional", &Scene::loadDirectionalLight}, {"spot", &Scene::loadSpotLight}
+		{"scene", &Scene::loadScene}, {"object", &Scene::loadObject}, {"point", &Scene::loadPointLight}, {"directional", &Scene::loadDirectionalLight}, {"spot", &Scene::loadSpotLight}
 	};
 	
 	// Parse the file.
@@ -89,25 +89,10 @@ void Scene::loadSpotLight(const std::vector<KeyValues> & params){
 	spotLights.back().decode(params);
 }
 
-void Scene::loadBackground(const std::vector<KeyValues> & params){
-	/// \todo Support other types of background object. Maybe based implicitely on what was passed (color/texture2d/cubemap)?
-	background = Object(Object::Type::Skybox, Resources::manager().getMesh("skybox"), false);
-	
-	for(int pid = 0; pid < params.size(); ++pid){
-		const auto & param = params[pid];
-		if(param.key == "texture"){
-			// Move to the next parameter.
-			const TextureInfos * tex = Codable::decodeTexture(params[++pid]);
-			if(tex){
-				background.addTexture(tex);
-			} else {
-				--pid;
-			}
-		}
-	}
-}
-
 void Scene::loadScene(const std::vector<KeyValues> & params){
+	background = Object(Object::Type::Common, Resources::manager().getMesh("plane"), false);
+	backgroundIrradiance = std::vector<glm::vec3>(9, glm::vec3(0.0f));
+	
 	for(int pid = 0; pid < params.size(); ++pid){
 		const auto & param = params[pid];
 		if(param.key == "irradiance" && !param.values.empty()){
@@ -116,6 +101,31 @@ void Scene::loadScene(const std::vector<KeyValues> & params){
 			// Move to the next parameter and try to load the texture.
 			backgroundReflection = Codable::decodeTexture(params[++pid]);
 			if(backgroundReflection == nullptr){
+				--pid;
+			}
+		} else if(param.key == "bgcolor"){
+			backgroundMode = Background::COLOR;
+			// Background is a plane, store the color.
+			backgroundColor = Codable::decodeVec3(param);
+		} else if(param.key == "bgimage"){
+			backgroundMode = Background::IMAGE;
+			// Background is a textured plane.
+			// Move to the next parameter.
+			const TextureInfos * tex = Codable::decodeTexture(params[++pid]);
+			if(tex){
+				background.addTexture(tex);
+			} else {
+				--pid;
+			}
+		} else if(param.key == "bgsky"){
+			backgroundMode = Background::SKYBOX;
+			// Object is a textured skybox.
+			background = Object(Object::Type::Common, Resources::manager().getMesh("skybox"), false);
+			// Move to the next parameter.
+			const TextureInfos * tex = Codable::decodeTexture(params[++pid]);
+			if(tex){
+				background.addTexture(tex);
+			} else {
 				--pid;
 			}
 		}
