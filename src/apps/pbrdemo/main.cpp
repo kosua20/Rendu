@@ -112,6 +112,7 @@ int main(int argc, char** argv) {
 				}
 				ImGui::EndCombo();
 			}
+			ImGui::Separator();
 		}
 		ImGui::End();
 		

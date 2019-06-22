@@ -47,7 +47,7 @@ public:
 	void fov(float fov);
 	
 	/**
-	 Obtain the current vertical field of view.
+	 Obtain the current vertical field of view, in radians.
 	 \return the field of view
 	 */
 	float fov() const { return _fov; }
@@ -87,7 +87,7 @@ protected:
 	glm::vec3 _up; ///< The camera up vector
 	glm::vec3 _right; ///< The camera right vector
 	
-	float _fov; ///< The vertical field of view
+	float _fov; ///< The vertical field of view, in radians.
 	float _ratio; ///< The aspect ratio
 	float _near; ///< The near plane distance
 	float _far; ///< The far plane distance

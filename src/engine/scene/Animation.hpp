@@ -58,7 +58,7 @@ protected:
 /** \brief Rotate an object around an axis.
  	\ingroup Scene
  */
-class Rotation : public Animation {
+class Rotation final : public Animation {
 public:
 	
 	/** Default constructor. */
@@ -102,7 +102,7 @@ private:
 /** \brief Translate an object back and forth along a direction.
  	\ingroup Scene
  */
-class BackAndForth : public Animation {
+class BackAndForth final : public Animation {
 public:
 	
 	/** Default constructor. */
