@@ -54,7 +54,7 @@ namespace Interface {
 			glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
 			glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
 			glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
-			// \note We might want to impose the configured size here. This means the monitor could be set in a non-native mode.
+			/// \note We might want to impose the configured size here. This means the monitor could be set in a non-native mode.
 			window = glfwCreateWindow(mode->width, mode->height, name.c_str(), glfwGetPrimaryMonitor(), NULL);
 		} else {
 			// Create a window with a given size. Width and height are defined in the configuration.
@@ -93,7 +93,6 @@ namespace Interface {
 		glfwSetWindowIconifyCallback(window, iconify_callback); 	// Window minimization
 		glfwSwapInterval(config.vsync ? (config.rate == 30 ? 2 : 1) : 0);						// 60 FPS V-sync
 		
-		/// \todo Rethink the way we can enable/disable ImGui?
 		setupImGui(window);
 		
 		// Check the window position and size (if we are on a screen smaller than the initial size).

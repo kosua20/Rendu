@@ -3,16 +3,12 @@
 // Attributes
 layout(location = 0) in vec3 v; ///< Position.
 
-// Uniform
-uniform mat4 mvp; ///< MVP transformation matrix.
-
-// Output: position in model space
+// Output: uv coordinates
 out INTERFACE {
 	vec2 uv;
-} Out ; ///< vec3 position;
+} Out ; ///< vec2 uv;
 
-/** Apply the transformation to the input vertex, treating it as a vector to ignore the translation part and keep it centered.
- We also ensure the vertex will be set to the maximum depth by tweaking gl_Position.z.
+/** Output vertex as-is. We ensure the vertex will be set to the maximum depth by tweaking gl_Position.z.
  */
 void main(){
 	gl_Position = vec4(v, 1.0);

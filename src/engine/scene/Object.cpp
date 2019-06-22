@@ -11,7 +11,6 @@ Object::Object(const Object::Type type, const MeshInfos * mesh, bool castShadows
 
 void Object::decode(const std::vector<KeyValues> & params){
 	
-	/// \todo Find a way to easily expand types list.
 #define REGISTER_TYPE(type) {#type, Type::type}
 	const std::map<std::string, Object::Type> types = {
 		REGISTER_TYPE(Common),

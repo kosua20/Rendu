@@ -19,7 +19,6 @@ void Raycaster::addMesh(const Mesh & mesh){
 	const size_t indexOffset = _vertices.size();
 	
 	// Start by copying all vertices.
-	/// \todo See if we also need to keep the normals.
 	_vertices.insert(_vertices.end(), mesh.positions.begin(), mesh.positions.end());
 	
 	const size_t trianglesCount = mesh.indices.size()/3;
