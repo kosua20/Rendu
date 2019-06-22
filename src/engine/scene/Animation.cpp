@@ -1,5 +1,34 @@
 #include "Animation.hpp"
 
+std::vector<std::shared_ptr<Animation>> Animation::decode(const std::vector<KeyValues> & params, int & listPos){
+	std::vector<std::shared_ptr<Animation>> animations;
+
+	if(params[listPos].key != "animations"){
+		Log::Warning() << "Unable to find animation keyword." << std::endl;
+		return {};
+	}
+	int pid = listPos+1;
+	while(pid < params.size()){
+		const auto & param = params[pid];
+		if(param.key == "rotation"){
+			auto anim = std::shared_ptr<Rotation>(new Rotation());
+			anim->decode(param);
+			animations.push_back(anim);
+			
+		} else if(param.key == "backandforth"){
+			auto anim = std::shared_ptr<BackAndForth>(new BackAndForth());
+			anim->decode(param);
+			animations.push_back(anim);
+			
+		} else {
+			// We reached the end of the animation list, break.
+			break;
+		}
+		++pid;
+	}
+	listPos = pid;
+	return animations;
+}
 
 void Animation::decodeBase(const KeyValues & params){
 	if(params.values.size() >= 2){
@@ -8,19 +37,6 @@ void Animation::decodeBase(const KeyValues & params){
 		_speed = speed;
 		_frame = frame;
 	}
-}
-
-std::shared_ptr<Animation> Animation::decode(const KeyValues & params){
-	if(params.key == "rotation"){
-		auto anim = std::shared_ptr<Rotation>(new Rotation());
-		anim->decode(params);
-		return anim;
-	} else if(params.key == "backandforth"){
-		auto anim = std::shared_ptr<BackAndForth>(new BackAndForth());
-		anim->decode(params);
-		return anim;
-	}
-	return std::shared_ptr<Animation>();
 }
 
 Rotation::Rotation(){

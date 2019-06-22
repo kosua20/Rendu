@@ -5,7 +5,7 @@
 #include "Common.hpp"
 
 /** \brief An animation is a transformation evaluated at each frame and applied to an object.
- \ingroup Scene
+ 	\ingroup Scene
  */
 class Animation {
 public:
@@ -33,10 +33,22 @@ public:
 	/** Virtual destructor. */
 	virtual ~Animation(){};
 	
-	static std::shared_ptr<Animation> decode(const KeyValues & params);
+	/** Helper that can instantiate a list of animations of any type from the passed keywords and parameters.
+	 \param params a list of key-value tuple containing animations parameters
+	 \param listPos the position of the 'animations' keyword in the params list. Will be updated with the position after the animations list.
+	 \return a vector of animations
+	 */
+	static std::vector<std::shared_ptr<Animation>> decode(const std::vector<KeyValues> & params, int & listPos);
 	
 protected:
 	
+	/** Setup shared animation parameters from a key-value tuple. The expected format is as follows:
+	 \verbatim
+	 animationtype: speed frame ...
+	 \endverbatim
+	 (where frame is one of 'world' or 'model').
+	 \param params the parameters tuple
+	 */
 	void decodeBase(const KeyValues & params);
 	
 	Frame _frame = Frame::WORLD; ///< The frame of transformation.
@@ -44,7 +56,7 @@ protected:
 };
 
 /** \brief Rotate an object around an axis.
- \ingroup Scene
+ 	\ingroup Scene
  */
 class Rotation : public Animation {
 public:
@@ -73,6 +85,13 @@ public:
 	 */
 	glm::vec4 apply(const glm::vec4 & v, double fullTime, double frameTime);
 	
+	/** Setup rotation animation parameters from a key-value tuple. The expected format is as follows:
+	 \verbatim
+	 rotation: speed frame axisX,axisY,axisZ
+	 \endverbatim
+	 (where frame is one of 'world' or 'model').
+	 \param params the parameters tuple
+	 */
 	void decode(const KeyValues & params);
 	
 private:
@@ -81,7 +100,7 @@ private:
 };
 
 /** \brief Translate an object back and forth along a direction.
- \ingroup Scene
+ 	\ingroup Scene
  */
 class BackAndForth : public Animation {
 public:
@@ -111,6 +130,13 @@ public:
 	 */
 	glm::vec4 apply(const glm::vec4 & v, double fullTime, double frameTime);
 	
+	/** Setup back-and-forth translation animation parameters from a key-value tuple. The expected format is as follows:
+	 \verbatim
+	 backandforth: speed frame directionX,directionY,directionZ amplitude
+	 \endverbatim
+	 (where frame is one of 'world' or 'model').
+	 \param params the parameters tuple
+	 */
 	void decode(const KeyValues & params);
 	
 private:
