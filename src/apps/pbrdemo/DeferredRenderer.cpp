@@ -221,6 +221,7 @@ GLuint DeferredRenderer::renderPostprocess(const glm::vec2 & invRenderSize){
 		_toneMappingFramebuffer->bind();
 		_toneMappingFramebuffer->setViewport();
 		glUseProgram(_toneMappingProgram->id());
+		glUniform1f(_toneMappingProgram->uniform("customExposure"), _exposure);
 		ScreenQuad::draw(currentResult);
 		_toneMappingFramebuffer->unbind();
 		currentResult = _toneMappingFramebuffer->textureId();
@@ -340,6 +341,7 @@ void DeferredRenderer::update(){
 		ImGui::Checkbox("Bloom", &_applyBloom);
 		ImGui::Checkbox("Tonemapping ", &_applyTonemapping); ImGui::SameLine(120);
 		ImGui::Checkbox("FXAA", &_applyFXAA);
+		ImGui::SliderFloat("Exposure", &_exposure, 0.1f, 10.0f);
 		ImGui::Separator();
 		ImGui::ColorEdit3("Background color", &_scene->backgroundColor[0]);
 		ImGui::Checkbox("Show debug lights", &_debugVisualization);

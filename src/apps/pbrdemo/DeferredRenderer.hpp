@@ -104,6 +104,7 @@ private:
 	std::shared_ptr<Scene> _scene; ///< The scene to render
 	
 	float _cameraFOV;
+	float _exposure = 1.0f;
 	bool _debugVisualization = false; ///< Toggle the rendering of debug informations in the scene.
 	bool _applyBloom = true;
 	bool _applyTonemapping = true;

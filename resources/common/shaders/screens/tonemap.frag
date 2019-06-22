@@ -6,6 +6,7 @@ in INTERFACE {
 } In ; ///< vec2 uv;
 
 layout(binding = 0) uniform sampler2D screenTexture; ///< Image to tonemap.
+uniform float customExposure = 1.0; ///< Exposure
 
 layout(location = 0) out vec3 fragColor; ///< Color.
 
@@ -57,7 +58,7 @@ vec3 uncharted2(vec3 hdrColor){
 void main(){
 	
 	vec3 finalColor = texture(screenTexture,In.uv, -1000.0).rgb;
-	fragColor = uncharted2(finalColor);
+	fragColor = simpleExposure(finalColor, customExposure);
 	
 	// Test if any component is still > 1, for debug purposes.
 	//fragColor = any(greaterThan(fragColor, vec3(1.0))) ? vec3(1.0,0.0,0.0) : fragColor;

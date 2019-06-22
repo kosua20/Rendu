@@ -12,7 +12,6 @@ layout(location = 0) out vec3 fragColor; ///< Final color.
 /** Apply a sharpening filter to the image (based on Uncharted 2 presentation). */
 void main(){
 	
-	/// \todo Refine performances and effect.
 	vec3 finalColor = texture(screenTexture,In.uv, -1000.0).rgb;
 	vec3 down = textureOffset(screenTexture,In.uv,ivec2(0,-1), -1000.0).rgb;
 	vec3 up = textureOffset(screenTexture,In.uv,ivec2(0,1), -1000.0).rgb;
