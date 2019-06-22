@@ -93,6 +93,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="class_light-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -107,12 +108,21 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:aeb5df09a25a32f19fdffa761268ba24f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_light.html#aeb5df09a25a32f19fdffa761268ba24f">Light</a> ()</td></tr>
+<tr class="separator:aeb5df09a25a32f19fdffa761268ba24f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aad66dc4b16fd701b316f38eedadd6e26"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_light.html#aad66dc4b16fd701b316f38eedadd6e26">Light</a> (const glm::vec3 &amp;color)</td></tr>
 <tr class="separator:aad66dc4b16fd701b316f38eedadd6e26"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9753d095b837bded3951debbcef35bb1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_light.html#a9753d095b837bded3951debbcef35bb1">castShadow</a> (const bool shouldCast)</td></tr>
 <tr class="separator:a9753d095b837bded3951debbcef35bb1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a91e1c518722138557e2733c2e474ee1f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_light.html#a91e1c518722138557e2733c2e474ee1f">setIntensity</a> (const glm::vec3 &amp;color)</td></tr>
 <tr class="separator:a91e1c518722138557e2733c2e474ee1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aceac3e9db9e6bed4a6129302f04e0e8d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_light.html#aceac3e9db9e6bed4a6129302f04e0e8d">addAnimation</a> (std::shared_ptr&lt; <a class="el" href="class_animation.html">Animation</a> &gt; anim)</td></tr>
+<tr class="separator:aceac3e9db9e6bed4a6129302f04e0e8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
+Protected Member Functions</h2></td></tr>
+<tr class="memitem:a87f889372072c5297adfba49159fdb16"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_light.html#a87f889372072c5297adfba49159fdb16">decode</a> (const std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt; &amp;params)</td></tr>
+<tr class="separator:a87f889372072c5297adfba49159fdb16"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
@@ -128,14 +138,44 @@ glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_light.html#a6c324048008d9af8b1194f597c5fb755">_castShadows</a></td></tr>
 <tr class="memdesc:a6c324048008d9af8b1194f597c5fb755"><td class="mdescLeft">&#160;</td><td class="mdescRight">Is the light casting shadows (and thus use a shadow map). <br /></td></tr>
 <tr class="separator:a6c324048008d9af8b1194f597c5fb755"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9a531ea8567af033989e972d7ebfecc2"><td class="memItemLeft" align="right" valign="top"><a id="a9a531ea8567af033989e972d7ebfecc2"></a>
+std::vector&lt; std::shared_ptr&lt; <a class="el" href="class_animation.html">Animation</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_light.html#a9a531ea8567af033989e972d7ebfecc2">_animations</a></td></tr>
+<tr class="memdesc:a9a531ea8567af033989e972d7ebfecc2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Animations list (will be applied in order). <br /></td></tr>
+<tr class="separator:a9a531ea8567af033989e972d7ebfecc2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A general light with adjustable color intensity, that can cast shadows. </p>
 </div>
 <p>Inherited by <a class="el" href="class_directional_light.html">DirectionalLight</a>, <a class="el" href="class_point_light.html">PointLight</a>, and <a class="el" href="class_spot_light.html">SpotLight</a>.</p>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="aeb5df09a25a32f19fdffa761268ba24f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeb5df09a25a32f19fdffa761268ba24f">&#9670;&nbsp;</a></span>Light() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Light::Light </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Default constructor. </p>
+
+</div>
+</div>
 <a id="aad66dc4b16fd701b316f38eedadd6e26"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aad66dc4b16fd701b316f38eedadd6e26">&#9670;&nbsp;</a></span>Light()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aad66dc4b16fd701b316f38eedadd6e26">&#9670;&nbsp;</a></span>Light() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -167,6 +207,38 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="aceac3e9db9e6bed4a6129302f04e0e8d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aceac3e9db9e6bed4a6129302f04e0e8d">&#9670;&nbsp;</a></span>addAnimation()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Light::addAnimation </td>
+          <td>(</td>
+          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="class_animation.html">Animation</a> &gt;&#160;</td>
+          <td class="paramname"><em>anim</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Add an animation to the light. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">anim</td><td>the animation to apply </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="a9753d095b837bded3951debbcef35bb1"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a9753d095b837bded3951debbcef35bb1">&#9670;&nbsp;</a></span>castShadow()</h2>
 
@@ -193,6 +265,43 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <p>Set if the light shoud cast shadows. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">shouldCast</td><td>toggle shadow casting </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a87f889372072c5297adfba49159fdb16"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a87f889372072c5297adfba49159fdb16">&#9670;&nbsp;</a></span>decode()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Light::decode </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>params</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Setup a light common parameters from a list of key-value tuples. The following keywords will be searched for: </p><pre class="fragment">intensity: R,G,B
+shadows: bool
+animations:
+    animationtype: ...
+    ...
+</pre> <dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">params</td><td>the parameters tuples list </td></tr>
   </table>
   </dd>
 </dl>

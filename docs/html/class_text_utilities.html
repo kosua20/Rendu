@@ -123,6 +123,10 @@ Static Public Member Functions</h2></td></tr>
 <tr class="separator:a109f8946c5c8b5b7980ef16b222cb2e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab5cc5b9fb2df80b191cc5b7023d85a70"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_text_utilities.html#ab5cc5b9fb2df80b191cc5b7023d85a70">replace</a> (std::string &amp;source, const std::string &amp;fromString, const std::string &amp;toString)</td></tr>
 <tr class="separator:ab5cc5b9fb2df80b191cc5b7023d85a70"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a17e4a1fe458b3e46bd23ed15d9e002f8"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_text_utilities.html#a17e4a1fe458b3e46bd23ed15d9e002f8">hasPrefix</a> (const std::string &amp;source, const std::string &amp;prefix)</td></tr>
+<tr class="separator:a17e4a1fe458b3e46bd23ed15d9e002f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abe79f8a4f4cc9ee437f468340a391694"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_text_utilities.html#abe79f8a4f4cc9ee437f468340a391694">hasSuffix</a> (const std::string &amp;source, const std::string &amp;suffix)</td></tr>
+<tr class="separator:abe79f8a4f4cc9ee437f468340a391694"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Provides utilities to load fonts, generate labels and process text in general. </p>
@@ -182,6 +186,94 @@ Static Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>the infos of the label mesh </dd></dl>
+
+</div>
+</div>
+<a id="a17e4a1fe458b3e46bd23ed15d9e002f8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a17e4a1fe458b3e46bd23ed15d9e002f8">&#9670;&nbsp;</a></span>hasPrefix()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool TextUtilities::hasPrefix </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>source</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>prefix</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Test if a string is a prefix of another string. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">source</td><td>the string to examine </td></tr>
+    <tr><td class="paramname">prefix</td><td>the prefix string to test </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the prefix is here </dd></dl>
+
+</div>
+</div>
+<a id="abe79f8a4f4cc9ee437f468340a391694"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abe79f8a4f4cc9ee437f468340a391694">&#9670;&nbsp;</a></span>hasSuffix()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool TextUtilities::hasSuffix </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>source</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>suffix</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Test if a string is a suffix of another string. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">source</td><td>the string to examine </td></tr>
+    <tr><td class="paramname">suffix</td><td>the suffix string to test </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the suffix is here </dd></dl>
 
 </div>
 </div>

@@ -108,86 +108,91 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:ad8dadb365053c182931671a424199e36"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#ad8dadb365053c182931671a424199e36">Type</a> { <a class="el" href="class_object.html#ad8dadb365053c182931671a424199e36a5d169f1a89babe4d8f11aec9b78b4bc1">Skybox</a> = 0, 
-<a class="el" href="class_object.html#ad8dadb365053c182931671a424199e36ac04b66057198bcaa3be6b5a61385908e">Regular</a> = 1, 
-<a class="el" href="class_object.html#ad8dadb365053c182931671a424199e36ac06815ac7ebba4c30493c11b422c0111">Parallax</a> = 2, 
-<a class="el" href="class_object.html#ad8dadb365053c182931671a424199e36a15a570f61f039c28096fd5a0ff390e08">Custom</a> = 3
+<tr class="memitem:a2e34d8d662b907a9e859b73311d84a0c"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#a2e34d8d662b907a9e859b73311d84a0c">Type</a> : int { <a class="el" href="class_object.html#a2e34d8d662b907a9e859b73311d84a0ca5d169f1a89babe4d8f11aec9b78b4bc1">Skybox</a> = 0, 
+<a class="el" href="class_object.html#a2e34d8d662b907a9e859b73311d84a0cad3787b48eed2e837901c27c326fe368e">PBRRegular</a> = 1, 
+<a class="el" href="class_object.html#a2e34d8d662b907a9e859b73311d84a0ca3285326d869ef94f2c18ae60ceef3f2d">PBRParallax</a> = 2
  }</td></tr>
-<tr class="memdesc:ad8dadb365053c182931671a424199e36"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type of shading/effects.  <a href="class_object.html#ad8dadb365053c182931671a424199e36">More...</a><br /></td></tr>
-<tr class="separator:ad8dadb365053c182931671a424199e36"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memdesc:a2e34d8d662b907a9e859b73311d84a0c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type of shading/effects.  <a href="class_object.html#a2e34d8d662b907a9e859b73311d84a0c">More...</a><br /></td></tr>
+<tr class="separator:a2e34d8d662b907a9e859b73311d84a0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a40860402e64d8008fb42329df7097cdb"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#a40860402e64d8008fb42329df7097cdb">Object</a> ()</td></tr>
 <tr class="separator:a40860402e64d8008fb42329df7097cdb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a744b3044e9990ded16326616ea5d94d9"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#a744b3044e9990ded16326616ea5d94d9">Object</a> (const <a class="el" href="class_object.html#ad8dadb365053c182931671a424199e36">Object::Type</a> &amp;type, const std::string &amp;meshPath, const std::vector&lt; std::pair&lt; std::string, bool &gt;&gt; &amp;texturesPaths, const std::vector&lt; std::pair&lt; std::string, bool &gt;&gt; &amp;cubemapPaths={}, bool castShadows=true)</td></tr>
-<tr class="separator:a744b3044e9990ded16326616ea5d94d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab79adca4cbe5e9a34d05927cbbc3abd6"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#ab79adca4cbe5e9a34d05927cbbc3abd6">Object</a> (const <a class="el" href="class_program_infos.html">ProgramInfos</a> *program, const std::string &amp;meshPath, const std::vector&lt; std::pair&lt; std::string, bool &gt;&gt; &amp;texturesPaths, const std::vector&lt; std::pair&lt; std::string, bool &gt;&gt; &amp;cubemapPaths={})</td></tr>
-<tr class="separator:ab79adca4cbe5e9a34d05927cbbc3abd6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a07175257588425f520c65d50935d151c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#a07175257588425f520c65d50935d151c">update</a> (const glm::mat4 &amp;<a class="el" href="class_object.html#af5695a45554dc74658c5cb378991374e">model</a>)</td></tr>
-<tr class="separator:a07175257588425f520c65d50935d151c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9ad7b23e2b7eef2ab37ba7f2d470410b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#a9ad7b23e2b7eef2ab37ba7f2d470410b">draw</a> (const glm::mat4 &amp;view, const glm::mat4 &amp;projection) const</td></tr>
-<tr class="separator:a9ad7b23e2b7eef2ab37ba7f2d470410b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad963001207341079de0bcd3a76f4d2c1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#ad963001207341079de0bcd3a76f4d2c1">drawGeometry</a> () const</td></tr>
-<tr class="separator:ad963001207341079de0bcd3a76f4d2c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9d0b9e78c72246d3c50a94226cbc9f81"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#a9d0b9e78c72246d3c50a94226cbc9f81">Object</a> (const <a class="el" href="class_object.html#a2e34d8d662b907a9e859b73311d84a0c">Object::Type</a> <a class="el" href="class_object.html#a199c7a4569e9cf511fbaa3668ee2c9c1">type</a>, const <a class="el" href="struct_mesh_infos.html">MeshInfos</a> *<a class="el" href="class_object.html#ab3266715eb29b70a1598613cf30d9196">mesh</a>, bool castShadows)</td></tr>
+<tr class="separator:a9d0b9e78c72246d3c50a94226cbc9f81"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7775732616ebecc34286a4246284a3d8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#a7775732616ebecc34286a4246284a3d8">addTexture</a> (const <a class="el" href="struct_texture_infos.html">TextureInfos</a> *infos)</td></tr>
+<tr class="separator:a7775732616ebecc34286a4246284a3d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a00d6ea2de936dd09de8154e766cf8474"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#a00d6ea2de936dd09de8154e766cf8474">addAnimation</a> (std::shared_ptr&lt; <a class="el" href="class_animation.html">Animation</a> &gt; anim)</td></tr>
+<tr class="separator:a00d6ea2de936dd09de8154e766cf8474"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a54341afe208b3b88a1194cce4562b0fc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#a54341afe208b3b88a1194cce4562b0fc">set</a> (const glm::mat4 &amp;<a class="el" href="class_object.html#af5695a45554dc74658c5cb378991374e">model</a>)</td></tr>
+<tr class="separator:a54341afe208b3b88a1194cce4562b0fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a668ae910ff1e416dd94f680e9bb43187"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#a668ae910ff1e416dd94f680e9bb43187">update</a> (double fullTime, double frameTime)</td></tr>
+<tr class="separator:a668ae910ff1e416dd94f680e9bb43187"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa62a0825f8083ef3df317113a0890ef2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_bounding_box.html">BoundingBox</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#aa62a0825f8083ef3df317113a0890ef2">getBoundingBox</a> () const</td></tr>
 <tr class="separator:aa62a0825f8083ef3df317113a0890ef2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1b30e68e45d495982ef7058e22da96d7"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#a1b30e68e45d495982ef7058e22da96d7">castsShadow</a> () const</td></tr>
-<tr class="separator:a1b30e68e45d495982ef7058e22da96d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab3266715eb29b70a1598613cf30d9196"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="struct_mesh_infos.html">MeshInfos</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#ab3266715eb29b70a1598613cf30d9196">mesh</a> () const</td></tr>
+<tr class="separator:ab3266715eb29b70a1598613cf30d9196"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a079c8bcbe5ee53927d20be292655655e"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; const <a class="el" href="struct_texture_infos.html">TextureInfos</a> * &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#a079c8bcbe5ee53927d20be292655655e">textures</a> () const</td></tr>
+<tr class="separator:a079c8bcbe5ee53927d20be292655655e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af5695a45554dc74658c5cb378991374e"><td class="memItemLeft" align="right" valign="top">const glm::mat4 &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#af5695a45554dc74658c5cb378991374e">model</a> () const</td></tr>
 <tr class="separator:af5695a45554dc74658c5cb378991374e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a199c7a4569e9cf511fbaa3668ee2c9c1"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="class_object.html#a2e34d8d662b907a9e859b73311d84a0c">Type</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#a199c7a4569e9cf511fbaa3668ee2c9c1">type</a> () const</td></tr>
+<tr class="separator:a199c7a4569e9cf511fbaa3668ee2c9c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1b30e68e45d495982ef7058e22da96d7"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#a1b30e68e45d495982ef7058e22da96d7">castsShadow</a> () const</td></tr>
+<tr class="separator:a1b30e68e45d495982ef7058e22da96d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a93655a808e6c7249ea65d85549d72dd1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#a93655a808e6c7249ea65d85549d72dd1">decode</a> (const std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt; &amp;params)</td></tr>
+<tr class="separator:a93655a808e6c7249ea65d85549d72dd1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:ad60abc5be3a16b1078e3c2a9826dde52"><td class="memItemLeft" align="right" valign="top"><a id="ad60abc5be3a16b1078e3c2a9826dde52"></a>
-const <a class="el" href="class_program_infos.html">ProgramInfos</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#ad60abc5be3a16b1078e3c2a9826dde52">_program</a></td></tr>
-<tr class="memdesc:ad60abc5be3a16b1078e3c2a9826dde52"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shader responsible for the object rendering. <br /></td></tr>
-<tr class="separator:ad60abc5be3a16b1078e3c2a9826dde52"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a41c5b9da1a1f274d461c08a711c5b14d"><td class="memItemLeft" align="right" valign="top"><a id="a41c5b9da1a1f274d461c08a711c5b14d"></a>
 const <a class="el" href="struct_mesh_infos.html">MeshInfos</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#a41c5b9da1a1f274d461c08a711c5b14d">_mesh</a></td></tr>
 <tr class="memdesc:a41c5b9da1a1f274d461c08a711c5b14d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Geometry of the object. <br /></td></tr>
 <tr class="separator:a41c5b9da1a1f274d461c08a711c5b14d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6f467d58c52373bfe86f5d25826a9173"><td class="memItemLeft" align="right" valign="top"><a id="a6f467d58c52373bfe86f5d25826a9173"></a>
-std::vector&lt; <a class="el" href="struct_texture_infos.html">TextureInfos</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#a6f467d58c52373bfe86f5d25826a9173">_textures</a></td></tr>
-<tr class="memdesc:a6f467d58c52373bfe86f5d25826a9173"><td class="mdescLeft">&#160;</td><td class="mdescRight">Textures used by the object. <br /></td></tr>
-<tr class="separator:a6f467d58c52373bfe86f5d25826a9173"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a117b85769bc07e4256a7fd9d670a6ca3"><td class="memItemLeft" align="right" valign="top"><a id="a117b85769bc07e4256a7fd9d670a6ca3"></a>
+std::vector&lt; const <a class="el" href="struct_texture_infos.html">TextureInfos</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#a117b85769bc07e4256a7fd9d670a6ca3">_textures</a></td></tr>
+<tr class="memdesc:a117b85769bc07e4256a7fd9d670a6ca3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Textures used by the object. <br /></td></tr>
+<tr class="separator:a117b85769bc07e4256a7fd9d670a6ca3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a311ce9dd3d37059d727b6711da42d628"><td class="memItemLeft" align="right" valign="top"><a id="a311ce9dd3d37059d727b6711da42d628"></a>
+std::vector&lt; std::shared_ptr&lt; <a class="el" href="class_animation.html">Animation</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#a311ce9dd3d37059d727b6711da42d628">_animations</a></td></tr>
+<tr class="memdesc:a311ce9dd3d37059d727b6711da42d628"><td class="mdescLeft">&#160;</td><td class="mdescRight">Animations list (applied in order). <br /></td></tr>
+<tr class="separator:a311ce9dd3d37059d727b6711da42d628"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2e27dc7e4eb5eca7a8db7da31340ec07"><td class="memItemLeft" align="right" valign="top"><a id="a2e27dc7e4eb5eca7a8db7da31340ec07"></a>
-glm::mat4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#a2e27dc7e4eb5eca7a8db7da31340ec07">_model</a></td></tr>
+glm::mat4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#a2e27dc7e4eb5eca7a8db7da31340ec07">_model</a> = glm::mat4(1.0f)</td></tr>
 <tr class="memdesc:a2e27dc7e4eb5eca7a8db7da31340ec07"><td class="mdescLeft">&#160;</td><td class="mdescRight">The transformation matrix of the 3D model. <br /></td></tr>
 <tr class="separator:a2e27dc7e4eb5eca7a8db7da31340ec07"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1b248e4dd05bdb3111ad6be7d642c172"><td class="memItemLeft" align="right" valign="top"><a id="a1b248e4dd05bdb3111ad6be7d642c172"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#a1b248e4dd05bdb3111ad6be7d642c172">_material</a></td></tr>
-<tr class="memdesc:a1b248e4dd05bdb3111ad6be7d642c172"><td class="mdescLeft">&#160;</td><td class="mdescRight">The material ID, based on shading effects. <br /></td></tr>
-<tr class="separator:a1b248e4dd05bdb3111ad6be7d642c172"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa87ac38368246581d03c8c8df531b2ed"><td class="memItemLeft" align="right" valign="top"><a id="aa87ac38368246581d03c8c8df531b2ed"></a>
+<a class="el" href="class_object.html#a2e34d8d662b907a9e859b73311d84a0c">Type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#aa87ac38368246581d03c8c8df531b2ed">_material</a> = Type::Common</td></tr>
+<tr class="memdesc:aa87ac38368246581d03c8c8df531b2ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">The material type. <br /></td></tr>
+<tr class="separator:aa87ac38368246581d03c8c8df531b2ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abd69fd796f180e9ea454ed12151e8e99"><td class="memItemLeft" align="right" valign="top"><a id="abd69fd796f180e9ea454ed12151e8e99"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#abd69fd796f180e9ea454ed12151e8e99">_castShadow</a></td></tr>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#abd69fd796f180e9ea454ed12151e8e99">_castShadow</a> = true</td></tr>
 <tr class="memdesc:abd69fd796f180e9ea454ed12151e8e99"><td class="mdescLeft">&#160;</td><td class="mdescRight">Can the object casts shadows. <br /></td></tr>
 <tr class="separator:abd69fd796f180e9ea454ed12151e8e99"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Represent a 3D textured object. </p>
 </div><h2 class="groupheader">Member Enumeration Documentation</h2>
-<a id="ad8dadb365053c182931671a424199e36"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad8dadb365053c182931671a424199e36">&#9670;&nbsp;</a></span>Type</h2>
+<a id="a2e34d8d662b907a9e859b73311d84a0c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2e34d8d662b907a9e859b73311d84a0c">&#9670;&nbsp;</a></span>Type</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">enum <a class="el" href="class_object.html#ad8dadb365053c182931671a424199e36">Object::Type</a></td>
+          <td class="memname">enum <a class="el" href="class_object.html#a2e34d8d662b907a9e859b73311d84a0c">Object::Type</a> : int</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>Type of shading/effects. </p>
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ad8dadb365053c182931671a424199e36a5d169f1a89babe4d8f11aec9b78b4bc1"></a>Skybox&#160;</td><td class="fielddoc"><dl class="section see"><dt>See also</dt><dd><a class="el" href="class_g_l_s_l_1_1_vert_1_1_skybox__gbuffer.html" title="&quot;Skybox gbuffer&quot; vertex shader.">GLSL::Vert::Skybox_gbuffer</a>, <a class="el" href="class_g_l_s_l_1_1_frag_1_1_skybox__gbuffer.html" title="&quot;Skybox gbuffer&quot; fragment shader.">GLSL::Frag::Skybox_gbuffer</a> </dd></dl>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a2e34d8d662b907a9e859b73311d84a0ca5d169f1a89babe4d8f11aec9b78b4bc1"></a>Skybox&#160;</td><td class="fielddoc"><dl class="section see"><dt>See also</dt><dd><a class="el" href="class_g_l_s_l_1_1_vert_1_1_skybox__gbuffer.html" title="&quot;Skybox gbuffer&quot; vertex shader.">GLSL::Vert::Skybox_gbuffer</a>, <a class="el" href="class_g_l_s_l_1_1_frag_1_1_skybox__gbuffer.html" title="&quot;Skybox gbuffer&quot; fragment shader.">GLSL::Frag::Skybox_gbuffer</a> </dd></dl>
 </td></tr>
-<tr><td class="fieldname"><a id="ad8dadb365053c182931671a424199e36ac04b66057198bcaa3be6b5a61385908e"></a>Regular&#160;</td><td class="fielddoc"><dl class="section see"><dt>See also</dt><dd><a class="el" href="class_g_l_s_l_1_1_vert_1_1_object__gbuffer.html" title="&quot;Object gbuffer&quot; vertex shader.">GLSL::Vert::Object_gbuffer</a>, <a class="el" href="class_g_l_s_l_1_1_frag_1_1_object__gbuffer.html" title="&quot;Object gbuffer&quot; fragment shader.">GLSL::Frag::Object_gbuffer</a> </dd></dl>
+<tr><td class="fieldname"><a id="a2e34d8d662b907a9e859b73311d84a0cad3787b48eed2e837901c27c326fe368e"></a>PBRRegular&#160;</td><td class="fielddoc"><dl class="section see"><dt>See also</dt><dd><a class="el" href="class_g_l_s_l_1_1_vert_1_1_object__gbuffer.html" title="&quot;Object gbuffer&quot; vertex shader.">GLSL::Vert::Object_gbuffer</a>, <a class="el" href="class_g_l_s_l_1_1_frag_1_1_object__gbuffer.html" title="&quot;Object gbuffer&quot; fragment shader.">GLSL::Frag::Object_gbuffer</a> </dd></dl>
 </td></tr>
-<tr><td class="fieldname"><a id="ad8dadb365053c182931671a424199e36ac06815ac7ebba4c30493c11b422c0111"></a>Parallax&#160;</td><td class="fielddoc"><dl class="section see"><dt>See also</dt><dd><a class="el" href="class_g_l_s_l_1_1_vert_1_1_parallax__gbuffer.html" title="&quot;Parallax gbuffer&quot; vertex shader.">GLSL::Vert::Parallax_gbuffer</a>, <a class="el" href="class_g_l_s_l_1_1_frag_1_1_parallax__gbuffer.html" title="&quot;Parallax gbuffer&quot; fragment shader.">GLSL::Frag::Parallax_gbuffer</a> </dd></dl>
-</td></tr>
-<tr><td class="fieldname"><a id="ad8dadb365053c182931671a424199e36a15a570f61f039c28096fd5a0ff390e08"></a>Custom&#160;</td><td class="fielddoc"><dl class="section see"><dt>See also</dt><dd><a class="el" href="class_g_l_s_l_1_1_vert_1_1_object__basic.html" title="&quot;Object basic&quot; vertex shader.">GLSL::Vert::Object_basic</a>, <a class="el" href="class_g_l_s_l_1_1_frag_1_1_object__basic.html" title="&quot;Object basic&quot; fragment shader.">GLSL::Frag::Object_basic</a>, <a class="el" href="class_g_l_s_l_1_1_vert_1_1_skybox__basic.html" title="&quot;Skybox basic&quot; vertex shader.">GLSL::Vert::Skybox_basic</a>, <a class="el" href="class_g_l_s_l_1_1_frag_1_1_skybox__basic.html" title="&quot;Skybox basic&quot; fragment shader.">GLSL::Frag::Skybox_basic</a> </dd></dl>
+<tr><td class="fieldname"><a id="a2e34d8d662b907a9e859b73311d84a0ca3285326d869ef94f2c18ae60ceef3f2d"></a>PBRParallax&#160;</td><td class="fielddoc"><dl class="section see"><dt>See also</dt><dd><a class="el" href="class_g_l_s_l_1_1_vert_1_1_parallax__gbuffer.html" title="&quot;Parallax gbuffer&quot; vertex shader.">GLSL::Vert::Parallax_gbuffer</a>, <a class="el" href="class_g_l_s_l_1_1_frag_1_1_parallax__gbuffer.html" title="&quot;Parallax gbuffer&quot; fragment shader.">GLSL::Frag::Parallax_gbuffer</a> </dd></dl>
 </td></tr>
 </table>
 
@@ -195,7 +200,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a40860402e64d8008fb42329df7097cdb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a40860402e64d8008fb42329df7097cdb">&#9670;&nbsp;</a></span>Object() <span class="overload">[1/3]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a40860402e64d8008fb42329df7097cdb">&#9670;&nbsp;</a></span>Object() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -212,8 +217,8 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a id="a744b3044e9990ded16326616ea5d94d9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a744b3044e9990ded16326616ea5d94d9">&#9670;&nbsp;</a></span>Object() <span class="overload">[2/3]</span></h2>
+<a id="a9d0b9e78c72246d3c50a94226cbc9f81"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9d0b9e78c72246d3c50a94226cbc9f81">&#9670;&nbsp;</a></span>Object() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -221,32 +226,20 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
         <tr>
           <td class="memname">Object::Object </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="class_object.html#ad8dadb365053c182931671a424199e36">Object::Type</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="class_object.html#a2e34d8d662b907a9e859b73311d84a0c">Object::Type</a>&#160;</td>
           <td class="paramname"><em>type</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>meshPath</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::vector&lt; std::pair&lt; std::string, bool &gt;&gt; &amp;&#160;</td>
-          <td class="paramname"><em>texturesPaths</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::vector&lt; std::pair&lt; std::string, bool &gt;&gt; &amp;&#160;</td>
-          <td class="paramname"><em>cubemapPaths</em> = <code>{}</code>, </td>
+          <td class="paramtype">const <a class="el" href="struct_mesh_infos.html">MeshInfos</a> *&#160;</td>
+          <td class="paramname"><em>mesh</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>castShadows</em> = <code>true</code>&#160;</td>
+          <td class="paramname"><em>castShadows</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -258,68 +251,63 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <p>Construct a new object. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">type</td><td>the type of shading and effects to use when rendering this object </td></tr>
-    <tr><td class="paramname">meshPath</td><td>name of the geometric mesh to use </td></tr>
-    <tr><td class="paramname">texturesPaths</td><td>names and SRGB flags of the 2D textures to use </td></tr>
-    <tr><td class="paramname">cubemapPaths</td><td>names and SRGB flags of the cubemap textures to use </td></tr>
+    <tr><td class="paramname">mesh</td><td>the geometric mesh infos </td></tr>
     <tr><td class="paramname">castShadows</td><td>denote if the object should cast shadows </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>The textures sRGB flag will only be honored if they are loaded from disk for the first time. </dd></dl>
 
 </div>
 </div>
-<a id="ab79adca4cbe5e9a34d05927cbbc3abd6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab79adca4cbe5e9a34d05927cbbc3abd6">&#9670;&nbsp;</a></span>Object() <span class="overload">[3/3]</span></h2>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a00d6ea2de936dd09de8154e766cf8474"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a00d6ea2de936dd09de8154e766cf8474">&#9670;&nbsp;</a></span>addAnimation()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">Object::Object </td>
+          <td class="memname">void Object::addAnimation </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="class_program_infos.html">ProgramInfos</a> *&#160;</td>
-          <td class="paramname"><em>program</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="class_animation.html">Animation</a> &gt;&#160;</td>
+          <td class="paramname"><em>anim</em></td><td>)</td>
           <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>meshPath</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::vector&lt; std::pair&lt; std::string, bool &gt;&gt; &amp;&#160;</td>
-          <td class="paramname"><em>texturesPaths</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::vector&lt; std::pair&lt; std::string, bool &gt;&gt; &amp;&#160;</td>
-          <td class="paramname"><em>cubemapPaths</em> = <code>{}</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Construct a new object. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Add an animation to apply at each frame. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">program</td><td>the custom shader program to use when rendering this object </td></tr>
-    <tr><td class="paramname">meshPath</td><td>name of the geometric mesh to use </td></tr>
-    <tr><td class="paramname">texturesPaths</td><td>names and SRGB flags of the 2D textures to use </td></tr>
-    <tr><td class="paramname">cubemapPaths</td><td>names and SRGB flags of the cubemap textures to use </td></tr>
+    <tr><td class="paramname">anim</td><td>the animation to add </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section warning"><dt>Warning</dt><dd>The textures sRGB flag will only be honored if they are loaded from disk for the first time. </dd></dl>
 
 </div>
 </div>
-<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a7775732616ebecc34286a4246284a3d8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7775732616ebecc34286a4246284a3d8">&#9670;&nbsp;</a></span>addTexture()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Object::addTexture </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="struct_texture_infos.html">TextureInfos</a> *&#160;</td>
+          <td class="paramname"><em>infos</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Register a texture. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">infos</td><td>the texture infos to add </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="a1b30e68e45d495982ef7058e22da96d7"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a1b30e68e45d495982ef7058e22da96d7">&#9670;&nbsp;</a></span>castsShadow()</h2>
 
@@ -342,60 +330,44 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Query if the object should cast shadows or not. </p><dl class="section return"><dt>Returns</dt><dd>if it is a shadow caster </dd></dl>
+<p>Is the object casting a shadow. </p><dl class="section return"><dt>Returns</dt><dd>a boolean denoting if the object is a caster </dd></dl>
 
 </div>
 </div>
-<a id="a9ad7b23e2b7eef2ab37ba7f2d470410b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9ad7b23e2b7eef2ab37ba7f2d470410b">&#9670;&nbsp;</a></span>draw()</h2>
+<a id="a93655a808e6c7249ea65d85549d72dd1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a93655a808e6c7249ea65d85549d72dd1">&#9670;&nbsp;</a></span>decode()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void Object::draw </td>
+          <td class="memname">void Object::decode </td>
           <td>(</td>
-          <td class="paramtype">const glm::mat4 &amp;&#160;</td>
-          <td class="paramname"><em>view</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramtype">const std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>params</em></td><td>)</td>
           <td></td>
-          <td class="paramtype">const glm::mat4 &amp;&#160;</td>
-          <td class="paramname"><em>projection</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td> const</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Render the object using its textures and shading program. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Setup an object parameters from a list of key-value tuples. The following keywords will be searched for: </p><pre class="fragment">type: objecttype
+mesh: meshname
+translation: X,Y,Z
+scaling: scale
+orientation: axisX,axisY,axisZ angle
+shadows: bool
+textures:
+    texturetype: ...
+    ...
+animations:
+    animationtype: ...
+    ...
+</pre> <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">view</td><td>the camera view matrix </td></tr>
-    <tr><td class="paramname">projection</td><td>the camera projection matrix </td></tr>
+    <tr><td class="paramname">params</td><td>the parameters tuples list </td></tr>
   </table>
   </dd>
 </dl>
-
-</div>
-</div>
-<a id="ad963001207341079de0bcd3a76f4d2c1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad963001207341079de0bcd3a76f4d2c1">&#9670;&nbsp;</a></span>drawGeometry()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Object::drawGeometry </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Just bind and draw the geometry, with no implicit shader or textures. </p>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000008">Todo:</a></b></dt><dd>Find a way to easily expand this. </dd></dl>
 
 </div>
 </div>
@@ -414,6 +386,33 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
       </table>
 </div><div class="memdoc">
 <p>Query the bounding box of the object. </p><dl class="section return"><dt>Returns</dt><dd>the bounding box </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>For mesh space bounding box, call boundingBox on <a class="el" href="class_object.html#ab3266715eb29b70a1598613cf30d9196">mesh()</a>. </dd></dl>
+
+</div>
+</div>
+<a id="ab3266715eb29b70a1598613cf30d9196"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab3266715eb29b70a1598613cf30d9196">&#9670;&nbsp;</a></span>mesh()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="struct_mesh_infos.html">MeshInfos</a>* Object::mesh </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p><a class="el" href="struct_mesh.html" title="Represents a geometric mesh composed of vertices and triangles. For now, material information and ele...">Mesh</a> getter. </p><dl class="section return"><dt>Returns</dt><dd>the mesh infos </dd></dl>
 
 </div>
 </div>
@@ -439,12 +438,97 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Query the object transformation palcing it in world space. </p><dl class="section return"><dt>Returns</dt><dd>the model matrix </dd></dl>
+<p><a class="el" href="class_object.html" title="Represent a 3D textured object.">Object</a> pose getter. </p><dl class="section return"><dt>Returns</dt><dd>the model matrix </dd></dl>
 
 </div>
 </div>
-<a id="a07175257588425f520c65d50935d151c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a07175257588425f520c65d50935d151c">&#9670;&nbsp;</a></span>update()</h2>
+<a id="a54341afe208b3b88a1194cce4562b0fc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a54341afe208b3b88a1194cce4562b0fc">&#9670;&nbsp;</a></span>set()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Object::set </td>
+          <td>(</td>
+          <td class="paramtype">const glm::mat4 &amp;&#160;</td>
+          <td class="paramname"><em>model</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Update the object transformation matrix. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">model</td><td>the new model matrix </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a079c8bcbe5ee53927d20be292655655e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a079c8bcbe5ee53927d20be292655655e">&#9670;&nbsp;</a></span>textures()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::vector&lt;const <a class="el" href="struct_texture_infos.html">TextureInfos</a> *&gt;&amp; Object::textures </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Textures array getter. </p><dl class="section return"><dt>Returns</dt><dd>a vector containing the infos of the textures associated to the object </dd></dl>
+
+</div>
+</div>
+<a id="a199c7a4569e9cf511fbaa3668ee2c9c1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a199c7a4569e9cf511fbaa3668ee2c9c1">&#9670;&nbsp;</a></span>type()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="class_object.html#a2e34d8d662b907a9e859b73311d84a0c">Type</a>&amp; Object::type </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Type getter. </p><dl class="section return"><dt>Returns</dt><dd>the type of the object </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This can be used in different way by different applications. </dd></dl>
+
+</div>
+</div>
+<a id="a668ae910ff1e416dd94f680e9bb43187"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a668ae910ff1e416dd94f680e9bb43187">&#9670;&nbsp;</a></span>update()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -452,15 +536,26 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
         <tr>
           <td class="memname">void Object::update </td>
           <td>(</td>
-          <td class="paramtype">const glm::mat4 &amp;&#160;</td>
-          <td class="paramname"><em>model</em></td><td>)</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>fullTime</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>frameTime</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Update the object transformation matrix. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Apply the animations for a frame duration. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">model</td><td>the new model matrix </td></tr>
+    <tr><td class="paramname">fullTime</td><td>the time since the launch of the application </td></tr>
+    <tr><td class="paramname">frameTime</td><td>the time elapsed since the last frame </td></tr>
   </table>
   </dd>
 </dl>

@@ -24,5 +24,6 @@ var searchData=
   ['rg',['rg',['../struct_image.html#a9f070a360631edb6a0d6667dd5dffd0d',1,'Image']]],
   ['rgb',['rgb',['../struct_image.html#af6375d63d738da77b9554739120f24fa',1,'Image']]],
   ['rgb2luma',['rgb2luma',['../class_g_l_s_l_1_1_frag_1_1_fxaa.html#a35ea1288f91450d5990ac43be84d264d',1,'GLSL::Frag::Fxaa']]],
-  ['rgba',['rgba',['../struct_image.html#aa38f1be5b9307280260f946736995629',1,'Image']]]
+  ['rgba',['rgba',['../struct_image.html#aa38f1be5b9307280260f946736995629',1,'Image']]],
+  ['rotation',['Rotation',['../class_rotation.html#a13ea1d345ca0a92c0f09b4de544ca460',1,'Rotation::Rotation()'],['../class_rotation.html#a5eda2d2860ac74a84bb022ef031c8780',1,'Rotation::Rotation(const glm::vec3 &amp;axis, float speed, Frame frame)']]]
 ];

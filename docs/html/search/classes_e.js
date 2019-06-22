@@ -7,5 +7,6 @@ var searchData=
   ['rayhit',['RayHit',['../struct_raycaster_1_1_ray_hit.html',1,'Raycaster']]],
   ['renderer',['Renderer',['../class_renderer.html',1,'']]],
   ['renderingconfig',['RenderingConfig',['../class_rendering_config.html',1,'']]],
-  ['resources',['Resources',['../class_resources.html',1,'']]]
+  ['resources',['Resources',['../class_resources.html',1,'']]],
+  ['rotation',['Rotation',['../class_rotation.html',1,'']]]
 ];

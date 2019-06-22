@@ -18,6 +18,7 @@ var searchData=
   ['getfont',['getFont',['../class_resources.html#aaec8e7a96ee7136b5db84c09bf7f28ff',1,'Resources']]],
   ['getglerrorstring',['getGLErrorString',['../group___graphics.html#ga01be4137b1e1c7959ab6016a07b45edd',1,'getGLErrorString(GLenum error):&#160;GLUtilities.cpp'],['../group___graphics.html#ga01be4137b1e1c7959ab6016a07b45edd',1,'getGLErrorString(GLenum error):&#160;GLUtilities.cpp']]],
   ['getimagepath',['getImagePath',['../class_resources.html#ae7529c1d4fcf62d52b9ee9b90997661d',1,'Resources']]],
+  ['getmagnificationfilter',['getMagnificationFilter',['../class_g_l_utilities.html#ab0657f4f234fd2afc6aa009a72030df4',1,'GLUtilities']]],
   ['getmesh',['getMesh',['../class_resources.html#a6dcf4e6ac4a7d560c349940829a3090a',1,'Resources']]],
   ['getprogram',['getProgram',['../class_resources.html#ad47623ccb8f0670cff1b873a4a9f8125',1,'Resources::getProgram(const std::string &amp;name, const bool useGeometryShader=false)'],['../class_resources.html#a64e73c8384f5e0cdc2a1369b72ea00a1',1,'Resources::getProgram(const std::string &amp;name, const std::string &amp;vertexName, const std::string &amp;fragmentName, const std::string &amp;geometryName=&quot;&quot;)']]],
   ['getprogram2d',['getProgram2D',['../class_resources.html#ae2fa45f51b950c3d016a381cebde189f',1,'Resources']]],

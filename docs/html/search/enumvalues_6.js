@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['load',['Load',['../namespace_interface.html#a6669a04094b14dee88eadbfac90521d7af19dbf2edb3a0bd74b0524d960ff21eb',1,'Interface']]]
+  ['model',['MODEL',['../class_animation.html#aab91ed238f585aa0fd149d1c392ab121a7a03bac2692f8d17e2cda1b0721ffd0e',1,'Animation']]]
 ];

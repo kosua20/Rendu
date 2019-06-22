@@ -134,15 +134,15 @@ Public Member Functions</h2></td></tr>
 Private Member Functions</h2></td></tr>
 <tr class="memitem:aeca3366d781d5150cd92c07868f8bf10"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_raycaster.html#aeca3366d781d5150cd92c07868f8bf10">updateSubHierarchy</a> (const int begin, const int count)</td></tr>
 <tr class="separator:aeca3366d781d5150cd92c07868f8bf10"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac9b61981c0b9cbdd78f0702a5dc62b6d"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="struct_raycaster_1_1_ray_hit.html">RayHit</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_raycaster.html#ac9b61981c0b9cbdd78f0702a5dc62b6d">intersects</a> (const <a class="el" href="struct_raycaster_1_1_ray.html">Ray</a> &amp;ray, const <a class="el" href="struct_raycaster_1_1_triangle_infos.html">TriangleInfos</a> &amp;tri) const</td></tr>
-<tr class="separator:ac9b61981c0b9cbdd78f0702a5dc62b6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae075ebecdf9546c0491580e9c45102eb"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="struct_raycaster_1_1_ray_hit.html">RayHit</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_raycaster.html#ae075ebecdf9546c0491580e9c45102eb">intersects</a> (const <a class="el" href="struct_raycaster_1_1_ray.html">Raycaster::Ray</a> &amp;ray, const <a class="el" href="struct_raycaster_1_1_node.html">Raycaster::Node</a> &amp;node) const</td></tr>
-<tr class="separator:ae075ebecdf9546c0491580e9c45102eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8570e0bce83e74091c684d5ca1e03faa"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="struct_raycaster_1_1_ray_hit.html">RayHit</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_raycaster.html#a8570e0bce83e74091c684d5ca1e03faa">intersects</a> (const <a class="el" href="struct_raycaster_1_1_ray.html">Ray</a> &amp;ray, const <a class="el" href="struct_raycaster_1_1_triangle_infos.html">TriangleInfos</a> &amp;tri, float mini, float maxi) const</td></tr>
+<tr class="separator:a8570e0bce83e74091c684d5ca1e03faa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1b35d9b710ea6f7f2a7d25c975aebdfd"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="struct_raycaster_1_1_ray_hit.html">RayHit</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_raycaster.html#a1b35d9b710ea6f7f2a7d25c975aebdfd">intersects</a> (const <a class="el" href="struct_raycaster_1_1_ray.html">Raycaster::Ray</a> &amp;ray, const <a class="el" href="struct_raycaster_1_1_node.html">Raycaster::Node</a> &amp;node, float mini, float maxi) const</td></tr>
+<tr class="separator:a1b35d9b710ea6f7f2a7d25c975aebdfd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-static-methods"></a>
 Static Private Member Functions</h2></td></tr>
-<tr class="memitem:aa03775249199b9df91981a84caa8d1b9"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_raycaster.html#aa03775249199b9df91981a84caa8d1b9">intersects</a> (const <a class="el" href="struct_raycaster_1_1_ray.html">Ray</a> &amp;ray, const <a class="el" href="struct_bounding_box.html">BoundingBox</a> &amp;box)</td></tr>
-<tr class="separator:aa03775249199b9df91981a84caa8d1b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0b915c68beacb1e364e6770e88fe1f70"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_raycaster.html#a0b915c68beacb1e364e6770e88fe1f70">intersects</a> (const <a class="el" href="struct_raycaster_1_1_ray.html">Ray</a> &amp;ray, const <a class="el" href="struct_bounding_box.html">BoundingBox</a> &amp;box, float mini, float maxi)</td></tr>
+<tr class="separator:a0b915c68beacb1e364e6770e88fe1f70"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
@@ -206,6 +206,7 @@ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
   </table>
   </dd>
 </dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000005">Todo:</a></b></dt><dd>See if we also need to keep the normals. </dd></dl>
 
 </div>
 </div>
@@ -245,8 +246,8 @@ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 
 </div>
 </div>
-<a id="ac9b61981c0b9cbdd78f0702a5dc62b6d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac9b61981c0b9cbdd78f0702a5dc62b6d">&#9670;&nbsp;</a></span>intersects() <span class="overload">[2/4]</span></h2>
+<a id="a8570e0bce83e74091c684d5ca1e03faa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8570e0bce83e74091c684d5ca1e03faa">&#9670;&nbsp;</a></span>intersects() <span class="overload">[2/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -264,7 +265,19 @@ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const <a class="el" href="struct_raycaster_1_1_triangle_infos.html">TriangleInfos</a> &amp;&#160;</td>
-          <td class="paramname"><em>tri</em>&#160;</td>
+          <td class="paramname"><em>tri</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>mini</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>maxi</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -282,6 +295,8 @@ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
   <table class="params">
     <tr><td class="paramname">ray</td><td>the ray </td></tr>
     <tr><td class="paramname">tri</td><td>the triangle infos </td></tr>
+    <tr><td class="paramname">mini</td><td>the minimum allowed distance along the ray </td></tr>
+    <tr><td class="paramname">maxi</td><td>the maximum allowed distance along the ray </td></tr>
   </table>
   </dd>
 </dl>
@@ -289,8 +304,8 @@ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 
 </div>
 </div>
-<a id="ae075ebecdf9546c0491580e9c45102eb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae075ebecdf9546c0491580e9c45102eb">&#9670;&nbsp;</a></span>intersects() <span class="overload">[3/4]</span></h2>
+<a id="a1b35d9b710ea6f7f2a7d25c975aebdfd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1b35d9b710ea6f7f2a7d25c975aebdfd">&#9670;&nbsp;</a></span>intersects() <span class="overload">[3/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -308,7 +323,19 @@ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const <a class="el" href="struct_raycaster_1_1_node.html">Raycaster::Node</a> &amp;&#160;</td>
-          <td class="paramname"><em>node</em>&#160;</td>
+          <td class="paramname"><em>node</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>mini</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>maxi</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -326,6 +353,8 @@ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
   <table class="params">
     <tr><td class="paramname">ray</td><td>the ray </td></tr>
     <tr><td class="paramname">node</td><td>the node to test intersections against </td></tr>
+    <tr><td class="paramname">mini</td><td>the minimum allowed distance along the ray </td></tr>
+    <tr><td class="paramname">maxi</td><td>the maximum allowed distance along the ray </td></tr>
   </table>
   </dd>
 </dl>
@@ -333,8 +362,8 @@ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 
 </div>
 </div>
-<a id="aa03775249199b9df91981a84caa8d1b9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa03775249199b9df91981a84caa8d1b9">&#9670;&nbsp;</a></span>intersects() <span class="overload">[4/4]</span></h2>
+<a id="a0b915c68beacb1e364e6770e88fe1f70"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0b915c68beacb1e364e6770e88fe1f70">&#9670;&nbsp;</a></span>intersects() <span class="overload">[4/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -352,7 +381,19 @@ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const <a class="el" href="struct_bounding_box.html">BoundingBox</a> &amp;&#160;</td>
-          <td class="paramname"><em>box</em>&#160;</td>
+          <td class="paramname"><em>box</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>mini</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>maxi</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -370,6 +411,8 @@ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
   <table class="params">
     <tr><td class="paramname">ray</td><td>the ray </td></tr>
     <tr><td class="paramname">box</td><td>the bounding box </td></tr>
+    <tr><td class="paramname">mini</td><td>the minimum allowed distance along the ray </td></tr>
+    <tr><td class="paramname">maxi</td><td>the maximum allowed distance along the ray </td></tr>
   </table>
   </dd>
 </dl>

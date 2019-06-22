@@ -13,7 +13,6 @@ var searchData=
   ['rayhit',['RayHit',['../struct_raycaster_1_1_ray_hit.html',1,'Raycaster::RayHit'],['../struct_raycaster_1_1_ray_hit.html#a2f1b7d35fa0e069f3d8b2093327ea8d6',1,'Raycaster::RayHit::RayHit()'],['../struct_raycaster_1_1_ray_hit.html#a14e2e8ef82a5a523dffdccf95642e6ed',1,'Raycaster::RayHit::RayHit(float distance, float uu, float vv, unsigned long lid, unsigned long mid)']]],
   ['rayleighphase',['rayleighPhase',['../class_g_l_s_l_1_1_frag_1_1_atmosphere.html#aabf8f69c9c12c201ffa63c4b207d734b',1,'GLSL::Frag::Atmosphere']]],
   ['raytracer_20demo',['Raytracer demo',['../group___raytracer_demo.html',1,'']]],
-  ['regular',['Regular',['../class_object.html#ad8dadb365053c182931671a424199e36ac04b66057198bcaa3be6b5a61385908e',1,'Object']]],
   ['reinhard',['reinhard',['../class_g_l_s_l_1_1_frag_1_1_tonemap.html#a8fb9b19a2c0d2a6e74487b2fe2e06c67',1,'GLSL::Frag::Tonemap']]],
   ['released',['released',['../class_input.html#a7d637c608560f19f81dab8741ccbc701',1,'Input::released(const Key &amp;keyboardKey, bool absorb=false)'],['../class_input.html#aaac8fc5411314c34c8ab4ffe353d336a',1,'Input::released(const Mouse &amp;mouseButton, bool absorb=false)']]],
   ['reload',['reload',['../class_program_infos.html#a910313bcd4340a39079df954bbb8db59',1,'ProgramInfos::reload()'],['../class_resources.html#a140d1c8b99049181e45b6a4232dbd426',1,'Resources::reload()']]],
@@ -33,5 +32,6 @@ var searchData=
   ['rgb',['rgb',['../struct_image.html#af6375d63d738da77b9554739120f24fa',1,'Image']]],
   ['rgb2luma',['rgb2luma',['../class_g_l_s_l_1_1_frag_1_1_fxaa.html#a35ea1288f91450d5990ac43be84d264d',1,'GLSL::Frag::Fxaa']]],
   ['rgba',['rgba',['../struct_image.html#aa38f1be5b9307280260f946736995629',1,'Image']]],
-  ['right',['right',['../struct_raycaster_1_1_node.html#ad5c06fdbb806f18bdaad04954e33db36',1,'Raycaster::Node']]]
+  ['right',['right',['../struct_raycaster_1_1_node.html#ad5c06fdbb806f18bdaad04954e33db36',1,'Raycaster::Node']]],
+  ['rotation',['Rotation',['../class_rotation.html',1,'Rotation'],['../class_rotation.html#a13ea1d345ca0a92c0f09b4de544ca460',1,'Rotation::Rotation()'],['../class_rotation.html#a5eda2d2860ac74a84bb022ef031c8780',1,'Rotation::Rotation(const glm::vec3 &amp;axis, float speed, Frame frame)']]]
 ];
