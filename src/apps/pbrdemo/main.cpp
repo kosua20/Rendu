@@ -3,7 +3,7 @@
 #include "input/Input.hpp"
 #include "input/InputCallbacks.hpp"
 #include "helpers/InterfaceUtilities.hpp"
-#include "scenes/Scenes.hpp"
+#include "scene/Scene.hpp"
 #include "Common.hpp"
 
 /**
@@ -50,11 +50,23 @@ int main(int argc, char** argv) {
 	double remainingTime = 0.0;
 	const double dt = 1.0/120.0; // Small physics timestep.
 	
+	
+	std::map<std::string, std::string> sceneInfos;
+	Resources::manager().getFiles("scene", sceneInfos);
+	std::vector<std::string> sceneNames;
+	sceneNames.push_back("None");
+	for(const auto & info : sceneInfos){
+		sceneNames.push_back(info.first);
+	}
+	
 	std::vector<std::shared_ptr<Scene>> scenes;
-	scenes.emplace_back(new Scene("dragon.scene"));
-	scenes.emplace_back(new Scene("spheres.scene"));
-	scenes.emplace_back(new Scene("desk.scene"));
-	char const * sceneNames[] = {"Dragon", "Spheres", "Desk", "None"};
+	scenes.push_back(nullptr);
+	for(int i = 1; i < sceneNames.size(); ++i){
+		const auto & sceneName = sceneNames[i];
+		scenes.emplace_back(new Scene(sceneName));
+	}
+	
+	
 	// Load the first scene by default.
 	int selected_scene = 0;
 	renderer->setScene(scenes[selected_scene]);
@@ -70,6 +82,11 @@ int main(int argc, char** argv) {
 		// Reload resources.
 		if(Input::manager().triggered(Input::KeyP)){
 			Resources::manager().reload();
+			// Reload the scene.
+			if(scenes[selected_scene]){
+				scenes[selected_scene].reset(new Scene(sceneNames[selected_scene]));
+				renderer->setScene(scenes[selected_scene]);
+			}
 		}
 		
 		
@@ -80,13 +97,20 @@ int main(int argc, char** argv) {
 		if(ImGui::Begin("Renderer")){
 			ImGui::Text("%.1f ms, %.1f fps", ImGui::GetIO().DeltaTime*1000.0f, ImGui::GetIO().Framerate);
 			
-			if(ImGui::Combo("Scene", &selected_scene, sceneNames, int(scenes.size())+1)){
-				if(selected_scene == int(scenes.size())){
-					renderer->setScene(nullptr);
-				} else {
-					Log::Info() << Log::Resources << "Loading scene " << sceneNames[selected_scene] << "." << std::endl;
-					renderer->setScene(scenes[selected_scene]);
+			const std::string & currentName = sceneNames[selected_scene];
+			if(ImGui::BeginCombo("Scene", currentName.c_str(), ImGuiComboFlags_None)){
+				for(int i = 0; i < sceneNames.size(); ++i){
+					if(ImGui::Selectable(sceneNames[i].c_str(), (i == selected_scene))) {
+						selected_scene = i;
+						Log::Info() << Log::Resources << "Loading scene " << sceneNames[selected_scene] << "." << std::endl;
+						renderer->setScene(scenes[selected_scene]);
+						
+					}
+					if(selected_scene == i){
+						ImGui::SetItemDefaultFocus();
+					}
 				}
+				ImGui::EndCombo();
 			}
 		}
 		ImGui::End();
