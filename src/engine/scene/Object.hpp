@@ -84,6 +84,23 @@ public:
 	 */
 	bool castsShadow() const { return _castShadow; }
 	
+	/** Setup an object parameters from a list of key-value tuples. The following keywords will be searched for:
+	 \verbatim
+	 type: objecttype
+	 mesh: meshname
+	 translation: X,Y,Z
+	 scaling: scale
+	 orientation: axisX,axisY,axisZ angle
+	 shadows: bool
+	 textures:
+	 	texturetype: ...
+	 	...
+	 animations:
+	 	animationtype: ...
+	 	...
+	 \endverbatim
+	 \param params the parameters tuples list
+	 */
 	void decode(const std::vector<KeyValues>& params);
 	
 private:

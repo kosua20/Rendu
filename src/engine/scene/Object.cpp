@@ -11,15 +11,20 @@ Object::Object(const Object::Type type, const MeshInfos * mesh, bool castShadows
 
 void Object::decode(const std::vector<KeyValues> & params){
 	
-	// \todo Find a way to easily expand this.
-	const std::map<std::string, Object::Type> types = {{"PBRRegular", Type::PBRRegular},
-		{"PBRParallax", Type::PBRParallax}, {"Skybox", Type::Skybox}, {"Common", Type::Common}};
+	/// \todo Find a way to easily expand types list.
+#define REGISTER_TYPE(type) {#type, Type::type}
+	const std::map<std::string, Object::Type> types = {
+		REGISTER_TYPE(PBRRegular),
+		REGISTER_TYPE(PBRParallax),
+		REGISTER_TYPE(Skybox),
+		REGISTER_TYPE(Common)
+	};
+#undef REGISTER_TYPE
 	
-	
-	// We know there is only one transformation in the parameters set.
+	// We expect there is only one transformation in the parameters set.
 	_model = Codable::decodeTransformation(params);
 	
-	for(int pid = 0; pid < params.size();){
+	for(int pid = 0; pid < params.size(); ++pid){
 		const auto & param = params[pid];
 		if(param.key == "type" && !param.values.empty()){
 			const std::string typeString = param.values[0];
@@ -31,40 +36,25 @@ void Object::decode(const std::vector<KeyValues> & params){
 			const std::string meshString = param.values[0];
 			_mesh = Resources::manager().getMesh(meshString);
 			
-		} else if(param.key == "shadows" && !param.values.empty()){
-			const std::string shadowString = param.values[0];
-			_castShadow = (shadowString == "true");
+		} else if(param.key == "shadows"){
+			_castShadow = Codable::decodeBool(param);
 			
 		} else if(param.key == "textures"){
-			// Move to the next parameter.
-			++pid;
-			while(pid < params.size()){
+			// Iterate on the following elements while we are finding viable textures.
+			while(++pid < params.size()){
 				const TextureInfos * tex = Codable::decodeTexture(params[pid]);
-				if(tex == nullptr){
-					// In this case, decrement pid again, this is something else.
+				if(tex){
+					addTexture(tex);
+				} else {
 					--pid;
 					break;
 				}
-				addTexture(tex);
-				++pid;
 			}
 		} else if(param.key == "animations"){
-			// Move to the next parameter.
-			++pid;
-			while(pid < params.size()){
-				const std::shared_ptr<Animation> anim = Animation::decode(params[pid]);
-				if(anim == nullptr) {
-					// In this case, decrement pid again, this is something else.
-					--pid;
-					break;
-				}
-				addAnimation(anim);
-				++pid;
-			}
+			_animations = Animation::decode(params, pid);
+			--pid;
 		}
-		++pid;
 	}
-	
 }
 
 void Object::addTexture(const TextureInfos * infos){
