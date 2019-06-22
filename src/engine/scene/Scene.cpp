@@ -3,89 +3,38 @@
 #include <sstream>
 
 Scene::Scene(const std::string & name){
-	
+	// Append the extension if needed.
 	std::string fullName = name;
 	if(!TextUtilities::hasSuffix(name, ".scene")){
 		fullName += ".scene";
 	}
 	_name = fullName;
 }
-
-std::vector<KeyValues> Scene::parse(const std::string & sceneFile){
-	std::vector<KeyValues> tokens;
-	std::stringstream sstr(sceneFile);
-	std::string line;
-	
-	while(std::getline(sstr, line)){
-		if(line.empty()){
-			continue;
-		}
-		// Check if the line contains a comment.
-		const std::string::size_type hashPos =  line.find("#");
-		if(hashPos != std::string::npos){
-			line = line.substr(0, hashPos);
-		}
-		line = TextUtilities::trim(line, " \t\r");
-		if(line.empty()){
-			continue;
-		}
-		// Find the first colon.
-		const std::string::size_type firstColon = line.find(":");
-		// If no colon, ignore the line.
-		if(firstColon == std::string::npos){
-			Log::Warning() << "Line with no colon encountered while parsing file. Skipping line." << std::endl;
-			continue;
-		}
-		
-		std::string::size_type previousColon = 0;
-		std::string::size_type nextColon = firstColon;
-		while (nextColon != std::string::npos) {
-			std::string key = line.substr(previousColon, nextColon-previousColon);
-			key =  TextUtilities::trim(key, " \t");
-			tokens.emplace_back(key);
-			previousColon = nextColon+1;
-			nextColon = line.find(":", previousColon);
-		}
-		
-		// Everything after the last colon are values, separated by either spaces or commas.
-		std::string values = line.substr(previousColon);
-		TextUtilities::replace(values, ",", " ");
-		values = TextUtilities::trim(values, " \t");
-		// Split in value tokens.
-		std::stringstream valuesSstr(values);
-		std::string value;
-		while(std::getline(valuesSstr, value, ' ')){
-			tokens.back().values.push_back(value);
-		}
-	}
-	return tokens;
-}
 	
 void Scene::init(){
 	if(_loaded){
 		return;
 	}
-	_loaded = true;
+	
+	// Define loaders for each keyword.
+	std::map<std::string, void (Scene::*)(const std::vector<KeyValues> &)> loaders = {
+		{"scene", &Scene::loadScene}, {"object", &Scene::loadObject}, { "background", &Scene::loadBackground}, {"point", &Scene::loadPointLight}, {"directional", &Scene::loadDirectionalLight}, {"spot", &Scene::loadSpotLight}
+	};
+	
+	// Parse the file.
 	const std::string sceneFile = Resources::manager().getString(_name);
+	const std::vector<KeyValues> allKeyVals = Codable::parse(sceneFile);
 	
-	const std::vector<KeyValues> allKeyVals = parse(sceneFile);
-	
-	// Find the main tokens.
-	const std::vector<std::string> mainKeys = {"object", "scene", "background", "point", "directional", "spot" };
+	// Find the main tokens positions. Everything between two keyword belongs to the first one.
 	std::vector<int> mainKeysLocations;
 	for(int tid = 0; tid < allKeyVals.size();++tid){
 		const std::string & key = allKeyVals[tid].key;
-		if(std::find(mainKeys.begin(), mainKeys.end(), key) != mainKeys.end()){
+		if(loaders.count(key) > 0){
 			mainKeysLocations.push_back(tid);
 		}
 	}
 	// Add a final end key.
 	mainKeysLocations.push_back(allKeyVals.size());
-	
-	
-	std::map<std::string, void (Scene::*)(const std::vector<KeyValues> &)> loaders = {{"object", &Scene::loadObject}, { "background", &Scene::loadBackground}, {"point", &Scene::loadPointLight}, {"directional", &Scene::loadDirectionalLight}, {"spot", &Scene::loadSpotLight}};
-	
-	glm::mat4 sceneModel(1.0f);
 	
 	// Process each group of keyvalues.
 	for(int mkid = 0; mkid < mainKeysLocations.size()-1; ++mkid){
@@ -94,42 +43,18 @@ void Scene::init(){
 		// Extract the corresponding subset.
 		std::vector<KeyValues> subset(allKeyVals.begin() + startId, allKeyVals.begin() + endId);
 		const std::string key = subset[0].key;
-		if(loaders.count(key) > 0){
-			(this->*loaders[key])(subset);
-		} else if(key == "scene"){
-			Log::Info() << "Loading scene data." << std::endl;
-			
-			const auto & params = subset;
-			for(int pid = 0; pid < params.size();){
-				const auto & param = params[pid];
-				if(param.key == "irradiance" && !param.values.empty()){
-					loadSphericalHarmonics(param.values[0]);
-				} else if(param.key == "probe"){
-					// Move to the next parameter.
-					++pid;
-					const TextureInfos * tex = Codable::decodeTexture(params[pid]);
-					if(tex == nullptr){
-						--pid;
-						break;
-					}
-					backgroundReflection = tex;
-					
-				}
-				++pid;
-			}
-			// Update matrix.
-			sceneModel = Codable::decodeTransformation(params);
-		} else {
-			Log::Warning() << "Unknown key, skipping." << std::endl;
-		}
-		
+		// By construction (see above), all keys should have a loader.
+		(this->*loaders[key])(subset);
 	}
 	
+	// Update all objects poses.
 	for(auto & object : objects){
-		const glm::mat4 newModel = sceneModel * object.model();
+		const glm::mat4 newModel = _sceneModel * object.model();
 		object.set(newModel);
 	}
-	
+	// The scene model matrix has been applied to all objects, we can reset it.
+	_sceneModel = glm::mat4(1.0f);
+	// Update all lights bounding box infos.
 	const BoundingBox sceneBox = computeBoundingBox(true);
 	for(auto & light : directionalLights){
 		light.setScene(sceneBox);
@@ -140,6 +65,8 @@ void Scene::init(){
 	for(auto & light : pointLights){
 		light.setScene(sceneBox);
 	}
+
+	_loaded = true;
 };
 
 void Scene::loadObject(const std::vector<KeyValues> & params){
@@ -163,26 +90,39 @@ void Scene::loadSpotLight(const std::vector<KeyValues> & params){
 }
 
 void Scene::loadBackground(const std::vector<KeyValues> & params){
-	
+	/// \todo Support other types of background object. Maybe based implicitely on what was passed (color/texture2d/cubemap)?
 	background = Object(Object::Type::Skybox, Resources::manager().getMesh("skybox"), false);
 	
-	for(int pid = 0; pid < params.size();){
+	for(int pid = 0; pid < params.size(); ++pid){
 		const auto & param = params[pid];
 		if(param.key == "texture"){
 			// Move to the next parameter.
-			++pid;
-			const TextureInfos * tex = Codable::decodeTexture(params[pid]);
-			if(tex == nullptr){
+			const TextureInfos * tex = Codable::decodeTexture(params[++pid]);
+			if(tex){
+				background.addTexture(tex);
+			} else {
 				--pid;
-				break;
 			}
-			background.addTexture(tex);
 		}
-		++pid;
 	}
 }
 
-Scene::~Scene(){};
+void Scene::loadScene(const std::vector<KeyValues> & params){
+	for(int pid = 0; pid < params.size(); ++pid){
+		const auto & param = params[pid];
+		if(param.key == "irradiance" && !param.values.empty()){
+			loadSphericalHarmonics(param.values[0]);
+		} else if(param.key == "probe"){
+			// Move to the next parameter and try to load the texture.
+			backgroundReflection = Codable::decodeTexture(params[++pid]);
+			if(backgroundReflection == nullptr){
+				--pid;
+			}
+		}
+	}
+	// Update matrix.
+	_sceneModel = Codable::decodeTransformation(params);
+}
 
 void Scene::loadSphericalHarmonics(const std::string & name){
 	backgroundIrradiance.clear();
@@ -191,15 +131,11 @@ void Scene::loadSphericalHarmonics(const std::string & name){
 	const std::string coeffsRaw = Resources::manager().getString(name);
 	std::stringstream coeffsStream(coeffsRaw);
 	
-	float x = 0.0f;
-	float y = 0.0f;
-	float z = 0.0f;
-	
+	float x = 0.0f; float y = 0.0f; float z = 0.0f;
 	for(int i = 0; i < 9; ++i){
 		coeffsStream >> x >> y >> z;
 		backgroundIrradiance[i] = glm::vec3(x,y,z);
 	}
-	
 }
 
 BoundingBox Scene::computeBoundingBox(bool onlyShadowCasters){
@@ -224,7 +160,6 @@ BoundingBox Scene::computeBoundingBox(bool onlyShadowCasters){
 }
 
 void Scene::update(double fullTime, double frameTime){
-	
 	for(auto & light : pointLights){
 		light.update(fullTime, frameTime);
 	}
@@ -237,11 +172,9 @@ void Scene::update(double fullTime, double frameTime){
 	for(auto & object : objects){
 		object.update(fullTime, frameTime);
 	}
-	
 }
 
 void Scene::clean() {
-	
 	for(auto& dirLight : directionalLights){
 		dirLight.clean();
 	}
