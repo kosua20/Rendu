@@ -152,19 +152,24 @@ void PointLight::setScene(const BoundingBox & sceneBox){
 	const glm::vec3 candidatesNear = glm::min(glm::abs(deltaMini), glm::abs(deltaMaxi));
 	const glm::vec3 candidatesFar = glm::max(glm::abs(deltaMini), glm::abs(deltaMaxi));
 	
+	const float size = glm::length(_sceneBox.getSize());
 	float far = candidatesFar[0];
 	float near = candidatesNear[0];
+	bool allInside = true;
 	for(int i = 0; i < 3; ++i){
 		// The light is inside the bbox along the axis i if the two delta have different signs.
 		const bool isInside = (std::signbit(deltaMini[i]) != std::signbit(deltaMaxi[i]));
+		allInside = allInside && isInside;
 		// In this case we enforce a small near.
-		near = isInside ? 0.01f : (std::min)(near, candidatesNear[i]);
+		near = (std::min)(near, candidatesNear[i]);
 		far = (std::max)(far, candidatesFar[i]);
 	}
-	
-	const float scaleMargin = 1.5f;
-	_farPlane = scaleMargin*far;
-	const glm::mat4 projection = glm::perspective(float(M_PI/2.0), 1.0f, (1.0f/scaleMargin)*near, _farPlane);
+	if(allInside){
+		near = 0.01f*size;
+		far = size;
+	}
+	_farPlane = far;
+	const glm::mat4 projection = glm::perspective(float(M_PI/2.0), 1.0f, near, _farPlane);
 	
 	// Create the constant view matrices for the 6 faces.
 	const glm::vec3 ups[6] = { glm::vec3(0.0,-1.0,0.0), glm::vec3(0.0,-1.0,0.0), glm::vec3(0.0,0.0,1.0), glm::vec3(0.0,0.0,-1.0), glm::vec3(0.0,-1.0,0.0), glm::vec3(0.0,-1.0,0.0) };

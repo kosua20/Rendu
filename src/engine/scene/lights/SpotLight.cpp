@@ -24,7 +24,7 @@ SpotLight::SpotLight(const glm::vec3& worldPosition, const glm::vec3& worldDirec
 
 void SpotLight::init(const std::vector<GLuint>& textureIds){
 	// Setup the framebuffer.
-	const Descriptor descriptor = {GL_RG16F, GL_LINEAR, GL_CLAMP_TO_BORDER};
+	const Descriptor descriptor = {GL_RG32F, GL_LINEAR, GL_CLAMP_TO_BORDER};
 	_shadowPass = std::unique_ptr<Framebuffer>(new Framebuffer(512, 512, descriptor, true));
 	_blur = std::unique_ptr<BoxBlur>(new BoxBlur(512, 512, false, descriptor));
 	
@@ -51,6 +51,7 @@ void SpotLight::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMat
 	const glm::mat4 mvp = projectionMatrix * viewMatrix * modelMatrix;
 	const glm::mat4 viewToLight = _mvp * glm::inverse(viewMatrix);
 	
+	glCullFace(GL_FRONT);
 	glUseProgram(_program->id());
 	glUniformMatrix4fv(_program->uniform("mvp"), 1, GL_FALSE, &mvp[0][0]);
 	glUniform3fv(_program->uniform("lightPosition"), 1,  &lightPositionViewSpace[0]);
@@ -77,7 +78,7 @@ void SpotLight::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMat
 	
 	glBindVertexArray(0);
 	glUseProgram(0);
-
+	glCullFace(GL_BACK);
 }
 
 void SpotLight::drawShadow(const std::vector<Object> & objects) const {
@@ -131,10 +132,13 @@ void SpotLight::drawDebug(const glm::mat4& viewMatrix, const glm::mat4& projecti
 
 void SpotLight::update(double fullTime, double frameTime){
 	glm::vec4 position = glm::vec4(_lightPosition, 1.0f);
+	glm::vec4 direction = glm::vec4(_lightDirection, 0.0f);
 	for(auto & anim : _animations){
 		position = anim->apply(position, fullTime, frameTime);
+		direction = anim->apply(direction, fullTime, frameTime);
 	}
 	_lightPosition = glm::vec3(position);
+	_lightDirection = glm::normalize(glm::vec3(direction));
 	setScene(_sceneBox);
 }
 
@@ -142,13 +146,20 @@ void SpotLight::setScene(const BoundingBox & sceneBox){
 	_sceneBox = sceneBox;
 	_viewMatrix = glm::lookAt(_lightPosition, _lightPosition+_lightDirection, glm::vec3(0.0f,1.0f,0.0f));
 	// Compute the projection matrix, automatically finding the near and far.
-	const BoundingBox lightSpacebox = _sceneBox.transformed(_viewMatrix);
-	const float absz1 = abs(lightSpacebox.minis[2]);
-	const float absz2 = abs(lightSpacebox.maxis[2]);
-	const float near = (std::min)(absz1, absz2);
-	const float far = (std::max)(absz1, absz2);
-	const float scaleMargin = 1.5f;
-	_projectionMatrix = glm::perspective(2.0f*_outerHalfAngle, 1.0f, (1.0f/scaleMargin)*near, scaleMargin*far);
+	float near = 0.01f;
+	float far = 100.0f;
+	if(_sceneBox.contains(_lightPosition)){
+		const float size = glm::length(_sceneBox.getSize());
+		near = 0.01f * size;
+		far = 1.0f*size;
+	} else {
+		const BoundingBox lightSpacebox = _sceneBox.transformed(_viewMatrix);
+		const float absz1 = abs(lightSpacebox.minis[2]);
+		const float absz2 = abs(lightSpacebox.maxis[2]);
+		near = (std::min)(absz1, absz2);
+		far = (std::max)(absz1, absz2);
+	}
+	_projectionMatrix = glm::perspective(2.0f*_outerHalfAngle, 1.0f, near, far);
 	_mvp = _projectionMatrix * _viewMatrix;
 }
 

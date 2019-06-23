@@ -77,6 +77,9 @@ public:
 	 */
 	static std::shared_ptr<Light> decode(const std::vector<KeyValues> & params);
 	
+	/** Destructor. */
+	virtual ~Light() = default;
+	
 protected:
 	
 	/** Setup a light common parameters from a list of key-value tuples. The following keywords will be searched for:
