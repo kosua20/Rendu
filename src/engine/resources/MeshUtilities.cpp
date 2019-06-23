@@ -225,6 +225,33 @@ void MeshUtilities::centerAndUnitMesh(Mesh & mesh){
 	}
 }
 
+void MeshUtilities::computeNormals(Mesh & mesh){
+	mesh.normals.resize(mesh.positions.size());
+	for(size_t pid = 0; pid < mesh.normals.size(); ++pid){
+		mesh.normals[pid] = glm::vec3(0.0f);
+	}
+	// Iterate over faces.
+	for(size_t tid = 0; tid < mesh.indices.size(); tid += 3){
+		const unsigned int i0 = mesh.indices[tid + 0];
+		const unsigned int i1 = mesh.indices[tid + 1];
+		const unsigned int i2 = mesh.indices[tid + 2];
+		const glm::vec3 & v0 = mesh.positions[i0];
+		const glm::vec3 & v1 = mesh.positions[i1];
+		const glm::vec3 & v2 = mesh.positions[i2];
+		// Compute cross product between the two edges of the triangle.
+		const glm::vec3 d01 = glm::normalize(v1 - v0);
+		const glm::vec3 d02 = glm::normalize(v2 - v0);
+		const glm::vec3 normal = glm::cross(d01, d02);
+		mesh.normals[i0] += normal;
+		mesh.normals[i1] += normal;
+		mesh.normals[i2] += normal;
+	}
+	// Average for each vertex normal.
+	for(size_t pid = 0; pid < mesh.normals.size(); ++pid){
+		mesh.normals[pid] = glm::normalize(mesh.normals[pid]);
+	}
+}
+
 void MeshUtilities::computeTangentsAndBinormals(Mesh & mesh){
 	if(mesh.indices.size() * mesh.positions.size() * mesh.texcoords.size() == 0){
 		// Missing data, or not the right mode (Points).
@@ -238,36 +265,40 @@ void MeshUtilities::computeTangentsAndBinormals(Mesh & mesh){
 	// Then, compute both vectors for each face and accumulate them.
 	for(size_t fid = 0; fid < mesh.indices.size(); fid += 3){
 
+		const unsigned int i0 = mesh.indices[fid+0];
+		const unsigned int i1 = mesh.indices[fid+1];
+		const unsigned int i2 = mesh.indices[fid+2];
+		
 		// Get the vertices of the face.
-		glm::vec3 & v0 = mesh.positions[mesh.indices[fid]];
-		glm::vec3 & v1 = mesh.positions[mesh.indices[fid+1]];
-		glm::vec3 & v2 = mesh.positions[mesh.indices[fid+2]];
+		const glm::vec3 & v0 = mesh.positions[i0];
+		const glm::vec3 & v1 = mesh.positions[i1];
+		const glm::vec3 & v2 = mesh.positions[i2];
 		// Get the uvs of the face.
-		glm::vec2 & uv0 = mesh.texcoords[mesh.indices[fid]];
-		glm::vec2 & uv1 = mesh.texcoords[mesh.indices[fid+1]];
-		glm::vec2 & uv2 = mesh.texcoords[mesh.indices[fid+2]];
+		const glm::vec2 & uv0 = mesh.texcoords[i0];
+		const glm::vec2 & uv1 = mesh.texcoords[i1];
+		const glm::vec2 & uv2 = mesh.texcoords[i2];
 
 		// Delta positions and uvs.
-		glm::vec3 deltaPosition1 = v1 - v0;
-		glm::vec3 deltaPosition2 = v2 - v0;
-		glm::vec2 deltaUv1 = uv1 - uv0;
-		glm::vec2 deltaUv2 = uv2 - uv0;
+		const glm::vec3 deltaPosition1 = v1 - v0;
+		const glm::vec3 deltaPosition2 = v2 - v0;
+		const glm::vec2 deltaUv1 = uv1 - uv0;
+		const glm::vec2 deltaUv2 = uv2 - uv0;
 
 		// Compute tangent and binormal for the face.
 		const float denom = deltaUv1.x * deltaUv2.y - deltaUv1.y * deltaUv2.x;
 		// Avoid divide-by-zero if same UVs.
-		float det = (abs(denom) < 0.001f) ? 1.0f : (1.0f / denom);
-    	glm::vec3 tangent = det * (deltaPosition1 * deltaUv2.y   - deltaPosition2 * deltaUv1.y);
-    	glm::vec3 binormal = det * (deltaPosition2 * deltaUv1.x   - deltaPosition1 * deltaUv2.x);
+		const float det = (abs(denom) < 0.001f) ? 1.0f : (1.0f / denom);
+    	const glm::vec3 tangent = det * (deltaPosition1 * deltaUv2.y   - deltaPosition2 * deltaUv1.y);
+    	const glm::vec3 binormal = det * (deltaPosition2 * deltaUv1.x   - deltaPosition1 * deltaUv2.x);
 
     	// Accumulate them. We don't normalize to get a free weighting based on the size of the face.
-    	mesh.tangents[mesh.indices[fid]] += tangent;
-    	mesh.tangents[mesh.indices[fid+1]] += tangent;
-    	mesh.tangents[mesh.indices[fid+2]] += tangent;
+    	mesh.tangents[i0] += tangent;
+    	mesh.tangents[i1] += tangent;
+    	mesh.tangents[i2] += tangent;
 
-    	mesh.binormals[mesh.indices[fid]] += binormal;
-    	mesh.binormals[mesh.indices[fid+1]] += binormal;
-    	mesh.binormals[mesh.indices[fid+2]] += binormal;
+    	mesh.binormals[i0] += binormal;
+    	mesh.binormals[i1] += binormal;
+    	mesh.binormals[i2] += binormal;
 	}
 	// Finally, enforce orthogonality and good orientation of the basis.
 	for(size_t tid = 0; tid < mesh.tangents.size(); ++tid){
