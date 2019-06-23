@@ -91,7 +91,11 @@ void main(){
 	n = normalize(n * 2.0 - 1.0);
 	
 	// Store values.
-	fragColor.rgb = texture(texture0, localUV).rgb;
+	vec4 color = texture(texture0, localUV);
+	if(color.a <= 0.01){
+		discard;
+	}
+	fragColor.rgb = color.rgb;
 	fragColor.a = float(MATERIAL_ID)/255.0;
 	fragNormal.rgb = normalize(In.tbn * n)*0.5+0.5;
 	fragEffects.rgb = texture(texture2,localUV).rgb;

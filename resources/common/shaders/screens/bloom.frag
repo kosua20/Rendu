@@ -6,6 +6,7 @@ in INTERFACE {
 } In ; ///< vec2 uv;
 
 layout(binding = 0) uniform sampler2D screenTexture; ///< Lighting buffer to filter. 
+uniform float luminanceTh = 1.0;
 
 layout(location = 0) out vec3 fragColor; ///< Scene color.
 
@@ -15,7 +16,7 @@ void main(){
 	
 	vec3 color = texture(screenTexture, In.uv, -1000.0).rgb;
 	// Compute intensity (luminance). If > 1.0, bloom should be visible.
-	if(dot(color, vec3(0.289, 0.527, 0.184)) > 1.0){
+	if(dot(color, vec3(0.289, 0.527, 0.184)) > luminanceTh){
 		fragColor = color;
 	}
 }
