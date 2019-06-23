@@ -55,9 +55,9 @@ void Scene::init(){
 	// The scene model matrix has been applied to all objects, we can reset it.
 	_sceneModel = glm::mat4(1.0f);
 	// Update all lights bounding box infos.
-	const BoundingBox sceneBox = computeBoundingBox(true);
+	_bbox = computeBoundingBox(true);
 	for(auto & light : lights){
-		light->setScene(sceneBox);
+		light->setScene(_bbox);
 	}
 	_loaded = true;
 };
