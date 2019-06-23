@@ -48,10 +48,9 @@ float shadow(vec3 lightToPosDir){
 		// No information in the depthmap: no occluder.
 		return 1.0;
 	}
-	// We have to scale by the frustum size.
-	moments *= vec2(lightFarPlane, lightFarPlane*lightFarPlane);
 	// Initial probability of light.
-	float dist = length(lightToPosDir);
+	// We have to correct for the frustum size.
+	float dist = length(lightToPosDir)/lightFarPlane;
 	float probability = float(dist <= moments.x);
 	// Compute variance.
 	float variance = moments.y - (moments.x * moments.x);

@@ -9,6 +9,6 @@ layout(location = 0) out vec2 fragColor; ///< World space depth and depth square
 void main(){
 	// We compute the distance in world space (or equivalently view space).
 	// We normalize it by the far plane distance to obtain a [0,1] value.
-	float dist = length(worldPos - lightPositionWorld) / lightFarPlane;
+	float dist = clamp(length(worldPos - lightPositionWorld) / lightFarPlane, 0.0, 1.0);
 	fragColor = vec2(dist, dist*dist);
 }
