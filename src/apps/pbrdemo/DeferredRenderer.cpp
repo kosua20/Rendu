@@ -75,7 +75,10 @@ void DeferredRenderer::setScene(std::shared_ptr<Scene> scene){
 	_scene->init();
 	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start);
 	Log::Info() << "Loading took " << duration.count() << "ms." << std::endl;
-	
+	const BoundingBox & bbox = _scene->getBoundingBox();
+	const float range = glm::length(bbox.getSize());
+	_userCamera.frustum(0.01f*range, 5.0f*range);
+	_userCamera.speed() = 0.2f*range;
 	_ambientScreen.setSceneParameters(_scene->backgroundReflection->id, _scene->backgroundIrradiance);
 	
 	std::vector<GLuint> includedTextures = _gbuffer->textureIds();
@@ -109,23 +112,25 @@ void DeferredRenderer::renderScene(){
 		// Select the program (and shaders).
 		switch (object.type()) {
 			case Object::PBRParallax:
-			glUseProgram(_parallaxProgram->id());
-			// Upload the MVP matrix.
-			glUniformMatrix4fv(_parallaxProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
-			// Upload the projection matrix.
-			glUniformMatrix4fv(_parallaxProgram->uniform("p"), 1, GL_FALSE, &proj[0][0]);
-			// Upload the MV matrix.
-			glUniformMatrix4fv(_parallaxProgram->uniform("mv"), 1, GL_FALSE, &MV[0][0]);
-			// Upload the normal matrix.
-			glUniformMatrix3fv(_parallaxProgram->uniform("normalMatrix"), 1, GL_FALSE, &normalMatrix[0][0]);
-			break;
+				glUseProgram(_parallaxProgram->id());
+				// Upload the MVP matrix.
+				glUniformMatrix4fv(_parallaxProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
+				// Upload the projection matrix.
+				glUniformMatrix4fv(_parallaxProgram->uniform("p"), 1, GL_FALSE, &proj[0][0]);
+				// Upload the MV matrix.
+				glUniformMatrix4fv(_parallaxProgram->uniform("mv"), 1, GL_FALSE, &MV[0][0]);
+				// Upload the normal matrix.
+				glUniformMatrix3fv(_parallaxProgram->uniform("normalMatrix"), 1, GL_FALSE, &normalMatrix[0][0]);
+				break;
 			case Object::PBRRegular:
-			glUseProgram(_objectProgram->id());
-			// Upload the MVP matrix.
-			glUniformMatrix4fv(_objectProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
-			// Upload the normal matrix.
-			glUniformMatrix3fv(_objectProgram->uniform("normalMatrix"), 1, GL_FALSE, &normalMatrix[0][0]);
-			break;
+			case Object::PBRNoNormal:
+				glUseProgram(_objectProgram->id());
+				// Upload the MVP matrix.
+				glUniformMatrix4fv(_objectProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
+				// Upload the normal matrix.
+				glUniformMatrix3fv(_objectProgram->uniform("normalMatrix"), 1, GL_FALSE, &normalMatrix[0][0]);
+				glUniform1i(_objectProgram->uniform("defaultNormal"), int(object.type() == Object::PBRNoNormal));
+				break;
 			default:
 			
 			break;
