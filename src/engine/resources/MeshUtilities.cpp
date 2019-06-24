@@ -286,11 +286,20 @@ void MeshUtilities::computeTangentsAndBinormals(Mesh & mesh){
 
 		// Compute tangent and binormal for the face.
 		const float denom = deltaUv1.x * deltaUv2.y - deltaUv1.y * deltaUv2.x;
+		const bool degen = std::abs(denom) < 0.001f;
+		glm::vec3 tangent  = glm::vec3(0.0f);
+		glm::vec3 binormal = glm::vec3(0.0f);
 		// Avoid divide-by-zero if same UVs.
-		const float det = (abs(denom) < 0.001f) ? 1.0f : (1.0f / denom);
-    	const glm::vec3 tangent = det * (deltaPosition1 * deltaUv2.y   - deltaPosition2 * deltaUv1.y);
-    	const glm::vec3 binormal = det * (deltaPosition2 * deltaUv1.x   - deltaPosition1 * deltaUv2.x);
-
+		if(!degen){
+			const float det = (1.0f / denom);
+    		tangent = det * (deltaPosition1 * deltaUv2.y - deltaPosition2 * deltaUv1.y);
+    		binormal = det * (deltaPosition2 * deltaUv1.x - deltaPosition1 * deltaUv2.x);
+		} else {
+			const glm::vec3 normal = glm::normalize(glm::cross(deltaPosition1, deltaPosition2));
+			tangent = std::abs(normal.z) > 0.8f ? glm::vec3(1.0f,0.0f,0.0f) : glm::vec3(0.0f,0.0f,1.0f);
+			binormal = glm::normalize(glm::cross(normal, tangent));
+			tangent = glm::normalize(glm::cross(binormal, normal));
+		}
     	// Accumulate them. We don't normalize to get a free weighting based on the size of the face.
     	mesh.tangents[i0] += tangent;
     	mesh.tangents[i1] += tangent;

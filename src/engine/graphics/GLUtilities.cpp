@@ -613,10 +613,6 @@ void GLUtilities::savePixels(const GLenum type, const GLenum format, const unsig
 	
 }
 
-
-
-
-
 unsigned int GLUtilities::getTypeAndFormat(const GLuint typedFormat, GLuint & type, GLuint & format){
 	
 	struct FormatAndType {

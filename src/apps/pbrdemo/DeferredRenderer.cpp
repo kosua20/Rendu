@@ -25,7 +25,7 @@ DeferredRenderer::DeferredRenderer(RenderingConfig & config) : Renderer(config) 
 	const Descriptor effectsDesc = { GL_RGB8, GL_NEAREST_MIPMAP_NEAREST, GL_CLAMP_TO_EDGE };
 	const Descriptor depthDesc = { GL_DEPTH_COMPONENT32F, GL_NEAREST_MIPMAP_NEAREST, GL_CLAMP_TO_EDGE };
 	const std::vector<Descriptor> descs = {albedoDesc, normalDesc, effectsDesc, depthDesc};
-	_gbuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderWidth, descs, false));
+	_gbuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, descs, false));
 	
 	// Other framebuffers.
 	_ssaoPass = std::unique_ptr<SSAO>(new SSAO(renderHalfWidth, renderHalfHeight, 0.5f));

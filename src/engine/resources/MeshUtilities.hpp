@@ -108,7 +108,7 @@ struct BoundingBox {
 	
 	/** Indicates if a point is inside the bounding box.
 	 \param point the point to check
-	 \return true if the point is inside the bounding box
+	 \return true if the bounding box contains the point
 	 */
 	bool contains(const glm::vec3 & point){
 		return glm::all(glm::greaterThanEqual(point, minis)) && glm::all(glm::lessThanEqual(point, maxis));
@@ -162,7 +162,7 @@ public:
 	 */
 	static void centerAndUnitMesh(Mesh & mesh);
 	
-	/** Compute per-vertex normals based on the face orientations.
+	/** Compute per-vertex normals based on the faces orientation.
 	 \param mesh the mesh to process
 	 */
 	static void computeNormals(Mesh & mesh);

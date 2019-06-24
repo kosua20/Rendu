@@ -78,7 +78,7 @@ void main(){
 		occlusion += (sampleDepth >= randomSample.z  ? isValid : 0.0);
 	}
 	
-	// Normalize and  reverse occlusion.
+	// Normalize and reverse occlusion.
 	occlusion = 1.0 - (occlusion/24.0);
-	fragColor = pow(occlusion,2.0);
+	fragColor = occlusion;
 }
