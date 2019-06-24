@@ -55,6 +55,7 @@ DeferredRenderer::DeferredRenderer(RenderingConfig & config) : Renderer(config) 
 	_bgProgram = Resources::manager().getProgram("background_gbuffer");
 	_parallaxProgram = Resources::manager().getProgram("parallax_gbuffer");
 	_objectProgram = Resources::manager().getProgram("object_gbuffer");
+	_objectNoUVsProgram = Resources::manager().getProgram("object_no_uv_gbuffer");
 	
 	const std::vector<GLuint> ambientTextures = _gbuffer->textureIds();
 	
@@ -122,6 +123,13 @@ void DeferredRenderer::renderScene(){
 				// Upload the normal matrix.
 				glUniformMatrix3fv(_parallaxProgram->uniform("normalMatrix"), 1, GL_FALSE, &normalMatrix[0][0]);
 				break;
+			case Object::PBRNoUVs:
+				glUseProgram(_objectNoUVsProgram->id());
+				// Upload the MVP matrix.
+				glUniformMatrix4fv(_objectNoUVsProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
+				// Upload the normal matrix.
+				glUniformMatrix3fv(_objectNoUVsProgram->uniform("normalMatrix"), 1, GL_FALSE, &normalMatrix[0][0]);
+			break;
 			case Object::PBRRegular:
 				glUseProgram(_objectProgram->id());
 				// Upload the MVP matrix.

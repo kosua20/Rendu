@@ -15,7 +15,8 @@ void Object::decode(const std::vector<KeyValues> & params){
 	const std::map<std::string, Object::Type> types = {
 		REGISTER_TYPE(Common),
 		REGISTER_TYPE(PBRRegular),
-		REGISTER_TYPE(PBRParallax)
+		REGISTER_TYPE(PBRParallax),
+		REGISTER_TYPE(PBRNoUVs)
 	};
 #undef REGISTER_TYPE
 	

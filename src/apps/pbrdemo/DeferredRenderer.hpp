@@ -95,6 +95,7 @@ private:
 	const ProgramInfos * _fxaaProgram; ///< FXAA program
 	const ProgramInfos * _finalProgram; ///< Final output program
 	const ProgramInfos * _objectProgram; ///< Basic PBR program
+	const ProgramInfos * _objectNoUVsProgram; ///< Basic PBR program
 	const ProgramInfos * _parallaxProgram;///< Parallax mapping PBR program
 	
 	const ProgramInfos * _skyboxProgram; ///< Skybox program.
@@ -103,14 +104,14 @@ private:
 	
 	std::shared_ptr<Scene> _scene; ///< The scene to render
 	
-	float _cameraFOV;
-	float _exposure = 1.0f;
+	float _cameraFOV; ///< Camera field of view in degrees.
+	float _exposure = 1.0f; ///< Film exposure.
 	bool _debugVisualization = false; ///< Toggle the rendering of debug informations in the scene.
-	bool _applyBloom = true;
-	bool _applyTonemapping = true;
-	bool _applyFXAA = true;
-	bool _applySSAO = true;
-	bool _updateShadows = true;
+	bool _applyBloom = true; ///< Should bloom (bright lights halo-ing) be applied.
+	bool _applyTonemapping = false; ///< Should HDR to LDR tonemapping be applied.
+	bool _applyFXAA = true; ///< Apply screenspace anti-aliasing.
+	bool _applySSAO = true; ///< Screen space ambient occlusion.
+	bool _updateShadows = true; ///< Update shadow maps at each frame.
 };
 
 #endif
