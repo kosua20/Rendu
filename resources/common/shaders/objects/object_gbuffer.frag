@@ -11,7 +11,6 @@ in INTERFACE {
 layout(binding = 0) uniform sampler2D texture0; ///< Albedo.
 layout(binding = 1) uniform sampler2D texture1; ///< Normal map.
 layout(binding = 2) uniform sampler2D texture2; ///< Effects map.
-uniform bool defaultNormal = false; ///< Use analytical local normal instead of normal map.
 
 layout (location = 0) out vec4 fragColor; ///< Color.
 layout (location = 1) out vec3 fragNormal; ///< View space normal.
@@ -22,9 +21,8 @@ layout (location = 2) out vec3 fragEffects; ///< Effects.
 void main(){
 	
 	// Compute the normal at the fragment using the tangent space matrix and the normal read in the normal map.
-	vec3 n = texture(texture1, In.uv).rgb * 2.0 - 1.0;
-	n = normalize(n);
-	n = mix(n, vec3(0.0,0.0,1.0), float(defaultNormal));
+	vec3 n = texture(texture1, In.uv).rgb ;
+	n = normalize(n * 2.0 - 1.0);
 	
 	// Store values.
 	vec4 color = texture(texture0, In.uv);

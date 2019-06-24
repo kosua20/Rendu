@@ -123,13 +123,11 @@ void DeferredRenderer::renderScene(){
 				glUniformMatrix3fv(_parallaxProgram->uniform("normalMatrix"), 1, GL_FALSE, &normalMatrix[0][0]);
 				break;
 			case Object::PBRRegular:
-			case Object::PBRNoNormal:
 				glUseProgram(_objectProgram->id());
 				// Upload the MVP matrix.
 				glUniformMatrix4fv(_objectProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
 				// Upload the normal matrix.
 				glUniformMatrix3fv(_objectProgram->uniform("normalMatrix"), 1, GL_FALSE, &normalMatrix[0][0]);
-				glUniform1i(_objectProgram->uniform("defaultNormal"), int(object.type() == Object::PBRNoNormal));
 				break;
 			default:
 			

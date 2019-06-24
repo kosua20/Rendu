@@ -17,8 +17,7 @@ public:
 	enum Type : int {
 		Common = 0, ///< Any type of shading.
 		PBRRegular, ///< PBR shading. \see GLSL::Vert::Object_gbuffer, GLSL::Frag::Object_gbuffer
-		PBRParallax, ///< PBR with parallax mapping. \see GLSL::Vert::Parallax_gbuffer, GLSL::Frag::Parallax_gbuffer
-		PBRNoNormal ///< PBR with no normal map (special case because a 0.0,0.0,1.0 local normal can't be stored as is.
+		PBRParallax ///< PBR with parallax mapping. \see GLSL::Vert::Parallax_gbuffer, GLSL::Frag::Parallax_gbuffer
 	};
 
 	/** Constructor */
