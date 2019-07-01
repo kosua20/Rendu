@@ -32,8 +32,8 @@ DeferredRenderer::DeferredRenderer(RenderingConfig & config) : Renderer(config) 
 	_sceneFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, GL_RGBA16F, false));
 	_bloomFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderPow2Size, renderPow2Size, GL_RGB16F, false));
 	
-	_toneMappingFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, GL_RGBA8, false));
-	_fxaaFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, GL_RGBA8, false));
+	_toneMappingFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, GL_RGB16F, false));
+	_fxaaFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, GL_RGB16F, false));
 	
 	_blurBuffer = std::unique_ptr<GaussianBlur>(new GaussianBlur(renderPow2Size, renderPow2Size, 2, GL_RGB16F));
 	
