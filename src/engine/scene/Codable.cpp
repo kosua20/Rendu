@@ -116,7 +116,9 @@ std::vector<KeyValues> Codable::parse(const std::string & codableFile){
 		while (nextColon != std::string::npos) {
 			std::string key = line.substr(previousColon, nextColon-previousColon);
 			key = TextUtilities::trim(key, " \t");
-			tokens.emplace_back(key);
+			if(!key.empty()){
+				tokens.emplace_back(key);
+			}
 			previousColon = nextColon+1;
 			nextColon = line.find(":", previousColon);
 		}
@@ -129,7 +131,9 @@ std::vector<KeyValues> Codable::parse(const std::string & codableFile){
 		std::stringstream valuesSstr(values);
 		std::string value;
 		while(std::getline(valuesSstr, value, ' ')){
-			tokens.back().values.push_back(value);
+			if(!value.empty()){
+				tokens.back().values.push_back(value);
+			}
 		}
 	}
 	return tokens;
