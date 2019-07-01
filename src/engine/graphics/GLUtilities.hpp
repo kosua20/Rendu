@@ -94,7 +94,7 @@ struct MeshInfos {
 	GLuint eId; ///< The element buffer OpenGL ID.
 	GLsizei count; ///< The number of vertices.
 	BoundingBox bbox; ///< The mesh bounding box in model space.
-	GLuint vbos[5]; ///< The vertex buffer objects openGL IDs.
+	GLuint vbo; ///< The vertex buffer objects openGL ID.
 	Mesh geometry; ///< The geometry data (optional)
 	
 	/** Default constructor. */
