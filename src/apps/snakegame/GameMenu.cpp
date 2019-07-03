@@ -26,7 +26,7 @@ MenuImage::MenuImage(const glm::vec2 & screenPos, const float screenScale, const
 	tid = texture.id;
 }
 
-MenuLabel::MenuLabel(const glm::vec2 & screenPos, const float verticalScale, const FontInfos * font, const TextUtilities::Alignment alignment) {
+MenuLabel::MenuLabel(const glm::vec2 & screenPos, const float verticalScale, const FontInfos * font, const Font::Alignment alignment) {
 	_font = font;
 	pos = screenPos;
 	tid = _font->atlas->id;
@@ -37,7 +37,7 @@ MenuLabel::MenuLabel(const glm::vec2 & screenPos, const float verticalScale, con
 
 void MenuLabel::update(const std::string & text){
 	mesh.clean();
-	mesh = TextUtilities::generateLabel(text, *_font, _vScale, _align);
+	mesh = Font::generateLabel(text, *_font, _vScale, _align);
 }
 
 void GameMenu::update(const glm::vec2 & screenResolution, const float initialRatio){

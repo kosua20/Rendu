@@ -1,8 +1,7 @@
 #include "DeferredRenderer.hpp"
-#include "helpers/GenerationUtilities.hpp"
+#include "helpers/Random.hpp"
 #include "input/Input.hpp"
-#include "input/InputCallbacks.hpp"
-#include "helpers/InterfaceUtilities.hpp"
+#include "helpers/Interface.hpp"
 #include "scene/Scene.hpp"
 #include "Common.hpp"
 

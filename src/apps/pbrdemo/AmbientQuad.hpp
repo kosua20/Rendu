@@ -1,5 +1,5 @@
-#ifndef AmbientQuad_h
-#define AmbientQuad_h
+#pragma once
+
 #include "graphics/ScreenQuad.hpp"
 #include "Common.hpp"
 
@@ -48,5 +48,3 @@ private:
 	GLuint _textureBrdf; ///< The linearized approximate BRDF components. \see BRDFEstimator
 	
 };
-
-#endif

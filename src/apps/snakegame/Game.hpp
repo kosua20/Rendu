@@ -3,7 +3,7 @@
 #include "GameMenu.hpp"
 #include "GameMenuRenderer.hpp"
 #include "GameRenderer.hpp"
-#include "helpers/InterfaceUtilities.hpp"
+#include "helpers/Interface.hpp"
 #include "processing/GaussianBlur.hpp"
 
 // *** Later improvements: ***

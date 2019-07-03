@@ -3,7 +3,7 @@
 #include "scene/lights/DirectionalLight.hpp"
 #include "scene/lights/PointLight.hpp"
 #include "scene/lights/SpotLight.hpp"
-#include "helpers/InterfaceUtilities.hpp"
+#include "helpers/Interface.hpp"
 #include <chrono>
 
 DeferredRenderer::DeferredRenderer(RenderingConfig & config) : Renderer(config) {

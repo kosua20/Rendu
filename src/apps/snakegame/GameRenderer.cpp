@@ -1,7 +1,6 @@
 
 #include "GameRenderer.hpp"
 #include "Common.hpp"
-#include "helpers/GenerationUtilities.hpp"
 
 GameRenderer::GameRenderer(RenderingConfig & config) : Renderer(config){
 	

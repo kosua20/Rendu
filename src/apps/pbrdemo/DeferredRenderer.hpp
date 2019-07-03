@@ -1,5 +1,4 @@
-#ifndef DeferredRenderer_h
-#define DeferredRenderer_h
+#pragma once
 
 #include "AmbientQuad.hpp"
 #include "scene/Scene.hpp"
@@ -113,5 +112,3 @@ private:
 	bool _applySSAO = true; ///< Screen space ambient occlusion.
 	bool _updateShadows = true; ///< Update shadow maps at each frame.
 };
-
-#endif

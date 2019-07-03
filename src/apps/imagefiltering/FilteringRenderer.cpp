@@ -1,7 +1,7 @@
 #include "FilteringRenderer.hpp"
 
 #include "input/Input.hpp"
-#include "helpers/InterfaceUtilities.hpp"
+#include "helpers/Interface.hpp"
 
 FilteringRenderer::FilteringRenderer(RenderingConfig & config) : Renderer(config) {
 	

@@ -1,8 +1,8 @@
 
 #include "Common.hpp"
-#include "helpers/GenerationUtilities.hpp"
+#include "helpers/Random.hpp"
 #include "input/Input.hpp"
-#include "helpers/InterfaceUtilities.hpp"
+#include "helpers/Interface.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "Game.hpp"
 

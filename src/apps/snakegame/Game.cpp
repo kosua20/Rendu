@@ -2,7 +2,6 @@
 #include "Game.hpp"
 #include "Common.hpp"
 #include "input/Input.hpp"
-#include "helpers/InterfaceUtilities.hpp"
 
 Game::Game(RenderingConfig & config) : _config(config), _inGameRenderer(config), _menuRenderer(config) {
 	
@@ -16,6 +15,7 @@ Game::Game(RenderingConfig & config) : _config(config), _inGameRenderer(config),
 	
 	const Descriptor commonDesc = {GL_SRGB8_ALPHA8, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE};
 	const GLuint backgroundTexture = Resources::manager().getTexture("menubg", commonDesc)->id;
+	
 	_menus[Status::MAINMENU].backgroundImage = backgroundTexture;
 	_menus[Status::MAINMENU].buttons.emplace_back(glm::vec2(0.0f,  0.10f), meshSize, displayScale, NEWGAME,
 												  *Resources::manager().getTexture("button-newgame", commonDesc));
@@ -25,7 +25,6 @@ Game::Game(RenderingConfig & config) : _config(config), _inGameRenderer(config),
 												  *Resources::manager().getTexture("button-quit", commonDesc));
 	_menus[Status::MAINMENU].images.emplace_back(glm::vec2(0.0f, 0.47f), 0.5f,
 												 *Resources::manager().getTexture("title", commonDesc));
-	
 	
 	_menus[Status::PAUSED].backgroundImage = _bgBlur->textureId();
 	_menus[Status::PAUSED].buttons.emplace_back(glm::vec2(0.0f,  0.10f), meshSize, displayScale, RESUME,
@@ -42,7 +41,6 @@ Game::Game(RenderingConfig & config) : _config(config), _inGameRenderer(config),
 	_menus[Status::OPTIONS].toggles.emplace_back(glm::vec2(0.0f,  -0.25f), meshSize, displayScale, OPTION_VSYNC,
 												 *Resources::manager().getTexture("button-vsync", commonDesc));
 	_menus[Status::OPTIONS].toggles.back().state = config.vsync ? MenuButton::ON : MenuButton::OFF;
-	
 	_menus[Status::OPTIONS].buttons.emplace_back(glm::vec2(0.0f, -0.60f), meshSize, displayScale, BACKTOMENU,
 												 *Resources::manager().getTexture("button-back", commonDesc));
 	_menus[Status::OPTIONS].images.emplace_back(glm::vec2(0.0f, 0.47f), 0.5f,
@@ -55,10 +53,9 @@ Game::Game(RenderingConfig & config) : _config(config), _inGameRenderer(config),
 											  *Resources::manager().getTexture("button-menu"));
 	_menus[Status::DEAD].images.emplace_back(glm::vec2(0.0f, 0.47f), 0.5f,
 											 *Resources::manager().getTexture("title-dead", commonDesc));
+	_menus[Status::DEAD].labels.emplace_back(glm::vec2(0.0f, 0.05f), 0.25f, font, Font::CENTER);
 	
-	_menus[Status::DEAD].labels.emplace_back(glm::vec2(0.0f, 0.05f), 0.25f, font, TextUtilities::CENTER);
-	
-	_menus[Status::INGAME].labels.emplace_back(glm::vec2(0.0f, 0.70f), 0.2f, font, TextUtilities::CENTER);
+	_menus[Status::INGAME].labels.emplace_back(glm::vec2(0.0f, 0.70f), 0.2f, font, Font::CENTER);
 	
 	// Initialize each menu buttons sizes.
 	const float initialRatio = _config.initialWidth / float(_config.initialHeight);

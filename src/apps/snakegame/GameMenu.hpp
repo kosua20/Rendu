@@ -3,7 +3,7 @@
 #include "Common.hpp"
 #include "GameMenu.hpp"
 #include "graphics/GLUtilities.hpp"
-#include "resources/TextUtilities.hpp"
+#include "resources/Font.hpp"
 
 /**
  \brief Represents a button in a menu.
@@ -103,7 +103,7 @@ public:
 	 \param font the font to use
 	 \param alignment the text alignment to use
 	 */
-	MenuLabel(const glm::vec2 & screenPos, const float verticalScale, const FontInfos * font, const TextUtilities::Alignment alignment);
+	MenuLabel(const glm::vec2 & screenPos, const float verticalScale, const FontInfos * font, const Font::Alignment alignment);
 	
 	/** Update the string displayed by the label.
 	 \param text the new text to display
@@ -117,7 +117,7 @@ public:
 private:
 	float _vScale; ///< Vertical size on screen.
 	const FontInfos * _font; ///< Font atlas.
-	TextUtilities::Alignment _align; ///< Text alignement.
+	Font::Alignment _align; ///< Text alignement.
 };
 
 
