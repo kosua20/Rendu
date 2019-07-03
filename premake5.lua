@@ -185,13 +185,16 @@ project("ShaderValidator")
 	InstallProject("%{prj.name}", "build/shader_validator"..ext)
 	filter({})
 
+project("ObjToScene")
+	ToolSetup()
+	files({ "src/tools/objtoscene/*.cpp", "src/tools/objtoscene/*.hpp" })
 
 group("Meta")
 
 project("ALL")
 	CPPSetup()
 	kind("ConsoleApp")
-	dependson( {"Engine", "PBRDemo", "Playground", "Atmosphere", "ImageViewer", "ImageFiltering", "AtmosphericScatteringEstimator", "BRDFEstimator", "ControllerTest", "SnakeGame", "RaytracerDemo"})
+	dependson( {"Engine", "PBRDemo", "Playground", "Atmosphere", "ImageViewer", "ImageFiltering", "AtmosphericScatteringEstimator", "BRDFEstimator", "ControllerTest", "SnakeGame", "RaytracerDemo", "ObjToScene"})
 
 -- Actions
 
