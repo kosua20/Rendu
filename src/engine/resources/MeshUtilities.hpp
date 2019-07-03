@@ -125,6 +125,10 @@ struct Mesh {
 	std::vector<glm::vec3> binormals;  ///< The surface binormals.
 	std::vector<glm::vec2> texcoords;  ///< The texture coordinates.
 	std::vector<unsigned int> indices; ///< The triangular faces indices.
+	
+	/** Clear all data. */
+	void clear();
+	
 };
 
 

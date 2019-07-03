@@ -5,6 +5,15 @@
 
 using namespace std;
 
+void Mesh::clear(){
+	positions.clear();
+	normals.clear();
+	tangents.clear();
+	binormals.clear();
+	texcoords.clear();
+	indices.clear();
+}
+
 void MeshUtilities::loadObj( std::istream & in, Mesh & mesh, MeshUtilities::LoadMode mode){
 	
 	//Init the mesh.
