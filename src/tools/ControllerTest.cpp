@@ -1,6 +1,6 @@
 #include "Common.hpp"
 #include "input/Input.hpp"
-#include "helpers/InterfaceUtilities.hpp"
+#include "helpers/Interface.hpp"
 #include "Config.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "input/controller/RawController.hpp"

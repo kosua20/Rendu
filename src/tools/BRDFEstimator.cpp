@@ -1,13 +1,13 @@
 #include "Common.hpp"
-#include "helpers/GenerationUtilities.hpp"
+#include "helpers/Random.hpp"
 #include "resources/ImageUtilities.hpp"
-#include "resources/TextUtilities.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "graphics/GLUtilities.hpp"
 #include "graphics/Framebuffer.hpp"
 #include "graphics/ScreenQuad.hpp"
 #include "input/Input.hpp"
-#include "helpers/InterfaceUtilities.hpp"
+#include "helpers/Interface.hpp"
+#include "helpers/TextUtilities.hpp"
 #include "input/ControllableCamera.hpp"
 
 

@@ -1,9 +1,8 @@
 #include "Common.hpp"
-#include "helpers/GenerationUtilities.hpp"
 #include "input/Input.hpp"
 #include "input/InputCallbacks.hpp"
 #include "input/ControllableCamera.hpp"
-#include "helpers/InterfaceUtilities.hpp"
+#include "helpers/Interface.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "graphics/ScreenQuad.hpp"
 #include "graphics/GLUtilities.hpp"
@@ -34,9 +33,6 @@ int main(int argc, char** argv) {
 		return -1;
 	}
 	Resources::manager().addResources("../../../resources/imageviewer");
-	
-	// Initialize random generator;
-	Random::seed();
 	
 	glEnable(GL_CULL_FACE);
 	
