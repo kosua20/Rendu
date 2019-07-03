@@ -1,5 +1,4 @@
-#ifndef ImageUtilities_h
-#define ImageUtilities_h
+#pragma once
 #include "Common.hpp"
 
 /**
@@ -135,5 +134,3 @@ private:
 	
 };
 
-
-#endif

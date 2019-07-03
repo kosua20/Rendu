@@ -1,5 +1,4 @@
-#ifndef Logger_h
-#define Logger_h
+#pragma once
 
 #include <string>
 #include <fstream>
@@ -195,5 +194,3 @@ private:
 	
 	static Log* _defaultLogger; ///< Default static logger.
 };
-
-#endif

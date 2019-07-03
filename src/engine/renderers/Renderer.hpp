@@ -1,5 +1,4 @@
-#ifndef Renderer_h
-#define Renderer_h
+#pragma once
 #include "Config.hpp"
 
 /**
@@ -57,6 +56,4 @@ private:
 	void defaultGLSetup();
 	
 };
-
-#endif
 

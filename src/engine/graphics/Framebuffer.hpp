@@ -1,5 +1,4 @@
-#ifndef Framebuffer_h
-#define Framebuffer_h
+#pragma once
 
 #include "graphics/GLUtilities.hpp"
 #include "Common.hpp"
@@ -133,5 +132,3 @@ private:
 	DepthBuffer _depthUse; ///< The type of depth backing the framebuffer.
 	
 };
-
-#endif

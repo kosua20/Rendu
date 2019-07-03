@@ -1,5 +1,4 @@
-#ifndef ScreenQuad_h
-#define ScreenQuad_h
+#pragma once
 
 #include "Common.hpp"
 #include "resources/ResourcesManager.hpp"
@@ -38,5 +37,3 @@ private:
 	
 	static GLuint _vao; ///< The unique empty VAO.
 };
-
-#endif

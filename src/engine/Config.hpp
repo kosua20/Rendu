@@ -5,8 +5,7 @@
 //  Copyright © 2017 Simon Rodriguez. All rights reserved.
 //
 
-#ifndef Config_hpp
-#define Config_hpp
+#pragma once
 
 #include "Common.hpp"
 
@@ -116,4 +115,3 @@ protected:
 	
 };
 
-#endif /* Config_hpp */

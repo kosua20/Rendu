@@ -7,7 +7,7 @@
 
 #include "Config.hpp"
 #include "resources/ResourcesManager.hpp"
-
+#include "helpers/TextUtilities.hpp"
 #include <sstream>
 
 

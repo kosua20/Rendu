@@ -1,5 +1,4 @@
-#ifndef GLUtilities_h
-#define GLUtilities_h
+#pragma once
 
 #include "resources/MeshUtilities.hpp"
 #include "resources/ImageUtilities.hpp"
@@ -231,5 +230,3 @@ private:
 	static void uploadTexture(const GLenum destination, const GLuint texId, const GLenum destTypedFormat, const unsigned int mipid, const unsigned int lid, const Image & image);
 };
 
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef FramebufferCube_h
-#define FramebufferCube_h
+#pragma once
 
 #include "graphics/Framebuffer.hpp"
 #include "graphics/GLUtilities.hpp"
@@ -84,5 +83,3 @@ private:
 	bool _useDepth; ///< Denotes if the framebuffer is backed by a depth buffer.
 	
 };
-
-#endif

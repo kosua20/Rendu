@@ -1,5 +1,5 @@
 #include "SSAO.hpp"
-#include "helpers/GenerationUtilities.hpp"
+#include "helpers/Random.hpp"
 
 SSAO::SSAO(unsigned int width, unsigned int height, float radius) {
 	_radius = radius;

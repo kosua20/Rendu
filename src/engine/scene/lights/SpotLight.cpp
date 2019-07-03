@@ -1,7 +1,5 @@
 #include "SpotLight.hpp"
 
-#include "helpers/InterfaceUtilities.hpp"
-
 
 SpotLight::SpotLight() : Light() {
 	_innerHalfAngle = M_PI/4.0f;

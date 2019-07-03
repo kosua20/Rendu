@@ -1,5 +1,4 @@
-#ifndef InterfaceUtilities_h
-#define InterfaceUtilities_h
+#pragma once
 
 #include "Config.hpp"
 #include "Common.hpp"
@@ -70,4 +69,3 @@ namespace Interface {
 	
 }
 
-#endif

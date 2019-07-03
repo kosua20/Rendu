@@ -1,5 +1,4 @@
-#ifndef ResourcesManager_h
-#define ResourcesManager_h
+#pragma once
 #include "graphics/GLUtilities.hpp"
 #include "graphics/ProgramInfos.hpp"
 #include "resources/Font.hpp"
@@ -204,5 +203,3 @@ private:
 	std::map<std::string, ProgramInfos> _programs; ///< Loaded shader programs, identified by name.
 	
 };
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef ProgramInfos_h
-#define ProgramInfos_h
+#pragma once
 
 #include "Common.hpp"
 
@@ -68,7 +67,3 @@ private:
 	std::map<std::string, glm::vec3> _vec3s; ///< Internal vec3 uniforms cache, for reloading.
 	
 };
-
-
-
-#endif

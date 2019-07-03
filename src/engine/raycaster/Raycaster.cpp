@@ -1,5 +1,5 @@
 #include "Raycaster.hpp"
-#include "helpers/GenerationUtilities.hpp"
+#include "helpers/Random.hpp"
 
 Raycaster::Ray::Ray(const glm::vec3 & origin, const glm::vec3 & direction) : pos(origin), dir(glm::normalize(direction)){
 }

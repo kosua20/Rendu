@@ -1,5 +1,4 @@
-#ifndef MeshUtilities_h
-#define MeshUtilities_h
+#pragma once
 #include "Common.hpp"
 
 /**
@@ -173,5 +172,3 @@ public:
 	static void computeTangentsAndBinormals(Mesh & mesh);
 	
 };
-
-#endif 

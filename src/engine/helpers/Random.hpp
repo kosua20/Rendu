@@ -1,4 +1,4 @@
-#pragma omp
+#pragma once
 
 #include <random>
 
