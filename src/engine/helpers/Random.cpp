@@ -1,4 +1,4 @@
-#include "GenerationUtilities.hpp"
+#include "Random.hpp"
 
 
 void Random::seed(){

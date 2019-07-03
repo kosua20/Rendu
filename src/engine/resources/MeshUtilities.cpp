@@ -1,7 +1,7 @@
 #include "MeshUtilities.hpp"
 #include <sstream>
 #include <cstddef>
-#include "TextUtilities.hpp"
+#include "helpers/TextUtilities.hpp"
 
 using namespace std;
 

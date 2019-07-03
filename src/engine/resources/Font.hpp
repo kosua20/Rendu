@@ -1,5 +1,4 @@
-#ifndef TextUtilities_h
-#define TextUtilities_h
+#pragma once
 #include "Common.hpp"
 
 #include "graphics/GLUtilities.hpp"
@@ -24,14 +23,12 @@ struct FontInfos {
 	glm::vec2 margins; ///< Margin to apply around each characters when generating the geometry.
 	
 	std::vector<Glyph> glyphs; ///<The glyphs informations.
+	
+	
 };
 
-/**
- \brief Provides utilities to load fonts, generate labels and process text in general.
- \ingroup Resources
- */
-class TextUtilities {
 
+class Font {
 public:
 	
 	/** \brief Text alignment */
@@ -54,40 +51,4 @@ public:
 	 */
 	static MeshInfos generateLabel(const std::string & text, const FontInfos & font, const float scale, const Alignment align = LEFT );
 	
-	/** Trim characters from both ends of a string.
-	 \param str the string to trim from
-	 \param del the characters to delete
-	 \return the trimmed string
-	 */
-	static std::string trim(const std::string & str, const std::string & del);
-	
-	/** Remove file extension from the end of a string.
-	 \param str the string to remove the extension from
-	 \return the extension string
-	 */
-	static std::string removeExtension(std::string & str);
-	
-	/** Replace all occurences of a substring in a string by another string.
-	 \param source the string in which substitutions should happen
-	 \param fromString substring to replace
-	 \param toString new substring to insert
-	 */
-	static void replace(std::string & source, const std::string& fromString, const std::string & toString);
-	
-	/** Test if a string is a prefix of another string.
-	 \param source the string to examine
-	 \param prefix the prefix string to test
-	 \return true if the prefix is here
-	 */
-	static bool hasPrefix(const std::string & source, const std::string & prefix);
-	
-	/** Test if a string is a suffix of another string.
-	 \param source the string to examine
-	 \param suffix the suffix string to test
-	 \return true if the suffix is here
-	 */
-	static bool hasSuffix(const std::string & source, const std::string & suffix);
-	
 };
-
-#endif 

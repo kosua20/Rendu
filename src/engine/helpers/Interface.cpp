@@ -1,4 +1,4 @@
-#include "InterfaceUtilities.hpp"
+#include "Interface.hpp"
 #include "input/InputCallbacks.hpp"
 #include "input/Input.hpp"
 

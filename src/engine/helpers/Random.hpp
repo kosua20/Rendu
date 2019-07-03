@@ -1,5 +1,4 @@
-#ifndef GenerationUtilities_h
-#define GenerationUtilities_h
+#pragma omp
 
 #include <random>
 
@@ -50,5 +49,3 @@ private:
 	static std::mt19937 _mt; ///< The randomness generator.
 	static std::uniform_real_distribution<float> _realDist; ///< The unit uniform float distribution used.
 };
-
-#endif

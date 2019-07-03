@@ -2,7 +2,7 @@
 #define ResourcesManager_h
 #include "graphics/GLUtilities.hpp"
 #include "graphics/ProgramInfos.hpp"
-#include "resources/TextUtilities.hpp"
+#include "resources/Font.hpp"
 #include "Common.hpp"
 
 /**

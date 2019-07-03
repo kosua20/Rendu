@@ -1,5 +1,7 @@
 #include "ResourcesManager.hpp"
 #include "MeshUtilities.hpp"
+#include "helpers/TextUtilities.hpp"
+
 #include <fstream>
 #include <sstream>
 #include <tinydir/tinydir.h>
@@ -442,7 +444,7 @@ FontInfos * Resources::getFont(const std::string & name){
 	const std::string fontInfosText = getString(name + ".fnt");
 	if(!fontInfosText.empty()){
 		std::stringstream fontStream(fontInfosText);
-		TextUtilities::loadFont(fontStream, infos);
+		Font::loadFont(fontStream, infos);
 	} else {
 		Log::Error() << Log::Resources << "Unable to load font named " << name << "." << std::endl;
 		return nullptr;
