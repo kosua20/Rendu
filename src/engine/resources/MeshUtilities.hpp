@@ -175,4 +175,12 @@ public:
 	 */
 	static void computeTangentsAndBinormals(Mesh & mesh);
 	
+	/** Save an OBJ mesh on disk.
+	 \param path the path to the mesh
+	 \param mesh the mesh data
+	 \param defaultUVs if the mesh has no UVs, should default ones be used.
+	 \return a success/error flag
+	 */
+	static int saveObj(const std::string & path, const Mesh & mesh, bool defaultUVs);
+	
 };

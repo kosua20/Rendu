@@ -328,3 +328,48 @@ void MeshUtilities::computeTangentsAndBinormals(Mesh & mesh){
 	Log::Verbose() << Log::Resources << "Mesh: " << mesh.tangents.size() << " tangents and binormals computed." << std::endl;
 }
 
+int MeshUtilities::saveObj(const std::string & path, const Mesh & mesh, bool defaultUVs){
+	
+	std::ofstream objFile(path);
+	if(!objFile.is_open()){
+		Log::Error() << "Unable to create file at path \"" << path << "\"." << std::endl;
+		return 1;
+	}
+	
+	// Write vertices information.
+	for(size_t pid = 0; pid < mesh.positions.size(); ++pid){
+		const glm::vec3 & v = mesh.positions[pid];
+		objFile << "v " << v.x << " " << v.y << " " << v.z << std::endl;
+	}
+	for(size_t pid = 0; pid < mesh.texcoords.size(); ++pid){
+		const glm::vec2 & t = mesh.texcoords[pid];
+		objFile << "vt " << t.x << " " << t.y << std::endl;
+	}
+	for(size_t pid = 0; pid < mesh.normals.size(); ++pid){
+		const glm::vec3 & n = mesh.normals[pid];
+		objFile << "vn " << n.x << " " << n.y << " " << n.z << std::endl;
+	}
+	
+	const bool hasNormals = !mesh.normals.empty();
+	const bool hasTexCoords = !mesh.texcoords.empty();
+	// If the mesh has no UVs, it's probably using a uniform color material. We can force all vertices to have 0.5,0.5 UVs.
+	std::string defUV = "";
+	if(!hasTexCoords && defaultUVs){
+		objFile << "vt 0.5 0.5" << std::endl;
+		defUV = "1";
+	}
+	
+	// Faces indices.
+	for(size_t tid = 0; tid < mesh.indices.size(); tid += 3){
+		const std::string t0 = std::to_string(mesh.indices[tid+0] + 1);
+		const std::string t1 = std::to_string(mesh.indices[tid+1] + 1);
+		const std::string t2 = std::to_string(mesh.indices[tid+2] + 1);
+		objFile << "f";
+		objFile << " " << t0 << "/" << (hasTexCoords ? t0 : defUV) << "/" << (hasNormals ? t0 : "");
+		objFile << " " << t1 << "/" << (hasTexCoords ? t1 : defUV) << "/" << (hasNormals ? t1 : "");
+		objFile << " " << t2 << "/" << (hasTexCoords ? t2 : defUV) << "/" << (hasNormals ? t2 : "");
+		objFile << std::endl;
+	}
+	objFile.close();
+	return 0;
+}
