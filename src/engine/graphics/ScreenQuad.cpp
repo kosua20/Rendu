@@ -3,14 +3,17 @@
 
 
 GLuint ScreenQuad::_vao = 0;
+bool ScreenQuad::_init = false;
+
 
 
 void ScreenQuad::draw() {
-	if(_vao == 0){
+	if(!_init){
 		// Generate an empty VAO (imposed by the OpenGL spec).
 		glGenVertexArrays (1, &_vao);
 		glBindVertexArray(_vao);
 		glBindVertexArray(0);
+		_init = true;
 	}
 	// Draw with an empty VAO (mandatory)
 	glBindVertexArray(_vao);

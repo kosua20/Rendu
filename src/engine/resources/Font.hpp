@@ -9,6 +9,7 @@
  \ingroup Resources
  */
 struct FontInfos {
+	
 	/** \brief
 	 A font glyph bounding box, in UV space.
 	 */
@@ -27,7 +28,10 @@ struct FontInfos {
 	
 };
 
-
+/**
+ \brief Font loading and labels generation utilities.
+ \ingroup Resources
+ */
 class Font {
 public:
 	
