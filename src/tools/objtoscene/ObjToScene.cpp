@@ -1,8 +1,8 @@
 #include "Common.hpp"
 #include "helpers/Interface.hpp"
 #include "helpers/TextUtilities.hpp"
-#include "MultiObjLoader.hpp"
-#include "SceneWriter.hpp"
+#include "CompositeObj.hpp"
+#include "SceneExport.hpp"
 
 /**
  \defgroup ObjToScene OBJ to scene converter
@@ -39,13 +39,12 @@ public:
 				outputDirPath = values[0] + "/";
 			} else if(key == "name" && !values.empty()){
 				outputName = values[0];
-			} else if(key == "generate-rmo"){
-				generateRMO = true;
-			} else if(key == "rmo" && values.size() >= 3){
+			} else if(key == "generate" && values.size() >= 3){
+				generateMap = true;
 				const float r = std::stof(values[0]);
 				const float m = std::stof(values[1]);
 				const float ao = std::stof(values[2]);
-				valuesRMO = glm::vec3(r,m,ao);
+				valuesMap = glm::vec3(r,m,ao);
 			}
 		}
 	}
@@ -56,22 +55,29 @@ public:
 	std::string outputDirPath = "./"; ///< Output directory path. Should already exists.
 	std::string outputName = "scene"; ///< Scene name, will be used as a prefix for all files.
 	
-	bool generateRMO = false; ///< Generate a roughness-metalness-ambient occlusion 8x8 image.
-	glm::vec3 valuesRMO = glm::vec3(0.5f,0.0f,1.0f); ///< Values for the generated image.
+	bool generateMap = false; ///< Generate a RGB color 8x8 image.
+	glm::vec3 valuesMap = glm::vec3(0.5f,0.0f,1.0f); ///< Values for the generated image.
 	
 };
 
 
 /**
-
+ Load a complex multi-objects multi-materials OBJ file and generate a Rendu scene from it,
+ outputing meshes, material textures and the scene description file.
  \param argc the number of input arguments.
  \param argv a pointer to the raw input arguments.
  \return a general error code.
- \ingroup SceneCreator
+ \ingroup ObjToScene
  */
 int main(int argc, char** argv) {
 	// First, init/parse/load configuration.
 	ObjToSceneConfig config(std::vector<std::string>(argv, argv+argc));
+	
+	// Export basic color map.
+	if(config.generateMap && !config.outputDirPath.empty()){
+		SceneExport::saveColor(config.outputDirPath, config.valuesMap);
+		return 0;
+	}
 	
 	if(config.inputMeshPath.empty() || config.outputDirPath.empty()){
 		Log::Error() << "No file passed as input/output." << std::endl;
@@ -79,9 +85,9 @@ int main(int argc, char** argv) {
 	}
 	
 	// Load the meshes and materials.
-	std::vector<ObjMaterialMesh> objects;
-	std::map<std::string, ObjMaterial> materials;
-	const int ret = loadCompositeObj(config.inputMeshPath, objects, materials);
+	std::vector<CompositeObj::Object> objects;
+	std::map<std::string, CompositeObj::Material> materials;
+	const int ret = CompositeObj::load(config.inputMeshPath, objects, materials);
 	if(ret != 0){
 		return ret;
 	}
@@ -90,19 +96,22 @@ int main(int argc, char** argv) {
 	
 	// Save each mesh, computing normals if needed.
 	for(auto & object : objects){
-		const std::string filePath = config.outputDirPath + object.name + ".obj";
-		saveMesh(object.mesh, filePath);
+		MeshUtilities::computeNormals(object.mesh);
+		// Export the mesh.
+		object.name = config.outputName + object.name;
+		const std::string filePath = config.outputDirPath + "/" + object.name + ".obj";
+		MeshUtilities::saveObj(filePath, object.mesh, true);
 		object.mesh.clear();
 	}
 	
 	// Save each material, creating textures if needed.
-	std::map<std::string, FinalMaterialInfos> finalMaterials;
+	std::map<std::string, SceneExport::Material> finalMaterials;
 	for(auto & materialKey : materials){
-		const std::string prefix = config.outputName + "_" + materialKey.first;
-		finalMaterials[materialKey.first] = saveMaterial(prefix, materialKey.second, config.outputDirPath);
+		const std::string baseName = config.outputName + "_" + materialKey.first;
+		finalMaterials[materialKey.first] = SceneExport::saveMaterial(baseName, materialKey.second, config.outputDirPath);
 	}
 	
 	// Save the scene file.
-	const int ret1 = saveSceneFile(objects, finalMaterials, config.outputDirPath + config.outputName + ".scene");
+	const int ret1 = SceneExport::saveDescription(objects, finalMaterials, config.outputDirPath + config.outputName + ".scene");
 	return ret1;
 }

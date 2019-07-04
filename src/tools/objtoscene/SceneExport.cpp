@@ -6,14 +6,14 @@ namespace SceneExport {
 
 	const int textureSize = 8;
 	
-	void saveColor(const std::string & outputPath, const glm::vec3 & color){
+	int saveColor(const std::string & outputPath, const glm::vec3 & color){
 		Image combinedImage(textureSize, textureSize, 3);
 		for(int y = 0; y < textureSize; ++y){
 			for(int x = 0; x < textureSize; ++x){
 				combinedImage.rgb(x, y) = color;
 			}
 		}
-		ImageUtilities::saveLDRImage(outputPath, combinedImage, false);
+		return ImageUtilities::saveLDRImage(outputPath, combinedImage, false);
 	}
 	
 	Material saveMaterial(const std::string & baseName, const CompositeObj::Material & material, const std::string & outputDirPath){

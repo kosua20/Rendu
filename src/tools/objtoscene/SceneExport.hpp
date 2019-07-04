@@ -22,6 +22,13 @@ namespace SceneExport {
 		std::string depthName; ///< Optional depth map.
 	};
 	
+	/** Save a small colored texture.
+	 \param outputPath the output image file path
+	 \param color the color to store in the texture
+	 \return an error code or 0
+	 */
+	int saveColor(const std::string & outputPath, const glm::vec3 & color);
+	
 	/** Save a material parameters as a series of textures.
 	 \param baseName material base name
 	 \param material the material to export
