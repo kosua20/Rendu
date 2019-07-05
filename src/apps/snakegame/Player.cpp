@@ -24,8 +24,8 @@ void Player::update(){
 
 bool Player::physics(double fullTime, const double frameTime) {
 	
-	const float deltaSpeed = frameTime * _headAccel;
-	const float deltaAngle = frameTime  * _angleSpeed;
+	const float deltaSpeed = float(frameTime * _headAccel);
+	const float deltaAngle = float(frameTime * _angleSpeed);
 	
 	bool updatedAngle = false;
 	if(Input::manager().pressed(Input::KeyA)){
@@ -47,13 +47,13 @@ bool Player::physics(double fullTime, const double frameTime) {
 	_position += translation;
 	if(std::abs(_position[0]) > _maxPos[0]){
 		_momentum[0] *= -1.0f;
-		_angle = M_PI - _angle + M_PI;
+		_angle = float(M_PI) - _angle + float(M_PI);
 		// Add a few frames of invicibility for acute angles.
 		_invicibility += _invicibilityIncrease;
 	}
 	if(std::abs(_position[1]) > _maxPos[1]){
 		_momentum[1] *= -1.0f;
-		_angle = -_angle + M_PI;
+		_angle = -_angle + float(M_PI);
 		// Add a few frames of invicibility for acute angles.
 		_invicibility += _invicibilityIncrease;
 	}
@@ -102,11 +102,11 @@ bool Player::physics(double fullTime, const double frameTime) {
 				// Blend between the current angle and the target one for a smooth animation.
 				_angles[id] = glm::mix(_angles[id], newAngle, frameTime);
 				// Bring back into the -pi,pi range to avoid accumulation.
-				if(_angles[id] > M_PI){
-					_angles[id] -= 2*M_PI;
+				if(_angles[id] > float(M_PI)){
+					_angles[id] -= 2.0f*float(M_PI);
 				}
-				if(_angles[id] < -M_PI){
-					_angles[id] += 2*M_PI;
+				if(_angles[id] < -float(M_PI)){
+					_angles[id] += 2.0f*float(M_PI);
 				}
 				
 				++id;
@@ -116,13 +116,13 @@ bool Player::physics(double fullTime, const double frameTime) {
 				break;
 			}
 			// Find the previous point.
-			int pid = _currentSample - sid;
-			if(pid < 0){ pid += _numSamplesPath; }
+			int pid = (_currentSample) - int(sid);
+			if(pid < 0){ pid += int(_numSamplesPath); }
 			previousPoint = _path[pid].pos;
 			newDist = _path[pid].dist;
 			// Find the next point (the one registered before).
 			int nid = pid - 1;
-			if(nid < 0){ nid += _numSamplesPath; }
+			if(nid < 0){ nid += int(_numSamplesPath); }
 			nextPoint = _path[nid].pos;
 			totalDistance += newDist;
 		}

@@ -60,8 +60,8 @@ int main(int argc, char** argv) {
 	std::vector<std::thread> threads(threadsCount);
 	for(size_t tid = 0; tid < threadsCount; ++tid){
 		// For each thread, create the same lambda, with different loop bounds values passed as arguments.
-		const unsigned int loopLow = tid * render.height / threadsCount;
-		const unsigned int loopHigh = (tid == threadsCount - 1) ? render.height : (tid + 1) * render.height/threadsCount;
+		const unsigned int loopLow = unsigned int(tid) * render.height / unsigned int(threadsCount);
+		const unsigned int loopHigh = (tid == threadsCount - 1) ? render.height : (unsigned int(tid) + 1) * render.height/ unsigned int(threadsCount);
 		threads[tid] = std::thread(std::bind( [&](const unsigned int lo, const unsigned int hi) {
 	
 			// This is the loop we want to parallelize.
@@ -97,7 +97,7 @@ int main(int argc, char** argv) {
 					// Compute lighting.
 					const float diffuse = std::max(0.0f, glm::dot(n, l));
 					// Fetch base color from texture.
-					const glm::vec3 baseColor = image.rgb(std::floor(uv.x * image.width), std::floor(uv.y * image.height));
+					const glm::vec3 baseColor = image.rgb(int(std::floor(uv.x * float(image.width))), int(std::floor(uv.y * float(image.height))));
 					// Done.
 					render.rgb(x,y) = diffuse * baseColor;
 				}

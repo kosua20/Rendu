@@ -245,7 +245,7 @@ GLuint DeferredRenderer::renderPostprocess(const glm::vec2 & invRenderSize){
 void DeferredRenderer::draw() {
 	
 	if(!_scene){
-		glClearColor(0.2f,0.2,0.2f, 1.0f);
+		glClearColor(0.2f,0.2f,0.2f,1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		return;
 	}
@@ -357,7 +357,7 @@ void DeferredRenderer::resize(unsigned int width, unsigned int height){
 	Renderer::updateResolution(width, height);
 	// Resize the framebuffers.
 	_gbuffer->resize(_renderResolution);
-	_ssaoPass->resize(_renderResolution[0] / 2.0f, _renderResolution[1] / 2.0f);
+	_ssaoPass->resize(unsigned int(_renderResolution[0] / 2.0f), unsigned int(_renderResolution[1] / 2.0f));
 	_toneMappingFramebuffer->resize(_renderResolution);
 	_fxaaFramebuffer->resize(_renderResolution);
 	if(_scene){

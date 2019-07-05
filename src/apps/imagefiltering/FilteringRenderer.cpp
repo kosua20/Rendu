@@ -99,7 +99,7 @@ void FilteringRenderer::draw() {
 	
 	// Render the output on screen.
 	const glm::vec2 screenSize = Input::manager().size();
-	glViewport(0.0f, 0.0f, screenSize[0], screenSize[1]);
+	glViewport(0, 0, GLsizei(screenSize[0]), GLsizei(screenSize[1]));
 	glUseProgram(_passthrough->id());
 	ScreenQuad::draw(finalTexID);
 	glUseProgram(0);
@@ -145,14 +145,17 @@ void FilteringRenderer::update(){
 		// Filter mode.
 		ImGui::Separator();
 		ImGui::Combo("Mode", (int*)&_mode, "Input\0Poisson fill\0Integrate\0Box blur\0Gaussian blur\0Flood fill\0\0");
-		
+
+		const unsigned int width  = unsigned int(_renderResolution[0]);
+		const unsigned int height = unsigned int(_renderResolution[1]);
+
 		// Mode specific option
 		switch(_mode){
 			case Filter::GAUSSBLUR:
 				if(ImGui::InputInt("Levels", &_blurLevel, 1, 2)){
 					_blurLevel = std::min(std::max(1, _blurLevel), 10);
 					_gaussianBlur->clean();
-					_gaussianBlur = std::unique_ptr<GaussianBlur>(new GaussianBlur(_renderResolution[0], _renderResolution[1], _blurLevel, GL_RGB8));
+					_gaussianBlur = std::unique_ptr<GaussianBlur>(new GaussianBlur(width, height, _blurLevel, GL_RGB8));
 				}
 				break;
 			case Filter::FILL:
@@ -160,7 +163,7 @@ void FilteringRenderer::update(){
 				if(ImGui::InputInt("Pyramid downscale", &_fillDownscale, 1, 2)){
 					_fillDownscale = std::max(_fillDownscale, 1);
 					_pyramidFiller->clean();
-					_pyramidFiller = std::unique_ptr<PoissonFiller>(new PoissonFiller(_renderResolution[0], _renderResolution[1], _fillDownscale));
+					_pyramidFiller = std::unique_ptr<PoissonFiller>(new PoissonFiller(width, height, _fillDownscale));
 				}
 				break;
 			case Filter::INTEGRATE:
@@ -168,7 +171,7 @@ void FilteringRenderer::update(){
 				if(ImGui::InputInt("Pyramid downscale", &_intDownscale, 1, 2)){
 					_intDownscale = std::max(_intDownscale, 1);
 					_pyramidIntegrator->clean();
-					_pyramidIntegrator = std::unique_ptr<LaplacianIntegrator>(new LaplacianIntegrator(_renderResolution[0], _renderResolution[1], _intDownscale));
+					_pyramidIntegrator = std::unique_ptr<LaplacianIntegrator>(new LaplacianIntegrator(width, height, _intDownscale));
 				}
 				break;
 			case Filter::FLOODFILL:
@@ -213,12 +216,14 @@ void FilteringRenderer::resize(unsigned int width, unsigned int height){
 	Renderer::updateResolution(width, height);
 	// Resize the framebuffers.
 	_sceneBuffer->resize(_renderResolution);
-	_pyramidFiller->resize(_renderResolution[0], _renderResolution[1]);
-	_pyramidIntegrator->resize(_renderResolution[0], _renderResolution[1]);
-	_gaussianBlur->resize(_renderResolution[0], _renderResolution[1]);
-	_boxBlur->resize(_renderResolution[0], _renderResolution[1]);
-	_floodFill->resize(_renderResolution[0], _renderResolution[1]);
-	_painter->resize(_renderResolution[0], _renderResolution[1]);
+	const unsigned int lwidth = unsigned int(_renderResolution[0]);
+	const unsigned int lheight = unsigned int(_renderResolution[1]);
+	_pyramidFiller->resize(lwidth, lheight);
+	_pyramidIntegrator->resize(lwidth, lheight);
+	_gaussianBlur->resize(lwidth, lheight);
+	_boxBlur->resize(lwidth, lheight);
+	_floodFill->resize(lwidth, lheight);
+	_painter->resize(lwidth, lheight);
 	
 	checkGLError();
 }
