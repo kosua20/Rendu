@@ -57,7 +57,7 @@ vec3 uncharted2(vec3 hdrColor){
 /** Apply a tonemapping operator to bring a HDR image to LDR. */
 void main(){
 	
-	vec3 finalColor = texture(screenTexture,In.uv, -1000.0).rgb;
+	vec3 finalColor = textureLod(screenTexture,In.uv, 0.0).rgb;
 	fragColor = simpleExposure(finalColor, customExposure);
 	
 	// Test if any component is still > 1, for debug purposes.

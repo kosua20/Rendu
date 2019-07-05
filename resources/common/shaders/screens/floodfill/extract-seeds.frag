@@ -13,7 +13,7 @@ const int unknownCoord = 65500; // Arbitrary high number.
 
 /** For each non-black pixel, consider it as a seed and store its coordinates. */
 void main(){
-	vec3 col = texture(screenTexture, In.uv, -1000.0).rgb;
+	vec3 col = textureLod(screenTexture, In.uv, 0.0).rgb;
 	// If a pixel is black, it's not a seed.
 	if(all(equal(col, vec3(0.0)))){
 		fragCoords = uvec2(unknownCoord);

@@ -14,23 +14,20 @@ void main(){
 	
 	// We have to unroll the box blur loop manually.
 	
-	vec3 color = textureOffset(screenTexture, In.uv, ivec2(-2,-2), -1000.0).rgb;
-	color += textureOffset(screenTexture, In.uv, ivec2(-2,0), -1000.0).rgb;
-	color += textureOffset(screenTexture, In.uv, ivec2(-2,2), -1000.0).rgb;
-	
-	color += textureOffset(screenTexture, In.uv, ivec2(-1,-1), -1000.0).rgb;
-	color += textureOffset(screenTexture, In.uv, ivec2(-1,1), -1000.0).rgb;
-	
-	color += textureOffset(screenTexture, In.uv, ivec2(0,-2), -1000.0).rgb;
-	color += textureOffset(screenTexture, In.uv, ivec2(0,0), -1000.0).rgb;
-	color += textureOffset(screenTexture, In.uv, ivec2(0,2), -1000.0).rgb;
-	
-	color += textureOffset(screenTexture, In.uv, ivec2(1,-1), -1000.0).rgb;
-	color += textureOffset(screenTexture, In.uv, ivec2(1,1), -1000.0).rgb;
-	
-	color += textureOffset(screenTexture, In.uv, ivec2(2,-2), -1000.0).rgb;
-	color += textureOffset(screenTexture, In.uv, ivec2(2,0), -1000.0).rgb;
-	color += textureOffset(screenTexture, In.uv, ivec2(2,2), -1000.0).rgb;
+	vec3 color;
+	color  = textureLodOffset(screenTexture, In.uv, 0.0, ivec2(-2,-2)).rgb;
+	color += textureLodOffset(screenTexture, In.uv, 0.0, ivec2(-2, 0)).rgb;
+	color += textureLodOffset(screenTexture, In.uv, 0.0, ivec2(-2, 2)).rgb;
+	color += textureLodOffset(screenTexture, In.uv, 0.0, ivec2(-1,-1)).rgb;
+	color += textureLodOffset(screenTexture, In.uv, 0.0, ivec2(-1, 1)).rgb;
+	color += textureLodOffset(screenTexture, In.uv, 0.0, ivec2( 0,-2)).rgb;
+	color += textureLodOffset(screenTexture, In.uv, 0.0, ivec2( 0, 0)).rgb;
+	color += textureLodOffset(screenTexture, In.uv, 0.0, ivec2( 0, 2)).rgb;
+	color += textureLodOffset(screenTexture, In.uv, 0.0, ivec2( 1,-1)).rgb;
+	color += textureLodOffset(screenTexture, In.uv, 0.0, ivec2( 1, 1)).rgb;
+	color += textureLodOffset(screenTexture, In.uv, 0.0, ivec2( 2,-2)).rgb;
+	color += textureLodOffset(screenTexture, In.uv, 0.0, ivec2( 2, 0)).rgb;
+	color += textureLodOffset(screenTexture, In.uv, 0.0, ivec2( 2, 2)).rgb;
 	
 	fragColor = color / 13.0;
 }

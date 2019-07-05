@@ -45,7 +45,7 @@ vec3 positionFromDepth(float depth){
 float shadow(vec3 lightSpacePosition){
 	float probabilityMax = 1.0;
 	// Read first and second moment from shadow map.
-	vec2 moments = texture(shadowMap, lightSpacePosition.xy, -1000.0).rg;
+	vec2 moments = textureLod(shadowMap, lightSpacePosition.xy, 0.0).rg;
 	if(moments.x >= 1.0){
 		// No information in the depthmap: no occluder.
 		return 1.0;
@@ -131,7 +131,7 @@ vec3 ggx(vec3 n, vec3 v, vec3 l, vec3 F0, float roughness){
 /** Compute the lighting contribution of a directional light using the GGX BRDF. */
 void main(){
 	vec2 uv = In.uv;
-	vec4 albedoInfo = texture(albedoTexture,uv, -1000.0);
+	vec4 albedoInfo = textureLod(albedoTexture,uv, 0.0);
 	// If this is the skybox, don't shade.
 	if(albedoInfo.a == 0.0){
 		discard;
@@ -139,13 +139,13 @@ void main(){
 	
 	// Get all informations from textures.
 	vec3 baseColor = albedoInfo.rgb;
-	float depth = texture(depthTexture,uv, -1000.0).r;
+	float depth = textureLod(depthTexture,uv, 0.0).r;
 	vec3 position = positionFromDepth(depth);
-	vec3 infos = texture(effectsTexture,uv, -1000.0).rgb;
+	vec3 infos = textureLod(effectsTexture,uv, 0.0).rgb;
 	float roughness = max(0.045, infos.r);
 	float metallic = infos.g;
 	
-	vec3 n = 2.0 * texture(normalTexture,uv, -1000.0).rgb - 1.0;
+	vec3 n = 2.0 * textureLod(normalTexture,uv, 0.0).rgb - 1.0;
 	vec3 v = normalize(-position);
 	vec3 l = normalize(-lightDirection);
 	

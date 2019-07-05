@@ -17,11 +17,11 @@ layout(location = 0) out vec3 fragColor; ///< Color.
 
 /** Merge multiple versions of the same image, blurred at different scales. */
 void main(){
-	vec3 col = texture(texture0, In.uv, -1000.0).rgb;
-	col += texture(texture1, In.uv, -1000.0).rgb;
-	col += texture(texture2, In.uv, -1000.0).rgb;
-	col += texture(texture3, In.uv, -1000.0).rgb;
-	col += texture(texture4, In.uv, -1000.0).rgb;
-	col += texture(texture5, In.uv, -1000.0).rgb;
+	vec3 col = textureLod(texture0, In.uv, 0.0).rgb;
+	col 	+= textureLod(texture1, In.uv, 0.0).rgb;
+	col 	+= textureLod(texture2, In.uv, 0.0).rgb;
+	col 	+= textureLod(texture3, In.uv, 0.0).rgb;
+	col 	+= textureLod(texture4, In.uv, 0.0).rgb;
+	col 	+= textureLod(texture5, In.uv, 0.0).rgb;
 	fragColor = col / 6.0;
 }

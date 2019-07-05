@@ -14,7 +14,7 @@ layout(location = 0) out vec3 fragColor; ///< Scene color.
 void main(){
 	fragColor = vec3(0.0);
 	
-	vec3 color = texture(screenTexture, In.uv, -1000.0).rgb;
+	vec3 color = textureLod(screenTexture, In.uv, 0.0).rgb;
 	// Compute intensity (luminance). If > 1.0, bloom should be visible.
 	if(dot(color, vec3(0.289, 0.527, 0.184)) > luminanceTh){
 		fragColor = color;
