@@ -77,7 +77,7 @@ BackAndForth::BackAndForth(const glm::vec3 & axis, float speed, float amplitude,
 
 glm::mat4 BackAndForth::apply(const glm::mat4 & m, double fullTime, double frameTime){
 	const double currentAbscisse = std::sin(_speed * fullTime);
-	const float delta = currentAbscisse - _previousAbscisse;
+	const float delta = float(currentAbscisse - _previousAbscisse);
 	_previousAbscisse = currentAbscisse;
 	
 	const glm::vec3 trans = delta * _amplitude * _axis;
@@ -87,7 +87,7 @@ glm::mat4 BackAndForth::apply(const glm::mat4 & m, double fullTime, double frame
 
 glm::vec4 BackAndForth::apply(const glm::vec4 & v, double fullTime, double frameTime){
 	const double currentAbscisse = std::sin(_speed * fullTime);
-	const float delta = currentAbscisse - _previousAbscisse;
+	const float delta = float(currentAbscisse - _previousAbscisse);
 	_previousAbscisse = currentAbscisse;
 	
 	const glm::vec3 trans = delta * _amplitude * _axis;

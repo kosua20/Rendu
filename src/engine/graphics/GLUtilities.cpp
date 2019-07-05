@@ -431,7 +431,7 @@ TextureInfos GLUtilities::loadTexture(const GLenum target, const std::vector<std
 				// Texture arrays are filled by subcopies, and have to be initialized first.
 				/// \todo Test in practice.
 				if(mipid == 0 && lid == 0 && target == GL_TEXTURE_2D_ARRAY){
-					glTexStorage3D(GL_TEXTURE_2D_ARRAY, infos.mipmap, descriptor.typedFormat, infos.width, infos.height, layersList.size());
+					glTexStorage3D(GL_TEXTURE_2D_ARRAY, infos.mipmap, descriptor.typedFormat, infos.width, infos.height, GLsizei(layersList.size()));
 				}
 				uploadTexture(target, infos.id, descriptor.typedFormat, mipid, lid, image);
 				checkGLError();

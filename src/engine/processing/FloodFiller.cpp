@@ -3,7 +3,7 @@
 
 FloodFiller::FloodFiller(unsigned int width, unsigned int height) {
 	
-	_iterations = std::ceil(std::log2(std::max(width, height)));
+	_iterations = int(std::ceil(std::log2(std::max(width, height))));
 	
 	const Descriptor desc = {GL_RG16UI, GL_NEAREST_MIPMAP_NEAREST, GL_REPEAT};
 	_ping = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, desc, false));
@@ -48,7 +48,7 @@ void FloodFiller::extractAndPropagate(const GLuint textureId){
 	// Propagate closest seeds with decreasing step size.
 	glUseProgram(_floodfill->id());
 	for(int i = 0; i < _iterations; ++i){
-		const int step = std::pow(2, std::max(0, _iterations - i - 1));
+		const int step = int(std::pow(2, std::max(0, _iterations - i - 1)));
 		_pong->bind();
 		_pong->setViewport();
 		glUniform1i(_floodfill->uniform("stepDist"), step);
@@ -66,7 +66,7 @@ void FloodFiller::clean() const {
 
 
 void FloodFiller::resize(unsigned int width, unsigned int height){
-	_iterations = std::ceil(std::log2(std::max(width, height)));
+	_iterations = int(std::ceil(std::log2(std::max(width, height))));
 	_ping->resize(width, height);
 	_pong->resize(width, height);
 	_final->resize(width, height);

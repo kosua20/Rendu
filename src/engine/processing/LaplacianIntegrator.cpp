@@ -12,9 +12,9 @@ LaplacianIntegrator::LaplacianIntegrator(unsigned int width, unsigned int height
 	_compo   = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, GL_RGBA8, false));
 	_scale = downscaling;
 	
-	const float h1[5] = {0.15, 0.5, 0.7, 0.5, 0.15};
-	const float h2 = 1.0;
-	const float g[3] = {0.175, 0.547, 0.175};
+	const float h1[5] = {0.15f, 0.5f, 0.7f, 0.5f, 0.15f};
+	const float h2 = 1.0f;
+	const float g[3] = {0.175f, 0.547f, 0.175f};
 	_pyramid.setFilters(h1, h2, g);
 	
 	checkGLError();

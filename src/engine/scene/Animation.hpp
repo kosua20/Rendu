@@ -143,5 +143,5 @@ private:
 	
 	glm::vec3 _axis = glm::vec3(1.0f, 0.0f, 0.0f); ///< Translation direction.
 	float _amplitude = 0.0f; ///< Amplitude of the translation (maximum distance).
-	float _previousAbscisse = 0.0f; ///< Position on the path at the previous frame.
+	double _previousAbscisse = 0.0f; ///< Position on the path at the previous frame.
 };

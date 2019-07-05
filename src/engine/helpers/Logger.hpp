@@ -41,7 +41,7 @@ private:
 
 	const std::vector<std::string> _levelStrings = {"","(!) ","(X) ", ""}; ///< Levels prefix strings.
 	
-	const std::vector<std::string> _colorStrings = {"\e[0m\e[39m","\e[0m\e[33m","\e[0m\e[31m", "\e[2m\e[37m"}; ///< Colors prefix strings.
+	const std::vector<std::string> _colorStrings = {"\\e[0m\\e[39m","\\e[0m\\e[33m","\\e[0m\\e[31m", "\\e[2m\\e[37m"}; ///< Colors prefix strings.
 	
 public:
 	

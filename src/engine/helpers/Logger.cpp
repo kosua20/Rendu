@@ -37,12 +37,16 @@ Log::Log(){
 	// Check if the output is indeed a terminal, and not piped.
 #ifdef _WIN32
 	const bool isTerminal = _isatty(_fileno(stdout));
+	char *env_p = nullptr;
+	size_t size = 0;
+	_dupenv_s(&env_p, &size, "TERM");
 #else
 	const bool isTerminal = isatty(fileno(stdout));
+	char *env_p = std::getenv("TERM");
 #endif
 	if(isTerminal){
 		// Check if the output support colors.
-		if(const char *env_p = std::getenv("TERM")) {
+		if(env_p) {
 			const std::vector<std::string> terms = { "xterm", "xterm-256", "xterm-256color", "vt100", "color", "ansi", "cygwin", "linux"};
 			const std::string term(env_p);
 			for(const auto & possibleTerm : terms){

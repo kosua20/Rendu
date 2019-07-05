@@ -2,8 +2,8 @@
 
 
 SpotLight::SpotLight() : Light() {
-	_innerHalfAngle = M_PI/4.0f;
-	_outerHalfAngle = M_PI/2.0f;
+	_innerHalfAngle = float(M_PI)/4.0f;
+	_outerHalfAngle = float(M_PI)/2.0f;
 	_radius = 1.0f;
 	
 	_lightPosition = glm::vec3(0.0f);

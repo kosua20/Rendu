@@ -12,9 +12,9 @@ PoissonFiller::PoissonFiller(unsigned int width, unsigned int height, unsigned i
 	_preproc = std::unique_ptr<Framebuffer>(new Framebuffer(_pyramid.width(), _pyramid.height(), desc , false));
 	_compo   = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, GL_RGBA8, false));
 	
-	const float h1[5] = {0.1507, 0.6836, 1.0334, 0.6836, 0.1507};
-	const float h2 = 0.0270;
-	const float g[3] = {0.0312, 0.7753,0.0312};
+	const float h1[5] = {0.1507f, 0.6836f, 1.0334f, 0.6836f, 0.1507f};
+	const float h2 = 0.0270f;
+	const float g[3] = {0.0312f, 0.7753f, 0.0312f};
 	_pyramid.setFilters(h1, h2, g);
 	
 	checkGLError();

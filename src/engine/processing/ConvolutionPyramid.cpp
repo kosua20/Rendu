@@ -23,7 +23,7 @@ ConvolutionPyramid::ConvolutionPyramid(unsigned int width, unsigned int height, 
 	_resolution = glm::ivec2(width + 2 * _padding, height + 2 * _padding);
 	
 	// Create a series of framebuffers smaller and smaller.
-	const int depth = std::ceil(std::log2(std::min(_resolution[0], _resolution[1])));
+	const int depth = int(std::ceil(std::log2(std::min(_resolution[0], _resolution[1]))));
 	_levelsIn = std::vector<std::unique_ptr<Framebuffer>>(depth);
 	_levelsOut = std::vector<std::unique_ptr<Framebuffer>>(depth);
 	// Initial padded size.
@@ -90,7 +90,7 @@ void ConvolutionPyramid::process(const GLuint textureId) {
 	glUniform1f(_upscale->uniform("h2"), _h2);
 	
 	// Do: f[i] = filter(l[i], g) + filter(upscale(f[i+1], h2)
-	for(int i = _levelsOut.size()-2; i >= 0; --i){
+	for(int i = int(_levelsOut.size()-2); i >= 0; --i){
 		_levelsOut[i]->bind();
 		_levelsOut[i]->setViewport();
 		// Upscale with zeros, filter and combine.
@@ -131,9 +131,9 @@ void ConvolutionPyramid::resize(unsigned int width, unsigned int height){
 	// Resolution of the pyramid takes into account the filter padding.
 	_resolution = glm::ivec2(width + 2 * _padding, height + 2 * _padding);
 	
-	const int currentDepth = _levelsIn.size();
+	const int currentDepth = int(_levelsIn.size());
 	
-	const int newDepth = std::ceil(std::log2(std::min(_resolution[0], _resolution[1])));
+	const int newDepth = int(std::ceil(std::log2(std::min(_resolution[0], _resolution[1]))));
 	// Create a series of framebuffers smaller and smaller.
 	const Descriptor desc = {GL_RGBA32F, GL_NEAREST_MIPMAP_NEAREST, GL_CLAMP_TO_EDGE};
 	_levelsIn.resize(newDepth);

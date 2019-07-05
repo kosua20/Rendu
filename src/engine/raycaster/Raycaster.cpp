@@ -16,7 +16,7 @@ Raycaster::Raycaster(){
 }
 
 void Raycaster::addMesh(const Mesh & mesh){
-	const size_t indexOffset = _vertices.size();
+	const unsigned long indexOffset = unsigned long(_vertices.size());
 	
 	// Start by copying all vertices.
 	_vertices.insert(_vertices.end(), mesh.positions.begin(), mesh.positions.end());
@@ -28,7 +28,7 @@ void Raycaster::addMesh(const Mesh & mesh){
 		triInfos.v0 = indexOffset + mesh.indices[localId + 0];
 		triInfos.v1 = indexOffset + mesh.indices[localId + 1];
 		triInfos.v2 = indexOffset + mesh.indices[localId + 2];
-		triInfos.localId = localId;
+		triInfos.localId = unsigned long(localId);
 		triInfos.meshId = _meshCount;
 		_triangles.push_back(triInfos);
 	}
@@ -40,7 +40,7 @@ void Raycaster::addMesh(const Mesh & mesh){
 
 void Raycaster::updateHierarchy(){
 	Log::Info() << "Building hierarchy... " << std::flush;
-	updateSubHierarchy(0, _triangles.size());
+	updateSubHierarchy(0, int(_triangles.size()));
 	Log::Info() << "Done." << std::endl;
 }
 
@@ -56,7 +56,7 @@ int Raycaster::updateSubHierarchy(const int begin, const int count){
 	});
 	// Create the node.
 	_hierarchy.emplace_back();
-	const int nodeId = _hierarchy.size()-1;
+	const int nodeId = int(_hierarchy.size()-1);
 	Node currentNode;
 	// If the triangles count is low enough, we have a leaf.
 	if(count < 3){

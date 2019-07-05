@@ -34,7 +34,7 @@ void Scene::init(){
 		}
 	}
 	// Add a final end key.
-	mainKeysLocations.push_back(allKeyVals.size());
+	mainKeysLocations.push_back(int(allKeyVals.size()));
 	
 	// Process each group of keyvalues.
 	for(int mkid = 0; mkid < mainKeysLocations.size()-1; ++mkid){
