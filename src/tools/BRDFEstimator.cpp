@@ -232,7 +232,7 @@ void computeCubemapConvolution(const TextureInfos & cubemapInfos, int levelsCoun
 			resultFramebuffer->bind();
 			// Use the cubemap texture as a backing texture for the framebuffer.
 			glBindTexture(GL_TEXTURE_CUBE_MAP, levelInfos.id);
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X+i, levelInfos.id, 0);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X+i), levelInfos.id, 0);
 			glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 			
 			// Clear texture slice.
@@ -332,7 +332,7 @@ int main(int argc, char** argv) {
 	Random::seed();
 	
 	ControllableCamera camera;
-	camera.projection(config.screenResolution[0]/config.screenResolution[1], M_PI*0.4, 0.1f, 10.0f);
+	camera.projection(config.screenResolution[0]/config.screenResolution[1], float(M_PI)*0.4, 0.1f, 10.0f);
 	camera.pose(glm::vec3(0.0f, 0.0f, 4.0f), glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	
 	const auto program = Resources::manager().getProgram("skybox_basic");
@@ -473,8 +473,8 @@ int main(int argc, char** argv) {
 			ImGui::RadioButton("SH coeffs", &mode, SH_COEFFS);
 			
 			if(mode == BRDF_CONV){
-				ImGui::SliderInt("Current level", &showLevel, 0, cubeLevels.size()-1);
-				ImGui::Text("Roughness: %.3f", showLevel / float(cubeLevels.size() - 1));
+				ImGui::SliderInt("Current level", &showLevel, 0, int(cubeLevels.size())-1);
+				ImGui::Text("Roughness: %.3f", float(showLevel) / float(cubeLevels.size() - 1));
 			}
 		}
 		
@@ -486,7 +486,7 @@ int main(int argc, char** argv) {
 		
 		glClearColor(0.5, 0.5f, 0.5f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glViewport(0,0, screenSize[0], screenSize[1]);
+		glViewport(0,0, GLsizei(screenSize[0]), GLsizei(screenSize[1]));
 		
 		// Render main cubemap.
 		if(cubemapInfos.id > 0){
@@ -510,7 +510,7 @@ int main(int argc, char** argv) {
 		glClear(GL_DEPTH_BUFFER_BIT);
 		const float gizmoScale = 0.2f;
 		const glm::vec2 gizmoSize = gizmoScale * screenSize;
-		glViewport(0.0f, 0.0f, gizmoSize[0], gizmoSize[1]);
+		glViewport(0, 0, GLsizei(gizmoSize[0]), GLsizei(gizmoSize[1]));
 		glEnable(GL_DEPTH_TEST);
 		glUseProgram(program->id());
 		glDisable(GL_CULL_FACE);
@@ -520,7 +520,7 @@ int main(int argc, char** argv) {
 		GLUtilities::drawMesh(*mesh);
 		glUseProgram(0);
 		glDisable(GL_DEPTH_TEST);
-		glViewport(0,0, screenSize[0], screenSize[1]);
+		glViewport(0,0, GLsizei(screenSize[0]), GLsizei(screenSize[1]));
 		
 		Interface::endFrame();
 		checkGLError();

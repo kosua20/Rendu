@@ -29,7 +29,7 @@ public:
 			} else if(key == "samples" && !values.empty()){
 				samples = std::stoi(values[0]);
 			}  else if(key == "resolution" && !values.empty()){
-				resolution = std::stoi(values[0]);
+				resolution = size_t(std::stoi(values[0]));
 			}
 		}
 		
@@ -41,7 +41,7 @@ public:
 	
 	unsigned int samples = 256; ///< Number of samples for iterative sampling.
 
-	unsigned int resolution = 512; ///< Output image resolution.
+	size_t resolution = 512; ///< Output image resolution.
 };
 
 
@@ -90,28 +90,28 @@ int preprocess(int argc, char** argv) {
 	Log::Info() << Log::Utilities << "Generating scattering lookup table." << std::endl;
 	
 	// Parameters.
-	const float groundRadius = 6371e3;
-	const float topRadius = 6471e3;
-	const glm::vec3 kRayleigh = glm::vec3(5.5e-6, 13.0e-6, 22.4e-6);
-	const float heightRayleigh = 8000.0;
-	const float heightMie = 1200.0;
-	const float kMie = 21e-6;
+	const float groundRadius = 6371e3f;
+	const float topRadius = 6471e3f;
+	const glm::vec3 kRayleigh = glm::vec3(5.5e-6f, 13.0e-6f, 22.4e-6f);
+	const float heightRayleigh = 8000.0f;
+	const float heightMie = 1200.0f;
+	const float kMie = 21e-6f;
 	
-	Image transmittanceTable(config.resolution, config.resolution, 3);
+	Image transmittanceTable(int(config.resolution), int(config.resolution), 3);
 	const unsigned int samplesCount = config.samples;
 	
 	for(size_t y = 0; y < config.resolution; ++y){
 		for(size_t x = 0; x < config.resolution; ++x){
 			// Move to 0,1.
 			// No need to take care of the 0.5 shift as we are working with indices
-			const float xf = float(x) / (config.resolution - 1.0);
-			const float yf = float(y) / (config.resolution - 1.0);
+			const float xf = float(x) / (config.resolution - 1.0f);
+			const float yf = float(y) / (config.resolution - 1.0f);
 			// Position and ray direction.
 			// x becomes the height
 			// y become the cosine
 			const glm::vec3 currPos = glm::vec3(0.0f, (topRadius - groundRadius) * xf + groundRadius, 0.0f);
 			const float cosA = 2.0f * yf - 1.0f;
-			const float sinA = sqrt(1.0 - cosA*cosA);
+			const float sinA = std::sqrt(1.0f - cosA*cosA);
 			const glm::vec3 sunDir = -glm::normalize(glm::vec3(sinA, cosA, 0.0f));
 			// Check when the ray leaves the atmosphere.
 			glm::vec2 interSecondTop;
@@ -139,7 +139,7 @@ int preprocess(int argc, char** argv) {
 			
 			// Compute associated attenuation.
 			const glm::vec3 secondaryAttenuation = exp(-(kMie * (mieSecondDist) + kRayleigh * (rayleighSecondDist)));
-			const unsigned int pixelPos = config.resolution*y+x;
+			const size_t pixelPos = config.resolution*y+x;
 			transmittanceTable.pixels[3*pixelPos+0] = secondaryAttenuation[0];
 			transmittanceTable.pixels[3*pixelPos+1] = secondaryAttenuation[1];
 			transmittanceTable.pixels[3*pixelPos+2] = secondaryAttenuation[2];

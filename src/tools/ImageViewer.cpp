@@ -125,7 +125,7 @@ int main(int argc, char** argv) {
 			glUniform1i(program->uniform("gammaOutput"), applyGamma);
 			glUniform4f(program->uniform("channelsFilter"), channelsFilter[0], channelsFilter[1], channelsFilter[2], channelsFilter[3]);
 			glUniform2f(program->uniform("flipAxis"), flipAxis[0], flipAxis[1]);
-			glUniform2f(program->uniform("angleTrig"), std::cos(currentAngle*M_PI_2), std::sin(currentAngle*M_PI_2));
+			glUniform2f(program->uniform("angleTrig"), std::cos(currentAngle*float(M_PI_2)), std::sin(currentAngle*float(M_PI_2)));
 			glUniform1f(program->uniform("pixelScale"), pixelScale);
 			glUniform2fv(program->uniform("mouseShift"), 1, &mouseShift[0]);
 			

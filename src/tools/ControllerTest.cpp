@@ -171,7 +171,7 @@ void drawPadTarget(const int idX, const int idY, const std::vector<float> & axes
 void drawTriggerTarget(const int idT, const std::vector<float> & axesValues, const float threshRadius){
 	const ImU32 whiteColor = IM_COL32(255,255,255, 255);
 	const int aidLT = idT;
-	const float magLT = aidLT >= 0 ? axesValues[aidLT]*0.5+0.5f : 0.0f;
+	const float magLT = aidLT >= 0 ? axesValues[aidLT]*0.5f+0.5f : 0.0f;
 	// Detect overflow.
 	const bool overflow = (magLT > 1.0f || magLT < 0.0f);
 	// Get current rendering position on screen.
@@ -376,13 +376,13 @@ int main(int argc, char** argv) {
 					
 					// Render the left trigger (assuming its default value is -1.0).
 					const int aidLT = axesMapping[Controller::TriggerL2];
-					const float magLT = aidLT >= 0 ? controller->allAxes[aidLT]*0.5+0.5f : 0.0f;
+					const float magLT = aidLT >= 0 ? controller->allAxes[aidLT]*0.5f+0.5f : 0.0f;
 					if(aidLT >= 0 && (magLT*magLT > threshold)){
 						drawButton(drawList, Controller::TriggerL2, pos, highlightColor);
 					}
 					// And the right trigger (assuming its default value is -1.0).
 					const int aidRT = axesMapping[Controller::TriggerR2];
-					const float magRT = aidRT >= 0 ? controller->allAxes[aidRT]*0.5+0.5f : 0.0f;
+					const float magRT = aidRT >= 0 ? controller->allAxes[aidRT]*0.5f+0.5f : 0.0f;
 					if(aidRT >= 0 && (magRT*magRT > threshold)){
 						drawButton(drawList, Controller::TriggerR2, pos, highlightColor);
 					}
@@ -396,7 +396,7 @@ int main(int argc, char** argv) {
 					}
 					
 					// Overlay the controller transparent texture.
-					ImGui::Image(reinterpret_cast<void*>(controllerTexId), ImVec2(450, 300), ImVec2(0, 1), ImVec2(1,0));
+					ImGui::Image(reinterpret_cast<void*>(static_cast<long long>(controllerTexId)), ImVec2(450, 300), ImVec2(0, 1), ImVec2(1,0));
 					
 					ImGui::EndChild();
 					ImGui::SameLine();
