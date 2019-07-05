@@ -16,7 +16,7 @@ Raycaster::Raycaster(){
 }
 
 void Raycaster::addMesh(const Mesh & mesh){
-	const unsigned long indexOffset = unsigned long(_vertices.size());
+	const unsigned long indexOffset = (unsigned long)(_vertices.size());
 	
 	// Start by copying all vertices.
 	_vertices.insert(_vertices.end(), mesh.positions.begin(), mesh.positions.end());
@@ -28,7 +28,7 @@ void Raycaster::addMesh(const Mesh & mesh){
 		triInfos.v0 = indexOffset + mesh.indices[localId + 0];
 		triInfos.v1 = indexOffset + mesh.indices[localId + 1];
 		triInfos.v2 = indexOffset + mesh.indices[localId + 2];
-		triInfos.localId = unsigned long(localId);
+		triInfos.localId = (unsigned long)(localId);
 		triInfos.meshId = _meshCount;
 		_triangles.push_back(triInfos);
 	}

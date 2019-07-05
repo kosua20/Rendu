@@ -146,8 +146,8 @@ void FilteringRenderer::update(){
 		ImGui::Separator();
 		ImGui::Combo("Mode", (int*)&_mode, "Input\0Poisson fill\0Integrate\0Box blur\0Gaussian blur\0Flood fill\0\0");
 
-		const unsigned int width  = unsigned int(_renderResolution[0]);
-		const unsigned int height = unsigned int(_renderResolution[1]);
+		const unsigned int width  = (unsigned int)(_renderResolution[0]);
+		const unsigned int height = (unsigned int)(_renderResolution[1]);
 
 		// Mode specific option
 		switch(_mode){
@@ -216,8 +216,8 @@ void FilteringRenderer::resize(unsigned int width, unsigned int height){
 	Renderer::updateResolution(width, height);
 	// Resize the framebuffers.
 	_sceneBuffer->resize(_renderResolution);
-	const unsigned int lwidth = unsigned int(_renderResolution[0]);
-	const unsigned int lheight = unsigned int(_renderResolution[1]);
+	const unsigned int lwidth  = (unsigned int)(_renderResolution[0]);
+	const unsigned int lheight = (unsigned int)(_renderResolution[1]);
 	_pyramidFiller->resize(lwidth, lheight);
 	_pyramidIntegrator->resize(lwidth, lheight);
 	_gaussianBlur->resize(lwidth, lheight);

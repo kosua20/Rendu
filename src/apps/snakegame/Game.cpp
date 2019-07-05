@@ -125,7 +125,7 @@ Interface::Action Game::update(){
 			_status = Status::DEAD;
 			// Make sure the blur effect buffer is the right size.
 			const glm::vec2 gameRes = _inGameRenderer.renderingResolution();
-			_bgBlur->resize(unsigned int(gameRes[0]), unsigned int(gameRes[1]));
+			_bgBlur->resize((unsigned int)(gameRes[0]), (unsigned int)(gameRes[1]));
 			_bgBlur->process(_inGameRenderer.finalImage());
 			_menus[Status::DEAD].labels[0].update(std::to_string(_player->score()));
 			
@@ -192,7 +192,7 @@ Interface::Action Game::handleButton(const ButtonAction tag){
 		case PAUSE:
 		{
 			const glm::vec2 gameRes = _inGameRenderer.renderingResolution();
-			_bgBlur->resize(unsigned int(gameRes[0]), unsigned int(gameRes[1]));
+			_bgBlur->resize((unsigned int)(gameRes[0]), (unsigned int)(gameRes[1]));
 			_bgBlur->process(_inGameRenderer.finalImage());
 			_status = Status::PAUSED;
 			break;

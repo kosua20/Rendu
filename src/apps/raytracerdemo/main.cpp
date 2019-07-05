@@ -60,8 +60,8 @@ int main(int argc, char** argv) {
 	std::vector<std::thread> threads(threadsCount);
 	for(size_t tid = 0; tid < threadsCount; ++tid){
 		// For each thread, create the same lambda, with different loop bounds values passed as arguments.
-		const unsigned int loopLow = unsigned int(tid) * render.height / unsigned int(threadsCount);
-		const unsigned int loopHigh = (tid == threadsCount - 1) ? render.height : (unsigned int(tid) + 1) * render.height/ unsigned int(threadsCount);
+		const unsigned int loopLow = (unsigned int)(tid) * render.height / (unsigned int)(threadsCount);
+		const unsigned int loopHigh = (tid == threadsCount - 1) ? render.height : ((unsigned int)(tid) + 1) * render.height/ (unsigned int)(threadsCount);
 		threads[tid] = std::thread(std::bind( [&](const unsigned int lo, const unsigned int hi) {
 	
 			// This is the loop we want to parallelize.

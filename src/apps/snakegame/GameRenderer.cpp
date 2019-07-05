@@ -137,7 +137,7 @@ void GameRenderer::resize(unsigned int width, unsigned int height){
 	_fxaaFramebuffer->resize(_renderResolution);
 	_sceneFramebuffer->resize(_renderResolution);
 	_lightingFramebuffer->resize(_renderResolution);
-	_ssaoPass->resize(unsigned int(_renderResolution[0]/2.0f), unsigned int(_renderResolution[1]/2.0f));
+	_ssaoPass->resize((unsigned int)(_renderResolution[0]/2.0f), (unsigned int)(_renderResolution[1]/2.0f));
 }
 
 void GameRenderer::clean() const {
