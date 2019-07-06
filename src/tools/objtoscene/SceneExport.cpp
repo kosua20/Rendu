@@ -208,7 +208,8 @@ namespace SceneExport {
 		sceneFile << "scene:" << std::endl;
 		sceneFile << "\tbgcolor: 0.0,0.0,0.0" << std::endl;
 		sceneFile << "\tprobe: rgbcube: default_cube" << std::endl;
-		sceneFile << "\tirradiance: default_shcoeffs" << std::endl;
+		sceneFile << "\tirradiance: default_shcoeffs" << std::endl ;
+		sceneFile << std::endl;
 		
 		// Objects.
 		for(const auto & object : objects){
