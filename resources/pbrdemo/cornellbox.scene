@@ -1,0 +1,83 @@
+scene:
+	bgcolor: 0.0,0.0,0.0
+	probe: rgbcube: default_cube
+	irradiance: default_shcoeffs
+
+point:
+	intensity: 3.0,2.8,2.0
+	shadows: true
+	position: -0.03,1.75,0.0
+	radius: 3.0
+	
+object:
+	mesh: cornellbox_floor_0
+	shadows: true
+	type: PBRNoUVs
+	textures:
+		srgb: cornellbox_allWalls_texture_color
+		rgb: default_normal
+		rgb: cornellbox_allWalls_texture_rough_met_ao
+
+object:
+	mesh: cornellbox_ceiling_6
+	shadows: true
+	type: PBRNoUVs
+	textures:
+		srgb: cornellbox_allWalls_texture_color
+		rgb: default_normal
+		rgb: cornellbox_allWalls_texture_rough_met_ao
+
+object:
+	mesh: cornellbox_backWall_12
+	shadows: true
+	type: PBRNoUVs
+	textures:
+		srgb: cornellbox_allWalls_texture_color
+		rgb: default_normal
+		rgb: cornellbox_allWalls_texture_rough_met_ao
+
+object:
+	mesh: cornellbox_rightWall_18
+	shadows: true
+	type: PBRNoUVs
+	textures:
+		srgb: cornellbox_rightWall_texture_color
+		rgb: default_normal
+		rgb: cornellbox_rightWall_texture_rough_met_ao
+
+object:
+	mesh: cornellbox_leftWall_24
+	shadows: true
+	type: PBRNoUVs
+	textures:
+		srgb: cornellbox_leftWall_texture_color
+		rgb: default_normal
+		rgb: cornellbox_leftWall_texture_rough_met_ao
+
+object:
+	mesh: cornellbox_smallBox_30
+	shadows: true
+	type: PBRNoUVs
+	textures:
+		srgb: cornellbox_allWalls_texture_color
+		rgb: default_normal
+		rgb: cornellbox_allWalls_texture_rough_met_ao
+
+object:
+	mesh: cornellbox_largeBox_60
+	shadows: true
+	type: PBRNoUVs
+	textures:
+		srgb: cornellbox_allWalls_texture_color
+		rgb: default_normal
+		rgb: cornellbox_allWalls_texture_rough_met_ao
+
+object:
+	mesh: cornellbox_light_90
+	shadows: true
+	type: PBRNoUVs
+	textures:
+		srgb: cornellbox_light_texture_color
+		rgb: default_normal
+		rgb: cornellbox_light_texture_rough_met_ao
+
