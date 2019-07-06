@@ -360,9 +360,7 @@ void DeferredRenderer::resize(unsigned int width, unsigned int height){
 	_ssaoPass->resize((unsigned int)(_renderResolution[0] / 2.0f), (unsigned int)(_renderResolution[1] / 2.0f));
 	_toneMappingFramebuffer->resize(_renderResolution);
 	_fxaaFramebuffer->resize(_renderResolution);
-	if(_scene){
-		_sceneFramebuffer->resize(_renderResolution);
-	}
+	_sceneFramebuffer->resize(_renderResolution);
 	checkGLError();
 }
 
