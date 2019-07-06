@@ -119,10 +119,9 @@ void Resources::parseDirectory(const std::string & directoryPath){
 			Log::Error() << Log::Resources << "Error getting file in directory \"" << narrow(dir.path) << "\"" << std::endl;
 			
 		} else if(file.is_dir){
-			// Extract subdirectory name, check that it isn't a special dir, and recursively aprse it.
+			// Extract subdirectory name, check that it isn't a special dir, and recursively parse it.
 			const std::string dirName = narrow(file.name);
-			if(dirName.size() > 0 && dirName != "." && dirName != ".."){
-				// @CHECK: "/" separator on Windows.
+			if(dirName.size() > 0 && dirName[0] != '.'){
 				parseDirectory(directoryPath + "/" + dirName);
 			}
 			
@@ -133,7 +132,6 @@ void Resources::parseDirectory(const std::string & directoryPath){
 			if(fileNameWithExt.size() > 0 && fileNameWithExt.at(0) != '.' ){
 				if(_files.count(fileNameWithExt) == 0){
 					// Store the file and its path.
-					// @CHECK: "/" separator on Windows.
 					_files[fileNameWithExt] = narrow(dir.path) + "/" + fileNameWithExt;
 					
 				} else {
