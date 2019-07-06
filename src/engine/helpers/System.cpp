@@ -1,4 +1,4 @@
-#include "Interface.hpp"
+#include "System.hpp"
 #include "input/InputCallbacks.hpp"
 #include "input/Input.hpp"
 
@@ -6,32 +6,38 @@
 #include <imgui/imgui_impl_opengl3.h>
 #include <sys/stat.h>
 
-namespace Interface {
+namespace System {
 	
-
-	void setupImGui(GLFWwindow * window){
-		ImGui::CreateContext();
-		ImGuiIO& io = ImGui::GetIO(); (void)io;
-		ImGui_ImplGlfw_InitForOpenGL(window, false);
-		ImGui_ImplOpenGL3_Init("#version 150");
-		ImGui::StyleColorsDark();
-	}
+	namespace GUI {
 		
-	void beginFrame(){
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
-		ImGui::NewFrame();
-	}
-	
-	void endFrame(){
-		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-	}
-	
-	void clean(){
-		ImGui_ImplOpenGL3_Shutdown();
-		ImGui_ImplGlfw_Shutdown();
-		ImGui::DestroyContext();
+		/** Initialize ImGui, including interaction callbacks.
+		 \param window the GLFW window
+		 */
+		void setupImGui(GLFWwindow * window){
+			ImGui::CreateContext();
+			ImGuiIO& io = ImGui::GetIO(); (void)io;
+			ImGui_ImplGlfw_InitForOpenGL(window, false);
+			ImGui_ImplOpenGL3_Init("#version 150");
+			ImGui::StyleColorsDark();
+		}
+		
+		void beginFrame(){
+			ImGui_ImplOpenGL3_NewFrame();
+			ImGui_ImplGlfw_NewFrame();
+			ImGui::NewFrame();
+		}
+		
+		void endFrame(){
+			ImGui::Render();
+			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+		}
+		
+		void clean(){
+			ImGui_ImplOpenGL3_Shutdown();
+			ImGui_ImplGlfw_Shutdown();
+			ImGui::DestroyContext();
+		}
+		
 	}
 	
 	GLFWwindow* initWindow(const std::string & name, RenderingConfig & config){
@@ -93,7 +99,7 @@ namespace Interface {
 		glfwSetWindowIconifyCallback(window, iconify_callback); 	// Window minimization
 		glfwSwapInterval(config.vsync ? (config.rate == 30 ? 2 : 1) : 0);						// 60 FPS V-sync
 		
-		setupImGui(window);
+		GUI::setupImGui(window);
 		
 		// Check the window position and size (if we are on a screen smaller than the initial size).
 		glfwGetWindowPos(window, &config.windowFrame[0], &config.windowFrame[1]);

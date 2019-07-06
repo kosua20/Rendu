@@ -9,24 +9,27 @@
 struct GLFWwindow;
 
 /**
- \brief Performs interface setup, rendering, file picking. GUi is internally backed by ImGUI.
+ \brief Performs system basic operations, file picking, interface setup and loop.
  \ingroup Helpers
  */
-namespace Interface {
+namespace System {
 	
-	/** Initialize ImGui, including interaction callbacks.
-	 \param window the GLFW window
+	/**
+	 \brief GUI helpers, internally backed by ImGUI.
+	 \ingroup Helpers
 	 */
-	void setupImGui(GLFWwindow * window);
+	namespace GUI {
 	
-	/** Start registering GUI items. */
-	void beginFrame();
+		/** Start registering GUI items. */
+		void beginFrame();
 	
-	/** Finish registering GUI items and render them. */
-	void endFrame();
+		/** Finish registering GUI items and render them. */
+		void endFrame();
+		
+		/** Clean internal resources. */
+		void clean();
 	
-	/** Clean internal resources. */
-	void clean();
+	}
 	
 	/** Create a new window backed by an OpenGL context.
 	 \param name the name of the window
@@ -71,7 +74,7 @@ namespace Interface {
 	 \param directory the path to the directory to create
 	 \return true if the creation is successful.
 	 \note If the directory already exists, it will fail.
-	 \warn This function will not create intermediate directories.
+	 \warning This function will not create intermediate directories.
 	 */
 	bool createDirectory(const std::string & directory);
 	
