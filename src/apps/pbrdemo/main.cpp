@@ -34,6 +34,7 @@ int main(int argc, char** argv) {
 	}
 	
 	Resources::manager().addResources("../../../resources/pbrdemo");
+	Resources::manager().addResources("../../../resources/additional");
 	// Initialize random generator;
 	Random::seed();
 	// Query the renderer identifier, and the supported OpenGL version.
