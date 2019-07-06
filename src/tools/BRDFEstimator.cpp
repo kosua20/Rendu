@@ -322,6 +322,10 @@ void computeAndExportLookupTable(const int outputSide, const std::string & outpu
 int main(int argc, char** argv) {
 	// First, init/parse/load configuration.
 	RenderingConfig config(std::vector<std::string>(argv, argv+argc));
+	if(config.showHelp()){
+		return 0;
+	}
+	
 	Resources::manager().addResources("../../../resources/pbrdemo");
 	
 	GLFWwindow* window = Interface::initWindow("BRDF Extractor", config);

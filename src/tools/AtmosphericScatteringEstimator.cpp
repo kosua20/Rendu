@@ -86,6 +86,9 @@ int preprocess(int argc, char** argv) {
 	
 	// First, init/parse/load configuration.
 	AtmosphericScatteringConfig config(std::vector<std::string>(argv, argv+argc));
+	if(config.showHelp()){
+		return 0;
+	}
 	
 	if(config.outputPath.empty()){
 		Log::Error() << Log::Utilities << "Need an output path." << std::endl;

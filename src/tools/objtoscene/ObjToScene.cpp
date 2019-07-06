@@ -80,6 +80,9 @@ public:
 int main(int argc, char** argv) {
 	// First, init/parse/load configuration.
 	ObjToSceneConfig config(std::vector<std::string>(argv, argv+argc));
+	if(config.showHelp()){
+		return 0;
+	}
 	
 	// Export basic color map.
 	if(config.generateMap && !config.outputDirPath.empty()){

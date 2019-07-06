@@ -200,8 +200,11 @@ int main(int argc, char** argv) {
 	
 	// First, init/parse/load configuration.
 	RenderingConfig config(std::vector<std::string>(argv, argv+argc));
-	// Override window dimensions.
+	if(config.showHelp()){
+		return 0;
+	}
 	
+	// Override window dimensions.
 	config.initialWidth = 800;
 	config.initialHeight = 800;
 	GLFWwindow* window = Interface::initWindow("Controller test", config);
