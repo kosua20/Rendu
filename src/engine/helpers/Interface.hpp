@@ -67,5 +67,13 @@ namespace Interface {
 	 */
 	bool showPicker(const Picker mode, const std::string & startDir, std::string & outPath, const std::string & extensions = "");
 	
+	/** Create a directory.
+	 \param directory the path to the directory to create
+	 \return true if the creation is successful.
+	 \note If the directory already exists, it will fail.
+	 \warn This function will not create intermediate directories.
+	 */
+	bool createDirectory(const std::string & directory);
+	
 }
 

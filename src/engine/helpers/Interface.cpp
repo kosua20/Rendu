@@ -4,7 +4,7 @@
 
 #include <nfd/nfd.h>
 #include <imgui/imgui_impl_opengl3.h>
-
+#include <sys/stat.h>
 
 namespace Interface {
 	
@@ -210,6 +210,14 @@ namespace Interface {
 		}
 		free(outPathRaw);
 		return false;
+	}
+	
+	bool createDirectory(const std::string & directory){
+#ifdef _WIN32
+		return CreateDirectoryW(directory.c_str(), 0) != 0;
+#else
+		return mkdir(directory.c_str(), S_IRWXU|S_IRWXG|S_IRWXO) == 0;
+#endif
 	}
 }
 
