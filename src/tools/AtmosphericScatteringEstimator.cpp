@@ -24,7 +24,7 @@ public:
 			const std::string key = arg.key;
 			const std::vector<std::string> & values = arg.values;
 			
-			if(key == "output-path" && !values.empty()){
+			if(key == "output" && !values.empty()){
 				outputPath = values[0];
 			} else if(key == "samples" && !values.empty()){
 				samples = std::stoi(values[0]);
@@ -33,6 +33,11 @@ public:
 			}
 		}
 		
+		
+		_infos.emplace_back("", "", "Atmospheric scattering");
+		_infos.emplace_back("output", "", "Output image path", "path/to/output.exr");
+		_infos.emplace_back("samples", "", "Number of samples per-pixel", "count");
+		_infos.emplace_back("resolution", "", "Output image side size", "size");
 	}
 	
 public:

@@ -47,6 +47,14 @@ public:
 				valuesMap = glm::vec3(r,m,ao);
 			}
 		}
+		
+		
+		_infos.emplace_back("", "", "Object to scene");
+		_infos.emplace_back("mesh", "", "Path to the OBJ file", "path/to/mesh.obj");
+		_infos.emplace_back("output", "", "Output directory path", "path/to/dir/");
+		_infos.emplace_back("name", "", "The name of the scene", "name");
+		_infos.emplace_back("generate", "", "Generate an image containing given color", "R G B");
+		
 	}
 	
 public:
