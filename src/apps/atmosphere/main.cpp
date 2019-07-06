@@ -28,6 +28,9 @@ int main(int argc, char** argv) {
 	
 	// First, init/parse/load configuration.
 	RenderingConfig config(std::vector<std::string>(argv, argv+argc));
+	if(config.showHelp()){
+		return 0;
+	}
 	
 	GLFWwindow* window = Interface::initWindow("Atmosphere", config);
 	if(!window){
