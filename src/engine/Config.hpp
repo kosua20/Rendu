@@ -37,6 +37,12 @@ public:
 	 */
 	Config(const std::vector<std::string> & argv);
 	
+	/** Display help using the logger if the '--help' argument has been passed.
+	 \return true if the help is shown, can be used for early exit
+	 \note Arguments with no name but a description will be used as headers.
+	 */
+	bool showHelp();
+	
 private:
 	
 	/**
@@ -52,13 +58,48 @@ private:
 	 \param arguments  a vector will be populated with (key, [values]) tuples.
 	 */
 	static void parseFromArgs(const std::vector<std::string> & argv, std::vector<KeyValues> & arguments);
-
+	
 protected:
+	
+	/** \brief Informations about an argument. */
+	struct ArgumentInfo {
+		
+		/** Constructor.
+		 \param aname argument long name
+		 \param ashort argument optional short name
+		 \param adetails argument description
+		 \param avalues optional list of parameters for the argument
+		 */
+		ArgumentInfo(const std::string & aname,  const std::string & ashort, const std::string & adetails,
+					 const std::vector<std::string> & avalues = {});
+		
+		/** Constructor.
+		 \param aname argument name
+		 \param ashort argument optional short name
+		 \param adetails argument description
+		 \param avalue parameter for the argument
+		 */
+		ArgumentInfo(const std::string & aname, const std::string & ashort, const std::string & adetails,
+					 const std::string & avalue);
+		
+		std::string nameLong; ///< The main argument name.
+		std::string nameShort; ///< The short argument name.
+		std::string details; ///< Argument description.
+		std::vector<std::string> values; ///< Zero, one or multiple argument parameters.
+		
+	};
 	
 	/// Store the internal parsed (keys, [values]) extracted from a file or the command-line.
 	std::vector<KeyValues> _rawArguments;
+	
+	/// Store informations about each argument, for displaying the help message.
+	std::vector<ArgumentInfo> _infos;
+	
+private:
+	
+	bool _showHelp = false; ///< Should the help be displayed.
+	
 };
-
 
 /**
  \brief Configuration containing parameters for windows and renderers.
