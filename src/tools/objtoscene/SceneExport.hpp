@@ -3,7 +3,7 @@
 #include "Common.hpp"
 #include "resources/ImageUtilities.hpp"
 #include "resources/MeshUtilities.hpp"
-#include "helpers/Interface.hpp"
+#include "helpers/System.hpp"
 #include "helpers/TextUtilities.hpp"
 #include "CompositeObj.hpp"
 

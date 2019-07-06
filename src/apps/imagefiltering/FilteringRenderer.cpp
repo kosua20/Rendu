@@ -1,7 +1,7 @@
 #include "FilteringRenderer.hpp"
 
 #include "input/Input.hpp"
-#include "helpers/Interface.hpp"
+#include "helpers/System.hpp"
 
 FilteringRenderer::FilteringRenderer(RenderingConfig & config) : Renderer(config) {
 	
@@ -128,7 +128,7 @@ void FilteringRenderer::update(){
 		if(_viewMode == View::IMAGE){
 			if(ImGui::Button("Load image...")){
 				std::string newImagePath;
-				const bool res = Interface::showPicker(Interface::Picker::Load, "../../../resources", newImagePath, "jpg,bmp,png,tga;exr");
+				const bool res = System::showPicker(System::Picker::Load, "../../../resources", newImagePath, "jpg,bmp,png,tga;exr");
 				// If user picked a path, load the texture from disk.
 				if(res && !newImagePath.empty()){
 					Log::Info() << "Loading " << newImagePath << "." << std::endl;

@@ -6,7 +6,7 @@
 #include "graphics/Framebuffer.hpp"
 #include "graphics/ScreenQuad.hpp"
 #include "input/Input.hpp"
-#include "helpers/Interface.hpp"
+#include "helpers/System.hpp"
 #include "helpers/TextUtilities.hpp"
 #include "input/ControllableCamera.hpp"
 
@@ -328,7 +328,7 @@ int main(int argc, char** argv) {
 	
 	Resources::manager().addResources("../../../resources/pbrdemo");
 	
-	GLFWwindow* window = Interface::initWindow("BRDF Extractor", config);
+	GLFWwindow* window = System::initWindow("BRDF Extractor", config);
 	if(!window){
 		return -1;
 	}
@@ -372,7 +372,7 @@ int main(int argc, char** argv) {
 			Resources::manager().reload();
 		}
 		
-		Interface::beginFrame();
+		System::GUI::beginFrame();
 		
 		// Update camera.
 		double currentTime = glfwGetTime();
@@ -387,7 +387,7 @@ int main(int argc, char** argv) {
 			/// Loading section.
 			if(ImGui::Button("Load cubemap...")){
 				std::string cubemapPath;
-				if(Interface::showPicker(Interface::Picker::Load, "../../../resources/pbrdemo/cubemaps/", cubemapPath, "jpg,bmp,png,tga;exr") && !cubemapPath.empty()){
+				if(System::showPicker(System::Picker::Load, "../../../resources/pbrdemo/cubemaps/", cubemapPath, "jpg,bmp,png,tga;exr") && !cubemapPath.empty()){
 					loadCubemap(cubemapPath, cubemapInfos);
 					// Reset state.
 					SCoeffs.clear();
@@ -441,7 +441,7 @@ int main(int argc, char** argv) {
 			// Export SH coefficients to text file.
 			if(ImGui::Button("Export SH coefficients...")){
 				std::string outputPath;
-				if(Interface::showPicker(Interface::Picker::Save, ".", outputPath, "txt") && !outputPath.empty()){
+				if(System::showPicker(System::Picker::Save, ".", outputPath, "txt") && !outputPath.empty()){
 					std::stringstream outputStr;
 					for(int i = 0; i < 9; ++i){
 						outputStr << SCoeffs[i][0] << " " << SCoeffs[i][1] << " " << SCoeffs[i][2] << std::endl;
@@ -454,7 +454,7 @@ int main(int argc, char** argv) {
 			// Export preconvolved cubemaps.
 			if(ImGui::Button("Export convolved BRDF maps...")){
 				std::string outputPath;
-				if(Interface::showPicker(Interface::Picker::Save, ".", outputPath, "exr") && !outputPath.empty()){
+				if(System::showPicker(System::Picker::Save, ".", outputPath, "exr") && !outputPath.empty()){
 					TextUtilities::removeExtension(outputPath);
 					exportCubemapConvolution(cubeLevels, outputPath);
 				}
@@ -463,7 +463,7 @@ int main(int argc, char** argv) {
 			// Compute and export the two coefficients of the BRDF linear approximation.
 			if(ImGui::Button("Export BRDF look-up table...")){
 				std::string outputPath;
-				if(Interface::showPicker(Interface::Picker::Save, ".", outputPath, "exr") && !outputPath.empty()){
+				if(System::showPicker(System::Picker::Save, ".", outputPath, "exr") && !outputPath.empty()){
 					TextUtilities::removeExtension(outputPath);
 					computeAndExportLookupTable(outputSide, outputPath);
 				}
@@ -526,12 +526,12 @@ int main(int argc, char** argv) {
 		glDisable(GL_DEPTH_TEST);
 		glViewport(0,0, GLsizei(screenSize[0]), GLsizei(screenSize[1]));
 		
-		Interface::endFrame();
+		System::GUI::endFrame();
 		checkGLError();
 		glfwSwapBuffers(window);
 	}
 	
-	Interface::clean();
+	System::GUI::clean();
 	// Clean resources.
 	Resources::manager().clean();
 	// Close GL context and any other GLFW resources.

@@ -2,7 +2,7 @@
 #include "input/Input.hpp"
 #include "input/InputCallbacks.hpp"
 #include "input/ControllableCamera.hpp"
-#include "helpers/Interface.hpp"
+#include "helpers/System.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "graphics/ScreenQuad.hpp"
 #include "graphics/GLUtilities.hpp"
@@ -31,7 +31,7 @@ int main(int argc, char** argv) {
 		return 0;
 	}
 	
-	GLFWwindow* window = Interface::initWindow("Image viewer", config);
+	GLFWwindow* window = System::initWindow("Image viewer", config);
 	if(!window){
 		return -1;
 	}
@@ -75,7 +75,7 @@ int main(int argc, char** argv) {
 			glfwSetWindowShouldClose(window, GL_TRUE);
 		}
 		// Start a new frame for the interface.
-		Interface::beginFrame();
+		System::GUI::beginFrame();
 		// Reload resources.
 		if(Input::manager().triggered(Input::KeyP)){
 			Resources::manager().reload();
@@ -160,7 +160,7 @@ int main(int argc, char** argv) {
 			// Image loader.
 			if(ImGui::Button("Load image...")){
 				std::string newImagePath;
-				bool res = Interface::showPicker(Interface::Picker::Load, "../../../resources", newImagePath, "jpg,bmp,png,tga;exr");
+				bool res = System::showPicker(System::Picker::Load, "../../../resources", newImagePath, "jpg,bmp,png,tga;exr");
 				// If user picked a path, load the texture from disk.
 				if(res && !newImagePath.empty()){
 					Log::Info() << "Loading " << newImagePath << "." << std::endl;
@@ -244,7 +244,7 @@ int main(int argc, char** argv) {
 			if(saveImage){
 				std::string destinationPath;
 				// Export either in LDR or HDR.
-				bool res = Interface::showPicker(Interface::Picker::Save, "../../../resources", destinationPath, "png;exr");
+				bool res = System::showPicker(System::Picker::Save, "../../../resources", destinationPath, "png;exr");
 				if(res && !destinationPath.empty()){
 					const GLenum typedFormat = ImageUtilities::isFloat(destinationPath) ? GL_RGBA32F : GL_RGBA8;
 					// Create a framebuffer at the right size and format, and render in it.
@@ -277,14 +277,14 @@ int main(int argc, char** argv) {
 		ImGui::End();
 		
 		// Then render the interface.
-		Interface::endFrame();
+		System::GUI::endFrame();
 		//Display the result for the current rendering loop.
 		glfwSwapBuffers(window);
 
 	}
 	
 	// Clean the interface.
-	Interface::clean();
+	System::GUI::clean();
 	
 	Resources::manager().clean();
 	// Close GL context and any other GLFW resources.

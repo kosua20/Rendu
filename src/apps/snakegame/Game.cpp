@@ -78,7 +78,7 @@ void Game::draw(){
 	checkGLError();
 }
 
-Interface::Action Game::update(){
+System::Action Game::update(){
 	
 	// Check if we need to resize.
 	if(Input::manager().resized()){
@@ -99,7 +99,7 @@ Interface::Action Game::update(){
 	}*/
 	
 	// Decide which action should (maybe) be performed.
-	Interface::Action finalAction = Interface::Action::None;
+	System::Action finalAction = System::Action::None;
 	
 	// Handle quitting.
 	if(Input::manager().triggered(Input::KeyEscape)){
@@ -146,8 +146,8 @@ Interface::Action Game::update(){
 				// If the mouse was released, trigger the action.
 				if(Input::manager().released(Input::MouseLeft)){
 					// Do the action.
-					const Interface::Action result = handleButton(ButtonAction(button.tag));
-					if(finalAction == Interface::Action::None){
+					const System::Action result = handleButton(ButtonAction(button.tag));
+					if(finalAction == System::Action::None){
 						finalAction = result;
 					}
 				}
@@ -158,8 +158,8 @@ Interface::Action Game::update(){
 			// Check if mouse inside, and if the click was validated through release.
 			if(toggle.contains(mousePos) && Input::manager().released(Input::MouseLeft)){
 				// Do the action.
-				const Interface::Action result = handleButton(ButtonAction(toggle.tag));
-				if(finalAction == Interface::Action::None){
+				const System::Action result = handleButton(ButtonAction(toggle.tag));
+				if(finalAction == System::Action::None){
 					finalAction = result;
 				}
 				// Update the display state.
@@ -172,7 +172,7 @@ Interface::Action Game::update(){
 	
 }
 
-Interface::Action Game::handleButton(const ButtonAction tag){
+System::Action Game::handleButton(const ButtonAction tag){
 	switch (tag) {
 		case NEWGAME:
 			_player = std::unique_ptr<Player>(new Player());
@@ -201,19 +201,19 @@ Interface::Action Game::handleButton(const ButtonAction tag){
 			_status = Status::INGAME;
 			break;
 		case QUIT:
-			return Interface::Action::Quit;
+			return System::Action::Quit;
 			break;
 		case OPTION_FULLSCREEN:
-			return Interface::Action::Fullscreen;
+			return System::Action::Fullscreen;
 			break;
 		case OPTION_VSYNC:
-			return Interface::Action::Vsync;
+			return System::Action::Vsync;
 			break;
 		default:
 			break;
 	}
 	
-	return Interface::Action::None;
+	return System::Action::None;
 }
 
 void Game::physics(double frameTime){

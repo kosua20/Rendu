@@ -2,7 +2,7 @@
 #include "Common.hpp"
 #include "helpers/Random.hpp"
 #include "input/Input.hpp"
-#include "helpers/Interface.hpp"
+#include "helpers/System.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "Game.hpp"
 
@@ -27,7 +27,7 @@ int main() {
 	config.initialHeight = 600;
 	config.forceAspectRatio = true;
 	
-	GLFWwindow* window = Interface::initWindow("SnakeGame", config);
+	GLFWwindow* window = System::initWindow("SnakeGame", config);
 	if(!window){
 		return -1;
 	}
@@ -56,15 +56,15 @@ int main() {
 		
 		
 		// Start a new frame for the interface.
-		Interface::beginFrame();
+		System::GUI::beginFrame();
 		
 		// We separate punctual events from the main physics/movement update loop.
-		const Interface::Action actionToTake = game.update();
-		if(actionToTake != Interface::Action::None){
-			Interface::performWindowAction(window, config, actionToTake);
+		const System::Action actionToTake = game.update();
+		if(actionToTake != System::Action::None){
+			System::performWindowAction(window, config, actionToTake);
 			// Due to the ordering between the update function and the fullscreen activation, we have to manually call resize here.
 			// Another solution would be to check resizing before rendering, in the Game object.
-			if(actionToTake == Interface::Action::Fullscreen){
+			if(actionToTake == System::Action::Fullscreen){
 				game.resize((unsigned int)Input::manager().size()[0], (unsigned int)Input::manager().size()[1]);
 			}
 			// Update the config on disk, for next launch.
@@ -93,14 +93,14 @@ int main() {
 		// Update the content of the window.
 		game.draw();
 		// Then render the interface.
-		Interface::endFrame();
+		System::GUI::endFrame();
 		//Display the result for the current rendering loop.
 		glfwSwapBuffers(window);
 		
 	}
 	
 	// Clean the interface.
-	Interface::clean();
+	System::GUI::clean();
 	// Clean other resources
 	game.clean();
 	Resources::manager().clean();

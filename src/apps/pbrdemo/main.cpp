@@ -1,7 +1,7 @@
 #include "DeferredRenderer.hpp"
 #include "helpers/Random.hpp"
 #include "input/Input.hpp"
-#include "helpers/Interface.hpp"
+#include "helpers/System.hpp"
 #include "scene/Scene.hpp"
 #include "Common.hpp"
 
@@ -28,7 +28,7 @@ int main(int argc, char** argv) {
 		return 0;
 	}
 	
-	GLFWwindow* window = Interface::initWindow("PBR demo", config);
+	GLFWwindow* window = System::initWindow("PBR demo", config);
 	if(!window){
 		return -1;
 	}
@@ -93,7 +93,7 @@ int main(int argc, char** argv) {
 		
 		
 		// Start a new frame for the interface.
-		Interface::beginFrame();
+		System::GUI::beginFrame();
 		
 		// Handle scene switching.
 		if(ImGui::Begin("Renderer")){
@@ -144,14 +144,14 @@ int main(int argc, char** argv) {
 		// Update the content of the window.
 		renderer->draw();
 		// Then render the interface.
-		Interface::endFrame();
+		System::GUI::endFrame();
 		//Display the result for the current rendering loop.
 		glfwSwapBuffers(window);
 
 	}
 	
 	// Clean the interface.
-	Interface::clean();
+	System::GUI::clean();
 	// Clean other resources
 	renderer->clean();
 	Resources::manager().clean();

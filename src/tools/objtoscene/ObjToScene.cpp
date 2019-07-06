@@ -1,5 +1,5 @@
 #include "Common.hpp"
-#include "helpers/Interface.hpp"
+#include "helpers/System.hpp"
 #include "helpers/TextUtilities.hpp"
 #include "CompositeObj.hpp"
 #include "SceneExport.hpp"
@@ -95,7 +95,7 @@ int main(int argc, char** argv) {
 		return 1;
 	}
 	
-	Interface::createDirectory(config.outputPath);
+	System::createDirectory(config.outputPath);
 	
 	// Load the meshes and materials.
 	std::vector<CompositeObj::Object> objects;

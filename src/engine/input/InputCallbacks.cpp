@@ -1,6 +1,6 @@
 #include "InputCallbacks.hpp"
 #include "Input.hpp"
-#include "helpers/Interface.hpp"
+#include "helpers/System.hpp"
 
 void resize_callback(GLFWwindow* window, int width, int height){
 	Input::manager().resizeEvent(width, height);

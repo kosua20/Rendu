@@ -4,7 +4,7 @@
 #include "input/Input.hpp"
 #include "input/InputCallbacks.hpp"
 #include "input/ControllableCamera.hpp"
-#include "helpers/Interface.hpp"
+#include "helpers/System.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "graphics/ScreenQuad.hpp"
 #include "Config.hpp"

@@ -1,6 +1,6 @@
 #include "Common.hpp"
 #include "input/Input.hpp"
-#include "helpers/Interface.hpp"
+#include "helpers/System.hpp"
 #include "Config.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "input/controller/RawController.hpp"
@@ -207,7 +207,7 @@ int main(int argc, char** argv) {
 	// Override window dimensions.
 	config.initialWidth = 800;
 	config.initialHeight = 800;
-	GLFWwindow* window = Interface::initWindow("Controller test", config);
+	GLFWwindow* window = System::initWindow("Controller test", config);
 	if(!window){
 		return -1;
 	}
@@ -285,7 +285,7 @@ int main(int argc, char** argv) {
 		}
 		
 		// Start a new frame for the interface.
-		Interface::beginFrame();
+		System::GUI::beginFrame();
 		
 		// Render nothing.
 		const glm::vec2 screenSize = Input::manager().size();
@@ -306,7 +306,7 @@ int main(int argc, char** argv) {
 				// Load/save configuration files.
 				if(ImGui::Button("Load...")){
 					std::string inputPath;
-					const bool res = Interface::showPicker(Interface::Picker::Load, "", inputPath);
+					const bool res = System::showPicker(System::Picker::Load, "", inputPath);
 					if(res && !inputPath.empty()){
 						const std::string settingsContent = Resources::manager().loadStringFromExternalFile(inputPath);
 						Controller::parseConfiguration(settingsContent, axesMapping, buttonsMapping);
@@ -315,7 +315,7 @@ int main(int argc, char** argv) {
 				ImGui::SameLine();
 				if(ImGui::Button("Save...")){
 					std::string outputPath;
-					const bool res = Interface::showPicker(Interface::Picker::Save, "", outputPath);
+					const bool res = System::showPicker(System::Picker::Save, "", outputPath);
 					if(res && !outputPath.empty()){
 						const Controller * controller = Input::manager().controller();
 						Controller::saveConfiguration(outputPath, controller->guid(), controller->name(), axesMapping, buttonsMapping);
@@ -484,14 +484,14 @@ int main(int argc, char** argv) {
 		
 		
 		// Then render the interface.
-		Interface::endFrame();
+		System::GUI::endFrame();
 		//Display the result for the current rendering loop.
 		glfwSwapBuffers(window);
 
 	}
 	
 	// Clean the interface.
-	Interface::clean();
+	System::GUI::clean();
 	
 	Resources::manager().clean();
 	// Close GL context and any other GLFW resources.

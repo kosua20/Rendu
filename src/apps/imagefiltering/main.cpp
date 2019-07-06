@@ -2,7 +2,7 @@
 
 #include "helpers/Random.hpp"
 #include "input/Input.hpp"
-#include "helpers/Interface.hpp"
+#include "helpers/System.hpp"
 #include "Config.hpp"
 #include "Common.hpp"
 
@@ -29,7 +29,7 @@ int main(int argc, char** argv) {
 		return 0;
 	}
 	
-	GLFWwindow* window = Interface::initWindow("Image filtering", config);
+	GLFWwindow* window = System::initWindow("Image filtering", config);
 	if(!window){
 		return -1;
 	}
@@ -61,7 +61,7 @@ int main(int argc, char** argv) {
 		}
 		
 		// Start a new frame for the interface.
-		Interface::beginFrame();
+		System::GUI::beginFrame();
 		
 		// We separate punctual events from the main physics/movement update loop.
 		renderer.update();
@@ -90,7 +90,7 @@ int main(int argc, char** argv) {
 		renderer.draw();
 		
 		// Then render the interface.
-		Interface::endFrame();
+		System::GUI::endFrame();
 		//Display the result for the current rendering loop.
 		glfwSwapBuffers(window);
 		
@@ -99,7 +99,7 @@ int main(int argc, char** argv) {
 	renderer.clean();
 	
 	// Clean the interface.
-	Interface::clean();
+	System::GUI::clean();
 	
 	Resources::manager().clean();
 	// Close GL context and any other GLFW resources.

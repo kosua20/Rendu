@@ -3,7 +3,7 @@
 #include "input/Input.hpp"
 #include "input/InputCallbacks.hpp"
 #include "input/ControllableCamera.hpp"
-#include "helpers/Interface.hpp"
+#include "helpers/System.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "graphics/ScreenQuad.hpp"
 #include "graphics/Framebuffer.hpp"
@@ -32,7 +32,7 @@ int main(int argc, char** argv) {
 		return 0;
 	}
 	
-	GLFWwindow* window = Interface::initWindow("Atmosphere", config);
+	GLFWwindow* window = System::initWindow("Atmosphere", config);
 	if(!window){
 		return -1;
 	}
@@ -87,7 +87,7 @@ int main(int argc, char** argv) {
 			glfwSetWindowShouldClose(window, GL_TRUE);
 		}
 		// Start a new frame for the interface.
-		Interface::beginFrame();
+		System::GUI::beginFrame();
 		// Reload resources.
 		if(Input::manager().triggered(Input::KeyP)){
 			Resources::manager().reload();
@@ -159,7 +159,7 @@ int main(int argc, char** argv) {
 			lightDirection = glm::normalize(lightDirection);
 		}
 		// Then render the interface.
-		Interface::endFrame();
+		System::GUI::endFrame();
 		//Display the result for the current rendering loop.
 		glfwSwapBuffers(window);
 		
@@ -169,7 +169,7 @@ int main(int argc, char** argv) {
 	atmosphereFramebuffer->clean();
 	
 	// Clean the interface.
-	Interface::clean();
+	System::GUI::clean();
 	
 	Resources::manager().clean();
 	// Close GL context and any other GLFW resources.

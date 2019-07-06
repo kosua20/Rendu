@@ -1,7 +1,7 @@
 #include "PaintingTool.hpp"
 
 #include "input/Input.hpp"
-#include "helpers/Interface.hpp"
+#include "helpers/System.hpp"
 
 PaintingTool::PaintingTool(unsigned int width, unsigned int height) {
 	
