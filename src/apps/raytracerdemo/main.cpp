@@ -42,23 +42,20 @@ int main(int argc, char** argv) {
 	
 	Raycaster raycaster;
 	for(const auto & obj : scene.objects){
-		raycaster.addMesh(obj.mesh()->geometry);
+		raycaster.addMesh(obj.mesh()->geometry, obj.model());
 	}
 	raycaster.updateHierarchy();
 	
 	
-	// Light direction.
-	const glm::vec3 l = glm::normalize(glm::vec3(1.0));
-	
 	// Result image.
-	Image render(512, 512, 3);
+	Image render(1024, 1024, 3);
 	// Setup camera.
 	Camera camera;
-	camera.pose(glm::vec3(0.0f, 1.0f, 2.0f), glm::vec3(0.0f, 1.5f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-	camera.projection(1.0, 2.5f, 0.01f, 100.0f);
-	// We only care about the X,Y transformation of the projection matrix.
-	const glm::mat3 invP = glm::mat3(glm::inverse(glm::mat2(camera.projection())));
-	const glm::mat3 invVP = glm::inverse(glm::mat3(camera.view())) * invP;
+	camera.pose(glm::vec3(0.0f, 1.0f, 2.5f), glm::vec3(0.0f, 1.0f, 2.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	camera.projection(1.0f, 1.3f, 0.01f, 100.0f);
+	// Compute incremental pixel shifts.
+	glm::vec3 corner, dx, dy;
+	camera.pixelShifts(corner, dx, dy);
 	
 	// Start chrono.
 	auto start = std::chrono::steady_clock::now();
@@ -66,12 +63,12 @@ int main(int argc, char** argv) {
 	// Get the maximum number of threads.
 	System::forParallel(0, render.height, [&](size_t y){
 		for(unsigned int x = 0; x < render.width; ++x){
+			
 			// Derive a position on the image plane from the pixel.
-			glm::vec2 ndcSpace = 2.0f*(glm::vec2(x,y) + 0.5f) / glm::vec2(render.width, render.height) - 1.0f;
-			ndcSpace.y *= -1.0f;
+			const glm::vec2 ndcPos = (glm::vec2(x,y) + 0.5f) / glm::vec2(render.width, render.height);
 			// Place the point on the near plane in clip space.
-			const glm::vec3 worldPos = invVP * glm::vec3(ndcSpace, -1.0f);
-			const glm::vec3 worldDir = worldPos - camera.position();
+			const glm::vec3 worldPos = corner + ndcPos.x * dx + ndcPos.y * dy;
+			const glm::vec3 worldDir = glm::normalize(worldPos - camera.position());
 			// Query closest intersection.
 			const Raycaster::RayHit hit = raycaster.intersects(camera.position(), worldDir);
 			// If no hit, background.
@@ -81,20 +78,30 @@ int main(int argc, char** argv) {
 			}
 			
 			// Fetch geometry infos...
-			const unsigned long meshId = hit.meshId;
-			const auto * mesh = scene.objects[meshId].mesh();
-			const glm::vec3 n = Raycaster::interpolateNormal(hit, mesh->geometry);
-			const glm::vec2 uv = Raycaster::interpolateUV(hit, mesh->geometry);
+			const Mesh & mesh = scene.objects[hit.meshId].mesh()->geometry;
+			const glm::vec3 p = camera.position() + hit.dist * worldDir;
+			const glm::vec3 n = Raycaster::interpolateNormal(hit, mesh);
+			const glm::vec2 uv = Raycaster::interpolateUV(hit, mesh);
 			
 			// Compute lighting.
-			const float diffuse = std::max(0.0f, glm::dot(n, l)) + 0.1;
+			// Check light visibility.
+			glm::vec3 illumination(0.1f);
+			for(const auto light : scene.lights){
+				glm::vec3 direction;
+				float attenuation;
+				if(light->visible(p, raycaster, direction, attenuation)){
+					const float diffuse = glm::max(glm::dot(n, direction), 0.0f);
+					illumination += attenuation * diffuse * light->intensity();
+				}
+			}
+			
 			// Fetch base color from texture.
-			const Image & image = scene.objects[meshId].textures()[0]->images[0];
-			const int px = int(std::floor(uv.x * float(image.width)));
-			const int py = int(std::floor(uv.y * float(image.height)));
-			const glm::vec3 baseColor = image.rgbc(px, py);
-			// Modulate and store.
-			render.rgb(x,y) = diffuse * baseColor;
+			const Image & image = scene.objects[hit.meshId].textures()[0]->images[0];
+			const int px = int(std::floor(uv.x * float(image.width))) % image.width;
+			const int py = int(std::floor(uv.y * float(image.height))) % image.height;
+			const glm::vec3 & baseColor = image.rgbc(px, py);
+			// Modulate and store, applying gamma correction.
+			render.rgb(x,y) = glm::pow(illumination * baseColor, glm::vec3(1.0f/2.2f));
 		}
 	});
 	
