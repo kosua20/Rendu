@@ -64,6 +64,46 @@ struct Image {
 	 */
 	float & a(int x, int y);
 	
+	/** Const accessor to a RGBA pixel
+	 \param x horizontal coordinate
+	 \param y vertical coordinate
+	 \return reference to the given pixel
+	 \warning no access or component check is done
+	 */
+	const glm::vec4 & rgbac(int x, int y) const;
+	
+	/** Const accessor to the RGB part of a pixel
+	 \param x horizontal coordinate
+	 \param y vertical coordinate
+	 \return reference to the given pixel
+	 \warning no access or component check is done
+	 */
+	const glm::vec3 & rgbc(int x, int y) const;
+	
+	/** Const accessor to the RG part of a pixel
+	 \param x horizontal coordinate
+	 \param y vertical coordinate
+	 \return reference to the given pixel
+	 \warning no access or component check is done
+	 */
+	const glm::vec2 & rgc(int x, int y) const;
+	
+	/** Const accessor to the red/first component of a pixel
+	 \param x horizontal coordinate
+	 \param y vertical coordinate
+	 \return reference to the given pixel first component
+	 \warning no access or component check is done
+	 */
+	const float & rc(int x, int y) const;
+	
+	/** Const accessor to the alpha/last component of a pixel
+	 \param x horizontal coordinate
+	 \param y vertical coordinate
+	 \return reference to the given pixel last component
+	 \warning no access or component check is done
+	 */
+	const float & ac(int x, int y) const;
+	
 };
 
 

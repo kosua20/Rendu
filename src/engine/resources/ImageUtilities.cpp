@@ -49,6 +49,26 @@ float & Image::a(int x, int y){
 	return pixels[(y*width+x+1)*components-1];
 }
 
+const glm::vec4 & Image::rgbac(int x, int y) const {
+	return reinterpret_cast<const glm::vec4*>(&pixels[(y*width+x)*components])[0];
+}
+
+const glm::vec3 & Image::rgbc(int x, int y) const {
+	return reinterpret_cast<const glm::vec3*>(&pixels[(y*width+x)*components])[0];
+}
+
+const glm::vec2 & Image::rgc(int x, int y) const {
+	return reinterpret_cast<const glm::vec2*>(&pixels[(y*width+x)*components])[0];
+}
+
+const float & Image::rc(int x, int y) const {
+	return pixels[(y*width+x)*components];
+}
+
+const float & Image::ac(int x, int y) const {
+	return pixels[(y*width+x+1)*components-1];
+}
+
 bool ImageUtilities::isFloat(const std::string & path){
 	return path.substr(path.size()-4,4) == ".exr";
 }
