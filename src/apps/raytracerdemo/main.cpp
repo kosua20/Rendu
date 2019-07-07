@@ -48,6 +48,7 @@ int main(int argc, char** argv) {
 	
 	// Result image.
 	Image render(1024, 1024, 3);
+	const size_t samples = 8;
 	
 	// Setup camera.
 	Camera camera;
@@ -64,72 +65,78 @@ int main(int argc, char** argv) {
 	System::forParallel(0, render.height, [&](size_t y){
 		for(size_t x = 0; x < render.width; ++x){
 			
-			// Derive a position on the image plane from the pixel.
-			const glm::vec2 ndcPos = (glm::vec2(x,y) + 0.5f) / glm::vec2(render.width, render.height);
-			// Place the point on the near plane in clip space.
-			const glm::vec3 worldPos = corner + ndcPos.x * dx + ndcPos.y * dy;
-			const glm::vec3 worldDir = glm::normalize(worldPos - camera.position());
-			// Query closest intersection.
-			const Raycaster::RayHit hit = raycaster.intersects(camera.position(), worldDir);
-			// If no hit, background.
-			if(!hit.hit){
-				glm::vec3 bgColor(0.0f);
-				switch(scene.backgroundMode){
-					case Scene::Background::COLOR:
-					{
-						bgColor = scene.backgroundColor;
-						break;
+			for(size_t sid = 0; sid < 8; ++sid){
+				// Draw random shift in [0.0,1.0f) for jittering.
+				const float jx = Random::Float();
+				const float jy = Random::Float();
+				// Derive a position on the image plane from the pixel.
+				const glm::vec2 ndcPos = glm::vec2(x + jx, y + jy) / glm::vec2(render.width, render.height);
+				// Place the point on the near plane in clip space.
+				const glm::vec3 worldPos = corner + ndcPos.x * dx + ndcPos.y * dy;
+				const glm::vec3 worldDir = glm::normalize(worldPos - camera.position());
+				// Query closest intersection.
+				const Raycaster::RayHit hit = raycaster.intersects(camera.position(), worldDir);
+				// If no hit, background.
+				if(!hit.hit){
+					glm::vec3 bgColor(0.0f);
+					switch(scene.backgroundMode){
+						case Scene::Background::COLOR:
+						{
+							bgColor = scene.backgroundColor;
+							break;
+						}
+						case Scene::Background::IMAGE:
+						{
+							const Image & image = scene.background.textures()[0]->images[0];
+							bgColor = image.rgbl(ndcPos.x, ndcPos.y);
+							break;
+						}
+						case Scene::Background::SKYBOX:
+						{
+							// Unsuported for now.
+							break;
+						}
+						default:
+							break;
+							
 					}
-					case Scene::Background::IMAGE:
-					{
-						const Image & image = scene.background.textures()[0]->images[0];
-						bgColor = image.rgbl(ndcPos.x, ndcPos.y);
-						break;
-					}
-					case Scene::Background::SKYBOX:
-					{
-						// Unsuported for now.
-						break;
-					}
-					default:
-						break;
-						
+					render.rgb(x,y) += bgColor;
+					continue;
 				}
-				render.rgb(x,y) = bgColor;
-				continue;
-			}
-			
-			// Fetch geometry infos...
-			const Mesh & mesh = scene.objects[hit.meshId].mesh()->geometry;
-			const glm::vec3 p = camera.position() + hit.dist * worldDir;
-			const glm::vec3 n = Raycaster::interpolateNormal(hit, mesh);
-			const glm::vec2 uv = Raycaster::interpolateUV(hit, mesh);
-			
-			// Compute lighting.
-			// Check light visibility.
-			glm::vec3 illumination(0.1f);
-			for(const auto light : scene.lights){
-				glm::vec3 direction;
-				float attenuation;
-				if(light->visible(p, raycaster, direction, attenuation)){
-					const float diffuse = glm::max(glm::dot(n, direction), 0.0f);
-					illumination += attenuation * diffuse * light->intensity();
+				
+				// Fetch geometry infos...
+				const Mesh & mesh = scene.objects[hit.meshId].mesh()->geometry;
+				const glm::vec3 p = camera.position() + hit.dist * worldDir;
+				const glm::vec3 n = Raycaster::interpolateNormal(hit, mesh);
+				const glm::vec2 uv = Raycaster::interpolateUV(hit, mesh);
+				
+				// Compute lighting.
+				// Check light visibility.
+				glm::vec3 illumination(0.1f);
+				for(const auto light : scene.lights){
+					glm::vec3 direction;
+					float attenuation;
+					if(light->visible(p, raycaster, direction, attenuation)){
+						const float diffuse = glm::max(glm::dot(n, direction), 0.0f);
+						illumination += attenuation * diffuse * light->intensity();
+					}
 				}
+				
+				// Fetch base color from texture.
+				const Image & image = scene.objects[hit.meshId].textures()[0]->images[0];
+				const glm::vec3 baseColor = image.rgbl(uv.x, uv.y);
+				// Modulate and store.
+				render.rgb(x,y) += illumination * baseColor;
 			}
-			
-			// Fetch base color from texture.
-			const Image & image = scene.objects[hit.meshId].textures()[0]->images[0];
-			const glm::vec3 baseColor = image.rgbl(uv.x, uv.y);
-			// Modulate and store.
-			render.rgb(x,y) = illumination * baseColor;
 		}
 	});
 	
 	
-	// Final tonemapping and gamma correction.
+	// Normalize and gamma correction.
 	System::forParallel(0, render.height, [&render](size_t y){
 		for(size_t x = 0; x < render.width; ++x){
-			render.rgb(x,y) = glm::pow(render.rgb(x,y), glm::vec3(1.0f/2.2f));
+			const glm::vec3 color = render.rgb(x,y) / float(samples);
+			render.rgb(x,y) = glm::pow(color, glm::vec3(1.0f/2.2f));
 		}
 	});
 	
