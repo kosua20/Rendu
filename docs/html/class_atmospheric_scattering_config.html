@@ -112,6 +112,8 @@ Public Member Functions</h2></td></tr>
 <tr class="inherit_header pub_methods_class_config"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_config')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_config.html">Config</a></td></tr>
 <tr class="memitem:a76ffead6bb88c7c92d3b60c7c1ce5c35 inherit pub_methods_class_config"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_config.html#a76ffead6bb88c7c92d3b60c7c1ce5c35">Config</a> (const std::vector&lt; std::string &gt; &amp;argv)</td></tr>
 <tr class="separator:a76ffead6bb88c7c92d3b60c7c1ce5c35 inherit pub_methods_class_config"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2617ea18beac4545dedad4d6f882e9aa inherit pub_methods_class_config"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_config.html#a2617ea18beac4545dedad4d6f882e9aa">showHelp</a> ()</td></tr>
+<tr class="separator:a2617ea18beac4545dedad4d6f882e9aa inherit pub_methods_class_config"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -123,10 +125,10 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_atmospheric_scattering_config.html#a97c4c26666d85dafe70849286f80cfc4">samples</a> = 256</td></tr>
 <tr class="memdesc:a97c4c26666d85dafe70849286f80cfc4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of samples for iterative sampling. <br /></td></tr>
 <tr class="separator:a97c4c26666d85dafe70849286f80cfc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5762791f95107df0ad2dcc85d5b396a3"><td class="memItemLeft" align="right" valign="top"><a id="a5762791f95107df0ad2dcc85d5b396a3"></a>
-unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_atmospheric_scattering_config.html#a5762791f95107df0ad2dcc85d5b396a3">resolution</a> = 512</td></tr>
-<tr class="memdesc:a5762791f95107df0ad2dcc85d5b396a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Output image resolution. <br /></td></tr>
-<tr class="separator:a5762791f95107df0ad2dcc85d5b396a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7ea4f058b83d0d75978593a8402cce72"><td class="memItemLeft" align="right" valign="top"><a id="a7ea4f058b83d0d75978593a8402cce72"></a>
+size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_atmospheric_scattering_config.html#a7ea4f058b83d0d75978593a8402cce72">resolution</a> = 512</td></tr>
+<tr class="memdesc:a7ea4f058b83d0d75978593a8402cce72"><td class="mdescLeft">&#160;</td><td class="mdescRight">Output image resolution. <br /></td></tr>
+<tr class="separator:a7ea4f058b83d0d75978593a8402cce72"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -135,6 +137,10 @@ Additional Inherited Members</h2></td></tr>
 std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_config.html#ab52b94536c96f769078c9d4cd0f7a631">_rawArguments</a></td></tr>
 <tr class="memdesc:ab52b94536c96f769078c9d4cd0f7a631 inherit pro_attribs_class_config"><td class="mdescLeft">&#160;</td><td class="mdescRight">Store the internal parsed (keys, [values]) extracted from a file or the command-line. <br /></td></tr>
 <tr class="separator:ab52b94536c96f769078c9d4cd0f7a631 inherit pro_attribs_class_config"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa8e913359869774ef02f452ea418b606 inherit pro_attribs_class_config"><td class="memItemLeft" align="right" valign="top"><a id="aa8e913359869774ef02f452ea418b606"></a>
+std::vector&lt; <a class="el" href="struct_config_1_1_argument_info.html">ArgumentInfo</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_config.html#aa8e913359869774ef02f452ea418b606">_infos</a></td></tr>
+<tr class="memdesc:aa8e913359869774ef02f452ea418b606 inherit pro_attribs_class_config"><td class="mdescLeft">&#160;</td><td class="mdescRight">Store informations about each argument, for displaying the help message. <br /></td></tr>
+<tr class="separator:aa8e913359869774ef02f452ea418b606 inherit pro_attribs_class_config"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Configuration for the atmospheric scattering precomputations. </p>

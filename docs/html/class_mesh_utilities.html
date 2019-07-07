@@ -122,8 +122,12 @@ Static Public Member Functions</h2></td></tr>
 <tr class="separator:a8ffe0e76025d84b93488fe878dcf30af"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad54ea89839db1c13dd6f1c02a3146dec"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mesh_utilities.html#ad54ea89839db1c13dd6f1c02a3146dec">centerAndUnitMesh</a> (<a class="el" href="struct_mesh.html">Mesh</a> &amp;mesh)</td></tr>
 <tr class="separator:ad54ea89839db1c13dd6f1c02a3146dec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a11cf2dee455c5ca83d4ca0cc6c4ef826"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mesh_utilities.html#a11cf2dee455c5ca83d4ca0cc6c4ef826">computeNormals</a> (<a class="el" href="struct_mesh.html">Mesh</a> &amp;mesh)</td></tr>
+<tr class="separator:a11cf2dee455c5ca83d4ca0cc6c4ef826"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abbf0aca2c1ff1aef082e06e9d4959c92"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mesh_utilities.html#abbf0aca2c1ff1aef082e06e9d4959c92">computeTangentsAndBinormals</a> (<a class="el" href="struct_mesh.html">Mesh</a> &amp;mesh)</td></tr>
 <tr class="separator:abbf0aca2c1ff1aef082e06e9d4959c92"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4ec7defd2a52e44788f56eb1595e70fe"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mesh_utilities.html#a4ec7defd2a52e44788f56eb1595e70fe">saveObj</a> (const std::string &amp;path, const <a class="el" href="struct_mesh.html">Mesh</a> &amp;mesh, bool defaultUVs)</td></tr>
+<tr class="separator:a4ec7defd2a52e44788f56eb1595e70fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Provides utilities to load and process geometric meshes. </p>
@@ -218,6 +222,38 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="a11cf2dee455c5ca83d4ca0cc6c4ef826"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a11cf2dee455c5ca83d4ca0cc6c4ef826">&#9670;&nbsp;</a></span>computeNormals()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void MeshUtilities::computeNormals </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="struct_mesh.html">Mesh</a> &amp;&#160;</td>
+          <td class="paramname"><em>mesh</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Compute per-vertex normals based on the faces orientation. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">mesh</td><td>the mesh to process </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="abbf0aca2c1ff1aef082e06e9d4959c92"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#abbf0aca2c1ff1aef082e06e9d4959c92">&#9670;&nbsp;</a></span>computeTangentsAndBinormals()</h2>
 
@@ -297,6 +333,57 @@ Static Public Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="a4ec7defd2a52e44788f56eb1595e70fe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4ec7defd2a52e44788f56eb1595e70fe">&#9670;&nbsp;</a></span>saveObj()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int MeshUtilities::saveObj </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>path</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="struct_mesh.html">Mesh</a> &amp;&#160;</td>
+          <td class="paramname"><em>mesh</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>defaultUVs</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Save an OBJ mesh on disk. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">path</td><td>the path to the mesh </td></tr>
+    <tr><td class="paramname">mesh</td><td>the mesh data </td></tr>
+    <tr><td class="paramname">defaultUVs</td><td>if the mesh has no UVs, should default ones be used. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>a success/error flag </dd></dl>
 
 </div>
 </div>

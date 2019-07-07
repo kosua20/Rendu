@@ -112,7 +112,7 @@ Public Member Functions</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_camera.html#a01f94c3543f56ede7af49dc778f19331">Camera</a> ()</td></tr>
 <tr class="memdesc:a01f94c3543f56ede7af49dc778f19331"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor. <br /></td></tr>
 <tr class="separator:a01f94c3543f56ede7af49dc778f19331"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abb722f059ef88d263d3142b57a4b174a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_camera.html#abb722f059ef88d263d3142b57a4b174a">pose</a> (const glm::vec3 &amp;<a class="el" href="class_camera.html#a26f5c28317ec7add2a21ddbdc8e463fb">position</a>, const glm::vec3 &amp;center, const glm::vec3 &amp;up)</td></tr>
+<tr class="memitem:abb722f059ef88d263d3142b57a4b174a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_camera.html#abb722f059ef88d263d3142b57a4b174a">pose</a> (const glm::vec3 &amp;<a class="el" href="class_camera.html#a26f5c28317ec7add2a21ddbdc8e463fb">position</a>, const glm::vec3 &amp;<a class="el" href="class_camera.html#ae4ec80011471d223041a098576f4408f">center</a>, const glm::vec3 &amp;<a class="el" href="class_camera.html#a8133c7abc5abb8c05f5e8f41c42b44de">up</a>)</td></tr>
 <tr class="separator:abb722f059ef88d263d3142b57a4b174a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3a7a9a2cd48a90f640105fd14c17b674"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_camera.html#a3a7a9a2cd48a90f640105fd14c17b674">projection</a> (float <a class="el" href="class_camera.html#a96e87214a83a0f2a9ff647901e2fffda">ratio</a>, float <a class="el" href="class_camera.html#aa1a21f7918bc345cf493680cc080f8af">fov</a>, float near, float far)</td></tr>
 <tr class="separator:a3a7a9a2cd48a90f640105fd14c17b674"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -122,6 +122,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a96e87214a83a0f2a9ff647901e2fffda"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa1a21f7918bc345cf493680cc080f8af"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_camera.html#aa1a21f7918bc345cf493680cc080f8af">fov</a> (float fov)</td></tr>
 <tr class="separator:aa1a21f7918bc345cf493680cc080f8af"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abe5f01c54bf88ee9fdf1e70d9aee4b3d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_camera.html#abe5f01c54bf88ee9fdf1e70d9aee4b3d">pixelShifts</a> (glm::vec3 &amp;corner, glm::vec3 &amp;dx, glm::vec3 &amp;dy)</td></tr>
+<tr class="separator:abe5f01c54bf88ee9fdf1e70d9aee4b3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a03e5f07c04f27cfb75ec6b441f411a20"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_camera.html#a03e5f07c04f27cfb75ec6b441f411a20">fov</a> () const</td></tr>
 <tr class="separator:a03e5f07c04f27cfb75ec6b441f411a20"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1a5b450e4659fd0521065a2a1471529f"><td class="memItemLeft" align="right" valign="top">const glm::mat4 &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_camera.html#a1a5b450e4659fd0521065a2a1471529f">view</a> () const</td></tr>
@@ -130,6 +132,12 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a7e7d167f9b161bfeebc77f1cd318f06a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a26f5c28317ec7add2a21ddbdc8e463fb"><td class="memItemLeft" align="right" valign="top">const glm::vec3 &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_camera.html#a26f5c28317ec7add2a21ddbdc8e463fb">position</a> () const</td></tr>
 <tr class="separator:a26f5c28317ec7add2a21ddbdc8e463fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8133c7abc5abb8c05f5e8f41c42b44de"><td class="memItemLeft" align="right" valign="top">const glm::vec3 &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_camera.html#a8133c7abc5abb8c05f5e8f41c42b44de">up</a> () const</td></tr>
+<tr class="separator:a8133c7abc5abb8c05f5e8f41c42b44de"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae4ec80011471d223041a098576f4408f"><td class="memItemLeft" align="right" valign="top">const glm::vec3 &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_camera.html#ae4ec80011471d223041a098576f4408f">center</a> () const</td></tr>
+<tr class="separator:ae4ec80011471d223041a098576f4408f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aea68e1aa53805ef9589d1410fcd3baca"><td class="memItemLeft" align="right" valign="top">const glm::vec2 &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_camera.html#aea68e1aa53805ef9589d1410fcd3baca">clippingPlanes</a> () const</td></tr>
+<tr class="separator:aea68e1aa53805ef9589d1410fcd3baca"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
@@ -168,28 +176,76 @@ glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_camera.html#a4c556280ed181d8589c28eec7ebebb49">_right</a></td></tr>
 <tr class="memdesc:a4c556280ed181d8589c28eec7ebebb49"><td class="mdescLeft">&#160;</td><td class="mdescRight">The camera right vector. <br /></td></tr>
 <tr class="separator:a4c556280ed181d8589c28eec7ebebb49"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7449f425eb759fe115a012424c2ec611"><td class="memItemLeft" align="right" valign="top"><a id="a7449f425eb759fe115a012424c2ec611"></a>
+glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_camera.html#a7449f425eb759fe115a012424c2ec611">_clippingPlanes</a></td></tr>
+<tr class="memdesc:a7449f425eb759fe115a012424c2ec611"><td class="mdescLeft">&#160;</td><td class="mdescRight">The near and far plane distances. <br /></td></tr>
+<tr class="separator:a7449f425eb759fe115a012424c2ec611"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adbe2dda1c394b5407fe925ea30dc6429"><td class="memItemLeft" align="right" valign="top"><a id="adbe2dda1c394b5407fe925ea30dc6429"></a>
 float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_camera.html#adbe2dda1c394b5407fe925ea30dc6429">_fov</a></td></tr>
-<tr class="memdesc:adbe2dda1c394b5407fe925ea30dc6429"><td class="mdescLeft">&#160;</td><td class="mdescRight">The vertical field of view. <br /></td></tr>
+<tr class="memdesc:adbe2dda1c394b5407fe925ea30dc6429"><td class="mdescLeft">&#160;</td><td class="mdescRight">The vertical field of view, in radians. <br /></td></tr>
 <tr class="separator:adbe2dda1c394b5407fe925ea30dc6429"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2b8108f942ad616cd3aca12a762af512"><td class="memItemLeft" align="right" valign="top"><a id="a2b8108f942ad616cd3aca12a762af512"></a>
 float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_camera.html#a2b8108f942ad616cd3aca12a762af512">_ratio</a></td></tr>
 <tr class="memdesc:a2b8108f942ad616cd3aca12a762af512"><td class="mdescLeft">&#160;</td><td class="mdescRight">The aspect ratio. <br /></td></tr>
 <tr class="separator:a2b8108f942ad616cd3aca12a762af512"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab42939a48150d37bee65e85fcf5d3e12"><td class="memItemLeft" align="right" valign="top"><a id="ab42939a48150d37bee65e85fcf5d3e12"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_camera.html#ab42939a48150d37bee65e85fcf5d3e12">_near</a></td></tr>
-<tr class="memdesc:ab42939a48150d37bee65e85fcf5d3e12"><td class="mdescLeft">&#160;</td><td class="mdescRight">The near plane distance. <br /></td></tr>
-<tr class="separator:ab42939a48150d37bee65e85fcf5d3e12"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaf4541d449dd15e00c5d28f844de81ea"><td class="memItemLeft" align="right" valign="top"><a id="aaf4541d449dd15e00c5d28f844de81ea"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_camera.html#aaf4541d449dd15e00c5d28f844de81ea">_far</a></td></tr>
-<tr class="memdesc:aaf4541d449dd15e00c5d28f844de81ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">The far plane distance. <br /></td></tr>
-<tr class="separator:aaf4541d449dd15e00c5d28f844de81ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>This class represents a camera as used in real-time rendering APIs. It provides a view and projection matrices, and handles their proper update. </p>
 </div>
 <p>Inherited by <a class="el" href="class_controllable_camera.html">ControllableCamera</a>.</p>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="ae4ec80011471d223041a098576f4408f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae4ec80011471d223041a098576f4408f">&#9670;&nbsp;</a></span>center()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const glm::vec3&amp; Camera::center </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Obtain the current world space center position. </p><dl class="section return"><dt>Returns</dt><dd>the current center </dd></dl>
+
+</div>
+</div>
+<a id="aea68e1aa53805ef9589d1410fcd3baca"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aea68e1aa53805ef9589d1410fcd3baca">&#9670;&nbsp;</a></span>clippingPlanes()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const glm::vec2&amp; Camera::clippingPlanes </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Obtain the current world space camera position. </p><dl class="section return"><dt>Returns</dt><dd>the current position </dd></dl>
+
+</div>
+</div>
 <a id="aa1a21f7918bc345cf493680cc080f8af"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa1a21f7918bc345cf493680cc080f8af">&#9670;&nbsp;</a></span>fov() <span class="overload">[1/2]</span></h2>
 
@@ -236,7 +292,7 @@ float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cla
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Obtain the current vertical field of view. </p><dl class="section return"><dt>Returns</dt><dd>the field of view </dd></dl>
+<p>Obtain the current vertical field of view, in radians. </p><dl class="section return"><dt>Returns</dt><dd>the field of view </dd></dl>
 
 </div>
 </div>
@@ -269,6 +325,48 @@ float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cla
   <table class="params">
     <tr><td class="paramname">near</td><td>the new near plane distance </td></tr>
     <tr><td class="paramname">far</td><td>the new far plane distance </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="abe5f01c54bf88ee9fdf1e70d9aee4b3d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abe5f01c54bf88ee9fdf1e70d9aee4b3d">&#9670;&nbsp;</a></span>pixelShifts()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Camera::pixelShifts </td>
+          <td>(</td>
+          <td class="paramtype">glm::vec3 &amp;&#160;</td>
+          <td class="paramname"><em>corner</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">glm::vec3 &amp;&#160;</td>
+          <td class="paramname"><em>dx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">glm::vec3 &amp;&#160;</td>
+          <td class="paramname"><em>dy</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Compute world space position of the top-left corner of the image, and the shifts to move to the next pixel, horizontally and vertically. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">corner</td><td>will contain the position of the top-left corner </td></tr>
+    <tr><td class="paramname">dx</td><td>will contain the horizontal step </td></tr>
+    <tr><td class="paramname">dy</td><td>will contain the vertical step </td></tr>
   </table>
   </dd>
 </dl>
@@ -439,6 +537,32 @@ float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cla
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="a8133c7abc5abb8c05f5e8f41c42b44de"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8133c7abc5abb8c05f5e8f41c42b44de">&#9670;&nbsp;</a></span>up()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const glm::vec3&amp; Camera::up </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Obtain the current world space up direction. </p><dl class="section return"><dt>Returns</dt><dd>the current direction </dd></dl>
 
 </div>
 </div>

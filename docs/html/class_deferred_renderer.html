@@ -93,6 +93,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pri-methods">Private Member Functions</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="class_deferred_renderer-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -128,6 +129,13 @@ Public Member Functions</h2></td></tr>
 virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_renderer.html#afeee408862d5bd6255a6882d47e6d5cd">~Renderer</a> ()</td></tr>
 <tr class="memdesc:afeee408862d5bd6255a6882d47e6d5cd inherit pub_methods_class_renderer"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor. <br /></td></tr>
 <tr class="separator:afeee408862d5bd6255a6882d47e6d5cd inherit pub_methods_class_renderer"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
+Private Member Functions</h2></td></tr>
+<tr class="memitem:ae1e706610caa7c8f8a0e878ed5db7c3f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_deferred_renderer.html#ae1e706610caa7c8f8a0e878ed5db7c3f">renderScene</a> ()</td></tr>
+<tr class="separator:ae1e706610caa7c8f8a0e878ed5db7c3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1b2a6d31ca0673bbf914d79c2c0a2755"><td class="memItemLeft" align="right" valign="top">GLuint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_deferred_renderer.html#a1b2a6d31ca0673bbf914d79c2c0a2755">renderPostprocess</a> (const glm::vec2 &amp;invRenderSize)</td></tr>
+<tr class="separator:a1b2a6d31ca0673bbf914d79c2c0a2755"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
@@ -183,14 +191,62 @@ const <a class="el" href="class_program_infos.html">ProgramInfos</a> *&#160;</td
 const <a class="el" href="class_program_infos.html">ProgramInfos</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_deferred_renderer.html#a4fddf87c88f902704a5cd9a745b158de">_finalProgram</a></td></tr>
 <tr class="memdesc:a4fddf87c88f902704a5cd9a745b158de"><td class="mdescLeft">&#160;</td><td class="mdescRight">Final output program. <br /></td></tr>
 <tr class="separator:a4fddf87c88f902704a5cd9a745b158de"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a11b1bfecfd421955136ddb06828b6e3a"><td class="memItemLeft" align="right" valign="top"><a id="a11b1bfecfd421955136ddb06828b6e3a"></a>
+const <a class="el" href="class_program_infos.html">ProgramInfos</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_deferred_renderer.html#a11b1bfecfd421955136ddb06828b6e3a">_objectProgram</a></td></tr>
+<tr class="memdesc:a11b1bfecfd421955136ddb06828b6e3a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Basic PBR program. <br /></td></tr>
+<tr class="separator:a11b1bfecfd421955136ddb06828b6e3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2ba11a144d7cc41fff04b10cdb454992"><td class="memItemLeft" align="right" valign="top"><a id="a2ba11a144d7cc41fff04b10cdb454992"></a>
+const <a class="el" href="class_program_infos.html">ProgramInfos</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_deferred_renderer.html#a2ba11a144d7cc41fff04b10cdb454992">_objectNoUVsProgram</a></td></tr>
+<tr class="memdesc:a2ba11a144d7cc41fff04b10cdb454992"><td class="mdescLeft">&#160;</td><td class="mdescRight">Basic PBR program. <br /></td></tr>
+<tr class="separator:a2ba11a144d7cc41fff04b10cdb454992"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adee9537eec5a4cc7e6644c3563f21223"><td class="memItemLeft" align="right" valign="top"><a id="adee9537eec5a4cc7e6644c3563f21223"></a>
+const <a class="el" href="class_program_infos.html">ProgramInfos</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_deferred_renderer.html#adee9537eec5a4cc7e6644c3563f21223">_parallaxProgram</a></td></tr>
+<tr class="memdesc:adee9537eec5a4cc7e6644c3563f21223"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parallax mapping PBR program. <br /></td></tr>
+<tr class="separator:adee9537eec5a4cc7e6644c3563f21223"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a719aa709024ff438628c7585106ecb60"><td class="memItemLeft" align="right" valign="top"><a id="a719aa709024ff438628c7585106ecb60"></a>
+const <a class="el" href="class_program_infos.html">ProgramInfos</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_deferred_renderer.html#a719aa709024ff438628c7585106ecb60">_skyboxProgram</a></td></tr>
+<tr class="memdesc:a719aa709024ff438628c7585106ecb60"><td class="mdescLeft">&#160;</td><td class="mdescRight">Skybox program. <br /></td></tr>
+<tr class="separator:a719aa709024ff438628c7585106ecb60"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aed300001f1a8c601653b0e065e52fddb"><td class="memItemLeft" align="right" valign="top"><a id="aed300001f1a8c601653b0e065e52fddb"></a>
+const <a class="el" href="class_program_infos.html">ProgramInfos</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_deferred_renderer.html#aed300001f1a8c601653b0e065e52fddb">_bgProgram</a></td></tr>
+<tr class="memdesc:aed300001f1a8c601653b0e065e52fddb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Planar background program. <br /></td></tr>
+<tr class="separator:aed300001f1a8c601653b0e065e52fddb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6f0c1b947c56169ea77cfdff8157b26b"><td class="memItemLeft" align="right" valign="top"><a id="a6f0c1b947c56169ea77cfdff8157b26b"></a>
 std::shared_ptr&lt; <a class="el" href="class_scene.html">Scene</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_deferred_renderer.html#a6f0c1b947c56169ea77cfdff8157b26b">_scene</a></td></tr>
 <tr class="memdesc:a6f0c1b947c56169ea77cfdff8157b26b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The scene to render. <br /></td></tr>
 <tr class="separator:a6f0c1b947c56169ea77cfdff8157b26b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a276c3f80df4244eec8e39a3c4ea3325b"><td class="memItemLeft" align="right" valign="top"><a id="a276c3f80df4244eec8e39a3c4ea3325b"></a>
+float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_deferred_renderer.html#a276c3f80df4244eec8e39a3c4ea3325b">_cameraFOV</a></td></tr>
+<tr class="memdesc:a276c3f80df4244eec8e39a3c4ea3325b"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_camera.html" title="This class represents a camera as used in real-time rendering APIs. It provides a view and projection...">Camera</a> field of view in degrees. <br /></td></tr>
+<tr class="separator:a276c3f80df4244eec8e39a3c4ea3325b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aea54a81da21c08638deb0a7fb18aa263"><td class="memItemLeft" align="right" valign="top"><a id="aea54a81da21c08638deb0a7fb18aa263"></a>
+float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_deferred_renderer.html#aea54a81da21c08638deb0a7fb18aa263">_exposure</a> = 1.0f</td></tr>
+<tr class="memdesc:aea54a81da21c08638deb0a7fb18aa263"><td class="mdescLeft">&#160;</td><td class="mdescRight">Film exposure. <br /></td></tr>
+<tr class="separator:aea54a81da21c08638deb0a7fb18aa263"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae88363f62d1f740c798aba95f10d8b0a"><td class="memItemLeft" align="right" valign="top"><a id="ae88363f62d1f740c798aba95f10d8b0a"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_deferred_renderer.html#ae88363f62d1f740c798aba95f10d8b0a">_debugVisualization</a> = false</td></tr>
-<tr class="memdesc:ae88363f62d1f740c798aba95f10d8b0a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Toggle the rendering of debug informations. <br /></td></tr>
+<tr class="memdesc:ae88363f62d1f740c798aba95f10d8b0a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Toggle the rendering of debug informations in the scene. <br /></td></tr>
 <tr class="separator:ae88363f62d1f740c798aba95f10d8b0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a74ca3a7fc1a54d149901038ad65ecb89"><td class="memItemLeft" align="right" valign="top"><a id="a74ca3a7fc1a54d149901038ad65ecb89"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_deferred_renderer.html#a74ca3a7fc1a54d149901038ad65ecb89">_applyBloom</a> = true</td></tr>
+<tr class="memdesc:a74ca3a7fc1a54d149901038ad65ecb89"><td class="mdescLeft">&#160;</td><td class="mdescRight">Should bloom (bright lights halo-ing) be applied. <br /></td></tr>
+<tr class="separator:a74ca3a7fc1a54d149901038ad65ecb89"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aad5be528e024c2f16e3192cbdaf67767"><td class="memItemLeft" align="right" valign="top"><a id="aad5be528e024c2f16e3192cbdaf67767"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_deferred_renderer.html#aad5be528e024c2f16e3192cbdaf67767">_applyTonemapping</a> = false</td></tr>
+<tr class="memdesc:aad5be528e024c2f16e3192cbdaf67767"><td class="mdescLeft">&#160;</td><td class="mdescRight">Should HDR to LDR tonemapping be applied. <br /></td></tr>
+<tr class="separator:aad5be528e024c2f16e3192cbdaf67767"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aecc3325cd5027cbc491caa8db05bd44c"><td class="memItemLeft" align="right" valign="top"><a id="aecc3325cd5027cbc491caa8db05bd44c"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_deferred_renderer.html#aecc3325cd5027cbc491caa8db05bd44c">_applyFXAA</a> = true</td></tr>
+<tr class="memdesc:aecc3325cd5027cbc491caa8db05bd44c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Apply screenspace anti-aliasing. <br /></td></tr>
+<tr class="separator:aecc3325cd5027cbc491caa8db05bd44c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5d3dfc08aefaf0c2ce6c7b9796bf1f41"><td class="memItemLeft" align="right" valign="top"><a id="a5d3dfc08aefaf0c2ce6c7b9796bf1f41"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_deferred_renderer.html#a5d3dfc08aefaf0c2ce6c7b9796bf1f41">_applySSAO</a> = true</td></tr>
+<tr class="memdesc:a5d3dfc08aefaf0c2ce6c7b9796bf1f41"><td class="mdescLeft">&#160;</td><td class="mdescRight">Screen space ambient occlusion. <br /></td></tr>
+<tr class="separator:a5d3dfc08aefaf0c2ce6c7b9796bf1f41"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7d043c618798c77b52fd658916fd429f"><td class="memItemLeft" align="right" valign="top"><a id="a7d043c618798c77b52fd658916fd429f"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_deferred_renderer.html#a7d043c618798c77b52fd658916fd429f">_updateShadows</a> = true</td></tr>
+<tr class="memdesc:a7d043c618798c77b52fd658916fd429f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update shadow maps at each frame. <br /></td></tr>
+<tr class="separator:a7d043c618798c77b52fd658916fd429f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -336,6 +392,65 @@ glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 <dl class="section note"><dt>Note</dt><dd>This function can be called multiple times per frame. </dd></dl>
 
 <p>Implements <a class="el" href="class_renderer.html#a72c719f3b6c39d4f08a9dccb85b44a61">Renderer</a>.</p>
+
+</div>
+</div>
+<a id="a1b2a6d31ca0673bbf914d79c2c0a2755"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1b2a6d31ca0673bbf914d79c2c0a2755">&#9670;&nbsp;</a></span>renderPostprocess()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">GLuint DeferredRenderer::renderPostprocess </td>
+          <td>(</td>
+          <td class="paramtype">const glm::vec2 &amp;&#160;</td>
+          <td class="paramname"><em>invRenderSize</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Apply the postprocess stack. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">invRenderSize</td><td>the inverse of the rendering resolution </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>the ID of the texture containing the result </dd></dl>
+
+</div>
+</div>
+<a id="ae1e706610caa7c8f8a0e878ed5db7c3f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae1e706610caa7c8f8a0e878ed5db7c3f">&#9670;&nbsp;</a></span>renderScene()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void DeferredRenderer::renderScene </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Render the scene to the G-buffer. </p>
 
 </div>
 </div>

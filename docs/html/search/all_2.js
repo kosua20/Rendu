@@ -1,13 +1,17 @@
 var searchData=
 [
   ['backandforth',['BackAndForth',['../class_back_and_forth.html',1,'BackAndForth'],['../class_back_and_forth.html#ab839701666b8c251984953cb10f93b21',1,'BackAndForth::BackAndForth()'],['../class_back_and_forth.html#a0b86c24c12a35f8b51c90ebd03ca4a17',1,'BackAndForth::BackAndForth(const glm::vec3 &amp;axis, float speed, float amplitude, Frame frame)']]],
-  ['background',['background',['../class_scene.html#a96a70fba16b735cc40069683bdbe25da',1,'Scene']]],
+  ['background',['background',['../class_scene.html#a96a70fba16b735cc40069683bdbe25da',1,'Scene::background()'],['../class_scene.html#a1d24bd5fd3c2aa5cc3a93913e7a2f24f',1,'Scene::Background()']]],
+  ['background_5fgbuffer',['Background_gbuffer',['../class_g_l_s_l_1_1_frag_1_1_background__gbuffer.html',1,'GLSL::Frag::Background_gbuffer'],['../class_g_l_s_l_1_1_vert_1_1_background__gbuffer.html',1,'GLSL::Vert::Background_gbuffer']]],
+  ['backgroundcolor',['backgroundColor',['../class_scene.html#a721beac7111afb6d8538af2c83fdbbfb',1,'Scene']]],
   ['backgroundimage',['backgroundImage',['../class_game_menu.html#a84c36596715105ee517fc934d998c347',1,'GameMenu']]],
   ['backgroundirradiance',['backgroundIrradiance',['../class_scene.html#a97cff53657acc24d38b147edd9fb59de',1,'Scene']]],
+  ['backgroundmode',['backgroundMode',['../class_scene.html#a1aa586d9c8af9a90e794ed990dc3dbbf',1,'Scene']]],
   ['backgroundreflection',['backgroundReflection',['../class_scene.html#aad299a9f21706bd59750d71bca0b7b0b',1,'Scene']]],
   ['basehash',['baseHash',['../class_g_l_s_l_1_1_frag_1_1_object__basic.html#ae7d56ba11452c48e848c4031039df882',1,'GLSL::Frag::Object_basic']]],
   ['bbox',['bbox',['../struct_mesh_infos.html#a4381751418eadcd6b57146ffe217efd7',1,'MeshInfos']]],
-  ['beginframe',['beginFrame',['../namespace_interface.html#af2afb1de30bf864dcd050bd1f2d05b4e',1,'Interface']]],
+  ['beginframe',['beginFrame',['../namespace_system_1_1_g_u_i.html#aa1605f8a8c02ec6414ed5f6094191b69',1,'System::GUI']]],
+  ['bgcolor',['bgColor',['../class_g_l_s_l_1_1_frag_1_1_background__gbuffer.html#a6ef8865bc73371798d2d9b9d9fe916ce',1,'GLSL::Frag::Background_gbuffer']]],
   ['bind',['bind',['../class_framebuffer.html#a7b5e9b658e3b08301a2df98b82c7d92c',1,'Framebuffer::bind()'],['../class_framebuffer_cube.html#a189da328bc6e34533c0dce688f370ff1',1,'FramebufferCube::bind()']]],
   ['bindtextures',['bindTextures',['../class_g_l_utilities.html#a9024683e15ab07a72c3b85b02b486bb0',1,'GLUtilities']]],
   ['binormals',['binormals',['../struct_mesh.html#a61bf76d1d94acc3d19f53ecf1ca1eee7',1,'Mesh']]],
@@ -36,7 +40,7 @@ var searchData=
   ['boxblur',['BoxBlur',['../class_box_blur.html',1,'BoxBlur'],['../class_box_blur.html#af9b1be7389ebd1321536da3906e87959',1,'BoxBlur::BoxBlur()']]],
   ['brdf_5fsampler',['Brdf_sampler',['../class_g_l_s_l_1_1_frag_1_1_brdf__sampler.html',1,'GLSL::Frag']]],
   ['brdf_20estimation',['BRDF Estimation',['../group___b_r_d_f_estimator.html',1,'']]],
-  ['brush_5fcolor',['Brush_color',['../class_g_l_s_l_1_1_frag_1_1_brush__color.html',1,'GLSL::Frag::Brush_color'],['../class_g_l_s_l_1_1_vert_1_1_brush__color.html',1,'GLSL::Vert::Brush_color']]],
+  ['brush_5fcolor',['Brush_color',['../class_g_l_s_l_1_1_vert_1_1_brush__color.html',1,'GLSL::Vert::Brush_color'],['../class_g_l_s_l_1_1_frag_1_1_brush__color.html',1,'GLSL::Frag::Brush_color']]],
   ['buttonaction',['ButtonAction',['../class_game.html#a2999de25fbbb113485295c51b3b47646',1,'Game']]],
   ['buttons',['buttons',['../class_game_menu.html#aa71a50182cfe6433c0f7548f3ac762ab',1,'GameMenu']]]
 ];

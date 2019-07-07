@@ -92,10 +92,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
-<a href="#pro-methods">Protected Member Functions</a> &#124;
-<a href="#pro-attribs">Protected Attributes</a> &#124;
+<a href="#pri-methods">Private Member Functions</a> &#124;
+<a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="class_scene-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">Scene Class Reference<div class="ingroups"><a class="el" href="group___scene.html">Scene</a></div></div>  </div>
@@ -107,12 +108,21 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <p><code>#include &lt;<a class="el" href="_scene_8hpp_source.html">Scene.hpp</a>&gt;</code></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
+Public Types</h2></td></tr>
+<tr class="memitem:a1d24bd5fd3c2aa5cc3a93913e7a2f24f"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_scene.html#a1d24bd5fd3c2aa5cc3a93913e7a2f24f">Background</a> { <a class="el" href="class_scene.html#a1d24bd5fd3c2aa5cc3a93913e7a2f24fa04bd834032febb3fda8c6936ee140949">Background::COLOR</a>, 
+<a class="el" href="class_scene.html#a1d24bd5fd3c2aa5cc3a93913e7a2f24fa23a12f67f614b5518c7f1c2465bf95e3">Background::IMAGE</a>, 
+<a class="el" href="class_scene.html#a1d24bd5fd3c2aa5cc3a93913e7a2f24fae3d53ff832d50102618d4fd24ca85a85">Background::SKYBOX</a>
+ }</td></tr>
+<tr class="memdesc:a1d24bd5fd3c2aa5cc3a93913e7a2f24f"><td class="mdescLeft">&#160;</td><td class="mdescRight">The background mode to use for a scene.  <a href="class_scene.html#a1d24bd5fd3c2aa5cc3a93913e7a2f24f">More...</a><br /></td></tr>
+<tr class="separator:a1d24bd5fd3c2aa5cc3a93913e7a2f24f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:aa8f88e4c6ad29a3f30b0c3f8a8fdace3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_scene.html#aa8f88e4c6ad29a3f30b0c3f8a8fdace3">Scene</a> (const std::string &amp;name)</td></tr>
 <tr class="separator:aa8f88e4c6ad29a3f30b0c3f8a8fdace3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abb3b6efc6fdba03cd96436edaf08a967"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_scene.html#abb3b6efc6fdba03cd96436edaf08a967">init</a> ()</td></tr>
-<tr class="separator:abb3b6efc6fdba03cd96436edaf08a967"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0492ee53314a81c0cf57005fd3297f26"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_scene.html#a0492ee53314a81c0cf57005fd3297f26">init</a> (const Storage mode)</td></tr>
+<tr class="separator:a0492ee53314a81c0cf57005fd3297f26"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0c465b1f534220dc72a55d5aa058d976"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_scene.html#a0c465b1f534220dc72a55d5aa058d976">update</a> (double fullTime, double frameTime)</td></tr>
 <tr class="separator:a0c465b1f534220dc72a55d5aa058d976"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1ca07cc9d3fc1fc8fbf985dc07c2cba2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_scene.html#a1ca07cc9d3fc1fc8fbf985dc07c2cba2">clean</a> ()</td></tr>
@@ -124,51 +134,45 @@ Public Attributes</h2></td></tr>
 std::vector&lt; <a class="el" href="class_object.html">Object</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_scene.html#ab492b7d67ad48a8c3ec4e1db1ad8772a">objects</a></td></tr>
 <tr class="memdesc:ab492b7d67ad48a8c3ec4e1db1ad8772a"><td class="mdescLeft">&#160;</td><td class="mdescRight">The objects in the scene. <br /></td></tr>
 <tr class="separator:ab492b7d67ad48a8c3ec4e1db1ad8772a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acc070003e3f35147692a64229ef2c9d3"><td class="memItemLeft" align="right" valign="top"><a id="acc070003e3f35147692a64229ef2c9d3"></a>
+std::vector&lt; std::shared_ptr&lt; <a class="el" href="class_light.html">Light</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_scene.html#acc070003e3f35147692a64229ef2c9d3">lights</a></td></tr>
+<tr class="memdesc:acc070003e3f35147692a64229ef2c9d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lights present in the scene. <br /></td></tr>
+<tr class="separator:acc070003e3f35147692a64229ef2c9d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1aa586d9c8af9a90e794ed990dc3dbbf"><td class="memItemLeft" align="right" valign="top"><a id="a1aa586d9c8af9a90e794ed990dc3dbbf"></a>
+<a class="el" href="class_scene.html#a1d24bd5fd3c2aa5cc3a93913e7a2f24f">Background</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_scene.html#a1aa586d9c8af9a90e794ed990dc3dbbf">backgroundMode</a> = <a class="el" href="class_scene.html#a1d24bd5fd3c2aa5cc3a93913e7a2f24fa04bd834032febb3fda8c6936ee140949">Background::COLOR</a></td></tr>
+<tr class="memdesc:a1aa586d9c8af9a90e794ed990dc3dbbf"><td class="mdescLeft">&#160;</td><td class="mdescRight">The background mode (see enum). <br /></td></tr>
+<tr class="separator:a1aa586d9c8af9a90e794ed990dc3dbbf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a721beac7111afb6d8538af2c83fdbbfb"><td class="memItemLeft" align="right" valign="top"><a id="a721beac7111afb6d8538af2c83fdbbfb"></a>
+glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_scene.html#a721beac7111afb6d8538af2c83fdbbfb">backgroundColor</a> = glm::vec3(0.0f)</td></tr>
+<tr class="memdesc:a721beac7111afb6d8538af2c83fdbbfb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Color to use if the background mode is COLOR. <br /></td></tr>
+<tr class="separator:a721beac7111afb6d8538af2c83fdbbfb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a96a70fba16b735cc40069683bdbe25da"><td class="memItemLeft" align="right" valign="top"><a id="a96a70fba16b735cc40069683bdbe25da"></a>
 <a class="el" href="class_object.html">Object</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_scene.html#a96a70fba16b735cc40069683bdbe25da">background</a></td></tr>
-<tr class="memdesc:a96a70fba16b735cc40069683bdbe25da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Background object. <br /></td></tr>
+<tr class="memdesc:a96a70fba16b735cc40069683bdbe25da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Background object, containing the geometry and optional textures to use. <br /></td></tr>
 <tr class="separator:a96a70fba16b735cc40069683bdbe25da"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a97cff53657acc24d38b147edd9fb59de"><td class="memItemLeft" align="right" valign="top">std::vector&lt; glm::vec3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_scene.html#a97cff53657acc24d38b147edd9fb59de">backgroundIrradiance</a></td></tr>
 <tr class="memdesc:a97cff53657acc24d38b147edd9fb59de"><td class="mdescLeft">&#160;</td><td class="mdescRight">RGB SH-coefficients of the background irradiance, computed using SHExtractor.  <a href="#a97cff53657acc24d38b147edd9fb59de">More...</a><br /></td></tr>
 <tr class="separator:a97cff53657acc24d38b147edd9fb59de"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aad299a9f21706bd59750d71bca0b7b0b"><td class="memItemLeft" align="right" valign="top"><a id="aad299a9f21706bd59750d71bca0b7b0b"></a>
-const <a class="el" href="struct_texture_infos.html">TextureInfos</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_scene.html#aad299a9f21706bd59750d71bca0b7b0b">backgroundReflection</a></td></tr>
+const <a class="el" href="struct_texture_infos.html">TextureInfos</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_scene.html#aad299a9f21706bd59750d71bca0b7b0b">backgroundReflection</a> = nullptr</td></tr>
 <tr class="memdesc:aad299a9f21706bd59750d71bca0b7b0b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cubemap texture ID of the background radiance. <br /></td></tr>
 <tr class="separator:aad299a9f21706bd59750d71bca0b7b0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab4e0885c188fe3ea73665b60b572b31d"><td class="memItemLeft" align="right" valign="top"><a id="ab4e0885c188fe3ea73665b60b572b31d"></a>
-std::vector&lt; <a class="el" href="class_directional_light.html">DirectionalLight</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_scene.html#ab4e0885c188fe3ea73665b60b572b31d">directionalLights</a></td></tr>
-<tr class="memdesc:ab4e0885c188fe3ea73665b60b572b31d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Directional lights present in the scene. <br /></td></tr>
-<tr class="separator:ab4e0885c188fe3ea73665b60b572b31d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abe57e5fa6f029c5c5c8b32c4144f03b0"><td class="memItemLeft" align="right" valign="top"><a id="abe57e5fa6f029c5c5c8b32c4144f03b0"></a>
-std::vector&lt; <a class="el" href="class_point_light.html">PointLight</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_scene.html#abe57e5fa6f029c5c5c8b32c4144f03b0">pointLights</a></td></tr>
-<tr class="memdesc:abe57e5fa6f029c5c5c8b32c4144f03b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Omni-directional lights present in the scene. <br /></td></tr>
-<tr class="separator:abe57e5fa6f029c5c5c8b32c4144f03b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9a1901b946b5ad43de1915554d3cbfa0"><td class="memItemLeft" align="right" valign="top"><a id="a9a1901b946b5ad43de1915554d3cbfa0"></a>
-std::vector&lt; <a class="el" href="class_spot_light.html">SpotLight</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_scene.html#a9a1901b946b5ad43de1915554d3cbfa0">spotLights</a></td></tr>
-<tr class="memdesc:a9a1901b946b5ad43de1915554d3cbfa0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Spotlights present in the scene. <br /></td></tr>
-<tr class="separator:a9a1901b946b5ad43de1915554d3cbfa0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
-Protected Member Functions</h2></td></tr>
-<tr class="memitem:a0a35c5dc744d7dd923e07e6388f3099a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_scene.html#a0a35c5dc744d7dd923e07e6388f3099a">loadObject</a> (const std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt; &amp;params)</td></tr>
-<tr class="separator:a0a35c5dc744d7dd923e07e6388f3099a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a042ec4aaee53b956c5504914be2251d8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_scene.html#a042ec4aaee53b956c5504914be2251d8">loadPointLight</a> (const std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt; &amp;params)</td></tr>
-<tr class="separator:a042ec4aaee53b956c5504914be2251d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8f9c813a4d214b8740ca2becf4115134"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_scene.html#a8f9c813a4d214b8740ca2becf4115134">loadDirectionalLight</a> (const std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt; &amp;params)</td></tr>
-<tr class="separator:a8f9c813a4d214b8740ca2becf4115134"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a712606d6141648e0a655837550bd0afc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_scene.html#a712606d6141648e0a655837550bd0afc">loadSpotLight</a> (const std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt; &amp;params)</td></tr>
-<tr class="separator:a712606d6141648e0a655837550bd0afc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6de515e84d20739c9bd04b22412a03cf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_scene.html#a6de515e84d20739c9bd04b22412a03cf">loadBackground</a> (const std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt; &amp;params)</td></tr>
-<tr class="separator:a6de515e84d20739c9bd04b22412a03cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a38b714e0989109c37c90b7e451a1af4c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_scene.html#a38b714e0989109c37c90b7e451a1af4c">loadScene</a> (const std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt; &amp;params)</td></tr>
-<tr class="separator:a38b714e0989109c37c90b7e451a1af4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
+Private Member Functions</h2></td></tr>
+<tr class="memitem:ade02a8bab28153983c7541e037fb5900"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_scene.html#ade02a8bab28153983c7541e037fb5900">loadObject</a> (const std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt; &amp;params, const Storage mode)</td></tr>
+<tr class="separator:ade02a8bab28153983c7541e037fb5900"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0d1f6476b1088cf8452e7f6e94572949"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_scene.html#a0d1f6476b1088cf8452e7f6e94572949">loadLight</a> (const std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt; &amp;params, const Storage mode)</td></tr>
+<tr class="separator:a0d1f6476b1088cf8452e7f6e94572949"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:add5dc7222f9e462d9af52762bec9d1f1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_scene.html#add5dc7222f9e462d9af52762bec9d1f1">loadScene</a> (const std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt; &amp;params, const Storage mode)</td></tr>
+<tr class="separator:add5dc7222f9e462d9af52762bec9d1f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a44ce93fd55624fa7e5d3afe4a1f0dc24"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_scene.html#a44ce93fd55624fa7e5d3afe4a1f0dc24">loadSphericalHarmonics</a> (const std::string &amp;name)</td></tr>
 <tr class="separator:a44ce93fd55624fa7e5d3afe4a1f0dc24"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7d001285074df11eaa60c1a8d449f708"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_bounding_box.html">BoundingBox</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_scene.html#a7d001285074df11eaa60c1a8d449f708">computeBoundingBox</a> (bool onlyShadowCasters=false)</td></tr>
 <tr class="separator:a7d001285074df11eaa60c1a8d449f708"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
-Protected Attributes</h2></td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
+Private Attributes</h2></td></tr>
 <tr class="memitem:ad39d09d56e7760faa4dee966251193ce"><td class="memItemLeft" align="right" valign="top"><a id="ad39d09d56e7760faa4dee966251193ce"></a>
 glm::mat4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_scene.html#ad39d09d56e7760faa4dee966251193ce">_sceneModel</a> = glm::mat4(1.0f)</td></tr>
 <tr class="memdesc:ad39d09d56e7760faa4dee966251193ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">The scene global transformation. <br /></td></tr>
@@ -184,7 +188,40 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Represents a 3D environment composed of objects, a background and additional environment lighting informations. </p>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+</div><h2 class="groupheader">Member Enumeration Documentation</h2>
+<a id="a1d24bd5fd3c2aa5cc3a93913e7a2f24f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1d24bd5fd3c2aa5cc3a93913e7a2f24f">&#9670;&nbsp;</a></span>Background</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="class_scene.html#a1d24bd5fd3c2aa5cc3a93913e7a2f24f">Scene::Background</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The background mode to use for a scene. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a1d24bd5fd3c2aa5cc3a93913e7a2f24fa04bd834032febb3fda8c6936ee140949"></a>COLOR&#160;</td><td class="fielddoc"><p>Use a unique color as background. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a1d24bd5fd3c2aa5cc3a93913e7a2f24fa23a12f67f614b5518c7f1c2465bf95e3"></a>IMAGE&#160;</td><td class="fielddoc"><p>Use a 2D texture image as background (will be stretched). </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a1d24bd5fd3c2aa5cc3a93913e7a2f24fae3d53ff832d50102618d4fd24ca85a85"></a>SKYBOX&#160;</td><td class="fielddoc"><p>Use a skybox/cubemap as background. </p>
+</td></tr>
+</table>
+
+</div>
+</div>
+<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="aa8f88e4c6ad29a3f30b0c3f8a8fdace3"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa8f88e4c6ad29a3f30b0c3f8a8fdace3">&#9670;&nbsp;</a></span>Scene()</h2>
 
@@ -200,22 +237,23 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Constructor from a scene description file. The expected format is as follow:</p>
-<pre class="fragment">scene:
+<p>Constructor from a scene description file. The expected format is as follow: </p><pre class="fragment">scene:
     probe: texturetype: texturename (see Codable::decodeTexture for details)
    irradiance: shcoeffsfilename
    translation: X,Y,Z
    scaling: scale
    orientation: axisX,axisY,axisZ angle
-background:
-   texture: texturetype: texturename
+   background: ...
 object:
    ... (see Object::decode documentation)
 ...
 lighttype:
    ... (see Light::decode documentation)
 ...
-</pre><p>where lighttype is one of point, directional, spot. </p><dl class="params"><dt>Parameters</dt><dd>
+</pre><p> where lighttype is one of point, directional, spot and background is one of </p><pre class="fragment">bgcolor: R,G,B
+bgimage: texturetype: texturename
+bgskybox: texturetype: texturename
+</pre><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">name</td><td>the name of the scene description file </td></tr>
   </table>
@@ -262,7 +300,7 @@ lighttype:
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -276,8 +314,8 @@ lighttype:
 
 </div>
 </div>
-<a id="abb3b6efc6fdba03cd96436edaf08a967"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abb3b6efc6fdba03cd96436edaf08a967">&#9670;&nbsp;</a></span>init()</h2>
+<a id="a0492ee53314a81c0cf57005fd3297f26"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0492ee53314a81c0cf57005fd3297f26">&#9670;&nbsp;</a></span>init()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -285,17 +323,23 @@ lighttype:
         <tr>
           <td class="memname">void Scene::init </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype">const Storage&#160;</td>
+          <td class="paramname"><em>mode</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Performs initialization against the graphics API, loading data. </p>
+<p>Performs initialization against the graphics API, loading data. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">mode</td><td>should the data be stored on the CPU, GPU, or both. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
-<a id="a6de515e84d20739c9bd04b22412a03cf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6de515e84d20739c9bd04b22412a03cf">&#9670;&nbsp;</a></span>loadBackground()</h2>
+<a id="a0d1f6476b1088cf8452e7f6e94572949"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0d1f6476b1088cf8452e7f6e94572949">&#9670;&nbsp;</a></span>loadLight()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -304,63 +348,41 @@ lighttype:
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void Scene::loadBackground </td>
+          <td class="memname">void Scene::loadLight </td>
           <td>(</td>
           <td class="paramtype">const std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt; &amp;&#160;</td>
-          <td class="paramname"><em>params</em></td><td>)</td>
-          <td></td>
+          <td class="paramname"><em>params</em>, </td>
         </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Load the scene background object from its serialized representation. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">params</td><td>the background parameters </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000009">Todo:</a></b></dt><dd>Support other types of background object. Maybe based implicitely on what was passed (color/texture2d/cubemap)? </dd></dl>
-
-</div>
-</div>
-<a id="a8f9c813a4d214b8740ca2becf4115134"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8f9c813a4d214b8740ca2becf4115134">&#9670;&nbsp;</a></span>loadDirectionalLight()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
         <tr>
-          <td class="memname">void Scene::loadDirectionalLight </td>
-          <td>(</td>
-          <td class="paramtype">const std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt; &amp;&#160;</td>
-          <td class="paramname"><em>params</em></td><td>)</td>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const Storage&#160;</td>
+          <td class="paramname"><em>mode</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Load a directional ligjt in the scene from its serialized representation. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Load a point light in the scene from its serialized representation. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">params</td><td>the directional light parameters </td></tr>
+    <tr><td class="paramname">params</td><td>the point light parameters </td></tr>
+    <tr><td class="paramname">mode</td><td>the storage mode (CPU, GPU, both) </td></tr>
   </table>
   </dd>
 </dl>
 
 </div>
 </div>
-<a id="a0a35c5dc744d7dd923e07e6388f3099a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0a35c5dc744d7dd923e07e6388f3099a">&#9670;&nbsp;</a></span>loadObject()</h2>
+<a id="ade02a8bab28153983c7541e037fb5900"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ade02a8bab28153983c7541e037fb5900">&#9670;&nbsp;</a></span>loadObject()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -372,59 +394,38 @@ lighttype:
           <td class="memname">void Scene::loadObject </td>
           <td>(</td>
           <td class="paramtype">const std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt; &amp;&#160;</td>
-          <td class="paramname"><em>params</em></td><td>)</td>
+          <td class="paramname"><em>params</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const Storage&#160;</td>
+          <td class="paramname"><em>mode</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 <p>Load an object in the scene from its serialized representation. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">params</td><td>the object parameters </td></tr>
+    <tr><td class="paramname">mode</td><td>the storage mode (CPU, GPU, both) </td></tr>
   </table>
   </dd>
 </dl>
 
 </div>
 </div>
-<a id="a042ec4aaee53b956c5504914be2251d8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a042ec4aaee53b956c5504914be2251d8">&#9670;&nbsp;</a></span>loadPointLight()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Scene::loadPointLight </td>
-          <td>(</td>
-          <td class="paramtype">const std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt; &amp;&#160;</td>
-          <td class="paramname"><em>params</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Load a point light in the scene from its serialized representation. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">params</td><td>the point light parameters </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="a38b714e0989109c37c90b7e451a1af4c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a38b714e0989109c37c90b7e451a1af4c">&#9670;&nbsp;</a></span>loadScene()</h2>
+<a id="add5dc7222f9e462d9af52762bec9d1f1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#add5dc7222f9e462d9af52762bec9d1f1">&#9670;&nbsp;</a></span>loadScene()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -436,19 +437,30 @@ lighttype:
           <td class="memname">void Scene::loadScene </td>
           <td>(</td>
           <td class="paramtype">const std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt; &amp;&#160;</td>
-          <td class="paramname"><em>params</em></td><td>)</td>
+          <td class="paramname"><em>params</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const Storage&#160;</td>
+          <td class="paramname"><em>mode</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 <p>Load the scene environment informations from its serialized representation. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">params</td><td>the scene parameters </td></tr>
+    <tr><td class="paramname">mode</td><td>the storage mode (CPU, GPU, both) </td></tr>
   </table>
   </dd>
 </dl>
@@ -474,7 +486,7 @@ lighttype:
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -485,38 +497,6 @@ lighttype:
   </dd>
 </dl>
 <dl class="section see"><dt>See also</dt><dd>SphericalHarmonics </dd></dl>
-
-</div>
-</div>
-<a id="a712606d6141648e0a655837550bd0afc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a712606d6141648e0a655837550bd0afc">&#9670;&nbsp;</a></span>loadSpotLight()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Scene::loadSpotLight </td>
-          <td>(</td>
-          <td class="paramtype">const std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt; &amp;&#160;</td>
-          <td class="paramname"><em>params</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Load a spot light in the scene from its serialized representation. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">params</td><td>the spot light parameters </td></tr>
-  </table>
-  </dd>
-</dl>
 
 </div>
 </div>

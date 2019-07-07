@@ -92,31 +92,20 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="class_text_utilities-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">TextUtilities Class Reference<div class="ingroups"><a class="el" href="group___resources.html">Resources</a></div></div>  </div>
+<div class="title">TextUtilities Class Reference<div class="ingroups"><a class="el" href="group___helpers.html">Helpers</a></div></div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p>Provides utilities to load fonts, generate labels and process text in general.  
+<p>Provides utilities process strings.  
  <a href="class_text_utilities.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="_text_utilities_8hpp_source.html">TextUtilities.hpp</a>&gt;</code></p>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
-Public Types</h2></td></tr>
-<tr class="memitem:a560996ad454c3f7371b6617cc39bf453"><td class="memItemLeft" align="right" valign="top"><a id="a560996ad454c3f7371b6617cc39bf453"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_text_utilities.html#a560996ad454c3f7371b6617cc39bf453">Alignment</a> </td></tr>
-<tr class="memdesc:a560996ad454c3f7371b6617cc39bf453"><td class="mdescLeft">&#160;</td><td class="mdescRight">Text alignment. <br /></td></tr>
-<tr class="separator:a560996ad454c3f7371b6617cc39bf453"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a1522687f64d1e7542c4a640072c4e8c7"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_text_utilities.html#a1522687f64d1e7542c4a640072c4e8c7">loadFont</a> (std::istream &amp;in, <a class="el" href="struct_font_infos.html">FontInfos</a> &amp;font)</td></tr>
-<tr class="separator:a1522687f64d1e7542c4a640072c4e8c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae9483dff79c87d187251229c13b42de7"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="struct_mesh_infos.html">MeshInfos</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_text_utilities.html#ae9483dff79c87d187251229c13b42de7">generateLabel</a> (const std::string &amp;text, const <a class="el" href="struct_font_infos.html">FontInfos</a> &amp;font, const float scale, const <a class="el" href="class_text_utilities.html#a560996ad454c3f7371b6617cc39bf453">Alignment</a> align=LEFT)</td></tr>
-<tr class="separator:ae9483dff79c87d187251229c13b42de7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8b4ed6b60c557e2fb40e27a9ce9d4991"><td class="memItemLeft" align="right" valign="top">static std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_text_utilities.html#a8b4ed6b60c557e2fb40e27a9ce9d4991">trim</a> (const std::string &amp;str, const std::string &amp;del)</td></tr>
 <tr class="separator:a8b4ed6b60c557e2fb40e27a9ce9d4991"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a109f8946c5c8b5b7980ef16b222cb2e4"><td class="memItemLeft" align="right" valign="top">static std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_text_utilities.html#a109f8946c5c8b5b7980ef16b222cb2e4">removeExtension</a> (std::string &amp;str)</td></tr>
@@ -129,66 +118,8 @@ Static Public Member Functions</h2></td></tr>
 <tr class="separator:abe79f8a4f4cc9ee437f468340a391694"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Provides utilities to load fonts, generate labels and process text in general. </p>
+<div class="textblock"><p>Provides utilities process strings. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="ae9483dff79c87d187251229c13b42de7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae9483dff79c87d187251229c13b42de7">&#9670;&nbsp;</a></span>generateLabel()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="struct_mesh_infos.html">MeshInfos</a> TextUtilities::generateLabel </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>text</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="struct_font_infos.html">FontInfos</a> &amp;&#160;</td>
-          <td class="paramname"><em>font</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const float&#160;</td>
-          <td class="paramname"><em>scale</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="class_text_utilities.html#a560996ad454c3f7371b6617cc39bf453">Alignment</a>&#160;</td>
-          <td class="paramname"><em>align</em> = <code>LEFT</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Generate the label mesh for a given text and font. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">text</td><td>the text do display </td></tr>
-    <tr><td class="paramname">font</td><td>the font to use for the label </td></tr>
-    <tr><td class="paramname">scale</td><td>the vertical height of the characters, in absolute units </td></tr>
-    <tr><td class="paramname">align</td><td>the text alignment to apply, will influence the origin placement </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>the infos of the label mesh </dd></dl>
-
-</div>
-</div>
 <a id="a17e4a1fe458b3e46bd23ed15d9e002f8"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a17e4a1fe458b3e46bd23ed15d9e002f8">&#9670;&nbsp;</a></span>hasPrefix()</h2>
 
@@ -274,49 +205,6 @@ Static Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if the suffix is here </dd></dl>
-
-</div>
-</div>
-<a id="a1522687f64d1e7542c4a640072c4e8c7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1522687f64d1e7542c4a640072c4e8c7">&#9670;&nbsp;</a></span>loadFont()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void TextUtilities::loadFont </td>
-          <td>(</td>
-          <td class="paramtype">std::istream &amp;&#160;</td>
-          <td class="paramname"><em>in</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="struct_font_infos.html">FontInfos</a> &amp;&#160;</td>
-          <td class="paramname"><em>font</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Load font from text stream. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">in</td><td>the input stream containing the metadata </td></tr>
-    <tr><td class="paramname">font</td><td>will be populated with the font metadata and atlas </td></tr>
-  </table>
-  </dd>
-</dl>
 
 </div>
 </div>
@@ -448,8 +336,8 @@ Static Public Member Functions</h2></td></tr>
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>src/engine/resources/<a class="el" href="_text_utilities_8hpp_source.html">TextUtilities.hpp</a></li>
-<li>src/engine/resources/TextUtilities.cpp</li>
+<li>src/engine/helpers/<a class="el" href="_text_utilities_8hpp_source.html">TextUtilities.hpp</a></li>
+<li>src/engine/helpers/TextUtilities.cpp</li>
 </ul>
 </div><!-- contents -->
 <!-- HTML footer for doxygen 1.8.14-->

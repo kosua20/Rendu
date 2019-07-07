@@ -96,7 +96,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="class_directional_light-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">DirectionalLight Class Reference<div class="ingroups"><a class="el" href="group___scene.html">Scene</a></div></div>  </div>
+<div class="title">DirectionalLight Class Reference<span class="mlabels"><span class="mlabel">final</span></span><div class="ingroups"><a class="el" href="group___scene.html">Scene</a></div></div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -113,8 +113,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a45781f74ce19c1ccbd052b32344908e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad230f34c8d0359afafa765292d1c5da9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_directional_light.html#ad230f34c8d0359afafa765292d1c5da9">init</a> (const std::vector&lt; GLuint &gt; &amp;textureIds)</td></tr>
 <tr class="separator:ad230f34c8d0359afafa765292d1c5da9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a27d23f9c83478911eed8a8d5b46b7af6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_directional_light.html#a27d23f9c83478911eed8a8d5b46b7af6">draw</a> (const glm::mat4 &amp;viewMatrix, const glm::mat4 &amp;projectionMatrix) const</td></tr>
-<tr class="separator:a27d23f9c83478911eed8a8d5b46b7af6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab5c100daa47536d3c89f7bfdbbd1a1e1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_directional_light.html#ab5c100daa47536d3c89f7bfdbbd1a1e1">draw</a> (const glm::mat4 &amp;viewMatrix, const glm::mat4 &amp;projectionMatrix, const glm::vec2 &amp;invScreenSize) const</td></tr>
+<tr class="separator:ab5c100daa47536d3c89f7bfdbbd1a1e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abcf5da6369a88665f1565bcb801e7148"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_directional_light.html#abcf5da6369a88665f1565bcb801e7148">drawShadow</a> (const std::vector&lt; <a class="el" href="class_object.html">Object</a> &gt; &amp;objects) const</td></tr>
 <tr class="separator:abcf5da6369a88665f1565bcb801e7148"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae500adbf9ba8f99d982ac7be66698a83"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_directional_light.html#ae500adbf9ba8f99d982ac7be66698a83">drawDebug</a> (const glm::mat4 &amp;viewMatrix, const glm::mat4 &amp;projectionMatrix) const</td></tr>
@@ -123,10 +123,12 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a1ad021501ddc67ac6f66c0fe7eb4d9cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab97f502d04926ea5144570474b85cf06"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_directional_light.html#ab97f502d04926ea5144570474b85cf06">clean</a> () const</td></tr>
 <tr class="separator:ab97f502d04926ea5144570474b85cf06"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a35982f69f0231bdf639cbe50df58c75f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_directional_light.html#a35982f69f0231bdf639cbe50df58c75f">decode</a> (const std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt; &amp;params)</td></tr>
-<tr class="separator:a35982f69f0231bdf639cbe50df58c75f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a015053485826913154f4c9eac17bcd6f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_directional_light.html#a015053485826913154f4c9eac17bcd6f">setScene</a> (const <a class="el" href="struct_bounding_box.html">BoundingBox</a> &amp;sceneBox)</td></tr>
 <tr class="separator:a015053485826913154f4c9eac17bcd6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a290acd1c4a9b3febd8b437e7bb296dfb"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_directional_light.html#a290acd1c4a9b3febd8b437e7bb296dfb">visible</a> (const glm::vec3 &amp;position, const <a class="el" href="class_raycaster.html">Raycaster</a> &amp;raycaster, glm::vec3 &amp;direction, float &amp;attenuation) const</td></tr>
+<tr class="separator:a290acd1c4a9b3febd8b437e7bb296dfb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a35982f69f0231bdf639cbe50df58c75f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_directional_light.html#a35982f69f0231bdf639cbe50df58c75f">decode</a> (const std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt; &amp;params)</td></tr>
+<tr class="separator:a35982f69f0231bdf639cbe50df58c75f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_light"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_light')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_light.html">Light</a></td></tr>
 <tr class="memitem:aeb5df09a25a32f19fdffa761268ba24f inherit pub_methods_class_light"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_light.html#aeb5df09a25a32f19fdffa761268ba24f">Light</a> ()</td></tr>
 <tr class="separator:aeb5df09a25a32f19fdffa761268ba24f inherit pub_methods_class_light"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -136,8 +138,12 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a9753d095b837bded3951debbcef35bb1 inherit pub_methods_class_light"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a91e1c518722138557e2733c2e474ee1f inherit pub_methods_class_light"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_light.html#a91e1c518722138557e2733c2e474ee1f">setIntensity</a> (const glm::vec3 &amp;color)</td></tr>
 <tr class="separator:a91e1c518722138557e2733c2e474ee1f inherit pub_methods_class_light"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3ac66ee48fea2b8486612fb3729c410d inherit pub_methods_class_light"><td class="memItemLeft" align="right" valign="top">const glm::vec3 &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_light.html#a3ac66ee48fea2b8486612fb3729c410d">intensity</a> ()</td></tr>
+<tr class="separator:a3ac66ee48fea2b8486612fb3729c410d inherit pub_methods_class_light"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aceac3e9db9e6bed4a6129302f04e0e8d inherit pub_methods_class_light"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_light.html#aceac3e9db9e6bed4a6129302f04e0e8d">addAnimation</a> (std::shared_ptr&lt; <a class="el" href="class_animation.html">Animation</a> &gt; anim)</td></tr>
 <tr class="separator:aceac3e9db9e6bed4a6129302f04e0e8d inherit pub_methods_class_light"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae3e3209d4b97d0bbbd614ded5e1213d9 inherit pub_methods_class_light"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_light.html#ae3e3209d4b97d0bbbd614ded5e1213d9">~Light</a> ()=default</td></tr>
+<tr class="separator:ae3e3209d4b97d0bbbd614ded5e1213d9 inherit pub_methods_class_light"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
@@ -149,10 +155,6 @@ std::unique_ptr&lt; <a class="el" href="class_framebuffer.html">Framebuffer</a> 
 std::unique_ptr&lt; <a class="el" href="class_box_blur.html">BoxBlur</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_directional_light.html#abd870afada34efbd74b327f5a675c84d">_blur</a></td></tr>
 <tr class="memdesc:abd870afada34efbd74b327f5a675c84d"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_blur.html" title="A general Blur interface. Can be used to blur a given OpenGL texture and return/draw the result textu...">Blur</a> processing for variance shadow mapping. <br /></td></tr>
 <tr class="separator:abd870afada34efbd74b327f5a675c84d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a21ebe0b371d2e14d8546bc0a962d0649"><td class="memItemLeft" align="right" valign="top"><a id="a21ebe0b371d2e14d8546bc0a962d0649"></a>
-<a class="el" href="struct_bounding_box.html">BoundingBox</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_directional_light.html#a21ebe0b371d2e14d8546bc0a962d0649">_sceneBox</a></td></tr>
-<tr class="memdesc:a21ebe0b371d2e14d8546bc0a962d0649"><td class="mdescLeft">&#160;</td><td class="mdescRight">The scene bounding box, to fit the shadow map. <br /></td></tr>
-<tr class="separator:a21ebe0b371d2e14d8546bc0a962d0649"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9f3dd6675de6c0ef16e7da31dcd808fe"><td class="memItemLeft" align="right" valign="top"><a id="a9f3dd6675de6c0ef16e7da31dcd808fe"></a>
 glm::mat4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_directional_light.html#a9f3dd6675de6c0ef16e7da31dcd808fe">_projectionMatrix</a></td></tr>
 <tr class="memdesc:a9f3dd6675de6c0ef16e7da31dcd808fe"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_light.html" title="A general light with adjustable color intensity, that can cast shadows.">Light</a> projection matrix. <br /></td></tr>
@@ -165,25 +167,36 @@ glm::mat4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_directional_light.html#ad16c1148b478fcad332eed9d54f991df">_lightDirection</a></td></tr>
 <tr class="memdesc:ad16c1148b478fcad332eed9d54f991df"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_light.html" title="A general light with adjustable color intensity, that can cast shadows.">Light</a> direction. <br /></td></tr>
 <tr class="separator:ad16c1148b478fcad332eed9d54f991df"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7b4849111c63a9129756453023e21141"><td class="memItemLeft" align="right" valign="top"><a id="a7b4849111c63a9129756453023e21141"></a>
-const <a class="el" href="class_program_infos.html">ProgramInfos</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_directional_light.html#a7b4849111c63a9129756453023e21141">_program</a></td></tr>
-<tr class="memdesc:a7b4849111c63a9129756453023e21141"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_light.html" title="A general light with adjustable color intensity, that can cast shadows.">Light</a> rendering program. <br /></td></tr>
-<tr class="separator:a7b4849111c63a9129756453023e21141"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa1d9d9ae4b8513558681af3b20a1f3a6"><td class="memItemLeft" align="right" valign="top"><a id="aa1d9d9ae4b8513558681af3b20a1f3a6"></a>
-const <a class="el" href="class_program_infos.html">ProgramInfos</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_directional_light.html#aa1d9d9ae4b8513558681af3b20a1f3a6">_programDepth</a></td></tr>
-<tr class="memdesc:aa1d9d9ae4b8513558681af3b20a1f3a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shadow map program. <br /></td></tr>
-<tr class="separator:aa1d9d9ae4b8513558681af3b20a1f3a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a63c99866cdcc22d4797389293c3a4f46"><td class="memItemLeft" align="right" valign="top"><a id="a63c99866cdcc22d4797389293c3a4f46"></a>
-std::vector&lt; GLuint &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_directional_light.html#a63c99866cdcc22d4797389293c3a4f46">_textures</a></td></tr>
-<tr class="memdesc:a63c99866cdcc22d4797389293c3a4f46"><td class="mdescLeft">&#160;</td><td class="mdescRight">The G-buffer textures. <br /></td></tr>
-<tr class="separator:a63c99866cdcc22d4797389293c3a4f46"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
+<tr class="inherit_header pub_static_methods_class_light"><td colspan="2" onclick="javascript:toggleInherit('pub_static_methods_class_light')"><img src="closed.png" alt="-"/>&#160;Static Public Member Functions inherited from <a class="el" href="class_light.html">Light</a></td></tr>
+<tr class="memitem:a3442917a550cb046c798f7567aa68c72 inherit pub_static_methods_class_light"><td class="memItemLeft" align="right" valign="top">static std::shared_ptr&lt; <a class="el" href="class_light.html">Light</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_light.html#a3442917a550cb046c798f7567aa68c72">decode</a> (const std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt; &amp;params)</td></tr>
+<tr class="separator:a3442917a550cb046c798f7567aa68c72 inherit pub_static_methods_class_light"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_methods_class_light"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_class_light')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="class_light.html">Light</a></td></tr>
-<tr class="memitem:a87f889372072c5297adfba49159fdb16 inherit pro_methods_class_light"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_light.html#a87f889372072c5297adfba49159fdb16">decode</a> (const std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt; &amp;params)</td></tr>
-<tr class="separator:a87f889372072c5297adfba49159fdb16 inherit pro_methods_class_light"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af3704b997105f53555c6d7435497f17e inherit pro_methods_class_light"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_light.html#af3704b997105f53555c6d7435497f17e">decodeBase</a> (const std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt; &amp;params)</td></tr>
+<tr class="separator:af3704b997105f53555c6d7435497f17e inherit pro_methods_class_light"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_attribs_class_light"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_class_light')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_light.html">Light</a></td></tr>
+<tr class="memitem:aac93e8aeacbd27e39047796dbd0ef135 inherit pro_attribs_class_light"><td class="memItemLeft" align="right" valign="top"><a id="aac93e8aeacbd27e39047796dbd0ef135"></a>
+std::vector&lt; GLuint &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_light.html#aac93e8aeacbd27e39047796dbd0ef135">_textures</a></td></tr>
+<tr class="memdesc:aac93e8aeacbd27e39047796dbd0ef135 inherit pro_attribs_class_light"><td class="mdescLeft">&#160;</td><td class="mdescRight">The G-buffer textures. <br /></td></tr>
+<tr class="separator:aac93e8aeacbd27e39047796dbd0ef135 inherit pro_attribs_class_light"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9a531ea8567af033989e972d7ebfecc2 inherit pro_attribs_class_light"><td class="memItemLeft" align="right" valign="top"><a id="a9a531ea8567af033989e972d7ebfecc2"></a>
+std::vector&lt; std::shared_ptr&lt; <a class="el" href="class_animation.html">Animation</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_light.html#a9a531ea8567af033989e972d7ebfecc2">_animations</a></td></tr>
+<tr class="memdesc:a9a531ea8567af033989e972d7ebfecc2 inherit pro_attribs_class_light"><td class="mdescLeft">&#160;</td><td class="mdescRight">Animations list (will be applied in order). <br /></td></tr>
+<tr class="separator:a9a531ea8567af033989e972d7ebfecc2 inherit pro_attribs_class_light"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7f1076aa7177eee49393648930b71dd8 inherit pro_attribs_class_light"><td class="memItemLeft" align="right" valign="top"><a id="a7f1076aa7177eee49393648930b71dd8"></a>
+<a class="el" href="struct_bounding_box.html">BoundingBox</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_light.html#a7f1076aa7177eee49393648930b71dd8">_sceneBox</a></td></tr>
+<tr class="memdesc:a7f1076aa7177eee49393648930b71dd8 inherit pro_attribs_class_light"><td class="mdescLeft">&#160;</td><td class="mdescRight">The scene bounding box, to fit the shadow map. <br /></td></tr>
+<tr class="separator:a7f1076aa7177eee49393648930b71dd8 inherit pro_attribs_class_light"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9d0a00dba56841d375968a0c6d073868 inherit pro_attribs_class_light"><td class="memItemLeft" align="right" valign="top"><a id="a9d0a00dba56841d375968a0c6d073868"></a>
+const <a class="el" href="class_program_infos.html">ProgramInfos</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_light.html#a9d0a00dba56841d375968a0c6d073868">_program</a></td></tr>
+<tr class="memdesc:a9d0a00dba56841d375968a0c6d073868 inherit pro_attribs_class_light"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_light.html" title="A general light with adjustable color intensity, that can cast shadows.">Light</a> rendering program. <br /></td></tr>
+<tr class="separator:a9d0a00dba56841d375968a0c6d073868 inherit pro_attribs_class_light"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abeeb3787ea1b8ab7247a6093d24fb207 inherit pro_attribs_class_light"><td class="memItemLeft" align="right" valign="top"><a id="abeeb3787ea1b8ab7247a6093d24fb207"></a>
+const <a class="el" href="class_program_infos.html">ProgramInfos</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_light.html#abeeb3787ea1b8ab7247a6093d24fb207">_programDepth</a></td></tr>
+<tr class="memdesc:abeeb3787ea1b8ab7247a6093d24fb207 inherit pro_attribs_class_light"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shadow map program. <br /></td></tr>
+<tr class="separator:abeeb3787ea1b8ab7247a6093d24fb207 inherit pro_attribs_class_light"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6688109bee3eb9d329d584098db897af inherit pro_attribs_class_light"><td class="memItemLeft" align="right" valign="top"><a id="a6688109bee3eb9d329d584098db897af"></a>
 glm::mat4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_light.html#a6688109bee3eb9d329d584098db897af">_mvp</a></td></tr>
 <tr class="memdesc:a6688109bee3eb9d329d584098db897af inherit pro_attribs_class_light"><td class="mdescLeft">&#160;</td><td class="mdescRight">MVP matrix for shadow casting. <br /></td></tr>
@@ -194,12 +207,8 @@ glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 <tr class="separator:af6af1152b9e945475c615b4728c9012f inherit pro_attribs_class_light"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6c324048008d9af8b1194f597c5fb755 inherit pro_attribs_class_light"><td class="memItemLeft" align="right" valign="top"><a id="a6c324048008d9af8b1194f597c5fb755"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_light.html#a6c324048008d9af8b1194f597c5fb755">_castShadows</a></td></tr>
-<tr class="memdesc:a6c324048008d9af8b1194f597c5fb755 inherit pro_attribs_class_light"><td class="mdescLeft">&#160;</td><td class="mdescRight">Is the light casting shadows (and thus use a shadow map). <br /></td></tr>
+<tr class="memdesc:a6c324048008d9af8b1194f597c5fb755 inherit pro_attribs_class_light"><td class="mdescLeft">&#160;</td><td class="mdescRight">Is the light casting shadows (and thus use a shadow map).. <br /></td></tr>
 <tr class="separator:a6c324048008d9af8b1194f597c5fb755 inherit pro_attribs_class_light"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9a531ea8567af033989e972d7ebfecc2 inherit pro_attribs_class_light"><td class="memItemLeft" align="right" valign="top"><a id="a9a531ea8567af033989e972d7ebfecc2"></a>
-std::vector&lt; std::shared_ptr&lt; <a class="el" href="class_animation.html">Animation</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_light.html#a9a531ea8567af033989e972d7ebfecc2">_animations</a></td></tr>
-<tr class="memdesc:a9a531ea8567af033989e972d7ebfecc2 inherit pro_attribs_class_light"><td class="mdescLeft">&#160;</td><td class="mdescRight">Animations list (will be applied in order). <br /></td></tr>
-<tr class="separator:a9a531ea8567af033989e972d7ebfecc2 inherit pro_attribs_class_light"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A directional light, where all light rays have the same direction. </p>
@@ -266,6 +275,9 @@ std::vector&lt; std::shared_ptr&lt; <a class="el" href="class_animation.html">An
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void DirectionalLight::clean </td>
@@ -274,8 +286,17 @@ std::vector&lt; std::shared_ptr&lt; <a class="el" href="class_animation.html">An
           <td> const</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
+
+<p></p>
 <p>Clean internal resources. </p>
+
+<p>Implements <a class="el" href="class_light.html#ac0885ce07406bf38174ec18c999ea5f8">Light</a>.</p>
 
 </div>
 </div>
@@ -309,11 +330,14 @@ animations:
 
 </div>
 </div>
-<a id="a27d23f9c83478911eed8a8d5b46b7af6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a27d23f9c83478911eed8a8d5b46b7af6">&#9670;&nbsp;</a></span>draw()</h2>
+<a id="ab5c100daa47536d3c89f7bfdbbd1a1e1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab5c100daa47536d3c89f7bfdbbd1a1e1">&#9670;&nbsp;</a></span>draw()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void DirectionalLight::draw </td>
@@ -325,7 +349,13 @@ animations:
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const glm::mat4 &amp;&#160;</td>
-          <td class="paramname"><em>projectionMatrix</em>&#160;</td>
+          <td class="paramname"><em>projectionMatrix</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const glm::vec2 &amp;&#160;</td>
+          <td class="paramname"><em>invScreenSize</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -333,14 +363,24 @@ animations:
           <td></td><td> const</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
+
+<p></p>
 <p>Render the light contribution to the scene. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">viewMatrix</td><td>the current camera view matrix </td></tr>
     <tr><td class="paramname">projectionMatrix</td><td>the current camera projection matrix </td></tr>
+    <tr><td class="paramname">invScreenSize</td><td>the inverse of the textures size </td></tr>
   </table>
   </dd>
 </dl>
+
+<p>Implements <a class="el" href="class_light.html#a526a543c75a4e9cd4a317bb94420ec2b">Light</a>.</p>
 
 </div>
 </div>
@@ -349,6 +389,9 @@ animations:
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void DirectionalLight::drawDebug </td>
@@ -368,7 +411,14 @@ animations:
           <td></td><td> const</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
+
+<p></p>
 <p>Render the light debug wireframe visualisation </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">viewMatrix</td><td>the current camera view matrix </td></tr>
@@ -377,6 +427,8 @@ animations:
   </dd>
 </dl>
 
+<p>Implements <a class="el" href="class_light.html#a3e5084597a05a188805675ef7505d418">Light</a>.</p>
+
 </div>
 </div>
 <a id="abcf5da6369a88665f1565bcb801e7148"></a>
@@ -384,6 +436,9 @@ animations:
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void DirectionalLight::drawShadow </td>
@@ -393,13 +448,22 @@ animations:
           <td> const</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
+
+<p></p>
 <p>Render the light shadow map. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">objects</td><td>list of shadow casting objects to render </td></tr>
   </table>
   </dd>
 </dl>
+
+<p>Implements <a class="el" href="class_light.html#a6f353d6f615a74485ce4b9e0c353a6b2">Light</a>.</p>
 
 </div>
 </div>
@@ -408,6 +472,9 @@ animations:
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void DirectionalLight::init </td>
@@ -417,13 +484,22 @@ animations:
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
+
+<p></p>
 <p>Perform initialization against the graphics API and register textures for deferred rendering. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">textureIds</td><td>the IDs of the albedo, normal, depth and effects G-buffer textures </td></tr>
   </table>
   </dd>
 </dl>
+
+<p>Implements <a class="el" href="class_light.html#a27a6598b0a67be508454fba1f36be508">Light</a>.</p>
 
 </div>
 </div>
@@ -432,6 +508,9 @@ animations:
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void DirectionalLight::setScene </td>
@@ -441,13 +520,22 @@ animations:
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
+
+<p></p>
 <p>Update the scene bounding box used for internal setup (shadow map,...). </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">sceneBox</td><td>the new bounding box </td></tr>
   </table>
   </dd>
 </dl>
+
+<p>Implements <a class="el" href="class_light.html#a741370e1e3abb1135d70d48816156668">Light</a>.</p>
 
 </div>
 </div>
@@ -456,6 +544,9 @@ animations:
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void DirectionalLight::update </td>
@@ -475,7 +566,14 @@ animations:
           <td></td><td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
+
+<p></p>
 <p>Apply the animations for a frame duration. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">fullTime</td><td>the time since the launch of the application </td></tr>
@@ -483,6 +581,70 @@ animations:
   </table>
   </dd>
 </dl>
+
+<p>Implements <a class="el" href="class_light.html#a758f89e00cf91c2816ff0438e909591e">Light</a>.</p>
+
+</div>
+</div>
+<a id="a290acd1c4a9b3febd8b437e7bb296dfb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a290acd1c4a9b3febd8b437e7bb296dfb">&#9670;&nbsp;</a></span>visible()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool DirectionalLight::visible </td>
+          <td>(</td>
+          <td class="paramtype">const glm::vec3 &amp;&#160;</td>
+          <td class="paramname"><em>position</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="class_raycaster.html">Raycaster</a> &amp;&#160;</td>
+          <td class="paramname"><em>raycaster</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">glm::vec3 &amp;&#160;</td>
+          <td class="paramname"><em>direction</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float &amp;&#160;</td>
+          <td class="paramname"><em>attenuation</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p></p>
+<p>Test the visibility of a point in space from the light source. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">position</td><td>the 3D point to test </td></tr>
+    <tr><td class="paramname">raycaster</td><td>the raycaster for intersections tests </td></tr>
+    <tr><td class="paramname">direction</td><td>will contain the direction from the point to the light </td></tr>
+    <tr><td class="paramname">attenuation</td><td>will contain the attenuation caused by the radius/cone/etc. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the point is visible from the light source. </dd></dl>
+
+<p>Implements <a class="el" href="class_light.html#ae1155bb902d1dea8a73de85f6518a578">Light</a>.</p>
 
 </div>
 </div>

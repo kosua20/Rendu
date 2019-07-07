@@ -9,7 +9,6 @@ var searchData=
   ['scroll',['scroll',['../struct_input_1_1_mouse_cursor.html#aa30562fa5fb46eb7abf07ec27781cb97',1,'Input::MouseCursor']]],
   ['shcoeffs',['shCoeffs',['../class_g_l_s_l_1_1_frag_1_1_skybox__shcoeffs.html#adb0126362c15cbf52acc12b5b47d1593',1,'GLSL::Frag::Skybox_shcoeffs::shCoeffs()'],['../class_g_l_s_l_1_1_frag_1_1_ambient.html#ac2692c652e3b8f04f35ffe3dae71dc4b',1,'GLSL::Frag::Ambient::shCoeffs()']]],
   ['size',['size',['../struct_menu_button.html#a395f5472010d53fbda85568a3703aabd',1,'MenuButton::size()'],['../struct_menu_image.html#ad353d36dc63ead9d302610096306af70',1,'MenuImage::size()']]],
-  ['spotlights',['spotLights',['../class_scene.html#a9a1901b946b5ad43de1915554d3cbfa0',1,'Scene']]],
   ['state',['state',['../struct_menu_button.html#ae0f41754ff4acb8e629d0183d236218f',1,'MenuButton']]],
   ['stepdist',['stepDist',['../class_g_l_s_l_1_1_frag_1_1_flood__fill.html#abc47c614fde81a921eb571173d267794',1,'GLSL::Frag::Flood_fill']]],
   ['sunangularradius',['sunAngularRadius',['../class_g_l_s_l_1_1_frag_1_1_atmosphere.html#aa3b1e0bad35c29173c73f52cd4f500e9',1,'GLSL::Frag::Atmosphere']]],

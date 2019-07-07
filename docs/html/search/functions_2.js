@@ -2,7 +2,7 @@ var searchData=
 [
   ['backandforth',['BackAndForth',['../class_back_and_forth.html#ab839701666b8c251984953cb10f93b21',1,'BackAndForth::BackAndForth()'],['../class_back_and_forth.html#a0b86c24c12a35f8b51c90ebd03ca4a17',1,'BackAndForth::BackAndForth(const glm::vec3 &amp;axis, float speed, float amplitude, Frame frame)']]],
   ['basehash',['baseHash',['../class_g_l_s_l_1_1_frag_1_1_object__basic.html#ae7d56ba11452c48e848c4031039df882',1,'GLSL::Frag::Object_basic']]],
-  ['beginframe',['beginFrame',['../namespace_interface.html#af2afb1de30bf864dcd050bd1f2d05b4e',1,'Interface']]],
+  ['beginframe',['beginFrame',['../namespace_system_1_1_g_u_i.html#aa1605f8a8c02ec6414ed5f6094191b69',1,'System::GUI']]],
   ['bind',['bind',['../class_framebuffer.html#a7b5e9b658e3b08301a2df98b82c7d92c',1,'Framebuffer::bind()'],['../class_framebuffer_cube.html#a189da328bc6e34533c0dce688f370ff1',1,'FramebufferCube::bind()']]],
   ['bindtextures',['bindTextures',['../class_g_l_utilities.html#a9024683e15ab07a72c3b85b02b486bb0',1,'GLUtilities']]],
   ['blur',['Blur',['../class_blur.html#a8662d98d6e52841270fc4e42c1a7dd52',1,'Blur']]],

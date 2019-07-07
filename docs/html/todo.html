@@ -89,26 +89,20 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><dl class="reflist">
-<dt>Member <a class="el" href="class_codable.html#a0138cdbade592842b21debbb9d892f94">Codable::decodeTexture</a>  (const <a class="el" href="struct_key_values.html" title="Represent a key-values tuple.">KeyValues</a> &amp;param)</dt>
-<dd><a class="anchor" id="_todo000006"></a>We could extract the interaction with the <a class="el" href="class_resources.html" title="The Resources manager is responsible for all resources loading and setup.">Resources</a> manager and only output the proper name/descriptor/type.  </dd>
+<dt>Member <a class="el" href="class_codable.html#ac97de06117a074bb34f4d0829194a57d">Codable::decodeTexture</a>  (const <a class="el" href="struct_key_values.html" title="Represent a key-values tuple.">KeyValues</a> &amp;param, const Storage mode)</dt>
+<dd><a class="anchor" id="_todo000005"></a>We could extract the interaction with the <a class="el" href="class_resources.html" title="The Resources manager is responsible for all resources loading and setup.">Resources</a> manager and only output the proper name/descriptor/type.  </dd>
+<dt>Class <a class="el" href="class_config.html">Config</a>  </dt>
+<dd><p class="startdd"><a class="anchor" id="_todo000002"></a>Merge format with the <a class="el" href="class_codable.html" title="Provides helpers for serialization/deserialization of basic types.">Codable</a> format.</p>
+<p class="enddd"></p>
+</dd>
 <dt>Member <a class="el" href="class_convolution_pyramid.html#a5e060a7fe281992ab982b9c533b55776">ConvolutionPyramid::process</a>  (const GLuint textureId)</dt>
 <dd><a class="anchor" id="_todo000004"></a>Those filters are separable, and could be applied in two passes (vertical and horizontal) to reduce the texture fetches count.  </dd>
 <dt>Member <a class="el" href="class_deferred_renderer.html#a61dea9bf1883606d8afd09381aaa846d">DeferredRenderer::setScene</a>  (std::shared_ptr&lt; Scene &gt; scene)</dt>
 <dd><a class="anchor" id="_todo000001"></a>clarify this.  </dd>
-<dt>Member <a class="el" href="class_g_l_s_l_1_1_frag_1_1_final__screenquad.html#a101c1f7917e61507b63dd1a8df991184">GLSL::Frag::Final_screenquad::main</a>  ()</dt>
-<dd><a class="anchor" id="_todo000010"></a>Refine performances and effect.  </dd>
 <dt>Member <a class="el" href="class_g_l_utilities.html#a9c842c5cfda2440e2da5e2e4bc4845db">GLUtilities::loadTexture</a>  (const GLenum target, const std::vector&lt; std::vector&lt; std::string &gt;&gt; &amp;path, const <a class="el" href="struct_descriptor.html" title="Regroups format, type, filtering and wrapping informations for a color buffer.">Descriptor</a> &amp;descriptor, Storage mode)</dt>
-<dd><a class="anchor" id="_todo000002"></a>Test in practice.  </dd>
-<dt>Member <a class="el" href="namespace_interface.html#a3afe2260d4d25314a3faac03bc5ca63f">Interface::initWindow</a>  (const std::string &amp;name, <a class="el" href="class_rendering_config.html" title="Configuration containing parameters for windows and renderers.">RenderingConfig</a> &amp;config)</dt>
-<dd><a class="anchor" id="_todo000003"></a>Rethink the way we can enable/disable ImGui?  </dd>
-<dt>Member <a class="el" href="class_object.html#a93655a808e6c7249ea65d85549d72dd1">Object::decode</a>  (const std::vector&lt; KeyValues &gt; &amp;params)</dt>
-<dd><a class="anchor" id="_todo000008"></a>Find a way to easily expand this.  </dd>
+<dd><a class="anchor" id="_todo000003"></a>Test in practice.  </dd>
 <dt>Member <a class="el" href="class_point_light.html#adaf763de126e3e7e029e207cc75e2ee8">PointLight::init</a>  (const std::vector&lt; GLuint &gt; &amp;textureIds)</dt>
-<dd><a class="anchor" id="_todo000007"></a>Enable only if the light is a shadow caster.  </dd>
-<dt>Member <a class="el" href="class_raycaster.html#a85db3072645f5bfd7388eab6eb4411f1">Raycaster::addMesh</a>  (const <a class="el" href="struct_mesh.html" title="Represents a geometric mesh composed of vertices and triangles. For now, material information and ele...">Mesh</a> &amp;mesh)</dt>
-<dd><a class="anchor" id="_todo000005"></a>See if we also need to keep the normals.  </dd>
-<dt>Member <a class="el" href="class_scene.html#a6de515e84d20739c9bd04b22412a03cf">Scene::loadBackground</a>  (const std::vector&lt; KeyValues &gt; &amp;params)</dt>
-<dd><a class="anchor" id="_todo000009"></a>Support other types of background object. Maybe based implicitely on what was passed (color/texture2d/cubemap)? </dd>
+<dd><a class="anchor" id="_todo000006"></a>Enable only if the light is a shadow caster, to avoid wasteful allocation. </dd>
 </dl>
 </div></div><!-- PageDoc -->
 </div><!-- contents -->

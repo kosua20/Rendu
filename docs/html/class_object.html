@@ -108,9 +108,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a2e34d8d662b907a9e859b73311d84a0c"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#a2e34d8d662b907a9e859b73311d84a0c">Type</a> : int { <a class="el" href="class_object.html#a2e34d8d662b907a9e859b73311d84a0ca5d169f1a89babe4d8f11aec9b78b4bc1">Skybox</a> = 0, 
-<a class="el" href="class_object.html#a2e34d8d662b907a9e859b73311d84a0cad3787b48eed2e837901c27c326fe368e">PBRRegular</a> = 1, 
-<a class="el" href="class_object.html#a2e34d8d662b907a9e859b73311d84a0ca3285326d869ef94f2c18ae60ceef3f2d">PBRParallax</a> = 2
+<tr class="memitem:a2e34d8d662b907a9e859b73311d84a0c"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#a2e34d8d662b907a9e859b73311d84a0c">Type</a> : int { <a class="el" href="class_object.html#a2e34d8d662b907a9e859b73311d84a0ca36dcc47244c3044036021a814602a3a9">Common</a> = 0, 
+<a class="el" href="class_object.html#a2e34d8d662b907a9e859b73311d84a0cad3787b48eed2e837901c27c326fe368e">PBRRegular</a>, 
+<a class="el" href="class_object.html#a2e34d8d662b907a9e859b73311d84a0ca3285326d869ef94f2c18ae60ceef3f2d">PBRParallax</a>
  }</td></tr>
 <tr class="memdesc:a2e34d8d662b907a9e859b73311d84a0c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type of shading/effects.  <a href="class_object.html#a2e34d8d662b907a9e859b73311d84a0c">More...</a><br /></td></tr>
 <tr class="separator:a2e34d8d662b907a9e859b73311d84a0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -141,8 +141,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a199c7a4569e9cf511fbaa3668ee2c9c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1b30e68e45d495982ef7058e22da96d7"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#a1b30e68e45d495982ef7058e22da96d7">castsShadow</a> () const</td></tr>
 <tr class="separator:a1b30e68e45d495982ef7058e22da96d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a93655a808e6c7249ea65d85549d72dd1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#a93655a808e6c7249ea65d85549d72dd1">decode</a> (const std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt; &amp;params)</td></tr>
-<tr class="separator:a93655a808e6c7249ea65d85549d72dd1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a37f88b5f3fb3cf82f67571ab39b0edd6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#a37f88b5f3fb3cf82f67571ab39b0edd6">decode</a> (const std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt; &amp;params, const Storage mode)</td></tr>
+<tr class="separator:a37f88b5f3fb3cf82f67571ab39b0edd6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
@@ -188,11 +188,13 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 <p>Type of shading/effects. </p>
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a2e34d8d662b907a9e859b73311d84a0ca5d169f1a89babe4d8f11aec9b78b4bc1"></a>Skybox&#160;</td><td class="fielddoc"><dl class="section see"><dt>See also</dt><dd><a class="el" href="class_g_l_s_l_1_1_vert_1_1_skybox__gbuffer.html" title="&quot;Skybox gbuffer&quot; vertex shader.">GLSL::Vert::Skybox_gbuffer</a>, <a class="el" href="class_g_l_s_l_1_1_frag_1_1_skybox__gbuffer.html" title="&quot;Skybox gbuffer&quot; fragment shader.">GLSL::Frag::Skybox_gbuffer</a> </dd></dl>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a2e34d8d662b907a9e859b73311d84a0ca36dcc47244c3044036021a814602a3a9"></a>Common&#160;</td><td class="fielddoc"><p>Any type of shading. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="a2e34d8d662b907a9e859b73311d84a0cad3787b48eed2e837901c27c326fe368e"></a>PBRRegular&#160;</td><td class="fielddoc"><dl class="section see"><dt>See also</dt><dd><a class="el" href="class_g_l_s_l_1_1_vert_1_1_object__gbuffer.html" title="&quot;Object gbuffer&quot; vertex shader.">GLSL::Vert::Object_gbuffer</a>, <a class="el" href="class_g_l_s_l_1_1_frag_1_1_object__gbuffer.html" title="&quot;Object gbuffer&quot; fragment shader.">GLSL::Frag::Object_gbuffer</a> </dd></dl>
+<tr><td class="fieldname"><a id="a2e34d8d662b907a9e859b73311d84a0cad3787b48eed2e837901c27c326fe368e"></a>PBRRegular&#160;</td><td class="fielddoc"><p>PBR shading. </p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_g_l_s_l_1_1_vert_1_1_object__gbuffer.html" title="&quot;Object gbuffer&quot; vertex shader.">GLSL::Vert::Object_gbuffer</a>, <a class="el" href="class_g_l_s_l_1_1_frag_1_1_object__gbuffer.html" title="&quot;Object gbuffer&quot; fragment shader.">GLSL::Frag::Object_gbuffer</a> </dd></dl>
 </td></tr>
-<tr><td class="fieldname"><a id="a2e34d8d662b907a9e859b73311d84a0ca3285326d869ef94f2c18ae60ceef3f2d"></a>PBRParallax&#160;</td><td class="fielddoc"><dl class="section see"><dt>See also</dt><dd><a class="el" href="class_g_l_s_l_1_1_vert_1_1_parallax__gbuffer.html" title="&quot;Parallax gbuffer&quot; vertex shader.">GLSL::Vert::Parallax_gbuffer</a>, <a class="el" href="class_g_l_s_l_1_1_frag_1_1_parallax__gbuffer.html" title="&quot;Parallax gbuffer&quot; fragment shader.">GLSL::Frag::Parallax_gbuffer</a> </dd></dl>
+<tr><td class="fieldname"><a id="a2e34d8d662b907a9e859b73311d84a0ca3285326d869ef94f2c18ae60ceef3f2d"></a>PBRParallax&#160;</td><td class="fielddoc"><p>PBR with parallax mapping. </p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_g_l_s_l_1_1_vert_1_1_parallax__gbuffer.html" title="&quot;Parallax gbuffer&quot; vertex shader.">GLSL::Vert::Parallax_gbuffer</a>, <a class="el" href="class_g_l_s_l_1_1_frag_1_1_parallax__gbuffer.html" title="&quot;Parallax gbuffer&quot; fragment shader.">GLSL::Frag::Parallax_gbuffer</a> </dd></dl>
 </td></tr>
 </table>
 
@@ -334,8 +336,8 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a id="a93655a808e6c7249ea65d85549d72dd1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a93655a808e6c7249ea65d85549d72dd1">&#9670;&nbsp;</a></span>decode()</h2>
+<a id="a37f88b5f3fb3cf82f67571ab39b0edd6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a37f88b5f3fb3cf82f67571ab39b0edd6">&#9670;&nbsp;</a></span>decode()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -344,8 +346,18 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
           <td class="memname">void Object::decode </td>
           <td>(</td>
           <td class="paramtype">const std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt; &amp;&#160;</td>
-          <td class="paramname"><em>params</em></td><td>)</td>
+          <td class="paramname"><em>params</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const Storage&#160;</td>
+          <td class="paramname"><em>mode</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -364,10 +376,10 @@ animations:
 </pre> <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">params</td><td>the parameters tuples list </td></tr>
+    <tr><td class="paramname">mode</td><td>the storage mode (CPU, GPU, both) </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000008">Todo:</a></b></dt><dd>Find a way to easily expand this. </dd></dl>
 
 </div>
 </div>

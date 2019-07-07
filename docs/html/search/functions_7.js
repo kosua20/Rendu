@@ -8,7 +8,7 @@ var searchData=
   ['gamerenderer',['GameRenderer',['../class_game_renderer.html#aaa5a00cdcfcf20578118b95e713d26ab',1,'GameRenderer']]],
   ['gamma',['gamma',['../class_g_l_s_l_1_1_frag_1_1_image__display.html#aa7b4e814488888910fb934c5147dc031',1,'GLSL::Frag::Image_display']]],
   ['gaussianblur',['GaussianBlur',['../class_gaussian_blur.html#aca500766ef7f94963ef6d6ae724d6b77',1,'GaussianBlur']]],
-  ['generatelabel',['generateLabel',['../class_text_utilities.html#ae9483dff79c87d187251229c13b42de7',1,'TextUtilities']]],
+  ['generatelabel',['generateLabel',['../class_font.html#a501aced86f9ab16691a3f55505512a5f',1,'Font']]],
   ['getboundingbox',['getBoundingBox',['../class_object.html#aa62a0825f8083ef3df317113a0890ef2',1,'Object']]],
   ['getbuttonsize',['getButtonSize',['../class_game_menu_renderer.html#afcb17ada2ef5db9d77b72294882a8b84',1,'GameMenuRenderer']]],
   ['getcorners',['getCorners',['../struct_bounding_box.html#a9e5cc6e4a333c096578f1fd73b6cf643',1,'BoundingBox']]],

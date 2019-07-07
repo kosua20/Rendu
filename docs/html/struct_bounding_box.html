@@ -121,6 +121,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a9e5cc6e4a333c096578f1fd73b6cf643"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:accd5b6bd9594e9623d5f9abf3c429be2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_bounding_box.html">BoundingBox</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_bounding_box.html#accd5b6bd9594e9623d5f9abf3c429be2">transformed</a> (const glm::mat4 &amp;trans) const</td></tr>
 <tr class="separator:accd5b6bd9594e9623d5f9abf3c429be2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a592d7739df184efbfc3a197fb6b1a037"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_bounding_box.html#a592d7739df184efbfc3a197fb6b1a037">contains</a> (const glm::vec3 &amp;point)</td></tr>
+<tr class="separator:a592d7739df184efbfc3a197fb6b1a037"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -213,6 +215,39 @@ glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a592d7739df184efbfc3a197fb6b1a037"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a592d7739df184efbfc3a197fb6b1a037">&#9670;&nbsp;</a></span>contains()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool BoundingBox::contains </td>
+          <td>(</td>
+          <td class="paramtype">const glm::vec3 &amp;&#160;</td>
+          <td class="paramname"><em>point</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Indicates if a point is inside the bounding box. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">point</td><td>the point to check </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the bounding box contains the point </dd></dl>
+
+</div>
+</div>
 <a id="a9e5cc6e4a333c096578f1fd73b6cf643"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a9e5cc6e4a333c096578f1fd73b6cf643">&#9670;&nbsp;</a></span>getCorners()</h2>
 

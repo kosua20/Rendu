@@ -137,7 +137,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 : <a class="el" href="class_input.html#a465771f5bb70075fe8810127c8e6b9f3">Input</a>
 </li>
 <li>_align
-: <a class="el" href="struct_menu_label.html#ab1323e2e717db5973e8cbaf56192fdff">MenuLabel</a>
+: <a class="el" href="struct_menu_label.html#a9883f2f90470654d87918e9023e9ec8b">MenuLabel</a>
 </li>
 <li>_alive
 : <a class="el" href="class_player.html#a546e144580cd876454018a2f7ed1684b">Player</a>
@@ -168,6 +168,18 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li>_appendPrefix
 : <a class="el" href="class_log.html#a541dea37b73e58ffdaf23f7b8cecbff7">Log</a>
 </li>
+<li>_applyBloom
+: <a class="el" href="class_deferred_renderer.html#a74ca3a7fc1a54d149901038ad65ecb89">DeferredRenderer</a>
+</li>
+<li>_applyFXAA
+: <a class="el" href="class_deferred_renderer.html#aecc3325cd5027cbc491caa8db05bd44c">DeferredRenderer</a>
+</li>
+<li>_applySSAO
+: <a class="el" href="class_deferred_renderer.html#a5d3dfc08aefaf0c2ce6c7b9796bf1f41">DeferredRenderer</a>
+</li>
+<li>_applyTonemapping
+: <a class="el" href="class_deferred_renderer.html#aad5be528e024c2f16e3192cbdaf67767">DeferredRenderer</a>
+</li>
 <li>_axes
 : <a class="el" href="class_controller.html#af1ca27dafbcbe486a65d7db9d2811314">Controller</a>
 </li>
@@ -180,6 +192,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </li>
 <li>_bgColor
 : <a class="el" href="class_painting_tool.html#a08cb02410148a5f1d96d5d43be69bd2a">PaintingTool</a>
+</li>
+<li>_bgProgram
+: <a class="el" href="class_deferred_renderer.html#aed300001f1a8c601653b0e065e52fddb">DeferredRenderer</a>
 </li>
 <li>_bloomFramebuffer
 : <a class="el" href="class_deferred_renderer.html#a7c371dfffee917a3b41251aced0a624f">DeferredRenderer</a>
@@ -219,6 +234,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li>_buttons
 : <a class="el" href="class_controller.html#a7b86c4cece20b574892cc384d6c8954e">Controller</a>
 </li>
+<li>_cameraFOV
+: <a class="el" href="class_deferred_renderer.html#a276c3f80df4244eec8e39a3c4ea3325b">DeferredRenderer</a>
+</li>
 <li>_canvas
 : <a class="el" href="class_painting_tool.html#a0baec59e2072f9237b0652784748e064">PaintingTool</a>
 </li>
@@ -230,6 +248,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </li>
 <li>_center
 : <a class="el" href="class_camera.html#a8f755fdaff8d41db9cee87d8c31eed76">Camera</a>
+</li>
+<li>_clippingPlanes
+: <a class="el" href="class_camera.html#a7449f425eb759fe115a012424c2ec611">Camera</a>
 </li>
 <li>_collisionDistance
 : <a class="el" href="class_player.html#ad0cea5fe1815415dfcff4e92a2cf9f9e">Player</a>
@@ -315,14 +336,14 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li>_eatingDistance
 : <a class="el" href="class_player.html#a1ea562bc67b2d8235cae45bf85eda7f9">Player</a>
 </li>
+<li>_exposure
+: <a class="el" href="class_deferred_renderer.html#aea54a81da21c08638deb0a7fb18aa263">DeferredRenderer</a>
+</li>
 <li>_extract
 : <a class="el" href="class_flood_filler.html#a2742b6295930988df0a3dbac46c5adfe">FloodFiller</a>
 </li>
 <li>_eye
 : <a class="el" href="class_camera.html#a09cfc8508386455a75088e622e84a528">Camera</a>
-</li>
-<li>_far
-: <a class="el" href="class_camera.html#aaf4541d449dd15e00c5d28f844de81ea">Camera</a>
 </li>
 <li>_farPlane
 : <a class="el" href="class_point_light.html#afddde3565e7d7d484cbfbaef54d9fcfe">PointLight</a>
@@ -452,8 +473,14 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li>_image
 : <a class="el" href="class_filtering_renderer.html#aa7913b16d89d6ebc2380740c8183d1e4">FilteringRenderer</a>
 </li>
+<li>_infos
+: <a class="el" href="class_config.html#aa8e913359869774ef02f452ea418b606">Config</a>
+</li>
 <li>_inGameRenderer
 : <a class="el" href="class_game.html#a862ccb6cfa2ceb609252668c9dd295e8">Game</a>
+</li>
+<li>_init
+: <a class="el" href="class_screen_quad.html#a25a65996a8b73ca248b07e9bf690d001">ScreenQuad</a>
 </li>
 <li>_innerHalfAngle
 : <a class="el" href="class_spot_light.html#a22ba77536d5a5ddbadb65cc9c7e0ea89">SpotLight</a>
@@ -575,14 +602,17 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 : <a class="el" href="class_controller.html#affe2eb5088c204f81416fa933c65f206">Controller</a>
 , <a class="el" href="class_scene.html#afbb5064e07cb2904ecd2cfb0096a00c9">Scene</a>
 </li>
-<li>_near
-: <a class="el" href="class_camera.html#ab42939a48150d37bee65e85fcf5d3e12">Camera</a>
-</li>
 <li>_noiseTextureID
 : <a class="el" href="class_s_s_a_o.html#aa40ea4756a80dc127f0324e1e420fcb3">SSAO</a>
 </li>
 <li>_numSamplesPath
 : <a class="el" href="class_player.html#a44b9b73d71a76dbeb9efaf063db2439a">Player</a>
+</li>
+<li>_objectNoUVsProgram
+: <a class="el" href="class_deferred_renderer.html#a2ba11a144d7cc41fff04b10cdb454992">DeferredRenderer</a>
+</li>
+<li>_objectProgram
+: <a class="el" href="class_deferred_renderer.html#a11b1bfecfd421955136ddb06828b6e3a">DeferredRenderer</a>
 </li>
 <li>_outerHalfAngle
 : <a class="el" href="class_spot_light.html#aa09e3b9a02c5b2511fd101f1b3b37006">SpotLight</a>
@@ -595,6 +625,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </li>
 <li>_padding
 : <a class="el" href="class_convolution_pyramid.html#a87ff94ab2b3086b54e2fabee523de0e2">ConvolutionPyramid</a>
+</li>
+<li>_parallaxProgram
+: <a class="el" href="class_deferred_renderer.html#adee9537eec5a4cc7e6644c3563f21223">DeferredRenderer</a>
 </li>
 <li>_passthrough
 : <a class="el" href="class_filtering_renderer.html#a9a75cc3c26e65de4f41f21213f56cf6d">FilteringRenderer</a>
@@ -635,18 +668,14 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 , <a class="el" href="class_poisson_filler.html#acfdc4d0b01687a37caf1980de3bec4fa">PoissonFiller</a>
 </li>
 <li>_previousAbscisse
-: <a class="el" href="class_back_and_forth.html#a67e20fb3067f71083f0df0a5f7c3ea43">BackAndForth</a>
+: <a class="el" href="class_back_and_forth.html#a796fc4a9a673ebc57695481b842e4503">BackAndForth</a>
 </li>
 <li>_program
 : <a class="el" href="class_ambient_quad.html#a5cd47434d69d205e2041adfba3c20f4b">AmbientQuad</a>
-, <a class="el" href="class_directional_light.html#a7b4849111c63a9129756453023e21141">DirectionalLight</a>
-, <a class="el" href="class_point_light.html#ae9cc167ebf70798a39a92170ee3024c5">PointLight</a>
-, <a class="el" href="class_spot_light.html#aab7b8c0db1277bb8ee07fdcd97f32756">SpotLight</a>
+, <a class="el" href="class_light.html#a9d0a00dba56841d375968a0c6d073868">Light</a>
 </li>
 <li>_programDepth
-: <a class="el" href="class_directional_light.html#aa1d9d9ae4b8513558681af3b20a1f3a6">DirectionalLight</a>
-, <a class="el" href="class_point_light.html#af3458c9308c1b50b6bdea02b40b98caf">PointLight</a>
-, <a class="el" href="class_spot_light.html#afa36c0a27fbd1c934d77dbab15d789aa">SpotLight</a>
+: <a class="el" href="class_light.html#abeeb3787ea1b8ab7247a6093d24fb207">Light</a>
 </li>
 <li>_programs
 : <a class="el" href="class_resources.html#a41829ec0b4f97d18d3a1ca862872a565">Resources</a>
@@ -717,9 +746,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 : <a class="el" href="class_deferred_renderer.html#a6f0c1b947c56169ea77cfdff8157b26b">DeferredRenderer</a>
 </li>
 <li>_sceneBox
-: <a class="el" href="class_directional_light.html#a21ebe0b371d2e14d8546bc0a962d0649">DirectionalLight</a>
-, <a class="el" href="class_point_light.html#a830a5817c1991fac7c347f136f4633b8">PointLight</a>
-, <a class="el" href="class_spot_light.html#a2b76cc008f961b3e41328c283c0d517e">SpotLight</a>
+: <a class="el" href="class_light.html#a7f1076aa7177eee49393648930b71dd8">Light</a>
 </li>
 <li>_sceneBuffer
 : <a class="el" href="class_filtering_renderer.html#a9232c8d12d9090a8a6839598172d0ed0">FilteringRenderer</a>
@@ -759,6 +786,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li>_shouldDraw
 : <a class="el" href="class_painting_tool.html#adf0e235ea9a6fb0b139c110ad5cd421f">PaintingTool</a>
 </li>
+<li>_showHelp
+: <a class="el" href="class_config.html#a1b3470592f6b99c89360e1b2613776d1">Config</a>
+</li>
 <li>_showProcInput
 : <a class="el" href="class_filtering_renderer.html#a3d523eaf242b6ace6e095b8774b58e23">FilteringRenderer</a>
 </li>
@@ -767,6 +797,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </li>
 <li>_size
 : <a class="el" href="class_convolution_pyramid.html#ab145a7c53eb54619830c769ef0f2912e">ConvolutionPyramid</a>
+</li>
+<li>_skyboxProgram
+: <a class="el" href="class_deferred_renderer.html#a719aa709024ff438628c7585106ecb60">DeferredRenderer</a>
 </li>
 <li>_spawnPeriod
 : <a class="el" href="class_player.html#a997d4fb9128d9ee2d24c44145fe0073d">Player</a>
@@ -800,14 +833,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li>_textureEnv
 : <a class="el" href="class_ambient_quad.html#a3c3987585f1aeb0d512f1201b6cf5761">AmbientQuad</a>
 </li>
-<li>_textureIds
-: <a class="el" href="class_point_light.html#afff3bfde11575f919e351f91fdce14e6">PointLight</a>
-, <a class="el" href="class_spot_light.html#a52e1a5c0e4754b59297f79ca6f3fd65c">SpotLight</a>
-</li>
 <li>_textures
 : <a class="el" href="class_ambient_quad.html#abf43465d4c45a3dd965ed4374ff8a7c6">AmbientQuad</a>
-, <a class="el" href="class_directional_light.html#a63c99866cdcc22d4797389293c3a4f46">DirectionalLight</a>
 , <a class="el" href="class_gaussian_blur.html#adf73b89101051ef97782451e42451964">GaussianBlur</a>
+, <a class="el" href="class_light.html#aac93e8aeacbd27e39047796dbd0ef135">Light</a>
 , <a class="el" href="class_object.html#a117b85769bc07e4256a7fd9d670a6ca3">Object</a>
 , <a class="el" href="class_resources.html#ae5e778be0764ee563165705d083d23ea">Resources</a>
 </li>
@@ -825,6 +854,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </li>
 <li>_up
 : <a class="el" href="class_camera.html#a323a698e4c5773ee3ec380851b145e2d">Camera</a>
+</li>
+<li>_updateShadows
+: <a class="el" href="class_deferred_renderer.html#a7d043c618798c77b52fd658916fd429f">DeferredRenderer</a>
 </li>
 <li>_upscale
 : <a class="el" href="class_convolution_pyramid.html#ae8d9ad0e4727a4f3da872eb715efbe32">ConvolutionPyramid</a>

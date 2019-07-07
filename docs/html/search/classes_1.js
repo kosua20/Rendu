@@ -1,6 +1,7 @@
 var searchData=
 [
   ['backandforth',['BackAndForth',['../class_back_and_forth.html',1,'']]],
+  ['background_5fgbuffer',['Background_gbuffer',['../class_g_l_s_l_1_1_frag_1_1_background__gbuffer.html',1,'GLSL::Frag::Background_gbuffer'],['../class_g_l_s_l_1_1_vert_1_1_background__gbuffer.html',1,'GLSL::Vert::Background_gbuffer']]],
   ['bloom',['Bloom',['../class_g_l_s_l_1_1_frag_1_1_bloom.html',1,'GLSL::Frag']]],
   ['blur',['Blur',['../class_blur.html',1,'Blur'],['../class_g_l_s_l_1_1_frag_1_1_blur.html',1,'GLSL::Frag::Blur']]],
   ['blur_5fcombine_5f10',['Blur_combine_10',['../class_g_l_s_l_1_1_frag_1_1_blur__combine__10.html',1,'GLSL::Frag']]],
@@ -24,5 +25,5 @@ var searchData=
   ['box_5fblur_5fapprox_5f4',['Box_blur_approx_4',['../class_g_l_s_l_1_1_frag_1_1_box__blur__approx__4.html',1,'GLSL::Frag']]],
   ['boxblur',['BoxBlur',['../class_box_blur.html',1,'']]],
   ['brdf_5fsampler',['Brdf_sampler',['../class_g_l_s_l_1_1_frag_1_1_brdf__sampler.html',1,'GLSL::Frag']]],
-  ['brush_5fcolor',['Brush_color',['../class_g_l_s_l_1_1_frag_1_1_brush__color.html',1,'GLSL::Frag::Brush_color'],['../class_g_l_s_l_1_1_vert_1_1_brush__color.html',1,'GLSL::Vert::Brush_color']]]
+  ['brush_5fcolor',['Brush_color',['../class_g_l_s_l_1_1_vert_1_1_brush__color.html',1,'GLSL::Vert::Brush_color'],['../class_g_l_s_l_1_1_frag_1_1_brush__color.html',1,'GLSL::Frag::Brush_color']]]
 ];
