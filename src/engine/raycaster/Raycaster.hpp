@@ -14,8 +14,9 @@ public:
 
 	/** Adds a mesh to the internal geometry.
 	 \param mesh the mesh to add
+	 \param model the transformation matrix to apply to the vertices
 	 */
-	void addMesh(const Mesh & mesh);
+	void addMesh(const Mesh & mesh, const glm::mat4 & model);
 	
 	/** Update the internal bounding volume hierarchy.
 	 \note This operation can be costful in time.
@@ -46,12 +47,27 @@ public:
 		
 	};
 	
-	/** Intersect a ray with the geometry.
+	/** Find the closest intersection of a ray with the geometry.
 	 \param origin ray origin
 	 \param direction ray direction (not necessarily normalized)
 	 \return a hit object containg the potential hit informations
 	 */
 	const RayHit intersects(const glm::vec3 & origin, const glm::vec3 & direction) const;
+	
+	/** Intersect a ray with the geometry.
+	 \param origin ray origin
+	 \param direction ray direction (not necessarily normalized)
+	 \return true if the two points are joined by a free-space segment
+	 */
+	bool intersectsAny(const glm::vec3 & origin, const glm::vec3 & direction) const;
+	
+	/** Test visibility between two points.
+	 \param p0 first point
+	 \param p1 second point
+	 \return true if the two points are joined by a free-space segment
+	 \note A ray is shot from the first to the second point to test for visibility.
+	 */
+	bool visible(const glm::vec3 & p0, const glm::vec3 & p1) const;
 	
 	/** Return the interpolated position of the ray hit on the surface of the mesh.
 	 \param hit the intersection record
@@ -130,6 +146,15 @@ private:
 	 \return a hit object containg the potential closest hit informations
 	 */
 	const RayHit intersects(const Raycaster::Ray & ray, const Raycaster::Node & node, float mini, float maxi) const;
+	
+	/** Check if there is any intersection between a ray and a node in the defined range.
+	 \param ray the ray
+	 \param node the node to test intersections against
+	 \param mini the minimum allowed distance along the ray
+	 \param maxi the maximum allowed distance along the ray
+	 \return true if any intersection occured
+	 */
+	bool intersectsAny(const Raycaster::Ray & ray, const Raycaster::Node & node, float mini, float maxi) const;
 	
 	/** Test a ray and bounding box intersection.
 	 \param ray the ray

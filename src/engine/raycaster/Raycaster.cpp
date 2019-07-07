@@ -15,11 +15,19 @@ Raycaster::Raycaster(){
 	
 }
 
-void Raycaster::addMesh(const Mesh & mesh){
+void Raycaster::addMesh(const Mesh & mesh, const glm::mat4 & model){
 	const unsigned long indexOffset = (unsigned long)(_vertices.size());
 	
 	// Start by copying all vertices.
+	const size_t startIndex = _vertices.size();
 	_vertices.insert(_vertices.end(), mesh.positions.begin(), mesh.positions.end());
+	const size_t endIndex = _vertices.size();
+	
+	if(model != glm::mat4(1.0f)){
+		for(size_t vid = startIndex; vid < endIndex; ++vid){
+			_vertices[vid] = glm::vec3(model * glm::vec4(_vertices[vid], 1.0f));
+		}
+	}
 	
 	const size_t trianglesCount = mesh.indices.size()/3;
 	for(size_t tid = 0; tid < trianglesCount; ++tid){
@@ -88,6 +96,18 @@ const Raycaster::RayHit Raycaster::intersects(const glm::vec3 & origin, const gl
 	return intersects(ray, _hierarchy[0], 0.0001f, 1e8f);
 }
 
+bool Raycaster::intersectsAny(const glm::vec3 & origin, const glm::vec3 & direction) const {
+	const Ray ray(origin, direction);
+	return intersectsAny(ray, _hierarchy[0], 0.0001f, 1e8f);
+}
+
+bool Raycaster::visible(const glm::vec3 & p0, const glm::vec3 & p1) const {
+	const glm::vec3 direction = p1 - p0;
+	const Ray ray(p0, direction);
+	const float maxi = glm::length(direction);
+	return !intersectsAny(ray, _hierarchy[0], 0.0001f, maxi);
+}
+
 const Raycaster::RayHit Raycaster::intersects(const Raycaster::Ray & ray, const Raycaster::Node & node, float mini, float maxi) const {
 	if(!Raycaster::intersects(ray, node.box, mini, maxi)){
 		return RayHit();
@@ -115,6 +135,32 @@ const Raycaster::RayHit Raycaster::intersects(const Raycaster::Ray & ray, const 
 	// Return the closest hit if it exists.
 	const RayHit right = intersects(ray, _hierarchy[node.right], mini, maxi);
 	return right;
+}
+
+bool Raycaster::intersectsAny(const Raycaster::Ray & ray, const Raycaster::Node & node, float mini, float maxi) const {
+	if(!Raycaster::intersects(ray, node.box, mini, maxi)){
+		return false;
+	}
+	// If the node is a leaf, test all included triangles.
+	if(node.leaf){
+		RayHit finalHit;
+		for(int tid = 0; tid < node.right; ++tid){
+			const auto & tri = _triangles[node.left + tid];
+			if(intersects(ray, tri, mini, maxi).hit){
+				return true;
+			}
+		}
+		return false;
+	}
+	// Check if left is hit.
+	if(intersectsAny(ray, _hierarchy[node.left], mini, maxi)){
+		return true;
+	}
+	// Check if right is hit.
+	if(intersectsAny(ray, _hierarchy[node.right], mini, maxi)){
+		return true;
+	}
+	return false;
 }
 
 const Raycaster::RayHit Raycaster::intersects(const Raycaster::Ray & ray, const TriangleInfos & tri, float mini, float maxi) const {
