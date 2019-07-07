@@ -46,6 +46,14 @@ public:
 	 */
 	void fov(float fov);
 	
+	/** Compute world space position of the top-left corner of the image,
+	 and the shifts to move to the next pixel, horizontally and vertically.
+	 \param corner will contain the position of the top-left corner
+	 \param dx will contain the horizontal step
+	 \param dy will contain the vertical step
+	 */
+	void pixelShifts(glm::vec3 & corner, glm::vec3 & dx, glm::vec3 & dy);
+	
 	/**
 	 Obtain the current vertical field of view, in radians.
 	 \return the field of view
@@ -70,6 +78,24 @@ public:
 	 */
 	const glm::vec3 & position() const { return _eye; }
 	
+	/**
+	 Obtain the current world space up direction.
+	 \return the current direction
+	 */
+	const glm::vec3 & up() const { return _up; }
+	
+	/**
+	 Obtain the current world space center position.
+	 \return the current center
+	 */
+	const glm::vec3 & center() const { return _center; }
+	
+	/**
+	 Obtain the current world space camera position.
+	 \return the current position
+	 */
+	const glm::vec2 & clippingPlanes() const { return _clippingPlanes; }
+	
 protected:
 	
 	/// Update the projection matrix using the camera parameters.
@@ -87,10 +113,10 @@ protected:
 	glm::vec3 _up; ///< The camera up vector
 	glm::vec3 _right; ///< The camera right vector
 	
+	glm::vec2 _clippingPlanes;  ///< The near and far plane distances.
+	
 	float _fov; ///< The vertical field of view, in radians.
 	float _ratio; ///< The aspect ratio
-	float _near; ///< The near plane distance
-	float _far; ///< The far plane distance
 	
 };
 
