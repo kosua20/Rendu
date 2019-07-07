@@ -37,36 +37,49 @@ glm::vec3 & Image::rgb(int x, int y){
 	return reinterpret_cast<glm::vec3*>(&pixels[(y*width+x)*components])[0];
 }
 
-glm::vec2 & Image::rg(int x, int y){
-	return reinterpret_cast<glm::vec2*>(&pixels[(y*width+x)*components])[0];
-}
-
 float & Image::r(int x, int y){
 	return pixels[(y*width+x)*components];
 }
 
-float & Image::a(int x, int y){
-	return pixels[(y*width+x+1)*components-1];
-}
 
-const glm::vec4 & Image::rgbac(int x, int y) const {
+const glm::vec4 & Image::rgba(int x, int y) const {
 	return reinterpret_cast<const glm::vec4*>(&pixels[(y*width+x)*components])[0];
 }
 
-const glm::vec3 & Image::rgbc(int x, int y) const {
+const glm::vec3 & Image::rgb(int x, int y) const {
 	return reinterpret_cast<const glm::vec3*>(&pixels[(y*width+x)*components])[0];
 }
 
-const glm::vec2 & Image::rgc(int x, int y) const {
-	return reinterpret_cast<const glm::vec2*>(&pixels[(y*width+x)*components])[0];
+glm::vec3 Image::rgbn(float x, float y) const {
+	const float xi = x * float(width);
+	const float yi = y * float(height);
+	const float xb = std::round(xi);
+	const float yb = std::round(yi);
+	const int x0 =  int(xb) % width;
+	const int y0 =  int(yb) % height;
+	return rgb(x0,y0);
 }
 
-const float & Image::rc(int x, int y) const {
-	return pixels[(y*width+x)*components];
-}
-
-const float & Image::ac(int x, int y) const {
-	return pixels[(y*width+x+1)*components-1];
+glm::vec3 Image::rgbl(float x, float y) const {
+	const float xi = x * float(width);
+	const float yi = y * float(height);
+	const float xb = std::floor(xi);
+	const float yb = std::floor(yi);
+	const float dx = xi - xb;
+	const float dy = yi - yb;
+	
+	const int x0 =  int(xb) % width;
+	const int x1 = (int(xb)+1) % width;
+	const int y0 =  int(yb) % height;
+	const int y1 = (int(yb)+1) % height;
+	
+	// Fetch four pixels.
+	const glm::vec3 & p00 = rgb(x0,y0);
+	const glm::vec3 & p01 = rgb(x0,y1);
+	const glm::vec3 & p10 = rgb(x1,y0);
+	const glm::vec3 & p11 = rgb(x1,y1);
+	
+	return (1.0f-dx) * ((1.0f - dy) * p00 + dy * p01) + dx * ( (1.0f - dy) * p10 + dy * p11);
 }
 
 bool ImageUtilities::isFloat(const std::string & path){

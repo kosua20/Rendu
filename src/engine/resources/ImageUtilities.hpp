@@ -40,14 +40,6 @@ struct Image {
 	 */
 	glm::vec3 & rgb(int x, int y);
 	
-	/** Accessor to the RG part of a pixel
-	 \param x horizontal coordinate
-	 \param y vertical coordinate
-	 \return reference to the given pixel
-	 \warning no access or component check is done
-	 */
-	glm::vec2 & rg(int x, int y);
-	
 	/** Accessor to the red/first component of a pixel
 	 \param x horizontal coordinate
 	 \param y vertical coordinate
@@ -56,21 +48,13 @@ struct Image {
 	 */
 	float & r(int x, int y);
 	
-	/** Accessor to the alpha/last component of a pixel
-	 \param x horizontal coordinate
-	 \param y vertical coordinate
-	 \return reference to the given pixel last component
-	 \warning no access or component check is done
-	 */
-	float & a(int x, int y);
-	
 	/** Const accessor to a RGBA pixel
 	 \param x horizontal coordinate
 	 \param y vertical coordinate
 	 \return reference to the given pixel
 	 \warning no access or component check is done
 	 */
-	const glm::vec4 & rgbac(int x, int y) const;
+	const glm::vec4 & rgba(int x, int y) const;
 	
 	/** Const accessor to the RGB part of a pixel
 	 \param x horizontal coordinate
@@ -78,31 +62,24 @@ struct Image {
 	 \return reference to the given pixel
 	 \warning no access or component check is done
 	 */
-	const glm::vec3 & rgbc(int x, int y) const;
+	const glm::vec3 & rgb(int x, int y) const;
 	
-	/** Const accessor to the RG part of a pixel
-	 \param x horizontal coordinate
-	 \param y vertical coordinate
-	 \return reference to the given pixel
-	 \warning no access or component check is done
+	/** Bilinear UV image read.
+	 \param x horizontal unit float coordinate
+	 \param y vertical unit float coordinate
+	 \return the bilinearly interpolated color value
+	 \note Wrapping is applied on both axis.
 	 */
-	const glm::vec2 & rgc(int x, int y) const;
+	glm::vec3 rgbl(float x, float y) const;
 	
-	/** Const accessor to the red/first component of a pixel
-	 \param x horizontal coordinate
-	 \param y vertical coordinate
-	 \return reference to the given pixel first component
-	 \warning no access or component check is done
+	/** Nearest-neighbour UV image read.
+	 \param x horizontal unit float coordinate
+	 \param y vertical unit float coordinate
+	 \return the color of the nearest pixel
+	 \note Wrapping is applied on both axis.
 	 */
-	const float & rc(int x, int y) const;
+	glm::vec3 rgbn(float x, float y) const;
 	
-	/** Const accessor to the alpha/last component of a pixel
-	 \param x horizontal coordinate
-	 \param y vertical coordinate
-	 \return reference to the given pixel last component
-	 \warning no access or component check is done
-	 */
-	const float & ac(int x, int y) const;
 	
 };
 
