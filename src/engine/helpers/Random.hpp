@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Common.hpp"
 #include <random>
 
 /**
@@ -18,6 +19,11 @@ public:
 	 \param seedValue the seed to use
 	 */
 	static void seed(unsigned int seedValue);
+	
+	/** Query the current seed.
+	 \return the current seed
+	 */
+	static unsigned int getSeed();
 	
 	/** Generate an integer in a given interval.
 	 \param min the included lower bound
@@ -38,10 +44,8 @@ public:
 	 */
 	static float Float(float min, float max);
 	
-	/** Query the current seed.
-	 \return the current seed
-	 */
-	static unsigned int getSeed();
+	
+	static glm::vec3 sampleSphere();
 	
 private:
 	
