@@ -28,7 +28,8 @@ public:
 		float dist; ///< Distance from the ray origin to the hit location.
 		float u; ///< First barycentric coordinate.
 		float v; ///< Second barycentric coordinate.
-		unsigned long localId; ///< Position of the hit triangle first vertex in the mesh  index buffer.
+		float w; ///< Third barycentric coordinate.
+		unsigned long localId; ///< Position of the hit triangle first vertex in the mesh index buffer.
 		unsigned long meshId; ///< Index of the mesh hit by the ray.
 		
 		/** Default constructor ('no hit' case). */
@@ -51,6 +52,27 @@ public:
 	 \return a hit object containg the potential hit informations
 	 */
 	const RayHit intersects(const glm::vec3 & origin, const glm::vec3 & direction) const;
+	
+	/** Return the interpolated position of the ray hit on the surface of the mesh.
+	 \param hit the intersection record
+	 \param geometry the mesh geometry information
+	 \return the smooth position
+	 */
+	static glm::vec3 interpolatePosition(const RayHit & hit, const Mesh geometry);
+	
+	/** Return the interpolated normal at the hit on the surface of the mesh.
+	 \param hit the intersection record
+	 \param geometry the mesh geometry information
+	 \return the smooth normal (normalized)
+	 */
+	static glm::vec3 interpolateNormal(const RayHit & hit, const Mesh geometry);
+	
+	/** Return the interpolated texture coordinates at the hit on the surface of the mesh.
+	 \param hit the intersection record
+	 \param geometry the mesh geometry information
+	 \return the smooth texture coordinates
+	 */
+	static glm::vec2 interpolateUV(const RayHit & hit, const Mesh geometry);
 	
 private:
 	
