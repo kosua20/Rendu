@@ -101,7 +101,7 @@ public:
 	 \endverbatim
 	 \param params the parameters tuples list
 	 */
-	void decode(const std::vector<KeyValues>& params);
+	void decode(const std::vector<KeyValues>& params, const Storage mode);
 	
 private:
 	

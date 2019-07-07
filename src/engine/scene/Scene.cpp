@@ -11,13 +11,13 @@ Scene::Scene(const std::string & name){
 	_name = fullName;
 }
 	
-void Scene::init(){
+void Scene::init(const Storage mode){
 	if(_loaded){
 		return;
 	}
 	
 	// Define loaders for each keyword.
-	std::map<std::string, void (Scene::*)(const std::vector<KeyValues> &)> loaders = {
+	std::map<std::string, void (Scene::*)(const std::vector<KeyValues> &, const Storage)> loaders = {
 		{"scene", &Scene::loadScene}, {"object", &Scene::loadObject}, {"point", &Scene::loadLight}, {"directional", &Scene::loadLight}, {"spot", &Scene::loadLight}
 	};
 	
@@ -44,7 +44,7 @@ void Scene::init(){
 		std::vector<KeyValues> subset(allKeyVals.begin() + startId, allKeyVals.begin() + endId);
 		const std::string key = subset[0].key;
 		// By construction (see above), all keys should have a loader.
-		(this->*loaders[key])(subset);
+		(this->*loaders[key])(subset, mode);
 	}
 	
 	// Update all objects poses.
@@ -62,20 +62,20 @@ void Scene::init(){
 	_loaded = true;
 };
 
-void Scene::loadObject(const std::vector<KeyValues> & params){
+void Scene::loadObject(const std::vector<KeyValues> & params, const Storage mode){
 	objects.emplace_back();
-	objects.back().decode(params);
+	objects.back().decode(params, mode);
 }
 
-void Scene::loadLight(const std::vector<KeyValues> & params){
+void Scene::loadLight(const std::vector<KeyValues> & params, const Storage mode){
 	auto light = Light::decode(params);
 	if(light){
 		lights.push_back(light);
 	}
 }
 
-void Scene::loadScene(const std::vector<KeyValues> & params){
-	background = Object(Object::Type::Common, Resources::manager().getMesh("plane"), false);
+void Scene::loadScene(const std::vector<KeyValues> & params, const Storage mode){
+	background = Object(Object::Type::Common, Resources::manager().getMesh("plane", mode), false);
 	backgroundIrradiance = std::vector<glm::vec3>(9, glm::vec3(0.0f));
 	
 	for(int pid = 0; pid < params.size(); ++pid){
@@ -84,7 +84,7 @@ void Scene::loadScene(const std::vector<KeyValues> & params){
 			loadSphericalHarmonics(param.values[0]);
 		} else if(param.key == "probe"){
 			// Move to the next parameter and try to load the texture.
-			backgroundReflection = Codable::decodeTexture(params[++pid]);
+			backgroundReflection = Codable::decodeTexture(params[++pid], mode);
 			if(backgroundReflection == nullptr){
 				--pid;
 			}
@@ -96,7 +96,7 @@ void Scene::loadScene(const std::vector<KeyValues> & params){
 			backgroundMode = Background::IMAGE;
 			// Background is a textured plane.
 			// Move to the next parameter.
-			const TextureInfos * tex = Codable::decodeTexture(params[++pid]);
+			const TextureInfos * tex = Codable::decodeTexture(params[++pid], mode);
 			if(tex){
 				background.addTexture(tex);
 			} else {
@@ -105,9 +105,9 @@ void Scene::loadScene(const std::vector<KeyValues> & params){
 		} else if(param.key == "bgsky"){
 			backgroundMode = Background::SKYBOX;
 			// Object is a textured skybox.
-			background = Object(Object::Type::Common, Resources::manager().getMesh("skybox"), false);
+			background = Object(Object::Type::Common, Resources::manager().getMesh("skybox", mode), false);
 			// Move to the next parameter.
-			const TextureInfos * tex = Codable::decodeTexture(params[++pid]);
+			const TextureInfos * tex = Codable::decodeTexture(params[++pid], mode);
 			if(tex){
 				background.addTexture(tex);
 			} else {

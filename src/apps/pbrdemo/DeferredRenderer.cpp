@@ -73,7 +73,7 @@ void DeferredRenderer::setScene(std::shared_ptr<Scene> scene){
 	}
 	
 	auto start = std::chrono::steady_clock::now();
-	_scene->init();
+	_scene->init(Storage::GPU);
 	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start);
 	Log::Info() << "Loading took " << duration.count() << "ms." << std::endl;
 	const BoundingBox & bbox = _scene->getBoundingBox();

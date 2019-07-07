@@ -45,8 +45,9 @@ public:
 	Scene(const std::string & name);
 	
 	/** Performs initialization against the graphics API, loading data.
+	 \param mode should the data be stored on the CPU, GPU, or both.
 	 */
-	void init();
+	void init(const Storage mode);
 	
 	/** Update the animations in the scene.
 	 \param fullTime the time elapsed since the beginning of the render loop
@@ -80,17 +81,17 @@ private:
 	/** Load an object in the scene from its serialized representation.
 	 \param params the object parameters
 	 */
-	void loadObject(const std::vector<KeyValues> & params);
+	void loadObject(const std::vector<KeyValues> & params, const Storage mode);
 	
 	/** Load a point light in the scene from its serialized representation.
 	 \param params the point light parameters
 	 */
-	void loadLight(const std::vector<KeyValues> & params);
+	void loadLight(const std::vector<KeyValues> & params, const Storage mode);
 	
 	/** Load the scene environment informations from its serialized representation.
 	 \param params the scene parameters
 	 */
-	void loadScene(const std::vector<KeyValues> & params);
+	void loadScene(const std::vector<KeyValues> & params, const Storage mode);
 	
 	/** Load a file containing some SH coefficients approximating background irradiance.
 	 \param name the name of the text file
