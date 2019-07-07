@@ -58,21 +58,21 @@ public:
 	 \param geometry the mesh geometry information
 	 \return the smooth position
 	 */
-	static glm::vec3 interpolatePosition(const RayHit & hit, const Mesh geometry);
+	static glm::vec3 interpolatePosition(const RayHit & hit, const Mesh & geometry);
 	
 	/** Return the interpolated normal at the hit on the surface of the mesh.
 	 \param hit the intersection record
 	 \param geometry the mesh geometry information
 	 \return the smooth normal (normalized)
 	 */
-	static glm::vec3 interpolateNormal(const RayHit & hit, const Mesh geometry);
+	static glm::vec3 interpolateNormal(const RayHit & hit, const Mesh & geometry);
 	
 	/** Return the interpolated texture coordinates at the hit on the surface of the mesh.
 	 \param hit the intersection record
 	 \param geometry the mesh geometry information
 	 \return the smooth texture coordinates
 	 */
-	static glm::vec2 interpolateUV(const RayHit & hit, const Mesh geometry);
+	static glm::vec2 interpolateUV(const RayHit & hit, const Mesh & geometry);
 	
 private:
 	
@@ -101,8 +101,8 @@ private:
 	/** Base element of the acceleration structure. */
 	struct Node {
 		BoundingBox box; ///< Boudinng box of the contained geometry.
-		int left; ///< Index of the left child element, or first triangle index if this is a leaf.
-		int right; ///< Index of the right child element, or number of triangles if this is a leaf.
+		size_t left; ///< Index of the left child element, or first triangle index if this is a leaf.
+		size_t right; ///< Index of the right child element, or number of triangles if this is a leaf.
 		bool leaf; ///< Is this a leaf in the hierarchy.
 	};
 	
@@ -111,7 +111,7 @@ private:
 	 \param count number of triangles in the region to update
 	 \return the index of the updated node
 	 */
-	int updateSubHierarchy(const int begin, const int count);
+	size_t updateSubHierarchy(const size_t begin, const size_t count);
 	
 	/** Test a ray and triangle intersection using the Muller-Trumbore test.
 	 \param ray the ray

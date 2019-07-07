@@ -40,11 +40,11 @@ void Raycaster::addMesh(const Mesh & mesh){
 
 void Raycaster::updateHierarchy(){
 	Log::Info() << "Building hierarchy... " << std::flush;
-	updateSubHierarchy(0, int(_triangles.size()));
+	updateSubHierarchy(0, _triangles.size());
 	Log::Info() << "Done." << std::endl;
 }
 
-int Raycaster::updateSubHierarchy(const int begin, const int count){
+size_t Raycaster::updateSubHierarchy(const size_t begin, const size_t count){
 	// Pick a random axis for sorting.
 	const int axis = Random::Int(0, 2);
 	// Sort all triangles along the picked axis.
@@ -56,7 +56,7 @@ int Raycaster::updateSubHierarchy(const int begin, const int count){
 	});
 	// Create the node.
 	_hierarchy.emplace_back();
-	const int nodeId = int(_hierarchy.size()-1);
+	const size_t nodeId = _hierarchy.size()-1;
 	Node currentNode;
 	// If the triangles count is low enough, we have a leaf.
 	if(count < 3){
@@ -161,7 +161,7 @@ bool Raycaster::intersects(const Raycaster::Ray & ray, const BoundingBox & box, 
 	return std::max(closest, mini) <= std::min(furthest, maxi);
 }
 
-glm::vec3 Raycaster::interpolatePosition(const RayHit & hit, const Mesh geometry){
+glm::vec3 Raycaster::interpolatePosition(const RayHit & hit, const Mesh & geometry){
 	const unsigned long triId = hit.localId;
 	const unsigned long i0 = geometry.indices[triId  ];
 	const unsigned long i1 = geometry.indices[triId+1];
@@ -169,7 +169,7 @@ glm::vec3 Raycaster::interpolatePosition(const RayHit & hit, const Mesh geometry
 	return hit.w * geometry.positions[i0] + hit.u * geometry.positions[i1] + hit.v * geometry.positions[i2];
 }
 
-glm::vec3 Raycaster::interpolateNormal(const RayHit & hit, const Mesh geometry){
+glm::vec3 Raycaster::interpolateNormal(const RayHit & hit, const Mesh & geometry){
 	const unsigned long triId = hit.localId;
 	const unsigned long i0 = geometry.indices[triId  ];
 	const unsigned long i1 = geometry.indices[triId+1];
@@ -178,7 +178,7 @@ glm::vec3 Raycaster::interpolateNormal(const RayHit & hit, const Mesh geometry){
 	return glm::normalize(n);
 }
 
-glm::vec2 Raycaster::interpolateUV(const RayHit & hit, const Mesh geometry){
+glm::vec2 Raycaster::interpolateUV(const RayHit & hit, const Mesh & geometry){
 	const unsigned long triId = hit.localId;
 	const unsigned long i0 = geometry.indices[triId  ];
 	const unsigned long i1 = geometry.indices[triId+1];
