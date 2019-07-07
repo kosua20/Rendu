@@ -46,12 +46,12 @@ int main(int argc, char** argv) {
 	}
 	raycaster.updateHierarchy();
 	
-	
 	// Result image.
 	Image render(1024, 1024, 3);
+	
 	// Setup camera.
 	Camera camera;
-	camera.pose(glm::vec3(0.0f, 1.0f, 2.5f), glm::vec3(0.0f, 1.0f, 2.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	camera.pose(glm::vec3(0.0f, 1.0f, 2.5f), glm::vec3(0.0f, 1.0f, 1.5f), glm::vec3(0.0f, 1.0f, 0.0f));
 	camera.projection(1.0f, 1.3f, 0.01f, 100.0f);
 	// Compute incremental pixel shifts.
 	glm::vec3 corner, dx, dy;
@@ -60,9 +60,9 @@ int main(int argc, char** argv) {
 	// Start chrono.
 	auto start = std::chrono::steady_clock::now();
 	
-	// Get the maximum number of threads.
+	// Parallelize on each row of the image.
 	System::forParallel(0, render.height, [&](size_t y){
-		for(unsigned int x = 0; x < render.width; ++x){
+		for(size_t x = 0; x < render.width; ++x){
 			
 			// Derive a position on the image plane from the pixel.
 			const glm::vec2 ndcPos = (glm::vec2(x,y) + 0.5f) / glm::vec2(render.width, render.height);
@@ -73,7 +73,29 @@ int main(int argc, char** argv) {
 			const Raycaster::RayHit hit = raycaster.intersects(camera.position(), worldDir);
 			// If no hit, background.
 			if(!hit.hit){
-				render.rgb(x,y) = glm::vec3(0.0f, 0.0f, 0.0f);
+				glm::vec3 bgColor(0.0f);
+				switch(scene.backgroundMode){
+					case Scene::Background::COLOR:
+					{
+						bgColor = scene.backgroundColor;
+						break;
+					}
+					case Scene::Background::IMAGE:
+					{
+						const Image & image = scene.background.textures()[0]->images[0];
+						bgColor = image.rgbl(ndcPos.x, ndcPos.y);
+						break;
+					}
+					case Scene::Background::SKYBOX:
+					{
+						// Unsuported for now.
+						break;
+					}
+					default:
+						break;
+						
+				}
+				render.rgb(x,y) = bgColor;
 				continue;
 			}
 			
@@ -97,13 +119,20 @@ int main(int argc, char** argv) {
 			
 			// Fetch base color from texture.
 			const Image & image = scene.objects[hit.meshId].textures()[0]->images[0];
-			const int px = int(std::floor(uv.x * float(image.width))) % image.width;
-			const int py = int(std::floor(uv.y * float(image.height))) % image.height;
-			const glm::vec3 & baseColor = image.rgbc(px, py);
-			// Modulate and store, applying gamma correction.
-			render.rgb(x,y) = glm::pow(illumination * baseColor, glm::vec3(1.0f/2.2f));
+			const glm::vec3 baseColor = image.rgbl(uv.x, uv.y);
+			// Modulate and store.
+			render.rgb(x,y) = illumination * baseColor;
 		}
 	});
+	
+	
+	// Final tonemapping and gamma correction.
+	System::forParallel(0, render.height, [&render](size_t y){
+		for(size_t x = 0; x < render.width; ++x){
+			render.rgb(x,y) = glm::pow(render.rgb(x,y), glm::vec3(1.0f/2.2f));
+		}
+	});
+	
 	
 	// Display duration.
 	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start);
