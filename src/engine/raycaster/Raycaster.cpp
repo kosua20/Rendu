@@ -47,7 +47,7 @@ void Raycaster::addMesh(const Mesh & mesh, const glm::mat4 & model){
 }
 
 void Raycaster::updateHierarchy(){
-	Log::Info() << "Building hierarchy... " << std::flush;
+	Log::Info() << "[Raycaster] Building hierarchy... " << std::flush;
 	updateSubHierarchy(0, _triangles.size());
 	Log::Info() << "Done." << std::endl;
 }
