@@ -102,7 +102,6 @@ void DirectionalLight::setScene(const BoundingBox & sceneBox){
 	const BoundingSphere sceneSphere = _sceneBox.getSphere();
 	const glm::vec3 lightPosition = sceneSphere.center - sceneSphere.radius*1.1f*_lightDirection;
 	const glm::vec3 lightTarget = sceneSphere.center;
-	
 	_viewMatrix = glm::lookAt(lightPosition, lightTarget, glm::vec3(0.0f,1.0f,0.0f));
 	
 	const BoundingBox lightSpacebox = _sceneBox.transformed(_viewMatrix);
@@ -120,6 +119,16 @@ void DirectionalLight::clean() const {
 	_shadowPass->clean();
 }
 
+bool DirectionalLight::visible(const glm::vec3 & position, const Raycaster & raycaster, glm::vec3 & direction, float & attenuation) const {
+	
+	if(_castShadows && raycaster.intersectsAny(position, -_lightDirection)){
+		return false;
+	}
+	direction = -_lightDirection;
+	attenuation = 1.0f;
+	return true;
+}
+
 void DirectionalLight::decode(const std::vector<KeyValues> & params){
 	Light::decodeBase(params);
 	for(const auto & param : params){
@@ -128,4 +137,3 @@ void DirectionalLight::decode(const std::vector<KeyValues> & params){
 		}
 	}
 }
-

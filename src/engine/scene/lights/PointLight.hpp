@@ -60,6 +60,11 @@ public:
 	 */
 	void setScene(const BoundingBox & sceneBox);
 	
+	/**
+	 \copydoc Light::visible
+	 */
+	bool visible(const glm::vec3 & position, const Raycaster & raycaster, glm::vec3 & direction, float & attenuation) const;
+	
 	/** Setup a point light parameters from a list of key-value tuples. The following keywords will be searched for:
 	 \verbatim
 	 position: X,Y,Z

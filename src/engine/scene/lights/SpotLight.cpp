@@ -127,7 +127,6 @@ void SpotLight::drawDebug(const glm::mat4& viewMatrix, const glm::mat4& projecti
 	glUseProgram(0);
 }
 
-
 void SpotLight::update(double fullTime, double frameTime){
 	glm::vec4 position = glm::vec4(_lightPosition, 1.0f);
 	glm::vec4 direction = glm::vec4(_lightDirection, 0.0f);
@@ -143,6 +142,7 @@ void SpotLight::update(double fullTime, double frameTime){
 void SpotLight::setScene(const BoundingBox & sceneBox){
 	_sceneBox = sceneBox;
 	_viewMatrix = glm::lookAt(_lightPosition, _lightPosition+_lightDirection, glm::vec3(0.0f,1.0f,0.0f));
+	
 	// Compute the projection matrix, automatically finding the near and far.
 	float near = 0.01f;
 	float far = 100.0f;
@@ -159,6 +159,40 @@ void SpotLight::setScene(const BoundingBox & sceneBox){
 	}
 	_projectionMatrix = glm::perspective(2.0f*_outerHalfAngle, 1.0f, near, far);
 	_mvp = _projectionMatrix * _viewMatrix;
+}
+
+bool SpotLight::visible(const glm::vec3 & position, const Raycaster & raycaster, glm::vec3 & direction, float & attenuation) const {
+	if(_castShadows && !raycaster.visible(position, _lightPosition)){
+		return false;
+	}
+	direction = _lightPosition - position;
+	
+	// Early exit if we are outside the sphere of influence.
+	const float localRadius = glm::length(direction);
+	if(localRadius > _radius){
+		return false;
+	}
+	if(localRadius > 0.0f){
+		direction /= localRadius;
+	}
+	
+	// Compute the angle between the light direction and the (light, surface point) vector.
+	const float currentCos = glm::dot(-direction, _lightDirection);
+	const float outerCos = std::cos(_outerHalfAngle);
+	// If we are outside the spotlight cone, no lighting.
+	if(currentCos < std::cos(outerCos)){
+		return false;
+	}
+	// Compute the spotlight attenuation factor based on our angle compared to the inner and outer spotlight angles.
+	const float innerCos = std::cos(_innerHalfAngle);
+	float angleAttenuation = glm::clamp((currentCos - outerCos)/(innerCos - outerCos), 0.0f, 1.0f);
+	
+	// Attenuation with increasing distance to the light.
+	const float radiusRatio = localRadius / _radius;
+	const float radiusRatio2 = radiusRatio * radiusRatio;
+	const float attenNum = glm::clamp(1.0f - radiusRatio2, 0.0f, 1.0f);
+	attenuation = angleAttenuation * attenNum * attenNum;
+	return true;
 }
 
 void SpotLight::decode(const std::vector<KeyValues> & params){

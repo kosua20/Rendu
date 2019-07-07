@@ -6,16 +6,16 @@
 
 Light::Light(){
 	_castShadows = false;
-	_color = glm::vec3(1.0f);
 	_mvp = glm::mat4(1.0f);
+	_color = glm::vec3(1.0f);
 	_program = nullptr;
 	_programDepth = nullptr;
 }
 
 Light::Light(const glm::vec3& color){
 	_castShadows = false;
-	_color = color;
 	_mvp = glm::mat4(1.0f);
+	_color = color;
 	_program = nullptr;
 	_programDepth = nullptr;
 }

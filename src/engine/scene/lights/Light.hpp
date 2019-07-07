@@ -3,6 +3,8 @@
 #include "scene/Animation.hpp"
 #include "Common.hpp"
 #include "scene/Object.hpp"
+#include "raycaster/Raycaster.hpp"
+
 /**
  \brief A general light with adjustable color intensity, that can cast shadows.
  \ingroup Scene
@@ -28,6 +30,11 @@ public:
 	 \param color the new intensity to use
 	 */
 	void setIntensity(const glm::vec3 & color){ _color = color; }
+	
+	/** Get the light colored intensity.
+	 \return the light intensity
+	 */
+	const glm::vec3 & intensity(){ return _color; }
 	
 	/** Add an animation to the light.
 	 \param anim the animation to apply
@@ -70,6 +77,15 @@ public:
 	 \param sceneBox the new bounding box
 	 */
 	virtual void setScene(const BoundingBox & sceneBox) = 0;
+	
+	/** Test the visibility of a point in space from the light source.
+	 \param position the 3D point to test
+	 \param raycaster the raycaster for intersections tests
+	 \param direction will contain the direction from the point to the light
+	 \param attenuation will contain the attenuation caused by the radius/cone/etc.
+	 \return true if the point is visible from the light source.
+	 */
+	virtual bool visible(const glm::vec3 & position, const Raycaster & raycaster, glm::vec3 & direction, float & attenuation) const = 0;
 	
 	/** Helper that can instantiate a light of any type from the passed keywords and parameters.
 	 \param params a list of key-value tuple containing light parameters

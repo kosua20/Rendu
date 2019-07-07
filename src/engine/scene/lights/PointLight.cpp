@@ -130,7 +130,6 @@ void PointLight::drawDebug(const glm::mat4& viewMatrix, const glm::mat4& project
 
 }
 
-
 void PointLight::update(double fullTime, double frameTime){
 	glm::vec4 position = glm::vec4(_lightPosition, 0.0);
 	for(auto & anim : _animations){
@@ -144,6 +143,7 @@ void PointLight::setScene(const BoundingBox & sceneBox){
 	_sceneBox = sceneBox;
 	
 	const glm::mat4 model = glm::translate(glm::mat4(1.0f), -_lightPosition);
+	
 	// Compute the projection matrix based on the scene bounding box.
 	// As both the view matrices and the bounding boxe are axis aligned, we can avoid costly transformations.
 	const glm::vec3 deltaMini = _lightPosition - _sceneBox.minis;
@@ -181,6 +181,29 @@ void PointLight::setScene(const BoundingBox & sceneBox){
 		const glm::mat4 view = glm::lookAt(glm::vec3(0.0f), centers[mid], ups[mid]);
 		_mvps[mid] = projection * view * model;
 	}
+}
+
+bool PointLight::visible(const glm::vec3 & position, const Raycaster & raycaster, glm::vec3 & direction, float & attenuation) const {
+	if(_castShadows && !raycaster.visible(position, _lightPosition)){
+		return false;
+	}
+	direction = _lightPosition - position;
+	
+	// Early exit if we are outside the sphere of influence.
+	const float localRadius = glm::length(direction);
+	if(localRadius > _radius){
+		return false;
+	}
+	if(localRadius > 0.0f){
+		direction /= localRadius;
+	}
+	
+	// Attenuation with increasing distance to the light.
+	const float radiusRatio = localRadius / _radius;
+	const float radiusRatio2 = radiusRatio * radiusRatio;
+	const float attenNum = glm::clamp(1.0f - radiusRatio2, 0.0f, 1.0f);
+	attenuation = attenNum*attenNum;
+	return true;
 }
 
 void PointLight::decode(const std::vector<KeyValues> & params){
