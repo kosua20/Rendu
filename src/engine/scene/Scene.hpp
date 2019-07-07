@@ -80,16 +80,19 @@ private:
 	
 	/** Load an object in the scene from its serialized representation.
 	 \param params the object parameters
+	 \param mode the storage mode (CPU, GPU, both)
 	 */
 	void loadObject(const std::vector<KeyValues> & params, const Storage mode);
 	
 	/** Load a point light in the scene from its serialized representation.
 	 \param params the point light parameters
+	 \param mode the storage mode (CPU, GPU, both)
 	 */
 	void loadLight(const std::vector<KeyValues> & params, const Storage mode);
 	
 	/** Load the scene environment informations from its serialized representation.
 	 \param params the scene parameters
+	 \param mode the storage mode (CPU, GPU, both)
 	 */
 	void loadScene(const std::vector<KeyValues> & params, const Storage mode);
 	

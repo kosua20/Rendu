@@ -43,6 +43,7 @@ public:
 	 \endverbatim
 	 (where texturetype can be one of 'rgb', 'srgb', 'rgb32', 'rgbcube', 'srgbcube', 'rgb32cube' depending on the desired format).
 	 \param param the parameters tuple
+	 \param mode the storage mode (CPU, GPU, both)
 	 \return a pointer to the allocated texture infos, or null/
 	 \todo We could extract the interaction with the Resources manager and only output the proper name/descriptor/type.
 	 */

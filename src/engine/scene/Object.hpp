@@ -100,6 +100,7 @@ public:
 	 	...
 	 \endverbatim
 	 \param params the parameters tuples list
+	 \param mode the storage mode (CPU, GPU, both)
 	 */
 	void decode(const std::vector<KeyValues>& params, const Storage mode);
 	
