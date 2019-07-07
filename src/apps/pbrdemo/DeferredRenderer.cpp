@@ -310,7 +310,16 @@ void DeferredRenderer::update(){
 			_userCamera.fov(_cameraFOV*float(M_PI)/180.0f);
 		}
 		ImGui::Combo("Camera mode", (int*)(&_userCamera.mode()), "FPS\0Turntable\0Joystick\0\0", 3);
+		ImGui::PopItemWidth();
+		if(ImGui::CollapsingHeader("Camera details")){
+			ImGui::InputFloat3("Position", (float*)(&_userCamera.position()[0]));
+			ImGui::InputFloat3("Center", (float*)(&_userCamera.center()[0]));
+			ImGui::InputFloat3("Up", (float*)(&_userCamera.up()[0]));
+			ImGui::InputFloat2("Clip planes", (float*)(&_userCamera.clippingPlanes()[0]));
+			ImGui::Text("FoV (rad): %2.3f", _userCamera.fov());
+		}
 		ImGui::Separator();
+		ImGui::PushItemWidth(100);
 		if(ImGui::InputInt("Vertical res.", &_config.internalVerticalResolution, 50, 200)){
 			resize(int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 		}
@@ -327,7 +336,7 @@ void DeferredRenderer::update(){
 		
 	}
 	ImGui::End();
-}
+	}
 
 void DeferredRenderer::physics(double fullTime, double frameTime){
 	_userCamera.physics(frameTime);
