@@ -69,6 +69,49 @@ public:
 	
 };
 
+glm::vec3 sampleCubemap(const std::vector<Image> & images, const glm::vec3 & dir){
+	// Images are stored in the following order:
+	// px, nx, py, ny, pz, nz
+	const glm::vec3 abs = glm::abs(dir);
+	int side = 0;
+	float x = 0.0f, y = 0.0f;
+	if(abs.x >= abs.y && abs.x >= abs.y){
+		y = abs.y / abs.x;
+		// X faces.
+		if(dir.x >= 0.0f){
+			side = 0;
+			x = -abs.z / abs.x;
+		} else {
+			side = 1;
+			x = abs.z / abs.x;
+		}
+		
+	} else if(abs.y >= abs.x && abs.y >= abs.z){
+		x = abs.x / abs.y;
+		// Y faces.
+		if(dir.y >= 0.0f){
+			side = 2;
+			y = -abs.z / abs.y;
+		} else {
+			side = 3;
+			y = abs.z / abs.y;
+		}
+	} else if(abs.z >= abs.x && abs.z >= abs.y){
+		y = abs.y / abs.z;
+		// Z faces.
+		if(dir.z >= 0.0f){
+			side = 4;
+			x = abs.x / abs.z;
+		} else {
+			side = 5;
+			x = -abs.x / abs.z;
+		}
+	}
+	x = 0.5f * x + 0.5f;
+	y = 0.5f * y + 0.5f;
+	return images[side].rgbl(x, y);
+}
+
 /**
  The main function of the demo.
  \param argc the number of input arguments.
@@ -111,7 +154,8 @@ int main(int argc, char** argv) {
 	
 	// Setup camera.
 	Camera camera;
-	camera.pose(glm::vec3(0.0f, 1.0f, 2.5f), glm::vec3(0.0f, 1.0f, 1.5f), glm::vec3(0.0f, 1.0f, 0.0f));
+	//camera.pose(glm::vec3(0.0f, 1.0f, 2.5f), glm::vec3(0.0f, 1.0f, 1.5f), glm::vec3(0.0f, 1.0f, 0.0f));
+	camera.pose(glm::vec3(0.0f, 0.0f, 2.5f), glm::vec3(0.0f, 0.0f, 1.5f), glm::vec3(0.0f, 1.0f, 0.0f));
 	camera.projection(ratio, 1.3f, 0.01f, 100.0f);
 	// Compute incremental pixel shifts.
 	glm::vec3 corner, dx, dy;
@@ -147,11 +191,14 @@ int main(int argc, char** argv) {
 					if(!hit.hit){
 						// For now the background is not emissive, it is only sampled for direct paths.
 						/// \todo Support environment map fetch.
-						if(depth == 0){
+						if(did == 0){
 							const Scene::Background mode = scene.backgroundMode;
 							if (mode == Scene::Background::IMAGE){
 								const Image & image = scene.background.textures()[0]->images[0];
 								sampleColor = image.rgbl(ndcPos.x, ndcPos.y);
+							} else if (mode == Scene::Background::SKYBOX){
+								const auto & images = scene.background.textures()[0]->images;
+								sampleColor = sampleCubemap(images, glm::normalize(rayDir));
 							} else {
 								sampleColor = scene.backgroundColor;
 							}
