@@ -1,6 +1,7 @@
 #include "ResourcesManager.hpp"
 #include "MeshUtilities.hpp"
 #include "helpers/TextUtilities.hpp"
+#include "helpers/System.hpp"
 
 #include <fstream>
 #include <sstream>
@@ -13,33 +14,6 @@
 //#define RESOURCES_PACKAGED
 
 
-
-#ifdef _WIN32
-WCHAR * widen(const std::string & str){
-	const int size = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, NULL, 0);
-	WCHAR *arr = new WCHAR[size];
-	MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, (LPWSTR)arr, size);
-	// \warn Will leak on Windows.
-	return arr;
-}
-
-std::string narrow(WCHAR * str){
-	const int size = WideCharToMultiByte(CP_UTF8, 0, str, -1, NULL, 0, NULL, NULL);
-	std::string res(size-1, 0);
-	WideCharToMultiByte(CP_UTF8, 0, str, -1, &res[0], size, NULL, NULL);
-	return res;
-}
-
-#else
-
-const char * widen(const std::string & str){
-	return str.c_str();
-}
-std::string narrow(char * str) {
-	return std::string(str);
-}
-
-#endif
 
 std::string Resources::defaultPath = "../../../resources/common/";
 
@@ -106,7 +80,7 @@ void Resources::parseArchive(const std::string & archivePath){
 void Resources::parseDirectory(const std::string & directoryPath){
 	// Open directory.
 	tinydir_dir dir;
-	auto * widenedPath = widen(directoryPath);
+	auto * widenedPath = System::widen(directoryPath);
 	if(tinydir_open(&dir, widenedPath) == -1){
 		tinydir_close(&dir);
 		Log::Error() << Log::Resources << "Unable to open resources directory at path \"" << directoryPath << "\"" << std::endl;
@@ -116,23 +90,23 @@ void Resources::parseDirectory(const std::string & directoryPath){
 		tinydir_file file;
 		if(tinydir_readfile(&dir, &file) == -1){
 			// Handle any read error.
-			Log::Error() << Log::Resources << "Error getting file in directory \"" << narrow(dir.path) << "\"" << std::endl;
+			Log::Error() << Log::Resources << "Error getting file in directory \"" << System::narrow(dir.path) << "\"" << std::endl;
 			
 		} else if(file.is_dir){
 			// Extract subdirectory name, check that it isn't a special dir, and recursively parse it.
-			const std::string dirName = narrow(file.name);
+			const std::string dirName = System::narrow(file.name);
 			if(dirName.size() > 0 && dirName[0] != '.'){
 				parseDirectory(directoryPath + "/" + dirName);
 			}
 			
 		} else {
 			// Else, we have a regular file.
-			const std::string fileNameWithExt = narrow(file.name);
+			const std::string fileNameWithExt = System::narrow(file.name);
 			// Filter empty files and system files.
 			if(fileNameWithExt.size() > 0 && fileNameWithExt.at(0) != '.' ){
 				if(_files.count(fileNameWithExt) == 0){
 					// Store the file and its path.
-					_files[fileNameWithExt] = narrow(dir.path) + "/" + fileNameWithExt;
+					_files[fileNameWithExt] = System::narrow(dir.path) + "/" + fileNameWithExt;
 					
 				} else {
 					// If the file already exists somewhere else in the hierarchy, warn about this.
@@ -476,7 +450,7 @@ void Resources::getFiles(const std::string & extension, std::map<std::string, st
 
 char * Resources::loadRawDataFromExternalFile(const std::string & path, size_t & size) {
 	char * rawContent;
-	std::ifstream inputFile(widen(path), std::ios::binary|std::ios::ate);
+	std::ifstream inputFile(System::widen(path), std::ios::binary|std::ios::ate);
 	if (inputFile.bad() || inputFile.fail()){
 		Log::Error() << Log::Resources << "Unable to load file at path \"" << path << "\"." << std::endl;
 		size = 0;
@@ -492,7 +466,7 @@ char * Resources::loadRawDataFromExternalFile(const std::string & path, size_t &
 }
 
 std::string Resources::loadStringFromExternalFile(const std::string & path) {
-	std::ifstream inputFile(widen(path));
+	std::ifstream inputFile(System::widen(path));
 	if (inputFile.bad() || inputFile.fail()){
 		Log::Error() << Log::Resources << "Unable to load file at path \"" << path << "\"." << std::endl;
 		return "";
@@ -508,7 +482,7 @@ std::string Resources::loadStringFromExternalFile(const std::string & path) {
 }
 
 void Resources::saveRawDataToExternalFile(const std::string & path, char * rawContent, const size_t size) {
-	std::ofstream outputFile(widen(path), std::ios::binary);
+	std::ofstream outputFile(System::widen(path), std::ios::binary);
 	if (outputFile.bad() || outputFile.fail()){
 		Log::Error() << Log::Resources << "Unable to save file at path \"" << path << "\"." << std::endl;
 		return;
@@ -518,7 +492,7 @@ void Resources::saveRawDataToExternalFile(const std::string & path, char * rawCo
 }
 
 void Resources::saveStringToExternalFile(const std::string & path, const std::string & content) {
-	std::ofstream outputFile(widen(path));
+	std::ofstream outputFile(System::widen(path));
 	if (outputFile.bad() || outputFile.fail()){
 		Log::Error() << Log::Resources << "Unable to save file at path \"" << path << "\"." << std::endl;
 		return;

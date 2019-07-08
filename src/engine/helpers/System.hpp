@@ -70,7 +70,7 @@ namespace System {
 	 \return true if the user picked an item, false if cancelled.
 	 */
 	bool showPicker(const Picker mode, const std::string & startDir, std::string & outPath, const std::string & extensions = "");
-	
+
 	/** Create a directory.
 	 \param directory the path to the directory to create
 	 \return true if the creation is successful.
@@ -78,8 +78,7 @@ namespace System {
 	 \warning This function will not create intermediate directories.
 	 */
 	bool createDirectory(const std::string & directory);
-	
-	
+
 	/** Multi-threaded for-loop.
 	 \param low lower (included) bound
 	 \param high higher (excluded) bound
@@ -120,6 +119,21 @@ namespace System {
 		// Wait for all threads to finish.
 		std::for_each(threads.begin(),threads.end(),[](std::thread& x){x.join();});
 	}
+
+
+#ifdef _WIN32
+
+	WCHAR * widen(const std::string & str);
+
+	std::string narrow(WCHAR * str);
+
+#else
+
+	const char * widen(const std::string & str);
+
+	std::string narrow(char * str);
+
+#endif
 	
 }
 
