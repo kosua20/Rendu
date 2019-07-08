@@ -75,40 +75,48 @@ glm::vec3 sampleCubemap(const std::vector<Image> & images, const glm::vec3 & dir
 	const glm::vec3 abs = glm::abs(dir);
 	int side = 0;
 	float x = 0.0f, y = 0.0f;
-	if(abs.x >= abs.y && abs.x >= abs.y){
-		y = abs.y / abs.x;
+	float denom = 1.0f;
+	if(abs.x >= abs.y && abs.x >= abs.z){
+		denom = abs.x;
+		y = dir.y;
 		// X faces.
 		if(dir.x >= 0.0f){
 			side = 0;
-			x = -abs.z / abs.x;
+			x = -dir.z;
 		} else {
 			side = 1;
-			x = abs.z / abs.x;
+			x = dir.z;
 		}
 		
 	} else if(abs.y >= abs.x && abs.y >= abs.z){
-		x = abs.x / abs.y;
+		denom = abs.y;
+		x = dir.x;
 		// Y faces.
 		if(dir.y >= 0.0f){
 			side = 2;
-			y = -abs.z / abs.y;
+			y = -dir.z;
 		} else {
 			side = 3;
-			y = abs.z / abs.y;
+			y = dir.z;
 		}
 	} else if(abs.z >= abs.x && abs.z >= abs.y){
-		y = abs.y / abs.z;
+		denom = abs.z;
+		y = dir.y;
 		// Z faces.
 		if(dir.z >= 0.0f){
 			side = 4;
-			x = abs.x / abs.z;
+			x = dir.x;
 		} else {
 			side = 5;
-			x = -abs.x / abs.z;
+			x = -dir.x;
 		}
 	}
-	x = 0.5f * x + 0.5f;
-	y = 0.5f * y + 0.5f;
+	x = 0.5f * ( x / denom) + 0.5f;
+	y = 0.5f * (-y / denom) + 0.5f;
+	// Ensure seamless borders between faces by never sampling closer than one pixel to the edge.
+	const float eps = 1.0f / float(std::min(images[side].width, images[side].height));
+	x = glm::clamp(x, 0.0f + eps, 1.0f - eps);
+	y = glm::clamp(y, 0.0f + eps, 1.0f - eps);
 	return images[side].rgbl(x, y);
 }
 
@@ -155,7 +163,7 @@ int main(int argc, char** argv) {
 	// Setup camera.
 	Camera camera;
 	//camera.pose(glm::vec3(0.0f, 1.0f, 2.5f), glm::vec3(0.0f, 1.0f, 1.5f), glm::vec3(0.0f, 1.0f, 0.0f));
-	camera.pose(glm::vec3(0.0f, 0.0f, 2.5f), glm::vec3(0.0f, 0.0f, 1.5f), glm::vec3(0.0f, 1.0f, 0.0f));
+	camera.pose(glm::vec3(0.0f, 1.0f, 2.5f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	camera.projection(ratio, 1.3f, 0.01f, 100.0f);
 	// Compute incremental pixel shifts.
 	glm::vec3 corner, dx, dy;
@@ -186,7 +194,8 @@ int main(int argc, char** argv) {
 				for(size_t did = 0; did < depth; ++did){
 					// Query closest intersection.
 					const Raycaster::RayHit hit = raycaster.intersects(rayPos, rayDir);
-					
+
+
 					// If no hit, background.
 					if(!hit.hit){
 						// For now the background is not emissive, it is only sampled for direct paths.
@@ -202,10 +211,19 @@ int main(int argc, char** argv) {
 							} else {
 								sampleColor = scene.backgroundColor;
 							}
+							break;
+						}
+
+						const Scene::Background mode = scene.backgroundMode;
+						if (mode == Scene::Background::SKYBOX) {
+							const auto & images = scene.background.textures()[0]->images;
+							sampleColor += attenColor * sampleCubemap(images, glm::normalize(rayDir));
 						}
 						break;
 					}
-					
+
+					glm::vec3 illumination(0.0f);
+
 					// Fetch geometry infos...
 					const Mesh & mesh = scene.objects[hit.meshId].mesh()->geometry;
 					const glm::vec3 p = rayPos + hit.dist * rayDir;
@@ -214,7 +232,6 @@ int main(int argc, char** argv) {
 					
 					// Compute lighting.
 					// Check light visibility.
-					glm::vec3 illumination(0.0f);
 					for(const auto light : scene.lights){
 						glm::vec3 direction;
 						float attenuation;
@@ -242,7 +259,7 @@ int main(int argc, char** argv) {
 					}
 				}
 				// Modulate and store.
-				render.rgb(x,y) += sampleColor;
+				render.rgb(x,y) += glm::min(sampleColor, 4.0f);
 			}
 		}
 	});
