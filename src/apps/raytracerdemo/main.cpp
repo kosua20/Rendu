@@ -45,6 +45,14 @@ public:
 				size[1] = std::stoi(values[1]);
 			}
 		}
+		
+		// Ensure that the samples count is a power of 2.
+		const size_t samplesOld = samples;
+		samples = std::pow(2, std::round(std::log2(float(samplesOld))));
+		if(samplesOld != samples){
+			Log::Warning() << "Non power-of-2 samples count. Using " << samples << " instead." << std::endl;
+		}
+		
 		// If no path passed, setup a default one.
 		if(outputPath.empty()){
 			outputPath 	= "./test_" + scene + "_" + std::to_string(samples) + "_" + std::to_string(depth)
@@ -54,15 +62,15 @@ public:
 		// Detail help.
 		_infos.emplace_back("", "", "Raytracer");
 		_infos.emplace_back("wxh", "", "Dimensions of the image.", std::vector<std::string>{"width", "height"});
-		_infos.emplace_back("samples", "", "Number of samples per pixel.", "int");
+		_infos.emplace_back("samples", "", "Number of samples per pixel (closest power of 2).", "int");
 		_infos.emplace_back("depth", "", "Maximum path depth.", "int");
 		_infos.emplace_back("scene", "", "Name of the scene to load.", "string");
 		_infos.emplace_back("output", "", "Path for the output image.", "path");
 		
 	}
 	
-	glm::ivec2 size = glm::ivec2(1024);
-	size_t samples = 8; ///< Number of samples per pixel.
+	glm::ivec2 size = glm::ivec2(1024); ///< Image size.
+	size_t samples = 8; ///< Number of samples per pixel., should be a power of two.
 	size_t depth = 5; ///< Max depth of a path.
 	std::string outputPath = ""; ///< Output image path.
 	std::string scene = ""; ///< Scene name.
@@ -169,6 +177,18 @@ int main(int argc, char** argv) {
 	glm::vec3 corner, dx, dy;
 	camera.pixelShifts(corner, dx, dy);
 	
+	// Prepare the stratified grid.
+	// We know that we have 2^k samples.
+	const int k = int(std::floor(std::log2(config.samples)));
+	// If even, just use k samples on each side.
+	glm::ivec2 stratesCount(std::pow(2, k/2));
+	if(k % 2 == 1){
+		//  Else dispatch the extraneous factor of 2 on the horizontal axis.
+		stratesCount[0] = std::pow(2, (k+1)/2);
+		stratesCount[1] = std::pow(2, (k-1)/2);
+	}
+	const glm::vec2 stratesSize = 1.0f / glm::vec2(stratesCount);
+	
 	// Start chrono.
 	auto start = std::chrono::steady_clock::now();
 	
@@ -177,11 +197,20 @@ int main(int argc, char** argv) {
 		for(size_t x = 0; x < render.width; ++x){
 			
 			for(size_t sid = 0; sid < samples; ++sid){
+				// Find the grid location.
+				const int sidy = sid / stratesCount.x;
+				const int sidx = sid % stratesCount.x;
+				
 				// Draw random shift in [0.0,1.0f) for jittering.
 				const float jx = Random::Float();
 				const float jy = Random::Float();
+				// Compute position in the stratification grid.
+				const glm::vec2 gridPos = glm::vec2(sidx + jx, sidy + jy);
+				// Position in screen space.
+				const glm::vec2 screenPos = gridPos * stratesSize + glm::vec2(x, y);
+				
 				// Derive a position on the image plane from the pixel.
-				const glm::vec2 ndcPos = glm::vec2(x + jx, y + jy) / glm::vec2(render.width, render.height);
+				const glm::vec2 ndcPos = screenPos / glm::vec2(render.width, render.height);
 				// Place the point on the near plane in clip space.
 				const glm::vec3 worldPos = corner + ndcPos.x * dx + ndcPos.y * dy;
 				
@@ -195,11 +224,8 @@ int main(int argc, char** argv) {
 					// Query closest intersection.
 					const Raycaster::RayHit hit = raycaster.intersects(rayPos, rayDir);
 
-
 					// If no hit, background.
 					if(!hit.hit){
-						// For now the background is not emissive, it is only sampled for direct paths.
-						/// \todo Support environment map fetch.
 						if(did == 0){
 							const Scene::Background mode = scene.backgroundMode;
 							if (mode == Scene::Background::IMAGE){
@@ -263,7 +289,6 @@ int main(int argc, char** argv) {
 			}
 		}
 	});
-	
 	
 	// Normalize and gamma correction.
 	System::forParallel(0, render.height, [&render, &samples](size_t y){
