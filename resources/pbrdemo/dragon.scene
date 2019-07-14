@@ -1,8 +1,10 @@
 scene:
-	probe: rgb32cube: kiara_dawn
-	irradiance: kiara_dawn_shcoeffs
-	bgsky: rgb32cube: kiara_dawn
-	orientation: 0.0,1.0,0.0 3.15
+	probe: rgb32cube: default_cube
+	irradiance: default_shcoeffs
+	bgsky:
+		direction: 2.0,1.5,0.0
+		animations:
+			backandforth: 0.75 world 0.0,-1.0,0.0 0.6
 
 # Objects
 object:
@@ -43,20 +45,21 @@ object:
 
 # Lights
 directional:
-	direction: 1.0,-1.5,1.5
+	# Imitate the sun, the direction and animation should be the reverse of the sky ones.
+	direction: -2.0,-1.5,0.0
 	intensity: 1.0,1.0,0.92
 	shadows: true
 	animations:
-		backandforth: 0.75 world 0.0,1.0,0.0 0.35
+		backandforth: 0.75 world 0.0,1.0,0.0 0.6
 		
 spot:
-	position: -1.1,2.0,1.1
-	direction: 1.0,-1.0,-1.0
+	position: 1.1,2.0,1.1
+	direction: -1.0,-1.0,-1.0
 	radius: 5.0
 	cone: 0.5 0.6
 	shadows: true
 	animations:
-		backandforth: 0.5 world 1.0,0.0,-1.0 2.0
+		backandforth: 0.5 world 1.0,0.0,1.0 2.0
 	intensity: 0.0,10.0,10.0
 point:
 	position: -1.0,-0.1,-1.0

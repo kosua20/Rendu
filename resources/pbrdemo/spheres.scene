@@ -1,7 +1,7 @@
 scene:
 	probe: rgb32cube: studio_3
 	irradiance: studio_3_shcoeffs
-	bgsky: rgb32cube: studio_3
+	bgcube: rgb32cube: studio_3
 
 # Objects
 object:
