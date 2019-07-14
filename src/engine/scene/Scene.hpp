@@ -67,11 +67,12 @@ public:
 	enum class Background {
 		COLOR, ///< Use a unique color as background.
 		IMAGE, ///< Use a 2D texture image as background (will be stretched).
-		SKYBOX ///< Use a skybox/cubemap as background.
+		SKYBOX, ///< Use a skybox/cubemap as background.
+		ATMOSPHERE ///< Use a realtime atmospheric scattering simulation.
 	};
 	Background backgroundMode = Background::COLOR; ///< The background mode (see enum).
 	glm::vec3 backgroundColor = glm::vec3(0.0f); ///< Color to use if the background mode is COLOR.
-	Object background; ///< Background object, containing the geometry and optional textures to use.
+	std::unique_ptr<Object> background; ///< Background object, containing the geometry and optional textures to use.
 	
 	std::vector<glm::vec3> backgroundIrradiance; ///< RGB SH-coefficients of the background irradiance, computed using SHExtractor. \see SphericalHarmonics
 	const TextureInfos * backgroundReflection = nullptr; ///< Cubemap texture ID of the background radiance.

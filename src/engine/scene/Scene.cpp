@@ -1,4 +1,5 @@
 #include "scene/Scene.hpp"
+#include "scene/Sky.hpp"
 #include "Common.hpp"
 #include "helpers/TextUtilities.hpp"
 
@@ -75,7 +76,7 @@ void Scene::loadLight(const std::vector<KeyValues> & params, const Storage mode)
 }
 
 void Scene::loadScene(const std::vector<KeyValues> & params, const Storage mode){
-	background = Object(Object::Type::Common, Resources::manager().getMesh("plane", mode), false);
+	background = std::unique_ptr<Object>(new Object(Object::Type::Common, Resources::manager().getMesh("plane", mode), false));
 	backgroundIrradiance = std::vector<glm::vec3>(9, glm::vec3(0.0f));
 	
 	for(int pid = 0; pid < params.size(); ++pid){
@@ -98,18 +99,27 @@ void Scene::loadScene(const std::vector<KeyValues> & params, const Storage mode)
 			// Move to the next parameter.
 			const TextureInfos * tex = Codable::decodeTexture(params[++pid], mode);
 			if(tex){
-				background.addTexture(tex);
+				background->addTexture(tex);
 			} else {
 				--pid;
 			}
 		} else if(param.key == "bgsky"){
+			// In that case the background is a sky object.
+			backgroundMode = Background::ATMOSPHERE;
+			background = std::unique_ptr<Sky>(new Sky(mode));
+			background->decode(params, mode);
+			// Load the scattering table.
+			const TextureInfos * tex = Resources::manager().getTexture("scattering-precomputed", {GL_RGB32F, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE});
+			background->addTexture(tex);
+			
+		}  else if(param.key == "bgcube"){
 			backgroundMode = Background::SKYBOX;
 			// Object is a textured skybox.
-			background = Object(Object::Type::Common, Resources::manager().getMesh("skybox", mode), false);
+			background =  std::unique_ptr<Object>(new Object(Object::Type::Common, Resources::manager().getMesh("skybox", mode), false));
 			// Move to the next parameter.
 			const TextureInfos * tex = Codable::decodeTexture(params[++pid], mode);
 			if(tex){
-				background.addTexture(tex);
+				background->addTexture(tex);
 			} else {
 				--pid;
 			}
@@ -161,10 +171,11 @@ void Scene::update(double fullTime, double frameTime){
 	for(auto & object : objects){
 		object.update(fullTime, frameTime);
 	}
+	background->update(fullTime, frameTime);
 }
 
 void Scene::clean() {
 	for(auto& light : lights){
 		light->clean();
 	}
-};
+}
