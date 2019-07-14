@@ -7,6 +7,7 @@ in INTERFACE {
 
 layout(binding = 0) uniform sampler2D screenTexture; ///< Image to tonemap.
 uniform float customExposure = 1.0; ///< Exposure
+uniform bool apply = true; ///< Apply the tonemapping operator (or just clamp).
 
 layout(location = 0) out vec3 fragColor; ///< Color.
 
@@ -58,7 +59,7 @@ vec3 uncharted2(vec3 hdrColor){
 void main(){
 	
 	vec3 finalColor = textureLod(screenTexture,In.uv, 0.0).rgb;
-	fragColor = simpleExposure(finalColor, customExposure);
+	fragColor = apply ? simpleExposure(finalColor, customExposure) : clamp(finalColor, 0.0, 1.0);
 	
 	// Test if any component is still > 1, for debug purposes.
 	//fragColor = any(greaterThan(fragColor, vec3(1.0))) ? vec3(1.0,0.0,0.0) : fragColor;

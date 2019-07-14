@@ -214,18 +214,16 @@ GLuint DeferredRenderer::renderPostprocess(const glm::vec2 & invRenderSize){
 		_sceneFramebuffer->unbind();
 	}
 	
-	GLuint currentResult = _sceneFramebuffer->textureId();
+	// --- Tonemapping pass ------
+	_toneMappingFramebuffer->bind();
+	_toneMappingFramebuffer->setViewport();
+	glUseProgram(_toneMappingProgram->id());
+	glUniform1f(_toneMappingProgram->uniform("customExposure"), _exposure);
+	glUniform1i(_toneMappingProgram->uniform("apply"), _applyTonemapping);
+	ScreenQuad::draw(_sceneFramebuffer->textureId());
+	_toneMappingFramebuffer->unbind();
+	GLuint currentResult = _toneMappingFramebuffer->textureId();
 	
-	if(_applyTonemapping){
-		// --- Tonemapping pass ------
-		_toneMappingFramebuffer->bind();
-		_toneMappingFramebuffer->setViewport();
-		glUseProgram(_toneMappingProgram->id());
-		glUniform1f(_toneMappingProgram->uniform("customExposure"), _exposure);
-		ScreenQuad::draw(currentResult);
-		_toneMappingFramebuffer->unbind();
-		currentResult = _toneMappingFramebuffer->textureId();
-	}
 	
 	if(_applyFXAA){
 		// --- FXAA pass -------
