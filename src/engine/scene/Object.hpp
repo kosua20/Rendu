@@ -50,7 +50,7 @@ public:
 	 \param fullTime the time since the launch of the application
 	 \param frameTime the time elapsed since the last frame
 	 */
-	void update(double fullTime, double frameTime);
+	virtual void update(double fullTime, double frameTime);
 	
 	/** Query the bounding box of the object.
 	 \return the bounding box
@@ -102,9 +102,11 @@ public:
 	 \param params the parameters tuples list
 	 \param mode the storage mode (CPU, GPU, both)
 	 */
-	void decode(const std::vector<KeyValues>& params, const Storage mode);
+	virtual void decode(const std::vector<KeyValues>& params, const Storage mode);
 	
-private:
+	virtual ~Object() = default;
+	
+protected:
 	
 	const MeshInfos * _mesh; ///< Geometry of the object.
 	std::vector<const TextureInfos *> _textures; ///< Textures used by the object.
