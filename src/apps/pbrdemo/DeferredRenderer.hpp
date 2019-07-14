@@ -99,7 +99,7 @@ private:
 	
 	const ProgramInfos * _skyboxProgram; ///< Skybox program.
 	const ProgramInfos * _bgProgram; ///< Planar background program.
-	
+	const ProgramInfos * _atmoProgram; ///< Atmospheric scattering program.
 	
 	std::shared_ptr<Scene> _scene; ///< The scene to render
 	
@@ -107,7 +107,7 @@ private:
 	float _exposure = 1.0f; ///< Film exposure.
 	bool _debugVisualization = false; ///< Toggle the rendering of debug informations in the scene.
 	bool _applyBloom = true; ///< Should bloom (bright lights halo-ing) be applied.
-	bool _applyTonemapping = false; ///< Should HDR to LDR tonemapping be applied.
+	bool _applyTonemapping = true; ///< Should HDR to LDR tonemapping be applied.
 	bool _applyFXAA = true; ///< Apply screenspace anti-aliasing.
 	bool _applySSAO = true; ///< Screen space ambient occlusion.
 	bool _updateShadows = true; ///< Update shadow maps at each frame.

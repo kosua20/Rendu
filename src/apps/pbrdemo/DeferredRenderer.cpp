@@ -3,6 +3,7 @@
 #include "scene/lights/DirectionalLight.hpp"
 #include "scene/lights/PointLight.hpp"
 #include "scene/lights/SpotLight.hpp"
+#include "scene/Sky.hpp"
 #include "helpers/System.hpp"
 #include <chrono>
 
@@ -53,6 +54,7 @@ DeferredRenderer::DeferredRenderer(RenderingConfig & config) : Renderer(config) 
 	
 	_skyboxProgram = Resources::manager().getProgram("skybox_gbuffer");
 	_bgProgram = Resources::manager().getProgram("background_gbuffer");
+	_atmoProgram = Resources::manager().getProgram("atmosphere_gbuffer", "background_gbuffer", "atmosphere_gbuffer");;
 	_parallaxProgram = Resources::manager().getProgram("parallax_gbuffer");
 	_objectProgram = Resources::manager().getProgram("object_gbuffer");
 	_objectNoUVsProgram = Resources::manager().getProgram("object_no_uv_gbuffer");
@@ -164,29 +166,48 @@ void DeferredRenderer::renderScene(){
 	glDepthMask(GL_FALSE);
 	// Accept a depth of 1.0 (far plane).
 	glDepthFunc(GL_LEQUAL);
-	const Object & background = _scene->background;
-	if(_scene->backgroundMode == Scene::Background::SKYBOX){
-		const glm::mat4 backgroundMVP = proj * view * background.model();
-		// draw background.
+	const Object * background = _scene->background.get();
+	const Scene::Background mode = _scene->backgroundMode;
+	
+	if(mode == Scene::Background::SKYBOX){
+		// Skybox.
+		const glm::mat4 backgroundMVP = proj * view * background->model();
+		// Draw background.
 		glUseProgram(_skyboxProgram->id());
 		// Upload the MVP matrix.
 		glUniformMatrix4fv(_skyboxProgram->uniform("mvp"), 1, GL_FALSE, &backgroundMVP[0][0]);
-		GLUtilities::bindTextures(background.textures());
-		GLUtilities::drawMesh(*background.mesh());
+		GLUtilities::bindTextures(background->textures());
+		GLUtilities::drawMesh(*background->mesh());
+		
+	} else if(mode == Scene::Background::ATMOSPHERE){
+		// Atmosphere screen quad.
+		glUseProgram(_atmoProgram->id());
+		// Revert the model to clip matrix, removing the translation part.
+		const glm::mat4 worldToClipNoT = _userCamera.projection() * glm::mat4(glm::mat3(_userCamera.view()));
+		const glm::mat4 clipToWorldNoT = glm::inverse(worldToClipNoT);
+		const glm::vec3 & sunDir = dynamic_cast<const Sky *>(background)->direction();
+		// Send and draw.
+		glUniformMatrix4fv(_atmoProgram->uniform("clipToWorld"), 1, GL_FALSE, &clipToWorldNoT[0][0]);
+		glUniform3fv(_atmoProgram->uniform("viewPos"), 1, &_userCamera.position()[0]);
+		glUniform3fv(_atmoProgram->uniform("lightDirection"), 1, &sunDir[0]);
+		GLUtilities::bindTextures(background->textures());
+		GLUtilities::drawMesh(*background->mesh());
+		
 	} else {
+		// Background color or 2D image.
 		glUseProgram(_bgProgram->id());
-		if(_scene->backgroundMode == Scene::Background::IMAGE){
+		if(mode == Scene::Background::IMAGE){
 			glUniform1i(_bgProgram->uniform("useTexture"), 1);
-			GLUtilities::bindTextures(background.textures());
+			GLUtilities::bindTextures(background->textures());
 		} else {
 			glUniform1i(_bgProgram->uniform("useTexture"), 0);
 			glUniform3fv(_bgProgram->uniform("bgColor"), 1, &_scene->backgroundColor[0]);
 		}
-		GLUtilities::drawMesh(*background.mesh());
+		GLUtilities::drawMesh(*background->mesh());
 	}
+	glUseProgram(0);
 	glDepthFunc(GL_LESS);
 	glDepthMask(GL_TRUE);
-	
 	
 	// Unbind the full scene framebuffer.
 	_gbuffer->unbind();
