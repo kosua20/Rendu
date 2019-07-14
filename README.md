@@ -77,13 +77,13 @@ I would like to add some additional features to Rendu in the near future, mainly
 - Local parallax-corrected light probes for reflections.
 - Rendering of a terrain and water using a procedural approach (Perlin/Worley/Fractal noise, maybe tesselation).
 - Temporal Antialiasing with reprojection and clamping.
+- Path tracing on the CPU.
 - Particle effects (updated on the GPU).
 - Volumetric effects, such as godrays and lit fog. 
 - Support interesting controllers (MIDI controllers, PS4 light bar and touchpad,...)
 
 On a more down-to-earth level, some engineering tasks could also help improve the engine.
 
-- Reorganize scenes and objects, which are strongly coupled to the deferred rendering demo.
 - Avoid binary dependencies by integrating GLFW3 and NativeFileDialog as subprojects.
 - Real-time cube maps could be rendered in multiple calls after culling objects, instead of layered rendering.
 - Abstract interactions with OpenGL and/or move to Vulkan.

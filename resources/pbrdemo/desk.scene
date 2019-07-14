@@ -1,8 +1,8 @@
 scene:
 	translation: 0.0,0.0,-2.0
 	scaling: 0.5
-	probe: rgb32cube: small_apartment
-	irradiance: small_apartment_shcoeffs
+	probe: rgb32cube: entrance_hall
+	irradiance: entrance_hall_shcoeffs
 	bgcolor: 0.2,0.15,0.1
 
 # Light
