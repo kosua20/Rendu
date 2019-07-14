@@ -229,10 +229,10 @@ int main(int argc, char** argv) {
 						if(did == 0){
 							const Scene::Background mode = scene.backgroundMode;
 							if (mode == Scene::Background::IMAGE){
-								const Image & image = scene.background.textures()[0]->images[0];
+								const Image & image = scene.background->textures()[0]->images[0];
 								sampleColor = image.rgbl(ndcPos.x, ndcPos.y);
 							} else if (mode == Scene::Background::SKYBOX){
-								const auto & images = scene.background.textures()[0]->images;
+								const auto & images = scene.background->textures()[0]->images;
 								sampleColor = sampleCubemap(images, glm::normalize(rayDir));
 							} else {
 								sampleColor = scene.backgroundColor;
@@ -242,7 +242,7 @@ int main(int argc, char** argv) {
 
 						const Scene::Background mode = scene.backgroundMode;
 						if (mode == Scene::Background::SKYBOX) {
-							const auto & images = scene.background.textures()[0]->images;
+							const auto & images = scene.background->textures()[0]->images;
 							sampleColor += attenColor * sampleCubemap(images, glm::normalize(rayDir));
 						}
 						break;
