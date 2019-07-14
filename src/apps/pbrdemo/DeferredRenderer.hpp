@@ -90,6 +90,7 @@ private:
 	
 	AmbientQuad _ambientScreen; ///< Ambient lighting contribution rendering.
 	const ProgramInfos * _bloomProgram; ///< Bloom program
+	const ProgramInfos * _bloomCompositeProgram;
 	const ProgramInfos * _toneMappingProgram; ///< Tonemapping program
 	const ProgramInfos * _fxaaProgram; ///< FXAA program
 	const ProgramInfos * _finalProgram; ///< Final output program
@@ -105,10 +106,13 @@ private:
 	
 	float _cameraFOV; ///< Camera field of view in degrees.
 	float _exposure = 1.0f; ///< Film exposure.
+	float _bloomTh = 1.2f; ///< Threshold for blooming regions.
+	float _bloomMix = 0.2f; ///< Factor for applying the bloom.
 	bool _debugVisualization = false; ///< Toggle the rendering of debug informations in the scene.
 	bool _applyBloom = true; ///< Should bloom (bright lights halo-ing) be applied.
 	bool _applyTonemapping = true; ///< Should HDR to LDR tonemapping be applied.
 	bool _applyFXAA = true; ///< Apply screenspace anti-aliasing.
 	bool _applySSAO = true; ///< Screen space ambient occlusion.
 	bool _updateShadows = true; ///< Update shadow maps at each frame.
+	bool _paused = false; ///< Update shadow maps at each frame.
 };

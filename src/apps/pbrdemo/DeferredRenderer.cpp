@@ -17,8 +17,6 @@ DeferredRenderer::DeferredRenderer(RenderingConfig & config) : Renderer(config) 
 	const int renderHeight = (int)_renderResolution[1];
 	const int renderHalfWidth = (int)(0.5f * _renderResolution[0]);
 	const int renderHalfHeight = (int)(0.5f * _renderResolution[1]);
-	// Find the closest power of 2 size.
-	const int renderPow2Size = (int)std::pow(2,(int)floor(log2(_renderResolution[0])));
 	
 	// G-buffer setup.
 	const Descriptor albedoDesc = { GL_RGBA16F, GL_NEAREST_MIPMAP_NEAREST, GL_CLAMP_TO_EDGE };
@@ -31,13 +29,10 @@ DeferredRenderer::DeferredRenderer(RenderingConfig & config) : Renderer(config) 
 	// Other framebuffers.
 	_ssaoPass = std::unique_ptr<SSAO>(new SSAO(renderHalfWidth, renderHalfHeight, 0.5f));
 	_sceneFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, GL_RGBA16F, false));
-	_bloomFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderPow2Size, renderPow2Size, GL_RGB16F, false));
-	
+	_bloomFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, GL_RGB16F, false));
 	_toneMappingFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, GL_RGB16F, false));
 	_fxaaFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, GL_RGB16F, false));
-	
-	_blurBuffer = std::unique_ptr<GaussianBlur>(new GaussianBlur(renderPow2Size, renderPow2Size, 2, GL_RGB16F));
-	
+	_blurBuffer = std::unique_ptr<GaussianBlur>(new GaussianBlur(renderHalfWidth, renderHalfHeight, 4, GL_RGB16F));
 	
 	checkGLError();
 
@@ -48,6 +43,7 @@ DeferredRenderer::DeferredRenderer(RenderingConfig & config) : Renderer(config) 
 	glBlendFunc(GL_ONE, GL_ONE);
 	
 	_bloomProgram = Resources::manager().getProgram2D("bloom");
+	_bloomCompositeProgram = Resources::manager().getProgram2D("bloom-composite");
 	_toneMappingProgram = Resources::manager().getProgram2D("tonemap");
 	_fxaaProgram = Resources::manager().getProgram2D("fxaa");
 	_finalProgram = Resources::manager().getProgram2D("final_screenquad");
@@ -220,6 +216,7 @@ GLuint DeferredRenderer::renderPostprocess(const glm::vec2 & invRenderSize){
 		_bloomFramebuffer->bind();
 		_bloomFramebuffer->setViewport();
 		glUseProgram(_bloomProgram->id());
+		glUniform1f(_bloomProgram->uniform("luminanceTh"), _bloomTh);
 		ScreenQuad::draw(_sceneFramebuffer->textureId());
 		_bloomFramebuffer->unbind();
 		
@@ -230,7 +227,9 @@ GLuint DeferredRenderer::renderPostprocess(const glm::vec2 & invRenderSize){
 		_sceneFramebuffer->bind();
 		_sceneFramebuffer->setViewport();
 		glEnable(GL_BLEND);
-		_blurBuffer->draw();
+		glUseProgram(_bloomCompositeProgram->id());
+		glUniform1f(_bloomCompositeProgram->uniform("mixFactor"), _bloomMix);
+		ScreenQuad::draw(_blurBuffer->textureId());
 		glDisable(GL_BLEND);
 		_sceneFramebuffer->unbind();
 	}
@@ -343,23 +342,34 @@ void DeferredRenderer::update(){
 			resize(int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 		}
 		ImGui::PopItemWidth();
-		ImGui::Checkbox("SSAO", &_applySSAO); ImGui::SameLine(120);
+		
 		ImGui::Checkbox("Bloom", &_applyBloom);
-		ImGui::Checkbox("Tonemapping ", &_applyTonemapping); ImGui::SameLine(120);
+		if(_applyBloom){
+			ImGui::SliderFloat("Bloom mix", &_bloomMix, 0.0f, 1.5f);
+			ImGui::SliderFloat("Bloom th.", &_bloomTh, 0.5f, 2.0f);
+		}
+		
+		ImGui::Checkbox("SSAO", &_applySSAO); ImGui::SameLine(120);
 		ImGui::Checkbox("FXAA", &_applyFXAA);
-		ImGui::SliderFloat("Exposure", &_exposure, 0.1f, 10.0f);
+		ImGui::Checkbox("Tonemapping ", &_applyTonemapping);
+		if(_applyTonemapping){
+			ImGui::SliderFloat("Exposure", &_exposure, 0.1f, 10.0f);
+		}
+		
 		ImGui::Separator();
 		ImGui::ColorEdit3("Background color", &_scene->backgroundColor[0]);
 		ImGui::Checkbox("Show debug lights", &_debugVisualization);
 		ImGui::Checkbox("Update shadows", &_updateShadows);
+		ImGui::Checkbox("Pause", &_paused);
+		
 		
 	}
 	ImGui::End();
-	}
+}
 
 void DeferredRenderer::physics(double fullTime, double frameTime){
 	_userCamera.physics(frameTime);
-	if(_scene){
+	if(_scene && !_paused){
 		_scene->update(fullTime, frameTime);
 	}
 }
@@ -375,6 +385,7 @@ void DeferredRenderer::clean() const {
 	_sceneFramebuffer->clean();
 	_toneMappingFramebuffer->clean();
 	_fxaaFramebuffer->clean();
+	_blurBuffer->clean();
 	if(_scene){
 		_scene->clean();
 	}
@@ -383,12 +394,16 @@ void DeferredRenderer::clean() const {
 
 void DeferredRenderer::resize(unsigned int width, unsigned int height){
 	Renderer::updateResolution(width, height);
+	const unsigned int hWidth = (unsigned int)(_renderResolution[0] / 2.0f);
+	const unsigned int hHeight = (unsigned int)(_renderResolution[1] / 2.0f);
 	// Resize the framebuffers.
 	_gbuffer->resize(_renderResolution);
-	_ssaoPass->resize((unsigned int)(_renderResolution[0] / 2.0f), (unsigned int)(_renderResolution[1] / 2.0f));
+	_ssaoPass->resize(hWidth, hHeight);
 	_toneMappingFramebuffer->resize(_renderResolution);
 	_fxaaFramebuffer->resize(_renderResolution);
 	_sceneFramebuffer->resize(_renderResolution);
+	_bloomFramebuffer->resize(_renderResolution);
+	_blurBuffer->resize(hWidth, hHeight);
 	checkGLError();
 }
 
