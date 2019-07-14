@@ -6,6 +6,7 @@ var searchData=
   ['ray',['Ray',['../struct_raycaster_1_1_ray.html',1,'Raycaster']]],
   ['raycaster',['Raycaster',['../class_raycaster.html',1,'']]],
   ['rayhit',['RayHit',['../struct_raycaster_1_1_ray_hit.html',1,'Raycaster']]],
+  ['raytracerconfig',['RaytracerConfig',['../class_raytracer_config.html',1,'']]],
   ['renderer',['Renderer',['../class_renderer.html',1,'']]],
   ['renderingconfig',['RenderingConfig',['../class_rendering_config.html',1,'']]],
   ['resources',['Resources',['../class_resources.html',1,'']]],

@@ -1,7 +1,7 @@
 var searchData=
 [
   ['frag',['Frag',['../namespace_g_l_s_l_1_1_frag.html',1,'GLSL']]],
-  ['g',['g',['../class_g_l_s_l_1_1_frag_1_1_filter.html#af2ebb7f9e2fa9bf38c303fdfdee41d3e',1,'GLSL::Frag::Filter::g()'],['../class_g_l_s_l_1_1_frag_1_1_upscale.html#ae85f3c8711d1a7c8caa6067d0bda8b66',1,'GLSL::Frag::Upscale::g()'],['../class_g_l_s_l_1_1_frag_1_1_directional__light.html#aaba478935d693c2b9935313f4da8f210',1,'GLSL::Frag::Directional_light::G()'],['../class_g_l_s_l_1_1_frag_1_1_point__light.html#ac812f2d9c9a8835e07b5ab21bd5a7ca7',1,'GLSL::Frag::Point_light::G()'],['../class_g_l_s_l_1_1_frag_1_1_spot__light.html#a38b2b16cfa69fbd82bb8c17720ea9a2f',1,'GLSL::Frag::Spot_light::G()'],['../class_g_l_s_l_1_1_frag_1_1_brdf__sampler.html#a12c1f31c3f1d692ff3ce64471db4f6bc',1,'GLSL::Frag::Brdf_sampler::G()']]],
+  ['g',['G',['../class_g_l_s_l_1_1_frag_1_1_directional__light.html#aaba478935d693c2b9935313f4da8f210',1,'GLSL::Frag::Directional_light::G()'],['../class_g_l_s_l_1_1_frag_1_1_point__light.html#ac812f2d9c9a8835e07b5ab21bd5a7ca7',1,'GLSL::Frag::Point_light::G()'],['../class_g_l_s_l_1_1_frag_1_1_spot__light.html#a38b2b16cfa69fbd82bb8c17720ea9a2f',1,'GLSL::Frag::Spot_light::G()'],['../class_g_l_s_l_1_1_frag_1_1_brdf__sampler.html#a12c1f31c3f1d692ff3ce64471db4f6bc',1,'GLSL::Frag::Brdf_sampler::G()'],['../class_g_l_s_l_1_1_frag_1_1_filter.html#af2ebb7f9e2fa9bf38c303fdfdee41d3e',1,'GLSL::Frag::Filter::g()'],['../class_g_l_s_l_1_1_frag_1_1_upscale.html#ae85f3c8711d1a7c8caa6067d0bda8b66',1,'GLSL::Frag::Upscale::g()']]],
   ['g1',['G1',['../class_g_l_s_l_1_1_frag_1_1_directional__light.html#a3501f2645b32f8912073da0190aa39cf',1,'GLSL::Frag::Directional_light::G1()'],['../class_g_l_s_l_1_1_frag_1_1_point__light.html#a9fcc5f38691abada5ded9a5748e3a595',1,'GLSL::Frag::Point_light::G1()'],['../class_g_l_s_l_1_1_frag_1_1_spot__light.html#abdba8455c601235592e5a6afafe4138d',1,'GLSL::Frag::Spot_light::G1()'],['../class_g_l_s_l_1_1_frag_1_1_brdf__sampler.html#aa742c27e1a4f8152efcd1f2561635087',1,'GLSL::Frag::Brdf_sampler::G1()']]],
   ['game',['Game',['../class_game.html',1,'Game'],['../class_game.html#a3e0acc981e61b656917f2eef42426509',1,'Game::Game()']]],
   ['game_5fcomposite',['Game_composite',['../class_g_l_s_l_1_1_frag_1_1_game__composite.html',1,'GLSL::Frag']]],
@@ -41,9 +41,9 @@ var searchData=
   ['glutilities',['GLUtilities',['../class_g_l_utilities.html',1,'']]],
   ['glyph',['Glyph',['../struct_font_infos_1_1_glyph.html',1,'FontInfos']]],
   ['glyphs',['glyphs',['../struct_font_infos.html#a0200baf2b75d24c6adaec302c8862c55',1,'FontInfos']]],
-  ['gmie',['gMie',['../class_g_l_s_l_1_1_frag_1_1_atmosphere.html#aa077053bc73fd9a3475602daabc00120',1,'GLSL::Frag::Atmosphere']]],
+  ['gmie',['gMie',['../class_g_l_s_l_1_1_frag_1_1_atmosphere.html#aa077053bc73fd9a3475602daabc00120',1,'GLSL::Frag::Atmosphere::gMie()'],['../class_g_l_s_l_1_1_frag_1_1_atmosphere__gbuffer.html#a7fa544fabbb0e922513b304053bfe42b',1,'GLSL::Frag::Atmosphere_gbuffer::gMie()']]],
   ['graphics',['Graphics',['../group___graphics.html',1,'']]],
-  ['groundradius',['groundRadius',['../class_g_l_s_l_1_1_frag_1_1_atmosphere.html#a2f66aa536205b3de1fb6ffd7d7522ced',1,'GLSL::Frag::Atmosphere']]],
+  ['groundradius',['groundRadius',['../class_g_l_s_l_1_1_frag_1_1_atmosphere.html#a2f66aa536205b3de1fb6ffd7d7522ced',1,'GLSL::Frag::Atmosphere::groundRadius()'],['../class_g_l_s_l_1_1_frag_1_1_atmosphere__gbuffer.html#a473603f923cda4d804df2001c0b57876',1,'GLSL::Frag::Atmosphere_gbuffer::groundRadius()']]],
   ['guid',['guid',['../class_controller.html#aa21524f0563a3fd02905c32bf535e921',1,'Controller']]],
   ['vert',['Vert',['../namespace_g_l_s_l_1_1_vert.html',1,'GLSL']]]
 ];

@@ -112,7 +112,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 Public Types</h2></td></tr>
 <tr class="memitem:a1d24bd5fd3c2aa5cc3a93913e7a2f24f"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_scene.html#a1d24bd5fd3c2aa5cc3a93913e7a2f24f">Background</a> { <a class="el" href="class_scene.html#a1d24bd5fd3c2aa5cc3a93913e7a2f24fa04bd834032febb3fda8c6936ee140949">Background::COLOR</a>, 
 <a class="el" href="class_scene.html#a1d24bd5fd3c2aa5cc3a93913e7a2f24fa23a12f67f614b5518c7f1c2465bf95e3">Background::IMAGE</a>, 
-<a class="el" href="class_scene.html#a1d24bd5fd3c2aa5cc3a93913e7a2f24fae3d53ff832d50102618d4fd24ca85a85">Background::SKYBOX</a>
+<a class="el" href="class_scene.html#a1d24bd5fd3c2aa5cc3a93913e7a2f24fae3d53ff832d50102618d4fd24ca85a85">Background::SKYBOX</a>, 
+<a class="el" href="class_scene.html#a1d24bd5fd3c2aa5cc3a93913e7a2f24fa5c00bf707f8452e03c8da38cde220883">Background::ATMOSPHERE</a>
  }</td></tr>
 <tr class="memdesc:a1d24bd5fd3c2aa5cc3a93913e7a2f24f"><td class="mdescLeft">&#160;</td><td class="mdescRight">The background mode to use for a scene.  <a href="class_scene.html#a1d24bd5fd3c2aa5cc3a93913e7a2f24f">More...</a><br /></td></tr>
 <tr class="separator:a1d24bd5fd3c2aa5cc3a93913e7a2f24f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -146,10 +147,10 @@ std::vector&lt; std::shared_ptr&lt; <a class="el" href="class_light.html">Light<
 glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_scene.html#a721beac7111afb6d8538af2c83fdbbfb">backgroundColor</a> = glm::vec3(0.0f)</td></tr>
 <tr class="memdesc:a721beac7111afb6d8538af2c83fdbbfb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Color to use if the background mode is COLOR. <br /></td></tr>
 <tr class="separator:a721beac7111afb6d8538af2c83fdbbfb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a96a70fba16b735cc40069683bdbe25da"><td class="memItemLeft" align="right" valign="top"><a id="a96a70fba16b735cc40069683bdbe25da"></a>
-<a class="el" href="class_object.html">Object</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_scene.html#a96a70fba16b735cc40069683bdbe25da">background</a></td></tr>
-<tr class="memdesc:a96a70fba16b735cc40069683bdbe25da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Background object, containing the geometry and optional textures to use. <br /></td></tr>
-<tr class="separator:a96a70fba16b735cc40069683bdbe25da"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a34e4ae6640964bbf379157beaad5a25a"><td class="memItemLeft" align="right" valign="top"><a id="a34e4ae6640964bbf379157beaad5a25a"></a>
+std::unique_ptr&lt; <a class="el" href="class_object.html">Object</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_scene.html#a34e4ae6640964bbf379157beaad5a25a">background</a></td></tr>
+<tr class="memdesc:a34e4ae6640964bbf379157beaad5a25a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Background object, containing the geometry and optional textures to use. <br /></td></tr>
+<tr class="separator:a34e4ae6640964bbf379157beaad5a25a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a97cff53657acc24d38b147edd9fb59de"><td class="memItemLeft" align="right" valign="top">std::vector&lt; glm::vec3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_scene.html#a97cff53657acc24d38b147edd9fb59de">backgroundIrradiance</a></td></tr>
 <tr class="memdesc:a97cff53657acc24d38b147edd9fb59de"><td class="mdescLeft">&#160;</td><td class="mdescRight">RGB SH-coefficients of the background irradiance, computed using SHExtractor.  <a href="#a97cff53657acc24d38b147edd9fb59de">More...</a><br /></td></tr>
 <tr class="separator:a97cff53657acc24d38b147edd9fb59de"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -216,6 +217,8 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr><td class="fieldname"><a id="a1d24bd5fd3c2aa5cc3a93913e7a2f24fa23a12f67f614b5518c7f1c2465bf95e3"></a>IMAGE&#160;</td><td class="fielddoc"><p>Use a 2D texture image as background (will be stretched). </p>
 </td></tr>
 <tr><td class="fieldname"><a id="a1d24bd5fd3c2aa5cc3a93913e7a2f24fae3d53ff832d50102618d4fd24ca85a85"></a>SKYBOX&#160;</td><td class="fielddoc"><p>Use a skybox/cubemap as background. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a1d24bd5fd3c2aa5cc3a93913e7a2f24fa5c00bf707f8452e03c8da38cde220883"></a>ATMOSPHERE&#160;</td><td class="fielddoc"><p>Use a realtime atmospheric scattering simulation. </p>
 </td></tr>
 </table>
 

@@ -6,7 +6,7 @@ var searchData=
   ['ray',['Ray',['../struct_raycaster_1_1_ray.html#ae09e182b0df960571a102dbbcc1a8d81',1,'Raycaster::Ray']]],
   ['raycaster',['Raycaster',['../class_raycaster.html#a983557ccf6eac260e7ff85b2390b55f3',1,'Raycaster']]],
   ['rayhit',['RayHit',['../struct_raycaster_1_1_ray_hit.html#a2f1b7d35fa0e069f3d8b2093327ea8d6',1,'Raycaster::RayHit::RayHit()'],['../struct_raycaster_1_1_ray_hit.html#a14e2e8ef82a5a523dffdccf95642e6ed',1,'Raycaster::RayHit::RayHit(float distance, float uu, float vv, unsigned long lid, unsigned long mid)']]],
-  ['rayleighphase',['rayleighPhase',['../class_g_l_s_l_1_1_frag_1_1_atmosphere.html#aabf8f69c9c12c201ffa63c4b207d734b',1,'GLSL::Frag::Atmosphere']]],
+  ['rayleighphase',['rayleighPhase',['../class_g_l_s_l_1_1_frag_1_1_atmosphere.html#aabf8f69c9c12c201ffa63c4b207d734b',1,'GLSL::Frag::Atmosphere::rayleighPhase()'],['../class_g_l_s_l_1_1_frag_1_1_atmosphere__gbuffer.html#a72bf174169f87947467eaccc66b41e1e',1,'GLSL::Frag::Atmosphere_gbuffer::rayleighPhase()']]],
   ['reinhard',['reinhard',['../class_g_l_s_l_1_1_frag_1_1_tonemap.html#a8fb9b19a2c0d2a6e74487b2fe2e06c67',1,'GLSL::Frag::Tonemap']]],
   ['released',['released',['../class_input.html#a7d637c608560f19f81dab8741ccbc701',1,'Input::released(const Key &amp;keyboardKey, bool absorb=false)'],['../class_input.html#aaac8fc5411314c34c8ab4ffe353d336a',1,'Input::released(const Mouse &amp;mouseButton, bool absorb=false)']]],
   ['reload',['reload',['../class_program_infos.html#a910313bcd4340a39079df954bbb8db59',1,'ProgramInfos::reload()'],['../class_resources.html#a140d1c8b99049181e45b6a4232dbd426',1,'Resources::reload()']]],

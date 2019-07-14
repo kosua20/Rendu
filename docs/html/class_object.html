@@ -94,7 +94,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div class="summary">
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pri-attribs">Private Attributes</a> &#124;
+<a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="class_object-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">Object Class Reference<div class="ingroups"><a class="el" href="group___scene.html">Scene</a></div></div>  </div>
@@ -127,7 +127,7 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a00d6ea2de936dd09de8154e766cf8474"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a54341afe208b3b88a1194cce4562b0fc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#a54341afe208b3b88a1194cce4562b0fc">set</a> (const glm::mat4 &amp;<a class="el" href="class_object.html#af5695a45554dc74658c5cb378991374e">model</a>)</td></tr>
 <tr class="separator:a54341afe208b3b88a1194cce4562b0fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a668ae910ff1e416dd94f680e9bb43187"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#a668ae910ff1e416dd94f680e9bb43187">update</a> (double fullTime, double frameTime)</td></tr>
+<tr class="memitem:a668ae910ff1e416dd94f680e9bb43187"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#a668ae910ff1e416dd94f680e9bb43187">update</a> (double fullTime, double frameTime)</td></tr>
 <tr class="separator:a668ae910ff1e416dd94f680e9bb43187"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa62a0825f8083ef3df317113a0890ef2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_bounding_box.html">BoundingBox</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#aa62a0825f8083ef3df317113a0890ef2">getBoundingBox</a> () const</td></tr>
 <tr class="separator:aa62a0825f8083ef3df317113a0890ef2"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -141,11 +141,11 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a199c7a4569e9cf511fbaa3668ee2c9c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1b30e68e45d495982ef7058e22da96d7"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#a1b30e68e45d495982ef7058e22da96d7">castsShadow</a> () const</td></tr>
 <tr class="separator:a1b30e68e45d495982ef7058e22da96d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a37f88b5f3fb3cf82f67571ab39b0edd6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#a37f88b5f3fb3cf82f67571ab39b0edd6">decode</a> (const std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt; &amp;params, const Storage mode)</td></tr>
+<tr class="memitem:a37f88b5f3fb3cf82f67571ab39b0edd6"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#a37f88b5f3fb3cf82f67571ab39b0edd6">decode</a> (const std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt; &amp;params, const Storage mode)</td></tr>
 <tr class="separator:a37f88b5f3fb3cf82f67571ab39b0edd6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
-Private Attributes</h2></td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
+Protected Attributes</h2></td></tr>
 <tr class="memitem:a41c5b9da1a1f274d461c08a711c5b14d"><td class="memItemLeft" align="right" valign="top"><a id="a41c5b9da1a1f274d461c08a711c5b14d"></a>
 const <a class="el" href="struct_mesh_infos.html">MeshInfos</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#a41c5b9da1a1f274d461c08a711c5b14d">_mesh</a></td></tr>
 <tr class="memdesc:a41c5b9da1a1f274d461c08a711c5b14d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Geometry of the object. <br /></td></tr>
@@ -173,7 +173,9 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Represent a 3D textured object. </p>
-</div><h2 class="groupheader">Member Enumeration Documentation</h2>
+</div>
+<p>Inherited by <a class="el" href="class_sky.html">Sky</a>.</p>
+<h2 class="groupheader">Member Enumeration Documentation</h2>
 <a id="a2e34d8d662b907a9e859b73311d84a0c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2e34d8d662b907a9e859b73311d84a0c">&#9670;&nbsp;</a></span>Type</h2>
 
@@ -341,6 +343,9 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void Object::decode </td>
@@ -360,6 +365,11 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
           <td></td><td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 <p>Setup an object parameters from a list of key-value tuples. The following keywords will be searched for: </p><pre class="fragment">type: objecttype
 mesh: meshname
@@ -380,6 +390,8 @@ animations:
   </table>
   </dd>
 </dl>
+
+<p>Reimplemented in <a class="el" href="class_sky.html#a4a3100e7367b92db99717a30593f3067">Sky</a>.</p>
 
 </div>
 </div>
@@ -544,6 +556,9 @@ animations:
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void Object::update </td>
@@ -563,6 +578,11 @@ animations:
           <td></td><td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 <p>Apply the animations for a frame duration. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -571,6 +591,8 @@ animations:
   </table>
   </dd>
 </dl>
+
+<p>Reimplemented in <a class="el" href="class_sky.html#a9460e913c24ca1b90786dc983e9cd765">Sky</a>.</p>
 
 </div>
 </div>

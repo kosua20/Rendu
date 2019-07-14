@@ -38,6 +38,7 @@ var searchData=
   ['side',['side',['../class_framebuffer_cube.html#a1601a47854186f2c9dc176e19b73ebcc',1,'FramebufferCube']]],
   ['simpleexposure',['simpleExposure',['../class_g_l_s_l_1_1_frag_1_1_tonemap.html#a662cc3734dad7787c932f9415a2077b8',1,'GLSL::Frag::Tonemap::simpleExposure()'],['../class_g_l_s_l_1_1_frag_1_1_image__display.html#add9b8d5d95baf5cbc496a1c94e2496c5',1,'GLSL::Frag::Image_display::simpleExposure()']]],
   ['size',['size',['../class_input.html#ae6574bea45edd81bba00c530ef4f14eb',1,'Input']]],
+  ['sky',['Sky',['../class_sky.html#a5c1b0fc465e7f4a0d1ca07c36da63423',1,'Sky']]],
   ['speed',['speed',['../class_controllable_camera.html#a5f8f2e8b86ef5c32ae061c9b830a5523',1,'ControllableCamera']]],
   ['spotlight',['SpotLight',['../class_spot_light.html#ae4045cd7c8c6d18af39b57c9cf6f9ce6',1,'SpotLight::SpotLight()'],['../class_spot_light.html#a96c0884914696d1dda9f7018f2ddcd82',1,'SpotLight::SpotLight(const glm::vec3 &amp;worldPosition, const glm::vec3 &amp;worldDirection, const glm::vec3 &amp;color, const float innerAngle, const float outerAngle, const float radius)']]],
   ['ssao',['SSAO',['../class_s_s_a_o.html#a4a94cb12811078a9d1fda8c5e355bba4',1,'SSAO']]]

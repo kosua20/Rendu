@@ -16,7 +16,7 @@ var searchData=
   ['computeboundingbox',['computeBoundingBox',['../class_mesh_utilities.html#a8ffe0e76025d84b93488fe878dcf30af',1,'MeshUtilities::computeBoundingBox()'],['../class_scene.html#a7d001285074df11eaa60c1a8d449f708',1,'Scene::computeBoundingBox()']]],
   ['computecubemapconvolution',['computeCubemapConvolution',['../group___b_r_d_f_estimator.html#gae1667d6ff0e82c58cf9b373c0fa4fd5a',1,'BRDFEstimator.cpp']]],
   ['computenormals',['computeNormals',['../class_mesh_utilities.html#a11cf2dee455c5ca83d4ca0cc6c4ef826',1,'MeshUtilities']]],
-  ['computeradiance',['computeRadiance',['../class_g_l_s_l_1_1_frag_1_1_atmosphere.html#a917f9c001913d1d7ecb02f9bf2438d6c',1,'GLSL::Frag::Atmosphere']]],
+  ['computeradiance',['computeRadiance',['../class_g_l_s_l_1_1_frag_1_1_atmosphere.html#a917f9c001913d1d7ecb02f9bf2438d6c',1,'GLSL::Frag::Atmosphere::computeRadiance()'],['../class_g_l_s_l_1_1_frag_1_1_atmosphere__gbuffer.html#a7375b38298726f709066a63c598f639e',1,'GLSL::Frag::Atmosphere_gbuffer::computeRadiance()']]],
   ['computeshcoeffs',['computeSHCoeffs',['../group___b_r_d_f_estimator.html#ga2fd49a3c2515a92a5b8370fa24c586eb',1,'BRDFEstimator.cpp']]],
   ['computetangentsandbinormals',['computeTangentsAndBinormals',['../class_mesh_utilities.html#abbf0aca2c1ff1aef082e06e9d4959c92',1,'MeshUtilities']]],
   ['config',['Config',['../class_config.html#a76ffead6bb88c7c92d3b60c7c1ce5c35',1,'Config']]],

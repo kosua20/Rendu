@@ -1,7 +1,7 @@
 var searchData=
 [
   ['backandforth',['BackAndForth',['../class_back_and_forth.html',1,'BackAndForth'],['../class_back_and_forth.html#ab839701666b8c251984953cb10f93b21',1,'BackAndForth::BackAndForth()'],['../class_back_and_forth.html#a0b86c24c12a35f8b51c90ebd03ca4a17',1,'BackAndForth::BackAndForth(const glm::vec3 &amp;axis, float speed, float amplitude, Frame frame)']]],
-  ['background',['background',['../class_scene.html#a96a70fba16b735cc40069683bdbe25da',1,'Scene::background()'],['../class_scene.html#a1d24bd5fd3c2aa5cc3a93913e7a2f24f',1,'Scene::Background()']]],
+  ['background',['background',['../class_scene.html#a34e4ae6640964bbf379157beaad5a25a',1,'Scene::background()'],['../class_scene.html#a1d24bd5fd3c2aa5cc3a93913e7a2f24f',1,'Scene::Background()']]],
   ['background_5fgbuffer',['Background_gbuffer',['../class_g_l_s_l_1_1_frag_1_1_background__gbuffer.html',1,'GLSL::Frag::Background_gbuffer'],['../class_g_l_s_l_1_1_vert_1_1_background__gbuffer.html',1,'GLSL::Vert::Background_gbuffer']]],
   ['backgroundcolor',['backgroundColor',['../class_scene.html#a721beac7111afb6d8538af2c83fdbbfb',1,'Scene']]],
   ['backgroundimage',['backgroundImage',['../class_game_menu.html#a84c36596715105ee517fc934d998c347',1,'GameMenu']]],
@@ -40,7 +40,7 @@ var searchData=
   ['boxblur',['BoxBlur',['../class_box_blur.html',1,'BoxBlur'],['../class_box_blur.html#af9b1be7389ebd1321536da3906e87959',1,'BoxBlur::BoxBlur()']]],
   ['brdf_5fsampler',['Brdf_sampler',['../class_g_l_s_l_1_1_frag_1_1_brdf__sampler.html',1,'GLSL::Frag']]],
   ['brdf_20estimation',['BRDF Estimation',['../group___b_r_d_f_estimator.html',1,'']]],
-  ['brush_5fcolor',['Brush_color',['../class_g_l_s_l_1_1_vert_1_1_brush__color.html',1,'GLSL::Vert::Brush_color'],['../class_g_l_s_l_1_1_frag_1_1_brush__color.html',1,'GLSL::Frag::Brush_color']]],
+  ['brush_5fcolor',['Brush_color',['../class_g_l_s_l_1_1_frag_1_1_brush__color.html',1,'GLSL::Frag::Brush_color'],['../class_g_l_s_l_1_1_vert_1_1_brush__color.html',1,'GLSL::Vert::Brush_color']]],
   ['buttonaction',['ButtonAction',['../class_game.html#a2999de25fbbb113485295c51b3b47646',1,'Game']]],
   ['buttons',['buttons',['../class_game_menu.html#aa71a50182cfe6433c0f7548f3ac762ab',1,'GameMenu']]]
 ];
