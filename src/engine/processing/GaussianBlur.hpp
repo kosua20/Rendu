@@ -4,13 +4,13 @@
 #include "Common.hpp"
 
 /**
- \brief Applies an approximate gaussian blur.
+ \brief Applies an approximate gaussian blur using a dual filtering approach.
  \details Use a downscaled pyramid approach to approximate a gaussian blur with a large radius. 
- The input texture is downscaled a number of times, and each level is blurred with the same kernel.
- The levels are then combined again in a unique texture, the blurred result.
- It uses a simplified gaussian sampling kernel, as described in Efficient Gaussian blur with linear sampling (http://rastergrid.com/blog/2010/09/efficient-gaussian-blur-with-linear-sampling/).
- \see GLSL::Frag::Blur
- \see GLSL::Frag::Blur_combine_2, GLSL::Frag::Blur_combine_3, GLSL::Frag::Blur_combine_4, GLSL::Frag::Blur_combine_5, GLSL::Frag::Blur_combine_6
+ The input texture is downscaled a number of times, using a custom filter as described by Marius Bjørge in the 'Bandwidth-Efficient Rendering' presentation, Siggraph 2015
+ (https://community.arm.com/cfs-file/__key/communityserver-blogs-components-weblogfiles/00-00-00-20-66/siggraph2015_2D00_mmg_2D00_marius_2D00_slides.pdf).
+ The image is then upscaled again with a second custom filtered.
+ 
+ \see GLSL::Frag::Blur-dual-filter-down, GLSL::Frag::Blur-dual-filter-up
  \ingroup Processing
  */
 class GaussianBlur : public Blur {
@@ -43,12 +43,9 @@ public:
 	
 private:
 	
-	const ProgramInfos * _blurProgram; ///< The approximate gaussian blurring kernel shader.
-	const ProgramInfos * _combineProgram;  ///< Program to merge pyramid levels.
-	std::unique_ptr<Framebuffer> _finalFramebuffer; ///< Final result framebuffer.
+	const ProgramInfos * _blurProgramDown; ///< The downscaling filter.
+	const ProgramInfos * _blurProgramUp; ///< The upscaling filter.
 	std::vector<std::unique_ptr<Framebuffer>> _frameBuffers; ///< Downscaled pyramid framebuffers.
-	std::vector<std::unique_ptr<Framebuffer>> _frameBuffersBlur; ///< Blurred pyramid framebuffers.
-	std::vector<GLuint> _textures; ///< Downscaled pyramid framebuffers.
 	
 };
 
