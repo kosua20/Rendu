@@ -18,6 +18,6 @@ void main(){
 	vec3 left 	= textureLodOffset(screenTexture, In.uv, 0.0, ivec2(-1, 0)).rgb;
 	vec3 right 	= textureLodOffset(screenTexture, In.uv, 0.0, ivec2( 1, 0)).rgb;
 
-	fragColor = clamp(finalColor + 0.4*(4 * finalColor - down - up - left - right),0.0,1.0);
+	fragColor = clamp(finalColor + 0.2*(4.0 * finalColor - down - up - left - right),0.0,1.0);
 	
 }

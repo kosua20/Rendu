@@ -10,8 +10,9 @@
 DeferredRenderer::DeferredRenderer(RenderingConfig & config) : Renderer(config) {
 	
 	// Setup camera parameters.
-	_userCamera.projection(config.screenResolution[0]/config.screenResolution[1], 1.3f, 0.01f, 200.0f);
+	_userCamera.ratio(config.screenResolution[0]/config.screenResolution[1]);
 	_cameraFOV = _userCamera.fov() * 180.0f / float(M_PI);
+	_cplanes = _userCamera.clippingPlanes();
 	
 	const int renderWidth = (int)_renderResolution[0];
 	const int renderHeight = (int)_renderResolution[1];
@@ -32,7 +33,7 @@ DeferredRenderer::DeferredRenderer(RenderingConfig & config) : Renderer(config) 
 	_bloomFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, GL_RGB16F, false));
 	_toneMappingFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, GL_RGB16F, false));
 	_fxaaFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, GL_RGB16F, false));
-	_blurBuffer = std::unique_ptr<GaussianBlur>(new GaussianBlur(renderHalfWidth, renderHalfHeight, 4, GL_RGB16F));
+	_blurBuffer = std::unique_ptr<GaussianBlur>(new GaussianBlur(renderHalfWidth, renderHalfHeight, _bloomRadius, GL_RGB16F));
 	
 	checkGLError();
 
@@ -46,7 +47,7 @@ DeferredRenderer::DeferredRenderer(RenderingConfig & config) : Renderer(config) 
 	_bloomCompositeProgram = Resources::manager().getProgram2D("bloom-composite");
 	_toneMappingProgram = Resources::manager().getProgram2D("tonemap");
 	_fxaaProgram = Resources::manager().getProgram2D("fxaa");
-	_finalProgram = Resources::manager().getProgram2D("passthrough");
+	_finalProgram = Resources::manager().getProgram2D("final_screenquad");
 	
 	_skyboxProgram = Resources::manager().getProgram("skybox_gbuffer");
 	_bgProgram = Resources::manager().getProgram("background_gbuffer");
@@ -74,10 +75,15 @@ void DeferredRenderer::setScene(std::shared_ptr<Scene> scene){
 	_scene->init(Storage::GPU);
 	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start);
 	Log::Info() << "Loading took " << duration.count() << "ms." << std::endl;
-	const BoundingBox & bbox = _scene->getBoundingBox();
+	
+	_userCamera.apply(_scene->viewpoint());
+	_userCamera.ratio(_renderResolution[0]/_renderResolution[1]);
+	const BoundingBox & bbox = _scene->boundingBox();
 	const float range = glm::length(bbox.getSize());
 	_userCamera.frustum(0.01f*range, 5.0f*range);
 	_userCamera.speed() = 0.2f*range;
+	_cplanes = _userCamera.clippingPlanes();
+	_cameraFOV = _userCamera.fov() * 180.0f /float(M_PI);
 	_ambientScreen.setSceneParameters(_scene->backgroundReflection->id, _scene->backgroundIrradiance);
 	
 	std::vector<GLuint> includedTextures = _gbuffer->textureIds();
@@ -323,19 +329,28 @@ void DeferredRenderer::update(){
 	
 	if(ImGui::Begin("Renderer")){
 		ImGui::PushItemWidth(100);
+		ImGui::Combo("Camera mode", (int*)(&_userCamera.mode()), "FPS\0Turntable\0Joystick\0\0", 3);
 		ImGui::InputFloat("Camera speed", &_userCamera.speed(), 0.1f, 1.0f);
 		if(ImGui::InputFloat("Camera FOV", &_cameraFOV, 1.0f, 10.0f)){
 			_userCamera.fov(_cameraFOV*float(M_PI)/180.0f);
 		}
-		ImGui::Combo("Camera mode", (int*)(&_userCamera.mode()), "FPS\0Turntable\0Joystick\0\0", 3);
 		ImGui::PopItemWidth();
-		if(ImGui::CollapsingHeader("Camera details")){
-			ImGui::InputFloat3("Position", (float*)(&_userCamera.position()[0]));
-			ImGui::InputFloat3("Center", (float*)(&_userCamera.center()[0]));
-			ImGui::InputFloat3("Up", (float*)(&_userCamera.up()[0]));
-			ImGui::InputFloat2("Clip planes", (float*)(&_userCamera.clippingPlanes()[0]));
-			ImGui::Text("FoV (rad): %2.3f", _userCamera.fov());
+		if(ImGui::DragFloat2("Camera planes", (float*)(&_cplanes[0]))){
+			_userCamera.frustum(_cplanes[0], _cplanes[1]);
 		}
+		
+		if(ImGui::Button("Copy camera")){
+			const std::string camDesc = _userCamera.encode();
+			ImGui::SetClipboardText(camDesc.c_str());
+		}
+		ImGui::SameLine();
+		if(ImGui::Button("Paste camera")){
+			const std::string camDesc(ImGui::GetClipboardText());
+			_userCamera.decode(Codable::parse(camDesc));
+			_cameraFOV = _userCamera.fov()*180.0f/float(M_PI);
+			_cplanes = _userCamera.clippingPlanes();
+		}
+		
 		ImGui::Separator();
 		ImGui::PushItemWidth(100);
 		if(ImGui::InputInt("Vertical res.", &_config.internalVerticalResolution, 50, 200)){
@@ -345,13 +360,20 @@ void DeferredRenderer::update(){
 		
 		ImGui::Checkbox("Bloom", &_applyBloom);
 		if(_applyBloom){
+			ImGui::SameLine();
+			ImGui::PushItemWidth(90);
+			if(ImGui::InputInt("Bloom rad.", &_bloomRadius, 1, 10)){
+				_blurBuffer.reset(new GaussianBlur(int(_renderResolution[0]/2), int(_renderResolution[1]/2), _bloomRadius, GL_RGB16F));
+			}
+			ImGui::PopItemWidth();
 			ImGui::SliderFloat("Bloom mix", &_bloomMix, 0.0f, 1.5f);
 			ImGui::SliderFloat("Bloom th.", &_bloomTh, 0.5f, 2.0f);
+			
 		}
 		
-		ImGui::Checkbox("SSAO", &_applySSAO); ImGui::SameLine(120);
-		ImGui::Checkbox("FXAA", &_applyFXAA);
-		ImGui::Checkbox("Tonemapping ", &_applyTonemapping);
+		ImGui::Checkbox("SSAO", &_applySSAO); ImGui::SameLine();
+		ImGui::Checkbox("FXAA", &_applyFXAA);  ImGui::SameLine();
+		ImGui::Checkbox("Tonemap ", &_applyTonemapping);
 		if(_applyTonemapping){
 			ImGui::SliderFloat("Exposure", &_exposure, 0.1f, 10.0f);
 		}

@@ -104,10 +104,12 @@ private:
 	
 	std::shared_ptr<Scene> _scene; ///< The scene to render
 	
+	glm::vec2 _cplanes;
 	float _cameraFOV; ///< Camera field of view in degrees.
 	float _exposure = 1.0f; ///< Film exposure.
 	float _bloomTh = 1.2f; ///< Threshold for blooming regions.
 	float _bloomMix = 0.2f; ///< Factor for applying the bloom.
+	int _bloomRadius = 4;
 	bool _debugVisualization = false; ///< Toggle the rendering of debug informations in the scene.
 	bool _applyBloom = true; ///< Should bloom (bright lights halo-ing) be applied.
 	bool _applyTonemapping = true; ///< Should HDR to LDR tonemapping be applied.
