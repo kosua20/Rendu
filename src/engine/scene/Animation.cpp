@@ -1,15 +1,9 @@
 #include "Animation.hpp"
 
-std::vector<std::shared_ptr<Animation>> Animation::decode(const std::vector<KeyValues> & params, size_t & listPos){
+std::vector<std::shared_ptr<Animation>> Animation::decode(const std::vector<KeyValues> & params){
 	std::vector<std::shared_ptr<Animation>> animations;
-
-	if(params[listPos].key != "animations"){
-		Log::Warning() << "Unable to find animation keyword." << std::endl;
-		return {};
-	}
-	size_t pid = listPos+1;
-	while(pid < params.size()){
-		const auto & param = params[pid];
+	// Each element is an animation.
+	for(const auto & param : params){
 		if(param.key == "rotation"){
 			auto anim = std::shared_ptr<Rotation>(new Rotation());
 			anim->decode(param);
@@ -20,13 +14,8 @@ std::vector<std::shared_ptr<Animation>> Animation::decode(const std::vector<KeyV
 			anim->decode(param);
 			animations.push_back(anim);
 			
-		} else {
-			// We reached the end of the animation list, break.
-			break;
 		}
-		++pid;
 	}
-	listPos = pid;
 	return animations;
 }
 

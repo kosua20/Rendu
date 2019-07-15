@@ -9,7 +9,7 @@ Object::Object(const Object::Type type, const MeshInfos * mesh, bool castShadows
 	_mesh = mesh;
 }
 
-void Object::decode(const std::vector<KeyValues> & params, const Storage mode){
+void Object::decode(const KeyValues & params, const Storage mode){
 	
 #define REGISTER_TYPE(type) {#type, Type::type}
 	const std::map<std::string, Object::Type> types = {
@@ -21,10 +21,9 @@ void Object::decode(const std::vector<KeyValues> & params, const Storage mode){
 #undef REGISTER_TYPE
 	
 	// We expect there is only one transformation in the parameters set.
-	_model = Codable::decodeTransformation(params);
+	_model = Codable::decodeTransformation(params.elements);
 	
-	for(size_t pid = 0; pid < params.size(); ++pid){
-		const auto & param = params[pid];
+	for(const auto & param : params.elements){
 		if(param.key == "type" && !param.values.empty()){
 			const std::string typeString = param.values[0];
 			if(types.count(typeString) > 0){
@@ -39,19 +38,13 @@ void Object::decode(const std::vector<KeyValues> & params, const Storage mode){
 			_castShadow = Codable::decodeBool(param);
 			
 		} else if(param.key == "textures"){
-			// Iterate on the following elements while we are finding viable textures.
-			while(++pid < params.size()){
-				const TextureInfos * tex = Codable::decodeTexture(params[pid], mode);
-				if(tex){
-					addTexture(tex);
-				} else {
-					--pid;
-					break;
-				}
+			for(const auto & paramTex : param.elements){
+				const TextureInfos * tex = Codable::decodeTexture(paramTex, mode);
+				addTexture(tex);
 			}
+			
 		} else if(param.key == "animations"){
-			_animations = Animation::decode(params, pid);
-			--pid;
+			_animations = Animation::decode(param.elements);
 		}
 	}
 }

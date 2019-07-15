@@ -11,6 +11,20 @@ Scene::Scene(const std::string & name){
 	}
 	_name = fullName;
 }
+
+void printToken(const KeyValues & tk, const std::string & shift){
+	Log::Info() << shift << tk.key << ": " << std::endl;
+	if(!tk.values.empty()){
+		Log::Info() << shift << "\t";
+		for(const auto & val : tk.values){
+			Log::Info() << val << " | ";
+		}
+		Log::Info() << std::endl;
+	}
+	for(const auto & subtk : tk.elements){
+		printToken(subtk, shift + "\t");
+	}
+}
 	
 void Scene::init(const Storage mode){
 	if(_loaded){
@@ -18,34 +32,19 @@ void Scene::init(const Storage mode){
 	}
 	
 	// Define loaders for each keyword.
-	std::map<std::string, void (Scene::*)(const std::vector<KeyValues> &, const Storage)> loaders = {
-		{"scene", &Scene::loadScene}, {"object", &Scene::loadObject}, {"point", &Scene::loadLight}, {"directional", &Scene::loadLight}, {"spot", &Scene::loadLight}, {"camera", &Scene::loadCamera}
+	std::map<std::string, void (Scene::*)(const KeyValues &, const Storage)> loaders = {
+		{"scene", &Scene::loadScene}, {"object", &Scene::loadObject}, {"point", &Scene::loadLight}, {"directional", &Scene::loadLight}, {"spot", &Scene::loadLight}, {"camera", &Scene::loadCamera}, {"background", &Scene::loadBackground}
 	};
 	
 	// Parse the file.
 	const std::string sceneFile = Resources::manager().getString(_name);
-	const std::vector<KeyValues> allKeyVals = Codable::parse(sceneFile);
-	
-	// Find the main tokens positions. Everything between two keyword belongs to the first one.
-	std::vector<int> mainKeysLocations;
-	for(size_t tid = 0; tid < allKeyVals.size();++tid){
-		const std::string & key = allKeyVals[tid].key;
-		if(loaders.count(key) > 0){
-			mainKeysLocations.push_back(tid);
-		}
-	}
-	// Add a final end key.
-	mainKeysLocations.push_back(int(allKeyVals.size()));
+	const std::vector<KeyValues> allParams = Codable::parse(sceneFile);
 	
 	// Process each group of keyvalues.
-	for(size_t mkid = 0; mkid < mainKeysLocations.size()-1; ++mkid){
-		const int startId = mainKeysLocations[mkid];
-		const int endId = mainKeysLocations[mkid+1];
-		// Extract the corresponding subset.
-		std::vector<KeyValues> subset(allKeyVals.begin() + startId, allKeyVals.begin() + endId);
-		const std::string key = subset[0].key;
+	for(const auto & element : allParams){
+		const std::string key = element.key;
 		// By construction (see above), all keys should have a loader.
-		(this->*loaders[key])(subset, mode);
+		(this->*loaders[key])(element, mode);
 	}
 	
 	// Update all objects poses.
@@ -63,51 +62,47 @@ void Scene::init(const Storage mode){
 	_loaded = true;
 };
 
-void Scene::loadObject(const std::vector<KeyValues> & params, const Storage mode){
+void Scene::loadObject(const KeyValues & params, const Storage mode){
 	objects.emplace_back();
 	objects.back().decode(params, mode);
 }
 
-void Scene::loadLight(const std::vector<KeyValues> & params, const Storage){
+void Scene::loadLight(const KeyValues & params, const Storage){
 	auto light = Light::decode(params);
 	if(light){
 		lights.push_back(light);
 	}
 }
 
-void Scene::loadCamera(const std::vector<KeyValues> & params, const Storage){
+void Scene::loadCamera(const KeyValues & params, const Storage){
 	_camera.decode(params);
 }
 
-void Scene::loadScene(const std::vector<KeyValues> & params, const Storage mode){
+void Scene::loadBackground(const KeyValues & params, const Storage mode){
 	background = std::unique_ptr<Object>(new Object(Object::Type::Common, Resources::manager().getMesh("plane", mode), false));
-	backgroundIrradiance = std::vector<glm::vec3>(9, glm::vec3(0.0f));
 	
-	for(size_t pid = 0; pid < params.size(); ++pid){
-		const auto & param = params[pid];
-		if(param.key == "irradiance" && !param.values.empty()){
-			loadSphericalHarmonics(param.values[0]);
-		} else if(param.key == "probe"){
-			// Move to the next parameter and try to load the texture.
-			backgroundReflection = Codable::decodeTexture(params[++pid], mode);
-			if(backgroundReflection == nullptr){
-				--pid;
-			}
-		} else if(param.key == "bgcolor"){
+	for(const auto & param : params.elements){
+		if(param.key == "color"){
 			backgroundMode = Background::COLOR;
 			// Background is a plane, store the color.
 			backgroundColor = Codable::decodeVec3(param);
-		} else if(param.key == "bgimage"){
+			
+		} else if(param.key == "image" && !param.elements.empty()){
 			backgroundMode = Background::IMAGE;
-			// Background is a textured plane.
-			// Move to the next parameter.
-			const TextureInfos * tex = Codable::decodeTexture(params[++pid], mode);
-			if(tex){
-				background->addTexture(tex);
-			} else {
-				--pid;
-			}
-		} else if(param.key == "bgsky"){
+			// Load image described as sub-element.
+			const TextureInfos * tex = Codable::decodeTexture(param.elements[0], mode);
+			background->addTexture(tex);
+			
+		} else if(param.key == "cube" && !param.elements.empty()){
+			backgroundMode = Background::SKYBOX;
+			// Object is a textured skybox.
+			background =  std::unique_ptr<Object>(new Object(Object::Type::Common, Resources::manager().getMesh("skybox", mode), false));
+			background->decode(params, mode);
+			// Load cubemap described as subelement.
+			const TextureInfos * tex = Codable::decodeTexture(param.elements[0], mode);
+			background->addTexture(tex);
+			
+		} else if(param.key == "sun"){
 			// In that case the background is a sky object.
 			backgroundMode = Background::ATMOSPHERE;
 			background = std::unique_ptr<Sky>(new Sky(mode));
@@ -115,36 +110,32 @@ void Scene::loadScene(const std::vector<KeyValues> & params, const Storage mode)
 			// Load the scattering table.
 			const TextureInfos * tex = Resources::manager().getTexture("scattering-precomputed", {GL_RGB32F, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE}, mode);
 			background->addTexture(tex);
-			
-		}  else if(param.key == "bgcube"){
-			backgroundMode = Background::SKYBOX;
-			// Object is a textured skybox.
-			background =  std::unique_ptr<Object>(new Object(Object::Type::Common, Resources::manager().getMesh("skybox", mode), false));
-			// Move to the next parameter.
-			const TextureInfos * tex = Codable::decodeTexture(params[++pid], mode);
-			if(tex){
-				background->addTexture(tex);
-			} else {
-				--pid;
-			}
 		}
 	}
-	// Update matrix.
-	_sceneModel = Codable::decodeTransformation(params);
 }
 
-void Scene::loadSphericalHarmonics(const std::string & name){
-	backgroundIrradiance.clear();
-	backgroundIrradiance.resize(9);
+void Scene::loadScene(const KeyValues & params, const Storage mode){
+	backgroundIrradiance = std::vector<glm::vec3>(9, glm::vec3(0.0f));
 	
-	const std::string coeffsRaw = Resources::manager().getString(name);
-	std::stringstream coeffsStream(coeffsRaw);
-	
-	float x = 0.0f; float y = 0.0f; float z = 0.0f;
-	for(int i = 0; i < 9; ++i){
-		coeffsStream >> x >> y >> z;
-		backgroundIrradiance[i] = glm::vec3(x,y,z);
+	for(const auto & param : params.elements){
+		if(param.key == "irradiance" && !param.values.empty()){
+			// Load the SH coefficients from the corresponding text file.
+			const std::string coeffsRaw = Resources::manager().getString(param.values[0]);
+			std::stringstream coeffsStream(coeffsRaw);
+			float x = 0.0f; float y = 0.0f; float z = 0.0f;
+			for(int i = 0; i < 9; ++i){
+				coeffsStream >> x >> y >> z;
+				backgroundIrradiance[i] = glm::vec3(x,y,z);
+			}
+			
+		} else if(param.key == "probe" && !param.elements.empty()){
+			// Load cubemap described as sub-element.
+			backgroundReflection = Codable::decodeTexture(param.elements[0], mode);
+			
+		}
 	}
+	// Update matrix, there is at most one transformation in the scene object.
+	_sceneModel = Codable::decodeTransformation(params.elements);
 }
 
 BoundingBox Scene::computeBoundingBox(bool onlyShadowCasters){

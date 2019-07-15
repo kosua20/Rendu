@@ -346,9 +346,12 @@ void DeferredRenderer::update(){
 		ImGui::SameLine();
 		if(ImGui::Button("Paste camera")){
 			const std::string camDesc(ImGui::GetClipboardText());
-			_userCamera.decode(Codable::parse(camDesc));
-			_cameraFOV = _userCamera.fov()*180.0f/float(M_PI);
-			_cplanes = _userCamera.clippingPlanes();
+			const auto cameraCode = Codable::parse(camDesc);
+			if(!cameraCode.empty()){
+				_userCamera.decode(cameraCode[0]);
+				_cameraFOV = _userCamera.fov()*180.0f/float(M_PI);
+				_cplanes = _userCamera.clippingPlanes();
+			}
 		}
 		
 		ImGui::Separator();

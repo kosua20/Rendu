@@ -6,11 +6,10 @@ Sky::Sky(const Storage mode) : Object(Object::Type::Common, Resources::manager()
 }
 
 
-void Sky::decode(const std::vector<KeyValues> & params, const Storage mode){
+void Sky::decode(const KeyValues & params, const Storage mode){
 	Object::decode(params, mode);
-	for(size_t pid = 0; pid < params.size(); ++pid){
-		const auto & param = params[pid];
-		if(param.key == "direction"){
+	for(const auto & param : params.elements){
+		if(param.key == "sun"){
 			_sunDirection = Codable::decodeVec3(param);
 			_sunDirection = glm::normalize(_sunDirection);
 		}

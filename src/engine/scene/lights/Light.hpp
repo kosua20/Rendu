@@ -88,10 +88,10 @@ public:
 	virtual bool visible(const glm::vec3 & position, const Raycaster & raycaster, glm::vec3 & direction, float & attenuation) const = 0;
 	
 	/** Helper that can instantiate a light of any type from the passed keywords and parameters.
-	 \param params a list of key-value tuple containing light parameters
+	 \param params a key-value tuple containing light parameters
 	 \return a generic light pointer
 	 */
-	static std::shared_ptr<Light> decode(const std::vector<KeyValues> & params);
+	static std::shared_ptr<Light> decode(const KeyValues & params);
 	
 	/** Destructor. */
 	virtual ~Light() = default;
@@ -103,13 +103,13 @@ protected:
 	 intensity: R,G,B
 	 shadows: bool
 	 animations:
-	 	animationtype: ...
-	 	...
+	 	- animationtype: ...
+	 	- ...
 	 ...
 	 \endverbatim
-	 \param params the parameters tuples list
+	 \param params the parameters tuple list
 	 */
-	void decodeBase(const std::vector<KeyValues> & params);
+	void decodeBase(const KeyValues & params);
 	
 	std::vector<GLuint> _textures; ///< The G-buffer textures.
 	std::vector<std::shared_ptr<Animation>> _animations; ///< Animations list (will be applied in order).

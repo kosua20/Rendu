@@ -2,7 +2,7 @@
 #define Camera_h
 
 #include "Common.hpp"
-#include "scene/Codable.hpp"
+#include "Codable.hpp"
 
 /**
  \brief This class represents a camera as used in real-time rendering APIs.
@@ -120,7 +120,7 @@ public:
 	 where the field of view is given in radians.
 	 \param params the parameters tuples list
 	 */
-	void decode(const std::vector<KeyValues> & params);
+	void decode(const KeyValues & params);
 	
 	/** Encode a camera as a Codable-compatible string representation.
 	 \return the encoded camera parameters

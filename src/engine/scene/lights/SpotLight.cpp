@@ -195,9 +195,9 @@ bool SpotLight::visible(const glm::vec3 & position, const Raycaster & raycaster,
 	return true;
 }
 
-void SpotLight::decode(const std::vector<KeyValues> & params){
+void SpotLight::decode(const KeyValues & params){
 	Light::decodeBase(params);
-	for(const auto & param : params){
+	for(const auto & param : params.elements){
 		if(param.key == "direction"){
 			_lightDirection = glm::normalize(Codable::decodeVec3(param));
 			

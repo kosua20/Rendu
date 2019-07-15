@@ -1,11 +1,11 @@
 #pragma once
-#include "scene/Codable.hpp"
 #include "scene/Object.hpp"
 #include "scene/lights/DirectionalLight.hpp"
 #include "scene/lights/PointLight.hpp"
 #include "scene/lights/SpotLight.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "input/Camera.hpp"
+#include "Codable.hpp"
 #include "Common.hpp"
 
 
@@ -20,25 +20,27 @@ public:
 	
 	/** Constructor from a scene description file. The expected format is as follow:
 	 \verbatim
-	 scene:
+	 * scene:
 	 	probe: texturetype: texturename (see Codable::decodeTexture for details)
 		irradiance: shcoeffsfilename
 		translation: X,Y,Z
 		scaling: scale
 		orientation: axisX,axisY,axisZ angle
-		background: ...
-	 object:
+	 * background:
+	 	bgtype: value
+	 * object:
 		... (see Object::decode documentation)
 	 ...
-	 lighttype:
+	 * lighttype:
 		... (see Light::decode documentation)
 	 ...
 	 \endverbatim
-	  where lighttype is one of point, directional, spot and background is one of
+	  where lighttype is one of point, directional, spot and bgtype is one of
 	 \verbatim
-	 bgcolor: R,G,B
-	 bgimage: texturetype: texturename
-	 bgskybox: texturetype: texturename
+	 color: R,G,B
+	 image: texturetype: texturename
+	 cube: texturetype: texturename
+	 sun: dirX,dirY,dirZ
 	 \endverbatim
 	
 	 \param name the name of the scene description file
@@ -92,31 +94,31 @@ private:
 	 \param params the object parameters
 	 \param mode the storage mode (CPU, GPU, both)
 	 */
-	void loadObject(const std::vector<KeyValues> & params, const Storage mode);
+	void loadObject(const KeyValues & params, const Storage mode);
 	
 	/** Load a point light in the scene from its serialized representation.
 	 \param params the point light parameters
 	 \param mode the storage mode (CPU, GPU, both) (unused)
 	 */
-	void loadLight(const std::vector<KeyValues> & params, const Storage mode);
+	void loadLight(const KeyValues & params, const Storage mode);
 	
 	/** Load the scene camera informations from its serialized representation.
 	 \param params the camera parameters
 	 \param mode the storage mode (CPU, GPU, both) (unused)
 	 */
-	void loadCamera(const std::vector<KeyValues> & params, const Storage mode);
+	void loadCamera(const KeyValues & params, const Storage mode);
 	
-	/** Load the scene environment informations from its serialized representation.
+	/** Load the scene background informations from its serialized representation.
+	 \param params the background parameters
+	 \param mode the storage mode (CPU, GPU, both)
+	 */
+	void loadBackground(const KeyValues & params, const Storage mode);
+	
+	/** Load the scene informations from its serialized representation.
 	 \param params the scene parameters
 	 \param mode the storage mode (CPU, GPU, both)
 	 */
-	void loadScene(const std::vector<KeyValues> & params, const Storage mode);
-	
-	/** Load a file containing some SH coefficients approximating background irradiance.
-	 \param name the name of the text file
-	 \see SphericalHarmonics
-	 */
-	void loadSphericalHarmonics(const std::string & name);
+	void loadScene(const KeyValues & params, const Storage mode);
 	
 	/** Compute the bounding box of the scene, optionaly excluding objects that do not cast shadows.
 	 \param onlyShadowCasters denote if only objects that are allowed to cast shadows should be taken into account

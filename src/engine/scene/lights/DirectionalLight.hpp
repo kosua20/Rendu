@@ -73,12 +73,12 @@ public:
 	 intensity: R,G,B
 	 shadows: bool
 	 animations:
-	 	animationtype: ...
-	 	...
+	 	- animationtype: ...
+	 	- ...
 	 \endverbatim
-	 \param params the parameters tuples list
+	 \param params the parameters tuple
 	 */
-	void decode(const std::vector<KeyValues> & params);
+	void decode(const KeyValues & params);
 	
 private:
 	

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "scene/Codable.hpp"
 #include "scene/Animation.hpp"
 #include "resources/ResourcesManager.hpp"
+#include "Codable.hpp"
 #include "Common.hpp"
 
 /**
@@ -93,16 +93,16 @@ public:
 	 orientation: axisX,axisY,axisZ angle
 	 shadows: bool
 	 textures:
-	 	texturetype: ...
-	 	...
+	 	- texturetype: ...
+	 	- ...
 	 animations:
-	 	animationtype: ...
-	 	...
+	 	- animationtype: ...
+	 	- ...
 	 \endverbatim
-	 \param params the parameters tuples list
+	 \param params the parameters tuple
 	 \param mode the storage mode (CPU, GPU, both)
 	 */
-	virtual void decode(const std::vector<KeyValues>& params, const Storage mode);
+	virtual void decode(const KeyValues& params, const Storage mode);
 	
 	virtual ~Object() = default;
 	

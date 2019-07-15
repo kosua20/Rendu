@@ -70,15 +70,16 @@ void Camera::apply(const Camera & camera){
 	this->projection(camera.ratio(), camera.fov(), planes[0], planes[1]);
 }
 
-void Camera::decode(const std::vector<KeyValues> & params){
+void Camera::decode(const KeyValues & params){
 	glm::vec3 pos(0.0f, 0.0f, 1.0f);
 	glm::vec3 center(0.0f, 0.0f, 0.0f);
 	glm::vec3 up(0.0f, 1.0f, 0.0f);
 	glm::vec2 planes(0.01f, 100.0f);
 	float fov = 1.3f;
 	
-	for(size_t pid = 0; pid < params.size(); ++pid){
-		const auto & param = params[pid];
+	const auto & elems = params.elements;
+	for(size_t pid = 0; pid < elems.size(); ++pid){
+		const auto & param = elems[pid];
 		if(param.key == "position"){
 			pos = Codable::decodeVec3(param);
 		} else if(param.key == "center"){
@@ -98,7 +99,7 @@ void Camera::decode(const std::vector<KeyValues> & params){
 
 std::string Camera::encode() const {
 	std::stringstream camDetails;
-	camDetails << "camera:\n";
+	camDetails << "* camera:\n";
 	camDetails << "\t" << "position: " << _eye[0] << "," << _eye[1] << "," << _eye[2] << "\n";
 	camDetails << "\t" << "center: " << _center[0] << "," << _center[1] << "," << _center[2] << "\n";
 	camDetails << "\t" << "up: " << _up[0] << "," << _up[1] << "," << _up[2] << "\n";

@@ -129,9 +129,9 @@ bool DirectionalLight::visible(const glm::vec3 & position, const Raycaster & ray
 	return true;
 }
 
-void DirectionalLight::decode(const std::vector<KeyValues> & params){
+void DirectionalLight::decode(const KeyValues & params){
 	Light::decodeBase(params);
-	for(const auto & param : params){
+	for(const auto & param : params.elements){
 		if(param.key == "direction"){
 			_lightDirection = glm::normalize(Codable::decodeVec3(param));
 		}

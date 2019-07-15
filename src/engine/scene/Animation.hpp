@@ -1,7 +1,7 @@
 #pragma once
 
-#include "scene/Codable.hpp"
 #include "resources/ResourcesManager.hpp"
+#include "Codable.hpp"
 #include "Common.hpp"
 
 /** \brief An animation is a transformation evaluated at each frame and applied to an object.
@@ -35,10 +35,9 @@ public:
 	
 	/** Helper that can instantiate a list of animations of any type from the passed keywords and parameters.
 	 \param params a list of key-value tuple containing animations parameters
-	 \param listPos the position of the 'animations' keyword in the params list. Will be updated with the position after the animations list.
 	 \return a vector of animations
 	 */
-	static std::vector<std::shared_ptr<Animation>> decode(const std::vector<KeyValues> & params, size_t & listPos);
+	static std::vector<std::shared_ptr<Animation>> decode(const std::vector<KeyValues> & params);
 	
 protected:
 	

@@ -206,9 +206,9 @@ bool PointLight::visible(const glm::vec3 & position, const Raycaster & raycaster
 	return true;
 }
 
-void PointLight::decode(const std::vector<KeyValues> & params){
+void PointLight::decode(const KeyValues & params){
 	Light::decodeBase(params);
-	for(const auto & param : params){
+	for(const auto & param : params.elements){
 		if(param.key == "position"){
 			_lightPosition = Codable::decodeVec3(param);
 		} else if(param.key == "radius" && !param.values.empty()){

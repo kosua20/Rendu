@@ -1,9 +1,9 @@
 #pragma once
 
-#include "scene/Codable.hpp"
 #include "scene/Animation.hpp"
 #include "scene/Object.hpp"
 #include "resources/ResourcesManager.hpp"
+#include "Codable.hpp"
 #include "Common.hpp"
 
 /**
@@ -35,10 +35,10 @@ public:
 	 	animations:
 	 		...
 	 \endverbatim
-	 \param params the parameters tuples list
+	 \param params the parameters tuple
 	 \param mode the storage mode (CPU, GPU, both)
 	 */
-	void decode(const std::vector<KeyValues>& params, const Storage mode);
+	void decode(const KeyValues& params, const Storage mode);
 	
 	/** Reference to the sun direction.
 	 \return the normalized sun direction
