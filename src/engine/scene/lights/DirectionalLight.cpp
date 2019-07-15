@@ -115,8 +115,12 @@ void DirectionalLight::setScene(const BoundingBox & sceneBox){
 }
 
 void DirectionalLight::clean() const {
-	_blur->clean();
-	_shadowPass->clean();
+	if(_blur){
+		_blur->clean();
+	}
+	if(_shadowPass){
+		_shadowPass->clean();
+	}
 }
 
 bool DirectionalLight::visible(const glm::vec3 & position, const Raycaster & raycaster, glm::vec3 & direction, float & attenuation) const {

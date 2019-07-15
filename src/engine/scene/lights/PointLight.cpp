@@ -218,5 +218,7 @@ void PointLight::decode(const KeyValues & params){
 }
 
 void PointLight::clean() const {
-	_shadowFramebuffer->clean();
+	if(_shadowFramebuffer){
+		_shadowFramebuffer->clean();
+	}
 }

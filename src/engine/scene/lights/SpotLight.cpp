@@ -219,7 +219,11 @@ void SpotLight::decode(const KeyValues & params){
 
 
 void SpotLight::clean() const {
-	_blur->clean();
-	_shadowPass->clean();
+	if(_blur){
+		_blur->clean();
+	}
+	if(_shadowPass){
+		_shadowPass->clean();
+	}
 }
 
