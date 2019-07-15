@@ -61,14 +61,14 @@ function GraphicsSetup(srcDir)
 
 	-- Libraries for each platform.
 	if os.istarget("macosx") then
-		libdirs({libDir.."glfw/lib-mac/", libDir.."nfd/lib-mac/"})
+		libdirs({libDir.."glfw/lib-mac/"})
 		links({"glfw3", "nfd", "OpenGL.framework", "Cocoa.framework", "IOKit.framework", "CoreVideo.framework", "AppKit.framework"})
 	elseif os.istarget("windows") then
-		libdirs({libDir.."glfw/lib-win-x64/", libDir.."nfd/lib-win-x64/"})
+		libdirs({libDir.."glfw/lib-win-x64/"})
 		links({"glfw3", "nfd", "opengl32", "comctl32"})
 	else -- Assume linux
 		-- Libraries needed: OpenGL and glfw3.  glfw3 require X11, Xi, and so on...	
-		libdirs({ os.findlib("glfw3"), os.findlib("nfd") })
+		libdirs({ os.findlib("glfw3") })
 		links({"glfw3", "nfd", "GL", "X11", "Xi", "Xrandr", "Xxf86vm", "Xinerama", "Xcursor", "rt", "m", "pthread", "dl", "gtk+-3.0"})
 	end
 
@@ -127,6 +127,7 @@ project("Engine")
 			"src/libs/*/*.hpp", "src/libs/*/*.cpp", "src/libs/*/*.h",
 			"premake5.lua"
 	})
+	removefiles { "src/libs/nfd/*" }
 	removefiles({"**.DS_STORE", "**.thumbs"})
 	-- Virtual path allow us to get rid of the on-disk hierarchy.
 	vpaths({
@@ -195,6 +196,10 @@ project("ALL")
 	CPPSetup()
 	kind("ConsoleApp")
 	dependson( {"Engine", "PBRDemo", "Playground", "Atmosphere", "ImageViewer", "ImageFiltering", "AtmosphericScatteringEstimator", "BRDFEstimator", "ControllerTest", "SnakeGame", "RaytracerDemo", "ObjToScene"})
+
+-- Include NFD premake file.
+
+include("src/libs/nfd/premake5.lua")
 
 -- Actions
 
