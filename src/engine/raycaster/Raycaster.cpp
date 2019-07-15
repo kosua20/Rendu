@@ -59,7 +59,7 @@ size_t Raycaster::updateSubHierarchy(const size_t begin, const size_t count){
 	std::sort(_triangles.begin()+begin, _triangles.begin()+begin+count, [this, axis](const TriangleInfos & t0, const TriangleInfos & t1){
 		// Compute both bounding boxes.
 		BoundingBox b0(_vertices[t0.v0], _vertices[t0.v1], _vertices[t0.v2]);
-		BoundingBox b1(_vertices[t0.v0], _vertices[t0.v1], _vertices[t0.v2]);
+		BoundingBox b1(_vertices[t1.v0], _vertices[t1.v1], _vertices[t1.v2]);
 		return b0.minis[axis] < b1.minis[axis];
 	});
 	// Create the node.
@@ -74,7 +74,7 @@ size_t Raycaster::updateSubHierarchy(const size_t begin, const size_t count){
 		// Compute node bounding box as the union of each triangle box.
 		const TriangleInfos & t0 = _triangles[begin];;
 		currentNode.box = BoundingBox(_vertices[t0.v0], _vertices[t0.v1], _vertices[t0.v2]);
-		for(int tid = 1; tid < count; ++tid){
+		for(size_t tid = 1; tid < count; ++tid){
 			const TriangleInfos & t = _triangles[begin+tid];;
 			const BoundingBox tbox(_vertices[t.v0], _vertices[t.v1], _vertices[t.v2]);
 			currentNode.box.merge(tbox);
@@ -115,7 +115,7 @@ const Raycaster::RayHit Raycaster::intersects(const Raycaster::Ray & ray, const 
 	// If the node is a leaf, test all included triangles.
 	if(node.leaf){
 		RayHit finalHit;
-		for(int tid = 0; tid < node.right; ++tid){
+		for(size_t tid = 0; tid < node.right; ++tid){
 			const auto & tri = _triangles[node.left + tid];
 			const RayHit hit = intersects(ray, tri, mini, maxi);
 			if(hit.hit && hit.dist < finalHit.dist){
@@ -144,7 +144,7 @@ bool Raycaster::intersectsAny(const Raycaster::Ray & ray, const Raycaster::Node 
 	// If the node is a leaf, test all included triangles.
 	if(node.leaf){
 		RayHit finalHit;
-		for(int tid = 0; tid < node.right; ++tid){
+		for(size_t tid = 0; tid < node.right; ++tid){
 			const auto & tri = _triangles[node.left + tid];
 			if(intersects(ray, tri, mini, maxi).hit){
 				return true;
