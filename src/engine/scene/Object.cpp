@@ -72,7 +72,7 @@ void Object::update(double fullTime, double frameTime) {
 	_model = model;
 }
 
-BoundingBox Object::getBoundingBox() const {
+BoundingBox Object::boundingBox() const {
 	return _mesh->bbox.transformed(_model);
 }
 

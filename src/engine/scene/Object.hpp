@@ -56,7 +56,7 @@ public:
 	 \return the bounding box
 	 \note For mesh space bounding box, call boundingBox on mesh().
 	 */
-	BoundingBox getBoundingBox() const;
+	BoundingBox boundingBox() const;
 	
 	/** Mesh getter.
 	 \return the mesh infos

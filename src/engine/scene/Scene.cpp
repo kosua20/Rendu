@@ -19,7 +19,7 @@ void Scene::init(const Storage mode){
 	
 	// Define loaders for each keyword.
 	std::map<std::string, void (Scene::*)(const std::vector<KeyValues> &, const Storage)> loaders = {
-		{"scene", &Scene::loadScene}, {"object", &Scene::loadObject}, {"point", &Scene::loadLight}, {"directional", &Scene::loadLight}, {"spot", &Scene::loadLight}
+		{"scene", &Scene::loadScene}, {"object", &Scene::loadObject}, {"point", &Scene::loadLight}, {"directional", &Scene::loadLight}, {"spot", &Scene::loadLight}, {"camera", &Scene::loadCamera}
 	};
 	
 	// Parse the file.
@@ -75,6 +75,10 @@ void Scene::loadLight(const std::vector<KeyValues> & params, const Storage){
 	}
 }
 
+void Scene::loadCamera(const std::vector<KeyValues> & params, const Storage){
+	_camera.decode(params);
+}
+
 void Scene::loadScene(const std::vector<KeyValues> & params, const Storage mode){
 	background = std::unique_ptr<Object>(new Object(Object::Type::Common, Resources::manager().getMesh("plane", mode), false));
 	backgroundIrradiance = std::vector<glm::vec3>(9, glm::vec3(0.0f));
@@ -109,7 +113,7 @@ void Scene::loadScene(const std::vector<KeyValues> & params, const Storage mode)
 			background = std::unique_ptr<Sky>(new Sky(mode));
 			background->decode(params, mode);
 			// Load the scattering table.
-			const TextureInfos * tex = Resources::manager().getTexture("scattering-precomputed", {GL_RGB32F, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE});
+			const TextureInfos * tex = Resources::manager().getTexture("scattering-precomputed", {GL_RGB32F, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE}, mode);
 			background->addTexture(tex);
 			
 		}  else if(param.key == "bgcube"){
@@ -155,10 +159,10 @@ BoundingBox Scene::computeBoundingBox(bool onlyShadowCasters){
 		}
 		if(first){
 			first = false;
-			bbox = objects[oid].getBoundingBox();
+			bbox = objects[oid].boundingBox();
 			continue;
 		}
-		bbox.merge(objects[oid].getBoundingBox());
+		bbox.merge(objects[oid].boundingBox());
 	}
 	Log::Info() << Log::Resources << "Scene bounding box: [" << bbox.minis << ", " << bbox.maxis << "]." << std::endl;
 	return bbox;

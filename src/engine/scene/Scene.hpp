@@ -5,6 +5,7 @@
 #include "scene/lights/PointLight.hpp"
 #include "scene/lights/SpotLight.hpp"
 #include "resources/ResourcesManager.hpp"
+#include "input/Camera.hpp"
 #include "Common.hpp"
 
 
@@ -58,7 +59,15 @@ public:
 	/** Clean internal resources. */
 	void clean();
 	
-	const BoundingBox & getBoundingBox(){ return _bbox; }
+	/** Get the scene bounding box.
+	 \return the bounding box
+	 */
+	const BoundingBox & boundingBox(){ return _bbox; }
+	
+	/** Get the initial viewpoint on the scene.
+	 \return the viewpoint camera
+	 */
+	const Camera & viewpoint(){ return _camera; }
 	
 	std::vector<Object> objects; ///< The objects in the scene.
 	std::vector<std::shared_ptr<Light>> lights; ///< Lights present in the scene.
@@ -87,9 +96,15 @@ private:
 	
 	/** Load a point light in the scene from its serialized representation.
 	 \param params the point light parameters
-	 \param mode the storage mode (CPU, GPU, both)
+	 \param mode the storage mode (CPU, GPU, both) (unused)
 	 */
 	void loadLight(const std::vector<KeyValues> & params, const Storage mode);
+	
+	/** Load the scene camera informations from its serialized representation.
+	 \param params the camera parameters
+	 \param mode the storage mode (CPU, GPU, both) (unused)
+	 */
+	void loadCamera(const std::vector<KeyValues> & params, const Storage mode);
 	
 	/** Load the scene environment informations from its serialized representation.
 	 \param params the scene parameters
@@ -109,7 +124,8 @@ private:
 	 */
 	BoundingBox computeBoundingBox(bool onlyShadowCasters = false);
 	
-	BoundingBox _bbox;
+	Camera _camera; ///< The initial viewpoint on the scene.
+	BoundingBox _bbox; ///< The scene bounding box.
 	glm::mat4 _sceneModel = glm::mat4(1.0f); ///< The scene global transformation.
 	std::string _name; ///< The scene file name.
 	bool _loaded = false; ///< Has the scene already been loaded from disk.
