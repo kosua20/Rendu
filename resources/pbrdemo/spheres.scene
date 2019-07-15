@@ -1,46 +1,48 @@
-scene:
+* scene:
 	probe: rgb32cube: studio_3
 	irradiance: studio_3_shcoeffs
-	bgcube: rgb32cube: studio_3
 
-camera:
+* background:
+	cube: rgb32cube: studio_3
+
+* camera:
 	position: 2.0,0.2,2.0
 	center: 1.3,0.1,1.3
 	up: 0.0,1.0,0.0
 	fov: 1.3
 
 # Objects
-object:
+* object:
 	type: PBRRegular
 	mesh: sphere
 	translation: 1.2,0.0,0.0
 	scaling: 0.9
 	textures:
-		srgb: sphere_wood_lacquered_albedo
-		rgb: sphere_wood_lacquered_normal
-		rgb: sphere_wood_lacquered_rough_met_ao
+		- srgb: sphere_wood_lacquered_albedo
+		- rgb: sphere_wood_lacquered_normal
+		- rgb: sphere_wood_lacquered_rough_met_ao
 	animations:
-		rotation: 0.2 model 0.0,1.0,0.0
+		- rotation: 0.2 model 0.0,1.0,0.0
 	shadows: true
 
-object:
+* object:
 	type: PBRRegular
 	mesh: sphere
 	translation: -1.2,0.0,0.0
 	scaling: 0.9
 	textures:
-		srgb: sphere_gold_worn_albedo
-		rgb: sphere_gold_worn_normal
-		rgb: sphere_gold_worn_rough_met_ao 
+		- srgb: sphere_gold_worn_albedo
+		- rgb: sphere_gold_worn_normal
+		- rgb: sphere_gold_worn_rough_met_ao 
 	shadows: true 
 
 # Lights
-point:
-		position: 0.5,-0.1,1.0
-		intensity: 1.2,4.8,7.2
-		shadows: false
-		radius: 1.0
-point:
+* point:
+	position: 0.5,-0.1,1.0
+	intensity: 1.2,4.8,7.2
+	shadows: false
+	radius: 1.0
+* point:
 		position: -0.5,-0.1,1.0
 		intensity: 12.6,1.8,3.6
 		shadows: false
