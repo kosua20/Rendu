@@ -3,6 +3,13 @@ scene:
 	probe: rgbcube: default_cube
 	irradiance: default_shcoeffs
 
+camera:
+	position: 0.0,1.0,2.5
+	center: 0.0,1.0,1.0
+	up: 0.0,1.0,0.0
+	fov: 1.3
+	planes: 0.01,20.0
+
 point:
 	intensity: 3.0,2.8,2.0
 	shadows: true
