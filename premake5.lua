@@ -22,9 +22,11 @@ workspace("Rendu")
 	filter("configurations:Release")
 		defines({ "NDEBUG" })
 		optimize("On")
+
 	filter("configurations:Dev")
 		defines({ "DEBUG" })
 		symbols("On")
+
 	filter({})
 	startproject("ALL")
 
@@ -48,8 +50,14 @@ end
 function CPPSetup()
 	language("C++")
 	cppdialect("C++11")
-	buildoptions({ "-Wall" })
 	systemversion("latest")
+
+	filter("toolset:not msc")
+		buildoptions({ "-Wall", "-Wextra" })
+	filter("toolset:msc")
+		buildoptions({ "-W4"})
+	filter({})
+
 end	
 
 function GraphicsSetup(srcDir)
@@ -131,7 +139,7 @@ project("Engine")
 	removefiles({"**.DS_STORE", "**.thumbs"})
 	-- Virtual path allow us to get rid of the on-disk hierarchy.
 	vpaths({
-	   ["engine/*"] = {"src/engine/**"},
+	   ["Engine/*"] = {"src/engine/**"},
 	   ["Resources/*"] = {"resources/common/**"},
 	   ["Libraries/*"] = {"src/libs/**"},
 	})
@@ -157,6 +165,7 @@ project("RaytracerDemo")
 project("ImageFiltering")
 	AppSetup("imagefiltering")
 
+
 group("Tools")
 
 project("AtmosphericScatteringEstimator")
@@ -176,6 +185,10 @@ project("ImageViewer")
 	ToolSetup()
 	RegisterSourcesAndResources("src/tools/ImageViewer.cpp", "resources/imageviewer/**")
 
+project("ObjToScene")
+	ToolSetup()
+	files({ "src/tools/objtoscene/*.cpp", "src/tools/objtoscene/*.hpp" })
+
 project("ShaderValidator")
 	GraphicsSetup("src")
 	includedirs({ "src/engine" })
@@ -186,9 +199,6 @@ project("ShaderValidator")
 	InstallProject("%{prj.name}", "build/shader_validator"..ext)
 	filter({})
 
-project("ObjToScene")
-	ToolSetup()
-	files({ "src/tools/objtoscene/*.cpp", "src/tools/objtoscene/*.hpp" })
 
 group("Meta")
 
