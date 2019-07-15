@@ -16,6 +16,7 @@ struct KeyValues {
 	
 	std::string key; ///< The key.
 	std::vector<std::string> values; ///< A vector of values.
+	std::vector<KeyValues> elements; ///< A vector of child elements.
 	
 	/** Constructor from a key.
 	 \param aKey the key of the new tuple

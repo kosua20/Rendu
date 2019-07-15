@@ -1,4 +1,4 @@
-#include "scene/Codable.hpp"
+#include "Codable.hpp"
 #include "helpers/TextUtilities.hpp"
 
 bool Codable::decodeBool(const KeyValues & param, unsigned int position){
@@ -7,7 +7,7 @@ bool Codable::decodeBool(const KeyValues & param, unsigned int position){
 	}
 	const std::string boolString = param.values[position];
 	
-	const std::vector<std::string> allowedTrues = {"true", "True", "yes", "Yes", "1"};
+	const std::vector<std::string> allowedTrues = {"true", "True", "yes", "Yes", "1", "y", "Y"};
 	for(const auto & term : allowedTrues){
 		if(boolString == term){
 			return true;
@@ -94,17 +94,14 @@ TextureInfos * Codable::decodeTexture(const KeyValues & param, const Storage mod
 }
 
 
-
 std::vector<KeyValues> Codable::parse(const std::string & codableFile){
-	std::vector<KeyValues> tokens;
+	std::vector<KeyValues> rawTokens;
 	std::stringstream sstr(codableFile);
 	std::string line;
 	
+	// First, get a list of flat tokens, cleaned up, splitting them when there are multiple on the same line.
 	while(std::getline(sstr, line)){
-		if(line.empty()){
-			continue;
-		}
-		// Check if the line contains a comment, remove evrything after.
+		// Check if the line contains a comment, remove everything after.
 		const std::string::size_type hashPos = line.find("#");
 		if(hashPos != std::string::npos){
 			line = line.substr(0, hashPos);
@@ -114,6 +111,7 @@ std::vector<KeyValues> Codable::parse(const std::string & codableFile){
 		if(line.empty()){
 			continue;
 		}
+		
 		// Find the first colon.
 		const std::string::size_type firstColon = line.find(":");
 		// If no colon, ignore the line.
@@ -122,20 +120,30 @@ std::vector<KeyValues> Codable::parse(const std::string & codableFile){
 			continue;
 		}
 		
-		// We can have multiple colons on the same line, when nesting (a texture for a specific attribute for instance).
-		std::string::size_type previousColon = 0;
-		std::string::size_type nextColon = firstColon;
+		// We can have multiple colons on the same line, when nesting (a texture for a specific attribute for instance). In that case, store the next element as a child of the current one, recursively.
+		// Create the base token.
+		std::string key = line.substr(0, firstColon);
+		key = TextUtilities::trim(key, " \t");
+		rawTokens.emplace_back(key);
+		KeyValues * tok = &rawTokens.back();
+		
+		// Then iterate while we are find sub-tokens, denoted by colons.
+		std::string::size_type previousColon = firstColon+1;
+		std::string::size_type nextColon = line.find(":", previousColon);
 		while (nextColon != std::string::npos) {
 			std::string key = line.substr(previousColon, nextColon-previousColon);
 			key = TextUtilities::trim(key, " \t");
+			// Store the token as a child of the previous one, and recurse.
 			if(!key.empty()){
-				tokens.emplace_back(key);
+				tok->elements.emplace_back(key);
+				tok = &(tok->elements.back());
 			}
 			previousColon = nextColon+1;
 			nextColon = line.find(":", previousColon);
 		}
 		
 		// Everything after the last colon are values, separated by either spaces or commas.
+		// Those values belong to the last token created.
 		std::string values = line.substr(previousColon);
 		TextUtilities::replace(values, ",", " ");
 		values = TextUtilities::trim(values, " \t");
@@ -144,9 +152,46 @@ std::vector<KeyValues> Codable::parse(const std::string & codableFile){
 		std::string value;
 		while(std::getline(valuesSstr, value, ' ')){
 			if(!value.empty()){
-				tokens.back().values.push_back(value);
+				tok->values.push_back(value);
 			}
 		}
+	}
+	
+	// Parse the raw tokens and recreate the hierarchy, looking at objets (*) and array elements (-).
+	std::vector<KeyValues> tokens;
+	for(size_t tid = 0; tid < rawTokens.size(); ++tid){
+		const auto & token = rawTokens[tid];
+		// Tokens here are guaranteed to be non-empty.
+		// If the token start with a '*' it is a root object.
+		if(token.key[0] == '*'){
+			std::string name = token.key.substr(1);
+			name = TextUtilities::trim(name, "\t ");
+			tokens.emplace_back(name);
+			tokens.back().values = token.values;
+			continue;
+		}
+		// Can't add tokens if there are no objects.
+		if(tokens.empty()){
+			continue;
+		}
+		// Else, we append to the current object elements list.
+		auto & object = tokens.back();
+		object.elements.push_back(token);
+		
+		// Array handling: search for tokens with a '-' following the current one.
+		auto & array = object.elements.back();
+		++tid;
+		while(tid < rawTokens.size() && rawTokens[tid].key[0] == '-'){
+			// Store the element in the array.
+			array.elements.push_back(rawTokens[tid]);
+			// Update the name.
+			std::string name = array.elements.back().key;
+			name = TextUtilities::trim(name.substr(1), "\t ");
+			array.elements.back().key = name;
+			++tid;
+		}
+		--tid;
+		
 	}
 	return tokens;
 }

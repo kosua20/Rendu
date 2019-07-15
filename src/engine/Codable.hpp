@@ -5,7 +5,7 @@
 #include "Config.hpp"
 
 /** \brief Provides helpers for serialization/deserialization of basic types.
- 	\ingroup Scene
+ 	\ingroup Engine
  */
 class Codable {
 public:
@@ -57,9 +57,12 @@ public:
 	 */
 	static TextureInfos * decodeTexture(const KeyValues & param, const Storage mode);
 	
-	/** Split a Codable-compatible text file in a list of (key,values) tuples, getting rid of extraneous spaces and punctuations.
+	/** Split a Codable-compatible text file in a hierarchical list of (key,values) tuples, getting rid of extraneous spaces and punctuations. The following rules are applied:
+	 - elements beginning with a '*' denote root-level objects.
+	 - elements beginning with a '-' belong to an array, defined by the element just before those.
+	 - elements can be nested on the same line: 'elem1: elem2: values'
 	 \param codableFile the text content to parse
-	 \return a list of (key, value) tokens
+	 \return a hiearchical list of (key, value) tokens
 	 */
 	static std::vector<KeyValues> parse(const std::string & codableFile);
 	
