@@ -45,9 +45,9 @@ extern "C" {
 #include <stdlib.h>
 #include <string.h>
 #ifdef _MSC_VER
-#ifndef WIN32_LEAN_AND_MEAN
-# define WIN32_LEAN_AND_MEAN
-#endif
+# ifndef WIN32_LEAN_AND_MEAN
+#  define WIN32_LEAN_AND_MEAN
+# endif
 # include <windows.h>
 # include <tchar.h>
 # pragma warning(push)
@@ -91,12 +91,16 @@ extern "C" {
 # define _TINYDIR_PATH_MAX MAX_PATH
 #elif defined  __linux__
 # include <limits.h>
-# define _TINYDIR_PATH_MAX PATH_MAX
+# ifdef PATH_MAX
+#  define _TINYDIR_PATH_MAX PATH_MAX
+# endif
 #elif defined(__unix__) || (defined(__APPLE__) && defined(__MACH__))
 # include <sys/param.h>
 # if defined(BSD)
 #  include <limits.h>
-#  define _TINYDIR_PATH_MAX PATH_MAX
+#  ifdef PATH_MAX
+#   define _TINYDIR_PATH_MAX PATH_MAX
+#  endif
 # endif
 #endif
 
@@ -494,6 +498,7 @@ int tinydir_next(tinydir_dir *dir)
 _TINYDIR_FUNC
 int tinydir_readfile(const tinydir_dir *dir, tinydir_file *file)
 {
+	const _tinydir_char_t *filename;
 	if (dir == NULL || file == NULL)
 	{
 		errno = EINVAL;
@@ -508,27 +513,21 @@ int tinydir_readfile(const tinydir_dir *dir, tinydir_file *file)
 		errno = ENOENT;
 		return -1;
 	}
-	if (_tinydir_strlen(dir->path) +
-		_tinydir_strlen(
+	filename =
 #ifdef _MSC_VER
-			dir->_f.cFileName
+		dir->_f.cFileName;
 #else
-			dir->_e->d_name
+		dir->_e->d_name;
 #endif
-		) + 1 + _TINYDIR_PATH_EXTRA >=
+	if (_tinydir_strlen(dir->path) +
+		_tinydir_strlen(filename) + 1 + _TINYDIR_PATH_EXTRA >=
 		_TINYDIR_PATH_MAX)
 	{
 		/* the path for the file will be too long */
 		errno = ENAMETOOLONG;
 		return -1;
 	}
-	if (_tinydir_strlen(
-#ifdef _MSC_VER
-			dir->_f.cFileName
-#else
-			dir->_e->d_name
-#endif
-		) >= _TINYDIR_FILENAME_MAX)
+	if (_tinydir_strlen(filename) >= _TINYDIR_FILENAME_MAX)
 	{
 		errno = ENAMETOOLONG;
 		return -1;
@@ -536,17 +535,15 @@ int tinydir_readfile(const tinydir_dir *dir, tinydir_file *file)
 
 	_tinydir_strcpy(file->path, dir->path);
 	_tinydir_strcat(file->path, TINYDIR_STRING("/"));
-	_tinydir_strcpy(file->name,
-#ifdef _MSC_VER
-		dir->_f.cFileName
-#else
-		dir->_e->d_name
-#endif
-	);
-	_tinydir_strcat(file->path, file->name);
+	_tinydir_strcpy(file->name, filename);
+	_tinydir_strcat(file->path, filename);
 #ifndef _MSC_VER
 #ifdef __MINGW32__
 	if (_tstat(
+#elif (defined _BSD_SOURCE) || (defined _DEFAULT_SOURCE)	\
+	|| ((defined _XOPEN_SOURCE) && (_XOPEN_SOURCE >= 500))	\
+	|| ((defined _POSIX_C_SOURCE) && (_POSIX_C_SOURCE >= 200112L))
+	if (lstat(
 #else
 	if (stat(
 #endif
