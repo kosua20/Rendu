@@ -64,15 +64,15 @@ int main(int argc, char** argv) {
 	
 	std::vector<std::shared_ptr<Scene>> scenes;
 	scenes.push_back(nullptr);
-	for(int i = 1; i < sceneNames.size(); ++i){
+	for(size_t i = 1; i < sceneNames.size(); ++i){
 		const auto & sceneName = sceneNames[i];
 		scenes.emplace_back(new Scene(sceneName));
 	}
 	
 	
 	// Load the first scene by default.
-	int selected_scene = 0;
-	renderer->setScene(scenes[selected_scene]);
+	size_t selectedScene = 0;
+	renderer->setScene(scenes[selectedScene]);
 	
 	// Start the display/interaction loop.
 	while (!glfwWindowShouldClose(window)) {
@@ -86,9 +86,9 @@ int main(int argc, char** argv) {
 		if(Input::manager().triggered(Input::KeyP)){
 			Resources::manager().reload();
 			// Reload the scene.
-			if(scenes[selected_scene]){
-				scenes[selected_scene].reset(new Scene(sceneNames[selected_scene]));
-				renderer->setScene(scenes[selected_scene]);
+			if(scenes[selectedScene]){
+				scenes[selectedScene].reset(new Scene(sceneNames[selectedScene]));
+				renderer->setScene(scenes[selectedScene]);
 			}
 		}
 		
@@ -100,16 +100,16 @@ int main(int argc, char** argv) {
 		if(ImGui::Begin("Renderer")){
 			ImGui::Text("%.1f ms, %.1f fps", ImGui::GetIO().DeltaTime*1000.0f, ImGui::GetIO().Framerate);
 			
-			const std::string & currentName = sceneNames[selected_scene];
+			const std::string & currentName = sceneNames[selectedScene];
 			if(ImGui::BeginCombo("Scene", currentName.c_str(), ImGuiComboFlags_None)){
-				for(int i = 0; i < sceneNames.size(); ++i){
-					if(ImGui::Selectable(sceneNames[i].c_str(), (i == selected_scene))) {
-						selected_scene = i;
-						Log::Info() << Log::Resources << "Loading scene " << sceneNames[selected_scene] << "." << std::endl;
-						renderer->setScene(scenes[selected_scene]);
+				for(size_t i = 0; i < sceneNames.size(); ++i){
+					if(ImGui::Selectable(sceneNames[i].c_str(), (i == selectedScene))) {
+						selectedScene = i;
+						Log::Info() << Log::Resources << "Loading scene " << sceneNames[selectedScene] << "." << std::endl;
+						renderer->setScene(scenes[selectedScene]);
 						
 					}
-					if(selected_scene == i){
+					if(selectedScene == i){
 						ImGui::SetItemDefaultFocus();
 					}
 				}

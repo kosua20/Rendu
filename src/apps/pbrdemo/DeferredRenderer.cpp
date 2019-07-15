@@ -46,7 +46,7 @@ DeferredRenderer::DeferredRenderer(RenderingConfig & config) : Renderer(config) 
 	_bloomCompositeProgram = Resources::manager().getProgram2D("bloom-composite");
 	_toneMappingProgram = Resources::manager().getProgram2D("tonemap");
 	_fxaaProgram = Resources::manager().getProgram2D("fxaa");
-	_finalProgram = Resources::manager().getProgram2D("final_screenquad");
+	_finalProgram = Resources::manager().getProgram2D("passthrough");
 	
 	_skyboxProgram = Resources::manager().getProgram("skybox_gbuffer");
 	_bgProgram = Resources::manager().getProgram("background_gbuffer");

@@ -42,7 +42,7 @@ public:
 	 \param fullTime the time elapsed since the beginning of the render loop
 	 \param frameTime the duration of the last frame
 	 */
-	void physics(double fullTime, double frameTime){};
+	void physics(double fullTime, double frameTime);
 	
 	/** Texture ID of the final rendered game.
 	 \return the texture ID

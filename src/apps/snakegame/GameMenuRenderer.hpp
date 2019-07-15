@@ -31,7 +31,7 @@ public:
 	 \param fullTime the time elapsed since the beginning of the render loop
 	 \param frameTime the duration of the last frame
 	 */
-	void physics(double fullTime, double frameTime){};
+	void physics(double fullTime, double frameTime);
 	
 	/** Handle a window resize event.
 	 \param width the new width

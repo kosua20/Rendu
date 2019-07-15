@@ -191,7 +191,7 @@ void FilteringRenderer::update(){
 	}
 }
 
-void FilteringRenderer::physics(double fullTime, double frameTime){
+void FilteringRenderer::physics(double, double frameTime){
 	// Only update the user camera if we are in Scene mode, to avoid moving accidentally while in other modes.
 	if(_viewMode == View::SCENE){
 		_userCamera.physics(frameTime);

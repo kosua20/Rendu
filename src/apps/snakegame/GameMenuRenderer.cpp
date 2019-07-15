@@ -140,6 +140,11 @@ void GameMenuRenderer::update(){
 	
 }
 
+
+void GameMenuRenderer::physics(double, double){
+	
+}
+
 void GameMenuRenderer::resize(unsigned int width, unsigned int height){
 	Renderer::updateResolution(width, height);
 }

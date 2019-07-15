@@ -95,7 +95,7 @@ namespace CompositeObj {
 				geometry.faces.push_back(tokens[3]);
 				faceNumber+=3;
 				// If we have more vertices, insert additional faces.
-				for(int i = 4; i < tokens.size(); ++i){
+				for(size_t i = 4; i < tokens.size(); ++i){
 					geometry.faces.push_back(tokens[1]);
 					geometry.faces.push_back(tokens[i-1]);
 					geometry.faces.push_back(tokens[i]);

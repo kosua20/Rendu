@@ -147,6 +147,11 @@ void GameRenderer::clean() const {
 	_ssaoPass->clean();
 }
 
+
+void GameRenderer::physics(double , double ){
+	
+}
+
 GLuint GameRenderer::finalImage() const {
 	return _fxaaFramebuffer->textureId();
 }
