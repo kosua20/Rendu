@@ -29,6 +29,18 @@ glm::vec3 Codable::decodeVec3(const KeyValues & param, unsigned int position){
 	return vec;
 }
 
+glm::vec2 Codable::decodeVec2(const KeyValues & param, unsigned int position){
+	// Filter erroneous case.
+	if(param.values.size() < position + 2){
+		Log::Error() << "Unable to decode vec2 from string." << std::endl;
+		return glm::vec2(0.0f);
+	}
+	glm::vec2 vec(0.0f);
+	vec[0] = std::stof(param.values[position + 0]);
+	vec[1] = std::stof(param.values[position + 1]);
+	return vec;
+}
+
 glm::mat4 Codable::decodeTransformation(const std::vector<KeyValues> & params){
 	glm::vec3 rotationAxis(0.0f);
 	glm::vec3 translation(0.0f);

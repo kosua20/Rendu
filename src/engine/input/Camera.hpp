@@ -2,6 +2,7 @@
 #define Camera_h
 
 #include "Common.hpp"
+#include "scene/Codable.hpp"
 
 /**
  \brief This class represents a camera as used in real-time rendering APIs.
@@ -20,7 +21,7 @@ public:
 	 \param center the camera center of interest
 	 \param up the camera vertical orientation
 	 */
-	void pose(const glm::vec3 & position, const glm::vec3 & center, const glm::vec3 & up);
+	virtual void pose(const glm::vec3 & position, const glm::vec3 & center, const glm::vec3 & up);
 	
 	/** Update all projection parameters.
 	 \param ratio the aspect ratio
@@ -28,7 +29,7 @@ public:
 	 \param near the near plane distance
 	 \param far the far plane distance
 	 */
-	void projection(float ratio, float fov, float near, float far);
+	virtual void projection(float ratio, float fov, float near, float far);
 	
 	/** Update the frustum near and far planes.
 	 \param near the new near plane distance
@@ -59,6 +60,12 @@ public:
 	 \return the field of view
 	 */
 	float fov() const { return _fov; }
+	
+	/**
+	 Obtain the current aspect ratio.
+	 \return the aspect ratio
+	 */
+	float ratio() const { return _ratio; }
 	
 	/**
 	 Obtain the current view matrix.
@@ -95,6 +102,30 @@ public:
 	 \return the current position
 	 */
 	const glm::vec2 & clippingPlanes() const { return _clippingPlanes; }
+	
+	/** Apply the pose and parameters of another camera.
+	 \param camera the camera to align with
+	 */
+	void apply(const Camera & camera);
+	
+	/** Setup a camera parameters from a list of key-value tuples. The following keywords will be searched for:
+	 \verbatim
+	 camera:
+	 	position: X,Y,Z
+	 	center: X,Y,Z
+	 	up: X,Y,Z
+	 	fov: F
+	 	planes: N,F
+	 \endverbatim
+	 where the field of view is given in radians.
+	 \param params the parameters tuples list
+	 */
+	void decode(const std::vector<KeyValues> & params);
+	
+	/** Encode a camera as a Codable-compatible string representation.
+	 \return the encoded camera parameters
+	 */
+	std::string encode() const;
 	
 protected:
 	

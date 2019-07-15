@@ -22,7 +22,7 @@ void ControllableCamera::pose(const glm::vec3 & position, const glm::vec3 & cent
 	Camera::pose(position, center, up);
 	_radius = glm::length(_eye - _center);
 	// Update angles.
-	const glm::vec3 dir = glm::normalize(_center - _eye);
+	const glm::vec3 dir = glm::normalize(_eye - _center);
 	const float axisH = std::atan2(dir[2], dir[0]);
 	const float axisV = std::asin(dir[1]);
 	_angles = glm::vec2(axisH, axisV);

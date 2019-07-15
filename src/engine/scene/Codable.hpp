@@ -26,6 +26,14 @@ public:
 	 */
 	static glm::vec3 decodeVec3(const KeyValues & param, unsigned int position = 0);
 	
+	/** Decode a 2D vector from a parameters tuple, starting at a specified position.
+	 A 2D vector is described as a set of 2 floats separated by spaces or commas: X,Y.
+	 \param param the parameters tuple
+	 \param position index of the first vector component in the values array
+	 \return a 2D vector
+	 */
+	static glm::vec2 decodeVec2(const KeyValues & param, unsigned int position = 0);
+	
 	/** Decode a transformation from a series of parameters tuple. For now this function look for three keywords in the whole params vector: translation, orientation, scaling.  A transformation is described as follows:
 	 \verbatim
 	 translation: X,Y,Z
