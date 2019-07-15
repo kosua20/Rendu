@@ -62,7 +62,7 @@ void ConvolutionPyramid::process(const GLuint textureId) {
 	glUniform1fv(_downscale->uniform("h1[0]"), 5, &_h1[0]);
 	
 	// Do: l[i] = downscale(filter(l[i-1], h1))
-	for(int i = 1; i < _levelsIn.size(); ++i){
+	for(size_t i = 1; i < _levelsIn.size(); ++i){
 		_levelsIn[i]->bind();
 		// Shift the viewport and fill the padded region with 0s.
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -143,7 +143,7 @@ void ConvolutionPyramid::resize(unsigned int width, unsigned int height){
 	int levelHeight = _resolution[1] + 2 * _size;
 	
 	// Generate framebuffer pyramids.
-	for(size_t i = 0; i < newDepth; ++i){
+	for(int i = 0; i < newDepth; ++i){
 		if(i < currentDepth){
 			_levelsIn[i]->resize(levelWidth, levelHeight);
 			_levelsOut[i]->resize(levelWidth, levelHeight);

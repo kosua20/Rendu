@@ -23,7 +23,7 @@ void Object::decode(const std::vector<KeyValues> & params, const Storage mode){
 	// We expect there is only one transformation in the parameters set.
 	_model = Codable::decodeTransformation(params);
 	
-	for(int pid = 0; pid < params.size(); ++pid){
+	for(size_t pid = 0; pid < params.size(); ++pid){
 		const auto & param = params[pid];
 		if(param.key == "type" && !param.values.empty()){
 			const std::string typeString = param.values[0];

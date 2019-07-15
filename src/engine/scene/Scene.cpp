@@ -28,7 +28,7 @@ void Scene::init(const Storage mode){
 	
 	// Find the main tokens positions. Everything between two keyword belongs to the first one.
 	std::vector<int> mainKeysLocations;
-	for(int tid = 0; tid < allKeyVals.size();++tid){
+	for(size_t tid = 0; tid < allKeyVals.size();++tid){
 		const std::string & key = allKeyVals[tid].key;
 		if(loaders.count(key) > 0){
 			mainKeysLocations.push_back(tid);
@@ -38,7 +38,7 @@ void Scene::init(const Storage mode){
 	mainKeysLocations.push_back(int(allKeyVals.size()));
 	
 	// Process each group of keyvalues.
-	for(int mkid = 0; mkid < mainKeysLocations.size()-1; ++mkid){
+	for(size_t mkid = 0; mkid < mainKeysLocations.size()-1; ++mkid){
 		const int startId = mainKeysLocations[mkid];
 		const int endId = mainKeysLocations[mkid+1];
 		// Extract the corresponding subset.
@@ -68,7 +68,7 @@ void Scene::loadObject(const std::vector<KeyValues> & params, const Storage mode
 	objects.back().decode(params, mode);
 }
 
-void Scene::loadLight(const std::vector<KeyValues> & params, const Storage mode){
+void Scene::loadLight(const std::vector<KeyValues> & params, const Storage){
 	auto light = Light::decode(params);
 	if(light){
 		lights.push_back(light);
@@ -79,7 +79,7 @@ void Scene::loadScene(const std::vector<KeyValues> & params, const Storage mode)
 	background = std::unique_ptr<Object>(new Object(Object::Type::Common, Resources::manager().getMesh("plane", mode), false));
 	backgroundIrradiance = std::vector<glm::vec3>(9, glm::vec3(0.0f));
 	
-	for(int pid = 0; pid < params.size(); ++pid){
+	for(size_t pid = 0; pid < params.size(); ++pid){
 		const auto & param = params[pid];
 		if(param.key == "irradiance" && !param.values.empty()){
 			loadSphericalHarmonics(param.values[0]);

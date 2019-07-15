@@ -1,13 +1,13 @@
 #include "Animation.hpp"
 
-std::vector<std::shared_ptr<Animation>> Animation::decode(const std::vector<KeyValues> & params, int & listPos){
+std::vector<std::shared_ptr<Animation>> Animation::decode(const std::vector<KeyValues> & params, size_t & listPos){
 	std::vector<std::shared_ptr<Animation>> animations;
 
 	if(params[listPos].key != "animations"){
 		Log::Warning() << "Unable to find animation keyword." << std::endl;
 		return {};
 	}
-	int pid = listPos+1;
+	size_t pid = listPos+1;
 	while(pid < params.size()){
 		const auto & param = params[pid];
 		if(param.key == "rotation"){
@@ -48,12 +48,12 @@ Rotation::Rotation(const glm::vec3 & axis, float speed, Frame frame){
 	_frame = frame;
 }
 
-glm::mat4 Rotation::apply(const glm::mat4 & m, double fullTime, double frameTime){
+glm::mat4 Rotation::apply(const glm::mat4 & m, double, double frameTime){
 	const glm::mat4 r = glm::rotate(glm::mat4(1.0f), _speed*float(frameTime), _axis);
 	return (_frame == Frame::WORLD ? r*m : m*r);
 }
 
-glm::vec4 Rotation::apply(const glm::vec4 & v, double fullTime, double frameTime){
+glm::vec4 Rotation::apply(const glm::vec4 & v, double, double frameTime){
 	const glm::mat4 r = glm::rotate(glm::mat4(1.0f), _speed*float(frameTime), _axis);
 	return r*v;
 }
@@ -75,7 +75,7 @@ BackAndForth::BackAndForth(const glm::vec3 & axis, float speed, float amplitude,
 	_frame = frame;
 }
 
-glm::mat4 BackAndForth::apply(const glm::mat4 & m, double fullTime, double frameTime){
+glm::mat4 BackAndForth::apply(const glm::mat4 & m, double fullTime, double){
 	const double currentAbscisse = std::sin(_speed * fullTime);
 	const float delta = float(currentAbscisse - _previousAbscisse);
 	_previousAbscisse = currentAbscisse;
@@ -85,7 +85,7 @@ glm::mat4 BackAndForth::apply(const glm::mat4 & m, double fullTime, double frame
 	return (_frame == Frame::WORLD ? t*m : m*t);
 }
 
-glm::vec4 BackAndForth::apply(const glm::vec4 & v, double fullTime, double frameTime){
+glm::vec4 BackAndForth::apply(const glm::vec4 & v, double fullTime, double){
 	const double currentAbscisse = std::sin(_speed * fullTime);
 	const float delta = float(currentAbscisse - _previousAbscisse);
 	_previousAbscisse = currentAbscisse;

@@ -38,7 +38,7 @@ public:
 	 \param listPos the position of the 'animations' keyword in the params list. Will be updated with the position after the animations list.
 	 \return a vector of animations
 	 */
-	static std::vector<std::shared_ptr<Animation>> decode(const std::vector<KeyValues> & params, int & listPos);
+	static std::vector<std::shared_ptr<Animation>> decode(const std::vector<KeyValues> & params, size_t & listPos);
 	
 protected:
 	

@@ -153,7 +153,7 @@ bool Config::showHelp(){
 		std::vector<std::string> namesAndValues(_infos.size());
 		size_t maxSize = 0;
 		
-		for(int aid = 0; aid < _infos.size(); ++aid){
+		for(size_t aid = 0; aid < _infos.size(); ++aid){
 			auto & argInfos = _infos[aid];
 			// If the name is empty, this is a header, insert its details as-is.
 			if(argInfos.nameLong.empty()){
@@ -176,10 +176,10 @@ bool Config::showHelp(){
 		
 		Log::Info() << Log::Config << "Help:" << std::endl;
 		
-		for(int aid = 0; aid < _infos.size(); ++aid){
+		for(size_t aid = 0; aid < _infos.size(); ++aid){
 			const auto & argInfos = _infos[aid];
 			Log::Info() << namesAndValues[aid];
-			for(int i = namesAndValues[aid].size(); i < maxSize; ++i){
+			for(size_t i = namesAndValues[aid].size(); i < maxSize; ++i){
 				Log::Info() << " ";
 			}
 			Log::Info() << "  " << argInfos.details;

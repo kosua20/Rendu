@@ -52,12 +52,12 @@ public:
 	/** Returns the width expected for the input texture.
 	 \return the width expected
 	 */
-	const unsigned int width(){ return _resolution[0]; }
+	unsigned int width(){ return _resolution[0]; }
 	
 	/** Returns the height expected for the input texture.
 	 \return the height expected
 	 */
-	const unsigned int height(){ return _resolution[1]; }
+	unsigned int height(){ return _resolution[1]; }
 	
 private:
 	

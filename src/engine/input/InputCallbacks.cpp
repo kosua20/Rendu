@@ -2,7 +2,7 @@
 #include "Input.hpp"
 #include "helpers/System.hpp"
 
-void resize_callback(GLFWwindow* window, int width, int height){
+void resize_callback(GLFWwindow*, int width, int height){
 	Input::manager().resizeEvent(width, height);
 }
 
@@ -17,13 +17,13 @@ void char_callback(GLFWwindow* window, unsigned int codepoint){
 	ImGui_ImplGlfw_CharCallback(window, codepoint);
 }
 
-void mouse_button_callback(GLFWwindow* window, int button, int action, int mods){
+void mouse_button_callback(GLFWwindow*, int button, int action, int){
 	if(!ImGui::GetIO().WantCaptureMouse){
 		Input::manager().mousePressedEvent(button, action);
 	}
 }
 
-void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos){
+void cursor_pos_callback(GLFWwindow*, double xpos, double ypos){
 	if(!ImGui::GetIO().WantCaptureMouse){
 		Input::manager().mouseMovedEvent(xpos, ypos);
 	}
@@ -36,7 +36,7 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset){
 	ImGui_ImplGlfw_ScrollCallback(window, xoffset, yoffset);
 }
 
-void iconify_callback(GLFWwindow* window, int state){
+void iconify_callback(GLFWwindow*, int state){
 	Input::manager().minimizedEvent(state == GLFW_TRUE);
 }
 

@@ -25,7 +25,7 @@ void Light::addAnimation(std::shared_ptr<Animation> anim){
 }
 
 void Light::decodeBase(const std::vector<KeyValues> & params){
-	for(int pid = 0; pid < params.size(); ++pid){
+	for(size_t pid = 0; pid < params.size(); ++pid){
 		const auto & param = params[pid];
 		
 		if(param.key == "intensity"){
