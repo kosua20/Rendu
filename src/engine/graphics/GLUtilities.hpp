@@ -204,6 +204,16 @@ public:
 	 */
 	static void bindTextures(const std::vector<const TextureInfos*> & textures, int startingSlot = GL_TEXTURE0);
 	
+	/** Upload data to a GPU texture.
+	 \param destination the kind of texture to target: 2D, cubemap, 2D array...
+	 \param texId the handle of the texture
+	 \param destTypedFormat the detailed format of the texture
+	 \param mipid the mipmap level to populate
+	 \param lid the layer to populate for arrays and cubemaps
+	 \param image the image data to upload to the GPU
+	 */
+	static void uploadTexture(const GLenum destination, const GLuint texId, const GLenum destTypedFormat, const unsigned int mipid, const unsigned int lid, const Image & image);
+	
 private:
 	
 	/** Read back the currently bound framebuffer to the CPU and save it in the best possible format on disk.
@@ -219,14 +229,5 @@ private:
 	 */
 	static void savePixels(const GLenum type, const GLenum format, const unsigned int width, const unsigned int height, const unsigned int components, const std::string & path, const bool flip, const bool ignoreAlpha);
 	
-	/** Upload data to a GPU texture.
-	 \param destination the kind of texture to target: 2D, cubemap, 2D array...
-	 \param texId the handle of the texture
-	 \param destTypedFormat the detailed format of the texture
-	 \param mipid the mipmap level to populate
-	 \param lid the layer to populate for arrays and cubemaps
-	 \param image the image data to upload to the GPU
-	 */
-	static void uploadTexture(const GLenum destination, const GLuint texId, const GLenum destTypedFormat, const unsigned int mipid, const unsigned int lid, const Image & image);
 };
 

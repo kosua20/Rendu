@@ -357,6 +357,9 @@ void GLUtilities::uploadTexture(const GLenum destination, const GLuint texId, co
 		// Just reinterpret the data.
 		finalDataPtr = reinterpret_cast<const GLubyte*>(&image.pixels[0]);
 	}
+	// Determine the required pack alignment.
+	const bool defaultAlign = (destType == GL_FLOAT || destType == GL_UNSIGNED_INT || destType == GL_INT) || destChannels == 4;
+	glPixelStorei(GL_UNPACK_ALIGNMENT, defaultAlign ? 4 : 1);
 	
 	// Upload.
 	glBindTexture(destination, texId);
@@ -369,7 +372,9 @@ void GLUtilities::uploadTexture(const GLenum destination, const GLuint texId, co
 	} else {
 		Log::Error() << Log::OpenGL << "Unsupported texture upload destination." << std::endl;
 	}
+	
 	glBindTexture(destination, 0);
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 	delete[] finalData;
 }
 
@@ -586,6 +591,7 @@ void GLUtilities::savePixels(const GLenum type, const GLenum format, const unsig
 	int ret = 0;
 	Image image(width, height, components);
 	
+	glPixelStorei(GL_PACK_ALIGNMENT, 1);
 	const size_t fullSize = image.width*image.height*image.components;
 	if(hdr){
 		// Get back values.
@@ -605,6 +611,7 @@ void GLUtilities::savePixels(const GLenum type, const GLenum format, const unsig
 		ret = ImageUtilities::saveLDRImage(path + ".png", image, flip, ignoreAlpha);
 		delete[] data;
 	}
+	glPixelStorei(GL_PACK_ALIGNMENT, 4);
 	
 	if(ret != 0){
 		Log::Error() << "Error." << std::endl;
