@@ -53,7 +53,7 @@ public:
 	 \param dx will contain the horizontal step
 	 \param dy will contain the vertical step
 	 */
-	void pixelShifts(glm::vec3 & corner, glm::vec3 & dx, glm::vec3 & dy);
+	void pixelShifts(glm::vec3 & corner, glm::vec3 & dx, glm::vec3 & dy) const;
 	
 	/**
 	 Obtain the current vertical field of view, in radians.

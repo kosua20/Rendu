@@ -46,7 +46,7 @@ void Camera::fov(float fov){
 	updateProjection();
 }
 
-void Camera::pixelShifts(glm::vec3 & corner, glm::vec3 & dx, glm::vec3 & dy){
+void Camera::pixelShifts(glm::vec3 & corner, glm::vec3 & dx, glm::vec3 & dy) const {
 	const float heightScale = std::tan(0.5f*_fov);
 	const float widthScale = _ratio * heightScale;
 	const float imageDist = glm::distance(_eye, _center);

@@ -342,6 +342,11 @@ public:
 	 */
 	float density() const;
 	
+	/** Check if the user interacted with the keyboard, window, or mouse (except mouse moves).
+	 \return true if any interaction happened.
+	 */
+	bool interacted() const;
+	
 	/**@}*/
 	
 private:
@@ -390,6 +395,9 @@ private:
 	};
 	KeyboardKey _keys[GLFW_KEY_LAST+1]; ///< States of all possible keyboard keys.
 	
+	bool _mouseInteracted = false; ///< Did the user interact with the mouse.
+	bool _keyInteracted = false; ///< Did the user interact with the keyboard.
+	bool _windowInteracted = false; ///< Did the user interact with the window (minimize, resize,...).
 	
 // Singleton management.
 		

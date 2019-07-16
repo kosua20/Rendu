@@ -50,6 +50,7 @@ void Input::keyPressedEvent(int key, int action){
 		_keys[key].first = false;
 		_keys[key].last = true;
 	}
+	_keyInteracted = true;
 	Log::Verbose() << Log::Input << "Key " << key << ", " << (action == GLFW_PRESS ? "pressed" : (action == GLFW_RELEASE ? "released" : "held")) << "." << std::endl;
 }
 
@@ -116,6 +117,7 @@ void Input::mousePressedEvent(int button, int action){
 		_mouseButtons[button].x1 = _mouse.x;
 		_mouseButtons[button].y1 = _mouse.y;
 	}
+	_mouseInteracted = true;
 	Log::Verbose() << Log::Input << "Mouse pressed: " << button << ", " << action << " at " << _mouse.x << "," << _mouse.y << "." << std::endl;
 }
 
@@ -129,7 +131,7 @@ void Input::mouseMovedEvent(double x, double y){
 void Input::mouseScrolledEvent(double xoffset, double yoffset){
 	_mouse.scroll = glm::vec2(xoffset, yoffset);
 	Log::Verbose() << Log::Input << "Mouse scrolled: " << xoffset << "," << yoffset << "." << std::endl;
-
+	_mouseInteracted = (xoffset != 0.0f || yoffset != 0.0f);
 }
 
 void Input::resizeEvent(int width, int height){
@@ -137,11 +139,12 @@ void Input::resizeEvent(int width, int height){
 	_height = height > 0 ? height : 1;
 	_resized = true;
 	Log::Verbose() << Log::Input << "Resize event: " << width << "," << height << "." << std::endl;
-
+	_windowInteracted = true;
 }
 
 void Input::minimizedEvent(bool minimized){
 	_minimized = minimized;
+	_windowInteracted = true;
 }
 
 void Input::densityEvent(float density){
@@ -164,6 +167,11 @@ void Input::update(){
 	}
 	_mouse.scroll = glm::vec2(0.0f,0.0f);
 	_resized = false;
+	
+	_mouseInteracted = false;
+	_keyInteracted = false;
+	_windowInteracted = false;
+	
 	// Update only the active joystick if it exists.
 	_joystickConnected = false;
 	_joystickDisconnected = false;
@@ -240,3 +248,6 @@ float Input::density() const {
 	return _density;
 }
 
+bool Input::interacted() const {
+	return _keyInteracted || _mouseInteracted || _windowInteracted;
+}
