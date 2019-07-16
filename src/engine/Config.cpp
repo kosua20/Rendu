@@ -168,7 +168,9 @@ bool Config::showHelp(){
 			}
 			line << "--" << argInfos.nameLong;
 			for(const auto & param : argInfos.values){
-				line << " <" << param << ">";
+				if(!param.empty()){
+					line << " <" << param << ">";
+				}
 			}
 			namesAndValues[aid] = line.str();
 			maxSize = std::max(maxSize, namesAndValues[aid].size());
