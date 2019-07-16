@@ -1,5 +1,5 @@
 #include "Random.hpp"
-
+#include <iostream>
 
 void Random::seed(){
 	std::random_device rd;
@@ -9,8 +9,8 @@ void Random::seed(){
 
 void Random::seed(unsigned int seedValue){
 	_seed = seedValue;
-	_mt = std::mt19937(_seed);
-	_realDist = std::uniform_real_distribution<float>(0,1);
+	// Seed the shared MT generator.
+	_shared = std::mt19937(_seed);
 }
 
 unsigned int Random::getSeed(){
@@ -18,15 +18,15 @@ unsigned int Random::getSeed(){
 }
 
 int Random::Int(int min, int max){
-	return (int)(floor(Float() * (max+1 - min)) + min);
+	return (std::uniform_int_distribution<int>(min,max)(_thread.mt));
 }
 
 float Random::Float(){
-	return _realDist(_mt);
+	return std::uniform_real_distribution<float>(0.0f,1.0f)(_thread.mt);
 }
 
 float Random::Float(float min, float max){
-	return _realDist(_mt)*(max-min)+min;
+	return std::uniform_real_distribution<float>(min,max)(_thread.mt);
 }
 
 glm::vec3 Random::sampleSphere(){
@@ -36,8 +36,17 @@ glm::vec3 Random::sampleSphere(){
 	return glm::vec3(thetaSin * std::cos(phi), thetaSin * std::sin(phi), thetaCos);	
 }
 
+Random::LocalMT19937::LocalMT19937(){
+	// Get a lock on the shared MT generator.
+	std::lock_guard<std::mutex> guard(_lock);
+	// Generate a local seed.
+	seed = std::uniform_int_distribution<>()(Random::_shared);
+	// Initialize thread MT generator using this seed.
+	mt = std::mt19937(seed);
+	// Lock is released at end of scope.
+}
 
-std::mt19937 Random::_mt;
-std::uniform_real_distribution<float> Random::_realDist;
 unsigned int Random::_seed;
-
+std::mt19937 Random::_shared;
+std::mutex Random::_lock;
+thread_local Random::LocalMT19937 Random::_thread;
