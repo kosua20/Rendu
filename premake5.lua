@@ -159,8 +159,8 @@ project("Atmosphere")
 project("SnakeGame")
 	AppSetup("snakegame")
 
-project("RaytracerDemo")
-	AppSetup("raytracerdemo")
+project("PathTracer")
+	AppSetup("pathtracer")
 
 project("ImageFiltering")
 	AppSetup("imagefiltering")
@@ -205,7 +205,7 @@ group("Meta")
 project("ALL")
 	CPPSetup()
 	kind("ConsoleApp")
-	dependson( {"Engine", "PBRDemo", "Playground", "Atmosphere", "ImageViewer", "ImageFiltering", "AtmosphericScatteringEstimator", "BRDFEstimator", "ControllerTest", "SnakeGame", "RaytracerDemo", "ObjToScene"})
+	dependson( {"Engine", "PBRDemo", "Playground", "Atmosphere", "ImageViewer", "ImageFiltering", "AtmosphericScatteringEstimator", "BRDFEstimator", "ControllerTest", "SnakeGame", "PathTracer", "ObjToScene"})
 
 -- Include NFD premake file.
 

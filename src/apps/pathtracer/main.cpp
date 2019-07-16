@@ -10,7 +10,7 @@
 
 
 /**
- \defgroup PathtracerDemo Path tracer demo
+ \defgroup PathtracerDemo Path tracer
  \brief A basic diffuse path tracing demo, with an interactive viewer to place the camera.
  \ingroup Applications
  */
@@ -38,7 +38,7 @@ public:
 				scene = values[0];
 			} else if(key == "output" && values.size() >= 1){
 				outputPath = values[0];
-			} else if(key == "wxh" && values.size() >= 2){
+			} else if(key == "size" && values.size() >= 2){
 				size[0] = std::stoi(values[0]);
 				size[1] = std::stoi(values[1]);
 			} else if(key == "render"){
@@ -60,13 +60,13 @@ public:
 		}
 		
 		// Detail help.
-		_infos.emplace_back("", "", "Raytracer");
-		_infos.emplace_back("wxh", "", "Dimensions of the image.", std::vector<std::string>{"width", "height"});
+		_infos.emplace_back("", "", "Path tracer");
+		_infos.emplace_back("size", "", "Dimensions of the image.", std::vector<std::string>{"width", "height"});
 		_infos.emplace_back("samples", "", "Number of samples per pixel (closest power of 2).", "int");
 		_infos.emplace_back("depth", "", "Maximum path depth.", "int");
 		_infos.emplace_back("scene", "", "Name of the scene to load.", "string");
 		_infos.emplace_back("output", "", "Path for the output image.", "path");
-		_infos.emplace_back("render", "", "Disable the GUI and run a render immediatly.", "");
+		_infos.emplace_back("render", "", "Disable the GUI and run a render immediatly.");
 		
 	}
 
