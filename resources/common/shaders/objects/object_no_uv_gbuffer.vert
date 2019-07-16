@@ -9,7 +9,7 @@ uniform mat3 normalMatrix; ///< Normal transformation matrix.
 // Output: normal in view space.
 out INTERFACE {
     vec3 vn;
-} Out ; ///< mat3 tbn; vec2 uv;
+} Out ; ///< vec3 vn;
 
 /** Apply the transformation to the input vertex.
   Compute the view space normal.

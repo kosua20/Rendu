@@ -1,5 +1,7 @@
 #version 330
 
+uniform bool flip = false; ///< Flip vertically.
+
 // Output: UV coordinates
 out INTERFACE {
 	vec2 uv;
@@ -22,7 +24,7 @@ out INTERFACE {
 */
 void main(){
 	vec2 temp = 2.0 * vec2(gl_VertexID == 1, gl_VertexID == 2);
-	Out.uv = temp;
+	Out.uv = flip ? vec2(temp.x, 1.0-temp.y) : temp;
 	gl_Position.xy = 2.0 * temp - 1.0;
 	gl_Position.zw = vec2(1.0);
 }
