@@ -40,6 +40,7 @@ void Raycaster::addMesh(const Mesh & mesh, const glm::mat4 & model){
 		triInfos.v2 = indexOffset + mesh.indices[localId + 2];
 		triInfos.localId = (unsigned long)(localId);
 		triInfos.meshId = _meshCount;
+		triInfos.bbox = BoundingBox(_vertices[triInfos.v0], _vertices[triInfos.v1], _vertices[triInfos.v2]);
 		_triangles.push_back(triInfos);
 	}
 	
@@ -55,14 +56,18 @@ void Raycaster::updateHierarchy(){
 }
 
 size_t Raycaster::updateSubHierarchy(const size_t begin, const size_t count){
-	// Pick a random axis for sorting.
-	const int axis = Random::Int(0, 2);
+	// Compute the global bounding box.
+	BoundingBox global = _triangles[begin].bbox;
+	for(size_t tid = 1; tid < count; ++tid){
+		global.merge(_triangles[begin+tid].bbox);
+	}
+	// Pick the dimension along which the global bbox is the largest.
+	const glm::vec3 bboxSize = global.getSize();
+	const int axis = (bboxSize.x >= bboxSize.y && bboxSize.x >= bboxSize.z) ? 0 : (bboxSize.y >= bboxSize.z ? 1 : 2);
+	
 	// Sort all triangles along the picked axis.
-	std::sort(_triangles.begin()+begin, _triangles.begin()+begin+count, [this, axis](const TriangleInfos & t0, const TriangleInfos & t1){
-		// Compute both bounding boxes.
-		BoundingBox b0(_vertices[t0.v0], _vertices[t0.v1], _vertices[t0.v2]);
-		BoundingBox b1(_vertices[t1.v0], _vertices[t1.v1], _vertices[t1.v2]);
-		return b0.minis[axis] < b1.minis[axis];
+	std::sort(_triangles.begin()+begin, _triangles.begin()+begin+count, [axis](const TriangleInfos & t0, const TriangleInfos & t1){
+		return t0.bbox.minis[axis] < t1.bbox.minis[axis];
 	});
 	// Create the node.
 	_hierarchy.emplace_back();
