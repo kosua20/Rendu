@@ -64,7 +64,7 @@ namespace System {
 	
 	/** Present a filesystem document picker to the user, using native controls.
 	 \param mode the type of item to ask to the user (load, save, directory)
-	 \param startDir the initial directory when the picker is opended
+	 \param startDir the initial directory when the picker is opened
 	 \param outPath the path to the item selected by the user
 	 \param extensions (optional) the extensions allowed, separated by "," or ";"
 	 \return true if the user picked an item, false if cancelled.
@@ -78,7 +78,13 @@ namespace System {
 	 \warning This function will not create intermediate directories.
 	 */
 	bool createDirectory(const std::string & directory);
-
+	
+	/** Convert a HSL color into a RGB one.
+	 \param hsl the HSL color, with range (360, 1, 1)
+	 \return the RGB color
+	 */
+	glm::vec3 hslToRgb(const glm::vec3 & hsl);
+	
 	/** Multi-threaded for-loop.
 	 \param low lower (included) bound
 	 \param high higher (excluded) bound
