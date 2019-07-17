@@ -125,7 +125,6 @@ void PointLight::drawDebug(const glm::mat4& viewMatrix, const glm::mat4& project
 	glUniform3fv(debugProgram->uniform("lightColor"), 1,  &_color[0]);
 	GLUtilities::drawMesh(*_sphere);
 	
-	glBindVertexArray(0);
 	glUseProgram(0);
 
 }

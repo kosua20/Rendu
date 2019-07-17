@@ -458,6 +458,11 @@ TextureInfos GLUtilities::loadTexture(const GLenum target, const std::vector<std
 MeshInfos GLUtilities::setupBuffers(const Mesh & mesh){
 	MeshInfos infos;
 	GLuint vbo = 0;
+	// Generate a vertex array.
+	GLuint vao = 0;
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+	
 	// Create an array buffer to host the geometry data.
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -475,67 +480,38 @@ MeshInfos GLUtilities::setupBuffers(const Mesh & mesh){
 	if(!mesh.positions.empty()){
 		const size_t size = sizeof(GLfloat) * 3 * mesh.positions.size();
 		glBufferSubData(GL_ARRAY_BUFFER, offset, size, &(mesh.positions[0]));
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)offset);
 		offset += size;
 	}
 	if(!mesh.normals.empty()){
 		const size_t size = sizeof(GLfloat) * 3 * mesh.normals.size();
 		glBufferSubData(GL_ARRAY_BUFFER, offset, size, &(mesh.normals[0]));
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)offset);
 		offset += size;
 	}
 	if(!mesh.texcoords.empty()){
 		const size_t size = sizeof(GLfloat) * 2 * mesh.texcoords.size();
 		glBufferSubData(GL_ARRAY_BUFFER, offset, size, &(mesh.texcoords[0]));
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (void*)offset);
 		offset += size;
 	}
 	if(!mesh.tangents.empty()){
 		const size_t size = sizeof(GLfloat) * 3 * mesh.tangents.size();
 		glBufferSubData(GL_ARRAY_BUFFER, offset, size, &(mesh.tangents[0]));
+		glEnableVertexAttribArray(3);
+		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, (void*)offset);
 		offset += size;
 	}
 	if(!mesh.binormals.empty()){
 		const size_t size = sizeof(GLfloat) * 3 * mesh.binormals.size();
 		glBufferSubData(GL_ARRAY_BUFFER, offset, size, &(mesh.binormals[0]));
+		glEnableVertexAttribArray(4);
+		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 0, (void*)offset);
 		offset += size;
 	}
-	
-	// Generate a vertex array.
-	GLuint vao = 0;
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
-	
-	// Setup attributes.
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	unsigned int currentAttribute = 0;
-	offset = 0;
-	if(!mesh.positions.empty()){
-		glEnableVertexAttribArray(currentAttribute);
-		glVertexAttribPointer(currentAttribute, 3, GL_FLOAT, GL_FALSE, 0, (void*)offset);
-		offset += sizeof(GLfloat) * 3 * mesh.positions.size();
-		++currentAttribute;
-	}
-	if(!mesh.normals.empty()){
-		glEnableVertexAttribArray(currentAttribute);
-		glVertexAttribPointer(currentAttribute, 3, GL_FLOAT, GL_FALSE, 0, (void*)offset);
-		offset += sizeof(GLfloat) * 3 * mesh.normals.size();
-		++currentAttribute;
-	}
-	if(!mesh.texcoords.empty()){
-		glEnableVertexAttribArray(currentAttribute);
-		glVertexAttribPointer(currentAttribute, 2, GL_FLOAT, GL_FALSE, 0, (void*)offset);
-		offset += sizeof(GLfloat) * 2 * mesh.texcoords.size();
-		++currentAttribute;
-	}
-	if(!mesh.tangents.empty()){
-		glEnableVertexAttribArray(currentAttribute);
-		glVertexAttribPointer(currentAttribute, 3, GL_FLOAT, GL_FALSE, 0, (void*)offset);
-		offset += sizeof(GLfloat) * 3 * mesh.tangents.size();
-		++currentAttribute;
-	}
-	if(!mesh.binormals.empty()){
-		glEnableVertexAttribArray(currentAttribute);
-		glVertexAttribPointer(currentAttribute, 3, GL_FLOAT, GL_FALSE, 0, (void*)offset);
-		offset += sizeof(GLfloat) * 3 * mesh.binormals.size();
-		++currentAttribute;
 	}
 	
 	// We load the indices data
