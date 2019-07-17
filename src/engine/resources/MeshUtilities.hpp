@@ -82,6 +82,7 @@ struct Mesh {
 	std::vector<glm::vec3> normals; ///< The surface normals.
 	std::vector<glm::vec3> tangents; ///< The surface tangents.
 	std::vector<glm::vec3> binormals;  ///< The surface binormals.
+	std::vector<glm::vec3> colors;  ///< The vertex colors.
 	std::vector<glm::vec2> texcoords;  ///< The texture coordinates.
 	std::vector<unsigned int> indices; ///< The triangular faces indices.
 	

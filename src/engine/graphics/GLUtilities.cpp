@@ -473,6 +473,8 @@ MeshInfos GLUtilities::setupBuffers(const Mesh & mesh){
 	totalSize += 2 * mesh.texcoords.size();
 	totalSize += 3 * mesh.tangents.size();
 	totalSize += 3 * mesh.binormals.size();
+	totalSize += 3 * mesh.colors.size();
+	
 	// Allocate.
 	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * totalSize, NULL, GL_STATIC_DRAW);
 	size_t offset = 0;
@@ -512,6 +514,12 @@ MeshInfos GLUtilities::setupBuffers(const Mesh & mesh){
 		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 0, (void*)offset);
 		offset += size;
 	}
+	if(!mesh.colors.empty()){
+		const size_t size = sizeof(GLfloat) * 3 * mesh.colors.size();
+		glBufferSubData(GL_ARRAY_BUFFER, offset, size, &(mesh.colors[0]));
+		glEnableVertexAttribArray(5);
+		glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, 0, (void*)offset);
+		offset += size;
 	}
 	
 	// We load the indices data

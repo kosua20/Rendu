@@ -85,6 +85,7 @@ void MeshUtilities::loadObj( std::istream & in, Mesh & mesh, MeshUtilities::Load
 	mesh.positions.clear();
 	mesh.normals.clear();
 	mesh.texcoords.clear();
+	mesh.colors.clear();
 	
 	// Init temporary vectors.
 	vector<glm::vec3> positions_temp;
