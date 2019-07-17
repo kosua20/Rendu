@@ -6,22 +6,18 @@
  \ingroup Resources
  */
 struct BoundingSphere {
+	
 	glm::vec3 center; ///< The sphere center.
 	float radius; ///< The sphere radius.
 	
 	/** Empty sphere constructor. */
-	BoundingSphere(){
-		center = glm::vec3(0.0f);
-		radius = 0.0f;
-	}
+	BoundingSphere();
 	
 	/** Constructor
 	 \param aCenter the center of the sphere
 	 \param aRadius the radius of the sphere
 	 */
-	BoundingSphere(const glm::vec3 & aCenter, const float aRadius){
-		center = aCenter; radius = aRadius;
-	}
+	BoundingSphere(const glm::vec3 & aCenter, const float aRadius);
 };
 
 /**
@@ -29,89 +25,52 @@ struct BoundingSphere {
  \ingroup Resources
  */
 struct BoundingBox {
+	
 	glm::vec3 minis; ///< Lower-back-left corner of the box.
 	glm::vec3 maxis; ///< Higher-top-right corner of the box.
 	
 	/** Empty box constructor. */
-	BoundingBox(){
-		minis = glm::vec3(0.0f);
-		maxis = glm::vec3(0.0f);
-	}
+	BoundingBox();
 	
 	/** Triangle-based box constructor.
 	 \param v0 first triangle vertex
 	 \param v1 second triangle vertex
 	 \param v2 third triangle vertex
 	 */
-	BoundingBox(const glm::vec3 & v0, const glm::vec3 & v1, const glm::vec3 & v2){
-		minis = glm::min(glm::min(v0, v1), v2);
-		maxis = glm::max(glm::max(v0, v1), v2);
-	}
+	BoundingBox(const glm::vec3 & v0, const glm::vec3 & v1, const glm::vec3 & v2);
 	
 	/** Extends the current box by another one. The result is the bounding box of the two boxes union.
 	 \param box the bounding box to include
 	 */
-	void merge(const BoundingBox & box){
-		minis = glm::min(minis, box.minis);
-		maxis = glm::max(maxis, box.maxis);
-	}
+	void merge(const BoundingBox & box);
 	
 	/** Query the bounding sphere of this box.
 	 \return the bounding sphere
 	 */
-	BoundingSphere getSphere() const {
-		const glm::vec3 center = 0.5f*(minis+maxis);
-		const float radius = glm::length(maxis-center);
-		return {center, radius};
-	}
+	BoundingSphere getSphere() const;
 	
 	/** Query the size of this box.
 	 \return the size
 	 */
-	glm::vec3 getSize() const {
-		return maxis - minis;
-	}
+	glm::vec3 getSize() const;
 	
-	/** Query the positions of the eight corners of the box.
+	/** Query the positions of the eight corners of the box, in the following order (with \p m=mini, \p M=maxi):
+	 \p (m,m,m), \p (m,m,M), \p (m,M,m), \p (m,M,M), \p (M,m,m), \p (M,m,M), \p (M,M,m), \p (M,M,M)
 	 \return a vector containing the box corners
 	 */
-	std::vector<glm::vec3> getCorners() const {
-		return {
-			glm::vec3(minis[0], minis[1], minis[2]),
-			glm::vec3(minis[0], minis[1], maxis[2]),
-			glm::vec3(minis[0], maxis[1], minis[2]),
-			glm::vec3(minis[0], maxis[1], maxis[2]),
-			glm::vec3(maxis[0], minis[1], minis[2]),
-			glm::vec3(maxis[0], minis[1], maxis[2]),
-			glm::vec3(maxis[0], maxis[1], minis[2]),
-			glm::vec3(maxis[0], maxis[1], maxis[2])
-		};
-	}
+	std::vector<glm::vec3> getCorners() const;
 	
 	/** Compute the bounding box of the transformed current box.
 	 \param trans the transformation to apply
 	 \return the bounding box of the transformed box
 	 */
-	BoundingBox transformed(const glm::mat4 & trans) const {
-		BoundingBox newBox;
-		const std::vector<glm::vec3> corners = getCorners();
-		newBox.minis = glm::vec3(trans * glm::vec4(corners[0],1.0f));
-		newBox.maxis = newBox.minis;
-		for(size_t i = 0; i < 8; ++i){
-			const glm::vec3 transformedCorner = glm::vec3(trans * glm::vec4(corners[i],1.0f));
-			newBox.minis = glm::min(newBox.minis, transformedCorner);
-			newBox.maxis = glm::max(newBox.maxis, transformedCorner);
-		}
-		return newBox;
-	}
+	BoundingBox transformed(const glm::mat4 & trans) const;
 	
 	/** Indicates if a point is inside the bounding box.
 	 \param point the point to check
 	 \return true if the bounding box contains the point
 	 */
-	bool contains(const glm::vec3 & point){
-		return glm::all(glm::greaterThanEqual(point, minis)) && glm::all(glm::lessThanEqual(point, maxis));
-	}
+	bool contains(const glm::vec3 & point) const;
 };
 
 /**
