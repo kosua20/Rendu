@@ -61,13 +61,18 @@ private:
 	
 	const ProgramInfos * _objectProgram; ///< Basic object program.
 	const ProgramInfos * _passthrough; ///< Passthrough program.
+	const ProgramInfos * _bvhProgram; ///< BVH visualisation program.
+	std::vector<MeshInfos> _bvhLevels; ///< The BVH visualisation mesh.
 	
 	std::shared_ptr<Scene> _scene; ///< The scene to render.
 	PathTracer _pathTracer; ///< The scene specific path tracer.
 	
+	glm::ivec2 _bvhRange; ///< The subset of the BVH to display.
 	float _cameraFOV; ///< The adjustable camera fov in degrees.
 	int _samples = 8; ///< Samples count.
 	int _depth = 5; ///< Depth of each ray.
 	TextureInfos _renderTex; ///< The result texture and image.
 	bool _showRender = false; ///< Should the result be displayed.
+	bool _showBVH = true; ///< Show the raytracer BVH.
+	bool _lockLevel = true; ///< Lock the range of the BVH visualisation.
 };

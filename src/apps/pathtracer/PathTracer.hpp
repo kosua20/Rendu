@@ -27,6 +27,8 @@ public:
 	 */
 	void render(const Camera & camera, size_t samples, size_t depth, Image & render);
 	
+	const Raycaster & raycaster() const { return _raycaster; }
+	
 private:
 	
 	/** Helper to bilinearly sample a cubemap in a given direction.

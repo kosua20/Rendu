@@ -12,6 +12,7 @@ BVHRenderer::BVHRenderer(RenderingConfig & config) : Renderer(config) {
 	// GL setup
 	_sceneFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, GL_RGB8, true));
 	_objectProgram = Resources::manager().getProgram("object_basic_lit");
+	_bvhProgram = Resources::manager().getProgram("object_basic_color");
 	_passthrough = Resources::manager().getProgram2D("passthrough");
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
@@ -36,12 +37,21 @@ void BVHRenderer::setScene(std::shared_ptr<Scene> scene){
 	_userCamera.ratio(_renderResolution[0]/_renderResolution[1]);
 	const BoundingBox & bbox = _scene->boundingBox();
 	const float range = glm::length(bbox.getSize());
+	_userCamera.frustum(0.01f*range, 5.0f*range);
 	_userCamera.speed() = 0.2f*range;
 	_cameraFOV = _userCamera.fov() * 180.0f / float(M_PI);
 	
 	// Create the path tracer and raycaster.
 	_pathTracer = PathTracer(_scene);
 	
+	// Build the BVH mesh.
+	std::vector<Mesh> meshes;
+	_pathTracer.raycaster().createBVHMeshes(meshes);
+	for(const Mesh & mesh : meshes){
+		// Setup the OpenGL mesh, don't keep the CPU mesh.
+		_bvhLevels.push_back(GLUtilities::setupBuffers(mesh));
+	}
+	_bvhRange = glm::vec2(0, 0);
 	checkGLError();
 }
 
@@ -62,7 +72,6 @@ void BVHRenderer::draw() {
 		glUniform1i(_passthrough->uniform("flip"), 1);
 		ScreenQuad::draw(_renderTex.id);
 		glDisable(GL_FRAMEBUFFER_SRGB);
-		checkGLError();
 		return;
 	}
 	
@@ -71,7 +80,6 @@ void BVHRenderer::draw() {
 	_sceneFramebuffer->bind();
 	_sceneFramebuffer->setViewport();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glClear(GL_DEPTH_BUFFER_BIT);
 	
 	const glm::mat4 & view = _userCamera.view();
 	const glm::mat4 & proj = _userCamera.projection();
@@ -86,6 +94,19 @@ void BVHRenderer::draw() {
 		glUniformMatrix3fv(_objectProgram->uniform("normalMatrix"), 1, GL_FALSE, &normalMatrix[0][0]);
 		GLUtilities::drawMesh(*object.mesh());
 	}
+	
+	if(_showBVH){
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		glDisable(GL_CULL_FACE);
+		glUseProgram(_bvhProgram->id());
+		glUniformMatrix4fv(_bvhProgram->uniform("mvp"), 1, GL_FALSE, &VP[0][0]);
+		for(int lid = _bvhRange.x; lid <= _bvhRange.y; ++lid){
+			GLUtilities::drawMesh(_bvhLevels[lid]);
+		}
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		glEnable(GL_CULL_FACE);
+	}
+	
 	glUseProgram(0);
 	_sceneFramebuffer->unbind();
 	glDisable(GL_DEPTH_TEST);
@@ -151,6 +172,27 @@ void BVHRenderer::update(){
 		}
 		
 		ImGui::Checkbox("Show rendered image", &_showRender);
+		if(!_showRender){
+			ImGui::Separator();
+			ImGui::Checkbox("Show BVH", &_showBVH);
+			ImGui::SameLine();
+			// Keep both ends of the range equal.
+			if(ImGui::Checkbox("Lock", &_lockLevel)){
+				_bvhRange[1] = _bvhRange[0];
+			}
+			// Display a subset of the BVH.
+			const int maxLevel = int(_bvhLevels.size())-1;
+			const bool mod1 = ImGui::SliderInt("Range min.", &_bvhRange[0], 0, maxLevel);
+			const bool mod2 = ImGui::SliderInt("Range max.", &_bvhRange[1], 0, maxLevel);
+			if(mod1 || mod2){
+				// Enforce synchronisation.
+				_bvhRange[1] = glm::clamp(_bvhRange[1], _bvhRange[0], maxLevel);
+				_bvhRange[0] = glm::clamp(_bvhRange[0], 0, _bvhRange[1]);
+				if(_lockLevel){
+					_bvhRange[1] = _bvhRange[0];
+				}
+			}
+		}
 		
 		// Camera settings.
 		if(ImGui::CollapsingHeader("Camera settings")){
