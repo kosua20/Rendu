@@ -52,7 +52,7 @@ DeferredRenderer::DeferredRenderer(RenderingConfig & config) : Renderer(config) 
 	_skyboxProgram = Resources::manager().getProgram("skybox_gbuffer");
 	_bgProgram = Resources::manager().getProgram("background_gbuffer");
 	_atmoProgram = Resources::manager().getProgram("atmosphere_gbuffer", "background_gbuffer", "atmosphere_gbuffer");;
-	_parallaxProgram = Resources::manager().getProgram("parallax_gbuffer");
+	_parallaxProgram = Resources::manager().getProgram("object_parallax_gbuffer");
 	_objectProgram = Resources::manager().getProgram("object_gbuffer");
 	_objectNoUVsProgram = Resources::manager().getProgram("object_no_uv_gbuffer");
 	

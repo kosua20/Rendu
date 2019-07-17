@@ -12,7 +12,7 @@ FilteringRenderer::FilteringRenderer(RenderingConfig & config) : Renderer(config
 	const int renderHeight = (int)_renderResolution[1];
 	
 	_passthrough = Resources::manager().getProgram2D("passthrough");
-	_sceneShader = Resources::manager().getProgram("object_basic");
+	_sceneShader = Resources::manager().getProgram("object", "object_basic", "object_basic_random");
 	_mesh = Resources::manager().getMesh("light_sphere");
 	
 	_sceneBuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, {GL_RGB8, GL_NEAREST_MIPMAP_NEAREST, GL_CLAMP_TO_EDGE}, true));
@@ -128,7 +128,7 @@ void FilteringRenderer::update(){
 		if(_viewMode == View::IMAGE){
 			if(ImGui::Button("Load image...")){
 				std::string newImagePath;
-				const bool res = System::showPicker(System::Picker::Load, "../../../resources", newImagePath, "jpg,bmp,png,tga;exr");
+				const bool res = System::showPicker(System::Picker::Load, "./", newImagePath, "jpg,bmp,png,tga;exr");
 				// If user picked a path, load the texture from disk.
 				if(res && !newImagePath.empty()){
 					Log::Info() << "Loading " << newImagePath << "." << std::endl;
