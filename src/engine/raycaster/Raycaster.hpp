@@ -23,6 +23,11 @@ public:
 	 */
 	void updateHierarchy();
 	
+	/** Generate geometry to visualize each level of the bounding volume hierarchy as a series of bounding boxes.
+	 \param meshes will be filled with the geometry of each depth level
+	 */
+	void createBVHMeshes(std::vector<Mesh> & meshes) const;
+	
 	/** Represent a hit event between a ray and the geometry. */
 	struct RayHit {
 		bool hit; ///< Denote if there has been a hit.
