@@ -55,16 +55,20 @@ public:
 	/** Find the closest intersection of a ray with the geometry.
 	 \param origin ray origin
 	 \param direction ray direction (not necessarily normalized)
+	 \param mini the minimum distance allowed for the intersection
+	 \param maxi the maximum distance allowed for the intersection
 	 \return a hit object containg the potential hit informations
 	 */
-	const RayHit intersects(const glm::vec3 & origin, const glm::vec3 & direction) const;
+	const RayHit intersects(const glm::vec3 & origin, const glm::vec3 & direction, float mini = 0.0001f, float maxi = 1e8f) const;
 	
 	/** Intersect a ray with the geometry.
 	 \param origin ray origin
 	 \param direction ray direction (not necessarily normalized)
+	 \param mini the minimum distance allowed for the intersection
+	 \param maxi the maximum distance allowed for the intersection
 	 \return true if the two points are joined by a free-space segment
 	 */
-	bool intersectsAny(const glm::vec3 & origin, const glm::vec3 & direction) const;
+	bool intersectsAny(const glm::vec3 & origin, const glm::vec3 & direction, float mini = 0.0001f, float maxi = 1e8f) const;
 	
 	/** Test visibility between two points.
 	 \param p0 first point
@@ -128,13 +132,6 @@ private:
 		bool leaf; ///< Is this a leaf in the hierarchy.
 	};
 	
-	/** Recursively updates part of the hierarchy structure.
-	 \param begin begining triangle index of the region to update
-	 \param count number of triangles in the region to update
-	 \return the index of the updated node
-	 */
-	size_t updateSubHierarchy(const size_t begin, const size_t count);
-	
 	/** Test a ray and triangle intersection using the Muller-Trumbore test.
 	 \param ray the ray
 	 \param tri the triangle infos
@@ -143,24 +140,6 @@ private:
 	 \return a hit object containg the potential hit informations
 	 */
 	const RayHit intersects(const Ray & ray, const TriangleInfos & tri, float mini, float maxi) const;
-	
-	/** Test a ray against a node of the acceleration structure, recursively.
-	 \param ray the ray
-	 \param node the node to test intersections against
-	 \param mini the minimum allowed distance along the ray
-	 \param maxi the maximum allowed distance along the ray
-	 \return a hit object containg the potential closest hit informations
-	 */
-	const RayHit intersects(const Raycaster::Ray & ray, const Raycaster::Node & node, float mini, float maxi) const;
-	
-	/** Check if there is any intersection between a ray and a node in the defined range.
-	 \param ray the ray
-	 \param node the node to test intersections against
-	 \param mini the minimum allowed distance along the ray
-	 \param maxi the maximum allowed distance along the ray
-	 \return true if any intersection occured
-	 */
-	bool intersectsAny(const Raycaster::Ray & ray, const Raycaster::Node & node, float mini, float maxi) const;
 	
 	/** Test a ray and bounding box intersection.
 	 \param ray the ray

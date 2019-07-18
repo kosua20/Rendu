@@ -2,6 +2,7 @@
 #include "helpers/Random.hpp"
 #include "helpers/System.hpp"
 #include <queue>
+#include <stack>
 
 Raycaster::Ray::Ray(const glm::vec3 & origin, const glm::vec3 & direction) : pos(origin), dir(glm::normalize(direction)){
 }
@@ -50,54 +51,69 @@ void Raycaster::addMesh(const Mesh & mesh, const glm::mat4 & model){
 }
 
 void Raycaster::updateHierarchy(){
+	
 	Log::Info() << "[Raycaster] Building hierarchy... " << std::flush;
-	updateSubHierarchy(0, _triangles.size());
+	
+	struct SetInfos {
+		size_t begin;
+		size_t count;
+		long parent;
+		bool right;
+	};
+	
+	std::stack<SetInfos> remainingSets;
+	remainingSets.push({0, _triangles.size(), -1, false});
+	
+	while(!remainingSets.empty()){
+		// Get the next node to process on the stack.
+		const SetInfos current(remainingSets.top());
+		remainingSets.pop();
+		const size_t begin = current.begin;
+		const size_t count = current.count;
+		
+		// Compute the global bounding box.
+		BoundingBox global(_triangles[begin].bbox);
+		for(size_t tid = 1; tid < count; ++tid){
+			global.merge(_triangles[begin+tid].bbox);
+		}
+		// Pick the dimension along which the global bbox is the largest.
+		const glm::vec3 bboxSize = global.getSize();
+		const int axis = (bboxSize.x >= bboxSize.y && bboxSize.x >= bboxSize.z) ? 0 : (bboxSize.y >= bboxSize.z ? 1 : 2);
+		// Sort all triangles along the picked axis.
+		std::sort(_triangles.begin()+begin, _triangles.begin()+begin+count, [axis](const TriangleInfos & t0, const TriangleInfos & t1){
+			return t0.bbox.minis[axis] < t1.bbox.minis[axis];
+		});
+		
+		// Create the node.
+		_hierarchy.emplace_back();
+		const size_t nodeId = _hierarchy.size()-1;
+		Node currentNode;
+		currentNode.box = global;
+		// If the triangles count is low enough, we have a leaf.
+		if(count < 3){
+			currentNode.leaf = true;
+			currentNode.left = begin;
+			currentNode.right = count;
+		} else {
+			currentNode.leaf = false;
+			// Create the two sub-nodes.
+			remainingSets.push({begin, count/2, long(nodeId), false});
+			remainingSets.push({begin+count/2, count-count/2, long(nodeId), true});
+		}
+		_hierarchy[nodeId] = currentNode;
+		
+		// Update the parent node with infos.
+		if(current.parent >= 0){
+			if(current.right){
+				_hierarchy[current.parent].right = nodeId;
+			} else {
+				_hierarchy[current.parent].left = nodeId;
+			}
+		}
+		
+	}
 	Log::Info() << "Done." << std::endl;
 }
-
-size_t Raycaster::updateSubHierarchy(const size_t begin, const size_t count){
-	// Compute the global bounding box.
-	BoundingBox global = _triangles[begin].bbox;
-	for(size_t tid = 1; tid < count; ++tid){
-		global.merge(_triangles[begin+tid].bbox);
-	}
-	// Pick the dimension along which the global bbox is the largest.
-	const glm::vec3 bboxSize = global.getSize();
-	const int axis = (bboxSize.x >= bboxSize.y && bboxSize.x >= bboxSize.z) ? 0 : (bboxSize.y >= bboxSize.z ? 1 : 2);
-	
-	// Sort all triangles along the picked axis.
-	std::sort(_triangles.begin()+begin, _triangles.begin()+begin+count, [axis](const TriangleInfos & t0, const TriangleInfos & t1){
-		return t0.bbox.minis[axis] < t1.bbox.minis[axis];
-	});
-	// Create the node.
-	_hierarchy.emplace_back();
-	const size_t nodeId = _hierarchy.size()-1;
-	Node currentNode;
-	// If the triangles count is low enough, we have a leaf.
-	if(count < 3){
-		currentNode.leaf = true;
-		currentNode.left = begin;
-		currentNode.right = count;
-		// Compute node bounding box as the union of each triangle box.
-		const TriangleInfos & t0 = _triangles[begin];;
-		currentNode.box = BoundingBox(_vertices[t0.v0], _vertices[t0.v1], _vertices[t0.v2]);
-		for(size_t tid = 1; tid < count; ++tid){
-			const TriangleInfos & t = _triangles[begin+tid];;
-			const BoundingBox tbox(_vertices[t.v0], _vertices[t.v1], _vertices[t.v2]);
-			currentNode.box.merge(tbox);
-		}
-	} else {
-		currentNode.leaf = false;
-		// Create the two sub-nodes.
-		currentNode.left = updateSubHierarchy(begin, count/2);
-		currentNode.right = updateSubHierarchy(begin+count/2, count-count/2);
-		currentNode.box = BoundingBox(_hierarchy[currentNode.left].box);
-		currentNode.box.merge(_hierarchy[currentNode.right].box);
-	}
-	_hierarchy[nodeId] = currentNode;
-	return nodeId;
-}
-
 
 void Raycaster::createBVHMeshes(std::vector<Mesh> &meshes) const {
 	meshes.clear();
@@ -161,76 +177,78 @@ void Raycaster::createBVHMeshes(std::vector<Mesh> &meshes) const {
 	}
 }
 
-const Raycaster::RayHit Raycaster::intersects(const glm::vec3 & origin, const glm::vec3 & direction) const {
+const Raycaster::RayHit Raycaster::intersects(const glm::vec3 & origin, const glm::vec3 & direction, float mini, float maxi) const {
 	const Ray ray(origin, direction);
-	return intersects(ray, _hierarchy[0], 0.0001f, 1e8f);
+	
+	std::stack<size_t> nodesToTest;
+	nodesToTest.push(0);
+	
+	RayHit bestHit;
+	while(!nodesToTest.empty()){
+		const Node & node = _hierarchy[nodesToTest.top()];
+		nodesToTest.pop();
+		
+		// If the ray doesn't intersect the bounding box, move to the next node.
+		if(!Raycaster::intersects(ray, node.box, mini, maxi)){
+			continue;
+		}
+		// If the node is a leaf, test all included triangles.
+		if(node.leaf){
+			for(size_t tid = 0; tid < node.right; ++tid){
+				const auto & tri = _triangles[node.left + tid];
+				const RayHit hit = intersects(ray, tri, mini, maxi);
+				// We found a valid hit.
+				if(hit.hit && hit.dist < bestHit.dist){
+					bestHit = hit;
+					maxi = bestHit.dist;
+				}
+			}
+			// Move to the next node.
+			continue;
+		}
+		// Else, intersect both child nodes.
+		nodesToTest.push(node.left);
+		nodesToTest.push(node.right);
+	}
+	return bestHit;
 }
 
-bool Raycaster::intersectsAny(const glm::vec3 & origin, const glm::vec3 & direction) const {
+bool Raycaster::intersectsAny(const glm::vec3 & origin, const glm::vec3 & direction, float mini, float maxi) const {
 	const Ray ray(origin, direction);
-	return intersectsAny(ray, _hierarchy[0], 0.0001f, 1e8f);
+	
+	std::stack<size_t> nodesToTest;
+	nodesToTest.push(0);
+	
+	while(!nodesToTest.empty()){
+		const Node & node = _hierarchy[nodesToTest.top()];
+		nodesToTest.pop();
+		// If the ray doesn't intersect the bounding box, move to the next node.
+		if(!Raycaster::intersects(ray, node.box, mini, maxi)){
+			continue;
+		}
+		// If the node is a leaf, test all included triangles.
+		if(node.leaf){
+			RayHit finalHit;
+			for(size_t tid = 0; tid < node.right; ++tid){
+				const auto & tri = _triangles[node.left + tid];
+				if(intersects(ray, tri, mini, maxi).hit){
+					return true;
+				}
+			}
+			// No intersection move to the next node.
+			continue;
+		}
+		// Check if any of the children is hit.
+		nodesToTest.push(node.left);
+		nodesToTest.push(node.right);
+	}
+	return false;
 }
 
 bool Raycaster::visible(const glm::vec3 & p0, const glm::vec3 & p1) const {
 	const glm::vec3 direction = p1 - p0;
-	const Ray ray(p0, direction);
 	const float maxi = glm::length(direction);
-	return !intersectsAny(ray, _hierarchy[0], 0.0001f, maxi);
-}
-
-const Raycaster::RayHit Raycaster::intersects(const Raycaster::Ray & ray, const Raycaster::Node & node, float mini, float maxi) const {
-	if(!Raycaster::intersects(ray, node.box, mini, maxi)){
-		return RayHit();
-	}
-	// If the node is a leaf, test all included triangles.
-	if(node.leaf){
-		RayHit finalHit;
-		for(size_t tid = 0; tid < node.right; ++tid){
-			const auto & tri = _triangles[node.left + tid];
-			const RayHit hit = intersects(ray, tri, mini, maxi);
-			if(hit.hit && hit.dist < finalHit.dist){
-				finalHit = hit;
-			}
-		}
-		return finalHit;
-	}
-	// Else, intersect both child nodes.
-	const RayHit left = intersects(ray, _hierarchy[node.left], mini, maxi);
-	// If left was hit, check if right is hit closer.
-	if(left.hit){
-		const RayHit right = intersects(ray, _hierarchy[node.right], mini, left.dist);
-		return right.hit ? right : left;
-	}
-	// Check if right is hit.
-	// Return the closest hit if it exists.
-	const RayHit right = intersects(ray, _hierarchy[node.right], mini, maxi);
-	return right;
-}
-
-bool Raycaster::intersectsAny(const Raycaster::Ray & ray, const Raycaster::Node & node, float mini, float maxi) const {
-	if(!Raycaster::intersects(ray, node.box, mini, maxi)){
-		return false;
-	}
-	// If the node is a leaf, test all included triangles.
-	if(node.leaf){
-		RayHit finalHit;
-		for(size_t tid = 0; tid < node.right; ++tid){
-			const auto & tri = _triangles[node.left + tid];
-			if(intersects(ray, tri, mini, maxi).hit){
-				return true;
-			}
-		}
-		return false;
-	}
-	// Check if left is hit.
-	if(intersectsAny(ray, _hierarchy[node.left], mini, maxi)){
-		return true;
-	}
-	// Check if right is hit.
-	if(intersectsAny(ray, _hierarchy[node.right], mini, maxi)){
-		return true;
-	}
-	return false;
+	return !intersectsAny(p0, direction, 0.0001f, maxi);
 }
 
 const Raycaster::RayHit Raycaster::intersects(const Raycaster::Ray & ray, const TriangleInfos & tri, float mini, float maxi) const {
