@@ -69,14 +69,10 @@ function GraphicsSetup(srcDir)
 
 	-- Libraries for each platform.
 	if os.istarget("macosx") then
-		libdirs({libDir.."glfw/lib-mac/"})
 		links({"glfw3", "nfd", "OpenGL.framework", "Cocoa.framework", "IOKit.framework", "CoreVideo.framework", "AppKit.framework"})
 	elseif os.istarget("windows") then
-		libdirs({libDir.."glfw/lib-win-x64/"})
 		links({"glfw3", "nfd", "opengl32", "comctl32"})
 	else -- Assume linux
-		-- Libraries needed: OpenGL and glfw3.  glfw3 require X11, Xi, and so on...	
-		libdirs({ os.findlib("glfw3") })
 		links({"glfw3", "nfd", "GL", "X11", "Xi", "Xrandr", "Xxf86vm", "Xinerama", "Xcursor", "rt", "m", "pthread", "dl", "gtk+-3.0"})
 	end
 
@@ -136,6 +132,7 @@ project("Engine")
 			"premake5.lua"
 	})
 	removefiles { "src/libs/nfd/*" }
+	removefiles { "src/libs/glfw/*" }
 	removefiles({"**.DS_STORE", "**.thumbs"})
 	-- Virtual path allow us to get rid of the on-disk hierarchy.
 	vpaths({
@@ -210,6 +207,7 @@ project("ALL")
 -- Include NFD premake file.
 
 include("src/libs/nfd/premake5.lua")
+include("src/libs/glfw/premake5.lua")
 
 -- Actions
 
