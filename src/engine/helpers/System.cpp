@@ -335,7 +335,12 @@ namespace System {
 		const float m = hsl[2] - chroma * 0.5f;
 		return m + base;
 	}
+	
+	void ping(){
+		Log::Info() << '\a' << std::endl;
+	}
 
+	
 }
 
 

@@ -85,6 +85,9 @@ namespace System {
 	 */
 	glm::vec3 hslToRgb(const glm::vec3 & hsl);
 	
+	/** Notify the user by sending a 'Bell' signal. */
+	void ping();
+	
 	/** Multi-threaded for-loop.
 	 \param low lower (included) bound
 	 \param high higher (excluded) bound

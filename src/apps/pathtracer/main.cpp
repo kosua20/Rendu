@@ -106,6 +106,8 @@ void renderOneShot(const PathTracerConfig & config){
 	
 	// Save image.
 	ImageUtilities::saveLDRImage(config.outputPath, render, false);
+	
+	System::ping();
 }
 
 
