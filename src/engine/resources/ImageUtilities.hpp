@@ -127,6 +127,13 @@ public:
 	 */
 	static int saveHDRImage(const std::string & path, const Image & image, const bool flip, const bool ignoreAlpha = false);
 	
+	/** Bilinearly sample a cubemap in a given direction.
+	 \param images the six cubemap faces, in standard Rendu order (px, nx, py, ny, pz, nz)
+	 \param dir the direction to sample
+	 \return the sampled color.
+	 */
+	static glm::vec3 sampleCubemap(const std::vector<Image> & images, const glm::vec3 & dir);
+	
 private:
 	
 	/** Load a LDR image from disk using stb_image.

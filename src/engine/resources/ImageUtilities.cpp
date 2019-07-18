@@ -417,3 +417,53 @@ int ImageUtilities::saveHDRImage(const std::string &path, const Image & image, c
 }
 
 
+glm::vec3 ImageUtilities::sampleCubemap(const std::vector<Image> & images, const glm::vec3 & dir){
+	// Images are stored in the following order:
+	// px, nx, py, ny, pz, nz
+	const glm::vec3 abs = glm::abs(dir);
+	int side = 0;
+	float x = 0.0f, y = 0.0f;
+	float denom = 1.0f;
+	if(abs.x >= abs.y && abs.x >= abs.z){
+		denom = abs.x;
+		y = dir.y;
+		// X faces.
+		if(dir.x >= 0.0f){
+			side = 0;
+			x = -dir.z;
+		} else {
+			side = 1;
+			x = dir.z;
+		}
+		
+	} else if(abs.y >= abs.x && abs.y >= abs.z){
+		denom = abs.y;
+		x = dir.x;
+		// Y faces.
+		if(dir.y >= 0.0f){
+			side = 2;
+			y = -dir.z;
+		} else {
+			side = 3;
+			y = dir.z;
+		}
+	} else if(abs.z >= abs.x && abs.z >= abs.y){
+		denom = abs.z;
+		y = dir.y;
+		// Z faces.
+		if(dir.z >= 0.0f){
+			side = 4;
+			x = dir.x;
+		} else {
+			side = 5;
+			x = -dir.x;
+		}
+	}
+	x = 0.5f * ( x / denom) + 0.5f;
+	y = 0.5f * (-y / denom) + 0.5f;
+	// Ensure seamless borders between faces by never sampling closer than one pixel to the edge.
+	const float eps = 1.0f / float(std::min(images[side].width, images[side].height));
+	x = glm::clamp(x, 0.0f + eps, 1.0f - eps);
+	y = glm::clamp(y, 0.0f + eps, 1.0f - eps);
+	return images[side].rgbl(x, y);
+}

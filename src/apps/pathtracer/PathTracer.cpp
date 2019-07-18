@@ -89,7 +89,7 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 								sampleColor = image.rgbl(ndcPos.x, ndcPos.y);
 							} else if (mode == Scene::Background::SKYBOX){
 								const auto & images = _scene->background->textures()[0]->images;
-								sampleColor = sampleCubemap(images, glm::normalize(rayDir));
+								sampleColor = ImageUtilities::sampleCubemap(images, glm::normalize(rayDir));
 							} else {
 								sampleColor = _scene->backgroundColor;
 							}
@@ -99,7 +99,7 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 						// Else, we only care about environment maps, for indirect illumination.
 						if (mode == Scene::Background::SKYBOX) {
 							const auto & images = _scene->background->textures()[0]->images;
-							sampleColor += attenColor * sampleCubemap(images, glm::normalize(rayDir));
+							sampleColor += attenColor * ImageUtilities::sampleCubemap(images, glm::normalize(rayDir));
 						}
 						break;
 					}
@@ -157,56 +157,6 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 	
 	// Display duration.
 	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start);
-	Log::Info() << "[PathTracer] Rendering took " << duration.count() << " ms at " << render.width << "x" << render.height << "." << std::endl;
+	Log::Info() << "[PathTracer] Rendering took " << (duration.count()/1000.0f) << "s at " << render.width << "x" << render.height << "." << std::endl;
 }
 
-glm::vec3 PathTracer::sampleCubemap(const std::vector<Image> & images, const glm::vec3 & dir){
-	// Images are stored in the following order:
-	// px, nx, py, ny, pz, nz
-	const glm::vec3 abs = glm::abs(dir);
-	int side = 0;
-	float x = 0.0f, y = 0.0f;
-	float denom = 1.0f;
-	if(abs.x >= abs.y && abs.x >= abs.z){
-		denom = abs.x;
-		y = dir.y;
-		// X faces.
-		if(dir.x >= 0.0f){
-			side = 0;
-			x = -dir.z;
-		} else {
-			side = 1;
-			x = dir.z;
-		}
-		
-	} else if(abs.y >= abs.x && abs.y >= abs.z){
-		denom = abs.y;
-		x = dir.x;
-		// Y faces.
-		if(dir.y >= 0.0f){
-			side = 2;
-			y = -dir.z;
-		} else {
-			side = 3;
-			y = dir.z;
-		}
-	} else if(abs.z >= abs.x && abs.z >= abs.y){
-		denom = abs.z;
-		y = dir.y;
-		// Z faces.
-		if(dir.z >= 0.0f){
-			side = 4;
-			x = dir.x;
-		} else {
-			side = 5;
-			x = -dir.x;
-		}
-	}
-	x = 0.5f * ( x / denom) + 0.5f;
-	y = 0.5f * (-y / denom) + 0.5f;
-	// Ensure seamless borders between faces by never sampling closer than one pixel to the edge.
-	const float eps = 1.0f / float(std::min(images[side].width, images[side].height));
-	x = glm::clamp(x, 0.0f + eps, 1.0f - eps);
-	y = glm::clamp(y, 0.0f + eps, 1.0f - eps);
-	return images[side].rgbl(x, y);
-}

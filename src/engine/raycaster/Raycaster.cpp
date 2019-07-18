@@ -52,7 +52,7 @@ void Raycaster::addMesh(const Mesh & mesh, const glm::mat4 & model){
 
 void Raycaster::updateHierarchy(){
 	
-	Log::Info() << "[Raycaster] Building hierarchy... " << std::flush;
+	Log::Info() << "[Raycaster] Building hierarchy for " << _triangles.size() << " triangles... " << std::flush;
 	
 	struct SetInfos {
 		size_t begin;
@@ -130,7 +130,7 @@ void Raycaster::updateHierarchy(){
 		}
 		
 	}
-	Log::Info() << "Done." << std::endl;
+	Log::Info() << " Done: " << _hierarchy.size() << " nodes created." << std::endl;
 }
 
 void Raycaster::createBVHMeshes(std::vector<Mesh> &meshes) const {

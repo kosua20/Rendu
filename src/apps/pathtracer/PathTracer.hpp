@@ -31,13 +31,6 @@ public:
 	
 private:
 	
-	/** Helper to bilinearly sample a cubemap in a given direction.
-	 \param images the six cubemap faces, in standard Rendu order (px, nx, py, ny, pz, nz)
-	 \param dir the direction to sample
-	 \return the sampled color.
-	 */
-	static glm::vec3 sampleCubemap(const std::vector<Image> & images, const glm::vec3 & dir);
-	
 	Raycaster _raycaster; ///< The internal raycaster.
 	std::shared_ptr<Scene> _scene; ///< The scene.
 	
