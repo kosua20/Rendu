@@ -9,6 +9,6 @@ var searchData=
   ['bbox',['bbox',['../struct_mesh_infos.html#a4381751418eadcd6b57146ffe217efd7',1,'MeshInfos']]],
   ['bgcolor',['bgColor',['../class_g_l_s_l_1_1_frag_1_1_background__gbuffer.html#a6ef8865bc73371798d2d9b9d9fe916ce',1,'GLSL::Frag::Background_gbuffer']]],
   ['binormals',['binormals',['../struct_mesh.html#a61bf76d1d94acc3d19f53ecf1ca1eee7',1,'Mesh']]],
-  ['box',['box',['../struct_raycaster_1_1_node.html#af5396c3c08cddcea49aee04f3671712b',1,'Raycaster::Node']]],
+  ['box',['box',['../struct_raycaster_1_1_triangle_infos.html#adc9bf6be2c2b25e3f4f2fd64a99baf30',1,'Raycaster::TriangleInfos::box()'],['../struct_raycaster_1_1_node.html#af5396c3c08cddcea49aee04f3671712b',1,'Raycaster::Node::box()']]],
   ['buttons',['buttons',['../class_game_menu.html#aa71a50182cfe6433c0f7548f3ac762ab',1,'GameMenu']]]
 ];

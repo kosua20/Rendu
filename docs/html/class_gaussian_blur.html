@@ -100,7 +100,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!--header-->
 <div class="contents">
 
-<p>Applies an approximate gaussian blur.  
+<p>Applies an approximate gaussian blur using a dual filtering approach.  
  <a href="class_gaussian_blur.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="_gaussian_blur_8hpp_source.html">GaussianBlur.hpp</a>&gt;</code></p>
@@ -129,30 +129,18 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:a2b95c8b50ee86f22311968b6d9d7e9a0"><td class="memItemLeft" align="right" valign="top"><a id="a2b95c8b50ee86f22311968b6d9d7e9a0"></a>
-const <a class="el" href="class_program_infos.html">ProgramInfos</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_gaussian_blur.html#a2b95c8b50ee86f22311968b6d9d7e9a0">_blurProgram</a></td></tr>
-<tr class="memdesc:a2b95c8b50ee86f22311968b6d9d7e9a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">The approximate gaussian blurring kernel shader. <br /></td></tr>
-<tr class="separator:a2b95c8b50ee86f22311968b6d9d7e9a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a941bf5c067f000a951dd495a642ca2c6"><td class="memItemLeft" align="right" valign="top"><a id="a941bf5c067f000a951dd495a642ca2c6"></a>
-const <a class="el" href="class_program_infos.html">ProgramInfos</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_gaussian_blur.html#a941bf5c067f000a951dd495a642ca2c6">_combineProgram</a></td></tr>
-<tr class="memdesc:a941bf5c067f000a951dd495a642ca2c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Program to merge pyramid levels. <br /></td></tr>
-<tr class="separator:a941bf5c067f000a951dd495a642ca2c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5a4609815c14bf526dbf8d01eccc0dc6"><td class="memItemLeft" align="right" valign="top"><a id="a5a4609815c14bf526dbf8d01eccc0dc6"></a>
-std::unique_ptr&lt; <a class="el" href="class_framebuffer.html">Framebuffer</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_gaussian_blur.html#a5a4609815c14bf526dbf8d01eccc0dc6">_finalFramebuffer</a></td></tr>
-<tr class="memdesc:a5a4609815c14bf526dbf8d01eccc0dc6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Final result framebuffer. <br /></td></tr>
-<tr class="separator:a5a4609815c14bf526dbf8d01eccc0dc6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2911b15b005e411225848ab1c96daf26"><td class="memItemLeft" align="right" valign="top"><a id="a2911b15b005e411225848ab1c96daf26"></a>
+const <a class="el" href="class_program_infos.html">ProgramInfos</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_gaussian_blur.html#a2911b15b005e411225848ab1c96daf26">_blurProgramDown</a></td></tr>
+<tr class="memdesc:a2911b15b005e411225848ab1c96daf26"><td class="mdescLeft">&#160;</td><td class="mdescRight">The downscaling filter. <br /></td></tr>
+<tr class="separator:a2911b15b005e411225848ab1c96daf26"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3b4b22b86b2c39124ccc9c89fe9010e0"><td class="memItemLeft" align="right" valign="top"><a id="a3b4b22b86b2c39124ccc9c89fe9010e0"></a>
+const <a class="el" href="class_program_infos.html">ProgramInfos</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_gaussian_blur.html#a3b4b22b86b2c39124ccc9c89fe9010e0">_blurProgramUp</a></td></tr>
+<tr class="memdesc:a3b4b22b86b2c39124ccc9c89fe9010e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">The upscaling filter. <br /></td></tr>
+<tr class="separator:a3b4b22b86b2c39124ccc9c89fe9010e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa6cb3eec89f9f551fdcc73b3e3474d61"><td class="memItemLeft" align="right" valign="top"><a id="aa6cb3eec89f9f551fdcc73b3e3474d61"></a>
 std::vector&lt; std::unique_ptr&lt; <a class="el" href="class_framebuffer.html">Framebuffer</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_gaussian_blur.html#aa6cb3eec89f9f551fdcc73b3e3474d61">_frameBuffers</a></td></tr>
 <tr class="memdesc:aa6cb3eec89f9f551fdcc73b3e3474d61"><td class="mdescLeft">&#160;</td><td class="mdescRight">Downscaled pyramid framebuffers. <br /></td></tr>
 <tr class="separator:aa6cb3eec89f9f551fdcc73b3e3474d61"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acd727f93f453438669efa0f77904b4e7"><td class="memItemLeft" align="right" valign="top"><a id="acd727f93f453438669efa0f77904b4e7"></a>
-std::vector&lt; std::unique_ptr&lt; <a class="el" href="class_framebuffer.html">Framebuffer</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_gaussian_blur.html#acd727f93f453438669efa0f77904b4e7">_frameBuffersBlur</a></td></tr>
-<tr class="memdesc:acd727f93f453438669efa0f77904b4e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Blurred pyramid framebuffers. <br /></td></tr>
-<tr class="separator:acd727f93f453438669efa0f77904b4e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adf73b89101051ef97782451e42451964"><td class="memItemLeft" align="right" valign="top"><a id="adf73b89101051ef97782451e42451964"></a>
-std::vector&lt; GLuint &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_gaussian_blur.html#adf73b89101051ef97782451e42451964">_textures</a></td></tr>
-<tr class="memdesc:adf73b89101051ef97782451e42451964"><td class="mdescLeft">&#160;</td><td class="mdescRight">Downscaled pyramid framebuffers. <br /></td></tr>
-<tr class="separator:adf73b89101051ef97782451e42451964"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -170,10 +158,9 @@ const <a class="el" href="class_program_infos.html">ProgramInfos</a> *&#160;</td
 <tr class="separator:ae5c21e0e37dc1f3507bd7634243207c1 inherit pro_attribs_class_blur"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Applies an approximate gaussian blur. </p>
-<p>Use a downscaled pyramid approach to approximate a gaussian blur with a large radius. The input texture is downscaled a number of times, and each level is blurred with the same kernel. The levels are then combined again in a unique texture, the blurred result. It uses a simplified gaussian sampling kernel, as described in Efficient Gaussian blur with linear sampling (<a href="http://rastergrid.com/blog/2010/09/efficient-gaussian-blur-with-linear-sampling/">http://rastergrid.com/blog/2010/09/efficient-gaussian-blur-with-linear-sampling/</a>). </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="class_g_l_s_l_1_1_frag_1_1_blur.html" title="&quot;Blur&quot; fragment shader.">GLSL::Frag::Blur</a> </dd>
-<dd>
-<a class="el" href="class_g_l_s_l_1_1_frag_1_1_blur__combine__2.html" title="&quot;Blur combine 2&quot; fragment shader.">GLSL::Frag::Blur_combine_2</a>, <a class="el" href="class_g_l_s_l_1_1_frag_1_1_blur__combine__3.html" title="&quot;Blur combine 3&quot; fragment shader.">GLSL::Frag::Blur_combine_3</a>, <a class="el" href="class_g_l_s_l_1_1_frag_1_1_blur__combine__4.html" title="&quot;Blur combine 4&quot; fragment shader.">GLSL::Frag::Blur_combine_4</a>, <a class="el" href="class_g_l_s_l_1_1_frag_1_1_blur__combine__5.html" title="&quot;Blur combine 5&quot; fragment shader.">GLSL::Frag::Blur_combine_5</a>, <a class="el" href="class_g_l_s_l_1_1_frag_1_1_blur__combine__6.html" title="&quot;Blur combine 6&quot; fragment shader.">GLSL::Frag::Blur_combine_6</a> </dd></dl>
+<div class="textblock"><p>Applies an approximate gaussian blur using a dual filtering approach. </p>
+<p>Use a downscaled pyramid approach to approximate a gaussian blur with a large radius. The input texture is downscaled a number of times, using a custom filter as described by Marius Bjørge in the 'Bandwidth-Efficient Rendering' presentation, Siggraph 2015 (<a href="https://community.arm.com/cfs-file/__key/communityserver-blogs-components-weblogfiles/00-00-00-20-66/siggraph2015_2D00_mmg_2D00_marius_2D00_slides.pdf">https://community.arm.com/cfs-file/__key/communityserver-blogs-components-weblogfiles/00-00-00-20-66/siggraph2015_2D00_mmg_2D00_marius_2D00_slides.pdf</a>). The image is then upscaled again with a second custom filtered.</p>
+<dl class="section see"><dt>See also</dt><dd>GLSL::Frag::Blur-dual-filter-down, GLSL::Frag::Blur-dual-filter-up </dd></dl>
 </div>
 <p>Inherits <a class="el" href="class_blur.html">Blur</a>.</p>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>

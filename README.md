@@ -17,6 +17,7 @@ Resources to run each project are included in this repository, but you can downl
 Name  | Description
 ------------- | -------------
 [Deferred Physically based rendering](http://kosua20.github.io/Rendu/html/group___deferred_rendering.html) | ![](docs/img/pbrdemo.png)Real-time rendering of a scene with 'physically-based' materials (GGX BRDF introduced in *Microfacet Models for Refraction through Rough Surfaces*, Walter et al., 2007), using deferred rendering and an HDR pipeline with bloom and SSAO.
+[Path Tracer](http://kosua20.github.io/Rendu/html/group___pathtracer_demo.html) | ![](docs/img/pathtracer.png) Offline unidirectional path tracing for diffuse textured materials. Supports stratified sampling, jittering, a form of next event estimation, environment lighting contribution. Relies on a raycaster with a BVH for fast intersection queries against triangular meshes. Comes with an interactive viewer where the BVH levels can be displayed, and the camera placed for an offline rendering.
 [Image Filtering](http://kosua20.github.io/Rendu/html/group___image_filtering.html)  | ![](docs/img/imagefiltering.png) Apply filters to an image, such as gaussian blur, approximate flood-fill (*Jump Flooding in GPU with Applications to Voronoi Diagram and Distance Transform*, Rong et al., 2006) and poisson filling (*Convolution Pyramids*, Farbman et al., 2011), etc.
 [Atmospheric scattering](http://kosua20.github.io/Rendu/html/group___atmospheric_scattering.html)  | ![](docs/img/atmosphere.png) Realistic atmosphere rendering with Rayleigh and Mie scattering (*Precomputed Atmospheric Scattering*, Bruneton et al., 2008).
 [Snake Game](http://kosua20.github.io/Rendu/html/group___snake_game.html)  | ![](docs/img/snake.png) A basic game of snake, demonstrating game menus, player state, batched rendering.
@@ -73,7 +74,6 @@ On a more detailed level, here are the main features you will find in Rendu.
 
 I would like to add some additional features to Rendu in the near future, mainly to get a better grasp of some techniques and allow for more experimentations.
 
-- Path tracing on the CPU.
 - Local light probes for reflections, parallax correction.
 - Temporal Antialiasing with reprojection and clamping.
 - Screen-space reflections and shadows (raymarching against the depth buffer).
@@ -85,6 +85,6 @@ I would like to add some additional features to Rendu in the near future, mainly
 On a more down-to-earth level, some engineering tasks could also help improve the engine.
 
 - Cleanup the way materials are handled right now.
-- Avoid binary dependencies by integrating GLFW3 and NativeFileDialog as subprojects.
+- Avoid binary dependencies by integrating GLFW3 as a subproject (see premake-glfw branch).
 - Real-time cube maps could be rendered in multiple calls after culling objects, instead of layered rendering.
 - Abstract interactions with OpenGL and/or move to Vulkan.

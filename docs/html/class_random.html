@@ -92,6 +92,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pri-static-attribs">Static Private Attributes</a> &#124;
 <a href="class_random-members.html">List of all members</a>  </div>
@@ -100,11 +101,17 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!--header-->
 <div class="contents">
 
-<p>Generate seedable random numbers of various types and in multiple intervals.  
+<p>Generate seedable random numbers of various types and in multiple intervals. Handles per-thread random number generators.  
  <a href="class_random.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="_random_8hpp_source.html">Random.hpp</a>&gt;</code></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_random_1_1_local_m_t19937.html">LocalMT19937</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A MT19937 generator seeded using the shared generator. Used to provide per-thread MT19937 generators in a thread-safe way.  <a href="struct_random_1_1_local_m_t19937.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
 <tr class="memitem:a8482e1a1b7e3680f334d6e6bc153834b"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_random.html#a8482e1a1b7e3680f334d6e6bc153834b">seed</a> ()</td></tr>
@@ -119,24 +126,29 @@ Static Public Member Functions</h2></td></tr>
 <tr class="separator:aa75cde5a0bb59463fe3d6a2db574dc95"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a64ffc2049b5aabcf0acd2a2c7c4c91e0"><td class="memItemLeft" align="right" valign="top">static float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_random.html#a64ffc2049b5aabcf0acd2a2c7c4c91e0">Float</a> (float min, float max)</td></tr>
 <tr class="separator:a64ffc2049b5aabcf0acd2a2c7c4c91e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2c74b6f15a87ec189fe4d560ace1ff28"><td class="memItemLeft" align="right" valign="top">static glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_random.html#a2c74b6f15a87ec189fe4d560ace1ff28">sampleSphere</a> ()</td></tr>
+<tr class="separator:a2c74b6f15a87ec189fe4d560ace1ff28"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-static-attribs"></a>
 Static Private Attributes</h2></td></tr>
 <tr class="memitem:a4e2e531587933a578a5ba25cfeb3b691"><td class="memItemLeft" align="right" valign="top"><a id="a4e2e531587933a578a5ba25cfeb3b691"></a>
 static unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_random.html#a4e2e531587933a578a5ba25cfeb3b691">_seed</a></td></tr>
-<tr class="memdesc:a4e2e531587933a578a5ba25cfeb3b691"><td class="mdescLeft">&#160;</td><td class="mdescRight">The current seed. <br /></td></tr>
+<tr class="memdesc:a4e2e531587933a578a5ba25cfeb3b691"><td class="mdescLeft">&#160;</td><td class="mdescRight">The current main seed. <br /></td></tr>
 <tr class="separator:a4e2e531587933a578a5ba25cfeb3b691"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab92a42396d2af50f14d179b35aa5b9ac"><td class="memItemLeft" align="right" valign="top"><a id="ab92a42396d2af50f14d179b35aa5b9ac"></a>
-static std::mt19937&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_random.html#ab92a42396d2af50f14d179b35aa5b9ac">_mt</a></td></tr>
-<tr class="memdesc:ab92a42396d2af50f14d179b35aa5b9ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">The randomness generator. <br /></td></tr>
-<tr class="separator:ab92a42396d2af50f14d179b35aa5b9ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aec0fda8cb2f7dfca1f849b7f9eff232e"><td class="memItemLeft" align="right" valign="top"><a id="aec0fda8cb2f7dfca1f849b7f9eff232e"></a>
-static std::uniform_real_distribution&lt; float &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_random.html#aec0fda8cb2f7dfca1f849b7f9eff232e">_realDist</a></td></tr>
-<tr class="memdesc:aec0fda8cb2f7dfca1f849b7f9eff232e"><td class="mdescLeft">&#160;</td><td class="mdescRight">The unit uniform float distribution used. <br /></td></tr>
-<tr class="separator:aec0fda8cb2f7dfca1f849b7f9eff232e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a11dfe4a92407b50cb79ea5433fcd95d9"><td class="memItemLeft" align="right" valign="top">static std::mt19937&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_random.html#a11dfe4a92407b50cb79ea5433fcd95d9">_shared</a></td></tr>
+<tr class="memdesc:a11dfe4a92407b50cb79ea5433fcd95d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shared randomness generator, used for seeding per-thread generators.  <a href="#a11dfe4a92407b50cb79ea5433fcd95d9">More...</a><br /></td></tr>
+<tr class="separator:a11dfe4a92407b50cb79ea5433fcd95d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acf374fcfa3ae20b5f7d7eab4792c04d6"><td class="memItemLeft" align="right" valign="top"><a id="acf374fcfa3ae20b5f7d7eab4792c04d6"></a>
+static std::mutex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_random.html#acf374fcfa3ae20b5f7d7eab4792c04d6">_lock</a></td></tr>
+<tr class="memdesc:acf374fcfa3ae20b5f7d7eab4792c04d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">The lock for the shared generator. <br /></td></tr>
+<tr class="separator:acf374fcfa3ae20b5f7d7eab4792c04d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5176648b01c358756b5df91c4ee0fdf3"><td class="memItemLeft" align="right" valign="top"><a id="a5176648b01c358756b5df91c4ee0fdf3"></a>
+static thread_local <a class="el" href="struct_random_1_1_local_m_t19937.html">LocalMT19937</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_random.html#a5176648b01c358756b5df91c4ee0fdf3">_thread</a></td></tr>
+<tr class="memdesc:a5176648b01c358756b5df91c4ee0fdf3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Per-thread randomness generator, seeded using the shared generator. <br /></td></tr>
+<tr class="separator:a5176648b01c358756b5df91c4ee0fdf3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Generate seedable random numbers of various types and in multiple intervals. </p>
+<div class="textblock"><p>Generate seedable random numbers of various types and in multiple intervals. Handles per-thread random number generators. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="aa75cde5a0bb59463fe3d6a2db574dc95"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa75cde5a0bb59463fe3d6a2db574dc95">&#9670;&nbsp;</a></span>Float() <span class="overload">[1/2]</span></h2>
@@ -230,7 +242,7 @@ static std::uniform_real_distribution&lt; float &gt;&#160;</td><td class="memIte
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Query the current seed. </p><dl class="section return"><dt>Returns</dt><dd>the current seed </dd></dl>
+<p>Query the current global seed. </p><dl class="section return"><dt>Returns</dt><dd>the current global seed </dd></dl>
 
 </div>
 </div>
@@ -278,6 +290,32 @@ static std::uniform_real_distribution&lt; float &gt;&#160;</td><td class="memIte
 
 </div>
 </div>
+<a id="a2c74b6f15a87ec189fe4d560ace1ff28"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2c74b6f15a87ec189fe4d560ace1ff28">&#9670;&nbsp;</a></span>sampleSphere()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">glm::vec3 Random::sampleSphere </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Sample point uniformly on a sphere. </p><dl class="section return"><dt>Returns</dt><dd>a 3D point on the unit sphere </dd></dl>
+
+</div>
+</div>
 <a id="a8482e1a1b7e3680f334d6e6bc153834b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8482e1a1b7e3680f334d6e6bc153834b">&#9670;&nbsp;</a></span>seed() <span class="overload">[1/2]</span></h2>
 
@@ -300,7 +338,7 @@ static std::uniform_real_distribution&lt; float &gt;&#160;</td><td class="memIte
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Seed using a random number. </p><dl class="section note"><dt>Note</dt><dd>The seed is obtained through a std::random_device. </dd></dl>
+<p>Seed the shared generator using a random number. </p><dl class="section note"><dt>Note</dt><dd>The seed is obtained through a std::random_device. </dd></dl>
 
 </div>
 </div>
@@ -327,12 +365,38 @@ static std::uniform_real_distribution&lt; float &gt;&#160;</td><td class="memIte
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Seed using a given number. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Seed the shared generator using a given number. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">seedValue</td><td>the seed to use </td></tr>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Data Documentation</h2>
+<a id="a11dfe4a92407b50cb79ea5433fcd95d9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a11dfe4a92407b50cb79ea5433fcd95d9">&#9670;&nbsp;</a></span>_shared</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::mt19937 Random::_shared</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Shared randomness generator, used for seeding per-thread generators. </p>
+<dl class="section warning"><dt>Warning</dt><dd>Not thread safe. </dd></dl>
 
 </div>
 </div>

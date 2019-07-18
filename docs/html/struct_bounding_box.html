@@ -113,16 +113,20 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a6f6b82ffe222a863fbc482a8cb2fd1f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2c95d9b0c6a7122cabfe19ae51e2d4cd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_bounding_box.html#a2c95d9b0c6a7122cabfe19ae51e2d4cd">merge</a> (const <a class="el" href="struct_bounding_box.html">BoundingBox</a> &amp;box)</td></tr>
 <tr class="separator:a2c95d9b0c6a7122cabfe19ae51e2d4cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0c8440d92d0640fea684bf556b34f9be"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_bounding_box.html#a0c8440d92d0640fea684bf556b34f9be">merge</a> (const glm::vec3 &amp;point)</td></tr>
+<tr class="separator:a0c8440d92d0640fea684bf556b34f9be"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4360c790eb3d6d8bf017557b8d06c71b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_bounding_sphere.html">BoundingSphere</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_bounding_box.html#a4360c790eb3d6d8bf017557b8d06c71b">getSphere</a> () const</td></tr>
 <tr class="separator:a4360c790eb3d6d8bf017557b8d06c71b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aff6939c98064ad4182a56c48191b996a"><td class="memItemLeft" align="right" valign="top">glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_bounding_box.html#aff6939c98064ad4182a56c48191b996a">getSize</a> () const</td></tr>
 <tr class="separator:aff6939c98064ad4182a56c48191b996a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9e5cc6e4a333c096578f1fd73b6cf643"><td class="memItemLeft" align="right" valign="top">std::vector&lt; glm::vec3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_bounding_box.html#a9e5cc6e4a333c096578f1fd73b6cf643">getCorners</a> () const</td></tr>
-<tr class="separator:a9e5cc6e4a333c096578f1fd73b6cf643"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6d383a028006abc1bc366e9f28d518e9"><td class="memItemLeft" align="right" valign="top">std::vector&lt; glm::vec3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_bounding_box.html#a6d383a028006abc1bc366e9f28d518e9">getCorners</a> () const</td></tr>
+<tr class="separator:a6d383a028006abc1bc366e9f28d518e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa7ca2372830cde0046639f136ddc2490"><td class="memItemLeft" align="right" valign="top">glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_bounding_box.html#aa7ca2372830cde0046639f136ddc2490">getCentroid</a> () const</td></tr>
+<tr class="separator:aa7ca2372830cde0046639f136ddc2490"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:accd5b6bd9594e9623d5f9abf3c429be2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_bounding_box.html">BoundingBox</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_bounding_box.html#accd5b6bd9594e9623d5f9abf3c429be2">transformed</a> (const glm::mat4 &amp;trans) const</td></tr>
 <tr class="separator:accd5b6bd9594e9623d5f9abf3c429be2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a592d7739df184efbfc3a197fb6b1a037"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_bounding_box.html#a592d7739df184efbfc3a197fb6b1a037">contains</a> (const glm::vec3 &amp;point)</td></tr>
-<tr class="separator:a592d7739df184efbfc3a197fb6b1a037"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7d6f884b32afddb7253e6d17a106d19e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_bounding_box.html#a7d6f884b32afddb7253e6d17a106d19e">contains</a> (const glm::vec3 &amp;point) const</td></tr>
+<tr class="separator:a7d6f884b32afddb7253e6d17a106d19e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -143,9 +147,6 @@ glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">BoundingBox::BoundingBox </td>
@@ -154,11 +155,6 @@ glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
           <td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 <p>Empty box constructor. </p>
 
@@ -169,9 +165,6 @@ glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">BoundingBox::BoundingBox </td>
@@ -197,11 +190,6 @@ glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
           <td></td><td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 <p>Triangle-based box constructor. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -215,28 +203,20 @@ glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a592d7739df184efbfc3a197fb6b1a037"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a592d7739df184efbfc3a197fb6b1a037">&#9670;&nbsp;</a></span>contains()</h2>
+<a id="a7d6f884b32afddb7253e6d17a106d19e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7d6f884b32afddb7253e6d17a106d19e">&#9670;&nbsp;</a></span>contains()</h2>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">bool BoundingBox::contains </td>
           <td>(</td>
           <td class="paramtype">const glm::vec3 &amp;&#160;</td>
           <td class="paramname"><em>point</em></td><td>)</td>
-          <td></td>
+          <td> const</td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 <p>Indicates if a point is inside the bounding box. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -248,29 +228,39 @@ glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 
 </div>
 </div>
-<a id="a9e5cc6e4a333c096578f1fd73b6cf643"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9e5cc6e4a333c096578f1fd73b6cf643">&#9670;&nbsp;</a></span>getCorners()</h2>
+<a id="aa7ca2372830cde0046639f136ddc2490"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa7ca2372830cde0046639f136ddc2490">&#9670;&nbsp;</a></span>getCentroid()</h2>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt;glm::vec3&gt; BoundingBox::getCorners </td>
+          <td class="memname">glm::vec3 BoundingBox::getCentroid </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
-<p>Query the positions of the eight corners of the box. </p><dl class="section return"><dt>Returns</dt><dd>a vector containing the box corners </dd></dl>
+<p>Query the center of the bounding box. </p><dl class="section return"><dt>Returns</dt><dd>the centroid </dd></dl>
+
+</div>
+</div>
+<a id="a6d383a028006abc1bc366e9f28d518e9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6d383a028006abc1bc366e9f28d518e9">&#9670;&nbsp;</a></span>getCorners()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; glm::vec3 &gt; BoundingBox::getCorners </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Query the positions of the eight corners of the box, in the following order (with <code>m=mini</code>, <code>M=maxi</code>): <code></code>(m,m,m), <code></code>(m,m,M), <code></code>(m,M,m), <code></code>(m,M,M), <code></code>(M,m,m), <code></code>(M,m,M), <code></code>(M,M,m), <code></code>(M,M,M) </p><dl class="section return"><dt>Returns</dt><dd>a vector containing the box corners </dd></dl>
 
 </div>
 </div>
@@ -279,9 +269,6 @@ glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">glm::vec3 BoundingBox::getSize </td>
@@ -290,11 +277,6 @@ glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
           <td> const</td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 <p>Query the size of this box. </p><dl class="section return"><dt>Returns</dt><dd>the size </dd></dl>
 
@@ -305,9 +287,6 @@ glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="struct_bounding_sphere.html">BoundingSphere</a> BoundingBox::getSphere </td>
@@ -316,24 +295,16 @@ glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
           <td> const</td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 <p>Query the bounding sphere of this box. </p><dl class="section return"><dt>Returns</dt><dd>the bounding sphere </dd></dl>
 
 </div>
 </div>
 <a id="a2c95d9b0c6a7122cabfe19ae51e2d4cd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2c95d9b0c6a7122cabfe19ae51e2d4cd">&#9670;&nbsp;</a></span>merge()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a2c95d9b0c6a7122cabfe19ae51e2d4cd">&#9670;&nbsp;</a></span>merge() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void BoundingBox::merge </td>
@@ -343,15 +314,34 @@ glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
           <td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 <p>Extends the current box by another one. The result is the bounding box of the two boxes union. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">box</td><td>the bounding box to include </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a0c8440d92d0640fea684bf556b34f9be"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0c8440d92d0640fea684bf556b34f9be">&#9670;&nbsp;</a></span>merge() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void BoundingBox::merge </td>
+          <td>(</td>
+          <td class="paramtype">const glm::vec3 &amp;&#160;</td>
+          <td class="paramname"><em>point</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Extends the current box by a point </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">point</td><td>the point to include </td></tr>
   </table>
   </dd>
 </dl>
@@ -363,9 +353,6 @@ glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="struct_bounding_box.html">BoundingBox</a> BoundingBox::transformed </td>
@@ -375,11 +362,6 @@ glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
           <td> const</td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 <p>Compute the bounding box of the transformed current box. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -391,8 +373,9 @@ glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 
 </div>
 </div>
-<hr/>The documentation for this struct was generated from the following file:<ul>
+<hr/>The documentation for this struct was generated from the following files:<ul>
 <li>src/engine/resources/<a class="el" href="_mesh_utilities_8hpp_source.html">MeshUtilities.hpp</a></li>
+<li>src/engine/resources/MeshUtilities.cpp</li>
 </ul>
 </div><!-- contents -->
 <!-- HTML footer for doxygen 1.8.14-->

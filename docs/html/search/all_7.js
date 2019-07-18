@@ -1,7 +1,7 @@
 var searchData=
 [
   ['frag',['Frag',['../namespace_g_l_s_l_1_1_frag.html',1,'GLSL']]],
-  ['g',['G',['../class_g_l_s_l_1_1_frag_1_1_directional__light.html#aaba478935d693c2b9935313f4da8f210',1,'GLSL::Frag::Directional_light::G()'],['../class_g_l_s_l_1_1_frag_1_1_point__light.html#ac812f2d9c9a8835e07b5ab21bd5a7ca7',1,'GLSL::Frag::Point_light::G()'],['../class_g_l_s_l_1_1_frag_1_1_spot__light.html#a38b2b16cfa69fbd82bb8c17720ea9a2f',1,'GLSL::Frag::Spot_light::G()'],['../class_g_l_s_l_1_1_frag_1_1_brdf__sampler.html#a12c1f31c3f1d692ff3ce64471db4f6bc',1,'GLSL::Frag::Brdf_sampler::G()'],['../class_g_l_s_l_1_1_frag_1_1_filter.html#af2ebb7f9e2fa9bf38c303fdfdee41d3e',1,'GLSL::Frag::Filter::g()'],['../class_g_l_s_l_1_1_frag_1_1_upscale.html#ae85f3c8711d1a7c8caa6067d0bda8b66',1,'GLSL::Frag::Upscale::g()']]],
+  ['g',['g',['../class_g_l_s_l_1_1_frag_1_1_filter.html#af2ebb7f9e2fa9bf38c303fdfdee41d3e',1,'GLSL::Frag::Filter::g()'],['../class_g_l_s_l_1_1_frag_1_1_upscale.html#ae85f3c8711d1a7c8caa6067d0bda8b66',1,'GLSL::Frag::Upscale::g()'],['../class_g_l_s_l_1_1_frag_1_1_directional__light.html#aaba478935d693c2b9935313f4da8f210',1,'GLSL::Frag::Directional_light::G()'],['../class_g_l_s_l_1_1_frag_1_1_point__light.html#ac812f2d9c9a8835e07b5ab21bd5a7ca7',1,'GLSL::Frag::Point_light::G()'],['../class_g_l_s_l_1_1_frag_1_1_spot__light.html#a38b2b16cfa69fbd82bb8c17720ea9a2f',1,'GLSL::Frag::Spot_light::G()'],['../class_g_l_s_l_1_1_frag_1_1_brdf__sampler.html#a12c1f31c3f1d692ff3ce64471db4f6bc',1,'GLSL::Frag::Brdf_sampler::G()']]],
   ['g1',['G1',['../class_g_l_s_l_1_1_frag_1_1_directional__light.html#a3501f2645b32f8912073da0190aa39cf',1,'GLSL::Frag::Directional_light::G1()'],['../class_g_l_s_l_1_1_frag_1_1_point__light.html#a9fcc5f38691abada5ded9a5748e3a595',1,'GLSL::Frag::Point_light::G1()'],['../class_g_l_s_l_1_1_frag_1_1_spot__light.html#abdba8455c601235592e5a6afafe4138d',1,'GLSL::Frag::Spot_light::G1()'],['../class_g_l_s_l_1_1_frag_1_1_brdf__sampler.html#aa742c27e1a4f8152efcd1f2561635087',1,'GLSL::Frag::Brdf_sampler::G1()']]],
   ['game',['Game',['../class_game.html',1,'Game'],['../class_game.html#a3e0acc981e61b656917f2eef42426509',1,'Game::Game()']]],
   ['game_5fcomposite',['Game_composite',['../class_g_l_s_l_1_1_frag_1_1_game__composite.html',1,'GLSL::Frag']]],
@@ -16,9 +16,9 @@ var searchData=
   ['generatemap',['generateMap',['../class_obj_to_scene_config.html#a9b96e9b2d8740aed156ba024b691bfdd',1,'ObjToSceneConfig']]],
   ['geom',['Geom',['../namespace_g_l_s_l_1_1_geom.html',1,'GLSL']]],
   ['geometry',['geometry',['../struct_mesh_infos.html#aabad79bbe6fe219194e501611ba9bd7a',1,'MeshInfos']]],
-  ['getboundingbox',['getBoundingBox',['../class_object.html#aa62a0825f8083ef3df317113a0890ef2',1,'Object']]],
   ['getbuttonsize',['getButtonSize',['../class_game_menu_renderer.html#afcb17ada2ef5db9d77b72294882a8b84',1,'GameMenuRenderer']]],
-  ['getcorners',['getCorners',['../struct_bounding_box.html#a9e5cc6e4a333c096578f1fd73b6cf643',1,'BoundingBox']]],
+  ['getcentroid',['getCentroid',['../struct_bounding_box.html#aa7ca2372830cde0046639f136ddc2490',1,'BoundingBox']]],
+  ['getcorners',['getCorners',['../struct_bounding_box.html#a6d383a028006abc1bc366e9f28d518e9',1,'BoundingBox']]],
   ['getcubemap',['getCubemap',['../class_resources.html#a0488f066e40ca55380210883895e9400',1,'Resources::getCubemap(const std::string &amp;name, const Descriptor &amp;descriptor, Storage mode=GPU, const std::string &amp;refName=&quot;&quot;)'],['../class_resources.html#a859948bf0f4a0356338806ffd54714e0',1,'Resources::getCubemap(const std::string &amp;name)']]],
   ['getcubemappaths',['getCubemapPaths',['../class_resources.html#a00d3a5427941ae141f8e16ad3f16a099',1,'Resources']]],
   ['getfiles',['getFiles',['../class_resources.html#a82e63d1ba182da12950b3ecd11d2e4a9',1,'Resources']]],
