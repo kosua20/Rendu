@@ -277,7 +277,7 @@ const Raycaster::RayHit Raycaster::intersects(const Raycaster::Ray & ray, const 
 	const glm::vec3 p = glm::cross(ray.dir, v02);
 	const float det = glm::dot(v01, p);
 	
-	if(std::abs(det) < 0.00001f){
+	if(std::abs(det) < std::numeric_limits<float>::epsilon()){
 		return RayHit();
 	}
 	
