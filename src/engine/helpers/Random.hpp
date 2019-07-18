@@ -65,7 +65,7 @@ private:
 	};
 	
 	static unsigned int _seed; ///< The current main seed.
-	static std::mt19937 _shared; ///< Shared randomness generator, used for seeding per-thread generators. \warn Not thread safe.
+	static std::mt19937 _shared; ///< Shared randomness generator, used for seeding per-thread generators. \warning Not thread safe.
 	static std::mutex _lock; ///< The lock for the shared generator.
 	static thread_local LocalMT19937 _thread; ///< Per-thread randomness generator, seeded using the shared generator.
 };

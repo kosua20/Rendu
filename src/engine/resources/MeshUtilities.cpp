@@ -52,6 +52,11 @@ std::vector<glm::vec3> BoundingBox::getCorners() const {
 	};
 }
 
+
+glm::vec3 BoundingBox::getCentroid() const {
+	return 0.5f * (minis + maxis);
+}
+
 BoundingBox BoundingBox::transformed(const glm::mat4 & trans) const {
 	BoundingBox newBox;
 	const std::vector<glm::vec3> corners = getCorners();

@@ -60,6 +60,11 @@ struct BoundingBox {
 	 */
 	std::vector<glm::vec3> getCorners() const;
 	
+	/** Query the center of the bounding box.
+	 \return the centroid
+	 */
+	glm::vec3 getCentroid() const;
+	
 	/** Compute the bounding box of the transformed current box.
 	 \param trans the transformation to apply
 	 \return the bounding box of the transformed box
