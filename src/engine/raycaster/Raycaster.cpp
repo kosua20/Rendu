@@ -41,7 +41,7 @@ void Raycaster::addMesh(const Mesh & mesh, const glm::mat4 & model){
 		triInfos.v2 = indexOffset + mesh.indices[localId + 2];
 		triInfos.localId = (unsigned long)(localId);
 		triInfos.meshId = _meshCount;
-		triInfos.bbox = BoundingBox(_vertices[triInfos.v0], _vertices[triInfos.v1], _vertices[triInfos.v2]);
+		triInfos.box = BoundingBox(_vertices[triInfos.v0], _vertices[triInfos.v1], _vertices[triInfos.v2]);
 		_triangles.push_back(triInfos);
 	}
 	
@@ -72,17 +72,10 @@ void Raycaster::updateHierarchy(){
 		const size_t count = current.count;
 		
 		// Compute the global bounding box.
-		BoundingBox global(_triangles[begin].bbox);
+		BoundingBox global(_triangles[begin].box);
 		for(size_t tid = 1; tid < count; ++tid){
-			global.merge(_triangles[begin+tid].bbox);
+			global.merge(_triangles[begin+tid].box);
 		}
-		// Pick the dimension along which the global bbox is the largest.
-		const glm::vec3 bboxSize = global.getSize();
-		const int axis = (bboxSize.x >= bboxSize.y && bboxSize.x >= bboxSize.z) ? 0 : (bboxSize.y >= bboxSize.z ? 1 : 2);
-		// Sort all triangles along the picked axis.
-		std::sort(_triangles.begin()+begin, _triangles.begin()+begin+count, [axis](const TriangleInfos & t0, const TriangleInfos & t1){
-			return t0.bbox.minis[axis] < t1.bbox.minis[axis];
-		});
 		
 		// Create the node.
 		_hierarchy.emplace_back();
@@ -96,9 +89,34 @@ void Raycaster::updateHierarchy(){
 			currentNode.right = count;
 		} else {
 			currentNode.leaf = false;
+			
+			// Pick the dimension along which the global bounding box is the largest.
+			const glm::vec3 boxSize = global.getSize();
+			const int axis = (boxSize.x >= boxSize.y && boxSize.x >= boxSize.z) ? 0 : (boxSize.y >= boxSize.z ? 1 : 2);
+			// Compute the midpoint of all triangles centroids along the picked axis.
+			float abscisse = 0.0f;
+			for(size_t tid = 0; tid < count; ++tid){
+				abscisse += _triangles[begin+tid].box.getCentroid()[axis];
+			}
+			abscisse /= float(count);
+			
+			// Split in two subnodes.
+			// Main criterion: split at the midpoint along the chosen axis.
+			const auto split = std::partition(_triangles.begin()+begin, _triangles.begin()+begin+count, [abscisse, axis](const TriangleInfos & t0){
+				return t0.box.getCentroid()[axis] < abscisse;
+			});
+			size_t splitCount = std::distance(_triangles.begin()+begin, split);
+			
+			// Fallback criterion: split in two equal size subsets.
+			// This can happen in case the primitive boxes overlap a lot,
+			// or in case of equal coordinates along the chosen axis.
+			if(splitCount == 0 || splitCount == count){
+				splitCount = count/2;
+			}
+			
 			// Create the two sub-nodes.
-			remainingSets.push({begin, count/2, long(nodeId), false});
-			remainingSets.push({begin+count/2, count-count/2, long(nodeId), true});
+			remainingSets.push({begin, splitCount, long(nodeId), false});
+			remainingSets.push({begin+splitCount, count-splitCount, long(nodeId), true});
 		}
 		_hierarchy[nodeId] = currentNode;
 		

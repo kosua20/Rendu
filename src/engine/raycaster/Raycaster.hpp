@@ -103,7 +103,7 @@ private:
 	
 	/** Internal triangle representation. */
 	struct TriangleInfos {
-		BoundingBox bbox;
+		BoundingBox box; ///< The triang axis-aligned bounding box.
 		unsigned long v0; ///< First vertex index.
 		unsigned long v1; ///< Second vertex index.
 		unsigned long v2; ///< Third vertex index.
