@@ -143,14 +143,9 @@ BoundingBox Scene::computeBoundingBox(bool onlyShadowCasters){
 	if(objects.empty()){
 		return bbox;
 	}
-	bool first = true;
+	
 	for(size_t oid = 0; oid < objects.size(); ++oid){
 		if(onlyShadowCasters && !objects[oid].castsShadow()){
-			continue;
-		}
-		if(first){
-			first = false;
-			bbox = objects[oid].boundingBox();
 			continue;
 		}
 		bbox.merge(objects[oid].boundingBox());

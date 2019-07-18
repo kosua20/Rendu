@@ -44,6 +44,11 @@ struct BoundingBox {
 	 */
 	void merge(const BoundingBox & box);
 	
+	/** Extends the current box by a point
+	 \param point the point to include
+	 */
+	void merge(const glm::vec3 & point);
+	
 	/** Query the bounding sphere of this box.
 	 \return the bounding sphere
 	 */

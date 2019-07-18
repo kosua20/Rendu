@@ -15,8 +15,8 @@ BoundingSphere::BoundingSphere(const glm::vec3 & aCenter, const float aRadius){
 }
 
 BoundingBox::BoundingBox(){
-	minis = glm::vec3(0.0f);
-	maxis = glm::vec3(0.0f);
+	minis = glm::vec3(std::numeric_limits<float>::max());
+	maxis = glm::vec3(std::numeric_limits<float>::lowest());
 }
 
 BoundingBox::BoundingBox(const glm::vec3 & v0, const glm::vec3 & v1, const glm::vec3 & v2){
@@ -27,6 +27,11 @@ BoundingBox::BoundingBox(const glm::vec3 & v0, const glm::vec3 & v1, const glm::
 void BoundingBox::merge(const BoundingBox & box){
 	minis = glm::min(minis, box.minis);
 	maxis = glm::max(maxis, box.maxis);
+}
+
+void BoundingBox::merge(const glm::vec3 & point){
+	minis = glm::min(minis, point);
+	maxis = glm::max(maxis, point);
 }
 
 BoundingSphere BoundingBox::getSphere() const {
