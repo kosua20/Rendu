@@ -20,7 +20,7 @@ project("nfd")
 	systemversion("latest")
 	
 	-- common files
-	files({"*.h", "nfd_common.c" })
+	files({"*.h", "nfd_common.c", "premake5.lua" })
 
 	-- system build filters
 	filter("system:windows")
