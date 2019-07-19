@@ -23,7 +23,7 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 		Log::Warning() << "[PathTracer] Expected a RGB image." << std::endl;
 	}
 	const size_t samplesOld = samples;
-	samples = std::pow(2, std::round(std::log2(float(samplesOld))));
+	samples = size_t(std::pow(2, std::round(std::log2(float(samplesOld)))));
 	if(samplesOld != samples){
 		Log::Warning() << "[PathTracer] Non power-of-2 samples count. Using " << samples << " instead." << std::endl;
 	}
@@ -36,11 +36,11 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 	// We know that we have 2^k samples.
 	const int k = int(std::floor(std::log2(samples)));
 	// If even, just use k samples on each side.
-	glm::ivec2 stratesCount(std::pow(2, k/2));
+	glm::ivec2 stratesCount(int(std::pow(2, k/2)));
 	if(k % 2 == 1){
 		//  Else dispatch the extraneous factor of 2 on the horizontal axis.
-		stratesCount[0] = std::pow(2, (k+1)/2);
-		stratesCount[1] = std::pow(2, (k-1)/2);
+		stratesCount[0] = int(std::pow(2, (k+1)/2));
+		stratesCount[1] = int(std::pow(2, (k-1)/2));
 	}
 	const glm::vec2 stratesSize = 1.0f / glm::vec2(stratesCount);
 	
@@ -52,8 +52,8 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 		for(size_t x = 0; x < render.width; ++x){
 			for(size_t sid = 0; sid < samples; ++sid){
 				// Find the grid location.
-				const int sidy = sid / stratesCount.x;
-				const int sidx = sid % stratesCount.x;
+				const int sidy = int(sid) / stratesCount.x;
+				const int sidx = int(sid) % stratesCount.x;
 				
 				// Draw random shift in [0.0,1.0f) for jittering.
 				const float jx = Random::Float();

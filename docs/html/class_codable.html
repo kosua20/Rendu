@@ -95,7 +95,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="class_codable-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">Codable Class Reference<div class="ingroups"><a class="el" href="group___scene.html">Scene</a></div></div>  </div>
+<div class="title">Codable Class Reference<div class="ingroups"><a class="el" href="group___engine.html">Engine</a></div></div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -110,6 +110,8 @@ Static Public Member Functions</h2></td></tr>
 <tr class="separator:ab3d9de81fe292c3710cc1778ad310bea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9c46bacd5c98a3efac31e10374ef8647"><td class="memItemLeft" align="right" valign="top">static glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_codable.html#a9c46bacd5c98a3efac31e10374ef8647">decodeVec3</a> (const <a class="el" href="struct_key_values.html">KeyValues</a> &amp;param, unsigned int position=0)</td></tr>
 <tr class="separator:a9c46bacd5c98a3efac31e10374ef8647"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a104ccb16d30802fc69b810db7d0afcee"><td class="memItemLeft" align="right" valign="top">static glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_codable.html#a104ccb16d30802fc69b810db7d0afcee">decodeVec2</a> (const <a class="el" href="struct_key_values.html">KeyValues</a> &amp;param, unsigned int position=0)</td></tr>
+<tr class="separator:a104ccb16d30802fc69b810db7d0afcee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad4e2612d16d7ad3b7a9ee7f1a3700749"><td class="memItemLeft" align="right" valign="top">static glm::mat4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_codable.html#ad4e2612d16d7ad3b7a9ee7f1a3700749">decodeTransformation</a> (const std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt; &amp;params)</td></tr>
 <tr class="separator:ad4e2612d16d7ad3b7a9ee7f1a3700749"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac97de06117a074bb34f4d0829194a57d"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="struct_texture_infos.html">TextureInfos</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_codable.html#ac97de06117a074bb34f4d0829194a57d">decodeTexture</a> (const <a class="el" href="struct_key_values.html">KeyValues</a> &amp;param, const Storage mode)</td></tr>
@@ -206,7 +208,7 @@ Static Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>a pointer to the allocated texture infos, or null/ </dd></dl>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000005">Todo:</a></b></dt><dd>We could extract the interaction with the <a class="el" href="class_resources.html" title="The Resources manager is responsible for all resources loading and setup.">Resources</a> manager and only output the proper name/descriptor/type. </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000002">Todo:</a></b></dt><dd>We could extract the interaction with the <a class="el" href="class_resources.html" title="The Resources manager is responsible for all resources loading and setup.">Resources</a> manager and only output the proper name/descriptor/type. </dd></dl>
 
 </div>
 </div>
@@ -243,6 +245,50 @@ scaling: scale
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>the 4x4 matrix representation of the transformation </dd></dl>
+
+</div>
+</div>
+<a id="a104ccb16d30802fc69b810db7d0afcee"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a104ccb16d30802fc69b810db7d0afcee">&#9670;&nbsp;</a></span>decodeVec2()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">glm::vec2 Codable::decodeVec2 </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="struct_key_values.html">KeyValues</a> &amp;&#160;</td>
+          <td class="paramname"><em>param</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>position</em> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Decode a 2D vector from a parameters tuple, starting at a specified position. A 2D vector is described as a set of 2 floats separated by spaces or commas: X,Y. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">param</td><td>the parameters tuple </td></tr>
+    <tr><td class="paramname">position</td><td>index of the first vector component in the values array </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>a 2D vector </dd></dl>
 
 </div>
 </div>
@@ -313,19 +359,24 @@ scaling: scale
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Split a Codable-compatible text file in a list of (key,values) tuples, getting rid of extraneous spaces and punctuations. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Split a Codable-compatible text file in a hierarchical list of (key,values) tuples, getting rid of extraneous spaces and punctuations. The following rules are applied:</p><ul>
+<li>elements beginning with a '*' denote root-level objects.</li>
+<li>elements beginning with a '-' belong to an array, defined by the element just before those.</li>
+<li>elements can be nested on the same line: 'elem1: elem2: values' <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">codableFile</td><td>the text content to parse </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>a list of (key, value) tokens </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>a hiearchical list of (key, value) tokens </dd></dl>
+</li>
+</ul>
 
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>src/engine/scene/<a class="el" href="_codable_8hpp_source.html">Codable.hpp</a></li>
-<li>src/engine/scene/Codable.cpp</li>
+<li>src/engine/<a class="el" href="_codable_8hpp_source.html">Codable.hpp</a></li>
+<li>src/engine/Codable.cpp</li>
 </ul>
 </div><!-- contents -->
 <!-- HTML footer for doxygen 1.8.14-->

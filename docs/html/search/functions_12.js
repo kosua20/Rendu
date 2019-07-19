@@ -1,5 +1,7 @@
 var searchData=
 [
+  ['samplecubemap',['sampleCubemap',['../class_image_utilities.html#aba77dc9bf90ca1731a7dd0c079fe77c6',1,'ImageUtilities']]],
+  ['samplesphere',['sampleSphere',['../class_random.html#a2c74b6f15a87ec189fe4d560ace1ff28',1,'Random']]],
   ['savebinary',['saveBinary',['../class_program_infos.html#a4a99b82916cc6f488f6c7755a318357b',1,'ProgramInfos']]],
   ['savecolor',['saveColor',['../namespace_scene_export.html#a3177226721b7d5604f7dd4f04f17488c',1,'SceneExport']]],
   ['saveconfiguration',['saveConfiguration',['../class_controller.html#ad0118fb333e4cd8b7e9ec39d4190366d',1,'Controller']]],
@@ -25,7 +27,7 @@ var searchData=
   ['setfile',['setFile',['../class_log.html#a71b1d684da3c9cf41a864e6c7f796c8d',1,'Log']]],
   ['setfilters',['setFilters',['../class_convolution_pyramid.html#ae9dca10be4c6adb740e6a2787b1e5986',1,'ConvolutionPyramid']]],
   ['setintensity',['setIntensity',['../class_light.html#a91e1c518722138557e2733c2e474ee1f',1,'Light']]],
-  ['setscene',['setScene',['../class_deferred_renderer.html#a61dea9bf1883606d8afd09381aaa846d',1,'DeferredRenderer::setScene()'],['../class_directional_light.html#a015053485826913154f4c9eac17bcd6f',1,'DirectionalLight::setScene()'],['../class_light.html#a741370e1e3abb1135d70d48816156668',1,'Light::setScene()'],['../class_point_light.html#aad6f9a944fd8a94758c2c582f99ed3f3',1,'PointLight::setScene()'],['../class_spot_light.html#aebf58c5bacd9f13fc1faef8c6c620e67',1,'SpotLight::setScene()']]],
+  ['setscene',['setScene',['../class_b_v_h_renderer.html#ad14b658dd042629de3f77e4435c274a3',1,'BVHRenderer::setScene()'],['../class_deferred_renderer.html#a61dea9bf1883606d8afd09381aaa846d',1,'DeferredRenderer::setScene()'],['../class_directional_light.html#a015053485826913154f4c9eac17bcd6f',1,'DirectionalLight::setScene()'],['../class_light.html#a741370e1e3abb1135d70d48816156668',1,'Light::setScene()'],['../class_point_light.html#aad6f9a944fd8a94758c2c582f99ed3f3',1,'PointLight::setScene()'],['../class_spot_light.html#aebf58c5bacd9f13fc1faef8c6c620e67',1,'SpotLight::setScene()']]],
   ['setsceneparameters',['setSceneParameters',['../class_ambient_quad.html#ab57cec30770a7b1340bc6c2ff138aa28',1,'AmbientQuad']]],
   ['setupbuffers',['setupBuffers',['../class_g_l_utilities.html#a2dc24089c4a28ee9f1a0a9cc95610a1a',1,'GLUtilities']]],
   ['setupimgui',['setupImGui',['../namespace_system_1_1_g_u_i.html#a5a614d1ebfb7443415b93f5c6b602469',1,'System::GUI']]],

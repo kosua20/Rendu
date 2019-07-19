@@ -188,6 +188,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:aae31fa2aeb045e258a4d02677c9cab70"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afd3deba17b875e62f2462093bf1920d7"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#afd3deba17b875e62f2462093bf1920d7">density</a> () const</td></tr>
 <tr class="separator:afd3deba17b875e62f2462093bf1920d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a97c586adb83fdc80c09f894f062eb920"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#a97c586adb83fdc80c09f894f062eb920">interacted</a> () const</td></tr>
+<tr class="separator:a97c586adb83fdc80c09f894f062eb920"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
@@ -255,6 +257,18 @@ std::unique_ptr&lt; <a class="el" href="class_controller.html">Controller</a> &g
 <a class="el" href="struct_input_1_1_keyboard_key.html">KeyboardKey</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#abd2d782cf6e40f4cb6edcf8f245dd0f5">_keys</a> [GLFW_KEY_LAST+1]</td></tr>
 <tr class="memdesc:abd2d782cf6e40f4cb6edcf8f245dd0f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">States of all possible keyboard keys. <br /></td></tr>
 <tr class="separator:abd2d782cf6e40f4cb6edcf8f245dd0f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad791a737705475d640f53b72dd424608"><td class="memItemLeft" align="right" valign="top"><a id="ad791a737705475d640f53b72dd424608"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#ad791a737705475d640f53b72dd424608">_mouseInteracted</a> = false</td></tr>
+<tr class="memdesc:ad791a737705475d640f53b72dd424608"><td class="mdescLeft">&#160;</td><td class="mdescRight">Did the user interact with the mouse. <br /></td></tr>
+<tr class="separator:ad791a737705475d640f53b72dd424608"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aed31bdcfa06412df0a5aef7954e44c36"><td class="memItemLeft" align="right" valign="top"><a id="aed31bdcfa06412df0a5aef7954e44c36"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#aed31bdcfa06412df0a5aef7954e44c36">_keyInteracted</a> = false</td></tr>
+<tr class="memdesc:aed31bdcfa06412df0a5aef7954e44c36"><td class="mdescLeft">&#160;</td><td class="mdescRight">Did the user interact with the keyboard. <br /></td></tr>
+<tr class="separator:aed31bdcfa06412df0a5aef7954e44c36"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5d72741c9d94aaefc113ac8fbde8dea8"><td class="memItemLeft" align="right" valign="top"><a id="a5d72741c9d94aaefc113ac8fbde8dea8"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#a5d72741c9d94aaefc113ac8fbde8dea8">_windowInteracted</a> = false</td></tr>
+<tr class="memdesc:a5d72741c9d94aaefc113ac8fbde8dea8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Did the user interact with the window (minimize, resize,...). <br /></td></tr>
+<tr class="separator:a5d72741c9d94aaefc113ac8fbde8dea8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The input manager is responsible for updating the internal input states (keyboard, mouse, window size). It can also be use to query back these states. </p>
@@ -403,6 +417,24 @@ std::unique_ptr&lt; <a class="el" href="class_controller.html">Controller</a> &g
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="a97c586adb83fdc80c09f894f062eb920"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a97c586adb83fdc80c09f894f062eb920">&#9670;&nbsp;</a></span>interacted()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Input::interacted </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Check if the user interacted with the keyboard, window, or mouse (except mouse moves). </p><dl class="section return"><dt>Returns</dt><dd>true if any interaction happened. </dd></dl>
 
 </div>
 </div>

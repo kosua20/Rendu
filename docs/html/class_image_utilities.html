@@ -115,6 +115,8 @@ Static Public Member Functions</h2></td></tr>
 <tr class="separator:ad2bdf2cfc2ff3a533d4b6450357261d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5a4f6f591f1606637762b2caec34af1a"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_image_utilities.html#a5a4f6f591f1606637762b2caec34af1a">saveHDRImage</a> (const std::string &amp;path, const <a class="el" href="struct_image.html">Image</a> &amp;image, const bool flip, const bool ignoreAlpha=false)</td></tr>
 <tr class="separator:a5a4f6f591f1606637762b2caec34af1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aba77dc9bf90ca1731a7dd0c079fe77c6"><td class="memItemLeft" align="right" valign="top">static glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_image_utilities.html#aba77dc9bf90ca1731a7dd0c079fe77c6">sampleCubemap</a> (const std::vector&lt; <a class="el" href="struct_image.html">Image</a> &gt; &amp;images, const glm::vec3 &amp;dir)</td></tr>
+<tr class="separator:aba77dc9bf90ca1731a7dd0c079fe77c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-static-methods"></a>
 Static Private Member Functions</h2></td></tr>
@@ -352,6 +354,50 @@ Static Private Member Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>a success/error flag </dd></dl>
+
+</div>
+</div>
+<a id="aba77dc9bf90ca1731a7dd0c079fe77c6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aba77dc9bf90ca1731a7dd0c079fe77c6">&#9670;&nbsp;</a></span>sampleCubemap()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">glm::vec3 ImageUtilities::sampleCubemap </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; <a class="el" href="struct_image.html">Image</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>images</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const glm::vec3 &amp;&#160;</td>
+          <td class="paramname"><em>dir</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Bilinearly sample a cubemap in a given direction. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">images</td><td>the six cubemap faces, in standard Rendu order (px, nx, py, ny, pz, nz) </td></tr>
+    <tr><td class="paramname">dir</td><td>the direction to sample </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>the sampled color. </dd></dl>
 
 </div>
 </div>

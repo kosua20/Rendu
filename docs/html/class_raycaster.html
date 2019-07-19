@@ -128,10 +128,12 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a1e80dfbd5dd182fb946c13fb8994a37e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6c943ea2504ec939bd255ae21de9d9fd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_raycaster.html#a6c943ea2504ec939bd255ae21de9d9fd">updateHierarchy</a> ()</td></tr>
 <tr class="separator:a6c943ea2504ec939bd255ae21de9d9fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5ec44ea5838abc0f9b7aad126f88cc32"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="struct_raycaster_1_1_ray_hit.html">RayHit</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_raycaster.html#a5ec44ea5838abc0f9b7aad126f88cc32">intersects</a> (const glm::vec3 &amp;origin, const glm::vec3 &amp;direction) const</td></tr>
-<tr class="separator:a5ec44ea5838abc0f9b7aad126f88cc32"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa3ff02b1aeaf873b07c560b18782ab17"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_raycaster.html#aa3ff02b1aeaf873b07c560b18782ab17">intersectsAny</a> (const glm::vec3 &amp;origin, const glm::vec3 &amp;direction) const</td></tr>
-<tr class="separator:aa3ff02b1aeaf873b07c560b18782ab17"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ace904fe54fefd8afadb68cb770abf03f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_raycaster.html#ace904fe54fefd8afadb68cb770abf03f">createBVHMeshes</a> (std::vector&lt; <a class="el" href="struct_mesh.html">Mesh</a> &gt; &amp;meshes) const</td></tr>
+<tr class="separator:ace904fe54fefd8afadb68cb770abf03f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aea9129ea0d98cfd4b81ed6afeec0ab74"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="struct_raycaster_1_1_ray_hit.html">RayHit</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_raycaster.html#aea9129ea0d98cfd4b81ed6afeec0ab74">intersects</a> (const glm::vec3 &amp;origin, const glm::vec3 &amp;direction, float mini=0.0001f, float maxi=1e8f) const</td></tr>
+<tr class="separator:aea9129ea0d98cfd4b81ed6afeec0ab74"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1779bf9a92e32fa998913505672c2bb9"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_raycaster.html#a1779bf9a92e32fa998913505672c2bb9">intersectsAny</a> (const glm::vec3 &amp;origin, const glm::vec3 &amp;direction, float mini=0.0001f, float maxi=1e8f) const</td></tr>
+<tr class="separator:a1779bf9a92e32fa998913505672c2bb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8b73138dc38394e618f7e535a694ff55"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_raycaster.html#a8b73138dc38394e618f7e535a694ff55">visible</a> (const glm::vec3 &amp;p0, const glm::vec3 &amp;p1) const</td></tr>
 <tr class="separator:a8b73138dc38394e618f7e535a694ff55"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -146,14 +148,8 @@ Static Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
-<tr class="memitem:a9977c0c4c3b69077ba29093c8e135496"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_raycaster.html#a9977c0c4c3b69077ba29093c8e135496">updateSubHierarchy</a> (const size_t begin, const size_t count)</td></tr>
-<tr class="separator:a9977c0c4c3b69077ba29093c8e135496"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8570e0bce83e74091c684d5ca1e03faa"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="struct_raycaster_1_1_ray_hit.html">RayHit</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_raycaster.html#a8570e0bce83e74091c684d5ca1e03faa">intersects</a> (const <a class="el" href="struct_raycaster_1_1_ray.html">Ray</a> &amp;ray, const <a class="el" href="struct_raycaster_1_1_triangle_infos.html">TriangleInfos</a> &amp;tri, float mini, float maxi) const</td></tr>
 <tr class="separator:a8570e0bce83e74091c684d5ca1e03faa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1b35d9b710ea6f7f2a7d25c975aebdfd"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="struct_raycaster_1_1_ray_hit.html">RayHit</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_raycaster.html#a1b35d9b710ea6f7f2a7d25c975aebdfd">intersects</a> (const <a class="el" href="struct_raycaster_1_1_ray.html">Raycaster::Ray</a> &amp;ray, const <a class="el" href="struct_raycaster_1_1_node.html">Raycaster::Node</a> &amp;node, float mini, float maxi) const</td></tr>
-<tr class="separator:a1b35d9b710ea6f7f2a7d25c975aebdfd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac0bda380c0e904265a377c1d7d81fc4d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_raycaster.html#ac0bda380c0e904265a377c1d7d81fc4d">intersectsAny</a> (const <a class="el" href="struct_raycaster_1_1_ray.html">Raycaster::Ray</a> &amp;ray, const <a class="el" href="struct_raycaster_1_1_node.html">Raycaster::Node</a> &amp;node, float mini, float maxi) const</td></tr>
-<tr class="separator:ac0bda380c0e904265a377c1d7d81fc4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-static-methods"></a>
 Static Private Member Functions</h2></td></tr>
@@ -230,6 +226,30 @@ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
   <table class="params">
     <tr><td class="paramname">mesh</td><td>the mesh to add </td></tr>
     <tr><td class="paramname">model</td><td>the transformation matrix to apply to the vertices </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ace904fe54fefd8afadb68cb770abf03f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ace904fe54fefd8afadb68cb770abf03f">&#9670;&nbsp;</a></span>createBVHMeshes()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Raycaster::createBVHMeshes </td>
+          <td>(</td>
+          <td class="paramtype">std::vector&lt; <a class="el" href="struct_mesh.html">Mesh</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>meshes</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Generate geometry to visualize each level of the bounding volume hierarchy as a series of bounding boxes. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">meshes</td><td>will be filled with the geometry of each depth level </td></tr>
   </table>
   </dd>
 </dl>
@@ -368,8 +388,8 @@ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 
 </div>
 </div>
-<a id="a5ec44ea5838abc0f9b7aad126f88cc32"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5ec44ea5838abc0f9b7aad126f88cc32">&#9670;&nbsp;</a></span>intersects() <span class="overload">[1/4]</span></h2>
+<a id="aea9129ea0d98cfd4b81ed6afeec0ab74"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aea9129ea0d98cfd4b81ed6afeec0ab74">&#9670;&nbsp;</a></span>intersects() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -384,7 +404,19 @@ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const glm::vec3 &amp;&#160;</td>
-          <td class="paramname"><em>direction</em>&#160;</td>
+          <td class="paramname"><em>direction</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>mini</em> = <code>0.0001f</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>maxi</em> = <code>1e8f</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -397,6 +429,8 @@ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
   <table class="params">
     <tr><td class="paramname">origin</td><td>ray origin </td></tr>
     <tr><td class="paramname">direction</td><td>ray direction (not necessarily normalized) </td></tr>
+    <tr><td class="paramname">mini</td><td>the minimum distance allowed for the intersection </td></tr>
+    <tr><td class="paramname">maxi</td><td>the maximum distance allowed for the intersection </td></tr>
   </table>
   </dd>
 </dl>
@@ -405,7 +439,7 @@ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 </div>
 </div>
 <a id="a8570e0bce83e74091c684d5ca1e03faa"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8570e0bce83e74091c684d5ca1e03faa">&#9670;&nbsp;</a></span>intersects() <span class="overload">[2/4]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a8570e0bce83e74091c684d5ca1e03faa">&#9670;&nbsp;</a></span>intersects() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -462,66 +496,8 @@ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 
 </div>
 </div>
-<a id="a1b35d9b710ea6f7f2a7d25c975aebdfd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1b35d9b710ea6f7f2a7d25c975aebdfd">&#9670;&nbsp;</a></span>intersects() <span class="overload">[3/4]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">const <a class="el" href="struct_raycaster_1_1_ray_hit.html">Raycaster::RayHit</a> Raycaster::intersects </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="struct_raycaster_1_1_ray.html">Raycaster::Ray</a> &amp;&#160;</td>
-          <td class="paramname"><em>ray</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="struct_raycaster_1_1_node.html">Raycaster::Node</a> &amp;&#160;</td>
-          <td class="paramname"><em>node</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">float&#160;</td>
-          <td class="paramname"><em>mini</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">float&#160;</td>
-          <td class="paramname"><em>maxi</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Test a ray against a node of the acceleration structure, recursively. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">ray</td><td>the ray </td></tr>
-    <tr><td class="paramname">node</td><td>the node to test intersections against </td></tr>
-    <tr><td class="paramname">mini</td><td>the minimum allowed distance along the ray </td></tr>
-    <tr><td class="paramname">maxi</td><td>the maximum allowed distance along the ray </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>a hit object containg the potential closest hit informations </dd></dl>
-
-</div>
-</div>
 <a id="a0b915c68beacb1e364e6770e88fe1f70"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0b915c68beacb1e364e6770e88fe1f70">&#9670;&nbsp;</a></span>intersects() <span class="overload">[4/4]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a0b915c68beacb1e364e6770e88fe1f70">&#9670;&nbsp;</a></span>intersects() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -578,8 +554,8 @@ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 
 </div>
 </div>
-<a id="aa3ff02b1aeaf873b07c560b18782ab17"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa3ff02b1aeaf873b07c560b18782ab17">&#9670;&nbsp;</a></span>intersectsAny() <span class="overload">[1/2]</span></h2>
+<a id="a1779bf9a92e32fa998913505672c2bb9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1779bf9a92e32fa998913505672c2bb9">&#9670;&nbsp;</a></span>intersectsAny()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -594,7 +570,19 @@ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const glm::vec3 &amp;&#160;</td>
-          <td class="paramname"><em>direction</em>&#160;</td>
+          <td class="paramname"><em>direction</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>mini</em> = <code>0.0001f</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>maxi</em> = <code>1e8f</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -607,68 +595,12 @@ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
   <table class="params">
     <tr><td class="paramname">origin</td><td>ray origin </td></tr>
     <tr><td class="paramname">direction</td><td>ray direction (not necessarily normalized) </td></tr>
+    <tr><td class="paramname">mini</td><td>the minimum distance allowed for the intersection </td></tr>
+    <tr><td class="paramname">maxi</td><td>the maximum distance allowed for the intersection </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if the two points are joined by a free-space segment </dd></dl>
-
-</div>
-</div>
-<a id="ac0bda380c0e904265a377c1d7d81fc4d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac0bda380c0e904265a377c1d7d81fc4d">&#9670;&nbsp;</a></span>intersectsAny() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool Raycaster::intersectsAny </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="struct_raycaster_1_1_ray.html">Raycaster::Ray</a> &amp;&#160;</td>
-          <td class="paramname"><em>ray</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="struct_raycaster_1_1_node.html">Raycaster::Node</a> &amp;&#160;</td>
-          <td class="paramname"><em>node</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">float&#160;</td>
-          <td class="paramname"><em>mini</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">float&#160;</td>
-          <td class="paramname"><em>maxi</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Check if there is any intersection between a ray and a node in the defined range. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">ray</td><td>the ray </td></tr>
-    <tr><td class="paramname">node</td><td>the node to test intersections against </td></tr>
-    <tr><td class="paramname">mini</td><td>the minimum allowed distance along the ray </td></tr>
-    <tr><td class="paramname">maxi</td><td>the maximum allowed distance along the ray </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>true if any intersection occured </dd></dl>
 
 </div>
 </div>
@@ -687,50 +619,6 @@ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
       </table>
 </div><div class="memdoc">
 <p>Update the internal bounding volume hierarchy. </p><dl class="section note"><dt>Note</dt><dd>This operation can be costful in time. </dd></dl>
-
-</div>
-</div>
-<a id="a9977c0c4c3b69077ba29093c8e135496"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9977c0c4c3b69077ba29093c8e135496">&#9670;&nbsp;</a></span>updateSubHierarchy()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">size_t Raycaster::updateSubHierarchy </td>
-          <td>(</td>
-          <td class="paramtype">const size_t&#160;</td>
-          <td class="paramname"><em>begin</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const size_t&#160;</td>
-          <td class="paramname"><em>count</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Recursively updates part of the hierarchy structure. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">begin</td><td>begining triangle index of the region to update </td></tr>
-    <tr><td class="paramname">count</td><td>number of triangles in the region to update </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>the index of the updated node </dd></dl>
 
 </div>
 </div>

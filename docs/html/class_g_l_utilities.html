@@ -129,13 +129,13 @@ Static Public Member Functions</h2></td></tr>
 <tr class="separator:a6946dfef4cf7a7c113f802e90b76236e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9024683e15ab07a72c3b85b02b486bb0"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_l_utilities.html#a9024683e15ab07a72c3b85b02b486bb0">bindTextures</a> (const std::vector&lt; const <a class="el" href="struct_texture_infos.html">TextureInfos</a> * &gt; &amp;textures, int startingSlot=GL_TEXTURE0)</td></tr>
 <tr class="separator:a9024683e15ab07a72c3b85b02b486bb0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5da6226e36846aca84f591b0133cecb1"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_l_utilities.html#a5da6226e36846aca84f591b0133cecb1">uploadTexture</a> (const GLenum destination, const GLuint texId, const GLenum destTypedFormat, const unsigned int mipid, const unsigned int lid, const <a class="el" href="struct_image.html">Image</a> &amp;image)</td></tr>
+<tr class="separator:a5da6226e36846aca84f591b0133cecb1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-static-methods"></a>
 Static Private Member Functions</h2></td></tr>
 <tr class="memitem:a8716a374964aa69df49e27dbf7220519"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_l_utilities.html#a8716a374964aa69df49e27dbf7220519">savePixels</a> (const GLenum type, const GLenum format, const unsigned int width, const unsigned int height, const unsigned int components, const std::string &amp;path, const bool flip, const bool ignoreAlpha)</td></tr>
 <tr class="separator:a8716a374964aa69df49e27dbf7220519"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5da6226e36846aca84f591b0133cecb1"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_l_utilities.html#a5da6226e36846aca84f591b0133cecb1">uploadTexture</a> (const GLenum destination, const GLuint texId, const GLenum destTypedFormat, const unsigned int mipid, const unsigned int lid, const <a class="el" href="struct_image.html">Image</a> &amp;image)</td></tr>
-<tr class="separator:a5da6226e36846aca84f591b0133cecb1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Provide utility functions to communicate with the driver and GPU. </p>
@@ -529,7 +529,7 @@ Static Private Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>the texture informations, including the OpenGL ID </dd></dl>
 <dl class="section note"><dt>Note</dt><dd>If only one list path is present, the mipmaps will be generated automatically. </dd></dl>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000003">Todo:</a></b></dt><dd>Test in practice. </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000004">Todo:</a></b></dt><dd>Test in practice. </dd></dl>
 
 </div>
 </div>
@@ -830,7 +830,7 @@ Static Private Member Functions</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
