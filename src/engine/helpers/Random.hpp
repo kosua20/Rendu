@@ -2,7 +2,7 @@
 
 #include "Common.hpp"
 #include <random>
-
+#include <mutex>
 
 /**
  \brief Generate seedable random numbers of various types and in multiple intervals. Handles per-thread random number generators.

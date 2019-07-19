@@ -15,7 +15,7 @@ PaintingTool::PaintingTool(unsigned int width, unsigned int height) {
 	// Generate a disk mesh.
 	Mesh disk;
 	const int diskResolution = 360;
-	const float radResolution = M_PI * 2.0f / float(diskResolution);
+	const float radResolution = float(M_PI) * 2.0f / float(diskResolution);
 	disk.positions.resize(diskResolution+1);
 	disk.indices.resize(diskResolution*3);
 	// Generate positions around the circle.

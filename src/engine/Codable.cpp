@@ -131,11 +131,11 @@ std::vector<KeyValues> Codable::parse(const std::string & codableFile){
 		std::string::size_type previousColon = firstColon+1;
 		std::string::size_type nextColon = line.find(":", previousColon);
 		while (nextColon != std::string::npos) {
-			std::string key = line.substr(previousColon, nextColon-previousColon);
-			key = TextUtilities::trim(key, " \t");
+			std::string keySub = line.substr(previousColon, nextColon-previousColon);
+			keySub = TextUtilities::trim(keySub, " \t");
 			// Store the token as a child of the previous one, and recurse.
-			if(!key.empty()){
-				tok->elements.emplace_back(key);
+			if(!keySub.empty()){
+				tok->elements.emplace_back(keySub);
 				tok = &(tok->elements.back());
 			}
 			previousColon = nextColon+1;

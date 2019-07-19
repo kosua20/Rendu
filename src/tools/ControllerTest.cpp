@@ -407,7 +407,7 @@ int main(int argc, char** argv) {
 					// Display combo selectors to assign raw input to each button.
 					ImGui::BeginChild("##Layout selection", ImVec2(0, 300));
 					ImGui::PushItemWidth(80);
-					const int spacing = 160;
+					const float spacing = 160.0f;
 					
 					showCombo("A", buttonsCount, "B", buttonsMapping[Controller::ButtonA]); ImGui::SameLine(spacing);
 					showCombo("B", buttonsCount, "B", buttonsMapping[Controller::ButtonB]);

@@ -193,12 +193,12 @@ void Raycaster::createBVHMeshes(std::vector<Mesh> &meshes) const {
 		// We have fewer boxes at low depth, skew the hue scale.
 		depth *= depth;
 		// Decrease luminosity as we go deeper.
-		const float lum = 0.5*(1.0f - depth);
+		const float lum = 0.5f*(1.0f - depth);
 		const glm::vec3 color = System::hslToRgb(glm::vec3(300.0f*depth, 0.9f, lum));
 		
 		// Setup vertices.
 		Mesh & mesh = meshes[location.depth];
-		const size_t firstIndex = mesh.positions.size();
+		const unsigned int firstIndex = (unsigned int)mesh.positions.size();
 		const auto corners = node.box.getCorners();
 		for(const auto & corner : corners){
 			mesh.positions.push_back(corner);
@@ -208,7 +208,7 @@ void Raycaster::createBVHMeshes(std::vector<Mesh> &meshes) const {
 		const std::vector<unsigned int> indices = {
 			0,1,0, 0,2,0, 1,3,1, 2,3,2, 4,5,4, 4,6,4, 5,7,5, 6,7,6, 1,5,1, 0,4,0, 2,6,2, 3,7,3
 		};
-		for(const int iid : indices){
+		for(const unsigned int iid : indices){
 			mesh.indices.push_back(firstIndex + iid);
 		}
 	}

@@ -235,6 +235,7 @@ namespace System {
 		outPath = "";
 
 #ifdef _WIN32
+		(void)startPath;
 		const std::string internalStartPath = "";
 #else
 		const std::string internalStartPath = startPath;
