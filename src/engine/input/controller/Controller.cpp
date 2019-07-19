@@ -109,9 +109,9 @@ bool Controller::parseConfiguration(const std::string & settingsContent, std::ve
 	
 	std::istringstream line(settingsContent);
 	std::vector<std::string> tokens;
-	std::string token;
-	while(std::getline(line, token, ',')) {
-		tokens.push_back(token);
+	std::string token1;
+	while(std::getline(line, token1, ',')) {
+		tokens.push_back(token1);
 	}
 	
 	// Skip the first three tokens, containing the GUID, the name and platform.
