@@ -85,6 +85,5 @@ I would like to add some additional features to Rendu in the near future, mainly
 On a more down-to-earth level, some engineering tasks could also help improve the engine.
 
 - Cleanup the way materials are handled right now.
-- Avoid binary dependencies by integrating GLFW3 as a subproject (see premake-glfw branch).
 - Real-time cube maps could be rendered in multiple calls after culling objects, instead of layered rendering.
 - Abstract interactions with OpenGL and/or move to Vulkan.
