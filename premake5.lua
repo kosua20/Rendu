@@ -22,6 +22,7 @@ workspace("Rendu")
 	filter("configurations:Release")
 		defines({ "NDEBUG" })
 		optimize("On")
+		flags({ "NoIncrementalLink", "LinkTimeOptimization" })
 
 	filter("configurations:Dev")
 		defines({ "DEBUG" })
@@ -94,13 +95,13 @@ function ShaderValidation()
 	})
 end	
 
-function RegisterSourcesAndResources(srcPath, rscPath)
-	files({ srcPath, rscPath })
+function RegisterSourcesAndShaders(srcPath, shdPath)
+	files({ srcPath, shdPath })
 	removefiles({"**.DS_STORE", "**.thumbs"})
 	-- Reorganize file hierarchy in the IDE project.
 	vpaths({
 	   ["*"] = {srcPath},
-	   ["Resources/*"] = {rscPath}
+	   ["Shaders/*"] = {shdPath}
 	})
 end
 
@@ -112,8 +113,8 @@ function AppSetup(appName)
 	ShaderValidation()
 	-- Declare src and resources files.
 	srcPath = "src/apps/"..appName.."/**"
-	rscPath = "resources/"..appName.."/**"
-	RegisterSourcesAndResources(srcPath, rscPath)
+	rscPath = "resources/"..appName.."/shaders/**"
+	RegisterSourcesAndShaders(srcPath, rscPath)
 end	
 
 function ToolSetup(toolName)
@@ -130,18 +131,23 @@ project("Engine")
 	GraphicsSetup("src")
 	includedirs({ "src/engine" })
 	kind("StaticLib")
+	-- Some additional files (README, scenes) are hidden, but you can display them in the project by uncommenting them below.
 	files({ "src/engine/**.hpp", "src/engine/**.cpp",
-			"resources/common/**", "resources/common/**", "resources/common/**",
+			"resources/common/shaders/**",
 			"src/libs/*/*.hpp", "src/libs/*/*.cpp", "src/libs/*/*.h",
-			"premake5.lua"
+			"premake5.lua", 
+			"README.md",
+	--		"resources/**.scene"
 	})
 	removefiles { "src/libs/nfd/*" }
 	removefiles({"**.DS_STORE", "**.thumbs"})
 	-- Virtual path allow us to get rid of the on-disk hierarchy.
 	vpaths({
 	   ["Engine/*"] = {"src/engine/**"},
-	   ["Resources/*"] = {"resources/common/**"},
+	   ["Shaders/*"] = {"resources/common/shaders/**"},
 	   ["Libraries/*"] = {"src/libs/**"},
+	   [""] = { "*.*" },
+	-- ["Scenes/*"] = {"resources/**.scene"},
 	})
 
 
@@ -183,7 +189,7 @@ project("ControllerTest")
 
 project("ImageViewer")
 	ToolSetup()
-	RegisterSourcesAndResources("src/tools/ImageViewer.cpp", "resources/imageviewer/**")
+	RegisterSourcesAndShaders("src/tools/ImageViewer.cpp", "resources/imageviewer/shaders/**")
 
 project("ObjToScene")
 	ToolSetup()
