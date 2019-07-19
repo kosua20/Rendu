@@ -48,7 +48,7 @@ public:
 		
 		// Ensure that the samples count is a power of 2.
 		const size_t samplesOld = samples;
-		samples = std::pow(2, std::round(std::log2(float(samplesOld))));
+		samples = size_t(std::pow(2, std::round(std::log2(float(samplesOld)))));
 		if(samplesOld != samples){
 			Log::Warning() << "Non power-of-2 samples count. Using " << samples << " instead." << std::endl;
 		}
