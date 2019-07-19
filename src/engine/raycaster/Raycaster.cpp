@@ -32,6 +32,7 @@ void Raycaster::addMesh(const Mesh & mesh, const glm::mat4 & model){
 		}
 	}
 	
+	const size_t startTriangle = _triangles.size();
 	const size_t trianglesCount = mesh.indices.size()/3;
 	for(size_t tid = 0; tid < trianglesCount; ++tid){
 		const size_t localId = 3 * tid;
@@ -45,6 +46,12 @@ void Raycaster::addMesh(const Mesh & mesh, const glm::mat4 & model){
 		_triangles.push_back(triInfos);
 	}
 	
+	// Add initial node to the hierarchy.
+	_hierarchy.emplace_back();
+	Node & node = _hierarchy.back();
+	node.left = startTriangle;
+	node.right = trianglesCount;
+	
 	Log::Info() << "[Raycaster]" << " Mesh " << _meshCount << " added, " << trianglesCount << " triangles, " << _vertices.size() - indexOffset << " vertices." << std::endl;
 	
 	++_meshCount;
@@ -55,14 +62,17 @@ void Raycaster::updateHierarchy(){
 	Log::Info() << "[Raycaster] Building hierarchy for " << _triangles.size() << " triangles... " << std::flush;
 	
 	struct SetInfos {
+		size_t id;
 		size_t begin;
 		size_t count;
-		long parent;
-		bool right;
 	};
 	
 	std::stack<SetInfos> remainingSets;
-	remainingSets.push({0, _triangles.size(), -1, false});
+	// One root node per mesh.
+	for(size_t nid = 0; nid < _meshCount; ++nid){
+		const Node & node = _hierarchy[nid];
+		remainingSets.push({nid, node.left, node.right});
+	}
 	
 	while(!remainingSets.empty()){
 		// Get the next node to process on the stack.
@@ -77,18 +87,17 @@ void Raycaster::updateHierarchy(){
 			global.merge(_triangles[begin+tid].box);
 		}
 		
-		// Create the node.
-		_hierarchy.emplace_back();
-		const size_t nodeId = _hierarchy.size()-1;
-		Node currentNode;
-		currentNode.box = global;
+		Node & node = _hierarchy[current.id];
+		node.box = global;
+		
 		// If the triangles count is low enough, we have a leaf.
 		if(count < 3){
-			currentNode.leaf = true;
-			currentNode.left = begin;
-			currentNode.right = count;
+			node.leaf = true;
+			node.left = begin;
+			node.right = count;
+			
 		} else {
-			currentNode.leaf = false;
+			node.leaf = false;
 			size_t splitCount = 0;
 			// Pick the dimension along which the global bounding box is the largest.
 			const glm::vec3 boxSize = global.getSize();
@@ -121,23 +130,23 @@ void Raycaster::updateHierarchy(){
 				});
 			}
 			
-			// Create the two sub-nodes.
-			remainingSets.push({begin, splitCount, long(nodeId), false});
-			remainingSets.push({begin+splitCount, count-splitCount, long(nodeId), true});
+			// Create the left and right sub-nodes.
+			// Can't use the currentNode reference anymore because of emplace_back.
+			// Left:
+			_hierarchy.emplace_back();
+			const size_t leftPos = _hierarchy.size()-1;
+			_hierarchy[current.id].left = leftPos;
+			remainingSets.push({leftPos, begin, splitCount});
+			// Right:
+			_hierarchy.emplace_back();
+			const size_t rightPos = _hierarchy.size()-1;
+			_hierarchy[current.id].right = rightPos;
+			remainingSets.push({rightPos, begin+splitCount, count-splitCount });
+			
 		}
-		_hierarchy[nodeId] = currentNode;
-		
-		// Update the parent node with infos.
-		if(current.parent >= 0){
-			if(current.right){
-				_hierarchy[current.parent].right = nodeId;
-			} else {
-				_hierarchy[current.parent].left = nodeId;
-			}
-		}
-		
 	}
 	Log::Info() << " Done: " << _hierarchy.size() << " nodes created." << std::endl;
+	
 }
 
 void Raycaster::createBVHMeshes(std::vector<Mesh> &meshes) const {
@@ -153,10 +162,13 @@ void Raycaster::createBVHMeshes(std::vector<Mesh> &meshes) const {
 	
 	// Breadth-first tree exploration.
 	std::queue<NodeLocation> nodesToVisit;
-	nodesToVisit.push({0, 0});
+	// Start by visiting each object.
+	for(size_t nid = 0; nid < _meshCount; ++nid){
+		nodesToVisit.push({nid, 0});
+	}
 	size_t maxDepth = 0;
 	while(!nodesToVisit.empty()){
-		const NodeLocation & location = nodesToVisit.front();
+		const NodeLocation location = nodesToVisit.front();
 		sortedNodes.push_back(location);
 		// If this is not a leaf, enqueue the two children nodes.
 		const Node & node = _hierarchy[location.node];
@@ -206,7 +218,10 @@ const Raycaster::RayHit Raycaster::intersects(const glm::vec3 & origin, const gl
 	const Ray ray(origin, direction);
 	
 	std::stack<size_t> nodesToTest;
-	nodesToTest.push(0);
+	// Start by testing each object.
+	for(size_t nid = 0; nid < _meshCount; ++nid){
+		nodesToTest.push(nid);
+	}
 	
 	RayHit bestHit;
 	while(!nodesToTest.empty()){
@@ -242,7 +257,10 @@ bool Raycaster::intersectsAny(const glm::vec3 & origin, const glm::vec3 & direct
 	const Ray ray(origin, direction);
 	
 	std::stack<size_t> nodesToTest;
-	nodesToTest.push(0);
+	// Start by testing each object.
+	for(size_t nid = 0; nid < _meshCount; ++nid){
+		nodesToTest.push(nid);
+	}
 	
 	while(!nodesToTest.empty()){
 		const Node & node = _hierarchy[nodesToTest.top()];
