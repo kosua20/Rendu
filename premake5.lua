@@ -53,9 +53,9 @@ function CPPSetup()
 	cppdialect("C++11")
 	systemversion("latest")
 
-	filter("toolset:not msc")
+	filter("toolset:not msc*")
 		buildoptions({ "-Wall", "-Wextra" })
-	filter("toolset:msc")
+	filter("toolset:msc*")
 		buildoptions({ "-W4"})
 	filter({})
 
