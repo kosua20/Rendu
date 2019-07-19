@@ -7,7 +7,7 @@ Rendu is a rendering engine designed for experimentation. The computer graphics 
 
 Rendu requires OpenGL 4 and builds on macOS (main test machine), Windows (regular testing) and Linux. After cloning the Rendu repository, see the [Building](#building) section to get the engine running! You can also check [the full documentation](http://kosua20.github.io/Rendu/html/index.html).
 
-Resources to run each project are included in this repository, but you can download additional scenes from an [auxiliary repository](https://github.com/kosua20/Rendu-resources) for some of the applications.
+Basic resources to run each project are included in this repository, but you can download many additional scenes from an [auxiliary repository](https://github.com/kosua20/Rendu-resources) for some of the applications.
 
 
 # Projects
