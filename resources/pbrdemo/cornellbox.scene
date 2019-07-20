@@ -21,6 +21,7 @@
 * object:
 	mesh: cornellbox_floor_0
 	shadows: true
+	twosided: true
 	type: PBRNoUVs
 	textures:
 		- srgb: cornellbox_allWalls_texture_color
@@ -30,6 +31,7 @@
 * object:
 	mesh: cornellbox_ceiling_6
 	shadows: true
+	twosided: true
 	type: PBRNoUVs
 	textures:
 		- srgb: cornellbox_allWalls_texture_color
@@ -39,6 +41,7 @@
 * object:
 	mesh: cornellbox_backWall_12
 	shadows: true
+	twosided: true
 	type: PBRNoUVs
 	textures:
 		- srgb: cornellbox_allWalls_texture_color
@@ -48,6 +51,7 @@
 * object:
 	mesh: cornellbox_rightWall_18
 	shadows: true
+	twosided: true
 	type: PBRNoUVs
 	textures:
 		- srgb: cornellbox_rightWall_texture_color
@@ -57,6 +61,7 @@
 * object:
 	mesh: cornellbox_leftWall_24
 	shadows: true
+	twosided: true
 	type: PBRNoUVs
 	textures:
 		- srgb: cornellbox_leftWall_texture_color
@@ -84,6 +89,7 @@
 * object:
 	mesh: cornellbox_light_90
 	shadows: true
+	twosided: true
 	type: PBRNoUVs
 	textures:
 		- srgb: cornellbox_light_texture_color

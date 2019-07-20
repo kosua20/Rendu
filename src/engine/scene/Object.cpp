@@ -45,6 +45,8 @@ void Object::decode(const KeyValues & params, const Storage mode){
 			
 		} else if(param.key == "animations"){
 			_animations = Animation::decode(param.elements);
+		} else if(param.key == "twosided"){
+			_twoSided = Codable::decodeBool(param);
 		}
 	}
 }

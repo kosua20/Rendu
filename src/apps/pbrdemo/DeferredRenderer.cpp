@@ -146,9 +146,16 @@ void DeferredRenderer::renderScene(){
 			break;
 		}
 		
+		// Backface culling state.
+		if(object.twoSided()){
+			glDisable(GL_CULL_FACE);
+		}
+		
 		// Bind the textures.
 		GLUtilities::bindTextures(object.textures());
 		GLUtilities::drawMesh(*object.mesh());
+		// Restore state.
+		glEnable(GL_CULL_FACE);
 		glUseProgram(0);
 	}
 	

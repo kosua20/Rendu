@@ -87,15 +87,20 @@ void SpotLight::drawShadow(const std::vector<Object> & objects) const {
 	_shadowPass->setViewport();
 	glClearColor(1.0f,1.0f,1.0f,0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glEnable(GL_CULL_FACE);
 	
 	glUseProgram(_programDepth->id());
 	for(auto& object : objects){
 		if(!object.castsShadow()){
 			continue;
 		}
+		if(object.twoSided()){
+			glDisable(GL_CULL_FACE);
+		}
 		const glm::mat4 lightMVP = _mvp * object.model();
 		glUniformMatrix4fv(_programDepth->uniform("mvp"), 1, GL_FALSE, &lightMVP[0][0]);
 		GLUtilities::drawMesh(*(object.mesh()));
+		glEnable(GL_CULL_FACE);
 	}
 	glUseProgram(0);
 	

@@ -81,6 +81,7 @@ void PointLight::drawShadow(const std::vector<Object> & objects) const {
 	_shadowFramebuffer->setViewport();
 	glClearColor(1.0f,1.0f,1.0f,1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glEnable(GL_CULL_FACE);
 	
 	glUseProgram(_programDepth->id());
 	// Udpate the light mvp matrices.
@@ -95,8 +96,12 @@ void PointLight::drawShadow(const std::vector<Object> & objects) const {
 		if(!object.castsShadow()){
 			continue;
 		}
+		if(object.twoSided()){
+			glDisable(GL_CULL_FACE);
+		}
 		glUniformMatrix4fv(_programDepth->uniform("model"), 1, GL_FALSE, &(object.model()[0][0]));
 		GLUtilities::drawMesh(*(object.mesh()));
+		glEnable(GL_CULL_FACE);
 	}
 	glUseProgram(0);
 	

@@ -84,6 +84,11 @@ public:
 	 */
 	bool castsShadow() const { return _castShadow; }
 	
+	/** Are the object faces visible from both sides.
+	 \return a boolean denoting if the faces have two sides
+	 */
+	bool twoSided() const { return _twoSided; }
+	
 	/** Setup an object parameters from a list of key-value tuples. The following keywords will be searched for:
 	 \verbatim
 	 type: objecttype
@@ -92,6 +97,7 @@ public:
 	 scaling: scale
 	 orientation: axisX,axisY,axisZ angle
 	 shadows: bool
+	 twosided: bool
 	 textures:
 	 	- texturetype: ...
 	 	- ...
@@ -114,4 +120,5 @@ protected:
 	glm::mat4 _model = glm::mat4(1.0f); ///< The transformation matrix of the 3D model.
 	Type _material = Type::Common; ///< The material type.
 	bool _castShadow = true; ///< Can the object casts shadows.
+	bool _twoSided = false; ///< Should faces of the object be visible from the two sides.
 };
