@@ -43,10 +43,11 @@ void BVHRenderer::setScene(std::shared_ptr<Scene> scene){
 	
 	// Create the path tracer and raycaster.
 	_pathTracer = PathTracer(_scene);
+	_visuHelper = std::unique_ptr<RaycasterVisualisation>(new RaycasterVisualisation(_pathTracer.raycaster()));
 	
 	// Build the BVH mesh.
 	std::vector<Mesh> meshes;
-	_pathTracer.raycaster().createBVHMeshes(meshes);
+	_visuHelper->getAllLevels(meshes);
 	for(const Mesh & mesh : meshes){
 		// Setup the OpenGL mesh, don't keep the CPU mesh.
 		_bvhLevels.push_back(GLUtilities::setupBuffers(mesh));
@@ -80,6 +81,7 @@ void BVHRenderer::draw() {
 	_sceneFramebuffer->bind();
 	_sceneFramebuffer->setViewport();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glDisable(GL_CULL_FACE);
 	
 	const glm::mat4 & view = _userCamera.view();
 	const glm::mat4 & proj = _userCamera.projection();
@@ -95,21 +97,32 @@ void BVHRenderer::draw() {
 		GLUtilities::drawMesh(*object.mesh());
 	}
 	
-	if(_showBVH){
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		glDisable(GL_CULL_FACE);
-		glUseProgram(_bvhProgram->id());
-		glUniformMatrix4fv(_bvhProgram->uniform("mvp"), 1, GL_FALSE, &VP[0][0]);
+	// Debug wireframe visualisation.
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glUseProgram(_bvhProgram->id());
+	glUniformMatrix4fv(_bvhProgram->uniform("mvp"), 1, GL_FALSE, &VP[0][0]);
+	// If there is a ray mesh, show it.
+	if(_rayVis.count > 0){
+		GLUtilities::drawMesh(_rayVis);
+		if(_showBVH){
+			for(int lid = _bvhRange.x; lid <= _bvhRange.y; ++lid){
+				if(lid >= int(_rayLevels.size())){
+					break;
+				}
+				GLUtilities::drawMesh(_rayLevels[lid]);
+			}
+		}
+	} else if(_showBVH){
 		for(int lid = _bvhRange.x; lid <= _bvhRange.y; ++lid){
 			GLUtilities::drawMesh(_bvhLevels[lid]);
 		}
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		glEnable(GL_CULL_FACE);
 	}
 	
 	glUseProgram(0);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	_sceneFramebuffer->unbind();
 	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
 	
 	// We now render a full screen quad in the default framebuffer, using sRGB space.
 	glEnable(GL_FRAMEBUFFER_SRGB);
@@ -120,6 +133,7 @@ void BVHRenderer::draw() {
 	glDisable(GL_FRAMEBUFFER_SRGB);
 	checkGLError();
 }
+
 
 void BVHRenderer::update(){
 	Renderer::update();
@@ -173,6 +187,7 @@ void BVHRenderer::update(){
 		
 		ImGui::Checkbox("Show rendered image", &_showRender);
 		if(!_showRender){
+			// Mesh and BVH display.
 			ImGui::Separator();
 			ImGui::Checkbox("Show BVH", &_showBVH);
 			ImGui::SameLine();
@@ -192,6 +207,18 @@ void BVHRenderer::update(){
 					_bvhRange[1] = _bvhRange[0];
 				}
 			}
+		}
+		
+		if(Input::manager().released(Input::MouseLeft) && Input::manager().pressed(Input::KeySpace)){
+			castRay(Input::manager().mouse());
+		}
+		
+		if(ImGui::Button("Clear ray")){
+			_rayVis.clean();
+			for(auto & level : _rayLevels){
+				level.clean();
+			}
+			_rayLevels.clear();
 		}
 		
 		// Camera settings.
@@ -246,6 +273,10 @@ void BVHRenderer::clean() {
 	for(MeshInfos & level : _bvhLevels){
 		level.clean();
 	}
+	for(MeshInfos & level : _rayLevels){
+		level.clean();
+	}
+	_rayVis.clean();
 	glDeleteTextures(1, &_renderTex.id);
 }
 
@@ -256,4 +287,27 @@ void BVHRenderer::resize(unsigned int width, unsigned int height){
 	// Udpate the image resolution, using the new aspect ratio.
 	_renderTex.width = (unsigned int)std::round(_renderResolution[0]/_renderResolution[1] * _renderTex.height);
 	checkGLError();
+}
+
+void BVHRenderer::castRay(const glm::vec2 & position){
+	// Compute incremental pixel shifts.
+	glm::vec3 corner, dx, dy;
+	_userCamera.pixelShifts(corner, dx, dy);
+	const glm::vec3 worldPos = corner + position.x * dx + position.y * dy;
+	const glm::vec3 rayPos = _userCamera.position();
+	const glm::vec3 rayDir = glm::normalize(worldPos - rayPos);
+	std::vector<Mesh> meshes;
+	Mesh rayMesh;
+	// Intersect.
+	const Raycaster::RayHit hit = _visuHelper->getRayLevels(rayPos, rayDir, meshes);
+	// Level meshes.
+	_rayLevels.clear();
+	for(const Mesh & mesh : meshes){
+		// Setup the OpenGL mesh, don't keep the CPU mesh.
+		_rayLevels.push_back(GLUtilities::setupBuffers(mesh));
+	}
+	// Ray and intersection mesh.
+	const float defaultLength = 3.0f * glm::length(_scene->boundingBox().getSize());
+	_visuHelper->getRayMesh(rayPos, rayDir, hit, rayMesh, defaultLength);
+	_rayVis = GLUtilities::setupBuffers(rayMesh);
 }
