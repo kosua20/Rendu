@@ -205,15 +205,16 @@ namespace SceneExport {
 			return 1;
 		}
 		// Scene environment infos.
-		sceneFile << "scene:" << std::endl;
-		sceneFile << "\tbgcolor: 0.0,0.0,0.0" << std::endl;
+		sceneFile << "* scene:" << std::endl;
 		sceneFile << "\tprobe: rgbcube: default_cube" << std::endl;
 		sceneFile << "\tirradiance: default_shcoeffs" << std::endl ;
+		sceneFile << "* background:" << std::endl;
+		sceneFile << "\tcolor: 0.0,0.0,0.0" << std::endl;
 		sceneFile << std::endl;
 		
 		// Objects.
 		for(const auto & object : objects){
-			sceneFile << "object:" << std::endl;
+			sceneFile << "* object:" << std::endl;
 			sceneFile << "\tmesh: " << object.name << std::endl;
 			sceneFile << "\tshadows: true" << std::endl;
 			
@@ -229,9 +230,9 @@ namespace SceneExport {
 				}
 				sceneFile << "\ttype: " << typeName << std::endl;
 				sceneFile << "\ttextures:" << std::endl;
-				sceneFile << "\t\tsrgb: " << materialDetails.colorName << std::endl;
-				sceneFile << "\t\trgb: " << materialDetails.normalName << std::endl;
-				sceneFile << "\t\trgb: " << materialDetails.roughMetAoName << std::endl;
+				sceneFile << "\t\t- srgb: " << materialDetails.colorName << std::endl;
+				sceneFile << "\t\t- rgb: " << materialDetails.normalName << std::endl;
+				sceneFile << "\t\t- rgb: " << materialDetails.roughMetAoName << std::endl;
 				
 			}
 			sceneFile << std::endl;
