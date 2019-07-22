@@ -242,7 +242,7 @@ void Game::resize(unsigned int width, unsigned int height){
 	}
 }
 
-void Game::clean() const {
+void Game::clean() {
 	_inGameRenderer.clean();
 	_menuRenderer.clean();
 	_bgBlur->clean();

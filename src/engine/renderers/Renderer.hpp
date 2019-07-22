@@ -28,7 +28,7 @@ public:
 	virtual void physics(double fullTime, double frameTime) = 0;
 	
 	/** Clean internal resources. */
-	virtual void clean() const;
+	virtual void clean();
 	
 	/** Handle a window resize event.
 	 \param width the new width

@@ -149,7 +149,7 @@ void GameMenuRenderer::resize(unsigned int width, unsigned int height){
 	Renderer::updateResolution(width, height);
 }
 
-void GameMenuRenderer::clean() const {
+void GameMenuRenderer::clean() {
 	Renderer::clean();
 }
 

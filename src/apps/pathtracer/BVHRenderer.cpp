@@ -237,12 +237,16 @@ void BVHRenderer::physics(double , double frameTime){
 	}
 }
 
-void BVHRenderer::clean() const {
+void BVHRenderer::clean() {
 	Renderer::clean();
 	_sceneFramebuffer->clean();
 	if(_scene){
 		_scene->clean();
 	}
+	for(MeshInfos & level : _bvhLevels){
+		level.clean();
+	}
+	glDeleteTextures(1, &_renderTex.id);
 }
 
 void BVHRenderer::resize(unsigned int width, unsigned int height){

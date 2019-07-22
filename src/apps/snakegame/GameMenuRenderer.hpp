@@ -40,7 +40,7 @@ public:
 	void resize(unsigned int width, unsigned int height);
 	
 	/** Clean internal resources. */
-	void clean() const;
+	void clean();
 	
 	/** Return the absolute unit size of the button mesh.
 	 \return the dimensions of the button mesh

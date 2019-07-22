@@ -33,7 +33,7 @@ public:
 	void resize(unsigned int width, unsigned int height);
 	
 	/** Clean up rendering resources.*/
-	void clean() const;
+	void clean();
 	
 	/** Empty draw */
 	void draw(){};

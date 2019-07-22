@@ -42,7 +42,7 @@ public:
 	void resize(unsigned int width, unsigned int height);
 	
 	/// Cleanup resources.
-	void clean() const;
+	void clean();
 	
 	
 private:

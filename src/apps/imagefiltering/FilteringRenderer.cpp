@@ -199,7 +199,7 @@ void FilteringRenderer::physics(double, double frameTime){
 }
 
 
-void FilteringRenderer::clean() const {
+void FilteringRenderer::clean() {
 	Renderer::clean();
 	// Clean objects.
 	_sceneBuffer->clean();

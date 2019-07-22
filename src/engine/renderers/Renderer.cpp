@@ -25,7 +25,7 @@ void Renderer::update(){
 }
 
 
-void Renderer::clean() const {
+void Renderer::clean() {
 	
 }
 

@@ -407,7 +407,7 @@ void DeferredRenderer::physics(double fullTime, double frameTime){
 }
 
 
-void DeferredRenderer::clean() const {
+void DeferredRenderer::clean() {
 	Renderer::clean();
 	// Clean objects.
 	_gbuffer->clean();
