@@ -1,17 +1,16 @@
 #include "Raycaster.hpp"
 #include "helpers/Random.hpp"
-#include "helpers/System.hpp"
 #include <queue>
 #include <stack>
 
 Raycaster::Ray::Ray(const glm::vec3 & origin, const glm::vec3 & direction) : pos(origin), dir(glm::normalize(direction)), invdir(1.0f/glm::normalize(direction)){
 }
 
-Raycaster::RayHit::RayHit() : hit(false), dist(std::numeric_limits<float>::max()), u(0.0f), v(0.0f), localId(0), meshId(0) {
+Raycaster::RayHit::RayHit() : hit(false), dist(std::numeric_limits<float>::max()), u(0.0f), v(0.0f), localId(0), meshId(0), internalId(0) {
 }
 
 Raycaster::RayHit::RayHit(float distance, float uu, float vv, unsigned long lid, unsigned long mid) :
-	hit(true), dist(distance), u(uu), v(vv), w(1.0f - uu - vv), localId(lid), meshId(mid) {
+	hit(true), dist(distance), u(uu), v(vv), w(1.0f - uu - vv), localId(lid), meshId(mid), internalId(0) {
 }
 
 Raycaster::Raycaster(){
@@ -149,72 +148,7 @@ void Raycaster::updateHierarchy(){
 	
 }
 
-void Raycaster::createBVHMeshes(std::vector<Mesh> &meshes) const {
-	meshes.clear();
-	// We want a mesh where the nodes are in increasing order of depth.
-	struct NodeLocation {
-		size_t node;
-		size_t depth;
-	};
-	
-	std::vector<NodeLocation> sortedNodes;
-	sortedNodes.reserve(_hierarchy.size());
-	
-	// Breadth-first tree exploration.
-	std::queue<NodeLocation> nodesToVisit;
-	// Start by visiting each object.
-	for(size_t nid = 0; nid < _meshCount; ++nid){
-		nodesToVisit.push({nid, 0});
-	}
-	size_t maxDepth = 0;
-	while(!nodesToVisit.empty()){
-		const NodeLocation location = nodesToVisit.front();
-		sortedNodes.push_back(location);
-		// If this is not a leaf, enqueue the two children nodes.
-		const Node & node = _hierarchy[location.node];
-		if(!node.leaf){
-			nodesToVisit.push({ node.left , location.depth+1 });
-			nodesToVisit.push({ node.right, location.depth+1 });
-		}
-		// Find the max depth.
-		maxDepth = std::max(maxDepth, location.depth);
-		// Remove the current node from the visit queue.
-		nodesToVisit.pop();
-	}
-	
-	meshes.resize(maxDepth+1);
-	
-	// For each node, generate a wireframe bounding box.
-	for(const auto & location : sortedNodes){
-		const Node & node = _hierarchy[location.node];
-		
-		// Compute relative depth for colorisation.
-		float depth = float(location.depth) / float(maxDepth);
-		// We have fewer boxes at low depth, skew the hue scale.
-		depth *= depth;
-		// Decrease value as we go deeper.
-		const float val = 0.5f*(1.0f - depth) + 0.25f;
-		const glm::vec3 color = glm::rgbColor(glm::vec3(300.0f*depth, 1.0f, val));
-		
-		// Setup vertices.
-		Mesh & mesh = meshes[location.depth];
-		const unsigned int firstIndex = (unsigned int)mesh.positions.size();
-		const auto corners = node.box.getCorners();
-		for(const auto & corner : corners){
-			mesh.positions.push_back(corner);
-			mesh.colors.push_back(color);
-		}
-		// Setup degenerate triangles for each line.
-		const std::vector<unsigned int> indices = {
-			0,1,0, 0,2,0, 1,3,1, 2,3,2, 4,5,4, 4,6,4, 5,7,5, 6,7,6, 1,5,1, 0,4,0, 2,6,2, 3,7,3
-		};
-		for(const unsigned int iid : indices){
-			mesh.indices.push_back(firstIndex + iid);
-		}
-	}
-}
-
-const Raycaster::RayHit Raycaster::intersects(const glm::vec3 & origin, const glm::vec3 & direction, float mini, float maxi) const {
+Raycaster::RayHit Raycaster::intersects(const glm::vec3 & origin, const glm::vec3 & direction, float mini, float maxi) const {
 	const Ray ray(origin, direction);
 	
 	std::stack<size_t> nodesToTest;

@@ -4,32 +4,19 @@
 
 /**
  \brief Allows to cast rays against a polygonal mesh, on the CPU. Relies on an internal acceleration structure to speed up intersection queries.
- \ingroup Engine
+ \ingroup Raycaster
  */
 class Raycaster {
+	
+	friend class RaycasterVisualisation; ///< For debug visualisation.
+	
 public:
-	
-	/** Default constructor. */
-	Raycaster();
-
-	/** Adds a mesh to the internal geometry.
-	 \param mesh the mesh to add
-	 \param model the transformation matrix to apply to the vertices
-	 */
-	void addMesh(const Mesh & mesh, const glm::mat4 & model);
-	
-	/** Update the internal bounding volume hierarchy.
-	 \note This operation can be costful in time.
-	 */
-	void updateHierarchy();
-	
-	/** Generate geometry to visualize each level of the bounding volume hierarchy as a series of bounding boxes.
-	 \param meshes will be filled with the geometry of each depth level
-	 */
-	void createBVHMeshes(std::vector<Mesh> & meshes) const;
 	
 	/** Represent a hit event between a ray and the geometry. */
 	struct RayHit {
+		
+		friend class RaycasterVisualisation; ///< For debug visualisation.
+		
 		bool hit; ///< Denote if there has been a hit.
 		float dist; ///< Distance from the ray origin to the hit location.
 		float u; ///< First barycentric coordinate.
@@ -45,12 +32,28 @@ public:
 		 \param distance the distance from the ray origin to the hit location
 		 \param uu first barycentric coordinate
 		 \param vv second barycentric coordinate
-		 \param lid position of the hit triangle first vertex in the mesh index buffer.
-		 \param mid index of the mesh hit by the ray.
+		 \param lid position of the hit triangle first vertex in the mesh index buffer
+		 \param mid index of the mesh hit by the ray
 		 */
 		RayHit(float distance, float uu, float vv, unsigned long lid, unsigned long mid);
 		
+	private:
+		unsigned long internalId; ///< Index of the triangle in the raycaster internal primitive list.
 	};
+	
+	/** Default constructor. */
+	Raycaster();
+
+	/** Adds a mesh to the internal geometry.
+	 \param mesh the mesh to add
+	 \param model the transformation matrix to apply to the vertices
+	 */
+	void addMesh(const Mesh & mesh, const glm::mat4 & model);
+	
+	/** Update the internal bounding volume hierarchy.
+	 \note This operation can be costful in time.
+	 */
+	void updateHierarchy();
 	
 	/** Find the closest intersection of a ray with the geometry.
 	 \param origin ray origin
@@ -59,7 +62,7 @@ public:
 	 \param maxi the maximum distance allowed for the intersection
 	 \return a hit object containg the potential hit informations
 	 */
-	const RayHit intersects(const glm::vec3 & origin, const glm::vec3 & direction, float mini = 0.0001f, float maxi = 1e8f) const;
+	RayHit intersects(const glm::vec3 & origin, const glm::vec3 & direction, float mini = 0.0001f, float maxi = 1e8f) const;
 	
 	/** Intersect a ray with the geometry.
 	 \param origin ray origin

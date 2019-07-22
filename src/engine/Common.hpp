@@ -47,6 +47,9 @@
  \defgroup Scene Scene
  \brief Contain objects, lights and environment representations used in 3D scene rendering.
  
+ \defgroup Raycaster Raycaster
+ \brief Compute intersection between rays and geometry.
+ 
  \defgroup Processing Processing
  \brief General image processing utilities.
  
