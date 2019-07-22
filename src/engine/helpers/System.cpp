@@ -304,39 +304,6 @@ namespace System {
 
 #endif
 	
-	glm::vec3 hslToRgb(const glm::vec3 & hsl){
-		const float chroma = (1.0f - std::abs(2.0f * hsl[2] - 1.0f)) * hsl[1];
-		const float hue = hsl.x / 60.0f;
-		const int id = int(std::floor(hue)) % 6;
-		const float x = chroma * (1.0f - std::abs(std::fmod(hue,2.0f) - 1.0f));
-		
-		glm::vec3 base(0.0f);
-		switch(id){
-			case 0:
-				base = {chroma, x, 0.0f};
-				break;
-			case 1:
-				base = {x, chroma, 0.0f};
-				break;
-			case 2:
-				base = {0.0f, chroma, x};
-				break;
-			case 3:
-				base = {0.0f, x, chroma};
-				break;
-			case 4:
-				base = {x, 0.0f, chroma};
-				break;
-			case 5:
-				base = {chroma, 0.0f, x};
-				break;
-			default:
-				break;
-		}
-		const float m = hsl[2] - chroma * 0.5f;
-		return m + base;
-	}
-	
 	void ping(){
 		Log::Info() << '\a' << std::endl;
 	}

@@ -79,12 +79,6 @@ namespace System {
 	 */
 	bool createDirectory(const std::string & directory);
 	
-	/** Convert a HSL color into a RGB one.
-	 \param hsl the HSL color, with range (360, 1, 1)
-	 \return the RGB color
-	 */
-	glm::vec3 hslToRgb(const glm::vec3 & hsl);
-	
 	/** Notify the user by sending a 'Bell' signal. */
 	void ping();
 	

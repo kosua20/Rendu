@@ -4,7 +4,7 @@
 #include <queue>
 #include <stack>
 
-Raycaster::Ray::Ray(const glm::vec3 & origin, const glm::vec3 & direction) : pos(origin), dir(glm::normalize(direction)){
+Raycaster::Ray::Ray(const glm::vec3 & origin, const glm::vec3 & direction) : pos(origin), dir(glm::normalize(direction)), invdir(1.0f/glm::normalize(direction)){
 }
 
 Raycaster::RayHit::RayHit() : hit(false), dist(std::numeric_limits<float>::max()), u(0.0f), v(0.0f), localId(0), meshId(0) {
@@ -145,7 +145,7 @@ void Raycaster::updateHierarchy(){
 			
 		}
 	}
-	Log::Info() << " Done: " << _hierarchy.size() << " nodes created." << std::endl;
+	Log::Info() << "Done: " << _hierarchy.size() << " nodes created." << std::endl;
 	
 }
 
@@ -192,9 +192,9 @@ void Raycaster::createBVHMeshes(std::vector<Mesh> &meshes) const {
 		float depth = float(location.depth) / float(maxDepth);
 		// We have fewer boxes at low depth, skew the hue scale.
 		depth *= depth;
-		// Decrease luminosity as we go deeper.
-		const float lum = 0.5f*(1.0f - depth);
-		const glm::vec3 color = System::hslToRgb(glm::vec3(300.0f*depth, 0.9f, lum));
+		// Decrease value as we go deeper.
+		const float val = 0.5f*(1.0f - depth) + 0.25f;
+		const glm::vec3 color = glm::rgbColor(glm::vec3(300.0f*depth, 1.0f, val));
 		
 		// Setup vertices.
 		Mesh & mesh = meshes[location.depth];
@@ -220,6 +220,10 @@ const Raycaster::RayHit Raycaster::intersects(const glm::vec3 & origin, const gl
 	std::stack<size_t> nodesToTest;
 	// Start by testing each object.
 	for(size_t nid = 0; nid < _meshCount; ++nid){
+		// If the ray doesn't intersect the bounding box, move to the next node.
+		if(!Raycaster::intersects(ray, _hierarchy[nid].box, mini, maxi)){
+			continue;
+		}
 		nodesToTest.push(nid);
 	}
 	
@@ -228,10 +232,6 @@ const Raycaster::RayHit Raycaster::intersects(const glm::vec3 & origin, const gl
 		const Node & node = _hierarchy[nodesToTest.top()];
 		nodesToTest.pop();
 		
-		// If the ray doesn't intersect the bounding box, move to the next node.
-		if(!Raycaster::intersects(ray, node.box, mini, maxi)){
-			continue;
-		}
 		// If the node is a leaf, test all included triangles.
 		if(node.leaf){
 			for(size_t tid = 0; tid < node.right; ++tid){
@@ -247,8 +247,14 @@ const Raycaster::RayHit Raycaster::intersects(const glm::vec3 & origin, const gl
 			continue;
 		}
 		// Else, intersect both child nodes.
-		nodesToTest.push(node.left);
-		nodesToTest.push(node.right);
+		if(Raycaster::intersects(ray, _hierarchy[node.left].box, mini, maxi)){
+			nodesToTest.push(node.left);
+		}
+		if(Raycaster::intersects(ray, _hierarchy[node.right].box, mini, maxi)){
+			nodesToTest.push(node.right);
+		}
+		
+		
 	}
 	return bestHit;
 }
@@ -259,16 +265,17 @@ bool Raycaster::intersectsAny(const glm::vec3 & origin, const glm::vec3 & direct
 	std::stack<size_t> nodesToTest;
 	// Start by testing each object.
 	for(size_t nid = 0; nid < _meshCount; ++nid){
+		// If the ray doesn't intersect the bounding box, move to the next node.
+		if(!Raycaster::intersects(ray, _hierarchy[nid].box, mini, maxi)){
+			continue;
+		}
 		nodesToTest.push(nid);
 	}
 	
 	while(!nodesToTest.empty()){
 		const Node & node = _hierarchy[nodesToTest.top()];
 		nodesToTest.pop();
-		// If the ray doesn't intersect the bounding box, move to the next node.
-		if(!Raycaster::intersects(ray, node.box, mini, maxi)){
-			continue;
-		}
+		
 		// If the node is a leaf, test all included triangles.
 		if(node.leaf){
 			RayHit finalHit;
@@ -282,8 +289,12 @@ bool Raycaster::intersectsAny(const glm::vec3 & origin, const glm::vec3 & direct
 			continue;
 		}
 		// Check if any of the children is hit.
-		nodesToTest.push(node.left);
-		nodesToTest.push(node.right);
+		if(Raycaster::intersects(ray, _hierarchy[node.left].box, mini, maxi)){
+			nodesToTest.push(node.left);
+		}
+		if(Raycaster::intersects(ray, _hierarchy[node.right].box, mini, maxi)){
+			nodesToTest.push(node.right);
+		}
 	}
 	return false;
 }
@@ -327,8 +338,8 @@ const Raycaster::RayHit Raycaster::intersects(const Raycaster::Ray & ray, const 
 }
 
 bool Raycaster::intersects(const Raycaster::Ray & ray, const BoundingBox & box, float mini, float maxi){
-	const glm::vec3 minRatio = (box.minis - ray.pos) / ray.dir;
-	const glm::vec3 maxRatio = (box.maxis - ray.pos) / ray.dir;
+	const glm::vec3 minRatio = (box.minis - ray.pos) * ray.invdir;
+	const glm::vec3 maxRatio = (box.maxis - ray.pos) * ray.invdir;
 	const glm::vec3 minFinal = glm::min(minRatio, maxRatio);
 	const glm::vec3 maxFinal = glm::max(minRatio, maxRatio);
 	

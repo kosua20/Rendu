@@ -4,7 +4,6 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
-#include <glm/glm.hpp>
 
 // Fix for Windows headers.
 #ifdef ERROR
@@ -89,46 +88,6 @@ public:
 	 \return itself for chaining
 	 */
 	Log& operator<<(std::ios_base& (*modif)(std::ios_base&));
-	
-	/** \name GLM types support
-	 @{ */
-	
-	/** glm::mat4 stream operator
-	 \param input the object to log
-	 \return itself for chaining
-	 */
-	Log & operator<<(const glm::mat4& input);
-	
-	/** glm::mat3 stream operator
-	 \param input the object to log
-	 \return itself for chaining
-	 */
-	Log & operator<<(const glm::mat3& input);
-	
-	/** glm::mat2 stream operator
-	 \param input the object to log
-	 \return itself for chaining
-	 */
-	Log & operator<<(const glm::mat2& input);
-	
-	/** glm::vec4 stream operator
-	 \param input the object to log
-	 \return itself for chaining
-	 */
-	Log & operator<<(const glm::vec4& input);
-	
-	/** glm::vec3 stream operator
-	 \param input the object to log
-	 \return itself for chaining
-	 */
-	Log & operator<<(const glm::vec3& input);
-	
-	/** glm::vec2 stream operator
-	 \param input the object to log
-	 \return itself for chaining
-	 */
-	Log & operator<<(const glm::vec2& input);
-	/** @} */
 	
 public:
 	

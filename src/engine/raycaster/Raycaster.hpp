@@ -115,7 +115,7 @@ private:
 	struct Ray {
 		const glm::vec3 pos; ///< Ray position.
 		const glm::vec3 dir; ///< Ray direction (normalized).
-		
+		const glm::vec3 invdir; ///< Ray reciprocal direction (normalized).
 		/** Constructor.
 		 \param origin the position the ray was shot from
 		 \param direction the direction of the ray (will be normalized)

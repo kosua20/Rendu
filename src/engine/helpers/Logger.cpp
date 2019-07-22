@@ -2,7 +2,7 @@
 #include <ctime>
 #include <iomanip>
 #include <iostream>
-
+#include <glm/gtx/io.hpp>
 
 #ifdef _WIN32
 #include <io.h>
@@ -33,6 +33,8 @@ Log::Log(){
 	_ignoreUntilFlush = false;
 	_appendPrefix = false;
 	_useColors = false;
+	// Setup glm objects delimiters.
+	_stream <<  glm::io::delimeter<char>('(', ')', ',');
 	
 	// Check if the output is indeed a terminal, and not piped.
 #ifdef _WIN32
@@ -66,6 +68,8 @@ Log::Log(const std::string & filePath, const bool logToStdin, const bool verbose
 	_ignoreUntilFlush = false;
 	_appendPrefix = false;
 	_useColors = false;
+	// Setup glm objects delimiters.
+	_stream <<  glm::io::delimeter<char>('(', ')', ',');
 	// Create file if it doesnt exist.
 	setFile(filePath, false);
 }
@@ -188,48 +192,5 @@ Log& Log::operator<<(std::ostream& (*modif)(std::ostream&)){
 
 Log& Log::operator<<(std::ios_base& (*modif)(std::ios_base&)){
 	modif(_stream);
-	return *this;
-}
-
-// GLM types support.
-Log & Log::operator<<(const glm::mat4& input){
-	appendIfNeeded();
-	_stream << "mat4( " << input[0][0] << ", " << input[0][1] << ", " << input[0][2] << ", " << input[0][3] << " | ";
-	_stream << input[1][0] << ", " << input[1][1] << ", " << input[1][2] << ", " << input[1][3] << " | ";
-	_stream <<  input[2][0] << ", " << input[2][1] << ", " << input[2][2] << ", " << input[2][3] << " | ";
-	_stream << input[3][0] << ", " << input[3][1] << ", " << input[3][2] << ", " << input[3][3] << " )";
-	return *this;
-}
-
-Log & Log::operator<<(const glm::mat3& input){
-	appendIfNeeded();
-	_stream << "mat3( " << input[0][0] << ", " << input[0][1] << ", " << input[0][2] << " | ";
-	_stream << input[1][0] << ", " << input[1][1] << ", " << input[1][2] << " | ";
-	_stream << input[2][0] << ", " << input[2][1] << ", " << input[2][2] << " )";
-	return *this;
-}
-
-Log & Log::operator<<(const glm::mat2& input){
-	appendIfNeeded();
-	_stream << "mat2( " << input[0][0] << ", " << input[0][1] << " | ";
-	_stream << input[1][0] << ", " << input[1][1] << " )";
-	return *this;
-}
-
-Log & Log::operator<<(const glm::vec4& input){
-	appendIfNeeded();
-	_stream << "vec4( " << input[0] << ", " << input[1] << ", " << input[2] << ", " << input[3] << " )";
-	return *this;
-}
-
-Log & Log::operator<<(const glm::vec3& input){
-	appendIfNeeded();
-	_stream << "vec3( " << input[0] << ", " << input[1] << ", " << input[2] << " )";
-	return *this;
-}
-
-Log & Log::operator<<(const glm::vec2& input){
-	appendIfNeeded();
-	_stream << "vec2( " << input[0] << ", " << input[1] << " )";
 	return *this;
 }

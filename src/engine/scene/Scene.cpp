@@ -150,7 +150,9 @@ BoundingBox Scene::computeBoundingBox(bool onlyShadowCasters){
 		}
 		bbox.merge(objects[oid].boundingBox());
 	}
-	Log::Info() << Log::Resources << "Scene bounding box: [" << bbox.minis << ", " << bbox.maxis << "]." << std::endl;
+	Log::Info() << Log::Resources << "Scene bounding box:" << std::endl
+	<< "mini: " << bbox.minis  << std::endl
+	<< "maxi: "	<< bbox.maxis << "." << std::endl;
 	return bbox;
 }
 
