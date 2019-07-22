@@ -98,6 +98,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
+<a href="#pri-attribs">Private Attributes</a> &#124;
+<a href="#friends">Friends</a> &#124;
 <a href="struct_raycaster_1_1_ray_hit-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">Raycaster::RayHit Struct Reference</div>  </div>
@@ -143,6 +145,20 @@ unsigned long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
 unsigned long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_raycaster_1_1_ray_hit.html#a3557da92b8a71e988303162fbcbdc955">meshId</a></td></tr>
 <tr class="memdesc:a3557da92b8a71e988303162fbcbdc955"><td class="mdescLeft">&#160;</td><td class="mdescRight">Index of the mesh hit by the ray. <br /></td></tr>
 <tr class="separator:a3557da92b8a71e988303162fbcbdc955"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
+Private Attributes</h2></td></tr>
+<tr class="memitem:a9a0be276f085424b56db8e15d481adac"><td class="memItemLeft" align="right" valign="top"><a id="a9a0be276f085424b56db8e15d481adac"></a>
+unsigned long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_raycaster_1_1_ray_hit.html#a9a0be276f085424b56db8e15d481adac">internalId</a></td></tr>
+<tr class="memdesc:a9a0be276f085424b56db8e15d481adac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Index of the triangle in the raycaster internal primitive list. <br /></td></tr>
+<tr class="separator:a9a0be276f085424b56db8e15d481adac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
+Friends</h2></td></tr>
+<tr class="memitem:a569a8a126dc4ace0f90737c2b21fb90a"><td class="memItemLeft" align="right" valign="top"><a id="a569a8a126dc4ace0f90737c2b21fb90a"></a>
+class&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_raycaster_1_1_ray_hit.html#a569a8a126dc4ace0f90737c2b21fb90a">RaycasterVisualisation</a></td></tr>
+<tr class="memdesc:a569a8a126dc4ace0f90737c2b21fb90a"><td class="mdescLeft">&#160;</td><td class="mdescRight">For debug visualisation. <br /></td></tr>
+<tr class="separator:a569a8a126dc4ace0f90737c2b21fb90a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Represent a hit event between a ray and the geometry. </p>
@@ -213,8 +229,8 @@ unsigned long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
     <tr><td class="paramname">distance</td><td>the distance from the ray origin to the hit location </td></tr>
     <tr><td class="paramname">uu</td><td>first barycentric coordinate </td></tr>
     <tr><td class="paramname">vv</td><td>second barycentric coordinate </td></tr>
-    <tr><td class="paramname">lid</td><td>position of the hit triangle first vertex in the mesh index buffer. </td></tr>
-    <tr><td class="paramname">mid</td><td>index of the mesh hit by the ray. </td></tr>
+    <tr><td class="paramname">lid</td><td>position of the hit triangle first vertex in the mesh index buffer </td></tr>
+    <tr><td class="paramname">mid</td><td>index of the mesh hit by the ray </td></tr>
   </table>
   </dd>
 </dl>

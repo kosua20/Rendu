@@ -11,7 +11,7 @@ var searchData=
   ['verbose',['Verbose',['../class_log.html#a99c41370ebf0556933a13ffeb30fd6a0',1,'Log::Verbose()'],['../class_log.html#a3718f3e276c3d3e23b58a3b8236d196ea0763041e407c0324563ab6aff02b11ee',1,'Log::VERBOSE()']]],
   ['version',['version',['../class_rendering_config.html#a3ca1efa11d34059ce3941e698671f81b',1,'RenderingConfig']]],
   ['vid',['vId',['../struct_mesh_infos.html#abaa35d560f17c8e477e5db2891b5daf1',1,'MeshInfos']]],
-  ['view',['view',['../class_camera.html#a1a5b450e4659fd0521065a2a1471529f',1,'Camera::view()'],['../class_filtering_renderer.html#a8c88c688f5591183c5b8ef7ce14cefa1',1,'FilteringRenderer::View()']]],
+  ['view',['View',['../class_filtering_renderer.html#a8c88c688f5591183c5b8ef7ce14cefa1',1,'FilteringRenderer::View()'],['../class_camera.html#a1a5b450e4659fd0521065a2a1471529f',1,'Camera::view()']]],
   ['viewpoint',['viewpoint',['../class_scene.html#a9c60456dc97d157dce990b14fd31ed8e',1,'Scene']]],
   ['viewpos',['viewPos',['../class_g_l_s_l_1_1_frag_1_1_atmosphere.html#a1324896464c47f29ad0900fd64ba4001',1,'GLSL::Frag::Atmosphere::viewPos()'],['../class_g_l_s_l_1_1_frag_1_1_atmosphere__gbuffer.html#a4361d9cfe4c7bdc52c59ecbd6ab4fbe4',1,'GLSL::Frag::Atmosphere_gbuffer::viewPos()']]],
   ['viewtolight',['viewToLight',['../class_g_l_s_l_1_1_frag_1_1_directional__light.html#ad947a97028cb73ebe56e3da7bb3f0a00',1,'GLSL::Frag::Directional_light::viewToLight()'],['../class_g_l_s_l_1_1_frag_1_1_point__light.html#a57adc5b9a002237700b7920fc6bdb94f',1,'GLSL::Frag::Point_light::viewToLight()'],['../class_g_l_s_l_1_1_frag_1_1_spot__light.html#aaedee9382cc388c0cc6741e602d234b0',1,'GLSL::Frag::Spot_light::viewToLight()']]],

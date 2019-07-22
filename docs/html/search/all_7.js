@@ -1,7 +1,7 @@
 var searchData=
 [
   ['frag',['Frag',['../namespace_g_l_s_l_1_1_frag.html',1,'GLSL']]],
-  ['g',['g',['../class_g_l_s_l_1_1_frag_1_1_filter.html#af2ebb7f9e2fa9bf38c303fdfdee41d3e',1,'GLSL::Frag::Filter::g()'],['../class_g_l_s_l_1_1_frag_1_1_upscale.html#ae85f3c8711d1a7c8caa6067d0bda8b66',1,'GLSL::Frag::Upscale::g()'],['../class_g_l_s_l_1_1_frag_1_1_directional__light.html#aaba478935d693c2b9935313f4da8f210',1,'GLSL::Frag::Directional_light::G()'],['../class_g_l_s_l_1_1_frag_1_1_point__light.html#ac812f2d9c9a8835e07b5ab21bd5a7ca7',1,'GLSL::Frag::Point_light::G()'],['../class_g_l_s_l_1_1_frag_1_1_spot__light.html#a38b2b16cfa69fbd82bb8c17720ea9a2f',1,'GLSL::Frag::Spot_light::G()'],['../class_g_l_s_l_1_1_frag_1_1_brdf__sampler.html#a12c1f31c3f1d692ff3ce64471db4f6bc',1,'GLSL::Frag::Brdf_sampler::G()']]],
+  ['g',['G',['../class_g_l_s_l_1_1_frag_1_1_directional__light.html#aaba478935d693c2b9935313f4da8f210',1,'GLSL::Frag::Directional_light::G()'],['../class_g_l_s_l_1_1_frag_1_1_point__light.html#ac812f2d9c9a8835e07b5ab21bd5a7ca7',1,'GLSL::Frag::Point_light::G()'],['../class_g_l_s_l_1_1_frag_1_1_spot__light.html#a38b2b16cfa69fbd82bb8c17720ea9a2f',1,'GLSL::Frag::Spot_light::G()'],['../class_g_l_s_l_1_1_frag_1_1_brdf__sampler.html#a12c1f31c3f1d692ff3ce64471db4f6bc',1,'GLSL::Frag::Brdf_sampler::G()'],['../class_g_l_s_l_1_1_frag_1_1_filter.html#af2ebb7f9e2fa9bf38c303fdfdee41d3e',1,'GLSL::Frag::Filter::g()'],['../class_g_l_s_l_1_1_frag_1_1_upscale.html#ae85f3c8711d1a7c8caa6067d0bda8b66',1,'GLSL::Frag::Upscale::g()']]],
   ['g1',['G1',['../class_g_l_s_l_1_1_frag_1_1_directional__light.html#a3501f2645b32f8912073da0190aa39cf',1,'GLSL::Frag::Directional_light::G1()'],['../class_g_l_s_l_1_1_frag_1_1_point__light.html#a9fcc5f38691abada5ded9a5748e3a595',1,'GLSL::Frag::Point_light::G1()'],['../class_g_l_s_l_1_1_frag_1_1_spot__light.html#abdba8455c601235592e5a6afafe4138d',1,'GLSL::Frag::Spot_light::G1()'],['../class_g_l_s_l_1_1_frag_1_1_brdf__sampler.html#aa742c27e1a4f8152efcd1f2561635087',1,'GLSL::Frag::Brdf_sampler::G1()']]],
   ['game',['Game',['../class_game.html',1,'Game'],['../class_game.html#a3e0acc981e61b656917f2eef42426509',1,'Game::Game()']]],
   ['game_5fcomposite',['Game_composite',['../class_g_l_s_l_1_1_frag_1_1_game__composite.html',1,'GLSL::Frag']]],
@@ -16,6 +16,7 @@ var searchData=
   ['generatemap',['generateMap',['../class_obj_to_scene_config.html#a9b96e9b2d8740aed156ba024b691bfdd',1,'ObjToSceneConfig']]],
   ['geom',['Geom',['../namespace_g_l_s_l_1_1_geom.html',1,'GLSL']]],
   ['geometry',['geometry',['../struct_mesh_infos.html#aabad79bbe6fe219194e501611ba9bd7a',1,'MeshInfos']]],
+  ['getalllevels',['getAllLevels',['../class_raycaster_visualisation.html#a0a315d7305619575f69fac10de767fd7',1,'RaycasterVisualisation']]],
   ['getbuttonsize',['getButtonSize',['../class_game_menu_renderer.html#afcb17ada2ef5db9d77b72294882a8b84',1,'GameMenuRenderer']]],
   ['getcentroid',['getCentroid',['../struct_bounding_box.html#aa7ca2372830cde0046639f136ddc2490',1,'BoundingBox']]],
   ['getcorners',['getCorners',['../struct_bounding_box.html#a6d383a028006abc1bc366e9f28d518e9',1,'BoundingBox']]],
@@ -30,6 +31,8 @@ var searchData=
   ['getprogram',['getProgram',['../class_resources.html#ad47623ccb8f0670cff1b873a4a9f8125',1,'Resources::getProgram(const std::string &amp;name, const bool useGeometryShader=false)'],['../class_resources.html#a64e73c8384f5e0cdc2a1369b72ea00a1',1,'Resources::getProgram(const std::string &amp;name, const std::string &amp;vertexName, const std::string &amp;fragmentName, const std::string &amp;geometryName=&quot;&quot;)']]],
   ['getprogram2d',['getProgram2D',['../class_resources.html#ae2fa45f51b950c3d016a381cebde189f',1,'Resources']]],
   ['getrawdata',['getRawData',['../class_resources.html#ab2aaed46f5a049f007a290b14af9fcb1',1,'Resources']]],
+  ['getraylevels',['getRayLevels',['../class_raycaster_visualisation.html#a40fe5e3b887f6c1c40351d1337bd4f7b',1,'RaycasterVisualisation']]],
+  ['getraymesh',['getRayMesh',['../class_raycaster_visualisation.html#a1a73d2c0e41afd1d007ca4661b333589',1,'RaycasterVisualisation']]],
   ['getseed',['getSeed',['../class_random.html#a02bc63c711cdbebba838473db8c8c9ee',1,'Random']]],
   ['getsize',['getSize',['../struct_bounding_box.html#aff6939c98064ad4182a56c48191b996a',1,'BoundingBox']]],
   ['getsphere',['getSphere',['../struct_bounding_box.html#a4360c790eb3d6d8bf017557b8d06c71b',1,'BoundingBox']]],

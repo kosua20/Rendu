@@ -94,7 +94,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 Example of included demos</div></div>
 <p>Rendu is a rendering engine designed for experimentation. The computer graphics academic and industrial litterature is full of interesting techniques and approaches than can be cumbersome to implement without some basic building blocks. This project aims to provide those building blocks, along with examples of interesting methods or papers. It also contains more general demo applications, such as a small snake game or a gamepad configurator.</p>
 <p>Rendu requires OpenGL 4 and builds on macOS (main test machine), Windows (regular testing) and Linux. After cloning the Rendu repository, see the <a href="#building">Building</a> section to get the engine running! You can also check <a href="http://kosua20.github.io/Rendu/html/index.html">the full documentation</a>.</p>
-<p><a class="el" href="class_resources.html" title="The Resources manager is responsible for all resources loading and setup.">Resources</a> to run each project are included in this repository, but you can download additional scenes from an <a href="https://github.com/kosua20/Rendu-resources">auxiliary repository</a> for some of the applications.</p>
+<p>Basic resources to run each project are included in this repository, but you can download many additional scenes from an <a href="https://github.com/kosua20/Rendu-resources">auxiliary repository</a> for some of the applications.</p>
 <h1><a class="anchor" id="autotoc_md1"></a>
 Projects</h1>
 <h2><a class="anchor" id="autotoc_md2"></a>
@@ -204,7 +204,6 @@ Planned</h2>
 <p>On a more down-to-earth level, some engineering tasks could also help improve the engine.</p>
 <ul>
 <li>Cleanup the way materials are handled right now.</li>
-<li>Avoid binary dependencies by integrating GLFW3 as a subproject (see premake-glfw branch).</li>
 <li>Real-time cube maps could be rendered in multiple calls after culling objects, instead of layered rendering.</li>
 <li>Abstract interactions with OpenGL and/or move to Vulkan. </li>
 </ul>

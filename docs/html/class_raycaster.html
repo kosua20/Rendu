@@ -98,9 +98,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a href="#pri-methods">Private Member Functions</a> &#124;
 <a href="#pri-static-methods">Static Private Member Functions</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
+<a href="#friends">Friends</a> &#124;
 <a href="class_raycaster-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">Raycaster Class Reference<div class="ingroups"><a class="el" href="group___engine.html">Engine</a></div></div>  </div>
+<div class="title">Raycaster Class Reference<div class="ingroups"><a class="el" href="group___raycaster.html">Raycaster</a></div></div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -128,10 +129,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a1e80dfbd5dd182fb946c13fb8994a37e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6c943ea2504ec939bd255ae21de9d9fd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_raycaster.html#a6c943ea2504ec939bd255ae21de9d9fd">updateHierarchy</a> ()</td></tr>
 <tr class="separator:a6c943ea2504ec939bd255ae21de9d9fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ace904fe54fefd8afadb68cb770abf03f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_raycaster.html#ace904fe54fefd8afadb68cb770abf03f">createBVHMeshes</a> (std::vector&lt; <a class="el" href="struct_mesh.html">Mesh</a> &gt; &amp;meshes) const</td></tr>
-<tr class="separator:ace904fe54fefd8afadb68cb770abf03f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aea9129ea0d98cfd4b81ed6afeec0ab74"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="struct_raycaster_1_1_ray_hit.html">RayHit</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_raycaster.html#aea9129ea0d98cfd4b81ed6afeec0ab74">intersects</a> (const glm::vec3 &amp;origin, const glm::vec3 &amp;direction, float mini=0.0001f, float maxi=1e8f) const</td></tr>
-<tr class="separator:aea9129ea0d98cfd4b81ed6afeec0ab74"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a27fb9c1f3aa594e5c3e3ad2896a50db1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_raycaster_1_1_ray_hit.html">RayHit</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_raycaster.html#a27fb9c1f3aa594e5c3e3ad2896a50db1">intersects</a> (const glm::vec3 &amp;origin, const glm::vec3 &amp;direction, float mini=0.0001f, float maxi=1e8f) const</td></tr>
+<tr class="separator:a27fb9c1f3aa594e5c3e3ad2896a50db1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1779bf9a92e32fa998913505672c2bb9"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_raycaster.html#a1779bf9a92e32fa998913505672c2bb9">intersectsAny</a> (const glm::vec3 &amp;origin, const glm::vec3 &amp;direction, float mini=0.0001f, float maxi=1e8f) const</td></tr>
 <tr class="separator:a1779bf9a92e32fa998913505672c2bb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8b73138dc38394e618f7e535a694ff55"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_raycaster.html#a8b73138dc38394e618f7e535a694ff55">visible</a> (const glm::vec3 &amp;p0, const glm::vec3 &amp;p1) const</td></tr>
@@ -174,6 +173,13 @@ std::vector&lt; <a class="el" href="struct_raycaster_1_1_node.html">Node</a> &gt
 unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_raycaster.html#a33b5acf2d7bd282ce12fb5e3d2b5ddc0">_meshCount</a> = 0</td></tr>
 <tr class="memdesc:a33b5acf2d7bd282ce12fb5e3d2b5ddc0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of meshes stored in the raycaster. <br /></td></tr>
 <tr class="separator:a33b5acf2d7bd282ce12fb5e3d2b5ddc0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
+Friends</h2></td></tr>
+<tr class="memitem:a569a8a126dc4ace0f90737c2b21fb90a"><td class="memItemLeft" align="right" valign="top"><a id="a569a8a126dc4ace0f90737c2b21fb90a"></a>
+class&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_raycaster.html#a569a8a126dc4ace0f90737c2b21fb90a">RaycasterVisualisation</a></td></tr>
+<tr class="memdesc:a569a8a126dc4ace0f90737c2b21fb90a"><td class="mdescLeft">&#160;</td><td class="mdescRight">For debug visualisation. <br /></td></tr>
+<tr class="separator:a569a8a126dc4ace0f90737c2b21fb90a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Allows to cast rays against a polygonal mesh, on the CPU. Relies on an internal acceleration structure to speed up intersection queries. </p>
@@ -226,30 +232,6 @@ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
   <table class="params">
     <tr><td class="paramname">mesh</td><td>the mesh to add </td></tr>
     <tr><td class="paramname">model</td><td>the transformation matrix to apply to the vertices </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="ace904fe54fefd8afadb68cb770abf03f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ace904fe54fefd8afadb68cb770abf03f">&#9670;&nbsp;</a></span>createBVHMeshes()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Raycaster::createBVHMeshes </td>
-          <td>(</td>
-          <td class="paramtype">std::vector&lt; <a class="el" href="struct_mesh.html">Mesh</a> &gt; &amp;&#160;</td>
-          <td class="paramname"><em>meshes</em></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Generate geometry to visualize each level of the bounding volume hierarchy as a series of bounding boxes. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">meshes</td><td>will be filled with the geometry of each depth level </td></tr>
   </table>
   </dd>
 </dl>
@@ -388,14 +370,14 @@ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 
 </div>
 </div>
-<a id="aea9129ea0d98cfd4b81ed6afeec0ab74"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aea9129ea0d98cfd4b81ed6afeec0ab74">&#9670;&nbsp;</a></span>intersects() <span class="overload">[1/3]</span></h2>
+<a id="a27fb9c1f3aa594e5c3e3ad2896a50db1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a27fb9c1f3aa594e5c3e3ad2896a50db1">&#9670;&nbsp;</a></span>intersects() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="struct_raycaster_1_1_ray_hit.html">Raycaster::RayHit</a> Raycaster::intersects </td>
+          <td class="memname"><a class="el" href="struct_raycaster_1_1_ray_hit.html">Raycaster::RayHit</a> Raycaster::intersects </td>
           <td>(</td>
           <td class="paramtype">const glm::vec3 &amp;&#160;</td>
           <td class="paramname"><em>origin</em>, </td>

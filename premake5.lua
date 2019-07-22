@@ -67,14 +67,14 @@ function GraphicsSetup(srcDir)
 	libDir = srcDir.."/libs/"
 	-- To support angled brackets in Xcode.
 	sysincludedirs({ libDir, libDir.."glfw/include/" })
-
+	links({"glfw3", "nfd"})
 	-- Libraries for each platform.
 	if os.istarget("macosx") then
-		links({"glfw3", "nfd", "OpenGL.framework", "Cocoa.framework", "IOKit.framework", "CoreVideo.framework", "AppKit.framework"})
+		links({"OpenGL.framework", "Cocoa.framework", "IOKit.framework", "CoreVideo.framework", "AppKit.framework"})
 	elseif os.istarget("windows") then
-		links({"glfw3", "nfd", "opengl32", "comctl32"})
+		links({"opengl32", "comctl32"})
 	else -- Assume linux
-		links({"glfw3", "nfd", "GL", "X11", "Xi", "Xrandr", "Xxf86vm", "Xinerama", "Xcursor", "rt", "m", "pthread", "dl", "gtk+-3.0"})
+		links({"GL", "X11", "Xi", "Xrandr", "Xxf86vm", "Xinerama", "Xcursor", "rt", "m", "pthread", "dl", "gtk+-3.0"})
 	end
 
 end
@@ -130,7 +130,7 @@ project("Engine")
 	-- Some additional files (README, scenes) are hidden, but you can display them in the project by uncommenting them below.
 	files({ "src/engine/**.hpp", "src/engine/**.cpp",
 			"resources/common/shaders/**",
-			"src/libs/*/*.hpp", "src/libs/*/*.cpp", "src/libs/*/*.h",
+			"src/libs/**.hpp", "src/libs/*/*.cpp", "src/libs/**.h",
 			"premake5.lua", 
 			"README.md",
 	--		"resources/**.scene"
