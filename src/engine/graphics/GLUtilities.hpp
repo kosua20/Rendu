@@ -99,7 +99,7 @@ struct MeshInfos {
 	/** Default constructor. */
 	MeshInfos();
 	
-	/** Clean internal GPU buffers. */
+	/** Clean internal GPU and CPU buffers. */
 	void clean();
 	
 };

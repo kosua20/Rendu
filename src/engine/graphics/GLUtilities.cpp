@@ -103,6 +103,7 @@ void MeshInfos::clean(){
 	count = 0;
 	eId = vId = vbo = 0;
 	bbox = BoundingBox();
+	geometry.clear();
 }
 
 void replace(std::string & source, const std::string& fromString, const std::string & toString){
