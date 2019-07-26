@@ -125,7 +125,14 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 					
 					// Fetch base color from texture.
 					const Image & image = _scene->objects[hit.meshId].textures()[0]->images[0];
-					const glm::vec3 baseColor = glm::pow(image.rgbl(uv.x, uv.y), glm::vec3(2.2f));
+					const glm::vec4 bCol = image.rgbal(uv.x, uv.y);
+					// In case of alpha cut-out, just update the position to the intersection and keep casting.
+					// The 'mini' margin will ensures that we don't reintersect the same surface.
+					if(bCol.a < 0.01f){
+						rayPos = p;
+						continue;
+					}
+					const glm::vec3 baseColor = glm::pow(glm::vec3(bCol), glm::vec3(2.2f));
 					
 					// Bounce decay.
 					attenColor *= baseColor;

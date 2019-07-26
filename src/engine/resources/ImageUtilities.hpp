@@ -72,6 +72,14 @@ struct Image {
 	 */
 	glm::vec3 rgbl(float x, float y) const;
 	
+	/** Bilinear UV image read.
+	 \param x horizontal unit float coordinate
+	 \param y vertical unit float coordinate
+	 \return the bilinearly interpolated color value
+	 \note Wrapping is applied on both axis.
+	 */
+	glm::vec4 rgbal(float x, float y) const;
+		
 	/** Nearest-neighbour UV image read.
 	 \param x horizontal unit float coordinate
 	 \param y vertical unit float coordinate

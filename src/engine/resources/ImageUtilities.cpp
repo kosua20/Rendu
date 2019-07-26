@@ -82,6 +82,28 @@ glm::vec3 Image::rgbl(float x, float y) const {
 	return (1.0f-dx) * ((1.0f - dy) * p00 + dy * p01) + dx * ( (1.0f - dy) * p10 + dy * p11);
 }
 
+glm::vec4 Image::rgbal(float x, float y) const {
+	const float xi = x * float(width);
+	const float yi = y * float(height);
+	const float xb = std::floor(xi);
+	const float yb = std::floor(yi);
+	const float dx = xi - xb;
+	const float dy = yi - yb;
+	
+	const int x0 =  int(xb) % width;
+	const int x1 = (int(xb)+1) % width;
+	const int y0 =  int(yb) % height;
+	const int y1 = (int(yb)+1) % height;
+	
+	// Fetch four pixels.
+	const glm::vec4 & p00 = rgba(x0,y0);
+	const glm::vec4 & p01 = rgba(x0,y1);
+	const glm::vec4 & p10 = rgba(x1,y0);
+	const glm::vec4 & p11 = rgba(x1,y1);
+	
+	return (1.0f-dx) * ((1.0f - dy) * p00 + dy * p01) + dx * ( (1.0f - dy) * p10 + dy * p11);
+}
+
 bool ImageUtilities::isFloat(const std::string & path){
 	return path.substr(path.size()-4,4) == ".exr";
 }
