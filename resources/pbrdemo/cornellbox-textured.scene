@@ -1,9 +1,9 @@
 * scene:
-	probe: rgbcube: default_cube
-	irradiance: default_shcoeffs
+	probe: rgb32cube: kiara_dawn
+	irradiance: kiara_dawn_shcoeffs
 
 * background:
-	color: 0.0,0.0,0.0
+	cube: rgb32cube: kiara_dawn
 
 * camera:
 	position: 0.0,1.0,2.5
@@ -22,11 +22,11 @@
 	mesh: cornellbox_floor_0
 	shadows: true
 	twosided: true
-	type: PBRNoUVs
+	type: PBRRegular
 	textures:
-		- srgb: cornellbox_grey
-		- rgb: default_normal
-		- rgb: cornellbox_rough_met_ao
+		- srgb: wood_floor_color
+		- rgb: wood_floor_normal
+		- rgb: wood_floor_rough_met_ao
 
 * object:
 	mesh: cornellbox_ceiling_6
@@ -54,7 +54,7 @@
 	twosided: true
 	type: PBRNoUVs
 	textures:
-		- srgb: cornellbox_red
+		- srgb: cornellbox_orange
 		- rgb: default_normal
 		- rgb: cornellbox_rough_met_ao
 
@@ -64,27 +64,27 @@
 	twosided: true
 	type: PBRNoUVs
 	textures:
-		- srgb: cornellbox_green
+		- srgb: cornellbox_blue
 		- rgb: default_normal
 		- rgb: cornellbox_rough_met_ao
 
 * object:
 	mesh: cornellbox_smallBox_30
 	shadows: true
-	type: PBRNoUVs
+	type: PBRRegular      
 	textures:
-		- srgb: cornellbox_grey
-		- rgb: default_normal
-		- rgb: cornellbox_rough_met_ao
+		- srgb: ceramic_tiles_blue_color
+		- rgb: ceramic_tiles_blue_normal
+		- rgb: ceramic_tiles_blue_rough_met_ao
 
 * object:
 	mesh: cornellbox_largeBox_60
 	shadows: true
-	type: PBRNoUVs
+	type: PBRRegular
 	textures:
-		- srgb: cornellbox_grey
-		- rgb: default_normal
-		- rgb: cornellbox_rough_met_ao
+		- srgb: metal_brushed_color
+		- rgb: metal_brushed_normal
+		- rgb: metal_brushed_rough_met_ao
 
 * object:
 	mesh: cornellbox_light_90
