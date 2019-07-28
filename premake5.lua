@@ -22,7 +22,7 @@ workspace("Rendu")
 	filter("configurations:Release")
 		defines({ "NDEBUG" })
 		optimize("On")
-		flags({ "NoIncrementalLink", "LinkTimeOptimization" })
+		--flags({ "NoIncrementalLink", "LinkTimeOptimization" })
 
 	filter("configurations:Dev")
 		defines({ "DEBUG" })
@@ -38,12 +38,12 @@ function InstallProject(projectName, destination)
 	filter("configurations:Release")
 		postbuildcommands({
 			path.translate( "{CHDIR} "..os.getcwd(), sep),
-			path.translate( "{COPY} build/"..projectName.."/Release/"..projectName..ext.." "..destination..copyFix, sep)
+			path.translate( "{COPY} "..os.getcwd().."/build/"..projectName.."/Release/"..projectName..ext.." "..os.getcwd().."/"..destination..copyFix, sep)
 		})
 	filter("configurations:Dev")
 		postbuildcommands({
 			path.translate( "{CHDIR} "..os.getcwd(), sep),
-			path.translate( "{COPY} build/"..projectName.."/Dev/"..projectName..ext.." "..destination..copyFix, sep)
+			path.translate( "{COPY} "..os.getcwd().."/build/"..projectName.."/Dev/"..projectName..ext.." "..destination..copyFix, sep)
 		})
 	filter({})
 end
@@ -63,19 +63,24 @@ end
 
 function GraphicsSetup(srcDir)
 	CPPSetup()
-
+	
 	libDir = srcDir.."/libs/"
 	-- To support angled brackets in Xcode.
 	sysincludedirs({ libDir, libDir.."glfw/include/" })
-	links({"glfw3", "nfd"})
-	-- Libraries for each platform.
-	if os.istarget("macosx") then
-		links({"OpenGL.framework", "Cocoa.framework", "IOKit.framework", "CoreVideo.framework", "AppKit.framework"})
-	elseif os.istarget("windows") then
-		links({"opengl32", "comctl32"})
-	else -- Assume linux
-		links({"GL", "X11", "Xi", "Xrandr", "Xxf86vm", "Xinerama", "Xcursor", "rt", "m", "pthread", "dl", "gtk+-3.0"})
-	end
+
+	filter("kind:not StaticLib")
+		links({"nfd", "glfw3"})
+		-- Libraries for each platform.
+		if os.istarget("macosx") then
+			links({"OpenGL.framework", "Cocoa.framework", "IOKit.framework", "CoreVideo.framework", "AppKit.framework"})
+		elseif os.istarget("windows") then
+			links({"opengl32", "comctl32"})
+		else -- Assume linux
+			links({"GL", "X11", "Xi", "Xrandr", "Xxf86vm", "Xinerama", "Xcursor", "Xext", "Xrender", "Xfixes", "xcb", "Xau", "Xdmcp", "rt", "m", "pthread", "dl", "gtk-3", "gdk-3", "pangocairo-1.0", "pango-1.0", "atk-1.0", "cairo-gobject", "cairo", "gdk_pixbuf-2.0", "gio-2.0", "gobject-2.0", "glib-2.0"})
+		end
+	filter({})
+	
+	
 
 end
 
@@ -102,9 +107,10 @@ function RegisterSourcesAndShaders(srcPath, shdPath)
 end
 
 function AppSetup(appName)
+	links({"Engine"})
 	GraphicsSetup("src")
 	includedirs({ "src/engine" })
-	links({"Engine"})
+	
 	kind("ConsoleApp")
 	ShaderValidation()
 	-- Declare src and resources files.
@@ -114,9 +120,10 @@ function AppSetup(appName)
 end	
 
 function ToolSetup(toolName)
+	links({"Engine"})
 	GraphicsSetup("src")
 	includedirs({ "src/engine" })
-	links({"Engine"})
+	
 	kind("ConsoleApp")
 	ShaderValidation()
 end	
@@ -125,6 +132,7 @@ end
 
 project("Engine")
 	GraphicsSetup("src")
+	
 	includedirs({ "src/engine" })
 	kind("StaticLib")
 	-- Some additional files (README, scenes) are hidden, but you can display them in the project by uncommenting them below.
@@ -193,15 +201,14 @@ project("ObjToScene")
 	files({ "src/tools/objtoscene/*.cpp", "src/tools/objtoscene/*.hpp" })
 
 project("ShaderValidator")
+	links({"Engine"})
 	GraphicsSetup("src")
 	includedirs({ "src/engine" })
-	links({"Engine"})
 	kind("ConsoleApp")
 	files({ "src/tools/ShaderValidator.cpp" })
 	-- Install the shader validation utility in the root build directory.
 	InstallProject("%{prj.name}", "build/shader_validator"..ext)
 	filter({})
-
 
 group("Meta")
 
