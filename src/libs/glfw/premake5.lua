@@ -24,6 +24,12 @@ project("glfw3")
 		"src/egl_context.h","src/osmesa_context.h","src/cocoa_init.m","src/cocoa_joystick.m","src/cocoa_monitor.m",
 		"src/cocoa_window.m","src/cocoa_time.c","src/posix_thread.c","src/nsgl_context.m","src/egl_context.c",
 		"src/osmesa_context.c"})
+	filter("system:linux")
+		defines({"_GLFW_X11=1"})
+		files({"src/x11_platform.h", "src/xkb_unicode.h", "src/posix_time.h", "src/posix_thread.h", "src/glx_context.h", 
+			"src/egl_context.h", "src/osmesa_context.h", "src/x11_init.c", "src/x11_monitor.c", "src/x11_window.c",
+			"src/xkb_unicode.c", "src/posix_time.c", "src/posix_thread.c", "src/glx_context.c", "src/egl_context.c",
+			"src/osmesa_context.c", "src/linux_joystick.h", "src/linux_joystick.c"})
 	
 	-- visual studio filters
 	filter("action:vs*")
