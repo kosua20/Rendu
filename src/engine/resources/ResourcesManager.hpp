@@ -34,10 +34,9 @@ public:
 	
 private:
 	
-	/** Constructor. Parse the directory or archive structure at the given path.
-	 \param root the resources root path
+	/** Constructor. 
 	 */
-	Resources(const std::string & root);
+	Resources();
 	
 	/** Parse the archive at the given path (using miniz), listing all files it contains.
 	 \param archivePath the path to the archive
@@ -191,10 +190,6 @@ private:
 	
 	/** Copy constructor (disabled). */
 	Resources (const Resources&) = delete;
-	
-	/** Default resources root path or archive path.
-	 */
-	static std::string defaultPath;
 	
 	std::map<std::string, std::string> _files; ///< Listing of available files and their paths.
 	std::map<std::string, TextureInfos> _textures; ///< Loaded textures, identified by name.

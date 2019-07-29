@@ -14,17 +14,13 @@
 //#define RESOURCES_PACKAGED
 
 
-
-std::string Resources::defaultPath = "../../../resources/common/";
-
 // Singleton.
 Resources& Resources::manager(){
-	static Resources* res = new Resources(Resources::defaultPath);
+	static Resources* res = new Resources();
 	return *res;
 }
 
-Resources::Resources(const std::string & root) {
-	addResources(root);
+Resources::Resources() {
 }
 
 #ifdef RESOURCES_PACKAGED
