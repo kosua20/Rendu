@@ -49,6 +49,7 @@ end
 
 function ExecutableSetup()
 	kind("ConsoleApp")
+	CommonSetup()
 
 	-- Link with compiled librarires
 	includedirs({ "src/engine" })
@@ -97,19 +98,10 @@ function RegisterSourcesAndShaders(srcPath, shdPath)
 end
 
 function AppSetup(appName)
-	CommonSetup()
 	ExecutableSetup()
 	ShaderValidation()
 	-- Declare src and resources files.
-	srcPath = "src/apps/"..appName.."/**"
-	rscPath = "resources/"..appName.."/shaders/**"
-	RegisterSourcesAndShaders(srcPath, rscPath)
-end	
-
-function ToolSetup()
-	CommonSetup()
-	ExecutableSetup()
-	ShaderValidation()
+	RegisterSourcesAndShaders("src/apps/"..appName.."/**", "resources/"..appName.."/shaders/**")
 end	
 
 -- Projects
@@ -164,28 +156,28 @@ project("ImageFiltering")
 group("Tools")
 
 project("AtmosphericScatteringEstimator")
-	ToolSetup()
+	ExecutableSetup()
 	files({ "src/tools/AtmosphericScatteringEstimator.cpp" })
 
 project("BRDFEstimator")
-	ToolSetup()
-	includedirs({ "src/apps/pbrdemo" })
+	ExecutableSetup()
+	ShaderValidation()
 	files({ "src/tools/BRDFEstimator.cpp" })
 
 project("ControllerTest")
-	ToolSetup()
+	ExecutableSetup()
 	files({ "src/tools/ControllerTest.cpp" })
 
 project("ImageViewer")
-	ToolSetup()
+	ExecutableSetup()
+	ShaderValidation()
 	RegisterSourcesAndShaders("src/tools/ImageViewer.cpp", "resources/imageviewer/shaders/**")
 
 project("ObjToScene")
-	ToolSetup()
+	ExecutableSetup()
 	files({ "src/tools/objtoscene/*.cpp", "src/tools/objtoscene/*.hpp" })
 
 project("ShaderValidator")
-	CommonSetup()
 	ExecutableSetup()
 	files({ "src/tools/ShaderValidator.cpp" })
 	
