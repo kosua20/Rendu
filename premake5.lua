@@ -1,9 +1,16 @@
 local sep = "/"
 local ext = ""
+-- On Windows we have to use specific separator and executable extension.
 if os.ishost("windows") then
 	sep = "\\"
 	ext = ".exe"
 end
+-- On Linux We have to query the dependencies of gtk+3 for NFD, and convert them to a list of libraries, we do this on the host for now.
+if os.ishost("linux") then
+	gtkList, code = os.outputof("pkg-config --libs gtk+-3.0")
+	gtkLibs = string.explode(string.gsub(gtkList, "-l", ""), " ")
+end
+
 cwd = os.getcwd()
 
 -- Workspace definition.
@@ -65,8 +72,6 @@ function ExecutableSetup()
 
 	filter("system:linux")
 		-- We have to query the dependencies of gtk+3 for NFD, and convert them to a list of libraries.
-		gtkList, code = os.outputof("pkg-config --libs gtk+-3.0")
-		gtkLibs = string.explode(string.gsub(gtkList, "-l", ""), " ")
 		links({"GL", "X11", "Xi", "Xrandr", "Xxf86vm", "Xinerama", "Xcursor", "Xext", "Xrender", "Xfixes", "xcb", "Xau", "Xdmcp", "rt", "m", "pthread", "dl", gtkLibs})
 	
 	filter({})
