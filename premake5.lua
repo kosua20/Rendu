@@ -73,16 +73,14 @@ function ShaderValidation()
 	-- Run the shader validator on all existing shaders.
 	-- Output IDE compatible error messages.
 	dependson({"ShaderValidator"})
-
+	
 	filter("configurations:Release")
 		prebuildcommands({ 
-			path.translate("{CHDIR} "..cwd.."/build/ShaderValidator/Release/", sep),
-			path.translate("./ShaderValidator"..ext.." "..cwd.."/resources/", sep)
+			path.translate(cwd.."/build/ShaderValidator/Release/ShaderValidator"..ext.." "..cwd.."/resources/", sep)
 		})
 	filter("configurations:Dev")
 		prebuildcommands({ 
-			path.translate("{CHDIR} "..cwd.."/build/ShaderValidator/Dev/", sep),
-			path.translate("./ShaderValidator"..ext.." "..cwd.."/resources/", sep)
+			path.translate(cwd.."/build/ShaderValidator/Dev/ShaderValidator"..ext.." "..cwd.."/resources/", sep)
 		})
 	filter({})
 
@@ -190,6 +188,8 @@ project("ShaderValidator")
 	CommonSetup()
 	ExecutableSetup()
 	files({ "src/tools/ShaderValidator.cpp" })
+	
+
 
 group("Meta")
 
