@@ -1,10 +1,8 @@
 local sep = "/"
 local ext = ""
-local copyFix = ""
 if os.ishost("windows") then
 	sep = "\\"
 	ext = ".exe"
-	copyFix = "*"
 end
 cwd = os.getcwd()
 
@@ -22,7 +20,6 @@ workspace("Rendu")
 	filter("configurations:Release")
 		defines({ "NDEBUG" })
 		optimize("On")
-		--flags({ "NoIncrementalLink", "LinkTimeOptimization" })
 
 	filter("configurations:Dev")
 		defines({ "DEBUG" })
@@ -34,53 +31,41 @@ workspace("Rendu")
 
 -- Helper functions for the projects.
 
-function InstallProject(projectName, destination)
-	filter("configurations:Release")
-		postbuildcommands({
-			path.translate( "{CHDIR} "..os.getcwd(), sep),
-			path.translate( "{COPY} "..os.getcwd().."/build/"..projectName.."/Release/"..projectName..ext.." "..os.getcwd().."/"..destination..copyFix, sep)
-		})
-	filter("configurations:Dev")
-		postbuildcommands({
-			path.translate( "{CHDIR} "..os.getcwd(), sep),
-			path.translate( "{COPY} "..os.getcwd().."/build/"..projectName.."/Dev/"..projectName..ext.." "..destination..copyFix, sep)
-		})
-	filter({})
-end
-
-function CPPSetup()
+function CommonSetup()
+	-- C++ settings
 	language("C++")
 	cppdialect("C++11")
 	systemversion("latest")
-
+	-- Compiler flags
 	filter("toolset:not msc*")
 		buildoptions({ "-Wall", "-Wextra" })
 	filter("toolset:msc*")
-		buildoptions({ "-W4"})
+		buildoptions({ "-W3"})
 	filter({})
-
+	-- Common include dirs
+	-- System headers are used to support angled brackets in Xcode.
+	sysincludedirs({ "src/libs/", "src/libs/glfw/include/" })
 end	
 
-function GraphicsSetup(srcDir)
-	CPPSetup()
-	
-	libDir = srcDir.."/libs/"
-	-- To support angled brackets in Xcode.
-	sysincludedirs({ libDir, libDir.."glfw/include/" })
+function ExecutableSetup()
+	kind("ConsoleApp")
 
-	filter("kind:not StaticLib")
-		links({"nfd", "glfw3"})
-		-- Libraries for each platform.
-		if os.istarget("macosx") then
-			links({"OpenGL.framework", "Cocoa.framework", "IOKit.framework", "CoreVideo.framework", "AppKit.framework"})
-		elseif os.istarget("windows") then
-			links({"opengl32", "comctl32"})
-		else -- Assume linux
-			links({"GL", "X11", "Xi", "Xrandr", "Xxf86vm", "Xinerama", "Xcursor", "Xext", "Xrender", "Xfixes", "xcb", "Xau", "Xdmcp", "rt", "m", "pthread", "dl", "gtk-3", "gdk-3", "pangocairo-1.0", "pango-1.0", "atk-1.0", "cairo-gobject", "cairo", "gdk_pixbuf-2.0", "gio-2.0", "gobject-2.0", "glib-2.0"})
-		end
+	-- Link with compiled librarires
+	includedirs({ "src/engine" })
+	links({"Engine"})
+	links({"nfd", "glfw3"})
+
+	-- Libraries for each platform.
+	filter("system:macosx")
+		links({"OpenGL.framework", "Cocoa.framework", "IOKit.framework", "CoreVideo.framework", "AppKit.framework"})
+
+	filter("system:windows")
+		links({"opengl32", "comctl32"})
+
+	filter("system:linux")
+		links({"GL", "X11", "Xi", "Xrandr", "Xxf86vm", "Xinerama", "Xcursor", "Xext", "Xrender", "Xfixes", "xcb", "Xau", "Xdmcp", "rt", "m", "pthread", "dl", "gtk-3", "gdk-3", "pangocairo-1.0", "pango-1.0", "atk-1.0", "cairo-gobject", "cairo", "gdk_pixbuf-2.0", "gio-2.0", "gobject-2.0", "glib-2.0"})
+	
 	filter({})
-	
-	
 
 end
 
@@ -88,12 +73,19 @@ function ShaderValidation()
 	-- Run the shader validator on all existing shaders.
 	-- Output IDE compatible error messages.
 	dependson({"ShaderValidator"})
-	prebuildcommands({ 
-		-- Move to the build directory.
-		path.translate("{CHDIR} "..os.getcwd().."/build", sep),
-		-- Run the shader validator on the resources directory.
-		path.translate( "./shader_validator"..ext.." "..cwd.."/resources/", sep)
-	})
+
+	filter("configurations:Release")
+		prebuildcommands({ 
+			path.translate("{CHDIR} "..cwd.."/build/ShaderValidator/Release/", sep),
+			path.translate("./ShaderValidator"..ext.." "..cwd.."/resources/", sep)
+		})
+	filter("configurations:Dev")
+		prebuildcommands({ 
+			path.translate("{CHDIR} "..cwd.."/build/ShaderValidator/Dev/", sep),
+			path.translate("./ShaderValidator"..ext.." "..cwd.."/resources/", sep)
+		})
+	filter({})
+
 end	
 
 function RegisterSourcesAndShaders(srcPath, shdPath)
@@ -107,11 +99,8 @@ function RegisterSourcesAndShaders(srcPath, shdPath)
 end
 
 function AppSetup(appName)
-	links({"Engine"})
-	GraphicsSetup("src")
-	includedirs({ "src/engine" })
-	
-	kind("ConsoleApp")
+	CommonSetup()
+	ExecutableSetup()
 	ShaderValidation()
 	-- Declare src and resources files.
 	srcPath = "src/apps/"..appName.."/**"
@@ -119,22 +108,19 @@ function AppSetup(appName)
 	RegisterSourcesAndShaders(srcPath, rscPath)
 end	
 
-function ToolSetup(toolName)
-	links({"Engine"})
-	GraphicsSetup("src")
-	includedirs({ "src/engine" })
-	
-	kind("ConsoleApp")
+function ToolSetup()
+	CommonSetup()
+	ExecutableSetup()
 	ShaderValidation()
 end	
 
 -- Projects
 
 project("Engine")
-	GraphicsSetup("src")
-	
-	includedirs({ "src/engine" })
+	CommonSetup()
 	kind("StaticLib")
+
+	includedirs({ "src/engine" })
 	-- Some additional files (README, scenes) are hidden, but you can display them in the project by uncommenting them below.
 	files({ "src/engine/**.hpp", "src/engine/**.cpp",
 			"resources/common/shaders/**",
@@ -201,19 +187,14 @@ project("ObjToScene")
 	files({ "src/tools/objtoscene/*.cpp", "src/tools/objtoscene/*.hpp" })
 
 project("ShaderValidator")
-	links({"Engine"})
-	GraphicsSetup("src")
-	includedirs({ "src/engine" })
-	kind("ConsoleApp")
+	CommonSetup()
+	ExecutableSetup()
 	files({ "src/tools/ShaderValidator.cpp" })
-	-- Install the shader validation utility in the root build directory.
-	InstallProject("%{prj.name}", "build/shader_validator"..ext)
-	filter({})
 
 group("Meta")
 
 project("ALL")
-	CPPSetup()
+	CommonSetup()
 	kind("ConsoleApp")
 	dependson( {"Engine", "PBRDemo", "Playground", "Atmosphere", "ImageViewer", "ImageFiltering", "AtmosphericScatteringEstimator", "BRDFEstimator", "ControllerTest", "SnakeGame", "PathTracer", "ObjToScene"})
 
