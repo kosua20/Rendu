@@ -64,7 +64,10 @@ function ExecutableSetup()
 		links({"opengl32", "comctl32"})
 
 	filter("system:linux")
-		links({"GL", "X11", "Xi", "Xrandr", "Xxf86vm", "Xinerama", "Xcursor", "Xext", "Xrender", "Xfixes", "xcb", "Xau", "Xdmcp", "rt", "m", "pthread", "dl", "gtk-3", "gdk-3", "pangocairo-1.0", "pango-1.0", "atk-1.0", "cairo-gobject", "cairo", "gdk_pixbuf-2.0", "gio-2.0", "gobject-2.0", "glib-2.0"})
+		-- We have to query the dependencies of gtk+3 for NFD, and convert them to a list of libraries.
+		gtkList, code = os.outputof("pkg-config --libs gtk+-3.0")
+		gtkLibs = string.explode(string.gsub(gtkList, "-l", ""), " ")
+		links({"GL", "X11", "Xi", "Xrandr", "Xxf86vm", "Xinerama", "Xcursor", "Xext", "Xrender", "Xfixes", "xcb", "Xau", "Xdmcp", "rt", "m", "pthread", "dl", gtkLibs})
 	
 	filter({})
 
