@@ -62,7 +62,7 @@ Raycaster::RayHit RaycasterVisualisation::getRayLevels(const glm::vec3 & origin,
 				if(hit.hit && hit.dist < bestHit.dist){
 					bestHit = hit;
 					maxi = bestHit.dist;
-					bestHit.internalId = node.left + tid;
+					bestHit.internalId = (unsigned long)(node.left + tid);
 				}
 			}
 			// Move to the next node.

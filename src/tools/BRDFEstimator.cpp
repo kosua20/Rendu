@@ -325,7 +325,8 @@ int main(int argc, char** argv) {
 	if(config.showHelp()){
 		return 0;
 	}
-	
+
+	Resources::manager().addResources("../../../resources/common");
 	Resources::manager().addResources("../../../resources/pbrdemo");
 	
 	GLFWwindow* window = System::initWindow("BRDF Extractor", config);

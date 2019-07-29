@@ -132,6 +132,8 @@ int main(int argc, char** argv) {
 	
 	// Initialize random generator;
 	Random::seed();
+
+	Resources::manager().addResources("../../../resources/common");
 	Resources::manager().addResources("../../../resources/pbrdemo");
 	Resources::manager().addResources("../../../resources/additional");
 	

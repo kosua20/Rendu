@@ -35,6 +35,8 @@ int main(int argc, char** argv) {
 	if(!window){
 		return -1;
 	}
+
+	Resources::manager().addResources("../../../resources/common");
 	Resources::manager().addResources("../../../resources/imageviewer");
 	
 	glEnable(GL_CULL_FACE);

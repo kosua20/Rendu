@@ -211,7 +211,9 @@ int main(int argc, char** argv) {
 	if(!window){
 		return -1;
 	}
-	
+
+	Resources::manager().addResources("../../../resources/common");
+
 	// Enable raw mode for the input, that way all controllers will be raw controllers.
 	Input::manager().preferRawControllers(true);
 	

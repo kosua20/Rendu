@@ -33,7 +33,8 @@ int main() {
 	}
 	// Disable Imgui saving.
 	ImGui::GetIO().IniFilename = NULL;
-	
+
+	Resources::manager().addResources("../../../resources/common");
 	Resources::manager().addResources("../../../resources/snakegame");
 	// Initialize random generator;
 	Random::seed();

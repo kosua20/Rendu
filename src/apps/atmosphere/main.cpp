@@ -36,7 +36,10 @@ int main(int argc, char** argv) {
 	if(!window){
 		return -1;
 	}
+
+	Resources::manager().addResources("../../../resources/common");
 	Resources::manager().addResources("../../../resources/atmosphere");
+
 	// Initialize random generator;
 	Random::seed();
 	// Query the renderer identifier, and the supported OpenGL version.

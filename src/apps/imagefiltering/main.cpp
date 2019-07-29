@@ -33,7 +33,8 @@ int main(int argc, char** argv) {
 	if(!window){
 		return -1;
 	}
-	
+
+	Resources::manager().addResources("../../../resources/common");
 	Resources::manager().addResources("../../../resources/imagefiltering");
 	
 	// Initialize random generator;
