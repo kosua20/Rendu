@@ -51,6 +51,11 @@ public:
 	 */
 	GLuint textureId() const;
 	
+	/** Query the SSAO radius (should be larger for larger scene with large planar surfaces).
+	 \return a reference to the radius parameter
+	 */
+	float & radius();
+	
 private:
 	
 	std::unique_ptr<Framebuffer> _ssaoFramebuffer; ///< SSAO framebuffer

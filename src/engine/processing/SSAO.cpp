@@ -84,3 +84,7 @@ GLuint SSAO::textureId() const {
 	return _blurSSAOBuffer->textureId();
 }
 
+float & SSAO::radius(){
+	return _radius;
+}
+

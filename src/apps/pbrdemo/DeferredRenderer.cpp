@@ -335,23 +335,25 @@ void DeferredRenderer::update(){
 	_userCamera.update();
 	
 	if(ImGui::Begin("Renderer")){
-		ImGui::PushItemWidth(100);
+		
+		ImGui::PushItemWidth(110);
 		ImGui::Combo("Camera mode", (int*)(&_userCamera.mode()), "FPS\0Turntable\0Joystick\0\0", 3);
 		ImGui::InputFloat("Camera speed", &_userCamera.speed(), 0.1f, 1.0f);
 		if(ImGui::InputFloat("Camera FOV", &_cameraFOV, 1.0f, 10.0f)){
 			_userCamera.fov(_cameraFOV*float(M_PI)/180.0f);
 		}
 		ImGui::PopItemWidth();
-		if(ImGui::DragFloat2("Camera planes", (float*)(&_cplanes[0]))){
+		
+		if(ImGui::DragFloat2("Planes", (float*)(&_cplanes[0]))){
 			_userCamera.frustum(_cplanes[0], _cplanes[1]);
 		}
 		
-		if(ImGui::Button("Copy camera")){
+		if(ImGui::Button("Copy camera", ImVec2(104,0))){
 			const std::string camDesc = _userCamera.encode();
 			ImGui::SetClipboardText(camDesc.c_str());
 		}
 		ImGui::SameLine();
-		if(ImGui::Button("Paste camera")){
+		if(ImGui::Button("Paste camera", ImVec2(104,0))){
 			const std::string camDesc(ImGui::GetClipboardText());
 			const auto cameraCode = Codable::parse(camDesc);
 			if(!cameraCode.empty()){
@@ -362,39 +364,46 @@ void DeferredRenderer::update(){
 		}
 		
 		ImGui::Separator();
-		ImGui::PushItemWidth(100);
+		ImGui::PushItemWidth(110);
 		if(ImGui::InputInt("Vertical res.", &_config.internalVerticalResolution, 50, 200)){
 			resize(int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 		}
-		ImGui::PopItemWidth();
 		
-		ImGui::Checkbox("Bloom", &_applyBloom);
+		ImGui::Checkbox("Bloom  ", &_applyBloom);
 		if(_applyBloom){
-			ImGui::SameLine();
-			ImGui::PushItemWidth(90);
-			if(ImGui::InputInt("Bloom rad.", &_bloomRadius, 1, 10)){
+			ImGui::SameLine(120);
+			ImGui::SliderFloat("Th.##Bloom", &_bloomTh, 0.5f, 2.0f);
+			
+			ImGui::PushItemWidth(80);
+			if(ImGui::InputInt("Rad.##Bloom", &_bloomRadius, 1, 10)){
 				_blurBuffer.reset(new GaussianBlur(int(_renderResolution[0]/2), int(_renderResolution[1]/2), _bloomRadius, GL_RGB16F));
 			}
 			ImGui::PopItemWidth();
-			ImGui::SliderFloat("Bloom mix", &_bloomMix, 0.0f, 1.5f);
-			ImGui::SliderFloat("Bloom th.", &_bloomTh, 0.5f, 2.0f);
+			ImGui::SameLine(120);
+			ImGui::SliderFloat("Mix##Bloom", &_bloomMix, 0.0f, 1.5f);
+			
 			
 		}
 		
-		ImGui::Checkbox("SSAO", &_applySSAO); ImGui::SameLine();
-		ImGui::Checkbox("FXAA", &_applyFXAA);  ImGui::SameLine();
-		ImGui::Checkbox("Tonemap ", &_applyTonemapping);
-		if(_applyTonemapping){
-			ImGui::SliderFloat("Exposure", &_exposure, 0.1f, 10.0f);
+		ImGui::Checkbox("SSAO", &_applySSAO);
+		if(_applySSAO){
+			 ImGui::SameLine(120);
+			ImGui::InputFloat("Radius", &_ssaoPass->radius(), 0.5f);
 		}
 		
+		ImGui::Checkbox("Tonemap ", &_applyTonemapping);
+		if(_applyTonemapping){
+			ImGui::SameLine(120);
+			ImGui::SliderFloat("Exposure", &_exposure, 0.1f, 10.0f);
+		}
+		ImGui::Checkbox("FXAA", &_applyFXAA);
+		
 		ImGui::Separator();
-		ImGui::ColorEdit3("Background color", &_scene->backgroundColor[0]);
-		ImGui::Checkbox("Show debug lights", &_debugVisualization);
+		ImGui::Checkbox("Debug", &_debugVisualization); ImGui::SameLine();
+		ImGui::Checkbox("Pause", &_paused); ImGui::SameLine();
 		ImGui::Checkbox("Update shadows", &_updateShadows);
-		ImGui::Checkbox("Pause", &_paused);
-		
-		
+		ImGui::PopItemWidth();
+		ImGui::ColorEdit3("Background", &_scene->backgroundColor[0], ImGuiColorEditFlags_Float);
 	}
 	ImGui::End();
 }
