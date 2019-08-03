@@ -86,18 +86,23 @@ void main(){
 		discard;
 	}
 	
-	// Compute the normal at the fragment using the tangent space matrix and the normal read in the normal map.
-	vec3 n = texture(texture1,localUV).rgb;
-	n = normalize(n * 2.0 - 1.0);
-	
 	// Store values.
 	vec4 color = texture(texture0, localUV);
 	if(color.a <= 0.01){
 		discard;
 	}
+	
+	// Flip the up of the local frame for back facing fragments.
+	mat3 tbn = In.tbn;
+	tbn[2] *= (gl_FrontFacing ? 1.0 : -1.0);
+	// Compute the normal at the fragment using the tangent space matrix and the normal read in the normal map.
+	vec3 n = texture(texture1,localUV).rgb;
+	n = normalize(n * 2.0 - 1.0);
+	n = normalize(tbn * n);
+	
 	fragColor.rgb = color.rgb;
 	fragColor.a = float(MATERIAL_ID)/255.0;
-	fragNormal.rgb = normalize(In.tbn * n)*0.5+0.5;
+	fragNormal.rgb = n * 0.5 + 0.5;
 	fragEffects.rgb = texture(texture2,localUV).rgb;
 	
 	// Store depth manually (see below).
@@ -106,7 +111,7 @@ void main(){
 	// Read the depth.
 	float localDepth = texture(texture3,localUV).r;
 	// Convert the 3D shift applied from tangent space to view space.
-	vec3 shift = In.tbn * vec3(positionShift.xy, -PARALLAX_SCALE * localDepth);
+	vec3 shift = tbn * vec3(positionShift.xy, -PARALLAX_SCALE * localDepth);
 	// Update the depth in view space.
 	vec3 newViewSpacePosition = In.viewSpacePosition - vec3(0.0,0.0, shift.z);
 	// Back to clip space.

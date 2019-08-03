@@ -28,7 +28,8 @@ void main(){
 	}
 	fragColor.rgb = color.rgb;
 	fragColor.a = float(MATERIAL_ID)/255.0;
-	fragNormal.rgb = n * 0.5 + 0.5;
+	// Flip the normal for back facing faces.
+	fragNormal.rgb = (gl_FrontFacing ? 1.0 : -1.0) * n * 0.5 + 0.5;
 	fragEffects.rgb = texture(texture2, defaultUV).rgb;
 	
 }

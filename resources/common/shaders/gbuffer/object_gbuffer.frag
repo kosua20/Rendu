@@ -20,18 +20,25 @@ layout (location = 2) out vec3 fragEffects; ///< Effects.
 	(combining geometry normal and normal map) in view space. */
 void main(){
 	
-	// Compute the normal at the fragment using the tangent space matrix and the normal read in the normal map.
-	vec3 n = texture(texture1, In.uv).rgb ;
-	n = normalize(n * 2.0 - 1.0);
 	
-	// Store values.
 	vec4 color = texture(texture0, In.uv);
 	if(color.a <= 0.01){
 		discard;
 	}
+	
+	// Flip the up of the local frame for back facing fragments.
+	mat3 tbn = In.tbn;
+	tbn[2] *= (gl_FrontFacing ? 1.0 : -1.0);
+	// Compute the normal at the fragment using the tangent space matrix and the normal read in the normal map.
+	vec3 n = texture(texture1, In.uv).rgb ;
+	n = normalize(n * 2.0 - 1.0);
+	n = normalize(tbn * n);
+	
+	// Store values.
 	fragColor.rgb = color.rgb;
 	fragColor.a = float(MATERIAL_ID)/255.0;
-	fragNormal.rgb = normalize(In.tbn * n)*0.5+0.5;
+	
+	fragNormal.rgb = n * 0.5 + 0.5;
 	fragEffects.rgb = texture(texture2, In.uv).rgb;
 	
 }
