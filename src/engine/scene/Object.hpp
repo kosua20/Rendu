@@ -89,6 +89,11 @@ public:
 	 */
 	bool twoSided() const { return _twoSided; }
 	
+	/** Should an alpha clip mask be applied when rendering the object (for leaves or chains for instance).
+	 \return a boolean denoting if masking should be applied
+	 */
+	bool masked() const { return _masked; }
+	
 	/** Setup an object parameters from a list of key-value tuples. The following keywords will be searched for:
 	 \verbatim
 	 type: objecttype
@@ -98,6 +103,7 @@ public:
 	 orientation: axisX,axisY,axisZ angle
 	 shadows: bool
 	 twosided: bool
+	 masked: bool
 	 textures:
 	 	- texturetype: ...
 	 	- ...
@@ -121,4 +127,5 @@ protected:
 	Type _material = Type::Common; ///< The material type.
 	bool _castShadow = true; ///< Can the object casts shadows.
 	bool _twoSided = false; ///< Should faces of the object be visible from the two sides.
+	bool _masked = false; ///< The object RGB texture has a non-empty alpha channel.
 };
