@@ -11,6 +11,8 @@ void Random::seed(unsigned int seedValue){
 	_seed = seedValue;
 	// Seed the shared MT generator.
 	_shared = std::mt19937(_seed);
+	// Reset the calling thread generator.
+	_thread = LocalMT19937();
 }
 
 unsigned int Random::getSeed(){
@@ -37,7 +39,6 @@ glm::vec3 Random::sampleSphere(){
 }
 
 Random::LocalMT19937::LocalMT19937(){
-	///\todo Local generators can be initialized before seeding because of static variables initialization order.
 	// Get a lock on the shared MT generator.
 	std::lock_guard<std::mutex> guard(_lock);
 	// Generate a local seed.
