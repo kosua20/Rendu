@@ -33,6 +33,7 @@ namespace SceneExport {
 		outMaterial.normalName     = baseName + "_texture_normal";
 		outMaterial.roughMetAoName = baseName + "_texture_rough_met_ao";
 		outMaterial.depthName      = hasTextureDisplacement ? (baseName + "_texture_depth") : "";
+		outMaterial.hasAlpha = hasTextureAlpha;
 		
 		// Output files.
 		const std::string outputColorPath  = outputDirPath + outMaterial.colorName + ".png";
@@ -229,6 +230,7 @@ namespace SceneExport {
 					typeName = "PBRNoUVs";
 				}
 				sceneFile << "\ttype: " << typeName << std::endl;
+				sceneFile << "\tmasked: " << (materialDetails.hasAlpha ? "true" : "false") << std::endl;
 				sceneFile << "\ttextures:" << std::endl;
 				sceneFile << "\t\t- srgb: " << materialDetails.colorName << std::endl;
 				sceneFile << "\t\t- rgb: " << materialDetails.normalName << std::endl;

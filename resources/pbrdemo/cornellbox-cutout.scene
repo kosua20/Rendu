@@ -92,6 +92,7 @@
 	shadows: true
 	type: PBRRegular
 	twosided: true
+	masked: true
 	textures:
 		- srgb: leaves_color
 		- rgb: leaves_normal

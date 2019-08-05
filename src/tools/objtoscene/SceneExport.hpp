@@ -20,6 +20,7 @@ namespace SceneExport {
 		std::string normalName; ///< Normal map name.
 		std::string roughMetAoName; ///< Roughness-metalness-ambient occlusion texture name.
 		std::string depthName; ///< Optional depth map.
+		bool hasAlpha = false; ///< Alpha mask.
 	};
 	
 	/** Save a small colored texture.
