@@ -21,7 +21,7 @@ void DirectionalLight::init(const std::vector<GLuint>& textureIds){
 	
 	// Load the shaders
 	_program = Resources::manager().getProgram2D("directional_light");
-	_programDepth = Resources::manager().getProgram("object_depth", "object_basic", "light_shadow");
+	_programDepth = Resources::manager().getProgram("object_depth", "object_basic_texture", "light_shadow");
 
 }
 
@@ -62,10 +62,16 @@ void DirectionalLight::drawShadow(const std::vector<Object> & objects) const {
 		if(object.twoSided()){
 			glDisable(GL_CULL_FACE);
 		}
+		glUniform1i(_programDepth->uniform("hasMask"), int(object.masked()));
+		if(object.masked()){
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, object.textures()[0]->id);
+		}
 		const glm::mat4 lightMVP = _mvp * object.model();
 		glUniformMatrix4fv(_programDepth->uniform("mvp"), 1, GL_FALSE, &lightMVP[0][0]);
 		GLUtilities::drawMesh(*(object.mesh()));
 		glEnable(GL_CULL_FACE);
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 	glUseProgram(0);
 	
