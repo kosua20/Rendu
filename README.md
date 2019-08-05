@@ -50,7 +50,7 @@ You can clean the build directory with
 
 	premake5 clean
 
-Two non-system dependencies are required by this framework: `glfw3` and `nfd`, binaries for both are provided for macOS and Windows. All other dependencies are compiled along with the projects.
+All non-system dependencies are compiled directly along with the projects.
 
 # Features
 
