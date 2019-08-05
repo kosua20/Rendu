@@ -37,6 +37,7 @@ glm::vec3 Random::sampleSphere(){
 }
 
 Random::LocalMT19937::LocalMT19937(){
+	///\todo Local generators can be initialized before seeding because of static variables initialization order.
 	// Get a lock on the shared MT generator.
 	std::lock_guard<std::mutex> guard(_lock);
 	// Generate a local seed.
