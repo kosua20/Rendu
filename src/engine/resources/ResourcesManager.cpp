@@ -215,13 +215,11 @@ const std::string Resources::getString(const std::string & filename){
 
 // Mesh method.
 
-const MeshInfos * Resources::getMesh(const std::string & name, Storage mode){
+const Mesh * Resources::getMesh(const std::string & name, Storage mode){
 	if(_meshes.count(name) > 0){
 		return &_meshes[name];
 	}
 
-	MeshInfos infos;
-	
 	// Load geometry. For now we only support OBJs.
 	Mesh mesh;
 	const std::string meshText = getString(name + ".obj");
@@ -231,6 +229,8 @@ const MeshInfos * Resources::getMesh(const std::string & name, Storage mode){
 		MeshUtilities::loadObj(meshStream, mesh, MeshUtilities::Indexed);
 		// If uv or positions are missing, tangent/binormals won't be computed.
 		MeshUtilities::computeTangentsAndBinormals(mesh);
+		// Compute bounding box.
+		mesh.bbox = MeshUtilities::computeBoundingBox(mesh);
 		
 	} else {
 		Log::Error() << Log::Resources << "Unable to load mesh named " << name << "." << std::endl;
@@ -239,17 +239,14 @@ const MeshInfos * Resources::getMesh(const std::string & name, Storage mode){
 	
 	if(mode & Storage::GPU){
 		// Setup GL buffers and attributes.
-		infos = GLUtilities::setupBuffers(mesh);
+		GLUtilities::setupBuffers(mesh);
 	}
-	// Compute bounding box.
-	infos.bbox = MeshUtilities::computeBoundingBox(mesh);
-	
-	// Move at the very end.
-	if(mode & Storage::CPU){
-		infos.geometry = std::move(mesh);
+	// If we are not planning on using the CPU data, remove it.
+	if(!(mode & Storage::CPU)){
+		mesh.clearGeometry();
 	}
 	
-	_meshes[name] = infos;
+	_meshes[name] = mesh;
 	return &_meshes[name];
 }
 

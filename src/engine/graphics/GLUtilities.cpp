@@ -93,17 +93,11 @@ Descriptor::Descriptor(const GLuint typedFormat_, const GLuint filtering_, const
 	typedFormat = typedFormat_; filtering = filtering_; wrapping = wrapping_;
 }
 
-MeshInfos::MeshInfos() : vId(0), eId(0), count(0), bbox() , vbo(0){
-}
-
-void MeshInfos::clean(){
+void GPUMesh::clean(){
 	glDeleteBuffers(1, &eId);
 	glDeleteVertexArrays(1, &vId);
 	glDeleteBuffers(1, &vbo);
-	count = 0;
-	eId = vId = vbo = 0;
-	bbox = BoundingBox();
-	geometry.clear();
+	count = eId = vId = vbo = 0;
 }
 
 void replace(std::string & source, const std::string& fromString, const std::string & toString){
@@ -456,8 +450,8 @@ TextureInfos GLUtilities::loadTexture(const GLenum target, const std::vector<std
 	return infos;
 }
 
-MeshInfos GLUtilities::setupBuffers(const Mesh & mesh){
-	MeshInfos infos;
+void GLUtilities::setupBuffers(Mesh & mesh){
+	mesh.gpu = new GPUMesh();
 	GLuint vbo = 0;
 	// Generate a vertex array.
 	GLuint vao = 0;
@@ -533,11 +527,10 @@ MeshInfos GLUtilities::setupBuffers(const Mesh & mesh){
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	
-	infos.vId = vao;
-	infos.eId = ebo;
-	infos.count = (GLsizei)mesh.indices.size();
-	infos.vbo = vbo;
-	return infos;
+	mesh.gpu->vId = vao;
+	mesh.gpu->eId = ebo;
+	mesh.gpu->count = (GLsizei)mesh.indices.size();
+	mesh.gpu->vbo = vbo;
 }
 
 void GLUtilities::saveDefaultFramebuffer(const unsigned int width, const unsigned int height, const std::string & path){
@@ -693,9 +686,9 @@ GLuint GLUtilities::getMagnificationFilter(const GLuint minificationFilter){
 	return minificationFilter;
 }
 
-void GLUtilities::drawMesh(const MeshInfos & mesh) {
-	glBindVertexArray(mesh.vId);
-	glDrawElements(GL_TRIANGLES, mesh.count, GL_UNSIGNED_INT, (void*)0);
+void GLUtilities::drawMesh(const Mesh & mesh) {
+	glBindVertexArray(mesh.gpu->vId);
+	glDrawElements(GL_TRIANGLES, mesh.gpu->count, GL_UNSIGNED_INT, (void*)0);
 }
 
 void GLUtilities::bindTextures(const std::vector<const TextureInfos*> & textures, int startingSlot){

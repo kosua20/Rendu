@@ -3,6 +3,8 @@
 #include "graphics/GLUtilities.hpp"
 #include "graphics/ProgramInfos.hpp"
 #include "resources/Font.hpp"
+#include "resources/Mesh.hpp"
+
 #include "Common.hpp"
 
 /**
@@ -81,7 +83,7 @@ public:
 	 \param mode denote if data will be available in the CPU and/or GPU memory
 	 \return the mesh informations
 	 */
-	const MeshInfos * getMesh(const std::string & name, Storage mode = GPU);
+	const Mesh * getMesh(const std::string & name, Storage mode);
 	
 	/** Get a 2D texture resource. Automatically handle custom mipmaps if present.
 	 \param name the texture base name
@@ -194,7 +196,7 @@ private:
 	
 	std::map<std::string, std::string> _files; ///< Listing of available files and their paths.
 	std::map<std::string, TextureInfos> _textures; ///< Loaded textures, identified by name.
-	std::map<std::string, MeshInfos> _meshes; ///< Loaded meshes, identified by name.
+	std::map<std::string, Mesh> _meshes; ///< Loaded meshes, identified by name.
 	std::map<std::string, FontInfos> _fonts; ///< Loaded font infos, identified by name.
 	std::map<std::string, ProgramInfos> _programs; ///< Loaded shader programs, identified by name.
 	

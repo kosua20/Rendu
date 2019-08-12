@@ -78,28 +78,32 @@ struct TextureInfos {
 	bool cubemap; ///< Denote if the texture is a cubemap.
 	bool array; ///< Denote if the texture is an array.
 	std::vector<Image> images; ///< The image data (optional)
-	
-	/** Default constructor. */
+ 
 	TextureInfos() : descriptor(), id(0), width(0), height(0), mipmap(0), cubemap(false), array(false), images() {}
 
 };
+/*
+struct GPUTexture {
+	Descriptor descriptor; ///< The texture format, type, filtering.
+	GLuint id; ///< The OpenGL texture ID.
+	unsigned int mipmap; ///< The mipmap count.
+	
+	GPUTexture() : descriptor(), id(0), mipmap(0) {
+	}
+};*/
 
 /**
- \brief Store geometry informations.
+ \brief Store geometry buffers on the GPU.
  \ingroup Graphics
  */
-struct MeshInfos {
-	GLuint vId; ///< The vertex array OpenGL ID.
-	GLuint eId; ///< The element buffer OpenGL ID.
-	GLsizei count; ///< The number of vertices.
-	BoundingBox bbox; ///< The mesh bounding box in model space.
-	GLuint vbo; ///< The vertex buffer objects openGL ID.
-	Mesh geometry; ///< The geometry data (optional)
+struct GPUMesh {
 	
-	/** Default constructor. */
-	MeshInfos();
+	GLuint vId = 0; ///< The vertex array OpenGL ID.
+	GLuint eId = 0; ///< The element buffer OpenGL ID.
+	GLsizei count = 0; ///< The number of vertices (cached).
+	GLuint vbo = 0; ///< The vertex buffer objects OpenGL ID.
 	
-	/** Clean internal GPU and CPU buffers. */
+	/** Clean internal GPU buffers. */
 	void clean();
 	
 };
@@ -144,12 +148,11 @@ public:
 	 */
 	static TextureInfos loadTexture(const GLenum target, const std::vector<std::vector<std::string>>& path, const Descriptor & descriptor, Storage mode);
 	
-	/** Mesh loading: send a mesh data to the GPU.
+	/** Mesh loading: send a mesh data to the GPU and set the input mesh GPU infos accordingly.
 	 \param mesh the mesh to upload
-	 \return the mesh infos, including OpenGL array/buffer IDs
 	 \note The order of attribute locations is: position, normal, uvs, tangents, binormals.
 	 */
-	static MeshInfos setupBuffers(const Mesh & mesh);
+	static void setupBuffers(Mesh & mesh);
 	
 	/** Save a given framebuffer content to the disk.
 	 \param framebuffer the framebuffer to save
@@ -196,7 +199,7 @@ public:
 	/** Draw indexed geometry.
 	 \param mesh the mesh to draw
 	 */
-	static void drawMesh(const MeshInfos & mesh);
+	static void drawMesh(const Mesh & mesh);
 	
 	/** Bind a series of textures to some texture slots, in order.
 	 \param textures the infos of the textures to bind
