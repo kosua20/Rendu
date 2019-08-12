@@ -8,7 +8,7 @@ void AmbientQuad::init(const GLuint texAlbedo, const GLuint texNormals, const GL
 	
 	_program = Resources::manager().getProgram2D("ambient");
 	// Load texture.
-	_textureBrdf = Resources::manager().getTexture("brdf-precomputed", {GL_RG32F, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE})->id;
+	_textureBrdf = Resources::manager().getTexture("brdf-precomputed", {GL_RG32F, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE})->gpu->id;
 	
 	// Ambient pass: needs the albedo, the normals, the depth, the effects and the AO result
 	_textures = { texAlbedo, texNormals, texEffects, texDepth, texSSAO };

@@ -84,7 +84,7 @@ void DeferredRenderer::setScene(std::shared_ptr<Scene> scene){
 	_userCamera.speed() = 0.2f*range;
 	_cplanes = _userCamera.clippingPlanes();
 	_cameraFOV = _userCamera.fov() * 180.0f /float(M_PI);
-	_ambientScreen.setSceneParameters(_scene->backgroundReflection->id, _scene->backgroundIrradiance);
+	_ambientScreen.setSceneParameters(_scene->backgroundReflection->gpu->id, _scene->backgroundIrradiance);
 	
 	std::vector<GLuint> includedTextures = _gbuffer->textureIds();
 	/// \todo clarify this.

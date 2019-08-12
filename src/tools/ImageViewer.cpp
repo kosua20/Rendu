@@ -45,7 +45,7 @@ int main(int argc, char** argv) {
 	const ProgramInfos * program = Resources::manager().getProgram("image_display");
 	
 	// Infos on the current texture.
-	TextureInfos imageInfos;
+	Texture imageInfos;
 	bool isFloat = false;
 	
 	// Settings.
@@ -135,7 +135,7 @@ int main(int argc, char** argv) {
 			glUniform2fv(program->uniform("mouseShift"), 1, &mouseShift[0]);
 			
 			// Draw.
-			ScreenQuad::draw(imageInfos.id);
+			ScreenQuad::draw(imageInfos.gpu->id);
 			
 			glDisable(GL_BLEND);
 
@@ -201,10 +201,10 @@ int main(int argc, char** argv) {
 			
 			// Filtering.
 			if(ImGui::Combo("Filtering", (int*)(&imageInterp), "Nearest\0Linear\0\0")){
-				imageInfos.descriptor.filtering = (imageInterp == Nearest) ? GL_NEAREST_MIPMAP_LINEAR : GL_LINEAR_MIPMAP_LINEAR;
-				glBindTexture(GL_TEXTURE_2D, imageInfos.id);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GLUtilities::getMagnificationFilter(imageInfos.descriptor.filtering));
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, imageInfos.descriptor.filtering);
+				imageInfos.gpu->descriptor.filtering = (imageInterp == Nearest) ? GL_NEAREST_MIPMAP_LINEAR : GL_LINEAR_MIPMAP_LINEAR;
+				glBindTexture(GL_TEXTURE_2D, imageInfos.gpu->id);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GLUtilities::getMagnificationFilter(imageInfos.gpu->descriptor.filtering));
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, imageInfos.gpu->descriptor.filtering);
 				glBindTexture(GL_TEXTURE_2D, 0);
 			}
 			
@@ -265,7 +265,7 @@ int main(int argc, char** argv) {
 					glUniform1f(program->uniform("widthRatio"), 1.0f);
 					glUniform1f(program->uniform("pixelScale"), 1.0f);
 					glUniform2f(program->uniform("mouseShift"), 0.0f, 0.0f);
-					ScreenQuad::draw(imageInfos.id);
+					ScreenQuad::draw(imageInfos.gpu->id);
 					glDisable(GL_BLEND);
 					
 					framebuffer->unbind();

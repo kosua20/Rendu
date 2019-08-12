@@ -68,7 +68,7 @@ private:
 	std::vector<Mesh> _bvhLevels; ///< The BVH visualisation mesh.
 	std::vector<Mesh> _rayLevels; ///< BVH nodes intersected with a ray.
 	Mesh _rayVis; ///< Mesh representing a ray and its intersected triangle.
-	TextureInfos _renderTex; ///< The result texture and image.
+	Texture _renderTex; ///< The result texture and image.
 	
 	std::shared_ptr<Scene> _scene; ///< The scene to render.
 	PathTracer _pathTracer; ///< The scene specific path tracer.

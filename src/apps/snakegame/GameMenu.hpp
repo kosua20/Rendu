@@ -20,7 +20,7 @@ public:
 	 \param actionTag the ID of the action associated to this button
 	 \param texture the text texture on the button
 	 */
-	MenuButton(const glm::vec2 & screenPos, const glm::vec2 & meshSize, const float screenScale, const int actionTag, const TextureInfos & texture);
+	MenuButton(const glm::vec2 & screenPos, const glm::vec2 & meshSize, const float screenScale, const int actionTag, const Texture & texture);
 	
 	/** Check if a position is inside the button.
 	 \param mousePos the position to test (in absolute units)
@@ -59,7 +59,7 @@ public:
 	 \param actionTag the ID of the action associated to this button
 	 \param texture the text texture accompanying the checkbox
 	 */
-	MenuToggle(const glm::vec2 & screenPos, const glm::vec2 & meshSize, const float screenScale, const int actionTag, const TextureInfos & texture);
+	MenuToggle(const glm::vec2 & screenPos, const glm::vec2 & meshSize, const float screenScale, const int actionTag, const Texture & texture);
 	
 	glm::vec2 posBox; ///< Screen position of the toggle box.
 	glm::vec2 posImg; ///< Screen position of the text.
@@ -80,7 +80,7 @@ public:
 	 \param screenScale scaling to apply to the image on the X axis
 	 \param texture the texture to display
 	 */
-	MenuImage(const glm::vec2 & screenPos, const float screenScale, const TextureInfos & texture);
+	MenuImage(const glm::vec2 & screenPos, const float screenScale, const Texture & texture);
 	
 	glm::vec2 pos; ///< Image position.
 	glm::vec2 size; ///< Screen size.

@@ -14,7 +14,7 @@ Game::Game(RenderingConfig & config) : _config(config), _inGameRenderer(config),
 	const FontInfos * font = Resources::manager().getFont("digits");
 	
 	const Descriptor commonDesc = {GL_SRGB8_ALPHA8, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE};
-	const GLuint backgroundTexture = Resources::manager().getTexture("menubg", commonDesc)->id;
+	const GLuint backgroundTexture = Resources::manager().getTexture("menubg", commonDesc)->gpu->id;
 	
 	_menus[Status::MAINMENU].backgroundImage = backgroundTexture;
 	_menus[Status::MAINMENU].buttons.emplace_back(glm::vec2(0.0f,  0.10f), meshSize, displayScale, NEWGAME,

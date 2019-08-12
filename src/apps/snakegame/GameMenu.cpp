@@ -1,12 +1,12 @@
 #include "GameMenu.hpp"
 
 
-MenuButton::MenuButton(const glm::vec2 & screenPos, const glm::vec2 & meshSize, const float screenScale, const int actionTag, const TextureInfos & texture){
+MenuButton::MenuButton(const glm::vec2 & screenPos, const glm::vec2 & meshSize, const float screenScale, const int actionTag, const Texture & texture){
 	pos = screenPos;
 	size = screenScale * meshSize;
 	displayScale = screenScale;
 	tag = actionTag;
-	tid = texture.id;
+	tid = texture.gpu->id;
 }
 
 bool MenuButton::contains(const glm::vec2 & mousePos){
@@ -14,22 +14,22 @@ bool MenuButton::contains(const glm::vec2 & mousePos){
 	&& glm::all(glm::lessThanEqual(mousePos, pos + size * 0.5f));
 }
 
-MenuToggle::MenuToggle(const glm::vec2 & screenPos, const glm::vec2 & meshSize, const float screenScale, const int actionTag, const TextureInfos & texture) : MenuButton(screenPos, meshSize, screenScale, actionTag, texture){
+MenuToggle::MenuToggle(const glm::vec2 & screenPos, const glm::vec2 & meshSize, const float screenScale, const int actionTag, const Texture & texture) : MenuButton(screenPos, meshSize, screenScale, actionTag, texture){
 	posBox = this->pos + glm::vec2(2.0f/3.0f, 0.0f)*screenScale;
 	posImg = this->pos - glm::vec2(0.4f, 0.0f)*screenScale;
 	scaleBox = checkBoxScale * this->scale;
 }
 
-MenuImage::MenuImage(const glm::vec2 & screenPos, const float screenScale, const TextureInfos & texture){
+MenuImage::MenuImage(const glm::vec2 & screenPos, const float screenScale, const Texture & texture){
 	pos = screenPos;
 	size = screenScale * glm::vec2(1.0f, float(texture.height) / float(texture.width));
-	tid = texture.id;
+	tid = texture.gpu->id;
 }
 
 MenuLabel::MenuLabel(const glm::vec2 & screenPos, const float verticalScale, const FontInfos * font, const Font::Alignment alignment) {
 	_font = font;
 	pos = screenPos;
-	tid = _font->atlas->id;
+	tid = _font->atlas->gpu->id;
 	_vScale = verticalScale;
 	_align = alignment;
 	update("0");

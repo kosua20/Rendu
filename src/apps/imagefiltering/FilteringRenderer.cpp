@@ -56,7 +56,7 @@ void FilteringRenderer::draw() {
 		_sceneBuffer->bind();
 		_sceneBuffer->setViewport();
 		glUseProgram(_passthrough->id());
-		ScreenQuad::draw(_image.id);
+		ScreenQuad::draw(_image.gpu->id);
 		glUseProgram(0);
 		_sceneBuffer->unbind();
 	} else {

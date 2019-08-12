@@ -76,7 +76,7 @@ private:
 	const Mesh * _bodyElement; ///< Body elements and items mesh.
 	
 	Camera _playerCamera; ///< The player camera (fixed).
-	const TextureInfos * _cubemap; ///< Environment map for reflections.
+	const Texture * _cubemap; ///< Environment map for reflections.
 };
 
 

@@ -29,7 +29,7 @@ const std::vector<std::string> suffixes = {"_px", "_nx", "_py", "_ny", "_pz", "_
  \param cubemapInfos will contain the cubemap infos once sent to the GPU
  \ingroup BRDFEstimator
  */
-void loadCubemap(const std::string & inputPath, TextureInfos & cubemapInfos){
+void loadCubemap(const std::string & inputPath, Texture & cubemapInfos){
 	std::string cubemapPath = inputPath;
 	const std::string ext = TextUtilities::removeExtension(cubemapPath);
 	cubemapPath = cubemapPath.substr(0, cubemapPath.size()-3);
@@ -53,7 +53,7 @@ void loadCubemap(const std::string & inputPath, TextureInfos & cubemapInfos){
 \return the 9 RGB coefficients of the SH decomposition
 \ingroup BRDFEstimator
 */
-std::vector<glm::vec3> computeSHCoeffs(const TextureInfos & cubemap){
+std::vector<glm::vec3> computeSHCoeffs(const Texture & cubemap){
 	// Indices conversions from cubemap UVs to direction.
 	const std::vector<int> axisIndices = { 0, 0, 1, 1, 2, 2 };
 	const std::vector<float> axisMul = { 1.0f, -1.0f, 1.0f, -1.0f, 1.0f, -1.0f};
@@ -174,7 +174,7 @@ std::vector<glm::vec3> computeSHCoeffs(const TextureInfos & cubemap){
  \param cubeLevels will contain the texture infos for each level
  \ingroup BRDFEstimator
  */
-void computeCubemapConvolution(const TextureInfos & cubemapInfos, int levelsCount, int outputSide, int samplesCount, std::vector<TextureInfos> & cubeLevels){
+void computeCubemapConvolution(const Texture & cubemapInfos, int levelsCount, int outputSide, int samplesCount, std::vector<Texture> & cubeLevels){
 	
 	cubeLevels.clear();
 	
@@ -204,20 +204,21 @@ void computeCubemapConvolution(const TextureInfos & cubemapInfos, int levelsCoun
 		Log::Info() << Log::Utilities << "Level " << level << " (size=" << w << ", r=" << roughness << "): " << std::flush;
 		
 		// Create cubemap texture for this mipmap level.
-		TextureInfos levelInfos;
-		levelInfos.cubemap = true;
-		levelInfos.mipmap = 1;
-		levelInfos.descriptor = {GL_RGB32F, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE};
+		Texture levelInfos;
+		levelInfos.gpu = new GPUTexture();
+		levelInfos.type = Texture::TCube;
+		levelInfos.gpu->mipmap = 1;
+		levelInfos.gpu->descriptor = {GL_RGB32F, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE};
 		levelInfos.width = w;
 		levelInfos.height = h;
-		levelInfos.id = GLUtilities::createTexture(GL_TEXTURE_CUBE_MAP, levelInfos.descriptor, levelInfos.mipmap);
+		levelInfos.gpu->id = GLUtilities::createTexture(GL_TEXTURE_CUBE_MAP, levelInfos.gpu->descriptor, levelInfos.gpu->mipmap);
 		
 		// Allocate cubemap storage.
 		GLenum type, format;
-		GLUtilities::getTypeAndFormat(levelInfos.descriptor.typedFormat, type, format);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, levelInfos.id);
+		GLUtilities::getTypeAndFormat(levelInfos.gpu->descriptor.typedFormat, type, format);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, levelInfos.gpu->id);
 		for(int i = 0; i < 6; ++i){
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, levelInfos.descriptor.typedFormat,
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, levelInfos.gpu->descriptor.typedFormat,
 						 w, h, 0, format, type, NULL);
 		}
 		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
@@ -230,8 +231,8 @@ void computeCubemapConvolution(const TextureInfos & cubemapInfos, int levelsCoun
 			const auto resultFramebuffer = std::make_shared<Framebuffer>(w, h, GL_RGB32F, false);
 			resultFramebuffer->bind();
 			// Use the cubemap texture as a backing texture for the framebuffer.
-			glBindTexture(GL_TEXTURE_CUBE_MAP, levelInfos.id);
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X+i), levelInfos.id, 0);
+			glBindTexture(GL_TEXTURE_CUBE_MAP, levelInfos.gpu->id);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X+i), levelInfos.gpu->id, 0);
 			glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 			
 			// Clear texture slice.
@@ -246,7 +247,7 @@ void computeCubemapConvolution(const TextureInfos & cubemapInfos, int levelsCoun
 			glUniform1i(programCubemap->uniform("samplesCount"), samplesCount);
 			// Attach source cubemap.
 			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapInfos.id);
+			glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapInfos.gpu->id);
 			// Draw.
 			GLUtilities::drawMesh(*mesh);
 			resultFramebuffer->unbind();
@@ -270,13 +271,13 @@ void computeCubemapConvolution(const TextureInfos & cubemapInfos, int levelsCoun
  \param outputPath the based destination path
  \ingroup BRDFEstimator
  */
-void exportCubemapConvolution(const std::vector<TextureInfos> &cubeLevels, const std::string & outputPath){
+void exportCubemapConvolution(const std::vector<Texture> &cubeLevels, const std::string & outputPath){
 	
 	for(int level = 0; level < int(cubeLevels.size()); ++level){
 		const std::string levelPath = outputPath + "_" + std::to_string(level);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, cubeLevels[level].id);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, cubeLevels[level].gpu->id);
 		GLenum type, format;
-		GLUtilities::getTypeAndFormat(cubeLevels[level].descriptor.typedFormat, type, format);
+		GLUtilities::getTypeAndFormat(cubeLevels[level].gpu->descriptor.typedFormat, type, format);
 		const int levelSide = cubeLevels[level].width;
 		for(int i = 0; i < 6; ++i){
 			const std::string faceLevelPath = levelPath + suffixes[i];
@@ -342,11 +343,11 @@ int main(int argc, char** argv) {
 	const auto program = Resources::manager().getProgram("skybox_basic");
 	const auto programSH = Resources::manager().getProgram("skybox_shcoeffs", "skybox_basic", "skybox_shcoeffs");
 	const auto mesh = Resources::manager().getMesh("skybox", GPU);
-	const TextureInfos * cubemapInfosDefault = Resources::manager().getCubemap("debug-cube", {GL_RGB8, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE});
+	const Texture * cubemapInfosDefault = Resources::manager().getCubemap("debug-cube", {GL_RGB8, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE});
 	
-	TextureInfos cubemapInfos;
+	Texture cubemapInfos;
 	std::vector<glm::vec3> SCoeffs(9);
-	std::vector<TextureInfos> cubeLevels;
+	std::vector<Texture> cubeLevels;
 	//std::vector<Image> cubemapSides;
 	
 	double timer = glfwGetTime();
@@ -493,16 +494,16 @@ int main(int argc, char** argv) {
 		glViewport(0,0, GLsizei(screenSize[0]), GLsizei(screenSize[1]));
 		
 		// Render main cubemap.
-		if(cubemapInfos.id > 0){
+		if(cubemapInfos.gpu->id > 0){
 			const auto & programToUse = mode == SH_COEFFS ? programSH : program;
 			glEnable(GL_DEPTH_TEST);
 			glUseProgram(programToUse->id());
 			glDisable(GL_CULL_FACE);
 			glActiveTexture(GL_TEXTURE0);
 			if(mode == BRDF_CONV && !cubeLevels.empty()){
-				glBindTexture(GL_TEXTURE_CUBE_MAP, cubeLevels[showLevel].id);
+				glBindTexture(GL_TEXTURE_CUBE_MAP, cubeLevels[showLevel].gpu->id);
 			} else {
-				glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapInfos.id);
+				glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapInfos.gpu->id);
 			}
 			glUniformMatrix4fv(programToUse->uniform("mvp"), 1, GL_FALSE,  &mvp[0][0]);
 			GLUtilities::drawMesh(*mesh);
@@ -519,7 +520,7 @@ int main(int argc, char** argv) {
 		glUseProgram(program->id());
 		glDisable(GL_CULL_FACE);
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapInfosDefault->id);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapInfosDefault->gpu->id);
 		glUniformMatrix4fv(program->uniform("mvp"), 1, GL_FALSE,  &mvp[0][0]);
 		GLUtilities::drawMesh(*mesh);
 		glUseProgram(0);

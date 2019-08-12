@@ -19,10 +19,10 @@ BVHRenderer::BVHRenderer(RenderingConfig & config) : Renderer(config) {
 	checkGLError();
 	
 	// Initial setup for rendering image.
-	_renderTex.array = false;
-	_renderTex.cubemap = false;
-	_renderTex.descriptor = {GL_SRGB8, GL_LINEAR, GL_CLAMP_TO_EDGE};
-	_renderTex.mipmap = 1;
+	_renderTex.type = Texture::T2D;
+	_renderTex.gpu = new GPUTexture();
+	_renderTex.gpu->descriptor = {GL_SRGB8, GL_LINEAR, GL_CLAMP_TO_EDGE};
+	_renderTex.gpu->mipmap = 1;
 	_renderTex.width = renderWidth;
 	_renderTex.height = renderHeight;
 }
@@ -71,7 +71,7 @@ void BVHRenderer::draw() {
 		glViewport(0, 0, GLsizei(_config.screenResolution[0]), GLsizei(_config.screenResolution[1]));
 		glUseProgram(_passthrough->id());
 		glUniform1i(_passthrough->uniform("flip"), 1);
-		ScreenQuad::draw(_renderTex.id);
+		ScreenQuad::draw(_renderTex.gpu->id);
 		glDisable(GL_FRAMEBUFFER_SRGB);
 		return;
 	}
@@ -169,10 +169,10 @@ void BVHRenderer::update(){
 			_pathTracer.render(_userCamera, _samples, _depth, render);
 			
 			// Remove previous texture.
-			glDeleteTextures(1, &_renderTex.id);
+			glDeleteTextures(1, &_renderTex.gpu->id);
 			// Upload to the GPU.
-			_renderTex.id  = GLUtilities::createTexture(GL_TEXTURE_2D, _renderTex.descriptor, _renderTex.mipmap);
-			GLUtilities::uploadTexture(GL_TEXTURE_2D, _renderTex.id, GL_SRGB8, 0, 0, render);
+			_renderTex.gpu->id  = GLUtilities::createTexture(GL_TEXTURE_2D, _renderTex.gpu->descriptor, _renderTex.gpu->mipmap);
+			GLUtilities::uploadTexture(GL_TEXTURE_2D, _renderTex.gpu->id, GL_SRGB8, 0, 0, render);
 			_showRender = true;
 		}
 		ImGui::SameLine();
@@ -277,7 +277,7 @@ void BVHRenderer::clean() {
 		level.clean();
 	}
 	_rayVis.clean();
-	glDeleteTextures(1, &_renderTex.id);
+	glDeleteTextures(1, &_renderTex.gpu->id);
 }
 
 void BVHRenderer::resize(unsigned int width, unsigned int height){

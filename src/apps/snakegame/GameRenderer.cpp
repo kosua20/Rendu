@@ -57,7 +57,7 @@ void GameRenderer::draw(const Player & player){
 	_lightingFramebuffer->setViewport();
 	glUseProgram(_compositingProgram->id());
 	glActiveTexture(GL_TEXTURE0 + 3);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, _cubemap->id);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, _cubemap->gpu->id);
 	ScreenQuad::draw({_sceneFramebuffer->textureId(0), _sceneFramebuffer->textureId(1), _ssaoPass->textureId()});
 	_lightingFramebuffer->unbind();
 	
