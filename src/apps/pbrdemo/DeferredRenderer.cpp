@@ -4,7 +4,7 @@
 #include "scene/lights/PointLight.hpp"
 #include "scene/lights/SpotLight.hpp"
 #include "scene/Sky.hpp"
-#include "helpers/System.hpp"
+#include "system/System.hpp"
 #include <chrono>
 
 DeferredRenderer::DeferredRenderer(RenderingConfig & config) : Renderer(config) {

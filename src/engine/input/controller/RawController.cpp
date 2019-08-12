@@ -1,4 +1,4 @@
-#include "RawController.hpp"
+#include "input/controller/RawController.hpp"
 
 RawController::RawController() : Controller() {
 	

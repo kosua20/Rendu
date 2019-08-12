@@ -1,5 +1,4 @@
-#ifndef RawController_h
-#define RawController_h
+#pragma once
 
 #include "input/controller/Controller.hpp"
 #include "Common.hpp"
@@ -39,5 +38,3 @@ private:
 	int _rawButtonsCount = 0; ///< Number of buttons returned by GLFW
 	
 };
-
-#endif

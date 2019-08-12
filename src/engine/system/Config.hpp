@@ -1,10 +1,3 @@
-//
-//  Config.hpp
-//
-//  Created by Simon Rodriguez on 30/12/2017.
-//  Copyright © 2017 Simon Rodriguez. All rights reserved.
-//
-
 #pragma once
 
 #include "Common.hpp"

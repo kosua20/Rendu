@@ -1,5 +1,5 @@
 #include "SceneExport.hpp"
-#include "resources/ImageUtilities.hpp"
+#include "resources/Image.hpp"
 
 
 namespace SceneExport {

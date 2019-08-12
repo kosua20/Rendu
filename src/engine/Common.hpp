@@ -11,7 +11,7 @@
 #include <gl3w/gl3w.h>
 #include <GLFW/glfw3.h>
 
-#include "helpers/Logger.hpp"
+#include "system/Logger.hpp"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>

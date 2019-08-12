@@ -1,4 +1,4 @@
-#include "Renderer.hpp"
+#include "renderers/Renderer.hpp"
 #include "input/Input.hpp"
 #include "graphics/GLUtilities.hpp"
 

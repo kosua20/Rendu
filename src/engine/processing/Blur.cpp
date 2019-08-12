@@ -1,4 +1,4 @@
-#include "Blur.hpp"
+#include "processing/Blur.hpp"
 
 Blur::Blur(){
 	_passthroughProgram = Resources::manager().getProgram("passthrough");

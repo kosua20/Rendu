@@ -1,5 +1,5 @@
-#ifndef Blur_h
-#define Blur_h
+#pragma once
+
 #include "graphics/Framebuffer.hpp"
 #include "graphics/ScreenQuad.hpp"
 #include "Common.hpp"
@@ -49,5 +49,3 @@ protected:
 	const ProgramInfos * _passthroughProgram; ///< Default passthrough utility program
 	
 };
-
-#endif

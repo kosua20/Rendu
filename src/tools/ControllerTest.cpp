@@ -1,10 +1,10 @@
-#include "Common.hpp"
 #include "input/Input.hpp"
-#include "helpers/System.hpp"
-#include "Config.hpp"
+#include "system/System.hpp"
+#include "system/Config.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "input/controller/RawController.hpp"
 #include "input/controller/GamepadController.hpp"
+#include "Common.hpp"
 
 /**
  \defgroup ControllerTest Controller Test

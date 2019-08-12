@@ -1,5 +1,5 @@
 #pragma once
-#include "ConvolutionPyramid.hpp"
+#include "processing/ConvolutionPyramid.hpp"
 #include "graphics/Framebuffer.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "Common.hpp"

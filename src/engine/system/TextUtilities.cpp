@@ -1,4 +1,4 @@
-#include "TextUtilities.hpp"
+#include "system/TextUtilities.hpp"
 
 std::string TextUtilities::trim(const std::string & str, const std::string & del){
 	const size_t firstNotDel = str.find_first_not_of(del);

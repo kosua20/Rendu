@@ -1,5 +1,5 @@
-#ifndef PointLight_h
-#define PointLight_h
+#pragma once
+
 #include "scene/lights/Light.hpp"
 #include "scene/Object.hpp"
 #include "resources/ResourcesManager.hpp"
@@ -91,5 +91,3 @@ private:
 	const MeshInfos * _sphere; ///< The supporting geometry.
 
 };
-
-#endif

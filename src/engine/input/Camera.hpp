@@ -1,8 +1,7 @@
-#ifndef Camera_h
-#define Camera_h
+#pragma once
 
+#include "system/Codable.hpp"
 #include "Common.hpp"
-#include "Codable.hpp"
 
 /**
  \brief This class represents a camera as used in real-time rendering APIs.
@@ -150,5 +149,3 @@ protected:
 	float _ratio; ///< The aspect ratio
 	
 };
-
-#endif

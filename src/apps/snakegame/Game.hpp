@@ -1,9 +1,10 @@
 #pragma once
-#include "Config.hpp"
+
 #include "GameMenu.hpp"
 #include "GameMenuRenderer.hpp"
 #include "GameRenderer.hpp"
-#include "helpers/System.hpp"
+#include "system/System.hpp"
+#include "system/Config.hpp"
 #include "processing/GaussianBlur.hpp"
 
 // *** Later improvements: ***

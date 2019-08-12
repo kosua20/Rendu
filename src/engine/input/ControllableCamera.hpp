@@ -1,5 +1,4 @@
-#ifndef ControllableCamera_h
-#define ControllableCamera_h
+#pragma once
 
 #include "input/Camera.hpp"
 #include "Common.hpp"
@@ -78,5 +77,3 @@ private:
 	
 	CameraMode _mode; ///< The current interaction mode
 };
-
-#endif

@@ -1,6 +1,6 @@
-#include "Font.hpp"
+#include "resources/Font.hpp"
 #include "resources/ResourcesManager.hpp"
-#include "helpers/TextUtilities.hpp"
+#include "system/TextUtilities.hpp"
 
 
 void Font::loadFont(std::istream & in, FontInfos & font){

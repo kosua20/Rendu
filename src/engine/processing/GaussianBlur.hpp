@@ -1,5 +1,5 @@
-#ifndef GaussianBlur_h
-#define GaussianBlur_h
+#pragma once
+
 #include "processing/Blur.hpp"
 #include "Common.hpp"
 
@@ -49,4 +49,3 @@ private:
 	
 };
 
-#endif

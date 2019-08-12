@@ -1,7 +1,7 @@
 #pragma once
-#include "Common.hpp"
-#include "resources/MeshUtilities.hpp"
+#include "resources/Mesh.hpp"
 #include "raycaster/Raycaster.hpp"
+#include "Common.hpp"
 
 /**
  \brief Helper that can generate information on a raycaster internal data: BVH visualisation, etc.

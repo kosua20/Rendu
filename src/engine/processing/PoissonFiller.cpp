@@ -1,4 +1,4 @@
-#include "PoissonFiller.hpp"
+#include "processing/PoissonFiller.hpp"
 #include "graphics/ScreenQuad.hpp"
 
 PoissonFiller::PoissonFiller(unsigned int width, unsigned int height, unsigned int downscaling) : _pyramid(width / downscaling, height / downscaling, 0) {

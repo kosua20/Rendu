@@ -1,7 +1,7 @@
 #include "DeferredRenderer.hpp"
-#include "helpers/Random.hpp"
+#include "system/Random.hpp"
 #include "input/Input.hpp"
-#include "helpers/System.hpp"
+#include "system/System.hpp"
 #include "scene/Scene.hpp"
 #include "Common.hpp"
 

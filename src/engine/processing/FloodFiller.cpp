@@ -1,4 +1,4 @@
-#include "FloodFiller.hpp"
+#include "processing/FloodFiller.hpp"
 #include "graphics/ScreenQuad.hpp"
 
 FloodFiller::FloodFiller(unsigned int width, unsigned int height) {

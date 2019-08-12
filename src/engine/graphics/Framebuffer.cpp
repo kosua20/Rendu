@@ -1,4 +1,4 @@
-#include "Framebuffer.hpp"
+#include "graphics/Framebuffer.hpp"
 
 Framebuffer::Framebuffer(unsigned int width, unsigned int height, const GLenum typedFormat, bool depthBuffer) : Framebuffer(width, height, {Descriptor(typedFormat, GL_LINEAR_MIPMAP_NEAREST, GL_CLAMP_TO_EDGE)}, depthBuffer) {
 	

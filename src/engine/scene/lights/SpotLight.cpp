@@ -1,4 +1,4 @@
-#include "SpotLight.hpp"
+#include "scene/lights/SpotLight.hpp"
 
 
 SpotLight::SpotLight() : Light() {

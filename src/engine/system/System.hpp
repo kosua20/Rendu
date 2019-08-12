@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Config.hpp"
+#include "system/Config.hpp"
 #include "Common.hpp"
 
 #include <imgui/imgui.h>

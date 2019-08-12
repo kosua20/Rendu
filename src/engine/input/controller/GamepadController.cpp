@@ -1,4 +1,4 @@
-#include "GamepadController.hpp"
+#include "input/controller/GamepadController.hpp"
 #include "resources/ResourcesManager.hpp"
 
 

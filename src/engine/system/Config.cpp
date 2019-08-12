@@ -1,13 +1,6 @@
-//
-//  Config.cpp
-//
-//  Created by Simon Rodriguez on 30/12/2017.
-//  Copyright © 2017 Simon Rodriguez. All rights reserved.
-//
-
-#include "Config.hpp"
+#include "system/Config.hpp"
 #include "resources/ResourcesManager.hpp"
-#include "helpers/TextUtilities.hpp"
+#include "system/TextUtilities.hpp"
 #include <sstream>
 
 

@@ -1,8 +1,8 @@
 #pragma once
 
 #include "resources/ResourcesManager.hpp"
+#include "system/Config.hpp"
 #include "Common.hpp"
-#include "Config.hpp"
 
 /** \brief Provides helpers for serialization/deserialization of basic types.
  	\ingroup Engine

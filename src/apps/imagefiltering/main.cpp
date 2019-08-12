@@ -1,9 +1,9 @@
 #include "FilteringRenderer.hpp"
 
-#include "helpers/Random.hpp"
 #include "input/Input.hpp"
-#include "helpers/System.hpp"
-#include "Config.hpp"
+#include "system/System.hpp"
+#include "system/Random.hpp"
+#include "system/Config.hpp"
 #include "Common.hpp"
 
 /**

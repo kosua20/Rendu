@@ -1,7 +1,6 @@
 #include "scene/Scene.hpp"
 #include "scene/Sky.hpp"
-#include "Common.hpp"
-#include "helpers/TextUtilities.hpp"
+#include "system/TextUtilities.hpp"
 
 Scene::Scene(const std::string & name){
 	// Append the extension if needed.

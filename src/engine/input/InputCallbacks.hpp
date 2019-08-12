@@ -1,5 +1,4 @@
-#ifndef InputCallbacks_h
-#define InputCallbacks_h
+#pragma once
 
 #include "Common.hpp"
 
@@ -76,5 +75,3 @@ void iconify_callback(GLFWwindow* window, int state);
  \ingroup Input
  */
 void joystick_callback(int joy, int event);
-
-#endif

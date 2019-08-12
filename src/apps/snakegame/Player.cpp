@@ -1,6 +1,6 @@
 #include "Player.hpp"
 #include "input/Input.hpp"
-#include "helpers/Random.hpp"
+#include "system/Random.hpp"
 
 Player::Player() {	
 	_path.resize(_numSamplesPath, {glm::vec2(0.0f), 0.0f } );

@@ -1,4 +1,4 @@
-#include "BoxBlur.hpp"
+#include "processing/BoxBlur.hpp"
 
 
 BoxBlur::BoxBlur(unsigned int width, unsigned int height, bool approximate, const Descriptor & descriptor) : Blur() {

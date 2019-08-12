@@ -1,12 +1,10 @@
-#ifndef SpotLight_h
-#define SpotLight_h
+#pragma once
 
 #include "scene/lights/Light.hpp"
 #include "scene/Object.hpp"
 #include "graphics/ScreenQuad.hpp"
 #include "graphics/Framebuffer.hpp"
 #include "processing/BoxBlur.hpp"
-#include "Common.hpp"
 
 /**
  \brief A spotlight, where light rays in a given cone are radiating from a single point in space. Implements distance attenuation and cone soft transition.
@@ -103,5 +101,3 @@ private:
 	const MeshInfos * _cone; ///< The supporting geometry.
 	
 };
-
-#endif

@@ -1,13 +1,13 @@
-#include "Common.hpp"
-#include "helpers/Random.hpp"
 #include "input/Input.hpp"
 #include "input/InputCallbacks.hpp"
 #include "input/ControllableCamera.hpp"
-#include "helpers/System.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "graphics/ScreenQuad.hpp"
 #include "graphics/Framebuffer.hpp"
-#include "Config.hpp"
+#include "system/System.hpp"
+#include "system/Random.hpp"
+#include "system/Config.hpp"
+#include "Common.hpp"
 
 /**
  \defgroup AtmosphericScattering Atmospheric scattering

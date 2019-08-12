@@ -1,5 +1,4 @@
-#ifndef Controller_h
-#define Controller_h
+#pragma once
 
 #include "Common.hpp"
 
@@ -122,5 +121,3 @@ protected:
 	std::string _guid = "0x0"; ///< GUID of the joystick
 	
 };
-
-#endif

@@ -1,4 +1,4 @@
-#include "Controller.hpp"
+#include "input/controller/Controller.hpp"
 #include "resources/ResourcesManager.hpp"
 #include <sstream>
 

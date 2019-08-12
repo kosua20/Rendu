@@ -1,6 +1,6 @@
 #pragma once
+#include "resources/Mesh.hpp"
 #include "Common.hpp"
-#include "resources/MeshUtilities.hpp"
 
 /**
  \brief Allows to cast rays against a polygonal mesh, on the CPU. Relies on an internal acceleration structure to speed up intersection queries.

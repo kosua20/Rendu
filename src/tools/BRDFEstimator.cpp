@@ -1,15 +1,14 @@
-#include "Common.hpp"
-#include "helpers/Random.hpp"
-#include "resources/ImageUtilities.hpp"
+#include "resources/Image.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "graphics/GLUtilities.hpp"
 #include "graphics/Framebuffer.hpp"
 #include "graphics/ScreenQuad.hpp"
 #include "input/Input.hpp"
-#include "helpers/System.hpp"
-#include "helpers/TextUtilities.hpp"
 #include "input/ControllableCamera.hpp"
-
+#include "system/System.hpp"
+#include "system/TextUtilities.hpp"
+#include "system/Random.hpp"
+#include "Common.hpp"
 
 /**
  \defgroup BRDFEstimator BRDF Estimation

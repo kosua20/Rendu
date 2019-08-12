@@ -1,5 +1,5 @@
-#include "ImageUtilities.hpp"
-#include "ResourcesManager.hpp"
+#include "resources/Image.hpp"
+#include "resources/ResourcesManager.hpp"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image/stb_image.h>

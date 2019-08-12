@@ -1,12 +1,10 @@
-#ifndef DirectionalLight_h
-#define DirectionalLight_h
+#pragma once
 
 #include "scene/lights/Light.hpp"
 #include "scene/Object.hpp"
 #include "graphics/ScreenQuad.hpp"
 #include "graphics/Framebuffer.hpp"
 #include "processing/BoxBlur.hpp"
-#include "Common.hpp"
 
 /**
  \brief A directional light, where all light rays have the same direction.
@@ -90,5 +88,3 @@ private:
 	glm::vec3 _lightDirection; ///< Light direction.
 	
 };
-
-#endif

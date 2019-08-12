@@ -1,6 +1,6 @@
 #include "Common.hpp"
-#include "Config.hpp"
-#include "resources/ImageUtilities.hpp"
+#include "system/Config.hpp"
+#include "resources/Image.hpp"
 
 /** \brief Configuration for the atmospheric scattering precomputations.
  	\ingroup AtmosphericScattering

@@ -1,4 +1,4 @@
-#include "LaplacianIntegrator.hpp"
+#include "processing/LaplacianIntegrator.hpp"
 #include "graphics/ScreenQuad.hpp"
 
 LaplacianIntegrator::LaplacianIntegrator(unsigned int width, unsigned int height, unsigned int downscaling) : _pyramid(width / downscaling, height / downscaling, 1)  {

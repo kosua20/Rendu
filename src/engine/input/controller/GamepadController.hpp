@@ -1,6 +1,4 @@
-#ifndef GamepadController_h
-#define GamepadController_h
-
+#pragma once
 #include "input/controller/Controller.hpp"
 #include "Common.hpp"
 
@@ -32,5 +30,3 @@ public:
 
 	
 };
-
-#endif

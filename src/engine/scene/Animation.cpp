@@ -1,4 +1,4 @@
-#include "Animation.hpp"
+#include "scene/Animation.hpp"
 
 std::vector<std::shared_ptr<Animation>> Animation::decode(const std::vector<KeyValues> & params){
 	std::vector<std::shared_ptr<Animation>> animations;

@@ -1,10 +1,11 @@
-
-#include "Common.hpp"
-#include "helpers/Random.hpp"
-#include "input/Input.hpp"
-#include "helpers/System.hpp"
-#include "resources/ResourcesManager.hpp"
 #include "Game.hpp"
+
+#include "input/Input.hpp"
+#include "system/Random.hpp"
+#include "system/System.hpp"
+#include "resources/ResourcesManager.hpp"
+#include "Common.hpp"
+
 
 
 /**

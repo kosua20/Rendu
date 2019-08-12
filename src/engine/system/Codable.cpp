@@ -1,5 +1,5 @@
-#include "Codable.hpp"
-#include "helpers/TextUtilities.hpp"
+#include "system/Codable.hpp"
+#include "system/TextUtilities.hpp"
 
 bool Codable::decodeBool(const KeyValues & param, unsigned int position){
 	if(param.values.size() < position + 1){

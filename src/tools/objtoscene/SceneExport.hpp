@@ -1,10 +1,10 @@
 #pragma once
 
 #include "Common.hpp"
-#include "resources/ImageUtilities.hpp"
-#include "resources/MeshUtilities.hpp"
-#include "helpers/System.hpp"
-#include "helpers/TextUtilities.hpp"
+#include "resources/Image.hpp"
+#include "resources/Mesh.hpp"
+#include "system/System.hpp"
+#include "system/TextUtilities.hpp"
 #include "CompositeObj.hpp"
 
 /**

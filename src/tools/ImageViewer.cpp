@@ -1,14 +1,14 @@
-#include "Common.hpp"
 #include "input/Input.hpp"
 #include "input/InputCallbacks.hpp"
 #include "input/ControllableCamera.hpp"
-#include "helpers/System.hpp"
+#include "system/System.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "graphics/ScreenQuad.hpp"
 #include "graphics/GLUtilities.hpp"
-#include "resources/ImageUtilities.hpp"
+#include "resources/Image.hpp"
 #include "graphics/Framebuffer.hpp"
-#include "Config.hpp"
+#include "system/Config.hpp"
+#include "Common.hpp"
 
 /**
  \defgroup ImageViewer Image Viewer

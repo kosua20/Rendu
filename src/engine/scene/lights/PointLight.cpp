@@ -1,5 +1,4 @@
-#include "PointLight.hpp"
-#include "Common.hpp"
+#include "scene/lights/PointLight.hpp"
 
 
 PointLight::PointLight(): Light() {

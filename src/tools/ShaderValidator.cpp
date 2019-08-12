@@ -1,6 +1,5 @@
-#include "Common.hpp"
-
 #include "resources/ResourcesManager.hpp"
+#include "Common.hpp"
 #include <iostream>
 
 /**

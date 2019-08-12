@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Common.hpp"
-#include "helpers/TextUtilities.hpp"
-#include "resources/MeshUtilities.hpp"
+#include "system/TextUtilities.hpp"
+#include "resources/Mesh.hpp"
 
 /**
  \brief Commposite OBJ files loading.

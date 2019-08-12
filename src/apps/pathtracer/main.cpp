@@ -1,11 +1,10 @@
-
 #include "BVHRenderer.hpp"
 #include "scene/Scene.hpp"
 #include "resources/ResourcesManager.hpp"
-#include "helpers/Random.hpp"
-#include "helpers/System.hpp"
+#include "system/Random.hpp"
+#include "system/System.hpp"
+#include "system/Config.hpp"
 #include "input/Input.hpp"
-#include "Config.hpp"
 #include "Common.hpp"
 
 

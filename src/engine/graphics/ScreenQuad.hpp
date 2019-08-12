@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Common.hpp"
 #include "resources/ResourcesManager.hpp"
+#include "Common.hpp"
 
 /**
  \brief Helper used to draw a fullscreen quad for texture processing.

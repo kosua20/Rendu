@@ -3,7 +3,7 @@
 #include "scene/Animation.hpp"
 #include "scene/Object.hpp"
 #include "resources/ResourcesManager.hpp"
-#include "Codable.hpp"
+#include "system/Codable.hpp"
 #include "Common.hpp"
 
 /**

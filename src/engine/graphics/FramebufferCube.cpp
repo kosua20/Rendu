@@ -1,4 +1,4 @@
-#include "FramebufferCube.hpp"
+#include "graphics/FramebufferCube.hpp"
 
 
 FramebufferCube::FramebufferCube(unsigned int side, const Descriptor & descriptor, bool depthBuffer) {

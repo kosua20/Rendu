@@ -1,4 +1,5 @@
 #pragma once
+
 #include "graphics/GLUtilities.hpp"
 #include "graphics/ProgramInfos.hpp"
 #include "resources/Font.hpp"

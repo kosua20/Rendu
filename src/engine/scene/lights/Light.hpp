@@ -1,9 +1,9 @@
 #pragma once
 
 #include "scene/Animation.hpp"
-#include "Common.hpp"
 #include "scene/Object.hpp"
 #include "raycaster/Raycaster.hpp"
+#include "Common.hpp"
 
 /**
  \brief A general light with adjustable color intensity, that can cast shadows.

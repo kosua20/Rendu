@@ -1,7 +1,7 @@
 #pragma once
-#include "Common.hpp"
 
 #include "graphics/GLUtilities.hpp"
+#include "Common.hpp"
 
 /**
  \brief Contains font informations: texture atlas, codepoints supported, dimensions of each glyph.

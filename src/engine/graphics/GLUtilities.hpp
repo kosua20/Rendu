@@ -1,7 +1,7 @@
 #pragma once
 
-#include "resources/MeshUtilities.hpp"
-#include "resources/ImageUtilities.hpp"
+#include "resources/Mesh.hpp"
+#include "resources/Image.hpp"
 #include "Common.hpp"
 
 /**

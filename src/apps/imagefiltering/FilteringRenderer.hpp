@@ -11,7 +11,7 @@
 #include "graphics/Framebuffer.hpp"
 #include "input/ControllableCamera.hpp"
 #include "graphics/ScreenQuad.hpp"
-#include "Config.hpp"
+#include "system/Config.hpp"
 
 #include "renderers/Renderer.hpp"
 

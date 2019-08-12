@@ -1,6 +1,6 @@
 #include "BVHRenderer.hpp"
 #include "input/Input.hpp"
-#include "helpers/System.hpp"
+#include "system/System.hpp"
 
 
 BVHRenderer::BVHRenderer(RenderingConfig & config) : Renderer(config) {	

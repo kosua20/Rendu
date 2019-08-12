@@ -1,7 +1,7 @@
-#include "ResourcesManager.hpp"
-#include "MeshUtilities.hpp"
-#include "helpers/TextUtilities.hpp"
-#include "helpers/System.hpp"
+#include "resources/ResourcesManager.hpp"
+#include "resources/Mesh.hpp"
+#include "system/TextUtilities.hpp"
+#include "system/System.hpp"
 
 #include <fstream>
 #include <sstream>

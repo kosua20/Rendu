@@ -1,5 +1,5 @@
-#ifndef SSAO_h
-#define SSAO_h
+#pragma once
+
 #include "processing/BoxBlur.hpp"
 #include "graphics/Framebuffer.hpp"
 #include "Common.hpp"
@@ -65,5 +65,3 @@ private:
 	float _radius = 0.5f;	///< SSAO intersection test radius.
 	GLuint _noiseTextureID; ///< Random noise texture.
 };
-
-#endif

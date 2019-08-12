@@ -1,6 +1,6 @@
-#include "Input.hpp"
-#include "controller/GamepadController.hpp"
-#include "controller/RawController.hpp"
+#include "input/Input.hpp"
+#include "input/controller/GamepadController.hpp"
+#include "input/controller/RawController.hpp"
 
 // Singleton.
 Input& Input::manager(){

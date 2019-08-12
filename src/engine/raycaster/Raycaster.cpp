@@ -1,5 +1,5 @@
-#include "Raycaster.hpp"
-#include "helpers/Random.hpp"
+#include "raycaster/Raycaster.hpp"
+#include "system/Random.hpp"
 #include <queue>
 #include <stack>
 

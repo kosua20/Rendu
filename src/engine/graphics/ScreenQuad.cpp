@@ -1,4 +1,4 @@
-#include "ScreenQuad.hpp"
+#include "graphics/ScreenQuad.hpp"
 #include "resources/ResourcesManager.hpp"
 
 

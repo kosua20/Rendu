@@ -1,7 +1,7 @@
 #pragma once
-#include "Common.hpp"
 #include "raycaster/Raycaster.hpp"
 #include "scene/Scene.hpp"
+#include "Common.hpp"
 
 
 /**

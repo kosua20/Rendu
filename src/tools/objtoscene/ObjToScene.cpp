@@ -1,8 +1,9 @@
-#include "Common.hpp"
-#include "helpers/System.hpp"
-#include "helpers/TextUtilities.hpp"
+
+#include "system/System.hpp"
+#include "system/TextUtilities.hpp"
 #include "CompositeObj.hpp"
 #include "SceneExport.hpp"
+#include "Common.hpp"
 
 /**
  \defgroup ObjToScene OBJ to scene converter

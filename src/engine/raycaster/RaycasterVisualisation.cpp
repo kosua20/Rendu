@@ -1,4 +1,4 @@
-#include "RaycasterVisualisation.hpp"
+#include "raycaster/RaycasterVisualisation.hpp"
 #include <queue>
 #include <stack>
 

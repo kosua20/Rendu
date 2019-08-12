@@ -1,7 +1,7 @@
 #pragma once
 
 #include "resources/ResourcesManager.hpp"
-#include "Codable.hpp"
+#include "system/Codable.hpp"
 #include "Common.hpp"
 
 /** \brief An animation is a transformation evaluated at each frame and applied to an object.

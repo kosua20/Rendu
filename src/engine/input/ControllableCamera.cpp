@@ -1,5 +1,5 @@
-#include "ControllableCamera.hpp"
-#include "Input.hpp"
+#include "input/ControllableCamera.hpp"
+#include "input/Input.hpp"
 
 ControllableCamera::ControllableCamera() : Camera() {
 	_speed = 1.2f;

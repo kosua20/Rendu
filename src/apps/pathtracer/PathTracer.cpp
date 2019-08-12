@@ -1,6 +1,6 @@
 #include "PathTracer.hpp"
-#include "helpers/System.hpp"
-#include "helpers/Random.hpp"
+#include "system/System.hpp"
+#include "system/Random.hpp"
 #include <chrono>
 
 PathTracer::PathTracer(const std::shared_ptr<Scene> & scene){

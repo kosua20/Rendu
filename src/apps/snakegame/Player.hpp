@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Common.hpp"
 #include "resources/ResourcesManager.hpp"
+#include "Common.hpp"
 
 /** \brief Player state and animations.
  \ingroup SnakeGame

@@ -1,11 +1,12 @@
 #pragma once
+
 #include "scene/Object.hpp"
 #include "scene/lights/DirectionalLight.hpp"
 #include "scene/lights/PointLight.hpp"
 #include "scene/lights/SpotLight.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "input/Camera.hpp"
-#include "Codable.hpp"
+#include "system/Codable.hpp"
 #include "Common.hpp"
 
 

@@ -1,4 +1,4 @@
-#include "ConvolutionPyramid.hpp"
+#include "processing/ConvolutionPyramid.hpp"
 #include "graphics/ScreenQuad.hpp"
 
 ConvolutionPyramid::ConvolutionPyramid(unsigned int width, unsigned int height, unsigned int inoutPadding) {
