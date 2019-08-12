@@ -96,7 +96,7 @@ Mesh Font::generateLabel(const std::string & text, const FontInfos & font, const
 			vert.x -= shiftX;
 		}
 	}
-	GLUtilities::setupBuffers(mesh);
+	mesh.upload();
 	// Remove uneeded CPU geometry.
 	mesh.clearGeometry();
 	return mesh;

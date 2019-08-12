@@ -239,7 +239,7 @@ const Mesh * Resources::getMesh(const std::string & name, Storage mode){
 	
 	if(mode & Storage::GPU){
 		// Setup GL buffers and attributes.
-		GLUtilities::setupBuffers(mesh);
+		mesh.upload();
 	}
 	// If we are not planning on using the CPU data, remove it.
 	if(!(mode & Storage::CPU)){

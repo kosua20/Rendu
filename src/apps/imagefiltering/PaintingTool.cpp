@@ -45,15 +45,15 @@ PaintingTool::PaintingTool(unsigned int width, unsigned int height) {
 	// Setup the mesh buffers.
 	_brushes.resize(int(Shape::COUNT));
 	
-	GLUtilities::setupBuffers(disk);
+	disk.upload();
 	disk.clearGeometry();
 	_brushes[0] = disk;
 	
-	GLUtilities::setupBuffers(square);
+	square.upload();
 	square.clearGeometry();
 	_brushes[1] = square;
 	
-	GLUtilities::setupBuffers(diamond);
+	diamond.upload();
 	diamond.clearGeometry();
 	_brushes[2] = diamond;
 	

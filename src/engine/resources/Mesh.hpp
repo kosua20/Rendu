@@ -18,6 +18,9 @@ public:
 	/** Cleanup all data. */
 	void clean();
 	
+	/** Send to the GPU. */
+	void upload();
+	
 	std::vector<glm::vec3> positions; ///< The 3D positions.
 	std::vector<glm::vec3> normals; ///< The surface normals.
 	std::vector<glm::vec3> tangents; ///< The surface tangents.

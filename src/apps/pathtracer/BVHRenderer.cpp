@@ -49,7 +49,7 @@ void BVHRenderer::setScene(std::shared_ptr<Scene> scene){
 	_visuHelper->getAllLevels(_bvhLevels);
 	for(Mesh & level : _bvhLevels){
 		// Setup the OpenGL mesh, don't keep the CPU mesh.
-		GLUtilities::setupBuffers(level);
+		level.upload();
 		level.clearGeometry();
 	}
 	_bvhRange = glm::vec2(0, 0);
@@ -302,13 +302,13 @@ void BVHRenderer::castRay(const glm::vec2 & position){
 	// Level meshes.
 	for(Mesh & level : _rayLevels){
 		// Setup the OpenGL mesh, don't keep the CPU mesh.
-		GLUtilities::setupBuffers(level);
+		level.upload();
 		level.clearGeometry();
 	}
 	// Ray and intersection mesh.
 	const float defaultLength = 3.0f * glm::length(_scene->boundingBox().getSize());
 	
 	_visuHelper->getRayMesh(rayPos, rayDir, hit, _rayVis, defaultLength);
-	GLUtilities::setupBuffers(_rayVis);
+	_rayVis.upload();
 	_rayVis.clearGeometry();
 }

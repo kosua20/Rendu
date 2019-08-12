@@ -22,6 +22,10 @@ void Mesh::clean(){
 	}
 }
 
+void Mesh::upload(){
+	GLUtilities::setupBuffers(*this);
+}
+
 void MeshUtilities::loadObj( std::istream & in, Mesh & mesh, MeshUtilities::LoadMode mode){
 	
 	using namespace std;
