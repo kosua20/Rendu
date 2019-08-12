@@ -110,7 +110,7 @@ public:
 	 */
 	void update(const std::string & text);
 	
-	MeshInfos mesh; ///< Label mesh.
+	Mesh mesh; ///< Label mesh.
 	glm::vec2 pos; ///< Label position.
 	GLuint tid; ///< Font texture shortcut.
 	

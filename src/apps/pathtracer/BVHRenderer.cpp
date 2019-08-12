@@ -46,11 +46,11 @@ void BVHRenderer::setScene(std::shared_ptr<Scene> scene){
 	_visuHelper = std::unique_ptr<RaycasterVisualisation>(new RaycasterVisualisation(_pathTracer.raycaster()));
 	
 	// Build the BVH mesh.
-	std::vector<Mesh> meshes;
-	_visuHelper->getAllLevels(meshes);
-	for(const Mesh & mesh : meshes){
+	_visuHelper->getAllLevels(_bvhLevels);
+	for(Mesh & level : _bvhLevels){
 		// Setup the OpenGL mesh, don't keep the CPU mesh.
-		_bvhLevels.push_back(GLUtilities::setupBuffers(mesh));
+		GLUtilities::setupBuffers(level);
+		level.clearGeometry();
 	}
 	_bvhRange = glm::vec2(0, 0);
 	checkGLError();
@@ -102,7 +102,7 @@ void BVHRenderer::draw() {
 	glUseProgram(_bvhProgram->id());
 	glUniformMatrix4fv(_bvhProgram->uniform("mvp"), 1, GL_FALSE, &VP[0][0]);
 	// If there is a ray mesh, show it.
-	if(_rayVis.count > 0){
+	if(_rayVis.gpu && _rayVis.gpu->count > 0){
 		GLUtilities::drawMesh(_rayVis);
 		if(_showBVH){
 			for(int lid = _bvhRange.x; lid <= _bvhRange.y; ++lid){
@@ -270,10 +270,10 @@ void BVHRenderer::clean() {
 	if(_scene){
 		_scene->clean();
 	}
-	for(MeshInfos & level : _bvhLevels){
+	for(Mesh & level : _bvhLevels){
 		level.clean();
 	}
-	for(MeshInfos & level : _rayLevels){
+	for(Mesh & level : _rayLevels){
 		level.clean();
 	}
 	_rayVis.clean();
@@ -296,18 +296,19 @@ void BVHRenderer::castRay(const glm::vec2 & position){
 	const glm::vec3 worldPos = corner + position.x * dx + position.y * dy;
 	const glm::vec3 rayPos = _userCamera.position();
 	const glm::vec3 rayDir = glm::normalize(worldPos - rayPos);
-	std::vector<Mesh> meshes;
-	Mesh rayMesh;
+	
 	// Intersect.
-	const Raycaster::RayHit hit = _visuHelper->getRayLevels(rayPos, rayDir, meshes);
+	const Raycaster::RayHit hit = _visuHelper->getRayLevels(rayPos, rayDir, _rayLevels);
 	// Level meshes.
-	_rayLevels.clear();
-	for(const Mesh & mesh : meshes){
+	for(Mesh & level : _rayLevels){
 		// Setup the OpenGL mesh, don't keep the CPU mesh.
-		_rayLevels.push_back(GLUtilities::setupBuffers(mesh));
+		GLUtilities::setupBuffers(level);
+		level.clearGeometry();
 	}
 	// Ray and intersection mesh.
 	const float defaultLength = 3.0f * glm::length(_scene->boundingBox().getSize());
-	_visuHelper->getRayMesh(rayPos, rayDir, hit, rayMesh, defaultLength);
-	_rayVis = GLUtilities::setupBuffers(rayMesh);
+	
+	_visuHelper->getRayMesh(rayPos, rayDir, hit, _rayVis, defaultLength);
+	GLUtilities::setupBuffers(_rayVis);
+	_rayVis.clearGeometry();
 }

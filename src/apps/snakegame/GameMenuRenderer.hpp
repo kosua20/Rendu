@@ -53,11 +53,11 @@ private:
 	const ProgramInfos * _buttonProgram; //< Buttons rendering.
 	const ProgramInfos * _imageProgram; //< Fixed images rendering.
 	const ProgramInfos * _fontProgram; //< Labels font rendering.
-	const MeshInfos * _button; //< Button main mesh (with border).
-	const MeshInfos * _buttonIn; //< Button interior mesh.
-	const MeshInfos * _toggle; //< Toggle main mesh (with border).
-	const MeshInfos * _toggleIn; //< Toggle interior mesh.
-	const MeshInfos * _quad; //< Quad mesh for images.
+	const Mesh * _button; //< Button main mesh (with border).
+	const Mesh * _buttonIn; //< Button interior mesh.
+	const Mesh * _toggle; //< Toggle main mesh (with border).
+	const Mesh * _toggleIn; //< Toggle interior mesh.
+	const Mesh * _quad; //< Quad mesh for images.
 
 };
 

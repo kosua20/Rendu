@@ -71,9 +71,9 @@ private:
 	const ProgramInfos * _coloredProgram; ///< Base scene rendering program.
 	const ProgramInfos * _compositingProgram; ///< Lighting program.
 	
-	const MeshInfos * _ground; ///< Terrain mesh.
-	const MeshInfos * _head; ///< Snake head mesh.
-	const MeshInfos * _bodyElement; ///< Body elements and items mesh.
+	const Mesh * _ground; ///< Terrain mesh.
+	const Mesh * _head; ///< Snake head mesh.
+	const Mesh * _bodyElement; ///< Body elements and items mesh.
 	
 	Camera _playerCamera; ///< The player camera (fixed).
 	const TextureInfos * _cubemap; ///< Environment map for reflections.

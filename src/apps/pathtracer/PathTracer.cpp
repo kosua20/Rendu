@@ -6,7 +6,7 @@
 PathTracer::PathTracer(const std::shared_ptr<Scene> & scene){
 	// Add all scene objects to the raycaster.
 	 for(const auto & obj : scene->objects){
-		 _raycaster.addMesh(obj.mesh()->geometry, obj.model());
+		 _raycaster.addMesh(*obj.mesh(), obj.model());
 	 }
 	_raycaster.updateHierarchy();
 	_scene = scene;
@@ -107,7 +107,7 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 					glm::vec3 illumination(0.0f);
 					
 					// Fetch geometry infos...
-					const Mesh & mesh = _scene->objects[hit.meshId].mesh()->geometry;
+					const Mesh & mesh = *(_scene->objects[hit.meshId].mesh());
 					const glm::vec3 p = rayPos + hit.dist * rayDir;
 					const glm::vec3 n = Raycaster::interpolateNormal(hit, mesh);
 					const glm::vec2 uv = Raycaster::interpolateUV(hit, mesh);

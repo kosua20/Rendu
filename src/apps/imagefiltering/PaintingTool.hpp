@@ -63,7 +63,7 @@ private:
 	std::unique_ptr<Framebuffer> _visu; ///< Scene rendering buffer.
 	
 	const ProgramInfos * _brushShader; ///< Program for the brush and its outline.
-	std::vector<MeshInfos> _brushes; ///< Brush shape geometries.
+	std::vector<Mesh> _brushes; ///< Brush shape geometries.
 	
 	glm::vec3 _bgColor; ///< Canvas color.
 	glm::vec3 _fgColor; ///< Brush color.

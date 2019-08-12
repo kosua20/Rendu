@@ -79,7 +79,7 @@ private:
 	
 	const ProgramInfos * _passthrough; ///< Basic blit shader.
 	const ProgramInfos * _sceneShader; ///< Object rendering shader.
-	const MeshInfos * _mesh; ///< Basic sphere mesh.
+	const Mesh * _mesh; ///< Basic sphere mesh.
 	
 	Filter _mode = Filter::INPUT; ///< Current filter mode.
 	View _viewMode = View::SCENE; ///< Current view mode.

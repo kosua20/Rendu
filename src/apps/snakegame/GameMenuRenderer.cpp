@@ -11,11 +11,11 @@ GameMenuRenderer::GameMenuRenderer(RenderingConfig & config) : Renderer(config){
 	_backgroundProgram = Resources::manager().getProgram2D("passthrough");
 	_imageProgram = Resources::manager().getProgram("menu_image");
 	_fontProgram = Resources::manager().getProgram("font_sdf");
-	_button = Resources::manager().getMesh("rounded-button-out");
-	_buttonIn = Resources::manager().getMesh("rounded-button-in");
-	_toggle = Resources::manager().getMesh("rounded-checkbox-out");
-	_toggleIn = Resources::manager().getMesh("rounded-checkbox-in");
-	_quad = Resources::manager().getMesh("plane");
+	_button = Resources::manager().getMesh("rounded-button-out", GPU);
+	_buttonIn = Resources::manager().getMesh("rounded-button-in", GPU);
+	_toggle = Resources::manager().getMesh("rounded-checkbox-out", GPU);
+	_toggleIn = Resources::manager().getMesh("rounded-checkbox-in", GPU);
+	_quad = Resources::manager().getMesh("plane", GPU);
 }
 
 void GameMenuRenderer::draw(const GameMenu & menu){

@@ -65,9 +65,9 @@ private:
 	const ProgramInfos * _objectProgram; ///< Basic object program.
 	const ProgramInfos * _passthrough; ///< Passthrough program.
 	const ProgramInfos * _bvhProgram; ///< BVH visualisation program.
-	std::vector<MeshInfos> _bvhLevels; ///< The BVH visualisation mesh.
-	std::vector<MeshInfos> _rayLevels; ///< BVH nodes intersected with a ray.
-	MeshInfos _rayVis; ///< Mesh representing a ray and its intersected triangle.
+	std::vector<Mesh> _bvhLevels; ///< The BVH visualisation mesh.
+	std::vector<Mesh> _rayLevels; ///< BVH nodes intersected with a ray.
+	Mesh _rayVis; ///< Mesh representing a ray and its intersected triangle.
 	TextureInfos _renderTex; ///< The result texture and image.
 	
 	std::shared_ptr<Scene> _scene; ///< The scene to render.

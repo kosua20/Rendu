@@ -44,9 +44,18 @@ PaintingTool::PaintingTool(unsigned int width, unsigned int height) {
 	
 	// Setup the mesh buffers.
 	_brushes.resize(int(Shape::COUNT));
-	_brushes[0] = GLUtilities::setupBuffers(disk);
-	_brushes[1] = GLUtilities::setupBuffers(square);
-	_brushes[2] = GLUtilities::setupBuffers(diamond);
+	
+	GLUtilities::setupBuffers(disk);
+	disk.clearGeometry();
+	_brushes[0] = disk;
+	
+	GLUtilities::setupBuffers(square);
+	square.clearGeometry();
+	_brushes[1] = square;
+	
+	GLUtilities::setupBuffers(diamond);
+	diamond.clearGeometry();
+	_brushes[2] = diamond;
 	
 	checkGLError();
 }
