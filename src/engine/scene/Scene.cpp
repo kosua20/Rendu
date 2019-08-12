@@ -89,7 +89,7 @@ void Scene::loadBackground(const KeyValues & params, const Storage mode){
 		} else if(param.key == "image" && !param.elements.empty()){
 			backgroundMode = Background::IMAGE;
 			// Load image described as sub-element.
-			const TextureInfos * tex = Codable::decodeTexture(param.elements[0], mode);
+			const Texture * tex = Codable::decodeTexture(param.elements[0], mode);
 			background->addTexture(tex);
 			
 		} else if(param.key == "cube" && !param.elements.empty()){
@@ -98,7 +98,7 @@ void Scene::loadBackground(const KeyValues & params, const Storage mode){
 			background =  std::unique_ptr<Object>(new Object(Object::Type::Common, Resources::manager().getMesh("skybox", mode), false));
 			background->decode(params, mode);
 			// Load cubemap described as subelement.
-			const TextureInfos * tex = Codable::decodeTexture(param.elements[0], mode);
+			const Texture * tex = Codable::decodeTexture(param.elements[0], mode);
 			background->addTexture(tex);
 			
 		} else if(param.key == "sun"){
@@ -107,7 +107,7 @@ void Scene::loadBackground(const KeyValues & params, const Storage mode){
 			background = std::unique_ptr<Sky>(new Sky(mode));
 			background->decode(params, mode);
 			// Load the scattering table.
-			const TextureInfos * tex = Resources::manager().getTexture("scattering-precomputed", {GL_RGB32F, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE}, mode);
+			const Texture* tex = Resources::manager().getTexture("scattering-precomputed", {GL_RGB32F, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE}, mode);
 			background->addTexture(tex);
 		}
 	}

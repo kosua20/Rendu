@@ -65,7 +65,7 @@ void DirectionalLight::drawShadow(const std::vector<Object> & objects) const {
 		glUniform1i(_programDepth->uniform("hasMask"), int(object.masked()));
 		if(object.masked()){
 			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, object.textures()[0]->id);
+			glBindTexture(GL_TEXTURE_2D, object.textures()[0]->gpu->id);
 		}
 		const glm::mat4 lightMVP = _mvp * object.model();
 		glUniformMatrix4fv(_programDepth->uniform("mvp"), 1, GL_FALSE, &lightMVP[0][0]);

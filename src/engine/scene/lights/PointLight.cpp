@@ -101,7 +101,7 @@ void PointLight::drawShadow(const std::vector<Object> & objects) const {
 		glUniform1i(_programDepth->uniform("hasMask"), int(object.masked()));
 		if(object.masked()){
 			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, object.textures()[0]->id);
+			glBindTexture(GL_TEXTURE_2D, object.textures()[0]->gpu->id);
 		}
 		glUniformMatrix4fv(_programDepth->uniform("model"), 1, GL_FALSE, &(object.model()[0][0]));
 		GLUtilities::drawMesh(*(object.mesh()));

@@ -39,7 +39,7 @@ void Object::decode(const KeyValues & params, const Storage mode){
 			
 		} else if(param.key == "textures"){
 			for(const auto & paramTex : param.elements){
-				const TextureInfos * tex = Codable::decodeTexture(paramTex, mode);
+				const Texture * tex = Codable::decodeTexture(paramTex, mode);
 				addTexture(tex);
 			}
 			
@@ -53,7 +53,7 @@ void Object::decode(const KeyValues & params, const Storage mode){
 	}
 }
 
-void Object::addTexture(const TextureInfos * infos){
+void Object::addTexture(const Texture * infos){
 	_textures.push_back(infos);
 }
 

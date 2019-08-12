@@ -55,7 +55,7 @@ public:
 	 \return a pointer to the allocated texture infos, or null/
 	 \todo We could extract the interaction with the Resources manager and only output the proper name/descriptor/type.
 	 */
-	static TextureInfos * decodeTexture(const KeyValues & param, const Storage mode);
+	static Texture * decodeTexture(const KeyValues & param, const Storage mode);
 	
 	/** Split a Codable-compatible text file in a hierarchical list of (key,values) tuples, getting rid of extraneous spaces and punctuations. The following rules are applied:
 	 - elements beginning with a '*' denote root-level objects.

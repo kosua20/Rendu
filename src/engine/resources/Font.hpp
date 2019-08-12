@@ -18,7 +18,7 @@ struct FontInfos {
 		glm::vec2 max; ///< Top right corner.
 	};
 	
-	TextureInfos * atlas; ///< The font texture atlas.
+	Texture * atlas; ///< The font texture atlas.
 	int firstCodepoint; ///< The integer value of the first supported character.
 	int lastCodepoint; ///< The integer value of the last supported character.
 	glm::vec2 margins; ///< Margin to apply around each characters when generating the geometry.

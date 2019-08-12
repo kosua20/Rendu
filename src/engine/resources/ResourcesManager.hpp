@@ -92,13 +92,13 @@ public:
 	 \param refName the name to use for the texture in future calls
 	 \return the texture informations
 	 */
-	TextureInfos * getTexture(const std::string & name, const Descriptor & descriptor, Storage mode = GPU, const std::string & refName = "");
+	Texture * getTexture(const std::string & name, const Descriptor & descriptor, Storage mode = GPU, const std::string & refName = "");
 	
 	/** Get an existing 2D texture resource.
 	 \param name the texture base name
 	 \return the texture informations
 	 */
-	TextureInfos * getTexture(const std::string & name);
+	Texture * getTexture(const std::string & name);
 	
 	/** Get a cubemap texture resource. Automatically handle custom mipmaps if present.
 	 \param name the texture base name
@@ -107,13 +107,13 @@ public:
 	 \param refName the name to use for the texture in future calls
 	 \return the texture informations
 	 */
-	TextureInfos * getCubemap(const std::string & name, const Descriptor & descriptor, Storage mode = GPU, const std::string & refName = "");
+	Texture * getCubemap(const std::string & name, const Descriptor & descriptor, Storage mode = GPU, const std::string & refName = "");
 	
 	/** Get an existing cubemap texture resource.
 	 \param name the texture base name
 	 \return the texture informations
 	 */
-	TextureInfos * getCubemap(const std::string & name);
+	Texture * getCubemap(const std::string & name);
 	
 	/** Get an OpenGL program resource.
 	 \param name the name of all the program shaders
@@ -195,7 +195,7 @@ private:
 	Resources (const Resources&) = delete;
 	
 	std::map<std::string, std::string> _files; ///< Listing of available files and their paths.
-	std::map<std::string, TextureInfos> _textures; ///< Loaded textures, identified by name.
+	std::map<std::string, Texture> _textures; ///< Loaded textures, identified by name.
 	std::map<std::string, Mesh> _meshes; ///< Loaded meshes, identified by name.
 	std::map<std::string, FontInfos> _fonts; ///< Loaded font infos, identified by name.
 	std::map<std::string, ProgramInfos> _programs; ///< Loaded shader programs, identified by name.

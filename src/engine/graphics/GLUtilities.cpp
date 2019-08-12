@@ -1,5 +1,6 @@
 #include "graphics/GLUtilities.hpp"
 #include "graphics/Framebuffer.hpp"
+#include "resources/Texture.hpp"
 #include "resources/Image.hpp"
 #include "system/TextUtilities.hpp"
 
@@ -373,12 +374,19 @@ void GLUtilities::uploadTexture(const GLenum destination, const GLuint texId, co
 	delete[] finalData;
 }
 
-TextureInfos GLUtilities::loadTexture(const GLenum target, const std::vector<std::vector<std::string>>& mipsList, const Descriptor & descriptor, Storage mode){
-	TextureInfos infos;
-	infos.descriptor = descriptor;
-	infos.cubemap = target == GL_TEXTURE_CUBE_MAP;
-	infos.array = target == GL_TEXTURE_2D_ARRAY;
-	infos.mipmap = int(mipsList.size());
+Texture GLUtilities::loadTexture(const GLenum target, const std::vector<std::vector<std::string>>& mipsList, const Descriptor & descriptor, Storage mode){
+	Texture infos;
+	infos.gpu = new GPUTexture();
+	infos.gpu->descriptor = descriptor;
+	infos.type = Texture::T2D;
+	/// \todo Support flag combinations.
+	if(target == GL_TEXTURE_CUBE_MAP){
+		infos.type = Texture::TCube ;
+	}
+	if(target == GL_TEXTURE_2D_ARRAY){
+		infos.type = Texture::TArray;
+	}
+	infos.gpu->mipmap = int(mipsList.size());
 	if(mipsList.empty() || mipsList[0].empty()){
 		Log::Error() << Log::Resources << "Unable to find texture." << std::endl;
 		return infos;
@@ -395,7 +403,7 @@ TextureInfos GLUtilities::loadTexture(const GLenum target, const std::vector<std
 	
 	if(mode & Storage::GPU){
 		// Create texture, if only one path, automatically generate mipmaps.
-		infos.id = createTexture(target, descriptor, infos.mipmap == 1 ? 0 : infos.mipmap);
+		infos.gpu->id = createTexture(target, descriptor, infos.gpu->mipmap == 1 ? 0 : infos.gpu->mipmap);
 		checkGLError();
 	}
 	
@@ -431,9 +439,9 @@ TextureInfos GLUtilities::loadTexture(const GLenum target, const std::vector<std
 				// Texture arrays are filled by subcopies, and have to be initialized first.
 				/// \todo Test in practice.
 				if(mipid == 0 && lid == 0 && target == GL_TEXTURE_2D_ARRAY){
-					glTexStorage3D(GL_TEXTURE_2D_ARRAY, infos.mipmap, descriptor.typedFormat, infos.width, infos.height, GLsizei(layersList.size()));
+					glTexStorage3D(GL_TEXTURE_2D_ARRAY, infos.gpu->mipmap, descriptor.typedFormat, infos.width, infos.height, GLsizei(layersList.size()));
 				}
-				uploadTexture(target, infos.id, descriptor.typedFormat, mipid, lid, image);
+				uploadTexture(target, infos.gpu->id, descriptor.typedFormat, mipid, lid, image);
 				checkGLError();
 			}
 			
@@ -441,8 +449,8 @@ TextureInfos GLUtilities::loadTexture(const GLenum target, const std::vector<std
 	}
 	
 	// If only level 0 was given, generate mipmaps pyramid automatically.
-	if((mode & Storage::GPU) && infos.mipmap == 1){
-		glBindTexture(target, infos.id);
+	if((mode & Storage::GPU) && infos.gpu->mipmap == 1){
+		glBindTexture(target, infos.gpu->id);
 		glGenerateMipmap(target);
 		glBindTexture(target, 0);
 		checkGLError();
@@ -691,11 +699,11 @@ void GLUtilities::drawMesh(const Mesh & mesh) {
 	glDrawElements(GL_TRIANGLES, mesh.gpu->count, GL_UNSIGNED_INT, (void*)0);
 }
 
-void GLUtilities::bindTextures(const std::vector<const TextureInfos*> & textures, int startingSlot){
+void GLUtilities::bindTextures(const std::vector<const Texture*> & textures, int startingSlot){
 	for (unsigned int i = 0; i < textures.size(); ++i){
-		const TextureInfos * infos = textures[i];
+		const Texture * infos = textures[i];
 		glActiveTexture(startingSlot + i);
-		const GLenum textureType = infos->cubemap ? (infos->array ? GL_TEXTURE_CUBE_MAP_ARRAY : GL_TEXTURE_CUBE_MAP) : (infos->array ? GL_TEXTURE_2D_ARRAY : GL_TEXTURE_2D);
-		glBindTexture(textureType, infos->id);
+		const GLenum textureType = (infos->type & Texture::TCube) ? ((infos->type & Texture::TArray) ? GL_TEXTURE_CUBE_MAP_ARRAY : GL_TEXTURE_CUBE_MAP) : ((infos->type & Texture::TArray) ? GL_TEXTURE_2D_ARRAY : GL_TEXTURE_2D);
+		glBindTexture(textureType, infos->gpu->id);
 	}
 }

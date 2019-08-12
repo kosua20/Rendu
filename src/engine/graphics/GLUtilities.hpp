@@ -2,6 +2,7 @@
 
 #include "resources/Mesh.hpp"
 #include "resources/Image.hpp"
+#include "resources/Texture.hpp"
 #include "Common.hpp"
 
 /**
@@ -69,7 +70,8 @@ enum Storage : int {
  \brief Store texture informations.
  \ingroup Graphics
  */
-struct TextureInfos {
+/*
+struct Texture {
 	Descriptor descriptor; ///< The texture format, type, filtering.
 	GLuint id; ///< The OpenGL texture ID.
 	unsigned int width; ///< The texture width.
@@ -79,10 +81,10 @@ struct TextureInfos {
 	bool array; ///< Denote if the texture is an array.
 	std::vector<Image> images; ///< The image data (optional)
  
-	TextureInfos() : descriptor(), id(0), width(0), height(0), mipmap(0), cubemap(false), array(false), images() {}
+	Texture() : descriptor(), id(0), width(0), height(0), mipmap(0), cubemap(false), array(false), images() {}
 
-};
-/*
+};*/
+
 struct GPUTexture {
 	Descriptor descriptor; ///< The texture format, type, filtering.
 	GLuint id; ///< The OpenGL texture ID.
@@ -90,7 +92,7 @@ struct GPUTexture {
 	
 	GPUTexture() : descriptor(), id(0), mipmap(0) {
 	}
-};*/
+};
 
 /**
  \brief Store geometry buffers on the GPU.
@@ -146,7 +148,7 @@ public:
 	 \return the texture informations, including the OpenGL ID
 	 \note If only one list path is present, the mipmaps will be generated automatically.
 	 */
-	static TextureInfos loadTexture(const GLenum target, const std::vector<std::vector<std::string>>& path, const Descriptor & descriptor, Storage mode);
+	static Texture loadTexture(const GLenum target, const std::vector<std::vector<std::string>>& path, const Descriptor & descriptor, Storage mode);
 	
 	/** Mesh loading: send a mesh data to the GPU and set the input mesh GPU infos accordingly.
 	 \param mesh the mesh to upload
@@ -205,7 +207,7 @@ public:
 	 \param textures the infos of the textures to bind
 	 \param startingSlot the optional index of the first binding slot
 	 */
-	static void bindTextures(const std::vector<const TextureInfos*> & textures, int startingSlot = GL_TEXTURE0);
+	static void bindTextures(const std::vector<const Texture*> & textures, int startingSlot = GL_TEXTURE0);
 	
 	/** Upload data to a GPU texture.
 	 \param destination the kind of texture to target: 2D, cubemap, 2D array...

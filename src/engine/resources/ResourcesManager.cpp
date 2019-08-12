@@ -253,7 +253,7 @@ const Mesh * Resources::getMesh(const std::string & name, Storage mode){
 
 // Texture methods.
 
-TextureInfos * Resources::getTexture(const std::string & name){
+Texture * Resources::getTexture(const std::string & name){
 	if(_textures.count(name) > 0){
 		return &_textures[name];
 	}
@@ -261,22 +261,22 @@ TextureInfos * Resources::getTexture(const std::string & name){
 	return nullptr;
 }
 
-TextureInfos * Resources::getTexture(const std::string & name, const Descriptor & descriptor, Storage mode, const std::string & refName){
+Texture * Resources::getTexture(const std::string & name, const Descriptor & descriptor, Storage mode, const std::string & refName){
 	const std::string & keyName = refName.empty() ? name : refName;
 	
 	// If texture already loaded, return it.
 	if(_textures.count(keyName) > 0){
 		const auto & infos = _textures[keyName];
 		// Check if this is the same descriptor.
-		if(descriptor.filtering != infos.descriptor.filtering ||
-		   descriptor.typedFormat != infos.descriptor.typedFormat ||
-		   descriptor.wrapping != infos.descriptor.wrapping){
+		if(descriptor.filtering != infos.gpu->descriptor.filtering ||
+		   descriptor.typedFormat != infos.gpu->descriptor.typedFormat ||
+		   descriptor.wrapping != infos.gpu->descriptor.wrapping){
 			Log::Warning() << Log::Resources << "Texture \"" << keyName << "\"already exist with a different descriptor." << std::endl;
 		}
 		return &_textures[keyName];
 	}
 	// Else, find the corresponding file.
-	TextureInfos infos;
+	Texture infos;
 	std::string path = getImagePath(name);
 	
 	if(!path.empty()){
@@ -311,7 +311,7 @@ TextureInfos * Resources::getTexture(const std::string & name, const Descriptor 
 	return nullptr;
 }
 
-TextureInfos * Resources::getCubemap(const std::string & name){
+Texture * Resources::getCubemap(const std::string & name){
 	// If cubemap already loaded, return it.
 	if(_textures.count(name) > 0){
 		return &_textures[name];
@@ -320,21 +320,21 @@ TextureInfos * Resources::getCubemap(const std::string & name){
 	return nullptr;
 }
 
-TextureInfos * Resources::getCubemap(const std::string & name, const Descriptor & descriptor, Storage mode, const std::string & refName){
+Texture * Resources::getCubemap(const std::string & name, const Descriptor & descriptor, Storage mode, const std::string & refName){
 	const std::string & keyName = refName.empty() ? name : refName;
 	// If texture already loaded, return it.
 	if(_textures.count(keyName) > 0){
 		const auto & infos = _textures[keyName];
 		// Check if this is the same descriptor.
-		if(descriptor.filtering != infos.descriptor.filtering ||
-		   descriptor.typedFormat != infos.descriptor.typedFormat ||
-		   descriptor.wrapping != infos.descriptor.wrapping){
+		if(descriptor.filtering != infos.gpu->descriptor.filtering ||
+		   descriptor.typedFormat != infos.gpu->descriptor.typedFormat ||
+		   descriptor.wrapping != infos.gpu->descriptor.wrapping){
 			Log::Warning() << "Cubemap \"" << keyName << "\" already exist with a different descriptor." << std::endl;
 		}
 		return &_textures[keyName];;
 	}
 	// Else, find the corresponding files.
-	TextureInfos infos;
+	Texture infos;
 	std::vector<std::string> paths = getCubemapPaths(name);
 	if(!paths.empty()){
 		// We found the texture files.
@@ -507,7 +507,7 @@ void Resources::clean(){
 	Log::Info() << Log::Resources << "Cleaning up." << std::endl;
 	
 	for(auto & tex : _textures){
-		glDeleteTextures(1, &tex.second.id);
+		glDeleteTextures(1, &tex.second.gpu->id);
 	}
 	for(auto & mesh : _meshes){
 		mesh.second.clean();

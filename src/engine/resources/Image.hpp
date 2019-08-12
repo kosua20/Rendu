@@ -5,7 +5,9 @@
  \brief Represents an image composed of pixels with values in [0,1].
  \ingroup Resources
  */
-struct Image {
+class Image {
+	
+public:
 	
 	/** Default constructor. */
 	Image();
@@ -18,11 +20,6 @@ struct Image {
 	 \param value the default value to use
 	 */
 	Image(int awidth, int aheight, int acomponents, float value = 0.0f);
-	
-	unsigned int width; //< The width of the image
-	unsigned int height; //< The height of the image
-	unsigned int components; //< Number of components/channels
-	std::vector<float> pixels; //< The pixels values of the image
 	
 	/** Accessor to a RGBA pixel
 	 \param x horizontal coordinate
@@ -71,14 +68,6 @@ struct Image {
 	 \note Wrapping is applied on both axis.
 	 */
 	glm::vec3 rgbl(float x, float y) const;
-	
-	/** Bilinear UV image read.
-	 \param x horizontal unit float coordinate
-	 \param y vertical unit float coordinate
-	 \return the bilinearly interpolated color value
-	 \note Wrapping is applied on both axis.
-	 */
-	glm::vec4 rgbal(float x, float y) const;
 		
 	/** Nearest-neighbour UV image read.
 	 \param x horizontal unit float coordinate
@@ -88,7 +77,18 @@ struct Image {
 	 */
 	glm::vec3 rgbn(float x, float y) const;
 	
+	/** Bilinear UV image read.
+	 \param x horizontal unit float coordinate
+	 \param y vertical unit float coordinate
+	 \return the bilinearly interpolated color value
+	 \note Wrapping is applied on both axis.
+	 */
+	glm::vec4 rgbal(float x, float y) const;
 	
+	unsigned int width; //< The width of the image
+	unsigned int height; //< The height of the image
+	unsigned int components; //< Number of components/channels
+	std::vector<float> pixels; //< The pixels values of the image
 };
 
 

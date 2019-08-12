@@ -87,7 +87,7 @@ public:
 	std::unique_ptr<Object> background; ///< Background object, containing the geometry and optional textures to use.
 	
 	std::vector<glm::vec3> backgroundIrradiance; ///< RGB SH-coefficients of the background irradiance, computed using SHExtractor. \see SphericalHarmonics
-	const TextureInfos * backgroundReflection = nullptr; ///< Cubemap texture ID of the background radiance.
+	const Texture * backgroundReflection = nullptr; ///< Cubemap texture ID of the background radiance.
 	
 private:
 	
