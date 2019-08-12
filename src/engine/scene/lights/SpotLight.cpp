@@ -26,7 +26,7 @@ void SpotLight::init(const std::vector<GLuint>& textureIds){
 	_shadowPass = std::unique_ptr<Framebuffer>(new Framebuffer(512, 512, descriptor, true));
 	_blur = std::unique_ptr<BoxBlur>(new BoxBlur(512, 512, false, descriptor));
 	
-	_cone = Resources::manager().getMesh("light_cone");
+	_cone = Resources::manager().getMesh("light_cone", GPU);
 	_textures = textureIds;
 	_textures.emplace_back(_blur->textureId());
 	

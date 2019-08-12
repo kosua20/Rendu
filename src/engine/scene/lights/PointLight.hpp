@@ -88,6 +88,6 @@ private:
 	float _radius; ///< The attenuation radius.
 	float _farPlane; ///< The projection matrices far plane.
 	
-	const MeshInfos * _sphere; ///< The supporting geometry.
+	const Mesh * _sphere; ///< The supporting geometry.
 
 };

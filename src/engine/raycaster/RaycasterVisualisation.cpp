@@ -86,7 +86,7 @@ void RaycasterVisualisation::getRayMesh(const glm::vec3 & rayPos, const glm::vec
 	// Ray color: green if hit, red otherwise.
 	const glm::vec3 rayColor(hit.hit ? 0.0f : 1.0f, hit.hit ? 1.0f : 0.0f, 0.0f);
 	// Create the geometry.
-	mesh.clear();
+	mesh.clean();
 	mesh.positions = {rayPos, hitPos};
 	mesh.colors = {rayColor, rayColor};
 	mesh.indices = {0, 1, 0};

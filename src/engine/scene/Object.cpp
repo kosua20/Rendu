@@ -3,7 +3,7 @@
 
 Object::Object() {}
 
-Object::Object(const Object::Type type, const MeshInfos * mesh, bool castShadows){
+Object::Object(const Object::Type type, const Mesh * mesh, bool castShadows){
 	_material = type;
 	_castShadow = castShadows;
 	_mesh = mesh;

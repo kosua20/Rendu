@@ -98,6 +98,6 @@ private:
 	float _outerHalfAngle; ///< The outer cone attenuation angle.
 	float _radius; ///< The attenuation radius.
 	
-	const MeshInfos * _cone; ///< The supporting geometry.
+	const Mesh * _cone; ///< The supporting geometry.
 	
 };

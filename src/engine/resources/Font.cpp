@@ -49,7 +49,7 @@ void Font::loadFont(std::istream & in, FontInfos & font){
 	}
 }
 
-MeshInfos Font::generateLabel(const std::string & text, const FontInfos & font, const float scale, const Alignment align){
+Mesh Font::generateLabel(const std::string & text, const FontInfos & font, const float scale, const Alignment align){
 	Mesh mesh;
 	glm::vec3 currentOrigin(0.0f);
 	
@@ -96,6 +96,9 @@ MeshInfos Font::generateLabel(const std::string & text, const FontInfos & font, 
 			vert.x -= shiftX;
 		}
 	}
-	return GLUtilities::setupBuffers(mesh);
+	GLUtilities::setupBuffers(mesh);
+	// Remove uneeded CPU geometry.
+	mesh.clearGeometry();
+	return mesh;
 	
 }

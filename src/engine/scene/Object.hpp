@@ -29,7 +29,7 @@ public:
 	 \param mesh the geometric mesh infos
 	 \param castShadows denote if the object should cast shadows
 	 */
-	Object(const Object::Type type, const MeshInfos * mesh, bool castShadows);
+	Object(const Object::Type type, const Mesh * mesh, bool castShadows);
 	
 	/** Register a texture.
 	 \param infos the texture infos to add
@@ -61,7 +61,7 @@ public:
 	/** Mesh getter.
 	 \return the mesh infos
 	 */
-	const MeshInfos * mesh() const { return _mesh; }
+	const Mesh * mesh() const { return _mesh; }
 	
 	/** Textures array getter.
 	 \return a vector containing the infos of the textures associated to the object
@@ -120,7 +120,7 @@ public:
 	
 protected:
 	
-	const MeshInfos * _mesh; ///< Geometry of the object.
+	const Mesh * _mesh; ///< Geometry of the object.
 	std::vector<const TextureInfos *> _textures; ///< Textures used by the object.
 	std::vector<std::shared_ptr<Animation>> _animations; ///< Animations list (applied in order).
 	glm::mat4 _model = glm::mat4(1.0f); ///< The transformation matrix of the 3D model.

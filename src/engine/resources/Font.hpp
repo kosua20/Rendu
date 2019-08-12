@@ -51,8 +51,8 @@ public:
 	 \param font the font to use for the label
 	 \param scale the vertical height of the characters, in absolute units
 	 \param align the text alignment to apply, will influence the origin placement
-	 \return the infos of the label mesh
+	 \return the label mesh
 	 */
-	static MeshInfos generateLabel(const std::string & text, const FontInfos & font, const float scale, const Alignment align = LEFT );
+	static Mesh generateLabel(const std::string & text, const FontInfos & font, const float scale, const Alignment align = LEFT );
 	
 };
