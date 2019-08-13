@@ -1,5 +1,5 @@
 #include "scene/lights/DirectionalLight.hpp"
-
+#include "graphics/GLUtilities.hpp"
 
 DirectionalLight::DirectionalLight() : Light() {
 	_lightDirection = glm::vec3(1.0f, 0.0f, 0.0f);

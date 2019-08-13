@@ -1,7 +1,7 @@
 #pragma once
 
 #include "graphics/Framebuffer.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPUObjects.hpp"
 #include "Common.hpp"
 
 /**

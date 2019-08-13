@@ -1,5 +1,6 @@
 #include "processing/SSAO.hpp"
 #include "system/Random.hpp"
+#include "graphics/GLUtilities.hpp"
 
 SSAO::SSAO(unsigned int width, unsigned int height, float radius) {
 	_radius = radius;

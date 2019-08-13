@@ -1,4 +1,5 @@
 #include "scene/lights/SpotLight.hpp"
+#include "graphics/GLUtilities.hpp"
 
 
 SpotLight::SpotLight() : Light() {

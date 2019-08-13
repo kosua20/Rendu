@@ -1,12 +1,12 @@
 #include "processing/BoxBlur.hpp"
-
+#include "graphics/GLUtilities.hpp"
 
 BoxBlur::BoxBlur(unsigned int width, unsigned int height, bool approximate, const Descriptor & descriptor) : Blur() {
 	
 	Descriptor linearDescriptor = descriptor;
 	linearDescriptor.filtering = GL_LINEAR_MIPMAP_NEAREST;
 	GLenum format, type;
-	const int channels = GLUtilities::getTypeAndFormat(linearDescriptor.typedFormat, type, format);
+	const int channels = linearDescriptor.getTypeAndFormat(type, format);
 	
 	std::string blur_type_name = "box-blur-" + (approximate ? std::string("approx-") : "");
 	blur_type_name.append(std::to_string(channels));

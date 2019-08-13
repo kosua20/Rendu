@@ -1,4 +1,5 @@
 #include "graphics/FramebufferCube.hpp"
+#include "graphics/GLUtilities.hpp"
 
 
 FramebufferCube::FramebufferCube(unsigned int side, const Descriptor & descriptor, bool depthBuffer) {
@@ -8,7 +9,7 @@ FramebufferCube::FramebufferCube(unsigned int side, const Descriptor & descripto
 	_useDepth = depthBuffer;
 	
 	GLenum type, format;
-	GLUtilities::getTypeAndFormat(_descriptor.typedFormat, type, format);
+	_descriptor.getTypeAndFormat(type, format);
 	
 	// Create a framebuffer.
 	glGenFramebuffers(1, &_id);
@@ -22,7 +23,7 @@ FramebufferCube::FramebufferCube(unsigned int side, const Descriptor & descripto
 		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X+i, 0, _descriptor.typedFormat, (GLsizei)_side , (GLsizei)_side, 0, format, type, 0);
 	}
 	
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GLUtilities::getMagnificationFilter(descriptor.filtering));
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, descriptor.getMagnificationFilter());
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, (GLint)_descriptor.filtering);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -83,7 +84,7 @@ void FramebufferCube::resize(unsigned int side){
 	}
 	// Resize the texture.
 	GLenum type, format;
-	GLUtilities::getTypeAndFormat(_descriptor.typedFormat, type, format);
+	_descriptor.getTypeAndFormat(type, format);
 	
 	glBindTexture(GL_TEXTURE_CUBE_MAP, _idColor);
 	// Reallocate all 6 layers.

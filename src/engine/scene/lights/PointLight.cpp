@@ -1,5 +1,5 @@
 #include "scene/lights/PointLight.hpp"
-
+#include "graphics/GLUtilities.hpp"
 
 PointLight::PointLight(): Light() {
 	_radius = 1.0f;

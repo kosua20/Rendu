@@ -1,4 +1,9 @@
 #include "graphics/Framebuffer.hpp"
+#include "graphics/GLUtilities.hpp"
+
+Framebuffer::Framebuffer(){
+	
+}
 
 Framebuffer::Framebuffer(unsigned int width, unsigned int height, const GLenum typedFormat, bool depthBuffer) : Framebuffer(width, height, {Descriptor(typedFormat, GL_LINEAR_MIPMAP_NEAREST, GL_CLAMP_TO_EDGE)}, depthBuffer) {
 	
@@ -22,13 +27,13 @@ Framebuffer::Framebuffer(unsigned int width, unsigned int height, const std::vec
 		// Create the color texture to store the result.
 		const auto & descriptor = descriptors[i];
 		GLuint type, format;
-		GLUtilities::getTypeAndFormat(descriptor.typedFormat, type, format);
+		descriptor.getTypeAndFormat(type, format);
 		
 		if(format == GL_DEPTH_COMPONENT || format == GL_DEPTH_STENCIL){
 			glGenTextures(1, &_idDepth);
 			glBindTexture(GL_TEXTURE_2D, _idDepth);
 			glTexImage2D(GL_TEXTURE_2D, 0, descriptor.typedFormat, (GLsizei)_width , (GLsizei)_height, 0, format, type, 0);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GLUtilities::getMagnificationFilter(descriptor.filtering));
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, descriptor.getMagnificationFilter());
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, (GLint)descriptor.filtering);
 			
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, (GLint)descriptor.wrapping);
@@ -53,7 +58,7 @@ Framebuffer::Framebuffer(unsigned int width, unsigned int height, const std::vec
 			glGenTextures(1, &idColor);
 			glBindTexture(GL_TEXTURE_2D, idColor);
 			glTexImage2D(GL_TEXTURE_2D, 0, descriptor.typedFormat, (GLsizei)_width , (GLsizei)_height, 0, format, type, 0);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GLUtilities::getMagnificationFilter(descriptor.filtering));
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, descriptor.getMagnificationFilter());
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, (GLint)descriptor.filtering);
 		
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, (GLint)descriptor.wrapping);
@@ -126,7 +131,7 @@ void Framebuffer::resize(unsigned int width, unsigned int height){
 		glBindRenderbuffer(GL_RENDERBUFFER, 0);
 	} else if(_depthUse == TEXTURE){
 		GLuint type, format;
-		GLUtilities::getTypeAndFormat(_depthDescriptor.typedFormat, type, format);
+		_depthDescriptor.getTypeAndFormat(type, format);
 		glBindTexture(GL_TEXTURE_2D, _idDepth);
 		glTexImage2D(GL_TEXTURE_2D, 0, _depthDescriptor.typedFormat, (GLsizei)_width , (GLsizei)_height, 0, format, type, 0);
 		glBindTexture(GL_TEXTURE_2D, 0);
@@ -135,7 +140,7 @@ void Framebuffer::resize(unsigned int width, unsigned int height){
 	for(size_t i = 0; i < _idColors.size(); ++i){
 		const auto & descriptor = _colorDescriptors[i];
 		GLuint type, format;
-		GLUtilities::getTypeAndFormat(descriptor.typedFormat, type, format);
+		descriptor.getTypeAndFormat(type, format);
 		glBindTexture(GL_TEXTURE_2D, _idColors[i]);
 		glTexImage2D(GL_TEXTURE_2D, 0, descriptor.typedFormat, (GLsizei)_width, (GLsizei)_height, 0, format, type, 0);
 		glBindTexture(GL_TEXTURE_2D, 0);
@@ -160,4 +165,14 @@ void Framebuffer::clean() const {
 }
 
 
+Framebuffer * Framebuffer::defaultFramebuffer = nullptr;
+
+const Framebuffer & Framebuffer::backbuffer(){
+	// Initialize a dummy framebuffer representing the backbuffer.
+	if(!defaultFramebuffer){
+		defaultFramebuffer = new Framebuffer();
+		defaultFramebuffer->_colorDescriptors = { Descriptor(GL_RGBA8, GL_NEAREST, GL_CLAMP_TO_EDGE) };
+	}
+	return *defaultFramebuffer;
+}
 

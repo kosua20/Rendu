@@ -1,4 +1,5 @@
 #include "processing/GaussianBlur.hpp"
+#include "graphics/GLUtilities.hpp"
 
 
 GaussianBlur::GaussianBlur(unsigned int width, unsigned int height, unsigned int depth, GLuint preciseFormat) : Blur() {

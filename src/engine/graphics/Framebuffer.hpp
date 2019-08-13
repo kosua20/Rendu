@@ -1,6 +1,6 @@
 #pragma once
 
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPUObjects.hpp"
 #include "Common.hpp"
 
 /**
@@ -107,20 +107,30 @@ public:
 	GLuint id() const { return _id; }
 	
 	/**
-	 Query a color attachment OpenGL type and format.
+	 Query a color attachment type, filtering and clamping.
 	 \param i the color attachment index (or 0 by default)
-	 \return the typed format
+	 \return the corresponding descriptor
 	 */
-	GLuint typedFormat(unsigned int i = 0) const { return _colorDescriptors[i].typedFormat; }
+	const Descriptor & descriptor(unsigned int i = 0) const { return _colorDescriptors[i]; }
+	
+	/**
+	 Query the window backbuffer infos.
+	 \return a reference to a placeholder representing the backbuffer
+	 \note Can be used in conjonction with saveFramebuffer() to save the content of the window.
+	 */
+	static const Framebuffer & backbuffer();
 	
 private:
 	
-	unsigned int _width; ///< The framebuffer width.
-	unsigned int _height; ///< The framebuffer height.
+	/** Default constructor. */
+	Framebuffer();
 	
-	GLuint _id; ///< The framebuffer ID.
+	unsigned int _width = 0; ///< The framebuffer width.
+	unsigned int _height = 0; ///< The framebuffer height.
+	
+	GLuint _id = 0; ///< The framebuffer ID.
 	std::vector<GLuint> _idColors; ///< The color textures IDs.
-	GLuint _idDepth; ///< The depth renderbuffer ID.
+	GLuint _idDepth = 0; ///< The depth renderbuffer ID.
 	
 	std::vector<Descriptor> _colorDescriptors; ///< The color buffer descriptors.
 	Descriptor _depthDescriptor; ///< The depth buffer descriptor.
@@ -129,6 +139,7 @@ private:
 	enum DepthBuffer {
 		NONE, RENDERBUFFER, TEXTURE
 	};
-	DepthBuffer _depthUse; ///< The type of depth backing the framebuffer.
+	DepthBuffer _depthUse = NONE; ///< The type of depth backing the framebuffer.
 	
+	static Framebuffer * defaultFramebuffer; ///< Dummy backbuffer framebuffer.
 };

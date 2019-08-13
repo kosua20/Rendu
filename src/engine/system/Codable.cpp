@@ -86,10 +86,6 @@ Texture * Codable::decodeTexture(const KeyValues & param, const Storage mode){
 	}
 	// This is indeed a texture.
 	const std::string textureString = param.values[0];
-	// Handle cubemap case.
-	if(TextUtilities::hasSuffix(param.key, "cube")){
-		return Resources::manager().getCubemap(textureString, descriptors.at(param.key), mode);
-	}
 	return Resources::manager().getTexture(textureString, descriptors.at(param.key), mode);
 }
 
