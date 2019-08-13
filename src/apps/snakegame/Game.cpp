@@ -12,8 +12,8 @@ Game::Game(RenderingConfig & config) : _config(config), _inGameRenderer(config),
 	
 	const glm::vec2 meshSize = _menuRenderer.getButtonSize();
 	const float displayScale = 0.3f;
-	const FontInfos * font = Resources::manager().getFont("digits");
-	
+	const Font * font = Resources::manager().getFont("digits");
+
 	const Descriptor commonDesc = {GL_SRGB8_ALPHA8, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE};
 	const GLuint backgroundTexture = Resources::manager().getTexture("menubg", commonDesc)->gpu->id;
 	

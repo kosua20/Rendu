@@ -423,23 +423,23 @@ void Resources::reload() {
 }
 
 
-FontInfos * Resources::getFont(const std::string & name){
+Font * Resources::getFont(const std::string & name){
 	if(_fonts.count(name) > 0){
 		return &_fonts[name];
 	}
 	
-	FontInfos infos;
+	Font font;
 	// Load the font descriptor and associated atlas.
 	const std::string fontInfosText = getString(name + ".fnt");
 	if(!fontInfosText.empty()){
 		std::stringstream fontStream(fontInfosText);
-		Font::loadFont(fontStream, infos);
+		Font::loadFont(fontStream, font);
 	} else {
 		Log::Error() << Log::Resources << "Unable to load font named " << name << "." << std::endl;
 		return nullptr;
 	}
 	
-	_fonts[name] = infos;
+	_fonts[name] = font;
 	return &_fonts[name];
 }
 

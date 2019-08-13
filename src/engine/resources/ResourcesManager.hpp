@@ -150,9 +150,9 @@ public:
 	
 	/** Load a font metadata and texture atlas from the resources.
 	 \param name the font base name
-	 \return the font informations
+	 \return the font data
 	 */
-	FontInfos * getFont(const std::string & name);
+	Font * getFont(const std::string & name);
 	
 	/** Load raw binary data from an external file
 	 \param path the path to the file on disk
@@ -207,7 +207,7 @@ private:
 	std::map<std::string, std::string> _files; ///< Listing of available files and their paths.
 	std::map<std::string, Texture> _textures; ///< Loaded textures, identified by name.
 	std::map<std::string, Mesh> _meshes; ///< Loaded meshes, identified by name.
-	std::map<std::string, FontInfos> _fonts; ///< Loaded font infos, identified by name.
+	std::map<std::string, Font> _fonts; ///< Loaded font infos, identified by name.
 	std::map<std::string, ProgramInfos> _programs; ///< Loaded shader programs, identified by name.
 	
 };

@@ -1,12 +1,4 @@
-//
-//  Common.hpp
-//
-//  Created by Simon Rodriguez on 08/08/2018.
-//  Copyright © 2017 Simon Rodriguez. All rights reserved.
-//
-
-#ifndef Common_hpp
-#define Common_hpp
+#pragma once
 
 #include <gl3w/gl3w.h>
 #include <GLFW/glfw3.h>
@@ -25,6 +17,8 @@
 #include <map>
 #include <algorithm>
 
+typedef unsigned int uint;
+
 #ifdef _WIN32
 
 #undef near
@@ -33,8 +27,6 @@
 #define M_PI	3.14159265358979323846
 #define M_PI_2  1.57079632679489661923
 #endif
-
-#endif /* Common_hpp */
 
 /**
  

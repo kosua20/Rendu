@@ -3,7 +3,7 @@
 #include "system/TextUtilities.hpp"
 
 
-void Font::loadFont(std::istream & in, FontInfos & font){
+void Font::loadFont(std::istream & in, Font & font){
 	
 	std::string line;
 	std::vector<std::string> lines;
@@ -49,8 +49,8 @@ void Font::loadFont(std::istream & in, FontInfos & font){
 	}
 }
 
-Mesh Font::generateLabel(const std::string & text, const FontInfos & font, const float scale, const Alignment align){
-	Mesh mesh;
+void Font::generateLabel(const std::string & text, const Font & font, const float scale, Mesh & mesh, const Alignment align){
+	mesh.clean();
 	glm::vec3 currentOrigin(0.0f);
 	
 	int idBase = 0;
@@ -99,6 +99,5 @@ Mesh Font::generateLabel(const std::string & text, const FontInfos & font, const
 	mesh.upload();
 	// Remove uneeded CPU geometry.
 	mesh.clearGeometry();
-	return mesh;
-	
+
 }
