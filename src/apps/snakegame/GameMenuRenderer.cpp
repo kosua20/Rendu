@@ -2,6 +2,7 @@
 #include "GameMenuRenderer.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "graphics/ScreenQuad.hpp"
+#include "graphics/GLUtilities.hpp"
 #include "input/Input.hpp"
 #include "Common.hpp"
 

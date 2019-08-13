@@ -2,7 +2,6 @@
 
 #include "Common.hpp"
 #include "GameMenu.hpp"
-#include "graphics/GLUtilities.hpp"
 #include "resources/Font.hpp"
 
 /**

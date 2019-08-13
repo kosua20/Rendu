@@ -2,6 +2,7 @@
 
 #include "input/Input.hpp"
 #include "system/System.hpp"
+#include "graphics/GLUtilities.hpp"
 
 FilteringRenderer::FilteringRenderer(RenderingConfig & config) : Renderer(config) {
 	
@@ -16,7 +17,6 @@ FilteringRenderer::FilteringRenderer(RenderingConfig & config) : Renderer(config
 	_mesh = Resources::manager().getMesh("light_sphere", GPU);
 	
 	_sceneBuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, {GL_RGB8, GL_NEAREST_MIPMAP_NEAREST, GL_CLAMP_TO_EDGE}, true));
-	_image = *Resources::manager().getTexture("debug-grid", {GL_RGB8, GL_NEAREST_MIPMAP_NEAREST, GL_CLAMP_TO_EDGE});
 	
 	// Create the Poisson filling and Laplacian integration pyramids, with a lowered internal resolution to speed things up.
 	_pyramidFiller = std::unique_ptr<PoissonFiller>(new PoissonFiller(renderWidth, renderHeight, _fillDownscale));
@@ -56,7 +56,11 @@ void FilteringRenderer::draw() {
 		_sceneBuffer->bind();
 		_sceneBuffer->setViewport();
 		glUseProgram(_passthrough->id());
-		ScreenQuad::draw(_image.gpu->id);
+		if(_image.width > 0){
+			ScreenQuad::draw(_image.gpu->id);
+		} else {
+			glClear(GL_COLOR_BUFFER_BIT);
+		}
 		glUseProgram(0);
 		_sceneBuffer->unbind();
 	} else {
@@ -132,8 +136,22 @@ void FilteringRenderer::update(){
 				// If user picked a path, load the texture from disk.
 				if(res && !newImagePath.empty()){
 					Log::Info() << "Loading " << newImagePath << "." << std::endl;
-					_image = GLUtilities::loadTexture(GL_TEXTURE_2D, {{newImagePath}}, {GL_RGBA8, GL_NEAREST_MIPMAP_NEAREST, GL_CLAMP_TO_EDGE}, Storage::GPU);
-					resize(_image.width, _image.height);
+					
+					_image.clean();
+					_image.shape = TextureShape::D2;
+					_image.levels = 1;
+					_image.images.emplace_back();
+					Image & img = _image.images.back();
+					const int ret = ImageUtilities::loadImage(newImagePath, 4, true, false, img);
+					if (ret != 0) {
+						Log::Error() << Log::Resources << "Unable to load the texture at path " << newImagePath << "." << std::endl;
+					} else {
+						_image.width = img.width;
+						_image.height = img.height;
+						_image.upload({ GL_RGBA8, GL_NEAREST_MIPMAP_NEAREST, GL_CLAMP_TO_EDGE }, false);
+						_image.clearImages();
+						resize(_image.width, _image.height);
+					}
 				}
 			}
 		}

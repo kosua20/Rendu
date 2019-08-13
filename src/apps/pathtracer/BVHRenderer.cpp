@@ -1,6 +1,8 @@
 #include "BVHRenderer.hpp"
 #include "input/Input.hpp"
 #include "system/System.hpp"
+#include "graphics/GLUtilities.hpp"
+#include "resources/Texture.hpp"
 
 
 BVHRenderer::BVHRenderer(RenderingConfig & config) : Renderer(config) {	
@@ -19,12 +21,11 @@ BVHRenderer::BVHRenderer(RenderingConfig & config) : Renderer(config) {
 	checkGLError();
 	
 	// Initial setup for rendering image.
-	_renderTex.type = Texture::T2D;
-	_renderTex.gpu = new GPUTexture();
-	_renderTex.gpu->descriptor = {GL_SRGB8, GL_LINEAR, GL_CLAMP_TO_EDGE};
-	_renderTex.gpu->mipmap = 1;
+	_renderTex.shape = TextureShape::D2;
+	_renderTex.levels = 1;
 	_renderTex.width = renderWidth;
 	_renderTex.height = renderHeight;
+	GLUtilities::setupTexture(_renderTex, {GL_SRGB8, GL_LINEAR, GL_CLAMP_TO_EDGE});
 }
 
 void BVHRenderer::setScene(std::shared_ptr<Scene> scene){
@@ -163,16 +164,16 @@ void BVHRenderer::update(){
 		
 		// Perform rendering.
 		if(ImGui::Button("Render")){
-			_renderTex.images.clear();
+			// Clean the texture.
+			_renderTex.clearImages();
+			_renderTex.gpu->clean();
+			GLUtilities::setupTexture(_renderTex, {GL_SRGB8, GL_LINEAR, GL_CLAMP_TO_EDGE});
+			// Render.
 			_renderTex.images.emplace_back(_renderTex.width, _renderTex.height, 3);
 			Image & render = _renderTex.images.back();
 			_pathTracer.render(_userCamera, _samples, _depth, render);
-			
-			// Remove previous texture.
-			glDeleteTextures(1, &_renderTex.gpu->id);
 			// Upload to the GPU.
-			_renderTex.gpu->id  = GLUtilities::createTexture(GL_TEXTURE_2D, _renderTex.gpu->descriptor, _renderTex.gpu->mipmap);
-			GLUtilities::uploadTexture(GL_TEXTURE_2D, _renderTex.gpu->id, GL_SRGB8, 0, 0, render);
+			GLUtilities::uploadTexture(_renderTex);
 			_showRender = true;
 		}
 		ImGui::SameLine();

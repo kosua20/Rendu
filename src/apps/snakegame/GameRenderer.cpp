@@ -1,5 +1,6 @@
 
 #include "GameRenderer.hpp"
+#include "graphics/GLUtilities.hpp"
 #include "Common.hpp"
 
 GameRenderer::GameRenderer(RenderingConfig & config) : Renderer(config){
@@ -30,7 +31,7 @@ GameRenderer::GameRenderer(RenderingConfig & config) : Renderer(config){
 	_ground = Resources::manager().getMesh("ground", GPU);
 	_head = Resources::manager().getMesh("head", GPU);
 	_bodyElement = Resources::manager().getMesh("body", GPU);
-	_cubemap = Resources::manager().getCubemap("env", {GL_RGB8, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE});
+	_cubemap = Resources::manager().getTexture("env", {GL_RGB8, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE});
 	
 	checkGLError();
 }

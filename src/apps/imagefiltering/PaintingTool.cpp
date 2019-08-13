@@ -2,6 +2,7 @@
 
 #include "input/Input.hpp"
 #include "system/System.hpp"
+#include "graphics/GLUtilities.hpp"
 
 PaintingTool::PaintingTool(unsigned int width, unsigned int height) {
 	
@@ -12,8 +13,11 @@ PaintingTool::PaintingTool(unsigned int width, unsigned int height) {
 	_canvas = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, {GL_RGB8, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE}, false));
 	_visu = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, {GL_RGB8, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE}, false));
 	
+	// Setup the mesh buffers.
+	_brushes.resize(int(Shape::COUNT));
+	
 	// Generate a disk mesh.
-	Mesh disk;
+	Mesh & disk = _brushes[0];
 	const int diskResolution = 360;
 	const float radResolution = float(M_PI) * 2.0f / float(diskResolution);
 	disk.positions.resize(diskResolution+1);
@@ -31,31 +35,22 @@ PaintingTool::PaintingTool(unsigned int width, unsigned int height) {
 		disk.indices[baseId+1] = (i==diskResolution) ? 1 : (i+1);
 		disk.indices[baseId+2] = i;
 	}
-	
-	// Generate a square mesh.
-	Mesh square;
-	square.positions = {{0.0f, 0.0f, 0.0f}, {-1.0f, -1.0f, 0.0f}, {1.0f, -1.0f, 0.0f}, {1.0f, 1.0f, 0.0f}, {-1.0f, 1.0f, 0.0f}};
-	square.indices = {0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 1};
-	
-	// Generate a diamond mesh.
-	Mesh diamond;
-	diamond.positions = {{0.0f, 0.0f, 0.0f}, {-1.41f, 0.0f, 0.0f}, {0.0f, -1.41f, 0.0f}, {1.41f, 0.0f, 0.0f}, {0.0f, 1.41f, 0.0f}};
-	diamond.indices = {0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 1};
-	
-	// Setup the mesh buffers.
-	_brushes.resize(int(Shape::COUNT));
-	
 	disk.upload();
 	disk.clearGeometry();
-	_brushes[0] = disk;
 	
+	// Generate a square mesh.
+	Mesh & square = _brushes[1];
+	square.positions = {{0.0f, 0.0f, 0.0f}, {-1.0f, -1.0f, 0.0f}, {1.0f, -1.0f, 0.0f}, {1.0f, 1.0f, 0.0f}, {-1.0f, 1.0f, 0.0f}};
+	square.indices = {0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 1};
 	square.upload();
 	square.clearGeometry();
-	_brushes[1] = square;
 	
+	// Generate a diamond mesh.
+	Mesh & diamond = _brushes[2];
+	diamond.positions = {{0.0f, 0.0f, 0.0f}, {-1.41f, 0.0f, 0.0f}, {0.0f, -1.41f, 0.0f}, {1.41f, 0.0f, 0.0f}, {0.0f, 1.41f, 0.0f}};
+	diamond.indices = {0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 1};
 	diamond.upload();
 	diamond.clearGeometry();
-	_brushes[2] = diamond;
 	
 	checkGLError();
 }

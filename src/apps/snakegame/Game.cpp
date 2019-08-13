@@ -1,6 +1,7 @@
 
 #include "Game.hpp"
 #include "input/Input.hpp"
+#include "graphics/GLUtilities.hpp"
 #include "Common.hpp"
 
 Game::Game(RenderingConfig & config) : _config(config), _inGameRenderer(config), _menuRenderer(config) {

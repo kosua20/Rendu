@@ -1,5 +1,6 @@
 #include "GameMenu.hpp"
-
+#include "graphics/GPUObjects.hpp"
+#include "resources/Texture.hpp"
 
 MenuButton::MenuButton(const glm::vec2 & screenPos, const glm::vec2 & meshSize, const float screenScale, const int actionTag, const Texture & texture){
 	pos = screenPos;

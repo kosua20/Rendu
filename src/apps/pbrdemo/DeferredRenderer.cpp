@@ -5,6 +5,7 @@
 #include "scene/lights/SpotLight.hpp"
 #include "scene/Sky.hpp"
 #include "system/System.hpp"
+#include "graphics/GLUtilities.hpp"
 #include <chrono>
 
 DeferredRenderer::DeferredRenderer(RenderingConfig & config) : Renderer(config) {

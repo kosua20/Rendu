@@ -1,5 +1,6 @@
 #include "AmbientQuad.hpp"
 #include "resources/ResourcesManager.hpp"
+#include "graphics/GLUtilities.hpp"
 
 
 AmbientQuad::AmbientQuad(){}
