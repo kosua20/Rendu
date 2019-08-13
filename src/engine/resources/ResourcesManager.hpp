@@ -1,11 +1,20 @@
 #pragma once
 
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPUObjects.hpp"
 #include "graphics/ProgramInfos.hpp"
 #include "resources/Font.hpp"
 #include "resources/Mesh.hpp"
 
 #include "Common.hpp"
+
+/**
+ \brief Denote if data is stored on the GPU or CPU.
+ */
+enum Storage : int {
+	GPU = 1, ///< On the GPU
+	CPU = 2, ///< On the CPU
+	BOTH = (GPU | CPU)  ///< On both the CPU and GPU
+};
 
 /**
  \brief The Resources manager is responsible for all resources loading and setup.
@@ -107,18 +116,19 @@ public:
 	 \param refName the name to use for the texture in future calls
 	 \return the texture informations
 	 */
-	Texture * getCubemap(const std::string & name, const Descriptor & descriptor, Storage mode = GPU, const std::string & refName = "");
+	//Texture * getCubemap(const std::string & name, const Descriptor & descriptor, Storage mode = GPU, const std::string & refName = "");
 	
 	/** Get an existing cubemap texture resource.
 	 \param name the texture base name
 	 \return the texture informations
 	 */
-	Texture * getCubemap(const std::string & name);
+	//Texture * getCubemap(const std::string & name);
 	
 	/** Get an OpenGL program resource.
 	 \param name the name of all the program shaders
 	 \param useGeometryShader should the program use a geometry shader
 	 \return the program informations
+	 \todo Merge with the one below
 	 */
 	ProgramInfos * getProgram(const std::string & name, const bool useGeometryShader = false);
 	

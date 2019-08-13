@@ -220,22 +220,22 @@ const Mesh * Resources::getMesh(const std::string & name, Storage mode){
 		return &_meshes[name];
 	}
 
-	// Load geometry. For now we only support OBJs.
-	Mesh mesh;
 	const std::string meshText = getString(name + ".obj");
-	if(!meshText.empty()){
-		std::stringstream meshStream(meshText);
-	
-		MeshUtilities::loadObj(meshStream, mesh, MeshUtilities::Indexed);
-		// If uv or positions are missing, tangent/binormals won't be computed.
-		MeshUtilities::computeTangentsAndBinormals(mesh);
-		// Compute bounding box.
-		mesh.bbox = MeshUtilities::computeBoundingBox(mesh);
-		
-	} else {
+	if(meshText.empty()){
 		Log::Error() << Log::Resources << "Unable to load mesh named " << name << "." << std::endl;
 		return nullptr;
 	}
+	
+	_meshes[name] = Mesh();
+	Mesh & mesh = _meshes[name];
+	
+	// Load geometry. For now we only support OBJs.
+	std::stringstream meshStream(meshText);
+	MeshUtilities::loadObj(meshStream, mesh, MeshUtilities::Indexed);
+	// If uv or positions are missing, tangent/binormals won't be computed.
+	MeshUtilities::computeTangentsAndBinormals(mesh);
+	// Compute bounding box.
+	mesh.bbox = MeshUtilities::computeBoundingBox(mesh);
 	
 	if(mode & Storage::GPU){
 		// Setup GL buffers and attributes.
@@ -246,7 +246,6 @@ const Mesh * Resources::getMesh(const std::string & name, Storage mode){
 		mesh.clearGeometry();
 	}
 	
-	_meshes[name] = mesh;
 	return &_meshes[name];
 }
 
@@ -266,106 +265,131 @@ Texture * Resources::getTexture(const std::string & name, const Descriptor & des
 	
 	// If texture already loaded, return it.
 	if(_textures.count(keyName) > 0){
-		const auto & infos = _textures[keyName];
-		// Check if this is the same descriptor.
-		if(descriptor.filtering != infos.gpu->descriptor.filtering ||
-		   descriptor.typedFormat != infos.gpu->descriptor.typedFormat ||
-		   descriptor.wrapping != infos.gpu->descriptor.wrapping){
-			Log::Warning() << Log::Resources << "Texture \"" << keyName << "\"already exist with a different descriptor." << std::endl;
+		auto & texture = _textures[keyName];
+		if(mode & GPU){
+			// If we want to store the texture on the GPU...
+			if(texture.gpu){
+				// If the texture is already on the GPU, check that the layout is the same.
+				const auto & existingDesc = texture.gpu->descriptor;
+				// Else raise a warning.
+				if(descriptor.filtering != existingDesc.filtering ||
+				   descriptor.typedFormat != existingDesc.typedFormat ||
+				   descriptor.wrapping != existingDesc.wrapping){
+					Log::Warning() << Log::Resources << "Texture \"" << keyName
+					<< "\" already exist with a different descriptor." << std::endl;
+				}
+			} else {
+				// Else upload to the GPU.
+				texture.upload(descriptor, texture.levels == 1);
+			}
+		}
+		// If we require CPU data but the images are empty, the texture CPU data was cleared...
+		// Don't try and reload, just print an error.
+		if((mode & CPU) && texture.images.empty()){
+			Log::Error() << Log::Resources << "Texture \"" << keyName
+			<< "\" exists but is not CPU available." << std::endl;
 		}
 		return &_textures[keyName];
 	}
-	// Else, find the corresponding file.
-	Texture infos;
-	std::string path = getImagePath(name);
 	
-	if(!path.empty()){
-		// Else, load it and store the infos.
-		infos = GLUtilities::loadTexture(GL_TEXTURE_2D, {{path}}, descriptor, mode);
-		_textures[keyName] = infos;
-		return &_textures[keyName];
-	}
-	// Else, maybe there are custom mipmap levels.
-	// In this case the true name is name_mipmaplevel.
+	// Else, find the corresponding file(s).
+	// Supported names:
+	// * "file", "file_0": 2D
+	// * "file_nx", "file_0_nx": cubemap
+	// Future support:
+	// * "file_s0", "file_0_s0": array 2D
+	// * "file_nx_s0", "file_0_nx_s0": array cubemap
+	// * "file_z0",  "file_0_z0": 3D
 	
-	// How many mipmap levels can we accumulate?
 	std::vector<std::vector<std::string>> paths;
-	unsigned int lastMipmap = 0;
-	std::string mipmapPath = getImagePath(name + "_" + std::to_string(lastMipmap));
-	while(!mipmapPath.empty()) {
-		// Transfer them to the final paths vector.
-		paths.push_back({mipmapPath});
-		++lastMipmap;
-		mipmapPath = getImagePath(name + "_" + std::to_string(lastMipmap));
-	}
-	if(!paths.empty()){
-		// We found the texture files.
-		// Load them and store the infos.
-		infos = GLUtilities::loadTexture(GL_TEXTURE_2D, paths, descriptor, mode);
-		_textures[keyName] = infos;
-		return &_textures[keyName];
-	}
 	
-	// If couldn't file the image, return empty texture infos.
-	Log::Error() << Log::Resources << "Unable to find texture named \"" << name << "\"." << std::endl;
-	return nullptr;
-}
-
-Texture * Resources::getCubemap(const std::string & name){
-	// If cubemap already loaded, return it.
-	if(_textures.count(name) > 0){
-		return &_textures[name];
-	}
-	Log::Error() << Log::Resources << "Unable to find existing cubemap \"" << name << "\"" << std::endl;
-	return nullptr;
-}
-
-Texture * Resources::getCubemap(const std::string & name, const Descriptor & descriptor, Storage mode, const std::string & refName){
-	const std::string & keyName = refName.empty() ? name : refName;
-	// If texture already loaded, return it.
-	if(_textures.count(keyName) > 0){
-		const auto & infos = _textures[keyName];
-		// Check if this is the same descriptor.
-		if(descriptor.filtering != infos.gpu->descriptor.filtering ||
-		   descriptor.typedFormat != infos.gpu->descriptor.typedFormat ||
-		   descriptor.wrapping != infos.gpu->descriptor.wrapping){
-			Log::Warning() << "Cubemap \"" << keyName << "\" already exist with a different descriptor." << std::endl;
+	const std::string path2D = getImagePath(name);
+	const std::string path2DMip = getImagePath(name + "_0");
+	const std::vector<std::string> pathCubes = getCubemapPaths(name);
+	const std::vector<std::string> pathCubesMip = getCubemapPaths(name + "_0");
+	
+	TextureShape shape = TextureShape::D2;
+	
+	if(!path2D.empty()){
+		shape = TextureShape::D2;
+		paths.push_back({path2D});
+		
+	} else if(!pathCubes.empty()){
+		shape = TextureShape::Cube;
+		paths.push_back(pathCubes);
+		
+	} else if(!path2DMip.empty()){
+		shape = TextureShape::D2;
+		// We need to find the number of mipmap levels.
+		unsigned int currLevel = 0;
+		std::string mipmapPath = path2DMip;
+		while(!mipmapPath.empty()) {
+			// Transfer it to the final paths vector.
+			paths.push_back({mipmapPath});
+			++currLevel;
+			// Next name to test.
+			mipmapPath = getImagePath(name + "_" + std::to_string(currLevel));
 		}
-		return &_textures[keyName];;
+		
+	} else if(!pathCubesMip.empty()){
+		shape = TextureShape::Cube;
+		// We need to find the number of mipmap levels.
+		unsigned int currLevel = 0;
+		std::vector<std::string> mipmapPaths = pathCubesMip;
+		while(!mipmapPaths.empty()) {
+			// Transfer them to the final paths vector.
+			paths.push_back(mipmapPaths);
+			++currLevel;
+			// Next name to test.
+			mipmapPaths = getCubemapPaths(name + "_" + std::to_string(currLevel));
+		}
+		
 	}
-	// Else, find the corresponding files.
-	Texture infos;
-	std::vector<std::string> paths = getCubemapPaths(name);
-	if(!paths.empty()){
-		// We found the texture files.
-		// Load them and store the infos.
-		infos = GLUtilities::loadTexture(GL_TEXTURE_CUBE_MAP, {paths}, descriptor, mode);
-		_textures[keyName] = infos;
-		return &_textures[keyName];
-	}
-	// Else, maybe there are custom mipmap levels.
-	// In this case the true name is name_mipmaplevel.
 	
-	// How many mipmap levels can we accumulate?
-	std::vector<std::vector<std::string>> allPaths;
-	unsigned int lastMipmap = 0;
-	std::vector<std::string> mipmapPaths = getCubemapPaths(name + "_" + std::to_string(lastMipmap));
-	while(!mipmapPaths.empty()) {
-		// Transfer them to the final paths vector.
-		allPaths.push_back(mipmapPaths);
-		++lastMipmap;
-		mipmapPaths = getCubemapPaths(name + "_" + std::to_string(lastMipmap));
+	if(paths.empty()){
+		// If couldn't file the image(s), return empty texture infos.
+		Log::Error() << Log::Resources << "Unable to find texture named \"" << name << "\"." << std::endl;
+		return nullptr;
 	}
-	if(!allPaths.empty()){
-		// We found the texture files.
-		// Load them and store the infos.
-		infos = GLUtilities::loadTexture(GL_TEXTURE_CUBE_MAP, allPaths, descriptor, mode);
-		_textures[keyName] = infos;
-		return &_textures[keyName];
+	
+	// Format and orientation.
+	GLenum format, type;
+	const unsigned int channels = descriptor.getTypeAndFormat(type, format);
+	// Cubemaps don't need to be flipped.
+	const bool flip = !(shape & TextureShape::Cube);
+	_textures[keyName] = Texture();
+	Texture & texture = _textures[keyName];
+	
+	// Load all images.
+	texture.images.reserve(paths.size() * paths[0].size());
+	for(const auto & levelPaths : paths){
+		for(const auto & filePath : levelPaths){
+			texture.images.emplace_back();
+			Image & image = texture.images.back();
+			int ret = ImageUtilities::loadImage(filePath, channels, flip, false, image);
+			if (ret != 0) {
+				Log::Error() << Log::Resources << "Unable to load the texture at path " << filePath << "." << std::endl;
+				continue;
+			}
+		}
 	}
-	Log::Error() << Log::Resources << "Unable to find cubemap named \"" << name << "\"." << std::endl;
-	// Nothing found, return empty texture.
-	return nullptr;
+	// Obtain the reference infos of the texture.
+	texture.shape = shape;
+	texture.width = texture.images[0].width;
+	texture.height = texture.images[0].height;
+	texture.levels = paths.size();
+	
+	// If GPU mode, send them to the GPU.
+	if(mode & Storage::GPU){
+		// If only one level was given, generate the mipmaps.
+		texture.upload(descriptor, texture.levels == 1);
+	}
+	// If GPU only, clear the CPU data.
+	if(!(mode & Storage::CPU)){
+		texture.clearImages();
+	}
+	return &_textures[keyName];
+	
 }
 
 // Program/shaders methods.
@@ -507,7 +531,7 @@ void Resources::clean(){
 	Log::Info() << Log::Resources << "Cleaning up." << std::endl;
 	
 	for(auto & tex : _textures){
-		glDeleteTextures(1, &tex.second.gpu->id);
+		tex.second.clean();
 	}
 	for(auto & mesh : _meshes){
 		mesh.second.clean();
