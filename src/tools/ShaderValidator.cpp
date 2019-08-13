@@ -1,4 +1,5 @@
 #include "resources/ResourcesManager.hpp"
+#include "graphics/GLUtilities.hpp"
 #include "Common.hpp"
 #include <iostream>
 
