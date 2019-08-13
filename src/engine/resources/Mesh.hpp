@@ -1,9 +1,7 @@
 #pragma once
 #include "resources/Bounds.hpp"
-#include "Common.hpp"
 #include "graphics/GPUObjects.hpp"
-
-struct GPUMesh;
+#include "Common.hpp"
 
 /**
  \brief Represents a geometric mesh composed of vertices and triangles. For now, material information and elements/groups are not represented.

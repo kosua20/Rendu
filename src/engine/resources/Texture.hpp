@@ -1,9 +1,7 @@
 #pragma once
 #include "resources/Image.hpp"
+#include "graphics/GPUObjects.hpp"
 #include "Common.hpp"
-
-struct GPUTexture;
-struct Descriptor;
 
 enum class TextureShape : uint {
 	D1 = 1 << 1,
@@ -30,15 +28,15 @@ inline TextureShape& operator |=(TextureShape t0, TextureShape t1){
 
 
 /**
- \brief Represents a texture containing one or more images, with optional GPU infos.
+ \brief Represents a texture containing one or more images, stored on the CPU and/or GPU.
  \ingroup Resources
  */
 class Texture {
 	
 public:
 	
-	std::vector<Image> images; ///< The image data (optional)
-	std::unique_ptr<GPUTexture> gpu = nullptr;
+	std::vector<Image> images; ///< The images CPU data (optional).
+	std::unique_ptr<GPUTexture> gpu; ///< The GPU data (optional).
 	
 	unsigned int width = 0; ///< The texture width.
 	unsigned int height = 0; ///< The texture height.

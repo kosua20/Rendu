@@ -266,7 +266,7 @@ Texture * Resources::getTexture(const std::string & name, const Descriptor & des
 	// If texture already loaded, return it.
 	if(_textures.count(keyName) > 0){
 		auto & texture = _textures[keyName];
-		if(mode & GPU){
+		if(mode & Storage::GPU){
 			// If we want to store the texture on the GPU...
 			if(texture.gpu){
 				// If the texture is already on the GPU, check that the layout is the same.
@@ -285,7 +285,7 @@ Texture * Resources::getTexture(const std::string & name, const Descriptor & des
 		}
 		// If we require CPU data but the images are empty, the texture CPU data was cleared...
 		// Don't try and reload, just print an error.
-		if((mode & CPU) && texture.images.empty()){
+		if((mode & Storage::CPU) && texture.images.empty()){
 			Log::Error() << Log::Resources << "Texture \"" << keyName
 			<< "\" exists but is not CPU available." << std::endl;
 		}

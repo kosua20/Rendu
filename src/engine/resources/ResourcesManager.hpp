@@ -10,11 +10,19 @@
 /**
  \brief Denote if data is stored on the GPU or CPU.
  */
-enum Storage : int {
+enum class Storage : uint {
 	GPU = 1, ///< On the GPU
 	CPU = 2, ///< On the CPU
 	BOTH = (GPU | CPU)  ///< On both the CPU and GPU
 };
+
+inline Storage operator |(Storage t0, Storage t1){
+	return static_cast<Storage>(static_cast<uint>(t0) | static_cast<uint>(t1));
+}
+
+inline bool operator &(Storage t0, Storage t1){
+	return bool(static_cast<uint>(t0) & static_cast<uint>(t1));
+}
 
 /**
  \brief The Resources manager is responsible for all resources loading and setup.
@@ -101,28 +109,13 @@ public:
 	 \param refName the name to use for the texture in future calls
 	 \return the texture informations
 	 */
-	Texture * getTexture(const std::string & name, const Descriptor & descriptor, Storage mode = GPU, const std::string & refName = "");
+	Texture * getTexture(const std::string & name, const Descriptor & descriptor, Storage mode, const std::string & refName = "");
 	
 	/** Get an existing 2D texture resource.
 	 \param name the texture base name
 	 \return the texture informations
 	 */
 	Texture * getTexture(const std::string & name);
-	
-	/** Get a cubemap texture resource. Automatically handle custom mipmaps if present.
-	 \param name the texture base name
-	 \param descriptor the texture layout to use
-	 \param mode denote if data will be available in the CPU and/or GPU memory
-	 \param refName the name to use for the texture in future calls
-	 \return the texture informations
-	 */
-	//Texture * getCubemap(const std::string & name, const Descriptor & descriptor, Storage mode = GPU, const std::string & refName = "");
-	
-	/** Get an existing cubemap texture resource.
-	 \param name the texture base name
-	 \return the texture informations
-	 */
-	//Texture * getCubemap(const std::string & name);
 	
 	/** Get an OpenGL program resource.
 	 \param name the name of all the program shaders

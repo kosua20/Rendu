@@ -202,7 +202,7 @@ void computeCubemapConvolution(const Texture & cubemapInfos, int levelsCount, in
 	}
 	// Create shader program for roughness pre-convolution.
 	const auto programCubemap = Resources::manager().getProgram("cubemap_convo", "skybox_basic", "cubemap_convo");
-	const auto mesh = Resources::manager().getMesh("skybox", GPU);
+	const auto mesh = Resources::manager().getMesh("skybox", Storage::GPU);
 	
 	// Generate convolution map for increments of roughness.
 	Log::Info() << Log::Utilities << "Convolving BRDF with cubemap." << std::endl;
@@ -354,8 +354,8 @@ int main(int argc, char** argv) {
 	
 	const auto program = Resources::manager().getProgram("skybox_basic");
 	const auto programSH = Resources::manager().getProgram("skybox_shcoeffs", "skybox_basic", "skybox_shcoeffs");
-	const auto mesh = Resources::manager().getMesh("skybox", GPU);
-	const Texture * cubemapInfosDefault = Resources::manager().getTexture("debug-cube", {GL_RGB8, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE});
+	const auto mesh = Resources::manager().getMesh("skybox", Storage::GPU);
+	const Texture * cubemapInfosDefault = Resources::manager().getTexture("debug-cube", {GL_RGB8, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE}, Storage::GPU);
 	
 	Texture cubemapInfos;
 	std::vector<glm::vec3> SCoeffs(9);

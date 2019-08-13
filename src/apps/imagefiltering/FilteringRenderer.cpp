@@ -14,7 +14,7 @@ FilteringRenderer::FilteringRenderer(RenderingConfig & config) : Renderer(config
 	
 	_passthrough = Resources::manager().getProgram2D("passthrough");
 	_sceneShader = Resources::manager().getProgram("object", "object_basic", "object_basic_random");
-	_mesh = Resources::manager().getMesh("light_sphere", GPU);
+	_mesh = Resources::manager().getMesh("light_sphere", Storage::GPU);
 	
 	_sceneBuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, {GL_RGB8, GL_NEAREST_MIPMAP_NEAREST, GL_CLAMP_TO_EDGE}, true));
 	

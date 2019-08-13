@@ -13,7 +13,7 @@ PointLight::PointLight(const glm::vec3& worldPosition, const glm::vec3& color, f
 
 void PointLight::init(const std::vector<GLuint>& textureIds){
 	_program = Resources::manager().getProgram("point_light", "object_basic", "point_light");
-	_sphere = Resources::manager().getMesh("light_sphere", GPU);
+	_sphere = Resources::manager().getMesh("light_sphere", Storage::GPU);
 	// Setup the framebuffer.
 	/// \todo Enable only if the light is a shadow caster, to avoid wasteful allocation.
 	const Descriptor descriptor = {GL_RG16F, GL_LINEAR, GL_CLAMP_TO_EDGE};

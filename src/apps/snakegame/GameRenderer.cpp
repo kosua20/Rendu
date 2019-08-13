@@ -28,10 +28,10 @@ GameRenderer::GameRenderer(RenderingConfig & config) : Renderer(config){
 	_ssaoPass = std::unique_ptr<SSAO>(new SSAO(renderWidth/2, renderHeight/2, 1.5f));
 	
 	_coloredProgram = Resources::manager().getProgram("colored_object");
-	_ground = Resources::manager().getMesh("ground", GPU);
-	_head = Resources::manager().getMesh("head", GPU);
-	_bodyElement = Resources::manager().getMesh("body", GPU);
-	_cubemap = Resources::manager().getTexture("env", {GL_RGB8, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE});
+	_ground = Resources::manager().getMesh("ground", Storage::GPU);
+	_head = Resources::manager().getMesh("head", Storage::GPU);
+	_bodyElement = Resources::manager().getMesh("body", Storage::GPU);
+	_cubemap = Resources::manager().getTexture("env", {GL_RGB8, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE}, Storage::GPU);
 	
 	checkGLError();
 }

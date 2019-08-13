@@ -86,7 +86,7 @@ void DirectionalLight::drawShadow(const std::vector<Object> & objects) const {
 void DirectionalLight::drawDebug(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) const {
 	
 	const ProgramInfos * debugProgram = Resources::manager().getProgram("light_debug", "object_basic", "light_debug");
-	const Mesh * debugMesh = Resources::manager().getMesh("light_arrow", GPU);
+	const Mesh * debugMesh = Resources::manager().getMesh("light_arrow", Storage::GPU);
 	
 	glm::mat4 vp = projectionMatrix * viewMatrix * glm::inverse(_viewMatrix) * glm::scale(glm::mat4(1.0f), glm::vec3(0.2f));
 	const glm::vec3 colorLow = _color/(std::max)(_color[0], (std::max)(_color[1], _color[2]));
