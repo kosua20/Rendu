@@ -1,6 +1,7 @@
 #pragma once
 
-#include "graphics/GLUtilities.hpp"
+#include "resources/Texture.hpp"
+#include "resources/Mesh.hpp"
 #include "Common.hpp"
 
 /**

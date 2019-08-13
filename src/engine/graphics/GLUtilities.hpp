@@ -3,6 +3,7 @@
 #include "resources/Mesh.hpp"
 #include "resources/Image.hpp"
 #include "resources/Texture.hpp"
+#include "graphics/GPUObjects.hpp"
 #include "Common.hpp"
 
 /**
@@ -14,12 +15,6 @@
 #define checkGLError() _checkGLError(__FILE__, __LINE__, "")
 /// This macro is used to check for OpenGL errors with access to the file and line number where the error is detected, along with additional user informations.
 #define checkGLErrorInfos(infos) _checkGLError(__FILE__ , __LINE__, infos)
-
-/** Converts a GLenum error number into a human-readable string.
- \param error the OpenGl error value
- \return the corresponding string
- */
-std::string getGLErrorString(GLenum error);
 
 /** Check if any OpenGL error has been detected and log it.
  \param file the current file
@@ -35,81 +30,6 @@ int _checkGLError(const char *file, int line, const std::string & infos);
 int checkGLFramebufferError();
 
 /**@}*/
-
-/** \brief Regroups format, type, filtering and wrapping informations for a color buffer.
-  \ingroup Graphics
- */
-struct Descriptor {
-	
-	GLuint typedFormat; ///< The precise typed format.
-	GLuint filtering; ///< Minification filtering mode.
-	GLuint wrapping; ///< Wrapping mode.
-	
-	/** Default constructor. RGB8, linear, clamp. */
-	Descriptor();
-	
-	/** Constructor.
-	 \param typedFormat_ the precise typed format to use
-	 \param filtering_ the texture minification filtering (GL_LINEAR_MIPMAP_NEAREST,...) to use
-	 \param wrapping_ the texture wrapping mode (GL_CLAMP_TO_EDGE) to use
-	 */
-	Descriptor(const GLuint typedFormat_, const GLuint filtering_, const GLuint wrapping_);
-	
-};
-
-/**
- \brief Denote if data is stored on the GPU or CPU.
- */
-enum Storage : int {
-	GPU = 1, ///< On the GPU
-	CPU = 2, ///< On the CPU
-	BOTH = (GPU | CPU)  ///< On both the CPU and GPU
-};
-
-/**
- \brief Store texture informations.
- \ingroup Graphics
- */
-/*
-struct Texture {
-	Descriptor descriptor; ///< The texture format, type, filtering.
-	GLuint id; ///< The OpenGL texture ID.
-	unsigned int width; ///< The texture width.
-	unsigned int height; ///< The texture height.
-	unsigned int mipmap; ///< The number of mipmaps.
-	bool cubemap; ///< Denote if the texture is a cubemap.
-	bool array; ///< Denote if the texture is an array.
-	std::vector<Image> images; ///< The image data (optional)
- 
-	Texture() : descriptor(), id(0), width(0), height(0), mipmap(0), cubemap(false), array(false), images() {}
-
-};*/
-
-struct GPUTexture {
-	Descriptor descriptor; ///< The texture format, type, filtering.
-	GLuint id; ///< The OpenGL texture ID.
-	unsigned int mipmap; ///< The mipmap count.
-	
-	GPUTexture() : descriptor(), id(0), mipmap(0) {
-	}
-};
-
-/**
- \brief Store geometry buffers on the GPU.
- \ingroup Graphics
- */
-struct GPUMesh {
-	
-	GLuint vId = 0; ///< The vertex array OpenGL ID.
-	GLuint eId = 0; ///< The element buffer OpenGL ID.
-	GLsizei count = 0; ///< The number of vertices (cached).
-	GLuint vbo = 0; ///< The vertex buffer objects OpenGL ID.
-	
-	/** Clean internal GPU buffers. */
-	void clean();
-	
-};
-
 
 class Framebuffer;
 
@@ -148,7 +68,7 @@ public:
 	 \return the texture informations, including the OpenGL ID
 	 \note If only one list path is present, the mipmaps will be generated automatically.
 	 */
-	static Texture loadTexture(const GLenum target, const std::vector<std::vector<std::string>>& path, const Descriptor & descriptor, Storage mode);
+	//static Texture loadTexture(const GLenum target, const std::vector<std::vector<std::string>>& path, const Descriptor & descriptor, Storage mode);
 	
 	/** Mesh loading: send a mesh data to the GPU and set the input mesh GPU infos accordingly.
 	 \param mesh the mesh to upload
@@ -168,35 +88,6 @@ public:
 	 */
 	static void saveFramebuffer(const Framebuffer & framebuffer, const unsigned int width, const unsigned int height, const std::string & path, const bool flip = true, const bool ignoreAlpha = false);
 	
-	/** Save the window framebuffer content to the disk.
-	 \param width the width of the region to save
-	 \param height the height of the region to save
-	 \param path the output image path
-	 \note The output image extension will be automatically added based on the framebuffer type and format.
-	 */
-	static void saveDefaultFramebuffer(const unsigned int width, const unsigned int height, const std::string & path);
-	
-	/** Obtain the separate type, format and channel count of a texture typed format.
-	 \param typedFormat the precise format to detail
-	 \param type will contain the type (GL_FLOAT,...)
-	 \param format will contain the general layout (GL_RG,...)
-	 \return the number of channels
-	 */
-	static unsigned int getTypeAndFormat(const GLuint typedFormat, GLuint & type, GLuint & format);
-	
-	/** Obtain the texture magnification filter associated to a minification filter, removing the mipmaping qualifier.
-	 \param minificationFilter the minification filter to convert
-	 \return the magnification filter
-	 */
-	static GLuint getMagnificationFilter(const GLuint minificationFilter);
-	
-	/** Create a GPU texture with a given layout and mip map count.
-	 \param destination the kind of texture to create: 2D, cubemap,...
-	 \param descriptor type and format information
-	 \param mipmapCount the number of mipmap levels. If null, default value will be used.
-	 \return the handle of the created texture.
-	 */
-	static GLuint createTexture(const GLenum destination, const Descriptor & descriptor, const int mipmapCount);
 	
 	/** Draw indexed geometry.
 	 \param mesh the mesh to draw
@@ -209,6 +100,13 @@ public:
 	 */
 	static void bindTextures(const std::vector<const Texture*> & textures, int startingSlot = GL_TEXTURE0);
 	
+	/** Create a GPU texture with a given layout.
+	 \param texture the texture to setup on the GPU
+	 \param descriptor type and format information
+	 */
+	static void setupTexture(Texture & texture, const Descriptor & descriptor);
+	
+	
 	/** Upload data to a GPU texture.
 	 \param destination the kind of texture to target: 2D, cubemap, 2D array...
 	 \param texId the handle of the texture
@@ -217,9 +115,17 @@ public:
 	 \param lid the layer to populate for arrays and cubemaps
 	 \param image the image data to upload to the GPU
 	 */
-	static void uploadTexture(const GLenum destination, const GLuint texId, const GLenum destTypedFormat, const unsigned int mipid, const unsigned int lid, const Image & image);
+	static void uploadTexture(const Texture & texture);
+	
+	static void generateMipMaps(const Texture & texture);
 	
 private:
+	
+	/** Convert a texture shape to an openGL texture format enum.
+	 \param shape the texture shape
+	 \return the corresponding target
+	 */
+	static GLenum targetFromShape(const TextureShape & shape);
 	
 	/** Read back the currently bound framebuffer to the CPU and save it in the best possible format on disk.
 	 \param type the type of the framebuffer

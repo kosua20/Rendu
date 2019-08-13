@@ -1,5 +1,6 @@
 #include "resources/Mesh.hpp"
 #include "system/TextUtilities.hpp"
+#include "graphics/GPUObjects.hpp"
 #include "graphics/GLUtilities.hpp"
 #include <sstream>
 #include <cstddef>

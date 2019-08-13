@@ -1,6 +1,7 @@
 #pragma once
 #include "resources/Bounds.hpp"
 #include "Common.hpp"
+#include "graphics/GPUObjects.hpp"
 
 struct GPUMesh;
 
@@ -31,7 +32,7 @@ public:
 	
 	BoundingBox bbox; ///< The mesh bounding box in model space.
 	
-	GPUMesh * gpu = nullptr; ///< The (optional) GPU buffers infos.
+	std::unique_ptr<GPUMesh> gpu = nullptr; ///< The (optional) GPU buffers infos.
 	
 };
 
