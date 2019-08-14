@@ -62,9 +62,9 @@ private:
 
 	std::unique_ptr<Framebuffer> _sceneFramebuffer; ///< Scene buffer.
 	
-	const ProgramInfos * _objectProgram; ///< Basic object program.
-	const ProgramInfos * _passthrough; ///< Passthrough program.
-	const ProgramInfos * _bvhProgram; ///< BVH visualisation program.
+	const Program * _objectProgram; ///< Basic object program.
+	const Program * _passthrough; ///< Passthrough program.
+	const Program * _bvhProgram; ///< BVH visualisation program.
 	std::vector<Mesh> _bvhLevels; ///< The BVH visualisation mesh.
 	std::vector<Mesh> _rayLevels; ///< BVH nodes intersected with a ray.
 	Mesh _rayVis; ///< Mesh representing a ray and its intersected triangle.

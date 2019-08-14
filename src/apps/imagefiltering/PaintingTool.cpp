@@ -73,14 +73,15 @@ void PaintingTool::draw() {
 	if(_shouldDraw){
 		_shouldDraw = false;
 		const glm::vec3 color = _mode == Mode::DRAW ? _fgColor : _bgColor;
+		const glm::vec2 radii(radiusF/_canvas->width(), radiusF/_canvas->height());
 		
-		glUseProgram(_brushShader->id());
-		glUniform2fv(_brushShader->uniform("position"), 1, &_drawPos[0]);
-		glUniform2f(_brushShader->uniform("radius"), radiusF/_canvas->width(), radiusF/_canvas->height());
-		glUniform1i(_brushShader->uniform("outline"), 0);
-		glUniform3fv(_brushShader->uniform("color"), 1, &color[0]);
+		_brushShader->use();
+		_brushShader->uniform("position", _drawPos);
+		_brushShader->uniform("radius", radii);
+		_brushShader->uniform("outline", 0);
+		_brushShader->uniform("color", color);
 		GLUtilities::drawMesh(_brushes[int(_shape)]);
-		glUseProgram(0);
+		
 	}
 	
 	_canvas->unbind();
@@ -94,14 +95,17 @@ void PaintingTool::draw() {
 	// Draw the brush outline.
 	_visu->bind();
 	_visu->setViewport();
-	glUseProgram(_brushShader->id());
-	glUniform2fv(_brushShader->uniform("position"), 1, &_drawPos[0]);
-	glUniform2f(_brushShader->uniform("radius"), radiusF/_canvas->width(), radiusF/_canvas->height());
-	glUniform1i(_brushShader->uniform("outline"), 1);
-	glUniform1f(_brushShader->uniform("radiusPx"), radiusF);
-	glUniform3f(_brushShader->uniform("color"), 1.0f, 1.0f, 1.0f);
+	_brushShader->use();
+	
+	const glm::vec2 radii(radiusF/_canvas->width(), radiusF/_canvas->height());
+	const glm::vec3 white(1.0f);
+	
+	_brushShader->uniform("position", _drawPos);
+	_brushShader->uniform("radius", radii);
+	_brushShader->uniform("outline", 1);
+	_brushShader->uniform("radiusPx", radiusF);
+	_brushShader->uniform("color", white);
 	GLUtilities::drawMesh(_brushes[int(_shape)]);
-	glUseProgram(0);
 	_visu->unbind();
 }
 

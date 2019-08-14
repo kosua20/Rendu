@@ -44,7 +44,7 @@ void GameMenuRenderer::draw(const GameMenu & menu){
 	
 	// Background image.
 	if(menu.backgroundImage > 0){
-		glUseProgram(_backgroundProgram->id());
+		_backgroundProgram->use();
 		ScreenQuad::draw(menu.backgroundImage);
 	}
 	
@@ -52,85 +52,81 @@ void GameMenuRenderer::draw(const GameMenu & menu){
 	glEnable(GL_BLEND);
 	
 	// Images.
-	glUseProgram(_imageProgram->id());
+	_imageProgram->use();
 	for(const auto & image : menu.images){
 		
-		glUniform2fv(_imageProgram->uniform("position"), 1, &image.pos[0]);
-		glUniform2fv(_imageProgram->uniform("scale"), 1, &image.scale[0]);
+		_imageProgram->uniform("position", image.pos);
+		_imageProgram->uniform("scale", image.scale);
 		
-		glUniform1f(_imageProgram->uniform("depth"), 0.95f);
+		_imageProgram->uniform("depth", 0.95f);
 		glActiveTexture(GL_TEXTURE0 );
 		glBindTexture(GL_TEXTURE_2D, image.tid);
 		GLUtilities::drawMesh(*_quad);
 	}
-	glUseProgram(0);
 	
 	// Buttons.
 	for(const auto & button : menu.buttons){
-		glUseProgram(_buttonProgram->id());
-		glUniform2fv(_buttonProgram->uniform("position"), 1, &button.pos[0]);
-		glUniform2fv(_buttonProgram->uniform("scale"), 1, &button.scale[0]);
+		_buttonProgram->use();
+		_buttonProgram->uniform("position", button.pos);
+		_buttonProgram->uniform("scale", button.scale);
 		// Draw the inside half-transparent region.
-		glUniform1f(_buttonProgram->uniform("depth"), 0.5f);
-		glUniform4fv(_buttonProgram->uniform("color"), 1, &innerColors.at(button.state)[0]);
+		_buttonProgram->uniform("depth", 0.5f);
+		_buttonProgram->uniform("color", innerColors.at(button.state));
 		GLUtilities::drawMesh(*_buttonIn);
 		// Draw the border of the button.
-		glUniform1f(_buttonProgram->uniform("depth"), 0.9f);
-		glUniform4fv(_buttonProgram->uniform("color"), 1, &borderColors.at(button.state)[0]);
+		_buttonProgram->uniform("depth", 0.9f);
+		_buttonProgram->uniform("color", borderColors.at(button.state));
 		GLUtilities::drawMesh(*_button);
 		// Draw the text image.
-		glUseProgram(_imageProgram->id());
-		glUniform2fv(_imageProgram->uniform("position"), 1, &button.pos[0]);
+		_imageProgram->use();
+		_imageProgram->uniform("position", button.pos);
 		const glm::vec2 newScale = button.scale * 0.7f * glm::vec2(1.0f, button.size[1]/button.size[0]);
-		glUniform2fv(_imageProgram->uniform("scale"), 1, &newScale[0]);
-		glUniform1f(_imageProgram->uniform("depth"), 0.2f);
+		_imageProgram->uniform("scale", newScale);
+		_imageProgram->uniform("depth", 0.2f);
 		glActiveTexture(GL_TEXTURE0 );
 		glBindTexture(GL_TEXTURE_2D, button.tid);
 		GLUtilities::drawMesh(*_quad);
-		glUseProgram(0);
 	}
 	
 	// Toggles.
 	for(const auto & toggle : menu.toggles){
-		glUseProgram(_buttonProgram->id());
-		glUniform2fv(_buttonProgram->uniform("position"), 1, &toggle.posBox[0]);
-		glUniform2fv(_buttonProgram->uniform("scale"), 1, &toggle.scaleBox[0]);
-		glUniform1f(_buttonProgram->uniform("depth"), 0.9f);
+		_buttonProgram->use();
+		_buttonProgram->uniform("position", toggle.posBox);
+		_buttonProgram->uniform("scale", toggle.scaleBox);
+		_buttonProgram->uniform("depth", 0.9f);
 		// Outside border.
-		glUniform4fv(_buttonProgram->uniform("color"), 1, &borderColors.at(MenuButton::OFF)[0]);
+		_buttonProgram->uniform("color", borderColors.at(MenuButton::OFF));
 		GLUtilities::drawMesh(*_toggle);
 		// If checked, fill the box.
 		if(toggle.state == MenuButton::ON){
-			glUniform4fv(_buttonProgram->uniform("color"), 1, &innerColors.at(MenuButton::OFF)[0]);
+			_buttonProgram->uniform("color", innerColors.at(MenuButton::OFF));
 			GLUtilities::drawMesh(*_toggleIn);
 		}
 		// Text display.
 		const glm::vec2 newScale = toggle.scale * 0.7f * glm::vec2(1.0f, toggle.size[1]/toggle.size[0]);
-		glUseProgram(_imageProgram->id());
-		glUniform2fv(_imageProgram->uniform("position"), 1, &toggle.posImg[0]);
-		glUniform2fv(_imageProgram->uniform("scale"), 1, &newScale[0]);
-		glUniform1f(_imageProgram->uniform("depth"), 0.2f);
+		_imageProgram->use();
+		_imageProgram->uniform("position", toggle.posImg);
+		_imageProgram->uniform("scale", newScale);
+		_imageProgram->uniform("depth", 0.2f);
 		glActiveTexture(GL_TEXTURE0 );
 		glBindTexture(GL_TEXTURE_2D, toggle.tid);
 		GLUtilities::drawMesh(*_quad);
-		glUseProgram(0);
+		
 	}
 	glDisable(GL_DEPTH_TEST);
 	
 	// Labels
-	glUseProgram(_fontProgram->id());
+	_fontProgram->use();
 	for(const auto & label : menu.labels){
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, label.tid);
-		glUniform1f(_fontProgram->uniform("ratio"), _config.screenResolution[1] / _config.screenResolution[0]);
-		glUniform2fv(_fontProgram->uniform("position"), 1, &label.pos[0]);
-		glUniform4fv(_fontProgram->uniform("color"), 1, &labelsColor[0]);
-		glUniform4fv(_fontProgram->uniform("edgeColor"), 1, &labelsEdgeColor[0]);
-		glUniform1f(_fontProgram->uniform("edgeWidth"), labelsEdgeWidth);
+		_fontProgram->uniform("ratio", _config.screenResolution[1] / _config.screenResolution[0]);
+		_fontProgram->uniform("position", label.pos);
+		_fontProgram->uniform("color", labelsColor);
+		_fontProgram->uniform("edgeColor", labelsEdgeColor);
+		_fontProgram->uniform("edgeWidth", labelsEdgeWidth);
 		GLUtilities::drawMesh(label.mesh);
 	}
-	glUseProgram(0);
-	
 	glDisable(GL_BLEND);
 	glDisable(GL_FRAMEBUFFER_SRGB);
 	checkGLError();

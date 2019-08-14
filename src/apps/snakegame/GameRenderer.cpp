@@ -56,7 +56,7 @@ void GameRenderer::draw(const Player & player){
 	// --- Lighting pass ------
 	_lightingFramebuffer->bind();
 	_lightingFramebuffer->setViewport();
-	glUseProgram(_compositingProgram->id());
+	_compositingProgram->use();
 	glActiveTexture(GL_TEXTURE0 + 3);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, _cubemap->gpu->id);
 	ScreenQuad::draw({_sceneFramebuffer->textureId(0), _sceneFramebuffer->textureId(1), _ssaoPass->textureId()});
@@ -65,8 +65,8 @@ void GameRenderer::draw(const Player & player){
 	// --- FXAA pass -------
 	_fxaaFramebuffer->bind();
 	_fxaaFramebuffer->setViewport();
-	glUseProgram(_fxaaProgram->id());
-	glUniform2fv(_fxaaProgram->uniform("inverseScreenSize"), 1, &(invRenderSize[0]));
+	_fxaaProgram->use();
+	_fxaaProgram->uniform("inverseScreenSize", invRenderSize);
 	ScreenQuad::draw(_lightingFramebuffer->textureId());
 	_fxaaFramebuffer->unbind();
 	
@@ -74,7 +74,7 @@ void GameRenderer::draw(const Player & player){
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glViewport(0, 0, GLsizei(_config.screenResolution[0]), GLsizei(_config.screenResolution[1]));
 	glEnable(GL_FRAMEBUFFER_SRGB);
-	glUseProgram(_finalProgram->id());
+	_finalProgram->use();
 	ScreenQuad::draw(_fxaaFramebuffer->textureId());
 	glDisable(GL_FRAMEBUFFER_SRGB);
 	checkGLError();
@@ -85,46 +85,43 @@ void GameRenderer::drawScene(const Player & player){
 	// So the normal matrix only takes the model matrix into account.
 	
 	const glm::mat4 VP = _playerCamera.projection() * _playerCamera.view();
-	glUseProgram(_coloredProgram->id());
+	_coloredProgram->use();
 	// Render the ground.
 	{
 		const glm::mat4 groundModel = glm::rotate(glm::mat4(1.0f), float(M_PI_2), glm::vec3(1.0f,0.0f,0.0f));
 		const glm::mat4 MVP = VP * groundModel;
 		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(groundModel)));
-		glUniformMatrix4fv(_coloredProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
-		glUniformMatrix3fv(_coloredProgram->uniform("normalMat"), 1, GL_FALSE, &normalMatrix[0][0]);
-		glUniform1i(_coloredProgram->uniform("matID"), 1);
+		_coloredProgram->uniform("mvp", MVP);
+		_coloredProgram->uniform("normalMat", normalMatrix);
+		_coloredProgram->uniform("matID", 1);
 		GLUtilities::drawMesh(*_ground);
 	}
 	// Render the head.
 	{
 		const glm::mat4 MVP = VP * player.modelHead;
 		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(player.modelHead)));
-		glUniformMatrix4fv(_coloredProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
-		glUniformMatrix3fv(_coloredProgram->uniform("normalMat"), 1, GL_FALSE, &normalMatrix[0][0]);
-		glUniform1i(_coloredProgram->uniform("matID"), 2);
+		_coloredProgram->uniform("mvp", MVP);
+		_coloredProgram->uniform("normalMat", normalMatrix);
+		_coloredProgram->uniform("matID", 2);
 		GLUtilities::drawMesh(*_head);
 	}
 	// Render body elements and items.
 	for(int i = 0; i < int(player.modelsBody.size());++i){
 		const glm::mat4 MVP = VP * player.modelsBody[i];
 		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(player.modelsBody[i])));
-		glUniformMatrix4fv(_coloredProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
-		glUniformMatrix3fv(_coloredProgram->uniform("normalMat"), 1, GL_FALSE, &normalMatrix[0][0]);
-		glUniform1i(_coloredProgram->uniform("matID"), player.looksBody[i]);
+		_coloredProgram->uniform("mvp", MVP);
+		_coloredProgram->uniform("normalMat", normalMatrix);
+		_coloredProgram->uniform("matID", player.looksBody[i]);
 		GLUtilities::drawMesh(*_bodyElement);
 	}
 	for(int i = 0; i < int(player.modelsItem.size());++i){
 		const glm::mat4 MVP = VP * player.modelsItem[i];
 		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(player.modelsItem[i])));
-		glUniformMatrix4fv(_coloredProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
-		glUniformMatrix3fv(_coloredProgram->uniform("normalMat"), 1, GL_FALSE, &normalMatrix[0][0]);
-		glUniform1i(_coloredProgram->uniform("matID"), player.looksItem[i]);
+		_coloredProgram->uniform("mvp", MVP);
+		_coloredProgram->uniform("normalMat", normalMatrix);
+		_coloredProgram->uniform("matID", player.looksItem[i]);
 		GLUtilities::drawMesh(*_bodyElement);
 	}
-	// Reset.
-	glBindVertexArray(0);
-	glUseProgram(0);
 }
 
 void GameRenderer::update(){

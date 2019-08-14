@@ -70,7 +70,7 @@ int main(int argc, char** argv) {
 	double remainingTime = 0.0;
 	const double dt = 1.0/120.0; // Small physics timestep.
 	
-	const ProgramInfos * program = Resources::manager().getProgram("object", "object_basic", "object_basic_random");
+	const Program * program = Resources::manager().getProgram("object", "object_basic", "object_basic_random");
 	const Mesh * mesh = Resources::manager().getMesh("light_sphere", Storage::GPU);
 	ControllableCamera camera;
 	camera.projection(config.screenResolution[0]/config.screenResolution[1], 1.34f, 0.1f, 100.0f);
@@ -120,11 +120,9 @@ int main(int argc, char** argv) {
 		glViewport(0, 0, (GLsizei)screenSize[0], (GLsizei)screenSize[1]);
 		glClearColor(0.2f, 0.3f, 0.25f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glUseProgram(program->id());
-		glUniformMatrix4fv(program->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
+		program->use();
+		program->uniform("mvp", MVP);
 		GLUtilities::drawMesh(*mesh);
-		glBindVertexArray(0);
-		glUseProgram(0);
 		
 		ImGui::Text("ImGui is functional!"); ImGui::SameLine(); ImGui::Checkbox("Show demo", &showImGuiDemo);
 		ImGui::Text("%.1f FPS / %.1f ms", ImGui::GetIO().Framerate, ImGui::GetIO().DeltaTime*1000.0f);

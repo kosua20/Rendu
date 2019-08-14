@@ -77,8 +77,8 @@ private:
 	std::unique_ptr<FloodFiller> _floodFill; ///< Flood filling.
 	std::unique_ptr<PaintingTool> _painter;
 	
-	const ProgramInfos * _passthrough; ///< Basic blit shader.
-	const ProgramInfos * _sceneShader; ///< Object rendering shader.
+	const Program * _passthrough; ///< Basic blit shader.
+	const Program * _sceneShader; ///< Object rendering shader.
 	const Mesh * _mesh; ///< Basic sphere mesh.
 	
 	Filter _mode = Filter::INPUT; ///< Current filter mode.

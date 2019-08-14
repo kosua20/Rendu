@@ -66,10 +66,10 @@ private:
 	std::unique_ptr<Framebuffer> _fxaaFramebuffer; ///< Framebuffer for postprocess.
 	std::unique_ptr<SSAO> _ssaoPass; ///< Screen space ambient occlusion pass.
 	
-	const ProgramInfos * _fxaaProgram; ///< Antialiasing program.
-	const ProgramInfos * _finalProgram; ///< Final upscaling program.
-	const ProgramInfos * _coloredProgram; ///< Base scene rendering program.
-	const ProgramInfos * _compositingProgram; ///< Lighting program.
+	const Program * _fxaaProgram; ///< Antialiasing program.
+	const Program * _finalProgram; ///< Final upscaling program.
+	const Program * _coloredProgram; ///< Base scene rendering program.
+	const Program * _compositingProgram; ///< Lighting program.
 	
 	const Mesh * _ground; ///< Terrain mesh.
 	const Mesh * _head; ///< Snake head mesh.

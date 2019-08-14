@@ -66,10 +66,10 @@ int main(int argc, char** argv) {
 	const GLuint precomputedScattering = Resources::manager().getTexture("scattering-precomputed", {GL_RGB32F, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE}, Storage::GPU)->gpu->id;
 	
 	// Atmosphere screen quad.
-	const ProgramInfos * atmosphereProgram = Resources::manager().getProgram2D("atmosphere");
+	const Program * atmosphereProgram = Resources::manager().getProgram2D("atmosphere");
 	
 	// Final tonemapping screen quad.
-	const ProgramInfos * tonemapProgram = Resources::manager().getProgram2D("tonemap");
+	const Program * tonemapProgram = Resources::manager().getProgram2D("tonemap");
 	
 	// Sun direction.
 	glm::vec3 lightDirection(0.437f,0.082f,-0.896f);
@@ -141,19 +141,19 @@ int main(int argc, char** argv) {
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 		
-		glUseProgram(atmosphereProgram->id());
+		atmosphereProgram->use();
 		const glm::mat4 camToWorldNoT = glm::mat4(glm::mat3(camToWorld));
 		const glm::mat4 clipToWorld = camToWorldNoT * clipToCam;
-		glUniformMatrix4fv(atmosphereProgram->uniform("clipToWorld"), 1, GL_FALSE, &clipToWorld[0][0]);
-		glUniform3fv(atmosphereProgram->uniform("viewPos"), 1, &camera.position()[0]);
-		glUniform3fv(atmosphereProgram->uniform("lightDirection"), 1, &lightDirection[0]);
+		atmosphereProgram->uniform("clipToWorld", clipToWorld);
+		atmosphereProgram->uniform("viewPos", camera.position());
+		atmosphereProgram->uniform("lightDirection", lightDirection);
 		ScreenQuad::draw(precomputedScattering);
 		atmosphereFramebuffer->unbind();
 		
 		// Tonemapping and final screen.
 		glViewport(0, 0, (GLsizei)screenSize[0], (GLsizei)screenSize[1]);
 		glEnable(GL_FRAMEBUFFER_SRGB);
-		glUseProgram(tonemapProgram->id());
+		tonemapProgram->use();
 		ScreenQuad::draw(atmosphereFramebuffer->textureId());
 		glDisable(GL_FRAMEBUFFER_SRGB);
 		

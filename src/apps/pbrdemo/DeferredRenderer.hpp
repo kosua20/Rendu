@@ -89,18 +89,18 @@ private:
 	std::unique_ptr<Framebuffer> _fxaaFramebuffer; ///< FXAA framebuffer
 	
 	AmbientQuad _ambientScreen; ///< Ambient lighting contribution rendering.
-	const ProgramInfos * _bloomProgram; ///< Bloom program
-	const ProgramInfos * _bloomCompositeProgram;
-	const ProgramInfos * _toneMappingProgram; ///< Tonemapping program
-	const ProgramInfos * _fxaaProgram; ///< FXAA program
-	const ProgramInfos * _finalProgram; ///< Final output program
-	const ProgramInfos * _objectProgram; ///< Basic PBR program
-	const ProgramInfos * _objectNoUVsProgram; ///< Basic PBR program
-	const ProgramInfos * _parallaxProgram;///< Parallax mapping PBR program
+	const Program * _bloomProgram; ///< Bloom program
+	const Program * _bloomCompositeProgram;
+	const Program * _toneMappingProgram; ///< Tonemapping program
+	const Program * _fxaaProgram; ///< FXAA program
+	const Program * _finalProgram; ///< Final output program
+	const Program * _objectProgram; ///< Basic PBR program
+	const Program * _objectNoUVsProgram; ///< Basic PBR program
+	const Program * _parallaxProgram;///< Parallax mapping PBR program
 	
-	const ProgramInfos * _skyboxProgram; ///< Skybox program.
-	const ProgramInfos * _bgProgram; ///< Planar background program.
-	const ProgramInfos * _atmoProgram; ///< Atmospheric scattering program.
+	const Program * _skyboxProgram; ///< Skybox program.
+	const Program * _bgProgram; ///< Planar background program.
+	const Program * _atmoProgram; ///< Atmospheric scattering program.
 	
 	std::shared_ptr<Scene> _scene; ///< The scene to render
 	

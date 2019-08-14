@@ -41,7 +41,7 @@ public:
 private:
 	
 	
-	ProgramInfos * _program; ///< The ambient lighting program.
+	Program * _program; ///< The ambient lighting program.
 
 	std::vector<GLuint> _textures; ///< The input textures for the ambient pass.
 	GLuint _textureEnv; ///< The environment radiance cubemap.

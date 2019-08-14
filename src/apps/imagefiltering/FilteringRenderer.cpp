@@ -45,24 +45,23 @@ void FilteringRenderer::draw() {
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		const glm::mat4 MVP = _userCamera.projection() * _userCamera.view();
-		glUseProgram(_sceneShader->id());
-		glUniformMatrix4fv(_sceneShader->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
+		_sceneShader->use();
+		_sceneShader->uniform("mvp", MVP);
 		GLUtilities::drawMesh(*_mesh);
-		glBindVertexArray(0);
-		glUseProgram(0);
 		_sceneBuffer->unbind();
+		
 	} else if(_viewMode == View::IMAGE){
 		glDisable(GL_DEPTH_TEST);
 		_sceneBuffer->bind();
 		_sceneBuffer->setViewport();
-		glUseProgram(_passthrough->id());
+		_passthrough->use();
 		if(_image.width > 0){
 			ScreenQuad::draw(_image.gpu->id);
 		} else {
 			glClear(GL_COLOR_BUFFER_BIT);
 		}
-		glUseProgram(0);
 		_sceneBuffer->unbind();
+		
 	} else {
 		glDisable(GL_DEPTH_TEST);
 		_painter->draw();
@@ -104,9 +103,8 @@ void FilteringRenderer::draw() {
 	// Render the output on screen.
 	const glm::vec2 screenSize = Input::manager().size();
 	glViewport(0, 0, GLsizei(screenSize[0]), GLsizei(screenSize[1]));
-	glUseProgram(_passthrough->id());
+	_passthrough->use();
 	ScreenQuad::draw(finalTexID);
-	glUseProgram(0);
 }
 
 void FilteringRenderer::update(){

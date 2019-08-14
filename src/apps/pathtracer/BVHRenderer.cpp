@@ -70,8 +70,8 @@ void BVHRenderer::draw() {
 	if(_showRender){
 		glEnable(GL_FRAMEBUFFER_SRGB);
 		glViewport(0, 0, GLsizei(_config.screenResolution[0]), GLsizei(_config.screenResolution[1]));
-		glUseProgram(_passthrough->id());
-		glUniform1i(_passthrough->uniform("flip"), 1);
+		_passthrough->use();
+		_passthrough->uniform("flip", 1);
 		ScreenQuad::draw(_renderTex.gpu->id);
 		glDisable(GL_FRAMEBUFFER_SRGB);
 		return;
@@ -88,20 +88,20 @@ void BVHRenderer::draw() {
 	const glm::mat4 & proj = _userCamera.projection();
 	const glm::mat4 VP = proj * view;
 	
-	glUseProgram(_objectProgram->id());
+	_objectProgram->use();
 	for(auto & object : _scene->objects){
 		// Combine the three matrices.
 		const glm::mat4 MVP = VP * object.model();
 		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(object.model())));
-		glUniformMatrix4fv(_objectProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
-		glUniformMatrix3fv(_objectProgram->uniform("normalMatrix"), 1, GL_FALSE, &normalMatrix[0][0]);
+		_objectProgram->uniform("mvp", MVP);
+		_objectProgram->uniform("normalMatrix", normalMatrix);
 		GLUtilities::drawMesh(*object.mesh());
 	}
 	
 	// Debug wireframe visualisation.
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	glUseProgram(_bvhProgram->id());
-	glUniformMatrix4fv(_bvhProgram->uniform("mvp"), 1, GL_FALSE, &VP[0][0]);
+	_bvhProgram->use();
+	_bvhProgram->uniform("mvp", VP);
 	// If there is a ray mesh, show it.
 	if(_rayVis.gpu && _rayVis.gpu->count > 0){
 		GLUtilities::drawMesh(_rayVis);
@@ -119,7 +119,6 @@ void BVHRenderer::draw() {
 		}
 	}
 	
-	glUseProgram(0);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	_sceneFramebuffer->unbind();
 	glDisable(GL_DEPTH_TEST);
@@ -128,8 +127,8 @@ void BVHRenderer::draw() {
 	// We now render a full screen quad in the default framebuffer, using sRGB space.
 	glEnable(GL_FRAMEBUFFER_SRGB);
 	glViewport(0, 0, GLsizei(_config.screenResolution[0]), GLsizei(_config.screenResolution[1]));
-	glUseProgram(_passthrough->id());
-	glUniform1i(_passthrough->uniform("flip"), 0);
+	_passthrough->use();
+	_passthrough->uniform("flip", 0);
 	ScreenQuad::draw(_sceneFramebuffer->textureId());
 	glDisable(GL_FRAMEBUFFER_SRGB);
 	checkGLError();

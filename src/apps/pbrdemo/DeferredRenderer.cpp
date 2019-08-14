@@ -118,29 +118,29 @@ void DeferredRenderer::renderScene(){
 		// Select the program (and shaders).
 		switch (object.type()) {
 			case Object::PBRParallax:
-				glUseProgram(_parallaxProgram->id());
+				_parallaxProgram->use();
 				// Upload the MVP matrix.
-				glUniformMatrix4fv(_parallaxProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
+				_parallaxProgram->uniform("mvp", MVP);
 				// Upload the projection matrix.
-				glUniformMatrix4fv(_parallaxProgram->uniform("p"), 1, GL_FALSE, &proj[0][0]);
+				_parallaxProgram->uniform("p", proj);
 				// Upload the MV matrix.
-				glUniformMatrix4fv(_parallaxProgram->uniform("mv"), 1, GL_FALSE, &MV[0][0]);
+				_parallaxProgram->uniform("mv", MV);
 				// Upload the normal matrix.
-				glUniformMatrix3fv(_parallaxProgram->uniform("normalMatrix"), 1, GL_FALSE, &normalMatrix[0][0]);
+				_parallaxProgram->uniform("normalMatrix", normalMatrix);
 				break;
 			case Object::PBRNoUVs:
-				glUseProgram(_objectNoUVsProgram->id());
+				_objectNoUVsProgram->use();
 				// Upload the MVP matrix.
-				glUniformMatrix4fv(_objectNoUVsProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
+				_objectNoUVsProgram->uniform("mvp", MVP);
 				// Upload the normal matrix.
-				glUniformMatrix3fv(_objectNoUVsProgram->uniform("normalMatrix"), 1, GL_FALSE, &normalMatrix[0][0]);
+				_objectNoUVsProgram->uniform("normalMatrix", normalMatrix);
 			break;
 			case Object::PBRRegular:
-				glUseProgram(_objectProgram->id());
+				_objectProgram->use();
 				// Upload the MVP matrix.
-				glUniformMatrix4fv(_objectProgram->uniform("mvp"), 1, GL_FALSE, &MVP[0][0]);
+				_objectProgram->uniform("mvp", MVP);
 				// Upload the normal matrix.
-				glUniformMatrix3fv(_objectProgram->uniform("normalMatrix"), 1, GL_FALSE, &normalMatrix[0][0]);
+				_objectProgram->uniform("normalMatrix", normalMatrix);
 				break;
 			default:
 			
@@ -157,7 +157,6 @@ void DeferredRenderer::renderScene(){
 		GLUtilities::drawMesh(*object.mesh());
 		// Restore state.
 		glEnable(GL_CULL_FACE);
-		glUseProgram(0);
 	}
 	
 	if(_debugVisualization){
@@ -183,39 +182,38 @@ void DeferredRenderer::renderScene(){
 		// Skybox.
 		const glm::mat4 backgroundMVP = proj * view * background->model();
 		// Draw background.
-		glUseProgram(_skyboxProgram->id());
+		_skyboxProgram->use();
 		// Upload the MVP matrix.
-		glUniformMatrix4fv(_skyboxProgram->uniform("mvp"), 1, GL_FALSE, &backgroundMVP[0][0]);
+		_skyboxProgram->uniform("mvp", backgroundMVP);
 		GLUtilities::bindTextures(background->textures());
 		GLUtilities::drawMesh(*background->mesh());
 		
 	} else if(mode == Scene::Background::ATMOSPHERE){
 		// Atmosphere screen quad.
-		glUseProgram(_atmoProgram->id());
+		_atmoProgram->use();
 		// Revert the model to clip matrix, removing the translation part.
 		const glm::mat4 worldToClipNoT = _userCamera.projection() * glm::mat4(glm::mat3(_userCamera.view()));
 		const glm::mat4 clipToWorldNoT = glm::inverse(worldToClipNoT);
 		const glm::vec3 & sunDir = dynamic_cast<const Sky *>(background)->direction();
 		// Send and draw.
-		glUniformMatrix4fv(_atmoProgram->uniform("clipToWorld"), 1, GL_FALSE, &clipToWorldNoT[0][0]);
-		glUniform3fv(_atmoProgram->uniform("viewPos"), 1, &_userCamera.position()[0]);
-		glUniform3fv(_atmoProgram->uniform("lightDirection"), 1, &sunDir[0]);
+		_atmoProgram->uniform("clipToWorld", clipToWorldNoT);
+		_atmoProgram->uniform("viewPos", _userCamera.position());
+		_atmoProgram->uniform("lightDirection", sunDir);
 		GLUtilities::bindTextures(background->textures());
 		GLUtilities::drawMesh(*background->mesh());
 		
 	} else {
 		// Background color or 2D image.
-		glUseProgram(_bgProgram->id());
+		_bgProgram->use();
 		if(mode == Scene::Background::IMAGE){
-			glUniform1i(_bgProgram->uniform("useTexture"), 1);
+			_bgProgram->uniform("useTexture", 1);
 			GLUtilities::bindTextures(background->textures());
 		} else {
-			glUniform1i(_bgProgram->uniform("useTexture"), 0);
-			glUniform3fv(_bgProgram->uniform("bgColor"), 1, &_scene->backgroundColor[0]);
+			_bgProgram->uniform("useTexture", 0);
+			_bgProgram->uniform("bgColor", _scene->backgroundColor);
 		}
 		GLUtilities::drawMesh(*background->mesh());
 	}
-	glUseProgram(0);
 	glDepthFunc(GL_LESS);
 	glDepthMask(GL_TRUE);
 	
@@ -229,8 +227,8 @@ GLuint DeferredRenderer::renderPostprocess(const glm::vec2 & invRenderSize){
 		// --- Bloom selection pass ------
 		_bloomFramebuffer->bind();
 		_bloomFramebuffer->setViewport();
-		glUseProgram(_bloomProgram->id());
-		glUniform1f(_bloomProgram->uniform("luminanceTh"), _bloomTh);
+		_bloomProgram->use();
+		_bloomProgram->uniform("luminanceTh", _bloomTh);
 		ScreenQuad::draw(_sceneFramebuffer->textureId());
 		_bloomFramebuffer->unbind();
 		
@@ -241,8 +239,8 @@ GLuint DeferredRenderer::renderPostprocess(const glm::vec2 & invRenderSize){
 		_sceneFramebuffer->bind();
 		_sceneFramebuffer->setViewport();
 		glEnable(GL_BLEND);
-		glUseProgram(_bloomCompositeProgram->id());
-		glUniform1f(_bloomCompositeProgram->uniform("mixFactor"), _bloomMix);
+		_bloomCompositeProgram->use();
+		_bloomCompositeProgram->uniform("mixFactor", _bloomMix);
 		ScreenQuad::draw(_blurBuffer->textureId());
 		glDisable(GL_BLEND);
 		_sceneFramebuffer->unbind();
@@ -251,9 +249,9 @@ GLuint DeferredRenderer::renderPostprocess(const glm::vec2 & invRenderSize){
 	// --- Tonemapping pass ------
 	_toneMappingFramebuffer->bind();
 	_toneMappingFramebuffer->setViewport();
-	glUseProgram(_toneMappingProgram->id());
-	glUniform1f(_toneMappingProgram->uniform("customExposure"), _exposure);
-	glUniform1i(_toneMappingProgram->uniform("apply"), _applyTonemapping);
+	_toneMappingProgram->use();
+	_toneMappingProgram->uniform("customExposure", _exposure);
+	_toneMappingProgram->uniform("apply", _applyTonemapping);
 	ScreenQuad::draw(_sceneFramebuffer->textureId());
 	_toneMappingFramebuffer->unbind();
 	GLuint currentResult = _toneMappingFramebuffer->textureId();
@@ -264,8 +262,8 @@ GLuint DeferredRenderer::renderPostprocess(const glm::vec2 & invRenderSize){
 		// Bind the post-processing framebuffer.
 		_fxaaFramebuffer->bind();
 		_fxaaFramebuffer->setViewport();
-		glUseProgram(_fxaaProgram->id());
-		glUniform2fv(_fxaaProgram->uniform("inverseScreenSize"), 1, &(invRenderSize[0]));
+		_fxaaProgram->use();
+		_fxaaProgram->uniform("inverseScreenSize", invRenderSize);
 		ScreenQuad::draw(currentResult);
 		_fxaaFramebuffer->unbind();
 		currentResult = _fxaaFramebuffer->textureId();
@@ -319,7 +317,7 @@ void DeferredRenderer::draw() {
 	// We now render a full screen quad in the default framebuffer, using sRGB space.
 	glEnable(GL_FRAMEBUFFER_SRGB);
 	glViewport(0, 0, GLsizei(_config.screenResolution[0]), GLsizei(_config.screenResolution[1]));
-	glUseProgram(_finalProgram->id());
+	_finalProgram->use();
 	ScreenQuad::draw(currentResult);
 	glDisable(GL_FRAMEBUFFER_SRGB);
 	glEnable(GL_DEPTH_TEST);

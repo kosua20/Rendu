@@ -249,14 +249,14 @@ void computeCubemapConvolution(const Texture & cubemapInfos, int levelsCount, in
 			
 			// Clear texture slice.
 			glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
-			glUseProgram(programCubemap->id());
+			programCubemap->use();
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			glDisable(GL_DEPTH_TEST);
 			glViewport(0,0,w,h);
 			// Pass roughness parameters.
-			glUniform1f(programCubemap->uniform("mimapRoughness"), roughness);
-			glUniformMatrix4fv(programCubemap->uniform("mvp"), 1, GL_FALSE, &MVPs[i][0][0]);
-			glUniform1i(programCubemap->uniform("samplesCount"), samplesCount);
+			programCubemap->uniform("mimapRoughness", roughness);
+			programCubemap->uniform("mvp", MVPs[i]);
+			programCubemap->uniform("samplesCount", samplesCount);
 			// Attach source cubemap.
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapInfos.gpu->id);
@@ -272,9 +272,6 @@ void computeCubemapConvolution(const Texture & cubemapInfos, int levelsCount, in
 		
 		Log::Info() << std::endl;
 	}
-	
-	glUseProgram(0);
-	glBindVertexArray(0);
 	glEnable(GL_DEPTH_TEST);
 }
 
@@ -317,7 +314,7 @@ void computeAndExportLookupTable(const int outputSide, const std::string & outpu
 	glClearColor(0.0f,0.0f,0.0f,0.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glDisable(GL_DEPTH_TEST);
-	glUseProgram(brdfProgram->id());
+	brdfProgram->use();
 	ScreenQuad::draw();
 	bakingFramebuffer->unbind();
 	glEnable(GL_DEPTH_TEST);
@@ -509,7 +506,7 @@ int main(int argc, char** argv) {
 		if(cubemapInfos.gpu){
 			const auto & programToUse = mode == SH_COEFFS ? programSH : program;
 			glEnable(GL_DEPTH_TEST);
-			glUseProgram(programToUse->id());
+			programToUse->use();
 			glDisable(GL_CULL_FACE);
 			glActiveTexture(GL_TEXTURE0);
 			if(mode == BRDF_CONV && !cubeLevels.empty()){
@@ -517,9 +514,8 @@ int main(int argc, char** argv) {
 			} else {
 				glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapInfos.gpu->id);
 			}
-			glUniformMatrix4fv(programToUse->uniform("mvp"), 1, GL_FALSE,  &mvp[0][0]);
+			programToUse->uniform("mvp", mvp);
 			GLUtilities::drawMesh(*mesh);
-			glUseProgram(0);
 			glDisable(GL_DEPTH_TEST);
 		}
 		
@@ -529,13 +525,12 @@ int main(int argc, char** argv) {
 		const glm::vec2 gizmoSize = gizmoScale * screenSize;
 		glViewport(0, 0, GLsizei(gizmoSize[0]), GLsizei(gizmoSize[1]));
 		glEnable(GL_DEPTH_TEST);
-		glUseProgram(program->id());
+		program->use();
 		glDisable(GL_CULL_FACE);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapInfosDefault->gpu->id);
-		glUniformMatrix4fv(program->uniform("mvp"), 1, GL_FALSE,  &mvp[0][0]);
+		program->uniform("mvp", mvp);
 		GLUtilities::drawMesh(*mesh);
-		glUseProgram(0);
 		glDisable(GL_DEPTH_TEST);
 		glViewport(0,0, GLsizei(screenSize[0]), GLsizei(screenSize[1]));
 		

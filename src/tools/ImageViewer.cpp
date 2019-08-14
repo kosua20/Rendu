@@ -42,7 +42,7 @@ int main(int argc, char** argv) {
 	glEnable(GL_CULL_FACE);
 	
 	// Create the rendering program.
-	const ProgramInfos * program = Resources::manager().getProgram("image_display");
+	const Program * program = Resources::manager().getProgram("image_display");
 	
 	// Infos on the current texture.
 	Texture imageInfos;
@@ -120,19 +120,23 @@ int main(int argc, char** argv) {
 			glEnable(GL_BLEND);
 			
 			// Render the image.
-			glUseProgram(program->id());
+			program->use();
 			// Pass settings.
-			glUniform1f(program->uniform("screenRatio"), screenRatio);
-			glUniform1f(program->uniform("imageRatio"), imageRatio);
-			glUniform1f(program->uniform("widthRatio"), widthRatio);
-			glUniform1i(program->uniform("isHDR"), isFloat);
-			glUniform1f(program->uniform("exposure"), exposure);
-			glUniform1i(program->uniform("gammaOutput"), applyGamma);
-			glUniform4f(program->uniform("channelsFilter"), channelsFilter[0], channelsFilter[1], channelsFilter[2], channelsFilter[3]);
-			glUniform2f(program->uniform("flipAxis"), flipAxis[0], flipAxis[1]);
-			glUniform2f(program->uniform("angleTrig"), std::cos(currentAngle*float(M_PI_2)), std::sin(currentAngle*float(M_PI_2)));
-			glUniform1f(program->uniform("pixelScale"), pixelScale);
-			glUniform2fv(program->uniform("mouseShift"), 1, &mouseShift[0]);
+			program->uniform("screenRatio", screenRatio);
+			program->uniform("imageRatio", imageRatio);
+			program->uniform("widthRatio", widthRatio);
+			program->uniform("isHDR", isFloat);
+			program->uniform("exposure", exposure);
+			program->uniform("gammaOutput", applyGamma);
+			const glm::vec4 chanFilts(channelsFilter);
+			const glm::vec2 flips(flipAxis);
+			const glm::vec2 angles(std::cos(currentAngle*float(M_PI_2)), std::sin(currentAngle*float(M_PI_2)));
+			
+			program->uniform("channelsFilter", chanFilts);
+			program->uniform("flipAxis", flips);
+			program->uniform("angleTrig", angles);
+			program->uniform("pixelScale", pixelScale);
+			program->uniform("mouseShift", mouseShift);
 			
 			// Draw.
 			ScreenQuad::draw(imageInfos.gpu->id);
@@ -272,13 +276,14 @@ int main(int argc, char** argv) {
 					
 					// Render the image in it.
 					glEnable(GL_BLEND);
-					glUseProgram(program->id());
+					program->use();
 					// No scaling or translation.
-					glUniform1f(program->uniform("screenRatio"), 1.0f);
-					glUniform1f(program->uniform("imageRatio"), 1.0f);
-					glUniform1f(program->uniform("widthRatio"), 1.0f);
-					glUniform1f(program->uniform("pixelScale"), 1.0f);
-					glUniform2f(program->uniform("mouseShift"), 0.0f, 0.0f);
+					const glm::vec2 zeros(0.0f);
+					program->uniform("screenRatio", 1.0f);
+					program->uniform("imageRatio", 1.0f);
+					program->uniform("widthRatio", 1.0f);
+					program->uniform("pixelScale", 1.0f);
+					program->uniform("mouseShift", zeros);
 					ScreenQuad::draw(imageInfos.gpu->id);
 					glDisable(GL_BLEND);
 					

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "renderers/Renderer.hpp"
-#include "graphics/ProgramInfos.hpp"
+#include "graphics/Program.hpp"
 #include "GameMenu.hpp"
 
 /**
@@ -49,10 +49,10 @@ public:
 	
 private:
 	
-	const ProgramInfos * _backgroundProgram; //< Background images rendering.
-	const ProgramInfos * _buttonProgram; //< Buttons rendering.
-	const ProgramInfos * _imageProgram; //< Fixed images rendering.
-	const ProgramInfos * _fontProgram; //< Labels font rendering.
+	const Program * _backgroundProgram; //< Background images rendering.
+	const Program * _buttonProgram; //< Buttons rendering.
+	const Program * _imageProgram; //< Fixed images rendering.
+	const Program * _fontProgram; //< Labels font rendering.
 	const Mesh * _button; //< Button main mesh (with border).
 	const Mesh * _buttonIn; //< Button interior mesh.
 	const Mesh * _toggle; //< Toggle main mesh (with border).

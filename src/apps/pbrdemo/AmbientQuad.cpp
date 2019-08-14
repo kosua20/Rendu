@@ -29,10 +29,10 @@ void AmbientQuad::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionM
 	// Store the four variable coefficients of the projection matrix.
 	glm::vec4 projectionVector = glm::vec4(projectionMatrix[0][0], projectionMatrix[1][1], projectionMatrix[2][2], projectionMatrix[3][2]);
 	
-	glUseProgram(_program->id());
+	_program->use();
 	
-	glUniformMatrix4fv(_program->uniform("inverseV"), 1, GL_FALSE, &invView[0][0]);
-	glUniform4fv(_program->uniform("projectionMatrix"), 1, &(projectionVector[0]));
+	_program->uniform("inverseV", invView);
+	_program->uniform("projectionMatrix", projectionVector);
 	// Cubemaps.
 	glActiveTexture(GL_TEXTURE0 + (unsigned int)_textures.size());
 	glBindTexture(GL_TEXTURE_CUBE_MAP, _textureEnv);
