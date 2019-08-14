@@ -11,6 +11,12 @@ class Framebuffer {
 	
 public:
 	
+	/// \brief Framebuffer binding mode.
+	enum class Mode {
+		READ, ///< Read mode.
+		WRITE ///< Write mode.
+	};
+	
 	/** Setup the framebuffer (attachments, renderbuffer, depth buffer, textures IDs,...).
 	 Will use linear filtering and edge clamping.
 	 \param width the width of the framebuffer
@@ -40,6 +46,12 @@ public:
 	 Bind the framebuffer.
 	 */
 	void bind() const;
+	
+	/**
+	 Bind the framebuffer in read or write mode.
+	 \param mode the mode to use
+	 */
+	void bind(Mode mode) const;
 
 	/**
 	 Set the viewport to the size of the framebuffer.
@@ -99,12 +111,6 @@ public:
 	 \return the height
 	 */
 	unsigned int height() const { return _height; }
-	
-	/**
-	 Query the framebuffer ID.
-	 \return the ID
-	 */
-	GLuint id() const { return _id; }
 	
 	/**
 	 Query a color attachment type, filtering and clamping.

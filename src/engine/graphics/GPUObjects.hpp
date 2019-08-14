@@ -29,6 +29,11 @@ struct Descriptor {
 	 */
 	unsigned int getTypeAndFormat(GLuint & type, GLuint & format) const;
 	
+	/** Query the number of channels.
+	 \return the number of channels
+	 */
+	unsigned int getChannelsCount() const;
+	
 	/** Obtain the texture magnification filter, removing the mipmaping qualifier.
 	 \return the magnification filter
 	 */

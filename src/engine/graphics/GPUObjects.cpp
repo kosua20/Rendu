@@ -97,6 +97,11 @@ unsigned int Descriptor::getTypeAndFormat(GLuint & type, GLuint & format) const 
 	return 0;
 }
 
+unsigned int Descriptor::getChannelsCount() const {
+	GLenum format, type;
+	return getTypeAndFormat(type, format);
+}
+
 GLuint Descriptor::getMagnificationFilter() const {
 	if(filtering == GL_NEAREST_MIPMAP_NEAREST || filtering == GL_NEAREST_MIPMAP_LINEAR){
 		return GL_NEAREST;

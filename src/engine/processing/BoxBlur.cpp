@@ -4,9 +4,9 @@
 BoxBlur::BoxBlur(unsigned int width, unsigned int height, bool approximate, const Descriptor & descriptor) : Blur() {
 	
 	Descriptor linearDescriptor = descriptor;
+	// Enforce linear filtering.
 	linearDescriptor.filtering = GL_LINEAR_MIPMAP_NEAREST;
-	GLenum format, type;
-	const int channels = linearDescriptor.getTypeAndFormat(type, format);
+	const int channels = linearDescriptor.getChannelsCount();
 	
 	std::string blur_type_name = "box-blur-" + (approximate ? std::string("approx-") : "");
 	blur_type_name.append(std::to_string(channels));

@@ -58,18 +58,6 @@ public:
 	 */
 	unsigned int side() const { return _side; }
 	
-	/**
-	 Query the framebuffer ID.
-	 \return the ID
-	 */
-	GLuint id() const { return _id; }
-	
-	/**
-	 Query the framebuffer OpenGL type and format.
-	 \return the typed format
-	 */
-	GLuint typedFormat() const { return _descriptor.typedFormat; }
-	
 private:
 	
 	unsigned int _side; ///< The size of each cubemap face sides.

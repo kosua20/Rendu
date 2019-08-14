@@ -34,8 +34,6 @@ void loadCubemap(const std::string & inputPath, Texture & cubemapInfos){
 	const std::string ext = TextUtilities::removeExtension(cubemapPath);
 	cubemapPath = cubemapPath.substr(0, cubemapPath.size()-3);
 	Log::Info() << "Loading " << cubemapPath << "..." << std::endl;
-	// Apply the proper format and filtering.
-	const GLenum typedFormat = Image::isFloat(inputPath) ? GL_RGBA32F : GL_SRGB8_ALPHA8;
 	std::vector<std::string> pathSides;
 	for(int i = 0; i < 6; ++i){
 		pathSides.push_back(cubemapPath + suffixes[i] + ext);
@@ -55,7 +53,7 @@ void loadCubemap(const std::string & inputPath, Texture & cubemapInfos){
 	}
 	cubemapInfos.width = cubemapInfos.images[0].width;
 	cubemapInfos.height = cubemapInfos.images[0].height;
-	cubemapInfos.upload({typedFormat, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE}, false);
+	cubemapInfos.upload({GL_RGBA32F, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE}, false);
 }
 
 /**
@@ -226,6 +224,7 @@ void computeCubemapConvolution(const Texture & cubemapInfos, int levelsCount, in
 		
 		
 		// Allocate cubemap storage.
+		/// \todo Move to the GPU utilities.
 		GLenum type, format;
 		levelInfos.gpu->descriptor.getTypeAndFormat(type, format);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, levelInfos.gpu->id);
@@ -281,7 +280,7 @@ void computeCubemapConvolution(const Texture & cubemapInfos, int levelsCount, in
  \ingroup BRDFEstimator
  */
 void exportCubemapConvolution(const std::vector<Texture> &cubeLevels, const std::string & outputPath){
-	
+	/// \todo Extract texture download in graphics subsystem.
 	for(int level = 0; level < int(cubeLevels.size()); ++level){
 		const std::string levelPath = outputPath + "_" + std::to_string(level);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, cubeLevels[level].gpu->id);

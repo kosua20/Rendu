@@ -346,6 +346,15 @@ void GLUtilities::uploadTexture(const Texture & texture){
 		Log::Error() << Log::OpenGL << "Not enough values in source data for texture upload." << std::endl;
 		return;
 	}
+	// Check that the descriptor type is valid.
+	/// \todo Move validation inside GLUtilities or Descriptor.
+	const bool validType = destType == GL_FLOAT || destType == GL_UNSIGNED_BYTE;
+	const bool validFormat = destFormat == GL_RED || destFormat == GL_RG || destFormat == GL_RGB || destFormat == GL_RGBA;
+	if(!validType || !validFormat){
+		Log::Error() << "Invalid descriptor for creating texture from image data." << std::endl;
+		return;
+	}
+	
 	// Determine the required pack alignment.
 	const bool defaultAlign = (destType == GL_FLOAT || destType == GL_UNSIGNED_INT || destType == GL_INT) || destChannels == 4;
 	glPixelStorei(GL_UNPACK_ALIGNMENT, defaultAlign ? 4 : 1);
@@ -378,9 +387,11 @@ void GLUtilities::uploadTexture(const Texture & texture){
 					finalData[pid] = GLubyte(newValue);
 				}
 				finalDataPtr = &finalData[0];
-			} else {
+			} else if(destType == GL_FLOAT){
 				// Just reinterpret the data.
 				finalDataPtr = reinterpret_cast<const GLubyte*>(&image.pixels[0]);
+			} else {
+				Log::Error() << Log::OpenGL << "Unsupported texture type for upload." << std::endl;
 			}
 			
 			// Upload.

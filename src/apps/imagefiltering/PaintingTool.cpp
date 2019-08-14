@@ -87,8 +87,8 @@ void PaintingTool::draw() {
 	_canvas->unbind();
 	
 	// Copy the canvas to the visualisation framebuffer.
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, _canvas->id());
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _visu->id());
+	_canvas->bind(Framebuffer::Mode::READ);
+	_visu->bind(Framebuffer::Mode::WRITE);
 	glBlitFramebuffer(0, 0, _canvas->width(), _canvas->height(), 0, 0, _visu->width(), _visu->height(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	
@@ -120,7 +120,7 @@ void PaintingTool::update(){
 		glm::vec2 mousePositionGL = glm::floor(glm::vec2(pos.x * w, (1.0f-pos.y) * h));
 		mousePositionGL = glm::clamp(mousePositionGL, glm::vec2(0.0f), glm::vec2(w, h));
 		// Read back from the framebuffer.
-		glBindFramebuffer(GL_READ_FRAMEBUFFER, _canvas->id());
+		_canvas->bind(Framebuffer::Mode::READ);
 		glReadPixels(int(mousePositionGL.x), int(mousePositionGL.y), 1, 1, GL_RGB, GL_FLOAT, &_fgColor[0]);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
@@ -174,8 +174,8 @@ void PaintingTool::resize(unsigned int width, unsigned int height){
 	const unsigned int w = _canvas->width();
 	const unsigned int h = _canvas->height();
 	Framebuffer tempCanvas(w, h,  {GL_RGB8, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE}, false);
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, _canvas->id());
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, tempCanvas.id());
+	_canvas->bind(Framebuffer::Mode::READ);
+	tempCanvas.bind(Framebuffer::Mode::WRITE);
 	glBlitFramebuffer(0, 0, w, h, 0, 0, w, h, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 	
 	// We can then resize the canvas.
@@ -187,8 +187,8 @@ void PaintingTool::resize(unsigned int width, unsigned int height){
 	_canvas->unbind();
 	
 	// Copy back the drawing.
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, tempCanvas.id());
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _canvas->id());
+	tempCanvas.bind(Framebuffer::Mode::READ);
+	_canvas->bind(Framebuffer::Mode::WRITE);
 	const unsigned int nw = std::min(w, _canvas->width());
 	const unsigned int nh = std::min(h, _canvas->height());
 	glBlitFramebuffer(0, 0, nw, nh, 0, 0, nw, nh, GL_COLOR_BUFFER_BIT, GL_NEAREST);

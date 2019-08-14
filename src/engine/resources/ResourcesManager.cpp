@@ -353,8 +353,7 @@ Texture * Resources::getTexture(const std::string & name, const Descriptor & des
 	}
 	
 	// Format and orientation.
-	GLenum format, type;
-	const unsigned int channels = descriptor.getTypeAndFormat(type, format);
+	const unsigned int channels = descriptor.getChannelsCount();
 	// Cubemaps don't need to be flipped.
 	const bool flip = !(shape & TextureShape::Cube);
 	_textures[keyName] = Texture();
