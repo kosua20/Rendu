@@ -571,6 +571,7 @@ void GLUtilities::generateMipMaps(const Texture & texture){
 void GLUtilities::drawMesh(const Mesh & mesh) {
 	glBindVertexArray(mesh.gpu->vId);
 	glDrawElements(GL_TRIANGLES, mesh.gpu->count, GL_UNSIGNED_INT, (void*)0);
+	glBindVertexArray(0);
 }
 
 void GLUtilities::bindTextures(const std::vector<const Texture*> & textures, int startingSlot){

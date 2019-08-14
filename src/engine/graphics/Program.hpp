@@ -7,11 +7,11 @@
  \details Internally responsible for handling uniforms locations, shaders reloading and values caching.
  \ingroup Graphics
  */
-class ProgramInfos {
+class Program {
 public:
 	
 	/** Default constructor */
-	ProgramInfos();
+	Program();
 	
 	/**
 	 Load, compile and link shaders into an OpenGL program.
@@ -19,15 +19,34 @@ public:
 	 \param fragmentName the name of the fragment shader
 	 \param geometryName the name of the geometry shader (can be empty)
 	 */
-	ProgramInfos(const std::string & vertexName, const std::string & fragmentName, const std::string & geometryName);
+	Program(const std::string & vertexName, const std::string & fragmentName, const std::string & geometryName);
 	
 	/** Query the location of a given uniform.
 	 \param name the uniform name
 	 \return the uniform location in the program
 	 \note If the uniform is not present, will return -1, conviniently ignored by glUniform(...) calls.
 	 */
-	GLint uniform(const std::string & name) const;
 
+	void uniform(const std::string & name, bool t) const;
+	
+	void uniform(const std::string & name, int t) const;
+	
+	void uniform(const std::string & name, float t) const;
+	
+	void uniform(const std::string & name, size_t count, const float * t) const;
+	
+	void uniform(const std::string & name, const glm::vec2 & t) const;
+	
+	void uniform(const std::string & name, const glm::vec3 & t) const;
+	
+	void uniform(const std::string & name, const glm::vec4 & t) const;
+	
+	void uniform(const std::string & name, const glm::mat3 & t) const;
+	
+	void uniform(const std::string & name, const glm::mat4 & t) const;
+
+	
+	
 	/** Cache the values passed for the uniform array.
 	 \param name the uniform array name
 	 \param vals the values to cache and to set the uniform to
@@ -52,10 +71,12 @@ public:
 	 */
 	void saveBinary(const std::string & outputPath);
 
-	/** Query the program ID.
-	 \return the OpenGL ID
+	/** Activate the program shaders.
 	 */
-	GLuint id() const { return _id; }
+	void use() const;
+	
+	/** Delete the program. */
+	void clean();
 	
 private:
 	

@@ -1,14 +1,14 @@
-#include "graphics/ProgramInfos.hpp"
+#include "graphics/Program.hpp"
 #include "graphics/GLUtilities.hpp"
 #include "resources/ResourcesManager.hpp"
 
 
-ProgramInfos::ProgramInfos(){
+Program::Program(){
 	_id = 0;
 	_uniforms.clear();
 }
 
-ProgramInfos::ProgramInfos(const std::string & vertexName, const std::string & fragmentName, const std::string & geometryName){
+Program::Program(const std::string & vertexName, const std::string & fragmentName, const std::string & geometryName){
 	_vertexName = vertexName;
 	_fragmentName = fragmentName;
 	_geometryName = geometryName;
@@ -65,16 +65,7 @@ ProgramInfos::ProgramInfos(const std::string & vertexName, const std::string & f
 	checkGLError();
 }
 
-
-GLint ProgramInfos::uniform(const std::string & name) const {
-	if(_uniforms.count(name) > 0) {
-		return _uniforms.at(name);
-	}
-	// glUniform*(-1,...) won't trigger any error and will simply be ignored.
-	return -1;
-}
-
-void ProgramInfos::cacheUniformArray(const std::string & name, const std::vector<glm::vec3> & vals) {
+void Program::cacheUniformArray(const std::string & name, const std::vector<glm::vec3> & vals) {
 	// Store the vec3s elements in a cache, to avoid re-setting them at each frame.
 	glUseProgram(_id);
 	for(size_t i = 0; i < vals.size(); ++i){
@@ -86,7 +77,7 @@ void ProgramInfos::cacheUniformArray(const std::string & name, const std::vector
 	checkGLError();
 }
 
-void ProgramInfos::reload()
+void Program::reload()
 {
 	std::map<std::string, int> bindings;
 	const std::string vertexContent = Resources::manager().getString(_vertexName + ".vert");
@@ -112,7 +103,7 @@ void ProgramInfos::reload()
 }
 
 
-void ProgramInfos::validate(){
+void Program::validate(){
 	glValidateProgram(_id);
 	int status = -2;
 	glGetProgramiv(_id, GL_VALIDATE_STATUS, &status);
@@ -128,7 +119,7 @@ void ProgramInfos::validate(){
 	Log::Error() << Log::OpenGL << "Log for validation: " << &infoLog[0] << std::endl;
 }
 
-void ProgramInfos::saveBinary(const std::string & outputPath){
+void Program::saveBinary(const std::string & outputPath){
 	int count = 0;
 	glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &count);
 	if (count <= 0) {
@@ -147,4 +138,67 @@ void ProgramInfos::saveBinary(const std::string & outputPath){
 	
 	Resources::saveRawDataToExternalFile(outputPath + "_(" + _vertexName + "," + _fragmentName + ")_" + std::to_string((unsigned int) format) + ".bin", &binary[0], binary.size());
 	
+}
+
+void Program::use() const {
+	glUseProgram(_id);
+}
+
+void Program::clean(){
+	glDeleteProgram(_id);
+}
+
+
+void Program::uniform(const std::string & name, bool t) const {
+	if(_uniforms.count(name) > 0) {
+		glUniform1i(_uniforms.at(name), int(t));
+	}
+}
+
+void Program::uniform(const std::string & name, int t) const {
+	if(_uniforms.count(name) > 0) {
+		glUniform1i(_uniforms.at(name), t);
+	}
+}
+
+void Program::uniform(const std::string & name, float t) const {
+	if(_uniforms.count(name) > 0) {
+		glUniform1f(_uniforms.at(name), t);
+	}
+}
+
+void Program::uniform(const std::string & name, size_t count, const float * t) const {
+	if(_uniforms.count(name) > 0) {
+		glUniform1fv(_uniforms.at(name), count, t);
+	}
+}
+
+void Program::uniform(const std::string & name, const glm::vec2 & t) const {
+	if(_uniforms.count(name) > 0) {
+		glUniform2fv(_uniforms.at(name), 1, &t[0]);
+	}
+}
+
+void Program::uniform(const std::string & name, const glm::vec3 & t) const {
+	if(_uniforms.count(name) > 0) {
+		 glUniform3fv(_uniforms.at(name), 1, &t[0]);
+	}
+}
+
+void Program::uniform(const std::string & name, const glm::vec4 & t) const {
+	if(_uniforms.count(name) > 0) {
+		glUniform4fv(_uniforms.at(name), 1, &t[0]);
+	}
+}
+
+void Program::uniform(const std::string & name, const glm::mat3 & t) const {
+	if(_uniforms.count(name) > 0) {
+		glUniformMatrix3fv(_uniforms.at(name), 1, GL_FALSE, &t[0][0]);
+	}
+}
+
+void Program::uniform(const std::string & name, const glm::mat4 & t) const {
+	if(_uniforms.count(name) > 0) {
+		glUniformMatrix4fv(_uniforms.at(name), 1, GL_FALSE, &t[0][0]);
+	}
 }
