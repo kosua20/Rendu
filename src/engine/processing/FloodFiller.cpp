@@ -24,10 +24,10 @@ void FloodFiller::process(const GLuint textureId, const OutputMode mode) {
 	_final->setViewport();
 	
 	if(mode == COLOR){
-		glUseProgram(_compositeColor->id());
+		_compositeColor->use();
 		ScreenQuad::draw({_ping->textureId(), textureId });
 	} else if(mode == DISTANCE){
-		glUseProgram(_compositeDist->id());
+		_compositeDist->use();
 		ScreenQuad::draw(_ping->textureId());
 	}
 	
@@ -40,18 +40,17 @@ void FloodFiller::extractAndPropagate(const GLuint textureId){
 	glDisable(GL_DEPTH_TEST);
 	_ping->bind();
 	_ping->setViewport();
-	glUseProgram(_extract->id());
+	_extract->use();
 	ScreenQuad::draw(textureId);
-	glUseProgram(0);
 	_ping->unbind();
 	
 	// Propagate closest seeds with decreasing step size.
-	glUseProgram(_floodfill->id());
+	_floodfill->use();
 	for(int i = 0; i < _iterations; ++i){
 		const int step = int(std::pow(2, std::max(0, _iterations - i - 1)));
 		_pong->bind();
 		_pong->setViewport();
-		glUniform1i(_floodfill->uniform("stepDist"), step);
+		_floodfill->uniform("stepDist", step);
 		ScreenQuad::draw(_ping->textureId());
 		_pong->unbind();
 		std::swap(_ping, _pong);

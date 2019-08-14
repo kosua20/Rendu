@@ -43,8 +43,8 @@ public:
 	
 private:
 	
-	const ProgramInfos * _blurProgramDown; ///< The downscaling filter.
-	const ProgramInfos * _blurProgramUp; ///< The upscaling filter.
+	const Program * _blurProgramDown; ///< The downscaling filter.
+	const Program * _blurProgramUp; ///< The upscaling filter.
 	std::vector<std::unique_ptr<Framebuffer>> _frameBuffers; ///< Downscaled pyramid framebuffers.
 	
 };

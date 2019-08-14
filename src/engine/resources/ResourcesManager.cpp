@@ -394,11 +394,11 @@ Texture * Resources::getTexture(const std::string & name, const Descriptor & des
 
 // Program/shaders methods.
 
-ProgramInfos * Resources::getProgram(const std::string & name, const bool useGeometryShader){
+Program * Resources::getProgram(const std::string & name, const bool useGeometryShader){
 	return getProgram(name, name, name, useGeometryShader ? name : "");
 }
 
-ProgramInfos * Resources::getProgram(const std::string & name, const std::string & vertexName, const std::string & fragmentName, const std::string & geometryName) {
+Program * Resources::getProgram(const std::string & name, const std::string & vertexName, const std::string & fragmentName, const std::string & geometryName) {
 	if (_programs.count(name) > 0) {
 		return &_programs[name];
 	}
@@ -411,7 +411,7 @@ ProgramInfos * Resources::getProgram(const std::string & name, const std::string
 }
 
 
-ProgramInfos * Resources::getProgram2D(const std::string & name){
+Program * Resources::getProgram2D(const std::string & name){
 	return getProgram(name, "passthrough", name);
 }
 
@@ -537,7 +537,7 @@ void Resources::clean(){
 		mesh.second.clean();
 	}
 	for(auto & prog : _programs){
-		glDeleteProgram(prog.second.id());
+		prog.second.clean();
 	}
 	_textures.clear();
 	_meshes.clear();

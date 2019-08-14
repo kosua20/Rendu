@@ -51,20 +51,20 @@ void SpotLight::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMat
 	const glm::mat4 viewToLight = _mvp * glm::inverse(viewMatrix);
 	
 	glCullFace(GL_FRONT);
-	glUseProgram(_program->id());
-	glUniformMatrix4fv(_program->uniform("mvp"), 1, GL_FALSE, &mvp[0][0]);
-	glUniform3fv(_program->uniform("lightPosition"), 1,  &lightPositionViewSpace[0]);
-	glUniform3fv(_program->uniform("lightDirection"), 1,  &lightDirectionViewSpace[0]);
-	glUniform3fv(_program->uniform("lightColor"), 1,  &_color[0]);
-	glUniform1f(_program->uniform("lightRadius"), _radius);
-	glUniform1f(_program->uniform("innerAngleCos"), std::cos(_innerHalfAngle));
-	glUniform1f(_program->uniform("outerAngleCos"), std::cos(_outerHalfAngle));
+	_program->use();
+	_program->uniform("mvp", mvp);
+	_program->uniform("lightPosition", lightPositionViewSpace);
+	_program->uniform("lightDirection", lightDirectionViewSpace);
+	_program->uniform("lightColor", _color);
+	_program->uniform("lightRadius", _radius);
+	_program->uniform("innerAngleCos", std::cos(_innerHalfAngle));
+	_program->uniform("outerAngleCos", std::cos(_outerHalfAngle));
 	// Projection parameter for position reconstruction.
-	glUniform4fv(_program->uniform("projectionMatrix"), 1, &(projectionVector[0]));
+	_program->uniform("projectionMatrix", projectionVector);
 	// Inverse screen size uniform.
-	glUniform2fv(_program->uniform("inverseScreenSize"), 1, &(invScreenSize[0]));
-	glUniformMatrix4fv(_program->uniform("viewToLight"), 1, GL_FALSE, &viewToLight[0][0]);
-	glUniform1i(_program->uniform("castShadow"), _castShadows);
+	_program->uniform("inverseScreenSize", invScreenSize);
+	_program->uniform("viewToLight", viewToLight);
+	_program->uniform("castShadow", _castShadows);
 	
 	// Active screen texture.
 	for(GLuint i = 0;i < _textures.size(); ++i){
@@ -75,8 +75,6 @@ void SpotLight::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMat
 	// Select the geometry.
 	GLUtilities::drawMesh(*_cone);
 	
-	glBindVertexArray(0);
-	glUseProgram(0);
 	glCullFace(GL_BACK);
 }
 
@@ -90,7 +88,7 @@ void SpotLight::drawShadow(const std::vector<Object> & objects) const {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_CULL_FACE);
 	
-	glUseProgram(_programDepth->id());
+	_programDepth->use();
 	for(auto& object : objects){
 		if(!object.castsShadow()){
 			continue;
@@ -98,18 +96,17 @@ void SpotLight::drawShadow(const std::vector<Object> & objects) const {
 		if(object.twoSided()){
 			glDisable(GL_CULL_FACE);
 		}
-		glUniform1i(_programDepth->uniform("hasMask"), int(object.masked()));
+		_programDepth->uniform("hasMask", object.masked());
 		if(object.masked()){
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, object.textures()[0]->gpu->id);
 		}
 		const glm::mat4 lightMVP = _mvp * object.model();
-		glUniformMatrix4fv(_programDepth->uniform("mvp"), 1, GL_FALSE, &lightMVP[0][0]);
+		_programDepth->uniform("mvp", lightMVP);
 		GLUtilities::drawMesh(*(object.mesh()));
 		glEnable(GL_CULL_FACE);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
-	glUseProgram(0);
 	
 	_shadowPass->unbind();
 	
@@ -122,7 +119,7 @@ void SpotLight::drawShadow(const std::vector<Object> & objects) const {
 
 void SpotLight::drawDebug(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) const {
 	
-	const ProgramInfos * debugProgram = Resources::manager().getProgram("light_debug", "object_basic", "light_debug");
+	const Program * debugProgram = Resources::manager().getProgram("light_debug", "object_basic", "light_debug");
 	
 	// Compute the model matrix to scale the cone based on the outer angle and the radius.
 	const float width = 2.0f*std::tan(_outerHalfAngle);
@@ -130,13 +127,11 @@ void SpotLight::drawDebug(const glm::mat4& viewMatrix, const glm::mat4& projecti
 	const glm::mat4 mvp = projectionMatrix * viewMatrix * modelMatrix;
 	const glm::vec3 colorLow = _color/(std::max)(_color[0], (std::max)(_color[1], _color[2]));
 	
-	glUseProgram(debugProgram->id());
-	glUniformMatrix4fv(debugProgram->uniform("mvp"), 1, GL_FALSE, &mvp[0][0]);
-	glUniform3fv(debugProgram->uniform("lightColor"), 1,  &colorLow[0]);
+	debugProgram->use();
+	debugProgram->uniform("mvp", mvp);
+	debugProgram->uniform("lightColor", colorLow);
 	
 	GLUtilities::drawMesh(*_cone);
-	glBindVertexArray(0);
-	glUseProgram(0);
 }
 
 void SpotLight::update(double fullTime, double frameTime){

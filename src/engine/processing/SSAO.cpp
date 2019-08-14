@@ -54,9 +54,9 @@ void SSAO::process(const glm::mat4 & projection, const GLuint depthTex, const GL
 	
 	_ssaoFramebuffer->bind();
 	_ssaoFramebuffer->setViewport();
-	glUseProgram(_programSSAO->id());
-	glUniformMatrix4fv(_programSSAO->uniform("projectionMatrix"), 1, GL_FALSE, &projection[0][0]);
-	glUniform1f(_programSSAO->uniform("radius"), _radius);
+	_programSSAO->use();
+	_programSSAO->uniform("projectionMatrix", projection);
+	_programSSAO->uniform("radius", _radius);
 	ScreenQuad::draw({depthTex, normalTex, _noiseTextureID});
 	_ssaoFramebuffer->unbind();
 	

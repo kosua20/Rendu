@@ -28,7 +28,7 @@ void PoissonFiller::process(const GLuint textureId) {
 	_preproc->bind();
 	_preproc->setViewport();
 	glClear(GL_COLOR_BUFFER_BIT);
-	glUseProgram(_prepare->id());
+	_prepare->use();
 	ScreenQuad::draw(textureId);
 	_preproc->unbind();
 	
@@ -38,7 +38,7 @@ void PoissonFiller::process(const GLuint textureId) {
 	// Composite the filled-in texture with the initial image at full resolution.
 	_compo->bind();
 	_compo->setViewport();
-	glUseProgram(_composite->id());
+	_composite->use();
 	ScreenQuad::draw({_pyramid.textureId(), textureId });
 	_compo->unbind();
 }

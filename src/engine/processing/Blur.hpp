@@ -46,6 +46,6 @@ protected:
 	Blur();
 	
 	GLuint _finalTexture; ///< The texture holding the blurred result
-	const ProgramInfos * _passthroughProgram; ///< Default passthrough utility program
+	const Program * _passthroughProgram; ///< Default passthrough utility program
 	
 };

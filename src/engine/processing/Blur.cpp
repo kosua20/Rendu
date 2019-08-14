@@ -9,7 +9,7 @@ void Blur::process(const GLuint ) {
 }
 
 void Blur::draw() {
-	glUseProgram(_passthroughProgram->id());
+	_passthroughProgram->use();
 	ScreenQuad::draw(_finalTexture);
 }
 

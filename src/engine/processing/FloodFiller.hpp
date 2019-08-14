@@ -51,10 +51,10 @@ private:
 	 */
 	void extractAndPropagate(const GLuint textureId);
 	
-	const ProgramInfos * _extract; ///< Extract the flood fill seeds.
-	const ProgramInfos * _floodfill; ///< Perform one pass of the flood fill.
-	const ProgramInfos * _compositeColor; ///< Generate the color image from the flood-fill seed map.
-	const ProgramInfos * _compositeDist; ///< Generate the normalized distance map from the flood-fill seed map.
+	const Program * _extract; ///< Extract the flood fill seeds.
+	const Program * _floodfill; ///< Perform one pass of the flood fill.
+	const Program * _compositeColor; ///< Generate the color image from the flood-fill seed map.
+	const Program * _compositeDist; ///< Generate the normalized distance map from the flood-fill seed map.
 	
 	std::unique_ptr<Framebuffer> _ping; ///< First flooding buffer.
 	std::unique_ptr<Framebuffer> _pong; ///< Second flooding buffer.

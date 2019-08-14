@@ -60,7 +60,7 @@ private:
 	
 	std::unique_ptr<Framebuffer> _ssaoFramebuffer; ///< SSAO framebuffer
 	std::unique_ptr<BoxBlur> _blurSSAOBuffer; ///< SSAO blur processing.
-	ProgramInfos * _programSSAO; ///< The SSAO program.
+	Program * _programSSAO; ///< The SSAO program.
 	
 	float _radius = 0.5f;	///< SSAO intersection test radius.
 	GLuint _noiseTextureID; ///< Random noise texture.

@@ -38,18 +38,18 @@ void PointLight::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMa
 	const glm::mat3 viewToLight = glm::mat3(glm::inverse(viewMatrix));
 	
 	glCullFace(GL_FRONT);
-	glUseProgram(_program->id());
-	glUniformMatrix4fv(_program->uniform("mvp"), 1, GL_FALSE, &mvp[0][0]);
-	glUniform3fv(_program->uniform("lightPosition"), 1,  &lightPositionViewSpace[0]);
-	glUniform3fv(_program->uniform("lightColor"), 1,  &_color[0]);
-	glUniform1f(_program->uniform("lightRadius"), _radius);
+	_program->use();
+	_program->uniform("mvp", mvp);
+	_program->uniform("lightPosition", lightPositionViewSpace);
+	_program->uniform("lightColor", _color);
+	_program->uniform("lightRadius", _radius);
 	// Projection parameter for position reconstruction.
-	glUniform4fv(_program->uniform("projectionMatrix"), 1, &(projectionVector[0]));
+	_program->uniform("projectionMatrix", projectionVector);
 	// Inverse screen size uniform.
-	glUniform2fv(_program->uniform("inverseScreenSize"), 1, &(invScreenSize[0]));
-	glUniformMatrix3fv(_program->uniform("viewToLight"), 1, GL_FALSE, &viewToLight[0][0]);
-	glUniform1f(_program->uniform("lightFarPlane"), _farPlane);
-	glUniform1i(_program->uniform("castShadow"), _castShadows);
+	_program->uniform("inverseScreenSize", invScreenSize);
+	_program->uniform("viewToLight", viewToLight);
+	_program->uniform("lightFarPlane", _farPlane);
+	_program->uniform("castShadow", _castShadows);
 	
 	// Active screen texture.
 	for(GLuint i = 0;i < _textures.size()-1; ++i){
@@ -64,8 +64,6 @@ void PointLight::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMa
 	// Select the geometry.
 	GLUtilities::drawMesh(*_sphere);
 	
-	glBindVertexArray(0);
-	glUseProgram(0);
 	glCullFace(GL_BACK);
 }
 
@@ -82,14 +80,14 @@ void PointLight::drawShadow(const std::vector<Object> & objects) const {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_CULL_FACE);
 	
-	glUseProgram(_programDepth->id());
+	_programDepth->use();
 	// Udpate the light mvp matrices.
 	for(size_t mid = 0; mid < 6; ++mid){
-		glUniformMatrix4fv(_programDepth->uniform(uniformNames[mid]), 1, GL_FALSE, &_mvps[mid][0][0]);
+		_programDepth->uniform(uniformNames[mid], _mvps[mid]);
 	}
 	// Pass the world space light position, and the projection matrix far plane.
-	glUniform3fv(_programDepth->uniform("lightPositionWorld"), 1, &_lightPosition[0]);
-	glUniform1f(_programDepth->uniform("lightFarPlane"), _farPlane);
+	_programDepth->uniform("lightPositionWorld", _lightPosition);
+	_programDepth->uniform("lightFarPlane", _farPlane);
 	
 	for(auto& object : objects){
 		if(!object.castsShadow()){
@@ -98,17 +96,16 @@ void PointLight::drawShadow(const std::vector<Object> & objects) const {
 		if(object.twoSided()){
 			glDisable(GL_CULL_FACE);
 		}
-		glUniform1i(_programDepth->uniform("hasMask"), int(object.masked()));
+		_programDepth->uniform("hasMask", object.masked());
 		if(object.masked()){
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, object.textures()[0]->gpu->id);
 		}
-		glUniformMatrix4fv(_programDepth->uniform("model"), 1, GL_FALSE, &(object.model()[0][0]));
+		_programDepth->uniform("model", object.model());
 		GLUtilities::drawMesh(*(object.mesh()));
 		glEnable(GL_CULL_FACE);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
-	glUseProgram(0);
 	
 	_shadowFramebuffer->unbind();
 	
@@ -117,25 +114,23 @@ void PointLight::drawShadow(const std::vector<Object> & objects) const {
 
 void PointLight::drawDebug(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) const {
 	
-	const ProgramInfos * debugProgram = Resources::manager().getProgram("light_debug", "object_basic", "light_debug");
+	const Program * debugProgram = Resources::manager().getProgram("light_debug", "object_basic", "light_debug");
 	
 	// Compute the model matrix to scale the sphere based on the radius.
 	const glm::mat4 modelMatrix = glm::scale(glm::translate(glm::mat4(1.0f), _lightPosition), glm::vec3(_radius));
 	const glm::mat4 mvp = projectionMatrix * viewMatrix * modelMatrix;
 	const glm::vec3 colorLow = _color/(std::max)(_color[0], (std::max)(_color[1], _color[2]));
 	
-	glUseProgram(debugProgram->id());
-	glUniformMatrix4fv(debugProgram->uniform("mvp"), 1, GL_FALSE, &mvp[0][0]);
-	glUniform3fv(debugProgram->uniform("lightColor"), 1,  &colorLow[0]);
+	debugProgram->use();
+	debugProgram->uniform("mvp", mvp);
+	debugProgram->uniform("lightColor", colorLow);
 	GLUtilities::drawMesh(*_sphere);
 	
 	const glm::mat4 modelMatrix1 = glm::scale(glm::translate(glm::mat4(1.0f), _lightPosition), glm::vec3(0.02f*_radius));
 	const glm::mat4 mvp1 = projectionMatrix * viewMatrix * modelMatrix1;
-	glUniformMatrix4fv(debugProgram->uniform("mvp"), 1, GL_FALSE, &mvp1[0][0]);
-	glUniform3fv(debugProgram->uniform("lightColor"), 1,  &_color[0]);
+	debugProgram->uniform("mvp", mvp1);
+	debugProgram->uniform("lightColor", _color);
 	GLUtilities::drawMesh(*_sphere);
-	
-	glUseProgram(0);
 
 }
 

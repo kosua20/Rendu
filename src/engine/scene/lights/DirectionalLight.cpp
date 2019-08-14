@@ -32,13 +32,13 @@ void DirectionalLight::draw(const glm::mat4& viewMatrix, const glm::mat4& projec
 	glm::vec4 projectionVector = glm::vec4(projectionMatrix[0][0], projectionMatrix[1][1], projectionMatrix[2][2], projectionMatrix[3][2]);
 	glm::vec3 lightDirectionViewSpace = glm::vec3(viewMatrix * glm::vec4(_lightDirection, 0.0));
 	
-	glUseProgram(_program->id());
-	glUniform3fv(_program->uniform("lightDirection"), 1,  &lightDirectionViewSpace[0]);
-	glUniform3fv(_program->uniform("lightColor"), 1,  &_color[0]);
+	_program->use();
+	_program->uniform("lightDirection", lightDirectionViewSpace);
+	_program->uniform("lightColor", _color);
 	// Projection parameter for position reconstruction.
-	glUniform4fv(_program->uniform("projectionMatrix"), 1, &(projectionVector[0]));
-	glUniformMatrix4fv(_program->uniform("viewToLight"), 1, GL_FALSE, &viewToLight[0][0]);
-	glUniform1i(_program->uniform("castShadow"), _castShadows);
+	_program->uniform("projectionMatrix", projectionVector);
+	_program->uniform("viewToLight", viewToLight);
+	_program->uniform("castShadow", _castShadows);
 
 	ScreenQuad::draw(_textures);
 
@@ -54,7 +54,7 @@ void DirectionalLight::drawShadow(const std::vector<Object> & objects) const {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_CULL_FACE);
 	
-	glUseProgram(_programDepth->id());
+	_programDepth->use();
 	for(auto& object : objects){
 		if(!object.castsShadow()){
 			continue;
@@ -62,19 +62,17 @@ void DirectionalLight::drawShadow(const std::vector<Object> & objects) const {
 		if(object.twoSided()){
 			glDisable(GL_CULL_FACE);
 		}
-		glUniform1i(_programDepth->uniform("hasMask"), int(object.masked()));
+		_programDepth->uniform("hasMask", object.masked());
 		if(object.masked()){
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, object.textures()[0]->gpu->id);
 		}
 		const glm::mat4 lightMVP = _mvp * object.model();
-		glUniformMatrix4fv(_programDepth->uniform("mvp"), 1, GL_FALSE, &lightMVP[0][0]);
+		_programDepth->uniform("mvp", lightMVP);
 		GLUtilities::drawMesh(*(object.mesh()));
 		glEnable(GL_CULL_FACE);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
-	glUseProgram(0);
-	
 	_shadowPass->unbind();
 	
 	// --- Blur pass --------
@@ -85,18 +83,16 @@ void DirectionalLight::drawShadow(const std::vector<Object> & objects) const {
 
 void DirectionalLight::drawDebug(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) const {
 	
-	const ProgramInfos * debugProgram = Resources::manager().getProgram("light_debug", "object_basic", "light_debug");
+	const Program * debugProgram = Resources::manager().getProgram("light_debug", "object_basic", "light_debug");
 	const Mesh * debugMesh = Resources::manager().getMesh("light_arrow", Storage::GPU);
 	
 	glm::mat4 vp = projectionMatrix * viewMatrix * glm::inverse(_viewMatrix) * glm::scale(glm::mat4(1.0f), glm::vec3(0.2f));
 	const glm::vec3 colorLow = _color/(std::max)(_color[0], (std::max)(_color[1], _color[2]));
 	
-	glUseProgram(debugProgram->id());
-	glUniformMatrix4fv(debugProgram->uniform("mvp"), 1, GL_FALSE, &vp[0][0]);
-	glUniform3fv(debugProgram->uniform("lightColor"), 1,  &colorLow[0]);
+	debugProgram->use();
+	debugProgram->uniform("mvp", vp);
+	debugProgram->uniform("lightColor", colorLow);
 	GLUtilities::drawMesh(*debugMesh);
-	glBindVertexArray(0);
-	glUseProgram(0);
 }
 
 void DirectionalLight::update(double fullTime, double frameTime){

@@ -29,8 +29,8 @@ void LaplacianIntegrator::process(const GLuint textureId) {
 	_preproc->bind();
 	_preproc->setViewport();
 	glClear(GL_COLOR_BUFFER_BIT);
-	glUseProgram(_prepare->id());
-	glUniform1i(_prepare->uniform("scale"), _scale);
+	_prepare->use();
+	_prepare->uniform("scale", _scale);
 	ScreenQuad::draw(textureId);
 	_preproc->unbind();
 	
@@ -40,7 +40,7 @@ void LaplacianIntegrator::process(const GLuint textureId) {
 	// Upscale to the final resolution.
 	_compo->bind();
 	_compo->setViewport();
-	glUseProgram(_composite->id());
+	_composite->use();
 	ScreenQuad::draw(_pyramid.textureId());
 	_compo->unbind();
 }

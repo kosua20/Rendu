@@ -50,16 +50,16 @@ void ConvolutionPyramid::process(const GLuint textureId) {
 	glViewport(_size, _size, _levelsIn[0]->width()-2*_size, _levelsIn[0]->height()-2*_size);
 	glClear(GL_COLOR_BUFFER_BIT);
 	// Transfer the boundary content.
-	glUseProgram(_padder->id());
-	glUniform1i(_padder->uniform("padding"), _size);
+	_padder->use();
+	_padder->uniform("padding", _size);
 	ScreenQuad::draw(textureId);
 	_levelsIn[0]->unbind();
 	
 	// Then iterate over all framebuffers, cascading down the filtered results.
 	/// \todo Those filters are separable, and could be applied in two passes (vertical and horizontal) to reduce the texture fetches count.
 	// Send parameters.
-	glUseProgram(_downscale->id());
-	glUniform1fv(_downscale->uniform("h1[0]"), 5, &_h1[0]);
+	_downscale->use();
+	_downscale->uniform("h1[0]", 5, &_h1[0]);
 	
 	// Do: l[i] = downscale(filter(l[i-1], h1))
 	for(size_t i = 1; i < _levelsIn.size(); ++i){
@@ -74,8 +74,8 @@ void ConvolutionPyramid::process(const GLuint textureId) {
 	
 	// Filter the last level with g.
 	// Send parameters.
-	glUseProgram(_filter->id());
-	glUniform1fv(_filter->uniform("g[0]"), 3, &_g[0]);
+	_filter->use();
+	_filter->uniform("g[0]", 3, &_g[0]);
 	// Do:  f[end] = filter(l[end], g)
 	const auto & lastLevel = _levelsOut.back();
 	lastLevel->bind();
@@ -84,10 +84,10 @@ void ConvolutionPyramid::process(const GLuint textureId) {
 	lastLevel->unbind();
 	
 	// Flatten the pyramid from the bottom, combining the filtered current result and the next level.
-	glUseProgram(_upscale->id());
-	glUniform1fv(_upscale->uniform("h1[0]"), 5, &_h1[0]);
-	glUniform1fv(_upscale->uniform("g[0]"), 3, &_g[0]);
-	glUniform1f(_upscale->uniform("h2"), _h2);
+	_upscale->use();
+	_upscale->uniform("h1[0]", 5, &_h1[0]);
+	_upscale->uniform("g[0]", 3, &_g[0]);
+	_upscale->uniform("h2", _h2);
 	
 	// Do: f[i] = filter(l[i], g) + filter(upscale(f[i+1], h2)
 	for(int i = int(_levelsOut.size()-2); i >= 0; --i){
@@ -101,13 +101,12 @@ void ConvolutionPyramid::process(const GLuint textureId) {
 	// Compensate the initial padding.
 	_shifted->bind();
 	_shifted->setViewport();
-	glUseProgram(_padder->id());
+	_padder->use();
 	// Need to also compensate for the potential extra padding.
-	glUniform1i(_padder->uniform("padding"), -_size-_padding);
+	_padder->uniform("padding", -_size-_padding);
 	ScreenQuad::draw(_levelsOut[0]->textureId());
 	_shifted->unbind();
 	
-	glUseProgram(0);
 }
 
 void ConvolutionPyramid::clean() const {

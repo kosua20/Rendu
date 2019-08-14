@@ -44,7 +44,7 @@ public:
 	
 private:
 	
-	const ProgramInfos * _blurProgram; ///< Box blur program
+	const Program * _blurProgram; ///< Box blur program
 	std::unique_ptr<Framebuffer> _finalFramebuffer; ///< Final framebuffer.
 	
 };

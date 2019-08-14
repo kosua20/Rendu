@@ -115,8 +115,8 @@ protected:
 	std::vector<std::shared_ptr<Animation>> _animations; ///< Animations list (will be applied in order).
 	
 	BoundingBox _sceneBox; ///< The scene bounding box, to fit the shadow map.
-	const ProgramInfos * _program; ///< Light rendering program.
-	const ProgramInfos * _programDepth; ///< Shadow map program.
+	const Program * _program; ///< Light rendering program.
+	const Program * _programDepth; ///< Shadow map program.
 	glm::mat4 _mvp; ///< MVP matrix for shadow casting.
 	glm::vec3 _color; ///< Colored intensity.
 	bool _castShadows; ///< Is the light casting shadows (and thus use a shadow map)..

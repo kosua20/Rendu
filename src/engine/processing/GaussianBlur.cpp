@@ -28,12 +28,12 @@ void GaussianBlur::process(const GLuint textureId) {
 	_frameBuffers[0]->bind();
 	_frameBuffers[0]->setViewport();
 	glClear(GL_COLOR_BUFFER_BIT);
-	glUseProgram(_passthroughProgram->id());
+	_passthroughProgram->use();
 	ScreenQuad::draw(textureId);
 	_frameBuffers[0]->unbind();
 	
 	// Downscale filter.
-	glUseProgram(_blurProgramDown->id());
+	_blurProgramDown->use();
 	for(size_t d = 1; d < _frameBuffers.size(); ++d){
 		_frameBuffers[d]->bind();
 		_frameBuffers[d]->setViewport();
@@ -44,7 +44,7 @@ void GaussianBlur::process(const GLuint textureId) {
 	}
 	
 	// Upscale filter.
-	glUseProgram(_blurProgramUp->id());
+	_blurProgramUp->use();
 	for(int d = int(_frameBuffers.size())-2; d >= 0; --d){
 		_frameBuffers[d]->bind();
 		_frameBuffers[d]->setViewport();

@@ -61,10 +61,10 @@ public:
 	
 private:
 	
-	const ProgramInfos * _downscale; ///< Pyramid descending pass shader.
-	const ProgramInfos * _upscale; ///< Pyramid ascending pass shader.
-	const ProgramInfos * _filter; ///< Filtering shader for the last pyramid level.
-	const ProgramInfos * _padder; ///< Padding helper shader.
+	const Program * _downscale; ///< Pyramid descending pass shader.
+	const Program * _upscale; ///< Pyramid ascending pass shader.
+	const Program * _filter; ///< Filtering shader for the last pyramid level.
+	const Program * _padder; ///< Padding helper shader.
 	
 	std::unique_ptr<Framebuffer> _shifted; ///< Contains the input data padded to the right size.
 	std::vector<std::unique_ptr<Framebuffer>> _levelsIn; ///< The initial levels of the pyramid.

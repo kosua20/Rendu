@@ -1,7 +1,7 @@
 #pragma once
 
 #include "graphics/GPUObjects.hpp"
-#include "graphics/ProgramInfos.hpp"
+#include "graphics/Program.hpp"
 #include "resources/Font.hpp"
 #include "resources/Mesh.hpp"
 
@@ -123,7 +123,7 @@ public:
 	 \return the program informations
 	 \todo Merge with the one below
 	 */
-	ProgramInfos * getProgram(const std::string & name, const bool useGeometryShader = false);
+	Program * getProgram(const std::string & name, const bool useGeometryShader = false);
 	
 	/** Get an OpenGL program resource.
 	 \param name the name to represent the program
@@ -132,14 +132,14 @@ public:
 	 \param geometryName the name of the optional geometry shader
 	 \return the program informations
 	 */
-	ProgramInfos * getProgram(const std::string & name, const std::string & vertexName, const std::string & fragmentName, const std::string & geometryName = "");
+	Program * getProgram(const std::string & name, const std::string & vertexName, const std::string & fragmentName, const std::string & geometryName = "");
 	
 	/** Get an OpenGL program resource for 2D screen processing. It will use GLSL::Vert::Passthrough as a vertex shader.
 	 \param name the name of the fragment shader
 	 \return the program informations
 	 \see GLSL::Vert::Passthrough
 	 */
-	ProgramInfos * getProgram2D(const std::string & name);
+	Program * getProgram2D(const std::string & name);
 	
 	/** Load a font metadata and texture atlas from the resources.
 	 \param name the font base name
@@ -201,6 +201,6 @@ private:
 	std::map<std::string, Texture> _textures; ///< Loaded textures, identified by name.
 	std::map<std::string, Mesh> _meshes; ///< Loaded meshes, identified by name.
 	std::map<std::string, Font> _fonts; ///< Loaded font infos, identified by name.
-	std::map<std::string, ProgramInfos> _programs; ///< Loaded shader programs, identified by name.
+	std::map<std::string, Program> _programs; ///< Loaded shader programs, identified by name.
 	
 };

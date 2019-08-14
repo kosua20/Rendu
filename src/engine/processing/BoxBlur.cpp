@@ -26,7 +26,7 @@ void BoxBlur::process(const GLuint textureId){
 	_finalFramebuffer->bind();
 	_finalFramebuffer->setViewport();
 	glClear(GL_COLOR_BUFFER_BIT);
-	glUseProgram(_blurProgram->id());
+	_blurProgram->use();
 	ScreenQuad::draw(textureId);
 	_finalFramebuffer->unbind();
 }
