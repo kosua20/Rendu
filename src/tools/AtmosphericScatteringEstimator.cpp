@@ -155,7 +155,7 @@ int preprocess(int argc, char** argv) {
 		}
 	}
 	
-	ImageUtilities::saveHDRImage(config.outputPath,transmittanceTable, true);
+	Image::saveHDRImage(config.outputPath,transmittanceTable, true);
 	
 	Log::Info() << Log::Utilities << "Done." << std::endl;
 	

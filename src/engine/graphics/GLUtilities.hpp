@@ -60,16 +60,6 @@ public:
 	 */
 	static GLuint createProgram(const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, std::map<std::string, int> & bindings, const std::string & debugInfos);
 	
-	/** Create, load and send a texture to the GPU.
-	 \param target the texture target: 2D, array, cubemap,...
-	 \param path a list of list of paths, one for each layer of each mip level of the texture
-	 \param descriptor the texture format descriptor
-	 \param mode denote if data will be available in the CPU and/or GPU memory
-	 \return the texture informations, including the OpenGL ID
-	 \note If only one list path is present, the mipmaps will be generated automatically.
-	 */
-	//static Texture loadTexture(const GLenum target, const std::vector<std::vector<std::string>>& path, const Descriptor & descriptor, Storage mode);
-	
 	/** Mesh loading: send a mesh data to the GPU and set the input mesh GPU infos accordingly.
 	 \param mesh the mesh to upload
 	 \note The order of attribute locations is: position, normal, uvs, tangents, binormals.
@@ -107,16 +97,14 @@ public:
 	static void setupTexture(Texture & texture, const Descriptor & descriptor);
 	
 	
-	/** Upload data to a GPU texture.
-	 \param destination the kind of texture to target: 2D, cubemap, 2D array...
-	 \param texId the handle of the texture
-	 \param destTypedFormat the detailed format of the texture
-	 \param mipid the mipmap level to populate
-	 \param lid the layer to populate for arrays and cubemaps
-	 \param image the image data to upload to the GPU
+	/** Upload a texture images data to the GPU.
+	 \param texture the texture to upload
 	 */
 	static void uploadTexture(const Texture & texture);
 	
+	/** Generate a texture mipmaps on the GPU.
+	 \param texture the texture to use
+	 */
 	static void generateMipMaps(const Texture & texture);
 	
 private:

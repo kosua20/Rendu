@@ -27,7 +27,7 @@ void Mesh::upload(){
 	GLUtilities::setupBuffers(*this);
 }
 
-void MeshUtilities::loadObj( std::istream & in, Mesh & mesh, MeshUtilities::LoadMode mode){
+void Mesh::loadObj( std::istream & in, Mesh & mesh, Mesh::LoadMode mode){
 	
 	using namespace std;
 	
@@ -114,7 +114,7 @@ void MeshUtilities::loadObj( std::istream & in, Mesh & mesh, MeshUtilities::Load
 	bool hasNormals = normals_temp.size()>0;
 
 	// Depending on the chosen extraction mode, we fill the mesh arrays accordingly.
-	if (mode == MeshUtilities::Points){
+	if (mode == Mesh::Points){
 		// Mode: Points
 		// In this mode, we don't care about faces. We simply associate each vertex/normal/uv in the same order.
 		
@@ -126,7 +126,7 @@ void MeshUtilities::loadObj( std::istream & in, Mesh & mesh, MeshUtilities::Load
 			mesh.texcoords = texcoords_temp;
 		}
 
-	} else if(mode == MeshUtilities::Expanded){
+	} else if(mode == Mesh::Expanded){
 		// Mode: Expanded
 		// In this mode, vertices are all duplicated. Each face has its set of 3 vertices, not shared with any other face.
 		
@@ -156,7 +156,7 @@ void MeshUtilities::loadObj( std::istream & in, Mesh & mesh, MeshUtilities::Load
 			mesh.indices.push_back((unsigned int)i);
 		}
 
-	} else if (mode == MeshUtilities::Indexed){
+	} else if (mode == Mesh::Indexed){
 		// Mode: Indexed
 		// In this mode, vertices are only duplicated if they were already used in a previous face with a different set of uv/normal coordinates.
 		
@@ -211,7 +211,7 @@ void MeshUtilities::loadObj( std::istream & in, Mesh & mesh, MeshUtilities::Load
 
 }
 
-BoundingBox MeshUtilities::computeBoundingBox(Mesh & mesh){
+BoundingBox Mesh::computeBoundingBox(Mesh & mesh){
 	BoundingBox bbox;
 	if(mesh.positions.empty()){
 		return bbox;
@@ -225,7 +225,7 @@ BoundingBox MeshUtilities::computeBoundingBox(Mesh & mesh){
 	return bbox;
 }
 
-void MeshUtilities::centerAndUnitMesh(Mesh & mesh){
+void Mesh::centerAndUnitMesh(Mesh & mesh){
 	// Compute the centroid.
 	glm::vec3 centroid = glm::vec3(0.0);
 	float maxi = mesh.positions[0].x;
@@ -250,7 +250,7 @@ void MeshUtilities::centerAndUnitMesh(Mesh & mesh){
 	}
 }
 
-void MeshUtilities::computeNormals(Mesh & mesh){
+void Mesh::computeNormals(Mesh & mesh){
 	mesh.normals.resize(mesh.positions.size());
 	for(size_t pid = 0; pid < mesh.normals.size(); ++pid){
 		mesh.normals[pid] = glm::vec3(0.0f);
@@ -277,7 +277,7 @@ void MeshUtilities::computeNormals(Mesh & mesh){
 	}
 }
 
-void MeshUtilities::computeTangentsAndBinormals(Mesh & mesh){
+void Mesh::computeTangentsAndBinormals(Mesh & mesh){
 	if(mesh.indices.size() * mesh.positions.size() * mesh.texcoords.size() == 0){
 		// Missing data, or not the right mode (Points).
 		return;
@@ -344,7 +344,7 @@ void MeshUtilities::computeTangentsAndBinormals(Mesh & mesh){
 	Log::Verbose() << Log::Resources << "Mesh: " << mesh.tangents.size() << " tangents and binormals computed." << std::endl;
 }
 
-int MeshUtilities::saveObj(const std::string & path, const Mesh & mesh, bool defaultUVs){
+int Mesh::saveObj(const std::string & path, const Mesh & mesh, bool defaultUVs){
 	
 	std::ofstream objFile(path);
 	if(!objFile.is_open()){

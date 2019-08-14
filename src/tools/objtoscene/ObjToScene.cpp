@@ -111,12 +111,12 @@ int main(int argc, char** argv) {
 	// Save each mesh, computing normals if needed.
 	for(auto & object : objects){
 		if(object.mesh.normals.empty()){
-			MeshUtilities::computeNormals(object.mesh);
+			Mesh::computeNormals(object.mesh);
 		}
 		// Export the mesh.
 		object.name = config.outputName + "_" + object.name;
 		const std::string filePath = config.outputPath + "/" + object.name + ".obj";
-		MeshUtilities::saveObj(filePath, object.mesh, true);
+		Mesh::saveObj(filePath, object.mesh, true);
 	}
 	
 	// Save each material, creating textures if needed.

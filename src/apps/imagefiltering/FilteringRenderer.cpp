@@ -140,7 +140,7 @@ void FilteringRenderer::update(){
 					_image.levels = 1;
 					_image.images.emplace_back();
 					Image & img = _image.images.back();
-					const int ret = ImageUtilities::loadImage(newImagePath, 4, true, false, img);
+					const int ret = Image::loadImage(newImagePath, 4, true, false, img);
 					if (ret != 0) {
 						Log::Error() << Log::Resources << "Unable to load the texture at path " << newImagePath << "." << std::endl;
 					} else {

@@ -231,11 +231,11 @@ const Mesh * Resources::getMesh(const std::string & name, Storage mode){
 	
 	// Load geometry. For now we only support OBJs.
 	std::stringstream meshStream(meshText);
-	MeshUtilities::loadObj(meshStream, mesh, MeshUtilities::Indexed);
+	Mesh::loadObj(meshStream, mesh, Mesh::Indexed);
 	// If uv or positions are missing, tangent/binormals won't be computed.
-	MeshUtilities::computeTangentsAndBinormals(mesh);
+	Mesh::computeTangentsAndBinormals(mesh);
 	// Compute bounding box.
-	mesh.bbox = MeshUtilities::computeBoundingBox(mesh);
+	mesh.bbox = Mesh::computeBoundingBox(mesh);
 	
 	if(mode & Storage::GPU){
 		// Setup GL buffers and attributes.
@@ -366,7 +366,7 @@ Texture * Resources::getTexture(const std::string & name, const Descriptor & des
 		for(const auto & filePath : levelPaths){
 			texture.images.emplace_back();
 			Image & image = texture.images.back();
-			int ret = ImageUtilities::loadImage(filePath, channels, flip, false, image);
+			int ret = Image::loadImage(filePath, channels, flip, false, image);
 			if (ret != 0) {
 				Log::Error() << Log::Resources << "Unable to load the texture at path " << filePath << "." << std::endl;
 				continue;

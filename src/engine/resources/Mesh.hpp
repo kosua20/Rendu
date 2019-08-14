@@ -5,7 +5,7 @@
 
 /**
  \brief Represents a geometric mesh composed of vertices and triangles. For now, material information and elements/groups are not represented.
- Can store both the CPU and GPU representations.
+ Can store both the CPU and GPU representations. Provides utilities to load and process geometric meshes.
  \ingroup Resources
 */
 class Mesh {
@@ -29,18 +29,8 @@ public:
 	std::vector<unsigned int> indices; ///< The triangular faces indices.
 	
 	BoundingBox bbox; ///< The mesh bounding box in model space.
+	std::unique_ptr<GPUMesh> gpu; ///< The GPU buffers infos (optional).
 	
-	std::unique_ptr<GPUMesh> gpu = nullptr; ///< The (optional) GPU buffers infos.
-	
-};
-
-
-/**
- \brief Provides utilities to load and process geometric meshes.
- \ingroup Resources
- */
-class MeshUtilities {
-
 public:
 	
 	/// \brief The mesh loading preprocessing mode.

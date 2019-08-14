@@ -13,14 +13,14 @@ public:
 	
 	/** Seed the shared generator using a random number.
 	 \note The seed is obtained through a std::random_device.
-	 \warn Threads created before the call won't be seeded (except for the calling thread).
+	 \warning Threads created before the call won't be seeded (except for the calling thread).
 	 \note It is recommended to seed the generator on the main thread at the beginning of the application execution.
 	 */
 	static void seed();
 	
 	/** Seed the shared generator using a given number.
 	 \param seedValue the seed to use
-	 \warn Threads created before the call won't be seeded (except for the calling thread). 
+	 \warning Threads created before the call won't be seeded (except for the calling thread). 
 	 \note It is recommended to seed the generator on the main thread at the beginning of the application execution.
 	 */
 	static void seed(unsigned int seedValue);

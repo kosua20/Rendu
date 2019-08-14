@@ -13,7 +13,7 @@ namespace SceneExport {
 				combinedImage.rgb(x, y) = color;
 			}
 		}
-		return ImageUtilities::saveLDRImage(outputPath, combinedImage, false);
+		return Image::saveLDRImage(outputPath, combinedImage, false);
 	}
 	
 	Material saveMaterial(const std::string & baseName, const CompositeObj::Material & material, const std::string & outputDirPath){
@@ -52,12 +52,12 @@ namespace SceneExport {
 		if(hasTextureColor && hasTextureAlpha){
 			// Load both images, which should have the same size.
 			Image colorMap, maskMap;
-			ImageUtilities::loadImage(material.colorTexturePath, 3, false, true, colorMap);
-			ImageUtilities::loadImage(material.alphaTexturePath, 1, false, true, maskMap);
+			Image::loadImage(material.colorTexturePath, 3, false, true, colorMap);
+			Image::loadImage(material.alphaTexturePath, 1, false, true, maskMap);
 			// Safety check.
 			if(colorMap.width != maskMap.width || colorMap.height != maskMap.height){
 				Log::Warning() << "Mask and color images have different sizes, keeping only color." << std::endl;
-				ImageUtilities::saveLDRImage(outputColorPath, colorMap, false);
+				Image::saveLDRImage(outputColorPath, colorMap, false);
 			} else {
 				// Combine both.
 				Image combinedImage(colorMap.width, colorMap.height, 4);
@@ -66,19 +66,19 @@ namespace SceneExport {
 						combinedImage.rgba(x, y) = glm::vec4(colorMap.rgb(x,y), maskMap.r(x,y));
 					}
 				}
-				ImageUtilities::saveLDRImage(outputColorPath, combinedImage, false);
+				Image::saveLDRImage(outputColorPath, combinedImage, false);
 			}
 			
 		} else if(hasTextureColor){
 			// Just copy the image.
 			Image colorMap;
-			ImageUtilities::loadImage(material.colorTexturePath, 3, false, true, colorMap);
-			ImageUtilities::saveLDRImage(outputColorPath, colorMap, false);
+			Image::loadImage(material.colorTexturePath, 3, false, true, colorMap);
+			Image::saveLDRImage(outputColorPath, colorMap, false);
 			
 		} else if(hasTextureAlpha){
 			// Load alpha.
 			Image maskMap;
-			ImageUtilities::loadImage(material.alphaTexturePath, 1, false, true, maskMap);
+			Image::loadImage(material.alphaTexturePath, 1, false, true, maskMap);
 			// Fill in with material/default color.
 			const glm::vec3 color = material.hasColor ? material.color : glm::vec3(1.0f);
 			Image combinedImage(maskMap.width, maskMap.height, 4);
@@ -87,7 +87,7 @@ namespace SceneExport {
 					combinedImage.rgba(x, y) = glm::vec4(color, maskMap.r(x,y));
 				}
 			}
-			ImageUtilities::saveLDRImage(outputColorPath, combinedImage, false);
+			Image::saveLDRImage(outputColorPath, combinedImage, false);
 			
 		} else if(material.hasColor){
 			// Save a small color texture.
@@ -105,8 +105,8 @@ namespace SceneExport {
 		if(hasTextureNormal){
 			// Copy normal map.
 			Image normalMap;
-			ImageUtilities::loadImage(material.normalTexturePath, 3, false, true, normalMap);
-			ImageUtilities::saveLDRImage(outputNormalPath, normalMap, false);
+			Image::loadImage(material.normalTexturePath, 3, false, true, normalMap);
+			Image::saveLDRImage(outputNormalPath, normalMap, false);
 		} else {
 			outMaterial.normalName = "default_normal";
 		}
@@ -123,11 +123,11 @@ namespace SceneExport {
 			// First, build the roughness map from existing roughness map or specular map.
 			Image roughImage;
 			if(hasTextureRough){
-				ImageUtilities::loadImage(material.roughTexturePath, 1, false, true, roughImage);
+				Image::loadImage(material.roughTexturePath, 1, false, true, roughImage);
 			} else {
 				// Load specular RGB, compute roughness as reverse of average.
 				Image specImage;
-				ImageUtilities::loadImage(material.specTexturePath, 3, false, true, specImage);
+				Image::loadImage(material.specTexturePath, 3, false, true, specImage);
 				roughImage = Image(specImage.width, specImage.height, 1);
 				for(unsigned int y = 0; y < specImage.height; ++y){
 					for(unsigned int x = 0; x < specImage.width; ++x){
@@ -141,7 +141,7 @@ namespace SceneExport {
 			Image metalImage;
 			bool scalarMetal = !hasTextureMetal;
 			if(hasTextureMetal){
-				ImageUtilities::loadImage(material.metalTexturePath, 1, false, true, metalImage);
+				Image::loadImage(material.metalTexturePath, 1, false, true, metalImage);
 				// Safety check, fallback to scalar metal.
 				if(metalImage.width != roughImage.width || metalImage.height != roughImage.height){
 					Log::Warning() << "Roughness/specular and metalness images have different sizes, using 0.0 metalness." << std::endl;
@@ -158,12 +158,12 @@ namespace SceneExport {
 					roughMetAo.rgb(x, y) = glm::vec3(roughImage.r(x,y), metalness, 1.0f);
 				}
 			}
-			ImageUtilities::saveLDRImage(outputRmaoPath, roughMetAo, false);
+			Image::saveLDRImage(outputRmaoPath, roughMetAo, false);
 			
 		} else if(hasTextureMetal){
 			// Load metal image.
 			Image metalImage;
-			ImageUtilities::loadImage(material.metalTexturePath, 1, false, true, metalImage);
+			Image::loadImage(material.metalTexturePath, 1, false, true, metalImage);
 			// Fill in with material/default roughness.
 			const float scalarRoughness = material.hasRough ? material.rough : (material.hasSpec ? (1.0f - material.spec) : 0.5f);
 			Image roughMetAo(metalImage.width, metalImage.height, 3, 0.0f);
@@ -172,7 +172,7 @@ namespace SceneExport {
 					roughMetAo.rgb(x, y) = glm::vec3(scalarRoughness, metalImage.r(x,y), 1.0f);
 				}
 			}
-			ImageUtilities::saveLDRImage(outputRmaoPath, roughMetAo, false);
+			Image::saveLDRImage(outputRmaoPath, roughMetAo, false);
 			
 		} else if(material.hasRough || material.hasSpec || material.hasMetal){
 			const float roughness = material.hasRough ? material.rough : (material.hasSpec ? (1.0f - material.spec) : 0.5f);
@@ -190,8 +190,8 @@ namespace SceneExport {
 		
 		if(hasTextureDisplacement){
 			Image depthMap;
-			ImageUtilities::loadImage(material.displacementTexturePath, 1, false, true, depthMap);
-			ImageUtilities::saveLDRImage(outputDepthPath, depthMap, false);
+			Image::loadImage(material.displacementTexturePath, 1, false, true, depthMap);
+			Image::saveLDRImage(outputDepthPath, depthMap, false);
 		}
 		
 		return outMaterial;

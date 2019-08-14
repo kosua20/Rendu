@@ -181,7 +181,7 @@ void BVHRenderer::update(){
 		if(hasImage && ImGui::Button("Save...")){
 			std::string outPath;
 			if(System::showPicker(System::Picker::Save, "", outPath) && !outPath.empty()){
-				ImageUtilities::saveLDRImage(outPath, _renderTex.images[0], false);
+				Image::saveLDRImage(outPath, _renderTex.images[0], false);
 			}
 		}
 		

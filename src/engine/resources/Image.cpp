@@ -104,21 +104,21 @@ glm::vec4 Image::rgbal(float x, float y) const {
 	return (1.0f-dx) * ((1.0f - dy) * p00 + dy * p01) + dx * ( (1.0f - dy) * p10 + dy * p11);
 }
 
-bool ImageUtilities::isFloat(const std::string & path){
+bool Image::isFloat(const std::string & path){
 	return path.substr(path.size()-4,4) == ".exr";
 }
 
-int ImageUtilities::loadImage(const std::string & path, const unsigned int channels, const bool flip, const bool externalFile, Image & image){
+int Image::loadImage(const std::string & path, const unsigned int channels, const bool flip, const bool externalFile, Image & image){
 	int ret = 0;
 	if(isFloat(path)){
-		ret = ImageUtilities::loadHDRImage(path, channels, flip, externalFile, image);
+		ret = Image::loadHDRImage(path, channels, flip, externalFile, image);
 	} else {
-		ret = ImageUtilities::loadLDRImage(path, channels, flip, externalFile, image);
+		ret = Image::loadLDRImage(path, channels, flip, externalFile, image);
 	}
 	return ret;
 }
 
-int ImageUtilities::loadLDRImage(const std::string &path, const unsigned int channels, const bool flip, const bool externalFile, Image & image){
+int Image::loadLDRImage(const std::string &path, const unsigned int channels, const bool flip, const bool externalFile, Image & image){
 	const unsigned int finalChannels = channels > 0 ? channels : 4;
 	
 	image.pixels.clear();
@@ -161,7 +161,7 @@ int ImageUtilities::loadLDRImage(const std::string &path, const unsigned int cha
 	return 0;
 }
 
-int ImageUtilities::loadHDRImage(const std::string &path, const unsigned int channels, const bool flip, const bool externalFile, Image & image){
+int Image::loadHDRImage(const std::string &path, const unsigned int channels, const bool flip, const bool externalFile, Image & image){
 	const unsigned int finalChannels = channels > 0 ? channels : 3;
 	image.pixels.clear();
 	image.width = image.height = image.components = 0;
@@ -265,7 +265,7 @@ void write_stbi_to_disk(void *context, void *data, int size){
 	Resources::saveRawDataToExternalFile(*path, static_cast<char *>(data), size);
 }
 
-int ImageUtilities::saveLDRImage(const std::string &path, const Image & image, const bool flip, const bool ignoreAlpha){
+int Image::saveLDRImage(const std::string &path, const Image & image, const bool flip, const bool ignoreAlpha){
 	const unsigned int width = image.width;
 	const unsigned int height = image.height;
 	const unsigned int channels = image.components;
@@ -292,7 +292,7 @@ int ImageUtilities::saveLDRImage(const std::string &path, const Image & image, c
 	return ret == 0;
 }
 
-int ImageUtilities::saveHDRImage(const std::string &path, const Image & image, const bool flip, const bool ignoreAlpha){
+int Image::saveHDRImage(const std::string &path, const Image & image, const bool flip, const bool ignoreAlpha){
 	
 	const unsigned int width = image.width;
 	const unsigned int height = image.height;
@@ -439,7 +439,7 @@ int ImageUtilities::saveHDRImage(const std::string &path, const Image & image, c
 }
 
 
-glm::vec3 ImageUtilities::sampleCubemap(const std::vector<Image> & images, const glm::vec3 & dir){
+glm::vec3 Image::sampleCubemap(const std::vector<Image> & images, const glm::vec3 & dir){
 	// Images are stored in the following order:
 	// px, nx, py, ny, pz, nz
 	const glm::vec3 abs = glm::abs(dir);

@@ -2,7 +2,7 @@
 #include "Common.hpp"
 
 /**
- \brief Represents an image composed of pixels with values in [0,1].
+ \brief Represents an image composed of pixels with values in [0,1]. Provide image loading/saving utilities, for both LDR and HDR images.
  \ingroup Resources
  */
 class Image {
@@ -89,15 +89,7 @@ public:
 	unsigned int height; //< The height of the image
 	unsigned int components; //< Number of components/channels
 	std::vector<float> pixels; //< The pixels values of the image
-};
-
-
-/**
- \brief Provide image loading/saving utilities, for both LDR and HDR images.
- \ingroup Resources
- */
-class ImageUtilities {
-
+	
 public:
 	
 	/** Query if a path points to an image loaded in floating point, based on the extension.

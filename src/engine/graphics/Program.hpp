@@ -21,32 +21,6 @@ public:
 	 */
 	Program(const std::string & vertexName, const std::string & fragmentName, const std::string & geometryName);
 	
-	/** Query the location of a given uniform.
-	 \param name the uniform name
-	 \return the uniform location in the program
-	 \note If the uniform is not present, will return -1, conviniently ignored by glUniform(...) calls.
-	 */
-
-	void uniform(const std::string & name, bool t) const;
-	
-	void uniform(const std::string & name, int t) const;
-	
-	void uniform(const std::string & name, float t) const;
-	
-	void uniform(const std::string & name, size_t count, const float * t) const;
-	
-	void uniform(const std::string & name, const glm::vec2 & t) const;
-	
-	void uniform(const std::string & name, const glm::vec3 & t) const;
-	
-	void uniform(const std::string & name, const glm::vec4 & t) const;
-	
-	void uniform(const std::string & name, const glm::mat3 & t) const;
-	
-	void uniform(const std::string & name, const glm::mat4 & t) const;
-
-	
-	
 	/** Cache the values passed for the uniform array.
 	 \param name the uniform array name
 	 \param vals the values to cache and to set the uniform to
@@ -75,8 +49,64 @@ public:
 	 */
 	void use() const;
 	
-	/** Delete the program. */
+	/** Delete the program on the GPU.
+	 */
 	void clean();
+	
+	/** Set a given uniform value.
+	 \param name the uniform name
+	 \param t the value to set the uniform to
+	 */
+	void uniform(const std::string & name, bool t) const;
+	
+	/** Set a given uniform value.
+	 \param name the uniform name
+	 \param t the value to set the uniform to
+	 */
+	void uniform(const std::string & name, int t) const;
+	
+	/** Set a given uniform value.
+	 \param name the uniform name
+	 \param t the value to set the uniform to
+	 */
+	void uniform(const std::string & name, float t) const;
+	
+	/** Set a given float array uniform values.
+	 \param name the uniform name (including "[0]")
+	 \param count the number of values in the float array
+	 \param t the values to set the uniform to
+	 */
+	void uniform(const std::string & name, size_t count, const float * t) const;
+	
+	/** Set a given uniform value.
+	 \param name the uniform name
+	 \param t the value to set the uniform to
+	 */
+	void uniform(const std::string & name, const glm::vec2 & t) const;
+	
+	/** Set a given uniform value.
+	 \param name the uniform name
+	 \param t the value to set the uniform to
+	 */
+	void uniform(const std::string & name, const glm::vec3 & t) const;
+	
+	/** Set a given uniform value.
+	 \param name the uniform name
+	 \param t the value to set the uniform to
+	 */
+	void uniform(const std::string & name, const glm::vec4 & t) const;
+	
+	/** Set a given uniform value.
+	 \param name the uniform name
+	 \param t the value to set the uniform to
+	 */
+	void uniform(const std::string & name, const glm::mat3 & t) const;
+	
+	/** Set a given uniform value.
+	 \param name the uniform name
+	 \param t the value to set the uniform to
+	 */
+	void uniform(const std::string & name, const glm::mat4 & t) const;
 	
 private:
 	

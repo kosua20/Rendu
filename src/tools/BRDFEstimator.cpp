@@ -35,7 +35,7 @@ void loadCubemap(const std::string & inputPath, Texture & cubemapInfos){
 	cubemapPath = cubemapPath.substr(0, cubemapPath.size()-3);
 	Log::Info() << "Loading " << cubemapPath << "..." << std::endl;
 	// Apply the proper format and filtering.
-	const GLenum typedFormat = ImageUtilities::isFloat(inputPath) ? GL_RGBA32F : GL_SRGB8_ALPHA8;
+	const GLenum typedFormat = Image::isFloat(inputPath) ? GL_RGBA32F : GL_SRGB8_ALPHA8;
 	std::vector<std::string> pathSides;
 	for(int i = 0; i < 6; ++i){
 		pathSides.push_back(cubemapPath + suffixes[i] + ext);
@@ -47,7 +47,7 @@ void loadCubemap(const std::string & inputPath, Texture & cubemapInfos){
 	for(const auto & filePath : pathSides){
 		cubemapInfos.images.emplace_back();
 		Image & image = cubemapInfos.images.back();
-		int ret = ImageUtilities::loadImage(filePath, 4, false, false, image);
+		int ret = Image::loadImage(filePath, 4, false, false, image);
 		if (ret != 0) {
 			Log::Error() << Log::Resources << "Unable to load the texture at path " << filePath << "." << std::endl;
 			continue;
@@ -292,7 +292,7 @@ void exportCubemapConvolution(const std::vector<Texture> &cubeLevels, const std:
 			const std::string faceLevelPath = levelPath + suffixes[i];
 			Image image(levelSide, levelSide, 3);
 			glGetTexImage(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, format, type, &image.pixels[0]);
-			const int ret = ImageUtilities::saveHDRImage(faceLevelPath + ".exr", image, false, true);
+			const int ret = Image::saveHDRImage(faceLevelPath + ".exr", image, false, true);
 			if(ret != 0){
 				Log::Error() << "Unable to save cubemap face to path \"" << faceLevelPath << "\"." << std::endl;
 			}

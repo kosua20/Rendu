@@ -170,7 +170,7 @@ int main(int argc, char** argv) {
 				// If user picked a path, load the texture from disk.
 				if(res && !newImagePath.empty()){
 					Log::Info() << "Loading " << newImagePath << "." << std::endl;
-					isFloat = ImageUtilities::isFloat(newImagePath);
+					isFloat = Image::isFloat(newImagePath);
 					// Apply the proper format and filtering.
 					const GLenum typedFormat = isFloat ? GL_RGBA32F : GL_SRGB8_ALPHA8;
 					const GLenum filtering = (imageInterp == Nearest) ? GL_NEAREST_MIPMAP_LINEAR : GL_LINEAR_MIPMAP_LINEAR;
@@ -180,7 +180,7 @@ int main(int argc, char** argv) {
 					imageInfos.levels = 1;
 					imageInfos.images.emplace_back();
 					Image & img = imageInfos.images.back();
-					const int ret = ImageUtilities::loadImage(newImagePath, 4, true, false, img);
+					const int ret = Image::loadImage(newImagePath, 4, true, false, img);
 					if (ret != 0) {
 						Log::Error() << Log::Resources << "Unable to load the texture at path " << newImagePath << "." << std::endl;
 						continue;
@@ -266,7 +266,7 @@ int main(int argc, char** argv) {
 				// Export either in LDR or HDR.
 				bool res = System::showPicker(System::Picker::Save, "../../../resources", destinationPath, "png;exr");
 				if(res && !destinationPath.empty()){
-					const GLenum typedFormat = ImageUtilities::isFloat(destinationPath) ? GL_RGBA32F : GL_RGBA8;
+					const GLenum typedFormat = Image::isFloat(destinationPath) ? GL_RGBA32F : GL_RGBA8;
 					// Create a framebuffer at the right size and format, and render in it.
 					const unsigned int outputWidth = isHorizontal ? imageInfos.height : imageInfos.width;
 					const unsigned int outputHeight = isHorizontal ? imageInfos.width : imageInfos.height;

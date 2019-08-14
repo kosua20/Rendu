@@ -89,7 +89,7 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 								sampleColor = image.rgbl(ndcPos.x, ndcPos.y);
 							} else if (mode == Scene::Background::SKYBOX){
 								const auto & images = _scene->background->textures()[0]->images;
-								sampleColor = ImageUtilities::sampleCubemap(images, glm::normalize(rayDir));
+								sampleColor = Image::sampleCubemap(images, glm::normalize(rayDir));
 							} else {
 								sampleColor = _scene->backgroundColor;
 							}
@@ -99,7 +99,7 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 						// Else, we only care about environment maps, for indirect illumination.
 						if (mode == Scene::Background::SKYBOX) {
 							const auto & images = _scene->background->textures()[0]->images;
-							sampleColor += attenColor * ImageUtilities::sampleCubemap(images, glm::normalize(rayDir));
+							sampleColor += attenColor * Image::sampleCubemap(images, glm::normalize(rayDir));
 						}
 						break;
 					}

@@ -9,6 +9,7 @@
 
 /**
  \brief Denote if data is stored on the GPU or CPU.
+ \ingroup Resources
  */
 enum class Storage : uint {
 	GPU = 1, ///< On the GPU
@@ -16,10 +17,20 @@ enum class Storage : uint {
 	BOTH = (GPU | CPU)  ///< On both the CPU and GPU
 };
 
+/** Combining operator for Storage.
+ \param t0 first flag
+ \param t1 second flag
+ \return the combination of both flags.
+ */
 inline Storage operator |(Storage t0, Storage t1){
 	return static_cast<Storage>(static_cast<uint>(t0) | static_cast<uint>(t1));
 }
 
+/** Extracting operator for Storage.
+ \param t0 reference flag
+ \param t1 flag to extract
+ \return true if t0 'contains' t1
+ */
 inline bool operator &(Storage t0, Storage t1){
 	return bool(static_cast<uint>(t0) & static_cast<uint>(t1));
 }
@@ -31,7 +42,7 @@ inline bool operator &(Storage t0, Storage t1){
  */
 class Resources {
 	
-	friend class ImageUtilities;
+	friend class Image;
 	
 public:
 	
