@@ -4,47 +4,38 @@
 
 FramebufferCube::FramebufferCube(unsigned int side, const Descriptor & descriptor, bool depthBuffer) {
 
-	_descriptor = descriptor;
 	_side = side;
 	_useDepth = depthBuffer;
 	
 	GLenum type, format;
-	_descriptor.getTypeAndFormat(type, format);
+	descriptor.getTypeAndFormat(type, format);
 	
 	// Create a framebuffer.
 	glGenFramebuffers(1, &_id);
 	glBindFramebuffer(GL_FRAMEBUFFER, _id);
 	// Create the texture to store the result.
-	glGenTextures(1, &_idColor);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, _idColor);
-	
-	// Allocate all 6 layers.
-	for(unsigned int i = 0; i < 6; ++i){
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X+i, 0, _descriptor.typedFormat, (GLsizei)_side , (GLsizei)_side, 0, format, type, 0);
-	}
-	
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, descriptor.getMagnificationFilter());
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, (GLint)_descriptor.filtering);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	_idColor.width = _side;
+	_idColor.height = _side;
+	_idColor.depth = 6;
+	_idColor.levels = 1;
+	_idColor.shape = TextureShape::Cube;
+	GLUtilities::setupTexture(_idColor, descriptor);
 	
 	// Link the texture to the first color attachment (ie output) of the framebuffer.
-	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, _idColor, 0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, _idColor.gpu->id);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, _idColor.gpu->id, 0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+	
 	if (_useDepth) {
-		// Create the depth buffer.
-		glGenTextures(1, &_idRenderbuffer);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, _idRenderbuffer);
-		// Allocate all 6 layers.
-		for(unsigned int i = 0; i < 6; ++i){
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X+i, 0, GL_DEPTH_COMPONENT32F, (GLsizei)_side , (GLsizei)_side, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
-		}
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, _idRenderbuffer, 0);
+		_idRenderbuffer.width = _side;
+		_idRenderbuffer.height = _side;
+		_idRenderbuffer.depth = 6;
+		_idRenderbuffer.levels = 1;
+		_idRenderbuffer.shape = TextureShape::Cube;
+		GLUtilities::setupTexture(_idRenderbuffer, {GL_DEPTH_COMPONENT32F, GL_NEAREST, GL_CLAMP_TO_EDGE});
+		
+		glBindTexture(GL_TEXTURE_CUBE_MAP, _idRenderbuffer.gpu->id);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, _idRenderbuffer.gpu->id, 0);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 	}
 	
@@ -61,8 +52,7 @@ void FramebufferCube::bind() const {
 	glBindFramebuffer(GL_FRAMEBUFFER, _id);
 }
 
-void FramebufferCube::setViewport() const
-{
+void FramebufferCube::setViewport() const {
 	glViewport(0, 0, (GLsizei)_side, (GLsizei)_side);
 }
 
@@ -70,36 +60,25 @@ void FramebufferCube::unbind() const {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-
 void FramebufferCube::resize(unsigned int side){
 	_side = side;
 	// Resize the renderbuffer.
 	if (_useDepth) {
-		glBindTexture(GL_TEXTURE_CUBE_MAP, _idRenderbuffer);
-		// Allocate all 6 layers.
-		for(unsigned int i = 0; i < 6; ++i){
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X+i, 0, GL_DEPTH_COMPONENT32F, (GLsizei)_side , (GLsizei)_side, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
-		}
-		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+		_idRenderbuffer.width = _side;
+		_idRenderbuffer.height = _side;
+		GLUtilities::allocateTexture(_idRenderbuffer);
 	}
 	// Resize the texture.
-	GLenum type, format;
-	_descriptor.getTypeAndFormat(type, format);
-	
-	glBindTexture(GL_TEXTURE_CUBE_MAP, _idColor);
-	// Reallocate all 6 layers.
-	for(unsigned int i = 0; i < 6; ++i){
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X+i, 0, _descriptor.typedFormat, (GLsizei)_side , (GLsizei)_side, 0, format, type, 0);
-	}
-	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+	_idColor.width = _side;
+	_idColor.height = _side;
+	GLUtilities::allocateTexture(_idColor);
 }
 
-
-void FramebufferCube::clean() const {
+void FramebufferCube::clean() {
 	if (_useDepth) {
-		glDeleteTextures(1, &_idRenderbuffer);
+		_idRenderbuffer.clean();
 	}
-	glDeleteTextures(1, &_idColor);
+	_idColor.clean();
 	glDeleteFramebuffers(1, &_id);
 }
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "graphics/GPUObjects.hpp"
+#include "resources/Texture.hpp"
 #include "Common.hpp"
 
 /**
@@ -79,26 +79,23 @@ public:
 	
 	/** Clean internal resources.
 	 */
-	void clean() const;
+	void clean();
 	
 	/**
-	 Query the ID of the 2D texture backing one of the color attachments.
+	 Query the 2D texture backing one of the color attachments.
 	 \param i the color attachment index (or 0 by default)
-	 \return the texture ID
+	 \return the texture
 	 */
-	GLuint textureId(unsigned int i = 0) const { return _idColors[i]; }
+	const Texture * textureId(unsigned int i = 0) const {
+		// _idColors will never be modified after initialization, so this can be done.
+		return &_idColors[i];
+	}
 	
 	/**
-	 Query the ID of the 2D textures backing all color attachments.
-	 \return the texture IDs
+	 Query the 2D texture or renderbuffer backing the depth attachment.
+	 \return the depth texture/renderbuffer
 	 */
-	const std::vector<GLuint> textureIds() const { return _idColors; }
-	
-	/**
-	 Query the ID of the 2D texture or renderbuffer backing the depth attachment.
-	 \return the depth texture/renderbuffer ID
-	 */
-	GLuint depthId() const { return _depthUse == NONE ? 0 : _idDepth; }
+	const Texture * depthId() const { return (_depthUse == NONE ? nullptr : &_idDepth); }
 	
 	/**
 	 Query the framebuffer width.
@@ -111,13 +108,6 @@ public:
 	 \return the height
 	 */
 	unsigned int height() const { return _height; }
-	
-	/**
-	 Query a color attachment type, filtering and clamping.
-	 \param i the color attachment index (or 0 by default)
-	 \return the corresponding descriptor
-	 */
-	const Descriptor & descriptor(unsigned int i = 0) const { return _colorDescriptors[i]; }
 	
 	/**
 	 Query the window backbuffer infos.
@@ -135,11 +125,8 @@ private:
 	unsigned int _height = 0; ///< The framebuffer height.
 	
 	GLuint _id = 0; ///< The framebuffer ID.
-	std::vector<GLuint> _idColors; ///< The color textures IDs.
-	GLuint _idDepth = 0; ///< The depth renderbuffer ID.
-	
-	std::vector<Descriptor> _colorDescriptors; ///< The color buffer descriptors.
-	Descriptor _depthDescriptor; ///< The depth buffer descriptor.
+	std::vector<Texture> _idColors; ///< The color textures.
+	Texture _idDepth; ///< The depth renderbuffer.
 	
 	/// \brief Type of depth storage structure used.
 	enum DepthBuffer {

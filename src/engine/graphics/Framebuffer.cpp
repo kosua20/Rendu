@@ -1,4 +1,5 @@
 #include "graphics/Framebuffer.hpp"
+#include "graphics/GPUObjects.hpp"
 #include "graphics/GLUtilities.hpp"
 
 Framebuffer::Framebuffer(){
@@ -17,11 +18,11 @@ Framebuffer::Framebuffer(unsigned int width, unsigned int height, const std::vec
 	
 	_width = width;
 	_height = height;
+	_depthUse = NONE;
 	
 	// Create a framebuffer.
 	glGenFramebuffers(1, &_id);
 	glBindFramebuffer(GL_FRAMEBUFFER, _id);
-	bool depthBufferSetup = false;
 	
 	for(size_t i = 0; i < descriptors.size(); ++i){
 		// Create the color texture to store the result.
@@ -30,68 +31,53 @@ Framebuffer::Framebuffer(unsigned int width, unsigned int height, const std::vec
 		descriptor.getTypeAndFormat(type, format);
 		
 		if(format == GL_DEPTH_COMPONENT || format == GL_DEPTH_STENCIL){
-			glGenTextures(1, &_idDepth);
-			glBindTexture(GL_TEXTURE_2D, _idDepth);
-			glTexImage2D(GL_TEXTURE_2D, 0, descriptor.typedFormat, (GLsizei)_width , (GLsizei)_height, 0, format, type, 0);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, descriptor.getMagnificationFilter());
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, (GLint)descriptor.filtering);
-			
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, (GLint)descriptor.wrapping);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, (GLint)descriptor.wrapping);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
-			
-			if(descriptor.wrapping == GL_CLAMP_TO_BORDER){
-				// Setup the border value for the shadow map
-				GLfloat border[] = { 1.0, 1.0, 1.0, 1.0 };
-				glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, border);
-			}
+			_depthUse = TEXTURE;
+			_idDepth.width = _width;
+			_idDepth.height = _height;
+			_idDepth.depth = 1;
+			_idDepth.levels = 1;
+			_idDepth.shape = TextureShape::D2;
+			GLUtilities::setupTexture(_idDepth, descriptor);
 			
 			// Link the texture to the depth attachment of the framebuffer.
-			glFramebufferTexture2D(GL_FRAMEBUFFER, (format == GL_DEPTH_STENCIL ? GL_DEPTH_STENCIL_ATTACHMENT : GL_DEPTH_ATTACHMENT), GL_TEXTURE_2D, _idDepth, 0);
-			depthBufferSetup = true;
-			_depthUse = TEXTURE;
-			_depthDescriptor = descriptor;
+			glBindTexture(GL_TEXTURE_2D, _idDepth.gpu->id);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, (format == GL_DEPTH_STENCIL ? GL_DEPTH_STENCIL_ATTACHMENT : GL_DEPTH_ATTACHMENT), GL_TEXTURE_2D, _idDepth.gpu->id, 0);
 			glBindTexture(GL_TEXTURE_2D, 0);
 			
 		} else {
-			GLuint idColor = 0;
-			glGenTextures(1, &idColor);
-			glBindTexture(GL_TEXTURE_2D, idColor);
-			glTexImage2D(GL_TEXTURE_2D, 0, descriptor.typedFormat, (GLsizei)_width , (GLsizei)_height, 0, format, type, 0);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, descriptor.getMagnificationFilter());
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, (GLint)descriptor.filtering);
-		
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, (GLint)descriptor.wrapping);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, (GLint)descriptor.wrapping);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
-		
-			if(descriptor.wrapping == GL_CLAMP_TO_BORDER){
-				// Setup the border value for the shadow map
-				GLfloat border[] = { 1.0, 1.0, 1.0, 1.0 };
-				glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, border);
-			}
-		
+			_idColors.emplace_back();
+			Texture & tex = _idColors.back();
+			tex.width = _width;
+			tex.height = _height;
+			tex.depth = 1;
+			tex.levels = 1;
+			tex.shape = TextureShape::D2;
+			GLUtilities::setupTexture(tex, descriptor);
+			
 			// Link the texture to the color attachment (ie output) of the framebuffer.
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + GLuint(_idColors.size()), GL_TEXTURE_2D, idColor, 0);
-			_idColors.push_back(idColor);
-			_colorDescriptors.push_back(descriptor);
+			glBindTexture(GL_TEXTURE_2D, tex.gpu->id);
+			const GLuint slot = GLuint(int(_idColors.size())-1);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + slot, GL_TEXTURE_2D, tex.gpu->id, 0);
 			glBindTexture(GL_TEXTURE_2D, 0);
+			
 		}
 	}
 	
-	if (!depthBufferSetup) {
-		if (depthBuffer){
-			// Create the renderbuffer (depth buffer).
-			glGenRenderbuffers(1, &_idDepth);
-			glBindRenderbuffer(GL_RENDERBUFFER, _idDepth);
-			// Setup the depth buffer storage.
-			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32F, (GLsizei)_width, (GLsizei)_height);
-			// Link the renderbuffer to the framebuffer.
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _idDepth);
-			_depthUse = RENDERBUFFER;
-		} else {
-			_depthUse = NONE;
-		}
+	// If the depth buffer has not been setup yet but we require it, use a renderbuffer.
+	if(_depthUse == NONE && depthBuffer){
+		_idDepth.width = _width;
+		_idDepth.height = _height;
+		_idDepth.levels = 1;
+		_idDepth.shape = TextureShape::D2;
+		_idDepth.gpu.reset(new GPUTexture());
+		// Create the renderbuffer (depth buffer).
+		glGenRenderbuffers(1, &_idDepth.gpu->id);
+		glBindRenderbuffer(GL_RENDERBUFFER, _idDepth.gpu->id);
+		// Setup the depth buffer storage.
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32F, (GLsizei)_width, (GLsizei)_height);
+		// Link the renderbuffer to the framebuffer.
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _idDepth.gpu->id);
+		_depthUse = RENDERBUFFER;
 	}
 	
 	//Register which color attachments to draw to.
@@ -101,11 +87,10 @@ Framebuffer::Framebuffer(unsigned int width, unsigned int height, const std::vec
 	}
 	glDrawBuffers(GLsizei(drawBuffers.size()), &drawBuffers[0]);
 	checkGLFramebufferError();
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	checkGLError();
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 }
-
 
 void Framebuffer::bind() const {
 	glBindFramebuffer(GL_FRAMEBUFFER, _id);
@@ -130,40 +115,39 @@ void Framebuffer::resize(unsigned int width, unsigned int height){
 	
 	// Resize the renderbuffer.
 	if (_depthUse == RENDERBUFFER) {
-		glBindRenderbuffer(GL_RENDERBUFFER, _idDepth);
+		_idDepth.width = _width;
+		_idDepth.height = _height;
+		glBindRenderbuffer(GL_RENDERBUFFER, _idDepth.gpu->id);
 		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32F, (GLsizei)_width, (GLsizei)_height);
 		glBindRenderbuffer(GL_RENDERBUFFER, 0);
+		
 	} else if(_depthUse == TEXTURE){
-		GLuint type, format;
-		_depthDescriptor.getTypeAndFormat(type, format);
-		glBindTexture(GL_TEXTURE_2D, _idDepth);
-		glTexImage2D(GL_TEXTURE_2D, 0, _depthDescriptor.typedFormat, (GLsizei)_width , (GLsizei)_height, 0, format, type, 0);
-		glBindTexture(GL_TEXTURE_2D, 0);
-	}
-	// Resize the textures.
-	for(size_t i = 0; i < _idColors.size(); ++i){
-		const auto & descriptor = _colorDescriptors[i];
-		GLuint type, format;
-		descriptor.getTypeAndFormat(type, format);
-		glBindTexture(GL_TEXTURE_2D, _idColors[i]);
-		glTexImage2D(GL_TEXTURE_2D, 0, descriptor.typedFormat, (GLsizei)_width, (GLsizei)_height, 0, format, type, 0);
-		glBindTexture(GL_TEXTURE_2D, 0);
+		_idDepth.width = _width;
+		_idDepth.height = _height;
+		GLUtilities::allocateTexture(_idDepth);
+		
 	}
 	
+	// Resize the textures.
+	for(size_t i = 0; i < _idColors.size(); ++i){
+		_idColors[i].width = _width;
+		_idColors[i].height = _height;
+		GLUtilities::allocateTexture(_idColors[i]);
+	}
 }
 
 void Framebuffer::resize(glm::vec2 size){
 	resize((unsigned int)size[0], (unsigned int)size[1]);
 }
 
-void Framebuffer::clean() const {
+void Framebuffer::clean() {
 	if (_depthUse == RENDERBUFFER) {
-		glDeleteRenderbuffers(1, &_idDepth);
+		glDeleteRenderbuffers(1, &_idDepth.gpu->id);
 	} else if(_depthUse == TEXTURE){
-		glDeleteTextures(1, &_idDepth);
+		_idDepth.clean();
 	}
-	for(const auto idColor : _idColors){
-		glDeleteTextures(1, &idColor);
+	for(Texture & idColor : _idColors){
+		idColor.clean();
 	}
 	glDeleteFramebuffers(1, &_id);
 }
@@ -175,7 +159,11 @@ const Framebuffer & Framebuffer::backbuffer(){
 	// Initialize a dummy framebuffer representing the backbuffer.
 	if(!defaultFramebuffer){
 		defaultFramebuffer = new Framebuffer();
-		defaultFramebuffer->_colorDescriptors = { Descriptor(GL_RGBA8, GL_NEAREST, GL_CLAMP_TO_EDGE) };
+		defaultFramebuffer->_idColors.emplace_back();
+		// We don't really need to allocate the texture, just setup its descriptor.
+		Texture & tex = defaultFramebuffer->_idColors.back();
+		tex.gpu.reset(new GPUTexture());
+		tex.gpu->descriptor  = Descriptor(GL_RGBA8, GL_NEAREST, GL_CLAMP_TO_EDGE);
 	}
 	return *defaultFramebuffer;
 }

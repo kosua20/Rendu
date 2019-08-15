@@ -44,13 +44,13 @@ public:
 	
 	/** Clean internal resources.
 	 */
-	void clean() const;
+	void clean();
 	
 	/**
-	 Query the ID to the cubemap texture backing the framebuffer.
-	 \return the texture ID
+	 Query the cubemap texture backing the framebuffer.
+	 \return the texture
 	 */
-	GLuint textureId() const { return _idColor; }
+	const Texture * textureId() const { return &_idColor; }
 	
 	/**
 	 Query the framebuffer side size.
@@ -63,10 +63,8 @@ private:
 	unsigned int _side; ///< The size of each cubemap face sides.
 	
 	GLuint _id; ///< The framebuffer ID.
-	GLuint _idColor; ///< The color texture ID.
-	GLuint _idRenderbuffer; ///< The depth buffer ID.
-	
-	Descriptor _descriptor; ///< The color target descriptor.
+	Texture _idColor; ///< The color texture.
+	Texture _idRenderbuffer; ///< The depth buffer.
 
 	bool _useDepth; ///< Denotes if the framebuffer is backed by a depth buffer.
 	

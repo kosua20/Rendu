@@ -21,13 +21,18 @@ public:
 	/** Draw a full screen quad.
 	 \param textureId the texture to pass to the shader.
 	 */
-	static void draw(GLuint textureId);
+	static void draw(const Texture & textureId);
+	
+	/** Draw a full screen quad.
+	 \param textureId the texture to pass to the shader.
+	 */
+	static void draw(const Texture * textureId);
 	
 	/** Draw a full screen quad.
 	 \param textureIds the textures to pass to the shader.
 	 \warning Do not support cubemaps for now.
 	 */
-	static void draw(const std::vector<GLuint> & textureIds);
+	static void draw(const std::vector<const Texture*> & textureIds);
 	
 	
 private:

@@ -21,18 +21,28 @@ void ScreenQuad::draw() {
 	glBindVertexArray(0);
 }
 
-void ScreenQuad::draw(const GLuint textureId) {
+void ScreenQuad::draw(const Texture & textureId) {
 	// Active screen texture.
 	glActiveTexture(GL_TEXTURE0 );
-	glBindTexture(GL_TEXTURE_2D, textureId);
+	/// \todo Use bindTexture instead. Or propagate shape on GPU texture.
+	glBindTexture(GL_TEXTURE_2D, textureId.gpu->id);
 	draw();
 }
 
-void ScreenQuad::draw(const std::vector<GLuint> & textures) {
+void ScreenQuad::draw(const Texture * textureId) {
+	// Active screen texture.
+	glActiveTexture(GL_TEXTURE0 );
+	/// \todo Use bindTexture instead. Or propagate shape on GPU texture.
+	glBindTexture(GL_TEXTURE_2D, textureId->gpu->id);
+	draw();
+}
+
+void ScreenQuad::draw(const std::vector<const Texture*> & textures) {
 	// Active screen textures.
-	for(GLuint i = 0; i < textures.size(); ++i){
-		glActiveTexture(GL_TEXTURE0 + i);
-		glBindTexture(GL_TEXTURE_2D, textures[i]);
+	/// \todo Use bindTexture instead. Or propagate shape on GPU texture.
+	for(size_t i = 0; i < textures.size(); ++i){
+		glActiveTexture(GL_TEXTURE0 + GLuint(i));
+		glBindTexture(GL_TEXTURE_2D, textures[i]->gpu->id);
 	}
 	draw();
 }
