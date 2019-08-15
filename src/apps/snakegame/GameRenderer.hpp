@@ -44,10 +44,10 @@ public:
 	 */
 	void physics(double fullTime, double frameTime);
 	
-	/** Texture ID of the final rendered game.
-	 \return the texture ID
+	/** Texture of the final rendered game.
+	 \return the texture
 	 */
-	GLuint finalImage() const ;
+	const Texture * finalImage() const ;
 	
 	/** Current rendering resolution.
 	 \return the internal resolution

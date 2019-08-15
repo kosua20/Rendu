@@ -17,19 +17,19 @@ public:
 	AmbientQuad();
 	
 	/** Setup against the graphics API, register the textures needed.
-	 \param texAlbedo the index of the texture containing the albedo
-	 \param texNormals the index of the texture containing the surface normals
-	 \param texEffects the index of the texture containing the material properties
-	 \param texDepth the index of the texture containing the depth
-	 \param texSSAO the index of the texture containing the SSAO result
+	 \param texAlbedo the texture containing the albedo
+	 \param texNormals the texture containing the surface normals
+	 \param texEffects the texture containing the material properties
+	 \param texDepth the texture containing the depth
+	 \param texSSAO the texture containing the SSAO result
 	 */
-	void init(const GLuint texAlbedo, const GLuint texNormals, const GLuint texEffects, const GLuint texDepth, const GLuint texSSAO);
+	void init(const Texture * texAlbedo, const Texture * texNormals, const Texture * texEffects, const Texture * texDepth, const Texture * texSSAO);
 	
 	/** Register the scene-specific lighting informations.
 	 \param reflectionMap the ID of the background cubemap, containing radiance convolved with increasing roughness lobes in the mipmap levels
 	 \param irradiance the SH coefficients of the background irradiance
 	 */
-	void setSceneParameters(const GLuint reflectionMap, const std::vector<glm::vec3> & irradiance);
+	void setSceneParameters(const Texture * reflectionMap, const std::vector<glm::vec3> & irradiance);
 	
 	/** Draw the ambient lighting contribution to the scene.
 	 \param viewMatrix the current camera view matrix
@@ -43,8 +43,8 @@ private:
 	
 	Program * _program; ///< The ambient lighting program.
 
-	std::vector<GLuint> _textures; ///< The input textures for the ambient pass.
-	GLuint _textureEnv; ///< The environment radiance cubemap.
-	GLuint _textureBrdf; ///< The linearized approximate BRDF components. \see BRDFEstimator
+	std::vector<const Texture *> _textures; ///< The input textures for the ambient pass.
+	const Texture * _textureEnv; ///< The environment radiance cubemap.
+	const Texture * _textureBrdf; ///< The linearized approximate BRDF components. \see BRDFEstimator
 	
 };

@@ -62,8 +62,8 @@ int main(int argc, char** argv) {
 	const glm::vec2 renderResolution = (config.internalVerticalResolution/config.screenResolution[1]) * config.screenResolution;
 	
 	// Framebuffer to store the rendered atmosphere result before tonemapping and upscaling to the window size.
-	std::unique_ptr<Framebuffer> atmosphereFramebuffer(new Framebuffer((unsigned int)(renderResolution[0]), (unsigned int)(renderResolution[1]), GL_RGB32F, true));
-	const GLuint precomputedScattering = Resources::manager().getTexture("scattering-precomputed", {GL_RGB32F, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE}, Storage::GPU)->gpu->id;
+	std::unique_ptr<Framebuffer> atmosphereFramebuffer(new Framebuffer((unsigned int)(renderResolution[0]), (unsigned int)(renderResolution[1]), GL_RGB32F, false));
+	const Texture * precomputedScattering = Resources::manager().getTexture("scattering-precomputed", {GL_RGB32F, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE}, Storage::GPU);
 	
 	// Atmosphere screen quad.
 	const Program * atmosphereProgram = Resources::manager().getProgram2D("atmosphere");

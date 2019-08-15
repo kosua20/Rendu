@@ -5,11 +5,11 @@
 
 AmbientQuad::AmbientQuad(){}
 
-void AmbientQuad::init(const GLuint texAlbedo, const GLuint texNormals, const GLuint texEffects, const GLuint texDepth, const GLuint texSSAO){
+void AmbientQuad::init(const Texture * texAlbedo, const Texture * texNormals, const Texture * texEffects, const Texture * texDepth, const Texture * texSSAO){
 	
 	_program = Resources::manager().getProgram2D("ambient");
 	// Load texture.
-	_textureBrdf = Resources::manager().getTexture("brdf-precomputed", {GL_RG32F, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE}, Storage::GPU)->gpu->id;
+	_textureBrdf = Resources::manager().getTexture("brdf-precomputed", {GL_RG32F, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE}, Storage::GPU);
 	
 	// Ambient pass: needs the albedo, the normals, the depth, the effects and the AO result
 	_textures = { texAlbedo, texNormals, texEffects, texDepth, texSSAO };
@@ -17,7 +17,7 @@ void AmbientQuad::init(const GLuint texAlbedo, const GLuint texNormals, const GL
 	checkGLError();
 }
 
-void AmbientQuad::setSceneParameters(const GLuint reflectionMap, const std::vector<glm::vec3> & irradiance){
+void AmbientQuad::setSceneParameters(const Texture * reflectionMap, const std::vector<glm::vec3> & irradiance){
 	_textureEnv = reflectionMap;
 	_program->cacheUniformArray("shCoeffs", irradiance);
 }
@@ -35,9 +35,9 @@ void AmbientQuad::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionM
 	_program->uniform("projectionMatrix", projectionVector);
 	// Cubemaps.
 	glActiveTexture(GL_TEXTURE0 + (unsigned int)_textures.size());
-	glBindTexture(GL_TEXTURE_CUBE_MAP, _textureEnv);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, _textureEnv->gpu->id);
 	glActiveTexture(GL_TEXTURE0 + (unsigned int)_textures.size() + 1);
-	glBindTexture(GL_TEXTURE_2D, _textureBrdf);
+	glBindTexture(GL_TEXTURE_2D, _textureBrdf->gpu->id);
 	
 	ScreenQuad::draw(_textures);
 	checkGLError();

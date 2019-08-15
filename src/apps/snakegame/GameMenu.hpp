@@ -19,7 +19,7 @@ public:
 	 \param actionTag the ID of the action associated to this button
 	 \param texture the text texture on the button
 	 */
-	MenuButton(const glm::vec2 & screenPos, const glm::vec2 & meshSize, const float screenScale, const int actionTag, const Texture & texture);
+	MenuButton(const glm::vec2 & screenPos, const glm::vec2 & meshSize, const float screenScale, const int actionTag, const Texture * texture);
 	
 	/** Check if a position is inside the button.
 	 \param mousePos the position to test (in absolute units)
@@ -40,7 +40,7 @@ public:
 	glm::vec2 scale; ///< Screen scale.
 	float displayScale; ///< Initial display scale.
 	int tag; ///< Action ID.
-	GLuint tid; ///< Text texture ID.
+	const Texture * tid; ///< Text texture.
 };
 
 
@@ -58,7 +58,7 @@ public:
 	 \param actionTag the ID of the action associated to this button
 	 \param texture the text texture accompanying the checkbox
 	 */
-	MenuToggle(const glm::vec2 & screenPos, const glm::vec2 & meshSize, const float screenScale, const int actionTag, const Texture & texture);
+	MenuToggle(const glm::vec2 & screenPos, const glm::vec2 & meshSize, const float screenScale, const int actionTag, const Texture * texture);
 	
 	glm::vec2 posBox; ///< Screen position of the toggle box.
 	glm::vec2 posImg; ///< Screen position of the text.
@@ -79,12 +79,12 @@ public:
 	 \param screenScale scaling to apply to the image on the X axis
 	 \param texture the texture to display
 	 */
-	MenuImage(const glm::vec2 & screenPos, const float screenScale, const Texture & texture);
+	MenuImage(const glm::vec2 & screenPos, const float screenScale, const Texture * texture);
 	
 	glm::vec2 pos; ///< Image position.
 	glm::vec2 size; ///< Screen size.
 	glm::vec2 scale; ///< Scaling.
-	GLuint tid; ///< Texture id.
+	const Texture * tid; ///< Texture.
 	
 };
 
@@ -111,7 +111,7 @@ public:
 	
 	Mesh mesh; ///< Label mesh.
 	glm::vec2 pos; ///< Label position.
-	GLuint tid; ///< Font texture shortcut.
+	const Texture * tid; ///< Font texture shortcut.
 	
 private:
 	float _vScale; ///< Vertical size on screen.
@@ -137,5 +137,5 @@ public:
 	std::vector<MenuToggle> toggles; ///< The menu toggles.
 	std::vector<MenuImage> images; ///< The menu images.
 	std::vector<MenuLabel> labels; ///< The menu custom labels.
-	GLuint backgroundImage = 0; ///< The background texure.
+	const Texture * backgroundImage = nullptr; ///< The background texure.
 };

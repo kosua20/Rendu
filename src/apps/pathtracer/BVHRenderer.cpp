@@ -23,6 +23,7 @@ BVHRenderer::BVHRenderer(RenderingConfig & config) : Renderer(config) {
 	// Initial setup for rendering image.
 	_renderTex.shape = TextureShape::D2;
 	_renderTex.levels = 1;
+	_renderTex.depth = 1;
 	_renderTex.width = renderWidth;
 	_renderTex.height = renderHeight;
 	GLUtilities::setupTexture(_renderTex, {GL_SRGB8, GL_LINEAR, GL_CLAMP_TO_EDGE});
@@ -72,7 +73,7 @@ void BVHRenderer::draw() {
 		glViewport(0, 0, GLsizei(_config.screenResolution[0]), GLsizei(_config.screenResolution[1]));
 		_passthrough->use();
 		_passthrough->uniform("flip", 1);
-		ScreenQuad::draw(_renderTex.gpu->id);
+		ScreenQuad::draw(_renderTex);
 		glDisable(GL_FRAMEBUFFER_SRGB);
 		return;
 	}

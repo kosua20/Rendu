@@ -150,7 +150,7 @@ void GameRenderer::physics(double , double ){
 	
 }
 
-GLuint GameRenderer::finalImage() const {
+const Texture * GameRenderer::finalImage() const {
 	return _fxaaFramebuffer->textureId();
 }
 

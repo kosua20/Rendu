@@ -40,12 +40,12 @@ public:
 	/** Canvas content texture.
 	 \return the canvas ID
 	 */
-	GLuint textureId() const { return _canvas->textureId(); }
+	const Texture * textureId() const { return _canvas->textureId(); }
 	
 	/** Texture containing the canvas and the brush shape outline, for visualisation.
 	 \return the texture ID
 	 */
-	GLuint visuId() const { return _visu->textureId(); }
+	const Texture * visuId() const { return _visu->textureId(); }
 	
 private:
 	

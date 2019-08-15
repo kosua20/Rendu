@@ -43,7 +43,7 @@ void GameMenuRenderer::draw(const GameMenu & menu){
 	glClear(GL_DEPTH_BUFFER_BIT);
 	
 	// Background image.
-	if(menu.backgroundImage > 0){
+	if(menu.backgroundImage){
 		_backgroundProgram->use();
 		ScreenQuad::draw(menu.backgroundImage);
 	}
@@ -60,7 +60,7 @@ void GameMenuRenderer::draw(const GameMenu & menu){
 		
 		_imageProgram->uniform("depth", 0.95f);
 		glActiveTexture(GL_TEXTURE0 );
-		glBindTexture(GL_TEXTURE_2D, image.tid);
+		glBindTexture(GL_TEXTURE_2D, image.tid->gpu->id);
 		GLUtilities::drawMesh(*_quad);
 	}
 	
@@ -84,7 +84,7 @@ void GameMenuRenderer::draw(const GameMenu & menu){
 		_imageProgram->uniform("scale", newScale);
 		_imageProgram->uniform("depth", 0.2f);
 		glActiveTexture(GL_TEXTURE0 );
-		glBindTexture(GL_TEXTURE_2D, button.tid);
+		glBindTexture(GL_TEXTURE_2D, button.tid->gpu->id);
 		GLUtilities::drawMesh(*_quad);
 	}
 	
@@ -109,7 +109,7 @@ void GameMenuRenderer::draw(const GameMenu & menu){
 		_imageProgram->uniform("scale", newScale);
 		_imageProgram->uniform("depth", 0.2f);
 		glActiveTexture(GL_TEXTURE0 );
-		glBindTexture(GL_TEXTURE_2D, toggle.tid);
+		glBindTexture(GL_TEXTURE_2D, toggle.tid->gpu->id);
 		GLUtilities::drawMesh(*_quad);
 		
 	}
@@ -119,7 +119,7 @@ void GameMenuRenderer::draw(const GameMenu & menu){
 	_fontProgram->use();
 	for(const auto & label : menu.labels){
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, label.tid);
+		glBindTexture(GL_TEXTURE_2D, label.tid->gpu->id);
 		_fontProgram->uniform("ratio", _config.screenResolution[1] / _config.screenResolution[0]);
 		_fontProgram->uniform("position", label.pos);
 		_fontProgram->uniform("color", labelsColor);

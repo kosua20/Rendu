@@ -73,9 +73,9 @@ private:
 	
 	/** Apply the postprocess stack.
 	 \param invRenderSize the inverse of the rendering resolution
-	 \return the ID of the texture containing the result
+	 \return the texture containing the result
 	 */
-	GLuint renderPostprocess(const glm::vec2 & invRenderSize);
+	const Texture * renderPostprocess(const glm::vec2 & invRenderSize);
 	
 	ControllableCamera _userCamera; ///< The interactive camera.
 

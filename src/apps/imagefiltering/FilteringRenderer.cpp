@@ -36,7 +36,7 @@ FilteringRenderer::FilteringRenderer(RenderingConfig & config) : Renderer(config
 
 void FilteringRenderer::draw() {
 	
-	GLuint srcTexID = _sceneBuffer->textureId();
+	const Texture * srcTexID = _sceneBuffer->textureId();
 	// Render the scene.
 	if(_viewMode == View::SCENE){
 		glEnable(GL_DEPTH_TEST);
@@ -56,7 +56,7 @@ void FilteringRenderer::draw() {
 		_sceneBuffer->setViewport();
 		_passthrough->use();
 		if(_image.width > 0){
-			ScreenQuad::draw(_image.gpu->id);
+			ScreenQuad::draw(_image);
 		} else {
 			glClear(GL_COLOR_BUFFER_BIT);
 		}
@@ -73,7 +73,7 @@ void FilteringRenderer::draw() {
 	glDisable(GL_DEPTH_TEST);
 	
 	
-	GLuint finalTexID = srcTexID;
+	const Texture * finalTexID = srcTexID;
 	
 	switch(_mode){
 		case Filter::FILL:
@@ -137,6 +137,7 @@ void FilteringRenderer::update(){
 					
 					_image.clean();
 					_image.shape = TextureShape::D2;
+					_image.depth = 1;
 					_image.levels = 1;
 					_image.images.emplace_back();
 					Image & img = _image.images.back();

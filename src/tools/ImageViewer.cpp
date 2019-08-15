@@ -139,7 +139,7 @@ int main(int argc, char** argv) {
 			program->uniform("mouseShift", mouseShift);
 			
 			// Draw.
-			ScreenQuad::draw(imageInfos.gpu->id);
+			ScreenQuad::draw(imageInfos);
 			
 			glDisable(GL_BLEND);
 
@@ -285,7 +285,7 @@ int main(int argc, char** argv) {
 					program->uniform("widthRatio", 1.0f);
 					program->uniform("pixelScale", 1.0f);
 					program->uniform("mouseShift", zeros);
-					ScreenQuad::draw(imageInfos.gpu->id);
+					ScreenQuad::draw(imageInfos);
 					glDisable(GL_BLEND);
 					
 					framebuffer->unbind();

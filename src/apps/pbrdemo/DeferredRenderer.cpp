@@ -57,10 +57,8 @@ DeferredRenderer::DeferredRenderer(RenderingConfig & config) : Renderer(config) 
 	_objectProgram = Resources::manager().getProgram("object_gbuffer");
 	_objectNoUVsProgram = Resources::manager().getProgram("object_no_uv_gbuffer");
 	
-	const std::vector<GLuint> ambientTextures = _gbuffer->textureIds();
-	
 	// Add the SSAO result.
-	_ambientScreen.init(ambientTextures[0], ambientTextures[1], ambientTextures[2], _gbuffer->depthId(), _ssaoPass->textureId());
+	_ambientScreen.init(_gbuffer->textureId(0), _gbuffer->textureId(1), _gbuffer->textureId(2), _gbuffer->depthId(), _ssaoPass->textureId());
 	
 	checkGLError();
 	
@@ -85,11 +83,10 @@ void DeferredRenderer::setScene(std::shared_ptr<Scene> scene){
 	_userCamera.speed() = 0.2f*range;
 	_cplanes = _userCamera.clippingPlanes();
 	_cameraFOV = _userCamera.fov() * 180.0f /float(M_PI);
-	_ambientScreen.setSceneParameters(_scene->backgroundReflection->gpu->id, _scene->backgroundIrradiance);
+	_ambientScreen.setSceneParameters(_scene->backgroundReflection, _scene->backgroundIrradiance);
 	
-	std::vector<GLuint> includedTextures = _gbuffer->textureIds();
 	/// \todo clarify this.
-	includedTextures.insert(includedTextures.begin()+2, _gbuffer->depthId());
+	std::vector<const Texture *> includedTextures = {_gbuffer->textureId(0), _gbuffer->textureId(1), _gbuffer->depthId(), _gbuffer->textureId(2)};
 	
 	for(auto& light : _scene->lights){
 		light->init(includedTextures);
@@ -221,7 +218,7 @@ void DeferredRenderer::renderScene(){
 	_gbuffer->unbind();
 }
 
-GLuint DeferredRenderer::renderPostprocess(const glm::vec2 & invRenderSize){
+const Texture * DeferredRenderer::renderPostprocess(const glm::vec2 & invRenderSize){
 	
 	if(_applyBloom){
 		// --- Bloom selection pass ------
@@ -254,7 +251,7 @@ GLuint DeferredRenderer::renderPostprocess(const glm::vec2 & invRenderSize){
 	_toneMappingProgram->uniform("apply", _applyTonemapping);
 	ScreenQuad::draw(_sceneFramebuffer->textureId());
 	_toneMappingFramebuffer->unbind();
-	GLuint currentResult = _toneMappingFramebuffer->textureId();
+	const Texture * currentResult = _toneMappingFramebuffer->textureId();
 	
 	
 	if(_applyFXAA){
@@ -311,7 +308,7 @@ void DeferredRenderer::draw() {
 	_sceneFramebuffer->unbind();
 	
 	// --- Post process passes -----
-	const GLuint currentResult = renderPostprocess(invRenderSize);
+	const Texture * currentResult = renderPostprocess(invRenderSize);
 	
 	// --- Final pass -------
 	// We now render a full screen quad in the default framebuffer, using sRGB space.
