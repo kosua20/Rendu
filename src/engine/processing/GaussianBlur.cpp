@@ -18,7 +18,7 @@ GaussianBlur::GaussianBlur(unsigned int width, unsigned int height, unsigned int
 	checkGLError();
 }
 
-void GaussianBlur::process(const GLuint textureId) {
+void GaussianBlur::process(const Texture * textureId) {
 	if(_frameBuffers.size() == 0){
 		return;
 	}

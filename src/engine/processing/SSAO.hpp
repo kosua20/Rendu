@@ -24,10 +24,10 @@ public:
 	/**
 	 Compute SSAO using the input depth and normal buffers.
 	 \param projection the camera projection matrix
-	 \param depthTex the ID of the depth texture
-	 \param normalTex the ID of the view-space normal texture
+	 \param depthTex the depth texture
+	 \param normalTex the view-space normal texture
 	 */
-	void process(const glm::mat4 & projection, const GLuint depthTex, const GLuint normalTex);
+	void process(const glm::mat4 & projection, const Texture * depthTex, const Texture * normalTex);
 	
 	/** Cleanup rssources.
 	 */
@@ -47,9 +47,9 @@ public:
 	
 	/**
 	 Query the texture containing the result of the SSAO+blur pass.
-	 \return the texture ID
+	 \return the texture
 	 */
-	GLuint textureId() const;
+	const Texture * textureId() const;
 	
 	/** Query the SSAO radius (should be larger for larger scene with large planar surfaces).
 	 \return a reference to the radius parameter
@@ -63,5 +63,5 @@ private:
 	Program * _programSSAO; ///< The SSAO program.
 	
 	float _radius = 0.5f;	///< SSAO intersection test radius.
-	GLuint _noiseTextureID; ///< Random noise texture.
+	Texture _noiseTextureID; ///< Random noise texture.
 };

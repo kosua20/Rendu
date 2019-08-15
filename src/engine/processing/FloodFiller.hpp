@@ -28,7 +28,7 @@ public:
 	 \param textureId the GPU ID of the texture
 	 \param mode the output mode (color or distance)
 	 */
-	void process(const GLuint textureId, const OutputMode mode);
+	void process(const Texture * textureId, const OutputMode mode);
 	
 	/** Cleanup internal resources. */
 	void clean() const;
@@ -42,14 +42,14 @@ public:
 	/** The GPU ID of the filter result.
 	 \return the ID of the result texture
 	 */
-	GLuint textureId(){ return _final->textureId(); }
+	const Texture * textureId(){ return _final->textureId(); }
 	
 private:
 	
 	/** Extract seeds from the input texture and propagate them so that each pixel contains the coordinates of the closest seed (approximately). The result will be stored in _ping.
 	 \param textureId the input texture
 	 */
-	void extractAndPropagate(const GLuint textureId);
+	void extractAndPropagate(const Texture * textureId);
 	
 	const Program * _extract; ///< Extract the flood fill seeds.
 	const Program * _floodfill; ///< Perform one pass of the flood fill.

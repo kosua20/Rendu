@@ -22,7 +22,7 @@ BoxBlur::BoxBlur(unsigned int width, unsigned int height, bool approximate, cons
 }
 
 // Draw function
-void BoxBlur::process(const GLuint textureId){
+void BoxBlur::process(const Texture * textureId){
 	_finalFramebuffer->bind();
 	_finalFramebuffer->setViewport();
 	glClear(GL_COLOR_BUFFER_BIT);

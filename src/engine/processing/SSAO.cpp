@@ -1,5 +1,6 @@
 #include "processing/SSAO.hpp"
 #include "system/Random.hpp"
+#include "graphics/GPUObjects.hpp"
 #include "graphics/GLUtilities.hpp"
 
 SSAO::SSAO(unsigned int width, unsigned int height, float radius) {
@@ -36,28 +37,35 @@ SSAO::SSAO(unsigned int width, unsigned int height, float radius) {
 	}
 	
 	// Send the texture to the GPU.
-	glGenTextures(1, &_noiseTextureID);
-	glBindTexture(GL_TEXTURE_2D, _noiseTextureID);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, 5 , 5, 0, GL_RGB, GL_FLOAT, &(noise[0]));
-	// Need nearest filtering and repeat.
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T, GL_REPEAT);
+	_noiseTextureID.width = 5;
+	_noiseTextureID.height = 5;
+	_noiseTextureID.depth = 1;
+	_noiseTextureID.levels = 1;
+	_noiseTextureID.shape = TextureShape::D2;
+	GLUtilities::setupTexture(_noiseTextureID, {GL_RGB16F, GL_NEAREST, GL_REPEAT});
 	
+//	glGenTextures(1, &_noiseTextureID);
+//	glBindTexture(GL_TEXTURE_2D, _noiseTextureID);
+//	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, 5 , 5, 0, GL_RGB, GL_FLOAT, &(noise[0]));
+//	// Need nearest filtering and repeat.
+//	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+//	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+//	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S, GL_REPEAT);
+//	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T, GL_REPEAT);
+//	
 	checkGLError();
 	
 }
 
 // Draw function
-void SSAO::process(const glm::mat4 & projection, const GLuint depthTex, const GLuint normalTex){
+void SSAO::process(const glm::mat4 & projection, const Texture * depthTex, const Texture * normalTex){
 	
 	_ssaoFramebuffer->bind();
 	_ssaoFramebuffer->setViewport();
 	_programSSAO->use();
 	_programSSAO->uniform("projectionMatrix", projection);
 	_programSSAO->uniform("radius", _radius);
-	ScreenQuad::draw({depthTex, normalTex, _noiseTextureID});
+	ScreenQuad::draw({depthTex, normalTex, &_noiseTextureID});
 	_ssaoFramebuffer->unbind();
 	
 	// Blurring pass
@@ -81,7 +89,7 @@ void SSAO::resize(unsigned int width, unsigned int height){
 	_ssaoFramebuffer->resize(width, height);
 }
 
-GLuint SSAO::textureId() const {
+const Texture * SSAO::textureId() const {
 	return _blurSSAOBuffer->textureId();
 }
 

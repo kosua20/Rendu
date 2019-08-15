@@ -22,7 +22,7 @@ public:
 	/** Filter a given input texture, first computing its laplacian field before performing integration.
 	 \param textureId the GPU ID of the texture
 	 */
-	void process(const GLuint textureId);
+	void process(const Texture * textureId);
 	
 	/** Cleanup internal resources. */
 	void clean() const;
@@ -36,12 +36,12 @@ public:
 	/** The ID of the texture containing the integration result.
 	 \return the result texture ID.
 	 */
-	GLuint textureId(){ return _compo->textureId(); }
+	const Texture * textureId(){ return _compo->textureId(); }
 	 
 	/** The ID of the texture containing the laplacian field.
 	\return the laplacian texture ID.
 	 */
-	GLuint preprocId(){ return _preproc->textureId(); }
+	const Texture * preprocId(){ return _preproc->textureId(); }
 	
 private:
 	

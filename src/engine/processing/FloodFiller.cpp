@@ -16,7 +16,7 @@ FloodFiller::FloodFiller(unsigned int width, unsigned int height) {
 	_compositeColor = Resources::manager().getProgram2D("color-seeds");
 }
 
-void FloodFiller::process(const GLuint textureId, const OutputMode mode) {
+void FloodFiller::process(const Texture * textureId, const OutputMode mode) {
 	
 	extractAndPropagate(textureId);
 	
@@ -35,7 +35,7 @@ void FloodFiller::process(const GLuint textureId, const OutputMode mode) {
 }
 
 
-void FloodFiller::extractAndPropagate(const GLuint textureId){
+void FloodFiller::extractAndPropagate(const Texture * textureId){
 	// Render seed positions in a 2 channels framebuffer (each non-black pixel is a seed).
 	glDisable(GL_DEPTH_TEST);
 	_ping->bind();

@@ -4,7 +4,7 @@ Blur::Blur(){
 	_passthroughProgram = Resources::manager().getProgram("passthrough");
 }
 
-void Blur::process(const GLuint ) {
+void Blur::process(const Texture * ) {
 
 }
 
@@ -13,7 +13,7 @@ void Blur::draw() {
 	ScreenQuad::draw(_finalTexture);
 }
 
-GLuint Blur::textureId() const {
+const Texture * Blur::textureId() const {
 	return _finalTexture;
 }
 

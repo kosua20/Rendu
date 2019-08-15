@@ -16,7 +16,7 @@ public:
 	 Apply the blurring process to a given texture.
 	 \param textureId the ID of the texture to process
 	 */
-	void process(const GLuint textureId);
+	void process(const Texture * textureId);
 	
 	/**
 	 Draw the result texture to the current framebuffer.
@@ -37,7 +37,7 @@ public:
 	 Query the texture containing the result of the blurring process.
 	 \return the texture ID
 	 */
-	GLuint textureId() const;
+	const Texture * textureId() const;
 	
 protected:
 	
@@ -45,7 +45,7 @@ protected:
 	 */
 	Blur();
 	
-	GLuint _finalTexture; ///< The texture holding the blurred result
+	const Texture * _finalTexture; ///< The texture holding the blurred result
 	const Program * _passthroughProgram; ///< Default passthrough utility program
 	
 };

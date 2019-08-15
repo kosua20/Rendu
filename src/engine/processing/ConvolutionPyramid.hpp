@@ -33,7 +33,7 @@ public:
 	/** Filter a given input texture.
 	 \param textureId the GPU ID of the texture
 	 */
-	void process(const GLuint textureId);
+	void process(const Texture * textureId);
 	
 	/** Cleanup internal resources. */
 	void clean() const;
@@ -47,7 +47,7 @@ public:
 	/** The GPU ID of the filter result.
 	 \return the ID of the result texture
 	 */
-	GLuint textureId(){ return _shifted->textureId(); }
+	const Texture * textureId(){ return _shifted->textureId(); }
 	
 	/** Returns the width expected for the input texture.
 	 \return the width expected

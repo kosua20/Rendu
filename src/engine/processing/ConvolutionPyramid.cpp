@@ -41,7 +41,7 @@ ConvolutionPyramid::ConvolutionPyramid(unsigned int width, unsigned int height, 
 	}
 }
 
-void ConvolutionPyramid::process(const GLuint textureId) {
+void ConvolutionPyramid::process(const Texture * textureId) {
 	
 	glClearColor(0.0f,0.0f,0.0f,0.0f);
 	// Pad by the size of the filter.

@@ -22,7 +22,7 @@ public:
 	/** Fill black regions of an image in a smooth fashion, first computing its border color before performing filling.
 	 \param textureId the GPU ID of the texture
 	 */
-	void process(const GLuint textureId);
+	void process(const Texture * textureId);
 	
 	/** Cleanup internal resources. */
 	void clean() const;
@@ -36,12 +36,12 @@ public:
 	/** The ID of the texture containing the filled result.
 	 \return the result texture ID.
 	 */
-	GLuint textureId(){ return _compo->textureId(); }
+	const Texture * textureId(){ return _compo->textureId(); }
 	
 	/** The ID of the texture containing the colored border.
 	 \return the border texture ID.
 	 */
-	GLuint preprocId(){ return _preproc->textureId(); }
+	const Texture * preprocId(){ return _preproc->textureId(); }
 	
 private:
 	

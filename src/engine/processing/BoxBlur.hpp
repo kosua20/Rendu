@@ -25,7 +25,7 @@ public:
 	/**
 	 \copydoc Blur::process
 	 */
-	void process(const GLuint textureId);
+	void process(const Texture * textureId);
 	
 	/**
 	 \copydoc Blur::clean
