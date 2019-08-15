@@ -252,7 +252,7 @@ const Mesh * Resources::getMesh(const std::string & name, Storage mode){
 
 // Texture methods.
 
-Texture * Resources::getTexture(const std::string & name){
+const Texture * Resources::getTexture(const std::string & name){
 	if(_textures.count(name) > 0){
 		return &_textures[name];
 	}
@@ -260,7 +260,7 @@ Texture * Resources::getTexture(const std::string & name){
 	return nullptr;
 }
 
-Texture * Resources::getTexture(const std::string & name, const Descriptor & descriptor, Storage mode, const std::string & refName){
+const Texture * Resources::getTexture(const std::string & name, const Descriptor & descriptor, Storage mode, const std::string & refName){
 	const std::string & keyName = refName.empty() ? name : refName;
 	
 	// If texture already loaded, return it.
@@ -376,6 +376,7 @@ Texture * Resources::getTexture(const std::string & name, const Descriptor & des
 	texture.shape = shape;
 	texture.width = texture.images[0].width;
 	texture.height = texture.images[0].height;
+	texture.depth = paths[0].size();
 	texture.levels = paths.size();
 	
 	// If GPU mode, send them to the GPU.

@@ -69,7 +69,8 @@ public:
 	
 	unsigned int width = 0; ///< The texture width.
 	unsigned int height = 0; ///< The texture height.
-	unsigned int levels = 0; ///< The mipmap count.
+	unsigned int depth = 1; ///< The texture depth.
+	unsigned int levels = 1; ///< The mipmap count.
 	
 	TextureShape shape = TextureShape::D2; ///< Texure type.
 	

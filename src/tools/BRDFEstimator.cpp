@@ -41,6 +41,7 @@ void loadCubemap(const std::string & inputPath, Texture & cubemapInfos){
 	
 	cubemapInfos.clean();
 	cubemapInfos.shape = TextureShape::Cube;
+	cubemapInfos.depth = 6;
 	cubemapInfos.levels = 1;
 	for(const auto & filePath : pathSides){
 		cubemapInfos.images.emplace_back();
@@ -219,6 +220,7 @@ void computeCubemapConvolution(const Texture & cubemapInfos, int levelsCount, in
 		levelInfos.shape = TextureShape::Cube;
 		levelInfos.width = w;
 		levelInfos.height = h;
+		levelInfos.depth = 6;
 		levelInfos.levels = 1;
 		GLUtilities::setupTexture(levelInfos, {GL_RGB32F, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE});
 		

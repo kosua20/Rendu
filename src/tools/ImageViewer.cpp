@@ -177,6 +177,7 @@ int main(int argc, char** argv) {
 					
 					imageInfos.clean();
 					imageInfos.shape = TextureShape::D2;
+					imageInfos.depth = 1;
 					imageInfos.levels = 1;
 					imageInfos.images.emplace_back();
 					Image & img = imageInfos.images.back();

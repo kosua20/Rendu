@@ -120,13 +120,13 @@ public:
 	 \param refName the name to use for the texture in future calls
 	 \return the texture informations
 	 */
-	Texture * getTexture(const std::string & name, const Descriptor & descriptor, Storage mode, const std::string & refName = "");
+	const Texture * getTexture(const std::string & name, const Descriptor & descriptor, Storage mode, const std::string & refName = "");
 	
 	/** Get an existing 2D texture resource.
 	 \param name the texture base name
 	 \return the texture informations
 	 */
-	Texture * getTexture(const std::string & name);
+	const Texture * getTexture(const std::string & name);
 	
 	/** Get an OpenGL program resource.
 	 \param name the name of all the program shaders
