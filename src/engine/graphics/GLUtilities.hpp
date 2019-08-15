@@ -96,6 +96,7 @@ public:
 	 */
 	static void setupTexture(Texture & texture, const Descriptor & descriptor);
 	
+	static void allocateTexture(const Texture & texture);
 	
 	/** Upload a texture images data to the GPU.
 	 \param texture the texture to upload
@@ -104,6 +105,7 @@ public:
 	
 	/** Generate a texture mipmaps on the GPU.
 	 \param texture the texture to use
+	 \note This will set the number of levels to 1000.
 	 */
 	static void generateMipMaps(const Texture & texture);
 	

@@ -318,12 +318,86 @@ void GLUtilities::setupTexture(Texture & texture, const Descriptor & descriptor)
 	glTexParameteri(target, GL_TEXTURE_WRAP_R, descriptor.wrapping);
 	glTexParameteri(target, GL_TEXTURE_WRAP_S, descriptor.wrapping);
 	glTexParameteri(target, GL_TEXTURE_WRAP_T, descriptor.wrapping);
+	if(descriptor.wrapping == GL_CLAMP_TO_BORDER){
+		// Setup the border value to one.
+		GLfloat border[] = { 1.0, 1.0, 1.0, 1.0 };
+		glTexParameterfv(target, GL_TEXTURE_BORDER_COLOR, border);
+	}
 	glBindTexture(target, 0);
 	
 	texture.gpu.reset(new GPUTexture());
 	texture.gpu->id = textureId;
 	texture.gpu->descriptor = descriptor;
+	
+	// Allocate.
+	GLUtilities::allocateTexture(texture);
 	return;
+}
+
+void GLUtilities::allocateTexture(const Texture & texture){
+	if(!texture.gpu){
+		Log::Error() << Log::OpenGL << "Uninitialized GPU texture." << std::endl;
+		return;
+	}
+	
+	const GLenum target = GLUtilities::targetFromShape(texture.shape);
+	const GLenum typeFormat = texture.gpu->descriptor.typedFormat;
+	GLenum type, format;
+	texture.gpu->descriptor.getTypeAndFormat(type, format);
+	glBindTexture(target, texture.gpu->id);
+	
+	for(size_t mid = 0; mid < texture.levels; ++mid){
+		// Mipmap dimensions.
+		const GLsizei w = GLsizei(texture.width/std::pow(2, mid));
+		const GLsizei h = GLsizei(texture.height/std::pow(2, mid));
+		const GLsizei d = GLsizei(texture.depth/std::pow(2, mid));
+		const GLint mip = GLint(mid);
+		
+		if(texture.shape == TextureShape::D1){
+			glTexImage1D(target, mip, typeFormat, w, 0, format, type, nullptr);
+			
+		} else if(texture.shape == TextureShape::D2){
+			glTexImage2D(target, mip, typeFormat, w, h, 0, format, type, nullptr);
+			
+		} else if(texture.shape == TextureShape::Cube){
+			// Here the number of levels is 6.
+			if(texture.depth != 6){
+				Log::Error() << Log::OpenGL << "Incorrect number of levels in a cubemap (" << texture.depth << ")." << std::endl;
+				return;
+			}
+			// In that case each level is a cubemap face.
+			for(size_t lid = 0; lid < texture.depth; ++lid){
+				// We need to allocate each level
+				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + lid, mip, typeFormat, w, h, 0, format, type, nullptr);
+			}
+			
+		} else if(texture.shape == TextureShape::D3){
+			glTexImage3D(target, mip, typeFormat, w, h, d, 0, format, type, nullptr);
+			
+		} else if(texture.shape == TextureShape::Array1D){
+			// For 1D texture arrays, we do a one-shot allocation using 2D.
+			glTexImage2D(target, mip, typeFormat, w, texture.depth, 0, format, type, nullptr);
+			
+		} else if(texture.shape == TextureShape::Array2D){
+			// For 2D texture arrays, we do a one-shot allocation using 3D.
+			glTexImage3D(target, mip, typeFormat, w, h, texture.depth, 0, format, type, nullptr);
+			
+		} else if(texture.shape == TextureShape::ArrayCube){
+			// Here the number of levels is a multiple of 6.
+			if(texture.depth % 6 != 0){
+				Log::Error() << Log::OpenGL << "Incorrect number of levels in a cubemap array (" << texture.depth << ")." << std::endl;
+				return;
+			}
+			// Unsure about this, would expect GL_TEXTURE_CUBE_MAP_ARRAY instead but the doc says so.
+			glTexImage3D(GL_TEXTURE_2D_ARRAY, mip, typeFormat, w, h, texture.depth, 0, format, type, nullptr);
+			
+		} else {
+			Log::Error() << Log::OpenGL << "Unsupported texture shape." << std::endl;
+			return;
+		}
+		
+	}
+	glBindTexture(target, 0);
 }
 
 void GLUtilities::uploadTexture(const Texture & texture){
@@ -337,8 +411,6 @@ void GLUtilities::uploadTexture(const Texture & texture){
 	}
 	
 	const GLenum target = GLUtilities::targetFromShape(texture.shape);
-	const GLenum destTypeFormat = texture.gpu->descriptor.typedFormat;
-	const size_t layers = texture.images.size() / texture.levels;
 	// Sanity check the texture destination format.
 	GLenum destType, destFormat;
 	const unsigned int destChannels = texture.gpu->descriptor.getTypeAndFormat(destType, destFormat);
@@ -347,7 +419,6 @@ void GLUtilities::uploadTexture(const Texture & texture){
 		return;
 	}
 	// Check that the descriptor type is valid.
-	/// \todo Move validation inside GLUtilities or Descriptor.
 	const bool validType = destType == GL_FLOAT || destType == GL_UNSIGNED_BYTE;
 	const bool validFormat = destFormat == GL_RED || destFormat == GL_RG || destFormat == GL_RGB || destFormat == GL_RGBA;
 	if(!validType || !validFormat){
@@ -360,19 +431,11 @@ void GLUtilities::uploadTexture(const Texture & texture){
 	glPixelStorei(GL_UNPACK_ALIGNMENT, defaultAlign ? 4 : 1);
 	glBindTexture(target, texture.gpu->id);
 	
-	// Allocation: arrays and 3D textures are filled by subcopies, and have to be initialized first.
-	/// \todo Test in practice.
-	if(texture.shape == TextureShape::Array1D){
-		glTexStorage2D(target, texture.levels, destTypeFormat, texture.width, GLsizei(layers));
-	} else if ((texture.shape & TextureShape::Array) || (texture.shape == TextureShape::D3)){
-		glTexStorage3D(target, texture.levels, destTypeFormat, texture.width, texture.height, layers);
-	}
-	
 	// For each mip level.
 	for(size_t mid = 0; mid < texture.levels; ++ mid){
 		// For each layer.
-		for(size_t lid = 0; lid < layers; ++lid){
-			const Image & image = texture.images[mid*layers+lid];
+		for(size_t lid = 0; lid < texture.depth; ++lid){
+			const Image & image = texture.images[mid * texture.depth + lid];
 			const size_t destSize = destChannels * image.height * image.width;
 			
 			//Perform conversion if needed.
@@ -399,20 +462,23 @@ void GLUtilities::uploadTexture(const Texture & texture){
 			const GLsizei w = GLsizei(image.width);
 			const GLsizei h = GLsizei(image.height);
 			if(target == GL_TEXTURE_1D){
-				glTexImage1D(target, mip, destTypeFormat, w, 0, destFormat, destType, finalDataPtr);
+				glTexSubImage1D(target, mip, 0, w, destFormat, destType, finalDataPtr);
 				
 			} else if(target == GL_TEXTURE_2D){
-				glTexImage2D(target, mip, destTypeFormat, w, h, 0, destFormat, destType, finalDataPtr);
+				glTexSubImage2D(target, mip, 0, 0, w, h, destFormat, destType, finalDataPtr);
 				
 			} else if(target == GL_TEXTURE_CUBE_MAP){
-				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + lid, mip, destTypeFormat, w, h, 0, destFormat, destType, finalDataPtr);
+				glTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + lid, mip, 0, 0, w, h, destFormat, destType, finalDataPtr);
 				
-			} else if(target == GL_TEXTURE_2D_ARRAY || target == GL_TEXTURE_3D || target == GL_TEXTURE_CUBE_MAP_ARRAY){
+			} else if(target == GL_TEXTURE_2D_ARRAY || target == GL_TEXTURE_CUBE_MAP_ARRAY){
 				glTexSubImage3D(target, mip, 0, 0, lid, w, h, 1, destFormat, destType, finalDataPtr);
 				
 			} else if(target == GL_TEXTURE_1D_ARRAY){
-				glTexSubImage2D(target, mip, 0, 0, w, 1, destFormat, destType, finalDataPtr);
+				glTexSubImage2D(target, mip, 0, lid, w, 1, destFormat, destType, finalDataPtr);
 				
+			} else if(target == GL_TEXTURE_3D){
+				/// \bug This is false because the number of layers decrease with the mip level. Fix the loop.
+				glTexSubImage3D(target, mip, 0, 0, lid, w, h, 1, destFormat, destType, finalDataPtr);
 			} else {
 				Log::Error() << Log::OpenGL << "Unsupported texture upload destination." << std::endl;
 			}
@@ -518,7 +584,7 @@ void GLUtilities::saveFramebuffer(const Framebuffer & framebuffer, const unsigne
 	
 	framebuffer.bind();
 	GLenum type, format;
-	const unsigned int components = framebuffer.descriptor().getTypeAndFormat(type, format);
+	const unsigned int components = framebuffer.textureId()->gpu->descriptor.getTypeAndFormat(type, format);
 	GLUtilities::savePixels(type, format, width, height, components, path, flip, ignoreAlpha);
 	
 	glBindFramebuffer(GL_FRAMEBUFFER, (GLuint)currentBoundFB);
@@ -565,7 +631,6 @@ void GLUtilities::savePixels(const GLenum type, const GLenum format, const unsig
 	}
 	
 }
-
 
 void GLUtilities::generateMipMaps(const Texture & texture){
 	if(!texture.gpu){
