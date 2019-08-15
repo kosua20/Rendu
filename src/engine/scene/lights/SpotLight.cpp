@@ -21,7 +21,7 @@ SpotLight::SpotLight(const glm::vec3& worldPosition, const glm::vec3& worldDirec
 }
 
 
-void SpotLight::init(const std::vector<GLuint>& textureIds){
+void SpotLight::init(const std::vector<const Texture *>& textureIds){
 	// Setup the framebuffer.
 	const Descriptor descriptor = {GL_RG32F, GL_LINEAR, GL_CLAMP_TO_BORDER};
 	_shadowPass = std::unique_ptr<Framebuffer>(new Framebuffer(512, 512, descriptor, true));
@@ -29,7 +29,7 @@ void SpotLight::init(const std::vector<GLuint>& textureIds){
 	
 	_cone = Resources::manager().getMesh("light_cone", Storage::GPU);
 	_textures = textureIds;
-	_textures.emplace_back(_blur->textureId());
+	_textures.push_back(_blur->textureId());
 	
 	// Load the shaders.
 	_program = Resources::manager().getProgram("spot_light", "object_basic", "spot_light");
@@ -69,7 +69,7 @@ void SpotLight::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMat
 	// Active screen texture.
 	for(GLuint i = 0;i < _textures.size(); ++i){
 		glActiveTexture(GL_TEXTURE0 + i);
-		glBindTexture(GL_TEXTURE_2D, _textures[i]);
+		glBindTexture(GL_TEXTURE_2D, _textures[i]->gpu->id);
 	}
 	
 	// Select the geometry.

@@ -44,7 +44,7 @@ public:
 	/** Perform initialization against the graphics API and register textures for deferred rendering.
 	 \param textureIds the IDs of the albedo, normal, depth and effects G-buffer textures
 	 */
-	virtual void init(const std::vector<GLuint>& textureIds) = 0;
+	virtual void init(const std::vector<const Texture *>& textureIds) = 0;
 	
 	/** Render the light contribution to the scene.
 	 \param viewMatrix the current camera view matrix
@@ -111,7 +111,7 @@ protected:
 	 */
 	void decodeBase(const KeyValues & params);
 	
-	std::vector<GLuint> _textures; ///< The G-buffer textures.
+	std::vector<const Texture *> _textures; ///< The G-buffer textures.
 	std::vector<std::shared_ptr<Animation>> _animations; ///< Animations list (will be applied in order).
 	
 	BoundingBox _sceneBox; ///< The scene bounding box, to fit the shadow map.

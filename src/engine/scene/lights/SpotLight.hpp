@@ -32,7 +32,7 @@ public:
 	/**
 	 \copydoc Light::init
 	 */
-	void init(const std::vector<GLuint>& textureIds);
+	void init(const std::vector<const Texture *>& textureIds);
 	
 	/**
 	 \copydoc Light::draw

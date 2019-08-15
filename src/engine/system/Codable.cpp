@@ -69,7 +69,7 @@ glm::mat4 Codable::decodeTransformation(const std::vector<KeyValues> & params){
 	return translationMat * rotationMat * scalingMat;
 }
 
-Texture * Codable::decodeTexture(const KeyValues & param, const Storage mode){
+const Texture * Codable::decodeTexture(const KeyValues & param, const Storage mode){
 	// Subest of descriptors supported by the scene serialization model.
 	const std::map<std::string, Descriptor> descriptors = {
 		{"srgb", {GL_SRGB8_ALPHA8, GL_LINEAR_MIPMAP_LINEAR, GL_REPEAT}},

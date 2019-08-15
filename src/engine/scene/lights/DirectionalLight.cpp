@@ -10,14 +10,14 @@ DirectionalLight::DirectionalLight(const glm::vec3& worldDirection, const glm::v
 }
 
 
-void DirectionalLight::init(const std::vector<GLuint>& textureIds){
+void DirectionalLight::init(const std::vector<const Texture *>& textureIds){
 	// Setup the framebuffer.
 	const Descriptor descriptor = { GL_RG16F, GL_LINEAR, GL_CLAMP_TO_BORDER };
 	_shadowPass = std::unique_ptr<Framebuffer>(new Framebuffer(512, 512, descriptor, true));
 	_blur = std::unique_ptr<BoxBlur>(new BoxBlur(512, 512, false, descriptor));
 	
 	_textures = textureIds;
-	_textures.emplace_back(_blur->textureId());
+	_textures.push_back(_blur->textureId());
 	
 	// Load the shaders
 	_program = Resources::manager().getProgram2D("directional_light");

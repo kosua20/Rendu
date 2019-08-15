@@ -11,7 +11,7 @@ PointLight::PointLight(const glm::vec3& worldPosition, const glm::vec3& color, f
 	_lightPosition = worldPosition;
 }
 
-void PointLight::init(const std::vector<GLuint>& textureIds){
+void PointLight::init(const std::vector<const Texture *>& textureIds){
 	_program = Resources::manager().getProgram("point_light", "object_basic", "point_light");
 	_sphere = Resources::manager().getMesh("light_sphere", Storage::GPU);
 	// Setup the framebuffer.
@@ -20,7 +20,7 @@ void PointLight::init(const std::vector<GLuint>& textureIds){
 	_shadowFramebuffer = std::unique_ptr<FramebufferCube>(new FramebufferCube(512, descriptor, true));
 	
 	_textures = textureIds;
-	_textures.emplace_back(_shadowFramebuffer->textureId());
+	_textures.push_back(_shadowFramebuffer->textureId());
 	// Load the shaders
 	_programDepth = Resources::manager().getProgram("object_layer_depth", "object_layer", "light_shadow_linear", "object_layer");
 	checkGLError();
@@ -54,12 +54,12 @@ void PointLight::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMa
 	// Active screen texture.
 	for(GLuint i = 0;i < _textures.size()-1; ++i){
 		glActiveTexture(GL_TEXTURE0 + i);
-		glBindTexture(GL_TEXTURE_2D, _textures[i]);
+		glBindTexture(GL_TEXTURE_2D, _textures[i]->gpu->id);
 	}
 	// Activate the shadow cubemap.
 	if(_castShadows){
 		glActiveTexture(GLenum(GL_TEXTURE0 + _textures.size()-1));
-		glBindTexture(GL_TEXTURE_CUBE_MAP, _textures[_textures.size()-1]);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, _textures[_textures.size()-1]->gpu->id);
 	}
 	// Select the geometry.
 	GLUtilities::drawMesh(*_sphere);
