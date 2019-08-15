@@ -23,7 +23,7 @@ SpotLight::SpotLight(const glm::vec3& worldPosition, const glm::vec3& worldDirec
 
 void SpotLight::init(const std::vector<const Texture *>& textureIds){
 	// Setup the framebuffer.
-	const Descriptor descriptor = {GL_RG32F, GL_LINEAR, GL_CLAMP_TO_BORDER};
+	const Descriptor descriptor = {GL_RG32F, GL_LINEAR, GL_CLAMP_TO_EDGE};
 	_shadowPass = std::unique_ptr<Framebuffer>(new Framebuffer(512, 512, descriptor, true));
 	_blur = std::unique_ptr<BoxBlur>(new BoxBlur(512, 512, false, descriptor));
 	

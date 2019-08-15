@@ -43,6 +43,10 @@ vec3 positionFromDepth(float depth, vec2 uv){
 	\return the shadowing factor
 */
 float shadow(vec3 lightSpacePosition){
+	// Avoid shadows when falling outside the shadow map.
+	if(any(greaterThan(abs(lightSpacePosition.xy-0.5), vec2(0.5)))){
+		return 1.0;
+	}
 	float probabilityMax = 1.0;
 	// Read first and second moment from shadow map.
 	vec2 moments = textureLod(shadowMap, lightSpacePosition.xy, 0.0).rg;

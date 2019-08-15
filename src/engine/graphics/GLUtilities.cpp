@@ -318,11 +318,6 @@ void GLUtilities::setupTexture(Texture & texture, const Descriptor & descriptor)
 	glTexParameteri(target, GL_TEXTURE_WRAP_R, descriptor.wrapping);
 	glTexParameteri(target, GL_TEXTURE_WRAP_S, descriptor.wrapping);
 	glTexParameteri(target, GL_TEXTURE_WRAP_T, descriptor.wrapping);
-	if(descriptor.wrapping == GL_CLAMP_TO_BORDER){
-		// Setup the border value to one.
-		GLfloat border[] = { 1.0, 1.0, 1.0, 1.0 };
-		glTexParameterfv(target, GL_TEXTURE_BORDER_COLOR, border);
-	}
 	glBindTexture(target, 0);
 	
 	texture.gpu.reset(new GPUTexture());
