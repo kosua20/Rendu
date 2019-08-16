@@ -1,4 +1,5 @@
 #include "graphics/ScreenQuad.hpp"
+#include "graphics/GLUtilities.hpp"
 #include "resources/ResourcesManager.hpp"
 
 
@@ -21,28 +22,19 @@ void ScreenQuad::draw() {
 	glBindVertexArray(0);
 }
 
-void ScreenQuad::draw(const Texture & textureId) {
-	// Active screen texture.
-	glActiveTexture(GL_TEXTURE0 );
-	/// \todo Use bindTexture instead. Or propagate shape on GPU texture.
-	glBindTexture(GL_TEXTURE_2D, textureId.gpu->id);
+void ScreenQuad::draw(const Texture & texture) {
+	GLUtilities::bindTexture(&texture, 0);
 	draw();
 }
 
-void ScreenQuad::draw(const Texture * textureId) {
-	// Active screen texture.
-	glActiveTexture(GL_TEXTURE0 );
-	/// \todo Use bindTexture instead. Or propagate shape on GPU texture.
-	glBindTexture(GL_TEXTURE_2D, textureId->gpu->id);
+void ScreenQuad::draw(const Texture * texture) {
+	GLUtilities::bindTexture(texture, 0);
 	draw();
 }
 
 void ScreenQuad::draw(const std::vector<const Texture*> & textures) {
-	// Active screen textures.
-	/// \todo Use bindTexture instead. Or propagate shape on GPU texture.
 	for(size_t i = 0; i < textures.size(); ++i){
-		glActiveTexture(GL_TEXTURE0 + GLuint(i));
-		glBindTexture(GL_TEXTURE_2D, textures[i]->gpu->id);
+		GLUtilities::bindTexture(textures[i], i);
 	}
 	draw();
 }

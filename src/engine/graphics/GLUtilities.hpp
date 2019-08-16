@@ -84,11 +84,14 @@ public:
 	 */
 	static void drawMesh(const Mesh & mesh);
 	
+	
+	
+	static void bindTexture(const Texture * texture, unsigned int slot);
 	/** Bind a series of textures to some texture slots, in order.
 	 \param textures the infos of the textures to bind
 	 \param startingSlot the optional index of the first binding slot
 	 */
-	static void bindTextures(const std::vector<const Texture*> & textures, int startingSlot = GL_TEXTURE0);
+	static void bindTextures(const std::vector<const Texture*> & textures, unsigned int startingSlot = 0);
 	
 	/** Create a GPU texture with a given layout.
 	 \param texture the texture to setup on the GPU
@@ -103,19 +106,22 @@ public:
 	 */
 	static void uploadTexture(const Texture & texture);
 	
+	static void downloadTexture(Texture & texture);
+	
 	/** Generate a texture mipmaps on the GPU.
 	 \param texture the texture to use
 	 \note This will set the number of levels to 1000.
 	 */
 	static void generateMipMaps(const Texture & texture);
 	
-private:
-	
 	/** Convert a texture shape to an openGL texture format enum.
 	 \param shape the texture shape
 	 \return the corresponding target
 	 */
 	static GLenum targetFromShape(const TextureShape & shape);
+	
+	
+private:
 	
 	/** Read back the currently bound framebuffer to the CPU and save it in the best possible format on disk.
 	 \param type the type of the framebuffer

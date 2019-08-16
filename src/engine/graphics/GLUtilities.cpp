@@ -300,29 +300,30 @@ GLenum GLUtilities::targetFromShape(const TextureShape & shape){
 }
 
 void GLUtilities::setupTexture(Texture & texture, const Descriptor & descriptor){
-	const GLenum target = targetFromShape(texture.shape);
+	
 	if(texture.gpu){
 		texture.gpu->clean();
 	}
 	
+	texture.gpu.reset(new GPUTexture(descriptor, texture.shape));
 	GLuint textureId;
 	glGenTextures(1, &textureId);
+	texture.gpu->id = textureId;
+	
+	const GLenum target = texture.gpu->target;
+	const GLenum wrap = texture.gpu->wrapping;
+	
 	glBindTexture(target, textureId);
 	
 	// Set proper max mipmap level.
 	glTexParameteri(target, GL_TEXTURE_MAX_LEVEL, texture.levels-1);
-	
 	// Texture settings.
-	glTexParameteri(target, GL_TEXTURE_MIN_FILTER, descriptor.filtering);
-	glTexParameteri(target, GL_TEXTURE_MAG_FILTER, descriptor.getMagnificationFilter());
-	glTexParameteri(target, GL_TEXTURE_WRAP_R, descriptor.wrapping);
-	glTexParameteri(target, GL_TEXTURE_WRAP_S, descriptor.wrapping);
-	glTexParameteri(target, GL_TEXTURE_WRAP_T, descriptor.wrapping);
+	glTexParameteri(target, GL_TEXTURE_MIN_FILTER, texture.gpu->minFiltering);
+	glTexParameteri(target, GL_TEXTURE_MAG_FILTER, texture.gpu->magFiltering);
+	glTexParameteri(target, GL_TEXTURE_WRAP_R, wrap);
+	glTexParameteri(target, GL_TEXTURE_WRAP_S, wrap);
+	glTexParameteri(target, GL_TEXTURE_WRAP_T, wrap);
 	glBindTexture(target, 0);
-	
-	texture.gpu.reset(new GPUTexture());
-	texture.gpu->id = textureId;
-	texture.gpu->descriptor = descriptor;
 	
 	// Allocate.
 	GLUtilities::allocateTexture(texture);
@@ -335,10 +336,10 @@ void GLUtilities::allocateTexture(const Texture & texture){
 		return;
 	}
 	
-	const GLenum target = GLUtilities::targetFromShape(texture.shape);
-	const GLenum typeFormat = texture.gpu->descriptor.typedFormat;
-	GLenum type, format;
-	texture.gpu->descriptor.getTypeAndFormat(type, format);
+	const GLenum target = texture.gpu->target;
+	const GLenum typeFormat = texture.gpu->typedFormat;
+	const GLenum type = texture.gpu->type;
+	const GLenum format = texture.gpu->format;
 	glBindTexture(target, texture.gpu->id);
 	
 	for(size_t mid = 0; mid < texture.levels; ++mid){
@@ -405,10 +406,11 @@ void GLUtilities::uploadTexture(const Texture & texture){
 		return;
 	}
 	
-	const GLenum target = GLUtilities::targetFromShape(texture.shape);
+	const GLenum target = texture.gpu->target;
+	const GLenum destType = texture.gpu->type;
+	const GLenum destFormat = texture.gpu->format;
 	// Sanity check the texture destination format.
-	GLenum destType, destFormat;
-	const unsigned int destChannels = texture.gpu->descriptor.getTypeAndFormat(destType, destFormat);
+	const unsigned int destChannels = texture.gpu->channels;
 	if(destChannels != texture.images[0].components){
 		Log::Error() << Log::OpenGL << "Not enough values in source data for texture upload." << std::endl;
 		return;
@@ -485,6 +487,51 @@ void GLUtilities::uploadTexture(const Texture & texture){
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 }
 
+void GLUtilities::downloadTexture(Texture & texture){
+	if(!texture.gpu){
+		Log::Error() << Log::OpenGL << "Uninitialized GPU texture." << std::endl;
+		return;
+	}
+	if(texture.shape != TextureShape::D2 && texture.shape != TextureShape::Cube){
+		Log::Error() << Log::OpenGL << "Unsupported download format." << std::endl;
+		return;
+	}
+	if(!texture.images.empty()){
+		Log::Warning() << Log::OpenGL << "Texture already contain CPU data, will be erased." << std::endl;
+		texture.images.clear();
+	}
+	
+	const GLenum target = texture.gpu->target;
+	const GLenum type = GL_FLOAT;
+	const GLenum format = texture.gpu->format;
+	const unsigned int channels = texture.gpu->channels;
+	
+	// We enforce float type, we can use 4 alignment.
+	glPixelStorei(GL_PACK_ALIGNMENT, 4);
+	glBindTexture(target, texture.gpu->id);
+	
+	// For each mip level.
+	for(size_t mid = 0; mid < texture.levels; ++ mid){
+		const GLsizei w = GLsizei(texture.width/std::pow(2, mid));
+		const GLsizei h = GLsizei(texture.height/std::pow(2, mid));
+		const GLint mip = GLint(mid);
+		
+		if(texture.shape == TextureShape::D2){
+			texture.images.emplace_back(w, h, channels);
+			Image & image = texture.images.back();
+			glGetTexImage(GL_TEXTURE_2D, mip, format, type, &image.pixels[0]);
+			
+		} else if (texture.shape == TextureShape::Cube){
+			for(size_t lid = 0; lid < texture.depth; ++lid){
+				texture.images.emplace_back(w, h, channels);
+				Image & image = texture.images.back();
+				glGetTexImage(GL_TEXTURE_CUBE_MAP_POSITIVE_X + lid, mip, format, type, &image.pixels[0]);
+			}
+			
+		}
+	}
+	glBindTexture(target, 0);
+}
 
 void GLUtilities::setupBuffers(Mesh & mesh){
 	if(mesh.gpu){
@@ -578,9 +625,8 @@ void GLUtilities::saveFramebuffer(const Framebuffer & framebuffer, const unsigne
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentBoundFB);
 	
 	framebuffer.bind();
-	GLenum type, format;
-	const unsigned int components = framebuffer.textureId()->gpu->descriptor.getTypeAndFormat(type, format);
-	GLUtilities::savePixels(type, format, width, height, components, path, flip, ignoreAlpha);
+	const std::unique_ptr<GPUTexture> & gpu = framebuffer.textureId()->gpu;
+	GLUtilities::savePixels(gpu->type, gpu->format, width, height, gpu->channels, path, flip, ignoreAlpha);
 	
 	glBindFramebuffer(GL_FRAMEBUFFER, (GLuint)currentBoundFB);
 }
@@ -632,7 +678,7 @@ void GLUtilities::generateMipMaps(const Texture & texture){
 		Log::Error() << Log::OpenGL << "Uninitialized GPU texture." << std::endl;
 		return;
 	}
-	const GLenum target = GLUtilities::targetFromShape(texture.shape);
+	const GLenum target = texture.gpu->target;
 	glBindTexture(target, texture.gpu->id);
 	glTexParameteri(target, GL_TEXTURE_MAX_LEVEL, 1000);
 	glGenerateMipmap(target);
@@ -645,11 +691,16 @@ void GLUtilities::drawMesh(const Mesh & mesh) {
 	glBindVertexArray(0);
 }
 
-void GLUtilities::bindTextures(const std::vector<const Texture*> & textures, int startingSlot){
+void GLUtilities::bindTexture(const Texture * texture, unsigned int slot){
+	glActiveTexture(GL_TEXTURE0 + slot);
+	glBindTexture(texture->gpu->target, texture->gpu->id);
+}
+
+
+void GLUtilities::bindTextures(const std::vector<const Texture*> & textures, unsigned int startingSlot){
 	for (unsigned int i = 0; i < textures.size(); ++i){
 		const Texture * infos = textures[i];
-		glActiveTexture(startingSlot + i);
-		const GLenum target = GLUtilities::targetFromShape(infos->shape);
-		glBindTexture(target, infos->gpu->id);
+		glActiveTexture(GL_TEXTURE0 + startingSlot + i);
+		glBindTexture(infos->gpu->target, infos->gpu->id);
 	}
 }

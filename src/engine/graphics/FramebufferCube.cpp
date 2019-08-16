@@ -7,9 +7,6 @@ FramebufferCube::FramebufferCube(unsigned int side, const Descriptor & descripto
 	_side = side;
 	_useDepth = depthBuffer;
 	
-	GLenum type, format;
-	descriptor.getTypeAndFormat(type, format);
-	
 	// Create a framebuffer.
 	glGenFramebuffers(1, &_id);
 	glBindFramebuffer(GL_FRAMEBUFFER, _id);
@@ -32,7 +29,7 @@ FramebufferCube::FramebufferCube(unsigned int side, const Descriptor & descripto
 		_idRenderbuffer.depth = 6;
 		_idRenderbuffer.levels = 1;
 		_idRenderbuffer.shape = TextureShape::Cube;
-		GLUtilities::setupTexture(_idRenderbuffer, {GL_DEPTH_COMPONENT32F, GL_NEAREST, GL_CLAMP_TO_EDGE});
+		GLUtilities::setupTexture(_idRenderbuffer, {DEPTH_COMPONENT32F, Filter::Nearest, Wrap::Clamp});
 		
 		glBindTexture(GL_TEXTURE_CUBE_MAP, _idRenderbuffer.gpu->id);
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, _idRenderbuffer.gpu->id, 0);

@@ -21,10 +21,10 @@ public:
 	 Will use linear filtering and edge clamping.
 	 \param width the width of the framebuffer
 	 \param height the height of the framebuffer
-	 \param typedFormat the precise typed format, combining format and type (GL_RGB8,...) to use
+	 \param typedFormat the precise typed format, combining format and type (RGB8,...) to use
 	 \param depthBuffer should the framebuffer contain a depth buffer to properly handle 3D geometry
 	 */
-	Framebuffer(unsigned int width, unsigned int height, const GLenum typedFormat, bool depthBuffer);
+	Framebuffer(unsigned int width, unsigned int height, const Layout typedFormat, bool depthBuffer);
 	
 	/** Setup the framebuffer (attachments, renderbuffer, depth buffer, textures IDs,...)
 	 \param width the width of the framebuffer
@@ -95,7 +95,7 @@ public:
 	 Query the 2D texture or renderbuffer backing the depth attachment.
 	 \return the depth texture/renderbuffer
 	 */
-	const Texture * depthId() const { return (_depthUse == NONE ? nullptr : &_idDepth); }
+	const Texture * depthId() const { return (_depthUse == Depth::NONE ? nullptr : &_idDepth); }
 	
 	/**
 	 Query the framebuffer width.
@@ -129,10 +129,10 @@ private:
 	Texture _idDepth; ///< The depth renderbuffer.
 	
 	/// \brief Type of depth storage structure used.
-	enum DepthBuffer {
+	enum class Depth {
 		NONE, RENDERBUFFER, TEXTURE
 	};
-	DepthBuffer _depthUse = NONE; ///< The type of depth backing the framebuffer.
+	Depth _depthUse = Depth::NONE; ///< The type of depth backing the framebuffer.
 	
 	static Framebuffer * defaultFramebuffer; ///< Dummy backbuffer framebuffer.
 };

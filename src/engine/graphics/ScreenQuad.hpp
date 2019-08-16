@@ -19,14 +19,14 @@ public:
 	static void draw();
 	
 	/** Draw a full screen quad.
-	 \param textureId the texture to pass to the shader.
+	 \param texture the texture to pass to the shader.
 	 */
-	static void draw(const Texture & textureId);
+	static void draw(const Texture & texture);
 	
 	/** Draw a full screen quad.
-	 \param textureId the texture to pass to the shader.
+	 \param texture the texture to pass to the shader.
 	 */
-	static void draw(const Texture * textureId);
+	static void draw(const Texture * texture);
 	
 	/** Draw a full screen quad.
 	 \param textureIds the textures to pass to the shader.

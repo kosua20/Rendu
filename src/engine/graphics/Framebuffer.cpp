@@ -6,7 +6,7 @@ Framebuffer::Framebuffer(){
 	
 }
 
-Framebuffer::Framebuffer(unsigned int width, unsigned int height, const GLenum typedFormat, bool depthBuffer) : Framebuffer(width, height, {Descriptor(typedFormat, GL_LINEAR_MIPMAP_NEAREST, GL_CLAMP_TO_EDGE)}, depthBuffer) {
+Framebuffer::Framebuffer(unsigned int width, unsigned int height, const Layout typedFormat, bool depthBuffer) : Framebuffer(width, height, { Descriptor(typedFormat, Filter::LinearMipNearest, Wrap::Clamp) }, depthBuffer) {
 	
 }
 
@@ -18,7 +18,7 @@ Framebuffer::Framebuffer(unsigned int width, unsigned int height, const std::vec
 	
 	_width = width;
 	_height = height;
-	_depthUse = NONE;
+	_depthUse = Depth::NONE;
 	
 	// Create a framebuffer.
 	glGenFramebuffers(1, &_id);
@@ -27,11 +27,13 @@ Framebuffer::Framebuffer(unsigned int width, unsigned int height, const std::vec
 	for(size_t i = 0; i < descriptors.size(); ++i){
 		// Create the color texture to store the result.
 		const auto & descriptor = descriptors[i];
-		GLuint type, format;
-		descriptor.getTypeAndFormat(type, format);
 		
-		if(format == GL_DEPTH_COMPONENT || format == GL_DEPTH_STENCIL){
-			_depthUse = TEXTURE;
+		const Layout & format = descriptor.typedFormat();
+		const bool isDepthComp = format == DEPTH_COMPONENT16 || format == DEPTH_COMPONENT24 || format == DEPTH_COMPONENT32F;
+		const bool isDepthStencilComp = format == DEPTH24_STENCIL8 || format == DEPTH32F_STENCIL8;
+		
+		if(isDepthComp || isDepthStencilComp){
+			_depthUse = Depth::TEXTURE;
 			_idDepth.width = _width;
 			_idDepth.height = _height;
 			_idDepth.depth = 1;
@@ -41,7 +43,7 @@ Framebuffer::Framebuffer(unsigned int width, unsigned int height, const std::vec
 			
 			// Link the texture to the depth attachment of the framebuffer.
 			glBindTexture(GL_TEXTURE_2D, _idDepth.gpu->id);
-			glFramebufferTexture2D(GL_FRAMEBUFFER, (format == GL_DEPTH_STENCIL ? GL_DEPTH_STENCIL_ATTACHMENT : GL_DEPTH_ATTACHMENT), GL_TEXTURE_2D, _idDepth.gpu->id, 0);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, (isDepthStencilComp ? GL_DEPTH_STENCIL_ATTACHMENT : GL_DEPTH_ATTACHMENT), GL_TEXTURE_2D, _idDepth.gpu->id, 0);
 			glBindTexture(GL_TEXTURE_2D, 0);
 			
 		} else {
@@ -64,12 +66,12 @@ Framebuffer::Framebuffer(unsigned int width, unsigned int height, const std::vec
 	}
 	
 	// If the depth buffer has not been setup yet but we require it, use a renderbuffer.
-	if(_depthUse == NONE && depthBuffer){
+	if(_depthUse == Depth::NONE && depthBuffer){
 		_idDepth.width = _width;
 		_idDepth.height = _height;
 		_idDepth.levels = 1;
 		_idDepth.shape = TextureShape::D2;
-		_idDepth.gpu.reset(new GPUTexture());
+		_idDepth.gpu.reset(new GPUTexture(Descriptor(), _idDepth.shape));
 		// Create the renderbuffer (depth buffer).
 		glGenRenderbuffers(1, &_idDepth.gpu->id);
 		glBindRenderbuffer(GL_RENDERBUFFER, _idDepth.gpu->id);
@@ -77,7 +79,7 @@ Framebuffer::Framebuffer(unsigned int width, unsigned int height, const std::vec
 		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32F, (GLsizei)_width, (GLsizei)_height);
 		// Link the renderbuffer to the framebuffer.
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _idDepth.gpu->id);
-		_depthUse = RENDERBUFFER;
+		_depthUse = Depth::RENDERBUFFER;
 	}
 	
 	//Register which color attachments to draw to.
@@ -114,14 +116,14 @@ void Framebuffer::resize(unsigned int width, unsigned int height){
 	_height = height;
 	
 	// Resize the renderbuffer.
-	if (_depthUse == RENDERBUFFER) {
+	if (_depthUse == Depth::RENDERBUFFER) {
 		_idDepth.width = _width;
 		_idDepth.height = _height;
 		glBindRenderbuffer(GL_RENDERBUFFER, _idDepth.gpu->id);
 		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32F, (GLsizei)_width, (GLsizei)_height);
 		glBindRenderbuffer(GL_RENDERBUFFER, 0);
 		
-	} else if(_depthUse == TEXTURE){
+	} else if(_depthUse == Depth::TEXTURE){
 		_idDepth.width = _width;
 		_idDepth.height = _height;
 		GLUtilities::allocateTexture(_idDepth);
@@ -141,9 +143,9 @@ void Framebuffer::resize(glm::vec2 size){
 }
 
 void Framebuffer::clean() {
-	if (_depthUse == RENDERBUFFER) {
+	if (_depthUse == Depth::RENDERBUFFER) {
 		glDeleteRenderbuffers(1, &_idDepth.gpu->id);
-	} else if(_depthUse == TEXTURE){
+	} else if(_depthUse == Depth::TEXTURE){
 		_idDepth.clean();
 	}
 	for(Texture & idColor : _idColors){
@@ -162,8 +164,10 @@ const Framebuffer & Framebuffer::backbuffer(){
 		defaultFramebuffer->_idColors.emplace_back();
 		// We don't really need to allocate the texture, just setup its descriptor.
 		Texture & tex = defaultFramebuffer->_idColors.back();
-		tex.gpu.reset(new GPUTexture());
-		tex.gpu->descriptor  = Descriptor(GL_RGBA8, GL_NEAREST, GL_CLAMP_TO_EDGE);
+		tex.shape = TextureShape::D2;
+		tex.levels = 1;
+		tex.depth = 1;
+		tex.gpu.reset(new GPUTexture(Descriptor(RGBA8, Filter::Nearest, Wrap::Clamp), tex.shape));
 	}
 	return *defaultFramebuffer;
 }
