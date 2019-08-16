@@ -24,7 +24,7 @@ BoxBlur::BoxBlur(unsigned int width, unsigned int height, bool approximate, cons
 void BoxBlur::process(const Texture * textureId){
 	_finalFramebuffer->bind();
 	_finalFramebuffer->setViewport();
-	glClear(GL_COLOR_BUFFER_BIT);
+	GLUtilities::clearColor(glm::vec4(0.0f));
 	_blurProgram->use();
 	ScreenQuad::draw(textureId);
 	_finalFramebuffer->unbind();
@@ -45,7 +45,6 @@ void BoxBlur::resize(unsigned int width, unsigned int height){
 void BoxBlur::clear(){
 	_finalFramebuffer->bind();
 	_finalFramebuffer->setViewport();
-	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
+	GLUtilities::clearColor(glm::vec4(1.0f));
 	_finalFramebuffer->unbind();
 }

@@ -50,7 +50,7 @@ void FramebufferCube::bind() const {
 }
 
 void FramebufferCube::setViewport() const {
-	glViewport(0, 0, (GLsizei)_side, (GLsizei)_side);
+	GLUtilities::setViewport(0, 0, int(_side), int(_side));
 }
 
 void FramebufferCube::unbind() const {

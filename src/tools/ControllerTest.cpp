@@ -4,6 +4,7 @@
 #include "resources/ResourcesManager.hpp"
 #include "input/controller/RawController.hpp"
 #include "input/controller/GamepadController.hpp"
+#include "graphics/GLUtilities.hpp"
 #include "Common.hpp"
 
 /**
@@ -290,10 +291,9 @@ int main(int argc, char** argv) {
 		System::GUI::beginFrame();
 		
 		// Render nothing.
-		const glm::vec2 screenSize = Input::manager().size();
-		glViewport(0, 0, (GLsizei)screenSize[0], (GLsizei)screenSize[1]);
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		const glm::ivec2 screenSize(Input::manager().size());
+		GLUtilities::setViewport(0, 0, screenSize[0], screenSize[1]);
+		GLUtilities::clearColor({0.0f, 0.0f, 0.0f, 1.0f});
 		
 		// Set a fullscreen fixed window.
 		ImGui::SetNextWindowPos(ImVec2(0,0));

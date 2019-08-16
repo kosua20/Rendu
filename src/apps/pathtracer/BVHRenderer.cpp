@@ -59,18 +59,17 @@ void BVHRenderer::setScene(std::shared_ptr<Scene> scene){
 }
 
 void BVHRenderer::draw() {
-	glClearColor(0.2f,0.2f,0.2f,1.0f);
 	
 	// If no scene, just clear.
 	if(!_scene){
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		GLUtilities::clearColorAndDepth({0.2f, 0.2f, 0.2f, 1.0f}, 1.0f);
 		return;
 	}
 	
 	// Directly render the result texture without drawing the scene.
 	if(_showRender){
 		glEnable(GL_FRAMEBUFFER_SRGB);
-		glViewport(0, 0, GLsizei(_config.screenResolution[0]), GLsizei(_config.screenResolution[1]));
+		GLUtilities::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 		_passthrough->use();
 		_passthrough->uniform("flip", 1);
 		ScreenQuad::draw(_renderTex);
@@ -82,7 +81,7 @@ void BVHRenderer::draw() {
 	glEnable(GL_DEPTH_TEST);
 	_sceneFramebuffer->bind();
 	_sceneFramebuffer->setViewport();
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	GLUtilities::clearColorAndDepth(glm::vec4(0.0f), 1.0f);
 	glDisable(GL_CULL_FACE);
 	
 	const glm::mat4 & view = _userCamera.view();
@@ -127,7 +126,7 @@ void BVHRenderer::draw() {
 	
 	// We now render a full screen quad in the default framebuffer, using sRGB space.
 	glEnable(GL_FRAMEBUFFER_SRGB);
-	glViewport(0, 0, GLsizei(_config.screenResolution[0]), GLsizei(_config.screenResolution[1]));
+	GLUtilities::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 	_passthrough->use();
 	_passthrough->uniform("flip", 0);
 	ScreenQuad::draw(_sceneFramebuffer->textureId());

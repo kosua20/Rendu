@@ -47,9 +47,8 @@ void GameRenderer::draw(const Player & player){
 	// --- Scene pass ------
 	_sceneFramebuffer->bind();
 	_sceneFramebuffer->setViewport();
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	GLUtilities::clearColorAndDepth(glm::vec4(0.0f), 1.0f);
 	glEnable(GL_DEPTH_TEST);
-	glClear(GL_DEPTH_BUFFER_BIT);
 	drawScene(player);
 	_sceneFramebuffer->unbind();
 	glDisable(GL_DEPTH_TEST);
@@ -73,7 +72,7 @@ void GameRenderer::draw(const Player & player){
 	_fxaaFramebuffer->unbind();
 	
 	// --- Final pass -------
-	glViewport(0, 0, GLsizei(_config.screenResolution[0]), GLsizei(_config.screenResolution[1]));
+	GLUtilities::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 	glEnable(GL_FRAMEBUFFER_SRGB);
 	_finalProgram->use();
 	ScreenQuad::draw(_fxaaFramebuffer->textureId());

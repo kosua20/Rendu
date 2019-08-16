@@ -730,3 +730,23 @@ std::vector<std::string> GLUtilities::deviceExtensions(){
 	}
 	return extensions;
 }
+
+void GLUtilities::setViewport(int x, int y, int w, int h){
+	glViewport(GLsizei(x), GLsizei(y), GLsizei(w), GLsizei(h));
+}
+
+void GLUtilities::clearColor(const glm::vec4 & color){
+	glClearColor(color[0], color[1], color[2], color[3]);
+	glClear(GL_COLOR_BUFFER_BIT);
+}
+
+void GLUtilities::clearDepth(float depth){
+	glClearDepth(depth);
+	glClear(GL_DEPTH_BUFFER_BIT);
+}
+
+void GLUtilities::clearColorAndDepth(const glm::vec4 & color, float depth){
+	glClearColor(color[0], color[1], color[2], color[3]);
+	glClearDepth(depth);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}

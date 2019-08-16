@@ -101,7 +101,7 @@ void DeferredRenderer::renderScene(){
 	_gbuffer->setViewport();
 	
 	// Clear the depth buffer (we know we will draw everywhere, no need to clear color.
-	glClear(GL_DEPTH_BUFFER_BIT);
+	GLUtilities::clearDepth(1.0f);
 	
 	const glm::mat4 & view = _userCamera.view();
 	const glm::mat4 & proj = _userCamera.projection();
@@ -272,8 +272,7 @@ const Texture * DeferredRenderer::renderPostprocess(const glm::vec2 & invRenderS
 void DeferredRenderer::draw() {
 	
 	if(!_scene){
-		glClearColor(0.2f,0.2f,0.2f,1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		GLUtilities::clearColorAndDepth({0.2f, 0.2f, 0.2f, 1.0f}, 1.0f);
 		return;
 	}
 	const glm::vec2 invRenderSize = 1.0f / _renderResolution;
@@ -313,7 +312,7 @@ void DeferredRenderer::draw() {
 	// --- Final pass -------
 	// We now render a full screen quad in the default framebuffer, using sRGB space.
 	glEnable(GL_FRAMEBUFFER_SRGB);
-	glViewport(0, 0, GLsizei(_config.screenResolution[0]), GLsizei(_config.screenResolution[1]));
+	GLUtilities::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 	_finalProgram->use();
 	ScreenQuad::draw(currentResult);
 	glDisable(GL_FRAMEBUFFER_SRGB);

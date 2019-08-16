@@ -81,8 +81,8 @@ void SpotLight::drawShadow(const std::vector<Object> & objects) const {
 	}
 	_shadowPass->bind();
 	_shadowPass->setViewport();
-	glClearColor(1.0f,1.0f,1.0f,0.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	GLUtilities::clearColorAndDepth(glm::vec4(1.0f), 1.0f);
+	
 	glEnable(GL_CULL_FACE);
 	
 	_programDepth->use();

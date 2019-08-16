@@ -42,8 +42,7 @@ void FilteringRenderer::draw() {
 		glEnable(GL_DEPTH_TEST);
 		_sceneBuffer->bind();
 		_sceneBuffer->setViewport();
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		GLUtilities::clearColorAndDepth({0.0f, 0.0f, 0.0f, 1.0f}, 1.0f);
 		const glm::mat4 MVP = _userCamera.projection() * _userCamera.view();
 		_sceneShader->use();
 		_sceneShader->uniform("mvp", MVP);
@@ -58,7 +57,7 @@ void FilteringRenderer::draw() {
 		if(_image.width > 0){
 			ScreenQuad::draw(_image);
 		} else {
-			glClear(GL_COLOR_BUFFER_BIT);
+			GLUtilities::clearColor({0.0f, 0.0f, 0.0f, 1.0f});
 		}
 		_sceneBuffer->unbind();
 		
@@ -101,8 +100,8 @@ void FilteringRenderer::draw() {
 	}
 	
 	// Render the output on screen.
-	const glm::vec2 screenSize = Input::manager().size();
-	glViewport(0, 0, GLsizei(screenSize[0]), GLsizei(screenSize[1]));
+	const glm::ivec2 screenSize(Input::manager().size());
+	GLUtilities::setViewport(0, 0, screenSize[0], screenSize[1]);
 	_passthrough->use();
 	ScreenQuad::draw(finalTexID);
 }

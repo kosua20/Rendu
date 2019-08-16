@@ -4,6 +4,7 @@
 #include "resources/ResourcesManager.hpp"
 #include "graphics/ScreenQuad.hpp"
 #include "graphics/Framebuffer.hpp"
+#include "graphics/GLUtilities.hpp"
 #include "system/System.hpp"
 #include "system/Random.hpp"
 #include "system/Config.hpp"
@@ -133,8 +134,7 @@ int main(int argc, char** argv) {
 		glDisable(GL_DEPTH_TEST);
 		atmosphereFramebuffer->bind();
 		atmosphereFramebuffer->setViewport();
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		GLUtilities::clearColor({0.0f, 0.0f, 0.0f, 1.0f});
 		
 		atmosphereProgram->use();
 		const glm::mat4 camToWorldNoT = glm::mat4(glm::mat3(camToWorld));
@@ -146,7 +146,7 @@ int main(int argc, char** argv) {
 		atmosphereFramebuffer->unbind();
 		
 		// Tonemapping and final screen.
-		glViewport(0, 0, (GLsizei)screenSize[0], (GLsizei)screenSize[1]);
+		GLUtilities::setViewport(0, 0, int(screenSize[0]), int(screenSize[1]));
 		glEnable(GL_FRAMEBUFFER_SRGB);
 		tonemapProgram->use();
 		ScreenQuad::draw(atmosphereFramebuffer->textureId());

@@ -52,7 +52,7 @@ void PointLight::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMa
 	_program->uniform("castShadow", _castShadows);
 	
 	// Active screen texture.
-	for(GLuint i = 0;i < _textures.size()-1; ++i){
+	for(int i = 0; i < int(_textures.size())-1; ++i){
 		GLUtilities::bindTexture(_textures[i], i);
 	}
 	// Activate the shadow cubemap.
@@ -74,8 +74,7 @@ void PointLight::drawShadow(const std::vector<Object> & objects) const {
 	
 	_shadowFramebuffer->bind();
 	_shadowFramebuffer->setViewport();
-	glClearColor(1.0f,1.0f,1.0f,1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	GLUtilities::clearColorAndDepth(glm::vec4(1.0f), 1.0f);
 	glEnable(GL_CULL_FACE);
 	
 	_programDepth->use();

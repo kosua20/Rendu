@@ -94,12 +94,10 @@ int main(int argc, char** argv) {
 			mousePrev = mouseNew;
 		}
 		
-		// Screen infos.
-		const glm::vec2 screenSize = Input::manager().size();
-		glViewport(0, 0, (GLsizei)screenSize[0], (GLsizei)screenSize[1]);
 		// Render the background.
-		glClearColor(bgColor[0], bgColor[1], bgColor[2], 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		const glm::vec2 screenSize = Input::manager().size();
+		GLUtilities::setViewport(0, 0, int(screenSize[0]), int(screenSize[1]));
+		GLUtilities::clearColorAndDepth(glm::vec4(bgColor, 1.0f), 1.0f);
 		
 		// Render the image if non empty.
 		bool hasImage = imageInfos.width > 0 && imageInfos.height > 0;

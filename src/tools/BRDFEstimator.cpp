@@ -235,15 +235,14 @@ void computeCubemapConvolution(const Texture & cubemapInfos, int levelsCount, in
 			// Use the cubemap texture as a backing texture for the framebuffer.
 			/// \todo Find another way of doing this without spilling OpenGL code.
 			glBindTexture(GL_TEXTURE_CUBE_MAP, levelInfos.gpu->id);
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X+i), levelInfos.gpu->id, 0);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X+i, levelInfos.gpu->id, 0);
 			glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 			
 			// Clear texture slice.
-			glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
-			programCubemap->use();
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			GLUtilities::clearColorAndDepth({0.0f, 0.0f, 0.0f, 1.0f}, 1.0f);
+			GLUtilities::setViewport(0,0,w,h);
 			glDisable(GL_DEPTH_TEST);
-			glViewport(0,0,w,h);
+			programCubemap->use();
 			// Pass roughness parameters.
 			programCubemap->uniform("mimapRoughness", roughness);
 			programCubemap->uniform("mvp", MVPs[i]);
@@ -295,9 +294,8 @@ void computeAndExportLookupTable(const int outputSide, const std::string & outpu
 	const auto bakingFramebuffer = std::make_shared<Framebuffer>(outputSide, outputSide, Layout::RG32F, false);
 	const auto brdfProgram = Resources::manager().getProgram2D("brdf_sampler");
 	bakingFramebuffer->bind();
-	glViewport(0,0,bakingFramebuffer->width(), bakingFramebuffer->height());
-	glClearColor(0.0f,0.0f,0.0f,0.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
+	GLUtilities::setViewport(0,0, int(bakingFramebuffer->width()), int(bakingFramebuffer->height()));
+	GLUtilities::clearColor(glm::vec4(0.0f));
 	glDisable(GL_DEPTH_TEST);
 	brdfProgram->use();
 	ScreenQuad::draw();
@@ -483,9 +481,8 @@ int main(int argc, char** argv) {
 		const glm::vec2 screenSize = Input::manager().size();
 		const glm::mat4 mvp = camera.projection() * camera.view();
 		
-		glClearColor(0.5, 0.5f, 0.5f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glViewport(0,0, GLsizei(screenSize[0]), GLsizei(screenSize[1]));
+		GLUtilities::setViewport(0,0, int(screenSize[0]), int(screenSize[1]));
+		GLUtilities::clearColorAndDepth({0.5f, 0.5f, 0.5f, 1.0f}, 1.0f);
 		
 		// Render main cubemap.
 		if(cubemapInfos.gpu){
@@ -505,10 +502,10 @@ int main(int argc, char** argv) {
 		}
 		
 		// Render reference cubemap in the bottom right corner.
-		glClear(GL_DEPTH_BUFFER_BIT);
+		GLUtilities::clearDepth(1.0f);
 		const float gizmoScale = 0.2f;
 		const glm::vec2 gizmoSize = gizmoScale * screenSize;
-		glViewport(0, 0, GLsizei(gizmoSize[0]), GLsizei(gizmoSize[1]));
+		GLUtilities::setViewport(0, 0, int(gizmoSize[0]), int(gizmoSize[1]));
 		glEnable(GL_DEPTH_TEST);
 		program->use();
 		glDisable(GL_CULL_FACE);
@@ -516,7 +513,7 @@ int main(int argc, char** argv) {
 		program->uniform("mvp", mvp);
 		GLUtilities::drawMesh(*mesh);
 		glDisable(GL_DEPTH_TEST);
-		glViewport(0,0, GLsizei(screenSize[0]), GLsizei(screenSize[1]));
+		GLUtilities::setViewport(0,0, int(screenSize[0]), int(screenSize[1]));
 		
 		System::GUI::endFrame();
 		checkGLError();

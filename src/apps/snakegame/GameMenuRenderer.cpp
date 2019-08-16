@@ -42,8 +42,8 @@ void GameMenuRenderer::draw(const GameMenu & menu){
 	Framebuffer::backbuffer().bind();
 	
 	glEnable(GL_FRAMEBUFFER_SRGB);
-	glViewport(0, 0, GLsizei(_config.screenResolution[0]), GLsizei(_config.screenResolution[1]));
-	glClear(GL_DEPTH_BUFFER_BIT);
+	GLUtilities::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
+	GLUtilities::clearDepth(1.0f);
 	
 	// Background image.
 	if(menu.backgroundImage){

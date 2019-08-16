@@ -23,11 +23,10 @@ void GaussianBlur::process(const Texture * textureId) {
 		return;
 	}
 	
-	glClearColor(0.0f,0.0f,0.0f,0.0f);
 	// First, copy the input texture to the first framebuffer.
 	_frameBuffers[0]->bind();
 	_frameBuffers[0]->setViewport();
-	glClear(GL_COLOR_BUFFER_BIT);
+	GLUtilities::clearColor(glm::vec4(0.0f));
 	_passthroughProgram->use();
 	ScreenQuad::draw(textureId);
 	_frameBuffers[0]->unbind();
@@ -37,8 +36,7 @@ void GaussianBlur::process(const Texture * textureId) {
 	for(size_t d = 1; d < _frameBuffers.size(); ++d){
 		_frameBuffers[d]->bind();
 		_frameBuffers[d]->setViewport();
-		glClear(GL_COLOR_BUFFER_BIT);
-		
+		GLUtilities::clearColor(glm::vec4(0.0f));
 		ScreenQuad::draw(_frameBuffers[d-1]->textureId());
 		_frameBuffers[d]->unbind();
 	}
@@ -48,7 +46,7 @@ void GaussianBlur::process(const Texture * textureId) {
 	for(int d = int(_frameBuffers.size())-2; d >= 0; --d){
 		_frameBuffers[d]->bind();
 		_frameBuffers[d]->setViewport();
-		glClear(GL_COLOR_BUFFER_BIT);
+		GLUtilities::clearColor(glm::vec4(0.0f));
 		ScreenQuad::draw(_frameBuffers[d+1]->textureId());
 		_frameBuffers[d]->unbind();
 	}

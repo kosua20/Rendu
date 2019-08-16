@@ -64,8 +64,7 @@ void PaintingTool::draw() {
 	// Clear if needed.
 	if(_shoudClear){
 		_shoudClear = false;
-		glClearColor(_bgColor[0], _bgColor[1], _bgColor[2], 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		GLUtilities::clearColor(glm::vec4(_bgColor, 1.0f));
 	}
 	
 	// Draw brush if needed.
@@ -183,8 +182,7 @@ void PaintingTool::resize(unsigned int width, unsigned int height){
 	_canvas->resize(width, height);
 	// Clean up the canvas.
 	_canvas->bind();
-	glClearColor(_bgColor[0], _bgColor[1], _bgColor[2], 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
+	GLUtilities::clearColor(glm::vec4(_bgColor, 1.0f));
 	_canvas->unbind();
 	
 	// Copy back the drawing.

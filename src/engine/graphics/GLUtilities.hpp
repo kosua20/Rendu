@@ -124,6 +124,14 @@ public:
 	
 	static std::vector<std::string> deviceExtensions();
 	
+	static void setViewport(int x, int y, int w, int h);
+	
+	static void clearColorAndDepth(const glm::vec4 & color, float depth);
+	
+	static void clearColor(const glm::vec4 & color);
+	
+	static void clearDepth(float depth);
+	
 private:
 	
 	/** Read back the currently bound framebuffer to the CPU and save it in the best possible format on disk.

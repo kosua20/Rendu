@@ -239,6 +239,7 @@ public:
 	/**
 	 Query the current window size.
 	 \return the size of the window, in pixels
+	 \todo Probably return an ivec2.
 	 */
 	glm::vec2 size() { return glm::vec2(_width, _height); };
 	

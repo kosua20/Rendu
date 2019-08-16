@@ -113,9 +113,8 @@ int main(int argc, char** argv) {
 		// Render.
 		const glm::vec2 screenSize = Input::manager().size();
 		const glm::mat4 MVP = camera.projection() * camera.view();
-		glViewport(0, 0, (GLsizei)screenSize[0], (GLsizei)screenSize[1]);
-		glClearColor(0.2f, 0.3f, 0.25f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		GLUtilities::setViewport(0, 0, int(screenSize[0]), int(screenSize[1]));
+		GLUtilities::clearColorAndDepth({0.2f, 0.3f, 0.25f, 1.0f}, 1.0f);
 		program->use();
 		program->uniform("mvp", MVP);
 		GLUtilities::drawMesh(*mesh);

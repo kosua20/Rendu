@@ -25,10 +25,10 @@ void LaplacianIntegrator::process(const Texture * textureId) {
 	
 	// First, compute the laplacian of each color channel (adding a 1px zero margin).
 	glDisable(GL_DEPTH_TEST);
-	glClearColor(0.0f,0.0f,0.0f,0.0f);
+	
 	_preproc->bind();
 	_preproc->setViewport();
-	glClear(GL_COLOR_BUFFER_BIT);
+	GLUtilities::clearColor(glm::vec4(0.0f));
 	_prepare->use();
 	_prepare->uniform("scale", _scale);
 	ScreenQuad::draw(textureId);

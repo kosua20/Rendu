@@ -102,9 +102,8 @@ void Framebuffer::bind(Mode mode) const {
 	glBindFramebuffer(mode == Mode::READ ? GL_READ_FRAMEBUFFER : GL_DRAW_FRAMEBUFFER, _id);
 }
 
-void Framebuffer::setViewport() const
-{
-	glViewport(0, 0, (GLsizei)_width, (GLsizei)_height);
+void Framebuffer::setViewport() const{
+	GLUtilities::setViewport(0, 0, int(_width), int(_height));
 }
 
 void Framebuffer::unbind() const {
