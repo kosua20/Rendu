@@ -5,8 +5,8 @@
 
 SSAO::SSAO(unsigned int width, unsigned int height, float radius) {
 	_radius = radius;
-	_ssaoFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, R8, false));
-	_blurSSAOBuffer = std::unique_ptr<BoxBlur>(new BoxBlur(width, height, true, Descriptor(R8, Filter::LINEAR_LINEAR, Wrap::CLAMP)));
+	_ssaoFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, Layout::R8, false));
+	_blurSSAOBuffer = std::unique_ptr<BoxBlur>(new BoxBlur(width, height, true, Descriptor(Layout::R8, Filter::LINEAR_LINEAR, Wrap::CLAMP)));
 	_programSSAO = Resources::manager().getProgram2D("ssao");
 	
 	// Generate samples.
@@ -50,7 +50,7 @@ SSAO::SSAO(unsigned int width, unsigned int height, float radius) {
 	}
 	
 	// Send the texture to the GPU.
-	GLUtilities::setupTexture(_noiseTextureID, {RGB32F, Filter::NEAREST, Wrap::REPEAT});
+	GLUtilities::setupTexture(_noiseTextureID, { Layout::RGB32F, Filter::NEAREST, Wrap::REPEAT});
 	GLUtilities::uploadTexture(_noiseTextureID);
 	
 	checkGLError();

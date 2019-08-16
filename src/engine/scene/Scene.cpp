@@ -107,7 +107,7 @@ void Scene::loadBackground(const KeyValues & params, const Storage mode){
 			background = std::unique_ptr<Sky>(new Sky(mode));
 			background->decode(params, mode);
 			// Load the scattering table.
-			const Texture* tex = Resources::manager().getTexture("scattering-precomputed", {RGB32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, mode);
+			const Texture* tex = Resources::manager().getTexture("scattering-precomputed", { Layout::RGB32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, mode);
 			background->addTexture(tex);
 		}
 	}

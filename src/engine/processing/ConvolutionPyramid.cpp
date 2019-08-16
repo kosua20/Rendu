@@ -16,9 +16,9 @@ ConvolutionPyramid::ConvolutionPyramid(unsigned int width, unsigned int height, 
 	_g[0] = _g[1] = _g[2] = 0.0f;
 	
 	// Pre and post process framebuffers.
-	const Descriptor desc = {RGBA32F, Filter::NEAREST_NEAREST, Wrap::CLAMP};
+	const Descriptor desc = { Layout::RGBA32F, Filter::NEAREST_NEAREST, Wrap::CLAMP};
 	// Output is as the basic required size.
-	_shifted = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, RGBA32F , false));
+	_shifted = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, Layout::RGBA32F , false));
 	// Resolution of the pyramid takes into account the filter padding.
 	_resolution = glm::ivec2(width + 2 * _padding, height + 2 * _padding);
 	
@@ -134,7 +134,7 @@ void ConvolutionPyramid::resize(unsigned int width, unsigned int height){
 	
 	const int newDepth = int(std::ceil(std::log2(std::min(_resolution[0], _resolution[1]))));
 	// Create a series of framebuffers smaller and smaller.
-	const Descriptor desc = {RGBA32F, Filter::NEAREST_NEAREST, Wrap::CLAMP};
+	const Descriptor desc = { Layout::RGBA32F, Filter::NEAREST_NEAREST, Wrap::CLAMP};
 	_levelsIn.resize(newDepth);
 	_levelsOut.resize(newDepth);
 	// Initial padded size.
