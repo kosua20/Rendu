@@ -3,6 +3,7 @@
 #include "resources/ResourcesManager.hpp"
 #include "graphics/ScreenQuad.hpp"
 #include "graphics/GLUtilities.hpp"
+#include "graphics/Framebuffer.hpp"
 #include "input/Input.hpp"
 #include "Common.hpp"
 
@@ -37,7 +38,9 @@ void GameMenuRenderer::draw(const GameMenu & menu){
 	static const glm::vec4 labelsEdgeColor = glm::vec4(1.0f);
 	static const float labelsEdgeWidth = 0.25f;
 	
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	// Make sure we are rendering directly in the window.
+	Framebuffer::backbuffer().bind();
+	
 	glEnable(GL_FRAMEBUFFER_SRGB);
 	glViewport(0, 0, GLsizei(_config.screenResolution[0]), GLsizei(_config.screenResolution[1]));
 	glClear(GL_DEPTH_BUFFER_BIT);

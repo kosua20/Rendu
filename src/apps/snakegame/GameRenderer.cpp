@@ -73,7 +73,6 @@ void GameRenderer::draw(const Player & player){
 	_fxaaFramebuffer->unbind();
 	
 	// --- Final pass -------
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glViewport(0, 0, GLsizei(_config.screenResolution[0]), GLsizei(_config.screenResolution[1]));
 	glEnable(GL_FRAMEBUFFER_SRGB);
 	_finalProgram->use();

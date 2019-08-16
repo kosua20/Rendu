@@ -118,6 +118,11 @@ public:
 	 */
 	static GLenum targetFromShape(const TextureShape & shape);
 	
+	static void sync();
+	
+	static void deviceInfos(std::string & vendor, std::string & renderer, std::string & version, std::string & shaderVersionk);
+	
+	static std::vector<std::string> deviceExtensions();
 	
 private:
 	

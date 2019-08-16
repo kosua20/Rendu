@@ -278,7 +278,7 @@ void BVHRenderer::clean() {
 		level.clean();
 	}
 	_rayVis.clean();
-	glDeleteTextures(1, &_renderTex.gpu->id);
+	_renderTex.clean();
 }
 
 void BVHRenderer::resize(unsigned int width, unsigned int height){

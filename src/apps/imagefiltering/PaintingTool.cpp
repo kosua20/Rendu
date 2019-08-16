@@ -90,7 +90,8 @@ void PaintingTool::draw() {
 	_canvas->bind(Framebuffer::Mode::READ);
 	_visu->bind(Framebuffer::Mode::WRITE);
 	glBlitFramebuffer(0, 0, _canvas->width(), _canvas->height(), 0, 0, _visu->width(), _visu->height(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	_visu->unbind();
+	_canvas->unbind();
 	
 	// Draw the brush outline.
 	_visu->bind();
@@ -122,7 +123,7 @@ void PaintingTool::update(){
 		// Read back from the framebuffer.
 		_canvas->bind(Framebuffer::Mode::READ);
 		glReadPixels(int(mousePositionGL.x), int(mousePositionGL.y), 1, 1, GL_RGB, GL_FLOAT, &_fgColor[0]);
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		_canvas->unbind();
 	}
 	
 	// If left-pressing, draw to the canvas.
@@ -192,8 +193,9 @@ void PaintingTool::resize(unsigned int width, unsigned int height){
 	const unsigned int nw = std::min(w, _canvas->width());
 	const unsigned int nh = std::min(h, _canvas->height());
 	glBlitFramebuffer(0, 0, nw, nh, 0, 0, nw, nh, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+	tempCanvas.unbind();
 	tempCanvas.clean();
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	_canvas->unbind();
 	
 	// The content of the visualisation buffer will be cleaned at the next frame canvas copy.
 	_visu->resize(width, height);

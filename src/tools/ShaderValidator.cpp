@@ -111,13 +111,11 @@ int main(int argc, char** argv) {
 	}
 	
 	// Query the renderer identifier, and the supported OpenGL version.
-	const GLubyte* vendorString = glGetString(GL_VENDOR);
-	const GLubyte* rendererString = glGetString(GL_RENDERER);
-	const GLubyte* versionString = glGetString(GL_VERSION);
-	const GLubyte* glslVersionString = glGetString(GL_SHADING_LANGUAGE_VERSION);
-	Log::Info() << Log::OpenGL << "Vendor: " << vendorString << "." << std::endl;
-	Log::Info() << Log::OpenGL << "Internal renderer: " << rendererString << "." << std::endl;
-	Log::Info() << Log::OpenGL << "Versions: Driver: " << versionString << ", GLSL: " << glslVersionString << "." << std::endl;
+	std::string vendor, renderer, version, shaderVersion;
+	GLUtilities::deviceInfos(vendor, renderer, version, shaderVersion);
+	Log::Info() << Log::OpenGL << "Vendor: " << vendor << "." << std::endl;
+	Log::Info() << Log::OpenGL << "Internal renderer: " << renderer << "." << std::endl;
+	Log::Info() << Log::OpenGL << "Versions: Driver: " << version << ", GLSL: " << shaderVersion << "." << std::endl;
 	
 	
 	bool encounteredIssues = false;

@@ -631,11 +631,14 @@ void GLUtilities::saveFramebuffer(const Framebuffer & framebuffer, const unsigne
 	glBindFramebuffer(GL_FRAMEBUFFER, (GLuint)currentBoundFB);
 }
 
+void GLUtilities::sync(){
+	glFlush();
+	glFinish();
+}
 
 void GLUtilities::savePixels(const GLenum type, const GLenum format, const unsigned int width, const unsigned int height, const unsigned int components, const std::string & path, const bool flip, const bool ignoreAlpha){
 	
-	glFlush();
-	glFinish();
+	GLUtilities::sync();
 	
 	const bool hdr = type == GL_FLOAT;
 	
@@ -703,4 +706,27 @@ void GLUtilities::bindTextures(const std::vector<const Texture*> & textures, uns
 		glActiveTexture(GL_TEXTURE0 + startingSlot + i);
 		glBindTexture(infos->gpu->target, infos->gpu->id);
 	}
+}
+
+void GLUtilities::deviceInfos(std::string & vendor, std::string & renderer, std::string & version, std::string & shaderVersion){
+	const GLubyte * vendorString = glGetString(GL_VENDOR);
+	const GLubyte * rendererString = glGetString(GL_RENDERER);
+	const GLubyte * versionString = glGetString(GL_VERSION);
+	const GLubyte * glslVersionString = glGetString(GL_SHADING_LANGUAGE_VERSION);
+	vendor = std::string(reinterpret_cast<const char*>(vendorString));
+	renderer = std::string(reinterpret_cast<const char*>(rendererString));
+	version = std::string(reinterpret_cast<const char*>(versionString));
+	shaderVersion = std::string(reinterpret_cast<const char*>(glslVersionString));
+}
+
+std::vector<std::string> GLUtilities::deviceExtensions(){
+	int extensionCount = 0;
+	glGetIntegerv(GL_NUM_EXTENSIONS, &extensionCount);
+	std::vector<std::string> extensions(extensionCount);
+	
+	for(int i = 0; i < extensionCount; ++i){
+		const GLubyte * extStr = glGetStringi(GL_EXTENSIONS, i);
+		extensions[i] = std::string(reinterpret_cast<const char*>(extStr));
+	}
+	return extensions;
 }

@@ -39,13 +39,6 @@ int main(int argc, char** argv) {
 
 	// Initialize random generator;
 	Random::seed();
-	// Query the renderer identifier, and the supported OpenGL version.
-	const GLubyte* rendererString = glGetString(GL_RENDERER);
-	const GLubyte* versionString = glGetString(GL_VERSION);
-	Log::Info() << Log::OpenGL << "Internal renderer: " << rendererString << "." << std::endl;
-	Log::Info() << Log::OpenGL << "Version supported: " << versionString << "." << std::endl;
-	
-	
 	
 	// Create the renderer.
 	std::unique_ptr<DeferredRenderer> renderer(new DeferredRenderer(config));

@@ -40,27 +40,23 @@ int main(int argc, char** argv) {
 	// Initialize random generator;
 	Random::seed();
 	// Query the renderer identifier, and the supported OpenGL version.
-	const GLubyte* vendorString = glGetString(GL_VENDOR);
-	const GLubyte* rendererString = glGetString(GL_RENDERER);
-	const GLubyte* versionString = glGetString(GL_VERSION);
-	const GLubyte* glslVersionString = glGetString(GL_SHADING_LANGUAGE_VERSION);
-	Log::Info() << Log::OpenGL << "Vendor: " << vendorString << "." << std::endl;
-	Log::Info() << Log::OpenGL << "Internal renderer: " << rendererString << "." << std::endl;
-	Log::Info() << Log::OpenGL << "Versions: Driver: " << versionString << ", GLSL: " << glslVersionString << "." << std::endl;
+	std::string vendor, renderer, version, shaderVersion;
+	GLUtilities::deviceInfos(vendor, renderer, version, shaderVersion);
+	Log::Info() << Log::OpenGL << "Vendor: " << vendor << "." << std::endl;
+	Log::Info() << Log::OpenGL << "Internal renderer: " << renderer << "." << std::endl;
+	Log::Info() << Log::OpenGL << "Versions: Driver: " << version << ", GLSL: " << shaderVersion << "." << std::endl;
 	
 	// Query the extensions.
-	int extensionCount = 0;
-	glGetIntegerv(GL_NUM_EXTENSIONS, &extensionCount);
-	std::vector<const GLubyte*> extensionStrings(extensionCount);
-	const std::string titleHeader = "Extensions (" + std::to_string(extensionCount) + ")";
-	if(extensionCount>0){
-		Log::Info() << Log::OpenGL << "Extensions detected (" << extensionCount << ")" << std::flush;
-		for(int i = 0; i < extensionCount; ++i){
-			extensionStrings[i] = glGetStringi(GL_EXTENSIONS, i);
-			Log::Verbose() << (i == 0 ? ": " : ", ") << extensionStrings[i] << std::flush;
+	const std::vector<std::string> extensions = GLUtilities::deviceExtensions();
+	// Log extensions.
+	if(!extensions.empty()){
+		Log::Info() << Log::OpenGL << "Extensions detected (" << extensions.size() << ")" << std::flush;
+		for(size_t i = 0; i < extensions.size(); ++i){
+			Log::Verbose() << (i == 0 ? ": " : ", ") << extensions[i] << std::flush;
 		}
 		Log::Info() << std::endl;
 	}
+	const std::string titleHeader = "Extensions (" + std::to_string(extensions.size()) + ")";
 	
 	glEnable(GL_DEPTH_TEST);
 	
@@ -128,12 +124,12 @@ int main(int argc, char** argv) {
 		ImGui::Text("%.1f FPS / %.1f ms", ImGui::GetIO().Framerate, ImGui::GetIO().DeltaTime*1000.0f);
 		ImGui::Separator();
 		
-		ImGui::Text("OpengGL vendor: %s", vendorString);
-		ImGui::Text("Internal renderer: %s", rendererString);
-		ImGui::Text("Versions: Driver: %s, GLSL: %s", versionString, glslVersionString);
+		ImGui::Text("OpengGL vendor: %s", vendor.c_str());
+		ImGui::Text("Internal renderer: %s", renderer.c_str());
+		ImGui::Text("Versions: Driver: %s, GLSL: %s", version.c_str(), shaderVersion.c_str());
 		if(ImGui::CollapsingHeader(titleHeader.c_str())) {
-			for(int i = 0; i < extensionCount; ++i){
-				ImGui::Text("%s", extensionStrings[i]);
+			for(size_t i = 0; i < extensions.size(); ++i){
+				ImGui::Text("%s", extensions[i].c_str());
 			}
 		}
 		

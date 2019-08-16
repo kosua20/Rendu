@@ -255,8 +255,7 @@ void computeCubemapConvolution(const Texture & cubemapInfos, int levelsCount, in
 			resultFramebuffer->unbind();
 			glDisable(GL_DEPTH_TEST);
 			// Force synchronization.
-			glFlush();
-			glFinish();
+			GLUtilities::sync();
 		}
 		// Store the new texture.
 		
