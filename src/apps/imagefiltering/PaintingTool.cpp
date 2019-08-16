@@ -10,8 +10,8 @@ PaintingTool::PaintingTool(unsigned int width, unsigned int height) {
 	_fgColor = glm::vec3(1.0f);
 	
 	_brushShader = Resources::manager().getProgram("brush_color");
-	_canvas = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, {GL_RGB8, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE}, false));
-	_visu = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, {GL_RGB8, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE}, false));
+	_canvas = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, {RGB8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, false));
+	_visu = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, {RGB8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, false));
 	
 	// Setup the mesh buffers.
 	_brushes.resize(int(Shape::COUNT));
@@ -112,7 +112,7 @@ void PaintingTool::draw() {
 void PaintingTool::update(){
 	
 	// If right-pressing, read back the color under the cursor.
-	if(Input::manager().pressed(Input::MouseRight)){
+	if(Input::manager().pressed(Input::Mouse::Right)){
 		// Pixel position in the framebuffer.
 		const unsigned int w = _canvas->width();
 		const unsigned int h = _canvas->height();
@@ -128,7 +128,7 @@ void PaintingTool::update(){
 	// If left-pressing, draw to the canvas.
 	_drawPos = 2.0f * Input::manager().mouse() - 1.0f;
 	_drawPos.y = -_drawPos.y;
-	if(Input::manager().pressed(Input::MouseLeft)){
+	if(Input::manager().pressed(Input::Mouse::Left)){
 		_shouldDraw = true;
 	}
 	
@@ -173,7 +173,7 @@ void PaintingTool::resize(unsigned int width, unsigned int height){
 	// We first copy the canvas to a temp framebuffer.
 	const unsigned int w = _canvas->width();
 	const unsigned int h = _canvas->height();
-	Framebuffer tempCanvas(w, h,  {GL_RGB8, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE}, false);
+	Framebuffer tempCanvas(w, h,  {RGB8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, false);
 	_canvas->bind(Framebuffer::Mode::READ);
 	tempCanvas.bind(Framebuffer::Mode::WRITE);
 	glBlitFramebuffer(0, 0, w, h, 0, 0, w, h, GL_COLOR_BUFFER_BIT, GL_NEAREST);

@@ -22,15 +22,15 @@ GameMenuRenderer::GameMenuRenderer(RenderingConfig & config) : Renderer(config){
 void GameMenuRenderer::draw(const GameMenu & menu){
 	
 	static const std::map<MenuButton::State, glm::vec4> borderColors = {
-		{ MenuButton::OFF, glm::vec4(0.8f, 0.8f, 0.8f, 1.0f) },
-		{ MenuButton::HOVER, glm::vec4(0.7f, 0.7f, 0.7f, 1.0f) },
-		{ MenuButton::ON, glm::vec4(0.95f, 0.95f , 0.95f, 1.0f) }
+		{ MenuButton::State::OFF, glm::vec4(0.8f, 0.8f, 0.8f, 1.0f) },
+		{ MenuButton::State::HOVER, glm::vec4(0.7f, 0.7f, 0.7f, 1.0f) },
+		{ MenuButton::State::ON, glm::vec4(0.95f, 0.95f , 0.95f, 1.0f) }
 	};
 	
 	static const std::map<MenuButton::State, glm::vec4> innerColors = {
-		{ MenuButton::OFF, glm::vec4(0.9f, 0.9f, 0.9f, 0.5f) },
-		{ MenuButton::HOVER, glm::vec4(1.0f, 1.0f, 1.0f, 0.5f) },
-		{ MenuButton::ON, glm::vec4(0.95f, 0.95f , 0.95f, 0.5f) }
+		{ MenuButton::State::OFF, glm::vec4(0.9f, 0.9f, 0.9f, 0.5f) },
+		{ MenuButton::State::HOVER, glm::vec4(1.0f, 1.0f, 1.0f, 0.5f) },
+		{ MenuButton::State::ON, glm::vec4(0.95f, 0.95f , 0.95f, 0.5f) }
 	};
 	
 	static const glm::vec4 labelsColor = glm::vec4(0.3f, 0.0f, 0.0f, 1.0f);
@@ -59,8 +59,7 @@ void GameMenuRenderer::draw(const GameMenu & menu){
 		_imageProgram->uniform("scale", image.scale);
 		
 		_imageProgram->uniform("depth", 0.95f);
-		glActiveTexture(GL_TEXTURE0 );
-		glBindTexture(GL_TEXTURE_2D, image.tid->gpu->id);
+		GLUtilities::bindTexture(image.tid, 0);
 		GLUtilities::drawMesh(*_quad);
 	}
 	
@@ -83,8 +82,7 @@ void GameMenuRenderer::draw(const GameMenu & menu){
 		const glm::vec2 newScale = button.scale * 0.7f * glm::vec2(1.0f, button.size[1]/button.size[0]);
 		_imageProgram->uniform("scale", newScale);
 		_imageProgram->uniform("depth", 0.2f);
-		glActiveTexture(GL_TEXTURE0 );
-		glBindTexture(GL_TEXTURE_2D, button.tid->gpu->id);
+		GLUtilities::bindTexture(button.tid, 0);
 		GLUtilities::drawMesh(*_quad);
 	}
 	
@@ -95,11 +93,11 @@ void GameMenuRenderer::draw(const GameMenu & menu){
 		_buttonProgram->uniform("scale", toggle.scaleBox);
 		_buttonProgram->uniform("depth", 0.9f);
 		// Outside border.
-		_buttonProgram->uniform("color", borderColors.at(MenuButton::OFF));
+		_buttonProgram->uniform("color", borderColors.at(MenuButton::State::OFF));
 		GLUtilities::drawMesh(*_toggle);
 		// If checked, fill the box.
-		if(toggle.state == MenuButton::ON){
-			_buttonProgram->uniform("color", innerColors.at(MenuButton::OFF));
+		if(toggle.state == MenuButton::State::ON){
+			_buttonProgram->uniform("color", innerColors.at(MenuButton::State::OFF));
 			GLUtilities::drawMesh(*_toggleIn);
 		}
 		// Text display.
@@ -108,8 +106,7 @@ void GameMenuRenderer::draw(const GameMenu & menu){
 		_imageProgram->uniform("position", toggle.posImg);
 		_imageProgram->uniform("scale", newScale);
 		_imageProgram->uniform("depth", 0.2f);
-		glActiveTexture(GL_TEXTURE0 );
-		glBindTexture(GL_TEXTURE_2D, toggle.tid->gpu->id);
+		GLUtilities::bindTexture(toggle.tid, 0);
 		GLUtilities::drawMesh(*_quad);
 		
 	}
@@ -118,8 +115,7 @@ void GameMenuRenderer::draw(const GameMenu & menu){
 	// Labels
 	_fontProgram->use();
 	for(const auto & label : menu.labels){
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, label.tid->gpu->id);
+		GLUtilities::bindTexture(label.tid, 0);
 		_fontProgram->uniform("ratio", _config.screenResolution[1] / _config.screenResolution[0]);
 		_fontProgram->uniform("position", label.pos);
 		_fontProgram->uniform("color", labelsColor);

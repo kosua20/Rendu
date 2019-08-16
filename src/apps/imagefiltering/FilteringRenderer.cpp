@@ -16,13 +16,13 @@ FilteringRenderer::FilteringRenderer(RenderingConfig & config) : Renderer(config
 	_sceneShader = Resources::manager().getProgram("object", "object_basic", "object_basic_random");
 	_mesh = Resources::manager().getMesh("light_sphere", Storage::GPU);
 	
-	_sceneBuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, {GL_RGB8, GL_NEAREST_MIPMAP_NEAREST, GL_CLAMP_TO_EDGE}, true));
+	_sceneBuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, {RGB8,  Filter::NEAREST_NEAREST, Wrap::CLAMP}, true));
 	
 	// Create the Poisson filling and Laplacian integration pyramids, with a lowered internal resolution to speed things up.
 	_pyramidFiller = std::unique_ptr<PoissonFiller>(new PoissonFiller(renderWidth, renderHeight, _fillDownscale));
 	_pyramidIntegrator = std::unique_ptr<LaplacianIntegrator>( new LaplacianIntegrator(renderWidth, renderHeight, _intDownscale));
-	_gaussianBlur = std::unique_ptr<GaussianBlur>(new GaussianBlur(renderWidth, renderHeight, _blurLevel, GL_RGB8));
-	_boxBlur = std::unique_ptr<BoxBlur>(new BoxBlur(renderWidth, renderHeight, false, {GL_RGB8, GL_NEAREST_MIPMAP_NEAREST, GL_CLAMP_TO_EDGE}));
+	_gaussianBlur = std::unique_ptr<GaussianBlur>(new GaussianBlur(renderWidth, renderHeight, _blurLevel, RGB8));
+	_boxBlur = std::unique_ptr<BoxBlur>(new BoxBlur(renderWidth, renderHeight, false, {RGB8,  Filter::NEAREST_NEAREST, Wrap::CLAMP}));
 	_floodFill = std::unique_ptr<FloodFiller>(new FloodFiller(renderWidth, renderHeight));
 	
 	_painter = std::unique_ptr<PaintingTool>(new PaintingTool(renderWidth, renderHeight));
@@ -67,7 +67,7 @@ void FilteringRenderer::draw() {
 		_painter->draw();
 		// If we are in INPUT mode, we want to display the frame with the brush outline visible.
 		// On the other hand, if we apply any processing, hide the brush and use the canvas frame.
-		srcTexID = (_mode == Filter::INPUT) ? _painter->visuId() : _painter->textureId();
+		srcTexID = (_mode == Processing::INPUT) ? _painter->visuId() : _painter->textureId();
 	}
 	
 	glDisable(GL_DEPTH_TEST);
@@ -76,24 +76,24 @@ void FilteringRenderer::draw() {
 	const Texture * finalTexID = srcTexID;
 	
 	switch(_mode){
-		case Filter::FILL:
+		case Processing::FILL:
 			_pyramidFiller->process(srcTexID);
 			finalTexID = _showProcInput ? _pyramidFiller->preprocId() : _pyramidFiller->textureId();
 			break;
-		case Filter::INTEGRATE:
+		case Processing::INTEGRATE:
 			_pyramidIntegrator->process(srcTexID);
 			finalTexID = _showProcInput ? _pyramidIntegrator->preprocId() :_pyramidIntegrator->textureId();
 			break;
-		case Filter::GAUSSBLUR:
+		case Processing::GAUSSBLUR:
 			_gaussianBlur->process(srcTexID);
 			finalTexID = _gaussianBlur->textureId();
 			break;
-		case Filter::BOXBLUR:
+		case Processing::BOXBLUR:
 			_boxBlur->process(srcTexID);
 			finalTexID = _boxBlur->textureId();
 			break;
-		case Filter::FLOODFILL:
-			_floodFill->process(srcTexID, _showProcInput ? FloodFiller::DISTANCE : FloodFiller::COLOR);
+		case Processing::FLOODFILL:
+			_floodFill->process(srcTexID, _showProcInput ? FloodFiller::Output::DISTANCE : FloodFiller::Output::COLOR);
 			finalTexID = _floodFill->textureId();
 		default:
 			// Show the input.
@@ -147,7 +147,7 @@ void FilteringRenderer::update(){
 					} else {
 						_image.width = img.width;
 						_image.height = img.height;
-						_image.upload({ GL_RGBA8, GL_NEAREST_MIPMAP_NEAREST, GL_CLAMP_TO_EDGE }, false);
+						_image.upload({ RGBA8, Filter::NEAREST_NEAREST, Wrap::CLAMP }, false);
 						_image.clearImages();
 						resize(_image.width, _image.height);
 					}
@@ -168,14 +168,14 @@ void FilteringRenderer::update(){
 
 		// Mode specific option
 		switch(_mode){
-			case Filter::GAUSSBLUR:
+			case Processing::GAUSSBLUR:
 				if(ImGui::InputInt("Levels", &_blurLevel, 1, 2)){
 					_blurLevel = std::min(std::max(1, _blurLevel), 10);
 					_gaussianBlur->clean();
-					_gaussianBlur = std::unique_ptr<GaussianBlur>(new GaussianBlur(width, height, _blurLevel, GL_RGB8));
+					_gaussianBlur = std::unique_ptr<GaussianBlur>(new GaussianBlur(width, height, _blurLevel, RGB8));
 				}
 				break;
-			case Filter::FILL:
+			case Processing::FILL:
 				ImGui::Checkbox("Show colored border", &_showProcInput);
 				if(ImGui::InputInt("Pyramid downscale", &_fillDownscale, 1, 2)){
 					_fillDownscale = std::max(_fillDownscale, 1);
@@ -183,7 +183,7 @@ void FilteringRenderer::update(){
 					_pyramidFiller = std::unique_ptr<PoissonFiller>(new PoissonFiller(width, height, _fillDownscale));
 				}
 				break;
-			case Filter::INTEGRATE:
+			case Processing::INTEGRATE:
 				ImGui::Checkbox("Show Laplacian", &_showProcInput);
 				if(ImGui::InputInt("Pyramid downscale", &_intDownscale, 1, 2)){
 					_intDownscale = std::max(_intDownscale, 1);
@@ -191,7 +191,7 @@ void FilteringRenderer::update(){
 					_pyramidIntegrator = std::unique_ptr<LaplacianIntegrator>(new LaplacianIntegrator(width, height, _intDownscale));
 				}
 				break;
-			case Filter::FLOODFILL:
+			case Processing::FLOODFILL:
 				ImGui::Checkbox("Show distance", &_showProcInput);
 				break;
 			default:

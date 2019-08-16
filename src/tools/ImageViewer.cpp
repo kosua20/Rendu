@@ -54,10 +54,7 @@ int main(int argc, char** argv) {
 	bool applyGamma = true;
 	glm::bvec4 channelsFilter(true);
 	// Filtering mode.
-	enum FilteringMode {
-		Nearest = 0, Linear = 1
-	};
-	FilteringMode imageInterp = Linear;
+	Filter imageInterp = Filter::LINEAR;
 	// Orientation.
 	glm::bvec2 flipAxis(false);
 	int currentAngle = 0;
@@ -88,10 +85,10 @@ int main(int argc, char** argv) {
 		pixelScale += Input::manager().scroll().y * zoomSpeed;
 		pixelScale = std::max(0.001f,std::min(1000.0f,pixelScale));
 		// Register left-click and drag.
-		if(Input::manager().triggered(Input::MouseLeft)){
+		if(Input::manager().triggered(Input::Mouse::Left)){
 			mousePrev = Input::manager().mouse();
 		}
-		if(Input::manager().pressed(Input::MouseLeft)){
+		if(Input::manager().pressed(Input::Mouse::Left)){
 			const glm::vec2 mouseNew = Input::manager().mouse();
 			mouseShift += pixelScale * (mouseNew - mousePrev);
 			mousePrev = mouseNew;
@@ -144,7 +141,7 @@ int main(int argc, char** argv) {
 			glDisable(GL_BLEND);
 
 			// Read back color under cursor when right-clicking.
-			if(Input::manager().pressed(Input::MouseRight)){
+			if(Input::manager().pressed(Input::Mouse::Right)){
 				const glm::vec2 mousePosition = Input::manager().mouse(true);
 				glReadPixels(int(mousePosition.x), int(mousePosition.y), 1, 1, GL_RGB, GL_FLOAT, &fgColor[0]);
 			}
@@ -172,8 +169,7 @@ int main(int argc, char** argv) {
 					Log::Info() << "Loading " << newImagePath << "." << std::endl;
 					isFloat = Image::isFloat(newImagePath);
 					// Apply the proper format and filtering.
-					const GLenum typedFormat = isFloat ? GL_RGBA32F : GL_SRGB8_ALPHA8;
-					const GLenum filtering = (imageInterp == Nearest) ? GL_NEAREST_MIPMAP_LINEAR : GL_LINEAR_MIPMAP_LINEAR;
+					const Layout typedFormat = isFloat ? RGBA32F : SRGB8_ALPHA8;
 					
 					imageInfos.clean();
 					imageInfos.shape = TextureShape::D2;
@@ -188,7 +184,7 @@ int main(int argc, char** argv) {
 					}
 					imageInfos.width = img.width;
 					imageInfos.height = img.height;
-					imageInfos.upload({typedFormat, filtering, GL_CLAMP_TO_EDGE}, false);
+					imageInfos.upload({typedFormat, imageInterp, Wrap::CLAMP}, false);
 					imageInfos.clearImages();
 					
 					// Reset display settings.
@@ -220,11 +216,7 @@ int main(int argc, char** argv) {
 			
 			// Filtering.
 			if(ImGui::Combo("Filtering", (int*)(&imageInterp), "Nearest\0Linear\0\0")){
-				imageInfos.gpu->descriptor.filtering = (imageInterp == Nearest) ? GL_NEAREST_MIPMAP_LINEAR : GL_LINEAR_MIPMAP_LINEAR;
-				glBindTexture(GL_TEXTURE_2D, imageInfos.gpu->id);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, imageInfos.gpu->descriptor.getMagnificationFilter());
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, imageInfos.gpu->descriptor.filtering);
-				glBindTexture(GL_TEXTURE_2D, 0);
+				imageInfos.gpu->setFiltering(imageInterp);
 			}
 			
 			// Image modifications.
@@ -267,7 +259,7 @@ int main(int argc, char** argv) {
 				// Export either in LDR or HDR.
 				bool res = System::showPicker(System::Picker::Save, "../../../resources", destinationPath, "png;exr");
 				if(res && !destinationPath.empty()){
-					const GLenum typedFormat = Image::isFloat(destinationPath) ? GL_RGBA32F : GL_RGBA8;
+					const Layout typedFormat = Image::isFloat(destinationPath) ? RGBA32F : RGBA8;
 					// Create a framebuffer at the right size and format, and render in it.
 					const unsigned int outputWidth = isHorizontal ? imageInfos.height : imageInfos.width;
 					const unsigned int outputHeight = isHorizontal ? imageInfos.width : imageInfos.height;

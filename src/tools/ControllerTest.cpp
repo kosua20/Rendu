@@ -48,24 +48,24 @@ void showCombo(const std::string & label, const int count, const std::string & p
  \param highlightColor the color to use for the highlight
  \ingroup ControllerTest
  */
-void drawButton(ImDrawList * drawList, const Controller::ControllerInput bid, const ImVec2 & pos, const ImU32 highlightColor){
+void drawButton(ImDrawList * drawList, const Controller::Input bid, const ImVec2 & pos, const ImU32 highlightColor){
 	switch (bid) {
-		case Controller::ButtonX:
+		case Controller::Input::ButtonX:
 			drawList->AddCircleFilled(ImVec2(pos.x+326, pos.y+118), 12, highlightColor);
 			break;
-		case Controller::ButtonY:
+		case Controller::Input::ButtonY:
 			drawList->AddCircleFilled(ImVec2(pos.x+351, pos.y+93), 12, highlightColor);
 			break;
-		case Controller::ButtonA:
+		case Controller::Input::ButtonA:
 			drawList->AddCircleFilled(ImVec2(pos.x+351, pos.y+143), 12, highlightColor);
 			break;
-		case Controller::ButtonB:
+		case Controller::Input::ButtonB:
 			drawList->AddCircleFilled(ImVec2(pos.x+376, pos.y+118), 12, highlightColor);
 			break;
-		case Controller::BumperL1:
+		case Controller::Input::BumperL1:
 			drawList->AddRectFilled(ImVec2(pos.x+69, pos.y+43), ImVec2(pos.x+137, pos.y+67), highlightColor, 5.0);
 			break;
-		case Controller::TriggerL2:
+		case Controller::Input::TriggerL2:
 		{
 			const std::vector<ImVec2> pointsL2 = {
 				ImVec2(pos.x + 67, pos.y + 36),
@@ -79,13 +79,13 @@ void drawButton(ImDrawList * drawList, const Controller::ControllerInput bid, co
 			drawList->AddConvexPolyFilled(&pointsL2[0], int(pointsL2.size()), highlightColor);
 			break;
 		}
-		case Controller::ButtonL3:
+		case Controller::Input::ButtonL3:
 			drawList->AddCircleFilled(ImVec2(pos.x+154, pos.y+179), 26, highlightColor);
 			break;
-		case Controller::BumperR1:
+		case Controller::Input::BumperR1:
 			drawList->AddRectFilled(ImVec2(pos.x+316, pos.y+43), ImVec2(pos.x+384, pos.y+67),  highlightColor, 5.0);
 			break;
-		case Controller::TriggerR2:
+		case Controller::Input::TriggerR2:
 		{
 			const std::vector<ImVec2> pointsR2 = {
 				ImVec2(pos.x + 67 + 248, pos.y + 36),
@@ -99,28 +99,28 @@ void drawButton(ImDrawList * drawList, const Controller::ControllerInput bid, co
 			drawList->AddConvexPolyFilled(&pointsR2[0], int(pointsR2.size()), highlightColor);
 		}
 			break;
-		case Controller::ButtonR3:
+		case Controller::Input::ButtonR3:
 			drawList->AddCircleFilled(ImVec2(pos.x+296, pos.y+179), 26, highlightColor);
 			break;
-		case Controller::ButtonUp:
+		case Controller::Input::ButtonUp:
 			drawList->AddRectFilled(ImVec2(pos.x+90, pos.y+82), ImVec2(pos.x+107, pos.y+106),  highlightColor, 5.0);
 			break;
-		case Controller::ButtonLeft:
+		case Controller::Input::ButtonLeft:
 			drawList->AddRectFilled(ImVec2(pos.x+62, pos.y+110), ImVec2(pos.x+87, pos.y+126), highlightColor, 5.0);
 			break;
-		case Controller::ButtonDown:
+		case Controller::Input::ButtonDown:
 			drawList->AddRectFilled(ImVec2(pos.x+90, pos.y+132), ImVec2(pos.x+107, pos.y+156),  highlightColor, 5.0);
 			break;
-		case Controller::ButtonRight:
+		case Controller::Input::ButtonRight:
 			drawList->AddRectFilled(ImVec2(pos.x+112, pos.y+110), ImVec2(pos.x+137, pos.y+126), highlightColor, 5.0);
 			break;
-		case Controller::ButtonLogo:
+		case Controller::Input::ButtonLogo:
 			drawList->AddCircleFilled(ImVec2(pos.x+225, pos.y+120), 24, highlightColor);
 			break;
-		case Controller::ButtonMenu:
+		case Controller::Input::ButtonMenu:
 			drawList->AddCircleFilled(ImVec2(pos.x+275, pos.y+96), 13, highlightColor);
 			break;
-		case Controller::ButtonView:
+		case Controller::Input::ButtonView:
 			drawList->AddCircleFilled(ImVec2(pos.x+175, pos.y+96), 13, highlightColor);
 			break;
 		default:
@@ -218,10 +218,10 @@ int main(int argc, char** argv) {
 	Input::manager().preferRawControllers(true);
 	
 	// Will contain reference button/axes to raw input mappings.
-	std::vector<int> buttonsMapping(Controller::ControllerInputCount, -1);
-	std::vector<int> axesMapping(Controller::ControllerInputCount, -1);
+	std::vector<int> buttonsMapping(uint(Controller::InputCount), -1);
+	std::vector<int> axesMapping(uint(Controller::InputCount), -1);
 	// Controller texture.
-	const GLuint controllerTexId = Resources::manager().getTexture("ControllerLayout", {GL_RGBA8, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE}, Storage::GPU)->gpu->id;
+	const Texture * controllerTex = Resources::manager().getTexture("ControllerLayout", {RGBA8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
 	
 	bool firstFrame = true;
 	const ImU32 highlightColor = IM_COL32(172, 172, 172, 255);
@@ -396,12 +396,12 @@ int main(int argc, char** argv) {
 					for(int bid = 0; bid < int(buttonsMapping.size()); ++bid){
 						const int bmid = buttonsMapping[bid];
 						if(bmid >= 0 && controller->allButtons[bmid].pressed){
-							drawButton(drawList, Controller::ControllerInput(bid), pos, highlightColor);
+							drawButton(drawList, Controller::Input(bid), pos, highlightColor);
 						}
 					}
 					
 					// Overlay the controller transparent texture.
-					ImGui::Image(reinterpret_cast<void*>(static_cast<long long>(controllerTexId)), ImVec2(450, 300), ImVec2(0, 1), ImVec2(1,0));
+					ImGui::Image(reinterpret_cast<void*>(static_cast<long long>(controllerTex->gpu->id)), ImVec2(450, 300), ImVec2(0, 1), ImVec2(1,0));
 					
 					ImGui::EndChild();
 					ImGui::SameLine();

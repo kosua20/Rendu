@@ -30,10 +30,10 @@ public:
 	/**
 	 \brief Button state.
 	 */
-	enum State {
+	enum class State {
 		OFF, HOVER, ON
 	};
-	State state = OFF; ///< The button interaction state.
+	State state = State::OFF; ///< The button interaction state.
 	
 	glm::vec2 pos; ///< Screen position.
 	glm::vec2 size; ///< Screen size.

@@ -40,11 +40,7 @@ public:
 	
 private:
 	
-	
 	Program * _program; ///< The ambient lighting program.
-
 	std::vector<const Texture *> _textures; ///< The input textures for the ambient pass.
-	const Texture * _textureEnv; ///< The environment radiance cubemap.
-	const Texture * _textureBrdf; ///< The linearized approximate BRDF components. \see BRDFEstimator
 	
 };

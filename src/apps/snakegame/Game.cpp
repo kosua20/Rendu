@@ -6,7 +6,7 @@
 
 Game::Game(RenderingConfig & config) : _config(config), _inGameRenderer(config), _menuRenderer(config) {
 	
-	_bgBlur = std::unique_ptr<GaussianBlur>(new GaussianBlur(_config.initialWidth, _config.initialHeight, 3, GL_RGB8));
+	_bgBlur = std::unique_ptr<GaussianBlur>(new GaussianBlur(_config.initialWidth, _config.initialHeight, 3, RGB8));
 	
 	// Create menus.
 	
@@ -14,7 +14,7 @@ Game::Game(RenderingConfig & config) : _config(config), _inGameRenderer(config),
 	const float displayScale = 0.3f;
 	const Font * font = Resources::manager().getFont("digits");
 
-	const Descriptor commonDesc = {GL_SRGB8_ALPHA8, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE};
+	const Descriptor commonDesc = {SRGB8_ALPHA8, Filter::LINEAR_LINEAR, Wrap::CLAMP};
 	const Texture * backgroundTexture = Resources::manager().getTexture("menubg", commonDesc, Storage::GPU);
 	
 	_menus[Status::MAINMENU].backgroundImage = backgroundTexture;
@@ -38,10 +38,10 @@ Game::Game(RenderingConfig & config) : _config(config), _inGameRenderer(config),
 	_menus[Status::OPTIONS].backgroundImage = backgroundTexture;
 	_menus[Status::OPTIONS].toggles.emplace_back(glm::vec2(0.0f,  0.10f), meshSize, displayScale, OPTION_FULLSCREEN,
 												 Resources::manager().getTexture("button-fullscreen", commonDesc, Storage::GPU));
-	_menus[Status::OPTIONS].toggles.back().state = config.fullscreen ? MenuButton::ON : MenuButton::OFF;
+	_menus[Status::OPTIONS].toggles.back().state = config.fullscreen ? MenuButton::State::ON : MenuButton::State::OFF;
 	_menus[Status::OPTIONS].toggles.emplace_back(glm::vec2(0.0f,  -0.25f), meshSize, displayScale, OPTION_VSYNC,
 												 Resources::manager().getTexture("button-vsync", commonDesc, Storage::GPU));
-	_menus[Status::OPTIONS].toggles.back().state = config.vsync ? MenuButton::ON : MenuButton::OFF;
+	_menus[Status::OPTIONS].toggles.back().state = config.vsync ? MenuButton::State::ON : MenuButton::State::OFF;
 	_menus[Status::OPTIONS].buttons.emplace_back(glm::vec2(0.0f, -0.60f), meshSize, displayScale, BACKTOMENU,
 												 Resources::manager().getTexture("button-back", commonDesc, Storage::GPU));
 	_menus[Status::OPTIONS].images.emplace_back(glm::vec2(0.0f, 0.47f), 0.5f,
@@ -54,9 +54,9 @@ Game::Game(RenderingConfig & config) : _config(config), _inGameRenderer(config),
 											  Resources::manager().getTexture("button-menu"));
 	_menus[Status::DEAD].images.emplace_back(glm::vec2(0.0f, 0.47f), 0.5f,
 											 Resources::manager().getTexture("title-dead", commonDesc, Storage::GPU));
-	_menus[Status::DEAD].labels.emplace_back(glm::vec2(0.0f, 0.05f), 0.25f, font, Font::CENTER);
+	_menus[Status::DEAD].labels.emplace_back(glm::vec2(0.0f, 0.05f), 0.25f, font, Font::Alignment::CENTER);
 	
-	_menus[Status::INGAME].labels.emplace_back(glm::vec2(0.0f, 0.70f), 0.2f, font, Font::CENTER);
+	_menus[Status::INGAME].labels.emplace_back(glm::vec2(0.0f, 0.70f), 0.2f, font, Font::Alignment::CENTER);
 	
 	// Initialize each menu buttons sizes.
 	const float initialRatio = _config.initialWidth / float(_config.initialHeight);
@@ -140,12 +140,12 @@ System::Action Game::update(){
 		// Check if any button is hovered or pressed.
 		const glm::vec2 mousePos = (Input::manager().mouse() * 2.0f - 1.0f) * glm::vec2(1.0f, -1.0f);
 		for( MenuButton & button : currentMenu.buttons){
-			button.state = MenuButton::OFF;
+			button.state = MenuButton::State::OFF;
 			// Check if mouse inside.
 			if(button.contains(mousePos)){
-				button.state = Input::manager().pressed(Input::MouseLeft) ? MenuButton::ON : MenuButton::HOVER;
+				button.state = Input::manager().pressed(Input::Mouse::Left) ? MenuButton::State::ON : MenuButton::State::HOVER;
 				// If the mouse was released, trigger the action.
-				if(Input::manager().released(Input::MouseLeft)){
+				if(Input::manager().released(Input::Mouse::Left)){
 					// Do the action.
 					const System::Action result = handleButton(ButtonAction(button.tag));
 					if(finalAction == System::Action::None){
@@ -157,14 +157,14 @@ System::Action Game::update(){
 		// Check if any checkbox was checked.
 		for( MenuButton & toggle : currentMenu.toggles){
 			// Check if mouse inside, and if the click was validated through release.
-			if(toggle.contains(mousePos) && Input::manager().released(Input::MouseLeft)){
+			if(toggle.contains(mousePos) && Input::manager().released(Input::Mouse::Left)){
 				// Do the action.
 				const System::Action result = handleButton(ButtonAction(toggle.tag));
 				if(finalAction == System::Action::None){
 					finalAction = result;
 				}
 				// Update the display state.
-				toggle.state = (toggle.state == MenuButton::ON ? MenuButton::OFF : MenuButton::ON);
+				toggle.state = (toggle.state == MenuButton::State::ON ? MenuButton::State::OFF : MenuButton::State::ON);
 			}
 		}
 	}

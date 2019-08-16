@@ -9,16 +9,23 @@ void AmbientQuad::init(const Texture * texAlbedo, const Texture * texNormals, co
 	
 	_program = Resources::manager().getProgram2D("ambient");
 	// Load texture.
-	_textureBrdf = Resources::manager().getTexture("brdf-precomputed", {GL_RG32F, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE}, Storage::GPU);
+	const Texture * textureBrdf = Resources::manager().getTexture("brdf-precomputed", {RG32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
 	
-	// Ambient pass: needs the albedo, the normals, the depth, the effects and the AO result
-	_textures = { texAlbedo, texNormals, texEffects, texDepth, texSSAO };
+	// Ambient pass: needs the albedo, the normals, the depth, the effects, the AO result, the BRDF table and the  envmap.
+	_textures.resize(7);
+	_textures[0] = texAlbedo;
+	_textures[1] = texNormals;
+	_textures[2] = texEffects;
+	_textures[3] = texDepth;
+	_textures[4] = texSSAO;
+	_textures[5] = textureBrdf;
+	_textures[6] = nullptr;
 	
 	checkGLError();
 }
 
 void AmbientQuad::setSceneParameters(const Texture * reflectionMap, const std::vector<glm::vec3> & irradiance){
-	_textureEnv = reflectionMap;
+	_textures[6] = reflectionMap;
 	_program->cacheUniformArray("shCoeffs", irradiance);
 }
 
@@ -33,13 +40,8 @@ void AmbientQuad::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionM
 	
 	_program->uniform("inverseV", invView);
 	_program->uniform("projectionMatrix", projectionVector);
-	// Cubemaps.
-	glActiveTexture(GL_TEXTURE0 + (unsigned int)_textures.size());
-	glBindTexture(GL_TEXTURE_CUBE_MAP, _textureEnv->gpu->id);
-	glActiveTexture(GL_TEXTURE0 + (unsigned int)_textures.size() + 1);
-	glBindTexture(GL_TEXTURE_2D, _textureBrdf->gpu->id);
-	
+
 	ScreenQuad::draw(_textures);
-	checkGLError();
+	
 }
 

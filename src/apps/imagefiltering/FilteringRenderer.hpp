@@ -58,7 +58,7 @@ public:
 private:
 	
 	/** \brief The filter to apply. */
-	enum class Filter : int {
+	enum class Processing : int {
 		INPUT = 0, FILL, INTEGRATE, BOXBLUR, GAUSSBLUR, FLOODFILL
 	};
 	
@@ -81,7 +81,7 @@ private:
 	const Program * _sceneShader; ///< Object rendering shader.
 	const Mesh * _mesh; ///< Basic sphere mesh.
 	
-	Filter _mode = Filter::INPUT; ///< Current filter mode.
+	Processing _mode = Processing::INPUT; ///< Current filter mode.
 	View _viewMode = View::SCENE; ///< Current view mode.
 	Texture _image; ///< The image to display in Image view mode.
 	

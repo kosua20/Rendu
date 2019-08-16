@@ -17,9 +17,9 @@ GameRenderer::GameRenderer(RenderingConfig & config) : Renderer(config){
 	
 	const int renderWidth = (int)_renderResolution[0];
 	const int renderHeight = (int)_renderResolution[1];
-	_sceneFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, {{GL_RGB16F, GL_NEAREST_MIPMAP_NEAREST, GL_CLAMP_TO_EDGE}, {GL_R8, GL_NEAREST_MIPMAP_NEAREST, GL_CLAMP_TO_EDGE}, {GL_DEPTH_COMPONENT32F, GL_NEAREST_MIPMAP_NEAREST, GL_CLAMP_TO_EDGE}}, true));
-	_lightingFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, GL_RGB8, false));
-	_fxaaFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, GL_RGBA8, false));
+	_sceneFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, {{RGB16F, Filter::NEAREST_NEAREST, Wrap::CLAMP}, {R8, Filter::NEAREST_NEAREST, Wrap::CLAMP}, {DEPTH_COMPONENT32F, Filter::NEAREST_NEAREST, Wrap::CLAMP}}, true));
+	_lightingFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, RGB8, false));
+	_fxaaFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, RGBA8, false));
 	
 	_fxaaProgram = Resources::manager().getProgram2D("fxaa");
 	_finalProgram = Resources::manager().getProgram2D("final_screenquad");
@@ -31,7 +31,7 @@ GameRenderer::GameRenderer(RenderingConfig & config) : Renderer(config){
 	_ground = Resources::manager().getMesh("ground", Storage::GPU);
 	_head = Resources::manager().getMesh("head", Storage::GPU);
 	_bodyElement = Resources::manager().getMesh("body", Storage::GPU);
-	_cubemap = Resources::manager().getTexture("env", {GL_RGB8, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE}, Storage::GPU);
+	_cubemap = Resources::manager().getTexture("env", {RGB8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
 	
 	checkGLError();
 }
@@ -57,9 +57,7 @@ void GameRenderer::draw(const Player & player){
 	_lightingFramebuffer->bind();
 	_lightingFramebuffer->setViewport();
 	_compositingProgram->use();
-	glActiveTexture(GL_TEXTURE0 + 3);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, _cubemap->gpu->id);
-	ScreenQuad::draw({_sceneFramebuffer->textureId(0), _sceneFramebuffer->textureId(1), _ssaoPass->textureId()});
+	ScreenQuad::draw({_sceneFramebuffer->textureId(0), _sceneFramebuffer->textureId(1), _ssaoPass->textureId(), _cubemap});
 	_lightingFramebuffer->unbind();
 	
 	// --- FXAA pass -------

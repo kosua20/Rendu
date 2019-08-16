@@ -54,7 +54,7 @@ void loadCubemap(const std::string & inputPath, Texture & cubemapInfos){
 	}
 	cubemapInfos.width = cubemapInfos.images[0].width;
 	cubemapInfos.height = cubemapInfos.images[0].height;
-	cubemapInfos.upload({GL_RGBA32F, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE}, false);
+	cubemapInfos.upload({RGBA32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, false);
 }
 
 /**
@@ -222,28 +222,18 @@ void computeCubemapConvolution(const Texture & cubemapInfos, int levelsCount, in
 		levelInfos.height = h;
 		levelInfos.depth = 6;
 		levelInfos.levels = 1;
-		GLUtilities::setupTexture(levelInfos, {GL_RGB32F, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE});
-		
-		
-		// Allocate cubemap storage.
-		/// \todo Move to the GPU utilities.
-		GLenum type, format;
-		levelInfos.gpu->descriptor.getTypeAndFormat(type, format);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, levelInfos.gpu->id);
-		for(int i = 0; i < 6; ++i){
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, levelInfos.gpu->descriptor.typedFormat,
-						 w, h, 0, format, type, NULL);
-		}
-		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+		// Create and allocate.
+		GLUtilities::setupTexture(levelInfos, {RGB32F, Filter::LINEAR_LINEAR, Wrap::CLAMP});
 		
 		// Iterate over faces.
 		for(size_t i = 0; i < 6; ++i){
 			Log::Info() << "." << std::flush;
 			
 			// Create local framebuffer.
-			const auto resultFramebuffer = std::make_shared<Framebuffer>(w, h, GL_RGB32F, false);
+			const auto resultFramebuffer = std::make_shared<Framebuffer>(w, h, RGB32F, false);
 			resultFramebuffer->bind();
 			// Use the cubemap texture as a backing texture for the framebuffer.
+			/// \todo Find another way of doing this without spilling OpenGL code.
 			glBindTexture(GL_TEXTURE_CUBE_MAP, levelInfos.gpu->id);
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X+i), levelInfos.gpu->id, 0);
 			glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
@@ -259,8 +249,7 @@ void computeCubemapConvolution(const Texture & cubemapInfos, int levelsCount, in
 			programCubemap->uniform("mvp", MVPs[i]);
 			programCubemap->uniform("samplesCount", samplesCount);
 			// Attach source cubemap.
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapInfos.gpu->id);
+			GLUtilities::bindTexture(&cubemapInfos, 0);
 			// Draw.
 			GLUtilities::drawMesh(*mesh);
 			resultFramebuffer->unbind();
@@ -281,19 +270,15 @@ void computeCubemapConvolution(const Texture & cubemapInfos, int levelsCount, in
  \param outputPath the based destination path
  \ingroup BRDFEstimator
  */
-void exportCubemapConvolution(const std::vector<Texture> &cubeLevels, const std::string & outputPath){
-	/// \todo Extract texture download in graphics subsystem.
+void exportCubemapConvolution(std::vector<Texture> &cubeLevels, const std::string & outputPath){
 	for(int level = 0; level < int(cubeLevels.size()); ++level){
+		Texture & texture = cubeLevels[level];
+		GLUtilities::downloadTexture(texture);
+		
 		const std::string levelPath = outputPath + "_" + std::to_string(level);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, cubeLevels[level].gpu->id);
-		GLenum type, format;
-		cubeLevels[level].gpu->descriptor.getTypeAndFormat(type, format);
-		const int levelSide = cubeLevels[level].width;
 		for(int i = 0; i < 6; ++i){
 			const std::string faceLevelPath = levelPath + suffixes[i];
-			Image image(levelSide, levelSide, 3);
-			glGetTexImage(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, format, type, &image.pixels[0]);
-			const int ret = Image::saveHDRImage(faceLevelPath + ".exr", image, false, true);
+			const int ret = Image::saveHDRImage(faceLevelPath + ".exr", texture.images[i], false, true);
 			if(ret != 0){
 				Log::Error() << "Unable to save cubemap face to path \"" << faceLevelPath << "\"." << std::endl;
 			}
@@ -308,7 +293,7 @@ void exportCubemapConvolution(const std::vector<Texture> &cubeLevels, const std:
  */
 void computeAndExportLookupTable(const int outputSide, const std::string & outputPath){
 	// Render the lookup table.
-	const auto bakingFramebuffer = std::make_shared<Framebuffer>(outputSide, outputSide, GL_RG32F, false);
+	const auto bakingFramebuffer = std::make_shared<Framebuffer>(outputSide, outputSide, RG32F, false);
 	const auto brdfProgram = Resources::manager().getProgram2D("brdf_sampler");
 	bakingFramebuffer->bind();
 	glViewport(0,0,bakingFramebuffer->width(), bakingFramebuffer->height());
@@ -353,7 +338,7 @@ int main(int argc, char** argv) {
 	const auto program = Resources::manager().getProgram("skybox_basic");
 	const auto programSH = Resources::manager().getProgram("skybox_shcoeffs", "skybox_basic", "skybox_shcoeffs");
 	const auto mesh = Resources::manager().getMesh("skybox", Storage::GPU);
-	const Texture * cubemapInfosDefault = Resources::manager().getTexture("debug-cube", {GL_RGB8, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE}, Storage::GPU);
+	const Texture * cubemapInfosDefault = Resources::manager().getTexture("debug-cube", {RGB8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
 	
 	Texture cubemapInfos;
 	std::vector<glm::vec3> SCoeffs(9);
@@ -506,15 +491,15 @@ int main(int argc, char** argv) {
 		// Render main cubemap.
 		if(cubemapInfos.gpu){
 			const auto & programToUse = mode == SH_COEFFS ? programSH : program;
+			Texture * texToUse = &cubemapInfos;
+			if(mode == BRDF_CONV && !cubeLevels.empty()){
+				texToUse = &cubeLevels[showLevel];
+			}
+			
 			glEnable(GL_DEPTH_TEST);
 			programToUse->use();
 			glDisable(GL_CULL_FACE);
-			glActiveTexture(GL_TEXTURE0);
-			if(mode == BRDF_CONV && !cubeLevels.empty()){
-				glBindTexture(GL_TEXTURE_CUBE_MAP, cubeLevels[showLevel].gpu->id);
-			} else {
-				glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapInfos.gpu->id);
-			}
+			GLUtilities::bindTexture(texToUse, 0);
 			programToUse->uniform("mvp", mvp);
 			GLUtilities::drawMesh(*mesh);
 			glDisable(GL_DEPTH_TEST);
@@ -528,8 +513,7 @@ int main(int argc, char** argv) {
 		glEnable(GL_DEPTH_TEST);
 		program->use();
 		glDisable(GL_CULL_FACE);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapInfosDefault->gpu->id);
+		GLUtilities::bindTexture(cubemapInfosDefault, 0);
 		program->uniform("mvp", mvp);
 		GLUtilities::drawMesh(*mesh);
 		glDisable(GL_DEPTH_TEST);
