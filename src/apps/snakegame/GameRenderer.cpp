@@ -17,9 +17,13 @@ GameRenderer::GameRenderer(RenderingConfig & config) : Renderer(config){
 	
 	const int renderWidth = (int)_renderResolution[0];
 	const int renderHeight = (int)_renderResolution[1];
-	_sceneFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, {{RGB16F, Filter::NEAREST_NEAREST, Wrap::CLAMP}, {R8, Filter::NEAREST_NEAREST, Wrap::CLAMP}, {DEPTH_COMPONENT32F, Filter::NEAREST_NEAREST, Wrap::CLAMP}}, true));
-	_lightingFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, RGB8, false));
-	_fxaaFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, RGBA8, false));
+	_sceneFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, {
+		{ Layout::RGB16F, Filter::NEAREST_NEAREST, Wrap::CLAMP},
+		{ Layout::R8, Filter::NEAREST_NEAREST, Wrap::CLAMP},
+		{ Layout::DEPTH_COMPONENT32F, Filter::NEAREST_NEAREST, Wrap::CLAMP}},
+	true));
+	_lightingFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, Layout::RGB8, false));
+	_fxaaFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, Layout::RGBA8, false));
 	
 	_fxaaProgram = Resources::manager().getProgram2D("fxaa");
 	_finalProgram = Resources::manager().getProgram2D("final_screenquad");
@@ -31,7 +35,7 @@ GameRenderer::GameRenderer(RenderingConfig & config) : Renderer(config){
 	_ground = Resources::manager().getMesh("ground", Storage::GPU);
 	_head = Resources::manager().getMesh("head", Storage::GPU);
 	_bodyElement = Resources::manager().getMesh("body", Storage::GPU);
-	_cubemap = Resources::manager().getTexture("env", {RGB8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
+	_cubemap = Resources::manager().getTexture("env", { Layout::RGB8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
 	
 	checkGLError();
 }

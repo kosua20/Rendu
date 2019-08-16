@@ -10,8 +10,8 @@ PaintingTool::PaintingTool(unsigned int width, unsigned int height) {
 	_fgColor = glm::vec3(1.0f);
 	
 	_brushShader = Resources::manager().getProgram("brush_color");
-	_canvas = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, {RGB8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, false));
-	_visu = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, {RGB8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, false));
+	_canvas = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, { Layout::RGB8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, false));
+	_visu = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, { Layout::RGB8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, false));
 	
 	// Setup the mesh buffers.
 	_brushes.resize(int(Shape::COUNT));
@@ -173,7 +173,7 @@ void PaintingTool::resize(unsigned int width, unsigned int height){
 	// We first copy the canvas to a temp framebuffer.
 	const unsigned int w = _canvas->width();
 	const unsigned int h = _canvas->height();
-	Framebuffer tempCanvas(w, h,  {RGB8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, false);
+	Framebuffer tempCanvas(w, h, { Layout::RGB8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, false);
 	_canvas->bind(Framebuffer::Mode::READ);
 	tempCanvas.bind(Framebuffer::Mode::WRITE);
 	glBlitFramebuffer(0, 0, w, h, 0, 0, w, h, GL_COLOR_BUFFER_BIT, GL_NEAREST);

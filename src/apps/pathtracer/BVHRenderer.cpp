@@ -12,7 +12,7 @@ BVHRenderer::BVHRenderer(RenderingConfig & config) : Renderer(config) {
 	const int renderHeight = (int)_renderResolution[1];
 	
 	// GL setup
-	_sceneFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, RGB8, true));
+	_sceneFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, Layout::RGB8, true));
 	_objectProgram = Resources::manager().getProgram("object_basic_lit");
 	_bvhProgram = Resources::manager().getProgram("object_basic_color");
 	_passthrough = Resources::manager().getProgram2D("passthrough");
@@ -26,7 +26,7 @@ BVHRenderer::BVHRenderer(RenderingConfig & config) : Renderer(config) {
 	_renderTex.depth = 1;
 	_renderTex.width = renderWidth;
 	_renderTex.height = renderHeight;
-	GLUtilities::setupTexture(_renderTex, {SRGB8, Filter::LINEAR, Wrap::CLAMP});
+	GLUtilities::setupTexture(_renderTex, { Layout::SRGB8, Filter::LINEAR, Wrap::CLAMP});
 }
 
 void BVHRenderer::setScene(std::shared_ptr<Scene> scene){
@@ -167,7 +167,7 @@ void BVHRenderer::update(){
 			// Clean the texture.
 			_renderTex.clearImages();
 			_renderTex.gpu->clean();
-			GLUtilities::setupTexture(_renderTex, {SRGB8, Filter::LINEAR, Wrap::CLAMP});
+			GLUtilities::setupTexture(_renderTex, { Layout::SRGB8, Filter::LINEAR, Wrap::CLAMP});
 			// Render.
 			_renderTex.images.emplace_back(_renderTex.width, _renderTex.height, 3);
 			Image & render = _renderTex.images.back();

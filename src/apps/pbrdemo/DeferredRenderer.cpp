@@ -21,20 +21,20 @@ DeferredRenderer::DeferredRenderer(RenderingConfig & config) : Renderer(config) 
 	const int renderHalfHeight = (int)(0.5f * _renderResolution[1]);
 	
 	// G-buffer setup.
-	const Descriptor albedoDesc = { RGBA16F, Filter::NEAREST_NEAREST, Wrap::CLAMP };
-	const Descriptor normalDesc = { RGB32F, Filter::NEAREST_NEAREST, Wrap::CLAMP };
-	const Descriptor effectsDesc = { RGB8, Filter::NEAREST_NEAREST, Wrap::CLAMP };
-	const Descriptor depthDesc = { DEPTH_COMPONENT32F, Filter::NEAREST_NEAREST, Wrap::CLAMP };
+	const Descriptor albedoDesc = { Layout::RGBA16F, Filter::NEAREST_NEAREST, Wrap::CLAMP };
+	const Descriptor normalDesc = { Layout::RGB32F, Filter::NEAREST_NEAREST, Wrap::CLAMP };
+	const Descriptor effectsDesc = { Layout::RGB8, Filter::NEAREST_NEAREST, Wrap::CLAMP };
+	const Descriptor depthDesc = { Layout::DEPTH_COMPONENT32F, Filter::NEAREST_NEAREST, Wrap::CLAMP };
 	const std::vector<Descriptor> descs = {albedoDesc, normalDesc, effectsDesc, depthDesc};
 	_gbuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, descs, false));
 	
 	// Other framebuffers.
 	_ssaoPass = std::unique_ptr<SSAO>(new SSAO(renderHalfWidth, renderHalfHeight, 0.5f));
-	_sceneFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, RGBA16F, false));
-	_bloomFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, RGB16F, false));
-	_toneMappingFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, RGB16F, false));
-	_fxaaFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, RGB16F, false));
-	_blurBuffer = std::unique_ptr<GaussianBlur>(new GaussianBlur(renderHalfWidth, renderHalfHeight, _bloomRadius, RGB16F));
+	_sceneFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, Layout::RGBA16F, false));
+	_bloomFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, Layout::RGB16F, false));
+	_toneMappingFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, Layout::RGB16F, false));
+	_fxaaFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, Layout::RGB16F, false));
+	_blurBuffer = std::unique_ptr<GaussianBlur>(new GaussianBlur(renderHalfWidth, renderHalfHeight, _bloomRadius, Layout::RGB16F));
 	
 	checkGLError();
 
@@ -372,7 +372,7 @@ void DeferredRenderer::update(){
 			
 			ImGui::PushItemWidth(80);
 			if(ImGui::InputInt("Rad.##Bloom", &_bloomRadius, 1, 10)){
-				_blurBuffer.reset(new GaussianBlur(int(_renderResolution[0]/2), int(_renderResolution[1]/2), _bloomRadius, RGB16F));
+				_blurBuffer.reset(new GaussianBlur(int(_renderResolution[0]/2), int(_renderResolution[1]/2), _bloomRadius, Layout::RGB16F));
 			}
 			ImGui::PopItemWidth();
 			ImGui::SameLine(120);

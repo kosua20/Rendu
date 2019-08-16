@@ -9,7 +9,7 @@ void AmbientQuad::init(const Texture * texAlbedo, const Texture * texNormals, co
 	
 	_program = Resources::manager().getProgram2D("ambient");
 	// Load texture.
-	const Texture * textureBrdf = Resources::manager().getTexture("brdf-precomputed", {RG32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
+	const Texture * textureBrdf = Resources::manager().getTexture("brdf-precomputed", { Layout::RG32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
 	
 	// Ambient pass: needs the albedo, the normals, the depth, the effects, the AO result, the BRDF table and the  envmap.
 	_textures.resize(7);

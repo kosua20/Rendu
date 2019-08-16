@@ -6,7 +6,7 @@
 
 Game::Game(RenderingConfig & config) : _config(config), _inGameRenderer(config), _menuRenderer(config) {
 	
-	_bgBlur = std::unique_ptr<GaussianBlur>(new GaussianBlur(_config.initialWidth, _config.initialHeight, 3, RGB8));
+	_bgBlur = std::unique_ptr<GaussianBlur>(new GaussianBlur(_config.initialWidth, _config.initialHeight, 3, Layout::RGB8));
 	
 	// Create menus.
 	
@@ -14,7 +14,7 @@ Game::Game(RenderingConfig & config) : _config(config), _inGameRenderer(config),
 	const float displayScale = 0.3f;
 	const Font * font = Resources::manager().getFont("digits");
 
-	const Descriptor commonDesc = {SRGB8_ALPHA8, Filter::LINEAR_LINEAR, Wrap::CLAMP};
+	const Descriptor commonDesc = { Layout::SRGB8_ALPHA8, Filter::LINEAR_LINEAR, Wrap::CLAMP};
 	const Texture * backgroundTexture = Resources::manager().getTexture("menubg", commonDesc, Storage::GPU);
 	
 	_menus[Status::MAINMENU].backgroundImage = backgroundTexture;

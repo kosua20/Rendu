@@ -54,7 +54,7 @@ void loadCubemap(const std::string & inputPath, Texture & cubemapInfos){
 	}
 	cubemapInfos.width = cubemapInfos.images[0].width;
 	cubemapInfos.height = cubemapInfos.images[0].height;
-	cubemapInfos.upload({RGBA32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, false);
+	cubemapInfos.upload({Layout::RGBA32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, false);
 }
 
 /**
@@ -223,14 +223,14 @@ void computeCubemapConvolution(const Texture & cubemapInfos, int levelsCount, in
 		levelInfos.depth = 6;
 		levelInfos.levels = 1;
 		// Create and allocate.
-		GLUtilities::setupTexture(levelInfos, {RGB32F, Filter::LINEAR_LINEAR, Wrap::CLAMP});
+		GLUtilities::setupTexture(levelInfos, {Layout::RGB32F, Filter::LINEAR_LINEAR, Wrap::CLAMP});
 		
 		// Iterate over faces.
 		for(size_t i = 0; i < 6; ++i){
 			Log::Info() << "." << std::flush;
 			
 			// Create local framebuffer.
-			const auto resultFramebuffer = std::make_shared<Framebuffer>(w, h, RGB32F, false);
+			const auto resultFramebuffer = std::make_shared<Framebuffer>(w, h, Layout::RGB32F, false);
 			resultFramebuffer->bind();
 			// Use the cubemap texture as a backing texture for the framebuffer.
 			/// \todo Find another way of doing this without spilling OpenGL code.
@@ -293,7 +293,7 @@ void exportCubemapConvolution(std::vector<Texture> &cubeLevels, const std::strin
  */
 void computeAndExportLookupTable(const int outputSide, const std::string & outputPath){
 	// Render the lookup table.
-	const auto bakingFramebuffer = std::make_shared<Framebuffer>(outputSide, outputSide, RG32F, false);
+	const auto bakingFramebuffer = std::make_shared<Framebuffer>(outputSide, outputSide, Layout::RG32F, false);
 	const auto brdfProgram = Resources::manager().getProgram2D("brdf_sampler");
 	bakingFramebuffer->bind();
 	glViewport(0,0,bakingFramebuffer->width(), bakingFramebuffer->height());
@@ -338,7 +338,7 @@ int main(int argc, char** argv) {
 	const auto program = Resources::manager().getProgram("skybox_basic");
 	const auto programSH = Resources::manager().getProgram("skybox_shcoeffs", "skybox_basic", "skybox_shcoeffs");
 	const auto mesh = Resources::manager().getMesh("skybox", Storage::GPU);
-	const Texture * cubemapInfosDefault = Resources::manager().getTexture("debug-cube", {RGB8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
+	const Texture * cubemapInfosDefault = Resources::manager().getTexture("debug-cube", {Layout::RGB8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
 	
 	Texture cubemapInfos;
 	std::vector<glm::vec3> SCoeffs(9);

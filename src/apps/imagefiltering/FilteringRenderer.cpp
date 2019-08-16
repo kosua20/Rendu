@@ -16,13 +16,13 @@ FilteringRenderer::FilteringRenderer(RenderingConfig & config) : Renderer(config
 	_sceneShader = Resources::manager().getProgram("object", "object_basic", "object_basic_random");
 	_mesh = Resources::manager().getMesh("light_sphere", Storage::GPU);
 	
-	_sceneBuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, {RGB8,  Filter::NEAREST_NEAREST, Wrap::CLAMP}, true));
+	_sceneBuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, { Layout::RGB8,  Filter::NEAREST_NEAREST, Wrap::CLAMP}, true));
 	
 	// Create the Poisson filling and Laplacian integration pyramids, with a lowered internal resolution to speed things up.
 	_pyramidFiller = std::unique_ptr<PoissonFiller>(new PoissonFiller(renderWidth, renderHeight, _fillDownscale));
 	_pyramidIntegrator = std::unique_ptr<LaplacianIntegrator>( new LaplacianIntegrator(renderWidth, renderHeight, _intDownscale));
-	_gaussianBlur = std::unique_ptr<GaussianBlur>(new GaussianBlur(renderWidth, renderHeight, _blurLevel, RGB8));
-	_boxBlur = std::unique_ptr<BoxBlur>(new BoxBlur(renderWidth, renderHeight, false, {RGB8,  Filter::NEAREST_NEAREST, Wrap::CLAMP}));
+	_gaussianBlur = std::unique_ptr<GaussianBlur>(new GaussianBlur(renderWidth, renderHeight, _blurLevel, Layout::RGB8));
+	_boxBlur = std::unique_ptr<BoxBlur>(new BoxBlur(renderWidth, renderHeight, false, { Layout::RGB8,  Filter::NEAREST_NEAREST, Wrap::CLAMP}));
 	_floodFill = std::unique_ptr<FloodFiller>(new FloodFiller(renderWidth, renderHeight));
 	
 	_painter = std::unique_ptr<PaintingTool>(new PaintingTool(renderWidth, renderHeight));
@@ -147,7 +147,7 @@ void FilteringRenderer::update(){
 					} else {
 						_image.width = img.width;
 						_image.height = img.height;
-						_image.upload({ RGBA8, Filter::NEAREST_NEAREST, Wrap::CLAMP }, false);
+						_image.upload({ Layout::RGBA8, Filter::NEAREST_NEAREST, Wrap::CLAMP }, false);
 						_image.clearImages();
 						resize(_image.width, _image.height);
 					}
@@ -172,7 +172,7 @@ void FilteringRenderer::update(){
 				if(ImGui::InputInt("Levels", &_blurLevel, 1, 2)){
 					_blurLevel = std::min(std::max(1, _blurLevel), 10);
 					_gaussianBlur->clean();
-					_gaussianBlur = std::unique_ptr<GaussianBlur>(new GaussianBlur(width, height, _blurLevel, RGB8));
+					_gaussianBlur = std::unique_ptr<GaussianBlur>(new GaussianBlur(width, height, _blurLevel, Layout::RGB8));
 				}
 				break;
 			case Processing::FILL:

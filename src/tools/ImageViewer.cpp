@@ -169,7 +169,7 @@ int main(int argc, char** argv) {
 					Log::Info() << "Loading " << newImagePath << "." << std::endl;
 					isFloat = Image::isFloat(newImagePath);
 					// Apply the proper format and filtering.
-					const Layout typedFormat = isFloat ? RGBA32F : SRGB8_ALPHA8;
+					const Layout typedFormat = isFloat ? Layout::RGBA32F : Layout::SRGB8_ALPHA8;
 					
 					imageInfos.clean();
 					imageInfos.shape = TextureShape::D2;
@@ -259,7 +259,7 @@ int main(int argc, char** argv) {
 				// Export either in LDR or HDR.
 				bool res = System::showPicker(System::Picker::Save, "../../../resources", destinationPath, "png;exr");
 				if(res && !destinationPath.empty()){
-					const Layout typedFormat = Image::isFloat(destinationPath) ? RGBA32F : RGBA8;
+					const Layout typedFormat = Image::isFloat(destinationPath) ? Layout::RGBA32F : Layout::RGBA8;
 					// Create a framebuffer at the right size and format, and render in it.
 					const unsigned int outputWidth = isHorizontal ? imageInfos.height : imageInfos.width;
 					const unsigned int outputHeight = isHorizontal ? imageInfos.width : imageInfos.height;
