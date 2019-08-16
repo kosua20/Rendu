@@ -84,8 +84,6 @@ public:
 	 */
 	static void drawMesh(const Mesh & mesh);
 	
-	
-	
 	static void bindTexture(const Texture * texture, unsigned int slot);
 	/** Bind a series of textures to some texture slots, in order.
 	 \param textures the infos of the textures to bind

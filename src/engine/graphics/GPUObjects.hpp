@@ -51,8 +51,19 @@ enum class Wrap : uint {
 	MIRROR
 };
 
-enum Layout {
-	R8, RG8, RGB8, RGBA8, SRGB8, SRGB8_ALPHA8, R16, RG16, RGBA16, R8_SNORM, RG8_SNORM, RGB8_SNORM, RGBA8_SNORM, R16_SNORM, RG16_SNORM, RGB16_SNORM, R16F, RG16F, RGB16F, RGBA16F, R32F, RG32F, RGB32F, RGBA32F, RGB5_A1, RGB10_A2, R11F_G11F_B10F, DEPTH_COMPONENT16, DEPTH_COMPONENT24, DEPTH_COMPONENT32F, DEPTH24_STENCIL8, DEPTH32F_STENCIL8, R8UI, R16I, R16UI, R32I, R32UI, RG8I, RG8UI, RG16I, RG16UI, RG32I, RG32UI, RGB8I, RGB8UI, RGB16I, RGB16UI, RGB32I, RGB32UI, RGBA8I, RGBA8UI, RGBA16I, RGBA16UI, RGBA32I, RGBA32UI
+enum class Layout : uint {
+	R8, RG8, RGB8, RGBA8, SRGB8, SRGB8_ALPHA8,
+	R16, RG16, RGBA16,
+	R8_SNORM, RG8_SNORM, RGB8_SNORM, RGBA8_SNORM,
+	R16_SNORM, RG16_SNORM, RGB16_SNORM,
+	R16F, RG16F, RGB16F, RGBA16F,
+	R32F, RG32F, RGB32F, RGBA32F,
+	RGB5_A1, RGB10_A2, R11F_G11F_B10F,
+	DEPTH_COMPONENT32F, DEPTH24_STENCIL8, DEPTH_COMPONENT16, DEPTH_COMPONENT24, DEPTH32F_STENCIL8,
+	R8UI, R16I, R16UI, R32I, R32UI,
+	RG8I, RG8UI, RG16I, RG16UI, RG32I, RG32UI,
+	RGB8I, RGB8UI, RGB16I, RGB16UI, RGB32I, RGB32UI,
+	RGBA8I, RGBA8UI, RGBA16I, RGBA16UI, RGBA32I, RGBA32UI
 };
 
 /** \brief Regroups format, type, filtering and wrapping informations for a color buffer.
@@ -80,7 +91,7 @@ struct Descriptor {
 	unsigned int getChannelsCount() const;
 	
 	/** Obtain the separate GPU type, format, typed format and channel count of the descriptor.
-	 \param detailedFormat will contain the type format
+	 \param detailedFormat will contain the type format (GL_RG32F,...)
 	 \param type will contain the type (GL_FLOAT,...)
 	 \param format will contain the general layout (GL_RG,...)
 	 \return the number of channels

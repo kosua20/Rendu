@@ -29,8 +29,8 @@ Framebuffer::Framebuffer(unsigned int width, unsigned int height, const std::vec
 		const auto & descriptor = descriptors[i];
 		
 		const Layout & format = descriptor.typedFormat();
-		const bool isDepthComp = format == DEPTH_COMPONENT16 || format == DEPTH_COMPONENT24 || format == DEPTH_COMPONENT32F;
-		const bool isDepthStencilComp = format == DEPTH24_STENCIL8 || format == DEPTH32F_STENCIL8;
+		const bool isDepthComp = format == Layout::DEPTH_COMPONENT16 || format == Layout::DEPTH_COMPONENT24 || format == Layout::DEPTH_COMPONENT32F;
+		const bool isDepthStencilComp = format == Layout::DEPTH24_STENCIL8 || format == Layout::DEPTH32F_STENCIL8;
 		
 		if(isDepthComp || isDepthStencilComp){
 			_depthUse = Depth::TEXTURE;
@@ -167,7 +167,7 @@ const Framebuffer & Framebuffer::backbuffer(){
 		tex.shape = TextureShape::D2;
 		tex.levels = 1;
 		tex.depth = 1;
-		tex.gpu.reset(new GPUTexture(Descriptor(RGBA8, Filter::NEAREST, Wrap::CLAMP), tex.shape));
+		tex.gpu.reset(new GPUTexture(Descriptor(Layout::RGBA8, Filter::NEAREST, Wrap::CLAMP), tex.shape));
 	}
 	return *defaultFramebuffer;
 }

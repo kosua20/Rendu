@@ -29,7 +29,7 @@ FramebufferCube::FramebufferCube(unsigned int side, const Descriptor & descripto
 		_idRenderbuffer.depth = 6;
 		_idRenderbuffer.levels = 1;
 		_idRenderbuffer.shape = TextureShape::Cube;
-		GLUtilities::setupTexture(_idRenderbuffer, {DEPTH_COMPONENT32F, Filter::NEAREST, Wrap::CLAMP});
+		GLUtilities::setupTexture(_idRenderbuffer, { Layout::DEPTH_COMPONENT32F, Filter::NEAREST, Wrap::CLAMP});
 		
 		glBindTexture(GL_TEXTURE_CUBE_MAP, _idRenderbuffer.gpu->id);
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, _idRenderbuffer.gpu->id, 0);
