@@ -19,22 +19,22 @@ class Log {
 public:
 	
 	/// \brief Domain prefix that will be appended before a line.
-	enum LogDomain {
-		OpenGL, Resources, Input, Utilities, Config
+	enum Domain {
+		OpenGL = 0, Resources, Input, Utilities, Config
 	};
 
 private:
 	
 	/// \brief Criticality level
-	enum LogLevel {
-		INFO, WARNING, ERROR, VERBOSE ///< Will only be logged if verbose is enabled.
+	enum class Level : uint {
+		INFO = 0, WARNING, ERROR, VERBOSE ///< Will only be logged if verbose is enabled.
 	};
 	
 	/** Set the criticality level.
 	 \param l the new level
 	 \note Level is not modified directly, but through the use of Log::Info, Log::Error, etc., mimicking std::cout and std::cerr.
 	 */
-	void set(LogLevel l);
+	void set(Level l);
 
 	const std::vector<std::string> _domainStrings = {"OpenGL","Resources","Input","Utilities","Config"}; ///< Domain prefix strings.
 
@@ -75,7 +75,7 @@ public:
 	 \return itself for chaining
 	 \note The domain is only applied to the incoming line.
 	 */
-	Log & operator<<(const LogDomain& domain);
+	Log & operator<<(const Domain& domain);
 	
 	/** Modifier stream operator
 	 \param modif the stream modifier
@@ -142,7 +142,7 @@ private:
 	 */
 	void appendIfNeeded();
 	
-	LogLevel _level; ///< The current criticality level.
+	Level _level; ///< The current criticality level.
 	bool _logToStdOut; ///< Should the logs be output to standard output.
 	std::ofstream _file; ///< The output log file stream.
 	std::stringstream _stream; ///< Internal log string stream.

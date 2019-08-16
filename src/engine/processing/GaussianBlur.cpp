@@ -2,7 +2,7 @@
 #include "graphics/GLUtilities.hpp"
 
 
-GaussianBlur::GaussianBlur(unsigned int width, unsigned int height, unsigned int depth, GLuint preciseFormat) : Blur() {
+GaussianBlur::GaussianBlur(unsigned int width, unsigned int height, unsigned int depth, Layout preciseFormat) : Blur() {
 	_passthroughProgram = Resources::manager().getProgram("passthrough");
 	_blurProgramDown = Resources::manager().getProgram2D("blur-dual-filter-down");
 	_blurProgramUp = Resources::manager().getProgram2D("blur-dual-filter-up");

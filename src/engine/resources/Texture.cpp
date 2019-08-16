@@ -15,10 +15,10 @@ void Texture::clean(){
 	}
 }
 
-void Texture::upload(const Descriptor & descriptor, bool updateMipmaps){
+void Texture::upload(const Descriptor & layout, bool updateMipmaps){
 	
 	// Create texture.
-	GLUtilities::setupTexture(*this, descriptor);
+	GLUtilities::setupTexture(*this, layout);
 	GLUtilities::uploadTexture(*this);
 
 	// Generate mipmaps pyramid automatically.

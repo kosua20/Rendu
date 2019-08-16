@@ -10,27 +10,27 @@ Controller::Controller() {
 void Controller::reset(){
 	_id = -1;
 	// Reset pressed buttons.
-	for(unsigned int i = 0; i < ControllerInput::ControllerInputCount; ++i){
+	for(unsigned int i = 0; i < uint(Controller::Input::InputCount); ++i){
 		_buttons[i].pressed = false;
 		_buttons[i].first = false;
 		_axes[i] = 0.0f;
 	}
 }
 
-bool Controller::pressed(const ControllerInput & input) const {
-	return _buttons[input].pressed;
+bool Controller::pressed(const Controller::Input & input) const {
+	return _buttons[uint(input)].pressed;
 }
 
-bool Controller::triggered(const ControllerInput & input, bool absorb) {
-	bool res = _buttons[input].first;
+bool Controller::triggered(const Controller::Input & input, bool absorb) {
+	bool res = _buttons[uint(input)].first;
 	if(absorb){
-		_buttons[input].first = false;
+		_buttons[uint(input)].first = false;
 	}
 	return res;
 }
 
-float Controller::axis(const ControllerInput & input) const {
-	return _axes[input];
+float Controller::axis(const Controller::Input & input) const {
+	return _axes[uint(input)];
 }
 
 Controller::~Controller(){
@@ -70,7 +70,7 @@ void Controller::saveConfiguration(const std::string & outputPath, const std::st
 		"leftx", "lefty", "rightx", "righty"
 	};
 	
-	for(int i = 0; i < Controller::ControllerInputCount; ++i){
+	for(uint i = 0; i < uint(Controller::Input::InputCount); ++i){
 		outputStr << internalToSdlNames[i] << ":";
 		const int bid = buttonsMapping[i];
 		const int aid = axesMapping[i];
@@ -94,17 +94,17 @@ bool Controller::parseConfiguration(const std::string & settingsContent, std::ve
 	}
 	axesMapping.clear();
 	buttonsMapping.clear();
-	axesMapping.resize(Controller::ControllerInputCount, -1);
-	buttonsMapping.resize(Controller::ControllerInputCount, -1);
+	axesMapping.resize(uint(Controller::Input::InputCount), -1);
+	buttonsMapping.resize(uint(Controller::Input::InputCount), -1);
 	
-	static const std::map<std::string, Controller::ControllerInput> sdlNamesToInternal = {
-		{ "c", Controller::ButtonX }, { "d", Controller::ButtonY }, { "a", Controller::ButtonA }, { "b", Controller::ButtonB },
-		{"leftshoulder", Controller::BumperL1 }, {"lefttrigger", Controller::TriggerL2 }, {"leftstick", Controller::ButtonL3 },
-		{"rightshoulder", Controller::BumperR1 }, {"righttrigger", Controller::TriggerR2 }, {"rightstick", Controller::ButtonR3 },
-		{"dpup", Controller::ButtonUp }, {"dpleft", Controller::ButtonLeft }, {"dpdown", Controller::ButtonDown }, {"dpright", Controller::ButtonRight },
-		{"guide", Controller::ButtonLogo }, {"start", Controller::ButtonMenu }, {"back", Controller::ButtonView },
-		{"leftx", Controller::PadLeftX }, {"lefty", Controller::PadLeftY },
-		{"rightx", Controller::PadRightX }, {"righty", Controller::PadRightY }
+	static const std::map<std::string, Controller::Input> sdlNamesToInternal = {
+		{ "c", Controller::Input::ButtonX }, { "d", Controller::Input::ButtonY }, { "a", Controller::Input::ButtonA }, { "b", Controller::Input::ButtonB },
+		{"leftshoulder", Controller::Input::BumperL1 }, {"lefttrigger", Controller::Input::TriggerL2 }, {"leftstick", Controller::Input::ButtonL3 },
+		{"rightshoulder", Controller::Input::BumperR1 }, {"righttrigger", Controller::Input::TriggerR2 }, {"rightstick", Controller::Input::ButtonR3 },
+		{"dpup", Controller::Input::ButtonUp }, {"dpleft", Controller::Input::ButtonLeft }, {"dpdown", Controller::Input::ButtonDown }, {"dpright", Controller::Input::ButtonRight },
+		{"guide", Controller::Input::ButtonLogo }, {"start", Controller::Input::ButtonMenu }, {"back", Controller::Input::ButtonView },
+		{"leftx", Controller::Input::PadLeftX }, {"lefty", Controller::Input::PadLeftY },
+		{"rightx", Controller::Input::PadRightX }, {"righty", Controller::Input::PadRightY }
 	};
 	
 	std::istringstream line(settingsContent);

@@ -21,7 +21,7 @@ void Font::loadFont(std::istream & in, Font & font){
 		Log::Error() << Log::Resources << "Unable to parse font." << std::endl;
 		return;
 	}
-	font.atlas = Resources::manager().getTexture(lines[0], {GL_R8, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE}, Storage::GPU);
+	font.atlas = Resources::manager().getTexture(lines[0], {R8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
 	const glm::vec2 textureSize(font.atlas->width, font.atlas->height);
 	
 	font.firstCodepoint = int(lines[1][0]);
@@ -90,8 +90,8 @@ void Font::generateLabel(const std::string & text, const Font & font, const floa
 	}
 	// currentOrigin.x now contains the width of the label.
 	// Depending on the alignment mode, we shift all vertices based on it.
-	if(align != LEFT){
-		const float shiftX = (align == CENTER ? 0.5f : 1.0f) * currentOrigin.x;
+	if(align != Alignment::LEFT){
+		const float shiftX = (align == Alignment::CENTER ? 0.5f : 1.0f) * currentOrigin.x;
 		for(auto & vert : mesh.positions){
 			vert.x -= shiftX;
 		}

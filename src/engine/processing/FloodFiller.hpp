@@ -14,7 +14,7 @@ public:
 
 	/** \brief Output mode: either the color of the input seeds propagated, or the normalized distance to the closest seed at each pixel.
 	 */
-	enum OutputMode {
+	enum class Output {
 		COLOR, DISTANCE
 	};
 	
@@ -28,7 +28,7 @@ public:
 	 \param textureId the GPU ID of the texture
 	 \param mode the output mode (color or distance)
 	 */
-	void process(const Texture * textureId, const OutputMode mode);
+	void process(const Texture * textureId, const Output mode);
 	
 	/** Cleanup internal resources. */
 	void clean() const;

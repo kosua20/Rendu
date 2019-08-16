@@ -9,9 +9,9 @@ PoissonFiller::PoissonFiller(unsigned int width, unsigned int height, unsigned i
 	_prepare = Resources::manager().getProgram2D("fill-boundary");
 	_composite = Resources::manager().getProgram2D("fill-combine");
 	
-	const Descriptor desc = {GL_RGBA32F, GL_NEAREST_MIPMAP_NEAREST, GL_CLAMP_TO_EDGE};
+	const Descriptor desc = {RGBA32F, Filter::NEAREST_NEAREST, Wrap::CLAMP};
 	_preproc = std::unique_ptr<Framebuffer>(new Framebuffer(_pyramid.width(), _pyramid.height(), desc , false));
-	_compo   = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, GL_RGBA8, false));
+	_compo   = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, RGBA8, false));
 	
 	const float h1[5] = {0.1507f, 0.6836f, 1.0334f, 0.6836f, 0.1507f};
 	const float h2 = 0.0270f;

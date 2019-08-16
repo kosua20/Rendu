@@ -17,10 +17,10 @@
 // but we want it to always be created.
 Log* Log::_defaultLogger = new Log();
 
-void Log::set(LogLevel l){
+void Log::set(Level l){
 	_level = l;
 	_appendPrefix = true;
-	if(_level == LogLevel::VERBOSE && !_verbose){
+	if(_level == Level::VERBOSE && !_verbose){
 		// In this case, we want to ignore until the next flush.
 		_ignoreUntilFlush = true;
 		_appendPrefix = false;
@@ -28,7 +28,7 @@ void Log::set(LogLevel l){
 }
 
 Log::Log(){
-	_level = LogLevel::INFO;
+	_level = Level::INFO;
 	_logToStdOut = true;
 	_verbose = false;
 	_ignoreUntilFlush = false;
@@ -63,7 +63,7 @@ Log::Log(){
 }
 
 Log::Log(const std::string & filePath, const bool logToStdin, const bool verbose){
-	_level = LogLevel::INFO;
+	_level = Level::INFO;
 	_logToStdOut = logToStdin;
 	_verbose = verbose;
 	_ignoreUntilFlush = false;
@@ -96,9 +96,6 @@ void Log::setVerbose(const bool verbose){
 	_verbose = verbose;
 }
 
-
-
-
 void Log::setDefaultFile(const std::string & filePath){
 	_defaultLogger->setFile(filePath);
 }
@@ -108,32 +105,31 @@ void Log::setDefaultVerbose(const bool verbose){
 }
 
 Log& Log::Info(){
-	_defaultLogger->set(LogLevel::INFO);
+	_defaultLogger->set(Level::INFO);
 	return *_defaultLogger;
 }
 
 Log& Log::Warning(){
-	_defaultLogger->set(LogLevel::WARNING);
+	_defaultLogger->set(Level::WARNING);
 	return *_defaultLogger;
 }
 
 Log& Log::Error(){
-	_defaultLogger->set(LogLevel::ERROR);
+	_defaultLogger->set(Level::ERROR);
 	return *_defaultLogger;
 }
 
 Log& Log::Verbose(){
-	_defaultLogger->set(LogLevel::VERBOSE);
+	_defaultLogger->set(Level::VERBOSE);
 	return *_defaultLogger;
 }
 
 void Log::flush(){
 	if(!_ignoreUntilFlush){
-		
 		const std::string finalStr =  _stream.str();
 		
 		if(_logToStdOut){
-			if(_level == LogLevel::INFO || _level == LogLevel::VERBOSE){
+			if(_level == Level::INFO || _level == Level::VERBOSE){
 				std::cout << finalStr << std::flush;
 			} else {
 				std::cerr << finalStr << std::flush;
@@ -147,28 +143,28 @@ void Log::flush(){
 	_appendPrefix = false;
 	_stream.str(std::string());
 	_stream.clear();
-	_level = LogLevel::INFO;
+	_level = Level::INFO;
 }
 
 void Log::appendIfNeeded(){
 	if(_appendPrefix){
 		_appendPrefix = false;
 		if(_useColors){
-			_stream << _colorStrings[_level];
+			_stream << _colorStrings[uint(_level)];
 		}
-		_stream << _levelStrings[_level];
+		_stream << _levelStrings[uint(_level)];
 	}
 }
 
-Log & Log::operator<<(const LogDomain& domain){
+Log & Log::operator<<(const Domain& domain){
 	
 	if(_appendPrefix && _useColors){
-		_stream << _colorStrings[_level];
+		_stream << _colorStrings[uint(_level)];
 	}
 	_stream << "[" << _domainStrings[domain] << "] ";
 	
 	if(_appendPrefix){
-		_stream << _levelStrings[_level];
+		_stream << _levelStrings[uint(_level)];
 		_appendPrefix = false;
 	}
 	return *this;

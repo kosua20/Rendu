@@ -12,7 +12,7 @@ DirectionalLight::DirectionalLight(const glm::vec3& worldDirection, const glm::v
 
 void DirectionalLight::init(const std::vector<const Texture *>& textureIds){
 	// Setup the framebuffer.
-	const Descriptor descriptor = { GL_RG16F, GL_LINEAR, GL_CLAMP_TO_EDGE };
+	const Descriptor descriptor = { RG16F, Filter::LINEAR, Wrap::CLAMP };
 	_shadowPass = std::unique_ptr<Framebuffer>(new Framebuffer(512, 512, descriptor, true));
 	_blur = std::unique_ptr<BoxBlur>(new BoxBlur(512, 512, false, descriptor));
 	
@@ -64,14 +64,12 @@ void DirectionalLight::drawShadow(const std::vector<Object> & objects) const {
 		}
 		_programDepth->uniform("hasMask", object.masked());
 		if(object.masked()){
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, object.textures()[0]->gpu->id);
+			GLUtilities::bindTexture(object.textures()[0], 0);
 		}
 		const glm::mat4 lightMVP = _mvp * object.model();
 		_programDepth->uniform("mvp", lightMVP);
 		GLUtilities::drawMesh(*(object.mesh()));
 		glEnable(GL_CULL_FACE);
-		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 	_shadowPass->unbind();
 	

@@ -14,14 +14,14 @@ public:
 	Controller();
 	
 	/// Controller inputs, based on the Xbox controller layout.
-	enum ControllerInput {
+	enum Input {
 		ButtonX, ButtonY, ButtonA, ButtonB,
 		BumperL1, TriggerL2, ButtonL3,
 		BumperR1, TriggerR2, ButtonR3,
 		ButtonUp, ButtonLeft, ButtonDown, ButtonRight,
 		ButtonLogo, ButtonMenu, ButtonView,
 		PadLeftX, PadLeftY, PadRightX, PadRightY,
-		ControllerInputCount
+		InputCount
 	};
 	
 	/**
@@ -46,7 +46,7 @@ public:
 	 \param input the button
 	 \return true if the button is pressed
 	 */
-	bool pressed(const ControllerInput & input) const;
+	bool pressed(const Controller::Input & input) const;
 	
 	/**
 	 Query if a given button was pressed at this frame precisely.
@@ -54,14 +54,14 @@ public:
 	 \param absorb should the press event be hidden from future queries during the current frame
 	 \return true if the button was triggered at this frame.
 	 */
-	bool triggered(const ControllerInput & input, bool absorb = false);
+	bool triggered(const Controller::Input & input, bool absorb = false);
 	
 	/**
 	 Query the amount of displacement along a given axis (for joysticks and triggers).
 	 \param input the button or pad
 	 \return the current amount of displacement
 	 */
-	float axis(const ControllerInput & input) const;
+	float axis(const Controller::Input & input) const;
 	
 	/** Query the controller ID.
 	 \return the id
@@ -113,8 +113,8 @@ protected:
 		bool first = false; ///< Is it the first frame it is held.
 	};
 	
-	ControllerButton _buttons[ControllerInput::ControllerInputCount]; ///< States of all possible buttons.
-	float _axes[ControllerInput::ControllerInputCount]; ///< States of all possible axis.
+	ControllerButton _buttons[Controller::Input::InputCount]; ///< States of all possible buttons.
+	float _axes[Controller::Input::InputCount]; ///< States of all possible axis.
 	
 	int _id = -1;///< Joystick ID (or -1 if no joystick is connected).
 	std::string _name = "Unknown"; ///< Name of the joystick

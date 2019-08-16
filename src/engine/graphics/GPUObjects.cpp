@@ -43,7 +43,7 @@ void GPUTexture::setFiltering(Filter filtering){
 }
 
 Descriptor::Descriptor() :
-	_typedFormat(RGB8), _filtering(Filter::LinearMipLinear), _wrapping(Wrap::Clamp) {
+	_typedFormat(RGB8), _filtering(Filter::LINEAR_LINEAR), _wrapping(Wrap::CLAMP) {
 }
 
 Descriptor::Descriptor(Layout typedFormat, Filter filtering, Wrap wrapping) :
@@ -132,22 +132,22 @@ unsigned int Descriptor::getGPULayout(GLenum & detailedFormat, GLenum & type, GL
 
 GLenum Descriptor::getGPUFilter(Filter filter) const {
 	static const std::map<Filter, GLenum> filters = {
-		{ Filter::Nearest, GL_NEAREST },
-		{ Filter::Linear, GL_LINEAR },
-		{ Filter::NearestMipNearest, GL_NEAREST_MIPMAP_NEAREST },
-		{ Filter::LinearMipNearest, GL_LINEAR_MIPMAP_NEAREST },
-		{ Filter::NearestMipLinear, GL_NEAREST_MIPMAP_LINEAR },
-		{ Filter::LinearMipLinear, GL_LINEAR_MIPMAP_LINEAR }
+		{ Filter::NEAREST, GL_NEAREST },
+		{ Filter::LINEAR, GL_LINEAR },
+		{ Filter::NEAREST_NEAREST, GL_NEAREST_MIPMAP_NEAREST },
+		{ Filter::LINEAR_NEAREST, GL_LINEAR_MIPMAP_NEAREST },
+		{ Filter::NEAREST_LINEAR, GL_NEAREST_MIPMAP_LINEAR },
+		{ Filter::LINEAR_LINEAR, GL_LINEAR_MIPMAP_LINEAR }
 	};
 	return filters.at(filter);
 }
 
 GLenum Descriptor::getGPUMagnificationFilter() const {
-	if(_filtering == Filter::NearestMipNearest || _filtering == Filter::NearestMipLinear){
-		return getGPUFilter(Filter::Nearest);
+	if(_filtering == Filter::NEAREST_NEAREST || _filtering == Filter::NEAREST_LINEAR){
+		return getGPUFilter(Filter::NEAREST);
 	}
-	if(_filtering == Filter::LinearMipNearest || _filtering == Filter::LinearMipLinear){
-		return getGPUFilter(Filter::Linear);
+	if(_filtering == Filter::LINEAR_NEAREST || _filtering == Filter::LINEAR_LINEAR){
+		return getGPUFilter(Filter::LINEAR);
 	}
 	return getGPUFilter(_filtering);
 }
@@ -164,9 +164,9 @@ GLenum Descriptor::getGPUMinificationFilter() const {
 
 GLenum Descriptor::getGPUWrapping() const {
 	static const std::map<Wrap, GLenum> wraps = {
-		{ Wrap::Clamp, GL_CLAMP_TO_EDGE},
-		{ Wrap::Repeat, GL_REPEAT},
-		{ Wrap::Mirror, GL_MIRRORED_REPEAT}
+		{ Wrap::CLAMP, GL_CLAMP_TO_EDGE},
+		{ Wrap::REPEAT, GL_REPEAT},
+		{ Wrap::MIRROR, GL_MIRRORED_REPEAT}
 	};
 	return wraps.at(_wrapping);
 }

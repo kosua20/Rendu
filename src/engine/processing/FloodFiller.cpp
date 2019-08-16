@@ -5,10 +5,10 @@ FloodFiller::FloodFiller(unsigned int width, unsigned int height) {
 	
 	_iterations = int(std::ceil(std::log2(std::max(width, height))));
 	
-	const Descriptor desc = {GL_RG16UI, GL_NEAREST_MIPMAP_NEAREST, GL_REPEAT};
+	const Descriptor desc = {RG16UI, Filter::NEAREST_NEAREST, Wrap::REPEAT};
 	_ping = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, desc, false));
 	_pong = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, desc, false));
-	_final = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, {GL_RGBA8, GL_NEAREST_MIPMAP_NEAREST, GL_CLAMP_TO_EDGE}, false));
+	_final = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, {RGBA8, Filter::NEAREST_NEAREST, Wrap::CLAMP}, false));
 	
 	_extract = Resources::manager().getProgram2D("extract-seeds");
 	_floodfill = Resources::manager().getProgram2D("flood-fill");
@@ -16,17 +16,17 @@ FloodFiller::FloodFiller(unsigned int width, unsigned int height) {
 	_compositeColor = Resources::manager().getProgram2D("color-seeds");
 }
 
-void FloodFiller::process(const Texture * textureId, const OutputMode mode) {
+void FloodFiller::process(const Texture * textureId, const Output mode) {
 	
 	extractAndPropagate(textureId);
 	
 	_final->bind();
 	_final->setViewport();
 	
-	if(mode == COLOR){
+	if(mode == Output::COLOR){
 		_compositeColor->use();
 		ScreenQuad::draw({_ping->textureId(), textureId });
-	} else if(mode == DISTANCE){
+	} else if(mode == Output::DISTANCE){
 		_compositeDist->use();
 		ScreenQuad::draw(_ping->textureId());
 	}

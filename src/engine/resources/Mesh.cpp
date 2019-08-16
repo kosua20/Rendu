@@ -27,7 +27,7 @@ void Mesh::upload(){
 	GLUtilities::setupBuffers(*this);
 }
 
-void Mesh::loadObj( std::istream & in, Mesh & mesh, Mesh::LoadMode mode){
+void Mesh::loadObj( std::istream & in, Mesh & mesh, Mesh::Load mode){
 	
 	using namespace std;
 	
@@ -114,7 +114,7 @@ void Mesh::loadObj( std::istream & in, Mesh & mesh, Mesh::LoadMode mode){
 	bool hasNormals = normals_temp.size()>0;
 
 	// Depending on the chosen extraction mode, we fill the mesh arrays accordingly.
-	if (mode == Mesh::Points){
+	if (mode == Mesh::Load::Points){
 		// Mode: Points
 		// In this mode, we don't care about faces. We simply associate each vertex/normal/uv in the same order.
 		
@@ -126,7 +126,7 @@ void Mesh::loadObj( std::istream & in, Mesh & mesh, Mesh::LoadMode mode){
 			mesh.texcoords = texcoords_temp;
 		}
 
-	} else if(mode == Mesh::Expanded){
+	} else if(mode == Mesh::Load::Expanded){
 		// Mode: Expanded
 		// In this mode, vertices are all duplicated. Each face has its set of 3 vertices, not shared with any other face.
 		
@@ -156,7 +156,7 @@ void Mesh::loadObj( std::istream & in, Mesh & mesh, Mesh::LoadMode mode){
 			mesh.indices.push_back((unsigned int)i);
 		}
 
-	} else if (mode == Mesh::Indexed){
+	} else if (mode == Mesh::Load::Indexed){
 		// Mode: Indexed
 		// In this mode, vertices are only duplicated if they were already used in a previous face with a different set of uv/normal coordinates.
 		

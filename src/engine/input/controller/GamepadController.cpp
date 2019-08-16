@@ -28,22 +28,22 @@ void GamepadController::update(){
 	GLFWgamepadstate state;
 	glfwGetGamepadState(_id, &state);
 	
-	static const std::vector<ControllerInput> glfwButtonsToInternal = {
-		ButtonA, ButtonB, ButtonX, ButtonY,
-		BumperL1, BumperR1,
-		ButtonView, ButtonMenu, ButtonLogo,
-		ButtonL3, ButtonR3,
-		ButtonUp, ButtonRight, ButtonDown, ButtonLeft
+	static const std::vector<Controller::Input> glfwButtonsToInternal = {
+		Controller::Input::ButtonA, Controller::Input::ButtonB, Controller::Input::ButtonX, Controller::Input::ButtonY,
+		Controller::Input::BumperL1, Controller::Input::BumperR1,
+		Controller::Input::ButtonView, Controller::Input::ButtonMenu, Controller::Input::ButtonLogo,
+		Controller::Input::ButtonL3, Controller::Input::ButtonR3,
+		Controller::Input::ButtonUp, Controller::Input::ButtonRight, Controller::Input::ButtonDown, Controller::Input::ButtonLeft
 	};
 	
-	static const std::vector<ControllerInput> glfwAxesToInternal = {
-		PadLeftX, PadLeftY, PadRightX, PadRightY,
-		TriggerL2, TriggerR2
+	static const std::vector<Controller::Input> glfwAxesToInternal = {
+		Controller::Input::PadLeftX, Controller::Input::PadLeftY, Controller::Input::PadRightX, Controller::Input::PadRightY,
+		Controller::Input::TriggerL2, Controller::Input::TriggerR2
 	};
 	
 	for(unsigned int i = 0; i < glfwButtonsToInternal.size(); ++i){
 		const bool pressed = state.buttons[i] == GLFW_PRESS;
-		const ControllerInput button = glfwButtonsToInternal[i];
+		const uint button = uint(glfwButtonsToInternal[i]);
 		if(pressed){
 			if(_buttons[button].pressed){
 				// Already pressed.
@@ -59,7 +59,7 @@ void GamepadController::update(){
 	}
 	
 	for(unsigned int i = 0; i < glfwAxesToInternal.size(); ++i){
-		_axes[glfwAxesToInternal[i]] = state.axes[i];
+		_axes[uint(glfwAxesToInternal[i])] = state.axes[i];
 	}
 	
 }

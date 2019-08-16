@@ -34,7 +34,7 @@ public:
 public:
 	
 	/// \brief The mesh loading preprocessing mode.
-	enum LoadMode {
+	enum class Load {
 		Expanded, ///< Duplicate vertices for every face.
 		Points, ///< Load the vertices without any connectivity
 		Indexed ///< Duplicate only vertices that are shared between faces with attributes with different values.
@@ -45,7 +45,7 @@ public:
 	 \param mesh will be populated with the loaded geometry
 	 \param mode the preprocessing mode
 	 */
-	static void loadObj(std::istream & in, Mesh & mesh, LoadMode mode);
+	static void loadObj(std::istream & in, Mesh & mesh, Load mode);
 	
 	/** Compute the axi-aligned bounding box of a mesh.
 	 \param mesh the mesh

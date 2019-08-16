@@ -6,7 +6,7 @@ Framebuffer::Framebuffer(){
 	
 }
 
-Framebuffer::Framebuffer(unsigned int width, unsigned int height, const Layout typedFormat, bool depthBuffer) : Framebuffer(width, height, { Descriptor(typedFormat, Filter::LinearMipNearest, Wrap::Clamp) }, depthBuffer) {
+Framebuffer::Framebuffer(unsigned int width, unsigned int height, const Layout typedFormat, bool depthBuffer) : Framebuffer(width, height, { Descriptor(typedFormat, Filter::LINEAR_NEAREST, Wrap::CLAMP) }, depthBuffer) {
 	
 }
 
@@ -167,7 +167,7 @@ const Framebuffer & Framebuffer::backbuffer(){
 		tex.shape = TextureShape::D2;
 		tex.levels = 1;
 		tex.depth = 1;
-		tex.gpu.reset(new GPUTexture(Descriptor(RGBA8, Filter::Nearest, Wrap::Clamp), tex.shape));
+		tex.gpu.reset(new GPUTexture(Descriptor(RGBA8, Filter::NEAREST, Wrap::CLAMP), tex.shape));
 	}
 	return *defaultFramebuffer;
 }

@@ -23,7 +23,7 @@ SpotLight::SpotLight(const glm::vec3& worldPosition, const glm::vec3& worldDirec
 
 void SpotLight::init(const std::vector<const Texture *>& textureIds){
 	// Setup the framebuffer.
-	const Descriptor descriptor = {GL_RG32F, GL_LINEAR, GL_CLAMP_TO_EDGE};
+	const Descriptor descriptor = {RG32F, Filter::LINEAR, Wrap::CLAMP};
 	_shadowPass = std::unique_ptr<Framebuffer>(new Framebuffer(512, 512, descriptor, true));
 	_blur = std::unique_ptr<BoxBlur>(new BoxBlur(512, 512, false, descriptor));
 	
@@ -67,10 +67,7 @@ void SpotLight::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMat
 	_program->uniform("castShadow", _castShadows);
 	
 	// Active screen texture.
-	for(GLuint i = 0;i < _textures.size(); ++i){
-		glActiveTexture(GL_TEXTURE0 + i);
-		glBindTexture(GL_TEXTURE_2D, _textures[i]->gpu->id);
-	}
+	GLUtilities::bindTextures(_textures);
 	
 	// Select the geometry.
 	GLUtilities::drawMesh(*_cone);
@@ -98,14 +95,12 @@ void SpotLight::drawShadow(const std::vector<Object> & objects) const {
 		}
 		_programDepth->uniform("hasMask", object.masked());
 		if(object.masked()){
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, object.textures()[0]->gpu->id);
+			GLUtilities::bindTexture(object.textures()[0], 0);
 		}
 		const glm::mat4 lightMVP = _mvp * object.model();
 		_programDepth->uniform("mvp", lightMVP);
 		GLUtilities::drawMesh(*(object.mesh()));
 		glEnable(GL_CULL_FACE);
-		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 	
 	_shadowPass->unbind();

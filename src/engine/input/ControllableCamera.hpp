@@ -12,8 +12,8 @@ class ControllableCamera : public Camera {
 public:
 	
 	/// The interaction mode of the controllable camera.
-	enum CameraMode {
-		FPS,
+	enum class Mode : uint {
+		FPS = 0,
 		TurnTable,
 		//Trackball, ///< Currently not supported.
 		Joystick
@@ -48,7 +48,7 @@ public:
 	/** Obtain the mode the camera is currently using.
 	 \return the current mode
 	 */
-	CameraMode & mode(){ return _mode; };
+	Mode & mode(){ return _mode; };
 	
 	
 private:
@@ -75,5 +75,5 @@ private:
 	glm::vec2 _angles; ///< Orientation angles
 	float _radius; ///< Turntable radius
 	
-	CameraMode _mode; ///< The current interaction mode
+	Mode _mode; ///< The current interaction mode
 };

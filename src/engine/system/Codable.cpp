@@ -72,13 +72,13 @@ glm::mat4 Codable::decodeTransformation(const std::vector<KeyValues> & params){
 const Texture * Codable::decodeTexture(const KeyValues & param, const Storage mode){
 	// Subest of descriptors supported by the scene serialization model.
 	const std::map<std::string, Descriptor> descriptors = {
-		{"srgb", {GL_SRGB8_ALPHA8, GL_LINEAR_MIPMAP_LINEAR, GL_REPEAT}},
-		{"rgb", {GL_RGBA8, GL_LINEAR_MIPMAP_LINEAR, GL_REPEAT}},
-		{"rgb32", {GL_RGB32F, GL_LINEAR_MIPMAP_LINEAR, GL_REPEAT}},
+		{"srgb", {SRGB8_ALPHA8, Filter::LINEAR_LINEAR, Wrap::REPEAT}},
+		{"rgb", {RGBA8, Filter::LINEAR_LINEAR, Wrap::REPEAT}},
+		{"rgb32", {RGB32F, Filter::LINEAR_LINEAR, Wrap::REPEAT}},
 		
-		{"srgbcube", {GL_SRGB8_ALPHA8, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE}},
-		{"rgbcube", {GL_RGBA8, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE}},
-		{"rgb32cube", {GL_RGB32F, GL_LINEAR_MIPMAP_LINEAR, GL_CLAMP_TO_EDGE}},
+		{"srgbcube", {SRGB8_ALPHA8, Filter::LINEAR_LINEAR, Wrap::CLAMP}},
+		{"rgbcube", {RGBA8, Filter::LINEAR_LINEAR, Wrap::CLAMP}},
+		{"rgb32cube", {RGB32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}},
 	};
 	// Check if the required format exists.
 	if(descriptors.count(param.key) == 0 || param.values.empty()){

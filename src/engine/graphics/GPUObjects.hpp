@@ -37,18 +37,18 @@ inline bool operator &(TextureShape t0, TextureShape t1){
 }
 
 enum class Filter : uint {
-	Nearest = 0,
-	Linear,
-	NearestMipNearest,
-	LinearMipNearest,
-	NearestMipLinear,
-	LinearMipLinear
+	NEAREST = 0,
+	LINEAR,
+	NEAREST_NEAREST,
+	LINEAR_NEAREST,
+	NEAREST_LINEAR,
+	LINEAR_LINEAR
 };
 
 enum class Wrap : uint {
-	Clamp = 0,
-	Repeat,
-	Mirror
+	CLAMP = 0,
+	REPEAT,
+	MIRROR
 };
 
 enum Layout {

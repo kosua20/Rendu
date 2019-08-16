@@ -5,8 +5,8 @@
 
 SSAO::SSAO(unsigned int width, unsigned int height, float radius) {
 	_radius = radius;
-	_ssaoFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, GL_R8, false));
-	_blurSSAOBuffer = std::unique_ptr<BoxBlur>(new BoxBlur(width, height, true, Descriptor(GL_R8, GL_LINEAR_MIPMAP_NEAREST, GL_CLAMP_TO_EDGE)));
+	_ssaoFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, R8, false));
+	_blurSSAOBuffer = std::unique_ptr<BoxBlur>(new BoxBlur(width, height, true, Descriptor(R8, Filter::LINEAR_LINEAR, Wrap::CLAMP)));
 	_programSSAO = Resources::manager().getProgram2D("ssao");
 	
 	// Generate samples.
@@ -28,31 +28,31 @@ SSAO::SSAO(unsigned int width, unsigned int height, float radius) {
 	
 	// Noise texture (same size as the box blur applied after SSAO computation).
 	// We need to generate two dimensional normalized offsets.
-	std::vector<glm::vec3> noise;
-	for(int i = 0; i < 25; ++i){
-		glm::vec3 randVec = glm::vec3(Random::Float(-1.0f, 1.0f),
-									  Random::Float(-1.0f, 1.0f),
-									  0.0f);
-		noise.push_back(glm::normalize(randVec));
-	}
-	
-	// Send the texture to the GPU.
 	_noiseTextureID.width = 5;
 	_noiseTextureID.height = 5;
 	_noiseTextureID.depth = 1;
 	_noiseTextureID.levels = 1;
 	_noiseTextureID.shape = TextureShape::D2;
-	GLUtilities::setupTexture(_noiseTextureID, {GL_RGB16F, GL_NEAREST, GL_REPEAT});
+	_noiseTextureID.images.emplace_back();
+	Image & img = _noiseTextureID.images.back();
+	img.width = 5;
+	img.height = 5;
+	img.components = 3;
 	
-//	glGenTextures(1, &_noiseTextureID);
-//	glBindTexture(GL_TEXTURE_2D, _noiseTextureID);
-//	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, 5 , 5, 0, GL_RGB, GL_FLOAT, &(noise[0]));
-//	// Need nearest filtering and repeat.
-//	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-//	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-//	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S, GL_REPEAT);
-//	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T, GL_REPEAT);
-//	
+	for(int i = 0; i < 25; ++i){
+		const glm::vec3 randVec = glm::vec3(Random::Float(-1.0f, 1.0f),
+									  Random::Float(-1.0f, 1.0f),
+									  0.0f);
+		const glm::vec3 norVec = glm::normalize(randVec);
+		img.pixels.push_back(norVec[0]);
+		img.pixels.push_back(norVec[1]);
+		img.pixels.push_back(norVec[2]);
+	}
+	
+	// Send the texture to the GPU.
+	GLUtilities::setupTexture(_noiseTextureID, {RGB32F, Filter::NEAREST, Wrap::REPEAT});
+	GLUtilities::uploadTexture(_noiseTextureID);
+	
 	checkGLError();
 	
 }

@@ -205,21 +205,21 @@ bool Input::released(const Key & keyboardKey, bool absorb) {
 }
 
 bool Input::pressed(const Mouse & mouseButton) const {
-	return _mouseButtons[mouseButton].pressed;
+	return _mouseButtons[uint(mouseButton)].pressed;
 }
 
 bool Input::triggered(const Mouse & mouseButton, bool absorb) {
-	bool res = _mouseButtons[mouseButton].first;
+	bool res = _mouseButtons[uint(mouseButton)].first;
 	if(absorb){
-		_mouseButtons[mouseButton].first = false;
+		_mouseButtons[uint(mouseButton)].first = false;
 	}
 	return res;
 }
 
 bool Input::released(const Mouse & mouseButton, bool absorb) {
-	bool res = _mouseButtons[mouseButton].last;
+	bool res = _mouseButtons[uint(mouseButton)].last;
 	if(absorb){
-		_mouseButtons[mouseButton].last = false;
+		_mouseButtons[uint(mouseButton)].last = false;
 	}
 	return res;
 }
@@ -233,7 +233,7 @@ glm::vec2 Input::mouse(bool inFramebuffer) const {
 }
 
 glm::vec2 Input::moved(const Mouse & mouseButton) const {
-	const MouseButton & b = _mouseButtons[mouseButton];
+	const MouseButton & b = _mouseButtons[uint(mouseButton)];
 	if(b.pressed){
 		return glm::vec2(_mouse.x - b.x0, _mouse.y - b.y0);
 	}

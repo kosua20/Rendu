@@ -20,7 +20,6 @@ struct KeyValues {
 
 /**
  \brief Contains configurable elements as attributes, populated from the command line, a configuration file or default values.
- \todo Merge format with the Codable format.
  \ingroup Engine
  */
 class Config {

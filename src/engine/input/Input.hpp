@@ -134,10 +134,10 @@ public:
 	};
 	
 	/// Mouse buttons codes.
-	enum Mouse {
-		MouseLeft = GLFW_MOUSE_BUTTON_LEFT,
-		MouseRight = GLFW_MOUSE_BUTTON_RIGHT,
-		MouseMiddle = GLFW_MOUSE_BUTTON_MIDDLE
+	enum class Mouse : uint {
+		Left = GLFW_MOUSE_BUTTON_LEFT,
+		Right = GLFW_MOUSE_BUTTON_RIGHT,
+		Middle = GLFW_MOUSE_BUTTON_MIDDLE
 	};
 	
 	

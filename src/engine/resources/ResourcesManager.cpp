@@ -231,7 +231,7 @@ const Mesh * Resources::getMesh(const std::string & name, Storage mode){
 	
 	// Load geometry. For now we only support OBJs.
 	std::stringstream meshStream(meshText);
-	Mesh::loadObj(meshStream, mesh, Mesh::Indexed);
+	Mesh::loadObj(meshStream, mesh, Mesh::Load::Indexed);
 	// If uv or positions are missing, tangent/binormals won't be computed.
 	Mesh::computeTangentsAndBinormals(mesh);
 	// Compute bounding box.
@@ -269,12 +269,8 @@ const Texture * Resources::getTexture(const std::string & name, const Descriptor
 		if(mode & Storage::GPU){
 			// If we want to store the texture on the GPU...
 			if(texture.gpu){
-				// If the texture is already on the GPU, check that the layout is the same.
-				const auto & existingDesc = texture.gpu->descriptor;
-				// Else raise a warning.
-				if(descriptor.filtering != existingDesc.filtering ||
-				   descriptor.typedFormat != existingDesc.typedFormat ||
-				   descriptor.wrapping != existingDesc.wrapping){
+				// If the texture is already on the GPU, check that the layout is the same, else raise a warning.
+				if(!texture.gpu->hasSameLayoutAs(descriptor)){
 					Log::Warning() << Log::Resources << "Texture \"" << keyName
 					<< "\" already exist with a different descriptor." << std::endl;
 				}

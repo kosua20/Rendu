@@ -16,7 +16,7 @@ void PointLight::init(const std::vector<const Texture *>& textureIds){
 	_sphere = Resources::manager().getMesh("light_sphere", Storage::GPU);
 	// Setup the framebuffer.
 	/// \todo Enable only if the light is a shadow caster, to avoid wasteful allocation.
-	const Descriptor descriptor = {GL_RG16F, GL_LINEAR, GL_CLAMP_TO_EDGE};
+	const Descriptor descriptor = {RG16F, Filter::LINEAR, Wrap::CLAMP};
 	_shadowFramebuffer = std::unique_ptr<FramebufferCube>(new FramebufferCube(512, descriptor, true));
 	
 	_textures = textureIds;
@@ -53,13 +53,11 @@ void PointLight::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMa
 	
 	// Active screen texture.
 	for(GLuint i = 0;i < _textures.size()-1; ++i){
-		glActiveTexture(GL_TEXTURE0 + i);
-		glBindTexture(GL_TEXTURE_2D, _textures[i]->gpu->id);
+		GLUtilities::bindTexture(_textures[i], i);
 	}
 	// Activate the shadow cubemap.
 	if(_castShadows){
-		glActiveTexture(GLenum(GL_TEXTURE0 + _textures.size()-1));
-		glBindTexture(GL_TEXTURE_CUBE_MAP, _textures[_textures.size()-1]->gpu->id);
+		GLUtilities::bindTexture(_textures.back(), uint(int(_textures.size())-1));
 	}
 	// Select the geometry.
 	GLUtilities::drawMesh(*_sphere);
@@ -98,13 +96,11 @@ void PointLight::drawShadow(const std::vector<Object> & objects) const {
 		}
 		_programDepth->uniform("hasMask", object.masked());
 		if(object.masked()){
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, object.textures()[0]->gpu->id);
+			GLUtilities::bindTexture(object.textures()[0], 0);
 		}
 		_programDepth->uniform("model", object.model());
 		GLUtilities::drawMesh(*(object.mesh()));
 		glEnable(GL_CULL_FACE);
-		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 	
 	_shadowFramebuffer->unbind();

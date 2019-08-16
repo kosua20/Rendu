@@ -4,7 +4,7 @@
 ControllableCamera::ControllableCamera() : Camera() {
 	_speed = 1.2f;
 	_angularSpeed = 4.0f;
-	_mode = TurnTable;
+	_mode = Mode::TurnTable;
 	reset();
 }
 
@@ -34,15 +34,15 @@ void ControllableCamera::update(){
 		reset();
 	}
 	if(Input::manager().triggered(Input::KeyF) ){
-		_mode = FPS;
+		_mode = Mode::FPS;
 	}
 	if(Input::manager().triggered(Input::KeyG) || Input::manager().controllerDisconnected()){
-		_mode = TurnTable;
+		_mode = Mode::TurnTable;
 		_radius = glm::length(_eye - _center);
 	}
 	if(Input::manager().triggered(Input::KeyJ) || Input::manager().controllerConnected()){
 		if(Input::manager().controllerAvailable()){
-			_mode = Joystick;
+			_mode = Mode::Joystick;
 		} else {
 			Log::Warning() << Log::Input << "No joystick connected." << std::endl;
 		}
@@ -55,11 +55,11 @@ void ControllableCamera::update(){
 
 void ControllableCamera::physics(double frameTime){
 	
-	if (_mode == Joystick){
+	if (_mode == Mode::Joystick){
 		updateUsingJoystick(frameTime);
-	} else if (_mode == FPS) {
+	} else if (_mode == Mode::FPS) {
 		updateUsingKeyboard(frameTime);
-	} else if (_mode == TurnTable){
+	} else if (_mode == Mode::TurnTable){
 		updateUsingTurnTable(frameTime);
 	}
 	
@@ -182,7 +182,7 @@ void ControllableCamera::updateUsingKeyboard(double frameTime){
 	}
 	
 	
-	const glm::vec2 delta = Input::manager().moved(Input::MouseLeft);
+	const glm::vec2 delta = Input::manager().moved(Input::Mouse::Left);
 	_angles += delta* (float)frameTime*_angularSpeed;
 	_angles[1] = (std::max)(-1.57f, (std::min)(1.57f, _angles[1]));
 	// Right stick to look around.
@@ -238,7 +238,7 @@ void ControllableCamera::updateUsingTurnTable(double frameTime){
 	_radius = (std::max)(0.0001f, _radius - scroll * (float)frameTime*_speed);
 	
 	// Angles update for the turntable.
-	const glm::vec2 delta = Input::manager().moved(Input::MouseLeft);
+	const glm::vec2 delta = Input::manager().moved(Input::Mouse::Left);
 	_angles += delta* (float)frameTime*_angularSpeed;
 	_angles[1] = (std::max)(-1.57f, (std::min)(1.57f, _angles[1]));
 	
