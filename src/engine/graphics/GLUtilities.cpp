@@ -750,3 +750,12 @@ void GLUtilities::clearColorAndDepth(const glm::vec4 & color, float depth){
 	glClearDepth(depth);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
+
+void GLUtilities::blit(const Framebuffer & src, const Framebuffer & dst, Filter filter){
+	src.bind(Framebuffer::Mode::READ);
+	dst.bind(Framebuffer::Mode::WRITE);
+	const GLenum filterGL = filter == Filter::LINEAR ? GL_LINEAR : GL_NEAREST;
+	glBlitFramebuffer(0, 0, src.width(), src.height(), 0, 0, src.width(), src.height(), GL_COLOR_BUFFER_BIT, filterGL);
+	src.unbind();
+	dst.unbind();
+}

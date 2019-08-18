@@ -86,11 +86,7 @@ void PaintingTool::draw() {
 	_canvas->unbind();
 	
 	// Copy the canvas to the visualisation framebuffer.
-	_canvas->bind(Framebuffer::Mode::READ);
-	_visu->bind(Framebuffer::Mode::WRITE);
-	glBlitFramebuffer(0, 0, _canvas->width(), _canvas->height(), 0, 0, _visu->width(), _visu->height(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
-	_visu->unbind();
-	_canvas->unbind();
+	GLUtilities::blit(*_canvas, *_visu, Filter::NEAREST);
 	
 	// Draw the brush outline.
 	_visu->bind();
@@ -176,7 +172,8 @@ void PaintingTool::resize(unsigned int width, unsigned int height){
 	Framebuffer tempCanvas(w, h, { Layout::RGB8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, false);
 	_canvas->bind(Framebuffer::Mode::READ);
 	tempCanvas.bind(Framebuffer::Mode::WRITE);
-	glBlitFramebuffer(0, 0, w, h, 0, 0, w, h, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+	
+	GLUtilities::blit(*_canvas, tempCanvas, Filter::NEAREST);
 	
 	// We can then resize the canvas.
 	_canvas->resize(width, height);
@@ -186,14 +183,8 @@ void PaintingTool::resize(unsigned int width, unsigned int height){
 	_canvas->unbind();
 	
 	// Copy back the drawing.
-	tempCanvas.bind(Framebuffer::Mode::READ);
-	_canvas->bind(Framebuffer::Mode::WRITE);
-	const unsigned int nw = std::min(w, _canvas->width());
-	const unsigned int nh = std::min(h, _canvas->height());
-	glBlitFramebuffer(0, 0, nw, nh, 0, 0, nw, nh, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-	tempCanvas.unbind();
+	GLUtilities::blit(tempCanvas, *_canvas, Filter::NEAREST);
 	tempCanvas.clean();
-	_canvas->unbind();
 	
 	// The content of the visualisation buffer will be cleaned at the next frame canvas copy.
 	_visu->resize(width, height);

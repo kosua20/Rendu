@@ -132,6 +132,8 @@ public:
 	
 	static void clearDepth(float depth);
 	
+	static void blit(const Framebuffer & src, const Framebuffer & dst, Filter filter);
+	
 private:
 	
 	/** Read back the currently bound framebuffer to the CPU and save it in the best possible format on disk.
