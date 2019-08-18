@@ -116,9 +116,7 @@ void PaintingTool::update(){
 		glm::vec2 mousePositionGL = glm::floor(glm::vec2(pos.x * w, (1.0f-pos.y) * h));
 		mousePositionGL = glm::clamp(mousePositionGL, glm::vec2(0.0f), glm::vec2(w, h));
 		// Read back from the framebuffer.
-		_canvas->bind(Framebuffer::Mode::READ);
-		glReadPixels(int(mousePositionGL.x), int(mousePositionGL.y), 1, 1, GL_RGB, GL_FLOAT, &_fgColor[0]);
-		_canvas->unbind();
+		_fgColor = _canvas->read(glm::ivec2(mousePositionGL));
 	}
 	
 	// If left-pressing, draw to the canvas.

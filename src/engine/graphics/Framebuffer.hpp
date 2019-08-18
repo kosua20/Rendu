@@ -81,6 +81,8 @@ public:
 	 */
 	void clean();
 	
+	glm::vec3 read(const glm::ivec2 & pos) const;
+	
 	/**
 	 Query the 2D texture backing one of the color attachments.
 	 \param i the color attachment index (or 0 by default)

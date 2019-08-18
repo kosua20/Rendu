@@ -141,7 +141,7 @@ int main(int argc, char** argv) {
 			// Read back color under cursor when right-clicking.
 			if(Input::manager().pressed(Input::Mouse::Right)){
 				const glm::vec2 mousePosition = Input::manager().mouse(true);
-				glReadPixels(int(mousePosition.x), int(mousePosition.y), 1, 1, GL_RGB, GL_FLOAT, &fgColor[0]);
+				fgColor = Framebuffer::backbuffer().read(glm::ivec2(mousePosition));
 			}
 		
 		}

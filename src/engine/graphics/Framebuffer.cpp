@@ -153,6 +153,14 @@ void Framebuffer::clean() {
 	glDeleteFramebuffers(1, &_id);
 }
 
+glm::vec3 Framebuffer::read(const glm::ivec2 & pos) const {
+	glm::vec3 rgb(0.0f);
+	bind(Mode::READ);
+	glReadPixels(pos.x, pos.y, 1, 1, GL_RGB, GL_FLOAT, &rgb[0]);
+	unbind();
+	return rgb;
+}
+
 
 Framebuffer * Framebuffer::defaultFramebuffer = nullptr;
 
