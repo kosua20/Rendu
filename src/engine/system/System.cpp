@@ -1,6 +1,7 @@
 #include "system/System.hpp"
 #include "input/InputCallbacks.hpp"
 #include "input/Input.hpp"
+#include "graphics/GLUtilities.hpp"
 
 #include <nfd/nfd.h>
 #include <imgui/imgui_impl_opengl3.h>
@@ -130,7 +131,10 @@ namespace System {
 			Log::Error() << Log::OpenGL << "OpenGL 3.2 not supported\n" << std::endl;
 			return nullptr;
 		}
-
+		
+		// Setup the GPU state.
+		GLUtilities::setup();
+		
 		// Setup callbacks for various interactions and inputs.
 		glfwSetFramebufferSizeCallback(window, resize_callback);	// Resizing the window
 		glfwSetKeyCallback(window, key_callback);					// Pressing a key
@@ -159,13 +163,6 @@ namespace System {
 
 		// Update the resolution.
 		Input::manager().resizeEvent(width, height);
-
-		// Default OpenGL state, just in case.
-		glDisable(GL_DEPTH_TEST);
-		glDisable(GL_CULL_FACE);
-		glBlendEquation(GL_FUNC_ADD);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glDisable(GL_BLEND);
 
 		return window;
 	}

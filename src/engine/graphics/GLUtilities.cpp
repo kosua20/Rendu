@@ -91,6 +91,22 @@ int _checkGLError(const char *file, int line, const std::string & infos){
 	return 0;
 }
 
+void GLUtilities::setup(){
+	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+	glFrontFace(GL_CCW);
+	glCullFace(GL_BACK);
+	glBlendEquation(GL_FUNC_ADD);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+	glDisable(GL_BLEND);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glDepthMask(GL_TRUE);
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	glDepthFunc(GL_LESS);
+	glDisable(GL_FRAMEBUFFER_SRGB);
+}
+
 GLuint GLUtilities::loadShader(const std::string & prog, GLuint type, std::map<std::string, int> & bindings, std::string & finalLog){
 	// We need to detect texture slots and store them, to avoid having to register them in
 	// the rest of the code (object, renderer), while not having support for 'layout(binding=n)' in OpenGL <4.2.

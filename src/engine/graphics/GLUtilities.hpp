@@ -41,6 +41,8 @@ class GLUtilities {
 	
 public:
 	
+	static void setup();
+	
 	/** Create a shader of a given type from a string. Extract additional informations from the shader.
 	 \param prog the content of the shader
 	 \param type the type of shader (GL_VERTEX_SHADER,...)

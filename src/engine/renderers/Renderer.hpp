@@ -50,10 +50,6 @@ protected:
 	RenderingConfig & _config; ///< The current configuration.
 	glm::vec2 _renderResolution; ///< The internal rendering resolution.
 	
-private:
-	
-	/** Default OpenGL states setup. */
-	void defaultGLSetup();
 	
 };
 
