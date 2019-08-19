@@ -13,17 +13,23 @@ class FramebufferCube {
 
 public:
 	
+	enum class CubeMode {
+		COMBINED, SLICED
+	};
+	
 	/** Setup the framebuffer (attachments, renderbuffer, depth buffer, textures IDs,...)
 	 \param side the width and height of each face of the framebuffer
 	 \param descriptor contains the precise format and filtering to use
 	 \param depthBuffer should the framebuffer contain a depth buffer to properly handle 3D geometry
 	 */
-	FramebufferCube(unsigned int side, const Descriptor & descriptor, bool depthBuffer);
+	FramebufferCube(unsigned int side, const Descriptor & descriptor, CubeMode mode, bool depthBuffer);
 	
 	/**
 	 Bind the framebuffer.
 	 */
 	void bind() const;
+	
+	void bind(unsigned int slice) const;
 	
 	/**
 	 Set the viewport to the size of the framebuffer.
@@ -64,7 +70,7 @@ private:
 	
 	GLuint _id; ///< The framebuffer ID.
 	Texture _idColor; ///< The color texture.
-	Texture _idRenderbuffer; ///< The depth buffer.
+	Texture _idDepth; ///< The depth buffer.
 
 	bool _useDepth; ///< Denotes if the framebuffer is backed by a depth buffer.
 	
