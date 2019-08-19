@@ -29,7 +29,7 @@ public:
 	 */
 	void bind() const;
 	
-	void bind(unsigned int slice) const;
+	void bind(size_t slice) const;
 	
 	/**
 	 Set the viewport to the size of the framebuffer.

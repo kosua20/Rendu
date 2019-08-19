@@ -58,11 +58,11 @@ void FramebufferCube::bind() const {
 	glBindFramebuffer(GL_FRAMEBUFFER, _id);
 }
 
-void FramebufferCube::bind(unsigned int slice) const {
+void FramebufferCube::bind(size_t slice) const {
 	bind();
 	// Bind the proper slice as the first color attachment.
 	glBindTexture(GL_TEXTURE_CUBE_MAP, _idColor.gpu->id);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + slice), _idColor.gpu->id, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + glm::clamp(slice, size_t(0), size_t(5))), _idColor.gpu->id, 0);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 }
 

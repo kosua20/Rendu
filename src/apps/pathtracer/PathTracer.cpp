@@ -149,7 +149,7 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 					
 				}
 				// Modulate and store.
-				render.rgb(x,y) += glm::min(sampleColor, 4.0f);
+				render.rgb(int(x),int(y)) += glm::min(sampleColor, 4.0f);
 			}
 		}
 	});
@@ -157,13 +157,13 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 	// Normalize and gamma correction.
 	System::forParallel(0, render.height, [&render, &samples](size_t y){
 		for(size_t x = 0; x < render.width; ++x){
-			const glm::vec3 color = render.rgb(x,y) / float(samples);
-			render.rgb(x,y) = glm::pow(color, glm::vec3(1.0f/2.2f));
+			const glm::vec3 color = render.rgb(int(x),int(y)) / float(samples);
+			render.rgb(int(x),int(y)) = glm::pow(color, glm::vec3(1.0f/2.2f));
 		}
 	});
 	
 	// Display duration.
-	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start);
+	const auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start);
 	Log::Info() << "[PathTracer] Rendering took " << (duration.count()/1000.0f) << "s at " << render.width << "x" << render.height << "." << std::endl;
 }
 

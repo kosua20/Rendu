@@ -86,12 +86,12 @@ public:
 	 */
 	static void drawMesh(const Mesh & mesh);
 	
-	static void bindTexture(const Texture * texture, unsigned int slot);
+	static void bindTexture(const Texture * texture, size_t slot);
 	/** Bind a series of textures to some texture slots, in order.
 	 \param textures the infos of the textures to bind
 	 \param startingSlot the optional index of the first binding slot
 	 */
-	static void bindTextures(const std::vector<const Texture*> & textures, unsigned int startingSlot = 0);
+	static void bindTextures(const std::vector<const Texture*> & textures, size_t startingSlot = 0);
 	
 	/** Create a GPU texture with a given layout.
 	 \param texture the texture to setup on the GPU
