@@ -364,7 +364,7 @@ void GLUtilities::allocateTexture(const Texture & texture){
 			// In that case each level is a cubemap face.
 			for(size_t lid = 0; lid < texture.depth; ++lid){
 				// We need to allocate each level
-				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + lid, mip, typeFormat, w, h, 0, format, type, nullptr);
+				glTexImage2D(GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + lid), mip, typeFormat, w, h, 0, format, type, nullptr);
 			}
 			
 		} else if(texture.shape == TextureShape::D3){
@@ -452,10 +452,12 @@ void GLUtilities::uploadTexture(const Texture & texture){
 				finalDataPtr = reinterpret_cast<const GLubyte*>(&image.pixels[0]);
 			} else {
 				Log::Error() << Log::OpenGL << "Unsupported texture type for upload." << std::endl;
+				continue;
 			}
 			
 			// Upload.
 			const GLint mip = GLint(mid);
+			const GLint lev = GLint(lid);
 			const GLsizei w = GLsizei(image.width);
 			const GLsizei h = GLsizei(image.height);
 			if(target == GL_TEXTURE_1D){
@@ -465,17 +467,17 @@ void GLUtilities::uploadTexture(const Texture & texture){
 				glTexSubImage2D(target, mip, 0, 0, w, h, destFormat, destType, finalDataPtr);
 				
 			} else if(target == GL_TEXTURE_CUBE_MAP){
-				glTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + lid, mip, 0, 0, w, h, destFormat, destType, finalDataPtr);
+				glTexSubImage2D(GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + lev), mip, 0, 0, w, h, destFormat, destType, finalDataPtr);
 				
 			} else if(target == GL_TEXTURE_2D_ARRAY || target == GL_TEXTURE_CUBE_MAP_ARRAY){
-				glTexSubImage3D(target, mip, 0, 0, lid, w, h, 1, destFormat, destType, finalDataPtr);
+				glTexSubImage3D(target, mip, 0, 0, lev, w, h, 1, destFormat, destType, finalDataPtr);
 				
 			} else if(target == GL_TEXTURE_1D_ARRAY){
-				glTexSubImage2D(target, mip, 0, lid, w, 1, destFormat, destType, finalDataPtr);
+				glTexSubImage2D(target, mip, 0, lev, w, 1, destFormat, destType, finalDataPtr);
 				
 			} else if(target == GL_TEXTURE_3D){
 				/// \bug This is false because the number of layers decrease with the mip level. Fix the loop.
-				glTexSubImage3D(target, mip, 0, 0, lid, w, h, 1, destFormat, destType, finalDataPtr);
+				glTexSubImage3D(target, mip, 0, 0, lev, w, h, 1, destFormat, destType, finalDataPtr);
 			} else {
 				Log::Error() << Log::OpenGL << "Unsupported texture upload destination." << std::endl;
 			}
@@ -525,7 +527,7 @@ void GLUtilities::downloadTexture(Texture & texture){
 			for(size_t lid = 0; lid < texture.depth; ++lid){
 				texture.images.emplace_back(w, h, channels);
 				Image & image = texture.images.back();
-				glGetTexImage(GL_TEXTURE_CUBE_MAP_POSITIVE_X + lid, mip, format, type, &image.pixels[0]);
+				glGetTexImage(GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + lid), mip, format, type, &image.pixels[0]);
 			}
 			
 		}
@@ -694,16 +696,16 @@ void GLUtilities::drawMesh(const Mesh & mesh) {
 	glBindVertexArray(0);
 }
 
-void GLUtilities::bindTexture(const Texture * texture, unsigned int slot){
-	glActiveTexture(GL_TEXTURE0 + slot);
+void GLUtilities::bindTexture(const Texture * texture, size_t slot){
+	glActiveTexture(GLenum(GL_TEXTURE0 + slot));
 	glBindTexture(texture->gpu->target, texture->gpu->id);
 }
 
 
-void GLUtilities::bindTextures(const std::vector<const Texture*> & textures, unsigned int startingSlot){
-	for (unsigned int i = 0; i < textures.size(); ++i){
+void GLUtilities::bindTextures(const std::vector<const Texture*> & textures, size_t startingSlot){
+	for (size_t i = 0; i < textures.size(); ++i){
 		const Texture * infos = textures[i];
-		glActiveTexture(GL_TEXTURE0 + startingSlot + i);
+		glActiveTexture(GLenum(GL_TEXTURE0 + startingSlot + i));
 		glBindTexture(infos->gpu->target, infos->gpu->id);
 	}
 }

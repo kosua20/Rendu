@@ -150,21 +150,21 @@ void Log::appendIfNeeded(){
 	if(_appendPrefix){
 		_appendPrefix = false;
 		if(_useColors){
-			_stream << _colorStrings[uint(_level)];
+			_stream << _colorStrings[int(_level)];
 		}
-		_stream << _levelStrings[uint(_level)];
+		_stream << _levelStrings[int(_level)];
 	}
 }
 
 Log & Log::operator<<(const Domain& domain){
 	
 	if(_appendPrefix && _useColors){
-		_stream << _colorStrings[uint(_level)];
+		_stream << _colorStrings[int(_level)];
 	}
 	_stream << "[" << _domainStrings[domain] << "] ";
 	
 	if(_appendPrefix){
-		_stream << _levelStrings[uint(_level)];
+		_stream << _levelStrings[int(_level)];
 		_appendPrefix = false;
 	}
 	return *this;

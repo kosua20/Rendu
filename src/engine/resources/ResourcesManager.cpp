@@ -372,8 +372,8 @@ const Texture * Resources::getTexture(const std::string & name, const Descriptor
 	texture.shape = shape;
 	texture.width = texture.images[0].width;
 	texture.height = texture.images[0].height;
-	texture.depth = paths[0].size();
-	texture.levels = paths.size();
+	texture.depth = uint(paths[0].size());
+	texture.levels = uint(paths.size());
 	
 	// If GPU mode, send them to the GPU.
 	if(mode & Storage::GPU){

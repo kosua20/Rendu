@@ -169,7 +169,7 @@ void Program::uniform(const std::string & name, float t) const {
 
 void Program::uniform(const std::string & name, size_t count, const float * t) const {
 	if(_uniforms.count(name) > 0) {
-		glUniform1fv(_uniforms.at(name), count, t);
+		glUniform1fv(_uniforms.at(name), GLsizei(count), t);
 	}
 }
 

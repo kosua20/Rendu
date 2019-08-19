@@ -26,7 +26,7 @@ public:
 private:
 	
 	/// \brief Criticality level
-	enum class Level : uint {
+	enum class Level : int {
 		INFO = 0, WARNING, ERROR, VERBOSE ///< Will only be logged if verbose is enabled.
 	};
 	
