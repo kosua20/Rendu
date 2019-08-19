@@ -1,6 +1,7 @@
 #include "resources/Image.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "graphics/Framebuffer.hpp"
+#include "graphics/FramebufferCube.hpp"
 #include "graphics/ScreenQuad.hpp"
 #include "graphics/GLUtilities.hpp"
 #include "input/Input.hpp"
@@ -214,30 +215,14 @@ void computeCubemapConvolution(const Texture & cubemapInfos, int levelsCount, in
 		
 		Log::Info() << Log::Utilities << "Level " << level << " (size=" << w << ", r=" << roughness << "): " << std::flush;
 		
-		// Create cubemap texture for this mipmap level.
-		cubeLevels.emplace_back();
-		Texture & levelInfos = cubeLevels.back();
-		levelInfos.shape = TextureShape::Cube;
-		levelInfos.width = w;
-		levelInfos.height = h;
-		levelInfos.depth = 6;
-		levelInfos.levels = 1;
-		// Create and allocate.
-		GLUtilities::setupTexture(levelInfos, {Layout::RGB32F, Filter::LINEAR_LINEAR, Wrap::CLAMP});
+		// Create local framebuffer.
+		FramebufferCube resultFramebuffer(w, { Layout::RGB32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, FramebufferCube::CubeMode::SLICED, false);
 		
 		// Iterate over faces.
 		for(size_t i = 0; i < 6; ++i){
 			Log::Info() << "." << std::flush;
 			
-			// Create local framebuffer.
-			const auto resultFramebuffer = std::make_shared<Framebuffer>(w, h, Layout::RGB32F, false);
-			resultFramebuffer->bind();
-			// Use the cubemap texture as a backing texture for the framebuffer.
-			/// \todo Find another way of doing this without spilling OpenGL code.
-			glBindTexture(GL_TEXTURE_CUBE_MAP, levelInfos.gpu->id);
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X+i, levelInfos.gpu->id, 0);
-			glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-			
+			resultFramebuffer.bind(i);
 			// Clear texture slice.
 			GLUtilities::clearColorAndDepth({0.0f, 0.0f, 0.0f, 1.0f}, 1.0f);
 			GLUtilities::setViewport(0,0,w,h);
@@ -247,16 +232,21 @@ void computeCubemapConvolution(const Texture & cubemapInfos, int levelsCount, in
 			programCubemap->uniform("mimapRoughness", roughness);
 			programCubemap->uniform("mvp", MVPs[i]);
 			programCubemap->uniform("samplesCount", samplesCount);
-			// Attach source cubemap.
+			// Attach source cubemap and compute.
 			GLUtilities::bindTexture(&cubemapInfos, 0);
-			// Draw.
 			GLUtilities::drawMesh(*mesh);
-			resultFramebuffer->unbind();
+			resultFramebuffer.unbind();
 			glDisable(GL_DEPTH_TEST);
 			// Force synchronization.
 			GLUtilities::sync();
 		}
-		// Store the new texture.
+		
+		// Now resultFramebuffer contain the texture data. But its lifetime is limited to this scope.
+		// Thus we perform a copy to our final texture.
+		cubeLevels.emplace_back();
+		Texture & levelInfos = cubeLevels.back();
+		GLUtilities::blit(*resultFramebuffer.textureId(), levelInfos, Filter::NEAREST);
+		resultFramebuffer.clean();
 		
 		Log::Info() << std::endl;
 	}
