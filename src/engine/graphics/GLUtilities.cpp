@@ -755,7 +755,62 @@ void GLUtilities::blit(const Framebuffer & src, const Framebuffer & dst, Filter 
 	src.bind(Framebuffer::Mode::READ);
 	dst.bind(Framebuffer::Mode::WRITE);
 	const GLenum filterGL = filter == Filter::LINEAR ? GL_LINEAR : GL_NEAREST;
-	glBlitFramebuffer(0, 0, src.width(), src.height(), 0, 0, src.width(), src.height(), GL_COLOR_BUFFER_BIT, filterGL);
+	glBlitFramebuffer(0, 0, src.width(), src.height(), 0, 0, dst.width(), dst.height(), GL_COLOR_BUFFER_BIT, filterGL);
 	src.unbind();
 	dst.unbind();
+}
+
+void GLUtilities::blit(const Texture & src, Texture & dst, Filter filter){
+	// Prepare the destination.
+	dst.width = src.width;
+	dst.height = src.height;
+	dst.depth = src.depth;
+	dst.levels = 1;
+	dst.shape = src.shape;
+	if(src.levels != 1){
+		Log::Warning() << Log::OpenGL << "Only the first mipmap level will be used." << std::endl;
+	}
+	if(!src.images.empty()){
+		Log::Warning() << Log::OpenGL << "CPU data won't be copied." << std::endl;
+	}
+	GLUtilities::setupTexture(dst, src.gpu->descriptor());
+	
+	// Create two framebuffers.
+	GLuint srcFb, dstFb;
+	glGenFramebuffers(1, &srcFb);
+	glGenFramebuffers(1, &dstFb);
+	
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, srcFb);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, dstFb);
+	
+	const GLenum filterGL = filter == Filter::LINEAR ? GL_LINEAR : GL_NEAREST;
+	
+	if(src.shape == TextureShape::Cube){
+		for(size_t i = 0; i < 6; ++i){
+			glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), src.gpu->id, 0);
+			glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), dst.gpu->id, 0);
+			checkGLFramebufferError();
+			glBlitFramebuffer(0, 0, src.width, src.height, 0, 0, dst.width, dst.height, GL_COLOR_BUFFER_BIT, filterGL);
+		}
+	} else {
+		if(src.shape == TextureShape::D1){
+			glFramebufferTexture1D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, src.gpu->target, src.gpu->id, 0);
+			glFramebufferTexture1D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, dst.gpu->target, dst.gpu->id, 0);
+			
+		} else if(src.shape == TextureShape::D2){
+			glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, src.gpu->target, src.gpu->id, 0);
+			glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, dst.gpu->target, dst.gpu->id, 0);
+			
+		} else {
+			Log::Error() << Log::OpenGL << "Unsupported texture shape for blitting." << std::endl;
+			return;
+		}
+		checkGLFramebufferError();
+		glBlitFramebuffer(0, 0, src.width, src.height, 0, 0, dst.width, dst.height, GL_COLOR_BUFFER_BIT, filterGL);
+	}
+	
+	
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glDeleteFramebuffers(1, &srcFb);
+	glDeleteFramebuffers(1, &dstFb);
 }

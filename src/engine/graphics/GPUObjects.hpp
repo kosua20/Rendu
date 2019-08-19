@@ -140,6 +140,8 @@ public:
 	
 	void setFiltering(Filter filtering);
 	
+	const Descriptor & descriptor() const { return _descriptor; };
+	
 	// Cached GPU settings.
 	const GLenum target; ///< Texture target.
 	GLenum minFiltering; ///< Minification filter.
@@ -153,7 +155,7 @@ public:
 	GLuint id = 0; ///< The OpenGL texture ID.
 	
 private:
-	Descriptor descriptor; ///< Layout used.
+	Descriptor _descriptor; ///< Layout used.
 };
 
 /**
