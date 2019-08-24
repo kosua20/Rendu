@@ -360,9 +360,9 @@ void GLUtilities::allocateTexture(const Texture & texture){
 	
 	for(size_t mid = 0; mid < texture.levels; ++mid){
 		// Mipmap dimensions.
-		const GLsizei w = GLsizei(texture.width/std::pow(2, mid));
-		const GLsizei h = GLsizei(texture.height/std::pow(2, mid));
-		const GLsizei d = GLsizei(texture.depth/std::pow(2, mid));
+		const GLsizei w = GLsizei(std::max(1, int(texture.width /std::pow(2, mid))));
+		const GLsizei h = GLsizei(std::max(1, int(texture.height/std::pow(2, mid))));
+		const GLsizei d = GLsizei(std::max(1, int(texture.depth /std::pow(2, mid))));
 		const GLint mip = GLint(mid);
 		
 		if(texture.shape == TextureShape::D1){
@@ -530,8 +530,8 @@ void GLUtilities::downloadTexture(Texture & texture){
 	
 	// For each mip level.
 	for(size_t mid = 0; mid < texture.levels; ++ mid){
-		const GLsizei w = GLsizei(texture.width/std::pow(2, mid));
-		const GLsizei h = GLsizei(texture.height/std::pow(2, mid));
+		const GLsizei w = GLsizei(std::max(1, int(texture.width /std::pow(2, mid))));
+		const GLsizei h = GLsizei(std::max(1, int(texture.height/std::pow(2, mid))));
 		const GLint mip = GLint(mid);
 		
 		if(texture.shape == TextureShape::D2){
