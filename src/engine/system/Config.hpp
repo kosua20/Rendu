@@ -14,7 +14,7 @@ struct KeyValues {
 	/** Constructor from a key.
 	 \param aKey the key of the new tuple
 	 */
-	KeyValues(const std::string & aKey);
+	explicit KeyValues(const std::string & aKey);
 };
 
 
