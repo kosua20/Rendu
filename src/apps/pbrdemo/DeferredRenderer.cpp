@@ -58,7 +58,8 @@ DeferredRenderer::DeferredRenderer(RenderingConfig & config) : Renderer(config) 
 	_objectNoUVsProgram = Resources::manager().getProgram("object_no_uv_gbuffer");
 	
 	// Add the SSAO result.
-	_ambientScreen.init(_gbuffer->textureId(0), _gbuffer->textureId(1), _gbuffer->textureId(2), _gbuffer->depthId(), _ssaoPass->textureId());
+	_ambientScreen = std::unique_ptr<AmbientQuad>(new AmbientQuad(_gbuffer->textureId(0), _gbuffer->textureId(1), 
+		_gbuffer->textureId(2), _gbuffer->depthId(), _ssaoPass->textureId()));
 	
 	checkGLError();
 	
@@ -83,7 +84,7 @@ void DeferredRenderer::setScene(std::shared_ptr<Scene> scene){
 	_userCamera.speed() = 0.2f*range;
 	_cplanes = _userCamera.clippingPlanes();
 	_cameraFOV = _userCamera.fov() * 180.0f /float(M_PI);
-	_ambientScreen.setSceneParameters(_scene->backgroundReflection, _scene->backgroundIrradiance);
+	_ambientScreen->setSceneParameters(_scene->backgroundReflection, _scene->backgroundIrradiance);
 	
 	/// \todo clarify this by having lights taking explicit named arguments.
 	std::vector<const Texture *> includedTextures = {_gbuffer->textureId(0), _gbuffer->textureId(1), _gbuffer->depthId(), _gbuffer->textureId(2)};
@@ -298,7 +299,7 @@ void DeferredRenderer::draw() {
 	// --- Gbuffer composition pass
 	_sceneFramebuffer->bind();
 	_sceneFramebuffer->setViewport();
-	_ambientScreen.draw(_userCamera.view(), _userCamera.projection());
+	_ambientScreen->draw(_userCamera.view(), _userCamera.projection());
 	glEnable(GL_BLEND);
 	for(auto& light : _scene->lights){
 		light->draw(_userCamera.view(), _userCamera.projection(), invRenderSize);
@@ -422,6 +423,7 @@ void DeferredRenderer::clean() {
 	_toneMappingFramebuffer->clean();
 	_fxaaFramebuffer->clean();
 	_blurBuffer->clean();
+
 	if(_scene){
 		_scene->clean();
 	}

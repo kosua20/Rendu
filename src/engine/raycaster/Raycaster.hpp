@@ -130,9 +130,9 @@ private:
 	/** Base element of the acceleration structure. */
 	struct Node {
 		BoundingBox box; ///< Boudinng box of the contained geometry.
-		size_t left; ///< Index of the left child element, or first triangle index if this is a leaf.
-		size_t right; ///< Index of the right child element, or number of triangles if this is a leaf.
-		bool leaf; ///< Is this a leaf in the hierarchy.
+		size_t left = 0; ///< Index of the left child element, or first triangle index if this is a leaf.
+		size_t right = 0; ///< Index of the right child element, or number of triangles if this is a leaf.
+		bool leaf = true; ///< Is this a leaf in the hierarchy.
 	};
 	
 	/** Test a ray and triangle intersection using the Muller-Trumbore test.

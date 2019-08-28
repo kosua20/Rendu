@@ -3,9 +3,7 @@
 #include "graphics/GLUtilities.hpp"
 
 
-AmbientQuad::AmbientQuad(){}
-
-void AmbientQuad::init(const Texture * texAlbedo, const Texture * texNormals, const Texture * texEffects, const Texture * texDepth, const Texture * texSSAO){
+AmbientQuad::AmbientQuad(const Texture * texAlbedo, const Texture * texNormals, const Texture * texEffects, const Texture * texDepth, const Texture * texSSAO){
 	
 	_program = Resources::manager().getProgram2D("ambient");
 	// Load texture.
@@ -28,7 +26,6 @@ void AmbientQuad::setSceneParameters(const Texture * reflectionMap, const std::v
 	_textures[6] = reflectionMap;
 	_program->cacheUniformArray("shCoeffs", irradiance);
 }
-
 
 void AmbientQuad::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) const {
 	

@@ -30,7 +30,7 @@ public:
 	/** Constructor.
 	 \param config the configuration to apply when setting up
 	 */
-	FilteringRenderer(RenderingConfig & config);
+	explicit FilteringRenderer(RenderingConfig & config);
 	
 	/** Draw the scene and effects */
 	void draw();

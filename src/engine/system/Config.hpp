@@ -28,7 +28,7 @@ public:
 	/** Initialize a new config object, parsing the input arguments and filling the attributes with their values.
 	 	\param argv the raw input arguments
 	 */
-	Config(const std::vector<std::string> & argv);
+	explicit Config(const std::vector<std::string> & argv);
 	
 	/** Display help using the logger if the '--help' argument has been passed.
 	 \return true if the help is shown, can be used for early exit
@@ -104,7 +104,7 @@ public:
 	/** Initialize a new rendering config object, parsing the input arguments and filling the attributes with their values.
 	 \param argv the raw input arguments
 	 */
-	RenderingConfig(const std::vector<std::string> & argv);
+	explicit RenderingConfig(const std::vector<std::string> & argv);
 
 public:
 	// Configuration properties (loaded from command-line or config file).
@@ -139,13 +139,6 @@ public:
 	
 	/// The last recorded window position and size on screen.
 	glm::ivec4 windowFrame = glm::vec4(0, 0, 800, 600);
-	
-protected:
-	
-	/**
-	 Read the internal (key, [values]) populated dictionary, and transfer their values to the configuration attributes.
-	 */
-	void processArguments();
-	
+
 };
 

@@ -185,35 +185,33 @@ bool Config::showHelp(){
 }
 
 RenderingConfig::RenderingConfig(const std::vector<std::string> & argv) : Config(argv){
-	processArguments();
-}
-
-
-void RenderingConfig::processArguments(){
-	
-	for(const auto & arg : _rawArguments){
+	for (const auto & arg : _rawArguments) {
 		const std::string key = arg.key;
 		const std::vector<std::string> & values = arg.values;
-		
-		if(key == "no-vsync"){
+
+		if (key == "no-vsync") {
 			vsync = false;
-		} else if(key == "half-rate"){
+		}
+		else if (key == "half-rate") {
 			rate = 30;
-		} else if(key == "fullscreen"){
+		}
+		else if (key == "fullscreen") {
 			fullscreen = true;
-		} else if((key == "internal-res" || key == "ivr") && !values.empty()){
+		}
+		else if ((key == "internal-res" || key == "ivr") && !values.empty()) {
 			internalVerticalResolution = std::stoi(values[0]);
-		} else if(key == "wxh" && values.size() >= 2){
-			const unsigned int w = (unsigned int)std::stoi(values[0]);
-			const unsigned int h = (unsigned int)std::stoi(values[1]);
+		}
+		else if (key == "wxh" && values.size() >= 2) {
+			const uint w = uint(std::stoi(values[0]));
+			const uint h = uint(std::stoi(values[1]));
 			initialWidth = w;
 			initialHeight = h;
-		} else if(key == "force-aspect" || key == "far"){
+		}
+		else if (key == "force-aspect" || key == "far") {
 			forceAspectRatio = true;
 		}
 	}
-	
-	
+
 	_infos.emplace_back("", "", "Rendering");
 	_infos.emplace_back("no-vsync", "", "Disable V-sync");
 	_infos.emplace_back("half-rate", "", "30fps mode");
@@ -221,5 +219,4 @@ void RenderingConfig::processArguments(){
 	_infos.emplace_back("internal-res", "ivr", "Vertical rendering resolution", "height");
 	_infos.emplace_back("wxh", "", "Window dimensions", std::vector<std::string>{"width", "height"});
 	_infos.emplace_back("force-aspect", "far", "Force window aspect ratio");
-	
 }

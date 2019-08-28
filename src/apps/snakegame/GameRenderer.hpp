@@ -16,7 +16,7 @@ public:
 	/** Constructor
 	 \param config the shared game config
 	 */
-	GameRenderer(RenderingConfig & config);
+	explicit GameRenderer(RenderingConfig & config);
 	
 	/** Draw the game scene
 	 \param player the state of the game and player

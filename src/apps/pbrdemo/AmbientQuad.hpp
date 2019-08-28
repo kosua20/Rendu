@@ -13,17 +13,14 @@ class AmbientQuad {
 
 public:
 
-	/** Constructor. */
-	AmbientQuad();
-	
-	/** Setup against the graphics API, register the textures needed.
+	/** Constructor. Setup against the graphics API, register the textures needed.
 	 \param texAlbedo the texture containing the albedo
 	 \param texNormals the texture containing the surface normals
 	 \param texEffects the texture containing the material properties
 	 \param texDepth the texture containing the depth
 	 \param texSSAO the texture containing the SSAO result
 	 */
-	void init(const Texture * texAlbedo, const Texture * texNormals, const Texture * texEffects, const Texture * texDepth, const Texture * texSSAO);
+	AmbientQuad(const Texture * texAlbedo, const Texture * texNormals, const Texture * texEffects, const Texture * texDepth, const Texture * texSSAO);
 	
 	/** Register the scene-specific lighting informations.
 	 \param reflectionMap the ID of the background cubemap, containing radiance convolved with increasing roughness lobes in the mipmap levels

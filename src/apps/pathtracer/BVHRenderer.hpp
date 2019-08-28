@@ -23,7 +23,7 @@ public:
 	/** Constructor.
 	 \param config the configuration to apply when setting up
 	 */
-	BVHRenderer(RenderingConfig & config);
+	explicit BVHRenderer(RenderingConfig & config);
 
 	/** Set the scene to render.
 	 \param scene the new scene
@@ -75,7 +75,7 @@ private:
 	std::unique_ptr<RaycasterVisualisation> _visuHelper; ///< Helper for raycaster internal data visualisation.
 	
 	glm::ivec2 _bvhRange; ///< The subset of the BVH to display.
-	float _cameraFOV; ///< The adjustable camera fov in degrees.
+	float _cameraFOV = 70.0f; ///< The adjustable camera fov in degrees.
 	int _samples = 8; ///< Samples count.
 	int _depth = 5; ///< Depth of each ray.
 	bool _showRender = false; ///< Should the result be displayed.

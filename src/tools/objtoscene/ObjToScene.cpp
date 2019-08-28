@@ -22,40 +22,35 @@ public:
 	/** Initialize a new config object, parsing the input arguments and filling the attributes with their values.
 	 \param argv the raw input arguments
 	 */
-	ObjToSceneConfig(const std::vector<std::string> & argv) : Config(argv) {
-		processArguments();
-	}
-	
-	/**
-	 Read the internal (key, [values]) populated dictionary, and transfer their values to the configuration attributes.
-	 */
-	void processArguments(){
-		for(const auto & arg : _rawArguments){
+	explicit ObjToSceneConfig(const std::vector<std::string> & argv) : Config(argv) {
+		for (const auto & arg : _rawArguments) {
 			const std::string key = arg.key;
 			const std::vector<std::string> & values = arg.values;
-			
-			if(key == "mesh" && !values.empty()){
+
+			if (key == "mesh" && !values.empty()) {
 				inputMeshPath = values[0];
-			} else if(key == "output" && !values.empty()){
+			}
+			else if (key == "output" && !values.empty()) {
 				outputPath = values[0];
-			} else if(key == "name" && !values.empty()){
+			}
+			else if (key == "name" && !values.empty()) {
 				outputName = values[0];
-			} else if(key == "generate" && values.size() >= 3){
+			}
+			else if (key == "generate" && values.size() >= 3) {
 				generateMap = true;
 				const float r = std::stof(values[0]);
 				const float m = std::stof(values[1]);
 				const float ao = std::stof(values[2]);
-				valuesMap = glm::vec3(r,m,ao);
+				valuesMap = glm::vec3(r, m, ao);
 			}
 		}
-		
-		
+
+
 		_infos.emplace_back("", "", "Converter");
 		_infos.emplace_back("mesh", "", "Path to the OBJ file", "path/to/mesh.obj");
 		_infos.emplace_back("output", "", "Output path", "path");
 		_infos.emplace_back("name", "", "The name of the scene", "name");
 		_infos.emplace_back("generate", "", "Generate an image containing given color", "R G B");
-		
 	}
 	
 public:

@@ -1,7 +1,7 @@
 #include "scene/Sky.hpp"
 
 
-Sky::Sky(const Storage mode) : Object(Object::Type::Common, Resources::manager().getMesh("plane", mode), false){
+Sky::Sky(Storage mode) : Object(Object::Type::Common, Resources::manager().getMesh("plane", mode), false){
 	
 }
 

@@ -19,7 +19,7 @@ public:
 	/** Constructor
 	 \param color the light color intensity
 	 */
-	Light(const glm::vec3& color);
+	explicit Light(const glm::vec3& color);
 	
 	/** Set if the light shoud cast shadows.
 	 \param shouldCast toggle shadow casting

@@ -36,7 +36,7 @@ public:
 	/** Constructor.
 	 \param config the configuration to apply when setting up
 	 */
-	DeferredRenderer(RenderingConfig & config);
+	explicit DeferredRenderer(RenderingConfig & config);
 
 	/** Set the scene to render.
 	 \param scene the new scene
@@ -88,7 +88,7 @@ private:
 	std::unique_ptr<Framebuffer> _toneMappingFramebuffer; ///< Tonemapping framebuffer
 	std::unique_ptr<Framebuffer> _fxaaFramebuffer; ///< FXAA framebuffer
 	
-	AmbientQuad _ambientScreen; ///< Ambient lighting contribution rendering.
+	std::unique_ptr<AmbientQuad> _ambientScreen; ///< Ambient lighting contribution rendering.
 	const Program * _bloomProgram; ///< Bloom program
 	const Program * _bloomCompositeProgram;
 	const Program * _toneMappingProgram; ///< Tonemapping program

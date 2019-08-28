@@ -13,7 +13,7 @@ public:
 	/** Constructor.
 	 \param raycaster the raycaster about which to provide visualisation
 	 */
-	RaycasterVisualisation(const Raycaster & raycaster);
+	explicit RaycasterVisualisation(const Raycaster & raycaster);
 	
 	/** Generate geometry to visualize each level of the bounding volume hierarchy as a series of bounding boxes.
 	 \param meshes will be filled with the geometry of each depth level

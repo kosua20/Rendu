@@ -62,7 +62,13 @@ public:
 	
 	/** Clean all loaded resources, both CPU and GPU side. */
 	void clean();
-	
+
+	/** Assignment operator (disabled). */
+	Resources& operator= (const Resources&) = delete;
+
+	/** Copy constructor (disabled). */
+	Resources(const Resources&) = delete;
+
 private:
 	
 	/** Constructor. 
@@ -201,12 +207,6 @@ public:
 private:
 	/** Destructor (disabled). */
 	~Resources(){};
-	
-	/** Assignment operator (disabled). */
-	Resources& operator= (const Resources&) = delete;
-	
-	/** Copy constructor (disabled). */
-	Resources (const Resources&) = delete;
 	
 	std::map<std::string, std::string> _files; ///< Listing of available files and their paths.
 	std::map<std::string, Texture> _textures; ///< Loaded textures, identified by name.

@@ -19,7 +19,7 @@ public:
 	/** Constructor.
 	 \param mode the storage mode (CPU, GPU, both) for the internal data.
 	 */
-	Sky(const Storage mode);
+	explicit Sky(Storage mode);
 	
 	/** Apply the animations for a frame duration.
 	 \param fullTime the time since the launch of the application

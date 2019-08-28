@@ -17,7 +17,7 @@ public:
 	/** Constructor. Initializes the internal raycaster with the scene data.
 	 \param scene the scene to path trace against
 	 */
-	PathTracer(const std::shared_ptr<Scene> & scene);
+	explicit PathTracer(const std::shared_ptr<Scene> & scene);
 	
 	/** Performs a rendering of the scene.
 	 \param camera the viewpoint to use
@@ -26,7 +26,8 @@ public:
 	 \param render the image, will be filled with the (gamma-corrected) result
 	 */
 	void render(const Camera & camera, size_t samples, size_t depth, Image & render);
-	
+
+	/** \return the internal raycaster. */
 	const Raycaster & raycaster() const { return _raycaster; }
 	
 private:

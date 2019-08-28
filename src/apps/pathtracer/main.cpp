@@ -22,7 +22,7 @@ class PathTracerConfig : public RenderingConfig {
 public:
 	
 	/** \copydoc RenderingConfig::RenderingConfig */
-	PathTracerConfig(const std::vector<std::string> & argv) : RenderingConfig(argv) {
+	explicit PathTracerConfig(const std::vector<std::string> & argv) : RenderingConfig(argv) {
 		
 		// Process arguments.
 		for(const auto & arg : _rawArguments){

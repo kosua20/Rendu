@@ -12,7 +12,7 @@ public:
 	/** Constructor.
 	 \param config the configuration to apply when setting up
 	 */
-	Renderer(RenderingConfig & config);
+	explicit Renderer(RenderingConfig & config);
 	
 	/** Draw the scene and effects */
 	virtual void draw() = 0;

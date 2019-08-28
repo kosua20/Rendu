@@ -21,7 +21,7 @@ public:
 	/** Constructor
 	 \param config the shared game configuration
 	 */
-	Game(RenderingConfig & config);
+	explicit Game(RenderingConfig & config);
 	
 	/// Draw the game.
 	void draw();

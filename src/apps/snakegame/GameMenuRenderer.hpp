@@ -14,7 +14,7 @@ public:
 	/** Constructor.
 	 \param config the configuration to apply when setting up
 	 */
-	GameMenuRenderer(RenderingConfig & config);
+	explicit GameMenuRenderer(RenderingConfig & config);
 	
 	/** Draw the menu
 	 \param menu the menu to draw

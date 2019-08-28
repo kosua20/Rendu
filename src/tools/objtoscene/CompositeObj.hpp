@@ -49,8 +49,7 @@ namespace CompositeObj {
 		 Constructor.
 		 \param aName the name of the object.
 		 */
-		Object(const std::string & aName){
-			name = aName;
+		explicit Object(const std::string & aName) : name(aName) {
 		}
 	};
 

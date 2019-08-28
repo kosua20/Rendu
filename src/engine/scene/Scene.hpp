@@ -46,7 +46,7 @@ public:
 	
 	 \param name the name of the scene description file
 	 */
-	Scene(const std::string & name);
+	explicit Scene(const std::string & name);
 	
 	/** Performs initialization against the graphics API, loading data.
 	 \param mode should the data be stored on the CPU, GPU, or both.

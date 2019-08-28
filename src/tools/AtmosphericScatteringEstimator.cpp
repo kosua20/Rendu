@@ -11,29 +11,23 @@ public:
 	/** Initialize a new config object, parsing the input arguments and filling the attributes with their values.
 	 	\param argv the raw input arguments
 	 */
-	AtmosphericScatteringConfig(const std::vector<std::string> & argv) : Config(argv) {
-		processArguments();
-	}
-	
-	/**
-	 Read the internal (key, [values]) populated dictionary, and transfer their values to the configuration attributes.
-	 */
-	void processArguments(){
-		
-		for(const auto & arg : _rawArguments){
+	explicit AtmosphericScatteringConfig(const std::vector<std::string> & argv) : Config(argv) {
+		for (const auto & arg : _rawArguments) {
 			const std::string key = arg.key;
 			const std::vector<std::string> & values = arg.values;
-			
-			if(key == "output" && !values.empty()){
+
+			if (key == "output" && !values.empty()) {
 				outputPath = values[0];
-			} else if(key == "samples" && !values.empty()){
+			}
+			else if (key == "samples" && !values.empty()) {
 				samples = std::stoi(values[0]);
-			}  else if(key == "resolution" && !values.empty()){
+			}
+			else if (key == "resolution" && !values.empty()) {
 				resolution = size_t(std::stoi(values[0]));
 			}
 		}
-		
-		
+
+
 		_infos.emplace_back("", "", "Atmospheric scattering");
 		_infos.emplace_back("output", "", "Output image path", "path/to/output.exr");
 		_infos.emplace_back("samples", "", "Number of samples per-pixel", "count");
