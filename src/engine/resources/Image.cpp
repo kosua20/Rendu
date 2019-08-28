@@ -372,41 +372,24 @@ int Image::saveHDRImage(const std::string &path, const Image & image, const bool
 
 	// Must be (A)BGR order, since most of EXR viewers expect this channel order.
 	if (components == 4) {
-		#ifdef _WIN32
-		strncpy_s(header.channels[0].name, "A", 255);
-		strncpy_s(header.channels[1].name, "B", 255);
-		strncpy_s(header.channels[2].name, "G", 255);
-		strncpy_s(header.channels[3].name, "R", 255);
-		#else
-		strncpy(header.channels[0].name, "A", 255);
-		strncpy(header.channels[1].name, "B", 255);
-		strncpy(header.channels[2].name, "G", 255);
-		strncpy(header.channels[3].name, "R", 255);
-		#endif
-		header.channels[0].name[strlen("A")] = '\0';
-		header.channels[1].name[strlen("B")] = '\0';
-		header.channels[2].name[strlen("G")] = '\0';
-		header.channels[3].name[strlen("R")] = '\0';
+		header.channels[0].name[0] = 'A';
+		header.channels[1].name[0] = 'B';
+		header.channels[2].name[0] = 'G';
+		header.channels[3].name[0] = 'R';
+		header.channels[0].name[1] = '\0';
+		header.channels[1].name[1] = '\0';
+		header.channels[2].name[1] = '\0';
+		header.channels[3].name[1] = '\0';
 	} else if (components == 3) {
-		#ifdef _WIN32
-		strncpy_s(header.channels[0].name, "B", 255);
-		strncpy_s(header.channels[1].name, "G", 255);
-		strncpy_s(header.channels[2].name, "R", 255);
-		#else
-		strncpy(header.channels[0].name, "B", 255);
-		strncpy(header.channels[1].name, "G", 255);
-		strncpy(header.channels[2].name, "R", 255);
-		#endif
-		header.channels[0].name[strlen("B")] = '\0';
-		header.channels[1].name[strlen("G")] = '\0';
-		header.channels[2].name[strlen("R")] = '\0';
+		header.channels[0].name[0] = 'B';
+		header.channels[1].name[0] = 'G';
+		header.channels[2].name[0] = 'R';
+		header.channels[0].name[1] = '\0';
+		header.channels[1].name[1] = '\0';
+		header.channels[2].name[1] = '\0';
 	} else {
-		#ifdef _WIN32
-		strncpy_s(header.channels[0].name, "A", 255);
-		#else
-		strncpy(header.channels[0].name, "A", 255);
-		#endif
-		header.channels[0].name[strlen("A")] = '\0';
+		header.channels[0].name[0] = 'A';
+		header.channels[0].name[1] = '\0';
 	}
 	
 	header.pixel_types = static_cast<int *>( malloc(sizeof(int) * static_cast<size_t>(header.num_channels)));
