@@ -37,7 +37,7 @@ int main() {
 
 	Resources::manager().addResources("../../../resources/common");
 	Resources::manager().addResources("../../../resources/snakegame");
-	// Initialize random generator;
+	// Seed random generator.
 	Random::seed();
 	
 	// Create the game main handler..

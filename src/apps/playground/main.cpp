@@ -37,7 +37,7 @@ int main(int argc, char** argv) {
 
 	Resources::manager().addResources("../../../resources/common");
 
-	// Initialize random generator;
+	// Seed random generator.
 	Random::seed();
 	// Query the renderer identifier, and the supported OpenGL version.
 	std::string vendor, renderer, version, shaderVersion;

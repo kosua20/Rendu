@@ -12,7 +12,7 @@ public:
 	 	\param argv the raw input arguments
 	 */
 	explicit AtmosphericScatteringConfig(const std::vector<std::string> & argv) : Config(argv) {
-		for (const auto & arg : _rawArguments) {
+		for (const auto & arg : arguments()) {
 			const std::string key = arg.key;
 			const std::vector<std::string> & values = arg.values;
 
@@ -28,10 +28,10 @@ public:
 		}
 
 
-		_infos.emplace_back("", "", "Atmospheric scattering");
-		_infos.emplace_back("output", "", "Output image path", "path/to/output.exr");
-		_infos.emplace_back("samples", "", "Number of samples per-pixel", "count");
-		_infos.emplace_back("resolution", "", "Output image side size", "size");
+		infos().emplace_back("", "", "Atmospheric scattering");
+		infos().emplace_back("output", "", "Output image path", "path/to/output.exr");
+		infos().emplace_back("samples", "", "Number of samples per-pixel", "count");
+		infos().emplace_back("resolution", "", "Output image side size", "size");
 	}
 	
 public:

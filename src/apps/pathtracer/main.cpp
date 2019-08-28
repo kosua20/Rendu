@@ -25,7 +25,7 @@ public:
 	explicit PathTracerConfig(const std::vector<std::string> & argv) : RenderingConfig(argv) {
 		
 		// Process arguments.
-		for(const auto & arg : _rawArguments){
+		for(const auto & arg : arguments()){
 			const std::string key = arg.key;
 			const std::vector<std::string> & values = arg.values;
 			
@@ -59,13 +59,13 @@ public:
 		}
 		
 		// Detail help.
-		_infos.emplace_back("", "", "Path tracer");
-		_infos.emplace_back("size", "", "Dimensions of the image.", std::vector<std::string>{"width", "height"});
-		_infos.emplace_back("samples", "", "Number of samples per pixel (closest power of 2).", "int");
-		_infos.emplace_back("depth", "", "Maximum path depth.", "int");
-		_infos.emplace_back("scene", "", "Name of the scene to load.", "string");
-		_infos.emplace_back("output", "", "Path for the output image.", "path");
-		_infos.emplace_back("render", "", "Disable the GUI and run a render immediatly.");
+		infos().emplace_back("", "", "Path tracer");
+		infos().emplace_back("size", "", "Dimensions of the image.", std::vector<std::string>{"width", "height"});
+		infos().emplace_back("samples", "", "Number of samples per pixel (closest power of 2).", "int");
+		infos().emplace_back("depth", "", "Maximum path depth.", "int");
+		infos().emplace_back("scene", "", "Name of the scene to load.", "string");
+		infos().emplace_back("output", "", "Path for the output image.", "path");
+		infos().emplace_back("render", "", "Disable the GUI and run a render immediatly.");
 		
 	}
 
@@ -129,7 +129,7 @@ int main(int argc, char** argv) {
 		return 1;
 	}
 	
-	// Initialize random generator;
+	// Seed random generator.
 	Random::seed();
 
 	Resources::manager().addResources("../../../resources/common");

@@ -86,19 +86,6 @@ System::Action Game::update(){
 		resize((unsigned int)Input::manager().size()[0], (unsigned int)Input::manager().size()[1]);
 	}
 	
-	// Debug: Reload resources.
-	/*{
-		if(Input::manager().triggered(Input::KeyP)){
-			Resources::manager().reload();
-		}
-		if(ImGui::Begin("Infos")){
-			ImGui::Text("%.1f ms, %.1f fps", ImGui::GetIO().DeltaTime*1000.0f, ImGui::GetIO().Framerate);
-			ImGui::Separator();
-			ImGui::Checkbox("Force pause", &_overrideTime);
-		}
-		ImGui::End();
-	}*/
-	
 	// Decide which action should (maybe) be performed.
 	System::Action finalAction = System::Action::None;
 	
@@ -203,13 +190,10 @@ System::Action Game::handleButton(const ButtonAction tag){
 			break;
 		case QUIT:
 			return System::Action::Quit;
-			break;
 		case OPTION_FULLSCREEN:
 			return System::Action::Fullscreen;
-			break;
 		case OPTION_VSYNC:
 			return System::Action::Vsync;
-			break;
 		default:
 			break;
 	}

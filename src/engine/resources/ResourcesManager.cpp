@@ -208,8 +208,7 @@ const std::string Resources::getString(const std::string & filename){
 	size_t rawSize = 0;
 	char* rawContent = Resources::manager().getRawData(path, rawSize);
 	std::string content(rawContent, rawSize);
-	//TextUtilities::replace(content, "\r\n", "\n");
-	free(rawContent);
+	delete[] rawContent;
 	return content;
 }
 
@@ -469,7 +468,7 @@ char * Resources::loadRawDataFromExternalFile(const std::string & path, size_t &
 		size = 0;
 		return NULL;
 	}
-	std::ifstream::pos_type fileSize = inputFile.tellg();
+	const std::ifstream::pos_type fileSize = inputFile.tellg();
 	rawContent = new char[fileSize];
 	inputFile.seekg(0, std::ios::beg);
 	inputFile.read(&rawContent[0], fileSize);
@@ -487,16 +486,16 @@ std::string Resources::loadStringFromExternalFile(const std::string & path) {
 	std::stringstream buffer;
 	// Read the stream in a buffer.
 	buffer << inputFile.rdbuf();
+	inputFile.close();
 	// Create a string based on the content of the buffer.
 	std::string line = buffer.str();
-	inputFile.close();
-	//TextUtilities::replace(line, "\r\n", "\n");
 	return line;
 }
 
 void Resources::saveRawDataToExternalFile(const std::string & path, char * rawContent, const size_t size) {
 	std::ofstream outputFile(System::widen(path), std::ios::binary);
-	if (outputFile.bad() || outputFile.fail()){
+	
+	if (!outputFile.is_open()){
 		Log::Error() << Log::Resources << "Unable to save file at path \"" << path << "\"." << std::endl;
 		return;
 	}

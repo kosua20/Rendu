@@ -82,13 +82,17 @@ protected:
 		
 	};
 	
+	const std::vector<KeyValues> & arguments();
+	
+	std::vector<ArgumentInfo> & infos();
+	
+private:
+	
 	/// Store the internal parsed (keys, [values]) extracted from a file or the command-line.
 	std::vector<KeyValues> _rawArguments;
 	
 	/// Store informations about each argument, for displaying the help message.
 	std::vector<ArgumentInfo> _infos;
-	
-private:
 	
 	bool _showHelp = false; ///< Should the help be displayed.
 	

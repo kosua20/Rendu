@@ -37,7 +37,7 @@ int main(int argc, char** argv) {
 	Resources::manager().addResources("../../../resources/pbrdemo");
 	Resources::manager().addResources("../../../resources/additional");
 
-	// Initialize random generator;
+	// Seed random generator.
 	Random::seed();
 	
 	// Create the renderer.

@@ -1,5 +1,6 @@
 #include "scene/Object.hpp"
 
+#define REGISTER_TYPE(type) {#type, Type::type}
 
 Object::Object() {}
 
@@ -11,14 +12,12 @@ Object::Object(const Object::Type type, const Mesh * mesh, bool castShadows){
 
 void Object::decode(const KeyValues & params, const Storage mode){
 	
-#define REGISTER_TYPE(type) {#type, Type::type}
 	const std::map<std::string, Object::Type> types = {
 		REGISTER_TYPE(Common),
 		REGISTER_TYPE(PBRRegular),
 		REGISTER_TYPE(PBRParallax),
 		REGISTER_TYPE(PBRNoUVs)
 	};
-#undef REGISTER_TYPE
 	
 	// We expect there is only one transformation in the parameters set.
 	_model = Codable::decodeTransformation(params.elements);

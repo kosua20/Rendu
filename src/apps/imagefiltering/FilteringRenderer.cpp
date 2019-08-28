@@ -94,6 +94,7 @@ void FilteringRenderer::draw() {
 		case Processing::FLOODFILL:
 			_floodFill->process(srcTexID, _showProcInput ? FloodFiller::Output::DISTANCE : FloodFiller::Output::COLOR);
 			finalTexID = _floodFill->textureId();
+			break;
 		default:
 			// Show the input.
 			break;
@@ -126,30 +127,28 @@ void FilteringRenderer::update(){
 		ImGui::RadioButton("Paint", (int*)&_viewMode, int(View::PAINT));
 		
 		// Image loading options for the image mode.
-		if(_viewMode == View::IMAGE){
-			if(ImGui::Button("Load image...")){
-				std::string newImagePath;
-				const bool res = System::showPicker(System::Picker::Load, "./", newImagePath, "jpg,bmp,png,tga;exr");
-				// If user picked a path, load the texture from disk.
-				if(res && !newImagePath.empty()){
-					Log::Info() << "Loading " << newImagePath << "." << std::endl;
-					
-					_image.clean();
-					_image.shape = TextureShape::D2;
-					_image.depth = 1;
-					_image.levels = 1;
-					_image.images.emplace_back();
-					Image & img = _image.images.back();
-					const int ret = Image::loadImage(newImagePath, 4, true, false, img);
-					if (ret != 0) {
-						Log::Error() << Log::Resources << "Unable to load the texture at path " << newImagePath << "." << std::endl;
-					} else {
-						_image.width = img.width;
-						_image.height = img.height;
-						_image.upload({ Layout::RGBA8, Filter::NEAREST_NEAREST, Wrap::CLAMP }, false);
-						_image.clearImages();
-						resize(_image.width, _image.height);
-					}
+		if(_viewMode == View::IMAGE && ImGui::Button("Load image...")){
+			std::string newImagePath;
+			const bool res = System::showPicker(System::Picker::Load, "./", newImagePath, "jpg,bmp,png,tga;exr");
+			// If user picked a path, load the texture from disk.
+			if(res && !newImagePath.empty()){
+				Log::Info() << "Loading " << newImagePath << "." << std::endl;
+				
+				_image.clean();
+				_image.shape = TextureShape::D2;
+				_image.depth = 1;
+				_image.levels = 1;
+				_image.images.emplace_back();
+				Image & img = _image.images.back();
+				const int ret = Image::loadImage(newImagePath, 4, true, false, img);
+				if (ret != 0) {
+					Log::Error() << Log::Resources << "Unable to load the texture at path " << newImagePath << "." << std::endl;
+				} else {
+					_image.width = img.width;
+					_image.height = img.height;
+					_image.upload({ Layout::RGBA8, Filter::NEAREST_NEAREST, Wrap::CLAMP }, false);
+					_image.clearImages();
+					resize(_image.width, _image.height);
 				}
 			}
 		}
@@ -160,43 +159,7 @@ void FilteringRenderer::update(){
 		
 		// Filter mode.
 		ImGui::Separator();
-		ImGui::Combo("Mode", (int*)&_mode, "Input\0Poisson fill\0Integrate\0Box blur\0Gaussian blur\0Flood fill\0\0");
-
-		const unsigned int width  = (unsigned int)(_renderResolution[0]);
-		const unsigned int height = (unsigned int)(_renderResolution[1]);
-
-		// Mode specific option
-		switch(_mode){
-			case Processing::GAUSSBLUR:
-				if(ImGui::InputInt("Levels", &_blurLevel, 1, 2)){
-					_blurLevel = std::min(std::max(1, _blurLevel), 10);
-					_gaussianBlur->clean();
-					_gaussianBlur = std::unique_ptr<GaussianBlur>(new GaussianBlur(width, height, _blurLevel, Layout::RGB8));
-				}
-				break;
-			case Processing::FILL:
-				ImGui::Checkbox("Show colored border", &_showProcInput);
-				if(ImGui::InputInt("Pyramid downscale", &_fillDownscale, 1, 2)){
-					_fillDownscale = std::max(_fillDownscale, 1);
-					_pyramidFiller->clean();
-					_pyramidFiller = std::unique_ptr<PoissonFiller>(new PoissonFiller(width, height, _fillDownscale));
-				}
-				break;
-			case Processing::INTEGRATE:
-				ImGui::Checkbox("Show Laplacian", &_showProcInput);
-				if(ImGui::InputInt("Pyramid downscale", &_intDownscale, 1, 2)){
-					_intDownscale = std::max(_intDownscale, 1);
-					_pyramidIntegrator->clean();
-					_pyramidIntegrator = std::unique_ptr<LaplacianIntegrator>(new LaplacianIntegrator(width, height, _intDownscale));
-				}
-				break;
-			case Processing::FLOODFILL:
-				ImGui::Checkbox("Show distance", &_showProcInput);
-				break;
-			default:
-				break;
-		}
-		
+		showModeOptions();
 	}
 	ImGui::End();
 	
@@ -204,6 +167,44 @@ void FilteringRenderer::update(){
 	if(_viewMode == View::PAINT){
 		ImGui::SetNextWindowPos(ImVec2(10,200), ImGuiCond_Once);
 		_painter->update();
+	}
+}
+
+void FilteringRenderer::showModeOptions(){
+	ImGui::Combo("Mode", (int*)&_mode, "Input\0Poisson fill\0Integrate\0Box blur\0Gaussian blur\0Flood fill\0\0");
+	
+	const unsigned int width  = (unsigned int)(_renderResolution[0]);
+	const unsigned int height = (unsigned int)(_renderResolution[1]);
+	
+	switch(_mode){
+		case Processing::GAUSSBLUR:
+			if(ImGui::InputInt("Levels", &_blurLevel, 1, 2)){
+				_blurLevel = std::min(std::max(1, _blurLevel), 10);
+				_gaussianBlur->clean();
+				_gaussianBlur = std::unique_ptr<GaussianBlur>(new GaussianBlur(width, height, _blurLevel, Layout::RGB8));
+			}
+			break;
+		case Processing::FILL:
+			ImGui::Checkbox("Show colored border", &_showProcInput);
+			if(ImGui::InputInt("Pyramid downscale", &_fillDownscale, 1, 2)){
+				_fillDownscale = std::max(_fillDownscale, 1);
+				_pyramidFiller->clean();
+				_pyramidFiller = std::unique_ptr<PoissonFiller>(new PoissonFiller(width, height, _fillDownscale));
+			}
+			break;
+		case Processing::INTEGRATE:
+			ImGui::Checkbox("Show Laplacian", &_showProcInput);
+			if(ImGui::InputInt("Pyramid downscale", &_intDownscale, 1, 2)){
+				_intDownscale = std::max(_intDownscale, 1);
+				_pyramidIntegrator->clean();
+				_pyramidIntegrator = std::unique_ptr<LaplacianIntegrator>(new LaplacianIntegrator(width, height, _intDownscale));
+			}
+			break;
+		case Processing::FLOODFILL:
+			ImGui::Checkbox("Show distance", &_showProcInput);
+			break;
+		default:
+			break;
 	}
 }
 

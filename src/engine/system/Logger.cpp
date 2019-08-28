@@ -175,15 +175,7 @@ Log& Log::operator<<(std::ostream& (*modif)(std::ostream&)){
 
 	modif(_stream);
 	
-	if(modif == static_cast<std::ostream& (*)(std::ostream&)>(std::flush) ||
-	   modif == static_cast<std::ostream& (*)(std::ostream&)>(std::endl)){
-		flush();
-	} else {
-#ifdef __APPLE__
-		// Temporary fix for macOS.
-		flush();
-#endif
-	}
+	flush();
 	return *this;
 }
 

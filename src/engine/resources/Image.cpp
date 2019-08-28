@@ -125,14 +125,14 @@ int Image::loadLDRImage(const std::string &path, const unsigned int channels, co
 	image.width = image.height = image.components = 0;
 	
 	size_t rawSize = 0;
-	unsigned char * rawData;
+	unsigned char * rawData = nullptr;
 	if(externalFile){
 		rawData = (unsigned char*)(Resources::loadRawDataFromExternalFile(path, rawSize));
 	} else {
 		rawData = (unsigned char*)(Resources::manager().getRawData(path, rawSize));
 	}
 	
-	if(rawData == NULL || rawSize == 0){
+	if(rawData == nullptr || rawSize == 0){
 		return 1;
 	}
 	
@@ -144,7 +144,7 @@ int Image::loadLDRImage(const std::string &path, const unsigned int channels, co
 	unsigned char *data = stbi_load_from_memory(rawData, (int)rawSize, &localWidth, &localHeight, NULL, int(finalChannels));
 	free(rawData);
 	
-	if(data == NULL){
+	if(data == nullptr){
 		return 1;
 	}
 	
@@ -198,6 +198,7 @@ int Image::loadHDRImage(const std::string &path, const unsigned int channels, co
 	{
 		int ret = ParseEXRHeaderFromMemory(&exr_header, &exr_version, rawData, rawSize, NULL);
 		if (ret != TINYEXR_SUCCESS) {
+			FreeEXRHeader(&exr_header);
 			return ret;
 		}
 	}

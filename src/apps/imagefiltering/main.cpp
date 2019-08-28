@@ -37,7 +37,7 @@ int main(int argc, char** argv) {
 	Resources::manager().addResources("../../../resources/common");
 	Resources::manager().addResources("../../../resources/imagefiltering");
 	
-	// Initialize random generator;
+	// Seed random generator.
 	Random::seed();
 	
 	// Setup the timer.

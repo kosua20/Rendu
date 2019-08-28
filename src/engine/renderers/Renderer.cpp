@@ -21,7 +21,7 @@ void Renderer::update(){
 
 
 void Renderer::clean() {
-	
+	// Nothing to do here.
 }
 
 

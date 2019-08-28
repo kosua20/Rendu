@@ -23,7 +23,7 @@ public:
 	 \param argv the raw input arguments
 	 */
 	explicit ObjToSceneConfig(const std::vector<std::string> & argv) : Config(argv) {
-		for (const auto & arg : _rawArguments) {
+		for (const auto & arg : arguments()) {
 			const std::string key = arg.key;
 			const std::vector<std::string> & values = arg.values;
 
@@ -46,11 +46,11 @@ public:
 		}
 
 
-		_infos.emplace_back("", "", "Converter");
-		_infos.emplace_back("mesh", "", "Path to the OBJ file", "path/to/mesh.obj");
-		_infos.emplace_back("output", "", "Output path", "path");
-		_infos.emplace_back("name", "", "The name of the scene", "name");
-		_infos.emplace_back("generate", "", "Generate an image containing given color", "R G B");
+		infos().emplace_back("", "", "Converter");
+		infos().emplace_back("mesh", "", "Path to the OBJ file", "path/to/mesh.obj");
+		infos().emplace_back("output", "", "Output path", "path");
+		infos().emplace_back("name", "", "The name of the scene", "name");
+		infos().emplace_back("generate", "", "Generate an image containing given color", "R G B");
 	}
 	
 public:

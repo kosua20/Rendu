@@ -1,9 +1,10 @@
-/build/
+/build*/
 /tools/
 /ext/
 /src/internal/
 /resources/internal/
 /resources/additional/
 /premake5.exe
+/.scannerwork
 resources.zip
 .DS_Store

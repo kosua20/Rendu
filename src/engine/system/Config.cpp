@@ -16,7 +16,6 @@ Config::ArgumentInfo::ArgumentInfo(const std::string & aname,  const std::string
 								   const std::string & avalue) : nameLong(aname), nameShort(ashort), details(adetails), values({avalue})
 {}
 
-
 Config::Config(const std::vector<std::string> & argv){
 	
 	if(argv.size() < 2){
@@ -39,11 +38,11 @@ Config::Config(const std::vector<std::string> & argv){
 		parseFromArgs(argv, _rawArguments);
 	}
 	
-	// Extract logging settings;
+	// Extract logging settings.
 	std::string logPath;
 	bool logVerbose = false;
 	
-	for(const auto & arg : _rawArguments){
+	for(const auto & arg : arguments()){
 		if(arg.key == "verbose" || arg.key == "v"){
 			logVerbose = true;
 		} else if(arg.key == "log-path" && !arg.values.empty()){
@@ -58,13 +57,20 @@ Config::Config(const std::vector<std::string> & argv){
 	}
 	Log::setDefaultVerbose(logVerbose);
 	
-	_infos.emplace_back("", "", "General");
-	_infos.emplace_back("verbose", "v", "Enable the verbose log level.");
-	_infos.emplace_back("log-path", "", "Log to a file instead of stdout.", "path/to/file.log");
-	_infos.emplace_back("help", "h", "Show this help.");
-	_infos.emplace_back("config", "c", "Load arguments from configuration file.", "path");
+	infos().emplace_back("", "", "General");
+	infos().emplace_back("verbose", "v", "Enable the verbose log level.");
+	infos().emplace_back("log-path", "", "Log to a file instead of stdout.", "path/to/file.log");
+	infos().emplace_back("help", "h", "Show this help.");
+	infos().emplace_back("config", "c", "Load arguments from configuration file.", "path");
 }
 
+const std::vector<KeyValues> & Config::arguments(){
+	return _rawArguments;
+}
+
+std::vector<Config::ArgumentInfo> & Config::infos(){
+	return _infos;
+}
 
 void Config::parseFromFile(const std::string & filePath, std::vector<KeyValues> & arguments){
 	// Load config from given file.
@@ -185,7 +191,7 @@ bool Config::showHelp(){
 }
 
 RenderingConfig::RenderingConfig(const std::vector<std::string> & argv) : Config(argv){
-	for (const auto & arg : _rawArguments) {
+	for (const auto & arg : arguments()) {
 		const std::string key = arg.key;
 		const std::vector<std::string> & values = arg.values;
 
@@ -212,11 +218,11 @@ RenderingConfig::RenderingConfig(const std::vector<std::string> & argv) : Config
 		}
 	}
 
-	_infos.emplace_back("", "", "Rendering");
-	_infos.emplace_back("no-vsync", "", "Disable V-sync");
-	_infos.emplace_back("half-rate", "", "30fps mode");
-	_infos.emplace_back("fullscreen", "", "Enable fullscreen");
-	_infos.emplace_back("internal-res", "ivr", "Vertical rendering resolution", "height");
-	_infos.emplace_back("wxh", "", "Window dimensions", std::vector<std::string>{"width", "height"});
-	_infos.emplace_back("force-aspect", "far", "Force window aspect ratio");
+	infos().emplace_back("", "", "Rendering");
+	infos().emplace_back("no-vsync", "", "Disable V-sync");
+	infos().emplace_back("half-rate", "", "30fps mode");
+	infos().emplace_back("fullscreen", "", "Enable fullscreen");
+	infos().emplace_back("internal-res", "ivr", "Vertical rendering resolution", "height");
+	infos().emplace_back("wxh", "", "Window dimensions", std::vector<std::string>{"width", "height"});
+	infos().emplace_back("force-aspect", "far", "Force window aspect ratio");
 }

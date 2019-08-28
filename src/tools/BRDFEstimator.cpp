@@ -315,7 +315,7 @@ int main(int argc, char** argv) {
 	if(!window){
 		return -1;
 	}
-	// Initialize random generator;
+	// Seed random generator.
 	Random::seed();
 	
 	ControllableCamera camera;
@@ -330,7 +330,6 @@ int main(int argc, char** argv) {
 	Texture cubemapInfos;
 	std::vector<glm::vec3> SCoeffs(9);
 	std::vector<Texture> cubeLevels;
-	//std::vector<Image> cubemapSides;
 	
 	double timer = glfwGetTime();
 	

@@ -67,6 +67,9 @@ private:
 		SCENE = 0, IMAGE, PAINT
 	};
 	
+	/** Display mode-specific GUI options. */
+	void showModeOptions();
+		
 	ControllableCamera _userCamera; ///< The interactive camera.
 	std::unique_ptr<Framebuffer> _sceneBuffer; ///< Scene rendering buffer.
 	

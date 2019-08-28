@@ -78,7 +78,7 @@ public:
 	 */
 	std::string guid() const { return _name; }
 	
-	/// Destructor;
+	/// Destructor.
 	virtual ~Controller();
 	
 	/**

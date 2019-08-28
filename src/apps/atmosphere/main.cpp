@@ -41,7 +41,7 @@ int main(int argc, char** argv) {
 	Resources::manager().addResources("../../../resources/common");
 	Resources::manager().addResources("../../../resources/atmosphere");
 
-	// Initialize random generator;
+	// Seed random generator.
 	Random::seed();
 	
 	glEnable(GL_DEPTH_TEST);
