@@ -1,5 +1,4 @@
 #include "input/Camera.hpp"
-#include "input/Input.hpp"
 
 Camera::Camera()  {
 	_fov = 1.3f;

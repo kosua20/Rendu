@@ -17,17 +17,17 @@ public:
 	/**
 	 \copydoc Controller::activate
 	 */
-	bool activate(int id);
+	bool activate(int id) override;
 	
 	/**
 	 \copydoc Controller::deactivate
 	 */
-	void deactivate();
+	void deactivate() override;
 	
 	/**
 	 \copydoc Controller::update
 	 */
-	void update();
+	void update() override;
 		
 	std::vector<float> allAxes; ///< Raw intensity values on all axes.
 	std::vector<Controller::ControllerButton> allButtons; ///< State of each button.

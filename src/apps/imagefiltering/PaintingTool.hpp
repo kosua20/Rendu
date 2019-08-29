@@ -2,9 +2,6 @@
 
 #include "graphics/Framebuffer.hpp"
 #include "graphics/ScreenQuad.hpp"
-#include "system/Config.hpp"
-
-#include "renderers/Renderer.hpp"
 
 #include "Common.hpp"
 
@@ -35,7 +32,7 @@ public:
 	 \param width the new width
 	 \param height the new height
 	 */
-	void resize(unsigned int width, unsigned int height);
+	void resize(unsigned int width, unsigned int height) const;
 	
 	/** Canvas content texture.
 	 \return the canvas ID

@@ -73,7 +73,7 @@ private:
 	
 	/** Constructor. 
 	 */
-	Resources();
+	Resources() = default;
 	
 	/** Parse the archive at the given path (using miniz), listing all files it contains.
 	 \param archivePath the path to the archive
@@ -89,13 +89,13 @@ private:
 	 \param name the name of the image
 	 \return the image path
 	 */
-	const std::string getImagePath(const std::string & name);
+	std::string getImagePath(const std::string & name);
 	
 	/** Expand a cubemap base name in its faces paths, testing all possibles extensions.
 	 \param name the base name of the cubemap
 	 \return a list of each face path
 	 */
-	const std::vector<std::string> getCubemapPaths(const std::string & name);
+	std::vector<std::string> getCubemapPaths(const std::string & name);
 	
 	/** Load raw binary data from a resource file
 	 \param path the path to the file
@@ -110,7 +110,7 @@ public:
 	 \param filename the file name
 	 \return the string content of the file
 	 */
-	const std::string getString(const std::string & filename);
+	std::string getString(const std::string & filename);
 	
 	/** Get a geometric mesh resource.
 	 \param name the mesh file name
@@ -140,7 +140,7 @@ public:
 	 \return the program informations
 	 \todo Merge with the one below
 	 */
-	Program * getProgram(const std::string & name, const bool useGeometryShader = false);
+	Program * getProgram(const std::string & name, bool useGeometryShader = false);
 	
 	/** Get an OpenGL program resource.
 	 \param name the name to represent the program
@@ -183,7 +183,7 @@ public:
 	 \param rawContent a pointer to the file binary data
 	 \param size will contain the number of bytes loaded from the file
 	 */
-	static void saveRawDataToExternalFile(const std::string & path, char * rawContent, const size_t size);
+	static void saveRawDataToExternalFile(const std::string & path, char * rawContent, size_t size);
 	
 	/** Write text data to an external file
 	 \param path the  path to the file on disk
@@ -206,7 +206,7 @@ public:
 	
 private:
 	/** Destructor (disabled). */
-	~Resources(){};
+	~Resources() = default;
 	
 	std::map<std::string, std::string> _files; ///< Listing of available files and their paths.
 	std::map<std::string, Texture> _textures; ///< Loaded textures, identified by name.

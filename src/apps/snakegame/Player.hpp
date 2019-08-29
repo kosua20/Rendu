@@ -1,6 +1,5 @@
 #pragma once
 
-#include "resources/ResourcesManager.hpp"
 #include "Common.hpp"
 
 /** \brief Player state and animations.
@@ -27,12 +26,12 @@ public:
 	void updateModels();
 	
 	/// Status of the player.
-	bool alive(){ return _alive; }
+	bool alive() const { return _alive; }
 	
 	/// Score of the player.
-	int score(){ return _score; }
+	int score() const { return _score; }
 	
-	glm::mat4 modelHead; ///< The snake head model matrix.
+	glm::mat4 modelHead = glm::mat4(1.0f); ///< The snake head model matrix.
 	std::vector<glm::mat4> modelsBody; ///< The snake body elements model matrices.
 	std::vector<glm::mat4> modelsItem; ///< The edible items model matrices.
 	std::vector<int> looksBody; ///< The snake body elements material IDs.

@@ -31,7 +31,7 @@ public:
 	 \param mesh the mesh to populate
 	 \param align the text alignment to apply, will influence the origin placement
 	 */
-	static void generateLabel(const std::string & text, const Font & font, const float scale, Mesh & mesh, const Alignment align = Alignment::LEFT );
+	static void generateLabel(const std::string & text, const Font & font, float scale, Mesh & mesh, Alignment align = Alignment::LEFT );
 	
 	/** \brief
 	 A font glyph bounding box, in UV space.

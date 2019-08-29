@@ -6,10 +6,8 @@
 
 #include "graphics/Framebuffer.hpp"
 #include "input/ControllableCamera.hpp"
-#include "graphics/ScreenQuad.hpp"
 
 #include "processing/GaussianBlur.hpp"
-#include "processing/BoxBlur.hpp"
 #include "processing/SSAO.hpp"
 
 #include "Common.hpp"
@@ -41,41 +39,41 @@ public:
 	/** Set the scene to render.
 	 \param scene the new scene
 	 */
-	void setScene(std::shared_ptr<Scene> scene);
+	void setScene(const std::shared_ptr<Scene> & scene);
 	
 	/** Draw the scene and effects */
-	void draw();
+	void draw() override;
 	
 	/** Perform once-per-frame update (buttons, GUI,...) */
-	void update();
+	void update() override;
 	
 	/** Perform physics simulation update.
 	 \param fullTime the time elapsed since the beginning of the render loop
 	 \param frameTime the duration of the last frame
 	 \note This function can be called multiple times per frame.
 	 */
-	void physics(double fullTime, double frameTime);
+	void physics(double fullTime, double frameTime) override;
 
 	/** Clean internal resources. */
-	void clean();
+	void clean() override;
 
 	/** Handle a window resize event.
 	 \param width the new width
 	 \param height the new height
 	 */
-	void resize(unsigned int width, unsigned int height);
+	void resize(unsigned int width, unsigned int height) override;
 	
 	
 private:
 	
 	/** Render the scene to the G-buffer. */
-	void renderScene();
+	void renderScene() const;
 	
 	/** Apply the postprocess stack.
 	 \param invRenderSize the inverse of the rendering resolution
 	 \return the texture containing the result
 	 */
-	const Texture * renderPostprocess(const glm::vec2 & invRenderSize);
+	const Texture * renderPostprocess(const glm::vec2 & invRenderSize) const;
 	
 	ControllableCamera _userCamera; ///< The interactive camera.
 
@@ -104,7 +102,7 @@ private:
 	
 	std::shared_ptr<Scene> _scene; ///< The scene to render
 	
-	glm::vec2 _cplanes;
+	glm::vec2 _cplanes = glm::vec2(0.01f, 100.0f); ///< Camera clipping planes.
 	float _cameraFOV; ///< Camera field of view in degrees.
 	float _exposure = 1.0f; ///< Film exposure.
 	float _bloomTh = 1.2f; ///< Threshold for blooming regions.

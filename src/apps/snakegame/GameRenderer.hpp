@@ -21,28 +21,25 @@ public:
 	/** Draw the game scene
 	 \param player the state of the game and player
 	 */
-	void draw(const Player & player);
-	
-	/** Perform once-per-frame update (buttons, GUI,...) */
-	void update();
+	void draw(const Player & player) const;
 	
 	/** Resize internal buffers based on new window size.
 	 \param width new width
 	 \param height new height
 	 */
-	void resize(unsigned int width, unsigned int height);
+	void resize(unsigned int width, unsigned int height) override;
 	
 	/** Clean up rendering resources.*/
-	void clean();
+	void clean() override;
 	
 	/** Empty draw */
-	void draw(){};
+	void draw() override;
 	
 	/** Perform physics simulation update (none here).
 	 \param fullTime the time elapsed since the beginning of the render loop
 	 \param frameTime the duration of the last frame
 	 */
-	void physics(double fullTime, double frameTime);
+	void physics(double fullTime, double frameTime) override;
 	
 	/** Texture of the final rendered game.
 	 \return the texture
@@ -59,7 +56,7 @@ private:
 	/** Draw the scene to the current bound framebuffer.
 	 \param player the player state
 	 */
-	void drawScene(const Player & player);
+	void drawScene(const Player & player) const;
 	
 	std::unique_ptr<Framebuffer> _sceneFramebuffer; ///< Scene framebuffer.
 	std::unique_ptr<Framebuffer> _lightingFramebuffer; ///< Framebuffer containing the lit result.

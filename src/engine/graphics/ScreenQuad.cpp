@@ -1,11 +1,9 @@
 #include "graphics/ScreenQuad.hpp"
 #include "graphics/GLUtilities.hpp"
-#include "resources/ResourcesManager.hpp"
 
 
 GLuint ScreenQuad::_vao = 0;
 bool ScreenQuad::_init = false;
-
 
 
 void ScreenQuad::draw() {

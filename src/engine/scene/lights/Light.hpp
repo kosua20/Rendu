@@ -34,12 +34,12 @@ public:
 	/** Get the light colored intensity.
 	 \return the light intensity
 	 */
-	const glm::vec3 & intensity(){ return _color; }
+	const glm::vec3 & intensity() const { return _color; }
 	
 	/** Add an animation to the light.
 	 \param anim the animation to apply
 	 */
-	void addAnimation(std::shared_ptr<Animation> anim);
+	void addAnimation(const std::shared_ptr<Animation> & anim);
 	
 	/** Perform initialization against the graphics API and register textures for deferred rendering.
 	 \param textureIds the IDs of the albedo, normal, depth and effects G-buffer textures

@@ -4,8 +4,7 @@
 #include <sstream>
 
 
-KeyValues::KeyValues(const std::string & aKey){
-	key = aKey;
+KeyValues::KeyValues(const std::string & aKey) : key(aKey) {
 }
 
 Config::ArgumentInfo::ArgumentInfo(const std::string & aname,  const std::string & ashort, const std::string & adetails,
@@ -64,7 +63,7 @@ Config::Config(const std::vector<std::string> & argv){
 	infos().emplace_back("config", "c", "Load arguments from configuration file.", "path");
 }
 
-const std::vector<KeyValues> & Config::arguments(){
+const std::vector<KeyValues> & Config::arguments() const {
 	return _rawArguments;
 }
 
@@ -88,9 +87,9 @@ void Config::parseFromFile(const std::string & filePath, std::vector<KeyValues> 
 			continue;
 		}
 		// Split at first space.
-		const std::string::size_type spacePos = lineClean.find_first_of(" ");
+		const std::string::size_type spacePos = lineClean.find_first_of(' ');
 		std::vector<std::string> values;
-		std::string firstArg = "";
+		std::string firstArg;
 		if(spacePos == std::string::npos){
 			// This is a on/off argument.
 			firstArg = TextUtilities::trim(lineClean, "-");
@@ -99,12 +98,12 @@ void Config::parseFromFile(const std::string & filePath, std::vector<KeyValues> 
 			firstArg = TextUtilities::trim(lineClean.substr(0, spacePos), "-");
 			
 			std::string::size_type beginPos = spacePos+1;
-			std::string::size_type afterEndPos = lineClean.find_first_of(" ", beginPos);
+			std::string::size_type afterEndPos = lineClean.find_first_of(' ', beginPos);
 			while (afterEndPos != std::string::npos) {
 				const std::string value = lineClean.substr(beginPos, afterEndPos - beginPos);
 				values.push_back(value);
 				beginPos = afterEndPos + 1;
-				afterEndPos = lineClean.find_first_of(" ", beginPos);
+				afterEndPos = lineClean.find_first_of(' ', beginPos);
 			}
 			// There is one remaining value, the last one.
 			const std::string value = lineClean.substr(beginPos);

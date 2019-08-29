@@ -36,12 +36,12 @@ public:
 	/** The ID of the texture containing the filled result.
 	 \return the result texture ID.
 	 */
-	const Texture * textureId(){ return _compo->textureId(); }
+	const Texture * textureId() const { return _compo->textureId(); }
 	
 	/** The ID of the texture containing the colored border.
 	 \return the border texture ID.
 	 */
-	const Texture * preprocId(){ return _preproc->textureId(); }
+	const Texture * preprocId() const { return _preproc->textureId(); }
 	
 private:
 	

@@ -72,7 +72,7 @@ void PaintingTool::draw() {
 	if(_shouldDraw){
 		_shouldDraw = false;
 		const glm::vec3 color = _mode == Mode::DRAW ? _fgColor : _bgColor;
-		const glm::vec2 radii(radiusF/_canvas->width(), radiusF/_canvas->height());
+		const glm::vec2 radii(radiusF/float(_canvas->width()), radiusF/float(_canvas->height()));
 		
 		_brushShader->use();
 		_brushShader->uniform("position", _drawPos);
@@ -93,7 +93,7 @@ void PaintingTool::draw() {
 	_visu->setViewport();
 	_brushShader->use();
 	
-	const glm::vec2 radii(radiusF/_canvas->width(), radiusF/_canvas->height());
+	const glm::vec2 radii(radiusF/float(_canvas->width()), radiusF/float(_canvas->height()));
 	const glm::vec3 white(1.0f);
 	
 	_brushShader->uniform("position", _drawPos);
@@ -113,7 +113,7 @@ void PaintingTool::update(){
 		const unsigned int w = _canvas->width();
 		const unsigned int h = _canvas->height();
 		const glm::vec2 pos = Input::manager().mouse();
-		glm::vec2 mousePositionGL = glm::floor(glm::vec2(pos.x * w, (1.0f-pos.y) * h));
+		glm::vec2 mousePositionGL = glm::floor(glm::vec2(pos.x * float(w), (1.0f-pos.y) * float(h)));
 		mousePositionGL = glm::clamp(mousePositionGL, glm::vec2(0.0f), glm::vec2(w, h));
 		// Read back from the framebuffer.
 		_fgColor = _canvas->read(glm::ivec2(mousePositionGL));
@@ -127,17 +127,17 @@ void PaintingTool::update(){
 	}
 	
 	// If scroll, adjust radius.
-	_radius = std::max(1, int(std::round(_radius - Input::manager().scroll()[1])));
+	_radius = std::max(1, int(std::round(float(_radius) - Input::manager().scroll()[1])));
 	
 	// Interface window.
 	if(ImGui::Begin("Canvas")){
 		// Brush mode.
-		ImGui::RadioButton("Draw", (int*)&_mode, 0);
+		ImGui::RadioButton("Draw", reinterpret_cast<int*>(&_mode), 0);
 		ImGui::SameLine();
-		ImGui::RadioButton("Erase", (int*)&_mode, 1);
+		ImGui::RadioButton("Erase", reinterpret_cast<int*>(&_mode), 1);
 		// Brush shape.
 		ImGui::PushItemWidth(100);
-		ImGui::Combo("Shape", (int*)&_shape, "Circle\0Square\0Losange\0\0");
+		ImGui::Combo("Shape", reinterpret_cast<int*>(&_shape), "Circle\0Square\0Losange\0\0");
 		// Brush radius.
 		if(ImGui::InputInt("Radius", &_radius, 1, 5)){
 			_radius = std::max(1, _radius);
@@ -163,7 +163,7 @@ void PaintingTool::clean() const {
 }
 
 
-void PaintingTool::resize(unsigned int width, unsigned int height){
+void PaintingTool::resize(unsigned int width, unsigned int height) const {
 	// We first copy the canvas to a temp framebuffer.
 	const unsigned int w = _canvas->width();
 	const unsigned int h = _canvas->height();

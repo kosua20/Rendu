@@ -1,5 +1,4 @@
 #include "system/Random.hpp"
-#include <iostream>
 
 void Random::seed(){
 	std::random_device rd;

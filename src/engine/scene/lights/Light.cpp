@@ -4,23 +4,15 @@
 #include "scene/lights/DirectionalLight.hpp"
 #include "scene/lights/SpotLight.hpp"
 
-Light::Light(){
-	_castShadows = false;
-	_mvp = glm::mat4(1.0f);
-	_color = glm::vec3(1.0f);
-	_program = nullptr;
-	_programDepth = nullptr;
+Light::Light() :
+	_program(nullptr), _programDepth(nullptr), _mvp(glm::mat4(1.0f)), _color(glm::vec3(1.0f)), _castShadows(false) {
 }
 
-Light::Light(const glm::vec3& color){
-	_castShadows = false;
-	_mvp = glm::mat4(1.0f);
-	_color = color;
-	_program = nullptr;
-	_programDepth = nullptr;
+Light::Light(const glm::vec3& color) :
+	_program(nullptr), _programDepth(nullptr), _mvp(glm::mat4(1.0f)), _color(color), _castShadows(false) {
 }
 
-void Light::addAnimation(std::shared_ptr<Animation> anim){
+void Light::addAnimation(const std::shared_ptr<Animation> & anim){
 	_animations.push_back(anim);
 }
 

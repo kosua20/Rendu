@@ -1,6 +1,7 @@
 #pragma once
 
 #include "processing/Blur.hpp"
+#include "graphics/Framebuffer.hpp"
 #include "Common.hpp"
 
 /**
@@ -23,24 +24,27 @@ public:
 	BoxBlur(unsigned int width, unsigned int height, bool approximate, const Descriptor & descriptor);
 
 	/**
-	 \copydoc Blur::process
+	 Apply the blurring process to a given texture.
+	 \param textureId the ID of the texture to process
 	 */
-	void process(const Texture * textureId);
+	void process(const Texture * textureId) const;
 	
 	/**
-	 \copydoc Blur::clean
+	 Clean internal resources.
 	 */
 	void clean() const;
 
 	/**
-	 \copydoc Blur::resize
+	  Handle screen resizing if needed.
+	 \param width the new width to use
+	 \param height the new height to use
 	 */
-	void resize(unsigned int width, unsigned int height);
+	void resize(unsigned int width, unsigned int height) const;
 	
 	/**
 	 Clear the final framebuffer texture.
 	 */
-	void clear();
+	void clear() const;
 	
 private:
 	

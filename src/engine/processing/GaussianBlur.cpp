@@ -2,7 +2,7 @@
 #include "graphics/GLUtilities.hpp"
 
 
-GaussianBlur::GaussianBlur(unsigned int width, unsigned int height, unsigned int depth, Layout preciseFormat) : Blur() {
+GaussianBlur::GaussianBlur(unsigned int width, unsigned int height, unsigned int depth, Layout preciseFormat) {
 	_passthroughProgram = Resources::manager().getProgram("passthrough");
 	_blurProgramDown = Resources::manager().getProgram2D("blur-dual-filter-down");
 	_blurProgramUp = Resources::manager().getProgram2D("blur-dual-filter-up");
@@ -10,8 +10,8 @@ GaussianBlur::GaussianBlur(unsigned int width, unsigned int height, unsigned int
 	// Create a series of framebuffers smaller and smaller.
 	_frameBuffers = std::vector<std::unique_ptr<Framebuffer>>(depth);
 	
-	for(size_t i = 0; i < (size_t)depth; ++i){
-		_frameBuffers[i] = std::unique_ptr<Framebuffer>(new Framebuffer((unsigned int)(width/std::pow(2,i)), (unsigned int)(height/std::pow(2,i)), preciseFormat , false));
+	for(size_t i = 0; i < size_t(depth); ++i){
+		_frameBuffers[i] = std::unique_ptr<Framebuffer>(new Framebuffer(uint(width / std::pow(2, i)), uint(height / std::pow(2, i)), preciseFormat , false));
 	}
 
 	_finalTexture = _frameBuffers[0]->textureId();
@@ -19,7 +19,7 @@ GaussianBlur::GaussianBlur(unsigned int width, unsigned int height, unsigned int
 }
 
 void GaussianBlur::process(const Texture * textureId) {
-	if(_frameBuffers.size() == 0){
+	if(_frameBuffers.empty()){
 		return;
 	}
 	
@@ -58,14 +58,13 @@ void GaussianBlur::clean() const {
 	for(auto & frameBuffer : _frameBuffers){
 		frameBuffer->clean();
 	}
-	Blur::clean();
 }
 
 
 void GaussianBlur::resize(unsigned int width, unsigned int height){
 	for(size_t i = 0; i < _frameBuffers.size(); ++i){
-		const unsigned int hwidth = (unsigned int)(width/std::pow(2,i));
-		const unsigned int hheight = (unsigned int)(height/std::pow(2,i));
+		const unsigned int hwidth = uint(width/std::pow(2,i));
+		const unsigned int hheight = uint(height/std::pow(2,i));
 		_frameBuffers[i]->resize(hwidth, hheight);
 	}
 }

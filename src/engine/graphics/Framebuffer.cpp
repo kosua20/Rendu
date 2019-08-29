@@ -2,11 +2,7 @@
 #include "graphics/GPUObjects.hpp"
 #include "graphics/GLUtilities.hpp"
 
-Framebuffer::Framebuffer(){
-	
-}
-
-Framebuffer::Framebuffer(unsigned int width, unsigned int height, const Layout typedFormat, bool depthBuffer) : Framebuffer(width, height, { Descriptor(typedFormat, Filter::LINEAR_NEAREST, Wrap::CLAMP) }, depthBuffer) {
+Framebuffer::Framebuffer(unsigned int width, unsigned int height, Layout typedFormat, bool depthBuffer) : Framebuffer(width, height, { Descriptor(typedFormat, Filter::LINEAR_NEAREST, Wrap::CLAMP) }, depthBuffer) {
 	
 }
 
@@ -14,10 +10,9 @@ Framebuffer::Framebuffer(unsigned int width, unsigned int height, const Descript
 	
 }
 
-Framebuffer::Framebuffer(unsigned int width, unsigned int height, const std::vector<Descriptor> & descriptors, bool depthBuffer) {
+Framebuffer::Framebuffer(unsigned int width, unsigned int height, const std::vector<Descriptor> & descriptors, bool depthBuffer) :
+	_width(width), _height(height) {
 	
-	_width = width;
-	_height = height;
 	_depthUse = Depth::NONE;
 	
 	// Create a framebuffer.
@@ -76,7 +71,7 @@ Framebuffer::Framebuffer(unsigned int width, unsigned int height, const std::vec
 		glGenRenderbuffers(1, &_idDepth.gpu->id);
 		glBindRenderbuffer(GL_RENDERBUFFER, _idDepth.gpu->id);
 		// Setup the depth buffer storage.
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32F, (GLsizei)_width, (GLsizei)_height);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32F, GLsizei(_width), GLsizei(_height));
 		// Link the renderbuffer to the framebuffer.
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _idDepth.gpu->id);
 		_depthUse = Depth::RENDERBUFFER;
@@ -119,7 +114,7 @@ void Framebuffer::resize(unsigned int width, unsigned int height){
 		_idDepth.width = _width;
 		_idDepth.height = _height;
 		glBindRenderbuffer(GL_RENDERBUFFER, _idDepth.gpu->id);
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32F, (GLsizei)_width, (GLsizei)_height);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32F, GLsizei(_width), GLsizei(_height));
 		glBindRenderbuffer(GL_RENDERBUFFER, 0);
 		
 	} else if(_depthUse == Depth::TEXTURE){
@@ -138,7 +133,7 @@ void Framebuffer::resize(unsigned int width, unsigned int height){
 }
 
 void Framebuffer::resize(glm::vec2 size){
-	resize((unsigned int)size[0], (unsigned int)size[1]);
+	resize(uint(size[0]), uint(size[1]));
 }
 
 void Framebuffer::clean() {

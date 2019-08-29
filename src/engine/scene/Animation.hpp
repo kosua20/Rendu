@@ -1,6 +1,5 @@
 #pragma once
 
-#include "resources/ResourcesManager.hpp"
 #include "system/Codable.hpp"
 #include "Common.hpp"
 
@@ -15,7 +14,9 @@ public:
 		MODEL, ///< Model space (right multiplication)
 		WORLD  ///< World space (left multiplication)
 	};
-	
+
+	Animation() = default;
+
 	/** Apply the animation transformation to the input matrix.
 	 \param m the matrix to transform
 	 \param fullTime the time elapsed since the beginning of the rendering loop
@@ -31,7 +32,7 @@ public:
 	virtual glm::vec4 apply(const glm::vec4 & v, double fullTime, double frameTime) = 0;
 	
 	/** Virtual destructor. */
-	virtual ~Animation(){};
+	virtual ~Animation() = default;
 	
 	/** Helper that can instantiate a list of animations of any type from the passed keywords and parameters.
 	 \param params a list of key-value tuple containing animations parameters
@@ -40,7 +41,10 @@ public:
 	static std::vector<std::shared_ptr<Animation>> decode(const std::vector<KeyValues> & params);
 	
 protected:
-	
+
+	/** Constructor. */
+	Animation(Frame frame, float speed);
+
 	/** Setup shared animation parameters from a key-value tuple. The expected format is as follows:
 	 \verbatim
 	 animationtype: speed frame ...
@@ -61,7 +65,7 @@ class Rotation final : public Animation {
 public:
 	
 	/** Default constructor. */
-	Rotation();
+	Rotation() = default;
 	
 	/** Setup a rotation animation.
 	 \param axis the rotation axis
@@ -75,14 +79,14 @@ public:
 	 \param fullTime the time elapsed since the beginning of the rendering loop
 	 \param frameTime the time elapsed since last frame
 	 */
-	glm::mat4 apply(const glm::mat4 & m, double fullTime, double frameTime);
+	glm::mat4 apply(const glm::mat4 & m, double fullTime, double frameTime) override;
 	
 	/** Apply the animation transformation to the input vector.
 	 \param v the vector to transform
 	 \param fullTime the time elapsed since the beginning of the rendering loop
 	 \param frameTime the time elapsed since last frame
 	 */
-	glm::vec4 apply(const glm::vec4 & v, double fullTime, double frameTime);
+	glm::vec4 apply(const glm::vec4 & v, double fullTime, double frameTime) override;
 	
 	/** Setup rotation animation parameters from a key-value tuple. The expected format is as follows:
 	 \verbatim
@@ -105,7 +109,7 @@ class BackAndForth final : public Animation {
 public:
 	
 	/** Default constructor. */
-	BackAndForth();
+	BackAndForth() = default;
 	
 	/** Setup a back and forth animation.
 	 \param axis the translation direction
@@ -120,14 +124,14 @@ public:
 	 \param fullTime the time elapsed since the beginning of the rendering loop
 	 \param frameTime the time elapsed since last frame
 	 */
-	glm::mat4 apply(const glm::mat4 & m, double fullTime, double frameTime);
+	glm::mat4 apply(const glm::mat4 & m, double fullTime, double frameTime) override;
 	
 	/** Apply the animation transformation to the input vector.
 	 \param v the vector to transform
 	 \param fullTime the time elapsed since the beginning of the rendering loop
 	 \param frameTime the time elapsed since last frame
 	 */
-	glm::vec4 apply(const glm::vec4 & v, double fullTime, double frameTime);
+	glm::vec4 apply(const glm::vec4 & v, double fullTime, double frameTime) override;
 	
 	/** Setup back-and-forth translation animation parameters from a key-value tuple. The expected format is as follows:
 	 \verbatim

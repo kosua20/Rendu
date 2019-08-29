@@ -1,8 +1,6 @@
 #pragma once
 
-#include "graphics/Framebuffer.hpp"
 #include "graphics/ScreenQuad.hpp"
-#include "Common.hpp"
 
 /**
  \brief A general Blur interface. Can be used to blur a given OpenGL texture and return/draw the result texture.
@@ -13,26 +11,10 @@ class Blur {
 public:
 
 	/**
-	 Apply the blurring process to a given texture.
-	 \param textureId the ID of the texture to process
-	 */
-	void process(const Texture * textureId);
-	
-	/**
 	 Draw the result texture to the current framebuffer.
 	 */
-	void draw();
+	void draw() const;
 	
-	/** Clean internal resources.
-	 */
-	void clean() const;
-
-	/** Handle screen resizing if needed.
-	 \param width the new width to use
-	 \param height the new height to use
-	 */
-	void resize(unsigned int width, unsigned int height);
-
 	/**
 	 Query the texture containing the result of the blurring process.
 	 \return the texture ID
@@ -41,7 +23,7 @@ public:
 	
 protected:
 	
-	/** Constructor (disabled)
+	/** Constructor.
 	 */
 	Blur();
 	

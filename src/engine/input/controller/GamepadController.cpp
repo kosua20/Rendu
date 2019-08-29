@@ -1,6 +1,5 @@
 #include "input/controller/GamepadController.hpp"
-#include "resources/ResourcesManager.hpp"
-
+#include "Common.hpp"
 
 GamepadController::GamepadController() : Controller() {
 } 

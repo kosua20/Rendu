@@ -37,7 +37,7 @@ public:
 	virtual void resize(unsigned int width, unsigned int height) = 0;
 	
 	/// Destructor
-	virtual ~Renderer();
+	virtual ~Renderer() = default;
 	
 protected:
 	

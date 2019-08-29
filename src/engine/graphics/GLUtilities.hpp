@@ -1,7 +1,6 @@
 #pragma once
 
 #include "resources/Mesh.hpp"
-#include "resources/Image.hpp"
 #include "resources/Texture.hpp"
 #include "graphics/GPUObjects.hpp"
 #include "Common.hpp"
@@ -78,7 +77,7 @@ public:
 	 \note The output image extension will be automatically added based on the framebuffer type and format.
 	 \warning Export of small size GL_FLOAT framebuffers can create artifacts.
 	 */
-	static void saveFramebuffer(const Framebuffer & framebuffer, const unsigned int width, const unsigned int height, const std::string & path, const bool flip = true, const bool ignoreAlpha = false);
+	static void saveFramebuffer(const Framebuffer & framebuffer, unsigned int width, unsigned int height, const std::string & path, bool flip = true, bool ignoreAlpha = false);
 	
 	
 	/** Draw indexed geometry.
@@ -151,7 +150,7 @@ private:
 	 \param ignoreAlpha should the alpha channel be ignored if it exists
 	 \note The output image extension will be automatically added based on the framebuffer type and format.
 	 */
-	static void savePixels(const GLenum type, const GLenum format, const unsigned int width, const unsigned int height, const unsigned int components, const std::string & path, const bool flip, const bool ignoreAlpha);
+	static void savePixels(GLenum type, GLenum format, unsigned int width, unsigned int height, unsigned int components, const std::string & path, bool flip, bool ignoreAlpha);
 	
 };
 

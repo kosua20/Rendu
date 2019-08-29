@@ -7,7 +7,7 @@
  \details It support turntable, fps and josytick based navigation methods, and handles their synchronization.
  \ingroup Input
  */
-class ControllableCamera : public Camera {
+class ControllableCamera final : public Camera {
 	
 public:
 	
@@ -27,7 +27,7 @@ public:
 	 \param center the camera center of interest
 	 \param up the camera vertical orientation
 	 */
-	void pose(const glm::vec3 & position, const glm::vec3 & center, const glm::vec3 & up);
+	void pose(const glm::vec3 & position, const glm::vec3 & center, const glm::vec3 & up) override;
 	
 	/// Reset the position of the camera.
 	void reset();

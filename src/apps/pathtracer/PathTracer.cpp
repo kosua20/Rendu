@@ -45,10 +45,10 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 	const glm::vec2 stratesSize = 1.0f / glm::vec2(stratesCount);
 	
 	// Start chrono.
-	auto start = std::chrono::steady_clock::now();
+	const auto start = std::chrono::steady_clock::now();
 	
 	// Parallelize on each row of the image.
-	System::forParallel(0, render.height, [&](size_t y){
+	System::forParallel(0, render.height, [&render, samples, stratesCount, &stratesSize, &corner, &dx, &dy, &camera, depth, this](size_t y){
 		for(size_t x = 0; x < render.width; ++x){
 			for(size_t sid = 0; sid < samples; ++sid){
 				// Find the grid location.
@@ -59,7 +59,7 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 				const float jx = Random::Float();
 				const float jy = Random::Float();
 				// Compute position in the stratification grid.
-				const glm::vec2 gridPos = glm::vec2(sidx + jx, sidy + jy);
+				const glm::vec2 gridPos = glm::vec2(float(sidx) + jx, float(sidy) + jy);
 				// Position in screen space.
 				const glm::vec2 screenPos = gridPos * stratesSize + glm::vec2(x, y);
 				
@@ -114,7 +114,7 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 					
 					// Compute lighting.
 					// Check light visibility and direct lighting.
-					for(const auto light : _scene->lights){
+					for(const auto & light : _scene->lights){
 						glm::vec3 direction;
 						float attenuation;
 						if(light->visible(p, _raycaster, direction, attenuation)){

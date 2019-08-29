@@ -19,33 +19,27 @@ public:
 	/** Draw the menu
 	 \param menu the menu to draw
 	 */
-	void draw(const GameMenu & menu);
+	void draw(const GameMenu & menu) const;
 	
 	/** Empty draw call. */
-	void draw(){};
-	
-	/** Perform once-per-frame update (buttons, GUI,...) */
-	void update();
+	void draw() override;
 	
 	/** Empty physics simulation update.
 	 \param fullTime the time elapsed since the beginning of the render loop
 	 \param frameTime the duration of the last frame
 	 */
-	void physics(double fullTime, double frameTime);
+	void physics(double fullTime, double frameTime) override;
 	
 	/** Handle a window resize event.
 	 \param width the new width
 	 \param height the new height
 	 */
-	void resize(unsigned int width, unsigned int height);
-	
-	/** Clean internal resources. */
-	void clean();
+	void resize(unsigned int width, unsigned int height) override;
 	
 	/** Return the absolute unit size of the button mesh.
 	 \return the dimensions of the button mesh
 	 */
-	glm::vec2 getButtonSize();
+	glm::vec2 getButtonSize() const;
 	
 private:
 	

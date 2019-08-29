@@ -1,6 +1,5 @@
 #include "graphics/GPUObjects.hpp"
 #include "graphics/GLUtilities.hpp"
-#include "resources/Texture.hpp"
 
 void GPUMesh::clean(){
 	glDeleteBuffers(1, &eId);
@@ -16,7 +15,7 @@ GPUTexture::GPUTexture(const Descriptor & texDescriptor, TextureShape shape) :
 	wrapping(texDescriptor.getGPUWrapping()),
 	channels(texDescriptor.getGPULayout(typedFormat, type, format)),
 	_descriptor(texDescriptor){
-	
+	texDescriptor.getGPULayout(typedFormat, type, format);
 }
 
 void GPUTexture::clean(){
@@ -130,7 +129,7 @@ unsigned int Descriptor::getGPULayout(GLenum & detailedFormat, GLenum & type, GL
 	return 0;
 }
 
-GLenum Descriptor::getGPUFilter(Filter filter) const {
+GLenum Descriptor::getGPUFilter(Filter filter) {
 	static const std::map<Filter, GLenum> filters = {
 		{ Filter::NEAREST, GL_NEAREST },
 		{ Filter::LINEAR, GL_LINEAR },

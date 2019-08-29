@@ -125,7 +125,9 @@ public:
 	 \return the encoded camera parameters
 	 */
 	std::string encode() const;
-	
+
+	virtual ~Camera() = default;
+
 protected:
 	
 	/// Update the projection matrix using the camera parameters.

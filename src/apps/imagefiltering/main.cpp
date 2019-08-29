@@ -62,7 +62,7 @@ int main(int argc, char** argv) {
 		}
 		
 		// Start a new frame for the interface.
-		System::GUI::beginFrame();
+		System::Gui::beginFrame();
 		
 		// We separate punctual events from the main physics/movement update loop.
 		renderer.update();
@@ -79,7 +79,7 @@ int main(int argc, char** argv) {
 		remainingTime += frameTime;
 		// Instead of bounding at dt, we lower our requirement (1 order of magnitude).
 		while(remainingTime > 0.2*dt){
-			double deltaTime = fmin(remainingTime, dt);
+			const double deltaTime = std::min(remainingTime, dt);
 			// Update physics and camera.
 			renderer.physics(fullTime, frameTime);
 			// Update timers.
@@ -91,7 +91,7 @@ int main(int argc, char** argv) {
 		renderer.draw();
 		
 		// Then render the interface.
-		System::GUI::endFrame();
+		System::Gui::endFrame();
 		//Display the result for the current rendering loop.
 		glfwSwapBuffers(window);
 		
@@ -100,7 +100,7 @@ int main(int argc, char** argv) {
 	renderer.clean();
 	
 	// Clean the interface.
-	System::GUI::clean();
+	System::Gui::clean();
 	
 	Resources::manager().clean();
 	// Close GL context and any other GLFW resources.

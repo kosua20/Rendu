@@ -5,11 +5,15 @@
 
 #include <nfd/nfd.h>
 #include <imgui/imgui_impl_opengl3.h>
+#include <imgui/imgui_impl_glfw.h>
+
+#ifndef _WIN32
 #include <sys/stat.h>
+#endif
 
 namespace System {
 
-	namespace GUI {
+	namespace Gui {
 
 		/** Initialize ImGui, including interaction callbacks.
 		 \param window the GLFW window
@@ -105,10 +109,10 @@ namespace System {
 			glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
 			glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
 			/// \note We might want to impose the configured size here. This means the monitor could be set in a non-native mode.
-			window = glfwCreateWindow(mode->width, mode->height, name.c_str(), glfwGetPrimaryMonitor(), NULL);
+			window = glfwCreateWindow(mode->width, mode->height, name.c_str(), glfwGetPrimaryMonitor(), nullptr);
 		} else {
 			// Create a window with a given size. Width and height are defined in the configuration.
-			window = glfwCreateWindow(config.initialWidth, config.initialHeight, name.c_str(), NULL, NULL);
+			window = glfwCreateWindow(int(config.initialWidth), int(config.initialHeight), name.c_str(), nullptr, nullptr);
 		}
 
 		if (!window) {
@@ -118,7 +122,7 @@ namespace System {
 		}
 
 		if (config.forceAspectRatio) {
-			glfwSetWindowAspectRatio(window, config.initialWidth, config.initialHeight);
+			glfwSetWindowAspectRatio(window, int(config.initialWidth), int(config.initialHeight));
 		}
 		// Bind the OpenGL context and the new window.
 		glfwMakeContextCurrent(window);
@@ -146,7 +150,7 @@ namespace System {
 		glfwSetWindowIconifyCallback(window, iconify_callback); 	// Window minimization
 		glfwSwapInterval(config.vsync ? (config.rate == 30 ? 2 : 1) : 0);						// 60 FPS V-sync
 
-		GUI::setupImGui(window);
+		Gui::setupImGui(window);
 
 		// Check the window position and size (if we are on a screen smaller than the initial size).
 		glfwGetWindowPos(window, &config.windowFrame[0], &config.windowFrame[1]);
@@ -158,7 +162,7 @@ namespace System {
 		config.screenResolution = glm::vec2(width, height);
 
 		// Compute point density by computing the ratio.
-		const float screenDensity = (float)width / (float)config.windowFrame[2];
+		const float screenDensity = float(width) / float(config.windowFrame[2]);
 		Input::manager().densityEvent(screenDensity);
 
 		// Update the resolution.
@@ -167,7 +171,7 @@ namespace System {
 		return window;
 	}
 
-	void performWindowAction(GLFWwindow * window, RenderingConfig & config, const Action action) {
+	void performWindowAction(GLFWwindow * window, RenderingConfig & config, Action action) {
 		switch (action) {
 		case Action::Quit:
 			glfwSetWindowShouldClose(window, GLFW_TRUE);
@@ -189,7 +193,7 @@ namespace System {
 
 			if (fullscreen) {
 				// Restore the window position and size.
-				glfwSetWindowMonitor(window, NULL, config.windowFrame[0], config.windowFrame[1], config.windowFrame[2], config.windowFrame[3], 0);
+				glfwSetWindowMonitor(window, nullptr, config.windowFrame[0], config.windowFrame[1], config.windowFrame[2], config.windowFrame[3], 0);
 				// Check the window position and size (if we are on a screen smaller than the initial size).
 				glfwGetWindowPos(window, &config.windowFrame[0], &config.windowFrame[1]);
 				glfwGetWindowSize(window, &config.windowFrame[2], &config.windowFrame[3]);
@@ -214,7 +218,7 @@ namespace System {
 			int wwidth, hheight;
 			glfwGetWindowSize(window, &wwidth, &hheight);
 			// Compute point density by computing the ratio.
-			const float screenDensity = (float)width / (float)wwidth;
+			const float screenDensity = float(width) / float(wwidth);
 			Input::manager().densityEvent(screenDensity);
 
 			// Update the resolution.
@@ -226,21 +230,21 @@ namespace System {
 		}
 	}
 
-	bool showPicker(const Picker mode, const std::string & startPath, std::string & outPath, const std::string & extensions) {
-		nfdchar_t *outPathRaw = NULL;
+	bool showPicker(Picker mode, const std::string & startDir, std::string & outPath, const std::string & extensions) {
+		nfdchar_t *outPathRaw = nullptr;
 		nfdresult_t result = NFD_CANCEL;
 		outPath = "";
 
 #ifdef _WIN32
-		(void)startPath;
-		const std::string internalStartPath = "";
+		(void)startDir;
+		const std::string internalStartPath;
 #else
-		const std::string internalStartPath = startPath;
+		const std::string internalStartPath = startDir;
 #endif
 		if (mode == Picker::Load) {
-			result = NFD_OpenDialog(extensions.empty() ? NULL : extensions.c_str(), internalStartPath.c_str(), &outPathRaw);
+			result = NFD_OpenDialog(extensions.empty() ? nullptr : extensions.c_str(), internalStartPath.c_str(), &outPathRaw);
 		} else if(mode == Picker::Save){
-			result = NFD_SaveDialog(extensions.empty() ? NULL : extensions.c_str(), internalStartPath.c_str(), &outPathRaw);
+			result = NFD_SaveDialog(extensions.empty() ? nullptr : extensions.c_str(), internalStartPath.c_str(), &outPathRaw);
 		} else if(mode == Picker::Directory){
 			result = NFD_PickFolder(internalStartPath.c_str(), &outPathRaw);
 		}
@@ -262,17 +266,17 @@ namespace System {
 #ifdef _WIN32
 
 	WCHAR * widen(const std::string & str) {
-		const int size = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, NULL, 0);
+		const int size = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, nullptr, 0);
 		WCHAR *arr = new WCHAR[size];
-		MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, (LPWSTR)arr, size);
+		MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, static_cast<LPWSTR>(arr), size);
 		// \warn Will leak on Windows.
 		return arr;
 	}
 
 	std::string narrow(WCHAR * str) {
-		const int size = WideCharToMultiByte(CP_UTF8, 0, str, -1, NULL, 0, NULL, NULL);
+		const int size = WideCharToMultiByte(CP_UTF8, 0, str, -1, nullptr, 0, nullptr, nullptr);
 		std::string res(size - 1, 0);
-		WideCharToMultiByte(CP_UTF8, 0, str, -1, &res[0], size, NULL, NULL);
+		WideCharToMultiByte(CP_UTF8, 0, str, -1, &res[0], size, nullptr, nullptr);
 		return res;
 	}
 
@@ -290,7 +294,7 @@ namespace System {
 #ifdef _WIN32
 
 	bool createDirectory(const std::string & directory) {
-		return CreateDirectoryW(widen(directory), 0) != 0;
+		return CreateDirectoryW(widen(directory), nullptr) != 0;
 	}
 
 #else

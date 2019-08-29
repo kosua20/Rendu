@@ -4,7 +4,6 @@
 #include "Common.hpp"
 
 #include <imgui/imgui.h>
-#include <imgui/imgui_impl_glfw.h>
 #include <thread>
 
 struct GLFWwindow;
@@ -19,7 +18,7 @@ namespace System {
 	 \brief GUI helpers, internally backed by ImGUI.
 	 \ingroup Helpers
 	 */
-	namespace GUI {
+	namespace Gui {
 	
 		/** Start registering GUI items. */
 		void beginFrame();
@@ -52,7 +51,7 @@ namespace System {
 	 \param config the current window configuration
 	 \param action the system action to perform
 	 */
-	void performWindowAction(GLFWwindow * window, RenderingConfig & config, const Action action);
+	void performWindowAction(GLFWwindow * window, RenderingConfig & config, Action action);
 	
 	
 	/** The file picker mode. */
@@ -69,7 +68,7 @@ namespace System {
 	 \param extensions (optional) the extensions allowed, separated by "," or ";"
 	 \return true if the user picked an item, false if cancelled.
 	 */
-	bool showPicker(const Picker mode, const std::string & startDir, std::string & outPath, const std::string & extensions = "");
+	bool showPicker(Picker mode, const std::string & startDir, std::string & outPath, const std::string & extensions = "");
 
 	/** Create a directory.
 	 \param directory the path to the directory to create

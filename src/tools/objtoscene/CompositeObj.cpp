@@ -1,4 +1,5 @@
 #include "CompositeObj.hpp"
+#include "system/TextUtilities.hpp"
 
 
 namespace CompositeObj {
@@ -6,12 +7,9 @@ namespace CompositeObj {
 	/** \brief Contains all the geometry information from an OBJ file.
 	 \ingroup ObjToScene
 	 */
-	struct RawGeometry {
-		std::vector<glm::vec3> positions; ///< Positions
-		std::vector<glm::vec3> normals; ///< Normals
-		std::vector<glm::vec2> texcoords; ///< UVs
-		std::vector<std::string> faces; ///< OBJ face strings
-		
+	class RawGeometry {
+	public:
+
 		/** Clear all data. */
 		void clear(){
 			positions.clear();
@@ -19,16 +17,19 @@ namespace CompositeObj {
 			texcoords.clear();
 			faces.clear();
 		}
-		
+
+		std::vector<glm::vec3> positions; ///< Positions
+		std::vector<glm::vec3> normals; ///< Normals
+		std::vector<glm::vec2> texcoords; ///< UVs
+		std::vector<std::string> faces; ///< OBJ face strings
+
 	};
 
 	/** \brief Associate an object and a material with geometry in an OBJ.
 	 \ingroup ObjToScene
 	 */
-	struct ObjectMaterialUse {
-		std::string objectName; ///< The name of the object
-		std::string materialName; ///< The name of the material
-		size_t index; ///< The position of the first face of the object in the OBJ file.
+	class ObjectMaterialUse {
+	public:
 		
 		/** Constructor.
 		 \param objName object name
@@ -38,6 +39,11 @@ namespace CompositeObj {
 		ObjectMaterialUse(const std::string & objName, const std::string & matName, size_t faceId):
 			objectName(objName), materialName(matName), index(faceId){
 		}
+
+		std::string objectName; ///< The name of the object
+		std::string materialName; ///< The name of the material
+		size_t index; ///< The position of the first face of the object in the OBJ file.
+
 	};
 
 	/** Parse an OBJ file to extract objects geometry, material library files and object-material associations.
@@ -68,24 +74,24 @@ namespace CompositeObj {
 			while(ss >> token){
 				tokens.push_back(token);
 			}
-			if(tokens.size() < 1){
+			if(tokens.empty()){
 				continue;
 			}
 			
 			// Check what kind of element the line represent.
 			if (tokens[0] == "v" && tokens.size() >= 4) {
 				// Vertex position
-				glm::vec3 pos = glm::vec3(stof(tokens[1],NULL),stof(tokens[2],NULL),stof(tokens[3],NULL));
+				glm::vec3 pos = glm::vec3(stof(tokens[1],nullptr),stof(tokens[2], nullptr),stof(tokens[3], nullptr));
 				geometry.positions.push_back(pos);
 				
 			} else if (tokens[0] == "vn" && tokens.size() >= 4){
 				// Vertex normal
-				glm::vec3 nor = glm::vec3(stof(tokens[1],NULL),stof(tokens[2],NULL),stof(tokens[3],NULL));
+				glm::vec3 nor = glm::vec3(stof(tokens[1], nullptr),stof(tokens[2], nullptr),stof(tokens[3], nullptr));
 				geometry.normals.push_back(nor);
 				
 			} else if (tokens[0] == "vt" && tokens.size() >= 3) {
 				// Vertex UV
-				glm::vec2 uv = glm::vec2(stof(tokens[1],NULL),stof(tokens[2],NULL));
+				glm::vec2 uv = glm::vec2(stof(tokens[1], nullptr),stof(tokens[2], nullptr));
 				geometry.texcoords.push_back(uv);
 				
 			} else if (tokens[0] == "f" && tokens.size() >= 4) {
@@ -188,21 +194,21 @@ namespace CompositeObj {
 			}
 			
 			// else, query the associated position/uv/normal, store it, update the indices vector and the list of used elements.
-			const size_t foundF = str.find_first_of("/");
-			const size_t foundL = str.find_last_of("/");
+			const size_t foundF = str.find_first_of('/');
+			const size_t foundL = str.find_last_of('/');
 			
 			//Positions (we are sure they exist)
-			long ind1 = stol(str.substr(0,foundF))-1;
+			const long ind1 = stol(str.substr(0,foundF))-1;
 			mesh.positions.push_back(geom.positions[ind1]);
 			
 			//UVs (second index)
 			if(hasUV){
-				long ind2 = stol(str.substr(foundF+1,foundL))-1;
+				const long ind2 = stol(str.substr(foundF+1,foundL))-1;
 				mesh.texcoords.push_back(geom.texcoords[ind2]);
 			}
 			//Normals (third index, in all cases)
 			if(hasNormals){
-				long ind3 = stol(str.substr(foundL+1))-1;
+				const long ind3 = stol(str.substr(foundL+1))-1;
 				mesh.normals.push_back(geom.normals[ind3]);
 			}
 			
@@ -248,8 +254,7 @@ namespace CompositeObj {
 				TextUtilities::replace(tokens[1], "/", "-");
 				TextUtilities::replace(tokens[1], ":", "-");
 				currentMaterialName = tokens[1];
-				Material material;
-				materials[currentMaterialName] = material;
+				materials[currentMaterialName] = Material();
 				
 			} else if(tokens[0] == "map_Ka" || tokens[0] == "map_Kd"){
 				// Diffuse/ambient color.

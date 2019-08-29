@@ -5,11 +5,9 @@
  \brief Represent the sphere of smallest radius containing a given object or region of space.
  \ingroup Resources
  */
-struct BoundingSphere {
-	
-	glm::vec3 center; ///< The sphere center.
-	float radius; ///< The sphere radius.
-	
+class BoundingSphere {
+public:
+
 	/** Empty sphere constructor. */
 	BoundingSphere();
 	
@@ -17,17 +15,19 @@ struct BoundingSphere {
 	 \param aCenter the center of the sphere
 	 \param aRadius the radius of the sphere
 	 */
-	BoundingSphere(const glm::vec3 & aCenter, const float aRadius);
+	BoundingSphere(const glm::vec3 & aCenter, float aRadius);
+
+	glm::vec3 center; ///< The sphere center.
+	float radius; ///< The sphere radius.
+
 };
 
 /**
  \brief Represent the smallest axis-aligne box containing a given object or region of space.
  \ingroup Resources
  */
-struct BoundingBox {
-	
-	glm::vec3 minis; ///< Lower-back-left corner of the box.
-	glm::vec3 maxis; ///< Higher-top-right corner of the box.
+class BoundingBox {
+public:
 	
 	/** Empty box constructor. */
 	BoundingBox();
@@ -81,5 +81,9 @@ struct BoundingBox {
 	 \return true if the bounding box contains the point
 	 */
 	bool contains(const glm::vec3 & point) const;
+
+	glm::vec3 minis; ///< Lower-back-left corner of the box.
+	glm::vec3 maxis; ///< Higher-top-right corner of the box.
+
 };
 

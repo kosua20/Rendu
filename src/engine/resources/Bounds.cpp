@@ -5,8 +5,8 @@ BoundingSphere::BoundingSphere(){
 	radius = 0.0f;
 }
 
-BoundingSphere::BoundingSphere(const glm::vec3 & aCenter, const float aRadius){
-	center = aCenter; radius = aRadius;
+BoundingSphere::BoundingSphere(const glm::vec3 & aCenter, float aRadius) : 
+	center(aCenter), radius(aRadius) {
 }
 
 BoundingBox::BoundingBox(){

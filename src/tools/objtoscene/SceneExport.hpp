@@ -1,10 +1,7 @@
 #pragma once
 
 #include "Common.hpp"
-#include "resources/Image.hpp"
-#include "resources/Mesh.hpp"
 #include "system/System.hpp"
-#include "system/TextUtilities.hpp"
 #include "CompositeObj.hpp"
 
 /**
@@ -41,9 +38,9 @@ namespace SceneExport {
 	/** Save a scene description, listing all objects with materials. The file can then be decoded by Codable objects.
 	 \param objects the scene objects
 	 \param materials the scene materials
-	 \param outputFile the destination file
+	 \param outputPath the destination file
 	 \return an error code or 0
 	 */
-	int saveDescription(const std::vector<CompositeObj::Object> & objects, const std::map<std::string, Material> & materials, const std::string & outputFile);
+	int saveDescription(const std::vector<CompositeObj::Object> & objects, const std::map<std::string, Material> & materials, const std::string & outputPath);
 	
 }

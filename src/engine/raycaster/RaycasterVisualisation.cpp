@@ -62,7 +62,7 @@ Raycaster::RayHit RaycasterVisualisation::getRayLevels(const glm::vec3 & origin,
 				if(hit.hit && hit.dist < bestHit.dist){
 					bestHit = hit;
 					maxi = bestHit.dist;
-					bestHit.internalId = (unsigned long)(node.left + tid);
+					bestHit.internalId = static_cast<unsigned long>(size_t(node.left) + tid);
 				}
 			}
 			// Move to the next node.
@@ -126,7 +126,7 @@ void RaycasterVisualisation::createBVHMeshes(const std::vector<DisplayNode> & no
 		const Raycaster::Node & node = _raycaster._hierarchy[displayNode.node];
 		// Setup vertices.
 		Mesh & mesh = meshes[displayNode.depth];
-		const unsigned int firstIndex = (unsigned int)mesh.positions.size();
+		const unsigned int firstIndex = uint(mesh.positions.size());
 		const auto corners = node.box.getCorners();
 		for(const auto & corner : corners){
 			mesh.positions.push_back(corner);

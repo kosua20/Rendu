@@ -1,5 +1,10 @@
 #include "scene/Animation.hpp"
 
+
+Animation::Animation(Frame frame, float speed) : 
+	_frame(frame), _speed(speed) {
+}
+
 std::vector<std::shared_ptr<Animation>> Animation::decode(const std::vector<KeyValues> & params){
 	std::vector<std::shared_ptr<Animation>> animations;
 	// Each element is an animation.
@@ -28,13 +33,8 @@ void Animation::decodeBase(const KeyValues & params){
 	}
 }
 
-Rotation::Rotation(){
-}
-
-Rotation::Rotation(const glm::vec3 & axis, float speed, Frame frame){
-	_axis = glm::normalize(axis);
-	_speed = speed;
-	_frame = frame;
+Rotation::Rotation(const glm::vec3 & axis, float speed, Frame frame) : Animation(frame, speed), 
+	_axis(glm::normalize(axis)){
 }
 
 glm::mat4 Rotation::apply(const glm::mat4 & m, double, double frameTime){
@@ -53,15 +53,8 @@ void Rotation::decode(const KeyValues & params){
 	_axis = glm::normalize(_axis);
 }
 
-BackAndForth::BackAndForth(){
-	
-}
-
-BackAndForth::BackAndForth(const glm::vec3 & axis, float speed, float amplitude, Frame frame){
-	_axis = glm::normalize(axis);
-	_speed = speed;
-	_amplitude = amplitude;
-	_frame = frame;
+BackAndForth::BackAndForth(const glm::vec3 & axis, float speed, float amplitude, Frame frame) : Animation(frame, speed),
+	_axis(glm::normalize(axis)), _amplitude(amplitude) {
 }
 
 glm::mat4 BackAndForth::apply(const glm::mat4 & m, double fullTime, double){

@@ -22,14 +22,14 @@ public:
 	};
 
 	/** Constructor */
-	Object();
+	Object() = default;
 
 	/** Construct a new object.
 	 \param type the type of shading and effects to use when rendering this object
 	 \param mesh the geometric mesh infos
 	 \param castShadows denote if the object should cast shadows
 	 */
-	Object(const Object::Type type, const Mesh * mesh, bool castShadows);
+	Object(Type type, const Mesh * mesh, bool castShadows);
 	
 	/** Register a texture.
 	 \param infos the texture infos to add
@@ -39,7 +39,7 @@ public:
 	/** Add an animation to apply at each frame.
 	 \param anim the animation to add
 	 */
-	void addAnimation(std::shared_ptr<Animation> anim);
+	void addAnimation(const std::shared_ptr<Animation> & anim);
 	
 	/** Update the object transformation matrix.
 	 \param model the new model matrix
@@ -114,13 +114,13 @@ public:
 	 \param params the parameters tuple
 	 \param mode the storage mode (CPU, GPU, both)
 	 */
-	virtual void decode(const KeyValues& params, const Storage mode);
+	virtual void decode(const KeyValues& params, Storage mode);
 	
 	virtual ~Object() = default;
 	
 protected:
 	
-	const Mesh * _mesh; ///< Geometry of the object.
+	const Mesh * _mesh = nullptr; ///< Geometry of the object.
 	std::vector<const Texture *> _textures; ///< Textures used by the object.
 	std::vector<std::shared_ptr<Animation>> _animations; ///< Animations list (applied in order).
 	glm::mat4 _model = glm::mat4(1.0f); ///< The transformation matrix of the 3D model.

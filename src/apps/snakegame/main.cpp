@@ -33,7 +33,7 @@ int main() {
 		return -1;
 	}
 	// Disable Imgui saving.
-	ImGui::GetIO().IniFilename = NULL;
+	ImGui::GetIO().IniFilename = nullptr;
 
 	Resources::manager().addResources("../../../resources/common");
 	Resources::manager().addResources("../../../resources/snakegame");
@@ -58,7 +58,7 @@ int main() {
 		
 		
 		// Start a new frame for the interface.
-		System::GUI::beginFrame();
+		System::Gui::beginFrame();
 		
 		// We separate punctual events from the main physics/movement update loop.
 		const System::Action actionToTake = game.update();
@@ -67,14 +67,14 @@ int main() {
 			// Due to the ordering between the update function and the fullscreen activation, we have to manually call resize here.
 			// Another solution would be to check resizing before rendering, in the Game object.
 			if(actionToTake == System::Action::Fullscreen){
-				game.resize((unsigned int)Input::manager().size()[0], (unsigned int)Input::manager().size()[1]);
+				game.resize(uint(Input::manager().size()[0]), uint(Input::manager().size()[1]));
 			}
 			// Update the config on disk, for next launch.
 			Resources::saveStringToExternalFile("./config.ini", "# SnakeGame Config v1.0\n" + std::string(config.fullscreen ? "fullscreen\n" : "") + (!config.vsync ? "no-vsync" : "\n"));
 		}
 		
 		// Compute the time elapsed since last frame
-		double currentTime = glfwGetTime();
+		const double currentTime = glfwGetTime();
 		double frameTime = currentTime - timer;
 		timer = currentTime;
 		
@@ -85,7 +85,7 @@ int main() {
 		remainingTime += frameTime;
 		// Instead of bounding at dt, we lower our requirement (1 order of magnitude).
 		while(remainingTime > 0.2*dt){
-			double deltaTime = fmin(remainingTime, dt);
+			const double deltaTime = std::min(remainingTime, dt);
 			// Update physics and camera.
 			game.physics(deltaTime);
 			// Update timers.
@@ -95,14 +95,14 @@ int main() {
 		// Update the content of the window.
 		game.draw();
 		// Then render the interface.
-		System::GUI::endFrame();
+		System::Gui::endFrame();
 		//Display the result for the current rendering loop.
 		glfwSwapBuffers(window);
 		
 	}
 	
 	// Clean the interface.
-	System::GUI::clean();
+	System::Gui::clean();
 	// Clean other resources
 	game.clean();
 	Resources::manager().clean();

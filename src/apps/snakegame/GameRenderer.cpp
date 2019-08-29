@@ -15,8 +15,8 @@ GameRenderer::GameRenderer(RenderingConfig & config) : Renderer(config){
 	glBlendEquation(GL_FUNC_ADD);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	
-	const int renderWidth = (int)_renderResolution[0];
-	const int renderHeight = (int)_renderResolution[1];
+	const int renderWidth = int(_renderResolution[0]);
+	const int renderHeight = int(_renderResolution[1]);
 	_sceneFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, {
 		{ Layout::RGB16F, Filter::NEAREST_NEAREST, Wrap::CLAMP},
 		{ Layout::R8, Filter::NEAREST_NEAREST, Wrap::CLAMP},
@@ -40,7 +40,7 @@ GameRenderer::GameRenderer(RenderingConfig & config) : Renderer(config){
 	checkGLError();
 }
 
-void GameRenderer::draw(const Player & player){
+void GameRenderer::draw(const Player & player) const {
 	
 	const glm::vec2 invRenderSize = 1.0f/_renderResolution;
 	
@@ -80,7 +80,7 @@ void GameRenderer::draw(const Player & player){
 	checkGLError();
 }
 
-void GameRenderer::drawScene(const Player & player){
+void GameRenderer::drawScene(const Player & player) const {
 	// Lighting and reflections will be computed in world space in the shaders.
 	// So the normal matrix only takes the model matrix into account.
 	
@@ -124,10 +124,6 @@ void GameRenderer::drawScene(const Player & player){
 	}
 }
 
-void GameRenderer::update(){
-	Renderer::update();
-}
-
 void GameRenderer::resize(unsigned int width, unsigned int height){
 	Renderer::updateResolution(width, height);
 	const float aspectRatio = _renderResolution[0]/_renderResolution[1];
@@ -135,7 +131,7 @@ void GameRenderer::resize(unsigned int width, unsigned int height){
 	_fxaaFramebuffer->resize(_renderResolution);
 	_sceneFramebuffer->resize(_renderResolution);
 	_lightingFramebuffer->resize(_renderResolution);
-	_ssaoPass->resize((unsigned int)(_renderResolution[0]/2.0f), (unsigned int)(_renderResolution[1]/2.0f));
+	_ssaoPass->resize(uint(_renderResolution[0] / 2.0f), uint(_renderResolution[1] / 2.0f));
 }
 
 void GameRenderer::clean() {
@@ -147,7 +143,12 @@ void GameRenderer::clean() {
 
 
 void GameRenderer::physics(double , double ){
-	
+	// Nothing to do here.
+}
+
+
+void GameRenderer::draw() {
+	// Nothing to do here.
 }
 
 const Texture * GameRenderer::finalImage() const {

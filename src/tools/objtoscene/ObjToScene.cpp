@@ -1,6 +1,5 @@
 
 #include "system/System.hpp"
-#include "system/TextUtilities.hpp"
 #include "CompositeObj.hpp"
 #include "SceneExport.hpp"
 #include "Common.hpp"
@@ -52,9 +51,7 @@ public:
 		infos().emplace_back("name", "", "The name of the scene", "name");
 		infos().emplace_back("generate", "", "Generate an image containing given color", "R G B");
 	}
-	
-public:
-	
+
 	std::string inputMeshPath; ///< Input OBJ path. Textures paths should be relative to it.
 	std::string outputPath = "./"; ///< Output directory path. Should already exists.
 	std::string outputName = "scene"; ///< Scene name, will be used as a prefix for all files.

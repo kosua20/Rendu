@@ -42,7 +42,7 @@ public:
 	};
 	
 	/** Default constructor. */
-	Raycaster();
+	Raycaster() = default;
 
 	/** Adds a mesh to the internal geometry.
 	 \param mesh the mesh to add
@@ -107,11 +107,11 @@ private:
 	/** Internal triangle representation. */
 	struct TriangleInfos {
 		BoundingBox box; ///< The triang axis-aligned bounding box.
-		unsigned long v0; ///< First vertex index.
-		unsigned long v1; ///< Second vertex index.
-		unsigned long v2; ///< Third vertex index.
-		unsigned long localId; ///< Position of the triangle first vertex in the mesh initial index buffer.
-		unsigned int meshId; ///< Index of the mesh this triangle belongs to.
+		unsigned long v0 = 0; ///< First vertex index.
+		unsigned long v1 = 0; ///< Second vertex index.
+		unsigned long v2 = 0; ///< Third vertex index.
+		unsigned long localId = 0; ///< Position of the triangle first vertex in the mesh initial index buffer.
+		unsigned int meshId = 0; ///< Index of the mesh this triangle belongs to.
 	};
 	
 	/** Represent a ray, shot from a given position in a specific direction. */
@@ -142,7 +142,7 @@ private:
 	 \param maxi the maximum allowed distance along the ray
 	 \return a hit object containg the potential hit informations
 	 */
-	const RayHit intersects(const Ray & ray, const TriangleInfos & tri, float mini, float maxi) const;
+	RayHit intersects(const Ray & ray, const TriangleInfos & tri, float mini, float maxi) const;
 	
 	/** Test a ray and bounding box intersection.
 	 \param ray the ray

@@ -1,6 +1,4 @@
 #include "input/Input.hpp"
-#include "input/InputCallbacks.hpp"
-#include "input/ControllableCamera.hpp"
 #include "system/System.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "graphics/ScreenQuad.hpp"
@@ -74,7 +72,7 @@ int main(int argc, char** argv) {
 			glfwSetWindowShouldClose(window, GL_TRUE);
 		}
 		// Start a new frame for the interface.
-		System::GUI::beginFrame();
+		System::Gui::beginFrame();
 		// Reload resources.
 		if(Input::manager().triggered(Input::KeyP)){
 			Resources::manager().reload();
@@ -125,7 +123,7 @@ int main(int argc, char** argv) {
 			program->uniform("gammaOutput", applyGamma);
 			const glm::vec4 chanFilts(channelsFilter);
 			const glm::vec2 flips(flipAxis);
-			const glm::vec2 angles(std::cos(currentAngle*float(M_PI_2)), std::sin(currentAngle*float(M_PI_2)));
+			const glm::vec2 angles(std::cos(float(currentAngle)*float(M_PI_2)), std::sin(float(currentAngle)*float(M_PI_2)));
 			
 			program->uniform("channelsFilter", chanFilts);
 			program->uniform("flipAxis", flips);
@@ -213,7 +211,7 @@ int main(int argc, char** argv) {
 			ImGui::Checkbox("A", &channelsFilter[3]);
 			
 			// Filtering.
-			if(ImGui::Combo("Filtering", (int*)(&imageInterp), "Nearest\0Linear\0\0")){
+			if(ImGui::Combo("Filtering", reinterpret_cast<int*>(&imageInterp), "Nearest\0Linear\0\0")){
 				imageInfos.gpu->setFiltering(imageInterp);
 			}
 			
@@ -289,14 +287,14 @@ int main(int argc, char** argv) {
 		ImGui::End();
 		
 		// Then render the interface.
-		System::GUI::endFrame();
+		System::Gui::endFrame();
 		//Display the result for the current rendering loop.
 		glfwSwapBuffers(window);
 
 	}
 	
 	// Clean the interface.
-	System::GUI::clean();
+	System::Gui::clean();
 	
 	Resources::manager().clean();
 	// Close GL context and any other GLFW resources.

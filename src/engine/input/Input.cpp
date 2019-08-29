@@ -51,6 +51,7 @@ void Input::keyPressedEvent(int key, int action){
 		_keys[key].last = true;
 	}
 	_keyInteracted = true;
+	
 	Log::Verbose() << Log::Input << "Key " << key << ", " << (action == GLFW_PRESS ? "pressed" : (action == GLFW_RELEASE ? "released" : "held")) << "." << std::endl;
 }
 
@@ -189,7 +190,7 @@ bool Input::pressed(const Key & keyboardKey) const {
 }
 
 bool Input::triggered(const Key & keyboardKey, bool absorb) {
-	bool res = _keys[keyboardKey].first;
+	const bool res = _keys[keyboardKey].first;
 	if(absorb){
 		_keys[keyboardKey].first = false;
 	}
@@ -197,7 +198,7 @@ bool Input::triggered(const Key & keyboardKey, bool absorb) {
 }
 
 bool Input::released(const Key & keyboardKey, bool absorb) {
-	bool res = _keys[keyboardKey].last;
+	const bool res = _keys[keyboardKey].last;
 	if(absorb){
 		_keys[keyboardKey].last = false;
 	}
@@ -209,7 +210,7 @@ bool Input::pressed(const Mouse & mouseButton) const {
 }
 
 bool Input::triggered(const Mouse & mouseButton, bool absorb) {
-	bool res = _mouseButtons[uint(mouseButton)].first;
+	const bool res = _mouseButtons[uint(mouseButton)].first;
 	if(absorb){
 		_mouseButtons[uint(mouseButton)].first = false;
 	}
@@ -217,7 +218,7 @@ bool Input::triggered(const Mouse & mouseButton, bool absorb) {
 }
 
 bool Input::released(const Mouse & mouseButton, bool absorb) {
-	bool res = _mouseButtons[uint(mouseButton)].last;
+	const bool res = _mouseButtons[uint(mouseButton)].last;
 	if(absorb){
 		_mouseButtons[uint(mouseButton)].last = false;
 	}

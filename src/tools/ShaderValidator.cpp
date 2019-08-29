@@ -47,13 +47,11 @@ bool processLog(const std::string & compilationLog, const std::string & filePath
 			}
 			
 			// The path should be relative to the root build directory.
-			const std::string adjustedPath = filePath;
-			
 			// Output in an IDE compatible format, to display warning and errors properly.
 #ifdef _WIN32
-			std::cerr << adjustedPath << "(" << lineId << "): error: " << errorMessage << std::endl;
+			std::cerr << filePath << "(" << lineId << "): error: " << errorMessage << std::endl;
 #else
-			std::cerr << adjustedPath << ":" << lineId << ": error: " << errorMessage << std::endl;
+			std::cerr << filePath << ":" << lineId << ": error: " << errorMessage << std::endl;
 #endif
 		}
 		// At least one issue was encountered.
@@ -91,7 +89,7 @@ int main(int argc, char** argv) {
 	glfwWindowHint (GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 	
-	GLFWwindow* window = glfwCreateWindow(100,100,"validation", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(100,100,"validation", nullptr, nullptr);
 	if (!window) {
 		Log::Error() << Log::OpenGL << "Could not open window with GLFW3" << std::endl;
 		glfwTerminate();

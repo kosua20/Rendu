@@ -1,8 +1,6 @@
 #include "input/Input.hpp"
-#include "input/InputCallbacks.hpp"
 #include "input/ControllableCamera.hpp"
 #include "resources/ResourcesManager.hpp"
-#include "graphics/ScreenQuad.hpp"
 #include "graphics/GLUtilities.hpp"
 #include "system/Config.hpp"
 #include "system/System.hpp"
@@ -109,7 +107,7 @@ int main(int argc, char** argv) {
 		}
 		
 		// Start a new frame for the interface.
-		System::GUI::beginFrame();
+		System::Gui::beginFrame();
 		// Render.
 		const glm::vec2 screenSize = Input::manager().size();
 		const glm::mat4 MVP = camera.projection() * camera.view();
@@ -127,8 +125,8 @@ int main(int argc, char** argv) {
 		ImGui::Text("Internal renderer: %s", renderer.c_str());
 		ImGui::Text("Versions: Driver: %s, GLSL: %s", version.c_str(), shaderVersion.c_str());
 		if(ImGui::CollapsingHeader(titleHeader.c_str())) {
-			for(size_t i = 0; i < extensions.size(); ++i){
-				ImGui::Text("%s", extensions[i].c_str());
+			for(const auto & ext : extensions){
+				ImGui::Text("%s", ext.c_str());
 			}
 		}
 		
@@ -137,14 +135,14 @@ int main(int argc, char** argv) {
 		}
 		
 		// Then render the interface.
-		System::GUI::endFrame();
+		System::Gui::endFrame();
 		//Display the result for the current rendering loop.
 		glfwSwapBuffers(window);
 
 	}
 	
 	// Clean the interface.
-	System::GUI::clean();
+	System::Gui::clean();
 	
 	Resources::manager().clean();
 	// Close GL context and any other GLFW resources.

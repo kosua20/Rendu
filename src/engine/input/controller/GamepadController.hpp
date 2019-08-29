@@ -1,6 +1,6 @@
 #pragma once
 #include "input/controller/Controller.hpp"
-#include "Common.hpp"
+
 
 /**
  \brief Represents a controller with a predefined mapping provided by GLFW/SDL.
@@ -16,17 +16,17 @@ public:
 	/**
 	 \copydoc Controller::activate
 	 */
-	bool activate(int id);
+	bool activate(int id) override;
 	
 	/**
 	 \copydoc Controller::deactivate
 	 */
-	void deactivate();
+	void deactivate() override;
 	
 	/**
 	 \copydoc Controller::update
 	 */
-	void update();
+	void update() override;
 
 	
 };

@@ -62,7 +62,7 @@ void Mesh::loadObj( std::istream & in, Mesh & mesh, Mesh::Load mode){
 		while(ss >> token){
 			tokens.push_back(token);
 		}
-		if(tokens.size() < 1){
+		if(tokens.empty()){
 			continue;
 		}
 		// Check what kind of element the line represent.
@@ -71,7 +71,7 @@ void Mesh::loadObj( std::istream & in, Mesh & mesh, Mesh::Load mode){
 			if(tokens.size() < 4){
 				continue;
 			}
-			glm::vec3 pos = glm::vec3(stof(tokens[1],NULL),stof(tokens[2],NULL),stof(tokens[3],NULL));
+			glm::vec3 pos = glm::vec3(stof(tokens[1], nullptr),stof(tokens[2], nullptr),stof(tokens[3], nullptr));
 			positions_temp.push_back(pos);
 			
 		} else if (tokens[0] == "vn"){ // Vertex normal
@@ -79,7 +79,7 @@ void Mesh::loadObj( std::istream & in, Mesh & mesh, Mesh::Load mode){
 			if(tokens.size() < 4){
 				continue;
 			}
-			glm::vec3 nor = glm::vec3(stof(tokens[1],NULL),stof(tokens[2],NULL),stof(tokens[3],NULL));
+			glm::vec3 nor = glm::vec3(stof(tokens[1], nullptr),stof(tokens[2], nullptr),stof(tokens[3], nullptr));
 			normals_temp.push_back(nor);
 			
 		} else if (tokens[0] == "vt") { // Vertex UV
@@ -87,7 +87,7 @@ void Mesh::loadObj( std::istream & in, Mesh & mesh, Mesh::Load mode){
 			if(tokens.size() < 3){
 				continue;
 			}
-			glm::vec2 uv = glm::vec2(stof(tokens[1],NULL),stof(tokens[2],NULL));
+			glm::vec2 uv = glm::vec2(stof(tokens[1], nullptr),stof(tokens[2], nullptr));
 			texcoords_temp.push_back(uv);
 			
 		} else if (tokens[0] == "f") { // Face indices.
@@ -105,13 +105,13 @@ void Mesh::loadObj( std::istream & in, Mesh & mesh, Mesh::Load mode){
 	}
 
 	// If no vertices, end.
-	if(positions_temp.size() == 0){
+	if(positions_temp.empty()){
 			return;
 	}
 
 	// Does the mesh have UV or normal coordinates ?
-	bool hasUV = texcoords_temp.size()>0;
-	bool hasNormals = normals_temp.size()>0;
+	bool hasUV = !texcoords_temp.empty();
+	bool hasNormals = !normals_temp.empty();
 
 	// Depending on the chosen extraction mode, we fill the mesh arrays accordingly.
 	if (mode == Mesh::Load::Points){
@@ -133,8 +133,8 @@ void Mesh::loadObj( std::istream & in, Mesh & mesh, Mesh::Load mode){
 		// For each face, query the needed positions, normals and uvs, and add them to the mesh structure.
 		for(size_t i = 0; i < faces_temp.size(); i++){
 			string str = faces_temp[i];
-			size_t foundF = str.find_first_of("/");
-			size_t foundL = str.find_last_of("/");
+			size_t foundF = str.find_first_of('/');
+			size_t foundL = str.find_last_of('/');
 			
 			// Positions (we are sure they exist).
 			long ind1 = stol(str.substr(0,foundF))-1;
@@ -153,7 +153,7 @@ void Mesh::loadObj( std::istream & in, Mesh & mesh, Mesh::Load mode){
 			}
 			
 			//Indices (simply a vector of increasing integers).
-			mesh.indices.push_back((unsigned int)i);
+			mesh.indices.push_back(uint(i));
 		}
 
 	} else if (mode == Mesh::Load::Indexed){
@@ -178,8 +178,8 @@ void Mesh::loadObj( std::istream & in, Mesh & mesh, Mesh::Load mode){
 			}
 
 			// else, query the associated position/uv/normal, store it, update the indices vector and the list of used elements.
-			size_t foundF = str.find_first_of("/");
-			size_t foundL = str.find_last_of("/");
+			size_t foundF = str.find_first_of('/');
+			size_t foundL = str.find_last_of('/');
 			
 			//Positions (we are sure they exist)
 			unsigned int ind1 = stoi(str.substr(0,foundF))-1;
@@ -284,8 +284,8 @@ void Mesh::computeTangentsAndBinormals(Mesh & mesh){
 	}
 	// Start by filling everything with 0 (as we want to accumulate tangents and binormals coming from different faces for each vertex).
 	for(size_t pid = 0; pid < mesh.positions.size(); ++pid){
-		mesh.tangents.push_back(glm::vec3(0.0f));
-		mesh.binormals.push_back(glm::vec3(0.0f));
+		mesh.tangents.emplace_back(0.0f);
+		mesh.binormals.emplace_back(0.0f);
 	}
 	// Then, compute both vectors for each face and accumulate them.
 	for(size_t fid = 0; fid < mesh.indices.size(); fid += 3){
@@ -369,7 +369,7 @@ int Mesh::saveObj(const std::string & path, const Mesh & mesh, bool defaultUVs){
 	const bool hasNormals = !mesh.normals.empty();
 	const bool hasTexCoords = !mesh.texcoords.empty();
 	// If the mesh has no UVs, it's probably using a uniform color material. We can force all vertices to have 0.5,0.5 UVs.
-	std::string defUV = "";
+	std::string defUV;
 	if(!hasTexCoords && defaultUVs){
 		objFile << "vt 0.5 0.5" << std::endl;
 		defUV = "1";

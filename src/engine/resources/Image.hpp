@@ -85,12 +85,10 @@ public:
 	 */
 	glm::vec4 rgbal(float x, float y) const;
 	
-	unsigned int width; //< The width of the image
-	unsigned int height; //< The height of the image
+	int width; //< The width of the image
+	int height; //< The height of the image
 	unsigned int components; //< Number of components/channels
 	std::vector<float> pixels; //< The pixels values of the image
-	
-public:
 	
 	/** Query if a path points to an image loaded in floating point, based on the extension.
 	 \param path the path to the image
@@ -107,7 +105,7 @@ public:
 	  \param image will contain the image raw data as [0,1] floats
 	 \return a success/error flag
 	 */
-	static int loadImage(const std::string & path,  const unsigned int channels, const bool flip, const bool externalFile, Image & image);
+	static int loadImage(const std::string & path, unsigned int channels, bool flip, bool externalFile, Image & image);
 	
 	/** Save a LDR image to disk using stb_image.
 	 \param path the path to the image
@@ -116,7 +114,7 @@ public:
 	 \param ignoreAlpha if true, the alpha channel will be ignored
 	 \return a success/error flag
 	 */
-	static int saveLDRImage(const std::string & path, const Image & image, const bool flip, const bool ignoreAlpha = false);
+	static int saveLDRImage(const std::string & path, const Image & image, bool flip, bool ignoreAlpha = false);
 	
 	/** Save a HDR image to disk using tiny_exr.
 	 \param path the path to the image
@@ -125,7 +123,7 @@ public:
 	 \param ignoreAlpha if true, the alpha channel will be ignored
 	 \return a success/error flag
 	 */
-	static int saveHDRImage(const std::string & path, const Image & image, const bool flip, const bool ignoreAlpha = false);
+	static int saveHDRImage(const std::string & path, const Image & image, bool flip, bool ignoreAlpha = false);
 	
 	/** Bilinearly sample a cubemap in a given direction.
 	 \param images the six cubemap faces, in standard Rendu order (px, nx, py, ny, pz, nz)
@@ -144,7 +142,7 @@ private:
 	 \param image will contain the image raw data as [0,1] floats
 	 \return a success/error flag
 	 */
-	static int loadLDRImage(const std::string & path, const unsigned int channels, const bool flip, const bool externalFile, Image & image);
+	static int loadLDRImage(const std::string & path, unsigned int channels, bool flip, bool externalFile, Image & image);
 	
 	/** Load a HDR image from disk using tiny_exr, assuming 3-channels.
 	 \param path the path to the image
@@ -154,7 +152,7 @@ private:
 	 \param image will contain the image raw data as [0,1] floats
 	 \return a success/error flag
 	 */
-	static int loadHDRImage(const std::string & path, const unsigned int channels, const bool flip, const bool externalFile, Image & image);
+	static int loadHDRImage(const std::string & path, unsigned int channels, bool flip, bool externalFile, Image & image);
 	
 };
 

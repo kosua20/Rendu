@@ -74,9 +74,9 @@ int checkGLFramebufferError(){
 }
 
 int _checkGLError(const char *file, int line, const std::string & infos){
-	GLenum glErr = glGetError();
+	const GLenum glErr = glGetError();
 	if (glErr != GL_NO_ERROR){
-		std::string filePath(file);
+		const std::string filePath(file);
 		size_t pos = (std::min)(filePath.find_last_of("/"), filePath.find_last_of("\\"));
 		if(pos == std::string::npos){
 			pos = 0;
@@ -192,13 +192,13 @@ GLuint GLUtilities::loadShader(const std::string & prog, GLuint type, std::map<s
 	checkGLError();
 	// Setup string as source.
 	const char * shaderProg = outputProg.c_str();
-	glShaderSource(id,1,&shaderProg,(const GLint*)NULL);
+	glShaderSource(id, 1, &shaderProg, static_cast<const GLint*>(nullptr));
 	// Compile the shader on the GPU.
 	glCompileShader(id);
 	checkGLError();
 
 	GLint success;
-	glGetShaderiv(id,GL_COMPILE_STATUS, &success);
+	glGetShaderiv(id, GL_COMPILE_STATUS, &success);
 	finalLog = "";
 	// If compilation failed, get information and display it.
 	if (success != GL_TRUE) {
@@ -206,8 +206,8 @@ GLuint GLUtilities::loadShader(const std::string & prog, GLuint type, std::map<s
 		GLint infoLogLength;
 		glGetShaderiv(id, GL_INFO_LOG_LENGTH, &infoLogLength);
 		// Get the log string.
-		std::vector<char> infoLog((size_t)(std::max)(infoLogLength, int(1)));
-		glGetShaderInfoLog(id, infoLogLength, NULL, &infoLog[0]);
+		std::vector<char> infoLog(size_t(std::max(infoLogLength, int(1))));
+		glGetShaderInfoLog(id, infoLogLength, nullptr, &infoLog[0]);
 		// Indent and clean.
 		std::string infoLogString(infoLog.data(), infoLogLength);
 		
@@ -220,8 +220,8 @@ GLuint GLUtilities::loadShader(const std::string & prog, GLuint type, std::map<s
 }
 
 GLuint GLUtilities::createProgram(const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, std::map<std::string, int> & bindings, const std::string & debugInfos){
-	GLuint vp(0), fp(0), gp(0), id(0);
-	id = glCreateProgram();
+	GLuint vp(0), fp(0), gp(0);
+	const GLuint id = glCreateProgram();
 	checkGLError();
 	
 	Log::Verbose() << Log::OpenGL << "Compiling " << debugInfos << "." << std::endl;
@@ -268,8 +268,8 @@ GLuint GLUtilities::createProgram(const std::string & vertexContent, const std::
 		GLint infoLogLength;
 		glGetProgramiv(id, GL_INFO_LOG_LENGTH, &infoLogLength);
 		// Get the log string.
-		std::vector<char> infoLog((size_t)(std::max)(infoLogLength, int(1)));
-		glGetProgramInfoLog(id, infoLogLength, NULL, &infoLog[0]);
+		std::vector<char> infoLog(size_t(std::max(infoLogLength, int(1))));
+		glGetProgramInfoLog(id, infoLogLength, nullptr, &infoLog[0]);
 		// Indent and clean.
 		std::string infoLogString(infoLog.data(), infoLogLength);
 		TextUtilities::replace(infoLogString, "\n", "\n\t");
@@ -575,49 +575,49 @@ void GLUtilities::setupBuffers(Mesh & mesh){
 	totalSize += 3 * mesh.colors.size();
 	
 	// Allocate.
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * totalSize, NULL, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * totalSize, nullptr, GL_STATIC_DRAW);
 	size_t offset = 0;
 	// Fill in subregions.
 	if(!mesh.positions.empty()){
 		const size_t size = sizeof(GLfloat) * 3 * mesh.positions.size();
 		glBufferSubData(GL_ARRAY_BUFFER, offset, size, &(mesh.positions[0]));
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)offset);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<void*>(offset));
 		offset += size;
 	}
 	if(!mesh.normals.empty()){
 		const size_t size = sizeof(GLfloat) * 3 * mesh.normals.size();
 		glBufferSubData(GL_ARRAY_BUFFER, offset, size, &(mesh.normals[0]));
 		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)offset);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<void*>(offset));
 		offset += size;
 	}
 	if(!mesh.texcoords.empty()){
 		const size_t size = sizeof(GLfloat) * 2 * mesh.texcoords.size();
 		glBufferSubData(GL_ARRAY_BUFFER, offset, size, &(mesh.texcoords[0]));
 		glEnableVertexAttribArray(2);
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (void*)offset);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<void*>(offset));
 		offset += size;
 	}
 	if(!mesh.tangents.empty()){
 		const size_t size = sizeof(GLfloat) * 3 * mesh.tangents.size();
 		glBufferSubData(GL_ARRAY_BUFFER, offset, size, &(mesh.tangents[0]));
 		glEnableVertexAttribArray(3);
-		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, (void*)offset);
+		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<void*>(offset));
 		offset += size;
 	}
 	if(!mesh.binormals.empty()){
 		const size_t size = sizeof(GLfloat) * 3 * mesh.binormals.size();
 		glBufferSubData(GL_ARRAY_BUFFER, offset, size, &(mesh.binormals[0]));
 		glEnableVertexAttribArray(4);
-		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 0, (void*)offset);
+		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<void*>(offset));
 		offset += size;
 	}
 	if(!mesh.colors.empty()){
 		const size_t size = sizeof(GLfloat) * 3 * mesh.colors.size();
 		glBufferSubData(GL_ARRAY_BUFFER, offset, size, &(mesh.colors[0]));
 		glEnableVertexAttribArray(5);
-		glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, 0, (void*)offset);
+		glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<void*>(offset));
 		
 	}
 	
@@ -633,11 +633,11 @@ void GLUtilities::setupBuffers(Mesh & mesh){
 	
 	mesh.gpu->vId = vao;
 	mesh.gpu->eId = ebo;
-	mesh.gpu->count = (GLsizei)mesh.indices.size();
+	mesh.gpu->count = GLsizei(mesh.indices.size());
 	mesh.gpu->vbo = vbo;
 }
 
-void GLUtilities::saveFramebuffer(const Framebuffer & framebuffer, const unsigned int width, const unsigned int height, const std::string & path, const bool flip, const bool ignoreAlpha){
+void GLUtilities::saveFramebuffer(const Framebuffer & framebuffer, unsigned int width, unsigned int height, const std::string & path, bool flip, bool ignoreAlpha){
 	
 	GLint currentBoundFB = 0;
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentBoundFB);
@@ -646,7 +646,7 @@ void GLUtilities::saveFramebuffer(const Framebuffer & framebuffer, const unsigne
 	const std::unique_ptr<GPUTexture> & gpu = framebuffer.textureId()->gpu;
 	GLUtilities::savePixels(gpu->type, gpu->format, width, height, gpu->channels, path, flip, ignoreAlpha);
 	
-	glBindFramebuffer(GL_FRAMEBUFFER, (GLuint)currentBoundFB);
+	glBindFramebuffer(GL_FRAMEBUFFER, GLuint(currentBoundFB));
 }
 
 void GLUtilities::sync(){
@@ -654,28 +654,28 @@ void GLUtilities::sync(){
 	glFinish();
 }
 
-void GLUtilities::savePixels(const GLenum type, const GLenum format, const unsigned int width, const unsigned int height, const unsigned int components, const std::string & path, const bool flip, const bool ignoreAlpha){
+void GLUtilities::savePixels(GLenum type, GLenum format, unsigned int width, unsigned int height, unsigned int components, const std::string & path, bool flip, bool ignoreAlpha){
 	
 	GLUtilities::sync();
 	
 	const bool hdr = type == GL_FLOAT;
 	
 	Log::Info() << Log::OpenGL << "Saving framebuffer to file " << path << (hdr ? ".exr" : ".png") << "... " << std::flush;
-	int ret = 0;
+	int ret;
 	Image image(width, height, components);
 	
 	glPixelStorei(GL_PACK_ALIGNMENT, 1);
 	const size_t fullSize = image.width*image.height*image.components;
 	if(hdr){
 		// Get back values.
-		glReadPixels(0, 0, (GLsizei)image.width, (GLsizei)image.height, format, type, &image.pixels[0]);
+		glReadPixels(0, 0, GLsizei(image.width), GLsizei(image.height), format, type, &image.pixels[0]);
 		// Save data.
 		ret = Image::saveHDRImage(path + ".exr", image, flip, ignoreAlpha);
 		
 	} else {
 		// Get back values.
 		GLubyte * data = new GLubyte[fullSize];
-		glReadPixels(0, 0, (GLsizei)image.width, (GLsizei)image.height, format, type, &data[0]);
+		glReadPixels(0, 0, GLsizei(image.width), GLsizei(image.height), format, type, &data[0]);
 		// Convert to image float format.
 		for(size_t pid = 0; pid < fullSize; ++pid){
 			image.pixels[pid] = float(data[pid])/255.0f;
@@ -708,7 +708,7 @@ void GLUtilities::generateMipMaps(const Texture & texture){
 
 void GLUtilities::drawMesh(const Mesh & mesh) {
 	glBindVertexArray(mesh.gpu->vId);
-	glDrawElements(GL_TRIANGLES, mesh.gpu->count, GL_UNSIGNED_INT, (void*)0);
+	glDrawElements(GL_TRIANGLES, mesh.gpu->count, GL_UNSIGNED_INT, static_cast<void*>(nullptr));
 	glBindVertexArray(0);
 }
 

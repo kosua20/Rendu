@@ -22,7 +22,7 @@ bool Controller::pressed(const Controller::Input & input) const {
 }
 
 bool Controller::triggered(const Controller::Input & input, bool absorb) {
-	bool res = _buttons[uint(input)].first;
+	const bool res = _buttons[uint(input)].first;
 	if(absorb){
 		_buttons[uint(input)].first = false;
 	}

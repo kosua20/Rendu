@@ -3,7 +3,6 @@
 #include "system/Config.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "input/controller/RawController.hpp"
-#include "input/controller/GamepadController.hpp"
 #include "graphics/GLUtilities.hpp"
 #include "Common.hpp"
 
@@ -28,7 +27,7 @@ void showCombo(const std::string & label, const int count, const std::string & p
 		{
 			const bool itemSelected = currentId == i;
 			const std::string lS = i < 0 ? "None" : (prefix + std::to_string(i));
-			ImGui::PushID((void*)(intptr_t)i);
+			ImGui::PushID(reinterpret_cast<void*>(static_cast<intptr_t>(i)));
 			if (ImGui::Selectable(lS.c_str(), itemSelected))
 			{
 				currentId = i;
@@ -246,27 +245,27 @@ int main(int argc, char** argv) {
 		// Detect either a new connected controller or a first frame with an already connected controller.
 		if(Input::manager().controllerConnected() || (firstFrame && Input::manager().controllerAvailable())){
 			firstFrame = false;
-			const RawController * controller = static_cast<RawController*>(Input::manager().controller());
+			const RawController * controller = dynamic_cast<RawController*>(Input::manager().controller());
 			const int axesCount = int(controller->allAxes.size());
 			const int buttonsCount = int(controller->allButtons.size());
 			
 			// Check if some elements were already modified.
 			bool wereEmpty = true;
-			for(int i = 0; i < int(buttonsMapping.size()); ++i){
-				if(wereEmpty && buttonsMapping[i] >= 0){
+			for(int & button : buttonsMapping){
+				if(wereEmpty && button >= 0){
 					wereEmpty = false;
 				}
 				// Update mapping for extraneous button IDs.
-				if(buttonsMapping[i] >= buttonsCount){
-					buttonsMapping[i] = -1;
+				if(button >= buttonsCount){
+					button = -1;
 				}
 			}
-			for(int i = 0; i < int(axesMapping.size()); ++i){
-				if(wereEmpty && axesMapping[i] >= 0){
+			for(int & axe : axesMapping){
+				if(wereEmpty && axe >= 0){
 					wereEmpty = false;
 				}
-				if(axesMapping[i] >= axesCount){
-					axesMapping[i] = -1;
+				if(axe >= axesCount){
+					axe = -1;
 				}
 			}
 		
@@ -288,7 +287,7 @@ int main(int argc, char** argv) {
 		}
 		
 		// Start a new frame for the interface.
-		System::GUI::beginFrame();
+		System::Gui::beginFrame();
 		
 		// Render nothing.
 		const glm::ivec2 screenSize(Input::manager().size());
@@ -310,7 +309,7 @@ int main(int argc, char** argv) {
 					std::string inputPath;
 					const bool res = System::showPicker(System::Picker::Load, "", inputPath);
 					if(res && !inputPath.empty()){
-						const std::string settingsContent = Resources::manager().loadStringFromExternalFile(inputPath);
+						const std::string settingsContent = Resources::loadStringFromExternalFile(inputPath);
 						Controller::parseConfiguration(settingsContent, axesMapping, buttonsMapping);
 					}
 				}
@@ -326,7 +325,7 @@ int main(int argc, char** argv) {
 				ImGui::Separator();
 				
 				// Infos on the controller.
-				RawController * controller = static_cast<RawController*>(Input::manager().controller());
+				RawController * controller = dynamic_cast<RawController*>(Input::manager().controller());
 				const int axesCount = int(controller->allAxes.size());
 				const int buttonsCount = int(controller->allButtons.size());
 				ImGui::Text("%s, id: %d, axes: %d, buttons: %d", controller->name().c_str(), controller->id(), axesCount, buttonsCount);
@@ -486,14 +485,14 @@ int main(int argc, char** argv) {
 		
 		
 		// Then render the interface.
-		System::GUI::endFrame();
+		System::Gui::endFrame();
 		//Display the result for the current rendering loop.
 		glfwSwapBuffers(window);
 
 	}
 	
 	// Clean the interface.
-	System::GUI::clean();
+	System::Gui::clean();
 	
 	Resources::manager().clean();
 	// Close GL context and any other GLFW resources.

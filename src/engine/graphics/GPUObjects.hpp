@@ -69,11 +69,8 @@ enum class Layout : uint {
 /** \brief Regroups format, type, filtering and wrapping informations for a color buffer.
   \ingroup Graphics
  */
-struct Descriptor {
-	
-	Layout typedFormat() const { return _typedFormat; } ///< The precise typed format.
-	Filter filtering() const { return _filtering; } ///< Minification filtering mode.
-	Wrap wrapping()const { return _wrapping; } ///< Wrapping mode.
+class Descriptor {
+public:
 	
 	/** Default constructor. RGB8, linear, clamp. */
 	Descriptor();
@@ -89,7 +86,22 @@ struct Descriptor {
 	 \return the number of channels
 	 */
 	unsigned int getChannelsCount() const;
+
+	/** Query the data layout.
+	 \return the layout
+	 */
+	Layout typedFormat() const { return _typedFormat; }
 	
+	/** Query the filtering mode.
+	 \return the filtering mode
+	 */
+	Filter filtering() const { return _filtering; }
+	
+	/** Query the wrapping mode.
+	 \return the wrapping mode
+	 */
+	Wrap wrapping()const { return _wrapping; }
+
 	/** Obtain the separate GPU type, format, typed format and channel count of the descriptor.
 	 \param detailedFormat will contain the type format (GL_RG32F,...)
 	 \param type will contain the type (GL_FLOAT,...)
@@ -107,14 +119,21 @@ struct Descriptor {
 	 \return the minification filter
 	 */
 	GLenum getGPUMinificationFilter() const;
-	
+
+	/** Obtain the GPU texture wrapping mode.
+	 \return the wrapping mode
+	 */
 	GLenum getGPUWrapping() const;
-	
+
+	/** Equality operator.
+	 \param other other descriptor to compare to
+	 \return true if layout, wrapping and filtering are identical.
+	 **/
 	bool operator ==(const Descriptor &other) const;
 	
 private:
 	
-	GLenum getGPUFilter(Filter filter) const;
+	static GLenum getGPUFilter(Filter filter);
 	
 	Layout _typedFormat; ///< The precise typed format.
 	Filter _filtering; ///< Minification filtering mode.
@@ -125,8 +144,9 @@ private:
  \brief Store a texture data on the GPU.
  \ingroup Graphics
  */
-struct GPUTexture {
+class GPUTexture {
 public:
+
 	/** Constructor from a layout description and a texture shape.
 	 \param texDescriptor the layout descriptor
 	 \param shape the texture dimensionality
@@ -162,8 +182,9 @@ private:
  \brief Store geometry buffers on the GPU.
  \ingroup Graphics
  */
-struct GPUMesh {
-	
+class GPUMesh {
+public:
+
 	GLuint vId = 0; ///< The vertex array OpenGL ID.
 	GLuint eId = 0; ///< The element buffer OpenGL ID.
 	GLsizei count = 0; ///< The number of vertices (cached).

@@ -52,12 +52,12 @@ public:
 	 \param logToStdin should the logs also be sent to the standard output
 	 \param verbose should verbose messages be output
 	 */
-	Log(const std::string & filePath, const bool logToStdin, const bool verbose = false);
+	Log(const std::string & filePath, bool logToStdin, bool verbose = false);
 	
 	/** Set the verbosity level.
 	 \param verbose toggle verbosity
 	 */
-	void setVerbose(const bool verbose);
+	void setVerbose(bool verbose);
 	
 	/** Default stream operator
 	 \param input the object to log
@@ -89,8 +89,6 @@ public:
 	 */
 	Log& operator<<(std::ios_base& (*modif)(std::ios_base&));
 	
-public:
-	
 	/** \name Default logger
 	 @{ */
 	
@@ -102,7 +100,7 @@ public:
 	/** Set the default logger verbosity.
 	 \param verbose toggle verbosity
 	 */
-	static void setDefaultVerbose(const bool verbose);
+	static void setDefaultVerbose(bool verbose);
 	
 	/** The default logger with an "Info" level.
 	 \return itself for chaining
@@ -132,7 +130,7 @@ private:
 	 \param filePath the file to write the logs to
 	 \param flushExisting should the existing unwritten messages be flushed
 	 */
-	void setFile(const std::string & filePath, const bool flushExisting = true);
+	void setFile(const std::string & filePath, bool flushExisting = true);
 	
 	/** Flush the log stream.
 	 */
@@ -142,14 +140,14 @@ private:
 	 */
 	void appendIfNeeded();
 	
-	Level _level; ///< The current criticality level.
-	bool _logToStdOut; ///< Should the logs be output to standard output.
+	Level _level = Level::INFO; ///< The current criticality level.
+	bool _logToStdOut = true; ///< Should the logs be output to standard output.
 	std::ofstream _file; ///< The output log file stream.
 	std::stringstream _stream; ///< Internal log string stream.
-	bool _verbose; ///< Is the logger verbose.
-	bool _ignoreUntilFlush; ///< Internal flag to ignore the current line if it is verbose.
-	bool _appendPrefix; ///< Should a domain or level prefix be appended to the current line.
-	bool _useColors; ///< Should color formatting be used.
+	bool _verbose = false; ///< Is the logger verbose.
+	bool _ignoreUntilFlush = false; ///< Internal flag to ignore the current line if it is verbose.
+	bool _appendPrefix = false; ///< Should a domain or level prefix be appended to the current line.
+	bool _useColors = false; ///< Should color formatting be used.
 	
 	static Log* _defaultLogger; ///< Default static logger.
 };

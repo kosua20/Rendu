@@ -2,13 +2,10 @@
 
 Blur::Blur(){
 	_passthroughProgram = Resources::manager().getProgram("passthrough");
+	_finalTexture = nullptr;
 }
 
-void Blur::process(const Texture * ) {
-
-}
-
-void Blur::draw() {
+void Blur::draw() const {
 	_passthroughProgram->use();
 	ScreenQuad::draw(_finalTexture);
 }
@@ -16,11 +13,3 @@ void Blur::draw() {
 const Texture * Blur::textureId() const {
 	return _finalTexture;
 }
-
-void Blur::clean() const {
-}
-
-
-void Blur::resize(unsigned int , unsigned int ){
-}
-

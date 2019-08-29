@@ -28,7 +28,7 @@ public:
 	 \param g the 3 coefficients of g
 	 \note See Convolution Pyramids, Farbman et al., 2011 for the notation details.
 	 */
-	void setFilters(const float h1[5], const float h2, const float g[3]);
+	void setFilters(const float h1[5], float h2, const float g[3]);
 	
 	/** Filter a given input texture.
 	 \param textureId the GPU ID of the texture
@@ -47,7 +47,7 @@ public:
 	/** The GPU ID of the filter result.
 	 \return the ID of the result texture
 	 */
-	const Texture * textureId(){ return _shifted->textureId(); }
+	const Texture * textureId() const { return _shifted->textureId(); }
 	
 	/** Returns the width expected for the input texture.
 	 \return the width expected

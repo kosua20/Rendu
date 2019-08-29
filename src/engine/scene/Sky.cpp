@@ -6,7 +6,7 @@ Sky::Sky(Storage mode) : Object(Object::Type::Common, Resources::manager().getMe
 }
 
 
-void Sky::decode(const KeyValues & params, const Storage mode){
+void Sky::decode(const KeyValues & params, Storage mode){
 	Object::decode(params, mode);
 	for(const auto & param : params.elements){
 		if(param.key == "sun"){
@@ -19,7 +19,7 @@ void Sky::decode(const KeyValues & params, const Storage mode){
 
 void Sky::update(double fullTime, double frameTime) {
 	glm::vec4 dir = glm::vec4(_sunDirection, 0.0f);
-	for(auto anim : _animations){
+	for(auto & anim : _animations){
 		dir = anim->apply(dir, fullTime, frameTime);
 	}
 	_sunDirection = glm::normalize(glm::vec3(dir));

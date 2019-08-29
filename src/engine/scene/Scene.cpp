@@ -25,13 +25,13 @@ void printToken(const KeyValues & tk, const std::string & shift){
 	}
 }
 	
-void Scene::init(const Storage mode){
+void Scene::init(Storage mode){
 	if(_loaded){
 		return;
 	}
 	
 	// Define loaders for each keyword.
-	std::map<std::string, void (Scene::*)(const KeyValues &, const Storage)> loaders = {
+	std::map<std::string, void (Scene::*)(const KeyValues &, Storage)> loaders = {
 		{"scene", &Scene::loadScene}, {"object", &Scene::loadObject}, {"point", &Scene::loadLight}, {"directional", &Scene::loadLight}, {"spot", &Scene::loadLight}, {"camera", &Scene::loadCamera}, {"background", &Scene::loadBackground}
 	};
 	
@@ -61,23 +61,23 @@ void Scene::init(const Storage mode){
 	_loaded = true;
 };
 
-void Scene::loadObject(const KeyValues & params, const Storage mode){
+void Scene::loadObject(const KeyValues & params, Storage mode){
 	objects.emplace_back();
 	objects.back().decode(params, mode);
 }
 
-void Scene::loadLight(const KeyValues & params, const Storage){
-	auto light = Light::decode(params);
+void Scene::loadLight(const KeyValues & params, Storage){
+	const auto light = Light::decode(params);
 	if(light){
 		lights.push_back(light);
 	}
 }
 
-void Scene::loadCamera(const KeyValues & params, const Storage){
+void Scene::loadCamera(const KeyValues & params, Storage){
 	_camera.decode(params);
 }
 
-void Scene::loadBackground(const KeyValues & params, const Storage mode){
+void Scene::loadBackground(const KeyValues & params, Storage mode){
 	background = std::unique_ptr<Object>(new Object(Object::Type::Common, Resources::manager().getMesh("plane", mode), false));
 	
 	for(const auto & param : params.elements){
@@ -113,7 +113,7 @@ void Scene::loadBackground(const KeyValues & params, const Storage mode){
 	}
 }
 
-void Scene::loadScene(const KeyValues & params, const Storage mode){
+void Scene::loadScene(const KeyValues & params, Storage mode){
 	backgroundIrradiance = std::vector<glm::vec3>(9, glm::vec3(0.0f));
 	
 	for(const auto & param : params.elements){
@@ -143,11 +143,11 @@ BoundingBox Scene::computeBoundingBox(bool onlyShadowCasters){
 		return bbox;
 	}
 	
-	for(size_t oid = 0; oid < objects.size(); ++oid){
-		if(onlyShadowCasters && !objects[oid].castsShadow()){
+	for(const auto & obj : objects){
+		if(onlyShadowCasters && !obj.castsShadow()){
 			continue;
 		}
-		bbox.merge(objects[oid].boundingBox());
+		bbox.merge(obj.boundingBox());
 	}
 	Log::Info() << Log::Resources << "Scene bounding box:" << std::endl
 	<< "mini: " << bbox.minis  << std::endl

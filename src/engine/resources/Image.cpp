@@ -22,10 +22,8 @@ Image::Image(){
 	pixels.clear();
 }
 
-Image::Image(int awidth, int aheight, int acomponents, float value){
-	width = awidth;
-	height = aheight;
-	components = acomponents;
+Image::Image(int awidth, int aheight, int acomponents, float value) :
+	width(awidth), height(aheight), components(acomponents) {
 	pixels.resize(width*height*components, value);
 }
 
@@ -108,28 +106,25 @@ bool Image::isFloat(const std::string & path){
 	return path.substr(path.size()-4,4) == ".exr";
 }
 
-int Image::loadImage(const std::string & path, const unsigned int channels, const bool flip, const bool externalFile, Image & image){
-	int ret = 0;
+int Image::loadImage(const std::string & path, unsigned int channels, bool flip, bool externalFile, Image & image){
 	if(isFloat(path)){
-		ret = Image::loadHDRImage(path, channels, flip, externalFile, image);
-	} else {
-		ret = Image::loadLDRImage(path, channels, flip, externalFile, image);
+		return Image::loadHDRImage(path, channels, flip, externalFile, image);
 	}
-	return ret;
+	return Image::loadLDRImage(path, channels, flip, externalFile, image);
 }
 
-int Image::loadLDRImage(const std::string &path, const unsigned int channels, const bool flip, const bool externalFile, Image & image){
+int Image::loadLDRImage(const std::string &path, unsigned int channels, bool flip, bool externalFile, Image & image){
 	const unsigned int finalChannels = channels > 0 ? channels : 4;
 	
 	image.pixels.clear();
 	image.width = image.height = image.components = 0;
 	
 	size_t rawSize = 0;
-	unsigned char * rawData = nullptr;
+	unsigned char * rawData;
 	if(externalFile){
-		rawData = (unsigned char*)(Resources::loadRawDataFromExternalFile(path, rawSize));
+		rawData = reinterpret_cast<unsigned char*>(Resources::loadRawDataFromExternalFile(path, rawSize));
 	} else {
-		rawData = (unsigned char*)(Resources::manager().getRawData(path, rawSize));
+		rawData = reinterpret_cast<unsigned char*>(Resources::manager().getRawData(path, rawSize));
 	}
 	
 	if(rawData == nullptr || rawSize == 0){
@@ -141,15 +136,15 @@ int Image::loadLDRImage(const std::string &path, const unsigned int channels, co
 	int localWidth = 0;
 	int localHeight = 0;
 	// Beware: the size has to be cast to int, imposing a limit on big file sizes.
-	unsigned char *data = stbi_load_from_memory(rawData, (int)rawSize, &localWidth, &localHeight, NULL, int(finalChannels));
+	unsigned char *data = stbi_load_from_memory(rawData, int(rawSize), &localWidth, &localHeight, nullptr, int(finalChannels));
 	free(rawData);
 	
 	if(data == nullptr){
 		return 1;
 	}
 	
-	image.width = (unsigned int)localWidth;
-	image.height = (unsigned int)localHeight;
+	image.width = uint(localWidth);
+	image.height = uint(localHeight);
 	image.components = finalChannels;
 	// Transform data from chars to float.
 	const size_t totalSize = image.width * image.height * image.components;
@@ -161,7 +156,7 @@ int Image::loadLDRImage(const std::string &path, const unsigned int channels, co
 	return 0;
 }
 
-int Image::loadHDRImage(const std::string &path, const unsigned int channels, const bool flip, const bool externalFile, Image & image){
+int Image::loadHDRImage(const std::string &path, unsigned int channels, bool flip, bool externalFile, Image & image){
 	const unsigned int finalChannels = channels > 0 ? channels : 3;
 	image.pixels.clear();
 	image.width = image.height = image.components = 0;
@@ -176,17 +171,17 @@ int Image::loadHDRImage(const std::string &path, const unsigned int channels, co
 	size_t rawSize = 0;
 	unsigned char * rawData;
 	if(externalFile){
-		rawData = (unsigned char*)(Resources::loadRawDataFromExternalFile(path, rawSize));
+		rawData = reinterpret_cast<unsigned char*>(Resources::loadRawDataFromExternalFile(path, rawSize));
 	} else {
-		rawData = (unsigned char*)(Resources::manager().getRawData(path, rawSize));
+		rawData = reinterpret_cast<unsigned char*>(Resources::manager().getRawData(path, rawSize));
 	}
 	
-	if(rawData == NULL || rawSize == 0){
+	if(rawData == nullptr || rawSize == 0){
 		return 1;
 	}
 	
 	{
-		int ret = ParseEXRVersionFromMemory(&exr_version, rawData, tinyexr::kEXRVersionSize);
+		const int ret = ParseEXRVersionFromMemory(&exr_version, rawData, tinyexr::kEXRVersionSize);
 		if (ret != TINYEXR_SUCCESS) {
 			return ret;
 		}
@@ -196,7 +191,7 @@ int Image::loadHDRImage(const std::string &path, const unsigned int channels, co
 		}
 	}
 	{
-		int ret = ParseEXRHeaderFromMemory(&exr_header, &exr_version, rawData, rawSize, NULL);
+		const int ret = ParseEXRHeaderFromMemory(&exr_header, &exr_version, rawData, rawSize, nullptr);
 		if (ret != TINYEXR_SUCCESS) {
 			FreeEXRHeader(&exr_header);
 			return ret;
@@ -211,7 +206,7 @@ int Image::loadHDRImage(const std::string &path, const unsigned int channels, co
 	}
 	
 	{
-		int ret = LoadEXRImageFromMemory(&exr_image, &exr_header, rawData, rawSize, NULL);
+		const int ret = LoadEXRImageFromMemory(&exr_image, &exr_header, rawData, rawSize, nullptr);
 		if (ret != TINYEXR_SUCCESS) {
 			FreeEXRHeader(&exr_header);
 			return ret;
@@ -233,8 +228,8 @@ int Image::loadHDRImage(const std::string &path, const unsigned int channels, co
 		}
 	}
 	
-	image.width = (unsigned int)exr_image.width;
-	image.height = (unsigned int)exr_image.height;
+	image.width = uint(exr_image.width);
+	image.height = uint(exr_image.height);
 	image.components = finalChannels;
 	image.pixels.resize(image.width * image.height * image.components);
 	
@@ -266,14 +261,14 @@ void write_stbi_to_disk(void *context, void *data, int size){
 	Resources::saveRawDataToExternalFile(*path, static_cast<char *>(data), size);
 }
 
-int Image::saveLDRImage(const std::string &path, const Image & image, const bool flip, const bool ignoreAlpha){
+int Image::saveLDRImage(const std::string &path, const Image & image, bool flip, bool ignoreAlpha){
 	const unsigned int width = image.width;
 	const unsigned int height = image.height;
 	const unsigned int channels = image.components;
 	
 	stbi_flip_vertically_on_write(flip);
 	
-	int stride_in_bytes = (int)width*(int)channels;
+	const int strideInBytes = int(width)*int(channels);
 	std::string pathCopy(path);
 	
 	unsigned char * newData = new unsigned char[width*height*channels];
@@ -281,19 +276,19 @@ int Image::saveLDRImage(const std::string &path, const Image & image, const bool
 		for(unsigned int cid = 0; cid < channels; ++cid){
 			const unsigned int currentPix = channels*pid+cid;
 			const float newValue = std::min(255.0f, std::max(0.0f, 255.0f*image.pixels[currentPix]));
-			newData[currentPix] = (unsigned char)(newValue);
+			newData[currentPix] = static_cast<unsigned char>(newValue);
 			if(cid == 3 && ignoreAlpha){
 				newData[currentPix] = 255;
 			}
 		}
 	}
 	// Write to an array in memory, then to the disk.
-	const int ret = stbi_write_png_to_func(write_stbi_to_disk, static_cast<void*>(&pathCopy), (int)width, (int)height, (int)channels, static_cast<const void*>(newData), stride_in_bytes);
+	const int ret = stbi_write_png_to_func(write_stbi_to_disk, static_cast<void*>(&pathCopy), int(width), int(height), int(channels), static_cast<const void*>(newData), strideInBytes);
 	delete [] newData;
 	return ret == 0;
 }
 
-int Image::saveHDRImage(const std::string &path, const Image & image, const bool flip, const bool ignoreAlpha){
+int Image::saveHDRImage(const std::string &path, const Image & image, bool flip, bool ignoreAlpha){
 	
 	const unsigned int width = image.width;
 	const unsigned int height = image.height;
@@ -310,7 +305,7 @@ int Image::saveHDRImage(const std::string &path, const Image & image, const bool
 	InitEXRImage(&exr_image);
 	
 	// Components: 1, 3, 3, 4
-	int components = int(channels == 2 ? 3 : channels);
+	const int components = int(channels == 2 ? 3 : channels);
 	exr_image.num_channels = components;
 	
 	std::vector<float> images[4];
@@ -350,7 +345,7 @@ int Image::saveHDRImage(const std::string &path, const Image & image, const bool
 		}
 	}
 	
-	float *image_ptr[4] = {0, 0, 0, 0};
+	float *image_ptr[4] = {nullptr, nullptr, nullptr, nullptr};
 	if (components == 4) {
 		image_ptr[0] = &(images[3].at(0));  // A
 		image_ptr[1] = &(images[2].at(0));  // B
@@ -365,8 +360,8 @@ int Image::saveHDRImage(const std::string &path, const Image & image, const bool
 	}
 	
 	exr_image.images = reinterpret_cast<unsigned char **>(image_ptr);
-	exr_image.width = (int)width;
-	exr_image.height = (int)height;
+	exr_image.width = int(width);
+	exr_image.height = int(height);
 	
 	header.num_channels = components;
 	header.channels = static_cast<EXRChannelInfo *>(malloc(sizeof(EXRChannelInfo) * static_cast<size_t>(header.num_channels)));
@@ -406,8 +401,8 @@ int Image::saveHDRImage(const std::string &path, const Image & image, const bool
 		// Not supported.
 		ret = 1;
 	}
-	unsigned char *exrData = NULL;
-	size_t exrSize = SaveEXRImageToMemory(&exr_image, &header, &exrData, NULL);
+	unsigned char *exrData = nullptr;
+	const size_t exrSize = SaveEXRImageToMemory(&exr_image, &header, &exrData, nullptr);
 	if(exrSize > 0 && exrData){
 		Resources::saveRawDataToExternalFile(path, reinterpret_cast<char *>(exrData), exrSize);
 		free(exrData);

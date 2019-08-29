@@ -1,6 +1,7 @@
 #pragma once
 
 #include "processing/Blur.hpp"
+#include "graphics/Framebuffer.hpp"
 #include "Common.hpp"
 
 /**
@@ -25,19 +26,22 @@ public:
 	 \param preciseFormat the precise format of the internal famebuffers
 	 */
 	GaussianBlur(unsigned int width, unsigned int height, unsigned int depth, Layout preciseFormat);
-
+	
 	/**
-	 \copydoc Blur::process
+	 Apply the blurring process to a given texture.
+	 \param textureId the ID of the texture to process
 	 */
 	void process(const Texture * textureId);
 	
 	/**
-	 \copydoc Blur::clean
+	 Clean internal resources.
 	 */
 	void clean() const;
 
 	/**
-	 \copydoc Blur::resize
+	  Handle screen resizing if needed.
+	 \param width the new width to use
+	 \param height the new height to use
 	 */
 	void resize(unsigned int width, unsigned int height);
 	

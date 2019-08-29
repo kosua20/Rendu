@@ -36,14 +36,14 @@ public:
 	/** Perform full program validation and log the results.
 	 \note Depending on the driver and GPU, some performance hints can be output.
 	 */
-	void validate();
+	void validate() const;
 
 	/**
 	 Save the program to a compiled set of instructions on disk.
 	 \param outputPath the output path
 	 \warning The export to binary is not supported by all GPUs and will silently fail.
 	 */
-	void saveBinary(const std::string & outputPath);
+	void saveBinary(const std::string & outputPath) const;
 
 	/** Activate the program shaders.
 	 */
@@ -51,7 +51,7 @@ public:
 	
 	/** Delete the program on the GPU.
 	 */
-	void clean();
+	void clean() const;
 	
 	/** Set a given uniform value.
 	 \param name the uniform name

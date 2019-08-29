@@ -9,8 +9,8 @@ FilteringRenderer::FilteringRenderer(RenderingConfig & config) : Renderer(config
 	// Setup camera parameters.
 	_userCamera.projection(config.screenResolution[0]/config.screenResolution[1], 1.3f, 0.01f, 200.0f);
 	_userCamera.pose(glm::vec3(0.0,0.0,3.0), glm::vec3(0.0,0.0,0.0), glm::vec3(0.0,1.0,0.0));
-	const int renderWidth = (int)_renderResolution[0];
-	const int renderHeight = (int)_renderResolution[1];
+	const int renderWidth = int(_renderResolution[0]);
+	const int renderHeight = int(_renderResolution[1]);
 	
 	_passthrough = Resources::manager().getProgram2D("passthrough");
 	_sceneShader = Resources::manager().getProgram("object", "object_basic", "object_basic_random");
@@ -120,11 +120,11 @@ void FilteringRenderer::update(){
 		
 		// View settings.
 		ImGui::Text("View:"); ImGui::SameLine();
-		ImGui::RadioButton("Scene", (int*)&_viewMode, int(View::SCENE));
+		ImGui::RadioButton("Scene", reinterpret_cast<int*>(&_viewMode), int(View::SCENE));
 		ImGui::SameLine();
-		ImGui::RadioButton("Image", (int*)&_viewMode, int(View::IMAGE));
+		ImGui::RadioButton("Image", reinterpret_cast<int*>(&_viewMode), int(View::IMAGE));
 		ImGui::SameLine();
-		ImGui::RadioButton("Paint", (int*)&_viewMode, int(View::PAINT));
+		ImGui::RadioButton("Paint", reinterpret_cast<int*>(&_viewMode), int(View::PAINT));
 		
 		// Image loading options for the image mode.
 		if(_viewMode == View::IMAGE && ImGui::Button("Load image...")){
@@ -171,10 +171,10 @@ void FilteringRenderer::update(){
 }
 
 void FilteringRenderer::showModeOptions(){
-	ImGui::Combo("Mode", (int*)&_mode, "Input\0Poisson fill\0Integrate\0Box blur\0Gaussian blur\0Flood fill\0\0");
+	ImGui::Combo("Mode", reinterpret_cast<int*>(&_mode), "Input\0Poisson fill\0Integrate\0Box blur\0Gaussian blur\0Flood fill\0\0");
 	
-	const unsigned int width  = (unsigned int)(_renderResolution[0]);
-	const unsigned int height = (unsigned int)(_renderResolution[1]);
+	const unsigned int width  = uint(_renderResolution[0]);
+	const unsigned int height = uint(_renderResolution[1]);
 	
 	switch(_mode){
 		case Processing::GAUSSBLUR:
@@ -233,8 +233,8 @@ void FilteringRenderer::resize(unsigned int width, unsigned int height){
 	Renderer::updateResolution(width, height);
 	// Resize the framebuffers.
 	_sceneBuffer->resize(_renderResolution);
-	const unsigned int lwidth  = (unsigned int)(_renderResolution[0]);
-	const unsigned int lheight = (unsigned int)(_renderResolution[1]);
+	const uint lwidth  = uint(_renderResolution[0]);
+	const uint lheight = uint(_renderResolution[1]);
 	_pyramidFiller->resize(lwidth, lheight);
 	_pyramidIntegrator->resize(lwidth, lheight);
 	_gaussianBlur->resize(lwidth, lheight);

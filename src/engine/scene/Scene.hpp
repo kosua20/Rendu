@@ -1,14 +1,11 @@
 #pragma once
 
 #include "scene/Object.hpp"
-#include "scene/lights/DirectionalLight.hpp"
-#include "scene/lights/PointLight.hpp"
-#include "scene/lights/SpotLight.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "input/Camera.hpp"
 #include "system/Codable.hpp"
 #include "Common.hpp"
-
+#include "lights/Light.hpp"
 
 
 /**
@@ -51,7 +48,7 @@ public:
 	/** Performs initialization against the graphics API, loading data.
 	 \param mode should the data be stored on the CPU, GPU, or both.
 	 */
-	void init(const Storage mode);
+	void init(Storage mode);
 	
 	/** Update the animations in the scene.
 	 \param fullTime the time elapsed since the beginning of the render loop
@@ -65,12 +62,12 @@ public:
 	/** Get the scene bounding box.
 	 \return the bounding box
 	 */
-	const BoundingBox & boundingBox(){ return _bbox; }
+	const BoundingBox & boundingBox() const { return _bbox; }
 	
 	/** Get the initial viewpoint on the scene.
 	 \return the viewpoint camera
 	 */
-	const Camera & viewpoint(){ return _camera; }
+	const Camera & viewpoint() const { return _camera; }
 	
 	std::vector<Object> objects; ///< The objects in the scene.
 	std::vector<std::shared_ptr<Light>> lights; ///< Lights present in the scene.
@@ -95,31 +92,31 @@ private:
 	 \param params the object parameters
 	 \param mode the storage mode (CPU, GPU, both)
 	 */
-	void loadObject(const KeyValues & params, const Storage mode);
+	void loadObject(const KeyValues & params, Storage mode);
 	
 	/** Load a point light in the scene from its serialized representation.
 	 \param params the point light parameters
 	 \param mode the storage mode (CPU, GPU, both) (unused)
 	 */
-	void loadLight(const KeyValues & params, const Storage mode);
+	void loadLight(const KeyValues & params, Storage mode);
 	
 	/** Load the scene camera informations from its serialized representation.
 	 \param params the camera parameters
 	 \param mode the storage mode (CPU, GPU, both) (unused)
 	 */
-	void loadCamera(const KeyValues & params, const Storage mode);
+	void loadCamera(const KeyValues & params, Storage mode);
 	
 	/** Load the scene background informations from its serialized representation.
 	 \param params the background parameters
 	 \param mode the storage mode (CPU, GPU, both)
 	 */
-	void loadBackground(const KeyValues & params, const Storage mode);
+	void loadBackground(const KeyValues & params, Storage mode);
 	
 	/** Load the scene informations from its serialized representation.
 	 \param params the scene parameters
 	 \param mode the storage mode (CPU, GPU, both)
 	 */
-	void loadScene(const KeyValues & params, const Storage mode);
+	void loadScene(const KeyValues & params, Storage mode);
 	
 	/** Compute the bounding box of the scene, optionaly excluding objects that do not cast shadows.
 	 \param onlyShadowCasters denote if only objects that are allowed to cast shadows should be taken into account

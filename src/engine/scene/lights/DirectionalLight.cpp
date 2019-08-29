@@ -1,14 +1,10 @@
 #include "scene/lights/DirectionalLight.hpp"
 #include "graphics/GLUtilities.hpp"
 
-DirectionalLight::DirectionalLight() : Light() {
-	_lightDirection = glm::vec3(1.0f, 0.0f, 0.0f);
-}
 
-DirectionalLight::DirectionalLight(const glm::vec3& worldDirection, const glm::vec3& color) : Light(color) {
-	_lightDirection = glm::normalize(worldDirection);
+DirectionalLight::DirectionalLight(const glm::vec3& worldDirection, const glm::vec3& color) : Light(color),  
+	_lightDirection(glm::normalize(worldDirection)) {
 }
-
 
 void DirectionalLight::init(const std::vector<const Texture *>& textureIds){
 	// Setup the framebuffer.
@@ -27,10 +23,10 @@ void DirectionalLight::init(const std::vector<const Texture *>& textureIds){
 
 void DirectionalLight::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix, const glm::vec2&) const {
 	
-	glm::mat4 viewToLight = _mvp * glm::inverse(viewMatrix);
+	const glm::mat4 viewToLight = _mvp * glm::inverse(viewMatrix);
 	// Store the four variable coefficients of the projection matrix.
-	glm::vec4 projectionVector = glm::vec4(projectionMatrix[0][0], projectionMatrix[1][1], projectionMatrix[2][2], projectionMatrix[3][2]);
-	glm::vec3 lightDirectionViewSpace = glm::vec3(viewMatrix * glm::vec4(_lightDirection, 0.0));
+	const glm::vec4 projectionVector = glm::vec4(projectionMatrix[0][0], projectionMatrix[1][1], projectionMatrix[2][2], projectionMatrix[3][2]);
+	const glm::vec3 lightDirectionViewSpace = glm::vec3(viewMatrix * glm::vec4(_lightDirection, 0.0));
 	
 	_program->use();
 	_program->uniform("lightDirection", lightDirectionViewSpace);
@@ -84,7 +80,7 @@ void DirectionalLight::drawDebug(const glm::mat4& viewMatrix, const glm::mat4& p
 	const Program * debugProgram = Resources::manager().getProgram("light_debug", "object_basic", "light_debug");
 	const Mesh * debugMesh = Resources::manager().getMesh("light_arrow", Storage::GPU);
 	
-	glm::mat4 vp = projectionMatrix * viewMatrix * glm::inverse(_viewMatrix) * glm::scale(glm::mat4(1.0f), glm::vec3(0.2f));
+	const glm::mat4 vp = projectionMatrix * viewMatrix * glm::inverse(_viewMatrix) * glm::scale(glm::mat4(1.0f), glm::vec3(0.2f));
 	const glm::vec3 colorLow = _color/(std::max)(_color[0], (std::max)(_color[1], _color[2]));
 	
 	debugProgram->use();

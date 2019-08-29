@@ -27,7 +27,7 @@ public:
 	 \param depthTex the depth texture
 	 \param normalTex the view-space normal texture
 	 */
-	void process(const glm::mat4 & projection, const Texture * depthTex, const Texture * normalTex);
+	void process(const glm::mat4 & projection, const Texture * depthTex, const Texture * normalTex) const;
 	
 	/** Cleanup rssources.
 	 */
@@ -38,12 +38,12 @@ public:
 	 \param width the new width
 	 \param height the new height
 	 */
-	void resize(unsigned int width, unsigned int height);
+	void resize(unsigned int width, unsigned int height) const;
 	
 	/**
 	 Clear the final framebuffer texture.
 	 */
-	void clear();
+	void clear() const;
 	
 	/**
 	 Query the texture containing the result of the SSAO+blur pass.

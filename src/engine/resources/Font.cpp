@@ -49,7 +49,7 @@ void Font::loadFont(std::istream & in, Font & font){
 	}
 }
 
-void Font::generateLabel(const std::string & text, const Font & font, const float scale, Mesh & mesh, const Alignment align){
+void Font::generateLabel(const std::string & text, const Font & font, float scale, Mesh & mesh, Alignment align){
 	mesh.clean();
 	glm::vec3 currentOrigin(0.0f);
 	
@@ -73,15 +73,15 @@ void Font::generateLabel(const std::string & text, const Font & font, const floa
 		const auto & glyph = font.glyphs[glyphIndex];
 		// Uvs also.
 		mesh.texcoords.push_back(glyph.min);
-		mesh.texcoords.push_back(glm::vec2(glyph.max.x, glyph.min.y));
+		mesh.texcoords.emplace_back(glyph.max.x, glyph.min.y);
 		mesh.texcoords.push_back(glyph.max);
-		mesh.texcoords.push_back(glm::vec2(glyph.min.x, glyph.max.y));
+		mesh.texcoords.emplace_back(glyph.min.x, glyph.max.y);
 		
 		// Vertices.
 		// We want the vertical height to be scale, X to follow based on aspect ratio in font atlas.
 		const glm::vec2 uvSize = (glyph.max - glyph.min);
-		float deltaY = scale;
-		float deltaX = deltaY * (uvSize.x / uvSize.y) * (font.atlas->width / float(font.atlas->height));
+		const float deltaY = scale;
+		const float deltaX = deltaY * (uvSize.x / uvSize.y) * (float(font.atlas->width) / float(font.atlas->height));
 		mesh.positions.push_back(currentOrigin);
 		mesh.positions.push_back(currentOrigin + glm::vec3(deltaX, 0.0f, 0.0f));
 		mesh.positions.push_back(currentOrigin + glm::vec3(deltaX, deltaY, 0.0f));

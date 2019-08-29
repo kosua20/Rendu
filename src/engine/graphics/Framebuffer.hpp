@@ -24,7 +24,7 @@ public:
 	 \param typedFormat the precise typed format, combining format and type (RGB8,...) to use
 	 \param depthBuffer should the framebuffer contain a depth buffer to properly handle 3D geometry
 	 */
-	Framebuffer(unsigned int width, unsigned int height, const Layout typedFormat, bool depthBuffer);
+	Framebuffer(unsigned int width, unsigned int height, Layout typedFormat, bool depthBuffer);
 	
 	/** Setup the framebuffer (attachments, renderbuffer, depth buffer, textures IDs,...)
 	 \param width the width of the framebuffer
@@ -121,7 +121,7 @@ public:
 private:
 	
 	/** Default constructor. */
-	Framebuffer();
+	Framebuffer() = default;
 	
 	unsigned int _width = 0; ///< The framebuffer width.
 	unsigned int _height = 0; ///< The framebuffer height.

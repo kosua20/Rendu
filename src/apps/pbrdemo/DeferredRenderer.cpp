@@ -1,8 +1,5 @@
 #include "DeferredRenderer.hpp"
-#include "input/Input.hpp"
-#include "scene/lights/DirectionalLight.hpp"
-#include "scene/lights/PointLight.hpp"
-#include "scene/lights/SpotLight.hpp"
+#include "scene/lights/Light.hpp"
 #include "scene/Sky.hpp"
 #include "system/System.hpp"
 #include "graphics/GLUtilities.hpp"
@@ -15,10 +12,10 @@ DeferredRenderer::DeferredRenderer(RenderingConfig & config) : Renderer(config) 
 	_cameraFOV = _userCamera.fov() * 180.0f / float(M_PI);
 	_cplanes = _userCamera.clippingPlanes();
 	
-	const int renderWidth = (int)_renderResolution[0];
-	const int renderHeight = (int)_renderResolution[1];
-	const int renderHalfWidth = (int)(0.5f * _renderResolution[0]);
-	const int renderHalfHeight = (int)(0.5f * _renderResolution[1]);
+	const int renderWidth = int(_renderResolution[0]);
+	const int renderHeight = int(_renderResolution[1]);
+	const int renderHalfWidth = int(0.5f * _renderResolution[0]);
+	const int renderHalfHeight = int(0.5f * _renderResolution[1]);
 	
 	// G-buffer setup.
 	const Descriptor albedoDesc = { Layout::RGBA16F, Filter::NEAREST_NEAREST, Wrap::CLAMP };
@@ -52,7 +49,7 @@ DeferredRenderer::DeferredRenderer(RenderingConfig & config) : Renderer(config) 
 	
 	_skyboxProgram = Resources::manager().getProgram("skybox_gbuffer");
 	_bgProgram = Resources::manager().getProgram("background_gbuffer");
-	_atmoProgram = Resources::manager().getProgram("atmosphere_gbuffer", "background_gbuffer", "atmosphere_gbuffer");;
+	_atmoProgram = Resources::manager().getProgram("atmosphere_gbuffer", "background_gbuffer", "atmosphere_gbuffer");
 	_parallaxProgram = Resources::manager().getProgram("object_parallax_gbuffer");
 	_objectProgram = Resources::manager().getProgram("object_gbuffer");
 	_objectNoUVsProgram = Resources::manager().getProgram("object_no_uv_gbuffer");
@@ -65,15 +62,15 @@ DeferredRenderer::DeferredRenderer(RenderingConfig & config) : Renderer(config) 
 	
 }
 
-void DeferredRenderer::setScene(std::shared_ptr<Scene> scene){
+void DeferredRenderer::setScene(const std::shared_ptr<Scene> & scene){
 	_scene = scene;
 	if(!scene){
 		return;
 	}
 	
-	auto start = std::chrono::steady_clock::now();
+	const auto start = std::chrono::steady_clock::now();
 	_scene->init(Storage::GPU);
-	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start);
+	const auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start);
 	Log::Info() << "Loading took " << duration.count() << "ms." << std::endl;
 	
 	_userCamera.apply(_scene->viewpoint());
@@ -87,7 +84,7 @@ void DeferredRenderer::setScene(std::shared_ptr<Scene> scene){
 	_ambientScreen->setSceneParameters(_scene->backgroundReflection, _scene->backgroundIrradiance);
 	
 	/// \todo clarify this by having lights taking explicit named arguments.
-	std::vector<const Texture *> includedTextures = {_gbuffer->textureId(0), _gbuffer->textureId(1), _gbuffer->depthId(), _gbuffer->textureId(2)};
+	const std::vector<const Texture *> includedTextures = {_gbuffer->textureId(0), _gbuffer->textureId(1), _gbuffer->depthId(), _gbuffer->textureId(2)};
 	
 	for(auto& light : _scene->lights){
 		light->init(includedTextures);
@@ -95,7 +92,7 @@ void DeferredRenderer::setScene(std::shared_ptr<Scene> scene){
 	checkGLError();
 }
 
-void DeferredRenderer::renderScene(){
+void DeferredRenderer::renderScene() const {
 	// Bind the full scene framebuffer.
 	_gbuffer->bind();
 	// Set screen viewport
@@ -219,7 +216,7 @@ void DeferredRenderer::renderScene(){
 	_gbuffer->unbind();
 }
 
-const Texture * DeferredRenderer::renderPostprocess(const glm::vec2 & invRenderSize){
+const Texture * DeferredRenderer::renderPostprocess(const glm::vec2 & invRenderSize) const {
 	
 	if(_applyBloom){
 		// --- Bloom selection pass ------
@@ -333,14 +330,14 @@ void DeferredRenderer::update(){
 	if(ImGui::Begin("Renderer")){
 		
 		ImGui::PushItemWidth(110);
-		ImGui::Combo("Camera mode", (int*)(&_userCamera.mode()), "FPS\0Turntable\0Joystick\0\0", 3);
+		ImGui::Combo("Camera mode", reinterpret_cast<int*>(&_userCamera.mode()), "FPS\0Turntable\0Joystick\0\0", 3);
 		ImGui::InputFloat("Camera speed", &_userCamera.speed(), 0.1f, 1.0f);
 		if(ImGui::InputFloat("Camera FOV", &_cameraFOV, 1.0f, 10.0f)){
 			_userCamera.fov(_cameraFOV*float(M_PI)/180.0f);
 		}
 		ImGui::PopItemWidth();
 		
-		if(ImGui::DragFloat2("Planes", (float*)(&_cplanes[0]))){
+		if(ImGui::DragFloat2("Planes", static_cast<float*>(&_cplanes[0]))){
 			_userCamera.frustum(_cplanes[0], _cplanes[1]);
 		}
 		
@@ -432,8 +429,8 @@ void DeferredRenderer::clean() {
 
 void DeferredRenderer::resize(unsigned int width, unsigned int height){
 	Renderer::updateResolution(width, height);
-	const unsigned int hWidth = (unsigned int)(_renderResolution[0] / 2.0f);
-	const unsigned int hHeight = (unsigned int)(_renderResolution[1] / 2.0f);
+	const unsigned int hWidth = uint(_renderResolution[0] / 2.0f);
+	const unsigned int hHeight = uint(_renderResolution[1] / 2.0f);
 	// Resize the framebuffers.
 	_gbuffer->resize(_renderResolution);
 	_ssaoPass->resize(hWidth, hHeight);

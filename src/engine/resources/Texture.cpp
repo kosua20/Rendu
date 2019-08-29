@@ -1,5 +1,4 @@
 #include "resources/Texture.hpp"
-#include "resources/ResourcesManager.hpp"
 #include "graphics/GPUObjects.hpp"
 #include "graphics/GLUtilities.hpp"
 

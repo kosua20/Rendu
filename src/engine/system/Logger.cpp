@@ -1,13 +1,12 @@
 #include "system/Logger.hpp"
 
 #include <ctime>
-#include <iomanip>
 #include <iostream>
 #include <glm/gtx/io.hpp>
 
 #ifdef _WIN32
 #include <io.h>
-#include <stdio.h>
+#include <cstdio>
 #else
 #include <unistd.h>
 #endif
@@ -28,12 +27,7 @@ void Log::set(Level l){
 }
 
 Log::Log(){
-	_level = Level::INFO;
-	_logToStdOut = true;
-	_verbose = false;
-	_ignoreUntilFlush = false;
-	_appendPrefix = false;
-	_useColors = false;
+	
 	// Setup glm objects delimiters.
 	_stream <<  glm::io::delimeter<char>('(', ')', ',');
 	
@@ -47,35 +41,29 @@ Log::Log(){
 	const bool isTerminal = isatty(fileno(stdout));
 	char *env_p = std::getenv("TERM");
 #endif
-	if(isTerminal){
+	if(isTerminal && env_p) {
 		// Check if the output support colors.
-		if(env_p) {
-			const std::vector<std::string> terms = { "xterm", "xterm-256", "xterm-256color", "vt100", "color", "ansi", "cygwin", "linux"};
-			const std::string term(env_p);
-			for(const auto & possibleTerm : terms){
-				if(term == possibleTerm){
-					_useColors = true;
-					break;
-				}
+		const std::vector<std::string> terms = { "xterm", "xterm-256", "xterm-256color", "vt100", "color", "ansi", "cygwin", "linux"};
+		const std::string term(env_p);
+		for(const auto & possibleTerm : terms){
+			if(term == possibleTerm){
+				_useColors = true;
+				break;
 			}
 		}
 	}
 }
 
-Log::Log(const std::string & filePath, const bool logToStdin, const bool verbose){
-	_level = Level::INFO;
-	_logToStdOut = logToStdin;
-	_verbose = verbose;
-	_ignoreUntilFlush = false;
-	_appendPrefix = false;
-	_useColors = false;
+Log::Log(const std::string & filePath, bool logToStdin, bool verbose) : 
+	_logToStdOut(logToStdin), _verbose(verbose) {
+	
 	// Setup glm objects delimiters.
 	_stream <<  glm::io::delimeter<char>('(', ')', ',');
 	// Create file if it doesnt exist.
 	setFile(filePath, false);
 }
 
-void Log::setFile(const std::string & filePath, const bool flushExisting){
+void Log::setFile(const std::string & filePath, bool flushExisting){
 	if(flushExisting){
 		_stream << std::endl;
 		flush();
@@ -85,14 +73,14 @@ void Log::setFile(const std::string & filePath, const bool flushExisting){
 	}
 	_file.open(filePath, std::ofstream::app);
 	if(_file.is_open()){
-		_file << "-- New session - " << time(NULL) << " -------------------------------" << std::endl;
+		_file << "-- New session - " << time(nullptr) << " -------------------------------" << std::endl;
 		_useColors = false;
 	} else {
 		std::cerr << "[Logger] Unable to create log file at path " << filePath << "." << std::endl;
 	}
 }
 
-void Log::setVerbose(const bool verbose){
+void Log::setVerbose(bool verbose){
 	_verbose = verbose;
 }
 
@@ -100,7 +88,7 @@ void Log::setDefaultFile(const std::string & filePath){
 	_defaultLogger->setFile(filePath);
 }
 
-void Log::setDefaultVerbose(const bool verbose){
+void Log::setDefaultVerbose(bool verbose){
 	_defaultLogger->setVerbose(verbose);
 }
 

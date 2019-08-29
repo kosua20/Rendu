@@ -34,8 +34,6 @@ public:
 		infos().emplace_back("resolution", "", "Output image side size", "size");
 	}
 	
-public:
-	
 	std::string outputPath = "./scattering.exr"; ///< Lookup table output path.
 	
 	unsigned int samples = 256; ///< Number of samples for iterative sampling.
@@ -54,16 +52,16 @@ public:
  \ingroup AtmosphericScattering
  */
 bool intersects(const glm::vec3 & rayOrigin, const glm::vec3 & rayDir, float radius, glm::vec2 & roots){
-	float a = glm::dot(rayDir,rayDir);
-	float b = glm::dot(rayOrigin, rayDir);
-	float c = glm::dot(rayOrigin, rayOrigin) - radius*radius;
-	float delta = b*b - a*c;
+	const float a = glm::dot(rayDir,rayDir);
+	const float b = glm::dot(rayOrigin, rayDir);
+	const float c = glm::dot(rayOrigin, rayOrigin) - radius*radius;
+	const float delta = b*b - a*c;
 	// No intersection if the polynome has no real roots.
 	if(delta < 0.0){
 		return false;
 	}
 	// If it intersects, return the two roots.
-	float dsqrt = sqrt(delta);
+	const float dsqrt = sqrt(delta);
 	roots = (-b+glm::vec2(-dsqrt,dsqrt))/a;
 	return true;
 }
@@ -119,7 +117,7 @@ int preprocess(int argc, char** argv) {
 			glm::vec2 interSecondTop;
 			const bool didHitSecondTop = intersects(currPos, sunDir, topRadius, interSecondTop);
 			// Divide the distance traveled through the atmosphere in samplesCount parts.
-			const float secondStepSize = didHitSecondTop ? interSecondTop.y/samplesCount : 0.0f;
+			const float secondStepSize = didHitSecondTop ? interSecondTop.y/float(samplesCount) : 0.0f;
 				
 			// Accumulate optical distance for both scatterings.
 			float rayleighSecondDist = 0.0;
@@ -128,7 +126,7 @@ int preprocess(int argc, char** argv) {
 			// March along the secondary ray.
 			for(unsigned int j = 0; j < samplesCount; ++j){
 				// Compute the current position along the ray, ...
-				const glm::vec3 currSecondPos = currPos + (j+0.5f) * secondStepSize * sunDir;
+				const glm::vec3 currSecondPos = currPos + (float(j)+0.5f) * secondStepSize * sunDir;
 				// ...and its distance to the ground (as we are in planet space).
 				const float currSecondHeight = glm::length(currSecondPos) - groundRadius;
 				// Compute density based on the characteristic height of Rayleigh and Mie.

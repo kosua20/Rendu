@@ -2,10 +2,8 @@
 #include "graphics/GLUtilities.hpp"
 
 
-FramebufferCube::FramebufferCube(unsigned int side, const Descriptor & descriptor, CubeMode mode, bool depthBuffer) {
-
-	_side = side;
-	_useDepth = depthBuffer;
+FramebufferCube::FramebufferCube(unsigned int side, const Descriptor & descriptor, CubeMode mode, bool depthBuffer) :
+	_side(side), _id(0), _useDepth(depthBuffer) {
 	
 	// Create a framebuffer.
 	glGenFramebuffers(1, &_id);

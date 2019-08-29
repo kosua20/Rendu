@@ -29,13 +29,13 @@ public:
 			const std::string key = arg.key;
 			const std::vector<std::string> & values = arg.values;
 			
-			if(key == "samples" && values.size() >= 1){
+			if(key == "samples" && !values.empty()){
 				samples = size_t(std::stoi(values[0]));
-			} else if(key == "depth" && values.size() >= 1){
+			} else if(key == "depth" && !values.empty()){
 				depth = size_t(std::stoi(values[0]));
-			} else if(key == "scene" && values.size() >= 1){
+			} else if(key == "scene" && !values.empty()){
 				scene = values[0];
-			} else if(key == "output" && values.size() >= 1){
+			} else if(key == "output" && !values.empty()){
 				outputPath = values[0];
 			} else if(key == "size" && values.size() >= 2){
 				size[0] = std::stoi(values[0]);
@@ -170,13 +170,13 @@ int main(int argc, char** argv) {
 		}
 		
 		// Start a new frame for the interface.
-		System::GUI::beginFrame();
+		System::Gui::beginFrame();
 		
 		// We separate punctual events from the main physics/movement update loop.
 		renderer->update();
 		
 		// Compute the time elapsed since last frame
-		double currentTime = glfwGetTime();
+		const double currentTime = glfwGetTime();
 		double frameTime = currentTime - timer;
 		timer = currentTime;
 		
@@ -187,7 +187,7 @@ int main(int argc, char** argv) {
 		remainingTime += frameTime;
 		// Instead of bounding at dt, we lower our requirement (1 order of magnitude).
 		while(remainingTime > 0.2*dt){
-			double deltaTime = fmin(remainingTime, dt);
+			const double deltaTime = std::min(remainingTime, dt);
 			// Update physics and camera.
 			renderer->physics(fullTime, deltaTime);
 			// Update timers.
@@ -198,14 +198,14 @@ int main(int argc, char** argv) {
 		// Update the content of the window.
 		renderer->draw();
 		// Then render the interface.
-		System::GUI::endFrame();
+		System::Gui::endFrame();
 		//Display the result for the current rendering loop.
 		glfwSwapBuffers(window);
 		
 	}
 	
 	// Clean the interface.
-	System::GUI::clean();
+	System::Gui::clean();
 	// Clean other resources
 	renderer->clean();
 	Resources::manager().clean();

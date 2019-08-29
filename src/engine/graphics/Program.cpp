@@ -8,10 +8,9 @@ Program::Program(){
 	_uniforms.clear();
 }
 
-Program::Program(const std::string & vertexName, const std::string & fragmentName, const std::string & geometryName){
-	_vertexName = vertexName;
-	_fragmentName = fragmentName;
-	_geometryName = geometryName;
+Program::Program(const std::string & vertexName, const std::string & fragmentName, const std::string & geometryName) :
+	_vertexName(vertexName), _fragmentName(fragmentName), _geometryName(geometryName)
+{
 	
 	std::map<std::string, int> bindings;
 	const std::string vertexContent = Resources::manager().getString(_vertexName + ".vert");
@@ -29,7 +28,7 @@ Program::Program(const std::string & vertexName, const std::string & fragmentNam
 	glGetProgramiv(_id, GL_ACTIVE_UNIFORM_MAX_LENGTH, &size);
 	
 	glUseProgram(_id);
-	for(GLuint i = 0; i < (GLuint)count; ++i){
+	for(GLuint i = 0; i < GLuint(count); ++i){
 		// Get infos (name, name length, type,...) of each uniform.
 		std::vector<GLchar> uname(size);
 		GLenum utype;
@@ -103,7 +102,7 @@ void Program::reload()
 }
 
 
-void Program::validate(){
+void Program::validate() const {
 	glValidateProgram(_id);
 	int status = -2;
 	glGetProgramiv(_id, GL_VALIDATE_STATUS, &status);
@@ -115,11 +114,11 @@ void Program::validate(){
 		return;
 	}
 	std::vector<char> infoLog(infoLogLength);
-	glGetProgramInfoLog(_id, infoLogLength, NULL, &infoLog[0]);
+	glGetProgramInfoLog(_id, infoLogLength, nullptr, &infoLog[0]);
 	Log::Error() << Log::OpenGL << "Log for validation: " << &infoLog[0] << std::endl;
 }
 
-void Program::saveBinary(const std::string & outputPath){
+void Program::saveBinary(const std::string & outputPath) const {
 	int count = 0;
 	glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &count);
 	if (count <= 0) {
@@ -134,9 +133,9 @@ void Program::saveBinary(const std::string & outputPath){
 	}
 	GLenum format;
 	std::vector<char>binary(length);
-	glGetProgramBinary(_id, length, NULL, &format, &binary[0]);
+	glGetProgramBinary(_id, length, nullptr, &format, &binary[0]);
 	
-	Resources::saveRawDataToExternalFile(outputPath + "_(" + _vertexName + "," + _fragmentName + ")_" + std::to_string((unsigned int) format) + ".bin", &binary[0], binary.size());
+	Resources::saveRawDataToExternalFile(outputPath + "_(" + _vertexName + "," + _fragmentName + ")_" + std::to_string(uint(format)) + ".bin", &binary[0], binary.size());
 	
 }
 
@@ -144,7 +143,7 @@ void Program::use() const {
 	glUseProgram(_id);
 }
 
-void Program::clean(){
+void Program::clean() const {
 	glDeleteProgram(_id);
 }
 

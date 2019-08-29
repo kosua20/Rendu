@@ -59,7 +59,7 @@ Game::Game(RenderingConfig & config) : _config(config), _inGameRenderer(config),
 	_menus[Status::INGAME].labels.emplace_back(glm::vec2(0.0f, 0.70f), 0.2f, font, Font::Alignment::CENTER);
 	
 	// Initialize each menu buttons sizes.
-	const float initialRatio = _config.initialWidth / float(_config.initialHeight);
+	const float initialRatio = float(_config.initialWidth) / float(_config.initialHeight);
 	for(auto & menu : _menus){
 		GameMenu & currentMenu = menu.second;
 		currentMenu.update(_config.screenResolution, initialRatio);
@@ -83,7 +83,7 @@ System::Action Game::update(){
 	
 	// Check if we need to resize.
 	if(Input::manager().resized()){
-		resize((unsigned int)Input::manager().size()[0], (unsigned int)Input::manager().size()[1]);
+		resize(uint(Input::manager().size()[0]), uint(Input::manager().size()[1]));
 	}
 	
 	// Decide which action should (maybe) be performed.
@@ -113,7 +113,7 @@ System::Action Game::update(){
 			_status = Status::DEAD;
 			// Make sure the blur effect buffer is the right size.
 			const glm::vec2 gameRes = _inGameRenderer.renderingResolution();
-			_bgBlur->resize((unsigned int)(gameRes[0]), (unsigned int)(gameRes[1]));
+			_bgBlur->resize(uint(gameRes[0]), uint(gameRes[1]));
 			_bgBlur->process(_inGameRenderer.finalImage());
 			_menus[Status::DEAD].labels[0].update(std::to_string(_player->score()));
 			
@@ -160,7 +160,7 @@ System::Action Game::update(){
 	
 }
 
-System::Action Game::handleButton(const ButtonAction tag){
+System::Action Game::handleButton(ButtonAction tag){
 	switch (tag) {
 		case NEWGAME:
 			_player = std::unique_ptr<Player>(new Player());
@@ -180,7 +180,7 @@ System::Action Game::handleButton(const ButtonAction tag){
 		case PAUSE:
 		{
 			const glm::vec2 gameRes = _inGameRenderer.renderingResolution();
-			_bgBlur->resize((unsigned int)(gameRes[0]), (unsigned int)(gameRes[1]));
+			_bgBlur->resize(uint(gameRes[0]), uint(gameRes[1]));
 			_bgBlur->process(_inGameRenderer.finalImage());
 			_status = Status::PAUSED;
 			break;
@@ -216,11 +216,11 @@ void Game::physics(double frameTime){
 }
 
 void Game::resize(unsigned int width, unsigned int height){
-	_config.internalVerticalResolution = int(height / Input::manager().density());
+	_config.internalVerticalResolution = int(float(height) / Input::manager().density());
 	_inGameRenderer.resize(width, height);
 	_menuRenderer.resize(width, height);
 	// Update each menu buttons sizes.
-	const float initialRatio = _config.initialWidth / float(_config.initialHeight);
+	const float initialRatio = float(_config.initialWidth) / float(_config.initialHeight);
 	for(auto & menu : _menus){
 		GameMenu & currentMenu = menu.second;
 		currentMenu.update(_config.screenResolution, initialRatio);

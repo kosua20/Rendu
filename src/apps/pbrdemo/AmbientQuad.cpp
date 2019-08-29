@@ -29,9 +29,9 @@ void AmbientQuad::setSceneParameters(const Texture * reflectionMap, const std::v
 
 void AmbientQuad::draw(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix) const {
 	
-	glm::mat4 invView = glm::inverse(viewMatrix);
+	const glm::mat4 invView = glm::inverse(viewMatrix);
 	// Store the four variable coefficients of the projection matrix.
-	glm::vec4 projectionVector = glm::vec4(projectionMatrix[0][0], projectionMatrix[1][1], projectionMatrix[2][2], projectionMatrix[3][2]);
+	const glm::vec4 projectionVector = glm::vec4(projectionMatrix[0][0], projectionMatrix[1][1], projectionMatrix[2][2], projectionMatrix[3][2]);
 	
 	_program->use();
 	

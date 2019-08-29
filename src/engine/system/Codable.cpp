@@ -58,7 +58,7 @@ glm::mat4 Codable::decodeTransformation(const std::vector<KeyValues> & params){
 		} else if(param.key == "translation"){
 			translation = Codable::decodeVec3(param);
 			
-		} else if(param.key == "scaling" && param.values.size() > 0){
+		} else if(param.key == "scaling" && !param.values.empty()){
 			scaling = std::stof(param.values[0]);
 			
 		}
@@ -69,7 +69,7 @@ glm::mat4 Codable::decodeTransformation(const std::vector<KeyValues> & params){
 	return translationMat * rotationMat * scalingMat;
 }
 
-const Texture * Codable::decodeTexture(const KeyValues & param, const Storage mode){
+const Texture * Codable::decodeTexture(const KeyValues & param, Storage mode){
 	// Subest of descriptors supported by the scene serialization model.
 	const std::map<std::string, Descriptor> descriptors = {
 		{"srgb", { Layout::SRGB8_ALPHA8, Filter::LINEAR_LINEAR, Wrap::REPEAT}},
@@ -98,7 +98,7 @@ std::vector<KeyValues> Codable::parse(const std::string & codableFile){
 	// First, get a list of flat tokens, cleaned up, splitting them when there are multiple on the same line.
 	while(std::getline(sstr, line)){
 		// Check if the line contains a comment, remove everything after.
-		const std::string::size_type hashPos = line.find("#");
+		const std::string::size_type hashPos = line.find('#');
 		if(hashPos != std::string::npos){
 			line = line.substr(0, hashPos);
 		}
@@ -109,7 +109,7 @@ std::vector<KeyValues> Codable::parse(const std::string & codableFile){
 		}
 		
 		// Find the first colon.
-		const std::string::size_type firstColon = line.find(":");
+		const std::string::size_type firstColon = line.find(':');
 		// If no colon, ignore the line.
 		if(firstColon == std::string::npos){
 			Log::Warning() << "Line with no colon encountered while parsing file. Skipping line." << std::endl;
@@ -125,7 +125,7 @@ std::vector<KeyValues> Codable::parse(const std::string & codableFile){
 		
 		// Then iterate while we are find sub-tokens, denoted by colons.
 		std::string::size_type previousColon = firstColon+1;
-		std::string::size_type nextColon = line.find(":", previousColon);
+		std::string::size_type nextColon = line.find(':', previousColon);
 		while (nextColon != std::string::npos) {
 			std::string keySub = line.substr(previousColon, nextColon-previousColon);
 			keySub = TextUtilities::trim(keySub, " \t");
@@ -135,7 +135,7 @@ std::vector<KeyValues> Codable::parse(const std::string & codableFile){
 				tok = &(tok->elements.back());
 			}
 			previousColon = nextColon+1;
-			nextColon = line.find(":", previousColon);
+			nextColon = line.find(':', previousColon);
 		}
 		
 		// Everything after the last colon are values, separated by either spaces or commas.

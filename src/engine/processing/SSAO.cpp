@@ -3,8 +3,8 @@
 #include "graphics/GPUObjects.hpp"
 #include "graphics/GLUtilities.hpp"
 
-SSAO::SSAO(unsigned int width, unsigned int height, float radius) {
-	_radius = radius;
+SSAO::SSAO(unsigned int width, unsigned int height, float radius) : 
+	_radius(radius) {
 	_ssaoFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, Layout::R8, false));
 	_blurSSAOBuffer = std::unique_ptr<BoxBlur>(new BoxBlur(width, height, true, Descriptor(Layout::R8, Filter::LINEAR_LINEAR, Wrap::CLAMP)));
 	_programSSAO = Resources::manager().getProgram2D("ssao");
@@ -19,7 +19,7 @@ SSAO::SSAO(unsigned int width, unsigned int height, float radius) {
 		samples.push_back(glm::normalize(randVec));
 		samples.back() *= Random::Float(0.0f,1.0f);
 		// Skew the distribution towards the center.
-		float scale = i/24.0f;
+		float scale = float(i)/24.0f;
 		scale = 0.1f+0.9f*scale*scale;
 		samples.back() *= scale;
 	}
@@ -58,7 +58,7 @@ SSAO::SSAO(unsigned int width, unsigned int height, float radius) {
 }
 
 // Draw function
-void SSAO::process(const glm::mat4 & projection, const Texture * depthTex, const Texture * normalTex){
+void SSAO::process(const glm::mat4 & projection, const Texture * depthTex, const Texture * normalTex) const {
 	
 	_ssaoFramebuffer->bind();
 	_ssaoFramebuffer->setViewport();
@@ -79,12 +79,12 @@ void SSAO::clean() const {
 	_ssaoFramebuffer->clean();
 }
 
-void SSAO::clear() {
+void SSAO::clear() const {
 	_blurSSAOBuffer->clear();
 }
 
 // Handle screen resizing
-void SSAO::resize(unsigned int width, unsigned int height){
+void SSAO::resize(unsigned int width, unsigned int height) const {
 	_blurSSAOBuffer->resize(width, height);
 	_ssaoFramebuffer->resize(width, height);
 }

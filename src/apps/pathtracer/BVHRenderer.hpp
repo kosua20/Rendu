@@ -6,7 +6,6 @@
 #include "renderers/Renderer.hpp"
 #include "graphics/Framebuffer.hpp"
 #include "input/ControllableCamera.hpp"
-#include "graphics/ScreenQuad.hpp"
 
 #include "Common.hpp"
 
@@ -28,29 +27,29 @@ public:
 	/** Set the scene to render.
 	 \param scene the new scene
 	 */
-	void setScene(std::shared_ptr<Scene> scene);
+	void setScene(const std::shared_ptr<Scene> & scene);
 	
 	/** Draw the scene and effects */
-	void draw();
+	void draw() override;
 	
 	/** Perform once-per-frame update (buttons, GUI,...) */
-	void update();
+	void update() override;
 	
 	/** Perform physics simulation update.
 	 \param fullTime the time elapsed since the beginning of the render loop
 	 \param frameTime the duration of the last frame
 	 \note This function can be called multiple times per frame.
 	 */
-	void physics(double fullTime, double frameTime);
+	void physics(double fullTime, double frameTime) override;
 
 	/** Clean internal resources. */
-	void clean();
+	void clean() override;
 
 	/** Handle a window resize event.
 	 \param width the new width
 	 \param height the new height
 	 */
-	void resize(unsigned int width, unsigned int height);
+	void resize(unsigned int width, unsigned int height) override;
 	
 	
 private:
@@ -74,7 +73,7 @@ private:
 	PathTracer _pathTracer; ///< The scene specific path tracer.
 	std::unique_ptr<RaycasterVisualisation> _visuHelper; ///< Helper for raycaster internal data visualisation.
 	
-	glm::ivec2 _bvhRange; ///< The subset of the BVH to display.
+	glm::ivec2 _bvhRange = glm::ivec2(0, 1); ///< The subset of the BVH to display.
 	float _cameraFOV = 70.0f; ///< The adjustable camera fov in degrees.
 	int _samples = 8; ///< Samples count.
 	int _depth = 5; ///< Depth of each ray.

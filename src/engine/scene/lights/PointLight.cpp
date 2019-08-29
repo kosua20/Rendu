@@ -1,14 +1,10 @@
 #include "scene/lights/PointLight.hpp"
 #include "graphics/GLUtilities.hpp"
+#include "resources/ResourcesManager.hpp"
 
-PointLight::PointLight(): Light() {
-	_radius = 1.0f;
-	_lightPosition = glm::vec3(0.0f);
-}
 
-PointLight::PointLight(const glm::vec3& worldPosition, const glm::vec3& color, float radius) : Light(color) {
-	_radius = radius;
-	_lightPosition = worldPosition;
+PointLight::PointLight(const glm::vec3& worldPosition, const glm::vec3& color, float radius) : Light(color),
+	_lightPosition(worldPosition), _radius(radius) {
 }
 
 void PointLight::init(const std::vector<const Texture *>& textureIds){

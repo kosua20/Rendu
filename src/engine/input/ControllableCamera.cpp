@@ -15,7 +15,7 @@ void ControllableCamera::reset(){
 	_right = glm::vec3(1.0,0.0,0.0);
 	_view = glm::lookAt(_eye, _center, _up);
 	_radius = 1.0;
-	_angles = glm::vec2((float)M_PI*0.5f, 0.0f);
+	_angles = glm::vec2(float(M_PI)*0.5f, 0.0f);
 }
 
 void ControllableCamera::pose(const glm::vec3 & position, const glm::vec3 & center, const glm::vec3 & up){
@@ -118,16 +118,16 @@ void ControllableCamera::updateUsingJoystick(double frameTime){
 	
 	if(axisForward * axisForward + axisLateral * axisLateral > 0.02f){
 		// Update the camera position.
-		_eye = _eye - axisForward * (float)frameTime * _speed * look;
-		_eye = _eye + axisLateral * (float)frameTime * _speed * _right;
+		_eye = _eye - axisForward * float(frameTime) * _speed * look;
+		_eye = _eye + axisLateral * float(frameTime) * _speed * _right;
 	}
 	
 	// L2 and R2 triggers are used to move up and down. They can be read like axis.
 	if(axisUp > -0.9){
-		_eye = _eye  - (axisUp + 1.0f)* 0.5f * (float)frameTime * _speed * _up;
+		_eye = _eye  - (axisUp + 1.0f)* 0.5f * float(frameTime) * _speed * _up;
 	}
 	if(axisDown > -0.9){
-		_eye = _eye  + (axisDown + 1.0f)* 0.5f * (float)frameTime * _speed * _up;
+		_eye = _eye  + (axisDown + 1.0f)* 0.5f * float(frameTime) * _speed * _up;
 	}
 	
 	// Update center (eye-center stays constant).
@@ -135,8 +135,8 @@ void ControllableCamera::updateUsingJoystick(double frameTime){
 	
 	// Right stick to look around.
 	if(axisVertical * axisVertical + axisHorizontal * axisHorizontal > 0.02f){
-		_center = _center - axisVertical * (float)frameTime * _angularSpeed * _up;
-		_center = _center + axisHorizontal * (float)frameTime * _angularSpeed * _right;
+		_center = _center - axisVertical * float(frameTime) * _angularSpeed * _up;
+		_center = _center + axisHorizontal * float(frameTime) * _angularSpeed * _right;
 	}
 	// Renormalize the look vector.
 	look = normalize(_center - _eye);
@@ -150,11 +150,11 @@ void ControllableCamera::updateUsingKeyboard(double frameTime){
 	// We need the direction of the camera, normalized.
 	glm::vec3 look = normalize(_center - _eye);
 	// One step forward or backward.
-	const glm::vec3 deltaLook =  _speed * (float)frameTime * look;
+	const glm::vec3 deltaLook =  _speed * float(frameTime) * look;
 	// One step laterally horizontal.
-	const glm::vec3 deltaLateral = _speed * (float)frameTime * _right;
+	const glm::vec3 deltaLateral = _speed * float(frameTime) * _right;
 	// One step laterally vertical.
-	const glm::vec3 deltaVertical = _speed * (float)frameTime * _up;
+	const glm::vec3 deltaVertical = _speed * float(frameTime) * _up;
 	
 	
 	if(Input::manager().pressed(Input::KeyW)){ // Forward
@@ -183,10 +183,10 @@ void ControllableCamera::updateUsingKeyboard(double frameTime){
 	
 	
 	const glm::vec2 delta = Input::manager().moved(Input::Mouse::Left);
-	_angles += delta* (float)frameTime*_angularSpeed;
+	_angles += delta* float(frameTime)*_angularSpeed;
 	_angles[1] = (std::max)(-1.57f, (std::min)(1.57f, _angles[1]));
 	// Right stick to look around.
-	const glm::mat4 rotY = glm::rotate(glm::mat4(1.0f), (float)M_PI*0.5f-_angles[0], glm::vec3(0.0,1.0,0.0));
+	const glm::mat4 rotY = glm::rotate(glm::mat4(1.0f), float(M_PI)*0.5f-_angles[0], glm::vec3(0.0,1.0,0.0));
 	const glm::mat4 rotX = glm::rotate(glm::mat4(1.0f), -_angles[1], glm::vec3(1.0,0.0,0.0));
 	const glm::mat3 rot = glm::mat3(rotY * rotX);
 	
@@ -202,11 +202,11 @@ void ControllableCamera::updateUsingTurnTable(double frameTime){
 	// We need the direction of the camera, normalized.
 	const glm::vec3 look = normalize(_center - _eye);
 	// One step forward or backward.
-	const glm::vec3 deltaLook =  _speed * (float)frameTime * look;
+	const glm::vec3 deltaLook =  _speed * float(frameTime) * look;
 	// One step laterally horizontal.
-	const glm::vec3 deltaLateral = _speed * (float)frameTime * _right;
+	const glm::vec3 deltaLateral = _speed * float(frameTime) * _right;
 	// One step laterally vertical.
-	const glm::vec3 deltaVertical = _speed * (float)frameTime * _up;
+	const glm::vec3 deltaVertical = _speed * float(frameTime) * _up;
 	
 	
 	if(Input::manager().pressed(Input::KeyW)){ // Forward
@@ -234,12 +234,12 @@ void ControllableCamera::updateUsingTurnTable(double frameTime){
 	}
 	
 	// Radius of the turntable.
-	float scroll = Input::manager().scroll()[1];
-	_radius = (std::max)(0.0001f, _radius - scroll * (float)frameTime*_speed);
+	const float scroll = Input::manager().scroll()[1];
+	_radius = (std::max)(0.0001f, _radius - scroll * float(frameTime)*_speed);
 	
 	// Angles update for the turntable.
 	const glm::vec2 delta = Input::manager().moved(Input::Mouse::Left);
-	_angles += delta* (float)frameTime*_angularSpeed;
+	_angles += delta* float(frameTime)*_angularSpeed;
 	_angles[1] = (std::max)(-1.57f, (std::min)(1.57f, _angles[1]));
 	
 	// Compute new look direction.

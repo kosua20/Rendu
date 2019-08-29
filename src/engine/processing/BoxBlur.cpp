@@ -4,7 +4,7 @@
 BoxBlur::BoxBlur(unsigned int width, unsigned int height, bool approximate, const Descriptor & descriptor) : Blur() {
 	
 	// Enforce linear filtering.
-	Descriptor linearDescriptor(descriptor.typedFormat(), Filter::LINEAR_NEAREST, descriptor.wrapping());
+	const Descriptor linearDescriptor(descriptor.typedFormat(), Filter::LINEAR_NEAREST, descriptor.wrapping());
 	const int channels = linearDescriptor.getChannelsCount();
 	
 	std::string blur_type_name = "box-blur-" + (approximate ? std::string("approx-") : "");
@@ -21,7 +21,7 @@ BoxBlur::BoxBlur(unsigned int width, unsigned int height, bool approximate, cons
 }
 
 // Draw function
-void BoxBlur::process(const Texture * textureId){
+void BoxBlur::process(const Texture * textureId) const {
 	_finalFramebuffer->bind();
 	_finalFramebuffer->setViewport();
 	GLUtilities::clearColor(glm::vec4(0.0f));
@@ -34,15 +34,14 @@ void BoxBlur::process(const Texture * textureId){
 // Clean function
 void BoxBlur::clean() const {
 	_finalFramebuffer->clean();
-	Blur::clean();
 }
 
 // Handle screen resizing
-void BoxBlur::resize(unsigned int width, unsigned int height){
+void BoxBlur::resize(unsigned int width, unsigned int height) const {
 	_finalFramebuffer->resize(width, height);
 }
 
-void BoxBlur::clear(){
+void BoxBlur::clear() const {
 	_finalFramebuffer->bind();
 	_finalFramebuffer->setViewport();
 	GLUtilities::clearColor(glm::vec4(1.0f));

@@ -4,7 +4,6 @@
 #include "graphics/ScreenQuad.hpp"
 #include "graphics/GLUtilities.hpp"
 #include "graphics/Framebuffer.hpp"
-#include "input/Input.hpp"
 #include "Common.hpp"
 
 GameMenuRenderer::GameMenuRenderer(RenderingConfig & config) : Renderer(config){
@@ -20,7 +19,7 @@ GameMenuRenderer::GameMenuRenderer(RenderingConfig & config) : Renderer(config){
 	_quad = Resources::manager().getMesh("plane", Storage::GPU);
 }
 
-void GameMenuRenderer::draw(const GameMenu & menu){
+void GameMenuRenderer::draw(const GameMenu & menu) const {
 	
 	static const std::map<MenuButton::State, glm::vec4> borderColors = {
 		{ MenuButton::State::OFF, glm::vec4(0.8f, 0.8f, 0.8f, 1.0f) },
@@ -131,25 +130,19 @@ void GameMenuRenderer::draw(const GameMenu & menu){
 	checkGLError();
 }
 
-void GameMenuRenderer::update(){
-	Renderer::update();
-	
+void GameMenuRenderer::draw() {
+	// Nothing to do here.
 }
 
-
 void GameMenuRenderer::physics(double, double){
-	
+	// Nothing to do here.
 }
 
 void GameMenuRenderer::resize(unsigned int width, unsigned int height){
 	Renderer::updateResolution(width, height);
 }
 
-void GameMenuRenderer::clean() {
-	Renderer::clean();
-}
-
-glm::vec2 GameMenuRenderer::getButtonSize(){
+glm::vec2 GameMenuRenderer::getButtonSize() const {
 	return glm::vec2(_button->bbox.getSize());
 }
 

@@ -2,15 +2,11 @@
 
 #define REGISTER_TYPE(type) {#type, Type::type}
 
-Object::Object() {}
-
-Object::Object(const Object::Type type, const Mesh * mesh, bool castShadows){
-	_material = type;
-	_castShadow = castShadows;
-	_mesh = mesh;
+Object::Object(const Type type, const Mesh * mesh, bool castShadows) :
+	_mesh(mesh), _material(type), _castShadow(castShadows) {
 }
 
-void Object::decode(const KeyValues & params, const Storage mode){
+void Object::decode(const KeyValues & params, Storage mode){
 	
 	const std::map<std::string, Object::Type> types = {
 		REGISTER_TYPE(Common),
@@ -56,13 +52,13 @@ void Object::addTexture(const Texture * infos){
 	_textures.push_back(infos);
 }
 
-void Object::addAnimation(std::shared_ptr<Animation> anim){
+void Object::addAnimation(const std::shared_ptr<Animation> & anim){
 	_animations.push_back(anim);
 }
 
 void Object::update(double fullTime, double frameTime) {
 	glm::mat4 model = _model;
-	for(auto anim : _animations){
+	for(auto & anim : _animations){
 		model = anim->apply(model, fullTime, frameTime);
 	}
 	_model = model;

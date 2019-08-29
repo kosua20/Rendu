@@ -35,9 +35,9 @@ void loadCubemap(const std::string & inputPath, Texture & cubemapInfos){
 	const std::string ext = TextUtilities::removeExtension(cubemapPath);
 	cubemapPath = cubemapPath.substr(0, cubemapPath.size()-3);
 	Log::Info() << "Loading " << cubemapPath << "..." << std::endl;
-	std::vector<std::string> pathSides;
+	std::vector<std::string> pathSides(6);
 	for(int i = 0; i < 6; ++i){
-		pathSides.push_back(cubemapPath + suffixes[i] + ext);
+		pathSides[i] = cubemapPath + suffixes[i] + ext;
 	}
 	
 	cubemapInfos.clean();
@@ -47,10 +47,9 @@ void loadCubemap(const std::string & inputPath, Texture & cubemapInfos){
 	for(const auto & filePath : pathSides){
 		cubemapInfos.images.emplace_back();
 		Image & image = cubemapInfos.images.back();
-		int ret = Image::loadImage(filePath, 4, false, false, image);
+		const int ret = Image::loadImage(filePath, 4, false, false, image);
 		if (ret != 0) {
 			Log::Error() << Log::Resources << "Unable to load the texture at path " << filePath << "." << std::endl;
-			continue;
 		}
 	}
 	cubemapInfos.width = cubemapInfos.images[0].width;
@@ -211,7 +210,7 @@ void computeCubemapConvolution(const Texture & cubemapInfos, int levelsCount, in
 		
 		const unsigned int w = outputSide / int(std::pow(2, level));
 		const unsigned int h = w;
-		const float roughness = level / float(levelsCount - 1);
+		const float roughness = float(level) / float(levelsCount - 1);
 		
 		Log::Info() << Log::Utilities << "Level " << level << " (size=" << w << ", r=" << roughness << "): " << std::flush;
 		
@@ -225,7 +224,7 @@ void computeCubemapConvolution(const Texture & cubemapInfos, int levelsCount, in
 			resultFramebuffer.bind(i);
 			// Clear texture slice.
 			GLUtilities::clearColorAndDepth({0.0f, 0.0f, 0.0f, 1.0f}, 1.0f);
-			GLUtilities::setViewport(0,0,w,h);
+			GLUtilities::setViewport(0,0, int(w), int(h));
 			glDisable(GL_DEPTH_TEST);
 			programCubemap->use();
 			// Pass roughness parameters.
@@ -291,7 +290,7 @@ void computeAndExportLookupTable(const int outputSide, const std::string & outpu
 	ScreenQuad::draw();
 	bakingFramebuffer->unbind();
 	glEnable(GL_DEPTH_TEST);
-	GLUtilities::saveFramebuffer(*bakingFramebuffer, (unsigned int)outputSide, (unsigned int)outputSide, outputPath, true);
+	GLUtilities::saveFramebuffer(*bakingFramebuffer, uint(outputSide), uint(outputSide), outputPath, true);
 }
 
 /**
@@ -354,7 +353,7 @@ int main(int argc, char** argv) {
 			Resources::manager().reload();
 		}
 		
-		System::GUI::beginFrame();
+		System::Gui::beginFrame();
 		
 		// Update camera.
 		double currentTime = glfwGetTime();
@@ -428,8 +427,7 @@ int main(int argc, char** argv) {
 					for(int i = 0; i < 9; ++i){
 						outputStr << SCoeffs[i][0] << " " << SCoeffs[i][1] << " " << SCoeffs[i][2] << std::endl;
 					}
-					const std::string destinationPath = outputPath;
-					Resources::saveStringToExternalFile(destinationPath, outputStr.str());
+					Resources::saveStringToExternalFile(outputPath, outputStr.str());
 				}
 			}
 			
@@ -504,12 +502,12 @@ int main(int argc, char** argv) {
 		glDisable(GL_DEPTH_TEST);
 		GLUtilities::setViewport(0,0, int(screenSize[0]), int(screenSize[1]));
 		
-		System::GUI::endFrame();
+		System::Gui::endFrame();
 		checkGLError();
 		glfwSwapBuffers(window);
 	}
 	
-	System::GUI::clean();
+	System::Gui::clean();
 	// Clean resources.
 	Resources::manager().clean();
 	// Close GL context and any other GLFW resources.

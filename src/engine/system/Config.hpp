@@ -36,22 +36,6 @@ public:
 	 */
 	bool showHelp();
 	
-private:
-	
-	/**
-	 Helper to extract (key, [values]) from a configuration file on disk.
-	 \param filePath the path to the configuration file.
-	 \param arguments a vector will be populated with (key, [values]) tuples.
-	 */
-	static void parseFromFile(const std::string & filePath, std::vector<KeyValues>& arguments);
-	
-	/**
-	 Helper to extract (key, [values]) from the given command-line arguments.
-	 \param argv the raw input arguments
-	 \param arguments  a vector will be populated with (key, [values]) tuples.
-	 */
-	static void parseFromArgs(const std::vector<std::string> & argv, std::vector<KeyValues> & arguments);
-	
 protected:
 	
 	/** \brief Informations about an argument. */
@@ -82,11 +66,25 @@ protected:
 		
 	};
 	
-	const std::vector<KeyValues> & arguments();
+	const std::vector<KeyValues> & arguments() const;
 	
 	std::vector<ArgumentInfo> & infos();
 	
 private:
+
+	/**
+	 Helper to extract (key, [values]) from a configuration file on disk.
+	 \param filePath the path to the configuration file.
+	 \param arguments a vector will be populated with (key, [values]) tuples.
+	 */
+	static void parseFromFile(const std::string & filePath, std::vector<KeyValues>& arguments);
+
+	/**
+	 Helper to extract (key, [values]) from the given command-line arguments.
+	 \param argv the raw input arguments
+	 \param arguments  a vector will be populated with (key, [values]) tuples.
+	 */
+	static void parseFromArgs(const std::vector<std::string> & argv, std::vector<KeyValues> & arguments);
 	
 	/// Store the internal parsed (keys, [values]) extracted from a file or the command-line.
 	std::vector<KeyValues> _rawArguments;
@@ -109,9 +107,6 @@ public:
 	 \param argv the raw input arguments
 	 */
 	explicit RenderingConfig(const std::vector<std::string> & argv);
-
-public:
-	// Configuration properties (loaded from command-line or config file).
 	
 	/// The configuration version number (unused).
 	const size_t version = 1;

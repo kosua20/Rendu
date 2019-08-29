@@ -8,7 +8,7 @@
  \brief Represents a button in a menu.
  \ingroup SnakeGame
  */
-struct MenuButton {
+class MenuButton {
 	
 public:
 	
@@ -19,13 +19,13 @@ public:
 	 \param actionTag the ID of the action associated to this button
 	 \param texture the text texture on the button
 	 */
-	MenuButton(const glm::vec2 & screenPos, const glm::vec2 & meshSize, const float screenScale, const int actionTag, const Texture * texture);
+	MenuButton(const glm::vec2 & screenPos, const glm::vec2 & meshSize, float screenScale, int actionTag, const Texture * texture);
 	
 	/** Check if a position is inside the button.
 	 \param mousePos the position to test (in absolute units)
 	 \return a boolean denoting if the tested position falls inside the button on screen.
 	 */
-	bool contains(const glm::vec2 & mousePos);
+	bool contains(const glm::vec2 & mousePos) const;
 	
 	/**
 	 \brief Button state.
@@ -49,7 +49,6 @@ public:
  \ingroup SnakeGame
  */
 struct MenuToggle: public MenuButton {
-public:
 	
 	/** Creates a new toggle button which can be either on or off.
 	 \param screenPos position on screen in absolute units
@@ -58,7 +57,7 @@ public:
 	 \param actionTag the ID of the action associated to this button
 	 \param texture the text texture accompanying the checkbox
 	 */
-	MenuToggle(const glm::vec2 & screenPos, const glm::vec2 & meshSize, const float screenScale, const int actionTag, const Texture * texture);
+	MenuToggle(const glm::vec2 & screenPos, const glm::vec2 & meshSize, float screenScale, int actionTag, const Texture * texture);
 	
 	glm::vec2 posBox; ///< Screen position of the toggle box.
 	glm::vec2 posImg; ///< Screen position of the text.
@@ -72,14 +71,13 @@ public:
  \ingroup SnakeGame
  */
 struct MenuImage {
-public:
 	
 	/** Creates a menu image.
 	 \param screenPos position on screen in absolute units
 	 \param screenScale scaling to apply to the image on the X axis
 	 \param texture the texture to display
 	 */
-	MenuImage(const glm::vec2 & screenPos, const float screenScale, const Texture * texture);
+	MenuImage(const glm::vec2 & screenPos, float screenScale, const Texture * texture);
 	
 	glm::vec2 pos; ///< Image position.
 	glm::vec2 size; ///< Screen size.
@@ -92,9 +90,9 @@ public:
  \brief A dynamic text label.
  \ingroup SnakeGame
  */
-struct MenuLabel {
+class MenuLabel {
 public:
-	
+
 	/** Creates a label. The position is in the bottom left corner if the alignment is LEFT,
 	 the bottom right if the alignment is RIGHT, and in the middle of the label if it is CENTER.
 	 \param screenPos position on screen in absolute units
@@ -102,7 +100,7 @@ public:
 	 \param font the font to use
 	 \param alignment the text alignment to use
 	 */
-	MenuLabel(const glm::vec2 & screenPos, const float verticalScale, const Font * font, const Font::Alignment alignment);
+	MenuLabel(const glm::vec2 & screenPos, float verticalScale, const Font * font, Font::Alignment alignment);
 	
 	/** Update the string displayed by the label.
 	 \param text the new text to display
@@ -131,7 +129,7 @@ public:
 	 \param screenResolution the current window resolution
 	 \param initialRatio the window ratio used to describe the initial layout
 	 */
-	void update(const glm::vec2 & screenResolution, const float initialRatio);
+	void update(const glm::vec2 & screenResolution, float initialRatio);
 	
 	std::vector<MenuButton> buttons; ///< The menu buttons.
 	std::vector<MenuToggle> toggles; ///< The menu toggles.

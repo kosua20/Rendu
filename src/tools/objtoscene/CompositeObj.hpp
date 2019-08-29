@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Common.hpp"
-#include "system/TextUtilities.hpp"
 #include "resources/Mesh.hpp"
 
 /**
@@ -15,13 +14,13 @@ namespace CompositeObj {
 	 */
 	struct Material {
 		// Textures.
-		std::string normalTexturePath;
-		std::string alphaTexturePath;
-		std::string displacementTexturePath;
-		std::string colorTexturePath;
-		std::string roughTexturePath;
-		std::string metalTexturePath;
-		std::string specTexturePath;
+		std::string normalTexturePath = "";
+		std::string alphaTexturePath = "";
+		std::string displacementTexturePath = "";
+		std::string colorTexturePath = "";
+		std::string roughTexturePath = "";
+		std::string metalTexturePath = "";
+		std::string specTexturePath = "";
 		
 		// Scalars.
 		glm::vec3 color = glm::vec3(0.0f);

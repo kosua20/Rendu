@@ -1,6 +1,5 @@
 #include "resources/ResourcesManager.hpp"
 #include "resources/Mesh.hpp"
-#include "system/TextUtilities.hpp"
 #include "system/System.hpp"
 
 #include <fstream>
@@ -20,9 +19,6 @@ Resources& Resources::manager(){
 	return *res;
 }
 
-Resources::Resources() {
-}
-
 #ifdef RESOURCES_PACKAGED
 void Resources::addResources(const std::string & path){
 	Log::Info() << Log::Resources << "Loading resources from archive (" << path + ".zip" << ")." << std::endl;
@@ -39,14 +35,15 @@ void Resources::addResources(const std::string & path){
 
 void Resources::parseArchive(const std::string & archivePath){
 	
-	mz_zip_archive zip_archive = {0, 0, 0, MZ_ZIP_MODE_INVALID, MZ_ZIP_TYPE_INVALID, MZ_ZIP_NO_ERROR, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-	int status = mz_zip_reader_init_file(&zip_archive, archivePath.c_str(), 0);
+	mz_zip_archive zip_archive = {0, 0, 0, MZ_ZIP_MODE_INVALID, MZ_ZIP_TYPE_INVALID, MZ_ZIP_NO_ERROR,
+		0, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
+	const int status = mz_zip_reader_init_file(&zip_archive, archivePath.c_str(), 0);
 	if (!status){
 		Log::Error() << Log::Resources << "Unable to load zip file \"" << archivePath << "\" (" << mz_zip_get_error_string(mz_zip_get_last_error(&zip_archive)) << ")." << std::endl;
 	}
 	
 	// Get and print information about each file in the archive.
-	for (unsigned int i = 0; i < (unsigned int)mz_zip_reader_get_num_files(&zip_archive); ++i){
+	for (unsigned int i = 0; i < static_cast<unsigned int>(mz_zip_reader_get_num_files(&zip_archive)); ++i){
 		mz_zip_archive_file_stat file_stat;
 		
 		if (!mz_zip_reader_file_stat(&zip_archive, i, &file_stat)){
@@ -61,7 +58,7 @@ void Resources::parseArchive(const std::string & archivePath){
 		const std::string filePath = std::string(file_stat.m_filename);
 		const std::string fileNameWithExt = filePath.substr(filePath.find_last_of("/\\") + 1);
 		// Filter empty files and system files.
-		if(fileNameWithExt.size() > 0 && fileNameWithExt.at(0) != '.' ){
+		if(!fileNameWithExt.empty() && fileNameWithExt.at(0) != '.' ){
 			if(_files.count(fileNameWithExt) == 0){
 				_files[fileNameWithExt] = archivePath + "/" + filePath;
 			} else {
@@ -91,7 +88,7 @@ void Resources::parseDirectory(const std::string & directoryPath){
 		} else if(file.is_dir){
 			// Extract subdirectory name, check that it isn't a special dir, and recursively parse it.
 			const std::string dirName = System::narrow(file.name);
-			if(dirName.size() > 0 && dirName[0] != '.'){
+			if(!dirName.empty() && dirName[0] != '.'){
 				parseDirectory(directoryPath + "/" + dirName);
 			}
 			
@@ -99,7 +96,7 @@ void Resources::parseDirectory(const std::string & directoryPath){
 			// Else, we have a regular file.
 			const std::string fileNameWithExt = System::narrow(file.name);
 			// Filter empty files and system files.
-			if(fileNameWithExt.size() > 0 && fileNameWithExt.at(0) != '.' ){
+			if(!fileNameWithExt.empty() && fileNameWithExt.at(0) != '.' ){
 				if(_files.count(fileNameWithExt) == 0){
 					// Store the file and its path.
 					_files[fileNameWithExt] = System::narrow(dir.path) + "/" + fileNameWithExt;
@@ -123,7 +120,7 @@ void Resources::parseDirectory(const std::string & directoryPath){
 
 // Image path utilities.
 
-const std::vector<std::string> Resources::getCubemapPaths(const std::string & name){
+std::vector<std::string> Resources::getCubemapPaths(const std::string & name){
 	const std::vector<std::string> names { name + "_px", name + "_nx", name + "_py", name + "_ny", name + "_pz", name + "_nz" };
 	std::vector<std::string> paths;
 	paths.reserve(6);
@@ -139,8 +136,8 @@ const std::vector<std::string> Resources::getCubemapPaths(const std::string & na
 	return paths;
 }
 
-const std::string Resources::getImagePath(const std::string & name){
-	std::string path = "";
+std::string Resources::getImagePath(const std::string & name){
+	std::string path;
 	// Check if the file exists with an image extension.
 	if(_files.count(name + ".png") > 0){
 		path = _files[name + ".png"];
@@ -194,8 +191,8 @@ char * Resources::getRawData(const std::string & path, size_t & size) {
 #endif
 	
 
-const std::string Resources::getString(const std::string & filename){
-	std::string path = "";
+std::string Resources::getString(const std::string & filename){
+	std::string path;
 	if(_files.count(filename) > 0){
 		path = _files[filename];
 	} else if(_files.count(filename + ".txt") > 0){
@@ -360,10 +357,9 @@ const Texture * Resources::getTexture(const std::string & name, const Descriptor
 		for(const auto & filePath : levelPaths){
 			texture.images.emplace_back();
 			Image & image = texture.images.back();
-			int ret = Image::loadImage(filePath, channels, flip, false, image);
+			const int ret = Image::loadImage(filePath, channels, flip, false, image);
 			if (ret != 0) {
 				Log::Error() << Log::Resources << "Unable to load the texture at path " << filePath << "." << std::endl;
-				continue;
 			}
 		}
 	}
@@ -389,7 +385,7 @@ const Texture * Resources::getTexture(const std::string & name, const Descriptor
 
 // Program/shaders methods.
 
-Program * Resources::getProgram(const std::string & name, const bool useGeometryShader){
+Program * Resources::getProgram(const std::string & name, bool useGeometryShader){
 	return getProgram(name, name, name, useGeometryShader ? name : "");
 }
 
@@ -442,7 +438,7 @@ void Resources::getFiles(const std::string & extension, std::map<std::string, st
 	files.clear();
 	for(const auto & file : _files){
 		const std::string & fileName = file.first;
-		const size_t lastPoint = fileName.find_last_of(".");
+		const size_t lastPoint = fileName.find_last_of('.');
 		if(lastPoint == std::string::npos){
 			//No extension, ext should be empty.
 			if(extension.empty()){
@@ -461,15 +457,15 @@ void Resources::getFiles(const std::string & extension, std::map<std::string, st
 // Static utilities methods.
 
 char * Resources::loadRawDataFromExternalFile(const std::string & path, size_t & size) {
-	char * rawContent;
+	
 	std::ifstream inputFile(System::widen(path), std::ios::binary|std::ios::ate);
 	if (inputFile.bad() || inputFile.fail()){
 		Log::Error() << Log::Resources << "Unable to load file at path \"" << path << "\"." << std::endl;
 		size = 0;
-		return NULL;
+		return nullptr;
 	}
 	const std::ifstream::pos_type fileSize = inputFile.tellg();
-	rawContent = new char[fileSize];
+	char * rawContent = new char[fileSize];
 	inputFile.seekg(0, std::ios::beg);
 	inputFile.read(&rawContent[0], fileSize);
 	inputFile.close();
@@ -492,7 +488,7 @@ std::string Resources::loadStringFromExternalFile(const std::string & path) {
 	return line;
 }
 
-void Resources::saveRawDataToExternalFile(const std::string & path, char * rawContent, const size_t size) {
+void Resources::saveRawDataToExternalFile(const std::string & path, char * rawContent, size_t size) {
 	std::ofstream outputFile(System::widen(path), std::ios::binary);
 	
 	if (!outputFile.is_open()){

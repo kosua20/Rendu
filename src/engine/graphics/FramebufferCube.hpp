@@ -20,6 +20,7 @@ public:
 	/** Setup the framebuffer (attachments, renderbuffer, depth buffer, textures IDs,...)
 	 \param side the width and height of each face of the framebuffer
 	 \param descriptor contains the precise format and filtering to use
+	 \param mode will the framebuffer be used for layered rendering or for per-face rendering
 	 \param depthBuffer should the framebuffer contain a depth buffer to properly handle 3D geometry
 	 */
 	FramebufferCube(unsigned int side, const Descriptor & descriptor, CubeMode mode, bool depthBuffer);

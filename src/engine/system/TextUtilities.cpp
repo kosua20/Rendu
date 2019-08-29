@@ -10,7 +10,7 @@ std::string TextUtilities::trim(const std::string & str, const std::string & del
 }
 
 std::string TextUtilities::removeExtension(std::string & str){
-	const std::string::size_type pos = str.find_last_of(".");
+	const std::string::size_type pos = str.find_last_of('.');
 	if(pos == std::string::npos){
 		return "";
 	}

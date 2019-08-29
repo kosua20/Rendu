@@ -28,7 +28,7 @@ public:
 	 \param textureId the GPU ID of the texture
 	 \param mode the output mode (color or distance)
 	 */
-	void process(const Texture * textureId, const Output mode);
+	void process(const Texture * textureId, Output mode);
 	
 	/** Cleanup internal resources. */
 	void clean() const;
@@ -42,7 +42,7 @@ public:
 	/** The GPU ID of the filter result.
 	 \return the ID of the result texture
 	 */
-	const Texture * textureId(){ return _final->textureId(); }
+	const Texture * textureId() const { return _final->textureId(); }
 	
 private:
 	

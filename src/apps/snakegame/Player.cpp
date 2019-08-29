@@ -80,7 +80,7 @@ bool Player::physics(double fullTime, const double frameTime) {
 	// Animate snake segments.
 	if(!_positions.empty()){
 		size_t id = 0;
-		float targetDistance = (id+1) * _radius * 2.0f;
+		float targetDistance = float(id+1) * _radius * 2.0f;
 		// Initialize with the segment between the head and the current segment.
 		glm::vec2 nextPoint = _path[_currentSample].pos;
 		glm::vec2 previousPoint = headPos;
@@ -110,13 +110,13 @@ bool Player::physics(double fullTime, const double frameTime) {
 				}
 				
 				++id;
-				targetDistance = (id+1) * _radius * 2.0f;
+				targetDistance = float(id+1) * _radius * 2.0f;
 			}
 			if(id >= _positions.size()){
 				break;
 			}
 			// Find the previous point.
-			int pid = (_currentSample) - int(sid);
+			int pid = int(_currentSample) - int(sid);
 			if(pid < 0){ pid += int(_numSamplesPath); }
 			previousPoint = _path[pid].pos;
 			newDist = _path[pid].dist;

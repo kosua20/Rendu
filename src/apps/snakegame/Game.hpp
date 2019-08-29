@@ -66,7 +66,7 @@ private:
 	 \param tag the action to perform
 	 \return the potential low-level action to perform (fullscreen, vsync,...)
 	 */
-	System::Action handleButton(const ButtonAction tag);
+	System::Action handleButton(ButtonAction tag);
 	
 	RenderingConfig & _config; ///< Reference to the shared game configuration.
 	std::unique_ptr<Player> _player; ///< The player state.

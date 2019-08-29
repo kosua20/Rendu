@@ -140,9 +140,6 @@ public:
 		Middle = GLFW_MOUSE_BUTTON_MIDDLE
 	};
 	
-	
-public:
-	
 	/**
 	 \name Input settings
 	 @{*/
@@ -228,20 +225,20 @@ public:
 	 Query if the window has been resized at this frame.
 	 \return true if the window was resized
 	 */
-	bool resized() { return _resized; };
+	bool resized() const { return _resized; };
 	
 	/**
 	 Query if the window has been minimized.
 	 \return true if the window is minimized
 	 */
-	bool minimized() { return _minimized; };
+	bool minimized() const { return _minimized; };
 	
 	/**
 	 Query the current window size.
 	 \return the size of the window, in pixels
 	 \todo Probably return an ivec2.
 	 */
-	glm::vec2 size() { return glm::vec2(_width, _height); };
+	glm::vec2 size() const { return glm::vec2(_width, _height); };
 	
 	/**
 	 Query if a controller (joystick) is available.
@@ -266,7 +263,7 @@ public:
 	 \return a reference to the current controller
 	 \warning Make sure a controller is available before calling this method.
 	 */
-	Controller * controller(){ return _controllers[_activeController].get(); };
+	Controller * controller() const { return _controllers[_activeController].get(); };
 	
 	/**
 	 Query if a given key is held at this frame.

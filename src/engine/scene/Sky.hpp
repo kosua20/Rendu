@@ -1,6 +1,5 @@
 #pragma once
 
-#include "scene/Animation.hpp"
 #include "scene/Object.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "system/Codable.hpp"
@@ -25,7 +24,7 @@ public:
 	 \param fullTime the time since the launch of the application
 	 \param frameTime the time elapsed since the last frame
 	 */
-	void update(double fullTime, double frameTime);
+	void update(double fullTime, double frameTime) override;
 	
 
 	/** Setup a sky environment parameters from a list of key-value tuples. The following keywords will be searched for:
@@ -38,7 +37,7 @@ public:
 	 \param params the parameters tuple
 	 \param mode the storage mode (CPU, GPU, both)
 	 */
-	void decode(const KeyValues& params, const Storage mode);
+	void decode(const KeyValues& params, Storage mode) override;
 	
 	/** Reference to the sun direction.
 	 \return the normalized sun direction

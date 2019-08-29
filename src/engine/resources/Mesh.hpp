@@ -31,8 +31,6 @@ public:
 	BoundingBox bbox; ///< The mesh bounding box in model space.
 	std::unique_ptr<GPUMesh> gpu; ///< The GPU buffers infos (optional).
 	
-public:
-	
 	/// \brief The mesh loading preprocessing mode.
 	enum class Load {
 		Expanded, ///< Duplicate vertices for every face.

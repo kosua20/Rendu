@@ -2,15 +2,14 @@
 #include "graphics/ScreenQuad.hpp"
 #include "graphics/GLUtilities.hpp"
 
-ConvolutionPyramid::ConvolutionPyramid(unsigned int width, unsigned int height, unsigned int inoutPadding) {
+ConvolutionPyramid::ConvolutionPyramid(unsigned int width, unsigned int height, unsigned int inoutPadding) : 
+	_padding(int(inoutPadding)) {
 	
 	// Convolution pyramids filters and scaling operations.
 	_downscale = Resources::manager().getProgram2D("downscale");
 	_upscale = Resources::manager().getProgram2D("upscale");
 	_filter = Resources::manager().getProgram2D("filter");
 	_padder = Resources::manager().getProgram2D("passthrough-shift");
-	
-	_padding = inoutPadding;
 	
 	_h1[0] = _h1[1] = _h1[2] = _h1[3] = _h1[4] = 0.0f;
 	_h2 = 0.0f;
@@ -31,7 +30,7 @@ ConvolutionPyramid::ConvolutionPyramid(unsigned int width, unsigned int height, 
 	int levelWidth = _resolution[0] + 2 * _size;
 	int levelHeight = _resolution[1] + 2 * _size;
 	// Generate framebuffer pyramids.
-	for(size_t i = 0; i < (size_t)depth; ++i){
+	for(size_t i = 0; i < size_t(depth); ++i){
 		_levelsIn[i] = std::unique_ptr<Framebuffer>(new Framebuffer(levelWidth, levelHeight, desc, false));
 		_levelsOut[i] = std::unique_ptr<Framebuffer>(new Framebuffer(levelWidth, levelHeight, desc, false));
 		// Downscaling and padding.
@@ -120,7 +119,7 @@ void ConvolutionPyramid::clean() const {
 	_shifted->clean();
 }
 
-void ConvolutionPyramid::setFilters(const float h1[5], const float h2, const float g[3]){
+void ConvolutionPyramid::setFilters(const float h1[5], float h2, const float g[3]){
 	_h1[0] = h1[0]; _h1[1] = h1[1]; _h1[2] = h1[2]; _h1[3] = h1[3]; _h1[4] = h1[4];
 	_h2 = h2;
 	_g[0] = g[0]; _g[1] = g[1]; _g[2] = g[2];

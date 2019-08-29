@@ -2,14 +2,15 @@
 #include "input/Input.hpp"
 #include "system/System.hpp"
 #include "graphics/GLUtilities.hpp"
+#include "graphics/ScreenQuad.hpp"
 #include "resources/Texture.hpp"
 
 
 BVHRenderer::BVHRenderer(RenderingConfig & config) : Renderer(config) {	
 	// Setup camera parameters.
 	_userCamera.ratio(config.screenResolution[0]/config.screenResolution[1]);
-	const int renderWidth = (int)_renderResolution[0];
-	const int renderHeight = (int)_renderResolution[1];
+	const int renderWidth = int(_renderResolution[0]);
+	const int renderHeight = int(_renderResolution[1]);
 	
 	// GL setup
 	_sceneFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, Layout::RGB8, true));
@@ -29,7 +30,7 @@ BVHRenderer::BVHRenderer(RenderingConfig & config) : Renderer(config) {
 	GLUtilities::setupTexture(_renderTex, { Layout::SRGB8, Filter::LINEAR, Wrap::CLAMP});
 }
 
-void BVHRenderer::setScene(std::shared_ptr<Scene> scene){
+void BVHRenderer::setScene(const std::shared_ptr<Scene> & scene){
 	_scene = scene;
 	if(!scene){
 		return;
@@ -155,9 +156,9 @@ void BVHRenderer::update(){
 		if(ImGui::InputInt("Depth", &_depth, 1, 2)){
 			_depth = std::max(1, _depth);
 		}
-		if(ImGui::InputScalar("Output height", ImGuiDataType_U32, (void*)(&_renderTex.height))){
-			_renderTex.height = std::max((unsigned int)1, _renderTex.height);
-			_renderTex.width = (unsigned int)std::round(_renderResolution[0]/_renderResolution[1] * _renderTex.height);
+		if(ImGui::InputScalar("Output height", ImGuiDataType_U32, static_cast<void*>(&_renderTex.height))){
+			_renderTex.height = std::max(uint(1), _renderTex.height);
+			_renderTex.width = uint(std::round(_renderResolution[0] / _renderResolution[1] * float(_renderTex.height)));
 		}
 		ImGui::PopItemWidth();
 		
@@ -224,7 +225,7 @@ void BVHRenderer::update(){
 		// Camera settings.
 		if(ImGui::CollapsingHeader("Camera settings")){
 			ImGui::PushItemWidth(100);
-			ImGui::Combo("Camera mode", (int*)(&_userCamera.mode()), "FPS\0Turntable\0Joystick\0\0", 3);
+			ImGui::Combo("Camera mode", reinterpret_cast<int*>(&_userCamera.mode()), "FPS\0Turntable\0Joystick\0\0", 3);
 			ImGui::InputFloat("Camera speed", &_userCamera.speed(), 0.1f, 1.0f);
 			if(ImGui::InputFloat("Camera FOV", &_cameraFOV, 1.0f, 10.0f)){
 				_userCamera.fov(_cameraFOV*float(M_PI)/180.0f);
@@ -285,7 +286,7 @@ void BVHRenderer::resize(unsigned int width, unsigned int height){
 	// Resize the framebuffers.
 	_sceneFramebuffer->resize(_renderResolution);
 	// Udpate the image resolution, using the new aspect ratio.
-	_renderTex.width = (unsigned int)std::round(_renderResolution[0]/_renderResolution[1] * _renderTex.height);
+	_renderTex.width = uint(std::round(_renderResolution[0] / _renderResolution[1] * float(_renderTex.height)));
 	checkGLError();
 }
 

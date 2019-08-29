@@ -60,9 +60,9 @@ namespace SceneExport {
 				Image::saveLDRImage(outputColorPath, colorMap, false);
 			} else {
 				// Combine both.
-				Image combinedImage(colorMap.width, colorMap.height, 4);
-				for(unsigned int y = 0; y < colorMap.height; ++y){
-					for(unsigned int x = 0; x < colorMap.width; ++x){
+				Image combinedImage(int(colorMap.width), int(colorMap.height), 4);
+				for(int y = 0; y < int(combinedImage.height); ++y){
+					for(int x = 0; x < int(combinedImage.width); ++x){
 						combinedImage.rgba(x, y) = glm::vec4(colorMap.rgb(x,y), maskMap.r(x,y));
 					}
 				}
@@ -118,7 +118,7 @@ namespace SceneExport {
 		//		- metalness map
 		//		- none
 		
-		if((hasTextureRough || hasTextureSpec)){
+		if(hasTextureRough || hasTextureSpec){
 			
 			// First, build the roughness map from existing roughness map or specular map.
 			Image roughImage;

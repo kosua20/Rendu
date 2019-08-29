@@ -1,5 +1,4 @@
 #include "input/Input.hpp"
-#include "input/InputCallbacks.hpp"
 #include "input/ControllableCamera.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "graphics/ScreenQuad.hpp"
@@ -55,10 +54,10 @@ int main(int argc, char** argv) {
 	// Camera.
 	ControllableCamera camera;
 	camera.projection(config.screenResolution[0]/config.screenResolution[1], 1.34f, 0.1f, 100.0f);
-	const glm::vec2 renderResolution = (config.internalVerticalResolution/config.screenResolution[1]) * config.screenResolution;
+	const glm::vec2 renderResolution = (float(config.internalVerticalResolution)/config.screenResolution[1]) * config.screenResolution;
 	
 	// Framebuffer to store the rendered atmosphere result before tonemapping and upscaling to the window size.
-	std::unique_ptr<Framebuffer> atmosphereFramebuffer(new Framebuffer((unsigned int)(renderResolution[0]), (unsigned int)(renderResolution[1]), Layout::RGB32F, false));
+	std::unique_ptr<Framebuffer> atmosphereFramebuffer(new Framebuffer(uint(renderResolution[0]), uint(renderResolution[1]), Layout::RGB32F, false));
 	const Texture * precomputedScattering = Resources::manager().getTexture("scattering-precomputed", { Layout::RGB32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
 	
 	// Atmosphere screen quad.
@@ -86,7 +85,7 @@ int main(int argc, char** argv) {
 			glfwSetWindowShouldClose(window, GL_TRUE);
 		}
 		// Start a new frame for the interface.
-		System::GUI::beginFrame();
+		System::Gui::beginFrame();
 		// Reload resources.
 		if(Input::manager().triggered(Input::KeyP)){
 			Resources::manager().reload();
@@ -113,7 +112,7 @@ int main(int argc, char** argv) {
 		remainingTime += frameTime;
 		// Instead of bounding at dt, we lower our requirement (1 order of magnitude).
 		while(remainingTime > 0.2*dt){
-			double deltaTime = fmin(remainingTime, dt);
+			double deltaTime = std::min(remainingTime, dt);
 			// Update physics and camera.
 			camera.physics(deltaTime);
 			// Update timers.
@@ -157,7 +156,7 @@ int main(int argc, char** argv) {
 			lightDirection = glm::normalize(lightDirection);
 		}
 		// Then render the interface.
-		System::GUI::endFrame();
+		System::Gui::endFrame();
 		//Display the result for the current rendering loop.
 		glfwSwapBuffers(window);
 		
@@ -167,7 +166,7 @@ int main(int argc, char** argv) {
 	atmosphereFramebuffer->clean();
 	
 	// Clean the interface.
-	System::GUI::clean();
+	System::Gui::clean();
 	
 	Resources::manager().clean();
 	// Close GL context and any other GLFW resources.

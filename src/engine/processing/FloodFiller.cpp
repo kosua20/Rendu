@@ -16,7 +16,7 @@ FloodFiller::FloodFiller(unsigned int width, unsigned int height) {
 	_compositeColor = Resources::manager().getProgram2D("color-seeds");
 }
 
-void FloodFiller::process(const Texture * textureId, const Output mode) {
+void FloodFiller::process(const Texture * textureId, Output mode) {
 	
 	extractAndPropagate(textureId);
 	

@@ -6,19 +6,15 @@
 Raycaster::Ray::Ray(const glm::vec3 & origin, const glm::vec3 & direction) : pos(origin), dir(glm::normalize(direction)), invdir(1.0f/glm::normalize(direction)){
 }
 
-Raycaster::RayHit::RayHit() : hit(false), dist(std::numeric_limits<float>::max()), u(0.0f), v(0.0f), localId(0), meshId(0), internalId(0) {
+Raycaster::RayHit::RayHit() : hit(false), dist(std::numeric_limits<float>::max()), u(0.0f), v(0.0f), w(0.0f), localId(0), meshId(0), internalId(0) {
 }
 
 Raycaster::RayHit::RayHit(float distance, float uu, float vv, unsigned long lid, unsigned long mid) :
 	hit(true), dist(distance), u(uu), v(vv), w(1.0f - uu - vv), localId(lid), meshId(mid), internalId(0) {
 }
 
-Raycaster::Raycaster(){
-	
-}
-
 void Raycaster::addMesh(const Mesh & mesh, const glm::mat4 & model){
-	const unsigned long indexOffset = (unsigned long)(_vertices.size());
+	const unsigned long indexOffset = static_cast<unsigned long>(_vertices.size());
 	
 	// Start by copying all vertices.
 	const size_t startIndex = _vertices.size();
@@ -39,7 +35,7 @@ void Raycaster::addMesh(const Mesh & mesh, const glm::mat4 & model){
 		triInfos.v0 = indexOffset + mesh.indices[localId + 0];
 		triInfos.v1 = indexOffset + mesh.indices[localId + 1];
 		triInfos.v2 = indexOffset + mesh.indices[localId + 2];
-		triInfos.localId = (unsigned long)(localId);
+		triInfos.localId = static_cast<unsigned long>(localId);
 		triInfos.meshId = _meshCount;
 		triInfos.box = BoundingBox(_vertices[triInfos.v0], _vertices[triInfos.v1], _vertices[triInfos.v2]);
 		_triangles.push_back(triInfos);
@@ -212,7 +208,6 @@ bool Raycaster::intersectsAny(const glm::vec3 & origin, const glm::vec3 & direct
 		
 		// If the node is a leaf, test all included triangles.
 		if(node.leaf){
-			RayHit finalHit;
 			for(size_t tid = 0; tid < node.right; ++tid){
 				const auto & tri = _triangles[node.left + tid];
 				if(intersects(ray, tri, mini, maxi).hit){
@@ -239,7 +234,7 @@ bool Raycaster::visible(const glm::vec3 & p0, const glm::vec3 & p1) const {
 	return !intersectsAny(p0, direction, 0.0001f, maxi);
 }
 
-const Raycaster::RayHit Raycaster::intersects(const Raycaster::Ray & ray, const TriangleInfos & tri, float mini, float maxi) const {
+Raycaster::RayHit Raycaster::intersects(const Raycaster::Ray & ray, const TriangleInfos & tri, float mini, float maxi) const {
 	// Implement Moller-Trumbore intersection test.
 	const glm::vec3 & v0 = _vertices[tri.v0];
 	const glm::vec3 v01 = _vertices[tri.v1] - v0;

@@ -1,23 +1,8 @@
 #include "scene/lights/SpotLight.hpp"
 #include "graphics/GLUtilities.hpp"
 
-
-SpotLight::SpotLight() : Light() {
-	_innerHalfAngle = float(M_PI)/4.0f;
-	_outerHalfAngle = float(M_PI)/2.0f;
-	_radius = 1.0f;
-	
-	_lightPosition = glm::vec3(0.0f);
-	_lightDirection = glm::vec3(1.0f, 0.0f, 0.0f);
-}
-
-SpotLight::SpotLight(const glm::vec3& worldPosition, const glm::vec3& worldDirection, const glm::vec3& color, const float innerAngle, const float outerAngle, const float radius) : Light(color) {
-	
-	_innerHalfAngle = 0.5f*innerAngle;
-	_outerHalfAngle = 0.5f*outerAngle;
-	_radius = radius;
-	_lightPosition = worldPosition;
-	_lightDirection = glm::normalize(worldDirection);
+SpotLight::SpotLight(const glm::vec3& worldPosition, const glm::vec3& worldDirection, const glm::vec3& color, float innerAngle, float outerAngle, float radius) : Light(color),
+	_lightDirection(glm::normalize(worldDirection)), _lightPosition(worldPosition), _innerHalfAngle(0.5f*innerAngle), _outerHalfAngle(0.5f*outerAngle), _radius(radius) {
 }
 
 
@@ -146,8 +131,8 @@ void SpotLight::setScene(const BoundingBox & sceneBox){
 	_viewMatrix = glm::lookAt(_lightPosition, _lightPosition+_lightDirection, glm::vec3(0.0f,1.0f,0.0f));
 	
 	// Compute the projection matrix, automatically finding the near and far.
-	float near = 0.01f;
-	float far = 100.0f;
+	float near;
+	float far;
 	if(_sceneBox.contains(_lightPosition)){
 		const float size = glm::length(_sceneBox.getSize());
 		near = 0.01f * size;
@@ -187,7 +172,7 @@ bool SpotLight::visible(const glm::vec3 & position, const Raycaster & raycaster,
 	}
 	// Compute the spotlight attenuation factor based on our angle compared to the inner and outer spotlight angles.
 	const float innerCos = std::cos(_innerHalfAngle);
-	float angleAttenuation = glm::clamp((currentCos - outerCos)/(innerCos - outerCos), 0.0f, 1.0f);
+	const float angleAttenuation = glm::clamp((currentCos - outerCos)/(innerCos - outerCos), 0.0f, 1.0f);
 	
 	// Attenuation with increasing distance to the light.
 	const float radiusRatio = localRadius / _radius;
