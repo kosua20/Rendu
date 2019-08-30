@@ -95,7 +95,19 @@ public:
 	
 	/** Destructor. */
 	virtual ~Light() = default;
-	
+
+	/** Copy constructor.*/
+	Light(const Light &) = default;
+
+	/** Copy assignment. */
+	Light& operator= (const Light&) = default;
+
+	/** Move constructor.*/
+	Light(Light &&) = default;
+
+	/** Move assignment. */
+	Light& operator= (Light&&) = default;
+
 protected:
 	
 	/** Setup a light common parameters from a list of key-value tuples. The following keywords will be searched for:

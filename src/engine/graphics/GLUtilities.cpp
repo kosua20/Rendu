@@ -77,12 +77,12 @@ int _checkGLError(const char *file, int line, const std::string & infos){
 	const GLenum glErr = glGetError();
 	if (glErr != GL_NO_ERROR){
 		const std::string filePath(file);
-		size_t pos = (std::min)(filePath.find_last_of("/"), filePath.find_last_of("\\"));
+		size_t pos = std::min(filePath.find_last_of('/'), filePath.find_last_of('\\'));
 		if(pos == std::string::npos){
 			pos = 0;
 		}
 		Log::Error() << Log::OpenGL << "Error " << getGLErrorString(glErr) << " in " << filePath.substr(pos+1) << " (" << line << ").";
-		if(infos.size() > 0){
+		if(!infos.empty()){
 			Log::Error() << " Infos: " << infos;
 		}
 		Log::Error() << std::endl;
@@ -147,8 +147,8 @@ GLuint GLUtilities::loadShader(const std::string & prog, GLuint type, std::map<s
 		// Detect sampler with no bindings.
 		const bool isAUniformSamplerWithNoBinding = samplerPos != std::string::npos && uniformPos != std::string::npos && bindingPos == std::string::npos;
 		if(isAUniformSamplerWithNoBinding){
-			const std::string::size_type endPosName  = line.find_first_of(";")-1;
-			const std::string::size_type startPosName  = line.find_last_of(" ", endPosName)+1;
+			const std::string::size_type endPosName  = line.find_first_of(';')-1;
+			const std::string::size_type startPosName  = line.find_last_of(' ', endPosName)+1;
 			const std::string name = line.substr(startPosName, endPosName - startPosName + 1);
 			Log::Warning() << Log::OpenGL << "Missing binding info for sampler \"" << name << "\"." << std::endl;
 			outputLines.push_back(line);
@@ -166,14 +166,15 @@ GLuint GLUtilities::loadShader(const std::string & prog, GLuint type, std::map<s
 		const std::string::size_type lastSlotPos = line.find_first_not_of("0123456789", firstSlotPos)-1;
 		const int slot = std::stoi(line.substr(firstSlotPos, lastSlotPos - firstSlotPos + 1));
 			
-		const std::string::size_type endPosName  = line.find_first_of(";", lastSlotPos)-1;
-		const std::string::size_type startPosName  = line.find_last_of(" ", endPosName)+1;
+		const std::string::size_type endPosName  = line.find_first_of(';', lastSlotPos)-1;
+		const std::string::size_type startPosName  = line.find_last_of(' ', endPosName)+1;
 		const std::string name = line.substr(startPosName, endPosName - startPosName + 1);
 		
-		const std::string::size_type endSamplerPos = line.find_first_of(" ", samplerPos) - 1;
-		const std::string::size_type startSamplerPos = line.find_last_of(" ", samplerPos) + 1;
+		const std::string::size_type endSamplerPos = line.find_first_of(' ', samplerPos) - 1;
+		const std::string::size_type startSamplerPos = line.find_last_of(' ', samplerPos) + 1;
 		const std::string samplerType = line.substr(startSamplerPos, endSamplerPos - startSamplerPos + 1);
-		const std::string outputLine = "uniform " + samplerType + " " + name + ";";
+		std::string outputLine = "uniform " + samplerType + " ";
+		outputLine += name + ";";
 		outputLines.push_back(outputLine);
 		
 		if(bindings.count(name) > 0 && bindings[name] != slot){
@@ -343,7 +344,7 @@ void GLUtilities::setupTexture(Texture & texture, const Descriptor & descriptor)
 	
 	// Allocate.
 	GLUtilities::allocateTexture(texture);
-	return;
+	
 }
 
 void GLUtilities::allocateTexture(const Texture & texture){

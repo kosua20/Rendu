@@ -253,7 +253,8 @@ namespace System {
 			outPath = std::string(outPathRaw);
 			free(outPathRaw);
 			return true;
-		} else if (result == NFD_CANCEL) {
+		} 
+		if (result == NFD_CANCEL) {
 			// Cancelled by user, nothing to do.
 		} else {
 			// Real error.

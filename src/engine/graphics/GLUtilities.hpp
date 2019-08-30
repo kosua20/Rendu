@@ -121,7 +121,7 @@ public:
 	
 	static void sync();
 	
-	static void deviceInfos(std::string & vendor, std::string & renderer, std::string & version, std::string & shaderVersionk);
+	static void deviceInfos(std::string & vendor, std::string & renderer, std::string & version, std::string & shaderVersion);
 	
 	static std::vector<std::string> deviceExtensions();
 	

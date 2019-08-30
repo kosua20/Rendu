@@ -1,9 +1,5 @@
 #include "input/controller/RawController.hpp"
 
-RawController::RawController() : Controller() {
-	
-} 
-
 bool RawController::activate(int id){
 	reset();
 	

@@ -151,7 +151,7 @@ System::Action Game::update(){
 					finalAction = result;
 				}
 				// Update the display state.
-				toggle.state = (toggle.state == MenuButton::State::ON ? MenuButton::State::OFF : MenuButton::State::ON);
+				toggle.state = toggle.state == MenuButton::State::ON ? MenuButton::State::OFF : MenuButton::State::ON;
 			}
 		}
 	}

@@ -9,16 +9,16 @@ class BoundingSphere {
 public:
 
 	/** Empty sphere constructor. */
-	BoundingSphere();
-	
+	BoundingSphere() = default;
+
 	/** Constructor
 	 \param aCenter the center of the sphere
 	 \param aRadius the radius of the sphere
 	 */
 	BoundingSphere(const glm::vec3 & aCenter, float aRadius);
 
-	glm::vec3 center; ///< The sphere center.
-	float radius; ///< The sphere radius.
+	glm::vec3 center = glm::vec3(0.0f); ///< The sphere center.
+	float radius = 0.0f; ///< The sphere radius.
 
 };
 
@@ -28,9 +28,9 @@ public:
  */
 class BoundingBox {
 public:
-	
+
 	/** Empty box constructor. */
-	BoundingBox();
+	BoundingBox() = default;
 	
 	/** Triangle-based box constructor.
 	 \param v0 first triangle vertex
@@ -82,8 +82,7 @@ public:
 	 */
 	bool contains(const glm::vec3 & point) const;
 
-	glm::vec3 minis; ///< Lower-back-left corner of the box.
-	glm::vec3 maxis; ///< Higher-top-right corner of the box.
-
+	glm::vec3 minis = glm::vec3(std::numeric_limits<float>::max()); ///< Lower-back-left corner of the box.
+	glm::vec3 maxis = glm::vec3(std::numeric_limits<float>::lowest()); ///< Higher-top-right corner of the box.
 };
 

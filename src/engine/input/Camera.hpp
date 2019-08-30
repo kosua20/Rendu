@@ -126,7 +126,20 @@ public:
 	 */
 	std::string encode() const;
 
+	/** Destructor. */
 	virtual ~Camera() = default;
+
+	/** Copy constructor.*/
+	Camera(const Camera &) = default;
+
+	/** Copy assignment. */
+	Camera& operator= (const Camera&) = default;
+
+	/** Move constructor.*/
+	Camera(Camera &&) = default;
+
+	/** Move assignment. */
+	Camera& operator= (Camera&&) = default;
 
 protected:
 	
@@ -136,18 +149,18 @@ protected:
 	/// Update the view matrix using the camera position and orientation.
 	void updateView();
 	
-	glm::mat4 _view; ///< The view matrix
-	glm::mat4 _projection; ///< The projection matrix
+	glm::mat4 _view = glm::mat4(1.0f); ///< The view matrix
+	glm::mat4 _projection = glm::mat4(1.0f); ///< The projection matrix
 	
 	// Vectors defining the view frame.
-	glm::vec3 _eye; ///< The camera position
-	glm::vec3 _center; ///< The camera center (look-at point)
-	glm::vec3 _up; ///< The camera up vector
-	glm::vec3 _right; ///< The camera right vector
+	glm::vec3 _eye = glm::vec3(0.0, 0.0, 1.0); ///< The camera position
+	glm::vec3 _center = glm::vec3(0.0, 0.0, 0.0); ///< The camera center (look-at point)
+	glm::vec3 _up = glm::vec3(0.0, 1.0, 0.0); ///< The camera up vector
+	glm::vec3 _right = glm::vec3(1.0, 0.0, 0.0); ///< The camera right vector
 	
-	glm::vec2 _clippingPlanes;  ///< The near and far plane distances.
+	glm::vec2 _clippingPlanes = glm::vec2(0.01f, 100.0f);  ///< The near and far plane distances.
 	
-	float _fov; ///< The vertical field of view, in radians.
-	float _ratio; ///< The aspect ratio
-	
+	float _fov = 1.3f; ///< The vertical field of view, in radians.
+	float _ratio = 1.0f; ///< The aspect ratio
+
 };

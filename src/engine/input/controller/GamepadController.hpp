@@ -6,12 +6,9 @@
  \brief Represents a controller with a predefined mapping provided by GLFW/SDL.
  \ingroup Input
  */
-class GamepadController : public Controller {
+class GamepadController final : public Controller {
 
 public:
-	
-	/// Constructor
-	GamepadController();
 	
 	/**
 	 \copydoc Controller::activate

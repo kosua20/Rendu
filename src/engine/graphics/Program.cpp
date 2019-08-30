@@ -37,7 +37,7 @@ Program::Program(const std::string & vertexName, const std::string & fragmentNam
 		glGetActiveUniform(_id, i, size, &ulength, &usize, &utype, &uname[0]);
 		const std::string name(&uname[0]);
 		// Skip empty or default uniforms (starting with 'gl_').
-		if(usize == 0 || name.size() == 0 || (name.size() > 3 && name.substr(0,3) == "gl_")){
+		if(usize == 0 || name.empty() || (name.size() > 3 && name.substr(0,3) == "gl_")){
 			continue;
 		}
 		// Register uniform using its name.
@@ -46,7 +46,7 @@ Program::Program(const std::string & vertexName, const std::string & fragmentNam
 		// If the size of the uniform is > 1, we have an array.
 		if(usize > 1){
 			// Extract the array name from the 'name[0]' string.
-			const std::string subname = name.substr(0, name.find_first_of("["));
+			const std::string subname = name.substr(0, name.find_first_of('['));
 			// Get the location of the other array elements.
 			for(GLsizei j = 1; j < usize; ++j){
 				const std::string vname = subname + "[" + std::to_string(j) + "]";

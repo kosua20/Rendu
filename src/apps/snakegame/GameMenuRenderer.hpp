@@ -8,7 +8,7 @@
  \brief Renders a game menu.
  \ingroup SnakeGame
  */
-class GameMenuRenderer: public Renderer {
+class GameMenuRenderer final : public Renderer {
 public:
 	
 	/** Constructor.

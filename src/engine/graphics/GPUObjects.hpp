@@ -160,7 +160,7 @@ public:
 	
 	void setFiltering(Filter filtering);
 	
-	const Descriptor & descriptor() const { return _descriptor; };
+	const Descriptor & descriptor() const { return _descriptor; }
 	
 	// Cached GPU settings.
 	const GLenum target; ///< Texture target.

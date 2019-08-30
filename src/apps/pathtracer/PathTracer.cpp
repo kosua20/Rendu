@@ -48,8 +48,8 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 	const auto start = std::chrono::steady_clock::now();
 	
 	// Parallelize on each row of the image.
-	System::forParallel(0, render.height, [&render, samples, stratesCount, &stratesSize, &corner, &dx, &dy, &camera, depth, this](size_t y){
-		for(size_t x = 0; x < render.width; ++x){
+	System::forParallel(0, size_t(render.height), [&render, samples, stratesCount, &stratesSize, &corner, &dx, &dy, &camera, depth, this](size_t y){
+		for(size_t x = 0; x < size_t(render.width); ++x){
 			for(size_t sid = 0; sid < samples; ++sid){
 				// Find the grid location.
 				const int sidy = int(sid) / stratesCount.x;
@@ -107,7 +107,7 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 					glm::vec3 illumination(0.0f);
 					
 					// Fetch geometry infos...
-					const Mesh & mesh = *(_scene->objects[hit.meshId].mesh());
+					const Mesh & mesh = *_scene->objects[hit.meshId].mesh();
 					const glm::vec3 p = rayPos + hit.dist * rayDir;
 					const glm::vec3 n = Raycaster::interpolateNormal(hit, mesh);
 					const glm::vec2 uv = Raycaster::interpolateUV(hit, mesh);
@@ -155,8 +155,8 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 	});
 	
 	// Normalize and gamma correction.
-	System::forParallel(0, render.height, [&render, &samples](size_t y){
-		for(size_t x = 0; x < render.width; ++x){
+	System::forParallel(0, size_t(render.height), [&render, &samples](size_t y){
+		for(size_t x = 0; x < size_t(render.width); ++x){
 			const glm::vec3 color = render.rgb(int(x),int(y)) / float(samples);
 			render.rgb(int(x),int(y)) = glm::pow(color, glm::vec3(1.0f/2.2f));
 		}
@@ -164,6 +164,6 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 	
 	// Display duration.
 	const auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start);
-	Log::Info() << "[PathTracer] Rendering took " << (duration.count()/1000.0f) << "s at " << render.width << "x" << render.height << "." << std::endl;
+	Log::Info() << "[PathTracer] Rendering took " << duration.count()/1000.0f << "s at " << render.width << "x" << render.height << "." << std::endl;
 }
 

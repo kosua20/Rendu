@@ -138,7 +138,7 @@ int preprocess(int argc, char** argv) {
 			}
 			
 			// Compute associated attenuation.
-			const glm::vec3 secondaryAttenuation = exp(-(kMie * (mieSecondDist) + kRayleigh * (rayleighSecondDist)));
+			const glm::vec3 secondaryAttenuation = exp(-(kMie * mieSecondDist + kRayleigh * rayleighSecondDist));
 			const size_t pixelPos = config.resolution*y+x;
 			transmittanceTable.pixels[3*pixelPos+0] = secondaryAttenuation[0];
 			transmittanceTable.pixels[3*pixelPos+1] = secondaryAttenuation[1];

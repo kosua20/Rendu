@@ -36,9 +36,21 @@ public:
 	 */
 	virtual void resize(unsigned int width, unsigned int height) = 0;
 	
-	/// Destructor
+	/** Destructor */
 	virtual ~Renderer() = default;
-	
+
+	/** Copy constructor.*/
+	Renderer(const Renderer &) = default;
+
+	/** Copy assignment. */
+	Renderer& operator= (const Renderer&) = delete;
+
+	/** Move constructor.*/
+	Renderer(Renderer &&) = default;
+
+	/** Move assignment. */
+	Renderer& operator= (Renderer&&) = delete;
+
 protected:
 	
 	/** Update the internal rendering resolution.
@@ -48,7 +60,7 @@ protected:
 	void updateResolution(unsigned int width, unsigned int height);
 	
 	RenderingConfig & _config; ///< The current configuration.
-	glm::vec2 _renderResolution; ///< The internal rendering resolution.
+	glm::vec2 _renderResolution = glm::vec2(0.0f); ///< The internal rendering resolution.
 	
 	
 };

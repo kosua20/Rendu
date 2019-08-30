@@ -147,7 +147,7 @@ namespace CompositeObj {
 				TextUtilities::replace(tokens[1], ":", "-");
 				const std::string materialName = tokens[1];
 				// A material can be:
-				if(!objectMatUses.empty() && (faceNumber == objectMatUses.back().index)){
+				if(!objectMatUses.empty() && faceNumber == objectMatUses.back().index){
 					// - pushed just after an object
 					// In that case, replace the material of the last object.
 					objectMatUses.back().materialName = materialName;
@@ -360,7 +360,7 @@ namespace CompositeObj {
 			auto& object = objMatUses[j];
 			objects.emplace_back(object.objectName);
 			objects.back().material = object.materialName;
-			const size_t upperBound = (j == objMatUses.size() - 1) ? rawGeom.faces.size() : objMatUses[j+1].index;
+			const size_t upperBound = j == objMatUses.size() - 1 ? rawGeom.faces.size() : objMatUses[j+1].index;
 			populateMesh(rawGeom, object.index, upperBound, objects.back().mesh);
 		}
 		// We are done with the raw geometry.

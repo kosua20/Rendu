@@ -11,10 +11,6 @@ ConvolutionPyramid::ConvolutionPyramid(unsigned int width, unsigned int height, 
 	_filter = Resources::manager().getProgram2D("filter");
 	_padder = Resources::manager().getProgram2D("passthrough-shift");
 	
-	_h1[0] = _h1[1] = _h1[2] = _h1[3] = _h1[4] = 0.0f;
-	_h2 = 0.0f;
-	_g[0] = _g[1] = _g[2] = 0.0f;
-	
 	// Pre and post process framebuffers.
 	const Descriptor desc = { Layout::RGBA32F, Filter::NEAREST_NEAREST, Wrap::CLAMP};
 	// Output is as the basic required size.
@@ -47,7 +43,7 @@ void ConvolutionPyramid::process(const Texture * textureId) {
 	// Pad by the size of the filter.
 	_levelsIn[0]->bind();
 	// Shift the viewport and fill the padded region with 0s.
-	GLUtilities::setViewport(_size, _size, _levelsIn[0]->width()-2*_size, _levelsIn[0]->height()-2*_size);
+	GLUtilities::setViewport(_size, _size, int(_levelsIn[0]->width())-2*_size, int(_levelsIn[0]->height())-2*_size);
 	GLUtilities::clearColor(glm::vec4(0.0f));
 	// Transfer the boundary content.
 	_padder->use();
@@ -66,7 +62,7 @@ void ConvolutionPyramid::process(const Texture * textureId) {
 		_levelsIn[i]->bind();
 		// Shift the viewport and fill the padded region with 0s.
 		GLUtilities::clearColor(glm::vec4(0.0f));
-		GLUtilities::setViewport(_size, _size, _levelsIn[i]->width() - 2*_size, _levelsIn[i]->height()-2*_size);
+		GLUtilities::setViewport(_size, _size, int(_levelsIn[i]->width()) - 2*_size, int(_levelsIn[i]->height())-2*_size);
 		// Filter and downscale.
 		ScreenQuad::draw(_levelsIn[i-1]->textureId());
 		_levelsIn[i]->unbind();

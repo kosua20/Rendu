@@ -79,8 +79,20 @@ public:
 	std::string guid() const { return _name; }
 	
 	/// Destructor.
-	virtual ~Controller();
-	
+	virtual ~Controller() = default;
+
+	/** Copy constructor.*/
+	Controller(const Controller &) = default;
+
+	/** Copy assignment. */
+	Controller& operator= (const Controller&) = default;
+
+	/** Move constructor.*/
+	Controller(Controller &&) = default;
+
+	/** Move assignment. */
+	Controller& operator= (Controller&&) = default;
+
 	/**
 	 Save a configuration to a file on disk.
 	 \param outputPath the file to write the configuration to

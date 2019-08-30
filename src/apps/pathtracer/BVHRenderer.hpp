@@ -15,7 +15,7 @@
  Can also display the raycaster acceleration structure.
  \ingroup PathtracerDemo
  */
-class BVHRenderer : public Renderer {
+class BVHRenderer final : public Renderer {
 
 public:
 

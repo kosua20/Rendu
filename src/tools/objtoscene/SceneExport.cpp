@@ -32,7 +32,7 @@ namespace SceneExport {
 		outMaterial.colorName      = baseName + "_texture_color";
 		outMaterial.normalName     = baseName + "_texture_normal";
 		outMaterial.roughMetAoName = baseName + "_texture_rough_met_ao";
-		outMaterial.depthName      = hasTextureDisplacement ? (baseName + "_texture_depth") : "";
+		outMaterial.depthName      = hasTextureDisplacement ? baseName + "_texture_depth" : "";
 		outMaterial.hasAlpha = hasTextureAlpha;
 		
 		// Output files.
@@ -82,8 +82,8 @@ namespace SceneExport {
 			// Fill in with material/default color.
 			const glm::vec3 color = material.hasColor ? material.color : glm::vec3(1.0f);
 			Image combinedImage(maskMap.width, maskMap.height, 4);
-			for(unsigned int y = 0; y < maskMap.height; ++y){
-				for(unsigned int x = 0; x < maskMap.width; ++x){
+			for(int y = 0; y < maskMap.height; ++y){
+				for(int x = 0; x < maskMap.width; ++x){
 					combinedImage.rgba(x, y) = glm::vec4(color, maskMap.r(x,y));
 				}
 			}
@@ -129,8 +129,8 @@ namespace SceneExport {
 				Image specImage;
 				Image::loadImage(material.specTexturePath, 3, false, true, specImage);
 				roughImage = Image(specImage.width, specImage.height, 1);
-				for(unsigned int y = 0; y < specImage.height; ++y){
-					for(unsigned int x = 0; x < specImage.width; ++x){
+				for(int y = 0; y < specImage.height; ++y){
+					for(int x = 0; x < specImage.width; ++x){
 						const glm::vec3 & spec = specImage.rgb(x,y);
 						roughImage.r(x, y) = 1.0f-(spec.x+spec.y+spec.z)/3.0f;
 					}
@@ -152,8 +152,8 @@ namespace SceneExport {
 			
 			// Merge the roughness map and the metal map/scalar.
 			Image roughMetAo(roughImage.width, roughImage.height, 3, 0.0f);
-			for(unsigned int y = 0; y < roughImage.height; ++y){
-				for(unsigned int x = 0; x < roughImage.width; ++x){
+			for(int y = 0; y < roughImage.height; ++y){
+				for(int x = 0; x < roughImage.width; ++x){
 					const float metalness = scalarMetal ? defaultMetal : metalImage.r(x,y);
 					roughMetAo.rgb(x, y) = glm::vec3(roughImage.r(x,y), metalness, 1.0f);
 				}
@@ -167,8 +167,8 @@ namespace SceneExport {
 			// Fill in with material/default roughness.
 			const float scalarRoughness = material.hasRough ? material.rough : (material.hasSpec ? (1.0f - material.spec) : 0.5f);
 			Image roughMetAo(metalImage.width, metalImage.height, 3, 0.0f);
-			for(unsigned int y = 0; y < metalImage.height; ++y){
-				for(unsigned int x = 0; x < metalImage.width; ++x){
+			for(int y = 0; y < metalImage.height; ++y){
+				for(int x = 0; x < metalImage.width; ++x){
 					roughMetAo.rgb(x, y) = glm::vec3(scalarRoughness, metalImage.r(x,y), 1.0f);
 				}
 			}

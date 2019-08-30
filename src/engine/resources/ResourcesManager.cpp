@@ -60,7 +60,7 @@ void Resources::parseArchive(const std::string & archivePath){
 		// Filter empty files and system files.
 		if(!fileNameWithExt.empty() && fileNameWithExt.at(0) != '.' ){
 			if(_files.count(fileNameWithExt) == 0){
-				_files[fileNameWithExt] = archivePath + "/" + filePath;
+				_files[fileNameWithExt] = (archivePath + "/").append(filePath);
 			} else {
 				// If the file already exists somewhere else in the hierarchy, warn about this.
 				Log::Error() << Log::Resources << "Error: asset named \"" << fileNameWithExt << "\" alread exists." << std::endl;
@@ -89,7 +89,7 @@ void Resources::parseDirectory(const std::string & directoryPath){
 			// Extract subdirectory name, check that it isn't a special dir, and recursively parse it.
 			const std::string dirName = System::narrow(file.name);
 			if(!dirName.empty() && dirName[0] != '.'){
-				parseDirectory(directoryPath + "/" + dirName);
+				parseDirectory((directoryPath + "/").append(dirName));
 			}
 			
 		} else {

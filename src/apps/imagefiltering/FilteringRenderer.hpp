@@ -22,7 +22,7 @@
  Filters available: Box blur of fixed radius, Gaussian blur, Poisson filling, Laplacian integration, Flood filling.
  \ingroup ImageFiltering
  */
-class FilteringRenderer : public Renderer {
+class FilteringRenderer final : public Renderer {
 	
 public:
 	

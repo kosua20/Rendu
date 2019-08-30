@@ -62,8 +62,8 @@ private:
 	const Program * _brushShader; ///< Program for the brush and its outline.
 	std::vector<Mesh> _brushes; ///< Brush shape geometries.
 	
-	glm::vec3 _bgColor; ///< Canvas color.
-	glm::vec3 _fgColor; ///< Brush color.
+	glm::vec3 _bgColor = glm::vec3(0.0f); ///< Canvas color.
+	glm::vec3 _fgColor = glm::vec3(1.0f); ///< Brush color.
 	glm::vec2 _drawPos = glm::vec2(0.0f); ///< Current brush position.
 	int _radius = 40; ///< Brush radius, in pixels.
 	Mode _mode = Mode::DRAW; ///< Current brush effect.

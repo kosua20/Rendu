@@ -3,6 +3,7 @@
 
 /**
  \brief Represents an image composed of pixels with values in [0,1]. Provide image loading/saving utilities, for both LDR and HDR images.
+ \note Image dimensions are stored as signed integers because they are often used in arithmetics operations and loops where values can be negative.
  \ingroup Resources
  */
 class Image {
@@ -19,7 +20,7 @@ public:
 	 \param acomponents the number of components of the image
 	 \param value the default value to use
 	 */
-	Image(int awidth, int aheight, int acomponents, float value = 0.0f);
+	Image(unsigned int awidth, unsigned int aheight, unsigned int acomponents, float value = 0.0f);
 	
 	/** Accessor to a RGBA pixel
 	 \param x horizontal coordinate

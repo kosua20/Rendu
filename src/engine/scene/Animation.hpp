@@ -33,7 +33,19 @@ public:
 	
 	/** Virtual destructor. */
 	virtual ~Animation() = default;
-	
+
+	/** Copy constructor.*/
+	Animation(const Animation &) = default;
+
+	/** Copy assignment. */
+	Animation& operator= (const Animation&) = default;
+
+	/** Move constructor.*/
+	Animation(Animation &&) = default;
+
+	/** Move assignment. */
+	Animation& operator= (Animation&&) = default;
+
 	/** Helper that can instantiate a list of animations of any type from the passed keywords and parameters.
 	 \param params a list of key-value tuple containing animations parameters
 	 \return a vector of animations

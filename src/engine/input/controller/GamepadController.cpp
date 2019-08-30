@@ -1,9 +1,6 @@
 #include "input/controller/GamepadController.hpp"
 #include "Common.hpp"
 
-GamepadController::GamepadController() : Controller() {
-} 
-
 bool GamepadController::activate(int id){
 	if(!glfwJoystickIsGamepad(id)){
 		_id = -1;

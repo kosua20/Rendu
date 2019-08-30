@@ -115,9 +115,22 @@ public:
 	 \param mode the storage mode (CPU, GPU, both)
 	 */
 	virtual void decode(const KeyValues& params, Storage mode);
-	
+
+	/** Destructor.*/
 	virtual ~Object() = default;
-	
+
+	/** Copy constructor.*/
+	Object(const Object &) = default;
+
+	/** Copy assignment. */
+	Object& operator= (const Object&) = default;
+
+	/** Move constructor.*/
+	Object(Object &&) = default;
+
+	/** Move assignment. */
+	Object& operator= (Object&&) = default;
+
 protected:
 	
 	const Mesh * _mesh = nullptr; ///< Geometry of the object.

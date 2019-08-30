@@ -35,12 +35,12 @@ public:
 	};
 	State state = State::OFF; ///< The button interaction state.
 	
-	glm::vec2 pos; ///< Screen position.
-	glm::vec2 size; ///< Screen size.
-	glm::vec2 scale; ///< Screen scale.
-	float displayScale; ///< Initial display scale.
-	int tag; ///< Action ID.
-	const Texture * tid; ///< Text texture.
+	glm::vec2 pos = glm::vec2(0.0f); ///< Screen position.
+	glm::vec2 size = glm::vec2(1.0f); ///< Screen size.
+	glm::vec2 scale = glm::vec2(1.0f); ///< Screen scale.
+	float displayScale = 1.0f; ///< Initial display scale.
+	int tag = 0; ///< Action ID.
+	const Texture * tid = nullptr; ///< Text texture.
 };
 
 
@@ -48,8 +48,9 @@ public:
  \brief Represents a toggle in a menu.
  \ingroup SnakeGame
  */
-struct MenuToggle: public MenuButton {
-	
+class MenuToggle: public MenuButton {
+public:
+
 	/** Creates a new toggle button which can be either on or off.
 	 \param screenPos position on screen in absolute units
 	 \param meshSize the size of the checkbox mesh
@@ -59,9 +60,9 @@ struct MenuToggle: public MenuButton {
 	 */
 	MenuToggle(const glm::vec2 & screenPos, const glm::vec2 & meshSize, float screenScale, int actionTag, const Texture * texture);
 	
-	glm::vec2 posBox; ///< Screen position of the toggle box.
-	glm::vec2 posImg; ///< Screen position of the text.
-	glm::vec2 scaleBox; ///< Scaling of the toggle box.
+	glm::vec2 posBox = glm::vec2(0.0f); ///< Screen position of the toggle box.
+	glm::vec2 posImg = glm::vec2(0.0f); ///< Screen position of the text.
+	glm::vec2 scaleBox = glm::vec2(1.0f); ///< Scaling of the toggle box.
 	const float checkBoxScale = 0.65f; ///< Scaling of checkboxes compared to regular buttons.
 };
 
@@ -70,7 +71,8 @@ struct MenuToggle: public MenuButton {
  \brief Represents a fixed image displayed in a menu.
  \ingroup SnakeGame
  */
-struct MenuImage {
+class MenuImage {
+public:
 	
 	/** Creates a menu image.
 	 \param screenPos position on screen in absolute units
@@ -79,10 +81,10 @@ struct MenuImage {
 	 */
 	MenuImage(const glm::vec2 & screenPos, float screenScale, const Texture * texture);
 	
-	glm::vec2 pos; ///< Image position.
-	glm::vec2 size; ///< Screen size.
-	glm::vec2 scale; ///< Scaling.
-	const Texture * tid; ///< Texture.
+	glm::vec2 pos = glm::vec2(0.0f); ///< Image position.
+	glm::vec2 size = glm::vec2(1.0f); ///< Screen size.
+	glm::vec2 scale = glm::vec2(1.0f); ///< Scaling.
+	const Texture * tid = nullptr; ///< Texture.
 	
 };
 
@@ -108,15 +110,14 @@ public:
 	void update(const std::string & text);
 	
 	Mesh mesh; ///< Label mesh.
-	glm::vec2 pos; ///< Label position.
-	const Texture * tid; ///< Font texture shortcut.
+	glm::vec2 pos = glm::vec2(0.0f); ///< Label position.
+	const Texture * tid = nullptr; ///< Font texture shortcut.
 	
 private:
-	float _vScale; ///< Vertical size on screen.
-	const Font * _font; ///< Font atlas.
-	Font::Alignment _align; ///< Text alignement.
+	float _vScale = 1.0f; ///< Vertical size on screen.
+	const Font * _font = nullptr; ///< Font atlas.
+	Font::Alignment _align = Font::Alignment::LEFT; ///< Text alignement.
 };
-
 
 /**
  \brief A game menu containing buttons, toggles and images.

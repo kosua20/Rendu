@@ -7,12 +7,9 @@
  \brief Represents a controller used for debug, where all raw buttons are shown.
  \ingroup Input
  */
-class RawController : public Controller {
+class RawController final : public Controller {
 
 public:
-	
-	/// Constructor
-	RawController();
 	
 	/**
 	 \copydoc Controller::activate

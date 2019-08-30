@@ -29,10 +29,9 @@ public:
 	static void draw(const Texture * texture);
 	
 	/** Draw a full screen quad.
-	 \param textureIds the textures to pass to the shader.
-	 \warning Do not support cubemaps for now.
+	 \param textures the textures to pass to the shader.
 	 */
-	static void draw(const std::vector<const Texture*> & textureIds);
+	static void draw(const std::vector<const Texture*> & textures);
 	
 	
 private:

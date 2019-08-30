@@ -37,7 +37,9 @@ void loadCubemap(const std::string & inputPath, Texture & cubemapInfos){
 	Log::Info() << "Loading " << cubemapPath << "..." << std::endl;
 	std::vector<std::string> pathSides(6);
 	for(int i = 0; i < 6; ++i){
-		pathSides[i] = cubemapPath + suffixes[i] + ext;
+		pathSides[i].append(cubemapPath);
+		pathSides[i].append(suffixes[i]);
+		pathSides[i].append(ext);
 	}
 	
 	cubemapInfos.clean();
@@ -78,10 +80,8 @@ std::vector<glm::vec3> computeSHCoeffs(const Texture & cubemap){
 
 	// Spherical harmonics coefficients.
 	Log::Info() << Log::Utilities << "Computing SH coefficients." << std::endl;
-	glm::vec3 LCoeffs[9];
-	for(int i = 0; i < 9; ++i){
-		LCoeffs[i] = glm::vec3(0.0f,0.0f,0.0f);
-	}
+	std::array<glm::vec3, 9> LCoeffs = {};
+	LCoeffs.fill(glm::vec3(0.0f, 0.0f, 0.0f));
 
 	const float y0 = 0.282095f;
 	const float y1 = 0.488603f;
@@ -146,8 +146,8 @@ std::vector<glm::vec3> computeSHCoeffs(const Texture & cubemap){
 	}
 
 	// Normalization.
-	for(int i = 0; i < 9; ++i){
-		LCoeffs[i] *= 4.0/denom;
+	for(auto & coeff : LCoeffs){
+		coeff *= 4.0/denom;
 	}
 
 	// To go from radiance to irradiance, we need to apply a cosine lobe convolution on the sphere in spatial domain.

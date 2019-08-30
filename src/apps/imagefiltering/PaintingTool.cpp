@@ -6,9 +6,6 @@
 
 PaintingTool::PaintingTool(unsigned int width, unsigned int height) {
 	
-	_bgColor = glm::vec3(0.0f);
-	_fgColor = glm::vec3(1.0f);
-	
 	_brushShader = Resources::manager().getProgram("brush_color");
 	_canvas = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, { Layout::RGB8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, false));
 	_visu = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, { Layout::RGB8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, false));
@@ -32,7 +29,7 @@ PaintingTool::PaintingTool(unsigned int width, unsigned int height) {
 	for(int i = 1; i <= diskResolution; ++i){
 		const int baseId = 3*(i-1);
 		disk.indices[baseId  ] = 0;
-		disk.indices[baseId+1] = (i==diskResolution) ? 1 : (i+1);
+		disk.indices[baseId+1] = i==diskResolution ? 1 : i+1;
 		disk.indices[baseId+2] = i;
 	}
 	disk.upload();

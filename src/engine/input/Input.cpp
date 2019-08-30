@@ -158,13 +158,13 @@ void Input::update(){
 	}
 	
 	// Reset temporary state (first, last).
-	for(unsigned int i = 0; i < GLFW_KEY_LAST+1; ++i){
-		_keys[i].first = false;
-		_keys[i].last = false;
+	for(auto & key : _keys){
+		key.first = false;
+		key.last = false;
 	}
-	for(unsigned int i = 0; i < GLFW_MOUSE_BUTTON_LAST+1; ++i){
-		_mouseButtons[i].first = false;
-		_mouseButtons[i].last = false;
+	for(auto & button : _mouseButtons){
+		button.first = false;
+		button.last = false;
 	}
 	_mouse.scroll = glm::vec2(0.0f,0.0f);
 	_resized = false;

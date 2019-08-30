@@ -34,10 +34,10 @@ public:
 	 \param rayPos the ray origin
 	 \param rayDir the ray direction( will be normalized)
 	 \param hit the ray hit
-	 \param rayMesh will be filled with the ray and triangle geometry
+	 \param mesh will be filled with the ray and triangle geometry
 	 \param defaultLength the length of the ray when no collision happened
 	 */
-	void getRayMesh(const glm::vec3 & rayPos, const glm::vec3 & rayDir, const Raycaster::RayHit & hit, Mesh & rayMesh, float defaultLength = 10000.0f) const;
+	void getRayMesh(const glm::vec3 & rayPos, const glm::vec3 & rayDir, const Raycaster::RayHit & hit, Mesh & mesh, float defaultLength = 10000.0f) const;
 	
 private:
 	

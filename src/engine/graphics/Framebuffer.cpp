@@ -19,10 +19,8 @@ Framebuffer::Framebuffer(unsigned int width, unsigned int height, const std::vec
 	glGenFramebuffers(1, &_id);
 	glBindFramebuffer(GL_FRAMEBUFFER, _id);
 	
-	for(size_t i = 0; i < descriptors.size(); ++i){
+	for(const auto & descriptor : descriptors){
 		// Create the color texture to store the result.
-		const auto & descriptor = descriptors[i];
-		
 		const Layout & format = descriptor.typedFormat();
 		const bool isDepthComp = format == Layout::DEPTH_COMPONENT16 || format == Layout::DEPTH_COMPONENT24 || format == Layout::DEPTH_COMPONENT32F;
 		const bool isDepthStencilComp = format == Layout::DEPTH24_STENCIL8 || format == Layout::DEPTH32F_STENCIL8;
@@ -125,10 +123,10 @@ void Framebuffer::resize(unsigned int width, unsigned int height){
 	}
 	
 	// Resize the textures.
-	for(size_t i = 0; i < _idColors.size(); ++i){
-		_idColors[i].width = _width;
-		_idColors[i].height = _height;
-		GLUtilities::allocateTexture(_idColors[i]);
+	for(auto & idColor : _idColors){
+		idColor.width = _width;
+		idColor.height = _height;
+		GLUtilities::allocateTexture(idColor);
 	}
 }
 

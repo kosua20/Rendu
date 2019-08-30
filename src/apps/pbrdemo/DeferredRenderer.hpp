@@ -27,7 +27,7 @@ enum class TextureType {
  \brief Performs deferred rendering of a scene.
  \ingroup DeferredRendering
  */
-class DeferredRenderer : public Renderer {
+class DeferredRenderer final : public Renderer {
 
 public:
 

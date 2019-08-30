@@ -1,11 +1,11 @@
 #include "processing/BoxBlur.hpp"
 #include "graphics/GLUtilities.hpp"
 
-BoxBlur::BoxBlur(unsigned int width, unsigned int height, bool approximate, const Descriptor & descriptor) : Blur() {
+BoxBlur::BoxBlur(unsigned int width, unsigned int height, bool approximate, const Descriptor & descriptor) {
 	
 	// Enforce linear filtering.
 	const Descriptor linearDescriptor(descriptor.typedFormat(), Filter::LINEAR_NEAREST, descriptor.wrapping());
-	const int channels = linearDescriptor.getChannelsCount();
+	const unsigned int channels = linearDescriptor.getChannelsCount();
 	
 	std::string blur_type_name = "box-blur-" + (approximate ? std::string("approx-") : "");
 	blur_type_name.append(std::to_string(channels));

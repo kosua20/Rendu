@@ -13,11 +13,14 @@
 
 #include <string>
 #include <vector>
+#include <array>
 #include <memory>
 #include <map>
 #include <algorithm>
 
+typedef unsigned char uchar;
 typedef unsigned int uint;
+typedef unsigned long ulong;
 
 #ifdef _WIN32
 

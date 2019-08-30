@@ -2,9 +2,10 @@
 #include <queue>
 #include <stack>
 
-RaycasterVisualisation::RaycasterVisualisation(const Raycaster & raycaster) : _raycaster(raycaster) {
+RaycasterVisualisation::RaycasterVisualisation(const Raycaster & raycaster) : 
+	_raycaster(raycaster) {
 	
-};
+}
 
 void RaycasterVisualisation::getAllLevels(std::vector<Mesh> & meshes) const {
 	std::vector<DisplayNode> selectedNodes;
@@ -62,7 +63,7 @@ Raycaster::RayHit RaycasterVisualisation::getRayLevels(const glm::vec3 & origin,
 				if(hit.hit && hit.dist < bestHit.dist){
 					bestHit = hit;
 					maxi = bestHit.dist;
-					bestHit.internalId = static_cast<unsigned long>(size_t(node.left) + tid);
+					bestHit.internalId = ulong(node.left) + ulong(tid);
 				}
 			}
 			// Move to the next node.

@@ -59,7 +59,7 @@ void Scene::init(Storage mode){
 		light->setScene(_bbox);
 	}
 	_loaded = true;
-};
+}
 
 void Scene::loadObject(const KeyValues & params, Storage mode){
 	objects.emplace_back();

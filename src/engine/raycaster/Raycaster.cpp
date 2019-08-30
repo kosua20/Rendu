@@ -243,27 +243,27 @@ Raycaster::RayHit Raycaster::intersects(const Raycaster::Ray & ray, const Triang
 	const float det = glm::dot(v01, p);
 	
 	if(std::abs(det) < std::numeric_limits<float>::epsilon()){
-		return RayHit();
+		return {};
 	}
 	
 	const float invDet = 1.0f / det;
 	const glm::vec3 q = ray.pos - v0;
 	const float u = invDet * glm::dot(q, p);
 	if(u < 0.0f || u > 1.0f){
-		return RayHit();
+		return {};
 	}
 	
 	const glm::vec3 r = glm::cross(q, v01);
 	const float v = invDet * glm::dot(ray.dir, r);
 	if(v < 0.0f || (u+v) > 1.0f){
-		return RayHit();
+		return {};
 	}
 	
 	const float t = invDet * glm::dot(v02, r);
 	if(t > mini && t < maxi){
-		return RayHit(t, u, v, tri.localId, tri.meshId);
+		return { t, u, v, tri.localId, tri.meshId };
 	}
-	return RayHit();
+	return {};
 }
 
 bool Raycaster::intersects(const Raycaster::Ray & ray, const BoundingBox & box, float mini, float maxi){

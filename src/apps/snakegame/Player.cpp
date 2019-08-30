@@ -89,8 +89,8 @@ bool Player::physics(double fullTime, const double frameTime) {
 		float totalDistance = newDist;
 		// Then iterate over each sample segment of the path.
 		for(size_t sid = 0; sid < _numSamplesPath; ++sid){
-			while(totalDistance >= targetDistance && (id < _positions.size())){
-				const float fraction1 = 1.0f-(totalDistance - targetDistance)/(newDist);
+			while(totalDistance >= targetDistance && id < _positions.size()){
+				const float fraction1 = 1.0f-(totalDistance - targetDistance)/newDist;
 				_positions[id] = glm::mix(previousPoint, nextPoint, fraction1);
 				// Angle update.
 				const glm::vec2 dir = glm::normalize((id > 0 ? _positions[id-1] : previousPoint) - nextPoint);

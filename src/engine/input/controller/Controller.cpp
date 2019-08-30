@@ -33,10 +33,6 @@ float Controller::axis(const Controller::Input & input) const {
 	return _axes[uint(input)];
 }
 
-Controller::~Controller(){
-	
-}
-
 void Controller::saveConfiguration(const std::string & outputPath, const std::string & guid, const std::string & name, const std::vector<int> & axesMapping, const std::vector<int> & buttonsMapping){
 	
 	// Build hexadecimal representation of the GUID.
@@ -117,7 +113,7 @@ bool Controller::parseConfiguration(const std::string & settingsContent, std::ve
 	// Skip the first three tokens, containing the GUID, the name and platform.
 	for(int tid = 3; tid < int(tokens.size()); ++tid){
 		const std::string & token = tokens[tid];
-		const size_t separatorPos = token.find(":");
+		const size_t separatorPos = token.find(':');
 		if(separatorPos == std::string::npos){
 			Log::Warning() << Log::Input << "Malformed token \"" << token << "\"." << std::endl;
 			continue;

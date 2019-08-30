@@ -10,7 +10,7 @@
  \brief Renders the main game scene.
  \ingroup SnakeGame
  */
-class GameRenderer: public Renderer {
+class GameRenderer final : public Renderer {
 public:
 	
 	/** Constructor

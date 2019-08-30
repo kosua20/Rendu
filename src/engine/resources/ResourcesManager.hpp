@@ -63,11 +63,18 @@ public:
 	/** Clean all loaded resources, both CPU and GPU side. */
 	void clean();
 
-	/** Assignment operator (disabled). */
+	/** Copy assignment operator (disabled). */
 	Resources& operator= (const Resources&) = delete;
 
 	/** Copy constructor (disabled). */
 	Resources(const Resources&) = delete;
+
+	/** Move assignment operator (disabled). */
+	Resources& operator= (const Resources&&) = delete;
+
+	/** Move constructor (disabled). */
+	Resources(const Resources&&) = delete;
+
 
 private:
 	

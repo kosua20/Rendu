@@ -98,7 +98,7 @@ int main(int argc, char** argv) {
 			const std::string & currentName = sceneNames[selectedScene];
 			if(ImGui::BeginCombo("Scene", currentName.c_str(), ImGuiComboFlags_None)){
 				for(size_t i = 0; i < sceneNames.size(); ++i){
-					if(ImGui::Selectable(sceneNames[i].c_str(), (i == selectedScene))) {
+					if(ImGui::Selectable(sceneNames[i].c_str(), i == selectedScene)) {
 						selectedScene = i;
 						Log::Info() << Log::Resources << "Loading scene " << sceneNames[selectedScene] << "." << std::endl;
 						renderer->setScene(scenes[selectedScene]);

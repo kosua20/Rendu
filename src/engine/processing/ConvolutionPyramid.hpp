@@ -70,12 +70,12 @@ private:
 	std::vector<std::unique_ptr<Framebuffer>> _levelsIn; ///< The initial levels of the pyramid.
 	std::vector<std::unique_ptr<Framebuffer>> _levelsOut; ///< The filtered levels of the pyramid.
 	
-	float _h1[5]; ///< h1 filter coefficients.
-	float _h2; ///< h2 filter multiplier.
-	float _g[3]; ///< g filter coefficients.
+	float _h1[5] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f}; ///< h1 filter coefficients.
+	float _h2 = 0.0f; ///< h2 filter multiplier.
+	float _g[3] = { 0.0f, 0.0f, 0.0f}; ///< g filter coefficients.
 	
-	glm::ivec2 _resolution; ///< Resolution expected for the input texture.
+	glm::ivec2 _resolution = glm::ivec2(0); ///< Resolution expected for the input texture.
 	const int _size = 5; ///< Size of the filter.
-	int _padding; ///< Additional padding.
+	int _padding = 0; ///< Additional padding.
 };
 

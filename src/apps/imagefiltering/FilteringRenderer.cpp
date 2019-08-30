@@ -66,7 +66,7 @@ void FilteringRenderer::draw() {
 		_painter->draw();
 		// If we are in INPUT mode, we want to display the frame with the brush outline visible.
 		// On the other hand, if we apply any processing, hide the brush and use the canvas frame.
-		srcTexID = (_mode == Processing::INPUT) ? _painter->visuId() : _painter->textureId();
+		srcTexID = _mode == Processing::INPUT ? _painter->visuId() : _painter->textureId();
 	}
 	
 	glDisable(GL_DEPTH_TEST);

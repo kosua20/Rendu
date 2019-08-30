@@ -99,9 +99,8 @@ void Mesh::loadObj( std::istream & in, Mesh & mesh, Mesh::Load mode){
 			faces_temp.push_back(tokens[2]);
 			faces_temp.push_back(tokens[3]);
 
-		} else { // Ignore s, l, g, matl or others
-			continue;
-		}
+		} 
+		// Ignore s, l, g, matl or others.
 	}
 
 	// If no vertices, end.
@@ -165,10 +164,7 @@ void Mesh::loadObj( std::istream & in, Mesh & mesh, Mesh::Load mode){
 
 		//Positions
 		unsigned int maxInd = 0;
-		for(size_t i = 0; i < faces_temp.size(); i++){
-			
-			string str = faces_temp[i];
-
+		for(const string & str : faces_temp){
 			//Does the association of attributs already exists ?
 			if(indices_used.count(str)>0){
 				// Just store the index in the indices vector.
@@ -229,31 +225,31 @@ void Mesh::centerAndUnitMesh(Mesh & mesh){
 	// Compute the centroid.
 	glm::vec3 centroid = glm::vec3(0.0);
 	float maxi = mesh.positions[0].x;
-	for(size_t i = 0; i < mesh.positions.size(); i++){
-		centroid += mesh.positions[i];
+	for(const auto & pos : mesh.positions){
+		centroid += pos;
 	}
 	centroid /= mesh.positions.size();
 
-	for(size_t i = 0; i < mesh.positions.size(); i++){
+	for(auto & pos : mesh.positions ){
 		// Translate  the vertex.
-		mesh.positions[i] -= centroid;
+		pos -= centroid;
 		// Find the maximal distance from a vertex to the center.
-		maxi = abs(mesh.positions[i].x) > maxi ? abs(mesh.positions[i].x) : maxi;
-		maxi = abs(mesh.positions[i].y) > maxi ? abs(mesh.positions[i].y) : maxi;
-		maxi = abs(mesh.positions[i].z) > maxi ? abs(mesh.positions[i].z) : maxi;
+		maxi = abs(pos.x) > maxi ? abs(pos.x) : maxi;
+		maxi = abs(pos.y) > maxi ? abs(pos.y) : maxi;
+		maxi = abs(pos.z) > maxi ? abs(pos.z) : maxi;
 	}
 	maxi = maxi == 0.0f ? 1.0f : maxi;
 	
 	// Scale the mesh.
-	for(size_t i = 0; i < mesh.positions.size(); i++){
-		mesh.positions[i] /= maxi;
+	for(auto & pos : mesh.positions){
+		pos /= maxi;
 	}
 }
 
 void Mesh::computeNormals(Mesh & mesh){
 	mesh.normals.resize(mesh.positions.size());
-	for(size_t pid = 0; pid < mesh.normals.size(); ++pid){
-		mesh.normals[pid] = glm::vec3(0.0f);
+	for (auto & n : mesh.normals) {
+		n = glm::vec3(0.0f);
 	}
 	// Iterate over faces.
 	for(size_t tid = 0; tid < mesh.indices.size(); tid += 3){
@@ -272,8 +268,8 @@ void Mesh::computeNormals(Mesh & mesh){
 		mesh.normals[i2] += normal;
 	}
 	// Average for each vertex normal.
-	for(size_t pid = 0; pid < mesh.normals.size(); ++pid){
-		mesh.normals[pid] = glm::normalize(mesh.normals[pid]);
+	for(auto & n : mesh.normals){
+		n = glm::normalize(n);
 	}
 }
 
@@ -353,16 +349,13 @@ int Mesh::saveObj(const std::string & path, const Mesh & mesh, bool defaultUVs){
 	}
 	
 	// Write vertices information.
-	for(size_t pid = 0; pid < mesh.positions.size(); ++pid){
-		const glm::vec3 & v = mesh.positions[pid];
+	for(const auto & v : mesh.positions){
 		objFile << "v " << v.x << " " << v.y << " " << v.z << std::endl;
 	}
-	for(size_t pid = 0; pid < mesh.texcoords.size(); ++pid){
-		const glm::vec2 & t = mesh.texcoords[pid];
+	for(const auto & t : mesh.texcoords){
 		objFile << "vt " << t.x << " " << t.y << std::endl;
 	}
-	for(size_t pid = 0; pid < mesh.normals.size(); ++pid){
-		const glm::vec3 & n = mesh.normals[pid];
+	for(const auto & n : mesh.normals){
 		objFile << "vn " << n.x << " " << n.y << " " << n.z << std::endl;
 	}
 	

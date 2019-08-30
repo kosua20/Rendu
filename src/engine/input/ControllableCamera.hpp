@@ -43,12 +43,12 @@ public:
 	/** Access the speed parameter.
 	 \return reference to the speed.
 	 */
-	float & speed(){ return _speed; };
+	float & speed(){ return _speed; }
 	
 	/** Obtain the mode the camera is currently using.
 	 \return the current mode
 	 */
-	Mode & mode(){ return _mode; };
+	Mode & mode(){ return _mode; }
 	
 	
 private:
@@ -68,12 +68,13 @@ private:
 	 */
 	void updateUsingTurnTable(double frameTime);
 	
-	float _speed; ///< Camera speed
-	float _angularSpeed; ///< Camera angular speed
+	float _speed = 1.2f; ///< Camera speed
+	float _angularSpeed = 4.0f; ///< Camera angular speed
 	
 	// Camera additional state.
-	glm::vec2 _angles; ///< Orientation angles
-	float _radius; ///< Turntable radius
+	glm::vec2 _angles = glm::vec2(float(M_PI)*0.5f, 0.0f); ///< Orientation angles
+	float _radius = 1.0f; ///< Turntable radius
 	
-	Mode _mode; ///< The current interaction mode
+	Mode _mode = Mode::TurnTable; ///< The current interaction mode
+
 };

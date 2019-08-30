@@ -225,45 +225,45 @@ public:
 	 Query if the window has been resized at this frame.
 	 \return true if the window was resized
 	 */
-	bool resized() const { return _resized; };
+	bool resized() const { return _resized; }
 	
 	/**
 	 Query if the window has been minimized.
 	 \return true if the window is minimized
 	 */
-	bool minimized() const { return _minimized; };
+	bool minimized() const { return _minimized; }
 	
 	/**
 	 Query the current window size.
 	 \return the size of the window, in pixels
 	 \todo Probably return an ivec2.
 	 */
-	glm::vec2 size() const { return glm::vec2(_width, _height); };
+	glm::vec2 size() const { return glm::vec2(_width, _height); }
 	
 	/**
 	 Query if a controller (joystick) is available.
 	 \return true if a controller is available
 	 */
-	bool controllerAvailable() const { return _activeController >= 0; };
+	bool controllerAvailable() const { return _activeController >= 0; }
 	
 	/**
 	 Query if a controller (joystick) was connected at this frame.
 	 \return true if a controller has just been connected
 	 */
-	bool controllerConnected() const { return _joystickConnected; };
+	bool controllerConnected() const { return _joystickConnected; }
 	
 	/**
 	 Query if a controller (joystick) was disconnected at this frame.
 	 \return true if a controller has just been disconnected
 	 */
-	bool controllerDisconnected() const { return _joystickDisconnected; };
+	bool controllerDisconnected() const { return _joystickDisconnected; }
 	
 	/**
 	 Query the current controller (joystick).
 	 \return a reference to the current controller
 	 \warning Make sure a controller is available before calling this method.
 	 */
-	Controller * controller() const { return _controllers[_activeController].get(); };
+	Controller * controller() const { return _controllers[_activeController].get(); }
 	
 	/**
 	 Query if a given key is held at this frame.
@@ -405,20 +405,25 @@ public:
 	 \return the Input manager
 	 */
 	static Input& manager();
-	
+
+	/// Copy operator (disabled).
+	Input& operator= (const Input&) = delete;
+
+	/// Copy constructor (disabled).
+	Input(const Input&) = delete;
+
+	/// Move operator (disabled).
+	Input& operator= (const Input&&) = delete;
+
+	/// Move constructor (disabled).
+	Input(const Input&&) = delete;
+
 private:
 	
 	/// Constructor (disabled).
 	Input();
 	
 	/// Destructor (disabled).
-	~Input(){};
-	
-	/// Copy operator (disabled).
-	Input& operator= (const Input&) = delete;
-	
-	/// Copy constructor (disabled).
-	Input (const Input&) = delete;
-
+	~Input() = default;
 
 };

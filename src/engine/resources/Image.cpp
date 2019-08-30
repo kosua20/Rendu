@@ -18,12 +18,13 @@
 #include <tinyexr/tinyexr.h>
 
 Image::Image(){
-	width = height = components = 0;
+	width = height = 0;
+	components = 0;
 	pixels.clear();
 }
 
-Image::Image(int awidth, int aheight, int acomponents, float value) :
-	width(awidth), height(aheight), components(acomponents) {
+Image::Image(unsigned int awidth, unsigned int aheight, unsigned int acomponents, float value) :
+	width(int(awidth)), height(int(aheight)), components(acomponents) {
 	pixels.resize(width*height*components, value);
 }
 
@@ -117,8 +118,9 @@ int Image::loadLDRImage(const std::string &path, unsigned int channels, bool fli
 	const unsigned int finalChannels = channels > 0 ? channels : 4;
 	
 	image.pixels.clear();
-	image.width = image.height = image.components = 0;
-	
+	image.width = image.height = 0;
+	image.components = 0;
+
 	size_t rawSize = 0;
 	unsigned char * rawData;
 	if(externalFile){
@@ -159,8 +161,9 @@ int Image::loadLDRImage(const std::string &path, unsigned int channels, bool fli
 int Image::loadHDRImage(const std::string &path, unsigned int channels, bool flip, bool externalFile, Image & image){
 	const unsigned int finalChannels = channels > 0 ? channels : 3;
 	image.pixels.clear();
-	image.width = image.height = image.components = 0;
-	
+	image.width = image.height = 0;
+	image.components = 0;
+
 	// Code adapted from tinyEXR deprecated loadEXR.
 	EXRVersion exr_version;
 	EXRImage exr_image;
@@ -416,7 +419,6 @@ int Image::saveHDRImage(const std::string &path, const Image & image, bool flip,
 	
 	return ret;
 }
-
 
 glm::vec3 Image::sampleCubemap(const std::vector<Image> & images, const glm::vec3 & dir){
 	// Images are stored in the following order:

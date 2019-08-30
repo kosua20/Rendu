@@ -1,10 +1,7 @@
 #include "input/ControllableCamera.hpp"
 #include "input/Input.hpp"
 
-ControllableCamera::ControllableCamera() : Camera() {
-	_speed = 1.2f;
-	_angularSpeed = 4.0f;
-	_mode = Mode::TurnTable;
+ControllableCamera::ControllableCamera() {
 	reset();
 }
 

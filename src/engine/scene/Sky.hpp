@@ -11,7 +11,7 @@
  \ingroup Scene
  \see AtmosphericScattering
  */
-class Sky : public Object {
+class Sky final : public Object {
 
 public:
 	

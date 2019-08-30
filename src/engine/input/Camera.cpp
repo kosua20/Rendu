@@ -1,13 +1,7 @@
 #include "input/Camera.hpp"
 
 Camera::Camera()  {
-	_fov = 1.3f;
-	_ratio = 1.0f;
-	_clippingPlanes = glm::vec2(0.01f, 100.0f);
-	_eye = glm::vec3(0.0,0.0,1.0);
-	_center = glm::vec3(0.0,0.0,0.0);
-	_up = glm::vec3(0.0,1.0,0.0);
-	_right = glm::vec3(1.0,0.0,0.0);
+	
 	updateView();
 	updateProjection();
 	
@@ -77,8 +71,7 @@ void Camera::decode(const KeyValues & params){
 	float fov = 1.3f;
 	
 	const auto & elems = params.elements;
-	for(size_t pid = 0; pid < elems.size(); ++pid){
-		const auto & param = elems[pid];
+	for(const auto & param : elems){
 		if(param.key == "position"){
 			pos = Codable::decodeVec3(param);
 		} else if(param.key == "center"){

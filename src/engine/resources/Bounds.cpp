@@ -1,17 +1,7 @@
 #include "resources/Bounds.hpp"
 
-BoundingSphere::BoundingSphere(){
-	center = glm::vec3(0.0f);
-	radius = 0.0f;
-}
-
 BoundingSphere::BoundingSphere(const glm::vec3 & aCenter, float aRadius) : 
 	center(aCenter), radius(aRadius) {
-}
-
-BoundingBox::BoundingBox(){
-	minis = glm::vec3(std::numeric_limits<float>::max());
-	maxis = glm::vec3(std::numeric_limits<float>::lowest());
 }
 
 BoundingBox::BoundingBox(const glm::vec3 & v0, const glm::vec3 & v1, const glm::vec3 & v2){
