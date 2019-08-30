@@ -74,7 +74,7 @@ public:
 	 Resize the framebuffer to new dimensions.
 	 \param size the new size
 	 */
-	void resize(glm::vec2 size);
+	void resize(const glm::ivec2 & size);
 
 	/** Clean internal resources.
 	 */

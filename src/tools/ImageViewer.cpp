@@ -93,8 +93,8 @@ int main(int argc, char ** argv) {
 		}
 
 		// Render the background.
-		const glm::vec2 screenSize = Input::manager().size();
-		GLUtilities::setViewport(0, 0, int(screenSize[0]), int(screenSize[1]));
+		const glm::ivec2 screenSize = Input::manager().size();
+		GLUtilities::setViewport(0, 0, screenSize[0], screenSize[1]);
 		GLUtilities::clearColorAndDepth(glm::vec4(bgColor, 1.0f), 1.0f);
 
 		// Render the image if non empty.
@@ -106,9 +106,9 @@ int main(int argc, char ** argv) {
 			const unsigned int widthIndex = isHorizontal ? 1 : 0;
 			// Compute image and screen infos.
 			const glm::vec2 imageSize(imageInfos.width, imageInfos.height);
-			float screenRatio = std::max(screenSize[1], 1.0f) / std::max(screenSize[0], 1.0f);
+			float screenRatio = float(std::max(screenSize[1], 1)) / float(std::max(screenSize[0], 1));
 			float imageRatio  = imageSize[1 - widthIndex] / imageSize[widthIndex];
-			float widthRatio  = screenSize[0] / imageSize[0] * imageSize[widthIndex] / imageSize[0];
+			float widthRatio  = float(screenSize[0]) / imageSize[0] * imageSize[widthIndex] / imageSize[0];
 
 			glEnable(GL_BLEND);
 

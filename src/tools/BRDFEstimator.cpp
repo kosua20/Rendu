@@ -463,10 +463,10 @@ int main(int argc, char ** argv) {
 		ImGui::End();
 
 		/// Rendering.
-		const glm::vec2 screenSize = Input::manager().size();
+		const glm::ivec2 screenSize = Input::manager().size();
 		const glm::mat4 mvp		   = camera.projection() * camera.view();
 
-		GLUtilities::setViewport(0, 0, int(screenSize[0]), int(screenSize[1]));
+		GLUtilities::setViewport(0, 0, screenSize[0], screenSize[1]);
 		GLUtilities::clearColorAndDepth({0.5f, 0.5f, 0.5f, 1.0f}, 1.0f);
 
 		// Render main cubemap.
@@ -488,9 +488,9 @@ int main(int argc, char ** argv) {
 
 		// Render reference cubemap in the bottom right corner.
 		GLUtilities::clearDepth(1.0f);
-		const float gizmoScale	= 0.2f;
-		const glm::vec2 gizmoSize = gizmoScale * screenSize;
-		GLUtilities::setViewport(0, 0, int(gizmoSize[0]), int(gizmoSize[1]));
+		const float gizmoScale	   = 0.2f;
+		const glm::ivec2 gizmoSize = glm::ivec2(gizmoScale * glm::vec2(screenSize));
+		GLUtilities::setViewport(0, 0, gizmoSize[0], gizmoSize[1]);
 		glEnable(GL_DEPTH_TEST);
 		program->use();
 		glDisable(GL_CULL_FACE);
@@ -498,7 +498,7 @@ int main(int argc, char ** argv) {
 		program->uniform("mvp", mvp);
 		GLUtilities::drawMesh(*mesh);
 		glDisable(GL_DEPTH_TEST);
-		GLUtilities::setViewport(0, 0, int(screenSize[0]), int(screenSize[1]));
+		GLUtilities::setViewport(0, 0, screenSize[0], screenSize[1]);
 
 		System::Gui::endFrame();
 		checkGLError();

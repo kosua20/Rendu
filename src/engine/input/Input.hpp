@@ -237,7 +237,7 @@ public:
 	 \return the size of the window, in pixels
 	 \todo Probably return an ivec2.
 	 */
-	glm::vec2 size() const { return glm::vec2(_width, _height); }
+	glm::ivec2 size() const { return glm::ivec2(_width, _height); }
 
 	/**
 	 Query if a controller (joystick) is available.

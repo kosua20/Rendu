@@ -111,9 +111,9 @@ int main(int argc, char ** argv) {
 		// Start a new frame for the interface.
 		System::Gui::beginFrame();
 		// Render.
-		const glm::vec2 screenSize = Input::manager().size();
+		const glm::ivec2 screenSize = Input::manager().size();
 		const glm::mat4 MVP		   = camera.projection() * camera.view();
-		GLUtilities::setViewport(0, 0, int(screenSize[0]), int(screenSize[1]));
+		GLUtilities::setViewport(0, 0, screenSize[0], screenSize[1]);
 		GLUtilities::clearColorAndDepth({0.2f, 0.3f, 0.25f, 1.0f}, 1.0f);
 		program->use();
 		program->uniform("mvp", MVP);

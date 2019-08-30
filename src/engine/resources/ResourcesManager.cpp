@@ -377,18 +377,20 @@ const Texture * Resources::getTexture(const std::string & name, const Descriptor
 
 // Program/shaders methods.
 
-Program * Resources::getProgram(const std::string & name, bool useGeometryShader) {
-	return getProgram(name, name, name, useGeometryShader ? name : "");
-}
-
 Program * Resources::getProgram(const std::string & name, const std::string & vertexName, const std::string & fragmentName, const std::string & geometryName) {
+	
 	if(_programs.count(name) > 0) {
 		return &_programs[name];
 	}
-
+	
+	const std::string vName = vertexName.empty() ? name : vertexName;
+	const std::string fName = fragmentName.empty() ? name : fragmentName;
+	// For the geometry name, we don't replace by the default name.
+	const std::string gName = geometryName;
+	
 	_programs.emplace(std::piecewise_construct,
 		std::forward_as_tuple(name),
-		std::forward_as_tuple(vertexName, fragmentName, geometryName));
+		std::forward_as_tuple(vName, fName, gName));
 
 	return &_programs[name];
 }

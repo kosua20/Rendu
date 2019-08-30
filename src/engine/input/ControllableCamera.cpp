@@ -44,8 +44,8 @@ void ControllableCamera::update() {
 		}
 	}
 	if(Input::manager().resized()) {
-		const glm::vec2 screenSize = Input::manager().size();
-		ratio(screenSize[0] / screenSize[1]);
+		const glm::ivec2 screenSize = Input::manager().size();
+		ratio(float(screenSize[0]) / float(screenSize[1]));
 	}
 }
 

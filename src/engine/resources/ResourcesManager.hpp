@@ -138,21 +138,13 @@ public:
 	const Texture * getTexture(const std::string & name);
 
 	/** Get an OpenGL program resource.
-	 \param name the name of all the program shaders
-	 \param useGeometryShader should the program use a geometry shader
-	 \return the program informations
-	 \todo Merge with the one below
-	 */
-	Program * getProgram(const std::string & name, bool useGeometryShader = false);
-
-	/** Get an OpenGL program resource.
 	 \param name the name to represent the program
 	 \param vertexName the name of the vertex shader
 	 \param fragmentName the name of the fragment shader
 	 \param geometryName the name of the optional geometry shader
 	 \return the program informations
 	 */
-	Program * getProgram(const std::string & name, const std::string & vertexName, const std::string & fragmentName, const std::string & geometryName = "");
+	Program * getProgram(const std::string & name, const std::string & vertexName = "", const std::string & fragmentName= "", const std::string & geometryName = "");
 
 	/** Get an OpenGL program resource for 2D screen processing. It will use GLSL::Vert::Passthrough as a vertex shader.
 	 \param name the name of the fragment shader

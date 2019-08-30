@@ -121,7 +121,7 @@ int main(int argc, char ** argv) {
 			remainingTime -= deltaTime;
 		}
 		// Handle resizing directly.
-		const glm::vec2 screenSize = Input::manager().size();
+		const glm::ivec2 screenSize = Input::manager().size();
 		if(Input::manager().resized()) {
 			atmosphereFramebuffer->resize(screenSize);
 		}

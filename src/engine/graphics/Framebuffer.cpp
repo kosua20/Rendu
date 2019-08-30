@@ -127,7 +127,7 @@ void Framebuffer::resize(unsigned int width, unsigned int height) {
 	}
 }
 
-void Framebuffer::resize(glm::vec2 size) {
+void Framebuffer::resize(const glm::ivec2 & size) {
 	resize(uint(size[0]), uint(size[1]));
 }
 
