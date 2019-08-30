@@ -12,7 +12,6 @@
 class SSAO {
 
 public:
-	
 	/**
 	 Constructor.
 	 \param width the internal resolution width
@@ -28,7 +27,7 @@ public:
 	 \param normalTex the view-space normal texture
 	 */
 	void process(const glm::mat4 & projection, const Texture * depthTex, const Texture * normalTex) const;
-	
+
 	/** Cleanup rssources.
 	 */
 	void clean() const;
@@ -39,29 +38,28 @@ public:
 	 \param height the new height
 	 */
 	void resize(unsigned int width, unsigned int height) const;
-	
+
 	/**
 	 Clear the final framebuffer texture.
 	 */
 	void clear() const;
-	
+
 	/**
 	 Query the texture containing the result of the SSAO+blur pass.
 	 \return the texture
 	 */
 	const Texture * textureId() const;
-	
+
 	/** Query the SSAO radius (should be larger for larger scene with large planar surfaces).
 	 \return a reference to the radius parameter
 	 */
 	float & radius();
-	
+
 private:
-	
 	std::unique_ptr<Framebuffer> _ssaoFramebuffer; ///< SSAO framebuffer
-	std::unique_ptr<BoxBlur> _blurSSAOBuffer; ///< SSAO blur processing.
-	Program * _programSSAO; ///< The SSAO program.
-	
+	std::unique_ptr<BoxBlur> _blurSSAOBuffer;	  ///< SSAO blur processing.
+	Program * _programSSAO;						   ///< The SSAO program.
+
 	float _radius = 0.5f;	///< SSAO intersection test radius.
 	Texture _noiseTextureID; ///< Random noise texture.
 };

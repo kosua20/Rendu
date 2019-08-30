@@ -17,7 +17,6 @@
 class GaussianBlur : public Blur {
 
 public:
-
 	/**
 	 Constructor. The depth of the gaussian pyramid will determine the strength of the blur, and the computational cost.
 	 \param width the internal initial resolution width
@@ -26,13 +25,13 @@ public:
 	 \param preciseFormat the precise format of the internal famebuffers
 	 */
 	GaussianBlur(unsigned int width, unsigned int height, unsigned int depth, Layout preciseFormat);
-	
+
 	/**
 	 Apply the blurring process to a given texture.
 	 \param textureId the ID of the texture to process
 	 */
 	void process(const Texture * textureId);
-	
+
 	/**
 	 Clean internal resources.
 	 */
@@ -44,12 +43,9 @@ public:
 	 \param height the new height to use
 	 */
 	void resize(unsigned int width, unsigned int height);
-	
-private:
-	
-	const Program * _blurProgramDown; ///< The downscaling filter.
-	const Program * _blurProgramUp; ///< The upscaling filter.
-	std::vector<std::unique_ptr<Framebuffer>> _frameBuffers; ///< Downscaled pyramid framebuffers.
-	
-};
 
+private:
+	const Program * _blurProgramDown;						 ///< The downscaling filter.
+	const Program * _blurProgramUp;							 ///< The upscaling filter.
+	std::vector<std::unique_ptr<Framebuffer>> _frameBuffers; ///< Downscaled pyramid framebuffers.
+};

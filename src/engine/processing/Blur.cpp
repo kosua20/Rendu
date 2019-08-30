@@ -1,8 +1,8 @@
 #include "processing/Blur.hpp"
 
-Blur::Blur(){
+Blur::Blur() {
 	_passthroughProgram = Resources::manager().getProgram("passthrough");
-	_finalTexture = nullptr;
+	_finalTexture		= nullptr;
 }
 
 void Blur::draw() const {

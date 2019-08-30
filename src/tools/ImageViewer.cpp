@@ -21,34 +21,34 @@
  \return a general error code.
  \ingroup ImageViewer
  */
-int main(int argc, char** argv) {
-	
+int main(int argc, char ** argv) {
+
 	// First, init/parse/load configuration.
-	RenderingConfig config(std::vector<std::string>(argv, argv+argc));
-	if(config.showHelp()){
+	RenderingConfig config(std::vector<std::string>(argv, argv + argc));
+	if(config.showHelp()) {
 		return 0;
 	}
-	
-	GLFWwindow* window = System::initWindow("Image viewer", config);
-	if(!window){
+
+	GLFWwindow * window = System::initWindow("Image viewer", config);
+	if(!window) {
 		return -1;
 	}
 
 	Resources::manager().addResources("../../../resources/common");
 	Resources::manager().addResources("../../../resources/imageviewer");
-	
+
 	glEnable(GL_CULL_FACE);
-	
+
 	// Create the rendering program.
 	const Program * program = Resources::manager().getProgram("image_display");
-	
+
 	// Infos on the current texture.
 	Texture imageInfos;
 	bool isFloat = false;
-	
+
 	// Settings.
 	glm::vec3 bgColor(0.6f);
-	float exposure = 1.0f;
+	float exposure  = 1.0f;
 	bool applyGamma = true;
 	glm::bvec4 channelsFilter(true);
 	// Filtering mode.
@@ -57,61 +57,61 @@ int main(int argc, char** argv) {
 	glm::bvec2 flipAxis(false);
 	int currentAngle = 0;
 	// Scale and position.
-	float pixelScale = 1.0f;
-	float zoomSpeed = 0.01f;
-	glm::vec2 mouseShift = glm::vec2(0.0f,0.0f);
-	glm::vec2 mousePrev = glm::vec2(0.0f,0.0f);
+	float pixelScale	 = 1.0f;
+	float zoomSpeed		 = 0.01f;
+	glm::vec2 mouseShift = glm::vec2(0.0f, 0.0f);
+	glm::vec2 mousePrev  = glm::vec2(0.0f, 0.0f);
 	glm::vec3 fgColor(0.6f);
-	
+
 	// Start the display/interaction loop.
-	while (!glfwWindowShouldClose(window)) {
+	while(!glfwWindowShouldClose(window)) {
 		// Update events (inputs,...).
 		Input::manager().update();
 		// Handle quitting.
-		if(Input::manager().pressed(Input::KeyEscape)){
+		if(Input::manager().pressed(Input::KeyEscape)) {
 			glfwSetWindowShouldClose(window, GL_TRUE);
 		}
 		// Start a new frame for the interface.
 		System::Gui::beginFrame();
 		// Reload resources.
-		if(Input::manager().triggered(Input::KeyP)){
+		if(Input::manager().triggered(Input::KeyP)) {
 			Resources::manager().reload();
 		}
-		
+
 		// Update scale and position.
 		// Scale when scrolling, with safety bounds.
 		pixelScale += Input::manager().scroll().y * zoomSpeed;
-		pixelScale = std::max(0.001f,std::min(1000.0f,pixelScale));
+		pixelScale = std::max(0.001f, std::min(1000.0f, pixelScale));
 		// Register left-click and drag.
-		if(Input::manager().triggered(Input::Mouse::Left)){
+		if(Input::manager().triggered(Input::Mouse::Left)) {
 			mousePrev = Input::manager().mouse();
 		}
-		if(Input::manager().pressed(Input::Mouse::Left)){
+		if(Input::manager().pressed(Input::Mouse::Left)) {
 			const glm::vec2 mouseNew = Input::manager().mouse();
 			mouseShift += pixelScale * (mouseNew - mousePrev);
 			mousePrev = mouseNew;
 		}
-		
+
 		// Render the background.
 		const glm::vec2 screenSize = Input::manager().size();
 		GLUtilities::setViewport(0, 0, int(screenSize[0]), int(screenSize[1]));
 		GLUtilities::clearColorAndDepth(glm::vec4(bgColor, 1.0f), 1.0f);
-		
+
 		// Render the image if non empty.
-		bool hasImage = imageInfos.width > 0 && imageInfos.height > 0;
+		bool hasImage			= imageInfos.width > 0 && imageInfos.height > 0;
 		const bool isHorizontal = currentAngle == 1 || currentAngle == 3;
-		
-		if(hasImage){
+
+		if(hasImage) {
 			// Depending on the current rotation, the horizontal dimension of the image is the width or the height.
 			const unsigned int widthIndex = isHorizontal ? 1 : 0;
 			// Compute image and screen infos.
 			const glm::vec2 imageSize(imageInfos.width, imageInfos.height);
 			float screenRatio = std::max(screenSize[1], 1.0f) / std::max(screenSize[0], 1.0f);
-			float imageRatio = imageSize[1-widthIndex] / imageSize[widthIndex];
-			float widthRatio = screenSize[0] / imageSize[0] * imageSize[widthIndex] / imageSize[0];
-			
+			float imageRatio  = imageSize[1 - widthIndex] / imageSize[widthIndex];
+			float widthRatio  = screenSize[0] / imageSize[0] * imageSize[widthIndex] / imageSize[0];
+
 			glEnable(GL_BLEND);
-			
+
 			// Render the image.
 			program->use();
 			// Pass settings.
@@ -123,146 +123,150 @@ int main(int argc, char** argv) {
 			program->uniform("gammaOutput", applyGamma);
 			const glm::vec4 chanFilts(channelsFilter);
 			const glm::vec2 flips(flipAxis);
-			const glm::vec2 angles(std::cos(float(currentAngle)*float(M_PI_2)), std::sin(float(currentAngle)*float(M_PI_2)));
-			
+			const glm::vec2 angles(std::cos(float(currentAngle) * float(M_PI_2)), std::sin(float(currentAngle) * float(M_PI_2)));
+
 			program->uniform("channelsFilter", chanFilts);
 			program->uniform("flipAxis", flips);
 			program->uniform("angleTrig", angles);
 			program->uniform("pixelScale", pixelScale);
 			program->uniform("mouseShift", mouseShift);
-			
+
 			// Draw.
 			ScreenQuad::draw(imageInfos);
-			
+
 			glDisable(GL_BLEND);
 
 			// Read back color under cursor when right-clicking.
-			if(Input::manager().pressed(Input::Mouse::Right)){
+			if(Input::manager().pressed(Input::Mouse::Right)) {
 				const glm::vec2 mousePosition = Input::manager().mouse(true);
-				fgColor = Framebuffer::backbuffer().read(glm::ivec2(mousePosition));
+				fgColor						  = Framebuffer::backbuffer().read(glm::ivec2(mousePosition));
 			}
-		
 		}
-		
+
 		// Interface.
-		ImGui::SetNextWindowPos(ImVec2(10,10));
+		ImGui::SetNextWindowPos(ImVec2(10, 10));
 		ImGui::SetNextWindowSize(ImVec2(285, 260), ImGuiCond_Appearing);
-		if(ImGui::Begin("Image viewer")){
-			
+		if(ImGui::Begin("Image viewer")) {
+
 			// Infos.
-			if(hasImage){
+			if(hasImage) {
 				ImGui::Text(isFloat ? "HDR image (%dx%d)." : "LDR image (%dx%d).", imageInfos.width, imageInfos.height);
 			} else {
 				ImGui::Text("No image.");
 			}
-			
+
 			// Image loader.
-			if(ImGui::Button("Load image...")){
+			if(ImGui::Button("Load image...")) {
 				std::string newImagePath;
 				bool res = System::showPicker(System::Picker::Load, "../../../resources", newImagePath, "jpg,bmp,png,tga;exr");
 				// If user picked a path, load the texture from disk.
-				if(res && !newImagePath.empty()){
+				if(res && !newImagePath.empty()) {
 					Log::Info() << "Loading " << newImagePath << "." << std::endl;
 					isFloat = Image::isFloat(newImagePath);
 					// Apply the proper format and filtering.
 					const Layout typedFormat = isFloat ? Layout::RGBA32F : Layout::SRGB8_ALPHA8;
-					
+
 					imageInfos.clean();
-					imageInfos.shape = TextureShape::D2;
-					imageInfos.depth = 1;
+					imageInfos.shape  = TextureShape::D2;
+					imageInfos.depth  = 1;
 					imageInfos.levels = 1;
 					imageInfos.images.emplace_back();
-					Image & img = imageInfos.images.back();
+					Image & img   = imageInfos.images.back();
 					const int ret = Image::loadImage(newImagePath, 4, true, false, img);
-					if (ret != 0) {
+					if(ret != 0) {
 						Log::Error() << Log::Resources << "Unable to load the texture at path " << newImagePath << "." << std::endl;
 						continue;
 					}
-					imageInfos.width = img.width;
+					imageInfos.width  = img.width;
 					imageInfos.height = img.height;
 					imageInfos.upload({typedFormat, imageInterp, Wrap::CLAMP}, false);
 					imageInfos.clearImages();
-					
+
 					// Reset display settings.
-					pixelScale = 1.0f;
-					mouseShift = glm::vec2(0.0f);
-					currentAngle = 0;
-					flipAxis = glm::bvec2(false);
+					pixelScale	 = 1.0f;
+					mouseShift	 = glm::vec2(0.0f);
+					currentAngle   = 0;
+					flipAxis	   = glm::bvec2(false);
 					channelsFilter = glm::vec4(true);
 				}
 			}
 			ImGui::SameLine();
 			// Save button.
 			const bool saveImage = ImGui::Button("Save image");
-			
+
 			// Gamma and exposure.
 			ImGui::Checkbox("Gamma", &applyGamma);
-			if(isFloat){
+			if(isFloat) {
 				ImGui::SameLine();
 				ImGui::PushItemWidth(120);
 				ImGui::SliderFloat("Exposure", &exposure, 0.0f, 10.0f);
 				ImGui::PopItemWidth();
 			}
-			
+
 			// Channels.
-			ImGui::Checkbox("R", &channelsFilter[0]); ImGui::SameLine();
-			ImGui::Checkbox("G", &channelsFilter[1]); ImGui::SameLine();
-			ImGui::Checkbox("B", &channelsFilter[2]); ImGui::SameLine();
+			ImGui::Checkbox("R", &channelsFilter[0]);
+			ImGui::SameLine();
+			ImGui::Checkbox("G", &channelsFilter[1]);
+			ImGui::SameLine();
+			ImGui::Checkbox("B", &channelsFilter[2]);
+			ImGui::SameLine();
 			ImGui::Checkbox("A", &channelsFilter[3]);
-			
+
 			// Filtering.
-			if(ImGui::Combo("Filtering", reinterpret_cast<int*>(&imageInterp), "Nearest\0Linear\0\0")){
+			if(ImGui::Combo("Filtering", reinterpret_cast<int *>(&imageInterp), "Nearest\0Linear\0\0")) {
 				imageInfos.gpu->setFiltering(imageInterp);
 			}
-			
+
 			// Image modifications.
 			// Rotation.
 			ImGui::Text("Rotate");
 			ImGui::SameLine();
-			if(ImGui::Button("<")){
+			if(ImGui::Button("<")) {
 				currentAngle--;
-				if(currentAngle < 0){
+				if(currentAngle < 0) {
 					currentAngle += 4;
 				}
 			}
 			ImGui::SameLine();
-			if(ImGui::Button(">")){
-				currentAngle=(currentAngle+1)%4;
+			if(ImGui::Button(">")) {
+				currentAngle = (currentAngle + 1) % 4;
 			}
 			ImGui::SameLine();
 			// Mirror.
-			ImGui::Text("Flip"); ImGui::SameLine();
-			ImGui::Checkbox("X", &flipAxis[1]); ImGui::SameLine();
+			ImGui::Text("Flip");
+			ImGui::SameLine();
+			ImGui::Checkbox("X", &flipAxis[1]);
+			ImGui::SameLine();
 			ImGui::Checkbox("Y", &flipAxis[0]);
-			
+
 			// Colors.
 			ImGui::ColorEdit3("Foreground", &fgColor[0]);
 			ImGui::ColorEdit3("Background", &bgColor[0]);
-			
+
 			// Scaling speed.
 			ImGui::SliderFloat("Zoom speed", &zoomSpeed, 0.001f, 0.1f, "%.3f", 4.0f);
 			// Position
-			if(ImGui::Button("Reset pos.")){
+			if(ImGui::Button("Reset pos.")) {
 				pixelScale = 1.0f;
 				mouseShift = glm::vec2(0.0f);
 			}
 			ImGui::SameLine();
-			ImGui::Text("%.1f%%, (%d,%d)", 100.0f/pixelScale, int((-mouseShift.x+0.5)*imageInfos.width), int((mouseShift.y+0.5)*imageInfos.height));
-			
+			ImGui::Text("%.1f%%, (%d,%d)", 100.0f / pixelScale, int((-mouseShift.x + 0.5) * imageInfos.width), int((mouseShift.y + 0.5) * imageInfos.height));
+
 			// Save the image in its current flip/rotation/channels/exposure/gamma settings.
-			if(saveImage){
+			if(saveImage) {
 				std::string destinationPath;
 				// Export either in LDR or HDR.
 				bool res = System::showPicker(System::Picker::Save, "../../../resources", destinationPath, "png;exr");
-				if(res && !destinationPath.empty()){
+				if(res && !destinationPath.empty()) {
 					const Layout typedFormat = Image::isFloat(destinationPath) ? Layout::RGBA32F : Layout::RGBA8;
 					// Create a framebuffer at the right size and format, and render in it.
-					const unsigned int outputWidth = isHorizontal ? imageInfos.height : imageInfos.width;
+					const unsigned int outputWidth  = isHorizontal ? imageInfos.height : imageInfos.width;
 					const unsigned int outputHeight = isHorizontal ? imageInfos.width : imageInfos.height;
 					std::unique_ptr<Framebuffer> framebuffer(new Framebuffer(outputWidth, outputHeight, typedFormat, false));
 					framebuffer->bind();
 					framebuffer->setViewport();
-					
+
 					// Render the image in it.
 					glEnable(GL_BLEND);
 					program->use();
@@ -275,33 +279,29 @@ int main(int argc, char** argv) {
 					program->uniform("mouseShift", zeros);
 					ScreenQuad::draw(imageInfos);
 					glDisable(GL_BLEND);
-					
+
 					framebuffer->unbind();
-					
+
 					// Then save it to the given path.
-					GLUtilities::saveFramebuffer(*framebuffer, outputWidth, outputHeight, destinationPath.substr(0, destinationPath.size()-4), true, false);
+					GLUtilities::saveFramebuffer(*framebuffer, outputWidth, outputHeight, destinationPath.substr(0, destinationPath.size() - 4), true, false);
 				}
 			}
-			
 		}
 		ImGui::End();
-		
+
 		// Then render the interface.
 		System::Gui::endFrame();
 		//Display the result for the current rendering loop.
 		glfwSwapBuffers(window);
-
 	}
-	
+
 	// Clean the interface.
 	System::Gui::clean();
-	
+
 	Resources::manager().clean();
 	// Close GL context and any other GLFW resources.
 	glfwDestroyWindow(window);
 	glfwTerminate();
-	
+
 	return 0;
 }
-
-

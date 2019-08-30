@@ -9,43 +9,42 @@ class Player {
 public:
 	/** Constructor */
 	Player();
-	
+
 	/** Update logical state, once per frame */
 	void update();
-	
+
 	/** Update the physic state of the player snake and items
 	 \param fullTime time elapsed since the beginning of the game
 	 \param frameTime delta time since last physics update
 	 \return a boolean denoting if any item has been eaten.
 	 */
 	bool physics(double fullTime, double frameTime);
-	
+
 	/** Update the model matrices of all items
 	 This is so that we avoid updating them at each physics step.
 	 */
 	void updateModels();
-	
+
 	/// Status of the player.
 	bool alive() const { return _alive; }
-	
+
 	/// Score of the player.
 	int score() const { return _score; }
-	
+
 	glm::mat4 modelHead = glm::mat4(1.0f); ///< The snake head model matrix.
-	std::vector<glm::mat4> modelsBody; ///< The snake body elements model matrices.
-	std::vector<glm::mat4> modelsItem; ///< The edible items model matrices.
-	std::vector<int> looksBody; ///< The snake body elements material IDs.
-	std::vector<int> looksItem; ///< The edible items material IDs.
-	
+	std::vector<glm::mat4> modelsBody;	 ///< The snake body elements model matrices.
+	std::vector<glm::mat4> modelsItem;	 ///< The edible items model matrices.
+	std::vector<int> looksBody;			   ///< The snake body elements material IDs.
+	std::vector<int> looksItem;			   ///< The edible items material IDs.
+
 private:
-	
 	/** \brief A sample along the snake path.
 	 */
 	struct PathPoint {
 		glm::vec2 pos; ///< Sample position on screen.
-		float dist; ///< Distance to the previous sample.
+		float dist;	///< Distance to the previous sample.
 	};
-	
+
 	/// The snake momentum.
 	glm::vec3 _momentum = glm::vec3(0.0f, 1.0f, 0.0f);
 	/// The snake position.
@@ -72,7 +71,7 @@ private:
 	int _score = 0;
 	/// Player status.
 	bool _alive = true;
-	
+
 	// Constants.
 	/// Terrain bounding box.
 	const glm::vec3 _maxPos = glm::vec3(8.6f, 5.0f, 0.0f);
@@ -105,5 +104,3 @@ private:
 	/// Score gained when eating an item.
 	const int _itemValue = 1;
 };
-
-

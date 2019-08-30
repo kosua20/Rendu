@@ -4,119 +4,120 @@
 #include "graphics/GLUtilities.hpp"
 #include "Common.hpp"
 
-Game::Game(RenderingConfig & config) : _config(config), _inGameRenderer(config), _menuRenderer(config) {
-	
+Game::Game(RenderingConfig & config) :
+	_config(config), _inGameRenderer(config), _menuRenderer(config) {
+
 	_bgBlur = std::unique_ptr<GaussianBlur>(new GaussianBlur(_config.initialWidth, _config.initialHeight, 3, Layout::RGB8));
-	
+
 	// Create menus.
-	
+
 	const glm::vec2 meshSize = _menuRenderer.getButtonSize();
 	const float displayScale = 0.3f;
-	const Font * font = Resources::manager().getFont("digits");
+	const Font * font		 = Resources::manager().getFont("digits");
 
-	const Descriptor commonDesc = { Layout::SRGB8_ALPHA8, Filter::LINEAR_LINEAR, Wrap::CLAMP};
+	const Descriptor commonDesc		  = {Layout::SRGB8_ALPHA8, Filter::LINEAR_LINEAR, Wrap::CLAMP};
 	const Texture * backgroundTexture = Resources::manager().getTexture("menubg", commonDesc, Storage::GPU);
-	
+
 	_menus[Status::MAINMENU].backgroundImage = backgroundTexture;
-	_menus[Status::MAINMENU].buttons.emplace_back(glm::vec2(0.0f,  0.10f), meshSize, displayScale, NEWGAME,
-												  Resources::manager().getTexture("button-newgame", commonDesc, Storage::GPU));
+	_menus[Status::MAINMENU].buttons.emplace_back(glm::vec2(0.0f, 0.10f), meshSize, displayScale, NEWGAME,
+		Resources::manager().getTexture("button-newgame", commonDesc, Storage::GPU));
 	_menus[Status::MAINMENU].buttons.emplace_back(glm::vec2(0.0f, -0.25f), meshSize, displayScale, OPTIONS,
-												  Resources::manager().getTexture("button-options", commonDesc, Storage::GPU));
+		Resources::manager().getTexture("button-options", commonDesc, Storage::GPU));
 	_menus[Status::MAINMENU].buttons.emplace_back(glm::vec2(0.0f, -0.60f), meshSize, displayScale, QUIT,
-												  Resources::manager().getTexture("button-quit", commonDesc, Storage::GPU));
+		Resources::manager().getTexture("button-quit", commonDesc, Storage::GPU));
 	_menus[Status::MAINMENU].images.emplace_back(glm::vec2(0.0f, 0.47f), 0.5f,
-												 Resources::manager().getTexture("title", commonDesc, Storage::GPU));
-	
+		Resources::manager().getTexture("title", commonDesc, Storage::GPU));
+
 	_menus[Status::PAUSED].backgroundImage = _bgBlur->textureId();
-	_menus[Status::PAUSED].buttons.emplace_back(glm::vec2(0.0f,  0.10f), meshSize, displayScale, RESUME,
-												Resources::manager().getTexture("button-resume", commonDesc, Storage::GPU));
+	_menus[Status::PAUSED].buttons.emplace_back(glm::vec2(0.0f, 0.10f), meshSize, displayScale, RESUME,
+		Resources::manager().getTexture("button-resume", commonDesc, Storage::GPU));
 	_menus[Status::PAUSED].buttons.emplace_back(glm::vec2(0.0f, -0.25f), meshSize, displayScale, BACKTOMENU,
-												Resources::manager().getTexture("button-menu", commonDesc, Storage::GPU));
+		Resources::manager().getTexture("button-menu", commonDesc, Storage::GPU));
 	_menus[Status::PAUSED].images.emplace_back(glm::vec2(0.0f, 0.47f), 0.5f,
-											   Resources::manager().getTexture("title-pause", commonDesc, Storage::GPU));
-	
+		Resources::manager().getTexture("title-pause", commonDesc, Storage::GPU));
+
 	_menus[Status::OPTIONS].backgroundImage = backgroundTexture;
-	_menus[Status::OPTIONS].toggles.emplace_back(glm::vec2(0.0f,  0.10f), meshSize, displayScale, OPTION_FULLSCREEN,
-												 Resources::manager().getTexture("button-fullscreen", commonDesc, Storage::GPU));
+	_menus[Status::OPTIONS].toggles.emplace_back(glm::vec2(0.0f, 0.10f), meshSize, displayScale, OPTION_FULLSCREEN,
+		Resources::manager().getTexture("button-fullscreen", commonDesc, Storage::GPU));
 	_menus[Status::OPTIONS].toggles.back().state = config.fullscreen ? MenuButton::State::ON : MenuButton::State::OFF;
-	_menus[Status::OPTIONS].toggles.emplace_back(glm::vec2(0.0f,  -0.25f), meshSize, displayScale, OPTION_VSYNC,
-												 Resources::manager().getTexture("button-vsync", commonDesc, Storage::GPU));
+	_menus[Status::OPTIONS].toggles.emplace_back(glm::vec2(0.0f, -0.25f), meshSize, displayScale, OPTION_VSYNC,
+		Resources::manager().getTexture("button-vsync", commonDesc, Storage::GPU));
 	_menus[Status::OPTIONS].toggles.back().state = config.vsync ? MenuButton::State::ON : MenuButton::State::OFF;
 	_menus[Status::OPTIONS].buttons.emplace_back(glm::vec2(0.0f, -0.60f), meshSize, displayScale, BACKTOMENU,
-												 Resources::manager().getTexture("button-back", commonDesc, Storage::GPU));
+		Resources::manager().getTexture("button-back", commonDesc, Storage::GPU));
 	_menus[Status::OPTIONS].images.emplace_back(glm::vec2(0.0f, 0.47f), 0.5f,
-												Resources::manager().getTexture("title-options", commonDesc, Storage::GPU));
-	
+		Resources::manager().getTexture("title-options", commonDesc, Storage::GPU));
+
 	_menus[Status::DEAD].backgroundImage = _bgBlur->textureId();
 	_menus[Status::DEAD].buttons.emplace_back(glm::vec2(0.0f, -0.20f), meshSize, displayScale, NEWGAME,
-											  Resources::manager().getTexture("button-newgame"));
+		Resources::manager().getTexture("button-newgame"));
 	_menus[Status::DEAD].buttons.emplace_back(glm::vec2(0.0f, -0.55f), meshSize, displayScale, BACKTOMENU,
-											  Resources::manager().getTexture("button-menu"));
+		Resources::manager().getTexture("button-menu"));
 	_menus[Status::DEAD].images.emplace_back(glm::vec2(0.0f, 0.47f), 0.5f,
-											 Resources::manager().getTexture("title-dead", commonDesc, Storage::GPU));
+		Resources::manager().getTexture("title-dead", commonDesc, Storage::GPU));
 	_menus[Status::DEAD].labels.emplace_back(glm::vec2(0.0f, 0.05f), 0.25f, font, Font::Alignment::CENTER);
-	
+
 	_menus[Status::INGAME].labels.emplace_back(glm::vec2(0.0f, 0.70f), 0.2f, font, Font::Alignment::CENTER);
-	
+
 	// Initialize each menu buttons sizes.
 	const float initialRatio = float(_config.initialWidth) / float(_config.initialHeight);
-	for(auto & menu : _menus){
+	for(auto & menu : _menus) {
 		GameMenu & currentMenu = menu.second;
 		currentMenu.update(_config.screenResolution, initialRatio);
 	}
 }
 
-void Game::draw(){
+void Game::draw() {
 	// If ingame, render the game.
-	if(_status == Status::INGAME){
+	if(_status == Status::INGAME) {
 		// Before drawing, prepare the model matrices.
 		_player->updateModels();
 		_inGameRenderer.draw(*_player);
 	}
-	
+
 	_menuRenderer.draw(_menus[_status]);
-	
+
 	checkGLError();
 }
 
-System::Action Game::update(){
-	
+System::Action Game::update() {
+
 	// Check if we need to resize.
-	if(Input::manager().resized()){
+	if(Input::manager().resized()) {
 		resize(uint(Input::manager().size()[0]), uint(Input::manager().size()[1]));
 	}
-	
+
 	// Decide which action should (maybe) be performed.
 	System::Action finalAction = System::Action::None;
-	
+
 	// Handle quitting.
-	if(Input::manager().triggered(Input::KeyEscape)){
-		if(_status == Status::MAINMENU){
+	if(Input::manager().triggered(Input::KeyEscape)) {
+		if(_status == Status::MAINMENU) {
 			// Special case.
 			finalAction = handleButton(ButtonAction::QUIT);
-		} else if(_status == Status::INGAME){
+		} else if(_status == Status::INGAME) {
 			finalAction = handleButton(ButtonAction::PAUSE);
-		} else if(_status == Status::PAUSED){
+		} else if(_status == Status::PAUSED) {
 			finalAction = handleButton(ButtonAction::RESUME);
-		} else if(_status == Status::OPTIONS || _status == Status::DEAD){
+		} else if(_status == Status::OPTIONS || _status == Status::DEAD) {
 			// If paused, dead or in options menu, go back to main menu.
 			finalAction = handleButton(ButtonAction::BACKTOMENU);
 		}
 	}
-	
+
 	// Handle in-game updates and transition to death menu.
-	if(_status == Status::INGAME){
+	if(_status == Status::INGAME) {
 		_inGameRenderer.update();
 		_player->update();
-		
-		if(!_player->alive()){
+
+		if(!_player->alive()) {
 			_status = Status::DEAD;
 			// Make sure the blur effect buffer is the right size.
 			const glm::vec2 gameRes = _inGameRenderer.renderingResolution();
 			_bgBlur->resize(uint(gameRes[0]), uint(gameRes[1]));
 			_bgBlur->process(_inGameRenderer.finalImage());
 			_menus[Status::DEAD].labels[0].update(std::to_string(_player->score()));
-			
+
 			// Save the final score.
 			const std::string scores = Resources::loadStringFromExternalFile("./scores.sav");
 			Resources::saveStringToExternalFile("./scores.sav", std::to_string(_player->score()) + "\n" + scores);
@@ -126,28 +127,28 @@ System::Action Game::update(){
 		GameMenu & currentMenu = _menus[_status];
 		// Check if any button is hovered or pressed.
 		const glm::vec2 mousePos = (Input::manager().mouse() * 2.0f - 1.0f) * glm::vec2(1.0f, -1.0f);
-		for( MenuButton & button : currentMenu.buttons){
+		for(MenuButton & button : currentMenu.buttons) {
 			button.state = MenuButton::State::OFF;
 			// Check if mouse inside.
-			if(button.contains(mousePos)){
+			if(button.contains(mousePos)) {
 				button.state = Input::manager().pressed(Input::Mouse::Left) ? MenuButton::State::ON : MenuButton::State::HOVER;
 				// If the mouse was released, trigger the action.
-				if(Input::manager().released(Input::Mouse::Left)){
+				if(Input::manager().released(Input::Mouse::Left)) {
 					// Do the action.
 					const System::Action result = handleButton(ButtonAction(button.tag));
-					if(finalAction == System::Action::None){
+					if(finalAction == System::Action::None) {
 						finalAction = result;
 					}
 				}
 			}
 		}
 		// Check if any checkbox was checked.
-		for( MenuButton & toggle : currentMenu.toggles){
+		for(MenuButton & toggle : currentMenu.toggles) {
 			// Check if mouse inside, and if the click was validated through release.
-			if(toggle.contains(mousePos) && Input::manager().released(Input::Mouse::Left)){
+			if(toggle.contains(mousePos) && Input::manager().released(Input::Mouse::Left)) {
 				// Do the action.
 				const System::Action result = handleButton(ButtonAction(toggle.tag));
-				if(finalAction == System::Action::None){
+				if(finalAction == System::Action::None) {
 					finalAction = result;
 				}
 				// Update the display state.
@@ -157,11 +158,10 @@ System::Action Game::update(){
 	}
 
 	return finalAction;
-	
 }
 
-System::Action Game::handleButton(ButtonAction tag){
-	switch (tag) {
+System::Action Game::handleButton(ButtonAction tag) {
+	switch(tag) {
 		case NEWGAME:
 			_player = std::unique_ptr<Player>(new Player());
 			_menus[Status::INGAME].labels[0].update("0");
@@ -169,7 +169,7 @@ System::Action Game::handleButton(ButtonAction tag){
 			break;
 		case BACKTOMENU:
 			// Delete the player if it exist.
-			if(_player){
+			if(_player) {
 				_player = std::unique_ptr<Player>(nullptr);
 			}
 			_status = Status::MAINMENU;
@@ -177,8 +177,7 @@ System::Action Game::handleButton(ButtonAction tag){
 		case OPTIONS:
 			_status = Status::OPTIONS;
 			break;
-		case PAUSE:
-		{
+		case PAUSE: {
 			const glm::vec2 gameRes = _inGameRenderer.renderingResolution();
 			_bgBlur->resize(uint(gameRes[0]), uint(gameRes[1]));
 			_bgBlur->process(_inGameRenderer.finalImage());
@@ -197,31 +196,31 @@ System::Action Game::handleButton(ButtonAction tag){
 		default:
 			break;
 	}
-	
+
 	return System::Action::None;
 }
 
-void Game::physics(double frameTime){
-	
-	if(_status == Status::INGAME && !_overrideTime){
-		_playTime = _playTime + frameTime;
+void Game::physics(double frameTime) {
+
+	if(_status == Status::INGAME && !_overrideTime) {
+		_playTime			= _playTime + frameTime;
 		const bool hasEaten = _player->physics(_playTime, frameTime);
 		// Update the ingame score label.
-		if(hasEaten){
+		if(hasEaten) {
 			_menus[Status::INGAME].labels[0].update(std::to_string(_player->score()));
 		}
 	}
-	
+
 	// No physics in menus.
 }
 
-void Game::resize(unsigned int width, unsigned int height){
+void Game::resize(unsigned int width, unsigned int height) {
 	_config.internalVerticalResolution = int(float(height) / Input::manager().density());
 	_inGameRenderer.resize(width, height);
 	_menuRenderer.resize(width, height);
 	// Update each menu buttons sizes.
 	const float initialRatio = float(_config.initialWidth) / float(_config.initialHeight);
-	for(auto & menu : _menus){
+	for(auto & menu : _menus) {
 		GameMenu & currentMenu = menu.second;
 		currentMenu.update(_config.screenResolution, initialRatio);
 	}

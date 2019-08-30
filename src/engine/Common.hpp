@@ -10,7 +10,6 @@
 #include <glm/gtx/color_space.hpp>
 #include <glm/gtx/io.hpp>
 
-
 #include <string>
 #include <vector>
 #include <array>
@@ -24,11 +23,11 @@ typedef unsigned long ulong;
 
 #ifdef _WIN32
 
-#undef near
-#undef far
-#define NOMINMAX
-#define M_PI	3.14159265358979323846
-#define M_PI_2  1.57079632679489661923
+#	undef near
+#	undef far
+#	define NOMINMAX
+#	define M_PI 3.14159265358979323846
+#	define M_PI_2 1.57079632679489661923
 #endif
 
 /**

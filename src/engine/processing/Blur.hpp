@@ -9,25 +9,22 @@
 class Blur {
 
 public:
-
 	/**
 	 Draw the result texture to the current framebuffer.
 	 */
 	void draw() const;
-	
+
 	/**
 	 Query the texture containing the result of the blurring process.
 	 \return the texture ID
 	 */
 	const Texture * textureId() const;
-	
+
 protected:
-	
 	/** Constructor.
 	 */
 	Blur();
-	
-	const Texture * _finalTexture; ///< The texture holding the blurred result
+
+	const Texture * _finalTexture;		 ///< The texture holding the blurred result
 	const Program * _passthroughProgram; ///< Default passthrough utility program
-	
 };

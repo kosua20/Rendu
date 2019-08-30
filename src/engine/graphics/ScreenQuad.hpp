@@ -14,31 +14,28 @@
 class ScreenQuad {
 
 public:
-
 	/** Draw a full screen quad. */
 	static void draw();
-	
+
 	/** Draw a full screen quad.
 	 \param texture the texture to pass to the shader.
 	 */
 	static void draw(const Texture & texture);
-	
+
 	/** Draw a full screen quad.
 	 \param texture the texture to pass to the shader.
 	 */
 	static void draw(const Texture * texture);
-	
+
 	/** Draw a full screen quad.
 	 \param textures the textures to pass to the shader.
 	 */
-	static void draw(const std::vector<const Texture*> & textures);
-	
-	
+	static void draw(const std::vector<const Texture *> & textures);
+
 private:
-	
 	/// Constructor.
 	ScreenQuad() = default;
-	
+
 	static GLuint _vao; ///< The unique empty VAO.
-	static bool _init; ///< Has the common VAO been setup?
+	static bool _init;  ///< Has the common VAO been setup?
 };

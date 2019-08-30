@@ -13,7 +13,6 @@
 class BoxBlur : public Blur {
 
 public:
-	
 	/**
 	 Constructor. Can use either an exhaustive 5x5 box blur (25 samples) or an approximate version with a checkerboard pattern (13 samples).
 	 \param width the internal resolution width
@@ -28,7 +27,7 @@ public:
 	 \param textureId the ID of the texture to process
 	 */
 	void process(const Texture * textureId) const;
-	
+
 	/**
 	 Clean internal resources.
 	 */
@@ -40,16 +39,13 @@ public:
 	 \param height the new height to use
 	 */
 	void resize(unsigned int width, unsigned int height) const;
-	
+
 	/**
 	 Clear the final framebuffer texture.
 	 */
 	void clear() const;
-	
-private:
-	
-	const Program * _blurProgram; ///< Box blur program
-	std::unique_ptr<Framebuffer> _finalFramebuffer; ///< Final framebuffer.
-	
-};
 
+private:
+	const Program * _blurProgram;					///< Box blur program
+	std::unique_ptr<Framebuffer> _finalFramebuffer; ///< Final framebuffer.
+};

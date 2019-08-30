@@ -23,73 +23,76 @@
  \ingroup ImageFiltering
  */
 class FilteringRenderer final : public Renderer {
-	
+
 public:
-	
 	/** Constructor.
 	 \param config the configuration to apply when setting up
 	 */
 	explicit FilteringRenderer(RenderingConfig & config);
-	
+
 	/** Draw the scene and effects */
 	void draw() override;
-	
+
 	/** Perform once-per-frame update (buttons, GUI,...) */
 	void update() override;
-	
+
 	/** Perform physics simulation update.
 	 \param fullTime the time elapsed since the beginning of the render loop
 	 \param frameTime the duration of the last frame
 	 \note This function can be called multiple times per frame.
 	 */
 	void physics(double fullTime, double frameTime) override;
-	
+
 	/** Clean internal resources. */
 	void clean() override;
-	
+
 	/** Handle a window resize event.
 	 \param width the new width
 	 \param height the new height
 	 */
 	void resize(unsigned int width, unsigned int height) override;
-	
-	
+
 private:
-	
 	/** \brief The filter to apply. */
 	enum class Processing : int {
-		INPUT = 0, FILL, INTEGRATE, BOXBLUR, GAUSSBLUR, FLOODFILL
+		INPUT = 0,
+		FILL,
+		INTEGRATE,
+		BOXBLUR,
+		GAUSSBLUR,
+		FLOODFILL
 	};
-	
+
 	/** \brief The viewing mode: either a rendering, a still image or a painting canvas. */
 	enum class View : int {
-		SCENE = 0, IMAGE, PAINT
+		SCENE = 0,
+		IMAGE,
+		PAINT
 	};
-	
+
 	/** Display mode-specific GUI options. */
 	void showModeOptions();
-		
-	ControllableCamera _userCamera; ///< The interactive camera.
+
+	ControllableCamera _userCamera;			   ///< The interactive camera.
 	std::unique_ptr<Framebuffer> _sceneBuffer; ///< Scene rendering buffer.
-	
-	std::unique_ptr<PoissonFiller> _pyramidFiller; ///< Poisson filling.
+
+	std::unique_ptr<PoissonFiller> _pyramidFiller;			 ///< Poisson filling.
 	std::unique_ptr<LaplacianIntegrator> _pyramidIntegrator; ///< Laplacian integration.
-	std::unique_ptr<GaussianBlur> _gaussianBlur; ///< Gaussian blur processing.
-	std::unique_ptr<BoxBlur> _boxBlur; ///< Box blur processing.
-	std::unique_ptr<FloodFiller> _floodFill; ///< Flood filling.
+	std::unique_ptr<GaussianBlur> _gaussianBlur;			 ///< Gaussian blur processing.
+	std::unique_ptr<BoxBlur> _boxBlur;						 ///< Box blur processing.
+	std::unique_ptr<FloodFiller> _floodFill;				 ///< Flood filling.
 	std::unique_ptr<PaintingTool> _painter;
-	
+
 	const Program * _passthrough; ///< Basic blit shader.
 	const Program * _sceneShader; ///< Object rendering shader.
-	const Mesh * _mesh; ///< Basic sphere mesh.
-	
+	const Mesh * _mesh;			  ///< Basic sphere mesh.
+
 	Processing _mode = Processing::INPUT; ///< Current filter mode.
-	View _viewMode = View::SCENE; ///< Current view mode.
-	Texture _image; ///< The image to display in Image view mode.
-	
-	int _blurLevel = 3; ///< Gaussian blur level.
-	int _intDownscale = 1; ///< Integrator internal resolution downscaling.
-	int _fillDownscale = 1; ///< Poisson filling internal resolution downscaling.
+	View _viewMode   = View::SCENE;		  ///< Current view mode.
+	Texture _image;						  ///< The image to display in Image view mode.
+
+	int _blurLevel		= 3;	 ///< Gaussian blur level.
+	int _intDownscale   = 1;	 ///< Integrator internal resolution downscaling.
+	int _fillDownscale  = 1;	 ///< Poisson filling internal resolution downscaling.
 	bool _showProcInput = false; ///< Option to show the input for both convolution filters.
-	
 };

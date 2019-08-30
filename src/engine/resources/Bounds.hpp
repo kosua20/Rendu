@@ -7,7 +7,6 @@
  */
 class BoundingSphere {
 public:
-
 	/** Empty sphere constructor. */
 	BoundingSphere() = default;
 
@@ -18,8 +17,7 @@ public:
 	BoundingSphere(const glm::vec3 & aCenter, float aRadius);
 
 	glm::vec3 center = glm::vec3(0.0f); ///< The sphere center.
-	float radius = 0.0f; ///< The sphere radius.
-
+	float radius	 = 0.0f;			///< The sphere radius.
 };
 
 /**
@@ -28,61 +26,59 @@ public:
  */
 class BoundingBox {
 public:
-
 	/** Empty box constructor. */
 	BoundingBox() = default;
-	
+
 	/** Triangle-based box constructor.
 	 \param v0 first triangle vertex
 	 \param v1 second triangle vertex
 	 \param v2 third triangle vertex
 	 */
 	BoundingBox(const glm::vec3 & v0, const glm::vec3 & v1, const glm::vec3 & v2);
-	
+
 	/** Extends the current box by another one. The result is the bounding box of the two boxes union.
 	 \param box the bounding box to include
 	 */
 	void merge(const BoundingBox & box);
-	
+
 	/** Extends the current box by a point
 	 \param point the point to include
 	 */
 	void merge(const glm::vec3 & point);
-	
+
 	/** Query the bounding sphere of this box.
 	 \return the bounding sphere
 	 */
 	BoundingSphere getSphere() const;
-	
+
 	/** Query the size of this box.
 	 \return the size
 	 */
 	glm::vec3 getSize() const;
-	
+
 	/** Query the positions of the eight corners of the box, in the following order (with \p m=mini, \p M=maxi):
 	 \p (m,m,m), \p (m,m,M), \p (m,M,m), \p (m,M,M), \p (M,m,m), \p (M,m,M), \p (M,M,m), \p (M,M,M)
 	 \return a vector containing the box corners
 	 */
 	std::vector<glm::vec3> getCorners() const;
-	
+
 	/** Query the center of the bounding box.
 	 \return the centroid
 	 */
 	glm::vec3 getCentroid() const;
-	
+
 	/** Compute the bounding box of the transformed current box.
 	 \param trans the transformation to apply
 	 \return the bounding box of the transformed box
 	 */
 	BoundingBox transformed(const glm::mat4 & trans) const;
-	
+
 	/** Indicates if a point is inside the bounding box.
 	 \param point the point to check
 	 \return true if the bounding box contains the point
 	 */
 	bool contains(const glm::vec3 & point) const;
 
-	glm::vec3 minis = glm::vec3(std::numeric_limits<float>::max()); ///< Lower-back-left corner of the box.
+	glm::vec3 minis = glm::vec3(std::numeric_limits<float>::max());	///< Lower-back-left corner of the box.
 	glm::vec3 maxis = glm::vec3(std::numeric_limits<float>::lowest()); ///< Higher-top-right corner of the box.
 };
-
