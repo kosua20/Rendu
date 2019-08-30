@@ -162,7 +162,7 @@ void PointLight::setScene(const BoundingBox & sceneBox) {
 		far  = size;
 	}
 	_farPlane				   = far;
-	const glm::mat4 projection = glm::perspective(float(M_PI / 2.0), 1.0f, near, _farPlane);
+	const glm::mat4 projection = glm::perspective(glm::half_pi<float>(), 1.0f, near, _farPlane);
 
 	// Create the constant view matrices for the 6 faces.
 	const glm::vec3 ups[6]	 = {glm::vec3(0.0, -1.0, 0.0), glm::vec3(0.0, -1.0, 0.0), glm::vec3(0.0, 0.0, 1.0), glm::vec3(0.0, 0.0, -1.0), glm::vec3(0.0, -1.0, 0.0), glm::vec3(0.0, -1.0, 0.0)};

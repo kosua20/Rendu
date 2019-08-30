@@ -188,7 +188,7 @@ void computeCubemapConvolution(const Texture & cubemapInfos, int levelsCount, in
 	// Generate 6 view-projection matrices corresponding to 6 cameras at a 90° angle and with a 90° field of view.
 	std::vector<glm::mat4> MVPs(6);
 	{
-		const glm::mat4 projection = glm::perspective(float(M_PI / 2.0), 1.0f, 0.1f, 200.0f);
+		const glm::mat4 projection = glm::perspective(glm::half_pi<float>(), 1.0f, 0.1f, 200.0f);
 		const glm::vec3 ups[6]	 = {glm::vec3(0.0, -1.0, 0.0), glm::vec3(0.0, -1.0, 0.0), glm::vec3(0.0, 0.0, 1.0), glm::vec3(0.0, 0.0, -1.0), glm::vec3(0.0, -1.0, 0.0), glm::vec3(0.0, -1.0, 0.0)};
 		const glm::vec3 centers[6] = {glm::vec3(1.0, 0.0, 0.0), glm::vec3(-1.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0), glm::vec3(0.0, -1.0, 0.0), glm::vec3(0.0, 0.0, 1.0), glm::vec3(0.0, 0.0, -1.0)};
 		for(int i = 0; i < 6; ++i) {
@@ -314,7 +314,7 @@ int main(int argc, char ** argv) {
 	Random::seed();
 
 	ControllableCamera camera;
-	camera.projection(config.screenResolution[0] / config.screenResolution[1], float(M_PI) * 0.4, 0.1f, 10.0f);
+	camera.projection(config.screenResolution[0] / config.screenResolution[1], glm::pi<float>() * 0.4, 0.1f, 10.0f);
 	camera.pose(glm::vec3(0.0f, 0.0f, 4.0f), glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
 	const auto program					= Resources::manager().getProgram("skybox_basic");

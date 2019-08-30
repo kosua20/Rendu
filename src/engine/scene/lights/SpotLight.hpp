@@ -91,8 +91,8 @@ private:
 	glm::mat4 _viewMatrix		= glm::mat4(1.0f);			   ///< Light view matrix.
 	glm::vec3 _lightDirection   = glm::vec3(1.0f, 0.0f, 0.0f); ///< Light direction.
 	glm::vec3 _lightPosition	= glm::vec3(0.0f);			   ///< Light position.
-	float _innerHalfAngle		= float(M_PI) / 4.0f;		   ///< The inner cone attenuation angle.
-	float _outerHalfAngle		= float(M_PI) / 2.0f;		   ///< The outer cone attenuation angle.
+	float _innerHalfAngle		= glm::quarter_pi<float>();	   ///< The inner cone attenuation angle.
+	float _outerHalfAngle		= glm::half_pi<float>();		   ///< The outer cone attenuation angle.
 	float _radius				= 1.0f;						   ///< The attenuation radius.
 
 	const Mesh * _cone = nullptr; ///< The supporting geometry.

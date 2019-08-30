@@ -123,7 +123,7 @@ int main(int argc, char ** argv) {
 			program->uniform("gammaOutput", applyGamma);
 			const glm::vec4 chanFilts(channelsFilter);
 			const glm::vec2 flips(flipAxis);
-			const glm::vec2 angles(std::cos(float(currentAngle) * float(M_PI_2)), std::sin(float(currentAngle) * float(M_PI_2)));
+			const glm::vec2 angles(std::cos(float(currentAngle) * glm::half_pi<float>()), std::sin(float(currentAngle) * glm::pi<float>()));
 
 			program->uniform("channelsFilter", chanFilts);
 			program->uniform("flipAxis", flips);

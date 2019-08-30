@@ -32,7 +32,7 @@ float Random::Float(float min, float max) {
 
 glm::vec3 Random::sampleSphere() {
 	const float thetaCos = 2.0f * Random::Float() - 1.0f;
-	const float phi		 = 2.0f * float(M_PI) * Random::Float();
+	const float phi		 = glm::two_pi<float>() * Random::Float();
 	const float thetaSin = std::sqrt(1.0f - thetaCos * thetaCos);
 	return glm::vec3(thetaSin * std::cos(phi), thetaSin * std::sin(phi), thetaCos);
 }

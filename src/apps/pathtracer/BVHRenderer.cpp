@@ -42,7 +42,7 @@ void BVHRenderer::setScene(const std::shared_ptr<Scene> & scene) {
 	const float range		 = glm::length(bbox.getSize());
 	_userCamera.frustum(0.01f * range, 5.0f * range);
 	_userCamera.speed() = 0.2f * range;
-	_cameraFOV			= _userCamera.fov() * 180.0f / float(M_PI);
+	_cameraFOV			= _userCamera.fov() * 180.0f / glm::pi<float>();
 
 	// Create the path tracer and raycaster.
 	_pathTracer = PathTracer(_scene);
@@ -227,7 +227,7 @@ void BVHRenderer::update() {
 			ImGui::Combo("Camera mode", reinterpret_cast<int *>(&_userCamera.mode()), "FPS\0Turntable\0Joystick\0\0", 3);
 			ImGui::InputFloat("Camera speed", &_userCamera.speed(), 0.1f, 1.0f);
 			if(ImGui::InputFloat("Camera FOV", &_cameraFOV, 1.0f, 10.0f)) {
-				_userCamera.fov(_cameraFOV * float(M_PI) / 180.0f);
+				_userCamera.fov(_cameraFOV * glm::pi<float>() / 180.0f);
 			}
 			ImGui::PopItemWidth();
 
@@ -242,14 +242,14 @@ void BVHRenderer::update() {
 				const auto cameraCode = Codable::parse(camDesc);
 				if(!cameraCode.empty()) {
 					_userCamera.decode(cameraCode[0]);
-					_cameraFOV = _userCamera.fov() * 180.0f / float(M_PI);
+					_cameraFOV = _userCamera.fov() * 180.0f / glm::pi<float>();
 				}
 			}
 			// Reset to the scene reference viewpoint.
 			if(ImGui::Button("Reset")) {
 				_userCamera.apply(_scene->viewpoint());
 				_userCamera.ratio(_renderResolution[0] / _renderResolution[1]);
-				_cameraFOV = _userCamera.fov() * 180.0f / float(M_PI);
+				_cameraFOV = _userCamera.fov() * 180.0f / glm::pi<float>();
 			}
 		}
 	}

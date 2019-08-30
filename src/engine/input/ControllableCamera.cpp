@@ -12,7 +12,7 @@ void ControllableCamera::reset() {
 	_right  = glm::vec3(1.0, 0.0, 0.0);
 	_view   = glm::lookAt(_eye, _center, _up);
 	_radius = 1.0;
-	_angles = glm::vec2(float(M_PI) * 0.5f, 0.0f);
+	_angles = glm::vec2(glm::half_pi<float>(), 0.0f);
 }
 
 void ControllableCamera::pose(const glm::vec3 & position, const glm::vec3 & center, const glm::vec3 & up) {
@@ -180,7 +180,7 @@ void ControllableCamera::updateUsingKeyboard(double frameTime) {
 	_angles += delta * float(frameTime) * _angularSpeed;
 	_angles[1] = (std::max)(-1.57f, (std::min)(1.57f, _angles[1]));
 	// Right stick to look around.
-	const glm::mat4 rotY = glm::rotate(glm::mat4(1.0f), float(M_PI) * 0.5f - _angles[0], glm::vec3(0.0, 1.0, 0.0));
+	const glm::mat4 rotY = glm::rotate(glm::mat4(1.0f), glm::half_pi<float>() - _angles[0], glm::vec3(0.0, 1.0, 0.0));
 	const glm::mat4 rotX = glm::rotate(glm::mat4(1.0f), -_angles[1], glm::vec3(1.0, 0.0, 0.0));
 	const glm::mat3 rot  = glm::mat3(rotY * rotX);
 

@@ -46,13 +46,13 @@ bool Player::physics(double fullTime, const double frameTime) {
 	_position += translation;
 	if(std::abs(_position[0]) > _maxPos[0]) {
 		_momentum[0] *= -1.0f;
-		_angle = float(M_PI) - _angle + float(M_PI);
+		_angle = glm::two_pi<float>() - _angle;
 		// Add a few frames of invicibility for acute angles.
 		_invicibility += _invicibilityIncrease;
 	}
 	if(std::abs(_position[1]) > _maxPos[1]) {
 		_momentum[1] *= -1.0f;
-		_angle = -_angle + float(M_PI);
+		_angle = -_angle + glm::pi<float>();
 		// Add a few frames of invicibility for acute angles.
 		_invicibility += _invicibilityIncrease;
 	}
@@ -101,11 +101,11 @@ bool Player::physics(double fullTime, const double frameTime) {
 				// Blend between the current angle and the target one for a smooth animation.
 				_angles[id] = glm::mix(_angles[id], newAngle, frameTime);
 				// Bring back into the -pi,pi range to avoid accumulation.
-				if(_angles[id] > float(M_PI)) {
-					_angles[id] -= 2.0f * float(M_PI);
+				if(_angles[id] > glm::pi<float>()) {
+					_angles[id] -= glm::two_pi<float>();
 				}
-				if(_angles[id] < -float(M_PI)) {
-					_angles[id] += 2.0f * float(M_PI);
+				if(_angles[id] < -glm::pi<float>()) {
+					_angles[id] += glm::two_pi<float>();
 				}
 
 				++id;

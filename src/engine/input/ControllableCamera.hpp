@@ -69,7 +69,7 @@ private:
 	float _angularSpeed = 4.0f; ///< Camera angular speed
 
 	// Camera additional state.
-	glm::vec2 _angles = glm::vec2(float(M_PI) * 0.5f, 0.0f); ///< Orientation angles
+	glm::vec2 _angles = glm::vec2(glm::half_pi<float>(), 0.0f); ///< Orientation angles
 	float _radius	 = 1.0f;								 ///< Turntable radius
 
 	Mode _mode = Mode::TurnTable; ///< The current interaction mode

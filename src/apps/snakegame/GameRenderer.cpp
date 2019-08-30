@@ -86,7 +86,7 @@ void GameRenderer::drawScene(const Player & player) const {
 	_coloredProgram->use();
 	// Render the ground.
 	{
-		const glm::mat4 groundModel  = glm::rotate(glm::mat4(1.0f), float(M_PI_2), glm::vec3(1.0f, 0.0f, 0.0f));
+		const glm::mat4 groundModel  = glm::rotate(glm::mat4(1.0f), glm::half_pi<float>(), glm::vec3(1.0f, 0.0f, 0.0f));
 		const glm::mat4 MVP			 = VP * groundModel;
 		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(groundModel)));
 		_coloredProgram->uniform("mvp", MVP);

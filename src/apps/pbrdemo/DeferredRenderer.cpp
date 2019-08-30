@@ -10,7 +10,7 @@ DeferredRenderer::DeferredRenderer(RenderingConfig & config) :
 
 	// Setup camera parameters.
 	_userCamera.ratio(config.screenResolution[0] / config.screenResolution[1]);
-	_cameraFOV = _userCamera.fov() * 180.0f / float(M_PI);
+	_cameraFOV = _userCamera.fov() * 180.0f / glm::pi<float>();
 	_cplanes   = _userCamera.clippingPlanes();
 
 	const int renderWidth	  = int(_renderResolution[0]);
@@ -80,7 +80,7 @@ void DeferredRenderer::setScene(const std::shared_ptr<Scene> & scene) {
 	_userCamera.frustum(0.01f * range, 5.0f * range);
 	_userCamera.speed() = 0.2f * range;
 	_cplanes			= _userCamera.clippingPlanes();
-	_cameraFOV			= _userCamera.fov() * 180.0f / float(M_PI);
+	_cameraFOV			= _userCamera.fov() * 180.0f / glm::pi<float>();
 	_ambientScreen->setSceneParameters(_scene->backgroundReflection, _scene->backgroundIrradiance);
 
 	/// \todo clarify this by having lights taking explicit named arguments.
@@ -331,7 +331,7 @@ void DeferredRenderer::update() {
 		ImGui::Combo("Camera mode", reinterpret_cast<int *>(&_userCamera.mode()), "FPS\0Turntable\0Joystick\0\0", 3);
 		ImGui::InputFloat("Camera speed", &_userCamera.speed(), 0.1f, 1.0f);
 		if(ImGui::InputFloat("Camera FOV", &_cameraFOV, 1.0f, 10.0f)) {
-			_userCamera.fov(_cameraFOV * float(M_PI) / 180.0f);
+			_userCamera.fov(_cameraFOV * glm::pi<float>() / 180.0f);
 		}
 		ImGui::PopItemWidth();
 
@@ -349,7 +349,7 @@ void DeferredRenderer::update() {
 			const auto cameraCode = Codable::parse(camDesc);
 			if(!cameraCode.empty()) {
 				_userCamera.decode(cameraCode[0]);
-				_cameraFOV = _userCamera.fov() * 180.0f / float(M_PI);
+				_cameraFOV = _userCamera.fov() * 180.0f / glm::pi<float>();
 				_cplanes   = _userCamera.clippingPlanes();
 			}
 		}
