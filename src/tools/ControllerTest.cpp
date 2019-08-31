@@ -1,6 +1,7 @@
 #include "input/Input.hpp"
 #include "system/System.hpp"
 #include "system/Config.hpp"
+#include "system/Window.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "input/controller/RawController.hpp"
 #include "graphics/GLUtilities.hpp"
@@ -199,11 +200,8 @@ int main(int argc, char ** argv) {
 	// Override window dimensions.
 	config.initialWidth  = 800;
 	config.initialHeight = 800;
-	GLFWwindow * window  = System::initWindow("Controller test", config);
-	if(!window) {
-		return -1;
-	}
-
+	Window window("Controller test", config);
+	
 	Resources::manager().addResources("../../../resources/common");
 
 	// Enable raw mode for the input, that way all controllers will be raw controllers.
@@ -221,16 +219,10 @@ int main(int argc, char ** argv) {
 	float threshold = 0.02f;
 
 	// Start the display/interaction loop.
-	while(!glfwWindowShouldClose(window)) {
-		// Update events (inputs,...).
-		Input::manager().update();
-		// Handle quitting.
-		if(Input::manager().pressed(Input::KeyEscape)) {
-			glfwSetWindowShouldClose(window, GL_TRUE);
-		}
-
+	while(window.nextFrame()) {
+		
 		// Reload resources.
-		if(Input::manager().triggered(Input::KeyP)) {
+		if(Input::manager().triggered(Input::Key::P)) {
 			Resources::manager().reload();
 		}
 
@@ -277,9 +269,6 @@ int main(int argc, char ** argv) {
 				}
 			}
 		}
-
-		// Start a new frame for the interface.
-		System::Gui::beginFrame();
 
 		// Render nothing.
 		const glm::ivec2 screenSize = Input::manager().size();
@@ -483,20 +472,11 @@ int main(int argc, char ** argv) {
 			}
 		}
 		ImGui::End();
-
-		// Then render the interface.
-		System::Gui::endFrame();
-		//Display the result for the current rendering loop.
-		glfwSwapBuffers(window);
 	}
 
-	// Clean the interface.
-	System::Gui::clean();
-
+	// Clean up.
 	Resources::manager().clean();
-	// Close GL context and any other GLFW resources.
-	glfwDestroyWindow(window);
-	glfwTerminate();
+	window.clean();
 
 	return 0;
 }

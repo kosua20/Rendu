@@ -6,6 +6,7 @@
 #include "resources/Image.hpp"
 #include "graphics/Framebuffer.hpp"
 #include "system/Config.hpp"
+#include "system/Window.hpp"
 #include "Common.hpp"
 
 /**
@@ -29,15 +30,10 @@ int main(int argc, char ** argv) {
 		return 0;
 	}
 
-	GLFWwindow * window = System::initWindow("Image viewer", config);
-	if(!window) {
-		return -1;
-	}
-
+	Window window("Image viewer", config);
+	
 	Resources::manager().addResources("../../../resources/common");
 	Resources::manager().addResources("../../../resources/imageviewer");
-
-	glEnable(GL_CULL_FACE);
 
 	// Create the rendering program.
 	const Program * program = Resources::manager().getProgram("image_display");
@@ -64,17 +60,10 @@ int main(int argc, char ** argv) {
 	glm::vec3 fgColor(0.6f);
 
 	// Start the display/interaction loop.
-	while(!glfwWindowShouldClose(window)) {
-		// Update events (inputs,...).
-		Input::manager().update();
-		// Handle quitting.
-		if(Input::manager().pressed(Input::KeyEscape)) {
-			glfwSetWindowShouldClose(window, GL_TRUE);
-		}
-		// Start a new frame for the interface.
-		System::Gui::beginFrame();
+	while(window.nextFrame()) {
+
 		// Reload resources.
-		if(Input::manager().triggered(Input::KeyP)) {
+		if(Input::manager().triggered(Input::Key::P)) {
 			Resources::manager().reload();
 		}
 
@@ -145,7 +134,7 @@ int main(int argc, char ** argv) {
 
 		// Interface.
 		ImGui::SetNextWindowPos(ImVec2(10, 10));
-		ImGui::SetNextWindowSize(ImVec2(285, 260), ImGuiCond_Appearing);
+		ImGui::SetNextWindowSize(ImVec2(285, 270), ImGuiCond_Appearing);
 		if(ImGui::Begin("Image viewer")) {
 
 			// Infos.
@@ -289,19 +278,11 @@ int main(int argc, char ** argv) {
 		}
 		ImGui::End();
 
-		// Then render the interface.
-		System::Gui::endFrame();
-		//Display the result for the current rendering loop.
-		glfwSwapBuffers(window);
 	}
 
-	// Clean the interface.
-	System::Gui::clean();
-
+	// Clean up.
 	Resources::manager().clean();
-	// Close GL context and any other GLFW resources.
-	glfwDestroyWindow(window);
-	glfwTerminate();
+	window.clean();
 
 	return 0;
 }

@@ -7,6 +7,7 @@
 #include "input/Input.hpp"
 #include "input/ControllableCamera.hpp"
 #include "system/System.hpp"
+#include "system/Window.hpp"
 #include "system/TextUtilities.hpp"
 #include "system/Random.hpp"
 #include "Common.hpp"
@@ -306,10 +307,8 @@ int main(int argc, char ** argv) {
 	Resources::manager().addResources("../../../resources/common");
 	Resources::manager().addResources("../../../resources/pbrdemo");
 
-	GLFWwindow * window = System::initWindow("BRDF Extractor", config);
-	if(!window) {
-		return -1;
-	}
+	Window window("BRDF Extractor", config);
+
 	// Seed random generator.
 	Random::seed();
 
@@ -326,7 +325,7 @@ int main(int argc, char ** argv) {
 	std::vector<glm::vec3> SCoeffs(9);
 	std::vector<Texture> cubeLevels;
 
-	double timer = glfwGetTime();
+	double timer = System::time();
 
 	// UI parameters.
 	int outputSide   = 512;
@@ -340,21 +339,10 @@ int main(int argc, char ** argv) {
 	};
 	int mode = INPUT;
 
-	while(!glfwWindowShouldClose(window)) {
-		// Update events (inputs,...).
-		Input::manager().update();
-		// Handle quitting/reloading.
-		if(Input::manager().pressed(Input::KeyEscape)) {
-			glfwSetWindowShouldClose(window, GL_TRUE);
-		}
-		if(Input::manager().released(Input::KeyP)) {
-			Resources::manager().reload();
-		}
-
-		System::Gui::beginFrame();
+	while(window.nextFrame()) {
 
 		// Update camera.
-		double currentTime = glfwGetTime();
+		double currentTime = System::time();
 		double frameTime   = currentTime - timer;
 		timer			   = currentTime;
 		camera.update();
@@ -500,17 +488,11 @@ int main(int argc, char ** argv) {
 		glDisable(GL_DEPTH_TEST);
 		GLUtilities::setViewport(0, 0, screenSize[0], screenSize[1]);
 
-		System::Gui::endFrame();
-		checkGLError();
-		glfwSwapBuffers(window);
 	}
 
-	System::Gui::clean();
 	// Clean resources.
 	Resources::manager().clean();
-	// Close GL context and any other GLFW resources.
-	glfwDestroyWindow(window);
-	glfwTerminate();
+	window.clean();
 
 	return 0;
 }

@@ -1,5 +1,6 @@
 #include "resources/ResourcesManager.hpp"
 #include "graphics/GLUtilities.hpp"
+#include "system/Window.hpp"
 #include "Common.hpp"
 #include <iostream>
 
@@ -76,38 +77,9 @@ int main(int argc, char ** argv) {
 		return 1;
 	}
 	Resources::manager().addResources(std::string(argv[1]));
-
-	// Initialize glfw, which will create and setup an OpenGL context.
-	if(!glfwInit()) {
-		Log::Error() << Log::OpenGL << "Could not start GLFW3" << std::endl;
-		return 1;
-	}
-
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-
-	GLFWwindow * window = glfwCreateWindow(100, 100, "validation", nullptr, nullptr);
-	if(!window) {
-		Log::Error() << Log::OpenGL << "Could not open window with GLFW3" << std::endl;
-		glfwTerminate();
-		return 1;
-	}
-
-	// Bind the OpenGL context and the new window.
-	glfwMakeContextCurrent(window);
-
-	if(gl3wInit()) {
-		Log::Error() << Log::OpenGL << "Failed to initialize OpenGL" << std::endl;
-		return -1;
-	}
-	if(!gl3wIsSupported(3, 2)) {
-		Log::Error() << Log::OpenGL << "OpenGL 3.2 not supported\n"
-					 << std::endl;
-		return -1;
-	}
+	
+	RenderingConfig config({});
+	Window window("Validation", config, false);
 
 	// Query the renderer identifier, and the supported OpenGL version.
 	std::string vendor, renderer, version, shaderVersion;
@@ -160,10 +132,7 @@ int main(int argc, char ** argv) {
 		encounteredIssues	= encounteredIssues || newIssues;
 	}
 
-	// Remove the window.
-	glfwDestroyWindow(window);
-	// Close GL context and any other GLFW resources.
-	glfwTerminate();
+	window.clean();
 	// Has any of the shaders encountered a compilation issue?
 	return encounteredIssues ? 1 : 0;
 }

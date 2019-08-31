@@ -2,6 +2,7 @@
 
 #include "input/Input.hpp"
 #include "system/Random.hpp"
+#include "system/Window.hpp"
 #include "system/System.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "Common.hpp"
@@ -26,10 +27,8 @@ int main() {
 	config.initialHeight	= 600;
 	config.forceAspectRatio = true;
 
-	GLFWwindow * window = System::initWindow("SnakeGame", config);
-	if(!window) {
-		return -1;
-	}
+	Window window("SnakeGame", config, false);
+	
 	// Disable Imgui saving.
 	ImGui::GetIO().IniFilename = nullptr;
 
@@ -45,25 +44,20 @@ int main() {
 		Resources::saveStringToExternalFile("./scores.sav", "\n");
 	}
 
-	double timer		 = glfwGetTime();
+	double timer		 = System::time();
 	double remainingTime = 0.0;
 	const double dt		 = 1.0 / 120.0; // Small physics timestep.
 
 	// Start the display/interaction loop.
-	while(!glfwWindowShouldClose(window)) {
-		// Update events (inputs,...).
-		Input::manager().update();
-
-		// Start a new frame for the interface.
-		System::Gui::beginFrame();
+	while(window.nextFrame()) {
 
 		// We separate punctual events from the main physics/movement update loop.
-		const System::Action actionToTake = game.update();
-		if(actionToTake != System::Action::None) {
-			System::performWindowAction(window, config, actionToTake);
+		const Window::Action actionToTake = game.update();
+		if(actionToTake != Window::Action::None) {
+			window.perform(actionToTake);
 			// Due to the ordering between the update function and the fullscreen activation, we have to manually call resize here.
 			// Another solution would be to check resizing before rendering, in the Game object.
-			if(actionToTake == System::Action::Fullscreen) {
+			if(actionToTake == Window::Action::Fullscreen) {
 				game.resize(uint(Input::manager().size()[0]), uint(Input::manager().size()[1]));
 			}
 			// Update the config on disk, for next launch.
@@ -71,7 +65,7 @@ int main() {
 		}
 
 		// Compute the time elapsed since last frame
-		const double currentTime = glfwGetTime();
+		const double currentTime = System::time();
 		double frameTime		 = currentTime - timer;
 		timer					 = currentTime;
 
@@ -93,20 +87,13 @@ int main() {
 
 		// Update the content of the window.
 		game.draw();
-		// Then render the interface.
-		System::Gui::endFrame();
-		//Display the result for the current rendering loop.
-		glfwSwapBuffers(window);
+		
 	}
 
-	// Clean the interface.
-	System::Gui::clean();
-	// Clean other resources
+	// Clean resources.
 	game.clean();
 	Resources::manager().clean();
-	// Close GL context and any other GLFW resources.
-	glfwDestroyWindow(window);
-	glfwTerminate();
+	window.clean();
 
 	return 0;
 }

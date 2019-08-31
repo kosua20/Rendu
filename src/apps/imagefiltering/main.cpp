@@ -1,6 +1,7 @@
 #include "FilteringRenderer.hpp"
 
 #include "input/Input.hpp"
+#include "system/Window.hpp"
 #include "system/System.hpp"
 #include "system/Random.hpp"
 #include "system/Config.hpp"
@@ -28,10 +29,7 @@ int main(int argc, char ** argv) {
 		return 0;
 	}
 
-	GLFWwindow * window = System::initWindow("Image filtering", config);
-	if(!window) {
-		return -1;
-	}
+	Window window("Image filtering", config);
 
 	Resources::manager().addResources("../../../resources/common");
 	Resources::manager().addResources("../../../resources/imagefiltering");
@@ -40,7 +38,7 @@ int main(int argc, char ** argv) {
 	Random::seed();
 
 	// Setup the timer.
-	double timer		 = glfwGetTime();
+	double timer		 = System::time();
 	double fullTime		 = 0.0;
 	double remainingTime = 0.0;
 	const double dt		 = 1.0 / 120.0; // Small physics timestep.
@@ -48,26 +46,18 @@ int main(int argc, char ** argv) {
 	FilteringRenderer renderer(config);
 
 	// Start the display/interaction loop.
-	while(!glfwWindowShouldClose(window)) {
-		// Update events (inputs,...).
-		Input::manager().update();
-		// Handle quitting.
-		if(Input::manager().pressed(Input::KeyEscape)) {
-			glfwSetWindowShouldClose(window, GL_TRUE);
-		}
+	while(window.nextFrame()) {
+		
 		// Reload resources.
-		if(Input::manager().triggered(Input::KeyP)) {
+		if(Input::manager().triggered(Input::Key::P)) {
 			Resources::manager().reload();
 		}
-
-		// Start a new frame for the interface.
-		System::Gui::beginFrame();
 
 		// We separate punctual events from the main physics/movement update loop.
 		renderer.update();
 
 		// Compute the time elapsed since last frame
-		const double currentTime = glfwGetTime();
+		const double currentTime = System::time();
 		double frameTime		 = currentTime - timer;
 		timer					 = currentTime;
 
@@ -91,21 +81,12 @@ int main(int argc, char ** argv) {
 		// Render.
 		renderer.draw();
 
-		// Then render the interface.
-		System::Gui::endFrame();
-		//Display the result for the current rendering loop.
-		glfwSwapBuffers(window);
 	}
-
+	
+	// Clean resources.
 	renderer.clean();
-
-	// Clean the interface.
-	System::Gui::clean();
-
 	Resources::manager().clean();
-	// Close GL context and any other GLFW resources.
-	glfwDestroyWindow(window);
-	glfwTerminate();
+	window.clean();
 
 	return 0;
 }

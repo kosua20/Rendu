@@ -3,6 +3,7 @@
 #include "resources/ResourcesManager.hpp"
 #include "system/Random.hpp"
 #include "system/System.hpp"
+#include "system/Window.hpp"
 #include "system/Config.hpp"
 #include "input/Input.hpp"
 #include "Common.hpp"
@@ -136,11 +137,8 @@ int main(int argc, char ** argv) {
 		return 0;
 	}
 
-	GLFWwindow * window = System::initWindow("Path tracer", config);
-	if(!window) {
-		return -1;
-	}
-
+	Window window("Path tracer", config);
+	
 	// Load geometry and create raycaster.
 	std::shared_ptr<Scene> scene(new Scene(config.scene));
 	// We need th CPU data for the path tracer, the GPU data for the preview.
@@ -149,28 +147,19 @@ int main(int argc, char ** argv) {
 	std::unique_ptr<BVHRenderer> renderer(new BVHRenderer(config));
 	renderer->setScene(scene);
 
-	double timer		 = glfwGetTime();
+	double timer		 = System::time();
 	double fullTime		 = 0.0;
 	double remainingTime = 0.0;
 	const double dt		 = 1.0 / 120.0; // Small physics timestep.
 
 	// Start the display/interaction loop.
-	while(!glfwWindowShouldClose(window)) {
-		// Update events (inputs,...).
-		Input::manager().update();
-		// Handle quitting.
-		if(Input::manager().pressed(Input::KeyEscape)) {
-			glfwSetWindowShouldClose(window, GL_TRUE);
-		}
-
-		// Start a new frame for the interface.
-		System::Gui::beginFrame();
+	while(window.nextFrame()) {
 
 		// We separate punctual events from the main physics/movement update loop.
 		renderer->update();
 
 		// Compute the time elapsed since last frame
-		const double currentTime = glfwGetTime();
+		const double currentTime = System::time();
 		double frameTime		 = currentTime - timer;
 		timer					 = currentTime;
 
@@ -193,20 +182,13 @@ int main(int argc, char ** argv) {
 
 		// Update the content of the window.
 		renderer->draw();
-		// Then render the interface.
-		System::Gui::endFrame();
-		//Display the result for the current rendering loop.
-		glfwSwapBuffers(window);
+		
 	}
 
-	// Clean the interface.
-	System::Gui::clean();
 	// Clean other resources
 	renderer->clean();
 	Resources::manager().clean();
-	// Close GL context and any other GLFW resources.
-	glfwDestroyWindow(window);
-	glfwTerminate();
+	window.clean();
 
 	return 0;
 }

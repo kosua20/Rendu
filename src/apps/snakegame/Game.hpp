@@ -3,7 +3,7 @@
 #include "GameMenu.hpp"
 #include "GameMenuRenderer.hpp"
 #include "GameRenderer.hpp"
-#include "system/System.hpp"
+#include "system/Window.hpp"
 #include "system/Config.hpp"
 #include "processing/GaussianBlur.hpp"
 
@@ -28,7 +28,7 @@ public:
 	/** Perform once-per-frame update (button clicks, key presses).
 	 \return If any, the action the windowing system should perform.
 	 */
-	System::Action update();
+	Window::Action update();
 
 	/** Update the physic state of the player snake and items
 	 \param frameTime delta time since last physics update
@@ -74,7 +74,7 @@ private:
 	 \param tag the action to perform
 	 \return the potential low-level action to perform (fullscreen, vsync,...)
 	 */
-	System::Action handleButton(ButtonAction tag);
+	Window::Action handleButton(ButtonAction tag);
 
 	RenderingConfig & _config;		 ///< Reference to the shared game configuration.
 	std::unique_ptr<Player> _player; ///< The player state.

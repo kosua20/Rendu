@@ -80,7 +80,7 @@ void Game::draw() {
 	checkGLError();
 }
 
-System::Action Game::update() {
+Window::Action Game::update() {
 
 	// Check if we need to resize.
 	if(Input::manager().resized()) {
@@ -88,10 +88,10 @@ System::Action Game::update() {
 	}
 
 	// Decide which action should (maybe) be performed.
-	System::Action finalAction = System::Action::None;
+	Window::Action finalAction = Window::Action::None;
 
 	// Handle quitting.
-	if(Input::manager().triggered(Input::KeyEscape)) {
+	if(Input::manager().triggered(Input::Key::Escape)) {
 		if(_status == Status::MAINMENU) {
 			// Special case.
 			finalAction = handleButton(ButtonAction::QUIT);
@@ -135,8 +135,8 @@ System::Action Game::update() {
 				// If the mouse was released, trigger the action.
 				if(Input::manager().released(Input::Mouse::Left)) {
 					// Do the action.
-					const System::Action result = handleButton(ButtonAction(button.tag));
-					if(finalAction == System::Action::None) {
+					const Window::Action result = handleButton(ButtonAction(button.tag));
+					if(finalAction == Window::Action::None) {
 						finalAction = result;
 					}
 				}
@@ -147,8 +147,8 @@ System::Action Game::update() {
 			// Check if mouse inside, and if the click was validated through release.
 			if(toggle.contains(mousePos) && Input::manager().released(Input::Mouse::Left)) {
 				// Do the action.
-				const System::Action result = handleButton(ButtonAction(toggle.tag));
-				if(finalAction == System::Action::None) {
+				const Window::Action result = handleButton(ButtonAction(toggle.tag));
+				if(finalAction == Window::Action::None) {
 					finalAction = result;
 				}
 				// Update the display state.
@@ -160,7 +160,7 @@ System::Action Game::update() {
 	return finalAction;
 }
 
-System::Action Game::handleButton(ButtonAction tag) {
+Window::Action Game::handleButton(ButtonAction tag) {
 	switch(tag) {
 		case NEWGAME:
 			_player = std::unique_ptr<Player>(new Player());
@@ -188,16 +188,16 @@ System::Action Game::handleButton(ButtonAction tag) {
 			_status = Status::INGAME;
 			break;
 		case QUIT:
-			return System::Action::Quit;
+			return Window::Action::Quit;
 		case OPTION_FULLSCREEN:
-			return System::Action::Fullscreen;
+			return Window::Action::Fullscreen;
 		case OPTION_VSYNC:
-			return System::Action::Vsync;
+			return Window::Action::Vsync;
 		default:
 			break;
 	}
 
-	return System::Action::None;
+	return Window::Action::None;
 }
 
 void Game::physics(double frameTime) {

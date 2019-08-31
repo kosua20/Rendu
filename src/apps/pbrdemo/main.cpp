@@ -1,6 +1,7 @@
 #include "DeferredRenderer.hpp"
 #include "system/Random.hpp"
 #include "input/Input.hpp"
+#include "system/Window.hpp"
 #include "system/System.hpp"
 #include "scene/Scene.hpp"
 #include "Common.hpp"
@@ -28,11 +29,8 @@ int main(int argc, char ** argv) {
 		return 0;
 	}
 
-	GLFWwindow * window = System::initWindow("PBR demo", config);
-	if(!window) {
-		return -1;
-	}
-
+	Window window("PBR demo", config);
+	
 	Resources::manager().addResources("../../../resources/common");
 	Resources::manager().addResources("../../../resources/pbrdemo");
 	Resources::manager().addResources("../../../resources/additional");
@@ -43,7 +41,7 @@ int main(int argc, char ** argv) {
 	// Create the renderer.
 	std::unique_ptr<DeferredRenderer> renderer(new DeferredRenderer(config));
 
-	double timer		 = glfwGetTime();
+	double timer		 = System::time();
 	double fullTime		 = 0.0;
 	double remainingTime = 0.0;
 	const double dt		 = 1.0 / 120.0; // Small physics timestep.
@@ -68,15 +66,10 @@ int main(int argc, char ** argv) {
 	renderer->setScene(scenes[selectedScene]);
 
 	// Start the display/interaction loop.
-	while(!glfwWindowShouldClose(window)) {
-		// Update events (inputs,...).
-		Input::manager().update();
-		// Handle quitting.
-		if(Input::manager().pressed(Input::KeyEscape)) {
-			glfwSetWindowShouldClose(window, GL_TRUE);
-		}
+	while(window.nextFrame()) {
+		
 		// Reload resources.
-		if(Input::manager().triggered(Input::KeyP)) {
+		if(Input::manager().triggered(Input::Key::P)) {
 			Resources::manager().reload();
 			// Reload the scene.
 			if(scenes[selectedScene]) {
@@ -84,9 +77,6 @@ int main(int argc, char ** argv) {
 				renderer->setScene(scenes[selectedScene]);
 			}
 		}
-
-		// Start a new frame for the interface.
-		System::Gui::beginFrame();
 
 		// Handle scene switching.
 		if(ImGui::Begin("Renderer")) {
@@ -114,7 +104,7 @@ int main(int argc, char ** argv) {
 		renderer->update();
 
 		// Compute the time elapsed since last frame
-		const double currentTime = glfwGetTime();
+		const double currentTime = System::time();
 		double frameTime		 = currentTime - timer;
 		timer					 = currentTime;
 
@@ -137,20 +127,13 @@ int main(int argc, char ** argv) {
 
 		// Update the content of the window.
 		renderer->draw();
-		// Then render the interface.
-		System::Gui::endFrame();
-		//Display the result for the current rendering loop.
-		glfwSwapBuffers(window);
 	}
 
-	// Clean the interface.
-	System::Gui::clean();
 	// Clean other resources
 	renderer->clean();
 	Resources::manager().clean();
-	// Close GL context and any other GLFW resources.
-	glfwDestroyWindow(window);
-	glfwTerminate();
+	
+	window.clean();
 
 	return 0;
 }
