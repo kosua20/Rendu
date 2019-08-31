@@ -209,7 +209,7 @@ void BVHRenderer::update() {
 			}
 		}
 
-		if(Input::manager().released(Input::Mouse::Left) && Input::manager().pressed(Input::KeySpace)) {
+		if(Input::manager().released(Input::Mouse::Left) && Input::manager().pressed(Input::Key::Space)) {
 			castRay(Input::manager().mouse());
 		}
 

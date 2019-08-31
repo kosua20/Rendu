@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Common.hpp"
+typedef struct GLFWwindow GLFWwindow;
 
 /**
  Callback for window resizing events.

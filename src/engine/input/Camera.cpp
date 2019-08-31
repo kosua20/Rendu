@@ -1,7 +1,6 @@
 #include "input/Camera.hpp"
 
 Camera::Camera() {
-
 	updateView();
 	updateProjection();
 }

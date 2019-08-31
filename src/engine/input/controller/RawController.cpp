@@ -1,4 +1,5 @@
 #include "input/controller/RawController.hpp"
+#include <GLFW/glfw3.h>
 
 bool RawController::activate(int id) {
 	reset();

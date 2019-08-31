@@ -40,7 +40,7 @@ public:
 
 	/**
 	 Enable the controller.
-	 \param id the GLFW ID of the controller.
+	 \param id the ID of the controller.
 	 \return true if the controller was correctly setup
 	 */
 	virtual bool activate(int id) = 0;

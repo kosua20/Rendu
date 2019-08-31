@@ -26,17 +26,17 @@ void ControllableCamera::pose(const glm::vec3 & position, const glm::vec3 & cent
 }
 
 void ControllableCamera::update() {
-	if(Input::manager().triggered(Input::KeyR)) {
+	if(Input::manager().triggered(Input::Key::R)) {
 		reset();
 	}
-	if(Input::manager().triggered(Input::KeyF)) {
+	if(Input::manager().triggered(Input::Key::F)) {
 		_mode = Mode::FPS;
 	}
-	if(Input::manager().triggered(Input::KeyG) || Input::manager().controllerDisconnected()) {
+	if(Input::manager().triggered(Input::Key::G) || Input::manager().controllerDisconnected()) {
 		_mode   = Mode::TurnTable;
 		_radius = glm::length(_eye - _center);
 	}
-	if(Input::manager().triggered(Input::KeyJ) || Input::manager().controllerConnected()) {
+	if(Input::manager().triggered(Input::Key::J) || Input::manager().controllerConnected()) {
 		if(Input::manager().controllerAvailable()) {
 			_mode = Mode::Joystick;
 		} else {
@@ -152,27 +152,27 @@ void ControllableCamera::updateUsingKeyboard(double frameTime) {
 	// One step laterally vertical.
 	const glm::vec3 deltaVertical = _speed * float(frameTime) * _up;
 
-	if(Input::manager().pressed(Input::KeyW)) { // Forward
+	if(Input::manager().pressed(Input::Key::W)) { // Forward
 		_eye += deltaLook;
 	}
 
-	if(Input::manager().pressed(Input::KeyS)) { // Backward
+	if(Input::manager().pressed(Input::Key::S)) { // Backward
 		_eye -= deltaLook;
 	}
 
-	if(Input::manager().pressed(Input::KeyA)) { // Left
+	if(Input::manager().pressed(Input::Key::A)) { // Left
 		_eye -= deltaLateral;
 	}
 
-	if(Input::manager().pressed(Input::KeyD)) { // Right
+	if(Input::manager().pressed(Input::Key::D)) { // Right
 		_eye += deltaLateral;
 	}
 
-	if(Input::manager().pressed(Input::KeyQ)) { // Down
+	if(Input::manager().pressed(Input::Key::Q)) { // Down
 		_eye -= deltaVertical;
 	}
 
-	if(Input::manager().pressed(Input::KeyE)) { // Up
+	if(Input::manager().pressed(Input::Key::E)) { // Up
 		_eye += deltaVertical;
 	}
 
@@ -200,27 +200,27 @@ void ControllableCamera::updateUsingTurnTable(double frameTime) {
 	// One step laterally vertical.
 	const glm::vec3 deltaVertical = _speed * float(frameTime) * _up;
 
-	if(Input::manager().pressed(Input::KeyW)) { // Forward
+	if(Input::manager().pressed(Input::Key::W)) { // Forward
 		_center += deltaLook;
 	}
 
-	if(Input::manager().pressed(Input::KeyS)) { // Backward
+	if(Input::manager().pressed(Input::Key::S)) { // Backward
 		_center -= deltaLook;
 	}
 
-	if(Input::manager().pressed(Input::KeyA)) { // Left
+	if(Input::manager().pressed(Input::Key::A)) { // Left
 		_center -= deltaLateral;
 	}
 
-	if(Input::manager().pressed(Input::KeyD)) { // Right
+	if(Input::manager().pressed(Input::Key::D)) { // Right
 		_center += deltaLateral;
 	}
 
-	if(Input::manager().pressed(Input::KeyQ)) { // Down
+	if(Input::manager().pressed(Input::Key::Q)) { // Down
 		_center -= deltaVertical;
 	}
 
-	if(Input::manager().pressed(Input::KeyE)) { // Up
+	if(Input::manager().pressed(Input::Key::E)) { // Up
 		_center += deltaVertical;
 	}
 

@@ -29,6 +29,6 @@ public:
 	std::vector<Controller::ControllerButton> allButtons; ///< State of each button.
 
 private:
-	int _rawAxesCount	= 0; ///< Number of axes returned by GLFW
-	int _rawButtonsCount = 0; ///< Number of buttons returned by GLFW
+	int _rawAxesCount	= 0; ///< Number of axes returned by the system.
+	int _rawButtonsCount = 0; ///< Number of buttons returned by the system.
 };

@@ -28,11 +28,11 @@ bool Player::physics(double fullTime, const double frameTime) {
 	const float deltaAngle = float(frameTime * _angleSpeed);
 
 	bool updatedAngle = false;
-	if(Input::manager().pressed(Input::KeyA)) {
+	if(Input::manager().pressed(Input::Key::A)) {
 		_angle += deltaAngle;
 		updatedAngle = true;
 	}
-	if(Input::manager().pressed(Input::KeyD)) {
+	if(Input::manager().pressed(Input::Key::D)) {
 		_angle -= deltaAngle;
 		updatedAngle = true;
 	}
