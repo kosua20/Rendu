@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Common.hpp"
+#include <vector>
 
 /** \brief Represent a key-values tuple.
   	\ingroup Engine

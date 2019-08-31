@@ -1,4 +1,5 @@
 #include "input/Camera.hpp"
+#include <sstream>
 
 Camera::Camera() {
 	updateView();

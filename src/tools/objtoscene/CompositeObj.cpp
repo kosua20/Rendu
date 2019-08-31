@@ -1,5 +1,6 @@
 #include "CompositeObj.hpp"
 #include "system/TextUtilities.hpp"
+#include <sstream>
 
 namespace CompositeObj {
 

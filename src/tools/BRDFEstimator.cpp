@@ -12,6 +12,9 @@
 #include "system/Random.hpp"
 #include "Common.hpp"
 
+#include <sstream>
+#include <array>
+
 /**
  \defgroup BRDFEstimator BRDF Estimation
  \brief Perform cubemap GGX convolution, irradiance SH coefficients computation, and linearized BRDF look-up table pre-computation.

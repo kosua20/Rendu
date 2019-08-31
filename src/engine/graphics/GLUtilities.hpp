@@ -4,6 +4,8 @@
 #include "resources/Texture.hpp"
 #include "graphics/GPUObjects.hpp"
 #include "Common.hpp"
+#include <map>
+
 
 /**
  \addtogroup Graphics

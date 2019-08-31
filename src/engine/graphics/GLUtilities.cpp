@@ -4,6 +4,8 @@
 #include "resources/Image.hpp"
 #include "system/TextUtilities.hpp"
 
+#include <sstream>
+
 /** Converts a GLenum error number into a human-readable string.
  \param error the OpenGl error value
  \return the corresponding string

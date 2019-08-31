@@ -19,7 +19,7 @@
 
 Image::Image() {
 	width = height = 0;
-	components	 = 0;
+	components = 0;
 	pixels.clear();
 }
 

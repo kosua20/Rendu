@@ -1,7 +1,8 @@
 #pragma once
 
-#include "Common.hpp"
 #include "resources/Mesh.hpp"
+#include "Common.hpp"
+#include <map>
 
 /**
  \brief Commposite OBJ files loading.

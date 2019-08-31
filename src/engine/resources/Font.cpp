@@ -2,6 +2,8 @@
 #include "resources/ResourcesManager.hpp"
 #include "system/TextUtilities.hpp"
 
+#include <sstream>
+
 void Font::loadFont(std::istream & in, Font & font) {
 
 	std::string line;

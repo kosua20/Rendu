@@ -1,8 +1,9 @@
 #pragma once
 
-#include "Common.hpp"
-#include "system/System.hpp"
 #include "CompositeObj.hpp"
+#include "system/System.hpp"
+#include "Common.hpp"
+#include <map>
 
 /**
  \brief Helpers to export a Rendu scene.

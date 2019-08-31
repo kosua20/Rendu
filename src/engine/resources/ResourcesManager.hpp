@@ -4,8 +4,9 @@
 #include "graphics/Program.hpp"
 #include "resources/Font.hpp"
 #include "resources/Mesh.hpp"
-
 #include "Common.hpp"
+#include <map>
+
 
 /**
  \brief Denote if data is stored on the GPU or CPU.

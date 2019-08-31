@@ -1,6 +1,8 @@
 #include "graphics/GPUObjects.hpp"
 #include "graphics/GLUtilities.hpp"
 
+#include <map>
+
 void GPUMesh::clean() {
 	glDeleteBuffers(1, &eId);
 	glDeleteVertexArrays(1, &vId);

@@ -2,6 +2,10 @@
 #include "scene/Sky.hpp"
 #include "system/TextUtilities.hpp"
 
+
+#include <map>
+#include <sstream>
+
 Scene::Scene(const std::string & name) {
 	// Append the extension if needed.
 	std::string fullName = name;

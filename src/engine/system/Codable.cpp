@@ -1,6 +1,9 @@
 #include "system/Codable.hpp"
 #include "system/TextUtilities.hpp"
 
+#include <map>
+#include <sstream>
+
 bool Codable::decodeBool(const KeyValues & param, unsigned int position) {
 	if(param.values.size() < position + 1) {
 		return false;

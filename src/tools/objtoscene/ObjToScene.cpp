@@ -1,8 +1,10 @@
 
-#include "system/System.hpp"
 #include "CompositeObj.hpp"
 #include "SceneExport.hpp"
+
+#include "system/System.hpp"
 #include "Common.hpp"
+#include <map>
 
 /**
  \defgroup ObjToScene OBJ to scene converter

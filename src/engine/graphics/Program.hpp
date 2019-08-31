@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Common.hpp"
+#include <map>
+
 
 /**
  \brief Represents a group of shaders used for rendering.

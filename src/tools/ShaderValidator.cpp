@@ -3,6 +3,8 @@
 #include "system/Window.hpp"
 #include "Common.hpp"
 #include <iostream>
+#include <map>
+#include <sstream>
 
 /**
  \defgroup ShaderValidator Shader Validation

@@ -1,8 +1,10 @@
 #include "resources/Mesh.hpp"
-#include "system/TextUtilities.hpp"
 #include "graphics/GPUObjects.hpp"
 #include "graphics/GLUtilities.hpp"
+#include "system/TextUtilities.hpp"
+
 #include <sstream>
+#include <fstream>
 #include <cstddef>
 
 void Mesh::clearGeometry() {

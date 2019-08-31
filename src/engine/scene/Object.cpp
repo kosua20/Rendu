@@ -1,4 +1,5 @@
 #include "scene/Object.hpp"
+#include <map>
 
 #define REGISTER_TYPE(type) \
 	{ #type, Type::type }
