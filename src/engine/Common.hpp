@@ -1,8 +1,5 @@
 #pragma once
 
-#include <gl3w/gl3w.h>
-#include <GLFW/glfw3.h>
-
 #include "system/Logger.hpp"
 
 #include <glm/glm.hpp>
@@ -10,6 +7,9 @@
 #include <glm/gtx/color_space.hpp>
 #include <glm/gtx/io.hpp>
 #include <glm/gtc/constants.hpp>
+
+#include <gl3w/gl3w.h>
+#include <imgui/imgui.h>
 
 #include <string>
 #include <vector>
@@ -19,7 +19,7 @@
 #include <algorithm>
 
 typedef unsigned char uchar;
-typedef unsigned int uint;
+typedef unsigned int  uint;
 typedef unsigned long ulong;
 
 #ifdef _WIN32
