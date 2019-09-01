@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['rendu_20documentation',['Rendu Documentation',['../index.html',1,'']]]
+  ['bug_20list',['Bug List',['../bug.html',1,'']]]
 ];

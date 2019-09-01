@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['obj_20to_20scene_20converter',['OBJ to scene converter',['../group___obj_to_scene.html',1,'']]]
+  ['path_20tracer',['Path tracer',['../group___pathtracer_demo.html',1,'']]],
+  ['playground',['Playground',['../group___playground.html',1,'']]],
+  ['processing',['Processing',['../group___processing.html',1,'']]]
 ];

@@ -107,39 +107,30 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a7b590da6b0d822b3d3addfbc27d61ff1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ambient_quad.html#a7b590da6b0d822b3d3addfbc27d61ff1">AmbientQuad</a> ()</td></tr>
-<tr class="separator:a7b590da6b0d822b3d3addfbc27d61ff1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a503ac98909ea6da366f97f6ee635dc5b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ambient_quad.html#a503ac98909ea6da366f97f6ee635dc5b">init</a> (const GLuint texAlbedo, const GLuint texNormals, const GLuint texEffects, const GLuint texDepth, const GLuint texSSAO)</td></tr>
-<tr class="separator:a503ac98909ea6da366f97f6ee635dc5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab57cec30770a7b1340bc6c2ff138aa28"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ambient_quad.html#ab57cec30770a7b1340bc6c2ff138aa28">setSceneParameters</a> (const GLuint reflectionMap, const std::vector&lt; glm::vec3 &gt; &amp;irradiance)</td></tr>
-<tr class="separator:ab57cec30770a7b1340bc6c2ff138aa28"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a17ed2c4a215567b12942225cb5af15ad"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ambient_quad.html#a17ed2c4a215567b12942225cb5af15ad">AmbientQuad</a> (const <a class="el" href="class_texture.html">Texture</a> *texAlbedo, const <a class="el" href="class_texture.html">Texture</a> *texNormals, const <a class="el" href="class_texture.html">Texture</a> *texEffects, const <a class="el" href="class_texture.html">Texture</a> *texDepth, const <a class="el" href="class_texture.html">Texture</a> *texSSAO)</td></tr>
+<tr class="separator:a17ed2c4a215567b12942225cb5af15ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a91cbe3d5c6a6d555cdb6c42a071cc1b8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ambient_quad.html#a91cbe3d5c6a6d555cdb6c42a071cc1b8">setSceneParameters</a> (const <a class="el" href="class_texture.html">Texture</a> *reflectionMap, const std::vector&lt; glm::vec3 &gt; &amp;irradiance)</td></tr>
+<tr class="separator:a91cbe3d5c6a6d555cdb6c42a071cc1b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4ace67ca9c6dd2e7e8e76fa148dfe7b8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ambient_quad.html#a4ace67ca9c6dd2e7e8e76fa148dfe7b8">draw</a> (const glm::mat4 &amp;viewMatrix, const glm::mat4 &amp;projectionMatrix) const</td></tr>
 <tr class="separator:a4ace67ca9c6dd2e7e8e76fa148dfe7b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:a5cd47434d69d205e2041adfba3c20f4b"><td class="memItemLeft" align="right" valign="top"><a id="a5cd47434d69d205e2041adfba3c20f4b"></a>
-<a class="el" href="class_program_infos.html">ProgramInfos</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ambient_quad.html#a5cd47434d69d205e2041adfba3c20f4b">_program</a></td></tr>
-<tr class="memdesc:a5cd47434d69d205e2041adfba3c20f4b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The ambient lighting program. <br /></td></tr>
-<tr class="separator:a5cd47434d69d205e2041adfba3c20f4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abf43465d4c45a3dd965ed4374ff8a7c6"><td class="memItemLeft" align="right" valign="top"><a id="abf43465d4c45a3dd965ed4374ff8a7c6"></a>
-std::vector&lt; GLuint &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ambient_quad.html#abf43465d4c45a3dd965ed4374ff8a7c6">_textures</a></td></tr>
-<tr class="memdesc:abf43465d4c45a3dd965ed4374ff8a7c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">The input textures for the ambient pass. <br /></td></tr>
-<tr class="separator:abf43465d4c45a3dd965ed4374ff8a7c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3c3987585f1aeb0d512f1201b6cf5761"><td class="memItemLeft" align="right" valign="top"><a id="a3c3987585f1aeb0d512f1201b6cf5761"></a>
-GLuint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ambient_quad.html#a3c3987585f1aeb0d512f1201b6cf5761">_textureEnv</a></td></tr>
-<tr class="memdesc:a3c3987585f1aeb0d512f1201b6cf5761"><td class="mdescLeft">&#160;</td><td class="mdescRight">The environment radiance cubemap. <br /></td></tr>
-<tr class="separator:a3c3987585f1aeb0d512f1201b6cf5761"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a004c88bd90a2cf4cf3902ff569859bb3"><td class="memItemLeft" align="right" valign="top">GLuint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ambient_quad.html#a004c88bd90a2cf4cf3902ff569859bb3">_textureBrdf</a></td></tr>
-<tr class="memdesc:a004c88bd90a2cf4cf3902ff569859bb3"><td class="mdescLeft">&#160;</td><td class="mdescRight">The linearized approximate BRDF components.  <a href="#a004c88bd90a2cf4cf3902ff569859bb3">More...</a><br /></td></tr>
-<tr class="separator:a004c88bd90a2cf4cf3902ff569859bb3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a34069306847fb0a346e35e344fde7d62"><td class="memItemLeft" align="right" valign="top"><a id="a34069306847fb0a346e35e344fde7d62"></a>
+<a class="el" href="class_program.html">Program</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ambient_quad.html#a34069306847fb0a346e35e344fde7d62">_program</a></td></tr>
+<tr class="memdesc:a34069306847fb0a346e35e344fde7d62"><td class="mdescLeft">&#160;</td><td class="mdescRight">The ambient lighting program. <br /></td></tr>
+<tr class="separator:a34069306847fb0a346e35e344fde7d62"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1c16ccf782e1e9ceed8bf0a75fc3683f"><td class="memItemLeft" align="right" valign="top"><a id="a1c16ccf782e1e9ceed8bf0a75fc3683f"></a>
+std::vector&lt; const <a class="el" href="class_texture.html">Texture</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ambient_quad.html#a1c16ccf782e1e9ceed8bf0a75fc3683f">_textures</a></td></tr>
+<tr class="memdesc:a1c16ccf782e1e9ceed8bf0a75fc3683f"><td class="mdescLeft">&#160;</td><td class="mdescRight">The input textures for the ambient pass. <br /></td></tr>
+<tr class="separator:a1c16ccf782e1e9ceed8bf0a75fc3683f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Renders the ambient lighting contribution of a scene, including irradiance and ambient occlusion. </p>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_g_l_s_l_1_1_frag_1_1_ambient.html" title="&quot;Ambient&quot; fragment shader.">GLSL::Frag::Ambient</a>, <a class="el" href="class_g_l_s_l_1_1_frag_1_1_ssao.html" title="&quot;Ssao&quot; fragment shader.">GLSL::Frag::Ssao</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_g_p_u_1_1_frag_1_1_ambient.html" title="&quot;Ambient&quot; fragment shader.">GPU::Frag::Ambient</a>, <a class="el" href="class_g_p_u_1_1_frag_1_1_ssao.html" title="&quot;Ssao&quot; fragment shader.">GPU::Frag::Ssao</a> </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a7b590da6b0d822b3d3addfbc27d61ff1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7b590da6b0d822b3d3addfbc27d61ff1">&#9670;&nbsp;</a></span>AmbientQuad()</h2>
+<a id="a17ed2c4a215567b12942225cb5af15ad"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a17ed2c4a215567b12942225cb5af15ad">&#9670;&nbsp;</a></span>AmbientQuad()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -147,12 +138,50 @@ GLuint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
         <tr>
           <td class="memname">AmbientQuad::AmbientQuad </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype">const <a class="el" href="class_texture.html">Texture</a> *&#160;</td>
+          <td class="paramname"><em>texAlbedo</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const <a class="el" href="class_texture.html">Texture</a> *&#160;</td>
+          <td class="paramname"><em>texNormals</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="class_texture.html">Texture</a> *&#160;</td>
+          <td class="paramname"><em>texEffects</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="class_texture.html">Texture</a> *&#160;</td>
+          <td class="paramname"><em>texDepth</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="class_texture.html">Texture</a> *&#160;</td>
+          <td class="paramname"><em>texSSAO</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Constructor. </p>
+<p>Constructor. Setup against the graphics API, register the textures needed. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">texAlbedo</td><td>the texture containing the albedo </td></tr>
+    <tr><td class="paramname">texNormals</td><td>the texture containing the surface normals </td></tr>
+    <tr><td class="paramname">texEffects</td><td>the texture containing the material properties </td></tr>
+    <tr><td class="paramname">texDepth</td><td>the texture containing the depth </td></tr>
+    <tr><td class="paramname">texSSAO</td><td>the texture containing the <a class="el" href="class_s_s_a_o.html" title="Computes screen space ambient occlusion from a depth and view-space normal buffer (brought to [0,...">SSAO</a> result </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -192,64 +221,8 @@ GLuint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
 
 </div>
 </div>
-<a id="a503ac98909ea6da366f97f6ee635dc5b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a503ac98909ea6da366f97f6ee635dc5b">&#9670;&nbsp;</a></span>init()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void AmbientQuad::init </td>
-          <td>(</td>
-          <td class="paramtype">const GLuint&#160;</td>
-          <td class="paramname"><em>texAlbedo</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const GLuint&#160;</td>
-          <td class="paramname"><em>texNormals</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const GLuint&#160;</td>
-          <td class="paramname"><em>texEffects</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const GLuint&#160;</td>
-          <td class="paramname"><em>texDepth</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const GLuint&#160;</td>
-          <td class="paramname"><em>texSSAO</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Setup against the graphics API, register the textures needed. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">texAlbedo</td><td>the index of the texture containing the albedo </td></tr>
-    <tr><td class="paramname">texNormals</td><td>the index of the texture containing the surface normals </td></tr>
-    <tr><td class="paramname">texEffects</td><td>the index of the texture containing the material properties </td></tr>
-    <tr><td class="paramname">texDepth</td><td>the index of the texture containing the depth </td></tr>
-    <tr><td class="paramname">texSSAO</td><td>the index of the texture containing the <a class="el" href="class_s_s_a_o.html" title="Computes screen space ambient occlusion from a depth and view-space normal buffer (brought to [0,...">SSAO</a> result </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="ab57cec30770a7b1340bc6c2ff138aa28"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab57cec30770a7b1340bc6c2ff138aa28">&#9670;&nbsp;</a></span>setSceneParameters()</h2>
+<a id="a91cbe3d5c6a6d555cdb6c42a071cc1b8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a91cbe3d5c6a6d555cdb6c42a071cc1b8">&#9670;&nbsp;</a></span>setSceneParameters()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -257,7 +230,7 @@ GLuint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
         <tr>
           <td class="memname">void AmbientQuad::setSceneParameters </td>
           <td>(</td>
-          <td class="paramtype">const GLuint&#160;</td>
+          <td class="paramtype">const <a class="el" href="class_texture.html">Texture</a> *&#160;</td>
           <td class="paramname"><em>reflectionMap</em>, </td>
         </tr>
         <tr>
@@ -280,32 +253,6 @@ GLuint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
   </table>
   </dd>
 </dl>
-
-</div>
-</div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a id="a004c88bd90a2cf4cf3902ff569859bb3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a004c88bd90a2cf4cf3902ff569859bb3">&#9670;&nbsp;</a></span>_textureBrdf</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">GLuint AmbientQuad::_textureBrdf</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>The linearized approximate BRDF components. </p>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="group___b_r_d_f_estimator.html" title="Perform cubemap GGX convolution, irradiance SH coefficients computation, and linearized BRDF look-up ...">BRDF Estimation</a> </dd></dl>
 
 </div>
 </div>

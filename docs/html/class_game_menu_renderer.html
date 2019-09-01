@@ -93,9 +93,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="class_game_menu_renderer-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">GameMenuRenderer Class Reference<div class="ingroups"><a class="el" href="group___applications.html">Applications</a> &raquo; <a class="el" href="group___snake_game.html">Snake Game</a></div></div>  </div>
+<div class="title">GameMenuRenderer Class Reference<span class="mlabels"><span class="mlabel">final</span></span><div class="ingroups"><a class="el" href="group___applications.html">Applications</a> &raquo; <a class="el" href="group___snake_game.html">Snake Game</a></div></div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -108,27 +109,72 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a3a6ec9f4ce41c461150e7649225b6001"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_game_menu_renderer.html#a3a6ec9f4ce41c461150e7649225b6001">GameMenuRenderer</a> (<a class="el" href="class_rendering_config.html">RenderingConfig</a> &amp;config)</td></tr>
 <tr class="separator:a3a6ec9f4ce41c461150e7649225b6001"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4c61f28856fb70407bf6b9dc6b76844e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_game_menu_renderer.html#a4c61f28856fb70407bf6b9dc6b76844e">draw</a> (const <a class="el" href="class_game_menu.html">GameMenu</a> &amp;menu)</td></tr>
-<tr class="separator:a4c61f28856fb70407bf6b9dc6b76844e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adbf05148cdee65376f4ebe8b0907b6e1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_game_menu_renderer.html#adbf05148cdee65376f4ebe8b0907b6e1">draw</a> ()</td></tr>
-<tr class="separator:adbf05148cdee65376f4ebe8b0907b6e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abdb9f8846d2cc0013eb88f6c7cfd80a8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_game_menu_renderer.html#abdb9f8846d2cc0013eb88f6c7cfd80a8">update</a> ()</td></tr>
-<tr class="separator:abdb9f8846d2cc0013eb88f6c7cfd80a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7b019d54090e5a0298bd2f5aa3c90c9e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_game_menu_renderer.html#a7b019d54090e5a0298bd2f5aa3c90c9e">physics</a> (double fullTime, double frameTime)</td></tr>
-<tr class="separator:a7b019d54090e5a0298bd2f5aa3c90c9e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa610cdcaf8028d61bf83b0eee1f18e29"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_game_menu_renderer.html#aa610cdcaf8028d61bf83b0eee1f18e29">resize</a> (unsigned int width, unsigned int height)</td></tr>
-<tr class="separator:aa610cdcaf8028d61bf83b0eee1f18e29"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6e3dce042b5da9df3293e29af9dc1afd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_game_menu_renderer.html#a6e3dce042b5da9df3293e29af9dc1afd">clean</a> ()</td></tr>
-<tr class="separator:a6e3dce042b5da9df3293e29af9dc1afd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afcb17ada2ef5db9d77b72294882a8b84"><td class="memItemLeft" align="right" valign="top">glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_game_menu_renderer.html#afcb17ada2ef5db9d77b72294882a8b84">getButtonSize</a> ()</td></tr>
-<tr class="separator:afcb17ada2ef5db9d77b72294882a8b84"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6fc8dcaf7e07da783243f00decbb3d85"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_game_menu_renderer.html#a6fc8dcaf7e07da783243f00decbb3d85">draw</a> (const <a class="el" href="class_game_menu.html">GameMenu</a> &amp;menu) const</td></tr>
+<tr class="separator:a6fc8dcaf7e07da783243f00decbb3d85"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af640297f9e52d755bee437717e5ccb09"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_game_menu_renderer.html#af640297f9e52d755bee437717e5ccb09">draw</a> () override</td></tr>
+<tr class="separator:af640297f9e52d755bee437717e5ccb09"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a10fd3701667115e9be4e20ef404e3214"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_game_menu_renderer.html#a10fd3701667115e9be4e20ef404e3214">physics</a> (double fullTime, double frameTime) override</td></tr>
+<tr class="separator:a10fd3701667115e9be4e20ef404e3214"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9f524f0197b417740cfe6539f66445dc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_game_menu_renderer.html#a9f524f0197b417740cfe6539f66445dc">resize</a> (unsigned int width, unsigned int height) override</td></tr>
+<tr class="separator:a9f524f0197b417740cfe6539f66445dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5960b18be382aef62696fd028a740fc6"><td class="memItemLeft" align="right" valign="top">glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_game_menu_renderer.html#a5960b18be382aef62696fd028a740fc6">getButtonSize</a> () const</td></tr>
+<tr class="separator:a5960b18be382aef62696fd028a740fc6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_renderer"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_renderer')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_renderer.html">Renderer</a></td></tr>
 <tr class="memitem:a8cbc69d15bba1744cd26ece5e2f34ba2 inherit pub_methods_class_renderer"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_renderer.html#a8cbc69d15bba1744cd26ece5e2f34ba2">Renderer</a> (<a class="el" href="class_rendering_config.html">RenderingConfig</a> &amp;config)</td></tr>
 <tr class="separator:a8cbc69d15bba1744cd26ece5e2f34ba2 inherit pub_methods_class_renderer"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afeee408862d5bd6255a6882d47e6d5cd inherit pub_methods_class_renderer"><td class="memItemLeft" align="right" valign="top"><a id="afeee408862d5bd6255a6882d47e6d5cd"></a>
-virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_renderer.html#afeee408862d5bd6255a6882d47e6d5cd">~Renderer</a> ()</td></tr>
-<tr class="memdesc:afeee408862d5bd6255a6882d47e6d5cd inherit pub_methods_class_renderer"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor. <br /></td></tr>
-<tr class="separator:afeee408862d5bd6255a6882d47e6d5cd inherit pub_methods_class_renderer"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af39230ac153ec5e1b0e5f078ebe351e1 inherit pub_methods_class_renderer"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_renderer.html#af39230ac153ec5e1b0e5f078ebe351e1">update</a> ()</td></tr>
+<tr class="separator:af39230ac153ec5e1b0e5f078ebe351e1 inherit pub_methods_class_renderer"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a609184e9e7ed6bf88448458ffc229981 inherit pub_methods_class_renderer"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_renderer.html#a609184e9e7ed6bf88448458ffc229981">clean</a> ()</td></tr>
+<tr class="separator:a609184e9e7ed6bf88448458ffc229981 inherit pub_methods_class_renderer"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:add2012f269f157754034e7b5475a8927 inherit pub_methods_class_renderer"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_renderer.html#add2012f269f157754034e7b5475a8927">~Renderer</a> ()=default</td></tr>
+<tr class="separator:add2012f269f157754034e7b5475a8927 inherit pub_methods_class_renderer"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8c6e15f666cb188a936004add75e6c6b inherit pub_methods_class_renderer"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_renderer.html#a8c6e15f666cb188a936004add75e6c6b">Renderer</a> (const <a class="el" href="class_renderer.html">Renderer</a> &amp;)=delete</td></tr>
+<tr class="separator:a8c6e15f666cb188a936004add75e6c6b inherit pub_methods_class_renderer"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad3a67410934db419e0f473f1a26c83ee inherit pub_methods_class_renderer"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_renderer.html">Renderer</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_renderer.html#ad3a67410934db419e0f473f1a26c83ee">operator=</a> (const <a class="el" href="class_renderer.html">Renderer</a> &amp;)=delete</td></tr>
+<tr class="separator:ad3a67410934db419e0f473f1a26c83ee inherit pub_methods_class_renderer"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa43ae6237b8cbf52d217d37f9986237f inherit pub_methods_class_renderer"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_renderer.html#aa43ae6237b8cbf52d217d37f9986237f">Renderer</a> (<a class="el" href="class_renderer.html">Renderer</a> &amp;&amp;)=delete</td></tr>
+<tr class="separator:aa43ae6237b8cbf52d217d37f9986237f inherit pub_methods_class_renderer"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acb6cae4362aa720ddd577f02918f9355 inherit pub_methods_class_renderer"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_renderer.html">Renderer</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_renderer.html#acb6cae4362aa720ddd577f02918f9355">operator=</a> (<a class="el" href="class_renderer.html">Renderer</a> &amp;&amp;)=delete</td></tr>
+<tr class="separator:acb6cae4362aa720ddd577f02918f9355 inherit pub_methods_class_renderer"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
+Private Attributes</h2></td></tr>
+<tr class="memitem:a24c8be8c31ad17718bb4eed9837af182"><td class="memItemLeft" align="right" valign="top"><a id="a24c8be8c31ad17718bb4eed9837af182"></a>
+const <a class="el" href="class_program.html">Program</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_game_menu_renderer.html#a24c8be8c31ad17718bb4eed9837af182">_backgroundProgram</a></td></tr>
+<tr class="memdesc:a24c8be8c31ad17718bb4eed9837af182"><td class="mdescLeft">&#160;</td><td class="mdescRight">Background images rendering. <br /></td></tr>
+<tr class="separator:a24c8be8c31ad17718bb4eed9837af182"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4ff8150d68b0423f7377b8fcb4db70b6"><td class="memItemLeft" align="right" valign="top"><a id="a4ff8150d68b0423f7377b8fcb4db70b6"></a>
+const <a class="el" href="class_program.html">Program</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_game_menu_renderer.html#a4ff8150d68b0423f7377b8fcb4db70b6">_buttonProgram</a></td></tr>
+<tr class="memdesc:a4ff8150d68b0423f7377b8fcb4db70b6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Buttons rendering. <br /></td></tr>
+<tr class="separator:a4ff8150d68b0423f7377b8fcb4db70b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a412ac8c92cc16b4babc96cddc0316875"><td class="memItemLeft" align="right" valign="top"><a id="a412ac8c92cc16b4babc96cddc0316875"></a>
+const <a class="el" href="class_program.html">Program</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_game_menu_renderer.html#a412ac8c92cc16b4babc96cddc0316875">_imageProgram</a></td></tr>
+<tr class="memdesc:a412ac8c92cc16b4babc96cddc0316875"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fixed images rendering. <br /></td></tr>
+<tr class="separator:a412ac8c92cc16b4babc96cddc0316875"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a53bde47de5d05bf951071e9f7e540e4d"><td class="memItemLeft" align="right" valign="top"><a id="a53bde47de5d05bf951071e9f7e540e4d"></a>
+const <a class="el" href="class_program.html">Program</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_game_menu_renderer.html#a53bde47de5d05bf951071e9f7e540e4d">_fontProgram</a></td></tr>
+<tr class="memdesc:a53bde47de5d05bf951071e9f7e540e4d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Labels font rendering. <br /></td></tr>
+<tr class="separator:a53bde47de5d05bf951071e9f7e540e4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af909080db9da0257d960275642fe8c70"><td class="memItemLeft" align="right" valign="top"><a id="af909080db9da0257d960275642fe8c70"></a>
+const <a class="el" href="class_mesh.html">Mesh</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_game_menu_renderer.html#af909080db9da0257d960275642fe8c70">_button</a></td></tr>
+<tr class="memdesc:af909080db9da0257d960275642fe8c70"><td class="mdescLeft">&#160;</td><td class="mdescRight">Button main mesh (with border). <br /></td></tr>
+<tr class="separator:af909080db9da0257d960275642fe8c70"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1c1caf8473fb5347cf672960de767e1f"><td class="memItemLeft" align="right" valign="top"><a id="a1c1caf8473fb5347cf672960de767e1f"></a>
+const <a class="el" href="class_mesh.html">Mesh</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_game_menu_renderer.html#a1c1caf8473fb5347cf672960de767e1f">_buttonIn</a></td></tr>
+<tr class="memdesc:a1c1caf8473fb5347cf672960de767e1f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Button interior mesh. <br /></td></tr>
+<tr class="separator:a1c1caf8473fb5347cf672960de767e1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac6fed239ba5dfd857c52c5a5cc2c7d84"><td class="memItemLeft" align="right" valign="top"><a id="ac6fed239ba5dfd857c52c5a5cc2c7d84"></a>
+const <a class="el" href="class_mesh.html">Mesh</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_game_menu_renderer.html#ac6fed239ba5dfd857c52c5a5cc2c7d84">_toggle</a></td></tr>
+<tr class="memdesc:ac6fed239ba5dfd857c52c5a5cc2c7d84"><td class="mdescLeft">&#160;</td><td class="mdescRight">Toggle main mesh (with border). <br /></td></tr>
+<tr class="separator:ac6fed239ba5dfd857c52c5a5cc2c7d84"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a88170a858a370049b470fe5bf12ea9ac"><td class="memItemLeft" align="right" valign="top"><a id="a88170a858a370049b470fe5bf12ea9ac"></a>
+const <a class="el" href="class_mesh.html">Mesh</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_game_menu_renderer.html#a88170a858a370049b470fe5bf12ea9ac">_toggleIn</a></td></tr>
+<tr class="memdesc:a88170a858a370049b470fe5bf12ea9ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Toggle interior mesh. <br /></td></tr>
+<tr class="separator:a88170a858a370049b470fe5bf12ea9ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8268dce6eff211db0ce0021849de7cb6"><td class="memItemLeft" align="right" valign="top"><a id="a8268dce6eff211db0ce0021849de7cb6"></a>
+const <a class="el" href="class_mesh.html">Mesh</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_game_menu_renderer.html#a8268dce6eff211db0ce0021849de7cb6">_quad</a></td></tr>
+<tr class="memdesc:a8268dce6eff211db0ce0021849de7cb6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Quad mesh for images. <br /></td></tr>
+<tr class="separator:a8268dce6eff211db0ce0021849de7cb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -141,7 +187,7 @@ Additional Inherited Members</h2></td></tr>
 <tr class="memdesc:ab81be582777b82fe9bfe5711f6d7d81b inherit pro_attribs_class_renderer"><td class="mdescLeft">&#160;</td><td class="mdescRight">The current configuration. <br /></td></tr>
 <tr class="separator:ab81be582777b82fe9bfe5711f6d7d81b inherit pro_attribs_class_renderer"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac7f0e2e982c72a5b8695db2db6c17dc1 inherit pro_attribs_class_renderer"><td class="memItemLeft" align="right" valign="top"><a id="ac7f0e2e982c72a5b8695db2db6c17dc1"></a>
-glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_renderer.html#ac7f0e2e982c72a5b8695db2db6c17dc1">_renderResolution</a></td></tr>
+glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_renderer.html#ac7f0e2e982c72a5b8695db2db6c17dc1">_renderResolution</a> = glm::vec2(0.0f)</td></tr>
 <tr class="memdesc:ac7f0e2e982c72a5b8695db2db6c17dc1 inherit pro_attribs_class_renderer"><td class="mdescLeft">&#160;</td><td class="mdescRight">The internal rendering resolution. <br /></td></tr>
 <tr class="separator:ac7f0e2e982c72a5b8695db2db6c17dc1 inherit pro_attribs_class_renderer"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -155,6 +201,9 @@ glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">GameMenuRenderer::GameMenuRenderer </td>
@@ -164,6 +213,11 @@ glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 <p>Constructor. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -175,36 +229,8 @@ glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a6e3dce042b5da9df3293e29af9dc1afd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6e3dce042b5da9df3293e29af9dc1afd">&#9670;&nbsp;</a></span>clean()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void GameMenuRenderer::clean </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Clean internal resources. </p>
-
-<p>Reimplemented from <a class="el" href="class_renderer.html#a609184e9e7ed6bf88448458ffc229981">Renderer</a>.</p>
-
-</div>
-</div>
-<a id="a4c61f28856fb70407bf6b9dc6b76844e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4c61f28856fb70407bf6b9dc6b76844e">&#9670;&nbsp;</a></span>draw() <span class="overload">[1/2]</span></h2>
+<a id="a6fc8dcaf7e07da783243f00decbb3d85"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6fc8dcaf7e07da783243f00decbb3d85">&#9670;&nbsp;</a></span>draw() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -214,7 +240,7 @@ glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
           <td>(</td>
           <td class="paramtype">const <a class="el" href="class_game_menu.html">GameMenu</a> &amp;&#160;</td>
           <td class="paramname"><em>menu</em></td><td>)</td>
-          <td></td>
+          <td> const</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -227,8 +253,8 @@ glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 
 </div>
 </div>
-<a id="adbf05148cdee65376f4ebe8b0907b6e1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adbf05148cdee65376f4ebe8b0907b6e1">&#9670;&nbsp;</a></span>draw() <span class="overload">[2/2]</span></h2>
+<a id="af640297f9e52d755bee437717e5ccb09"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af640297f9e52d755bee437717e5ccb09">&#9670;&nbsp;</a></span>draw() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -245,7 +271,7 @@ glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -255,8 +281,8 @@ glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 
 </div>
 </div>
-<a id="afcb17ada2ef5db9d77b72294882a8b84"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afcb17ada2ef5db9d77b72294882a8b84">&#9670;&nbsp;</a></span>getButtonSize()</h2>
+<a id="a5960b18be382aef62696fd028a740fc6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5960b18be382aef62696fd028a740fc6">&#9670;&nbsp;</a></span>getButtonSize()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -265,7 +291,7 @@ glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
           <td class="memname">glm::vec2 GameMenuRenderer::getButtonSize </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td></td>
+          <td> const</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -273,8 +299,8 @@ glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 
 </div>
 </div>
-<a id="a7b019d54090e5a0298bd2f5aa3c90c9e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7b019d54090e5a0298bd2f5aa3c90c9e">&#9670;&nbsp;</a></span>physics()</h2>
+<a id="a10fd3701667115e9be4e20ef404e3214"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a10fd3701667115e9be4e20ef404e3214">&#9670;&nbsp;</a></span>physics()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -302,7 +328,7 @@ glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -318,8 +344,8 @@ glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 
 </div>
 </div>
-<a id="aa610cdcaf8028d61bf83b0eee1f18e29"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa610cdcaf8028d61bf83b0eee1f18e29">&#9670;&nbsp;</a></span>resize()</h2>
+<a id="a9f524f0197b417740cfe6539f66445dc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9f524f0197b417740cfe6539f66445dc">&#9670;&nbsp;</a></span>resize()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -347,7 +373,7 @@ glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -360,34 +386,6 @@ glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 </dl>
 
 <p>Implements <a class="el" href="class_renderer.html#ad13b36196c806bd3e227abbfc58c3e62">Renderer</a>.</p>
-
-</div>
-</div>
-<a id="abdb9f8846d2cc0013eb88f6c7cfd80a8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abdb9f8846d2cc0013eb88f6c7cfd80a8">&#9670;&nbsp;</a></span>update()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void GameMenuRenderer::update </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Perform once-per-frame update (buttons, GUI,...) </p>
-
-<p>Reimplemented from <a class="el" href="class_renderer.html#af39230ac153ec5e1b0e5f078ebe351e1">Renderer</a>.</p>
 
 </div>
 </div>

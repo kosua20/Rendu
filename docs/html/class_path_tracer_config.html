@@ -120,7 +120,7 @@ Public Member Functions</h2></td></tr>
 Public Attributes</h2></td></tr>
 <tr class="memitem:a182f83f68b334079356899c25477495a"><td class="memItemLeft" align="right" valign="top"><a id="a182f83f68b334079356899c25477495a"></a>
 glm::ivec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_path_tracer_config.html#a182f83f68b334079356899c25477495a">size</a> = glm::ivec2(1024)</td></tr>
-<tr class="memdesc:a182f83f68b334079356899c25477495a"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="struct_image.html" title="Represents an image composed of pixels with values in [0,1].">Image</a> size. <br /></td></tr>
+<tr class="memdesc:a182f83f68b334079356899c25477495a"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_image.html" title="Represents an image composed of pixels with values in [0,1]. Provide image loading/saving utilities,...">Image</a> size. <br /></td></tr>
 <tr class="separator:a182f83f68b334079356899c25477495a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aebfb0351b09dd16bc6e2aec18ce5d97b"><td class="memItemLeft" align="right" valign="top"><a id="aebfb0351b09dd16bc6e2aec18ce5d97b"></a>
 size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_path_tracer_config.html#aebfb0351b09dd16bc6e2aec18ce5d97b">samples</a> = 8</td></tr>
@@ -175,7 +175,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memdesc:ad82d9898427740cd9a970580d2b02608 inherit pub_attribs_class_rendering_config"><td class="mdescLeft">&#160;</td><td class="mdescRight">Should the aspect ratio of the window be constrained. <br /></td></tr>
 <tr class="separator:ad82d9898427740cd9a970580d2b02608 inherit pub_attribs_class_rendering_config"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a817a131117b4c48456d508dc27e6347f inherit pub_attribs_class_rendering_config"><td class="memItemLeft" align="right" valign="top"><a id="a817a131117b4c48456d508dc27e6347f"></a>
-glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_rendering_config.html#a817a131117b4c48456d508dc27e6347f">screenResolution</a> = glm::vec2(800.0f,600.0f)</td></tr>
+glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_rendering_config.html#a817a131117b4c48456d508dc27e6347f">screenResolution</a> = glm::vec2(800.0f, 600.0f)</td></tr>
 <tr class="memdesc:a817a131117b4c48456d508dc27e6347f inherit pub_attribs_class_rendering_config"><td class="mdescLeft">&#160;</td><td class="mdescRight">Size of the window in raw pixels, updated at launch based on screen density. <br /></td></tr>
 <tr class="separator:a817a131117b4c48456d508dc27e6347f inherit pub_attribs_class_rendering_config"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af68ed64a5a2877cc6721eb63088579b5 inherit pub_attribs_class_rendering_config"><td class="memItemLeft" align="right" valign="top"><a id="af68ed64a5a2877cc6721eb63088579b5"></a>
@@ -185,18 +185,11 @@ glm::ivec4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
-<tr class="inherit_header pro_methods_class_rendering_config"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_class_rendering_config')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="class_rendering_config.html">RenderingConfig</a></td></tr>
-<tr class="memitem:a680cce67b3ae86701be99c30eb359342 inherit pro_methods_class_rendering_config"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_rendering_config.html#a680cce67b3ae86701be99c30eb359342">processArguments</a> ()</td></tr>
-<tr class="separator:a680cce67b3ae86701be99c30eb359342 inherit pro_methods_class_rendering_config"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pro_attribs_class_config"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_class_config')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_config.html">Config</a></td></tr>
-<tr class="memitem:ab52b94536c96f769078c9d4cd0f7a631 inherit pro_attribs_class_config"><td class="memItemLeft" align="right" valign="top"><a id="ab52b94536c96f769078c9d4cd0f7a631"></a>
-std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_config.html#ab52b94536c96f769078c9d4cd0f7a631">_rawArguments</a></td></tr>
-<tr class="memdesc:ab52b94536c96f769078c9d4cd0f7a631 inherit pro_attribs_class_config"><td class="mdescLeft">&#160;</td><td class="mdescRight">Store the internal parsed (keys, [values]) extracted from a file or the command-line. <br /></td></tr>
-<tr class="separator:ab52b94536c96f769078c9d4cd0f7a631 inherit pro_attribs_class_config"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa8e913359869774ef02f452ea418b606 inherit pro_attribs_class_config"><td class="memItemLeft" align="right" valign="top"><a id="aa8e913359869774ef02f452ea418b606"></a>
-std::vector&lt; <a class="el" href="struct_config_1_1_argument_info.html">ArgumentInfo</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_config.html#aa8e913359869774ef02f452ea418b606">_infos</a></td></tr>
-<tr class="memdesc:aa8e913359869774ef02f452ea418b606 inherit pro_attribs_class_config"><td class="mdescLeft">&#160;</td><td class="mdescRight">Store informations about each argument, for displaying the help message. <br /></td></tr>
-<tr class="separator:aa8e913359869774ef02f452ea418b606 inherit pro_attribs_class_config"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pro_methods_class_config"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_class_config')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="class_config.html">Config</a></td></tr>
+<tr class="memitem:a101eefd683dfcbf721a7fb92cb61cf34 inherit pro_methods_class_config"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_config.html#a101eefd683dfcbf721a7fb92cb61cf34">arguments</a> () const</td></tr>
+<tr class="separator:a101eefd683dfcbf721a7fb92cb61cf34 inherit pro_methods_class_config"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a31f3cbb2499caeef6e663883ecb8e0f9 inherit pro_methods_class_config"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="struct_config_1_1_argument_info.html">ArgumentInfo</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_config.html#a31f3cbb2499caeef6e663883ecb8e0f9">infos</a> ()</td></tr>
+<tr class="separator:a31f3cbb2499caeef6e663883ecb8e0f9 inherit pro_methods_class_config"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Path tracer demo configuration. Parameters for offline rendering. </p>
@@ -222,7 +215,7 @@ std::vector&lt; <a class="el" href="struct_config_1_1_argument_info.html">Argume
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">explicit</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">

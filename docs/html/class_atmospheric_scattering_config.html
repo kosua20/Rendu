@@ -107,8 +107,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a1490c8e23fa9fabaf1561ca6b5111400"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_atmospheric_scattering_config.html#a1490c8e23fa9fabaf1561ca6b5111400">AtmosphericScatteringConfig</a> (const std::vector&lt; std::string &gt; &amp;argv)</td></tr>
 <tr class="separator:a1490c8e23fa9fabaf1561ca6b5111400"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a214ec2df20ff4c9a120616625f6d8779"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_atmospheric_scattering_config.html#a214ec2df20ff4c9a120616625f6d8779">processArguments</a> ()</td></tr>
-<tr class="separator:a214ec2df20ff4c9a120616625f6d8779"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_config"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_config')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_config.html">Config</a></td></tr>
 <tr class="memitem:a76ffead6bb88c7c92d3b60c7c1ce5c35 inherit pub_methods_class_config"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_config.html#a76ffead6bb88c7c92d3b60c7c1ce5c35">Config</a> (const std::vector&lt; std::string &gt; &amp;argv)</td></tr>
 <tr class="separator:a76ffead6bb88c7c92d3b60c7c1ce5c35 inherit pub_methods_class_config"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -132,15 +130,11 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
-<tr class="inherit_header pro_attribs_class_config"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_class_config')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_config.html">Config</a></td></tr>
-<tr class="memitem:ab52b94536c96f769078c9d4cd0f7a631 inherit pro_attribs_class_config"><td class="memItemLeft" align="right" valign="top"><a id="ab52b94536c96f769078c9d4cd0f7a631"></a>
-std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_config.html#ab52b94536c96f769078c9d4cd0f7a631">_rawArguments</a></td></tr>
-<tr class="memdesc:ab52b94536c96f769078c9d4cd0f7a631 inherit pro_attribs_class_config"><td class="mdescLeft">&#160;</td><td class="mdescRight">Store the internal parsed (keys, [values]) extracted from a file or the command-line. <br /></td></tr>
-<tr class="separator:ab52b94536c96f769078c9d4cd0f7a631 inherit pro_attribs_class_config"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa8e913359869774ef02f452ea418b606 inherit pro_attribs_class_config"><td class="memItemLeft" align="right" valign="top"><a id="aa8e913359869774ef02f452ea418b606"></a>
-std::vector&lt; <a class="el" href="struct_config_1_1_argument_info.html">ArgumentInfo</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_config.html#aa8e913359869774ef02f452ea418b606">_infos</a></td></tr>
-<tr class="memdesc:aa8e913359869774ef02f452ea418b606 inherit pro_attribs_class_config"><td class="mdescLeft">&#160;</td><td class="mdescRight">Store informations about each argument, for displaying the help message. <br /></td></tr>
-<tr class="separator:aa8e913359869774ef02f452ea418b606 inherit pro_attribs_class_config"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pro_methods_class_config"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_class_config')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="class_config.html">Config</a></td></tr>
+<tr class="memitem:a101eefd683dfcbf721a7fb92cb61cf34 inherit pro_methods_class_config"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_config.html#a101eefd683dfcbf721a7fb92cb61cf34">arguments</a> () const</td></tr>
+<tr class="separator:a101eefd683dfcbf721a7fb92cb61cf34 inherit pro_methods_class_config"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a31f3cbb2499caeef6e663883ecb8e0f9 inherit pro_methods_class_config"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="struct_config_1_1_argument_info.html">ArgumentInfo</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_config.html#a31f3cbb2499caeef6e663883ecb8e0f9">infos</a> ()</td></tr>
+<tr class="separator:a31f3cbb2499caeef6e663883ecb8e0f9 inherit pro_methods_class_config"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Configuration for the atmospheric scattering precomputations. </p>
@@ -166,7 +160,7 @@ std::vector&lt; <a class="el" href="struct_config_1_1_argument_info.html">Argume
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">explicit</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -176,33 +170,6 @@ std::vector&lt; <a class="el" href="struct_config_1_1_argument_info.html">Argume
   </table>
   </dd>
 </dl>
-
-</div>
-</div>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a id="a214ec2df20ff4c9a120616625f6d8779"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a214ec2df20ff4c9a120616625f6d8779">&#9670;&nbsp;</a></span>processArguments()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void AtmosphericScatteringConfig::processArguments </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Read the internal (key, [values]) populated dictionary, and transfer their values to the configuration attributes. </p>
 
 </div>
 </div>

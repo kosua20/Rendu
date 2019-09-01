@@ -94,10 +94,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
-<a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="class_rendering_config-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">RenderingConfig Class Reference<div class="ingroups"><a class="el" href="group___engine.html">Engine</a></div></div>  </div>
+<div class="title">RenderingConfig Class Reference<div class="ingroups"><a class="el" href="group___system.html">System</a></div></div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -150,7 +149,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memdesc:ad82d9898427740cd9a970580d2b02608"><td class="mdescLeft">&#160;</td><td class="mdescRight">Should the aspect ratio of the window be constrained. <br /></td></tr>
 <tr class="separator:ad82d9898427740cd9a970580d2b02608"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a817a131117b4c48456d508dc27e6347f"><td class="memItemLeft" align="right" valign="top"><a id="a817a131117b4c48456d508dc27e6347f"></a>
-glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_rendering_config.html#a817a131117b4c48456d508dc27e6347f">screenResolution</a> = glm::vec2(800.0f,600.0f)</td></tr>
+glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_rendering_config.html#a817a131117b4c48456d508dc27e6347f">screenResolution</a> = glm::vec2(800.0f, 600.0f)</td></tr>
 <tr class="memdesc:a817a131117b4c48456d508dc27e6347f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Size of the window in raw pixels, updated at launch based on screen density. <br /></td></tr>
 <tr class="separator:a817a131117b4c48456d508dc27e6347f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af68ed64a5a2877cc6721eb63088579b5"><td class="memItemLeft" align="right" valign="top"><a id="af68ed64a5a2877cc6721eb63088579b5"></a>
@@ -158,22 +157,13 @@ glm::ivec4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href
 <tr class="memdesc:af68ed64a5a2877cc6721eb63088579b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">The last recorded window position and size on screen. <br /></td></tr>
 <tr class="separator:af68ed64a5a2877cc6721eb63088579b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
-Protected Member Functions</h2></td></tr>
-<tr class="memitem:a680cce67b3ae86701be99c30eb359342"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_rendering_config.html#a680cce67b3ae86701be99c30eb359342">processArguments</a> ()</td></tr>
-<tr class="separator:a680cce67b3ae86701be99c30eb359342"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
-<tr class="inherit_header pro_attribs_class_config"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_class_config')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_config.html">Config</a></td></tr>
-<tr class="memitem:ab52b94536c96f769078c9d4cd0f7a631 inherit pro_attribs_class_config"><td class="memItemLeft" align="right" valign="top"><a id="ab52b94536c96f769078c9d4cd0f7a631"></a>
-std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_config.html#ab52b94536c96f769078c9d4cd0f7a631">_rawArguments</a></td></tr>
-<tr class="memdesc:ab52b94536c96f769078c9d4cd0f7a631 inherit pro_attribs_class_config"><td class="mdescLeft">&#160;</td><td class="mdescRight">Store the internal parsed (keys, [values]) extracted from a file or the command-line. <br /></td></tr>
-<tr class="separator:ab52b94536c96f769078c9d4cd0f7a631 inherit pro_attribs_class_config"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa8e913359869774ef02f452ea418b606 inherit pro_attribs_class_config"><td class="memItemLeft" align="right" valign="top"><a id="aa8e913359869774ef02f452ea418b606"></a>
-std::vector&lt; <a class="el" href="struct_config_1_1_argument_info.html">ArgumentInfo</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_config.html#aa8e913359869774ef02f452ea418b606">_infos</a></td></tr>
-<tr class="memdesc:aa8e913359869774ef02f452ea418b606 inherit pro_attribs_class_config"><td class="mdescLeft">&#160;</td><td class="mdescRight">Store informations about each argument, for displaying the help message. <br /></td></tr>
-<tr class="separator:aa8e913359869774ef02f452ea418b606 inherit pro_attribs_class_config"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pro_methods_class_config"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_class_config')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="class_config.html">Config</a></td></tr>
+<tr class="memitem:a101eefd683dfcbf721a7fb92cb61cf34 inherit pro_methods_class_config"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_config.html#a101eefd683dfcbf721a7fb92cb61cf34">arguments</a> () const</td></tr>
+<tr class="separator:a101eefd683dfcbf721a7fb92cb61cf34 inherit pro_methods_class_config"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a31f3cbb2499caeef6e663883ecb8e0f9 inherit pro_methods_class_config"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="struct_config_1_1_argument_info.html">ArgumentInfo</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_config.html#a31f3cbb2499caeef6e663883ecb8e0f9">infos</a> ()</td></tr>
+<tr class="separator:a31f3cbb2499caeef6e663883ecb8e0f9 inherit pro_methods_class_config"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Configuration containing parameters for windows and renderers. </p>
@@ -187,6 +177,9 @@ std::vector&lt; <a class="el" href="struct_config_1_1_argument_info.html">Argume
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">RenderingConfig::RenderingConfig </td>
@@ -196,6 +189,11 @@ std::vector&lt; <a class="el" href="struct_config_1_1_argument_info.html">Argume
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 <p>Initialize a new rendering config object, parsing the input arguments and filling the attributes with their values. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -203,33 +201,6 @@ std::vector&lt; <a class="el" href="struct_config_1_1_argument_info.html">Argume
   </table>
   </dd>
 </dl>
-
-</div>
-</div>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a id="a680cce67b3ae86701be99c30eb359342"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a680cce67b3ae86701be99c30eb359342">&#9670;&nbsp;</a></span>processArguments()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void RenderingConfig::processArguments </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Read the internal (key, [values]) populated dictionary, and transfer their values to the configuration attributes. </p>
 
 </div>
 </div>
@@ -252,8 +223,8 @@ std::vector&lt; <a class="el" href="struct_config_1_1_argument_info.html">Argume
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>src/engine/<a class="el" href="_config_8hpp_source.html">Config.hpp</a></li>
-<li>src/engine/Config.cpp</li>
+<li>src/engine/system/<a class="el" href="_config_8hpp_source.html">Config.hpp</a></li>
+<li>src/engine/system/Config.cpp</li>
 </ul>
 </div><!-- contents -->
 <!-- HTML footer for doxygen 1.8.14-->

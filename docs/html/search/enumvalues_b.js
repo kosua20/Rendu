@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['save',['Save',['../namespace_system.html#a6264fc8774c87b04f209b309df982f98ac9cc8cce247e49bae79f15173ce97354',1,'System']]],
-  ['skybox',['SKYBOX',['../class_scene.html#a1d24bd5fd3c2aa5cc3a93913e7a2f24fae3d53ff832d50102618d4fd24ca85a85',1,'Scene']]]
+  ['pbrparallax',['PBRParallax',['../class_object.html#a2e34d8d662b907a9e859b73311d84a0ca3285326d869ef94f2c18ae60ceef3f2d',1,'Object']]],
+  ['pbrregular',['PBRRegular',['../class_object.html#a2e34d8d662b907a9e859b73311d84a0cad3787b48eed2e837901c27c326fe368e',1,'Object']]],
+  ['points',['Points',['../class_mesh.html#aaee8acdbda278ad977aa4e6bf379ac56a75dd5f1160a3f02b6fae89c54361a1b3',1,'Mesh']]]
 ];

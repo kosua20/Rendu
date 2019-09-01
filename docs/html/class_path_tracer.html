@@ -111,8 +111,10 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ad97bbc90859d3a4cb3e62fab8c3cc460"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5311416401f700b753249c5583f1c66c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_path_tracer.html#a5311416401f700b753249c5583f1c66c">PathTracer</a> (const std::shared_ptr&lt; <a class="el" href="class_scene.html">Scene</a> &gt; &amp;scene)</td></tr>
 <tr class="separator:a5311416401f700b753249c5583f1c66c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2987a50049d82d89c6f4dc86d648ca33"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_path_tracer.html#a2987a50049d82d89c6f4dc86d648ca33">render</a> (const <a class="el" href="class_camera.html">Camera</a> &amp;camera, size_t samples, size_t depth, <a class="el" href="struct_image.html">Image</a> &amp;render)</td></tr>
+<tr class="memitem:a2987a50049d82d89c6f4dc86d648ca33"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_path_tracer.html#a2987a50049d82d89c6f4dc86d648ca33">render</a> (const <a class="el" href="class_camera.html">Camera</a> &amp;camera, size_t samples, size_t depth, <a class="el" href="class_image.html">Image</a> &amp;render)</td></tr>
 <tr class="separator:a2987a50049d82d89c6f4dc86d648ca33"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad12d336d2658dfceca3200e5c65349c2"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="class_raycaster.html">Raycaster</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_path_tracer.html#ad12d336d2658dfceca3200e5c65349c2">raycaster</a> () const</td></tr>
+<tr class="separator:ad12d336d2658dfceca3200e5c65349c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
@@ -159,6 +161,9 @@ std::shared_ptr&lt; <a class="el" href="class_scene.html">Scene</a> &gt;&#160;</
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">PathTracer::PathTracer </td>
@@ -168,6 +173,11 @@ std::shared_ptr&lt; <a class="el" href="class_scene.html">Scene</a> &gt;&#160;</
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 <p>Constructor. Initializes the internal raycaster with the scene data. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -179,6 +189,32 @@ std::shared_ptr&lt; <a class="el" href="class_scene.html">Scene</a> &gt;&#160;</
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="ad12d336d2658dfceca3200e5c65349c2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad12d336d2658dfceca3200e5c65349c2">&#9670;&nbsp;</a></span>raycaster()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="class_raycaster.html">Raycaster</a>&amp; PathTracer::raycaster </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>the internal raycaster. </dd></dl>
+
+</div>
+</div>
 <a id="a2987a50049d82d89c6f4dc86d648ca33"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2987a50049d82d89c6f4dc86d648ca33">&#9670;&nbsp;</a></span>render()</h2>
 
@@ -206,7 +242,7 @@ std::shared_ptr&lt; <a class="el" href="class_scene.html">Scene</a> &gt;&#160;</
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="struct_image.html">Image</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="class_image.html">Image</a> &amp;&#160;</td>
           <td class="paramname"><em>render</em>&#160;</td>
         </tr>
         <tr>

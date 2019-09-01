@@ -109,18 +109,18 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_composite_obj_1_1_object.html">Object</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Associate a mesh and a material.  <a href="struct_composite_obj_1_1_object.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_composite_obj_1_1_object_material_use.html">ObjectMaterialUse</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Associate an object and a material with geometry in an OBJ.  <a href="struct_composite_obj_1_1_object_material_use.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_composite_obj_1_1_object_material_use.html">ObjectMaterialUse</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Associate an object and a material with geometry in an OBJ.  <a href="class_composite_obj_1_1_object_material_use.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_composite_obj_1_1_raw_geometry.html">RawGeometry</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains all the geometry information from an OBJ file.  <a href="struct_composite_obj_1_1_raw_geometry.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_composite_obj_1_1_raw_geometry.html">RawGeometry</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains all the geometry information from an OBJ file.  <a href="class_composite_obj_1_1_raw_geometry.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a5b5bf9a9afe884f9c6018b469be8ce38"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_composite_obj.html#a5b5bf9a9afe884f9c6018b469be8ce38">parseMultiObj</a> (std::istream &amp;objFile, <a class="el" href="struct_composite_obj_1_1_raw_geometry.html">RawGeometry</a> &amp;geometry, std::vector&lt; std::string &gt; &amp;materialsFiles, std::vector&lt; <a class="el" href="struct_composite_obj_1_1_object_material_use.html">ObjectMaterialUse</a> &gt; &amp;objectMatUses)</td></tr>
+<tr class="memitem:a5b5bf9a9afe884f9c6018b469be8ce38"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_composite_obj.html#a5b5bf9a9afe884f9c6018b469be8ce38">parseMultiObj</a> (std::istream &amp;objFile, <a class="el" href="class_composite_obj_1_1_raw_geometry.html">RawGeometry</a> &amp;geometry, std::vector&lt; std::string &gt; &amp;materialsFiles, std::vector&lt; <a class="el" href="class_composite_obj_1_1_object_material_use.html">ObjectMaterialUse</a> &gt; &amp;objectMatUses)</td></tr>
 <tr class="separator:a5b5bf9a9afe884f9c6018b469be8ce38"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a367c9c01711cd669ab2cd75b324ca375"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_composite_obj.html#a367c9c01711cd669ab2cd75b324ca375">populateMesh</a> (const <a class="el" href="struct_composite_obj_1_1_raw_geometry.html">RawGeometry</a> &amp;geom, size_t lowerBound, size_t upperBound, <a class="el" href="struct_mesh.html">Mesh</a> &amp;mesh)</td></tr>
+<tr class="memitem:a367c9c01711cd669ab2cd75b324ca375"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_composite_obj.html#a367c9c01711cd669ab2cd75b324ca375">populateMesh</a> (const <a class="el" href="class_composite_obj_1_1_raw_geometry.html">RawGeometry</a> &amp;geom, size_t lowerBound, size_t upperBound, <a class="el" href="class_mesh.html">Mesh</a> &amp;mesh)</td></tr>
 <tr class="separator:a367c9c01711cd669ab2cd75b324ca375"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a940c28d669c31751e5ec86ec403d8fa5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_composite_obj.html#a940c28d669c31751e5ec86ec403d8fa5">parseMtlFile</a> (std::istream &amp;inMat, const std::string &amp;rootPath, std::map&lt; std::string, <a class="el" href="struct_composite_obj_1_1_material.html">Material</a> &gt; &amp;materials)</td></tr>
 <tr class="separator:a940c28d669c31751e5ec86ec403d8fa5"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -230,7 +230,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="struct_composite_obj_1_1_raw_geometry.html">RawGeometry</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="class_composite_obj_1_1_raw_geometry.html">RawGeometry</a> &amp;&#160;</td>
           <td class="paramname"><em>geometry</em>, </td>
         </tr>
         <tr>
@@ -242,7 +242,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">std::vector&lt; <a class="el" href="struct_composite_obj_1_1_object_material_use.html">ObjectMaterialUse</a> &gt; &amp;&#160;</td>
+          <td class="paramtype">std::vector&lt; <a class="el" href="class_composite_obj_1_1_object_material_use.html">ObjectMaterialUse</a> &gt; &amp;&#160;</td>
           <td class="paramname"><em>objectMatUses</em>&#160;</td>
         </tr>
         <tr>
@@ -273,7 +273,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">void CompositeObj::populateMesh </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="struct_composite_obj_1_1_raw_geometry.html">RawGeometry</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="class_composite_obj_1_1_raw_geometry.html">RawGeometry</a> &amp;&#160;</td>
           <td class="paramname"><em>geom</em>, </td>
         </tr>
         <tr>
@@ -291,7 +291,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="struct_mesh.html">Mesh</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="class_mesh.html">Mesh</a> &amp;&#160;</td>
           <td class="paramname"><em>mesh</em>&#160;</td>
         </tr>
         <tr>

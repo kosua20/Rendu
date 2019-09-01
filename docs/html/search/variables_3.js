@@ -1,14 +1,16 @@
 var searchData=
 [
-  ['castshadow',['castShadow',['../class_g_l_s_l_1_1_frag_1_1_directional__light.html#a1473132cedd83145c7abb2d7fb5dc987',1,'GLSL::Frag::Directional_light::castShadow()'],['../class_g_l_s_l_1_1_frag_1_1_point__light.html#a89af46dd30c05f43a18d020a83373806',1,'GLSL::Frag::Point_light::castShadow()'],['../class_g_l_s_l_1_1_frag_1_1_spot__light.html#a6054c46467625a8dfe7c46c8724a21ad',1,'GLSL::Frag::Spot_light::castShadow()']]],
-  ['center',['center',['../struct_bounding_sphere.html#a44ebb112940eada2d42e469985f56b5c',1,'BoundingSphere']]],
-  ['channelsfilter',['channelsFilter',['../class_g_l_s_l_1_1_frag_1_1_image__display.html#a31e9f14095d7c7194d0ca9f4cd0a2483',1,'GLSL::Frag::Image_display']]],
-  ['checkboxscale',['checkBoxScale',['../struct_menu_toggle.html#a4219ddd1ad889871731b149edda0308f',1,'MenuToggle']]],
-  ['cliptoworld',['clipToWorld',['../class_g_l_s_l_1_1_frag_1_1_atmosphere.html#a1d40f25687a07f729101a3cb9f7089cc',1,'GLSL::Frag::Atmosphere::clipToWorld()'],['../class_g_l_s_l_1_1_frag_1_1_atmosphere__gbuffer.html#a0ee64715e27f3d2c1a872ef1d0931d5a',1,'GLSL::Frag::Atmosphere_gbuffer::clipToWorld()']]],
-  ['color',['color',['../class_g_l_s_l_1_1_frag_1_1_object__basic__uniform.html#a48817c11181ad6d5f116c8a9864d0f8a',1,'GLSL::Frag::Object_basic_uniform::color()'],['../class_g_l_s_l_1_1_frag_1_1_font__sdf.html#aca275214ea2ce5acbe44d83020384d55',1,'GLSL::Frag::Font_sdf::color()'],['../class_g_l_s_l_1_1_frag_1_1_brush__color.html#ae7a44f83c3826f0edb2bc51cf1e4e1b1',1,'GLSL::Frag::Brush_color::color()'],['../class_g_l_s_l_1_1_frag_1_1_menu__button.html#ab03c24447f61445ced32d342b535e5db',1,'GLSL::Frag::Menu_button::color()']]],
+  ['castshadow',['castShadow',['../class_g_p_u_1_1_frag_1_1_directional__light.html#aeadadacf344e2a61047a9d64655eb8e1',1,'GPU::Frag::Directional_light::castShadow()'],['../class_g_p_u_1_1_frag_1_1_point__light.html#ae652919a7c8632592c560d1a3fad124b',1,'GPU::Frag::Point_light::castShadow()'],['../class_g_p_u_1_1_frag_1_1_spot__light.html#a4f118eb30e5b41c4e88ba203afff0276',1,'GPU::Frag::Spot_light::castShadow()']]],
+  ['center',['center',['../class_bounding_sphere.html#a44ebb112940eada2d42e469985f56b5c',1,'BoundingSphere']]],
+  ['channels',['channels',['../class_g_p_u_texture.html#a55f408880e9a0c4a8ee1999df3e40059',1,'GPUTexture']]],
+  ['channelsfilter',['channelsFilter',['../class_g_p_u_1_1_frag_1_1_image__display.html#a844b191afe23e0bf941ecd8d6864dbde',1,'GPU::Frag::Image_display']]],
+  ['checkboxscale',['checkBoxScale',['../class_menu_toggle.html#a4219ddd1ad889871731b149edda0308f',1,'MenuToggle']]],
+  ['cliptoworld',['clipToWorld',['../class_g_p_u_1_1_frag_1_1_atmosphere.html#a7c2d74beac847b8094cf5fa2c8bff7f6',1,'GPU::Frag::Atmosphere::clipToWorld()'],['../class_g_p_u_1_1_frag_1_1_atmosphere__gbuffer.html#ad83f1f7d173284259d638007e3a9eec4',1,'GPU::Frag::Atmosphere_gbuffer::clipToWorld()']]],
+  ['color',['color',['../struct_composite_obj_1_1_material.html#a6439bbd8a9c9f08b72dd32088014cc35',1,'CompositeObj::Material::color()'],['../class_g_p_u_1_1_frag_1_1_object__basic__uniform.html#a39936c5b65580de63e2142719ea87dec',1,'GPU::Frag::Object_basic_uniform::color()'],['../class_g_p_u_1_1_frag_1_1_font__sdf.html#a360252d40fe60e6e1d670a5873033582',1,'GPU::Frag::Font_sdf::color()'],['../class_g_p_u_1_1_frag_1_1_brush__color.html#a3609dd833eb508a13a987880be17e770',1,'GPU::Frag::Brush_color::color()'],['../class_g_p_u_1_1_frag_1_1_menu__button.html#a22e00747205baae607d7c13eb0bd9391',1,'GPU::Frag::Menu_button::color()']]],
   ['colorname',['colorName',['../struct_scene_export_1_1_material.html#a98aa6434007f8372ed14dfa7f01a7a30',1,'SceneExport::Material']]],
-  ['colors',['colors',['../struct_mesh.html#a484b6f05575dbac43b3f5de817f90069',1,'Mesh']]],
-  ['count',['count',['../struct_mesh_infos.html#ab70a3ae83fabe4354268c113ae30401c',1,'MeshInfos']]],
-  ['cubemap',['cubemap',['../struct_texture_infos.html#ab0597044e73fe987e9f157515b2c8c59',1,'TextureInfos']]],
-  ['customexposure',['customExposure',['../class_g_l_s_l_1_1_frag_1_1_tonemap.html#a8cef59ae2b7423559241801ac00a4f5f',1,'GLSL::Frag::Tonemap']]]
+  ['colors',['colors',['../class_mesh.html#a484b6f05575dbac43b3f5de817f90069',1,'Mesh']]],
+  ['colortexturepath',['colorTexturePath',['../struct_composite_obj_1_1_material.html#a499883bbca746cf9e1266ff8d7f5fde5',1,'CompositeObj::Material']]],
+  ['components',['components',['../class_image.html#a18444ca9b6a92bad890fd7172700e0c4',1,'Image']]],
+  ['count',['count',['../class_g_p_u_mesh.html#a06651d4a934cbf77cb48fe720711cf14',1,'GPUMesh']]],
+  ['customexposure',['customExposure',['../class_g_p_u_1_1_frag_1_1_tonemap.html#afb920de934b12d25fd37fe642281d689',1,'GPU::Frag::Tonemap']]]
 ];

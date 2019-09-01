@@ -92,25 +92,25 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="contents">
 <a name="details" id="details"></a><h2 class="groupheader"> </h2>
 <p>Perform cubemap GGX convolution, irradiance SH coefficients computation, and linearized BRDF look-up table pre-computation. </p>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_g_l_s_l_1_1_frag_1_1_cubemap__convo.html" title="&quot;Cubemap convo&quot; fragment shader.">GLSL::Frag::Cubemap_convo</a> </dd>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_g_p_u_1_1_frag_1_1_cubemap__convo.html" title="&quot;Cubemap convo&quot; fragment shader.">GPU::Frag::Cubemap_convo</a> </dd>
 <dd>
-<a class="el" href="class_g_l_s_l_1_1_frag_1_1_brdf__sampler.html" title="&quot;Brdf sampler&quot; fragment shader.">GLSL::Frag::Brdf_sampler</a> </dd>
+<a class="el" href="class_g_p_u_1_1_frag_1_1_brdf__sampler.html" title="&quot;Brdf sampler&quot; fragment shader.">GPU::Frag::Brdf_sampler</a> </dd>
 <dd>
-<a class="el" href="class_g_l_s_l_1_1_frag_1_1_skybox__shcoeffs.html" title="&quot;Skybox shcoeffs&quot; fragment shader.">GLSL::Frag::Skybox_shcoeffs</a> </dd>
+<a class="el" href="class_g_p_u_1_1_frag_1_1_skybox__shcoeffs.html" title="&quot;Skybox shcoeffs&quot; fragment shader.">GPU::Frag::Skybox_shcoeffs</a> </dd>
 <dd>
 <a class="el" href="group___deferred_rendering.html" title="Render a scene using a PBR approach, image-based ambient lighting, ambient occlusion,...">Deferred rendering</a> </dd></dl>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ga8bb46f768b9af101a5f84fae331645b5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___b_r_d_f_estimator.html#ga8bb46f768b9af101a5f84fae331645b5">loadCubemap</a> (const std::string &amp;inputPath, <a class="el" href="struct_texture_infos.html">TextureInfos</a> &amp;cubemapInfos)</td></tr>
-<tr class="separator:ga8bb46f768b9af101a5f84fae331645b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga2fd49a3c2515a92a5b8370fa24c586eb"><td class="memItemLeft" align="right" valign="top">std::vector&lt; glm::vec3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___b_r_d_f_estimator.html#ga2fd49a3c2515a92a5b8370fa24c586eb">computeSHCoeffs</a> (const <a class="el" href="struct_texture_infos.html">TextureInfos</a> &amp;cubemap)</td></tr>
-<tr class="memdesc:ga2fd49a3c2515a92a5b8370fa24c586eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decompose an existing cubemap irradiance onto the nine first elements of the spherical harmonic basis.  <a href="#ga2fd49a3c2515a92a5b8370fa24c586eb">More...</a><br /></td></tr>
-<tr class="separator:ga2fd49a3c2515a92a5b8370fa24c586eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gae1667d6ff0e82c58cf9b373c0fa4fd5a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___b_r_d_f_estimator.html#gae1667d6ff0e82c58cf9b373c0fa4fd5a">computeCubemapConvolution</a> (const <a class="el" href="struct_texture_infos.html">TextureInfos</a> &amp;cubemapInfos, int levelsCount, int outputSide, int samplesCount, std::vector&lt; <a class="el" href="struct_texture_infos.html">TextureInfos</a> &gt; &amp;cubeLevels)</td></tr>
-<tr class="separator:gae1667d6ff0e82c58cf9b373c0fa4fd5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaff7327c71a5f326e65b565ae43dcc0aa"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___b_r_d_f_estimator.html#gaff7327c71a5f326e65b565ae43dcc0aa">exportCubemapConvolution</a> (const std::vector&lt; <a class="el" href="struct_texture_infos.html">TextureInfos</a> &gt; &amp;cubeLevels, const std::string &amp;outputPath)</td></tr>
-<tr class="separator:gaff7327c71a5f326e65b565ae43dcc0aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga01e39e3f18539cc8bf8a3f844f6ae532"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___b_r_d_f_estimator.html#ga01e39e3f18539cc8bf8a3f844f6ae532">loadCubemap</a> (const std::string &amp;inputPath, <a class="el" href="class_texture.html">Texture</a> &amp;cubemapInfos)</td></tr>
+<tr class="separator:ga01e39e3f18539cc8bf8a3f844f6ae532"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf4857febc224b23898e52b8c3e43524d"><td class="memItemLeft" align="right" valign="top">std::vector&lt; glm::vec3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___b_r_d_f_estimator.html#gaf4857febc224b23898e52b8c3e43524d">computeSHCoeffs</a> (const <a class="el" href="class_texture.html">Texture</a> &amp;cubemap)</td></tr>
+<tr class="memdesc:gaf4857febc224b23898e52b8c3e43524d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decompose an existing cubemap irradiance onto the nine first elements of the spherical harmonic basis.  <a href="#gaf4857febc224b23898e52b8c3e43524d">More...</a><br /></td></tr>
+<tr class="separator:gaf4857febc224b23898e52b8c3e43524d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga23457022b378179392250281e696f53e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___b_r_d_f_estimator.html#ga23457022b378179392250281e696f53e">computeCubemapConvolution</a> (const <a class="el" href="class_texture.html">Texture</a> &amp;cubemapInfos, int levelsCount, int outputSide, int samplesCount, std::vector&lt; <a class="el" href="class_texture.html">Texture</a> &gt; &amp;cubeLevels)</td></tr>
+<tr class="separator:ga23457022b378179392250281e696f53e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab36530070ec4d11604b2d118e692e8dd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___b_r_d_f_estimator.html#gab36530070ec4d11604b2d118e692e8dd">exportCubemapConvolution</a> (std::vector&lt; <a class="el" href="class_texture.html">Texture</a> &gt; &amp;cubeLevels, const std::string &amp;outputPath)</td></tr>
+<tr class="separator:gab36530070ec4d11604b2d118e692e8dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga10fdb7e3e48d2ebbc2522d3a353f876a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___b_r_d_f_estimator.html#ga10fdb7e3e48d2ebbc2522d3a353f876a">computeAndExportLookupTable</a> (const int outputSide, const std::string &amp;outputPath)</td></tr>
 <tr class="separator:ga10fdb7e3e48d2ebbc2522d3a353f876a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga3c04138a5bfe5d72780bb7e82a18e627"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___b_r_d_f_estimator.html#ga3c04138a5bfe5d72780bb7e82a18e627">main</a> (int argc, char **argv)</td></tr>
@@ -152,8 +152,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="gae1667d6ff0e82c58cf9b373c0fa4fd5a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gae1667d6ff0e82c58cf9b373c0fa4fd5a">&#9670;&nbsp;</a></span>computeCubemapConvolution()</h2>
+<a id="ga23457022b378179392250281e696f53e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga23457022b378179392250281e696f53e">&#9670;&nbsp;</a></span>computeCubemapConvolution()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -161,7 +161,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">void computeCubemapConvolution </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="struct_texture_infos.html">TextureInfos</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="class_texture.html">Texture</a> &amp;&#160;</td>
           <td class="paramname"><em>cubemapInfos</em>, </td>
         </tr>
         <tr>
@@ -185,7 +185,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">std::vector&lt; <a class="el" href="struct_texture_infos.html">TextureInfos</a> &gt; &amp;&#160;</td>
+          <td class="paramtype">std::vector&lt; <a class="el" href="class_texture.html">Texture</a> &gt; &amp;&#160;</td>
           <td class="paramname"><em>cubeLevels</em>&#160;</td>
         </tr>
         <tr>
@@ -209,8 +209,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga2fd49a3c2515a92a5b8370fa24c586eb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga2fd49a3c2515a92a5b8370fa24c586eb">&#9670;&nbsp;</a></span>computeSHCoeffs()</h2>
+<a id="gaf4857febc224b23898e52b8c3e43524d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaf4857febc224b23898e52b8c3e43524d">&#9670;&nbsp;</a></span>computeSHCoeffs()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -218,7 +218,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">std::vector&lt;glm::vec3&gt; computeSHCoeffs </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="struct_texture_infos.html">TextureInfos</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="class_texture.html">Texture</a> &amp;&#160;</td>
           <td class="paramname"><em>cubemap</em></td><td>)</td>
           <td></td>
         </tr>
@@ -236,8 +236,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="gaff7327c71a5f326e65b565ae43dcc0aa"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaff7327c71a5f326e65b565ae43dcc0aa">&#9670;&nbsp;</a></span>exportCubemapConvolution()</h2>
+<a id="gab36530070ec4d11604b2d118e692e8dd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab36530070ec4d11604b2d118e692e8dd">&#9670;&nbsp;</a></span>exportCubemapConvolution()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -245,7 +245,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">void exportCubemapConvolution </td>
           <td>(</td>
-          <td class="paramtype">const std::vector&lt; <a class="el" href="struct_texture_infos.html">TextureInfos</a> &gt; &amp;&#160;</td>
+          <td class="paramtype">std::vector&lt; <a class="el" href="class_texture.html">Texture</a> &gt; &amp;&#160;</td>
           <td class="paramname"><em>cubeLevels</em>, </td>
         </tr>
         <tr>
@@ -271,8 +271,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ga8bb46f768b9af101a5f84fae331645b5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga8bb46f768b9af101a5f84fae331645b5">&#9670;&nbsp;</a></span>loadCubemap()</h2>
+<a id="ga01e39e3f18539cc8bf8a3f844f6ae532"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga01e39e3f18539cc8bf8a3f844f6ae532">&#9670;&nbsp;</a></span>loadCubemap()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -286,7 +286,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="struct_texture_infos.html">TextureInfos</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="class_texture.html">Texture</a> &amp;&#160;</td>
           <td class="paramname"><em>cubemapInfos</em>&#160;</td>
         </tr>
         <tr>
@@ -296,10 +296,10 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Load a cubemap on both the CPU and GPU from an input path. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Load a cubemap on both the CPU and <a class="el" href="namespace_g_p_u.html" title="GPU shaders.">GPU</a> from an input path. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">inputPath</td><td>the base path on disk </td></tr>
-    <tr><td class="paramname">cubemapInfos</td><td>will contain the cubemap infos once sent to the GPU </td></tr>
+    <tr><td class="paramname">cubemapInfos</td><td>will contain the cubemap infos once sent to the <a class="el" href="namespace_g_p_u.html" title="GPU shaders.">GPU</a> </td></tr>
   </table>
   </dd>
 </dl>

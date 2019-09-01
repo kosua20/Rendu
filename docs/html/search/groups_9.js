@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['path_20tracer',['Path tracer',['../group___pathtracer_demo.html',1,'']]],
-  ['playground',['Playground',['../group___playground.html',1,'']]],
-  ['processing',['Processing',['../group___processing.html',1,'']]]
+  ['raycaster',['Raycaster',['../group___raycaster.html',1,'']]],
+  ['resources',['Resources',['../group___resources.html',1,'']]]
 ];

@@ -102,53 +102,55 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!--header-->
 <div class="contents">
 
-<p>Perform an approximate flood fill on the GPU, outputing a color filled image or a distance map. Implement the method described in Jump Flooding in GPU with Applications to Voronoi Diagram and Distance Transform, Rong et al., 2006.  
+<p>Perform an approximate flood fill on the <a class="el" href="namespace_g_p_u.html" title="GPU shaders.">GPU</a>, outputing a color filled image or a distance map. Implement the method described in Jump Flooding in <a class="el" href="namespace_g_p_u.html" title="GPU shaders.">GPU</a> with Applications to Voronoi Diagram and Distance Transform, Rong et al., 2006.  
  <a href="class_flood_filler.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="_flood_filler_8hpp_source.html">FloodFiller.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:aa413aecb098c1f58d89e528b8a4c8b02"><td class="memItemLeft" align="right" valign="top"><a id="aa413aecb098c1f58d89e528b8a4c8b02"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_flood_filler.html#aa413aecb098c1f58d89e528b8a4c8b02">OutputMode</a> </td></tr>
-<tr class="memdesc:aa413aecb098c1f58d89e528b8a4c8b02"><td class="mdescLeft">&#160;</td><td class="mdescRight">Output mode: either the color of the input seeds propagated, or the normalized distance to the closest seed at each pixel. <br /></td></tr>
-<tr class="separator:aa413aecb098c1f58d89e528b8a4c8b02"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a72cccbda345a86f55482d8535575e6c5"><td class="memItemLeft" align="right" valign="top"><a id="a72cccbda345a86f55482d8535575e6c5"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_flood_filler.html#a72cccbda345a86f55482d8535575e6c5">Output</a> { <b>COLOR</b>, 
+<b>DISTANCE</b>
+ }</td></tr>
+<tr class="memdesc:a72cccbda345a86f55482d8535575e6c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Output mode: either the color of the input seeds propagated, or the normalized distance to the closest seed at each pixel. <br /></td></tr>
+<tr class="separator:a72cccbda345a86f55482d8535575e6c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a211f8ff7fd85ae014b5a19e2d94ab1d7"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_flood_filler.html#a211f8ff7fd85ae014b5a19e2d94ab1d7">FloodFiller</a> (unsigned int width, unsigned int height)</td></tr>
 <tr class="separator:a211f8ff7fd85ae014b5a19e2d94ab1d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a950bdfeb854be7102d0de2e08c46c079"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_flood_filler.html#a950bdfeb854be7102d0de2e08c46c079">process</a> (const GLuint <a class="el" href="class_flood_filler.html#a636111cb0884116d616e4b31eb31ba4e">textureId</a>, const <a class="el" href="class_flood_filler.html#aa413aecb098c1f58d89e528b8a4c8b02">OutputMode</a> mode)</td></tr>
-<tr class="separator:a950bdfeb854be7102d0de2e08c46c079"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa552d19c74f250ea574eb814d291219a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_flood_filler.html#aa552d19c74f250ea574eb814d291219a">process</a> (const <a class="el" href="class_texture.html">Texture</a> *<a class="el" href="class_flood_filler.html#a0bdd667eaf55211a6d929db962bb28a7">textureId</a>, <a class="el" href="class_flood_filler.html#a72cccbda345a86f55482d8535575e6c5">Output</a> mode)</td></tr>
+<tr class="separator:aa552d19c74f250ea574eb814d291219a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afd7bea5aa99d2309aee82ed270942ebe"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_flood_filler.html#afd7bea5aa99d2309aee82ed270942ebe">clean</a> () const</td></tr>
 <tr class="separator:afd7bea5aa99d2309aee82ed270942ebe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad6e428bfa96aeabe0c26ea69c770c675"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_flood_filler.html#ad6e428bfa96aeabe0c26ea69c770c675">resize</a> (unsigned int width, unsigned int height)</td></tr>
 <tr class="separator:ad6e428bfa96aeabe0c26ea69c770c675"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a636111cb0884116d616e4b31eb31ba4e"><td class="memItemLeft" align="right" valign="top">GLuint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_flood_filler.html#a636111cb0884116d616e4b31eb31ba4e">textureId</a> ()</td></tr>
-<tr class="separator:a636111cb0884116d616e4b31eb31ba4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0bdd667eaf55211a6d929db962bb28a7"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="class_texture.html">Texture</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_flood_filler.html#a0bdd667eaf55211a6d929db962bb28a7">textureId</a> () const</td></tr>
+<tr class="separator:a0bdd667eaf55211a6d929db962bb28a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
-<tr class="memitem:ac198fff92a558fe7d6944038ba16342e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_flood_filler.html#ac198fff92a558fe7d6944038ba16342e">extractAndPropagate</a> (const GLuint <a class="el" href="class_flood_filler.html#a636111cb0884116d616e4b31eb31ba4e">textureId</a>)</td></tr>
-<tr class="separator:ac198fff92a558fe7d6944038ba16342e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a598d346ce43871047d00e76cf576227e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_flood_filler.html#a598d346ce43871047d00e76cf576227e">extractAndPropagate</a> (const <a class="el" href="class_texture.html">Texture</a> *<a class="el" href="class_flood_filler.html#a0bdd667eaf55211a6d929db962bb28a7">textureId</a>)</td></tr>
+<tr class="separator:a598d346ce43871047d00e76cf576227e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:a2742b6295930988df0a3dbac46c5adfe"><td class="memItemLeft" align="right" valign="top"><a id="a2742b6295930988df0a3dbac46c5adfe"></a>
-const <a class="el" href="class_program_infos.html">ProgramInfos</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_flood_filler.html#a2742b6295930988df0a3dbac46c5adfe">_extract</a></td></tr>
-<tr class="memdesc:a2742b6295930988df0a3dbac46c5adfe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extract the flood fill seeds. <br /></td></tr>
-<tr class="separator:a2742b6295930988df0a3dbac46c5adfe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afeca448fa29b83d4e5ae19553615614a"><td class="memItemLeft" align="right" valign="top"><a id="afeca448fa29b83d4e5ae19553615614a"></a>
-const <a class="el" href="class_program_infos.html">ProgramInfos</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_flood_filler.html#afeca448fa29b83d4e5ae19553615614a">_floodfill</a></td></tr>
-<tr class="memdesc:afeca448fa29b83d4e5ae19553615614a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform one pass of the flood fill. <br /></td></tr>
-<tr class="separator:afeca448fa29b83d4e5ae19553615614a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a81f4d3fbce334f3b9c34a0244686999a"><td class="memItemLeft" align="right" valign="top"><a id="a81f4d3fbce334f3b9c34a0244686999a"></a>
-const <a class="el" href="class_program_infos.html">ProgramInfos</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_flood_filler.html#a81f4d3fbce334f3b9c34a0244686999a">_compositeColor</a></td></tr>
-<tr class="memdesc:a81f4d3fbce334f3b9c34a0244686999a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate the color image from the flood-fill seed map. <br /></td></tr>
-<tr class="separator:a81f4d3fbce334f3b9c34a0244686999a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a18a5ee3a880c969604be2edaad5a16ec"><td class="memItemLeft" align="right" valign="top"><a id="a18a5ee3a880c969604be2edaad5a16ec"></a>
-const <a class="el" href="class_program_infos.html">ProgramInfos</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_flood_filler.html#a18a5ee3a880c969604be2edaad5a16ec">_compositeDist</a></td></tr>
-<tr class="memdesc:a18a5ee3a880c969604be2edaad5a16ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate the normalized distance map from the flood-fill seed map. <br /></td></tr>
-<tr class="separator:a18a5ee3a880c969604be2edaad5a16ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abef5e5101c471631d2eb6da76c9a7b35"><td class="memItemLeft" align="right" valign="top"><a id="abef5e5101c471631d2eb6da76c9a7b35"></a>
+const <a class="el" href="class_program.html">Program</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_flood_filler.html#abef5e5101c471631d2eb6da76c9a7b35">_extract</a></td></tr>
+<tr class="memdesc:abef5e5101c471631d2eb6da76c9a7b35"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extract the flood fill seeds. <br /></td></tr>
+<tr class="separator:abef5e5101c471631d2eb6da76c9a7b35"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad5f588b3274bedabf247ec2310e401b0"><td class="memItemLeft" align="right" valign="top"><a id="ad5f588b3274bedabf247ec2310e401b0"></a>
+const <a class="el" href="class_program.html">Program</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_flood_filler.html#ad5f588b3274bedabf247ec2310e401b0">_floodfill</a></td></tr>
+<tr class="memdesc:ad5f588b3274bedabf247ec2310e401b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform one pass of the flood fill. <br /></td></tr>
+<tr class="separator:ad5f588b3274bedabf247ec2310e401b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a860185468f71392370928dfc182f1fd0"><td class="memItemLeft" align="right" valign="top"><a id="a860185468f71392370928dfc182f1fd0"></a>
+const <a class="el" href="class_program.html">Program</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_flood_filler.html#a860185468f71392370928dfc182f1fd0">_compositeColor</a></td></tr>
+<tr class="memdesc:a860185468f71392370928dfc182f1fd0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate the color image from the flood-fill seed map. <br /></td></tr>
+<tr class="separator:a860185468f71392370928dfc182f1fd0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2a29b11e54f0d1082a0496c145169210"><td class="memItemLeft" align="right" valign="top"><a id="a2a29b11e54f0d1082a0496c145169210"></a>
+const <a class="el" href="class_program.html">Program</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_flood_filler.html#a2a29b11e54f0d1082a0496c145169210">_compositeDist</a></td></tr>
+<tr class="memdesc:a2a29b11e54f0d1082a0496c145169210"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate the normalized distance map from the flood-fill seed map. <br /></td></tr>
+<tr class="separator:a2a29b11e54f0d1082a0496c145169210"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a173bb6410915254bdd808244228d372c"><td class="memItemLeft" align="right" valign="top"><a id="a173bb6410915254bdd808244228d372c"></a>
 std::unique_ptr&lt; <a class="el" href="class_framebuffer.html">Framebuffer</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_flood_filler.html#a173bb6410915254bdd808244228d372c">_ping</a></td></tr>
 <tr class="memdesc:a173bb6410915254bdd808244228d372c"><td class="mdescLeft">&#160;</td><td class="mdescRight">First flooding buffer. <br /></td></tr>
@@ -167,7 +169,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 <tr class="separator:adc98d176ad3bc4ef9ce4751bc4d64b99"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Perform an approximate flood fill on the GPU, outputing a color filled image or a distance map. Implement the method described in Jump Flooding in GPU with Applications to Voronoi Diagram and Distance Transform, Rong et al., 2006. </p>
+<div class="textblock"><p>Perform an approximate flood fill on the <a class="el" href="namespace_g_p_u.html" title="GPU shaders.">GPU</a>, outputing a color filled image or a distance map. Implement the method described in Jump Flooding in <a class="el" href="namespace_g_p_u.html" title="GPU shaders.">GPU</a> with Applications to Voronoi Diagram and Distance Transform, Rong et al., 2006. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a211f8ff7fd85ae014b5a19e2d94ab1d7"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a211f8ff7fd85ae014b5a19e2d94ab1d7">&#9670;&nbsp;</a></span>FloodFiller()</h2>
@@ -223,8 +225,8 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 
 </div>
 </div>
-<a id="ac198fff92a558fe7d6944038ba16342e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac198fff92a558fe7d6944038ba16342e">&#9670;&nbsp;</a></span>extractAndPropagate()</h2>
+<a id="a598d346ce43871047d00e76cf576227e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a598d346ce43871047d00e76cf576227e">&#9670;&nbsp;</a></span>extractAndPropagate()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -235,7 +237,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
         <tr>
           <td class="memname">void FloodFiller::extractAndPropagate </td>
           <td>(</td>
-          <td class="paramtype">const GLuint&#160;</td>
+          <td class="paramtype">const <a class="el" href="class_texture.html">Texture</a> *&#160;</td>
           <td class="paramname"><em>textureId</em></td><td>)</td>
           <td></td>
         </tr>
@@ -255,8 +257,8 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 
 </div>
 </div>
-<a id="a950bdfeb854be7102d0de2e08c46c079"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a950bdfeb854be7102d0de2e08c46c079">&#9670;&nbsp;</a></span>process()</h2>
+<a id="aa552d19c74f250ea574eb814d291219a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa552d19c74f250ea574eb814d291219a">&#9670;&nbsp;</a></span>process()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -264,13 +266,13 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
         <tr>
           <td class="memname">void FloodFiller::process </td>
           <td>(</td>
-          <td class="paramtype">const GLuint&#160;</td>
+          <td class="paramtype">const <a class="el" href="class_texture.html">Texture</a> *&#160;</td>
           <td class="paramname"><em>textureId</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="class_flood_filler.html#aa413aecb098c1f58d89e528b8a4c8b02">OutputMode</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="class_flood_filler.html#a72cccbda345a86f55482d8535575e6c5">Output</a>&#160;</td>
           <td class="paramname"><em>mode</em>&#160;</td>
         </tr>
         <tr>
@@ -282,7 +284,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 </div><div class="memdoc">
 <p>Fill a given input texture. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">textureId</td><td>the GPU ID of the texture </td></tr>
+    <tr><td class="paramname">textureId</td><td>the <a class="el" href="namespace_g_p_u.html" title="GPU shaders.">GPU</a> ID of the texture </td></tr>
     <tr><td class="paramname">mode</td><td>the output mode (color or distance) </td></tr>
   </table>
   </dd>
@@ -325,8 +327,8 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 
 </div>
 </div>
-<a id="a636111cb0884116d616e4b31eb31ba4e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a636111cb0884116d616e4b31eb31ba4e">&#9670;&nbsp;</a></span>textureId()</h2>
+<a id="a0bdd667eaf55211a6d929db962bb28a7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0bdd667eaf55211a6d929db962bb28a7">&#9670;&nbsp;</a></span>textureId()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -335,10 +337,10 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">GLuint FloodFiller::textureId </td>
+          <td class="memname">const <a class="el" href="class_texture.html">Texture</a>* FloodFiller::textureId </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td></td>
+          <td> const</td>
         </tr>
       </table>
   </td>
@@ -347,7 +349,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
   </tr>
 </table>
 </div><div class="memdoc">
-<p>The GPU ID of the filter result. </p><dl class="section return"><dt>Returns</dt><dd>the ID of the result texture </dd></dl>
+<p>The <a class="el" href="namespace_g_p_u.html" title="GPU shaders.">GPU</a> ID of the filter result. </p><dl class="section return"><dt>Returns</dt><dd>the ID of the result texture </dd></dl>
 
 </div>
 </div>

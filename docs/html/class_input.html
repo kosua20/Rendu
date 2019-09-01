@@ -94,6 +94,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-types">Public Types</a> &#124;
+<a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pri-methods">Private Member Functions</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
@@ -122,15 +123,180 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:ac74df526ba38aedbefa716292b6534d5"><td class="memItemLeft" align="right" valign="top"><a id="ac74df526ba38aedbefa716292b6534d5"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#ac74df526ba38aedbefa716292b6534d5">Key</a> </td></tr>
-<tr class="memdesc:ac74df526ba38aedbefa716292b6534d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Keys codes. <br /></td></tr>
-<tr class="separator:ac74df526ba38aedbefa716292b6534d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a157642cb7a7c40253670d19e9954ddf3"><td class="memItemLeft" align="right" valign="top"><a id="a157642cb7a7c40253670d19e9954ddf3"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#a157642cb7a7c40253670d19e9954ddf3">Mouse</a> </td></tr>
-<tr class="memdesc:a157642cb7a7c40253670d19e9954ddf3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mouse buttons codes. <br /></td></tr>
-<tr class="separator:a157642cb7a7c40253670d19e9954ddf3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a54d91b6e7708aaf7a4913989c5271a46"><td class="memItemLeft" align="right" valign="top"><a id="a54d91b6e7708aaf7a4913989c5271a46"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#a54d91b6e7708aaf7a4913989c5271a46">Key</a> : uint { <br />
+&#160;&#160;<b>Space</b> = 0, 
+<b>Apostrophe</b>, 
+<b>Comma</b>, 
+<b>Minus</b>, 
+<br />
+&#160;&#160;<b>Period</b>, 
+<b>Slash</b>, 
+<b>N0</b>, 
+<b>N1</b>, 
+<br />
+&#160;&#160;<b>N2</b>, 
+<b>N3</b>, 
+<b>N4</b>, 
+<b>N5</b>, 
+<br />
+&#160;&#160;<b>N6</b>, 
+<b>N7</b>, 
+<b>N8</b>, 
+<b>N9</b>, 
+<br />
+&#160;&#160;<b>Semicolon</b>, 
+<b>Equal</b>, 
+<b>A</b>, 
+<b>B</b>, 
+<br />
+&#160;&#160;<b>C</b>, 
+<b>D</b>, 
+<b>E</b>, 
+<b>F</b>, 
+<br />
+&#160;&#160;<b>G</b>, 
+<b>H</b>, 
+<b>I</b>, 
+<b>J</b>, 
+<br />
+&#160;&#160;<b>K</b>, 
+<b>L</b>, 
+<b>M</b>, 
+<b>N</b>, 
+<br />
+&#160;&#160;<b>O</b>, 
+<b>P</b>, 
+<b>Q</b>, 
+<b>R</b>, 
+<br />
+&#160;&#160;<b>S</b>, 
+<b>T</b>, 
+<b>U</b>, 
+<b>V</b>, 
+<br />
+&#160;&#160;<b>W</b>, 
+<b>X</b>, 
+<b>Y</b>, 
+<b>Z</b>, 
+<br />
+&#160;&#160;<b>LeftBracket</b>, 
+<b>Backslash</b>, 
+<b>RightBracket</b>, 
+<b>GraveAccent</b>, 
+<br />
+&#160;&#160;<b>World1</b>, 
+<b>World2</b>, 
+<b>Escape</b>, 
+<b>Enter</b>, 
+<br />
+&#160;&#160;<b>Tab</b>, 
+<b>Backspace</b>, 
+<b>Insert</b>, 
+<b>Delete</b>, 
+<br />
+&#160;&#160;<b>Right</b>, 
+<b>Left</b>, 
+<b>Down</b>, 
+<b>Up</b>, 
+<br />
+&#160;&#160;<b>PageUp</b>, 
+<b>PageDown</b>, 
+<b>Home</b>, 
+<b>End</b>, 
+<br />
+&#160;&#160;<b>CapsLock</b>, 
+<b>ScrollLock</b>, 
+<b>NumLock</b>, 
+<b>PrintScreen</b>, 
+<br />
+&#160;&#160;<b>Pause</b>, 
+<b>F1</b>, 
+<b>F2</b>, 
+<b>F3</b>, 
+<br />
+&#160;&#160;<b>F4</b>, 
+<b>F5</b>, 
+<b>F6</b>, 
+<b>F7</b>, 
+<br />
+&#160;&#160;<b>F8</b>, 
+<b>F9</b>, 
+<b>F10</b>, 
+<b>F11</b>, 
+<br />
+&#160;&#160;<b>F12</b>, 
+<b>F13</b>, 
+<b>F14</b>, 
+<b>F15</b>, 
+<br />
+&#160;&#160;<b>F16</b>, 
+<b>F17</b>, 
+<b>F18</b>, 
+<b>F19</b>, 
+<br />
+&#160;&#160;<b>F20</b>, 
+<b>F21</b>, 
+<b>F22</b>, 
+<b>F23</b>, 
+<br />
+&#160;&#160;<b>F24</b>, 
+<b>F25</b>, 
+<b>Pad0</b>, 
+<b>Pad1</b>, 
+<br />
+&#160;&#160;<b>Pad2</b>, 
+<b>Pad3</b>, 
+<b>Pad4</b>, 
+<b>Pad5</b>, 
+<br />
+&#160;&#160;<b>Pad6</b>, 
+<b>Pad7</b>, 
+<b>Pad8</b>, 
+<b>Pad9</b>, 
+<br />
+&#160;&#160;<b>PadDecimal</b>, 
+<b>PadDivide</b>, 
+<b>PadMultiply</b>, 
+<b>PadSubtract</b>, 
+<br />
+&#160;&#160;<b>PadAdd</b>, 
+<b>PadEnter</b>, 
+<b>PadEqual</b>, 
+<b>LeftShift</b>, 
+<br />
+&#160;&#160;<b>LeftControl</b>, 
+<b>LeftAlt</b>, 
+<b>LeftSuper</b>, 
+<b>RightShift</b>, 
+<br />
+&#160;&#160;<b>RightControl</b>, 
+<b>RightAlt</b>, 
+<b>RightSuper</b>, 
+<b>Menu</b>, 
+<br />
+&#160;&#160;<b>Count</b>
+<br />
+ }</td></tr>
+<tr class="memdesc:a54d91b6e7708aaf7a4913989c5271a46"><td class="mdescLeft">&#160;</td><td class="mdescRight">Keys codes. <br /></td></tr>
+<tr class="separator:a54d91b6e7708aaf7a4913989c5271a46"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a590d47e547a7e4460957d40ea522f77a"><td class="memItemLeft" align="right" valign="top"><a id="a590d47e547a7e4460957d40ea522f77a"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#a590d47e547a7e4460957d40ea522f77a">Mouse</a> : uint { <b>Left</b> = 0, 
+<b>Right</b> = 1, 
+<b>Middle</b> = 2, 
+<b>Count</b> = 3
+ }</td></tr>
+<tr class="memdesc:a590d47e547a7e4460957d40ea522f77a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mouse buttons codes. <br /></td></tr>
+<tr class="separator:a590d47e547a7e4460957d40ea522f77a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a783b4f3b44ed45f17d58e896c2785c93"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_input.html">Input</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#a783b4f3b44ed45f17d58e896c2785c93">operator=</a> (const <a class="el" href="class_input.html">Input</a> &amp;)=delete</td></tr>
+<tr class="separator:a783b4f3b44ed45f17d58e896c2785c93"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a961dc8386a03428cb07effb524f36731"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#a961dc8386a03428cb07effb524f36731">Input</a> (const <a class="el" href="class_input.html">Input</a> &amp;)=delete</td></tr>
+<tr class="separator:a961dc8386a03428cb07effb524f36731"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6764ed3bc8f1c0afa742a9207ac94538"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_input.html">Input</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#a6764ed3bc8f1c0afa742a9207ac94538">operator=</a> (<a class="el" href="class_input.html">Input</a> &amp;&amp;)=delete</td></tr>
+<tr class="separator:a6764ed3bc8f1c0afa742a9207ac94538"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7b1185308801295eeed1c32dab96e278"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#a7b1185308801295eeed1c32dab96e278">Input</a> (<a class="el" href="class_input.html">Input</a> &amp;&amp;)=delete</td></tr>
+<tr class="separator:a7b1185308801295eeed1c32dab96e278"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr><td colspan="2"><div class="groupHeader">Input settings</div></td></tr>
 <tr class="memitem:a9518c2de1f0b3d033f7bfd44413c64e9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#a9518c2de1f0b3d033f7bfd44413c64e9">preferRawControllers</a> (bool prefer)</td></tr>
 <tr class="separator:a9518c2de1f0b3d033f7bfd44413c64e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -147,42 +313,42 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a416f3fae1ff9fa36f035aa0dff78e3dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8243877531ad318139d144ff87840b24"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#a8243877531ad318139d144ff87840b24">resizeEvent</a> (int width, int height)</td></tr>
 <tr class="separator:a8243877531ad318139d144ff87840b24"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2ef05f438a48b5ddb7cb0620f860335b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#a2ef05f438a48b5ddb7cb0620f860335b">minimizedEvent</a> (bool <a class="el" href="class_input.html#a6e6bdf83ea769fb80b112e7860ca0914">minimized</a>)</td></tr>
+<tr class="memitem:a2ef05f438a48b5ddb7cb0620f860335b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#a2ef05f438a48b5ddb7cb0620f860335b">minimizedEvent</a> (bool <a class="el" href="class_input.html#a36f106f073e75805b250861c0f2121c2">minimized</a>)</td></tr>
 <tr class="separator:a2ef05f438a48b5ddb7cb0620f860335b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a76634d92fbca557589b865a8ec83e0f7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#a76634d92fbca557589b865a8ec83e0f7">densityEvent</a> (float <a class="el" href="class_input.html#afd3deba17b875e62f2462093bf1920d7">density</a>)</td></tr>
 <tr class="separator:a76634d92fbca557589b865a8ec83e0f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa7fe26710dd863d11737bf2f6de4ad05"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#aa7fe26710dd863d11737bf2f6de4ad05">update</a> ()</td></tr>
 <tr class="separator:aa7fe26710dd863d11737bf2f6de4ad05"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr><td colspan="2"><div class="groupHeader">Input queries</div></td></tr>
-<tr class="memitem:a8c20033a8cd8dc2a52bc3a335dc30e47"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#a8c20033a8cd8dc2a52bc3a335dc30e47">resized</a> ()</td></tr>
-<tr class="separator:a8c20033a8cd8dc2a52bc3a335dc30e47"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6e6bdf83ea769fb80b112e7860ca0914"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#a6e6bdf83ea769fb80b112e7860ca0914">minimized</a> ()</td></tr>
-<tr class="separator:a6e6bdf83ea769fb80b112e7860ca0914"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae6574bea45edd81bba00c530ef4f14eb"><td class="memItemLeft" align="right" valign="top">glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#ae6574bea45edd81bba00c530ef4f14eb">size</a> ()</td></tr>
-<tr class="separator:ae6574bea45edd81bba00c530ef4f14eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4dfb0101c4b4f7f8e64da7e5bc6f6403"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#a4dfb0101c4b4f7f8e64da7e5bc6f6403">resized</a> () const</td></tr>
+<tr class="separator:a4dfb0101c4b4f7f8e64da7e5bc6f6403"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a36f106f073e75805b250861c0f2121c2"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#a36f106f073e75805b250861c0f2121c2">minimized</a> () const</td></tr>
+<tr class="separator:a36f106f073e75805b250861c0f2121c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af9165aed5c3fff8aebb6fd2bd08248d8"><td class="memItemLeft" align="right" valign="top">glm::ivec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#af9165aed5c3fff8aebb6fd2bd08248d8">size</a> () const</td></tr>
+<tr class="separator:af9165aed5c3fff8aebb6fd2bd08248d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac3bf2e1f18bef71dc9d9a5f48e278fae"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#ac3bf2e1f18bef71dc9d9a5f48e278fae">controllerAvailable</a> () const</td></tr>
 <tr class="separator:ac3bf2e1f18bef71dc9d9a5f48e278fae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9f6f0a113ca0dcb4af9e433e45908c1d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#a9f6f0a113ca0dcb4af9e433e45908c1d">controllerConnected</a> () const</td></tr>
 <tr class="separator:a9f6f0a113ca0dcb4af9e433e45908c1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab2b10aea88cbb6ab0f7aa7e2287c5d00"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#ab2b10aea88cbb6ab0f7aa7e2287c5d00">controllerDisconnected</a> () const</td></tr>
 <tr class="separator:ab2b10aea88cbb6ab0f7aa7e2287c5d00"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a076ccf24e0302551cc51b291ddfda802"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_controller.html">Controller</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#a076ccf24e0302551cc51b291ddfda802">controller</a> ()</td></tr>
-<tr class="separator:a076ccf24e0302551cc51b291ddfda802"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aefb3eb2422934e47c5ad3efc5e49676c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#aefb3eb2422934e47c5ad3efc5e49676c">pressed</a> (const <a class="el" href="class_input.html#ac74df526ba38aedbefa716292b6534d5">Key</a> &amp;keyboardKey) const</td></tr>
+<tr class="memitem:acaef77bdb84d330fba55d746941bf67a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_controller.html">Controller</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#acaef77bdb84d330fba55d746941bf67a">controller</a> () const</td></tr>
+<tr class="separator:acaef77bdb84d330fba55d746941bf67a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aefb3eb2422934e47c5ad3efc5e49676c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#aefb3eb2422934e47c5ad3efc5e49676c">pressed</a> (const <a class="el" href="class_input.html#a54d91b6e7708aaf7a4913989c5271a46">Key</a> &amp;keyboardKey) const</td></tr>
 <tr class="separator:aefb3eb2422934e47c5ad3efc5e49676c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a737d7b65ddcb0760400e111fe7ae6bfc"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#a737d7b65ddcb0760400e111fe7ae6bfc">triggered</a> (const <a class="el" href="class_input.html#ac74df526ba38aedbefa716292b6534d5">Key</a> &amp;keyboardKey, bool absorb=false)</td></tr>
+<tr class="memitem:a737d7b65ddcb0760400e111fe7ae6bfc"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#a737d7b65ddcb0760400e111fe7ae6bfc">triggered</a> (const <a class="el" href="class_input.html#a54d91b6e7708aaf7a4913989c5271a46">Key</a> &amp;keyboardKey, bool absorb=false)</td></tr>
 <tr class="separator:a737d7b65ddcb0760400e111fe7ae6bfc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7d637c608560f19f81dab8741ccbc701"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#a7d637c608560f19f81dab8741ccbc701">released</a> (const <a class="el" href="class_input.html#ac74df526ba38aedbefa716292b6534d5">Key</a> &amp;keyboardKey, bool absorb=false)</td></tr>
+<tr class="memitem:a7d637c608560f19f81dab8741ccbc701"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#a7d637c608560f19f81dab8741ccbc701">released</a> (const <a class="el" href="class_input.html#a54d91b6e7708aaf7a4913989c5271a46">Key</a> &amp;keyboardKey, bool absorb=false)</td></tr>
 <tr class="separator:a7d637c608560f19f81dab8741ccbc701"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0e439ec515e10d6037626c07c3f81223"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#a0e439ec515e10d6037626c07c3f81223">pressed</a> (const <a class="el" href="class_input.html#a157642cb7a7c40253670d19e9954ddf3">Mouse</a> &amp;mouseButton) const</td></tr>
+<tr class="memitem:a0e439ec515e10d6037626c07c3f81223"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#a0e439ec515e10d6037626c07c3f81223">pressed</a> (const <a class="el" href="class_input.html#a590d47e547a7e4460957d40ea522f77a">Mouse</a> &amp;mouseButton) const</td></tr>
 <tr class="separator:a0e439ec515e10d6037626c07c3f81223"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acfeffaf1972f53933520e595570679a8"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#acfeffaf1972f53933520e595570679a8">triggered</a> (const <a class="el" href="class_input.html#a157642cb7a7c40253670d19e9954ddf3">Mouse</a> &amp;mouseButton, bool absorb=false)</td></tr>
+<tr class="memitem:acfeffaf1972f53933520e595570679a8"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#acfeffaf1972f53933520e595570679a8">triggered</a> (const <a class="el" href="class_input.html#a590d47e547a7e4460957d40ea522f77a">Mouse</a> &amp;mouseButton, bool absorb=false)</td></tr>
 <tr class="separator:acfeffaf1972f53933520e595570679a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaac8fc5411314c34c8ab4ffe353d336a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#aaac8fc5411314c34c8ab4ffe353d336a">released</a> (const <a class="el" href="class_input.html#a157642cb7a7c40253670d19e9954ddf3">Mouse</a> &amp;mouseButton, bool absorb=false)</td></tr>
+<tr class="memitem:aaac8fc5411314c34c8ab4ffe353d336a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#aaac8fc5411314c34c8ab4ffe353d336a">released</a> (const <a class="el" href="class_input.html#a590d47e547a7e4460957d40ea522f77a">Mouse</a> &amp;mouseButton, bool absorb=false)</td></tr>
 <tr class="separator:aaac8fc5411314c34c8ab4ffe353d336a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac8061ee67608fdc9add576453aadfa96"><td class="memItemLeft" align="right" valign="top">glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#ac8061ee67608fdc9add576453aadfa96">mouse</a> (bool inFramebuffer=false) const</td></tr>
 <tr class="separator:ac8061ee67608fdc9add576453aadfa96"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a76109e4a409197edcc92c589b24ef7c5"><td class="memItemLeft" align="right" valign="top">glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#a76109e4a409197edcc92c589b24ef7c5">moved</a> (const <a class="el" href="class_input.html#a157642cb7a7c40253670d19e9954ddf3">Mouse</a> &amp;mouseButton) const</td></tr>
+<tr class="memitem:a76109e4a409197edcc92c589b24ef7c5"><td class="memItemLeft" align="right" valign="top">glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#a76109e4a409197edcc92c589b24ef7c5">moved</a> (const <a class="el" href="class_input.html#a590d47e547a7e4460957d40ea522f77a">Mouse</a> &amp;mouseButton) const</td></tr>
 <tr class="separator:a76109e4a409197edcc92c589b24ef7c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aae31fa2aeb045e258a4d02677c9cab70"><td class="memItemLeft" align="right" valign="top">glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#aae31fa2aeb045e258a4d02677c9cab70">scroll</a> () const</td></tr>
 <tr class="separator:aae31fa2aeb045e258a4d02677c9cab70"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -202,18 +368,10 @@ Private Member Functions</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#abae3f379d3f157cf42dc857309832dba">Input</a> ()</td></tr>
 <tr class="memdesc:abae3f379d3f157cf42dc857309832dba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor (disabled). <br /></td></tr>
 <tr class="separator:abae3f379d3f157cf42dc857309832dba"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af2db35ba67c8a8ccd23bef6a482fc291"><td class="memItemLeft" align="right" valign="top"><a id="af2db35ba67c8a8ccd23bef6a482fc291"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#af2db35ba67c8a8ccd23bef6a482fc291">~Input</a> ()</td></tr>
-<tr class="memdesc:af2db35ba67c8a8ccd23bef6a482fc291"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor (disabled). <br /></td></tr>
-<tr class="separator:af2db35ba67c8a8ccd23bef6a482fc291"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a783b4f3b44ed45f17d58e896c2785c93"><td class="memItemLeft" align="right" valign="top"><a id="a783b4f3b44ed45f17d58e896c2785c93"></a>
-<a class="el" href="class_input.html">Input</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#a783b4f3b44ed45f17d58e896c2785c93">operator=</a> (const <a class="el" href="class_input.html">Input</a> &amp;)=delete</td></tr>
-<tr class="memdesc:a783b4f3b44ed45f17d58e896c2785c93"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy operator (disabled). <br /></td></tr>
-<tr class="separator:a783b4f3b44ed45f17d58e896c2785c93"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a961dc8386a03428cb07effb524f36731"><td class="memItemLeft" align="right" valign="top"><a id="a961dc8386a03428cb07effb524f36731"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#a961dc8386a03428cb07effb524f36731">Input</a> (const <a class="el" href="class_input.html">Input</a> &amp;)=delete</td></tr>
-<tr class="memdesc:a961dc8386a03428cb07effb524f36731"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor (disabled). <br /></td></tr>
-<tr class="separator:a961dc8386a03428cb07effb524f36731"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ade7428e932177ef33fa8195f073e5a41"><td class="memItemLeft" align="right" valign="top"><a id="ade7428e932177ef33fa8195f073e5a41"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#ade7428e932177ef33fa8195f073e5a41">~Input</a> ()=default</td></tr>
+<tr class="memdesc:ade7428e932177ef33fa8195f073e5a41"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor (disabled). <br /></td></tr>
+<tr class="separator:ade7428e932177ef33fa8195f073e5a41"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
@@ -241,22 +399,34 @@ float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cla
 int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#a465771f5bb70075fe8810127c8e6b9f3">_activeController</a> = -1</td></tr>
 <tr class="memdesc:a465771f5bb70075fe8810127c8e6b9f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">The active joystick ID, or -1 if no controller active. <br /></td></tr>
 <tr class="separator:a465771f5bb70075fe8810127c8e6b9f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7e331d1ac9f1593a9c15ca4db2070bb3"><td class="memItemLeft" align="right" valign="top"><a id="a7e331d1ac9f1593a9c15ca4db2070bb3"></a>
-std::unique_ptr&lt; <a class="el" href="class_controller.html">Controller</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#a7e331d1ac9f1593a9c15ca4db2070bb3">_controllers</a> [GLFW_JOYSTICK_LAST+1]</td></tr>
-<tr class="memdesc:a7e331d1ac9f1593a9c15ca4db2070bb3"><td class="mdescLeft">&#160;</td><td class="mdescRight">States of all possible controllers. <br /></td></tr>
-<tr class="separator:a7e331d1ac9f1593a9c15ca4db2070bb3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4a7d1c21a827d2dc08497e5163b1ba70"><td class="memItemLeft" align="right" valign="top"><a id="a4a7d1c21a827d2dc08497e5163b1ba70"></a>
-<a class="el" href="struct_input_1_1_mouse_button.html">MouseButton</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#a4a7d1c21a827d2dc08497e5163b1ba70">_mouseButtons</a> [GLFW_MOUSE_BUTTON_LAST+1]</td></tr>
-<tr class="memdesc:a4a7d1c21a827d2dc08497e5163b1ba70"><td class="mdescLeft">&#160;</td><td class="mdescRight">States of all possible mouse buttons. <br /></td></tr>
-<tr class="separator:a4a7d1c21a827d2dc08497e5163b1ba70"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2b9d7a140c5564c10e713f7ceef133fb"><td class="memItemLeft" align="right" valign="top"><a id="a2b9d7a140c5564c10e713f7ceef133fb"></a>
+std::unique_ptr&lt; <a class="el" href="class_controller.html">Controller</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#a2b9d7a140c5564c10e713f7ceef133fb">_controllers</a> [16]</td></tr>
+<tr class="memdesc:a2b9d7a140c5564c10e713f7ceef133fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">States of all possible controllers. <br /></td></tr>
+<tr class="separator:a2b9d7a140c5564c10e713f7ceef133fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a460b2652dbbae8e77d4116e2819f0d45"><td class="memItemLeft" align="right" valign="top"><a id="a460b2652dbbae8e77d4116e2819f0d45"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#a460b2652dbbae8e77d4116e2819f0d45">_preferRawControllers</a> = false</td></tr>
+<tr class="memdesc:a460b2652dbbae8e77d4116e2819f0d45"><td class="mdescLeft">&#160;</td><td class="mdescRight">Should controller use the gamepad mappings or raw values. <br /></td></tr>
+<tr class="separator:a460b2652dbbae8e77d4116e2819f0d45"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9d23acb7afda1654e952b2a8c70685bd"><td class="memItemLeft" align="right" valign="top"><a id="a9d23acb7afda1654e952b2a8c70685bd"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#a9d23acb7afda1654e952b2a8c70685bd">_joystickConnected</a> = false</td></tr>
+<tr class="memdesc:a9d23acb7afda1654e952b2a8c70685bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Has a joystick just been connected. <br /></td></tr>
+<tr class="separator:a9d23acb7afda1654e952b2a8c70685bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a841b6e0efb637c6bea3929043a919302"><td class="memItemLeft" align="right" valign="top"><a id="a841b6e0efb637c6bea3929043a919302"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#a841b6e0efb637c6bea3929043a919302">_joystickDisconnected</a> = false</td></tr>
+<tr class="memdesc:a841b6e0efb637c6bea3929043a919302"><td class="mdescLeft">&#160;</td><td class="mdescRight">Has a joystick just been disconnected. <br /></td></tr>
+<tr class="separator:a841b6e0efb637c6bea3929043a919302"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8d45b57dfb26c19f5bfd73675740d2e2"><td class="memItemLeft" align="right" valign="top"><a id="a8d45b57dfb26c19f5bfd73675740d2e2"></a>
+<a class="el" href="struct_input_1_1_mouse_button.html">MouseButton</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#a8d45b57dfb26c19f5bfd73675740d2e2">_mouseButtons</a> [uint(Mouse::Count)]</td></tr>
+<tr class="memdesc:a8d45b57dfb26c19f5bfd73675740d2e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">States of all possible mouse buttons. <br /></td></tr>
+<tr class="separator:a8d45b57dfb26c19f5bfd73675740d2e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa6b60cc3a91d7931b799829329eb4bf5"><td class="memItemLeft" align="right" valign="top"><a id="aa6b60cc3a91d7931b799829329eb4bf5"></a>
 <a class="el" href="struct_input_1_1_mouse_cursor.html">MouseCursor</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#aa6b60cc3a91d7931b799829329eb4bf5">_mouse</a></td></tr>
 <tr class="memdesc:aa6b60cc3a91d7931b799829329eb4bf5"><td class="mdescLeft">&#160;</td><td class="mdescRight">State of the mouse cursor. <br /></td></tr>
 <tr class="separator:aa6b60cc3a91d7931b799829329eb4bf5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abd2d782cf6e40f4cb6edcf8f245dd0f5"><td class="memItemLeft" align="right" valign="top"><a id="abd2d782cf6e40f4cb6edcf8f245dd0f5"></a>
-<a class="el" href="struct_input_1_1_keyboard_key.html">KeyboardKey</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#abd2d782cf6e40f4cb6edcf8f245dd0f5">_keys</a> [GLFW_KEY_LAST+1]</td></tr>
-<tr class="memdesc:abd2d782cf6e40f4cb6edcf8f245dd0f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">States of all possible keyboard keys. <br /></td></tr>
-<tr class="separator:abd2d782cf6e40f4cb6edcf8f245dd0f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab3a7f92d3e95e65d9b96e8f1bff76718"><td class="memItemLeft" align="right" valign="top"><a id="ab3a7f92d3e95e65d9b96e8f1bff76718"></a>
+<a class="el" href="struct_input_1_1_keyboard_key.html">KeyboardKey</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#ab3a7f92d3e95e65d9b96e8f1bff76718">_keys</a> [uint(Key::Count)]</td></tr>
+<tr class="memdesc:ab3a7f92d3e95e65d9b96e8f1bff76718"><td class="mdescLeft">&#160;</td><td class="mdescRight">States of all possible keyboard keys. <br /></td></tr>
+<tr class="separator:ab3a7f92d3e95e65d9b96e8f1bff76718"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad791a737705475d640f53b72dd424608"><td class="memItemLeft" align="right" valign="top"><a id="ad791a737705475d640f53b72dd424608"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_input.html#ad791a737705475d640f53b72dd424608">_mouseInteracted</a> = false</td></tr>
 <tr class="memdesc:ad791a737705475d640f53b72dd424608"><td class="mdescLeft">&#160;</td><td class="mdescRight">Did the user interact with the mouse. <br /></td></tr>
@@ -272,9 +442,64 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The input manager is responsible for updating the internal input states (keyboard, mouse, window size). It can also be use to query back these states. </p>
-</div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a076ccf24e0302551cc51b291ddfda802"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a076ccf24e0302551cc51b291ddfda802">&#9670;&nbsp;</a></span>controller()</h2>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a961dc8386a03428cb07effb524f36731"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a961dc8386a03428cb07effb524f36731">&#9670;&nbsp;</a></span>Input() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Input::Input </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="class_input.html">Input</a> &amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">delete</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Copy constructor (disabled). </p>
+
+</div>
+</div>
+<a id="a7b1185308801295eeed1c32dab96e278"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7b1185308801295eeed1c32dab96e278">&#9670;&nbsp;</a></span>Input() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Input::Input </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_input.html">Input</a> &amp;&amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">delete</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Move constructor (disabled). </p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="acaef77bdb84d330fba55d746941bf67a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acaef77bdb84d330fba55d746941bf67a">&#9670;&nbsp;</a></span>controller()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -286,7 +511,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
           <td class="memname"><a class="el" href="class_controller.html">Controller</a>* Input::controller </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td></td>
+          <td> const</td>
         </tr>
       </table>
   </td>
@@ -534,8 +759,8 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a id="a6e6bdf83ea769fb80b112e7860ca0914"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6e6bdf83ea769fb80b112e7860ca0914">&#9670;&nbsp;</a></span>minimized()</h2>
+<a id="a36f106f073e75805b250861c0f2121c2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a36f106f073e75805b250861c0f2121c2">&#9670;&nbsp;</a></span>minimized()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -547,7 +772,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
           <td class="memname">bool Input::minimized </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td></td>
+          <td> const</td>
         </tr>
       </table>
   </td>
@@ -724,7 +949,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
         <tr>
           <td class="memname">glm::vec2 Input::moved </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="class_input.html#a157642cb7a7c40253670d19e9954ddf3">Mouse</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="class_input.html#a590d47e547a7e4460957d40ea522f77a">Mouse</a> &amp;&#160;</td>
           <td class="paramname"><em>mouseButton</em></td><td>)</td>
           <td> const</td>
         </tr>
@@ -738,6 +963,60 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>the amount of displacement on both axis in unit coordinates. </dd></dl>
 <dl class="section note"><dt>Note</dt><dd>The displacement will be expressed in the [0,1] range. </dd></dl>
+
+</div>
+</div>
+<a id="a783b4f3b44ed45f17d58e896c2785c93"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a783b4f3b44ed45f17d58e896c2785c93">&#9670;&nbsp;</a></span>operator=() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_input.html">Input</a>&amp; Input::operator= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="class_input.html">Input</a> &amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">delete</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Copy operator (disabled). </p><dl class="section return"><dt>Returns</dt><dd>a reference to the object assigned to </dd></dl>
+
+</div>
+</div>
+<a id="a6764ed3bc8f1c0afa742a9207ac94538"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6764ed3bc8f1c0afa742a9207ac94538">&#9670;&nbsp;</a></span>operator=() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_input.html">Input</a>&amp; Input::operator= </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_input.html">Input</a> &amp;&amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">delete</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Move operator (disabled). </p><dl class="section return"><dt>Returns</dt><dd>a reference to the object assigned to </dd></dl>
 
 </div>
 </div>
@@ -774,7 +1053,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
         <tr>
           <td class="memname">bool Input::pressed </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="class_input.html#ac74df526ba38aedbefa716292b6534d5">Key</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="class_input.html#a54d91b6e7708aaf7a4913989c5271a46">Key</a> &amp;&#160;</td>
           <td class="paramname"><em>keyboardKey</em></td><td>)</td>
           <td> const</td>
         </tr>
@@ -799,7 +1078,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
         <tr>
           <td class="memname">bool Input::pressed </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="class_input.html#a157642cb7a7c40253670d19e9954ddf3">Mouse</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="class_input.html#a590d47e547a7e4460957d40ea522f77a">Mouse</a> &amp;&#160;</td>
           <td class="paramname"><em>mouseButton</em></td><td>)</td>
           <td> const</td>
         </tr>
@@ -824,7 +1103,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
         <tr>
           <td class="memname">bool Input::released </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="class_input.html#ac74df526ba38aedbefa716292b6534d5">Key</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="class_input.html#a54d91b6e7708aaf7a4913989c5271a46">Key</a> &amp;&#160;</td>
           <td class="paramname"><em>keyboardKey</em>, </td>
         </tr>
         <tr>
@@ -860,7 +1139,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
         <tr>
           <td class="memname">bool Input::released </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="class_input.html#a157642cb7a7c40253670d19e9954ddf3">Mouse</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="class_input.html#a590d47e547a7e4460957d40ea522f77a">Mouse</a> &amp;&#160;</td>
           <td class="paramname"><em>mouseButton</em>, </td>
         </tr>
         <tr>
@@ -887,8 +1166,8 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a id="a8c20033a8cd8dc2a52bc3a335dc30e47"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8c20033a8cd8dc2a52bc3a335dc30e47">&#9670;&nbsp;</a></span>resized()</h2>
+<a id="a4dfb0101c4b4f7f8e64da7e5bc6f6403"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4dfb0101c4b4f7f8e64da7e5bc6f6403">&#9670;&nbsp;</a></span>resized()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -900,7 +1179,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
           <td class="memname">bool Input::resized </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td></td>
+          <td> const</td>
         </tr>
       </table>
   </td>
@@ -967,8 +1246,8 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a id="ae6574bea45edd81bba00c530ef4f14eb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae6574bea45edd81bba00c530ef4f14eb">&#9670;&nbsp;</a></span>size()</h2>
+<a id="af9165aed5c3fff8aebb6fd2bd08248d8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af9165aed5c3fff8aebb6fd2bd08248d8">&#9670;&nbsp;</a></span>size()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -977,10 +1256,10 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">glm::vec2 Input::size </td>
+          <td class="memname">glm::ivec2 Input::size </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td></td>
+          <td> const</td>
         </tr>
       </table>
   </td>
@@ -1002,7 +1281,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
         <tr>
           <td class="memname">bool Input::triggered </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="class_input.html#ac74df526ba38aedbefa716292b6534d5">Key</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="class_input.html#a54d91b6e7708aaf7a4913989c5271a46">Key</a> &amp;&#160;</td>
           <td class="paramname"><em>keyboardKey</em>, </td>
         </tr>
         <tr>
@@ -1038,7 +1317,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
         <tr>
           <td class="memname">bool Input::triggered </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="class_input.html#a157642cb7a7c40253670d19e9954ddf3">Mouse</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="class_input.html#a590d47e547a7e4460957d40ea522f77a">Mouse</a> &amp;&#160;</td>
           <td class="paramname"><em>mouseButton</em>, </td>
         </tr>
         <tr>

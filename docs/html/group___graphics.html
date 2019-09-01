@@ -103,20 +103,20 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_framebuffer_cube.html">FramebufferCube</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represent a cubemap rendering target, of any size, format and type, backed by an OpenGL framebuffer composed of six layers.  <a href="class_framebuffer_cube.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_descriptor.html">Descriptor</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Regroups format, type, filtering and wrapping informations for a color buffer.  <a href="struct_descriptor.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_texture_infos.html">TextureInfos</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Store texture informations.  <a href="struct_texture_infos.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_mesh_infos.html">MeshInfos</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Store geometry informations.  <a href="struct_mesh_infos.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_l_utilities.html">GLUtilities</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Provide utility functions to communicate with the driver and GPU.  <a href="class_g_l_utilities.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Provide utility functions to communicate with the driver and <a class="el" href="namespace_g_p_u.html" title="GPU shaders.">GPU</a>.  <a href="class_g_l_utilities.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_program_infos.html">ProgramInfos</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents a group of shaders used for rendering.  <a href="class_program_infos.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_descriptor.html">Descriptor</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Regroups format, type, filtering and wrapping informations for a color buffer.  <a href="class_descriptor.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_texture.html">GPUTexture</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Store a texture data on the <a class="el" href="namespace_g_p_u.html" title="GPU shaders.">GPU</a>.  <a href="class_g_p_u_texture.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_mesh.html">GPUMesh</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Store geometry buffers on the <a class="el" href="namespace_g_p_u.html" title="GPU shaders.">GPU</a>.  <a href="class_g_p_u_mesh.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_program.html">Program</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents a group of shaders used for rendering.  <a href="class_program.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_screen_quad.html">ScreenQuad</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper used to draw a fullscreen quad for texture processing.  <a href="class_screen_quad.html#details">More...</a><br /></td></tr>
@@ -129,14 +129,12 @@ Macros</h2></td></tr>
 <tr class="memdesc:ga75f201b0e53e68726854997957322b8d"><td class="mdescLeft">&#160;</td><td class="mdescRight">This macro is used to check for OpenGL errors with access to the file and line number where the error is detected. <br /></td></tr>
 <tr class="separator:ga75f201b0e53e68726854997957322b8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaca65bbe50a0ed6411359608eb49b9c5a"><td class="memItemLeft" align="right" valign="top"><a id="gaca65bbe50a0ed6411359608eb49b9c5a"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___graphics.html#gaca65bbe50a0ed6411359608eb49b9c5a">checkGLErrorInfos</a>(infos)&#160;&#160;&#160;<a class="el" href="group___graphics.html#ga0e355454ad2ba7f71b5134e1243b02f5">_checkGLError</a>(__FILE__ , __LINE__, infos)</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___graphics.html#gaca65bbe50a0ed6411359608eb49b9c5a">checkGLErrorInfos</a>(infos)&#160;&#160;&#160;<a class="el" href="group___graphics.html#ga0e355454ad2ba7f71b5134e1243b02f5">_checkGLError</a>(__FILE__, __LINE__, infos)</td></tr>
 <tr class="memdesc:gaca65bbe50a0ed6411359608eb49b9c5a"><td class="mdescLeft">&#160;</td><td class="mdescRight">This macro is used to check for OpenGL errors with access to the file and line number where the error is detected, along with additional user informations. <br /></td></tr>
 <tr class="separator:gaca65bbe50a0ed6411359608eb49b9c5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ga01be4137b1e1c7959ab6016a07b45edd"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___graphics.html#ga01be4137b1e1c7959ab6016a07b45edd">getGLErrorString</a> (GLenum error)</td></tr>
-<tr class="separator:ga01be4137b1e1c7959ab6016a07b45edd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga0e355454ad2ba7f71b5134e1243b02f5"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___graphics.html#ga0e355454ad2ba7f71b5134e1243b02f5">_checkGLError</a> (const char *file, int line, const std::string &amp;infos)</td></tr>
 <tr class="separator:ga0e355454ad2ba7f71b5134e1243b02f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga01f5ea155b0740dc232f1083c7c0be0c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___graphics.html#ga01f5ea155b0740dc232f1083c7c0be0c">checkGLFramebufferError</a> ()</td></tr>
@@ -201,31 +199,6 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <p>Check if any OpenGL has been detected after setting up a framebuffer. </p><dl class="section return"><dt>Returns</dt><dd>non zero if an error was encountered </dd></dl>
-
-</div>
-</div>
-<a id="ga01be4137b1e1c7959ab6016a07b45edd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga01be4137b1e1c7959ab6016a07b45edd">&#9670;&nbsp;</a></span>getGLErrorString()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::string getGLErrorString </td>
-          <td>(</td>
-          <td class="paramtype">GLenum&#160;</td>
-          <td class="paramname"><em>error</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Converts a GLenum error number into a human-readable string. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">error</td><td>the OpenGl error value </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>the corresponding string </dd></dl>
 
 </div>
 </div>

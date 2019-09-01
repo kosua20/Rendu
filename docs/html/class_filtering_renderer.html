@@ -94,10 +94,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pri-types">Private Types</a> &#124;
+<a href="#pri-methods">Private Member Functions</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="class_filtering_renderer-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">FilteringRenderer Class Reference<div class="ingroups"><a class="el" href="group___applications.html">Applications</a> &raquo; <a class="el" href="group___image_filtering.html">Image Filtering</a></div></div>  </div>
+<div class="title">FilteringRenderer Class Reference<span class="mlabels"><span class="mlabel">final</span></span><div class="ingroups"><a class="el" href="group___applications.html">Applications</a> &raquo; <a class="el" href="group___image_filtering.html">Image Filtering</a></div></div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -110,32 +111,55 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 Public Member Functions</h2></td></tr>
 <tr class="memitem:acc28df8da49becfdb1f0aadc397f1536"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_filtering_renderer.html#acc28df8da49becfdb1f0aadc397f1536">FilteringRenderer</a> (<a class="el" href="class_rendering_config.html">RenderingConfig</a> &amp;config)</td></tr>
 <tr class="separator:acc28df8da49becfdb1f0aadc397f1536"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9b288d57fe7566e49b33839426c0707a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_filtering_renderer.html#a9b288d57fe7566e49b33839426c0707a">draw</a> ()</td></tr>
-<tr class="separator:a9b288d57fe7566e49b33839426c0707a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adc64bd297f64af6314dd36883d1e0419"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_filtering_renderer.html#adc64bd297f64af6314dd36883d1e0419">update</a> ()</td></tr>
-<tr class="separator:adc64bd297f64af6314dd36883d1e0419"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a651aca494aec0ef9bfd59f8c9789b210"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_filtering_renderer.html#a651aca494aec0ef9bfd59f8c9789b210">physics</a> (double fullTime, double frameTime)</td></tr>
-<tr class="separator:a651aca494aec0ef9bfd59f8c9789b210"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a47a7fb80d44530c6d13f839b698594f1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_filtering_renderer.html#a47a7fb80d44530c6d13f839b698594f1">clean</a> ()</td></tr>
-<tr class="separator:a47a7fb80d44530c6d13f839b698594f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1631486584d3c0286fd2fc62c323ed14"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_filtering_renderer.html#a1631486584d3c0286fd2fc62c323ed14">resize</a> (unsigned int width, unsigned int height)</td></tr>
-<tr class="separator:a1631486584d3c0286fd2fc62c323ed14"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a738ab9921d7304a5de6658e7786d65bb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_filtering_renderer.html#a738ab9921d7304a5de6658e7786d65bb">draw</a> () override</td></tr>
+<tr class="separator:a738ab9921d7304a5de6658e7786d65bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a642d6f6604ae2f7d75f00e4306ec5a14"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_filtering_renderer.html#a642d6f6604ae2f7d75f00e4306ec5a14">update</a> () override</td></tr>
+<tr class="separator:a642d6f6604ae2f7d75f00e4306ec5a14"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8632061ddcce95290a4f6f73e12f4c2f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_filtering_renderer.html#a8632061ddcce95290a4f6f73e12f4c2f">physics</a> (double fullTime, double frameTime) override</td></tr>
+<tr class="separator:a8632061ddcce95290a4f6f73e12f4c2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4190b371e472667ac98c164990030b8d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_filtering_renderer.html#a4190b371e472667ac98c164990030b8d">clean</a> () override</td></tr>
+<tr class="separator:a4190b371e472667ac98c164990030b8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac7ef0ecdb5db108e0cdae5c1d76b8c2b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_filtering_renderer.html#ac7ef0ecdb5db108e0cdae5c1d76b8c2b">resize</a> (unsigned int width, unsigned int height) override</td></tr>
+<tr class="separator:ac7ef0ecdb5db108e0cdae5c1d76b8c2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_renderer"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_renderer')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_renderer.html">Renderer</a></td></tr>
 <tr class="memitem:a8cbc69d15bba1744cd26ece5e2f34ba2 inherit pub_methods_class_renderer"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_renderer.html#a8cbc69d15bba1744cd26ece5e2f34ba2">Renderer</a> (<a class="el" href="class_rendering_config.html">RenderingConfig</a> &amp;config)</td></tr>
 <tr class="separator:a8cbc69d15bba1744cd26ece5e2f34ba2 inherit pub_methods_class_renderer"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afeee408862d5bd6255a6882d47e6d5cd inherit pub_methods_class_renderer"><td class="memItemLeft" align="right" valign="top"><a id="afeee408862d5bd6255a6882d47e6d5cd"></a>
-virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_renderer.html#afeee408862d5bd6255a6882d47e6d5cd">~Renderer</a> ()</td></tr>
-<tr class="memdesc:afeee408862d5bd6255a6882d47e6d5cd inherit pub_methods_class_renderer"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor. <br /></td></tr>
-<tr class="separator:afeee408862d5bd6255a6882d47e6d5cd inherit pub_methods_class_renderer"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:add2012f269f157754034e7b5475a8927 inherit pub_methods_class_renderer"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_renderer.html#add2012f269f157754034e7b5475a8927">~Renderer</a> ()=default</td></tr>
+<tr class="separator:add2012f269f157754034e7b5475a8927 inherit pub_methods_class_renderer"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8c6e15f666cb188a936004add75e6c6b inherit pub_methods_class_renderer"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_renderer.html#a8c6e15f666cb188a936004add75e6c6b">Renderer</a> (const <a class="el" href="class_renderer.html">Renderer</a> &amp;)=delete</td></tr>
+<tr class="separator:a8c6e15f666cb188a936004add75e6c6b inherit pub_methods_class_renderer"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad3a67410934db419e0f473f1a26c83ee inherit pub_methods_class_renderer"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_renderer.html">Renderer</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_renderer.html#ad3a67410934db419e0f473f1a26c83ee">operator=</a> (const <a class="el" href="class_renderer.html">Renderer</a> &amp;)=delete</td></tr>
+<tr class="separator:ad3a67410934db419e0f473f1a26c83ee inherit pub_methods_class_renderer"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa43ae6237b8cbf52d217d37f9986237f inherit pub_methods_class_renderer"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_renderer.html#aa43ae6237b8cbf52d217d37f9986237f">Renderer</a> (<a class="el" href="class_renderer.html">Renderer</a> &amp;&amp;)=delete</td></tr>
+<tr class="separator:aa43ae6237b8cbf52d217d37f9986237f inherit pub_methods_class_renderer"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acb6cae4362aa720ddd577f02918f9355 inherit pub_methods_class_renderer"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_renderer.html">Renderer</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_renderer.html#acb6cae4362aa720ddd577f02918f9355">operator=</a> (<a class="el" href="class_renderer.html">Renderer</a> &amp;&amp;)=delete</td></tr>
+<tr class="separator:acb6cae4362aa720ddd577f02918f9355 inherit pub_methods_class_renderer"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-types"></a>
 Private Types</h2></td></tr>
-<tr class="memitem:ad65c3a8580f3349497261c5914d62373"><td class="memItemLeft" align="right" valign="top"><a id="ad65c3a8580f3349497261c5914d62373"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_filtering_renderer.html#ad65c3a8580f3349497261c5914d62373">Filter</a> : int </td></tr>
-<tr class="memdesc:ad65c3a8580f3349497261c5914d62373"><td class="mdescLeft">&#160;</td><td class="mdescRight">The filter to apply. <br /></td></tr>
-<tr class="separator:ad65c3a8580f3349497261c5914d62373"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8c88c688f5591183c5b8ef7ce14cefa1"><td class="memItemLeft" align="right" valign="top"><a id="a8c88c688f5591183c5b8ef7ce14cefa1"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_filtering_renderer.html#a8c88c688f5591183c5b8ef7ce14cefa1">View</a> : int </td></tr>
+<tr class="memitem:a150bb43c7c4dbf6d681bff6b96281496"><td class="memItemLeft" align="right" valign="top"><a id="a150bb43c7c4dbf6d681bff6b96281496"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_filtering_renderer.html#a150bb43c7c4dbf6d681bff6b96281496">Processing</a> : int { <br />
+&#160;&#160;<b>INPUT</b> = 0, 
+<b>FILL</b>, 
+<b>INTEGRATE</b>, 
+<b>BOXBLUR</b>, 
+<br />
+&#160;&#160;<b>GAUSSBLUR</b>, 
+<b>FLOODFILL</b>
+<br />
+ }</td></tr>
+<tr class="memdesc:a150bb43c7c4dbf6d681bff6b96281496"><td class="mdescLeft">&#160;</td><td class="mdescRight">The filter to apply. <br /></td></tr>
+<tr class="separator:a150bb43c7c4dbf6d681bff6b96281496"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8c88c688f5591183c5b8ef7ce14cefa1"><td class="memItemLeft" align="right" valign="top"><a id="a8c88c688f5591183c5b8ef7ce14cefa1"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_filtering_renderer.html#a8c88c688f5591183c5b8ef7ce14cefa1">View</a> : int { <b>SCENE</b> = 0, 
+<b>IMAGE</b>, 
+<b>PAINT</b>
+ }</td></tr>
 <tr class="memdesc:a8c88c688f5591183c5b8ef7ce14cefa1"><td class="mdescLeft">&#160;</td><td class="mdescRight">The viewing mode: either a rendering, a still image or a painting canvas. <br /></td></tr>
 <tr class="separator:a8c88c688f5591183c5b8ef7ce14cefa1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
+Private Member Functions</h2></td></tr>
+<tr class="memitem:a9cff49ad149262595ac8f810d9ab429f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_filtering_renderer.html#a9cff49ad149262595ac8f810d9ab429f">showModeOptions</a> ()</td></tr>
+<tr class="separator:a9cff49ad149262595ac8f810d9ab429f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
@@ -167,30 +191,34 @@ std::unique_ptr&lt; <a class="el" href="class_box_blur.html">BoxBlur</a> &gt;&#1
 std::unique_ptr&lt; <a class="el" href="class_flood_filler.html">FloodFiller</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_filtering_renderer.html#a3268a07f96691ecf26bac3d4239ab696">_floodFill</a></td></tr>
 <tr class="memdesc:a3268a07f96691ecf26bac3d4239ab696"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flood filling. <br /></td></tr>
 <tr class="separator:a3268a07f96691ecf26bac3d4239ab696"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9a75cc3c26e65de4f41f21213f56cf6d"><td class="memItemLeft" align="right" valign="top"><a id="a9a75cc3c26e65de4f41f21213f56cf6d"></a>
-const <a class="el" href="class_program_infos.html">ProgramInfos</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_filtering_renderer.html#a9a75cc3c26e65de4f41f21213f56cf6d">_passthrough</a></td></tr>
-<tr class="memdesc:a9a75cc3c26e65de4f41f21213f56cf6d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Basic blit shader. <br /></td></tr>
-<tr class="separator:a9a75cc3c26e65de4f41f21213f56cf6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab88294240aedd8afb6b1602fc11eec89"><td class="memItemLeft" align="right" valign="top"><a id="ab88294240aedd8afb6b1602fc11eec89"></a>
-const <a class="el" href="class_program_infos.html">ProgramInfos</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_filtering_renderer.html#ab88294240aedd8afb6b1602fc11eec89">_sceneShader</a></td></tr>
-<tr class="memdesc:ab88294240aedd8afb6b1602fc11eec89"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_object.html" title="Represent a 3D textured object.">Object</a> rendering shader. <br /></td></tr>
-<tr class="separator:ab88294240aedd8afb6b1602fc11eec89"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a482f6e4d0d061637c80f546a232ad688"><td class="memItemLeft" align="right" valign="top"><a id="a482f6e4d0d061637c80f546a232ad688"></a>
-const <a class="el" href="struct_mesh_infos.html">MeshInfos</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_filtering_renderer.html#a482f6e4d0d061637c80f546a232ad688">_mesh</a></td></tr>
-<tr class="memdesc:a482f6e4d0d061637c80f546a232ad688"><td class="mdescLeft">&#160;</td><td class="mdescRight">Basic sphere mesh. <br /></td></tr>
-<tr class="separator:a482f6e4d0d061637c80f546a232ad688"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a57f86bcf10fd5e13f186991fff39b087"><td class="memItemLeft" align="right" valign="top"><a id="a57f86bcf10fd5e13f186991fff39b087"></a>
-<a class="el" href="class_filtering_renderer.html#ad65c3a8580f3349497261c5914d62373">Filter</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_filtering_renderer.html#a57f86bcf10fd5e13f186991fff39b087">_mode</a> = Filter::INPUT</td></tr>
-<tr class="memdesc:a57f86bcf10fd5e13f186991fff39b087"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current filter mode. <br /></td></tr>
-<tr class="separator:a57f86bcf10fd5e13f186991fff39b087"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a047fde1207581e46ea63acc9f0bec1d8"><td class="memItemLeft" align="right" valign="top"><a id="a047fde1207581e46ea63acc9f0bec1d8"></a>
+std::unique_ptr&lt; <a class="el" href="class_painting_tool.html">PaintingTool</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_filtering_renderer.html#a047fde1207581e46ea63acc9f0bec1d8">_painter</a></td></tr>
+<tr class="memdesc:a047fde1207581e46ea63acc9f0bec1d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">The painting interface. <br /></td></tr>
+<tr class="separator:a047fde1207581e46ea63acc9f0bec1d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:accea59a298a5a5dd8317779de416c799"><td class="memItemLeft" align="right" valign="top"><a id="accea59a298a5a5dd8317779de416c799"></a>
+const <a class="el" href="class_program.html">Program</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_filtering_renderer.html#accea59a298a5a5dd8317779de416c799">_passthrough</a></td></tr>
+<tr class="memdesc:accea59a298a5a5dd8317779de416c799"><td class="mdescLeft">&#160;</td><td class="mdescRight">Basic blit shader. <br /></td></tr>
+<tr class="separator:accea59a298a5a5dd8317779de416c799"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1ba338d66d099b17429152dd4c96e425"><td class="memItemLeft" align="right" valign="top"><a id="a1ba338d66d099b17429152dd4c96e425"></a>
+const <a class="el" href="class_program.html">Program</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_filtering_renderer.html#a1ba338d66d099b17429152dd4c96e425">_sceneShader</a></td></tr>
+<tr class="memdesc:a1ba338d66d099b17429152dd4c96e425"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_object.html" title="Represent a 3D textured object.">Object</a> rendering shader. <br /></td></tr>
+<tr class="separator:a1ba338d66d099b17429152dd4c96e425"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a56a32a1d11038455d8a1120ffdbb762a"><td class="memItemLeft" align="right" valign="top"><a id="a56a32a1d11038455d8a1120ffdbb762a"></a>
+const <a class="el" href="class_mesh.html">Mesh</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_filtering_renderer.html#a56a32a1d11038455d8a1120ffdbb762a">_mesh</a></td></tr>
+<tr class="memdesc:a56a32a1d11038455d8a1120ffdbb762a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Basic sphere mesh. <br /></td></tr>
+<tr class="separator:a56a32a1d11038455d8a1120ffdbb762a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a26c8dfe53bb58ce5c145b6997911b62c"><td class="memItemLeft" align="right" valign="top"><a id="a26c8dfe53bb58ce5c145b6997911b62c"></a>
+<a class="el" href="class_filtering_renderer.html#a150bb43c7c4dbf6d681bff6b96281496">Processing</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_filtering_renderer.html#a26c8dfe53bb58ce5c145b6997911b62c">_mode</a> = Processing::INPUT</td></tr>
+<tr class="memdesc:a26c8dfe53bb58ce5c145b6997911b62c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current filter mode. <br /></td></tr>
+<tr class="separator:a26c8dfe53bb58ce5c145b6997911b62c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6440ed25213c87562087d4aa7430a98b"><td class="memItemLeft" align="right" valign="top"><a id="a6440ed25213c87562087d4aa7430a98b"></a>
 <a class="el" href="class_filtering_renderer.html#a8c88c688f5591183c5b8ef7ce14cefa1">View</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_filtering_renderer.html#a6440ed25213c87562087d4aa7430a98b">_viewMode</a> = View::SCENE</td></tr>
 <tr class="memdesc:a6440ed25213c87562087d4aa7430a98b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current view mode. <br /></td></tr>
 <tr class="separator:a6440ed25213c87562087d4aa7430a98b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa7913b16d89d6ebc2380740c8183d1e4"><td class="memItemLeft" align="right" valign="top"><a id="aa7913b16d89d6ebc2380740c8183d1e4"></a>
-<a class="el" href="struct_texture_infos.html">TextureInfos</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_filtering_renderer.html#aa7913b16d89d6ebc2380740c8183d1e4">_image</a></td></tr>
-<tr class="memdesc:aa7913b16d89d6ebc2380740c8183d1e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">The image to display in <a class="el" href="struct_image.html" title="Represents an image composed of pixels with values in [0,1].">Image</a> view mode. <br /></td></tr>
-<tr class="separator:aa7913b16d89d6ebc2380740c8183d1e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2349813df7eb7ba14f8dd0a17009996f"><td class="memItemLeft" align="right" valign="top"><a id="a2349813df7eb7ba14f8dd0a17009996f"></a>
+<a class="el" href="class_texture.html">Texture</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_filtering_renderer.html#a2349813df7eb7ba14f8dd0a17009996f">_image</a></td></tr>
+<tr class="memdesc:a2349813df7eb7ba14f8dd0a17009996f"><td class="mdescLeft">&#160;</td><td class="mdescRight">The image to display in <a class="el" href="class_image.html" title="Represents an image composed of pixels with values in [0,1]. Provide image loading/saving utilities,...">Image</a> view mode. <br /></td></tr>
+<tr class="separator:a2349813df7eb7ba14f8dd0a17009996f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7c0d410556a11ba3806c422cdcce7177"><td class="memItemLeft" align="right" valign="top"><a id="a7c0d410556a11ba3806c422cdcce7177"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_filtering_renderer.html#a7c0d410556a11ba3806c422cdcce7177">_blurLevel</a> = 3</td></tr>
 <tr class="memdesc:a7c0d410556a11ba3806c422cdcce7177"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gaussian blur level. <br /></td></tr>
@@ -219,7 +247,7 @@ Additional Inherited Members</h2></td></tr>
 <tr class="memdesc:ab81be582777b82fe9bfe5711f6d7d81b inherit pro_attribs_class_renderer"><td class="mdescLeft">&#160;</td><td class="mdescRight">The current configuration. <br /></td></tr>
 <tr class="separator:ab81be582777b82fe9bfe5711f6d7d81b inherit pro_attribs_class_renderer"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac7f0e2e982c72a5b8695db2db6c17dc1 inherit pro_attribs_class_renderer"><td class="memItemLeft" align="right" valign="top"><a id="ac7f0e2e982c72a5b8695db2db6c17dc1"></a>
-glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_renderer.html#ac7f0e2e982c72a5b8695db2db6c17dc1">_renderResolution</a></td></tr>
+glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_renderer.html#ac7f0e2e982c72a5b8695db2db6c17dc1">_renderResolution</a> = glm::vec2(0.0f)</td></tr>
 <tr class="memdesc:ac7f0e2e982c72a5b8695db2db6c17dc1 inherit pro_attribs_class_renderer"><td class="mdescLeft">&#160;</td><td class="mdescRight">The internal rendering resolution. <br /></td></tr>
 <tr class="separator:ac7f0e2e982c72a5b8695db2db6c17dc1 inherit pro_attribs_class_renderer"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -234,6 +262,9 @@ glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">FilteringRenderer::FilteringRenderer </td>
@@ -243,6 +274,11 @@ glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 <p>Constructor. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -254,8 +290,8 @@ glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a47a7fb80d44530c6d13f839b698594f1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a47a7fb80d44530c6d13f839b698594f1">&#9670;&nbsp;</a></span>clean()</h2>
+<a id="a4190b371e472667ac98c164990030b8d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4190b371e472667ac98c164990030b8d">&#9670;&nbsp;</a></span>clean()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -272,7 +308,7 @@ glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -282,8 +318,8 @@ glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 
 </div>
 </div>
-<a id="a9b288d57fe7566e49b33839426c0707a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9b288d57fe7566e49b33839426c0707a">&#9670;&nbsp;</a></span>draw()</h2>
+<a id="a738ab9921d7304a5de6658e7786d65bb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a738ab9921d7304a5de6658e7786d65bb">&#9670;&nbsp;</a></span>draw()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -300,7 +336,7 @@ glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -310,8 +346,8 @@ glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 
 </div>
 </div>
-<a id="a651aca494aec0ef9bfd59f8c9789b210"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a651aca494aec0ef9bfd59f8c9789b210">&#9670;&nbsp;</a></span>physics()</h2>
+<a id="a8632061ddcce95290a4f6f73e12f4c2f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8632061ddcce95290a4f6f73e12f4c2f">&#9670;&nbsp;</a></span>physics()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -339,7 +375,7 @@ glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -356,8 +392,8 @@ glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 
 </div>
 </div>
-<a id="a1631486584d3c0286fd2fc62c323ed14"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1631486584d3c0286fd2fc62c323ed14">&#9670;&nbsp;</a></span>resize()</h2>
+<a id="ac7ef0ecdb5db108e0cdae5c1d76b8c2b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac7ef0ecdb5db108e0cdae5c1d76b8c2b">&#9670;&nbsp;</a></span>resize()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -385,7 +421,7 @@ glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -401,8 +437,34 @@ glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 
 </div>
 </div>
-<a id="adc64bd297f64af6314dd36883d1e0419"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adc64bd297f64af6314dd36883d1e0419">&#9670;&nbsp;</a></span>update()</h2>
+<a id="a9cff49ad149262595ac8f810d9ab429f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9cff49ad149262595ac8f810d9ab429f">&#9670;&nbsp;</a></span>showModeOptions()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void FilteringRenderer::showModeOptions </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Display mode-specific GUI options. </p>
+
+</div>
+</div>
+<a id="a642d6f6604ae2f7d75f00e4306ec5a14"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a642d6f6604ae2f7d75f00e4306ec5a14">&#9670;&nbsp;</a></span>update()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -419,7 +481,7 @@ glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">

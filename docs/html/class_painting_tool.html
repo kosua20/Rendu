@@ -116,19 +116,25 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a2ad280f800669f92f5b6ca7575635b90"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5f3093cbb50331c755cf3c37c9a684b3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_painting_tool.html#a5f3093cbb50331c755cf3c37c9a684b3">clean</a> () const</td></tr>
 <tr class="separator:a5f3093cbb50331c755cf3c37c9a684b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a11f9426046a28b2d70d64c23e293565c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_painting_tool.html#a11f9426046a28b2d70d64c23e293565c">resize</a> (unsigned int width, unsigned int height)</td></tr>
-<tr class="separator:a11f9426046a28b2d70d64c23e293565c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2cf77f6a490942fd206f9062e35a541d"><td class="memItemLeft" align="right" valign="top">GLuint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_painting_tool.html#a2cf77f6a490942fd206f9062e35a541d">textureId</a> () const</td></tr>
-<tr class="separator:a2cf77f6a490942fd206f9062e35a541d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af2e20bd11346e157a32c4f8d1bb560b5"><td class="memItemLeft" align="right" valign="top">GLuint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_painting_tool.html#af2e20bd11346e157a32c4f8d1bb560b5">visuId</a> () const</td></tr>
-<tr class="separator:af2e20bd11346e157a32c4f8d1bb560b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8b460278c326311ffacc55ded729f389"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_painting_tool.html#a8b460278c326311ffacc55ded729f389">resize</a> (unsigned int width, unsigned int height) const</td></tr>
+<tr class="separator:a8b460278c326311ffacc55ded729f389"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a11204edb4825eff4134e08a0dd196b2a"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="class_texture.html">Texture</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_painting_tool.html#a11204edb4825eff4134e08a0dd196b2a">textureId</a> () const</td></tr>
+<tr class="separator:a11204edb4825eff4134e08a0dd196b2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3330a96b20f7cc1a357d68843abb8796"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="class_texture.html">Texture</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_painting_tool.html#a3330a96b20f7cc1a357d68843abb8796">visuId</a> () const</td></tr>
+<tr class="separator:a3330a96b20f7cc1a357d68843abb8796"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-types"></a>
 Private Types</h2></td></tr>
-<tr class="memitem:a2235a847455b4cba6b8a64570005b256"><td class="memItemLeft" align="right" valign="top"><a id="a2235a847455b4cba6b8a64570005b256"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_painting_tool.html#a2235a847455b4cba6b8a64570005b256">Mode</a> : int </td></tr>
+<tr class="memitem:a2235a847455b4cba6b8a64570005b256"><td class="memItemLeft" align="right" valign="top"><a id="a2235a847455b4cba6b8a64570005b256"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_painting_tool.html#a2235a847455b4cba6b8a64570005b256">Mode</a> : int { <b>DRAW</b> = 0, 
+<b>ERASE</b>
+ }</td></tr>
 <tr class="memdesc:a2235a847455b4cba6b8a64570005b256"><td class="mdescLeft">&#160;</td><td class="mdescRight">The effect of a brush stroke. <br /></td></tr>
 <tr class="separator:a2235a847455b4cba6b8a64570005b256"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adc95d9c62b816d5e766fd77d910d9ef9"><td class="memItemLeft" align="right" valign="top"><a id="adc95d9c62b816d5e766fd77d910d9ef9"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_painting_tool.html#adc95d9c62b816d5e766fd77d910d9ef9">Shape</a> : int </td></tr>
+<tr class="memitem:adc95d9c62b816d5e766fd77d910d9ef9"><td class="memItemLeft" align="right" valign="top"><a id="adc95d9c62b816d5e766fd77d910d9ef9"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_painting_tool.html#adc95d9c62b816d5e766fd77d910d9ef9">Shape</a> : int { <b>CIRCLE</b> = 0, 
+<b>SQUARE</b>, 
+<b>DIAMOND</b>, 
+<b>COUNT</b>
+ }</td></tr>
 <tr class="memdesc:adc95d9c62b816d5e766fd77d910d9ef9"><td class="mdescLeft">&#160;</td><td class="mdescRight">The shape of the brush. <br /></td></tr>
 <tr class="separator:adc95d9c62b816d5e766fd77d910d9ef9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -142,20 +148,20 @@ std::unique_ptr&lt; <a class="el" href="class_framebuffer.html">Framebuffer</a> 
 std::unique_ptr&lt; <a class="el" href="class_framebuffer.html">Framebuffer</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_painting_tool.html#a54052fbe93362bfc754188b578cd8e97">_visu</a></td></tr>
 <tr class="memdesc:a54052fbe93362bfc754188b578cd8e97"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_scene.html" title="Represents a 3D environment composed of objects, a background and additional environment lighting inf...">Scene</a> rendering buffer. <br /></td></tr>
 <tr class="separator:a54052fbe93362bfc754188b578cd8e97"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ace18df7eae0aa519fd2e0db64b143698"><td class="memItemLeft" align="right" valign="top"><a id="ace18df7eae0aa519fd2e0db64b143698"></a>
-const <a class="el" href="class_program_infos.html">ProgramInfos</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_painting_tool.html#ace18df7eae0aa519fd2e0db64b143698">_brushShader</a></td></tr>
-<tr class="memdesc:ace18df7eae0aa519fd2e0db64b143698"><td class="mdescLeft">&#160;</td><td class="mdescRight">Program for the brush and its outline. <br /></td></tr>
-<tr class="separator:ace18df7eae0aa519fd2e0db64b143698"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9d3f871aa3b2d4ed6f4ead28df2b81ba"><td class="memItemLeft" align="right" valign="top"><a id="a9d3f871aa3b2d4ed6f4ead28df2b81ba"></a>
-std::vector&lt; <a class="el" href="struct_mesh_infos.html">MeshInfos</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_painting_tool.html#a9d3f871aa3b2d4ed6f4ead28df2b81ba">_brushes</a></td></tr>
-<tr class="memdesc:a9d3f871aa3b2d4ed6f4ead28df2b81ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Brush shape geometries. <br /></td></tr>
-<tr class="separator:a9d3f871aa3b2d4ed6f4ead28df2b81ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a85abb58861a8b2ae7826c0e5a1993b33"><td class="memItemLeft" align="right" valign="top"><a id="a85abb58861a8b2ae7826c0e5a1993b33"></a>
+const <a class="el" href="class_program.html">Program</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_painting_tool.html#a85abb58861a8b2ae7826c0e5a1993b33">_brushShader</a></td></tr>
+<tr class="memdesc:a85abb58861a8b2ae7826c0e5a1993b33"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_program.html" title="Represents a group of shaders used for rendering.">Program</a> for the brush and its outline. <br /></td></tr>
+<tr class="separator:a85abb58861a8b2ae7826c0e5a1993b33"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a635f61349260f14d0405f0e71ef0386a"><td class="memItemLeft" align="right" valign="top"><a id="a635f61349260f14d0405f0e71ef0386a"></a>
+std::vector&lt; <a class="el" href="class_mesh.html">Mesh</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_painting_tool.html#a635f61349260f14d0405f0e71ef0386a">_brushes</a></td></tr>
+<tr class="memdesc:a635f61349260f14d0405f0e71ef0386a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Brush shape geometries. <br /></td></tr>
+<tr class="separator:a635f61349260f14d0405f0e71ef0386a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a08cb02410148a5f1d96d5d43be69bd2a"><td class="memItemLeft" align="right" valign="top"><a id="a08cb02410148a5f1d96d5d43be69bd2a"></a>
-glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_painting_tool.html#a08cb02410148a5f1d96d5d43be69bd2a">_bgColor</a></td></tr>
+glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_painting_tool.html#a08cb02410148a5f1d96d5d43be69bd2a">_bgColor</a> = glm::vec3(0.0f)</td></tr>
 <tr class="memdesc:a08cb02410148a5f1d96d5d43be69bd2a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Canvas color. <br /></td></tr>
 <tr class="separator:a08cb02410148a5f1d96d5d43be69bd2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a73b1ec2a98703fd30f4cc6fa2d3700c6"><td class="memItemLeft" align="right" valign="top"><a id="a73b1ec2a98703fd30f4cc6fa2d3700c6"></a>
-glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_painting_tool.html#a73b1ec2a98703fd30f4cc6fa2d3700c6">_fgColor</a></td></tr>
+glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_painting_tool.html#a73b1ec2a98703fd30f4cc6fa2d3700c6">_fgColor</a> = glm::vec3(1.0f)</td></tr>
 <tr class="memdesc:a73b1ec2a98703fd30f4cc6fa2d3700c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Brush color. <br /></td></tr>
 <tr class="separator:a73b1ec2a98703fd30f4cc6fa2d3700c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8e1622bd52b29b9b3e386524d0b8cdb3"><td class="memItemLeft" align="right" valign="top"><a id="a8e1622bd52b29b9b3e386524d0b8cdb3"></a>
@@ -258,8 +264,8 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a id="a11f9426046a28b2d70d64c23e293565c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a11f9426046a28b2d70d64c23e293565c">&#9670;&nbsp;</a></span>resize()</h2>
+<a id="a8b460278c326311ffacc55ded729f389"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8b460278c326311ffacc55ded729f389">&#9670;&nbsp;</a></span>resize()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -279,7 +285,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
         <tr>
           <td></td>
           <td>)</td>
-          <td></td><td></td>
+          <td></td><td> const</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -293,8 +299,8 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a id="a2cf77f6a490942fd206f9062e35a541d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2cf77f6a490942fd206f9062e35a541d">&#9670;&nbsp;</a></span>textureId()</h2>
+<a id="a11204edb4825eff4134e08a0dd196b2a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a11204edb4825eff4134e08a0dd196b2a">&#9670;&nbsp;</a></span>textureId()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -303,7 +309,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">GLuint PaintingTool::textureId </td>
+          <td class="memname">const <a class="el" href="class_texture.html">Texture</a>* PaintingTool::textureId </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -337,8 +343,8 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a id="af2e20bd11346e157a32c4f8d1bb560b5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af2e20bd11346e157a32c4f8d1bb560b5">&#9670;&nbsp;</a></span>visuId()</h2>
+<a id="a3330a96b20f7cc1a357d68843abb8796"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3330a96b20f7cc1a357d68843abb8796">&#9670;&nbsp;</a></span>visuId()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -347,7 +353,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">GLuint PaintingTool::visuId </td>
+          <td class="memname">const <a class="el" href="class_texture.html">Texture</a>* PaintingTool::visuId </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -359,7 +365,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Texture containing the canvas and the brush shape outline, for visualisation. </p><dl class="section return"><dt>Returns</dt><dd>the texture ID </dd></dl>
+<p><a class="el" href="class_texture.html" title="Represents a texture containing one or more images, stored on the CPU and/or GPU.">Texture</a> containing the canvas and the brush shape outline, for visualisation. </p><dl class="section return"><dt>Returns</dt><dd>the texture ID </dd></dl>
 
 </div>
 </div>

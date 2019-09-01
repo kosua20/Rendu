@@ -2,7 +2,7 @@ var searchData=
 [
   ['random',['Random',['../class_random.html',1,'']]],
   ['rawcontroller',['RawController',['../class_raw_controller.html',1,'']]],
-  ['rawgeometry',['RawGeometry',['../struct_composite_obj_1_1_raw_geometry.html',1,'CompositeObj']]],
+  ['rawgeometry',['RawGeometry',['../class_composite_obj_1_1_raw_geometry.html',1,'CompositeObj']]],
   ['ray',['Ray',['../struct_raycaster_1_1_ray.html',1,'Raycaster']]],
   ['raycaster',['Raycaster',['../class_raycaster.html',1,'']]],
   ['raycastervisualisation',['RaycasterVisualisation',['../class_raycaster_visualisation.html',1,'']]],

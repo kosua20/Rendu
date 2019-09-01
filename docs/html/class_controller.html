@@ -117,9 +117,38 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a45866aa8e6dd66bbd819a6ceb4a36085"><td class="memItemLeft" align="right" valign="top"><a id="a45866aa8e6dd66bbd819a6ceb4a36085"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_controller.html#a45866aa8e6dd66bbd819a6ceb4a36085">ControllerInput</a> </td></tr>
-<tr class="memdesc:a45866aa8e6dd66bbd819a6ceb4a36085"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_controller.html" title="Represents a joystick or any additional controller.">Controller</a> inputs, based on the Xbox controller layout. <br /></td></tr>
-<tr class="separator:a45866aa8e6dd66bbd819a6ceb4a36085"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9d321846dd8e4f98d3b3e6d9354fd88e"><td class="memItemLeft" align="right" valign="top"><a id="a9d321846dd8e4f98d3b3e6d9354fd88e"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_controller.html#a9d321846dd8e4f98d3b3e6d9354fd88e">Input</a> { <br />
+&#160;&#160;<b>ButtonX</b>, 
+<b>ButtonY</b>, 
+<b>ButtonA</b>, 
+<b>ButtonB</b>, 
+<br />
+&#160;&#160;<b>BumperL1</b>, 
+<b>TriggerL2</b>, 
+<b>ButtonL3</b>, 
+<b>BumperR1</b>, 
+<br />
+&#160;&#160;<b>TriggerR2</b>, 
+<b>ButtonR3</b>, 
+<b>ButtonUp</b>, 
+<b>ButtonLeft</b>, 
+<br />
+&#160;&#160;<b>ButtonDown</b>, 
+<b>ButtonRight</b>, 
+<b>ButtonLogo</b>, 
+<b>ButtonMenu</b>, 
+<br />
+&#160;&#160;<b>ButtonView</b>, 
+<b>PadLeftX</b>, 
+<b>PadLeftY</b>, 
+<b>PadRightX</b>, 
+<br />
+&#160;&#160;<b>PadRightY</b>, 
+<b>InputCount</b>
+<br />
+ }</td></tr>
+<tr class="memdesc:a9d321846dd8e4f98d3b3e6d9354fd88e"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_controller.html" title="Represents a joystick or any additional controller.">Controller</a> inputs, based on the Xbox controller layout. <br /></td></tr>
+<tr class="separator:a9d321846dd8e4f98d3b3e6d9354fd88e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -133,22 +162,30 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:acffad7e30d8c7fa4bcfa5bc89d2b4ab3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa4aa89576f0889183fd4c7ac3c68062d"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_controller.html#aa4aa89576f0889183fd4c7ac3c68062d">update</a> ()=0</td></tr>
 <tr class="separator:aa4aa89576f0889183fd4c7ac3c68062d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9ab69991225e7d51ef8a3d73f9fe350a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_controller.html#a9ab69991225e7d51ef8a3d73f9fe350a">pressed</a> (const <a class="el" href="class_controller.html#a45866aa8e6dd66bbd819a6ceb4a36085">ControllerInput</a> &amp;input) const</td></tr>
-<tr class="separator:a9ab69991225e7d51ef8a3d73f9fe350a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a37f47e21b49efd1b03c8c68774740107"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_controller.html#a37f47e21b49efd1b03c8c68774740107">triggered</a> (const <a class="el" href="class_controller.html#a45866aa8e6dd66bbd819a6ceb4a36085">ControllerInput</a> &amp;input, bool absorb=false)</td></tr>
-<tr class="separator:a37f47e21b49efd1b03c8c68774740107"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acea40eeebfe94c1b58ab55bebf9eb536"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_controller.html#acea40eeebfe94c1b58ab55bebf9eb536">axis</a> (const <a class="el" href="class_controller.html#a45866aa8e6dd66bbd819a6ceb4a36085">ControllerInput</a> &amp;input) const</td></tr>
-<tr class="separator:acea40eeebfe94c1b58ab55bebf9eb536"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae226fe45e99f272a4de23c5f47a80ce4"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_controller.html#ae226fe45e99f272a4de23c5f47a80ce4">pressed</a> (const <a class="el" href="class_controller.html#a9d321846dd8e4f98d3b3e6d9354fd88e">Controller::Input</a> &amp;input) const</td></tr>
+<tr class="separator:ae226fe45e99f272a4de23c5f47a80ce4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6f634264b68e8c6c0ed06913e8270b1b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_controller.html#a6f634264b68e8c6c0ed06913e8270b1b">triggered</a> (const <a class="el" href="class_controller.html#a9d321846dd8e4f98d3b3e6d9354fd88e">Controller::Input</a> &amp;input, bool absorb=false)</td></tr>
+<tr class="separator:a6f634264b68e8c6c0ed06913e8270b1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afa4f1947611eb6c0a6b5c0591bab22d5"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_controller.html#afa4f1947611eb6c0a6b5c0591bab22d5">axis</a> (const <a class="el" href="class_controller.html#a9d321846dd8e4f98d3b3e6d9354fd88e">Controller::Input</a> &amp;input) const</td></tr>
+<tr class="separator:afa4f1947611eb6c0a6b5c0591bab22d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a200db1e1737eb7f3c0807dcdfb74788c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_controller.html#a200db1e1737eb7f3c0807dcdfb74788c">id</a> () const</td></tr>
 <tr class="separator:a200db1e1737eb7f3c0807dcdfb74788c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7c6cee9cb86146bb89b05fbd787f8b2a"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_controller.html#a7c6cee9cb86146bb89b05fbd787f8b2a">name</a> () const</td></tr>
 <tr class="separator:a7c6cee9cb86146bb89b05fbd787f8b2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa21524f0563a3fd02905c32bf535e921"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_controller.html#aa21524f0563a3fd02905c32bf535e921">guid</a> () const</td></tr>
 <tr class="separator:aa21524f0563a3fd02905c32bf535e921"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0ab87934c4f7a266cfdb86e0f36bc1b5"><td class="memItemLeft" align="right" valign="top"><a id="a0ab87934c4f7a266cfdb86e0f36bc1b5"></a>
-virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_controller.html#a0ab87934c4f7a266cfdb86e0f36bc1b5">~Controller</a> ()</td></tr>
-<tr class="memdesc:a0ab87934c4f7a266cfdb86e0f36bc1b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor;. <br /></td></tr>
-<tr class="separator:a0ab87934c4f7a266cfdb86e0f36bc1b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8d16a7a97c266dc0d5aa5685c4dcdd89"><td class="memItemLeft" align="right" valign="top"><a id="a8d16a7a97c266dc0d5aa5685c4dcdd89"></a>
+virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_controller.html#a8d16a7a97c266dc0d5aa5685c4dcdd89">~Controller</a> ()=default</td></tr>
+<tr class="memdesc:a8d16a7a97c266dc0d5aa5685c4dcdd89"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor. <br /></td></tr>
+<tr class="separator:a8d16a7a97c266dc0d5aa5685c4dcdd89"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab2ccfb3fcbabdd1307d10436b0d7131d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_controller.html#ab2ccfb3fcbabdd1307d10436b0d7131d">Controller</a> (const <a class="el" href="class_controller.html">Controller</a> &amp;)=delete</td></tr>
+<tr class="separator:ab2ccfb3fcbabdd1307d10436b0d7131d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0a608678faa069a91f3e5f0483b740a0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_controller.html">Controller</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_controller.html#a0a608678faa069a91f3e5f0483b740a0">operator=</a> (const <a class="el" href="class_controller.html">Controller</a> &amp;)=delete</td></tr>
+<tr class="separator:a0a608678faa069a91f3e5f0483b740a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1a60891a6415ffc0ee93b446a90a6d8d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_controller.html#a1a60891a6415ffc0ee93b446a90a6d8d">Controller</a> (<a class="el" href="class_controller.html">Controller</a> &amp;&amp;)=delete</td></tr>
+<tr class="separator:a1a60891a6415ffc0ee93b446a90a6d8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a613ae7e75841c94ec85a15372ad2dfa7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_controller.html">Controller</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_controller.html#a613ae7e75841c94ec85a15372ad2dfa7">operator=</a> (<a class="el" href="class_controller.html">Controller</a> &amp;&amp;)=delete</td></tr>
+<tr class="separator:a613ae7e75841c94ec85a15372ad2dfa7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
@@ -164,14 +201,14 @@ Protected Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
-<tr class="memitem:a7b86c4cece20b574892cc384d6c8954e"><td class="memItemLeft" align="right" valign="top"><a id="a7b86c4cece20b574892cc384d6c8954e"></a>
-<a class="el" href="struct_controller_1_1_controller_button.html">ControllerButton</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_controller.html#a7b86c4cece20b574892cc384d6c8954e">_buttons</a> [ControllerInput::ControllerInputCount]</td></tr>
-<tr class="memdesc:a7b86c4cece20b574892cc384d6c8954e"><td class="mdescLeft">&#160;</td><td class="mdescRight">States of all possible buttons. <br /></td></tr>
-<tr class="separator:a7b86c4cece20b574892cc384d6c8954e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af1ca27dafbcbe486a65d7db9d2811314"><td class="memItemLeft" align="right" valign="top"><a id="af1ca27dafbcbe486a65d7db9d2811314"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_controller.html#af1ca27dafbcbe486a65d7db9d2811314">_axes</a> [ControllerInput::ControllerInputCount]</td></tr>
-<tr class="memdesc:af1ca27dafbcbe486a65d7db9d2811314"><td class="mdescLeft">&#160;</td><td class="mdescRight">States of all possible axis. <br /></td></tr>
-<tr class="separator:af1ca27dafbcbe486a65d7db9d2811314"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4865f41271eb371cab4ac1cb8423ec77"><td class="memItemLeft" align="right" valign="top"><a id="a4865f41271eb371cab4ac1cb8423ec77"></a>
+<a class="el" href="struct_controller_1_1_controller_button.html">ControllerButton</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_controller.html#a4865f41271eb371cab4ac1cb8423ec77">_buttons</a> [Controller::Input::InputCount]</td></tr>
+<tr class="memdesc:a4865f41271eb371cab4ac1cb8423ec77"><td class="mdescLeft">&#160;</td><td class="mdescRight">States of all possible buttons. <br /></td></tr>
+<tr class="separator:a4865f41271eb371cab4ac1cb8423ec77"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adaf54f57b938ef6e0767bcade72239f5"><td class="memItemLeft" align="right" valign="top"><a id="adaf54f57b938ef6e0767bcade72239f5"></a>
+float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_controller.html#adaf54f57b938ef6e0767bcade72239f5">_axes</a> [Controller::Input::InputCount]</td></tr>
+<tr class="memdesc:adaf54f57b938ef6e0767bcade72239f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">States of all possible axis. <br /></td></tr>
+<tr class="separator:adaf54f57b938ef6e0767bcade72239f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad47e246a40cc93da09dc5390fd4d168f"><td class="memItemLeft" align="right" valign="top"><a id="ad47e246a40cc93da09dc5390fd4d168f"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_controller.html#ad47e246a40cc93da09dc5390fd4d168f">_id</a> = -1</td></tr>
 <tr class="memdesc:ad47e246a40cc93da09dc5390fd4d168f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Joystick ID (or -1 if no joystick is connected). <br /></td></tr>
@@ -189,6 +226,61 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 <div class="textblock"><p>Represents a joystick or any additional controller. </p>
 </div>
 <p>Inherited by <a class="el" href="class_gamepad_controller.html">GamepadController</a>, and <a class="el" href="class_raw_controller.html">RawController</a>.</p>
+<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="ab2ccfb3fcbabdd1307d10436b0d7131d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab2ccfb3fcbabdd1307d10436b0d7131d">&#9670;&nbsp;</a></span>Controller() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Controller::Controller </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="class_controller.html">Controller</a> &amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">delete</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Copy constructor. </p>
+
+</div>
+</div>
+<a id="a1a60891a6415ffc0ee93b446a90a6d8d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1a60891a6415ffc0ee93b446a90a6d8d">&#9670;&nbsp;</a></span>Controller() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Controller::Controller </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_controller.html">Controller</a> &amp;&amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">delete</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Move constructor. </p>
+
+</div>
+</div>
 <h2 class="groupheader">Member Function Documentation</h2>
 <a id="a4b6204f001c20124ea6635a17234cf5d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a4b6204f001c20124ea6635a17234cf5d">&#9670;&nbsp;</a></span>activate()</h2>
@@ -215,18 +307,18 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 </div><div class="memdoc">
 <p>Enable the controller. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">id</td><td>the GLFW ID of the controller. </td></tr>
+    <tr><td class="paramname">id</td><td>the ID of the controller. </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if the controller was correctly setup </dd></dl>
 
-<p>Implemented in <a class="el" href="class_gamepad_controller.html#a3e8138a7460ba405340f3c7c79a522b8">GamepadController</a>, and <a class="el" href="class_raw_controller.html#aaa8f928ae3cff7f989b1a8fbb29a42f5">RawController</a>.</p>
+<p>Implemented in <a class="el" href="class_raw_controller.html#a7587991242758b4b6dcc5de32c6ef05c">RawController</a>, and <a class="el" href="class_gamepad_controller.html#a1aa90c2ca7166412e38bcd700844687d">GamepadController</a>.</p>
 
 </div>
 </div>
-<a id="acea40eeebfe94c1b58ab55bebf9eb536"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acea40eeebfe94c1b58ab55bebf9eb536">&#9670;&nbsp;</a></span>axis()</h2>
+<a id="afa4f1947611eb6c0a6b5c0591bab22d5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afa4f1947611eb6c0a6b5c0591bab22d5">&#9670;&nbsp;</a></span>axis()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -234,7 +326,7 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
         <tr>
           <td class="memname">float Controller::axis </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="class_controller.html#a45866aa8e6dd66bbd819a6ceb4a36085">ControllerInput</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="class_controller.html#a9d321846dd8e4f98d3b3e6d9354fd88e">Controller::Input</a> &amp;&#160;</td>
           <td class="paramname"><em>input</em></td><td>)</td>
           <td> const</td>
         </tr>
@@ -274,7 +366,7 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 </div><div class="memdoc">
 <p>Disable the controller. </p>
 
-<p>Implemented in <a class="el" href="class_gamepad_controller.html#a2fe79acb1952013c33198d753c699a67">GamepadController</a>, and <a class="el" href="class_raw_controller.html#a9b823235bd35330aa49e8f1f2ced243c">RawController</a>.</p>
+<p>Implemented in <a class="el" href="class_raw_controller.html#a3726d50f8a0abc35bdb3acfdc470f909">RawController</a>, and <a class="el" href="class_gamepad_controller.html#a5c46831c23a55e7c3278ad1ddc6f2f3d">GamepadController</a>.</p>
 
 </div>
 </div>
@@ -356,6 +448,60 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 
 </div>
 </div>
+<a id="a0a608678faa069a91f3e5f0483b740a0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0a608678faa069a91f3e5f0483b740a0">&#9670;&nbsp;</a></span>operator=() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_controller.html">Controller</a>&amp; Controller::operator= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="class_controller.html">Controller</a> &amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">delete</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Copy assignment. </p><dl class="section return"><dt>Returns</dt><dd>a reference to the object assigned to </dd></dl>
+
+</div>
+</div>
+<a id="a613ae7e75841c94ec85a15372ad2dfa7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a613ae7e75841c94ec85a15372ad2dfa7">&#9670;&nbsp;</a></span>operator=() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_controller.html">Controller</a>&amp; Controller::operator= </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_controller.html">Controller</a> &amp;&amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">delete</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Move assignment. </p><dl class="section return"><dt>Returns</dt><dd>a reference to the object assigned to </dd></dl>
+
+</div>
+</div>
 <a id="a24120da1a092830ef42794c7951458ef"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a24120da1a092830ef42794c7951458ef">&#9670;&nbsp;</a></span>parseConfiguration()</h2>
 
@@ -407,8 +553,8 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 
 </div>
 </div>
-<a id="a9ab69991225e7d51ef8a3d73f9fe350a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9ab69991225e7d51ef8a3d73f9fe350a">&#9670;&nbsp;</a></span>pressed()</h2>
+<a id="ae226fe45e99f272a4de23c5f47a80ce4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae226fe45e99f272a4de23c5f47a80ce4">&#9670;&nbsp;</a></span>pressed()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -416,7 +562,7 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
         <tr>
           <td class="memname">bool Controller::pressed </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="class_controller.html#a45866aa8e6dd66bbd819a6ceb4a36085">ControllerInput</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="class_controller.html#a9d321846dd8e4f98d3b3e6d9354fd88e">Controller::Input</a> &amp;&#160;</td>
           <td class="paramname"><em>input</em></td><td>)</td>
           <td> const</td>
         </tr>
@@ -522,8 +668,8 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 
 </div>
 </div>
-<a id="a37f47e21b49efd1b03c8c68774740107"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a37f47e21b49efd1b03c8c68774740107">&#9670;&nbsp;</a></span>triggered()</h2>
+<a id="a6f634264b68e8c6c0ed06913e8270b1b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6f634264b68e8c6c0ed06913e8270b1b">&#9670;&nbsp;</a></span>triggered()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -531,7 +677,7 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
         <tr>
           <td class="memname">bool Controller::triggered </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="class_controller.html#a45866aa8e6dd66bbd819a6ceb4a36085">ControllerInput</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="class_controller.html#a9d321846dd8e4f98d3b3e6d9354fd88e">Controller::Input</a> &amp;&#160;</td>
           <td class="paramname"><em>input</em>, </td>
         </tr>
         <tr>
@@ -582,7 +728,7 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 </div><div class="memdoc">
 <p>Update the internal controller state (once per frame). </p>
 
-<p>Implemented in <a class="el" href="class_gamepad_controller.html#a9130f22f3dca15a07d3d2a361d7fce9c">GamepadController</a>, and <a class="el" href="class_raw_controller.html#a88516a5e471041b8c782ae5e72970d04">RawController</a>.</p>
+<p>Implemented in <a class="el" href="class_raw_controller.html#a5a02970215f5e01d14de91dcc53d60a5">RawController</a>, and <a class="el" href="class_gamepad_controller.html#a64b2b816b671bcc500aaead6dc8e9a3a">GamepadController</a>.</p>
 
 </div>
 </div>

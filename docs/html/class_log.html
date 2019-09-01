@@ -100,7 +100,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a href="#pri-static-attribs">Static Private Attributes</a> &#124;
 <a href="class_log-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">Log Class Reference<div class="ingroups"><a class="el" href="group___helpers.html">Helpers</a></div></div>  </div>
+<div class="title">Log Class Reference<div class="ingroups"><a class="el" href="group___system.html">System</a></div></div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -111,23 +111,31 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a14613b2ffe22717db5bd56c68400f5b3"><td class="memItemLeft" align="right" valign="top"><a id="a14613b2ffe22717db5bd56c68400f5b3"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_log.html#a14613b2ffe22717db5bd56c68400f5b3">LogDomain</a> </td></tr>
-<tr class="memdesc:a14613b2ffe22717db5bd56c68400f5b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Domain prefix that will be appended before a line. <br /></td></tr>
-<tr class="separator:a14613b2ffe22717db5bd56c68400f5b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2fa7f78a838cb410f0c28079d51e1fb7"><td class="memItemLeft" align="right" valign="top"><a id="a2fa7f78a838cb410f0c28079d51e1fb7"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_log.html#a2fa7f78a838cb410f0c28079d51e1fb7">Domain</a> { <br />
+&#160;&#160;<b>OpenGL</b> = 0, 
+<b>Resources</b>, 
+<b>Input</b>, 
+<b>Utilities</b>, 
+<br />
+&#160;&#160;<b>Config</b>
+<br />
+ }</td></tr>
+<tr class="memdesc:a2fa7f78a838cb410f0c28079d51e1fb7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Domain prefix that will be appended before a line. <br /></td></tr>
+<tr class="separator:a2fa7f78a838cb410f0c28079d51e1fb7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:af6071a60aa52b6c1b511f99b4bc1b8fe"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_log.html#af6071a60aa52b6c1b511f99b4bc1b8fe">Log</a> ()</td></tr>
 <tr class="separator:af6071a60aa52b6c1b511f99b4bc1b8fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aafd58a7da390ab0a4de868d4218ff064"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_log.html#aafd58a7da390ab0a4de868d4218ff064">Log</a> (const std::string &amp;filePath, const bool logToStdin, const bool verbose=false)</td></tr>
-<tr class="separator:aafd58a7da390ab0a4de868d4218ff064"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2a372eb2c571e78625d74c24a5490f4d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_log.html#a2a372eb2c571e78625d74c24a5490f4d">setVerbose</a> (const bool verbose)</td></tr>
-<tr class="separator:a2a372eb2c571e78625d74c24a5490f4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acb9520812f36aa5f6e59fba5fb6315de"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_log.html#acb9520812f36aa5f6e59fba5fb6315de">Log</a> (const std::string &amp;filePath, bool logToStdin, bool verbose=false)</td></tr>
+<tr class="separator:acb9520812f36aa5f6e59fba5fb6315de"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ddfd82bb9f501688d493db7896fbd36"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_log.html#a0ddfd82bb9f501688d493db7896fbd36">setVerbose</a> (bool verbose)</td></tr>
+<tr class="separator:a0ddfd82bb9f501688d493db7896fbd36"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1184b0c4c09dd5f934e8282818178b75"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
 <tr class="memitem:a1184b0c4c09dd5f934e8282818178b75"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="class_log.html">Log</a> &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="class_log.html#a1184b0c4c09dd5f934e8282818178b75">operator&lt;&lt;</a> (const T &amp;input)</td></tr>
 <tr class="separator:a1184b0c4c09dd5f934e8282818178b75"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a81c1dedc85f259177e340339890ed754"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_log.html">Log</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_log.html#a81c1dedc85f259177e340339890ed754">operator&lt;&lt;</a> (const <a class="el" href="class_log.html#a14613b2ffe22717db5bd56c68400f5b3">LogDomain</a> &amp;domain)</td></tr>
-<tr class="separator:a81c1dedc85f259177e340339890ed754"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7d0f0ba6d34ac65965727388c656f6cf"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_log.html">Log</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_log.html#a7d0f0ba6d34ac65965727388c656f6cf">operator&lt;&lt;</a> (const <a class="el" href="class_log.html#a2fa7f78a838cb410f0c28079d51e1fb7">Domain</a> &amp;domain)</td></tr>
+<tr class="separator:a7d0f0ba6d34ac65965727388c656f6cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a94e5bce79261629bac80ff913c3ff26d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_log.html">Log</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_log.html#a94e5bce79261629bac80ff913c3ff26d">operator&lt;&lt;</a> (std::ostream &amp;(*modif)(std::ostream &amp;))</td></tr>
 <tr class="separator:a94e5bce79261629bac80ff913c3ff26d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a282d2bc01e3af663bfa99398bed43763"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_log.html">Log</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_log.html#a282d2bc01e3af663bfa99398bed43763">operator&lt;&lt;</a> (std::ios_base &amp;(*modif)(std::ios_base &amp;))</td></tr>
@@ -138,8 +146,8 @@ Static Public Member Functions</h2></td></tr>
 <tr><td colspan="2"><div class="groupHeader">Default logger</div></td></tr>
 <tr class="memitem:aadbfaa4b2838990e064f37d70dacdc0d"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_log.html#aadbfaa4b2838990e064f37d70dacdc0d">setDefaultFile</a> (const std::string &amp;filePath)</td></tr>
 <tr class="separator:aadbfaa4b2838990e064f37d70dacdc0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a53d96dc5b83f28f6cff273aefc2ab53b"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_log.html#a53d96dc5b83f28f6cff273aefc2ab53b">setDefaultVerbose</a> (const bool verbose)</td></tr>
-<tr class="separator:a53d96dc5b83f28f6cff273aefc2ab53b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad8dc64f02a30ea2d025363c3def554a3"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_log.html#ad8dc64f02a30ea2d025363c3def554a3">setDefaultVerbose</a> (bool verbose)</td></tr>
+<tr class="separator:ad8dc64f02a30ea2d025363c3def554a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a90fb67d35cdba86a3c215d4f5b88d73d"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_log.html">Log</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_log.html#a90fb67d35cdba86a3c215d4f5b88d73d">Info</a> ()</td></tr>
 <tr class="separator:a90fb67d35cdba86a3c215d4f5b88d73d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a893ebadffc21742a0efe3b9eac59051e"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_log.html">Log</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_log.html#a893ebadffc21742a0efe3b9eac59051e">Warning</a> ()</td></tr>
@@ -151,17 +159,20 @@ Static Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-types"></a>
 Private Types</h2></td></tr>
-<tr class="memitem:a3718f3e276c3d3e23b58a3b8236d196e"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_log.html#a3718f3e276c3d3e23b58a3b8236d196e">LogLevel</a> { , <a class="el" href="class_log.html#a3718f3e276c3d3e23b58a3b8236d196ea0763041e407c0324563ab6aff02b11ee">VERBOSE</a>
+<tr class="memitem:ac5b9f0ae808a41980640e0bcbe49299c"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_log.html#ac5b9f0ae808a41980640e0bcbe49299c">Level</a> : int { <b>INFO</b> = 0, 
+<b>WARNING</b>, 
+<b>ERROR</b>, 
+<a class="el" href="class_log.html#ac5b9f0ae808a41980640e0bcbe49299caec1f06e9fb39c4ef0729b3c7c9c8e8cc">Level::VERBOSE</a>
  }</td></tr>
-<tr class="memdesc:a3718f3e276c3d3e23b58a3b8236d196e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Criticality level.  <a href="class_log.html#a3718f3e276c3d3e23b58a3b8236d196e">More...</a><br /></td></tr>
-<tr class="separator:a3718f3e276c3d3e23b58a3b8236d196e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memdesc:ac5b9f0ae808a41980640e0bcbe49299c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Criticality level.  <a href="class_log.html#ac5b9f0ae808a41980640e0bcbe49299c">More...</a><br /></td></tr>
+<tr class="separator:ac5b9f0ae808a41980640e0bcbe49299c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
-<tr class="memitem:a6e3d0f517b567e68142f88cb45c5497c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_log.html#a6e3d0f517b567e68142f88cb45c5497c">set</a> (<a class="el" href="class_log.html#a3718f3e276c3d3e23b58a3b8236d196e">LogLevel</a> l)</td></tr>
-<tr class="separator:a6e3d0f517b567e68142f88cb45c5497c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a71b1d684da3c9cf41a864e6c7f796c8d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_log.html#a71b1d684da3c9cf41a864e6c7f796c8d">setFile</a> (const std::string &amp;filePath, const bool flushExisting=true)</td></tr>
-<tr class="separator:a71b1d684da3c9cf41a864e6c7f796c8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa905d506aa3399df8d3802dd6070f06e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_log.html#aa905d506aa3399df8d3802dd6070f06e">set</a> (<a class="el" href="class_log.html#ac5b9f0ae808a41980640e0bcbe49299c">Level</a> l)</td></tr>
+<tr class="separator:aa905d506aa3399df8d3802dd6070f06e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1938f424ee0545194ebca22fd12be197"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_log.html#a1938f424ee0545194ebca22fd12be197">setFile</a> (const std::string &amp;filePath, bool flushExisting=true)</td></tr>
+<tr class="separator:a1938f424ee0545194ebca22fd12be197"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a48b8faa1f9d2590c6fb650f1004e73c9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_log.html#a48b8faa1f9d2590c6fb650f1004e73c9">flush</a> ()</td></tr>
 <tr class="separator:a48b8faa1f9d2590c6fb650f1004e73c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa8ac2a0a438a073598a0fa5cfe2d88bf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_log.html#aa8ac2a0a438a073598a0fa5cfe2d88bf">appendIfNeeded</a> ()</td></tr>
@@ -170,23 +181,23 @@ Private Member Functions</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
 <tr class="memitem:a8fe0b4cf9a45c266364509ee3dcefe7a"><td class="memItemLeft" align="right" valign="top"><a id="a8fe0b4cf9a45c266364509ee3dcefe7a"></a>
-const std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_log.html#a8fe0b4cf9a45c266364509ee3dcefe7a">_domainStrings</a> = {&quot;OpenGL&quot;,&quot;<a class="el" href="class_resources.html">Resources</a>&quot;,&quot;<a class="el" href="class_input.html">Input</a>&quot;,&quot;Utilities&quot;,&quot;<a class="el" href="class_config.html">Config</a>&quot;}</td></tr>
+const std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_log.html#a8fe0b4cf9a45c266364509ee3dcefe7a">_domainStrings</a> = {&quot;OpenGL&quot;, &quot;<a class="el" href="class_resources.html">Resources</a>&quot;, &quot;<a class="el" href="class_input.html">Input</a>&quot;, &quot;Utilities&quot;, &quot;<a class="el" href="class_config.html">Config</a>&quot;}</td></tr>
 <tr class="memdesc:a8fe0b4cf9a45c266364509ee3dcefe7a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Domain prefix strings. <br /></td></tr>
 <tr class="separator:a8fe0b4cf9a45c266364509ee3dcefe7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac1738d6a848cda6bff41e0df88acee92"><td class="memItemLeft" align="right" valign="top"><a id="ac1738d6a848cda6bff41e0df88acee92"></a>
-const std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_log.html#ac1738d6a848cda6bff41e0df88acee92">_levelStrings</a> = {&quot;&quot;,&quot;(!) &quot;,&quot;(X) &quot;, &quot;&quot;}</td></tr>
+const std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_log.html#ac1738d6a848cda6bff41e0df88acee92">_levelStrings</a> = {&quot;&quot;, &quot;(!) &quot;, &quot;(X) &quot;, &quot;&quot;}</td></tr>
 <tr class="memdesc:ac1738d6a848cda6bff41e0df88acee92"><td class="mdescLeft">&#160;</td><td class="mdescRight">Levels prefix strings. <br /></td></tr>
 <tr class="separator:ac1738d6a848cda6bff41e0df88acee92"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2b19b0b614649a4caa27ed4d7eae1286"><td class="memItemLeft" align="right" valign="top"><a id="a2b19b0b614649a4caa27ed4d7eae1286"></a>
-const std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_log.html#a2b19b0b614649a4caa27ed4d7eae1286">_colorStrings</a> = {&quot;\x1B[0m\x1B[39m&quot;,&quot;\x1B[0m\x1B[33m&quot;,&quot;\x1B[0m\x1B[31m&quot;, &quot;\x1B[2m\x1B[37m&quot;}</td></tr>
+const std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_log.html#a2b19b0b614649a4caa27ed4d7eae1286">_colorStrings</a> = {&quot;\x1B[0m\x1B[39m&quot;, &quot;\x1B[0m\x1B[33m&quot;, &quot;\x1B[0m\x1B[31m&quot;, &quot;\x1B[2m\x1B[37m&quot;}</td></tr>
 <tr class="memdesc:a2b19b0b614649a4caa27ed4d7eae1286"><td class="mdescLeft">&#160;</td><td class="mdescRight">Colors prefix strings. <br /></td></tr>
 <tr class="separator:a2b19b0b614649a4caa27ed4d7eae1286"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1e1743c05c263d0ae30cdb2158e9ef1d"><td class="memItemLeft" align="right" valign="top"><a id="a1e1743c05c263d0ae30cdb2158e9ef1d"></a>
-<a class="el" href="class_log.html#a3718f3e276c3d3e23b58a3b8236d196e">LogLevel</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_log.html#a1e1743c05c263d0ae30cdb2158e9ef1d">_level</a></td></tr>
-<tr class="memdesc:a1e1743c05c263d0ae30cdb2158e9ef1d"><td class="mdescLeft">&#160;</td><td class="mdescRight">The current criticality level. <br /></td></tr>
-<tr class="separator:a1e1743c05c263d0ae30cdb2158e9ef1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac6c47bab1fa8de4d2ff1e6f8f79d8826"><td class="memItemLeft" align="right" valign="top"><a id="ac6c47bab1fa8de4d2ff1e6f8f79d8826"></a>
+<a class="el" href="class_log.html#ac5b9f0ae808a41980640e0bcbe49299c">Level</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_log.html#ac6c47bab1fa8de4d2ff1e6f8f79d8826">_level</a> = Level::INFO</td></tr>
+<tr class="memdesc:ac6c47bab1fa8de4d2ff1e6f8f79d8826"><td class="mdescLeft">&#160;</td><td class="mdescRight">The current criticality level. <br /></td></tr>
+<tr class="separator:ac6c47bab1fa8de4d2ff1e6f8f79d8826"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1c7fd87114f1910a1a79a3439ad20f50"><td class="memItemLeft" align="right" valign="top"><a id="a1c7fd87114f1910a1a79a3439ad20f50"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_log.html#a1c7fd87114f1910a1a79a3439ad20f50">_logToStdOut</a></td></tr>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_log.html#a1c7fd87114f1910a1a79a3439ad20f50">_logToStdOut</a> = true</td></tr>
 <tr class="memdesc:a1c7fd87114f1910a1a79a3439ad20f50"><td class="mdescLeft">&#160;</td><td class="mdescRight">Should the logs be output to standard output. <br /></td></tr>
 <tr class="separator:a1c7fd87114f1910a1a79a3439ad20f50"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9a0f5484f0aa40f66b67f5d6674467d5"><td class="memItemLeft" align="right" valign="top"><a id="a9a0f5484f0aa40f66b67f5d6674467d5"></a>
@@ -198,19 +209,19 @@ std::stringstream&#160;</td><td class="memItemRight" valign="bottom"><a class="e
 <tr class="memdesc:a9d63e6a71d872810ebffa76f82f7f09a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal log string stream. <br /></td></tr>
 <tr class="separator:a9d63e6a71d872810ebffa76f82f7f09a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2640051102ad72e65fab261569ce2356"><td class="memItemLeft" align="right" valign="top"><a id="a2640051102ad72e65fab261569ce2356"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_log.html#a2640051102ad72e65fab261569ce2356">_verbose</a></td></tr>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_log.html#a2640051102ad72e65fab261569ce2356">_verbose</a> = false</td></tr>
 <tr class="memdesc:a2640051102ad72e65fab261569ce2356"><td class="mdescLeft">&#160;</td><td class="mdescRight">Is the logger verbose. <br /></td></tr>
 <tr class="separator:a2640051102ad72e65fab261569ce2356"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a77edc357c96548214baa4f6b37fb076e"><td class="memItemLeft" align="right" valign="top"><a id="a77edc357c96548214baa4f6b37fb076e"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_log.html#a77edc357c96548214baa4f6b37fb076e">_ignoreUntilFlush</a></td></tr>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_log.html#a77edc357c96548214baa4f6b37fb076e">_ignoreUntilFlush</a> = false</td></tr>
 <tr class="memdesc:a77edc357c96548214baa4f6b37fb076e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal flag to ignore the current line if it is verbose. <br /></td></tr>
 <tr class="separator:a77edc357c96548214baa4f6b37fb076e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a541dea37b73e58ffdaf23f7b8cecbff7"><td class="memItemLeft" align="right" valign="top"><a id="a541dea37b73e58ffdaf23f7b8cecbff7"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_log.html#a541dea37b73e58ffdaf23f7b8cecbff7">_appendPrefix</a></td></tr>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_log.html#a541dea37b73e58ffdaf23f7b8cecbff7">_appendPrefix</a> = false</td></tr>
 <tr class="memdesc:a541dea37b73e58ffdaf23f7b8cecbff7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Should a domain or level prefix be appended to the current line. <br /></td></tr>
 <tr class="separator:a541dea37b73e58ffdaf23f7b8cecbff7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a46f596f098f4dbf0e20d20f6a6f9a219"><td class="memItemLeft" align="right" valign="top"><a id="a46f596f098f4dbf0e20d20f6a6f9a219"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_log.html#a46f596f098f4dbf0e20d20f6a6f9a219">_useColors</a></td></tr>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_log.html#a46f596f098f4dbf0e20d20f6a6f9a219">_useColors</a> = false</td></tr>
 <tr class="memdesc:a46f596f098f4dbf0e20d20f6a6f9a219"><td class="mdescLeft">&#160;</td><td class="mdescRight">Should color formatting be used. <br /></td></tr>
 <tr class="separator:a46f596f098f4dbf0e20d20f6a6f9a219"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -224,8 +235,8 @@ static <a class="el" href="class_log.html">Log</a> *&#160;</td><td class="memIte
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Provides logging utilities, either to the standard/error output or to a file, with multiple criticality levels. </p>
 </div><h2 class="groupheader">Member Enumeration Documentation</h2>
-<a id="a3718f3e276c3d3e23b58a3b8236d196e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3718f3e276c3d3e23b58a3b8236d196e">&#9670;&nbsp;</a></span>LogLevel</h2>
+<a id="ac5b9f0ae808a41980640e0bcbe49299c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac5b9f0ae808a41980640e0bcbe49299c">&#9670;&nbsp;</a></span>Level</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -234,19 +245,19 @@ static <a class="el" href="class_log.html">Log</a> *&#160;</td><td class="memIte
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">enum <a class="el" href="class_log.html#a3718f3e276c3d3e23b58a3b8236d196e">Log::LogLevel</a></td>
+          <td class="memname">enum <a class="el" href="class_log.html#ac5b9f0ae808a41980640e0bcbe49299c">Log::Level</a> : int</td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">strong</span><span class="mlabel">private</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p>Criticality level. </p>
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a3718f3e276c3d3e23b58a3b8236d196ea0763041e407c0324563ab6aff02b11ee"></a>VERBOSE&#160;</td><td class="fielddoc"><p>Will only be logged if verbose is enabled. </p>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ac5b9f0ae808a41980640e0bcbe49299caec1f06e9fb39c4ef0729b3c7c9c8e8cc"></a>VERBOSE&#160;</td><td class="fielddoc"><p>Will only be logged if verbose is enabled. </p>
 </td></tr>
 </table>
 
@@ -271,8 +282,8 @@ static <a class="el" href="class_log.html">Log</a> *&#160;</td><td class="memIte
 
 </div>
 </div>
-<a id="aafd58a7da390ab0a4de868d4218ff064"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aafd58a7da390ab0a4de868d4218ff064">&#9670;&nbsp;</a></span>Log() <span class="overload">[2/2]</span></h2>
+<a id="acb9520812f36aa5f6e59fba5fb6315de"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acb9520812f36aa5f6e59fba5fb6315de">&#9670;&nbsp;</a></span>Log() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -286,13 +297,13 @@ static <a class="el" href="class_log.html">Log</a> *&#160;</td><td class="memIte
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const bool&#160;</td>
+          <td class="paramtype">bool&#160;</td>
           <td class="paramname"><em>logToStdin</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const bool&#160;</td>
+          <td class="paramtype">bool&#160;</td>
           <td class="paramname"><em>verbose</em> = <code>false</code>&#160;</td>
         </tr>
         <tr>
@@ -453,8 +464,8 @@ template&lt;class T &gt; </div>
 
 </div>
 </div>
-<a id="a81c1dedc85f259177e340339890ed754"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a81c1dedc85f259177e340339890ed754">&#9670;&nbsp;</a></span>operator&lt;&lt;() <span class="overload">[2/4]</span></h2>
+<a id="a7d0f0ba6d34ac65965727388c656f6cf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7d0f0ba6d34ac65965727388c656f6cf">&#9670;&nbsp;</a></span>operator&lt;&lt;() <span class="overload">[2/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -462,7 +473,7 @@ template&lt;class T &gt; </div>
         <tr>
           <td class="memname"><a class="el" href="class_log.html">Log</a> &amp; Log::operator&lt;&lt; </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="class_log.html#a14613b2ffe22717db5bd56c68400f5b3">LogDomain</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="class_log.html#a2fa7f78a838cb410f0c28079d51e1fb7">Domain</a> &amp;&#160;</td>
           <td class="paramname"><em>domain</em></td><td>)</td>
           <td></td>
         </tr>
@@ -529,8 +540,8 @@ template&lt;class T &gt; </div>
 
 </div>
 </div>
-<a id="a6e3d0f517b567e68142f88cb45c5497c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6e3d0f517b567e68142f88cb45c5497c">&#9670;&nbsp;</a></span>set()</h2>
+<a id="aa905d506aa3399df8d3802dd6070f06e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa905d506aa3399df8d3802dd6070f06e">&#9670;&nbsp;</a></span>set()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -541,7 +552,7 @@ template&lt;class T &gt; </div>
         <tr>
           <td class="memname">void Log::set </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="class_log.html#a3718f3e276c3d3e23b58a3b8236d196e">LogLevel</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="class_log.html#ac5b9f0ae808a41980640e0bcbe49299c">Level</a>&#160;</td>
           <td class="paramname"><em>l</em></td><td>)</td>
           <td></td>
         </tr>
@@ -594,8 +605,8 @@ template&lt;class T &gt; </div>
 
 </div>
 </div>
-<a id="a53d96dc5b83f28f6cff273aefc2ab53b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a53d96dc5b83f28f6cff273aefc2ab53b">&#9670;&nbsp;</a></span>setDefaultVerbose()</h2>
+<a id="ad8dc64f02a30ea2d025363c3def554a3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad8dc64f02a30ea2d025363c3def554a3">&#9670;&nbsp;</a></span>setDefaultVerbose()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -606,7 +617,7 @@ template&lt;class T &gt; </div>
         <tr>
           <td class="memname">void Log::setDefaultVerbose </td>
           <td>(</td>
-          <td class="paramtype">const bool&#160;</td>
+          <td class="paramtype">bool&#160;</td>
           <td class="paramname"><em>verbose</em></td><td>)</td>
           <td></td>
         </tr>
@@ -626,8 +637,8 @@ template&lt;class T &gt; </div>
 
 </div>
 </div>
-<a id="a71b1d684da3c9cf41a864e6c7f796c8d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a71b1d684da3c9cf41a864e6c7f796c8d">&#9670;&nbsp;</a></span>setFile()</h2>
+<a id="a1938f424ee0545194ebca22fd12be197"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1938f424ee0545194ebca22fd12be197">&#9670;&nbsp;</a></span>setFile()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -644,7 +655,7 @@ template&lt;class T &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const bool&#160;</td>
+          <td class="paramtype">bool&#160;</td>
           <td class="paramname"><em>flushExisting</em> = <code>true</code>&#160;</td>
         </tr>
         <tr>
@@ -669,8 +680,8 @@ template&lt;class T &gt; </div>
 
 </div>
 </div>
-<a id="a2a372eb2c571e78625d74c24a5490f4d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2a372eb2c571e78625d74c24a5490f4d">&#9670;&nbsp;</a></span>setVerbose()</h2>
+<a id="a0ddfd82bb9f501688d493db7896fbd36"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0ddfd82bb9f501688d493db7896fbd36">&#9670;&nbsp;</a></span>setVerbose()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -678,7 +689,7 @@ template&lt;class T &gt; </div>
         <tr>
           <td class="memname">void Log::setVerbose </td>
           <td>(</td>
-          <td class="paramtype">const bool&#160;</td>
+          <td class="paramtype">bool&#160;</td>
           <td class="paramname"><em>verbose</em></td><td>)</td>
           <td></td>
         </tr>
@@ -746,8 +757,8 @@ template&lt;class T &gt; </div>
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>src/engine/helpers/<a class="el" href="_logger_8hpp_source.html">Logger.hpp</a></li>
-<li>src/engine/helpers/Logger.cpp</li>
+<li>src/engine/system/<a class="el" href="_logger_8hpp_source.html">Logger.hpp</a></li>
+<li>src/engine/system/Logger.cpp</li>
 </ul>
 </div><!-- contents -->
 <!-- HTML footer for doxygen 1.8.14-->

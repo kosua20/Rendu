@@ -95,7 +95,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="class_codable-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">Codable Class Reference<div class="ingroups"><a class="el" href="group___engine.html">Engine</a></div></div>  </div>
+<div class="title">Codable Class Reference<div class="ingroups"><a class="el" href="group___system.html">System</a></div></div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -114,8 +114,8 @@ Static Public Member Functions</h2></td></tr>
 <tr class="separator:a104ccb16d30802fc69b810db7d0afcee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad4e2612d16d7ad3b7a9ee7f1a3700749"><td class="memItemLeft" align="right" valign="top">static glm::mat4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_codable.html#ad4e2612d16d7ad3b7a9ee7f1a3700749">decodeTransformation</a> (const std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt; &amp;params)</td></tr>
 <tr class="separator:ad4e2612d16d7ad3b7a9ee7f1a3700749"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac97de06117a074bb34f4d0829194a57d"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="struct_texture_infos.html">TextureInfos</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_codable.html#ac97de06117a074bb34f4d0829194a57d">decodeTexture</a> (const <a class="el" href="struct_key_values.html">KeyValues</a> &amp;param, const Storage mode)</td></tr>
-<tr class="separator:ac97de06117a074bb34f4d0829194a57d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af78f3260209895d04b3dfd17df61e806"><td class="memItemLeft" align="right" valign="top">static std::pair&lt; std::string, <a class="el" href="class_descriptor.html">Descriptor</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_codable.html#af78f3260209895d04b3dfd17df61e806">decodeTexture</a> (const <a class="el" href="struct_key_values.html">KeyValues</a> &amp;param)</td></tr>
+<tr class="separator:af78f3260209895d04b3dfd17df61e806"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5f8888f631a00736b0e3659f09d7b1e6"><td class="memItemLeft" align="right" valign="top">static std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_codable.html#a5f8888f631a00736b0e3659f09d7b1e6">parse</a> (const std::string &amp;codableFile)</td></tr>
 <tr class="separator:a5f8888f631a00736b0e3659f09d7b1e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -166,8 +166,8 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ac97de06117a074bb34f4d0829194a57d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac97de06117a074bb34f4d0829194a57d">&#9670;&nbsp;</a></span>decodeTexture()</h2>
+<a id="af78f3260209895d04b3dfd17df61e806"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af78f3260209895d04b3dfd17df61e806">&#9670;&nbsp;</a></span>decodeTexture()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -176,21 +176,11 @@ Static Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="struct_texture_infos.html">TextureInfos</a> * Codable::decodeTexture </td>
+          <td class="memname">std::pair&lt; std::string, <a class="el" href="class_descriptor.html">Descriptor</a> &gt; Codable::decodeTexture </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="struct_key_values.html">KeyValues</a> &amp;&#160;</td>
-          <td class="paramname"><em>param</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramname"><em>param</em></td><td>)</td>
           <td></td>
-          <td class="paramtype">const Storage&#160;</td>
-          <td class="paramname"><em>mode</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -203,12 +193,10 @@ Static Public Member Functions</h2></td></tr>
 </pre><p> (where texturetype can be one of 'rgb', 'srgb', 'rgb32', 'rgbcube', 'srgbcube', 'rgb32cube' depending on the desired format). </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">param</td><td>the parameters tuple </td></tr>
-    <tr><td class="paramname">mode</td><td>the storage mode (CPU, GPU, both) </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>a pointer to the allocated texture infos, or null/ </dd></dl>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000002">Todo:</a></b></dt><dd>We could extract the interaction with the <a class="el" href="class_resources.html" title="The Resources manager is responsible for all resources loading and setup.">Resources</a> manager and only output the proper name/descriptor/type. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>the name of the texture and its descriptor. </dd></dl>
 
 </div>
 </div>
@@ -375,8 +363,8 @@ scaling: scale
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>src/engine/<a class="el" href="_codable_8hpp_source.html">Codable.hpp</a></li>
-<li>src/engine/Codable.cpp</li>
+<li>src/engine/system/<a class="el" href="_codable_8hpp_source.html">Codable.hpp</a></li>
+<li>src/engine/system/Codable.cpp</li>
 </ul>
 </div><!-- contents -->
 <!-- HTML footer for doxygen 1.8.14-->

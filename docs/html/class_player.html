@@ -123,19 +123,15 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a3efb40aeae7ef6254aa428620f7c7b49"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a60160d4fc58ffe01c2462b26cc6affb3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_player.html#a60160d4fc58ffe01c2462b26cc6affb3">updateModels</a> ()</td></tr>
 <tr class="separator:a60160d4fc58ffe01c2462b26cc6affb3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a62f52f2ece02035fd6dabf5f6b395dbf"><td class="memItemLeft" align="right" valign="top"><a id="a62f52f2ece02035fd6dabf5f6b395dbf"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_player.html#a62f52f2ece02035fd6dabf5f6b395dbf">alive</a> ()</td></tr>
-<tr class="memdesc:a62f52f2ece02035fd6dabf5f6b395dbf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Status of the player. <br /></td></tr>
-<tr class="separator:a62f52f2ece02035fd6dabf5f6b395dbf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0b5af9f507f7901efcc8ab8ee85e02a5"><td class="memItemLeft" align="right" valign="top"><a id="a0b5af9f507f7901efcc8ab8ee85e02a5"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_player.html#a0b5af9f507f7901efcc8ab8ee85e02a5">score</a> ()</td></tr>
-<tr class="memdesc:a0b5af9f507f7901efcc8ab8ee85e02a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Score of the player. <br /></td></tr>
-<tr class="separator:a0b5af9f507f7901efcc8ab8ee85e02a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a959a5ee558d4dd9e17ddd40b75cfe32d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_player.html#a959a5ee558d4dd9e17ddd40b75cfe32d">alive</a> () const</td></tr>
+<tr class="separator:a959a5ee558d4dd9e17ddd40b75cfe32d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a622590d639a6c5c1a984e3d371981d35"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_player.html#a622590d639a6c5c1a984e3d371981d35">score</a> () const</td></tr>
+<tr class="separator:a622590d639a6c5c1a984e3d371981d35"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:a33fd7a8a178ce0c0349020c360d61e6a"><td class="memItemLeft" align="right" valign="top"><a id="a33fd7a8a178ce0c0349020c360d61e6a"></a>
-glm::mat4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_player.html#a33fd7a8a178ce0c0349020c360d61e6a">modelHead</a></td></tr>
+glm::mat4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_player.html#a33fd7a8a178ce0c0349020c360d61e6a">modelHead</a> = glm::mat4(1.0f)</td></tr>
 <tr class="memdesc:a33fd7a8a178ce0c0349020c360d61e6a"><td class="mdescLeft">&#160;</td><td class="mdescRight">The snake head model matrix. <br /></td></tr>
 <tr class="separator:a33fd7a8a178ce0c0349020c360d61e6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae7729f6450710b1d7b2e5296e632e33b"><td class="memItemLeft" align="right" valign="top"><a id="ae7729f6450710b1d7b2e5296e632e33b"></a>
@@ -292,6 +288,32 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a959a5ee558d4dd9e17ddd40b75cfe32d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a959a5ee558d4dd9e17ddd40b75cfe32d">&#9670;&nbsp;</a></span>alive()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Player::alive </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Status of the player. </p><dl class="section return"><dt>Returns</dt><dd>true if the player is alive. </dd></dl>
+
+</div>
+</div>
 <a id="a3efb40aeae7ef6254aa428620f7c7b49"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a3efb40aeae7ef6254aa428620f7c7b49">&#9670;&nbsp;</a></span>physics()</h2>
 
@@ -325,6 +347,32 @@ const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>a boolean denoting if any item has been eaten. </dd></dl>
+
+</div>
+</div>
+<a id="a622590d639a6c5c1a984e3d371981d35"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a622590d639a6c5c1a984e3d371981d35">&#9670;&nbsp;</a></span>score()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int Player::score </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Score of the player. </p><dl class="section return"><dt>Returns</dt><dd>the score. </dd></dl>
 
 </div>
 </div>

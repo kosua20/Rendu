@@ -95,7 +95,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="#pro-attribs">Protected Attributes</a> &#124;
-<a href="#pri-methods">Private Member Functions</a> &#124;
 <a href="class_renderer-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">Renderer Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span><div class="ingroups"><a class="el" href="group___engine.html">Engine</a></div></div>  </div>
@@ -121,10 +120,16 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a609184e9e7ed6bf88448458ffc229981"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad13b36196c806bd3e227abbfc58c3e62"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_renderer.html#ad13b36196c806bd3e227abbfc58c3e62">resize</a> (unsigned int width, unsigned int height)=0</td></tr>
 <tr class="separator:ad13b36196c806bd3e227abbfc58c3e62"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afeee408862d5bd6255a6882d47e6d5cd"><td class="memItemLeft" align="right" valign="top"><a id="afeee408862d5bd6255a6882d47e6d5cd"></a>
-virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_renderer.html#afeee408862d5bd6255a6882d47e6d5cd">~Renderer</a> ()</td></tr>
-<tr class="memdesc:afeee408862d5bd6255a6882d47e6d5cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor. <br /></td></tr>
-<tr class="separator:afeee408862d5bd6255a6882d47e6d5cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:add2012f269f157754034e7b5475a8927"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_renderer.html#add2012f269f157754034e7b5475a8927">~Renderer</a> ()=default</td></tr>
+<tr class="separator:add2012f269f157754034e7b5475a8927"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8c6e15f666cb188a936004add75e6c6b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_renderer.html#a8c6e15f666cb188a936004add75e6c6b">Renderer</a> (const <a class="el" href="class_renderer.html">Renderer</a> &amp;)=delete</td></tr>
+<tr class="separator:a8c6e15f666cb188a936004add75e6c6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad3a67410934db419e0f473f1a26c83ee"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_renderer.html">Renderer</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_renderer.html#ad3a67410934db419e0f473f1a26c83ee">operator=</a> (const <a class="el" href="class_renderer.html">Renderer</a> &amp;)=delete</td></tr>
+<tr class="separator:ad3a67410934db419e0f473f1a26c83ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa43ae6237b8cbf52d217d37f9986237f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_renderer.html#aa43ae6237b8cbf52d217d37f9986237f">Renderer</a> (<a class="el" href="class_renderer.html">Renderer</a> &amp;&amp;)=delete</td></tr>
+<tr class="separator:aa43ae6237b8cbf52d217d37f9986237f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acb6cae4362aa720ddd577f02918f9355"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_renderer.html">Renderer</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_renderer.html#acb6cae4362aa720ddd577f02918f9355">operator=</a> (<a class="el" href="class_renderer.html">Renderer</a> &amp;&amp;)=delete</td></tr>
+<tr class="separator:acb6cae4362aa720ddd577f02918f9355"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
@@ -138,14 +143,9 @@ Protected Attributes</h2></td></tr>
 <tr class="memdesc:ab81be582777b82fe9bfe5711f6d7d81b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The current configuration. <br /></td></tr>
 <tr class="separator:ab81be582777b82fe9bfe5711f6d7d81b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac7f0e2e982c72a5b8695db2db6c17dc1"><td class="memItemLeft" align="right" valign="top"><a id="ac7f0e2e982c72a5b8695db2db6c17dc1"></a>
-glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_renderer.html#ac7f0e2e982c72a5b8695db2db6c17dc1">_renderResolution</a></td></tr>
+glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_renderer.html#ac7f0e2e982c72a5b8695db2db6c17dc1">_renderResolution</a> = glm::vec2(0.0f)</td></tr>
 <tr class="memdesc:ac7f0e2e982c72a5b8695db2db6c17dc1"><td class="mdescLeft">&#160;</td><td class="mdescRight">The internal rendering resolution. <br /></td></tr>
 <tr class="separator:ac7f0e2e982c72a5b8695db2db6c17dc1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
-Private Member Functions</h2></td></tr>
-<tr class="memitem:a28e429ff31d63ab2c18baea18bd809f7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_renderer.html#a28e429ff31d63ab2c18baea18bd809f7">defaultGLSetup</a> ()</td></tr>
-<tr class="separator:a28e429ff31d63ab2c18baea18bd809f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Base structure of a renderer. </p>
@@ -153,10 +153,13 @@ Private Member Functions</h2></td></tr>
 <p>Inherited by <a class="el" href="class_b_v_h_renderer.html">BVHRenderer</a>, <a class="el" href="class_deferred_renderer.html">DeferredRenderer</a>, <a class="el" href="class_filtering_renderer.html">FilteringRenderer</a>, <a class="el" href="class_game_menu_renderer.html">GameMenuRenderer</a>, and <a class="el" href="class_game_renderer.html">GameRenderer</a>.</p>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a8cbc69d15bba1744cd26ece5e2f34ba2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8cbc69d15bba1744cd26ece5e2f34ba2">&#9670;&nbsp;</a></span>Renderer()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a8cbc69d15bba1744cd26ece5e2f34ba2">&#9670;&nbsp;</a></span>Renderer() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">Renderer::Renderer </td>
@@ -166,6 +169,11 @@ Private Member Functions</h2></td></tr>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 <p>Constructor. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -173,6 +181,86 @@ Private Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="add2012f269f157754034e7b5475a8927"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#add2012f269f157754034e7b5475a8927">&#9670;&nbsp;</a></span>~Renderer()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual Renderer::~Renderer </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span><span class="mlabel">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Destructor </p>
+
+</div>
+</div>
+<a id="a8c6e15f666cb188a936004add75e6c6b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8c6e15f666cb188a936004add75e6c6b">&#9670;&nbsp;</a></span>Renderer() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Renderer::Renderer </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="class_renderer.html">Renderer</a> &amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">delete</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Copy constructor. </p>
+
+</div>
+</div>
+<a id="aa43ae6237b8cbf52d217d37f9986237f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa43ae6237b8cbf52d217d37f9986237f">&#9670;&nbsp;</a></span>Renderer() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Renderer::Renderer </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_renderer.html">Renderer</a> &amp;&amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">delete</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Move constructor. </p>
 
 </div>
 </div>
@@ -201,33 +289,7 @@ Private Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>Clean internal resources. </p>
 
-<p>Reimplemented in <a class="el" href="class_deferred_renderer.html#a09d55a164f4fc4e38f39a7d6f187ed28">DeferredRenderer</a>, <a class="el" href="class_filtering_renderer.html#a47a7fb80d44530c6d13f839b698594f1">FilteringRenderer</a>, <a class="el" href="class_b_v_h_renderer.html#a730225822f22ee130959a22c58183213">BVHRenderer</a>, <a class="el" href="class_game_menu_renderer.html#a6e3dce042b5da9df3293e29af9dc1afd">GameMenuRenderer</a>, and <a class="el" href="class_game_renderer.html#ab70c3c111b052b0142598b23e3c306cd">GameRenderer</a>.</p>
-
-</div>
-</div>
-<a id="a28e429ff31d63ab2c18baea18bd809f7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a28e429ff31d63ab2c18baea18bd809f7">&#9670;&nbsp;</a></span>defaultGLSetup()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Renderer::defaultGLSetup </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Default OpenGL states setup. </p>
+<p>Reimplemented in <a class="el" href="class_deferred_renderer.html#acd37a714f41e2918a1af765bb32ab5bb">DeferredRenderer</a>, <a class="el" href="class_filtering_renderer.html#a4190b371e472667ac98c164990030b8d">FilteringRenderer</a>, <a class="el" href="class_b_v_h_renderer.html#aad30525ee58321b5c18a4586beed3b63">BVHRenderer</a>, and <a class="el" href="class_game_renderer.html#a86e7880a11bc4ea68e6ffd8d4968d4ea">GameRenderer</a>.</p>
 
 </div>
 </div>
@@ -255,7 +317,61 @@ Private Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>Draw the scene and effects </p>
 
-<p>Implemented in <a class="el" href="class_deferred_renderer.html#a4cfba6a580916eb50f45ddcad15e9c30">DeferredRenderer</a>, <a class="el" href="class_game_renderer.html#a15af11c38030b99bcba8b3fbd5e7f4e6">GameRenderer</a>, <a class="el" href="class_filtering_renderer.html#a9b288d57fe7566e49b33839426c0707a">FilteringRenderer</a>, <a class="el" href="class_b_v_h_renderer.html#aafadb6448b8035ffbbf534334e8bc1eb">BVHRenderer</a>, and <a class="el" href="class_game_menu_renderer.html#adbf05148cdee65376f4ebe8b0907b6e1">GameMenuRenderer</a>.</p>
+<p>Implemented in <a class="el" href="class_deferred_renderer.html#a86812f468cc3436c804b03d2d844e1f5">DeferredRenderer</a>, <a class="el" href="class_filtering_renderer.html#a738ab9921d7304a5de6658e7786d65bb">FilteringRenderer</a>, <a class="el" href="class_game_renderer.html#affaf0089d581d762d7e59b49f7be37b7">GameRenderer</a>, <a class="el" href="class_b_v_h_renderer.html#a1fe468c298af398c52a7714bafd1a320">BVHRenderer</a>, and <a class="el" href="class_game_menu_renderer.html#af640297f9e52d755bee437717e5ccb09">GameMenuRenderer</a>.</p>
+
+</div>
+</div>
+<a id="ad3a67410934db419e0f473f1a26c83ee"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad3a67410934db419e0f473f1a26c83ee">&#9670;&nbsp;</a></span>operator=() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_renderer.html">Renderer</a>&amp; Renderer::operator= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="class_renderer.html">Renderer</a> &amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">delete</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Copy assignment. </p><dl class="section return"><dt>Returns</dt><dd>a reference to the object assigned to </dd></dl>
+
+</div>
+</div>
+<a id="acb6cae4362aa720ddd577f02918f9355"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acb6cae4362aa720ddd577f02918f9355">&#9670;&nbsp;</a></span>operator=() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_renderer.html">Renderer</a>&amp; Renderer::operator= </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_renderer.html">Renderer</a> &amp;&amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">delete</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Move assignment. </p><dl class="section return"><dt>Returns</dt><dd>a reference to the object assigned to </dd></dl>
 
 </div>
 </div>
@@ -301,7 +417,7 @@ Private Member Functions</h2></td></tr>
 </dl>
 <dl class="section note"><dt>Note</dt><dd>This function can be called multiple times per frame. </dd></dl>
 
-<p>Implemented in <a class="el" href="class_deferred_renderer.html#a66c04e5128c0c694377e1ba43ea805c7">DeferredRenderer</a>, <a class="el" href="class_filtering_renderer.html#a651aca494aec0ef9bfd59f8c9789b210">FilteringRenderer</a>, <a class="el" href="class_game_renderer.html#a3f733f444d452e8da88a590e50e05aeb">GameRenderer</a>, <a class="el" href="class_b_v_h_renderer.html#a03f4dcbfca74b012d6548156cc02cfad">BVHRenderer</a>, and <a class="el" href="class_game_menu_renderer.html#a7b019d54090e5a0298bd2f5aa3c90c9e">GameMenuRenderer</a>.</p>
+<p>Implemented in <a class="el" href="class_deferred_renderer.html#adae3b19cdb68ab24a8d4eeb2a386e077">DeferredRenderer</a>, <a class="el" href="class_filtering_renderer.html#a8632061ddcce95290a4f6f73e12f4c2f">FilteringRenderer</a>, <a class="el" href="class_b_v_h_renderer.html#a8dacc309ed33e6a5a9e1f8abcc0de7a3">BVHRenderer</a>, <a class="el" href="class_game_renderer.html#a23377650c1a31218135a26630ab00a71">GameRenderer</a>, and <a class="el" href="class_game_menu_renderer.html#a10fd3701667115e9be4e20ef404e3214">GameMenuRenderer</a>.</p>
 
 </div>
 </div>
@@ -346,7 +462,7 @@ Private Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Implemented in <a class="el" href="class_deferred_renderer.html#a6e32140f32121a5292990ce287af1210">DeferredRenderer</a>, <a class="el" href="class_filtering_renderer.html#a1631486584d3c0286fd2fc62c323ed14">FilteringRenderer</a>, <a class="el" href="class_b_v_h_renderer.html#ab94059899d898a0b6cf25f32e744237b">BVHRenderer</a>, <a class="el" href="class_game_menu_renderer.html#aa610cdcaf8028d61bf83b0eee1f18e29">GameMenuRenderer</a>, and <a class="el" href="class_game_renderer.html#a4f1cac4671ed28566cfd697a8b91e217">GameRenderer</a>.</p>
+<p>Implemented in <a class="el" href="class_deferred_renderer.html#a3f027feece0a1e14e4f995a1a450dd16">DeferredRenderer</a>, <a class="el" href="class_filtering_renderer.html#ac7ef0ecdb5db108e0cdae5c1d76b8c2b">FilteringRenderer</a>, <a class="el" href="class_b_v_h_renderer.html#a9c403344c512c9411ee1ed4ffc069d7b">BVHRenderer</a>, <a class="el" href="class_game_menu_renderer.html#a9f524f0197b417740cfe6539f66445dc">GameMenuRenderer</a>, and <a class="el" href="class_game_renderer.html#a46ff565c2e188426cd9ad9f529f4a080">GameRenderer</a>.</p>
 
 </div>
 </div>
@@ -374,7 +490,7 @@ Private Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>Perform once-per-frame update (buttons, GUI,...) </p>
 
-<p>Reimplemented in <a class="el" href="class_deferred_renderer.html#a81fc890160c469eddd86348c1bc48b8d">DeferredRenderer</a>, <a class="el" href="class_filtering_renderer.html#adc64bd297f64af6314dd36883d1e0419">FilteringRenderer</a>, <a class="el" href="class_b_v_h_renderer.html#acafc0d205449d0e4ded108c4c06f50ab">BVHRenderer</a>, <a class="el" href="class_game_menu_renderer.html#abdb9f8846d2cc0013eb88f6c7cfd80a8">GameMenuRenderer</a>, and <a class="el" href="class_game_renderer.html#ac293c5d9d20c7ea26281a05d06051c8b">GameRenderer</a>.</p>
+<p>Reimplemented in <a class="el" href="class_deferred_renderer.html#aa634a4c64513ffb2ae36beab45b1d821">DeferredRenderer</a>, <a class="el" href="class_filtering_renderer.html#a642d6f6604ae2f7d75f00e4306ec5a14">FilteringRenderer</a>, and <a class="el" href="class_b_v_h_renderer.html#ae539481dfd45716ed92f8e9e58658bd4">BVHRenderer</a>.</p>
 
 </div>
 </div>
