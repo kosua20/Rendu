@@ -129,7 +129,6 @@ public:
 	/**
 	 Query the current window size.
 	 \return the size of the window, in pixels
-	 \todo Probably return an ivec2.
 	 */
 	glm::ivec2 size() const { return glm::ivec2(_width, _height); }
 

@@ -63,8 +63,14 @@ protected:
 		std::vector<std::string> values; ///< Zero, one or multiple argument parameters.
 	};
 
+	/** List of raw arguments.
+	 \return the arguments list
+	 */
 	const std::vector<KeyValues> & arguments() const;
 
+	/** Access the arguments help infos.
+	 \return a reference to the info list
+	 */
 	std::vector<ArgumentInfo> & infos();
 
 private:
