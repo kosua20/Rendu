@@ -43,6 +43,7 @@ inline bool operator&(Storage t0, Storage t1) {
  */
 class Resources {
 
+	/// Image class.
 	friend class Image;
 
 public:
@@ -63,17 +64,21 @@ public:
 	/** Clean all loaded resources, both CPU and GPU side. */
 	void clean();
 
-	/** Copy assignment operator (disabled). */
+	/** Copy assignment operator (disabled).
+	 \return a reference to the object assigned to
+	 */
 	Resources & operator=(const Resources &) = delete;
 
 	/** Copy constructor (disabled). */
 	Resources(const Resources &) = delete;
 
-	/** Move assignment operator (disabled). */
-	Resources & operator=(const Resources &&) = delete;
+	/** Move assignment operator (disabled).
+	 \return a reference to the object assigned to
+	 */
+	Resources & operator=(Resources &&) = delete;
 
 	/** Move constructor (disabled). */
-	Resources(const Resources &&) = delete;
+	Resources(Resources &&) = delete;
 
 private:
 	/** Constructor. 
@@ -147,10 +152,10 @@ public:
 	 */
 	Program * getProgram(const std::string & name, const std::string & vertexName = "", const std::string & fragmentName= "", const std::string & geometryName = "");
 
-	/** Get an OpenGL program resource for 2D screen processing. It will use GLSL::Vert::Passthrough as a vertex shader.
+	/** Get an OpenGL program resource for 2D screen processing. It will use GPU::Vert::Passthrough as a vertex shader.
 	 \param name the name of the fragment shader
 	 \return the program informations
-	 \see GLSL::Vert::Passthrough
+	 \see GPU::Vert::Passthrough
 	 */
 	Program * getProgram2D(const std::string & name);
 

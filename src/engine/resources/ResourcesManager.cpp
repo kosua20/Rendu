@@ -217,17 +217,15 @@ const Mesh * Resources::getMesh(const std::string & name, Storage mode) {
 		Log::Error() << Log::Resources << "Unable to load mesh named " << name << "." << std::endl;
 		return nullptr;
 	}
-
-	_meshes[name] = Mesh();
-	Mesh & mesh   = _meshes[name];
-
 	// Load geometry. For now we only support OBJs.
 	std::stringstream meshStream(meshText);
-	Mesh::loadObj(meshStream, mesh, Mesh::Load::Indexed);
+	_meshes.emplace(std::make_pair(name, Mesh(meshStream, Mesh::Load::Indexed)));
+	
+	auto & mesh = _meshes[name];
 	// If uv or positions are missing, tangent/binormals won't be computed.
-	Mesh::computeTangentsAndBinormals(mesh);
+	mesh.computeTangentsAndBinormals();
 	// Compute bounding box.
-	mesh.bbox = Mesh::computeBoundingBox(mesh);
+	mesh.computeBoundingBox();
 
 	if(mode & Storage::GPU) {
 		// Setup GL buffers and attributes.
@@ -342,7 +340,6 @@ const Texture * Resources::getTexture(const std::string & name, const Descriptor
 	const unsigned int channels = descriptor.getChannelsCount();
 	// Cubemaps don't need to be flipped.
 	const bool flip	= !(shape & TextureShape::Cube);
-	_textures[keyName] = Texture();
 	Texture & texture  = _textures[keyName];
 
 	// Load all images.
@@ -351,7 +348,7 @@ const Texture * Resources::getTexture(const std::string & name, const Descriptor
 		for(const auto & filePath : levelPaths) {
 			texture.images.emplace_back();
 			Image & image = texture.images.back();
-			const int ret = Image::loadImage(filePath, channels, flip, false, image);
+			const int ret = image.load(filePath, channels, flip, false);
 			if(ret != 0) {
 				Log::Error() << Log::Resources << "Unable to load the texture at path " << filePath << "." << std::endl;
 			}
@@ -381,7 +378,7 @@ const Texture * Resources::getTexture(const std::string & name, const Descriptor
 Program * Resources::getProgram(const std::string & name, const std::string & vertexName, const std::string & fragmentName, const std::string & geometryName) {
 	
 	if(_programs.count(name) > 0) {
-		return &_programs[name];
+		return &_programs.at(name);
 	}
 	
 	const std::string vName = vertexName.empty() ? name : vertexName;
@@ -389,11 +386,9 @@ Program * Resources::getProgram(const std::string & name, const std::string & ve
 	// For the geometry name, we don't replace by the default name.
 	const std::string gName = geometryName;
 	
-	_programs.emplace(std::piecewise_construct,
-		std::forward_as_tuple(name),
-		std::forward_as_tuple(vName, fName, gName));
+	_programs.emplace(std::make_pair(name, Program(vName, fName, gName)));
 
-	return &_programs[name];
+	return &_programs.at(name);
 }
 
 Program * Resources::getProgram2D(const std::string & name) {
@@ -409,22 +404,18 @@ void Resources::reload() {
 
 Font * Resources::getFont(const std::string & name) {
 	if(_fonts.count(name) > 0) {
-		return &_fonts[name];
+		return &_fonts.at(name);
 	}
-
-	Font font;
+	
 	// Load the font descriptor and associated atlas.
 	const std::string fontInfosText = getString(name + ".fnt");
-	if(!fontInfosText.empty()) {
-		std::stringstream fontStream(fontInfosText);
-		Font::loadFont(fontStream, font);
-	} else {
+	if(fontInfosText.empty()) {
 		Log::Error() << Log::Resources << "Unable to load font named " << name << "." << std::endl;
 		return nullptr;
 	}
-
-	_fonts[name] = font;
-	return &_fonts[name];
+	std::stringstream fontStream(fontInfosText);
+	_fonts.emplace(std::make_pair(name, Font(fontStream)));
+	return &_fonts.at(name);
 }
 
 void Resources::getFiles(const std::string & extension, std::map<std::string, std::string> & files) const {
