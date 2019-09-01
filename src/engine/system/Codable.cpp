@@ -71,7 +71,7 @@ glm::mat4 Codable::decodeTransformation(const std::vector<KeyValues> & params) {
 	return translationMat * rotationMat * scalingMat;
 }
 
-const Texture * Codable::decodeTexture(const KeyValues & param, Storage mode) {
+std::pair<std::string, Descriptor> Codable::decodeTexture(const KeyValues & param) {
 	// Subest of descriptors supported by the scene serialization model.
 	const std::map<std::string, Descriptor> descriptors = {
 		{"srgb", {Layout::SRGB8_ALPHA8, Filter::LINEAR_LINEAR, Wrap::REPEAT}},
@@ -84,11 +84,11 @@ const Texture * Codable::decodeTexture(const KeyValues & param, Storage mode) {
 	};
 	// Check if the required format exists.
 	if(descriptors.count(param.key) == 0 || param.values.empty()) {
-		return nullptr;
+		return {"", Descriptor()};
 	}
 	// This is indeed a texture.
 	const std::string textureString = param.values[0];
-	return Resources::manager().getTexture(textureString, descriptors.at(param.key), mode);
+	return {textureString, descriptors.at(param.key)};
 }
 
 std::vector<KeyValues> Codable::parse(const std::string & codableFile) {

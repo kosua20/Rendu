@@ -1,7 +1,7 @@
 #pragma once
 
-#include "resources/ResourcesManager.hpp"
 #include "system/Config.hpp"
+#include "graphics/GPUObjects.hpp"
 #include "Common.hpp"
 
 /** \brief Provides helpers for serialization/deserialization of basic types.
@@ -50,11 +50,9 @@ public:
 	 \endverbatim
 	 (where texturetype can be one of 'rgb', 'srgb', 'rgb32', 'rgbcube', 'srgbcube', 'rgb32cube' depending on the desired format).
 	 \param param the parameters tuple
-	 \param mode the storage mode (CPU, GPU, both)
-	 \return a pointer to the allocated texture infos, or null/
-	 \todo We could extract the interaction with the Resources manager and only output the proper name/descriptor/type.
+	 \return the name of the texture and its descriptor.
 	 */
-	static const Texture * decodeTexture(const KeyValues & param, Storage mode);
+	static std::pair<std::string, Descriptor> decodeTexture(const KeyValues & param);
 
 	/** Split a Codable-compatible text file in a hierarchical list of (key,values) tuples, getting rid of extraneous spaces and punctuations. The following rules are applied:
 	 - elements beginning with a '*' denote root-level objects.

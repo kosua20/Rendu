@@ -92,7 +92,8 @@ void Scene::loadBackground(const KeyValues & params, Storage mode) {
 		} else if(param.key == "image" && !param.elements.empty()) {
 			backgroundMode = Background::IMAGE;
 			// Load image described as sub-element.
-			const Texture * tex = Codable::decodeTexture(param.elements[0], mode);
+			const auto texInfos = Codable::decodeTexture(param.elements[0]);
+			const Texture * tex = Resources::manager().getTexture(texInfos.first, texInfos.second, mode);
 			background->addTexture(tex);
 
 		} else if(param.key == "cube" && !param.elements.empty()) {
@@ -101,7 +102,8 @@ void Scene::loadBackground(const KeyValues & params, Storage mode) {
 			background = std::unique_ptr<Object>(new Object(Object::Type::Common, Resources::manager().getMesh("skybox", mode), false));
 			background->decode(params, mode);
 			// Load cubemap described as subelement.
-			const Texture * tex = Codable::decodeTexture(param.elements[0], mode);
+			const auto texInfos = Codable::decodeTexture(param.elements[0]);
+			const Texture * tex = Resources::manager().getTexture(texInfos.first, texInfos.second, mode);
 			background->addTexture(tex);
 
 		} else if(param.key == "sun") {
@@ -134,7 +136,8 @@ void Scene::loadScene(const KeyValues & params, Storage mode) {
 
 		} else if(param.key == "probe" && !param.elements.empty()) {
 			// Load cubemap described as sub-element.
-			backgroundReflection = Codable::decodeTexture(param.elements[0], mode);
+			const auto texInfos = Codable::decodeTexture(param.elements[0]);
+			backgroundReflection = Resources::manager().getTexture(texInfos.first, texInfos.second, mode);
 		}
 	}
 	// Update matrix, there is at most one transformation in the scene object.
