@@ -212,7 +212,23 @@ public:
 	GLenum type;				 ///< Data type.
 
 	GLuint id = 0; ///< The OpenGL texture ID.
-
+	
+	/** Copy assignment operator (disabled).
+	 \return a reference to the object assigned to
+	 */
+	GPUTexture & operator=(const GPUTexture &) = delete;
+	
+	/** Copy constructor (disabled). */
+	GPUTexture(const GPUTexture &) = delete;
+	
+	/** Move assignment operator .
+	 \return a reference to the object assigned to
+	 */
+	GPUTexture & operator=(GPUTexture &&) = delete;
+	
+	/** Move constructor. */
+	GPUTexture(GPUTexture &&) = delete;
+	
 private:
 	Descriptor _descriptor; ///< Layout used.
 };
@@ -230,4 +246,23 @@ public:
 
 	/** Clean internal GPU buffers. */
 	void clean();
+	
+	/** Constructor. */
+	GPUMesh() = default;
+	
+	/** Copy assignment operator (disabled).
+	 \return a reference to the object assigned to
+	 */
+	GPUMesh & operator=(const GPUMesh &) = delete;
+	
+	/** Copy constructor (disabled). */
+	GPUMesh(const GPUMesh &) = delete;
+	
+	/** Move assignment operator .
+	 \return a reference to the object assigned to
+	 */
+	GPUMesh & operator=(GPUMesh &&) = delete;
+	
+	/** Move constructor. */
+	GPUMesh(GPUMesh &&) = delete;
 };

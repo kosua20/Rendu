@@ -2,10 +2,6 @@
 #include "graphics/GLUtilities.hpp"
 #include "resources/ResourcesManager.hpp"
 
-Program::Program() {
-	_id = 0;
-	_uniforms.clear();
-}
 
 Program::Program(const std::string & vertexName, const std::string & fragmentName, const std::string & geometryName) :
 	_vertexName(vertexName), _fragmentName(fragmentName), _geometryName(geometryName) {

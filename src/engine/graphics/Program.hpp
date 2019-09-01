@@ -11,8 +11,6 @@
  */
 class Program {
 public:
-	/** Default constructor */
-	Program();
 
 	/**
 	 Load, compile and link shaders into an OpenGL program.
@@ -109,6 +107,22 @@ public:
 	 */
 	void uniform(const std::string & name, const glm::mat4 & t) const;
 
+	/** Copy assignment operator (disabled).
+	 \return a reference to the object assigned to
+	 */
+	Program & operator=(const Program &) = delete;
+	
+	/** Copy constructor (disabled). */
+	Program(const Program &) = delete;
+	
+	/** Move assignment operator.
+	 \return a reference to the object assigned to
+	 */
+	Program & operator=(Program &&) = default;
+	
+	/** Move constructor. */
+	Program(Program &&) = default;
+	
 private:
 	GLuint _id;								 ///< The OpenGL program ID.
 	std::string _vertexName;				 ///< The vertex shader filename

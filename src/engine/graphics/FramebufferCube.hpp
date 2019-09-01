@@ -6,7 +6,7 @@
 
 /**
  \brief Represent a cubemap rendering target, of any size, format and type, backed by an OpenGL framebuffer composed of six layers.
- \see GLSL::Vert::Object_layer, GLSL::Geom::Object_layer
+ \see GPU::Vert::Object_layer, GPU::Geom::Object_layer
  \ingroup Graphics
  */
 class FramebufferCube {
@@ -65,6 +65,22 @@ public:
 	 */
 	unsigned int side() const { return _side; }
 
+	/** Copy assignment operator (disabled).
+	 \return a reference to the object assigned to
+	 */
+	FramebufferCube & operator=(const FramebufferCube &) = delete;
+	
+	/** Copy constructor (disabled). */
+	FramebufferCube(const FramebufferCube &) = delete;
+	
+	/** Move assignment operator (disabled).
+	 \return a reference to the object assigned to
+	 */
+	FramebufferCube & operator=(FramebufferCube &&) = delete;
+	
+	/** Move constructor (disabled). */
+	FramebufferCube(FramebufferCube &&) = delete;
+	
 private:
 	unsigned int _side; ///< The size of each cubemap face sides.
 

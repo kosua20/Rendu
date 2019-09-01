@@ -116,7 +116,23 @@ public:
 	 \note Can be used in conjonction with saveFramebuffer() to save the content of the window.
 	 */
 	static const Framebuffer & backbuffer();
-
+	
+	/** Copy assignment operator (disabled).
+	 \return a reference to the object assigned to
+	 */
+	Framebuffer & operator=(const Framebuffer &) = delete;
+	
+	/** Copy constructor (disabled). */
+	Framebuffer(const Framebuffer &) = delete;
+	
+	/** Move assignment operator (disabled).
+	 \return a reference to the object assigned to
+	 */
+	Framebuffer & operator=(Framebuffer &&) = delete;
+	
+	/** Move constructor (disabled). */
+	Framebuffer(Framebuffer &&) = delete;
+	
 private:
 	/** Default constructor. */
 	Framebuffer() = default;
