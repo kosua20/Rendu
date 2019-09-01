@@ -251,9 +251,9 @@ private:
 	// Joystick state.
 	int _activeController = -1;										  ///< The active joystick ID, or -1 if no controller active.
 	std::unique_ptr<Controller> _controllers[16]; ///< States of all possible controllers.
-	bool _preferRawControllers = false;
-	bool _joystickConnected	= false;
-	bool _joystickDisconnected = false;
+	bool _preferRawControllers = false; ///< Should controller use the gamepad mappings or raw values.
+	bool _joystickConnected	= false; ///< Has a joystick just been connected.
+	bool _joystickDisconnected = false; ///< Has a joystick just been disconnected.
 
 	/// Mouse state.
 	struct MouseButton {

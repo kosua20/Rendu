@@ -81,7 +81,7 @@ private:
 	std::unique_ptr<GaussianBlur> _gaussianBlur;			 ///< Gaussian blur processing.
 	std::unique_ptr<BoxBlur> _boxBlur;						 ///< Box blur processing.
 	std::unique_ptr<FloodFiller> _floodFill;				 ///< Flood filling.
-	std::unique_ptr<PaintingTool> _painter;
+	std::unique_ptr<PaintingTool> _painter;					 ///< The painting interface.
 
 	const Program * _passthrough; ///< Basic blit shader.
 	const Program * _sceneShader; ///< Object rendering shader.

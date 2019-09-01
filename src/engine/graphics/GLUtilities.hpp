@@ -41,6 +41,8 @@ class Framebuffer;
 class GLUtilities {
 
 public:
+	/** Setup the GPU in its initial state.
+	 */
 	static void setup();
 
 	/** Create a shader of a given type from a string. Extract additional informations from the shader.
@@ -85,7 +87,12 @@ public:
 	 */
 	static void drawMesh(const Mesh & mesh);
 
+	/** Bind a texture to some texture slot.
+	 \param texture the infos of the texture to bind
+	 \param slot the binding slot
+	 */
 	static void bindTexture(const Texture * texture, size_t slot);
+	
 	/** Bind a series of textures to some texture slots, in order.
 	 \param textures the infos of the textures to bind
 	 \param startingSlot the optional index of the first binding slot
@@ -98,6 +105,9 @@ public:
 	 */
 	static void setupTexture(Texture & texture, const Descriptor & descriptor);
 
+	/** Allocate GPU memory for a texture.
+	 \param texture the texture to allocate memory for
+	 */
 	static void allocateTexture(const Texture & texture);
 
 	/** Upload a texture images data to the GPU.
@@ -105,6 +115,10 @@ public:
 	 */
 	static void uploadTexture(const Texture & texture);
 
+	/** Download a texture images data from the GPU.
+	 \param texture the texture to download
+	 \warning The CPU images of the texture will be overwritten.
+	 */
 	static void downloadTexture(Texture & texture);
 
 	/** Generate a texture mipmaps on the GPU.
@@ -113,28 +127,65 @@ public:
 	 */
 	static void generateMipMaps(const Texture & texture);
 
-	/** Convert a texture shape to an openGL texture format enum.
+	/** Convert a texture shape to an OpenGL texture format enum.
 	 \param shape the texture shape
 	 \return the corresponding target
 	 */
 	static GLenum targetFromShape(const TextureShape & shape);
 
+	/** Flush the GPU command pipelines and wait for all processing to be done.
+	 */
 	static void sync();
 
+	/** Query the GPU driver and API infos.
+	 \param vendor will contain the vendor name
+	 \param renderer will contain the renderer name
+	 \param version will contain the driver API version
+	 \param shaderVersion will contain the shading language version
+	 */
 	static void deviceInfos(std::string & vendor, std::string & renderer, std::string & version, std::string & shaderVersion);
 
+	/** Query the GPU supported extensions.
+	 \return a list of extensions names
+	 */
 	static std::vector<std::string> deviceExtensions();
 
+	/** Set the current viewport.
+	 \param x horizontal coordinate
+	 \param y vertical coordinate
+	 \param w width
+	 \param h height
+	 */
 	static void setViewport(int x, int y, int w, int h);
 
+	/** Clear color and depth for the current framebuffer.
+	 \param color the RGBA float clear color
+	 \param depth the depth clear
+	 */
 	static void clearColorAndDepth(const glm::vec4 & color, float depth);
-
+	
+	/** Clear color for the current framebuffer.
+	 \param color the RGBA float clear color
+	 */
 	static void clearColor(const glm::vec4 & color);
-
+	
+	/** Clear depth for the current framebuffer.
+	 \param depth the depth clear
+	 */
 	static void clearDepth(float depth);
 
+	/** Blit the content of a framebuffer into another one, resizing the content accordingly.
+	 \param src the source framebuffer
+	 \param dst the destination framebuffer
+	 \param filter the filtering to use for resizing
+	 */
 	static void blit(const Framebuffer & src, const Framebuffer & dst, Filter filter);
-
+	
+	/** Blit the content of a texture into another one, resizing the content accordingly.
+	 \param src the source texture
+	 \param dst the destination texture
+	 \param filter the filtering to use for resizing
+	 */
 	static void blit(const Texture & src, Texture & dst, Filter filter);
 
 private:

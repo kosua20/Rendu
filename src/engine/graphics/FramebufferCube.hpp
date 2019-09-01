@@ -12,9 +12,11 @@
 class FramebufferCube {
 
 public:
+	
+	/** \brief How the cubemap framebuffer should be used. This determines the shape of the depth buffer. */
 	enum class CubeMode {
-		COMBINED,
-		SLICED
+		COMBINED, ///< Render to the 6 cube faces at the same time.
+		SLICED ///< Render to each layer separately.
 	};
 
 	/** Setup the framebuffer (attachments, renderbuffer, depth buffer, textures IDs,...)
@@ -26,10 +28,14 @@ public:
 	FramebufferCube(unsigned int side, const Descriptor & descriptor, CubeMode mode, bool depthBuffer);
 
 	/**
-	 Bind the framebuffer.
+	 Bind the framebuffer as a whole.
 	 */
 	void bind() const;
-
+	
+	/**
+	 Bind a specific layer of the framebuffer.
+	 \param slice the layer index
+	 */
 	void bind(size_t slice) const;
 
 	/**

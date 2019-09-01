@@ -173,6 +173,10 @@ public:
 	bool operator==(const Descriptor & other) const;
 
 private:
+	/** Convert a filtering mode to the corresponding GPU driver value.
+	 \param filter the filtering mode
+	 \return the corresponding driver value
+	 */
 	static GLenum getGPUFilter(Filter filter);
 
 	Layout _typedFormat; ///< The precise typed format.
@@ -195,23 +199,21 @@ public:
 	/** Clean internal GPU buffer. */
 	void clean();
 
+	/** Compare the texture layout to another one.
+	 \param other the descriptor to compare to
+	 \return true if the texture has a similar descriptor
+	 */
 	bool hasSameLayoutAs(const Descriptor & other) const;
 
+	/** Set the texture filtering.
+	 \param filtering the new filtering mode
+	 */
 	void setFiltering(Filter filtering);
 
+	/** Query the texture descriptor.
+	 \return the descriptor used
+	 */
 	const Descriptor & descriptor() const { return _descriptor; }
-
-	// Cached GPU settings.
-	const GLenum target;		 ///< Texture target.
-	GLenum minFiltering;		 ///< Minification filter.
-	GLenum magFiltering;		 ///< Magnification filter.
-	GLenum wrapping;			 ///< Wrapping mode.
-	const unsigned int channels; ///< Number of channels.
-	GLenum typedFormat;			 ///< Detailed format.
-	GLenum format;				 ///< General format.
-	GLenum type;				 ///< Data type.
-
-	GLuint id = 0; ///< The OpenGL texture ID.
 	
 	/** Copy assignment operator (disabled).
 	 \return a reference to the object assigned to
@@ -228,6 +230,17 @@ public:
 	
 	/** Move constructor. */
 	GPUTexture(GPUTexture &&) = delete;
+	
+	// Cached GPU settings.
+	const GLenum target;		 ///< Texture target.
+	GLenum minFiltering;		 ///< Minification filter.
+	GLenum magFiltering;		 ///< Magnification filter.
+	GLenum wrapping;			 ///< Wrapping mode.
+	const unsigned int channels; ///< Number of channels.
+	GLenum typedFormat;			 ///< Detailed format.
+	GLenum format;				 ///< General format.
+	GLenum type;				 ///< Data type.
+	GLuint id = 0; ///< The OpenGL texture ID.
 	
 private:
 	Descriptor _descriptor; ///< Layout used.

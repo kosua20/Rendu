@@ -3,7 +3,7 @@
 
 namespace SceneExport {
 
-const int textureSize = 8;
+const int textureSize = 8; ///< Default uniform texture size.
 
 int saveColor(const std::string & outputPath, const glm::vec3 & color) {
 	Image combinedImage(textureSize, textureSize, 3);

@@ -11,34 +11,34 @@
 namespace CompositeObj {
 
 /**
-	 \brief OBJ material descriptor.
-	 */
+ \brief OBJ material descriptor.
+*/
 struct Material {
 	// Textures.
-	std::string normalTexturePath		= "";
-	std::string alphaTexturePath		= "";
-	std::string displacementTexturePath = "";
-	std::string colorTexturePath		= "";
-	std::string roughTexturePath		= "";
-	std::string metalTexturePath		= "";
-	std::string specTexturePath			= "";
+	std::string normalTexturePath; 		///< Normal texture path.
+	std::string alphaTexturePath;	 	///< Alpha texture path.
+	std::string displacementTexturePath;///< Displacement texture path.
+	std::string colorTexturePath;		///< Albedo texture path.
+	std::string roughTexturePath;		///< Roughness texture path.
+	std::string metalTexturePath;		///< Metalness texture path.
+	std::string specTexturePath;		///< Specular texture path.
 
 	// Scalars.
-	glm::vec3 color = glm::vec3(0.0f);
-	float rough		= 0.0f;
-	float metal		= 0.0f;
-	float spec		= 0.0f;
+	glm::vec3 color = glm::vec3(0.0f);  ///< Albedo value.
+	float rough		= 0.0f;	///< Roughness value.
+	float metal		= 0.0f; ///< Metalness value.
+	float spec		= 0.0f; ///< Specular value.
 
 	// Have some of the scalars been set?
-	bool hasColor = false;
-	bool hasRough = false;
-	bool hasMetal = false;
-	bool hasSpec  = false;
+	bool hasColor = false; ///< Has an albedo value.
+	bool hasRough = false; ///< Has a roughness value.
+	bool hasMetal = false; ///< Has a metalness value.
+	bool hasSpec  = false; ///< Has a specular value.
 };
 
 /**
-	 \brief Associate a mesh and a material.
-	 */
+ \brief Associate a mesh and a material.
+*/
 struct Object {
 
 	Mesh mesh;			  ///< The mesh.

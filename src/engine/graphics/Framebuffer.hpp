@@ -80,6 +80,10 @@ public:
 	 */
 	void clean();
 
+	/** Read back the value at a given pixel in the first color attachment.
+	 \param pos the position in pixels
+	 \return a float RGB color.
+	 */
 	glm::vec3 read(const glm::ivec2 & pos) const;
 
 	/**

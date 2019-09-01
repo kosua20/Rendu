@@ -85,13 +85,13 @@ private:
 
 	std::unique_ptr<AmbientQuad> _ambientScreen; ///< Ambient lighting contribution rendering.
 	const Program * _bloomProgram;				 ///< Bloom program
-	const Program * _bloomCompositeProgram;
+	const Program * _bloomCompositeProgram;		 ///< Bloom compositing program.
 	const Program * _toneMappingProgram; ///< Tonemapping program
 	const Program * _fxaaProgram;		 ///< FXAA program
 	const Program * _finalProgram;		 ///< Final output program
 	const Program * _objectProgram;		 ///< Basic PBR program
 	const Program * _objectNoUVsProgram; ///< Basic PBR program
-	const Program * _parallaxProgram;	///< Parallax mapping PBR program
+	const Program * _parallaxProgram;	 ///< Parallax mapping PBR program
 
 	const Program * _skyboxProgram; ///< Skybox program.
 	const Program * _bgProgram;		///< Planar background program.
@@ -100,16 +100,16 @@ private:
 	std::shared_ptr<Scene> _scene; ///< The scene to render
 
 	glm::vec2 _cplanes = glm::vec2(0.01f, 100.0f); ///< Camera clipping planes.
-	float _cameraFOV;							   ///< Camera field of view in degrees.
-	float _exposure			 = 1.0f;			   ///< Film exposure.
-	float _bloomTh			 = 1.2f;			   ///< Threshold for blooming regions.
-	float _bloomMix			 = 0.2f;			   ///< Factor for applying the bloom.
-	int _bloomRadius		 = 4;
+	float _cameraFOV		 = 50.0f; ///< Camera field of view in degrees.
+	float _exposure			 = 1.0f;  ///< Film exposure.
+	float _bloomTh			 = 1.2f;  ///< Threshold for blooming regions.
+	float _bloomMix			 = 0.2f;  ///< Factor for applying the bloom.
+	int _bloomRadius		 = 4;	  ///< Bloom blur radius.
 	bool _debugVisualization = false; ///< Toggle the rendering of debug informations in the scene.
 	bool _applyBloom		 = true;  ///< Should bloom (bright lights halo-ing) be applied.
 	bool _applyTonemapping   = true;  ///< Should HDR to LDR tonemapping be applied.
 	bool _applyFXAA			 = true;  ///< Apply screenspace anti-aliasing.
 	bool _applySSAO			 = true;  ///< Screen space ambient occlusion.
 	bool _updateShadows		 = true;  ///< Update shadow maps at each frame.
-	bool _paused			 = false; ///< Update shadow maps at each frame.
+	bool _paused			 = false; ///< Pause animations.
 };
