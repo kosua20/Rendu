@@ -7,7 +7,7 @@ PointLight::PointLight(const glm::vec3 & worldPosition, const glm::vec3 & color,
 	_lightPosition(worldPosition), _radius(radius) {
 }
 
-void PointLight::init(const std::vector<const Texture *> & textureIds) {
+void PointLight::init(const Texture * albedo, const Texture * normal, const Texture * depth, const Texture * effects) {
 	_program = Resources::manager().getProgram("point_light", "object_basic", "point_light");
 	_sphere  = Resources::manager().getMesh("light_sphere", Storage::GPU);
 	// Setup the framebuffer.
@@ -15,8 +15,7 @@ void PointLight::init(const std::vector<const Texture *> & textureIds) {
 	const Descriptor descriptor = {Layout::RG16F, Filter::LINEAR, Wrap::CLAMP};
 	_shadowFramebuffer			= std::unique_ptr<FramebufferCube>(new FramebufferCube(512, descriptor, FramebufferCube::CubeMode::COMBINED, true));
 
-	_textures = textureIds;
-	_textures.push_back(_shadowFramebuffer->textureId());
+	_textures = {albedo, normal, depth, effects, _shadowFramebuffer->textureId()};
 	// Load the shaders
 	_programDepth = Resources::manager().getProgram("object_layer_depth", "object_layer", "light_shadow_linear", "object_layer");
 	checkGLError();

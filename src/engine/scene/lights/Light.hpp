@@ -41,9 +41,12 @@ public:
 	void addAnimation(const std::shared_ptr<Animation> & anim);
 
 	/** Perform initialization against the graphics API and register textures for deferred rendering.
-	 \param textureIds the IDs of the albedo, normal, depth and effects G-buffer textures
+	 \param albedo the albedo texture
+	 \param normal the normal texture
+	 \param depth the depth buffer texture
+	 \param effects the roughness/metalness texture
 	 */
-	virtual void init(const std::vector<const Texture *> & textureIds) = 0;
+	virtual void init(const Texture * albedo, const Texture * normal, const Texture * depth, const Texture * effects) = 0;
 
 	/** Render the light contribution to the scene.
 	 \param viewMatrix the current camera view matrix

@@ -30,7 +30,7 @@ public:
 	/**
 	 \copydoc Light::init
 	 */
-	void init(const std::vector<const Texture *> & textureIds) override;
+	void init(const Texture * albedo, const Texture * normal, const Texture * depth, const Texture * effects) override;
 
 	/**
 	 \copydoc Light::draw

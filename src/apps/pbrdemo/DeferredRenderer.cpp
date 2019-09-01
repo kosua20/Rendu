@@ -83,11 +83,8 @@ void DeferredRenderer::setScene(const std::shared_ptr<Scene> & scene) {
 	_cameraFOV			= _userCamera.fov() * 180.0f / glm::pi<float>();
 	_ambientScreen->setSceneParameters(_scene->backgroundReflection, _scene->backgroundIrradiance);
 
-	/// \todo clarify this by having lights taking explicit named arguments.
-	const std::vector<const Texture *> includedTextures = {_gbuffer->textureId(0), _gbuffer->textureId(1), _gbuffer->depthId(), _gbuffer->textureId(2)};
-
 	for(auto & light : _scene->lights) {
-		light->init(includedTextures);
+		light->init(_gbuffer->textureId(0), _gbuffer->textureId(1), _gbuffer->depthId(), _gbuffer->textureId(2));
 	}
 	checkGLError();
 }
