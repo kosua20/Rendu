@@ -7,37 +7,9 @@
 #include <fstream>
 #include <cstddef>
 
-void Mesh::clearGeometry() {
-	positions.clear();
-	normals.clear();
-	tangents.clear();
-	binormals.clear();
-	texcoords.clear();
-	indices.clear();
-}
-
-void Mesh::clean() {
-	clearGeometry();
-	bbox = BoundingBox();
-	if(gpu) {
-		gpu->clean();
-	}
-}
-
-void Mesh::upload() {
-	GLUtilities::setupBuffers(*this);
-}
-
-void Mesh::loadObj(std::istream & in, Mesh & mesh, Mesh::Load mode) {
+Mesh::Mesh(std::istream & in, Mesh::Load mode) {
 
 	using namespace std;
-
-	//Init the mesh.
-	mesh.indices.clear();
-	mesh.positions.clear();
-	mesh.normals.clear();
-	mesh.texcoords.clear();
-	mesh.colors.clear();
 
 	// Init temporary vectors.
 	vector<glm::vec3> positions_temp;
@@ -117,12 +89,12 @@ void Mesh::loadObj(std::istream & in, Mesh & mesh, Mesh::Load mode) {
 		// Mode: Points
 		// In this mode, we don't care about faces. We simply associate each vertex/normal/uv in the same order.
 
-		mesh.positions = positions_temp;
+		positions = positions_temp;
 		if(hasNormals) {
-			mesh.normals = normals_temp;
+			normals = normals_temp;
 		}
 		if(hasUV) {
-			mesh.texcoords = texcoords_temp;
+			texcoords = texcoords_temp;
 		}
 
 	} else if(mode == Mesh::Load::Expanded) {
@@ -137,22 +109,22 @@ void Mesh::loadObj(std::istream & in, Mesh & mesh, Mesh::Load mode) {
 
 			// Positions (we are sure they exist).
 			long ind1 = stol(str.substr(0, foundF)) - 1;
-			mesh.positions.push_back(positions_temp[ind1]);
+			positions.push_back(positions_temp[ind1]);
 
 			// UVs (second index).
 			if(hasUV) {
 				long ind2 = stol(str.substr(foundF + 1, foundL)) - 1;
-				mesh.texcoords.push_back(texcoords_temp[ind2]);
+				texcoords.push_back(texcoords_temp[ind2]);
 			}
 
 			// Normals (third index, in all cases).
 			if(hasNormals) {
 				long ind3 = stol(str.substr(foundL + 1)) - 1;
-				mesh.normals.push_back(normals_temp[ind3]);
+				normals.push_back(normals_temp[ind3]);
 			}
 
 			//Indices (simply a vector of increasing integers).
-			mesh.indices.push_back(uint(i));
+			indices.push_back(uint(i));
 		}
 
 	} else if(mode == Mesh::Load::Indexed) {
@@ -168,7 +140,7 @@ void Mesh::loadObj(std::istream & in, Mesh & mesh, Mesh::Load mode) {
 			//Does the association of attributs already exists ?
 			if(indices_used.count(str) > 0) {
 				// Just store the index in the indices vector.
-				mesh.indices.push_back(indices_used[str]);
+				indices.push_back(indices_used[str]);
 				// Go to next face.
 				continue;
 			}
@@ -179,20 +151,20 @@ void Mesh::loadObj(std::istream & in, Mesh & mesh, Mesh::Load mode) {
 
 			//Positions (we are sure they exist)
 			unsigned int ind1 = stoi(str.substr(0, foundF)) - 1;
-			mesh.positions.push_back(positions_temp[ind1]);
+			positions.push_back(positions_temp[ind1]);
 
 			//UVs (second index)
 			if(hasUV) {
 				unsigned int ind2 = stoi(str.substr(foundF + 1, foundL)) - 1;
-				mesh.texcoords.push_back(texcoords_temp[ind2]);
+				texcoords.push_back(texcoords_temp[ind2]);
 			}
 			//Normals (third index, in all cases)
 			if(hasNormals) {
 				unsigned int ind3 = stoi(str.substr(foundL + 1)) - 1;
-				mesh.normals.push_back(normals_temp[ind3]);
+				normals.push_back(normals_temp[ind3]);
 			}
 
-			mesh.indices.push_back(maxInd);
+			indices.push_back(maxInd);
 			indices_used[str] = maxInd;
 			maxInd++;
 		}
@@ -203,33 +175,54 @@ void Mesh::loadObj(std::istream & in, Mesh & mesh, Mesh::Load mode) {
 	normals_temp.clear();
 	texcoords_temp.clear();
 	faces_temp.clear();
-	Log::Verbose() << Log::Resources << "Mesh loaded with " << mesh.indices.size() / 3 << " faces, " << mesh.positions.size() << " vertices, " << mesh.normals.size() << " normals, " << mesh.texcoords.size() << " texcoords." << std::endl;
+	Log::Verbose() << Log::Resources << "Mesh loaded with " << indices.size() / 3 << " faces, " << positions.size() << " vertices, " << normals.size() << " normals, " << texcoords.size() << " texcoords." << std::endl;
 }
 
-BoundingBox Mesh::computeBoundingBox(Mesh & mesh) {
-	BoundingBox bbox;
-	if(mesh.positions.empty()) {
+void Mesh::upload() {
+	GLUtilities::setupBuffers(*this);
+}
+
+void Mesh::clearGeometry() {
+	positions.clear();
+	normals.clear();
+	tangents.clear();
+	binormals.clear();
+	texcoords.clear();
+	indices.clear();
+}
+
+void Mesh::clean() {
+	clearGeometry();
+	bbox = BoundingBox();
+	if(gpu) {
+		gpu->clean();
+	}
+}
+
+BoundingBox Mesh::computeBoundingBox() {
+	bbox = BoundingBox();
+	if(positions.empty()) {
 		return bbox;
 	}
-	bbox.minis = bbox.maxis  = mesh.positions[0];
-	const size_t numVertices = mesh.positions.size();
+	bbox.minis = bbox.maxis  = positions[0];
+	const size_t numVertices = positions.size();
 	for(size_t vid = 1; vid < numVertices; ++vid) {
-		bbox.minis = glm::min(bbox.minis, mesh.positions[vid]);
-		bbox.maxis = glm::max(bbox.maxis, mesh.positions[vid]);
+		bbox.minis = glm::min(bbox.minis, positions[vid]);
+		bbox.maxis = glm::max(bbox.maxis, positions[vid]);
 	}
 	return bbox;
 }
 
-void Mesh::centerAndUnitMesh(Mesh & mesh) {
+void Mesh::centerAndUnit() {
 	// Compute the centroid.
 	glm::vec3 centroid = glm::vec3(0.0);
-	float maxi		   = mesh.positions[0].x;
-	for(const auto & pos : mesh.positions) {
+	float maxi		   = positions[0].x;
+	for(const auto & pos : positions) {
 		centroid += pos;
 	}
-	centroid /= mesh.positions.size();
+	centroid /= positions.size();
 
-	for(auto & pos : mesh.positions) {
+	for(auto & pos : positions) {
 		// Translate  the vertex.
 		pos -= centroid;
 		// Find the maximal distance from a vertex to the center.
@@ -240,63 +233,63 @@ void Mesh::centerAndUnitMesh(Mesh & mesh) {
 	maxi = maxi == 0.0f ? 1.0f : maxi;
 
 	// Scale the mesh.
-	for(auto & pos : mesh.positions) {
+	for(auto & pos : positions) {
 		pos /= maxi;
 	}
 }
 
-void Mesh::computeNormals(Mesh & mesh) {
-	mesh.normals.resize(mesh.positions.size());
-	for(auto & n : mesh.normals) {
+void Mesh::computeNormals() {
+	normals.resize(positions.size());
+	for(auto & n : normals) {
 		n = glm::vec3(0.0f);
 	}
 	// Iterate over faces.
-	for(size_t tid = 0; tid < mesh.indices.size(); tid += 3) {
-		const unsigned int i0 = mesh.indices[tid + 0];
-		const unsigned int i1 = mesh.indices[tid + 1];
-		const unsigned int i2 = mesh.indices[tid + 2];
-		const glm::vec3 & v0  = mesh.positions[i0];
-		const glm::vec3 & v1  = mesh.positions[i1];
-		const glm::vec3 & v2  = mesh.positions[i2];
+	for(size_t tid = 0; tid < indices.size(); tid += 3) {
+		const unsigned int i0 = indices[tid + 0];
+		const unsigned int i1 = indices[tid + 1];
+		const unsigned int i2 = indices[tid + 2];
+		const glm::vec3 & v0  = positions[i0];
+		const glm::vec3 & v1  = positions[i1];
+		const glm::vec3 & v2  = positions[i2];
 		// Compute cross product between the two edges of the triangle.
 		const glm::vec3 d01	= glm::normalize(v1 - v0);
 		const glm::vec3 d02	= glm::normalize(v2 - v0);
 		const glm::vec3 normal = glm::cross(d01, d02);
-		mesh.normals[i0] += normal;
-		mesh.normals[i1] += normal;
-		mesh.normals[i2] += normal;
+		normals[i0] += normal;
+		normals[i1] += normal;
+		normals[i2] += normal;
 	}
 	// Average for each vertex normal.
-	for(auto & n : mesh.normals) {
+	for(auto & n : normals) {
 		n = glm::normalize(n);
 	}
 }
 
-void Mesh::computeTangentsAndBinormals(Mesh & mesh) {
-	if(mesh.indices.size() * mesh.positions.size() * mesh.texcoords.size() == 0) {
+void Mesh::computeTangentsAndBinormals() {
+	if(indices.size() * positions.size() * texcoords.size() == 0) {
 		// Missing data, or not the right mode (Points).
 		return;
 	}
 	// Start by filling everything with 0 (as we want to accumulate tangents and binormals coming from different faces for each vertex).
-	for(size_t pid = 0; pid < mesh.positions.size(); ++pid) {
-		mesh.tangents.emplace_back(0.0f);
-		mesh.binormals.emplace_back(0.0f);
+	for(size_t pid = 0; pid < positions.size(); ++pid) {
+		tangents.emplace_back(0.0f);
+		binormals.emplace_back(0.0f);
 	}
 	// Then, compute both vectors for each face and accumulate them.
-	for(size_t fid = 0; fid < mesh.indices.size(); fid += 3) {
+	for(size_t fid = 0; fid < indices.size(); fid += 3) {
 
-		const unsigned int i0 = mesh.indices[fid + 0];
-		const unsigned int i1 = mesh.indices[fid + 1];
-		const unsigned int i2 = mesh.indices[fid + 2];
+		const unsigned int i0 = indices[fid + 0];
+		const unsigned int i1 = indices[fid + 1];
+		const unsigned int i2 = indices[fid + 2];
 
 		// Get the vertices of the face.
-		const glm::vec3 & v0 = mesh.positions[i0];
-		const glm::vec3 & v1 = mesh.positions[i1];
-		const glm::vec3 & v2 = mesh.positions[i2];
+		const glm::vec3 & v0 = positions[i0];
+		const glm::vec3 & v1 = positions[i1];
+		const glm::vec3 & v2 = positions[i2];
 		// Get the uvs of the face.
-		const glm::vec2 & uv0 = mesh.texcoords[i0];
-		const glm::vec2 & uv1 = mesh.texcoords[i1];
-		const glm::vec2 & uv2 = mesh.texcoords[i2];
+		const glm::vec2 & uv0 = texcoords[i0];
+		const glm::vec2 & uv1 = texcoords[i1];
+		const glm::vec2 & uv2 = texcoords[i2];
 
 		// Delta positions and uvs.
 		const glm::vec3 deltaPosition1 = v1 - v0;
@@ -321,25 +314,25 @@ void Mesh::computeTangentsAndBinormals(Mesh & mesh) {
 			tangent				   = glm::normalize(glm::cross(binormal, normal));
 		}
 		// Accumulate them. We don't normalize to get a free weighting based on the size of the face.
-		mesh.tangents[i0] += tangent;
-		mesh.tangents[i1] += tangent;
-		mesh.tangents[i2] += tangent;
+		tangents[i0] += tangent;
+		tangents[i1] += tangent;
+		tangents[i2] += tangent;
 
-		mesh.binormals[i0] += binormal;
-		mesh.binormals[i1] += binormal;
-		mesh.binormals[i2] += binormal;
+		binormals[i0] += binormal;
+		binormals[i1] += binormal;
+		binormals[i2] += binormal;
 	}
 	// Finally, enforce orthogonality and good orientation of the basis.
-	for(size_t tid = 0; tid < mesh.tangents.size(); ++tid) {
-		mesh.tangents[tid] = normalize(mesh.tangents[tid] - mesh.normals[tid] * dot(mesh.normals[tid], mesh.tangents[tid]));
-		if(dot(cross(mesh.normals[tid], mesh.tangents[tid]), mesh.binormals[tid]) < 0.0f) {
-			mesh.tangents[tid] *= -1.0f;
+	for(size_t tid = 0; tid < tangents.size(); ++tid) {
+		tangents[tid] = glm::normalize(tangents[tid] - normals[tid] * glm::dot(normals[tid], tangents[tid]));
+		if(glm::dot(glm::cross(normals[tid], tangents[tid]), binormals[tid]) < 0.0f) {
+			tangents[tid] *= -1.0f;
 		}
 	}
-	Log::Verbose() << Log::Resources << "Mesh: " << mesh.tangents.size() << " tangents and binormals computed." << std::endl;
+	Log::Verbose() << Log::Resources << "Mesh: " << tangents.size() << " tangents and binormals computed." << std::endl;
 }
 
-int Mesh::saveObj(const std::string & path, const Mesh & mesh, bool defaultUVs) {
+int Mesh::saveAsObj(const std::string & path, bool defaultUVs) {
 
 	std::ofstream objFile(path);
 	if(!objFile.is_open()) {
@@ -348,18 +341,18 @@ int Mesh::saveObj(const std::string & path, const Mesh & mesh, bool defaultUVs) 
 	}
 
 	// Write vertices information.
-	for(const auto & v : mesh.positions) {
+	for(const auto & v : positions) {
 		objFile << "v " << v.x << " " << v.y << " " << v.z << std::endl;
 	}
-	for(const auto & t : mesh.texcoords) {
+	for(const auto & t : texcoords) {
 		objFile << "vt " << t.x << " " << t.y << std::endl;
 	}
-	for(const auto & n : mesh.normals) {
+	for(const auto & n : normals) {
 		objFile << "vn " << n.x << " " << n.y << " " << n.z << std::endl;
 	}
 
-	const bool hasNormals   = !mesh.normals.empty();
-	const bool hasTexCoords = !mesh.texcoords.empty();
+	const bool hasNormals   = !normals.empty();
+	const bool hasTexCoords = !texcoords.empty();
 	// If the mesh has no UVs, it's probably using a uniform color material. We can force all vertices to have 0.5,0.5 UVs.
 	std::string defUV;
 	if(!hasTexCoords && defaultUVs) {
@@ -368,10 +361,10 @@ int Mesh::saveObj(const std::string & path, const Mesh & mesh, bool defaultUVs) 
 	}
 
 	// Faces indices.
-	for(size_t tid = 0; tid < mesh.indices.size(); tid += 3) {
-		const std::string t0 = std::to_string(mesh.indices[tid + 0] + 1);
-		const std::string t1 = std::to_string(mesh.indices[tid + 1] + 1);
-		const std::string t2 = std::to_string(mesh.indices[tid + 2] + 1);
+	for(size_t tid = 0; tid < indices.size(); tid += 3) {
+		const std::string t0 = std::to_string(indices[tid + 0] + 1);
+		const std::string t1 = std::to_string(indices[tid + 1] + 1);
+		const std::string t2 = std::to_string(indices[tid + 2] + 1);
 		objFile << "f";
 		objFile << " " << t0 << "/" << (hasTexCoords ? t0 : defUV) << "/" << (hasNormals ? t0 : "");
 		objFile << " " << t1 << "/" << (hasTexCoords ? t1 : defUV) << "/" << (hasNormals ? t1 : "");
