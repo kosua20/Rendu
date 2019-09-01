@@ -6,11 +6,11 @@
 #include <thread>
 
 /**
- \brief Performs system basic operations, file picking, interface setup and loop.
- \ingroup Helpers
+ \brief Performs system basic operations such as directory creation, timing, threading, file picking.
+ \ingroup System
  */
-namespace System {
-
+class System {
+public:
 	/** The file picker mode. */
 	enum class Picker {
 		Load,	  ///< Load an existing file.
@@ -25,7 +25,7 @@ namespace System {
 		 \param extensions (optional) the extensions allowed, separated by "," or ";"
 		 \return true if the user picked an item, false if cancelled.
 		 */
-	bool showPicker(Picker mode, const std::string & startDir, std::string & outPath, const std::string & extensions = "");
+	static bool showPicker(Picker mode, const std::string & startDir, std::string & outPath, const std::string & extensions = "");
 
 	/** Create a directory.
 		 \param directory the path to the directory to create
@@ -33,15 +33,15 @@ namespace System {
 		 \note If the directory already exists, it will fail.
 		 \warning This function will not create intermediate directories.
 		 */
-	bool createDirectory(const std::string & directory);
+	static bool createDirectory(const std::string & directory);
 
 	/** Notify the user by sending a 'Bell' signal. */
-	void ping();
+	static void ping();
 	
 	/** Return the current value of a time counter.
-	 \param the current counter value, in seconds.
+	 \return the current counter value, in seconds.
 	 */
-	double time();
+	static double time();
 	
 	/** Multi-threaded for-loop.
 		 \param low lower (included) bound
@@ -51,7 +51,7 @@ namespace System {
 		 \note For now only an increment by one is supported.
 		 */
 	template<typename ThreadFunc>
-	void forParallel(size_t low, size_t high, ThreadFunc func) {
+	static void forParallel(size_t low, size_t high, ThreadFunc func) {
 		// Make sure the loop is increasing.
 		if(high < low) {
 			const size_t temp = low;
@@ -86,16 +86,16 @@ namespace System {
 
 	#ifdef _WIN32
 
-	WCHAR * widen(const std::string & str);
+	static WCHAR * widen(const std::string & str);
 
-	std::string narrow(WCHAR * str);
+	static std::string narrow(WCHAR * str);
 
 	#else
 
-	const char * widen(const std::string & str);
+	static const char * widen(const std::string & str);
 
-	std::string narrow(char * str);
+	static std::string narrow(char * str);
 
 	#endif
 
-}
+};
