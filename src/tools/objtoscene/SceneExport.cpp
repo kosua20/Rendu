@@ -12,7 +12,7 @@ int saveColor(const std::string & outputPath, const glm::vec3 & color) {
 			combinedImage.rgb(x, y) = color;
 		}
 	}
-	return Image::saveLDRImage(outputPath, combinedImage, false);
+	return combinedImage.save(outputPath, false);
 }
 
 Material saveMaterial(const std::string & baseName, const CompositeObj::Material & material, const std::string & outputDirPath) {
@@ -50,42 +50,42 @@ Material saveMaterial(const std::string & baseName, const CompositeObj::Material
 	if(hasTextureColor && hasTextureAlpha) {
 		// Load both images, which should have the same size.
 		Image colorMap, maskMap;
-		Image::loadImage(material.colorTexturePath, 3, false, true, colorMap);
-		Image::loadImage(material.alphaTexturePath, 1, false, true, maskMap);
+		colorMap.load(material.colorTexturePath, 3, false, true);
+		maskMap.load(material.alphaTexturePath, 1, false, true);
 		// Safety check.
 		if(colorMap.width != maskMap.width || colorMap.height != maskMap.height) {
 			Log::Warning() << "Mask and color images have different sizes, keeping only color." << std::endl;
-			Image::saveLDRImage(outputColorPath, colorMap, false);
+			colorMap.save(outputColorPath, false);
 		} else {
 			// Combine both.
 			Image combinedImage(int(colorMap.width), int(colorMap.height), 4);
-			for(int y = 0; y < int(combinedImage.height); ++y) {
-				for(int x = 0; x < int(combinedImage.width); ++x) {
+			for(uint y = 0; y < combinedImage.height; ++y) {
+				for(uint x = 0; x < combinedImage.width; ++x) {
 					combinedImage.rgba(x, y) = glm::vec4(colorMap.rgb(x, y), maskMap.r(x, y));
 				}
 			}
-			Image::saveLDRImage(outputColorPath, combinedImage, false);
+			combinedImage.save(outputColorPath, false);
 		}
 
 	} else if(hasTextureColor) {
 		// Just copy the image.
 		Image colorMap;
-		Image::loadImage(material.colorTexturePath, 3, false, true, colorMap);
-		Image::saveLDRImage(outputColorPath, colorMap, false);
+		colorMap.load(material.colorTexturePath, 3, false, true);
+		colorMap.save(outputColorPath, false);
 
 	} else if(hasTextureAlpha) {
 		// Load alpha.
 		Image maskMap;
-		Image::loadImage(material.alphaTexturePath, 1, false, true, maskMap);
+		maskMap.load(material.alphaTexturePath, 1, false, true);
 		// Fill in with material/default color.
 		const glm::vec3 color = material.hasColor ? material.color : glm::vec3(1.0f);
 		Image combinedImage(maskMap.width, maskMap.height, 4);
-		for(int y = 0; y < maskMap.height; ++y) {
-			for(int x = 0; x < maskMap.width; ++x) {
+		for(uint y = 0; y < maskMap.height; ++y) {
+			for(uint x = 0; x < maskMap.width; ++x) {
 				combinedImage.rgba(x, y) = glm::vec4(color, maskMap.r(x, y));
 			}
 		}
-		Image::saveLDRImage(outputColorPath, combinedImage, false);
+		combinedImage.save(outputColorPath, false);
 
 	} else if(material.hasColor) {
 		// Save a small color texture.
@@ -102,8 +102,8 @@ Material saveMaterial(const std::string & baseName, const CompositeObj::Material
 	if(hasTextureNormal) {
 		// Copy normal map.
 		Image normalMap;
-		Image::loadImage(material.normalTexturePath, 3, false, true, normalMap);
-		Image::saveLDRImage(outputNormalPath, normalMap, false);
+		normalMap.load(material.normalTexturePath, 3, false, true);
+		normalMap.save(outputNormalPath, false);
 	} else {
 		outMaterial.normalName = "default_normal";
 	}
@@ -119,14 +119,14 @@ Material saveMaterial(const std::string & baseName, const CompositeObj::Material
 		// First, build the roughness map from existing roughness map or specular map.
 		Image roughImage;
 		if(hasTextureRough) {
-			Image::loadImage(material.roughTexturePath, 1, false, true, roughImage);
+			roughImage.load(material.roughTexturePath, 1, false, true);
 		} else {
 			// Load specular RGB, compute roughness as reverse of average.
 			Image specImage;
-			Image::loadImage(material.specTexturePath, 3, false, true, specImage);
+			specImage.load(material.specTexturePath, 3, false, true);
 			roughImage = Image(specImage.width, specImage.height, 1);
-			for(int y = 0; y < specImage.height; ++y) {
-				for(int x = 0; x < specImage.width; ++x) {
+			for(uint y = 0; y < specImage.height; ++y) {
+				for(uint x = 0; x < specImage.width; ++x) {
 					const glm::vec3 & spec = specImage.rgb(x, y);
 					roughImage.r(x, y)	 = 1.0f - (spec.x + spec.y + spec.z) / 3.0f;
 				}
@@ -137,7 +137,7 @@ Material saveMaterial(const std::string & baseName, const CompositeObj::Material
 		Image metalImage;
 		bool scalarMetal = !hasTextureMetal;
 		if(hasTextureMetal) {
-			Image::loadImage(material.metalTexturePath, 1, false, true, metalImage);
+			metalImage.load(material.metalTexturePath, 1, false, true);
 			// Safety check, fallback to scalar metal.
 			if(metalImage.width != roughImage.width || metalImage.height != roughImage.height) {
 				Log::Warning() << "Roughness/specular and metalness images have different sizes, using 0.0 metalness." << std::endl;
@@ -148,27 +148,27 @@ Material saveMaterial(const std::string & baseName, const CompositeObj::Material
 
 		// Merge the roughness map and the metal map/scalar.
 		Image roughMetAo(roughImage.width, roughImage.height, 3, 0.0f);
-		for(int y = 0; y < roughImage.height; ++y) {
-			for(int x = 0; x < roughImage.width; ++x) {
+		for(uint y = 0; y < roughImage.height; ++y) {
+			for(uint x = 0; x < roughImage.width; ++x) {
 				const float metalness = scalarMetal ? defaultMetal : metalImage.r(x, y);
 				roughMetAo.rgb(x, y)  = glm::vec3(roughImage.r(x, y), metalness, 1.0f);
 			}
 		}
-		Image::saveLDRImage(outputRmaoPath, roughMetAo, false);
+		roughMetAo.save(outputRmaoPath, false);
 
 	} else if(hasTextureMetal) {
 		// Load metal image.
 		Image metalImage;
-		Image::loadImage(material.metalTexturePath, 1, false, true, metalImage);
+		metalImage.load(material.metalTexturePath, 1, false, true);
 		// Fill in with material/default roughness.
 		const float scalarRoughness = material.hasRough ? material.rough : (material.hasSpec ? (1.0f - material.spec) : 0.5f);
 		Image roughMetAo(metalImage.width, metalImage.height, 3, 0.0f);
-		for(int y = 0; y < metalImage.height; ++y) {
-			for(int x = 0; x < metalImage.width; ++x) {
+		for(uint y = 0; y < metalImage.height; ++y) {
+			for(uint x = 0; x < metalImage.width; ++x) {
 				roughMetAo.rgb(x, y) = glm::vec3(scalarRoughness, metalImage.r(x, y), 1.0f);
 			}
 		}
-		Image::saveLDRImage(outputRmaoPath, roughMetAo, false);
+		roughMetAo.save(outputRmaoPath, false);
 
 	} else if(material.hasRough || material.hasSpec || material.hasMetal) {
 		const float roughness = material.hasRough ? material.rough : (material.hasSpec ? (1.0f - material.spec) : 0.5f);
@@ -185,8 +185,8 @@ Material saveMaterial(const std::string & baseName, const CompositeObj::Material
 
 	if(hasTextureDisplacement) {
 		Image depthMap;
-		Image::loadImage(material.displacementTexturePath, 1, false, true, depthMap);
-		Image::saveLDRImage(outputDepthPath, depthMap, false);
+		depthMap.load(material.displacementTexturePath, 1, false, true);
+		depthMap.save(outputDepthPath, false);
 	}
 
 	return outMaterial;

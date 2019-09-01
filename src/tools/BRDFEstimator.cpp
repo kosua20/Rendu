@@ -18,9 +18,9 @@
 /**
  \defgroup BRDFEstimator BRDF Estimation
  \brief Perform cubemap GGX convolution, irradiance SH coefficients computation, and linearized BRDF look-up table pre-computation.
- \see GLSL::Frag::Cubemap_convo
- \see GLSL::Frag::Brdf_sampler
- \see GLSL::Frag::Skybox_shcoeffs
+ \see GPU::Frag::Cubemap_convo
+ \see GPU::Frag::Brdf_sampler
+ \see GPU::Frag::Skybox_shcoeffs
  \see DeferredRendering
  \ingroup Tools
  */
@@ -53,7 +53,7 @@ void loadCubemap(const std::string & inputPath, Texture & cubemapInfos) {
 	for(const auto & filePath : pathSides) {
 		cubemapInfos.images.emplace_back();
 		Image & image = cubemapInfos.images.back();
-		const int ret = Image::loadImage(filePath, 4, false, false, image);
+		const int ret = image.load(filePath, 4, false, false);
 		if(ret != 0) {
 			Log::Error() << Log::Resources << "Unable to load the texture at path " << filePath << "." << std::endl;
 		}
@@ -265,7 +265,7 @@ void exportCubemapConvolution(std::vector<Texture> & cubeLevels, const std::stri
 		const std::string levelPath = outputPath + "_" + std::to_string(level);
 		for(int i = 0; i < 6; ++i) {
 			const std::string faceLevelPath = levelPath + suffixes[i];
-			const int ret					= Image::saveHDRImage(faceLevelPath + ".exr", texture.images[i], false, true);
+			const int ret					= texture.images[i].save(faceLevelPath + ".exr", false, true);
 			if(ret != 0) {
 				Log::Error() << "Unable to save cubemap face to path \"" << faceLevelPath << "\"." << std::endl;
 			}

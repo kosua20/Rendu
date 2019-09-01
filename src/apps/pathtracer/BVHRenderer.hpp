@@ -18,7 +18,7 @@ class BVHRenderer final : public Renderer {
 
 public:
 	/** Constructor.
-	 \param config the configuration to apply when setting up
+	 \param config the configuration to apply
 	 */
 	explicit BVHRenderer(RenderingConfig & config);
 
@@ -50,7 +50,9 @@ public:
 	void resize(unsigned int width, unsigned int height) override;
 
 private:
-	/** Generate visualisation for a ray cast from a given unit viewport position. */
+	/** Generate visualisation for a ray cast from a given unit viewport position.
+	 \param position the position in unit viewport space.
+	 */
 	void castRay(const glm::vec2 & position);
 
 	ControllableCamera _userCamera; ///< The interactive camera.
@@ -66,7 +68,7 @@ private:
 	Texture _renderTex;				///< The result texture and image.
 
 	std::shared_ptr<Scene> _scene;						 ///< The scene to render.
-	PathTracer _pathTracer;								 ///< The scene specific path tracer.
+	std::unique_ptr<PathTracer> _pathTracer;			 ///< The scene specific path tracer.
 	std::unique_ptr<RaycasterVisualisation> _visuHelper; ///< Helper for raycaster internal data visualisation.
 
 	glm::ivec2 _bvhRange = glm::ivec2(0, 1); ///< The subset of the BVH to display.

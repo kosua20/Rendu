@@ -23,12 +23,12 @@ MenuImage::MenuImage(const glm::vec2 & screenPos, float screenScale, const Textu
 }
 
 MenuLabel::MenuLabel(const glm::vec2 & screenPos, float verticalScale, const Font * font, Font::Alignment alignment) :
-	pos(screenPos), tid(font->atlas), _vScale(verticalScale), _font(font), _align(alignment) {
+	pos(screenPos), tid(font->atlas()), _vScale(verticalScale), _font(font), _align(alignment) {
 	update("0");
 }
 
 void MenuLabel::update(const std::string & text) {
-	Font::generateLabel(text, *_font, _vScale, mesh, _align);
+	_font->generateLabel(text, _vScale, mesh, _align);
 }
 
 void GameMenu::update(const glm::vec2 & screenResolution, float initialRatio) {

@@ -45,8 +45,8 @@ void BVHRenderer::setScene(const std::shared_ptr<Scene> & scene) {
 	_cameraFOV			= _userCamera.fov() * 180.0f / glm::pi<float>();
 
 	// Create the path tracer and raycaster.
-	_pathTracer = PathTracer(_scene);
-	_visuHelper = std::unique_ptr<RaycasterVisualisation>(new RaycasterVisualisation(_pathTracer.raycaster()));
+	_pathTracer.reset(new PathTracer(_scene));
+	_visuHelper = std::unique_ptr<RaycasterVisualisation>(new RaycasterVisualisation(_pathTracer->raycaster()));
 
 	// Build the BVH mesh.
 	_visuHelper->getAllLevels(_bvhLevels);
@@ -170,7 +170,7 @@ void BVHRenderer::update() {
 			// Render.
 			_renderTex.images.emplace_back(_renderTex.width, _renderTex.height, 3);
 			Image & render = _renderTex.images.back();
-			_pathTracer.render(_userCamera, _samples, _depth, render);
+			_pathTracer->render(_userCamera, _samples, _depth, render);
 			// Upload to the GPU.
 			GLUtilities::uploadTexture(_renderTex);
 			_showRender = true;
@@ -181,7 +181,7 @@ void BVHRenderer::update() {
 		if(hasImage && ImGui::Button("Save...")) {
 			std::string outPath;
 			if(System::showPicker(System::Picker::Save, "", outPath) && !outPath.empty()) {
-				Image::saveLDRImage(outPath, _renderTex.images[0], false);
+				_renderTex.images[0].save(outPath, false);
 			}
 		}
 

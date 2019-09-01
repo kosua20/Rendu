@@ -161,7 +161,7 @@ int main(int argc, char ** argv) {
 					imageInfos.levels = 1;
 					imageInfos.images.emplace_back();
 					Image & img   = imageInfos.images.back();
-					const int ret = Image::loadImage(newImagePath, 4, true, false, img);
+					const int ret = img.load(newImagePath, 4, true, false);
 					if(ret != 0) {
 						Log::Error() << Log::Resources << "Unable to load the texture at path " << newImagePath << "." << std::endl;
 						continue;

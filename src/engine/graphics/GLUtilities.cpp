@@ -667,7 +667,7 @@ void GLUtilities::savePixels(GLenum type, GLenum format, unsigned int width, uns
 		// Get back values.
 		glReadPixels(0, 0, GLsizei(image.width), GLsizei(image.height), format, type, &image.pixels[0]);
 		// Save data.
-		ret = Image::saveHDRImage(path + ".exr", image, flip, ignoreAlpha);
+		ret = image.save(path + ".exr", flip, ignoreAlpha);
 
 	} else {
 		// Get back values.
@@ -678,7 +678,7 @@ void GLUtilities::savePixels(GLenum type, GLenum format, unsigned int width, uns
 			image.pixels[pid] = float(data[pid]) / 255.0f;
 		}
 		// Save data.
-		ret = Image::saveLDRImage(path + ".png", image, flip, ignoreAlpha);
+		ret = image.save(path + ".png", flip, ignoreAlpha);
 		delete[] data;
 	}
 	glPixelStorei(GL_PACK_ALIGNMENT, 4);

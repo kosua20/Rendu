@@ -88,8 +88,8 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 								const Image & image = _scene->background->textures()[0]->images[0];
 								sampleColor			= image.rgbl(ndcPos.x, ndcPos.y);
 							} else if(mode == Scene::Background::SKYBOX) {
-								const auto & images = _scene->background->textures()[0]->images;
-								sampleColor			= Image::sampleCubemap(images, glm::normalize(rayDir));
+								const Texture * tex = _scene->background->textures()[0];
+								sampleColor			= tex->sampleCubemap(glm::normalize(rayDir));
 							} else {
 								sampleColor = _scene->backgroundColor;
 							}
@@ -98,8 +98,8 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 
 						// Else, we only care about environment maps, for indirect illumination.
 						if(mode == Scene::Background::SKYBOX) {
-							const auto & images = _scene->background->textures()[0]->images;
-							sampleColor += attenColor * Image::sampleCubemap(images, glm::normalize(rayDir));
+							const Texture * tex = _scene->background->textures()[0];
+							sampleColor += attenColor * tex->sampleCubemap(glm::normalize(rayDir));
 						}
 						break;
 					}
@@ -155,7 +155,7 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 
 	// Normalize and gamma correction.
 	System::forParallel(0, size_t(render.height), [&render, &samples](size_t y) {
-		for(size_t x = 0; x < size_t(render.width); ++x) {
+		for(size_t x = 0; x < (render.width); ++x) {
 			const glm::vec3 color	  = render.rgb(int(x), int(y)) / float(samples);
 			render.rgb(int(x), int(y)) = glm::pow(color, glm::vec3(1.0f / 2.2f));
 		}

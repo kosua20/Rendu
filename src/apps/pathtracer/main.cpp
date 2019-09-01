@@ -100,7 +100,7 @@ void renderOneShot(const PathTracerConfig & config) {
 	tracer.render(camera, config.samples, config.depth, render);
 
 	// Save image.
-	Image::saveLDRImage(config.outputPath, render, false);
+	render.save(config.outputPath, false);
 
 	System::ping();
 }
