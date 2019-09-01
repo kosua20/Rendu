@@ -4,13 +4,17 @@
 
 struct GLFWwindow;
 
+/** \brief Represent an OS window and its associated rendering context.
+ \ingroup System
+ */
 class Window {
 public:
 	
 	/** Create a new window backed by an OpenGL context.
 	 \param name the name of the window
 	 \param config the configuration to use (additional info will be added to it)
-	 \param should the window be hidden (for preprocess for instance)
+	 \param escapeQuit allows the user to close the window by pressing escape
+	 \param hidden should the window be hidden (for preprocess for instance)
 	*/
 	Window(const std::string & name, RenderingConfig & config, bool escapeQuit = true, bool hidden = false);
 
@@ -23,24 +27,41 @@ public:
 	};
 
 	/** Execute an action related to the windowing system.
-		 \param action the system action to perform
-		 */
+	 \param action the system action to perform
+	*/
 	void perform(Action action);
 	
 	/** Start registering GUI items.
-	 \return true if the next frame is valid, else the window should be cleaned and destroyed.*/
+	 \return true if the next frame is valid.
+	 \note If the frame is invalid, the window should be cleaned and closed.
+	 */
 	bool nextFrame();
 	
-	/** Clean resources, delete window. */
+	/** Clean resources, delete the window and its context. */
 	void clean();
 	
-private:
+	/** Copy constructor.*/
+	Window(const Window &) = delete;
 	
+	/** Copy assignment.
+	 \return a reference to the object assigned to
+	 */
+	Window & operator=(const Window &) = delete;
+	
+	/** Move constructor.*/
+	Window(Window &&) = delete;
+	
+	/** Move assignment.
+	 \return a reference to the object assigned to
+	 */
+	Window & operator=(Window &&) = delete;
+	
+private:
 	/** Setup ImGui with the proper callbacks and style. */
 	void setupImGui();
 	
-	RenderingConfig & _config;
-	GLFWwindow * _window = nullptr;
-	bool _frameStarted = false;
-	bool _allowEscape = false;
+	RenderingConfig & _config; ///< The window configuration.
+	GLFWwindow * _window = nullptr; ///< Internal window handle.
+	bool _frameStarted = false; ///< Has a frame been started.
+	bool _allowEscape = false; ///< Can the window be closed by pressing escape.
 };
