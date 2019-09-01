@@ -20,19 +20,40 @@ public:
 
 	/** Load font from text stream.
 	 \param in the input stream containing the metadata
-	 \param font will be populated with the font metadata and atlas
 	 */
-	static void loadFont(std::istream & in, Font & font);
+	Font(std::istream & in);
 
 	/** Generate the label mesh for a given text and font.
 	 \param text the text do display
-	 \param font the font to use for the label
 	 \param scale the vertical height of the characters, in absolute units
 	 \param mesh the mesh to populate
 	 \param align the text alignment to apply, will influence the origin placement
 	 */
-	static void generateLabel(const std::string & text, const Font & font, float scale, Mesh & mesh, Alignment align = Alignment::LEFT);
+	void generateLabel(const std::string & text, float scale, Mesh & mesh, Alignment align = Alignment::LEFT) const;
+	
+	/** Copy assignment operator (disabled).
+	 \return a reference to the object assigned to
+	 */
+	Font & operator=(const Font &) = delete;
 
+	/** Copy constructor (disabled). */
+	Font(const Font &) = delete;
+
+	/** Move assignment operator.
+	 \return a reference to the object assigned to
+	 */
+	Font & operator=(Font &&) = default;
+
+	/** Move constructor. */
+	Font(Font &&) = default;
+
+	/** Obtain the font atlas.
+	 \return the font atlas texture.
+	 */
+	const Texture * atlas() const { return _atlas; }
+	
+private:
+	
 	/** \brief
 	 A font glyph bounding box, in UV space.
 	 */
@@ -40,11 +61,11 @@ public:
 		glm::vec2 min; ///< Bottom left corner.
 		glm::vec2 max; ///< Top right corner.
 	};
-
-	const Texture * atlas; ///< The font texture atlas.
-	int firstCodepoint;	///< The integer value of the first supported character.
-	int lastCodepoint;	 ///< The integer value of the last supported character.
-	glm::vec2 margins;	 ///< Margin to apply around each characters when generating the geometry.
-
-	std::vector<Glyph> glyphs; ///<The glyphs informations.
+	
+	const Texture * _atlas; ///< The font texture atlas.
+	int _firstCodepoint;	///< The integer value of the first supported character.
+	int _lastCodepoint;	 ///< The integer value of the last supported character.
+	glm::vec2 _margins;	 ///< Margin to apply around each characters when generating the geometry.
+	
+	std::vector<Glyph> _glyphs; ///<The glyphs informations.
 };

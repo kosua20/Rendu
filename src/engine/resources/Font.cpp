@@ -4,7 +4,7 @@
 
 #include <sstream>
 
-void Font::loadFont(std::istream & in, Font & font) {
+Font::Font(std::istream & in) {
 
 	std::string line;
 	std::vector<std::string> lines;
@@ -22,45 +22,45 @@ void Font::loadFont(std::istream & in, Font & font) {
 		Log::Error() << Log::Resources << "Unable to parse font." << std::endl;
 		return;
 	}
-	font.atlas = Resources::manager().getTexture(lines[0], {Layout::R8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
-	const glm::vec2 textureSize(font.atlas->width, font.atlas->height);
+	_atlas = Resources::manager().getTexture(lines[0], {Layout::R8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
+	const glm::vec2 textureSize(_atlas->width, _atlas->height);
 
-	font.firstCodepoint = int(lines[1][0]);
-	font.lastCodepoint  = int(lines[2][0]);
+	_firstCodepoint = int(lines[1][0]);
+	_lastCodepoint  = int(lines[2][0]);
 	// Compute expected number of glyphs.
-	const int expectedCount = font.lastCodepoint - font.firstCodepoint + 1;
+	const int expectedCount = _lastCodepoint - _firstCodepoint + 1;
 	if(int(lines.size()) < 4 + expectedCount) {
 		Log::Error() << Log::Resources << "Unable to parse glyphs." << std::endl;
 		return;
 	}
 	// Parse margins.
 	const std::string::size_type splitPos = lines[3].find(" ");
-	font.margins.x						  = std::stof(lines[3].substr(0, splitPos));
-	font.margins.y						  = std::stof(lines[3].substr(splitPos + 1));
+	_margins.x = std::stof(lines[3].substr(0, splitPos));
+	_margins.y = std::stof(lines[3].substr(splitPos + 1));
 
 	// Parse glyphes.
-	font.glyphs.resize(expectedCount);
+	_glyphs.resize(expectedCount);
 	for(int i = 0; i < expectedCount; ++i) {
 		// Split in a vec4.
 		std::stringstream glyphStr(lines[4 + i]);
 		int minx, miny, maxx, maxy;
 		glyphStr >> minx >> miny >> maxx >> maxy;
-		font.glyphs[i].min = (glm::vec2(minx, miny) - font.margins) / textureSize;
-		font.glyphs[i].max = (glm::vec2(maxx, maxy) + font.margins) / textureSize;
+		_glyphs[i].min = (glm::vec2(minx, miny) - _margins) / textureSize;
+		_glyphs[i].max = (glm::vec2(maxx, maxy) + _margins) / textureSize;
 	}
 }
 
-void Font::generateLabel(const std::string & text, const Font & font, float scale, Mesh & mesh, Alignment align) {
+void Font::generateLabel(const std::string & text, float scale, Mesh & mesh, Alignment align) const {
 	mesh.clean();
 	glm::vec3 currentOrigin(0.0f);
 
 	int idBase = 0;
 	for(const auto & c : text) {
-		if(int(c) < font.firstCodepoint || int(c) > font.lastCodepoint) {
+		if(int(c) < _firstCodepoint || int(c) > _lastCodepoint) {
 			Log::Error() << "Unknown codepoint." << std::endl;
 			continue;
 		}
-		const int glyphIndex = int(c) - font.firstCodepoint;
+		const int glyphIndex = int(c) - _firstCodepoint;
 
 		// Indices are easy.
 		mesh.indices.push_back(idBase);
@@ -71,7 +71,7 @@ void Font::generateLabel(const std::string & text, const Font & font, float scal
 		mesh.indices.push_back(idBase + 3);
 		idBase += 4;
 
-		const auto & glyph = font.glyphs[glyphIndex];
+		const auto & glyph = _glyphs[glyphIndex];
 		// Uvs also.
 		mesh.texcoords.push_back(glyph.min);
 		mesh.texcoords.emplace_back(glyph.max.x, glyph.min.y);
@@ -82,7 +82,7 @@ void Font::generateLabel(const std::string & text, const Font & font, float scal
 		// We want the vertical height to be scale, X to follow based on aspect ratio in font atlas.
 		const glm::vec2 uvSize = (glyph.max - glyph.min);
 		const float deltaY	 = scale;
-		const float deltaX	 = deltaY * (uvSize.x / uvSize.y) * (float(font.atlas->width) / float(font.atlas->height));
+		const float deltaX	 = deltaY * (uvSize.x / uvSize.y) * (float(_atlas->width) / float(_atlas->height));
 		mesh.positions.push_back(currentOrigin);
 		mesh.positions.push_back(currentOrigin + glm::vec3(deltaX, 0.0f, 0.0f));
 		mesh.positions.push_back(currentOrigin + glm::vec3(deltaX, deltaY, 0.0f));
