@@ -96,16 +96,20 @@ public:
 	virtual ~Controller() = default;
 
 	/** Copy constructor.*/
-	Controller(const Controller &) = default;
+	Controller(const Controller &) = delete;
 
-	/** Copy assignment. */
-	Controller & operator=(const Controller &) = default;
+	/** Copy assignment.
+	 \return a reference to the object assigned to
+	 */
+	Controller & operator=(const Controller &) = delete;
 
 	/** Move constructor.*/
-	Controller(Controller &&) = default;
+	Controller(Controller &&) = delete;
 
-	/** Move assignment. */
-	Controller & operator=(Controller &&) = default;
+	/** Move assignment.
+	 \return a reference to the object assigned to
+	 */
+	Controller & operator=(Controller &&) = delete;
 
 	/**
 	 Save a configuration to a file on disk.

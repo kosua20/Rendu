@@ -101,6 +101,22 @@ public:
 	 */
 	static glm::vec2 interpolateUV(const RayHit & hit, const Mesh & geometry);
 
+	/** Copy constructor.*/
+	Raycaster(const Raycaster &) = delete;
+	
+	/** Copy assignment.
+	 \return a reference to the object assigned to
+	 */
+	Raycaster & operator=(const Raycaster &) = delete;
+	
+	/** Move constructor.*/
+	Raycaster(Raycaster &&) = delete;
+	
+	/** Move assignment.
+	 \return a reference to the object assigned to
+	 */
+	Raycaster & operator=(Raycaster &&) = delete;
+	
 private:
 	/** Internal triangle representation. */
 	struct TriangleInfos {

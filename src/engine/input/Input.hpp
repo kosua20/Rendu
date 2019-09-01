@@ -297,17 +297,21 @@ public:
 	 */
 	static Input & manager();
 
-	/// Copy operator (disabled).
+	/** Copy operator (disabled).
+	 \return a reference to the object assigned to
+	 */
 	Input & operator=(const Input &) = delete;
 
-	/// Copy constructor (disabled).
+	/** Copy constructor (disabled). */
 	Input(const Input &) = delete;
 
-	/// Move operator (disabled).
-	Input & operator=(const Input &&) = delete;
+	/** Move operator (disabled).
+	 \return a reference to the object assigned to
+	 */
+	Input & operator=(Input &&) = delete;
 
-	/// Move constructor (disabled).
-	Input(const Input &&) = delete;
+	/** Move constructor (disabled). */
+	Input(Input &&) = delete;
 
 private:
 	/// Constructor (disabled).

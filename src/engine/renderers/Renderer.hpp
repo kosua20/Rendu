@@ -39,15 +39,19 @@ public:
 	virtual ~Renderer() = default;
 
 	/** Copy constructor.*/
-	Renderer(const Renderer &) = default;
+	Renderer(const Renderer &) = delete;
 
-	/** Copy assignment. */
+	/** Copy assignment.
+	 \return a reference to the object assigned to
+	 */
 	Renderer & operator=(const Renderer &) = delete;
 
 	/** Move constructor.*/
-	Renderer(Renderer &&) = default;
+	Renderer(Renderer &&) = delete;
 
-	/** Move assignment. */
+	/** Move assignment.
+	 \return a reference to the object assigned to
+	 */
 	Renderer & operator=(Renderer &&) = delete;
 
 protected:
