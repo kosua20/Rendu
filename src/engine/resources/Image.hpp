@@ -3,14 +3,14 @@
 
 /**
  \brief Represents an image composed of pixels with values in [0,1]. Provide image loading/saving utilities, for both LDR and HDR images.
- \note Image dimensions are stored as signed integers because they are often used in arithmetics operations and loops where values can be negative.
  \ingroup Resources
  */
 class Image {
 
 public:
+	
 	/** Default constructor. */
-	Image();
+	Image() = default;
 
 	/**
 	 Constructor that allocates an empty image with the given dimensions.
@@ -85,71 +85,85 @@ public:
 	 */
 	glm::vec4 rgbal(float x, float y) const;
 
-	int width;				   //< The width of the image
-	int height;				   //< The height of the image
-	unsigned int components;   //< Number of components/channels
-	std::vector<float> pixels; //< The pixels values of the image
-
+	/** Load an image from disk. Will contain the image raw data as [0,1] floats.
+	 \param path the path to the image
+	 \param channels the number of channels to load from the image
+	 \param flip should the image be vertically flipped
+	 \param externalFile if true, skip the resources manager and load directly from disk
+	 \return a success/error flag
+	 */
+	int load(const std::string & path, unsigned int channels, bool flip, bool externalFile);
+	
+	/** Save an image to disk, either in HDR (when using "exr" extension) or in LDR (any other extension).
+	 \param path the path to the image
+	 \param flip should the image be vertically flipped
+	 \param ignoreAlpha if true, the alpha channel will be ignored
+	 \return a success/error flag
+	 */
+	int save(const std::string & path, bool flip, bool ignoreAlpha = false);
+	
 	/** Query if a path points to an image loaded in floating point, based on the extension.
 	 \param path the path to the image
 	 \return true if the file is loaded as a floating point numbers image
 	 \note Extensions checked: .exr
 	 */
 	static bool isFloat(const std::string & path);
-
-	/** Load an image from disk.
-	 \param path the path to the image
-	 \param channels the number of channels to load from the image
-	 \param flip should the image be vertically flipped
-	 \param externalFile if true, skip the resources manager and load directly from disk
-	  \param image will contain the image raw data as [0,1] floats
-	 \return a success/error flag
+	
+	/** Copy assignment operator (disabled).
+	 \return a reference to the object assigned to
 	 */
-	static int loadImage(const std::string & path, unsigned int channels, bool flip, bool externalFile, Image & image);
-
+	Image & operator=(const Image &) = delete;
+	
+	/** Copy constructor (disabled). */
+	Image(const Image &) = delete;
+	
+	/** Move assignment operator .
+	 \return a reference to the object assigned to
+	 */
+	Image & operator=(Image &&) = default;
+	
+	/** Move constructor. */
+	Image(Image &&) = default;
+	
+	unsigned int width = 0;		 ///< The width of the image
+	unsigned int height = 0;	 ///< The height of the image
+	unsigned int components = 0; ///< Number of components/channels
+	std::vector<float> pixels;	 ///< The pixels values of the image
+	
+private:
+	
 	/** Save a LDR image to disk using stb_image.
 	 \param path the path to the image
-	 \param image the image data in [0,1] and infos
 	 \param flip should the image be vertically flipped
 	 \param ignoreAlpha if true, the alpha channel will be ignored
 	 \return a success/error flag
 	 */
-	static int saveLDRImage(const std::string & path, const Image & image, bool flip, bool ignoreAlpha = false);
-
+	int saveAsLDR(const std::string & path, bool flip, bool ignoreAlpha);
+	
 	/** Save a HDR image to disk using tiny_exr.
 	 \param path the path to the image
-	 \param image the image data in [0,1] and infos
 	 \param flip should the image be vertically flipped
 	 \param ignoreAlpha if true, the alpha channel will be ignored
 	 \return a success/error flag
 	 */
-	static int saveHDRImage(const std::string & path, const Image & image, bool flip, bool ignoreAlpha = false);
-
-	/** Bilinearly sample a cubemap in a given direction.
-	 \param images the six cubemap faces, in standard Rendu order (px, nx, py, ny, pz, nz)
-	 \param dir the direction to sample
-	 \return the sampled color.
-	 */
-	static glm::vec3 sampleCubemap(const std::vector<Image> & images, const glm::vec3 & dir);
-
-private:
+	int saveAsHDR(const std::string & path,  bool flip, bool ignoreAlpha);
+	
 	/** Load a LDR image from disk using stb_image.
 	 \param path the path to the image
 	 \param channels the number of channels to load from the image
 	 \param flip should the image be vertically flipped
 	 \param externalFile if true, skip the resources manager and load directly from disk
-	 \param image will contain the image raw data as [0,1] floats
 	 \return a success/error flag
 	 */
-	static int loadLDRImage(const std::string & path, unsigned int channels, bool flip, bool externalFile, Image & image);
+	int loadLDR(const std::string & path, unsigned int channels, bool flip, bool externalFile);
 
 	/** Load a HDR image from disk using tiny_exr, assuming 3-channels.
 	 \param path the path to the image
 	 \param channels will contain the number of channels of the loaded image
 	 \param flip should the image be vertically flipped
 	 \param externalFile if true, skip the resources manager and load directly from disk
-	 \param image will contain the image raw data as [0,1] floats
 	 \return a success/error flag
 	 */
-	static int loadHDRImage(const std::string & path, unsigned int channels, bool flip, bool externalFile, Image & image);
+	int loadHDR(const std::string & path, unsigned int channels, bool flip, bool externalFile);
+	
 };
