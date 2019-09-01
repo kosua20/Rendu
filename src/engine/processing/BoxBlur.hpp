@@ -6,8 +6,8 @@
 
 /**
  \brief Applies a box blur of fixed radius 2. Correspond to uniformly averaging values over a square window.
- \see GLSL::Frag::Box_blur_1, GLSL::Frag::Box_blur_2, GLSL::Frag::Box_blur_3, GLSL::Frag::Box_blur_4
- \see GLSL::Frag::Box_blur_approx_1, GLSL::Frag::Box_blur_approx_2, GLSL::Frag::Box_blur_approx_3, GLSL::Frag::Box_blur_approx_4
+ \see GPU::Frag::Box_blur_1, GPU::Frag::Box_blur_2, GPU::Frag::Box_blur_3, GPU::Frag::Box_blur_4
+ \see GPU::Frag::Box_blur_approx_1, GPU::Frag::Box_blur_approx_2, GPU::Frag::Box_blur_approx_3, GPU::Frag::Box_blur_approx_4
  \ingroup Processing
  */
 class BoxBlur : public Blur {

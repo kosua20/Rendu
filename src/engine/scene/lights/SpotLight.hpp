@@ -8,7 +8,7 @@
 /**
  \brief A spotlight, where light rays in a given cone are radiating from a single point in space. Implements distance attenuation and cone soft transition.
  \details It can be associated with a shadow 2D map with perspective projection, generated using Variance shadow mapping. It is rendered as a cone in deferred rendering.
- \see GLSL::Frag::Spot_light, GLSL::Frag::Light_shadow, GLSL::Frag::Light_debug
+ \see GPU::Frag::Spot_light, GPU::Frag::Light_shadow, GPU::Frag::Light_debug
  \ingroup Scene
  */
 class SpotLight final : public Light {

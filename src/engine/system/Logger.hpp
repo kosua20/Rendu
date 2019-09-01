@@ -12,7 +12,7 @@
 
 /**
  \brief Provides logging utilities, either to the standard/error output or to a file, with multiple criticality levels.
- \ingroup Helpers
+ \ingroup System
  */
 class Log {
 

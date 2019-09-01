@@ -11,7 +11,7 @@
  (https://community.arm.com/cfs-file/__key/communityserver-blogs-components-weblogfiles/00-00-00-20-66/siggraph2015_2D00_mmg_2D00_marius_2D00_slides.pdf).
  The image is then upscaled again with a second custom filtered.
  
- \see GLSL::Frag::Blur-dual-filter-down, GLSL::Frag::Blur-dual-filter-up
+ \see GPU::Frag::Blur-dual-filter-down, GPU::Frag::Blur-dual-filter-up
  \ingroup Processing
  */
 class GaussianBlur : public Blur {

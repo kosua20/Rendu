@@ -6,7 +6,7 @@
 
 /**
  \brief Computes screen space ambient occlusion from a depth and view-space normal buffer (brought to [0,1]).
- \see GLSL::Frag::SSAO
+ \see GPU::Frag::SSAO
  \ingroup Processing
  */
 class SSAO {

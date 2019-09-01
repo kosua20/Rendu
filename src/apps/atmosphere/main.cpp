@@ -13,7 +13,7 @@
 /**
  \defgroup AtmosphericScattering Atmospheric scattering
  \brief Demonstrate real-time approximate atmospheric scattering simulation.
- \see GLSL::Frag::Atmosphere
+ \see GPU::Frag::Atmosphere
  \ingroup Applications
  */
 

@@ -41,13 +41,13 @@ public:
 	glm::vec2 getButtonSize() const;
 
 private:
-	const Program * _backgroundProgram; //< Background images rendering.
-	const Program * _buttonProgram;		//< Buttons rendering.
-	const Program * _imageProgram;		//< Fixed images rendering.
-	const Program * _fontProgram;		//< Labels font rendering.
-	const Mesh * _button;				//< Button main mesh (with border).
-	const Mesh * _buttonIn;				//< Button interior mesh.
-	const Mesh * _toggle;				//< Toggle main mesh (with border).
-	const Mesh * _toggleIn;				//< Toggle interior mesh.
-	const Mesh * _quad;					//< Quad mesh for images.
+	const Program * _backgroundProgram; ///< Background images rendering.
+	const Program * _buttonProgram;		///< Buttons rendering.
+	const Program * _imageProgram;		///< Fixed images rendering.
+	const Program * _fontProgram;		///< Labels font rendering.
+	const Mesh * _button;				///< Button main mesh (with border).
+	const Mesh * _buttonIn;				///< Button interior mesh.
+	const Mesh * _toggle;				///< Toggle main mesh (with border).
+	const Mesh * _toggleIn;				///< Toggle interior mesh.
+	const Mesh * _quad;					///< Quad mesh for images.
 };

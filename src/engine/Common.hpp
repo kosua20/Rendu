@@ -1,7 +1,5 @@
 #pragma once
 
-#include "system/Logger.hpp"
-
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/color_space.hpp>
@@ -24,6 +22,8 @@ typedef unsigned long ulong;
 #	define NOMINMAX
 #	undef ERROR
 #endif
+
+#include "system/Logger.hpp"
 
 /**
  
@@ -48,11 +48,11 @@ typedef unsigned long ulong;
  \defgroup Resources Resources
  \brief Handle all resources loading/saving tasks.
  
- \defgroup Helpers Helpers
- \brief Various utility helpers.
+ \defgroup System System
+ \brief Interaction with the operating system.
  
  \defgroup Shaders Shaders
- \brief OpenGL GLSL shaders.
+ \brief Vertex processing and shading subprograms.
  \details Those shaders are small programs compiled at runtime and executed by the GPU cores. They can process vertices (vertex shader), primitives (geometry shader) and compute per-pixel values (fragment shader).
  
  \defgroup Applications Applications
@@ -61,16 +61,16 @@ typedef unsigned long ulong;
  \defgroup Tools Tools
  \brief Preprocess tools for shader validation, data precomputations, etc.
  
- \namespace GLSL
- \brief GLSL shaders
+ \namespace GPU
+ \brief GPU shaders
  
- \namespace GLSL::Vert
+ \namespace GPU::Vert
  \brief Contains all vertex shaders
  
- \namespace GLSL::Frag
+ \namespace GPU::Frag
  \brief Contains all fragment shaders
  
- \namespace GLSL::Geom
+ \namespace GPU::Geom
  \brief Contains all geometry shaders
  
  */

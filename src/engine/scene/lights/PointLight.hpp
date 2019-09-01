@@ -7,7 +7,7 @@
 /**
  \brief An omnidirectional punctual light, where light is radiating in all directions from a single point in space. Implements distance attenuation.
  \details It can be associated with a shadow cubemap with six orthogonal projections, and is rendered as a sphere in deferred rendering.
- \see GLSL::Frag::Point_light, GLSL::Frag::Light_shadow_linear, GLSL::Frag::Light_debug
+ \see GPU::Frag::Point_light, GPU::Frag::Light_shadow_linear, GPU::Frag::Light_debug
  \ingroup Scene
  */
 class PointLight final : public Light {

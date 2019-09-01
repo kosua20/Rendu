@@ -4,7 +4,7 @@
 #include <vector>
 
 /** \brief Represent a key-values tuple.
-  	\ingroup Engine
+  	\ingroup System
  */
 struct KeyValues {
 
@@ -20,7 +20,7 @@ struct KeyValues {
 
 /**
  \brief Contains configurable elements as attributes, populated from the command line, a configuration file or default values.
- \ingroup Engine
+ \ingroup System
  */
 class Config {
 public:
@@ -93,7 +93,7 @@ private:
 
 /**
  \brief Configuration containing parameters for windows and renderers.
- \ingroup Engine
+ \ingroup System
  */
 class RenderingConfig : public Config {
 public:

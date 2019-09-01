@@ -45,7 +45,7 @@ vec3 positionFromDepth(float depth){
 	\param v the view direction
 	\param F0 the Fresnel coefficient
 	\param roughness the surface roughness
-	return the BRDF value
+	\return the BRDF value
 	*/
 vec3 ggx(vec3 n, vec3 v, vec3 F0, float roughness){
 	// Compute local frame.

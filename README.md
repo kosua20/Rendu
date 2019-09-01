@@ -8,9 +8,9 @@ Rendu requires OpenGL 4 and builds on macOS (main test machine), Windows (regula
 
 Basic resources to run each project are included in this repository, but you can download many additional scenes from an [auxiliary repository](https://github.com/kosua20/Rendu-resources) for some of the applications.
 
-## Projects
+# Projects
 
-### Applications
+## Applications
 
 | Name  | Description |
 | ------------- | ------------- |
@@ -20,7 +20,7 @@ Basic resources to run each project are included in this repository, but you can
 | [Atmospheric scattering](http://kosua20.github.io/Rendu/html/group___atmospheric_scattering.html) | ![Atmospheric scattering preview](docs/img/atmosphere.png) Realistic atmosphere rendering with Rayleigh and Mie scattering (*Precomputed Atmospheric Scattering*, Bruneton et al., 2008). |
 | [Snake Game](http://kosua20.github.io/Rendu/html/group___snake_game.html) | ![Snake game preview](docs/img/snake.png) A basic game of snake, demonstrating game menus, player state, batched rendering. |
 
-### Tools
+## Tools
 
 | Name  | Description |
 | ------------- | ------------- |
@@ -31,7 +31,7 @@ Basic resources to run each project are included in this repository, but you can
 | [Atmospheric scattering preprocess](http://kosua20.github.io/Rendu/html/group___atmospheric_scattering.html) | ![Scattering tool preview](docs/img/atmopreproc.png) Compute the atmosphere coefficients look-up table for the Atmospheric Scattering project. |
 | [Playground](http://kosua20.github.io/Rendu/html/group___playground.html) | ![Playground preview](docs/img/playground.png) Simple application setting up a rendering context for small experimentations. |
 
-## Building
+# Building
 
 This project use `premake` ([premake.github.io](https://premake.github.io)) for generating the workspace and projects files.
 Run
@@ -50,7 +50,7 @@ You can clean the build directory with
 
 All non-system dependencies are compiled directly along with the projects.
 
-## Features
+# Features
 
 On a more detailed level, here are the main features you will find in Rendu.
 
@@ -68,7 +68,7 @@ On a more detailed level, here are the main features you will find in Rendu.
 - 2D interface rendering (buttons, checkboxes) with support for font distance fields.
 - A raycaster CPU implementation using a bounding volume hierarchy.
 
-### Planned
+## Planned
 
 I would like to add some additional features to Rendu in the near future, mainly to get a better grasp of some techniques and allow for more experimentations.
 

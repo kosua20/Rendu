@@ -131,13 +131,17 @@ public:
 	/** Copy constructor.*/
 	Camera(const Camera &) = default;
 
-	/** Copy assignment. */
+	/** Copy assignment.
+	 \return a reference to the object assigned to
+	 */
 	Camera & operator=(const Camera &) = default;
 
 	/** Move constructor.*/
 	Camera(Camera &&) = default;
 
-	/** Move assignment. */
+	/** Move assignment.
+	 \return a reference to the object assigned to
+	 */
 	Camera & operator=(Camera &&) = default;
 
 protected:

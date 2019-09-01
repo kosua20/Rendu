@@ -25,15 +25,19 @@ public:
 	 */
 	void updateModels();
 
-	/// Status of the player.
+	/** Status of the player.
+	 \return true if the player is alive.
+	 */
 	bool alive() const { return _alive; }
 
-	/// Score of the player.
+	/** Score of the player.
+	 \return the score.
+	 */
 	int score() const { return _score; }
 
 	glm::mat4 modelHead = glm::mat4(1.0f); ///< The snake head model matrix.
-	std::vector<glm::mat4> modelsBody;	 ///< The snake body elements model matrices.
-	std::vector<glm::mat4> modelsItem;	 ///< The edible items model matrices.
+	std::vector<glm::mat4> modelsBody;	   ///< The snake body elements model matrices.
+	std::vector<glm::mat4> modelsItem;	   ///< The edible items model matrices.
 	std::vector<int> looksBody;			   ///< The snake body elements material IDs.
 	std::vector<int> looksItem;			   ///< The edible items material IDs.
 

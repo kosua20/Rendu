@@ -3,7 +3,7 @@
 
 /**
  \brief Provides utilities process strings.
- \ingroup Helpers
+ \ingroup System
  */
 class TextUtilities {
 

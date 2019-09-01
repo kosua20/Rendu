@@ -5,7 +5,7 @@
 #include "Common.hpp"
 
 /** \brief Provides helpers for serialization/deserialization of basic types.
- 	\ingroup Engine
+ 	\ingroup System
  */
 class Codable {
 public:

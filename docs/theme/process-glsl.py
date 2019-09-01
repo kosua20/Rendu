@@ -24,7 +24,7 @@ fileLines = fileHandle.readlines()
 fileHandle.close()
 
 # Doxygen infos.
-doxyNamespace = "GLSL"
+doxyNamespace = "GPU"
 doxyGroup = "Shaders"
 doxySubnamespace = fileExt.lower()[1:].capitalize()
 doxyClass = fileName.capitalize().replace("-", "_")
