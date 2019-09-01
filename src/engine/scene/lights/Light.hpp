@@ -96,16 +96,20 @@ public:
 	virtual ~Light() = default;
 
 	/** Copy constructor.*/
-	Light(const Light &) = default;
+	Light(const Light &) = delete;
 
-	/** Copy assignment. */
-	Light & operator=(const Light &) = default;
+	/** Copy assignment.
+	 \return a reference to the object assigned to
+	 */
+	Light & operator=(const Light &) = delete;
 
 	/** Move constructor.*/
 	Light(Light &&) = default;
 
-	/** Move assignment. */
-	Light & operator=(Light &&) = default;
+	/** Move assignment.
+	 \return a reference to the object assigned to
+	 */
+	Light & operator=(Light &&) = delete;
 
 protected:
 	/** Setup a light common parameters from a list of key-value tuples. The following keywords will be searched for:

@@ -83,7 +83,23 @@ public:
 
 	std::vector<glm::vec3> backgroundIrradiance;	///< RGB SH-coefficients of the background irradiance, computed using SHExtractor. \see SphericalHarmonics
 	const Texture * backgroundReflection = nullptr; ///< Cubemap texture ID of the background radiance.
-
+	
+	/** Copy constructor.*/
+	Scene(const Scene &) = delete;
+	
+	/** Copy assignment.
+	 \return a reference to the object assigned to
+	 */
+	Scene & operator=(const Scene &) = delete;
+	
+	/** Move constructor.*/
+	Scene(Scene &&) = delete;
+	
+	/** Move assignment.
+	 \return a reference to the object assigned to
+	 */
+	Scene & operator=(Scene &&) = delete;
+	
 private:
 	/** Load an object in the scene from its serialized representation.
 	 \param params the object parameters

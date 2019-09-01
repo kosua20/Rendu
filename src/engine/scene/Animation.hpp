@@ -14,12 +14,11 @@ public:
 		WORLD  ///< World space (left multiplication)
 	};
 
-	Animation() = default;
-
 	/** Apply the animation transformation to the input matrix.
 	 \param m the matrix to transform
 	 \param fullTime the time elapsed since the beginning of the rendering loop
 	 \param frameTime the time elapsed since last frame
+	 \return the transformed matrix.
 	 */
 	virtual glm::mat4 apply(const glm::mat4 & m, double fullTime, double frameTime) = 0;
 
@@ -27,6 +26,7 @@ public:
 	 \param v the vector to transform
 	 \param fullTime the time elapsed since the beginning of the rendering loop
 	 \param frameTime the time elapsed since last frame
+	 \return the transformed matrix.
 	 */
 	virtual glm::vec4 apply(const glm::vec4 & v, double fullTime, double frameTime) = 0;
 
@@ -34,16 +34,20 @@ public:
 	virtual ~Animation() = default;
 
 	/** Copy constructor.*/
-	Animation(const Animation &) = default;
+	Animation(const Animation &) = delete;
 
-	/** Copy assignment. */
-	Animation & operator=(const Animation &) = default;
+	/** Copy assignment.
+	 \return a reference to the object assigned to
+	 */
+	Animation & operator=(const Animation &) = delete;
 
 	/** Move constructor.*/
-	Animation(Animation &&) = default;
+	Animation(Animation &&) = delete;
 
-	/** Move assignment. */
-	Animation & operator=(Animation &&) = default;
+	/** Move assignment.
+	 \return a reference to the object assigned to
+	 */
+	Animation & operator=(Animation &&) = delete;
 
 	/** Helper that can instantiate a list of animations of any type from the passed keywords and parameters.
 	 \param params a list of key-value tuple containing animations parameters
@@ -52,7 +56,14 @@ public:
 	static std::vector<std::shared_ptr<Animation>> decode(const std::vector<KeyValues> & params);
 
 protected:
+	
 	/** Constructor. */
+	Animation() = default;
+	
+	/** Constructor.
+	 \param frame the frame in which the transformation is expressed
+	 \param speed the speed of the animation
+	 */
 	Animation(Frame frame, float speed);
 
 	/** Setup shared animation parameters from a key-value tuple. The expected format is as follows:
@@ -87,6 +98,7 @@ public:
 	 \param m the matrix to transform
 	 \param fullTime the time elapsed since the beginning of the rendering loop
 	 \param frameTime the time elapsed since last frame
+	 \return the transformed matrix.
 	 */
 	glm::mat4 apply(const glm::mat4 & m, double fullTime, double frameTime) override;
 
@@ -94,6 +106,7 @@ public:
 	 \param v the vector to transform
 	 \param fullTime the time elapsed since the beginning of the rendering loop
 	 \param frameTime the time elapsed since last frame
+	 \return the transformed matrix.
 	 */
 	glm::vec4 apply(const glm::vec4 & v, double fullTime, double frameTime) override;
 
@@ -130,6 +143,7 @@ public:
 	 \param m the matrix to transform
 	 \param fullTime the time elapsed since the beginning of the rendering loop
 	 \param frameTime the time elapsed since last frame
+	 \return the transformed matrix.
 	 */
 	glm::mat4 apply(const glm::mat4 & m, double fullTime, double frameTime) override;
 
@@ -137,6 +151,7 @@ public:
 	 \param v the vector to transform
 	 \param fullTime the time elapsed since the beginning of the rendering loop
 	 \param frameTime the time elapsed since last frame
+	 \return the transformed matrix.
 	 */
 	glm::vec4 apply(const glm::vec4 & v, double fullTime, double frameTime) override;
 

@@ -15,8 +15,8 @@ public:
 	/// \brief Type of shading/effects.
 	enum Type : int {
 		Common = 0,  ///< Any type of shading.
-		PBRRegular,  ///< PBR shading. \see GLSL::Vert::Object_gbuffer, GLSL::Frag::Object_gbuffer
-		PBRParallax, ///< PBR with parallax mapping. \see GLSL::Vert::Object_parallax_gbuffer, GLSL::Frag::Object_parallax_gbuffer
+		PBRRegular,  ///< PBR shading. \see GPU::Vert::Object_gbuffer, GPU::Frag::Object_gbuffer
+		PBRParallax, ///< PBR with parallax mapping. \see GPU::Vert::Object_parallax_gbuffer, GPU::Frag::Object_parallax_gbuffer
 		PBRNoUVs
 	};
 
@@ -119,16 +119,20 @@ public:
 	virtual ~Object() = default;
 
 	/** Copy constructor.*/
-	Object(const Object &) = default;
+	Object(const Object &) = delete;
 
-	/** Copy assignment. */
-	Object & operator=(const Object &) = default;
+	/** Copy assignment.
+	 \return a reference to the object assigned to
+	 */
+	Object & operator=(const Object &) = delete;
 
 	/** Move constructor.*/
 	Object(Object &&) = default;
 
-	/** Move assignment. */
-	Object & operator=(Object &&) = default;
+	/** Move assignment.
+	 \return a reference to the object assigned to
+	 */
+	Object & operator=(Object &&) = delete;
 
 protected:
 	const Mesh * _mesh = nullptr;						 ///< Geometry of the object.
