@@ -1,6 +1,6 @@
 #version 330
 
-/* Interpoalted vertex color. */
+/// Interpolated vertex color.
 in INTERFACE {
 	vec3 col;
 } In ; ///< vec3 col;

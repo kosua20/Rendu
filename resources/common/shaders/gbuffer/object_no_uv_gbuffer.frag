@@ -2,7 +2,7 @@
 
 #define MATERIAL_ID 1 ///< The material ID.
 
-// Input: normal in view space.
+/// Input: normal in view space.
 in INTERFACE {
 	vec3 vn;
 } In; ///< vec3 nv;

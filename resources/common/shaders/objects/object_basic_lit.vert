@@ -8,7 +8,7 @@ layout(location = 1) in vec3 n;///< Normal.
 uniform mat4 mvp; ///< The transformation matrix.
 uniform mat3 normalMatrix; ///< The normal transformation matrix.
 
-// Output: normal in world space.
+/// Output: normal in world space.
 out INTERFACE {
 	vec3 vn;
 } Out ; ///< vec3 vn;

@@ -1,5 +1,5 @@
 #version 330
-// Input: texture coordinates.
+/// Input: texture coordinates.
 in INTERFACE {
 	vec2 uv;
 } In ; ///< vec2 uv;

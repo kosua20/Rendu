@@ -1,6 +1,6 @@
 #version 330
 
-// Input: UV coordinates
+/// Input: UV coordinates
 in INTERFACE {
 	vec2 uv;
 } In ; ///< vec2 uv;
@@ -9,7 +9,7 @@ layout(binding = 0) uniform sampler2D screenTexture; ///< Color image.
 
 layout(location = 0) out uvec2 fragCoords; ///< Seeds coordinates.
 
-const int unknownCoord = 65500; // Arbitrary high number.
+const int unknownCoord = 65500; ///< Arbitrary high number.
 
 /** For each non-black pixel, consider it as a seed and store its coordinates. */
 void main(){

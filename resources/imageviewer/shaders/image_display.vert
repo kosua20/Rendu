@@ -1,6 +1,6 @@
 #version 330
 
-// Output: UV coordinates
+/// Output: UV coordinates
 out INTERFACE {
 	vec2 uv;
 } Out ; ///< vec2 uv;

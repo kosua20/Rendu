@@ -2,7 +2,7 @@
 
 #define MATERIAL_ID 0 ///< The material ID.
 
-// Input: uv coordinates.
+/// Input: uv coordinates.
 in INTERFACE {
 	vec2 uv; 
 } In ; ///< vec2 uv;

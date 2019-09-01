@@ -2,7 +2,7 @@
 
 uniform bool flip = false; ///< Flip vertically.
 
-// Output: UV coordinates
+/// Output: UV coordinates
 out INTERFACE {
 	vec2 uv;
 } Out ; ///< vec2 uv;

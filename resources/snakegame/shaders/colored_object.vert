@@ -7,6 +7,7 @@ layout(location = 1) in vec3 n; ///< Normal.
 uniform mat4 mvp; ///< The transformation matrix.
 uniform mat3 normalMat; ///< Model to world space for normals.
 
+/// Interface block.
 out INTERFACE {
 	vec3 n;
 } Out; ///< The world space normal.

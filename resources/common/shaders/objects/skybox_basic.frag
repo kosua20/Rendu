@@ -1,6 +1,6 @@
 #version 330
 
-// Input: position in model space
+/// Input: position in model space
 in INTERFACE {
 	vec3 pos;
 } In ; ///< vec3 pos;

@@ -2,7 +2,7 @@
 
 #define MATERIAL_ID 0 ///< The material ID.
 
-// Input: position in model space
+/// Input: position in model space
 in INTERFACE {
 	vec3 position; 
 } In ; ///< vec3 position;

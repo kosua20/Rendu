@@ -2,15 +2,6 @@
 
 layout(location = 0) out vec4 fragColor; ///< Color.
 
-vec3 hash31(int x);
-
-/** Color each face with a random color. */
-void main(){
-	// We multiply the coordinates by the MVP matrix, and ouput the result.
-	fragColor = vec4(hash31(gl_PrimitiveID), 1.0);
-	
-}
-
 // Random number generation:
 // "Quality hashes collection" (https://www.shadertoy.com/view/Xt3cDn)
 // by nimitz 2018 (twitter: @stormoid)
@@ -35,4 +26,10 @@ vec3 hash31(int x) {
 	uint n = baseHash(uint(x+1));
 	uvec3 rz = uvec3(n, n*16807U, n*48271U);
 	return vec3(rz & uvec3(0x7fffffffU))/float(0x7fffffff);
+}
+
+/** Color each face with a random color. */
+void main(){
+	// We multiply the coordinates by the MVP matrix, and ouput the result.
+	fragColor = vec4(hash31(gl_PrimitiveID), 1.0);	
 }

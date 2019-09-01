@@ -3,7 +3,7 @@
 // Attributes
 layout(location = 0) in vec3 v; ///< Position.
 
-// Output: uv coordinates
+/// Output: uv coordinates
 out INTERFACE {
 	vec2 uv;
 } Out ; ///< vec2 uv;

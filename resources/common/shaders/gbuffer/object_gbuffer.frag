@@ -2,10 +2,10 @@
 
 #define MATERIAL_ID 1 ///< The material ID.
 
-// Input: tangent space matrix, position (view space) and uv coming from the vertex shader
+/// Input: tangent space matrix, position (view space) and uv coming from the vertex shader
 in INTERFACE {
-    mat3 tbn;
-	vec2 uv;
+    mat3 tbn; ///< Normal to view matrix.
+	vec2 uv; ///< UV coordinates.
 } In ; ///< mat3 tbn; vec2 uv;
 
 layout(binding = 0) uniform sampler2D texture0; ///< Albedo.
@@ -19,7 +19,6 @@ layout (location = 2) out vec3 fragEffects; ///< Effects.
 /** Transfer albedo and effects along with the material ID, and output the final normal 
 	(combining geometry normal and normal map) in view space. */
 void main(){
-	
 	
 	vec4 color = texture(texture0, In.uv);
 	if(color.a <= 0.01){

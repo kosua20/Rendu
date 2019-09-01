@@ -7,7 +7,7 @@ layout(location = 2) in vec2 uv;///< UV.
 // Uniform: the MVP.
 uniform mat4 mvp; ///< The transformation matrix.
 
-// Output: texture coordinates.
+/// Output: texture coordinates.
 out INTERFACE {
 	vec2 uv;
 } Out ; ///< vec2 uv;

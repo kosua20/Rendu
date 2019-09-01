@@ -1,12 +1,12 @@
 #version 330
 
-// Input: UV coordinates
+/// Input: UV coordinates
 in INTERFACE {
 	vec2 uv;
 } In ; ///< vec2 uv;
 
 layout(binding = 0) uniform sampler2D screenTexture; ///< Lighting buffer to filter. 
-uniform float luminanceTh = 1.0;
+uniform float luminanceTh = 1.0; ///< Luminance minimum threshold.
 
 layout(location = 0) out vec3 fragColor; ///< Scene color.
 

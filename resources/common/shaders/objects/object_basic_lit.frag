@@ -1,6 +1,6 @@
 #version 330
 
-/* World space normal. */
+/// World space normal.
 in INTERFACE {
 	vec3 vn;
 } In ; ///< vec3 vn;

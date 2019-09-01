@@ -6,7 +6,7 @@ layout(location = 0) in vec3 v; ///< Position.
 // Uniform
 uniform mat4 mvp; ///< MVP transformation matrix.
 
-// Output: position in model space
+/// Output: position in model space
 out INTERFACE {
 	vec3 position;
 } Out ; ///< vec3 position;

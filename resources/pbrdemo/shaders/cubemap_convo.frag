@@ -1,6 +1,6 @@
 #version 330
 
-// Input: UV coordinates
+/// Input: UV coordinates
 in INTERFACE {
 	vec3 pos;
 } In ; ///< vec3 pos;
