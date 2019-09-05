@@ -316,7 +316,7 @@ int main(int argc, char ** argv) {
 	Random::seed();
 
 	ControllableCamera camera;
-	camera.projection(config.screenResolution[0] / config.screenResolution[1], glm::pi<float>() * 0.4, 0.1f, 10.0f);
+	camera.projection(config.screenResolution[0] / config.screenResolution[1], glm::pi<float>() * 0.4f, 0.1f, 10.0f);
 	camera.pose(glm::vec3(0.0f, 0.0f, 4.0f), glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
 	const auto program					= Resources::manager().getProgram("skybox_basic");

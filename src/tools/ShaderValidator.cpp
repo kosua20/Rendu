@@ -81,7 +81,7 @@ int main(int argc, char ** argv) {
 	Resources::manager().addResources(std::string(argv[1]));
 	
 	RenderingConfig config({ "ShaderValidator", "wxh", "100", "100"});
-	Window window("Validation", config, false);
+	Window window("Validation", config, false, true);
 
 	// Query the renderer identifier, and the supported OpenGL version.
 	std::string vendor, renderer, version, shaderVersion;

@@ -1,5 +1,9 @@
 #pragma once
 
+#ifdef _WIN32
+#	define NOMINMAX
+#endif
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/color_space.hpp>
@@ -11,6 +15,7 @@
 
 #include <string>
 #include <vector>
+#include <algorithm>
 
 typedef unsigned char uchar;
 typedef unsigned int  uint;
@@ -19,7 +24,6 @@ typedef unsigned long ulong;
 #ifdef _WIN32
 #	undef near
 #	undef far
-#	define NOMINMAX
 #	undef ERROR
 #endif
 
