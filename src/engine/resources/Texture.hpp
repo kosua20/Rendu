@@ -31,7 +31,9 @@ public:
 	/** Clear CPU images data. */
 	void clearImages();
 	
-	/** Cleanup all data. */
+	/** Cleanup all data.
+	 \note The dimensions and shape of the texture are preserved.
+	 */
 	void clean();
 		
 	/** Bilinearly sample a cubemap in a given direction.

@@ -20,7 +20,6 @@ void Texture::clearImages() {
 
 void Texture::clean() {
 	clearImages();
-	width = height = levels = 0;
 	if(gpu) {
 		gpu->clean();
 	}

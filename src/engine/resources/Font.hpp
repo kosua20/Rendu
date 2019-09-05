@@ -21,7 +21,7 @@ public:
 	/** Load font from text stream.
 	 \param in the input stream containing the metadata
 	 */
-	Font(std::istream & in);
+	explicit Font(std::istream & in);
 
 	/** Generate the label mesh for a given text and font.
 	 \param text the text do display

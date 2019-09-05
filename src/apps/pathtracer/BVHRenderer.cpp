@@ -164,8 +164,7 @@ void BVHRenderer::update() {
 		// Perform rendering.
 		if(ImGui::Button("Render")) {
 			// Clean the texture.
-			_renderTex.clearImages();
-			_renderTex.gpu->clean();
+			_renderTex.clean();
 			GLUtilities::setupTexture(_renderTex, {Layout::SRGB8, Filter::LINEAR, Wrap::CLAMP});
 			// Render.
 			_renderTex.images.emplace_back(_renderTex.width, _renderTex.height, 3);
