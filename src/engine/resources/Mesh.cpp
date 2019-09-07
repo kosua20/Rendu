@@ -226,9 +226,9 @@ void Mesh::centerAndUnit() {
 		// Translate  the vertex.
 		pos -= centroid;
 		// Find the maximal distance from a vertex to the center.
-		maxi = abs(pos.x) > maxi ? abs(pos.x) : maxi;
-		maxi = abs(pos.y) > maxi ? abs(pos.y) : maxi;
-		maxi = abs(pos.z) > maxi ? abs(pos.z) : maxi;
+		maxi = std::abs(pos.x) > maxi ? std::abs(pos.x) : maxi;
+		maxi = std::abs(pos.y) > maxi ? std::abs(pos.y) : maxi;
+		maxi = std::abs(pos.z) > maxi ? std::abs(pos.z) : maxi;
 	}
 	maxi = maxi == 0.0f ? 1.0f : maxi;
 

@@ -8,7 +8,7 @@
  \param t1 second flag
  \return reference to the first flag after combination with the second flag.
  */
-inline TextureShape & operator|=(TextureShape t0, TextureShape t1) {
+inline TextureShape & operator|=(TextureShape & t0, TextureShape & t1) {
 	return t0 = t0 | t1;
 }
 

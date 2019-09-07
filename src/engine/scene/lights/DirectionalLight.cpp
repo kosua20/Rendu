@@ -103,10 +103,10 @@ void DirectionalLight::setScene(const BoundingBox & sceneBox) {
 	_viewMatrix						 = glm::lookAt(lightPosition, lightTarget, glm::vec3(0.0f, 1.0f, 0.0f));
 
 	const BoundingBox lightSpacebox = _sceneBox.transformed(_viewMatrix);
-	const float absz1				= abs(lightSpacebox.minis[2]);
-	const float absz2				= abs(lightSpacebox.maxis[2]);
-	const float near				= (std::min)(absz1, absz2);
-	const float far					= (std::max)(absz1, absz2);
+	const float absz1				= std::abs(lightSpacebox.minis[2]);
+	const float absz2				= std::abs(lightSpacebox.maxis[2]);
+	const float near				= std::min(absz1, absz2);
+	const float far					= std::max(absz1, absz2);
 	const float scaleMargin			= 1.5f;
 	_projectionMatrix				= glm::ortho(scaleMargin * lightSpacebox.minis[0], scaleMargin * lightSpacebox.maxis[0], scaleMargin * lightSpacebox.minis[1], scaleMargin * lightSpacebox.maxis[1], (1.0f / scaleMargin) * near, scaleMargin * far);
 	_mvp							= _projectionMatrix * _viewMatrix;

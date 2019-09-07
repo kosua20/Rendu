@@ -137,10 +137,10 @@ void SpotLight::setScene(const BoundingBox & sceneBox) {
 		far				 = 1.0f * size;
 	} else {
 		const BoundingBox lightSpacebox = _sceneBox.transformed(_viewMatrix);
-		const float absz1				= abs(lightSpacebox.minis[2]);
-		const float absz2				= abs(lightSpacebox.maxis[2]);
-		near							= (std::min)(absz1, absz2);
-		far								= (std::max)(absz1, absz2);
+		const float absz1				= std::abs(lightSpacebox.minis[2]);
+		const float absz2				= std::abs(lightSpacebox.maxis[2]);
+		near							= std::min(absz1, absz2);
+		far								= std::max(absz1, absz2);
 	}
 	_projectionMatrix = glm::perspective(2.0f * _outerHalfAngle, 1.0f, near, far);
 	_mvp			  = _projectionMatrix * _viewMatrix;
