@@ -27,7 +27,10 @@ matrix:
       install:
         - wget https://github.com/premake/premake-core/releases/download/v5.0.0-alpha14/premake-5.0.0-alpha14-linux.tar.gz -O premake.tar.gz
         - tar -xzf premake.tar.gz
-
+    - os: windows
+      install:
+        - wget https://github.com/premake/premake-core/releases/download/v5.0.0-alpha14/premake-5.0.0-alpha14-windows.zip -O premake.zip
+        - 7z e premake.zip
 
 script:
   - ./premake5 gmake2 --skip_shader_validation
