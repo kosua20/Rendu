@@ -15,7 +15,6 @@ matrix:
       dist: bionic
       compiler: gcc
       before_install:
-        - sudo apt-get update
         - sudo apt-get install -y libgtk-3-dev
       install:
         - wget https://github.com/premake/premake-core/releases/download/v5.0.0-alpha14/premake-5.0.0-alpha14-linux.tar.gz -O premake.tar.gz
