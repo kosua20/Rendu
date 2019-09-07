@@ -23,7 +23,7 @@ matrix:
 
 
 script:
-  - ./premake5 gmake2
+  - ./premake5 gmake2 --skip_shader_validation
   - cd build/
   - make ALL
   - cd ..
