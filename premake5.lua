@@ -207,9 +207,11 @@ project("ShaderValidator")
 group("Meta")
 
 project("ALL")
-	CommonSetup()
 	kind("ConsoleApp")
+	CommonSetup()
 	dependson( {"Engine", "PBRDemo", "Playground", "Atmosphere", "ImageViewer", "ImageFiltering", "AtmosphericScatteringEstimator", "BRDFEstimator", "ControllerTest", "SnakeGame", "PathTracer", "ObjToScene"})
+	-- We need a dummy file to execute.
+	files({ "src/tools/ALL.cpp" })
 
 -- Include NFD premake file.
 
