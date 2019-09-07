@@ -46,9 +46,10 @@ matrix:
       install:
         - wget https://github.com/premake/premake-core/releases/download/v5.0.0-alpha14/premake-5.0.0-alpha14-windows.zip -O premake.zip
         - 7z e premake.zip
+
       script:
         - ./premake5 vs2017 --skip_shader_validation
         - cd build
-        - MSBuild.exe Rendu.sln //m:2 //nologo //p:Configuration=Release //p:Platform=x64
+        - cmd.exe /C 'MSBuild.exe Rendu.sln /m:2 /nologo /p:Configuration=Release /p:Platform=x64'
         - cd ..
 
