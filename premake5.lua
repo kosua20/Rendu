@@ -13,6 +13,17 @@ end
 
 cwd = os.getcwd()
 
+-- Options
+newoption {
+	 trigger     = "skip_shader_validation",
+	 description = "Do not validate shaders at application/tool compilation."
+}
+
+newoption {
+	 trigger     = "skip_internal",
+	 description = "Do not generate any existing internal projects."
+}
+
 -- Workspace definition.
 
 workspace("Rendu")
@@ -79,10 +90,13 @@ function ExecutableSetup()
 end
 
 function ShaderValidation()
+	if _OPTIONS["skip_shader_validation"] then
+		return
+	end
 	-- Run the shader validator on all existing shaders.
 	-- Output IDE compatible error messages.
 	dependson({"ShaderValidator"})
-	
+
 	filter("configurations:Release")
 		prebuildcommands({ 
 			path.translate(cwd.."/build/ShaderValidator/Release/ShaderValidator"..ext.." "..cwd.."/resources/", sep)
@@ -92,7 +106,6 @@ function ShaderValidation()
 			path.translate(cwd.."/build/ShaderValidator/Dev/ShaderValidator"..ext.." "..cwd.."/resources/", sep)
 		})
 	filter({})
-
 end	
 
 function RegisterSourcesAndShaders(srcPath, shdPath)
@@ -226,7 +239,7 @@ newaction {
 }
 
 -- Internal private projects can be added here.
-if os.isfile("src/internal/premake5.lua") then
+if (not _OPTIONS["skip_internal"]) and os.isfile("src/internal/premake5.lua") then
 	include("src/internal/premake5.lua")
 end
 	
