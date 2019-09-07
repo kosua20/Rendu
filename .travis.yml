@@ -1,0 +1,26 @@
+branches:
+  only:
+  - master
+
+language: cpp
+
+matrix:
+  include:
+    - os: osx
+      osx_image: xcode10
+      install:
+        - wget https://github.com/premake/premake-core/releases/download/v5.0.0-alpha14/premake-5.0.0-alpha14-macosx.tar.gz -O premake.tar.gz
+        - tar -xzf premake.tar.gz
+    - os: linux
+      dist: bionic
+      compiler: gcc
+      install:
+        - wget https://github.com/premake/premake-core/releases/download/v5.0.0-alpha14/premake-5.0.0-alpha14-linux.tar.gz -O premake.tar.gz
+        - tar -xzf premake.tar.gz
+
+
+script:
+  - ./premake5 gmake2
+  - cd build/
+  - make ALL
+  - cd ..
