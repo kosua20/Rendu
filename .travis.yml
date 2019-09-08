@@ -15,14 +15,14 @@ matrix:
       dist: bionic
       compiler: gcc
       install:
-        - apt-get install -y libgtk-3-dev
+        - sudo apt-get install -y libgtk-3-dev
         - wget https://github.com/premake/premake-core/releases/download/v5.0.0-alpha14/premake-5.0.0-alpha14-linux.tar.gz -O premake.tar.gz
         - tar -xzf premake.tar.gz
     - os: linux
       dist: bionic
       compiler: clang
       install:
-        - apt-get install -y libgtk-3-dev
+        - sudo apt-get install -y libgtk-3-dev
         - wget https://github.com/premake/premake-core/releases/download/v5.0.0-alpha14/premake-5.0.0-alpha14-linux.tar.gz -O premake.tar.gz
         - tar -xzf premake.tar.gz
     - os: windows
@@ -39,7 +39,7 @@ script:
   - if [ "$TRAVIS_OS_NAME" = "linux"   ]; then ./premake5 gmake2 --skip_shader_validation; fi
   - if [ "$TRAVIS_OS_NAME" = "osx"     ]; then ./premake5 gmake2 --skip_shader_validation; fi
   - cd build
-  - if [ "$TRAVIS_OS_NAME" = "windows" ]; then MSBuild.exe Rendu.sln -t:Meta\\ALL -m:2 -nologo -v:minimal -p:Configuration=Release -p:Platform=x64; fi
+  - if [ "$TRAVIS_OS_NAME" = "windows" ]; then MSBuild.exe Rendu.sln -t:Meta\\ALL -nologo -v:minimal -p:Configuration=Release -p:Platform=x64; fi
   - if [ "$TRAVIS_OS_NAME" = "linux"   ]; then make ALL; fi
   - if [ "$TRAVIS_OS_NAME" = "osx"     ]; then make ALL; fi
   - cd ..
