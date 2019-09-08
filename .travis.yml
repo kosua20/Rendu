@@ -52,6 +52,6 @@ matrix:
         - export PATH=$MSBUILD_PATH:$PATH
         - ./premake5 vs2017 --skip_shader_validation
         - cd build
-        - MSBuild.exe Rendu.sln //t:ALL //m:2 //nologo //verbosity:minimal //p:Configuration=Release //p:Platform=x64
+        - MSBuild.exe Rendu.sln //t:Meta/\ALL //m:2 //nologo //verbosity:minimal //p:Configuration=Release //p:Platform=x64
         - cd ..
 
