@@ -33,8 +33,12 @@ Basic resources to run each project are included in this repository, but you can
 
 # Building
 
+[![Build Status](https://travis-ci.org/kosua20/Rendu.svg?branch=master)](https://travis-ci.org/kosua20/Rendu)
+[![GitHub license](https://img.shields.io/github/license/kosua20/Rendu)](https://github.com/kosua20/Rendu/blob/master/LICENSE)
+[![GitHub repo size](https://img.shields.io/github/repo-size/kosua20/Rendu)](https://github.com/kosua20/Rendu)
+
 This project use `premake` ([premake.github.io](https://premake.github.io)) for generating the workspace and projects files.
-Run
+After cloning Rendu, move to the root of the repository and run
 
     premake5.exe [vs2017 | xcode | make | ...]
 
@@ -48,7 +52,7 @@ You can clean the build directory with
 
     premake5 clean
 
-All non-system dependencies are compiled directly along with the projects.
+All non-system dependencies are compiled directly along with the projects. The only exception is `gtk3` on Linux.
 
 # Features
 
