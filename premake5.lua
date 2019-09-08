@@ -12,6 +12,7 @@ if os.ishost("linux") then
 end
 
 cwd = os.getcwd()
+projects = {}
 
 -- Options
 newoption {
@@ -86,6 +87,9 @@ function ExecutableSetup()
 		links({"GL", "X11", "Xi", "Xrandr", "Xxf86vm", "Xinerama", "Xcursor", "Xext", "Xrender", "Xfixes", "xcb", "Xau", "Xdmcp", "rt", "m", "pthread", "dl", gtkLibs})
 	
 	filter({})
+
+	-- Register in the projects list for the ALL target.
+	table.insert(projects, project().name)
 
 end
 
@@ -209,7 +213,8 @@ group("Meta")
 project("ALL")
 	kind("ConsoleApp")
 	CommonSetup()
-	dependson( {"Engine", "PBRDemo", "Playground", "Atmosphere", "ImageViewer", "ImageFiltering", "AtmosphericScatteringEstimator", "BRDFEstimator", "ControllerTest", "SnakeGame", "PathTracer", "ObjToScene"})
+	dependson({ "Engine" })
+	dependson( projects )
 	-- We need a dummy file to execute.
 	files({ "src/tools/ALL.cpp" })
 
@@ -237,6 +242,15 @@ newaction {
       print("Generating documentation...")
       os.execute("doxygen"..ext.." docs/Doxyfile")
       print("Done.")
+   end
+}
+
+newaction {
+   trigger     = "list",
+   description = "List projects that will be built in the 'ALL' project",
+   execute     = function ()
+   		print("Found "..#projects.." projects:")
+      	for i,v in ipairs(projects) do print(" * "..v) end
    end
 }
 
