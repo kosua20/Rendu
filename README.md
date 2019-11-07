@@ -1,5 +1,9 @@
 # Rendu Documentation
 
+[![Build Status](https://travis-ci.com/kosua20/Rendu.svg?branch=master)](https://travis-ci.com/kosua20/Rendu)
+[![GitHub license](https://img.shields.io/github/license/kosua20/Rendu)](https://github.com/kosua20/Rendu/blob/master/LICENSE)
+[![GitHub repo size](https://img.shields.io/github/repo-size/kosua20/Rendu)](https://github.com/kosua20/Rendu)
+
 ![Example of included demos](docs/img/header.png)
 
 Rendu is a rendering engine designed for experimentation. The computer graphics academic and industrial litterature is full of interesting techniques and approaches than can be cumbersome to implement without some basic building blocks. This project aims to provide those building blocks, along with examples of interesting methods or papers. It also contains more general demo applications, such as a small snake game or a gamepad configurator.
@@ -32,10 +36,6 @@ Basic resources to run each project are included in this repository, but you can
 | [Playground](http://kosua20.github.io/Rendu/html/group___playground.html) | ![Playground preview](docs/img/playground.png) Simple application setting up a rendering context for small experimentations. |
 
 # Building
-
-[![Build Status](https://travis-ci.org/kosua20/Rendu.svg?branch=master)](https://travis-ci.org/kosua20/Rendu)
-[![GitHub license](https://img.shields.io/github/license/kosua20/Rendu)](https://github.com/kosua20/Rendu/blob/master/LICENSE)
-[![GitHub repo size](https://img.shields.io/github/repo-size/kosua20/Rendu)](https://github.com/kosua20/Rendu)
 
 This project use `premake` ([premake.github.io](https://premake.github.io)) for generating the workspace and projects files.
 After cloning Rendu, move to the root of the repository and run
