@@ -35,21 +35,34 @@ inline bool operator&(TextureShape t0, TextureShape t1) {
 	return bool(static_cast<uint>(t0) & static_cast<uint>(t1));
 }
 
+/**
+ \brief The filtering mode of a texture: we deduce the magnification
+ filter from the minification filter for now.
+ \ingroup Resources
+ */
 enum class Filter : uint {
-	NEAREST = 0,
-	LINEAR,
-	NEAREST_NEAREST,
-	LINEAR_NEAREST,
-	NEAREST_LINEAR,
-	LINEAR_LINEAR
+	NEAREST = 0, ///< Nearest neighbour, no mipmap.
+	LINEAR, ///< Bilinear, no mipmap.
+	NEAREST_NEAREST, ///< Nearest neighbour, closest mipmap.
+	LINEAR_NEAREST, ///< Bilinear, closest mipmap.
+	NEAREST_LINEAR, ///< Nearest neighbour, linear blend of mipmaps.
+	LINEAR_LINEAR ///< Bilinear, linear blend of mipmaps.
 };
 
+/**
+ \brief The wrapping mode of a texture.
+ \ingroup Resources
+ */
 enum class Wrap : uint {
-	CLAMP = 0,
-	REPEAT,
-	MIRROR
+	CLAMP = 0, ///< Clamp to the edges of the texture.
+	REPEAT, ///< Repeat the texture.
+	MIRROR ///< Repeat the texture using flipped versions to ensure continuity.
 };
 
+/**
+ \brief The layout of a texture: components count and type.
+ \ingroup Resources
+ */
 enum class Layout : uint {
 	R8,
 	RG8,
