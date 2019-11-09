@@ -33,7 +33,8 @@ void Scene::init(Storage mode) {
 	if(_loaded) {
 		return;
 	}
-
+	const auto start = std::chrono::steady_clock::now();
+	
 	// Define loaders for each keyword.
 	std::map<std::string, void (Scene::*)(const KeyValues &, Storage)> loaders = {
 		{"scene", &Scene::loadScene}, {"object", &Scene::loadObject}, {"point", &Scene::loadLight}, {"directional", &Scene::loadLight}, {"spot", &Scene::loadLight}, {"camera", &Scene::loadCamera}, {"background", &Scene::loadBackground}};
@@ -62,6 +63,8 @@ void Scene::init(Storage mode) {
 		light->setScene(_bbox);
 	}
 	_loaded = true;
+	const auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start);
+	Log::Info() << Log::Resources << "Loading took " << duration.count() << "ms." << std::endl;
 }
 
 void Scene::loadObject(const KeyValues & params, Storage mode) {

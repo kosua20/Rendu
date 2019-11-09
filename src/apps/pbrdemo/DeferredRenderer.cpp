@@ -68,10 +68,7 @@ void DeferredRenderer::setScene(const std::shared_ptr<Scene> & scene) {
 		return;
 	}
 
-	const auto start = std::chrono::steady_clock::now();
 	_scene->init(Storage::GPU);
-	const auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start);
-	Log::Info() << "Loading took " << duration.count() << "ms." << std::endl;
 
 	_userCamera.apply(_scene->viewpoint());
 	_userCamera.ratio(_renderResolution[0] / _renderResolution[1]);
@@ -95,7 +92,7 @@ void DeferredRenderer::renderScene() const {
 	// Set screen viewport
 	_gbuffer->setViewport();
 
-	// Clear the depth buffer (we know we will draw everywhere, no need to clear color.
+	// Clear the depth buffer (we know we will draw everywhere, no need to clear color).
 	GLUtilities::clearDepth(1.0f);
 
 	const glm::mat4 & view = _userCamera.view();
