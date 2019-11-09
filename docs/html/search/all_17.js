@@ -9,6 +9,7 @@ var searchData=
   ['windowframe',['windowFrame',['../class_rendering_config.html#af68ed64a5a2877cc6721eb63088579b5',1,'RenderingConfig']]],
   ['world',['WORLD',['../class_animation.html#aab91ed238f585aa0fd149d1c392ab121a5289492cf082446ca4a6eec9f72f1ec3',1,'Animation']]],
   ['worldpos',['worldPos',['../class_g_p_u_1_1_frag_1_1_light__shadow__linear.html#af42b240dae1361d336efcfe2d5216fa0',1,'GPU::Frag::Light_shadow_linear::worldPos()'],['../class_g_p_u_1_1_geom_1_1_object__layer.html#a072005f1ccbc44f0c2371a283c1db789',1,'GPU::Geom::Object_layer::worldPos()']]],
+  ['wrap',['Wrap',['../group___resources.html#gaf2cec82467b12344e9120a0f60fa1c76',1,'GPUObjects.hpp']]],
   ['wrapping',['wrapping',['../class_g_p_u_texture.html#a89500f457683af99011c4e2c98f41b4b',1,'GPUTexture::wrapping()'],['../class_descriptor.html#a9a37781de237fefec6948bfca0a38f85',1,'Descriptor::wrapping()']]],
   ['write',['WRITE',['../class_framebuffer.html#a2a80cb882c421c482f54235cd1d96fb8ad4b9e47f65b6e79b010582f15785867e',1,'Framebuffer']]]
 ];

@@ -16,6 +16,7 @@ var searchData=
   ['saverawdatatoexternalfile',['saveRawDataToExternalFile',['../class_resources.html#a4b46d87e3e133ab44021dd45941f4089',1,'Resources']]],
   ['savestringtoexternalfile',['saveStringToExternalFile',['../class_resources.html#a7631d15e68dba8902eefcbb37e9ab6af',1,'Resources']]],
   ['scene',['Scene',['../class_scene.html#aa8f88e4c6ad29a3f30b0c3f8a8fdace3',1,'Scene::Scene(const std::string &amp;name)'],['../class_scene.html#a817e38149ed312f00941b7fbb28a4fcb',1,'Scene::Scene(const Scene &amp;)=delete'],['../class_scene.html#ac8da64e4c17db10489db6112c584532c',1,'Scene::Scene(Scene &amp;&amp;)=delete']]],
+  ['sceneeditorconfig',['SceneEditorConfig',['../class_scene_editor_config.html#a8152112ed8fda7b57e00bb7fa5e1430a',1,'SceneEditorConfig']]],
   ['score',['score',['../class_player.html#a622590d639a6c5c1a984e3d371981d35',1,'Player']]],
   ['screenquad',['ScreenQuad',['../class_screen_quad.html#a67565b8d46e5fa7b7968e84ddca3bd91',1,'ScreenQuad']]],
   ['scroll',['scroll',['../class_input.html#aae31fa2aeb045e258a4d02677c9cab70',1,'Input']]],

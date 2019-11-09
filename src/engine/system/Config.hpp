@@ -68,8 +68,8 @@ protected:
 	 "--shortName,--longName <param0> <param1>	Details."
 	 \param longName the command full name
 	 \param shortName the command abbreviated name
-	 \param params the command description
-	 \param values name or type of each expected parameter
+	 \param details the command description
+	 \param params name or type of each expected parameter
 	 */
 	void registerArgument(const std::string & longName, const std::string & shortName, const std::string & details, const std::vector<std::string> & params = {});
 	

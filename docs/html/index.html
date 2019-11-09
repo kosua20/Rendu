@@ -88,7 +88,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">Rendu Documentation </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><div class="image">
+<div class="textblock"><p><a href="https://travis-ci.com/kosua20/Rendu"><img src="https://travis-ci.com/kosua20/Rendu.svg?branch=master" alt="Build Status" class="inline"/>
+</a> <a href="https://github.com/kosua20/Rendu/blob/master/LICENSE"><img src="https://img.shields.io/github/license/kosua20/Rendu" alt="GitHub license" class="inline"/>
+</a> <a href="https://github.com/kosua20/Rendu"><img src="https://img.shields.io/github/repo-size/kosua20/Rendu" alt="GitHub repo size" class="inline"/>
+</a></p>
+<div class="image">
 <img src="header.png" alt="header.png"/>
 <div class="caption">
 Example of included demos</div></div>
@@ -177,10 +181,6 @@ Playground preview</div></div>
 </table>
 <h1><a class="anchor" id="autotoc_md4"></a>
 Building</h1>
-<p><a href="https://travis-ci.org/kosua20/Rendu"><img src="https://travis-ci.org/kosua20/Rendu.svg?branch=master" alt="Build Status" class="inline"/>
-</a> <a href="https://github.com/kosua20/Rendu/blob/master/LICENSE"><img src="https://img.shields.io/github/license/kosua20/Rendu" alt="GitHub license" class="inline"/>
-</a> <a href="https://github.com/kosua20/Rendu"><img src="https://img.shields.io/github/repo-size/kosua20/Rendu" alt="GitHub repo size" class="inline"/>
-</a></p>
 <p>This project use <code>premake</code> (<a href="https://premake.github.io">premake.github.io</a>) for generating the workspace and projects files. After cloning Rendu, move to the root of the repository and run </p><pre class="fragment">premake5.exe [vs2017 | xcode | make | ...]
 </pre><p>To generate the desired workspace in the <code>build</code> directory.</p>
 <p>The documentation (access it at <code>docs/index.html</code>) relies on Doxygen being installed. Generate it with </p><pre class="fragment">premake5 docs

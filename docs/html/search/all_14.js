@@ -25,6 +25,6 @@ var searchData=
   ['triggered',['triggered',['../class_controller.html#a6f634264b68e8c6c0ed06913e8270b1b',1,'Controller::triggered()'],['../class_input.html#a737d7b65ddcb0760400e111fe7ae6bfc',1,'Input::triggered(const Key &amp;keyboardKey, bool absorb=false)'],['../class_input.html#acfeffaf1972f53933520e595570679a8',1,'Input::triggered(const Mouse &amp;mouseButton, bool absorb=false)']]],
   ['trim',['trim',['../class_text_utilities.html#a8b4ed6b60c557e2fb40e27a9ce9d4991',1,'TextUtilities']]],
   ['twosided',['twoSided',['../class_object.html#a315a712b4b6c7470769c1ac97557842f',1,'Object']]],
-  ['type',['type',['../class_g_p_u_texture.html#a2f9bae1a0cd1c6e2e584662ec21d2a2d',1,'GPUTexture::type()'],['../class_object.html#a199c7a4569e9cf511fbaa3668ee2c9c1',1,'Object::type() const'],['../class_object.html#a2e34d8d662b907a9e859b73311d84a0c',1,'Object::Type()']]],
+  ['type',['Type',['../class_object.html#a2e34d8d662b907a9e859b73311d84a0c',1,'Object::Type()'],['../class_g_p_u_texture.html#a2f9bae1a0cd1c6e2e584662ec21d2a2d',1,'GPUTexture::type()'],['../class_object.html#a199c7a4569e9cf511fbaa3668ee2c9c1',1,'Object::type()']]],
   ['typedformat',['typedFormat',['../class_g_p_u_texture.html#a05d4eb9d192b57354e69c28d0bc6a856',1,'GPUTexture::typedFormat()'],['../class_descriptor.html#a02e7a43eec774297ccd3bd7b7f751935',1,'Descriptor::typedFormat()']]]
 ];

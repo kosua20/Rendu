@@ -125,8 +125,12 @@ Public Member Functions</h2></td></tr>
 Protected Member Functions</h2></td></tr>
 <tr class="memitem:a101eefd683dfcbf721a7fb92cb61cf34"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_config.html#a101eefd683dfcbf721a7fb92cb61cf34">arguments</a> () const</td></tr>
 <tr class="separator:a101eefd683dfcbf721a7fb92cb61cf34"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a31f3cbb2499caeef6e663883ecb8e0f9"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="struct_config_1_1_argument_info.html">ArgumentInfo</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_config.html#a31f3cbb2499caeef6e663883ecb8e0f9">infos</a> ()</td></tr>
-<tr class="separator:a31f3cbb2499caeef6e663883ecb8e0f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5594ebaaacfa95758731f2a15ff49222"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_config.html#a5594ebaaacfa95758731f2a15ff49222">registerSection</a> (const std::string &amp;name)</td></tr>
+<tr class="separator:a5594ebaaacfa95758731f2a15ff49222"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa9dfd38952731786ed9835170d142245"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_config.html#aa9dfd38952731786ed9835170d142245">registerArgument</a> (const std::string &amp;longName, const std::string &amp;shortName, const std::string &amp;details, const std::vector&lt; std::string &gt; &amp;params={})</td></tr>
+<tr class="separator:aa9dfd38952731786ed9835170d142245"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8c599b5ec0cb0bc3b63b85dc1ab97e38"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_config.html#a8c599b5ec0cb0bc3b63b85dc1ab97e38">registerArgument</a> (const std::string &amp;longName, const std::string &amp;shortName, const std::string &amp;details, const std::string &amp;param)</td></tr>
+<tr class="separator:a8c599b5ec0cb0bc3b63b85dc1ab97e38"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-static-methods"></a>
 Static Private Member Functions</h2></td></tr>
@@ -214,32 +218,6 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a id="a31f3cbb2499caeef6e663883ecb8e0f9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a31f3cbb2499caeef6e663883ecb8e0f9">&#9670;&nbsp;</a></span>infos()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt; <a class="el" href="struct_config_1_1_argument_info.html">Config::ArgumentInfo</a> &gt; &amp; Config::infos </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Access the arguments help infos. </p><dl class="section return"><dt>Returns</dt><dd>a reference to the info list </dd></dl>
-
-</div>
-</div>
 <a id="a47e2408c825e9bdee38a4e6c94327c6b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a47e2408c825e9bdee38a4e6c94327c6b">&#9670;&nbsp;</a></span>parseFromArgs()</h2>
 
@@ -320,6 +298,152 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
   <table class="params">
     <tr><td class="paramname">filePath</td><td>the path to the configuration file. </td></tr>
     <tr><td class="paramname">arguments</td><td>a vector will be populated with (key, [values]) tuples. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="aa9dfd38952731786ed9835170d142245"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa9dfd38952731786ed9835170d142245">&#9670;&nbsp;</a></span>registerArgument() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Config::registerArgument </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>longName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>shortName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>details</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; std::string &gt; &amp;&#160;</td>
+          <td class="paramname"><em>params</em> = <code>{}</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Register help infos for an argument. The command will be listed as follow in the help message: "--shortName,--longName &lt;param0&gt; &lt;param1&gt;   Details." </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">longName</td><td>the command full name </td></tr>
+    <tr><td class="paramname">shortName</td><td>the command abbreviated name </td></tr>
+    <tr><td class="paramname">details</td><td>the command description </td></tr>
+    <tr><td class="paramname">params</td><td>name or type of each expected parameter </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a8c599b5ec0cb0bc3b63b85dc1ab97e38"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8c599b5ec0cb0bc3b63b85dc1ab97e38">&#9670;&nbsp;</a></span>registerArgument() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Config::registerArgument </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>longName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>shortName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>details</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>param</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Register help infos for an argument. The command will be listed as follow in the help message: "--shortName,--longName &lt;param&gt; Details." </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">longName</td><td>the command full name </td></tr>
+    <tr><td class="paramname">shortName</td><td>the command abbreviated name </td></tr>
+    <tr><td class="paramname">details</td><td>the command description </td></tr>
+    <tr><td class="paramname">param</td><td>name or type of the expected parameter </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a5594ebaaacfa95758731f2a15ff49222"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5594ebaaacfa95758731f2a15ff49222">&#9670;&nbsp;</a></span>registerSection()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Config::registerSection </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>name</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Create a section in the help messages, to group arguments. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">name</td><td>the section name </td></tr>
   </table>
   </dd>
 </dl>

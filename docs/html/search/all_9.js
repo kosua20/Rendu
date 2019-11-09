@@ -13,7 +13,6 @@ var searchData=
   ['indexed',['Indexed',['../class_mesh.html#aaee8acdbda278ad977aa4e6bf379ac56acccd5fd8c8f59fe9373c56b1b951780c',1,'Mesh']]],
   ['indices',['indices',['../class_mesh.html#a26632e27b772f24b069a738e7983b9da',1,'Mesh']]],
   ['info',['Info',['../class_log.html#a90fb67d35cdba86a3c215d4f5b88d73d',1,'Log']]],
-  ['infos',['infos',['../class_config.html#a31f3cbb2499caeef6e663883ecb8e0f9',1,'Config']]],
   ['init',['init',['../class_directional_light.html#a9f60b8c770daffa7969fe34d718d541a',1,'DirectionalLight::init()'],['../class_light.html#a2d90213c6daa7bd16b64d006881b6745',1,'Light::init()'],['../class_point_light.html#af2847fd3b00d1c150709a5dc75132c1c',1,'PointLight::init()'],['../class_spot_light.html#ad01868d9a5c6c8f95fc0c12e4933b947',1,'SpotLight::init()'],['../class_scene.html#adcdcf336127cbe866704385e971e46d6',1,'Scene::init()']]],
   ['initialheight',['initialHeight',['../class_rendering_config.html#aee5692361ef57a8ce8d31022488fb1f3',1,'RenderingConfig']]],
   ['initialwidth',['initialWidth',['../class_rendering_config.html#acd1b583d436a3cb8c618b916e83f3535',1,'RenderingConfig']]],

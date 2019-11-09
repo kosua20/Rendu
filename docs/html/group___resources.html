@@ -134,6 +134,97 @@ Enumerations</h2></td></tr>
  }</td></tr>
 <tr class="memdesc:ga3fb1e3ce7a7253e364b016dd40f5efd6"><td class="mdescLeft">&#160;</td><td class="mdescRight">The shape of a texture: dimensions, layers organisation.  <a href="group___resources.html#ga3fb1e3ce7a7253e364b016dd40f5efd6">More...</a><br /></td></tr>
 <tr class="separator:ga3fb1e3ce7a7253e364b016dd40f5efd6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga215dd3a110b19ba0cf42bcf30ef589b5"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___resources.html#ga215dd3a110b19ba0cf42bcf30ef589b5">Filter</a> : uint { <br />
+&#160;&#160;<a class="el" href="group___resources.html#gga215dd3a110b19ba0cf42bcf30ef589b5aad135772d7cf93dd0ccf9d2474b34e6a">Filter::NEAREST</a> = 0, 
+<a class="el" href="group___resources.html#gga215dd3a110b19ba0cf42bcf30ef589b5aaac544aacc3615aada24897a215f5046">Filter::LINEAR</a>, 
+<a class="el" href="group___resources.html#gga215dd3a110b19ba0cf42bcf30ef589b5a6b50c2af4e51aedb18df43ffeb156cba">Filter::NEAREST_NEAREST</a>, 
+<a class="el" href="group___resources.html#gga215dd3a110b19ba0cf42bcf30ef589b5aea900ba8219b4246303461ec5b529a9d">Filter::LINEAR_NEAREST</a>, 
+<br />
+&#160;&#160;<a class="el" href="group___resources.html#gga215dd3a110b19ba0cf42bcf30ef589b5a704f21e07e578564824a3102bbbccac2">Filter::NEAREST_LINEAR</a>, 
+<a class="el" href="group___resources.html#gga215dd3a110b19ba0cf42bcf30ef589b5a4efe1867144bfaabd20855d80619895a">Filter::LINEAR_LINEAR</a>
+<br />
+ }</td></tr>
+<tr class="memdesc:ga215dd3a110b19ba0cf42bcf30ef589b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">The filtering mode of a texture: we deduce the magnification filter from the minification filter for now.  <a href="group___resources.html#ga215dd3a110b19ba0cf42bcf30ef589b5">More...</a><br /></td></tr>
+<tr class="separator:ga215dd3a110b19ba0cf42bcf30ef589b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf2cec82467b12344e9120a0f60fa1c76"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___resources.html#gaf2cec82467b12344e9120a0f60fa1c76">Wrap</a> : uint { <a class="el" href="group___resources.html#ggaf2cec82467b12344e9120a0f60fa1c76aecf301fe86e23bb2bf5155bbef3b1345">Wrap::CLAMP</a> = 0, 
+<a class="el" href="group___resources.html#ggaf2cec82467b12344e9120a0f60fa1c76a5be68175be14dfaa080165456c2e9555">Wrap::REPEAT</a>, 
+<a class="el" href="group___resources.html#ggaf2cec82467b12344e9120a0f60fa1c76a72a92ae9c1d172cdda196686278fbfc6">Wrap::MIRROR</a>
+ }</td></tr>
+<tr class="memdesc:gaf2cec82467b12344e9120a0f60fa1c76"><td class="mdescLeft">&#160;</td><td class="mdescRight">The wrapping mode of a texture.  <a href="group___resources.html#gaf2cec82467b12344e9120a0f60fa1c76">More...</a><br /></td></tr>
+<tr class="separator:gaf2cec82467b12344e9120a0f60fa1c76"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga9db33ebfe0dbf694fe056e626988b728"><td class="memItemLeft" align="right" valign="top"><a id="ga9db33ebfe0dbf694fe056e626988b728"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___resources.html#ga9db33ebfe0dbf694fe056e626988b728">Layout</a> : uint { <br />
+&#160;&#160;<b>R8</b>, 
+<b>RG8</b>, 
+<b>RGB8</b>, 
+<b>RGBA8</b>, 
+<br />
+&#160;&#160;<b>SRGB8</b>, 
+<b>SRGB8_ALPHA8</b>, 
+<b>R16</b>, 
+<b>RG16</b>, 
+<br />
+&#160;&#160;<b>RGBA16</b>, 
+<b>R8_SNORM</b>, 
+<b>RG8_SNORM</b>, 
+<b>RGB8_SNORM</b>, 
+<br />
+&#160;&#160;<b>RGBA8_SNORM</b>, 
+<b>R16_SNORM</b>, 
+<b>RG16_SNORM</b>, 
+<b>RGB16_SNORM</b>, 
+<br />
+&#160;&#160;<b>R16F</b>, 
+<b>RG16F</b>, 
+<b>RGB16F</b>, 
+<b>RGBA16F</b>, 
+<br />
+&#160;&#160;<b>R32F</b>, 
+<b>RG32F</b>, 
+<b>RGB32F</b>, 
+<b>RGBA32F</b>, 
+<br />
+&#160;&#160;<b>RGB5_A1</b>, 
+<b>RGB10_A2</b>, 
+<b>R11F_G11F_B10F</b>, 
+<b>DEPTH_COMPONENT32F</b>, 
+<br />
+&#160;&#160;<b>DEPTH24_STENCIL8</b>, 
+<b>DEPTH_COMPONENT16</b>, 
+<b>DEPTH_COMPONENT24</b>, 
+<b>DEPTH32F_STENCIL8</b>, 
+<br />
+&#160;&#160;<b>R8UI</b>, 
+<b>R16I</b>, 
+<b>R16UI</b>, 
+<b>R32I</b>, 
+<br />
+&#160;&#160;<b>R32UI</b>, 
+<b>RG8I</b>, 
+<b>RG8UI</b>, 
+<b>RG16I</b>, 
+<br />
+&#160;&#160;<b>RG16UI</b>, 
+<b>RG32I</b>, 
+<b>RG32UI</b>, 
+<b>RGB8I</b>, 
+<br />
+&#160;&#160;<b>RGB8UI</b>, 
+<b>RGB16I</b>, 
+<b>RGB16UI</b>, 
+<b>RGB32I</b>, 
+<br />
+&#160;&#160;<b>RGB32UI</b>, 
+<b>RGBA8I</b>, 
+<b>RGBA8UI</b>, 
+<b>RGBA16I</b>, 
+<br />
+&#160;&#160;<b>RGBA16UI</b>, 
+<b>RGBA32I</b>, 
+<b>RGBA32UI</b>
+<br />
+ }</td></tr>
+<tr class="memdesc:ga9db33ebfe0dbf694fe056e626988b728"><td class="mdescLeft">&#160;</td><td class="mdescRight">The layout of a texture: components count and type. <br /></td></tr>
+<tr class="separator:ga9db33ebfe0dbf694fe056e626988b728"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaa9f7226fdc21094a152870ec1872f744"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___resources.html#gaa9f7226fdc21094a152870ec1872f744">Storage</a> : uint { <a class="el" href="group___resources.html#ggaa9f7226fdc21094a152870ec1872f744a52f9ec21735243ad9917cda3ca077d32">Storage::GPU</a> = 1, 
 <a class="el" href="group___resources.html#ggaa9f7226fdc21094a152870ec1872f744a2b55387dd066c5bac646ac61543d152d">Storage::CPU</a> = 2, 
 <a class="el" href="group___resources.html#ggaa9f7226fdc21094a152870ec1872f744a6328e5e3186c227a021ef2ff77e40197">Storage::BOTH</a> = (GPU | CPU)
@@ -142,6 +233,44 @@ Enumerations</h2></td></tr>
 <tr class="separator:gaa9f7226fdc21094a152870ec1872f744"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Enumeration Type Documentation</h2>
+<a id="ga215dd3a110b19ba0cf42bcf30ef589b5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga215dd3a110b19ba0cf42bcf30ef589b5">&#9670;&nbsp;</a></span>Filter</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="group___resources.html#ga215dd3a110b19ba0cf42bcf30ef589b5">Filter</a> : uint</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The filtering mode of a texture: we deduce the magnification filter from the minification filter for now. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="gga215dd3a110b19ba0cf42bcf30ef589b5aad135772d7cf93dd0ccf9d2474b34e6a"></a>NEAREST&#160;</td><td class="fielddoc"><p>Nearest neighbour, no mipmap. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga215dd3a110b19ba0cf42bcf30ef589b5aaac544aacc3615aada24897a215f5046"></a>LINEAR&#160;</td><td class="fielddoc"><p>Bilinear, no mipmap. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga215dd3a110b19ba0cf42bcf30ef589b5a6b50c2af4e51aedb18df43ffeb156cba"></a>NEAREST_NEAREST&#160;</td><td class="fielddoc"><p>Nearest neighbour, closest mipmap. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga215dd3a110b19ba0cf42bcf30ef589b5aea900ba8219b4246303461ec5b529a9d"></a>LINEAR_NEAREST&#160;</td><td class="fielddoc"><p>Bilinear, closest mipmap. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga215dd3a110b19ba0cf42bcf30ef589b5a704f21e07e578564824a3102bbbccac2"></a>NEAREST_LINEAR&#160;</td><td class="fielddoc"><p>Nearest neighbour, linear blend of mipmaps. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga215dd3a110b19ba0cf42bcf30ef589b5a4efe1867144bfaabd20855d80619895a"></a>LINEAR_LINEAR&#160;</td><td class="fielddoc"><p>Bilinear, linear blend of mipmaps. </p>
+</td></tr>
+</table>
+
+</div>
+</div>
 <a id="gaa9f7226fdc21094a152870ec1872f744"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#gaa9f7226fdc21094a152870ec1872f744">&#9670;&nbsp;</a></span>Storage</h2>
 
@@ -211,6 +340,38 @@ Enumerations</h2></td></tr>
 <tr><td class="fieldname"><a id="gga3fb1e3ce7a7253e364b016dd40f5efd6a096a665f02124c8ef91616f3df924602"></a>Array2D&#160;</td><td class="fielddoc"><p>2D texture array. </p>
 </td></tr>
 <tr><td class="fieldname"><a id="gga3fb1e3ce7a7253e364b016dd40f5efd6adec2ff2d1c605157062417a31111cb88"></a>ArrayCube&#160;</td><td class="fielddoc"><p>Cubemap texture array. </p>
+</td></tr>
+</table>
+
+</div>
+</div>
+<a id="gaf2cec82467b12344e9120a0f60fa1c76"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaf2cec82467b12344e9120a0f60fa1c76">&#9670;&nbsp;</a></span>Wrap</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="group___resources.html#gaf2cec82467b12344e9120a0f60fa1c76">Wrap</a> : uint</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The wrapping mode of a texture. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ggaf2cec82467b12344e9120a0f60fa1c76aecf301fe86e23bb2bf5155bbef3b1345"></a>CLAMP&#160;</td><td class="fielddoc"><p>Clamp to the edges of the texture. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggaf2cec82467b12344e9120a0f60fa1c76a5be68175be14dfaa080165456c2e9555"></a>REPEAT&#160;</td><td class="fielddoc"><p>Repeat the texture. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggaf2cec82467b12344e9120a0f60fa1c76a72a92ae9c1d172cdda196686278fbfc6"></a>MIRROR&#160;</td><td class="fielddoc"><p>Repeat the texture using flipped versions to ensure continuity. </p>
 </td></tr>
 </table>
 
