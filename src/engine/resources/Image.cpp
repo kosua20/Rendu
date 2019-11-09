@@ -52,8 +52,8 @@ glm::vec3 Image::rgbn(float x, float y) const {
 	const float yi = y * float(height);
 	const float xb = std::round(xi);
 	const float yb = std::round(yi);
-	const int x0   = int(xb) % int(width);
-	const int y0   = int(yb) % int(height);
+	const int x0   = modPos(int(xb), int(width) );
+	const int y0   = modPos(int(yb), int(height));
 	return rgb(x0, y0);
 }
 
@@ -65,10 +65,10 @@ glm::vec3 Image::rgbl(float x, float y) const {
 	const float dx = xi - xb;
 	const float dy = yi - yb;
 
-	const int x0 = int(xb) % int(width);
-	const int y0 = int(yb) % int(height);
-	const int x1 = (int(xb) + 1) % int(width);
-	const int y1 = (int(yb) + 1) % int(height);
+	const int x0 = modPos(int(xb), int(width));
+	const int y0 = modPos(int(yb), int(height));
+	const int x1 = modPos((int(xb) + 1), int(width));
+	const int y1 = modPos((int(yb) + 1), int(height));
 
 	// Fetch four pixels.
 	const glm::vec3 & p00 = rgb(x0, y0);
@@ -87,10 +87,10 @@ glm::vec4 Image::rgbal(float x, float y) const {
 	const float dx = xi - xb;
 	const float dy = yi - yb;
 
-	const int x0 = int(xb) % int(width);
-	const int y0 = int(yb) % int(height);
-	const int x1 = (int(xb) + 1) % int(width);
-	const int y1 = (int(yb) + 1) % int(height);
+	const int x0 = modPos(int(xb), int(width));
+	const int y0 = modPos(int(yb), int(height));
+	const int x1 = modPos((int(xb) + 1), int(width));
+	const int y1 = modPos((int(yb) + 1), int(height));
 
 	// Fetch four pixels.
 	const glm::vec4 & p00 = rgba(x0, y0);

@@ -167,3 +167,12 @@ private:
 	int loadHDR(const std::string & path, unsigned int channels, bool flip, bool externalFile);
 	
 };
+
+/** Compute the integral modulo, ensuring that the result is positive.
+ \param x value to decompose
+ \param w the divisor
+ \return the positive remainder
+ */
+inline int modPos(int x, int w){
+	return ((x%w)+w)%w;
+}
