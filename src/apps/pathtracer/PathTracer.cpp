@@ -113,15 +113,17 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 					const glm::vec2 uv = Raycaster::interpolateUV(hit, mesh);
 
 					// Compute lighting.
-					// Check light visibility and direct lighting.
-					for(const auto & light : _scene->lights) {
-						glm::vec3 direction;
-						float attenuation;
-						if(light->visible(p, _raycaster, direction, attenuation)) {
-							const float diffuse = glm::max(glm::dot(n, direction), 0.0f);
-							illumination += attenuation * diffuse * light->intensity();
-						}
+					// Cast a ray toward one of the lights, at random.
+					const unsigned int lid = Random::Int(0, _scene->lights.size()-1);
+					const auto & light = _scene->lights[lid];
+					glm::vec3 direction;
+					float attenuation;
+					if(light->visible(p, _raycaster, direction, attenuation)) {
+						const float diffuse = glm::max(glm::dot(n, direction), 0.0f);
+						illumination += attenuation * diffuse * light->intensity();
 					}
+					// Because we only have analytical lights, the probability that we hit the light
+					// at the next regular raycast is infinitely small. We ignore this double-hit case for now.
 
 					// Fetch base color from texture.
 					const Image & image  = _scene->objects[hit.meshId].textures()[0]->images[0];
