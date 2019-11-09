@@ -431,43 +431,48 @@ int main(int argc, char ** argv) {
 					showCombo("R. trigger", axesCount, "A", axesMapping[Controller::TriggerR2]);
 
 					ImGui::PopItemWidth();
-					// Add threshold setup slider.
-					ImGui::PushItemWidth(240);
-					ImGui::SliderFloat("Threshold", &threshold, 0.0f, 0.3f);
-					ImGui::PopItemWidth();
+					
 					ImGui::EndChild();
 				}
-
 				// Display targets with the current axis positions.
 				if(ImGui::CollapsingHeader("Calibration##HEADER", ImGuiTreeNodeFlags_DefaultOpen)) {
-
+					
 					const float threshRadius = sqrt(threshold) * 100;
+					
 					// Titles.
+					ImGui::Text("Threshold");
+					ImGui::SameLine(100);
 					ImGui::Text("Left pad & trigger");
-					ImGui::SameLine(300);
+					ImGui::SameLine(300+100);
 					ImGui::Text("Right pad & trigger");
 
+					// Add threshold setup slider.
+					ImGui::VSliderFloat("##threshold", ImVec2(50, 200), &threshold, 0.0f, 1.0f, "%.3f");
+					ImGui::SameLine(100);
+					
 					// Left pad.
 					ImGui::BeginChild("PadLeftTarget", ImVec2(200, 200));
 					drawPadTarget(axesMapping[Controller::PadLeftX], axesMapping[Controller::PadLeftY], controller->allAxes, threshRadius);
 					ImGui::EndChild();
-					ImGui::SameLine(220);
+					ImGui::SameLine(320);
 					// Left trigger
 					ImGui::BeginChild("TriggerL2", ImVec2(40, 200));
 					drawTriggerTarget(axesMapping[Controller::TriggerL2], controller->allAxes, threshRadius);
 					ImGui::EndChild();
 
-					ImGui::SameLine(300);
+					ImGui::SameLine(400);
 					// Right pad.
 					ImGui::BeginChild("PadRightTarget", ImVec2(200, 200));
 					drawPadTarget(axesMapping[Controller::PadRightX], axesMapping[Controller::PadRightY], controller->allAxes, threshRadius);
 					ImGui::EndChild();
 
 					// Right trigger
-					ImGui::SameLine(520);
+					ImGui::SameLine(620);
 					ImGui::BeginChild("TriggerR2", ImVec2(40, 200));
 					drawTriggerTarget(axesMapping[Controller::TriggerR2], controller->allAxes, threshRadius);
 					ImGui::EndChild();
+					
+					
 				}
 			}
 		}
