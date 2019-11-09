@@ -46,16 +46,7 @@ protected:
 		 \param avalues optional list of parameters for the argument
 		 */
 		ArgumentInfo(const std::string & aname, const std::string & ashort, const std::string & adetails,
-			const std::vector<std::string> & avalues = {});
-
-		/** Constructor.
-		 \param aname argument name
-		 \param ashort argument optional short name
-		 \param adetails argument description
-		 \param avalue parameter for the argument
-		 */
-		ArgumentInfo(const std::string & aname, const std::string & ashort, const std::string & adetails,
-			const std::string & avalue);
+			const std::vector<std::string> & avalues);
 
 		std::string nameLong;			 ///< The main argument name.
 		std::string nameShort;			 ///< The short argument name.
@@ -68,10 +59,28 @@ protected:
 	 */
 	const std::vector<KeyValues> & arguments() const;
 
-	/** Access the arguments help infos.
-	 \return a reference to the info list
+	/** Create a section in the help messages, to group arguments.
+	 \param name the section name
 	 */
-	std::vector<ArgumentInfo> & infos();
+	void registerSection(const std::string & name);
+	
+	/** Register help infos for an argument. The command will be listed as follow in the help message:
+	 "--shortName,--longName <param0> <param1>	Details."
+	 \param longName the command full name
+	 \param shortName the command abbreviated name
+	 \param params the command description
+	 \param values name or type of each expected parameter
+	 */
+	void registerArgument(const std::string & longName, const std::string & shortName, const std::string & details, const std::vector<std::string> & params = {});
+	
+	/** Register help infos for an argument. The command will be listed as follow in the help message:
+	 "--shortName,--longName <param>	Details."
+	 \param longName the command full name
+	 \param shortName the command abbreviated name
+	 \param details the command description
+	 \param param name or type of the expected parameter
+	 */
+	void registerArgument(const std::string & longName, const std::string & shortName, const std::string & details, const std::string & param);
 
 private:
 	/**

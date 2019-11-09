@@ -25,10 +25,10 @@ public:
 			}
 		}
 
-		infos().emplace_back("", "", "Atmospheric scattering");
-		infos().emplace_back("output", "", "Output image path", "path/to/output.exr");
-		infos().emplace_back("samples", "", "Number of samples per-pixel", "count");
-		infos().emplace_back("resolution", "", "Output image side size", "size");
+		registerSection("Atmospheric scattering");
+		registerArgument("output", "", "Output image path.", "path/to/output.exr");
+		registerArgument("samples", "", "Number of samples per-pixel.", "count");
+		registerArgument("resolution", "", "Output image side size.", "size");
 	}
 
 	std::string outputPath = "./scattering.exr"; ///< Lookup table output path.

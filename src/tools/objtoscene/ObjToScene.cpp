@@ -42,11 +42,11 @@ public:
 			}
 		}
 
-		infos().emplace_back("", "", "Converter");
-		infos().emplace_back("mesh", "", "Path to the OBJ file", "path/to/mesh.obj");
-		infos().emplace_back("output", "", "Output path", "path");
-		infos().emplace_back("name", "", "The name of the scene", "name");
-		infos().emplace_back("generate", "", "Generate an image containing given color", "R G B");
+		registerSection("Converter");
+		registerArgument("mesh", "", "Path to the OBJ file.", "path/to/mesh.obj");
+		registerArgument("output", "", "Output path.", "path");
+		registerArgument("name", "", "The name of the scene.", "name");
+		registerArgument("generate", "", "Generate an image containing the given color.", "R G B");
 	}
 
 	std::string inputMeshPath;		  ///< Input OBJ path. Textures paths should be relative to it.

@@ -12,11 +12,6 @@ Config::ArgumentInfo::ArgumentInfo(const std::string & aname, const std::string 
 	nameLong(aname),
 	nameShort(ashort), details(adetails), values(avalues) {}
 
-Config::ArgumentInfo::ArgumentInfo(const std::string & aname, const std::string & ashort, const std::string & adetails,
-	const std::string & avalue) :
-	nameLong(aname),
-	nameShort(ashort), details(adetails), values({avalue}) {}
-
 Config::Config(const std::vector<std::string> & argv) {
 
 	if(argv.size() < 2) {
@@ -58,19 +53,27 @@ Config::Config(const std::vector<std::string> & argv) {
 	}
 	Log::setDefaultVerbose(logVerbose);
 
-	infos().emplace_back("", "", "General");
-	infos().emplace_back("verbose", "v", "Enable the verbose log level.");
-	infos().emplace_back("log-path", "", "Log to a file instead of stdout.", "path/to/file.log");
-	infos().emplace_back("help", "h", "Show this help.");
-	infos().emplace_back("config", "c", "Load arguments from configuration file.", "path");
+	registerSection("General");
+	registerArgument("verbose", "v", "Enable the verbose log level.");
+	registerArgument("log-path", "", "Log to a file instead of stdout.", "path/to/file.log");
+	registerArgument("help", "h", "Show this help.");
+	registerArgument("config", "c", "Load arguments from configuration file.", "path");
 }
 
 const std::vector<KeyValues> & Config::arguments() const {
 	return _rawArguments;
 }
 
-std::vector<Config::ArgumentInfo> & Config::infos() {
-	return _infos;
+void Config::registerSection(const std::string & name){
+	_infos.emplace_back(std::string(), std::string(), name, std::vector<std::string>());
+}
+
+void Config::registerArgument(const std::string & longName, const std::string & shortName, const std::string & details, const std::vector<std::string> & params){
+	_infos.emplace_back(longName, shortName, details, params);
+}
+
+void Config::registerArgument(const std::string & longName, const std::string & shortName, const std::string & details, const std::string & param){
+	_infos.emplace_back(longName, shortName, details, std::vector<std::string>{param});
 }
 
 void Config::parseFromFile(const std::string & filePath, std::vector<KeyValues> & arguments) {
@@ -212,11 +215,11 @@ RenderingConfig::RenderingConfig(const std::vector<std::string> & argv) :
 		}
 	}
 
-	infos().emplace_back("", "", "Rendering");
-	infos().emplace_back("no-vsync", "", "Disable V-sync");
-	infos().emplace_back("half-rate", "", "30fps mode");
-	infos().emplace_back("fullscreen", "", "Enable fullscreen");
-	infos().emplace_back("internal-res", "ivr", "Vertical rendering resolution", "height");
-	infos().emplace_back("wxh", "", "Window dimensions", std::vector<std::string> {"width", "height"});
-	infos().emplace_back("force-aspect", "far", "Force window aspect ratio");
+	registerSection("Rendering");
+	registerArgument("no-vsync", "", "Disable V-sync.");
+	registerArgument("half-rate", "", "30fps mode.");
+	registerArgument("fullscreen", "", "Enable fullscreen.");
+	registerArgument("internal-res", "ivr", "Vertical rendering resolution", "height.");
+	registerArgument("wxh", "", "Window dimensions.", std::vector<std::string> {"width", "height"});
+	registerArgument("force-aspect", "far", "Force window aspect ratio.");
 }

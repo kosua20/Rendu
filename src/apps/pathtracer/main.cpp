@@ -59,13 +59,13 @@ public:
 		}
 
 		// Detail help.
-		infos().emplace_back("", "", "Path tracer");
-		infos().emplace_back("size", "", "Dimensions of the image.", std::vector<std::string> {"width", "height"});
-		infos().emplace_back("samples", "", "Number of samples per pixel (closest power of 2).", "int");
-		infos().emplace_back("depth", "", "Maximum path depth.", "int");
-		infos().emplace_back("scene", "", "Name of the scene to load.", "string");
-		infos().emplace_back("output", "", "Path for the output image.", "path");
-		infos().emplace_back("render", "", "Disable the GUI and run a render immediatly.");
+		registerSection("Path tracer");
+		registerArgument("size", "", "Dimensions of the image.", std::vector<std::string> {"width", "height"});
+		registerArgument("samples", "", "Number of samples per pixel (closest power of 2).", "int");
+		registerArgument("depth", "", "Maximum path depth.", "int");
+		registerArgument("scene", "", "Name of the scene to load.", "string");
+		registerArgument("output", "", "Path for the output image.", "path");
+		registerArgument("render", "", "Disable the GUI and run a render immediatly.");
 	}
 
 	glm::ivec2 size		   = glm::ivec2(1024); ///< Image size.
