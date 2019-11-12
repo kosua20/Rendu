@@ -54,9 +54,6 @@ public:
 	 */
 	void update(double fullTime, double frameTime);
 
-	/** Clean internal resources. */
-	void clean();
-
 	/** Get the scene bounding box.
 	 \return the bounding box
 	 */

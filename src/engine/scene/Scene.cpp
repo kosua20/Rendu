@@ -174,9 +174,3 @@ void Scene::update(double fullTime, double frameTime) {
 	}
 	background->update(fullTime, frameTime);
 }
-
-void Scene::clean() {
-	for(auto & light : lights) {
-		light->clean();
-	}
-}

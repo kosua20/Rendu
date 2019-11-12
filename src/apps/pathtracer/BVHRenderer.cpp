@@ -266,9 +266,6 @@ void BVHRenderer::physics(double, double frameTime) {
 void BVHRenderer::clean() {
 	Renderer::clean();
 	_sceneFramebuffer->clean();
-	if(_scene) {
-		_scene->clean();
-	}
 	for(Mesh & level : _bvhLevels) {
 		level.clean();
 	}
