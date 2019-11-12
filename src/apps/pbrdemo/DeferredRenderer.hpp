@@ -1,5 +1,10 @@
 #pragma once
 
+#include "DeferredLight.hpp"
+#include "ShadowMap.hpp"
+
+#include "renderers/DebugLightRenderer.hpp"
+
 #include "AmbientQuad.hpp"
 #include "scene/Scene.hpp"
 #include "renderers/Renderer.hpp"
@@ -63,8 +68,12 @@ public:
 	void resize(unsigned int width, unsigned int height) override;
 
 private:
+	
 	/** Render the scene to the G-buffer. */
-	void renderScene() const;
+	void renderScene();
+	
+	/** Render the scene background to the G-buffer. */
+	void renderBackground();
 
 	/** Apply the postprocess stack.
 	 \param invRenderSize the inverse of the rendering resolution
@@ -74,7 +83,7 @@ private:
 
 	ControllableCamera _userCamera; ///< The interactive camera.
 
-	std::unique_ptr<Framebuffer> _gbuffer;	 ///< G-buffer.
+	std::unique_ptr<Framebuffer> _gbuffer;	   ///< G-buffer.
 	std::unique_ptr<GaussianBlur> _blurBuffer; ///< Bloom blur processing.
 	std::unique_ptr<SSAO> _ssaoPass;		   ///< SSAO processing.
 
@@ -89,6 +98,7 @@ private:
 	const Program * _toneMappingProgram; ///< Tonemapping program
 	const Program * _fxaaProgram;		 ///< FXAA program
 	const Program * _finalProgram;		 ///< Final output program
+	
 	const Program * _objectProgram;		 ///< Basic PBR program
 	const Program * _objectNoUVsProgram; ///< Basic PBR program
 	const Program * _parallaxProgram;	 ///< Parallax mapping PBR program
@@ -97,8 +107,11 @@ private:
 	const Program * _bgProgram;		///< Planar background program.
 	const Program * _atmoProgram;   ///< Atmospheric scattering program.
 
-	std::shared_ptr<Scene> _scene; ///< The scene to render
-
+	std::shared_ptr<Scene> _scene; 						 ///< The scene to render
+	std::unique_ptr<DeferredLight> _lightRenderer;   	 ///< The lights renderer.
+	DebugLightRenderer _lightDebugRenderer; 			 ///< The lights debug renderer.
+	std::vector<std::unique_ptr<ShadowMap>> _shadowMaps; ///< The lights shadow maps.
+	
 	glm::vec2 _cplanes = glm::vec2(0.01f, 100.0f); ///< Camera clipping planes.
 	float _cameraFOV		 = 50.0f; ///< Camera field of view in degrees.
 	float _exposure			 = 1.0f;  ///< Film exposure.

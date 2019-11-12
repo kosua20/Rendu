@@ -1,6 +1,6 @@
 #version 330
 
-uniform vec3 lightColor; ///< The color of the light.
+uniform vec4 color; ///< The color of the light.
 
 // Output: the fragment color
 layout (location = 0) out vec4 fragColor; ///< Color.
@@ -11,7 +11,7 @@ layout (location = 2) out vec3 fragEffects; ///< Effects (roughness, etc.).
 void main(){
 	
 	// Store values.
-	fragColor.rgb = lightColor;
+	fragColor.rgb = color.rgb;
 	fragColor.a = 0.0; // same ID as the background.
 	fragNormal.rgb = vec3(0.5);
 	fragEffects.rgb = vec3(0.0);

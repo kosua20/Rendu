@@ -6,7 +6,7 @@
 #include <chrono>
 
 DeferredRenderer::DeferredRenderer(RenderingConfig & config) :
-	Renderer(config) {
+	Renderer(config), _lightDebugRenderer("light_debug") {
 
 	// Setup camera parameters.
 	_userCamera.ratio(config.screenResolution[0] / config.screenResolution[1]);
@@ -48,17 +48,17 @@ DeferredRenderer::DeferredRenderer(RenderingConfig & config) :
 	_fxaaProgram		   = Resources::manager().getProgram2D("fxaa");
 	_finalProgram		   = Resources::manager().getProgram2D("final_screenquad");
 
-	_skyboxProgram		= Resources::manager().getProgram("skybox_gbuffer");
-	_bgProgram			= Resources::manager().getProgram("background_gbuffer");
-	_atmoProgram		= Resources::manager().getProgram("atmosphere_gbuffer", "background_gbuffer", "atmosphere_gbuffer");
+	_skyboxProgram		= Resources::manager().getProgram("skybox_gbuffer", "skybox_infinity", "skybox_gbuffer");
+	_bgProgram			= Resources::manager().getProgram("background_gbuffer", "background_infinity", "background_gbuffer");
+	_atmoProgram		= Resources::manager().getProgram("atmosphere_gbuffer", "background_infinity", "atmosphere_gbuffer");
 	_parallaxProgram	= Resources::manager().getProgram("object_parallax_gbuffer");
 	_objectProgram		= Resources::manager().getProgram("object_gbuffer");
 	_objectNoUVsProgram = Resources::manager().getProgram("object_no_uv_gbuffer");
 
-	// Add the SSAO result.
+	// Lighting passes.
 	_ambientScreen = std::unique_ptr<AmbientQuad>(new AmbientQuad(_gbuffer->textureId(0), _gbuffer->textureId(1),
 		_gbuffer->textureId(2), _gbuffer->depthId(), _ssaoPass->textureId()));
-
+	_lightRenderer = std::unique_ptr<DeferredLight>(new DeferredLight(_gbuffer->textureId(0), _gbuffer->textureId(1), _gbuffer->depthId(), _gbuffer->textureId(2)));
 	checkGLError();
 }
 
@@ -79,22 +79,35 @@ void DeferredRenderer::setScene(const std::shared_ptr<Scene> & scene) {
 	_cplanes			= _userCamera.clippingPlanes();
 	_cameraFOV			= _userCamera.fov() * 180.0f / glm::pi<float>();
 	_ambientScreen->setSceneParameters(_scene->backgroundReflection, _scene->backgroundIrradiance);
-
-	for(auto & light : _scene->lights) {
-		light->init(_gbuffer->textureId(0), _gbuffer->textureId(1), _gbuffer->depthId(), _gbuffer->textureId(2));
+	
+	// Delete existing shadow maps.
+	for(auto & map : _shadowMaps){
+		map->clean();
+	}
+	_shadowMaps.clear();
+	// Allocate shadow maps.
+	for(auto & light : scene->lights){
+		if(!light->castsShadow()){
+			continue;
+		}
+		if(auto pLight = std::dynamic_pointer_cast<PointLight>(light)){
+			_shadowMaps.emplace_back(new ShadowMapCube(pLight, 512));
+		} else {
+			_shadowMaps.emplace_back(new ShadowMap2D(light, glm::vec2(512)));
+		}
 	}
 	checkGLError();
 }
 
-void DeferredRenderer::renderScene() const {
+void DeferredRenderer::renderScene() {
 	// Bind the full scene framebuffer.
 	_gbuffer->bind();
 	// Set screen viewport
 	_gbuffer->setViewport();
-
 	// Clear the depth buffer (we know we will draw everywhere, no need to clear color).
 	GLUtilities::clearDepth(1.0f);
 
+	// Scene objects.
 	const glm::mat4 & view = _userCamera.view();
 	const glm::mat4 & proj = _userCamera.projection();
 	for(auto & object : _scene->objects) {
@@ -132,7 +145,6 @@ void DeferredRenderer::renderScene() const {
 				_objectProgram->uniform("normalMatrix", normalMatrix);
 				break;
 			default:
-
 				break;
 		}
 
@@ -147,25 +159,36 @@ void DeferredRenderer::renderScene() const {
 		// Restore state.
 		glEnable(GL_CULL_FACE);
 	}
-
-	if(_debugVisualization) {
+	
+	// Lights wireframe debug.
+	if(_debugVisualization){
+		_lightDebugRenderer.updateCameraInfos(_userCamera.view(), _userCamera.projection());
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		glDisable(GL_CULL_FACE);
-		for(auto & light : _scene->lights) {
-			light->drawDebug(_userCamera.view(), _userCamera.projection());
+		for(const auto & light : _scene->lights){
+			light->draw(_lightDebugRenderer);
 		}
-
 		glEnable(GL_CULL_FACE);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
+	
+	renderBackground();
 
+	// Unbind the full scene framebuffer.
+	_gbuffer->unbind();
+}
+
+void DeferredRenderer::renderBackground(){
+	// Background.
 	// No need to write the skybox depth to the framebuffer.
 	glDepthMask(GL_FALSE);
 	// Accept a depth of 1.0 (far plane).
 	glDepthFunc(GL_LEQUAL);
 	const Object * background	= _scene->background.get();
 	const Scene::Background mode = _scene->backgroundMode;
-
+	const glm::mat4 & view = _userCamera.view();
+	const glm::mat4 & proj = _userCamera.projection();
+	
 	if(mode == Scene::Background::SKYBOX) {
 		// Skybox.
 		const glm::mat4 backgroundMVP = proj * view * background->model();
@@ -175,7 +198,7 @@ void DeferredRenderer::renderScene() const {
 		_skyboxProgram->uniform("mvp", backgroundMVP);
 		GLUtilities::bindTextures(background->textures());
 		GLUtilities::drawMesh(*background->mesh());
-
+		
 	} else if(mode == Scene::Background::ATMOSPHERE) {
 		// Atmosphere screen quad.
 		_atmoProgram->use();
@@ -189,7 +212,7 @@ void DeferredRenderer::renderScene() const {
 		_atmoProgram->uniform("lightDirection", sunDir);
 		GLUtilities::bindTextures(background->textures());
 		GLUtilities::drawMesh(*background->mesh());
-
+		
 	} else {
 		// Background color or 2D image.
 		_bgProgram->use();
@@ -204,9 +227,6 @@ void DeferredRenderer::renderScene() const {
 	}
 	glDepthFunc(GL_LESS);
 	glDepthMask(GL_TRUE);
-
-	// Unbind the full scene framebuffer.
-	_gbuffer->unbind();
 }
 
 const Texture * DeferredRenderer::renderPostprocess(const glm::vec2 & invRenderSize) const {
@@ -269,8 +289,8 @@ void DeferredRenderer::draw() {
 
 	// --- Light pass -------
 	if(_updateShadows) {
-		for(auto & light : _scene->lights) {
-			light->drawShadow(_scene->objects);
+		for(const auto & map : _shadowMaps){
+			map->draw(*_scene);
 		}
 	}
 
@@ -286,12 +306,13 @@ void DeferredRenderer::draw() {
 	}
 
 	// --- Gbuffer composition pass
+	_lightRenderer->updateCameraInfos(_userCamera.view(), _userCamera.projection());
 	_sceneFramebuffer->bind();
 	_sceneFramebuffer->setViewport();
 	_ambientScreen->draw(_userCamera.view(), _userCamera.projection());
 	glEnable(GL_BLEND);
 	for(auto & light : _scene->lights) {
-		light->draw(_userCamera.view(), _userCamera.projection(), invRenderSize);
+		light->draw(*_lightRenderer);
 	}
 	glDisable(GL_BLEND);
 	_sceneFramebuffer->unbind();
@@ -411,9 +432,8 @@ void DeferredRenderer::clean() {
 	_toneMappingFramebuffer->clean();
 	_fxaaFramebuffer->clean();
 	_blurBuffer->clean();
-
-	if(_scene) {
-		_scene->clean();
+	for(auto & map : _shadowMaps){
+		map->clean();
 	}
 }
 

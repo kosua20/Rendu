@@ -10,16 +10,14 @@ layout(binding = 2) uniform sampler2D depthTexture; ///< Depth.
 layout(binding = 3) uniform sampler2D effectsTexture; ///< Effects.
 layout(binding = 4) uniform sampler2D shadowMap; ///< Shadow map.
 
-uniform vec2 inverseScreenSize; ///< Size of a pixel in uv space.
 uniform vec4 projectionMatrix; ///< Camera projection matrix
 uniform mat4 viewToLight; ///< View to light space matrix.
 
 uniform vec3 lightPosition; ///< Light position in view space.
 uniform vec3 lightDirection; ///< Light direction in view space.
 uniform vec3 lightColor; ///< Light intensity.
+uniform vec2 intOutAnglesCos; ///< Angular attenuation inner and outer angles.
 uniform float lightRadius; ///< Attenuation radius.
-uniform float outerAngleCos; ///< Angular attenuation outer angle.
-uniform float innerAngleCos; ///< Angular attenuation inner angle.
 uniform bool castShadow; ///< Should the shadow map be used.
 
 layout(location = 0) out vec3 fragColor; ///< Color.
@@ -135,7 +133,7 @@ vec3 ggx(vec3 n, vec3 v, vec3 l, vec3 F0, float roughness){
 /** Compute the lighting contribution of a spot light using the GGX BRDF. */
 void main(){
 	
-	vec2 uv = gl_FragCoord.xy*inverseScreenSize;
+	vec2 uv = gl_FragCoord.xy/textureSize(albedoTexture, 0).xy;
 	
 	vec4 albedoInfo = textureLod(albedoTexture,uv, 0.0);
 	// If this is the skybox, don't shade.
@@ -160,11 +158,11 @@ void main(){
 	// Compute the angle between the light direction and the (light, surface point) vector.
 	float currentAngleCos = dot(-l, normalize(lightDirection));
 	// If we are outside the spotlight cone, no lighting.
-	if(currentAngleCos < outerAngleCos){
+	if(currentAngleCos < intOutAnglesCos.y){
 		discard;
 	}
 	// Compute the spotlight attenuation factor based on our angle compared to the inner and outer spotlight angles.
-	float angleAttenuation = clamp((currentAngleCos - outerAngleCos)/(innerAngleCos - outerAngleCos), 0.0, 1.0);
+	float angleAttenuation = clamp((currentAngleCos - intOutAnglesCos.y)/(intOutAnglesCos.x - intOutAnglesCos.y), 0.0, 1.0);
 	
 	// Orientation: basic diffuse shadowing.
 	float orientation = max(0.0, dot(l,n));

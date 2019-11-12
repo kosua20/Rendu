@@ -10,7 +10,6 @@ layout(binding = 2) uniform sampler2D depthTexture; ///< Depth.
 layout(binding = 3) uniform sampler2D effectsTexture;///< Effects.
 layout(binding = 4) uniform samplerCube shadowMap; ///< Shadow map.
 
-uniform vec2 inverseScreenSize; ///< Size of a pixel in uv space.
 uniform vec4 projectionMatrix; ///< Camera projection matrix
 uniform mat3 viewToLight; ///< Light direction in view space.
 
@@ -131,7 +130,7 @@ vec3 ggx(vec3 n, vec3 v, vec3 l, vec3 F0, float roughness){
 /** Compute the lighting contribution of a point light using the GGX BRDF. */
 void main(){
 	
-	vec2 uv = gl_FragCoord.xy*inverseScreenSize;
+	vec2 uv = gl_FragCoord.xy/textureSize(albedoTexture, 0).xy;
 	
 	vec4 albedoInfo = textureLod(albedoTexture,uv, 0.0);
 	// If this is the skybox, don't shade.
