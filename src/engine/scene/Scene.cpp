@@ -2,9 +2,9 @@
 #include "scene/Sky.hpp"
 #include "system/TextUtilities.hpp"
 
-
 #include <map>
 #include <sstream>
+#include <chrono>
 
 Scene::Scene(const std::string & name) {
 	// Append the extension if needed.
