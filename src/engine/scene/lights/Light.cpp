@@ -5,11 +5,11 @@
 #include "scene/lights/SpotLight.hpp"
 
 Light::Light() :
-	_program(nullptr), _programDepth(nullptr), _mvp(glm::mat4(1.0f)), _color(glm::vec3(1.0f)), _castShadows(false) {
+	_vp(glm::mat4(1.0f)), _model(glm::mat4(1.0f)), _color(glm::vec3(1.0f)), _castShadows(false) {
 }
 
 Light::Light(const glm::vec3 & color) :
-	_program(nullptr), _programDepth(nullptr), _mvp(glm::mat4(1.0f)), _color(color), _castShadows(false) {
+	_vp(glm::mat4(1.0f)), _model(glm::mat4(1.0f)), _color(color), _castShadows(false) {
 }
 
 void Light::addAnimation(const std::shared_ptr<Animation> & anim) {

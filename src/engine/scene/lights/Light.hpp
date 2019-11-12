@@ -3,6 +3,7 @@
 #include "scene/Animation.hpp"
 #include "scene/Object.hpp"
 #include "raycaster/Raycaster.hpp"
+#include "renderers/LightRenderer.hpp"
 #include "Common.hpp"
 
 /**
@@ -19,61 +20,22 @@ public:
 	 \param color the light color intensity
 	 */
 	explicit Light(const glm::vec3 & color);
-
-	/** Set if the light shoud cast shadows.
-	 \param shouldCast toggle shadow casting
-	 */
-	void castShadow(const bool shouldCast) { _castShadows = shouldCast; }
-
-	/** Set the light colored intensity.
-	 \param color the new intensity to use
-	 */
-	void setIntensity(const glm::vec3 & color) { _color = color; }
-
-	/** Get the light colored intensity.
-	 \return the light intensity
-	 */
-	const glm::vec3 & intensity() const { return _color; }
-
+	
 	/** Add an animation to the light.
 	 \param anim the animation to apply
 	 */
 	void addAnimation(const std::shared_ptr<Animation> & anim);
-
-	/** Perform initialization against the graphics API and register textures for deferred rendering.
-	 \param albedo the albedo texture
-	 \param normal the normal texture
-	 \param depth the depth buffer texture
-	 \param effects the roughness/metalness texture
+	
+	/** Process the light using a specific renderer. \see LightRenderer for the expected interface details.
+	 \param renderer the light-specific renderer
 	 */
-	virtual void init(const Texture * albedo, const Texture * normal, const Texture * depth, const Texture * effects) = 0;
-
-	/** Render the light contribution to the scene.
-	 \param viewMatrix the current camera view matrix
-	 \param projectionMatrix the current camera projection matrix
-	 \param invScreenSize the inverse of the textures size
-	 */
-	virtual void draw(const glm::mat4 & viewMatrix, const glm::mat4 & projectionMatrix, const glm::vec2 & invScreenSize) const = 0;
-
-	/** Render the light shadow map.
-	 \param objects list of shadow casting objects to render
-	 */
-	virtual void drawShadow(const std::vector<Object> & objects) const = 0;
-
-	/** Render the light debug wireframe visualisation
-	 \param viewMatrix the current camera view matrix
-	 \param projectionMatrix the current camera projection matrix
-	 */
-	virtual void drawDebug(const glm::mat4 & viewMatrix, const glm::mat4 & projectionMatrix) const = 0;
+	virtual void draw(const LightRenderer & renderer) const = 0;
 
 	/** Apply the animations for a frame duration.
 	 \param fullTime the time since the launch of the application
 	 \param frameTime the time elapsed since the last frame
 	 */
 	virtual void update(double fullTime, double frameTime) = 0;
-
-	/** Clean internal resources. */
-	virtual void clean() const = 0;
 
 	/** Update the scene bounding box used for internal setup (shadow map,...).
 	 \param sceneBox the new bounding box
@@ -88,7 +50,38 @@ public:
 	 \return true if the point is visible from the light source.
 	 */
 	virtual bool visible(const glm::vec3 & position, const Raycaster & raycaster, glm::vec3 & direction, float & attenuation) const = 0;
-
+	
+	/** Is the light casting shadows.
+	 \return a boolean denoting if the light is a shadowcaster
+	 */
+	bool castsShadow() const { return _castShadows; }
+	
+	/** Get the light colored intensity.
+	 \return the light intensity
+	 */
+	const glm::vec3 & intensity() const { return _color; }
+	
+	/** Get the light viewproj matrix.
+	 \return the VP matrix
+	 */
+	const glm::mat4 & vp() const { return _vp; }
+	
+	/** Get the light mesh model matrix.
+	 \return the model matrix
+	 */
+	const glm::mat4 & model() const { return _model; }
+	
+	/** Get the light shadow map (either 2D or cube depending on the light type).
+	 \return the shadow map texture
+	 */
+	const Texture * shadowMap() const { return _shadowMap; }
+	
+	/** Set the light shadow map (either 2D or cube depending on the light type).
+	 \param map the shadow map texture
+	 \warning No check on texture type is performed.
+	 */
+	void registerShadowMap(const Texture * map) { _shadowMap = map; }
+	
 	/** Helper that can instantiate a light of any type from the passed keywords and parameters.
 	 \param params a key-value tuple containing light parameters
 	 \return a generic light pointer
@@ -128,13 +121,11 @@ protected:
 	 */
 	void decodeBase(const KeyValues & params);
 
-	std::vector<const Texture *> _textures;				 ///< The G-buffer textures.
 	std::vector<std::shared_ptr<Animation>> _animations; ///< Animations list (will be applied in order).
-
-	BoundingBox _sceneBox;		   ///< The scene bounding box, to fit the shadow map.
-	const Program * _program;	  ///< Light rendering program.
-	const Program * _programDepth; ///< Shadow map program.
-	glm::mat4 _mvp;				   ///< MVP matrix for shadow casting.
-	glm::vec3 _color;			   ///< Colored intensity.
-	bool _castShadows;			   ///< Is the light casting shadows (and thus use a shadow map)..
+	const Texture * _shadowMap = nullptr;	///< The (optional) light shadow map.
+	BoundingBox _sceneBox; 	///< The scene bounding box, to fit the shadow map.
+	glm::mat4 _vp;			///< VP matrix for shadow casting.
+	glm::mat4 _model;		///< Model matrix of the mesh containing the light-covered region.
+	glm::vec3 _color;		///< Colored intensity.
+	bool _castShadows;		///< Is the light casting shadows (and thus use a shadow map)..
 };

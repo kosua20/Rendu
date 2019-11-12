@@ -4,6 +4,8 @@
 #include "scene/Object.hpp"
 #include "graphics/FramebufferCube.hpp"
 
+#include <array>
+
 /**
  \brief An omnidirectional punctual light, where light is radiating in all directions from a single point in space. Implements distance attenuation.
  \details It can be associated with a shadow cubemap with six orthogonal projections, and is rendered as a sphere in deferred rendering.
@@ -24,34 +26,14 @@ public:
 	PointLight(const glm::vec3 & worldPosition, const glm::vec3 & color, float radius);
 
 	/**
-	 \copydoc Light::init
-	 */
-	void init(const Texture * albedo, const Texture * normal, const Texture * depth, const Texture * effects) override;
-
-	/**
 	 \copydoc Light::draw
 	 */
-	void draw(const glm::mat4 & viewMatrix, const glm::mat4 & projectionMatrix, const glm::vec2 & invScreenSize) const override;
-
-	/**
-	 \copydoc Light::drawShadow
-	 */
-	void drawShadow(const std::vector<Object> & objects) const override;
-
-	/**
-	 \copydoc Light::drawDebug
-	 */
-	void drawDebug(const glm::mat4 & viewMatrix, const glm::mat4 & projectionMatrix) const override;
+	void draw(const LightRenderer & renderer) const override;
 
 	/**
 	 \copydoc Light::update
 	 */
 	void update(double fullTime, double frameTime) override;
-
-	/**
-	 \copydoc Light::clean
-	 */
-	void clean() const override;
 
 	/**
 	 \copydoc Light::setScene
@@ -77,13 +59,31 @@ public:
 	 */
 	void decode(const KeyValues & params);
 
+	/** Get the light position in world space.
+	 \return the position
+	 */
+	const glm::vec3 & position() const { return _lightPosition; }
+	
+	/** Get the light influence radius. No emitted light propagates further than this distance from the light position.
+	 \return the radius
+	 */
+	float radius() const { return _radius; }
+	
+	/** Get the light far plane used to render the cube shadow map with distances in world space.
+	 \return the far plane distance
+	 */
+	float farPlane() const { return _farPlane; }
+	
+	/** Get 6 view-projection matrices that cover the full 360° environment, with proper near/far planes for the current environment.
+	 \return the matrices list.
+	 */
+	const std::array<glm::mat4, 6> & vpFaces(){ return _vps; }
+	
 private:
-	std::unique_ptr<FramebufferCube> _shadowFramebuffer; ///< The shadow cubemap framebuffer.
 
-	std::vector<glm::mat4> _mvps;				///< Light mvp matrices for each face.
+	std::array<glm::mat4, 6> _vps;				///< Light VP matrices for each face.
 	glm::vec3 _lightPosition = glm::vec3(1.0f); ///< Light position.
 	float _radius			 = 1.0f;			///< The attenuation radius.
 	float _farPlane			 = 1.0f;			///< The projection matrices far plane.
 
-	const Mesh * _sphere = nullptr; ///< The supporting geometry.
 };

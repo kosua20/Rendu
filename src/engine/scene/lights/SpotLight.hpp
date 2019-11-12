@@ -28,34 +28,14 @@ public:
 	SpotLight(const glm::vec3 & worldPosition, const glm::vec3 & worldDirection, const glm::vec3 & color, float innerAngle, float outerAngle, float radius);
 
 	/**
-	 \copydoc Light::init
-	 */
-	void init(const Texture * albedo, const Texture * normal, const Texture * depth, const Texture * effects) override;
-
-	/**
 	 \copydoc Light::draw
 	 */
-	void draw(const glm::mat4 & viewMatrix, const glm::mat4 & projectionMatrix, const glm::vec2 & invScreenSize) const override;
-
-	/**
-	 \copydoc Light::drawShadow
-	 */
-	void drawShadow(const std::vector<Object> & objects) const override;
-
-	/**
-	 \copydoc Light::drawDebug
-	 */
-	void drawDebug(const glm::mat4 & viewMatrix, const glm::mat4 & projectionMatrix) const override;
+	void draw(const LightRenderer & renderer) const override;
 
 	/**
 	 \copydoc Light::update
 	 */
 	void update(double fullTime, double frameTime) override;
-
-	/**
-	 \copydoc Light::clean
-	 */
-	void clean() const override;
 
 	/**
 	 \copydoc Light::setScene
@@ -83,17 +63,32 @@ public:
 	 */
 	void decode(const KeyValues & params);
 
+	/** Get the light position in world space.
+	 \return the position
+	 */
+	const glm::vec3 & position() const { return _lightPosition; }
+	
+	/** Get the light principal direction in world space.
+	 \return the direction
+	 */
+	const glm::vec3 & direction() const { return _lightDirection; }
+	
+	/** Get the light cone inner and outer angles. Attenuation happens between the two angles.
+	 \return the angles
+	 */
+	const glm::vec2 & angles() const { return _angles; }
+	
+	/** Get the light influence radius. No emitted light propagates further than this distance from the light position.
+	 \return the radius
+	 */
+	float radius() const { return _radius; }
+	
 private:
-	std::unique_ptr<Framebuffer> _shadowPass; ///< The shadow map framebuffer.
-	std::unique_ptr<BoxBlur> _blur;			  ///< Blur processing for variance shadow mapping.
 
 	glm::mat4 _projectionMatrix = glm::mat4(1.0f);			   ///< Light projection matrix.
 	glm::mat4 _viewMatrix		= glm::mat4(1.0f);			   ///< Light view matrix.
 	glm::vec3 _lightDirection   = glm::vec3(1.0f, 0.0f, 0.0f); ///< Light direction.
 	glm::vec3 _lightPosition	= glm::vec3(0.0f);			   ///< Light position.
-	float _innerHalfAngle		= glm::quarter_pi<float>();	   ///< The inner cone attenuation angle.
-	float _outerHalfAngle		= glm::half_pi<float>();		   ///< The outer cone attenuation angle.
+	glm::vec2 _angles 			= glm::vec2(glm::quarter_pi<float>(), glm::half_pi<float>()); ///< The inner and outer cone attenuation angles.
 	float _radius				= 1.0f;						   ///< The attenuation radius.
-
-	const Mesh * _cone = nullptr; ///< The supporting geometry.
 };
