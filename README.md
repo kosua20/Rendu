@@ -37,7 +37,7 @@ Basic resources to run each project are included in this repository, but you can
 
 # Building
 
-This project use `premake` ([premake.github.io](https://premake.github.io)) for generating the workspace and projects files.
+This project use `premake5` ([premake.github.io](https://premake.github.io)) for generating the workspace and projects files.
 After cloning Rendu, move to the root of the repository and run
 
     premake5.exe [vs2017 | xcode | make | ...]
