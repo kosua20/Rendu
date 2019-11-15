@@ -24,9 +24,11 @@
 	intensity: 1.0,1.8,2.0
 	shadows: true
 	direction: -0.8,-1.0,-0.8
-	position: 1.0,1.8,1.0
+	position: 1.0,1.2,1.0
 	cone: 0.7 0.8
 	radius: 5.0
+	animations:
+		- backandforth: 1.0 world 0.0,1.0,0.0 0.75
 	
 * object:
 	mesh: cornellbox_floor_0
