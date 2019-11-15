@@ -1,66 +1,64 @@
 #pragma once
 #include "system/Config.hpp"
+#include "input/Camera.hpp"
+#include "resources/Texture.hpp"
 
 /**
- \brief Base structure of a renderer.
+ \brief Base structure of a renderer. The result of the renderer is available through result().
  \ingroup Engine
  */
 class Renderer {
-
+	
 public:
-	/** Constructor.
-	 \param config the configuration to apply when setting up
+	
+	/** Default constructor.*/
+	Renderer() = default;
+	
+	/** Draw from a given viewpoint.
+	 \param camera the rendering viewpoint
 	 */
-	explicit Renderer(RenderingConfig & config);
-
-	/** Draw the scene and effects */
-	virtual void draw() = 0;
-
-	/** Perform once-per-frame update (buttons, GUI,...) */
-	virtual void update();
-
-	/** Perform physics simulation update.
-	 \param fullTime the time elapsed since the beginning of the render loop
-	 \param frameTime the duration of the last frame
-	 \note This function can be called multiple times per frame.
+	virtual void draw(const Camera & camera);
+	
+	/** Process a given input texture.
+	 \param texture the GPU ID of the texture
 	 */
-	virtual void physics(double fullTime, double frameTime) = 0;
-
+	virtual void process(const Texture * texture);
+	
 	/** Clean internal resources. */
-	virtual void clean();
-
+	virtual void clean() = 0;
+	
 	/** Handle a window resize event.
 	 \param width the new width
 	 \param height the new height
 	 */
 	virtual void resize(unsigned int width, unsigned int height) = 0;
+	
+	/** Contains the result of the rendering.
+	 \return the result texture
+	 */
+	const Texture * result(){ return _renderResult; }
 
 	/** Destructor */
 	virtual ~Renderer() = default;
-
+	
 	/** Copy constructor.*/
 	Renderer(const Renderer &) = delete;
-
+	
 	/** Copy assignment.
 	 \return a reference to the object assigned to
 	 */
 	Renderer & operator=(const Renderer &) = delete;
-
+	
 	/** Move constructor.*/
 	Renderer(Renderer &&) = delete;
-
+	
 	/** Move assignment.
 	 \return a reference to the object assigned to
 	 */
 	Renderer & operator=(Renderer &&) = delete;
-
+	
 protected:
-	/** Update the internal rendering resolution.
-	 \param width the new width
-	 \param height the new height
-	 */
-	void updateResolution(unsigned int width, unsigned int height);
-
-	RenderingConfig & _config;					   ///< The current configuration.
-	glm::vec2 _renderResolution = glm::vec2(0.0f); ///< The internal rendering resolution.
+	
+	glm::vec2 _renderResolution = glm::vec2(0.0f,0.0f); ///< The internal resolution.
+	const Texture * _renderResult = nullptr; ///< The texture containing the result.
 };
