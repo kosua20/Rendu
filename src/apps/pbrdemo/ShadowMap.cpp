@@ -18,6 +18,7 @@ void ShadowMap2D::draw(const Scene & scene) const {
 	_map->setViewport();
 	GLUtilities::clearColorAndDepth(glm::vec4(1.0f), 1.0f);
 	glEnable(GL_CULL_FACE);
+	glEnable(GL_DEPTH_TEST);
 	_program->use();
 	
 	for(auto & object : scene.objects) {
@@ -41,7 +42,6 @@ void ShadowMap2D::draw(const Scene & scene) const {
 	// --- Blur pass --------
 	glDisable(GL_DEPTH_TEST);
 	_blur->process(_map->textureId());
-	glEnable(GL_DEPTH_TEST);
 }
 
 void ShadowMap2D::clean(){
@@ -67,6 +67,7 @@ void ShadowMapCube::draw(const Scene & scene) const {
 	_map->bind();
 	_map->setViewport();
 	GLUtilities::clearColorAndDepth(glm::vec4(1.0f), 1.0f);
+	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	
 	_program->use();
@@ -97,6 +98,7 @@ void ShadowMapCube::draw(const Scene & scene) const {
 	
 	_map->unbind();
 	// No blurring pass for now.
+	glDisable(GL_DEPTH_TEST);
 }
 
 void ShadowMapCube::clean(){
