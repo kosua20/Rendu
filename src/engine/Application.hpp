@@ -1,6 +1,6 @@
 #pragma once
 #include "system/Config.hpp"
-#include "input/Camera.hpp"
+#include "input/ControllableCamera.hpp"
 
 /**
  \brief Base structure of an application.
@@ -14,19 +14,12 @@ public:
 	 */
 	explicit Application(RenderingConfig & config);
 
-	/** Draw. */
+	/** Draw call. */
 	virtual void draw() = 0;
-
-	/** Perform once-per-frame update (buttons, GUI,...) */
+	
+	/** Interactions call. */
 	virtual void update();
-
-	/** Perform physics simulation update.
-	 \param fullTime the time elapsed since the beginning of the render loop
-	 \param frameTime the duration of the last frame
-	 \note This function can be called multiple times per frame.
-	 */
-	virtual void physics(double fullTime, double frameTime) = 0;
-
+	
 	/** Clean internal resources. */
 	virtual void clean() = 0;
 	
@@ -55,5 +48,45 @@ public:
 protected:
 
 	RenderingConfig & _config; ///< The current configuration.
+};
+
+/**
+ \brief Application with an interactive camera.
+ \ingroup Engine
+ */
+class CameraApp : public Application {
+public:
+	
+	/** Constructor.
+	 \param config the rendering configuration
+	 */
+	explicit CameraApp(RenderingConfig & config);
+	
+	/** Per-frame update. */
+	virtual void update() override;
+	
+	/** Perform physics simulation update.
+	 \param fullTime the time elapsed since the beginning of the render loop
+	 \param frameTime the duration of the last frame
+	 \note This function can be called multiple times per frame.
+	 */
+	virtual void physics(double fullTime, double frameTime) = 0;
+	
+protected:
+	
+	/** Prevent the user from interacting with the camera.
+	 \param shouldFreeze the toggle
+	 */
+	void freezeCamera(bool shouldFreeze);
+	
+	ControllableCamera _userCamera; ///< The interactive camera.
+	
+private:
+	
+	bool _freezeCamera    = false; 	///< Should the camera be frozen.
+	double _timer		  = 0.0; 	///< Absolute timer.
+	double _fullTime	  = 0.0; 	///< Time elapsed since the app launch.
+	double _remainingTime = 0.0;	///< Remaining accumulated time to process.
+	const double _dt = 1.0 / 120.0; ///< Small physics timestep.
 };
 
