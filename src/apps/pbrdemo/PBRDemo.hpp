@@ -14,7 +14,7 @@
  \brief PBR rendering demonstration and interactions.
  \ingroup DeferredRendering
  */
-class PBRDemo final : public Application {
+class PBRDemo final : public CameraApp {
 
 public:
 	/** Constructor.
@@ -22,19 +22,19 @@ public:
 	 */
 	explicit PBRDemo(RenderingConfig & config);
 
-	/** \copydoc Application::draw */
+	/** \copydoc CameraApp::draw */
 	void draw() override;
 
-	/** \copydoc Application::update */
+	/** \copydoc CameraApp::update */
 	void update() override;
 
-	/** \copydoc Application::physics */
+	/** \copydoc CameraApp::physics */
 	void physics(double fullTime, double frameTime) override;
 
-	/** \copydoc Application::clean */
+	/** \copydoc CameraApp::clean */
 	void clean() override;
 
-	/** \copydoc Application::resize */
+	/** \copydoc CameraApp::resize */
 	void resize() override;
 
 private:
@@ -47,8 +47,6 @@ private:
 	std::unique_ptr<DeferredRenderer> _renderer; ///< Active PBR renderer.
 	std::unique_ptr<PostProcessStack> _postprocess; ///< Post-process renderer.
 	const Program * _finalProgram; ///< Final display program.
-	
-	ControllableCamera _userCamera; ///< The interactive camera.
 	
 	std::vector<std::shared_ptr<Scene>> _scenes; ///< The existing scenes.
 	std::vector<std::string> _sceneNames; ///< The associated scene names.

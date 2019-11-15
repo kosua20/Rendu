@@ -5,7 +5,7 @@
 #include "graphics/GLUtilities.hpp"
 
 FilteringApp::FilteringApp(RenderingConfig & config) :
-	Application(config) {
+	CameraApp(config) {
 	
 	const glm::vec2 renderResolution = _config.renderingResolution();
 	// Setup camera parameters.
@@ -108,8 +108,7 @@ void FilteringApp::draw() {
 }
 
 void FilteringApp::update() {
-	Application::update();
-	_userCamera.update();
+	CameraApp::update();
 
 	ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_Once);
 	if(ImGui::Begin("Filtering")) {
@@ -121,12 +120,14 @@ void FilteringApp::update() {
 		// View settings.
 		ImGui::Text("View:");
 		ImGui::SameLine();
-		ImGui::RadioButton("Scene", reinterpret_cast<int *>(&_viewMode), int(View::SCENE));
+		const bool t0 = ImGui::RadioButton("Scene", reinterpret_cast<int *>(&_viewMode), int(View::SCENE));
 		ImGui::SameLine();
-		ImGui::RadioButton("Image", reinterpret_cast<int *>(&_viewMode), int(View::IMAGE));
+		const bool t1 = ImGui::RadioButton("Image", reinterpret_cast<int *>(&_viewMode), int(View::IMAGE));
 		ImGui::SameLine();
-		ImGui::RadioButton("Paint", reinterpret_cast<int *>(&_viewMode), int(View::PAINT));
-
+		const bool t2 = ImGui::RadioButton("Paint", reinterpret_cast<int *>(&_viewMode), int(View::PAINT));
+		if(t0 || t1 || t2){
+			freezeCamera(_viewMode != View::SCENE);
+		}
 		// Image loading options for the image mode.
 		if(_viewMode == View::IMAGE && ImGui::Button("Load image...")) {
 			std::string newImagePath;
@@ -170,6 +171,7 @@ void FilteringApp::update() {
 		ImGui::SetNextWindowPos(ImVec2(10, 200), ImGuiCond_Once);
 		_painter->update();
 	}
+	
 }
 
 void FilteringApp::showModeOptions() {
@@ -211,11 +213,7 @@ void FilteringApp::showModeOptions() {
 	}
 }
 
-void FilteringApp::physics(double, double frameTime) {
-	// Only update the user camera if we are in Scene mode, to avoid moving accidentally while in other modes.
-	if(_viewMode == View::SCENE) {
-		_userCamera.physics(frameTime);
-	}
+void FilteringApp::physics(double, double) {
 }
 
 void FilteringApp::clean() {

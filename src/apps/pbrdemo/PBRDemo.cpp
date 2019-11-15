@@ -2,7 +2,7 @@
 #include "graphics/GLUtilities.hpp"
 #include "input/Input.hpp"
 
-PBRDemo::PBRDemo(RenderingConfig & config) : Application(config) {
+PBRDemo::PBRDemo(RenderingConfig & config) : CameraApp(config) {
 	
 	const glm::vec2 renderRes = _config.renderingResolution();
 	_renderer.reset(new DeferredRenderer(renderRes));
@@ -10,7 +10,6 @@ PBRDemo::PBRDemo(RenderingConfig & config) : Application(config) {
 	_finalProgram = Resources::manager().getProgram2D("final_screenquad");
 	
 	// Setup camera parameters.
-	_userCamera.ratio(config.screenResolution[0] / config.screenResolution[1]);
 	_cameraFOV = _userCamera.fov() * 180.0f / glm::pi<float>();
 	_cplanes   = _userCamera.clippingPlanes();
 	
@@ -32,8 +31,11 @@ PBRDemo::PBRDemo(RenderingConfig & config) : Application(config) {
 
 void PBRDemo::setScene(const std::shared_ptr<Scene> & scene) {
 	if(!scene){
+		freezeCamera(true);
 		return;
 	}
+	freezeCamera(false);
+	
 	scene->init(Storage::GPU);
 
 	_userCamera.apply(scene->viewpoint());
@@ -66,7 +68,7 @@ void PBRDemo::draw() {
 }
 
 void PBRDemo::update() {
-	Application::update();
+	CameraApp::update();
 	
 	// First part of the ImGui window is always displayed.
 	if(ImGui::Begin("Renderer")) {
@@ -97,8 +99,6 @@ void PBRDemo::update() {
 		_scenes[_currentScene].reset(new Scene(_sceneNames[_currentScene]));
 		setScene(_scenes[_currentScene]);
 	}
-	
-	_userCamera.update();
 	
 	// Reopen the Imgui window.
 	if(ImGui::Begin("Renderer")) {
@@ -178,7 +178,6 @@ void PBRDemo::update() {
 }
 
 void PBRDemo::physics(double fullTime, double frameTime) {
-	_userCamera.physics(frameTime);
 	if(_scenes[_currentScene] && !_paused) {
 		_scenes[_currentScene]->update(fullTime, frameTime);
 	}

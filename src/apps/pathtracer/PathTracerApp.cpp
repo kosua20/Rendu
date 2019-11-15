@@ -5,7 +5,7 @@
 #include "graphics/ScreenQuad.hpp"
 #include "resources/Texture.hpp"
 
-PathTracerApp::PathTracerApp(RenderingConfig & config, const std::shared_ptr<Scene> & scene) : Application(config) {
+PathTracerApp::PathTracerApp(RenderingConfig & config, const std::shared_ptr<Scene> & scene) : CameraApp(config) {
 	
 	const glm::vec2 renderRes = _config.renderingResolution();
 	_bvhRenderer.reset(new BVHRenderer(renderRes));
@@ -71,13 +71,12 @@ void PathTracerApp::draw() {
 }
 
 void PathTracerApp::update() {
-	Application::update();
+	CameraApp::update();
 	
 	// If no scene, no need to udpate the camera or the scene-specific UI.
 	if(!_scene) {
 		return;
 	}
-	_userCamera.update();
 
 	if(ImGui::Begin("Path tracer")) {
 
@@ -197,8 +196,7 @@ void PathTracerApp::update() {
 	ImGui::End();
 }
 
-void PathTracerApp::physics(double, double frameTime) {
-	_userCamera.physics(frameTime);
+void PathTracerApp::physics(double, double) {
 	// If there is any interaction, exit the 'show render' mode.
 	if(Input::manager().interacted()) {
 		_showRender = false;

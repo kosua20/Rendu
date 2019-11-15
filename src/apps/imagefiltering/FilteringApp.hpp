@@ -22,7 +22,7 @@
  Filters available: Box blur of fixed radius, Gaussian blur, Poisson filling, Laplacian integration, Flood filling.
  \ingroup ImageFiltering
  */
-class FilteringApp final : public Application {
+class FilteringApp final : public CameraApp {
 
 public:
 	/** Constructor.
@@ -30,19 +30,19 @@ public:
 	 */
 	explicit FilteringApp(RenderingConfig & config);
 
-	/** \copydoc Application::draw */
+	/** \copydoc CameraApp::draw */
 	void draw() override;
 
-	/** \copydoc Application::update */
+	/** \copydoc CameraApp::update */
 	void update() override;
 
-	/** \copydoc Application::physics */
+	/** \copydoc CameraApp::physics */
 	void physics(double fullTime, double frameTime) override;
 
-	/** \copydoc Application::clean */
+	/** \copydoc CameraApp::clean */
 	void clean() override;
 
-	/** \copydoc Application::resize */
+	/** \copydoc CameraApp::resize */
 	void resize() override;
 
 private:
@@ -66,7 +66,6 @@ private:
 	/** Display mode-specific GUI options. */
 	void showModeOptions();
 
-	ControllableCamera _userCamera;			   ///< The interactive camera.
 	std::unique_ptr<Framebuffer> _sceneBuffer; ///< Scene rendering buffer.
 
 	std::unique_ptr<PoissonFiller> _pyramidFiller;			 ///< Poisson filling.

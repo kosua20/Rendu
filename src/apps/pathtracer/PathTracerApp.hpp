@@ -14,7 +14,7 @@
  Can also display the raycaster acceleration structure.
  \ingroup PathtracerDemo
  */
-class PathTracerApp final : public Application {
+class PathTracerApp final : public CameraApp {
 
 public:
 	/** Constructor.
@@ -23,27 +23,25 @@ public:
 	 */
 	explicit PathTracerApp(RenderingConfig & config, const std::shared_ptr<Scene> & scene);
 
-	/** \copydoc Application::draw */
+	/** \copydoc CameraApp::draw */
 	void draw() override;
 
-	/** \copydoc Application::update
+	/** \copydoc CameraApp::update
 	 */
 	void update() override;
 
-	/** \copydoc Application::physics
+	/** \copydoc CameraApp::physics
 	 */
 	void physics(double fullTime, double frameTime) override;
 
-	/** \copydoc Application::clean */
+	/** \copydoc CameraApp::clean */
 	void clean() override;
 
-	/** \copydoc Application::resize
+	/** \copydoc CameraApp::resize
 	 */
 	void resize() override;
 
 private:
-
-	ControllableCamera _userCamera; ///< The interactive camera.
 
 	const Program * _passthrough;	///< Passthrough program.
 	Texture _renderTex;				///< The result texture and image.

@@ -145,43 +145,11 @@ int main(int argc, char ** argv) {
 	scene->init(Storage::BOTH);
 
 	PathTracerApp app(config, scene);
-	
-	double timer		 = System::time();
-	double fullTime		 = 0.0;
-	double remainingTime = 0.0;
-	const double dt		 = 1.0 / 120.0; // Small physics timestep.
 
 	// Start the display/interaction loop.
 	while(window.nextFrame()) {
-
-		// We separate punctual events from the main physics/movement update loop.
 		app.update();
-
-		// Compute the time elapsed since last frame
-		const double currentTime = System::time();
-		double frameTime		 = currentTime - timer;
-		timer					 = currentTime;
-
-		// Physics simulation
-		// First avoid super high frametime by clamping.
-		if(frameTime > 0.2) {
-			frameTime = 0.2;
-		}
-		// Accumulate new frame time.
-		remainingTime += frameTime;
-		// Instead of bounding at dt, we lower our requirement (1 order of magnitude).
-		while(remainingTime > 0.2 * dt) {
-			const double deltaTime = std::min(remainingTime, dt);
-			// Update physics and camera.
-			app.physics(fullTime, deltaTime);
-			// Update timers.
-			fullTime += deltaTime;
-			remainingTime -= deltaTime;
-		}
-
-		// Update the content of the window.
 		app.draw();
-		
 	}
 
 	// Clean other resources
