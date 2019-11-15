@@ -4,14 +4,15 @@
 #include "system/System.hpp"
 #include "graphics/GLUtilities.hpp"
 
-FilteringRenderer::FilteringRenderer(RenderingConfig & config) :
-	Renderer(config) {
-
+FilteringApp::FilteringApp(RenderingConfig & config) :
+	Application(config) {
+	
+	const glm::vec2 renderResolution = _config.renderingResolution();
 	// Setup camera parameters.
 	_userCamera.projection(config.screenResolution[0] / config.screenResolution[1], 1.3f, 0.01f, 200.0f);
 	_userCamera.pose(glm::vec3(0.0, 0.0, 3.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
-	const int renderWidth  = int(_renderResolution[0]);
-	const int renderHeight = int(_renderResolution[1]);
+	const int renderWidth  = int(renderResolution[0]);
+	const int renderHeight = int(renderResolution[1]);
 
 	_passthrough = Resources::manager().getProgram2D("passthrough");
 	_sceneShader = Resources::manager().getProgram("object", "object_basic", "object_basic_random");
@@ -34,7 +35,7 @@ FilteringRenderer::FilteringRenderer(RenderingConfig & config) :
 	checkGLError();
 }
 
-void FilteringRenderer::draw() {
+void FilteringApp::draw() {
 
 	const Texture * srcTexID = _sceneBuffer->textureId();
 	// Render the scene.
@@ -106,8 +107,8 @@ void FilteringRenderer::draw() {
 	ScreenQuad::draw(finalTexID);
 }
 
-void FilteringRenderer::update() {
-	Renderer::update();
+void FilteringApp::update() {
+	Application::update();
 	_userCamera.update();
 
 	ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_Once);
@@ -148,13 +149,14 @@ void FilteringRenderer::update() {
 					_image.height = img.height;
 					_image.upload({Layout::RGBA8, Filter::NEAREST_NEAREST, Wrap::CLAMP}, false);
 					_image.clearImages();
-					resize(_image.width, _image.height);
+					_config.screenResolution = {_image.width, _image.height};
+					resize();
 				}
 			}
 		}
 
 		if(ImGui::InputInt("Vertical res.", &_config.internalVerticalResolution, 50, 200)) {
-			resize(int(_config.screenResolution[0]), int(_config.screenResolution[1]));
+			resize();
 		}
 
 		// Filter mode.
@@ -170,11 +172,12 @@ void FilteringRenderer::update() {
 	}
 }
 
-void FilteringRenderer::showModeOptions() {
+void FilteringApp::showModeOptions() {
 	ImGui::Combo("Mode", reinterpret_cast<int *>(&_mode), "Input\0Poisson fill\0Integrate\0Box blur\0Gaussian blur\0Flood fill\0\0");
 
-	const unsigned int width  = uint(_renderResolution[0]);
-	const unsigned int height = uint(_renderResolution[1]);
+	const glm::vec2 renderRes = _config.renderingResolution();
+	const unsigned int width  = uint(renderRes[0]);
+	const unsigned int height = uint(renderRes[1]);
 
 	switch(_mode) {
 		case Processing::GAUSSBLUR:
@@ -208,15 +211,14 @@ void FilteringRenderer::showModeOptions() {
 	}
 }
 
-void FilteringRenderer::physics(double, double frameTime) {
+void FilteringApp::physics(double, double frameTime) {
 	// Only update the user camera if we are in Scene mode, to avoid moving accidentally while in other modes.
 	if(_viewMode == View::SCENE) {
 		_userCamera.physics(frameTime);
 	}
 }
 
-void FilteringRenderer::clean() {
-	Renderer::clean();
+void FilteringApp::clean() {
 	// Clean objects.
 	_sceneBuffer->clean();
 	_pyramidFiller->clean();
@@ -227,12 +229,12 @@ void FilteringRenderer::clean() {
 	_painter->clean();
 }
 
-void FilteringRenderer::resize(unsigned int width, unsigned int height) {
-	Renderer::updateResolution(width, height);
+void FilteringApp::resize() {
+	const glm::vec2 renderResolution = _config.renderingResolution();
 	// Resize the framebuffers.
-	_sceneBuffer->resize(_renderResolution);
-	const uint lwidth  = uint(_renderResolution[0]);
-	const uint lheight = uint(_renderResolution[1]);
+	_sceneBuffer->resize(renderResolution);
+	const uint lwidth  = uint(renderResolution[0]);
+	const uint lheight = uint(renderResolution[1]);
 	_pyramidFiller->resize(lwidth, lheight);
 	_pyramidIntegrator->resize(lwidth, lheight);
 	_gaussianBlur->resize(lwidth, lheight);

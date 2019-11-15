@@ -1,4 +1,4 @@
-#include "FilteringRenderer.hpp"
+#include "FilteringApp.hpp"
 
 #include "input/Input.hpp"
 #include "system/Window.hpp"
@@ -43,7 +43,7 @@ int main(int argc, char ** argv) {
 	double remainingTime = 0.0;
 	const double dt		 = 1.0 / 120.0; // Small physics timestep.
 
-	FilteringRenderer renderer(config);
+	FilteringApp app(config);
 
 	// Start the display/interaction loop.
 	while(window.nextFrame()) {
@@ -54,7 +54,7 @@ int main(int argc, char ** argv) {
 		}
 
 		// We separate punctual events from the main physics/movement update loop.
-		renderer.update();
+		app.update();
 
 		// Compute the time elapsed since last frame
 		const double currentTime = System::time();
@@ -72,19 +72,19 @@ int main(int argc, char ** argv) {
 		while(remainingTime > 0.2 * dt) {
 			const double deltaTime = std::min(remainingTime, dt);
 			// Update physics and camera.
-			renderer.physics(fullTime, frameTime);
+			app.physics(fullTime, frameTime);
 			// Update timers.
 			fullTime += deltaTime;
 			remainingTime -= deltaTime;
 		}
 
 		// Render.
-		renderer.draw();
+		app.draw();
 
 	}
 	
 	// Clean resources.
-	renderer.clean();
+	app.clean();
 	Resources::manager().clean();
 	window.clean();
 
