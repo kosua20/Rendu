@@ -1,5 +1,5 @@
 #include "input/Input.hpp"
-#include "input/ControllableCamera.hpp"
+#include "Application.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "graphics/ScreenQuad.hpp"
 #include "graphics/Framebuffer.hpp"
@@ -17,6 +17,96 @@
  \ingroup Applications
  */
 
+/** \brief Demo application for the atmospheric scattering shader.
+ \ingroup AtmosphericScattering
+ */
+class AtmosphereApp final : public CameraApp {
+public:
+	
+	/** Constructor
+	 \param config rendering config
+	 */
+	AtmosphereApp(RenderingConfig & config) : CameraApp(config) {
+		_userCamera.projection(config.screenResolution[0] / config.screenResolution[1], 1.34f, 0.1f, 100.0f);
+		// Framebuffer to store the rendered atmosphere result before tonemapping and upscaling to the window size.
+		const glm::vec2 renderRes = _config.renderingResolution();
+		_atmosphereBuffer.reset(new Framebuffer(uint(renderRes[0]), uint(renderRes[1]), Layout::RGB32F, false));
+		// Lookup table.
+		_precomputedScattering = Resources::manager().getTexture("scattering-precomputed", {Layout::RGB32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
+		// Atmosphere screen quad.
+		_atmosphere = Resources::manager().getProgram2D("atmosphere");
+		// Final tonemapping screen quad.
+		_tonemap = Resources::manager().getProgram2D("tonemap");
+		// Sun direction.
+		_lightDirection = glm::normalize(glm::vec3(0.437f, 0.082f, -0.896f));
+		
+		glEnable(GL_DEPTH_TEST);
+		checkGLError();
+	}
+	
+	/** \copydoc CameraApp::draw */
+	void draw() override {
+		// Render.
+		const glm::mat4 camToWorld = glm::inverse(_userCamera.view());
+		const glm::mat4 clipToCam  = glm::inverse(_userCamera.projection());
+		
+		// Draw the atmosphere.
+		glDisable(GL_DEPTH_TEST);
+		_atmosphereBuffer->bind();
+		_atmosphereBuffer->setViewport();
+		GLUtilities::clearColor({0.0f, 0.0f, 0.0f, 1.0f});
+		
+		_atmosphere->use();
+		const glm::mat4 camToWorldNoT = glm::mat4(glm::mat3(camToWorld));
+		const glm::mat4 clipToWorld   = camToWorldNoT * clipToCam;
+		_atmosphere->uniform("clipToWorld", clipToWorld);
+		_atmosphere->uniform("viewPos", _userCamera.position());
+		_atmosphere->uniform("lightDirection", _lightDirection);
+		ScreenQuad::draw(_precomputedScattering);
+		_atmosphereBuffer->unbind();
+		
+		// Tonemapping and final screen.
+		GLUtilities::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
+		glEnable(GL_FRAMEBUFFER_SRGB);
+		_tonemap->use();
+		ScreenQuad::draw(_atmosphereBuffer->textureId());
+		glDisable(GL_FRAMEBUFFER_SRGB);
+	}
+	
+	/** \copydoc CameraApp::update */
+	void update() override {
+		CameraApp::update();
+		
+		if(ImGui::Begin("Atmosphere")){
+			ImGui::Text("%.1f ms, %.1f fps", ImGui::GetIO().DeltaTime * 1000.0f, ImGui::GetIO().Framerate);
+			if(ImGui::DragFloat3("Light dir", &_lightDirection[0], 0.05f, -1.0f, 1.0f)) {
+				_lightDirection = glm::normalize(_lightDirection);
+			}
+		}
+		ImGui::End();
+	}
+	
+	/** \copydoc CameraApp::physics */
+	void physics(double fullTime, double frameTime) override {}
+	
+	/** \copydoc CameraApp::resize */
+	void resize() override {
+		_atmosphereBuffer->resize(_config.renderingResolution());
+	}
+	
+	/** \copydoc CameraApp::clean */
+	void clean() override {
+		_atmosphereBuffer->clean();
+	}
+	
+private:
+	std::unique_ptr<Framebuffer> _atmosphereBuffer; ///< Scene framebuffer.
+	const Program * _atmosphere; ///< Atmospheric scattering shader.
+	const Program * _tonemap; ///< Tonemapping shader.
+	const Texture * _precomputedScattering; ///< Precomputed lookup table.
+	glm::vec3 _lightDirection; ///< Sun light direction.
+};
+
 /**
  The main function of the atmospheric scattering demo.
  \param argc the number of input arguments.
@@ -25,129 +115,33 @@
  \ingroup AtmosphericScattering
  */
 int main(int argc, char ** argv) {
-
+	
 	// First, init/parse/load configuration.
 	RenderingConfig config(std::vector<std::string>(argv, argv + argc));
 	if(config.showHelp()) {
 		return 0;
 	}
-
+	
 	Window window("Atmosphere", config);
 	
 	Resources::manager().addResources("../../../resources/common");
 	Resources::manager().addResources("../../../resources/atmosphere");
-
+	
 	// Seed random generator.
 	Random::seed();
-
-	glEnable(GL_DEPTH_TEST);
-
-	// Setup the timer.
-	double timer		 = System::time();
-	double fullTime		 = 0.0;
-	double remainingTime = 0.0;
-	const double dt		 = 1.0 / 120.0; // Small physics timestep.
-
-	// Camera.
-	ControllableCamera camera;
-	camera.projection(config.screenResolution[0] / config.screenResolution[1], 1.34f, 0.1f, 100.0f);
-	const glm::vec2 renderResolution = config.renderingResolution();
-
-	// Framebuffer to store the rendered atmosphere result before tonemapping and upscaling to the window size.
-	std::unique_ptr<Framebuffer> atmosphereFramebuffer(new Framebuffer(uint(renderResolution[0]), uint(renderResolution[1]), Layout::RGB32F, false));
-	const Texture * precomputedScattering = Resources::manager().getTexture("scattering-precomputed", {Layout::RGB32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
-
-	// Atmosphere screen quad.
-	const Program * atmosphereProgram = Resources::manager().getProgram2D("atmosphere");
-
-	// Final tonemapping screen quad.
-	const Program * tonemapProgram = Resources::manager().getProgram2D("tonemap");
-
-	// Sun direction.
-	glm::vec3 lightDirection(0.437f, 0.082f, -0.896f);
-	lightDirection = glm::normalize(lightDirection);
-
-	// Timing.
-	const unsigned int frameCount = 20;
-	std::vector<double> timings(frameCount, 0.0);
-	unsigned int currentTiming = 0;
-	double smoothedFrameTime   = 0.0;
-
+	
+	AtmosphereApp app(config);
+	
 	// Start the display/interaction loop.
 	while(window.nextFrame()) {
-
-		// Compute the time elapsed since last frame
-		const double currentTime = System::time();
-		double frameTime		 = currentTime - timer;
-		timer					 = currentTime;
-		camera.update();
-
-		// Timing.
-		smoothedFrameTime -= timings[currentTiming];
-		timings[currentTiming] = 1000.0 * frameTime;
-		smoothedFrameTime += timings[currentTiming];
-		currentTiming	= (currentTiming + 1) % frameCount;
-		const double sft = smoothedFrameTime / frameCount;
-		ImGui::Text("%2.2f ms (%2.0f fps)", sft, 1.0 / sft * 1000.0);
-
-		// Physics simulation
-		// First avoid super high frametime by clamping.
-		if(frameTime > 0.2) {
-			frameTime = 0.2;
-		}
-		// Accumulate new frame time.
-		remainingTime += frameTime;
-		// Instead of bounding at dt, we lower our requirement (1 order of magnitude).
-		while(remainingTime > 0.2 * dt) {
-			double deltaTime = std::min(remainingTime, dt);
-			// Update physics and camera.
-			camera.physics(deltaTime);
-			// Update timers.
-			fullTime += deltaTime;
-			remainingTime -= deltaTime;
-		}
-		// Handle resizing directly.
-		const glm::ivec2 screenSize = Input::manager().size();
-		if(Input::manager().resized()) {
-			atmosphereFramebuffer->resize(screenSize);
-		}
-
-		// Render.
-		const glm::mat4 camToWorld = glm::inverse(camera.view());
-		const glm::mat4 clipToCam  = glm::inverse(camera.projection());
-
-		// Draw the atmosphere.
-		glDisable(GL_DEPTH_TEST);
-		atmosphereFramebuffer->bind();
-		atmosphereFramebuffer->setViewport();
-		GLUtilities::clearColor({0.0f, 0.0f, 0.0f, 1.0f});
-
-		atmosphereProgram->use();
-		const glm::mat4 camToWorldNoT = glm::mat4(glm::mat3(camToWorld));
-		const glm::mat4 clipToWorld   = camToWorldNoT * clipToCam;
-		atmosphereProgram->uniform("clipToWorld", clipToWorld);
-		atmosphereProgram->uniform("viewPos", camera.position());
-		atmosphereProgram->uniform("lightDirection", lightDirection);
-		ScreenQuad::draw(precomputedScattering);
-		atmosphereFramebuffer->unbind();
-
-		// Tonemapping and final screen.
-		GLUtilities::setViewport(0, 0, int(screenSize[0]), int(screenSize[1]));
-		glEnable(GL_FRAMEBUFFER_SRGB);
-		tonemapProgram->use();
-		ScreenQuad::draw(atmosphereFramebuffer->textureId());
-		glDisable(GL_FRAMEBUFFER_SRGB);
-
-		// Settings.
-		if(ImGui::DragFloat3("Light dir", &lightDirection[0], 0.05f, -1.0f, 1.0f)) {
-			lightDirection = glm::normalize(lightDirection);
-		}
+		app.update();
+		app.draw();
 	}
-
+	
 	// Cleaning.
-	atmosphereFramebuffer->clean();
+	app.clean();
 	Resources::manager().clean();
 	window.clean();
-
+	
 	return 0;
 }
