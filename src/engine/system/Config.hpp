@@ -116,7 +116,12 @@ public:
 	 \param argv the raw input arguments
 	 */
 	explicit RenderingConfig(const std::vector<std::string> & argv);
-
+	
+	/** Compute the rendering resolution based on internal settings.
+	 \return the rendering resolution
+	 */
+	glm::vec2 renderingResolution();
+	
 	/// The configuration version number (unused).
 	const size_t version = 1;
 

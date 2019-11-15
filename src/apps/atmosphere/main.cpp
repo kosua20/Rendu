@@ -51,7 +51,7 @@ int main(int argc, char ** argv) {
 	// Camera.
 	ControllableCamera camera;
 	camera.projection(config.screenResolution[0] / config.screenResolution[1], 1.34f, 0.1f, 100.0f);
-	const glm::vec2 renderResolution = float(config.internalVerticalResolution) / config.screenResolution[1] * config.screenResolution;
+	const glm::vec2 renderResolution = config.renderingResolution();
 
 	// Framebuffer to store the rendered atmosphere result before tonemapping and upscaling to the window size.
 	std::unique_ptr<Framebuffer> atmosphereFramebuffer(new Framebuffer(uint(renderResolution[0]), uint(renderResolution[1]), Layout::RGB32F, false));

@@ -12,7 +12,7 @@
 #include "input/ControllableCamera.hpp"
 #include "system/Config.hpp"
 
-#include "renderers/Renderer.hpp"
+#include "Application.hpp"
 
 #include "Common.hpp"
 
@@ -22,35 +22,28 @@
  Filters available: Box blur of fixed radius, Gaussian blur, Poisson filling, Laplacian integration, Flood filling.
  \ingroup ImageFiltering
  */
-class FilteringRenderer final : public Renderer {
+class FilteringApp final : public Application {
 
 public:
 	/** Constructor.
 	 \param config the configuration to apply when setting up
 	 */
-	explicit FilteringRenderer(RenderingConfig & config);
+	explicit FilteringApp(RenderingConfig & config);
 
-	/** Draw the scene and effects */
+	/** \copydoc Application::draw */
 	void draw() override;
 
-	/** Perform once-per-frame update (buttons, GUI,...) */
+	/** \copydoc Application::update */
 	void update() override;
 
-	/** Perform physics simulation update.
-	 \param fullTime the time elapsed since the beginning of the render loop
-	 \param frameTime the duration of the last frame
-	 \note This function can be called multiple times per frame.
-	 */
+	/** \copydoc Application::physics */
 	void physics(double fullTime, double frameTime) override;
 
-	/** Clean internal resources. */
+	/** \copydoc Application::clean */
 	void clean() override;
 
-	/** Handle a window resize event.
-	 \param width the new width
-	 \param height the new height
-	 */
-	void resize(unsigned int width, unsigned int height) override;
+	/** \copydoc Application::resize */
+	void resize() override;
 
 private:
 	/** \brief The filter to apply. */

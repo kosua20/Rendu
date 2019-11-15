@@ -1,4 +1,4 @@
-#include "FilteringRenderer.hpp"
+#include "FilteringApp.hpp"
 
 #include "input/Input.hpp"
 #include "system/System.hpp"

@@ -223,3 +223,7 @@ RenderingConfig::RenderingConfig(const std::vector<std::string> & argv) :
 	registerArgument("wxh", "", "Window dimensions.", std::vector<std::string> {"width", "height"});
 	registerArgument("force-aspect", "far", "Force window aspect ratio.");
 }
+
+glm::vec2 RenderingConfig::renderingResolution(){
+	return float(internalVerticalResolution) / screenResolution[1] * screenResolution;
+}

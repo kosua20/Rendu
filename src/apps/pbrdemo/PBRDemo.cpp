@@ -4,7 +4,7 @@
 
 PBRDemo::PBRDemo(RenderingConfig & config) : Application(config) {
 	
-	const glm::vec2 renderRes = (float(_config.internalVerticalResolution) / _config.screenResolution[1]) * _config.screenResolution;
+	const glm::vec2 renderRes = _config.renderingResolution();
 	_renderer.reset(new DeferredRenderer(renderRes));
 	_postprocess.reset(new PostProcessStack(renderRes));
 	_finalProgram = Resources::manager().getProgram2D("final_screenquad");
@@ -192,7 +192,7 @@ void PBRDemo::clean() {
 
 void PBRDemo::resize() {
 	// Same aspect ratio as the display resolution
-	const glm::vec2 renderRes = (float(_config.internalVerticalResolution) / _config.screenResolution[1]) * _config.screenResolution;
+	const glm::vec2 renderRes = _config.renderingResolution();
 	_renderer->resize(renderRes[0], renderRes[1]);
 	_postprocess->resize(renderRes[0], renderRes[1]);
 }
