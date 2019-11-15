@@ -1,16 +1,16 @@
 #include "ShadowMap.hpp"
 #include "graphics/GLUtilities.hpp"
 
-ShadowMap2D::ShadowMap2D(const std::shared_ptr<Light> & light, const glm::vec2 & resolution){
+VarianceShadowMap2D::VarianceShadowMap2D(const std::shared_ptr<Light> & light, const glm::vec2 & resolution){
 	_light = light;
 	const Descriptor descriptor = {Layout::RG32F, Filter::LINEAR, Wrap::CLAMP};
 	_map = std::unique_ptr<Framebuffer>(new Framebuffer(resolution.x, resolution.y, descriptor, true));
 	_blur = std::unique_ptr<BoxBlur>(new BoxBlur(resolution.x, resolution.y, false, descriptor));
-	_program = Resources::manager().getProgram("object_depth", "object_basic_texture", "light_shadow");
+	_program = Resources::manager().getProgram("object_depth", "object_basic_texture", "light_shadow_variance");
 	_light->registerShadowMap(_blur->textureId());
 }
 
-void ShadowMap2D::draw(const Scene & scene) const {
+void VarianceShadowMap2D::draw(const Scene & scene) const {
 	if(!_light->castsShadow()){
 		return;
 	}
@@ -44,7 +44,7 @@ void ShadowMap2D::draw(const Scene & scene) const {
 	_blur->process(_map->textureId());
 }
 
-void ShadowMap2D::clean(){
+void VarianceShadowMap2D::clean(){
 	_blur->clean();
 	_map->clean();
 }
