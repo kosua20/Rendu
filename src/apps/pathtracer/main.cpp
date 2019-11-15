@@ -1,4 +1,4 @@
-#include "BVHRenderer.hpp"
+#include "PathTracerApp.hpp"
 #include "scene/Scene.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "system/Random.hpp"
@@ -144,9 +144,8 @@ int main(int argc, char ** argv) {
 	// We need th CPU data for the path tracer, the GPU data for the preview.
 	scene->init(Storage::BOTH);
 
-	std::unique_ptr<BVHRenderer> renderer(new BVHRenderer(config));
-	renderer->setScene(scene);
-
+	PathTracerApp app(config, scene);
+	
 	double timer		 = System::time();
 	double fullTime		 = 0.0;
 	double remainingTime = 0.0;
@@ -156,7 +155,7 @@ int main(int argc, char ** argv) {
 	while(window.nextFrame()) {
 
 		// We separate punctual events from the main physics/movement update loop.
-		renderer->update();
+		app.update();
 
 		// Compute the time elapsed since last frame
 		const double currentTime = System::time();
@@ -174,19 +173,19 @@ int main(int argc, char ** argv) {
 		while(remainingTime > 0.2 * dt) {
 			const double deltaTime = std::min(remainingTime, dt);
 			// Update physics and camera.
-			renderer->physics(fullTime, deltaTime);
+			app.physics(fullTime, deltaTime);
 			// Update timers.
 			fullTime += deltaTime;
 			remainingTime -= deltaTime;
 		}
 
 		// Update the content of the window.
-		renderer->draw();
+		app.draw();
 		
 	}
 
 	// Clean other resources
-	renderer->clean();
+	app.clean();
 	Resources::manager().clean();
 	window.clean();
 
