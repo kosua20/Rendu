@@ -12,14 +12,14 @@
 class GameRenderer final : public Renderer {
 public:
 	/** Constructor
-	 \param config the shared game config
+	 \param resolution the rendering resolution
 	 */
-	explicit GameRenderer(RenderingConfig & config);
+	explicit GameRenderer(const glm::vec2 & resolution);
 
 	/** Draw the game scene
 	 \param player the state of the game and player
 	 */
-	void draw(const Player & player) const;
+	void drawPlayer(const Player & player) const;
 
 	/** Resize internal buffers based on new window size.
 	 \param width new width
@@ -29,20 +29,6 @@ public:
 
 	/** Clean up rendering resources.*/
 	void clean() override;
-
-	/** Empty draw */
-	void draw() override;
-
-	/** Perform physics simulation update (none here).
-	 \param fullTime the time elapsed since the beginning of the render loop
-	 \param frameTime the duration of the last frame
-	 */
-	void physics(double fullTime, double frameTime) override;
-
-	/** Texture of the final rendered game.
-	 \return the texture
-	 */
-	const Texture * finalImage() const;
 
 	/** Current rendering resolution.
 	 \return the internal resolution
@@ -61,7 +47,6 @@ private:
 	std::unique_ptr<SSAO> _ssaoPass;				   ///< Screen space ambient occlusion pass.
 
 	const Program * _fxaaProgram;		 ///< Antialiasing program.
-	const Program * _finalProgram;		 ///< Final upscaling program.
 	const Program * _coloredProgram;	 ///< Base scene rendering program.
 	const Program * _compositingProgram; ///< Lighting program.
 

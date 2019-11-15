@@ -6,12 +6,12 @@
 #include "graphics/Framebuffer.hpp"
 #include "Common.hpp"
 
-GameMenuRenderer::GameMenuRenderer(RenderingConfig & config) :
-	Renderer(config) {
+GameMenuRenderer::GameMenuRenderer(const glm::vec2 & resolution) {
+	_renderResolution = resolution;
 
-	_buttonProgram	 = Resources::manager().getProgram("menu_button");
+	_buttonProgram	   = Resources::manager().getProgram("menu_button");
 	_backgroundProgram = Resources::manager().getProgram2D("passthrough");
-	_imageProgram	  = Resources::manager().getProgram("menu_image");
+	_imageProgram	   = Resources::manager().getProgram("menu_image");
 	_fontProgram	   = Resources::manager().getProgram("font_sdf");
 	_button			   = Resources::manager().getMesh("rounded-button-out", Storage::GPU);
 	_buttonIn		   = Resources::manager().getMesh("rounded-button-in", Storage::GPU);
@@ -20,7 +20,7 @@ GameMenuRenderer::GameMenuRenderer(RenderingConfig & config) :
 	_quad			   = Resources::manager().getMesh("plane", Storage::GPU);
 }
 
-void GameMenuRenderer::draw(const GameMenu & menu) const {
+void GameMenuRenderer::drawMenu(const GameMenu & menu, const glm::vec2 & finalRes) const {
 
 	static const std::map<MenuButton::State, glm::vec4> borderColors = {
 		{MenuButton::State::OFF, glm::vec4(0.8f, 0.8f, 0.8f, 1.0f)},
@@ -40,7 +40,7 @@ void GameMenuRenderer::draw(const GameMenu & menu) const {
 	Framebuffer::backbuffer().bind();
 
 	glEnable(GL_FRAMEBUFFER_SRGB);
-	GLUtilities::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
+	GLUtilities::setViewport(0, 0, int(finalRes[0]), int(finalRes[1]));
 	GLUtilities::clearDepth(1.0f);
 
 	// Background image.
@@ -116,7 +116,7 @@ void GameMenuRenderer::draw(const GameMenu & menu) const {
 	_fontProgram->use();
 	for(const auto & label : menu.labels) {
 		GLUtilities::bindTexture(label.tid, 0);
-		_fontProgram->uniform("ratio", _config.screenResolution[1] / _config.screenResolution[0]);
+		_fontProgram->uniform("ratio", _renderResolution[1] / _renderResolution[0]);
 		_fontProgram->uniform("position", label.pos);
 		_fontProgram->uniform("color", labelsColor);
 		_fontProgram->uniform("edgeColor", labelsEdgeColor);
@@ -128,16 +128,8 @@ void GameMenuRenderer::draw(const GameMenu & menu) const {
 	checkGLError();
 }
 
-void GameMenuRenderer::draw() {
-	// Nothing to do here.
-}
-
-void GameMenuRenderer::physics(double, double) {
-	// Nothing to do here.
-}
-
 void GameMenuRenderer::resize(unsigned int width, unsigned int height) {
-	Renderer::updateResolution(width, height);
+	_renderResolution = {width, height};
 }
 
 glm::vec2 GameMenuRenderer::getButtonSize() const {

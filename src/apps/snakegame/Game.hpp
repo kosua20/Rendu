@@ -82,6 +82,7 @@ private:
 	GameRenderer _inGameRenderer;		   ///< In-game renderer.
 	GameMenuRenderer _menuRenderer;		   ///< Menus renderer.
 	std::unique_ptr<GaussianBlur> _bgBlur; ///< Blurring pass for the paused/dead menus background.
+	const Program * _finalProgram;		   ///< Final upscaling program.
 
 	Status _status = Status::MAINMENU; ///< Current game sattus (specific menu or in-game)
 	std::map<Status, GameMenu> _menus; ///< Menus for each game status.

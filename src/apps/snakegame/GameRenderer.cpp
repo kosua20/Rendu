@@ -3,11 +3,10 @@
 #include "graphics/GLUtilities.hpp"
 #include "Common.hpp"
 
-GameRenderer::GameRenderer(RenderingConfig & config) :
-	Renderer(config) {
-
+GameRenderer::GameRenderer(const glm::vec2 & resolution) {
+	_renderResolution = resolution;
 	_playerCamera.pose(glm::vec3(0.0f, -5.0f, 24.0f), glm::vec3(0.0f, 0.5f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-	_playerCamera.projection(config.screenResolution[0] / config.screenResolution[1], 0.6f, 1.0f, 30.0f);
+	_playerCamera.projection(_renderResolution[0] / _renderResolution[1], 0.6f, 1.0f, 30.0f);
 
 	// GL options
 	glEnable(GL_DEPTH_TEST);
@@ -24,7 +23,6 @@ GameRenderer::GameRenderer(RenderingConfig & config) :
 	_fxaaFramebuffer	   = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, Layout::RGBA8, false));
 
 	_fxaaProgram		= Resources::manager().getProgram2D("fxaa");
-	_finalProgram		= Resources::manager().getProgram2D("final_screenquad");
 	_compositingProgram = Resources::manager().getProgram2D("game_composite");
 
 	_ssaoPass = std::unique_ptr<SSAO>(new SSAO(renderWidth / 2, renderHeight / 2, 1.5f));
@@ -35,10 +33,11 @@ GameRenderer::GameRenderer(RenderingConfig & config) :
 	_bodyElement	= Resources::manager().getMesh("body", Storage::GPU);
 	_cubemap		= Resources::manager().getTexture("env", {Layout::RGB8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
 
+	_renderResult = _fxaaFramebuffer->textureId();
 	checkGLError();
 }
 
-void GameRenderer::draw(const Player & player) const {
+void GameRenderer::drawPlayer(const Player & player) const {
 
 	const glm::vec2 invRenderSize = 1.0f / _renderResolution;
 
@@ -69,13 +68,6 @@ void GameRenderer::draw(const Player & player) const {
 	ScreenQuad::draw(_lightingFramebuffer->textureId());
 	_fxaaFramebuffer->unbind();
 
-	// --- Final pass -------
-	GLUtilities::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
-	glEnable(GL_FRAMEBUFFER_SRGB);
-	_finalProgram->use();
-	ScreenQuad::draw(_fxaaFramebuffer->textureId());
-	glDisable(GL_FRAMEBUFFER_SRGB);
-	checkGLError();
 }
 
 void GameRenderer::drawScene(const Player & player) const {
@@ -123,7 +115,7 @@ void GameRenderer::drawScene(const Player & player) const {
 }
 
 void GameRenderer::resize(unsigned int width, unsigned int height) {
-	Renderer::updateResolution(width, height);
+	_renderResolution = {float(width), float(height)};
 	const float aspectRatio = _renderResolution[0] / _renderResolution[1];
 	_playerCamera.ratio(aspectRatio);
 	_fxaaFramebuffer->resize(_renderResolution);
@@ -133,22 +125,9 @@ void GameRenderer::resize(unsigned int width, unsigned int height) {
 }
 
 void GameRenderer::clean() {
-	Renderer::clean();
 	_fxaaFramebuffer->clean();
 	_sceneFramebuffer->clean();
 	_ssaoPass->clean();
-}
-
-void GameRenderer::physics(double, double) {
-	// Nothing to do here.
-}
-
-void GameRenderer::draw() {
-	// Nothing to do here.
-}
-
-const Texture * GameRenderer::finalImage() const {
-	return _fxaaFramebuffer->textureId();
 }
 
 glm::vec2 GameRenderer::renderingResolution() const {

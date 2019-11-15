@@ -11,23 +11,15 @@
 class GameMenuRenderer final : public Renderer {
 public:
 	/** Constructor.
-	 \param config the configuration to apply when setting up
+	 \param resolution the rendering resolution
 	 */
-	explicit GameMenuRenderer(RenderingConfig & config);
+	explicit GameMenuRenderer(const glm::vec2 & resolution);
 
 	/** Draw the menu
 	 \param menu the menu to draw
+	 \param finalRes the final viewport dimensions
 	 */
-	void draw(const GameMenu & menu) const;
-
-	/** Empty draw call. */
-	void draw() override;
-
-	/** Empty physics simulation update.
-	 \param fullTime the time elapsed since the beginning of the render loop
-	 \param frameTime the duration of the last frame
-	 */
-	void physics(double fullTime, double frameTime) override;
+	void drawMenu(const GameMenu & menu, const glm::vec2 & finalRes) const;
 
 	/** Handle a window resize event.
 	 \param width the new width
@@ -40,6 +32,9 @@ public:
 	 */
 	glm::vec2 getButtonSize() const;
 
+	/** \copydoc Renderer::clean */
+	void clean() override {};
+	
 private:
 	const Program * _backgroundProgram; ///< Background images rendering.
 	const Program * _buttonProgram;		///< Buttons rendering.

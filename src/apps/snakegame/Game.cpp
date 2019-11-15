@@ -5,9 +5,10 @@
 #include "Common.hpp"
 
 Game::Game(RenderingConfig & config) :
-	_config(config), _inGameRenderer(config), _menuRenderer(config) {
+	_config(config), _inGameRenderer(_config.screenResolution), _menuRenderer(_config.screenResolution) {
 
 	_bgBlur = std::unique_ptr<GaussianBlur>(new GaussianBlur(_config.initialWidth, _config.initialHeight, 3, Layout::RGB8));
+	_finalProgram = Resources::manager().getProgram2D("final_screenquad");
 
 	// Create menus.
 
@@ -72,10 +73,18 @@ void Game::draw() {
 	if(_status == Status::INGAME) {
 		// Before drawing, prepare the model matrices.
 		_player->updateModels();
-		_inGameRenderer.draw(*_player);
+		_inGameRenderer.drawPlayer(*_player);
+		
+		GLUtilities::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
+		glEnable(GL_FRAMEBUFFER_SRGB);
+		_finalProgram->use();
+		ScreenQuad::draw(_inGameRenderer.result());
+		glDisable(GL_FRAMEBUFFER_SRGB);
+		checkGLError();
+		
 	}
 
-	_menuRenderer.draw(_menus[_status]);
+	_menuRenderer.drawMenu(_menus[_status], _config.screenResolution);
 
 	checkGLError();
 }
@@ -107,7 +116,6 @@ Window::Action Game::update() {
 
 	// Handle in-game updates and transition to death menu.
 	if(_status == Status::INGAME) {
-		_inGameRenderer.update();
 		_player->update();
 
 		if(!_player->alive()) {
@@ -115,7 +123,7 @@ Window::Action Game::update() {
 			// Make sure the blur effect buffer is the right size.
 			const glm::vec2 gameRes = _inGameRenderer.renderingResolution();
 			_bgBlur->resize(uint(gameRes[0]), uint(gameRes[1]));
-			_bgBlur->process(_inGameRenderer.finalImage());
+			_bgBlur->process(_inGameRenderer.result());
 			_menus[Status::DEAD].labels[0].update(std::to_string(_player->score()));
 
 			// Save the final score.
@@ -180,7 +188,7 @@ Window::Action Game::handleButton(ButtonAction tag) {
 		case PAUSE: {
 			const glm::vec2 gameRes = _inGameRenderer.renderingResolution();
 			_bgBlur->resize(uint(gameRes[0]), uint(gameRes[1]));
-			_bgBlur->process(_inGameRenderer.finalImage());
+			_bgBlur->process(_inGameRenderer.result());
 			_status = Status::PAUSED;
 			break;
 		}
@@ -216,8 +224,12 @@ void Game::physics(double frameTime) {
 
 void Game::resize(unsigned int width, unsigned int height) {
 	_config.internalVerticalResolution = int(float(height) / Input::manager().density());
-	_inGameRenderer.resize(width, height);
-	_menuRenderer.resize(width, height);
+	_config.screenResolution = {float(width), float(height)};
+	const glm::vec2 renderRes = _config.renderingResolution();
+	const unsigned int w(renderRes[0]);
+	const unsigned int h(renderRes[1]);
+	_inGameRenderer.resize(w, h);
+	_menuRenderer.resize(w, h);
 	// Update each menu buttons sizes.
 	const float initialRatio = float(_config.initialWidth) / float(_config.initialHeight);
 	for(auto & menu : _menus) {
