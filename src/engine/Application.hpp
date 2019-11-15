@@ -70,7 +70,7 @@ public:
 	 \param frameTime the duration of the last frame
 	 \note This function can be called multiple times per frame.
 	 */
-	virtual void physics(double fullTime, double frameTime) = 0;
+	virtual void physics(double fullTime, double frameTime);
 	
 protected:
 	

@@ -86,9 +86,6 @@ public:
 		ImGui::End();
 	}
 	
-	/** \copydoc CameraApp::physics */
-	void physics(double fullTime, double frameTime) override {}
-	
 	/** \copydoc CameraApp::resize */
 	void resize() override {
 		_atmosphereBuffer->resize(_config.renderingResolution());

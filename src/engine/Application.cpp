@@ -60,6 +60,11 @@ void CameraApp::update(){
 	}
 }
 
+void CameraApp::physics(double, double){
+	
+}
+
 void CameraApp::freezeCamera(bool shouldFreeze){
 	_freezeCamera = shouldFreeze;
 }
+
