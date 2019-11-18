@@ -1,9 +1,11 @@
 #include "SceneEditor.hpp"
 #include "graphics/GLUtilities.hpp"
 
-SceneEditor::SceneEditor(RenderingConfig & config) : CameraApp(config)
-{
+SceneEditor::SceneEditor(RenderingConfig & config) : CameraApp(config), _renderer(config.renderingResolution()){
 	_cameraFOV = _userCamera.fov() * 180.0f / glm::pi<float>();
+	_passthrough = Resources::manager().getProgram2D("passthrough");
+		
+		 
 	// Query existing scenes.
 	std::map<std::string, std::string> sceneInfos;
 	Resources::manager().getFiles("scene", sceneInfos);
@@ -37,6 +39,7 @@ void SceneEditor::setScene(const std::shared_ptr<Scene> & scene) {
 	_userCamera.speed() = 0.2f * range;
 	_cameraFOV			= _userCamera.fov() * 180.0f / glm::pi<float>();
 	
+	_renderer.setScene(scene);
 
 }
 
@@ -47,6 +50,17 @@ void SceneEditor::draw() {
 		GLUtilities::clearColorAndDepth({0.2f, 0.2f, 0.2f, 1.0f}, 1.0f);
 		return;
 	}
+
+	_renderer.draw(_userCamera);
+
+	// We now render a full screen quad in the default framebuffer, using sRGB space.
+	glEnable(GL_FRAMEBUFFER_SRGB);
+	GLUtilities::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
+	_passthrough->use();
+	_passthrough->uniform("flip", 0);
+	ScreenQuad::draw(_renderer.result());
+	glDisable(GL_FRAMEBUFFER_SRGB);
+	checkGLError();
 }
 void SceneEditor::update() {
 	CameraApp::update();
@@ -76,6 +90,21 @@ void SceneEditor::update() {
 	if(!_scenes[_currentScene]) {
 		return;
 	}
+	// Reload the scene.
+	const auto & scene = _scenes[_currentScene];
+	
+	if(ImGui::Begin("Scene")){
+		ImGui::Checkbox("Pause animations", &_paused);
+		if(ImGui::Button("Reload scene") && _scenes[_currentScene]) {
+			_scenes[_currentScene].reset(new Scene(_sceneNames[_currentScene]));
+			setScene(_scenes[_currentScene]);
+		}
+		ImGui::Separator();
+		ImGui::Separator();
+		ImGui::ColorEdit3("Background", &scene->backgroundColor[0]);
+		
+	}
+	ImGui::End();
 	if(ImGui::Begin("Camera")) {
 		// Camera settings.
 		ImGui::PushItemWidth(100);
@@ -117,7 +146,11 @@ void SceneEditor::physics(double fullTime, double frameTime) {
 }
 
 void SceneEditor::clean() {
+	_renderer.clean();
 }
 
 void SceneEditor::resize() {
+	const glm::vec2 renderRes = _config.renderingResolution();
+	// Resize the framebuffers.
+	_renderer.resize(renderRes[0], renderRes[1]);
 }

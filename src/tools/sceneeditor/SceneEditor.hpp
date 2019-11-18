@@ -35,6 +35,10 @@ public:
 private:
 	
 	void setScene(const std::shared_ptr<Scene> & scene);
+	
+	EditorRenderer _renderer;
+	const Program * _passthrough;   ///< Passthrough program.
+	
 	std::vector<std::shared_ptr<Scene>> _scenes; ///< The existing scenes.
 	std::vector<std::string> _sceneNames; ///< The associated scene names.
 	unsigned int _currentScene = 0; ///< Currently selected scene.
