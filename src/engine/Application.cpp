@@ -50,7 +50,7 @@ void CameraApp::update(){
 	while(_remainingTime > 0.2 * _dt) {
 		const double deltaTime = std::min(_remainingTime, _dt);
 		if(!_freezeCamera){
-			_userCamera.physics(frameTime);
+			_userCamera.physics(deltaTime);
 		}
 		// Update physics.
 		physics(_fullTime, deltaTime);
