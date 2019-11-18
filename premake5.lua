@@ -198,6 +198,12 @@ project("ObjToScene")
 	ExecutableSetup()
 	files({ "src/tools/objtoscene/*.cpp", "src/tools/objtoscene/*.hpp" })
 
+
+project("SceneEditor")
+	ExecutableSetup()
+	ShaderValidation()
+	files({ "src/tools/sceneeditor/*.cpp", "src/tools/sceneeditor/*.hpp" })
+
 project("ShaderValidator")
 	ExecutableSetup()
 	files({ "src/tools/ShaderValidator.cpp" })
