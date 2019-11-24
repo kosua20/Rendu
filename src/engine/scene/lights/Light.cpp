@@ -30,6 +30,17 @@ void Light::decodeBase(const KeyValues & params) {
 	}
 }
 
+KeyValues Light::encode() const {
+	KeyValues light("light");
+	light.elements.emplace_back("intensity");
+	light.elements.back().values = { Codable::encode(_color) };
+	light.elements.emplace_back("shadows");
+	light.elements.back().values = { Codable::encode(_castShadows) };
+	light.elements.emplace_back("animations");
+	light.elements.back().elements = Animation::encode(_animations);
+	return light;
+}
+
 std::shared_ptr<Light> Light::decode(const KeyValues & params) {
 
 	const std::string typeKey = params.key;

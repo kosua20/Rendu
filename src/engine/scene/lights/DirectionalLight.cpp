@@ -11,7 +11,7 @@ void DirectionalLight::draw(const LightRenderer & renderer) const {
 }
 
 void DirectionalLight::update(double fullTime, double frameTime) {
-	glm::vec4 direction = glm::vec4(_lightDirection, 0.0f);
+	glm::vec4 direction = glm::vec4(_lightDirection.get(), 0.0f);
 	for(auto & anim : _animations) {
 		direction = anim->apply(direction, fullTime, frameTime);
 	}
@@ -22,7 +22,7 @@ void DirectionalLight::update(double fullTime, double frameTime) {
 void DirectionalLight::setScene(const BoundingBox & sceneBox) {
 	_sceneBox						 = sceneBox;
 	const BoundingSphere sceneSphere = _sceneBox.getSphere();
-	const glm::vec3 lightPosition	= sceneSphere.center - sceneSphere.radius * 1.1f * _lightDirection;
+	const glm::vec3 lightPosition	= sceneSphere.center - sceneSphere.radius * 1.1f * _lightDirection.get();
 	const glm::vec3 lightTarget		 = sceneSphere.center;
 	_viewMatrix						 = glm::lookAt(lightPosition, lightTarget, glm::vec3(0.0f, 1.0f, 0.0f));
 
@@ -38,11 +38,10 @@ void DirectionalLight::setScene(const BoundingBox & sceneBox) {
 }
 
 bool DirectionalLight::visible(const glm::vec3 & position, const Raycaster & raycaster, glm::vec3 & direction, float & attenuation) const {
-
-	if(_castShadows && raycaster.intersectsAny(position, -_lightDirection)) {
+	if(_castShadows && raycaster.intersectsAny(position, -_lightDirection.get())) {
 		return false;
 	}
-	direction   = -_lightDirection;
+	direction   = -_lightDirection.get();
 	attenuation = 1.0f;
 	return true;
 }
@@ -51,7 +50,15 @@ void DirectionalLight::decode(const KeyValues & params) {
 	Light::decodeBase(params);
 	for(const auto & param : params.elements) {
 		if(param.key == "direction") {
-			_lightDirection = glm::normalize(Codable::decodeVec3(param));
+			_lightDirection.reset(glm::normalize(Codable::decodeVec3(param)));
 		}
 	}
+}
+
+KeyValues DirectionalLight::encode() const {
+	KeyValues light = Light::encode();
+	light.key = "directional";
+	light.elements.emplace_back("direction");
+	light.elements.back().values = { Codable::encode(_lightDirection.initial()) };
+	return light;
 }

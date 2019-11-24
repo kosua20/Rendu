@@ -1,6 +1,7 @@
 #pragma once
 
 #include "scene/lights/Light.hpp"
+#include "scene/Animated.hpp"
 #include "scene/Object.hpp"
 #include "graphics/Framebuffer.hpp"
 #include "processing/BoxBlur.hpp"
@@ -56,6 +57,11 @@ public:
 	 */
 	void decode(const KeyValues & params);
 	
+	/**
+	 \copydoc Light::encode
+	*/
+	KeyValues encode() const override;
+	
 	/** Get the light principal direction in world space.
 	 \return the direction
 	 */
@@ -65,5 +71,5 @@ private:
 
 	glm::mat4 _projectionMatrix = glm::mat4(1.0f);			   ///< Light projection matrix.
 	glm::mat4 _viewMatrix		= glm::mat4(1.0f);			   ///< Light view matrix.
-	glm::vec3 _lightDirection   = glm::vec3(1.0f, 0.0f, 0.0f); ///< Light direction.
+	Animated<glm::vec3> _lightDirection { glm::vec3(0.0f, 0.0f, 1.0f) }; ///< Light direction.
 };

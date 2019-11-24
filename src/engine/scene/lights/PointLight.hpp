@@ -1,6 +1,7 @@
 #pragma once
 
 #include "scene/lights/Light.hpp"
+#include "scene/Animated.hpp"
 #include "scene/Object.hpp"
 #include "graphics/FramebufferCube.hpp"
 
@@ -58,6 +59,11 @@ public:
 	 \param params the parameters tuple
 	 */
 	void decode(const KeyValues & params);
+	
+	/**
+	 \copydoc Light::encode
+	*/
+	KeyValues encode() const override;
 
 	/** Get the light position in world space.
 	 \return the position
@@ -82,7 +88,7 @@ public:
 private:
 
 	std::array<glm::mat4, 6> _vps;				///< Light VP matrices for each face.
-	glm::vec3 _lightPosition = glm::vec3(1.0f); ///< Light position.
+	Animated<glm::vec3> _lightPosition { glm::vec3(0.0f) }; ///< Light position.
 	float _radius			 = 1.0f;			///< The attenuation radius.
 	float _farPlane			 = 1.0f;			///< The projection matrices far plane.
 

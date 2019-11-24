@@ -1,6 +1,7 @@
 #pragma once
 
 #include "scene/lights/Light.hpp"
+#include "scene/Animated.hpp"
 #include "scene/Object.hpp"
 #include "graphics/Framebuffer.hpp"
 #include "processing/BoxBlur.hpp"
@@ -62,7 +63,12 @@ public:
 	 \param params the parameters tuple
 	 */
 	void decode(const KeyValues & params);
-
+	
+	/**
+	 \copydoc Light::encode
+	*/
+	KeyValues encode() const override;
+	
 	/** Get the light position in world space.
 	 \return the position
 	 */
@@ -87,8 +93,8 @@ private:
 
 	glm::mat4 _projectionMatrix = glm::mat4(1.0f);			   ///< Light projection matrix.
 	glm::mat4 _viewMatrix		= glm::mat4(1.0f);			   ///< Light view matrix.
-	glm::vec3 _lightDirection   = glm::vec3(1.0f, 0.0f, 0.0f); ///< Light direction.
-	glm::vec3 _lightPosition	= glm::vec3(0.0f);			   ///< Light position.
+	Animated<glm::vec3> _lightDirection { glm::vec3(1.0f, 0.0f, 0.0f) }; ///< Light direction.
+	Animated<glm::vec3> _lightPosition { glm::vec3(0.0f) };			   	 ///< Light position.
 	glm::vec2 _angles 			= glm::vec2(glm::quarter_pi<float>(), glm::half_pi<float>()); ///< The inner and outer cone attenuation angles.
 	float _radius				= 1.0f;						   ///< The attenuation radius.
 };

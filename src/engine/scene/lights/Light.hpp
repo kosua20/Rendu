@@ -51,6 +51,11 @@ public:
 	 */
 	virtual bool visible(const glm::vec3 & position, const Raycaster & raycaster, glm::vec3 & direction, float & attenuation) const = 0;
 	
+	/** Generate a key-values representation of the light. See decode for the keywords and layout.
+	\return a tuple representing the light
+	*/
+	virtual KeyValues encode() const;
+	
 	/** Is the light casting shadows.
 	 \return a boolean denoting if the light is a shadowcaster
 	 */
@@ -87,7 +92,7 @@ public:
 	 \return a generic light pointer
 	 */
 	static std::shared_ptr<Light> decode(const KeyValues & params);
-
+	
 	/** Destructor. */
 	virtual ~Light() = default;
 

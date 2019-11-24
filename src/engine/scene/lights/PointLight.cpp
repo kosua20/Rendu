@@ -12,7 +12,7 @@ void PointLight::draw(const LightRenderer & renderer) const {
 }
 
 void PointLight::update(double fullTime, double frameTime) {
-	glm::vec4 position = glm::vec4(_lightPosition, 0.0);
+	glm::vec4 position = glm::vec4(_lightPosition.get(), 0.0);
 	for(auto & anim : _animations) {
 		position = anim->apply(position, fullTime, frameTime);
 	}
@@ -23,12 +23,12 @@ void PointLight::update(double fullTime, double frameTime) {
 void PointLight::setScene(const BoundingBox & sceneBox) {
 	_sceneBox = sceneBox;
 
-	const glm::mat4 model = glm::translate(glm::mat4(1.0f), -_lightPosition);
+	const glm::mat4 model = glm::translate(glm::mat4(1.0f), -_lightPosition.get());
 
 	// Compute the projection matrix based on the scene bounding box.
 	// As both the view matrices and the bounding boxe are axis aligned, we can avoid costly transformations.
-	const glm::vec3 deltaMini = _lightPosition - _sceneBox.minis;
-	const glm::vec3 deltaMaxi = _lightPosition - _sceneBox.maxis;
+	const glm::vec3 deltaMini = _lightPosition.get() - _sceneBox.minis;
+	const glm::vec3 deltaMaxi = _lightPosition.get() - _sceneBox.maxis;
 	// Absolute value of each min/max  distance on each axis.
 	const glm::vec3 candidatesNear = glm::min(glm::abs(deltaMini), glm::abs(deltaMaxi));
 	const glm::vec3 candidatesFar  = glm::max(glm::abs(deltaMini), glm::abs(deltaMaxi));
@@ -63,14 +63,14 @@ void PointLight::setScene(const BoundingBox & sceneBox) {
 	}
 	
 	// Compute the model matrix to scale the sphere based on the radius.
-	_model = glm::scale(glm::translate(glm::mat4(1.0f), _lightPosition), glm::vec3(_radius));
+	_model = glm::scale(glm::translate(glm::mat4(1.0f), _lightPosition.get()), glm::vec3(_radius));
 }
 
 bool PointLight::visible(const glm::vec3 & position, const Raycaster & raycaster, glm::vec3 & direction, float & attenuation) const {
 	if(_castShadows && !raycaster.visible(position, _lightPosition)) {
 		return false;
 	}
-	direction = _lightPosition - position;
+	direction = _lightPosition.get() - position;
 
 	// Early exit if we are outside the sphere of influence.
 	const float localRadius = glm::length(direction);
@@ -93,9 +93,19 @@ void PointLight::decode(const KeyValues & params) {
 	Light::decodeBase(params);
 	for(const auto & param : params.elements) {
 		if(param.key == "position") {
-			_lightPosition = Codable::decodeVec3(param);
+			_lightPosition.reset(Codable::decodeVec3(param));
 		} else if(param.key == "radius" && !param.values.empty()) {
 			_radius = std::stof(param.values[0]);
 		}
 	}
+}
+
+KeyValues PointLight::encode() const {
+	KeyValues light = Light::encode();
+	light.key = "point";
+	light.elements.emplace_back("position");
+	light.elements.back().values = { Codable::encode(_lightPosition.initial()) };
+	light.elements.emplace_back("radius");
+	light.elements.back().values = { std::to_string(_radius) };
+	return light;
 }

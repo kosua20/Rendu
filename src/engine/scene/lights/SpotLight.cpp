@@ -12,8 +12,8 @@ void SpotLight::draw(const LightRenderer & renderer) const {
 }
 
 void SpotLight::update(double fullTime, double frameTime) {
-	glm::vec4 position  = glm::vec4(_lightPosition, 1.0f);
-	glm::vec4 direction = glm::vec4(_lightDirection, 0.0f);
+	glm::vec4 position  = glm::vec4(_lightPosition.get(), 1.0f);
+	glm::vec4 direction = glm::vec4(_lightDirection.get(), 0.0f);
 	for(auto & anim : _animations) {
 		position  = anim->apply(position, fullTime, frameTime);
 		direction = anim->apply(direction, fullTime, frameTime);
@@ -25,7 +25,7 @@ void SpotLight::update(double fullTime, double frameTime) {
 
 void SpotLight::setScene(const BoundingBox & sceneBox) {
 	_sceneBox   = sceneBox;
-	_viewMatrix = glm::lookAt(_lightPosition, _lightPosition + _lightDirection, glm::vec3(0.0f, 1.0f, 0.0f));
+	_viewMatrix = glm::lookAt(_lightPosition.get(), _lightPosition.get() + _lightDirection.get(), glm::vec3(0.0f, 1.0f, 0.0f));
 
 	// Compute the projection matrix, automatically finding the near and far.
 	float near;
@@ -52,7 +52,7 @@ bool SpotLight::visible(const glm::vec3 & position, const Raycaster & raycaster,
 	if(_castShadows && !raycaster.visible(position, _lightPosition)) {
 		return false;
 	}
-	direction = _lightPosition - position;
+	direction = _lightPosition.get() - position;
 
 	// Early exit if we are outside the sphere of influence.
 	const float localRadius = glm::length(direction);
@@ -64,7 +64,7 @@ bool SpotLight::visible(const glm::vec3 & position, const Raycaster & raycaster,
 	}
 
 	// Compute the angle between the light direction and the (light, surface point) vector.
-	const float currentCos = glm::dot(-direction, _lightDirection);
+	const float currentCos = glm::dot(-direction, _lightDirection.get());
 	const float outerCos   = std::cos(_angles.y);
 	// If we are outside the spotlight cone, no lighting.
 	if(currentCos < std::cos(outerCos)) {
@@ -86,10 +86,10 @@ void SpotLight::decode(const KeyValues & params) {
 	Light::decodeBase(params);
 	for(const auto & param : params.elements) {
 		if(param.key == "direction") {
-			_lightDirection = glm::normalize(Codable::decodeVec3(param));
+			_lightDirection.reset(glm::normalize(Codable::decodeVec3(param)));
 
 		} else if(param.key == "position") {
-			_lightPosition = Codable::decodeVec3(param);
+			_lightPosition.reset(Codable::decodeVec3(param));
 
 		} else if(param.key == "cone" && param.values.size() >= 2) {
 			const float innerAngle = std::stof(param.values[0]);
@@ -100,4 +100,18 @@ void SpotLight::decode(const KeyValues & params) {
 			_radius = std::stof(param.values[0]);
 		}
 	}
+}
+
+KeyValues SpotLight::encode() const {
+	KeyValues light = Light::encode();
+	light.key = "spot";
+	light.elements.emplace_back("position");
+	light.elements.back().values = { Codable::encode(_lightPosition.initial()) };
+	light.elements.emplace_back("direction");
+	light.elements.back().values = { Codable::encode(_lightDirection.initial()) };
+	light.elements.emplace_back("radius");
+	light.elements.back().values = { std::to_string(_radius) };
+	light.elements.emplace_back("cone");
+	light.elements.back().values = { std::to_string(_angles[0] * 2.0f), std::to_string(_angles[1] * 2.0f) };
+	return light;
 }
