@@ -95,6 +95,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
+<a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="class_mesh-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">Mesh Class Reference<div class="ingroups"><a class="el" href="group___resources.html">Resources</a></div></div>  </div>
@@ -117,8 +118,8 @@ Public Types</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a6c87dda9596a9df314528d5c4e606fe1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mesh.html#a6c87dda9596a9df314528d5c4e606fe1">Mesh</a> (std::istream &amp;in, <a class="el" href="class_mesh.html#aaee8acdbda278ad977aa4e6bf379ac56">Load</a> mode)</td></tr>
-<tr class="separator:a6c87dda9596a9df314528d5c4e606fe1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6d3aa861bcfdabaf582dd67738479529"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mesh.html#a6d3aa861bcfdabaf582dd67738479529">Mesh</a> (std::istream &amp;in, <a class="el" href="class_mesh.html#aaee8acdbda278ad977aa4e6bf379ac56">Load</a> mode, const std::string &amp;<a class="el" href="class_mesh.html#a511a9c4441ce4d4310aa748f523959ad">name</a>)</td></tr>
+<tr class="separator:a6d3aa861bcfdabaf582dd67738479529"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae6b6c56f0ebfa2f6b2b10d25a835c865"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mesh.html#ae6b6c56f0ebfa2f6b2b10d25a835c865">Mesh</a> ()=default</td></tr>
 <tr class="separator:ae6b6c56f0ebfa2f6b2b10d25a835c865"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9db5ef1b45eef404d46169c4034ec5ff"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mesh.html#a9db5ef1b45eef404d46169c4034ec5ff">upload</a> ()</td></tr>
@@ -137,6 +138,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ab951655d798cd594e5dd6dd252a6b398"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0170a268c51eb7a1238fed41de44ec7c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mesh.html#a0170a268c51eb7a1238fed41de44ec7c">saveAsObj</a> (const std::string &amp;path, bool defaultUVs)</td></tr>
 <tr class="separator:a0170a268c51eb7a1238fed41de44ec7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a511a9c4441ce4d4310aa748f523959ad"><td class="memItemLeft" align="right" valign="top">const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mesh.html#a511a9c4441ce4d4310aa748f523959ad">name</a> () const</td></tr>
+<tr class="separator:a511a9c4441ce4d4310aa748f523959ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a413bc011045c95d449569666639b7389"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_mesh.html">Mesh</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mesh.html#a413bc011045c95d449569666639b7389">operator=</a> (const <a class="el" href="class_mesh.html">Mesh</a> &amp;)=delete</td></tr>
 <tr class="separator:a413bc011045c95d449569666639b7389"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adecf9ab32fac64e846ad6b7753e8996b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mesh.html#adecf9ab32fac64e846ad6b7753e8996b">Mesh</a> (const <a class="el" href="class_mesh.html">Mesh</a> &amp;)=delete</td></tr>
@@ -184,6 +187,13 @@ std::vector&lt; unsigned int &gt;&#160;</td><td class="memItemRight" valign="bot
 std::unique_ptr&lt; <a class="el" href="class_g_p_u_mesh.html">GPUMesh</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mesh.html#a4276378fa775036ed8e064f2ec1fe981">gpu</a></td></tr>
 <tr class="memdesc:a4276378fa775036ed8e064f2ec1fe981"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <a class="el" href="namespace_g_p_u.html" title="GPU shaders.">GPU</a> buffers infos (optional). <br /></td></tr>
 <tr class="separator:a4276378fa775036ed8e064f2ec1fe981"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
+Private Attributes</h2></td></tr>
+<tr class="memitem:a556913beae21d0427bd8353815cf439e"><td class="memItemLeft" align="right" valign="top"><a id="a556913beae21d0427bd8353815cf439e"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mesh.html#a556913beae21d0427bd8353815cf439e">_name</a></td></tr>
+<tr class="memdesc:a556913beae21d0427bd8353815cf439e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resource name. <br /></td></tr>
+<tr class="separator:a556913beae21d0427bd8353815cf439e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Represents a geometric mesh composed of vertices and triangles. For now, material information and elements/groups are not represented. Can store both the CPU and <a class="el" href="namespace_g_p_u.html" title="GPU shaders.">GPU</a> representations. Provides utilities to load and process geometric meshes. </p>
@@ -221,8 +231,8 @@ std::unique_ptr&lt; <a class="el" href="class_g_p_u_mesh.html">GPUMesh</a> &gt;&
 </div>
 </div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a6c87dda9596a9df314528d5c4e606fe1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6c87dda9596a9df314528d5c4e606fe1">&#9670;&nbsp;</a></span>Mesh() <span class="overload">[1/4]</span></h2>
+<a id="a6d3aa861bcfdabaf582dd67738479529"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6d3aa861bcfdabaf582dd67738479529">&#9670;&nbsp;</a></span>Mesh() <span class="overload">[1/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -237,7 +247,13 @@ std::unique_ptr&lt; <a class="el" href="class_g_p_u_mesh.html">GPUMesh</a> &gt;&
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="class_mesh.html#aaee8acdbda278ad977aa4e6bf379ac56">Mesh::Load</a>&#160;</td>
-          <td class="paramname"><em>mode</em>&#160;</td>
+          <td class="paramname"><em>mode</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>name</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -250,6 +266,7 @@ std::unique_ptr&lt; <a class="el" href="class_g_p_u_mesh.html">GPUMesh</a> &gt;&
   <table class="params">
     <tr><td class="paramname">in</td><td>the input string stream from which the geometry will be loaded </td></tr>
     <tr><td class="paramname">mode</td><td>the preprocessing mode </td></tr>
+    <tr><td class="paramname">name</td><td>the identifier </td></tr>
   </table>
   </dd>
 </dl>
@@ -442,6 +459,24 @@ std::unique_ptr&lt; <a class="el" href="class_g_p_u_mesh.html">GPUMesh</a> &gt;&
       </table>
 </div><div class="memdoc">
 <p>Compute the tangent and binormal vectors for each vertex of a mesh. </p>
+
+</div>
+</div>
+<a id="a511a9c4441ce4d4310aa748f523959ad"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a511a9c4441ce4d4310aa748f523959ad">&#9670;&nbsp;</a></span>name()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::string &amp; Mesh::name </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Get the resource name. </p><dl class="section return"><dt>Returns</dt><dd>the name. </dd></dl>
 
 </div>
 </div>

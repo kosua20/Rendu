@@ -2,14 +2,14 @@ var searchData=
 [
   ['f',['F',['../class_g_p_u_1_1_frag_1_1_directional__light.html#aa6bf916da8b6a8fc10ed3269b25e79e1',1,'GPU::Frag::Directional_light::F()'],['../class_g_p_u_1_1_frag_1_1_point__light.html#ac00f600cb93d7c853af71d99c4960dba',1,'GPU::Frag::Point_light::F()'],['../class_g_p_u_1_1_frag_1_1_spot__light.html#aa359e46c0b1090e1a214eee1b88476cd',1,'GPU::Frag::Spot_light::F()']]],
   ['faces',['faces',['../class_composite_obj_1_1_raw_geometry.html#aa1d5b3e95e2bf7a3856e09012d04baaf',1,'CompositeObj::RawGeometry']]],
+  ['farplane',['farPlane',['../class_point_light.html#aac43879220b93e574b0d0cb9a4b56ea5',1,'PointLight']]],
   ['fetchoffset',['fetchOffset',['../class_g_p_u_1_1_frag_1_1_blur__gaussian.html#a907f4d625985dce302d150d3074a22d3',1,'GPU::Frag::Blur_gaussian']]],
   ['fill_5fboundary',['Fill_boundary',['../class_g_p_u_1_1_frag_1_1_fill__boundary.html',1,'GPU::Frag']]],
   ['fill_5fcombine',['Fill_combine',['../class_g_p_u_1_1_frag_1_1_fill__combine.html',1,'GPU::Frag']]],
   ['filter',['Filter',['../class_g_p_u_1_1_frag_1_1_filter.html',1,'GPU::Frag::Filter'],['../group___resources.html#ga215dd3a110b19ba0cf42bcf30ef589b5',1,'Filter():&#160;GPUObjects.hpp']]],
   ['filtering',['filtering',['../class_descriptor.html#ad0efbe469b62533251e85518fcf86a60',1,'Descriptor']]],
-  ['filteringrenderer',['FilteringRenderer',['../class_filtering_renderer.html',1,'FilteringRenderer'],['../class_filtering_renderer.html#acc28df8da49becfdb1f0aadc397f1536',1,'FilteringRenderer::FilteringRenderer()']]],
+  ['filteringapp',['FilteringApp',['../class_filtering_app.html',1,'FilteringApp'],['../class_filtering_app.html#a8f705d814e84d08a2f515ee483e8ffbc',1,'FilteringApp::FilteringApp()']]],
   ['final_5fscreenquad',['Final_screenquad',['../class_g_p_u_1_1_frag_1_1_final__screenquad.html',1,'GPU::Frag']]],
-  ['finalimage',['finalImage',['../class_game_renderer.html#a060b267c45c20afcaf0f0b58bebc1661',1,'GameRenderer']]],
   ['first',['first',['../struct_controller_1_1_controller_button.html#adb08261442cf17419058447c7643e3ef',1,'Controller::ControllerButton::first()'],['../struct_input_1_1_mouse_button.html#a2ea296fa6304bf81008bf5d765fcd666',1,'Input::MouseButton::first()'],['../struct_input_1_1_keyboard_key.html#aa5f79cecf9070d014e376d8bb98f0088',1,'Input::KeyboardKey::first()']]],
   ['flip',['flip',['../class_g_p_u_1_1_vert_1_1_passthrough.html#a3425024bd3cc8ecf376dae6f42992c26',1,'GPU::Vert::Passthrough']]],
   ['flipaxis',['flipAxis',['../class_g_p_u_1_1_vert_1_1_image__display.html#a33a0d309bd7ec0d1c0e7e31ec8bf68dc',1,'GPU::Vert::Image_display']]],
@@ -27,7 +27,8 @@ var searchData=
   ['frame',['Frame',['../class_animation.html#aab91ed238f585aa0fd149d1c392ab121',1,'Animation']]],
   ['framebuffer',['Framebuffer',['../class_framebuffer.html',1,'Framebuffer'],['../class_framebuffer.html#a9d2bd44ee57f7fd847b4e43e1659034a',1,'Framebuffer::Framebuffer(unsigned int width, unsigned int height, Layout typedFormat, bool depthBuffer)'],['../class_framebuffer.html#adff5658c65369bb237fc200858ab6d72',1,'Framebuffer::Framebuffer(unsigned int width, unsigned int height, const Descriptor &amp;descriptor, bool depthBuffer)'],['../class_framebuffer.html#ac8404563ad778e063e4f556e3d3ed8ad',1,'Framebuffer::Framebuffer(unsigned int width, unsigned int height, const std::vector&lt; Descriptor &gt; &amp;descriptors, bool depthBuffer)'],['../class_framebuffer.html#ad023fa43b1bc49f4e0b227a77cc9756c',1,'Framebuffer::Framebuffer(const Framebuffer &amp;)=delete'],['../class_framebuffer.html#a4f22d58d068b65f86ee0818e65afaff3',1,'Framebuffer::Framebuffer(Framebuffer &amp;&amp;)=delete'],['../class_framebuffer.html#afdc29f6e975a332b84144f4d587daeff',1,'Framebuffer::Framebuffer()=default']]],
   ['framebuffercube',['FramebufferCube',['../class_framebuffer_cube.html',1,'FramebufferCube'],['../class_framebuffer_cube.html#aee0b6389e7b9b2f88054645e74012570',1,'FramebufferCube::FramebufferCube(unsigned int side, const Descriptor &amp;descriptor, CubeMode mode, bool depthBuffer)'],['../class_framebuffer_cube.html#a587e0d7a6331c7a3dea1dd06a24da320',1,'FramebufferCube::FramebufferCube(const FramebufferCube &amp;)=delete'],['../class_framebuffer_cube.html#a8d36eba277046928e3c5674e26e49e07',1,'FramebufferCube::FramebufferCube(FramebufferCube &amp;&amp;)=delete']]],
+  ['freezecamera',['freezeCamera',['../class_camera_app.html#a279ea14cfbd4ffaf56bf458de1b29616',1,'CameraApp']]],
   ['frustum',['frustum',['../class_camera.html#ad5fe6e1d3960ab92605b40546800c07b',1,'Camera']]],
   ['fullscreen',['Fullscreen',['../class_window.html#a23db6c08edfd162f98d7ce8a3257e4a6a0829ea6734059d66e6bf87096b215dc1',1,'Window::Fullscreen()'],['../class_rendering_config.html#af10fc789575c92d51d429d12c7df8858',1,'RenderingConfig::fullscreen()']]],
-  ['fxaa',['Fxaa',['../class_g_p_u_1_1_frag_1_1_fxaa.html',1,'GPU::Frag']]]
+  ['fxaa',['Fxaa',['../class_g_p_u_1_1_frag_1_1_fxaa.html',1,'GPU::Frag::Fxaa'],['../struct_post_process_stack_1_1_settings.html#a9d6afa32ff44f03d0f66e5b9d4d19fd8',1,'PostProcessStack::Settings::fxaa()']]]
 ];

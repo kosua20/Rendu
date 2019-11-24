@@ -93,7 +93,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pri-methods">Private Member Functions</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="class_b_v_h_renderer-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -101,30 +100,40 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!--header-->
 <div class="contents">
 
-<p><a class="el" href="class_renderer.html" title="Base structure of a renderer.">Renderer</a> coupled with a basic diffuse path tracer. The user can move the camera anywhere and trigger a path-traced rendering. Can also display the raycaster acceleration structure.  
+<p><a class="el" href="class_renderer.html" title="Base structure of a renderer. The result of the renderer is available through result().">Renderer</a> coupled with a basic diffuse path tracer. The user can move the camera anywhere and trigger a path-traced rendering. Can also display the raycaster acceleration structure.  
  <a href="class_b_v_h_renderer.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="_b_v_h_renderer_8hpp_source.html">BVHRenderer.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a5d66244d90b6aa385553599f618b4875"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_b_v_h_renderer.html#a5d66244d90b6aa385553599f618b4875">BVHRenderer</a> (<a class="el" href="class_rendering_config.html">RenderingConfig</a> &amp;config)</td></tr>
-<tr class="separator:a5d66244d90b6aa385553599f618b4875"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae1a3d9c6ccbaa6998c31397c01c969b9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_b_v_h_renderer.html#ae1a3d9c6ccbaa6998c31397c01c969b9">setScene</a> (const std::shared_ptr&lt; <a class="el" href="class_scene.html">Scene</a> &gt; &amp;scene)</td></tr>
-<tr class="separator:ae1a3d9c6ccbaa6998c31397c01c969b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1fe468c298af398c52a7714bafd1a320"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_b_v_h_renderer.html#a1fe468c298af398c52a7714bafd1a320">draw</a> () override</td></tr>
-<tr class="separator:a1fe468c298af398c52a7714bafd1a320"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae539481dfd45716ed92f8e9e58658bd4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_b_v_h_renderer.html#ae539481dfd45716ed92f8e9e58658bd4">update</a> () override</td></tr>
-<tr class="separator:ae539481dfd45716ed92f8e9e58658bd4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8dacc309ed33e6a5a9e1f8abcc0de7a3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_b_v_h_renderer.html#a8dacc309ed33e6a5a9e1f8abcc0de7a3">physics</a> (double fullTime, double frameTime) override</td></tr>
-<tr class="separator:a8dacc309ed33e6a5a9e1f8abcc0de7a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afeba9f0f6571e1f69ba68a4e3db1424c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_b_v_h_renderer.html#afeba9f0f6571e1f69ba68a4e3db1424c">BVHRenderer</a> (const glm::vec2 &amp;resolution)</td></tr>
+<tr class="separator:afeba9f0f6571e1f69ba68a4e3db1424c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3ad1c0dd09e59e1e4fc2cd0b00c59013"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_b_v_h_renderer.html#a3ad1c0dd09e59e1e4fc2cd0b00c59013">setScene</a> (const std::shared_ptr&lt; <a class="el" href="class_scene.html">Scene</a> &gt; &amp;scene, const <a class="el" href="class_raycaster.html">Raycaster</a> &amp;raycaster)</td></tr>
+<tr class="separator:a3ad1c0dd09e59e1e4fc2cd0b00c59013"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0408d3e07de03dd5701f9fbfb82fc0e7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_b_v_h_renderer.html#a0408d3e07de03dd5701f9fbfb82fc0e7">draw</a> (const <a class="el" href="class_camera.html">Camera</a> &amp;camera) override</td></tr>
+<tr class="separator:a0408d3e07de03dd5701f9fbfb82fc0e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aad30525ee58321b5c18a4586beed3b63"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_b_v_h_renderer.html#aad30525ee58321b5c18a4586beed3b63">clean</a> () override</td></tr>
 <tr class="separator:aad30525ee58321b5c18a4586beed3b63"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9c403344c512c9411ee1ed4ffc069d7b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_b_v_h_renderer.html#a9c403344c512c9411ee1ed4ffc069d7b">resize</a> (unsigned int width, unsigned int height) override</td></tr>
 <tr class="separator:a9c403344c512c9411ee1ed4ffc069d7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a14a420df01d8f56584e21637d107815a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_b_v_h_renderer.html#a14a420df01d8f56584e21637d107815a">castRay</a> (const glm::vec3 &amp;position, const glm::vec3 &amp;direction)</td></tr>
+<tr class="separator:a14a420df01d8f56584e21637d107815a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac9c79c34e98a4d8f2440f74d8f4581a1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_b_v_h_renderer.html#ac9c79c34e98a4d8f2440f74d8f4581a1">clearRay</a> ()</td></tr>
+<tr class="separator:ac9c79c34e98a4d8f2440f74d8f4581a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a943db34898889d077dcd575d421a96bf"><td class="memItemLeft" align="right" valign="top">bool &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_b_v_h_renderer.html#a943db34898889d077dcd575d421a96bf">showBVH</a> ()</td></tr>
+<tr class="separator:a943db34898889d077dcd575d421a96bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8b8f057beaa6d1deb0f61bdc51d36ff0"><td class="memItemLeft" align="right" valign="top">glm::ivec2 &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_b_v_h_renderer.html#a8b8f057beaa6d1deb0f61bdc51d36ff0">range</a> ()</td></tr>
+<tr class="separator:a8b8f057beaa6d1deb0f61bdc51d36ff0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4c9389bca9a8af6e831491eb8d340f56"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_b_v_h_renderer.html#a4c9389bca9a8af6e831491eb8d340f56">maxLevel</a> ()</td></tr>
+<tr class="separator:a4c9389bca9a8af6e831491eb8d340f56"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_renderer"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_renderer')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_renderer.html">Renderer</a></td></tr>
-<tr class="memitem:a8cbc69d15bba1744cd26ece5e2f34ba2 inherit pub_methods_class_renderer"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_renderer.html#a8cbc69d15bba1744cd26ece5e2f34ba2">Renderer</a> (<a class="el" href="class_rendering_config.html">RenderingConfig</a> &amp;config)</td></tr>
-<tr class="separator:a8cbc69d15bba1744cd26ece5e2f34ba2 inherit pub_methods_class_renderer"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4dddd75ab18573a3686f90225f3f03d4 inherit pub_methods_class_renderer"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_renderer.html#a4dddd75ab18573a3686f90225f3f03d4">Renderer</a> ()=default</td></tr>
+<tr class="separator:a4dddd75ab18573a3686f90225f3f03d4 inherit pub_methods_class_renderer"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae62dcc5b792a30b25f9bfd9b8ab3464c inherit pub_methods_class_renderer"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_renderer.html#ae62dcc5b792a30b25f9bfd9b8ab3464c">process</a> (const <a class="el" href="class_texture.html">Texture</a> *texture)</td></tr>
+<tr class="separator:ae62dcc5b792a30b25f9bfd9b8ab3464c inherit pub_methods_class_renderer"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9c9052933b0507d8dec3ac8e66c649b4 inherit pub_methods_class_renderer"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="class_texture.html">Texture</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_renderer.html#a9c9052933b0507d8dec3ac8e66c649b4">result</a> ()</td></tr>
+<tr class="separator:a9c9052933b0507d8dec3ac8e66c649b4 inherit pub_methods_class_renderer"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:add2012f269f157754034e7b5475a8927 inherit pub_methods_class_renderer"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_renderer.html#add2012f269f157754034e7b5475a8927">~Renderer</a> ()=default</td></tr>
 <tr class="separator:add2012f269f157754034e7b5475a8927 inherit pub_methods_class_renderer"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8c6e15f666cb188a936004add75e6c6b inherit pub_methods_class_renderer"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_renderer.html#a8c6e15f666cb188a936004add75e6c6b">Renderer</a> (const <a class="el" href="class_renderer.html">Renderer</a> &amp;)=delete</td></tr>
@@ -136,17 +145,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:acb6cae4362aa720ddd577f02918f9355 inherit pub_methods_class_renderer"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_renderer.html">Renderer</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_renderer.html#acb6cae4362aa720ddd577f02918f9355">operator=</a> (<a class="el" href="class_renderer.html">Renderer</a> &amp;&amp;)=delete</td></tr>
 <tr class="separator:acb6cae4362aa720ddd577f02918f9355 inherit pub_methods_class_renderer"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
-Private Member Functions</h2></td></tr>
-<tr class="memitem:a03738282e932304f9d031f02cd17bc62"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_b_v_h_renderer.html#a03738282e932304f9d031f02cd17bc62">castRay</a> (const glm::vec2 &amp;position)</td></tr>
-<tr class="separator:a03738282e932304f9d031f02cd17bc62"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:a3c324c0371ff38a1eb5dbad465e8a7ce"><td class="memItemLeft" align="right" valign="top"><a id="a3c324c0371ff38a1eb5dbad465e8a7ce"></a>
-<a class="el" href="class_controllable_camera.html">ControllableCamera</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_b_v_h_renderer.html#a3c324c0371ff38a1eb5dbad465e8a7ce">_userCamera</a></td></tr>
-<tr class="memdesc:a3c324c0371ff38a1eb5dbad465e8a7ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">The interactive camera. <br /></td></tr>
-<tr class="separator:a3c324c0371ff38a1eb5dbad465e8a7ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7d52e4202a6aa96dae2a980863df0cc0"><td class="memItemLeft" align="right" valign="top"><a id="a7d52e4202a6aa96dae2a980863df0cc0"></a>
 std::unique_ptr&lt; <a class="el" href="class_framebuffer.html">Framebuffer</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_b_v_h_renderer.html#a7d52e4202a6aa96dae2a980863df0cc0">_sceneFramebuffer</a></td></tr>
 <tr class="memdesc:a7d52e4202a6aa96dae2a980863df0cc0"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_scene.html" title="Represents a 3D environment composed of objects, a background and additional environment lighting inf...">Scene</a> buffer. <br /></td></tr>
@@ -155,10 +155,6 @@ std::unique_ptr&lt; <a class="el" href="class_framebuffer.html">Framebuffer</a> 
 const <a class="el" href="class_program.html">Program</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_b_v_h_renderer.html#a830ef5ce7d407fe34b6b71dc28f41169">_objectProgram</a></td></tr>
 <tr class="memdesc:a830ef5ce7d407fe34b6b71dc28f41169"><td class="mdescLeft">&#160;</td><td class="mdescRight">Basic object program. <br /></td></tr>
 <tr class="separator:a830ef5ce7d407fe34b6b71dc28f41169"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a46dff7a3eccf1612a681b287e990454f"><td class="memItemLeft" align="right" valign="top"><a id="a46dff7a3eccf1612a681b287e990454f"></a>
-const <a class="el" href="class_program.html">Program</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_b_v_h_renderer.html#a46dff7a3eccf1612a681b287e990454f">_passthrough</a></td></tr>
-<tr class="memdesc:a46dff7a3eccf1612a681b287e990454f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Passthrough program. <br /></td></tr>
-<tr class="separator:a46dff7a3eccf1612a681b287e990454f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a50c163cb47b228198453acfc9c9ee8ad"><td class="memItemLeft" align="right" valign="top"><a id="a50c163cb47b228198453acfc9c9ee8ad"></a>
 const <a class="el" href="class_program.html">Program</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_b_v_h_renderer.html#a50c163cb47b228198453acfc9c9ee8ad">_bvhProgram</a></td></tr>
 <tr class="memdesc:a50c163cb47b228198453acfc9c9ee8ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">BVH visualisation program. <br /></td></tr>
@@ -175,18 +171,10 @@ std::vector&lt; <a class="el" href="class_mesh.html">Mesh</a> &gt;&#160;</td><td
 <a class="el" href="class_mesh.html">Mesh</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_b_v_h_renderer.html#a6da913990b80701442791f4154d20546">_rayVis</a></td></tr>
 <tr class="memdesc:a6da913990b80701442791f4154d20546"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_mesh.html" title="Represents a geometric mesh composed of vertices and triangles. For now, material information and ele...">Mesh</a> representing a ray and its intersected triangle. <br /></td></tr>
 <tr class="separator:a6da913990b80701442791f4154d20546"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adc53f457f357e336f26074d675f98e46"><td class="memItemLeft" align="right" valign="top"><a id="adc53f457f357e336f26074d675f98e46"></a>
-<a class="el" href="class_texture.html">Texture</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_b_v_h_renderer.html#adc53f457f357e336f26074d675f98e46">_renderTex</a></td></tr>
-<tr class="memdesc:adc53f457f357e336f26074d675f98e46"><td class="mdescLeft">&#160;</td><td class="mdescRight">The result texture and image. <br /></td></tr>
-<tr class="separator:adc53f457f357e336f26074d675f98e46"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:accb989e2985f10486d65f044cb97733e"><td class="memItemLeft" align="right" valign="top"><a id="accb989e2985f10486d65f044cb97733e"></a>
 std::shared_ptr&lt; <a class="el" href="class_scene.html">Scene</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_b_v_h_renderer.html#accb989e2985f10486d65f044cb97733e">_scene</a></td></tr>
 <tr class="memdesc:accb989e2985f10486d65f044cb97733e"><td class="mdescLeft">&#160;</td><td class="mdescRight">The scene to render. <br /></td></tr>
 <tr class="separator:accb989e2985f10486d65f044cb97733e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a132147ca0ea7f7bb0cbd5462312c820c"><td class="memItemLeft" align="right" valign="top"><a id="a132147ca0ea7f7bb0cbd5462312c820c"></a>
-std::unique_ptr&lt; <a class="el" href="class_path_tracer.html">PathTracer</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_b_v_h_renderer.html#a132147ca0ea7f7bb0cbd5462312c820c">_pathTracer</a></td></tr>
-<tr class="memdesc:a132147ca0ea7f7bb0cbd5462312c820c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The scene specific path tracer. <br /></td></tr>
-<tr class="separator:a132147ca0ea7f7bb0cbd5462312c820c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0fd91483f1d9d33262d361545fc094da"><td class="memItemLeft" align="right" valign="top"><a id="a0fd91483f1d9d33262d361545fc094da"></a>
 std::unique_ptr&lt; <a class="el" href="class_raycaster_visualisation.html">RaycasterVisualisation</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_b_v_h_renderer.html#a0fd91483f1d9d33262d361545fc094da">_visuHelper</a></td></tr>
 <tr class="memdesc:a0fd91483f1d9d33262d361545fc094da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper for raycaster internal data visualisation. <br /></td></tr>
@@ -195,53 +183,30 @@ std::unique_ptr&lt; <a class="el" href="class_raycaster_visualisation.html">Rayc
 glm::ivec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_b_v_h_renderer.html#a6e03e7d9ebad47a751d1f4d22bfdb318">_bvhRange</a> = glm::ivec2(0, 1)</td></tr>
 <tr class="memdesc:a6e03e7d9ebad47a751d1f4d22bfdb318"><td class="mdescLeft">&#160;</td><td class="mdescRight">The subset of the BVH to display. <br /></td></tr>
 <tr class="separator:a6e03e7d9ebad47a751d1f4d22bfdb318"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa40df610f28a7bad6f11fb1061524ac8"><td class="memItemLeft" align="right" valign="top"><a id="aa40df610f28a7bad6f11fb1061524ac8"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_b_v_h_renderer.html#aa40df610f28a7bad6f11fb1061524ac8">_cameraFOV</a> = 70.0f</td></tr>
-<tr class="memdesc:aa40df610f28a7bad6f11fb1061524ac8"><td class="mdescLeft">&#160;</td><td class="mdescRight">The adjustable camera fov in degrees. <br /></td></tr>
-<tr class="separator:aa40df610f28a7bad6f11fb1061524ac8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a86b09f406b76b214b94e76b5a54ffc0e"><td class="memItemLeft" align="right" valign="top"><a id="a86b09f406b76b214b94e76b5a54ffc0e"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_b_v_h_renderer.html#a86b09f406b76b214b94e76b5a54ffc0e">_samples</a> = 8</td></tr>
-<tr class="memdesc:a86b09f406b76b214b94e76b5a54ffc0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Samples count. <br /></td></tr>
-<tr class="separator:a86b09f406b76b214b94e76b5a54ffc0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3786641d534ffe6619f54e02dccd8ff5"><td class="memItemLeft" align="right" valign="top"><a id="a3786641d534ffe6619f54e02dccd8ff5"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_b_v_h_renderer.html#a3786641d534ffe6619f54e02dccd8ff5">_depth</a> = 5</td></tr>
-<tr class="memdesc:a3786641d534ffe6619f54e02dccd8ff5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Depth of each ray. <br /></td></tr>
-<tr class="separator:a3786641d534ffe6619f54e02dccd8ff5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6836da467defc249bebf3923e9378d57"><td class="memItemLeft" align="right" valign="top"><a id="a6836da467defc249bebf3923e9378d57"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_b_v_h_renderer.html#a6836da467defc249bebf3923e9378d57">_showRender</a> = false</td></tr>
-<tr class="memdesc:a6836da467defc249bebf3923e9378d57"><td class="mdescLeft">&#160;</td><td class="mdescRight">Should the result be displayed. <br /></td></tr>
-<tr class="separator:a6836da467defc249bebf3923e9378d57"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afd416a1807cb7fefee1493f3d5315f7b"><td class="memItemLeft" align="right" valign="top"><a id="afd416a1807cb7fefee1493f3d5315f7b"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_b_v_h_renderer.html#afd416a1807cb7fefee1493f3d5315f7b">_showBVH</a> = true</td></tr>
 <tr class="memdesc:afd416a1807cb7fefee1493f3d5315f7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Show the raytracer BVH. <br /></td></tr>
 <tr class="separator:afd416a1807cb7fefee1493f3d5315f7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac71b8680759f0321e445cc7419e4853b"><td class="memItemLeft" align="right" valign="top"><a id="ac71b8680759f0321e445cc7419e4853b"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_b_v_h_renderer.html#ac71b8680759f0321e445cc7419e4853b">_lockLevel</a> = true</td></tr>
-<tr class="memdesc:ac71b8680759f0321e445cc7419e4853b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lock the range of the BVH visualisation. <br /></td></tr>
-<tr class="separator:ac71b8680759f0321e445cc7419e4853b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
-<tr class="inherit_header pro_methods_class_renderer"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_class_renderer')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="class_renderer.html">Renderer</a></td></tr>
-<tr class="memitem:a1f347cf3e011ff109aefcc29a591057f inherit pro_methods_class_renderer"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_renderer.html#a1f347cf3e011ff109aefcc29a591057f">updateResolution</a> (unsigned int width, unsigned int height)</td></tr>
-<tr class="separator:a1f347cf3e011ff109aefcc29a591057f inherit pro_methods_class_renderer"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_attribs_class_renderer"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_class_renderer')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_renderer.html">Renderer</a></td></tr>
-<tr class="memitem:ab81be582777b82fe9bfe5711f6d7d81b inherit pro_attribs_class_renderer"><td class="memItemLeft" align="right" valign="top"><a id="ab81be582777b82fe9bfe5711f6d7d81b"></a>
-<a class="el" href="class_rendering_config.html">RenderingConfig</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_renderer.html#ab81be582777b82fe9bfe5711f6d7d81b">_config</a></td></tr>
-<tr class="memdesc:ab81be582777b82fe9bfe5711f6d7d81b inherit pro_attribs_class_renderer"><td class="mdescLeft">&#160;</td><td class="mdescRight">The current configuration. <br /></td></tr>
-<tr class="separator:ab81be582777b82fe9bfe5711f6d7d81b inherit pro_attribs_class_renderer"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac7f0e2e982c72a5b8695db2db6c17dc1 inherit pro_attribs_class_renderer"><td class="memItemLeft" align="right" valign="top"><a id="ac7f0e2e982c72a5b8695db2db6c17dc1"></a>
-glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_renderer.html#ac7f0e2e982c72a5b8695db2db6c17dc1">_renderResolution</a> = glm::vec2(0.0f)</td></tr>
-<tr class="memdesc:ac7f0e2e982c72a5b8695db2db6c17dc1 inherit pro_attribs_class_renderer"><td class="mdescLeft">&#160;</td><td class="mdescRight">The internal rendering resolution. <br /></td></tr>
+glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_renderer.html#ac7f0e2e982c72a5b8695db2db6c17dc1">_renderResolution</a> = glm::vec2(0.0f,0.0f)</td></tr>
+<tr class="memdesc:ac7f0e2e982c72a5b8695db2db6c17dc1 inherit pro_attribs_class_renderer"><td class="mdescLeft">&#160;</td><td class="mdescRight">The internal resolution. <br /></td></tr>
 <tr class="separator:ac7f0e2e982c72a5b8695db2db6c17dc1 inherit pro_attribs_class_renderer"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5246ef05c005ea22ce00edead719f2ef inherit pro_attribs_class_renderer"><td class="memItemLeft" align="right" valign="top"><a id="a5246ef05c005ea22ce00edead719f2ef"></a>
+const <a class="el" href="class_texture.html">Texture</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_renderer.html#a5246ef05c005ea22ce00edead719f2ef">_renderResult</a> = nullptr</td></tr>
+<tr class="memdesc:a5246ef05c005ea22ce00edead719f2ef inherit pro_attribs_class_renderer"><td class="mdescLeft">&#160;</td><td class="mdescRight">The texture containing the result. <br /></td></tr>
+<tr class="separator:a5246ef05c005ea22ce00edead719f2ef inherit pro_attribs_class_renderer"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p><a class="el" href="class_renderer.html" title="Base structure of a renderer.">Renderer</a> coupled with a basic diffuse path tracer. The user can move the camera anywhere and trigger a path-traced rendering. Can also display the raycaster acceleration structure. </p>
+<div class="textblock"><p><a class="el" href="class_renderer.html" title="Base structure of a renderer. The result of the renderer is available through result().">Renderer</a> coupled with a basic diffuse path tracer. The user can move the camera anywhere and trigger a path-traced rendering. Can also display the raycaster acceleration structure. </p>
 </div>
 <p>Inherits <a class="el" href="class_renderer.html">Renderer</a>.</p>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a5d66244d90b6aa385553599f618b4875"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5d66244d90b6aa385553599f618b4875">&#9670;&nbsp;</a></span>BVHRenderer()</h2>
+<a id="afeba9f0f6571e1f69ba68a4e3db1424c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afeba9f0f6571e1f69ba68a4e3db1424c">&#9670;&nbsp;</a></span>BVHRenderer()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -252,8 +217,8 @@ glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
         <tr>
           <td class="memname">BVHRenderer::BVHRenderer </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="class_rendering_config.html">RenderingConfig</a> &amp;&#160;</td>
-          <td class="paramname"><em>config</em></td><td>)</td>
+          <td class="paramtype">const glm::vec2 &amp;&#160;</td>
+          <td class="paramname"><em>resolution</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -265,7 +230,7 @@ glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 </div><div class="memdoc">
 <p>Constructor. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">config</td><td>the configuration to apply </td></tr>
+    <tr><td class="paramname">resolution</td><td>the rendering resolution </td></tr>
   </table>
   </dd>
 </dl>
@@ -273,32 +238,35 @@ glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a03738282e932304f9d031f02cd17bc62"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a03738282e932304f9d031f02cd17bc62">&#9670;&nbsp;</a></span>castRay()</h2>
+<a id="a14a420df01d8f56584e21637d107815a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a14a420df01d8f56584e21637d107815a">&#9670;&nbsp;</a></span>castRay()</h2>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void BVHRenderer::castRay </td>
           <td>(</td>
-          <td class="paramtype">const glm::vec2 &amp;&#160;</td>
-          <td class="paramname"><em>position</em></td><td>)</td>
+          <td class="paramtype">const glm::vec3 &amp;&#160;</td>
+          <td class="paramname"><em>position</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const glm::vec3 &amp;&#160;</td>
+          <td class="paramname"><em>direction</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
-<p>Generate visualisation for a ray cast from a given unit viewport position. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Generate visualisation for a ray cast from a position. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">position</td><td>the position in unit viewport space. </td></tr>
+    <tr><td class="paramname">position</td><td>the ray origin. </td></tr>
+    <tr><td class="paramname">direction</td><td>the ray direction. </td></tr>
   </table>
   </dd>
 </dl>
@@ -327,14 +295,34 @@ glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p></p>
 <p>Clean internal resources. </p>
 
-<p>Reimplemented from <a class="el" href="class_renderer.html#a609184e9e7ed6bf88448458ffc229981">Renderer</a>.</p>
+<p>Implements <a class="el" href="class_renderer.html#a7414d81fe2cb69f61c19622862f4530e">Renderer</a>.</p>
 
 </div>
 </div>
-<a id="a1fe468c298af398c52a7714bafd1a320"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1fe468c298af398c52a7714bafd1a320">&#9670;&nbsp;</a></span>draw()</h2>
+<a id="ac9c79c34e98a4d8f2440f74d8f4581a1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac9c79c34e98a4d8f2440f74d8f4581a1">&#9670;&nbsp;</a></span>clearRay()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void BVHRenderer::clearRay </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Delete the displayed ray. </p>
+
+</div>
+</div>
+<a id="a0408d3e07de03dd5701f9fbfb82fc0e7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0408d3e07de03dd5701f9fbfb82fc0e7">&#9670;&nbsp;</a></span>draw()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -345,7 +333,8 @@ glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
         <tr>
           <td class="memname">void BVHRenderer::draw </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype">const <a class="el" href="class_camera.html">Camera</a> &amp;&#160;</td>
+          <td class="paramname"><em>camera</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -355,14 +344,39 @@ glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Draw the scene and effects </p>
 
-<p>Implements <a class="el" href="class_renderer.html#a20abacf6f866f53f219664d4956c3a1e">Renderer</a>.</p>
+<p></p>
+<p>Draw from a given viewpoint. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">camera</td><td>the rendering viewpoint </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Reimplemented from <a class="el" href="class_renderer.html#a5ea4161c30ac6d6ef2aa44c84b1fed6a">Renderer</a>.</p>
 
 </div>
 </div>
-<a id="a8dacc309ed33e6a5a9e1f8abcc0de7a3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8dacc309ed33e6a5a9e1f8abcc0de7a3">&#9670;&nbsp;</a></span>physics()</h2>
+<a id="a4c9389bca9a8af6e831491eb8d340f56"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4c9389bca9a8af6e831491eb8d340f56">&#9670;&nbsp;</a></span>maxLevel()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int BVHRenderer::maxLevel </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>The maximum depth of the BVH. </p><dl class="section return"><dt>Returns</dt><dd>the maximum level </dd></dl>
+
+</div>
+</div>
+<a id="a8b8f057beaa6d1deb0f61bdc51d36ff0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8b8f057beaa6d1deb0f61bdc51d36ff0">&#9670;&nbsp;</a></span>range()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -371,39 +385,19 @@ glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void BVHRenderer::physics </td>
+          <td class="memname">glm::ivec2&amp; BVHRenderer::range </td>
           <td>(</td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>fullTime</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramname"></td><td>)</td>
           <td></td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>frameTime</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Perform physics simulation update. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">fullTime</td><td>the time elapsed since the beginning of the render loop </td></tr>
-    <tr><td class="paramname">frameTime</td><td>the duration of the last frame </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section note"><dt>Note</dt><dd>This function can be called multiple times per frame. </dd></dl>
-
-<p>Implements <a class="el" href="class_renderer.html#a72c719f3b6c39d4f08a9dccb85b44a61">Renderer</a>.</p>
+<p>Display a range of levels of the BVH. </p><dl class="section return"><dt>Returns</dt><dd>the range </dd></dl>
 
 </div>
 </div>
@@ -440,6 +434,8 @@ glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p></p>
 <p>Handle a window resize event. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">width</td><td>the new width </td></tr>
@@ -452,8 +448,8 @@ glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 
 </div>
 </div>
-<a id="ae1a3d9c6ccbaa6998c31397c01c969b9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae1a3d9c6ccbaa6998c31397c01c969b9">&#9670;&nbsp;</a></span>setScene()</h2>
+<a id="a3ad1c0dd09e59e1e4fc2cd0b00c59013"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3ad1c0dd09e59e1e4fc2cd0b00c59013">&#9670;&nbsp;</a></span>setScene()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -462,22 +458,33 @@ glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
           <td class="memname">void BVHRenderer::setScene </td>
           <td>(</td>
           <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="class_scene.html">Scene</a> &gt; &amp;&#160;</td>
-          <td class="paramname"><em>scene</em></td><td>)</td>
+          <td class="paramname"><em>scene</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const <a class="el" href="class_raycaster.html">Raycaster</a> &amp;&#160;</td>
+          <td class="paramname"><em>raycaster</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 <p>Set the scene to render. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">scene</td><td>the new scene </td></tr>
+    <tr><td class="paramname">raycaster</td><td>the associated raycaster </td></tr>
   </table>
   </dd>
 </dl>
 
 </div>
 </div>
-<a id="ae539481dfd45716ed92f8e9e58658bd4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae539481dfd45716ed92f8e9e58658bd4">&#9670;&nbsp;</a></span>update()</h2>
+<a id="a943db34898889d077dcd575d421a96bf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a943db34898889d077dcd575d421a96bf">&#9670;&nbsp;</a></span>showBVH()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -486,7 +493,7 @@ glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void BVHRenderer::update </td>
+          <td class="memname">bool&amp; BVHRenderer::showBVH </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -494,13 +501,11 @@ glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Perform once-per-frame update (buttons, GUI,...) </p>
-
-<p>Reimplemented from <a class="el" href="class_renderer.html#af39230ac153ec5e1b0e5f078ebe351e1">Renderer</a>.</p>
+<p>Show the BVH structure. </p><dl class="section return"><dt>Returns</dt><dd>the toggle </dd></dl>
 
 </div>
 </div>

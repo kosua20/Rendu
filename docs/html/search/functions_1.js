@@ -9,13 +9,18 @@ var searchData=
   ['alive',['alive',['../class_player.html#a959a5ee558d4dd9e17ddd40b75cfe32d',1,'Player']]],
   ['allocatetexture',['allocateTexture',['../class_g_l_utilities.html#aa73c447c32316b433dfc12c45548a0ba',1,'GLUtilities']]],
   ['ambientquad',['AmbientQuad',['../class_ambient_quad.html#a17ed2c4a215567b12942225cb5af15ad',1,'AmbientQuad']]],
+  ['angles',['angles',['../class_spot_light.html#a00a247f5a2ee1cebe44445b07a374fae',1,'SpotLight']]],
+  ['animated',['Animated',['../class_animated.html#a894ae98145242d34f545824c23af31c0',1,'Animated']]],
   ['animation',['Animation',['../class_animation.html#a9eda75883c9e3c29d12fd225d8c0073d',1,'Animation::Animation(const Animation &amp;)=delete'],['../class_animation.html#a47af6c2b7cbbc24c410d57aba2672406',1,'Animation::Animation(Animation &amp;&amp;)=delete'],['../class_animation.html#a4c294d8ee848291f5da25a7d6360601f',1,'Animation::Animation()=default'],['../class_animation.html#abdacd115f038ebd967bf3d073aee82e5',1,'Animation::Animation(Frame frame, float speed)']]],
   ['appendifneeded',['appendIfNeeded',['../class_log.html#aa8ac2a0a438a073598a0fa5cfe2d88bf',1,'Log']]],
+  ['application',['Application',['../class_application.html#ae228579dfbd951742d935cc727b94a9e',1,'Application::Application(RenderingConfig &amp;config)'],['../class_application.html#afaeec66a8591b6d88049b260133d13fc',1,'Application::Application(const Application &amp;)=delete'],['../class_application.html#a7b5be0a8e4df05ca7ceb2d3d7d275278',1,'Application::Application(Application &amp;&amp;)=delete']]],
   ['apply',['apply',['../class_camera.html#afc0737d735399af76d0b88178867cecb',1,'Camera::apply()'],['../class_animation.html#a89c70e11d9f73e2b8f2cd8bbe573ac7f',1,'Animation::apply(const glm::mat4 &amp;m, double fullTime, double frameTime)=0'],['../class_animation.html#a4f0b3bd5fcba50bbda3aa2500562e78f',1,'Animation::apply(const glm::vec4 &amp;v, double fullTime, double frameTime)=0'],['../class_rotation.html#a7f9e53b289e8a1ee336284986c417480',1,'Rotation::apply(const glm::mat4 &amp;m, double fullTime, double frameTime) override'],['../class_rotation.html#a9cb13e343be0af62b8613e5bc195e438',1,'Rotation::apply(const glm::vec4 &amp;v, double fullTime, double frameTime) override'],['../class_back_and_forth.html#a164c4fc486da5873288fc377ccd25ca7',1,'BackAndForth::apply(const glm::mat4 &amp;m, double fullTime, double frameTime) override'],['../class_back_and_forth.html#a7323d341c384cf1f08bc74524ddc3e9d',1,'BackAndForth::apply(const glm::vec4 &amp;v, double fullTime, double frameTime) override']]],
   ['applysh',['applySH',['../class_g_p_u_1_1_frag_1_1_skybox__shcoeffs.html#a86ff45e12a92da7f417ca5f0b16df0e4',1,'GPU::Frag::Skybox_shcoeffs::applySH()'],['../class_g_p_u_1_1_frag_1_1_ambient.html#abbce7e4349a27b31dd55794769218291',1,'GPU::Frag::Ambient::applySH()']]],
+  ['applyssao',['applySSAO',['../class_deferred_renderer.html#a8502714f490d4cda1a7009a4a5a7a445',1,'DeferredRenderer']]],
   ['argumentinfo',['ArgumentInfo',['../struct_config_1_1_argument_info.html#a0159cd7aa806de139e6d244861a10925',1,'Config::ArgumentInfo']]],
   ['arguments',['arguments',['../class_config.html#a101eefd683dfcbf721a7fb92cb61cf34',1,'Config']]],
   ['atlas',['atlas',['../class_font.html#aead19f4c904df70ee69b57d3c5d059eb',1,'Font']]],
+  ['atmosphereapp',['AtmosphereApp',['../class_atmosphere_app.html#a931bc7ed5b43dbe2f2d9271d92487492',1,'AtmosphereApp']]],
   ['atmosphericscatteringconfig',['AtmosphericScatteringConfig',['../class_atmospheric_scattering_config.html#a1490c8e23fa9fabaf1561ca6b5111400',1,'AtmosphericScatteringConfig']]],
   ['axis',['axis',['../class_controller.html#afa4f1947611eb6c0a6b5c0591bab22d5',1,'Controller']]]
 ];

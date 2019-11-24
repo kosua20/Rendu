@@ -126,12 +126,14 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:adcdcf336127cbe866704385e971e46d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0c465b1f534220dc72a55d5aa058d976"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_scene.html#a0c465b1f534220dc72a55d5aa058d976">update</a> (double fullTime, double frameTime)</td></tr>
 <tr class="separator:a0c465b1f534220dc72a55d5aa058d976"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1ca07cc9d3fc1fc8fbf985dc07c2cba2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_scene.html#a1ca07cc9d3fc1fc8fbf985dc07c2cba2">clean</a> ()</td></tr>
-<tr class="separator:a1ca07cc9d3fc1fc8fbf985dc07c2cba2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1487485a6af2d81ca00ea37af2fd3c64"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_scene.html#a1487485a6af2d81ca00ea37af2fd3c64">encode</a> () const</td></tr>
+<tr class="separator:a1487485a6af2d81ca00ea37af2fd3c64"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa17a72d4ca35662c2e390508e6dcc7fc"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="class_bounding_box.html">BoundingBox</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_scene.html#aa17a72d4ca35662c2e390508e6dcc7fc">boundingBox</a> () const</td></tr>
 <tr class="separator:aa17a72d4ca35662c2e390508e6dcc7fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a26401d28a1bf3a253cb668f235ed3aa6"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="class_camera.html">Camera</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_scene.html#a26401d28a1bf3a253cb668f235ed3aa6">viewpoint</a> () const</td></tr>
 <tr class="separator:a26401d28a1bf3a253cb668f235ed3aa6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5107d9e6a5de7ca66e5f7d5eeafdc55e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_scene.html#a5107d9e6a5de7ca66e5f7d5eeafdc55e">setViewpoint</a> (const <a class="el" href="class_camera.html">Camera</a> &amp;cam)</td></tr>
+<tr class="separator:a5107d9e6a5de7ca66e5f7d5eeafdc55e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a817e38149ed312f00941b7fbb28a4fcb"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_scene.html#a817e38149ed312f00941b7fbb28a4fcb">Scene</a> (const <a class="el" href="class_scene.html">Scene</a> &amp;)=delete</td></tr>
 <tr class="separator:a817e38149ed312f00941b7fbb28a4fcb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9e8d2978197a3cd67a4203ab6c7425e7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_scene.html">Scene</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_scene.html#a9e8d2978197a3cd67a4203ab6c7425e7">operator=</a> (const <a class="el" href="class_scene.html">Scene</a> &amp;)=delete</td></tr>
@@ -378,24 +380,6 @@ sun: dirX,dirY,dirZ
 
 </div>
 </div>
-<a id="a1ca07cc9d3fc1fc8fbf985dc07c2cba2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1ca07cc9d3fc1fc8fbf985dc07c2cba2">&#9670;&nbsp;</a></span>clean()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Scene::clean </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Clean internal resources. </p>
-
-</div>
-</div>
 <a id="a7d001285074df11eaa60c1a8d449f708"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7d001285074df11eaa60c1a8d449f708">&#9670;&nbsp;</a></span>computeBoundingBox()</h2>
 
@@ -426,6 +410,24 @@ sun: dirX,dirY,dirZ
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>the scene bounding box </dd></dl>
+
+</div>
+</div>
+<a id="a1487485a6af2d81ca00ea37af2fd3c64"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1487485a6af2d81ca00ea37af2fd3c64">&#9670;&nbsp;</a></span>encode()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt; Scene::encode </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Convert a scene to a Codable-compliant list of key-values tuples. Can be used for serialization. </p><dl class="section return"><dt>Returns</dt><dd>a list of tuples </dd></dl>
 
 </div>
 </div>
@@ -719,6 +721,38 @@ sun: dirX,dirY,dirZ
 </table>
 </div><div class="memdoc">
 <p>Move assignment. </p><dl class="section return"><dt>Returns</dt><dd>a reference to the object assigned to </dd></dl>
+
+</div>
+</div>
+<a id="a5107d9e6a5de7ca66e5f7d5eeafdc55e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5107d9e6a5de7ca66e5f7d5eeafdc55e">&#9670;&nbsp;</a></span>setViewpoint()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Scene::setViewpoint </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="class_camera.html">Camera</a> &amp;&#160;</td>
+          <td class="paramname"><em>cam</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Set the initial viewpoint on the scene. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">cam</td><td>the new camera </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['key',['Key',['../class_input.html#a54d91b6e7708aaf7a4913989c5271a46',1,'Input::Key()'],['../struct_key_values.html#ae41bfdecdec9daa8dd13120a0a39dd5f',1,'KeyValues::key()']]],
+  ['key',['key',['../struct_key_values.html#ae41bfdecdec9daa8dd13120a0a39dd5f',1,'KeyValues::key()'],['../class_input.html#a54d91b6e7708aaf7a4913989c5271a46',1,'Input::Key()']]],
   ['key_5fcallback',['key_callback',['../group___input.html#ga286930f4e8ede059b83ff6eafa2ff718',1,'key_callback(GLFWwindow *window, int key, int scancode, int action, int mods):&#160;InputCallbacks.cpp'],['../group___input.html#ga286930f4e8ede059b83ff6eafa2ff718',1,'key_callback(GLFWwindow *window, int key, int scancode, int action, int mods):&#160;InputCallbacks.cpp']]],
   ['keyboardkey',['KeyboardKey',['../struct_input_1_1_keyboard_key.html',1,'Input']]],
   ['keypressedevent',['keyPressedEvent',['../class_input.html#a3491087b3da6f911af656d389dfe4410',1,'Input']]],

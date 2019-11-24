@@ -152,8 +152,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li>In
 : <a class="el" href="class_g_p_u_1_1_frag_1_1_ambient.html#ac7cacf225638e43dcb53f693c6141990">GPU::Frag::Ambient</a>
 , <a class="el" href="class_g_p_u_1_1_frag_1_1_atmosphere.html#a5ca18d4e89ac01c5f04d099c6e5e2a20">GPU::Frag::Atmosphere</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_atmosphere__debug.html#a3210807e9aa144fb5700086885c53d5e">GPU::Frag::Atmosphere_debug</a>
 , <a class="el" href="class_g_p_u_1_1_frag_1_1_atmosphere__gbuffer.html#a0f13a407195a06adb25a0347b23d7363">GPU::Frag::Atmosphere_gbuffer</a>
 , <a class="el" href="class_g_p_u_1_1_frag_1_1_background__gbuffer.html#a0499c5544cabd0b389f6e4a0de879593">GPU::Frag::Background_gbuffer</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_background__infinity.html#a9b0505c7678c5c552d9f695e7b75f4b1">GPU::Frag::Background_infinity</a>
 , <a class="el" href="class_g_p_u_1_1_frag_1_1_bloom.html#a40836c1b2a2e2f06e94d421596d3ecee">GPU::Frag::Bloom</a>
 , <a class="el" href="class_g_p_u_1_1_frag_1_1_bloom__composite.html#a1d727baae29a934e863e6b6270584af6">GPU::Frag::Bloom_composite</a>
 , <a class="el" href="class_g_p_u_1_1_frag_1_1_blur__dual__filter__down.html#a72ee6188bb4c25d5a03f728005ce302d">GPU::Frag::Blur_dual_filter_down</a>
@@ -186,9 +188,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 , <a class="el" href="class_g_p_u_1_1_frag_1_1_image__display.html#ac270f7531d2e95011a2cacca20cc6e31">GPU::Frag::Image_display</a>
 , <a class="el" href="class_g_p_u_1_1_frag_1_1_laplacian.html#a619413c9af3b839daaf4401fdd4b14b5">GPU::Frag::Laplacian</a>
 , <a class="el" href="class_g_p_u_1_1_frag_1_1_light__shadow.html#a185028454c3b9ab3dfa92d668e6ac688">GPU::Frag::Light_shadow</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_light__shadow__variance.html#af4cb13d5680dca3ed55eba86f75014a6">GPU::Frag::Light_shadow_variance</a>
 , <a class="el" href="class_g_p_u_1_1_frag_1_1_menu__image.html#a375cdd2bf0f9ff25891f3bfa287ee472">GPU::Frag::Menu_image</a>
 , <a class="el" href="class_g_p_u_1_1_frag_1_1_object__basic__color.html#a369b36eced2906dcd6c942cde3b200e7">GPU::Frag::Object_basic_color</a>
 , <a class="el" href="class_g_p_u_1_1_frag_1_1_object__basic__lit.html#a1b77bfb57ded9ea951133eaa31421998">GPU::Frag::Object_basic_lit</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_object__basic__lit__texture.html#a74e6e234dc417732a211fcd784bd0d19">GPU::Frag::Object_basic_lit_texture</a>
 , <a class="el" href="class_g_p_u_1_1_frag_1_1_object__basic__texture.html#ab25802ef53a1519e4837ff3d77e4fd7a">GPU::Frag::Object_basic_texture</a>
 , <a class="el" href="class_g_p_u_1_1_frag_1_1_object__gbuffer.html#a4bd5424c08a638514119b510400285ff">GPU::Frag::Object_gbuffer</a>
 , <a class="el" href="class_g_p_u_1_1_frag_1_1_object__no__uv__gbuffer.html#a88056157653475cd085863a383febfe0">GPU::Frag::Object_no_uv_gbuffer</a>
@@ -214,20 +218,16 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 : <a class="el" href="class_log.html#a90fb67d35cdba86a3c215d4f5b88d73d">Log</a>
 </li>
 <li>init()
-: <a class="el" href="class_directional_light.html#a9f60b8c770daffa7969fe34d718d541a">DirectionalLight</a>
-, <a class="el" href="class_light.html#a2d90213c6daa7bd16b64d006881b6745">Light</a>
-, <a class="el" href="class_point_light.html#af2847fd3b00d1c150709a5dc75132c1c">PointLight</a>
-, <a class="el" href="class_scene.html#adcdcf336127cbe866704385e971e46d6">Scene</a>
-, <a class="el" href="class_spot_light.html#ad01868d9a5c6c8f95fc0c12e4933b947">SpotLight</a>
+: <a class="el" href="class_scene.html#adcdcf336127cbe866704385e971e46d6">Scene</a>
+</li>
+<li>initial()
+: <a class="el" href="class_animated.html#a59093525e699e71572e1ff557fdbe23c">Animated&lt; T &gt;</a>
 </li>
 <li>initialHeight
 : <a class="el" href="class_rendering_config.html#aee5692361ef57a8ce8d31022488fb1f3">RenderingConfig</a>
 </li>
 <li>initialWidth
 : <a class="el" href="class_rendering_config.html#acd1b583d436a3cb8c618b916e83f3535">RenderingConfig</a>
-</li>
-<li>innerAngleCos
-: <a class="el" href="class_g_p_u_1_1_frag_1_1_spot__light.html#ae76c9cac93dded8773d683738f4de8f5">GPU::Frag::Spot_light</a>
 </li>
 <li>Input
 : <a class="el" href="class_controller.html#a9d321846dd8e4f98d3b3e6d9354fd88e">Controller</a>
@@ -248,8 +248,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li>INTERFACE
 : <a class="el" href="class_g_p_u_1_1_frag_1_1_ambient.html#a1a75e758ad6bd5d4d8f14fe21dfb16eb">GPU::Frag::Ambient</a>
 , <a class="el" href="class_g_p_u_1_1_frag_1_1_atmosphere.html#a2921f259d74b87b8bcb401d1be157765">GPU::Frag::Atmosphere</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_atmosphere__debug.html#ac031800f3aea0ccd825f56d0557c6b67">GPU::Frag::Atmosphere_debug</a>
 , <a class="el" href="class_g_p_u_1_1_frag_1_1_atmosphere__gbuffer.html#ae07649a88a0fd97927a2e9a14e9517a6">GPU::Frag::Atmosphere_gbuffer</a>
 , <a class="el" href="class_g_p_u_1_1_frag_1_1_background__gbuffer.html#a0049b7f4586cde006e2d7e7174585ba6">GPU::Frag::Background_gbuffer</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_background__infinity.html#adb249884021da8634ea19e500bccfd86">GPU::Frag::Background_infinity</a>
 , <a class="el" href="class_g_p_u_1_1_frag_1_1_bloom.html#a134fe6dd20bdb2c99e84ca1e59a3693a">GPU::Frag::Bloom</a>
 , <a class="el" href="class_g_p_u_1_1_frag_1_1_bloom__composite.html#ae137bda730bdfffc23a1e56fc8fa799f">GPU::Frag::Bloom_composite</a>
 , <a class="el" href="class_g_p_u_1_1_frag_1_1_blur__dual__filter__down.html#ae7f707f355aa5ca0d9bfed905c779dff">GPU::Frag::Blur_dual_filter_down</a>
@@ -282,9 +284,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 , <a class="el" href="class_g_p_u_1_1_frag_1_1_image__display.html#a7f49f611e45f0d5984eaf09a6422d020">GPU::Frag::Image_display</a>
 , <a class="el" href="class_g_p_u_1_1_frag_1_1_laplacian.html#a7498b39b907eff46b9f39a9ecee62b29">GPU::Frag::Laplacian</a>
 , <a class="el" href="class_g_p_u_1_1_frag_1_1_light__shadow.html#a9d6dabad81f3e3880da91dc049972a77">GPU::Frag::Light_shadow</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_light__shadow__variance.html#acd0ca614a3853edc8097cdb12889d087">GPU::Frag::Light_shadow_variance</a>
 , <a class="el" href="class_g_p_u_1_1_frag_1_1_menu__image.html#a5e6d05cdb74d7dbd1e0153a3571fd3b1">GPU::Frag::Menu_image</a>
 , <a class="el" href="class_g_p_u_1_1_frag_1_1_object__basic__color.html#aae7a2a02ac96e7d2c02d3bdfa8e21dd1">GPU::Frag::Object_basic_color</a>
 , <a class="el" href="class_g_p_u_1_1_frag_1_1_object__basic__lit.html#a94957fc676f446113cfcc22a8725ac3e">GPU::Frag::Object_basic_lit</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_object__basic__lit__texture.html#ad2e0f1f5fc085b3e997650fe18701697">GPU::Frag::Object_basic_lit_texture</a>
 , <a class="el" href="class_g_p_u_1_1_frag_1_1_object__basic__texture.html#a7b200ee12c3ecd4d217bdcf5e0e7ad90">GPU::Frag::Object_basic_texture</a>
 , <a class="el" href="class_g_p_u_1_1_frag_1_1_object__gbuffer.html#a34747cb1e3c0ca543c762391c3a3e212">GPU::Frag::Object_gbuffer</a>
 , <a class="el" href="class_g_p_u_1_1_frag_1_1_object__no__uv__gbuffer.html#a665a624ac886dbf7fc985783ff063211">GPU::Frag::Object_no_uv_gbuffer</a>
@@ -298,20 +302,21 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 , <a class="el" href="class_g_p_u_1_1_frag_1_1_ssao.html#ace5c108701698b645f000f1006b5dc27">GPU::Frag::Ssao</a>
 , <a class="el" href="class_g_p_u_1_1_frag_1_1_tonemap.html#ac1c43e453a1f1c254a737d79f5104c7c">GPU::Frag::Tonemap</a>
 , <a class="el" href="class_g_p_u_1_1_frag_1_1_upscale.html#a5ba45c4f3a8a0d7f00ab0282cdb0cb1a">GPU::Frag::Upscale</a>
-, <a class="el" href="class_g_p_u_1_1_vert_1_1_background__gbuffer.html#a8e1d1486950a41c71ec1d8e98daa519c">GPU::Vert::Background_gbuffer</a>
+, <a class="el" href="class_g_p_u_1_1_vert_1_1_background__infinity.html#a20834c955bb27f8a460bbd50da517432">GPU::Vert::Background_infinity</a>
 , <a class="el" href="class_g_p_u_1_1_vert_1_1_colored__object.html#ae878f8470c2f1e1285aa833491d97c97">GPU::Vert::Colored_object</a>
 , <a class="el" href="class_g_p_u_1_1_vert_1_1_font__sdf.html#a0634f219e983dec022b9a0f90e9e4ca5">GPU::Vert::Font_sdf</a>
 , <a class="el" href="class_g_p_u_1_1_vert_1_1_image__display.html#aa53682ba1419a2e740c6e044694d3f4d">GPU::Vert::Image_display</a>
 , <a class="el" href="class_g_p_u_1_1_vert_1_1_menu__image.html#a30154f6f7b096113105d8d6722c8c6d2">GPU::Vert::Menu_image</a>
 , <a class="el" href="class_g_p_u_1_1_vert_1_1_object__basic__color.html#a12fba0bfca816a923aa835b1dd4388a7">GPU::Vert::Object_basic_color</a>
 , <a class="el" href="class_g_p_u_1_1_vert_1_1_object__basic__lit.html#a0783e035fbc02e1b88e977bad3c888eb">GPU::Vert::Object_basic_lit</a>
+, <a class="el" href="class_g_p_u_1_1_vert_1_1_object__basic__lit__texture.html#ab2938a7f82e470bfde653d42a91b6639">GPU::Vert::Object_basic_lit_texture</a>
 , <a class="el" href="class_g_p_u_1_1_vert_1_1_object__basic__texture.html#adc472650e67d782b08fcfb0c6e5efc59">GPU::Vert::Object_basic_texture</a>
 , <a class="el" href="class_g_p_u_1_1_vert_1_1_object__gbuffer.html#ae4547df06fa7e3434af9d298b1e167b7">GPU::Vert::Object_gbuffer</a>
 , <a class="el" href="class_g_p_u_1_1_vert_1_1_object__no__uv__gbuffer.html#ac39edb825a85dc26505140daa605416f">GPU::Vert::Object_no_uv_gbuffer</a>
 , <a class="el" href="class_g_p_u_1_1_vert_1_1_object__parallax__gbuffer.html#ac9ed5a045e754b736b50cec1abee79fe">GPU::Vert::Object_parallax_gbuffer</a>
 , <a class="el" href="class_g_p_u_1_1_vert_1_1_passthrough.html#a12f103737670db923fc609e35d9f40b3">GPU::Vert::Passthrough</a>
 , <a class="el" href="class_g_p_u_1_1_vert_1_1_skybox__basic.html#a33c96c26992267ff2f789ee3fef5f9ce">GPU::Vert::Skybox_basic</a>
-, <a class="el" href="class_g_p_u_1_1_vert_1_1_skybox__gbuffer.html#a41427c9268c142cd0f31af4fad6d971e">GPU::Vert::Skybox_gbuffer</a>
+, <a class="el" href="class_g_p_u_1_1_vert_1_1_skybox__infinity.html#afe28249e60ff61b397fcf058dc09ffa5">GPU::Vert::Skybox_infinity</a>
 </li>
 <li>internalId
 : <a class="el" href="struct_raycaster_1_1_ray_hit.html#a9a0be276f085424b56db8e15d481adac">Raycaster::RayHit</a>
@@ -330,19 +335,21 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </li>
 <li>intersects()
 : <a class="el" href="class_g_p_u_1_1_frag_1_1_atmosphere.html#ae17f295a9c67c7f3a621466bd75d22fc">GPU::Frag::Atmosphere</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_atmosphere__debug.html#a0f66ebdfc2c12876ac27c949ba392b14">GPU::Frag::Atmosphere_debug</a>
 , <a class="el" href="class_g_p_u_1_1_frag_1_1_atmosphere__gbuffer.html#abf4b4dac7c434a2c081ed3806ab2e938">GPU::Frag::Atmosphere_gbuffer</a>
-, <a class="el" href="class_raycaster.html#a0b915c68beacb1e364e6770e88fe1f70">Raycaster</a>
+, <a class="el" href="class_raycaster.html#a27fb9c1f3aa594e5c3e3ad2896a50db1">Raycaster</a>
 </li>
 <li>intersectsAny()
 : <a class="el" href="class_raycaster.html#a1779bf9a92e32fa998913505672c2bb9">Raycaster</a>
+</li>
+<li>intOutAnglesCos
+: <a class="el" href="class_g_p_u_1_1_frag_1_1_spot__light.html#ad74581faad463303d6b2e62348e1acc1">GPU::Frag::Spot_light</a>
 </li>
 <li>invdir
 : <a class="el" href="struct_raycaster_1_1_ray.html#a83d01a5f238014dd4e2cd0861a47df59">Raycaster::Ray</a>
 </li>
 <li>inverseScreenSize
 : <a class="el" href="class_g_p_u_1_1_frag_1_1_fxaa.html#a3466c799a463a18d69009a4dd2c3ae23">GPU::Frag::Fxaa</a>
-, <a class="el" href="class_g_p_u_1_1_frag_1_1_point__light.html#a763e61105c8f386bfc5c47e30e90308e">GPU::Frag::Point_light</a>
-, <a class="el" href="class_g_p_u_1_1_frag_1_1_spot__light.html#a5a677d7699af22926cc72038f6fad522">GPU::Frag::Spot_light</a>
 </li>
 <li>inverseV
 : <a class="el" href="class_g_p_u_1_1_frag_1_1_ambient.html#a6e47d2bc7a16b98a28b467981031e010">GPU::Frag::Ambient</a>

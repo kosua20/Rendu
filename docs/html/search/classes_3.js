@@ -1,5 +1,7 @@
 var searchData=
 [
+  ['debuglightrenderer',['DebugLightRenderer',['../class_debug_light_renderer.html',1,'']]],
+  ['deferredlight',['DeferredLight',['../class_deferred_light.html',1,'']]],
   ['deferredrenderer',['DeferredRenderer',['../class_deferred_renderer.html',1,'']]],
   ['descriptor',['Descriptor',['../class_descriptor.html',1,'']]],
   ['directional_5flight',['Directional_light',['../class_g_p_u_1_1_frag_1_1_directional__light.html',1,'GPU::Frag']]],

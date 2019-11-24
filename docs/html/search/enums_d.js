@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['view',['View',['../class_filtering_renderer.html#a8c88c688f5591183c5b8ef7ce14cefa1',1,'FilteringRenderer']]]
+  ['view',['View',['../class_filtering_app.html#abf08916aa59abe9a54706ff9510008b9',1,'FilteringApp']]]
 ];

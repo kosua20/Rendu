@@ -4,7 +4,7 @@ var searchData=
   ['h2',['h2',['../class_g_p_u_1_1_frag_1_1_upscale.html#a6d4113ebf034ba0e64b7d9d4ae2d77f9',1,'GPU::Frag::Upscale']]],
   ['hasalpha',['hasAlpha',['../struct_scene_export_1_1_material.html#aed15de2895dcdc6026958d75eb49ec87',1,'SceneExport::Material']]],
   ['hascolor',['hasColor',['../struct_composite_obj_1_1_material.html#a107e0c0738694add8e60cc688ae17a35',1,'CompositeObj::Material']]],
-  ['hasmask',['hasMask',['../class_g_p_u_1_1_frag_1_1_light__shadow.html#a86189abe252403424d8c66f03581e584',1,'GPU::Frag::Light_shadow::hasMask()'],['../class_g_p_u_1_1_frag_1_1_light__shadow__linear.html#ab3b99918e8b4ff2d3990a0dbd8f50a9a',1,'GPU::Frag::Light_shadow_linear::hasMask()']]],
+  ['hasmask',['hasMask',['../class_g_p_u_1_1_frag_1_1_light__shadow.html#a86189abe252403424d8c66f03581e584',1,'GPU::Frag::Light_shadow::hasMask()'],['../class_g_p_u_1_1_frag_1_1_light__shadow__linear.html#ab3b99918e8b4ff2d3990a0dbd8f50a9a',1,'GPU::Frag::Light_shadow_linear::hasMask()'],['../class_g_p_u_1_1_frag_1_1_light__shadow__variance.html#aae7ed760a0a57c3eac369d747283092f',1,'GPU::Frag::Light_shadow_variance::hasMask()']]],
   ['hasmetal',['hasMetal',['../struct_composite_obj_1_1_material.html#ab0210cfbd64a3af96ebb20302c6e3406',1,'CompositeObj::Material']]],
   ['hasrough',['hasRough',['../struct_composite_obj_1_1_material.html#a213f59f8e13dd254a0f61b6a7c4dd300',1,'CompositeObj::Material']]],
   ['hasspec',['hasSpec',['../struct_composite_obj_1_1_material.html#af189a3d241fa372549589d0301501040',1,'CompositeObj::Material']]],

@@ -7,17 +7,20 @@ var searchData=
   ['validate',['validate',['../class_program.html#a92b4f0a0964b3c65b0e7bdbc56f2379f',1,'Program']]],
   ['values',['values',['../struct_key_values.html#ac0d17d95371242a7a7bd853b62bbc871',1,'KeyValues::values()'],['../struct_config_1_1_argument_info.html#a9e9570bc6977e77cc074976808f4b963',1,'Config::ArgumentInfo::values()']]],
   ['valuesmap',['valuesMap',['../class_obj_to_scene_config.html#a605d6f6fced1e6376bccd536c7b7cf62',1,'ObjToSceneConfig']]],
+  ['varianceshadowmap2d',['VarianceShadowMap2D',['../class_variance_shadow_map2_d.html',1,'VarianceShadowMap2D'],['../class_variance_shadow_map2_d.html#a6b765c44dd97369f3c939c2db3163730',1,'VarianceShadowMap2D::VarianceShadowMap2D()']]],
   ['vbo',['vbo',['../class_g_p_u_mesh.html#a8970f1de8846ab683f4b1aa84ca2c9a1',1,'GPUMesh']]],
   ['verbose',['VERBOSE',['../class_log.html#ac5b9f0ae808a41980640e0bcbe49299caec1f06e9fb39c4ef0729b3c7c9c8e8cc',1,'Log::VERBOSE()'],['../class_log.html#a99c41370ebf0556933a13ffeb30fd6a0',1,'Log::Verbose()']]],
   ['version',['version',['../class_rendering_config.html#a3ca1efa11d34059ce3941e698671f81b',1,'RenderingConfig']]],
   ['vid',['vId',['../class_g_p_u_mesh.html#adeb4a043a0784b97cafa71fc89c82385',1,'GPUMesh']]],
-  ['view',['View',['../class_filtering_renderer.html#a8c88c688f5591183c5b8ef7ce14cefa1',1,'FilteringRenderer::View()'],['../class_camera.html#a1a5b450e4659fd0521065a2a1471529f',1,'Camera::view()']]],
+  ['view',['view',['../class_camera.html#a1a5b450e4659fd0521065a2a1471529f',1,'Camera::view()'],['../class_filtering_app.html#abf08916aa59abe9a54706ff9510008b9',1,'FilteringApp::View()']]],
   ['viewpoint',['viewpoint',['../class_scene.html#a26401d28a1bf3a253cb668f235ed3aa6',1,'Scene']]],
-  ['viewpos',['viewPos',['../class_g_p_u_1_1_frag_1_1_atmosphere.html#ae9cb3758c6403d7b17687ce713c2023d',1,'GPU::Frag::Atmosphere::viewPos()'],['../class_g_p_u_1_1_frag_1_1_atmosphere__gbuffer.html#a6ffa9a5e92fd6b157d0659b20f7841bb',1,'GPU::Frag::Atmosphere_gbuffer::viewPos()']]],
+  ['viewpos',['viewPos',['../class_g_p_u_1_1_frag_1_1_atmosphere.html#ae9cb3758c6403d7b17687ce713c2023d',1,'GPU::Frag::Atmosphere::viewPos()'],['../class_g_p_u_1_1_frag_1_1_atmosphere__gbuffer.html#a6ffa9a5e92fd6b157d0659b20f7841bb',1,'GPU::Frag::Atmosphere_gbuffer::viewPos()'],['../class_g_p_u_1_1_frag_1_1_atmosphere__debug.html#af4d5cc4084decdfc36f5ac45f366e2b7',1,'GPU::Frag::Atmosphere_debug::viewPos()']]],
   ['viewspaceposition',['viewSpacePosition',['../class_g_p_u_1_1_frag_1_1_object__parallax__gbuffer.html#aab4d6644d9415aac1459ed2fccaa6abc',1,'GPU::Frag::Object_parallax_gbuffer::viewSpacePosition()'],['../class_g_p_u_1_1_vert_1_1_object__parallax__gbuffer.html#a04b88666ff6df6e89ab7018b1637f440',1,'GPU::Vert::Object_parallax_gbuffer::viewSpacePosition()']]],
   ['viewtolight',['viewToLight',['../class_g_p_u_1_1_frag_1_1_directional__light.html#a6e8cc5c29f189efb8a3e7e2519bd04bd',1,'GPU::Frag::Directional_light::viewToLight()'],['../class_g_p_u_1_1_frag_1_1_point__light.html#a494c28cc108b2483fd781b25796bcaaf',1,'GPU::Frag::Point_light::viewToLight()'],['../class_g_p_u_1_1_frag_1_1_spot__light.html#ac5e6d8c063e35729023c3dca99e3a654',1,'GPU::Frag::Spot_light::viewToLight()']]],
   ['visible',['visible',['../class_raycaster.html#a8b73138dc38394e618f7e535a694ff55',1,'Raycaster::visible()'],['../class_directional_light.html#a598461d7ce56dd943f55e61f0037de53',1,'DirectionalLight::visible()'],['../class_light.html#ae1155bb902d1dea8a73de85f6518a578',1,'Light::visible()'],['../class_point_light.html#a717f9be8e575dad1445d883c7e2988a6',1,'PointLight::visible()'],['../class_spot_light.html#ac9cb7a3d4c5e7fb004bbd1c9e864d8d6',1,'SpotLight::visible()']]],
   ['visuid',['visuId',['../class_painting_tool.html#a3330a96b20f7cc1a357d68843abb8796',1,'PaintingTool']]],
+  ['vp',['vp',['../class_light.html#a6abd01e5a32c177e826b00e0fc1cdd16',1,'Light']]],
+  ['vpfaces',['vpFaces',['../class_point_light.html#a4fef82391426599f302bde8b5becb32b',1,'PointLight']]],
   ['vps',['vps',['../class_g_p_u_1_1_geom_1_1_object__layer.html#a9193d7e724e9b9ec0fa9a9fb013e043a',1,'GPU::Geom::Object_layer']]],
-  ['vsync',['Vsync',['../class_window.html#a23db6c08edfd162f98d7ce8a3257e4a6a41e20f49b7679de30f241279dc2e7c48',1,'Window::Vsync()'],['../class_rendering_config.html#a74c8a0c618bef7d9c93903ec496643fe',1,'RenderingConfig::vsync()']]]
+  ['vsync',['vsync',['../class_rendering_config.html#a74c8a0c618bef7d9c93903ec496643fe',1,'RenderingConfig::vsync()'],['../class_window.html#a23db6c08edfd162f98d7ce8a3257e4a6a41e20f49b7679de30f241279dc2e7c48',1,'Window::Vsync()']]]
 ];

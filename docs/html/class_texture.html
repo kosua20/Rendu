@@ -94,6 +94,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
+<a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="class_texture-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">Texture Class Reference<div class="ingroups"><a class="el" href="group___resources.html">Resources</a></div></div>  </div>
@@ -109,6 +110,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a66179be276016021e80b1c67c047d4ad"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_texture.html#a66179be276016021e80b1c67c047d4ad">Texture</a> ()=default</td></tr>
 <tr class="separator:a66179be276016021e80b1c67c047d4ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a23a5db9257ff41b2a4f47f83d232a2c5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_texture.html#a23a5db9257ff41b2a4f47f83d232a2c5">Texture</a> (const std::string &amp;<a class="el" href="class_texture.html#acdce0f8fa0aaf97f97c962e91172dca9">name</a>)</td></tr>
+<tr class="separator:a23a5db9257ff41b2a4f47f83d232a2c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5982601424fb87f9cf494e3b6fa2cc42"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_texture.html#a5982601424fb87f9cf494e3b6fa2cc42">upload</a> (const <a class="el" href="class_descriptor.html">Descriptor</a> &amp;layout, bool updateMipmaps)</td></tr>
 <tr class="separator:a5982601424fb87f9cf494e3b6fa2cc42"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa7b0dad27376cff468804d4f6f5bb868"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_texture.html#aa7b0dad27376cff468804d4f6f5bb868">clearImages</a> ()</td></tr>
@@ -117,6 +120,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a2d0283525256389a133f23d0933e207e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2339f5584c1b39ba39766d95c152969d"><td class="memItemLeft" align="right" valign="top">glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_texture.html#a2339f5584c1b39ba39766d95c152969d">sampleCubemap</a> (const glm::vec3 &amp;dir) const</td></tr>
 <tr class="separator:a2339f5584c1b39ba39766d95c152969d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acdce0f8fa0aaf97f97c962e91172dca9"><td class="memItemLeft" align="right" valign="top">const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_texture.html#acdce0f8fa0aaf97f97c962e91172dca9">name</a> () const</td></tr>
+<tr class="separator:acdce0f8fa0aaf97f97c962e91172dca9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6115af369a55c86b4e48345c2726db0f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_texture.html">Texture</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_texture.html#a6115af369a55c86b4e48345c2726db0f">operator=</a> (const <a class="el" href="class_texture.html">Texture</a> &amp;)=delete</td></tr>
 <tr class="separator:a6115af369a55c86b4e48345c2726db0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6f37ee9dc7bb5e960660df07200de426"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_texture.html#a6f37ee9dc7bb5e960660df07200de426">Texture</a> (const <a class="el" href="class_texture.html">Texture</a> &amp;)=delete</td></tr>
@@ -156,12 +161,19 @@ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <a class="el" href="group___resources.html#ga3fb1e3ce7a7253e364b016dd40f5efd6">TextureShape</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_texture.html#a1baf826bbc3b30b9801cd9619aea05bf">shape</a> = <a class="el" href="group___resources.html#gga3fb1e3ce7a7253e364b016dd40f5efd6ac4d62b6dcca08e5caf06c01889282859">TextureShape::D2</a></td></tr>
 <tr class="memdesc:a1baf826bbc3b30b9801cd9619aea05bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Texure type. <br /></td></tr>
 <tr class="separator:a1baf826bbc3b30b9801cd9619aea05bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
+Private Attributes</h2></td></tr>
+<tr class="memitem:a87db50703e8979fa48484dd8aa3bb474"><td class="memItemLeft" align="right" valign="top"><a id="a87db50703e8979fa48484dd8aa3bb474"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_texture.html#a87db50703e8979fa48484dd8aa3bb474">_name</a></td></tr>
+<tr class="memdesc:a87db50703e8979fa48484dd8aa3bb474"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resource name. <br /></td></tr>
+<tr class="separator:a87db50703e8979fa48484dd8aa3bb474"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Represents a texture containing one or more images, stored on the CPU and/or <a class="el" href="namespace_g_p_u.html" title="GPU shaders.">GPU</a>. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a66179be276016021e80b1c67c047d4ad"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a66179be276016021e80b1c67c047d4ad">&#9670;&nbsp;</a></span>Texture() <span class="overload">[1/3]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a66179be276016021e80b1c67c047d4ad">&#9670;&nbsp;</a></span>Texture() <span class="overload">[1/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -186,8 +198,32 @@ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 
 </div>
 </div>
+<a id="a23a5db9257ff41b2a4f47f83d232a2c5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a23a5db9257ff41b2a4f47f83d232a2c5">&#9670;&nbsp;</a></span>Texture() <span class="overload">[2/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Texture::Texture </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>name</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Constructor. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">name</td><td>the texture identifier </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="a6f37ee9dc7bb5e960660df07200de426"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6f37ee9dc7bb5e960660df07200de426">&#9670;&nbsp;</a></span>Texture() <span class="overload">[2/3]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a6f37ee9dc7bb5e960660df07200de426">&#9670;&nbsp;</a></span>Texture() <span class="overload">[3/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -214,7 +250,7 @@ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 </div>
 </div>
 <a id="a004dd9bd404d90c4be569497aa5540e1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a004dd9bd404d90c4be569497aa5540e1">&#9670;&nbsp;</a></span>Texture() <span class="overload">[3/3]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a004dd9bd404d90c4be569497aa5540e1">&#9670;&nbsp;</a></span>Texture() <span class="overload">[4/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -274,6 +310,24 @@ unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
       </table>
 </div><div class="memdoc">
 <p>Clear CPU images data. </p>
+
+</div>
+</div>
+<a id="acdce0f8fa0aaf97f97c962e91172dca9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acdce0f8fa0aaf97f97c962e91172dca9">&#9670;&nbsp;</a></span>name()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::string &amp; Texture::name </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Get the resource name. </p><dl class="section return"><dt>Returns</dt><dd>the name. </dd></dl>
 
 </div>
 </div>

@@ -8,8 +8,8 @@ var searchData=
   ['bindtextures',['bindTextures',['../class_g_l_utilities.html#a46f3d6239e367552ac21761fab5213aa',1,'GLUtilities']]],
   ['blit',['blit',['../class_g_l_utilities.html#a244d3e72767fc0e2e968667557c4e2f4',1,'GLUtilities::blit(const Framebuffer &amp;src, const Framebuffer &amp;dst, Filter filter)'],['../class_g_l_utilities.html#ad1b2819871c9109d85167fec31de67df',1,'GLUtilities::blit(const Texture &amp;src, Texture &amp;dst, Filter filter)']]],
   ['blur',['Blur',['../class_blur.html#a8662d98d6e52841270fc4e42c1a7dd52',1,'Blur']]],
-  ['boundingbox',['BoundingBox',['../class_bounding_box.html#a4323fc64a71cee220dac92746a2bfe5e',1,'BoundingBox::BoundingBox()=default'],['../class_bounding_box.html#a6f6b82ffe222a863fbc482a8cb2fd1f9',1,'BoundingBox::BoundingBox(const glm::vec3 &amp;v0, const glm::vec3 &amp;v1, const glm::vec3 &amp;v2)'],['../class_object.html#a2e37df160aba75dd5819da541fe41694',1,'Object::boundingBox()'],['../class_scene.html#aa17a72d4ca35662c2e390508e6dcc7fc',1,'Scene::boundingBox()']]],
+  ['boundingbox',['boundingBox',['../class_object.html#a2e37df160aba75dd5819da541fe41694',1,'Object::boundingBox()'],['../class_scene.html#aa17a72d4ca35662c2e390508e6dcc7fc',1,'Scene::boundingBox()'],['../class_bounding_box.html#a4323fc64a71cee220dac92746a2bfe5e',1,'BoundingBox::BoundingBox()=default'],['../class_bounding_box.html#a6f6b82ffe222a863fbc482a8cb2fd1f9',1,'BoundingBox::BoundingBox(const glm::vec3 &amp;v0, const glm::vec3 &amp;v1, const glm::vec3 &amp;v2)']]],
   ['boundingsphere',['BoundingSphere',['../class_bounding_sphere.html#a1b69543e124e9b4d9ae8ccc25fd7b9fb',1,'BoundingSphere::BoundingSphere()=default'],['../class_bounding_sphere.html#ac131e7ce32d9184cbfa2b20101359c42',1,'BoundingSphere::BoundingSphere(const glm::vec3 &amp;aCenter, float aRadius)']]],
   ['boxblur',['BoxBlur',['../class_box_blur.html#af9b1be7389ebd1321536da3906e87959',1,'BoxBlur']]],
-  ['bvhrenderer',['BVHRenderer',['../class_b_v_h_renderer.html#a5d66244d90b6aa385553599f618b4875',1,'BVHRenderer']]]
+  ['bvhrenderer',['BVHRenderer',['../class_b_v_h_renderer.html#afeba9f0f6571e1f69ba68a4e3db1424c',1,'BVHRenderer']]]
 ];

@@ -113,6 +113,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a81146de75649204b9da9c1e1333a0a3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af6823e04311b2d8c0ad39e96a9a0193a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_sky.html#af6823e04311b2d8c0ad39e96a9a0193a">decode</a> (const <a class="el" href="struct_key_values.html">KeyValues</a> &amp;params, <a class="el" href="group___resources.html#gaa9f7226fdc21094a152870ec1872f744">Storage</a> mode) override</td></tr>
 <tr class="separator:af6823e04311b2d8c0ad39e96a9a0193a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5954839386c25c35e07d3754f67c6c25"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_key_values.html">KeyValues</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_sky.html#a5954839386c25c35e07d3754f67c6c25">encode</a> () const override</td></tr>
+<tr class="separator:a5954839386c25c35e07d3754f67c6c25"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa47f1b0d19cd4b96e4b77d6f48c239cd"><td class="memItemLeft" align="right" valign="top">const glm::vec3 &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_sky.html#aa47f1b0d19cd4b96e4b77d6f48c239cd">direction</a> () const</td></tr>
 <tr class="separator:aa47f1b0d19cd4b96e4b77d6f48c239cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_object"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_object')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_object.html">Object</a></td></tr>
@@ -155,10 +157,10 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:ac71c8a1f02269619a29a72895f3546e2"><td class="memItemLeft" align="right" valign="top"><a id="ac71c8a1f02269619a29a72895f3546e2"></a>
-glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_sky.html#ac71c8a1f02269619a29a72895f3546e2">_sunDirection</a> = glm::vec3(0.0f, 1.0f, 0.0f)</td></tr>
-<tr class="memdesc:ac71c8a1f02269619a29a72895f3546e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">The sun direction. <br /></td></tr>
-<tr class="separator:ac71c8a1f02269619a29a72895f3546e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a93079e6ec059b0176056380a981f6ca3"><td class="memItemLeft" align="right" valign="top"><a id="a93079e6ec059b0176056380a981f6ca3"></a>
+<a class="el" href="class_animated.html">Animated</a>&lt; glm::vec3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_sky.html#a93079e6ec059b0176056380a981f6ca3">_sunDirection</a> { glm::vec3(0.0f, 1.0f, 0.0f) }</td></tr>
+<tr class="memdesc:a93079e6ec059b0176056380a981f6ca3"><td class="mdescLeft">&#160;</td><td class="mdescRight">The sun direction. <br /></td></tr>
+<tr class="separator:a93079e6ec059b0176056380a981f6ca3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -183,10 +185,10 @@ std::vector&lt; const <a class="el" href="class_texture.html">Texture</a> * &gt;
 std::vector&lt; std::shared_ptr&lt; <a class="el" href="class_animation.html">Animation</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#a311ce9dd3d37059d727b6711da42d628">_animations</a></td></tr>
 <tr class="memdesc:a311ce9dd3d37059d727b6711da42d628 inherit pro_attribs_class_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Animations list (applied in order). <br /></td></tr>
 <tr class="separator:a311ce9dd3d37059d727b6711da42d628 inherit pro_attribs_class_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2e27dc7e4eb5eca7a8db7da31340ec07 inherit pro_attribs_class_object"><td class="memItemLeft" align="right" valign="top"><a id="a2e27dc7e4eb5eca7a8db7da31340ec07"></a>
-glm::mat4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#a2e27dc7e4eb5eca7a8db7da31340ec07">_model</a> = glm::mat4(1.0f)</td></tr>
-<tr class="memdesc:a2e27dc7e4eb5eca7a8db7da31340ec07 inherit pro_attribs_class_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">The transformation matrix of the 3D model. <br /></td></tr>
-<tr class="separator:a2e27dc7e4eb5eca7a8db7da31340ec07 inherit pro_attribs_class_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3acf2126a4770eece7cf7b8efb319a8b inherit pro_attribs_class_object"><td class="memItemLeft" align="right" valign="top"><a id="a3acf2126a4770eece7cf7b8efb319a8b"></a>
+<a class="el" href="class_animated.html">Animated</a>&lt; glm::mat4 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#a3acf2126a4770eece7cf7b8efb319a8b">_model</a> { glm::mat4(1.0f) }</td></tr>
+<tr class="memdesc:a3acf2126a4770eece7cf7b8efb319a8b inherit pro_attribs_class_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">The transformation matrix of the 3D model, updated by the animations. <br /></td></tr>
+<tr class="separator:a3acf2126a4770eece7cf7b8efb319a8b inherit pro_attribs_class_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa87ac38368246581d03c8c8df531b2ed inherit pro_attribs_class_object"><td class="memItemLeft" align="right" valign="top"><a id="aa87ac38368246581d03c8c8df531b2ed"></a>
 <a class="el" href="class_object.html#a2e34d8d662b907a9e859b73311d84a0c">Type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_object.html#aa87ac38368246581d03c8c8df531b2ed">_material</a> = Type::Common</td></tr>
 <tr class="memdesc:aa87ac38368246581d03c8c8df531b2ed inherit pro_attribs_class_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">The material type. <br /></td></tr>
@@ -315,6 +317,34 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </table>
 </div><div class="memdoc">
 <p>Reference to the sun direction. </p><dl class="section return"><dt>Returns</dt><dd>the normalized sun direction </dd></dl>
+
+</div>
+</div>
+<a id="a5954839386c25c35e07d3754f67c6c25"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5954839386c25c35e07d3754f67c6c25">&#9670;&nbsp;</a></span>encode()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="struct_key_values.html">KeyValues</a> Sky::encode </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Generate a key-values representation of the object. See decode for the keywords and layout. </p><dl class="section return"><dt>Returns</dt><dd>a tuple representing the object. </dd></dl>
+
+<p>Reimplemented from <a class="el" href="class_object.html#a7166fb45d423fd5e51a8aaaf7104ce90">Object</a>.</p>
 
 </div>
 </div>

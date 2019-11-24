@@ -93,6 +93,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="header">
   <div class="summary">
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
+<a href="#pri-types">Private Types</a> &#124;
+<a href="#pri-static-methods">Static Private Member Functions</a> &#124;
 <a href="class_codable-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">Codable Class Reference<div class="ingroups"><a class="el" href="group___system.html">System</a></div></div>  </div>
@@ -108,20 +110,117 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 Static Public Member Functions</h2></td></tr>
 <tr class="memitem:ab3d9de81fe292c3710cc1778ad310bea"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_codable.html#ab3d9de81fe292c3710cc1778ad310bea">decodeBool</a> (const <a class="el" href="struct_key_values.html">KeyValues</a> &amp;param, unsigned int position=0)</td></tr>
 <tr class="separator:ab3d9de81fe292c3710cc1778ad310bea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a70b8cc1bfa81503d49e50acd10c008b4"><td class="memItemLeft" align="right" valign="top">static std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_codable.html#a70b8cc1bfa81503d49e50acd10c008b4">encode</a> (bool b)</td></tr>
+<tr class="separator:a70b8cc1bfa81503d49e50acd10c008b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9c46bacd5c98a3efac31e10374ef8647"><td class="memItemLeft" align="right" valign="top">static glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_codable.html#a9c46bacd5c98a3efac31e10374ef8647">decodeVec3</a> (const <a class="el" href="struct_key_values.html">KeyValues</a> &amp;param, unsigned int position=0)</td></tr>
 <tr class="separator:a9c46bacd5c98a3efac31e10374ef8647"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a95647699d80d149f30adf9c55dcf15e7"><td class="memItemLeft" align="right" valign="top">static std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_codable.html#a95647699d80d149f30adf9c55dcf15e7">encode</a> (const glm::vec3 &amp;v)</td></tr>
+<tr class="separator:a95647699d80d149f30adf9c55dcf15e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a104ccb16d30802fc69b810db7d0afcee"><td class="memItemLeft" align="right" valign="top">static glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_codable.html#a104ccb16d30802fc69b810db7d0afcee">decodeVec2</a> (const <a class="el" href="struct_key_values.html">KeyValues</a> &amp;param, unsigned int position=0)</td></tr>
 <tr class="separator:a104ccb16d30802fc69b810db7d0afcee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3c4eb8f41af9a6a3c84f7e03b2ef9671"><td class="memItemLeft" align="right" valign="top">static std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_codable.html#a3c4eb8f41af9a6a3c84f7e03b2ef9671">encode</a> (const glm::vec2 &amp;v)</td></tr>
+<tr class="separator:a3c4eb8f41af9a6a3c84f7e03b2ef9671"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad4e2612d16d7ad3b7a9ee7f1a3700749"><td class="memItemLeft" align="right" valign="top">static glm::mat4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_codable.html#ad4e2612d16d7ad3b7a9ee7f1a3700749">decodeTransformation</a> (const std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt; &amp;params)</td></tr>
 <tr class="separator:ad4e2612d16d7ad3b7a9ee7f1a3700749"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae7fecece422803b99f195cdf2a4604be"><td class="memItemLeft" align="right" valign="top">static std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_codable.html#ae7fecece422803b99f195cdf2a4604be">encode</a> (const glm::mat4 &amp;transfo)</td></tr>
+<tr class="separator:ae7fecece422803b99f195cdf2a4604be"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af78f3260209895d04b3dfd17df61e806"><td class="memItemLeft" align="right" valign="top">static std::pair&lt; std::string, <a class="el" href="class_descriptor.html">Descriptor</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_codable.html#af78f3260209895d04b3dfd17df61e806">decodeTexture</a> (const <a class="el" href="struct_key_values.html">KeyValues</a> &amp;param)</td></tr>
 <tr class="separator:af78f3260209895d04b3dfd17df61e806"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5f8888f631a00736b0e3659f09d7b1e6"><td class="memItemLeft" align="right" valign="top">static std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_codable.html#a5f8888f631a00736b0e3659f09d7b1e6">parse</a> (const std::string &amp;codableFile)</td></tr>
-<tr class="separator:a5f8888f631a00736b0e3659f09d7b1e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a94ab2d514e5c99c8fd69aa53ea2adaad"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="struct_key_values.html">KeyValues</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_codable.html#a94ab2d514e5c99c8fd69aa53ea2adaad">encode</a> (const <a class="el" href="class_texture.html">Texture</a> *texture)</td></tr>
+<tr class="separator:a94ab2d514e5c99c8fd69aa53ea2adaad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acac75d7d3e66e012e824f7afe6588913"><td class="memItemLeft" align="right" valign="top">static std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_codable.html#acac75d7d3e66e012e824f7afe6588913">decode</a> (const std::string &amp;codableFile)</td></tr>
+<tr class="separator:acac75d7d3e66e012e824f7afe6588913"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5e96edfc6dc0da77f3ff6dc6475d6f5e"><td class="memItemLeft" align="right" valign="top">static std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_codable.html#a5e96edfc6dc0da77f3ff6dc6475d6f5e">encode</a> (const std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt; &amp;params)</td></tr>
+<tr class="separator:a5e96edfc6dc0da77f3ff6dc6475d6f5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-types"></a>
+Private Types</h2></td></tr>
+<tr class="memitem:a19f5878bd6f3f9814702cc4f1afe14bf"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_codable.html#a19f5878bd6f3f9814702cc4f1afe14bf">Prefix</a> : uint { <a class="el" href="class_codable.html#a19f5878bd6f3f9814702cc4f1afe14bfaea2adde5c377cb5e09d14b71935c6f32">Prefix::ROOT</a>, 
+<a class="el" href="class_codable.html#a19f5878bd6f3f9814702cc4f1afe14bfa298cb25408234de02baf2085803a464a">Prefix::LIST</a>, 
+<a class="el" href="class_codable.html#a19f5878bd6f3f9814702cc4f1afe14bfab50339a10e1de285ac99d4c3990b8693">Prefix::NONE</a>
+ }</td></tr>
+<tr class="memdesc:a19f5878bd6f3f9814702cc4f1afe14bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prefix type/.  <a href="class_codable.html#a19f5878bd6f3f9814702cc4f1afe14bf">More...</a><br /></td></tr>
+<tr class="separator:a19f5878bd6f3f9814702cc4f1afe14bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-static-methods"></a>
+Static Private Member Functions</h2></td></tr>
+<tr class="memitem:a991ae5e22b948f18cbbbc496efa63e9c"><td class="memItemLeft" align="right" valign="top">static std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_codable.html#a991ae5e22b948f18cbbbc496efa63e9c">encode</a> (const std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt; &amp;params, <a class="el" href="class_codable.html#a19f5878bd6f3f9814702cc4f1afe14bf">Prefix</a> prefix, uint level)</td></tr>
+<tr class="separator:a991ae5e22b948f18cbbbc496efa63e9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Provides helpers for serialization/deserialization of basic types. </p>
-</div><h2 class="groupheader">Member Function Documentation</h2>
+</div><h2 class="groupheader">Member Enumeration Documentation</h2>
+<a id="a19f5878bd6f3f9814702cc4f1afe14bf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a19f5878bd6f3f9814702cc4f1afe14bf">&#9670;&nbsp;</a></span>Prefix</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="class_codable.html#a19f5878bd6f3f9814702cc4f1afe14bf">Codable::Prefix</a> : uint</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Prefix type/. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a19f5878bd6f3f9814702cc4f1afe14bfaea2adde5c377cb5e09d14b71935c6f32"></a>ROOT&#160;</td><td class="fielddoc"><p>"*" prefix. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a19f5878bd6f3f9814702cc4f1afe14bfa298cb25408234de02baf2085803a464a"></a>LIST&#160;</td><td class="fielddoc"><p>"-" prefix. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a19f5878bd6f3f9814702cc4f1afe14bfab50339a10e1de285ac99d4c3990b8693"></a>NONE&#160;</td><td class="fielddoc"><p>No prefix. </p>
+</td></tr>
+</table>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="acac75d7d3e66e012e824f7afe6588913"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acac75d7d3e66e012e824f7afe6588913">&#9670;&nbsp;</a></span>decode()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt; Codable::decode </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>codableFile</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Split a Codable-compatible text file in a hierarchical list of (key,values) tuples, getting rid of extraneous spaces and punctuations. The following rules are applied:</p><ul>
+<li>elements beginning with a '*' denote root-level objects.</li>
+<li>elements beginning with a '-' belong to an array, defined by the element just before those.</li>
+<li>elements can be nested on the same line: 'elem1: elem2: values' <dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">codableFile</td><td>the text content to parse </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>a hierarchical list of (key, value) tokens </dd></dl>
+</li>
+</ul>
+
+</div>
+</div>
 <a id="ab3d9de81fe292c3710cc1778ad310bea"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab3d9de81fe292c3710cc1778ad310bea">&#9670;&nbsp;</a></span>decodeBool()</h2>
 
@@ -324,8 +423,8 @@ scaling: scale
 
 </div>
 </div>
-<a id="a5f8888f631a00736b0e3659f09d7b1e6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5f8888f631a00736b0e3659f09d7b1e6">&#9670;&nbsp;</a></span>parse()</h2>
+<a id="a70b8cc1bfa81503d49e50acd10c008b4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a70b8cc1bfa81503d49e50acd10c008b4">&#9670;&nbsp;</a></span>encode() <span class="overload">[1/7]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -334,10 +433,10 @@ scaling: scale
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt; Codable::parse </td>
+          <td class="memname">std::string Codable::encode </td>
           <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>codableFile</em></td><td>)</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>b</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -347,18 +446,239 @@ scaling: scale
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Split a Codable-compatible text file in a hierarchical list of (key,values) tuples, getting rid of extraneous spaces and punctuations. The following rules are applied:</p><ul>
-<li>elements beginning with a '*' denote root-level objects.</li>
-<li>elements beginning with a '-' belong to an array, defined by the element just before those.</li>
-<li>elements can be nested on the same line: 'elem1: elem2: values' <dl class="params"><dt>Parameters</dt><dd>
+<p>Encode a boolean into a string ("true" or "false") </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">codableFile</td><td>the text content to parse </td></tr>
+    <tr><td class="paramname">b</td><td>the boolean value to encode </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>a hiearchical list of (key, value) tokens </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>the string representation </dd></dl>
+
+</div>
+</div>
+<a id="a95647699d80d149f30adf9c55dcf15e7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a95647699d80d149f30adf9c55dcf15e7">&#9670;&nbsp;</a></span>encode() <span class="overload">[2/7]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string Codable::encode </td>
+          <td>(</td>
+          <td class="paramtype">const glm::vec3 &amp;&#160;</td>
+          <td class="paramname"><em>v</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Encode a 3D vector into a comma-separated string "X,Y,Z" </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">v</td><td>the vector to encode </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>the string representation </dd></dl>
+
+</div>
+</div>
+<a id="a3c4eb8f41af9a6a3c84f7e03b2ef9671"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3c4eb8f41af9a6a3c84f7e03b2ef9671">&#9670;&nbsp;</a></span>encode() <span class="overload">[3/7]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string Codable::encode </td>
+          <td>(</td>
+          <td class="paramtype">const glm::vec2 &amp;&#160;</td>
+          <td class="paramname"><em>v</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Encode a 2D vector into a comma-separated string "X,Y" </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">v</td><td>the vector to encode </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>the string representation </dd></dl>
+
+</div>
+</div>
+<a id="ae7fecece422803b99f195cdf2a4604be"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae7fecece422803b99f195cdf2a4604be">&#9670;&nbsp;</a></span>encode() <span class="overload">[4/7]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt; Codable::encode </td>
+          <td>(</td>
+          <td class="paramtype">const glm::mat4 &amp;&#160;</td>
+          <td class="paramname"><em>transfo</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Encode a rotation/scaling/orientation transformation matrix into a set of parameters. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">transfo</td><td>the transformation to encode </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>a list of 3 Codable-comaptible parameters </dd></dl>
+
+</div>
+</div>
+<a id="a94ab2d514e5c99c8fd69aa53ea2adaad"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a94ab2d514e5c99c8fd69aa53ea2adaad">&#9670;&nbsp;</a></span>encode() <span class="overload">[5/7]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="struct_key_values.html">KeyValues</a> Codable::encode </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="class_texture.html">Texture</a> *&#160;</td>
+          <td class="paramname"><em>texture</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Encode a texture into a Codable-compliant tuple. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">texture</td><td>the texture to encode </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>the tuple representation </dd></dl>
+
+</div>
+</div>
+<a id="a5e96edfc6dc0da77f3ff6dc6475d6f5e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5e96edfc6dc0da77f3ff6dc6475d6f5e">&#9670;&nbsp;</a></span>encode() <span class="overload">[6/7]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string Codable::encode </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>params</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Generate a Codable-compatible text representation from a hierarchical list of (key,values) tuples. The following rules are applied:</p><ul>
+<li>elements beginning with a '*' denote root-level objects.</li>
+<li>elements beginning with a '-' belong to an array, defined by the element just before those. <dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">params</td><td>a hierarchical list of (key, value) tokens </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>a string containing the text represenation </dd></dl>
 </li>
 </ul>
+
+</div>
+</div>
+<a id="a991ae5e22b948f18cbbbc496efa63e9c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a991ae5e22b948f18cbbbc496efa63e9c">&#9670;&nbsp;</a></span>encode() <span class="overload">[7/7]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string Codable::encode </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; <a class="el" href="struct_key_values.html">KeyValues</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>params</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_codable.html#a19f5878bd6f3f9814702cc4f1afe14bf">Prefix</a>&#160;</td>
+          <td class="paramname"><em>prefix</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint&#160;</td>
+          <td class="paramname"><em>level</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Generate a Codable-compatible text representation from a hierarchical list of (key,values) tuples. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">params</td><td>a hierarchical list of (key, value) tokens </td></tr>
+    <tr><td class="paramname">prefix</td><td>the type of prefix character to use (</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_codable.html#a19f5878bd6f3f9814702cc4f1afe14bf" title="Prefix type/.">Prefix</a>) </dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">level</td><td>the indentation level (using tabulations) </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>a string containing the text represenation </dd></dl>
 
 </div>
 </div>
