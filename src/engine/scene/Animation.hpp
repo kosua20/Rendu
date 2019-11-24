@@ -30,6 +30,11 @@ public:
 	 */
 	virtual glm::vec4 apply(const glm::vec4 & v, double fullTime, double frameTime) = 0;
 
+	/** Generate a key-values representation of the animation. See decode for the keywords and layout.
+	 \return a tuple representing the animation.
+	 */
+	virtual KeyValues encode() const;
+	
 	/** Virtual destructor. */
 	virtual ~Animation() = default;
 
@@ -54,7 +59,13 @@ public:
 	 \return a vector of animations
 	 */
 	static std::vector<std::shared_ptr<Animation>> decode(const std::vector<KeyValues> & params);
-
+	
+	/** Helper that can instantiate a list of key-values tuples that are Codable-compatible from the passed animations.
+	\param anims a vector of animations
+	\return a list of key-value tuple containing animations parameters
+	*/
+	static std::vector<KeyValues> encode(const std::vector<std::shared_ptr<Animation>> & anims);
+	
 protected:
 	
 	/** Constructor. */
@@ -74,7 +85,7 @@ protected:
 	 \param params the parameters tuple
 	 */
 	void decodeBase(const KeyValues & params);
-
+	
 	Frame _frame = Frame::WORLD; ///< The frame of transformation.
 	float _speed = 0.0f;		 ///< Speed of the animation.
 };
@@ -119,7 +130,13 @@ public:
 	 */
 	void decode(const KeyValues & params);
 
+	/** Generate a key-values representation of the animation. See decode for the keywords and layout.
+	\return a tuple representing the animation.
+	*/
+	KeyValues encode() const override;
+	
 private:
+	
 	glm::vec3 _axis = glm::vec3(1.0f, 0.0f, 0.0f); ///< Rotation axis.
 };
 
@@ -164,7 +181,13 @@ public:
 	 */
 	void decode(const KeyValues & params);
 
+	/** Generate a key-values representation of the animation. See decode for the keywords and layout.
+	\return a tuple representing the animation.
+	*/
+	KeyValues encode() const override;
+	
 private:
+		
 	glm::vec3 _axis			 = glm::vec3(1.0f, 0.0f, 0.0f); ///< Translation direction.
 	float _amplitude		 = 0.0f;						///< Amplitude of the translation (maximum distance).
 	double _previousAbscisse = 0.0f;						///< Position on the path at the previous frame.

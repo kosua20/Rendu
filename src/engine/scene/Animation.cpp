@@ -22,6 +22,14 @@ std::vector<std::shared_ptr<Animation>> Animation::decode(const std::vector<KeyV
 	return animations;
 }
 
+std::vector<KeyValues> Animation::encode(const std::vector<std::shared_ptr<Animation>> & anims)  {
+	std::vector<KeyValues> res;
+	for(size_t i = 0; i < anims.size(); ++i){
+		res.push_back(anims[i]->encode());
+	}
+	return res;
+}
+
 void Animation::decodeBase(const KeyValues & params) {
 	if(params.values.size() >= 2) {
 		const float speed			 = std::stof(params.values[0]);
@@ -29,6 +37,13 @@ void Animation::decodeBase(const KeyValues & params) {
 		_speed						 = speed;
 		_frame						 = frame;
 	}
+}
+
+KeyValues Animation::encode() const {
+	KeyValues anim("anim");
+	anim.values.push_back(std::to_string(_speed));
+	anim.values.push_back(_frame == Frame::MODEL ? "model" : "world");
+	return anim;
 }
 
 Rotation::Rotation(const glm::vec3 & axis, float speed, Frame frame) :
@@ -50,6 +65,13 @@ void Rotation::decode(const KeyValues & params) {
 	Animation::decodeBase(params);
 	_axis = Codable::decodeVec3(params, 2);
 	_axis = glm::normalize(_axis);
+}
+
+KeyValues Rotation::encode() const {
+	KeyValues base = Animation::encode();
+	base.key = "rotation";
+	base.values.emplace_back(Codable::encode(_axis));
+	return base;
 }
 
 BackAndForth::BackAndForth(const glm::vec3 & axis, float speed, float amplitude, Frame frame) :
@@ -84,3 +106,12 @@ void BackAndForth::decode(const KeyValues & params) {
 		_amplitude = std::stof(params.values[5]);
 	}
 }
+
+KeyValues BackAndForth::encode() const {
+	KeyValues base = Animation::encode();
+	base.key = "backandforth";
+	base.values.emplace_back(Codable::encode(_axis));
+	base.values.emplace_back(std::to_string(_amplitude));
+	return base;
+}
+
