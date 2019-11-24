@@ -1,8 +1,11 @@
 #include "scene/Object.hpp"
 #include <map>
 
-#define REGISTER_TYPE(type) \
+#define REGISTER_STRTYPE(type) \
 	{ #type, Type::type }
+#define REGISTER_TYPESTR(type) \
+{ Type::type, #type }
+
 
 Object::Object(const Type type, const Mesh * mesh, bool castShadows) :
 	_mesh(mesh), _material(type), _castShadow(castShadows) {
@@ -10,15 +13,15 @@ Object::Object(const Type type, const Mesh * mesh, bool castShadows) :
 
 void Object::decode(const KeyValues & params, Storage mode) {
 
-	const std::map<std::string, Object::Type> types = {
-		REGISTER_TYPE(Common),
-		REGISTER_TYPE(PBRRegular),
-		REGISTER_TYPE(PBRParallax),
-		REGISTER_TYPE(PBRNoUVs)};
+	static const std::map<std::string, Object::Type> types = {
+		REGISTER_STRTYPE(Common),
+		REGISTER_STRTYPE(PBRRegular),
+		REGISTER_STRTYPE(PBRParallax),
+		REGISTER_STRTYPE(PBRNoUVs)};
 
 	// We expect there is only one transformation in the parameters set.
-	_model = Codable::decodeTransformation(params.elements);
-
+	_model.reset(Codable::decodeTransformation(params.elements));
+	
 	for(const auto & param : params.elements) {
 		if(param.key == "type" && !param.values.empty()) {
 			const std::string typeString = param.values[0];
@@ -50,12 +53,62 @@ void Object::decode(const KeyValues & params, Storage mode) {
 	}
 }
 
+KeyValues Object::encode() const {
+	KeyValues obj("object");
+	static const std::map<Object::Type, std::string> types = {
+		REGISTER_TYPESTR(Common),
+		REGISTER_TYPESTR(PBRRegular),
+		REGISTER_TYPESTR(PBRParallax),
+		REGISTER_TYPESTR(PBRNoUVs)};
+
+	obj.elements.emplace_back("type");
+	obj.elements.back().values = {types.at(_material)};
+	
+	obj.elements.emplace_back("shadows");
+	obj.elements.back().values = {Codable::encode(_castShadow)};
+	obj.elements.emplace_back("twosided");
+	obj.elements.back().values = {Codable::encode(_twoSided)};
+	obj.elements.emplace_back("masked");
+	obj.elements.back().values = {Codable::encode(_masked)};
+	
+	if(_mesh){
+		obj.elements.emplace_back("mesh");
+		obj.elements.back().values = {_mesh->name()};
+	}
+	
+	if(!_animations.empty()){
+		obj.elements.emplace_back("animations");
+		obj.elements.back().elements = Animation::encode(_animations);
+	}
+	
+	if(!_textures.empty()){
+		obj.elements.emplace_back("textures");
+		for(const auto texture : _textures){
+			if(!texture){
+				continue;
+			}
+			obj.elements.back().elements.push_back(Codable::encode(texture));
+		}
+	}
+	
+	const auto transfo = Codable::encode(_model.initial());
+	for(const auto & param : transfo){
+		obj.elements.push_back(param);
+	}
+	return obj;
+}
+
 void Object::addTexture(const Texture * infos) {
 	_textures.push_back(infos);
 }
 
 void Object::addAnimation(const std::shared_ptr<Animation> & anim) {
 	_animations.push_back(anim);
+}
+
+
+void Object::set(const glm::mat4 & model){
+	_model.reset(model);
 }
 
 void Object::update(double fullTime, double frameTime) {

@@ -36,12 +36,17 @@ public:
 	 \param mode the storage mode (CPU, GPU, both)
 	 */
 	void decode(const KeyValues & params, Storage mode) override;
-
+	
+	/** Generate a key-values representation of the object. See decode for the keywords and layout.
+	\return a tuple representing the object.
+	*/
+	KeyValues encode() const override;
+	
 	/** Reference to the sun direction.
 	 \return the normalized sun direction
 	 */
 	const glm::vec3 & direction() const { return _sunDirection; }
 
 private:
-	glm::vec3 _sunDirection = glm::vec3(0.0f, 1.0f, 0.0f); ///< The sun direction.
+	Animated<glm::vec3> _sunDirection { glm::vec3(0.0f, 1.0f, 0.0f) }; ///< The sun direction.
 };

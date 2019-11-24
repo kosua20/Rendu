@@ -1,5 +1,6 @@
 #pragma once
 
+#include "scene/Animated.hpp"
 #include "scene/Animation.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "system/Codable.hpp"
@@ -43,7 +44,7 @@ public:
 	/** Update the object transformation matrix.
 	 \param model the new model matrix
 	 */
-	void set(const glm::mat4 & model) { _model = model; }
+	void set(const glm::mat4 & model);
 
 	/** Apply the animations for a frame duration.
 	 \param fullTime the time since the launch of the application
@@ -115,6 +116,11 @@ public:
 	 */
 	virtual void decode(const KeyValues & params, Storage mode);
 
+	/** Generate a key-values representation of the object. See decode for the keywords and layout.
+	\return a tuple representing the object.
+	*/
+	virtual KeyValues encode() const;
+	
 	/** Destructor.*/
 	virtual ~Object() = default;
 
@@ -138,7 +144,7 @@ protected:
 	const Mesh * _mesh = nullptr;						 ///< Geometry of the object.
 	std::vector<const Texture *> _textures;				 ///< Textures used by the object.
 	std::vector<std::shared_ptr<Animation>> _animations; ///< Animations list (applied in order).
-	glm::mat4 _model = glm::mat4(1.0f);					 ///< The transformation matrix of the 3D model.
+	Animated<glm::mat4> _model { glm::mat4(1.0f) };		///< The transformation matrix of the 3D model, updated by the animations.
 	Type _material   = Type::Common;					 ///< The material type.
 	bool _castShadow = true;							 ///< Can the object casts shadows.
 	bool _twoSided   = false;							 ///< Should faces of the object be visible from the two sides.
