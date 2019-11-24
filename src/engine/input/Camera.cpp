@@ -88,18 +88,17 @@ void Camera::decode(const KeyValues & params) {
 	this->projection(_ratio, fov, planes.x, planes.y);
 }
 
-std::string Camera::encode() const {
-	std::stringstream camDetails;
-	camDetails << "* camera:\n";
-	camDetails << "\t"
-			   << "position: " << _eye[0] << "," << _eye[1] << "," << _eye[2] << "\n";
-	camDetails << "\t"
-			   << "center: " << _center[0] << "," << _center[1] << "," << _center[2] << "\n";
-	camDetails << "\t"
-			   << "up: " << _up[0] << "," << _up[1] << "," << _up[2] << "\n";
-	camDetails << "\t"
-			   << "fov: " << _fov << "\n";
-	camDetails << "\t"
-			   << "planes: " << _clippingPlanes[0] << "," << _clippingPlanes[1];
-	return camDetails.str();
+KeyValues Camera::encode() const {
+	KeyValues cam("camera");
+	cam.elements.emplace_back("position");
+	cam.elements.back().values = {Codable::encode(_eye)};
+	cam.elements.emplace_back("center");
+	cam.elements.back().values = {Codable::encode(_center)};
+	cam.elements.emplace_back("up");
+	cam.elements.back().values = {Codable::encode(_up)};
+	cam.elements.emplace_back("fov");
+	cam.elements.back().values = {std::to_string(_fov)};
+	cam.elements.emplace_back("planes");
+	cam.elements.back().values = {Codable::encode(_clippingPlanes)};
+	return cam;
 }

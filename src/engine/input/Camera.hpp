@@ -120,10 +120,10 @@ public:
 	 */
 	void decode(const KeyValues & params);
 
-	/** Encode a camera as a Codable-compatible string representation.
+	/** Encode a camera as a key-values representation.
 	 \return the encoded camera parameters
 	 */
-	std::string encode() const;
+	KeyValues encode() const;
 
 	/** Destructor. */
 	virtual ~Camera() = default;

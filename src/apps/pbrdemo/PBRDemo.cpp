@@ -117,13 +117,13 @@ void PBRDemo::update() {
 		}
 
 		if(ImGui::Button("Copy camera", ImVec2(104, 0))) {
-			const std::string camDesc = _userCamera.encode();
+			const std::string camDesc = Codable::encode({_userCamera.encode()});
 			ImGui::SetClipboardText(camDesc.c_str());
 		}
 		ImGui::SameLine();
 		if(ImGui::Button("Paste camera", ImVec2(104, 0))) {
 			const std::string camDesc(ImGui::GetClipboardText());
-			const auto cameraCode = Codable::parse(camDesc);
+			const auto cameraCode = Codable::decode(camDesc);
 			if(!cameraCode.empty()) {
 				_userCamera.decode(cameraCode[0]);
 				_cameraFOV = _userCamera.fov() * 180.0f / glm::pi<float>();
