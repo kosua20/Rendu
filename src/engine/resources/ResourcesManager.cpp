@@ -219,7 +219,7 @@ const Mesh * Resources::getMesh(const std::string & name, Storage mode) {
 	}
 	// Load geometry. For now we only support OBJs.
 	std::stringstream meshStream(meshText);
-	_meshes.emplace(std::make_pair(name, Mesh(meshStream, Mesh::Load::Indexed)));
+	_meshes.emplace(std::make_pair(name, Mesh(meshStream, Mesh::Load::Indexed, name)));
 	
 	auto & mesh = _meshes[name];
 	// If uv or positions are missing, tangent/binormals won't be computed.
@@ -340,6 +340,7 @@ const Texture * Resources::getTexture(const std::string & name, const Descriptor
 	const unsigned int channels = descriptor.getChannelsCount();
 	// Cubemaps don't need to be flipped.
 	const bool flip	= !(shape & TextureShape::Cube);
+	_textures[keyName] = Texture(keyName);
 	Texture & texture  = _textures[keyName];
 
 	// Load all images.

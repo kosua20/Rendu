@@ -21,6 +21,11 @@ public:
 	
 	/** Constructor. */
 	Texture() = default;
+	
+	/** Constructor.
+	 \param name the texture identifier
+	 */
+	Texture(const std::string & name);
 
 	/** Send to the GPU.
 	 \param layout the data layout and type to use for the texture
@@ -42,6 +47,11 @@ public:
 	 */
 	glm::vec3 sampleCubemap(const glm::vec3 & dir) const;
 	
+	/** Get the resource name.
+		\return the name.
+	 */
+	const std::string & name() const;
+		
 	/** Copy assignment operator (disabled).
 	 \return a reference to the object assigned to
 	 */
@@ -67,4 +77,9 @@ public:
 	unsigned int levels = 1; ///< The mipmap count.
 	
 	TextureShape shape = TextureShape::D2; ///< Texure type.
+	
+private:
+		
+	std::string _name; ///< Resource name.
+	
 };

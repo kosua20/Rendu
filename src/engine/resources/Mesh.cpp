@@ -7,8 +7,9 @@
 #include <fstream>
 #include <cstddef>
 
-Mesh::Mesh(std::istream & in, Mesh::Load mode) {
-
+Mesh::Mesh(std::istream & in, Mesh::Load mode, const std::string & name) {
+	_name = name;
+	
 	using namespace std;
 
 	// Init temporary vectors.
@@ -373,4 +374,9 @@ int Mesh::saveAsObj(const std::string & path, bool defaultUVs) {
 	}
 	objFile.close();
 	return 0;
+}
+
+
+const std::string & Mesh::name() const {
+	return _name;
 }

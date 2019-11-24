@@ -2,6 +2,10 @@
 #include "graphics/GPUObjects.hpp"
 #include "graphics/GLUtilities.hpp"
 
+Texture::Texture(const std::string & name){
+	_name = name;
+}
+
 void Texture::upload(const Descriptor & layout, bool updateMipmaps) {
 
 	// Create texture.
@@ -75,4 +79,8 @@ glm::vec3 Texture::sampleCubemap(const glm::vec3 & dir) const {
 	x				= glm::clamp(x, 0.0f + eps, 1.0f - eps);
 	y				= glm::clamp(y, 0.0f + eps, 1.0f - eps);
 	return images[side].rgbl(x, y);
+}
+
+const std::string & Texture::name() const {
+	return _name;
 }

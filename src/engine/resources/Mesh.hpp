@@ -21,8 +21,9 @@ public:
 	/** Load an .obj file from disk into a mesh structure.
 	 \param in the input string stream from which the geometry will be loaded
 	 \param mode the preprocessing mode
+	 \param name the identifier
 	 */
-	Mesh(std::istream & in, Load mode);
+	Mesh(std::istream & in, Load mode, const std::string & name);
 	
 	/** Default constructor. */
 	Mesh() = default;
@@ -61,6 +62,11 @@ public:
 	 */
 	int saveAsObj(const std::string & path, bool defaultUVs);
 	
+	/** Get the resource name.
+	 \return the name.
+	 */
+	const std::string & name() const;
+	
 	/** Copy assignment operator (disabled).
 	 \return a reference to the object assigned to
 	 */
@@ -87,5 +93,8 @@ public:
 	
 	BoundingBox bbox;			  ///< The mesh bounding box in model space.
 	std::unique_ptr<GPUMesh> gpu; ///< The GPU buffers infos (optional).
+
+private:
 	
+	std::string _name; ///< Resource name.
 };
