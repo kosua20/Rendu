@@ -7,6 +7,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/color_space.hpp>
+#include <glm/gtx/matrix_decompose.hpp>
 #include <glm/gtx/io.hpp>
 #include <glm/gtc/constants.hpp>
 

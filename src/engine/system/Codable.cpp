@@ -1,5 +1,6 @@
 #include "system/Codable.hpp"
 #include "system/TextUtilities.hpp"
+#include "resources/Texture.hpp"
 
 #include <map>
 #include <sstream>
@@ -19,6 +20,10 @@ bool Codable::decodeBool(const KeyValues & param, unsigned int position) {
 	return false;
 }
 
+std::string Codable::encode(bool b){
+	return b ? "true" : "false";
+}
+
 glm::vec3 Codable::decodeVec3(const KeyValues & param, unsigned int position) {
 	// Filter erroneous case.
 	if(param.values.size() < position + 3) {
@@ -32,6 +37,10 @@ glm::vec3 Codable::decodeVec3(const KeyValues & param, unsigned int position) {
 	return vec;
 }
 
+std::string Codable::encode(const glm::vec3 & v){
+	return std::to_string(v[0]) + "," + std::to_string(v[1]) + "," + std::to_string(v[2]);
+}
+
 glm::vec2 Codable::decodeVec2(const KeyValues & param, unsigned int position) {
 	// Filter erroneous case.
 	if(param.values.size() < position + 2) {
@@ -42,6 +51,10 @@ glm::vec2 Codable::decodeVec2(const KeyValues & param, unsigned int position) {
 	vec[0] = std::stof(param.values[position + 0]);
 	vec[1] = std::stof(param.values[position + 1]);
 	return vec;
+}
+
+std::string Codable::encode(const glm::vec2 & v){
+	return std::to_string(v[0]) + "," + std::to_string(v[1]);
 }
 
 glm::mat4 Codable::decodeTransformation(const std::vector<KeyValues> & params) {
@@ -71,6 +84,32 @@ glm::mat4 Codable::decodeTransformation(const std::vector<KeyValues> & params) {
 	return translationMat * rotationMat * scalingMat;
 }
 
+
+std::vector<KeyValues> Codable::encode(const glm::mat4 & transfo) {
+
+	KeyValues scaling("scaling");
+	KeyValues translation("translation");
+	KeyValues orientation("orientation");
+	glm::vec3 scale, trans, skew;
+	glm::vec4 persp;
+	glm::quat orient;
+	glm::decompose(transfo, scale, orient, trans, skew, persp);
+	orient = glm::normalize(orient);
+	
+	if(scale[0] != scale[1] || scale[0] != scale[2] || scale[1] != scale[2]){
+		Log::Error() << "Encoding a non uniform scale is unsupported. (" << scale << "), using average." << std::endl;
+		scale[0] = (scale[0] + scale[1] + scale[2])/3.0f;
+	}
+	scaling.values = {std::to_string(scale[0])};
+	translation.values = {encode(trans)};
+	
+	const glm::vec3 axis = glm::axis(orient);
+	const float angle = glm::angle(orient);
+	orientation.values = {encode(axis), std::to_string(angle)};
+	return {scaling, translation, orientation};
+	
+}
+
 std::pair<std::string, Descriptor> Codable::decodeTexture(const KeyValues & param) {
 	// Subest of descriptors supported by the scene serialization model.
 	const std::map<std::string, Descriptor> descriptors = {
@@ -91,7 +130,29 @@ std::pair<std::string, Descriptor> Codable::decodeTexture(const KeyValues & para
 	return {textureString, descriptors.at(param.key)};
 }
 
-std::vector<KeyValues> Codable::parse(const std::string & codableFile) {
+
+KeyValues Codable::encode(const Texture * texture){
+	const std::vector<std::pair<std::string, Descriptor>> descriptors = {
+		{"srgb", {Layout::SRGB8_ALPHA8, Filter::LINEAR_LINEAR, Wrap::REPEAT}},
+		{"rgb", {Layout::RGBA8, Filter::LINEAR_LINEAR, Wrap::REPEAT}},
+		{"rgb32", {Layout::RGB32F, Filter::LINEAR_LINEAR, Wrap::REPEAT}},
+
+		{"srgbcube", {Layout::SRGB8_ALPHA8, Filter::LINEAR_LINEAR, Wrap::CLAMP}},
+		{"rgbcube", {Layout::RGBA8, Filter::LINEAR_LINEAR, Wrap::CLAMP}},
+		{"rgb32cube", {Layout::RGB32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}},
+	};
+	KeyValues token("rgb");
+	for(const auto & desc : descriptors){
+		if(texture->gpu->descriptor() == desc.second){
+			token.key = desc.first;
+			break;
+		}
+	}
+	token.values = {texture->name()};
+	return token;
+}
+
+std::vector<KeyValues> Codable::decode(const std::string & codableFile) {
 	std::vector<KeyValues> rawTokens;
 	std::stringstream sstr(codableFile);
 	std::string line;
@@ -190,4 +251,38 @@ std::vector<KeyValues> Codable::parse(const std::string & codableFile) {
 		--tid;
 	}
 	return tokens;
+}
+
+std::string Codable::encode(const std::vector<KeyValues> & params, Prefix prefix, uint level) {
+	std::stringstream str;
+	static const std::map<Prefix, std::string> prefixes = {
+		{Prefix::ROOT, "* "}, {Prefix::LIST, "- "}, {Prefix::NONE, ""}
+	};
+	const std::string padChar(level, '\t');
+	
+	for(const auto & param : params){
+		str << padChar << prefixes.at(prefix) << param.key << ": ";
+		for(const auto & val : param.values){
+			str << val << " ";
+		}
+		// If no sub-elements, done.
+		if(param.elements.empty()){
+			str << std::endl;
+			continue;
+		}
+		// If only one sub-element, pack it on the same line.
+		if(param.elements.size() == 1){
+			str << encode(param.elements, Prefix::NONE, 0);
+			continue;
+		}
+		// Else move to the next one and generate the list.
+		str << std::endl;
+		const Prefix elemPrefix = (level == 0) ? Prefix::NONE : Prefix::LIST;
+		str << encode(param.elements, elemPrefix, level+1);
+	}
+	return str.str();
+}
+
+std::string Codable::encode(const std::vector<KeyValues> & params) {
+	return encode(params, Prefix::ROOT, 0);
 }
