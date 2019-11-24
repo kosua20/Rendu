@@ -41,7 +41,7 @@ void Scene::init(Storage mode) {
 
 	// Parse the file.
 	const std::string sceneFile			   = Resources::manager().getString(_name);
-	const std::vector<KeyValues> allParams = Codable::parse(sceneFile);
+	const std::vector<KeyValues> allParams = Codable::decode(sceneFile);
 
 	// Process each group of keyvalues.
 	for(const auto & element : allParams) {
@@ -145,6 +145,62 @@ void Scene::loadScene(const KeyValues & params, Storage mode) {
 	}
 	// Update matrix, there is at most one transformation in the scene object.
 	_sceneModel = Codable::decodeTransformation(params.elements);
+}
+
+std::vector<KeyValues> Scene::encode() const {
+	std::vector<KeyValues> tokens;
+	
+	// Encode the scene
+	tokens.emplace_back("scene");
+	auto & scnNode = tokens.back();
+	KeyValues irradiance("irradiance");
+	irradiance.values = {"default_shcoeffs"};
+	scnNode.elements.push_back(irradiance);
+	if(backgroundReflection){
+		KeyValues probe("probe");
+		probe.elements = { Codable::encode(backgroundReflection) };
+		scnNode.elements.push_back(probe);
+	}
+	// Encode the scene transformation.
+	const auto modelKeys = Codable::encode(_sceneModel);
+	for(const auto & key : modelKeys){
+		scnNode.elements.push_back(key);
+	}
+	
+	// Encode the background.
+	KeyValues bgNode("background");
+	
+	switch (backgroundMode) {
+		case Background::COLOR:
+			bgNode.elements.emplace_back("color");
+			bgNode.elements.back().values = { Codable::encode(backgroundColor) };
+			break;
+		case Background::IMAGE:
+			bgNode.elements.emplace_back("image");
+			bgNode.elements.back().elements = { Codable::encode(background->textures()[0]) };
+			break;
+		case Background::SKYBOX:
+			bgNode.elements.emplace_back("cube");
+			bgNode.elements.back().elements = { Codable::encode(background->textures()[0]) };
+		break;
+		case Background::ATMOSPHERE:
+			bgNode = background->encode();
+			bgNode.key = "background";
+		break;
+		default:
+			break;
+	}
+	tokens.push_back(bgNode);
+	// Encode the objects
+	for(const auto & obj : objects){
+		tokens.push_back(obj.encode());
+	}
+	// Encode the lights
+	for(const auto & light : lights){
+		tokens.push_back(light->encode());
+	}
+	tokens.push_back(_camera.encode());
+	return tokens;
 }
 
 BoundingBox Scene::computeBoundingBox(bool onlyShadowCasters) {

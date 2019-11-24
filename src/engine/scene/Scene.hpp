@@ -54,6 +54,11 @@ public:
 	 */
 	void update(double fullTime, double frameTime);
 
+	/** Convert a scene to a Codable-compliant list of key-values tuples. Can be used for serialization.
+	 \return a list of tuples
+	 */
+	std::vector<KeyValues> encode() const;
+	
 	/** Get the scene bounding box.
 	 \return the bounding box
 	 */
@@ -63,6 +68,11 @@ public:
 	 \return the viewpoint camera
 	 */
 	const Camera & viewpoint() const { return _camera; }
+	
+	/** Set the initial viewpoint on the scene.
+	 \param cam the new camera
+	 */
+	void setViewpoint(const Camera & cam) { _camera = cam; }
 
 	std::vector<Object> objects;				///< The objects in the scene.
 	std::vector<std::shared_ptr<Light>> lights; ///< Lights present in the scene.
@@ -128,6 +138,7 @@ private:
 	 */
 	void loadScene(const KeyValues & params, Storage mode);
 
+	
 	/** Compute the bounding box of the scene, optionaly excluding objects that do not cast shadows.
 	 \param onlyShadowCasters denote if only objects that are allowed to cast shadows should be taken into account
 	 \return the scene bounding box
