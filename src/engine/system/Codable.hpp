@@ -99,9 +99,15 @@ public:
 	 - elements beginning with a '*' denote root-level objects.
 	 - elements beginning with a '-' belong to an array, defined by the element just before those.
 	 \param params a hierarchical list of (key, value) tokens
-	 \return a string containing the text represenation
+	 \return a string containing the text representation
 	 */
 	static std::string encode(const std::vector<KeyValues> & params);
+
+	/** Generate a Codable-compatible text representation from a (key,values) tuple. The following rules are applied:
+	\param params a (key, value) token
+	 \return a string containing the text representation
+	 */
+	static std::string encode(const KeyValues & params);
 	
 private:
 	

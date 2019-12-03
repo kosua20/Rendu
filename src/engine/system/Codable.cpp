@@ -286,3 +286,8 @@ std::string Codable::encode(const std::vector<KeyValues> & params, Prefix prefix
 std::string Codable::encode(const std::vector<KeyValues> & params) {
 	return encode(params, Prefix::ROOT, 0);
 }
+
+std::string Codable::encode(const KeyValues & params) {
+	return encode({ params }, Prefix::ROOT, 0);
+}
+
