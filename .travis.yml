@@ -11,6 +11,9 @@ matrix:
       install:
         - wget https://github.com/premake/premake-core/releases/download/v5.0.0-alpha14/premake-5.0.0-alpha14-macosx.tar.gz -O premake.tar.gz
         - tar -xzf premake.tar.gz
+        - HOMEBREW_NO_AUTO_UPDATE=1 brew install doxygen
+      env:
+        - BUILD_DOCS="1"
     - os: linux
       dist: bionic
       compiler: gcc
@@ -43,4 +46,22 @@ script:
   - if [ "$TRAVIS_OS_NAME" = "linux"   ]; then make ALL; fi
   - if [ "$TRAVIS_OS_NAME" = "osx"     ]; then make ALL; fi
   - cd ..
+  
+before_deploy:
+  - ./premake5 docs
+  
+deploy:
+  provider: pages:git
+  edge: true
+  cleanup: false
+  token: $GITHUB_TOKEN
+  keep_history: true
+  target_branch: master
+  email: "kosua20@gmail.com"
+  name: "Simon Rodriguez"
+  committer_from_gh: true
+  commit_message: "Documentation: update (via CI)."
+  on:
+    branch: master
+    condition: "$BUILD_DOCS = 1"
 
