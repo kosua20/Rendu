@@ -8,3 +8,7 @@
 /.scannerwork
 resources.zip
 .DS_Store
+premake.tar.gz
+premake.zip
+premake5
+premake5.exe
