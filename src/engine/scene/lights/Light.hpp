@@ -61,10 +61,20 @@ public:
 	 */
 	bool castsShadow() const { return _castShadows; }
 	
+	/** Set if the light should cast shadows.
+	 \param shouldCast a boolean denoting if the light is a shadowcaster
+	*/
+	void setCastShadow(bool shouldCast) { _castShadows = shouldCast; }
+	
 	/** Get the light colored intensity.
 	 \return the light intensity
 	 */
 	const glm::vec3 & intensity() const { return _color; }
+	
+	/** Set the light colored intensity.
+	\param color the light intensity
+	*/
+	void setIntensity(const glm::vec3 & color)  { _color = color; }
 	
 	/** Get the light viewproj matrix.
 	 \return the VP matrix

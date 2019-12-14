@@ -18,7 +18,7 @@ public:
 		Common = 0,  ///< Any type of shading.
 		PBRRegular,  ///< PBR shading. \see GPU::Vert::Object_gbuffer, GPU::Frag::Object_gbuffer
 		PBRParallax, ///< PBR with parallax mapping. \see GPU::Vert::Object_parallax_gbuffer, GPU::Frag::Object_parallax_gbuffer
-		PBRNoUVs
+		PBRNoUVs 	 ///< PBR for objects with no UVs.
 	};
 
 	/** Constructor */
