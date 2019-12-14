@@ -1,9 +1,8 @@
 #version 330
 
-/// Interface block.
 in INTERFACE {
-	vec3 n;
-} In; ///< The world-space normal.
+	vec3 n; ///< The world-space normal.
+} In;
 
 uniform int matID; ///< The material index.
 

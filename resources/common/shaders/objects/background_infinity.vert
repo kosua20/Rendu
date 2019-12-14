@@ -3,10 +3,9 @@
 // Attributes
 layout(location = 0) in vec3 v; ///< Position.
 
-/// Output: uv coordinates
 out INTERFACE {
-	vec2 uv;
-} Out ; ///< vec2 uv;
+	vec2 uv; ///< UV coordinates.
+} Out;
 
 /** Output vertex as-is. We ensure the vertex will be set to the maximum depth by tweaking gl_Position.z.
  */

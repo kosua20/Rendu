@@ -4,11 +4,10 @@ layout (triangle_strip, max_vertices = 18) out; ///< Output 6 triangles.
 
 uniform mat4 vps[6]; ///< The viewproj matrices.
 
-/// Interface block.
 in GS_INTERFACE {
 	vec4 pos; ///< World position.
 	vec2 uv; ///< UV coordinates.
-} In[]; ///< vec4 pos, vec2 uv;
+} In[];
 
 out vec3 worldPos; ///< Pass the world space position along.
 out vec2 uv; ///< UV coordinates.

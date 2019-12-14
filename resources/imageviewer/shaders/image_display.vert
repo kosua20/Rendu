@@ -1,9 +1,8 @@
 #version 330
 
-/// Output: UV coordinates
 out INTERFACE {
-	vec2 uv;
-} Out ; ///< vec2 uv;
+	vec2 uv; ///< Texture coordinates.
+} Out ;
 
 uniform float screenRatio; ///< Screen h/v ratio.
 uniform float imageRatio; ///< Image h/v ratio.

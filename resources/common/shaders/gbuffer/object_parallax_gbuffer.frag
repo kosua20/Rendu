@@ -2,13 +2,12 @@
 
 #define MATERIAL_ID 2
 
-/// Input: tangent space matrix, position (view space) and uv coming from the vertex shader
 in INTERFACE {
     mat3 tbn; ///< Normal to view matrix.
 	vec3 tangentSpacePosition; ///< Tangent space position.
 	vec3 viewSpacePosition; ///< View space position.
 	vec2 uv; ///< UV coordinates.
-} In ; ///< mat3 tbn; vec3 tangentSpacePosition; vec3 viewSpacePosition; vec2 uv;
+} In ;
 
 layout(binding = 0) uniform sampler2D texture0; ///< Albedo.
 layout(binding = 1) uniform sampler2D texture1; ///< Normal map.

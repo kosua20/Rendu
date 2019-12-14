@@ -6,11 +6,10 @@ layout(location = 2) in vec2 uv; ///< UVs.
 
 uniform mat4 model; ///< The model to world transformation.
 
-/// Interface block.
 out GS_INTERFACE {
 	vec4 pos; ///< World position.
 	vec2 uv; ///< UV coordinates.
-} Out; ///< vec4 pos; vec2 uv;
+} Out;
 
 /** Apply only the world transformation to the input vertex. */
 void main(){

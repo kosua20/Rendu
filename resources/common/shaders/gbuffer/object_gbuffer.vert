@@ -10,11 +10,10 @@ layout(location = 4) in vec3 binor; ///< Binormal.
 uniform mat4 mvp; ///< MVP transformation matrix.
 uniform mat3 normalMatrix; ///< Normal transformation matrix.
 
-/// Output: tangent space matrix, position in view space and uv.
 out INTERFACE {
     mat3 tbn; ///< Normal to view matrix.
 	vec2 uv; ///< UV coordinateS.
-} Out ; ///< mat3 tbn; vec2 uv;
+} Out ;
 
 /** Apply the transformation to the input vertex.
   Compute the tangent-to-view space transformation matrix.

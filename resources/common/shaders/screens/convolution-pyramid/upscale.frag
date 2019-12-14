@@ -1,9 +1,8 @@
 #version 330
 
-/// Input: UV coordinates
 in INTERFACE {
-	vec2 uv;
-} In ; ///< vec2 uv;
+	vec2 uv; ///< UV coordinates.
+} In ;
 
 layout(binding = 0) uniform sampler2D unfilteredCurrent; ///< Current h1 filtered level.
 layout(binding = 1) uniform sampler2D filteredSmaller; ///< Previous h1+g filtered level.

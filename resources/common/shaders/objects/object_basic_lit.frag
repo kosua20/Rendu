@@ -1,9 +1,8 @@
 #version 330
 
-/// World space normal.
 in INTERFACE {
-	vec3 vn;
-} In ; ///< vec3 vn;
+	vec3 vn; ///< World space normal.
+} In ;
 
 uniform vec3 lightDir = vec3(0.577); ///< Light direction.
 

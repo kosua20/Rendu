@@ -1,8 +1,8 @@
 #version 330
-/// Input: texture coordinates.
+
 in INTERFACE {
-	vec2 uv;
-} In ; ///< vec2 uv;
+	vec2 uv; ///< UV coordinates.
+} In ;
 
 uniform bool hasMask = false; ///< Should the object alpha mask be applied.
 layout(binding = 0) uniform sampler2D mask; ///< RGBA texture.

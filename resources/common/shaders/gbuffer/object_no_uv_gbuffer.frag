@@ -2,10 +2,9 @@
 
 #define MATERIAL_ID 1 ///< The material ID.
 
-/// Input: normal in view space.
 in INTERFACE {
-	vec3 vn;
-} In; ///< vec3 nv;
+	vec3 vn; ///< Normal in view space.
+} In;
 
 layout(binding = 0) uniform sampler2D texture0; ///< Albedo.
 layout(binding = 2) uniform sampler2D texture2; ///< Effects map.

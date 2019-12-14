@@ -2,10 +2,9 @@
 
 uniform bool flip = false; ///< Flip vertically.
 
-/// Output: UV coordinates
 out INTERFACE {
-	vec2 uv;
-} Out ; ///< vec2 uv;
+	vec2 uv; ///< UV coordinates.
+} Out ;
 
 /**
   Generate one triangle covering the whole screen,

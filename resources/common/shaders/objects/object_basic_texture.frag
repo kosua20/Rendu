@@ -1,9 +1,8 @@
 #version 330
 
-/// Input: texture coordinates.
 in INTERFACE {
-	vec2 uv;
-} In ; ///< vec2 uv;
+	vec2 uv; ///< Texture coordinates.
+} In ; 
 
 layout(binding = 0) uniform sampler2D texture0; ///< Color texture.
 

@@ -6,10 +6,9 @@ layout(location = 1) in vec3 n; ///< Normal.
 uniform mat4 mvp; ///< MVP transformation matrix.
 uniform mat3 normalMatrix; ///< Normal transformation matrix.
 
-/// Output: normal in view space.
 out INTERFACE {
-    vec3 vn;
-} Out ; ///< vec3 vn;
+    vec3 vn; ///< Normal in view space.
+} Out ;
 
 /** Apply the transformation to the input vertex.
   Compute the view space normal.

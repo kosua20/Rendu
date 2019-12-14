@@ -1,9 +1,8 @@
 #version 330
 
-/// Input: UV coordinates
 in INTERFACE {
-	vec3 pos;
-} In ; ///< vec3 pos;
+	vec3 pos;  ///< World position.
+} In ;
 
 #define INV_M_PI 0.3183098862
 #define M_PI 3.1415926536

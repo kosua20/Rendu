@@ -2,10 +2,9 @@
 
 #define MATERIAL_ID 0 ///< The material ID.
 
-/// Input: position in model space
 in INTERFACE {
-	vec3 pos;
-} In ; ///< vec3 pos;
+	vec3 pos; ///< Position in model space.
+} In ;
 
 layout(binding = 0) uniform samplerCube texture0; ///< Albedo.
 

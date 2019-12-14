@@ -11,13 +11,12 @@ uniform mat4 mvp; ///< MVP transformation matrix.
 uniform mat4 mv; ///< MV transformation matrix.
 uniform mat3 normalMatrix; ///< Normal transformation matrix.
 
-/// Output: tangent space matrix, position in view space and uv.
 out INTERFACE {
     mat3 tbn; ///< Normal to view matrix.
 	vec3 tangentSpacePosition; ///< Tangent space position.
 	vec3 viewSpacePosition; ///< View space position.
 	vec2 uv; ///< UV coordinates.
-} Out ; ///< mat3 tbn; vec3 tangentSpacePosition; vec3 viewSpacePosition; vec2 uv;
+} Out ;
 
 /** Apply the transformation to the input vertex.
  Compute the tangent-to-view space transformation matrix.

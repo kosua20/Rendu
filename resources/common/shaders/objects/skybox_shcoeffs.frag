@@ -1,9 +1,8 @@
 #version 330
 
-/// Input: position in model space
 in INTERFACE {
-	vec3 pos;
-} In ; ///< vec3 pos;
+	vec3 pos; ///< Position in model space.
+} In ;
 
 uniform vec3 shCoeffs[9]; ///< SH approximation of the environment irradiance.
 

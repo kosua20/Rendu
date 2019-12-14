@@ -1,9 +1,8 @@
 #version 330
 
-/// Interpolated vertex color.
 in INTERFACE {
-	vec3 col;
-} In ; ///< vec3 col;
+	vec3 col; ///< Interpolated vertex color.
+} In ;
 
 layout(location = 0) out vec4 fragColor; ///< Color.
 

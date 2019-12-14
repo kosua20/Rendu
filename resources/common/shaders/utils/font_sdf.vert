@@ -7,10 +7,9 @@ layout(location = 2) in vec2 uv;///< Uv coordinates.
 uniform float ratio = 1.0f; ///< The screen aspect ratio.
 uniform vec2 position; ///< The position of the anchor point on screen.
 
-/// Output: UV coordinates
 out INTERFACE {
-	vec2 uv;
-} Out ; ///< vec2 uv;
+	vec2 uv; ///< Texture coordinates.
+} Out ;
 
 
 /** Compute the 2D position of the glyph on screen. */

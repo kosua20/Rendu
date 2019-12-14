@@ -2,10 +2,12 @@
 
 in vec3 worldPos; ///< The world space position of the fragment.
 in vec2 uv; ///< UV coordinates.
-uniform bool hasMask = false; ///< Should the object alpha mask be applied.
+
 layout(binding = 0) uniform sampler2D mask;  ///< RGBA texture.
 uniform vec3 lightPositionWorld; ///< The world space position of the light.
 uniform float lightFarPlane; ///< The light projection matrix far plane.
+uniform bool hasMask = false; ///< Should the object alpha mask be applied.
+
 layout(location = 0) out vec2 fragColor; ///< World space depth and depth squared.
 
 /** Compute the depth in world space, normalized by the far plane distance */

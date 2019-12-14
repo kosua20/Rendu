@@ -1,10 +1,8 @@
 #version 330
 
-/// Input: UV coordinates
 in INTERFACE {
-	vec2 uv;
-} In ; ///< vec2 uv;
-
+	vec2 uv; ///< Texture coordinates.
+} In ;
 
 #define INV_M_PI 0.3183098862
 #define M_PI 3.1415926536

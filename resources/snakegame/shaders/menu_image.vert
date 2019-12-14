@@ -7,10 +7,9 @@ uniform vec2 position; ///< Image position.
 uniform vec2 scale; ///< Image scale.
 uniform float depth; ///< Image Z-layer.
 
-/// Output: UV coordinates
 out INTERFACE {
-	vec2 uv;
-} Out ; ///< vec2 uv;
+	vec2 uv; ///< Texture coordinates.
+} Out ;
 
 /** Compute the position of the menu image on screen. */
 void main(){

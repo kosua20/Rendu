@@ -1,9 +1,8 @@
 #version 330
 
-/// Input: UV coordinates
 in INTERFACE {
-	vec2 uv;
-} In ; ///< vec2 uv;
+	vec2 uv; ///< Texture coordinates.
+} In ;
 
 uniform vec4 color; ///< The inner glyph color.
 uniform vec4 edgeColor; ///< The outer glyph color.

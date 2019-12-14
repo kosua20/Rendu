@@ -1,10 +1,9 @@
 #version 330
 
-/// Interface block.
 in INTERFACE {
 	vec3 vn; ///< World space normal.
 	vec2 uv; ///< Texture coordinates.
-} In ; ///< vec3 vn; vec2 uv;
+} In ;
 
 uniform vec3 lightDir = vec3(0.577); ///< Light direction.
 

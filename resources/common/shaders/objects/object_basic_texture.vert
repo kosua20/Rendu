@@ -7,10 +7,9 @@ layout(location = 2) in vec2 uv;///< UV.
 // Uniform: the MVP.
 uniform mat4 mvp; ///< The transformation matrix.
 
-/// Output: texture coordinates.
 out INTERFACE {
-	vec2 uv;
-} Out ; ///< vec2 uv;
+	vec2 uv; ///< Texture coordinates.
+} Out ;
 
 /** Apply the MVP transformation to the input vertex. */
 void main(){

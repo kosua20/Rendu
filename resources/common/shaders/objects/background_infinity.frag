@@ -1,9 +1,8 @@
 #version 330
 
-/// Input: uv coordinates.
 in INTERFACE {
-	vec2 uv; 
-} In ; ///< vec2 uv;
+	vec2 uv; ///< UV coordinates.
+} In;
 
 layout(binding = 0) uniform sampler2D texture0; ///< Image.
 uniform vec3 bgColor = vec3(0.0); ///< Background color.

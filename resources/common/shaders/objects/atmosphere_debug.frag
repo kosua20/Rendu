@@ -1,9 +1,8 @@
 #version 330
 
-/// Input: uv coordinates.
 in INTERFACE {
-	vec2 uv; 
-} In ; ///< vec2 uv;
+	vec2 uv; ///< UV coordinates.
+} In;
 
 uniform mat4 clipToWorld; ///< Clip-to-world space transformation matrix.
 uniform vec3 viewPos; ///< The position in view space.
