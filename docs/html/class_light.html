@@ -127,8 +127,12 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ae9f9feb54f05a4716057cbcc90d7ef57"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a624609699130154b71247fb2193b108d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_light.html#a624609699130154b71247fb2193b108d">castsShadow</a> () const</td></tr>
 <tr class="separator:a624609699130154b71247fb2193b108d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afa3c58eaa2670e8b268919ad09de8147"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_light.html#afa3c58eaa2670e8b268919ad09de8147">setCastShadow</a> (bool shouldCast)</td></tr>
+<tr class="separator:afa3c58eaa2670e8b268919ad09de8147"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2912cd5f16e929e60661796f233e8e8e"><td class="memItemLeft" align="right" valign="top">const glm::vec3 &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_light.html#a2912cd5f16e929e60661796f233e8e8e">intensity</a> () const</td></tr>
 <tr class="separator:a2912cd5f16e929e60661796f233e8e8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a91e1c518722138557e2733c2e474ee1f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_light.html#a91e1c518722138557e2733c2e474ee1f">setIntensity</a> (const glm::vec3 &amp;color)</td></tr>
+<tr class="separator:a91e1c518722138557e2733c2e474ee1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6abd01e5a32c177e826b00e0fc1cdd16"><td class="memItemLeft" align="right" valign="top">const glm::mat4 &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_light.html#a6abd01e5a32c177e826b00e0fc1cdd16">vp</a> () const</td></tr>
 <tr class="separator:a6abd01e5a32c177e826b00e0fc1cdd16"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a81e19df0c30d2908887566fc194390b0"><td class="memItemLeft" align="right" valign="top">const glm::mat4 &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_light.html#a81e19df0c30d2908887566fc194390b0">model</a> () const</td></tr>
@@ -645,6 +649,70 @@ animations:
   </dd>
 </dl>
 <dl class="section warning"><dt>Warning</dt><dd>No check on texture type is performed. </dd></dl>
+
+</div>
+</div>
+<a id="afa3c58eaa2670e8b268919ad09de8147"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afa3c58eaa2670e8b268919ad09de8147">&#9670;&nbsp;</a></span>setCastShadow()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Light::setCastShadow </td>
+          <td>(</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>shouldCast</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Set if the light should cast shadows. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">shouldCast</td><td>a boolean denoting if the light is a shadowcaster </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a91e1c518722138557e2733c2e474ee1f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a91e1c518722138557e2733c2e474ee1f">&#9670;&nbsp;</a></span>setIntensity()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Light::setIntensity </td>
+          <td>(</td>
+          <td class="paramtype">const glm::vec3 &amp;&#160;</td>
+          <td class="paramname"><em>color</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Set the light colored intensity. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">color</td><td>the light intensity </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

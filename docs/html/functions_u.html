@@ -144,8 +144,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li>uncharted2()
 : <a class="el" href="class_g_p_u_1_1_frag_1_1_tonemap.html#a0276d92ae75892cb47084129a2436530">GPU::Frag::Tonemap</a>
 </li>
+<li>unfilteredCurrent
+: <a class="el" href="class_g_p_u_1_1_frag_1_1_upscale.html#ab37afbdc67cf30b1cb93a1dfdb118657">GPU::Frag::Upscale</a>
+</li>
 <li>uniform()
-: <a class="el" href="class_program.html#aaf59f1c49a87713355511b1aec55b8ce">Program</a>
+: <a class="el" href="class_program.html#a8ca4b283fe74d2b601d5fb04b34c422e">Program</a>
 </li>
 <li>unknownCoord
 : <a class="el" href="class_g_p_u_1_1_frag_1_1_extract__seeds.html#a78f54be6e520cd14360006d48033ea28">GPU::Frag::Extract_seeds</a>
@@ -225,15 +228,66 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 , <a class="el" href="class_g_p_u_1_1_frag_1_1_background__infinity.html#ab5e78526d854328593ce62381179adae">GPU::Frag::Background_infinity</a>
 </li>
 <li>uv
-: <a class="el" href="class_g_p_u_1_1_frag_1_1_light__shadow__linear.html#a42076627935543b3f9d94292e4435ac8">GPU::Frag::Light_shadow_linear</a>
-, <a class="el" href="class_g_p_u_1_1_frag_1_1_object__basic__lit__texture.html#a4b564fb87d86e990f4e4cc27769112d5">GPU::Frag::Object_basic_lit_texture</a>
-, <a class="el" href="class_g_p_u_1_1_frag_1_1_object__gbuffer.html#aec5b44f0726390da518e903a67de6fdd">GPU::Frag::Object_gbuffer</a>
-, <a class="el" href="class_g_p_u_1_1_frag_1_1_object__parallax__gbuffer.html#af937d68014f334b7e3a6626b694eb33d">GPU::Frag::Object_parallax_gbuffer</a>
-, <a class="el" href="class_g_p_u_1_1_geom_1_1_object__layer.html#a329bd21ac84b522a78cef985aa9c37fa">GPU::Geom::Object_layer</a>
-, <a class="el" href="class_g_p_u_1_1_vert_1_1_object__basic__lit__texture.html#ae00afab81ea9915584da91bd3203d9cf">GPU::Vert::Object_basic_lit_texture</a>
-, <a class="el" href="class_g_p_u_1_1_vert_1_1_object__gbuffer.html#acae6dd645361760f0a5302f70d936604">GPU::Vert::Object_gbuffer</a>
-, <a class="el" href="class_g_p_u_1_1_vert_1_1_object__layer.html#af0b417e052c65262e222cde21d1ee5c5">GPU::Vert::Object_layer</a>
-, <a class="el" href="class_g_p_u_1_1_vert_1_1_object__parallax__gbuffer.html#a99568d392369b97d8364aed741449248">GPU::Vert::Object_parallax_gbuffer</a>
+: <a class="el" href="class_g_p_u_1_1_frag_1_1_ambient.html#a441046016b70098bfefb935409ffbe7d">GPU::Frag::Ambient</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_atmosphere.html#a914228dc0015f23f44e8f9d443cad1dd">GPU::Frag::Atmosphere</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_atmosphere__debug.html#ae84bb29ba0ed92ff965521a07ff85b45">GPU::Frag::Atmosphere_debug</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_atmosphere__gbuffer.html#aacf4683e857eb79931a81d4e933598cf">GPU::Frag::Atmosphere_gbuffer</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_background__gbuffer.html#ac40a5668c84c530b043f91772fa1d43e">GPU::Frag::Background_gbuffer</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_background__infinity.html#a0ef88919cc626ce1060e2528b3b0f290">GPU::Frag::Background_infinity</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_bloom.html#ab50ff273ac5d3e98757669ee62fb4b17">GPU::Frag::Bloom</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_bloom__composite.html#ab75f9a36740d4579e8bc332e77246df2">GPU::Frag::Bloom_composite</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_blur__dual__filter__down.html#a4661ae0238cc34c2c263e72fa7d41836">GPU::Frag::Blur_dual_filter_down</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_blur__dual__filter__up.html#a9ff8622dbc8bffefcf9272621877186e">GPU::Frag::Blur_dual_filter_up</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_blur__gaussian.html#aa63e7530b97a2c3e63f39ab8b8f1138a">GPU::Frag::Blur_gaussian</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_box__blur__1.html#a3d070ddb199d0da40c594b97acb9bea9">GPU::Frag::Box_blur_1</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_box__blur__2.html#a45cbd51c9a88f6e722fed2eddc6d2cdf">GPU::Frag::Box_blur_2</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_box__blur__3.html#adbdf464590de20bd4650062de2d29169">GPU::Frag::Box_blur_3</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_box__blur__4.html#a87ef99c639dc24684d3adf55c7d71abc">GPU::Frag::Box_blur_4</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_box__blur__approx__1.html#a22195dd330421a0e86a0509791b68fc8">GPU::Frag::Box_blur_approx_1</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_box__blur__approx__2.html#a05402965b0000e2b64e02d54b75069bd">GPU::Frag::Box_blur_approx_2</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_box__blur__approx__3.html#a7797d6f17241bd11c3cb84b424ad38cf">GPU::Frag::Box_blur_approx_3</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_box__blur__approx__4.html#abddb1bd5f597e22eb02de734ae51a745">GPU::Frag::Box_blur_approx_4</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_brdf__sampler.html#ae9c99768472eb39e560ec0128c014304">GPU::Frag::Brdf_sampler</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_color__seeds.html#a0adbfcf1aa7b708d5fbae1486e8b0fd5">GPU::Frag::Color_seeds</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_directional__light.html#ae737b41c99075728a2bdc761384e7785">GPU::Frag::Directional_light</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_distance__seeds.html#a9d999df3a8e6398706dea061f524d892">GPU::Frag::Distance_seeds</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_downscale.html#ac11041743308945197ee8663715d3095">GPU::Frag::Downscale</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_extract__seeds.html#a0f13c5183c432c1c538cc2c1875c1338">GPU::Frag::Extract_seeds</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_fill__boundary.html#a85617303c8a2a49a714d0e01c5e36faa">GPU::Frag::Fill_boundary</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_fill__combine.html#a173904d8b0f3cfaac32834eee8b7f632">GPU::Frag::Fill_combine</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_filter.html#aca09e4836a7b7213ce548aa461897953">GPU::Frag::Filter</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_final__screenquad.html#a7271dbd80e8d6d4e90a2236b4134751e">GPU::Frag::Final_screenquad</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_flood__fill.html#a7355e3dda13f529d5675655798721266">GPU::Frag::Flood_fill</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_font__sdf.html#a08faa37752cd0439af010cbb140a515d">GPU::Frag::Font_sdf</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_fxaa.html#a2f9961cb464ef807e27de10e0393fc84">GPU::Frag::Fxaa</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_game__composite.html#a427a76f74b20eb16d9fc6173523fc77b">GPU::Frag::Game_composite</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_image__display.html#a96309823d2f5ec4c8c0f5b53854d785d">GPU::Frag::Image_display</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_laplacian.html#a0826e4263434397325328ab09d48c940">GPU::Frag::Laplacian</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_light__shadow.html#ad5f64c3f4773442221274c88751c4b7f">GPU::Frag::Light_shadow</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_light__shadow__linear.html#a42076627935543b3f9d94292e4435ac8">GPU::Frag::Light_shadow_linear</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_light__shadow__variance.html#a74102ddeb1006606cd6e62df7dbd3db8">GPU::Frag::Light_shadow_variance</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_menu__image.html#a6e4e3b46341fb87384bc58819b78b03f">GPU::Frag::Menu_image</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_object__basic__lit__texture.html#ac988db29c5569dd3a1600937565ed7b9">GPU::Frag::Object_basic_lit_texture</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_object__basic__texture.html#a1fbb8b31f8881695c634a19081ec57f1">GPU::Frag::Object_basic_texture</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_object__gbuffer.html#aa0f0cabe417008988212929904d883fe">GPU::Frag::Object_gbuffer</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_object__parallax__gbuffer.html#af267debdf81e558f1ce4cbbff0d6d592">GPU::Frag::Object_parallax_gbuffer</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_passthrough.html#ab0d01b219a70395326ce76d0a7b14b07">GPU::Frag::Passthrough</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_passthrough__pixelperfect.html#ad33a77fde1b7ae6ff11cbf72a2b761e6">GPU::Frag::Passthrough_pixelperfect</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_passthrough__shift.html#a93e09313c17d3161908a1713a979cf45">GPU::Frag::Passthrough_shift</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_ssao.html#ae1fa99ee9b0796423523dfe5e01dc836">GPU::Frag::Ssao</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_tonemap.html#ada6d627afa6301928b782869d87ae597">GPU::Frag::Tonemap</a>
+, <a class="el" href="class_g_p_u_1_1_frag_1_1_upscale.html#a3a09d10ef789f3ff02ab57b4d0fe1f36">GPU::Frag::Upscale</a>
+, <a class="el" href="class_g_p_u_1_1_geom_1_1_object__layer.html#a93e046fb133058fd610ac39caf89801b">GPU::Geom::Object_layer</a>
+, <a class="el" href="class_g_p_u_1_1_vert_1_1_background__infinity.html#a007885a108a3a11432e3e3f9f5c239ef">GPU::Vert::Background_infinity</a>
+, <a class="el" href="class_g_p_u_1_1_vert_1_1_font__sdf.html#a4b52fa26f11a2aa7fb8e60d506d1d671">GPU::Vert::Font_sdf</a>
+, <a class="el" href="class_g_p_u_1_1_vert_1_1_image__display.html#ad4cce92a456c6c54a70a130a8b50008b">GPU::Vert::Image_display</a>
+, <a class="el" href="class_g_p_u_1_1_vert_1_1_menu__image.html#ab9fcd3a0154f9e343056505a0c23894e">GPU::Vert::Menu_image</a>
+, <a class="el" href="class_g_p_u_1_1_vert_1_1_object__basic__lit__texture.html#a7a9f372bc796b5ddb76a31af27e530c3">GPU::Vert::Object_basic_lit_texture</a>
+, <a class="el" href="class_g_p_u_1_1_vert_1_1_object__basic__texture.html#aed0672e0dd2073303bfb8e9e90e64940">GPU::Vert::Object_basic_texture</a>
+, <a class="el" href="class_g_p_u_1_1_vert_1_1_object__gbuffer.html#a55f6c24c03f42d2634f9b809a830c958">GPU::Vert::Object_gbuffer</a>
+, <a class="el" href="class_g_p_u_1_1_vert_1_1_object__layer.html#a470569618313b0461f4c967e3d3e7067">GPU::Vert::Object_layer</a>
+, <a class="el" href="class_g_p_u_1_1_vert_1_1_object__parallax__gbuffer.html#ae6294aa7d98998e50ba7ed3b234cde5f">GPU::Vert::Object_parallax_gbuffer</a>
+, <a class="el" href="class_g_p_u_1_1_vert_1_1_passthrough.html#ab3aa275d275b8c621b4f2a164d9c25ab">GPU::Vert::Passthrough</a>
 </li>
 </ul>
 </div><!-- contents -->

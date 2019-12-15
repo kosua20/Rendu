@@ -109,10 +109,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:acef1baab245d10c4b703dd8d35add751"><td class="memItemLeft" align="right" valign="top"><a id="acef1baab245d10c4b703dd8d35add751"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_1_1_frag_1_1_atmosphere__debug.html#acef1baab245d10c4b703dd8d35add751">layout</a> (location=0) out vec4 fragColor</td></tr>
-<tr class="memdesc:acef1baab245d10c4b703dd8d35add751"><td class="mdescLeft">&#160;</td><td class="mdescRight">Color. <br /></td></tr>
-<tr class="separator:acef1baab245d10c4b703dd8d35add751"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0f66ebdfc2c12876ac27c949ba392b14"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_1_1_frag_1_1_atmosphere__debug.html#a0f66ebdfc2c12876ac27c949ba392b14">intersects</a> (vec3 rayOrigin, vec3 rayDir, float radius, out vec2 roots)</td></tr>
 <tr class="separator:a0f66ebdfc2c12876ac27c949ba392b14"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a38a5f5525ffa45fe4a588075357e89bf"><td class="memItemLeft" align="right" valign="top">vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_1_1_frag_1_1_atmosphere__debug.html#a38a5f5525ffa45fe4a588075357e89bf">computeEstimate</a> (vec3 rayOrigin, vec3 rayDir, vec3 sunDir)</td></tr>
@@ -122,13 +118,10 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:ac031800f3aea0ccd825f56d0557c6b67"><td class="memItemLeft" align="right" valign="top">in&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_1_1_frag_1_1_atmosphere__debug.html#ac031800f3aea0ccd825f56d0557c6b67">INTERFACE</a></td></tr>
-<tr class="memdesc:ac031800f3aea0ccd825f56d0557c6b67"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_input.html" title="The input manager is responsible for updating the internal input states (keyboard,...">Input</a>: uv coordinates.  <a href="class_g_p_u_1_1_frag_1_1_atmosphere__debug.html#ac031800f3aea0ccd825f56d0557c6b67">More...</a><br /></td></tr>
-<tr class="separator:ac031800f3aea0ccd825f56d0557c6b67"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3210807e9aa144fb5700086885c53d5e"><td class="memItemLeft" align="right" valign="top"><a id="a3210807e9aa144fb5700086885c53d5e"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_1_1_frag_1_1_atmosphere__debug.html#a3210807e9aa144fb5700086885c53d5e">In</a></td></tr>
-<tr class="memdesc:a3210807e9aa144fb5700086885c53d5e"><td class="mdescLeft">&#160;</td><td class="mdescRight">vec2 uv; <br /></td></tr>
-<tr class="separator:a3210807e9aa144fb5700086885c53d5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae84bb29ba0ed92ff965521a07ff85b45"><td class="memItemLeft" align="right" valign="top"><a id="ae84bb29ba0ed92ff965521a07ff85b45"></a>
+in vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_1_1_frag_1_1_atmosphere__debug.html#ae84bb29ba0ed92ff965521a07ff85b45">uv</a></td></tr>
+<tr class="memdesc:ae84bb29ba0ed92ff965521a07ff85b45"><td class="mdescLeft">&#160;</td><td class="mdescRight">UV coordinates. <br /></td></tr>
+<tr class="separator:ae84bb29ba0ed92ff965521a07ff85b45"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0f98a5a75e6de551e3d18f7f889fbf31"><td class="memItemLeft" align="right" valign="top"><a id="a0f98a5a75e6de551e3d18f7f889fbf31"></a>
 uniform mat4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_1_1_frag_1_1_atmosphere__debug.html#a0f98a5a75e6de551e3d18f7f889fbf31">clipToWorld</a></td></tr>
 <tr class="memdesc:a0f98a5a75e6de551e3d18f7f889fbf31"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clip-to-world space transformation matrix. <br /></td></tr>
@@ -161,6 +154,10 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_1_1_frag_1_1_atmosphere__debug.html#a22d24c082dc8f6913ee34afd564458a8">sunAngularRadiusCos</a> = 0.998</td></tr>
 <tr class="memdesc:a22d24c082dc8f6913ee34afd564458a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cosine of the sun angular radius. <br /></td></tr>
 <tr class="separator:a22d24c082dc8f6913ee34afd564458a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9b035f4c222491a8995a9b5e076a265b"><td class="memItemLeft" align="right" valign="top"><a id="a9b035f4c222491a8995a9b5e076a265b"></a>
+out vec4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_1_1_frag_1_1_atmosphere__debug.html#a9b035f4c222491a8995a9b5e076a265b">fragColor</a></td></tr>
+<tr class="memdesc:a9b035f4c222491a8995a9b5e076a265b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Color. <br /></td></tr>
+<tr class="separator:a9b035f4c222491a8995a9b5e076a265b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>"Atmosphere debug" fragment shader. </p>
@@ -298,25 +295,6 @@ const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 </table>
 </div><div class="memdoc">
 <p>Simulate sky color based on an atmospheric scattering approximate model. </p>
-
-</div>
-</div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a id="ac031800f3aea0ccd825f56d0557c6b67"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac031800f3aea0ccd825f56d0557c6b67">&#9670;&nbsp;</a></span>INTERFACE</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">in GPU::Frag::Atmosphere_debug::INTERFACE</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">{</div>
-<div class="line">    vec2 uv</div>
-</div><!-- fragment -->
-<p><a class="el" href="class_input.html" title="The input manager is responsible for updating the internal input states (keyboard,...">Input</a>: uv coordinates. </p>
 
 </div>
 </div>

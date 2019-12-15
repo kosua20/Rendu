@@ -109,26 +109,23 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:afe9385e4c88dcf428a34ec65bcc424c8"><td class="memItemLeft" align="right" valign="top"><a id="afe9385e4c88dcf428a34ec65bcc424c8"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_1_1_vert_1_1_skybox__infinity.html#afe9385e4c88dcf428a34ec65bcc424c8">layout</a> (location=0) in vec3 v</td></tr>
-<tr class="memdesc:afe9385e4c88dcf428a34ec65bcc424c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Position. <br /></td></tr>
-<tr class="separator:afe9385e4c88dcf428a34ec65bcc424c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a00ba171311d68928a821b8887e9fd709"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_1_1_vert_1_1_skybox__infinity.html#a00ba171311d68928a821b8887e9fd709">main</a> ()</td></tr>
 <tr class="separator:a00ba171311d68928a821b8887e9fd709"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
+<tr class="memitem:ad976d59e0c99b07d340c6299c3cd8cf8"><td class="memItemLeft" align="right" valign="top"><a id="ad976d59e0c99b07d340c6299c3cd8cf8"></a>
+in vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_1_1_vert_1_1_skybox__infinity.html#ad976d59e0c99b07d340c6299c3cd8cf8">v</a></td></tr>
+<tr class="memdesc:ad976d59e0c99b07d340c6299c3cd8cf8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Position. <br /></td></tr>
+<tr class="separator:ad976d59e0c99b07d340c6299c3cd8cf8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a15cc3054ec289f5efca60864ab0b130d"><td class="memItemLeft" align="right" valign="top"><a id="a15cc3054ec289f5efca60864ab0b130d"></a>
 uniform mat4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_1_1_vert_1_1_skybox__infinity.html#a15cc3054ec289f5efca60864ab0b130d">mvp</a></td></tr>
 <tr class="memdesc:a15cc3054ec289f5efca60864ab0b130d"><td class="mdescLeft">&#160;</td><td class="mdescRight">MVP transformation matrix. <br /></td></tr>
 <tr class="separator:a15cc3054ec289f5efca60864ab0b130d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afe28249e60ff61b397fcf058dc09ffa5"><td class="memItemLeft" align="right" valign="top">out&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_1_1_vert_1_1_skybox__infinity.html#afe28249e60ff61b397fcf058dc09ffa5">INTERFACE</a></td></tr>
-<tr class="memdesc:afe28249e60ff61b397fcf058dc09ffa5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Output: position in model space.  <a href="class_g_p_u_1_1_vert_1_1_skybox__infinity.html#afe28249e60ff61b397fcf058dc09ffa5">More...</a><br /></td></tr>
-<tr class="separator:afe28249e60ff61b397fcf058dc09ffa5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a73dc395ee53d01678efda4967ea944e3"><td class="memItemLeft" align="right" valign="top"><a id="a73dc395ee53d01678efda4967ea944e3"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_1_1_vert_1_1_skybox__infinity.html#a73dc395ee53d01678efda4967ea944e3">Out</a></td></tr>
-<tr class="memdesc:a73dc395ee53d01678efda4967ea944e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">vec3 pos; <br /></td></tr>
-<tr class="separator:a73dc395ee53d01678efda4967ea944e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a08835c135ae24c520595e2f4c780f3ea"><td class="memItemLeft" align="right" valign="top"><a id="a08835c135ae24c520595e2f4c780f3ea"></a>
+out vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_1_1_vert_1_1_skybox__infinity.html#a08835c135ae24c520595e2f4c780f3ea">pos</a></td></tr>
+<tr class="memdesc:a08835c135ae24c520595e2f4c780f3ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Position in model space. <br /></td></tr>
+<tr class="separator:a08835c135ae24c520595e2f4c780f3ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>"Skybox infinity" vertex shader. </p>
@@ -156,25 +153,6 @@ uniform mat4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 </table>
 </div><div class="memdoc">
 <p>Apply the transformation to the input vertex, treating it as a vector to ignore the translation part and keep it centered. We also ensure the vertex will be set to the maximum depth by tweaking gl_Position.z. </p>
-
-</div>
-</div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a id="afe28249e60ff61b397fcf058dc09ffa5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afe28249e60ff61b397fcf058dc09ffa5">&#9670;&nbsp;</a></span>INTERFACE</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">out GPU::Vert::Skybox_infinity::INTERFACE</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">{</div>
-<div class="line">    vec3 pos</div>
-</div><!-- fragment -->
-<p>Output: position in model space. </p>
 
 </div>
 </div>

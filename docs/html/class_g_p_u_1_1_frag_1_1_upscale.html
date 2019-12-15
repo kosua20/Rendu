@@ -109,18 +109,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a30576c056bb6cc23043042655b40b2a0"><td class="memItemLeft" align="right" valign="top"><a id="a30576c056bb6cc23043042655b40b2a0"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_1_1_frag_1_1_upscale.html#a30576c056bb6cc23043042655b40b2a0">layout</a> (binding=0) uniform sampler2D unfilteredCurrent</td></tr>
-<tr class="memdesc:a30576c056bb6cc23043042655b40b2a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current h1 filtered level. <br /></td></tr>
-<tr class="separator:a30576c056bb6cc23043042655b40b2a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afd1d5bbbdfd84bc2a5dcdeda2fb43796"><td class="memItemLeft" align="right" valign="top"><a id="afd1d5bbbdfd84bc2a5dcdeda2fb43796"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_1_1_frag_1_1_upscale.html#afd1d5bbbdfd84bc2a5dcdeda2fb43796">layout</a> (binding=1) uniform sampler2D filteredSmaller</td></tr>
-<tr class="memdesc:afd1d5bbbdfd84bc2a5dcdeda2fb43796"><td class="mdescLeft">&#160;</td><td class="mdescRight">Previous h1+g filtered level. <br /></td></tr>
-<tr class="separator:afd1d5bbbdfd84bc2a5dcdeda2fb43796"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6331a85502915dd27b8dced6658972ae"><td class="memItemLeft" align="right" valign="top"><a id="a6331a85502915dd27b8dced6658972ae"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_1_1_frag_1_1_upscale.html#a6331a85502915dd27b8dced6658972ae">layout</a> (location=0) out vec4 fragColor</td></tr>
-<tr class="memdesc:a6331a85502915dd27b8dced6658972ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Color. <br /></td></tr>
-<tr class="separator:a6331a85502915dd27b8dced6658972ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa7ada756903151a8867dc21684fb8984"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_1_1_frag_1_1_upscale.html#aa7ada756903151a8867dc21684fb8984">isOutside</a> (ivec2 pos, ivec2 size)</td></tr>
 <tr class="separator:aa7ada756903151a8867dc21684fb8984"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9ef5f9b67fcb560ff33c2c0c80751282"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_1_1_frag_1_1_upscale.html#a9ef5f9b67fcb560ff33c2c0c80751282">main</a> ()</td></tr>
@@ -128,13 +116,22 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a5ba45c4f3a8a0d7f00ab0282cdb0cb1a"><td class="memItemLeft" align="right" valign="top">in&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_1_1_frag_1_1_upscale.html#a5ba45c4f3a8a0d7f00ab0282cdb0cb1a">INTERFACE</a></td></tr>
-<tr class="memdesc:a5ba45c4f3a8a0d7f00ab0282cdb0cb1a"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_input.html" title="The input manager is responsible for updating the internal input states (keyboard,...">Input</a>: UV coordinates.  <a href="class_g_p_u_1_1_frag_1_1_upscale.html#a5ba45c4f3a8a0d7f00ab0282cdb0cb1a">More...</a><br /></td></tr>
-<tr class="separator:a5ba45c4f3a8a0d7f00ab0282cdb0cb1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae697ecbe4b4d792064e82e92161e05b4"><td class="memItemLeft" align="right" valign="top"><a id="ae697ecbe4b4d792064e82e92161e05b4"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_1_1_frag_1_1_upscale.html#ae697ecbe4b4d792064e82e92161e05b4">In</a></td></tr>
-<tr class="memdesc:ae697ecbe4b4d792064e82e92161e05b4"><td class="mdescLeft">&#160;</td><td class="mdescRight">vec2 uv; <br /></td></tr>
-<tr class="separator:ae697ecbe4b4d792064e82e92161e05b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3a09d10ef789f3ff02ab57b4d0fe1f36"><td class="memItemLeft" align="right" valign="top"><a id="a3a09d10ef789f3ff02ab57b4d0fe1f36"></a>
+in vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_1_1_frag_1_1_upscale.html#a3a09d10ef789f3ff02ab57b4d0fe1f36">uv</a></td></tr>
+<tr class="memdesc:a3a09d10ef789f3ff02ab57b4d0fe1f36"><td class="mdescLeft">&#160;</td><td class="mdescRight">UV coordinates. <br /></td></tr>
+<tr class="separator:a3a09d10ef789f3ff02ab57b4d0fe1f36"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab37afbdc67cf30b1cb93a1dfdb118657"><td class="memItemLeft" align="right" valign="top"><a id="ab37afbdc67cf30b1cb93a1dfdb118657"></a>
+uniform sampler2D&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_1_1_frag_1_1_upscale.html#ab37afbdc67cf30b1cb93a1dfdb118657">unfilteredCurrent</a></td></tr>
+<tr class="memdesc:ab37afbdc67cf30b1cb93a1dfdb118657"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current h1 filtered level. <br /></td></tr>
+<tr class="separator:ab37afbdc67cf30b1cb93a1dfdb118657"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1d19272b2837613f60fc61db552775e7"><td class="memItemLeft" align="right" valign="top"><a id="a1d19272b2837613f60fc61db552775e7"></a>
+uniform sampler2D&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_1_1_frag_1_1_upscale.html#a1d19272b2837613f60fc61db552775e7">filteredSmaller</a></td></tr>
+<tr class="memdesc:a1d19272b2837613f60fc61db552775e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Previous h1+g filtered level. <br /></td></tr>
+<tr class="separator:a1d19272b2837613f60fc61db552775e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4fe20f938ecc73b172f3804628b34013"><td class="memItemLeft" align="right" valign="top"><a id="a4fe20f938ecc73b172f3804628b34013"></a>
+out vec4&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_1_1_frag_1_1_upscale.html#a4fe20f938ecc73b172f3804628b34013">fragColor</a></td></tr>
+<tr class="memdesc:a4fe20f938ecc73b172f3804628b34013"><td class="mdescLeft">&#160;</td><td class="mdescRight">Color. <br /></td></tr>
+<tr class="separator:a4fe20f938ecc73b172f3804628b34013"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a960a89627d5471b09d73f2210bef8572"><td class="memItemLeft" align="right" valign="top"><a id="a960a89627d5471b09d73f2210bef8572"></a>
 uniform float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_1_1_frag_1_1_upscale.html#a960a89627d5471b09d73f2210bef8572">h1</a> [5]</td></tr>
 <tr class="memdesc:a960a89627d5471b09d73f2210bef8572"><td class="mdescLeft">&#160;</td><td class="mdescRight">h1 filter parameters. <br /></td></tr>
@@ -218,25 +215,6 @@ uniform float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
 </table>
 </div><div class="memdoc">
 <p>Combine previous level filtered with h2 (applying a 0-filled upscaling) and the current level filtered with g. </p>
-
-</div>
-</div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a id="a5ba45c4f3a8a0d7f00ab0282cdb0cb1a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5ba45c4f3a8a0d7f00ab0282cdb0cb1a">&#9670;&nbsp;</a></span>INTERFACE</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">in GPU::Frag::Upscale::INTERFACE</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">{</div>
-<div class="line">    vec2 uv</div>
-</div><!-- fragment -->
-<p><a class="el" href="class_input.html" title="The input manager is responsible for updating the internal input states (keyboard,...">Input</a>: UV coordinates. </p>
 
 </div>
 </div>

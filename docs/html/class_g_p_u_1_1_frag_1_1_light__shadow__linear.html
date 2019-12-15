@@ -109,14 +109,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a4c0f3a16b1293b461729095f9619758c"><td class="memItemLeft" align="right" valign="top"><a id="a4c0f3a16b1293b461729095f9619758c"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_1_1_frag_1_1_light__shadow__linear.html#a4c0f3a16b1293b461729095f9619758c">layout</a> (binding=0) uniform sampler2D mask</td></tr>
-<tr class="memdesc:a4c0f3a16b1293b461729095f9619758c"><td class="mdescLeft">&#160;</td><td class="mdescRight">RGBA texture. <br /></td></tr>
-<tr class="separator:a4c0f3a16b1293b461729095f9619758c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aad833333b0d657e9ef5a78ca38b5c8de"><td class="memItemLeft" align="right" valign="top"><a id="aad833333b0d657e9ef5a78ca38b5c8de"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_1_1_frag_1_1_light__shadow__linear.html#aad833333b0d657e9ef5a78ca38b5c8de">layout</a> (location=0) out vec2 fragColor</td></tr>
-<tr class="memdesc:aad833333b0d657e9ef5a78ca38b5c8de"><td class="mdescLeft">&#160;</td><td class="mdescRight">World space depth and depth squared. <br /></td></tr>
-<tr class="separator:aad833333b0d657e9ef5a78ca38b5c8de"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8cd31d440c4c5b7e9b3459329e07cf8e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_1_1_frag_1_1_light__shadow__linear.html#a8cd31d440c4c5b7e9b3459329e07cf8e">main</a> ()</td></tr>
 <tr class="separator:a8cd31d440c4c5b7e9b3459329e07cf8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -130,10 +122,10 @@ in vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 in vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_1_1_frag_1_1_light__shadow__linear.html#a42076627935543b3f9d94292e4435ac8">uv</a></td></tr>
 <tr class="memdesc:a42076627935543b3f9d94292e4435ac8"><td class="mdescLeft">&#160;</td><td class="mdescRight">UV coordinates. <br /></td></tr>
 <tr class="separator:a42076627935543b3f9d94292e4435ac8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab3b99918e8b4ff2d3990a0dbd8f50a9a"><td class="memItemLeft" align="right" valign="top"><a id="ab3b99918e8b4ff2d3990a0dbd8f50a9a"></a>
-uniform bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_1_1_frag_1_1_light__shadow__linear.html#ab3b99918e8b4ff2d3990a0dbd8f50a9a">hasMask</a> = false</td></tr>
-<tr class="memdesc:ab3b99918e8b4ff2d3990a0dbd8f50a9a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Should the object alpha mask be applied. <br /></td></tr>
-<tr class="separator:ab3b99918e8b4ff2d3990a0dbd8f50a9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3ffd25444c6fdd844b7d93855c66e18c"><td class="memItemLeft" align="right" valign="top"><a id="a3ffd25444c6fdd844b7d93855c66e18c"></a>
+uniform sampler2D&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_1_1_frag_1_1_light__shadow__linear.html#a3ffd25444c6fdd844b7d93855c66e18c">mask</a></td></tr>
+<tr class="memdesc:a3ffd25444c6fdd844b7d93855c66e18c"><td class="mdescLeft">&#160;</td><td class="mdescRight">RGBA texture. <br /></td></tr>
+<tr class="separator:a3ffd25444c6fdd844b7d93855c66e18c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a43dc676f59d5603c7490dd326d01cb72"><td class="memItemLeft" align="right" valign="top"><a id="a43dc676f59d5603c7490dd326d01cb72"></a>
 uniform vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_1_1_frag_1_1_light__shadow__linear.html#a43dc676f59d5603c7490dd326d01cb72">lightPositionWorld</a></td></tr>
 <tr class="memdesc:a43dc676f59d5603c7490dd326d01cb72"><td class="mdescLeft">&#160;</td><td class="mdescRight">The world space position of the light. <br /></td></tr>
@@ -142,6 +134,14 @@ uniform vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 uniform float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_1_1_frag_1_1_light__shadow__linear.html#a51f2c88c3c025ea7e05387c0fd6f63b8">lightFarPlane</a></td></tr>
 <tr class="memdesc:a51f2c88c3c025ea7e05387c0fd6f63b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">The light projection matrix far plane. <br /></td></tr>
 <tr class="separator:a51f2c88c3c025ea7e05387c0fd6f63b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab3b99918e8b4ff2d3990a0dbd8f50a9a"><td class="memItemLeft" align="right" valign="top"><a id="ab3b99918e8b4ff2d3990a0dbd8f50a9a"></a>
+uniform bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_1_1_frag_1_1_light__shadow__linear.html#ab3b99918e8b4ff2d3990a0dbd8f50a9a">hasMask</a> = false</td></tr>
+<tr class="memdesc:ab3b99918e8b4ff2d3990a0dbd8f50a9a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Should the object alpha mask be applied. <br /></td></tr>
+<tr class="separator:ab3b99918e8b4ff2d3990a0dbd8f50a9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afe4fa24105feed71969bc245269cfedc"><td class="memItemLeft" align="right" valign="top"><a id="afe4fa24105feed71969bc245269cfedc"></a>
+out vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_1_1_frag_1_1_light__shadow__linear.html#afe4fa24105feed71969bc245269cfedc">fragColor</a></td></tr>
+<tr class="memdesc:afe4fa24105feed71969bc245269cfedc"><td class="mdescLeft">&#160;</td><td class="mdescRight">World space depth and depth squared. <br /></td></tr>
+<tr class="separator:afe4fa24105feed71969bc245269cfedc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>"Light shadow linear" fragment shader. </p>
