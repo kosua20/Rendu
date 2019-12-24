@@ -38,22 +38,20 @@ vec3 positionFromDepth(float depth){
 	return vec3(- ndcPos * viewDepth / projectionMatrix.xy , viewDepth);
 }
 
-/** Evaluate the GGX BRDF for a given normal, view direction and 
-	material parameters using a preintegrated BRDF (linear approximation).
+/** Return the (pre-convolved) radiance for a given normal, view direction and
+	material parameters.
 	\param n the surface normal
 	\param v the view direction
-	\param F0 the Fresnel coefficient
 	\param roughness the surface roughness
-	\return the BRDF value
+	\return the radiance value
 	*/
-vec3 ggx(vec3 n, vec3 v, vec3 F0, float roughness){
+vec3 radiance(vec3 n, vec3 v, float roughness){
 	// Compute local frame.
-	float NdotV = max(0.0, dot(v, n));
 	vec3 r = -reflect(v,n);
 	r = normalize((inverseV * vec4(r, 0.0)).xyz);
-	vec2 brdfParams = texture(brdfPrecalc, vec2(NdotV, roughness)).rg;
+	
 	vec3 specularColor = textureLod(textureCubeMap, r, MAX_LOD * roughness).rgb;
-	return specularColor * (brdfParams.x * F0 + brdfParams.y);
+	return specularColor;
 }
 
 /** Evaluate the ambient irradiance (as SH coefficients) in a given direction. 
@@ -86,6 +84,7 @@ void main(){
 	vec3 position = positionFromDepth(depth);
 	vec3 n = normalize(2.0 * texture(normalTexture,In.uv).rgb - 1.0);
 	vec3 v = normalize(-position);
+	float NdotV = max(0.0, dot(v, n));
 	
 	// Compute AO.
 	float precomputedAO = infos.b;
@@ -94,18 +93,28 @@ void main(){
 	
 	// Sample illumination envmap using world space normal and SH pre-computed coefficients.
 	vec3 worldNormal = normalize(vec3(inverseV * vec4(n,0.0)));
-	vec3 envLighting = applySH(worldNormal);
+	vec3 irradiance = applySH(worldNormal);
+	vec3 radiance = radiance(n, v, roughness);
 	
 	// BRDF contributions.
 	// Compute F0 (fresnel coeff).
 	// Dielectrics have a constant low coeff, metals use the baseColor (ie reflections are tinted).
 	vec3 F0 = mix(vec3(0.08), baseColor, metallic);
+	// Adjust Fresnel absed on roughness.
+	vec3 Fr = max(vec3(1.0 - roughness), F0) - F0;
+    vec3 Fs = F0 + Fr * pow(1.0 - NdotV, 5.0);
+	// Specular single scattering contribution (preintegrated).
+	vec2 brdfParams = texture(brdfPrecalc, vec2(NdotV, roughness)).rg;
+	vec3 specular = (brdfParams.x * Fs + brdfParams.y);
 	
-	// Ambient diffuse contribution. Metallic materials have no diffuse contribution.
-	vec3 diffuse = (1.0 - metallic) * baseColor * (1.0 - F0) * envLighting;
+	// Account for multiple scattering.
+	// Based on A Multiple-Scattering Microfacet Model for Real-Time Image-based Lighting, C. J. Fdez-Agüera, JCGT, 2019.
+    float scatter = (1.0 - (brdfParams.x + brdfParams.y));
+    vec3 Favg = F0 + (1.0 - F0) / 21.0;
+    vec3 multi = scatter * specular * Favg / (1.0 - Favg * scatter);
+	// Diffuse contribution. Metallic materials have no diffuse contribution.
+	vec3 single = (1.0 - metallic) * baseColor * (1.0 - F0);
+	vec3 diffuse = single * (1.0 - specular - multi) + multi;
 	
-	// Secular contribution (preintegrated).
-	vec3 specular = ggx(n, v, F0, roughness);
-
-	fragColor = ao * (diffuse + specular);
+	fragColor = ao * (diffuse * irradiance + specular * radiance);
 }
