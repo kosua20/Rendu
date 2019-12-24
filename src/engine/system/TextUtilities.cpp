@@ -50,3 +50,37 @@ bool TextUtilities::hasSuffix(const std::string & source, const std::string & su
 	const std::string sourceSuffix = source.substr(source.size() - suffix.size(), suffix.size());
 	return sourceSuffix == suffix;
 }
+
+std::string TextUtilities::join(const std::vector<std::string> & tokens, const std::string & delimiter){
+	std::string accum;
+	for(size_t i = 0; i < tokens.size(); ++i){
+		accum.append(tokens[i]);
+		if(i != (tokens.size() - 1)){
+			accum.append(delimiter);
+		}
+	}
+	return accum;
+}
+
+std::vector<std::string> TextUtilities::split(const std::string & str, const std::string & delimiter, bool skipEmpty){
+	std::string subdelimiter = " ";
+	if(delimiter.empty()){
+		Log::Warning() << "Delimiter is empty, using space as a delimiter." << std::endl;
+	} else {
+		subdelimiter = delimiter.substr(0,1);
+	}
+	if(delimiter.size() > 1){
+		Log::Warning() << "Only the first character of the delimiter will be used (" << delimiter[0] << ")." << std::endl;
+	}
+	std::stringstream sstr(str);
+	std::string value;
+	std::vector<std::string> tokens;
+	while(std::getline(sstr, value, subdelimiter[0])) {
+		if(!skipEmpty || !value.empty()) {
+			tokens.emplace_back(value);
+		}
+	}
+	return tokens;
+}
+
+

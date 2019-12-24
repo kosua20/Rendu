@@ -206,13 +206,8 @@ std::vector<KeyValues> Codable::decode(const std::string & codableFile) {
 		TextUtilities::replace(values, ",", " ");
 		values = TextUtilities::trim(values, " \t");
 		// Split in value tokens.
-		std::stringstream valuesSstr(values);
-		std::string value;
-		while(std::getline(valuesSstr, value, ' ')) {
-			if(!value.empty()) {
-				tok->values.push_back(value);
-			}
-		}
+		tok->values = TextUtilities::split(values, " ", true);
+		
 	}
 
 	// Parse the raw tokens and recreate the hierarchy, looking at objets (*) and array elements (-).

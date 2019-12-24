@@ -1,5 +1,6 @@
 #include "input/controller/Controller.hpp"
 #include "resources/ResourcesManager.hpp"
+#include "system/TextUtilities.hpp"
 
 #include <sstream>
 #include <map>
@@ -101,13 +102,8 @@ bool Controller::parseConfiguration(const std::string & settingsContent, std::ve
 		{"guide", Controller::Input::ButtonLogo}, {"start", Controller::Input::ButtonMenu}, {"back", Controller::Input::ButtonView},
 		{"leftx", Controller::Input::PadLeftX}, {"lefty", Controller::Input::PadLeftY},
 		{"rightx", Controller::Input::PadRightX}, {"righty", Controller::Input::PadRightY}};
-
-	std::istringstream line(settingsContent);
-	std::vector<std::string> tokens;
-	std::string token1;
-	while(std::getline(line, token1, ',')) {
-		tokens.push_back(token1);
-	}
+	
+	const std::vector<std::string> tokens = TextUtilities::split(settingsContent, ",", false);
 
 	// Skip the first three tokens, containing the GUID, the name and platform.
 	for(int tid = 3; tid < int(tokens.size()); ++tid) {
