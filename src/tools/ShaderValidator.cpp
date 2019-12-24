@@ -8,7 +8,7 @@
 
 /**
  \defgroup ShaderValidator Shader Validation
- \brief Validate shaders compilation on the GPU and output IDE-compatible errors. Can be integrated to the build preprocess.
+ \brief Validate shaders compilation on the GPU and output IDE-compliant error messages.
  \ingroup Tools
  */
 

@@ -174,7 +174,7 @@ public:
 
 	/** Setup back-and-forth translation animation parameters from a key-value tuple. The expected format is as follows:
 	 \verbatim
-	 backandforth: speed frame directionX,directionY,directionZ amplitude
+	 backandforth: speed frame axisX,axisY,axisZ amplitude
 	 \endverbatim
 	 (where frame is one of 'world' or 'model').
 	 \param params the parameters tuple

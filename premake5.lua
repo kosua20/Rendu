@@ -198,7 +198,6 @@ project("ObjToScene")
 	ExecutableSetup()
 	files({ "src/tools/objtoscene/*.cpp", "src/tools/objtoscene/*.hpp" })
 
-
 project("SceneEditor")
 	ExecutableSetup()
 	ShaderValidation()
@@ -208,7 +207,6 @@ project("ShaderValidator")
 	ExecutableSetup()
 	files({ "src/tools/ShaderValidator.cpp" })
 	
-
 
 group("Meta")
 
@@ -220,10 +218,22 @@ project("ALL")
 	-- We need a dummy file to execute.
 	files({ "src/tools/ALL.cpp" })
 
--- Include NFD premake file.
+project("DOCS")
+	kind("ConsoleApp")
+	prebuildcommands({ 
+		path.translate("cd "..cwd),
+		path.translate("doxygen"..ext.." docs/Doxyfile")
+	})
+	-- We need a dummy file to execute.
+	files({ "src/tools/ALL.cpp" })
 
+
+group("Dependencies")
+
+-- Include NFD and GLFW premake files.
 include("src/libs/nfd/premake5.lua")
 include("src/libs/glfw/premake5.lua")
+
 
 -- Actions
 

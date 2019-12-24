@@ -11,7 +11,7 @@ enum class TextureShape : uint {
 	D2		  = 1 << 2,		 ///< 2D texture.
 	D3		  = 1 << 3,		 ///< 3D texture.
 	Cube	  = 1 << 4,		 ///< Cubemap texture.
-	Array	 = 1 << 5,		 ///< General texture array flag.
+	Array	  = 1 << 5,		 ///< General texture array flag.
 	Array1D   = D1 | Array,  ///< 1D texture array.
 	Array2D   = D2 | Array,  ///< 2D texture array.
 	ArrayCube = Cube | Array ///< Cubemap texture array.

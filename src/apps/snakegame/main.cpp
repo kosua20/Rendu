@@ -9,7 +9,7 @@
 
 /**
  \defgroup SnakeGame Snake Game
- \brief A small 3D game demo.
+ \brief A 3D snake game demo.
  \ingroup Applications
  */
 

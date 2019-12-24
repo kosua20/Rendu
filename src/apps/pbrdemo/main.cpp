@@ -8,7 +8,7 @@
 
 /**
  \defgroup DeferredRendering Deferred rendering
- \brief Render a scene using a PBR approach, image-based ambient lighting, ambient occlusion, HDR and tonemapping, antialiasing, and deferred rendering.
+ \brief Real-time deferred rendering using GGX BRDF, image-based lighting, AO, tonemapped HDR, antialiasing.
  \details All scene informations (albedo, normals, material ID, roughness) are rendered to a G-Buffer before being used to render each light contribution using simple geometric proxies. The scene is rendered using the GGX BRDF model.
  \see GPU::Frag::Bloom, GPU::Frag::Tonemap, GPU::Frag::Fxaa, GPU::Frag::Final_screenquad, GPU::Frag::Ambient, GPU::Frag::Ssao, GPU::Frag::Point_light, GPU::Frag::Directional_light, GPU::Frag::Spot_light
  \ingroup Applications

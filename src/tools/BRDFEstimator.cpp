@@ -17,7 +17,8 @@
 
 /**
  \defgroup BRDFEstimator BRDF Estimation
- \brief Perform cubemap GGX convolution, irradiance SH coefficients computation, and linearized BRDF look-up table pre-computation.
+ \brief Precompute BRDF-related data for real-time rendering.
+ \details Perform cubemap GGX convolution, irradiance SH coefficients computation, and linearized BRDF look-up table precomputation.
  \see GPU::Frag::Cubemap_convo
  \see GPU::Frag::Brdf_sampler
  \see GPU::Frag::Skybox_shcoeffs

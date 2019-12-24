@@ -9,7 +9,7 @@
  \details Use a downscaled pyramid approach to approximate a gaussian blur with a large radius. 
  The input texture is downscaled a number of times, using a custom filter as described by Marius Bjørge in the 'Bandwidth-Efficient Rendering' presentation, Siggraph 2015
  (https://community.arm.com/cfs-file/__key/communityserver-blogs-components-weblogfiles/00-00-00-20-66/siggraph2015_2D00_mmg_2D00_marius_2D00_slides.pdf).
- The image is then upscaled again with a second custom filtered.
+ The image is then upscaled again with a second custom filter.
  
  \see GPU::Frag::Blur-dual-filter-down, GPU::Frag::Blur-dual-filter-up
  \ingroup Processing

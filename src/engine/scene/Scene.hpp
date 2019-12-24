@@ -8,37 +8,13 @@
 #include "lights/Light.hpp"
 
 /**
- \brief Represents a 3D environment composed of objects, a background and additional environment lighting informations.
+ \brief Represents a 3D environment composed of objects, a background and additional environment lighting informations, along with serialization support.
  \ingroup Scene
  */
 class Scene {
 
 public:
-	/** Constructor from a scene description file. The expected format is as follow:
-	 \verbatim
-	 * scene:
-	 	probe: texturetype: texturename (see Codable::decodeTexture for details)
-		irradiance: shcoeffsfilename
-		translation: X,Y,Z
-		scaling: scale
-		orientation: axisX,axisY,axisZ angle
-	 * background:
-	 	bgtype: value
-	 * object:
-		... (see Object::decode documentation)
-	 ...
-	 * lighttype:
-		... (see Light::decode documentation)
-	 ...
-	 \endverbatim
-	  where lighttype is one of point, directional, spot and bgtype is one of
-	 \verbatim
-	 color: R,G,B
-	 image: texturetype: texturename
-	 cube: texturetype: texturename
-	 sun: dirX,dirY,dirZ
-	 \endverbatim
-	
+	/** Constructor from a scene description file.
 	 \param name the name of the scene description file
 	 */
 	explicit Scene(const std::string & name);
