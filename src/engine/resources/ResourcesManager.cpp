@@ -1,5 +1,6 @@
 #include "resources/ResourcesManager.hpp"
 #include "resources/Mesh.hpp"
+#include "system/TextUtilities.hpp"
 #include "system/System.hpp"
 
 
@@ -281,13 +282,15 @@ const Texture * Resources::getTexture(const std::string & name, const Descriptor
 	// Supported names:
 	// * "file", "file_0": 2D
 	// * "file_nx", "file_0_nx": cubemap
+	// * "r,g,b,a", "r,g,b", "r,g", "r": generate a constant value 8x8 texture, using the provided descriptor.
 	// Future support:
 	// * "file_s0", "file_0_s0": array 2D
 	// * "file_nx_s0", "file_0_nx_s0": array cubemap
 	// * "file_z0",  "file_0_z0": 3D
 
 	std::vector<std::vector<std::string>> paths;
-
+	// We need to detect the constant color case. A naive proxy is to check that the string only contains [0-9,.-] characters.
+	const bool isColorString = !name.empty() && (name.find_first_not_of("0123456789,.-") == std::string::npos);
 	const std::string path2D					= getImagePath(name);
 	const std::string path2DMip					= getImagePath(name + "_0");
 	const std::vector<std::string> pathCubes	= getCubemapPaths(name);
@@ -295,7 +298,11 @@ const Texture * Resources::getTexture(const std::string & name, const Descriptor
 
 	TextureShape shape = TextureShape::D2;
 
-	if(!path2D.empty()) {
+	if(isColorString){
+		// For now a color constant can only generate a 2D texture.
+		shape = TextureShape::D2;
+		paths.push_back({""});
+	} else if(!path2D.empty()) {
 		shape = TextureShape::D2;
 		paths.push_back({path2D});
 
@@ -337,21 +344,42 @@ const Texture * Resources::getTexture(const std::string & name, const Descriptor
 	}
 
 	// Format and orientation.
-	const unsigned int channels = descriptor.getChannelsCount();
+	const uint channels = descriptor.getChannelsCount();
 	// Cubemaps don't need to be flipped.
 	const bool flip	= !(shape & TextureShape::Cube);
 	_textures[keyName] = Texture(keyName);
 	Texture & texture  = _textures[keyName];
 
-	// Load all images.
-	texture.images.reserve(paths.size() * paths[0].size());
-	for(const auto & levelPaths : paths) {
-		for(const auto & filePath : levelPaths) {
-			texture.images.emplace_back();
-			Image & image = texture.images.back();
-			const int ret = image.load(filePath, channels, flip, false);
-			if(ret != 0) {
-				Log::Error() << Log::Resources << "Unable to load the texture at path " << filePath << "." << std::endl;
+	if(isColorString){
+		// For now we assume only one level and a 2D image.
+		const auto toks = TextUtilities::split(name, ",", true);
+		glm::vec4 col(0.0f, 0.0f, 0.0f, 1.0f);
+		const uint bnd = std::min(uint(toks.size()), uint(4));
+		for(uint i = 0; i < bnd; ++i){
+			col[i] = std::stof(toks[i]);
+		}
+		texture.images.emplace_back(8, 8, channels, 0.0f);
+		Image & image = texture.images.back();
+		for(uint y = 0; y < image.height; ++y){
+			for(uint x = 0; x < image.width; ++x){
+				const uint ind = channels * (y * image.width + x);
+				for(uint c = 0; c < channels; ++c){
+					image.pixels[ind + c] = col[c];
+				}
+			}
+		}
+		
+	} else {
+		// Load all images.
+		texture.images.reserve(paths.size() * paths[0].size());
+		for(const auto & levelPaths : paths) {
+			for(const auto & filePath : levelPaths) {
+				texture.images.emplace_back();
+				Image & image = texture.images.back();
+				const int ret = image.load(filePath, channels, flip, false);
+				if(ret != 0) {
+					Log::Error() << Log::Resources << "Unable to load the texture at path " << filePath << "." << std::endl;
+				}
 			}
 		}
 	}

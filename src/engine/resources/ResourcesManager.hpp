@@ -134,6 +134,7 @@ public:
 	 \param mode denote if data will be available in the CPU and/or GPU memory
 	 \param refName the name to use for the texture in future calls
 	 \return the texture informations
+	 \note If the name is the string representation of an RGB(A) color ("1.0,0.0,1.0" for instance), a constant color 2D texture will be allocated using the passed descriptor.
 	 */
 	const Texture * getTexture(const std::string & name, const Descriptor & descriptor, Storage mode, const std::string & refName = "");
 

@@ -111,7 +111,7 @@ std::vector<KeyValues> Codable::encode(const glm::mat4 & transfo) {
 }
 
 std::pair<std::string, Descriptor> Codable::decodeTexture(const KeyValues & param) {
-	// Subest of descriptors supported by the scene serialization model.
+	// Subset of descriptors supported by the scene serialization model.
 	const std::map<std::string, Descriptor> descriptors = {
 		{"srgb", {Layout::SRGB8_ALPHA8, Filter::LINEAR_LINEAR, Wrap::REPEAT}},
 		{"rgb", {Layout::RGBA8, Filter::LINEAR_LINEAR, Wrap::REPEAT}},
@@ -125,8 +125,8 @@ std::pair<std::string, Descriptor> Codable::decodeTexture(const KeyValues & para
 	if(descriptors.count(param.key) == 0 || param.values.empty()) {
 		return {"", Descriptor()};
 	}
-	// This is indeed a texture.
-	const std::string textureString = param.values[0];
+	// This is indeed a texture, join all tokens together in case of a custom-value specification.
+	const std::string textureString = TextUtilities::join(param.values, ",");
 	return {textureString, descriptors.at(param.key)};
 }
 
