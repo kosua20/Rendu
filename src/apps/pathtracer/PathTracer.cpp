@@ -72,17 +72,18 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 				glm::vec3 rayDir = glm::normalize(worldPos - camera.position());
 
 				glm::vec3 sampleColor(0.0f);
-				glm::vec3 attenColor(1.0f);
+				glm::vec3 attenuation(1.0f);
 
 				for(size_t did = 0; did < depth; ++did) {
 					// Query closest intersection.
 					const Raycaster::RayHit hit = _raycaster.intersects(rayPos, rayDir);
-
+					
+					 
 					// If no hit, background.
 					if(!hit.hit) {
 						const Scene::Background mode = _scene->backgroundMode;
 
-						// If direct background hit, produce the correct color.
+						// If direct background hit, produce the correct color without attenuation.
 						if(did == 0) {
 							if(mode == Scene::Background::IMAGE) {
 								const Image & image = _scene->background->textures()[0]->images[0];
@@ -93,13 +94,14 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 							} else {
 								sampleColor = _scene->backgroundColor;
 							}
+							// \todo Support sampling atmospheric simulation.
 							break;
 						}
 
-						// Else, we only care about environment maps, for indirect illumination.
+						// Else, only environment maps contribute to indirect illumination (for now).
 						if(mode == Scene::Background::SKYBOX) {
 							const Texture * tex = _scene->background->textures()[0];
-							sampleColor += attenColor * tex->sampleCubemap(glm::normalize(rayDir));
+							sampleColor += attenuation * tex->sampleCubemap(glm::normalize(rayDir));
 						}
 						break;
 					}
@@ -107,26 +109,30 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 					glm::vec3 illumination(0.0f);
 
 					// Fetch geometry infos...
-					const Mesh & mesh  = *_scene->objects[hit.meshId].mesh();
+					const Object & obj = _scene->objects[hit.meshId];
+					const Mesh & mesh  = *obj.mesh();
 					const glm::vec3 p  = rayPos + hit.dist * rayDir;
-					const glm::vec3 n  = Raycaster::interpolateNormal(hit, mesh);
+					const glm::vec3 n  = glm::normalize(glm::inverse(glm::transpose(obj.model())) * glm::vec4(Raycaster::interpolateNormal(hit, mesh), 0.0));
 					const glm::vec2 uv = Raycaster::interpolateUV(hit, mesh);
-
+					
+					// No support for geometric emitters for now.
+					
 					// Compute lighting.
 					// Cast a ray toward one of the lights, at random.
-					const unsigned int lid = Random::Int(0, _scene->lights.size()-1);
-					const auto & light = _scene->lights[lid];
-					glm::vec3 direction;
-					float attenuation;
-					if(light->visible(p, _raycaster, direction, attenuation)) {
-						const float diffuse = glm::max(glm::dot(n, direction), 0.0f);
-						illumination += attenuation * diffuse * light->intensity();
+					if(!_scene->lights.empty()){
+						const unsigned int lid = Random::Int(0, _scene->lights.size()-1);
+						const auto & light = _scene->lights[lid];
+						glm::vec3 direction;
+						float falloff;
+						if(light->visible(p+0.001f*n, _raycaster, direction, falloff)) {
+							const float diffuse = glm::max(glm::dot(n, direction), 0.0f);
+							illumination += falloff * diffuse * light->intensity();
+						}
 					}
-					// Because we only have analytical lights, the probability that we hit the light
-					// at the next regular raycast is infinitely small. We ignore this double-hit case for now.
+					// Because we only have analytical lights, we can't hit an emitter via the raycaster, so no double-hit case to consider for now.
 
 					// Fetch base color from texture.
-					const Image & image  = _scene->objects[hit.meshId].textures()[0]->images[0];
+					const Image & image  = obj.textures()[0]->images[0];
 					const glm::vec4 bCol = image.rgbal(uv.x, uv.y);
 					// In case of alpha cut-out, just update the position to the intersection and keep casting.
 					// The 'mini' margin will ensures that we don't reintersect the same surface.
@@ -137,8 +143,8 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 					const glm::vec3 baseColor = glm::pow(glm::vec3(bCol), glm::vec3(2.2f));
 
 					// Bounce decay.
-					attenColor *= baseColor;
-					sampleColor += attenColor * illumination;
+					attenuation *= baseColor;
+					sampleColor += attenuation * illumination;
 
 					// Update position and ray direction.
 					if(did < depth - 1) {

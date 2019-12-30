@@ -68,7 +68,7 @@ public:
 	 \param direction ray direction (not necessarily normalized)
 	 \param mini the minimum distance allowed for the intersection
 	 \param maxi the maximum distance allowed for the intersection
-	 \return true if the two points are joined by a free-space segment
+	 \return true if the ray intersected geometry
 	 */
 	bool intersectsAny(const glm::vec3 & origin, const glm::vec3 & direction, float mini = 0.0001f, float maxi = 1e8f) const;
 
@@ -167,7 +167,7 @@ private:
 	static bool intersects(const Ray & ray, const BoundingBox & box, float mini, float maxi);
 
 	std::vector<TriangleInfos> _triangles; ///< Merged triangles informations.
-	std::vector<glm::vec3> _vertices;	  ///< Merged vertices.
+	std::vector<glm::vec3> _vertices;	   ///< Merged vertices.
 	std::vector<Node> _hierarchy;		   ///< Acceleration structure.
 
 	unsigned int _meshCount = 0; ///< Number of meshes stored in the raycaster.
