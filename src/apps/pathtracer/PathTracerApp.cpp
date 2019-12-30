@@ -47,7 +47,20 @@ void PathTracerApp::draw() {
 		GLUtilities::clearColorAndDepth({0.2f, 0.2f, 0.2f, 1.0f}, 1.0f);
 		return;
 	}
-
+	
+	// If we are rendering live, perform path tracing on the fly.
+	if(_liveRender){
+		_renderTex.clean();
+		GLUtilities::setupTexture(_renderTex, {Layout::SRGB8, Filter::LINEAR, Wrap::CLAMP});
+		// Render.
+		_renderTex.images.emplace_back(_renderTex.width, _renderTex.height, 3);
+		Image & render = _renderTex.images.back();
+		_pathTracer->render(_userCamera, _samples, _depth, render);
+		// Upload to the GPU.
+		GLUtilities::uploadTexture(_renderTex);
+		_showRender = true;
+	}
+	
 	// Directly render the result texture without drawing the scene.
 	if(_showRender) {
 		glEnable(GL_FRAMEBUFFER_SRGB);
@@ -98,7 +111,6 @@ void PathTracerApp::update() {
 
 		// Perform rendering.
 		if(ImGui::Button("Render")) {
-			// Clean the texture.
 			_renderTex.clean();
 			GLUtilities::setupTexture(_renderTex, {Layout::SRGB8, Filter::LINEAR, Wrap::CLAMP});
 			// Render.
@@ -118,8 +130,9 @@ void PathTracerApp::update() {
 				_renderTex.images[0].save(outPath, false);
 			}
 		}
-
-		ImGui::Checkbox("Show rendered image", &_showRender);
+		
+		ImGui::Checkbox("Show render", &_showRender); ImGui::SameLine();
+		ImGui::Checkbox("Live render", &_liveRender);
 		if(!_showRender) {
 			// Mesh and BVH display.
 			ImGui::Separator();
@@ -194,11 +207,12 @@ void PathTracerApp::update() {
 		}
 	}
 	ImGui::End();
+	
 }
 
 void PathTracerApp::physics(double, double) {
-	// If there is any interaction, exit the 'show render' mode.
-	if(Input::manager().interacted()) {
+	// If there is any interaction, exit the 'show render' mode except if we are live rendering.
+	if(Input::manager().interacted() && !_liveRender) {
 		_showRender = false;
 	}
 }
