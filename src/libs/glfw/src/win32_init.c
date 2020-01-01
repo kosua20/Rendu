@@ -1,5 +1,5 @@
 //========================================================================
-// GLFW 3.4 Win32 - www.glfw.org
+// GLFW 3.3 Win32 - www.glfw.org
 //------------------------------------------------------------------------
 // Copyright (c) 2002-2006 Marcus Geelnard
 // Copyright (c) 2006-2019 Camilla Löwy <elmindreda@glfw.org>
@@ -525,7 +525,7 @@ BOOL _glfwIsWindowsVersionOrGreaterWin32(WORD major, WORD minor, WORD sp)
     cond = VerSetConditionMask(cond, VER_MINORVERSION, VER_GREATER_EQUAL);
     cond = VerSetConditionMask(cond, VER_SERVICEPACKMAJOR, VER_GREATER_EQUAL);
     // HACK: Use RtlVerifyVersionInfo instead of VerifyVersionInfoW as the
-    //       latter lies unless the user knew to embedd a non-default manifest
+    //       latter lies unless the user knew to embed a non-default manifest
     //       announcing support for Windows 10 via supportedOS GUID
     return RtlVerifyVersionInfo(&osvi, mask, cond) == 0;
 }
@@ -540,7 +540,7 @@ BOOL _glfwIsWindows10BuildOrGreaterWin32(WORD build)
     cond = VerSetConditionMask(cond, VER_MINORVERSION, VER_GREATER_EQUAL);
     cond = VerSetConditionMask(cond, VER_BUILDNUMBER, VER_GREATER_EQUAL);
     // HACK: Use RtlVerifyVersionInfo instead of VerifyVersionInfoW as the
-    //       latter lies unless the user knew to embedd a non-default manifest
+    //       latter lies unless the user knew to embed a non-default manifest
     //       announcing support for Windows 10 via supportedOS GUID
     return RtlVerifyVersionInfo(&osvi, mask, cond) == 0;
 }

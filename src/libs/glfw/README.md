@@ -11,7 +11,7 @@ application development.  It provides a simple, platform-independent API for
 creating windows, contexts and surfaces, reading input, handling events, etc.
 
 GLFW natively supports Windows, macOS and Linux and other Unix-like systems.  On
-Linux both X11 and Wayland is supported.
+Linux both X11 and Wayland are supported.
 
 GLFW is licensed under the [zlib/libpng
 license](http://www.glfw.org/license.html).
@@ -88,7 +88,7 @@ in the documentation for more information.
 GLFW itself depends only on the headers and libraries for your window system.
 
 The (experimental) Wayland backend also depends on the `extra-cmake-modules`
-package, which is used to generated Wayland protocol headers.
+package, which is used to generate Wayland protocol headers.
 
 The examples and test programs depend on a number of tiny libraries.  These are
 located in the `deps/` directory.
@@ -118,17 +118,39 @@ information on what to include when reporting a bug.
 
 ## Changelog
 
- - Disabled tests and examples by default when built as a CMake subdirectory
  - Bugfix: The CMake config-file package used an absolute path and was not
    relocatable (#1470)
+ - Bugfix: Video modes with a duplicate screen area were discarded (#1555,#1556)
+ - Bugfix: Compiling with -Wextra-semi caused warnings (#1440)
+ - Bugfix: Built-in mappings failed because some OEMs re-used VID/PID (#1583)
  - [Win32] Bugfix: `GLFW_INCLUDE_VULKAN` plus `VK_USE_PLATFORM_WIN32_KHR` caused
    symbol redefinition (#1524)
  - [Win32] Bugfix: The cursor position event was emitted before its cursor enter
    event (#1490)
+ - [Win32] Bugfix: The window hint `GLFW_MAXIMIZED` did not move or resize the
+   window (#1499)
+ - [Win32] Bugfix: Disabled cursor mode interfered with some non-client actions
+ - [Cocoa] Removed dependency on the CoreVideo framework
+ - [Cocoa] Bugfix: `glfwSetWindowSize` used a bottom-left anchor point (#1553)
+ - [Cocoa] Bugfix: Window remained on screen after destruction until event poll
+   (#1412)
+ - [Cocoa] Bugfix: Event processing before window creation would assert (#1543)
+ - [Cocoa] Bugfix: Undecorated windows could not be iconified on recent macOS
  - [X11] Bugfix: The CMake files did not check for the XInput headers (#1480)
  - [X11] Bugfix: Key names were not updated when the keyboard layout changed
    (#1462,#1528)
- - [NSGL] Removed enforcement of forward-compatible flag for core contexts
+ - [X11] Bugfix: Decorations could not be enabled after window creation (#1566)
+ - [X11] Bugfix: Content scale fallback value could be inconsistent (#1578)
+ - [X11] Bugfix: `glfwMaximizeWindow` had no effect on hidden windows
+ - [X11] Bugfix: Clearing `GLFW_FLOATING` on a hidden window caused invalid read
+ - [X11] Bugfix: Changing `GLFW_FLOATING` on a hidden window could silently fail
+ - [X11] Bugfix: Disabled cursor mode was interrupted by indicator windows
+ - [X11] Bugfix: Monitor physical dimensions could be reported as zero mm
+ - [X11] Bugfix: Window position events were not emitted during resizing (#1613)
+ - [Wayland] Bugfix: The `GLFW_HAND_CURSOR` shape used the wrong image (#1432)
+ - [NSGL] Bugfix: `GLFW_COCOA_RETINA_FRAMEBUFFER` had no effect on newer
+   macOS versions (#1442)
+ - [NSGL] Bugfix: Workaround for swap interval on 10.14 broke on 10.12 (#1483)
 
 
 ## Contact
@@ -137,7 +159,7 @@ On [glfw.org](http://www.glfw.org/) you can find the latest version of GLFW, as
 well as news, documentation and other information about the project.
 
 If you have questions related to the use of GLFW, we have a
-[forum](http://discourse.glfw.org/), and the `#glfw` IRC channel on
+[forum](https://discourse.glfw.org/), and the `#glfw` IRC channel on
 [Freenode](http://freenode.net/).
 
 If you have a bug to report, a patch to submit or a feature you'd like to
@@ -167,6 +189,7 @@ skills.
  - blanco
  - Kyle Brenneman
  - Rok Breulj
+ - Kai Burjack
  - Martin Capitanio
  - David Carlier
  - Arturo Castro
@@ -199,6 +222,8 @@ skills.
  - Mário Freitas
  - GeO4d
  - Marcus Geelnard
+ - Charles Giessen
+ - Ryan C. Gordon
  - Stephen Gowen
  - Kovid Goyal
  - Eloi Marín Gratacós
@@ -223,6 +248,7 @@ skills.
  - Peter Knut
  - Christoph Kubisch
  - Yuri Kunde Schlesner
+ - Rokas Kupstys
  - Konstantin Käfer
  - Eric Larson
  - Robin Leffmann
@@ -245,6 +271,7 @@ skills.
  - Jonathan Mercier
  - Marcel Metz
  - Liam Middlebrook
+ - Ave Milia
  - Jonathan Miller
  - Kenneth Miller
  - Bruce Mitchener
@@ -275,7 +302,10 @@ skills.
  - Konstantin Podsvirov
  - Nathan Poirier
  - Alexandre Pretyman
+ - Pablo Prietz
  - przemekmirek
+ - pthom
+ - Guillaume Racicot
  - Philip Rideout
  - Eddie Ringle
  - Max Risuhin

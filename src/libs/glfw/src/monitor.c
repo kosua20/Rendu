@@ -1,5 +1,5 @@
 //========================================================================
-// GLFW 3.4 - www.glfw.org
+// GLFW 3.3 - www.glfw.org
 //------------------------------------------------------------------------
 // Copyright (c) 2002-2006 Marcus Geelnard
 // Copyright (c) 2006-2019 Camilla Löwy <elmindreda@glfw.org>
@@ -55,6 +55,10 @@ static int compareVideoModes(const void* fp, const void* sp)
     // Then sort on screen area
     if (farea != sarea)
         return farea - sarea;
+
+    // Then sort on width
+    if (fm->width != sm->width)
+        return fm->width - sm->width;
 
     // Lastly sort on refresh rate
     return fm->refreshRate - sm->refreshRate;

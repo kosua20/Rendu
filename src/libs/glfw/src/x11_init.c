@@ -1,5 +1,5 @@
 //========================================================================
-// GLFW 3.4 X11 - www.glfw.org
+// GLFW 3.3 X11 - www.glfw.org
 //------------------------------------------------------------------------
 // Copyright (c) 2002-2006 Marcus Geelnard
 // Copyright (c) 2006-2019 Camilla Löwy <elmindreda@glfw.org>
@@ -793,13 +793,10 @@ static GLFWbool initExtensions(void)
 //
 static void getSystemContentScale(float* xscale, float* yscale)
 {
-    // NOTE: Fall back to the display-wide DPI instead of RandR monitor DPI if
-    //       Xft.dpi retrieval below fails as we don't currently have an exact
-    //       policy for which monitor a window is considered to "be on"
-    float xdpi = DisplayWidth(_glfw.x11.display, _glfw.x11.screen) *
-        25.4f / DisplayWidthMM(_glfw.x11.display, _glfw.x11.screen);
-    float ydpi = DisplayHeight(_glfw.x11.display, _glfw.x11.screen) *
-        25.4f / DisplayHeightMM(_glfw.x11.display, _glfw.x11.screen);
+    // Start by assuming the default X11 DPI
+    // NOTE: Some desktop environments (KDE) may remove the Xft.dpi field when it
+    //       would be set to 96, so assume that is the case if we cannot find it
+    float xdpi = 96.f, ydpi = 96.f;
 
     // NOTE: Basing the scale on Xft.dpi where available should provide the most
     //       consistent user experience (matches Qt, Gtk, etc), although not

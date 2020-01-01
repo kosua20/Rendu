@@ -1,5 +1,5 @@
 /*************************************************************************
- * GLFW 3.4 - www.glfw.org
+ * GLFW 3.3 - www.glfw.org
  * A library for OpenGL, window and input
  *------------------------------------------------------------------------
  * Copyright (c) 2002-2006 Marcus Geelnard
@@ -263,14 +263,14 @@ extern "C" {
  *  backward-compatible.
  *  @ingroup init
  */
-#define GLFW_VERSION_MINOR          4
+#define GLFW_VERSION_MINOR          3
 /*! @brief The revision number of the GLFW library.
  *
  *  This is incremented when a bug fix release is made that does not contain any
  *  API changes.
  *  @ingroup init
  */
-#define GLFW_VERSION_REVISION       0
+#define GLFW_VERSION_REVISION       1
 /*! @} */
 
 /*! @brief One.
@@ -2041,7 +2041,7 @@ GLFWAPI GLFWmonitor* glfwGetPrimaryMonitor(void);
  */
 GLFWAPI void glfwGetMonitorPos(GLFWmonitor* monitor, int* xpos, int* ypos);
 
-/*! @brief Retrives the work area of the monitor.
+/*! @brief Retrieves the work area of the monitor.
  *
  *  This function returns the position, in screen coordinates, of the upper-left
  *  corner of the work area of the specified monitor along with the work area
@@ -2325,7 +2325,7 @@ GLFWAPI const GLFWvidmode* glfwGetVideoMode(GLFWmonitor* monitor);
  *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED, @ref
  *  GLFW_INVALID_VALUE and @ref GLFW_PLATFORM_ERROR.
  *
- *  @remark @wayland Gamma handling is a priviledged protocol, this function
+ *  @remark @wayland Gamma handling is a privileged protocol, this function
  *  will thus never be implemented and emits @ref GLFW_PLATFORM_ERROR.
  *
  *  @thread_safety This function must only be called from the main thread.
@@ -2349,7 +2349,7 @@ GLFWAPI void glfwSetGamma(GLFWmonitor* monitor, float gamma);
  *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
  *  GLFW_PLATFORM_ERROR.
  *
- *  @remark @wayland Gamma handling is a priviledged protocol, this function
+ *  @remark @wayland Gamma handling is a privileged protocol, this function
  *  will thus never be implemented and emits @ref GLFW_PLATFORM_ERROR while
  *  returning `NULL`.
  *
@@ -2393,7 +2393,7 @@ GLFWAPI const GLFWgammaramp* glfwGetGammaRamp(GLFWmonitor* monitor);
  *
  *  @remark @win32 The gamma ramp size must be 256.
  *
- *  @remark @wayland Gamma handling is a priviledged protocol, this function
+ *  @remark @wayland Gamma handling is a privileged protocol, this function
  *  will thus never be implemented and emits @ref GLFW_PLATFORM_ERROR.
  *
  *  @pointer_lifetime The specified gamma ramp is copied before this function
@@ -2612,7 +2612,7 @@ GLFWAPI void glfwWindowHintString(int hint, const char* value);
  *
  *  @remark @macos When activating frame autosaving with
  *  [GLFW_COCOA_FRAME_NAME](@ref GLFW_COCOA_FRAME_NAME_hint), the specified
- *  window size and position may be overriden by previously saved values.
+ *  window size and position may be overridden by previously saved values.
  *
  *  @remark @x11 Some window managers will not respect the placement of
  *  initially hidden windows.
@@ -3191,8 +3191,8 @@ GLFWAPI void glfwSetWindowOpacity(GLFWwindow* window, float opacity);
  *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
  *  GLFW_PLATFORM_ERROR.
  *
- *  @remark @wayland Once a window is iconified, @ref glfwRestoreWindow won’t
- *  be able to restore it.  This is a design decision of the xdg-shell
+ *  @remark @wayland There is no concept of iconification in wl_shell, this
+ *  function will emit @ref GLFW_PLATFORM_ERROR when using this deprecated
  *  protocol.
  *
  *  @thread_safety This function must only be called from the main thread.
@@ -3769,6 +3769,9 @@ GLFWAPI GLFWwindowfocusfun glfwSetWindowFocusCallback(GLFWwindow* window, GLFWwi
  *
  *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED.
  *
+ *  @remark @wayland The wl_shell protocol has no concept of iconification,
+ *  this callback will never be called when using this deprecated protocol.
+ *
  *  @thread_safety This function must only be called from the main thread.
  *
  *  @sa @ref window_iconify
@@ -4190,9 +4193,11 @@ GLFWAPI int glfwRawMouseMotionSupported(void);
  *  @errors Possible errors include @ref GLFW_NOT_INITIALIZED and @ref
  *  GLFW_PLATFORM_ERROR.
  *
+ *  @remark The contents of the returned string may change when a keyboard
+ *  layout change event is received.
+ *
  *  @pointer_lifetime The returned string is allocated and freed by GLFW.  You
- *  should not free it yourself.  It is valid until the next call to @ref
- *  glfwGetKeyName, or until the library is terminated.
+ *  should not free it yourself.  It is valid until the library is terminated.
  *
  *  @thread_safety This function must only be called from the main thread.
  *
@@ -4982,7 +4987,7 @@ GLFWAPI const unsigned char* glfwGetJoystickHats(int jid, int* count);
  */
 GLFWAPI const char* glfwGetJoystickName(int jid);
 
-/*! @brief Returns the SDL comaptible GUID of the specified joystick.
+/*! @brief Returns the SDL compatible GUID of the specified joystick.
  *
  *  This function returns the SDL compatible GUID, as a UTF-8 encoded
  *  hexadecimal string, of the specified joystick.  The returned string is
@@ -5203,7 +5208,7 @@ GLFWAPI const char* glfwGetGamepadName(int jid);
 
 /*! @brief Retrieves the state of the specified joystick remapped as a gamepad.
  *
- *  This function retrives the state of the specified joystick remapped to
+ *  This function retrieves the state of the specified joystick remapped to
  *  an Xbox-like gamepad.
  *
  *  If the specified joystick is not present or does not have a gamepad mapping
