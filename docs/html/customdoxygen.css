@@ -19,6 +19,7 @@ h1.groupheader {
 	font-weight: 400;
 	margin: 15px 12px 15px 0px;
 	margin-top:18px;
+	line-height: 38px;
 }
 
 .image img {
@@ -918,7 +919,7 @@ table.directory {
 	white-space: nowrap;
 	border-right: 2px solid #eee;
 	border-bottom: 2px solid #eee;
-	vertical-align: top;
+	vertical-align: middle;
 }
 
 .fieldtable td.fieldname {

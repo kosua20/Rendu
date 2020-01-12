@@ -92,7 +92,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!--header-->
 <div class="contents">
 <a name="details" id="details"></a><h2 class="groupheader"> </h2>
-<p>Handle all resources loading/saving tasks. </p>
+<p>Handle resource loading/saving tasks. </p>
+<p>The <a class="el" href="class_resources.html" title="The Resources manager is responsible for all resources loading and setup.">Resources</a> manager is sole responsible for allocation/deallocation of resources loaded from the disk directory hierarchy or from an archive. Images and meshes can be sent to the <a class="el" href="namespace_g_p_u.html" title="Contains all shaders.">GPU</a> as textures and meshes. Storage settings (CPU/GPU, layout in memory, format) are specified at first use of a resource. </p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
@@ -109,13 +110,13 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents an image composed of pixels with values in [0,1]. Provide image loading/saving utilities, for both LDR and HDR images.  <a href="class_image.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mesh.html">Mesh</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents a geometric mesh composed of vertices and triangles. For now, material information and elements/groups are not represented. Can store both the CPU and <a class="el" href="namespace_g_p_u.html" title="GPU shaders.">GPU</a> representations. Provides utilities to load and process geometric meshes.  <a href="class_mesh.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents a geometric mesh composed of vertices and triangles. For now, material information and elements/groups are not represented. Can store both the CPU and <a class="el" href="namespace_g_p_u.html" title="Contains all shaders.">GPU</a> representations. Provides utilities to load and process geometric meshes.  <a href="class_mesh.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_resources.html">Resources</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <a class="el" href="class_resources.html" title="The Resources manager is responsible for all resources loading and setup.">Resources</a> manager is responsible for all resources loading and setup.  <a href="class_resources.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_texture.html">Texture</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents a texture containing one or more images, stored on the CPU and/or <a class="el" href="namespace_g_p_u.html" title="GPU shaders.">GPU</a>.  <a href="class_texture.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents a texture containing one or more images, stored on the CPU and/or <a class="el" href="namespace_g_p_u.html" title="Contains all shaders.">GPU</a>.  <a href="class_texture.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
@@ -229,7 +230,7 @@ Enumerations</h2></td></tr>
 <a class="el" href="group___resources.html#ggaa9f7226fdc21094a152870ec1872f744a2b55387dd066c5bac646ac61543d152d">Storage::CPU</a> = 2, 
 <a class="el" href="group___resources.html#ggaa9f7226fdc21094a152870ec1872f744a6328e5e3186c227a021ef2ff77e40197">Storage::BOTH</a> = (GPU | CPU)
  }</td></tr>
-<tr class="memdesc:gaa9f7226fdc21094a152870ec1872f744"><td class="mdescLeft">&#160;</td><td class="mdescRight">Denote if data is stored on the <a class="el" href="namespace_g_p_u.html" title="GPU shaders.">GPU</a> or CPU.  <a href="group___resources.html#gaa9f7226fdc21094a152870ec1872f744">More...</a><br /></td></tr>
+<tr class="memdesc:gaa9f7226fdc21094a152870ec1872f744"><td class="mdescLeft">&#160;</td><td class="mdescRight">Denote if data is stored on the <a class="el" href="namespace_g_p_u.html" title="Contains all shaders.">GPU</a> or CPU.  <a href="group___resources.html#gaa9f7226fdc21094a152870ec1872f744">More...</a><br /></td></tr>
 <tr class="separator:gaa9f7226fdc21094a152870ec1872f744"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Enumeration Type Documentation</h2>
@@ -291,13 +292,13 @@ Enumerations</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Denote if data is stored on the <a class="el" href="namespace_g_p_u.html" title="GPU shaders.">GPU</a> or CPU. </p>
+<p>Denote if data is stored on the <a class="el" href="namespace_g_p_u.html" title="Contains all shaders.">GPU</a> or CPU. </p>
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ggaa9f7226fdc21094a152870ec1872f744a52f9ec21735243ad9917cda3ca077d32"></a>GPU&#160;</td><td class="fielddoc"><p>On the <a class="el" href="namespace_g_p_u.html" title="GPU shaders.">GPU</a>. </p>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ggaa9f7226fdc21094a152870ec1872f744a52f9ec21735243ad9917cda3ca077d32"></a>GPU&#160;</td><td class="fielddoc"><p>On the <a class="el" href="namespace_g_p_u.html" title="Contains all shaders.">GPU</a>. </p>
 </td></tr>
 <tr><td class="fieldname"><a id="ggaa9f7226fdc21094a152870ec1872f744a2b55387dd066c5bac646ac61543d152d"></a>CPU&#160;</td><td class="fielddoc"><p>On the CPU. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="ggaa9f7226fdc21094a152870ec1872f744a6328e5e3186c227a021ef2ff77e40197"></a>BOTH&#160;</td><td class="fielddoc"><p>On both the CPU and <a class="el" href="namespace_g_p_u.html" title="GPU shaders.">GPU</a>. </p>
+<tr><td class="fieldname"><a id="ggaa9f7226fdc21094a152870ec1872f744a6328e5e3186c227a021ef2ff77e40197"></a>BOTH&#160;</td><td class="fielddoc"><p>On both the CPU and <a class="el" href="namespace_g_p_u.html" title="Contains all shaders.">GPU</a>. </p>
 </td></tr>
 </table>
 

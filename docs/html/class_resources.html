@@ -352,7 +352,7 @@ class&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cla
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Clean all loaded resources, both CPU and <a class="el" href="namespace_g_p_u.html" title="GPU shaders.">GPU</a> side. </p>
+<p>Clean all loaded resources, both CPU and <a class="el" href="namespace_g_p_u.html" title="Contains all shaders.">GPU</a> side. </p>
 
 </div>
 </div>
@@ -543,7 +543,7 @@ class&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cla
 <p>Get a geometric mesh resource. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">name</td><td>the mesh file name </td></tr>
-    <tr><td class="paramname">mode</td><td>denote if data will be available in the CPU and/or <a class="el" href="namespace_g_p_u.html" title="GPU shaders.">GPU</a> memory </td></tr>
+    <tr><td class="paramname">mode</td><td>denote if data will be available in the CPU and/or <a class="el" href="namespace_g_p_u.html" title="Contains all shaders.">GPU</a> memory </td></tr>
   </table>
   </dd>
 </dl>
@@ -762,12 +762,13 @@ class&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cla
   <table class="params">
     <tr><td class="paramname">name</td><td>the texture base name </td></tr>
     <tr><td class="paramname">descriptor</td><td>the texture layout to use </td></tr>
-    <tr><td class="paramname">mode</td><td>denote if data will be available in the CPU and/or <a class="el" href="namespace_g_p_u.html" title="GPU shaders.">GPU</a> memory </td></tr>
+    <tr><td class="paramname">mode</td><td>denote if data will be available in the CPU and/or <a class="el" href="namespace_g_p_u.html" title="Contains all shaders.">GPU</a> memory </td></tr>
     <tr><td class="paramname">refName</td><td>the name to use for the texture in future calls </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>the texture informations </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>If the name is the string representation of an RGB(A) color ("1.0,0.0,1.0" for instance), a constant color 2D texture will be allocated using the passed descriptor. </dd></dl>
 
 </div>
 </div>

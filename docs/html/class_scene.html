@@ -103,7 +103,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!--header-->
 <div class="contents">
 
-<p>Represents a 3D environment composed of objects, a background and additional environment lighting informations.  
+<p>Represents a 3D environment composed of objects, a background and additional environment lighting informations, along with serialization support.  
  <a href="class_scene.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="_scene_8hpp_source.html">Scene.hpp</a>&gt;</code></p>
@@ -212,7 +212,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="separator:a034abef276d1f2801e1ff13a5f3d30d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Represents a 3D environment composed of objects, a background and additional environment lighting informations. </p>
+<div class="textblock"><p>Represents a 3D environment composed of objects, a background and additional environment lighting informations, along with serialization support. </p>
 </div><h2 class="groupheader">Member Enumeration Documentation</h2>
 <a id="a1d24bd5fd3c2aa5cc3a93913e7a2f24f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a1d24bd5fd3c2aa5cc3a93913e7a2f24f">&#9670;&nbsp;</a></span>Background</h2>
@@ -272,25 +272,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Constructor from a scene description file. The expected format is as follow: </p><pre class="fragment">* scene:
-    probe: texturetype: texturename (see Codable::decodeTexture for details)
-   irradiance: shcoeffsfilename
-   translation: X,Y,Z
-   scaling: scale
-   orientation: axisX,axisY,axisZ angle
-* background:
-    bgtype: value
-* object:
-   ... (see Object::decode documentation)
-...
-* lighttype:
-   ... (see Light::decode documentation)
-...
-</pre><p> where lighttype is one of point, directional, spot and bgtype is one of </p><pre class="fragment">color: R,G,B
-image: texturetype: texturename
-cube: texturetype: texturename
-sun: dirX,dirY,dirZ
-</pre><dl class="params"><dt>Parameters</dt><dd>
+<p>Constructor from a scene description file. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">name</td><td>the name of the scene description file </td></tr>
   </table>
@@ -448,7 +430,7 @@ sun: dirX,dirY,dirZ
 </div><div class="memdoc">
 <p>Performs initialization against the graphics API, loading data. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">mode</td><td>should the data be stored on the CPU, <a class="el" href="namespace_g_p_u.html" title="GPU shaders.">GPU</a>, or both. </td></tr>
+    <tr><td class="paramname">mode</td><td>should the data be stored on the CPU, <a class="el" href="namespace_g_p_u.html" title="Contains all shaders.">GPU</a>, or both. </td></tr>
   </table>
   </dd>
 </dl>
@@ -491,7 +473,7 @@ sun: dirX,dirY,dirZ
 <p>Load the scene background informations from its serialized representation. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">params</td><td>the background parameters </td></tr>
-    <tr><td class="paramname">mode</td><td>the storage mode (CPU, <a class="el" href="namespace_g_p_u.html" title="GPU shaders.">GPU</a>, both) </td></tr>
+    <tr><td class="paramname">mode</td><td>the storage mode (CPU, <a class="el" href="namespace_g_p_u.html" title="Contains all shaders.">GPU</a>, both) </td></tr>
   </table>
   </dd>
 </dl>
@@ -534,7 +516,7 @@ sun: dirX,dirY,dirZ
 <p>Load the scene camera informations from its serialized representation. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">params</td><td>the camera parameters </td></tr>
-    <tr><td class="paramname">mode</td><td>the storage mode (CPU, <a class="el" href="namespace_g_p_u.html" title="GPU shaders.">GPU</a>, both) (unused) </td></tr>
+    <tr><td class="paramname">mode</td><td>the storage mode (CPU, <a class="el" href="namespace_g_p_u.html" title="Contains all shaders.">GPU</a>, both) (unused) </td></tr>
   </table>
   </dd>
 </dl>
@@ -577,7 +559,7 @@ sun: dirX,dirY,dirZ
 <p>Load a point light in the scene from its serialized representation. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">params</td><td>the point light parameters </td></tr>
-    <tr><td class="paramname">mode</td><td>the storage mode (CPU, <a class="el" href="namespace_g_p_u.html" title="GPU shaders.">GPU</a>, both) (unused) </td></tr>
+    <tr><td class="paramname">mode</td><td>the storage mode (CPU, <a class="el" href="namespace_g_p_u.html" title="Contains all shaders.">GPU</a>, both) (unused) </td></tr>
   </table>
   </dd>
 </dl>
@@ -620,7 +602,7 @@ sun: dirX,dirY,dirZ
 <p>Load an object in the scene from its serialized representation. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">params</td><td>the object parameters </td></tr>
-    <tr><td class="paramname">mode</td><td>the storage mode (CPU, <a class="el" href="namespace_g_p_u.html" title="GPU shaders.">GPU</a>, both) </td></tr>
+    <tr><td class="paramname">mode</td><td>the storage mode (CPU, <a class="el" href="namespace_g_p_u.html" title="Contains all shaders.">GPU</a>, both) </td></tr>
   </table>
   </dd>
 </dl>
@@ -663,7 +645,7 @@ sun: dirX,dirY,dirZ
 <p>Load the scene informations from its serialized representation. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">params</td><td>the scene parameters </td></tr>
-    <tr><td class="paramname">mode</td><td>the storage mode (CPU, <a class="el" href="namespace_g_p_u.html" title="GPU shaders.">GPU</a>, both) </td></tr>
+    <tr><td class="paramname">mode</td><td>the storage mode (CPU, <a class="el" href="namespace_g_p_u.html" title="Contains all shaders.">GPU</a>, both) </td></tr>
   </table>
   </dd>
 </dl>

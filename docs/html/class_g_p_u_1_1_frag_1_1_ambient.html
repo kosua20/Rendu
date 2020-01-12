@@ -111,8 +111,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 Public Member Functions</h2></td></tr>
 <tr class="memitem:adabc892cc496c69157fb7b1389c52d00"><td class="memItemLeft" align="right" valign="top">vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_1_1_frag_1_1_ambient.html#adabc892cc496c69157fb7b1389c52d00">positionFromDepth</a> (float depth)</td></tr>
 <tr class="separator:adabc892cc496c69157fb7b1389c52d00"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2ac84cbdab3022c6c71236e95fb790c2"><td class="memItemLeft" align="right" valign="top">vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_1_1_frag_1_1_ambient.html#a2ac84cbdab3022c6c71236e95fb790c2">ggx</a> (vec3 n, vec3 v, vec3 F0, float roughness)</td></tr>
-<tr class="separator:a2ac84cbdab3022c6c71236e95fb790c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a257b6ce69ab946e7fa33b34c3fe0cfb0"><td class="memItemLeft" align="right" valign="top">vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_1_1_frag_1_1_ambient.html#a257b6ce69ab946e7fa33b34c3fe0cfb0">radiance</a> (vec3 n, vec3 v, float roughness)</td></tr>
+<tr class="separator:a257b6ce69ab946e7fa33b34c3fe0cfb0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abbce7e4349a27b31dd55794769218291"><td class="memItemLeft" align="right" valign="top">vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_1_1_frag_1_1_ambient.html#abbce7e4349a27b31dd55794769218291">applySH</a> (vec3 wn)</td></tr>
 <tr class="separator:abbce7e4349a27b31dd55794769218291"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3d60f4f776835c33ee13a032d7892a63"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_1_1_frag_1_1_ambient.html#a3d60f4f776835c33ee13a032d7892a63">main</a> ()</td></tr>
@@ -205,64 +205,6 @@ out vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="
 
 </div>
 </div>
-<a id="a2ac84cbdab3022c6c71236e95fb790c2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2ac84cbdab3022c6c71236e95fb790c2">&#9670;&nbsp;</a></span>ggx()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">vec3 GPU::Frag::Ambient::ggx </td>
-          <td>(</td>
-          <td class="paramtype">vec3&#160;</td>
-          <td class="paramname"><em>n</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">vec3&#160;</td>
-          <td class="paramname"><em>v</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">vec3&#160;</td>
-          <td class="paramname"><em>F0</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">float&#160;</td>
-          <td class="paramname"><em>roughness</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Evaluate the GGX BRDF for a given normal, view direction and material parameters using a preintegrated BRDF (linear approximation). </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">n</td><td>the surface normal </td></tr>
-    <tr><td class="paramname">v</td><td>the view direction </td></tr>
-    <tr><td class="paramname">F0</td><td>the Fresnel coefficient </td></tr>
-    <tr><td class="paramname">roughness</td><td>the surface roughness </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>the BRDF value </dd></dl>
-
-</div>
-</div>
 <a id="a3d60f4f776835c33ee13a032d7892a63"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a3d60f4f776835c33ee13a032d7892a63">&#9670;&nbsp;</a></span>main()</h2>
 
@@ -319,6 +261,57 @@ out vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>the view space position </dd></dl>
+
+</div>
+</div>
+<a id="a257b6ce69ab946e7fa33b34c3fe0cfb0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a257b6ce69ab946e7fa33b34c3fe0cfb0">&#9670;&nbsp;</a></span>radiance()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">vec3 GPU::Frag::Ambient::radiance </td>
+          <td>(</td>
+          <td class="paramtype">vec3&#160;</td>
+          <td class="paramname"><em>n</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">vec3&#160;</td>
+          <td class="paramname"><em>v</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>roughness</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Return the (pre-convolved) radiance for a given normal, view direction and material parameters. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">n</td><td>the surface normal </td></tr>
+    <tr><td class="paramname">v</td><td>the view direction </td></tr>
+    <tr><td class="paramname">roughness</td><td>the surface roughness </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>the radiance value </dd></dl>
 
 </div>
 </div>

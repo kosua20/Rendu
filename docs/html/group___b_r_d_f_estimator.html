@@ -91,14 +91,14 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!--header-->
 <div class="contents">
 <a name="details" id="details"></a><h2 class="groupheader"> </h2>
-<p>Perform cubemap GGX convolution, irradiance SH coefficients computation, and linearized BRDF look-up table pre-computation. </p>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_g_p_u_1_1_frag_1_1_cubemap__convo.html" title="&quot;Cubemap convo&quot; fragment shader.">GPU::Frag::Cubemap_convo</a> </dd>
+<p>Precompute BRDF-related data for real-time rendering. </p>
+<p>Perform cubemap GGX convolution, irradiance SH coefficients computation, and linearized BRDF look-up table precomputation. </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="class_g_p_u_1_1_frag_1_1_cubemap__convo.html" title="&quot;Cubemap convo&quot; fragment shader.">GPU::Frag::Cubemap_convo</a> </dd>
 <dd>
 <a class="el" href="class_g_p_u_1_1_frag_1_1_brdf__sampler.html" title="&quot;Brdf sampler&quot; fragment shader.">GPU::Frag::Brdf_sampler</a> </dd>
 <dd>
 <a class="el" href="class_g_p_u_1_1_frag_1_1_skybox__shcoeffs.html" title="&quot;Skybox shcoeffs&quot; fragment shader.">GPU::Frag::Skybox_shcoeffs</a> </dd>
 <dd>
-<a class="el" href="group___deferred_rendering.html" title="Render a scene using a PBR approach, image-based ambient lighting, ambient occlusion,...">Deferred rendering</a> </dd></dl>
+<a class="el" href="group___deferred_rendering.html" title="Real-time deferred rendering using GGX BRDF, image-based lighting, AO, tonemapped HDR,...">Deferred rendering</a> </dd></dl>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
@@ -296,10 +296,10 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Load a cubemap on both the CPU and <a class="el" href="namespace_g_p_u.html" title="GPU shaders.">GPU</a> from an input path. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Load a cubemap on both the CPU and <a class="el" href="namespace_g_p_u.html" title="Contains all shaders.">GPU</a> from an input path. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">inputPath</td><td>the base path on disk </td></tr>
-    <tr><td class="paramname">cubemapInfos</td><td>will contain the cubemap infos once sent to the <a class="el" href="namespace_g_p_u.html" title="GPU shaders.">GPU</a> </td></tr>
+    <tr><td class="paramname">cubemapInfos</td><td>will contain the cubemap infos once sent to the <a class="el" href="namespace_g_p_u.html" title="Contains all shaders.">GPU</a> </td></tr>
   </table>
   </dd>
 </dl>

@@ -92,6 +92,58 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="contents">
 <a name="details" id="details"></a><h2 class="groupheader"> </h2>
 <p>Contain objects, lights and environment representations used in 3D scene rendering. </p>
+<p>A scene can be represented on disk as a text file referencing resources by name. The general scene parameters and environment are setup as follows: </p><pre class="fragment"> * scene:
+    probe: texturetype: texturename
+    irradiance: shcoeffsfilename
+    translation: X,Y,Z
+    scaling: scale
+    orientation: axisX,axisY,axisZ angle
+ * background:
+    bgtype: value
+</pre><p> where bgtype is one of </p><pre class="fragment">  color: R,G,B
+  image: texturetype: texturename
+  cube: texturetype: texturename
+  bgsky: direction: X,Y,Z
+</pre><p>Each object can the be declared as follows: </p><pre class="fragment"> * object:
+    type: objecttype
+    mesh: meshname
+    translation: X,Y,Z
+    scaling: scale
+    orientation: axisX,axisY,axisZ angle
+    shadows: bool
+    twosided: bool
+    masked: bool
+    textures:
+        - texturetype: texturename
+        - ...
+    animations:
+        - rotation: speed frame axisX,axisY,axisZ
+        - backandforth: speed frame axisX,axisY,axisZ amplitude
+        - ...
+</pre><p> Animations can be applied in either the world or model frame.</p>
+<p>Lights of different types can be declared. Point lights: </p><pre class="fragment"> * point:
+    position: X,Y,Z
+    radius: radius
+    intensity: R,G,B
+    shadows: bool
+    animations:
+       - ...
+</pre><p> Spot lights: </p><pre class="fragment"> * spot:
+    direction: dirX,dirY,dirZ
+    position: X,Y,Z
+    radius: radius
+    cone: innerAngle outerAngle
+    intensity: R,G,B
+    shadows: bool
+    animations:
+        - ...
+</pre><p> Directional lights: </p><pre class="fragment"> * directional:
+    direction: dirX,dirY,dirZ
+    intensity: R,G,B
+    shadows: bool
+    animations:
+       - ...
+</pre><p> For more details on each parameter, consult each object decode function documentation. </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="class_scene.html#adcdcf336127cbe866704385e971e46d6">Scene::init</a>, <a class="el" href="class_object.html#a428d41f44813d95edeb3aae4f8a45b41">Object::decode</a>, <a class="el" href="class_light.html#ab57de670c01b19263287f187ff6773c1">Light::decodeBase</a>, <a class="el" href="class_point_light.html#a2d059bc354cb14d28a8f6b5095108508">PointLight::decode</a>, <a class="el" href="class_directional_light.html#a0b77bcc1bf706fdef2d7254cebe685e9">DirectionalLight::decode</a>, <a class="el" href="class_spot_light.html#ada5ca8a80862e1b497222800c8b48816">SpotLight::decode</a>, <a class="el" href="class_animation.html#a793d4b6aaf8ad72f5e1bc368a0d2c17a">Animation::decodeBase</a>, <a class="el" href="class_back_and_forth.html#aadfc3bd5db9d810e6cba39d10b20e542">BackAndForth::decode</a>, <a class="el" href="class_rotation.html#af59d0c5faf4fff5f0c49124105518bb6">Rotation::decode</a>, <a class="el" href="class_codable.html#af78f3260209895d04b3dfd17df61e806">Codable::decodeTexture</a>, <a class="el" href="class_sky.html#af6823e04311b2d8c0ad39e96a9a0193a">Sky::decode</a> </dd></dl>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
@@ -123,7 +175,7 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represent a 3D textured object.  <a href="class_object.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_scene.html">Scene</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents a 3D environment composed of objects, a background and additional environment lighting informations.  <a href="class_scene.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents a 3D environment composed of objects, a background and additional environment lighting informations, along with serialization support.  <a href="class_scene.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_sky.html">Sky</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represent a background environment with atmospheric scattering. The sun direction can be animated.  <a href="class_sky.html#details">More...</a><br /></td></tr>
