@@ -168,3 +168,7 @@ GLenum Descriptor::getGPUWrapping() const {
 bool Descriptor::operator==(const Descriptor & other) const {
 	return other._typedFormat == _typedFormat && other._filtering == _filtering && other._wrapping == _wrapping;
 }
+
+bool Descriptor::isSRGB() const {
+	return _typedFormat == Layout::SRGB8 || _typedFormat == Layout::SRGB8_ALPHA8;
+}

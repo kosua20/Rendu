@@ -163,7 +163,7 @@ const Framebuffer & Framebuffer::backbuffer() {
 		tex.shape	 = TextureShape::D2;
 		tex.levels	= 1;
 		tex.depth	 = 1;
-		tex.gpu.reset(new GPUTexture(Descriptor(Layout::RGBA8, Filter::NEAREST, Wrap::CLAMP), tex.shape));
+		tex.gpu.reset(new GPUTexture(Descriptor(Layout::SRGB8_ALPHA8, Filter::NEAREST, Wrap::CLAMP), tex.shape));
 	}
 	return *defaultFramebuffer;
 }

@@ -185,6 +185,11 @@ public:
 	 **/
 	bool operator==(const Descriptor & other) const;
 
+	/** Query if the texture is storing gamma-corrected values.
+	 \return the srgb status
+	 */
+	bool isSRGB() const;
+
 private:
 	/** Convert a filtering mode to the corresponding GPU driver value.
 	 \param filter the filtering mode
