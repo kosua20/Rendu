@@ -46,6 +46,20 @@ float G(float NdotL, float NdotV, float alpha){
 	return G1(NdotL, halfAlpha)*G1(NdotV, halfAlpha);
 }
 
+/** Visibility term of GGX BRDF, V=G/(n.v)(n.l)
+\param NdotL dot product of the light direction with the surface normal
+\param NdotV dot product of the view direction with the surface normal
+\param alpha squared roughness
+\return the value of V
+*/
+float V(float NdotL, float NdotV, float alpha){
+	// Correct version.
+	float alpha2 = alpha * alpha;
+	float visL = NdotV * sqrt((-NdotL * alpha2 + NdotL) * NdotL + alpha2);
+	float visV = NdotL * sqrt((-NdotV * alpha2 + NdotV) * NdotV + alpha2);
+    return 0.5 / (visV + visL);
+}
+
 /** Evaluated the GGX BRDF for a given surface normal, view direction and roughness.
 \param NdotV dot product of the view direction with the surface normal
 \param roughness the roughness of the surface
@@ -61,7 +75,7 @@ vec2 ggx(float NdotV, float roughness){
 	vec3 tangent = normalize(cross(temp, n));
 	vec3 binormal = cross(n, tangent);
 	
-	float alpha = max(0.000, roughness*roughness);
+	float alpha = max(0.0001, roughness*roughness);
 
 	vec2 sum = vec2(0.0);
 	
@@ -85,9 +99,9 @@ vec2 ggx(float NdotV, float roughness){
 			float VdotH = max(dot(v,h), 0.000);
 			float NdotH = max(h.z, 0.000);
 			
-			float Gterm = G(NdotL, NdotV, alpha) * VdotH * NdotL / NdotH;
-			float Fc = pow(2.0, (-5.55473 * VdotH - 6.98316) * VdotH);
-			sum += vec2(1.0 - Fc, Fc) * Gterm;
+			float Gterm =  4.0 * V(NdotL, NdotV, alpha) * NdotL * VdotH / NdotH ;
+			float Fc = pow(1.0 - VdotH, 5.0);
+			sum += Gterm * vec2(1.0 - Fc, Fc);
 			
 		}
 	}
