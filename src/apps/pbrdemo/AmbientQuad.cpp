@@ -4,7 +4,7 @@
 
 AmbientQuad::AmbientQuad(const Texture * texAlbedo, const Texture * texNormals, const Texture * texEffects, const Texture * texDepth, const Texture * texSSAO) {
 
-	_program = Resources::manager().getProgram2D("ambient");
+	_program = Resources::manager().getProgram2D("ambient_pbr");
 	// Load texture.
 	const Texture * textureBrdf = Resources::manager().getTexture("brdf-precomputed", {Layout::RG32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
 
@@ -36,6 +36,7 @@ void AmbientQuad::draw(const glm::mat4 & viewMatrix, const glm::mat4 & projectio
 
 	_program->uniform("inverseV", invView);
 	_program->uniform("projectionMatrix", projectionVector);
-
+	_program->uniform("maxLod", float(_textures[6]->levels-1));
+	
 	ScreenQuad::draw(_textures);
 }

@@ -65,7 +65,7 @@ vec3 convo(vec3 r, float roughness){
 
 		float NdotL = max(dot(n,l), 0.000);
 		if(NdotL > 0.0){
-			sum += NdotL * texture(texture0, l).rgb;
+			sum += NdotL * textureLod(texture0, l, 0.0).rgb;
 			denom += NdotL;
 		}
 	}

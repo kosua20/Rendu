@@ -6,9 +6,9 @@ DeferredLight::DeferredLight(const Texture * texAlbedo, const Texture * texNorma
 	_sphere  = Resources::manager().getMesh("light_sphere", Storage::GPU);
 	_cone  = Resources::manager().getMesh("light_cone", Storage::GPU);
 	
-	_pointProgram = Resources::manager().getProgram("point_light", "object_basic", "point_light");
-	_spotProgram = Resources::manager().getProgram("spot_light", "object_basic", "spot_light");
-	_dirProgram = Resources::manager().getProgram2D("directional_light");
+	_pointProgram = Resources::manager().getProgram("point_light_pbr", "object_basic", "point_light_pbr");
+	_spotProgram = Resources::manager().getProgram("spot_light_pbr", "object_basic", "spot_light_pbr");
+	_dirProgram = Resources::manager().getProgram2D("directional_light_pbr");
 }
 
 void DeferredLight::updateCameraInfos(const glm::mat4 & viewMatrix, const glm::mat4 & projMatrix){

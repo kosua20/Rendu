@@ -70,7 +70,7 @@ float shadow(vec3 lightToPosDir){
 	\return the Fresnel term
 */
 vec3 F(vec3 F0, float VdotH){
-	float approx = pow(2.0, (-5.55473 * VdotH - 6.98316) * VdotH);
+	float approx = exp2((-5.55473 * VdotH - 6.98316) * VdotH);
 	return F0 + approx * (1.0 - F0);
 }
 
@@ -85,24 +85,21 @@ float D(float NdotH, float alpha){
 	return halfTerm * halfTerm * INV_M_PI;
 }
 
-/** Geometric half-term of GGX BRDF.
-\param NdotX dot product of either the light or the view direction with the surface normal
-\param halfAlpha half squared roughness
-\return the value of the half-term
-*/
-float G1(float NdotX, float halfAlpha){
-	return 1.0 / max(0.0001, (NdotX * (1.0 - halfAlpha) + halfAlpha));
-}
-
-/** Geometric term of GGX BRDF, G.
+/** Visibility term of GGX BRDF, V=G/(n.v)(n.l)
 \param NdotL dot product of the light direction with the surface normal
 \param NdotV dot product of the view direction with the surface normal
 \param alpha squared roughness
-\return the value of G
+\return the value of V
 */
-float G(float NdotL, float NdotV, float alpha){
-	float halfAlpha = alpha * 0.5;
-	return G1(NdotL, halfAlpha)*G1(NdotV, halfAlpha);
+float V(float NdotL, float NdotV, float alpha){
+	// Correct version.
+	/* float alpha2 = alpha * alpha;
+	   float visL = NdotV * sqrt((-NdotL * alpha2 + NdotL) * NdotL + alpha2);
+	   float visV = NdotL * sqrt((-NdotV * alpha2 + NdotV) * NdotV + alpha2);
+	 */
+    float visV = NdotL * (NdotV * (1.0 - alpha) + alpha);
+    float visL = NdotV * (NdotL * (1.0 - alpha) + alpha);
+    return 0.5 / max(0.0001, visV + visL);
 }
 
 /** Evaluate the GGX BRDF for a given normal, view direction and 
@@ -124,7 +121,7 @@ vec3 ggx(vec3 n, vec3 v, vec3 l, vec3 F0, float roughness){
 	float VdotH = clamp(dot(v,h), 0.0, 1.0);
 	float alpha = max(0.0001, roughness*roughness);
 	
-	return D(NdotH, alpha) * G(NdotL, NdotV, alpha) * 0.25 * F(F0, VdotH);
+	return D(NdotH, alpha) * V(NdotL, NdotV, alpha) * F(F0, VdotH);
 }
 
 /** Compute the lighting contribution of a point light using the GGX BRDF. */
@@ -173,7 +170,7 @@ void main(){
 	// BRDF contributions.
 	// Compute F0 (fresnel coeff).
 	// Dielectrics have a constant low coeff, metals use the baseColor (ie reflections are tinted).
-	vec3 F0 = mix(vec3(0.08), baseColor, metallic);
+	vec3 F0 = mix(vec3(0.04), baseColor, metallic);
 	
 	// Normalized diffuse contribution. Metallic materials have no diffuse contribution.
 	vec3 diffuse = INV_M_PI * (1.0 - metallic) * baseColor * (1.0 - F0);
