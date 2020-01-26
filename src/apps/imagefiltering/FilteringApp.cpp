@@ -101,10 +101,12 @@ void FilteringApp::draw() {
 	}
 
 	// Render the output on screen.
+	Framebuffer::backbuffer()->bind();
 	const glm::ivec2 screenSize = Input::manager().size();
 	GLUtilities::setViewport(0, 0, screenSize[0], screenSize[1]);
 	_passthrough->use();
 	ScreenQuad::draw(finalTexID);
+	Framebuffer::backbuffer()->unbind();
 }
 
 void FilteringApp::update() {

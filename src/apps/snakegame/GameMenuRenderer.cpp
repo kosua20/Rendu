@@ -37,9 +37,7 @@ void GameMenuRenderer::drawMenu(const GameMenu & menu, const glm::vec2 & finalRe
 	static const float labelsEdgeWidth	 = 0.25f;
 
 	// Make sure we are rendering directly in the window.
-	Framebuffer::backbuffer().bind();
-
-	glEnable(GL_FRAMEBUFFER_SRGB);
+	Framebuffer::backbuffer()->bind(Framebuffer::Mode::SRGB);
 	GLUtilities::setViewport(0, 0, int(finalRes[0]), int(finalRes[1]));
 	GLUtilities::clearDepth(1.0f);
 
@@ -124,7 +122,7 @@ void GameMenuRenderer::drawMenu(const GameMenu & menu, const glm::vec2 & finalRe
 		GLUtilities::drawMesh(label.mesh);
 	}
 	glDisable(GL_BLEND);
-	glDisable(GL_FRAMEBUFFER_SRGB);
+	Framebuffer::backbuffer()->unbind();
 	checkGLError();
 }
 

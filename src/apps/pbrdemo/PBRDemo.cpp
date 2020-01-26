@@ -59,11 +59,11 @@ void PBRDemo::draw() {
 	_postprocess->process(_renderer->result());
 	
 	// We now render a full screen quad in the default framebuffer, using sRGB space.
-	glEnable(GL_FRAMEBUFFER_SRGB);
+	Framebuffer::backbuffer()->bind(Framebuffer::Mode::SRGB);
 	GLUtilities::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 	_finalProgram->use();
 	ScreenQuad::draw(_postprocess->result());
-	glDisable(GL_FRAMEBUFFER_SRGB);
+	Framebuffer::backbuffer()->unbind();
 	
 }
 

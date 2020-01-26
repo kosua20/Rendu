@@ -67,10 +67,10 @@ public:
 		
 		// Tonemapping and final screen.
 		GLUtilities::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
-		glEnable(GL_FRAMEBUFFER_SRGB);
+		Framebuffer::backbuffer()->bind(Framebuffer::Mode::SRGB);
 		_tonemap->use();
 		ScreenQuad::draw(_atmosphereBuffer->textureId());
-		glDisable(GL_FRAMEBUFFER_SRGB);
+		Framebuffer::backbuffer()->unbind();
 	}
 	
 	/** \copydoc CameraApp::update */

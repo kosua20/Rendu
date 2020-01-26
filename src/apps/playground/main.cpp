@@ -2,6 +2,7 @@
 #include "input/ControllableCamera.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "graphics/GLUtilities.hpp"
+#include "graphics/Framebuffer.hpp"
 #include "system/Config.hpp"
 #include "system/System.hpp"
 #include "system/Window.hpp"
@@ -104,6 +105,8 @@ int main(int argc, char ** argv) {
 		// Render.
 		const glm::ivec2 screenSize = Input::manager().size();
 		const glm::mat4 MVP		   = camera.projection() * camera.view();
+
+		Framebuffer::backbuffer()->bind();
 		GLUtilities::setViewport(0, 0, screenSize[0], screenSize[1]);
 		GLUtilities::clearColorAndDepth({0.2f, 0.3f, 0.25f, 1.0f}, 1.0f);
 		program->use();
@@ -128,6 +131,8 @@ int main(int argc, char ** argv) {
 		if(showImGuiDemo) {
 			ImGui::ShowDemoWindow();
 		}
+
+		Framebuffer::backbuffer()->unbind();
 
 	}
 
