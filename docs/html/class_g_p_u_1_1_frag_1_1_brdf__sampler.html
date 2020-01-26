@@ -115,6 +115,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ac27fc47c66d5da1a00af3adfdbbb0102"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a421abdc2b53179cdc8b84e17e60d0025"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_1_1_frag_1_1_brdf__sampler.html#a421abdc2b53179cdc8b84e17e60d0025">G</a> (float NdotL, float NdotV, float alpha)</td></tr>
 <tr class="separator:a421abdc2b53179cdc8b84e17e60d0025"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9002f5aa6e848b0b69411f53a8dfb8a4"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_1_1_frag_1_1_brdf__sampler.html#a9002f5aa6e848b0b69411f53a8dfb8a4">V</a> (float NdotL, float NdotV, float alpha)</td></tr>
+<tr class="separator:a9002f5aa6e848b0b69411f53a8dfb8a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a117424fdbcde42a034c4e4c7a87d5af0"><td class="memItemLeft" align="right" valign="top">vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_1_1_frag_1_1_brdf__sampler.html#a117424fdbcde42a034c4e4c7a87d5af0">ggx</a> (float NdotV, float roughness)</td></tr>
 <tr class="separator:a117424fdbcde42a034c4e4c7a87d5af0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae12405aab1d81b8bd9a24791bae8d6f8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_p_u_1_1_frag_1_1_brdf__sampler.html#ae12405aab1d81b8bd9a24791bae8d6f8">main</a> ()</td></tr>
@@ -329,6 +331,57 @@ out vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="
 </table>
 </div><div class="memdoc">
 <p>Compute a linear approximation of the GGX BRDF in two coefficients. </p>
+
+</div>
+</div>
+<a id="a9002f5aa6e848b0b69411f53a8dfb8a4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9002f5aa6e848b0b69411f53a8dfb8a4">&#9670;&nbsp;</a></span>V()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">float GPU::Frag::Brdf_sampler::V </td>
+          <td>(</td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>NdotL</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>NdotV</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>alpha</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Visibility term of GGX BRDF, V=G/(n.v)(n.l) </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">NdotL</td><td>dot product of the light direction with the surface normal </td></tr>
+    <tr><td class="paramname">NdotV</td><td>dot product of the view direction with the surface normal </td></tr>
+    <tr><td class="paramname">alpha</td><td>squared roughness </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>the value of V </dd></dl>
 
 </div>
 </div>
