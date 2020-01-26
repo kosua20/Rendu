@@ -19,8 +19,8 @@ void Application::update() {
 	}
 	// Perform screenshot capture in the current working directory.
 	if(Input::manager().triggered(Input::Key::O) || (Input::manager().controllerAvailable() && Input::manager().controller()->triggered(Controller::ButtonView))) {
-		//\todo Generate timestamp.
-		GLUtilities::saveFramebuffer(Framebuffer::backbuffer(), uint(_config.screenResolution[0]), uint(_config.screenResolution[1]), "./test-default", true, true);
+		const std::string filename = System::timestamp();
+		GLUtilities::saveFramebuffer(Framebuffer::backbuffer(), uint(_config.screenResolution[0]), uint(_config.screenResolution[1]), "./" + filename, true, true);
 	}
 }
 
