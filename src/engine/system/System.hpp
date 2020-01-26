@@ -42,7 +42,12 @@ public:
 	 \return the current counter value, in seconds.
 	 */
 	static double time();
-	
+
+	/** Obtain a YYYY_MM_DD_HH_MM_SS timestamp of the current time.
+	 \return the string representation
+	 */
+	static std::string timestamp();
+
 	/** Multi-threaded for-loop.
 		 \param low lower (included) bound
 		 \param high higher (excluded) bound

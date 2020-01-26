@@ -46,6 +46,41 @@ bool System::showPicker(Picker mode, const std::string & startDir, std::string &
 
 #ifdef _WIN32
 
+bool System::createDirectory(const std::string & directory) {
+	return CreateDirectoryW(widen(directory), nullptr) != 0;
+}
+
+#else
+
+bool System::createDirectory(const std::string & directory) {
+	return mkdir(directory.c_str(), S_IRWXU | S_IRWXG | S_IRWXO) == 0;
+}
+
+#endif
+
+void System::ping() {
+	Log::Info() << '\a' << std::endl;
+}
+
+double System::time(){
+	return glfwGetTime();
+}
+
+std::string System::timestamp(){
+	const auto time = std::time(nullptr);
+#ifdef _WIN32
+	tm ltime = { 0,0,0,0,0,0,0,0,0 };
+	localtime_s(&ltime, &time);
+#else
+	const tm ltime = *(std::localtime(&time));
+#endif
+	std::stringstream str;
+	str << std::put_time(&ltime, "%Y_%m_%d_%H_%M_%S");
+	return str.str();
+}
+
+#ifdef _WIN32
+
 WCHAR * System::widen(const std::string & str) {
 	const int size = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, nullptr, 0);
 	WCHAR * arr	= new WCHAR[size];
@@ -71,27 +106,3 @@ std::string System::narrow(char * str) {
 }
 
 #endif
-
-#ifdef _WIN32
-
-bool System::createDirectory(const std::string & directory) {
-	return CreateDirectoryW(widen(directory), nullptr) != 0;
-}
-
-#else
-
-bool System::createDirectory(const std::string & directory) {
-	return mkdir(directory.c_str(), S_IRWXU | S_IRWXG | S_IRWXO) == 0;
-}
-
-#endif
-
-void System::ping() {
-	Log::Info() << '\a' << std::endl;
-}
-
-double System::time(){
-	return glfwGetTime();
-}
-
-
