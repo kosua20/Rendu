@@ -90,7 +90,14 @@ void Framebuffer::bind() const {
 }
 
 void Framebuffer::bind(Mode mode) const {
-	glBindFramebuffer(mode == Mode::READ ? GL_READ_FRAMEBUFFER : GL_DRAW_FRAMEBUFFER, _id);
+	if(mode == Mode::READ){
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, _id);
+	} else if(mode == Mode::WRITE){
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _id);
+	} else if(mode == Mode::SRGB){
+		bind();
+		glEnable(GL_FRAMEBUFFER_SRGB);
+	}
 }
 
 void Framebuffer::setViewport() const {
@@ -99,6 +106,7 @@ void Framebuffer::setViewport() const {
 
 void Framebuffer::unbind() const {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glDisable(GL_FRAMEBUFFER_SRGB);
 }
 
 void Framebuffer::resize(unsigned int width, unsigned int height) {
@@ -151,19 +159,19 @@ glm::vec3 Framebuffer::read(const glm::ivec2 & pos) const {
 	return rgb;
 }
 
-Framebuffer * Framebuffer::defaultFramebuffer = nullptr;
+Framebuffer * Framebuffer::_backbuffer = nullptr;
 
-const Framebuffer & Framebuffer::backbuffer() {
+const Framebuffer * Framebuffer::backbuffer() {
 	// Initialize a dummy framebuffer representing the backbuffer.
-	if(!defaultFramebuffer) {
-		defaultFramebuffer = new Framebuffer();
-		defaultFramebuffer->_idColors.emplace_back();
+	if(!_backbuffer) {
+		_backbuffer = new Framebuffer();
+		_backbuffer->_idColors.emplace_back();
 		// We don't really need to allocate the texture, just setup its descriptor.
-		Texture & tex = defaultFramebuffer->_idColors.back();
-		tex.shape	 = TextureShape::D2;
-		tex.levels	= 1;
-		tex.depth	 = 1;
+		Texture & tex = _backbuffer->_idColors.back();
+		tex.shape  = TextureShape::D2;
+		tex.levels = 1;
+		tex.depth  = 1;
 		tex.gpu.reset(new GPUTexture(Descriptor(Layout::SRGB8_ALPHA8, Filter::NEAREST, Wrap::CLAMP), tex.shape));
 	}
-	return *defaultFramebuffer;
+	return _backbuffer;
 }

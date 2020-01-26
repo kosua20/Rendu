@@ -12,8 +12,9 @@ class Framebuffer {
 public:
 	/// \brief Framebuffer binding mode.
 	enum class Mode {
-		READ, ///< Read mode.
-		WRITE ///< Write mode.
+		READ,  ///< Read mode.
+		WRITE, ///< Write mode.
+		SRGB   ///< Perform linear-to-sRGB conversion when writing/reading (if the framebuffer is backed by an sRGB texture).
 	};
 
 	/** Setup the framebuffer (attachments, renderbuffer, depth buffer, textures IDs,...).
@@ -47,7 +48,7 @@ public:
 	void bind() const;
 
 	/**
-	 Bind the framebuffer in read or write mode.
+	 Bind the framebuffer with specific options.
 	 \param mode the mode to use
 	 */
 	void bind(Mode mode) const;
@@ -59,7 +60,7 @@ public:
 
 	/**
 	 Unbind the framebuffer.
-	 \note Technically bind the window backbuffer.
+	 \note Technically bind the window backbuffer with sRGB conversion disabled.
 	 */
 	void unbind() const;
 
@@ -119,7 +120,7 @@ public:
 	 \return a reference to a placeholder representing the backbuffer
 	 \note Can be used in conjonction with saveFramebuffer() to save the content of the window.
 	 */
-	static const Framebuffer & backbuffer();
+	static const Framebuffer * backbuffer();
 	
 	/** Copy assignment operator (disabled).
 	 \return a reference to the object assigned to
@@ -156,5 +157,5 @@ private:
 	};
 	Depth _depthUse = Depth::NONE; ///< The type of depth backing the framebuffer.
 
-	static Framebuffer * defaultFramebuffer; ///< Dummy backbuffer framebuffer.
+	static Framebuffer * _backbuffer; ///< Dummy backbuffer framebuffer.
 };
