@@ -82,6 +82,7 @@ int main(int argc, char ** argv) {
 		}
 
 		// Render the background.
+		Framebuffer::backbuffer()->bind();
 		const glm::ivec2 screenSize = Input::manager().size();
 		GLUtilities::setViewport(0, 0, screenSize[0], screenSize[1]);
 		GLUtilities::clearColorAndDepth(glm::vec4(bgColor, 1.0f), 1.0f);
@@ -128,9 +129,10 @@ int main(int argc, char ** argv) {
 			// Read back color under cursor when right-clicking.
 			if(Input::manager().pressed(Input::Mouse::Right)) {
 				const glm::vec2 mousePosition = Input::manager().mouse(true);
-				fgColor						  = Framebuffer::backbuffer().read(glm::ivec2(mousePosition));
+				fgColor						  = Framebuffer::backbuffer()->read(glm::ivec2(mousePosition));
 			}
 		}
+		Framebuffer::backbuffer()->unbind();
 
 		// Interface.
 		ImGui::SetNextWindowPos(ImVec2(10, 10));

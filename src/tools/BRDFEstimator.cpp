@@ -458,6 +458,8 @@ int main(int argc, char ** argv) {
 		const glm::ivec2 screenSize = Input::manager().size();
 		const glm::mat4 mvp		   = camera.projection() * camera.view();
 
+
+		Framebuffer::backbuffer()->bind();
 		GLUtilities::setViewport(0, 0, screenSize[0], screenSize[1]);
 		GLUtilities::clearColorAndDepth({0.5f, 0.5f, 0.5f, 1.0f}, 1.0f);
 
@@ -491,7 +493,8 @@ int main(int argc, char ** argv) {
 		GLUtilities::drawMesh(*mesh);
 		glDisable(GL_DEPTH_TEST);
 		GLUtilities::setViewport(0, 0, screenSize[0], screenSize[1]);
-
+		Framebuffer::backbuffer()->unbind();
+		
 	}
 
 	// Clean resources.

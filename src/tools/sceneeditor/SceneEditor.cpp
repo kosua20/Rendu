@@ -47,19 +47,21 @@ void SceneEditor::draw() {
 
 	// If no scene, just clear.
 	if(!_scenes[_currentScene]) {
+		Framebuffer::backbuffer()->bind();
 		GLUtilities::clearColorAndDepth({0.2f, 0.2f, 0.2f, 1.0f}, 1.0f);
+		Framebuffer::backbuffer()->unbind();
 		return;
 	}
 
 	_renderer.draw(_userCamera);
 
 	// We now render a full screen quad in the default framebuffer, using sRGB space.
-	glEnable(GL_FRAMEBUFFER_SRGB);
+	Framebuffer::backbuffer()->bind(Framebuffer::Mode::SRGB);
 	GLUtilities::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 	_passthrough->use();
 	_passthrough->uniform("flip", 0);
 	ScreenQuad::draw(_renderer.result());
-	glDisable(GL_FRAMEBUFFER_SRGB);
+	Framebuffer::backbuffer()->unbind();
 	checkGLError();
 }
 void SceneEditor::update() {
