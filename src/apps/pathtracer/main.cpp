@@ -142,7 +142,7 @@ int main(int argc, char ** argv) {
 	// Load geometry and create raycaster.
 	std::shared_ptr<Scene> scene(new Scene(config.scene));
 	// We need th CPU data for the path tracer, the GPU data for the preview.
-	scene->init(Storage::BOTH);
+	scene->init(Storage::BOTH | Storage::FORCE_FRAME);
 
 	PathTracerApp app(config, scene);
 

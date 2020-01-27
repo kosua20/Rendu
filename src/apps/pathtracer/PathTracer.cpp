@@ -6,6 +6,9 @@
 PathTracer::PathTracer(const std::shared_ptr<Scene> & scene) {
 	// Add all scene objects to the raycaster.
 	for(const auto & obj : scene->objects) {
+		if(obj.mesh()->tangents.empty()){
+			Log::Error() << "The path tracer requires local tangent frames for all meshes." << std::endl;
+		}
 		_raycaster.addMesh(*obj.mesh(), obj.model());
 	}
 	_raycaster.updateHierarchy();
