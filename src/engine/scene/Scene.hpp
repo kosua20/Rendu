@@ -14,15 +14,16 @@
 class Scene {
 
 public:
+	
 	/** Constructor from a scene description file.
 	 \param name the name of the scene description file
 	 */
 	explicit Scene(const std::string & name);
 
 	/** Performs initialization against the graphics API, loading data.
-	 \param mode should the data be stored on the CPU, GPU, or both.
+	 \param options data loading and storage options.
 	 */
-	void init(Storage mode);
+	void init(Storage options);
 
 	/** Update the animations in the scene.
 	 \param fullTime the time elapsed since the beginning of the render loop
@@ -86,33 +87,33 @@ public:
 private:
 	/** Load an object in the scene from its serialized representation.
 	 \param params the object parameters
-	 \param mode the storage mode (CPU, GPU, both)
+	 \param options data loading and storage options
 	 */
-	void loadObject(const KeyValues & params, Storage mode);
+	void loadObject(const KeyValues & params, Storage options);
 
 	/** Load a point light in the scene from its serialized representation.
 	 \param params the point light parameters
-	 \param mode the storage mode (CPU, GPU, both) (unused)
+	 \param options data loading and storage options (unused)
 	 */
-	void loadLight(const KeyValues & params, Storage mode);
+	void loadLight(const KeyValues & params, Storage options);
 
 	/** Load the scene camera informations from its serialized representation.
 	 \param params the camera parameters
-	 \param mode the storage mode (CPU, GPU, both) (unused)
+	\param options data loading and storage options (unused)
 	 */
-	void loadCamera(const KeyValues & params, Storage mode);
+	void loadCamera(const KeyValues & params, Storage options);
 
 	/** Load the scene background informations from its serialized representation.
 	 \param params the background parameters
-	 \param mode the storage mode (CPU, GPU, both)
+	 \param options data loading and storage options
 	 */
-	void loadBackground(const KeyValues & params, Storage mode);
+	void loadBackground(const KeyValues & params, Storage options);
 
 	/** Load the scene informations from its serialized representation.
 	 \param params the scene parameters
-	 \param mode the storage mode (CPU, GPU, both)
+	 \param options data loading and storage options
 	 */
-	void loadScene(const KeyValues & params, Storage mode);
+	void loadScene(const KeyValues & params, Storage options);
 
 	
 	/** Compute the bounding box of the scene, optionaly excluding objects that do not cast shadows.

@@ -11,7 +11,7 @@ Object::Object(const Type type, const Mesh * mesh, bool castShadows) :
 	_mesh(mesh), _material(type), _castShadow(castShadows) {
 }
 
-void Object::decode(const KeyValues & params, Storage mode) {
+void Object::decode(const KeyValues & params, Storage options) {
 
 	static const std::map<std::string, Object::Type> types = {
 		REGISTER_STRTYPE(Common),
@@ -31,7 +31,7 @@ void Object::decode(const KeyValues & params, Storage mode) {
 
 		} else if(param.key == "mesh" && !param.values.empty()) {
 			const std::string meshString = param.values[0];
-			_mesh						 = Resources::manager().getMesh(meshString, mode);
+			_mesh						 = Resources::manager().getMesh(meshString, options);
 
 		} else if(param.key == "shadows") {
 			_castShadow = Codable::decodeBool(param);
@@ -39,7 +39,7 @@ void Object::decode(const KeyValues & params, Storage mode) {
 		} else if(param.key == "textures") {
 			for(const auto & paramTex : param.elements) {
 				const auto texInfos = Codable::decodeTexture(paramTex);
-				const Texture * tex = Resources::manager().getTexture(texInfos.first, texInfos.second, mode);
+				const Texture * tex = Resources::manager().getTexture(texInfos.first, texInfos.second, options);
 				addTexture(tex);
 			}
 

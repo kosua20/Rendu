@@ -15,9 +15,9 @@ class Sky final : public Object {
 
 public:
 	/** Constructor.
-	 \param mode the storage mode (CPU, GPU, both) for the internal data.
+	 \param options data loading and storage options
 	 */
-	explicit Sky(Storage mode);
+	explicit Sky(Storage options);
 
 	/** Apply the animations for a frame duration.
 	 \param fullTime the time since the launch of the application
@@ -33,9 +33,9 @@ public:
 	 		...
 	 \endverbatim
 	 \param params the parameters tuple
-	 \param mode the storage mode (CPU, GPU, both)
+	 \param options data loading and storage options
 	 */
-	void decode(const KeyValues & params, Storage mode) override;
+	void decode(const KeyValues & params, Storage options) override;
 	
 	/** Generate a key-values representation of the object. See decode for the keywords and layout.
 	\return a tuple representing the object.

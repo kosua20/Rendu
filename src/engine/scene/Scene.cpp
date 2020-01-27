@@ -29,7 +29,7 @@ void printToken(const KeyValues & tk, const std::string & shift) {
 	}
 }
 
-void Scene::init(Storage mode) {
+void Scene::init(Storage options) {
 	if(_loaded) {
 		return;
 	}
@@ -47,7 +47,7 @@ void Scene::init(Storage mode) {
 	for(const auto & element : allParams) {
 		const std::string key = element.key;
 		// By construction (see above), all keys should have a loader.
-		(this->*loaders[key])(element, mode);
+		(this->*loaders[key])(element, options);
 	}
 
 	// Update all objects poses.
@@ -67,9 +67,9 @@ void Scene::init(Storage mode) {
 	Log::Info() << Log::Resources << "Loading took " << duration.count() << "ms." << std::endl;
 }
 
-void Scene::loadObject(const KeyValues & params, Storage mode) {
+void Scene::loadObject(const KeyValues & params, Storage options) {
 	objects.emplace_back();
-	objects.back().decode(params, mode);
+	objects.back().decode(params, options);
 }
 
 void Scene::loadLight(const KeyValues & params, Storage) {
@@ -83,8 +83,8 @@ void Scene::loadCamera(const KeyValues & params, Storage) {
 	_camera.decode(params);
 }
 
-void Scene::loadBackground(const KeyValues & params, Storage mode) {
-	background = std::unique_ptr<Object>(new Object(Object::Type::Common, Resources::manager().getMesh("plane", mode), false));
+void Scene::loadBackground(const KeyValues & params, Storage options) {
+	background = std::unique_ptr<Object>(new Object(Object::Type::Common, Resources::manager().getMesh("plane", options), false));
 
 	for(const auto & param : params.elements) {
 		if(param.key == "color") {
@@ -96,32 +96,32 @@ void Scene::loadBackground(const KeyValues & params, Storage mode) {
 			backgroundMode = Background::IMAGE;
 			// Load image described as sub-element.
 			const auto texInfos = Codable::decodeTexture(param.elements[0]);
-			const Texture * tex = Resources::manager().getTexture(texInfos.first, texInfos.second, mode);
+			const Texture * tex = Resources::manager().getTexture(texInfos.first, texInfos.second, options);
 			background->addTexture(tex);
 
 		} else if(param.key == "cube" && !param.elements.empty()) {
 			backgroundMode = Background::SKYBOX;
 			// Object is a textured skybox.
-			background = std::unique_ptr<Object>(new Object(Object::Type::Common, Resources::manager().getMesh("skybox", mode), false));
-			background->decode(params, mode);
+			background = std::unique_ptr<Object>(new Object(Object::Type::Common, Resources::manager().getMesh("skybox", options), false));
+			background->decode(params, options);
 			// Load cubemap described as subelement.
 			const auto texInfos = Codable::decodeTexture(param.elements[0]);
-			const Texture * tex = Resources::manager().getTexture(texInfos.first, texInfos.second, mode);
+			const Texture * tex = Resources::manager().getTexture(texInfos.first, texInfos.second, options);
 			background->addTexture(tex);
 
 		} else if(param.key == "sun") {
 			// In that case the background is a sky object.
 			backgroundMode = Background::ATMOSPHERE;
-			background	 = std::unique_ptr<Sky>(new Sky(mode));
-			background->decode(params, mode);
+			background	 = std::unique_ptr<Sky>(new Sky(options));
+			background->decode(params, options);
 			// Load the scattering table.
-			const Texture * tex = Resources::manager().getTexture("scattering-precomputed", {Layout::RGB32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, mode);
+			const Texture * tex = Resources::manager().getTexture("scattering-precomputed", {Layout::RGB32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, options);
 			background->addTexture(tex);
 		}
 	}
 }
 
-void Scene::loadScene(const KeyValues & params, Storage mode) {
+void Scene::loadScene(const KeyValues & params, Storage options) {
 	backgroundIrradiance = std::vector<glm::vec3>(9, glm::vec3(0.0f));
 
 	for(const auto & param : params.elements) {
@@ -140,7 +140,7 @@ void Scene::loadScene(const KeyValues & params, Storage mode) {
 		} else if(param.key == "probe" && !param.elements.empty()) {
 			// Load cubemap described as sub-element.
 			const auto texInfos = Codable::decodeTexture(param.elements[0]);
-			backgroundReflection = Resources::manager().getTexture(texInfos.first, texInfos.second, mode);
+			backgroundReflection = Resources::manager().getTexture(texInfos.first, texInfos.second, options);
 		}
 	}
 	// Update matrix, there is at most one transformation in the scene object.

@@ -112,9 +112,9 @@ public:
 	 	- ...
 	 \endverbatim
 	 \param params the parameters tuple
-	 \param mode the storage mode (CPU, GPU, both)
+	 \param options data loading and storage options
 	 */
-	virtual void decode(const KeyValues & params, Storage mode);
+	virtual void decode(const KeyValues & params, Storage options);
 
 	/** Generate a key-values representation of the object. See decode for the keywords and layout.
 	\return a tuple representing the object.
