@@ -9,13 +9,15 @@
 
 
 /**
- \brief Denote if data is stored on the GPU or CPU.
+ \brief Storage and loading options.
  \ingroup Resources
  */
 enum class Storage : uint {
-	GPU  = 1,		   ///< On the GPU
-	CPU  = 2,		   ///< On the CPU
-	BOTH = (GPU | CPU) ///< On both the CPU and GPU
+	NONE = 0,
+	GPU  = 1,		   ///< Store on the GPU
+	CPU  = 2,		   ///< Store on the CPU
+	BOTH = (GPU | CPU), ///< Store on both the CPU and GPU
+	FORCE_FRAME = 4 ///< For meshes, force computation of a local frame
 };
 
 /** Combining operator for Storage.
@@ -123,20 +125,20 @@ public:
 
 	/** Get a geometric mesh resource.
 	 \param name the mesh file name
-	 \param mode denote if data will be available in the CPU and/or GPU memory
+	 \param options data loading and storage options
 	 \return the mesh informations
 	 */
-	const Mesh * getMesh(const std::string & name, Storage mode);
+	const Mesh * getMesh(const std::string & name, Storage options);
 
 	/** Get a 2D texture resource. Automatically handle custom mipmaps if present.
 	 \param name the texture base name
 	 \param descriptor the texture layout to use
-	 \param mode denote if data will be available in the CPU and/or GPU memory
+	 \param options data loading and storage options
 	 \param refName the name to use for the texture in future calls
 	 \return the texture informations
 	 \note If the name is the string representation of an RGB(A) color ("1.0,0.0,1.0" for instance), a constant color 2D texture will be allocated using the passed descriptor.
 	 */
-	const Texture * getTexture(const std::string & name, const Descriptor & descriptor, Storage mode, const std::string & refName = "");
+	const Texture * getTexture(const std::string & name, const Descriptor & descriptor, Storage options, const std::string & refName = "");
 
 	/** Get an existing 2D texture resource.
 	 \param name the texture base name

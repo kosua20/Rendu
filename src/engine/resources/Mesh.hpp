@@ -52,8 +52,9 @@ public:
 	void computeNormals();
 
 	/** Compute the tangent and binormal vectors for each vertex of a mesh.
+	 \param force Compute local tangent frame even if texture coordinates are not available.
 	 */
-	void computeTangentsAndBinormals();
+	void computeTangentsAndBinormals(bool force);
 
 	/** Save an OBJ mesh on disk.
 	 \param path the path to the mesh

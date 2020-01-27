@@ -266,11 +266,13 @@ void Mesh::computeNormals() {
 	}
 }
 
-void Mesh::computeTangentsAndBinormals() {
-	if(indices.size() * positions.size() * texcoords.size() == 0) {
-		// Missing data, or not the right mode (Points).
+void Mesh::computeTangentsAndBinormals(bool force) {
+	const bool uvAvailable = !texcoords.empty();
+	if(!uvAvailable && !force) {
+		// No available info.
 		return;
 	}
+
 	// Start by filling everything with 0 (as we want to accumulate tangents and binormals coming from different faces for each vertex).
 	for(size_t pid = 0; pid < positions.size(); ++pid) {
 		tangents.emplace_back(0.0f);
@@ -287,28 +289,32 @@ void Mesh::computeTangentsAndBinormals() {
 		const glm::vec3 & v0 = positions[i0];
 		const glm::vec3 & v1 = positions[i1];
 		const glm::vec3 & v2 = positions[i2];
-		// Get the uvs of the face.
-		const glm::vec2 & uv0 = texcoords[i0];
-		const glm::vec2 & uv1 = texcoords[i1];
-		const glm::vec2 & uv2 = texcoords[i2];
-
-		// Delta positions and uvs.
 		const glm::vec3 deltaPosition1 = v1 - v0;
 		const glm::vec3 deltaPosition2 = v2 - v0;
-		const glm::vec2 deltaUv1	   = uv1 - uv0;
-		const glm::vec2 deltaUv2	   = uv2 - uv0;
 
-		// Compute tangent and binormal for the face.
-		const float denom  = deltaUv1.x * deltaUv2.y - deltaUv1.y * deltaUv2.x;
-		const bool degen   = std::abs(denom) < 0.001f;
+		bool done = false;
 		glm::vec3 tangent  = glm::vec3(0.0f);
 		glm::vec3 binormal = glm::vec3(0.0f);
-		// Avoid divide-by-zero if same UVs.
-		if(!degen) {
-			const float det = (1.0f / denom);
-			tangent			= det * (deltaPosition1 * deltaUv2.y - deltaPosition2 * deltaUv1.y);
-			binormal		= det * (deltaPosition2 * deltaUv1.x - deltaPosition1 * deltaUv2.x);
-		} else {
+
+		// Get the uvs of the face if available.
+		if(uvAvailable){
+			const glm::vec2 & uv0 = texcoords[i0];
+			const glm::vec2 & uv1 = texcoords[i1];
+			const glm::vec2 & uv2 = texcoords[i2];
+			const glm::vec2 deltaUv1 = uv1 - uv0;
+			const glm::vec2 deltaUv2 = uv2 - uv0;
+
+			// Compute tangent and binormal for the face.
+			const float denom  = deltaUv1.x * deltaUv2.y - deltaUv1.y * deltaUv2.x;
+			if(std::abs(denom) >= 0.001f) {
+				const float det = (1.0f / denom);
+				tangent			= det * (deltaPosition1 * deltaUv2.y - deltaPosition2 * deltaUv1.y);
+				binormal		= det * (deltaPosition2 * deltaUv1.x - deltaPosition1 * deltaUv2.x);
+				done = true;
+			}
+		}
+		// Fallback to basic frame.
+		if(!done){
 			const glm::vec3 normal = glm::normalize(glm::cross(deltaPosition1, deltaPosition2));
 			tangent				   = std::abs(normal.z) > 0.8f ? glm::vec3(1.0f, 0.0f, 0.0f) : glm::vec3(0.0f, 0.0f, 1.0f);
 			binormal			   = glm::normalize(glm::cross(normal, tangent));

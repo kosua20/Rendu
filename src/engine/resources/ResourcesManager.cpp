@@ -208,7 +208,7 @@ std::string Resources::getString(const std::string & filename) {
 
 // Mesh method.
 
-const Mesh * Resources::getMesh(const std::string & name, Storage mode) {
+const Mesh * Resources::getMesh(const std::string & name, Storage options) {
 	if(_meshes.count(name) > 0) {
 		return &_meshes[name];
 	}
@@ -224,16 +224,16 @@ const Mesh * Resources::getMesh(const std::string & name, Storage mode) {
 	
 	auto & mesh = _meshes[name];
 	// If uv or positions are missing, tangent/binormals won't be computed.
-	mesh.computeTangentsAndBinormals();
+	mesh.computeTangentsAndBinormals(options & Storage::FORCE_FRAME);
 	// Compute bounding box.
 	mesh.computeBoundingBox();
 
-	if(mode & Storage::GPU) {
+	if(options & Storage::GPU) {
 		// Setup GL buffers and attributes.
 		mesh.upload();
 	}
 	// If we are not planning on using the CPU data, remove it.
-	if(!(mode & Storage::CPU)) {
+	if(!(options & Storage::CPU)) {
 		mesh.clearGeometry();
 	}
 
@@ -250,13 +250,13 @@ const Texture * Resources::getTexture(const std::string & name) {
 	return nullptr;
 }
 
-const Texture * Resources::getTexture(const std::string & name, const Descriptor & descriptor, Storage mode, const std::string & refName) {
+const Texture * Resources::getTexture(const std::string & name, const Descriptor & descriptor, Storage options, const std::string & refName) {
 	const std::string & keyName = refName.empty() ? name : refName;
 
 	// If texture already loaded, return it.
 	if(_textures.count(keyName) > 0) {
 		auto & texture = _textures[keyName];
-		if(mode & Storage::GPU) {
+		if(options & Storage::GPU) {
 			// If we want to store the texture on the GPU...
 			if(texture.gpu) {
 				// If the texture is already on the GPU, check that the layout is the same, else raise a warning.
@@ -271,7 +271,7 @@ const Texture * Resources::getTexture(const std::string & name, const Descriptor
 		}
 		// If we require CPU data but the images are empty, the texture CPU data was cleared...
 		// Don't try and reload, just print an error.
-		if((mode & Storage::CPU) && texture.images.empty()) {
+		if((options & Storage::CPU) && texture.images.empty()) {
 			Log::Error() << Log::Resources << "Texture \"" << keyName
 						 << "\" exists but is not CPU available." << std::endl;
 		}
@@ -391,12 +391,12 @@ const Texture * Resources::getTexture(const std::string & name, const Descriptor
 	texture.levels = uint(paths.size());
 
 	// If GPU mode, send them to the GPU.
-	if(mode & Storage::GPU) {
+	if(options & Storage::GPU) {
 		// If only one level was given, generate the mipmaps.
 		texture.upload(descriptor, texture.levels == 1);
 	}
 	// If GPU only, clear the CPU data.
-	if(!(mode & Storage::CPU)) {
+	if(!(options & Storage::CPU)) {
 		texture.clearImages();
 	}
 	return &_textures[keyName];
