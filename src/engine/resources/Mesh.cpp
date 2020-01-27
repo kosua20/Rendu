@@ -268,7 +268,7 @@ void Mesh::computeNormals() {
 
 void Mesh::computeTangentsAndBinormals(bool force) {
 	const bool uvAvailable = !texcoords.empty();
-	if(!uvAvailable && !force) {
+	if(positions.empty() || normals.empty() || (!uvAvailable && !force)) {
 		// No available info.
 		return;
 	}

@@ -223,8 +223,12 @@ const Mesh * Resources::getMesh(const std::string & name, Storage options) {
 	_meshes.emplace(std::make_pair(name, Mesh(meshStream, Mesh::Load::Indexed, name)));
 	
 	auto & mesh = _meshes[name];
+	const bool forceFrame = options & Storage::FORCE_FRAME;
+	if(forceFrame && mesh.normals.empty()){
+		mesh.computeNormals();
+	}
 	// If uv or positions are missing, tangent/binormals won't be computed.
-	mesh.computeTangentsAndBinormals(options & Storage::FORCE_FRAME);
+	mesh.computeTangentsAndBinormals(forceFrame);
 	// Compute bounding box.
 	mesh.computeBoundingBox();
 
