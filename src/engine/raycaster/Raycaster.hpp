@@ -80,26 +80,20 @@ public:
 	 */
 	bool visible(const glm::vec3 & p0, const glm::vec3 & p1) const;
 
-	/** Return the interpolated position of the ray hit on the surface of the mesh.
-	 \param hit the intersection record
-	 \param geometry the mesh geometry information
-	 \return the smooth position
-	 */
-	static glm::vec3 interpolatePosition(const RayHit & hit, const Mesh & geometry);
-
-	/** Return the interpolated normal at the hit on the surface of the mesh.
-	 \param hit the intersection record
-	 \param geometry the mesh geometry information
-	 \return the smooth normal (normalized)
-	 */
-	static glm::vec3 interpolateNormal(const RayHit & hit, const Mesh & geometry);
-
-	/** Return the interpolated texture coordinates at the hit on the surface of the mesh.
-	 \param hit the intersection record
-	 \param geometry the mesh geometry information
-	 \return the smooth texture coordinates
-	 */
-	static glm::vec2 interpolateUV(const RayHit & hit, const Mesh & geometry);
+	/** Return the interpolated attribute for a hit at the surface of the mesh.
+	\param hit the intersection record
+	\param geometry the mesh geometry information
+	\param attribute the vector containing per-vertex values for the attribute
+	\return the interpolated attribute
+	*/
+	template<typename T>
+	static T interpolateAttribute(const RayHit & hit, const Mesh & geometry, const std::vector<T> & attribute){
+		const unsigned long triId = hit.localId;
+		const unsigned long i0	= geometry.indices[triId];
+		const unsigned long i1	= geometry.indices[triId + 1];
+		const unsigned long i2	= geometry.indices[triId + 2];
+		return hit.w * attribute[i0] + hit.u * attribute[i1] + hit.v * attribute[i2];
+	}
 
 	/** Copy constructor.*/
 	Raycaster(const Raycaster &) = delete;

@@ -276,28 +276,3 @@ bool Raycaster::intersects(const Raycaster::Ray & ray, const BoundingBox & box, 
 
 	return std::max(closest, mini) <= std::min(furthest, maxi);
 }
-
-glm::vec3 Raycaster::interpolatePosition(const RayHit & hit, const Mesh & geometry) {
-	const unsigned long triId = hit.localId;
-	const unsigned long i0	= geometry.indices[triId];
-	const unsigned long i1	= geometry.indices[triId + 1];
-	const unsigned long i2	= geometry.indices[triId + 2];
-	return hit.w * geometry.positions[i0] + hit.u * geometry.positions[i1] + hit.v * geometry.positions[i2];
-}
-
-glm::vec3 Raycaster::interpolateNormal(const RayHit & hit, const Mesh & geometry) {
-	const unsigned long triId = hit.localId;
-	const unsigned long i0	= geometry.indices[triId];
-	const unsigned long i1	= geometry.indices[triId + 1];
-	const unsigned long i2	= geometry.indices[triId + 2];
-	const glm::vec3 n		  = hit.w * geometry.normals[i0] + hit.u * geometry.normals[i1] + hit.v * geometry.normals[i2];
-	return glm::normalize(n);
-}
-
-glm::vec2 Raycaster::interpolateUV(const RayHit & hit, const Mesh & geometry) {
-	const unsigned long triId = hit.localId;
-	const unsigned long i0	= geometry.indices[triId];
-	const unsigned long i1	= geometry.indices[triId + 1];
-	const unsigned long i2	= geometry.indices[triId + 2];
-	return hit.w * geometry.texcoords[i0] + hit.u * geometry.texcoords[i1] + hit.v * geometry.texcoords[i2];
-}
