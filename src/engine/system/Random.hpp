@@ -48,10 +48,20 @@ public:
 	 */
 	static float Float(float min, float max);
 
+	/** Sample point uniformly on a disk.
+	 \return a 2D point on the unit disk
+	*/
+	static glm::vec2 sampleDisk();
+
 	/** Sample point uniformly on a sphere.
 	 \return a 3D point on the unit sphere
 	 */
 	static glm::vec3 sampleSphere();
+
+	/** Sample point from the hemisphere, following a cosine lobe
+	 \return a 3D point on the unit z-positive hemisphere
+	*/
+	static glm::vec3 sampleCosineHemisphere();
 
 private:
 	/** \brief A MT19937 generator seeded using the shared generator.
