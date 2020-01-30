@@ -15,6 +15,79 @@ PathTracer::PathTracer(const std::shared_ptr<Scene> & scene) {
 	_scene = scene;
 }
 
+
+glm::vec3 F(glm::vec3 F0, float VdotH){
+	return F0 + std::pow(1.0f - VdotH, 5.0f) * (glm::vec3(1.0f) - F0);
+}
+
+float D(float NdotH, float alpha){
+	const float halfDenum = NdotH * NdotH * (alpha * alpha - 1.0f) + 1.0f;
+	const float halfTerm = alpha / std::max(0.0001f, halfDenum);
+	return halfTerm * halfTerm * glm::one_over_pi<float>();
+}
+
+float V(float NdotL, float NdotV, float alpha){
+	// Correct version.
+	const float alpha2 = alpha * alpha;
+	const float visL = NdotV * std::sqrt((-NdotL * alpha2 + NdotL) * NdotL + alpha2);
+	const float visV = NdotL * std::sqrt((-NdotV * alpha2 + NdotV) * NdotV + alpha2);
+	return 0.5f / std::max(0.0001f, visV + visL);
+}
+
+
+glm::vec3 brdf(const glm::vec3 & wo, const glm::vec3 & baseColor, float roughness, float metallic, glm::vec3 & wi, float & pdf){
+	const float probaSpecular = glm::mix(1.0f / (glm::dot(baseColor, glm::vec3(1.0f)) / 3.0f + 1.0f), 1.0f,  metallic);
+
+	const float roughClamp = std::max(0.045f, roughness);
+	const float alpha = std::max(0.0001f, roughClamp*roughClamp);
+
+	if(Random::Float() < probaSpecular){
+		// Sample specular lobe.
+		const float a2 = alpha * alpha;
+		const float x = Random::Float();
+		// for dielectrics, Walter et al. have a roughness rescaling hack.
+		// alpha * (1.2f - 0.2f * std::sqrt(std::abs(wi.z)));
+		const float phiH = Random::Float() * glm::two_pi<float>();
+		const float cosThetaHSqr = std::min((1.0f - x) / ((a2 - 1.0f) * x + 1.0f), 1.0f);
+		const float cosThetaH = std::sqrt(cosThetaHSqr);
+		const float sinThetaH = std::sqrt(1.0f - cosThetaHSqr);
+		const glm::vec3 lh(sinThetaH * cos(phiH), sinThetaH * sin(phiH), cosThetaH);
+		// wi is outgoing here. wo is outgoing also.
+		wi = 2.0f * glm::dot(wo, lh) * lh - wo;
+	} else {
+		// Else sample diffuse lobe.
+		wi = Random::sampleCosineHemisphere();
+		if(wo.z < 0.0f){
+			wi.z *= -1.0f;
+		}
+	}
+	if(wi.z < 0.0f){
+		pdf = 0.0f;
+		return glm::vec3(0.0f);
+	}
+	const glm::vec3 h = glm::normalize(wi + wo);
+	const float NdotH = h.z;
+	const float VdotH = glm::dot(wi,h);
+	const float NdotL = wo.z;
+	const float NdotV = wi.z;
+
+	// Evaluate D(h)
+	const float Dh = D(NdotH, alpha);
+	// Evaluate the total PDF.
+	const float hPdf = Dh * NdotH;
+	pdf = glm::mix(glm::one_over_pi<float>() * NdotV, hPdf / (4.0f * std::max(0.001f, VdotH)), probaSpecular);
+	if(pdf == 0.0f){
+		return glm::vec3(0.0f);
+	}
+	// Evaluate the total BRDF and weight it.
+	const glm::vec3 F0 = glm::mix(glm::vec3(0.04f), baseColor, metallic);
+	const glm::vec3 spec = Dh * V(NdotL, NdotV, alpha) * F(F0, VdotH);
+	const glm::vec3 diff = (1.0f - metallic) * glm::one_over_pi<float>() * baseColor * (glm::vec3(1.0f) - F0);
+	const glm::vec3 brdf = (diff + spec) * NdotV;
+	return brdf / pdf;
+}
+
+
 void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Image & render) {
 
 	// Safety checks.
@@ -80,8 +153,7 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 				for(size_t did = 0; did < depth; ++did) {
 					// Query closest intersection.
 					const Raycaster::RayHit hit = _raycaster.intersects(rayPos, rayDir);
-					
-					 
+
 					// If no hit, background.
 					if(!hit.hit) {
 						const Scene::Background mode = _scene->backgroundMode;
@@ -109,20 +181,56 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 						break;
 					}
 
-					glm::vec3 illumination(0.0f);
-
 					// Fetch geometry infos...
 					const Object & obj = _scene->objects[hit.meshId];
 					const Mesh & mesh  = *obj.mesh();
 					const glm::vec3 p  = rayPos + hit.dist * rayDir;
-					const glm::vec3 n  = glm::normalize(glm::inverse(glm::transpose(obj.model())) * glm::vec4(Raycaster::interpolateNormal(hit, mesh), 0.0));
-					const glm::vec2 uv = Raycaster::interpolateUV(hit, mesh);
-					
-					// No support for geometric emitters for now.
-					
+					const glm::mat4 invtp = glm::inverse(glm::transpose(obj.model()));
+					glm::vec3 n = glm::normalize(Raycaster::interpolateAttribute(hit, mesh, mesh.normals));
+					glm::vec3 t = glm::normalize(Raycaster::interpolateAttribute(hit, mesh, mesh.tangents));
+					// Convert to world frame.
+					n = glm::normalize(glm::vec3(invtp * glm::vec4(n, 0.0f)));
+					t = glm::normalize(glm::vec3(invtp * glm::vec4(t, 0.0f)));
+					// Enforce orthogonality.
+					const glm::vec3 b = glm::normalize(glm::cross(n,t));
+					t = glm::normalize(glm::cross(b,n));
+
+					const glm::mat3 tbn(t, b, n);
+					const glm::mat3 itbn = glm::transpose(tbn);
+					const glm::vec2 uv = Raycaster::interpolateAttribute(hit, mesh, mesh.texcoords);
+
+
+					// Fetch base color from texture.
+					const Image & image  = obj.textures()[0]->images[0];
+					const glm::vec4 bCol = image.rgbal(uv.x, uv.y);
+					const Image & imageRMAO  = obj.textures()[2]->images[0];
+					const glm::vec4 rmao = imageRMAO.rgbal(uv.x, uv.y);
+					// In case of alpha cut-out, just update the position to the intersection and keep casting.
+					// The 'mini' margin will ensures that we don't reintersect the same surface.
+					if(bCol.a < 0.01f) {
+						rayPos = p;
+						continue;
+					}
+
+					// When sampling and evaluating the BRDF, work in the local (t,b,n) frame
+					/// \todo Create a frame for meshes with no UVs.
+					float pdf = 0.0f;
+					const glm::vec3 wo = glm::normalize(itbn * (-rayDir));
+					const glm::vec3 baseColor = glm::pow(glm::vec3(bCol), glm::vec3(2.2f));
+					glm::vec3 wi;
+					glm::vec3 eval = brdf(wo, baseColor, rmao.r, rmao.g, wi, pdf);
+					const glm::vec3 nextRayDir = glm::normalize(tbn * wi);
+					// Bounce decay.
+					attenuation *= eval;
+
+
+
 					// Compute lighting.
 					// Cast a ray toward one of the lights, at random.
 					if(!_scene->lights.empty()){
+						// Light sampling.
+						glm::vec3 illumination(0.0f);
+						// No support for geometric emitters for now.
 						const unsigned int lid = Random::Int(0, _scene->lights.size()-1);
 						const auto & light = _scene->lights[lid];
 						glm::vec3 direction;
@@ -131,35 +239,19 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 							const float diffuse = glm::max(glm::dot(n, direction), 0.0f);
 							illumination += falloff * diffuse * light->intensity();
 						}
+						// Because we only sample analytical lights, we can't hit an emitter via the raycaster, so no double-hit case to consider for now.
+						sampleColor += attenuation * illumination;
 					}
-					// Because we only have analytical lights, we can't hit an emitter via the raycaster, so no double-hit case to consider for now.
 
-					// Fetch base color from texture.
-					const Image & image  = obj.textures()[0]->images[0];
-					const glm::vec4 bCol = image.rgbal(uv.x, uv.y);
-					// In case of alpha cut-out, just update the position to the intersection and keep casting.
-					// The 'mini' margin will ensures that we don't reintersect the same surface.
-					if(bCol.a < 0.01f) {
-						rayPos = p;
-						continue;
-					}
-					const glm::vec3 baseColor = glm::pow(glm::vec3(bCol), glm::vec3(2.2f));
-
-					// Bounce decay.
-					attenuation *= baseColor;
-					sampleColor += attenuation * illumination;
 
 					// Update position and ray direction.
 					if(did < depth - 1) {
 						rayPos = p;
-						// For the direction, we want to sample the hemisphere, weighted by the cosine weight to better use our samples.
-						// We use the trick described by Peter Shirley in 'Raytracing in One Week-End':
-						// Uniformly sample a sphere tangent to the surface, add this to the normal.
-						rayDir = glm::normalize(n + Random::sampleSphere());
+						rayDir = glm::normalize(nextRayDir);
 					}
 				}
 				// Modulate and store.
-				render.rgb(int(x), int(y)) += glm::min(sampleColor, 4.0f);
+				render.rgb(int(x), int(y)) += sampleColor;
 			}
 		}
 	});
