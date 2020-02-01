@@ -81,9 +81,12 @@ glm::vec3 brdf(const glm::vec3 & wo, const glm::vec3 & baseColor, float roughnes
 	}
 	// Evaluate the total BRDF and weight it.
 	const glm::vec3 F0 = glm::mix(glm::vec3(0.04f), baseColor, metallic);
-	const glm::vec3 spec = Dh * V(NdotL, NdotV, alpha) * F(F0, VdotH);
-	const glm::vec3 diff = (1.0f - metallic) * glm::one_over_pi<float>() * baseColor * (glm::vec3(1.0f) - F0);
-	const glm::vec3 brdf = (diff + spec) * NdotV;
+	const glm::vec3 specular = Dh * V(NdotL, NdotV, alpha) * F(F0, VdotH);
+
+	const glm::vec3 diffuse = (1.0f - metallic) * glm::one_over_pi<float>() * baseColor * (1.0f - F0);
+	// Multi scattering adjustment hack.
+	const glm::vec3 multiAdj = glm::vec3(1.0f) + (2.0f * alpha * alpha * NdotV) * F0;
+	const glm::vec3 brdf = (diffuse + specular * multiAdj) * NdotV;
 	return brdf / pdf;
 }
 
@@ -250,8 +253,8 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 						rayDir = glm::normalize(nextRayDir);
 					}
 				}
-				// Modulate and store.
-				render.rgb(int(x), int(y)) += sampleColor;
+				// Clamp and store.
+				render.rgb(int(x), int(y)) += glm::min(sampleColor, 5.0f);
 			}
 		}
 	});
