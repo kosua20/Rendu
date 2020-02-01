@@ -66,16 +66,16 @@ glm::vec3 brdf(const glm::vec3 & wo, const glm::vec3 & baseColor, float roughnes
 		return glm::vec3(0.0f);
 	}
 	const glm::vec3 h = glm::normalize(wi + wo);
-	const float NdotH = h.z;
-	const float VdotH = glm::dot(wi,h);
-	const float NdotL = wo.z;
-	const float NdotV = wi.z;
+	const float NdotH = std::max(h.z, 0.0f);
+	const float VdotH = std::max(glm::dot(wi,h), 0.0f);
+	const float NdotL = std::max(wo.z, 0.0f);
+	const float NdotV = std::max(wi.z, 0.0f);
 
 	// Evaluate D(h)
 	const float Dh = D(NdotH, alpha);
 	// Evaluate the total PDF.
 	const float hPdf = Dh * NdotH;
-	pdf = glm::mix(glm::one_over_pi<float>() * NdotV, hPdf / (4.0f * std::max(0.001f, VdotH)), probaSpecular);
+	pdf = glm::mix(glm::one_over_pi<float>() * NdotV, hPdf / (4.0f * std::max(0.0001f, VdotH)), probaSpecular);
 	if(pdf == 0.0f){
 		return glm::vec3(0.0f);
 	}
