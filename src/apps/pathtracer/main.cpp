@@ -55,7 +55,7 @@ public:
 		// If no path passed, setup a default one.
 		if(outputPath.empty()) {
 			outputPath = "./test_" + scene + "_" + std::to_string(samples) + "_" + std::to_string(depth)
-						 + "_" + std::to_string(size.x) + "x" + std::to_string(size.y) + ".png";
+						 + "_" + std::to_string(size.x) + "x" + std::to_string(size.y) + "_" + System::timestamp() + ".png";
 		}
 
 		// Detail help.
@@ -72,7 +72,7 @@ public:
 	size_t samples		   = 8;				   ///< Number of samples per pixel, should be a power of two.
 	size_t depth		   = 5;				   ///< Max depth of a path.
 	std::string outputPath = "";			   ///< Output image path.
-	std::string scene	  = "";			   ///< Scene name.
+	std::string scene	  = "";			   	   ///< Scene name.
 	bool directRender	  = false;			   ///< Disable the GUI and run a render immediatly.
 };
 
@@ -87,7 +87,7 @@ void renderOneShot(const PathTracerConfig & config) {
 	// Load geometry and create raycaster.
 	std::shared_ptr<Scene> scene(new Scene(config.scene));
 	// For offline renders we only need the CPU data.
-	scene->init(Storage::CPU);
+	scene->init(Storage::CPU | Storage::FORCE_FRAME);
 
 	// Create the result image.
 	Image render(config.size.x, config.size.y, 3);
@@ -97,9 +97,12 @@ void renderOneShot(const PathTracerConfig & config) {
 	camera.ratio(ratio);
 
 	PathTracer tracer(scene);
+
+	Log::Info() << "[PathTracer] Rendering..." << std::endl;
 	tracer.render(camera, config.samples, config.depth, render);
 
 	// Save image.
+	Log::Info() << "[PathTracer] Saving to " << config.outputPath << "." << std::endl;
 	render.save(config.outputPath, false);
 
 	System::ping();
@@ -141,7 +144,7 @@ int main(int argc, char ** argv) {
 	
 	// Load geometry and create raycaster.
 	std::shared_ptr<Scene> scene(new Scene(config.scene));
-	// We need th CPU data for the path tracer, the GPU data for the preview.
+	// We need the CPU data for the path tracer, the GPU data for the preview.
 	scene->init(Storage::BOTH | Storage::FORCE_FRAME);
 
 	PathTracerApp app(config, scene);
