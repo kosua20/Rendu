@@ -113,7 +113,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
 <tr class="memitem:a2a80cb882c421c482f54235cd1d96fb8"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_framebuffer.html#a2a80cb882c421c482f54235cd1d96fb8">Mode</a> { <a class="el" href="class_framebuffer.html#a2a80cb882c421c482f54235cd1d96fb8a3466fab4975481651940ed328aa990e4">Mode::READ</a>, 
-<a class="el" href="class_framebuffer.html#a2a80cb882c421c482f54235cd1d96fb8ad4b9e47f65b6e79b010582f15785867e">Mode::WRITE</a>
+<a class="el" href="class_framebuffer.html#a2a80cb882c421c482f54235cd1d96fb8ad4b9e47f65b6e79b010582f15785867e">Mode::WRITE</a>, 
+<a class="el" href="class_framebuffer.html#a2a80cb882c421c482f54235cd1d96fb8a1f3f09bca5728eb7af4ea263ae84b9f1">Mode::SRGB</a>
  }</td></tr>
 <tr class="memdesc:a2a80cb882c421c482f54235cd1d96fb8"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_framebuffer.html" title="Represent a 2D rendering target, of any size, format and type, backed by an OpenGL framebuffer.">Framebuffer</a> binding mode.  <a href="class_framebuffer.html#a2a80cb882c421c482f54235cd1d96fb8">More...</a><br /></td></tr>
 <tr class="separator:a2a80cb882c421c482f54235cd1d96fb8"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -161,8 +162,8 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:adfbd7d33c2606d5a5f848d0e0646959d"><td class="memItemLeft" align="right" valign="top">static const <a class="el" href="class_framebuffer.html">Framebuffer</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_framebuffer.html#adfbd7d33c2606d5a5f848d0e0646959d">backbuffer</a> ()</td></tr>
-<tr class="separator:adfbd7d33c2606d5a5f848d0e0646959d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aead51ca1fcb23f592b340dee22aad5db"><td class="memItemLeft" align="right" valign="top">static const <a class="el" href="class_framebuffer.html">Framebuffer</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_framebuffer.html#aead51ca1fcb23f592b340dee22aad5db">backbuffer</a> ()</td></tr>
+<tr class="separator:aead51ca1fcb23f592b340dee22aad5db"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-types"></a>
 Private Types</h2></td></tr>
@@ -207,10 +208,10 @@ std::vector&lt; <a class="el" href="class_texture.html">Texture</a> &gt;&#160;</
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-static-attribs"></a>
 Static Private Attributes</h2></td></tr>
-<tr class="memitem:a3fad167431cf98b9aee7fc3041383402"><td class="memItemLeft" align="right" valign="top"><a id="a3fad167431cf98b9aee7fc3041383402"></a>
-static <a class="el" href="class_framebuffer.html">Framebuffer</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_framebuffer.html#a3fad167431cf98b9aee7fc3041383402">defaultFramebuffer</a> = nullptr</td></tr>
-<tr class="memdesc:a3fad167431cf98b9aee7fc3041383402"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dummy backbuffer framebuffer. <br /></td></tr>
-<tr class="separator:a3fad167431cf98b9aee7fc3041383402"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a28b89b077da32b16c7430b1e2e0d5c76"><td class="memItemLeft" align="right" valign="top"><a id="a28b89b077da32b16c7430b1e2e0d5c76"></a>
+static <a class="el" href="class_framebuffer.html">Framebuffer</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_framebuffer.html#a28b89b077da32b16c7430b1e2e0d5c76">_backbuffer</a> = nullptr</td></tr>
+<tr class="memdesc:a28b89b077da32b16c7430b1e2e0d5c76"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dummy backbuffer framebuffer. <br /></td></tr>
+<tr class="separator:a28b89b077da32b16c7430b1e2e0d5c76"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Represent a 2D rendering target, of any size, format and type, backed by an OpenGL framebuffer. </p>
@@ -240,6 +241,8 @@ static <a class="el" href="class_framebuffer.html">Framebuffer</a> *&#160;</td><
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a2a80cb882c421c482f54235cd1d96fb8a3466fab4975481651940ed328aa990e4"></a>READ&#160;</td><td class="fielddoc"><p>Read mode. </p>
 </td></tr>
 <tr><td class="fieldname"><a id="a2a80cb882c421c482f54235cd1d96fb8ad4b9e47f65b6e79b010582f15785867e"></a>WRITE&#160;</td><td class="fielddoc"><p>Write mode. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a2a80cb882c421c482f54235cd1d96fb8a1f3f09bca5728eb7af4ea263ae84b9f1"></a>SRGB&#160;</td><td class="fielddoc"><p>Perform linear-to-sRGB conversion when writing/reading (if the framebuffer is backed by an sRGB texture). </p>
 </td></tr>
 </table>
 
@@ -474,8 +477,8 @@ static <a class="el" href="class_framebuffer.html">Framebuffer</a> *&#160;</td><
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="adfbd7d33c2606d5a5f848d0e0646959d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adfbd7d33c2606d5a5f848d0e0646959d">&#9670;&nbsp;</a></span>backbuffer()</h2>
+<a id="aead51ca1fcb23f592b340dee22aad5db"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aead51ca1fcb23f592b340dee22aad5db">&#9670;&nbsp;</a></span>backbuffer()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -484,7 +487,7 @@ static <a class="el" href="class_framebuffer.html">Framebuffer</a> *&#160;</td><
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="class_framebuffer.html">Framebuffer</a> &amp; Framebuffer::backbuffer </td>
+          <td class="memname">const <a class="el" href="class_framebuffer.html">Framebuffer</a> * Framebuffer::backbuffer </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -534,7 +537,7 @@ static <a class="el" href="class_framebuffer.html">Framebuffer</a> *&#160;</td><
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Bind the framebuffer in read or write mode. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Bind the framebuffer with specific options. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">mode</td><td>the mode to use </td></tr>
   </table>
@@ -816,7 +819,7 @@ static <a class="el" href="class_framebuffer.html">Framebuffer</a> *&#160;</td><
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Unbind the framebuffer. </p><dl class="section note"><dt>Note</dt><dd>Technically bind the window backbuffer. </dd></dl>
+<p>Unbind the framebuffer. </p><dl class="section note"><dt>Note</dt><dd>Technically bind the window backbuffer with sRGB conversion disabled. </dd></dl>
 
 </div>
 </div>

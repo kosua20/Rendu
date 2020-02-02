@@ -126,8 +126,12 @@ Static Public Member Functions</h2></td></tr>
 <tr class="separator:aa75cde5a0bb59463fe3d6a2db574dc95"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a64ffc2049b5aabcf0acd2a2c7c4c91e0"><td class="memItemLeft" align="right" valign="top">static float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_random.html#a64ffc2049b5aabcf0acd2a2c7c4c91e0">Float</a> (float min, float max)</td></tr>
 <tr class="separator:a64ffc2049b5aabcf0acd2a2c7c4c91e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6586c6b6b843324d41be79e6bf82e846"><td class="memItemLeft" align="right" valign="top">static glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_random.html#a6586c6b6b843324d41be79e6bf82e846">sampleDisk</a> ()</td></tr>
+<tr class="separator:a6586c6b6b843324d41be79e6bf82e846"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2c74b6f15a87ec189fe4d560ace1ff28"><td class="memItemLeft" align="right" valign="top">static glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_random.html#a2c74b6f15a87ec189fe4d560ace1ff28">sampleSphere</a> ()</td></tr>
 <tr class="separator:a2c74b6f15a87ec189fe4d560ace1ff28"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1687f7bd961492fab346c0c3ad7bc1ef"><td class="memItemLeft" align="right" valign="top">static glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_random.html#a1687f7bd961492fab346c0c3ad7bc1ef">sampleCosineHemisphere</a> ()</td></tr>
+<tr class="separator:a1687f7bd961492fab346c0c3ad7bc1ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-static-attribs"></a>
 Static Private Attributes</h2></td></tr>
@@ -287,6 +291,58 @@ static thread_local <a class="el" href="struct_random_1_1_local_m_t19937.html">L
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>an integer in [min, max] </dd></dl>
+
+</div>
+</div>
+<a id="a1687f7bd961492fab346c0c3ad7bc1ef"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1687f7bd961492fab346c0c3ad7bc1ef">&#9670;&nbsp;</a></span>sampleCosineHemisphere()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">glm::vec3 Random::sampleCosineHemisphere </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Sample point from the hemisphere, following a cosine lobe </p><dl class="section return"><dt>Returns</dt><dd>a 3D point on the unit z-positive hemisphere </dd></dl>
+
+</div>
+</div>
+<a id="a6586c6b6b843324d41be79e6bf82e846"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6586c6b6b843324d41be79e6bf82e846">&#9670;&nbsp;</a></span>sampleDisk()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">glm::vec2 Random::sampleDisk </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Sample point uniformly on a disk. </p><dl class="section return"><dt>Returns</dt><dd>a 2D point on the unit disk </dd></dl>
 
 </div>
 </div>

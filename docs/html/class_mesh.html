@@ -134,8 +134,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a6066cbcb431e13b1e580e4cb83bc6a2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa365461672f50bdcfbc8801d81a13114"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mesh.html#aa365461672f50bdcfbc8801d81a13114">computeNormals</a> ()</td></tr>
 <tr class="separator:aa365461672f50bdcfbc8801d81a13114"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab951655d798cd594e5dd6dd252a6b398"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mesh.html#ab951655d798cd594e5dd6dd252a6b398">computeTangentsAndBinormals</a> ()</td></tr>
-<tr class="separator:ab951655d798cd594e5dd6dd252a6b398"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acd80b6d8d6fc53269fdc0ccd287225d6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mesh.html#acd80b6d8d6fc53269fdc0ccd287225d6">computeTangentsAndBinormals</a> (bool force)</td></tr>
+<tr class="separator:acd80b6d8d6fc53269fdc0ccd287225d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0170a268c51eb7a1238fed41de44ec7c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mesh.html#a0170a268c51eb7a1238fed41de44ec7c">saveAsObj</a> (const std::string &amp;path, bool defaultUVs)</td></tr>
 <tr class="separator:a0170a268c51eb7a1238fed41de44ec7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a511a9c4441ce4d4310aa748f523959ad"><td class="memItemLeft" align="right" valign="top">const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mesh.html#a511a9c4441ce4d4310aa748f523959ad">name</a> () const</td></tr>
@@ -444,8 +444,8 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 
 </div>
 </div>
-<a id="ab951655d798cd594e5dd6dd252a6b398"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab951655d798cd594e5dd6dd252a6b398">&#9670;&nbsp;</a></span>computeTangentsAndBinormals()</h2>
+<a id="acd80b6d8d6fc53269fdc0ccd287225d6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acd80b6d8d6fc53269fdc0ccd287225d6">&#9670;&nbsp;</a></span>computeTangentsAndBinormals()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -453,12 +453,18 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
         <tr>
           <td class="memname">void Mesh::computeTangentsAndBinormals </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>force</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Compute the tangent and binormal vectors for each vertex of a mesh. </p>
+<p>Compute the tangent and binormal vectors for each vertex of a mesh. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">force</td><td>Compute local tangent frame even if texture coordinates are not available. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

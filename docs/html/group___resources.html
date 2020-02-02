@@ -226,11 +226,16 @@ Enumerations</h2></td></tr>
  }</td></tr>
 <tr class="memdesc:ga9db33ebfe0dbf694fe056e626988b728"><td class="mdescLeft">&#160;</td><td class="mdescRight">The layout of a texture: components count and type. <br /></td></tr>
 <tr class="separator:ga9db33ebfe0dbf694fe056e626988b728"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaa9f7226fdc21094a152870ec1872f744"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___resources.html#gaa9f7226fdc21094a152870ec1872f744">Storage</a> : uint { <a class="el" href="group___resources.html#ggaa9f7226fdc21094a152870ec1872f744a52f9ec21735243ad9917cda3ca077d32">Storage::GPU</a> = 1, 
+<tr class="memitem:gaa9f7226fdc21094a152870ec1872f744"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___resources.html#gaa9f7226fdc21094a152870ec1872f744">Storage</a> : uint { <br />
+&#160;&#160;<b>NONE</b> = 0, 
+<a class="el" href="group___resources.html#ggaa9f7226fdc21094a152870ec1872f744a52f9ec21735243ad9917cda3ca077d32">Storage::GPU</a> = 1, 
 <a class="el" href="group___resources.html#ggaa9f7226fdc21094a152870ec1872f744a2b55387dd066c5bac646ac61543d152d">Storage::CPU</a> = 2, 
-<a class="el" href="group___resources.html#ggaa9f7226fdc21094a152870ec1872f744a6328e5e3186c227a021ef2ff77e40197">Storage::BOTH</a> = (GPU | CPU)
+<a class="el" href="group___resources.html#ggaa9f7226fdc21094a152870ec1872f744a6328e5e3186c227a021ef2ff77e40197">Storage::BOTH</a> = (GPU | CPU), 
+<br />
+&#160;&#160;<a class="el" href="group___resources.html#ggaa9f7226fdc21094a152870ec1872f744a2d7812591e175ddfcd7eb91b10d14b81">Storage::FORCE_FRAME</a> = 4
+<br />
  }</td></tr>
-<tr class="memdesc:gaa9f7226fdc21094a152870ec1872f744"><td class="mdescLeft">&#160;</td><td class="mdescRight">Denote if data is stored on the <a class="el" href="namespace_g_p_u.html" title="Contains all shaders.">GPU</a> or CPU.  <a href="group___resources.html#gaa9f7226fdc21094a152870ec1872f744">More...</a><br /></td></tr>
+<tr class="memdesc:gaa9f7226fdc21094a152870ec1872f744"><td class="mdescLeft">&#160;</td><td class="mdescRight">Storage and loading options.  <a href="group___resources.html#gaa9f7226fdc21094a152870ec1872f744">More...</a><br /></td></tr>
 <tr class="separator:gaa9f7226fdc21094a152870ec1872f744"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Enumeration Type Documentation</h2>
@@ -292,13 +297,15 @@ Enumerations</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Denote if data is stored on the <a class="el" href="namespace_g_p_u.html" title="Contains all shaders.">GPU</a> or CPU. </p>
+<p>Storage and loading options. </p>
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ggaa9f7226fdc21094a152870ec1872f744a52f9ec21735243ad9917cda3ca077d32"></a>GPU&#160;</td><td class="fielddoc"><p>On the <a class="el" href="namespace_g_p_u.html" title="Contains all shaders.">GPU</a>. </p>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ggaa9f7226fdc21094a152870ec1872f744a52f9ec21735243ad9917cda3ca077d32"></a>GPU&#160;</td><td class="fielddoc"><p>Store on the <a class="el" href="namespace_g_p_u.html" title="Contains all shaders.">GPU</a>. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="ggaa9f7226fdc21094a152870ec1872f744a2b55387dd066c5bac646ac61543d152d"></a>CPU&#160;</td><td class="fielddoc"><p>On the CPU. </p>
+<tr><td class="fieldname"><a id="ggaa9f7226fdc21094a152870ec1872f744a2b55387dd066c5bac646ac61543d152d"></a>CPU&#160;</td><td class="fielddoc"><p>Store on the CPU. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="ggaa9f7226fdc21094a152870ec1872f744a6328e5e3186c227a021ef2ff77e40197"></a>BOTH&#160;</td><td class="fielddoc"><p>On both the CPU and <a class="el" href="namespace_g_p_u.html" title="Contains all shaders.">GPU</a>. </p>
+<tr><td class="fieldname"><a id="ggaa9f7226fdc21094a152870ec1872f744a6328e5e3186c227a021ef2ff77e40197"></a>BOTH&#160;</td><td class="fielddoc"><p>Store on both the CPU and <a class="el" href="namespace_g_p_u.html" title="Contains all shaders.">GPU</a>. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggaa9f7226fdc21094a152870ec1872f744a2d7812591e175ddfcd7eb91b10d14b81"></a>FORCE_FRAME&#160;</td><td class="fielddoc"><p>For meshes, force computation of a local frame. </p>
 </td></tr>
 </table>
 

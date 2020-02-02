@@ -146,12 +146,9 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a3bd4f814e64fc025acead45ab8fa2224"><td class="memItemLeft" align="right" valign="top">static glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_raycaster.html#a3bd4f814e64fc025acead45ab8fa2224">interpolatePosition</a> (const <a class="el" href="struct_raycaster_1_1_ray_hit.html">RayHit</a> &amp;hit, const <a class="el" href="class_mesh.html">Mesh</a> &amp;geometry)</td></tr>
-<tr class="separator:a3bd4f814e64fc025acead45ab8fa2224"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abafde01e0620e51986b219f34bdb4d78"><td class="memItemLeft" align="right" valign="top">static glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_raycaster.html#abafde01e0620e51986b219f34bdb4d78">interpolateNormal</a> (const <a class="el" href="struct_raycaster_1_1_ray_hit.html">RayHit</a> &amp;hit, const <a class="el" href="class_mesh.html">Mesh</a> &amp;geometry)</td></tr>
-<tr class="separator:abafde01e0620e51986b219f34bdb4d78"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab06483bdce1d75545ebfd447fd95e26c"><td class="memItemLeft" align="right" valign="top">static glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_raycaster.html#ab06483bdce1d75545ebfd447fd95e26c">interpolateUV</a> (const <a class="el" href="struct_raycaster_1_1_ray_hit.html">RayHit</a> &amp;hit, const <a class="el" href="class_mesh.html">Mesh</a> &amp;geometry)</td></tr>
-<tr class="separator:ab06483bdce1d75545ebfd447fd95e26c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8ff6823fa94bdc00ad0c9c6ca678d772"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a8ff6823fa94bdc00ad0c9c6ca678d772"><td class="memTemplItemLeft" align="right" valign="top">static T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="class_raycaster.html#a8ff6823fa94bdc00ad0c9c6ca678d772">interpolateAttribute</a> (const <a class="el" href="struct_raycaster_1_1_ray_hit.html">RayHit</a> &amp;hit, const <a class="el" href="class_mesh.html">Mesh</a> &amp;geometry, const std::vector&lt; T &gt; &amp;attribute)</td></tr>
+<tr class="separator:a8ff6823fa94bdc00ad0c9c6ca678d772"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
@@ -308,17 +305,19 @@ class&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cla
 
 </div>
 </div>
-<a id="abafde01e0620e51986b219f34bdb4d78"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abafde01e0620e51986b219f34bdb4d78">&#9670;&nbsp;</a></span>interpolateNormal()</h2>
+<a id="a8ff6823fa94bdc00ad0c9c6ca678d772"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8ff6823fa94bdc00ad0c9c6ca678d772">&#9670;&nbsp;</a></span>interpolateAttribute()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">glm::vec3 Raycaster::interpolateNormal </td>
+          <td class="memname">static T Raycaster::interpolateAttribute </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="struct_raycaster_1_1_ray_hit.html">RayHit</a> &amp;&#160;</td>
           <td class="paramname"><em>hit</em>, </td>
@@ -327,7 +326,13 @@ class&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cla
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const <a class="el" href="class_mesh.html">Mesh</a> &amp;&#160;</td>
-          <td class="paramname"><em>geometry</em>&#160;</td>
+          <td class="paramname"><em>geometry</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; T &gt; &amp;&#160;</td>
+          <td class="paramname"><em>attribute</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -337,106 +342,19 @@ class&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cla
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Return the interpolated normal at the hit on the surface of the mesh. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Return the interpolated attribute for a hit at the surface of the mesh. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">hit</td><td>the intersection record </td></tr>
     <tr><td class="paramname">geometry</td><td>the mesh geometry information </td></tr>
+    <tr><td class="paramname">attribute</td><td>the vector containing per-vertex values for the attribute </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>the smooth normal (normalized) </dd></dl>
-
-</div>
-</div>
-<a id="a3bd4f814e64fc025acead45ab8fa2224"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3bd4f814e64fc025acead45ab8fa2224">&#9670;&nbsp;</a></span>interpolatePosition()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">glm::vec3 Raycaster::interpolatePosition </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="struct_raycaster_1_1_ray_hit.html">RayHit</a> &amp;&#160;</td>
-          <td class="paramname"><em>hit</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="class_mesh.html">Mesh</a> &amp;&#160;</td>
-          <td class="paramname"><em>geometry</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Return the interpolated position of the ray hit on the surface of the mesh. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">hit</td><td>the intersection record </td></tr>
-    <tr><td class="paramname">geometry</td><td>the mesh geometry information </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>the smooth position </dd></dl>
-
-</div>
-</div>
-<a id="ab06483bdce1d75545ebfd447fd95e26c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab06483bdce1d75545ebfd447fd95e26c">&#9670;&nbsp;</a></span>interpolateUV()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">glm::vec2 Raycaster::interpolateUV </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="struct_raycaster_1_1_ray_hit.html">RayHit</a> &amp;&#160;</td>
-          <td class="paramname"><em>hit</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="class_mesh.html">Mesh</a> &amp;&#160;</td>
-          <td class="paramname"><em>geometry</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Return the interpolated texture coordinates at the hit on the surface of the mesh. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">hit</td><td>the intersection record </td></tr>
-    <tr><td class="paramname">geometry</td><td>the mesh geometry information </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>the smooth texture coordinates </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>the interpolated attribute </dd></dl>
 
 </div>
 </div>
