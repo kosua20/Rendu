@@ -35,7 +35,7 @@ float V(float NdotL, float NdotV, float alpha){
 }
 
 
-glm::vec3 brdf(const glm::vec3 & wo, const glm::vec3 & baseColor, float roughness, float metallic, glm::vec3 & wi, float & pdf){
+glm::vec3 sampleBrdf(const glm::vec3 & wo, const glm::vec3 & baseColor, float roughness, float metallic, glm::vec3 & wi){
 	const float probaSpecular = glm::mix(1.0f / (glm::dot(baseColor, glm::vec3(1.0f)) / 3.0f + 1.0f), 1.0f,  metallic);
 
 	const float roughClamp = std::max(0.045f, roughness);
@@ -62,7 +62,6 @@ glm::vec3 brdf(const glm::vec3 & wo, const glm::vec3 & baseColor, float roughnes
 		}
 	}
 	if(wi.z < 0.0f){
-		pdf = 0.0f;
 		return glm::vec3(0.0f);
 	}
 	const glm::vec3 h = glm::normalize(wi + wo);
@@ -75,7 +74,7 @@ glm::vec3 brdf(const glm::vec3 & wo, const glm::vec3 & baseColor, float roughnes
 	const float Dh = D(NdotH, alpha);
 	// Evaluate the total PDF.
 	const float hPdf = Dh * NdotH;
-	pdf = glm::mix(glm::one_over_pi<float>() * NdotV, hPdf / (4.0f * std::max(0.0001f, VdotH)), probaSpecular);
+	const float pdf = glm::mix(glm::one_over_pi<float>() * NdotV, hPdf / (4.0f * std::max(0.0001f, VdotH)), probaSpecular);
 	if(pdf == 0.0f){
 		return glm::vec3(0.0f);
 	}
@@ -88,6 +87,34 @@ glm::vec3 brdf(const glm::vec3 & wo, const glm::vec3 & baseColor, float roughnes
 	const glm::vec3 multiAdj = glm::vec3(1.0f) + (2.0f * alpha * alpha * NdotV) * F0;
 	const glm::vec3 brdf = (diffuse + specular * multiAdj) * NdotV;
 	return brdf / pdf;
+}
+
+glm::vec3 brdf(const glm::vec3 & wo, const glm::vec3 & baseColor, float roughness, float metallic, const glm::vec3 & wi){
+
+	const float roughClamp = std::max(0.045f, roughness);
+	const float alpha = std::max(0.0001f, roughClamp*roughClamp);
+
+	if(wi.z < 0.0f){
+		return glm::vec3(0.0f);
+	}
+	const glm::vec3 h = glm::normalize(wi + wo);
+	const float NdotH = std::max(h.z, 0.0f);
+	const float VdotH = std::max(glm::dot(wi,h), 0.0f);
+	const float NdotL = std::max(wo.z, 0.0f);
+	const float NdotV = std::max(wi.z, 0.0f);
+
+	// Evaluate D(h)
+	const float Dh = D(NdotH, alpha);
+
+	// Evaluate the total BRDF and weight it.
+	const glm::vec3 F0 = glm::mix(glm::vec3(0.04f), baseColor, metallic);
+	const glm::vec3 specular = Dh * V(NdotL, NdotV, alpha) * F(F0, VdotH);
+
+	const glm::vec3 diffuse = (1.0f - metallic) * glm::one_over_pi<float>() * baseColor * (1.0f - F0);
+	// Multi scattering adjustment hack.
+	const glm::vec3 multiAdj = glm::vec3(1.0f) + (2.0f * alpha * alpha * NdotV) * F0;
+	const glm::vec3 brdf = (diffuse + specular * multiAdj) * NdotV;
+	return brdf;
 }
 
 
@@ -192,6 +219,7 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 					glm::vec3 n = glm::normalize(Raycaster::interpolateAttribute(hit, mesh, mesh.normals));
 					glm::vec3 t = glm::normalize(Raycaster::interpolateAttribute(hit, mesh, mesh.tangents));
 					// Convert to world frame.
+					// \todo Support the different types of materials (double sided for instance).
 					n = glm::normalize(glm::vec3(invtp * glm::vec4(n, 0.0f)));
 					t = glm::normalize(glm::vec3(invtp * glm::vec4(t, 0.0f)));
 					// Enforce orthogonality.
@@ -215,37 +243,35 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 						continue;
 					}
 
-					// When sampling and evaluating the BRDF, work in the local (t,b,n) frame
-					/// \todo Create a frame for meshes with no UVs.
-					float pdf = 0.0f;
+					// When sampling and evaluating the BRDF, work in the local (t,b,n) frame.
+
 					const glm::vec3 wo = glm::normalize(itbn * (-rayDir));
 					const glm::vec3 baseColor = glm::pow(glm::vec3(bCol), glm::vec3(2.2f));
-					glm::vec3 wi;
-					glm::vec3 eval = brdf(wo, baseColor, rmao.r, rmao.g, wi, pdf);
-					const glm::vec3 nextRayDir = glm::normalize(tbn * wi);
-					// Bounce decay.
-					attenuation *= eval;
 
-
-
-					// Compute lighting.
+					// Direct light sampling.
 					// Cast a ray toward one of the lights, at random.
 					if(!_scene->lights.empty()){
-						// Light sampling.
-						glm::vec3 illumination(0.0f);
 						// No support for geometric emitters for now.
 						const unsigned int lid = Random::Int(0, _scene->lights.size()-1);
 						const auto & light = _scene->lights[lid];
 						glm::vec3 direction;
 						float falloff;
 						if(light->visible(p+0.001f*n, _raycaster, direction, falloff)) {
-							const float diffuse = glm::max(glm::dot(n, direction), 0.0f);
-							illumination += falloff * diffuse * light->intensity();
+							const glm::vec3 lwi = glm::normalize(itbn * (direction));
+							const glm::vec3 evalLight = brdf(wo, baseColor, rmao.r, rmao.g, lwi);
+							const float lightPdf = 1.0f / float(_scene->lights.size());
+							const glm::vec3 illumination = falloff * evalLight * light->intensity() / lightPdf;
+							// Because we only sample analytical lights, we can't hit an emitter via the raycaster, so no double-hit case to consider for now.
+							sampleColor += attenuation * illumination;
 						}
-						// Because we only sample analytical lights, we can't hit an emitter via the raycaster, so no double-hit case to consider for now.
-						sampleColor += attenuation * illumination;
 					}
 
+					// Pick next direction based on the BRDF.
+					glm::vec3 wi;
+					glm::vec3 eval = sampleBrdf(wo, baseColor, rmao.r, rmao.g, wi);
+					const glm::vec3 nextRayDir = glm::normalize(tbn * wi);
+					// Bounce decay.
+					attenuation *= eval;
 
 					// Update position and ray direction.
 					if(did < depth - 1) {
