@@ -169,6 +169,6 @@ void main(){
 	
 	vec3 specular = ggx(n, v, l, F0, roughness);
 	
-	fragColor.rgb = shadowing * orientation * (diffuse + specular) * lightColor * M_PI;
+	fragColor.rgb = shadowing * orientation * (diffuse + specular) * lightColor;
 }
 

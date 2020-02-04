@@ -13,7 +13,7 @@
 	planes: 0.01,20.0
 
 * point:
-	intensity: 3.0,2.8,2.0
+	intensity: 9.0,8.4,6.0
 	shadows: true
 	position: -0.03,1.75,0.0
 	radius: 3.0
