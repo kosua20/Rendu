@@ -182,7 +182,7 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 
 				for(size_t did = 0; did < depth; ++did) {
 					// Query closest intersection.
-					const Raycaster::RayHit hit = _raycaster.intersects(rayPos, rayDir);
+					const Raycaster::Hit hit = _raycaster.intersects(rayPos, rayDir);
 
 					// If no hit, background.
 					if(!hit.hit) {
@@ -215,36 +215,56 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 					const Object & obj = _scene->objects[hit.meshId];
 					const Mesh & mesh  = *obj.mesh();
 					const glm::vec3 p  = rayPos + hit.dist * rayDir;
-					const glm::mat4 invtp = glm::inverse(glm::transpose(obj.model()));
-					glm::vec3 n = glm::normalize(Raycaster::interpolateAttribute(hit, mesh, mesh.normals));
-					glm::vec3 t = glm::normalize(Raycaster::interpolateAttribute(hit, mesh, mesh.tangents));
-					// Convert to world frame.
-					// \todo Support the different types of materials (double sided for instance).
-					n = glm::normalize(glm::vec3(invtp * glm::vec4(n, 0.0f)));
-					t = glm::normalize(glm::vec3(invtp * glm::vec4(t, 0.0f)));
-					// Enforce orthogonality.
-					const glm::vec3 b = glm::normalize(glm::cross(n,t));
-					t = glm::normalize(glm::cross(b,n));
 
-					const glm::mat3 tbn(t, b, n);
-					const glm::mat3 itbn = glm::transpose(tbn);
-					const glm::vec2 uv = Raycaster::interpolateAttribute(hit, mesh, mesh.texcoords);
-
+					// Fetch material texel information.
+					const glm::vec2 uv = obj.type() == Object::Type::PBRNoUVs ? glm::vec2(0.5f, 0.5f) :  Raycaster::interpolateAttribute(hit, mesh, mesh.texcoords);
 
 					// Fetch base color from texture.
 					const Image & image  = obj.textures()[0]->images[0];
 					const glm::vec4 bCol = image.rgbal(uv.x, uv.y);
-					const Image & imageRMAO  = obj.textures()[2]->images[0];
-					const glm::vec4 rmao = imageRMAO.rgbal(uv.x, uv.y);
 					// In case of alpha cut-out, just update the position to the intersection and keep casting.
 					// The 'mini' margin will ensures that we don't reintersect the same surface.
-					if(bCol.a < 0.01f) {
+					if(obj.masked() && bCol.a < 0.01f) {
 						rayPos = p;
 						continue;
 					}
 
-					// When sampling and evaluating the BRDF, work in the local (t,b,n) frame.
+					// Check other material attributes.
+					const Image & imageRMAO  = obj.textures()[2]->images[0];
+					const glm::vec4 rmao = imageRMAO.rgbal(uv.x, uv.y);
 
+					// Normal computation.
+					glm::mat3 tbn;
+					{
+						const glm::vec3 n = glm::normalize(Raycaster::interpolateAttribute(hit, mesh, mesh.normals));
+						const glm::vec3 t = glm::normalize(Raycaster::interpolateAttribute(hit, mesh, mesh.tangents));
+						const glm::vec3 b = glm::normalize(Raycaster::interpolateAttribute(hit, mesh, mesh.binormals));
+						// Convert to world frame.
+						const glm::mat3 invtp = glm::inverse(glm::transpose(glm::mat3(obj.model())));
+						// From tangent space to world space.
+						tbn[0] = glm::normalize(glm::vec3(invtp * glm::vec4(t, 0.0f)));
+						tbn[1] = glm::normalize(glm::vec3(invtp * glm::vec4(b, 0.0f)));
+						tbn[2] = glm::normalize(glm::vec3(invtp * glm::vec4(n, 0.0f)));
+					}
+					// Flip normal if needed (all objects are double sided).
+					const bool frontFacing = glm::dot(tbn[2], rayDir) < 0.0f;
+					if(!frontFacing){
+						tbn[2] *= -1.0f;
+					}
+
+					// If we have a normal map, perturbed the local normal and udpate the frame.
+					if(obj.type() != Object::Type::PBRNoUVs){
+						const glm::vec3 localNormal = glm::normalize(2.0f * glm::vec3(obj.textures()[1]->images[0].rgbal(uv.x, uv.y)) - 1.0f);
+						// Convert local normal to world.
+						const glm::vec3 nn = glm::normalize(tbn * localNormal);
+						const glm::vec3 bn = glm::normalize(glm::cross(nn, tbn[0]));
+						const glm::vec3 tn = glm::normalize(glm::cross(bn, nn));
+						tbn = glm::mat3(tn, bn, nn);
+					}
+					// From world space to perturbed tangent space.
+					const glm::mat3 itbn = glm::transpose(tbn);
+
+					// For sampling and evaluating the BRDF, convert outgoing direction to the local frame.
 					const glm::vec3 wo = glm::normalize(itbn * (-rayDir));
 					const glm::vec3 baseColor = glm::pow(glm::vec3(bCol), glm::vec3(2.2f));
 
@@ -254,16 +274,55 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 						// No support for geometric emitters for now.
 						const unsigned int lid = Random::Int(0, _scene->lights.size()-1);
 						const auto & light = _scene->lights[lid];
-						glm::vec3 direction;
-						float falloff;
-						if(light->visible(p+0.001f*n, _raycaster, direction, falloff)) {
-							const glm::vec3 lwi = glm::normalize(itbn * (direction));
-							const glm::vec3 evalLight = brdf(wo, baseColor, rmao.r, rmao.g, lwi);
-							const float lightPdf = 1.0f / float(_scene->lights.size());
-							const glm::vec3 illumination = falloff * evalLight * light->intensity() / lightPdf;
-							// Because we only sample analytical lights, we can't hit an emitter via the raycaster, so no double-hit case to consider for now.
-							sampleColor += attenuation * illumination;
+						// Shift slightly to avoid grazing angle self-intersections.
+						const glm::vec3 pShift = p+0.001f*tbn[2];
+						float maxDist, falloff;
+						const glm::vec3 direction = light->sample(pShift, maxDist, falloff);
+						// Check visibility.
+						if(falloff > 0.0f){
+							bool visible = true;
+							// We need a direction and a distance.
+							if(light->castsShadow()){
+								glm::vec3 lpos = pShift;
+								while(maxDist > 0.0f){
+									const Raycaster::Hit lhit = _raycaster.intersects(lpos, direction, 0.001f, maxDist);
+									if(!lhit.hit){
+										visible = true;
+										break;
+									}
+									// If we hit, two cases.
+									const auto & lobj = _scene->objects[lhit.meshId];
+									if(!lobj.masked()){
+										// Geometric occlusion is always valid.
+										visible = false;
+										break;
+									} else {
+										const auto & lmesh = *lobj.mesh();
+										// We have to compute the UVs and check the texture.
+										const glm::vec2 luv = Raycaster::interpolateAttribute(lhit, lmesh, lmesh.texcoords);
+										const float alpha = lobj.textures()[0]->images[0].rgbal(luv.x, luv.y).a;
+										if(alpha < 0.01f){
+											// Shift, update the distance and keep casting.
+											maxDist = maxDist - lhit.dist;
+											lpos = lpos + lhit.dist * direction;
+										} else {
+											visible = false;
+											break;
+										}
+
+									}
+								}
+							}
+							if(visible){
+								const glm::vec3 lwi = glm::normalize(itbn * (direction));
+								const glm::vec3 evalLight = brdf(wo, baseColor, rmao.r, rmao.g, lwi);
+								const float lightPdf = 1.0f / float(_scene->lights.size());
+								const glm::vec3 illumination = falloff * evalLight * light->intensity() / lightPdf;
+								// Because we only sample analytical lights, we can't hit an emitter via the raycaster, so no double-hit case to consider for now.
+								sampleColor += attenuation * illumination;
+							}
 						}
+
 					}
 
 					// Pick next direction based on the BRDF.

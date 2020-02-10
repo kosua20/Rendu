@@ -4,7 +4,7 @@
 #include "Common.hpp"
 
 /**
- \brief Diffuse path tracer. Generates renderings of a scene by emitting rays from the user viewpoint and letting them bounce in the scene, forming paths. Lighting and materials contributions are accumulated along each path to compute the color of the associated sample.
+ \brief Unidirectional path tracer. Generates renderings of a scene by emitting rays from the user viewpoint and letting them bounce in the scene, forming paths. Lighting and materials contributions are accumulated along each path to compute the color of the associated sample.
  \ingroup PathtracerDemo
  */
 class PathTracer {
