@@ -7,11 +7,11 @@ Raycaster::Ray::Ray(const glm::vec3 & origin, const glm::vec3 & direction) :
 	pos(origin), dir(glm::normalize(direction)), invdir(1.0f / glm::normalize(direction)) {
 }
 
-Raycaster::RayHit::RayHit() :
+Raycaster::Hit::Hit() :
 	hit(false), dist(std::numeric_limits<float>::max()), u(0.0f), v(0.0f), w(0.0f), localId(0), meshId(0), internalId(0) {
 }
 
-Raycaster::RayHit::RayHit(float distance, float uu, float vv, unsigned long lid, unsigned long mid) :
+Raycaster::Hit::Hit(float distance, float uu, float vv, unsigned long lid, unsigned long mid) :
 	hit(true), dist(distance), u(uu), v(vv), w(1.0f - uu - vv), localId(lid), meshId(mid), internalId(0) {
 }
 
@@ -145,7 +145,7 @@ void Raycaster::updateHierarchy() {
 	Log::Info() << "Done: " << _hierarchy.size() << " nodes created." << std::endl;
 }
 
-Raycaster::RayHit Raycaster::intersects(const glm::vec3 & origin, const glm::vec3 & direction, float mini, float maxi) const {
+Raycaster::Hit Raycaster::intersects(const glm::vec3 & origin, const glm::vec3 & direction, float mini, float maxi) const {
 	const Ray ray(origin, direction);
 
 	std::stack<size_t> nodesToTest;
@@ -158,7 +158,7 @@ Raycaster::RayHit Raycaster::intersects(const glm::vec3 & origin, const glm::vec
 		nodesToTest.push(nid);
 	}
 
-	RayHit bestHit;
+	Hit bestHit;
 	while(!nodesToTest.empty()) {
 		const Node & node = _hierarchy[nodesToTest.top()];
 		nodesToTest.pop();
@@ -167,7 +167,7 @@ Raycaster::RayHit Raycaster::intersects(const glm::vec3 & origin, const glm::vec
 		if(node.leaf) {
 			for(size_t tid = 0; tid < node.right; ++tid) {
 				const auto & tri = _triangles[node.left + tid];
-				const RayHit hit = intersects(ray, tri, mini, maxi);
+				const Hit hit = intersects(ray, tri, mini, maxi);
 				// We found a valid hit.
 				if(hit.hit && hit.dist < bestHit.dist) {
 					bestHit = hit;
@@ -233,7 +233,7 @@ bool Raycaster::visible(const glm::vec3 & p0, const glm::vec3 & p1) const {
 	return !intersectsAny(p0, direction, 0.0001f, maxi);
 }
 
-Raycaster::RayHit Raycaster::intersects(const Raycaster::Ray & ray, const TriangleInfos & tri, float mini, float maxi) const {
+Raycaster::Hit Raycaster::intersects(const Raycaster::Ray & ray, const TriangleInfos & tri, float mini, float maxi) const {
 	// Implement Moller-Trumbore intersection test.
 	const glm::vec3 & v0 = _vertices[tri.v0];
 	const glm::vec3 v01  = _vertices[tri.v1] - v0;

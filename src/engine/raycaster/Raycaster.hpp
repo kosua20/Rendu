@@ -12,7 +12,7 @@ class Raycaster {
 
 public:
 	/** Represent a hit event between a ray and the geometry. */
-	struct RayHit {
+	struct Hit {
 
 		friend class RaycasterVisualisation; ///< For debug visualisation.
 
@@ -25,7 +25,7 @@ public:
 		unsigned long meshId;  ///< Index of the mesh hit by the ray.
 
 		/** Default constructor ('no hit' case). */
-		RayHit();
+		Hit();
 
 		/** Constructore ('hit' case).
 		 \param distance the distance from the ray origin to the hit location
@@ -34,7 +34,7 @@ public:
 		 \param lid position of the hit triangle first vertex in the mesh index buffer
 		 \param mid index of the mesh hit by the ray
 		 */
-		RayHit(float distance, float uu, float vv, unsigned long lid, unsigned long mid);
+		Hit(float distance, float uu, float vv, unsigned long lid, unsigned long mid);
 
 	private:
 		unsigned long internalId; ///< Index of the triangle in the raycaster internal primitive list.
@@ -61,7 +61,7 @@ public:
 	 \param maxi the maximum distance allowed for the intersection
 	 \return a hit object containg the potential hit informations
 	 */
-	RayHit intersects(const glm::vec3 & origin, const glm::vec3 & direction, float mini = 0.0001f, float maxi = 1e8f) const;
+	Hit intersects(const glm::vec3 & origin, const glm::vec3 & direction, float mini = 0.0001f, float maxi = 1e8f) const;
 
 	/** Intersect a ray with the geometry.
 	 \param origin ray origin
@@ -87,7 +87,7 @@ public:
 	\return the interpolated attribute
 	*/
 	template<typename T>
-	static T interpolateAttribute(const RayHit & hit, const Mesh & geometry, const std::vector<T> & attribute){
+	static T interpolateAttribute(const Hit & hit, const Mesh & geometry, const std::vector<T> & attribute){
 		const unsigned long triId = hit.localId;
 		const unsigned long i0	= geometry.indices[triId];
 		const unsigned long i1	= geometry.indices[triId + 1];
@@ -149,7 +149,7 @@ private:
 	 \param maxi the maximum allowed distance along the ray
 	 \return a hit object containg the potential hit informations
 	 */
-	RayHit intersects(const Ray & ray, const TriangleInfos & tri, float mini, float maxi) const;
+	Hit intersects(const Ray & ray, const TriangleInfos & tri, float mini, float maxi) const;
 
 	/** Test a ray and bounding box intersection.
 	 \param ray the ray

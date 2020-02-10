@@ -32,7 +32,7 @@ void RaycasterVisualisation::getAllLevels(std::vector<Mesh> & meshes) const {
 	createBVHMeshes(selectedNodes, meshes);
 }
 
-Raycaster::RayHit RaycasterVisualisation::getRayLevels(const glm::vec3 & origin, const glm::vec3 & direction, std::vector<Mesh> & meshes, float mini, float maxi) const {
+Raycaster::Hit RaycasterVisualisation::getRayLevels(const glm::vec3 & origin, const glm::vec3 & direction, std::vector<Mesh> & meshes, float mini, float maxi) const {
 
 	const Raycaster::Ray ray(origin, direction);
 	std::vector<DisplayNode> selectedNodes;
@@ -45,7 +45,7 @@ Raycaster::RayHit RaycasterVisualisation::getRayLevels(const glm::vec3 & origin,
 		}
 		nodesToTest.push({nid, 0});
 	}
-	Raycaster::RayHit bestHit;
+	Raycaster::Hit bestHit;
 	while(!nodesToTest.empty()) {
 		const DisplayNode & infos	= nodesToTest.top();
 		const Raycaster::Node & node = _raycaster._hierarchy[infos.node];
@@ -57,7 +57,7 @@ Raycaster::RayHit RaycasterVisualisation::getRayLevels(const glm::vec3 & origin,
 		if(node.leaf) {
 			for(size_t tid = 0; tid < node.right; ++tid) {
 				const auto & tri			= _raycaster._triangles[node.left + tid];
-				const Raycaster::RayHit hit = _raycaster.intersects(ray, tri, mini, maxi);
+				const Raycaster::Hit hit = _raycaster.intersects(ray, tri, mini, maxi);
 				// We found a valid hit.
 				if(hit.hit && hit.dist < bestHit.dist) {
 					bestHit			   = hit;
@@ -80,7 +80,7 @@ Raycaster::RayHit RaycasterVisualisation::getRayLevels(const glm::vec3 & origin,
 	return bestHit;
 }
 
-void RaycasterVisualisation::getRayMesh(const glm::vec3 & rayPos, const glm::vec3 & rayDir, const Raycaster::RayHit & hit, Mesh & mesh, float defaultLength) const {
+void RaycasterVisualisation::getRayMesh(const glm::vec3 & rayPos, const glm::vec3 & rayDir, const Raycaster::Hit & hit, Mesh & mesh, float defaultLength) const {
 	const float length	 = hit.hit ? hit.dist : defaultLength;
 	const glm::vec3 hitPos = rayPos + length * glm::normalize(rayDir);
 	// Ray color: green if hit, red otherwise.

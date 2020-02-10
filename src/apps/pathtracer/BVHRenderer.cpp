@@ -100,7 +100,7 @@ void BVHRenderer::resize(unsigned int width, unsigned int height) {
 void BVHRenderer::castRay(const glm::vec3 & position, const glm::vec3 & direction) {
 
 	// Intersect.
-	const Raycaster::RayHit hit = _visuHelper->getRayLevels(position, direction, _rayLevels);
+	const Raycaster::Hit hit = _visuHelper->getRayLevels(position, direction, _rayLevels);
 	// Level meshes.
 	for(Mesh & level : _rayLevels) {
 		// Setup the OpenGL mesh, don't keep the CPU mesh.

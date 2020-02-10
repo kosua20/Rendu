@@ -27,7 +27,7 @@ public:
 	 \param maxi the maximum distance allowed for the intersection
 	 \return a hit object containg the potential hit informations
 	 */
-	Raycaster::RayHit getRayLevels(const glm::vec3 & origin, const glm::vec3 & direction, std::vector<Mesh> & meshes, float mini = 0.0001f, float maxi = 1e8f) const;
+	Raycaster::Hit getRayLevels(const glm::vec3 & origin, const glm::vec3 & direction, std::vector<Mesh> & meshes, float mini = 0.0001f, float maxi = 1e8f) const;
 
 	/** Generate a mesh representing a ray and the intersected triangle.
 	 \param rayPos the ray origin
@@ -36,7 +36,7 @@ public:
 	 \param mesh will be filled with the ray and triangle geometry
 	 \param defaultLength the length of the ray when no collision happened
 	 */
-	void getRayMesh(const glm::vec3 & rayPos, const glm::vec3 & rayDir, const Raycaster::RayHit & hit, Mesh & mesh, float defaultLength = 10000.0f) const;
+	void getRayMesh(const glm::vec3 & rayPos, const glm::vec3 & rayDir, const Raycaster::Hit & hit, Mesh & mesh, float defaultLength = 10000.0f) const;
 
 private:
 	/** Infos for displaying a given node. */
