@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['action_2351',['Action',['../class_window.html#a23db6c08edfd162f98d7ce8a3257e4a6',1,'Window']]],
-  ['alignment_2352',['Alignment',['../class_font.html#a4eaff706b6dbd4682ca0910fae0c80be',1,'Font']]]
+  ['action_2350',['Action',['../class_window.html#a23db6c08edfd162f98d7ce8a3257e4a6',1,'Window']]],
+  ['alignment_2351',['Alignment',['../class_font.html#a4eaff706b6dbd4682ca0910fae0c80be',1,'Font']]]
 ];
