@@ -48,19 +48,16 @@ void SpotLight::setScene(const BoundingBox & sceneBox) {
 	_model = glm::inverse(_viewMatrix) * glm::scale(glm::mat4(1.0f), _radius * glm::vec3(width, width, 1.0f));
 }
 
-bool SpotLight::visible(const glm::vec3 & position, const Raycaster & raycaster, glm::vec3 & direction, float & attenuation) const {
-	if(_castShadows && !raycaster.visible(position, _lightPosition)) {
-		return false;
-	}
-	direction = _lightPosition.get() - position;
-
+glm::vec3 SpotLight::sample(const glm::vec3 & position, float & dist, float & attenuation) const {
+	glm::vec3 direction = _lightPosition.get() - position;
+	dist = glm::length(direction);
+	attenuation = 0.0f;
 	// Early exit if we are outside the sphere of influence.
-	const float localRadius = glm::length(direction);
-	if(localRadius > _radius) {
-		return false;
+	if(dist > _radius) {
+		return {};
 	}
-	if(localRadius > 0.0f) {
-		direction /= localRadius;
+	if(dist > 0.0f) {
+		direction /= dist;
 	}
 
 	// Compute the angle between the light direction and the (light, surface point) vector.
@@ -68,18 +65,18 @@ bool SpotLight::visible(const glm::vec3 & position, const Raycaster & raycaster,
 	const float outerCos   = std::cos(_angles.y);
 	// If we are outside the spotlight cone, no lighting.
 	if(currentCos < std::cos(outerCos)) {
-		return false;
+		return {};
 	}
 	// Compute the spotlight attenuation factor based on our angle compared to the inner and outer spotlight angles.
 	const float innerCos		 = std::cos(_angles.x);
 	const float angleAttenuation = glm::clamp((currentCos - outerCos) / (innerCos - outerCos), 0.0f, 1.0f);
 
 	// Attenuation with increasing distance to the light.
-	const float radiusRatio  = localRadius / _radius;
+	const float radiusRatio  = dist / _radius;
 	const float radiusRatio2 = radiusRatio * radiusRatio;
 	const float attenNum	 = glm::clamp(1.0f - radiusRatio2, 0.0f, 1.0f);
-	attenuation				 = angleAttenuation * attenNum * attenNum;
-	return true;
+	attenuation = angleAttenuation * attenNum * attenNum;
+	return direction;
 }
 
 void SpotLight::decode(const KeyValues & params) {

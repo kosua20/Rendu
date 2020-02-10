@@ -42,9 +42,9 @@ public:
 	void setScene(const BoundingBox & sceneBox) override;
 
 	/**
-	 \copydoc Light::visible
+	  \copydoc Light::sample
 	 */
-	bool visible(const glm::vec3 & position, const Raycaster & raycaster, glm::vec3 & direction, float & attenuation) const override;
+	glm::vec3 sample(const glm::vec3 & position, float & dist, float & attenuation) const override;
 
 	/** Setup a point light parameters from a list of key-value tuples. The following keywords will be searched for:
 	 \verbatim

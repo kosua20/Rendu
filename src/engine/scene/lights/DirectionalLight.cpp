@@ -37,13 +37,10 @@ void DirectionalLight::setScene(const BoundingBox & sceneBox) {
 	_model = glm::inverse(_viewMatrix) * glm::scale(glm::mat4(1.0f), glm::vec3(0.2f));
 }
 
-bool DirectionalLight::visible(const glm::vec3 & position, const Raycaster & raycaster, glm::vec3 & direction, float & attenuation) const {
-	if(_castShadows && raycaster.intersectsAny(position, -_lightDirection.get())) {
-		return false;
-	}
-	direction   = -_lightDirection.get();
+glm::vec3 DirectionalLight::sample(const glm::vec3 & , float & dist, float & attenuation) const {
 	attenuation = 1.0f;
-	return true;
+	dist = std::numeric_limits<float>::max();
+	return -_lightDirection.get();
 }
 
 void DirectionalLight::decode(const KeyValues & params) {

@@ -66,27 +66,26 @@ void PointLight::setScene(const BoundingBox & sceneBox) {
 	_model = glm::scale(glm::translate(glm::mat4(1.0f), _lightPosition.get()), glm::vec3(_radius));
 }
 
-bool PointLight::visible(const glm::vec3 & position, const Raycaster & raycaster, glm::vec3 & direction, float & attenuation) const {
-	if(_castShadows && !raycaster.visible(position, _lightPosition)) {
-		return false;
-	}
-	direction = _lightPosition.get() - position;
 
+glm::vec3 PointLight::sample(const glm::vec3 & position, float & dist, float & attenuation) const {
+	glm::vec3 direction = _lightPosition.get() - position;
+	dist = glm::length(direction);
+	attenuation = 0.0f;
 	// Early exit if we are outside the sphere of influence.
-	const float localRadius = glm::length(direction);
-	if(localRadius > _radius) {
-		return false;
+	if(dist > _radius) {
+		return {};
 	}
-	if(localRadius > 0.0f) {
-		direction /= localRadius;
+	if(dist > 0.0f) {
+		direction /= dist;
 	}
 
 	// Attenuation with increasing distance to the light.
-	const float radiusRatio  = localRadius / _radius;
+	const float radiusRatio  = dist / _radius;
 	const float radiusRatio2 = radiusRatio * radiusRatio;
 	const float attenNum	 = glm::clamp(1.0f - radiusRatio2, 0.0f, 1.0f);
-	attenuation				 = attenNum * attenNum;
-	return true;
+	attenuation  = attenNum * attenNum;
+
+	return direction;
 }
 
 void PointLight::decode(const KeyValues & params) {

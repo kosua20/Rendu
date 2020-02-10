@@ -42,14 +42,13 @@ public:
 	 */
 	virtual void setScene(const BoundingBox & sceneBox) = 0;
 
-	/** Test the visibility of a point in space from the light source.
-	 \param position the 3D point to test
-	 \param raycaster the raycaster for intersections tests
-	 \param direction will contain the direction from the point to the light
-	 \param attenuation will contain the attenuation caused by the radius/cone/etc.
-	 \return true if the point is visible from the light source.
+	/** Sample a direction from a reference point to the light.
+	 \param position the 3D point
+	 \param dist will contain the distance from the light to the point
+	 \param attenuation will contain the light attenuation factor
+	 \return a direction from the point to the light
 	 */
-	virtual bool visible(const glm::vec3 & position, const Raycaster & raycaster, glm::vec3 & direction, float & attenuation) const = 0;
+	virtual glm::vec3 sample(const glm::vec3 & position, float & dist, float & attenuation) const = 0;
 	
 	/** Generate a key-values representation of the light. See decode for the keywords and layout.
 	\return a tuple representing the light
