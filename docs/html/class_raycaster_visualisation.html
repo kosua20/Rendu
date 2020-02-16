@@ -118,10 +118,10 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a829acba725d525dcefec68bf31ed09d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0a315d7305619575f69fac10de767fd7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_raycaster_visualisation.html#a0a315d7305619575f69fac10de767fd7">getAllLevels</a> (std::vector&lt; <a class="el" href="class_mesh.html">Mesh</a> &gt; &amp;meshes) const</td></tr>
 <tr class="separator:a0a315d7305619575f69fac10de767fd7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a40fe5e3b887f6c1c40351d1337bd4f7b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_raycaster_1_1_ray_hit.html">Raycaster::RayHit</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_raycaster_visualisation.html#a40fe5e3b887f6c1c40351d1337bd4f7b">getRayLevels</a> (const glm::vec3 &amp;origin, const glm::vec3 &amp;direction, std::vector&lt; <a class="el" href="class_mesh.html">Mesh</a> &gt; &amp;meshes, float mini=0.0001f, float maxi=1e8f) const</td></tr>
-<tr class="separator:a40fe5e3b887f6c1c40351d1337bd4f7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa12ab18b4c18e6db59da3afd5efebbc0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_raycaster_visualisation.html#aa12ab18b4c18e6db59da3afd5efebbc0">getRayMesh</a> (const glm::vec3 &amp;rayPos, const glm::vec3 &amp;rayDir, const <a class="el" href="struct_raycaster_1_1_ray_hit.html">Raycaster::RayHit</a> &amp;hit, <a class="el" href="class_mesh.html">Mesh</a> &amp;mesh, float defaultLength=10000.0f) const</td></tr>
-<tr class="separator:aa12ab18b4c18e6db59da3afd5efebbc0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab9fd96f470e1537b3fec30db62a2327a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_raycaster_1_1_hit.html">Raycaster::Hit</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_raycaster_visualisation.html#ab9fd96f470e1537b3fec30db62a2327a">getRayLevels</a> (const glm::vec3 &amp;origin, const glm::vec3 &amp;direction, std::vector&lt; <a class="el" href="class_mesh.html">Mesh</a> &gt; &amp;meshes, float mini=0.0001f, float maxi=1e8f) const</td></tr>
+<tr class="separator:ab9fd96f470e1537b3fec30db62a2327a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad96c1f1902f82d294384438e761c716a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_raycaster_visualisation.html#ad96c1f1902f82d294384438e761c716a">getRayMesh</a> (const glm::vec3 &amp;rayPos, const glm::vec3 &amp;rayDir, const <a class="el" href="struct_raycaster_1_1_hit.html">Raycaster::Hit</a> &amp;hit, <a class="el" href="class_mesh.html">Mesh</a> &amp;mesh, float defaultLength=10000.0f) const</td></tr>
+<tr class="separator:ad96c1f1902f82d294384438e761c716a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
@@ -238,14 +238,14 @@ const <a class="el" href="class_raycaster.html">Raycaster</a> &amp;&#160;</td><t
 
 </div>
 </div>
-<a id="a40fe5e3b887f6c1c40351d1337bd4f7b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a40fe5e3b887f6c1c40351d1337bd4f7b">&#9670;&nbsp;</a></span>getRayLevels()</h2>
+<a id="ab9fd96f470e1537b3fec30db62a2327a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab9fd96f470e1537b3fec30db62a2327a">&#9670;&nbsp;</a></span>getRayLevels()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="struct_raycaster_1_1_ray_hit.html">Raycaster::RayHit</a> RaycasterVisualisation::getRayLevels </td>
+          <td class="memname"><a class="el" href="struct_raycaster_1_1_hit.html">Raycaster::Hit</a> RaycasterVisualisation::getRayLevels </td>
           <td>(</td>
           <td class="paramtype">const glm::vec3 &amp;&#160;</td>
           <td class="paramname"><em>origin</em>, </td>
@@ -295,8 +295,8 @@ const <a class="el" href="class_raycaster.html">Raycaster</a> &amp;&#160;</td><t
 
 </div>
 </div>
-<a id="aa12ab18b4c18e6db59da3afd5efebbc0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa12ab18b4c18e6db59da3afd5efebbc0">&#9670;&nbsp;</a></span>getRayMesh()</h2>
+<a id="ad96c1f1902f82d294384438e761c716a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad96c1f1902f82d294384438e761c716a">&#9670;&nbsp;</a></span>getRayMesh()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -316,7 +316,7 @@ const <a class="el" href="class_raycaster.html">Raycaster</a> &amp;&#160;</td><t
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="struct_raycaster_1_1_ray_hit.html">Raycaster::RayHit</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="struct_raycaster_1_1_hit.html">Raycaster::Hit</a> &amp;&#160;</td>
           <td class="paramname"><em>hit</em>, </td>
         </tr>
         <tr>

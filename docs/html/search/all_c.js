@@ -40,7 +40,7 @@ var searchData=
   ['loadscene_736',['loadScene',['../class_scene.html#af07df160cf79432f4637c23bf83f0c8c',1,'Scene']]],
   ['loadshader_737',['loadShader',['../class_g_l_utilities.html#a6da6e0de0463c97589fd80c5c1cd9a37',1,'GLUtilities']]],
   ['loadstringfromexternalfile_738',['loadStringFromExternalFile',['../class_resources.html#a9a11d9cbff92fce2ab1bfc95a64eddb6',1,'Resources']]],
-  ['localid_739',['localId',['../struct_raycaster_1_1_ray_hit.html#aa0d98cc8b98bdef718e3265535d95275',1,'Raycaster::RayHit::localId()'],['../struct_raycaster_1_1_triangle_infos.html#a40bc34a5bf8b39e911ed3157a633e0c2',1,'Raycaster::TriangleInfos::localId()']]],
+  ['localid_739',['localId',['../struct_raycaster_1_1_hit.html#a08798e66736ba708e97dfbd1d15a2853',1,'Raycaster::Hit::localId()'],['../struct_raycaster_1_1_triangle_infos.html#a40bc34a5bf8b39e911ed3157a633e0c2',1,'Raycaster::TriangleInfos::localId()']]],
   ['localmt19937_740',['LocalMT19937',['../struct_random_1_1_local_m_t19937.html',1,'Random::LocalMT19937'],['../struct_random_1_1_local_m_t19937.html#af1f5c3719100ec84ada1168aa25a9569',1,'Random::LocalMT19937::LocalMT19937()']]],
   ['log_741',['Log',['../class_log.html',1,'Log'],['../class_log.html#af6071a60aa52b6c1b511f99b4bc1b8fe',1,'Log::Log()'],['../class_log.html#acb9520812f36aa5f6e59fba5fb6315de',1,'Log::Log(const std::string &amp;filePath, bool logToStdin, bool verbose=false)']]],
   ['looksbody_742',['looksBody',['../class_player.html#ae245fa56d663dce1dff36f4fff23cbcd',1,'Player']]],
