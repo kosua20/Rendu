@@ -35,7 +35,7 @@ var searchData=
   ['displacementtexturepath_510',['displacementTexturePath',['../struct_composite_obj_1_1_material.html#a19fd000cc7dcd4d7beb1652430bbaf36',1,'CompositeObj::Material']]],
   ['displaynode_511',['DisplayNode',['../struct_raycaster_visualisation_1_1_display_node.html',1,'RaycasterVisualisation']]],
   ['displayscale_512',['displayScale',['../class_menu_button.html#a61c709d4079ea1e06435dcdbb7bfd3cb',1,'MenuButton']]],
-  ['dist_513',['dist',['../struct_player_1_1_path_point.html#add8732d8408d2b0d01eecdf5230c88f8',1,'Player::PathPoint::dist()'],['../struct_raycaster_1_1_ray_hit.html#a4fd4c5fe5c03b12ce6c92417ca2138f1',1,'Raycaster::RayHit::dist()'],['../class_g_p_u_1_1_frag_1_1_brush__color.html#afcafd64afe916b215fbd58c94405b15e',1,'GPU::Frag::Brush_color::dist()'],['../class_g_p_u_1_1_vert_1_1_brush__color.html#aeceeba4c9f562d0d297ec6f46e4aec6e',1,'GPU::Vert::Brush_color::dist()']]],
+  ['dist_513',['dist',['../struct_player_1_1_path_point.html#add8732d8408d2b0d01eecdf5230c88f8',1,'Player::PathPoint::dist()'],['../struct_raycaster_1_1_hit.html#a21f38ca65ad222a1134a568767f3d324',1,'Raycaster::Hit::dist()'],['../class_g_p_u_1_1_frag_1_1_brush__color.html#afcafd64afe916b215fbd58c94405b15e',1,'GPU::Frag::Brush_color::dist()'],['../class_g_p_u_1_1_vert_1_1_brush__color.html#aeceeba4c9f562d0d297ec6f46e4aec6e',1,'GPU::Vert::Brush_color::dist()']]],
   ['distance_5fseeds_514',['Distance_seeds',['../class_g_p_u_1_1_frag_1_1_distance__seeds.html',1,'GPU::Frag']]],
   ['domain_515',['Domain',['../class_log.html#a2fa7f78a838cb410f0c28079d51e1fb7',1,'Log']]],
   ['downloadtexture_516',['downloadTexture',['../class_g_l_utilities.html#a708d9c01930870d22c4d5420bab2af57',1,'GLUtilities']]],

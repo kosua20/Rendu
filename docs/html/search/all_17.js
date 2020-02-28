@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['w_1131',['w',['../struct_raycaster_1_1_ray_hit.html#a030d8ecec1ec9e49390bea8eb79d35ae',1,'Raycaster::RayHit']]],
+  ['w_1131',['w',['../struct_raycaster_1_1_hit.html#afa2cbe1e6cca1c4cc6a5af752014ee67',1,'Raycaster::Hit']]],
   ['warning_1132',['Warning',['../class_log.html#a893ebadffc21742a0efe3b9eac59051e',1,'Log']]],
   ['widen_1133',['widen',['../class_system.html#a21f2a6c7f6896ca3e0fce0d47d6b2704',1,'System']]],
   ['width_1134',['width',['../class_image.html#aaa2cc744ff3969ac6cb63ca05a40e5f6',1,'Image::width()'],['../class_texture.html#a5d81cb05821b158ded3d5a46a4cd8f5a',1,'Texture::width()'],['../class_framebuffer.html#a6821df6939025473cf9e2529d4ee8a61',1,'Framebuffer::width()'],['../class_convolution_pyramid.html#af06e84b4d06212473532a881f914c37d',1,'ConvolutionPyramid::width()']]],

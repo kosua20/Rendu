@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['u_1083',['u',['../struct_raycaster_1_1_ray_hit.html#ad86acbe3a88ccde581a8b97f4f3895e0',1,'Raycaster::RayHit']]],
+  ['u_1083',['u',['../struct_raycaster_1_1_hit.html#a8057dbb0beac781377a1906cfc300543',1,'Raycaster::Hit']]],
   ['unbind_1084',['unbind',['../class_framebuffer.html#aaf2df0de57e0087799fefce2810c97d8',1,'Framebuffer::unbind()'],['../class_framebuffer_cube.html#a1411aa87bdbc06a9f0901a7dc73255a9',1,'FramebufferCube::unbind()']]],
   ['uncharted2_1085',['uncharted2',['../class_g_p_u_1_1_frag_1_1_tonemap.html#a0276d92ae75892cb47084129a2436530',1,'GPU::Frag::Tonemap']]],
   ['unfilteredcurrent_1086',['unfilteredCurrent',['../class_g_p_u_1_1_frag_1_1_upscale.html#ab37afbdc67cf30b1cb93a1dfdb118657',1,'GPU::Frag::Upscale']]],

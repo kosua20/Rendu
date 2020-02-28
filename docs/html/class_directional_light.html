@@ -117,8 +117,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a4f43d21bbcaed2a9806413d679d5df60"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab88ed8e410c6ff72f0248a285eb34e22"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_directional_light.html#ab88ed8e410c6ff72f0248a285eb34e22">setScene</a> (const <a class="el" href="class_bounding_box.html">BoundingBox</a> &amp;sceneBox) override</td></tr>
 <tr class="separator:ab88ed8e410c6ff72f0248a285eb34e22"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a598461d7ce56dd943f55e61f0037de53"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_directional_light.html#a598461d7ce56dd943f55e61f0037de53">visible</a> (const glm::vec3 &amp;position, const <a class="el" href="class_raycaster.html">Raycaster</a> &amp;raycaster, glm::vec3 &amp;<a class="el" href="class_directional_light.html#ae359238dc5785d5ad7956d6d0c3f6ca1">direction</a>, float &amp;attenuation) const override</td></tr>
-<tr class="separator:a598461d7ce56dd943f55e61f0037de53"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a468da620d77c50770f4b7ced3351df11"><td class="memItemLeft" align="right" valign="top">glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_directional_light.html#a468da620d77c50770f4b7ced3351df11">sample</a> (const glm::vec3 &amp;position, float &amp;dist, float &amp;attenuation) const override</td></tr>
+<tr class="separator:a468da620d77c50770f4b7ced3351df11"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0b77bcc1bf706fdef2d7254cebe685e9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_directional_light.html#a0b77bcc1bf706fdef2d7254cebe685e9">decode</a> (const <a class="el" href="struct_key_values.html">KeyValues</a> &amp;params)</td></tr>
 <tr class="separator:a0b77bcc1bf706fdef2d7254cebe685e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a892b36253dab894ff3ae481c41a572e4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_key_values.html">KeyValues</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_directional_light.html#a892b36253dab894ff3ae481c41a572e4">encode</a> () const override</td></tr>
@@ -403,6 +403,61 @@ animations:
 
 </div>
 </div>
+<a id="a468da620d77c50770f4b7ced3351df11"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a468da620d77c50770f4b7ced3351df11">&#9670;&nbsp;</a></span>sample()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">glm::vec3 DirectionalLight::sample </td>
+          <td>(</td>
+          <td class="paramtype">const glm::vec3 &amp;&#160;</td>
+          <td class="paramname"><em>position</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float &amp;&#160;</td>
+          <td class="paramname"><em>dist</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float &amp;&#160;</td>
+          <td class="paramname"><em>attenuation</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p></p>
+<p>Sample a direction from a reference point to the light. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">position</td><td>the 3D point </td></tr>
+    <tr><td class="paramname">dist</td><td>will contain the distance from the light to the point </td></tr>
+    <tr><td class="paramname">attenuation</td><td>will contain the light attenuation factor </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>a direction from the point to the light </dd></dl>
+
+<p>Implements <a class="el" href="class_light.html#a989d9ca765778ff2ef92574185071750">Light</a>.</p>
+
+</div>
+</div>
 <a id="ab88ed8e410c6ff72f0248a285eb34e22"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab88ed8e410c6ff72f0248a285eb34e22">&#9670;&nbsp;</a></span>setScene()</h2>
 
@@ -483,68 +538,6 @@ animations:
 </dl>
 
 <p>Implements <a class="el" href="class_light.html#a758f89e00cf91c2816ff0438e909591e">Light</a>.</p>
-
-</div>
-</div>
-<a id="a598461d7ce56dd943f55e61f0037de53"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a598461d7ce56dd943f55e61f0037de53">&#9670;&nbsp;</a></span>visible()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool DirectionalLight::visible </td>
-          <td>(</td>
-          <td class="paramtype">const glm::vec3 &amp;&#160;</td>
-          <td class="paramname"><em>position</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="class_raycaster.html">Raycaster</a> &amp;&#160;</td>
-          <td class="paramname"><em>raycaster</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">glm::vec3 &amp;&#160;</td>
-          <td class="paramname"><em>direction</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">float &amp;&#160;</td>
-          <td class="paramname"><em>attenuation</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p></p>
-<p>Test the visibility of a point in space from the light source. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">position</td><td>the 3D point to test </td></tr>
-    <tr><td class="paramname">raycaster</td><td>the raycaster for intersections tests </td></tr>
-    <tr><td class="paramname">direction</td><td>will contain the direction from the point to the light </td></tr>
-    <tr><td class="paramname">attenuation</td><td>will contain the attenuation caused by the radius/cone/etc. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>true if the point is visible from the light source. </dd></dl>
-
-<p>Implements <a class="el" href="class_light.html#ae1155bb902d1dea8a73de85f6518a578">Light</a>.</p>
 
 </div>
 </div>
