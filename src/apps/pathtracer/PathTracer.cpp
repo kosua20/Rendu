@@ -1,4 +1,6 @@
 #include "PathTracer.hpp"
+#include "MaterialGGX.hpp"
+
 #include "system/System.hpp"
 #include "system/Random.hpp"
 #include <chrono>
@@ -15,108 +17,127 @@ PathTracer::PathTracer(const std::shared_ptr<Scene> & scene) {
 	_scene = scene;
 }
 
+glm::vec3 PathTracer::evalBackground(const glm::vec3 & rayDir, const glm::vec2 & ndcPos, bool directHit) const {
+	const Scene::Background mode = _scene->backgroundMode;
 
-glm::vec3 F(glm::vec3 F0, float VdotH){
-	return F0 + std::pow(1.0f - VdotH, 5.0f) * (glm::vec3(1.0f) - F0);
+	glm::vec3 color(0.0f);
+	// If direct background hit, produce the correct color without attenuation.
+	if(directHit) {
+		if(mode == Scene::Background::IMAGE) {
+			const Image & image = _scene->background->textures()[0]->images[0];
+			color = image.rgbl(ndcPos.x, ndcPos.y);
+		} else if(mode == Scene::Background::SKYBOX) {
+			const Texture * tex = _scene->background->textures()[0];
+			color = tex->sampleCubemap(glm::normalize(rayDir));
+		} else {
+			color = _scene->backgroundColor;
+		}
+		// \todo Support sampling atmospheric simulation.
+		return color;
+	}
+
+	// Else, only environment maps contribute to indirect illumination (for now).
+	if(mode == Scene::Background::SKYBOX) {
+		const Texture * tex = _scene->background->textures()[0];
+		color = tex->sampleCubemap(glm::normalize(rayDir));
+	}
+	return color;
 }
 
-float D(float NdotH, float alpha){
-	const float halfDenum = NdotH * NdotH * (alpha * alpha - 1.0f) + 1.0f;
-	const float halfTerm = alpha / std::max(0.0001f, halfDenum);
-	return halfTerm * halfTerm * glm::one_over_pi<float>();
+glm::ivec2 PathTracer::getSampleGrid(size_t samples) {
+	// Prepare the stratified grid.
+	// We know that we have 2^k samples.
+	const int k = int(std::floor(std::log2(samples)));
+	// If even, just use k samples on each side.
+	glm::ivec2 stratesCount(int(std::pow(2, k / 2)));
+	if(k % 2 == 1) {
+		//  Else dispatch the extraneous factor of 2 on the horizontal axis.
+		stratesCount[0] = int(std::pow(2, (k + 1) / 2));
+		stratesCount[1] = int(std::pow(2, (k - 1) / 2));
+	}
+	return stratesCount;
 }
 
-float V(float NdotL, float NdotV, float alpha){
-	// Correct version.
-	const float alpha2 = alpha * alpha;
-	const float visL = NdotV * std::sqrt((-NdotL * alpha2 + NdotL) * NdotL + alpha2);
-	const float visV = NdotL * std::sqrt((-NdotV * alpha2 + NdotV) * NdotV + alpha2);
-	return 0.5f / std::max(0.0001f, visV + visL);
+glm::vec2 PathTracer::getSamplePosition(size_t sid, const glm::ivec2 & cellCount, const glm::vec2 & cellSize) {
+	// Find the grid location.
+	const int sidy = int(sid) / cellCount.x;
+	const int sidx = int(sid) % cellCount.x;
+
+	// Draw random shift in [0.0,1.0f) for jittering.
+	const float jx = Random::Float();
+	const float jy = Random::Float();
+	// Compute position in the stratification grid.
+	const glm::vec2 gridPos = glm::vec2(float(sidx) + jx, float(sidy) + jy);
+	// Position in screen space.
+	const glm::vec2 localPos = gridPos * cellSize;
+	return localPos;
 }
 
+glm::mat3 PathTracer::buildLocalFrame(const Object & obj, const Raycaster::Hit & hit, const glm::vec3 & rayDir, const glm::vec2 & uv){
+	const auto & mesh = *obj.mesh();
+	const glm::vec3 n = glm::normalize(Raycaster::interpolateAttribute(hit, mesh, mesh.normals));
+	const glm::vec3 t = glm::normalize(Raycaster::interpolateAttribute(hit, mesh, mesh.tangents));
+	const glm::vec3 b = glm::normalize(Raycaster::interpolateAttribute(hit, mesh, mesh.binormals));
+	// Convert to world frame.
+	const glm::mat3 invtp = glm::inverse(glm::transpose(glm::mat3(obj.model())));
+	// From tangent space to world space.
+	glm::mat3 tbn;
+	tbn[0] = glm::normalize(glm::vec3(invtp * glm::vec4(t, 0.0f)));
+	tbn[1] = glm::normalize(glm::vec3(invtp * glm::vec4(b, 0.0f)));
+	tbn[2] = glm::normalize(glm::vec3(invtp * glm::vec4(n, 0.0f)));
 
-glm::vec3 sampleBrdf(const glm::vec3 & wo, const glm::vec3 & baseColor, float roughness, float metallic, glm::vec3 & wi){
-	const float probaSpecular = glm::mix(1.0f / (glm::dot(baseColor, glm::vec3(1.0f)) / 3.0f + 1.0f), 1.0f,  metallic);
+	// Flip normal if needed (all objects are double sided).
+	const bool frontFacing = glm::dot(tbn[2], rayDir) < 0.0f;
+	if(!frontFacing){
+		tbn[2] *= -1.0f;
+	}
 
-	const float roughClamp = std::max(0.045f, roughness);
-	const float alpha = std::max(0.0001f, roughClamp*roughClamp);
+	// If we have a normal map, perturb the local normal and udpate the frame.
+	if(obj.type() != Object::Type::PBRNoUVs){
+		const glm::vec3 imgNormal = glm::vec3(obj.textures()[1]->images[0].rgbal(uv.x, uv.y));
+		const glm::vec3 localNormal = glm::normalize(2.0f * imgNormal - 1.0f);
+		// Convert local normal to world.
+		const glm::vec3 nn = glm::normalize(tbn * localNormal);
+		const glm::vec3 bn = glm::normalize(glm::cross(nn, tbn[0]));
+		const glm::vec3 tn = glm::normalize(glm::cross(bn, nn));
+		tbn = glm::mat3(tn, bn, nn);
+	}
+	return tbn;
+}
 
-	if(Random::Float() < probaSpecular){
-		// Sample specular lobe.
-		const float a2 = alpha * alpha;
-		const float x = Random::Float();
-		// for dielectrics, Walter et al. have a roughness rescaling hack.
-		// alpha * (1.2f - 0.2f * std::sqrt(std::abs(wi.z)));
-		const float phiH = Random::Float() * glm::two_pi<float>();
-		const float cosThetaHSqr = std::min((1.0f - x) / ((a2 - 1.0f) * x + 1.0f), 1.0f);
-		const float cosThetaH = std::sqrt(cosThetaHSqr);
-		const float sinThetaH = std::sqrt(1.0f - cosThetaHSqr);
-		const glm::vec3 lh(sinThetaH * cos(phiH), sinThetaH * sin(phiH), cosThetaH);
-		// wi is outgoing here. wo is outgoing also.
-		wi = 2.0f * glm::dot(wo, lh) * lh - wo;
-	} else {
-		// Else sample diffuse lobe.
-		wi = Random::sampleCosineHemisphere();
-		if(wo.z < 0.0f){
-			wi.z *= -1.0f;
+bool PathTracer::checkVisibility(const glm::vec3 & startPos, const glm::vec3 & rayDir, float maxDist) const {
+	glm::vec3 lpos = startPos;
+	// Walk along the ray, checking at each intersection if there is occlusion.
+	while(maxDist > 0.0f){
+		const Raycaster::Hit lhit = _raycaster.intersects(lpos, rayDir, 0.001f, maxDist);
+		// No hit, we are visible, exit.
+		if(!lhit.hit){
+			return true;
+		}
+		// If we hit, two cases.
+		const auto & lobj = _scene->objects[lhit.meshId];
+		if(!lobj.masked()){
+			// If the object has no masj, geometric occlusion is always valid.
+			return false;
+		} else {
+			// We have to sample the object alpha mask.
+			// For this we compute the UVs and check the texture.
+			const auto & lmesh = *lobj.mesh();
+			const glm::vec2 luv = Raycaster::interpolateAttribute(lhit, lmesh, lmesh.texcoords);
+			const float alpha = lobj.textures()[0]->images[0].rgbal(luv.x, luv.y).a;
+			if(alpha < 0.01f){
+				// Transparent: shift, update the distance and keep casting.
+				maxDist = maxDist - lhit.dist;
+				lpos = lpos + lhit.dist * rayDir;
+			} else {
+				// Occlusion.
+				return false;
+				break;
+			}
 		}
 	}
-	if(wi.z < 0.0f){
-		return glm::vec3(0.0f);
-	}
-	const glm::vec3 h = glm::normalize(wi + wo);
-	const float NdotH = std::max(h.z, 0.0f);
-	const float VdotH = std::max(glm::dot(wi,h), 0.0f);
-	const float NdotL = std::max(wo.z, 0.0f);
-	const float NdotV = std::max(wi.z, 0.0f);
-
-	// Evaluate D(h)
-	const float Dh = D(NdotH, alpha);
-	// Evaluate the total PDF.
-	const float hPdf = Dh * NdotH;
-	const float pdf = glm::mix(glm::one_over_pi<float>() * NdotV, hPdf / (4.0f * std::max(0.0001f, VdotH)), probaSpecular);
-	if(pdf == 0.0f){
-		return glm::vec3(0.0f);
-	}
-	// Evaluate the total BRDF and weight it.
-	const glm::vec3 F0 = glm::mix(glm::vec3(0.04f), baseColor, metallic);
-	const glm::vec3 specular = Dh * V(NdotL, NdotV, alpha) * F(F0, VdotH);
-
-	const glm::vec3 diffuse = (1.0f - metallic) * glm::one_over_pi<float>() * baseColor * (1.0f - F0);
-	// Multi scattering adjustment hack.
-	const glm::vec3 multiAdj = glm::vec3(1.0f) + (2.0f * alpha * alpha * NdotV) * F0;
-	const glm::vec3 brdf = (diffuse + specular * multiAdj) * NdotV;
-	return brdf / pdf;
+	return true;
 }
-
-glm::vec3 brdf(const glm::vec3 & wo, const glm::vec3 & baseColor, float roughness, float metallic, const glm::vec3 & wi){
-
-	const float roughClamp = std::max(0.045f, roughness);
-	const float alpha = std::max(0.0001f, roughClamp*roughClamp);
-
-	if(wi.z < 0.0f){
-		return glm::vec3(0.0f);
-	}
-	const glm::vec3 h = glm::normalize(wi + wo);
-	const float NdotH = std::max(h.z, 0.0f);
-	const float VdotH = std::max(glm::dot(wi,h), 0.0f);
-	const float NdotL = std::max(wo.z, 0.0f);
-	const float NdotV = std::max(wi.z, 0.0f);
-
-	// Evaluate D(h)
-	const float Dh = D(NdotH, alpha);
-
-	// Evaluate the total BRDF and weight it.
-	const glm::vec3 F0 = glm::mix(glm::vec3(0.04f), baseColor, metallic);
-	const glm::vec3 specular = Dh * V(NdotL, NdotV, alpha) * F(F0, VdotH);
-
-	const glm::vec3 diffuse = (1.0f - metallic) * glm::one_over_pi<float>() * baseColor * (1.0f - F0);
-	// Multi scattering adjustment hack.
-	const glm::vec3 multiAdj = glm::vec3(1.0f) + (2.0f * alpha * alpha * NdotV) * F0;
-	const glm::vec3 brdf = (diffuse + specular * multiAdj) * NdotV;
-	return brdf;
-}
-
 
 void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Image & render) {
 
@@ -137,77 +158,35 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 	// Compute incremental pixel shifts.
 	glm::vec3 corner, dx, dy;
 	camera.pixelShifts(corner, dx, dy);
-
-	// Prepare the stratified grid.
-	// We know that we have 2^k samples.
-	const int k = int(std::floor(std::log2(samples)));
-	// If even, just use k samples on each side.
-	glm::ivec2 stratesCount(int(std::pow(2, k / 2)));
-	if(k % 2 == 1) {
-		//  Else dispatch the extraneous factor of 2 on the horizontal axis.
-		stratesCount[0] = int(std::pow(2, (k + 1) / 2));
-		stratesCount[1] = int(std::pow(2, (k - 1) / 2));
-	}
-	const glm::vec2 stratesSize = 1.0f / glm::vec2(stratesCount);
+	const glm::ivec2 cellCount = getSampleGrid(samples);
+	const glm::vec2 cellSize = 1.0f / glm::vec2(cellCount);
 
 	// Start chrono.
 	const auto start = std::chrono::steady_clock::now();
 
 	// Parallelize on each row of the image.
-	System::forParallel(0, size_t(render.height), [&render, samples, stratesCount, &stratesSize, &corner, &dx, &dy, &camera, depth, this](size_t y) {
+	System::forParallel(0, size_t(render.height), [&render, samples, &cellCount, &cellSize, &corner, &dx, &dy, &camera, depth, this](size_t y) {
 		for(size_t x = 0; x < size_t(render.width); ++x) {
 			for(size_t sid = 0; sid < samples; ++sid) {
-				// Find the grid location.
-				const int sidy = int(sid) / stratesCount.x;
-				const int sidx = int(sid) % stratesCount.x;
 
-				// Draw random shift in [0.0,1.0f) for jittering.
-				const float jx = Random::Float();
-				const float jy = Random::Float();
-				// Compute position in the stratification grid.
-				const glm::vec2 gridPos = glm::vec2(float(sidx) + jx, float(sidy) + jy);
-				// Position in screen space.
-				const glm::vec2 screenPos = gridPos * stratesSize + glm::vec2(x, y);
-
+				// Get the position of the sample in screenspace.
+				const glm::vec2 screenPos = glm::vec2(x, y) + getSamplePosition(sid, cellCount, cellSize);
 				// Derive a position on the image plane from the pixel.
 				const glm::vec2 ndcPos = screenPos / glm::vec2(render.width, render.height);
 				// Place the point on the near plane in clip space.
 				const glm::vec3 worldPos = corner + ndcPos.x * dx + ndcPos.y * dy;
-
+				// Initial ray setup.
 				glm::vec3 rayPos = camera.position();
 				glm::vec3 rayDir = glm::normalize(worldPos - camera.position());
-
 				glm::vec3 sampleColor(0.0f);
 				glm::vec3 attenuation(1.0f);
 
 				for(size_t did = 0; did < depth; ++did) {
 					// Query closest intersection.
 					const Raycaster::Hit hit = _raycaster.intersects(rayPos, rayDir);
-
 					// If no hit, background.
 					if(!hit.hit) {
-						const Scene::Background mode = _scene->backgroundMode;
-
-						// If direct background hit, produce the correct color without attenuation.
-						if(did == 0) {
-							if(mode == Scene::Background::IMAGE) {
-								const Image & image = _scene->background->textures()[0]->images[0];
-								sampleColor			= image.rgbl(ndcPos.x, ndcPos.y);
-							} else if(mode == Scene::Background::SKYBOX) {
-								const Texture * tex = _scene->background->textures()[0];
-								sampleColor			= tex->sampleCubemap(glm::normalize(rayDir));
-							} else {
-								sampleColor = _scene->backgroundColor;
-							}
-							// \todo Support sampling atmospheric simulation.
-							break;
-						}
-
-						// Else, only environment maps contribute to indirect illumination (for now).
-						if(mode == Scene::Background::SKYBOX) {
-							const Texture * tex = _scene->background->textures()[0];
-							sampleColor += attenuation * tex->sampleCubemap(glm::normalize(rayDir));
-						}
+						sampleColor += attenuation * evalBackground(rayDir, ndcPos, did == 0);
 						break;
 					}
 
@@ -215,11 +194,8 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 					const Object & obj = _scene->objects[hit.meshId];
 					const Mesh & mesh  = *obj.mesh();
 					const glm::vec3 p  = rayPos + hit.dist * rayDir;
-
 					// Fetch material texel information.
 					const glm::vec2 uv = obj.type() == Object::Type::PBRNoUVs ? glm::vec2(0.5f, 0.5f) :  Raycaster::interpolateAttribute(hit, mesh, mesh.texcoords);
-
-					// Fetch base color from texture.
 					const Image & image  = obj.textures()[0]->images[0];
 					const glm::vec4 bCol = image.rgbal(uv.x, uv.y);
 					// In case of alpha cut-out, just update the position to the intersection and keep casting.
@@ -229,105 +205,46 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 						continue;
 					}
 
+					// Compute local tangent frame.
+					const glm::mat3 tbn = buildLocalFrame(obj, hit, rayDir, uv);
+					const glm::mat3 itbn = glm::transpose(tbn);
+					// For sampling and evaluating the BRDF, convert outgoing direction to the local frame.
+					const glm::vec3 wo = glm::normalize(itbn * (-rayDir));
+					const glm::vec3 baseColor = glm::pow(glm::vec3(bCol), glm::vec3(2.2f));
 					// Check other material attributes.
 					const Image & imageRMAO  = obj.textures()[2]->images[0];
 					const glm::vec4 rmao = imageRMAO.rgbal(uv.x, uv.y);
 
-					// Normal computation.
-					glm::mat3 tbn;
-					{
-						const glm::vec3 n = glm::normalize(Raycaster::interpolateAttribute(hit, mesh, mesh.normals));
-						const glm::vec3 t = glm::normalize(Raycaster::interpolateAttribute(hit, mesh, mesh.tangents));
-						const glm::vec3 b = glm::normalize(Raycaster::interpolateAttribute(hit, mesh, mesh.binormals));
-						// Convert to world frame.
-						const glm::mat3 invtp = glm::inverse(glm::transpose(glm::mat3(obj.model())));
-						// From tangent space to world space.
-						tbn[0] = glm::normalize(glm::vec3(invtp * glm::vec4(t, 0.0f)));
-						tbn[1] = glm::normalize(glm::vec3(invtp * glm::vec4(b, 0.0f)));
-						tbn[2] = glm::normalize(glm::vec3(invtp * glm::vec4(n, 0.0f)));
-					}
-					// Flip normal if needed (all objects are double sided).
-					const bool frontFacing = glm::dot(tbn[2], rayDir) < 0.0f;
-					if(!frontFacing){
-						tbn[2] *= -1.0f;
-					}
-
-					// If we have a normal map, perturbed the local normal and udpate the frame.
-					if(obj.type() != Object::Type::PBRNoUVs){
-						const glm::vec3 localNormal = glm::normalize(2.0f * glm::vec3(obj.textures()[1]->images[0].rgbal(uv.x, uv.y)) - 1.0f);
-						// Convert local normal to world.
-						const glm::vec3 nn = glm::normalize(tbn * localNormal);
-						const glm::vec3 bn = glm::normalize(glm::cross(nn, tbn[0]));
-						const glm::vec3 tn = glm::normalize(glm::cross(bn, nn));
-						tbn = glm::mat3(tn, bn, nn);
-					}
-					// From world space to perturbed tangent space.
-					const glm::mat3 itbn = glm::transpose(tbn);
-
-					// For sampling and evaluating the BRDF, convert outgoing direction to the local frame.
-					const glm::vec3 wo = glm::normalize(itbn * (-rayDir));
-					const glm::vec3 baseColor = glm::pow(glm::vec3(bCol), glm::vec3(2.2f));
-
 					// Direct light sampling.
-					// Cast a ray toward one of the lights, at random.
 					if(!_scene->lights.empty()){
-						// No support for geometric emitters for now.
+						// Take a light at random.
 						const unsigned int lid = Random::Int(0, _scene->lights.size()-1);
 						const auto & light = _scene->lights[lid];
 						// Shift slightly to avoid grazing angle self-intersections.
 						const glm::vec3 pShift = p+0.001f*tbn[2];
+						// Sample a ray going from the surface of the object to the light.
 						float maxDist, falloff;
 						const glm::vec3 direction = light->sample(pShift, maxDist, falloff);
-						// Check visibility.
-						if(falloff > 0.0f){
-							bool visible = true;
-							// We need a direction and a distance.
-							if(light->castsShadow()){
-								glm::vec3 lpos = pShift;
-								while(maxDist > 0.0f){
-									const Raycaster::Hit lhit = _raycaster.intersects(lpos, direction, 0.001f, maxDist);
-									if(!lhit.hit){
-										visible = true;
-										break;
-									}
-									// If we hit, two cases.
-									const auto & lobj = _scene->objects[lhit.meshId];
-									if(!lobj.masked()){
-										// Geometric occlusion is always valid.
-										visible = false;
-										break;
-									} else {
-										const auto & lmesh = *lobj.mesh();
-										// We have to compute the UVs and check the texture.
-										const glm::vec2 luv = Raycaster::interpolateAttribute(lhit, lmesh, lmesh.texcoords);
-										const float alpha = lobj.textures()[0]->images[0].rgbal(luv.x, luv.y).a;
-										if(alpha < 0.01f){
-											// Shift, update the distance and keep casting.
-											maxDist = maxDist - lhit.dist;
-											lpos = lpos + lhit.dist * direction;
-										} else {
-											visible = false;
-											break;
-										}
-
-									}
-								}
-							}
-							if(visible){
-								const glm::vec3 lwi = glm::normalize(itbn * (direction));
-								const glm::vec3 evalLight = brdf(wo, baseColor, rmao.r, rmao.g, lwi);
-								const float lightPdf = 1.0f / float(_scene->lights.size());
-								const glm::vec3 illumination = falloff * evalLight * light->intensity() / lightPdf;
-								// Because we only sample analytical lights, we can't hit an emitter via the raycaster, so no double-hit case to consider for now.
-								sampleColor += attenuation * illumination;
-							}
+						// Test visibility of needed..
+						bool visible = falloff > 0.0f;
+						if(visible && light->castsShadow()){
+							visible = checkVisibility(pShift, direction, maxDist);
 						}
 
+						// If visible, add contribution weighted by the surface BRDF.
+						if(visible){
+							const glm::vec3 lwi = glm::normalize(itbn * direction);
+							const glm::vec3 evalLight = MaterialGGX::eval(wo, baseColor, rmao.r, rmao.g, lwi);
+							const float lightPdf = 1.0f / float(_scene->lights.size());
+							const glm::vec3 illumination = falloff * evalLight * light->intensity() / lightPdf;
+							// Because we only sample analytical lights, we can't hit an emitter via the raycaster, so no double-hit case to consider for now.
+							sampleColor += attenuation * illumination;
+						}
 					}
 
 					// Pick next direction based on the BRDF.
 					glm::vec3 wi;
-					glm::vec3 eval = sampleBrdf(wo, baseColor, rmao.r, rmao.g, wi);
+					glm::vec3 eval = MaterialGGX::sampleAndEval(wo, baseColor, rmao.r, rmao.g, wi);
 					const glm::vec3 nextRayDir = glm::normalize(tbn * wi);
 					// Bounce decay.
 					attenuation *= eval;
