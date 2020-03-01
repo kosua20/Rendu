@@ -358,7 +358,7 @@ std::shared_ptr&lt; <a class="el" href="class_scene.html">Scene</a> &gt;&#160;</
 <p>Evalutation the contribution from the scene background. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">rayDir</td><td>the direction of the ray that intersected </td></tr>
-    <tr><td class="paramname">ndfPos</td><td>the current pixel in the final image </td></tr>
+    <tr><td class="paramname">ndcPos</td><td>the current pixel in the final image </td></tr>
     <tr><td class="paramname">directHit</td><td>was it a direct hit or a hit after bounces </td></tr>
   </table>
   </dd>
@@ -447,6 +447,7 @@ std::shared_ptr&lt; <a class="el" href="class_scene.html">Scene</a> &gt;&#160;</
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>the local sample location in [0,1] </dd></dl>
 <dl class="section note"><dt>Note</dt><dd>The sample will be randomly jittered. </dd></dl>
 
 </div>

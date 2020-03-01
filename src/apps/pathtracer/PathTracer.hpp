@@ -40,6 +40,7 @@ private:
 	 \param sid the sample ID for the pixel
 	 \param cellCount the number of samples on each grid axis
 	 \param cellSize the spacing between two samples on an axis
+	 \return the local sample location in [0,1]
 	 \note The sample will be randomly jittered.
 	 */
 	static glm::vec2 getSamplePosition(size_t sid, const glm::ivec2 & cellCount, const glm::vec2 & cellSize);
@@ -63,7 +64,7 @@ private:
 
 	/** Evalutation the contribution from the scene background.
 	 \param rayDir the direction of the ray that intersected
-	 \param ndfPos the current pixel in the final image
+	 \param ndcPos the current pixel in the final image
 	 \param directHit was it a direct hit or a hit after bounces
 	 \return the background contribution
 	 */

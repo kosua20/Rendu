@@ -66,7 +66,7 @@ private:
 	/** Evaluate the specular GGX lobe BRDF.
 	 \param wo the outgoing ray direction (usually direction towards the camera)
 	 \param baseColor the surface albedo (for dieletrics) or specular tint (for conductors)
-	 \param roughness the linear roughness of the surface
+	 \param alpha the perceptual roughness of the surface
 	 \param metallic the metallicness of the surface (usually 0 or 1)
 	 \param wi the incoming ray direction (usually direction towards a light/surface)
 	 \param pdf if non null, will contain the PDF of the incoming direction
