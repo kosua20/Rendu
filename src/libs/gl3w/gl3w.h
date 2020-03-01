@@ -55,7 +55,7 @@ GL3WglProc gl3wGetProcAddress(const char *proc);
 
 /* gl3w internal state */
 union GL3WProcs {
-	GL3WglProc ptr[657];
+	GL3WglProc ptr[659];
 	struct {
 		PFNGLACTIVESHADERPROGRAMPROC                            ActiveShaderProgram;
 		PFNGLACTIVETEXTUREPROC                                  ActiveTexture;
@@ -221,6 +221,7 @@ union GL3WProcs {
 		PFNGLFLUSHMAPPEDBUFFERRANGEPROC                         FlushMappedBufferRange;
 		PFNGLFLUSHMAPPEDNAMEDBUFFERRANGEPROC                    FlushMappedNamedBufferRange;
 		PFNGLFRAMEBUFFERPARAMETERIPROC                          FramebufferParameteri;
+		PFNGLFRAMEBUFFERPARAMETERIMESAPROC                      FramebufferParameteriMESA;
 		PFNGLFRAMEBUFFERRENDERBUFFERPROC                        FramebufferRenderbuffer;
 		PFNGLFRAMEBUFFERTEXTUREPROC                             FramebufferTexture;
 		PFNGLFRAMEBUFFERTEXTURE1DPROC                           FramebufferTexture1D;
@@ -270,6 +271,7 @@ union GL3WProcs {
 		PFNGLGETFRAGDATALOCATIONPROC                            GetFragDataLocation;
 		PFNGLGETFRAMEBUFFERATTACHMENTPARAMETERIVPROC            GetFramebufferAttachmentParameteriv;
 		PFNGLGETFRAMEBUFFERPARAMETERIVPROC                      GetFramebufferParameteriv;
+		PFNGLGETFRAMEBUFFERPARAMETERIVMESAPROC                  GetFramebufferParameterivMESA;
 		PFNGLGETGRAPHICSRESETSTATUSPROC                         GetGraphicsResetStatus;
 		PFNGLGETINTEGER64I_VPROC                                GetInteger64i_v;
 		PFNGLGETINTEGER64VPROC                                  GetInteger64v;
@@ -884,6 +886,7 @@ extern union GL3WProcs gl3wProcs;
 #define glFlushMappedBufferRange                         gl3wProcs.gl.FlushMappedBufferRange
 #define glFlushMappedNamedBufferRange                    gl3wProcs.gl.FlushMappedNamedBufferRange
 #define glFramebufferParameteri                          gl3wProcs.gl.FramebufferParameteri
+#define glFramebufferParameteriMESA                      gl3wProcs.gl.FramebufferParameteriMESA
 #define glFramebufferRenderbuffer                        gl3wProcs.gl.FramebufferRenderbuffer
 #define glFramebufferTexture                             gl3wProcs.gl.FramebufferTexture
 #define glFramebufferTexture1D                           gl3wProcs.gl.FramebufferTexture1D
@@ -933,6 +936,7 @@ extern union GL3WProcs gl3wProcs;
 #define glGetFragDataLocation                            gl3wProcs.gl.GetFragDataLocation
 #define glGetFramebufferAttachmentParameteriv            gl3wProcs.gl.GetFramebufferAttachmentParameteriv
 #define glGetFramebufferParameteriv                      gl3wProcs.gl.GetFramebufferParameteriv
+#define glGetFramebufferParameterivMESA                  gl3wProcs.gl.GetFramebufferParameterivMESA
 #define glGetGraphicsResetStatus                         gl3wProcs.gl.GetGraphicsResetStatus
 #define glGetInteger64i_v                                gl3wProcs.gl.GetInteger64i_v
 #define glGetInteger64v                                  gl3wProcs.gl.GetInteger64v

@@ -32,7 +32,9 @@
 #define ARRAY_SIZE(x)  (sizeof(x) / sizeof((x)[0]))
 
 #if defined(_WIN32)
-#define WIN32_LEAN_AND_MEAN 1
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN 1 // Exclude advanced Windows headers
+#endif // WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
 static HMODULE libgl;
@@ -336,6 +338,7 @@ static const char *proc_names[] = {
 	"glFlushMappedBufferRange",
 	"glFlushMappedNamedBufferRange",
 	"glFramebufferParameteri",
+	"glFramebufferParameteriMESA",
 	"glFramebufferRenderbuffer",
 	"glFramebufferTexture",
 	"glFramebufferTexture1D",
@@ -385,6 +388,7 @@ static const char *proc_names[] = {
 	"glGetFragDataLocation",
 	"glGetFramebufferAttachmentParameteriv",
 	"glGetFramebufferParameteriv",
+	"glGetFramebufferParameterivMESA",
 	"glGetGraphicsResetStatus",
 	"glGetInteger64i_v",
 	"glGetInteger64v",

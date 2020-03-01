@@ -34,6 +34,7 @@ workspace("Rendu")
 	targetdir ("build/%{prj.name}/%{cfg.longname}")
 	debugdir ("build/%{prj.name}/%{cfg.longname}")
 	architecture("x64")
+	systemversion("latest")
 
 	-- Configuration specific settings.
 	filter("configurations:Release")
@@ -54,7 +55,6 @@ function CommonSetup()
 	-- C++ settings
 	language("C++")
 	cppdialect("C++11")
-	systemversion("latest")
 	-- Compiler flags
 	filter("toolset:not msc*")
 		buildoptions({ "-Wall", "-Wextra" })
@@ -135,7 +135,7 @@ project("Engine")
 	-- Some additional files (README, scenes) are hidden, but you can display them in the project by uncommenting them below.
 	files({ "src/engine/**.hpp", "src/engine/**.cpp",
 			"resources/common/shaders/**",
-			"src/libs/**.hpp", "src/libs/*/*.cpp", "src/libs/**.h",
+			"src/libs/**.hpp", "src/libs/*/*.cpp", "src/libs/**.h", "src/libs/*/*.c",
 			"premake5.lua", 
 			"README.md",
 	--		"resources/**.scene"
