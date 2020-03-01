@@ -93,6 +93,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pri-methods">Private Member Functions</a> &#124;
+<a href="#pri-static-methods">Static Private Member Functions</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="class_path_tracer-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -115,6 +117,22 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a2987a50049d82d89c6f4dc86d648ca33"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad12d336d2658dfceca3200e5c65349c2"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="class_raycaster.html">Raycaster</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_path_tracer.html#ad12d336d2658dfceca3200e5c65349c2">raycaster</a> () const</td></tr>
 <tr class="separator:ad12d336d2658dfceca3200e5c65349c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
+Private Member Functions</h2></td></tr>
+<tr class="memitem:ad18a8f98c1bc58dc486f8048f207fc01"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_path_tracer.html#ad18a8f98c1bc58dc486f8048f207fc01">checkVisibility</a> (const glm::vec3 &amp;startPos, const glm::vec3 &amp;rayDir, float maxDist) const</td></tr>
+<tr class="separator:ad18a8f98c1bc58dc486f8048f207fc01"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a29ea4b6e84cb9c1ab5f70229d571c83b"><td class="memItemLeft" align="right" valign="top">glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_path_tracer.html#a29ea4b6e84cb9c1ab5f70229d571c83b">evalBackground</a> (const glm::vec3 &amp;rayDir, const glm::vec2 &amp;ndcPos, bool directHit) const</td></tr>
+<tr class="separator:a29ea4b6e84cb9c1ab5f70229d571c83b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-static-methods"></a>
+Static Private Member Functions</h2></td></tr>
+<tr class="memitem:a0b5243677e3af3f0b5597f84c252a7f6"><td class="memItemLeft" align="right" valign="top">static glm::ivec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_path_tracer.html#a0b5243677e3af3f0b5597f84c252a7f6">getSampleGrid</a> (size_t samples)</td></tr>
+<tr class="separator:a0b5243677e3af3f0b5597f84c252a7f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad34cb9069cb46feaf872579f3f4ef631"><td class="memItemLeft" align="right" valign="top">static glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_path_tracer.html#ad34cb9069cb46feaf872579f3f4ef631">getSamplePosition</a> (size_t sid, const glm::ivec2 &amp;cellCount, const glm::vec2 &amp;cellSize)</td></tr>
+<tr class="separator:ad34cb9069cb46feaf872579f3f4ef631"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a920a1f9d159265127d879fecde923034"><td class="memItemLeft" align="right" valign="top">static glm::mat3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_path_tracer.html#a920a1f9d159265127d879fecde923034">buildLocalFrame</a> (const <a class="el" href="class_object.html">Object</a> &amp;obj, const <a class="el" href="struct_raycaster_1_1_hit.html">Raycaster::Hit</a> &amp;hit, const glm::vec3 &amp;rayDir, const glm::vec2 &amp;uv)</td></tr>
+<tr class="separator:a920a1f9d159265127d879fecde923034"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
@@ -189,6 +207,250 @@ std::shared_ptr&lt; <a class="el" href="class_scene.html">Scene</a> &gt;&#160;</
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a920a1f9d159265127d879fecde923034"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a920a1f9d159265127d879fecde923034">&#9670;&nbsp;</a></span>buildLocalFrame()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">glm::mat3 PathTracer::buildLocalFrame </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="class_object.html">Object</a> &amp;&#160;</td>
+          <td class="paramname"><em>obj</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="struct_raycaster_1_1_hit.html">Raycaster::Hit</a> &amp;&#160;</td>
+          <td class="paramname"><em>hit</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const glm::vec3 &amp;&#160;</td>
+          <td class="paramname"><em>rayDir</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const glm::vec2 &amp;&#160;</td>
+          <td class="paramname"><em>uv</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Build the local frame at an intersection on an object surface. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">obj</td><td>the intersected object </td></tr>
+    <tr><td class="paramname">hit</td><td>the intersection record </td></tr>
+    <tr><td class="paramname">rayDir</td><td>the direction of the ray that intersected </td></tr>
+    <tr><td class="paramname">uv</td><td>the local texture coordinates (if valid) </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>the local tangent space frame. \ </dd></dl>
+
+</div>
+</div>
+<a id="ad18a8f98c1bc58dc486f8048f207fc01"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad18a8f98c1bc58dc486f8048f207fc01">&#9670;&nbsp;</a></span>checkVisibility()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool PathTracer::checkVisibility </td>
+          <td>(</td>
+          <td class="paramtype">const glm::vec3 &amp;&#160;</td>
+          <td class="paramname"><em>startPos</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const glm::vec3 &amp;&#160;</td>
+          <td class="paramname"><em>rayDir</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>maxDist</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Check visibility from a point along a ray in the scene, taking into account object opacity masks. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">startPos</td><td>the point to test visibility for </td></tr>
+    <tr><td class="paramname">rayDir</td><td>the ray direction to follow </td></tr>
+    <tr><td class="paramname">maxDist</td><td>the maximum distance to travel along the ray </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the point has clear visibility along the ray </dd></dl>
+
+</div>
+</div>
+<a id="a29ea4b6e84cb9c1ab5f70229d571c83b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a29ea4b6e84cb9c1ab5f70229d571c83b">&#9670;&nbsp;</a></span>evalBackground()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">glm::vec3 PathTracer::evalBackground </td>
+          <td>(</td>
+          <td class="paramtype">const glm::vec3 &amp;&#160;</td>
+          <td class="paramname"><em>rayDir</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const glm::vec2 &amp;&#160;</td>
+          <td class="paramname"><em>ndcPos</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>directHit</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Evalutation the contribution from the scene background. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">rayDir</td><td>the direction of the ray that intersected </td></tr>
+    <tr><td class="paramname">ndfPos</td><td>the current pixel in the final image </td></tr>
+    <tr><td class="paramname">directHit</td><td>was it a direct hit or a hit after bounces </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>the background contribution </dd></dl>
+
+</div>
+</div>
+<a id="a0b5243677e3af3f0b5597f84c252a7f6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0b5243677e3af3f0b5597f84c252a7f6">&#9670;&nbsp;</a></span>getSampleGrid()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">glm::ivec2 PathTracer::getSampleGrid </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>samples</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Compute the dimensions of a grid that contains a given number of samples. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">samples</td><td>the number of samples to place on a regular grid </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>the number of samples on each axis </dd></dl>
+
+</div>
+</div>
+<a id="ad34cb9069cb46feaf872579f3f4ef631"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad34cb9069cb46feaf872579f3f4ef631">&#9670;&nbsp;</a></span>getSamplePosition()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">glm::vec2 PathTracer::getSamplePosition </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>sid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const glm::ivec2 &amp;&#160;</td>
+          <td class="paramname"><em>cellCount</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const glm::vec2 &amp;&#160;</td>
+          <td class="paramname"><em>cellSize</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Get the local location of a sample in a pixel. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">sid</td><td>the sample ID for the pixel </td></tr>
+    <tr><td class="paramname">cellCount</td><td>the number of samples on each grid axis </td></tr>
+    <tr><td class="paramname">cellSize</td><td>the spacing between two samples on an axis </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>The sample will be randomly jittered. </dd></dl>
+
+</div>
+</div>
 <a id="ad12d336d2658dfceca3200e5c65349c2"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad12d336d2658dfceca3200e5c65349c2">&#9670;&nbsp;</a></span>raycaster()</h2>
 
