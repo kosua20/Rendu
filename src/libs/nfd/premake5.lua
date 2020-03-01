@@ -17,7 +17,6 @@ end
 
 project("nfd")
 	kind("StaticLib")
-	systemversion("latest")
 	
 	-- common files
 	files({"*.h", "nfd_common.c", "premake5.lua" })

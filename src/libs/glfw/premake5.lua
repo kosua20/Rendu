@@ -3,7 +3,6 @@ project("glfw3")
 	kind("StaticLib")
 
 	language("C")
-	systemversion("latest")
 
 	-- common files
 	files({"src/internal.h", "src/mappings.h", "src/glfw_config.h",
