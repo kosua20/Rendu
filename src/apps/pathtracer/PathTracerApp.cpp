@@ -226,7 +226,7 @@ void PathTracerApp::resize() {
 	// Same aspect ratio as the display resolution
 	const glm::vec2 renderRes = _config.renderingResolution();
 	// Resize the renderer.
-	_bvhRenderer->resize(renderRes[0], renderRes[1]);
+	_bvhRenderer->resize(uint(renderRes[0]), uint(renderRes[1]));
 	// Udpate the image resolution, using the new aspect ratio.
 	_renderTex.width = uint(std::round(_config.screenResolution[0] / _config.screenResolution[1] * float(_renderTex.height)));
 	checkGLError();

@@ -51,7 +51,7 @@ private:
 	std::vector<std::shared_ptr<Scene>> _scenes; ///< The existing scenes.
 	std::vector<std::string> _sceneNames; ///< The associated scene names.
 	
-	unsigned int _currentScene = 0; ///< Currently selected scene.
+	size_t _currentScene = 0; ///< Currently selected scene.
 	glm::vec2 _cplanes  = glm::vec2(0.01f, 100.0f); ///< Camera clipping planes.
 	float _cameraFOV	= 50.0f; ///< Camera field of view in degrees.
 	bool _paused		= false; ///< Pause animations.

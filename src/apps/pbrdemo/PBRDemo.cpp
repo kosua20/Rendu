@@ -192,6 +192,6 @@ void PBRDemo::clean() {
 void PBRDemo::resize() {
 	// Same aspect ratio as the display resolution
 	const glm::vec2 renderRes = _config.renderingResolution();
-	_renderer->resize(renderRes[0], renderRes[1]);
-	_postprocess->resize(renderRes[0], renderRes[1]);
+	_renderer->resize(uint(renderRes[0]), uint(renderRes[1]));
+	_postprocess->resize(uint(renderRes[0]), uint(renderRes[1]));
 }

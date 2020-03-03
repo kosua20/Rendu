@@ -218,7 +218,7 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 					// Direct light sampling.
 					if(!_scene->lights.empty()){
 						// Take a light at random.
-						const unsigned int lid = Random::Int(0, _scene->lights.size()-1);
+						const unsigned int lid = Random::Int(0, int(_scene->lights.size()-1));
 						const auto & light = _scene->lights[lid];
 						// Shift slightly to avoid grazing angle self-intersections.
 						const glm::vec3 pShift = p+0.001f*tbn[2];

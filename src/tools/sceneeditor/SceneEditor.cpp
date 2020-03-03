@@ -154,5 +154,5 @@ void SceneEditor::clean() {
 void SceneEditor::resize() {
 	const glm::vec2 renderRes = _config.renderingResolution();
 	// Resize the framebuffers.
-	_renderer.resize(renderRes[0], renderRes[1]);
+	_renderer.resize(uint(renderRes[0]), uint(renderRes[1]));
 }

@@ -9,7 +9,7 @@ BVHRenderer::BVHRenderer(const glm::vec2 & resolution) {
 	// Setup camera parameters.
 	_renderResolution = resolution;
 	// GL setup
-	_sceneFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(_renderResolution[0], _renderResolution[1], Layout::RGB8, true));
+	_sceneFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(uint(_renderResolution[0]), uint(_renderResolution[1]), Layout::RGB8, true));
 	_objectProgram	= Resources::manager().getProgram("object_basic_lit");
 	_bvhProgram		  = Resources::manager().getProgram("object_basic_color");
 	_renderResult = _sceneFramebuffer->textureId();

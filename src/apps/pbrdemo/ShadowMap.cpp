@@ -4,8 +4,8 @@
 VarianceShadowMap2D::VarianceShadowMap2D(const std::shared_ptr<Light> & light, const glm::vec2 & resolution){
 	_light = light;
 	const Descriptor descriptor = {Layout::RG32F, Filter::LINEAR, Wrap::CLAMP};
-	_map = std::unique_ptr<Framebuffer>(new Framebuffer(resolution.x, resolution.y, descriptor, true));
-	_blur = std::unique_ptr<BoxBlur>(new BoxBlur(resolution.x, resolution.y, false, descriptor));
+	_map = std::unique_ptr<Framebuffer>(new Framebuffer(uint(resolution.x), uint(resolution.y), descriptor, true));
+	_blur = std::unique_ptr<BoxBlur>(new BoxBlur(uint(resolution.x), uint(resolution.y), false, descriptor));
 	_program = Resources::manager().getProgram("object_depth", "object_basic_texture", "light_shadow_variance");
 	_light->registerShadowMap(_blur->textureId());
 }

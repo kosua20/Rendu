@@ -41,8 +41,8 @@ void Animation::decodeBase(const KeyValues & params) {
 
 KeyValues Animation::encode() const {
 	KeyValues anim("anim");
-	anim.values.push_back(std::to_string(_speed));
-	anim.values.push_back(_frame == Frame::MODEL ? "model" : "world");
+	anim.values.emplace_back(std::to_string(_speed));
+	anim.values.emplace_back(_frame == Frame::MODEL ? "model" : "world");
 	return anim;
 }
 

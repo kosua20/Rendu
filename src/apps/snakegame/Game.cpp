@@ -226,8 +226,8 @@ void Game::resize(unsigned int width, unsigned int height) {
 	_config.internalVerticalResolution = int(float(height) / Input::manager().density());
 	_config.screenResolution = {float(width), float(height)};
 	const glm::vec2 renderRes = _config.renderingResolution();
-	const unsigned int w(renderRes[0]);
-	const unsigned int h(renderRes[1]);
+	const uint w = uint(renderRes[0]);
+	const uint h = uint(renderRes[1]);
 	_inGameRenderer.resize(w, h);
 	_menuRenderer.resize(w, h);
 	// Update each menu buttons sizes.

@@ -41,7 +41,7 @@ private:
 	
 	std::vector<std::shared_ptr<Scene>> _scenes; ///< The existing scenes.
 	std::vector<std::string> _sceneNames; ///< The associated scene names.
-	unsigned int _currentScene = 0; ///< Currently selected scene.
+	size_t _currentScene = 0; ///< Currently selected scene.
 	float _cameraFOV	 = 70.0f;	///< The adjustable camera fov in degrees.
 	bool _paused = false;			///< Pause the scene animations.
 };
