@@ -15,7 +15,7 @@
 
 #include <glm/glm.hpp>
 
-#define IMGUI_IMPL_OPENGL_LOADER_CUSTOM "gl3w.h"
+#define IMGUI_IMPL_OPENGL_LOADER_CUSTOM "gl3w/gl3w.h"
 
 //---- Define constructor and implicit cast operators to convert back<>forth between your math types and ImVec2/ImVec4.
 // This will be inlined as part of ImVec2 and ImVec4 class declarations.
