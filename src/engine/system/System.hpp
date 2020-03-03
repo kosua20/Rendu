@@ -64,14 +64,13 @@ public:
 			high			  = temp;
 		}
 		// Prepare the threads pool.
-		const size_t count = size_t(std::max(std::thread::hardware_concurrency(), unsigned(1)));
+		// Always leave one thread free.
+		const size_t count = size_t(std::max(int(std::thread::hardware_concurrency())-1, 1));
 		std::vector<std::thread> threads;
 		threads.reserve(count);
 
 		// Compute the span of each thread.
-		size_t span = size_t(std::round((float(high) - float(low)) / float(count)));
-		span		= std::max(size_t(1), span);
-
+		const size_t span = std::max(size_t(1), (high - low) / count);
 		// Helper to execute the function passed on a subset of the total interval.
 		auto launchThread = [&func](size_t a, size_t b) {
 			for(size_t i = a; i < b; ++i) {
@@ -81,8 +80,8 @@ public:
 
 		for(size_t tid = 0; tid < count; ++tid) {
 			// For each thread, call the same lambda with different bounds as arguments.
-			const size_t threadLow = tid * span;
-			size_t threadHigh	  = (tid == count - 1) ? high : ((tid + 1) * span);
+			const size_t threadLow  = tid * span;
+			const size_t threadHigh = tid == (count-1) ? high : ((tid + 1) * span);
 			threads.emplace_back(launchThread, threadLow, threadHigh);
 		}
 		// Wait for all threads to finish.
