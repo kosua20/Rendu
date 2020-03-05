@@ -102,7 +102,7 @@ function ShaderValidation()
 	dependson({"ShaderValidator"})
 	
 	filter("configurations:*")
-		prebuildcommands({ 
+		postbuildcommands({ 
 			path.translate(cwd.."/build/ShaderValidator/%{cfg.longname}/ShaderValidator"..ext.." "..cwd.."/resources/", sep)
 		})
 	filter({})
