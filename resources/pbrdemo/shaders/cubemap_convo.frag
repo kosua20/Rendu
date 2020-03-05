@@ -1,12 +1,11 @@
 #version 330
 
+#include "common_pbr.glsl"
+
 in INTERFACE {
 	vec3 pos;  ///< World position.
 } In ;
 
-#define INV_M_PI 0.3183098862
-#define M_PI 3.1415926536
-#define M_INV_LOG2 1.4426950408889
 
 uniform int samplesCount = 32768; ///< Number of samples to take, higher count helps avoiding artifacts in bright areas.
 
@@ -15,20 +14,6 @@ uniform float mimapRoughness; ///< The roughness to use for the convolution lobe
 
 layout(location = 0) out vec3 fragColor; ///< Color.
 
-/** Compute an arbitrary sample of the 2D Hammersley sequence.
-\param i the index in the hammersley sequence
-\return the i-th 2D sample
-*/
-vec2 hammersleySample(uint i) {
-	uint bits = i;
-	bits = (bits << 16u) | (bits >> 16u);
-	bits = ((bits & 0x55555555u) << 1u) | ((bits & 0xAAAAAAAAu) >> 1u);
-	bits = ((bits & 0x33333333u) << 2u) | ((bits & 0xCCCCCCCCu) >> 2u);
-	bits = ((bits & 0x0F0F0F0Fu) << 4u) | ((bits & 0xF0F0F0F0u) >> 4u);
-	bits = ((bits & 0x00FF00FFu) << 8u) | ((bits & 0xFF00FF00u) >> 8u);
-	float y = float(bits) * 2.3283064365386963e-10; // / 0x100000000
-	return vec2(float(i)/float(samplesCount), y);
-}
 
 /** Perform convolution with the BRDF specular lobe, evaluated in a given direction. 
 \param r the reflection direction
@@ -51,7 +36,7 @@ vec3 convo(vec3 r, float roughness){
 	float denom = 0.0;
 	for(int i = 0; i < samplesCount; ++i){
 		// Draw a sample using Van der Corput sequence.
-		vec2 sampleVec = hammersleySample(uint(i));
+		vec2 sampleVec = hammersleySample(uint(i), samplesCount);
 
 		// Compute corresponding angles.
 		float cosT2 = (1.0 - sampleVec.y)/(1.0+(alpha*alpha-1.0)*sampleVec.y);

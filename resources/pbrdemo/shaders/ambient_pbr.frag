@@ -1,12 +1,11 @@
 #version 330
 
+#include "common_pbr.glsl"
+
 in INTERFACE {
 	vec2 uv; ///< Texture coordinates.
 } In ;
 
-#define INV_M_PI 0.3183098862
-#define M_PI 3.1415926536
-#define M_INV_LOG2 1.4426950408889
 
 layout(binding = 0) uniform sampler2D albedoTexture; ///< The albedo texture.
 layout(binding = 1) uniform sampler2D normalTexture; ///< The normal texture.
@@ -25,18 +24,6 @@ layout(location = 0) out vec3 fragColor; ///< Color.
 
 #define SAMPLES_COUNT 16u
 
-/** Estimate the position of the current fragment in view space based on its depth and camera parameters.
-\param depth the depth of the fragment
-\return the view space position
-*/
-vec3 positionFromDepth(float depth){
-	float depth2 = 2.0 * depth - 1.0 ;
-	vec2 ndcPos = 2.0 * In.uv - 1.0;
-	// Linearize depth -> in view space.
-	float viewDepth = - projectionMatrix.w / (depth2 + projectionMatrix.z);
-	// Compute the x and y components in view space.
-	return vec3(- ndcPos * viewDepth / projectionMatrix.xy , viewDepth);
-}
 
 /** Return the (pre-convolved) radiance for a given normal, view direction and
 	material parameters.
@@ -92,7 +79,7 @@ void main(){
 	float roughness = max(0.045, infos.r);
 	float metallic = infos.g;
 	float depth = texture(depthTexture,In.uv).r;
-	vec3 position = positionFromDepth(depth);
+	vec3 position = positionFromDepth(depth, In.uv, projectionMatrix);
 	vec3 n = normalize(2.0 * texture(normalTexture,In.uv).rgb - 1.0);
 	vec3 v = normalize(-position);
 	float NdotV = max(0.0, dot(v, n));
