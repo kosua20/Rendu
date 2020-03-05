@@ -206,6 +206,46 @@ std::string Resources::getString(const std::string & filename) {
 	return content;
 }
 
+std::string Resources::getStringWithIncludes(const std::string & filename){
+	struct Infos {
+		std::string name = "";
+		std::string content = "";
+		std::string::size_type linePos = std::string::npos;
+		size_t lineSize = 0;
+		int line = 0;
+	};
+	const auto lines = TextUtilities::splitLines(getString(filename), false);
+	std::string newStr;
+	int includeId = 0;
+	for(size_t lid = 0; lid < lines.size(); ++lid){
+		const std::string & line = lines[lid];
+		const std::string::size_type pos = line.find("#include");
+		if(pos == std::string::npos){
+			newStr.append(line);
+			newStr.append("\n");
+			continue;
+		}
+		const std::string::size_type bpos = line.find('"', pos);
+		const std::string::size_type epos = line.find('"', bpos+1);
+		if(bpos == std::string::npos || epos == std::string::npos){
+			Log::Warning() << "Misformed include at line " << lid << " of " << filename << ", empty line." << std::endl;
+			newStr.append("\n");
+			continue;
+		}
+		++includeId;
+		const std::string subname = line.substr(bpos+1, epos - (bpos+1));
+		const std::string content = getStringWithIncludes(subname);
+		// Insert a line reset before except if it's the first line (#version should always be on the first line).
+		if(lid != 0){
+			newStr.append("#line 1\n");
+		}
+		newStr.append(content);
+		newStr.append("\n");
+		newStr.append("#line " + std::to_string(lid+2) + "\n");
+	}
+	return newStr;
+}
+
 // Mesh method.
 
 const Mesh * Resources::getMesh(const std::string & name, Storage options) {

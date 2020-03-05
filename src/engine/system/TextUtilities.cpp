@@ -83,4 +83,16 @@ std::vector<std::string> TextUtilities::split(const std::string & str, const std
 	return tokens;
 }
 
+std::vector<std::string> TextUtilities::splitLines(const std::string & str, bool skipEmpty){
 
+	std::stringstream sstr(str);
+	std::string value;
+	std::vector<std::string> tokens;
+	while(std::getline(sstr, value)) {
+		value = TextUtilities::trim(value, "\r");
+		if(!skipEmpty || !value.empty()) {
+			tokens.emplace_back(value);
+		}
+	}
+	return tokens;
+}

@@ -123,6 +123,12 @@ public:
 	 */
 	std::string getString(const std::string & filename);
 
+	/** Get a text file resource, following #include directives.
+	 \param filename the file name
+	 \return the string content of the file
+	 */
+	std::string getStringWithIncludes(const std::string & filename);
+
 	/** Get a geometric mesh resource.
 	 \param name the mesh file name
 	 \param options data loading and storage options

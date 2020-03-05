@@ -183,7 +183,7 @@ void populateMesh(const RawGeometry & geom, size_t lowerBound, size_t upperBound
 		//Does the association of attributs already exists ?
 		if(indices_used.count(str) > 0) {
 			// Just store the index in the indices vector.
-			mesh.indices.push_back(indices_used[str]);
+			mesh.indices.push_back(uint(indices_used[str]));
 			// Go to next face.
 			continue;
 		}
@@ -207,7 +207,7 @@ void populateMesh(const RawGeometry & geom, size_t lowerBound, size_t upperBound
 			mesh.normals.push_back(geom.normals[ind3]);
 		}
 
-		mesh.indices.push_back(maxInd);
+		mesh.indices.push_back(uint(maxInd));
 		indices_used[str] = maxInd;
 		maxInd++;
 	}
