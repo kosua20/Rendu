@@ -43,11 +43,6 @@ int main(int argc, char ** argv) {
 
 	// Start the display/interaction loop.
 	while(window.nextFrame()) {
-		
-		// Reload resources.
-		if(Input::manager().triggered(Input::Key::P)) {
-			Resources::manager().reload();
-		}
 		app.update();
 		app.draw();
 	}

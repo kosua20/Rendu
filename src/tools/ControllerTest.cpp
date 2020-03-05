@@ -221,11 +221,6 @@ int main(int argc, char ** argv) {
 
 	// Start the display/interaction loop.
 	while(window.nextFrame()) {
-		
-		// Reload resources.
-		if(Input::manager().triggered(Input::Key::P)) {
-			Resources::manager().reload();
-		}
 
 		// Detect either a new connected controller or a first frame with an already connected controller.
 		if(Input::manager().controllerConnected() || (firstFrame && Input::manager().controllerAvailable())) {

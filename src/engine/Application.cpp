@@ -2,6 +2,7 @@
 #include "input/Input.hpp"
 #include "graphics/GLUtilities.hpp"
 #include "graphics/Framebuffer.hpp"
+#include "resources/ResourcesManager.hpp"
 #include "system/System.hpp"
 
 Application::Application(RenderingConfig & config) :
@@ -21,6 +22,10 @@ void Application::update() {
 	if(Input::manager().triggered(Input::Key::O) || (Input::manager().controllerAvailable() && Input::manager().controller()->triggered(Controller::ButtonView))) {
 		const std::string filename = System::timestamp();
 		GLUtilities::saveFramebuffer(*Framebuffer::backbuffer(), uint(_config.screenResolution[0]), uint(_config.screenResolution[1]), "./" + filename, true, true);
+	}
+	// Reload resources.
+	if(Input::manager().triggered(Input::Key::P)) {
+		Resources::manager().reload();
 	}
 }
 
