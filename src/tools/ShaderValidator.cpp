@@ -6,6 +6,8 @@
 #include <map>
 #include <sstream>
 
+#include "system/TextUtilities.hpp"
+
 /**
  \defgroup ShaderValidator Shader Validation
  \brief Validate shaders compilation on the GPU and output IDE-compliant error messages.
@@ -14,12 +16,12 @@
 
 /**  Convert a shader compilation log into a IDE-compatible error reporting format and output it to stderr.
  	\param compilationLog the compilation log to process.
- 	\param filePath the path to the shader file, relative to the directory containing the IDE project.
+ 	\param filePaths the paths to the shader file and all include files, absolute or relative to the directory containing the IDE project.
  	\return a boolean denoting if at least one error was reported by the log.
- 	\warning If filePath is not expressed relative to the directory containing the IDE project, error links (for instance "src/foo/bar.frag:18") won't be functional.
+ 	\warning If filePath is not expressed absolute or relative to the directory containing the IDE project, error links (for instance "src/foo/bar.frag:18") won't be functional.
  	\ingroup ShaderValidator
  */
-bool processLog(const std::string & compilationLog, const std::string & filePath) {
+bool processLog(const std::string & compilationLog, const std::vector<std::string> & filePaths) {
 	if(!compilationLog.empty()) {
 		std::stringstream str(compilationLog);
 		std::string line;
@@ -38,6 +40,14 @@ bool processLog(const std::string & compilationLog, const std::string & filePath
 			if(firstLineDigitPos == std::string::npos || lastLineDigitPos == std::string::npos) {
 				continue;
 			}
+			// Find the file containing the error based on the ID.
+			const std::string fileNumberRaw = line.substr(firstIDDigitPos, lastIDDigitPos - 1 - firstIDDigitPos + 1);
+			const unsigned int fileId = std::stoi(fileNumberRaw);
+			// Update the file path.
+			std::string finalFilePath = "unknown_file";
+			if(fileId < filePaths.size()) {
+				finalFilePath = filePaths[fileId];
+			}
 			// Generate the corresponding int.
 			const std::string lineNumberRaw = line.substr(firstLineDigitPos, lastLineDigitPos - 1 - firstLineDigitPos + 1);
 			const unsigned int lineId		= std::stoi(lineNumberRaw);
@@ -52,9 +62,9 @@ bool processLog(const std::string & compilationLog, const std::string & filePath
 			// The path should be relative to the root build directory.
 			// Output in an IDE compatible format, to display warning and errors properly.
 #ifdef _WIN32
-			std::cerr << filePath << "(" << lineId << "): error: " << errorMessage << std::endl;
+			std::cerr << finalFilePath << "(" << lineId << "): error: " << errorMessage << std::endl;
 #else
-			std::cerr << filePath << ":" << lineId << ": error: " << errorMessage << std::endl;
+			std::cerr << finalFilePath << ":" << lineId << ": error: " << errorMessage << std::endl;
 #endif
 		}
 		// At least one issue was encountered.
@@ -90,48 +100,41 @@ int main(int argc, char ** argv) {
 	Log::Info() << Log::OpenGL << "Internal renderer: " << renderer << "." << std::endl;
 	Log::Info() << Log::OpenGL << "Versions: Driver: " << version << ", GLSL: " << shaderVersion << "." << std::endl;
 
+	// We will need all glsl files for include support.
+	std::map<std::string, std::string> includeFiles;
+	Resources::manager().getFiles("glsl", includeFiles);
+
+	// Test all shaders.
+	const std::map<GLuint, std::string> types = { {GL_VERTEX_SHADER, "vert" },  {GL_GEOMETRY_SHADER, "geom" },  {GL_FRAGMENT_SHADER, "frag" } };
 	bool encounteredIssues = false;
-
-	// Load all vertex shaders from disk.
-	std::map<std::string, std::string> verts;
-	Resources::manager().getFiles("vert", verts);
-	for(auto & vert : verts) {
-		std::map<std::string, int> bindings;
-		std::string compilationLog;
-		// Load and compile the shader.
-		const std::string shader = Resources::manager().getString(vert.first + ".vert");
-		GLUtilities::loadShader(shader, GL_VERTEX_SHADER, bindings, compilationLog);
-		// Process the log.
-		const bool newIssues = processLog(compilationLog, vert.second);
-		encounteredIssues	= encounteredIssues || newIssues;
-	}
-
-	// Load all geometry shaders from disk.
-	std::map<std::string, std::string> geoms;
-	Resources::manager().getFiles("geom", geoms);
-	for(auto & geom : geoms) {
-		std::map<std::string, int> bindings;
-		std::string compilationLog;
-		// Load and compile the shader.
-		const std::string shader = Resources::manager().getString(geom.first + ".geom");
-		GLUtilities::loadShader(shader, GL_GEOMETRY_SHADER, bindings, compilationLog);
-		// Process the log.
-		const bool newIssues = processLog(compilationLog, geom.second);
-		encounteredIssues	= encounteredIssues || newIssues;
-	}
-
-	// Load all fragment shaders from disk.
-	std::map<std::string, std::string> frags;
-	Resources::manager().getFiles("frag", frags);
-	for(auto & frag : frags) {
-		std::map<std::string, int> bindings;
-		std::string compilationLog;
-		// Load and compile the shader.
-		const std::string shader = Resources::manager().getString(frag.first + ".frag");
-		GLUtilities::loadShader(shader, GL_FRAGMENT_SHADER, bindings, compilationLog);
-		// Process the log.
-		const bool newIssues = processLog(compilationLog, frag.second);
-		encounteredIssues	= encounteredIssues || newIssues;
+	
+	for(const auto & type : types) {
+		// Load shaders from disk.
+		std::map<std::string, std::string> files;
+		Resources::manager().getFiles(type.second, files);
+		for (auto& file : files) {
+			std::map<std::string, int> bindings;
+			std::string compilationLog;
+			// Keep track of the include files used.
+			// File with ID 0 is the base file, already set its name.
+			std::vector<std::string> names = { file.second };
+			// Load the shader.
+			const std::string fullName = file.first + "." + type.second;
+			const std::string shader = Resources::manager().getStringWithIncludes(fullName, names);
+			// Compile the shader.
+			GLUtilities::loadShader(shader, type.first, bindings, compilationLog);
+			// Replace the include names by the full paths.
+			for(size_t nid = 1; nid < names.size(); ++nid) {
+				auto& name = names[nid];
+				TextUtilities::removeExtension(name);
+				if(includeFiles.count(name) > 0) {
+					name = includeFiles[name];
+				}
+			}
+			// Process the log.
+			const bool newIssues = processLog(compilationLog, names);
+			encounteredIssues = encounteredIssues || newIssues;
+		}
 	}
 
 	window.clean();
