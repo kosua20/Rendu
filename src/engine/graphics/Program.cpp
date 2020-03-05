@@ -7,9 +7,9 @@ Program::Program(const std::string & vertexName, const std::string & fragmentNam
 	_vertexName(vertexName), _fragmentName(fragmentName), _geometryName(geometryName) {
 
 	std::map<std::string, int> bindings;
-	const std::string vertexContent   = Resources::manager().getString(_vertexName + ".vert");
-	const std::string fragmentContent = Resources::manager().getString(_fragmentName + ".frag");
-	const std::string geometryContent = _geometryName.empty() ? "" : Resources::manager().getString(_geometryName + ".geom");
+	const std::string vertexContent   = Resources::manager().getStringWithIncludes(_vertexName + ".vert");
+	const std::string fragmentContent = Resources::manager().getStringWithIncludes(_fragmentName + ".frag");
+	const std::string geometryContent = _geometryName.empty() ? "" : Resources::manager().getStringWithIncludes(_geometryName + ".geom");
 	const std::string debugName		  = "(" + _vertexName + ", " + (_geometryName.empty() ? "" : (_geometryName + ", ")) + _fragmentName + ")";
 
 	_id = GLUtilities::createProgram(vertexContent, fragmentContent, geometryContent, bindings, debugName);
@@ -72,9 +72,9 @@ void Program::cacheUniformArray(const std::string & name, const std::vector<glm:
 
 void Program::reload() {
 	std::map<std::string, int> bindings;
-	const std::string vertexContent   = Resources::manager().getString(_vertexName + ".vert");
-	const std::string fragmentContent = Resources::manager().getString(_fragmentName + ".frag");
-	const std::string geometryContent = _geometryName.empty() ? "" : Resources::manager().getString(_geometryName + ".geom");
+	const std::string vertexContent   = Resources::manager().getStringWithIncludes(_vertexName + ".vert");
+	const std::string fragmentContent = Resources::manager().getStringWithIncludes(_fragmentName + ".frag");
+	const std::string geometryContent = _geometryName.empty() ? "" : Resources::manager().getStringWithIncludes(_geometryName + ".geom");
 	const std::string debugName		  = "(" + _vertexName + ", " + (_geometryName.empty() ? "" : (_geometryName + ", ")) + _fragmentName + ")";
 	_id								  = GLUtilities::createProgram(vertexContent, fragmentContent, geometryContent, bindings, debugName);
 

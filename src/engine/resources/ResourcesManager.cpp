@@ -206,17 +206,17 @@ std::string Resources::getString(const std::string & filename) {
 	return content;
 }
 
-std::string Resources::getStringWithIncludes(const std::string & filename){
-	struct Infos {
-		std::string name = "";
-		std::string content = "";
-		std::string::size_type linePos = std::string::npos;
-		size_t lineSize = 0;
-		int line = 0;
-	};
+std::string Resources::getStringWithIncludes(const std::string & filename, std::vector<std::string>& names){
+	
 	const auto lines = TextUtilities::splitLines(getString(filename), false);
 	std::string newStr;
-	int includeId = 0;
+	// Special case: if names is empty, we are at the root and no special name was specified, add the filename.
+	if(names.empty()) {
+		names.push_back(filename);
+	}
+	// Current location is the last one encountered.
+	const size_t currentLoc = names.size()-1;
+	// Check if some lines are include.
 	for(size_t lid = 0; lid < lines.size(); ++lid){
 		const std::string & line = lines[lid];
 		const std::string::size_type pos = line.find("#include");
@@ -232,18 +232,26 @@ std::string Resources::getStringWithIncludes(const std::string & filename){
 			newStr.append("\n");
 			continue;
 		}
-		++includeId;
-		const std::string subname = line.substr(bpos+1, epos - (bpos+1));
-		const std::string content = getStringWithIncludes(subname);
-		// Insert a line reset before except if it's the first line (#version should always be on the first line).
-		if(lid != 0){
-			newStr.append("#line 1\n");
-		}
+		// Save the file name.
+		const std::string subname = line.substr(bpos + 1, epos - (bpos + 1));
+		names.push_back(subname);
+
+		// Insert a line reset before the file.
+		const size_t loc = names.size() - 1;
+		newStr.append("#line 1 " + std::to_string(loc) + "\n");
+		// Insert the content.
+		const std::string content = getStringWithIncludes(subname,  names);
 		newStr.append(content);
 		newStr.append("\n");
-		newStr.append("#line " + std::to_string(lid+2) + "\n");
+		// And reset to where we were before in the parent file.
+		newStr.append("#line " + std::to_string(lid+2) + " " + std::to_string(currentLoc) + "\n");
 	}
 	return newStr;
+}
+
+std::string Resources::getStringWithIncludes(const std::string& filename) {
+	std::vector<std::string> names;
+	return getStringWithIncludes(filename, names);
 }
 
 // Mesh method.
