@@ -169,6 +169,7 @@ void PBRDemo::update() {
 		ImGui::Checkbox("Debug", &_renderer->showLights());
 		ImGui::SameLine();
 		ImGui::Checkbox("Pause", &_paused);
+		ImGui::Combo("Shadow technique", (int*)&_renderer->shadowMode(), "Basic\0Variance\0\0");
 		ImGui::SameLine();
 		ImGui::Checkbox("Update shadows", &_renderer->updateShadows());
 		ImGui::PopItemWidth();

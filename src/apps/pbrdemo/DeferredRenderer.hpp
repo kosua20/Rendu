@@ -74,7 +74,12 @@ public:
 	 \return the toggle
 	 */
 	bool & updateShadows(){ return _updateShadows; }
-	
+
+	/** Shadow mapping technique.
+	 \return the current technique
+	 */
+	ShadowMode & shadowMode(){ return _shadowMode; }
+
 private:
 	
 	/** Render the scene objects to the G-buffer.
@@ -112,4 +117,5 @@ private:
 	bool _debugVisualization = false; ///< Toggle the rendering of debug informations in the scene.
 	bool _applySSAO			 = true;  ///< Screen space ambient occlusion.
 	bool _updateShadows		 = true;  ///< Update shadow maps at each frame.
+	ShadowMode  _shadowMode	 = ShadowMode::VARIANCE;  ///< Shadow mapping technique to use.
 };
