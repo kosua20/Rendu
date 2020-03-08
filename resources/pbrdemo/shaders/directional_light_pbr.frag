@@ -20,6 +20,9 @@ uniform mat4 viewToLight; ///< View to light space matrix.
 uniform vec3 lightDirection; ///< Light direction in view space.
 uniform vec3 lightColor; ///< Light intensity.
 uniform bool castShadow; ///< Should the shadow map be used.
+uniform float shadowBias; ///< shadow depth bias.
+uniform int shadowMode; ///< The shadow map technique.
+
 
 layout(location = 0) out vec3 fragColor; ///< Color.
 
@@ -52,7 +55,7 @@ void main(){
 	float shadowing = 1.0;
 	if(castShadow){
 		vec3 lightSpacePosition = 0.5*(viewToLight * vec4(position,1.0)).xyz + 0.5;
-		shadowing = shadowVSM(lightSpacePosition, shadowMap);
+		shadowing = shadow(shadowMode, lightSpacePosition, shadowMap, shadowBias);
 	}
 	// BRDF contributions.
 	// Compute F0 (fresnel coeff).

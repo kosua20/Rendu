@@ -18,6 +18,9 @@ uniform vec3 lightColor; ///< Light intensity.
 uniform float lightRadius; ///< Attenuation radius.
 uniform float lightFarPlane; ///< Light projection far plane.
 uniform bool castShadow; ///< Should the shadow map be used.
+uniform float shadowBias; ///< shadow depth bias.
+uniform int shadowMode; ///< The shadow map technique.
+
 
 layout(location = 0) out vec3 fragColor; ///< Color.
 
@@ -61,7 +64,7 @@ void main(){
 	float shadowing = 1.0;
 	if(castShadow){
 		vec3 deltaPositionWorld = -viewToLight*deltaPosition;
-		shadowing = shadowVSMCube(deltaPositionWorld, shadowMap, lightFarPlane);
+		shadowing = shadowCube(shadowMode, deltaPositionWorld, shadowMap, lightFarPlane, shadowBias);
 	}
 	
 	// BRDF contributions.

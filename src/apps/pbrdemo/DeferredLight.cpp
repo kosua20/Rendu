@@ -16,6 +16,11 @@ void DeferredLight::updateCameraInfos(const glm::mat4 & viewMatrix, const glm::m
 	_proj = projMatrix;
 }
 
+void DeferredLight::updateShadowMapInfos(ShadowMode mode, float bias){
+	_shadowBias = bias;
+	_shadowMode = mode;
+}
+
 void DeferredLight::draw(const SpotLight * light) const {
 	
 	// Projection parameter for position reconstruction.
@@ -41,6 +46,8 @@ void DeferredLight::draw(const SpotLight * light) const {
 	GLUtilities::bindTextures(_textures);
 	if(light->castsShadow()) {
 		GLUtilities::bindTexture(light->shadowMap(), _textures.size());
+		_spotProgram->uniform("shadowBias", _shadowBias);
+		_spotProgram->uniform("shadowMode", int(_shadowMode));
 	}
 	// Select the geometry.
 	GLUtilities::drawMesh(*_cone);
@@ -71,6 +78,8 @@ void DeferredLight::draw(const PointLight * light) const {
 	GLUtilities::bindTextures(_textures);
 	if(light->castsShadow()) {
 		GLUtilities::bindTexture(light->shadowMap(), _textures.size());
+		_pointProgram->uniform("shadowBias", _shadowBias);
+		_pointProgram->uniform("shadowMode", int(_shadowMode));
 	}
 	// Select the geometry.
 	GLUtilities::drawMesh(*_sphere);
@@ -92,6 +101,8 @@ void DeferredLight::draw(const DirectionalLight * light) const {
 	GLUtilities::bindTextures(_textures);
 	if(light->castsShadow()) {
 		GLUtilities::bindTexture(light->shadowMap(), _textures.size());
+		_dirProgram->uniform("shadowBias", _shadowBias);
+		_dirProgram->uniform("shadowMode", int(_shadowMode));
 	}
 	ScreenQuad::draw();
 	

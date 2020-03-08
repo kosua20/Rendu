@@ -19,6 +19,8 @@ uniform vec3 lightColor; ///< Light intensity.
 uniform vec2 intOutAnglesCos; ///< Angular attenuation inner and outer angles.
 uniform float lightRadius; ///< Attenuation radius.
 uniform bool castShadow; ///< Should the shadow map be used.
+uniform float shadowBias; ///< shadow depth bias.
+uniform int shadowMode; ///< The shadow map technique.
 
 layout(location = 0) out vec3 fragColor; ///< Color.
 
@@ -64,7 +66,7 @@ void main(){
 	if(castShadow){
 		vec4 lightSpacePosition = viewToLight * vec4(position,1.0);
 		lightSpacePosition /= lightSpacePosition.w;
-		shadowing = shadowVSM(0.5*lightSpacePosition.xyz+0.5, shadowMap);
+		shadowing = shadow(shadowMode, 0.5*lightSpacePosition.xyz+0.5, shadowMap, shadowBias);
 	}
 	// Attenuation with increasing distance to the light.
 	float localRadius2 = dot(deltaPosition, deltaPosition);
