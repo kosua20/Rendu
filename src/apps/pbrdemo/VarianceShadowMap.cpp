@@ -1,4 +1,4 @@
-#include "ShadowMap.hpp"
+#include "VarianceShadowMap.hpp"
 #include "graphics/GLUtilities.hpp"
 
 VarianceShadowMap2D::VarianceShadowMap2D(const std::shared_ptr<Light> & light, const glm::vec2 & resolution){
@@ -49,20 +49,20 @@ void VarianceShadowMap2D::clean(){
 	_map->clean();
 }
 
-ShadowMapCube::ShadowMapCube(const std::shared_ptr<PointLight> & light, int side){
+VarianceShadowMapCube::VarianceShadowMapCube(const std::shared_ptr<PointLight> & light, int side){
 	_light = light;
 	const Descriptor descriptor = {Layout::RG16F, Filter::LINEAR, Wrap::CLAMP};
 	_map = std::unique_ptr<FramebufferCube>(new FramebufferCube(side, descriptor, FramebufferCube::CubeMode::COMBINED, true));
-	_program = Resources::manager().getProgram("object_layer_depth", "object_layer", "light_shadow_linear", "object_layer");
+	_program = Resources::manager().getProgram("object_layer_depth", "object_layer", "light_shadow_linear_variance", "object_layer");
 	_light->registerShadowMap(_map->textureId());
 }
 
-void ShadowMapCube::draw(const Scene & scene) const {
+void VarianceShadowMapCube::draw(const Scene & scene) const {
 	if(!_light->castsShadow()){
 		return;
 	}
 	
-	static const char * uniformNames[6] = {"vps[0]", "vps[1]", "vps[2]", "vps[3]", "vps[4]", "vps[5]"};
+	static std::array<std::string, 6> uniformNames = {"vps[0]", "vps[1]", "vps[2]", "vps[3]", "vps[4]", "vps[5]"};
 	
 	_map->bind();
 	_map->setViewport();
@@ -101,6 +101,6 @@ void ShadowMapCube::draw(const Scene & scene) const {
 	glDisable(GL_DEPTH_TEST);
 }
 
-void ShadowMapCube::clean(){
+void VarianceShadowMapCube::clean(){
 	_map->clean();
 }

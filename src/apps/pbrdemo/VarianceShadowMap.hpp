@@ -1,51 +1,6 @@
 #pragma once
 
-#include "scene/Scene.hpp"
-
-#include "graphics/Framebuffer.hpp"
-#include "processing/BoxBlur.hpp"
-#include "scene/lights/Light.hpp"
-#include "scene/lights/PointLight.hpp"
-
-#include "Common.hpp"
-
-/**
- \brief Store shadowing information as a map generated from the light viewpoint.
- \ingroup DeferredRendering
- */
-class ShadowMap {
-public:
-	/** Default constructor.*/
-	ShadowMap() = default;
-	
-	/** Update the shadow map.
-	 \param scene the objcts to draw in the map.
-	 */
-	virtual void draw(const Scene & scene) const = 0;
-	
-	/** Clean internal resources. */
-	virtual void clean() = 0;
-	
-	/** Destructor. */
-	virtual ~ShadowMap() = default;
-	
-	/** Copy constructor.*/
-	ShadowMap(const ShadowMap &) = delete;
-	
-	/** Copy assignment.
-	 \return a reference to the object assigned to
-	 */
-	ShadowMap & operator=(const Light &) = delete;
-	
-	/** Move constructor.*/
-	ShadowMap(ShadowMap &&) = default;
-	
-	/** Move assignment.
-	 \return a reference to the object assigned to
-	 */
-	ShadowMap & operator=(ShadowMap &&) = delete;
-
-};
+#include "renderers/ShadowMap.hpp"
 
 /**
  \brief A 2D variance shadow map, can be used for directional and spot lights. The shadow map will register itself with the associated light. Implement variance shadow mapping to filter the shadows and get correct smoother edges.
@@ -75,16 +30,16 @@ private:
 };
 
 /**
- \brief A cube shadow map, can be used for lights. Each face of the map is updated at the same time using a layered approach. The shadow map will register itself with the associated light.
+ \brief A cube variance shadow map, can be used for lights. Each face of the map is updated at the same time using a layered approach. The shadow map will register itself with the associated light. Implement variance shadow mapping to filter the shadows and get correct smoother edges.
  \ingroup DeferredRendering
  */
-class ShadowMapCube : public ShadowMap {
+class VarianceShadowMapCube : public ShadowMap {
 public:
 	/** Constructor.
 	 \param light the light to generate the associated shadow map for
 	 \param side the shadow map resolution
 	 */
-	explicit ShadowMapCube(const std::shared_ptr<PointLight> & light, int side);
+	explicit VarianceShadowMapCube(const std::shared_ptr<PointLight> & light, int side);
 	
 	/** \copydoc ShadowMap::draw  */
 	void draw(const Scene & scene) const override;

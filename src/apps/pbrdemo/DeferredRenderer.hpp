@@ -1,7 +1,7 @@
 #pragma once
 
 #include "DeferredLight.hpp"
-#include "ShadowMap.hpp"
+#include "VarianceShadowMap.hpp"
 
 #include "renderers/DebugLightRenderer.hpp"
 

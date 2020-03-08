@@ -60,7 +60,7 @@ void DeferredRenderer::setScene(const std::shared_ptr<Scene> & scene) {
 			continue;
 		}
 		if(auto pLight = std::dynamic_pointer_cast<PointLight>(light)){
-			_shadowMaps.emplace_back(new ShadowMapCube(pLight, 512));
+			_shadowMaps.emplace_back(new VarianceShadowMapCube(pLight, 512));
 		} else {
 			_shadowMaps.emplace_back(new VarianceShadowMap2D(light, glm::vec2(512)));
 		}
