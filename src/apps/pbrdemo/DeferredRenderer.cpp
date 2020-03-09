@@ -49,22 +49,6 @@ void DeferredRenderer::setScene(const std::shared_ptr<Scene> & scene) {
 	
 	_scene = scene;
 	_ambientScreen->setSceneParameters(_scene->backgroundReflection, _scene->backgroundIrradiance);
-	// Delete existing shadow maps.
-	for(auto & map : _shadowMaps){
-		map->clean();
-	}
-	_shadowMaps.clear();
-	// Allocate shadow maps.
-	for(auto & light : scene->lights){
-		if(!light->castsShadow()){
-			continue;
-		}
-		if(auto pLight = std::dynamic_pointer_cast<PointLight>(light)){
-			_shadowMaps.emplace_back(new VarianceShadowMapCube(pLight, 512));
-		} else {
-			_shadowMaps.emplace_back(new VarianceShadowMap2D(light, glm::vec2(512)));
-		}
-	}
 	checkGLError();
 }
 
@@ -198,13 +182,6 @@ void DeferredRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 
 }
 
 void DeferredRenderer::draw(const Camera & camera) {
-	
-	// --- Light pass -------
-	if(_updateShadows) {
-		for(const auto & map : _shadowMaps){
-			map->draw(*_scene);
-		}
-	}
 
 	const glm::mat4 & view = camera.view();
 	const glm::mat4 & proj = camera.projection();
@@ -242,9 +219,6 @@ void DeferredRenderer::clean() {
 	_gbuffer->clean();
 	_ssaoPass->clean();
 	_sceneFramebuffer->clean();
-	for(auto & map : _shadowMaps){
-		map->clean();
-	}
 }
 
 void DeferredRenderer::resize(unsigned int width, unsigned int height) {

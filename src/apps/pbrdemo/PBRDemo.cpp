@@ -46,7 +46,27 @@ void PBRDemo::setScene(const std::shared_ptr<Scene> & scene) {
 	_userCamera.speed() = 0.2f * range;
 	_cplanes			= _userCamera.clippingPlanes();
 	_cameraFOV			= _userCamera.fov() * 180.0f / glm::pi<float>();
+
+	// Set the scene for the renderer.
 	_renderer->setScene(scene);
+
+	// Recreate the shadow maps.
+	// Delete existing shadow maps.
+	for(auto & map : _shadowMaps){
+		map->clean();
+	}
+	_shadowMaps.clear();
+	// Allocate shadow maps.
+	for(auto & light : scene->lights){
+		if(!light->castsShadow()){
+			continue;
+		}
+		if(auto pLight = std::dynamic_pointer_cast<PointLight>(light)){
+			_shadowMaps.emplace_back(new VarianceShadowMapCube(pLight, 512));
+		} else {
+			_shadowMaps.emplace_back(new VarianceShadowMap2D(light, glm::vec2(512)));
+		}
+	}
 }
 
 void PBRDemo::draw() {
@@ -55,6 +75,13 @@ void PBRDemo::draw() {
 		GLUtilities::clearColorAndDepth({0.2f, 0.2f, 0.2f, 1.0f}, 1.0f);
 		return;
 	}
+	// Light pass.
+	if(_updateShadows) {
+		for(const auto & map : _shadowMaps){
+			map->draw(*_scenes[_currentScene]);
+		}
+	}
+	// Renderer and postproc passes.
 	_renderer->draw(_userCamera);
 	_postprocess->process(_renderer->result());
 	
@@ -171,7 +198,7 @@ void PBRDemo::update() {
 		ImGui::Checkbox("Pause", &_paused);
 		ImGui::Combo("Shadow technique", (int*)&_renderer->shadowMode(), "Basic\0Variance\0\0");
 		ImGui::SameLine();
-		ImGui::Checkbox("Update shadows", &_renderer->updateShadows());
+		ImGui::Checkbox("Update shadows", &_updateShadows);
 		ImGui::PopItemWidth();
 		ImGui::ColorEdit3("Background", &(_scenes[_currentScene]->backgroundColor[0]), ImGuiColorEditFlags_Float);
 	}
@@ -188,6 +215,9 @@ void PBRDemo::clean() {
 	// Clean objects.
 	_renderer->clean();
 	_postprocess->clean();
+	for(auto & map : _shadowMaps){
+		map->clean();
+	}
 }
 
 void PBRDemo::resize() {

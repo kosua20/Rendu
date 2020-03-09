@@ -1,7 +1,6 @@
 #pragma once
 
 #include "DeferredLight.hpp"
-#include "VarianceShadowMap.hpp"
 
 #include "renderers/DebugLightRenderer.hpp"
 
@@ -69,11 +68,6 @@ public:
 	 \return the radius
 	 */
 	float & radiusSSAO(){ return _ssaoPass->radius(); }
-	
-	/** Update the shadow maps at each frame.
-	 \return the toggle
-	 */
-	bool & updateShadows(){ return _updateShadows; }
 
 	/** Shadow mapping technique.
 	 \return the current technique
@@ -112,10 +106,8 @@ private:
 	const Program * _atmoProgram;   ///< Atmospheric scattering program.
 
 	std::shared_ptr<Scene> _scene; 						 ///< The scene to render
-	std::vector<std::unique_ptr<ShadowMap>> _shadowMaps; ///< The lights shadow maps.
 	
 	bool _debugVisualization = false; ///< Toggle the rendering of debug informations in the scene.
 	bool _applySSAO			 = true;  ///< Screen space ambient occlusion.
-	bool _updateShadows		 = true;  ///< Update shadow maps at each frame.
 	ShadowMode  _shadowMode	 = ShadowMode::VARIANCE;  ///< Shadow mapping technique to use.
 };

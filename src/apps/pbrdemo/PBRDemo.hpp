@@ -2,6 +2,7 @@
 
 #include "DeferredRenderer.hpp"
 #include "PostProcessStack.hpp"
+#include "VarianceShadowMap.hpp"
 
 #include "Application.hpp"
 #include "scene/Scene.hpp"
@@ -43,7 +44,8 @@ private:
 	 \param scene the scene to use
 	 */
 	void setScene(const std::shared_ptr<Scene> & scene);
-	
+
+	std::vector<std::unique_ptr<ShadowMap>> _shadowMaps; ///< The lights shadow maps.
 	std::unique_ptr<DeferredRenderer> _renderer; ///< Active PBR renderer.
 	std::unique_ptr<PostProcessStack> _postprocess; ///< Post-process renderer.
 	const Program * _finalProgram; ///< Final display program.
@@ -55,4 +57,5 @@ private:
 	glm::vec2 _cplanes  = glm::vec2(0.01f, 100.0f); ///< Camera clipping planes.
 	float _cameraFOV	= 50.0f; ///< Camera field of view in degrees.
 	bool _paused		= false; ///< Pause animations.
+	bool _updateShadows = true; ///< Update the shadow maps.
 };
