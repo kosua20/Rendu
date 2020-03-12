@@ -1,37 +1,17 @@
-#version 330
-
-#define MATERIAL_ID 2
-
-in INTERFACE {
-    mat3 tbn; ///< Normal to view matrix.
-	vec3 tangentSpacePosition; ///< Tangent space position.
-	vec3 viewSpacePosition; ///< View space position.
-	vec2 uv; ///< UV coordinates.
-} In ;
-
-layout(binding = 0) uniform sampler2D texture0; ///< Albedo.
-layout(binding = 1) uniform sampler2D texture1; ///< Normal map.
-layout(binding = 2) uniform sampler2D texture2; ///< Effects map.
-layout(binding = 3) uniform sampler2D texture3; ///< Local depth map.
-uniform mat4 p; ///< Projection matrix.
 
 #define PARALLAX_MIN 8
 #define PARALLAX_MAX 32
 #define PARALLAX_SCALE 0.04
 
-// Output: the fragment color
-layout (location = 0) out vec4 fragColor; ///< Color.
-layout (location = 1) out vec3 fragNormal; ///< View space normal.
-layout (location = 2) out vec3 fragEffects; ///< Effects.
-
 /**
 	Perform parallax mapping by marching against the local depth map, and output the final UV to use.
 	\param uv the initial texture coordinates
 	\param vTangentDir the view direction in tangent space
+	\param depth the heightmap
 	\param positionShift will contain the final position shift
 	\return the final texture coordinates to use to query the material maps
 */
-vec2 parallax(vec2 uv, vec3 vTangentDir, out vec2 positionShift){
+vec2 parallax(vec2 uv, vec3 vTangentDir, sampler2D depth, out vec2 positionShift){
 	
 	// We can adapt the layer count based on the view direction. If we are straight above the surface, we don't need many layers.
 	float layersCount = mix(PARALLAX_MAX, PARALLAX_MIN, abs(vTangentDir.z));
@@ -39,7 +19,7 @@ vec2 parallax(vec2 uv, vec3 vTangentDir, out vec2 positionShift){
 	float layerHeight = 1.0 / layersCount;
 	float currentLayer = 0.0;
 	// Initial depth at the given position.
-	float currentDepth = texture(texture3, uv).r;
+	float currentDepth = texture(depth, uv).r;
 	
 	// Step vector: in tangent space, we walk on the surface, in the (X,Y) plane.
 	vec2 shift = PARALLAX_SCALE * vTangentDir.xy;
@@ -52,7 +32,7 @@ vec2 parallax(vec2 uv, vec3 vTangentDir, out vec2 positionShift){
 		// We update the UV, going further away from the viewer.
 		newUV -= shiftUV;
 		// Update current depth.
-		currentDepth = texture(texture3,newUV).r;
+		currentDepth = texture(depth, newUV).r;
 		// Update current layer.
 		currentLayer += layerHeight;
 	}
@@ -61,7 +41,7 @@ vec2 parallax(vec2 uv, vec3 vTangentDir, out vec2 positionShift){
 	vec2 previousNewUV = newUV + shiftUV;
 	// The local depth is the gap between the current depth and the current depth layer.
 	float currentLocalDepth = currentDepth - currentLayer;
-	float previousLocalDepth = texture(texture3,previousNewUV).r - (currentLayer - layerHeight);
+	float previousLocalDepth = texture(depth, previousNewUV).r - (currentLayer - layerHeight);
 	
 	
 	// Interpolate between the two local depths to obtain the correct UV shift.
@@ -70,54 +50,22 @@ vec2 parallax(vec2 uv, vec3 vTangentDir, out vec2 positionShift){
 	return finalUV;
 }
 
-/** Transfer albedo and effects along with the material ID, and output the final normal 
-	(combining geometry normal and normal map) in view space. Apply parallax mapping effect. */
-void main(){
-	
-	vec2 localUV = In.uv;
-	vec2 positionShift;
-	
-	// Compute the new uvs, and use them for the remaining steps.
-	vec3 vTangentDir = normalize(- In.tangentSpacePosition);
-	localUV = parallax(localUV, vTangentDir, positionShift);
-	// If UV are outside the texture ([0,1]), we discard the fragment.
-	if(localUV.x > 1.0 || localUV.y  > 1.0 || localUV.x < 0.0 || localUV.y < 0.0){
-		discard;
-	}
-	
-	// Store values.
-	vec4 color = texture(texture0, localUV);
-	if(color.a <= 0.01){
-		discard;
-	}
-	
-	// Flip the up of the local frame for back facing fragments.
-	mat3 tbn = In.tbn;
-	tbn[2] *= (gl_FrontFacing ? 1.0 : -1.0);
-	// Compute the normal at the fragment using the tangent space matrix and the normal read in the normal map.
-	vec3 n = texture(texture1,localUV).rgb;
-	n = normalize(n * 2.0 - 1.0);
-	n = normalize(tbn * n);
-	
-	fragColor.rgb = color.rgb;
-	fragColor.a = float(MATERIAL_ID)/255.0;
-	fragNormal.rgb = n * 0.5 + 0.5;
-	fragEffects.rgb = texture(texture2,localUV).rgb;
-	
+vec3 updateFragmentPosition(vec2 localUV, vec2 positionShift, vec3 viewPos, mat4 proj, mat3 tbn, sampler2D depth){
+	// For parallax mapping we have to update the depth of the fragment with the new found depth.
 	// Store depth manually (see below).
 	gl_FragDepth = gl_FragCoord.z;
 	// Update the depth using the heightmap and the displacement applied.
 	// Read the depth.
-	float localDepth = texture(texture3,localUV).r;
+	float localDepth = texture(depth, localUV).r;
 	// Convert the 3D shift applied from tangent space to view space.
-	vec3 shift = tbn * vec3(positionShift.xy, -PARALLAX_SCALE * localDepth);
+	vec3 shift = tbn * vec3(positionShift, -PARALLAX_SCALE * localDepth);
 	// Update the depth in view space.
-	vec3 newViewSpacePosition = In.viewSpacePosition - vec3(0.0,0.0, shift.z);
+	vec3 newViewSpacePosition = viewPos - vec3(0.0, 0.0, shift.z);
 	// Back to clip space.
-	vec4 clipPos = p * vec4(newViewSpacePosition,1.0);
+	vec4 clipPos = proj * vec4(newViewSpacePosition, 1.0);
 	// Perpsective division.
 	float newDepth = clipPos.z / clipPos.w;
 	// Update the fragment depth, taking into account the depth range parameters.
 	gl_FragDepth = ((gl_DepthRange.diff * newDepth) + gl_DepthRange.near + gl_DepthRange.far)/2.0;
-	
+	return newViewSpacePosition;
 }
