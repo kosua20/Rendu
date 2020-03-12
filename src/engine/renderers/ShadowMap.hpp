@@ -9,6 +9,16 @@
 
 #include "Common.hpp"
 
+
+/**
+\brief Available shadow mapping techniques.
+\ingroup DeferredRendering
+*/
+enum class ShadowMode : int {
+	BASIC	 = 0, ///< Basic depth test mode
+	VARIANCE = 1  ///< Variance shadow map.
+};
+
 /**
  \brief Store shadowing information as a map generated from the light viewpoint.
  \ingroup DeferredRendering

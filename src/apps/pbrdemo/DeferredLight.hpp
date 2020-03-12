@@ -3,6 +3,7 @@
 #include "scene/Scene.hpp"
 
 #include "renderers/LightRenderer.hpp"
+#include "renderers/ShadowMap.hpp"
 #include "scene/lights/Light.hpp"
 #include "scene/lights/PointLight.hpp"
 #include "scene/lights/DirectionalLight.hpp"
@@ -10,14 +11,6 @@
 
 #include "Common.hpp"
 
-/**
-\brief Available shadow mapping techniques.
-\ingroup DeferredRendering
-*/
-enum class ShadowMode : int {
-	BASIC = 0, ///< Basic depth test mode
-	VARIANCE = 1 ///< Variance shadow map.
-};
 
 /**
  \brief Apply a light onto the lighting buffer. By processing all lights, the final lighting is accumulated in the buffer.
