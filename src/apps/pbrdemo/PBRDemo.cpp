@@ -2,17 +2,19 @@
 #include "graphics/GLUtilities.hpp"
 #include "input/Input.hpp"
 
-PBRDemo::PBRDemo(RenderingConfig & config) : CameraApp(config) {
-	
+PBRDemo::PBRDemo(RenderingConfig & config) :
+	CameraApp(config) {
+
 	const glm::vec2 renderRes = _config.renderingResolution();
-	_renderer.reset(new DeferredRenderer(renderRes));
+	_defRenderer.reset(new DeferredRenderer(renderRes));
+	_forRenderer.reset(new ForwardRenderer(renderRes));
 	_postprocess.reset(new PostProcessStack(renderRes));
 	_finalProgram = Resources::manager().getProgram2D("final_screenquad");
-	
+
 	// Setup camera parameters.
 	_cameraFOV = _userCamera.fov() * 180.0f / glm::pi<float>();
 	_cplanes   = _userCamera.clippingPlanes();
-	
+
 	// Load all existing scenes, with associated names.
 	std::map<std::string, std::string> sceneInfos;
 	Resources::manager().getFiles("scene", sceneInfos);
@@ -30,12 +32,12 @@ PBRDemo::PBRDemo(RenderingConfig & config) : CameraApp(config) {
 }
 
 void PBRDemo::setScene(const std::shared_ptr<Scene> & scene) {
-	if(!scene){
+	if(!scene) {
 		freezeCamera(true);
 		return;
 	}
 	freezeCamera(false);
-	
+
 	scene->init(Storage::GPU);
 
 	_userCamera.apply(scene->viewpoint());
@@ -48,20 +50,22 @@ void PBRDemo::setScene(const std::shared_ptr<Scene> & scene) {
 	_cameraFOV			= _userCamera.fov() * 180.0f / glm::pi<float>();
 
 	// Set the scene for the renderer.
-	_renderer->setScene(scene);
+	_defRenderer->setScene(scene);
+	_forRenderer->setScene(scene);
 
 	// Recreate the shadow maps.
 	// Delete existing shadow maps.
-	for(auto & map : _shadowMaps){
+	for(auto & map : _shadowMaps) {
 		map->clean();
 	}
 	_shadowMaps.clear();
 	// Allocate shadow maps.
-	for(auto & light : scene->lights){
-		if(!light->castsShadow()){
+	// For now all techniques require at most a VSM (depth,depth^2) map so we use this in all cases.
+	for(auto & light : scene->lights) {
+		if(!light->castsShadow()) {
 			continue;
 		}
-		if(auto pLight = std::dynamic_pointer_cast<PointLight>(light)){
+		if(auto pLight = std::dynamic_pointer_cast<PointLight>(light)) {
 			_shadowMaps.emplace_back(new VarianceShadowMapCube(pLight, 512));
 		} else {
 			_shadowMaps.emplace_back(new VarianceShadowMap2D(light, glm::vec2(512)));
@@ -77,26 +81,33 @@ void PBRDemo::draw() {
 	}
 	// Light pass.
 	if(_updateShadows) {
-		for(const auto & map : _shadowMaps){
+		for(const auto & map : _shadowMaps) {
 			map->draw(*_scenes[_currentScene]);
 		}
 	}
 	// Renderer and postproc passes.
-	_renderer->draw(_userCamera);
-	_postprocess->process(_renderer->result());
-	
+	const Texture * result = nullptr;
+	if(_mode == RendererMode::DEFERRED) {
+		_defRenderer->draw(_userCamera);
+		result = _defRenderer->result();
+	} else if(_mode == RendererMode::FORWARD) {
+		_forRenderer->draw(_userCamera);
+		result = _forRenderer->result();
+	}
+
+	_postprocess->process(result);
+
 	// We now render a full screen quad in the default framebuffer, using sRGB space.
 	Framebuffer::backbuffer()->bind(Framebuffer::Mode::SRGB);
 	GLUtilities::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 	_finalProgram->use();
 	ScreenQuad::draw(_postprocess->result());
 	Framebuffer::backbuffer()->unbind();
-	
 }
 
 void PBRDemo::update() {
 	CameraApp::update();
-	
+
 	// First part of the ImGui window is always displayed.
 	if(ImGui::Begin("Renderer")) {
 		ImGui::Text("%.1f ms, %.1f fps", ImGui::GetIO().DeltaTime * 1000.0f, ImGui::GetIO().Framerate);
@@ -115,22 +126,22 @@ void PBRDemo::update() {
 		}
 	}
 	ImGui::End();
-	
+
 	// If no scene, no need to udpate the camera or the scene-specific UI.
 	if(!_scenes[_currentScene]) {
 		return;
 	}
-	
+
 	// Reload the scene metadata.
 	if(Input::manager().triggered(Input::Key::P)) {
 		_scenes[_currentScene].reset(new Scene(_sceneNames[_currentScene]));
 		setScene(_scenes[_currentScene]);
 	}
-	
+
 	// Reopen the Imgui window.
 	if(ImGui::Begin("Renderer")) {
 		ImGui::Separator();
-		
+
 		ImGui::PushItemWidth(110);
 		ImGui::Combo("Camera mode", reinterpret_cast<int *>(&_userCamera.mode()), "FPS\0Turntable\0Joystick\0\0", 3);
 		ImGui::InputFloat("Camera speed", &_userCamera.speed(), 0.1f, 1.0f);
@@ -159,6 +170,9 @@ void PBRDemo::update() {
 		}
 
 		ImGui::Separator();
+
+		ImGui::Combo("Renderer mode", reinterpret_cast<int *>(&_mode), "Deferred\0Forward\0\0");
+
 		ImGui::PushItemWidth(110);
 		if(ImGui::InputInt("Vertical res.", &_config.internalVerticalResolution, 50, 200)) {
 			_config.internalVerticalResolution = std::max(8, _config.internalVerticalResolution);
@@ -178,11 +192,13 @@ void PBRDemo::update() {
 			ImGui::SameLine(120);
 			ImGui::SliderFloat("Mix##Bloom", &_postprocess->settings().bloomMix, 0.0f, 1.5f);
 		}
-		
-		ImGui::Checkbox("SSAO", &_renderer->applySSAO());
-		if(_renderer->applySSAO()) {
+
+		bool & applySSAO = (_mode == RendererMode::DEFERRED ? _defRenderer->applySSAO() : _forRenderer->applySSAO());
+		float & radiusSSAO = (_mode == RendererMode::DEFERRED ? _defRenderer->radiusSSAO() : _forRenderer->radiusSSAO());
+		ImGui::Checkbox("SSAO", &applySSAO);
+		if(applySSAO) {
 			ImGui::SameLine(120);
-			ImGui::InputFloat("Radius", &_renderer->radiusSSAO(), 0.5f);
+			ImGui::InputFloat("Radius", &radiusSSAO, 0.5f);
 		}
 
 		ImGui::Checkbox("Tonemap ", &_postprocess->settings().tonemap);
@@ -193,13 +209,18 @@ void PBRDemo::update() {
 		ImGui::Checkbox("FXAA", &_postprocess->settings().fxaa);
 
 		ImGui::Separator();
-		ImGui::Checkbox("Debug", &_renderer->showLights());
+		bool & showLights = (_mode == RendererMode::DEFERRED ? _defRenderer->showLights() : _forRenderer->showLights());
+		ImGui::Checkbox("Debug", &showLights);
 		ImGui::SameLine();
 		ImGui::Checkbox("Pause", &_paused);
-		ImGui::Combo("Shadow technique", (int*)&_renderer->shadowMode(), "Basic\0Variance\0\0");
+
+		ShadowMode & shadowMode = (_mode == RendererMode::DEFERRED ? _defRenderer->shadowMode() : _forRenderer->shadowMode());
+		ImGui::Combo("Shadow technique", reinterpret_cast<int*>(&shadowMode), "None\0Basic\0Variance\0\0");
 		ImGui::SameLine();
-		ImGui::Checkbox("Update shadows", &_updateShadows);
+		ImGui::Checkbox("Update", &_updateShadows);
+
 		ImGui::PopItemWidth();
+
 		ImGui::ColorEdit3("Background", &(_scenes[_currentScene]->backgroundColor[0]), ImGuiColorEditFlags_Float);
 	}
 	ImGui::End();
@@ -213,9 +234,10 @@ void PBRDemo::physics(double fullTime, double frameTime) {
 
 void PBRDemo::clean() {
 	// Clean objects.
-	_renderer->clean();
+	_defRenderer->clean();
+	_forRenderer->clean();
 	_postprocess->clean();
-	for(auto & map : _shadowMaps){
+	for(auto & map : _shadowMaps) {
 		map->clean();
 	}
 }
@@ -223,6 +245,7 @@ void PBRDemo::clean() {
 void PBRDemo::resize() {
 	// Same aspect ratio as the display resolution
 	const glm::vec2 renderRes = _config.renderingResolution();
-	_renderer->resize(uint(renderRes[0]), uint(renderRes[1]));
+	_defRenderer->resize(uint(renderRes[0]), uint(renderRes[1]));
+	_forRenderer->resize(uint(renderRes[0]), uint(renderRes[1]));
 	_postprocess->resize(uint(renderRes[0]), uint(renderRes[1]));
 }
