@@ -42,17 +42,17 @@ public:
 	/** Apply a spot lighting using a supporting cone.
 	 \param light the light to compute the contribution of
 	 */
-	void draw(const SpotLight * light) const override;
+	void draw(const SpotLight * light) override;
 	
 	/** Apply a point lighting using a supporting sphere.
 	 \param light the light to compute the contribution of
 	 */
-	void draw(const PointLight * light) const override;
+	void draw(const PointLight * light) override;
 	
 	/** Apply a directional lighting using a supporting quad.
 	 \param light the light to compute the contribution of
 	 */
-	void draw(const DirectionalLight * light) const override;
+	void draw(const DirectionalLight * light) override;
 
 private:
 	

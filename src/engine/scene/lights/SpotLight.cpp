@@ -7,7 +7,7 @@ SpotLight::SpotLight(const glm::vec3 & worldPosition, const glm::vec3 & worldDir
 	_angles(0.5f * innerAngle, 0.5f * outerAngle), _radius(radius) {
 }
 
-void SpotLight::draw(const LightRenderer & renderer) const {
+void SpotLight::draw(LightRenderer & renderer) {
 	renderer.draw(this);
 }
 

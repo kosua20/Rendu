@@ -17,7 +17,6 @@ uniform vec3 lightPosition; ///< Light position in view space.
 uniform vec3 lightColor; ///< Light intensity.
 uniform float lightRadius; ///< Attenuation radius.
 uniform float lightFarPlane; ///< Light projection far plane.
-uniform bool castShadow; ///< Should the shadow map be used.
 uniform float shadowBias; ///< shadow depth bias.
 uniform int shadowMode; ///< The shadow map technique.
 
@@ -62,7 +61,7 @@ void main(){
 	// Compute the light to surface vector in light centered space.
 	// We only care about the direction, so we don't need the translation.
 	float shadowing = 1.0;
-	if(castShadow){
+	if(shadowMode != SHADOW_NONE){
 		vec3 deltaPositionWorld = -viewToLight*deltaPosition;
 		shadowing = shadowCube(shadowMode, deltaPositionWorld, shadowMap, lightFarPlane, shadowBias);
 	}

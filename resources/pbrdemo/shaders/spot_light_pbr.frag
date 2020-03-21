@@ -18,7 +18,6 @@ uniform vec3 lightDirection; ///< Light direction in view space.
 uniform vec3 lightColor; ///< Light intensity.
 uniform vec2 intOutAnglesCos; ///< Angular attenuation inner and outer angles.
 uniform float lightRadius; ///< Attenuation radius.
-uniform bool castShadow; ///< Should the shadow map be used.
 uniform float shadowBias; ///< shadow depth bias.
 uniform int shadowMode; ///< The shadow map technique.
 
@@ -63,7 +62,7 @@ void main(){
 	float orientation = max(0.0, dot(l,n));
 	// Shadowing
 	float shadowing = 1.0;
-	if(castShadow){
+	if(shadowMode != SHADOW_NONE){
 		vec4 lightSpacePosition = viewToLight * vec4(position,1.0);
 		lightSpacePosition /= lightSpacePosition.w;
 		shadowing = shadow(shadowMode, 0.5*lightSpacePosition.xyz+0.5, shadowMap, shadowBias);

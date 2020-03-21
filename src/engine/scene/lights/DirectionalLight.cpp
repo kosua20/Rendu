@@ -6,7 +6,7 @@ DirectionalLight::DirectionalLight(const glm::vec3 & worldDirection, const glm::
 	_lightDirection(glm::normalize(worldDirection)) {
 }
 
-void DirectionalLight::draw(const LightRenderer & renderer) const {
+void DirectionalLight::draw(LightRenderer & renderer) {
 	renderer.draw(this);
 }
 

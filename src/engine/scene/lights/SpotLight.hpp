@@ -31,7 +31,7 @@ public:
 	/**
 	 \copydoc Light::draw
 	 */
-	void draw(const LightRenderer & renderer) const override;
+	void draw(LightRenderer & renderer) override;
 
 	/**
 	 \copydoc Light::update

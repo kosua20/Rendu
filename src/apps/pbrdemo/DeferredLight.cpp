@@ -21,7 +21,7 @@ void DeferredLight::updateShadowMapInfos(ShadowMode mode, float bias){
 	_shadowMode = mode;
 }
 
-void DeferredLight::draw(const SpotLight * light) const {
+void DeferredLight::draw(const SpotLight * light) {
 	
 	// Projection parameter for position reconstruction.
 	const glm::vec4 projectionVector = glm::vec4(_proj[0][0], _proj[1][1], _proj[2][2], _proj[3][2]);
@@ -40,7 +40,6 @@ void DeferredLight::draw(const SpotLight * light) const {
 	_spotProgram->uniform("intOutAnglesCos", glm::cos(light->angles()));
 	_spotProgram->uniform("projectionMatrix", projectionVector);
 	_spotProgram->uniform("viewToLight", viewToLight);
-	_spotProgram->uniform("castShadow", light->castsShadow());
 	
 	// Active screen texture.
 	GLUtilities::bindTextures(_textures);
@@ -48,6 +47,8 @@ void DeferredLight::draw(const SpotLight * light) const {
 		GLUtilities::bindTexture(light->shadowMap(), _textures.size());
 		_spotProgram->uniform("shadowBias", _shadowBias);
 		_spotProgram->uniform("shadowMode", int(_shadowMode));
+	} else {
+		_pointProgram->uniform("shadowMode", int(ShadowMode::NONE));
 	}
 	// Select the geometry.
 	GLUtilities::drawMesh(*_cone);
@@ -55,7 +56,7 @@ void DeferredLight::draw(const SpotLight * light) const {
 	glCullFace(GL_BACK);
 }
 
-void DeferredLight::draw(const PointLight * light) const {
+void DeferredLight::draw(const PointLight * light) {
 	
 	// Projection parameter for position reconstruction.
 	const glm::vec4 projectionVector = glm::vec4(_proj[0][0], _proj[1][1], _proj[2][2], _proj[3][2]);
@@ -72,7 +73,6 @@ void DeferredLight::draw(const PointLight * light) const {
 	_pointProgram->uniform("projectionMatrix", projectionVector);
 	_pointProgram->uniform("viewToLight", viewToLight);
 	_pointProgram->uniform("lightFarPlane", light->farPlane());
-	_pointProgram->uniform("castShadow", light->castsShadow());
 	
 	 // Active screen texture.
 	GLUtilities::bindTextures(_textures);
@@ -80,13 +80,15 @@ void DeferredLight::draw(const PointLight * light) const {
 		GLUtilities::bindTexture(light->shadowMap(), _textures.size());
 		_pointProgram->uniform("shadowBias", _shadowBias);
 		_pointProgram->uniform("shadowMode", int(_shadowMode));
+	} else {
+		_pointProgram->uniform("shadowMode", int(ShadowMode::NONE));
 	}
 	// Select the geometry.
 	GLUtilities::drawMesh(*_sphere);
 	glCullFace(GL_BACK);
 }
 
-void DeferredLight::draw(const DirectionalLight * light) const {
+void DeferredLight::draw(const DirectionalLight * light) {
 	const glm::mat4 viewToLight = light->vp() * glm::inverse(_view);
 	// Projection parameter for position reconstruction.
 	const glm::vec4 projectionVector = glm::vec4(_proj[0][0], _proj[1][1], _proj[2][2], _proj[3][2]);
@@ -97,12 +99,14 @@ void DeferredLight::draw(const DirectionalLight * light) const {
 	_dirProgram->uniform("lightColor", light->intensity());
 	_dirProgram->uniform("projectionMatrix", projectionVector);
 	_dirProgram->uniform("viewToLight", viewToLight);
-	_dirProgram->uniform("castShadow", light->castsShadow());
+
 	GLUtilities::bindTextures(_textures);
 	if(light->castsShadow()) {
 		GLUtilities::bindTexture(light->shadowMap(), _textures.size());
 		_dirProgram->uniform("shadowBias", _shadowBias);
 		_dirProgram->uniform("shadowMode", int(_shadowMode));
+	} else {
+		_pointProgram->uniform("shadowMode", int(ShadowMode::NONE));
 	}
 	ScreenQuad::draw();
 	

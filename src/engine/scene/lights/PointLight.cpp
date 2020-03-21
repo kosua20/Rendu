@@ -7,7 +7,7 @@ PointLight::PointLight(const glm::vec3 & worldPosition, const glm::vec3 & color,
 	_lightPosition(worldPosition), _radius(radius) {
 }
 
-void PointLight::draw(const LightRenderer & renderer) const {
+void PointLight::draw(LightRenderer & renderer) {
 	renderer.draw(this);
 }
 

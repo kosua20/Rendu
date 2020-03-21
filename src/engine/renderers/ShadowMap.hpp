@@ -15,8 +15,9 @@
 \ingroup DeferredRendering
 */
 enum class ShadowMode : int {
-	BASIC	 = 0, ///< Basic depth test mode
-	VARIANCE = 1  ///< Variance shadow map.
+	NONE	 = 0, ///< No shadows.
+	BASIC	 = 1, ///< Basic depth test mode
+	VARIANCE = 2  ///< Variance shadow map.
 };
 
 /**

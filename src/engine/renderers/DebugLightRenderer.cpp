@@ -13,7 +13,7 @@ void DebugLightRenderer::updateCameraInfos(const glm::mat4 & viewMatrix, const g
 	_proj = projMatrix;
 }
 
-void DebugLightRenderer::draw(const SpotLight * light) const {
+void DebugLightRenderer::draw(const SpotLight * light) {
 	const glm::mat4 mvp		 = _proj * _view * light->model();
 	const glm::vec3 & color = light->intensity();
 	const glm::vec3 colorLow = color / std::max(color[0], std::max(color[1], color[2]));
@@ -24,7 +24,7 @@ void DebugLightRenderer::draw(const SpotLight * light) const {
 	GLUtilities::drawMesh(*_cone);
 }
 
-void DebugLightRenderer::draw(const PointLight * light) const {
+void DebugLightRenderer::draw(const PointLight * light) {
 	const glm::mat4 mvp  = _proj * _view * light->model();
 	const glm::mat4 mvp1 = glm::scale(mvp , glm::vec3(0.02f));
 	
@@ -40,7 +40,7 @@ void DebugLightRenderer::draw(const PointLight * light) const {
 	GLUtilities::drawMesh(*_sphere);
 }
 
-void DebugLightRenderer::draw(const DirectionalLight * light) const {
+void DebugLightRenderer::draw(const DirectionalLight * light) {
 	const glm::mat4 vp		 = _proj * _view * light->model();
 	const glm::vec3 & color = light->intensity();
 	const glm::vec3 colorLow = color / std::max(color[0], std::max(color[1], color[2]));

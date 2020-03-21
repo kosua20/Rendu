@@ -31,17 +31,17 @@ public:
 	/** Draw a spot light as a colored wireframe cone.
 	 \param light the light to draw
 	 */
-	void draw(const SpotLight * light) const override;
+	void draw(const SpotLight * light) override;
 	
 	/** Draw a point light as a colored wireframe sphere.
 	 \param light the light to draw
 	 */
-	void draw(const PointLight * light) const override;
+	void draw(const PointLight * light) override;
 	
 	/** Draw a directional light as a colored wireframe arrow pointing at the origin.
 	 \param light the light to draw
 	 */
-	void draw(const DirectionalLight * light) const override;
+	void draw(const DirectionalLight * light) override;
 
 private:
 	

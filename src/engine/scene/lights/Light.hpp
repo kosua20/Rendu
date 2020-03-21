@@ -6,6 +6,12 @@
 #include "renderers/LightRenderer.hpp"
 #include "Common.hpp"
 
+enum class LightType : int {
+	POINT = 0,
+	DIRECTIONAL = 1,
+	SPOT = 2
+};
+
 /**
  \brief A general light with adjustable color intensity, that can cast shadows.
  \ingroup Scene
@@ -29,7 +35,7 @@ public:
 	/** Process the light using a specific renderer. \see LightRenderer for the expected interface details.
 	 \param renderer the light-specific renderer
 	 */
-	virtual void draw(const LightRenderer & renderer) const = 0;
+	virtual void draw(LightRenderer & renderer) = 0;
 
 	/** Apply the animations for a frame duration.
 	 \param fullTime the time since the launch of the application

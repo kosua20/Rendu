@@ -19,7 +19,6 @@ uniform mat4 viewToLight; ///< View to light space matrix.
 
 uniform vec3 lightDirection; ///< Light direction in view space.
 uniform vec3 lightColor; ///< Light intensity.
-uniform bool castShadow; ///< Should the shadow map be used.
 uniform float shadowBias; ///< shadow depth bias.
 uniform int shadowMode; ///< The shadow map technique.
 
@@ -53,7 +52,7 @@ void main(){
 	float orientation = max(0.0, dot(l,n));
 	// Shadowing
 	float shadowing = 1.0;
-	if(castShadow){
+	if(shadowMode != SHADOW_NONE){
 		vec3 lightSpacePosition = 0.5*(viewToLight * vec4(position,1.0)).xyz + 0.5;
 		shadowing = shadow(shadowMode, lightSpacePosition, shadowMap, shadowBias);
 	}

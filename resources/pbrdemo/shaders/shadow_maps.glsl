@@ -1,4 +1,8 @@
 
+#define SHADOW_NONE 0
+#define SHADOW_BASIC 1
+#define SHADOW_VARIANCE 2
+
 /** Compute the lighting factor based on shadow map.
 	\param lightSpacePosition fragment position in light space
 	\param smap the shadow map
@@ -104,14 +108,12 @@ float shadowVSMCube(vec3 lightToPosDir, samplerCube smap, float farPlane){
 	return probabilityMax;
 }
 
-#define BASIC 0
-#define VARIANCE 1
 
 float shadow(int mode, vec3 lightSpacePosition, sampler2D smap, float bias){
-	if(mode == BASIC){
+	if(mode == SHADOW_BASIC){
 		return shadowBasic(lightSpacePosition, smap, bias);
 	}
-	if(mode == VARIANCE){
+	if(mode == SHADOW_VARIANCE) {
 		return shadowVSM(lightSpacePosition, smap);
 	}
 	return 1.0;
@@ -119,10 +121,10 @@ float shadow(int mode, vec3 lightSpacePosition, sampler2D smap, float bias){
 
 
 float shadowCube(int mode, vec3 lightToPosDir, samplerCube smap, float farPlane, float bias){
-	if(mode == BASIC){
+	if(mode == SHADOW_BASIC) {
 		return shadowBasicCube(lightToPosDir, smap, farPlane, bias);
 	}
-	if(mode == VARIANCE){
+	if(mode == SHADOW_VARIANCE) {
 		return shadowVSMCube(lightToPosDir, smap, farPlane);
 	}
 	return 1.0;
