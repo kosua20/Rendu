@@ -50,25 +50,35 @@ public:
 	 */
 	void draw(const DirectionalLight * light) override;
 
+	void upload() const;
+
+	/// \todo Extract in GLUtilities, wrap Buffer similarly to Texture.
+	void bind(size_t slot) const;
+
+	size_t count() const {
+		return _currentCount;
+	}
+
 private:
-	
 	
 	struct GPULight {
 		glm::mat4 viewToLight;
 		glm::vec4 colorAndBias;
 		glm::vec4 positionAndRadius;
 		glm::vec4 directionAndPlane;
-		glm::vec2 anglesCos;
-		int type;
-		int shadowMode;
+		glm::vec4 typeModeAngles;
 	};
 
-	std::vector<GPULight> _lightsData;
 	size_t _currentId = 0;
+	size_t _currentCount = 0;
+	const static size_t _maxLightCount = 5;
+	std::array<GPULight, _maxLightCount> _lightsData;
 	
 	glm::mat4 _view = glm::mat4(1.0f); ///< Cached camera view matrix.
 	glm::mat4 _proj = glm::mat4(1.0f); ///< Cached camera projection matrix.
 
 	ShadowMode _shadowMode = ShadowMode::BASIC; ///< Shadow mapping techique.
 	float _shadowBias = 0.0f; ///< Shadow depth bias.
+
+	GLuint _bufferHandle = 0; ///< OpenGL buffer handle.
 };

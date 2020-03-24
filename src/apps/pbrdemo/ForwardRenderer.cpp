@@ -80,6 +80,8 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 				_parallaxProgram->uniform("normalMatrix", normalMatrix);
 				_parallaxProgram->uniform("inverseV", invView);
 				_parallaxProgram->uniform("maxLod", cubeLod);
+				_parallaxProgram->uniformBuffer("Lights", 0);
+				_parallaxProgram->uniform("lightsCount", int(_lightGPUData->count()));
 				break;
 			case Object::PBRNoUVs:
 				_objectNoUVsProgram->use();
@@ -91,6 +93,8 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 				_objectNoUVsProgram->uniform("normalMatrix", normalMatrix);
 				_objectNoUVsProgram->uniform("inverseV", invView);
 				_objectNoUVsProgram->uniform("maxLod", cubeLod);
+				_objectNoUVsProgram->uniformBuffer("Lights", 0);
+				_objectNoUVsProgram->uniform("lightsCount", int(_lightGPUData->count()));
 				break;
 			case Object::PBRRegular:
 				_objectProgram->use();
@@ -102,6 +106,8 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 				_objectProgram->uniform("normalMatrix", normalMatrix);
 				_objectProgram->uniform("inverseV", invView);
 				_objectProgram->uniform("maxLod", cubeLod);
+				_objectProgram->uniformBuffer("Lights", 0);
+				_objectProgram->uniform("lightsCount", int(_lightGPUData->count()));
 				break;
 			default:
 				break;
@@ -111,7 +117,8 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 		if(object.twoSided()) {
 			glDisable(GL_CULL_FACE);
 		}
-
+		// Bind the lights.
+		_lightGPUData->bind(0);
 		// Bind the textures.
 		GLUtilities::bindTextures(object.textures());
 		GLUtilities::bindTexture(_textureBrdf, object.textures().size());
@@ -120,7 +127,7 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 		// Restore state.
 		glEnable(GL_CULL_FACE);
 	}
-
+	
 	// Render all lights.
 	if(_debugVisualization) {
 		_lightDebugRenderer.updateCameraInfos(view, proj);
@@ -135,7 +142,6 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 
 	// Render the backgound.
 	renderBackground(view, proj, pos);
-
 	_sceneFramebuffer->unbind();
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
@@ -200,6 +206,7 @@ void ForwardRenderer::draw(const Camera & camera) {
 	for(const auto light : _scene->lights) {
 		light->draw(*_lightGPUData);
 	}
+	_lightGPUData->upload();
 
 	// --- Scene pass -------
 	renderScene(view, proj, pos);
