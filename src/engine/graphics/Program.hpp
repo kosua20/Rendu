@@ -107,6 +107,18 @@ public:
 	 */
 	void uniform(const std::string & name, const glm::mat4 & t) const;
 
+	/** Set a given uniform buffer binding point.
+	 \param name the uniform name
+	 \param slot the binding point
+	 */
+	void uniformBuffer(const std::string & name, size_t slot) const;
+
+	/** Set a given uniform sampler binding point.
+	 \param name the uniform name
+	 \param slot the binding point
+	 */
+	void uniformTexture(const std::string & name, size_t slot) const;
+
 	/** Copy assignment operator (disabled).
 	 \return a reference to the object assigned to
 	 */

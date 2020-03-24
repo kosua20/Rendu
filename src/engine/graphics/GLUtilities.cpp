@@ -151,7 +151,7 @@ GLuint GLUtilities::loadShader(const std::string & prog, GLuint type, std::map<s
 			const std::string::size_type endPosName   = line.find_first_of(';') - 1;
 			const std::string::size_type startPosName = line.find_last_of(' ', endPosName) + 1;
 			const std::string name					  = line.substr(startPosName, endPosName - startPosName + 1);
-			Log::Warning() << Log::OpenGL << "Missing binding info for sampler \"" << name << "\"." << std::endl;
+			Log::Verbose() << Log::OpenGL << "No binding info for sampler \"" << name << "\"." << std::endl;
 			outputLines.push_back(line);
 			continue;
 		}

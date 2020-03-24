@@ -16,6 +16,8 @@ Program::Program(const std::string & vertexName, const std::string & fragmentNam
 	_uniforms.clear();
 
 	// Get the number of active uniforms and their maximum length.
+	// Note: this will also capture each attribute of each element of a uniform block.
+	// We just process them as other uniforms but won't use them afterwards.
 	GLint count = 0;
 	GLint size  = 0;
 	glGetProgramiv(_id, GL_ACTIVE_UNIFORMS, &count);
@@ -37,6 +39,7 @@ Program::Program(const std::string & vertexName, const std::string & fragmentNam
 		// Register uniform using its name.
 		// /!\ the uniform location can be different from the uniform ID.
 		_uniforms[name] = glGetUniformLocation(_id, name.c_str());
+
 		// If the size of the uniform is > 1, we have an array.
 		if(usize > 1) {
 			// Extract the array name from the 'name[0]' string.
@@ -47,7 +50,26 @@ Program::Program(const std::string & vertexName, const std::string & fragmentNam
 				_uniforms[vname]		= glGetUniformLocation(_id, vname.c_str());
 			}
 		}
+
 	}
+
+	// Parse uniform blocks.
+	glGetProgramiv(_id, GL_ACTIVE_UNIFORM_BLOCKS, &count);
+	glGetProgramiv(_id, GL_ACTIVE_UNIFORM_BLOCK_MAX_NAME_LENGTH, &size);
+
+	for(GLuint i = 0; i < GLuint(count); ++i) {
+		// Get infos (name, name length) of each block.
+		std::vector<GLchar> uname(size);
+		GLsizei ulength = 0;
+		glGetActiveUniformBlockName(_id, i, size, &ulength, &uname[0]);
+		const std::string name(&uname[0]);
+		// Skip empty or default uniforms (starting with 'gl_').
+		if(name.empty() || (name.size() > 3 && name.substr(0, 3) == "gl_")) {
+			continue;
+		}
+		_uniforms[name] = glGetUniformBlockIndex(_id, name.c_str());
+	}
+
 	// Register texture slots.
 	for(auto & texture : bindings) {
 		glUniform1i(_uniforms[texture.first], texture.second);
@@ -189,5 +211,17 @@ void Program::uniform(const std::string & name, const glm::mat3 & t) const {
 void Program::uniform(const std::string & name, const glm::mat4 & t) const {
 	if(_uniforms.count(name) > 0) {
 		glUniformMatrix4fv(_uniforms.at(name), 1, GL_FALSE, &t[0][0]);
+	}
+}
+
+void Program::uniformBuffer(const std::string & name, size_t slot) const {
+	if(_uniforms.count(name) > 0) {
+		glUniformBlockBinding(_id, _uniforms.at(name), GLuint(slot));
+	}
+}
+
+void Program::uniformTexture(const std::string & name, size_t slot) const {
+	if(_uniforms.count(name) > 0) {
+		glUniform1i(_uniforms.at(name), int(slot));
 	}
 }
