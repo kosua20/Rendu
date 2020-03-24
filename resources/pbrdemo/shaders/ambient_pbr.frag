@@ -1,7 +1,6 @@
 #version 330
 
 #include "common_pbr.glsl"
-#include "common_ambient_pbr.glsl"
 
 in INTERFACE {
 	vec2 uv; ///< Texture coordinates.
@@ -37,7 +36,6 @@ void main(){
 	vec3 baseColor = albedoInfo.rgb;
 	vec3 infos = texture(effectsTexture,In.uv).rgb;
 	float roughness = max(0.045, infos.r);
-	float metallic = infos.g;
 	float depth = texture(depthTexture,In.uv).r;
 	vec3 position = positionFromDepth(depth, In.uv, projectionMatrix);
 	vec3 n = normalize(2.0 * texture(normalTexture,In.uv).rgb - 1.0);

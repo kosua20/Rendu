@@ -1,6 +1,6 @@
 #version 330
 
-#include "common_ambient_pbr.glsl"
+#include "common_pbr.glsl"
 
 in INTERFACE {
     mat3 tbn; ///< Normal to view matrix.

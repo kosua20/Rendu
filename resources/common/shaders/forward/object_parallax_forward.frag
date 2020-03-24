@@ -1,6 +1,6 @@
 #version 330
 
-#include "common_ambient_pbr.glsl"
+#include "common_pbr.glsl"
 #include "common_parallax.glsl"
 
 in INTERFACE {
