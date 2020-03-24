@@ -1,6 +1,7 @@
 #version 330
 
 #include "common_pbr.glsl"
+#include "common_lights.glsl"
 
 in INTERFACE {
 	vec3 viewSpacePosition; ///< View position.
@@ -17,8 +18,15 @@ uniform vec3 shCoeffs[9]; ///< SH approximation of the environment irradiance.
 uniform mat4 inverseV; ///< The view to world transformation matrix.
 uniform float maxLod; ///< Mip level count for background map.
 
-layout (location = 0) out vec3 fragColor; ///< Color.
+uniform int lightsCount;
+// Store the lights in a continuous buffer (UBO).
+layout(std140) uniform Lights {
+	GPULight lights[MAX_LIGHTS_COUNT];
+};
+uniform sampler2D shadowMaps2D[MAX_LIGHTS_COUNT];
+uniform samplerCube shadowMapsCube[MAX_LIGHTS_COUNT];
 
+layout (location = 0) out vec3 fragColor; ///< Color.
 
 /** Transfer albedo and effects along with the material ID, and output the final normal 
 	(combining geometry normal and normal map) in view space. */
@@ -36,6 +44,7 @@ void main(){
 	float roughness = max(0.045, infos.r);
 	vec3 v = normalize(-In.viewSpacePosition);
 	float NdotV = max(0.0, dot(v, n));
+	float metallic = infos.g;
 
 	// Compute AO.
 	float precomputedAO = infos.b;
@@ -50,7 +59,28 @@ void main(){
 	
 	// BRDF contributions.
 	vec3 diffuse, specular;
-	ambientBrdf(baseColor, infos.g, roughness, NdotV, brdfPrecalc, diffuse, specular);
+	ambientBrdf(baseColor, metallic, roughness, NdotV, brdfPrecalc, diffuse, specular);
 	
 	fragColor = aoDiffuse * diffuse * irradiance + aoSpecular * specular * radiance;
+
+	// Compute F0 (fresnel coeff).
+	// Dielectrics have a constant low coeff, metals use the baseColor (ie reflections are tinted).
+	vec3 F0 = mix(vec3(0.04), baseColor, metallic);
+	// Normalized diffuse contribution. Metallic materials have no diffuse contribution.
+	vec3 diffuseL = INV_M_PI * (1.0 - metallic) * baseColor * (1.0 - F0);
+
+	for(int lid = 0; lid < MAX_LIGHTS_COUNT; ++lid){
+		if(lid >= lightsCount){
+			break;
+		}
+		float shadowing;
+		vec3 l;
+		if(!applyLight(lights[lid], In.viewSpacePosition, /*shadowMapsCube[lid], shadowMaps2D[lid], */  l, shadowing)){
+			continue;
+		}
+		// Orientation: basic diffuse shadowing.
+		float orientation = max(0.0, dot(l,n));
+		vec3 specularL = ggx(n, v, l, F0, roughness);
+		fragColor += shadowing * orientation * (diffuseL + specularL) * lights[lid].colorAndBias.rgb;
+	}
 }
