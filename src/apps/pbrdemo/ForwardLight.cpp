@@ -25,14 +25,14 @@ void ForwardLight::updateShadowMapInfos(ShadowMode mode, float bias) {
 }
 
 void ForwardLight::draw(const SpotLight * light) {
-
-	GPULight & currentLight = _lightsData[_currentId];
+	const size_t selectedId = _currentId;
 	_currentId				= (_currentId + 1) % _currentCount;
-	// Skip if extraneous light.
-	if(_currentId >= _maxLightCount){
+	// Skip update if extraneous light.
+	if(selectedId >= _maxLightCount) {
 		return;
 	}
 
+	GPULight & currentLight					= _lightsData[selectedId];
 	const glm::vec3 lightPositionViewSpace	= glm::vec3(_view * glm::vec4(light->position(), 1.0f));
 	const glm::vec3 lightDirectionViewSpace = glm::vec3(_view * glm::vec4(light->direction(), 0.0f));
 
@@ -48,13 +48,14 @@ void ForwardLight::draw(const SpotLight * light) {
 }
 
 void ForwardLight::draw(const PointLight * light) {
-	GPULight & currentLight = _lightsData[_currentId];
+	const size_t selectedId = _currentId;
 	_currentId				= (_currentId + 1) % _currentCount;
-	// Skip if extraneous light.
-	if(_currentId >= _maxLightCount){
+	// Skip update if extraneous light.
+	if(selectedId >= _maxLightCount) {
 		return;
 	}
 
+	GPULight & currentLight				   = _lightsData[selectedId];
 	const glm::vec3 lightPositionViewSpace = glm::vec3(_view * glm::vec4(light->position(), 1.0f));
 
 	currentLight.viewToLight		  = glm::inverse(_view);
@@ -66,13 +67,14 @@ void ForwardLight::draw(const PointLight * light) {
 }
 
 void ForwardLight::draw(const DirectionalLight * light) {
-	GPULight & currentLight = _lightsData[_currentId];
+	const size_t selectedId = _currentId;
 	_currentId				= (_currentId + 1) % _currentCount;
-	// Skip if extraneous light.
-	if(_currentId >= _maxLightCount){
+	// Skip update if extraneous light.
+	if(selectedId >= _maxLightCount) {
 		return;
 	}
 
+	GPULight & currentLight					= _lightsData[selectedId];
 	const glm::vec3 lightDirectionViewSpace = glm::vec3(_view * glm::vec4(light->direction(), 0.0));
 
 	currentLight.viewToLight	   = light->vp() * glm::inverse(_view);
