@@ -41,17 +41,30 @@ std::vector<glm::vec3> BoundingBox::getCorners() const {
 		glm::vec3(maxis[0], maxis[1], maxis[2])};
 }
 
+std::vector<glm::vec4> BoundingBox::getHomogeneousCorners() const {
+	return {
+		glm::vec4(minis[0], minis[1], minis[2], 1.0f),
+		glm::vec4(minis[0], minis[1], maxis[2], 1.0f),
+		glm::vec4(minis[0], maxis[1], minis[2], 1.0f),
+		glm::vec4(minis[0], maxis[1], maxis[2], 1.0f),
+		glm::vec4(maxis[0], minis[1], minis[2], 1.0f),
+		glm::vec4(maxis[0], minis[1], maxis[2], 1.0f),
+		glm::vec4(maxis[0], maxis[1], minis[2], 1.0f),
+		glm::vec4(maxis[0], maxis[1], maxis[2], 1.0f)};
+}
+
 glm::vec3 BoundingBox::getCentroid() const {
 	return 0.5f * (minis + maxis);
 }
 
 BoundingBox BoundingBox::transformed(const glm::mat4 & trans) const {
 	BoundingBox newBox;
-	const std::vector<glm::vec3> corners = getCorners();
-	newBox.minis						 = glm::vec3(trans * glm::vec4(corners[0], 1.0f));
+	const std::vector<glm::vec4> corners = getHomogeneousCorners();
+
+	newBox.minis						 = glm::vec3(trans * corners[0]);
 	newBox.maxis						 = newBox.minis;
-	for(size_t i = 0; i < 8; ++i) {
-		const glm::vec3 transformedCorner = glm::vec3(trans * glm::vec4(corners[i], 1.0f));
+	for(size_t i = 1; i < 8; ++i) {
+		const glm::vec3 transformedCorner = glm::vec3(trans * corners[i]);
 		newBox.minis					  = glm::min(newBox.minis, transformedCorner);
 		newBox.maxis					  = glm::max(newBox.maxis, transformedCorner);
 	}

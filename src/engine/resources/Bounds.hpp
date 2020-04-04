@@ -62,6 +62,12 @@ public:
 	 */
 	std::vector<glm::vec3> getCorners() const;
 
+	/** Query the homogeneous positions of the eight corners of the box, in the following order (with \p m=mini, \p M=maxi):
+	 \p (m,m,m,1), \p (m,m,M,1), \p (m,M,m,1), \p (m,M,M,1), \p (M,m,m,1), \p (M,m,M,1), \p (M,M,m,1), \p (M,M,M,1)
+	 \return a vector containing the box corners
+	 */
+	std::vector<glm::vec4> getHomogeneousCorners() const;
+
 	/** Query the center of the bounding box.
 	 \return the centroid
 	 */
