@@ -91,24 +91,30 @@ public:
 };
 
 
-
+/** Represent a 3D frustum, volume defined by the intersection of six planes.
+  \ingroup Resources
+ */
 class Frustum {
 public:
 
+	/**Create a frustum from a view-projection matrix.
+	 \param vp the matrix defining the frustum
+	 */
 	Frustum(const glm::mat4 & vp);
 
 	/** Indicate if a bounding box intersect this frustum.
 	\param box the bounding box to test
-	\return true if the bounding box intersects the frustum
+	\return true if the bounding box intersects the frustum.
 	*/
 	bool intersects(const BoundingBox & box) const;
 	
 private:
 
+	/** Helper enum for the frustum plane locations. */
 	enum FrustumPlane : uint {
 		LEFT = 0, RIGHT = 1, TOP = 2, BOTTOM = 3, NEAR = 4, FAR = 5, COUNT = 6
 	};
 
-	std::array<glm::vec4, FrustumPlane::COUNT> _planes;
-	std::array<glm::vec3, 8> _corners;
+	std::array<glm::vec4, FrustumPlane::COUNT> _planes; ///< Frustum hyperplane coefficients.
+	std::array<glm::vec3, 8> _corners; ///< Frustum corners.
 };

@@ -18,8 +18,8 @@ uniform vec3 shCoeffs[9]; ///< SH approximation of the environment irradiance.
 uniform mat4 inverseV; ///< The view to world transformation matrix.
 uniform float maxLod; ///< Mip level count for background map.
 
-uniform int lightsCount;
-// Store the lights in a continuous buffer (UBO).
+uniform int lightsCount; ///< Number of active lights.
+/// Store the lights in a continuous buffer (UBO).
 layout(std140) uniform Lights {
 	GPULight lights[MAX_LIGHTS_COUNT];
 };

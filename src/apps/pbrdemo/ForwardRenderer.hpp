@@ -17,7 +17,7 @@
 
 
 /**
- \brief
+ \brief A renderer that shade each object as it is drawn in the scene directly.
  \ingroup DeferredRendering
  */
 class ForwardRenderer final : public Renderer {
@@ -75,10 +75,9 @@ private:
 	const Program * _bgProgram;		///< Planar background program.
 	const Program * _atmoProgram;   ///< Atmospheric scattering program.
 
-	const Texture * _textureBrdf;
+	const Texture * _textureBrdf; ///< The BRDF lookup table.
 
-
-	std::shared_ptr<Scene> _scene; 						 ///< The scene to render
+	std::shared_ptr<Scene> _scene; ///< The scene to render
 	
 	bool _debugVisualization = false; ///< Toggle the rendering of debug informations in the scene.
 	//bool _applySSAO			 = true;  ///< Screen space ambient occlusion.

@@ -57,7 +57,7 @@ public:
 	 */
 	static std::vector<std::string> split(const std::string & str, const std::string & delimiter, bool skipEmpty);
 	
-	/** Split a string into a list of lines. This function supports both '\n' and '\r\n'.
+	/** Split a string into a list of lines. This function supports both '\\n' and '\\r\\n'.
 	 \param str the string to split
 	 \param skipEmpty should empty lines be ignored
 	 \return a list of lines

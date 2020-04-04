@@ -24,8 +24,8 @@ uniform mat4 inverseV; ///< The view to world transformation matrix.
 uniform float maxLod; ///< Mip level count for background map.
 uniform mat4 p; ///< Projection matrix.
 
-uniform int lightsCount;
-// Store the lights in a continuous buffer (UBO).
+uniform int lightsCount; ///< Number of active lights.
+/// Store the lights in a continuous buffer (UBO).
 layout(std140) uniform Lights {
 	GPULight lights[MAX_LIGHTS_COUNT];
 };
@@ -34,6 +34,7 @@ uniform samplerCube shadowMapsCube[MAX_LIGHTS_COUNT];
 
 layout (location = 0) out vec3 fragColor; ///< Color.
 
+/** Shade the object, applying parallax mapping. */
 void main(){
 	
 	vec2 localUV = In.uv;

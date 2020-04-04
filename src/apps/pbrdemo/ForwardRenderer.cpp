@@ -11,8 +11,8 @@ ForwardRenderer::ForwardRenderer(const glm::vec2 & resolution) :
 	_renderResolution		   = resolution;
 	const int renderWidth	   = int(_renderResolution[0]);
 	const int renderHeight	   = int(_renderResolution[1]);
-	const int renderHalfWidth  = int(0.5f * _renderResolution[0]);
-	const int renderHalfHeight = int(0.5f * _renderResolution[1]);
+	//const int renderHalfWidth  = int(0.5f * _renderResolution[0]);
+	//const int renderHalfHeight = int(0.5f * _renderResolution[1]);
 
 	// Other framebuffers.
 	//_ssaoPass		  = std::unique_ptr<SSAO>(new SSAO(renderHalfWidth, renderHalfHeight, 0.5f));
