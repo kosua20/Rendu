@@ -109,6 +109,7 @@ void Object::addAnimation(const std::shared_ptr<Animation> & anim) {
 
 void Object::set(const glm::mat4 & model){
 	_model.reset(model);
+	_dirtyBbox = true;
 }
 
 void Object::update(double fullTime, double frameTime) {
@@ -116,9 +117,16 @@ void Object::update(double fullTime, double frameTime) {
 	for(auto & anim : _animations) {
 		model = anim->apply(model, fullTime, frameTime);
 	}
+	if(!_animations.empty()){
+		_dirtyBbox = true;
+	}
 	_model = model;
 }
 
-BoundingBox Object::boundingBox() const {
-	return _mesh->bbox.transformed(_model);
+const BoundingBox & Object::boundingBox() const {
+	if(_dirtyBbox){
+		_bbox = _mesh->bbox.transformed(_model);
+		_dirtyBbox = false;
+	}
+	return _bbox;
 }

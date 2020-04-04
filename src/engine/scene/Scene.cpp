@@ -209,7 +209,7 @@ BoundingBox Scene::computeBoundingBox(bool onlyShadowCasters) {
 		return bbox;
 	}
 
-	for(const auto & obj : objects) {
+	for(Object & obj : objects) {
 		if(onlyShadowCasters && !obj.castsShadow()) {
 			continue;
 		}

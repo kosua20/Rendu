@@ -52,11 +52,11 @@ public:
 	 */
 	virtual void update(double fullTime, double frameTime);
 
-	/** Query the bounding box of the object.
+	/** Query the bounding box of the object in world space.
 	 \return the bounding box
 	 \note For mesh space bounding box, call boundingBox on mesh().
 	 */
-	BoundingBox boundingBox() const;
+	const BoundingBox & boundingBox() const;
 
 	/** Mesh getter.
 	 \return the mesh infos
@@ -145,8 +145,10 @@ protected:
 	std::vector<const Texture *> _textures;				 ///< Textures used by the object.
 	std::vector<std::shared_ptr<Animation>> _animations; ///< Animations list (applied in order).
 	Animated<glm::mat4> _model { glm::mat4(1.0f) };		///< The transformation matrix of the 3D model, updated by the animations.
+	mutable BoundingBox _bbox;							///< The world space object bounding box.
 	Type _material   = Type::Common;					 ///< The material type.
 	bool _castShadow = true;							 ///< Can the object casts shadows.
 	bool _twoSided   = false;							 ///< Should faces of the object be visible from the two sides.
 	bool _masked	 = false;							 ///< The object RGB texture has a non-empty alpha channel.
+	mutable bool _dirtyBbox  = true;					 ///< Has the bounding box been updated following an animation update.
 };
