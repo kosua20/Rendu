@@ -59,7 +59,7 @@ VarianceShadowMapCube::VarianceShadowMapCube(const std::shared_ptr<PointLight> &
 	_light = light;
 	const Descriptor descriptor = {Layout::RG16F, Filter::LINEAR, Wrap::CLAMP};
 	_map = std::unique_ptr<FramebufferCube>(new FramebufferCube(side, descriptor, FramebufferCube::CubeMode::COMBINED, true));
-	_program = Resources::manager().getProgram("object_layer_depth", "object_layer", "light_shadow_linear_variance", "object_layer");
+	_program = Resources::manager().getProgram("object_layer_depth", "object_layer", "light_shadow_linear_variance_layer", "object_layer");
 	_light->registerShadowMap(_map->textureId());
 }
 
