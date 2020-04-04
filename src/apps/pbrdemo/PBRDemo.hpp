@@ -42,6 +42,7 @@ public:
 
 private:
 
+	/** The type of renderer used to display the scene. */
 	enum class RendererMode : int {
 		DEFERRED, FORWARD
 	};
@@ -60,10 +61,15 @@ private:
 	std::vector<std::shared_ptr<Scene>> _scenes; ///< The existing scenes.
 	std::vector<std::string> _sceneNames; ///< The associated scene names.
 
-	RendererMode _mode	 = RendererMode::DEFERRED;
+	GPUQuery _shadowTime = GPUQuery(GPUQuery::Type::TIME_ELAPSED); ///< Timing for the shadow mapping.
+	GPUQuery _rendererTime = GPUQuery(GPUQuery::Type::TIME_ELAPSED); ///< Timing for the scene rendering.
+	GPUQuery _postprocessTime = GPUQuery(GPUQuery::Type::TIME_ELAPSED); ///< Timing for the postprocessing.
+
+	RendererMode _mode	 = RendererMode::DEFERRED; ///< Active renderer.
 	size_t _currentScene = 0; ///< Currently selected scene.
 	glm::vec2 _cplanes  = glm::vec2(0.01f, 100.0f); ///< Camera clipping planes.
 	float _cameraFOV	= 50.0f; ///< Camera field of view in degrees.
 	bool _paused		= false; ///< Pause animations.
 	bool _updateShadows = true; ///< Update the shadow maps.
+
 };

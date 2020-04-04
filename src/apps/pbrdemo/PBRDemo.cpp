@@ -79,13 +79,18 @@ void PBRDemo::draw() {
 		GLUtilities::clearColorAndDepth({0.2f, 0.2f, 0.2f, 1.0f}, 1.0f);
 		return;
 	}
+	
 	// Light pass.
+	_shadowTime.begin();
 	if(_updateShadows) {
 		for(const auto & map : _shadowMaps) {
 			map->draw(*_scenes[_currentScene]);
 		}
 	}
+	_shadowTime.end();
+
 	// Renderer and postproc passes.
+	_rendererTime.begin();
 	const Texture * result = nullptr;
 	if(_mode == RendererMode::DEFERRED) {
 		_defRenderer->draw(_userCamera);
@@ -94,8 +99,11 @@ void PBRDemo::draw() {
 		_forRenderer->draw(_userCamera);
 		result = _forRenderer->result();
 	}
+	_rendererTime.end();
 
+	_postprocessTime.begin();
 	_postprocess->process(result);
+	_postprocessTime.end();
 
 	// We now render a full screen quad in the default framebuffer, using sRGB space.
 	Framebuffer::backbuffer()->bind(Framebuffer::Mode::SRGB);
@@ -108,9 +116,16 @@ void PBRDemo::draw() {
 void PBRDemo::update() {
 	CameraApp::update();
 
+	// Performances window.
+	if(ImGui::Begin("Performance")){
+		ImGui::Text("%.1f ms, %.1f fps", ImGui::GetIO().DeltaTime * 1000.0f, ImGui::GetIO().Framerate);
+		ImGui::Text("Shadow maps update: %.1fms", float(_shadowTime.value())/1000000.0f);
+		ImGui::Text("Scene rendering: %.1fms", float(_rendererTime.value())/1000000.0f);
+		ImGui::Text("Post processing: %.1fms", float(_postprocessTime.value())/1000000.0f);
+	}
+
 	// First part of the ImGui window is always displayed.
 	if(ImGui::Begin("Renderer")) {
-		ImGui::Text("%.1f ms, %.1f fps", ImGui::GetIO().DeltaTime * 1000.0f, ImGui::GetIO().Framerate);
 		const std::string & currentName = _sceneNames[_currentScene];
 		if(ImGui::BeginCombo("Scene", currentName.c_str(), ImGuiComboFlags_None)) {
 			for(size_t i = 0; i < _sceneNames.size(); ++i) {
@@ -189,14 +204,13 @@ void PBRDemo::update() {
 			}
 		}
 
-
 		ImGui::Checkbox("Pause animation", &_paused); ImGui::SameLine();
 		ImGui::Checkbox("Update shadows", &_updateShadows);
-
 		ImGui::PopItemWidth();
 		ImGui::ColorEdit3("Background", &(_scenes[_currentScene]->backgroundColor[0]), ImGuiColorEditFlags_Float);
 	}
 	ImGui::End();
+
 }
 
 void PBRDemo::physics(double fullTime, double frameTime) {
