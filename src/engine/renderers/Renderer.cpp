@@ -11,3 +11,8 @@ void Renderer::process(const Texture *){
 	assert(false);
 }
 
+void Renderer::interface(){
+	Log::Error() << "Renderer: Unimplemented interface function." << std::endl;
+	assert(false);
+}
+

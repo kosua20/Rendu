@@ -32,7 +32,12 @@ public:
 	 \param height the new height
 	 */
 	virtual void resize(unsigned int width, unsigned int height) = 0;
-	
+
+	/** Display GUI exposing renderer options.
+	 \note The renderer can assume that a GUI window is currently open.
+	 */
+	virtual void interface();
+
 	/** Contains the result of the rendering.
 	 \return the result texture
 	 */
