@@ -15,9 +15,13 @@ FramebufferCube::FramebufferCube(unsigned int side, const Descriptor & descripto
 	_idColor.shape  = TextureShape::Cube;
 	GLUtilities::setupTexture(_idColor, descriptor);
 
-	// Link the texture to the first color attachment (ie output) of the framebuffer.
 	glBindTexture(GL_TEXTURE_CUBE_MAP, _idColor.gpu->id);
-	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, _idColor.gpu->id, 0);
+	// Link the texture to the first color attachment (ie output) of the framebuffer.
+	if(mode == CubeMode::COMBINED) {
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, _idColor.gpu->id, 0);
+	} else {
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X, _idColor.gpu->id, 0);
+	}
 	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 
 	if(_useDepth) {
