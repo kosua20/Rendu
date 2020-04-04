@@ -98,3 +98,26 @@ void PostProcessStack::resize(unsigned int width, unsigned int height) {
 	_blurBuffer->resize(hWidth, hHeight);
 	checkGLError();
 }
+
+void PostProcessStack::interface(){
+	ImGui::Checkbox("Bloom  ", &_settings.bloom);
+	if(_settings.bloom) {
+		ImGui::SameLine(120);
+		ImGui::SliderFloat("Th.##Bloom", &_settings.bloomTh, 0.5f, 2.0f);
+
+		ImGui::PushItemWidth(80);
+		if(ImGui::InputInt("Rad.##Bloom", &_settings.bloomRadius, 1, 10)) {
+			updateBlurPass();
+		}
+		ImGui::PopItemWidth();
+		ImGui::SameLine(120);
+		ImGui::SliderFloat("Mix##Bloom", &_settings.bloomMix, 0.0f, 1.5f);
+	}
+
+	ImGui::Checkbox("Tonemap ", &_settings.tonemap);
+	if(_settings.tonemap) {
+		ImGui::SameLine(120);
+		ImGui::SliderFloat("Exposure", &_settings.exposure, 0.1f, 10.0f);
+	}
+	ImGui::Checkbox("FXAA", &_settings.fxaa);
+}

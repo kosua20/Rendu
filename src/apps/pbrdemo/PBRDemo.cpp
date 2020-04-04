@@ -140,87 +140,60 @@ void PBRDemo::update() {
 
 	// Reopen the Imgui window.
 	if(ImGui::Begin("Renderer")) {
-		ImGui::Separator();
 
 		ImGui::PushItemWidth(110);
-		ImGui::Combo("Camera mode", reinterpret_cast<int *>(&_userCamera.mode()), "FPS\0Turntable\0Joystick\0\0", 3);
-		ImGui::InputFloat("Camera speed", &_userCamera.speed(), 0.1f, 1.0f);
-		if(ImGui::InputFloat("Camera FOV", &_cameraFOV, 1.0f, 10.0f)) {
-			_userCamera.fov(_cameraFOV * glm::pi<float>() / 180.0f);
-		}
-		ImGui::PopItemWidth();
-
-		if(ImGui::DragFloat2("Planes", static_cast<float *>(&_cplanes[0]))) {
-			_userCamera.frustum(_cplanes[0], _cplanes[1]);
-		}
-
-		if(ImGui::Button("Copy camera", ImVec2(104, 0))) {
-			const std::string camDesc = Codable::encode({_userCamera.encode()});
-			ImGui::SetClipboardText(camDesc.c_str());
-		}
-		ImGui::SameLine();
-		if(ImGui::Button("Paste camera", ImVec2(104, 0))) {
-			const std::string camDesc(ImGui::GetClipboardText());
-			const auto cameraCode = Codable::decode(camDesc);
-			if(!cameraCode.empty()) {
-				_userCamera.decode(cameraCode[0]);
-				_cameraFOV = _userCamera.fov() * 180.0f / glm::pi<float>();
-				_cplanes   = _userCamera.clippingPlanes();
-			}
-		}
-
-		ImGui::Separator();
-
-		ImGui::Combo("Renderer mode", reinterpret_cast<int *>(&_mode), "Deferred\0Forward\0\0");
-
-		ImGui::PushItemWidth(110);
+		ImGui::Combo("Renderer##picklist", reinterpret_cast<int *>(&_mode), "Deferred\0Forward\0\0");
 		if(ImGui::InputInt("Vertical res.", &_config.internalVerticalResolution, 50, 200)) {
 			_config.internalVerticalResolution = std::max(8, _config.internalVerticalResolution);
 			resize();
 		}
 
-		ImGui::Checkbox("Bloom  ", &_postprocess->settings().bloom);
-		if(_postprocess->settings().bloom) {
-			ImGui::SameLine(120);
-			ImGui::SliderFloat("Th.##Bloom", &_postprocess->settings().bloomTh, 0.5f, 2.0f);
+		if(ImGui::CollapsingHeader("Renderer##options")){
+			if(_mode == RendererMode::DEFERRED){
+				_defRenderer->interface();
+			} else {
+				_forRenderer->interface();
+			}
+		}
 
-			ImGui::PushItemWidth(80);
-			if(ImGui::InputInt("Rad.##Bloom", &_postprocess->settings().bloomRadius, 1, 10)) {
-				_postprocess->updateBlurPass();
+		if(ImGui::CollapsingHeader("Postprocess")){
+			_postprocess->interface();
+		}
+
+		if(ImGui::CollapsingHeader("Camera")){
+			ImGui::PushItemWidth(110);
+			ImGui::Combo("Camera mode", reinterpret_cast<int *>(&_userCamera.mode()), "FPS\0Turntable\0Joystick\0\0", 3);
+			ImGui::InputFloat("Camera speed", &_userCamera.speed(), 0.1f, 1.0f);
+			if(ImGui::InputFloat("Camera FOV", &_cameraFOV, 1.0f, 10.0f)) {
+				_userCamera.fov(_cameraFOV * glm::pi<float>() / 180.0f);
 			}
 			ImGui::PopItemWidth();
-			ImGui::SameLine(120);
-			ImGui::SliderFloat("Mix##Bloom", &_postprocess->settings().bloomMix, 0.0f, 1.5f);
+
+			if(ImGui::DragFloat2("Planes", static_cast<float *>(&_cplanes[0]))) {
+				_userCamera.frustum(_cplanes[0], _cplanes[1]);
+			}
+
+			if(ImGui::Button("Copy camera", ImVec2(104, 0))) {
+				const std::string camDesc = Codable::encode({_userCamera.encode()});
+				ImGui::SetClipboardText(camDesc.c_str());
+			}
+			ImGui::SameLine();
+			if(ImGui::Button("Paste camera", ImVec2(104, 0))) {
+				const std::string camDesc(ImGui::GetClipboardText());
+				const auto cameraCode = Codable::decode(camDesc);
+				if(!cameraCode.empty()) {
+					_userCamera.decode(cameraCode[0]);
+					_cameraFOV = _userCamera.fov() * 180.0f / glm::pi<float>();
+					_cplanes   = _userCamera.clippingPlanes();
+				}
+			}
 		}
 
-		bool & applySSAO = (_mode == RendererMode::DEFERRED ? _defRenderer->applySSAO() : _forRenderer->applySSAO());
-		float & radiusSSAO = (_mode == RendererMode::DEFERRED ? _defRenderer->radiusSSAO() : _forRenderer->radiusSSAO());
-		ImGui::Checkbox("SSAO", &applySSAO);
-		if(applySSAO) {
-			ImGui::SameLine(120);
-			ImGui::InputFloat("Radius", &radiusSSAO, 0.5f);
-		}
 
-		ImGui::Checkbox("Tonemap ", &_postprocess->settings().tonemap);
-		if(_postprocess->settings().tonemap) {
-			ImGui::SameLine(120);
-			ImGui::SliderFloat("Exposure", &_postprocess->settings().exposure, 0.1f, 10.0f);
-		}
-		ImGui::Checkbox("FXAA", &_postprocess->settings().fxaa);
-
-		ImGui::Separator();
-		bool & showLights = (_mode == RendererMode::DEFERRED ? _defRenderer->showLights() : _forRenderer->showLights());
-		ImGui::Checkbox("Debug", &showLights);
-		ImGui::SameLine();
-		ImGui::Checkbox("Pause", &_paused);
-
-		ShadowMode & shadowMode = (_mode == RendererMode::DEFERRED ? _defRenderer->shadowMode() : _forRenderer->shadowMode());
-		ImGui::Combo("Shadow technique", reinterpret_cast<int*>(&shadowMode), "None\0Basic\0Variance\0\0");
-		ImGui::SameLine();
-		ImGui::Checkbox("Update", &_updateShadows);
+		ImGui::Checkbox("Pause animation", &_paused); ImGui::SameLine();
+		ImGui::Checkbox("Update shadows", &_updateShadows);
 
 		ImGui::PopItemWidth();
-
 		ImGui::ColorEdit3("Background", &(_scenes[_currentScene]->backgroundColor[0]), ImGuiColorEditFlags_Float);
 	}
 	ImGui::End();

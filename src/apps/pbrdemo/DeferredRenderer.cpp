@@ -195,7 +195,7 @@ void DeferredRenderer::draw(const Camera & camera) {
 	const glm::mat4 & view = camera.view();
 	const glm::mat4 & proj = camera.projection();
 	const glm::vec3 & pos = camera.position();
-	
+
 	// --- Scene pass -------
 	renderScene(view, proj, pos);
 
@@ -241,4 +241,19 @@ void DeferredRenderer::resize(unsigned int width, unsigned int height) {
 	_ssaoPass->resize(hWidth, hHeight);
 	_sceneFramebuffer->resize(_renderResolution);
 	checkGLError();
+	
+}
+
+void DeferredRenderer::interface(){
+	ImGui::Checkbox("Show debug vis.", &_debugVisualization);
+	ImGui::SameLine();
+	ImGui::Checkbox("Freeze culling", &_freezeFrustum);
+	ImGui::Combo("Shadow technique", reinterpret_cast<int*>(&_shadowMode), "None\0Basic\0Variance\0\0");
+	ImGui::Checkbox("SSAO", &_applySSAO);
+	if(_applySSAO) {
+		ImGui::SameLine(120);
+		ImGui::InputFloat("Radius", &_ssaoPass->radius(), 0.5f);
+	}
+
+
 }

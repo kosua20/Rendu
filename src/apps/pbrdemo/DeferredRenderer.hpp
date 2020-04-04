@@ -53,26 +53,9 @@ public:
 	/** \copydoc Renderer::resize
 	 */
 	void resize(unsigned int width, unsigned int height) override;
-	
-	/** Display lights wireframe representation.
-	 \return the toggle
-	 */
-	bool & showLights(){ return _debugVisualization; }
-	
-	/** Apply screenspace ambient occlusion.
-	 \return the toggle
-	 */
-	bool & applySSAO(){ return _applySSAO; }
-	
-	/** Get the SSAO occlusion search radius.
-	 \return the radius
-	 */
-	float & radiusSSAO(){ return _ssaoPass->radius(); }
 
-	/** Shadow mapping technique.
-	 \return the current technique
-	 */
-	ShadowMode & shadowMode(){ return _shadowMode; }
+	/** \copydoc Renderer::interface */
+	void interface() override;
 
 private:
 	

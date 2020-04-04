@@ -42,26 +42,9 @@ public:
 	/** \copydoc Renderer::resize
 	 */
 	void resize(unsigned int width, unsigned int height) override;
-	
-	/** Display lights wireframe representation.
-	 \return the toggle
-	 */
-	bool & showLights(){ return _debugVisualization; }
-	
-	/** Apply screenspace ambient occlusion.
-	 \return the toggle
-	 */
-	bool & applySSAO(){ return _applySSAO; }
-	
-	/** Get the SSAO occlusion search radius.
-	 \return the radius
-	 */
-	float & radiusSSAO(){ return _ssaoPass->radius(); }
 
-	/** Shadow mapping technique.
-	 \return the current technique
-	 */
-	ShadowMode & shadowMode(){ return _shadowMode; }
+	/** \copydoc Renderer::interface */
+	void interface() override;
 
 private:
 
@@ -80,7 +63,7 @@ private:
 	void renderBackground(const glm::mat4 & view, const glm::mat4 & proj, const glm::vec3 & pos);
 
 	std::unique_ptr<Framebuffer> _sceneFramebuffer; ///< Scene framebuffer
-	std::unique_ptr<SSAO> _ssaoPass;				///< SSAO processing.
+	//std::unique_ptr<SSAO> _ssaoPass;				///< SSAO processing.
 	std::unique_ptr<ForwardLight> _lightGPUData;	///< The lights renderer.
 	DebugLightRenderer _lightDebugRenderer;			///< The lights debug renderer.
 	
@@ -98,7 +81,7 @@ private:
 	std::shared_ptr<Scene> _scene; 						 ///< The scene to render
 	
 	bool _debugVisualization = false; ///< Toggle the rendering of debug informations in the scene.
-	bool _applySSAO			 = true;  ///< Screen space ambient occlusion.
+	//bool _applySSAO			 = true;  ///< Screen space ambient occlusion.
 	ShadowMode  _shadowMode	 = ShadowMode::VARIANCE;  ///< Shadow mapping technique to use.
 
 	glm::mat4 _frustumMat = glm::mat4(1.0f); ///< View projection matrix backup.

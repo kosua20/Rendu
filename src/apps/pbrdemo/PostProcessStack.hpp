@@ -36,6 +36,10 @@ public:
 	 */
 	void process(const Texture * texture) override;
 
+	/** \copydoc Renderer::interface
+	 */
+	void interface() override;
+
 	/** \copydoc Renderer::clean
 	 */
 	void clean() override;
@@ -43,17 +47,17 @@ public:
 	/** \copydoc Renderer::resize
 	 */
 	void resize(unsigned int width, unsigned int height) override;
-	
-	/** Update the bloom pass depth based on the current set radius. */
-	void updateBlurPass();
-	
+
 	/** Get the stack settings.
 	 \return a reference to the settings.
 	 */
 	Settings & settings(){ return _settings; }
 	
 private:
-	
+
+	/** Update the bloom pass depth based on the current set radius. */
+	void updateBlurPass();
+
 	std::unique_ptr<Framebuffer> _bloomBuffer; 	 ///< Bloom framebuffer
 	std::unique_ptr<Framebuffer> _toneMapBuffer; ///< Tonemapping framebuffer
 	std::unique_ptr<Framebuffer> _fxaaBuffer;	 ///< FXAA framebuffer

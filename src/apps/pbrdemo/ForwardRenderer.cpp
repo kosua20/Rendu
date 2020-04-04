@@ -15,7 +15,7 @@ ForwardRenderer::ForwardRenderer(const glm::vec2 & resolution) :
 	const int renderHalfHeight = int(0.5f * _renderResolution[1]);
 
 	// Other framebuffers.
-	_ssaoPass		  = std::unique_ptr<SSAO>(new SSAO(renderHalfWidth, renderHalfHeight, 0.5f));
+	//_ssaoPass		  = std::unique_ptr<SSAO>(new SSAO(renderHalfWidth, renderHalfHeight, 0.5f));
 	_sceneFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, Layout::RGBA16F, true));
 
 	_objectProgram		= Resources::manager().getProgram("object_forward");
@@ -230,7 +230,7 @@ void ForwardRenderer::draw(const Camera & camera) {
 
 void ForwardRenderer::clean() {
 	// Clean objects.
-	_ssaoPass->clean();
+	//_ssaoPass->clean();
 	_sceneFramebuffer->clean();
 }
 
@@ -238,10 +238,22 @@ void ForwardRenderer::resize(unsigned int width, unsigned int height) {
 	_renderResolution[0] = float(width);
 	_renderResolution[1] = float(height);
 	//Renderer::updateResolution(width, height);
-	const unsigned int hWidth  = uint(_renderResolution[0] / 2.0f);
-	const unsigned int hHeight = uint(_renderResolution[1] / 2.0f);
+	//const unsigned int hWidth  = uint(_renderResolution[0] / 2.0f);
+	//const unsigned int hHeight = uint(_renderResolution[1] / 2.0f);
 	// Resize the framebuffers.
-	_ssaoPass->resize(hWidth, hHeight);
+	//_ssaoPass->resize(hWidth, hHeight);
 	_sceneFramebuffer->resize(_renderResolution);
 	checkGLError();
+}
+
+void ForwardRenderer::interface(){
+	ImGui::Checkbox("Show debug vis.", &_debugVisualization);
+	ImGui::SameLine();
+	ImGui::Checkbox("Freeze culling", &_freezeFrustum);
+	ImGui::Combo("Shadow technique", reinterpret_cast<int*>(&_shadowMode), "None\0Basic\0Variance\0\0");
+	/*ImGui::Checkbox("SSAO", &_applySSAO);
+	if(_applySSAO) {
+		ImGui::SameLine(120);
+		ImGui::InputFloat("Radius", &_ssaoPass->radius(), 0.5f);
+	}*/
 }
