@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Common.hpp"
+#include <array>
 
 /**
  \brief The shape of a texture: dimensions, layers organisation.
@@ -296,4 +297,44 @@ public:
 	
 	/** Move constructor. */
 	GPUMesh(GPUMesh &&) = delete;
+};
+
+/** Represent a GPU query, automatically buffered and retrieved.
+ \warning You cannot have multiple queries of the same type running at the same time.
+ \ingroup Graphics
+ */
+class GPUQuery {
+public:
+
+	/** Type fo query to perform. */
+	enum class Type : uint {
+		TIME_ELAPSED, ///< Time taken by GPU operations between the beginning and end of the query.
+		SAMPLES_DRAWN, ///< Number of samples passing the tests while the query is active.
+		ANY_DRAWN ///< Was any sample drawn while the query was active.
+	};
+
+	/** Constructor.
+	 \param type the metric to query
+	 */
+	GPUQuery(Type type);
+
+	/** Start measuring the metric. */
+	void begin();
+
+	/** End the measurement. */
+	void end();
+
+	/** Query the metric measured at the last frame.
+	 Unit used is nanoseconds for timing queries, number of samples for occlusion queries.
+	 \return the raw metric value */
+	uint64_t value();
+
+private:
+
+	static const size_t bufferCount = 3; ///< Number of internal buffered queries.
+	GLenum _internalType; ///< OpenGL query type.
+	std::array<GLuint, bufferCount> _ids; ///< OpenGL query object IDs.
+	size_t _current = 0; ///< Current query in use.
+	bool _running = false; ///< Is a measurement currently taking place.
+
 };

@@ -172,3 +172,51 @@ bool Descriptor::operator==(const Descriptor & other) const {
 bool Descriptor::isSRGB() const {
 	return _typedFormat == Layout::SRGB8 || _typedFormat == Layout::SRGB8_ALPHA8;
 }
+
+GPUQuery::GPUQuery(Type type) {
+	static const std::map<GPUQuery::Type, GLenum> types = {
+		{ Type::TIME_ELAPSED, GL_TIME_ELAPSED},
+		{ Type::SAMPLES_DRAWN, GL_SAMPLES_PASSED},
+		{ Type::ANY_DRAWN, GL_ANY_SAMPLES_PASSED}
+	};
+	_internalType = types.at(type);
+	glGenQueries(GLsizei(_ids.size()), &_ids[0]);
+	// Do dummy initial queries.
+	for(int i = 0; i < 2; ++i){
+		begin();
+		end();
+	}
+}
+
+void GPUQuery::begin(){
+	if(_running){
+		Log::Warning() << "A query is already running. Ignoring the restart." << std::endl;
+		return;
+	}
+	glBeginQuery(_internalType, _ids[_current]);
+	_running = true;
+}
+
+void GPUQuery::end(){
+	if(!_running){
+		Log::Warning() << "No query running currently. Ignoring the stop." << std::endl;
+		return;
+	}
+	glEndQuery(_internalType);
+	_running = false;
+	_current = (_current + 1) % _ids.size();
+}
+
+uint64_t GPUQuery::value(){
+	if(_running){
+		Log::Warning() << "A query is currently running, stopping it first." << std::endl;
+		end();
+	}
+	// We have incremented to the next query index when ending.
+	// Furthermore, the previous index was done at the same frame, so low chance of it being ready.
+	// So fetch two before, except if we only have one query (will stall).
+	const size_t finished = _ids.size() == 1 ? 0 : ((_current + _ids.size() - 2) % _ids.size());
+	GLuint64 data = 0;
+	glGetQueryObjectui64v(_ids[finished], GL_QUERY_RESULT, &data);
+	return uint64_t(data);
+}
