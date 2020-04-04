@@ -74,3 +74,53 @@ BoundingBox BoundingBox::transformed(const glm::mat4 & trans) const {
 bool BoundingBox::contains(const glm::vec3 & point) const {
 	return glm::all(glm::greaterThanEqual(point, minis)) && glm::all(glm::lessThanEqual(point, maxis));
 }
+
+
+Frustum::Frustum(const glm::mat4 & vp){
+	// We have to access rows easily, so transpose.
+	const glm::mat4 tvp = glm::transpose(vp);
+	const glm::mat4 ivp = glm::inverse(vp);
+	// Based on Fast Extraction of Viewing Frustum Planes from the World- View-Projection Matrix, G. Gribb, K. Hartmann
+	// (https://www.gamedevs.org/uploads/fast-extraction-viewing-frustum-planes-from-world-view-projection-matrix.pdf)
+	_planes[LEFT]   = tvp[3] + tvp[0];
+	_planes[RIGHT]  = tvp[3] - tvp[0];
+	_planes[TOP]    = tvp[3] - tvp[1];
+	_planes[BOTTOM] = tvp[3] + tvp[1];
+	_planes[NEAR]   = tvp[3] + tvp[2];
+	_planes[FAR]    = tvp[3] - tvp[2];
+
+	// Reproject the 8 corners of the frustum from NDC to world space.
+	static const std::array<glm::vec4, 8> ndcCorner = {
+		glm::vec4(-1.0f, -1.0f, -1.0f, 1.0f),
+		glm::vec4(-1.0f, -1.0f,  1.0f, 1.0f),
+		glm::vec4(-1.0f,  1.0f, -1.0f, 1.0f),
+		glm::vec4(-1.0f,  1.0f,  1.0f, 1.0f),
+		glm::vec4( 1.0f, -1.0f, -1.0f, 1.0f),
+		glm::vec4( 1.0f, -1.0f,  1.0f, 1.0f),
+		glm::vec4( 1.0f,  1.0f, -1.0f, 1.0f),
+		glm::vec4( 1.0f,  1.0f,  1.0f, 1.0f)};
+
+	for(uint i = 0; i < 8; ++i){
+		const glm::vec4 corn = ivp * ndcCorner[i];
+		_corners[i] = glm::vec3(corn) / corn[3];
+	}
+}
+
+bool Frustum::intersects(const BoundingBox & box) const {
+	const std::vector<glm::vec4> corners = box.getHomogeneousCorners();
+	// For each of the frustum planes, check if all points are in the "outside" half-space.
+	for(uint pid = 0; pid < FrustumPlane::COUNT; ++pid){
+		if((glm::dot(_planes[pid], corners[0]) < 0.0) &&
+		   (glm::dot(_planes[pid], corners[1]) < 0.0) &&
+		   (glm::dot(_planes[pid], corners[2]) < 0.0) &&
+		   (glm::dot(_planes[pid], corners[3]) < 0.0) &&
+		   (glm::dot(_planes[pid], corners[4]) < 0.0) &&
+		   (glm::dot(_planes[pid], corners[5]) < 0.0) &&
+		   (glm::dot(_planes[pid], corners[6]) < 0.0) &&
+		   (glm::dot(_planes[pid], corners[7]) < 0.0)){
+			return false;
+		}
+	}
+	/// \todo Implement frustum corner checks to weed out more false positives.
+	return true;
+}

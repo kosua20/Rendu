@@ -1,5 +1,6 @@
 #pragma once
 #include "Common.hpp"
+#include <array>
 
 /**
  \brief Represent the sphere of smallest radius containing a given object or region of space.
@@ -87,4 +88,27 @@ public:
 
 	glm::vec3 minis = glm::vec3(std::numeric_limits<float>::max());	///< Lower-back-left corner of the box.
 	glm::vec3 maxis = glm::vec3(std::numeric_limits<float>::lowest()); ///< Higher-top-right corner of the box.
+};
+
+
+
+class Frustum {
+public:
+
+	Frustum(const glm::mat4 & vp);
+
+	/** Indicate if a bounding box intersect this frustum.
+	\param box the bounding box to test
+	\return true if the bounding box intersects the frustum
+	*/
+	bool intersects(const BoundingBox & box) const;
+	
+private:
+
+	enum FrustumPlane : uint {
+		LEFT = 0, RIGHT = 1, TOP = 2, BOTTOM = 3, NEAR = 4, FAR = 5, COUNT = 6
+	};
+
+	std::array<glm::vec4, FrustumPlane::COUNT> _planes;
+	std::array<glm::vec3, 8> _corners;
 };
