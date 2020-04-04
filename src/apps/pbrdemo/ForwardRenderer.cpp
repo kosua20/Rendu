@@ -58,8 +58,17 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 
 	const float cubeLod		= float(_scene->backgroundReflection->levels - 1);
 	const glm::mat4 invView = glm::inverse(view);
-	// Render all objects.
+	// Build the camera frustum for culling.
+	if(!_freezeFrustum){
+		_frustumMat = proj*view;
+	}
+	const Frustum camFrustum(_frustumMat);
+	// Scene objects.
 	for(auto & object : _scene->objects) {
+		// Check visibility.
+		if(!camFrustum.intersects(object.boundingBox())){
+			continue;
+		}
 		// Combine the three matrices.
 		const glm::mat4 MV	= view * object.model();
 		const glm::mat4 MVP = proj * MV;

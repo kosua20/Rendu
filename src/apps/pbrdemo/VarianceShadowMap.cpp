@@ -20,9 +20,15 @@ void VarianceShadowMap2D::draw(const Scene & scene) const {
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
 	_program->use();
-	
+
+	const Frustum lightFrustum(_light->vp());
+
 	for(auto & object : scene.objects) {
 		if(!object.castsShadow()) {
+			continue;
+		}
+		// Frustum culling.
+		if(!lightFrustum.intersects(object.boundingBox())){
 			continue;
 		}
 		if(object.twoSided()) {

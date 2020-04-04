@@ -110,4 +110,7 @@ private:
 	bool _debugVisualization = false; ///< Toggle the rendering of debug informations in the scene.
 	bool _applySSAO			 = true;  ///< Screen space ambient occlusion.
 	ShadowMode  _shadowMode	 = ShadowMode::VARIANCE;  ///< Shadow mapping technique to use.
+
+	glm::mat4 _frustumMat = glm::mat4(1.0f); ///< View projection matrix backup.
+	bool _freezeFrustum = false;			 ///< Freeze the frustum used for culling.
 };

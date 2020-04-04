@@ -62,8 +62,17 @@ void DeferredRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & pro
 	// Clear the depth buffer (we know we will draw everywhere, no need to clear color).
 	GLUtilities::clearDepth(1.0f);
 
+	// Build the camera frustum for culling.
+	if(!_freezeFrustum){
+		_frustumMat = proj*view;
+	}
+	const Frustum camFrustum(_frustumMat);
 	// Scene objects.
 	for(auto & object : _scene->objects) {
+		// Check visibility.
+		if(!camFrustum.intersects(object.boundingBox())){
+			continue;
+		}
 		// Combine the three matrices.
 		const glm::mat4 MV  = view * object.model();
 		const glm::mat4 MVP = proj * MV;
