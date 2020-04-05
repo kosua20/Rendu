@@ -55,64 +55,6 @@ void VarianceShadowMap2D::clean(){
 	_map->clean();
 }
 
-
-//#define CUBEMAP_VER
-
-#ifdef CUBEMAP_VER
-VarianceShadowMapCube::VarianceShadowMapCube(const std::shared_ptr<PointLight> & light, int side){
-	_light = light;
-	const Descriptor descriptor = {Layout::RG16F, Filter::LINEAR, Wrap::CLAMP};
-	_map = std::unique_ptr<FramebufferCube>(new FramebufferCube(side, descriptor, FramebufferCube::CubeMode::COMBINED, true));
-	_program = Resources::manager().getProgram("object_layer_depth", "object_layer", "light_shadow_linear_variance_layer", "object_layer");
-	_light->registerShadowMap(_map->textureId());
-}
-
-void VarianceShadowMapCube::draw(const Scene & scene) const {
-	if(!_light->castsShadow()){
-		return;
-	}
-	
-	static std::array<std::string, 6> uniformNames = {"vps[0]", "vps[1]", "vps[2]", "vps[3]", "vps[4]", "vps[5]"};
-	
-	_map->bind();
-	_map->setViewport();
-	GLUtilities::clearColorAndDepth(glm::vec4(1.0f), 1.0f);
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
-	
-	_program->use();
-	// Udpate the light vp matrices.
-	const auto & faces = _light->vpFaces();
-	for(size_t mid = 0; mid < 6; ++mid) {
-		_program->uniform(uniformNames[mid], faces[mid]);
-	}
-	// Pass the world space light position, and the projection matrix far plane.
-	_program->uniform("lightPositionWorld", _light->position());
-	_program->uniform("lightFarPlane", _light->farPlane());
-	
-	for(auto & object : scene.objects) {
-		if(!object.castsShadow()) {
-			continue;
-		}
-		if(object.twoSided()) {
-			glDisable(GL_CULL_FACE);
-		}
-		_program->uniform("hasMask", object.masked());
-		if(object.masked()) {
-			GLUtilities::bindTexture(object.textures()[0], 0);
-		}
-		_program->uniform("model", object.model());
-		GLUtilities::drawMesh(*(object.mesh()));
-		glEnable(GL_CULL_FACE);
-	}
-	
-	_map->unbind();
-	// No blurring pass for now.
-	glDisable(GL_DEPTH_TEST);
-}
-
-#else
-
 VarianceShadowMapCube::VarianceShadowMapCube(const std::shared_ptr<PointLight> & light, int side){
 	_light = light;
 	const Descriptor descriptor = {Layout::RG16F, Filter::LINEAR, Wrap::CLAMP};
@@ -136,6 +78,7 @@ void VarianceShadowMapCube::draw(const Scene & scene) const {
 	_program->uniform("lightPositionWorld", _light->position());
 	_program->uniform("lightFarPlane", _light->farPlane());
 	for(int i = 0; i < 6; ++i){
+		// We render each face sequentially, culling objects that are not visible.
 		_map->bind(i);
 		GLUtilities::clearColorAndDepth(glm::vec4(1.0f), 1.0f);
 		const Frustum lightFrustum(faces[i]);
@@ -166,7 +109,6 @@ void VarianceShadowMapCube::draw(const Scene & scene) const {
 	// No blurring pass for now.
 	glDisable(GL_DEPTH_TEST);
 }
-#endif
 
 void VarianceShadowMapCube::clean(){
 	_map->clean();
