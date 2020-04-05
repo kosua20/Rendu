@@ -1,0 +1,5896 @@
+* scene:
+	probe: rgb32cube: kiara_dawn
+	irradiance: kiara_dawn_shcoeffs
+
+* background:
+	color: 0.9,0.9,0.9
+
+* camera:
+	position: 0.0,1.0,2.5
+	center: 0.0,1.0,1.0
+	up: 0.0,1.0,0.0
+	fov: 1.3
+	planes: 0.01,20.0
+
+* object:
+	type: PBRNoUVs
+	mesh: groundplane
+	translation: 0.0,0.0,0.0
+	scaling: 11.0
+	textures:
+		- srgb: 0.8,0.8,0.8 
+		- rgb: default_normal 
+		- rgb: 0.9,0.0,1.0
+	shadows: false
+
+* point:
+	intensity: 6.40094,0.626787,2.84049
+	shadows: true
+	position: -7.74996,1.58798,-8.44429
+	radius: 5.67438
+* point:
+	intensity: 10.1887,9.88024,5.08622
+	shadows: true
+	position: -7.57222,1.93845,-4.2576
+	radius: 5.83403
+* point:
+	intensity: 6.9454,8.28834,2.25535
+	shadows: true
+	position: -8.14466,1.73925,-0.0907011
+	radius: 6.67125
+* point:
+	intensity: 6.4712,12.4573,1.12975
+	shadows: true
+	position: -8.34059,1.52151,3.59927
+	radius: 5.57537
+* point:
+	intensity: 10.997,1.84489,6.9108
+	shadows: true
+	position: -7.80537,1.63067,8.03303
+	radius: 6.85347
+* point:
+	intensity: 15.5757,1.11276,10.2018
+	shadows: true
+	position: -4.39013,2.46281,-8.00772
+	radius: 6.00968
+* point:
+	intensity: 12.7732,6.64252,2.82311
+	shadows: true
+	position: -3.86089,1.55308,-4.23759
+	radius: 6.76884
+* point:
+	intensity: 0.902653,9.94733,8.33813
+	shadows: true
+	position: -4.19584,1.79829,0.224751
+	radius: 5.17321
+* point:
+	intensity: 9.10225,5.79081,11.6184
+	shadows: true
+	position: -4.30179,1.62098,3.65779
+	radius: 6.76952
+* point:
+	intensity: 3.35465,15.0236,8.74869
+	shadows: true
+	position: -4.25648,1.95355,7.70298
+	radius: 5.91599
+* point:
+	intensity: 3.7731,9.86177,4.93539
+	shadows: true
+	position: 0.410295,1.72251,-8.15234
+	radius: 4.77369
+* point:
+	intensity: 7.26493,2.53159,5.82038
+	shadows: true
+	position: 0.183854,1.53068,-4.42153
+	radius: 5.08662
+* point:
+	intensity: 8.40622,6.00266,2.98578
+	shadows: true
+	position: -0.120063,2.16432,-0.250402
+	radius: 5.11488
+* point:
+	intensity: 8.10071,7.32788,16.0991
+	shadows: true
+	position: -0.0144539,2.49152,3.92846
+	radius: 4.03627
+* point:
+	intensity: 5.95167,12.1415,6.20465
+	shadows: true
+	position: 0.37894,2.08831,8.39261
+	radius: 5.84856
+* point:
+	intensity: 10.4632,5.57454,11.3538
+	shadows: true
+	position: 3.51512,1.58513,-8.3244
+	radius: 6.7682
+* point:
+	intensity: 4.62518,3.09822,13.011
+	shadows: true
+	position: 4.29888,2.22287,-4.33381
+	radius: 6.20226
+* point:
+	intensity: 5.60778,12.6973,7.79823
+	shadows: true
+	position: 4.20805,2.07469,0.167954
+	radius: 6.15994
+* point:
+	intensity: 1.23975,10.6608,6.78674
+	shadows: true
+	position: 3.68019,2.19836,4.37808
+	radius: 4.44309
+* point:
+	intensity: 12.4132,1.30646,2.89145
+	shadows: true
+	position: 3.98576,1.82038,7.56534
+	radius: 5.46512
+* point:
+	intensity: 10.3628,10.2626,4.65472
+	shadows: true
+	position: 8.38712,1.5818,-8.15273
+	radius: 5.99949
+* point:
+	intensity: 2.76116,9.95684,3.91066
+	shadows: true
+	position: 7.56285,1.8734,-3.71076
+	radius: 6.95267
+* point:
+	intensity: 7.54362,1.75631,4.71376
+	shadows: true
+	position: 7.76525,2.46104,0.350328
+	radius: 4.2447
+* point:
+	intensity: 4.46534,6.1089,1.90366
+	shadows: true
+	position: 7.5428,1.71859,4.03378
+	radius: 5.60191
+* point:
+	intensity: 2.29659,10.3208,3.76901
+	shadows: true
+	position: 7.55995,1.77503,8.06656
+	radius: 5.86869
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -10.0,0.0,-10.0
+	orientation: 0.0,1.0,0.0 1.43247
+	scaling: 0.400403
+	textures:
+		- rgb: 0.568533,0.0384168,0.462886
+		- rgb: default_normal
+		- rgb: 0.33596,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -10.0,0.438862,-10.0
+	orientation: 0.0,1.0,0.0 0.528604
+	scaling: 0.438862
+	textures:
+		- rgb: 0.3141,0.691835,0.179557
+		- rgb: default_normal
+		- rgb: 0.786895,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -10.0,0.234059,-9.0
+	orientation: 0.0,1.0,0.0 0.265383
+	scaling: 0.234059
+	textures:
+		- rgb: 0.127814,0.786916,0.216038
+		- rgb: default_normal
+		- rgb: 0.259651,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -10.0,0.559086,-8.0
+	orientation: 0.0,1.0,0.0 0.1412
+	scaling: 0.559086
+	textures:
+		- rgb: 0.748707,0.060226,0.880702
+		- rgb: default_normal
+		- rgb: 0.314974,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -10.0,0.521832,-7.0
+	orientation: 0.0,1.0,0.0 1.49509
+	scaling: 0.521832
+	textures:
+		- rgb: 0.125209,0.678792,0.684789
+		- rgb: default_normal
+		- rgb: 0.791278,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -10.0,0.369454,-6.0
+	orientation: 0.0,1.0,0.0 0.765773
+	scaling: 0.369454
+	textures:
+		- rgb: 0.439488,0.190591,0.934291
+		- rgb: default_normal
+		- rgb: 0.16986,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -10.0,0.361108,-5.0
+	orientation: 0.0,1.0,0.0 0.145828
+	scaling: 0.361108
+	textures:
+		- rgb: 0.86963,0.881383,0.242853
+		- rgb: default_normal
+		- rgb: 0.583815,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -10.0,0.215789,-4.0
+	orientation: 0.0,1.0,0.0 0.0840595
+	scaling: 0.215789
+	textures:
+		- rgb: 0.245666,0.427974,0.649516
+		- rgb: default_normal
+		- rgb: 0.230295,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -10.0,0.233066,-3.0
+	orientation: 0.0,1.0,0.0 1.08781
+	scaling: 0.233066
+	textures:
+		- rgb: 0.0311385,0.544308,0.154796
+		- rgb: default_normal
+		- rgb: 0.607589,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -10.0,0.224418,-2.0
+	orientation: 0.0,1.0,0.0 1.21854
+	scaling: 0.224418
+	textures:
+		- rgb: 0.366165,0.876384,0.938936
+		- rgb: default_normal
+		- rgb: 0.00410131,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -10.0,0.567756,-1.0
+	orientation: 0.0,1.0,0.0 0.0440646
+	scaling: 0.567756
+	textures:
+		- rgb: 0.744985,0.378557,0.31386
+		- rgb: default_normal
+		- rgb: 0.00272758,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -10.0,0.477292,0.0
+	orientation: 0.0,1.0,0.0 1.16443
+	scaling: 0.477292
+	textures:
+		- rgb: 0.803216,0.364013,0.287507
+		- rgb: default_normal
+		- rgb: 0.263059,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -10.0,0.527493,1.0
+	orientation: 0.0,1.0,0.0 1.31082
+	scaling: 0.527493
+	textures:
+		- rgb: 0.848859,0.385997,0.210977
+		- rgb: default_normal
+		- rgb: 0.4569,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -10.0,0.499234,2.0
+	orientation: 0.0,1.0,0.0 0.758516
+	scaling: 0.499234
+	textures:
+		- rgb: 0.348902,0.092311,0.874815
+		- rgb: default_normal
+		- rgb: 0.529845,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -10.0,0.469564,3.0
+	orientation: 0.0,1.0,0.0 0.87008
+	scaling: 0.469564
+	textures:
+		- rgb: 0.450858,0.859174,0.101599
+		- rgb: default_normal
+		- rgb: 0.723547,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -10.0,0.275606,4.0
+	orientation: 0.0,1.0,0.0 1.55228
+	scaling: 0.275606
+	textures:
+		- rgb: 0.498911,0.863762,0.422305
+		- rgb: default_normal
+		- rgb: 0.358935,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -10.0,0.193095,5.0
+	orientation: 0.0,1.0,0.0 0.607555
+	scaling: 0.193095
+	textures:
+		- rgb: 0.94888,0.381197,0.201436
+		- rgb: default_normal
+		- rgb: 0.00686622,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -10.0,0.519563,6.0
+	orientation: 0.0,1.0,0.0 0.0797669
+	scaling: 0.519563
+	textures:
+		- rgb: 0.716179,0.170449,0.571013
+		- rgb: default_normal
+		- rgb: 0.0846133,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -10.0,0.443138,7.0
+	orientation: 0.0,1.0,0.0 0.0523093
+	scaling: 0.443138
+	textures:
+		- rgb: 0.52056,0.409648,0.0977022
+		- rgb: default_normal
+		- rgb: 0.12995,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -10.0,0.716335,8.0
+	orientation: 0.0,1.0,0.0 1.14742
+	scaling: 0.716335
+	textures:
+		- rgb: 0.19941,0.812618,0.572987
+		- rgb: default_normal
+		- rgb: 0.74124,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -10.0,0.514047,9.0
+	orientation: 0.0,1.0,0.0 1.51653
+	scaling: 0.514047
+	textures:
+		- rgb: 0.40442,0.345775,0.761678
+		- rgb: default_normal
+		- rgb: 0.707508,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -10.0,0.298471,10.0
+	orientation: 0.0,1.0,0.0 0.304411
+	scaling: 0.298471
+	textures:
+		- rgb: 0.478069,0.729558,0.196162
+		- rgb: default_normal
+		- rgb: 0.406744,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -9.0,0.365744,-10.0
+	orientation: 0.0,1.0,0.0 1.11138
+	scaling: 0.365744
+	textures:
+		- rgb: 0.527362,0.228688,0.240229
+		- rgb: default_normal
+		- rgb: 0.247149,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -9.0,0.661409,-9.0
+	orientation: 0.0,1.0,0.0 0.339313
+	scaling: 0.661409
+	textures:
+		- rgb: 0.894692,0.121528,0.330921
+		- rgb: default_normal
+		- rgb: 0.641721,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -9.0,0.271475,-8.0
+	orientation: 0.0,1.0,0.0 1.55505
+	scaling: 0.271475
+	textures:
+		- rgb: 0.306125,0.330949,0.898734
+		- rgb: default_normal
+		- rgb: 0.02284,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -9.0,0.281269,-7.0
+	orientation: 0.0,1.0,0.0 0.607547
+	scaling: 0.281269
+	textures:
+		- rgb: 0.197844,0.120236,0.758182
+		- rgb: default_normal
+		- rgb: 0.417318,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -9.0,0.467303,-6.0
+	orientation: 0.0,1.0,0.0 1.09583
+	scaling: 0.467303
+	textures:
+		- rgb: 0.512037,0.630524,0.283173
+		- rgb: default_normal
+		- rgb: 0.395306,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -9.0,0.288573,-5.0
+	orientation: 0.0,1.0,0.0 0.641042
+	scaling: 0.288573
+	textures:
+		- rgb: 0.421957,0.0556712,0.579442
+		- rgb: default_normal
+		- rgb: 0.532986,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -9.0,0.776068,-4.0
+	orientation: 0.0,1.0,0.0 1.46753
+	scaling: 0.776068
+	textures:
+		- rgb: 0.555728,0.251062,0.116018
+		- rgb: default_normal
+		- rgb: 0.639939,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -9.0,0.45984,-3.0
+	orientation: 0.0,1.0,0.0 1.3576
+	scaling: 0.45984
+	textures:
+		- rgb: 0.396387,0.292186,0.651577
+		- rgb: default_normal
+		- rgb: 0.648238,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -9.0,0.602646,-2.0
+	orientation: 0.0,1.0,0.0 1.53217
+	scaling: 0.602646
+	textures:
+		- rgb: 0.78653,0.456141,0.160702
+		- rgb: default_normal
+		- rgb: 0.264015,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -9.0,0.277959,-1.0
+	orientation: 0.0,1.0,0.0 0.668023
+	scaling: 0.277959
+	textures:
+		- rgb: 0.894294,0.0637545,0.711526
+		- rgb: default_normal
+		- rgb: 0.368606,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -9.0,0.358232,0.0
+	orientation: 0.0,1.0,0.0 0.764558
+	scaling: 0.358232
+	textures:
+		- rgb: 0.220065,0.903412,0.71646
+		- rgb: default_normal
+		- rgb: 0.623007,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -9.0,0.753529,1.0
+	orientation: 0.0,1.0,0.0 0.80444
+	scaling: 0.753529
+	textures:
+		- rgb: 0.446223,0.185202,0.81726
+		- rgb: default_normal
+		- rgb: 0.459291,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -9.0,0.112238,2.0
+	orientation: 0.0,1.0,0.0 1.28462
+	scaling: 0.112238
+	textures:
+		- rgb: 0.689222,0.589237,0.169055
+		- rgb: default_normal
+		- rgb: 0.47225,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -9.0,0.547967,3.0
+	orientation: 0.0,1.0,0.0 0.901022
+	scaling: 0.547967
+	textures:
+		- rgb: 0.890875,0.670528,0.110727
+		- rgb: default_normal
+		- rgb: 0.71784,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -9.0,0.646863,4.0
+	orientation: 0.0,1.0,0.0 0.575571
+	scaling: 0.646863
+	textures:
+		- rgb: 0.0768953,0.627454,0.198642
+		- rgb: default_normal
+		- rgb: 0.123306,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -9.0,0.523053,5.0
+	orientation: 0.0,1.0,0.0 1.55287
+	scaling: 0.523053
+	textures:
+		- rgb: 0.680065,0.276021,0.160673
+		- rgb: default_normal
+		- rgb: 0.734825,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -9.0,0.22474,6.0
+	orientation: 0.0,1.0,0.0 0.261169
+	scaling: 0.22474
+	textures:
+		- rgb: 0.597319,0.336461,0.815773
+		- rgb: default_normal
+		- rgb: 0.0902045,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -9.0,0.127267,7.0
+	orientation: 0.0,1.0,0.0 0.222828
+	scaling: 0.127267
+	textures:
+		- rgb: 0.378021,0.778241,0.560028
+		- rgb: default_normal
+		- rgb: 0.573705,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -9.0,0.663037,8.0
+	orientation: 0.0,1.0,0.0 0.671563
+	scaling: 0.663037
+	textures:
+		- rgb: 0.673846,0.399002,0.059545
+		- rgb: default_normal
+		- rgb: 0.289953,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -9.0,0.283971,9.0
+	orientation: 0.0,1.0,0.0 0.867361
+	scaling: 0.283971
+	textures:
+		- rgb: 0.896925,0.315409,0.718382
+		- rgb: default_normal
+		- rgb: 0.440299,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -9.0,0.742444,10.0
+	orientation: 0.0,1.0,0.0 0.259871
+	scaling: 0.742444
+	textures:
+		- rgb: 0.253915,0.735446,0.876116
+		- rgb: default_normal
+		- rgb: 0.708854,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -8.0,0.707927,-10.0
+	orientation: 0.0,1.0,0.0 0.345285
+	scaling: 0.707927
+	textures:
+		- rgb: 0.620068,0.266247,0.202365
+		- rgb: default_normal
+		- rgb: 0.48363,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -8.0,0.343868,-9.0
+	orientation: 0.0,1.0,0.0 1.24016
+	scaling: 0.343868
+	textures:
+		- rgb: 0.722043,0.327038,0.418041
+		- rgb: default_normal
+		- rgb: 0.59647,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -8.0,0.719087,-8.0
+	orientation: 0.0,1.0,0.0 1.15004
+	scaling: 0.719087
+	textures:
+		- rgb: 0.156506,0.508031,0.273689
+		- rgb: default_normal
+		- rgb: 0.533102,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -8.0,0.581699,-7.0
+	orientation: 0.0,1.0,0.0 0.269095
+	scaling: 0.581699
+	textures:
+		- rgb: 0.375099,0.927598,0.427802
+		- rgb: default_normal
+		- rgb: 0.67034,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -8.0,0.125589,-6.0
+	orientation: 0.0,1.0,0.0 0.272366
+	scaling: 0.125589
+	textures:
+		- rgb: 0.526065,0.259129,0.762383
+		- rgb: default_normal
+		- rgb: 0.722656,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -8.0,0.459775,-5.0
+	orientation: 0.0,1.0,0.0 0.467847
+	scaling: 0.459775
+	textures:
+		- rgb: 0.875112,0.614085,0.423776
+		- rgb: default_normal
+		- rgb: 0.132225,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -8.0,0.4349,-4.0
+	orientation: 0.0,1.0,0.0 0.624459
+	scaling: 0.4349
+	textures:
+		- rgb: 0.539131,0.0608893,0.642338
+		- rgb: default_normal
+		- rgb: 0.00322115,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -8.0,0.44811,-3.0
+	orientation: 0.0,1.0,0.0 0.28723
+	scaling: 0.44811
+	textures:
+		- rgb: 0.244851,0.138577,0.77062
+		- rgb: default_normal
+		- rgb: 0.658415,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -8.0,0.500466,-2.0
+	orientation: 0.0,1.0,0.0 0.308866
+	scaling: 0.500466
+	textures:
+		- rgb: 0.660351,0.283352,0.901757
+		- rgb: default_normal
+		- rgb: 0.455169,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -8.0,0.215548,-1.0
+	orientation: 0.0,1.0,0.0 0.9447
+	scaling: 0.215548
+	textures:
+		- rgb: 0.692348,0.731292,0.34089
+		- rgb: default_normal
+		- rgb: 0.5395,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -8.0,0.224686,0.0
+	orientation: 0.0,1.0,0.0 0.17361
+	scaling: 0.224686
+	textures:
+		- rgb: 0.605176,0.226179,0.370976
+		- rgb: default_normal
+		- rgb: 0.507614,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -8.0,0.253358,1.0
+	orientation: 0.0,1.0,0.0 0.263544
+	scaling: 0.253358
+	textures:
+		- rgb: 0.754391,0.83183,0.270116
+		- rgb: default_normal
+		- rgb: 0.273486,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -8.0,0.293954,2.0
+	orientation: 0.0,1.0,0.0 0.420943
+	scaling: 0.293954
+	textures:
+		- rgb: 0.731582,0.786275,0.0917272
+		- rgb: default_normal
+		- rgb: 0.00674088,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -8.0,0.154258,3.0
+	orientation: 0.0,1.0,0.0 1.52943
+	scaling: 0.154258
+	textures:
+		- rgb: 0.50094,0.580257,0.095098
+		- rgb: default_normal
+		- rgb: 0.41402,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -8.0,0.111551,4.0
+	orientation: 0.0,1.0,0.0 1.27369
+	scaling: 0.111551
+	textures:
+		- rgb: 0.876783,0.252544,0.101828
+		- rgb: default_normal
+		- rgb: 0.224234,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -8.0,0.527252,5.0
+	orientation: 0.0,1.0,0.0 0.670582
+	scaling: 0.527252
+	textures:
+		- rgb: 0.139147,0.84934,0.40336
+		- rgb: default_normal
+		- rgb: 0.458682,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -8.0,0.10127,6.0
+	orientation: 0.0,1.0,0.0 1.35882
+	scaling: 0.10127
+	textures:
+		- rgb: 0.0893369,0.160603,0.642226
+		- rgb: default_normal
+		- rgb: 0.0292071,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -8.0,0.669926,7.0
+	orientation: 0.0,1.0,0.0 0.742064
+	scaling: 0.669926
+	textures:
+		- rgb: 0.223072,0.50919,0.0635202
+		- rgb: default_normal
+		- rgb: 0.195179,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -8.0,0.365634,8.0
+	orientation: 0.0,1.0,0.0 1.42868
+	scaling: 0.365634
+	textures:
+		- rgb: 0.632428,0.0504522,0.580677
+		- rgb: default_normal
+		- rgb: 0.128006,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -8.0,0.260287,9.0
+	orientation: 0.0,1.0,0.0 0.620368
+	scaling: 0.260287
+	textures:
+		- rgb: 0.710975,0.274357,0.511747
+		- rgb: default_normal
+		- rgb: 0.429937,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -8.0,0.325398,10.0
+	orientation: 0.0,1.0,0.0 0.0316048
+	scaling: 0.325398
+	textures:
+		- rgb: 0.287143,0.558862,0.821284
+		- rgb: default_normal
+		- rgb: 0.348942,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -7.0,0.583413,-10.0
+	orientation: 0.0,1.0,0.0 0.854263
+	scaling: 0.583413
+	textures:
+		- rgb: 0.408794,0.0484928,0.52012
+		- rgb: default_normal
+		- rgb: 0.678996,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -7.0,0.46346,-9.0
+	orientation: 0.0,1.0,0.0 1.19277
+	scaling: 0.46346
+	textures:
+		- rgb: 0.576182,0.384884,0.233794
+		- rgb: default_normal
+		- rgb: 0.407953,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -7.0,0.34456,-8.0
+	orientation: 0.0,1.0,0.0 0.641688
+	scaling: 0.34456
+	textures:
+		- rgb: 0.680535,0.45839,0.0789623
+		- rgb: default_normal
+		- rgb: 0.278176,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -7.0,0.337943,-7.0
+	orientation: 0.0,1.0,0.0 0.0784741
+	scaling: 0.337943
+	textures:
+		- rgb: 0.866063,0.175332,0.743023
+		- rgb: default_normal
+		- rgb: 0.281732,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -7.0,0.183144,-6.0
+	orientation: 0.0,1.0,0.0 0.14737
+	scaling: 0.183144
+	textures:
+		- rgb: 0.569182,0.492384,0.252449
+		- rgb: default_normal
+		- rgb: 0.288259,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -7.0,0.510693,-5.0
+	orientation: 0.0,1.0,0.0 0.413519
+	scaling: 0.510693
+	textures:
+		- rgb: 0.112188,0.0622111,0.70447
+		- rgb: default_normal
+		- rgb: 0.442028,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -7.0,0.788276,-4.0
+	orientation: 0.0,1.0,0.0 0.169687
+	scaling: 0.788276
+	textures:
+		- rgb: 0.221156,0.612683,0.528013
+		- rgb: default_normal
+		- rgb: 0.47821,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -7.0,0.680581,-3.0
+	orientation: 0.0,1.0,0.0 1.52705
+	scaling: 0.680581
+	textures:
+		- rgb: 0.764126,0.170608,0.303825
+		- rgb: default_normal
+		- rgb: 0.452553,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -7.0,0.281044,-2.0
+	orientation: 0.0,1.0,0.0 0.383328
+	scaling: 0.281044
+	textures:
+		- rgb: 0.0718089,0.281023,0.903758
+		- rgb: default_normal
+		- rgb: 0.127691,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -7.0,0.46452,-1.0
+	orientation: 0.0,1.0,0.0 0.667113
+	scaling: 0.46452
+	textures:
+		- rgb: 0.859318,0.1731,0.324048
+		- rgb: default_normal
+		- rgb: 0.425744,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -7.0,0.739656,0.0
+	orientation: 0.0,1.0,0.0 1.12314
+	scaling: 0.739656
+	textures:
+		- rgb: 0.336108,0.817526,0.642144
+		- rgb: default_normal
+		- rgb: 0.0518991,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -7.0,0.12522,1.0
+	orientation: 0.0,1.0,0.0 1.54373
+	scaling: 0.12522
+	textures:
+		- rgb: 0.55405,0.151626,0.246558
+		- rgb: default_normal
+		- rgb: 0.298713,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -7.0,0.559199,2.0
+	orientation: 0.0,1.0,0.0 0.709173
+	scaling: 0.559199
+	textures:
+		- rgb: 0.661218,0.658935,0.283156
+		- rgb: default_normal
+		- rgb: 0.768957,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -7.0,0.562658,3.0
+	orientation: 0.0,1.0,0.0 1.11963
+	scaling: 0.562658
+	textures:
+		- rgb: 0.516603,0.231809,0.338143
+		- rgb: default_normal
+		- rgb: 0.652038,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -7.0,0.735578,4.0
+	orientation: 0.0,1.0,0.0 0.965894
+	scaling: 0.735578
+	textures:
+		- rgb: 0.54425,0.271664,0.06011
+		- rgb: default_normal
+		- rgb: 0.166518,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -7.0,0.43845,5.0
+	orientation: 0.0,1.0,0.0 1.50868
+	scaling: 0.43845
+	textures:
+		- rgb: 0.167875,0.132323,0.662787
+		- rgb: default_normal
+		- rgb: 0.158191,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -7.0,0.571058,6.0
+	orientation: 0.0,1.0,0.0 1.42008
+	scaling: 0.571058
+	textures:
+		- rgb: 0.728919,0.276384,0.935239
+		- rgb: default_normal
+		- rgb: 0.697695,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -7.0,0.575293,7.0
+	orientation: 0.0,1.0,0.0 0.516566
+	scaling: 0.575293
+	textures:
+		- rgb: 0.355371,0.641769,0.118999
+		- rgb: default_normal
+		- rgb: 0.605705,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -7.0,0.593082,8.0
+	orientation: 0.0,1.0,0.0 1.29683
+	scaling: 0.593082
+	textures:
+		- rgb: 0.371501,0.6321,0.0599247
+		- rgb: default_normal
+		- rgb: 0.532151,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -7.0,0.335471,9.0
+	orientation: 0.0,1.0,0.0 1.41385
+	scaling: 0.335471
+	textures:
+		- rgb: 0.613009,0.129251,0.42438
+		- rgb: default_normal
+		- rgb: 0.444648,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -7.0,0.707403,10.0
+	orientation: 0.0,1.0,0.0 0.979501
+	scaling: 0.707403
+	textures:
+		- rgb: 0.420145,0.106936,0.680974
+		- rgb: default_normal
+		- rgb: 0.72346,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -6.0,0.2853,-10.0
+	orientation: 0.0,1.0,0.0 0.98171
+	scaling: 0.2853
+	textures:
+		- rgb: 0.417685,0.0448466,0.583116
+		- rgb: default_normal
+		- rgb: 0.681406,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -6.0,0.253902,-9.0
+	orientation: 0.0,1.0,0.0 1.14025
+	scaling: 0.253902
+	textures:
+		- rgb: 0.815181,0.304584,0.677094
+		- rgb: default_normal
+		- rgb: 0.187719,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -6.0,0.148233,-8.0
+	orientation: 0.0,1.0,0.0 1.40179
+	scaling: 0.148233
+	textures:
+		- rgb: 0.175647,0.500966,0.509135
+		- rgb: default_normal
+		- rgb: 0.205705,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -6.0,0.1686,-7.0
+	orientation: 0.0,1.0,0.0 1.18056
+	scaling: 0.1686
+	textures:
+		- rgb: 0.553595,0.266908,0.363353
+		- rgb: default_normal
+		- rgb: 0.701635,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -6.0,0.476742,-6.0
+	orientation: 0.0,1.0,0.0 0.523764
+	scaling: 0.476742
+	textures:
+		- rgb: 0.814442,0.792316,0.392941
+		- rgb: default_normal
+		- rgb: 0.588394,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -6.0,0.594515,-5.0
+	orientation: 0.0,1.0,0.0 0.2093
+	scaling: 0.594515
+	textures:
+		- rgb: 0.26739,0.592758,0.224221
+		- rgb: default_normal
+		- rgb: 0.138879,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -6.0,0.700361,-4.0
+	orientation: 0.0,1.0,0.0 1.40921
+	scaling: 0.700361
+	textures:
+		- rgb: 0.358484,0.833181,0.32687
+		- rgb: default_normal
+		- rgb: 0.129658,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -6.0,0.22919,-3.0
+	orientation: 0.0,1.0,0.0 1.29707
+	scaling: 0.22919
+	textures:
+		- rgb: 0.231728,0.632889,0.0834173
+		- rgb: default_normal
+		- rgb: 0.572829,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -6.0,0.334034,-2.0
+	orientation: 0.0,1.0,0.0 1.20604
+	scaling: 0.334034
+	textures:
+		- rgb: 0.569332,0.336486,0.0663237
+		- rgb: default_normal
+		- rgb: 0.326675,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -6.0,0.161416,-1.0
+	orientation: 0.0,1.0,0.0 0.957076
+	scaling: 0.161416
+	textures:
+		- rgb: 0.211283,0.603931,0.931334
+		- rgb: default_normal
+		- rgb: 0.52044,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -6.0,0.63919,0.0
+	orientation: 0.0,1.0,0.0 0.0524434
+	scaling: 0.63919
+	textures:
+		- rgb: 0.79215,0.146825,0.829498
+		- rgb: default_normal
+		- rgb: 0.218023,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -6.0,0.213682,1.0
+	orientation: 0.0,1.0,0.0 0.157189
+	scaling: 0.213682
+	textures:
+		- rgb: 0.158305,0.689215,0.822233
+		- rgb: default_normal
+		- rgb: 0.229466,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -6.0,0.655352,2.0
+	orientation: 0.0,1.0,0.0 0.211791
+	scaling: 0.655352
+	textures:
+		- rgb: 0.522847,0.910235,0.439838
+		- rgb: default_normal
+		- rgb: 0.0560361,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -6.0,0.550822,3.0
+	orientation: 0.0,1.0,0.0 0.443933
+	scaling: 0.550822
+	textures:
+		- rgb: 0.752399,0.539009,0.338883
+		- rgb: default_normal
+		- rgb: 0.57389,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -6.0,0.259225,4.0
+	orientation: 0.0,1.0,0.0 0.0982154
+	scaling: 0.259225
+	textures:
+		- rgb: 0.732837,0.743897,0.304238
+		- rgb: default_normal
+		- rgb: 0.19246,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -6.0,0.693042,5.0
+	orientation: 0.0,1.0,0.0 0.88803
+	scaling: 0.693042
+	textures:
+		- rgb: 0.132463,0.771996,0.875213
+		- rgb: default_normal
+		- rgb: 0.540599,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -6.0,0.617546,6.0
+	orientation: 0.0,1.0,0.0 0.343102
+	scaling: 0.617546
+	textures:
+		- rgb: 0.0836068,0.357211,0.505182
+		- rgb: default_normal
+		- rgb: 0.752079,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -6.0,0.216937,7.0
+	orientation: 0.0,1.0,0.0 1.38194
+	scaling: 0.216937
+	textures:
+		- rgb: 0.0766613,0.794224,0.221403
+		- rgb: default_normal
+		- rgb: 0.209659,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -6.0,0.685271,8.0
+	orientation: 0.0,1.0,0.0 0.821266
+	scaling: 0.685271
+	textures:
+		- rgb: 0.46642,0.660495,0.301755
+		- rgb: default_normal
+		- rgb: 0.234842,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -6.0,0.396599,9.0
+	orientation: 0.0,1.0,0.0 1.06876
+	scaling: 0.396599
+	textures:
+		- rgb: 0.7781,0.230322,0.635381
+		- rgb: default_normal
+		- rgb: 0.214119,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -6.0,0.611177,10.0
+	orientation: 0.0,1.0,0.0 0.182259
+	scaling: 0.611177
+	textures:
+		- rgb: 0.220613,0.505127,0.652998
+		- rgb: default_normal
+		- rgb: 0.724383,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -5.0,0.22403,-10.0
+	orientation: 0.0,1.0,0.0 1.30985
+	scaling: 0.22403
+	textures:
+		- rgb: 0.897281,0.796512,0.426392
+		- rgb: default_normal
+		- rgb: 0.676746,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -5.0,0.282605,-9.0
+	orientation: 0.0,1.0,0.0 1.07794
+	scaling: 0.282605
+	textures:
+		- rgb: 0.911542,0.760198,0.267738
+		- rgb: default_normal
+		- rgb: 0.13898,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -5.0,0.295127,-8.0
+	orientation: 0.0,1.0,0.0 0.0642817
+	scaling: 0.295127
+	textures:
+		- rgb: 0.641704,0.327323,0.0893756
+		- rgb: default_normal
+		- rgb: 0.0933454,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -5.0,0.587586,-7.0
+	orientation: 0.0,1.0,0.0 0.876821
+	scaling: 0.587586
+	textures:
+		- rgb: 0.150396,0.236907,0.806419
+		- rgb: default_normal
+		- rgb: 0.417673,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -5.0,0.742793,-6.0
+	orientation: 0.0,1.0,0.0 0.46996
+	scaling: 0.742793
+	textures:
+		- rgb: 0.0495529,0.120948,0.524452
+		- rgb: default_normal
+		- rgb: 0.745651,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -5.0,0.680498,-5.0
+	orientation: 0.0,1.0,0.0 0.824917
+	scaling: 0.680498
+	textures:
+		- rgb: 0.899724,0.219499,0.617091
+		- rgb: default_normal
+		- rgb: 0.314336,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -5.0,0.661624,-4.0
+	orientation: 0.0,1.0,0.0 0.698652
+	scaling: 0.661624
+	textures:
+		- rgb: 0.560842,0.430001,0.0624273
+		- rgb: default_normal
+		- rgb: 0.40953,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -5.0,0.418031,-3.0
+	orientation: 0.0,1.0,0.0 1.31432
+	scaling: 0.418031
+	textures:
+		- rgb: 0.702095,0.18087,0.818316
+		- rgb: default_normal
+		- rgb: 0.636875,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -5.0,0.513575,-2.0
+	orientation: 0.0,1.0,0.0 1.2757
+	scaling: 0.513575
+	textures:
+		- rgb: 0.783433,0.0933925,0.886507
+		- rgb: default_normal
+		- rgb: 0.551677,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -5.0,0.359166,-1.0
+	orientation: 0.0,1.0,0.0 0.488026
+	scaling: 0.359166
+	textures:
+		- rgb: 0.611108,0.183482,0.857165
+		- rgb: default_normal
+		- rgb: 0.313959,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -5.0,0.370899,0.0
+	orientation: 0.0,1.0,0.0 1.46478
+	scaling: 0.370899
+	textures:
+		- rgb: 0.286724,0.748102,0.792947
+		- rgb: default_normal
+		- rgb: 0.00410019,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -5.0,0.508053,1.0
+	orientation: 0.0,1.0,0.0 0.157545
+	scaling: 0.508053
+	textures:
+		- rgb: 0.945791,0.253087,0.860437
+		- rgb: default_normal
+		- rgb: 0.60874,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -5.0,0.502747,2.0
+	orientation: 0.0,1.0,0.0 1.27777
+	scaling: 0.502747
+	textures:
+		- rgb: 0.17446,0.932371,0.587622
+		- rgb: default_normal
+		- rgb: 0.168598,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -5.0,0.554872,3.0
+	orientation: 0.0,1.0,0.0 0.256697
+	scaling: 0.554872
+	textures:
+		- rgb: 0.700024,0.533508,0.306817
+		- rgb: default_normal
+		- rgb: 0.475328,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -5.0,0.476065,4.0
+	orientation: 0.0,1.0,0.0 1.39699
+	scaling: 0.476065
+	textures:
+		- rgb: 0.61923,0.248323,0.429396
+		- rgb: default_normal
+		- rgb: 0.712788,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -5.0,0.556925,5.0
+	orientation: 0.0,1.0,0.0 1.07406
+	scaling: 0.556925
+	textures:
+		- rgb: 0.57626,0.878797,0.417134
+		- rgb: default_normal
+		- rgb: 0.78717,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -5.0,0.745201,6.0
+	orientation: 0.0,1.0,0.0 0.424386
+	scaling: 0.745201
+	textures:
+		- rgb: 0.447225,0.621194,0.232578
+		- rgb: default_normal
+		- rgb: 0.398097,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -5.0,0.325415,7.0
+	orientation: 0.0,1.0,0.0 1.16915
+	scaling: 0.325415
+	textures:
+		- rgb: 0.699047,0.21693,0.121136
+		- rgb: default_normal
+		- rgb: 0.520002,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -5.0,0.601473,8.0
+	orientation: 0.0,1.0,0.0 0.00374993
+	scaling: 0.601473
+	textures:
+		- rgb: 0.221273,0.745421,0.314493
+		- rgb: default_normal
+		- rgb: 0.54681,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -5.0,0.245026,9.0
+	orientation: 0.0,1.0,0.0 0.00195138
+	scaling: 0.245026
+	textures:
+		- rgb: 0.558807,0.387176,0.246896
+		- rgb: default_normal
+		- rgb: 0.183642,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -5.0,0.298951,10.0
+	orientation: 0.0,1.0,0.0 0.77616
+	scaling: 0.298951
+	textures:
+		- rgb: 0.278022,0.496909,0.875546
+		- rgb: default_normal
+		- rgb: 0.42892,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -4.0,0.105656,-10.0
+	orientation: 0.0,1.0,0.0 0.593127
+	scaling: 0.105656
+	textures:
+		- rgb: 0.711647,0.0764387,0.611155
+		- rgb: default_normal
+		- rgb: 0.615039,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -4.0,0.199301,-9.0
+	orientation: 0.0,1.0,0.0 1.49548
+	scaling: 0.199301
+	textures:
+		- rgb: 0.200527,0.655532,0.0886206
+		- rgb: default_normal
+		- rgb: 0.279357,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -4.0,0.437011,-8.0
+	orientation: 0.0,1.0,0.0 0.524156
+	scaling: 0.437011
+	textures:
+		- rgb: 0.296974,0.670554,0.471202
+		- rgb: default_normal
+		- rgb: 0.395765,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -4.0,0.182243,-7.0
+	orientation: 0.0,1.0,0.0 0.757223
+	scaling: 0.182243
+	textures:
+		- rgb: 0.253009,0.558729,0.316149
+		- rgb: default_normal
+		- rgb: 0.206005,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -4.0,0.126547,-6.0
+	orientation: 0.0,1.0,0.0 0.0311262
+	scaling: 0.126547
+	textures:
+		- rgb: 0.0786135,0.662886,0.0585691
+		- rgb: default_normal
+		- rgb: 0.463162,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -4.0,0.453147,-5.0
+	orientation: 0.0,1.0,0.0 0.545436
+	scaling: 0.453147
+	textures:
+		- rgb: 0.399766,0.799068,0.215421
+		- rgb: default_normal
+		- rgb: 0.614609,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -4.0,0.218641,-4.0
+	orientation: 0.0,1.0,0.0 0.988849
+	scaling: 0.218641
+	textures:
+		- rgb: 0.064001,0.636377,0.480484
+		- rgb: default_normal
+		- rgb: 0.495117,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -4.0,0.384462,-3.0
+	orientation: 0.0,1.0,0.0 0.154265
+	scaling: 0.384462
+	textures:
+		- rgb: 0.706632,0.323482,0.588348
+		- rgb: default_normal
+		- rgb: 0.521343,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -4.0,0.147496,-2.0
+	orientation: 0.0,1.0,0.0 1.46488
+	scaling: 0.147496
+	textures:
+		- rgb: 0.121192,0.677429,0.31132
+		- rgb: default_normal
+		- rgb: 0.203356,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -4.0,0.112897,-1.0
+	orientation: 0.0,1.0,0.0 1.00999
+	scaling: 0.112897
+	textures:
+		- rgb: 0.656107,0.627608,0.0945897
+		- rgb: default_normal
+		- rgb: 0.294122,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -4.0,0.327891,0.0
+	orientation: 0.0,1.0,0.0 0.269145
+	scaling: 0.327891
+	textures:
+		- rgb: 0.419585,0.199941,0.822517
+		- rgb: default_normal
+		- rgb: 0.555502,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -4.0,0.270145,1.0
+	orientation: 0.0,1.0,0.0 0.875992
+	scaling: 0.270145
+	textures:
+		- rgb: 0.861825,0.307307,0.721325
+		- rgb: default_normal
+		- rgb: 0.0197457,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -4.0,0.213882,2.0
+	orientation: 0.0,1.0,0.0 0.788281
+	scaling: 0.213882
+	textures:
+		- rgb: 0.116686,0.630498,0.590926
+		- rgb: default_normal
+		- rgb: 0.254864,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -4.0,0.368173,3.0
+	orientation: 0.0,1.0,0.0 0.729088
+	scaling: 0.368173
+	textures:
+		- rgb: 0.131239,0.514714,0.148256
+		- rgb: default_normal
+		- rgb: 0.368473,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -4.0,0.680619,4.0
+	orientation: 0.0,1.0,0.0 0.119597
+	scaling: 0.680619
+	textures:
+		- rgb: 0.370471,0.761723,0.54641
+		- rgb: default_normal
+		- rgb: 0.738752,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -4.0,0.207243,5.0
+	orientation: 0.0,1.0,0.0 1.36193
+	scaling: 0.207243
+	textures:
+		- rgb: 0.365459,0.858474,0.334323
+		- rgb: default_normal
+		- rgb: 0.653022,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -4.0,0.504618,6.0
+	orientation: 0.0,1.0,0.0 0.556454
+	scaling: 0.504618
+	textures:
+		- rgb: 0.766835,0.113487,0.174338
+		- rgb: default_normal
+		- rgb: 0.726313,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -4.0,0.301648,7.0
+	orientation: 0.0,1.0,0.0 0.368204
+	scaling: 0.301648
+	textures:
+		- rgb: 0.508994,0.181081,0.420167
+		- rgb: default_normal
+		- rgb: 0.549616,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -4.0,0.112647,8.0
+	orientation: 0.0,1.0,0.0 0.945973
+	scaling: 0.112647
+	textures:
+		- rgb: 0.620496,0.117116,0.35524
+		- rgb: default_normal
+		- rgb: 0.699974,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -4.0,0.188446,9.0
+	orientation: 0.0,1.0,0.0 0.13884
+	scaling: 0.188446
+	textures:
+		- rgb: 0.676481,0.396466,0.0786782
+		- rgb: default_normal
+		- rgb: 0.0428184,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -4.0,0.421554,10.0
+	orientation: 0.0,1.0,0.0 1.14462
+	scaling: 0.421554
+	textures:
+		- rgb: 0.289122,0.631219,0.610091
+		- rgb: default_normal
+		- rgb: 0.339015,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -3.0,0.575165,-10.0
+	orientation: 0.0,1.0,0.0 1.03595
+	scaling: 0.575165
+	textures:
+		- rgb: 0.815507,0.217267,0.486357
+		- rgb: default_normal
+		- rgb: 0.0234756,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -3.0,0.795606,-9.0
+	orientation: 0.0,1.0,0.0 1.20353
+	scaling: 0.795606
+	textures:
+		- rgb: 0.359785,0.304046,0.650526
+		- rgb: default_normal
+		- rgb: 0.671265,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -3.0,0.266786,-8.0
+	orientation: 0.0,1.0,0.0 0.00450336
+	scaling: 0.266786
+	textures:
+		- rgb: 0.239901,0.634484,0.0473342
+		- rgb: default_normal
+		- rgb: 0.429413,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -3.0,0.78468,-7.0
+	orientation: 0.0,1.0,0.0 1.34555
+	scaling: 0.78468
+	textures:
+		- rgb: 0.382199,0.131687,0.913727
+		- rgb: default_normal
+		- rgb: 0.404646,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -3.0,0.61447,-6.0
+	orientation: 0.0,1.0,0.0 0.0688936
+	scaling: 0.61447
+	textures:
+		- rgb: 0.354692,0.140089,0.768022
+		- rgb: default_normal
+		- rgb: 0.363983,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -3.0,0.11834,-5.0
+	orientation: 0.0,1.0,0.0 0.99623
+	scaling: 0.11834
+	textures:
+		- rgb: 0.24183,0.205788,0.583833
+		- rgb: default_normal
+		- rgb: 0.644355,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -3.0,0.244281,-4.0
+	orientation: 0.0,1.0,0.0 0.0833707
+	scaling: 0.244281
+	textures:
+		- rgb: 0.690369,0.647473,0.303152
+		- rgb: default_normal
+		- rgb: 0.710282,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -3.0,0.58516,-3.0
+	orientation: 0.0,1.0,0.0 0.848901
+	scaling: 0.58516
+	textures:
+		- rgb: 0.572304,0.701168,0.137698
+		- rgb: default_normal
+		- rgb: 0.124708,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -3.0,0.215414,-2.0
+	orientation: 0.0,1.0,0.0 0.965408
+	scaling: 0.215414
+	textures:
+		- rgb: 0.762839,0.40455,0.215862
+		- rgb: default_normal
+		- rgb: 0.700051,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -3.0,0.33312,-1.0
+	orientation: 0.0,1.0,0.0 0.00533495
+	scaling: 0.33312
+	textures:
+		- rgb: 0.267495,0.682594,0.913837
+		- rgb: default_normal
+		- rgb: 0.0721586,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -3.0,0.110665,0.0
+	orientation: 0.0,1.0,0.0 1.39951
+	scaling: 0.110665
+	textures:
+		- rgb: 0.352042,0.271111,0.605554
+		- rgb: default_normal
+		- rgb: 0.164168,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -3.0,0.427302,1.0
+	orientation: 0.0,1.0,0.0 0.183194
+	scaling: 0.427302
+	textures:
+		- rgb: 0.733506,0.233574,0.746364
+		- rgb: default_normal
+		- rgb: 0.631558,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -3.0,0.529418,2.0
+	orientation: 0.0,1.0,0.0 1.39538
+	scaling: 0.529418
+	textures:
+		- rgb: 0.628547,0.678476,0.260575
+		- rgb: default_normal
+		- rgb: 0.479342,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -3.0,0.515978,3.0
+	orientation: 0.0,1.0,0.0 0.929431
+	scaling: 0.515978
+	textures:
+		- rgb: 0.350487,0.889384,0.806995
+		- rgb: default_normal
+		- rgb: 0.168728,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -3.0,0.351985,4.0
+	orientation: 0.0,1.0,0.0 1.29964
+	scaling: 0.351985
+	textures:
+		- rgb: 0.447537,0.891394,0.386245
+		- rgb: default_normal
+		- rgb: 0.138418,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -3.0,0.585529,5.0
+	orientation: 0.0,1.0,0.0 1.35554
+	scaling: 0.585529
+	textures:
+		- rgb: 0.800647,0.385513,0.575548
+		- rgb: default_normal
+		- rgb: 0.618051,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -3.0,0.159689,6.0
+	orientation: 0.0,1.0,0.0 0.120821
+	scaling: 0.159689
+	textures:
+		- rgb: 0.549168,0.106935,0.512228
+		- rgb: default_normal
+		- rgb: 0.241816,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -3.0,0.205358,7.0
+	orientation: 0.0,1.0,0.0 1.44925
+	scaling: 0.205358
+	textures:
+		- rgb: 0.291895,0.156105,0.525754
+		- rgb: default_normal
+		- rgb: 0.439236,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -3.0,0.304173,8.0
+	orientation: 0.0,1.0,0.0 0.587148
+	scaling: 0.304173
+	textures:
+		- rgb: 0.236996,0.502515,0.0659761
+		- rgb: default_normal
+		- rgb: 0.00645517,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -3.0,0.624993,9.0
+	orientation: 0.0,1.0,0.0 0.275621
+	scaling: 0.624993
+	textures:
+		- rgb: 0.141737,0.834306,0.236235
+		- rgb: default_normal
+		- rgb: 0.482106,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -3.0,0.227756,10.0
+	orientation: 0.0,1.0,0.0 1.49616
+	scaling: 0.227756
+	textures:
+		- rgb: 0.834602,0.156561,0.583047
+		- rgb: default_normal
+		- rgb: 0.732726,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -2.0,0.559221,-10.0
+	orientation: 0.0,1.0,0.0 0.124523
+	scaling: 0.559221
+	textures:
+		- rgb: 0.922626,0.331068,0.462827
+		- rgb: default_normal
+		- rgb: 0.131721,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -2.0,0.1582,-9.0
+	orientation: 0.0,1.0,0.0 0.127016
+	scaling: 0.1582
+	textures:
+		- rgb: 0.543626,0.389724,0.78976
+		- rgb: default_normal
+		- rgb: 0.276027,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -2.0,0.297131,-8.0
+	orientation: 0.0,1.0,0.0 0.0174807
+	scaling: 0.297131
+	textures:
+		- rgb: 0.272175,0.534042,0.122179
+		- rgb: default_normal
+		- rgb: 0.326678,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -2.0,0.514498,-7.0
+	orientation: 0.0,1.0,0.0 0.154462
+	scaling: 0.514498
+	textures:
+		- rgb: 0.0598229,0.834756,0.407502
+		- rgb: default_normal
+		- rgb: 0.786399,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -2.0,0.670663,-6.0
+	orientation: 0.0,1.0,0.0 0.666792
+	scaling: 0.670663
+	textures:
+		- rgb: 0.676108,0.243262,0.193782
+		- rgb: default_normal
+		- rgb: 0.076072,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -2.0,0.696203,-5.0
+	orientation: 0.0,1.0,0.0 0.0494028
+	scaling: 0.696203
+	textures:
+		- rgb: 0.148155,0.70119,0.73244
+		- rgb: default_normal
+		- rgb: 0.371645,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -2.0,0.4032,-4.0
+	orientation: 0.0,1.0,0.0 0.337739
+	scaling: 0.4032
+	textures:
+		- rgb: 0.694043,0.322051,0.693517
+		- rgb: default_normal
+		- rgb: 0.308256,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -2.0,0.382649,-3.0
+	orientation: 0.0,1.0,0.0 0.576253
+	scaling: 0.382649
+	textures:
+		- rgb: 0.103265,0.527149,0.455139
+		- rgb: default_normal
+		- rgb: 0.485117,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -2.0,0.30016,-2.0
+	orientation: 0.0,1.0,0.0 0.5078
+	scaling: 0.30016
+	textures:
+		- rgb: 0.743769,0.295796,0.660025
+		- rgb: default_normal
+		- rgb: 0.699628,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -2.0,0.337397,-1.0
+	orientation: 0.0,1.0,0.0 1.1747
+	scaling: 0.337397
+	textures:
+		- rgb: 0.641299,0.502197,0.3058
+		- rgb: default_normal
+		- rgb: 0.0815881,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -2.0,0.437551,0.0
+	orientation: 0.0,1.0,0.0 0.697321
+	scaling: 0.437551
+	textures:
+		- rgb: 0.553788,0.237994,0.552531
+		- rgb: default_normal
+		- rgb: 0.731029,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -2.0,0.567864,1.0
+	orientation: 0.0,1.0,0.0 1.07414
+	scaling: 0.567864
+	textures:
+		- rgb: 0.724676,0.295672,0.449945
+		- rgb: default_normal
+		- rgb: 0.308873,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -2.0,0.111234,2.0
+	orientation: 0.0,1.0,0.0 0.135485
+	scaling: 0.111234
+	textures:
+		- rgb: 0.65915,0.686643,0.178559
+		- rgb: default_normal
+		- rgb: 0.247131,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -2.0,0.59648,3.0
+	orientation: 0.0,1.0,0.0 0.835138
+	scaling: 0.59648
+	textures:
+		- rgb: 0.137899,0.230326,0.578455
+		- rgb: default_normal
+		- rgb: 0.23016,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -2.0,0.255486,4.0
+	orientation: 0.0,1.0,0.0 0.763889
+	scaling: 0.255486
+	textures:
+		- rgb: 0.362115,0.424848,0.825622
+		- rgb: default_normal
+		- rgb: 0.756948,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -2.0,0.326621,5.0
+	orientation: 0.0,1.0,0.0 0.598934
+	scaling: 0.326621
+	textures:
+		- rgb: 0.259149,0.535147,0.561194
+		- rgb: default_normal
+		- rgb: 0.0180768,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -2.0,0.13764,6.0
+	orientation: 0.0,1.0,0.0 0.122727
+	scaling: 0.13764
+	textures:
+		- rgb: 0.244402,0.724593,0.437473
+		- rgb: default_normal
+		- rgb: 0.732715,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -2.0,0.166244,7.0
+	orientation: 0.0,1.0,0.0 0.811714
+	scaling: 0.166244
+	textures:
+		- rgb: 0.328675,0.758623,0.138769
+		- rgb: default_normal
+		- rgb: 0.739592,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -2.0,0.360954,8.0
+	orientation: 0.0,1.0,0.0 0.806193
+	scaling: 0.360954
+	textures:
+		- rgb: 0.526125,0.390534,0.217147
+		- rgb: default_normal
+		- rgb: 0.535684,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -2.0,0.533355,9.0
+	orientation: 0.0,1.0,0.0 1.05281
+	scaling: 0.533355
+	textures:
+		- rgb: 0.134503,0.943331,0.547252
+		- rgb: default_normal
+		- rgb: 0.596574,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -2.0,0.664046,10.0
+	orientation: 0.0,1.0,0.0 1.28104
+	scaling: 0.664046
+	textures:
+		- rgb: 0.326057,0.76689,0.944543
+		- rgb: default_normal
+		- rgb: 0.620739,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -1.0,0.594784,-10.0
+	orientation: 0.0,1.0,0.0 1.52146
+	scaling: 0.594784
+	textures:
+		- rgb: 0.741056,0.241619,0.73037
+		- rgb: default_normal
+		- rgb: 0.136689,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -1.0,0.297805,-9.0
+	orientation: 0.0,1.0,0.0 0.486528
+	scaling: 0.297805
+	textures:
+		- rgb: 0.446145,0.049356,0.725381
+		- rgb: default_normal
+		- rgb: 0.2844,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -1.0,0.177084,-8.0
+	orientation: 0.0,1.0,0.0 1.22955
+	scaling: 0.177084
+	textures:
+		- rgb: 0.345287,0.919526,0.546553
+		- rgb: default_normal
+		- rgb: 0.0438132,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -1.0,0.688191,-7.0
+	orientation: 0.0,1.0,0.0 1.42279
+	scaling: 0.688191
+	textures:
+		- rgb: 0.930485,0.447653,0.160692
+		- rgb: default_normal
+		- rgb: 0.152415,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -1.0,0.45399,-6.0
+	orientation: 0.0,1.0,0.0 1.35084
+	scaling: 0.45399
+	textures:
+		- rgb: 0.0631625,0.0818113,0.558876
+		- rgb: default_normal
+		- rgb: 0.626764,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -1.0,0.285886,-5.0
+	orientation: 0.0,1.0,0.0 0.329948
+	scaling: 0.285886
+	textures:
+		- rgb: 0.494879,0.710609,0.264759
+		- rgb: default_normal
+		- rgb: 0.298595,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -1.0,0.50167,-4.0
+	orientation: 0.0,1.0,0.0 0.554614
+	scaling: 0.50167
+	textures:
+		- rgb: 0.747589,0.198645,0.38717
+		- rgb: default_normal
+		- rgb: 0.592244,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -1.0,0.205959,-3.0
+	orientation: 0.0,1.0,0.0 1.10326
+	scaling: 0.205959
+	textures:
+		- rgb: 0.690654,0.922358,0.296247
+		- rgb: default_normal
+		- rgb: 0.247356,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -1.0,0.470907,-2.0
+	orientation: 0.0,1.0,0.0 0.668208
+	scaling: 0.470907
+	textures:
+		- rgb: 0.55705,0.463401,0.239147
+		- rgb: default_normal
+		- rgb: 0.00400489,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -1.0,0.587617,-1.0
+	orientation: 0.0,1.0,0.0 1.50652
+	scaling: 0.587617
+	textures:
+		- rgb: 0.0859637,0.944965,0.341822
+		- rgb: default_normal
+		- rgb: 0.263986,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -1.0,0.193513,0.0
+	orientation: 0.0,1.0,0.0 0.981858
+	scaling: 0.193513
+	textures:
+		- rgb: 0.44423,0.499632,0.947639
+		- rgb: default_normal
+		- rgb: 0.679865,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -1.0,0.278593,1.0
+	orientation: 0.0,1.0,0.0 0.575137
+	scaling: 0.278593
+	textures:
+		- rgb: 0.595825,0.789843,0.15714
+		- rgb: default_normal
+		- rgb: 0.540037,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -1.0,0.384333,2.0
+	orientation: 0.0,1.0,0.0 1.01535
+	scaling: 0.384333
+	textures:
+		- rgb: 0.36059,0.619667,0.853349
+		- rgb: default_normal
+		- rgb: 0.520634,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -1.0,0.734362,3.0
+	orientation: 0.0,1.0,0.0 0.571663
+	scaling: 0.734362
+	textures:
+		- rgb: 0.365172,0.399996,0.801333
+		- rgb: default_normal
+		- rgb: 0.0767084,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -1.0,0.315751,4.0
+	orientation: 0.0,1.0,0.0 0.871016
+	scaling: 0.315751
+	textures:
+		- rgb: 0.378702,0.202095,0.774923
+		- rgb: default_normal
+		- rgb: 0.539306,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -1.0,0.759995,5.0
+	orientation: 0.0,1.0,0.0 0.645575
+	scaling: 0.759995
+	textures:
+		- rgb: 0.142569,0.650999,0.91308
+		- rgb: default_normal
+		- rgb: 0.105018,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -1.0,0.340417,6.0
+	orientation: 0.0,1.0,0.0 0.938497
+	scaling: 0.340417
+	textures:
+		- rgb: 0.902728,0.468079,0.109013
+		- rgb: default_normal
+		- rgb: 0.788866,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -1.0,0.325957,7.0
+	orientation: 0.0,1.0,0.0 1.38842
+	scaling: 0.325957
+	textures:
+		- rgb: 0.0601811,0.619649,0.184586
+		- rgb: default_normal
+		- rgb: 0.671503,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -1.0,0.390219,8.0
+	orientation: 0.0,1.0,0.0 1.55748
+	scaling: 0.390219
+	textures:
+		- rgb: 0.560143,0.126176,0.449613
+		- rgb: default_normal
+		- rgb: 0.374535,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -1.0,0.450184,9.0
+	orientation: 0.0,1.0,0.0 0.171511
+	scaling: 0.450184
+	textures:
+		- rgb: 0.929721,0.431557,0.665123
+		- rgb: default_normal
+		- rgb: 0.755531,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: -1.0,0.556296,10.0
+	orientation: 0.0,1.0,0.0 1.43155
+	scaling: 0.556296
+	textures:
+		- rgb: 0.759924,0.137777,0.764417
+		- rgb: default_normal
+		- rgb: 0.413281,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 0.0,0.384282,-10.0
+	orientation: 0.0,1.0,0.0 0.199163
+	scaling: 0.384282
+	textures:
+		- rgb: 0.376507,0.238059,0.612214
+		- rgb: default_normal
+		- rgb: 0.47548,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 0.0,0.503194,-9.0
+	orientation: 0.0,1.0,0.0 1.36869
+	scaling: 0.503194
+	textures:
+		- rgb: 0.668523,0.357858,0.846396
+		- rgb: default_normal
+		- rgb: 0.307421,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 0.0,0.234665,-8.0
+	orientation: 0.0,1.0,0.0 0.292536
+	scaling: 0.234665
+	textures:
+		- rgb: 0.39854,0.600649,0.115913
+		- rgb: default_normal
+		- rgb: 0.0741789,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 0.0,0.303361,-7.0
+	orientation: 0.0,1.0,0.0 1.17488
+	scaling: 0.303361
+	textures:
+		- rgb: 0.223911,0.635498,0.681383
+		- rgb: default_normal
+		- rgb: 0.231661,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 0.0,0.4123,-6.0
+	orientation: 0.0,1.0,0.0 1.37772
+	scaling: 0.4123
+	textures:
+		- rgb: 0.558494,0.803584,0.239406
+		- rgb: default_normal
+		- rgb: 0.035681,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 0.0,0.59461,-5.0
+	orientation: 0.0,1.0,0.0 1.19805
+	scaling: 0.59461
+	textures:
+		- rgb: 0.555551,0.642199,0.0354703
+		- rgb: default_normal
+		- rgb: 0.00413998,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 0.0,0.464047,-4.0
+	orientation: 0.0,1.0,0.0 0.606561
+	scaling: 0.464047
+	textures:
+		- rgb: 0.803718,0.22192,0.569639
+		- rgb: default_normal
+		- rgb: 0.775801,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 0.0,0.5711,-3.0
+	orientation: 0.0,1.0,0.0 0.00560939
+	scaling: 0.5711
+	textures:
+		- rgb: 0.0605575,0.544209,0.492947
+		- rgb: default_normal
+		- rgb: 0.263131,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 0.0,0.102107,-2.0
+	orientation: 0.0,1.0,0.0 1.45191
+	scaling: 0.102107
+	textures:
+		- rgb: 0.759204,0.334686,0.840115
+		- rgb: default_normal
+		- rgb: 0.534616,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 0.0,0.528351,-1.0
+	orientation: 0.0,1.0,0.0 1.43534
+	scaling: 0.528351
+	textures:
+		- rgb: 0.676415,0.32597,0.69733
+		- rgb: default_normal
+		- rgb: 0.584261,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 0.0,0.233085,0.0
+	orientation: 0.0,1.0,0.0 0.89427
+	scaling: 0.233085
+	textures:
+		- rgb: 0.226208,0.688923,0.111657
+		- rgb: default_normal
+		- rgb: 0.429934,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 0.0,0.521495,1.0
+	orientation: 0.0,1.0,0.0 0.516318
+	scaling: 0.521495
+	textures:
+		- rgb: 0.061333,0.622091,0.137482
+		- rgb: default_normal
+		- rgb: 0.381189,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 0.0,0.344294,2.0
+	orientation: 0.0,1.0,0.0 1.09423
+	scaling: 0.344294
+	textures:
+		- rgb: 0.256015,0.384408,0.633167
+		- rgb: default_normal
+		- rgb: 0.451524,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 0.0,0.208996,3.0
+	orientation: 0.0,1.0,0.0 0.359461
+	scaling: 0.208996
+	textures:
+		- rgb: 0.219785,0.853,0.0894266
+		- rgb: default_normal
+		- rgb: 0.757065,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 0.0,0.785261,4.0
+	orientation: 0.0,1.0,0.0 1.04535
+	scaling: 0.785261
+	textures:
+		- rgb: 0.503041,0.618866,0.0635391
+		- rgb: default_normal
+		- rgb: 0.308164,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 0.0,0.204088,5.0
+	orientation: 0.0,1.0,0.0 0.72061
+	scaling: 0.204088
+	textures:
+		- rgb: 0.602227,0.265435,0.374435
+		- rgb: default_normal
+		- rgb: 0.226856,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 0.0,0.170429,6.0
+	orientation: 0.0,1.0,0.0 0.631348
+	scaling: 0.170429
+	textures:
+		- rgb: 0.663573,0.214079,0.492524
+		- rgb: default_normal
+		- rgb: 0.0169463,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 0.0,0.278116,7.0
+	orientation: 0.0,1.0,0.0 1.41058
+	scaling: 0.278116
+	textures:
+		- rgb: 0.0869186,0.701921,0.892292
+		- rgb: default_normal
+		- rgb: 0.0582525,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 0.0,0.142147,8.0
+	orientation: 0.0,1.0,0.0 0.159181
+	scaling: 0.142147
+	textures:
+		- rgb: 0.700148,0.593643,0.0811401
+		- rgb: default_normal
+		- rgb: 0.00230874,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 0.0,0.514583,9.0
+	orientation: 0.0,1.0,0.0 0.957286
+	scaling: 0.514583
+	textures:
+		- rgb: 0.224869,0.550378,0.875914
+		- rgb: default_normal
+		- rgb: 0.772691,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 0.0,0.787373,10.0
+	orientation: 0.0,1.0,0.0 0.553155
+	scaling: 0.787373
+	textures:
+		- rgb: 0.487518,0.547778,0.0963768
+		- rgb: default_normal
+		- rgb: 0.326704,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 1.0,0.592549,-10.0
+	orientation: 0.0,1.0,0.0 1.35504
+	scaling: 0.592549
+	textures:
+		- rgb: 0.112082,0.752991,0.262122
+		- rgb: default_normal
+		- rgb: 0.664518,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 1.0,0.646062,-9.0
+	orientation: 0.0,1.0,0.0 1.17097
+	scaling: 0.646062
+	textures:
+		- rgb: 0.087389,0.601165,0.609141
+		- rgb: default_normal
+		- rgb: 0.785857,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 1.0,0.673613,-8.0
+	orientation: 0.0,1.0,0.0 0.322492
+	scaling: 0.673613
+	textures:
+		- rgb: 0.651744,0.11004,0.261477
+		- rgb: default_normal
+		- rgb: 0.507291,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 1.0,0.678253,-7.0
+	orientation: 0.0,1.0,0.0 0.409758
+	scaling: 0.678253
+	textures:
+		- rgb: 0.707038,0.33262,0.922852
+		- rgb: default_normal
+		- rgb: 0.476835,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 1.0,0.651423,-6.0
+	orientation: 0.0,1.0,0.0 1.08362
+	scaling: 0.651423
+	textures:
+		- rgb: 0.0618166,0.641655,0.534354
+		- rgb: default_normal
+		- rgb: 0.270116,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 1.0,0.480867,-5.0
+	orientation: 0.0,1.0,0.0 0.575406
+	scaling: 0.480867
+	textures:
+		- rgb: 0.526475,0.260095,0.370109
+		- rgb: default_normal
+		- rgb: 0.00671545,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 1.0,0.422638,-4.0
+	orientation: 0.0,1.0,0.0 1.30241
+	scaling: 0.422638
+	textures:
+		- rgb: 0.926428,0.272208,0.402943
+		- rgb: default_normal
+		- rgb: 0.273057,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 1.0,0.309163,-3.0
+	orientation: 0.0,1.0,0.0 0.537508
+	scaling: 0.309163
+	textures:
+		- rgb: 0.777833,0.569594,0.360367
+		- rgb: default_normal
+		- rgb: 0.240927,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 1.0,0.632366,-2.0
+	orientation: 0.0,1.0,0.0 0.416561
+	scaling: 0.632366
+	textures:
+		- rgb: 0.0788733,0.523276,0.244823
+		- rgb: default_normal
+		- rgb: 0.563587,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 1.0,0.186605,-1.0
+	orientation: 0.0,1.0,0.0 0.162374
+	scaling: 0.186605
+	textures:
+		- rgb: 0.529838,0.731122,0.201287
+		- rgb: default_normal
+		- rgb: 0.0827907,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 1.0,0.435129,0.0
+	orientation: 0.0,1.0,0.0 0.496589
+	scaling: 0.435129
+	textures:
+		- rgb: 0.533395,0.438679,0.107206
+		- rgb: default_normal
+		- rgb: 0.551169,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 1.0,0.503692,1.0
+	orientation: 0.0,1.0,0.0 0.396864
+	scaling: 0.503692
+	textures:
+		- rgb: 0.374039,0.75811,0.357614
+		- rgb: default_normal
+		- rgb: 0.374102,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 1.0,0.121305,2.0
+	orientation: 0.0,1.0,0.0 1.00246
+	scaling: 0.121305
+	textures:
+		- rgb: 0.15622,0.843139,0.649717
+		- rgb: default_normal
+		- rgb: 0.224444,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 1.0,0.26134,3.0
+	orientation: 0.0,1.0,0.0 0.616229
+	scaling: 0.26134
+	textures:
+		- rgb: 0.850896,0.194642,0.317218
+		- rgb: default_normal
+		- rgb: 0.79473,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 1.0,0.599239,4.0
+	orientation: 0.0,1.0,0.0 0.15625
+	scaling: 0.599239
+	textures:
+		- rgb: 0.170697,0.701345,0.911675
+		- rgb: default_normal
+		- rgb: 0.212852,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 1.0,0.581421,5.0
+	orientation: 0.0,1.0,0.0 0.225918
+	scaling: 0.581421
+	textures:
+		- rgb: 0.178501,0.427443,0.655608
+		- rgb: default_normal
+		- rgb: 0.158308,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 1.0,0.473994,6.0
+	orientation: 0.0,1.0,0.0 0.927024
+	scaling: 0.473994
+	textures:
+		- rgb: 0.462345,0.518347,0.0364987
+		- rgb: default_normal
+		- rgb: 0.00683698,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 1.0,0.146761,7.0
+	orientation: 0.0,1.0,0.0 1.31929
+	scaling: 0.146761
+	textures:
+		- rgb: 0.779929,0.250696,0.937036
+		- rgb: default_normal
+		- rgb: 0.0987414,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 1.0,0.182332,8.0
+	orientation: 0.0,1.0,0.0 0.946637
+	scaling: 0.182332
+	textures:
+		- rgb: 0.683522,0.569054,0.301313
+		- rgb: default_normal
+		- rgb: 0.135197,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 1.0,0.2287,9.0
+	orientation: 0.0,1.0,0.0 0.198212
+	scaling: 0.2287
+	textures:
+		- rgb: 0.0905513,0.176678,0.685728
+		- rgb: default_normal
+		- rgb: 0.284164,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 1.0,0.247202,10.0
+	orientation: 0.0,1.0,0.0 0.909525
+	scaling: 0.247202
+	textures:
+		- rgb: 0.245438,0.371997,0.576915
+		- rgb: default_normal
+		- rgb: 0.416471,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 2.0,0.589832,-10.0
+	orientation: 0.0,1.0,0.0 0.989246
+	scaling: 0.589832
+	textures:
+		- rgb: 0.818546,0.319058,0.793808
+		- rgb: default_normal
+		- rgb: 0.441623,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 2.0,0.190761,-9.0
+	orientation: 0.0,1.0,0.0 0.0384697
+	scaling: 0.190761
+	textures:
+		- rgb: 0.501073,0.158644,0.216411
+		- rgb: default_normal
+		- rgb: 0.502874,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 2.0,0.115524,-8.0
+	orientation: 0.0,1.0,0.0 0.942226
+	scaling: 0.115524
+	textures:
+		- rgb: 0.77777,0.363247,0.808203
+		- rgb: default_normal
+		- rgb: 0.28875,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 2.0,0.310464,-7.0
+	orientation: 0.0,1.0,0.0 1.03943
+	scaling: 0.310464
+	textures:
+		- rgb: 0.623725,0.586184,0.162157
+		- rgb: default_normal
+		- rgb: 0.38431,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 2.0,0.576451,-6.0
+	orientation: 0.0,1.0,0.0 0.52292
+	scaling: 0.576451
+	textures:
+		- rgb: 0.466256,0.713622,0.287006
+		- rgb: default_normal
+		- rgb: 0.498208,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 2.0,0.642975,-5.0
+	orientation: 0.0,1.0,0.0 0.0570936
+	scaling: 0.642975
+	textures:
+		- rgb: 0.148662,0.445237,0.844126
+		- rgb: default_normal
+		- rgb: 0.437882,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 2.0,0.165368,-4.0
+	orientation: 0.0,1.0,0.0 0.91691
+	scaling: 0.165368
+	textures:
+		- rgb: 0.598892,0.676623,0.337549
+		- rgb: default_normal
+		- rgb: 0.551812,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 2.0,0.488432,-3.0
+	orientation: 0.0,1.0,0.0 0.300822
+	scaling: 0.488432
+	textures:
+		- rgb: 0.500479,0.226057,0.38935
+		- rgb: default_normal
+		- rgb: 0.141808,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 2.0,0.463282,-2.0
+	orientation: 0.0,1.0,0.0 0.113613
+	scaling: 0.463282
+	textures:
+		- rgb: 0.236488,0.606579,0.773511
+		- rgb: default_normal
+		- rgb: 0.420706,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 2.0,0.511939,-1.0
+	orientation: 0.0,1.0,0.0 0.407671
+	scaling: 0.511939
+	textures:
+		- rgb: 0.378839,0.826554,0.26413
+		- rgb: default_normal
+		- rgb: 0.227647,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 2.0,0.737933,0.0
+	orientation: 0.0,1.0,0.0 1.41049
+	scaling: 0.737933
+	textures:
+		- rgb: 0.236036,0.549015,0.649492
+		- rgb: default_normal
+		- rgb: 0.29288,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 2.0,0.261779,1.0
+	orientation: 0.0,1.0,0.0 0.155781
+	scaling: 0.261779
+	textures:
+		- rgb: 0.630361,0.745124,0.0879609
+		- rgb: default_normal
+		- rgb: 0.235588,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 2.0,0.561725,2.0
+	orientation: 0.0,1.0,0.0 0.703623
+	scaling: 0.561725
+	textures:
+		- rgb: 0.55842,0.247698,0.461567
+		- rgb: default_normal
+		- rgb: 0.705227,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 2.0,0.707297,3.0
+	orientation: 0.0,1.0,0.0 0.0680438
+	scaling: 0.707297
+	textures:
+		- rgb: 0.584247,0.231311,0.407573
+		- rgb: default_normal
+		- rgb: 0.564742,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 2.0,0.201395,4.0
+	orientation: 0.0,1.0,0.0 1.3548
+	scaling: 0.201395
+	textures:
+		- rgb: 0.544999,0.310052,0.258793
+		- rgb: default_normal
+		- rgb: 0.787364,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 2.0,0.62112,5.0
+	orientation: 0.0,1.0,0.0 0.79722
+	scaling: 0.62112
+	textures:
+		- rgb: 0.281692,0.521025,0.63573
+		- rgb: default_normal
+		- rgb: 0.0466112,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 2.0,0.644863,6.0
+	orientation: 0.0,1.0,0.0 0.517502
+	scaling: 0.644863
+	textures:
+		- rgb: 0.572252,0.273458,0.280682
+		- rgb: default_normal
+		- rgb: 0.355468,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 2.0,0.286459,7.0
+	orientation: 0.0,1.0,0.0 0.787436
+	scaling: 0.286459
+	textures:
+		- rgb: 0.59743,0.237792,0.21233
+		- rgb: default_normal
+		- rgb: 0.382098,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 2.0,0.747219,8.0
+	orientation: 0.0,1.0,0.0 0.988638
+	scaling: 0.747219
+	textures:
+		- rgb: 0.66832,0.475368,0.211792
+		- rgb: default_normal
+		- rgb: 0.382437,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 2.0,0.722754,9.0
+	orientation: 0.0,1.0,0.0 1.23114
+	scaling: 0.722754
+	textures:
+		- rgb: 0.406606,0.826198,0.3805
+		- rgb: default_normal
+		- rgb: 0.21163,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 2.0,0.289477,10.0
+	orientation: 0.0,1.0,0.0 1.09631
+	scaling: 0.289477
+	textures:
+		- rgb: 0.695256,0.375545,0.12513
+		- rgb: default_normal
+		- rgb: 0.597974,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 3.0,0.318933,-10.0
+	orientation: 0.0,1.0,0.0 0.477672
+	scaling: 0.318933
+	textures:
+		- rgb: 0.198323,0.532188,0.0926919
+		- rgb: default_normal
+		- rgb: 0.457221,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 3.0,0.639885,-9.0
+	orientation: 0.0,1.0,0.0 0.600928
+	scaling: 0.639885
+	textures:
+		- rgb: 0.159413,0.282138,0.57637
+		- rgb: default_normal
+		- rgb: 0.747982,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 3.0,0.58016,-8.0
+	orientation: 0.0,1.0,0.0 0.192635
+	scaling: 0.58016
+	textures:
+		- rgb: 0.937353,0.222088,0.354683
+		- rgb: default_normal
+		- rgb: 0.377946,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 3.0,0.748972,-7.0
+	orientation: 0.0,1.0,0.0 1.52033
+	scaling: 0.748972
+	textures:
+		- rgb: 0.258997,0.142384,0.687246
+		- rgb: default_normal
+		- rgb: 0.533843,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 3.0,0.159356,-6.0
+	orientation: 0.0,1.0,0.0 0.888759
+	scaling: 0.159356
+	textures:
+		- rgb: 0.0570649,0.482866,0.517961
+		- rgb: default_normal
+		- rgb: 0.15852,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 3.0,0.466604,-5.0
+	orientation: 0.0,1.0,0.0 0.702697
+	scaling: 0.466604
+	textures:
+		- rgb: 0.229838,0.504484,0.608604
+		- rgb: default_normal
+		- rgb: 0.0744659,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 3.0,0.571798,-4.0
+	orientation: 0.0,1.0,0.0 0.891203
+	scaling: 0.571798
+	textures:
+		- rgb: 0.506457,0.69214,0.126325
+		- rgb: default_normal
+		- rgb: 0.0597264,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 3.0,0.519018,-3.0
+	orientation: 0.0,1.0,0.0 0.645028
+	scaling: 0.519018
+	textures:
+		- rgb: 0.382161,0.219997,0.562213
+		- rgb: default_normal
+		- rgb: 0.393541,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 3.0,0.246445,-2.0
+	orientation: 0.0,1.0,0.0 0.732377
+	scaling: 0.246445
+	textures:
+		- rgb: 0.507011,0.584782,0.0480116
+		- rgb: default_normal
+		- rgb: 0.0681683,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 3.0,0.584282,-1.0
+	orientation: 0.0,1.0,0.0 1.27099
+	scaling: 0.584282
+	textures:
+		- rgb: 0.619308,0.81078,0.200462
+		- rgb: default_normal
+		- rgb: 0.762172,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 3.0,0.696196,0.0
+	orientation: 0.0,1.0,0.0 0.705735
+	scaling: 0.696196
+	textures:
+		- rgb: 0.250988,0.672972,0.765232
+		- rgb: default_normal
+		- rgb: 0.174606,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 3.0,0.118728,1.0
+	orientation: 0.0,1.0,0.0 1.12681
+	scaling: 0.118728
+	textures:
+		- rgb: 0.320032,0.633854,0.276177
+		- rgb: default_normal
+		- rgb: 0.617689,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 3.0,0.713067,2.0
+	orientation: 0.0,1.0,0.0 1.02688
+	scaling: 0.713067
+	textures:
+		- rgb: 0.839815,0.268554,0.645664
+		- rgb: default_normal
+		- rgb: 0.721066,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 3.0,0.674739,3.0
+	orientation: 0.0,1.0,0.0 0.318332
+	scaling: 0.674739
+	textures:
+		- rgb: 0.279098,0.94502,0.669844
+		- rgb: default_normal
+		- rgb: 0.2312,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 3.0,0.489903,4.0
+	orientation: 0.0,1.0,0.0 0.945153
+	scaling: 0.489903
+	textures:
+		- rgb: 0.924049,0.373084,0.287677
+		- rgb: default_normal
+		- rgb: 0.388868,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 3.0,0.546852,5.0
+	orientation: 0.0,1.0,0.0 1.22251
+	scaling: 0.546852
+	textures:
+		- rgb: 0.586908,0.287995,0.336801
+		- rgb: default_normal
+		- rgb: 0.478657,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 3.0,0.180261,6.0
+	orientation: 0.0,1.0,0.0 0.597293
+	scaling: 0.180261
+	textures:
+		- rgb: 0.400407,0.5239,0.80383
+		- rgb: default_normal
+		- rgb: 0.0495602,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 3.0,0.365398,7.0
+	orientation: 0.0,1.0,0.0 1.02247
+	scaling: 0.365398
+	textures:
+		- rgb: 0.668226,0.720966,0.28044
+		- rgb: default_normal
+		- rgb: 0.00222482,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 3.0,0.404109,8.0
+	orientation: 0.0,1.0,0.0 0.112524
+	scaling: 0.404109
+	textures:
+		- rgb: 0.607507,0.2092,0.869395
+		- rgb: default_normal
+		- rgb: 0.633932,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 3.0,0.251186,9.0
+	orientation: 0.0,1.0,0.0 0.645325
+	scaling: 0.251186
+	textures:
+		- rgb: 0.939497,0.242837,0.194691
+		- rgb: default_normal
+		- rgb: 0.477124,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 3.0,0.435704,10.0
+	orientation: 0.0,1.0,0.0 1.26631
+	scaling: 0.435704
+	textures:
+		- rgb: 0.817293,0.821526,0.105953
+		- rgb: default_normal
+		- rgb: 0.218783,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 4.0,0.246127,-10.0
+	orientation: 0.0,1.0,0.0 0.523996
+	scaling: 0.246127
+	textures:
+		- rgb: 0.168022,0.844389,0.0782315
+		- rgb: default_normal
+		- rgb: 0.321478,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 4.0,0.344491,-9.0
+	orientation: 0.0,1.0,0.0 0.611524
+	scaling: 0.344491
+	textures:
+		- rgb: 0.31038,0.28405,0.64235
+		- rgb: default_normal
+		- rgb: 0.645055,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 4.0,0.136018,-8.0
+	orientation: 0.0,1.0,0.0 1.11772
+	scaling: 0.136018
+	textures:
+		- rgb: 0.120548,0.497608,0.776569
+		- rgb: default_normal
+		- rgb: 0.288322,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 4.0,0.181669,-7.0
+	orientation: 0.0,1.0,0.0 0.0420945
+	scaling: 0.181669
+	textures:
+		- rgb: 0.334212,0.504214,0.141853
+		- rgb: default_normal
+		- rgb: 0.645057,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 4.0,0.605564,-6.0
+	orientation: 0.0,1.0,0.0 0.4038
+	scaling: 0.605564
+	textures:
+		- rgb: 0.540795,0.511707,0.0718521
+		- rgb: default_normal
+		- rgb: 0.0643207,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 4.0,0.557583,-5.0
+	orientation: 0.0,1.0,0.0 1.0612
+	scaling: 0.557583
+	textures:
+		- rgb: 0.220227,0.851316,0.0963139
+		- rgb: default_normal
+		- rgb: 0.021015,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 4.0,0.14277,-4.0
+	orientation: 0.0,1.0,0.0 0.724931
+	scaling: 0.14277
+	textures:
+		- rgb: 0.119771,0.712898,0.24476
+		- rgb: default_normal
+		- rgb: 0.125174,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 4.0,0.597402,-3.0
+	orientation: 0.0,1.0,0.0 0.28462
+	scaling: 0.597402
+	textures:
+		- rgb: 0.879998,0.359355,0.359373
+		- rgb: default_normal
+		- rgb: 0.690538,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 4.0,0.782291,-2.0
+	orientation: 0.0,1.0,0.0 0.829486
+	scaling: 0.782291
+	textures:
+		- rgb: 0.210389,0.739006,0.416979
+		- rgb: default_normal
+		- rgb: 0.23772,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 4.0,0.1037,-1.0
+	orientation: 0.0,1.0,0.0 0.343745
+	scaling: 0.1037
+	textures:
+		- rgb: 0.734401,0.670635,0.113519
+		- rgb: default_normal
+		- rgb: 0.281359,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 4.0,0.26087,0.0
+	orientation: 0.0,1.0,0.0 0.680563
+	scaling: 0.26087
+	textures:
+		- rgb: 0.306313,0.644982,0.668214
+		- rgb: default_normal
+		- rgb: 0.683142,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 4.0,0.194302,1.0
+	orientation: 0.0,1.0,0.0 1.43966
+	scaling: 0.194302
+	textures:
+		- rgb: 0.325308,0.93307,0.762303
+		- rgb: default_normal
+		- rgb: 0.547167,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 4.0,0.24824,2.0
+	orientation: 0.0,1.0,0.0 0.524189
+	scaling: 0.24824
+	textures:
+		- rgb: 0.543963,0.239234,0.226484
+		- rgb: default_normal
+		- rgb: 0.427256,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 4.0,0.527569,3.0
+	orientation: 0.0,1.0,0.0 0.932284
+	scaling: 0.527569
+	textures:
+		- rgb: 0.577572,0.289964,0.603356
+		- rgb: default_normal
+		- rgb: 0.514637,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 4.0,0.703547,4.0
+	orientation: 0.0,1.0,0.0 0.764253
+	scaling: 0.703547
+	textures:
+		- rgb: 0.0570555,0.865235,0.273775
+		- rgb: default_normal
+		- rgb: 0.61181,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 4.0,0.445211,5.0
+	orientation: 0.0,1.0,0.0 1.2659
+	scaling: 0.445211
+	textures:
+		- rgb: 0.319015,0.639686,0.464023
+		- rgb: default_normal
+		- rgb: 0.28562,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 4.0,0.440554,6.0
+	orientation: 0.0,1.0,0.0 1.23588
+	scaling: 0.440554
+	textures:
+		- rgb: 0.329651,0.656472,0.681812
+		- rgb: default_normal
+		- rgb: 0.554485,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 4.0,0.269502,7.0
+	orientation: 0.0,1.0,0.0 1.52473
+	scaling: 0.269502
+	textures:
+		- rgb: 0.104698,0.770449,0.531747
+		- rgb: default_normal
+		- rgb: 0.645115,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 4.0,0.581853,8.0
+	orientation: 0.0,1.0,0.0 0.096397
+	scaling: 0.581853
+	textures:
+		- rgb: 0.680482,0.427192,0.0809133
+		- rgb: default_normal
+		- rgb: 0.533294,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 4.0,0.376924,9.0
+	orientation: 0.0,1.0,0.0 0.257851
+	scaling: 0.376924
+	textures:
+		- rgb: 0.272955,0.787421,0.505268
+		- rgb: default_normal
+		- rgb: 0.438962,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 4.0,0.399147,10.0
+	orientation: 0.0,1.0,0.0 0.415331
+	scaling: 0.399147
+	textures:
+		- rgb: 0.741317,0.370052,0.581117
+		- rgb: default_normal
+		- rgb: 0.781575,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 5.0,0.126745,-10.0
+	orientation: 0.0,1.0,0.0 0.816188
+	scaling: 0.126745
+	textures:
+		- rgb: 0.714454,0.8936,0.424949
+		- rgb: default_normal
+		- rgb: 0.467598,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 5.0,0.262202,-9.0
+	orientation: 0.0,1.0,0.0 0.831388
+	scaling: 0.262202
+	textures:
+		- rgb: 0.379047,0.215797,0.785464
+		- rgb: default_normal
+		- rgb: 0.234951,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 5.0,0.345601,-8.0
+	orientation: 0.0,1.0,0.0 0.0146558
+	scaling: 0.345601
+	textures:
+		- rgb: 0.094196,0.32281,0.520315
+		- rgb: default_normal
+		- rgb: 0.304935,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 5.0,0.782164,-7.0
+	orientation: 0.0,1.0,0.0 1.5284
+	scaling: 0.782164
+	textures:
+		- rgb: 0.65993,0.115193,0.140093
+		- rgb: default_normal
+		- rgb: 0.018719,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 5.0,0.717668,-6.0
+	orientation: 0.0,1.0,0.0 0.49787
+	scaling: 0.717668
+	textures:
+		- rgb: 0.0499698,0.273175,0.788333
+		- rgb: default_normal
+		- rgb: 0.313099,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 5.0,0.199762,-5.0
+	orientation: 0.0,1.0,0.0 1.29559
+	scaling: 0.199762
+	textures:
+		- rgb: 0.172751,0.776385,0.247128
+		- rgb: default_normal
+		- rgb: 0.0622031,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 5.0,0.29837,-4.0
+	orientation: 0.0,1.0,0.0 0.697449
+	scaling: 0.29837
+	textures:
+		- rgb: 0.907758,0.420643,0.6215
+		- rgb: default_normal
+		- rgb: 0.448609,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 5.0,0.651008,-3.0
+	orientation: 0.0,1.0,0.0 0.905226
+	scaling: 0.651008
+	textures:
+		- rgb: 0.0975932,0.261122,0.596777
+		- rgb: default_normal
+		- rgb: 0.515619,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 5.0,0.555252,-2.0
+	orientation: 0.0,1.0,0.0 1.3569
+	scaling: 0.555252
+	textures:
+		- rgb: 0.0570487,0.933626,0.488406
+		- rgb: default_normal
+		- rgb: 0.0306041,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 5.0,0.420539,-1.0
+	orientation: 0.0,1.0,0.0 0.492287
+	scaling: 0.420539
+	textures:
+		- rgb: 0.618511,0.688589,0.182068
+		- rgb: default_normal
+		- rgb: 0.69359,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 5.0,0.212276,0.0
+	orientation: 0.0,1.0,0.0 1.11
+	scaling: 0.212276
+	textures:
+		- rgb: 0.24011,0.623604,0.652919
+		- rgb: default_normal
+		- rgb: 0.0064067,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 5.0,0.484825,1.0
+	orientation: 0.0,1.0,0.0 1.02168
+	scaling: 0.484825
+	textures:
+		- rgb: 0.407513,0.874364,0.166777
+		- rgb: default_normal
+		- rgb: 0.111653,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 5.0,0.377702,2.0
+	orientation: 0.0,1.0,0.0 0.109455
+	scaling: 0.377702
+	textures:
+		- rgb: 0.388949,0.842991,0.292582
+		- rgb: default_normal
+		- rgb: 0.0270287,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 5.0,0.733467,3.0
+	orientation: 0.0,1.0,0.0 0.496913
+	scaling: 0.733467
+	textures:
+		- rgb: 0.344773,0.754413,0.691743
+		- rgb: default_normal
+		- rgb: 0.235346,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 5.0,0.484922,4.0
+	orientation: 0.0,1.0,0.0 0.140611
+	scaling: 0.484922
+	textures:
+		- rgb: 0.920245,0.405708,0.458824
+		- rgb: default_normal
+		- rgb: 0.75184,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 5.0,0.474486,5.0
+	orientation: 0.0,1.0,0.0 1.47598
+	scaling: 0.474486
+	textures:
+		- rgb: 0.853778,0.361396,0.935099
+		- rgb: default_normal
+		- rgb: 0.411577,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 5.0,0.225989,6.0
+	orientation: 0.0,1.0,0.0 0.168456
+	scaling: 0.225989
+	textures:
+		- rgb: 0.133459,0.661365,0.532201
+		- rgb: default_normal
+		- rgb: 0.0482604,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 5.0,0.191784,7.0
+	orientation: 0.0,1.0,0.0 0.527101
+	scaling: 0.191784
+	textures:
+		- rgb: 0.679514,0.624275,0.157434
+		- rgb: default_normal
+		- rgb: 0.503828,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 5.0,0.441973,8.0
+	orientation: 0.0,1.0,0.0 1.54495
+	scaling: 0.441973
+	textures:
+		- rgb: 0.709036,0.250665,0.810606
+		- rgb: default_normal
+		- rgb: 0.0873229,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 5.0,0.124625,9.0
+	orientation: 0.0,1.0,0.0 0.392937
+	scaling: 0.124625
+	textures:
+		- rgb: 0.657605,0.0777969,0.372245
+		- rgb: default_normal
+		- rgb: 0.0677442,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 5.0,0.552095,10.0
+	orientation: 0.0,1.0,0.0 1.32196
+	scaling: 0.552095
+	textures:
+		- rgb: 0.131601,0.844722,0.440096
+		- rgb: default_normal
+		- rgb: 0.431864,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 6.0,0.790695,-10.0
+	orientation: 0.0,1.0,0.0 0.818022
+	scaling: 0.790695
+	textures:
+		- rgb: 0.333068,0.750844,0.264236
+		- rgb: default_normal
+		- rgb: 0.386285,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 6.0,0.576408,-9.0
+	orientation: 0.0,1.0,0.0 0.318396
+	scaling: 0.576408
+	textures:
+		- rgb: 0.104656,0.238621,0.624452
+		- rgb: default_normal
+		- rgb: 0.274879,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 6.0,0.677055,-8.0
+	orientation: 0.0,1.0,0.0 1.0824
+	scaling: 0.677055
+	textures:
+		- rgb: 0.245783,0.52795,0.191327
+		- rgb: default_normal
+		- rgb: 0.0338632,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 6.0,0.52861,-7.0
+	orientation: 0.0,1.0,0.0 0.370323
+	scaling: 0.52861
+	textures:
+		- rgb: 0.899932,0.369977,0.687673
+		- rgb: default_normal
+		- rgb: 0.272791,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 6.0,0.616795,-6.0
+	orientation: 0.0,1.0,0.0 0.254791
+	scaling: 0.616795
+	textures:
+		- rgb: 0.77884,0.832986,0.360699
+		- rgb: default_normal
+		- rgb: 0.0763541,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 6.0,0.245662,-5.0
+	orientation: 0.0,1.0,0.0 1.35431
+	scaling: 0.245662
+	textures:
+		- rgb: 0.136191,0.535321,0.513238
+		- rgb: default_normal
+		- rgb: 0.67593,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 6.0,0.571618,-4.0
+	orientation: 0.0,1.0,0.0 1.12518
+	scaling: 0.571618
+	textures:
+		- rgb: 0.834701,0.389543,0.579065
+		- rgb: default_normal
+		- rgb: 0.0200731,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 6.0,0.708334,-3.0
+	orientation: 0.0,1.0,0.0 0.502479
+	scaling: 0.708334
+	textures:
+		- rgb: 0.193007,0.82414,0.264674
+		- rgb: default_normal
+		- rgb: 0.48551,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 6.0,0.381341,-2.0
+	orientation: 0.0,1.0,0.0 1.39601
+	scaling: 0.381341
+	textures:
+		- rgb: 0.515639,0.350006,0.209093
+		- rgb: default_normal
+		- rgb: 0.253597,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 6.0,0.585616,-1.0
+	orientation: 0.0,1.0,0.0 0.479852
+	scaling: 0.585616
+	textures:
+		- rgb: 0.236594,0.562748,0.525848
+		- rgb: default_normal
+		- rgb: 0.307734,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 6.0,0.592621,0.0
+	orientation: 0.0,1.0,0.0 0.456314
+	scaling: 0.592621
+	textures:
+		- rgb: 0.566415,0.474682,0.268764
+		- rgb: default_normal
+		- rgb: 0.785287,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 6.0,0.729207,1.0
+	orientation: 0.0,1.0,0.0 1.04839
+	scaling: 0.729207
+	textures:
+		- rgb: 0.521428,0.394724,0.0907367
+		- rgb: default_normal
+		- rgb: 0.601243,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 6.0,0.784916,2.0
+	orientation: 0.0,1.0,0.0 1.55724
+	scaling: 0.784916
+	textures:
+		- rgb: 0.502801,0.919932,0.172317
+		- rgb: default_normal
+		- rgb: 0.687008,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 6.0,0.14717,3.0
+	orientation: 0.0,1.0,0.0 0.507402
+	scaling: 0.14717
+	textures:
+		- rgb: 0.619615,0.120217,0.265968
+		- rgb: default_normal
+		- rgb: 0.715804,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 6.0,0.560904,4.0
+	orientation: 0.0,1.0,0.0 1.2616
+	scaling: 0.560904
+	textures:
+		- rgb: 0.509092,0.405634,0.250173
+		- rgb: default_normal
+		- rgb: 0.197204,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 6.0,0.321282,5.0
+	orientation: 0.0,1.0,0.0 0.802943
+	scaling: 0.321282
+	textures:
+		- rgb: 0.600831,0.222672,0.775017
+		- rgb: default_normal
+		- rgb: 0.013902,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 6.0,0.719376,6.0
+	orientation: 0.0,1.0,0.0 1.47826
+	scaling: 0.719376
+	textures:
+		- rgb: 0.377828,0.554954,0.915114
+		- rgb: default_normal
+		- rgb: 0.749124,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 6.0,0.301503,7.0
+	orientation: 0.0,1.0,0.0 1.3253
+	scaling: 0.301503
+	textures:
+		- rgb: 0.498705,0.031519,0.629385
+		- rgb: default_normal
+		- rgb: 0.0332812,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 6.0,0.346129,8.0
+	orientation: 0.0,1.0,0.0 1.34692
+	scaling: 0.346129
+	textures:
+		- rgb: 0.470725,0.0771585,0.545699
+		- rgb: default_normal
+		- rgb: 0.388356,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 6.0,0.324296,9.0
+	orientation: 0.0,1.0,0.0 0.792261
+	scaling: 0.324296
+	textures:
+		- rgb: 0.27679,0.528611,0.172192
+		- rgb: default_normal
+		- rgb: 0.133976,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 6.0,0.721473,10.0
+	orientation: 0.0,1.0,0.0 0.137388
+	scaling: 0.721473
+	textures:
+		- rgb: 0.903686,0.651521,0.238868
+		- rgb: default_normal
+		- rgb: 0.129432,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 7.0,0.674376,-10.0
+	orientation: 0.0,1.0,0.0 0.436687
+	scaling: 0.674376
+	textures:
+		- rgb: 0.655283,0.159312,0.555373
+		- rgb: default_normal
+		- rgb: 0.395985,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 7.0,0.593533,-9.0
+	orientation: 0.0,1.0,0.0 0.333147
+	scaling: 0.593533
+	textures:
+		- rgb: 0.666647,0.221445,0.890434
+		- rgb: default_normal
+		- rgb: 0.348444,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 7.0,0.397788,-8.0
+	orientation: 0.0,1.0,0.0 0.139974
+	scaling: 0.397788
+	textures:
+		- rgb: 0.171583,0.799866,0.066218
+		- rgb: default_normal
+		- rgb: 0.0382019,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 7.0,0.335441,-7.0
+	orientation: 0.0,1.0,0.0 0.48571
+	scaling: 0.335441
+	textures:
+		- rgb: 0.730151,0.94139,0.0578946
+		- rgb: default_normal
+		- rgb: 0.616676,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 7.0,0.683227,-6.0
+	orientation: 0.0,1.0,0.0 0.0195415
+	scaling: 0.683227
+	textures:
+		- rgb: 0.373438,0.790641,0.351209
+		- rgb: default_normal
+		- rgb: 0.0449029,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 7.0,0.717901,-5.0
+	orientation: 0.0,1.0,0.0 0.00700157
+	scaling: 0.717901
+	textures:
+		- rgb: 0.746272,0.74384,0.257207
+		- rgb: default_normal
+		- rgb: 0.0108856,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 7.0,0.329095,-4.0
+	orientation: 0.0,1.0,0.0 0.722051
+	scaling: 0.329095
+	textures:
+		- rgb: 0.413605,0.28023,0.653103
+		- rgb: default_normal
+		- rgb: 0.417738,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 7.0,0.525469,-3.0
+	orientation: 0.0,1.0,0.0 0.50476
+	scaling: 0.525469
+	textures:
+		- rgb: 0.554389,0.726942,0.0793345
+		- rgb: default_normal
+		- rgb: 0.382453,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 7.0,0.205277,-2.0
+	orientation: 0.0,1.0,0.0 0.62886
+	scaling: 0.205277
+	textures:
+		- rgb: 0.657331,0.6427,0.104938
+		- rgb: default_normal
+		- rgb: 0.397404,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 7.0,0.591796,-1.0
+	orientation: 0.0,1.0,0.0 0.513041
+	scaling: 0.591796
+	textures:
+		- rgb: 0.537627,0.931193,0.387789
+		- rgb: default_normal
+		- rgb: 0.605544,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 7.0,0.513552,0.0
+	orientation: 0.0,1.0,0.0 0.320537
+	scaling: 0.513552
+	textures:
+		- rgb: 0.550377,0.0982364,0.28291
+		- rgb: default_normal
+		- rgb: 0.534438,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 7.0,0.28933,1.0
+	orientation: 0.0,1.0,0.0 1.17477
+	scaling: 0.28933
+	textures:
+		- rgb: 0.782638,0.121445,0.812285
+		- rgb: default_normal
+		- rgb: 0.184562,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 7.0,0.42432,2.0
+	orientation: 0.0,1.0,0.0 0.636423
+	scaling: 0.42432
+	textures:
+		- rgb: 0.819738,0.824211,0.320312
+		- rgb: default_normal
+		- rgb: 0.510742,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 7.0,0.328873,3.0
+	orientation: 0.0,1.0,0.0 0.824421
+	scaling: 0.328873
+	textures:
+		- rgb: 0.825328,0.102122,0.764824
+		- rgb: default_normal
+		- rgb: 0.696085,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 7.0,0.600838,4.0
+	orientation: 0.0,1.0,0.0 1.34986
+	scaling: 0.600838
+	textures:
+		- rgb: 0.222627,0.537241,0.556646
+		- rgb: default_normal
+		- rgb: 0.578474,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 7.0,0.723267,5.0
+	orientation: 0.0,1.0,0.0 0.558156
+	scaling: 0.723267
+	textures:
+		- rgb: 0.263806,0.0777835,0.768292
+		- rgb: default_normal
+		- rgb: 0.707867,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 7.0,0.233528,6.0
+	orientation: 0.0,1.0,0.0 0.382803
+	scaling: 0.233528
+	textures:
+		- rgb: 0.282697,0.892184,0.630273
+		- rgb: default_normal
+		- rgb: 0.552317,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 7.0,0.517164,7.0
+	orientation: 0.0,1.0,0.0 1.4489
+	scaling: 0.517164
+	textures:
+		- rgb: 0.284152,0.743392,0.129284
+		- rgb: default_normal
+		- rgb: 0.560616,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 7.0,0.438389,8.0
+	orientation: 0.0,1.0,0.0 1.56849
+	scaling: 0.438389
+	textures:
+		- rgb: 0.82121,0.803502,0.0569564
+		- rgb: default_normal
+		- rgb: 0.467374,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 7.0,0.218076,9.0
+	orientation: 0.0,1.0,0.0 0.828894
+	scaling: 0.218076
+	textures:
+		- rgb: 0.702674,0.285938,0.442405
+		- rgb: default_normal
+		- rgb: 0.117198,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 7.0,0.415681,10.0
+	orientation: 0.0,1.0,0.0 0.219424
+	scaling: 0.415681
+	textures:
+		- rgb: 0.413631,0.832761,0.387272
+		- rgb: default_normal
+		- rgb: 0.39226,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 8.0,0.667827,-10.0
+	orientation: 0.0,1.0,0.0 0.765164
+	scaling: 0.667827
+	textures:
+		- rgb: 0.525857,0.184169,0.524076
+		- rgb: default_normal
+		- rgb: 0.436814,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 8.0,0.751084,-9.0
+	orientation: 0.0,1.0,0.0 1.11748
+	scaling: 0.751084
+	textures:
+		- rgb: 0.641249,0.129427,0.214305
+		- rgb: default_normal
+		- rgb: 0.0952856,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 8.0,0.340665,-8.0
+	orientation: 0.0,1.0,0.0 0.340989
+	scaling: 0.340665
+	textures:
+		- rgb: 0.599114,0.512649,0.1947
+		- rgb: default_normal
+		- rgb: 0.194361,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 8.0,0.245784,-7.0
+	orientation: 0.0,1.0,0.0 0.985864
+	scaling: 0.245784
+	textures:
+		- rgb: 0.60055,0.218102,0.501892
+		- rgb: default_normal
+		- rgb: 0.0526466,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 8.0,0.319405,-6.0
+	orientation: 0.0,1.0,0.0 0.0258036
+	scaling: 0.319405
+	textures:
+		- rgb: 0.0400803,0.334334,0.561929
+		- rgb: default_normal
+		- rgb: 0.559081,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 8.0,0.46553,-5.0
+	orientation: 0.0,1.0,0.0 0.583334
+	scaling: 0.46553
+	textures:
+		- rgb: 0.866167,0.334229,0.897421
+		- rgb: default_normal
+		- rgb: 0.403741,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 8.0,0.261239,-4.0
+	orientation: 0.0,1.0,0.0 1.43549
+	scaling: 0.261239
+	textures:
+		- rgb: 0.293697,0.749023,0.288284
+		- rgb: default_normal
+		- rgb: 0.0981008,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 8.0,0.306502,-3.0
+	orientation: 0.0,1.0,0.0 0.177644
+	scaling: 0.306502
+	textures:
+		- rgb: 0.368021,0.440378,0.828036
+		- rgb: default_normal
+		- rgb: 0.365464,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 8.0,0.130006,-2.0
+	orientation: 0.0,1.0,0.0 0.825767
+	scaling: 0.130006
+	textures:
+		- rgb: 0.69282,0.583018,0.338497
+		- rgb: default_normal
+		- rgb: 0.47719,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 8.0,0.364806,-1.0
+	orientation: 0.0,1.0,0.0 0.220747
+	scaling: 0.364806
+	textures:
+		- rgb: 0.750812,0.526477,0.166824
+		- rgb: default_normal
+		- rgb: 0.772682,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 8.0,0.586528,0.0
+	orientation: 0.0,1.0,0.0 0.30049
+	scaling: 0.586528
+	textures:
+		- rgb: 0.689975,0.470702,0.278456
+		- rgb: default_normal
+		- rgb: 0.328555,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 8.0,0.147757,1.0
+	orientation: 0.0,1.0,0.0 0.487076
+	scaling: 0.147757
+	textures:
+		- rgb: 0.588674,0.310994,0.728952
+		- rgb: default_normal
+		- rgb: 0.0590385,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 8.0,0.457746,2.0
+	orientation: 0.0,1.0,0.0 0.805486
+	scaling: 0.457746
+	textures:
+		- rgb: 0.590302,0.124025,0.336645
+		- rgb: default_normal
+		- rgb: 0.165868,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 8.0,0.440998,3.0
+	orientation: 0.0,1.0,0.0 1.30235
+	scaling: 0.440998
+	textures:
+		- rgb: 0.309723,0.677076,0.345734
+		- rgb: default_normal
+		- rgb: 0.254087,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 8.0,0.503135,4.0
+	orientation: 0.0,1.0,0.0 0.222879
+	scaling: 0.503135
+	textures:
+		- rgb: 0.58672,0.139258,0.599158
+		- rgb: default_normal
+		- rgb: 0.470979,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 8.0,0.247406,5.0
+	orientation: 0.0,1.0,0.0 0.805555
+	scaling: 0.247406
+	textures:
+		- rgb: 0.464661,0.602261,0.296622
+		- rgb: default_normal
+		- rgb: 0.487154,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 8.0,0.738466,6.0
+	orientation: 0.0,1.0,0.0 1.14197
+	scaling: 0.738466
+	textures:
+		- rgb: 0.766711,0.0813581,0.533296
+		- rgb: default_normal
+		- rgb: 0.195657,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 8.0,0.183476,7.0
+	orientation: 0.0,1.0,0.0 0.811539
+	scaling: 0.183476
+	textures:
+		- rgb: 0.169612,0.227605,0.846595
+		- rgb: default_normal
+		- rgb: 0.35868,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 8.0,0.33154,8.0
+	orientation: 0.0,1.0,0.0 0.707993
+	scaling: 0.33154
+	textures:
+		- rgb: 0.524429,0.0802561,0.0865503
+		- rgb: default_normal
+		- rgb: 0.034409,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 8.0,0.115836,9.0
+	orientation: 0.0,1.0,0.0 0.129729
+	scaling: 0.115836
+	textures:
+		- rgb: 0.0323437,0.56301,0.0798629
+		- rgb: default_normal
+		- rgb: 0.633808,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 8.0,0.570611,10.0
+	orientation: 0.0,1.0,0.0 1.22809
+	scaling: 0.570611
+	textures:
+		- rgb: 0.718295,0.910157,0.320491
+		- rgb: default_normal
+		- rgb: 0.327726,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 9.0,0.387423,-10.0
+	orientation: 0.0,1.0,0.0 0.0703272
+	scaling: 0.387423
+	textures:
+		- rgb: 0.276864,0.629063,0.715853
+		- rgb: default_normal
+		- rgb: 0.004406,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 9.0,0.264908,-9.0
+	orientation: 0.0,1.0,0.0 0.486136
+	scaling: 0.264908
+	textures:
+		- rgb: 0.0392597,0.271704,0.698927
+		- rgb: default_normal
+		- rgb: 0.0897346,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 9.0,0.443093,-8.0
+	orientation: 0.0,1.0,0.0 0.783872
+	scaling: 0.443093
+	textures:
+		- rgb: 0.671484,0.552554,0.303365
+		- rgb: default_normal
+		- rgb: 0.285765,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 9.0,0.750517,-7.0
+	orientation: 0.0,1.0,0.0 0.898798
+	scaling: 0.750517
+	textures:
+		- rgb: 0.457612,0.292449,0.71304
+		- rgb: default_normal
+		- rgb: 0.520867,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 9.0,0.521569,-6.0
+	orientation: 0.0,1.0,0.0 0.99558
+	scaling: 0.521569
+	textures:
+		- rgb: 0.37266,0.78353,0.820928
+		- rgb: default_normal
+		- rgb: 0.270428,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 9.0,0.280845,-5.0
+	orientation: 0.0,1.0,0.0 0.154139
+	scaling: 0.280845
+	textures:
+		- rgb: 0.0434229,0.718176,0.152022
+		- rgb: default_normal
+		- rgb: 0.541333,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 9.0,0.341684,-4.0
+	orientation: 0.0,1.0,0.0 0.901268
+	scaling: 0.341684
+	textures:
+		- rgb: 0.681078,0.547895,0.138544
+		- rgb: default_normal
+		- rgb: 0.299383,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 9.0,0.544478,-3.0
+	orientation: 0.0,1.0,0.0 1.43941
+	scaling: 0.544478
+	textures:
+		- rgb: 0.0690872,0.799921,0.816535
+		- rgb: default_normal
+		- rgb: 0.624992,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 9.0,0.368817,-2.0
+	orientation: 0.0,1.0,0.0 0.0365693
+	scaling: 0.368817
+	textures:
+		- rgb: 0.91148,0.716535,0.212684
+		- rgb: default_normal
+		- rgb: 0.0811634,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 9.0,0.769892,-1.0
+	orientation: 0.0,1.0,0.0 1.52759
+	scaling: 0.769892
+	textures:
+		- rgb: 0.684505,0.0460692,0.352932
+		- rgb: default_normal
+		- rgb: 0.543942,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 9.0,0.132965,0.0
+	orientation: 0.0,1.0,0.0 0.644684
+	scaling: 0.132965
+	textures:
+		- rgb: 0.283341,0.721373,0.838318
+		- rgb: default_normal
+		- rgb: 0.368025,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 9.0,0.438297,1.0
+	orientation: 0.0,1.0,0.0 1.1895
+	scaling: 0.438297
+	textures:
+		- rgb: 0.194607,0.351636,0.556434
+		- rgb: default_normal
+		- rgb: 0.253725,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 9.0,0.102403,2.0
+	orientation: 0.0,1.0,0.0 0.984397
+	scaling: 0.102403
+	textures:
+		- rgb: 0.839424,0.731257,0.361833
+		- rgb: default_normal
+		- rgb: 0.40833,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 9.0,0.108967,3.0
+	orientation: 0.0,1.0,0.0 0.503629
+	scaling: 0.108967
+	textures:
+		- rgb: 0.112834,0.565693,0.494025
+		- rgb: default_normal
+		- rgb: 0.479932,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 9.0,0.397379,4.0
+	orientation: 0.0,1.0,0.0 0.64858
+	scaling: 0.397379
+	textures:
+		- rgb: 0.303057,0.57135,0.773742
+		- rgb: default_normal
+		- rgb: 0.123963,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 9.0,0.603543,5.0
+	orientation: 0.0,1.0,0.0 0.0154059
+	scaling: 0.603543
+	textures:
+		- rgb: 0.812221,0.392059,0.820773
+		- rgb: default_normal
+		- rgb: 0.615207,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 9.0,0.193517,6.0
+	orientation: 0.0,1.0,0.0 0.914565
+	scaling: 0.193517
+	textures:
+		- rgb: 0.161377,0.779639,0.905822
+		- rgb: default_normal
+		- rgb: 0.0779465,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 9.0,0.512387,7.0
+	orientation: 0.0,1.0,0.0 1.52453
+	scaling: 0.512387
+	textures:
+		- rgb: 0.291104,0.385313,0.617871
+		- rgb: default_normal
+		- rgb: 0.057558,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 9.0,0.677045,8.0
+	orientation: 0.0,1.0,0.0 1.32177
+	scaling: 0.677045
+	textures:
+		- rgb: 0.617203,0.333359,0.743569
+		- rgb: default_normal
+		- rgb: 0.584069,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 9.0,0.415391,9.0
+	orientation: 0.0,1.0,0.0 0.848884
+	scaling: 0.415391
+	textures:
+		- rgb: 0.786024,0.383375,0.544704
+		- rgb: default_normal
+		- rgb: 0.148953,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 9.0,0.44002,10.0
+	orientation: 0.0,1.0,0.0 0.400638
+	scaling: 0.44002
+	textures:
+		- rgb: 0.539786,0.667612,0.134714
+		- rgb: default_normal
+		- rgb: 0.623211,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 10.0,0.474326,-10.0
+	orientation: 0.0,1.0,0.0 0.166944
+	scaling: 0.474326
+	textures:
+		- rgb: 0.155759,0.384556,0.552245
+		- rgb: default_normal
+		- rgb: 0.202916,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 10.0,0.191286,-9.0
+	orientation: 0.0,1.0,0.0 0.342983
+	scaling: 0.191286
+	textures:
+		- rgb: 0.637977,0.403442,0.214498
+		- rgb: default_normal
+		- rgb: 0.178722,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 10.0,0.503908,-8.0
+	orientation: 0.0,1.0,0.0 0.416799
+	scaling: 0.503908
+	textures:
+		- rgb: 0.591119,0.246113,0.536897
+		- rgb: default_normal
+		- rgb: 0.768819,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 10.0,0.259287,-7.0
+	orientation: 0.0,1.0,0.0 0.842572
+	scaling: 0.259287
+	textures:
+		- rgb: 0.800541,0.503615,0.382325
+		- rgb: default_normal
+		- rgb: 0.0743357,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 10.0,0.397858,-6.0
+	orientation: 0.0,1.0,0.0 0.0445718
+	scaling: 0.397858
+	textures:
+		- rgb: 0.7138,0.830493,0.354553
+		- rgb: default_normal
+		- rgb: 0.307457,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 10.0,0.168432,-5.0
+	orientation: 0.0,1.0,0.0 0.971435
+	scaling: 0.168432
+	textures:
+		- rgb: 0.883536,0.40581,0.385724
+		- rgb: default_normal
+		- rgb: 0.311448,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 10.0,0.662593,-4.0
+	orientation: 0.0,1.0,0.0 0.0231584
+	scaling: 0.662593
+	textures:
+		- rgb: 0.912111,0.336189,0.609898
+		- rgb: default_normal
+		- rgb: 0.653014,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 10.0,0.65742,-3.0
+	orientation: 0.0,1.0,0.0 0.271438
+	scaling: 0.65742
+	textures:
+		- rgb: 0.887003,0.384334,0.580279
+		- rgb: default_normal
+		- rgb: 0.232659,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 10.0,0.599207,-2.0
+	orientation: 0.0,1.0,0.0 0.757224
+	scaling: 0.599207
+	textures:
+		- rgb: 0.229136,0.190976,0.780425
+		- rgb: default_normal
+		- rgb: 0.634593,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 10.0,0.259773,-1.0
+	orientation: 0.0,1.0,0.0 1.30866
+	scaling: 0.259773
+	textures:
+		- rgb: 0.419941,0.873904,0.560313
+		- rgb: default_normal
+		- rgb: 0.68851,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 10.0,0.522005,0.0
+	orientation: 0.0,1.0,0.0 1.09608
+	scaling: 0.522005
+	textures:
+		- rgb: 0.149281,0.648018,0.931376
+		- rgb: default_normal
+		- rgb: 0.128356,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 10.0,0.285717,1.0
+	orientation: 0.0,1.0,0.0 0.979558
+	scaling: 0.285717
+	textures:
+		- rgb: 0.516399,0.107094,0.803032
+		- rgb: default_normal
+		- rgb: 0.615302,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 10.0,0.704078,2.0
+	orientation: 0.0,1.0,0.0 1.45816
+	scaling: 0.704078
+	textures:
+		- rgb: 0.755852,0.0867673,0.726899
+		- rgb: default_normal
+		- rgb: 0.423937,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 10.0,0.65629,3.0
+	orientation: 0.0,1.0,0.0 0.77415
+	scaling: 0.65629
+	textures:
+		- rgb: 0.841849,0.0698949,0.161522
+		- rgb: default_normal
+		- rgb: 0.126203,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 10.0,0.101369,4.0
+	orientation: 0.0,1.0,0.0 1.23338
+	scaling: 0.101369
+	textures:
+		- rgb: 0.134733,0.720806,0.0732983
+		- rgb: default_normal
+		- rgb: 0.668671,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 10.0,0.190486,5.0
+	orientation: 0.0,1.0,0.0 1.05505
+	scaling: 0.190486
+	textures:
+		- rgb: 0.262177,0.542978,0.372061
+		- rgb: default_normal
+		- rgb: 0.670232,0.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 10.0,0.319205,6.0
+	orientation: 0.0,1.0,0.0 0.706869
+	scaling: 0.319205
+	textures:
+		- rgb: 0.411035,0.83825,0.790342
+		- rgb: default_normal
+		- rgb: 0.204391,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 10.0,0.556381,7.0
+	orientation: 0.0,1.0,0.0 0.713501
+	scaling: 0.556381
+	textures:
+		- rgb: 0.614909,0.887234,0.190617
+		- rgb: default_normal
+		- rgb: 0.286593,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 10.0,0.159665,8.0
+	orientation: 0.0,1.0,0.0 0.719503
+	scaling: 0.159665
+	textures:
+		- rgb: 0.398977,0.122705,0.623744
+		- rgb: default_normal
+		- rgb: 0.0581242,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 10.0,0.455467,9.0
+	orientation: 0.0,1.0,0.0 0.00330291
+	scaling: 0.455467
+	textures:
+		- rgb: 0.519414,0.532168,0.200304
+		- rgb: default_normal
+		- rgb: 0.291666,1.0,1.0
+
+* object:
+	mesh: cube
+	shadows: true
+	twosided: false
+	type: PBRNoUVs
+	translation: 10.0,0.309536,10.0
+	orientation: 0.0,1.0,0.0 1.34016
+	scaling: 0.309536
+	textures:
+		- rgb: 0.398375,0.7942,0.355907
+		- rgb: default_normal
+		- rgb: 0.798709,0.0,1.0
