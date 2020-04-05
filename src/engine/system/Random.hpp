@@ -48,6 +48,13 @@ public:
 	 */
 	static float Float(float min, float max);
 
+	/** Generate a random color in RGB color space.
+	 Internally a HSV color with reasonable saturation and luminance
+	 is generated and converted to RGB.
+	 \return an RGB triplet.
+	 */
+	static glm::vec3 Color();
+
 	/** Sample point uniformly on a disk.
 	 \return a 2D point on the unit disk
 	*/

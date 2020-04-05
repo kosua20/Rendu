@@ -30,6 +30,14 @@ float Random::Float(float min, float max) {
 	return std::uniform_real_distribution<float>(min, max)(_thread.mt);
 }
 
+
+glm::vec3 Random::Color(){
+	const float hue = Random::Float(0.0f, 360.0f);
+	const float saturation = Random::Float(0.5f, 0.95f);
+	const float value = Random::Float(0.5f, 0.95f);
+	return glm::rgbColor(glm::vec3(hue, saturation, value));
+}
+
 glm::vec2 Random::sampleDisk(){
 	const float x = 2.0f * Random::Float() - 1.0f;
 	const float y = 2.0f * Random::Float() - 1.0f;
