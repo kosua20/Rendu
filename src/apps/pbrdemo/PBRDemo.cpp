@@ -119,9 +119,9 @@ void PBRDemo::update() {
 	// Performances window.
 	if(ImGui::Begin("Performance")){
 		ImGui::Text("%.1f ms, %.1f fps", ImGui::GetIO().DeltaTime * 1000.0f, ImGui::GetIO().Framerate);
-		ImGui::Text("Shadow maps update: %.1fms", float(_shadowTime.value())/1000000.0f);
-		ImGui::Text("Scene rendering: %.1fms", float(_rendererTime.value())/1000000.0f);
-		ImGui::Text("Post processing: %.1fms", float(_postprocessTime.value())/1000000.0f);
+		ImGui::Text("Shadow maps update: %05.1fms", float(_shadowTime.value())/1000000.0f);
+		ImGui::Text("Scene rendering: %05.1fms", float(_rendererTime.value())/1000000.0f);
+		ImGui::Text("Post processing: %05.1fms", float(_postprocessTime.value())/1000000.0f);
 	}
 
 	// First part of the ImGui window is always displayed.
