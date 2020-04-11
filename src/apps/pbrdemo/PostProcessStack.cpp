@@ -12,10 +12,10 @@ PostProcessStack::PostProcessStack(const glm::vec2 & resolution){
 	const int renderHeight	= int(_renderResolution[1]);
 	const int renderHWidth  = int(0.5f * _renderResolution[0]);
 	const int renderHHeight = int(0.5f * _renderResolution[1]);
-
-	_bloomBuffer	= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, Layout::RGB16F, false));
-	_toneMapBuffer 	= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, Layout::RGB16F, false));
-	_fxaaBuffer		= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, Layout::RGB16F, false));
+	const Descriptor desc = {Layout::RGB16F, Filter::LINEAR_NEAREST, Wrap::CLAMP};
+	_bloomBuffer	= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, desc, false));
+	_toneMapBuffer 	= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, desc, false));
+	_fxaaBuffer		= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, desc, false));
 	_blurBuffer		= std::unique_ptr<GaussianBlur>(new GaussianBlur(renderHWidth, renderHHeight, _settings.bloomRadius, Layout::RGB16F));
 
 	_bloomProgram		   = Resources::manager().getProgram2D("bloom");

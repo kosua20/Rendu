@@ -97,6 +97,6 @@ void ForwardLight::upload() const {
 
 void ForwardLight::bind(size_t slot) const {
 	glBindBuffer(GL_UNIFORM_BUFFER, _bufferHandle);
-	glBindBufferBase(GL_UNIFORM_BUFFER, slot, _bufferHandle);
+	glBindBufferBase(GL_UNIFORM_BUFFER, GLuint(slot), _bufferHandle);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }

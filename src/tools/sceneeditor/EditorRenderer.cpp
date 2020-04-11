@@ -15,7 +15,7 @@ EditorRenderer::EditorRenderer(const glm::vec2 & resolution) :
 	const int renderHeight = int(_renderResolution[1]);
 
 	// GL setup
-	_sceneFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, Layout::RGB8, true));
+		_sceneFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, {Layout::RGB8, Filter::LINEAR_NEAREST, Wrap::CLAMP}, true));
 	_objectProgram	  = Resources::manager().getProgram("object_basic_lit_texture");
 	_skyboxProgram	  = Resources::manager().getProgram("skybox_editor", "skybox_infinity", "skybox_basic");
 	_bgProgram		  = Resources::manager().getProgram("background_infinity");

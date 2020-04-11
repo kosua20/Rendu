@@ -30,7 +30,7 @@ public:
 		_userCamera.projection(config.screenResolution[0] / config.screenResolution[1], 1.34f, 0.1f, 100.0f);
 		// Framebuffer to store the rendered atmosphere result before tonemapping and upscaling to the window size.
 		const glm::vec2 renderRes = _config.renderingResolution();
-		_atmosphereBuffer.reset(new Framebuffer(uint(renderRes[0]), uint(renderRes[1]), Layout::RGB32F, false));
+		_atmosphereBuffer.reset(new Framebuffer(uint(renderRes[0]), uint(renderRes[1]), {Layout::RGB32F, Filter::LINEAR_NEAREST, Wrap::CLAMP}, false));
 		// Lookup table.
 		_precomputedScattering = Resources::manager().getTexture("scattering-precomputed", {Layout::RGB32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
 		// Atmosphere screen quad.

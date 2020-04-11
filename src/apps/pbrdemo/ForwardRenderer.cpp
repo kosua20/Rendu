@@ -16,7 +16,8 @@ ForwardRenderer::ForwardRenderer(const glm::vec2 & resolution) :
 
 	// Other framebuffers.
 	//_ssaoPass		  = std::unique_ptr<SSAO>(new SSAO(renderHalfWidth, renderHalfHeight, 0.5f));
-	_sceneFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, Layout::RGBA16F, true));
+	const Descriptor desc = {Layout::RGBA16F, Filter::LINEAR_NEAREST, Wrap::CLAMP};
+	_sceneFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, desc, true));
 
 	_objectProgram		= Resources::manager().getProgram("object_forward");
 	_objectNoUVsProgram = Resources::manager().getProgram("object_no_uv_forward");
@@ -212,7 +213,7 @@ void ForwardRenderer::draw(const Camera & camera) {
 	// --- Update lights data ----
 	_lightGPUData->updateCameraInfos(view, proj);
 	_lightGPUData->updateShadowMapInfos(_shadowMode, 0.01f);
-	for(const auto light : _scene->lights) {
+	for(const auto & light : _scene->lights) {
 		light->draw(*_lightGPUData);
 	}
 	_lightGPUData->upload();

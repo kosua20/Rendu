@@ -9,8 +9,9 @@ GaussianBlur::GaussianBlur(unsigned int width, unsigned int height, unsigned int
 	// Create a series of framebuffers smaller and smaller.
 	_frameBuffers = std::vector<std::unique_ptr<Framebuffer>>(depth);
 
+	const Descriptor desc = {preciseFormat, Filter::LINEAR_NEAREST, Wrap::CLAMP};
 	for(size_t i = 0; i < size_t(depth); ++i) {
-		_frameBuffers[i] = std::unique_ptr<Framebuffer>(new Framebuffer(uint(width / std::pow(2, i)), uint(height / std::pow(2, i)), preciseFormat, false));
+		_frameBuffers[i] = std::unique_ptr<Framebuffer>(new Framebuffer(uint(width / std::pow(2, i)), uint(height / std::pow(2, i)), desc, false));
 	}
 
 	_finalTexture = _frameBuffers[0]->textureId();

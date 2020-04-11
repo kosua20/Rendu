@@ -24,7 +24,8 @@ DeferredRenderer::DeferredRenderer(const glm::vec2 & resolution) :
 
 	// Other framebuffers.
 	_ssaoPass				= std::unique_ptr<SSAO>(new SSAO(renderHalfWidth, renderHalfHeight, 0.5f));
-	_sceneFramebuffer		= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, Layout::RGBA16F, false));
+	const Descriptor desc = {Layout::RGBA16F, Filter::LINEAR_NEAREST, Wrap::CLAMP};
+	_sceneFramebuffer		= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, desc, false));
 
 	_skyboxProgram		= Resources::manager().getProgram("skybox_gbuffer", "skybox_infinity", "skybox_gbuffer");
 	_bgProgram			= Resources::manager().getProgram("background_gbuffer", "background_infinity", "background_gbuffer");

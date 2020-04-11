@@ -281,7 +281,8 @@ void exportCubemapConvolution(std::vector<Texture> & cubeLevels, const std::stri
  */
 void computeAndExportLookupTable(const int outputSide, const std::string & outputPath) {
 	// Render the lookup table.
-	const auto bakingFramebuffer = std::make_shared<Framebuffer>(outputSide, outputSide, Layout::RG32F, false);
+	const Descriptor desc = {Layout::RG32F, Filter::LINEAR_NEAREST, Wrap::CLAMP};
+	const auto bakingFramebuffer = std::make_shared<Framebuffer>(outputSide, outputSide, desc, false);
 	const auto brdfProgram		 = Resources::manager().getProgram2D("brdf_sampler");
 	bakingFramebuffer->bind();
 	GLUtilities::setViewport(0, 0, int(bakingFramebuffer->width()), int(bakingFramebuffer->height()));

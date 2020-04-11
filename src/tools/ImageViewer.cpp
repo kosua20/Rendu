@@ -245,11 +245,11 @@ int main(int argc, char ** argv) {
 				// Export either in LDR or HDR.
 				bool res = System::showPicker(System::Picker::Save, "../../../resources", destinationPath, "png;exr");
 				if(res && !destinationPath.empty()) {
-					const Layout typedFormat = Image::isFloat(destinationPath) ? Layout::RGBA32F : Layout::RGBA8;
+					const Descriptor typedDesc = {Image::isFloat(destinationPath) ? Layout::RGBA32F : Layout::RGBA8, Filter::LINEAR_NEAREST, Wrap::CLAMP};
 					// Create a framebuffer at the right size and format, and render in it.
 					const unsigned int outputWidth  = isHorizontal ? imageInfos.height : imageInfos.width;
 					const unsigned int outputHeight = isHorizontal ? imageInfos.width : imageInfos.height;
-					std::unique_ptr<Framebuffer> framebuffer(new Framebuffer(outputWidth, outputHeight, typedFormat, false));
+					std::unique_ptr<Framebuffer> framebuffer(new Framebuffer(outputWidth, outputHeight, typedDesc, false));
 					framebuffer->bind();
 					framebuffer->setViewport();
 

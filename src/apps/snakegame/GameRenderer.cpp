@@ -19,8 +19,8 @@ GameRenderer::GameRenderer(const glm::vec2 & resolution) {
 	const int renderHeight = int(_renderResolution[1]);
 	_sceneFramebuffer	  = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, {{Layout::RGB16F, Filter::NEAREST_NEAREST, Wrap::CLAMP}, {Layout::R8, Filter::NEAREST_NEAREST, Wrap::CLAMP}, {Layout::DEPTH_COMPONENT32F, Filter::NEAREST_NEAREST, Wrap::CLAMP}},
 		 true));
-	_lightingFramebuffer   = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, Layout::RGB8, false));
-	_fxaaFramebuffer	   = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, Layout::RGBA8, false));
+	_lightingFramebuffer   = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, {Layout::RGB8, Filter::LINEAR_NEAREST, Wrap::CLAMP}, false));
+	_fxaaFramebuffer	   = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, {Layout::RGBA8,Filter::LINEAR_NEAREST, Wrap::CLAMP}, false));
 
 	_fxaaProgram		= Resources::manager().getProgram2D("fxaa");
 	_compositingProgram = Resources::manager().getProgram2D("game_composite");

@@ -13,8 +13,9 @@ ConvolutionPyramid::ConvolutionPyramid(unsigned int width, unsigned int height, 
 
 	// Pre and post process framebuffers.
 	const Descriptor desc = {Layout::RGBA32F, Filter::NEAREST_NEAREST, Wrap::CLAMP};
+	const Descriptor descSrc = {Layout::RGBA32F, Filter::LINEAR_NEAREST, Wrap::CLAMP};
 	// Output is as the basic required size.
-	_shifted = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, Layout::RGBA32F, false));
+	_shifted = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, descSrc, false));
 	// Resolution of the pyramid takes into account the filter padding.
 	_resolution = glm::ivec2(width + 2 * _padding, height + 2 * _padding);
 
