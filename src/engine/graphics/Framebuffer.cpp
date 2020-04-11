@@ -2,10 +2,6 @@
 #include "graphics/GPUObjects.hpp"
 #include "graphics/GLUtilities.hpp"
 
-Framebuffer::Framebuffer(unsigned int width, unsigned int height, Layout typedFormat, bool depthBuffer) :
-	Framebuffer(width, height, {Descriptor(typedFormat, Filter::LINEAR_NEAREST, Wrap::CLAMP)}, depthBuffer) {
-}
-
 Framebuffer::Framebuffer(unsigned int width, unsigned int height, const Descriptor & descriptor, bool depthBuffer) :
 	Framebuffer(width, height, std::vector<Descriptor>(1, descriptor), depthBuffer) {
 }
