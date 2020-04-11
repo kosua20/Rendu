@@ -3,14 +3,31 @@
 #include "graphics/GLUtilities.hpp"
 
 Framebuffer::Framebuffer(unsigned int width, unsigned int height, const Descriptor & descriptor, bool depthBuffer) :
-	Framebuffer(width, height, std::vector<Descriptor>(1, descriptor), depthBuffer) {
+	Framebuffer(TextureShape::D2, width, height, 1, std::vector<Descriptor>(1, descriptor), depthBuffer) {
 }
 
 Framebuffer::Framebuffer(unsigned int width, unsigned int height, const std::vector<Descriptor> & descriptors, bool depthBuffer) :
+	Framebuffer(TextureShape::D2, width, height, 1, descriptors, depthBuffer) {
+}
+
+Framebuffer::Framebuffer(TextureShape shape, unsigned int width, unsigned int height, unsigned int depth, const std::vector<Descriptor> & descriptors, bool depthBuffer) :
 	_width(width), _height(height) {
 
+	// Check that the shape is supported.
+	_shape = shape;
+	if(_shape != TextureShape::D2 && _shape != TextureShape::Array2D && _shape != TextureShape::Cube && _shape != TextureShape::ArrayCube){
+		Log::Error() << Log::OpenGL << "Unsupported framebuffer shape." << std::endl;
+		return;
+	}
+	if(shape == TextureShape::D2){
+		depth = 1;
+	} else if(shape == TextureShape::Cube){
+		depth = 6;
+	} else if(shape == TextureShape::ArrayCube){
+		depth *= 6;
+	}
 	_depthUse = Depth::NONE;
-
+	_target = GLUtilities::targetFromShape(_shape);
 	// Create a framebuffer.
 	glGenFramebuffers(1, &_id);
 	glBindFramebuffer(GL_FRAMEBUFFER, _id);
@@ -27,6 +44,7 @@ Framebuffer::Framebuffer(unsigned int width, unsigned int height, const std::vec
 			_idDepth.height = _height;
 			_idDepth.depth  = 1;
 			_idDepth.levels = 1;
+			// For now we don't support layered rendering, depth is always a TEXTURE_2D.
 			_idDepth.shape  = TextureShape::D2;
 			GLUtilities::setupTexture(_idDepth, descriptor);
 
@@ -40,19 +58,26 @@ Framebuffer::Framebuffer(unsigned int width, unsigned int height, const std::vec
 			Texture & tex = _idColors.back();
 			tex.width	 = _width;
 			tex.height	= _height;
-			tex.depth	 = 1;
+			tex.depth	 = depth;
 			tex.levels	= 1;
-			tex.shape	 = TextureShape::D2;
+			tex.shape	 = shape;
 			GLUtilities::setupTexture(tex, descriptor);
 
 			// Link the texture to the color attachment (ie output) of the framebuffer.
-			glBindTexture(GL_TEXTURE_2D, tex.gpu->id);
+			glBindTexture(_target, tex.gpu->id); // might not be needed.
 			const GLuint slot = GLuint(int(_idColors.size()) - 1);
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + slot, GL_TEXTURE_2D, tex.gpu->id, 0);
-			glBindTexture(GL_TEXTURE_2D, 0);
+			// Two cases: 2D texture or array (either 2D array, cubemap, or cubemap array).
+			if(_shape == TextureShape::D2){
+				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + slot, GL_TEXTURE_2D, tex.gpu->id, 0);
+			} else if(_shape == TextureShape::Cube){
+				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + slot, GL_TEXTURE_CUBE_MAP_POSITIVE_X, tex.gpu->id, 0);
+			} else {
+				glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + slot, tex.gpu->id, 0, 0);
+			}
+			glBindTexture(_target, 0);
+			checkGLError();
 		}
 	}
-
 	// If the depth buffer has not been setup yet but we require it, use a renderbuffer.
 	if(_depthUse == Depth::NONE && depthBuffer) {
 		_idDepth.width  = _width;
@@ -69,7 +94,6 @@ Framebuffer::Framebuffer(unsigned int width, unsigned int height, const std::vec
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _idDepth.gpu->id);
 		_depthUse = Depth::RENDERBUFFER;
 	}
-
 	//Register which color attachments to draw to.
 	std::vector<GLenum> drawBuffers(_idColors.size());
 	for(size_t i = 0; i < _idColors.size(); ++i) {
@@ -93,6 +117,24 @@ void Framebuffer::bind(Mode mode) const {
 	} else if(mode == Mode::SRGB){
 		bind();
 		glEnable(GL_FRAMEBUFFER_SRGB);
+	}
+}
+
+void Framebuffer::bind(size_t layer) const {
+	bind();
+	// Bind the proper slice for each color attachment.
+	for(uint cid = 0; cid < _idColors.size(); ++cid){
+		glBindTexture(_target, _idColors[cid].gpu->id);
+		const GLuint slot = GLuint(int(_idColors.size()) - 1);
+		const GLuint id = _idColors[cid].gpu->id;
+		if(_shape == TextureShape::D2){
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + slot, GL_TEXTURE_2D, id, 0);
+		} else if(_shape == TextureShape::Cube){
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + slot, GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + layer), id, 0);
+		} else {
+			glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + slot, id, 0, GLint(layer));
+		}
+		glBindTexture(_target, 0);
 	}
 }
 

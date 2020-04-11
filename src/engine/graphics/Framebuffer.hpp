@@ -4,7 +4,9 @@
 #include "Common.hpp"
 
 /**
- \brief Represent a 2D rendering target, of any size, format and type, backed by an OpenGL framebuffer.
+ \brief Represent a rendering target, of any size, format and type, backed by an OpenGL framebuffer.
+ Framebuffer can use different shapes: 2D, cubemap, 2D array, cubemap array, but you can only render to one 2D layer at a time.
+ For cubemaps and arrays you can select the ayer when binding.
  \ingroup Graphics
  */
 class Framebuffer {
@@ -16,14 +18,6 @@ public:
 		WRITE, ///< Write mode.
 		SRGB   ///< Perform linear-to-sRGB conversion when writing/reading (if the framebuffer is backed by an sRGB texture).
 	};
-
-	/** Setup the framebuffer (attachments, renderbuffer, depth buffer, textures IDs,...).
-	 Will use linear filtering and edge clamping.
-	 \param width the width of the framebuffer
-	 \param height the height of the framebuffer
-	 \param typedFormat the precise typed format, combining format and type (RGB8,...) to use
-	 \param depthBuffer should the framebuffer contain a depth buffer to properly handle 3D geometry
-	 */
 
 	/** Setup the framebuffer (attachments, renderbuffer, depth buffer, textures IDs,...)
 	 \param width the width of the framebuffer
@@ -41,6 +35,16 @@ public:
 	 */
 	Framebuffer(unsigned int width, unsigned int height, const std::vector<Descriptor> & descriptors, bool depthBuffer);
 
+	/** Setup the framebuffer (attachments, renderbuffer, depth buffer, textures IDs,...)
+	 \param shape the texture shape (2D, cubemap, array,...)
+	 \param width the width of the framebuffer
+	 \param height the height of the framebuffer
+	 \param depth the number of layers of the framebuffer
+	 \param descriptors the color attachments texture descriptors (format, filtering,...)
+	 \param depthBuffer should the framebuffer contain a depth buffer to properly handle 3D geometry
+	 */
+	Framebuffer(TextureShape shape, unsigned int width, unsigned int height, unsigned int depth, const std::vector<Descriptor> & descriptors, bool depthBuffer);
+
 	/**
 	 Bind the framebuffer.
 	 */
@@ -51,6 +55,12 @@ public:
 	 \param mode the mode to use
 	 */
 	void bind(Mode mode) const;
+
+	/**
+	 Bind a specific layer of the framebuffer
+	 \param layer the layer to bind
+	 */
+	void bind(size_t layer) const;
 
 	/**
 	 Set the viewport to the size of the framebuffer.
@@ -147,6 +157,8 @@ private:
 	GLuint _id = 0;					///< The framebuffer ID.
 	std::vector<Texture> _idColors; ///< The color textures.
 	Texture _idDepth;				///< The depth renderbuffer.
+	TextureShape _shape;
+	GLenum _target;
 
 	/// \brief Type of depth storage structure used.
 	enum class Depth {
