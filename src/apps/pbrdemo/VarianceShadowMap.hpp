@@ -1,6 +1,7 @@
 #pragma once
 
 #include "renderers/ShadowMap.hpp"
+#include "graphics/Framebuffer.hpp"
 
 /**
  \brief A 2D variance shadow map, can be used for directional and spot lights. The shadow map will register itself with the associated light. Implement variance shadow mapping to filter the shadows and get correct smoother edges.
@@ -51,6 +52,6 @@ private:
 	
 	std::shared_ptr<PointLight> _light;		///< The associated light.
 	const Program * _program;				///< Shadow program.
-	std::unique_ptr<FramebufferCube> _map;	///< Raw shadow map result.
+	std::unique_ptr<Framebuffer> _map;	///< Raw shadow map result.
 	
 };

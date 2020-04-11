@@ -1,7 +1,6 @@
 #include "resources/Image.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "graphics/Framebuffer.hpp"
-#include "graphics/FramebufferCube.hpp"
 #include "graphics/ScreenQuad.hpp"
 #include "graphics/GLUtilities.hpp"
 #include "input/Input.hpp"
@@ -216,7 +215,8 @@ void computeCubemapConvolution(const Texture & cubemapInfos, int levelsCount, in
 		Log::Info() << Log::Utilities << "Level " << level << " (size=" << w << ", r=" << roughness << "): " << std::flush;
 
 		// Create local framebuffer.
-		FramebufferCube resultFramebuffer(w, {Layout::RGB32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, FramebufferCube::CubeMode::SLICED, false);
+		const Descriptor resDesc = {Layout::RGB32F, Filter::LINEAR_LINEAR, Wrap::CLAMP};
+		Framebuffer resultFramebuffer(TextureShape::Cube, w, w, 6, {resDesc}, false);
 
 		// Iterate over faces.
 		for(size_t i = 0; i < 6; ++i) {

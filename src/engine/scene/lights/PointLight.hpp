@@ -3,7 +3,6 @@
 #include "scene/lights/Light.hpp"
 #include "scene/Animated.hpp"
 #include "scene/Object.hpp"
-#include "graphics/FramebufferCube.hpp"
 
 #include <array>
 

@@ -58,7 +58,7 @@ void VarianceShadowMap2D::clean(){
 VarianceShadowMapCube::VarianceShadowMapCube(const std::shared_ptr<PointLight> & light, int side){
 	_light = light;
 	const Descriptor descriptor = {Layout::RG16F, Filter::LINEAR, Wrap::CLAMP};
-	_map = std::unique_ptr<FramebufferCube>(new FramebufferCube(side, descriptor, FramebufferCube::CubeMode::SLICED, true));
+	_map = std::unique_ptr<Framebuffer>(new Framebuffer( TextureShape::Cube, side, side, 6, {descriptor}, true));
 	_program = Resources::manager().getProgram("object_cube_depth", "object_basic_texture_worldpos", "light_shadow_linear_variance");
 	_light->registerShadowMap(_map->textureId());
 }
