@@ -13,15 +13,16 @@
 
 
 /**
- \brief Store lights data for forward rendering.
+ \brief Store lights data for forward rendering in a GPU buffer.
  \ingroup DeferredRendering
  */
 class ForwardLight final : public LightRenderer {
 
 public:
 	/** Constructor.
+	 \param count number of lights that will be submitted
 	 */
-	explicit ForwardLight(size_t maxCount);
+	explicit ForwardLight(size_t count);
 	
 	/** Set the current user view and projection matrices.
 	 \param viewMatrix the camera view matrix
@@ -50,35 +51,45 @@ public:
 	 */
 	void draw(const DirectionalLight * light) override;
 
+	/// \todo Extract in GLUtilities, wrap Buffer similarly to Texture, update Mesh to use it.
 	void upload() const;
 
-	/// \todo Extract in GLUtilities, wrap Buffer similarly to Texture.
+	/// \todo Extract in GLUtilities, wrap Buffer similarly to Texture, update Mesh to use it.
 	void bind(size_t slot) const;
 
+	/** \return the current number of lights */
 	size_t count() const {
 		return _currentCount;
 	}
 
+	/** \return the shadow maps used by the lights */
+	const std::vector<const Texture *> & shadowMaps() const {
+		return _shadowMaps;
+	}
+
 private:
-	
+
+	/** \brief Represent a light on the GPU for the forward renderer. */
 	struct GPULight {
-		glm::mat4 viewToLight;
-		glm::vec4 colorAndBias;
-		glm::vec4 positionAndRadius;
-		glm::vec4 directionAndPlane;
-		glm::vec4 typeModeAngles;
+		glm::mat4 viewToLight; ///< View to light matrix.
+		glm::vec4 colorAndBias; ///< Light tint and shadow bias.
+		glm::vec4 positionAndRadius; ///< Light position and effect radius.
+		glm::vec4 directionAndPlane; ///< Light direction and far plane distance.
+		glm::vec4 typeModeLayer; ///< Light type, shadow mode and shadow map layer.
+		glm::vec4 angles; ///< Cone inner and outer angles.
 	};
 
-	size_t _currentId = 0;
-	size_t _currentCount = 0;
-	const static size_t _maxLightCount = 5;
-	std::array<GPULight, _maxLightCount> _lightsData;
+	size_t _currentId = 0; ///< Current insertion location.
+	size_t _currentCount = 0; ///< Number of lights to store.
+	const static size_t _maxLightCount = 50; ///< Maximum allowed number of lights (see common_lights.glsl).
+	std::array<GPULight, _maxLightCount> _lightsData; ///< GPU buffer.
+	GLuint _bufferHandle = 0; ///< OpenGL buffer handle.
 	
 	glm::mat4 _view = glm::mat4(1.0f); ///< Cached camera view matrix.
 	glm::mat4 _proj = glm::mat4(1.0f); ///< Cached camera projection matrix.
+	glm::mat4 _invView = glm::mat4(1.0f); ///< Cached inverse view matrix.
 
 	ShadowMode _shadowMode = ShadowMode::BASIC; ///< Shadow mapping techique.
 	float _shadowBias = 0.0f; ///< Shadow depth bias.
-
-	GLuint _bufferHandle = 0; ///< OpenGL buffer handle.
+	std::vector<const Texture *> _shadowMaps; ///< Shadow maps list.
 };

@@ -59,6 +59,27 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 
 	const float cubeLod		= float(_scene->backgroundReflection->levels - 1);
 	const glm::mat4 invView = glm::inverse(view);
+	// Update shared data for the three programs.
+	{
+		_parallaxProgram->use();
+		_parallaxProgram->uniform("p", proj);
+		_parallaxProgram->uniform("inverseV", invView);
+		_parallaxProgram->uniform("maxLod", cubeLod);
+		_parallaxProgram->uniformBuffer("Lights", 0);
+		_parallaxProgram->uniform("lightsCount", int(_lightGPUData->count()));
+		_objectProgram->use();
+		_objectProgram->uniform("inverseV", invView);
+		_objectProgram->uniform("maxLod", cubeLod);
+		_objectProgram->uniformBuffer("Lights", 0);
+		_objectProgram->uniform("lightsCount", int(_lightGPUData->count()));
+		_objectNoUVsProgram->use();
+		_objectNoUVsProgram->uniform("inverseV", invView);
+		_objectNoUVsProgram->uniform("maxLod", cubeLod);
+		_objectNoUVsProgram->uniformBuffer("Lights", 0);
+		_objectNoUVsProgram->uniform("lightsCount", int(_lightGPUData->count()));
+	}
+	const auto & shadowMaps = _lightGPUData->shadowMaps();
+
 	// Build the camera frustum for culling.
 	if(!_freezeFrustum){
 		_frustumMat = proj*view;
@@ -77,51 +98,28 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(MV)));
 
 		// Select the program (and shaders).
+		Program * currentProgram = nullptr;
 		switch(object.type()) {
 			case Object::PBRParallax:
-				_parallaxProgram->use();
-				// Upload the MVP matrix.
-				_parallaxProgram->uniform("mvp", MVP);
-				// Upload the projection matrix.
-				_parallaxProgram->uniform("p", proj);
-				// Upload the MV matrix.
-				_parallaxProgram->uniform("mv", MV);
-				// Upload the normal matrix.
-				_parallaxProgram->uniform("normalMatrix", normalMatrix);
-				_parallaxProgram->uniform("inverseV", invView);
-				_parallaxProgram->uniform("maxLod", cubeLod);
-				_parallaxProgram->uniformBuffer("Lights", 0);
-				_parallaxProgram->uniform("lightsCount", int(_lightGPUData->count()));
+				currentProgram = _parallaxProgram;
 				break;
 			case Object::PBRNoUVs:
-				_objectNoUVsProgram->use();
-				// Upload the MVP matrix.
-				_objectNoUVsProgram->uniform("mvp", MVP);
-				// Upload the MV matrix.
-				_objectNoUVsProgram->uniform("mv", MV);
-				// Upload the normal matrix.
-				_objectNoUVsProgram->uniform("normalMatrix", normalMatrix);
-				_objectNoUVsProgram->uniform("inverseV", invView);
-				_objectNoUVsProgram->uniform("maxLod", cubeLod);
-				_objectNoUVsProgram->uniformBuffer("Lights", 0);
-				_objectNoUVsProgram->uniform("lightsCount", int(_lightGPUData->count()));
+				currentProgram = _objectNoUVsProgram;
 				break;
 			case Object::PBRRegular:
-				_objectProgram->use();
-				// Upload the MVP matrix.
-				_objectProgram->uniform("mvp", MVP);
-				// Upload the MV matrix.
-				_objectProgram->uniform("mv", MV);
-				// Upload the normal matrix.
-				_objectProgram->uniform("normalMatrix", normalMatrix);
-				_objectProgram->uniform("inverseV", invView);
-				_objectProgram->uniform("maxLod", cubeLod);
-				_objectProgram->uniformBuffer("Lights", 0);
-				_objectProgram->uniform("lightsCount", int(_lightGPUData->count()));
+				currentProgram = _objectProgram;
 				break;
 			default:
+				Log::Error() << "Unsupported material type." << std::endl;
+				continue;
 				break;
 		}
+
+		currentProgram->use();
+		// Upload the matrices.
+		currentProgram->uniform("mvp", MVP);
+		currentProgram->uniform("mv", MV);
+		currentProgram->uniform("normalMatrix", normalMatrix);
 
 		// Backface culling state.
 		if(object.twoSided()) {
@@ -131,8 +129,15 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 		_lightGPUData->bind(0);
 		// Bind the textures.
 		GLUtilities::bindTextures(object.textures());
-		GLUtilities::bindTexture(_textureBrdf, object.textures().size());
-		GLUtilities::bindTexture(_scene->backgroundReflection, object.textures().size() + 1);
+		GLUtilities::bindTexture(_textureBrdf, 4);
+		GLUtilities::bindTexture(_scene->backgroundReflection, 5);
+		// Bind available shadow maps.
+		if(shadowMaps[0]){
+			GLUtilities::bindTexture(shadowMaps[0], 6);
+		}
+		if(shadowMaps[1]){
+			GLUtilities::bindTexture(shadowMaps[1], 7);
+		}
 		GLUtilities::drawMesh(*object.mesh());
 		// Restore state.
 		glEnable(GL_CULL_FACE);

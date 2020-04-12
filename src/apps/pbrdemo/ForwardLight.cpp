@@ -12,11 +12,13 @@ ForwardLight::ForwardLight(size_t count) {
 	glBindBuffer(GL_UNIFORM_BUFFER, _bufferHandle);
 	glBufferData(GL_UNIFORM_BUFFER, sizeof(GPULight)*_maxLightCount, nullptr, GL_DYNAMIC_DRAW);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+	_shadowMaps.resize(2, nullptr);
 }
 
 void ForwardLight::updateCameraInfos(const glm::mat4 & viewMatrix, const glm::mat4 & projMatrix) {
 	_view = viewMatrix;
 	_proj = projMatrix;
+	_invView = glm::inverse(_view);
 }
 
 void ForwardLight::updateShadowMapInfos(ShadowMode mode, float bias) {
@@ -36,15 +38,21 @@ void ForwardLight::draw(const SpotLight * light) {
 	const glm::vec3 lightPositionViewSpace	= glm::vec3(_view * glm::vec4(light->position(), 1.0f));
 	const glm::vec3 lightDirectionViewSpace = glm::vec3(_view * glm::vec4(light->direction(), 0.0f));
 
-	currentLight.viewToLight	   = light->vp() * glm::inverse(_view);
+	currentLight.viewToLight	   = light->vp() * _invView;
 	currentLight.colorAndBias	   = glm::vec4(light->intensity(), _shadowBias);
 	currentLight.positionAndRadius = glm::vec4(lightPositionViewSpace, light->radius());
 	currentLight.directionAndPlane = glm::vec4(lightDirectionViewSpace, 0.0f);
 
-	currentLight.typeModeAngles[0] = float(LightType::SPOT);
-	currentLight.typeModeAngles[1] = float(light->castsShadow() ? _shadowMode : ShadowMode::NONE);
-	currentLight.typeModeAngles[2] = glm::cos(light->angles()[0]);
-	currentLight.typeModeAngles[3] = glm::cos(light->angles()[1]);
+	currentLight.typeModeLayer[0] = float(LightType::SPOT);
+	currentLight.typeModeLayer[1] = float(light->castsShadow() ? _shadowMode : ShadowMode::NONE);
+	currentLight.typeModeLayer[2] = float(light->shadowMap().layer);
+
+	currentLight.angles[0] = glm::cos(light->angles()[0]);
+	currentLight.angles[1] = glm::cos(light->angles()[1]);
+
+	if(light->castsShadow()){
+		_shadowMaps[0] = light->shadowMap().map;
+	}
 }
 
 void ForwardLight::draw(const PointLight * light) {
@@ -58,12 +66,18 @@ void ForwardLight::draw(const PointLight * light) {
 	GPULight & currentLight				   = _lightsData[selectedId];
 	const glm::vec3 lightPositionViewSpace = glm::vec3(_view * glm::vec4(light->position(), 1.0f));
 
-	currentLight.viewToLight		  = glm::inverse(_view);
+	currentLight.viewToLight		  = _invView;
 	currentLight.colorAndBias		  = glm::vec4(light->intensity(), _shadowBias);
 	currentLight.directionAndPlane[3] = light->farPlane();
 	currentLight.positionAndRadius	  = glm::vec4(lightPositionViewSpace, light->radius());
-	currentLight.typeModeAngles[0]	  = float(LightType::POINT);
-	currentLight.typeModeAngles[1]	  = float(light->castsShadow() ? _shadowMode : ShadowMode::NONE);
+
+	currentLight.typeModeLayer[0] = float(LightType::POINT);
+	currentLight.typeModeLayer[1] = float(light->castsShadow() ? _shadowMode : ShadowMode::NONE);
+	currentLight.typeModeLayer[2] = float(light->shadowMap().layer);
+
+	if(light->castsShadow()){
+		_shadowMaps[1] = light->shadowMap().map;
+	}
 }
 
 void ForwardLight::draw(const DirectionalLight * light) {
@@ -77,13 +91,17 @@ void ForwardLight::draw(const DirectionalLight * light) {
 	GPULight & currentLight					= _lightsData[selectedId];
 	const glm::vec3 lightDirectionViewSpace = glm::vec3(_view * glm::vec4(light->direction(), 0.0));
 
-	currentLight.viewToLight	   = light->vp() * glm::inverse(_view);
+	currentLight.viewToLight	   = _invView;
 	currentLight.colorAndBias	   = glm::vec4(light->intensity(), _shadowBias);
 	currentLight.directionAndPlane = glm::vec4(lightDirectionViewSpace, 0.0f);
 
-	currentLight.typeModeAngles[0] = float(LightType::DIRECTIONAL);
-	currentLight.typeModeAngles[1] = float(light->castsShadow() ? _shadowMode : ShadowMode::NONE);
+	currentLight.typeModeLayer[0] = float(LightType::DIRECTIONAL);
+	currentLight.typeModeLayer[1] = float(light->castsShadow() ? _shadowMode : ShadowMode::NONE);
+	currentLight.typeModeLayer[2] = float(light->shadowMap().layer);
 
+	if(light->castsShadow()){
+		_shadowMaps[0] = light->shadowMap().map;
+	}
 }
 
 void ForwardLight::upload() const {

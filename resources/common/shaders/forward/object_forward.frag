@@ -12,9 +12,10 @@ in INTERFACE {
 layout(binding = 0) uniform sampler2D albedoTexture; ///< Albedo.
 layout(binding = 1) uniform sampler2D normalTexture; ///< Normal map.
 layout(binding = 2) uniform sampler2D effectsTexture; ///< Effects map.
-
-layout(binding = 3) uniform sampler2D brdfPrecalc; ///< Preintegrated BRDF lookup table.
-layout(binding = 4) uniform samplerCube textureCubeMap; ///< Background environment cubemap (with preconvoluted versions of increasing roughness in mipmap levels).
+layout(binding = 4) uniform sampler2D brdfPrecalc; ///< Preintegrated BRDF lookup table.
+layout(binding = 5) uniform samplerCube textureCubeMap; ///< Background environment cubemap (with preconvoluted versions of increasing roughness in mipmap levels).
+layout(binding = 6) uniform sampler2DArray shadowMaps2D; ///< Shadow maps array.
+layout(binding = 7) uniform samplerCubeArray shadowMapsCube; ///< Shadow cubemaps array.
 
 uniform vec3 shCoeffs[9]; ///< SH approximation of the environment irradiance.
 uniform mat4 inverseV; ///< The view to world transformation matrix.
@@ -25,12 +26,11 @@ uniform int lightsCount; ///< Number of active lights.
 layout(std140) uniform Lights {
 	GPULight lights[MAX_LIGHTS_COUNT];
 };
-uniform sampler2D shadowMaps2D[MAX_LIGHTS_COUNT];
-uniform samplerCube shadowMapsCube[MAX_LIGHTS_COUNT];
+
 
 layout (location = 0) out vec3 fragColor; ///< Color.
 
-/** Shade the object, applying parallax mapping. */
+/** Shade the object, applying lighting. */
 void main(){
 	
 	vec4 albedoInfos = texture(albedoTexture, In.uv);
@@ -82,7 +82,7 @@ void main(){
 		}
 		float shadowing;
 		vec3 l;
-		if(!applyLight(lights[lid], In.viewSpacePosition, /*shadowMapsCube[lid], shadowMaps2D[lid], */  l, shadowing)){
+		if(!applyLight(lights[lid], In.viewSpacePosition, shadowMapsCube, shadowMaps2D, l, shadowing)){
 			continue;
 		}
 		// Orientation: basic diffuse shadowing.
