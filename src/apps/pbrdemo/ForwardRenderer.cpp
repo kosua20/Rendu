@@ -212,7 +212,7 @@ void ForwardRenderer::draw(const Camera & camera) {
 	const glm::vec3 & pos  = camera.position();
 	// --- Update lights data ----
 	_lightGPUData->updateCameraInfos(view, proj);
-	_lightGPUData->updateShadowMapInfos(_shadowMode, 0.01f);
+	_lightGPUData->updateShadowMapInfos(_shadowMode, 0.002f);
 	for(const auto & light : _scene->lights) {
 		light->draw(*_lightGPUData);
 	}

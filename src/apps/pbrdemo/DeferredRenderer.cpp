@@ -209,7 +209,7 @@ void DeferredRenderer::draw(const Camera & camera) {
 
 	// --- Gbuffer composition pass
 	_lightRenderer->updateCameraInfos(view, proj);
-	_lightRenderer->updateShadowMapInfos(_shadowMode, 0.01f);
+	_lightRenderer->updateShadowMapInfos(_shadowMode, 0.002f);
 	_sceneFramebuffer->bind();
 	_sceneFramebuffer->setViewport();
 	_ambientScreen->draw(view, proj);
