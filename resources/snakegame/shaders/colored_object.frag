@@ -1,4 +1,4 @@
-#version 330
+#version 400
 
 in INTERFACE {
 	vec3 n; ///< The world-space normal.

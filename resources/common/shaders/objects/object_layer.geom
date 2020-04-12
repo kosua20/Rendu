@@ -1,4 +1,4 @@
-#version 330
+#version 400
 layout (triangles) in; ///< Triangles as input.
 layout (triangle_strip, max_vertices = 18) out; ///< Output 6 triangles.
 

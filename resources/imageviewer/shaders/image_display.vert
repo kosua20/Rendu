@@ -1,4 +1,4 @@
-#version 330
+#version 400
 
 out INTERFACE {
 	vec2 uv; ///< Texture coordinates.

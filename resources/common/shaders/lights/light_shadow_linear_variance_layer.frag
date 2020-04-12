@@ -1,4 +1,4 @@
-#version 330
+#version 400
 
 in vec3 worldPos; ///< The world space position of the fragment.
 in vec2 uv; ///< UV coordinates.

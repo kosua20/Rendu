@@ -1,4 +1,4 @@
-#version 330
+#version 400
 
 in INTERFACE {
 	vec3 vn; ///< World space normal.

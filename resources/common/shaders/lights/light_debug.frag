@@ -1,4 +1,4 @@
-#version 330
+#version 400
 
 uniform vec4 color; ///< The color of the light.
 

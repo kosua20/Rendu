@@ -1,4 +1,4 @@
-#version 330
+#version 400
 
 in INTERFACE {
 	vec2 uv; ///< UV coordinates.

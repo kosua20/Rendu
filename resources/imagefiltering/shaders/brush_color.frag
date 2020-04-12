@@ -1,4 +1,4 @@
-#version 330
+#version 400
 
 in float dist; ///< Pseudo-distance to the brush center.
 

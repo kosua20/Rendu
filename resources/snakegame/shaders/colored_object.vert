@@ -1,4 +1,4 @@
-#version 330
+#version 400
 
 // Attributes
 layout(location = 0) in vec3 v;///< Position.

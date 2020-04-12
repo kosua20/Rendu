@@ -1,4 +1,4 @@
-#version 330
+#version 400
 
 #include "common_pbr.glsl"
 #include "common_lights.glsl"
