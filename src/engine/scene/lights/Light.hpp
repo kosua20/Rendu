@@ -4,6 +4,7 @@
 #include "scene/Object.hpp"
 #include "raycaster/Raycaster.hpp"
 #include "renderers/LightRenderer.hpp"
+#include "renderers/ShadowMap.hpp"
 #include "Common.hpp"
 
 enum class LightType : int {
@@ -91,16 +92,24 @@ public:
 	 */
 	const glm::mat4 & model() const { return _model; }
 	
-	/** Get the light shadow map (either 2D or cube depending on the light type).
-	 \return the shadow map texture
+	/** Get the light shadow map texture (either 2D or cube depending on the light type) and location.
+	 \return the shadow map information
 	 */
-	const Texture * shadowMap() const { return _shadowMap; }
+	const ShadowMap::Region & shadowMap() const { return _shadowMapInfos; }
 	
 	/** Set the light shadow map (either 2D or cube depending on the light type).
 	 \param map the shadow map texture
+	 \param layer the texture layer containing the map
+	 \param minUV bottom-left corner of map region in the texture
+	 \param maxUV upper-right corner of map region in the texture
 	 \warning No check on texture type is performed.
 	 */
-	void registerShadowMap(const Texture * map) { _shadowMap = map; }
+	void registerShadowMap(const Texture * map, size_t layer = 0, const glm::vec2 & minUV = glm::vec2(0.0f), const glm::vec2 & maxUV = glm::vec2(1.0f)) {
+		_shadowMapInfos.map = map;
+		_shadowMapInfos.minUV = minUV;
+		_shadowMapInfos.maxUV = maxUV;
+		_shadowMapInfos.layer = layer;
+	}
 	
 	/** Helper that can instantiate a light of any type from the passed keywords and parameters.
 	 \param params a key-value tuple containing light parameters
@@ -128,6 +137,7 @@ public:
 	Light & operator=(Light &&) = delete;
 
 protected:
+
 	/** Setup a light common parameters from a list of key-value tuples. The following keywords will be searched for:
 	 \verbatim
 	 intensity: R,G,B
@@ -141,8 +151,9 @@ protected:
 	 */
 	void decodeBase(const KeyValues & params);
 
+
 	std::vector<std::shared_ptr<Animation>> _animations; ///< Animations list (will be applied in order).
-	const Texture * _shadowMap = nullptr;	///< The (optional) light shadow map.
+	ShadowMap::Region _shadowMapInfos; ///< Region of the (optional) shadow map containing this light information.
 	BoundingBox _sceneBox; 	///< The scene bounding box, to fit the shadow map.
 	glm::mat4 _vp;			///< VP matrix for shadow casting.
 	glm::mat4 _model;		///< Model matrix of the mesh containing the light-covered region.

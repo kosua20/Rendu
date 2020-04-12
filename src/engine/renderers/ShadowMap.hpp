@@ -1,14 +1,11 @@
 #pragma once
 
-#include "scene/Scene.hpp"
-
 #include "graphics/Framebuffer.hpp"
 #include "processing/BoxBlur.hpp"
-#include "scene/lights/Light.hpp"
-#include "scene/lights/PointLight.hpp"
 
 #include "Common.hpp"
 
+class Scene;
 
 /**
 \brief Available shadow mapping techniques.
@@ -46,7 +43,7 @@ public:
 	/** Copy assignment.
 	 \return a reference to the object assigned to
 	 */
-	ShadowMap & operator=(const Light &) = delete;
+	ShadowMap & operator=(const ShadowMap &) = delete;
 	
 	/** Move constructor.*/
 	ShadowMap(ShadowMap &&) = default;
@@ -55,5 +52,13 @@ public:
 	 \return a reference to the object assigned to
 	 */
 	ShadowMap & operator=(ShadowMap &&) = delete;
+
+	/** Define a region in a 2D or array texture, containing a shadow map content. */
+	struct Region {
+		const Texture * map = nullptr; ///< The texture reference.
+		glm::vec2 minUV = glm::vec2(0.0f); ///< The bottom-left corner of the texture region.
+		glm::vec2 maxUV = glm::vec2(0.0f); ///< The upper-right corner of the texture region.
+		size_t layer = 0; ///< The layer containing the shadow map.
+	};
 
 };
