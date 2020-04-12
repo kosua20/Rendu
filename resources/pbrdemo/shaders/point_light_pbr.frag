@@ -1,4 +1,4 @@
-#version 330
+#version 400
 
 #include "common_pbr.glsl"
 #include "shadow_maps.glsl"
@@ -8,7 +8,7 @@ layout(binding = 0) uniform sampler2D albedoTexture; ///< Albedo.
 layout(binding = 1) uniform sampler2D normalTexture; ///< Normal.
 layout(binding = 2) uniform sampler2D depthTexture; ///< Depth.
 layout(binding = 3) uniform sampler2D effectsTexture;///< Effects.
-layout(binding = 4) uniform samplerCube shadowMap; ///< Shadow map.
+layout(binding = 4) uniform samplerCubeArray shadowMap; ///< Shadow map.
 
 uniform vec4 projectionMatrix; ///< Camera projection matrix
 uniform mat3 viewToLight; ///< Light direction in view space.
@@ -19,6 +19,7 @@ uniform float lightRadius; ///< Attenuation radius.
 uniform float lightFarPlane; ///< Light projection far plane.
 uniform float shadowBias; ///< shadow depth bias.
 uniform int shadowMode; ///< The shadow map technique.
+uniform int shadowLayer; ///< The shadow map layer.
 
 
 layout(location = 0) out vec3 fragColor; ///< Color.
@@ -63,7 +64,7 @@ void main(){
 	float shadowing = 1.0;
 	if(shadowMode != SHADOW_NONE){
 		vec3 deltaPositionWorld = -viewToLight*deltaPosition;
-		shadowing = shadowCube(shadowMode, deltaPositionWorld, shadowMap, lightFarPlane, shadowBias);
+		shadowing = shadowCube(shadowMode, deltaPositionWorld, shadowMap, shadowLayer, lightFarPlane, shadowBias);
 	}
 	
 	// BRDF contributions.

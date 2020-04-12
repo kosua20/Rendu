@@ -1,4 +1,4 @@
-#version 330
+#version 400
 
 #include "common_pbr.glsl"
 #include "shadow_maps.glsl"
@@ -8,7 +8,7 @@ layout(binding = 0) uniform sampler2D albedoTexture; ///< Albedo.
 layout(binding = 1) uniform sampler2D normalTexture; ///< Normal.
 layout(binding = 2) uniform sampler2D depthTexture; ///< Depth.
 layout(binding = 3) uniform sampler2D effectsTexture; ///< Effects.
-layout(binding = 4) uniform sampler2D shadowMap; ///< Shadow map.
+layout(binding = 4) uniform sampler2DArray shadowMap; ///< Shadow map.
 
 uniform vec4 projectionMatrix; ///< Camera projection matrix
 uniform mat4 viewToLight; ///< View to light space matrix.
@@ -20,6 +20,7 @@ uniform vec2 intOutAnglesCos; ///< Angular attenuation inner and outer angles.
 uniform float lightRadius; ///< Attenuation radius.
 uniform float shadowBias; ///< shadow depth bias.
 uniform int shadowMode; ///< The shadow map technique.
+uniform int shadowLayer; ///< The shadow map layer.
 
 layout(location = 0) out vec3 fragColor; ///< Color.
 
@@ -65,7 +66,7 @@ void main(){
 	if(shadowMode != SHADOW_NONE){
 		vec4 lightSpacePosition = viewToLight * vec4(position,1.0);
 		lightSpacePosition /= lightSpacePosition.w;
-		shadowing = shadow(shadowMode, 0.5*lightSpacePosition.xyz+0.5, shadowMap, shadowBias);
+		shadowing = shadow(shadowMode, 0.5*lightSpacePosition.xyz+0.5, shadowMap, shadowLayer, shadowBias);
 	}
 	// Attenuation with increasing distance to the light.
 	float localRadius2 = dot(deltaPosition, deltaPosition);

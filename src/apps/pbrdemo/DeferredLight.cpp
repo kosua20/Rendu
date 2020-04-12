@@ -44,11 +44,13 @@ void DeferredLight::draw(const SpotLight * light) {
 	// Active screen texture.
 	GLUtilities::bindTextures(_textures);
 	if(light->castsShadow()) {
-		GLUtilities::bindTexture(light->shadowMap(), _textures.size());
+		const auto & shadowInfos = light->shadowMap();
+		GLUtilities::bindTexture(shadowInfos.map, _textures.size());
+		_spotProgram->uniform("shadowLayer", int(shadowInfos.layer));
 		_spotProgram->uniform("shadowBias", _shadowBias);
 		_spotProgram->uniform("shadowMode", int(_shadowMode));
 	} else {
-		_pointProgram->uniform("shadowMode", int(ShadowMode::NONE));
+		_spotProgram->uniform("shadowMode", int(ShadowMode::NONE));
 	}
 	// Select the geometry.
 	GLUtilities::drawMesh(*_cone);
@@ -77,7 +79,9 @@ void DeferredLight::draw(const PointLight * light) {
 	 // Active screen texture.
 	GLUtilities::bindTextures(_textures);
 	if(light->castsShadow()) {
-		GLUtilities::bindTexture(light->shadowMap(), _textures.size());
+		const auto & shadowInfos = light->shadowMap();
+		GLUtilities::bindTexture(shadowInfos.map, _textures.size());
+		_pointProgram->uniform("shadowLayer", int(shadowInfos.layer));
 		_pointProgram->uniform("shadowBias", _shadowBias);
 		_pointProgram->uniform("shadowMode", int(_shadowMode));
 	} else {
@@ -102,11 +106,13 @@ void DeferredLight::draw(const DirectionalLight * light) {
 
 	GLUtilities::bindTextures(_textures);
 	if(light->castsShadow()) {
-		GLUtilities::bindTexture(light->shadowMap(), _textures.size());
+		const auto & shadowInfos = light->shadowMap();
+		GLUtilities::bindTexture(shadowInfos.map, _textures.size());
+		_dirProgram->uniform("shadowLayer", int(shadowInfos.layer));
 		_dirProgram->uniform("shadowBias", _shadowBias);
 		_dirProgram->uniform("shadowMode", int(_shadowMode));
 	} else {
-		_pointProgram->uniform("shadowMode", int(ShadowMode::NONE));
+		_dirProgram->uniform("shadowMode", int(ShadowMode::NONE));
 	}
 	ScreenQuad::draw();
 	
