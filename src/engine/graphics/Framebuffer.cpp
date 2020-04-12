@@ -20,11 +20,13 @@ Framebuffer::Framebuffer(TextureShape shape, unsigned int width, unsigned int he
 		return;
 	}
 	if(shape == TextureShape::D2){
-		depth = 1;
+		_depth = 1;
 	} else if(shape == TextureShape::Cube){
-		depth = 6;
+		_depth = 6;
 	} else if(shape == TextureShape::ArrayCube){
-		depth *= 6;
+		_depth = 6 * depth;
+	} else {
+		_depth = depth;
 	}
 	_depthUse = Depth::NONE;
 	_target = GLUtilities::targetFromShape(_shape);
@@ -58,7 +60,7 @@ Framebuffer::Framebuffer(TextureShape shape, unsigned int width, unsigned int he
 			Texture & tex = _idColors.back();
 			tex.width	 = _width;
 			tex.height	= _height;
-			tex.depth	 = depth;
+			tex.depth	 = _depth;
 			tex.levels	= 1;
 			tex.shape	 = shape;
 			GLUtilities::setupTexture(tex, descriptor);
@@ -191,6 +193,7 @@ void Framebuffer::clean() {
 
 glm::vec3 Framebuffer::read(const glm::ivec2 & pos) const {
 	glm::vec3 rgb(0.0f);
+	bind(0);
 	bind(Mode::READ);
 	glReadPixels(pos.x, pos.y, 1, 1, GL_RGB, GL_FLOAT, &rgb[0]);
 	unbind();

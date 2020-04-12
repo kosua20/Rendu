@@ -125,6 +125,12 @@ public:
 	unsigned int height() const { return _height; }
 
 	/**
+	 Query the framebuffer depth.
+	 \return the depth
+	 */
+	unsigned int depth() const { return _depth; }
+
+	/**
 	 Query the window backbuffer infos.
 	 \return a reference to a placeholder representing the backbuffer
 	 \note Can be used in conjonction with saveFramebuffer() to save the content of the window.
@@ -153,12 +159,13 @@ private:
 
 	unsigned int _width  = 0; ///< The framebuffer width.
 	unsigned int _height = 0; ///< The framebuffer height.
+	unsigned int _depth = 0; ///< The framebuffer depth.
 
 	GLuint _id = 0;					///< The framebuffer ID.
 	std::vector<Texture> _idColors; ///< The color textures.
 	Texture _idDepth;				///< The depth renderbuffer.
-	TextureShape _shape;
-	GLenum _target;
+	TextureShape _shape;			///< The texture shape.
+	GLenum _target;					///< The OpenGL texture shape.
 
 	/// \brief Type of depth storage structure used.
 	enum class Depth {
