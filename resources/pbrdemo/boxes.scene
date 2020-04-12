@@ -161,6 +161,8 @@
 		- rgb: 0.568533,0.0384168,0.462886
 		- rgb: default_normal
 		- rgb: 0.33596,0.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -187,6 +189,8 @@
 		- rgb: 0.127814,0.786916,0.216038
 		- rgb: default_normal
 		- rgb: 0.259651,1.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -200,6 +204,8 @@
 		- rgb: 0.748707,0.060226,0.880702
 		- rgb: default_normal
 		- rgb: 0.314974,0.0,1.0
+	animations:
+		- backandforth: 0.5 world 0.0,1.0,0.0 0.5
 
 * object:
 	mesh: cube
@@ -213,6 +219,8 @@
 		- rgb: 0.125209,0.678792,0.684789
 		- rgb: default_normal
 		- rgb: 0.791278,1.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -226,6 +234,8 @@
 		- rgb: 0.439488,0.190591,0.934291
 		- rgb: default_normal
 		- rgb: 0.16986,0.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -265,6 +275,8 @@
 		- rgb: 0.0311385,0.544308,0.154796
 		- rgb: default_normal
 		- rgb: 0.607589,0.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -291,6 +303,8 @@
 		- rgb: 0.744985,0.378557,0.31386
 		- rgb: default_normal
 		- rgb: 0.00272758,0.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -304,6 +318,8 @@
 		- rgb: 0.803216,0.364013,0.287507
 		- rgb: default_normal
 		- rgb: 0.263059,1.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -343,6 +359,8 @@
 		- rgb: 0.450858,0.859174,0.101599
 		- rgb: default_normal
 		- rgb: 0.723547,1.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -369,6 +387,8 @@
 		- rgb: 0.94888,0.381197,0.201436
 		- rgb: default_normal
 		- rgb: 0.00686622,0.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -382,6 +402,8 @@
 		- rgb: 0.716179,0.170449,0.571013
 		- rgb: default_normal
 		- rgb: 0.0846133,1.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -421,6 +443,8 @@
 		- rgb: 0.40442,0.345775,0.761678
 		- rgb: default_normal
 		- rgb: 0.707508,0.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -447,6 +471,8 @@
 		- rgb: 0.527362,0.228688,0.240229
 		- rgb: default_normal
 		- rgb: 0.247149,0.0,1.0
+	animations:
+		- backandforth: 0.5 world 0.0,1.0,0.0 0.5
 
 * object:
 	mesh: cube
@@ -460,6 +486,8 @@
 		- rgb: 0.894692,0.121528,0.330921
 		- rgb: default_normal
 		- rgb: 0.641721,0.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -486,6 +514,8 @@
 		- rgb: 0.197844,0.120236,0.758182
 		- rgb: default_normal
 		- rgb: 0.417318,1.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -512,6 +542,8 @@
 		- rgb: 0.421957,0.0556712,0.579442
 		- rgb: default_normal
 		- rgb: 0.532986,0.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -538,6 +570,8 @@
 		- rgb: 0.396387,0.292186,0.651577
 		- rgb: default_normal
 		- rgb: 0.648238,0.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -564,6 +598,8 @@
 		- rgb: 0.894294,0.0637545,0.711526
 		- rgb: default_normal
 		- rgb: 0.368606,1.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -616,6 +652,8 @@
 		- rgb: 0.890875,0.670528,0.110727
 		- rgb: default_normal
 		- rgb: 0.71784,0.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -681,6 +719,8 @@
 		- rgb: 0.673846,0.399002,0.059545
 		- rgb: default_normal
 		- rgb: 0.289953,1.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -720,6 +760,8 @@
 		- rgb: 0.620068,0.266247,0.202365
 		- rgb: default_normal
 		- rgb: 0.48363,0.0,1.0
+	animations:
+		- backandforth: 0.5 world 0.0,1.0,0.0 0.5
 
 * object:
 	mesh: cube
@@ -733,6 +775,8 @@
 		- rgb: 0.722043,0.327038,0.418041
 		- rgb: default_normal
 		- rgb: 0.59647,1.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -746,6 +790,8 @@
 		- rgb: 0.156506,0.508031,0.273689
 		- rgb: default_normal
 		- rgb: 0.533102,1.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -837,6 +883,8 @@
 		- rgb: 0.692348,0.731292,0.34089
 		- rgb: default_normal
 		- rgb: 0.5395,0.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -876,6 +924,8 @@
 		- rgb: 0.731582,0.786275,0.0917272
 		- rgb: default_normal
 		- rgb: 0.00674088,1.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -928,6 +978,8 @@
 		- rgb: 0.0893369,0.160603,0.642226
 		- rgb: default_normal
 		- rgb: 0.0292071,1.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -941,6 +993,8 @@
 		- rgb: 0.223072,0.50919,0.0635202
 		- rgb: default_normal
 		- rgb: 0.195179,0.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -993,6 +1047,8 @@
 		- rgb: 0.408794,0.0484928,0.52012
 		- rgb: default_normal
 		- rgb: 0.678996,1.0,1.0
+	animations:
+		- backandforth: 0.5 world 0.0,1.0,0.0 0.5
 
 * object:
 	mesh: cube
@@ -1019,6 +1075,8 @@
 		- rgb: 0.680535,0.45839,0.0789623
 		- rgb: default_normal
 		- rgb: 0.278176,1.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -1084,6 +1142,8 @@
 		- rgb: 0.764126,0.170608,0.303825
 		- rgb: default_normal
 		- rgb: 0.452553,1.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -1136,6 +1196,8 @@
 		- rgb: 0.55405,0.151626,0.246558
 		- rgb: default_normal
 		- rgb: 0.298713,0.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -1227,6 +1289,8 @@
 		- rgb: 0.371501,0.6321,0.0599247
 		- rgb: default_normal
 		- rgb: 0.532151,1.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -1279,6 +1343,8 @@
 		- rgb: 0.815181,0.304584,0.677094
 		- rgb: default_normal
 		- rgb: 0.187719,0.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -1305,6 +1371,8 @@
 		- rgb: 0.553595,0.266908,0.363353
 		- rgb: default_normal
 		- rgb: 0.701635,0.0,1.0
+	animations:
+		- backandforth: 0.5 world 0.0,1.0,0.0 0.5
 
 * object:
 	mesh: cube
@@ -1331,6 +1399,8 @@
 		- rgb: 0.26739,0.592758,0.224221
 		- rgb: default_normal
 		- rgb: 0.138879,1.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -1383,6 +1453,8 @@
 		- rgb: 0.211283,0.603931,0.931334
 		- rgb: default_normal
 		- rgb: 0.52044,0.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -1435,6 +1507,8 @@
 		- rgb: 0.752399,0.539009,0.338883
 		- rgb: default_normal
 		- rgb: 0.57389,1.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -1448,6 +1522,8 @@
 		- rgb: 0.732837,0.743897,0.304238
 		- rgb: default_normal
 		- rgb: 0.19246,1.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -1513,6 +1589,8 @@
 		- rgb: 0.7781,0.230322,0.635381
 		- rgb: default_normal
 		- rgb: 0.214119,0.0,1.0
+	animations:
+		- backandforth: 0.5 world 0.0,1.0,0.0 0.5
 
 * object:
 	mesh: cube
@@ -1526,6 +1604,8 @@
 		- rgb: 0.220613,0.505127,0.652998
 		- rgb: default_normal
 		- rgb: 0.724383,0.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -1578,6 +1658,8 @@
 		- rgb: 0.150396,0.236907,0.806419
 		- rgb: default_normal
 		- rgb: 0.417673,1.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -1630,6 +1712,8 @@
 		- rgb: 0.702095,0.18087,0.818316
 		- rgb: default_normal
 		- rgb: 0.636875,1.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -1708,6 +1792,8 @@
 		- rgb: 0.700024,0.533508,0.306817
 		- rgb: default_normal
 		- rgb: 0.475328,1.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -1721,6 +1807,8 @@
 		- rgb: 0.61923,0.248323,0.429396
 		- rgb: default_normal
 		- rgb: 0.712788,0.0,1.0
+	animations:
+		- backandforth: 0.5 world 0.0,1.0,0.0 0.5
 
 * object:
 	mesh: cube
@@ -1799,6 +1887,8 @@
 		- rgb: 0.278022,0.496909,0.875546
 		- rgb: default_normal
 		- rgb: 0.42892,0.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -1812,6 +1902,8 @@
 		- rgb: 0.711647,0.0764387,0.611155
 		- rgb: default_normal
 		- rgb: 0.615039,0.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -1877,6 +1969,8 @@
 		- rgb: 0.399766,0.799068,0.215421
 		- rgb: default_normal
 		- rgb: 0.614609,1.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -1929,6 +2023,8 @@
 		- rgb: 0.656107,0.627608,0.0945897
 		- rgb: default_normal
 		- rgb: 0.294122,0.0,1.0
+	animations:
+		- backandforth: 0.5 world 0.0,1.0,0.0 0.5
 
 * object:
 	mesh: cube
@@ -1942,6 +2038,8 @@
 		- rgb: 0.419585,0.199941,0.822517
 		- rgb: default_normal
 		- rgb: 0.555502,1.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -2020,6 +2118,8 @@
 		- rgb: 0.766835,0.113487,0.174338
 		- rgb: default_normal
 		- rgb: 0.726313,1.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -2033,6 +2133,8 @@
 		- rgb: 0.508994,0.181081,0.420167
 		- rgb: default_normal
 		- rgb: 0.549616,0.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -2072,6 +2174,8 @@
 		- rgb: 0.289122,0.631219,0.610091
 		- rgb: default_normal
 		- rgb: 0.339015,0.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -2137,6 +2241,8 @@
 		- rgb: 0.354692,0.140089,0.768022
 		- rgb: default_normal
 		- rgb: 0.363983,0.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -2176,6 +2282,8 @@
 		- rgb: 0.572304,0.701168,0.137698
 		- rgb: default_normal
 		- rgb: 0.124708,1.0,1.0
+	animations:
+		- backandforth: 0.5 world 0.0,1.0,0.0 0.5
 
 * object:
 	mesh: cube
@@ -2228,6 +2336,8 @@
 		- rgb: 0.733506,0.233574,0.746364
 		- rgb: default_normal
 		- rgb: 0.631558,1.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -2319,6 +2429,8 @@
 		- rgb: 0.236996,0.502515,0.0659761
 		- rgb: default_normal
 		- rgb: 0.00645517,0.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -2397,6 +2509,8 @@
 		- rgb: 0.0598229,0.834756,0.407502
 		- rgb: default_normal
 		- rgb: 0.786399,0.0,1.0
+	animations:
+		- backandforth: 0.5 world 0.0,1.0,0.0 0.5
 
 * object:
 	mesh: cube
@@ -2410,6 +2524,8 @@
 		- rgb: 0.676108,0.243262,0.193782
 		- rgb: default_normal
 		- rgb: 0.076072,1.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -2423,6 +2539,8 @@
 		- rgb: 0.148155,0.70119,0.73244
 		- rgb: default_normal
 		- rgb: 0.371645,0.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -2579,6 +2697,8 @@
 		- rgb: 0.328675,0.758623,0.138769
 		- rgb: default_normal
 		- rgb: 0.739592,0.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -2592,6 +2712,8 @@
 		- rgb: 0.526125,0.390534,0.217147
 		- rgb: default_normal
 		- rgb: 0.535684,0.0,1.0
+	animations:
+		- backandforth: 0.5 world 0.0,1.0,0.0 0.5
 
 * object:
 	mesh: cube
@@ -2670,6 +2792,8 @@
 		- rgb: 0.930485,0.447653,0.160692
 		- rgb: default_normal
 		- rgb: 0.152415,1.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -2683,6 +2807,8 @@
 		- rgb: 0.0631625,0.0818113,0.558876
 		- rgb: default_normal
 		- rgb: 0.626764,0.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -2761,6 +2887,8 @@
 		- rgb: 0.44423,0.499632,0.947639
 		- rgb: default_normal
 		- rgb: 0.679865,1.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -2826,6 +2954,8 @@
 		- rgb: 0.142569,0.650999,0.91308
 		- rgb: default_normal
 		- rgb: 0.105018,0.0,1.0
+	animations:
+		- backandforth: 0.5 world 0.0,1.0,0.0 0.5
 
 * object:
 	mesh: cube
@@ -2878,6 +3008,8 @@
 		- rgb: 0.929721,0.431557,0.665123
 		- rgb: default_normal
 		- rgb: 0.755531,0.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -2956,6 +3088,8 @@
 		- rgb: 0.558494,0.803584,0.239406
 		- rgb: default_normal
 		- rgb: 0.035681,0.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -2995,6 +3129,8 @@
 		- rgb: 0.0605575,0.544209,0.492947
 		- rgb: default_normal
 		- rgb: 0.263131,1.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -3034,6 +3170,8 @@
 		- rgb: 0.226208,0.688923,0.111657
 		- rgb: default_normal
 		- rgb: 0.429934,1.0,1.0
+	animations:
+		- backandforth: 0.5 world 0.0,1.0,0.0 0.5
 
 * object:
 	mesh: cube
@@ -3099,6 +3237,8 @@
 		- rgb: 0.602227,0.265435,0.374435
 		- rgb: default_normal
 		- rgb: 0.226856,1.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -3216,6 +3356,8 @@
 		- rgb: 0.707038,0.33262,0.922852
 		- rgb: default_normal
 		- rgb: 0.476835,0.0,1.0
+	animations:
+		- backandforth: 0.5 world 0.0,1.0,0.0 0.5
 
 * object:
 	mesh: cube
@@ -3229,6 +3371,8 @@
 		- rgb: 0.0618166,0.641655,0.534354
 		- rgb: default_normal
 		- rgb: 0.270116,1.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -3333,6 +3477,8 @@
 		- rgb: 0.15622,0.843139,0.649717
 		- rgb: default_normal
 		- rgb: 0.224444,0.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -3411,6 +3557,8 @@
 		- rgb: 0.683522,0.569054,0.301313
 		- rgb: default_normal
 		- rgb: 0.135197,0.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -3502,6 +3650,8 @@
 		- rgb: 0.466256,0.713622,0.287006
 		- rgb: default_normal
 		- rgb: 0.498208,1.0,1.0
+	animations:
+		- backandforth: 0.5 world 0.0,1.0,0.0 0.5
 
 * object:
 	mesh: cube
@@ -3515,6 +3665,8 @@
 		- rgb: 0.148662,0.445237,0.844126
 		- rgb: default_normal
 		- rgb: 0.437882,1.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -3697,6 +3849,8 @@
 		- rgb: 0.406606,0.826198,0.3805
 		- rgb: default_normal
 		- rgb: 0.21163,0.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -3710,6 +3864,8 @@
 		- rgb: 0.695256,0.375545,0.12513
 		- rgb: default_normal
 		- rgb: 0.597974,0.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -3723,6 +3879,8 @@
 		- rgb: 0.198323,0.532188,0.0926919
 		- rgb: default_normal
 		- rgb: 0.457221,0.0,1.0
+	animations:
+		- backandforth: 0.5 world 0.0,1.0,0.0 0.5
 
 * object:
 	mesh: cube
@@ -3866,6 +4024,8 @@
 		- rgb: 0.320032,0.633854,0.276177
 		- rgb: default_normal
 		- rgb: 0.617689,0.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -3931,6 +4091,8 @@
 		- rgb: 0.400407,0.5239,0.80383
 		- rgb: default_normal
 		- rgb: 0.0495602,0.0,1.0
+	animations:
+		- backandforth: 0.5 world 0.0,1.0,0.0 0.5
 
 * object:
 	mesh: cube
@@ -4009,6 +4171,8 @@
 		- rgb: 0.31038,0.28405,0.64235
 		- rgb: default_normal
 		- rgb: 0.645055,0.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -4035,6 +4199,8 @@
 		- rgb: 0.334212,0.504214,0.141853
 		- rgb: default_normal
 		- rgb: 0.645057,1.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -4191,6 +4357,8 @@
 		- rgb: 0.319015,0.639686,0.464023
 		- rgb: default_normal
 		- rgb: 0.28562,1.0,1.0
+	animations:
+		- backandforth: 0.5 world 0.0,1.0,0.0 0.5
 
 * object:
 	mesh: cube
@@ -4243,6 +4411,8 @@
 		- rgb: 0.272955,0.787421,0.505268
 		- rgb: default_normal
 		- rgb: 0.438962,1.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -4269,6 +4439,8 @@
 		- rgb: 0.714454,0.8936,0.424949
 		- rgb: default_normal
 		- rgb: 0.467598,1.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -4373,6 +4545,8 @@
 		- rgb: 0.0570487,0.933626,0.488406
 		- rgb: default_normal
 		- rgb: 0.0306041,1.0,1.0
+	animations:
+		- backandforth: 0.5 world 0.0,1.0,0.0 0.5
 
 * object:
 	mesh: cube
@@ -4529,6 +4703,8 @@
 		- rgb: 0.131601,0.844722,0.440096
 		- rgb: default_normal
 		- rgb: 0.431864,0.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -4555,6 +4731,8 @@
 		- rgb: 0.104656,0.238621,0.624452
 		- rgb: default_normal
 		- rgb: 0.274879,0.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -4581,6 +4759,8 @@
 		- rgb: 0.899932,0.369977,0.687673
 		- rgb: default_normal
 		- rgb: 0.272791,0.0,1.0
+	animations:
+		- backandforth: 0.5 world 0.0,1.0,0.0 0.5
 
 * object:
 	mesh: cube
@@ -4737,6 +4917,8 @@
 		- rgb: 0.600831,0.222672,0.775017
 		- rgb: default_normal
 		- rgb: 0.013902,0.0,1.0
+	animations:
+		- backandforth: 0.5 world 0.0,1.0,0.0 0.5
 
 * object:
 	mesh: cube
@@ -4750,6 +4932,8 @@
 		- rgb: 0.377828,0.554954,0.915114
 		- rgb: default_normal
 		- rgb: 0.749124,0.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -4776,6 +4960,8 @@
 		- rgb: 0.470725,0.0771585,0.545699
 		- rgb: default_normal
 		- rgb: 0.388356,1.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -4854,6 +5040,8 @@
 		- rgb: 0.730151,0.94139,0.0578946
 		- rgb: default_normal
 		- rgb: 0.616676,1.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -4906,6 +5094,8 @@
 		- rgb: 0.554389,0.726942,0.0793345
 		- rgb: default_normal
 		- rgb: 0.382453,0.0,1.0
+	animations:
+		- backandforth: 0.5 world 0.0,1.0,0.0 0.5
 
 * object:
 	mesh: cube
@@ -5101,6 +5291,8 @@
 		- rgb: 0.641249,0.129427,0.214305
 		- rgb: default_normal
 		- rgb: 0.0952856,0.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -5127,6 +5319,8 @@
 		- rgb: 0.60055,0.218102,0.501892
 		- rgb: default_normal
 		- rgb: 0.0526466,1.0,1.0
+	animations:
+		- backandforth: 0.5 world 0.0,1.0,0.0 0.5
 
 * object:
 	mesh: cube
@@ -5140,6 +5334,8 @@
 		- rgb: 0.0400803,0.334334,0.561929
 		- rgb: default_normal
 		- rgb: 0.559081,1.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -5270,6 +5466,8 @@
 		- rgb: 0.58672,0.139258,0.599158
 		- rgb: default_normal
 		- rgb: 0.470979,1.0,1.0
+	animations:
+		- backandforth: 0.5 world 0.0,1.0,0.0 0.5
 
 * object:
 	mesh: cube
@@ -5283,6 +5481,8 @@
 		- rgb: 0.464661,0.602261,0.296622
 		- rgb: default_normal
 		- rgb: 0.487154,1.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -5309,6 +5509,8 @@
 		- rgb: 0.169612,0.227605,0.846595
 		- rgb: default_normal
 		- rgb: 0.35868,0.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -5387,6 +5589,8 @@
 		- rgb: 0.671484,0.552554,0.303365
 		- rgb: default_normal
 		- rgb: 0.285765,1.0,1.0
+	animations:
+		- backandforth: 0.5 world 0.0,1.0,0.0 0.5
 
 * object:
 	mesh: cube
@@ -5504,6 +5708,8 @@
 		- rgb: 0.194607,0.351636,0.556434
 		- rgb: default_normal
 		- rgb: 0.253725,1.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -5530,6 +5736,8 @@
 		- rgb: 0.112834,0.565693,0.494025
 		- rgb: default_normal
 		- rgb: 0.479932,1.0,1.0
+	animations:
+		- backandforth: 0.5 world 0.0,1.0,0.0 0.5
 
 * object:
 	mesh: cube
@@ -5647,6 +5855,8 @@
 		- rgb: 0.637977,0.403442,0.214498
 		- rgb: default_normal
 		- rgb: 0.178722,1.0,1.0
+	animations:
+		- backandforth: 0.5 world 0.0,1.0,0.0 0.5
 
 * object:
 	mesh: cube
@@ -5686,6 +5896,8 @@
 		- rgb: 0.7138,0.830493,0.354553
 		- rgb: default_normal
 		- rgb: 0.307457,0.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -5764,6 +5976,8 @@
 		- rgb: 0.149281,0.648018,0.931376
 		- rgb: default_normal
 		- rgb: 0.128356,0.0,1.0
+	animations:
+		- backandforth: 0.5 world 0.0,1.0,0.0 0.5
 
 * object:
 	mesh: cube
@@ -5829,6 +6043,8 @@
 		- rgb: 0.262177,0.542978,0.372061
 		- rgb: default_normal
 		- rgb: 0.670232,0.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -5868,6 +6084,8 @@
 		- rgb: 0.398977,0.122705,0.623744
 		- rgb: default_normal
 		- rgb: 0.0581242,1.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
 
 * object:
 	mesh: cube
@@ -5894,3 +6112,5 @@
 		- rgb: 0.398375,0.7942,0.355907
 		- rgb: default_normal
 		- rgb: 0.798709,0.0,1.0
+	animations:
+		- rotation: 1.0 model 0.0,1.0,0.0
