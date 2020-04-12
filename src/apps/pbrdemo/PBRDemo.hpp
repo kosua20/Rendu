@@ -3,7 +3,6 @@
 #include "DeferredRenderer.hpp"
 #include "ForwardRenderer.hpp"
 #include "PostProcessStack.hpp"
-#include "VarianceShadowMap.hpp"
 
 #include "Application.hpp"
 #include "scene/Scene.hpp"

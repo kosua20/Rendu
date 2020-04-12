@@ -1,4 +1,5 @@
 #include "PBRDemo.hpp"
+#include "VarianceShadowMapArray.hpp"
 #include "graphics/GLUtilities.hpp"
 #include "input/Input.hpp"
 
@@ -61,15 +62,23 @@ void PBRDemo::setScene(const std::shared_ptr<Scene> & scene) {
 	_shadowMaps.clear();
 	// Allocate shadow maps.
 	// For now all techniques require at most a VSM (depth,depth^2) map so we use this in all cases.
+	std::vector<std::shared_ptr<Light>> lights2D;
+	std::vector<std::shared_ptr<PointLight>> lightsCube;
 	for(auto & light : scene->lights) {
 		if(!light->castsShadow()) {
 			continue;
 		}
 		if(auto pLight = std::dynamic_pointer_cast<PointLight>(light)) {
-			_shadowMaps.emplace_back(new VarianceShadowMapCube(pLight, 512));
+			lightsCube.push_back(pLight);
 		} else {
-			_shadowMaps.emplace_back(new VarianceShadowMap2D(light, glm::vec2(512)));
+			lights2D.push_back(light);
 		}
+	}
+	if(!lights2D.empty()){
+		_shadowMaps.emplace_back(new VarianceShadowMap2DArray(lights2D, glm::vec2(512)));
+	}
+	if(!lightsCube.empty()){
+		_shadowMaps.emplace_back(new VarianceShadowMapCubeArray(lightsCube, 512));
 	}
 }
 
