@@ -401,7 +401,7 @@ void GLUtilities::allocateTexture(const Texture & texture) {
 				return;
 			}
 			// Unsure about this, would expect GL_TEXTURE_CUBE_MAP_ARRAY instead but the doc says so.
-			glTexImage3D(GL_TEXTURE_2D_ARRAY, mip, typeFormat, w, h, texture.depth, 0, format, type, nullptr);
+			glTexImage3D(GL_TEXTURE_CUBE_MAP_ARRAY, mip, typeFormat, w, h, texture.depth, 0, format, type, nullptr);
 
 		} else {
 			Log::Error() << Log::OpenGL << "Unsupported texture shape." << std::endl;
