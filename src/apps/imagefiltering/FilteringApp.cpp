@@ -24,7 +24,7 @@ FilteringApp::FilteringApp(RenderingConfig & config) :
 	_pyramidFiller	 = std::unique_ptr<PoissonFiller>(new PoissonFiller(renderWidth, renderHeight, _fillDownscale));
 	_pyramidIntegrator = std::unique_ptr<LaplacianIntegrator>(new LaplacianIntegrator(renderWidth, renderHeight, _intDownscale));
 	_gaussianBlur	  = std::unique_ptr<GaussianBlur>(new GaussianBlur(renderWidth, renderHeight, _blurLevel, Layout::RGB8));
-	_boxBlur		   = std::unique_ptr<BoxBlur>(new BoxBlur(renderWidth, renderHeight, false, {Layout::RGB8, Filter::NEAREST_NEAREST, Wrap::CLAMP}));
+	_boxBlur		   = std::unique_ptr<BoxBlur>(new BoxBlur(TextureShape::D2, renderWidth, renderHeight, 1,  {Layout::RGB8, Filter::NEAREST_NEAREST, Wrap::CLAMP}, false));
 	_floodFill		   = std::unique_ptr<FloodFiller>(new FloodFiller(renderWidth, renderHeight));
 
 	_painter = std::unique_ptr<PaintingTool>(new PaintingTool(renderWidth, renderHeight));

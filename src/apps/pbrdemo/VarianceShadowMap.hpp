@@ -2,6 +2,8 @@
 
 #include "renderers/ShadowMap.hpp"
 #include "graphics/Framebuffer.hpp"
+#include "scene/lights/Light.hpp"
+#include "scene/lights/PointLight.hpp"
 
 /**
  \brief A 2D variance shadow map, can be used for directional and spot lights. The shadow map will register itself with the associated light. Implement variance shadow mapping to filter the shadows and get correct smoother edges.
@@ -31,7 +33,7 @@ private:
 };
 
 /**
- \brief A cube variance shadow map, can be used for lights. Each face of the map is updated at the same time using a layered approach. The shadow map will register itself with the associated light. Implement variance shadow mapping to filter the shadows and get correct smoother edges.
+ \brief A cube variance shadow map, can be used for lights. Each face of the map is updated sequentially. The shadow map will register itself with the associated light. Implement variance shadow mapping to filter the shadows and get correct smoother edges.
  \ingroup DeferredRendering
  */
 class VarianceShadowMapCube : public ShadowMap {

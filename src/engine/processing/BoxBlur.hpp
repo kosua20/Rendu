@@ -20,7 +20,7 @@ public:
 	 \param approximate toggles the approximate box blur
 	 \param descriptor the framebuffer format and wrapping descriptor
 	 */
-	BoxBlur(unsigned int width, unsigned int height, bool approximate, const Descriptor & descriptor);
+	BoxBlur(TextureShape shape, unsigned int width, unsigned int height, unsigned int depth, const Descriptor & descriptor, bool approximate);
 
 	/**
 	 Apply the blurring process to a given texture.
