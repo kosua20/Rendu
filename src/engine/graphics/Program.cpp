@@ -5,7 +5,22 @@
 
 Program::Program(const std::string & vertexName, const std::string & fragmentName, const std::string & geometryName) :
 	_vertexName(vertexName), _fragmentName(fragmentName), _geometryName(geometryName) {
+	load();
+}
 
+void Program::cacheUniformArray(const std::string & name, const std::vector<glm::vec3> & vals) {
+	// Store the vec3s elements in a cache, to avoid re-setting them at each frame.
+	glUseProgram(_id);
+	for(size_t i = 0; i < vals.size(); ++i) {
+		const std::string elementName = name + "[" + std::to_string(i) + "]";
+		_vec3s[elementName]			  = vals[i];
+		glUniform3fv(_uniforms[elementName], 1, &(_vec3s[elementName][0]));
+	}
+	glUseProgram(0);
+	checkGLError();
+}
+
+void Program::load() {
 	std::map<std::string, int> bindings;
 	const std::string vertexContent   = Resources::manager().getStringWithIncludes(_vertexName + ".vert");
 	const std::string fragmentContent = Resources::manager().getStringWithIncludes(_fragmentName + ".frag");
@@ -80,38 +95,12 @@ Program::Program(const std::string & vertexName, const std::string & fragmentNam
 	checkGLError();
 }
 
-void Program::cacheUniformArray(const std::string & name, const std::vector<glm::vec3> & vals) {
-	// Store the vec3s elements in a cache, to avoid re-setting them at each frame.
-	glUseProgram(_id);
-	for(size_t i = 0; i < vals.size(); ++i) {
-		const std::string elementName = name + "[" + std::to_string(i) + "]";
-		_vec3s[elementName]			  = vals[i];
-		glUniform3fv(_uniforms[elementName], 1, &(_vec3s[elementName][0]));
-	}
-	glUseProgram(0);
-	checkGLError();
-}
-
 void Program::reload() {
-	std::map<std::string, int> bindings;
-	const std::string vertexContent   = Resources::manager().getStringWithIncludes(_vertexName + ".vert");
-	const std::string fragmentContent = Resources::manager().getStringWithIncludes(_fragmentName + ".frag");
-	const std::string geometryContent = _geometryName.empty() ? "" : Resources::manager().getStringWithIncludes(_geometryName + ".geom");
-	const std::string debugName		  = "(" + _vertexName + ", " + (_geometryName.empty() ? "" : (_geometryName + ", ")) + _fragmentName + ")";
-	_id								  = GLUtilities::createProgram(vertexContent, fragmentContent, geometryContent, bindings, debugName);
-
-	// For each stored uniform, update its location, and update textures slots and cached values.
+	load();
+	// Restore values.
 	glUseProgram(_id);
-	for(auto & uni : _uniforms) {
-		_uniforms[uni.first] = glGetUniformLocation(_id, uni.first.c_str());
-		if(_vec3s.count(uni.first) > 0) {
-			glUniform3fv(_uniforms[uni.first], 1, &(_vec3s[uni.first][0]));
-		}
-	}
-	// Register texture slots.
-	for(auto & texture : bindings) {
-		glUniform1i(_uniforms[texture.first], texture.second);
-		checkGLErrorInfos("Unused texture \"" + texture.first + "\" in program " + debugName + ".");
+	for(const auto & val : _vec3s) {
+		glUniform3fv(_uniforms[val.first], 1, &(val.second[0]));
 	}
 	glUseProgram(0);
 }

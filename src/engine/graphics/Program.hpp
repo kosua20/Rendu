@@ -136,10 +136,16 @@ public:
 	Program(Program &&) = default;
 	
 private:
+
+	/**
+	 Load the program, compiling the shader and updating all uniform locations.
+	 */
+	void load();
+
 	GLuint _id;								 ///< The OpenGL program ID.
 	std::string _vertexName;				 ///< The vertex shader filename
 	std::string _fragmentName;				 ///< The fragment shader filename
 	std::string _geometryName;				 ///< The geometry shader filename
 	std::map<std::string, GLint> _uniforms;  ///< The list of automatically registered uniforms and their locations.
-	std::map<std::string, glm::vec3> _vec3s; ///< Internal vec3 uniforms cache, for reloading.
+	std::map<std::string, glm::vec3> _vec3s; ///< Internal vec3 uniforms cache, for reloading. \todo Generalize (maybe with std::any?).
 };
