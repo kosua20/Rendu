@@ -27,8 +27,9 @@ layout(std140) uniform Lights {
 	GPULight lights[MAX_LIGHTS_COUNT];
 };
 
-
-layout (location = 0) out vec3 fragColor; ///< Color.
+layout (location = 0) out vec4 fragAmbient; ///< Ambient contribution.
+layout (location = 1) out vec3 fragDirect; ///< Direct lights contribution.
+layout (location = 2) out vec3 fragNormal; ///< Surface normal.
 
 /** Shade the object, applying lighting. */
 void main(){
@@ -46,18 +47,13 @@ void main(){
 	vec3 n = texture(normalTexture, In.uv).rgb ;
 	n = normalize(n * 2.0 - 1.0);
 	n = normalize(tbn * n);
+	fragNormal = n * 0.5 + 0.5;
 
 	vec3 infos = texture(effectsTexture, In.uv).rgb;
 	float roughness = max(0.045, infos.r);
 	vec3 v = normalize(-In.viewSpacePosition);
 	float NdotV = max(0.0, dot(v, n));
 	float metallic = infos.g;
-
-	// Compute AO.
-	float precomputedAO = infos.b;
-	float realtimeAO = 1.0; // No AO for now.
-	float aoDiffuse = min(realtimeAO, precomputedAO);
-	float aoSpecular = approximateSpecularAO(aoDiffuse, NdotV, roughness);
 
 	// Sample illumination envmap using world space normal and SH pre-computed coefficients.
 	vec3 worldNormal = normalize(vec3(inverseV * vec4(n,0.0)));
@@ -67,15 +63,18 @@ void main(){
 	// BRDF contributions.
 	vec3 diffuse, specular;
 	ambientBrdf(baseColor, metallic, roughness, NdotV, brdfPrecalc, diffuse, specular);
-	
-	fragColor = aoDiffuse * diffuse * irradiance + aoSpecular * specular * radiance;
+	// Store the ambient contribution.
+	// Final AO will be computed afterwards, so we only store its precomputed value for now.
+	float precomputedAO = infos.b;
+	fragAmbient = vec4(diffuse * irradiance + specular * radiance, precomputedAO);
 
 	// Compute F0 (fresnel coeff).
 	// Dielectrics have a constant low coeff, metals use the baseColor (ie reflections are tinted).
 	vec3 F0 = mix(vec3(0.04), baseColor, metallic);
 	// Normalized diffuse contribution. Metallic materials have no diffuse contribution.
 	vec3 diffuseL = INV_M_PI * (1.0 - metallic) * baseColor * (1.0 - F0);
-
+	
+	fragDirect = vec3(0.0);
 	for(int lid = 0; lid < MAX_LIGHTS_COUNT; ++lid){
 		if(lid >= lightsCount){
 			break;
@@ -88,6 +87,6 @@ void main(){
 		// Orientation: basic diffuse shadowing.
 		float orientation = max(0.0, dot(l,n));
 		vec3 specularL = ggx(n, v, l, F0, roughness);
-		fragColor += shadowing * orientation * (diffuseL + specularL) * lights[lid].colorAndBias.rgb;
+		fragDirect += shadowing * orientation * (diffuseL + specularL) * lights[lid].colorAndBias.rgb;
 	}
 }

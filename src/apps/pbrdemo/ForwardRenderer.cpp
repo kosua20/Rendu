@@ -11,25 +11,31 @@ ForwardRenderer::ForwardRenderer(const glm::vec2 & resolution) :
 	_renderResolution		   = resolution;
 	const int renderWidth	   = int(_renderResolution[0]);
 	const int renderHeight	   = int(_renderResolution[1]);
-	//const int renderHalfWidth  = int(0.5f * _renderResolution[0]);
-	//const int renderHalfHeight = int(0.5f * _renderResolution[1]);
+	const int renderHalfWidth  = int(0.5f * _renderResolution[0]);
+	const int renderHalfHeight = int(0.5f * _renderResolution[1]);
 
-	// Other framebuffers.
-	//_ssaoPass		  = std::unique_ptr<SSAO>(new SSAO(renderHalfWidth, renderHalfHeight, 0.5f));
-	const Descriptor desc = {Layout::RGBA16F, Filter::LINEAR_NEAREST, Wrap::CLAMP};
-	_sceneFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, desc, true));
+	// Framebuffers.
+	const Descriptor descAmbient = {Layout::RGBA16F, Filter::LINEAR_NEAREST, Wrap::CLAMP};
+	const Descriptor descDirect = {Layout::RGB16F, Filter::LINEAR_NEAREST, Wrap::CLAMP};
+	const Descriptor descNormal = {Layout::RGB16F, Filter::LINEAR_NEAREST, Wrap::CLAMP};
+	const Descriptor descDepth = {Layout::DEPTH_COMPONENT32F, Filter::NEAREST_NEAREST, Wrap::CLAMP};
+	const std::vector<Descriptor> descs = { descAmbient, descDirect, descNormal, descDepth};
+	_sceneFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, descs, true));
+	_compoFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, descAmbient, false));
+	_ssaoPass		  = std::unique_ptr<SSAO>(new SSAO(renderHalfWidth, renderHalfHeight, 0.5f));
 
 	_objectProgram		= Resources::manager().getProgram("object_forward");
 	_objectNoUVsProgram = Resources::manager().getProgram("object_no_uv_forward");
 	_parallaxProgram	= Resources::manager().getProgram("object_parallax_forward");
+	_compProgram	= Resources::manager().getProgram2D("composite_forward");
 
-	_skyboxProgram = Resources::manager().getProgram("skybox_forward", "skybox_infinity", "skybox_basic");
-	_bgProgram	   = Resources::manager().getProgram("background_infinity");
-	_atmoProgram   = Resources::manager().getProgram("atmosphere_forward", "background_infinity", "atmosphere");
+	_skyboxProgram = Resources::manager().getProgram("skybox_forward", "skybox_infinity", "skybox_forward");
+	_bgProgram	   = Resources::manager().getProgram("background_forward", "background_infinity", "background_forward");
+	_atmoProgram   = Resources::manager().getProgram("atmosphere_forward", "background_infinity", "atmosphere_forward");
 
 	_textureBrdf = Resources::manager().getTexture("brdf-precomputed", {Layout::RG32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
 
-	_renderResult = _sceneFramebuffer->textureId();
+	_renderResult = _compoFramebuffer->textureId();
 	checkGLError();
 }
 
@@ -56,6 +62,7 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 	_sceneFramebuffer->bind();
 	_sceneFramebuffer->setViewport();
 	GLUtilities::clearDepth(1.0f);
+	GLUtilities::clearColor({0.0f,0.0f,0.0f,1.0f});
 
 	const float cubeLod		= float(_scene->backgroundReflection->levels - 1);
 	const glm::mat4 invView = glm::inverse(view);
@@ -154,7 +161,7 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glEnable(GL_CULL_FACE);
 	}
-
+	
 	// Render the backgound.
 	renderBackground(view, proj, pos);
 	_sceneFramebuffer->unbind();
@@ -167,6 +174,7 @@ void ForwardRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 &
 	glDepthMask(GL_FALSE);
 	// Accept a depth of 1.0 (far plane).
 	glDepthFunc(GL_LEQUAL);
+	glDisable(GL_BLEND);
 	const Object * background	 = _scene->background.get();
 	const Scene::Background mode = _scene->backgroundMode;
 
@@ -223,32 +231,45 @@ void ForwardRenderer::draw(const Camera & camera) {
 	}
 	_lightGPUData->upload();
 
-	// --- Scene pass -------
+	// --- Scene pass
 	renderScene(view, proj, pos);
 
 	// --- SSAO pass
-	/*if(_applySSAO) {
-		_ssaoPass->process(proj, _gbuffer->depthId(), _gbuffer->textureId(int(TextureType::Normal)));
+	if(_applySSAO) {
+		_ssaoPass->process(proj, _sceneFramebuffer->depthId(), _sceneFramebuffer->textureId(2));
 	} else {
 		_ssaoPass->clear();
-	}*/
+	}
+
+	// --- Final composite pass
+	_compoFramebuffer->bind();
+	_compoFramebuffer->setViewport();
+	_compProgram->use();
+	glDisable(GL_DEPTH_TEST);
+	GLUtilities::bindTexture(_sceneFramebuffer->textureId(0), 0);
+	GLUtilities::bindTexture(_sceneFramebuffer->textureId(1), 1);
+	GLUtilities::bindTexture(_ssaoPass->textureId(), 2);
+	ScreenQuad::draw();
+	_compoFramebuffer->unbind();
 }
 
 void ForwardRenderer::clean() {
 	// Clean objects.
-	//_ssaoPass->clean();
+	_ssaoPass->clean();
 	_sceneFramebuffer->clean();
+	_compoFramebuffer->clean();
 }
 
 void ForwardRenderer::resize(unsigned int width, unsigned int height) {
 	_renderResolution[0] = float(width);
 	_renderResolution[1] = float(height);
 	//Renderer::updateResolution(width, height);
-	//const unsigned int hWidth  = uint(_renderResolution[0] / 2.0f);
-	//const unsigned int hHeight = uint(_renderResolution[1] / 2.0f);
+	const unsigned int hWidth  = uint(_renderResolution[0] / 2.0f);
+	const unsigned int hHeight = uint(_renderResolution[1] / 2.0f);
 	// Resize the framebuffers.
-	//_ssaoPass->resize(hWidth, hHeight);
+	_ssaoPass->resize(hWidth, hHeight);
 	_sceneFramebuffer->resize(_renderResolution);
+	_compoFramebuffer->resize(_renderResolution);
 	checkGLError();
 }
 
@@ -257,9 +278,9 @@ void ForwardRenderer::interface(){
 	ImGui::SameLine();
 	ImGui::Checkbox("Freeze culling", &_freezeFrustum);
 	ImGui::Combo("Shadow technique", reinterpret_cast<int*>(&_shadowMode), "None\0Basic\0Variance\0\0");
-	/*ImGui::Checkbox("SSAO", &_applySSAO);
+	ImGui::Checkbox("SSAO", &_applySSAO);
 	if(_applySSAO) {
 		ImGui::SameLine(120);
 		ImGui::InputFloat("Radius", &_ssaoPass->radius(), 0.5f);
-	}*/
+	}
 }

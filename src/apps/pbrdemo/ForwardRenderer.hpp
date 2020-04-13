@@ -63,13 +63,15 @@ private:
 	void renderBackground(const glm::mat4 & view, const glm::mat4 & proj, const glm::vec3 & pos);
 
 	std::unique_ptr<Framebuffer> _sceneFramebuffer; ///< Scene framebuffer
-	//std::unique_ptr<SSAO> _ssaoPass;				///< SSAO processing.
+	std::unique_ptr<SSAO> _ssaoPass;				///< SSAO processing.
+	std::unique_ptr<Framebuffer> _compoFramebuffer; ///< Composite framebuffer
 	std::unique_ptr<ForwardLight> _lightGPUData;	///< The lights renderer.
 	DebugLightRenderer _lightDebugRenderer;			///< The lights debug renderer.
 	
 	Program * _objectProgram;		 ///< Basic PBR program
 	Program * _objectNoUVsProgram; ///< Basic PBR program
 	Program * _parallaxProgram;	 ///< Parallax mapping PBR program
+	const Program * _compProgram;   ///< Atmospheric scattering program.
 
 	const Program * _skyboxProgram; ///< Skybox program.
 	const Program * _bgProgram;		///< Planar background program.
@@ -80,7 +82,7 @@ private:
 	std::shared_ptr<Scene> _scene; ///< The scene to render
 	
 	bool _debugVisualization = false; ///< Toggle the rendering of debug informations in the scene.
-	//bool _applySSAO			 = true;  ///< Screen space ambient occlusion.
+	bool _applySSAO			 = true;  ///< Screen space ambient occlusion.
 	ShadowMode  _shadowMode	 = ShadowMode::VARIANCE;  ///< Shadow mapping technique to use.
 
 	glm::mat4 _frustumMat = glm::mat4(1.0f); ///< View projection matrix backup.
