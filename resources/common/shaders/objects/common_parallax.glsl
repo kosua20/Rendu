@@ -18,6 +18,8 @@ vec2 parallax(vec2 uv, vec3 vTangentDir, sampler2D depth, out vec2 positionShift
 	// Depth will vary between 0 and 1.
 	float layerHeight = 1.0 / layersCount;
 	float currentLayer = 0.0;
+	// Apply a slight rescaling to the UVs to avoid issue at boundaries.
+	uv = uv * 0.998 + 0.001;
 	// Initial depth at the given position.
 	float currentDepth = texture(depth, uv).r;
 	
