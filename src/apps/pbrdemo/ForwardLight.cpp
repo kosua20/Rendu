@@ -91,7 +91,7 @@ void ForwardLight::draw(const DirectionalLight * light) {
 	GPULight & currentLight					= _lightsData[selectedId];
 	const glm::vec3 lightDirectionViewSpace = glm::vec3(_view * glm::vec4(light->direction(), 0.0));
 
-	currentLight.viewToLight	   = _invView;
+	currentLight.viewToLight	   = light->vp() * _invView;
 	currentLight.colorAndBias	   = glm::vec4(light->intensity(), _shadowBias);
 	currentLight.directionAndPlane = glm::vec4(lightDirectionViewSpace, 0.0f);
 

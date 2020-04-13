@@ -61,7 +61,7 @@ bool applyLight(GPULight light, vec3 viewSpacePos, samplerCubeArray smapCube, sa
 		// Shadowing
 		int shadowMode = int(light.typeModeLayer[1]);
 		if(shadowMode != SHADOW_NONE){
-			vec3 lightSpacePosition = 0.5 * ( (light.viewToLight) * vec4(viewSpacePos, 1.0)).xyz + 0.5;
+			vec3 lightSpacePosition = 0.5 * (light.viewToLight * vec4(viewSpacePos, 1.0)).xyz + 0.5;
 			shadowing *= shadow(shadowMode, lightSpacePosition, smap2D, layer, light.colorAndBias.w);
 		}
 	} else if(lightType == SPOT){
