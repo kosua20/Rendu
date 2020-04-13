@@ -157,7 +157,7 @@ void PBRDemo::update() {
 	}
 
 	// Reload the scene metadata.
-	if(Input::manager().triggered(Input::Key::P)) {
+	if(Input::manager().triggered(Input::Key::LeftBracket)) {
 		_scenes[_currentScene].reset(new Scene(_sceneNames[_currentScene]));
 		setScene(_scenes[_currentScene]);
 	}

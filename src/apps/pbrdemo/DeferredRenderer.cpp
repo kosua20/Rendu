@@ -16,7 +16,7 @@ DeferredRenderer::DeferredRenderer(const glm::vec2 & resolution) :
 
 	// G-buffer setup.
 	const Descriptor albedoDesc			= {Layout::RGBA16F, Filter::NEAREST_NEAREST, Wrap::CLAMP};
-	const Descriptor normalDesc			= {Layout::RGB32F, Filter::NEAREST_NEAREST, Wrap::CLAMP};
+	const Descriptor normalDesc			= {Layout::RGB16F, Filter::NEAREST_NEAREST, Wrap::CLAMP};
 	const Descriptor effectsDesc		= {Layout::RGB8, Filter::NEAREST_NEAREST, Wrap::CLAMP};
 	const Descriptor depthDesc			= {Layout::DEPTH_COMPONENT32F, Filter::NEAREST_NEAREST, Wrap::CLAMP};
 	const std::vector<Descriptor> descs = {albedoDesc, normalDesc, effectsDesc, depthDesc};
