@@ -27,6 +27,7 @@ ForwardRenderer::ForwardRenderer(const glm::vec2 & resolution) :
 	_objectProgram		= Resources::manager().getProgram("object_forward");
 	_objectNoUVsProgram = Resources::manager().getProgram("object_no_uv_forward");
 	_parallaxProgram	= Resources::manager().getProgram("object_parallax_forward");
+	_emissiveProgram	= Resources::manager().getProgram("object_emissive_forward");
 	_compProgram	= Resources::manager().getProgram2D("composite_forward");
 
 	_skyboxProgram = Resources::manager().getProgram("skybox_forward", "skybox_infinity", "skybox_forward");
@@ -101,6 +102,23 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 		// Combine the three matrices.
 		const glm::mat4 MV	= view * object.model();
 		const glm::mat4 MVP = proj * MV;
+
+		// Shortcut for emissive objects as their shader is quite different from other PBR shaders.
+		if(object.type() == Object::Type::Emissive){
+			_emissiveProgram->use();
+			_emissiveProgram->uniform("mvp", MVP);
+			_emissiveProgram->uniform("hasUV", !object.mesh()->texcoords.empty());
+			if(object.twoSided()) {
+				glDisable(GL_CULL_FACE);
+			}
+			// Bind the textures.
+			GLUtilities::bindTextures(object.textures());
+			GLUtilities::drawMesh(*object.mesh());
+			glEnable(GL_CULL_FACE);
+			continue;
+		}
+
+
 		// Compute the normal matrix
 		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(MV)));
 

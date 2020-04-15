@@ -71,7 +71,8 @@ private:
 	Program * _objectProgram;		 ///< Basic PBR program
 	Program * _objectNoUVsProgram; ///< Basic PBR program
 	Program * _parallaxProgram;	 ///< Parallax mapping PBR program
-	const Program * _compProgram;   ///< Atmospheric scattering program.
+	Program * _emissiveProgram;	 ///< Parallax mapping PBR program
+	const Program * _compProgram;   ///< Final ambeint qnd direct compositing.
 
 	const Program * _skyboxProgram; ///< Skybox program.
 	const Program * _bgProgram;		///< Planar background program.
