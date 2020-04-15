@@ -2,10 +2,24 @@
 #include <map>
 
 #define REGISTER_STRTYPE(type) \
-	{ #type, Type::type }
+	{ #type, Object::Type::type }
 #define REGISTER_TYPESTR(type) \
-{ Type::type, #type }
+{ Object::Type::type, #type }
 
+
+static const std::map<Object::Type, std::string> typesToStr = {
+	REGISTER_TYPESTR(Common),
+	REGISTER_TYPESTR(PBRRegular),
+	REGISTER_TYPESTR(PBRParallax),
+	REGISTER_TYPESTR(PBRNoUVs),
+	REGISTER_TYPESTR(Emissive)};
+
+static const std::map<std::string, Object::Type> strToTypes = {
+	REGISTER_STRTYPE(Common),
+	REGISTER_STRTYPE(PBRRegular),
+	REGISTER_STRTYPE(PBRParallax),
+	REGISTER_STRTYPE(PBRNoUVs),
+	REGISTER_STRTYPE(Emissive)};
 
 Object::Object(const Type type, const Mesh * mesh, bool castShadows) :
 	_mesh(mesh), _material(type), _castShadow(castShadows) {
@@ -13,20 +27,14 @@ Object::Object(const Type type, const Mesh * mesh, bool castShadows) :
 
 void Object::decode(const KeyValues & params, Storage options) {
 
-	static const std::map<std::string, Object::Type> types = {
-		REGISTER_STRTYPE(Common),
-		REGISTER_STRTYPE(PBRRegular),
-		REGISTER_STRTYPE(PBRParallax),
-		REGISTER_STRTYPE(PBRNoUVs)};
-
 	// We expect there is only one transformation in the parameters set.
 	_model.reset(Codable::decodeTransformation(params.elements));
 	
 	for(const auto & param : params.elements) {
 		if(param.key == "type" && !param.values.empty()) {
 			const std::string typeString = param.values[0];
-			if(types.count(typeString) > 0) {
-				_material = types.at(typeString);
+			if(strToTypes.count(typeString) > 0) {
+				_material = strToTypes.at(typeString);
 			}
 
 		} else if(param.key == "mesh" && !param.values.empty()) {
@@ -55,14 +63,9 @@ void Object::decode(const KeyValues & params, Storage options) {
 
 KeyValues Object::encode() const {
 	KeyValues obj("object");
-	static const std::map<Object::Type, std::string> types = {
-		REGISTER_TYPESTR(Common),
-		REGISTER_TYPESTR(PBRRegular),
-		REGISTER_TYPESTR(PBRParallax),
-		REGISTER_TYPESTR(PBRNoUVs)};
 
 	obj.elements.emplace_back("type");
-	obj.elements.back().values = {types.at(_material)};
+	obj.elements.back().values = {typesToStr.at(_material)};
 	
 	obj.elements.emplace_back("shadows");
 	obj.elements.back().values = {Codable::encode(_castShadow)};
