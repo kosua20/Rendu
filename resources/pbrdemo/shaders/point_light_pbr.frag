@@ -31,7 +31,7 @@ void main(){
 	vec2 uv = gl_FragCoord.xy/textureSize(albedoTexture, 0).xy;
 	
 	vec4 albedoInfo = textureLod(albedoTexture,uv, 0.0);
-	// If this is the skybox, don't shade.
+	// If emissive (skybox or object), don't shade.
 	if(albedoInfo.a == 0.0){
 		discard;
 	}

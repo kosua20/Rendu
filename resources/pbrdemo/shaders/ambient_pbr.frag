@@ -28,7 +28,7 @@ void main(){
 	vec4 albedoInfo = texture(albedoTexture,In.uv);
 	
 	if(albedoInfo.a == 0){
-		// If background (skybox), use directly the diffuse color.
+		// If emissive (skybox or object), use directly the albedo color.
 		fragColor = albedoInfo.rgb;
 		return;
 	}

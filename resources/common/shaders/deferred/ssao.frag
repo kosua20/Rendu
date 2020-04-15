@@ -43,7 +43,7 @@ void main(){
 	
 	vec3 n = normalize(2.0 * texture(normalTexture,In.uv).rgb - 1.0);
 	
-	// If normal is null, this is the background, no AO
+	// If normal is null, this is an emissive object (or background), no AO
 	// (avoid reading the albedo texture just for the id.)
 	if(length(n) < 0.1){
 		fragColor = 1.0;
