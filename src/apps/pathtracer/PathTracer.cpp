@@ -93,7 +93,7 @@ glm::mat3 PathTracer::buildLocalFrame(const Object & obj, const Raycaster::Hit &
 	}
 
 	// If we have a normal map, perturb the local normal and udpate the frame.
-	if(obj.type() != Object::Type::PBRNoUVs){
+	if(obj.type() != Object::Type::PBRNoUVs && obj.type() != Object::Type::Emissive){
 		const glm::vec3 imgNormal = glm::vec3(obj.textures()[1]->images[0].rgbal(uv.x, uv.y));
 		const glm::vec3 localNormal = glm::normalize(2.0f * imgNormal - 1.0f);
 		// Convert local normal to world.
@@ -195,7 +195,8 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 					const Mesh & mesh  = *obj.mesh();
 					const glm::vec3 p  = rayPos + hit.dist * rayDir;
 					// Fetch material texel information.
-					const glm::vec2 uv = obj.type() == Object::Type::PBRNoUVs ? glm::vec2(0.5f, 0.5f) :  Raycaster::interpolateAttribute(hit, mesh, mesh.texcoords);
+					const bool noUVs = obj.type() == Object::Type::PBRNoUVs || mesh.texcoords.empty();
+					const glm::vec2 uv = noUVs ? glm::vec2(0.5f, 0.5f) :  Raycaster::interpolateAttribute(hit, mesh, mesh.texcoords);
 					const Image & image  = obj.textures()[0]->images[0];
 					const glm::vec4 bCol = image.rgbal(uv.x, uv.y);
 					// In case of alpha cut-out, just update the position to the intersection and keep casting.
@@ -203,6 +204,13 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 					if(obj.masked() && bCol.a < 0.01f) {
 						rayPos = p;
 						continue;
+					}
+					// For emissive we don't apply any BRDF or re-cast rays, we just receive emitted light.
+					if(obj.type() == Object::Type::Emissive){
+						// Should we gamma-correct emissive textures?
+						sampleColor += attenuation * glm::vec3(bCol);
+						// No need to continue further.
+						break;
 					}
 
 					// Compute local tangent frame.
