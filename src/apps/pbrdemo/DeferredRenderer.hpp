@@ -83,6 +83,7 @@ private:
 	const Program * _objectProgram;		 ///< Basic PBR program
 	const Program * _objectNoUVsProgram; ///< Basic PBR program
 	const Program * _parallaxProgram;	 ///< Parallax mapping PBR program
+	const Program * _emissiveProgram;	 ///< Emissive program
 
 	const Program * _skyboxProgram; ///< Skybox program.
 	const Program * _bgProgram;		///< Planar background program.

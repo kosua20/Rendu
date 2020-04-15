@@ -33,6 +33,7 @@ DeferredRenderer::DeferredRenderer(const glm::vec2 & resolution) :
 	_parallaxProgram	= Resources::manager().getProgram("object_parallax_gbuffer");
 	_objectProgram		= Resources::manager().getProgram("object_gbuffer");
 	_objectNoUVsProgram = Resources::manager().getProgram("object_no_uv_gbuffer");
+	_emissiveProgram	= Resources::manager().getProgram("object_emissive");
 
 	// Lighting passes.
 	_ambientScreen = std::unique_ptr<AmbientQuad>(new AmbientQuad(_gbuffer->textureId(0), _gbuffer->textureId(1),
@@ -106,6 +107,13 @@ void DeferredRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & pro
 				_objectProgram->uniform("mvp", MVP);
 				// Upload the normal matrix.
 				_objectProgram->uniform("normalMatrix", normalMatrix);
+				break;
+			case Object::Emissive:
+				_emissiveProgram->use();
+				// Upload the MVP matrix.
+				_emissiveProgram->uniform("mvp", MVP);
+				// Are UV available. Note: we might want to decouple UV use from their existence.
+				_emissiveProgram->uniform("hasUV", !object.mesh()->texcoords.empty());
 				break;
 			default:
 				break;
