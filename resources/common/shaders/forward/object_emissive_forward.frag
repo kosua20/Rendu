@@ -22,7 +22,7 @@ void main(){
 	if(emissiveColor.a <= 0.01){
 		discard;
 	}
-	fragAmbient = vec4(emissiveColor.rgb, 1.0);
+	fragAmbient = vec4(emissiveColor.rgb, -1.0);
 	fragDirect = vec3(0.0);
 	fragNormal = vec3(0.5);
 }
