@@ -1,7 +1,7 @@
 
 #define PARALLAX_MIN 8
-#define PARALLAX_MAX 32
-#define PARALLAX_SCALE 0.04
+#define PARALLAX_MAX 64
+#define PARALLAX_SCALE 0.03
 
 /**
 	Perform parallax mapping by marching against the local depth map, and output the final UV to use.
@@ -47,7 +47,7 @@ vec2 parallax(vec2 uv, vec3 vTangentDir, sampler2D depth, out vec2 positionShift
 	
 	
 	// Interpolate between the two local depths to obtain the correct UV shift.
-	vec2 finalUV = mix(newUV,previousNewUV,currentLocalDepth / (currentLocalDepth - previousLocalDepth));
+	vec2 finalUV = mix(newUV, previousNewUV, currentLocalDepth / (currentLocalDepth - previousLocalDepth));
 	positionShift = (uv - finalUV) * vTangentDir.z / layerHeight;
 	return finalUV;
 }
@@ -62,10 +62,11 @@ vec3 updateFragmentPosition(vec2 localUV, vec2 positionShift, vec3 viewPos, mat4
 	// Convert the 3D shift applied from tangent space to view space.
 	vec3 shift = tbn * vec3(positionShift, -PARALLAX_SCALE * localDepth);
 	// Update the depth in view space.
-	vec3 newViewSpacePosition = viewPos - vec3(0.0, 0.0, shift.z);
+	vec3 viewDir = normalize(viewPos);
+	vec3 newViewSpacePosition = viewPos - dot(shift, viewDir) * viewDir;
 	// Back to clip space.
 	vec4 clipPos = proj * vec4(newViewSpacePosition, 1.0);
-	// Perpsective division.
+	// Perspective division.
 	float newDepth = clipPos.z / clipPos.w;
 	// Update the fragment depth, taking into account the depth range parameters.
 	gl_FragDepth = ((gl_DepthRange.diff * newDepth) + gl_DepthRange.near + gl_DepthRange.far)/2.0;
