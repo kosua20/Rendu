@@ -57,8 +57,8 @@ void ForwardRenderer::setScene(const std::shared_ptr<Scene> & scene) {
 
 void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj, const glm::vec3 & pos) {
 	// Draw the scene.
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
+	GLUtilities::setDepthState(true);
+	GLUtilities::setCullState(true);
 	_sceneFramebuffer->bind();
 	_sceneFramebuffer->setViewport();
 	GLUtilities::clearDepth(1.0f);
@@ -108,12 +108,12 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 			_emissiveProgram->uniform("mvp", MVP);
 			_emissiveProgram->uniform("hasUV", !object.mesh()->texcoords.empty());
 			if(object.twoSided()) {
-				glDisable(GL_CULL_FACE);
+				GLUtilities::setCullState(false);
 			}
 			// Bind the textures.
 			GLUtilities::bindTextures(object.textures());
 			GLUtilities::drawMesh(*object.mesh());
-			glEnable(GL_CULL_FACE);
+			GLUtilities::setCullState(true);
 			continue;
 		}
 
@@ -147,7 +147,7 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 
 		// Backface culling state.
 		if(object.twoSided()) {
-			glDisable(GL_CULL_FACE);
+			GLUtilities::setCullState(false);
 		}
 		// Bind the lights.
 		GLUtilities::bindBuffer(_lightsGPU->data(), 0);
@@ -164,34 +164,33 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 		}
 		GLUtilities::drawMesh(*object.mesh());
 		// Restore state.
-		glEnable(GL_CULL_FACE);
+		GLUtilities::setCullState(true);
 	}
 	
 	// Render all lights.
 	if(_debugVisualization) {
 		_lightDebugRenderer.updateCameraInfos(view, proj);
-		glDisable(GL_CULL_FACE);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		GLUtilities::setCullState(false);
+		GLUtilities::setPolygonState(PolygonMode::LINE, Faces::ALL);
 		for(auto & light : _scene->lights) {
 			light->draw(_lightDebugRenderer);
 		}
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		glEnable(GL_CULL_FACE);
+		GLUtilities::setPolygonState(PolygonMode::FILL, Faces::ALL);
+		GLUtilities::setCullState(true);
 	}
 	
 	// Render the backgound.
 	renderBackground(view, proj, pos);
 	_sceneFramebuffer->unbind();
-	glDisable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
+	GLUtilities::setDepthState(false);
+	GLUtilities::setCullState(true);
 }
 
 void ForwardRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 & proj, const glm::vec3 & pos) {
 	// No need to write the skybox depth to the framebuffer.
-	glDepthMask(GL_FALSE);
 	// Accept a depth of 1.0 (far plane).
-	glDepthFunc(GL_LEQUAL);
-	glDisable(GL_BLEND);
+	GLUtilities::setDepthState(true, DepthEquation::LEQUAL, false);
+	GLUtilities::setBlendState(false);
 	const Object * background	 = _scene->background.get();
 	const Scene::Background mode = _scene->backgroundMode;
 
@@ -231,8 +230,8 @@ void ForwardRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 &
 		}
 		GLUtilities::drawMesh(*background->mesh());
 	}
-	glDepthFunc(GL_LESS);
-	glDepthMask(GL_TRUE);
+
+	GLUtilities::setDepthState(true, DepthEquation::LESS, true);
 }
 
 void ForwardRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_t layer) {
@@ -262,7 +261,7 @@ void ForwardRenderer::draw(const Camera & camera, Framebuffer & framebuffer, siz
 	framebuffer.bind(layer);
 	framebuffer.setViewport();
 	_compProgram->use();
-	glDisable(GL_DEPTH_TEST);
+	GLUtilities::setDepthState(false);
 	GLUtilities::bindTexture(_sceneFramebuffer->textureId(0), 0);
 	GLUtilities::bindTexture(_sceneFramebuffer->textureId(1), 1);
 	GLUtilities::bindTexture(_ssaoPass->textureId(), 2);

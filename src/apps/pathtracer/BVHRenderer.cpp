@@ -31,11 +31,11 @@ void BVHRenderer::setScene(const std::shared_ptr<Scene> & scene, const Raycaster
 void BVHRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_t layer) {
 
 	// Draw the scene.
-	glEnable(GL_DEPTH_TEST);
+	GLUtilities::setDepthState(true);
 	framebuffer.bind(layer);
 	framebuffer.setViewport();
 	GLUtilities::clearColorAndDepth(glm::vec4(0.0f), 1.0f);
-	glDisable(GL_CULL_FACE);
+	GLUtilities::setCullState(false);
 
 	const glm::mat4 & view = camera.view();
 	const glm::mat4 & proj = camera.projection();
@@ -52,7 +52,7 @@ void BVHRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_t 
 	}
 
 	// Debug wireframe visualisation.
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	GLUtilities::setPolygonState(PolygonMode::LINE, Faces::ALL);
 	_bvhProgram->use();
 	_bvhProgram->uniform("mvp", VP);
 	// If there is a ray mesh, show it.
@@ -72,10 +72,10 @@ void BVHRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_t 
 		}
 	}
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	GLUtilities::setPolygonState(PolygonMode::FILL, Faces::ALL);
 	framebuffer.unbind();
-	glDisable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
+	GLUtilities::setDepthState(false);
+	GLUtilities::setCullState(true);
 }
 
 void BVHRenderer::clean() {

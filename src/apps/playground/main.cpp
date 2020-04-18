@@ -55,7 +55,7 @@ int main(int argc, char ** argv) {
 	}
 	const std::string titleHeader = "Extensions (" + std::to_string(extensions.size()) + ")";
 
-	glEnable(GL_DEPTH_TEST);
+	GLUtilities::setDepthState(true);
 
 	// Setup the timer.
 	double timer		 = System::time();

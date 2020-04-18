@@ -30,8 +30,8 @@ FilteringApp::FilteringApp(RenderingConfig & config) :
 	_painter = std::unique_ptr<PaintingTool>(new PaintingTool(renderWidth, renderHeight));
 
 	// GL options
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
+	GLUtilities::setDepthState(true);
+	GLUtilities::setCullState(true);
 	checkGLError();
 }
 
@@ -40,7 +40,7 @@ void FilteringApp::draw() {
 	const Texture * srcTexID = _sceneBuffer->textureId();
 	// Render the scene.
 	if(_viewMode == View::SCENE) {
-		glEnable(GL_DEPTH_TEST);
+		GLUtilities::setDepthState(true);
 		_sceneBuffer->bind();
 		_sceneBuffer->setViewport();
 		GLUtilities::clearColorAndDepth({0.0f, 0.0f, 0.0f, 1.0f}, 1.0f);
@@ -51,7 +51,7 @@ void FilteringApp::draw() {
 		_sceneBuffer->unbind();
 
 	} else if(_viewMode == View::IMAGE) {
-		glDisable(GL_DEPTH_TEST);
+		GLUtilities::setDepthState(false);
 		_sceneBuffer->bind();
 		_sceneBuffer->setViewport();
 		_passthrough->use();
@@ -63,14 +63,14 @@ void FilteringApp::draw() {
 		_sceneBuffer->unbind();
 
 	} else {
-		glDisable(GL_DEPTH_TEST);
+		GLUtilities::setDepthState(false);
 		_painter->draw();
 		// If we are in INPUT mode, we want to display the frame with the brush outline visible.
 		// On the other hand, if we apply any processing, hide the brush and use the canvas frame.
 		srcTexID = _mode == Processing::INPUT ? _painter->visuId() : _painter->textureId();
 	}
 
-	glDisable(GL_DEPTH_TEST);
+	GLUtilities::setDepthState(false);
 
 	const Texture * finalTexID = srcTexID;
 

@@ -54,7 +54,7 @@ void DeferredRenderer::setScene(const std::shared_ptr<Scene> & scene) {
 }
 
 void DeferredRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj, const glm::vec3 & pos) {
-	glEnable(GL_DEPTH_TEST);
+	GLUtilities::setDepthState(true);
 	
 	// Bind the full scene framebuffer.
 	_gbuffer->bind();
@@ -120,41 +120,40 @@ void DeferredRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & pro
 
 		// Backface culling state.
 		if(object.twoSided()) {
-			glDisable(GL_CULL_FACE);
+			GLUtilities::setCullState(false);
 		}
 
 		// Bind the textures.
 		GLUtilities::bindTextures(object.textures());
 		GLUtilities::drawMesh(*object.mesh());
 		// Restore state.
-		glEnable(GL_CULL_FACE);
+		GLUtilities::setCullState(true);
 	}
 	
 	// Lights wireframe debug.
 	if(_debugVisualization){
 		_lightDebugRenderer.updateCameraInfos(view, proj);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		glDisable(GL_CULL_FACE);
+		GLUtilities::setPolygonState(PolygonMode::LINE, Faces::ALL);
+		GLUtilities::setCullState(false);
 		for(const auto & light : _scene->lights){
 			light->draw(_lightDebugRenderer);
 		}
-		glEnable(GL_CULL_FACE);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		GLUtilities::setCullState(true);
+		GLUtilities::setPolygonState(PolygonMode::FILL, Faces::ALL);
 	}
 	
 	renderBackground(view, proj, pos);
 
 	// Unbind the full scene framebuffer.
 	_gbuffer->unbind();
-	glDisable(GL_DEPTH_TEST);
+	GLUtilities::setDepthState(false);
 }
 
 void DeferredRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 & proj, const glm::vec3 & pos){
 	// Background.
 	// No need to write the skybox depth to the framebuffer.
-	glDepthMask(GL_FALSE);
 	// Accept a depth of 1.0 (far plane).
-	glDepthFunc(GL_LEQUAL);
+	GLUtilities::setDepthState(true, DepthEquation::LEQUAL, false);
 	const Object * background	= _scene->background.get();
 	const Scene::Background mode = _scene->backgroundMode;
 	
@@ -194,8 +193,7 @@ void DeferredRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 
 		}
 		GLUtilities::drawMesh(*background->mesh());
 	}
-	glDepthFunc(GL_LESS);
-	glDepthMask(GL_TRUE);
+	GLUtilities::setDepthState(true, DepthEquation::LESS, true);
 }
 
 void DeferredRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_t layer) {
@@ -220,13 +218,11 @@ void DeferredRenderer::draw(const Camera & camera, Framebuffer & framebuffer, si
 	framebuffer.bind(layer);
 	framebuffer.setViewport();
 	_ambientScreen->draw(view, proj);
-	glEnable(GL_BLEND);
-	glBlendEquation(GL_FUNC_ADD);
-	glBlendFunc(GL_ONE, GL_ONE);
+	GLUtilities::setBlendState(true, BlendEquation::ADD, BlendFunction::ONE, BlendFunction::ONE);
 	for(auto & light : _scene->lights) {
 		light->draw(*_lightRenderer);
 	}
-	glDisable(GL_BLEND);
+	GLUtilities::setBlendState(false);
 	framebuffer.unbind();
 
 }

@@ -8,11 +8,10 @@ GameRenderer::GameRenderer(const glm::vec2 & resolution) {
 	_playerCamera.projection(resolution[0] / resolution[1], 0.6f, 1.0f, 30.0f);
 
 	// GL options
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LESS);
-	glEnable(GL_CULL_FACE);
-	glBlendEquation(GL_FUNC_ADD);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	GLUtilities::setDepthState(true, DepthEquation::LESS, true);
+	GLUtilities::setCullState(true, Faces::BACK);
+	GLUtilities::setBlendState(false, BlendEquation::ADD, BlendFunction::SRC_ALPHA, BlendFunction::ONE_MINUS_SRC_ALPHA);
 
 	const int renderWidth  = int(resolution[0]);
 	const int renderHeight = int(resolution[1]);
@@ -44,10 +43,10 @@ void GameRenderer::drawPlayer(const Player & player, Framebuffer & framebuffer) 
 	_sceneFramebuffer->bind();
 	_sceneFramebuffer->setViewport();
 	GLUtilities::clearColorAndDepth(glm::vec4(0.0f), 1.0f);
-	glEnable(GL_DEPTH_TEST);
+	GLUtilities::setDepthState(true);
 	drawScene(player);
 	_sceneFramebuffer->unbind();
-	glDisable(GL_DEPTH_TEST);
+	GLUtilities::setDepthState(false);
 
 	// --- SSAO pass ------
 	_ssaoPass->process(_playerCamera.projection(), _sceneFramebuffer->depthId(), _sceneFramebuffer->textureId(0));

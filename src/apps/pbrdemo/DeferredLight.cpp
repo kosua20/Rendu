@@ -29,8 +29,8 @@ void DeferredLight::draw(const SpotLight * light) {
 	const glm::vec3 lightDirectionViewSpace = glm::vec3(_view * glm::vec4(light->direction(), 0.0f));
 	const glm::mat4 mvp			= _proj * _view * light->model();
 	const glm::mat4 viewToLight = light->vp() * glm::inverse(_view);
-	
-	glCullFace(GL_FRONT);
+
+	GLUtilities::setCullState(true, Faces::FRONT);
 	_spotProgram->use();
 	_spotProgram->uniform("mvp", mvp);
 	_spotProgram->uniform("lightPosition", lightPositionViewSpace);
@@ -55,7 +55,7 @@ void DeferredLight::draw(const SpotLight * light) {
 	// Select the geometry.
 	GLUtilities::drawMesh(*_cone);
 	
-	glCullFace(GL_BACK);
+	GLUtilities::setCullState(true, Faces::BACK);
 }
 
 void DeferredLight::draw(const PointLight * light) {
@@ -65,8 +65,8 @@ void DeferredLight::draw(const PointLight * light) {
 	const glm::vec3 lightPositionViewSpace = glm::vec3(_view * glm::vec4(light->position(), 1.0f));
 	const glm::mat4 mvp		 = _proj * _view * light->model();
 	const glm::mat3 viewToLight = glm::mat3(glm::inverse(_view));
-	
-	glCullFace(GL_FRONT);
+
+	GLUtilities::setCullState(true, Faces::FRONT);
 	_pointProgram->use();
 	_pointProgram->uniform("mvp", mvp);
 	_pointProgram->uniform("lightPosition", lightPositionViewSpace);
@@ -89,7 +89,7 @@ void DeferredLight::draw(const PointLight * light) {
 	}
 	// Select the geometry.
 	GLUtilities::drawMesh(*_sphere);
-	glCullFace(GL_BACK);
+	GLUtilities::setCullState(true, Faces::BACK);
 }
 
 void DeferredLight::draw(const DirectionalLight * light) {

@@ -45,8 +45,8 @@ void GameMenuRenderer::drawMenu(const GameMenu & menu, const glm::vec2 & finalRe
 		ScreenQuad::draw(menu.backgroundImage);
 	}
 
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND);
+	GLUtilities::setDepthState(true);
+	GLUtilities::setBlendState(true);
 
 	// Images.
 	_imageProgram->use();
@@ -106,7 +106,7 @@ void GameMenuRenderer::drawMenu(const GameMenu & menu, const glm::vec2 & finalRe
 		GLUtilities::bindTexture(toggle.tid, 0);
 		GLUtilities::drawMesh(*_quad);
 	}
-	glDisable(GL_DEPTH_TEST);
+	GLUtilities::setDepthState(false);
 
 	// Labels
 	_fontProgram->use();
@@ -119,7 +119,7 @@ void GameMenuRenderer::drawMenu(const GameMenu & menu, const glm::vec2 & finalRe
 		_fontProgram->uniform("edgeWidth", labelsEdgeWidth);
 		GLUtilities::drawMesh(label.mesh);
 	}
-	glDisable(GL_BLEND);
+	GLUtilities::setBlendState(false);
 	Framebuffer::backbuffer()->unbind();
 	checkGLError();
 }

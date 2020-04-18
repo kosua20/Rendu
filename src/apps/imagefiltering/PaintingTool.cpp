@@ -54,7 +54,7 @@ PaintingTool::PaintingTool(unsigned int width, unsigned int height) {
 
 void PaintingTool::draw() {
 
-	glDisable(GL_DEPTH_TEST);
+	GLUtilities::setDepthState(false);
 	_canvas->bind();
 	_canvas->setViewport();
 

@@ -40,7 +40,7 @@ public:
 		// Sun direction.
 		_lightDirection = glm::normalize(glm::vec3(0.437f, 0.082f, -0.896f));
 		
-		glEnable(GL_DEPTH_TEST);
+		GLUtilities::setDepthState(true);
 		checkGLError();
 	}
 	
@@ -51,7 +51,7 @@ public:
 		const glm::mat4 clipToCam  = glm::inverse(_userCamera.projection());
 		
 		// Draw the atmosphere.
-		glDisable(GL_DEPTH_TEST);
+		GLUtilities::setDepthState(false);
 		_atmosphereBuffer->bind();
 		_atmosphereBuffer->setViewport();
 		GLUtilities::clearColor({0.0f, 0.0f, 0.0f, 1.0f});

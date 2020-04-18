@@ -11,7 +11,6 @@
 #include "graphics/Framebuffer.hpp"
 #include "input/ControllableCamera.hpp"
 
-#include "processing/GaussianBlur.hpp"
 #include "processing/SSAO.hpp"
 
 #include "Common.hpp"
