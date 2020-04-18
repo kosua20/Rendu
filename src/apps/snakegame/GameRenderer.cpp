@@ -4,9 +4,8 @@
 #include "Common.hpp"
 
 GameRenderer::GameRenderer(const glm::vec2 & resolution) {
-	_renderResolution = resolution;
 	_playerCamera.pose(glm::vec3(0.0f, -5.0f, 24.0f), glm::vec3(0.0f, 0.5f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-	_playerCamera.projection(_renderResolution[0] / _renderResolution[1], 0.6f, 1.0f, 30.0f);
+	_playerCamera.projection(resolution[0] / resolution[1], 0.6f, 1.0f, 30.0f);
 
 	// GL options
 	glEnable(GL_DEPTH_TEST);
@@ -15,12 +14,13 @@ GameRenderer::GameRenderer(const glm::vec2 & resolution) {
 	glBlendEquation(GL_FUNC_ADD);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	const int renderWidth  = int(_renderResolution[0]);
-	const int renderHeight = int(_renderResolution[1]);
+	const int renderWidth  = int(resolution[0]);
+	const int renderHeight = int(resolution[1]);
 	_sceneFramebuffer	  = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, {{Layout::RGB16F, Filter::NEAREST_NEAREST, Wrap::CLAMP}, {Layout::R8, Filter::NEAREST_NEAREST, Wrap::CLAMP}, {Layout::DEPTH_COMPONENT32F, Filter::NEAREST_NEAREST, Wrap::CLAMP}},
 		 true));
 	_lightingFramebuffer   = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, {Layout::RGB8, Filter::LINEAR_NEAREST, Wrap::CLAMP}, false));
-	_fxaaFramebuffer	   = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, {Layout::RGBA8,Filter::LINEAR_NEAREST, Wrap::CLAMP}, false));
+	_preferredFormat.push_back({Layout::RGBA8,Filter::LINEAR_NEAREST, Wrap::CLAMP});
+	
 
 	_fxaaProgram		= Resources::manager().getProgram2D("fxaa");
 	_compositingProgram = Resources::manager().getProgram2D("game_composite");
@@ -33,13 +33,12 @@ GameRenderer::GameRenderer(const glm::vec2 & resolution) {
 	_bodyElement	= Resources::manager().getMesh("body", Storage::GPU);
 	_cubemap		= Resources::manager().getTexture("env", {Layout::RGB8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
 
-	_renderResult = _fxaaFramebuffer->textureId();
 	checkGLError();
 }
 
-void GameRenderer::drawPlayer(const Player & player) const {
+void GameRenderer::drawPlayer(const Player & player, Framebuffer & framebuffer) const {
 
-	const glm::vec2 invRenderSize = 1.0f / _renderResolution;
+	const glm::vec2 invRenderSize = 1.0f / glm::vec2(framebuffer.width(), framebuffer.height());
 
 	// --- Scene pass ------
 	_sceneFramebuffer->bind();
@@ -61,12 +60,12 @@ void GameRenderer::drawPlayer(const Player & player) const {
 	_lightingFramebuffer->unbind();
 
 	// --- FXAA pass -------
-	_fxaaFramebuffer->bind();
-	_fxaaFramebuffer->setViewport();
+	framebuffer.bind();
+	framebuffer.setViewport();
 	_fxaaProgram->use();
 	_fxaaProgram->uniform("inverseScreenSize", invRenderSize);
 	ScreenQuad::draw(_lightingFramebuffer->textureId());
-	_fxaaFramebuffer->unbind();
+	framebuffer.unbind();
 
 }
 
@@ -115,21 +114,14 @@ void GameRenderer::drawScene(const Player & player) const {
 }
 
 void GameRenderer::resize(unsigned int width, unsigned int height) {
-	_renderResolution = {float(width), float(height)};
-	const float aspectRatio = _renderResolution[0] / _renderResolution[1];
-	_playerCamera.ratio(aspectRatio);
-	_fxaaFramebuffer->resize(_renderResolution);
-	_sceneFramebuffer->resize(_renderResolution);
-	_lightingFramebuffer->resize(_renderResolution);
-	_ssaoPass->resize(uint(_renderResolution[0] / 2.0f), uint(_renderResolution[1] / 2.0f));
+	const glm::vec2 res(width, height);
+	_playerCamera.ratio(res[0]/res[1]);
+	_sceneFramebuffer->resize(res);
+	_lightingFramebuffer->resize(res);
+	_ssaoPass->resize(width/2, height/2);
 }
 
 void GameRenderer::clean() {
-	_fxaaFramebuffer->clean();
 	_sceneFramebuffer->clean();
 	_ssaoPass->clean();
-}
-
-glm::vec2 GameRenderer::renderingResolution() const {
-	return _renderResolution;
 }

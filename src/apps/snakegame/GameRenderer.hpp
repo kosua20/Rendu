@@ -18,8 +18,9 @@ public:
 
 	/** Draw the game scene
 	 \param player the state of the game and player
+	 \param framebuffer the destination framebuffer
 	 */
-	void drawPlayer(const Player & player) const;
+	void drawPlayer(const Player & player, Framebuffer & framebuffer) const;
 
 	/** Resize internal buffers based on new window size.
 	 \param width new width
@@ -29,12 +30,7 @@ public:
 
 	/** Clean up rendering resources.*/
 	void clean() override;
-
-	/** Current rendering resolution.
-	 \return the internal resolution
-	 */
-	glm::vec2 renderingResolution() const;
-
+	
 private:
 	/** Draw the scene to the current bound framebuffer.
 	 \param player the player state
@@ -43,7 +39,6 @@ private:
 
 	std::unique_ptr<Framebuffer> _sceneFramebuffer;	///< Scene framebuffer.
 	std::unique_ptr<Framebuffer> _lightingFramebuffer; ///< Framebuffer containing the lit result.
-	std::unique_ptr<Framebuffer> _fxaaFramebuffer;	 ///< Framebuffer for postprocess.
 	std::unique_ptr<SSAO> _ssaoPass;				   ///< Screen space ambient occlusion pass.
 
 	const Program * _fxaaProgram;		 ///< Antialiasing program.

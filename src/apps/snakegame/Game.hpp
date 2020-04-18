@@ -11,6 +11,26 @@
 // \todo Add match-3 mechanics.
 // \todo High score list or best score display.
 
+
+/** \brief Game common configuration.
+	\ingroup SnakeGame
+ */
+class GameConfig : public RenderingConfig {
+public:
+
+	/** Setup game configuration.
+	 \param argv the arguments
+	 */
+	GameConfig(const std::vector<std::string> & argv);
+
+	/** Save the config to disk at a predetermined path.
+	 */
+	void save();
+
+	bool lowRes = false; ///< Perform internal rendering at a lower resolution.
+
+};
+
 /**
  \brief Handles communication between the different game components (renderers, player, menus) and the player actions.
  \ingroup SnakeGame
@@ -20,7 +40,7 @@ public:
 	/** Constructor
 	 \param config the shared game configuration
 	 */
-	explicit Game(RenderingConfig & config);
+	explicit Game(GameConfig & config);
 
 	/// Draw the game.
 	void draw();
@@ -46,7 +66,7 @@ public:
 
 private:
 	/**
-	 \brief Game satte: either a specific menu or in-game.
+	 \brief Game state: either a specific menu or in-game.
 	 */
 	enum class Status {
 		MAINMENU,
@@ -67,7 +87,8 @@ private:
 		RESUME,
 		BACKTOMENU,
 		OPTION_FULLSCREEN,
-		OPTION_VSYNC
+		OPTION_VSYNC,
+		OPTION_HALFRES
 	};
 
 	/** For a given button action tag, perform the corresponding internal operations and indicates if any low-level action should be performed by the windowing system/hardware.
@@ -76,12 +97,13 @@ private:
 	 */
 	Window::Action handleButton(ButtonAction tag);
 
-	RenderingConfig & _config;		 ///< Reference to the shared game configuration.
+	GameConfig & _config;		 ///< Reference to the shared game configuration.
 	std::unique_ptr<Player> _player; ///< The player state.
 
 	GameRenderer _inGameRenderer;		   ///< In-game renderer.
 	GameMenuRenderer _menuRenderer;		   ///< Menus renderer.
 	std::unique_ptr<GaussianBlur> _bgBlur; ///< Blurring pass for the paused/dead menus background.
+	std::unique_ptr<Framebuffer> _gameFramebuffer; ///< Game scene framebuffer.
 	const Program * _finalProgram;		   ///< Final upscaling program.
 
 	Status _status = Status::MAINMENU; ///< Current game sattus (specific menu or in-game)

@@ -22,7 +22,7 @@ int main() {
 
 	// First, init/parse/load configuration.
 	const std::vector<std::string> forceArgv = {"SnakeGame", "-c", "config.ini"};
-	RenderingConfig config(forceArgv);
+	GameConfig config(forceArgv);
 	config.initialWidth		= 800;
 	config.initialHeight	= 600;
 	config.forceAspectRatio = true;
@@ -61,7 +61,7 @@ int main() {
 				game.resize(uint(Input::manager().size()[0]), uint(Input::manager().size()[1]));
 			}
 			// Update the config on disk, for next launch.
-			Resources::saveStringToExternalFile("./config.ini", "# SnakeGame Config v1.0\n" + std::string(config.fullscreen ? "fullscreen\n" : "") + (!config.vsync ? "no-vsync" : "\n"));
+			config.save();
 		}
 
 		// Compute the time elapsed since last frame

@@ -6,9 +6,7 @@
 #include "graphics/Framebuffer.hpp"
 #include "Common.hpp"
 
-GameMenuRenderer::GameMenuRenderer(const glm::vec2 & resolution) {
-	_renderResolution = resolution;
-
+GameMenuRenderer::GameMenuRenderer() {
 	_buttonProgram	   = Resources::manager().getProgram("menu_button");
 	_backgroundProgram = Resources::manager().getProgram2D("passthrough");
 	_imageProgram	   = Resources::manager().getProgram("menu_image");
@@ -20,7 +18,7 @@ GameMenuRenderer::GameMenuRenderer(const glm::vec2 & resolution) {
 	_quad			   = Resources::manager().getMesh("plane", Storage::GPU);
 }
 
-void GameMenuRenderer::drawMenu(const GameMenu & menu, const glm::vec2 & finalRes) const {
+void GameMenuRenderer::drawMenu(const GameMenu & menu, const glm::vec2 & finalRes, float aspectRatio) const {
 
 	static const std::map<MenuButton::State, glm::vec4> borderColors = {
 		{MenuButton::State::OFF, glm::vec4(0.8f, 0.8f, 0.8f, 1.0f)},
@@ -114,7 +112,7 @@ void GameMenuRenderer::drawMenu(const GameMenu & menu, const glm::vec2 & finalRe
 	_fontProgram->use();
 	for(const auto & label : menu.labels) {
 		GLUtilities::bindTexture(label.tid, 0);
-		_fontProgram->uniform("ratio", _renderResolution[1] / _renderResolution[0]);
+		_fontProgram->uniform("ratio", aspectRatio);
 		_fontProgram->uniform("position", label.pos);
 		_fontProgram->uniform("color", labelsColor);
 		_fontProgram->uniform("edgeColor", labelsEdgeColor);
@@ -124,10 +122,6 @@ void GameMenuRenderer::drawMenu(const GameMenu & menu, const glm::vec2 & finalRe
 	glDisable(GL_BLEND);
 	Framebuffer::backbuffer()->unbind();
 	checkGLError();
-}
-
-void GameMenuRenderer::resize(unsigned int width, unsigned int height) {
-	_renderResolution = {width, height};
 }
 
 glm::vec2 GameMenuRenderer::getButtonSize() const {

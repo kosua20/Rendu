@@ -11,29 +11,20 @@
 class GameMenuRenderer final : public Renderer {
 public:
 	/** Constructor.
-	 \param resolution the rendering resolution
 	 */
-	explicit GameMenuRenderer(const glm::vec2 & resolution);
+	explicit GameMenuRenderer();
 
 	/** Draw the menu
 	 \param menu the menu to draw
 	 \param finalRes the final viewport dimensions
+	 \param aspectRatio the target aspect ratio
 	 */
-	void drawMenu(const GameMenu & menu, const glm::vec2 & finalRes) const;
-
-	/** Handle a window resize event.
-	 \param width the new width
-	 \param height the new height
-	 */
-	void resize(unsigned int width, unsigned int height) override;
+	void drawMenu(const GameMenu & menu, const glm::vec2 & finalRes, float aspectRatio) const;
 
 	/** Return the absolute unit size of the button mesh.
 	 \return the dimensions of the button mesh
 	 */
 	glm::vec2 getButtonSize() const;
-
-	/** \copydoc Renderer::clean */
-	void clean() override {};
 	
 private:
 	const Program * _backgroundProgram; ///< Background images rendering.
