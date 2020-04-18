@@ -33,8 +33,8 @@ void EditorRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size
 	const glm::mat4 VP	   = proj * view;
 	
 	// Draw the scene.
-	glEnable(GL_DEPTH_TEST);
-	glDisable(GL_CULL_FACE);
+	GLUtilities::setDepthState(true);
+	GLUtilities::setCullState(false);
 	framebuffer.bind(layer);
 	framebuffer.setViewport();
 	GLUtilities::clearColorAndDepth(glm::vec4(0.0f), 1.0f);
@@ -58,26 +58,25 @@ void EditorRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size
 	
 	// Render all lights.
 	_lightsDebug.updateCameraInfos(view, proj);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	GLUtilities::setPolygonState(PolygonMode::LINE, Faces::ALL);
 	for(auto & light : _scene->lights) {
 		light->draw(_lightsDebug);
 	}
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	GLUtilities::setPolygonState(PolygonMode::FILL, Faces::ALL);
 	
 	// Render the background.
 	renderBackground(view, proj, camera.position());
 	
 	framebuffer.unbind();
-	glDisable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
+	GLUtilities::setDepthState(false);
+	GLUtilities::setCullState(true);
 
 }
 
 void EditorRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 & proj, const glm::vec3 & pos){
 	// No need to write the skybox depth to the framebuffer.
-	glDepthMask(GL_FALSE);
 	// Accept a depth of 1.0 (far plane).
-	glDepthFunc(GL_LEQUAL);
+	GLUtilities::setDepthState(true, DepthEquation::LEQUAL, false);
 	const Object * background	= _scene->background.get();
 	const Scene::Background mode = _scene->backgroundMode;
 	
@@ -117,6 +116,5 @@ void EditorRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 & 
 		}
 		GLUtilities::drawMesh(*background->mesh());
 	}
-	glDepthFunc(GL_LESS);
-	glDepthMask(GL_TRUE);
+	GLUtilities::setDepthState(true, DepthEquation::LESS, true);
 }

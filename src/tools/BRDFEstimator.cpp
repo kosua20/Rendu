@@ -226,7 +226,7 @@ void computeCubemapConvolution(const Texture & cubemapInfos, int levelsCount, in
 			// Clear texture slice.
 			GLUtilities::clearColorAndDepth({0.0f, 0.0f, 0.0f, 1.0f}, 1.0f);
 			GLUtilities::setViewport(0, 0, int(w), int(h));
-			glDisable(GL_DEPTH_TEST);
+			GLUtilities::setDepthState(false);
 			programCubemap->use();
 			// Pass roughness parameters.
 			programCubemap->uniform("mimapRoughness", roughness);
@@ -236,7 +236,7 @@ void computeCubemapConvolution(const Texture & cubemapInfos, int levelsCount, in
 			GLUtilities::bindTexture(&cubemapInfos, 0);
 			GLUtilities::drawMesh(*mesh);
 			resultFramebuffer.unbind();
-			glDisable(GL_DEPTH_TEST);
+			GLUtilities::setDepthState(false);
 			// Force synchronization.
 			GLUtilities::sync();
 		}
@@ -250,7 +250,7 @@ void computeCubemapConvolution(const Texture & cubemapInfos, int levelsCount, in
 
 		Log::Info() << std::endl;
 	}
-	glEnable(GL_DEPTH_TEST);
+	GLUtilities::setDepthState(true);
 }
 
 /** Export the pre-convolved cubemap levels.
@@ -287,11 +287,11 @@ void computeAndExportLookupTable(const int outputSide, const std::string & outpu
 	bakingFramebuffer->bind();
 	GLUtilities::setViewport(0, 0, int(bakingFramebuffer->width()), int(bakingFramebuffer->height()));
 	GLUtilities::clearColor(glm::vec4(0.0f));
-	glDisable(GL_DEPTH_TEST);
+	GLUtilities::setDepthState(false);
 	brdfProgram->use();
 	ScreenQuad::draw();
 	bakingFramebuffer->unbind();
-	glEnable(GL_DEPTH_TEST);
+	GLUtilities::setDepthState(true);
 	GLUtilities::saveFramebuffer(*bakingFramebuffer, uint(outputSide), uint(outputSide), outputPath, true);
 }
 
@@ -472,13 +472,13 @@ int main(int argc, char ** argv) {
 				texToUse = &cubeLevels[showLevel];
 			}
 
-			glEnable(GL_DEPTH_TEST);
+			GLUtilities::setDepthState(true);
 			programToUse->use();
-			glDisable(GL_CULL_FACE);
+			GLUtilities::setCullState(false);
 			GLUtilities::bindTexture(texToUse, 0);
 			programToUse->uniform("mvp", mvp);
 			GLUtilities::drawMesh(*mesh);
-			glDisable(GL_DEPTH_TEST);
+			GLUtilities::setDepthState(false);
 		}
 
 		// Render reference cubemap in the bottom right corner.
@@ -486,13 +486,13 @@ int main(int argc, char ** argv) {
 		const float gizmoScale	   = 0.2f;
 		const glm::ivec2 gizmoSize = glm::ivec2(gizmoScale * glm::vec2(screenSize));
 		GLUtilities::setViewport(0, 0, gizmoSize[0], gizmoSize[1]);
-		glEnable(GL_DEPTH_TEST);
+		GLUtilities::setDepthState(true);
 		program->use();
-		glDisable(GL_CULL_FACE);
+		GLUtilities::setCullState(false);
 		GLUtilities::bindTexture(cubemapInfosDefault, 0);
 		program->uniform("mvp", mvp);
 		GLUtilities::drawMesh(*mesh);
-		glDisable(GL_DEPTH_TEST);
+		GLUtilities::setDepthState(false);
 		GLUtilities::setViewport(0, 0, screenSize[0], screenSize[1]);
 		Framebuffer::backbuffer()->unbind();
 		

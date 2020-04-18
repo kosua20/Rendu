@@ -95,7 +95,7 @@ int main(int argc, char ** argv) {
 			float imageRatio  = imageSize[1 - widthIndex] / imageSize[widthIndex];
 			float widthRatio  = float(screenSize[0]) / imageSize[0] * imageSize[widthIndex] / imageSize[0];
 
-			glEnable(GL_BLEND);
+			GLUtilities::setBlendState(true);
 
 			// Render the image.
 			program->use();
@@ -119,7 +119,7 @@ int main(int argc, char ** argv) {
 			// Draw.
 			ScreenQuad::draw(imageInfos);
 
-			glDisable(GL_BLEND);
+			GLUtilities::setBlendState(false);
 
 			// Read back color under cursor when right-clicking.
 			if(Input::manager().pressed(Input::Mouse::Right)) {
@@ -254,7 +254,7 @@ int main(int argc, char ** argv) {
 					framebuffer->setViewport();
 
 					// Render the image in it.
-					glEnable(GL_BLEND);
+					GLUtilities::setBlendState(true);
 					program->use();
 					// No scaling or translation.
 					const glm::vec2 zeros(0.0f);
@@ -264,7 +264,7 @@ int main(int argc, char ** argv) {
 					program->uniform("pixelScale", 1.0f);
 					program->uniform("mouseShift", zeros);
 					ScreenQuad::draw(imageInfos);
-					glDisable(GL_BLEND);
+					GLUtilities::setBlendState(false);
 
 					framebuffer->unbind();
 
