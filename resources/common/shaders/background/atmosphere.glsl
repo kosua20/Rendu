@@ -1,17 +1,7 @@
-#version 400
+#include "common.glsl"
 
-#define MATERIAL_ID 0 ///< The material ID.
-
-in INTERFACE {
-	vec2 uv;  ///< Texture coordinates.
-} In ;
-
-uniform mat4 clipToWorld; ///< Clip-to-world space transformation matrix.
-uniform vec3 viewPos; ///< The position in view space.
-uniform vec3 lightDirection; ///< The light direction in world space.
-
-const float groundRadius = 6371e3; ///< Radius of the planet.
-const float topRadius = 6471e3; ///< Radius of the atmosphere.
+const float atmosphereGroundRadius = 6371e3; ///< Radius of the planet.
+const float atmosphereTopRadius = 6471e3; ///< Radius of the atmosphere.
 const float sunIntensity = 20.0; ///< Sun intensity.
 const vec3 sunColor = vec3(1.474, 1.8504, 1.91198); ///< Sun direct color.
 const vec3 kRayleigh = vec3(5.5e-6, 13.0e-6, 22.4e-6); ///< Rayleigh coefficients.
@@ -23,16 +13,7 @@ const float gMie = 0.758; ///< Mie g constant.
 const float sunAngularRadius = 0.04675; ///< Sun angular radius.
 const float sunAngularRadiusCos = 0.998; ///< Cosine of the sun angular radius.
 
-
-layout(binding = 0) uniform sampler2D precomputedScattering; ///< Secondary scattering lookup table.
-
-layout (location = 0) out vec4 fragColor; ///< Color.
-layout (location = 1) out vec3 fragNormal; ///< View space normal.
-layout (location = 2) out vec3 fragEffects; ///< Effects.
-
-#define SAMPLES_COUNT 16
-#define M_PI 3.14159265358979323846
-
+#define SAMPLES_COUNT_ATMO 16
 
 /** Check if a sphere of a given radius is intersected by a ray defined by an 
 	origin wrt to the sphere center and a normalized direction.
@@ -81,22 +62,23 @@ float miePhase(float cosAngle){
 	\param rayOrigin the ray origin
 	\param rayDir the ray direction
 	\param sunDir the light direction
+	\param scatterTable the precomputed secondary scattering lookup table
 	\return the estimated radiance
 */
-vec3 computeRadiance(vec3 rayOrigin, vec3 rayDir, vec3 sunDir){
+vec3 computeAtmosphereRadiance(vec3 rayOrigin, vec3 rayDir, vec3 sunDir, sampler2D scatterTable){
 	// Check intersection with atmosphere.
 	vec2 interTop, interGround;
-	bool didHitTop = intersects(rayOrigin, rayDir, topRadius, interTop);
+	bool didHitTop = intersects(rayOrigin, rayDir, atmosphereTopRadius, interTop);
 	// If no intersection with the atmosphere, it's the dark void of space.
 	if(!didHitTop){
 		return vec3(0.0);
 	}
 	// Now intersect with the planet.
-	bool didHitGround = intersects(rayOrigin, rayDir, groundRadius, interGround);
+	bool didHitGround = intersects(rayOrigin, rayDir, atmosphereGroundRadius, interGround);
 	// Distance to the closest intersection.
 	float distanceToInter = min(interTop.y, didHitGround ? interGround.x : 0.0);
-	// Divide the distance traveled through the atmosphere in SAMPLES_COUNT parts.
-	float stepSize = (distanceToInter - interTop.x)/SAMPLES_COUNT;
+	// Divide the distance traveled through the atmosphere in SAMPLES_COUNT_ATMO parts.
+	float stepSize = (distanceToInter - interTop.x)/SAMPLES_COUNT_ATMO;
 	// Angle between the sun direction and the ray.
 	float cosViewSun = dot(rayDir, sunDir);
 	
@@ -109,13 +91,13 @@ vec3 computeRadiance(vec3 rayOrigin, vec3 rayDir, vec3 sunDir){
 	vec3 transmittance = vec3(0.0);
 	
 	// March along the ray.
-	for(int i = 0; i < SAMPLES_COUNT; ++i){
+	for(int i = 0; i < SAMPLES_COUNT_ATMO; ++i){
 		// Compute the current position along the ray, ...
 		vec3 currPos = rayOrigin + (i+0.5) * stepSize * rayDir;
 		// ...and its distance to the ground (as we are in planet space).
-		float currHeight = length(currPos) - groundRadius;
+		float currHeight = length(currPos) - atmosphereGroundRadius;
 		// ... there is an artifact similar to clipping when close to the planet surface if we allow for negative heights.
-		if(i == SAMPLES_COUNT-1 && currHeight < 0.0){
+		if(i == SAMPLES_COUNT_ATMO-1 && currHeight < 0.0){
 			currHeight = 0.0;
 		}
 		// Compute density based on the characteristic height of Rayleigh and Mie.
@@ -129,11 +111,11 @@ vec3 computeRadiance(vec3 rayOrigin, vec3 rayDir, vec3 sunDir){
 		
 		// The secondary attenuation lookup table is parametrized by
 		// the height in the atmosphere, and the cosine of the vertical angle with the sun.
-		float relativeHeight = (length(currPos) - groundRadius) / (topRadius - groundRadius);
+		float relativeHeight = (length(currPos) - atmosphereGroundRadius) / (atmosphereTopRadius - atmosphereGroundRadius);
 		float relativeCosAngle = -0.5*sunDir.y+0.5;
 		// Compute UVs, scaled to read at the center of pixels.
 		vec2 attenuationUVs = (1.0-1.0/512.0)*vec2(relativeHeight, relativeCosAngle)+0.5/512.0;
-		vec3 secondaryAttenuation = texture(precomputedScattering, attenuationUVs).rgb;
+		vec3 secondaryAttenuation = texture(scatterTable, attenuationUVs).rgb;
 		
 		// Final attenuation.
 		vec3 attenuation = directAttenuation * secondaryAttenuation;
@@ -155,21 +137,5 @@ vec3 computeRadiance(vec3 rayOrigin, vec3 rayDir, vec3 sunDir){
 	}
 	
 	return sunIntensity * (rayleighParticipation + mieParticipation) + transmittance * sunRadiance;
-}
-
-/** Simulate sky color based on an atmospheric scattering approximate model. */
-void main(){
-	// Move to -1,1
-	vec4 clipVertex = vec4(-1.0+2.0*In.uv, 0.0, 1.0);
-	// Then to world space.
-	vec3 viewRay = normalize((clipToWorld * clipVertex).xyz);
-	// We then move to the planet model space, where its center is in (0,0,0).
-	vec3 planetSpaceViewPos = viewPos + vec3(0,6371e3,0) + vec3(0.0,1.0,0.0);
-	vec3 atmosphereColor = computeRadiance(planetSpaceViewPos, viewRay, lightDirection);
-
-	fragColor.rgb = atmosphereColor;
-	fragColor.a = MATERIAL_ID;
-	fragNormal = vec3(0.5);
-	fragEffects = vec3(0.0);
 }
 

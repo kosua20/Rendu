@@ -34,7 +34,7 @@ public:
 		// Lookup table.
 		_precomputedScattering = Resources::manager().getTexture("scattering-precomputed", {Layout::RGB32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
 		// Atmosphere screen quad.
-		_atmosphere = Resources::manager().getProgram2D("atmosphere");
+		_atmosphere = Resources::manager().getProgram2D("atmosphere_basic");
 		// Final tonemapping screen quad.
 		_tonemap = Resources::manager().getProgram2D("tonemap");
 		// Sun direction.
