@@ -207,6 +207,15 @@ public:
 	 \param filter the filtering to use for resizing
 	 */
 	static void blit(const Framebuffer & src, const Framebuffer & dst, Filter filter);
+
+	/** Blit the content of a framebuffer into another one, resizing the content accordingly.
+	 \param src the source framebuffer
+	 \param dst the destination framebuffer
+	 \param lSrc the src layer to copy
+	 \param lDst the dst layer to copy to
+	 \param filter the filtering to use for resizing
+	 */
+	static void blit(const Framebuffer & src, const Framebuffer & dst, size_t lSrc, size_t lDst, Filter filter);
 	
 	/** Blit the content of a texture into another one, resizing the content accordingly.
 	 \param src the source texture

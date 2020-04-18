@@ -46,7 +46,7 @@ public:
 	Framebuffer(TextureShape shape, unsigned int width, unsigned int height, unsigned int depth, const std::vector<Descriptor> & descriptors, bool depthBuffer);
 
 	/**
-	 Bind the framebuffer.
+	 Bind the framebuffer. Shortcut for writing to a 2D framebuffer.
 	 */
 	void bind() const;
 
@@ -59,8 +59,9 @@ public:
 	/**
 	 Bind a specific layer of the framebuffer
 	 \param layer the layer to bind
+	 \param mode the mode to use
 	 */
-	void bind(size_t layer) const;
+	void bind(size_t layer, Mode mode = Mode::WRITE) const;
 
 	/**
 	 Set the viewport to the size of the framebuffer.

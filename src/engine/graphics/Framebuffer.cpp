@@ -108,7 +108,7 @@ Framebuffer::Framebuffer(TextureShape shape, unsigned int width, unsigned int he
 }
 
 void Framebuffer::bind() const {
-	glBindFramebuffer(GL_FRAMEBUFFER, _id);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _id);
 }
 
 void Framebuffer::bind(Mode mode) const {
@@ -117,26 +117,32 @@ void Framebuffer::bind(Mode mode) const {
 	} else if(mode == Mode::WRITE){
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _id);
 	} else if(mode == Mode::SRGB){
-		bind();
+		// When mode is SRGB, we assume we want to write.
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _id);
 		glEnable(GL_FRAMEBUFFER_SRGB);
 	}
 }
 
-void Framebuffer::bind(size_t layer) const {
-	bind();
+void Framebuffer::bind(size_t layer, Mode mode) const {
+	// When mode is SRGB, we assume we want to write.
+	const GLenum target = mode == Mode::READ ? GL_READ_FRAMEBUFFER : GL_DRAW_FRAMEBUFFER;
+	glBindFramebuffer(target, _id);
 	// Bind the proper slice for each color attachment.
 	for(uint cid = 0; cid < _idColors.size(); ++cid){
 		glBindTexture(_target, _idColors[cid].gpu->id);
 		const GLuint slot = GLuint(int(_idColors.size()) - 1);
 		const GLuint id = _idColors[cid].gpu->id;
 		if(_shape == TextureShape::D2){
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + slot, GL_TEXTURE_2D, id, 0);
+			glFramebufferTexture2D(target, GL_COLOR_ATTACHMENT0 + slot, GL_TEXTURE_2D, id, 0);
 		} else if(_shape == TextureShape::Cube){
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + slot, GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + layer), id, 0);
+			glFramebufferTexture2D(target, GL_COLOR_ATTACHMENT0 + slot, GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + layer), id, 0);
 		} else {
-			glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + slot, id, 0, GLint(layer));
+			glFramebufferTextureLayer(target, GL_COLOR_ATTACHMENT0 + slot, id, 0, GLint(layer));
 		}
 		glBindTexture(_target, 0);
+	}
+	if(mode == Mode::SRGB){
+		glEnable(GL_FRAMEBUFFER_SRGB);
 	}
 }
 
@@ -145,7 +151,8 @@ void Framebuffer::setViewport() const {
 }
 
 void Framebuffer::unbind() const {
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
 	glDisable(GL_FRAMEBUFFER_SRGB);
 }
 
@@ -193,8 +200,7 @@ void Framebuffer::clean() {
 
 glm::vec3 Framebuffer::read(const glm::ivec2 & pos) const {
 	glm::vec3 rgb(0.0f);
-	bind(0);
-	bind(Mode::READ);
+	bind(0, Mode::READ);
 	glReadPixels(pos.x, pos.y, 1, 1, GL_RGB, GL_FLOAT, &rgb[0]);
 	unbind();
 	return rgb;
