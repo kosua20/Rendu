@@ -3,6 +3,26 @@
 #include "Common.hpp"
 #include <array>
 
+
+/**
+\brief The type of data a buffer is storing, determining its use.
+\ingroup Resources
+*/
+enum class BufferType : uint {
+	VERTEX, ///< Vertex data.
+	INDEX, ///< Element indices.
+	UNIFORM ///< Uniform data.
+};
+
+/**
+\brief The frequency at which a resources might be updated.
+\ingroup Resources
+*/
+enum class DataUse : uint {
+	STATIC, ///< Data won't be updated after upload.
+	DYNAMIC ///< Data will be updated many times.
+};
+
 /**
  \brief The shape of a texture: dimensions, layers organisation.
  \ingroup Resources
@@ -34,6 +54,15 @@ inline TextureShape operator|(TextureShape t0, TextureShape t1) {
  */
 inline bool operator&(TextureShape t0, TextureShape t1) {
 	return bool(static_cast<uint>(t0) & static_cast<uint>(t1));
+}
+
+/** Combining operator for TextureShape.
+ \param t0 first flag
+ \param t1 second flag
+ \return reference to the first flag after combination with the second flag.
+ */
+inline TextureShape & operator|=(TextureShape & t0, TextureShape & t1) {
+	return t0 = t0 | t1;
 }
 
 /**
@@ -265,17 +294,58 @@ private:
 	Descriptor _descriptor; ///< Layout used.
 };
 
+
 /**
- \brief Store geometry buffers on the GPU.
+ \brief Store data in a GPU buffer.
+ \ingroup Graphics
+ */
+class GPUBuffer {
+public:
+
+	GLuint id = 0; ///< The buffer OpenGL ID.
+	GLenum target; ///< The buffer type.
+	GLenum usage; ///< The buffer usage.
+
+	/** Constructor.
+	 \param type the type of buffer
+	 \param use the update frequency
+	 */
+	GPUBuffer(BufferType type, DataUse use);
+
+	/** Clean internal GPU buffer. */
+	void clean();
+
+	/** Copy assignment operator (disabled).
+	 \return a reference to the object assigned to
+	 */
+	GPUBuffer & operator=(const GPUBuffer &) = delete;
+
+	/** Copy constructor (disabled). */
+	GPUBuffer(const GPUBuffer &) = delete;
+
+	/** Move assignment operator .
+	 \return a reference to the object assigned to
+	 */
+	GPUBuffer & operator=(GPUBuffer &&) = delete;
+
+	/** Move constructor. */
+	GPUBuffer(GPUBuffer &&) = delete;
+};
+
+
+/**
+ \brief Store vertices and triangles data on the GPU, linked by an array object.
  \ingroup Graphics
  */
 class GPUMesh {
 public:
-	GLuint vId	= 0; ///< The vertex array OpenGL ID.
-	GLuint eId	= 0; ///< The element buffer OpenGL ID.
-	GLsizei count = 0; ///< The number of vertices (cached).
-	GLuint vbo	= 0; ///< The vertex buffer objects OpenGL ID.
+	
+	std::unique_ptr<GPUBuffer> vertexBuffer; ///< Vertex data buffer.
+	std::unique_ptr<GPUBuffer> indexBuffer; ///< Index element buffer.
 
+	GLsizei count = 0; ///< The number of vertices (cached).
+	GLuint id	= 0; ///< The vertex buffer objects OpenGL ID.
+	
 	/** Clean internal GPU buffers. */
 	void clean();
 	
@@ -298,6 +368,7 @@ public:
 	/** Move constructor. */
 	GPUMesh(GPUMesh &&) = delete;
 };
+
 
 /** Represent a GPU query, automatically buffered and retrieved.
  \warning You cannot have multiple queries of the same type running at the same time.
