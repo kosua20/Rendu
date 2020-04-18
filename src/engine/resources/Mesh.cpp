@@ -180,7 +180,7 @@ Mesh::Mesh(std::istream & in, Mesh::Load mode, const std::string & name) {
 }
 
 void Mesh::upload() {
-	GLUtilities::setupBuffers(*this);
+	GLUtilities::setupMesh(*this);
 }
 
 void Mesh::clearGeometry() {

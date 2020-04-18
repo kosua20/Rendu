@@ -303,17 +303,29 @@ GLuint GLUtilities::createProgram(const std::string & vertexContent, const std::
 	return id;
 }
 
-GLenum GLUtilities::targetFromShape(const TextureShape & shape) {
+void GLUtilities::saveFramebuffer(const Framebuffer & framebuffer, unsigned int width, unsigned int height, const std::string & path, bool flip, bool ignoreAlpha) {
 
-	static const std::map<TextureShape, GLenum> shapesTargets = {
-		{TextureShape::D1, GL_TEXTURE_1D},
-		{TextureShape::D2, GL_TEXTURE_2D},
-		{TextureShape::D3, GL_TEXTURE_3D},
-		{TextureShape::Cube, GL_TEXTURE_CUBE_MAP},
-		{TextureShape::Array1D, GL_TEXTURE_1D_ARRAY},
-		{TextureShape::Array2D, GL_TEXTURE_2D_ARRAY},
-		{TextureShape::ArrayCube, GL_TEXTURE_CUBE_MAP_ARRAY}};
-	return shapesTargets.at(shape);
+	GLint currentBoundFB = 0;
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentBoundFB);
+
+	framebuffer.bind();
+	const std::unique_ptr<GPUTexture> & gpu = framebuffer.textureId()->gpu;
+	GLUtilities::savePixels(gpu->type, gpu->format, width, height, gpu->channels, path, flip, ignoreAlpha);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, GLuint(currentBoundFB));
+}
+
+void GLUtilities::bindTexture(const Texture * texture, size_t slot) {
+	glActiveTexture(GLenum(GL_TEXTURE0 + slot));
+	glBindTexture(texture->gpu->target, texture->gpu->id);
+}
+
+void GLUtilities::bindTextures(const std::vector<const Texture *> & textures, size_t startingSlot) {
+	for(size_t i = 0; i < textures.size(); ++i) {
+		const Texture * infos = textures[i];
+		glActiveTexture(GLenum(GL_TEXTURE0 + startingSlot + i));
+		glBindTexture(infos->gpu->target, infos->gpu->id);
+	}
 }
 
 void GLUtilities::setupTexture(Texture & texture, const Descriptor & descriptor) {
@@ -400,7 +412,6 @@ void GLUtilities::allocateTexture(const Texture & texture) {
 				Log::Error() << Log::OpenGL << "Incorrect number of levels in a cubemap array (" << texture.depth << ")." << std::endl;
 				return;
 			}
-			// Unsure about this, would expect GL_TEXTURE_CUBE_MAP_ARRAY instead but the doc says so.
 			glTexImage3D(GL_TEXTURE_CUBE_MAP_ARRAY, mip, typeFormat, w, h, texture.depth, 0, format, type, nullptr);
 
 		} else {
@@ -443,11 +454,15 @@ void GLUtilities::uploadTexture(const Texture & texture) {
 	glPixelStorei(GL_UNPACK_ALIGNMENT, defaultAlign ? 4 : 1);
 	glBindTexture(target, texture.gpu->id);
 
+	int currentImg = 0;
 	// For each mip level.
 	for(size_t mid = 0; mid < texture.levels; ++mid) {
+		// For 3D textures, the number of layers decreases with the mip level.
+		const size_t depth = target == GL_TEXTURE_3D ? (texture.depth / (1 << mid)) : texture.depth;
 		// For each layer.
-		for(size_t lid = 0; lid < texture.depth; ++lid) {
-			const Image & image   = texture.images[mid * texture.depth + lid];
+		for(size_t lid = 0; lid < depth; ++lid) {
+			const Image & image   = texture.images[currentImg];
+			currentImg += 1;
 			const size_t destSize = destChannels * image.height * image.width;
 
 			//Perform conversion if needed.
@@ -464,7 +479,7 @@ void GLUtilities::uploadTexture(const Texture & texture) {
 				finalDataPtr = &finalData[0];
 			} else if(destType == GL_FLOAT) {
 				// Just reinterpret the data.
-				finalDataPtr = reinterpret_cast<const GLubyte *>(&image.pixels[0]);
+				finalDataPtr = reinterpret_cast<const GLubyte *>(image.pixels.data());
 			} else {
 				Log::Error() << Log::OpenGL << "Unsupported texture type for upload." << std::endl;
 				continue;
@@ -491,8 +506,8 @@ void GLUtilities::uploadTexture(const Texture & texture) {
 				glTexSubImage2D(target, mip, 0, lev, w, 1, destFormat, destType, finalDataPtr);
 
 			} else if(target == GL_TEXTURE_3D) {
-				/// \bug This is false because the number of layers decrease with the mip level. Fix the loop.
 				glTexSubImage3D(target, mip, 0, 0, lev, w, h, 1, destFormat, destType, finalDataPtr);
+				
 			} else {
 				Log::Error() << Log::OpenGL << "Unsupported texture upload destination." << std::endl;
 			}
@@ -549,147 +564,6 @@ void GLUtilities::downloadTexture(Texture & texture) {
 	glBindTexture(target, 0);
 }
 
-void GLUtilities::setupBuffers(Mesh & mesh) {
-	if(mesh.gpu) {
-		mesh.gpu->clean();
-	}
-	mesh.gpu.reset(new GPUMesh());
-	GLuint vbo = 0;
-	// Generate a vertex array.
-	GLuint vao = 0;
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
-
-	// Create an array buffer to host the geometry data.
-	glGenBuffers(1, &vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	// Compute full allocation size.
-	size_t totalSize = 0;
-	totalSize += 3 * mesh.positions.size();
-	totalSize += 3 * mesh.normals.size();
-	totalSize += 2 * mesh.texcoords.size();
-	totalSize += 3 * mesh.tangents.size();
-	totalSize += 3 * mesh.binormals.size();
-	totalSize += 3 * mesh.colors.size();
-
-	// Allocate.
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * totalSize, nullptr, GL_STATIC_DRAW);
-	size_t offset = 0;
-	// Fill in subregions.
-	if(!mesh.positions.empty()) {
-		const size_t size = sizeof(GLfloat) * 3 * mesh.positions.size();
-		glBufferSubData(GL_ARRAY_BUFFER, offset, size, &(mesh.positions[0]));
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<void *>(offset));
-		offset += size;
-	}
-	if(!mesh.normals.empty()) {
-		const size_t size = sizeof(GLfloat) * 3 * mesh.normals.size();
-		glBufferSubData(GL_ARRAY_BUFFER, offset, size, &(mesh.normals[0]));
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<void *>(offset));
-		offset += size;
-	}
-	if(!mesh.texcoords.empty()) {
-		const size_t size = sizeof(GLfloat) * 2 * mesh.texcoords.size();
-		glBufferSubData(GL_ARRAY_BUFFER, offset, size, &(mesh.texcoords[0]));
-		glEnableVertexAttribArray(2);
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<void *>(offset));
-		offset += size;
-	}
-	if(!mesh.tangents.empty()) {
-		const size_t size = sizeof(GLfloat) * 3 * mesh.tangents.size();
-		glBufferSubData(GL_ARRAY_BUFFER, offset, size, &(mesh.tangents[0]));
-		glEnableVertexAttribArray(3);
-		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<void *>(offset));
-		offset += size;
-	}
-	if(!mesh.binormals.empty()) {
-		const size_t size = sizeof(GLfloat) * 3 * mesh.binormals.size();
-		glBufferSubData(GL_ARRAY_BUFFER, offset, size, &(mesh.binormals[0]));
-		glEnableVertexAttribArray(4);
-		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<void *>(offset));
-		offset += size;
-	}
-	if(!mesh.colors.empty()) {
-		const size_t size = sizeof(GLfloat) * 3 * mesh.colors.size();
-		glBufferSubData(GL_ARRAY_BUFFER, offset, size, &(mesh.colors[0]));
-		glEnableVertexAttribArray(5);
-		glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<void *>(offset));
-	}
-
-	// We load the indices data
-	GLuint ebo = 0;
-	glGenBuffers(1, &ebo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * mesh.indices.size(), &(mesh.indices[0]), GL_STATIC_DRAW);
-
-	glBindVertexArray(0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	mesh.gpu->vId   = vao;
-	mesh.gpu->eId   = ebo;
-	mesh.gpu->count = GLsizei(mesh.indices.size());
-	mesh.gpu->vbo   = vbo;
-}
-
-void GLUtilities::saveFramebuffer(const Framebuffer & framebuffer, unsigned int width, unsigned int height, const std::string & path, bool flip, bool ignoreAlpha) {
-
-	GLint currentBoundFB = 0;
-	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentBoundFB);
-
-	framebuffer.bind();
-	const std::unique_ptr<GPUTexture> & gpu = framebuffer.textureId()->gpu;
-	GLUtilities::savePixels(gpu->type, gpu->format, width, height, gpu->channels, path, flip, ignoreAlpha);
-
-	glBindFramebuffer(GL_FRAMEBUFFER, GLuint(currentBoundFB));
-}
-
-void GLUtilities::sync() {
-	glFlush();
-	glFinish();
-}
-
-void GLUtilities::savePixels(GLenum type, GLenum format, unsigned int width, unsigned int height, unsigned int components, const std::string & path, bool flip, bool ignoreAlpha) {
-
-	GLUtilities::sync();
-
-	const bool hdr = type == GL_FLOAT;
-
-	Log::Info() << Log::OpenGL << "Saving framebuffer to file " << path << (hdr ? ".exr" : ".png") << "... " << std::flush;
-	int ret;
-	Image image(width, height, components);
-
-	glPixelStorei(GL_PACK_ALIGNMENT, 1);
-	const size_t fullSize = image.width * image.height * image.components;
-	if(hdr) {
-		// Get back values.
-		glReadPixels(0, 0, GLsizei(image.width), GLsizei(image.height), format, type, &image.pixels[0]);
-		// Save data.
-		ret = image.save(path + ".exr", flip, ignoreAlpha);
-
-	} else {
-		// Get back values.
-		GLubyte * data = new GLubyte[fullSize];
-		glReadPixels(0, 0, GLsizei(image.width), GLsizei(image.height), format, type, &data[0]);
-		// Convert to image float format.
-		for(size_t pid = 0; pid < fullSize; ++pid) {
-			image.pixels[pid] = float(data[pid]) / 255.0f;
-		}
-		// Save data.
-		ret = image.save(path + ".png", flip, ignoreAlpha);
-		delete[] data;
-	}
-	glPixelStorei(GL_PACK_ALIGNMENT, 4);
-
-	if(ret != 0) {
-		Log::Error() << "Error." << std::endl;
-	} else {
-		Log::Info() << "Done." << std::endl;
-	}
-}
-
 void GLUtilities::generateMipMaps(const Texture & texture) {
 	if(!texture.gpu) {
 		Log::Error() << Log::OpenGL << "Uninitialized GPU texture." << std::endl;
@@ -702,23 +576,168 @@ void GLUtilities::generateMipMaps(const Texture & texture) {
 	glBindTexture(target, 0);
 }
 
+GLenum GLUtilities::targetFromShape(const TextureShape & shape) {
+
+	static const std::map<TextureShape, GLenum> shapesTargets = {
+		{TextureShape::D1, GL_TEXTURE_1D},
+		{TextureShape::D2, GL_TEXTURE_2D},
+		{TextureShape::D3, GL_TEXTURE_3D},
+		{TextureShape::Cube, GL_TEXTURE_CUBE_MAP},
+		{TextureShape::Array1D, GL_TEXTURE_1D_ARRAY},
+		{TextureShape::Array2D, GL_TEXTURE_2D_ARRAY},
+		{TextureShape::ArrayCube, GL_TEXTURE_CUBE_MAP_ARRAY}};
+	return shapesTargets.at(shape);
+}
+
+void GLUtilities::bindBuffer(const BufferBase & buffer, size_t slot){
+	glBindBuffer(GL_UNIFORM_BUFFER, buffer.gpu->id);
+	glBindBufferBase(GL_UNIFORM_BUFFER, GLuint(slot), buffer.gpu->id);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+}
+
+void GLUtilities::setupBuffer(BufferBase & buffer) {
+	if(buffer.gpu) {
+		buffer.gpu->clean();
+	}
+	// Create.
+	buffer.gpu.reset(new GPUBuffer(buffer.type, buffer.usage));
+	GLuint bufferId;
+	glGenBuffers(1, &bufferId);
+	buffer.gpu->id = bufferId;
+	// Allocate.
+	GLUtilities::allocateBuffer(buffer);
+}
+
+void GLUtilities::allocateBuffer(const BufferBase & buffer) {
+	if(!buffer.gpu) {
+		Log::Error() << Log::OpenGL << "Uninitialized GPU buffer." << std::endl;
+		return;
+	}
+
+	const GLenum target = buffer.gpu->target;
+	glBindBuffer(target, buffer.gpu->id);
+	glBufferData(target, buffer.size, nullptr, buffer.gpu->usage);
+	glBindBuffer(target, 0);
+}
+
+void GLUtilities::uploadBuffer(const BufferBase & buffer, size_t size, unsigned char * data, size_t offset) {
+	if(!buffer.gpu) {
+		Log::Error() << Log::OpenGL << "Uninitialized GPU buffer." << std::endl;
+		return;
+	}
+	if(size == 0) {
+		Log::Warning() << Log::OpenGL << "No data to upload." << std::endl;
+		return;
+	}
+	if(offset + size > buffer.size) {
+		Log::Warning() << Log::OpenGL << "Not enough allocated space to upload." << std::endl;
+		return;
+	}
+
+	const GLenum target = buffer.gpu->target;
+	glBindBuffer(target, buffer.gpu->id);
+	glBufferSubData(target, offset, size, data);
+	glBindBuffer(target, 0);
+}
+
+void GLUtilities::setupMesh(Mesh & mesh) {
+	if(mesh.gpu) {
+		mesh.gpu->clean();
+	}
+	mesh.gpu.reset(new GPUMesh());
+	// Generate a vertex array.
+	GLuint vao = 0;
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+
+	// Compute full allocation size.
+	size_t totalSize = 0;
+	totalSize += 3 * mesh.positions.size();
+	totalSize += 3 * mesh.normals.size();
+	totalSize += 2 * mesh.texcoords.size();
+	totalSize += 3 * mesh.tangents.size();
+	totalSize += 3 * mesh.binormals.size();
+	totalSize += 3 * mesh.colors.size();
+
+	// Create an array buffer to host the geometry data.
+	BufferBase vertexBuffer(sizeof(GLfloat) * totalSize, BufferType::VERTEX, DataUse::STATIC);
+	GLUtilities::setupBuffer(vertexBuffer);
+	// Fill in subregions.
+	size_t offset = 0;
+	if(!mesh.positions.empty()) {
+		const size_t size = sizeof(GLfloat) * 3 * mesh.positions.size();
+		GLUtilities::uploadBuffer(vertexBuffer, size, reinterpret_cast<unsigned char*>(mesh.positions.data()), offset);
+		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.gpu->id);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<void *>(offset));
+		offset += size;
+	}
+	if(!mesh.normals.empty()) {
+		const size_t size = sizeof(GLfloat) * 3 * mesh.normals.size();
+		GLUtilities::uploadBuffer(vertexBuffer, size, reinterpret_cast<unsigned char*>(mesh.normals.data()), offset);
+		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.gpu->id);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<void *>(offset));
+		offset += size;
+	}
+	if(!mesh.texcoords.empty()) {
+		const size_t size = sizeof(GLfloat) * 2 * mesh.texcoords.size();
+		GLUtilities::uploadBuffer(vertexBuffer, size, reinterpret_cast<unsigned char*>(mesh.texcoords.data()), offset);
+		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.gpu->id);
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<void *>(offset));
+		offset += size;
+	}
+	if(!mesh.tangents.empty()) {
+		const size_t size = sizeof(GLfloat) * 3 * mesh.tangents.size();
+		GLUtilities::uploadBuffer(vertexBuffer, size, reinterpret_cast<unsigned char*>(mesh.tangents.data()), offset);
+		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.gpu->id);
+		glEnableVertexAttribArray(3);
+		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<void *>(offset));
+		offset += size;
+	}
+	if(!mesh.binormals.empty()) {
+		const size_t size = sizeof(GLfloat) * 3 * mesh.binormals.size();
+		GLUtilities::uploadBuffer(vertexBuffer, size, reinterpret_cast<unsigned char*>(mesh.binormals.data()), offset);
+		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.gpu->id);
+		glEnableVertexAttribArray(4);
+		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<void *>(offset));
+		offset += size;
+	}
+	if(!mesh.colors.empty()) {
+		const size_t size = sizeof(GLfloat) * 3 * mesh.colors.size();
+		GLUtilities::uploadBuffer(vertexBuffer, size, reinterpret_cast<unsigned char*>(mesh.colors.data()), offset);
+		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.gpu->id);
+		glEnableVertexAttribArray(5);
+		glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<void *>(offset));
+	}
+
+	// We load the indices data
+	const size_t inSize = sizeof(unsigned int) * mesh.indices.size();
+	BufferBase indexBuffer(inSize, BufferType::INDEX, DataUse::STATIC);
+	GLUtilities::setupBuffer(indexBuffer);
+	GLUtilities::uploadBuffer(indexBuffer, inSize, reinterpret_cast<unsigned char *>(mesh.indices.data()));
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer.gpu->id);
+	glBindVertexArray(0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	mesh.gpu->id   = vao;
+	mesh.gpu->count = GLsizei(mesh.indices.size());
+	mesh.gpu->indexBuffer = std::move(indexBuffer.gpu);
+	mesh.gpu->vertexBuffer = std::move(vertexBuffer.gpu);
+}
+
 void GLUtilities::drawMesh(const Mesh & mesh) {
-	glBindVertexArray(mesh.gpu->vId);
+	glBindVertexArray(mesh.gpu->id);
 	glDrawElements(GL_TRIANGLES, mesh.gpu->count, GL_UNSIGNED_INT, static_cast<void *>(nullptr));
 	glBindVertexArray(0);
 }
 
-void GLUtilities::bindTexture(const Texture * texture, size_t slot) {
-	glActiveTexture(GLenum(GL_TEXTURE0 + slot));
-	glBindTexture(texture->gpu->target, texture->gpu->id);
-}
-
-void GLUtilities::bindTextures(const std::vector<const Texture *> & textures, size_t startingSlot) {
-	for(size_t i = 0; i < textures.size(); ++i) {
-		const Texture * infos = textures[i];
-		glActiveTexture(GLenum(GL_TEXTURE0 + startingSlot + i));
-		glBindTexture(infos->gpu->target, infos->gpu->id);
-	}
+void GLUtilities::sync() {
+	glFlush();
+	glFinish();
 }
 
 void GLUtilities::deviceInfos(std::string & vendor, std::string & renderer, std::string & version, std::string & shaderVersion) {
@@ -825,4 +844,43 @@ void GLUtilities::blit(const Texture & src, Texture & dst, Filter filter) {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glDeleteFramebuffers(1, &srcFb);
 	glDeleteFramebuffers(1, &dstFb);
+}
+
+void GLUtilities::savePixels(GLenum type, GLenum format, unsigned int width, unsigned int height, unsigned int components, const std::string & path, bool flip, bool ignoreAlpha) {
+
+	GLUtilities::sync();
+
+	const bool hdr = type == GL_FLOAT;
+
+	Log::Info() << Log::OpenGL << "Saving framebuffer to file " << path << (hdr ? ".exr" : ".png") << "... " << std::flush;
+	int ret;
+	Image image(width, height, components);
+
+	glPixelStorei(GL_PACK_ALIGNMENT, 1);
+	const size_t fullSize = image.width * image.height * image.components;
+	if(hdr) {
+		// Get back values.
+		glReadPixels(0, 0, GLsizei(image.width), GLsizei(image.height), format, type, &image.pixels[0]);
+		// Save data.
+		ret = image.save(path + ".exr", flip, ignoreAlpha);
+
+	} else {
+		// Get back values.
+		GLubyte * data = new GLubyte[fullSize];
+		glReadPixels(0, 0, GLsizei(image.width), GLsizei(image.height), format, type, &data[0]);
+		// Convert to image float format.
+		for(size_t pid = 0; pid < fullSize; ++pid) {
+			image.pixels[pid] = float(data[pid]) / 255.0f;
+		}
+		// Save data.
+		ret = image.save(path + ".png", flip, ignoreAlpha);
+		delete[] data;
+	}
+	glPixelStorei(GL_PACK_ALIGNMENT, 4);
+
+	if(ret != 0) {
+		Log::Error() << "Error." << std::endl;
+	} else {
+		Log::Info() << "Done." << std::endl;
+	}
 }

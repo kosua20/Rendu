@@ -2,6 +2,7 @@
 
 #include "resources/Mesh.hpp"
 #include "resources/Texture.hpp"
+#include "resources/Buffer.hpp"
 #include "graphics/GPUObjects.hpp"
 #include "Common.hpp"
 #include <map>
@@ -64,12 +65,6 @@ public:
 	 */
 	static GLuint createProgram(const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, std::map<std::string, int> & bindings, const std::string & debugInfos);
 
-	/** Mesh loading: send a mesh data to the GPU and set the input mesh GPU infos accordingly.
-	 \param mesh the mesh to upload
-	 \note The order of attribute locations is: position, normal, uvs, tangents, binormals.
-	 */
-	static void setupBuffers(Mesh & mesh);
-
 	/** Save a given framebuffer content to the disk.
 	 \param framebuffer the framebuffer to save
 	 \param width the width of the region to save
@@ -82,10 +77,6 @@ public:
 	 */
 	static void saveFramebuffer(const Framebuffer & framebuffer, unsigned int width, unsigned int height, const std::string & path, bool flip = true, bool ignoreAlpha = false);
 
-	/** Draw indexed geometry.
-	 \param mesh the mesh to draw
-	 */
-	static void drawMesh(const Mesh & mesh);
 
 	/** Bind a texture to some texture slot.
 	 \param texture the infos of the texture to bind
@@ -99,13 +90,13 @@ public:
 	 */
 	static void bindTextures(const std::vector<const Texture *> & textures, size_t startingSlot = 0);
 
-	/** Create a GPU texture with a given layout.
+	/** Create a GPU texture with a given layout and allocate it.
 	 \param texture the texture to setup on the GPU
 	 \param descriptor type and format information
 	 */
 	static void setupTexture(Texture & texture, const Descriptor & descriptor);
 
-	/** Allocate GPU memory for a texture.
+	/** Allocate GPU memory for an existing texture.
 	 \param texture the texture to allocate memory for
 	 */
 	static void allocateTexture(const Texture & texture);
@@ -133,6 +124,42 @@ public:
 	 */
 	static GLenum targetFromShape(const TextureShape & shape);
 
+	/** Bind a uniform buffer to a shader slot.
+	 \param buffer the infos of the buffer to bind
+	 \param slot the binding slot
+	 \note This will bind the buffer as a uniform buffer.
+	 */
+	static void bindBuffer(const BufferBase & buffer, size_t slot);
+
+	/** Create and allocate a GPU buffer.
+	 \param buffer the buffer to setup on the GPU
+	 */
+	static void setupBuffer(BufferBase & buffer);
+
+	/** Allocate GPU memory for an existing buffer.
+	 \param buffer the buffer to allocate memory for
+	 */
+	static void allocateBuffer(const BufferBase & buffer);
+
+	/** Upload data to a buffer on the GPU. It's possible to upload a subrange of the buffer data store.
+	 \param buffer the buffer to upload to
+	 \param size the amount of data to upload, in bytes
+	 \param data pointer to the data to upload
+	 \param offset optional offset in the buffer store
+	 */
+	static void uploadBuffer(const BufferBase & buffer, size_t size, unsigned char * data, size_t offset = 0);
+
+	/** Mesh loading: send a mesh data to the GPU and set the input mesh GPU infos accordingly.
+	 \param mesh the mesh to upload
+	 \note The order of attribute locations is: position, normal, uvs, tangents, binormals.
+	 */
+	static void setupMesh(Mesh & mesh);
+
+	/** Draw indexed geometry.
+	 \param mesh the mesh to draw
+	 */
+	static void drawMesh(const Mesh & mesh);
+
 	/** Flush the GPU command pipelines and wait for all processing to be done.
 	 */
 	static void sync();
@@ -157,12 +184,6 @@ public:
 	 \param h height
 	 */
 	static void setViewport(int x, int y, int w, int h);
-
-	/** Clear color and depth for the current framebuffer.
-	 \param color the RGBA float clear color
-	 \param depth the depth clear
-	 */
-	static void clearColorAndDepth(const glm::vec4 & color, float depth);
 	
 	/** Clear color for the current framebuffer.
 	 \param color the RGBA float clear color
@@ -173,6 +194,12 @@ public:
 	 \param depth the depth clear
 	 */
 	static void clearDepth(float depth);
+
+	/** Clear color and depth for the current framebuffer.
+	 \param color the RGBA float clear color
+	 \param depth the depth clear
+	 */
+	static void clearColorAndDepth(const glm::vec4 & color, float depth);
 
 	/** Blit the content of a framebuffer into another one, resizing the content accordingly.
 	 \param src the source framebuffer
