@@ -11,7 +11,7 @@ SceneEditor::SceneEditor(RenderingConfig & config) : CameraApp(config), _rendere
 	Resources::manager().getFiles("scene", sceneInfos);
 	_sceneNames.emplace_back("New scene");
 	for(const auto & info : sceneInfos) {
-	 _sceneNames.push_back(info.first);
+		_sceneNames.push_back(info.first);
 	}
 	_scenes.push_back(nullptr);
 	for(size_t i = 1; i < _sceneNames.size(); ++i) {
@@ -96,18 +96,17 @@ void SceneEditor::update() {
 	const auto & scene = _scenes[_currentScene];
 	
 	if(ImGui::Begin("Scene")){
-		ImGui::Checkbox("Pause animations", &_paused);
-		if(ImGui::Button("Reload scene") && _scenes[_currentScene]) {
+		if(ImGui::Button("Reload") && _scenes[_currentScene]) {
 			_scenes[_currentScene].reset(new Scene(_sceneNames[_currentScene]));
 			setScene(_scenes[_currentScene]);
 		}
+		ImGui::SameLine();
+		if(ImGui::Button("Save") && _scenes[_currentScene]) {
+			const auto tokens = _scenes[_currentScene]->encode();
+			Log::Info() << Codable::encode(tokens) << std::endl;
+		}
 		ImGui::Separator();
-		ImGui::Separator();
-		ImGui::ColorEdit3("Background", &scene->backgroundColor[0]);
-		
-	}
-	ImGui::End();
-	if(ImGui::Begin("Camera")) {
+		ImGui::Checkbox("Pause animations", &_paused);
 		// Camera settings.
 		ImGui::PushItemWidth(100);
 		ImGui::Combo("Camera mode", reinterpret_cast<int *>(&_userCamera.mode()), "FPS\0Turntable\0Joystick\0\0", 3);
@@ -118,25 +117,93 @@ void SceneEditor::update() {
 		ImGui::PopItemWidth();
 
 		// Copy/paste camera to clipboard.
-		if(ImGui::Button("Copy camera")) {
-			const std::string camDesc = Codable::encode(_userCamera.encode());
-			ImGui::SetClipboardText(camDesc.c_str());
+		if(ImGui::Button("Define camera")) {
+			_scenes[_currentScene]->setViewpoint(_userCamera);
 		}
 		ImGui::SameLine();
-		if(ImGui::Button("Paste camera")) {
-			const std::string camDesc(ImGui::GetClipboardText());
-			const auto cameraCode = Codable::decode(camDesc);
-			if(!cameraCode.empty()) {
-				_userCamera.decode(cameraCode[0]);
-				_cameraFOV = _userCamera.fov() * 180.0f / glm::pi<float>();
-			}
-		}
 		// Reset to the scene reference viewpoint.
 		if(ImGui::Button("Reset")) {
 			_userCamera.apply(_scenes[_currentScene]->viewpoint());
 			_userCamera.ratio(_config.screenResolution[0] / _config.screenResolution[1]);
 			_cameraFOV = _userCamera.fov() * 180.0f / glm::pi<float>();
 		}
+		ImGui::Separator();
+		ImGui::ColorEdit3("Background", &scene->backgroundColor[0]);
+		
+	}
+	ImGui::End();
+	
+	if(ImGui::Begin("Inspector") && _selectedObject >= 0) {
+		if(_selectedObject < int(scene->objects.size())){
+			ImGui::Text("Object %d", _selectedObject);
+			const auto & obj = scene->objects[_selectedObject];
+			ImGui::Text("Geometry: %s", obj.mesh()->name().c_str());
+			
+			ImGui::Text("Textures:");
+			for(const auto tex : obj.textures()){
+				ImGui::Text("%s", tex->name().c_str());
+			}
+		} else {
+			const int lid = _selectedObject - int(scene->objects.size());
+			ImGui::Text("Light %d", lid);
+			auto & light = scene->lights[lid];
+			std::string type = "Unknown";
+			if(std::dynamic_pointer_cast<PointLight>(light)){
+				type = "Omni";
+			} else if(std::dynamic_pointer_cast<DirectionalLight>(light)){
+				type = "Directional";
+			} else if(std::dynamic_pointer_cast<SpotLight>(light)){
+				type = "Spot";
+			}
+			ImGui::Text("Type: %s", type.c_str());
+			glm::vec3 col = light->intensity();
+			if(ImGui::DragFloat3("Color", &col[0])){
+				light->setIntensity(col);
+			}
+			
+		}
+	}
+	ImGui::End();
+	
+	if(ImGui::Begin("Elements")) {
+		
+		if(ImGui::TreeNode("Objects")){
+			int id = 0;
+			for(const auto & obj : scene->objects){
+				ImGuiTreeNodeFlags nodeFlags = (_selectedObject == id) ? ImGuiTreeNodeFlags_Selected : 0;
+				nodeFlags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+				ImGui::TreeNodeEx((void*)(intptr_t)id, nodeFlags, "%s", obj.mesh()->name().c_str());
+				if (ImGui::IsItemClicked()){
+					_selectedObject = id;
+				}
+				++id;
+			}
+			ImGui::TreePop();
+		}
+		if(ImGui::TreeNode("Lights")){
+			int id = 0;
+			
+			for(const auto & light : scene->lights){
+				// tentative cast.
+				std::string type = "Unknown";
+				if(std::dynamic_pointer_cast<PointLight>(light)){
+					type = "Omni";
+				} else if(std::dynamic_pointer_cast<DirectionalLight>(light)){
+					type = "Directional";
+				} else if(std::dynamic_pointer_cast<SpotLight>(light)){
+					type = "Spot";
+				}
+				ImGuiTreeNodeFlags nodeFlags = (_selectedObject - int(scene->objects.size()) == id)  ? ImGuiTreeNodeFlags_Selected : 0;
+				nodeFlags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+				ImGui::TreeNodeEx((void*)(intptr_t)id, nodeFlags, "%s %d", type.c_str(), id);
+				if (ImGui::IsItemClicked()){
+					_selectedObject = id + int(scene->objects.size());
+				}
+				++id;
+			}
+			ImGui::TreePop();
+		}
+		
 	}
 	ImGui::End();
 }
