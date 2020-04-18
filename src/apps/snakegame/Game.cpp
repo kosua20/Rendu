@@ -8,7 +8,7 @@ Game::Game(RenderingConfig & config) :
 	_config(config), _inGameRenderer(_config.screenResolution), _menuRenderer(_config.screenResolution) {
 
 	_bgBlur = std::unique_ptr<GaussianBlur>(new GaussianBlur(_config.initialWidth, _config.initialHeight, 3, Layout::RGB8));
-	_finalProgram = Resources::manager().getProgram2D("final_screenquad");
+	_finalProgram = Resources::manager().getProgram2D("sharpening");
 
 	// Create menus.
 

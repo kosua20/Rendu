@@ -10,7 +10,7 @@ PBRDemo::PBRDemo(RenderingConfig & config) :
 	_defRenderer.reset(new DeferredRenderer(renderRes));
 	_forRenderer.reset(new ForwardRenderer(renderRes));
 	_postprocess.reset(new PostProcessStack(renderRes));
-	_finalProgram = Resources::manager().getProgram2D("final_screenquad");
+	_finalProgram = Resources::manager().getProgram2D("sharpening");
 
 	// Setup camera parameters.
 	_cameraFOV = _userCamera.fov() * 180.0f / glm::pi<float>();
