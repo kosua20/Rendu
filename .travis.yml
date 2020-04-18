@@ -52,16 +52,17 @@ before_deploy:
   
 deploy:
   provider: pages:git
-  edge: true
   cleanup: false
   keep_history: true
-  repo: Rendu-documentation
+  repo: kosua20/Rendu-documentation
+  local_dir: docs/html/
   token: $GITHUB_TOKEN
   target_branch: master
   email: "kosua20@gmail.com"
   name: "Simon Rodriguez"
   committer_from_gh: true
   commit_message: "Documentation: update (via CI)."
+  edge: true
   on:
     branch: master
     condition: "$BUILD_DOCS = 1"
