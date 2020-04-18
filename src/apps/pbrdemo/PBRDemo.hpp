@@ -7,7 +7,7 @@
 #include "Application.hpp"
 #include "scene/Scene.hpp"
 #include "renderers/Renderer.hpp"
-#include "renderers/ShadowMap.hpp"
+#include "renderers/shadowmaps/ShadowMap.hpp"
 #include "input/ControllableCamera.hpp"
 
 #include "Common.hpp"

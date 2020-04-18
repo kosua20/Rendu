@@ -1,5 +1,5 @@
 #include "PBRDemo.hpp"
-#include "VarianceShadowMapArray.hpp"
+#include "renderers/shadowmaps/VarianceShadowMapArray.hpp"
 #include "graphics/GLUtilities.hpp"
 #include "input/Input.hpp"
 

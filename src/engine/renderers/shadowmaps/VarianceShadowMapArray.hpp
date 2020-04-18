@@ -1,6 +1,6 @@
 #pragma once
 
-#include "renderers/ShadowMap.hpp"
+#include "renderers/shadowmaps/ShadowMap.hpp"
 #include "graphics/Framebuffer.hpp"
 #include "scene/lights/Light.hpp"
 #include "scene/lights/PointLight.hpp"

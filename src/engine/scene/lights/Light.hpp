@@ -4,7 +4,7 @@
 #include "scene/Object.hpp"
 #include "raycaster/Raycaster.hpp"
 #include "renderers/LightRenderer.hpp"
-#include "renderers/ShadowMap.hpp"
+#include "renderers/shadowmaps/ShadowMap.hpp"
 #include "Common.hpp"
 
 enum class LightType : int {

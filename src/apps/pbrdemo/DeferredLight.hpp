@@ -3,7 +3,7 @@
 #include "scene/Scene.hpp"
 
 #include "renderers/LightRenderer.hpp"
-#include "renderers/ShadowMap.hpp"
+#include "renderers/shadowmaps/ShadowMap.hpp"
 #include "scene/lights/Light.hpp"
 #include "scene/lights/PointLight.hpp"
 #include "scene/lights/DirectionalLight.hpp"
