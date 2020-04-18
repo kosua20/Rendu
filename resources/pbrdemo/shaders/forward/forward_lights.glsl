@@ -8,7 +8,7 @@
 
 #define MAX_LIGHTS_COUNT 50
 
-/** Represent a light in the forward renderer. */
+/** \brief Represent a light in the forward renderer. */
 struct GPULight {
 	mat4 viewToLight; ///< View to light matrix.
 	vec4 colorAndBias; ///< Light tint and shadow bias.

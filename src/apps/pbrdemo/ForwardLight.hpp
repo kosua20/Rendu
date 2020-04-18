@@ -82,7 +82,7 @@ private:
 
 	size_t _currentId = 0; ///< Current insertion location.
 	size_t _currentCount = 0; ///< Number of lights to store.
-	const static size_t _maxLightCount = 50; ///< Maximum allowed number of lights (see common_lights.glsl).
+	const static size_t _maxLightCount = 50; ///< Maximum allowed number of lights (see forward_lights.glsl).
 	Buffer<GPULight> _lightsData; ///< GPU buffer.
 
 	glm::mat4 _view = glm::mat4(1.0f); ///< Cached camera view matrix.

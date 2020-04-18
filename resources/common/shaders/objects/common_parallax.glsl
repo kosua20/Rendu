@@ -52,6 +52,15 @@ vec2 parallax(vec2 uv, vec3 vTangentDir, sampler2D depth, out vec2 positionShift
 	return finalUV;
 }
 
+/** Compute the new view space position of the parallax-mapped fragment and update its depth in the depth buffer.
+ \param localUV the final computed UV
+ \param positionShift the shift in the tangent plane
+ \param viewPos the initial view space fragment position
+ \param proj the projection matrix
+ \param tbn the tangent space to view space matrix
+ \param depth the heightmap used for parallax mapping
+ \return the updated position
+ */
 vec3 updateFragmentPosition(vec2 localUV, vec2 positionShift, vec3 viewPos, mat4 proj, mat3 tbn, sampler2D depth){
 	// For parallax mapping we have to update the depth of the fragment with the new found depth.
 	// Store depth manually (see below).

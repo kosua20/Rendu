@@ -144,6 +144,15 @@ float approximateSpecularAO(float diffuseAO, float NdotV, float roughness){
 	return clamp(specAO - 1.0 + diffuseAO, 0.0, 1.0);
 }
 
+/** Evaluate the global lighting contirbution from the ambient environment. Implements a multi-scattering compensation step, as described in A Multiple-Scattering Microfacet Model for Real-Time Image-based Lighting, C. J. Fdez-Agüera, JCGT, 2019.
+ \param baseColor the surface color/Fresnel coefficient for metals
+ \param metallic is the surface a metal or a dielectric
+ \param roughness the linear material roughness
+ \param NdotV visibility/normal angle
+ \param brdfCoeffs precomputed BRDF linearized coefficients lookup table
+ \param diffuse will contain the diffuse ambient contribution
+ \param specular will contain the specular ambient contribution
+ */
 void ambientBrdf(vec3 baseColor, float metallic, float roughness, float NdotV, sampler2D brdfCoeffs, out vec3 diffuse, out vec3 specular){
 
 	// BRDF contributions.
@@ -158,7 +167,6 @@ void ambientBrdf(vec3 baseColor, float metallic, float roughness, float NdotV, s
 	specular = (brdfParams.x * Fs + brdfParams.y);
 
 	// Account for multiple scattering.
-	// Based on A Multiple-Scattering Microfacet Model for Real-Time Image-based Lighting, C. J. Fdez-Agüera, JCGT, 2019.
     float scatter = (1.0 - (brdfParams.x + brdfParams.y));
     vec3 Favg = F0 + (1.0 - F0) / 21.0;
     vec3 multi = scatter * specular * Favg / (1.0 - Favg * scatter);

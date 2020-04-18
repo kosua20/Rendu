@@ -1,7 +1,7 @@
 #version 400
 
 #include "common_pbr.glsl"
-#include "common_lights.glsl"
+#include "forward_lights.glsl"
 
 in INTERFACE {
 	vec3 viewSpacePosition; ///< View position.

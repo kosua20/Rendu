@@ -1,7 +1,7 @@
 #version 400
 
 #include "common_pbr.glsl"
-#include "common_lights.glsl"
+#include "forward_lights.glsl"
 
 in INTERFACE {
     mat3 tbn; ///< Normal to view matrix.
