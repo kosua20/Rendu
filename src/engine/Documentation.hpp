@@ -20,7 +20,12 @@
  \defgroup Processing Processing
  \brief General image processing utilities.
  \details Real-time image processing methods, such as box blur, approximate gaussian blur, flood-filling. An implementation of the Convolution pyramids paper also offer a Poisson filling tool and a laplacian integrator.
- 
+
+
+ \defgroup Renderers Renderers
+ \brief General 3D renderers.
+ \details Renderers are used to display geometry on screen or an off-screen texture. Some renderers can display debug visualization while others can be used to process different types of objects, or to generate information for shadows rendering.
+
  
  \defgroup Raycaster Raycaster
  \brief Compute intersection between rays and geometry.
@@ -129,7 +134,10 @@
  
  \namespace GPU
  \brief Contains all shaders.
- 
+
+ \namespace GPU::Common
+ \brief Contains shared shader code.
+
  \namespace GPU::Vert
  \brief Contains all vertex shaders.
  
@@ -138,5 +146,5 @@
  
  \namespace GPU::Geom
  \brief Contains all geometry shaders.
- 
+
  */

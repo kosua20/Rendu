@@ -7,7 +7,7 @@
 #include "Common.hpp"
 
 /**
- \defgroup PBRDemo Physically based rendering demo
+ \defgroup PBRDemo Physically-based rendering
  \brief Real-time rendering using GGX BRDF, image-based lighting, AO, tonemapped HDR, antialiasing.
  \details Two renderers can be used: a forward renderer where objects are directly shaded and the resulting colors stored, and deffered, where all scene informations (albedo, normals, material ID, roughness) are rendered to a G-Buffer before being used to render each light contribution using simple geometric proxies. The scene is rendered using the GGX BRDF model.
  \sa DeferredRenderer, ForwardRenderer

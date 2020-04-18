@@ -5,7 +5,7 @@
 
 /**
  \brief Base structure of a renderer. The result of the renderer is available through result().
- \ingroup Engine
+ \ingroup Renderers
  */
 class Renderer {
 	

@@ -7,7 +7,7 @@
 
 /**
  \brief A 2D variance shadow map array, can be used for directional and spot lights. The shadow map will register itself with the associated lights. Implement variance shadow mapping to filter the shadows and get correct smoother edges.
- \ingroup DeferredRendering
+ \ingroup Renderers
  */
 class VarianceShadowMap2DArray : public ShadowMap {
 public:
@@ -34,7 +34,7 @@ private:
 
 /**
  \brief A cube variance shadow map array, can be used for point lights. Each face of the map is updated sequentially. The shadow map will register itself with the associated lights. Implement variance shadow mapping to filter the shadows and get correct smoother edges.
- \ingroup DeferredRendering
+ \ingroup Renderers
  */
 class VarianceShadowMapCubeArray : public ShadowMap {
 public:

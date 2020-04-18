@@ -12,7 +12,7 @@
 
 /**
  \brief Visualize lights as colored wireframe objects.
- \ingroup Engine
+ \ingroup Renderers
  */
 class DebugLightRenderer final : public LightRenderer {
 

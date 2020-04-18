@@ -9,7 +9,7 @@ class Scene;
 
 /**
 \brief Available shadow mapping techniques.
-\ingroup DeferredRendering
+\ingroup Renderers
 */
 enum class ShadowMode : int {
 	NONE	 = 0, ///< No shadows.
@@ -19,7 +19,7 @@ enum class ShadowMode : int {
 
 /**
  \brief Store shadowing information as a map generated from the light viewpoint.
- \ingroup DeferredRendering
+ \ingroup Renderers
  */
 class ShadowMap {
 public:

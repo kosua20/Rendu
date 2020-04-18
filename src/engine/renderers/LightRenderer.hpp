@@ -7,7 +7,7 @@ class SpotLight;
 
 /**
  \brief Base structure of a per-light specialized renderer. It can be applied to a light by calling light->draw(renderer), which will then call the corresponding method below.
- \ingroup Engine
+ \ingroup Renderers
  */
 class LightRenderer {
 
