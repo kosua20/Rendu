@@ -7,7 +7,7 @@ VarianceShadowMap2DArray::VarianceShadowMap2DArray(const std::vector<std::shared
 	const Descriptor descriptor = {Layout::RG32F, Filter::LINEAR, Wrap::CLAMP};
 	_map = std::unique_ptr<Framebuffer>(new Framebuffer(TextureShape::Array2D, uint(resolution.x), uint(resolution.y), uint(lights.size()), {descriptor}, true));
 	_blur = std::unique_ptr<BoxBlur>(new BoxBlur(TextureShape::Array2D, uint(resolution.x), uint(resolution.y), uint(lights.size()), descriptor, false));
-	_program = Resources::manager().getProgram("object_depth", "object_basic_texture", "light_shadow_variance");
+	_program = Resources::manager().getProgram("object_depth", "light_shadow_vertex", "light_shadow_variance");
 	for(size_t lid = 0; lid < _lights.size(); ++lid){
 		_lights[lid]->registerShadowMap(_blur->textureId(), lid);
 	}
@@ -67,7 +67,7 @@ VarianceShadowMapCubeArray::VarianceShadowMapCubeArray(const std::vector<std::sh
 	_lights = lights;
 	const Descriptor descriptor = {Layout::RG16F, Filter::LINEAR, Wrap::CLAMP};
 	_map = std::unique_ptr<Framebuffer>(new Framebuffer( TextureShape::ArrayCube, side, side, uint(lights.size()), {descriptor}, true));
-	_program = Resources::manager().getProgram("object_cube_depth", "object_basic_texture_worldpos", "light_shadow_linear_variance");
+	_program = Resources::manager().getProgram("object_cube_depth", "light_shadow_linear_vertex", "light_shadow_linear_variance");
 	for(size_t lid = 0; lid < _lights.size(); ++lid){
 		_lights[lid]->registerShadowMap(_map->textureId(), lid);
 	}

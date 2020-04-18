@@ -33,7 +33,7 @@ DeferredRenderer::DeferredRenderer(const glm::vec2 & resolution) :
 	_parallaxProgram	= Resources::manager().getProgram("object_parallax_gbuffer");
 	_objectProgram		= Resources::manager().getProgram("object_gbuffer");
 	_objectNoUVsProgram = Resources::manager().getProgram("object_no_uv_gbuffer");
-	_emissiveProgram	= Resources::manager().getProgram("object_emissive");
+	_emissiveProgram	= Resources::manager().getProgram("object_emissive_gbuffer");
 
 	// Lighting passes.
 	_ambientScreen = std::unique_ptr<AmbientQuad>(new AmbientQuad(_gbuffer->textureId(0), _gbuffer->textureId(1),
