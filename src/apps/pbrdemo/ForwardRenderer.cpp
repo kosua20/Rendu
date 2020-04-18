@@ -50,7 +50,7 @@ void ForwardRenderer::setScene(const std::shared_ptr<Scene> & scene) {
 	_objectProgram->cacheUniformArray("shCoeffs", _scene->backgroundIrradiance);
 	_objectNoUVsProgram->cacheUniformArray("shCoeffs", _scene->backgroundIrradiance);
 	_parallaxProgram->cacheUniformArray("shCoeffs", _scene->backgroundIrradiance);
-	_lightGPUData.reset(new ForwardLight(_scene->lights.size()));
+	_lightsGPU.reset(new ForwardLight(_scene->lights.size()));
 
 	checkGLError();
 }
@@ -74,19 +74,19 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 		_parallaxProgram->uniform("inverseV", invView);
 		_parallaxProgram->uniform("maxLod", cubeLod);
 		_parallaxProgram->uniformBuffer("Lights", 0);
-		_parallaxProgram->uniform("lightsCount", int(_lightGPUData->count()));
+		_parallaxProgram->uniform("lightsCount", int(_lightsGPU->count()));
 		_objectProgram->use();
 		_objectProgram->uniform("inverseV", invView);
 		_objectProgram->uniform("maxLod", cubeLod);
 		_objectProgram->uniformBuffer("Lights", 0);
-		_objectProgram->uniform("lightsCount", int(_lightGPUData->count()));
+		_objectProgram->uniform("lightsCount", int(_lightsGPU->count()));
 		_objectNoUVsProgram->use();
 		_objectNoUVsProgram->uniform("inverseV", invView);
 		_objectNoUVsProgram->uniform("maxLod", cubeLod);
 		_objectNoUVsProgram->uniformBuffer("Lights", 0);
-		_objectNoUVsProgram->uniform("lightsCount", int(_lightGPUData->count()));
+		_objectNoUVsProgram->uniform("lightsCount", int(_lightsGPU->count()));
 	}
-	const auto & shadowMaps = _lightGPUData->shadowMaps();
+	const auto & shadowMaps = _lightsGPU->shadowMaps();
 
 	// Build the camera frustum for culling.
 	if(!_freezeFrustum){
@@ -151,7 +151,7 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 			glDisable(GL_CULL_FACE);
 		}
 		// Bind the lights.
-		_lightGPUData->bind(0);
+		GLUtilities::bindBuffer(_lightsGPU->data(), 0);
 		// Bind the textures.
 		GLUtilities::bindTextures(object.textures());
 		GLUtilities::bindTexture(_textureBrdf, 4);
@@ -242,12 +242,12 @@ void ForwardRenderer::draw(const Camera & camera) {
 	const glm::mat4 & proj = camera.projection();
 	const glm::vec3 & pos  = camera.position();
 	// --- Update lights data ----
-	_lightGPUData->updateCameraInfos(view, proj);
-	_lightGPUData->updateShadowMapInfos(_shadowMode, 0.002f);
+	_lightsGPU->updateCameraInfos(view, proj);
+	_lightsGPU->updateShadowMapInfos(_shadowMode, 0.002f);
 	for(const auto & light : _scene->lights) {
-		light->draw(*_lightGPUData);
+		light->draw(*_lightsGPU);
 	}
-	_lightGPUData->upload();
+	_lightsGPU->data().upload();
 
 	// --- Scene pass
 	renderScene(view, proj, pos);

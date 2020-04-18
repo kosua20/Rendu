@@ -1,17 +1,15 @@
 #include "ForwardLight.hpp"
 #include "graphics/GLUtilities.hpp"
 
-ForwardLight::ForwardLight(size_t count) {
+ForwardLight::ForwardLight(size_t count) :
+	_lightsData(_maxLightCount, BufferType::UNIFORM, DataUse::DYNAMIC) {
 	_currentCount = count;
 	if(_currentCount > _maxLightCount){
 		Log::Warning() << "Forward light renderer can only handle the first " << _maxLightCount << " lights (requested " << _currentCount << ")." << std::endl;
 	}
 
-	// Initially buffer creation and allocation.
-	glGenBuffers(1, &_bufferHandle);
-	glBindBuffer(GL_UNIFORM_BUFFER, _bufferHandle);
-	glBufferData(GL_UNIFORM_BUFFER, sizeof(GPULight)*_maxLightCount, nullptr, GL_DYNAMIC_DRAW);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+	// Initial buffers creation and allocation.
+	_lightsData.setup();
 	_shadowMaps.resize(2, nullptr);
 }
 
@@ -102,19 +100,4 @@ void ForwardLight::draw(const DirectionalLight * light) {
 	if(light->castsShadow()){
 		_shadowMaps[0] = light->shadowMap().map;
 	}
-}
-
-void ForwardLight::upload() const {
-	glBindBuffer(GL_UNIFORM_BUFFER, _bufferHandle);
-	// Start by orphaning the buffer.
-	glBufferData(GL_UNIFORM_BUFFER, sizeof(GPULight)*_maxLightCount, nullptr, GL_DYNAMIC_DRAW);
-	// Then upload the data.
-	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(GPULight)*_maxLightCount, &_lightsData[0]);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-}
-
-void ForwardLight::bind(size_t slot) const {
-	glBindBuffer(GL_UNIFORM_BUFFER, _bufferHandle);
-	glBindBufferBase(GL_UNIFORM_BUFFER, GLuint(slot), _bufferHandle);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }

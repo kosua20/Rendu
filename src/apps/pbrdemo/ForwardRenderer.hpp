@@ -65,7 +65,7 @@ private:
 	std::unique_ptr<Framebuffer> _sceneFramebuffer; ///< Scene framebuffer
 	std::unique_ptr<SSAO> _ssaoPass;				///< SSAO processing.
 	std::unique_ptr<Framebuffer> _compoFramebuffer; ///< Composite framebuffer
-	std::unique_ptr<ForwardLight> _lightGPUData;	///< The lights renderer.
+	std::unique_ptr<ForwardLight> _lightsGPU;	///< The lights renderer.
 	DebugLightRenderer _lightDebugRenderer;			///< The lights debug renderer.
 	
 	Program * _objectProgram;		 ///< Basic PBR program
