@@ -1,12 +1,12 @@
 #include "Renderer.hpp"
 
 
-void Renderer::draw(const Camera &){
+void Renderer::draw(const Camera &, Framebuffer &, size_t){
 	Log::Error() << "Renderer: Unimplemented draw function." << std::endl;
 	assert(false);
 }
 
-void Renderer::process(const Texture *){
+void Renderer::process(const Texture *, Framebuffer &, size_t){
 	Log::Error() << "Renderer: Unimplemented draw function." << std::endl;
 	assert(false);
 }
@@ -14,5 +14,19 @@ void Renderer::process(const Texture *){
 void Renderer::interface(){
 	Log::Error() << "Renderer: Unimplemented interface function." << std::endl;
 	assert(false);
+}
+
+void Renderer::clean(){
+}
+
+void Renderer::resize(unsigned int, unsigned int){
+}
+
+std::unique_ptr<Framebuffer> Renderer::createOutput(uint width, uint height) const {
+	return createOutput(TextureShape::D2, width, height, 1);
+}
+
+std::unique_ptr<Framebuffer> Renderer::createOutput(TextureShape shape, uint width, uint height, uint depth) const {
+	return std::unique_ptr<Framebuffer>(new Framebuffer(shape, width, height, depth, _preferredFormat, _needsDepth));
 }
 

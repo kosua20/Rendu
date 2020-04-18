@@ -2,6 +2,7 @@
 #include "system/Config.hpp"
 #include "input/Camera.hpp"
 #include "resources/Texture.hpp"
+#include "graphics/Framebuffer.hpp"
 
 /**
  \brief Base structure of a renderer. The result of the renderer is available through result().
@@ -16,32 +17,49 @@ public:
 	
 	/** Draw from a given viewpoint.
 	 \param camera the rendering viewpoint
+	 \param framebuffer the destination target
+	 \param layer the layer to write to in the target
 	 */
-	virtual void draw(const Camera & camera);
+	virtual void draw(const Camera & camera, Framebuffer & framebuffer, size_t layer = 0);
 	
 	/** Process a given input texture.
-	 \param texture the GPU ID of the texture
+	 \param texture the texture to process
+	 \param framebuffer the destination target
+	 \param layer the layer to write to in the target
 	 */
-	virtual void process(const Texture * texture);
+	virtual void process(const Texture * texture, Framebuffer & framebuffer, size_t layer = 0);
 	
 	/** Clean internal resources. */
-	virtual void clean() = 0;
+	virtual void clean();
 	
 	/** Handle a window resize event.
 	 \param width the new width
 	 \param height the new height
 	 */
-	virtual void resize(unsigned int width, unsigned int height) = 0;
+	virtual void resize(unsigned int width, unsigned int height);
 
 	/** Display GUI exposing renderer options.
 	 \note The renderer can assume that a GUI window is currently open.
 	 */
 	virtual void interface();
 
-	/** Contains the result of the rendering.
-	 \return the result texture
+	/** Create a 2D framebuffer with the recommended settings for it to be used as
+	 the output of this renderer when calling process/draw.
+	 \param width the framebuffer width
+	 \param height the framebuffer height
+	 \return the allocated framebuffer
 	 */
-	const Texture * result(){ return _renderResult; }
+	std::unique_ptr<Framebuffer> createOutput(uint width, uint height) const;
+
+	/** Create a framebuffer with the recommended settings for it to be used as
+	the output of this renderer when calling process/draw.
+	\param shape the framebuffer texture shape
+	\param width the framebuffer width
+	\param height the framebuffer height
+	\param depth the framebuffer depth
+	\return the allocated framebuffer
+	*/
+	std::unique_ptr<Framebuffer> createOutput(TextureShape shape, uint width, uint height, uint depth) const;
 
 	/** Destructor */
 	virtual ~Renderer() = default;
@@ -61,9 +79,9 @@ public:
 	 \return a reference to the object assigned to
 	 */
 	Renderer & operator=(Renderer &&) = delete;
-	
+
 protected:
-	
-	glm::vec2 _renderResolution = glm::vec2(0.0f,0.0f); ///< The internal resolution.
-	const Texture * _renderResult = nullptr; ///< The texture containing the result.
+
+	std::vector<Descriptor> _preferredFormat; ///< The preferred output format for a given renderer.
+	bool _needsDepth = false; ///< Does the output needs a depth buffer or not.
 };
