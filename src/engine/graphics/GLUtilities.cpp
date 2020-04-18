@@ -783,6 +783,79 @@ void GLUtilities::clearColorAndDepth(const glm::vec4 & color, float depth) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
+void GLUtilities::setDepthState(bool test){
+	(test ? glEnable : glDisable)(GL_DEPTH_TEST);
+}
+
+void GLUtilities::setDepthState(bool test, DepthEquation equation, bool write){
+	(test ? glEnable : glDisable)(GL_DEPTH_TEST);
+	static const std::map<DepthEquation, GLenum> eqs = {
+		{DepthEquation::NEVER, GL_NEVER},
+		{DepthEquation::LESS, GL_LESS },
+		{DepthEquation::LEQUAL, GL_LEQUAL },
+		{DepthEquation::EQUAL, GL_EQUAL },
+		{DepthEquation::GREATER, GL_GREATER },
+		{DepthEquation::GEQUAL, GL_GEQUAL },
+		{DepthEquation::NOTEQUAL, GL_NOTEQUAL },
+		{DepthEquation::ALWAYS, GL_ALWAYS }
+	};
+	glDepthFunc(eqs.at(equation));
+	glDepthMask(write ? GL_TRUE : GL_FALSE);
+}
+
+void GLUtilities::setBlendState(bool test){
+	(test ? glEnable : glDisable)(GL_BLEND);
+}
+
+void GLUtilities::setBlendState(bool test, BlendEquation equation, BlendFunction src, BlendFunction dst){
+	static const std::map<BlendEquation, GLenum> eqs = {
+		{BlendEquation::ADD, GL_FUNC_ADD},
+		{BlendEquation::SUBTRACT, GL_FUNC_SUBTRACT},
+		{BlendEquation::REVERSE_SUBTRACT, GL_FUNC_REVERSE_SUBTRACT},
+		{BlendEquation::MIN, GL_MIN},
+		{BlendEquation::MAX, GL_MAX}
+	};
+	static const std::map<BlendFunction, GLenum> funcs = {
+		{BlendFunction::ONE, GL_ONE},
+		{BlendFunction::ZERO, GL_ZERO},
+		{BlendFunction::SRC_COLOR, GL_SRC_COLOR},
+		{BlendFunction::ONE_MINUS_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR},
+		{BlendFunction::SRC_ALPHA, GL_SRC_ALPHA},
+		{BlendFunction::ONE_MINUS_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA},
+		{BlendFunction::DST_COLOR, GL_DST_COLOR},
+		{BlendFunction::ONE_MINUS_DST_COLOR, GL_ONE_MINUS_DST_COLOR},
+		{BlendFunction::DST_ALPHA, GL_DST_ALPHA},
+		{BlendFunction::ONE_MINUS_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA}
+	};
+	glBlendFunc(funcs.at(src), funcs.at(dst));
+	glBlendEquation(eqs.at(equation));
+	(test ? glEnable : glDisable)(GL_BLEND);
+}
+
+void GLUtilities::setCullState(bool cull){
+	(cull ? glEnable : glDisable)(GL_CULL_FACE);
+}
+
+static const std::map<Faces, GLenum> faces = {
+	{Faces::FRONT, GL_FRONT},
+	{Faces::BACK, GL_BACK},
+	{Faces::ALL, GL_FRONT_AND_BACK}
+};
+
+void GLUtilities::setCullState(bool cull, Faces culledFaces){
+	(cull ? glEnable : glDisable)(GL_CULL_FACE);
+	glCullFace(faces.at(culledFaces));
+}
+
+void GLUtilities::setPolygonState(PolygonMode mode, Faces selectedFaces){
+	static const std::map<PolygonMode, GLenum> modes = {
+		{PolygonMode::FILL, GL_FILL},
+		{PolygonMode::LINE, GL_LINE},
+		{PolygonMode::POINT, GL_POINT}
+	};
+	glPolygonMode(faces.at(selectedFaces), modes.at(mode));
+}
+
 void GLUtilities::blit(const Framebuffer & src, const Framebuffer & dst, Filter filter) {
 	src.bind(Framebuffer::Mode::READ);
 	dst.bind(Framebuffer::Mode::WRITE);

@@ -201,6 +201,48 @@ public:
 	 */
 	static void clearColorAndDepth(const glm::vec4 & color, float depth);
 
+	/** Enable or disable the depth test.
+	 \param test should depth test be performed
+	 */
+	static void setDepthState(bool test);
+
+	/** Configure depth testing.
+	 \param test should depth test be performed
+	 \param equation the test equation
+	 \param write should the depth be written to the depth buffer
+	 */
+	static void setDepthState(bool test, DepthEquation equation, bool write = false);
+
+	/** Enable or disable blending.
+	\param test should blending be enabled
+	*/
+	static void setBlendState(bool test);
+
+	/** Configure blending.
+	\param test should blending be enabled
+	\param equation the blending equation
+	\param src the blending value to use for the source
+	\param dst the blending value to use for the destination
+	*/
+	static void setBlendState(bool test, BlendEquation equation, BlendFunction src, BlendFunction dst);
+
+	/** Enable or disable backface culling.
+	\param cull should backfaces be culled
+	*/
+	static void setCullState(bool cull);
+
+	/** Configure backface culling.
+	 \param cull should backfaces be culled
+	 \param culledFaces the set of faces to cull
+	 */
+	static void setCullState(bool cull, Faces culledFaces);
+
+	/** Set the polygon rasterization mode.
+	 \param mode the mode (filled, lines, points)
+	 \param selectedFaces the faces to apply the mode to
+	 */
+	static void setPolygonState(PolygonMode mode, Faces selectedFaces);
+
 	/** Blit the content of a framebuffer into another one, resizing the content accordingly.
 	 \param src the source framebuffer
 	 \param dst the destination framebuffer

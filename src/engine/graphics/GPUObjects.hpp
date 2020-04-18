@@ -24,6 +24,72 @@ enum class DataUse : uint {
 };
 
 /**
+\brief Depth test equation.
+\ingroup Resources
+*/
+enum class DepthEquation : uint {
+	NEVER, ///< Fail in all cases
+	LESS, ///< Pass if lower
+	LEQUAL, ///< Pass if lower or equal
+	EQUAL, ///< Pass if equal
+	GREATER, ///< Pass if greater
+	GEQUAL, ///< Pass if greater or equal
+	NOTEQUAL, ///< Pass if different
+	ALWAYS ///< Always pass
+};
+
+/**
+\brief Blending mix equation for each component. Below we use src and dst to denote
+ the (modulated by the blend functions) values to blend.
+ Note that min and max do not apply the modulation factor to each term.
+\ingroup Resources
+*/
+enum class BlendEquation : uint {
+	ADD, ///< Perform src + dst
+	SUBTRACT, ///< Perform src - dst
+	REVERSE_SUBTRACT, ///< Perform dst - src
+	MIN, ///< Perform min(src, dst)
+	MAX ///< Perform max(src, dst)
+};
+
+/**
+\brief How the source and destination values to blend are obtained from the pixel data by scaling.
+\ingroup Resources
+*/
+enum class BlendFunction : uint {
+	ZERO, ///< Multiply by 0
+	ONE, ///< Multiply by 1
+	SRC_COLOR, ///< Multiply by src color, component wise
+	ONE_MINUS_SRC_COLOR, ///< Multiply by 1-src color, component wise
+	DST_COLOR, ///< Multiply by dst color, component wise
+	ONE_MINUS_DST_COLOR, ///< Multiply by 1-dst color, component wise
+	SRC_ALPHA, ///< Multiply by src scalar alpha
+	ONE_MINUS_SRC_ALPHA, ///< Multiply by 1-src scalar alpha
+	DST_ALPHA, ///< Multiply by dst scalar alpha
+	ONE_MINUS_DST_ALPHA ///< Multiply by 1-dst scalar alpha
+};
+
+/**
+\brief Used to select a subset of faces. Front faces are defined counter-clockwise.
+\ingroup Resources
+*/
+enum class Faces : uint {
+	FRONT, ///> Front (CCW) faces
+	BACK, ///< Back (CW) faces
+	ALL ///< All faces
+};
+
+/**
+\brief How polygons should be rasterized
+\ingroup Resources
+*/
+enum class PolygonMode : uint {
+	FILL, ///< As filled polygons.
+	LINE, ///< As wireframe edges.
+	POINT ///< As vertex points.
+};
+
+/**
  \brief The shape of a texture: dimensions, layers organisation.
  \ingroup Resources
  */
