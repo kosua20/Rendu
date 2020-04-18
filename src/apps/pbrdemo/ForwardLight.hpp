@@ -15,7 +15,7 @@
 
 /**
  \brief Store lights data for forward rendering in a GPU buffer.
- \ingroup DeferredRendering
+ \ingroup PBRDemo
  */
 class ForwardLight final : public LightRenderer {
 

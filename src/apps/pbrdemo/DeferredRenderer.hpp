@@ -18,7 +18,7 @@
 
 /**
  \brief Available G-buffer layers.
- \ingroup DeferredRendering
+ \ingroup PBRDemo
  */
 enum class TextureType {
 	Albedo  = 0, ///< (or base color)
@@ -29,7 +29,8 @@ enum class TextureType {
 
 /**
  \brief Performs deferred rendering of a scene.
- \ingroup DeferredRendering
+ \sa DeferredLight
+ \ingroup PBRDemo
  */
 class DeferredRenderer final : public Renderer {
 

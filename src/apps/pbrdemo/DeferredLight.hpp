@@ -14,7 +14,7 @@
 
 /**
  \brief Apply a light onto the lighting buffer. By processing all lights, the final lighting is accumulated in the buffer.
- \ingroup DeferredRendering
+ \ingroup PBRDemo
  */
 class DeferredLight final : public LightRenderer {
 

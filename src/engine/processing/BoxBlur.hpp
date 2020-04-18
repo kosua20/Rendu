@@ -18,8 +18,9 @@ public:
 	 \param shape the shape of the textures to process
 	 \param width the internal resolution width
 	 \param height the internal resolution height
-	 \param approximate toggles the approximate box blur
+	 \param depth the internal texture 3rd dimension
 	 \param descriptor the framebuffer format and wrapping descriptor
+	 \param approximate toggles the approximate box blur
 	 */
 	BoxBlur(TextureShape shape, unsigned int width, unsigned int height, unsigned int depth, const Descriptor & descriptor, bool approximate);
 

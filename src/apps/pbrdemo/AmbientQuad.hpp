@@ -6,7 +6,7 @@
 /**
  \brief Renders the ambient lighting contribution of a scene, including irradiance and ambient occlusion.
  \see GPU::Frag::Ambient, GPU::Frag::Ssao
- \ingroup DeferredRendering
+ \ingroup PBRDemo
  */
 class AmbientQuad {
 

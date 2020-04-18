@@ -11,7 +11,7 @@
 
 /**
  \brief Apply post process effects to a HDR rendering of a scene.
- \ingroup DeferredRendering
+ \ingroup PBRDemo
  */
 class PostProcessStack final : public Renderer {
 public:

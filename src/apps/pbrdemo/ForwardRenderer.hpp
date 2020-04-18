@@ -18,7 +18,8 @@
 
 /**
  \brief A renderer that shade each object as it is drawn in the scene directly.
- \ingroup DeferredRendering
+ \sa ForwardLight
+ \ingroup PBRDemo
  */
 class ForwardRenderer final : public Renderer {
 

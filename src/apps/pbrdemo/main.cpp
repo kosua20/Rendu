@@ -7,10 +7,10 @@
 #include "Common.hpp"
 
 /**
- \defgroup DeferredRendering Deferred rendering
- \brief Real-time deferred rendering using GGX BRDF, image-based lighting, AO, tonemapped HDR, antialiasing.
- \details All scene informations (albedo, normals, material ID, roughness) are rendered to a G-Buffer before being used to render each light contribution using simple geometric proxies. The scene is rendered using the GGX BRDF model.
- \see GPU::Frag::Bloom, GPU::Frag::Tonemap, GPU::Frag::Fxaa, GPU::Frag::Sharpening, GPU::Frag::Ambient, GPU::Frag::Ssao, GPU::Frag::Point_light, GPU::Frag::Directional_light, GPU::Frag::Spot_light
+ \defgroup PBRDemo Physically based rendering demo
+ \brief Real-time rendering using GGX BRDF, image-based lighting, AO, tonemapped HDR, antialiasing.
+ \details Two renderers can be used: a forward renderer where objects are directly shaded and the resulting colors stored, and deffered, where all scene informations (albedo, normals, material ID, roughness) are rendered to a G-Buffer before being used to render each light contribution using simple geometric proxies. The scene is rendered using the GGX BRDF model.
+ \sa DeferredRenderer, ForwardRenderer
  \ingroup Applications
  */
 
@@ -19,7 +19,7 @@
  \param argc the number of input arguments.
  \param argv a pointer to the raw input arguments.
  \return a general error code.
- \ingroup DeferredRendering
+ \ingroup PBRDemo
  */
 int main(int argc, char ** argv) {
 

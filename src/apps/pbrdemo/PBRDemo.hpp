@@ -14,7 +14,7 @@
 
 /**
  \brief PBR rendering demonstration and interactions.
- \ingroup DeferredRendering
+ \ingroup PBRDemo
  */
 class PBRDemo final : public CameraApp {
 
