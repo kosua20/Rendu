@@ -294,7 +294,8 @@ OPTIMIZE_OUTPUT_VHDL   = NO
 
 EXTENSION_MAPPING      = frag=C++ \
                          vert=C++ \
-                         geom=C++
+                         geom=C++ \
+                         glsl=C++
 
 # If the MARKDOWN_SUPPORT tag is enabled then doxygen pre-processes all comments
 # according to the Markdown format, which allows for more readable
@@ -864,7 +865,8 @@ FILE_PATTERNS          = *.c \
                          *.qsf \
                          *.frag \
                          *.vert \
-                         *.geom
+                         *.geom \
+                         *.glsl
 
 # The RECURSIVE tag can be used to specify whether or not subdirectories should
 # be searched for input files as well.
@@ -970,7 +972,8 @@ INPUT_FILTER           =
 
 FILTER_PATTERNS        = *.frag="python docs/theme/process-glsl.py" \
                          *.vert="python docs/theme/process-glsl.py" \
-                         *.geom="python docs/theme/process-glsl.py"
+                         *.geom="python docs/theme/process-glsl.py" \
+                         *.glsl="python docs/theme/process-glsl.py"
 
 # If the FILTER_SOURCE_FILES tag is set to YES, the input filter (if set using
 # INPUT_FILTER) will also be used to filter the input files that are used for

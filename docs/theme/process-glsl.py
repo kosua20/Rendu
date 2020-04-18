@@ -8,6 +8,10 @@ import os
 def printout(text):
 	sys.stdout.write(text)
 
+doxyFullNames = {"vert" : "vertex", "frag" : "fragment", "geom" : "geometry", "glsl" : "general" }
+doxySubNamespaces = {"vert" : "Vert", "frag" : "Frag", "geom" : "Geom", "glsl" : "Common" }
+structAddKeyword = {"vert" : "out", "frag" : "in", "geom" : "in", "glsl" : "" }
+
 if len(sys.argv) != 2:
 	sys.exit(1)
 
@@ -17,6 +21,7 @@ fileSubpath, fileExt = os.path.splitext(filePath)
 fileDir, fileName = os.path.split(fileSubpath)
 fileExt = fileExt
 fileName = fileName
+fileType = fileExt.lower()[1:]
 
 # Get the file content.
 fileHandle = open(filePath)
@@ -26,23 +31,22 @@ fileHandle.close()
 # Doxygen infos.
 doxyNamespace = "GPU"
 doxyGroup = "Shaders"
-doxySubnamespace = fileExt.lower()[1:].capitalize()
-doxyClass = fileName.capitalize().replace("-", "_")
-doxyFullNames = {"Vert" : "vertex", "Frag" : "fragment", "Geom" : "geometry" }
-structAddKeyword = {"Vert" : "out", "Frag" : "in", "Geom" : "in" }
-doxyClassDetail = doxyClass.replace("_", " ")
-structKeyword = structAddKeyword[doxySubnamespace]
-# C++ namespaces
-printout("namespace " + doxyNamespace + "{\n")
-printout("namespace " + doxySubnamespace + "{\n")
-# Class
-printout("/** \\class " + doxyClass + "\n")
-printout("  * \\brief \"" + doxyClassDetail + "\" " + doxyFullNames[doxySubnamespace] + " shader." + "\n")
-printout("  * \\ingroup " + doxyGroup + "\n*/\n")
-printout("public class " + doxyClass + " {" + "\n")
-printout("public:" + "\n")
+
+subNamespace = doxySubNamespaces[fileType]
+descripName = doxyFullNames[fileType]
+structKeyword = structAddKeyword[fileType]
+
+className = fileName.capitalize().replace("-", "_")
+classDetails = className.replace("_", " ")
+
+# Start by parsing the body of the shader and wrapping it into a C++ class.
+# We adjust include, layout and blocks keywords to avoid issues with Doxygen.
+# We do this first so that we can reference included shaders afterwards.
+bodyStr  = "public class " + className + " {" + "\n"
+bodyStr += "public:" + "\n"
 
 inInterfaceBlock = False
+referencedFiles = []
 # Content of the shader
 for line in fileLines:
 	printLine = True
@@ -57,10 +61,45 @@ for line in fileLines:
 		inInterfaceBlock = False
 	if inInterfaceBlock and len(line) > 0:
 		line = structKeyword + " " + line.lstrip()
-	
+	# Skip our include system directives, but keep track 
+	# of them so that we can reference them in the description.
+	incPos = line.find("#include")
+	if incPos>=0:
+		nameStart = line.find("\"", incPos)
+		nameEnd = line.find(".glsl\"", nameStart)
+		name = line[(nameStart+1):(nameEnd)]
+		referencedFiles += [name]
+		printLine = False
 	if printLine:
-		printout(line)
+		bodyStr += line
+
 # Close the class, the namespaces, the group.
-printout("\n}}}\n")
+bodyStr += "\n}}}\n"
+
+
+# C++ namespaces
+headerStr  = "namespace " + doxyNamespace + "{\n"
+headerStr += "namespace " + subNamespace + "{\n"
+# Class description
+headerStr += "/** \\class " + className + "\n"
+headerStr += "  * \\brief " + classDetails + " " + descripName + " shader." + "\n"
+# Reference included shaders
+if(len(referencedFiles) > 0):
+	headerStr += "  * \\sa "
+	firstSA  = True
+	for refFile in referencedFiles:
+		if not firstSA:
+			headerStr += ", "
+		else:
+			firstSA = False
+
+		refName = refFile.capitalize().replace("-", "_")
+		headerStr += doxyNamespace + "::" + doxySubNamespaces["glsl"] + "::" + refName
+	headerStr += "\n"
+headerStr += "  * \\ingroup " + doxyGroup + "\n*/\n"
+
+
+printout(headerStr)
+printout(bodyStr)
 
 sys.exit(0)
