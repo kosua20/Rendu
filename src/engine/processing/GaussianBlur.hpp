@@ -44,6 +44,16 @@ public:
 	 */
 	void resize(unsigned int width, unsigned int height);
 
+	/** \return the internal processing width */
+	unsigned int width() const {
+		return _frameBuffers.empty() ? 0 : (_frameBuffers[0]->width());
+	}
+
+	/** \return the internal processing height */
+	unsigned int height() const {
+		return _frameBuffers.empty() ? 0 : (_frameBuffers[0]->height());
+	}
+
 private:
 	const Program * _blurProgramDown;						 ///< The downscaling filter.
 	const Program * _blurProgramUp;							 ///< The upscaling filter.
