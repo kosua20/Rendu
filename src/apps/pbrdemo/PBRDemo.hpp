@@ -55,6 +55,7 @@ private:
 	std::unique_ptr<DeferredRenderer> _defRenderer; ///< Deferred PBR renderer.
 	std::unique_ptr<ForwardRenderer> _forRenderer;	 ///< Forward PBR renderer.
 	std::unique_ptr<PostProcessStack> _postprocess; ///< Post-process renderer.
+	std::unique_ptr<Framebuffer> _finalRender; ///< Final framebuffer.
 	const Program * _finalProgram; ///< Final display program.
 	
 	std::vector<std::shared_ptr<Scene>> _scenes; ///< The existing scenes.

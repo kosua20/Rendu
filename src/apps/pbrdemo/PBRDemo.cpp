@@ -10,6 +10,7 @@ PBRDemo::PBRDemo(RenderingConfig & config) :
 	_defRenderer.reset(new DeferredRenderer(renderRes));
 	_forRenderer.reset(new ForwardRenderer(renderRes));
 	_postprocess.reset(new PostProcessStack(renderRes));
+	_finalRender = _defRenderer->createOutput(renderRes[0], renderRes[1]);//std::unique_ptr<Framebuffer>(new Framebuffer(renderRes[0], renderRes[1], _defRenderer->preferredFormat(), false));
 	_finalProgram = Resources::manager().getProgram2D("sharpening");
 
 	// Setup camera parameters.
@@ -100,25 +101,22 @@ void PBRDemo::draw() {
 
 	// Renderer and postproc passes.
 	_rendererTime.begin();
-	const Texture * result = nullptr;
 	if(_mode == RendererMode::DEFERRED) {
-		_defRenderer->draw(_userCamera);
-		result = _defRenderer->result();
+		_defRenderer->draw(_userCamera, *_finalRender);
 	} else if(_mode == RendererMode::FORWARD) {
-		_forRenderer->draw(_userCamera);
-		result = _forRenderer->result();
+		_forRenderer->draw(_userCamera, *_finalRender);
 	}
 	_rendererTime.end();
 
 	_postprocessTime.begin();
-	_postprocess->process(result);
+	_postprocess->process(_finalRender->textureId(), *_finalRender);
 	_postprocessTime.end();
 
 	// We now render a full screen quad in the default framebuffer, using sRGB space.
 	Framebuffer::backbuffer()->bind(Framebuffer::Mode::SRGB);
 	GLUtilities::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 	_finalProgram->use();
-	ScreenQuad::draw(_postprocess->result());
+	ScreenQuad::draw(_finalRender->textureId());
 	Framebuffer::backbuffer()->unbind();
 }
 
@@ -236,6 +234,7 @@ void PBRDemo::clean() {
 	for(auto & map : _shadowMaps) {
 		map->clean();
 	}
+	_finalRender->clean();
 }
 
 void PBRDemo::resize() {
@@ -244,4 +243,5 @@ void PBRDemo::resize() {
 	_defRenderer->resize(uint(renderRes[0]), uint(renderRes[1]));
 	_forRenderer->resize(uint(renderRes[0]), uint(renderRes[1]));
 	_postprocess->resize(uint(renderRes[0]), uint(renderRes[1]));
+	_finalRender->resize(renderRes);
 }

@@ -46,7 +46,7 @@ public:
 	void setScene(const std::shared_ptr<Scene> & scene);
 
 	/** \copydoc Renderer::draw */
-	void draw(const Camera & camera) override;
+	void draw(const Camera & camera, Framebuffer & framebuffer, size_t layer = 0) override;
 
 	/** \copydoc Renderer::clean */
 	void clean() override;
@@ -75,7 +75,6 @@ private:
 	void renderBackground(const glm::mat4 & view, const glm::mat4 & proj, const glm::vec3 & pos);
 
 	std::unique_ptr<Framebuffer> _gbuffer;			///< G-buffer.
-	std::unique_ptr<Framebuffer> _sceneFramebuffer; ///< Lighting framebuffer
 	std::unique_ptr<SSAO> _ssaoPass;				///< SSAO processing.
 	std::unique_ptr<AmbientQuad> _ambientScreen;	///< Ambient lighting contribution rendering.
 	std::unique_ptr<DeferredLight> _lightRenderer;	///< The lights renderer.

@@ -35,7 +35,7 @@ public:
 	void setScene(const std::shared_ptr<Scene> & scene);
 
 	/** \copydoc Renderer::draw */
-	void draw(const Camera & camera) override;
+	void draw(const Camera & camera, Framebuffer & framebuffer, size_t layer = 0) override;
 
 	/** \copydoc Renderer::clean */
 	void clean() override;
@@ -65,7 +65,6 @@ private:
 
 	std::unique_ptr<Framebuffer> _sceneFramebuffer; ///< Scene framebuffer
 	std::unique_ptr<SSAO> _ssaoPass;				///< SSAO processing.
-	std::unique_ptr<Framebuffer> _compoFramebuffer; ///< Composite framebuffer
 	std::unique_ptr<ForwardLight> _lightsGPU;	///< The lights renderer.
 	DebugLightRenderer _lightDebugRenderer;			///< The lights debug renderer.
 	

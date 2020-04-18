@@ -8,11 +8,10 @@
 ForwardRenderer::ForwardRenderer(const glm::vec2 & resolution) :
 	_lightDebugRenderer("object_basic_uniform") {
 
-	_renderResolution		   = resolution;
-	const int renderWidth	   = int(_renderResolution[0]);
-	const int renderHeight	   = int(_renderResolution[1]);
-	const int renderHalfWidth  = int(0.5f * _renderResolution[0]);
-	const int renderHalfHeight = int(0.5f * _renderResolution[1]);
+	const int renderWidth	   = int(resolution[0]);
+	const int renderHeight	   = int(resolution[1]);
+	const int renderHalfWidth  = int(0.5f * resolution[0]);
+	const int renderHalfHeight = int(0.5f * resolution[1]);
 
 	// Framebuffers.
 	const Descriptor descAmbient = {Layout::RGBA16F, Filter::LINEAR_NEAREST, Wrap::CLAMP};
@@ -21,8 +20,9 @@ ForwardRenderer::ForwardRenderer(const glm::vec2 & resolution) :
 	const Descriptor descDepth = {Layout::DEPTH_COMPONENT32F, Filter::NEAREST_NEAREST, Wrap::CLAMP};
 	const std::vector<Descriptor> descs = { descAmbient, descDirect, descNormal, descDepth};
 	_sceneFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, descs, true));
-	_compoFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, descAmbient, false));
 	_ssaoPass		  = std::unique_ptr<SSAO>(new SSAO(renderHalfWidth, renderHalfHeight, 0.5f));
+	_preferredFormat.push_back(descAmbient);
+	_needsDepth = false;
 
 	_objectProgram		= Resources::manager().getProgram("object_forward");
 	_objectNoUVsProgram = Resources::manager().getProgram("object_no_uv_forward");
@@ -36,7 +36,6 @@ ForwardRenderer::ForwardRenderer(const glm::vec2 & resolution) :
 
 	_textureBrdf = Resources::manager().getTexture("brdf-precomputed", {Layout::RG32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
 
-	_renderResult = _compoFramebuffer->textureId();
 	checkGLError();
 }
 
@@ -236,7 +235,7 @@ void ForwardRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 &
 	glDepthMask(GL_TRUE);
 }
 
-void ForwardRenderer::draw(const Camera & camera) {
+void ForwardRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_t layer) {
 
 	const glm::mat4 & view = camera.view();
 	const glm::mat4 & proj = camera.projection();
@@ -260,34 +259,27 @@ void ForwardRenderer::draw(const Camera & camera) {
 	}
 
 	// --- Final composite pass
-	_compoFramebuffer->bind();
-	_compoFramebuffer->setViewport();
+	framebuffer.bind(layer);
+	framebuffer.setViewport();
 	_compProgram->use();
 	glDisable(GL_DEPTH_TEST);
 	GLUtilities::bindTexture(_sceneFramebuffer->textureId(0), 0);
 	GLUtilities::bindTexture(_sceneFramebuffer->textureId(1), 1);
 	GLUtilities::bindTexture(_ssaoPass->textureId(), 2);
 	ScreenQuad::draw();
-	_compoFramebuffer->unbind();
+	framebuffer.unbind();
 }
 
 void ForwardRenderer::clean() {
 	// Clean objects.
 	_ssaoPass->clean();
 	_sceneFramebuffer->clean();
-	_compoFramebuffer->clean();
 }
 
 void ForwardRenderer::resize(unsigned int width, unsigned int height) {
-	_renderResolution[0] = float(width);
-	_renderResolution[1] = float(height);
-	//Renderer::updateResolution(width, height);
-	const unsigned int hWidth  = uint(_renderResolution[0] / 2.0f);
-	const unsigned int hHeight = uint(_renderResolution[1] / 2.0f);
 	// Resize the framebuffers.
-	_ssaoPass->resize(hWidth, hHeight);
-	_sceneFramebuffer->resize(_renderResolution);
-	_compoFramebuffer->resize(_renderResolution);
+	_ssaoPass->resize(width / 2, height / 2);
+	_sceneFramebuffer->resize(glm::vec2(width, height));
 	checkGLError();
 }
 

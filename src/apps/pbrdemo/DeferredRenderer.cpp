@@ -7,12 +7,11 @@
 
 DeferredRenderer::DeferredRenderer(const glm::vec2 & resolution) :
 	_lightDebugRenderer("light_debug") {
-		
-	_renderResolution = resolution;
-	const int renderWidth	  = int(_renderResolution[0]);
-	const int renderHeight	 = int(_renderResolution[1]);
-	const int renderHalfWidth  = int(0.5f * _renderResolution[0]);
-	const int renderHalfHeight = int(0.5f * _renderResolution[1]);
+
+	const int renderWidth	  = int(resolution[0]);
+	const int renderHeight	  = int(resolution[1]);
+	const int renderHalfWidth  = int(0.5f * resolution[0]);
+	const int renderHalfHeight = int(0.5f * resolution[1]);
 
 	// G-buffer setup.
 	const Descriptor albedoDesc			= {Layout::RGBA16F, Filter::NEAREST_NEAREST, Wrap::CLAMP};
@@ -25,7 +24,8 @@ DeferredRenderer::DeferredRenderer(const glm::vec2 & resolution) :
 	// Other framebuffers.
 	_ssaoPass				= std::unique_ptr<SSAO>(new SSAO(renderHalfWidth, renderHalfHeight, 0.5f));
 	const Descriptor desc = {Layout::RGBA16F, Filter::LINEAR_NEAREST, Wrap::CLAMP};
-	_sceneFramebuffer		= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, desc, false));
+	_preferredFormat.push_back(desc);
+	_needsDepth = false;
 
 	_skyboxProgram		= Resources::manager().getProgram("skybox_gbuffer", "skybox_infinity", "skybox_gbuffer");
 	_bgProgram			= Resources::manager().getProgram("background_gbuffer", "background_infinity", "background_gbuffer");
@@ -39,7 +39,6 @@ DeferredRenderer::DeferredRenderer(const glm::vec2 & resolution) :
 	_ambientScreen = std::unique_ptr<AmbientQuad>(new AmbientQuad(_gbuffer->textureId(0), _gbuffer->textureId(1),
 		_gbuffer->textureId(2), _gbuffer->depthId(), _ssaoPass->textureId()));
 	_lightRenderer = std::unique_ptr<DeferredLight>(new DeferredLight(_gbuffer->textureId(0), _gbuffer->textureId(1), _gbuffer->depthId(), _gbuffer->textureId(2)));
-	_renderResult = _sceneFramebuffer->textureId();
 	checkGLError();
 }
 
@@ -199,7 +198,7 @@ void DeferredRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 
 	glDepthMask(GL_TRUE);
 }
 
-void DeferredRenderer::draw(const Camera & camera) {
+void DeferredRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_t layer) {
 
 	const glm::mat4 & view = camera.view();
 	const glm::mat4 & proj = camera.projection();
@@ -218,8 +217,8 @@ void DeferredRenderer::draw(const Camera & camera) {
 	// --- Gbuffer composition pass
 	_lightRenderer->updateCameraInfos(view, proj);
 	_lightRenderer->updateShadowMapInfos(_shadowMode, 0.002f);
-	_sceneFramebuffer->bind();
-	_sceneFramebuffer->setViewport();
+	framebuffer.bind(layer);
+	framebuffer.setViewport();
 	_ambientScreen->draw(view, proj);
 	glEnable(GL_BLEND);
 	glBlendEquation(GL_FUNC_ADD);
@@ -228,7 +227,7 @@ void DeferredRenderer::draw(const Camera & camera) {
 		light->draw(*_lightRenderer);
 	}
 	glDisable(GL_BLEND);
-	_sceneFramebuffer->unbind();
+	framebuffer.unbind();
 
 }
 
@@ -236,19 +235,12 @@ void DeferredRenderer::clean() {
 	// Clean objects.
 	_gbuffer->clean();
 	_ssaoPass->clean();
-	_sceneFramebuffer->clean();
 }
 
 void DeferredRenderer::resize(unsigned int width, unsigned int height) {
-	_renderResolution[0] = float(width);
-	_renderResolution[1] = float(height);
-	//Renderer::updateResolution(width, height);
-	const unsigned int hWidth  = uint(_renderResolution[0] / 2.0f);
-	const unsigned int hHeight = uint(_renderResolution[1] / 2.0f);
 	// Resize the framebuffers.
-	_gbuffer->resize(_renderResolution);
-	_ssaoPass->resize(hWidth, hHeight);
-	_sceneFramebuffer->resize(_renderResolution);
+	_gbuffer->resize(glm::vec2(width, height));
+	_ssaoPass->resize(width / 2, height / 2);
 	checkGLError();
 	
 }

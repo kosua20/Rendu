@@ -6,18 +6,16 @@
 #include <chrono>
 
 PostProcessStack::PostProcessStack(const glm::vec2 & resolution){
-
-	_renderResolution = resolution;
-	const int renderWidth	= int(_renderResolution[0]);
-	const int renderHeight	= int(_renderResolution[1]);
-	const int renderHWidth  = int(0.5f * _renderResolution[0]);
-	const int renderHHeight = int(0.5f * _renderResolution[1]);
+	const int renderWidth	= int(resolution[0]);
+	const int renderHeight	= int(resolution[1]);
+	const int renderHWidth  = int(resolution[0]/2);
+	const int renderHHeight = int(resolution[1]/2);
 	const Descriptor desc = {Layout::RGB16F, Filter::LINEAR_NEAREST, Wrap::CLAMP};
 	_bloomBuffer	= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, desc, false));
 	_toneMapBuffer 	= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, desc, false));
-	_fxaaBuffer		= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, desc, false));
 	_blurBuffer		= std::unique_ptr<GaussianBlur>(new GaussianBlur(renderHWidth, renderHHeight, _settings.bloomRadius, Layout::RGB16F));
-
+	_preferredFormat.push_back(desc);
+	_needsDepth = false;
 	_bloomProgram		   = Resources::manager().getProgram2D("bloom");
 	_bloomCompositeProgram = Resources::manager().getProgram2D("bloom-composite");
 	_toneMappingProgram	   = Resources::manager().getProgram2D("tonemap");
@@ -25,9 +23,9 @@ PostProcessStack::PostProcessStack(const glm::vec2 & resolution){
 	checkGLError();
 }
 
-void PostProcessStack::process(const Texture * texture) {
+void PostProcessStack::process(const Texture * texture, Framebuffer & framebuffer, size_t layer) {
 
-	const glm::vec2 invRenderSize = 1.0f / _renderResolution;
+	const glm::vec2 invRenderSize = 1.0f / glm::vec2(framebuffer.width(), framebuffer.height());
 
 	const Texture * sceneResult = texture;
 	if(_settings.bloom) {
@@ -60,42 +58,38 @@ void PostProcessStack::process(const Texture * texture) {
 	_toneMappingProgram->uniform("apply", _settings.tonemap);
 	ScreenQuad::draw(sceneResult);
 	_toneMapBuffer->unbind();
-	_renderResult = _toneMapBuffer->textureId();
-	
+
 	if(_settings.fxaa) {
-		_fxaaBuffer->bind();
-		_fxaaBuffer->setViewport();
+		framebuffer.bind(layer);
+		framebuffer.setViewport();
 		_fxaaProgram->use();
 		_fxaaProgram->uniform("inverseScreenSize", invRenderSize);
-		ScreenQuad::draw(_renderResult);
-		_fxaaBuffer->unbind();
-		_renderResult = _fxaaBuffer->textureId();
+		ScreenQuad::draw(_toneMapBuffer->textureId());
+		framebuffer.unbind();
+	} else {
+		GLUtilities::blit(*_toneMapBuffer, framebuffer, 0, layer, Filter::LINEAR);
 	}
 
 	checkGLError();
 }
 
 void PostProcessStack::updateBlurPass(){
-	_blurBuffer.reset(new GaussianBlur(int(_renderResolution[0] / 2), int(_renderResolution[1] / 2), _settings.bloomRadius, Layout::RGB16F));
+	const uint bw = _blurBuffer->width();
+	const uint bh = _blurBuffer->height();
+	_blurBuffer.reset(new GaussianBlur(bw, bh, _settings.bloomRadius, Layout::RGB16F));
 }
 
 void PostProcessStack::clean() {
 	_blurBuffer->clean();
 	_bloomBuffer->clean();
 	_toneMapBuffer->clean();
-	_fxaaBuffer->clean();
 }
 
 void PostProcessStack::resize(unsigned int width, unsigned int height) {
-	_renderResolution[0] = float(width);
-	_renderResolution[1] = float(height);
-	const unsigned int hWidth  = uint(_renderResolution[0] / 2.0f);
-	const unsigned int hHeight = uint(_renderResolution[1] / 2.0f);
-	// Resize the framebuffers.
-	_toneMapBuffer->resize(_renderResolution);
-	_fxaaBuffer->resize(_renderResolution);
-	_bloomBuffer->resize(_renderResolution);
-	_blurBuffer->resize(hWidth, hHeight);
+	const glm::vec2 renderRes(width, height);
+	_toneMapBuffer->resize(renderRes);
+	_bloomBuffer->resize(renderRes);
+	_blurBuffer->resize(width/2, height/2);
 	checkGLError();
 }
 

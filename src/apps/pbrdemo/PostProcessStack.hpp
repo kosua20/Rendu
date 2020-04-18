@@ -32,9 +32,13 @@ public:
 	 */
 	explicit PostProcessStack(const glm::vec2 & resolution);
 	
-	/** \copydoc Renderer::process
+	/** Apply post processing to the scene.
+	 You can assume that there will be at least one operation applied so the same texture can be used as input and output.
+	 \param texture the texture to process
+	 \param framebuffer the destination framebuffer
+	 \param layer the layer of the destination to write to
 	 */
-	void process(const Texture * texture) override;
+	void process(const Texture * texture, Framebuffer & framebuffer, size_t layer = 0) override;
 
 	/** \copydoc Renderer::interface
 	 */
@@ -60,7 +64,6 @@ private:
 
 	std::unique_ptr<Framebuffer> _bloomBuffer; 	 ///< Bloom framebuffer
 	std::unique_ptr<Framebuffer> _toneMapBuffer; ///< Tonemapping framebuffer
-	std::unique_ptr<Framebuffer> _fxaaBuffer;	 ///< FXAA framebuffer
 	std::unique_ptr<GaussianBlur> _blurBuffer;	 ///< Bloom blur processing.
 	
 	const Program * _bloomProgram;			///< Bloom program
