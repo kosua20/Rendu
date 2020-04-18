@@ -4,6 +4,7 @@
 /src/internal/
 /resources/internal/
 /resources/additional/
+/docs/html/
 /premake5.exe
 /.scannerwork
 resources.zip
