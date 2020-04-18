@@ -1,5 +1,6 @@
 #include "processing/FloodFiller.hpp"
 #include "graphics/ScreenQuad.hpp"
+#include "graphics/GLUtilities.hpp"
 
 FloodFiller::FloodFiller(unsigned int width, unsigned int height) {
 
@@ -36,7 +37,7 @@ void FloodFiller::process(const Texture * textureId, Output mode) {
 
 void FloodFiller::extractAndPropagate(const Texture * textureId) {
 	// Render seed positions in a 2 channels framebuffer (each non-black pixel is a seed).
-	glDisable(GL_DEPTH_TEST);
+	GLUtilities::setDepthState(false);
 	_ping->bind();
 	_ping->setViewport();
 	_extract->use();

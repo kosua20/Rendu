@@ -4,7 +4,6 @@
 #include "scene/Animated.hpp"
 #include "scene/Object.hpp"
 #include "graphics/Framebuffer.hpp"
-#include "processing/BoxBlur.hpp"
 
 /**
  \brief A directional light, where all light rays have the same direction.

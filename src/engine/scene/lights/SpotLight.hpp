@@ -4,7 +4,6 @@
 #include "scene/Animated.hpp"
 #include "scene/Object.hpp"
 #include "graphics/Framebuffer.hpp"
-#include "processing/BoxBlur.hpp"
 
 /**
  \brief A spotlight, where light rays in a given cone are radiating from a single point in space. Implements distance attenuation and cone soft transition.

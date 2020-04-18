@@ -24,7 +24,7 @@ PoissonFiller::PoissonFiller(unsigned int width, unsigned int height, unsigned i
 
 void PoissonFiller::process(const Texture * textureId) {
 	// Compute the color boundary of the mask..
-	glDisable(GL_DEPTH_TEST);
+	GLUtilities::setDepthState(false);
 	_preproc->bind();
 	_preproc->setViewport();
 	GLUtilities::clearColor(glm::vec4(0.0f));

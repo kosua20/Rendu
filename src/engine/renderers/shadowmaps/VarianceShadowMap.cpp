@@ -18,8 +18,8 @@ void VarianceShadowMap2D::draw(const Scene & scene) const {
 	_map->bind();
 	_map->setViewport();
 	GLUtilities::clearColorAndDepth(glm::vec4(1.0f), 1.0f);
-	glEnable(GL_CULL_FACE);
-	glEnable(GL_DEPTH_TEST);
+	GLUtilities::setCullState(true);
+	GLUtilities::setDepthState(true);
 	_program->use();
 
 	const Frustum lightFrustum(_light->vp());
@@ -33,7 +33,7 @@ void VarianceShadowMap2D::draw(const Scene & scene) const {
 			continue;
 		}
 		if(object.twoSided()) {
-			glDisable(GL_CULL_FACE);
+			GLUtilities::setCullState(false);
 		}
 		_program->uniform("hasMask", object.masked());
 		if(object.masked()) {
@@ -42,12 +42,12 @@ void VarianceShadowMap2D::draw(const Scene & scene) const {
 		const glm::mat4 lightMVP = _light->vp() * object.model();
 		_program->uniform("mvp", lightMVP);
 		GLUtilities::drawMesh(*(object.mesh()));
-		glEnable(GL_CULL_FACE);
+		GLUtilities::setCullState(true);
 	}
 	_map->unbind();
 	
 	// --- Blur pass --------
-	glDisable(GL_DEPTH_TEST);
+	GLUtilities::setDepthState(false);
 	_blur->process(_map->textureId());
 }
 
@@ -71,8 +71,8 @@ void VarianceShadowMapCube::draw(const Scene & scene) const {
 	// Udpate the light vp matrices.
 	const auto & faces = _light->vpFaces();
 
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
+	GLUtilities::setDepthState(true);
+	GLUtilities::setCullState(true);
 	_map->setViewport();
 	_program->use();
 	// Pass the world space light position, and the projection matrix far plane.
@@ -93,7 +93,7 @@ void VarianceShadowMapCube::draw(const Scene & scene) const {
 				continue;
 			}
 			if(object.twoSided()) {
-				glDisable(GL_CULL_FACE);
+				GLUtilities::setCullState(false);
 			}
 			const glm::mat4 mvp = faces[i] * object.model();
 			_program->uniform("mvp", mvp);
@@ -103,12 +103,12 @@ void VarianceShadowMapCube::draw(const Scene & scene) const {
 				GLUtilities::bindTexture(object.textures()[0], 0);
 			}
 			GLUtilities::drawMesh(*(object.mesh()));
-			glEnable(GL_CULL_FACE);
+			GLUtilities::setCullState(true);
 		}
 	}
 	_map->unbind();
 	// No blurring pass for now.
-	glDisable(GL_DEPTH_TEST);
+	GLUtilities::setDepthState(false);
 }
 
 void VarianceShadowMapCube::clean(){
