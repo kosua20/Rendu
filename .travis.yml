@@ -4,7 +4,7 @@ branches:
 
 language: cpp
 
-matrix:
+jobs:
   include:
     - os: osx
       osx_image: xcode10
@@ -13,7 +13,7 @@ matrix:
         - tar -xzf premake.tar.gz
         - HOMEBREW_NO_AUTO_UPDATE=1 brew install doxygen
       env:
-        - BUILD_DOCS="0"
+        - BUILD_DOCS="1"
     - os: linux
       dist: bionic
       compiler: gcc
@@ -54,8 +54,9 @@ deploy:
   provider: pages:git
   edge: true
   cleanup: false
-  token: $GITHUB_TOKEN
   keep_history: true
+  repo: Rendu-documentation
+  token: $GITHUB_TOKEN
   target_branch: master
   email: "kosua20@gmail.com"
   name: "Simon Rodriguez"
