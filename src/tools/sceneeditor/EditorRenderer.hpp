@@ -37,7 +37,11 @@ public:
 
 private:
 	
-	/** Render background object. */
+	/** Render background object.
+	 \param view the view matrix
+	 \param proj the projection matrix
+	 \param pos the viewer position
+	 */
 	void renderBackground(const glm::mat4 & view, const glm::mat4 & proj, const glm::vec3 & pos);
 
 	DebugLightRenderer _lightsDebug; ///< Lights wireframe renderer.

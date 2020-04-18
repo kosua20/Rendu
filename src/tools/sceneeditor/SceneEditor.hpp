@@ -33,15 +33,18 @@ public:
 	void resize() override;
 
 private:
-	
+
+	/** Set the scene to display.
+	 \param scene the new scene
+	 */
 	void setScene(const std::shared_ptr<Scene> & scene);
 	
-	EditorRenderer _renderer;
+	EditorRenderer _renderer; ///< Scene renderer.
 	const Program * _passthrough;   ///< Passthrough program.
 	
 	std::vector<std::shared_ptr<Scene>> _scenes; ///< The existing scenes.
 	std::vector<std::string> _sceneNames; ///< The associated scene names.
-	int _selectedObject = -1;
+	int _selectedObject = -1; ///< Currently selected object.
 	
 	size_t _currentScene = 0; ///< Currently selected scene.
 	float _cameraFOV	 = 70.0f;	///< The adjustable camera fov in degrees.
