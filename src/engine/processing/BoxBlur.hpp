@@ -15,6 +15,7 @@ class BoxBlur : public Blur {
 public:
 	/**
 	 Constructor. Can use either an exhaustive 5x5 box blur (25 samples) or an approximate version with a checkerboard pattern (13 samples).
+	 \param shape the shape of the textures to process
 	 \param width the internal resolution width
 	 \param height the internal resolution height
 	 \param approximate toggles the approximate box blur

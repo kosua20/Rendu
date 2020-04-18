@@ -3,15 +3,6 @@
 #include "graphics/GPUObjects.hpp"
 #include "Common.hpp"
 
-/** Combining operator for TextureShape.
- \param t0 first flag
- \param t1 second flag
- \return reference to the first flag after combination with the second flag.
- */
-inline TextureShape & operator|=(TextureShape & t0, TextureShape & t1) {
-	return t0 = t0 | t1;
-}
-
 /**
  \brief Represents a texture containing one or more images, stored on the CPU and/or GPU.
  \ingroup Resources
