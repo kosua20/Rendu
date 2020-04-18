@@ -40,6 +40,7 @@ private:
 	void setScene(const std::shared_ptr<Scene> & scene);
 	
 	EditorRenderer _renderer; ///< Scene renderer.
+	std::unique_ptr<Framebuffer> _sceneFramebuffer; ///< Scene buffer.
 	const Program * _passthrough;   ///< Passthrough program.
 	
 	std::vector<std::shared_ptr<Scene>> _scenes; ///< The existing scenes.

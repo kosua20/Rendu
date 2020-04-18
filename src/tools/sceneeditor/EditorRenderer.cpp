@@ -6,22 +6,16 @@
 #include "resources/Texture.hpp"
 #include "scene/Sky.hpp"
 
-EditorRenderer::EditorRenderer(const glm::vec2 & resolution) :
+EditorRenderer::EditorRenderer() :
 	_lightsDebug("object_basic_uniform") {
-		
-	_renderResolution = resolution;
-	// Setup camera parameters.
-	const int renderWidth  = int(_renderResolution[0]);
-	const int renderHeight = int(_renderResolution[1]);
 
-	// GL setup
-		_sceneFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, {Layout::RGB8, Filter::LINEAR_NEAREST, Wrap::CLAMP}, true));
+	_preferredFormat.push_back({Layout::RGB8, Filter::LINEAR_NEAREST, Wrap::CLAMP});
+	_needsDepth = true;
+		
 	_objectProgram	  = Resources::manager().getProgram("object_basic_lit_texture");
 	_skyboxProgram	  = Resources::manager().getProgram("skybox_editor", "skybox_infinity", "skybox_basic");
 	_bgProgram		  = Resources::manager().getProgram("background_infinity");
 	_atmoProgram	  = Resources::manager().getProgram("atmosphere_editor", "background_infinity", "atmosphere_debug");
-		
-	_renderResult = _sceneFramebuffer->textureId();
 		
 	Resources::manager().getTexture("debug-grid", { Layout::RGB8, Filter::LINEAR_LINEAR, Wrap::REPEAT}, Storage::GPU);
 	
@@ -32,7 +26,7 @@ void EditorRenderer::setScene(const std::shared_ptr<Scene> & scene) {
 	_scene = scene;
 }
 
-void EditorRenderer::draw(const Camera & camera) {
+void EditorRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_t layer) {
 
 	const glm::mat4 & view = camera.view();
 	const glm::mat4 & proj = camera.projection();
@@ -41,8 +35,8 @@ void EditorRenderer::draw(const Camera & camera) {
 	// Draw the scene.
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
-	_sceneFramebuffer->bind();
-	_sceneFramebuffer->setViewport();
+	framebuffer.bind(layer);
+	framebuffer.setViewport();
 	GLUtilities::clearColorAndDepth(glm::vec4(0.0f), 1.0f);
 	
 	// Render all objects.
@@ -73,7 +67,7 @@ void EditorRenderer::draw(const Camera & camera) {
 	// Render the background.
 	renderBackground(view, proj, camera.position());
 	
-	_sceneFramebuffer->unbind();
+	framebuffer.unbind();
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 
@@ -125,15 +119,4 @@ void EditorRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 & 
 	}
 	glDepthFunc(GL_LESS);
 	glDepthMask(GL_TRUE);
-}
-
-
-void EditorRenderer::clean() {
-	_sceneFramebuffer->clean();
-}
-
-void EditorRenderer::resize(unsigned int width, unsigned int height) {
-	_renderResolution = {float(width), float(height)};
-	// Resize the framebuffers.
-	_sceneFramebuffer->resize(_renderResolution);
 }

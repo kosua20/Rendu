@@ -1,10 +1,11 @@
 #include "SceneEditor.hpp"
 #include "graphics/GLUtilities.hpp"
 
-SceneEditor::SceneEditor(RenderingConfig & config) : CameraApp(config), _renderer(config.renderingResolution()){
+SceneEditor::SceneEditor(RenderingConfig & config) : CameraApp(config) {
 	_cameraFOV = _userCamera.fov() * 180.0f / glm::pi<float>();
 	_passthrough = Resources::manager().getProgram2D("passthrough");
-		
+
+	_sceneFramebuffer = _renderer.createOutput(uint(config.renderingResolution()[0]), uint(config.renderingResolution()[1]));
 		 
 	// Query existing scenes.
 	std::map<std::string, std::string> sceneInfos;
@@ -53,14 +54,14 @@ void SceneEditor::draw() {
 		return;
 	}
 
-	_renderer.draw(_userCamera);
+	_renderer.draw(_userCamera, *_sceneFramebuffer);
 
 	// We now render a full screen quad in the default framebuffer, using sRGB space.
 	Framebuffer::backbuffer()->bind(Framebuffer::Mode::SRGB);
 	GLUtilities::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 	_passthrough->use();
 	_passthrough->uniform("flip", 0);
-	ScreenQuad::draw(_renderer.result());
+	ScreenQuad::draw(_sceneFramebuffer->textureId());
 	Framebuffer::backbuffer()->unbind();
 	checkGLError();
 }
@@ -215,11 +216,9 @@ void SceneEditor::physics(double fullTime, double frameTime) {
 }
 
 void SceneEditor::clean() {
-	_renderer.clean();
+	_sceneFramebuffer->clean();
 }
 
 void SceneEditor::resize() {
-	const glm::vec2 renderRes = _config.renderingResolution();
-	// Resize the framebuffers.
-	_renderer.resize(uint(renderRes[0]), uint(renderRes[1]));
+	_sceneFramebuffer->resize(_config.renderingResolution());
 }

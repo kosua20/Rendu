@@ -16,9 +16,8 @@ class EditorRenderer final : public Renderer {
 
 public:
 	/** Constructor.
-	 \param resolution the rendering resolution
 	 */
-	explicit EditorRenderer(const glm::vec2 & resolution);
+	explicit EditorRenderer();
 
 	/** Set the scene to render.
 	 \param scene the new scene
@@ -26,14 +25,7 @@ public:
 	void setScene(const std::shared_ptr<Scene> & scene);
 
 	/** \copydoc Renderer::draw */
-	void draw(const Camera & camera) override;
-
-	/** \copydoc Renderer::clean */
-	void clean() override;
-
-	/** \copydoc Renderer::resize
-	 */
-	void resize(unsigned int width, unsigned int height) override;
+	void draw(const Camera & camera, Framebuffer & framebuffer, size_t layer = 0) override;
 
 private:
 	
@@ -45,8 +37,6 @@ private:
 	void renderBackground(const glm::mat4 & view, const glm::mat4 & proj, const glm::vec3 & pos);
 
 	DebugLightRenderer _lightsDebug; ///< Lights wireframe renderer.
-	
-	std::unique_ptr<Framebuffer> _sceneFramebuffer; ///< Scene buffer.
 
 	const Program * _objectProgram; ///< Basic object program.
 	const Program * _skyboxProgram; ///< Skybox program.
