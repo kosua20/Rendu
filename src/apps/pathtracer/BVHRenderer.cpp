@@ -5,14 +5,12 @@
 #include "graphics/ScreenQuad.hpp"
 #include "resources/Texture.hpp"
 
-BVHRenderer::BVHRenderer(const glm::vec2 & resolution) {
-	// Setup camera parameters.
-	_renderResolution = resolution;
+BVHRenderer::BVHRenderer() {
 	// GL setup
-	_sceneFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(uint(_renderResolution[0]), uint(_renderResolution[1]), {Layout::RGB8, Filter::LINEAR_NEAREST, Wrap::CLAMP}, true));
-	_objectProgram	= Resources::manager().getProgram("object_basic_lit");
-	_bvhProgram		  = Resources::manager().getProgram("object_basic_color");
-	_renderResult = _sceneFramebuffer->textureId();
+	_preferredFormat.push_back({Layout::RGB8, Filter::LINEAR_NEAREST, Wrap::CLAMP});
+	_needsDepth = true;
+	_objectProgram = Resources::manager().getProgram("object_basic_lit");
+	_bvhProgram = Resources::manager().getProgram("object_basic_color");
 	checkGLError();
 }
 
@@ -30,12 +28,12 @@ void BVHRenderer::setScene(const std::shared_ptr<Scene> & scene, const Raycaster
 	checkGLError();
 }
 
-void BVHRenderer::draw(const Camera & camera) {
+void BVHRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_t layer) {
 
 	// Draw the scene.
 	glEnable(GL_DEPTH_TEST);
-	_sceneFramebuffer->bind();
-	_sceneFramebuffer->setViewport();
+	framebuffer.bind(layer);
+	framebuffer.setViewport();
 	GLUtilities::clearColorAndDepth(glm::vec4(0.0f), 1.0f);
 	glDisable(GL_CULL_FACE);
 
@@ -75,13 +73,12 @@ void BVHRenderer::draw(const Camera & camera) {
 	}
 
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	_sceneFramebuffer->unbind();
+	framebuffer.unbind();
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 }
 
 void BVHRenderer::clean() {
-	_sceneFramebuffer->clean();
 	for(Mesh & level : _bvhLevels) {
 		level.clean();
 	}
@@ -89,12 +86,6 @@ void BVHRenderer::clean() {
 		level.clean();
 	}
 	_rayVis.clean();
-}
-
-void BVHRenderer::resize(unsigned int width, unsigned int height) {
-	_renderResolution = glm::vec2(width, height);
-	// Resize the framebuffers.
-	_sceneFramebuffer->resize(_renderResolution);
 }
 
 void BVHRenderer::castRay(const glm::vec3 & position, const glm::vec3 & direction) {

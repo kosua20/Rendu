@@ -49,6 +49,7 @@ private:
 	std::shared_ptr<Scene> _scene;				///< The scene to render.
 	std::unique_ptr<PathTracer> _pathTracer;	///< The scene specific path tracer.
 	std::unique_ptr<BVHRenderer> _bvhRenderer;	///< The scene debug viewer.
+	std::unique_ptr<Framebuffer> _sceneFramebuffer; ///< Scene buffer.
 
 	float _cameraFOV	 = 70.0f;	///< The adjustable camera fov in degrees.
 	int _samples		 = 8;		///< Samples count.

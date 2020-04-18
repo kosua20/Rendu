@@ -6,9 +6,10 @@
 #include "resources/Texture.hpp"
 
 PathTracerApp::PathTracerApp(RenderingConfig & config, const std::shared_ptr<Scene> & scene) : CameraApp(config) {
-	
+
+	_bvhRenderer.reset(new BVHRenderer());
 	const glm::vec2 renderRes = _config.renderingResolution();
-	_bvhRenderer.reset(new BVHRenderer(renderRes));
+	_sceneFramebuffer = _bvhRenderer->createOutput(uint(renderRes[0]), uint(renderRes[1]));
 	_passthrough = Resources::manager().getProgram2D("passthrough");
 	
 	// Initial setup for rendering image.
@@ -73,13 +74,13 @@ void PathTracerApp::draw() {
 	}
 	
 	// Draw the real time visualization.
-	_bvhRenderer->draw(_userCamera);
+	_bvhRenderer->draw(_userCamera, *_sceneFramebuffer);
 	// We now render a full screen quad in the default framebuffer, using sRGB space.
 	Framebuffer::backbuffer()->bind(Framebuffer::Mode::SRGB);
 	GLUtilities::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 	_passthrough->use();
 	_passthrough->uniform("flip", 0);
-	ScreenQuad::draw(_bvhRenderer->result());
+	ScreenQuad::draw(_sceneFramebuffer->textureId());
 	Framebuffer::backbuffer()->unbind();
 }
 
@@ -220,13 +221,13 @@ void PathTracerApp::physics(double, double) {
 void PathTracerApp::clean() {
 	_bvhRenderer->clean();
 	_renderTex.clean();
+	_sceneFramebuffer->clean();
 }
 
 void PathTracerApp::resize() {
 	// Same aspect ratio as the display resolution
 	const glm::vec2 renderRes = _config.renderingResolution();
-	// Resize the renderer.
-	_bvhRenderer->resize(uint(renderRes[0]), uint(renderRes[1]));
+	_sceneFramebuffer->resize(renderRes);
 	// Udpate the image resolution, using the new aspect ratio.
 	_renderTex.width = uint(std::round(_config.screenResolution[0] / _config.screenResolution[1] * float(_renderTex.height)));
 	checkGLError();

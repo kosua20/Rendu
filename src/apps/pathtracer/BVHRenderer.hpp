@@ -18,9 +18,8 @@ class BVHRenderer final : public Renderer {
 
 public:
 	/** Constructor.
-	 \param resolution the rendering resolution
 	 */
-	explicit BVHRenderer(const glm::vec2 & resolution);
+	explicit BVHRenderer();
 
 	/** Set the scene to render.
 	 \param scene the new scene
@@ -29,14 +28,10 @@ public:
 	void setScene(const std::shared_ptr<Scene> & scene, const Raycaster & raycaster);
 
 	/** \copydoc Renderer::draw */
-	void draw(const Camera & camera) override;
+	void draw(const Camera & camera, Framebuffer & framebuffer, size_t layer = 0) override;
 
 	/** \copydoc Renderer::clean */
 	void clean() override;
-
-	/** \copydoc Renderer::resize
-	 */
-	void resize(unsigned int width, unsigned int height) override;
 
 	/** Generate visualisation for a ray cast from a position.
 	 \param position the ray origin.
