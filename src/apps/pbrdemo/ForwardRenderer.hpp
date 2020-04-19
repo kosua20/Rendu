@@ -25,6 +25,8 @@ class ForwardRenderer final : public Renderer {
 public:
 	/** Constructor.
 	 \param resolution the initial rendering resolution
+	 \param mode the shadow rendering algorithm
+	 \param ssao should screen space ambient occlusion be computed	 
 	 */
 	explicit ForwardRenderer(const glm::vec2 & resolution, ShadowMode mode, bool ssao);
 

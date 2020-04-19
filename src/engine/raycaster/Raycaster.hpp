@@ -114,7 +114,7 @@ public:
 private:
 	/** Internal triangle representation. */
 	struct TriangleInfos {
-		BoundingBox box;		   ///< The triang axis-aligned bounding box.
+		BoundingBox box;		   ///< The triangle axis-aligned bounding box.
 		unsigned long v0	  = 0; ///< First vertex index.
 		unsigned long v1	  = 0; ///< Second vertex index.
 		unsigned long v2	  = 0; ///< Third vertex index.
@@ -136,7 +136,7 @@ private:
 
 	/** Base element of the acceleration structure. */
 	struct Node {
-		BoundingBox box;	 ///< Boudinng box of the contained geometry.
+		BoundingBox box;	 ///< Bounding box of the contained geometry.
 		size_t left  = 0;	///< Index of the left child element, or first triangle index if this is a leaf.
 		size_t right = 0;	///< Index of the right child element, or number of triangles if this is a leaf.
 		bool leaf	= true; ///< Is this a leaf in the hierarchy.
