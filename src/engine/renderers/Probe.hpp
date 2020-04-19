@@ -25,7 +25,9 @@ public:
 
 	/** Update the content of the cubemap. */
 	void draw();
-	
+
+	void integrate(float clamp);
+
 	/** Clean internal resources.
 	 */
 	void clean();
@@ -34,7 +36,7 @@ public:
 	const Texture * textureId() const {
 		return _framebuffer->textureId();
 	}
-
+	
 	/** \return the probe position */
 	const glm::vec3 & position() const {
 		return _position;
@@ -62,5 +64,6 @@ private:
 	std::shared_ptr<Renderer> _renderer; ///< The renderer to use.
 
 	std::array<Camera, 6> _cameras; ///< Camera for each face.
+	std::array<glm::mat4, 6> _mvps; ///< MVP for each face.
 	glm::vec3 _position; ///< The probe location.
 };
