@@ -372,9 +372,9 @@ void GLUtilities::allocateTexture(const Texture & texture) {
 
 	for(size_t mid = 0; mid < texture.levels; ++mid) {
 		// Mipmap dimensions.
-		const GLsizei w = GLsizei(std::max(1, int(texture.width / std::pow(2, mid))));
-		const GLsizei h = GLsizei(std::max(1, int(texture.height / std::pow(2, mid))));
-		const GLsizei d = GLsizei(std::max(1, int(texture.depth / std::pow(2, mid))));
+		const GLsizei w = GLsizei(std::max<uint>(1, texture.width  / (1 << mid)));
+		const GLsizei h = GLsizei(std::max<uint>(1, texture.height / (1 << mid)));
+
 		const GLint mip = GLint(mid);
 
 		if(texture.shape == TextureShape::D1) {
@@ -396,6 +396,7 @@ void GLUtilities::allocateTexture(const Texture & texture) {
 			}
 
 		} else if(texture.shape == TextureShape::D3) {
+			const GLsizei d = GLsizei(std::max<uint>(1, texture.depth / (1 << mid)));
 			glTexImage3D(target, mip, typeFormat, w, h, d, 0, format, type, nullptr);
 
 		} else if(texture.shape == TextureShape::Array1D) {
@@ -529,7 +530,7 @@ void GLUtilities::downloadTexture(Texture & texture) {
 		return;
 	}
 	if(!texture.images.empty()) {
-		Log::Warning() << Log::OpenGL << "Texture already contain CPU data, will be erased." << std::endl;
+		Log::Verbose() << Log::OpenGL << "Texture already contain CPU data, will be erased." << std::endl;
 		texture.images.clear();
 	}
 
@@ -544,8 +545,8 @@ void GLUtilities::downloadTexture(Texture & texture) {
 
 	// For each mip level.
 	for(size_t mid = 0; mid < texture.levels; ++mid) {
-		const GLsizei w = GLsizei(std::max(1, int(texture.width / std::pow(2, mid))));
-		const GLsizei h = GLsizei(std::max(1, int(texture.height / std::pow(2, mid))));
+		const GLsizei w = GLsizei(std::max<uint>(1, texture.width  / (1 << mid)));
+		const GLsizei h = GLsizei(std::max<uint>(1, texture.height / (1 << mid)));
 		const GLint mip = GLint(mid);
 
 		if(texture.shape == TextureShape::D2) {
@@ -865,9 +866,14 @@ void GLUtilities::blit(const Framebuffer & src, const Framebuffer & dst, Filter 
 	dst.unbind();
 }
 
+
 void GLUtilities::blit(const Framebuffer & src, const Framebuffer & dst, size_t lSrc, size_t lDst, Filter filter) {
-	src.bind(lSrc, Framebuffer::Mode::READ);
-	dst.bind(lDst, Framebuffer::Mode::WRITE);
+	GLUtilities::blit(src, dst, lSrc, lDst, 0, 0, filter);
+}
+
+void GLUtilities::blit(const Framebuffer & src, const Framebuffer & dst, size_t lSrc, size_t lDst, size_t mipSrc, size_t mipDst, Filter filter) {
+	src.bind(lSrc, mipSrc, Framebuffer::Mode::READ);
+	dst.bind(lDst, mipDst, Framebuffer::Mode::WRITE);
 	const GLenum filterGL = filter == Filter::LINEAR ? GL_LINEAR : GL_NEAREST;
 	glBlitFramebuffer(0, 0, src.width(), src.height(), 0, 0, dst.width(), dst.height(), GL_COLOR_BUFFER_BIT, filterGL);
 	src.unbind();
