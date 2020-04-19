@@ -51,6 +51,9 @@ public:
 	 */
 	void setViewpoint(const Camera & cam) { _camera = cam; }
 
+	/** \return true if the scene contains animations */
+	bool animated() const { return _animated; }
+
 	std::vector<Object> objects;				///< The objects in the scene.
 	std::vector<std::shared_ptr<Light>> lights; ///< Lights present in the scene.
 
@@ -127,4 +130,5 @@ private:
 	glm::mat4 _sceneModel = glm::mat4(1.0f); ///< The scene global transformation.
 	std::string _name;						 ///< The scene file name.
 	bool _loaded = false;					 ///< Has the scene already been loaded from disk.
+	bool _animated = false;					 ///< Is the scene using animations.
 };

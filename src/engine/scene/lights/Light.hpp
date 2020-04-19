@@ -91,12 +91,12 @@ public:
 	 \return the model matrix
 	 */
 	const glm::mat4 & model() const { return _model; }
-	
+
 	/** Get the light shadow map texture (either 2D or cube depending on the light type) and location.
 	 \return the shadow map information
 	 */
 	const ShadowMap::Region & shadowMap() const { return _shadowMapInfos; }
-	
+
 	/** Set the light shadow map (either 2D or cube depending on the light type).
 	 \param map the shadow map texture
 	 \param layer the texture layer containing the map
@@ -110,6 +110,11 @@ public:
 		_shadowMapInfos.maxUV = maxUV;
 		_shadowMapInfos.layer = layer;
 	}
+
+	/** Check if the light is evolving over time.
+	 \return a boolean denoting if animations are applied to the light
+	 */
+	bool animated() const { return !_animations.empty(); }
 	
 	/** Helper that can instantiate a light of any type from the passed keywords and parameters.
 	 \param params a key-value tuple containing light parameters

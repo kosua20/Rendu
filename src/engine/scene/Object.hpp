@@ -95,6 +95,11 @@ public:
 	 */
 	bool masked() const { return _masked; }
 
+	/** Check if the object is moving over time.
+	 \return a boolean denoting if animations are applied to the object
+	 */
+	bool animated() const { return !_animations.empty(); }
+
 	/** Setup an object parameters from a list of key-value tuples. The following keywords will be searched for:
 	 \verbatim
 	 type: objecttype
@@ -139,7 +144,7 @@ public:
 	/** Move assignment.
 	 \return a reference to the object assigned to
 	 */
-	Object & operator=(Object &&) = delete;
+	Object & operator=(Object &&) = default;
 
 protected:
 	const Mesh * _mesh = nullptr;						 ///< Geometry of the object.

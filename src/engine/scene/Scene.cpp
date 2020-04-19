@@ -63,6 +63,21 @@ void Scene::init(Storage options) {
 		light->setScene(_bbox);
 	}
 	_loaded = true;
+
+	// Check if the scene is static.
+	for(const auto & obj : objects){
+		if(obj.animated()){
+			_animated = true;
+			break;
+		}
+	}
+	for(const auto & light : lights){
+		if(light->animated()){
+			_animated = true;
+			break;
+		}
+	}
+
 	const auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start);
 	Log::Info() << Log::Resources << "Loading took " << duration.count() << "ms." << std::endl;
 }
@@ -216,8 +231,8 @@ BoundingBox Scene::computeBoundingBox(bool onlyShadowCasters) {
 		bbox.merge(obj.boundingBox());
 	}
 	Log::Info() << Log::Resources << "Scene bounding box:" << std::endl
-				<< "mini: " << bbox.minis << std::endl
-				<< "maxi: " << bbox.maxis << "." << std::endl;
+				<< "\t\tmini: " << bbox.minis << std::endl
+				<< "\t\tmaxi: " << bbox.maxis << "." << std::endl;
 	return bbox;
 }
 
