@@ -1,5 +1,5 @@
 * scene:
-	probe: 0d.0,1.0,0.0
+	probe: 0.0,1.0,0.0
 	irradiance: kiara_dawn_shcoeffs
 
 * background:
@@ -83,12 +83,13 @@
 
 * object:
 	mesh: sphere
-	shadows: true
+	shadows: false
+	twosided: false
 	type: PBRNoUVs
 	textures:
 		- srgb: 1.0,1.0,1.0
 		- rgb: default_normal
-		- rgb: 0.1,1.0,1.0
+		- rgb: 0.2,1.0,1.0
 	translation: -0.35,1.0,-0.25
 	scaling: 0.5
 
