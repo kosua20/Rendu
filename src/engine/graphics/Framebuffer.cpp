@@ -2,15 +2,15 @@
 #include "graphics/GPUObjects.hpp"
 #include "graphics/GLUtilities.hpp"
 
-Framebuffer::Framebuffer(unsigned int width, unsigned int height, const Descriptor & descriptor, bool depthBuffer) :
-	Framebuffer(TextureShape::D2, width, height, 1, std::vector<Descriptor>(1, descriptor), depthBuffer) {
+Framebuffer::Framebuffer(uint width, uint height, const Descriptor & descriptor, bool depthBuffer) :
+	Framebuffer(TextureShape::D2, width, height, 1, 1, std::vector<Descriptor>(1, descriptor), depthBuffer) {
 }
 
-Framebuffer::Framebuffer(unsigned int width, unsigned int height, const std::vector<Descriptor> & descriptors, bool depthBuffer) :
-	Framebuffer(TextureShape::D2, width, height, 1, descriptors, depthBuffer) {
+Framebuffer::Framebuffer(uint width, uint height, const std::vector<Descriptor> & descriptors, bool depthBuffer) :
+	Framebuffer(TextureShape::D2, width, height, 1, 1, descriptors, depthBuffer) {
 }
 
-Framebuffer::Framebuffer(TextureShape shape, unsigned int width, unsigned int height, unsigned int depth, const std::vector<Descriptor> & descriptors, bool depthBuffer) :
+Framebuffer::Framebuffer(TextureShape shape, uint width, uint height, uint depth, uint mips, const std::vector<Descriptor> & descriptors, bool depthBuffer) :
 	_width(width), _height(height) {
 
 	// Check that the shape is supported.
@@ -45,7 +45,7 @@ Framebuffer::Framebuffer(TextureShape shape, unsigned int width, unsigned int he
 			_idDepth.width  = _width;
 			_idDepth.height = _height;
 			_idDepth.depth  = 1;
-			_idDepth.levels = 1;
+			_idDepth.levels = mips;
 			// For now we don't support layered rendering, depth is always a TEXTURE_2D.
 			_idDepth.shape  = TextureShape::D2;
 			GLUtilities::setupTexture(_idDepth, descriptor);
@@ -58,11 +58,11 @@ Framebuffer::Framebuffer(TextureShape shape, unsigned int width, unsigned int he
 		} else {
 			_idColors.emplace_back();
 			Texture & tex = _idColors.back();
-			tex.width	 = _width;
-			tex.height	= _height;
-			tex.depth	 = _depth;
-			tex.levels	= 1;
-			tex.shape	 = shape;
+			tex.width     = _width;
+			tex.height	  = _height;
+			tex.depth	  = _depth;
+			tex.levels	  = mips;
+			tex.shape	  = shape;
 			GLUtilities::setupTexture(tex, descriptor);
 
 			// Link the texture to the color attachment (ie output) of the framebuffer.
@@ -156,7 +156,7 @@ void Framebuffer::unbind() const {
 	glDisable(GL_FRAMEBUFFER_SRGB);
 }
 
-void Framebuffer::resize(unsigned int width, unsigned int height) {
+void Framebuffer::resize(uint width, uint height) {
 	_width  = width;
 	_height = height;
 

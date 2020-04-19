@@ -2,9 +2,9 @@
 #include "graphics/GPUObjects.hpp"
 #include "graphics/GLUtilities.hpp"
 
-Probe::Probe(const glm::vec3 & position, std::shared_ptr<Renderer> renderer, unsigned int size, const glm::vec2 & clippingPlanes){
+Probe::Probe(const glm::vec3 & position, std::shared_ptr<Renderer> renderer, uint size, uint mips, const glm::vec2 & clippingPlanes){
 	_renderer = renderer;
-	_framebuffer = renderer->createOutput(TextureShape::Cube, size, size, 6);
+	_framebuffer = renderer->createOutput(TextureShape::Cube, size, size, 6, mips);
 	_framebuffer->clear(glm::vec4(0.0f), 1.0f);
 	_position = position;
 

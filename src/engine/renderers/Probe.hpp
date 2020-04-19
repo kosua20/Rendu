@@ -17,14 +17,15 @@ public:
 	 \param position the probe position in the scene
 	 \param renderer the renderer to use to fill the cubemap
 	 \param size the dimensions of the cubemap
+	 \param mips the number of mip levels of the cubemap
 	 \param clippingPlanes the near/far planes to use when rendering each face
 	 \note If the renderer is using the output of the probe, be careful to note use it in the last rendering step.
 	 */
-	Probe(const glm::vec3 & position, std::shared_ptr<Renderer> renderer, unsigned int size, const glm::vec2 & clippingPlanes);
+	Probe(const glm::vec3 & position, std::shared_ptr<Renderer> renderer, uint size, uint mips, const glm::vec2 & clippingPlanes);
 
 	/** Update the content of the cubemap. */
 	void draw();
-
+	
 	/** Clean internal resources.
 	 */
 	void clean();

@@ -25,7 +25,7 @@ public:
 	 \param descriptor the color attachment texture descriptor (format, filtering,...)
 	 \param depthBuffer should the framebuffer contain a depth buffer to properly handle 3D geometry
 	 */
-	Framebuffer(unsigned int width, unsigned int height, const Descriptor & descriptor, bool depthBuffer);
+	Framebuffer(uint width, uint height, const Descriptor & descriptor, bool depthBuffer);
 
 	/** Setup the framebuffer (attachments, renderbuffer, depth buffer, textures IDs,...)
 	 \param width the width of the framebuffer
@@ -33,17 +33,18 @@ public:
 	 \param descriptors the color attachments texture descriptors (format, filtering,...)
 	 \param depthBuffer should the framebuffer contain a depth buffer to properly handle 3D geometry
 	 */
-	Framebuffer(unsigned int width, unsigned int height, const std::vector<Descriptor> & descriptors, bool depthBuffer);
+	Framebuffer(uint width, uint height, const std::vector<Descriptor> & descriptors, bool depthBuffer);
 
 	/** Setup the framebuffer (attachments, renderbuffer, depth buffer, textures IDs,...)
 	 \param shape the texture shape (2D, cubemap, array,...)
 	 \param width the width of the framebuffer
 	 \param height the height of the framebuffer
 	 \param depth the number of layers of the framebuffer
+	 \param mips the number of mip levels of the framebuffer
 	 \param descriptors the color attachments texture descriptors (format, filtering,...)
 	 \param depthBuffer should the framebuffer contain a depth buffer to properly handle 3D geometry
 	 */
-	Framebuffer(TextureShape shape, unsigned int width, unsigned int height, unsigned int depth, const std::vector<Descriptor> & descriptors, bool depthBuffer);
+	Framebuffer(TextureShape shape, uint width, uint height, uint depth, uint mips, const std::vector<Descriptor> & descriptors, bool depthBuffer);
 
 	/**
 	 Bind the framebuffer. Shortcut for writing to a 2D framebuffer.
@@ -79,7 +80,7 @@ public:
 	 \param width the new width
 	 \param height the new height
 	 */
-	void resize(unsigned int width, unsigned int height);
+	void resize(uint width, uint height);
 
 	/**
 	 Resize the framebuffer to new dimensions.

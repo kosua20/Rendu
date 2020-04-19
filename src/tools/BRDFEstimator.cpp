@@ -216,7 +216,7 @@ void computeCubemapConvolution(const Texture & cubemapInfos, int levelsCount, in
 
 		// Create local framebuffer.
 		const Descriptor resDesc = {Layout::RGB32F, Filter::LINEAR_LINEAR, Wrap::CLAMP};
-		Framebuffer resultFramebuffer(TextureShape::Cube, w, w, 6, {resDesc}, false);
+		Framebuffer resultFramebuffer(TextureShape::Cube, w, w, 6, 1, {resDesc}, false);
 
 		// Iterate over faces.
 		for(size_t i = 0; i < 6; ++i) {

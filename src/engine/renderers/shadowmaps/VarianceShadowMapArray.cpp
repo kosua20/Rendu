@@ -5,7 +5,7 @@
 VarianceShadowMap2DArray::VarianceShadowMap2DArray(const std::vector<std::shared_ptr<Light>> & lights, const glm::vec2 & resolution){
 	_lights = lights;
 	const Descriptor descriptor = {Layout::RG32F, Filter::LINEAR, Wrap::CLAMP};
-	_map = std::unique_ptr<Framebuffer>(new Framebuffer(TextureShape::Array2D, uint(resolution.x), uint(resolution.y), uint(lights.size()), {descriptor}, true));
+	_map = std::unique_ptr<Framebuffer>(new Framebuffer(TextureShape::Array2D, uint(resolution.x), uint(resolution.y), uint(lights.size()), 1, {descriptor}, true));
 	_blur = std::unique_ptr<BoxBlur>(new BoxBlur(TextureShape::Array2D, uint(resolution.x), uint(resolution.y), uint(lights.size()), descriptor, false));
 	_program = Resources::manager().getProgram("object_depth", "light_shadow_vertex", "light_shadow_variance");
 	for(size_t lid = 0; lid < _lights.size(); ++lid){
@@ -66,7 +66,7 @@ void VarianceShadowMap2DArray::clean(){
 VarianceShadowMapCubeArray::VarianceShadowMapCubeArray(const std::vector<std::shared_ptr<PointLight>> & lights, int side){
 	_lights = lights;
 	const Descriptor descriptor = {Layout::RG16F, Filter::LINEAR, Wrap::CLAMP};
-	_map = std::unique_ptr<Framebuffer>(new Framebuffer( TextureShape::ArrayCube, side, side, uint(lights.size()), {descriptor}, true));
+	_map = std::unique_ptr<Framebuffer>(new Framebuffer( TextureShape::ArrayCube, side, side, uint(lights.size()), 1,  {descriptor}, true));
 	_program = Resources::manager().getProgram("object_cube_depth", "light_shadow_linear_vertex", "light_shadow_linear_variance");
 	for(size_t lid = 0; lid < _lights.size(); ++lid){
 		_lights[lid]->registerShadowMap(_map->textureId(), lid);

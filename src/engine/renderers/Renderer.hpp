@@ -57,9 +57,10 @@ public:
 	\param width the framebuffer width
 	\param height the framebuffer height
 	\param depth the framebuffer depth
+	\param mips the number of mip levels for the framebuffer
 	\return the allocated framebuffer
 	*/
-	std::unique_ptr<Framebuffer> createOutput(TextureShape shape, uint width, uint height, uint depth) const;
+	std::unique_ptr<Framebuffer> createOutput(TextureShape shape, uint width, uint height, uint depth, uint mips) const;
 
 	/** Destructor */
 	virtual ~Renderer() = default;
