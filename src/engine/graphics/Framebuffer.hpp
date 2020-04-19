@@ -87,6 +87,12 @@ public:
 	 */
 	void resize(const glm::ivec2 & size);
 
+	/** Clear all attachments of the framebuffer.
+	 \param color clear color
+	 \param depth clear depth
+	 */
+	void clear(const glm::vec4 & color, float depth);
+
 	/** Clean internal resources.
 	 */
 	void clean();

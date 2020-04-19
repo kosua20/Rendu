@@ -130,14 +130,14 @@ void Framebuffer::bind(size_t layer, Mode mode) const {
 	// Bind the proper slice for each color attachment.
 	for(uint cid = 0; cid < _idColors.size(); ++cid){
 		glBindTexture(_target, _idColors[cid].gpu->id);
-		const GLuint slot = GLuint(int(_idColors.size()) - 1);
+		const GLenum slot = GL_COLOR_ATTACHMENT0 + GLuint(cid);
 		const GLuint id = _idColors[cid].gpu->id;
 		if(_shape == TextureShape::D2){
-			glFramebufferTexture2D(target, GL_COLOR_ATTACHMENT0 + slot, GL_TEXTURE_2D, id, 0);
+			glFramebufferTexture2D(target, slot, GL_TEXTURE_2D, id, 0);
 		} else if(_shape == TextureShape::Cube){
-			glFramebufferTexture2D(target, GL_COLOR_ATTACHMENT0 + slot, GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + layer), id, 0);
+			glFramebufferTexture2D(target, slot, GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + layer), id, 0);
 		} else {
-			glFramebufferTextureLayer(target, GL_COLOR_ATTACHMENT0 + slot, id, 0, GLint(layer));
+			glFramebufferTextureLayer(target, slot, id, 0, GLint(layer));
 		}
 		glBindTexture(_target, 0);
 	}
@@ -184,6 +184,19 @@ void Framebuffer::resize(unsigned int width, unsigned int height) {
 
 void Framebuffer::resize(const glm::ivec2 & size) {
 	resize(uint(size[0]), uint(size[1]));
+}
+
+void Framebuffer::clear(const glm::vec4 & color, float depth){
+	// Clear depth.
+	bind(0, Mode::WRITE);
+	glClearBufferfv(GL_DEPTH, 0, &depth);
+	for(uint lid = 0; lid < _depth; ++lid){
+		bind(lid, Mode::WRITE);
+		for(uint cid = 0; cid < _idColors.size(); ++cid){
+			glClearBufferfv(GL_COLOR, GLint(cid), &color[0]);
+		}
+	}
+
 }
 
 void Framebuffer::clean() {
