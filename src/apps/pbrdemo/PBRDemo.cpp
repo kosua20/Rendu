@@ -113,11 +113,16 @@ void PBRDemo::updateMaps(){
 	_shadowTime.end();
 
 	// Probes pass.
+	static int i = 0;
 	_probesTime.begin();
 	for(auto & probe : _probes) {
-		probe->draw();
-		GLUtilities::generateMipMaps(*probe->textureId());
+		if(i == 0){
+			probe->draw();
+		} else {
+			probe->integrate(1.2f);
+		}
 	}
+	i = 1 - i;
 	_probesTime.end();
 
 }
