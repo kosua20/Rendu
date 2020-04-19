@@ -335,6 +335,11 @@ void Mesh::computeTangentsAndBinormals(bool force) {
 		if(glm::dot(glm::cross(normals[tid], tangents[tid]), binormals[tid]) < 0.0f) {
 			tangents[tid] *= -1.0f;
 		}
+		// Detect cancellations.
+		if(glm::length(binormals[tid]) < 0.1f){
+			binormals[tid] = glm::cross(normals[tid], tangents[tid]);
+		}
+		binormals[tid] = glm::normalize(binormals[tid]);
 	}
 	Log::Verbose() << Log::Resources << "Mesh: " << tangents.size() << " tangents and binormals computed." << std::endl;
 }
