@@ -21,7 +21,7 @@ ForwardRenderer::ForwardRenderer(const glm::vec2 & resolution, ShadowMode mode, 
 	const std::vector<Descriptor> descs = { descAmbient, descDirect, descNormal, descDepth};
 	_sceneFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, descs, true));
 	_ssaoPass		  = std::unique_ptr<SSAO>(new SSAO(renderHalfWidth, renderHalfHeight, 0.5f));
-	_preferredFormat.push_back(descAmbient);
+	_preferredFormat.push_back({Layout::RGB16F, Filter::LINEAR_LINEAR, Wrap::CLAMP});
 	_needsDepth = false;
 
 	_objectProgram		= Resources::manager().getProgram("object_forward");
