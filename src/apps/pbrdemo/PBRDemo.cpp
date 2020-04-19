@@ -7,12 +7,14 @@ PBRDemo::PBRDemo(RenderingConfig & config) :
 	CameraApp(config) {
 
 	const glm::vec2 renderRes = _config.renderingResolution();
-	_defRenderer.reset(new DeferredRenderer(renderRes));
-	_forRenderer.reset(new ForwardRenderer(renderRes));
+	_defRenderer.reset(new DeferredRenderer(renderRes, ShadowMode::VARIANCE, true));
+	_forRenderer.reset(new ForwardRenderer(renderRes, ShadowMode::VARIANCE, true));
 	_postprocess.reset(new PostProcessStack(renderRes));
-	_finalRender = _defRenderer->createOutput(renderRes[0], renderRes[1]);//std::unique_ptr<Framebuffer>(new Framebuffer(renderRes[0], renderRes[1], _defRenderer->preferredFormat(), false));
+	_finalRender = _defRenderer->createOutput(renderRes[0], renderRes[1]);
 	_finalProgram = Resources::manager().getProgram2D("sharpening");
-
+	
+	_probesRenderer.reset(new DeferredRenderer(glm::vec2(256,256), ShadowMode::BASIC, false));
+	
 	// Setup camera parameters.
 	_cameraFOV = _userCamera.fov() * 180.0f / glm::pi<float>();
 	_cplanes   = _userCamera.clippingPlanes();
@@ -54,6 +56,7 @@ void PBRDemo::setScene(const std::shared_ptr<Scene> & scene) {
 	// Set the scene for the renderer.
 	_defRenderer->setScene(scene);
 	_forRenderer->setScene(scene);
+	_probesRenderer->setScene(scene);
 
 	// Recreate the shadow maps.
 	// Delete existing shadow maps.
@@ -81,6 +84,40 @@ void PBRDemo::setScene(const std::shared_ptr<Scene> & scene) {
 	if(!lightsCube.empty()){
 		_shadowMaps.emplace_back(new VarianceShadowMapCubeArray(lightsCube, 512));
 	}
+
+	// Recreate probes
+	// Delete existing probes.
+	for(auto & probe : _probes) {
+		probe->clean();
+	}
+	_probes.clear();
+	// Allocate probes.
+	if(scene->environment.dynamic()){
+		_probes.emplace_back(new Probe(scene->environment.position(), _probesRenderer, 256, glm::vec2(0.01f, 1000.0f)));
+		scene->environment.registerEnvmap(_probes[0]->textureId());
+	}
+	// Trigger one-shot data update.
+	for(int i = 0; i < 3; ++i){
+		updateMaps();
+	}
+}
+
+void PBRDemo::updateMaps(){
+	// Light shadows pass.
+	_shadowTime.begin();
+	if(_updateShadows) {
+		for(const auto & map : _shadowMaps) {
+			map->draw(*_scenes[_currentScene]);
+		}
+	}
+	_shadowTime.end();
+
+	// Probes pass.
+	_probesTime.begin();
+	for(auto & probe : _probes) {
+		probe->draw();
+	}
+	_probesTime.end();
 }
 
 void PBRDemo::draw() {
@@ -90,14 +127,10 @@ void PBRDemo::draw() {
 		return;
 	}
 	
-	// Light pass.
-	_shadowTime.begin();
-	if(_updateShadows) {
-		for(const auto & map : _shadowMaps) {
-			map->draw(*_scenes[_currentScene]);
-		}
+
+	if(_scenes[_currentScene]->animated()){
+		updateMaps();
 	}
-	_shadowTime.end();
 
 	// Renderer and postproc passes.
 	_rendererTime.begin();
@@ -116,6 +149,8 @@ void PBRDemo::draw() {
 	Framebuffer::backbuffer()->bind(Framebuffer::Mode::SRGB);
 	GLUtilities::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 	_finalProgram->use();
+	GLUtilities::setDepthState(false);
+	GLUtilities::setCullState(true);
 	ScreenQuad::draw(_finalRender->textureId());
 	Framebuffer::backbuffer()->unbind();
 }
@@ -127,6 +162,7 @@ void PBRDemo::update() {
 	if(ImGui::Begin("Performance")){
 		ImGui::Text("%.1f ms, %.1f fps", ImGui::GetIO().DeltaTime * 1000.0f, ImGui::GetIO().Framerate);
 		ImGui::Text("Shadow maps update: %05.1fms", float(_shadowTime.value())/1000000.0f);
+		ImGui::Text("Probes update: %05.1fms", float(_probesTime.value())/1000000.0f);
 		ImGui::Text("Scene rendering: %05.1fms", float(_rendererTime.value())/1000000.0f);
 		ImGui::Text("Post processing: %05.1fms", float(_postprocessTime.value())/1000000.0f);
 	}
@@ -231,8 +267,12 @@ void PBRDemo::clean() {
 	_defRenderer->clean();
 	_forRenderer->clean();
 	_postprocess->clean();
+	_probesRenderer->clean();
 	for(auto & map : _shadowMaps) {
 		map->clean();
+	}
+	for(auto & probe : _probes) {
+		probe->clean();
 	}
 	_finalRender->clean();
 }
@@ -240,8 +280,10 @@ void PBRDemo::clean() {
 void PBRDemo::resize() {
 	// Same aspect ratio as the display resolution
 	const glm::vec2 renderRes = _config.renderingResolution();
-	_defRenderer->resize(uint(renderRes[0]), uint(renderRes[1]));
-	_forRenderer->resize(uint(renderRes[0]), uint(renderRes[1]));
-	_postprocess->resize(uint(renderRes[0]), uint(renderRes[1]));
+	const uint rw = uint(renderRes[0]);
+	const uint rh = uint(renderRes[1]);
+	_defRenderer->resize(rw, rh);
+	_forRenderer->resize(rw, rh);
+	_postprocess->resize(rw, rh);
 	_finalRender->resize(renderRes);
 }

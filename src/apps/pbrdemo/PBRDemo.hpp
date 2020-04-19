@@ -7,6 +7,7 @@
 #include "Application.hpp"
 #include "scene/Scene.hpp"
 #include "renderers/Renderer.hpp"
+#include "renderers/Probe.hpp"
 #include "renderers/shadowmaps/ShadowMap.hpp"
 #include "input/ControllableCamera.hpp"
 
@@ -51,10 +52,14 @@ private:
 	 */
 	void setScene(const std::shared_ptr<Scene> & scene);
 
+	void updateMaps();
+
 	std::vector<std::unique_ptr<ShadowMap>> _shadowMaps; ///< The lights shadow maps.
+	std::vector<std::unique_ptr<Probe>> _probes; ///< The environment probes.
 	std::unique_ptr<DeferredRenderer> _defRenderer; ///< Deferred PBR renderer.
 	std::unique_ptr<ForwardRenderer> _forRenderer;	 ///< Forward PBR renderer.
 	std::unique_ptr<PostProcessStack> _postprocess; ///< Post-process renderer.
+	std::shared_ptr<DeferredRenderer> _probesRenderer; ///< Renderer for the light probes.
 	std::unique_ptr<Framebuffer> _finalRender; ///< Final framebuffer.
 	const Program * _finalProgram; ///< Final display program.
 	
@@ -62,6 +67,7 @@ private:
 	std::vector<std::string> _sceneNames; ///< The associated scene names.
 
 	GPUQuery _shadowTime = GPUQuery(GPUQuery::Type::TIME_ELAPSED); ///< Timing for the shadow mapping.
+	GPUQuery _probesTime = GPUQuery(GPUQuery::Type::TIME_ELAPSED); ///< Timing for the probe rendering.
 	GPUQuery _rendererTime = GPUQuery(GPUQuery::Type::TIME_ELAPSED); ///< Timing for the scene rendering.
 	GPUQuery _postprocessTime = GPUQuery(GPUQuery::Type::TIME_ELAPSED); ///< Timing for the postprocessing.
 
@@ -71,5 +77,4 @@ private:
 	float _cameraFOV	= 50.0f; ///< Camera field of view in degrees.
 	bool _paused		= false; ///< Pause animations.
 	bool _updateShadows = true; ///< Update the shadow maps.
-
 };
