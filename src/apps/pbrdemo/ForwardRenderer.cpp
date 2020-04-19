@@ -5,8 +5,8 @@
 #include "graphics/GLUtilities.hpp"
 #include <chrono>
 
-ForwardRenderer::ForwardRenderer(const glm::vec2 & resolution) :
-	_lightDebugRenderer("object_basic_uniform") {
+ForwardRenderer::ForwardRenderer(const glm::vec2 & resolution, ShadowMode mode, bool ssao) :
+	_lightDebugRenderer("object_basic_uniform"), _applySSAO(ssao), _shadowMode(mode) {
 
 	const int renderWidth	   = int(resolution[0]);
 	const int renderHeight	   = int(resolution[1]);
@@ -64,7 +64,7 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 	GLUtilities::clearDepth(1.0f);
 	GLUtilities::clearColor({0.0f,0.0f,0.0f,1.0f});
 
-	const float cubeLod		= float(_scene->backgroundReflection->levels - 1);
+	const float cubeLod		= float(_scene->environment.map()->levels - 1);
 	const glm::mat4 invView = glm::inverse(view);
 	// Update shared data for the three programs.
 	{
@@ -154,7 +154,7 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 		// Bind the textures.
 		GLUtilities::bindTextures(object.textures());
 		GLUtilities::bindTexture(_textureBrdf, 4);
-		GLUtilities::bindTexture(_scene->backgroundReflection, 5);
+		GLUtilities::bindTexture(_scene->environment.map(), 5);
 		// Bind available shadow maps.
 		if(shadowMaps[0]){
 			GLUtilities::bindTexture(shadowMaps[0], 6);

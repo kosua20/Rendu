@@ -21,16 +21,16 @@ public:
 	AmbientQuad(const Texture * texAlbedo, const Texture * texNormals, const Texture * texEffects, const Texture * texDepth, const Texture * texSSAO);
 
 	/** Register the scene-specific lighting informations.
-	 \param reflectionMap the ID of the background cubemap, containing radiance convolved with increasing roughness lobes in the mipmap levels
 	 \param irradiance the SH coefficients of the background irradiance
 	 */
-	void setSceneParameters(const Texture * reflectionMap, const std::vector<glm::vec3> & irradiance);
+	void setSceneParameters(const std::vector<glm::vec3> & irradiance);
 
 	/** Draw the ambient lighting contribution to the scene.
 	 \param viewMatrix the current camera view matrix
 	 \param projectionMatrix the current camera projection matrix
+	  \param envmap the environment cubemap (ideally containing radiance convolved with increasing roughness lobes in the mipmap levels)
 	 */
-	void draw(const glm::mat4 & viewMatrix, const glm::mat4 & projectionMatrix) const;
+	void draw(const glm::mat4 & viewMatrix, const glm::mat4 & projectionMatrix, const Texture * envmap);
 
 private:
 	Program * _program;						///< The ambient lighting program.

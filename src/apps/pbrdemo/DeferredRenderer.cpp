@@ -5,8 +5,8 @@
 #include "graphics/GLUtilities.hpp"
 #include <chrono>
 
-DeferredRenderer::DeferredRenderer(const glm::vec2 & resolution) :
-	_lightDebugRenderer("light_debug") {
+DeferredRenderer::DeferredRenderer(const glm::vec2 & resolution, ShadowMode mode, bool ssao) :
+	_lightDebugRenderer("light_debug"), _applySSAO(ssao), _shadowMode(mode) {
 
 	const int renderWidth	  = int(resolution[0]);
 	const int renderHeight	  = int(resolution[1]);
@@ -20,10 +20,9 @@ DeferredRenderer::DeferredRenderer(const glm::vec2 & resolution) :
 	const Descriptor depthDesc			= {Layout::DEPTH_COMPONENT32F, Filter::NEAREST_NEAREST, Wrap::CLAMP};
 	const std::vector<Descriptor> descs = {albedoDesc, normalDesc, effectsDesc, depthDesc};
 	_gbuffer							= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, descs, false));
-
-	// Other framebuffers.
 	_ssaoPass				= std::unique_ptr<SSAO>(new SSAO(renderHalfWidth, renderHalfHeight, 0.5f));
 	const Descriptor desc = {Layout::RGBA16F, Filter::LINEAR_NEAREST, Wrap::CLAMP};
+	_lightBuffer						= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, desc, false));
 	_preferredFormat.push_back(desc);
 	_needsDepth = false;
 
@@ -49,7 +48,7 @@ void DeferredRenderer::setScene(const std::shared_ptr<Scene> & scene) {
 	}
 	
 	_scene = scene;
-	_ambientScreen->setSceneParameters(_scene->backgroundReflection, _scene->backgroundIrradiance);
+	_ambientScreen->setSceneParameters(_scene->backgroundIrradiance);
 	checkGLError();
 }
 
@@ -215,15 +214,17 @@ void DeferredRenderer::draw(const Camera & camera, Framebuffer & framebuffer, si
 	// --- Gbuffer composition pass
 	_lightRenderer->updateCameraInfos(view, proj);
 	_lightRenderer->updateShadowMapInfos(_shadowMode, 0.002f);
-	framebuffer.bind(layer);
-	framebuffer.setViewport();
-	_ambientScreen->draw(view, proj);
+	_lightBuffer->bind();
+	_lightBuffer->setViewport();
+	_ambientScreen->draw(view, proj, _scene->environment.map());
 	GLUtilities::setBlendState(true, BlendEquation::ADD, BlendFunction::ONE, BlendFunction::ONE);
 	for(auto & light : _scene->lights) {
 		light->draw(*_lightRenderer);
 	}
 	GLUtilities::setBlendState(false);
-	framebuffer.unbind();
+	_lightBuffer->unbind();
+	// Copy to the final framebuffer.
+	GLUtilities::blit(*_lightBuffer, framebuffer, 0, layer, Filter::NEAREST);
 
 }
 
@@ -231,11 +232,13 @@ void DeferredRenderer::clean() {
 	// Clean objects.
 	_gbuffer->clean();
 	_ssaoPass->clean();
+	_lightBuffer->clean();
 }
 
 void DeferredRenderer::resize(unsigned int width, unsigned int height) {
 	// Resize the framebuffers.
 	_gbuffer->resize(glm::vec2(width, height));
+	_lightBuffer->resize(glm::vec2(width, height));
 	_ssaoPass->resize(width / 2, height / 2);
 	checkGLError();
 	

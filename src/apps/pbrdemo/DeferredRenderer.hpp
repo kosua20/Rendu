@@ -37,7 +37,7 @@ public:
 	/** Constructor.
 	 \param resolution the initial rendering resolution
 	 */
-	explicit DeferredRenderer(const glm::vec2 & resolution);
+	explicit DeferredRenderer(const glm::vec2 & resolution, ShadowMode mode, bool ssao);
 
 	/** Set the scene to render.
 	 \param scene the new scene
@@ -74,6 +74,7 @@ private:
 	void renderBackground(const glm::mat4 & view, const glm::mat4 & proj, const glm::vec3 & pos);
 
 	std::unique_ptr<Framebuffer> _gbuffer;			///< G-buffer.
+	std::unique_ptr<Framebuffer> _lightBuffer;		///< Lighting accumulation.
 	std::unique_ptr<SSAO> _ssaoPass;				///< SSAO processing.
 	std::unique_ptr<AmbientQuad> _ambientScreen;	///< Ambient lighting contribution rendering.
 	std::unique_ptr<DeferredLight> _lightRenderer;	///< The lights renderer.

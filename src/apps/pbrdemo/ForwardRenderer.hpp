@@ -26,7 +26,7 @@ public:
 	/** Constructor.
 	 \param resolution the initial rendering resolution
 	 */
-	explicit ForwardRenderer(const glm::vec2 & resolution);
+	explicit ForwardRenderer(const glm::vec2 & resolution, ShadowMode mode, bool ssao);
 
 	/** Set the scene to render.
 	 \param scene the new scene

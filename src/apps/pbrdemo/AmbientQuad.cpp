@@ -21,19 +21,18 @@ AmbientQuad::AmbientQuad(const Texture * texAlbedo, const Texture * texNormals, 
 	checkGLError();
 }
 
-void AmbientQuad::setSceneParameters(const Texture * reflectionMap, const std::vector<glm::vec3> & irradiance) {
-	_textures[6] = reflectionMap;
+void AmbientQuad::setSceneParameters(const std::vector<glm::vec3> & irradiance) {
 	_program->cacheUniformArray("shCoeffs", irradiance);
 }
 
-void AmbientQuad::draw(const glm::mat4 & viewMatrix, const glm::mat4 & projectionMatrix) const {
+void AmbientQuad::draw(const glm::mat4 & viewMatrix, const glm::mat4 & projectionMatrix, const Texture * envmap) {
 
 	const glm::mat4 invView = glm::inverse(viewMatrix);
 	// Store the four variable coefficients of the projection matrix.
 	const glm::vec4 projectionVector = glm::vec4(projectionMatrix[0][0], projectionMatrix[1][1], projectionMatrix[2][2], projectionMatrix[3][2]);
+	_textures[6] = envmap;
 
 	_program->use();
-
 	_program->uniform("inverseV", invView);
 	_program->uniform("projectionMatrix", projectionVector);
 	_program->uniform("maxLod", float(_textures[6]->levels-1));
