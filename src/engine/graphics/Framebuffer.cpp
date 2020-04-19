@@ -38,9 +38,9 @@ Framebuffer::Framebuffer(TextureShape shape, uint width, uint height, uint depth
 		// Create the color texture to store the result.
 		const Layout & format		  = descriptor.typedFormat();
 		const bool isDepthComp		  = format == Layout::DEPTH_COMPONENT16 || format == Layout::DEPTH_COMPONENT24 || format == Layout::DEPTH_COMPONENT32F;
-		const bool isDepthStencilComp = format == Layout::DEPTH24_STENCIL8 || format == Layout::DEPTH32F_STENCIL8;
+		_hasStencil = format == Layout::DEPTH24_STENCIL8 || format == Layout::DEPTH32F_STENCIL8;
 
-		if(isDepthComp || isDepthStencilComp) {
+		if(isDepthComp || _hasStencil) {
 			_depthUse		= Depth::TEXTURE;
 			_idDepth.width  = _width;
 			_idDepth.height = _height;
@@ -52,7 +52,7 @@ Framebuffer::Framebuffer(TextureShape shape, uint width, uint height, uint depth
 
 			// Link the texture to the depth attachment of the framebuffer.
 			glBindTexture(GL_TEXTURE_2D, _idDepth.gpu->id);
-			glFramebufferTexture2D(GL_FRAMEBUFFER, (isDepthStencilComp ? GL_DEPTH_STENCIL_ATTACHMENT : GL_DEPTH_ATTACHMENT), GL_TEXTURE_2D, _idDepth.gpu->id, 0);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, (_hasStencil ? GL_DEPTH_STENCIL_ATTACHMENT : GL_DEPTH_ATTACHMENT), GL_TEXTURE_2D, _idDepth.gpu->id, 0);
 			glBindTexture(GL_TEXTURE_2D, 0);
 
 		} else {
@@ -123,7 +123,7 @@ void Framebuffer::bind(Mode mode) const {
 	}
 }
 
-void Framebuffer::bind(size_t layer, Mode mode) const {
+void Framebuffer::bind(size_t layer, size_t mip, Mode mode) const {
 	// When mode is SRGB, we assume we want to write.
 	const GLenum target = mode == Mode::READ ? GL_READ_FRAMEBUFFER : GL_DRAW_FRAMEBUFFER;
 	glBindFramebuffer(target, _id);
@@ -133,14 +133,21 @@ void Framebuffer::bind(size_t layer, Mode mode) const {
 		const GLenum slot = GL_COLOR_ATTACHMENT0 + GLuint(cid);
 		const GLuint id = _idColors[cid].gpu->id;
 		if(_shape == TextureShape::D2){
-			glFramebufferTexture2D(target, slot, GL_TEXTURE_2D, id, 0);
+			glFramebufferTexture2D(target, slot, GL_TEXTURE_2D, id, mip);
 		} else if(_shape == TextureShape::Cube){
-			glFramebufferTexture2D(target, slot, GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + layer), id, 0);
+			glFramebufferTexture2D(target, slot, GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + layer), id, mip);
 		} else {
-			glFramebufferTextureLayer(target, slot, id, 0, GLint(layer));
+			glFramebufferTextureLayer(target, slot, id, mip, GLint(layer));
 		}
 		glBindTexture(_target, 0);
 	}
+
+	if(_depthUse == Depth::TEXTURE){
+		glBindTexture(GL_TEXTURE_2D, _idDepth.gpu->id);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, (_hasStencil ? GL_DEPTH_STENCIL_ATTACHMENT : GL_DEPTH_ATTACHMENT), GL_TEXTURE_2D, _idDepth.gpu->id, mip);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
 	if(mode == Mode::SRGB){
 		glEnable(GL_FRAMEBUFFER_SRGB);
 	}
@@ -188,10 +195,10 @@ void Framebuffer::resize(const glm::ivec2 & size) {
 
 void Framebuffer::clear(const glm::vec4 & color, float depth){
 	// Clear depth.
-	bind(0, Mode::WRITE);
+	bind(0, 0, Mode::WRITE);
 	glClearBufferfv(GL_DEPTH, 0, &depth);
 	for(uint lid = 0; lid < _depth; ++lid){
-		bind(lid, Mode::WRITE);
+		bind(lid, 0, Mode::WRITE);
 		for(uint cid = 0; cid < _idColors.size(); ++cid){
 			glClearBufferfv(GL_COLOR, GLint(cid), &color[0]);
 		}
@@ -213,7 +220,7 @@ void Framebuffer::clean() {
 
 glm::vec3 Framebuffer::read(const glm::ivec2 & pos) const {
 	glm::vec3 rgb(0.0f);
-	bind(0, Mode::READ);
+	bind(0, 0, Mode::READ);
 	glReadPixels(pos.x, pos.y, 1, 1, GL_RGB, GL_FLOAT, &rgb[0]);
 	unbind();
 	return rgb;

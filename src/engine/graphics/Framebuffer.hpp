@@ -60,9 +60,10 @@ public:
 	/**
 	 Bind a specific layer of the framebuffer
 	 \param layer the layer to bind
+	 \param mip the mip level to bind
 	 \param mode the mode to use
 	 */
-	void bind(size_t layer, Mode mode = Mode::WRITE) const;
+	void bind(size_t layer, size_t mip = 0, Mode mode = Mode::WRITE) const;
 
 	/**
 	 Set the viewport to the size of the framebuffer.
@@ -174,7 +175,8 @@ private:
 	Texture _idDepth;				///< The depth renderbuffer.
 	TextureShape _shape;			///< The texture shape.
 	GLenum _target;					///< The OpenGL texture shape.
-
+	bool _hasStencil = false;		///< Does the framebuffer has a stencil buffer.
+	
 	/// \brief Type of depth storage structure used.
 	enum class Depth {
 		NONE,
