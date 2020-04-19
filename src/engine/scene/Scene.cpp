@@ -151,11 +151,8 @@ void Scene::loadScene(const KeyValues & params, Storage options) {
 				coeffsStream >> x >> y >> z;
 				backgroundIrradiance[i] = glm::vec3(x, y, z);
 			}
-
-		} else if(param.key == "probe" && !param.elements.empty()) {
-			// Load cubemap described as sub-element.
-			const auto texInfos = Codable::decodeTexture(param.elements[0]);
-			backgroundReflection = Resources::manager().getTexture(texInfos.first, texInfos.second, options);
+		} else if(param.key == "probe") {
+			environment.decode(param, options);
 		}
 	}
 	// Update matrix, there is at most one transformation in the scene object.
@@ -171,11 +168,8 @@ std::vector<KeyValues> Scene::encode() const {
 	KeyValues irradiance("irradiance");
 	irradiance.values = {"default_shcoeffs"};
 	scnNode.elements.push_back(irradiance);
-	if(backgroundReflection){
-		KeyValues probe("probe");
-		probe.elements = { Codable::encode(backgroundReflection) };
-		scnNode.elements.push_back(probe);
-	}
+	scnNode.elements.push_back(environment.encode());
+	
 	// Encode the scene transformation.
 	const auto modelKeys = Codable::encode(_sceneModel);
 	for(const auto & key : modelKeys){

@@ -1,11 +1,14 @@
 #pragma once
 
 #include "scene/Object.hpp"
+#include "scene/LightProbe.hpp"
+#include "lights/Light.hpp"
+
 #include "resources/ResourcesManager.hpp"
 #include "input/Camera.hpp"
 #include "system/Codable.hpp"
+
 #include "Common.hpp"
-#include "lights/Light.hpp"
 
 /**
  \brief Represents a 3D environment composed of objects, a background and additional environment lighting informations, along with serialization support.
@@ -67,9 +70,8 @@ public:
 	Background backgroundMode = Background::COLOR; ///< The background mode (see enum).
 	glm::vec3 backgroundColor = glm::vec3(0.0f);   ///< Color to use if the background mode is COLOR.
 	std::unique_ptr<Object> background;			   ///< Background object, containing the geometry and optional textures to use.
-
 	std::vector<glm::vec3> backgroundIrradiance;	///< RGB SH-coefficients of the background irradiance, computed using SHExtractor. \see SphericalHarmonics
-	const Texture * backgroundReflection = nullptr; ///< Cubemap texture ID of the background radiance.
+	LightProbe environment;							///< Reflection probe.
 	
 	/** Copy constructor.*/
 	Scene(const Scene &) = delete;
