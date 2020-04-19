@@ -10,7 +10,8 @@ in INTERFACE {
 uniform int samplesCount = 32768; ///< Number of samples to take, higher count helps avoiding artifacts in bright areas.
 
 layout(binding = 0) uniform samplerCube texture0; ///< Input cubemap to process.
-uniform float mimapRoughness; ///< The roughness to use for the convolution lobe.
+uniform float mipmapRoughness; ///< The roughness to use for the convolution lobe.
+uniform float clampMax = 100000.0; ///< Clamp input HDR values to avoid artefacts.
 
 layout(location = 0) out vec3 fragColor; ///< Color.
 
@@ -50,7 +51,7 @@ vec3 convo(vec3 r, float roughness){
 
 		float NdotL = max(dot(n,l), 0.000);
 		if(NdotL > 0.0){
-			sum += NdotL * textureLod(texture0, l, 0.0).rgb;
+			sum += NdotL * clamp(textureLod(texture0, l, 0.0).rgb, 0.0, clampMax);
 			denom += NdotL;
 		}
 	}
@@ -61,5 +62,5 @@ vec3 convo(vec3 r, float roughness){
   and importance sampling. This is done in the direction in world space of the current fragment.
 */
 void main(){
-	fragColor = convo(normalize(In.pos), mimapRoughness);
+	fragColor = convo(normalize(In.pos), mipmapRoughness);
 }
