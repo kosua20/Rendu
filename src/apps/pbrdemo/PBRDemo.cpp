@@ -93,7 +93,7 @@ void PBRDemo::setScene(const std::shared_ptr<Scene> & scene) {
 	_probes.clear();
 	// Allocate probes.
 	if(scene->environment.dynamic()){
-		_probes.emplace_back(new Probe(scene->environment.position(), _probesRenderer, 256, glm::vec2(0.01f, 1000.0f)));
+		_probes.emplace_back(new Probe(scene->environment.position(), _probesRenderer, 256, 6, glm::vec2(0.01f, 1000.0f)));
 		scene->environment.registerEnvmap(_probes[0]->textureId());
 	}
 	// Trigger one-shot data update.
@@ -116,8 +116,10 @@ void PBRDemo::updateMaps(){
 	_probesTime.begin();
 	for(auto & probe : _probes) {
 		probe->draw();
+		GLUtilities::generateMipMaps(*probe->textureId());
 	}
 	_probesTime.end();
+
 }
 
 void PBRDemo::draw() {
