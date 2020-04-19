@@ -14,8 +14,22 @@ void Texture::upload(const Descriptor & layout, bool updateMipmaps) {
 
 	// Generate mipmaps pyramid automatically.
 	if(updateMipmaps) {
+		// Compute the last mip level.
+		levels = getMaxMipLevel()+1;
 		GLUtilities::generateMipMaps(*this);
 	}
+}
+
+uint Texture::getMaxMipLevel() const {
+	uint minDimension = width;
+	if(shape & TextureShape::D2){
+		minDimension = std::min(minDimension, height);
+	}
+	if(shape & TextureShape::D3){
+		minDimension = std::min(minDimension, height);
+		minDimension = std::min(minDimension, depth);
+	}
+	return std::floor(std::log2(minDimension));
 }
 
 void Texture::clearImages() {

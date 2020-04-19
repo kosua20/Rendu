@@ -571,7 +571,7 @@ void GLUtilities::generateMipMaps(const Texture & texture) {
 	}
 	const GLenum target = texture.gpu->target;
 	glBindTexture(target, texture.gpu->id);
-	glTexParameteri(target, GL_TEXTURE_MAX_LEVEL, 1000);
+	glTexParameteri(target, GL_TEXTURE_MAX_LEVEL, texture.levels-1);
 	glGenerateMipmap(target);
 	glBindTexture(target, 0);
 }

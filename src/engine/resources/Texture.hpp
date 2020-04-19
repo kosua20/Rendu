@@ -42,7 +42,12 @@ public:
 		\return the name.
 	 */
 	const std::string & name() const;
-		
+
+	/** Compute the maximum possible mipmap level based on the texture type and dimensions.
+	 \return the maximum level
+	 */
+	uint getMaxMipLevel() const;
+
 	/** Copy assignment operator (disabled).
 	 \return a reference to the object assigned to
 	 */
