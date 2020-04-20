@@ -10,7 +10,7 @@ PBRDemo::PBRDemo(RenderingConfig & config) :
 	_defRenderer.reset(new DeferredRenderer(renderRes, ShadowMode::VARIANCE, true));
 	_forRenderer.reset(new ForwardRenderer(renderRes, ShadowMode::VARIANCE, true));
 	_postprocess.reset(new PostProcessStack(renderRes));
-	_finalRender = _defRenderer->createOutput(renderRes[0], renderRes[1]);
+	_finalRender = _defRenderer->createOutput(uint(renderRes[0]), uint(renderRes[1]));
 	_finalProgram = Resources::manager().getProgram2D("sharpening");
 	
 	_probesRenderer.reset(new DeferredRenderer(glm::vec2(256,256), ShadowMode::BASIC, false));

@@ -30,7 +30,7 @@ Game::Game(GameConfig & config) :
 
 	_bgBlur = std::unique_ptr<GaussianBlur>(new GaussianBlur(_config.initialWidth, _config.initialHeight, 3, Layout::RGB8));
 	_finalProgram = Resources::manager().getProgram2D("sharpening");
-	_gameFramebuffer = _inGameRenderer.createOutput(_config.screenResolution[0], _config.screenResolution[1]);
+	_gameFramebuffer = _inGameRenderer.createOutput(uint(_config.screenResolution[0]), uint(_config.screenResolution[1]));
 
 	// Create menus.
 	const glm::vec2 meshSize = _menuRenderer.getButtonSize();
@@ -93,7 +93,7 @@ Game::Game(GameConfig & config) :
 		currentMenu.update(_config.screenResolution, initialRatio);
 	}
 
-	resize(_config.screenResolution[0], _config.screenResolution[1]);
+	resize(uint(_config.screenResolution[0]), uint(_config.screenResolution[1]));
 }
 
 void Game::draw() {
@@ -230,7 +230,7 @@ Window::Action Game::handleButton(ButtonAction tag) {
 			return Window::Action::Vsync;
 		case OPTION_HALFRES:
 			_config.lowRes = !_config.lowRes;
-			resize(_config.screenResolution[0], _config.screenResolution[1]);
+			resize(uint(_config.screenResolution[0]), uint(_config.screenResolution[1]));
 		default:
 			break;
 	}

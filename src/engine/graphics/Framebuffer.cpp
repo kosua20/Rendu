@@ -126,6 +126,7 @@ void Framebuffer::bind(Mode mode) const {
 void Framebuffer::bind(size_t layer, size_t mip, Mode mode) const {
 	// When mode is SRGB, we assume we want to write.
 	const GLenum target = mode == Mode::READ ? GL_READ_FRAMEBUFFER : GL_DRAW_FRAMEBUFFER;
+	const GLint mid		= GLint(mip);
 	glBindFramebuffer(target, _id);
 	// Bind the proper slice for each color attachment.
 	for(uint cid = 0; cid < _idColors.size(); ++cid){
@@ -133,18 +134,18 @@ void Framebuffer::bind(size_t layer, size_t mip, Mode mode) const {
 		const GLenum slot = GL_COLOR_ATTACHMENT0 + GLuint(cid);
 		const GLuint id = _idColors[cid].gpu->id;
 		if(_shape == TextureShape::D2){
-			glFramebufferTexture2D(target, slot, GL_TEXTURE_2D, id, mip);
+			glFramebufferTexture2D(target, slot, GL_TEXTURE_2D, id, mid);
 		} else if(_shape == TextureShape::Cube){
-			glFramebufferTexture2D(target, slot, GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + layer), id, mip);
+			glFramebufferTexture2D(target, slot, GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + layer), id, mid);
 		} else {
-			glFramebufferTextureLayer(target, slot, id, mip, GLint(layer));
+			glFramebufferTextureLayer(target, slot, id, mid, GLint(layer));
 		}
 		glBindTexture(_target, 0);
 	}
 
 	if(_depthUse == Depth::TEXTURE){
 		glBindTexture(GL_TEXTURE_2D, _idDepth.gpu->id);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, (_hasStencil ? GL_DEPTH_STENCIL_ATTACHMENT : GL_DEPTH_ATTACHMENT), GL_TEXTURE_2D, _idDepth.gpu->id, mip);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, (_hasStencil ? GL_DEPTH_STENCIL_ATTACHMENT : GL_DEPTH_ATTACHMENT), GL_TEXTURE_2D, _idDepth.gpu->id, mid);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 

@@ -29,7 +29,7 @@ uint Texture::getMaxMipLevel() const {
 		minDimension = std::min(minDimension, height);
 		minDimension = std::min(minDimension, depth);
 	}
-	return std::floor(std::log2(minDimension));
+	return uint(std::floor(std::log2(minDimension)));
 }
 
 void Texture::clearImages() {
