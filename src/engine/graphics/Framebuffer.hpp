@@ -116,6 +116,16 @@ public:
 	}
 
 	/**
+	 Query the 2D texture backing one of the color attachments.
+	 \param i the color attachment index (or 0 by default)
+	 \return the texture
+	 */
+	Texture * textureId(unsigned int i = 0) {
+		// _idColors will never be modified after initialization, so this can be done.
+		return &_idColors[i];
+	}
+
+	/**
 	 Query the 2D texture or renderbuffer backing the depth attachment.
 	 \return the depth texture/renderbuffer
 	 */

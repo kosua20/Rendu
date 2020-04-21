@@ -899,7 +899,7 @@ void GLUtilities::blit(const Framebuffer & src, const Framebuffer & dst, size_t 
 	src.bind(lSrc, mipSrc, Framebuffer::Mode::READ);
 	dst.bind(lDst, mipDst, Framebuffer::Mode::WRITE);
 	const GLenum filterGL = filter == Filter::LINEAR ? GL_LINEAR : GL_NEAREST;
-	glBlitFramebuffer(0, 0, src.width(), src.height(), 0, 0, dst.width(), dst.height(), GL_COLOR_BUFFER_BIT, filterGL);
+	glBlitFramebuffer(0, 0, src.width()/(1 << mipSrc), src.height()/(1 << mipSrc), 0, 0, dst.width()/(1 << mipDst), dst.height()/(1 << mipDst), GL_COLOR_BUFFER_BIT, filterGL);
 	src.unbind();
 	dst.unbind();
 }
