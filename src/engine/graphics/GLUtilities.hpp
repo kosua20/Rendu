@@ -112,6 +112,13 @@ public:
 	 */
 	static void downloadTexture(Texture & texture);
 
+	/** Download a texture images data from the GPU.
+	 \param texture the texture to download
+	 \param level the specific mip level to download
+	 \warning The CPU images of the texture will be overwritten.
+	 */
+	static void downloadTexture(Texture & texture, int level);
+
 	/** Generate a texture mipmaps on the GPU.
 	 \param texture the texture to use
 	 \note This will set the number of levels to 1000.

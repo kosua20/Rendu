@@ -520,7 +520,11 @@ void GLUtilities::uploadTexture(const Texture & texture) {
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 }
 
-void GLUtilities::downloadTexture(Texture & texture) {
+void GLUtilities::downloadTexture(Texture & texture){
+	downloadTexture(texture, -1);
+}
+
+void GLUtilities::downloadTexture(Texture & texture, int level) {
 	if(!texture.gpu) {
 		Log::Error() << Log::OpenGL << "Uninitialized GPU texture." << std::endl;
 		return;
@@ -531,8 +535,8 @@ void GLUtilities::downloadTexture(Texture & texture) {
 	}
 	if(!texture.images.empty()) {
 		Log::Verbose() << Log::OpenGL << "Texture already contain CPU data, will be erased." << std::endl;
-		texture.images.clear();
 	}
+	texture.images.resize(texture.depth * texture.levels);
 
 	const GLenum target			= texture.gpu->target;
 	const GLenum type			= GL_FLOAT;
@@ -545,19 +549,23 @@ void GLUtilities::downloadTexture(Texture & texture) {
 
 	// For each mip level.
 	for(size_t mid = 0; mid < texture.levels; ++mid) {
+		if(level >= 0 && int(mid) != level){
+			continue;
+		}
 		const GLsizei w = GLsizei(std::max<uint>(1, texture.width  / (1 << mid)));
 		const GLsizei h = GLsizei(std::max<uint>(1, texture.height / (1 << mid)));
 		const GLint mip = GLint(mid);
 
 		if(texture.shape == TextureShape::D2) {
-			texture.images.emplace_back(w, h, channels);
-			Image & image = texture.images.back();
+			texture.images[mid] = Image(w, h, channels);
+			Image & image = texture.images[mid];
 			glGetTexImage(GL_TEXTURE_2D, mip, format, type, &image.pixels[0]);
 
 		} else if(texture.shape == TextureShape::Cube) {
 			for(size_t lid = 0; lid < texture.depth; ++lid) {
-				texture.images.emplace_back(w, h, channels);
-				Image & image = texture.images.back();
+				const size_t id = mid*texture.levels+lid;
+				texture.images[id] = Image(w, h, channels);
+				Image & image = texture.images[id];
 				glGetTexImage(GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + lid), mip, format, type, &image.pixels[0]);
 			}
 		}
@@ -882,7 +890,6 @@ void GLUtilities::blit(const Framebuffer & src, const Framebuffer & dst, Filter 
 	src.unbind();
 	dst.unbind();
 }
-
 
 void GLUtilities::blit(const Framebuffer & src, const Framebuffer & dst, size_t lSrc, size_t lDst, Filter filter) {
 	GLUtilities::blit(src, dst, lSrc, lDst, 0, 0, filter);
