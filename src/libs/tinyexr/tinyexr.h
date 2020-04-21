@@ -7589,6 +7589,7 @@ static void CompressZip(unsigned char *dst,
   uLong outSize = compressBound(static_cast<uLong>(src_size));
   int ret = compress(dst, &outSize, static_cast<const Bytef *>(&tmpBuf.at(0)),
                      src_size);
+   (void)ret;
   assert(ret == Z_OK);
 
   compressedSize = outSize;
