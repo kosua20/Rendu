@@ -3,7 +3,7 @@
 #include "graphics/GLUtilities.hpp"
 
 BufferBase::BufferBase(size_t sizeInBytes, BufferType atype, DataUse ausage) :
-	size(sizeInBytes), type(atype), usage(ausage) {
+	sizeMax(sizeInBytes), type(atype), usage(ausage) {
 }
 
 void BufferBase::setup(){
@@ -15,12 +15,20 @@ void BufferBase::upload(size_t sizeInBytes, unsigned char * data, size_t offset)
 	if(!gpu){
 		setup();
 	}
-	if(sizeInBytes == size){
+	if(sizeInBytes == sizeMax){
 		// Orphan the buffer so that we don't need to wait for it to be unused before overwriting it.
 		GLUtilities::allocateBuffer(*this);
 	}
 	// Then upload the data.
 	GLUtilities::uploadBuffer(*this, sizeInBytes, data, offset);
+}
+
+void BufferBase::download(size_t sizeInBytes, unsigned char * data, size_t offset){
+	if(!gpu){
+		Log::Warning() << "No GPU data to download for the buffer." << std::endl;
+		return;
+	}
+	GLUtilities::downloadBuffer(*this, sizeInBytes, data, offset);
 }
 
 void BufferBase::clean() {

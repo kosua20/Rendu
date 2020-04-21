@@ -149,6 +149,14 @@ public:
 	 */
 	static void uploadBuffer(const BufferBase & buffer, size_t size, unsigned char * data, size_t offset = 0);
 
+	/** Download data from a buffer on the GPU. It's possible to download a subrange of the buffer data store.
+	 \param buffer the buffer to download from
+	 \param size the amount of data to download, in bytes
+	 \param data pointer to the storage destination
+	 \param offset optional offset in the buffer store
+	 */
+	static void downloadBuffer(const BufferBase & buffer, size_t size, unsigned char * data, size_t offset = 0);
+
 	/** Mesh loading: send a mesh data to the GPU and set the input mesh GPU infos accordingly.
 	 \param mesh the mesh to upload
 	 \note The order of attribute locations is: position, normal, uvs, tangents, binormals.

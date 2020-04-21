@@ -33,6 +33,13 @@ public:
 	 */
 	void upload(size_t sizeInBytes, unsigned char * data, size_t offset);
 
+	/** Download data from the buffer.
+	 \param sizeInBytes the size of the data to download, in bytes
+	 \param data the storage to download to
+	 \param offset offset in the buffer
+	 */
+	void download(size_t sizeInBytes, unsigned char * data, size_t offset);
+
 	/** Cleanup all data.
 	 */
 	void clean();
@@ -53,7 +60,7 @@ public:
 	/** Move constructor. */
 	BufferBase(BufferBase &&) = delete;
 
-	const size_t size;	///< Buffer size.
+	const size_t sizeMax; ///< Buffer size in bytes.
 	const BufferType type; ///< Buffer type.
 	const DataUse usage; ///< Buffer update frequency.
 
@@ -70,11 +77,11 @@ class Buffer : public BufferBase {
 public:
 
 	/** Constructor.
-	 \param size the number of elements
+	 \param count the number of elements
 	 \param type the target of the buffer (uniform, index, vertex)
 	 \param usage the update frequency of the buffer content
 	 */
-	Buffer(size_t size, BufferType type, DataUse usage);
+	Buffer(size_t count, BufferType type, DataUse usage);
 
 	/** Accessor.
 	 \param i the location of the item to retrieve
@@ -82,6 +89,35 @@ public:
 	 */
 	T & operator[](size_t i){
 		return data[i];
+	}
+
+	/** Accessor.
+	 \param i the location of the item to retrieve
+	 \return a reference to the item
+	 */
+	const T & operator[](size_t i) const {
+		return data[i];
+	}
+
+	/** Accessor.
+	 \param i the location of the item to retrieve
+	 \return a reference to the item
+	 */
+	T & at(size_t i){
+		return data[i];
+	}
+
+	/** Accessor.
+	 \param i the location of the item to retrieve
+	 \return a reference to the item
+	 */
+	const T & at(size_t i) const {
+		return data[i];
+	}
+
+	/** \return the CPU size of the buffer. */
+	size_t size() const {
+		return data.size();
 	}
 
 	/** Send the buffer data to the GPU.
@@ -94,6 +130,11 @@ public:
 	 \param offset location of the first element to upload
 	*/
 	void upload(size_t offset, size_t count);
+
+	/** Download data from the GPU buffer to the CPU.
+	 If the CPU buffer was cleared, it will be reallocated.
+	 */
+	void download();
 	
 	/** Cleanup all data.
 	 */
@@ -124,9 +165,9 @@ public:
 };
 
 template <typename T>
-Buffer<T>::Buffer(size_t size, BufferType type, DataUse usage) :
-	BufferBase(size * sizeof(T), type, usage) {
-	data.resize(size);
+Buffer<T>::Buffer(size_t count, BufferType type, DataUse usage) :
+	BufferBase(count * sizeof(T), type, usage) {
+	data.resize(count);
 }
 
 template <typename T>
@@ -137,6 +178,13 @@ void Buffer<T>::upload() {
 template <typename T>
 void Buffer<T>::upload(size_t offset, size_t count) {
 	BufferBase::upload(count * sizeof(T), reinterpret_cast<unsigned char*>(data.data()), offset);
+}
+
+template <typename T>
+void Buffer<T>::download() {
+	// Resize to make sure that we have enough room.
+	data.resize(sizeMax/sizeof(T));
+	BufferBase::download(data.size() * sizeof(T), reinterpret_cast<unsigned char*>(data.data()), 0);
 }
 
 template <typename T>

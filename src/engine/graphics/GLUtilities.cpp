@@ -617,7 +617,7 @@ void GLUtilities::allocateBuffer(const BufferBase & buffer) {
 
 	const GLenum target = buffer.gpu->target;
 	glBindBuffer(target, buffer.gpu->id);
-	glBufferData(target, buffer.size, nullptr, buffer.gpu->usage);
+	glBufferData(target, buffer.sizeMax, nullptr, buffer.gpu->usage);
 	glBindBuffer(target, 0);
 }
 
@@ -630,7 +630,7 @@ void GLUtilities::uploadBuffer(const BufferBase & buffer, size_t size, unsigned 
 		Log::Warning() << Log::OpenGL << "No data to upload." << std::endl;
 		return;
 	}
-	if(offset + size > buffer.size) {
+	if(offset + size > buffer.sizeMax) {
 		Log::Warning() << Log::OpenGL << "Not enough allocated space to upload." << std::endl;
 		return;
 	}
@@ -638,6 +638,23 @@ void GLUtilities::uploadBuffer(const BufferBase & buffer, size_t size, unsigned 
 	const GLenum target = buffer.gpu->target;
 	glBindBuffer(target, buffer.gpu->id);
 	glBufferSubData(target, offset, size, data);
+	glBindBuffer(target, 0);
+}
+
+
+void GLUtilities::downloadBuffer(const BufferBase & buffer, size_t size, unsigned char * data, size_t offset) {
+	if(!buffer.gpu) {
+		Log::Error() << Log::OpenGL << "Uninitialized GPU buffer." << std::endl;
+		return;
+	}
+	if(offset + size > buffer.sizeMax) {
+		Log::Warning() << Log::OpenGL << "Not enough available data to download." << std::endl;
+		return;
+	}
+
+	const GLenum target = buffer.gpu->target;
+	glBindBuffer(target, buffer.gpu->id);
+	glGetBufferSubData(target, offset, size, data);
 	glBindBuffer(target, 0);
 }
 
