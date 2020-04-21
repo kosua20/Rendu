@@ -1,5 +1,6 @@
 #include "resources/Image.hpp"
 #include "resources/ResourcesManager.hpp"
+#include "renderers/Probe.hpp"
 #include "graphics/Framebuffer.hpp"
 #include "graphics/ScreenQuad.hpp"
 #include "graphics/GLUtilities.hpp"
@@ -61,118 +62,6 @@ void loadCubemap(const std::string & inputPath, Texture & cubemapInfos) {
 	cubemapInfos.width  = cubemapInfos.images[0].width;
 	cubemapInfos.height = cubemapInfos.images[0].height;
 	cubemapInfos.upload({Layout::RGBA32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, false);
-}
-
-/**
-\brief Decompose an existing cubemap irradiance onto the nine first elements of the spherical harmonic basis.
-\details Perform approximated convolution as described in Ramamoorthi, Ravi, and Pat Hanrahan. "An efficient representation for irradiance environment maps.", Proceedings of the 28th annual conference on Computer graphics and interactive techniques. ACM, 2001.
-\param cubemap the cubemap to extract SH coefficients from
-\return the 9 RGB coefficients of the SH decomposition
-\ingroup BRDFEstimator
-*/
-std::vector<glm::vec3> computeSHCoeffs(const Texture & cubemap) {
-	// Indices conversions from cubemap UVs to direction.
-	const std::vector<int> axisIndices = {0, 0, 1, 1, 2, 2};
-	const std::vector<float> axisMul   = {1.0f, -1.0f, 1.0f, -1.0f, 1.0f, -1.0f};
-
-	const std::vector<int> horizIndices = {2, 2, 0, 0, 0, 0};
-	const std::vector<float> horizMul   = {-1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f};
-
-	const std::vector<int> vertIndices = {1, 1, 2, 2, 1, 1};
-	const std::vector<float> vertMul   = {-1.0f, -1.0f, 1.0f, -1.0f, -1.0f, -1.0f};
-
-	// Spherical harmonics coefficients.
-	Log::Info() << Log::Utilities << "Computing SH coefficients." << std::endl;
-	std::array<glm::vec3, 9> LCoeffs = {};
-	LCoeffs.fill(glm::vec3(0.0f, 0.0f, 0.0f));
-
-	const float y0 = 0.282095f;
-	const float y1 = 0.488603f;
-	const float y2 = 1.092548f;
-	const float y3 = 0.315392f;
-	const float y4 = 0.546274f;
-
-	float denom				= 0.0f;
-	const unsigned int side = cubemap.width;
-
-	if(cubemap.width != cubemap.height) {
-		Log::Error() << Log::Utilities << "Expecting squared size cubemap." << std::endl;
-		return {};
-	}
-
-	for(unsigned int i = 0; i < 6; ++i) {
-		const auto & currentSide = cubemap.images[i];
-		for(unsigned int y = 0; y < side; ++y) {
-			for(unsigned int x = 0; x < side; ++x) {
-
-				const float v = -1.0f + 1.0f / float(side) + float(y) * 2.0f / float(side);
-				const float u = -1.0f + 1.0f / float(side) + float(x) * 2.0f / float(side);
-
-				glm::vec3 pos		 = glm::vec3(0.0f, 0.0f, 0.0f);
-				pos[axisIndices[i]]  = axisMul[i];
-				pos[horizIndices[i]] = horizMul[i] * u;
-				pos[vertIndices[i]]  = vertMul[i] * v;
-				pos					 = glm::normalize(pos);
-
-				// Normalization factor.
-				const float fTmp   = 1.0f + u * u + v * v;
-				const float weight = 4.0f / (sqrt(fTmp) * fTmp);
-				denom += weight;
-
-				// HDR color.
-				const size_t pixelPos = (y * side + x) * currentSide.components;
-				const glm::vec3 hdr   = weight * glm::vec3(currentSide.pixels[pixelPos + 0], currentSide.pixels[pixelPos + 1], currentSide.pixels[pixelPos + 2]);
-
-				// Y0,0  = 0.282095
-				LCoeffs[0] += hdr * y0;
-				// Y1,-1 = 0.488603 y
-				LCoeffs[1] += hdr * (y1 * pos[1]);
-				// Y1,0  = 0.488603 z
-				LCoeffs[2] += hdr * (y1 * pos[2]);
-				// Y1,1  = 0.488603 x
-				LCoeffs[3] += hdr * (y1 * pos[0]);
-				// Y2,-2 = 1.092548 xy
-				LCoeffs[4] += hdr * (y2 * (pos[0] * pos[1]));
-				// Y2,-1 = 1.092548 yz
-				LCoeffs[5] += hdr * (y2 * pos[1] * pos[2]);
-				// Y2,0  = 0.315392 (3z^2 - 1)
-				LCoeffs[6] += hdr * (y3 * (3.0f * pos[2] * pos[2] - 1.0f));
-				// Y2,1  = 1.092548 xz
-				LCoeffs[7] += hdr * (y2 * pos[0] * pos[2]);
-				// Y2,2  = 0.546274 (x^2 - y^2)
-				LCoeffs[8] += hdr * (y4 * (pos[0] * pos[0] - pos[1] * pos[1]));
-			}
-		}
-	}
-
-	// Normalization.
-	for(auto & coeff : LCoeffs) {
-		coeff *= 4.0 / denom;
-	}
-
-	// To go from radiance to irradiance, we need to apply a cosine lobe convolution on the sphere in spatial domain.
-	// This can be expressed as a product in frequency (on the SH basis) domain, with constant pre-computed coefficients.
-	// See:	Ramamoorthi, Ravi, and Pat Hanrahan. "An efficient representation for irradiance environment maps."
-	//		Proceedings of the 28th annual conference on Computer graphics and interactive techniques. ACM, 2001.
-
-	const float c1 = 0.429043f;
-	const float c2 = 0.511664f;
-	const float c3 = 0.743125f;
-	const float c4 = 0.886227f;
-	const float c5 = 0.247708f;
-
-	std::vector<glm::vec3> SCoeffs(9);
-	SCoeffs[0] = c4 * LCoeffs[0] - c5 * LCoeffs[6];
-	SCoeffs[1] = 2.0f * c2 * LCoeffs[1];
-	SCoeffs[2] = 2.0f * c2 * LCoeffs[2];
-	SCoeffs[3] = 2.0f * c2 * LCoeffs[3];
-	SCoeffs[4] = 2.0f * c1 * LCoeffs[4];
-	SCoeffs[5] = 2.0f * c1 * LCoeffs[5];
-	SCoeffs[6] = c3 * LCoeffs[6];
-	SCoeffs[7] = 2.0f * c1 * LCoeffs[7];
-	SCoeffs[8] = c1 * LCoeffs[8];
-
-	return SCoeffs;
 }
 
 /**
@@ -394,7 +283,7 @@ int main(int argc, char ** argv) {
 
 			// Compute SH irradiance coefficients for the cubemap.
 			if(ImGui::Button("Compute SH coefficients")) {
-				SCoeffs = computeSHCoeffs(cubemapInfos);
+				Probe::extractIrradianceSHCoeffs(cubemapInfos, SCoeffs);
 				std::stringstream outputStr;
 				for(int i = 0; i < 9; ++i) {
 					outputStr << "\t" << SCoeffs[i][0] << " " << SCoeffs[i][1] << " " << SCoeffs[i][2] << std::endl;
