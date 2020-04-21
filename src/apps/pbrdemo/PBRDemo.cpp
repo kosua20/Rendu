@@ -97,8 +97,10 @@ void PBRDemo::setScene(const std::shared_ptr<Scene> & scene) {
 		scene->environment.registerEnvmap(_probes[0]->textureId());
 	}
 	// Trigger one-shot data update.
-	for(int i = 0; i < 3; ++i){
+	for(int i = 0; i < 6; ++i){
+		_frameID = (_frameID + 1)%_frameCount;
 		updateMaps();
+		GLUtilities::sync();
 	}
 }
 
@@ -113,27 +115,38 @@ void PBRDemo::updateMaps(){
 	_shadowTime.end();
 
 	// Probes pass.
-	static int i = 0;
-	_probesTime.begin();
+
 	for(auto & probe : _probes) {
-		if(i == 0){
+		if(_frameID % _frameCount == 0){
+			_probesTime.begin();
 			probe->draw();
-		} else {
-			probe->integrate(1.2f);
+			_probesTime.end();
+
+		} else if(_frameID % _frameCount == 1){
+
+			const auto start = std::chrono::high_resolution_clock::now();
+			_copyTime.begin();
+			probe->estimateIrradiance();
+			_copyTime.end();
+			const auto end = std::chrono::high_resolution_clock::now();
+			_copyTimeCPU = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+			
+			_inteTime.begin();
+			probe->convolveRadiance(1.2f);
+			_inteTime.end();
 		}
 	}
-	i = 1 - i;
-	_probesTime.end();
 
 }
 
 void PBRDemo::draw() {
 
+	_frameID = (_frameID + 1)%_frameCount;
+
 	if(!_scenes[_currentScene]) {
 		GLUtilities::clearColorAndDepth({0.2f, 0.2f, 0.2f, 1.0f}, 1.0f);
 		return;
 	}
-	
 
 	if(_scenes[_currentScene]->animated()){
 		updateMaps();
@@ -170,6 +183,9 @@ void PBRDemo::update() {
 		ImGui::Text("%.1f ms, %.1f fps", ImGui::GetIO().DeltaTime * 1000.0f, ImGui::GetIO().Framerate);
 		ImGui::Text("Shadow maps update: %05.1fms", float(_shadowTime.value())/1000000.0f);
 		ImGui::Text("Probes update: %05.1fms", float(_probesTime.value())/1000000.0f);
+		ImGui::Text("Probes integration: %05.1fms", float(_inteTime.value())/1000000.0f);
+		ImGui::Text("Probes copy: %05.1fus", float(_copyTime.value())/1000.0f);
+		ImGui::Text("Probes copy CPU: %05.1fms", float(_copyTimeCPU)/1000000.0f);
 		ImGui::Text("Scene rendering: %05.1fms", float(_rendererTime.value())/1000000.0f);
 		ImGui::Text("Post processing: %05.1fms", float(_postprocessTime.value())/1000000.0f);
 	}

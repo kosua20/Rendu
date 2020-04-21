@@ -69,6 +69,9 @@ private:
 
 	GPUQuery _shadowTime = GPUQuery(GPUQuery::Type::TIME_ELAPSED); ///< Timing for the shadow mapping.
 	GPUQuery _probesTime = GPUQuery(GPUQuery::Type::TIME_ELAPSED); ///< Timing for the probe rendering.
+	GPUQuery _inteTime = GPUQuery(GPUQuery::Type::TIME_ELAPSED); ///< Timing for the probe preconvolution.
+	GPUQuery _copyTime = GPUQuery(GPUQuery::Type::TIME_ELAPSED); ///< Timing for the probe irradiance SH coeffs.
+	size_t _copyTimeCPU = 0;  ///< CPU timing for the probe irradiance SH coeffs.
 	GPUQuery _rendererTime = GPUQuery(GPUQuery::Type::TIME_ELAPSED); ///< Timing for the scene rendering.
 	GPUQuery _postprocessTime = GPUQuery(GPUQuery::Type::TIME_ELAPSED); ///< Timing for the postprocessing.
 
@@ -76,6 +79,9 @@ private:
 	size_t _currentScene = 0; ///< Currently selected scene.
 	glm::vec2 _cplanes  = glm::vec2(0.01f, 100.0f); ///< Camera clipping planes.
 	float _cameraFOV	= 50.0f; ///< Camera field of view in degrees.
+	const int _frameCount = 2;	 ///< Number of frames to count before looping.
+	int _frameID		= 0; 	 ///< Current frame count (will loop)
+
 	bool _paused		= false; ///< Pause animations.
 	bool _updateShadows = true; ///< Update the shadow maps.
 };
