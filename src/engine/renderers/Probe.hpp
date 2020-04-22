@@ -35,6 +35,8 @@ public:
 	/** Perform BRDF pre-integration of the probe radiance for increasing roughness and store them in the mip levels.
 	 This also copies a downscaled version of the radiance for future SH computations.
 	 \param clamp maximum intensity value, useful to avoid ringing artifacts
+	 \param first first layer to process (in 1, mip count - 1)
+	 \param count the number of layers to process
 	 */
 	void convolveRadiance(float clamp, size_t first, size_t count);
 
@@ -87,7 +89,6 @@ public:
 	
 	/** Move constructor (disabled). */
 	Probe(Probe &&) = delete;
-
 
 	/**
 	\brief Decompose an existing cubemap irradiance onto the nine first elements of the spherical harmonic basis.

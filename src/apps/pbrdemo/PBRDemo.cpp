@@ -92,11 +92,12 @@ void PBRDemo::setScene(const std::shared_ptr<Scene> & scene) {
 	}
 	_probes.clear();
 	// Allocate probes.
-	if(scene->environment.dynamic()){
+	if(scene->environment.type() == LightProbe::Type::DYNAMIC){
 		_probes.emplace_back(new Probe(scene->environment.position(), _probesRenderer, 256, 6, glm::vec2(0.01f, 1000.0f)));
-		scene->environment.registerEnvmap(_probes[0]->textureId());
+		scene->environment.registerEnvironment(_probes[0]->textureId(), _probes[0]->shCoeffs());
 	}
 	// Trigger one-shot data update.
+	_frameID = 0;
 	for(int i = 0; i < 6; ++i){
 		_frameID = (_frameID + 1)%_frameCount;
 		updateMaps();
@@ -131,7 +132,13 @@ void PBRDemo::updateMaps(){
 			_copyTimeCPU.end();
 			
 			_inteTime.begin();
-			probe->convolveRadiance(1.2f);
+			probe->convolveRadiance(1.2f, 1, 2);
+			_inteTime.end();
+
+			probe->prepareIrradiance();
+		} else {
+			_inteTime.begin();
+			probe->convolveRadiance(1.2f, 3, 3);
 			_inteTime.end();
 		}
 	}
