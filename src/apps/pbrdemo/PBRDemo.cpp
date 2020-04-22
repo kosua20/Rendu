@@ -124,12 +124,11 @@ void PBRDemo::updateMaps(){
 
 		} else if(_frameID % _frameCount == 1){
 
-			const auto start = std::chrono::high_resolution_clock::now();
+			_copyTimeCPU.begin();
 			_copyTime.begin();
 			probe->estimateIrradiance();
 			_copyTime.end();
-			const auto end = std::chrono::high_resolution_clock::now();
-			_copyTimeCPU = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+			_copyTimeCPU.end();
 			
 			_inteTime.begin();
 			probe->convolveRadiance(1.2f);
@@ -184,8 +183,8 @@ void PBRDemo::update() {
 		ImGui::Text("Shadow maps update: %05.1fms", float(_shadowTime.value())/1000000.0f);
 		ImGui::Text("Probes update: %05.1fms", float(_probesTime.value())/1000000.0f);
 		ImGui::Text("Probes integration: %05.1fms", float(_inteTime.value())/1000000.0f);
-		ImGui::Text("Probes copy: %05.1fus", float(_copyTime.value())/1000.0f);
-		ImGui::Text("Probes copy CPU: %05.1fms", float(_copyTimeCPU)/1000000.0f);
+		ImGui::Text("Probes copy: %05.1fms", float(_copyTime.value())/1000000.0f);
+		ImGui::Text("Probes copy CPU: %05.1fms", float(_copyTimeCPU.value()) / 1000000.0f);
 		ImGui::Text("Scene rendering: %05.1fms", float(_rendererTime.value())/1000000.0f);
 		ImGui::Text("Post processing: %05.1fms", float(_postprocessTime.value())/1000000.0f);
 	}

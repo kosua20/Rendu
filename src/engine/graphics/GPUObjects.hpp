@@ -453,7 +453,7 @@ public:
 	/** Constructor.
 	 \param type the metric to query
 	 */
-	GPUQuery(Type type);
+	GPUQuery(Type type = GPUQuery::Type::TIME_ELAPSED);
 
 	/** Start measuring the metric. */
 	void begin();
@@ -463,7 +463,8 @@ public:
 
 	/** Query the metric measured at the last frame.
 	 Unit used is nanoseconds for timing queries, number of samples for occlusion queries.
-	 \return the raw metric value */
+	 \return the raw metric value
+	 */
 	uint64_t value();
 
 private:

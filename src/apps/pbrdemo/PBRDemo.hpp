@@ -10,6 +10,7 @@
 #include "renderers/Probe.hpp"
 #include "renderers/shadowmaps/ShadowMap.hpp"
 #include "input/ControllableCamera.hpp"
+#include "system/Query.hpp"
 
 #include "Common.hpp"
 
@@ -67,13 +68,13 @@ private:
 	std::vector<std::shared_ptr<Scene>> _scenes; ///< The existing scenes.
 	std::vector<std::string> _sceneNames; ///< The associated scene names.
 
-	GPUQuery _shadowTime = GPUQuery(GPUQuery::Type::TIME_ELAPSED); ///< Timing for the shadow mapping.
-	GPUQuery _probesTime = GPUQuery(GPUQuery::Type::TIME_ELAPSED); ///< Timing for the probe rendering.
-	GPUQuery _inteTime = GPUQuery(GPUQuery::Type::TIME_ELAPSED); ///< Timing for the probe preconvolution.
-	GPUQuery _copyTime = GPUQuery(GPUQuery::Type::TIME_ELAPSED); ///< Timing for the probe irradiance SH coeffs.
-	size_t _copyTimeCPU = 0;  ///< CPU timing for the probe irradiance SH coeffs.
-	GPUQuery _rendererTime = GPUQuery(GPUQuery::Type::TIME_ELAPSED); ///< Timing for the scene rendering.
-	GPUQuery _postprocessTime = GPUQuery(GPUQuery::Type::TIME_ELAPSED); ///< Timing for the postprocessing.
+	GPUQuery _shadowTime;      ///< Timing for the shadow mapping.
+	GPUQuery _probesTime;      ///< Timing for the probe rendering.
+	GPUQuery _inteTime;        ///< Timing for the probe preconvolution.
+	GPUQuery _copyTime;        ///< Timing for the probe irradiance SH coeffs.
+	GPUQuery _rendererTime;    ///< Timing for the scene rendering.
+	GPUQuery _postprocessTime; ///< Timing for the postprocessing.
+	Query _copyTimeCPU;	       ///< CPU timing for the probe irradiance SH coeffs.
 
 	RendererMode _mode	 = RendererMode::DEFERRED; ///< Active renderer.
 	size_t _currentScene = 0; ///< Currently selected scene.
