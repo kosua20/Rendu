@@ -15,7 +15,10 @@ layout(binding = 5) uniform samplerCube textureCubeMap; ///< Background environm
 layout(binding = 6) uniform sampler2DArray shadowMaps2D; ///< Shadow maps array.
 layout(binding = 7) uniform samplerCubeArray shadowMapsCube; ///< Shadow cubemaps array.
 
-uniform vec3 shCoeffs[9]; ///< SH approximation of the environment irradiance.
+///< SH approximation of the environment irradiance (UBO).
+layout(std140) uniform SHCoeffs {
+	vec4 shCoeffs[9];
+};
 uniform mat4 inverseV; ///< The view to world transformation matrix.
 uniform float maxLod; ///< Mip level count for background map.
 

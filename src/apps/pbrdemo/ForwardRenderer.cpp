@@ -46,9 +46,7 @@ void ForwardRenderer::setScene(const std::shared_ptr<Scene> & scene) {
 	}
 
 	_scene = scene;
-	_objectProgram->cacheUniformArray("shCoeffs", _scene->backgroundIrradiance);
-	_objectNoUVsProgram->cacheUniformArray("shCoeffs", _scene->backgroundIrradiance);
-	_parallaxProgram->cacheUniformArray("shCoeffs", _scene->backgroundIrradiance);
+
 	_lightsGPU.reset(new ForwardLight(_scene->lights.size()));
 
 	checkGLError();
@@ -73,16 +71,19 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 		_parallaxProgram->uniform("inverseV", invView);
 		_parallaxProgram->uniform("maxLod", cubeLod);
 		_parallaxProgram->uniformBuffer("Lights", 0);
+		_parallaxProgram->uniformBuffer("SHCoeffs", 1);
 		_parallaxProgram->uniform("lightsCount", int(_lightsGPU->count()));
 		_objectProgram->use();
 		_objectProgram->uniform("inverseV", invView);
 		_objectProgram->uniform("maxLod", cubeLod);
 		_objectProgram->uniformBuffer("Lights", 0);
+		_objectProgram->uniformBuffer("SHCoeffs", 1);
 		_objectProgram->uniform("lightsCount", int(_lightsGPU->count()));
 		_objectNoUVsProgram->use();
 		_objectNoUVsProgram->uniform("inverseV", invView);
 		_objectNoUVsProgram->uniform("maxLod", cubeLod);
 		_objectNoUVsProgram->uniformBuffer("Lights", 0);
+		_objectNoUVsProgram->uniformBuffer("SHCoeffs", 1);
 		_objectNoUVsProgram->uniform("lightsCount", int(_lightsGPU->count()));
 	}
 	const auto & shadowMaps = _lightsGPU->shadowMaps();
@@ -151,6 +152,7 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 		}
 		// Bind the lights.
 		GLUtilities::bindBuffer(_lightsGPU->data(), 0);
+		GLUtilities::bindBuffer(*_scene->environment.shCoeffs(), 1);
 		// Bind the textures.
 		GLUtilities::bindTextures(object.textures());
 		GLUtilities::bindTexture(_textureBrdf, 4);

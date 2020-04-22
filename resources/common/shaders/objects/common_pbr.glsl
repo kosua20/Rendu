@@ -126,11 +126,11 @@ vec3 radiance(vec3 n, vec3 v, float roughness, mat4 inverseV, samplerCube cubeMa
 	\param coeffs the SH coefficients
 	\return the ambient irradiance
 	*/
-vec3 applySH(vec3 wn, vec3 coeffs[9]){
-	return (coeffs[7] * wn.z + coeffs[4]  * wn.y + coeffs[8]  * wn.x + coeffs[3]) * wn.x +
-		   (coeffs[5] * wn.z - coeffs[8]  * wn.y + coeffs[1]) * wn.y +
-		   (coeffs[6] * wn.z + coeffs[2]) * wn.z +
-		    coeffs[0];
+vec3 applySH(vec3 wn, vec4 coeffs[9]){
+	return (coeffs[7].rgb * wn.z + coeffs[4].rgb  * wn.y + coeffs[8].rgb  * wn.x + coeffs[3].rgb) * wn.x +
+		   (coeffs[5].rgb * wn.z - coeffs[8].rgb  * wn.y + coeffs[1].rgb) * wn.y +
+		   (coeffs[6].rgb * wn.z + coeffs[2].rgb) * wn.z +
+		    coeffs[0].rgb;
 }
 
 /** Estimate specular ambient occlusion. Based on "Moving Frostbite to Physically Based Rendering".

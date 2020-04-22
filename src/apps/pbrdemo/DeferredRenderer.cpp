@@ -46,9 +46,7 @@ void DeferredRenderer::setScene(const std::shared_ptr<Scene> & scene) {
 	if(!scene) {
 		return;
 	}
-	
 	_scene = scene;
-	_ambientScreen->setSceneParameters(_scene->backgroundIrradiance);
 	checkGLError();
 }
 
@@ -216,7 +214,7 @@ void DeferredRenderer::draw(const Camera & camera, Framebuffer & framebuffer, si
 	_lightRenderer->updateShadowMapInfos(_shadowMode, 0.002f);
 	_lightBuffer->bind();
 	_lightBuffer->setViewport();
-	_ambientScreen->draw(view, proj, _scene->environment.map());
+	_ambientScreen->draw(view, proj, _scene->environment.map(), *_scene->environment.shCoeffs());
 	GLUtilities::setBlendState(true, BlendEquation::ADD, BlendFunction::ONE, BlendFunction::ONE);
 	for(auto & light : _scene->lights) {
 		light->draw(*_lightRenderer);
