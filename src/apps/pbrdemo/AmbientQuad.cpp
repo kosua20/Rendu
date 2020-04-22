@@ -5,6 +5,7 @@
 AmbientQuad::AmbientQuad(const Texture * texAlbedo, const Texture * texNormals, const Texture * texEffects, const Texture * texDepth, const Texture * texSSAO) {
 
 	_program = Resources::manager().getProgram2D("ambient_pbr");
+
 	// Load texture.
 	const Texture * textureBrdf = Resources::manager().getTexture("brdf-precomputed", {Layout::RG32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
 
@@ -21,11 +22,7 @@ AmbientQuad::AmbientQuad(const Texture * texAlbedo, const Texture * texNormals, 
 	checkGLError();
 }
 
-void AmbientQuad::setSceneParameters(const std::vector<glm::vec3> & irradiance) {
-	_program->cacheUniformArray("shCoeffs", irradiance);
-}
-
-void AmbientQuad::draw(const glm::mat4 & viewMatrix, const glm::mat4 & projectionMatrix, const Texture * envmap) {
+void AmbientQuad::draw(const glm::mat4 & viewMatrix, const glm::mat4 & projectionMatrix, const Texture * envmap, const Buffer<glm::vec4> & shCoeffs) {
 
 	const glm::mat4 invView = glm::inverse(viewMatrix);
 	// Store the four variable coefficients of the projection matrix.
@@ -36,6 +33,8 @@ void AmbientQuad::draw(const glm::mat4 & viewMatrix, const glm::mat4 & projectio
 	_program->uniform("inverseV", invView);
 	_program->uniform("projectionMatrix", projectionVector);
 	_program->uniform("maxLod", float(_textures[6]->levels-1));
+	_program->uniformBuffer("SHCoeffs", 0);
+	GLUtilities::bindBuffer(shCoeffs, 0);
 	
 	ScreenQuad::draw(_textures);
 }

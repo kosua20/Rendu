@@ -1,6 +1,7 @@
 #pragma once
 
 #include "graphics/ScreenQuad.hpp"
+#include "resources/Buffer.hpp"
 #include "Common.hpp"
 
 /**
@@ -20,17 +21,13 @@ public:
 	 */
 	AmbientQuad(const Texture * texAlbedo, const Texture * texNormals, const Texture * texEffects, const Texture * texDepth, const Texture * texSSAO);
 
-	/** Register the scene-specific lighting informations.
-	 \param irradiance the SH coefficients of the background irradiance
-	 */
-	void setSceneParameters(const std::vector<glm::vec3> & irradiance);
-
 	/** Draw the ambient lighting contribution to the scene.
 	 \param viewMatrix the current camera view matrix
 	 \param projectionMatrix the current camera projection matrix
-	  \param envmap the environment cubemap (ideally containing radiance convolved with increasing roughness lobes in the mipmap levels)
+	 \param envmap the environment cubemap (ideally containing radiance convolved with increasing roughness lobes in the mipmap levels)
+	 \param shCoeffs the irradiance spherical harmonic representation
 	 */
-	void draw(const glm::mat4 & viewMatrix, const glm::mat4 & projectionMatrix, const Texture * envmap);
+	void draw(const glm::mat4 & viewMatrix, const glm::mat4 & projectionMatrix, const Texture * envmap, const Buffer<glm::vec4> & shCoeffs);
 
 private:
 	Program * _program;						///< The ambient lighting program.
