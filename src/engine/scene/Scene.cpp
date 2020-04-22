@@ -37,7 +37,7 @@ void Scene::init(Storage options) {
 	
 	// Define loaders for each keyword.
 	std::map<std::string, void (Scene::*)(const KeyValues &, Storage)> loaders = {
-		{"scene", &Scene::loadScene}, {"object", &Scene::loadObject}, {"point", &Scene::loadLight}, {"directional", &Scene::loadLight}, {"spot", &Scene::loadLight}, {"camera", &Scene::loadCamera}, {"background", &Scene::loadBackground}};
+		{"scene", &Scene::loadScene}, {"object", &Scene::loadObject}, {"point", &Scene::loadLight}, {"directional", &Scene::loadLight}, {"spot", &Scene::loadLight}, {"camera", &Scene::loadCamera}, {"background", &Scene::loadBackground}, {"probe", &Scene::loadProbe}};
 
 	// Parse the file.
 	const std::string sceneFile			   = Resources::manager().getString(_name);
@@ -62,6 +62,12 @@ void Scene::init(Storage options) {
 	for(auto & light : lights) {
 		light->setScene(_bbox);
 	}
+
+	// Check if the environment has been setup.
+	if(environment.type() == LightProbe::Type::DEFAULT){
+		KeyValues defaultKv("probe");
+		environment.decode(defaultKv, options);
+	}
 	_loaded = true;
 
 	// Check if the scene is static.
@@ -77,7 +83,6 @@ void Scene::init(Storage options) {
 			break;
 		}
 	}
-
 	const auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start);
 	Log::Info() << Log::Resources << "Loading took " << duration.count() << "ms." << std::endl;
 }
@@ -136,25 +141,11 @@ void Scene::loadBackground(const KeyValues & params, Storage options) {
 	}
 }
 
-void Scene::loadScene(const KeyValues & params, Storage options) {
-	backgroundIrradiance = std::vector<glm::vec3>(9, glm::vec3(0.0f));
+void Scene::loadProbe(const KeyValues & params, Storage options) {
+	environment.decode(params, options);
+}
 
-	for(const auto & param : params.elements) {
-		if(param.key == "irradiance" && !param.values.empty()) {
-			// Load the SH coefficients from the corresponding text file.
-			const std::string coeffsRaw = Resources::manager().getString(param.values[0]);
-			std::stringstream coeffsStream(coeffsRaw);
-			float x = 0.0f;
-			float y = 0.0f;
-			float z = 0.0f;
-			for(int i = 0; i < 9; ++i) {
-				coeffsStream >> x >> y >> z;
-				backgroundIrradiance[i] = glm::vec3(x, y, z);
-			}
-		} else if(param.key == "probe") {
-			environment.decode(param, options);
-		}
-	}
+void Scene::loadScene(const KeyValues & params, Storage) {
 	// Update matrix, there is at most one transformation in the scene object.
 	_sceneModel = Codable::decodeTransformation(params.elements);
 }
@@ -165,9 +156,6 @@ std::vector<KeyValues> Scene::encode() const {
 	// Encode the scene
 	tokens.emplace_back("scene");
 	auto & scnNode = tokens.back();
-	KeyValues irradiance("irradiance");
-	irradiance.values = {"default_shcoeffs"};
-	scnNode.elements.push_back(irradiance);
 	scnNode.elements.push_back(environment.encode());
 	
 	// Encode the scene transformation.

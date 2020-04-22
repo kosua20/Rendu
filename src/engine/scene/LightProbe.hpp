@@ -1,6 +1,7 @@
 #pragma once
 
 #include "resources/ResourcesManager.hpp"
+#include "resources/Buffer.hpp"
 #include "system/Codable.hpp"
 #include "Common.hpp"
 
@@ -11,6 +12,12 @@
 class LightProbe {
 
 public:
+	/** The type of probe. */
+	enum class Type : uint {
+		DEFAULT, ///< Empty probe.
+		STATIC, ///< Loaded from disk, never updated.
+		DYNAMIC ///< Generated in engine.
+	};
 
 	/** Constructor.
 	 */
@@ -36,14 +43,17 @@ public:
 	*/
 	KeyValues encode() const;
 
-	/** Register an environment map, potentially updated on the fly.
+	/** Register an environment, potentially updated on the fly.
 	 \param envmap the new map to use
+	 \param shCoeffs the new irradiance coefficients
 	 */
-	void registerEnvmap(const Texture * envmap);
+	void registerEnvironment(const Texture * envmap, const std::shared_ptr<Buffer<glm::vec4>> & shCoeffs);
 
-	/** \return true if the map should be generated in-engine
+	/** \return the type of probe
 	 */
-	bool dynamic() const;
+	Type type() const {
+		return _type;
+	}
 
 	/** \return the probe position (or the origin for static probes)
 	 */
@@ -52,17 +62,15 @@ public:
 	/** \return the environment map */
 	const Texture * map() const { return _envmap; }
 
+	/** \return the irradiance coefficients buffer */
+	const std::shared_ptr<Buffer<glm::vec4>> & shCoeffs() const { return _shCoeffs; }
 
 private:
 
-	/** The type of probe. */
-	enum class Type : uint {
-		STATIC, ///< Loaded from disk, never updated.
-		DYNAMIC ///< Generated in engine.
-	};
-
 	const Texture * _envmap = nullptr; ///< The environment map.
-	Type _type = Type::STATIC; ///< The type of probe.
+	std::shared_ptr<Buffer<glm::vec4>> _shCoeffs; ///< The irradiance representation.
+	
+	Type _type = Type::DEFAULT; ///< The type of probe.
 	glm::vec3 _position = glm::vec3(0.0f); ///< The probe location.
 
 };

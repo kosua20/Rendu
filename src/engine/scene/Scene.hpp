@@ -70,8 +70,7 @@ public:
 	Background backgroundMode = Background::COLOR; ///< The background mode (see enum).
 	glm::vec3 backgroundColor = glm::vec3(0.0f);   ///< Color to use if the background mode is COLOR.
 	std::unique_ptr<Object> background;			   ///< Background object, containing the geometry and optional textures to use.
-	std::vector<glm::vec3> backgroundIrradiance;	///< RGB SH-coefficients of the background irradiance, computed using SHExtractor. \see SphericalHarmonics
-	LightProbe environment;							///< Reflection probe.
+	LightProbe environment;						   ///< Reflection probe.
 	
 	/** Copy constructor.*/
 	Scene(const Scene &) = delete;
@@ -114,13 +113,18 @@ private:
 	 */
 	void loadBackground(const KeyValues & params, Storage options);
 
+	/** Load the scene environment informations from its serialized representation.
+	 \param params the probe parameters
+	 \param options data loading and storage options
+	 */
+	void loadProbe(const KeyValues & params, Storage options);
+
 	/** Load the scene informations from its serialized representation.
 	 \param params the scene parameters
 	 \param options data loading and storage options
 	 */
 	void loadScene(const KeyValues & params, Storage options);
 
-	
 	/** Compute the bounding box of the scene, optionaly excluding objects that do not cast shadows.
 	 \param onlyShadowCasters denote if only objects that are allowed to cast shadows should be taken into account
 	 \return the scene bounding box
