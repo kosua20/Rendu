@@ -1,7 +1,7 @@
 # Test a range of roughness parameters on both dielectric and metallic materials.
 
-* scene:
-	probe: rgb32cube: kiara_dawn
+* probe: 
+	radiance: rgb32cube: kiara_dawn
 	irradiance: kiara_dawn_shcoeffs
 
 * background:

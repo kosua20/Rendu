@@ -3,8 +3,8 @@
 # The sphere should reflect all the incoming light, thus becoming invisible.
 # Disable SSAO, Bloom and Tonemapping for an accurate result.
 
-* scene:
-	probe: rgb32cube: grey_cube
+* probe: 
+	radiance: rgb32cube: grey_cube
 	irradiance: grey_cube_shcoeffs
 
 * background:

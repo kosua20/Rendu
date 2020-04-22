@@ -1,6 +1,5 @@
-* scene:
-	probe: 0.0,1.0,0.0
-	irradiance: kiara_dawn_shcoeffs
+* probe: 
+	position: 0.0,1.0,0.0
 
 * background:
 	sun: -0.3,0.0,1.0

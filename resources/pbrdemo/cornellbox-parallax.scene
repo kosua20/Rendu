@@ -1,5 +1,5 @@
-* scene:
-	probe: rgbcube: default_cube
+* probe: 
+	radiance: rgbcube: default_cube
 	irradiance: default_shcoeffs
 
 * background:
