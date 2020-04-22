@@ -1,7 +1,6 @@
 #include "Probe.hpp"
 #include "graphics/GPUObjects.hpp"
 #include "graphics/GLUtilities.hpp"
-#include "resources/ResourcesManager.hpp"
 
 
 Probe::Probe(const glm::vec3 & position, std::shared_ptr<Renderer> renderer, uint size, uint mips, const glm::vec2 & clippingPlanes){
@@ -9,9 +8,17 @@ Probe::Probe(const glm::vec3 & position, std::shared_ptr<Renderer> renderer, uin
 	_framebuffer = renderer->createOutput(TextureShape::Cube, size, size, 6, mips);
 	_framebuffer->clear(glm::vec4(0.0f), 1.0f);
 	_position = position;
+	_integration = Resources::manager().getProgram("cubemap_convo", "skybox_basic", "cubemap_convo");
+	_cube = Resources::manager().getMesh("skybox", Storage::GPU);
 	// Texture used to compute irradiance spherical harmonics.
 	_copy = _renderer->createOutput(TextureShape::Cube, 16, 16, 6, 1);
-	_shCoeffs.resize(9);
+
+	_shCoeffs.reset(new Buffer<glm::vec4>(9, BufferType::UNIFORM, DataUse::DYNAMIC));
+	for(int i = 0; i < 9; ++i){
+		_shCoeffs->at(i) = glm::vec4(0.0f);
+	}
+	_shCoeffs->setup();
+	_shCoeffs->upload();
 
 	// Compute the camera for each face.
 	const std::array<glm::vec3, 6> ups = {
@@ -33,10 +40,7 @@ void Probe::draw(){
 	}
 }
 
-void Probe::convolveRadiance(float clamp){
-
-	const auto _integration = Resources::manager().getProgram("cubemap_convo", "skybox_basic", "cubemap_convo");
-	const auto mesh			= Resources::manager().getMesh("skybox", Storage::GPU);
+void Probe::convolveRadiance(float clamp, size_t first, size_t count){
 
 	GLUtilities::setDepthState(false);
 	GLUtilities::setBlendState(false);
@@ -45,7 +49,10 @@ void Probe::convolveRadiance(float clamp){
 	_integration->use();
 	_integration->uniform("clampMax", clamp);
 
-	for(uint mid = 1; mid < _framebuffer->textureId()->levels; ++mid){
+	const uint lb = glm::clamp<size_t>(first, 1, size_t(_framebuffer->textureId()->levels-1));
+	const uint ub = std::min(first + count, size_t(_framebuffer->textureId()->levels));
+
+	for(uint mid = lb; mid < ub; ++mid){
 		const uint wh = _framebuffer->textureId()->width / (1 << mid);
 		const float roughness = float(mid) / float((_framebuffer->textureId()->levels)-1);
 		const int samplesCount = (mid == 1 ? 64 : 128);
@@ -58,16 +65,17 @@ void Probe::convolveRadiance(float clamp){
 			_framebuffer->bind(lid, mid);
 			_integration->uniform("mvp", _mvps[lid]);
 			GLUtilities::bindTexture(_framebuffer->textureId(), 0);
-			GLUtilities::drawMesh(*mesh);
+			GLUtilities::drawMesh(*_cube);
 		}
 	}
 	_framebuffer->unbind();
+}
 
+void Probe::prepareIrradiance(){
 	// Downscale radiance to a smaller texture, to be copied on the CPU for SH decomposition.
 	for(uint lid = 0; lid < 6; ++lid){
 		GLUtilities::blit(*_framebuffer, *_copy, lid, lid, 0, 0, Filter::LINEAR);
 	}
-
 }
 
 void Probe::estimateIrradiance(){
@@ -75,7 +83,14 @@ void Probe::estimateIrradiance(){
 	Texture & tex = *_copy->textureId();
 	GLUtilities::downloadTexture(tex, 0);
 	// Compute SH coeffs.
-	extractIrradianceSHCoeffs(tex, _shCoeffs);
+	std::vector<glm::vec3> coeffs(9);
+	extractIrradianceSHCoeffs(tex, coeffs);
+	for(int i = 0; i < 9; ++i){
+		_shCoeffs->at(i)[0] = coeffs[i][0];
+		_shCoeffs->at(i)[1] = coeffs[i][1];
+		_shCoeffs->at(i)[2] = coeffs[i][2];
+	}
+	_shCoeffs->upload();
 }
 
 void Probe::clean(){

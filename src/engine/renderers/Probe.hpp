@@ -1,6 +1,7 @@
 #pragma once
 
 #include "resources/Buffer.hpp"
+#include "resources/ResourcesManager.hpp"
 #include "graphics/Framebuffer.hpp"
 #include "renderers/Renderer.hpp"
 #include "input/Camera.hpp"
@@ -35,12 +36,15 @@ public:
 	 This also copies a downscaled version of the radiance for future SH computations.
 	 \param clamp maximum intensity value, useful to avoid ringing artifacts
 	 */
-	void convolveRadiance(float clamp);
+	void convolveRadiance(float clamp, size_t first, size_t count);
+
+	/** Downscale radiance cubemap info for future irradiance estimation. */
+	void prepareIrradiance();
 
 	/** Estimate the SH representation of the cubemap irradiance. The estimation is done on the CPU,
 	 and relies on downlaoding a (downscaled) copy of the cubemap content. For synchronization reasons,
 	 it is recommended to only update irradiance every other frame, and to trigger the copy
-	 (performed at the end of convolveRadiance) after the coeffs update. This will introduce a latency but
+	 (performed by prepareIrradiance) after the coeffs update. This will introduce a latency but
 	 will avoid any stalls. */
 	void estimateIrradiance();
 
@@ -59,7 +63,7 @@ public:
 	/** The cubemap irradiance SH representation, if estimateIrradiance has been called.
 	 \return the irradiance SH coefficients
 	 */
-	const std::vector<glm::vec3> & shCoeffs() const {
+	const std::shared_ptr<Buffer<glm::vec4>> & shCoeffs() const {
 		return _shCoeffs;
 	}
 	
@@ -100,9 +104,11 @@ private:
 	std::unique_ptr<Framebuffer> _framebuffer; ///< The cubemap content.
 	std::shared_ptr<Renderer> _renderer; ///< The renderer to use.
 	std::unique_ptr<Framebuffer> _copy; ///< Downscaled copy of the cubemap content.
-	std::vector<glm::vec3> _shCoeffs; ///< SH representation of the cubemap irradiance.
+	std::shared_ptr<Buffer<glm::vec4>> _shCoeffs; ///< SH representation of the cubemap irradiance.
 
 	std::array<Camera, 6> _cameras; ///< Camera for each face.
 	std::array<glm::mat4, 6> _mvps; ///< MVP for each (centered) face.
 	glm::vec3 _position; ///< The probe location.
+	const Program * _integration; ///< Radiance preconvolution shader.
+	const Mesh * _cube; ///< Skybox cube.
 };
