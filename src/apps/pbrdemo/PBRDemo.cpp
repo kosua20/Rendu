@@ -127,7 +127,7 @@ void PBRDemo::updateMaps(){
 
 			_copyTimeCPU.begin();
 			_copyTime.begin();
-			probe->estimateIrradiance();
+			probe->estimateIrradiance(5.0f);
 			_copyTime.end();
 			_copyTimeCPU.end();
 			

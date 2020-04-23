@@ -47,8 +47,10 @@ public:
 	 and relies on downlaoding a (downscaled) copy of the cubemap content. For synchronization reasons,
 	 it is recommended to only update irradiance every other frame, and to trigger the copy
 	 (performed by prepareIrradiance) after the coeffs update. This will introduce a latency but
-	 will avoid any stalls. */
-	void estimateIrradiance();
+	 will avoid any stalls.
+	 \param clamp maximum intensity value, useful to avoid temporal instabilities
+	 */
+	void estimateIrradiance(float clamp);
 
 	/** Clean internal resources.
 	 */
@@ -96,9 +98,10 @@ public:
 	 "An efficient representation for irradiance environment maps.",
 	 Proceedings of the 28th annual conference on Computer graphics and interactive techniques. ACM, 2001.
 	\param cubemap the cubemap to extract SH coefficients from
+	\param clamp maximum intensity value, useful to avoid temporal instabilities
 	\param shCoeffs will contain the irradiance SH representation
 	 */
-	static void extractIrradianceSHCoeffs(const Texture & cubemap, std::vector<glm::vec3> & shCoeffs);
+	static void extractIrradianceSHCoeffs(const Texture & cubemap, float clamp, std::vector<glm::vec3> & shCoeffs);
 	
 private:
 

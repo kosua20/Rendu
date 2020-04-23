@@ -283,7 +283,7 @@ int main(int argc, char ** argv) {
 
 			// Compute SH irradiance coefficients for the cubemap.
 			if(ImGui::Button("Compute SH coefficients")) {
-				Probe::extractIrradianceSHCoeffs(cubemapInfos, SCoeffs);
+				Probe::extractIrradianceSHCoeffs(cubemapInfos, 10000.0f, SCoeffs);
 				std::stringstream outputStr;
 				for(int i = 0; i < 9; ++i) {
 					outputStr << "\t" << SCoeffs[i][0] << " " << SCoeffs[i][1] << " " << SCoeffs[i][2] << std::endl;
