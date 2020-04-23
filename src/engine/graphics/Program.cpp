@@ -21,7 +21,7 @@ void Program::cacheUniformArray(const std::string & name, const std::vector<glm:
 }
 
 void Program::load() {
-	std::map<std::string, int> bindings;
+	GLUtilities::Bindings bindings;
 	const std::string vertexContent   = Resources::manager().getStringWithIncludes(_vertexName + ".vert");
 	const std::string fragmentContent = Resources::manager().getStringWithIncludes(_fragmentName + ".frag");
 	const std::string geometryContent = _geometryName.empty() ? "" : Resources::manager().getStringWithIncludes(_geometryName + ".geom");
@@ -65,7 +65,6 @@ void Program::load() {
 				_uniforms[vname]		= glGetUniformLocation(_id, vname.c_str());
 			}
 		}
-
 	}
 
 	// Parse uniform blocks.
@@ -84,11 +83,21 @@ void Program::load() {
 		}
 		_uniforms[name] = glGetUniformBlockIndex(_id, name.c_str());
 	}
+	checkGLError();
 
 	// Register texture slots.
-	for(auto & texture : bindings) {
-		glUniform1i(_uniforms[texture.first], texture.second);
-		checkGLErrorInfos("Unused texture \"" + texture.first + "\" in program " + debugName + ".");
+	for(auto & binding : bindings) {
+		const std::string & name = binding.first;
+		const GLUtilities::BindingType type = binding.second.type;
+		const int slot = binding.second.location;
+
+		if(type == GLUtilities::BindingType::TEXTURE) {
+			glUniform1i(_uniforms.at(name), slot);
+		} else if(type == GLUtilities::BindingType::UNIFORM_BUFFER) {
+			glUniformBlockBinding(_id, _uniforms.at(name), GLuint(slot));
+		}
+		checkGLErrorInfos("Unused binding \"" + name + "\" in program " + debugName + ".");
+
 	}
 
 	glUseProgram(0);

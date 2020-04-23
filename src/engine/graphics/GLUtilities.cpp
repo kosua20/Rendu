@@ -108,7 +108,7 @@ void GLUtilities::setup() {
 	glDisable(GL_FRAMEBUFFER_SRGB);
 }
 
-GLuint GLUtilities::loadShader(const std::string & prog, GLuint type, std::map<std::string, int> & bindings, std::string & finalLog) {
+GLuint GLUtilities::loadShader(const std::string & prog, GLuint type, Bindings & bindings, std::string & finalLog) {
 	// We need to detect texture slots and store them, to avoid having to register them in
 	// the rest of the code (object, renderer), while not having support for 'layout(binding=n)' in OpenGL <4.2.
 	std::stringstream inputLines(prog);
@@ -119,8 +119,8 @@ GLuint GLUtilities::loadShader(const std::string & prog, GLuint type, std::map<s
 
 		// Comment handling.
 		const std::string::size_type commentPosBegin = line.find("/*");
-		const std::string::size_type commentPosEnd   = line.rfind("*/");
-		const std::string::size_type commentMonoPos  = line.find("//");
+		const std::string::size_type commentPosEnd	 = line.rfind("*/");
+		const std::string::size_type commentMonoPos	 = line.find("//");
 		// We suppose no multi-line comment nesting, that way we can tackle them linearly.
 		if(commentPosBegin != std::string::npos && commentPosEnd != std::string::npos) {
 			// Both token exist.
@@ -135,54 +135,75 @@ GLuint GLUtilities::loadShader(const std::string & prog, GLuint type, std::map<s
 			isInMultiLineComment = true;
 		}
 
-		// Find a line containing "layout...binding...uniform...sampler..."
-		const std::string::size_type layoutPos  = line.find("layout");
+		// Find a line containing "layout...binding...uniform..."
+		const std::string::size_type layoutPos	= line.find("layout");
 		const std::string::size_type bindingPos = line.find("binding");
 		const std::string::size_type uniformPos = line.find("uniform");
-		const std::string::size_type samplerPos = line.find("sampler");
 
-		const bool isNotALayoutBindingUniformSampler = (layoutPos == std::string::npos || bindingPos == std::string::npos || uniformPos == std::string::npos || samplerPos == std::string::npos);
-		const bool isALayoutInsideAMultiLineComment  = isInMultiLineComment && (layoutPos > commentPosBegin || samplerPos < commentPosEnd);
+		const bool isNotALayoutBindingUniform		 = (layoutPos == std::string::npos || bindingPos == std::string::npos || uniformPos == std::string::npos);
+		const bool isALayoutInsideAMultiLineComment	 = isInMultiLineComment && (layoutPos > commentPosBegin || uniformPos < commentPosEnd);
 		const bool isALayoutInsideASingleLineComment = commentMonoPos != std::string::npos && layoutPos > commentMonoPos;
-
-		// Detect sampler with no bindings.
-		const bool isAUniformSamplerWithNoBinding = samplerPos != std::string::npos && uniformPos != std::string::npos && bindingPos == std::string::npos;
-		if(isAUniformSamplerWithNoBinding) {
-			const std::string::size_type endPosName   = line.find_first_of(';') - 1;
-			const std::string::size_type startPosName = line.find_last_of(' ', endPosName) + 1;
-			const std::string name					  = line.substr(startPosName, endPosName - startPosName + 1);
-			Log::Verbose() << Log::OpenGL << "No binding info for sampler \"" << name << "\"." << std::endl;
-			outputLines.push_back(line);
-			continue;
-		}
-
-		if(isNotALayoutBindingUniformSampler || isALayoutInsideAMultiLineComment || isALayoutInsideASingleLineComment) {
+		if(isNotALayoutBindingUniform || isALayoutInsideAMultiLineComment || isALayoutInsideASingleLineComment) {
 			// We don't modify the line.
 			outputLines.push_back(line);
 			continue;
 		}
-
-		// Layout on basic uniforms is not really used < 4.2, so we can be quite aggressive in our extraction.
-		const std::string::size_type firstSlotPos = line.find_first_of("0123456789", bindingPos);
-		const std::string::size_type lastSlotPos  = line.find_first_not_of("0123456789", firstSlotPos) - 1;
-		const int slot							  = std::stoi(line.substr(firstSlotPos, lastSlotPos - firstSlotPos + 1));
-
-		const std::string::size_type endPosName   = line.find_first_of(';', lastSlotPos) - 1;
-		const std::string::size_type startPosName = line.find_last_of(' ', endPosName) + 1;
-		const std::string name					  = line.substr(startPosName, endPosName - startPosName + 1);
-
-		const std::string::size_type endSamplerPos   = line.find_first_of(' ', samplerPos) - 1;
-		const std::string::size_type startSamplerPos = line.find_last_of(' ', samplerPos) + 1;
-		const std::string samplerType				 = line.substr(startSamplerPos, endSamplerPos - startSamplerPos + 1);
-		std::string outputLine						 = "uniform " + samplerType + " ";
-		outputLine += name + ";";
-		outputLines.push_back(outputLine);
-
-		if(bindings.count(name) > 0 && bindings[name] != slot) {
-			Log::Warning() << Log::OpenGL << "Inconsistent sampler location between linked shaders for \"" << name << "\"." << std::endl;
+		// Extract the statement.
+		const std::string::size_type startStatement = std::min(layoutPos, uniformPos);
+		const std::string::size_type endStatement	= line.find_first_of(";{", startStatement);
+		int slot									= 0;
+		std::string name;
+		{
+			const std::string statement = TextUtilities::trim(line.substr(startStatement, endStatement - startStatement), "\t ");
+			// Extract the location and the name.
+			const std::string::size_type bindingPosSub = statement.find("binding");
+			const std::string::size_type firstSlotPos  = statement.find_first_of("0123456789", bindingPosSub);
+			const std::string::size_type lastSlotPos   = statement.find_first_not_of("0123456789", firstSlotPos) - 1;
+			const std::string::size_type startPosName  = statement.find_last_of(" \t") + 1;
+			name									   = statement.substr(startPosName);
+			slot									   = std::stoi(statement.substr(firstSlotPos, lastSlotPos - firstSlotPos + 1));
 		}
-		bindings[name] = slot;
-		Log::Verbose() << Log::OpenGL << "Detected texture (" << name << ", " << slot << ") => " << outputLine << std::endl;
+		// Two possibles cases, sampler or buffer.
+		const std::string::size_type samplerPos = line.find("sampler", layoutPos);
+		const bool isSampler					= samplerPos != std::string::npos;
+		if(isSampler) {
+			const std::string::size_type endSamplerPos	 = line.find_first_of(' ', samplerPos) - 1;
+			const std::string::size_type startSamplerPos = line.find_last_of(' ', samplerPos) + 1;
+			const std::string samplerType				 = line.substr(startSamplerPos, endSamplerPos - startSamplerPos + 1);
+			std::string outputLine						 = "uniform " + samplerType + " ";
+			outputLine += name + ";";
+			outputLines.push_back(outputLine);
+		} else {
+			// We just need to remove the binding spec from the layout.
+			const std::string::size_type layoutContentStart = line.find_first_of("(", layoutPos) + 1;
+			const std::string::size_type layoutContentEnd	= line.find_first_of(")", layoutContentStart);
+			// Two options: either binding is the only argument.
+			const std::string::size_type splitPos = line.find_first_of(",", layoutContentStart, layoutContentEnd - layoutContentStart);
+			if(splitPos == std::string::npos) {
+				// Remove layout entirely.
+				const std::string outputLine = line.substr(0, layoutPos) + line.substr(layoutContentEnd + 1);
+				outputLines.push_back(outputLine);
+			} else {
+				// Or there are other specifiers to preserve.
+				std::string::size_type sepBefore = line.find_last_of("(,", bindingPos);
+				std::string::size_type sepAfter	 = line.find_first_of("),", bindingPos);
+				if(line[sepBefore] == '(') {
+					sepBefore += 1;
+				}
+				if(line[sepAfter] == ')') {
+					sepAfter -= 1;
+				}
+				const std::string outputLine = line.substr(0, sepBefore) + line.substr(sepAfter + 1);
+				outputLines.push_back(outputLine);
+			}
+		}
+
+		if(bindings.count(name) > 0 && bindings[name].location != slot) {
+			Log::Warning() << Log::OpenGL << "Inconsistent binding location between linked shaders for \"" << name << "\"." << std::endl;
+		}
+		bindings[name].location = slot;
+		bindings[name].type		= isSampler ? BindingType::TEXTURE : BindingType::UNIFORM_BUFFER;
+		Log::Verbose() << Log::OpenGL << "Detected binding (" << name << ", " << slot << ") => " << outputLines.back() << std::endl;
 	}
 	std::string outputProg;
 	for(const auto & outputLine : outputLines) {
@@ -221,7 +242,7 @@ GLuint GLUtilities::loadShader(const std::string & prog, GLuint type, std::map<s
 	return id;
 }
 
-GLuint GLUtilities::createProgram(const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, std::map<std::string, int> & bindings, const std::string & debugInfos) {
+GLuint GLUtilities::createProgram(const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, Bindings & bindings, const std::string & debugInfos) {
 	GLuint vp(0), fp(0), gp(0);
 	const GLuint id = glCreateProgram();
 	checkGLError();
@@ -340,7 +361,7 @@ void GLUtilities::setupTexture(Texture & texture, const Descriptor & descriptor)
 	texture.gpu->id = textureId;
 
 	const GLenum target = texture.gpu->target;
-	const GLenum wrap   = texture.gpu->wrapping;
+	const GLenum wrap	= texture.gpu->wrapping;
 
 	glBindTexture(target, textureId);
 
@@ -372,7 +393,7 @@ void GLUtilities::allocateTexture(const Texture & texture) {
 
 	for(size_t mid = 0; mid < texture.levels; ++mid) {
 		// Mipmap dimensions.
-		const GLsizei w = GLsizei(std::max<uint>(1, texture.width  / (1 << mid)));
+		const GLsizei w = GLsizei(std::max<uint>(1, texture.width / (1 << mid)));
 		const GLsizei h = GLsizei(std::max<uint>(1, texture.height / (1 << mid)));
 
 		const GLint mip = GLint(mid);
@@ -434,7 +455,7 @@ void GLUtilities::uploadTexture(const Texture & texture) {
 	}
 
 	const GLenum target		= texture.gpu->target;
-	const GLenum destType   = texture.gpu->type;
+	const GLenum destType	= texture.gpu->type;
 	const GLenum destFormat = texture.gpu->format;
 	// Sanity check the texture destination format.
 	const unsigned int destChannels = texture.gpu->channels;
@@ -462,7 +483,7 @@ void GLUtilities::uploadTexture(const Texture & texture) {
 		const size_t depth = target == GL_TEXTURE_3D ? (texture.depth / (1 << mid)) : texture.depth;
 		// For each layer.
 		for(size_t lid = 0; lid < depth; ++lid) {
-			const Image & image   = texture.images[currentImg];
+			const Image & image = texture.images[currentImg];
 			currentImg += 1;
 			const size_t destSize = destChannels * image.height * image.width;
 
@@ -508,7 +529,7 @@ void GLUtilities::uploadTexture(const Texture & texture) {
 
 			} else if(target == GL_TEXTURE_3D) {
 				glTexSubImage3D(target, mip, 0, 0, lev, w, h, 1, destFormat, destType, finalDataPtr);
-				
+
 			} else {
 				Log::Error() << Log::OpenGL << "Unsupported texture upload destination." << std::endl;
 			}
@@ -520,7 +541,7 @@ void GLUtilities::uploadTexture(const Texture & texture) {
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 }
 
-void GLUtilities::downloadTexture(Texture & texture){
+void GLUtilities::downloadTexture(Texture & texture) {
 	downloadTexture(texture, -1);
 }
 
@@ -549,23 +570,23 @@ void GLUtilities::downloadTexture(Texture & texture, int level) {
 
 	// For each mip level.
 	for(size_t mid = 0; mid < texture.levels; ++mid) {
-		if(level >= 0 && int(mid) != level){
+		if(level >= 0 && int(mid) != level) {
 			continue;
 		}
-		const GLsizei w = GLsizei(std::max<uint>(1, texture.width  / (1 << mid)));
+		const GLsizei w = GLsizei(std::max<uint>(1, texture.width / (1 << mid)));
 		const GLsizei h = GLsizei(std::max<uint>(1, texture.height / (1 << mid)));
 		const GLint mip = GLint(mid);
 
 		if(texture.shape == TextureShape::D2) {
 			texture.images[mid] = Image(w, h, channels);
-			Image & image = texture.images[mid];
+			Image & image		= texture.images[mid];
 			glGetTexImage(GL_TEXTURE_2D, mip, format, type, &image.pixels[0]);
 
 		} else if(texture.shape == TextureShape::Cube) {
 			for(size_t lid = 0; lid < texture.depth; ++lid) {
-				const size_t id = mid*texture.levels+lid;
+				const size_t id	   = mid * texture.levels + lid;
 				texture.images[id] = Image(w, h, channels);
-				Image & image = texture.images[id];
+				Image & image	   = texture.images[id];
 				glGetTexImage(GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + lid), mip, format, type, &image.pixels[0]);
 			}
 		}
@@ -580,7 +601,7 @@ void GLUtilities::generateMipMaps(const Texture & texture) {
 	}
 	const GLenum target = texture.gpu->target;
 	glBindTexture(target, texture.gpu->id);
-	glTexParameteri(target, GL_TEXTURE_MAX_LEVEL, texture.levels-1);
+	glTexParameteri(target, GL_TEXTURE_MAX_LEVEL, texture.levels - 1);
 	glGenerateMipmap(target);
 	glBindTexture(target, 0);
 }
@@ -598,7 +619,7 @@ GLenum GLUtilities::targetFromShape(const TextureShape & shape) {
 	return shapesTargets.at(shape);
 }
 
-void GLUtilities::bindBuffer(const BufferBase & buffer, size_t slot){
+void GLUtilities::bindBuffer(const BufferBase & buffer, size_t slot) {
 	glBindBuffer(GL_UNIFORM_BUFFER, buffer.gpu->id);
 	glBindBufferBase(GL_UNIFORM_BUFFER, GLuint(slot), buffer.gpu->id);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
@@ -649,7 +670,6 @@ void GLUtilities::uploadBuffer(const BufferBase & buffer, size_t size, unsigned 
 	glBindBuffer(target, 0);
 }
 
-
 void GLUtilities::downloadBuffer(const BufferBase & buffer, size_t size, unsigned char * data, size_t offset) {
 	if(!buffer.gpu) {
 		Log::Error() << Log::OpenGL << "Uninitialized GPU buffer." << std::endl;
@@ -692,7 +712,7 @@ void GLUtilities::setupMesh(Mesh & mesh) {
 	size_t offset = 0;
 	if(!mesh.positions.empty()) {
 		const size_t size = sizeof(GLfloat) * 3 * mesh.positions.size();
-		GLUtilities::uploadBuffer(vertexBuffer, size, reinterpret_cast<unsigned char*>(mesh.positions.data()), offset);
+		GLUtilities::uploadBuffer(vertexBuffer, size, reinterpret_cast<unsigned char *>(mesh.positions.data()), offset);
 		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.gpu->id);
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<void *>(offset));
@@ -700,7 +720,7 @@ void GLUtilities::setupMesh(Mesh & mesh) {
 	}
 	if(!mesh.normals.empty()) {
 		const size_t size = sizeof(GLfloat) * 3 * mesh.normals.size();
-		GLUtilities::uploadBuffer(vertexBuffer, size, reinterpret_cast<unsigned char*>(mesh.normals.data()), offset);
+		GLUtilities::uploadBuffer(vertexBuffer, size, reinterpret_cast<unsigned char *>(mesh.normals.data()), offset);
 		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.gpu->id);
 		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<void *>(offset));
@@ -708,7 +728,7 @@ void GLUtilities::setupMesh(Mesh & mesh) {
 	}
 	if(!mesh.texcoords.empty()) {
 		const size_t size = sizeof(GLfloat) * 2 * mesh.texcoords.size();
-		GLUtilities::uploadBuffer(vertexBuffer, size, reinterpret_cast<unsigned char*>(mesh.texcoords.data()), offset);
+		GLUtilities::uploadBuffer(vertexBuffer, size, reinterpret_cast<unsigned char *>(mesh.texcoords.data()), offset);
 		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.gpu->id);
 		glEnableVertexAttribArray(2);
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<void *>(offset));
@@ -716,7 +736,7 @@ void GLUtilities::setupMesh(Mesh & mesh) {
 	}
 	if(!mesh.tangents.empty()) {
 		const size_t size = sizeof(GLfloat) * 3 * mesh.tangents.size();
-		GLUtilities::uploadBuffer(vertexBuffer, size, reinterpret_cast<unsigned char*>(mesh.tangents.data()), offset);
+		GLUtilities::uploadBuffer(vertexBuffer, size, reinterpret_cast<unsigned char *>(mesh.tangents.data()), offset);
 		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.gpu->id);
 		glEnableVertexAttribArray(3);
 		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<void *>(offset));
@@ -724,7 +744,7 @@ void GLUtilities::setupMesh(Mesh & mesh) {
 	}
 	if(!mesh.binormals.empty()) {
 		const size_t size = sizeof(GLfloat) * 3 * mesh.binormals.size();
-		GLUtilities::uploadBuffer(vertexBuffer, size, reinterpret_cast<unsigned char*>(mesh.binormals.data()), offset);
+		GLUtilities::uploadBuffer(vertexBuffer, size, reinterpret_cast<unsigned char *>(mesh.binormals.data()), offset);
 		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.gpu->id);
 		glEnableVertexAttribArray(4);
 		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<void *>(offset));
@@ -732,7 +752,7 @@ void GLUtilities::setupMesh(Mesh & mesh) {
 	}
 	if(!mesh.colors.empty()) {
 		const size_t size = sizeof(GLfloat) * 3 * mesh.colors.size();
-		GLUtilities::uploadBuffer(vertexBuffer, size, reinterpret_cast<unsigned char*>(mesh.colors.data()), offset);
+		GLUtilities::uploadBuffer(vertexBuffer, size, reinterpret_cast<unsigned char *>(mesh.colors.data()), offset);
 		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.gpu->id);
 		glEnableVertexAttribArray(5);
 		glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<void *>(offset));
@@ -749,9 +769,9 @@ void GLUtilities::setupMesh(Mesh & mesh) {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	mesh.gpu->id   = vao;
-	mesh.gpu->count = GLsizei(mesh.indices.size());
-	mesh.gpu->indexBuffer = std::move(indexBuffer.gpu);
+	mesh.gpu->id		   = vao;
+	mesh.gpu->count		   = GLsizei(mesh.indices.size());
+	mesh.gpu->indexBuffer  = std::move(indexBuffer.gpu);
 	mesh.gpu->vertexBuffer = std::move(vertexBuffer.gpu);
 }
 
@@ -768,8 +788,8 @@ void GLUtilities::sync() {
 
 void GLUtilities::deviceInfos(std::string & vendor, std::string & renderer, std::string & version, std::string & shaderVersion) {
 	const GLubyte * vendorString	  = glGetString(GL_VENDOR);
-	const GLubyte * rendererString	= glGetString(GL_RENDERER);
-	const GLubyte * versionString	 = glGetString(GL_VERSION);
+	const GLubyte * rendererString	  = glGetString(GL_RENDERER);
+	const GLubyte * versionString	  = glGetString(GL_VERSION);
 	const GLubyte * glslVersionString = glGetString(GL_SHADING_LANGUAGE_VERSION);
 	vendor							  = std::string(reinterpret_cast<const char *>(vendorString));
 	renderer						  = std::string(reinterpret_cast<const char *>(rendererString));
@@ -809,38 +829,36 @@ void GLUtilities::clearColorAndDepth(const glm::vec4 & color, float depth) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void GLUtilities::setDepthState(bool test){
+void GLUtilities::setDepthState(bool test) {
 	(test ? glEnable : glDisable)(GL_DEPTH_TEST);
 }
 
-void GLUtilities::setDepthState(bool test, DepthEquation equation, bool write){
+void GLUtilities::setDepthState(bool test, DepthEquation equation, bool write) {
 	(test ? glEnable : glDisable)(GL_DEPTH_TEST);
 	static const std::map<DepthEquation, GLenum> eqs = {
 		{DepthEquation::NEVER, GL_NEVER},
-		{DepthEquation::LESS, GL_LESS },
-		{DepthEquation::LEQUAL, GL_LEQUAL },
-		{DepthEquation::EQUAL, GL_EQUAL },
-		{DepthEquation::GREATER, GL_GREATER },
-		{DepthEquation::GEQUAL, GL_GEQUAL },
-		{DepthEquation::NOTEQUAL, GL_NOTEQUAL },
-		{DepthEquation::ALWAYS, GL_ALWAYS }
-	};
+		{DepthEquation::LESS, GL_LESS},
+		{DepthEquation::LEQUAL, GL_LEQUAL},
+		{DepthEquation::EQUAL, GL_EQUAL},
+		{DepthEquation::GREATER, GL_GREATER},
+		{DepthEquation::GEQUAL, GL_GEQUAL},
+		{DepthEquation::NOTEQUAL, GL_NOTEQUAL},
+		{DepthEquation::ALWAYS, GL_ALWAYS}};
 	glDepthFunc(eqs.at(equation));
 	glDepthMask(write ? GL_TRUE : GL_FALSE);
 }
 
-void GLUtilities::setBlendState(bool test){
+void GLUtilities::setBlendState(bool test) {
 	(test ? glEnable : glDisable)(GL_BLEND);
 }
 
-void GLUtilities::setBlendState(bool test, BlendEquation equation, BlendFunction src, BlendFunction dst){
+void GLUtilities::setBlendState(bool test, BlendEquation equation, BlendFunction src, BlendFunction dst) {
 	static const std::map<BlendEquation, GLenum> eqs = {
 		{BlendEquation::ADD, GL_FUNC_ADD},
 		{BlendEquation::SUBTRACT, GL_FUNC_SUBTRACT},
 		{BlendEquation::REVERSE_SUBTRACT, GL_FUNC_REVERSE_SUBTRACT},
 		{BlendEquation::MIN, GL_MIN},
-		{BlendEquation::MAX, GL_MAX}
-	};
+		{BlendEquation::MAX, GL_MAX}};
 	static const std::map<BlendFunction, GLenum> funcs = {
 		{BlendFunction::ONE, GL_ONE},
 		{BlendFunction::ZERO, GL_ZERO},
@@ -851,34 +869,31 @@ void GLUtilities::setBlendState(bool test, BlendEquation equation, BlendFunction
 		{BlendFunction::DST_COLOR, GL_DST_COLOR},
 		{BlendFunction::ONE_MINUS_DST_COLOR, GL_ONE_MINUS_DST_COLOR},
 		{BlendFunction::DST_ALPHA, GL_DST_ALPHA},
-		{BlendFunction::ONE_MINUS_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA}
-	};
+		{BlendFunction::ONE_MINUS_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA}};
 	glBlendFunc(funcs.at(src), funcs.at(dst));
 	glBlendEquation(eqs.at(equation));
 	(test ? glEnable : glDisable)(GL_BLEND);
 }
 
-void GLUtilities::setCullState(bool cull){
+void GLUtilities::setCullState(bool cull) {
 	(cull ? glEnable : glDisable)(GL_CULL_FACE);
 }
 
 static const std::map<Faces, GLenum> faces = {
 	{Faces::FRONT, GL_FRONT},
 	{Faces::BACK, GL_BACK},
-	{Faces::ALL, GL_FRONT_AND_BACK}
-};
+	{Faces::ALL, GL_FRONT_AND_BACK}};
 
-void GLUtilities::setCullState(bool cull, Faces culledFaces){
+void GLUtilities::setCullState(bool cull, Faces culledFaces) {
 	(cull ? glEnable : glDisable)(GL_CULL_FACE);
 	glCullFace(faces.at(culledFaces));
 }
 
-void GLUtilities::setPolygonState(PolygonMode mode, Faces selectedFaces){
+void GLUtilities::setPolygonState(PolygonMode mode, Faces selectedFaces) {
 	static const std::map<PolygonMode, GLenum> modes = {
 		{PolygonMode::FILL, GL_FILL},
 		{PolygonMode::LINE, GL_LINE},
-		{PolygonMode::POINT, GL_POINT}
-	};
+		{PolygonMode::POINT, GL_POINT}};
 	glPolygonMode(faces.at(selectedFaces), modes.at(mode));
 }
 
@@ -899,7 +914,7 @@ void GLUtilities::blit(const Framebuffer & src, const Framebuffer & dst, size_t 
 	src.bind(lSrc, mipSrc, Framebuffer::Mode::READ);
 	dst.bind(lDst, mipDst, Framebuffer::Mode::WRITE);
 	const GLenum filterGL = filter == Filter::LINEAR ? GL_LINEAR : GL_NEAREST;
-	glBlitFramebuffer(0, 0, src.width()/(1 << mipSrc), src.height()/(1 << mipSrc), 0, 0, dst.width()/(1 << mipDst), dst.height()/(1 << mipDst), GL_COLOR_BUFFER_BIT, filterGL);
+	glBlitFramebuffer(0, 0, src.width() / (1 << mipSrc), src.height() / (1 << mipSrc), 0, 0, dst.width() / (1 << mipDst), dst.height() / (1 << mipDst), GL_COLOR_BUFFER_BIT, filterGL);
 	src.unbind();
 	dst.unbind();
 }

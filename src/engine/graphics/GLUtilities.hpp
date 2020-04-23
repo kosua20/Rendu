@@ -46,14 +46,28 @@ public:
 	 */
 	static void setup();
 
+	/** Type of shader uniform binding */
+	enum class BindingType : uint {
+		TEXTURE, UNIFORM_BUFFER
+	};
+
+	/** A binding declared in a shader, corresponding to a location slot. */
+	struct Binding {
+		BindingType type; ///< The type of binding.
+		int location; ///< The binding slot.
+	};
+
+	/** Bindings list */
+	using Bindings = std::map<std::string, Binding>;
+
 	/** Create a shader of a given type from a string. Extract additional informations from the shader.
 	 \param prog the content of the shader
 	 \param type the type of shader (GL_VERTEX_SHADER,...)
-	 \param bindings will be filled with the samplers present in the shader and their user-defined locations
+	 \param bindings will be filled with the samplers/buffers present in the shader and their user-defined locations
 	 \param finalLog will contain the compilation log of the shader
 	 \return the OpenGL ID of the shader object
 	 */
-	static GLuint loadShader(const std::string & prog, GLuint type, std::map<std::string, int> & bindings, std::string & finalLog);
+	static GLuint loadShader(const std::string & prog, GLuint type, Bindings & bindings, std::string & finalLog);
 
 	/** Create and link a GLProgram using the shader code contained in the given strings.
 	 \param vertexContent the vertex shader string
@@ -63,7 +77,7 @@ public:
 	 \param debugInfos the name of the program, or any custom debug infos that will be logged.
 	 \return the OpenGL ID of the program
 	 */
-	static GLuint createProgram(const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, std::map<std::string, int> & bindings, const std::string & debugInfos);
+	static GLuint createProgram(const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, Bindings & bindings, const std::string & debugInfos);
 
 	/** Save a given framebuffer content to the disk.
 	 \param framebuffer the framebuffer to save
