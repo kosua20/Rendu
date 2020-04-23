@@ -33,7 +33,6 @@ void AmbientQuad::draw(const glm::mat4 & viewMatrix, const glm::mat4 & projectio
 	_program->uniform("inverseV", invView);
 	_program->uniform("projectionMatrix", projectionVector);
 	_program->uniform("maxLod", float(_textures[6]->levels-1));
-	_program->uniformBuffer("SHCoeffs", 0);
 	GLUtilities::bindBuffer(shCoeffs, 0);
 	
 	ScreenQuad::draw(_textures);

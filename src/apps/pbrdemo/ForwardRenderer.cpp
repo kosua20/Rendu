@@ -70,20 +70,14 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 		_parallaxProgram->uniform("p", proj);
 		_parallaxProgram->uniform("inverseV", invView);
 		_parallaxProgram->uniform("maxLod", cubeLod);
-		_parallaxProgram->uniformBuffer("Lights", 0);
-		_parallaxProgram->uniformBuffer("SHCoeffs", 1);
 		_parallaxProgram->uniform("lightsCount", int(_lightsGPU->count()));
 		_objectProgram->use();
 		_objectProgram->uniform("inverseV", invView);
 		_objectProgram->uniform("maxLod", cubeLod);
-		_objectProgram->uniformBuffer("Lights", 0);
-		_objectProgram->uniformBuffer("SHCoeffs", 1);
 		_objectProgram->uniform("lightsCount", int(_lightsGPU->count()));
 		_objectNoUVsProgram->use();
 		_objectNoUVsProgram->uniform("inverseV", invView);
 		_objectNoUVsProgram->uniform("maxLod", cubeLod);
-		_objectNoUVsProgram->uniformBuffer("Lights", 0);
-		_objectNoUVsProgram->uniformBuffer("SHCoeffs", 1);
 		_objectNoUVsProgram->uniform("lightsCount", int(_lightsGPU->count()));
 	}
 	const auto & shadowMaps = _lightsGPU->shadowMaps();

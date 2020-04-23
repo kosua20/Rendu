@@ -16,7 +16,7 @@ layout(binding = 5) uniform sampler2D brdfPrecalc; ///< Preintegrated BRDF looku
 layout(binding = 6) uniform samplerCube textureCubeMap; ///< Background environment cubemap (with preconvoluted versions of increasing roughness in mipmap levels).
 
 ///< SH approximation of the environment irradiance (UBO).
-layout(std140) uniform SHCoeffs {
+layout(std140, binding = 0) uniform SHCoeffs {
 	vec4 shCoeffs[9];
 };
 uniform mat4 inverseV; ///< The view to world transformation matrix.

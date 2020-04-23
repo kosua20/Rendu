@@ -21,7 +21,7 @@ layout(binding = 6) uniform sampler2DArray shadowMaps2D; ///< Shadow maps array.
 layout(binding = 7) uniform samplerCubeArray shadowMapsCube; ///< Shadow cubemaps array.
 
 ///< SH approximation of the environment irradiance (UBO).
-layout(std140) uniform SHCoeffs {
+layout(std140, binding = 1) uniform SHCoeffs {
 	vec4 shCoeffs[9];
 };
 uniform mat4 inverseV; ///< The view to world transformation matrix.
@@ -30,7 +30,7 @@ uniform mat4 p; ///< Projection matrix.
 
 uniform int lightsCount; ///< Number of active lights.
 /// Store the lights in a continuous buffer (UBO).
-layout(std140) uniform Lights {
+layout(std140, binding = 0) uniform Lights {
 	GPULight lights[MAX_LIGHTS_COUNT];
 };
 

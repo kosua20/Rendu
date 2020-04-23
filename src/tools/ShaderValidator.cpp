@@ -113,7 +113,7 @@ int main(int argc, char ** argv) {
 		std::map<std::string, std::string> files;
 		Resources::manager().getFiles(type.second, files);
 		for (auto& file : files) {
-			std::map<std::string, int> bindings;
+			GLUtilities::Bindings bindings;
 			std::string compilationLog;
 			// Keep track of the include files used.
 			// File with ID 0 is the base file, already set its name.
