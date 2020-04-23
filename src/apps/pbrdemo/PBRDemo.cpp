@@ -97,11 +97,18 @@ void PBRDemo::setScene(const std::shared_ptr<Scene> & scene) {
 		scene->environment.registerEnvironment(_probes[0]->textureId(), _probes[0]->shCoeffs());
 	}
 	// Trigger one-shot data update.
-	_frameID = 0;
-	for(int i = 0; i < 6; ++i){
-		_frameID = (_frameID + 1)%_frameCount;
-		updateMaps();
-		GLUtilities::sync();
+	// Shadow pass.
+	for(const auto & map : _shadowMaps) {
+			map->draw(*_scenes[_currentScene]);
+	}
+	// Probes pass.
+	for(int i = 0; i < 3; ++i) {
+		for(auto & probe : _probes) {
+			probe->draw();
+			probe->convolveRadiance(1.2f, 1, 5);
+			probe->prepareIrradiance();
+			probe->estimateIrradiance(5.0f);
+		}
 	}
 }
 
