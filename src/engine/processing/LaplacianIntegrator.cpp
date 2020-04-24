@@ -23,7 +23,7 @@ LaplacianIntegrator::LaplacianIntegrator(unsigned int width, unsigned int height
 	checkGLError();
 }
 
-void LaplacianIntegrator::process(const Texture * textureId) {
+void LaplacianIntegrator::process(const Texture * texture) {
 
 	// First, compute the laplacian of each color channel (adding a 1px zero margin).
 	GLUtilities::setDepthState(false);
@@ -33,17 +33,17 @@ void LaplacianIntegrator::process(const Texture * textureId) {
 	GLUtilities::clearColor(glm::vec4(0.0f));
 	_prepare->use();
 	_prepare->uniform("scale", _scale);
-	ScreenQuad::draw(textureId);
+	ScreenQuad::draw(texture);
 	_preproc->unbind();
 
 	// Run the convolutional pyramid filter.
-	_pyramid.process(_preproc->textureId());
+	_pyramid.process(_preproc->texture());
 
 	// Upscale to the final resolution.
 	_compo->bind();
 	_compo->setViewport();
 	_composite->use();
-	ScreenQuad::draw(_pyramid.textureId());
+	ScreenQuad::draw(_pyramid.texture());
 	_compo->unbind();
 }
 

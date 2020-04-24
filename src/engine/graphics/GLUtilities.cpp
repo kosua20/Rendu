@@ -330,7 +330,7 @@ void GLUtilities::saveFramebuffer(const Framebuffer & framebuffer, unsigned int 
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentBoundFB);
 
 	framebuffer.bind();
-	const std::unique_ptr<GPUTexture> & gpu = framebuffer.textureId()->gpu;
+	const std::unique_ptr<GPUTexture> & gpu = framebuffer.texture()->gpu;
 	GLUtilities::savePixels(gpu->type, gpu->format, width, height, gpu->channels, path, flip, ignoreAlpha);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, GLuint(currentBoundFB));

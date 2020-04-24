@@ -17,31 +17,31 @@ FloodFiller::FloodFiller(unsigned int width, unsigned int height) {
 	_compositeColor = Resources::manager().getProgram2D("color-seeds");
 }
 
-void FloodFiller::process(const Texture * textureId, Output mode) {
+void FloodFiller::process(const Texture * texture, Output mode) {
 
-	extractAndPropagate(textureId);
+	extractAndPropagate(texture);
 
 	_final->bind();
 	_final->setViewport();
 
 	if(mode == Output::COLOR) {
 		_compositeColor->use();
-		ScreenQuad::draw({_ping->textureId(), textureId});
+		ScreenQuad::draw({_ping->texture(), texture});
 	} else if(mode == Output::DISTANCE) {
 		_compositeDist->use();
-		ScreenQuad::draw(_ping->textureId());
+		ScreenQuad::draw(_ping->texture());
 	}
 
 	_final->unbind();
 }
 
-void FloodFiller::extractAndPropagate(const Texture * textureId) {
+void FloodFiller::extractAndPropagate(const Texture * texture) {
 	// Render seed positions in a 2 channels framebuffer (each non-black pixel is a seed).
 	GLUtilities::setDepthState(false);
 	_ping->bind();
 	_ping->setViewport();
 	_extract->use();
-	ScreenQuad::draw(textureId);
+	ScreenQuad::draw(texture);
 	_ping->unbind();
 
 	// Propagate closest seeds with decreasing step size.
@@ -51,7 +51,7 @@ void FloodFiller::extractAndPropagate(const Texture * textureId) {
 		_pong->bind();
 		_pong->setViewport();
 		_floodfill->uniform("stepDist", step);
-		ScreenQuad::draw(_ping->textureId());
+		ScreenQuad::draw(_ping->texture());
 		_pong->unbind();
 		std::swap(_ping, _pong);
 	}

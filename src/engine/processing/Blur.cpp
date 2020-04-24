@@ -10,6 +10,6 @@ void Blur::draw() const {
 	ScreenQuad::draw(_finalTexture);
 }
 
-const Texture * Blur::textureId() const {
+const Texture * Blur::texture() const {
 	return _finalTexture;
 }

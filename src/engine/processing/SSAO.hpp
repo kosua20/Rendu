@@ -48,7 +48,7 @@ public:
 	 Query the texture containing the result of the SSAO+blur pass.
 	 \return the texture
 	 */
-	const Texture * textureId() const;
+	const Texture * texture() const;
 
 	/** Query the SSAO radius (should be larger for larger scene with large planar surfaces).
 	 \return a reference to the radius parameter
@@ -61,5 +61,5 @@ private:
 	Program * _programSSAO;						   ///< The SSAO program.
 
 	float _radius = 0.5f;	///< SSAO intersection test radius.
-	Texture _noiseTextureID; ///< Random noise texture.
+	Texture _noisetexture; ///< Random noise texture.
 };

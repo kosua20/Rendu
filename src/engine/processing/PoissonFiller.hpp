@@ -19,9 +19,9 @@ public:
 	PoissonFiller(unsigned int width, unsigned int height, unsigned int downscaling);
 
 	/** Fill black regions of an image in a smooth fashion, first computing its border color before performing filling.
-	 \param textureId the GPU ID of the texture
+	 \param texture the GPU ID of the texture
 	 */
-	void process(const Texture * textureId);
+	void process(const Texture * texture);
 
 	/** Cleanup internal resources. */
 	void clean() const;
@@ -35,12 +35,12 @@ public:
 	/** The ID of the texture containing the filled result.
 	 \return the result texture ID.
 	 */
-	const Texture * textureId() const { return _compo->textureId(); }
+	const Texture * texture() const { return _compo->texture(); }
 
 	/** The ID of the texture containing the colored border.
 	 \return the border texture ID.
 	 */
-	const Texture * preprocId() const { return _preproc->textureId(); }
+	const Texture * preprocId() const { return _preproc->texture(); }
 
 private:
 	ConvolutionPyramid _pyramid;		   ///< The convolution pyramid.

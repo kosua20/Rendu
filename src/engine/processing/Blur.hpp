@@ -18,7 +18,7 @@ public:
 	 Query the texture containing the result of the blurring process.
 	 \return the texture ID
 	 */
-	const Texture * textureId() const;
+	const Texture * texture() const;
 
 protected:
 	/** Constructor.

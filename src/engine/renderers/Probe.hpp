@@ -60,8 +60,8 @@ public:
 	 if convolveRadiance has been called
 	 \return the cubemap texture
 	 */
-	Texture * textureId() const {
-		return _framebuffer->textureId();
+	Texture * texture() const {
+		return _framebuffer->texture();
 	}
 
 	/** The cubemap irradiance SH representation, if estimateIrradiance has been called.

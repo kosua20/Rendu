@@ -14,11 +14,11 @@ GaussianBlur::GaussianBlur(unsigned int width, unsigned int height, unsigned int
 		_frameBuffers[i] = std::unique_ptr<Framebuffer>(new Framebuffer(uint(width / std::pow(2, i)), uint(height / std::pow(2, i)), desc, false));
 	}
 
-	_finalTexture = _frameBuffers[0]->textureId();
+	_finalTexture = _frameBuffers[0]->texture();
 	checkGLError();
 }
 
-void GaussianBlur::process(const Texture * textureId) {
+void GaussianBlur::process(const Texture * texture) {
 	if(_frameBuffers.empty()) {
 		return;
 	}
@@ -28,7 +28,7 @@ void GaussianBlur::process(const Texture * textureId) {
 	_frameBuffers[0]->setViewport();
 	GLUtilities::clearColor(glm::vec4(0.0f));
 	_passthroughProgram->use();
-	ScreenQuad::draw(textureId);
+	ScreenQuad::draw(texture);
 	_frameBuffers[0]->unbind();
 
 	// Downscale filter.
@@ -37,7 +37,7 @@ void GaussianBlur::process(const Texture * textureId) {
 		_frameBuffers[d]->bind();
 		_frameBuffers[d]->setViewport();
 		GLUtilities::clearColor(glm::vec4(0.0f));
-		ScreenQuad::draw(_frameBuffers[d - 1]->textureId());
+		ScreenQuad::draw(_frameBuffers[d - 1]->texture());
 		_frameBuffers[d]->unbind();
 	}
 
@@ -47,7 +47,7 @@ void GaussianBlur::process(const Texture * textureId) {
 		_frameBuffers[d]->bind();
 		_frameBuffers[d]->setViewport();
 		GLUtilities::clearColor(glm::vec4(0.0f));
-		ScreenQuad::draw(_frameBuffers[d + 1]->textureId());
+		ScreenQuad::draw(_frameBuffers[d + 1]->texture());
 		_frameBuffers[d]->unbind();
 	}
 }

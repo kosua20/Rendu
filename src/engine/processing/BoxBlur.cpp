@@ -11,7 +11,7 @@ BoxBlur::BoxBlur(TextureShape shape, unsigned int width, unsigned int height, un
 	const Descriptor linearDescriptor(descriptor.typedFormat(), Filter::LINEAR_NEAREST, descriptor.wrapping());
 
 
-	std::string blur_type_name = "box-blur-";;
+	std::string blur_type_name = "box-blur-";
 	if(approximate){
 		blur_type_name.append("approx-");
 	}
@@ -21,20 +21,20 @@ BoxBlur::BoxBlur(TextureShape shape, unsigned int width, unsigned int height, un
 	// Create one framebuffer.
 	_finalFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(shape, width, height, depth, 1, {linearDescriptor}, false));
 	// Final combining buffer.
-	_finalTexture = _finalFramebuffer->textureId();
+	_finalTexture = _finalFramebuffer->texture();
 
 	checkGLError();
 }
 
 // Draw function
-void BoxBlur::process(const Texture * textureId) const {
+void BoxBlur::process(const Texture * texture) const {
 	_finalFramebuffer->setViewport();
 	_blurProgram->use();
 	for(size_t lid = 0; lid < _finalFramebuffer->depth(); ++lid){
 		_finalFramebuffer->bind(lid);
 		GLUtilities::clearColor(glm::vec4(0.0f));
 		_blurProgram->uniform("layer", int(lid));
-		ScreenQuad::draw(textureId);
+		ScreenQuad::draw(texture);
 	}
 	_finalFramebuffer->unbind();
 }

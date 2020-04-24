@@ -28,9 +28,9 @@ public:
 
 	/**
 	 Apply the blurring process to a given texture.
-	 \param textureId the ID of the texture to process
+	 \param texture the ID of the texture to process
 	 */
-	void process(const Texture * textureId);
+	void process(const Texture * texture);
 
 	/**
 	 Clean internal resources.

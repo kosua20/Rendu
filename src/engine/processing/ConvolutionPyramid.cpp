@@ -38,7 +38,7 @@ ConvolutionPyramid::ConvolutionPyramid(unsigned int width, unsigned int height, 
 	}
 }
 
-void ConvolutionPyramid::process(const Texture * textureId) {
+void ConvolutionPyramid::process(const Texture * texture) {
 
 	// Pad by the size of the filter.
 	_levelsIn[0]->bind();
@@ -48,7 +48,7 @@ void ConvolutionPyramid::process(const Texture * textureId) {
 	// Transfer the boundary content.
 	_padder->use();
 	_padder->uniform("padding", _size);
-	ScreenQuad::draw(textureId);
+	ScreenQuad::draw(texture);
 	_levelsIn[0]->unbind();
 
 	// Then iterate over all framebuffers, cascading down the filtered results.
@@ -64,7 +64,7 @@ void ConvolutionPyramid::process(const Texture * textureId) {
 		GLUtilities::clearColor(glm::vec4(0.0f));
 		GLUtilities::setViewport(_size, _size, int(_levelsIn[i]->width()) - 2 * _size, int(_levelsIn[i]->height()) - 2 * _size);
 		// Filter and downscale.
-		ScreenQuad::draw(_levelsIn[i - 1]->textureId());
+		ScreenQuad::draw(_levelsIn[i - 1]->texture());
 		_levelsIn[i]->unbind();
 	}
 
@@ -76,7 +76,7 @@ void ConvolutionPyramid::process(const Texture * textureId) {
 	const auto & lastLevel = _levelsOut.back();
 	lastLevel->bind();
 	lastLevel->setViewport();
-	ScreenQuad::draw(_levelsIn.back()->textureId());
+	ScreenQuad::draw(_levelsIn.back()->texture());
 	lastLevel->unbind();
 
 	// Flatten the pyramid from the bottom, combining the filtered current result and the next level.
@@ -90,7 +90,7 @@ void ConvolutionPyramid::process(const Texture * textureId) {
 		_levelsOut[i]->bind();
 		_levelsOut[i]->setViewport();
 		// Upscale with zeros, filter and combine.
-		ScreenQuad::draw({_levelsIn[i]->textureId(), _levelsOut[i + 1]->textureId()});
+		ScreenQuad::draw({_levelsIn[i]->texture(), _levelsOut[i + 1]->texture()});
 		_levelsOut[i]->unbind();
 	}
 
@@ -100,7 +100,7 @@ void ConvolutionPyramid::process(const Texture * textureId) {
 	_padder->use();
 	// Need to also compensate for the potential extra padding.
 	_padder->uniform("padding", -_size - _padding);
-	ScreenQuad::draw(_levelsOut[0]->textureId());
+	ScreenQuad::draw(_levelsOut[0]->texture());
 	_shifted->unbind();
 }
 

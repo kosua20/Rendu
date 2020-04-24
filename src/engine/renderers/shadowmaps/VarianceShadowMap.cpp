@@ -8,7 +8,7 @@ VarianceShadowMap2D::VarianceShadowMap2D(const std::shared_ptr<Light> & light, c
 	_map = std::unique_ptr<Framebuffer>(new Framebuffer(uint(resolution.x), uint(resolution.y), descriptor, true));
 	_blur = std::unique_ptr<BoxBlur>(new BoxBlur(TextureShape::D2, uint(resolution.x), uint(resolution.y), 1, descriptor, false));
 	_program = Resources::manager().getProgram("object_depth", "object_basic_texture", "light_shadow_variance");
-	_light->registerShadowMap(_blur->textureId());
+	_light->registerShadowMap(_blur->texture());
 }
 
 void VarianceShadowMap2D::draw(const Scene & scene) const {
@@ -48,7 +48,7 @@ void VarianceShadowMap2D::draw(const Scene & scene) const {
 	
 	// --- Blur pass --------
 	GLUtilities::setDepthState(false);
-	_blur->process(_map->textureId());
+	_blur->process(_map->texture());
 }
 
 void VarianceShadowMap2D::clean(){
@@ -61,7 +61,7 @@ VarianceShadowMapCube::VarianceShadowMapCube(const std::shared_ptr<PointLight> &
 	const Descriptor descriptor = {Layout::RG16F, Filter::LINEAR, Wrap::CLAMP};
 	_map = std::unique_ptr<Framebuffer>(new Framebuffer( TextureShape::Cube, side, side, 6, 1, {descriptor}, true));
 	_program = Resources::manager().getProgram("object_cube_depth", "object_basic_texture_worldpos", "light_shadow_linear_variance");
-	_light->registerShadowMap(_map->textureId());
+	_light->registerShadowMap(_map->texture());
 }
 
 void VarianceShadowMapCube::draw(const Scene & scene) const {

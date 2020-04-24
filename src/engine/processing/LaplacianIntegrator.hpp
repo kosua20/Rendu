@@ -19,9 +19,9 @@ public:
 	LaplacianIntegrator(unsigned int width, unsigned int height, unsigned int downscaling);
 
 	/** Filter a given input texture, first computing its laplacian field before performing integration.
-	 \param textureId the GPU ID of the texture
+	 \param texture the GPU ID of the texture
 	 */
-	void process(const Texture * textureId);
+	void process(const Texture * texture);
 
 	/** Cleanup internal resources. */
 	void clean() const;
@@ -35,12 +35,12 @@ public:
 	/** The ID of the texture containing the integration result.
 	 \return the result texture ID.
 	 */
-	const Texture * textureId() const { return _compo->textureId(); }
+	const Texture * texture() const { return _compo->texture(); }
 
 	/** The ID of the texture containing the laplacian field.
 	\return the laplacian texture ID.
 	 */
-	const Texture * preprocId() const { return _preproc->textureId(); }
+	const Texture * preprocId() const { return _preproc->texture(); }
 
 private:
 	ConvolutionPyramid _pyramid;		   ///< The convolution pyramid.

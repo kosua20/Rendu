@@ -25,10 +25,10 @@ public:
 	FloodFiller(unsigned int width, unsigned int height);
 
 	/** Fill a given input texture.
-	 \param textureId the GPU ID of the texture
+	 \param texture the GPU ID of the texture
 	 \param mode the output mode (color or distance)
 	 */
-	void process(const Texture * textureId, Output mode);
+	void process(const Texture * texture, Output mode);
 
 	/** Cleanup internal resources. */
 	void clean() const;
@@ -42,13 +42,13 @@ public:
 	/** The GPU ID of the filter result.
 	 \return the ID of the result texture
 	 */
-	const Texture * textureId() const { return _final->textureId(); }
+	const Texture * texture() const { return _final->texture(); }
 
 private:
 	/** Extract seeds from the input texture and propagate them so that each pixel contains the coordinates of the closest seed (approximately). The result will be stored in _ping.
-	 \param textureId the input texture
+	 \param texture the input texture
 	 */
-	void extractAndPropagate(const Texture * textureId);
+	void extractAndPropagate(const Texture * texture);
 
 	const Program * _extract;		 ///< Extract the flood fill seeds.
 	const Program * _floodfill;		 ///< Perform one pass of the flood fill.

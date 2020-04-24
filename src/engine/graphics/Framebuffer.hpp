@@ -110,7 +110,7 @@ public:
 	 \param i the color attachment index (or 0 by default)
 	 \return the texture
 	 */
-	const Texture * textureId(unsigned int i = 0) const {
+	const Texture * texture(unsigned int i = 0) const {
 		// _idColors will never be modified after initialization, so this can be done.
 		return &_idColors[i];
 	}
@@ -120,9 +120,13 @@ public:
 	 \param i the color attachment index (or 0 by default)
 	 \return the texture
 	 */
-	Texture * textureId(unsigned int i = 0) {
+	Texture * texture(unsigned int i = 0) {
 		// _idColors will never be modified after initialization, so this can be done.
 		return &_idColors[i];
+	}
+
+	const Descriptor & descriptor(unsigned int i = 0) const {
+		return _idColors[i].gpu->descriptor();
 	}
 
 	/**

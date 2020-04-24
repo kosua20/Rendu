@@ -142,10 +142,12 @@ KeyValues Codable::encode(const Texture * texture){
 		{"rgb32cube", {Layout::RGB32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}},
 	};
 	KeyValues token("rgb");
-	for(const auto & desc : descriptors){
-		if(texture->gpu->descriptor() == desc.second){
-			token.key = desc.first;
-			break;
+	if(texture->gpu){
+		for(const auto & desc : descriptors){
+			if(texture->gpu->descriptor() == desc.second){
+				token.key = desc.first;
+				break;
+			}
 		}
 	}
 	token.values = {texture->name()};

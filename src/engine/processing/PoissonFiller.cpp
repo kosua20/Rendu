@@ -22,24 +22,24 @@ PoissonFiller::PoissonFiller(unsigned int width, unsigned int height, unsigned i
 	checkGLError();
 }
 
-void PoissonFiller::process(const Texture * textureId) {
+void PoissonFiller::process(const Texture * texture) {
 	// Compute the color boundary of the mask..
 	GLUtilities::setDepthState(false);
 	_preproc->bind();
 	_preproc->setViewport();
 	GLUtilities::clearColor(glm::vec4(0.0f));
 	_prepare->use();
-	ScreenQuad::draw(textureId);
+	ScreenQuad::draw(texture);
 	_preproc->unbind();
 
 	// Run the convolutional pyramid filter.
-	_pyramid.process(_preproc->textureId());
+	_pyramid.process(_preproc->texture());
 
 	// Composite the filled-in texture with the initial image at full resolution.
 	_compo->bind();
 	_compo->setViewport();
 	_composite->use();
-	ScreenQuad::draw({_pyramid.textureId(), textureId});
+	ScreenQuad::draw({_pyramid.texture(), texture});
 	_compo->unbind();
 }
 

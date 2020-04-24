@@ -28,13 +28,13 @@ SSAO::SSAO(unsigned int width, unsigned int height, float radius) :
 
 	// Noise texture (same size as the box blur applied after SSAO computation).
 	// We need to generate two dimensional normalized offsets.
-	_noiseTextureID.width  = 5;
-	_noiseTextureID.height = 5;
-	_noiseTextureID.depth  = 1;
-	_noiseTextureID.levels = 1;
-	_noiseTextureID.shape  = TextureShape::D2;
-	_noiseTextureID.images.emplace_back();
-	Image & img	= _noiseTextureID.images.back();
+	_noisetexture.width  = 5;
+	_noisetexture.height = 5;
+	_noisetexture.depth  = 1;
+	_noisetexture.levels = 1;
+	_noisetexture.shape  = TextureShape::D2;
+	_noisetexture.images.emplace_back();
+	Image & img	= _noisetexture.images.back();
 	img.width	  = 5;
 	img.height	 = 5;
 	img.components = 3;
@@ -50,8 +50,8 @@ SSAO::SSAO(unsigned int width, unsigned int height, float radius) :
 	}
 
 	// Send the texture to the GPU.
-	GLUtilities::setupTexture(_noiseTextureID, {Layout::RGB32F, Filter::NEAREST, Wrap::REPEAT});
-	GLUtilities::uploadTexture(_noiseTextureID);
+	GLUtilities::setupTexture(_noisetexture, {Layout::RGB32F, Filter::NEAREST, Wrap::REPEAT});
+	GLUtilities::uploadTexture(_noisetexture);
 
 	checkGLError();
 }
@@ -64,11 +64,11 @@ void SSAO::process(const glm::mat4 & projection, const Texture * depthTex, const
 	_programSSAO->use();
 	_programSSAO->uniform("projectionMatrix", projection);
 	_programSSAO->uniform("radius", _radius);
-	ScreenQuad::draw({depthTex, normalTex, &_noiseTextureID});
+	ScreenQuad::draw({depthTex, normalTex, &_noisetexture});
 	_ssaoFramebuffer->unbind();
 
 	// Blurring pass
-	_blurSSAOBuffer->process(_ssaoFramebuffer->textureId());
+	_blurSSAOBuffer->process(_ssaoFramebuffer->texture());
 }
 
 // Clean function
@@ -87,8 +87,8 @@ void SSAO::resize(unsigned int width, unsigned int height) const {
 	_ssaoFramebuffer->resize(width, height);
 }
 
-const Texture * SSAO::textureId() const {
-	return _blurSSAOBuffer->textureId();
+const Texture * SSAO::texture() const {
+	return _blurSSAOBuffer->texture();
 }
 
 float & SSAO::radius() {

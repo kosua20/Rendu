@@ -30,9 +30,9 @@ public:
 	void setFilters(const float h1[5], float h2, const float g[3]);
 
 	/** Filter a given input texture.
-	 \param textureId the GPU ID of the texture
+	 \param texture the GPU ID of the texture
 	 */
-	void process(const Texture * textureId);
+	void process(const Texture * texture);
 
 	/** Cleanup internal resources. */
 	void clean() const;
@@ -46,7 +46,7 @@ public:
 	/** The GPU ID of the filter result.
 	 \return the ID of the result texture
 	 */
-	const Texture * textureId() const { return _shifted->textureId(); }
+	const Texture * texture() const { return _shifted->texture(); }
 
 	/** Returns the width expected for the input texture.
 	 \return the width expected
