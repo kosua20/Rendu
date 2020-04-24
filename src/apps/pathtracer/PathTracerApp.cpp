@@ -80,7 +80,7 @@ void PathTracerApp::draw() {
 	GLUtilities::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 	_passthrough->use();
 	_passthrough->uniform("flip", 0);
-	ScreenQuad::draw(_sceneFramebuffer->textureId());
+	ScreenQuad::draw(_sceneFramebuffer->texture());
 	Framebuffer::backbuffer()->unbind();
 }
 

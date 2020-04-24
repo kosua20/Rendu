@@ -50,7 +50,7 @@ Game::Game(GameConfig & config) :
 	_menus[Status::MAINMENU].images.emplace_back(glm::vec2(0.0f, 0.47f), 0.5f,
 		Resources::manager().getTexture("title", commonDesc, Storage::GPU));
 
-	_menus[Status::PAUSED].backgroundImage = _bgBlur->textureId();
+	_menus[Status::PAUSED].backgroundImage = _bgBlur->texture();
 	_menus[Status::PAUSED].buttons.emplace_back(glm::vec2(0.0f, 0.10f), meshSize, displayScale, RESUME,
 		Resources::manager().getTexture("button-resume", commonDesc, Storage::GPU));
 	_menus[Status::PAUSED].buttons.emplace_back(glm::vec2(0.0f, -0.25f), meshSize, displayScale, BACKTOMENU,
@@ -75,7 +75,7 @@ Game::Game(GameConfig & config) :
 	_menus[Status::OPTIONS].images.emplace_back(glm::vec2(0.0f, 0.55f), 0.5f,
 		Resources::manager().getTexture("title-options", commonDesc, Storage::GPU));
 
-	_menus[Status::DEAD].backgroundImage = _bgBlur->textureId();
+	_menus[Status::DEAD].backgroundImage = _bgBlur->texture();
 	_menus[Status::DEAD].buttons.emplace_back(glm::vec2(0.0f, -0.20f), meshSize, displayScale, NEWGAME,
 		Resources::manager().getTexture("button-newgame"));
 	_menus[Status::DEAD].buttons.emplace_back(glm::vec2(0.0f, -0.55f), meshSize, displayScale, BACKTOMENU,
@@ -106,7 +106,7 @@ void Game::draw() {
 		GLUtilities::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 		Framebuffer::backbuffer()->bind(Framebuffer::Mode::SRGB);
 		_finalProgram->use();
-		ScreenQuad::draw(_gameFramebuffer->textureId());
+		ScreenQuad::draw(_gameFramebuffer->texture());
 		Framebuffer::backbuffer()->unbind();
 		checkGLError();
 		
@@ -151,7 +151,7 @@ Window::Action Game::update() {
 			_status = Status::DEAD;
 			// Make sure the blur effect buffer is the right size.
 			_bgBlur->resize(_gameFramebuffer->width(), _gameFramebuffer->height());
-			_bgBlur->process(_gameFramebuffer->textureId());
+			_bgBlur->process(_gameFramebuffer->texture());
 			_menus[Status::DEAD].labels[0].update(std::to_string(_player->score()));
 
 			// Save the final score.
@@ -215,7 +215,7 @@ Window::Action Game::handleButton(ButtonAction tag) {
 			break;
 		case PAUSE: {
 			_bgBlur->resize(_gameFramebuffer->width(), _gameFramebuffer->height());
-			_bgBlur->process(_gameFramebuffer->textureId());
+			_bgBlur->process(_gameFramebuffer->texture());
 			_status = Status::PAUSED;
 			break;
 		}

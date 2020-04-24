@@ -35,9 +35,9 @@ DeferredRenderer::DeferredRenderer(const glm::vec2 & resolution, ShadowMode mode
 	_emissiveProgram	= Resources::manager().getProgram("object_emissive_gbuffer");
 
 	// Lighting passes.
-	_ambientScreen = std::unique_ptr<AmbientQuad>(new AmbientQuad(_gbuffer->textureId(0), _gbuffer->textureId(1),
-		_gbuffer->textureId(2), _gbuffer->depthId(), _ssaoPass->textureId()));
-	_lightRenderer = std::unique_ptr<DeferredLight>(new DeferredLight(_gbuffer->textureId(0), _gbuffer->textureId(1), _gbuffer->depthId(), _gbuffer->textureId(2)));
+	_ambientScreen = std::unique_ptr<AmbientQuad>(new AmbientQuad(_gbuffer->texture(0), _gbuffer->texture(1),
+		_gbuffer->texture(2), _gbuffer->depthId(), _ssaoPass->texture()));
+	_lightRenderer = std::unique_ptr<DeferredLight>(new DeferredLight(_gbuffer->texture(0), _gbuffer->texture(1), _gbuffer->depthId(), _gbuffer->texture(2)));
 	checkGLError();
 }
 
@@ -204,7 +204,7 @@ void DeferredRenderer::draw(const Camera & camera, Framebuffer & framebuffer, si
 
 	// --- SSAO pass
 	if(_applySSAO) {
-		_ssaoPass->process(proj, _gbuffer->depthId(), _gbuffer->textureId(int(TextureType::Normal)));
+		_ssaoPass->process(proj, _gbuffer->depthId(), _gbuffer->texture(int(TextureType::Normal)));
 	} else {
 		_ssaoPass->clear();
 	}

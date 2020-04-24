@@ -94,7 +94,7 @@ void PBRDemo::setScene(const std::shared_ptr<Scene> & scene) {
 	// Allocate probes.
 	if(scene->environment.type() == LightProbe::Type::DYNAMIC){
 		_probes.emplace_back(new Probe(scene->environment.position(), _probesRenderer, 256, 6, glm::vec2(0.01f, 1000.0f)));
-		scene->environment.registerEnvironment(_probes[0]->textureId(), _probes[0]->shCoeffs());
+		scene->environment.registerEnvironment(_probes[0]->texture(), _probes[0]->shCoeffs());
 	}
 	// Trigger one-shot data update.
 	// Shadow pass.
@@ -175,7 +175,7 @@ void PBRDemo::draw() {
 	_rendererTime.end();
 
 	_postprocessTime.begin();
-	_postprocess->process(_finalRender->textureId(), *_finalRender);
+	_postprocess->process(_finalRender->texture(), *_finalRender);
 	_postprocessTime.end();
 
 	// We now render a full screen quad in the default framebuffer, using sRGB space.
@@ -184,7 +184,7 @@ void PBRDemo::draw() {
 	_finalProgram->use();
 	GLUtilities::setDepthState(false);
 	GLUtilities::setCullState(true);
-	ScreenQuad::draw(_finalRender->textureId());
+	ScreenQuad::draw(_finalRender->texture());
 	Framebuffer::backbuffer()->unbind();
 }
 

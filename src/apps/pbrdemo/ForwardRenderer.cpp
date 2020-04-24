@@ -248,7 +248,7 @@ void ForwardRenderer::draw(const Camera & camera, Framebuffer & framebuffer, siz
 
 	// --- SSAO pass
 	if(_applySSAO) {
-		_ssaoPass->process(proj, _sceneFramebuffer->depthId(), _sceneFramebuffer->textureId(2));
+		_ssaoPass->process(proj, _sceneFramebuffer->depthId(), _sceneFramebuffer->texture(2));
 	} else {
 		_ssaoPass->clear();
 	}
@@ -258,9 +258,9 @@ void ForwardRenderer::draw(const Camera & camera, Framebuffer & framebuffer, siz
 	framebuffer.setViewport();
 	_compProgram->use();
 	GLUtilities::setDepthState(false);
-	GLUtilities::bindTexture(_sceneFramebuffer->textureId(0), 0);
-	GLUtilities::bindTexture(_sceneFramebuffer->textureId(1), 1);
-	GLUtilities::bindTexture(_ssaoPass->textureId(), 2);
+	GLUtilities::bindTexture(_sceneFramebuffer->texture(0), 0);
+	GLUtilities::bindTexture(_sceneFramebuffer->texture(1), 1);
+	GLUtilities::bindTexture(_ssaoPass->texture(), 2);
 	ScreenQuad::draw();
 	framebuffer.unbind();
 }

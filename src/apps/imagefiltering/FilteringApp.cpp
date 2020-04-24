@@ -37,7 +37,7 @@ FilteringApp::FilteringApp(RenderingConfig & config) :
 
 void FilteringApp::draw() {
 
-	const Texture * srcTexID = _sceneBuffer->textureId();
+	const Texture * srcTexID = _sceneBuffer->texture();
 	// Render the scene.
 	if(_viewMode == View::SCENE) {
 		GLUtilities::setDepthState(true);
@@ -67,7 +67,7 @@ void FilteringApp::draw() {
 		_painter->draw();
 		// If we are in INPUT mode, we want to display the frame with the brush outline visible.
 		// On the other hand, if we apply any processing, hide the brush and use the canvas frame.
-		srcTexID = _mode == Processing::INPUT ? _painter->visuId() : _painter->textureId();
+		srcTexID = _mode == Processing::INPUT ? _painter->visuId() : _painter->texture();
 	}
 
 	GLUtilities::setDepthState(false);
@@ -77,23 +77,23 @@ void FilteringApp::draw() {
 	switch(_mode) {
 		case Processing::FILL:
 			_pyramidFiller->process(srcTexID);
-			finalTexID = _showProcInput ? _pyramidFiller->preprocId() : _pyramidFiller->textureId();
+			finalTexID = _showProcInput ? _pyramidFiller->preprocId() : _pyramidFiller->texture();
 			break;
 		case Processing::INTEGRATE:
 			_pyramidIntegrator->process(srcTexID);
-			finalTexID = _showProcInput ? _pyramidIntegrator->preprocId() : _pyramidIntegrator->textureId();
+			finalTexID = _showProcInput ? _pyramidIntegrator->preprocId() : _pyramidIntegrator->texture();
 			break;
 		case Processing::GAUSSBLUR:
 			_gaussianBlur->process(srcTexID);
-			finalTexID = _gaussianBlur->textureId();
+			finalTexID = _gaussianBlur->texture();
 			break;
 		case Processing::BOXBLUR:
 			_boxBlur->process(srcTexID);
-			finalTexID = _boxBlur->textureId();
+			finalTexID = _boxBlur->texture();
 			break;
 		case Processing::FLOODFILL:
 			_floodFill->process(srcTexID, _showProcInput ? FloodFiller::Output::DISTANCE : FloodFiller::Output::COLOR);
-			finalTexID = _floodFill->textureId();
+			finalTexID = _floodFill->texture();
 			break;
 		default:
 			// Show the input.

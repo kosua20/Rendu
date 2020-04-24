@@ -134,7 +134,7 @@ void computeCubemapConvolution(const Texture & cubemapInfos, int levelsCount, in
 		// Thus we perform a copy to our final texture.
 		cubeLevels.emplace_back();
 		Texture & levelInfos = cubeLevels.back();
-		GLUtilities::blit(*resultFramebuffer.textureId(), levelInfos, Filter::NEAREST);
+		GLUtilities::blit(*resultFramebuffer.texture(), levelInfos, Filter::NEAREST);
 		resultFramebuffer.clean();
 
 		Log::Info() << std::endl;

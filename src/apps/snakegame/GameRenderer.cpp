@@ -49,13 +49,13 @@ void GameRenderer::drawPlayer(const Player & player, Framebuffer & framebuffer) 
 	GLUtilities::setDepthState(false);
 
 	// --- SSAO pass ------
-	_ssaoPass->process(_playerCamera.projection(), _sceneFramebuffer->depthId(), _sceneFramebuffer->textureId(0));
+	_ssaoPass->process(_playerCamera.projection(), _sceneFramebuffer->depthId(), _sceneFramebuffer->texture(0));
 
 	// --- Lighting pass ------
 	_lightingFramebuffer->bind();
 	_lightingFramebuffer->setViewport();
 	_compositingProgram->use();
-	ScreenQuad::draw({_sceneFramebuffer->textureId(0), _sceneFramebuffer->textureId(1), _ssaoPass->textureId(), _cubemap});
+	ScreenQuad::draw({_sceneFramebuffer->texture(0), _sceneFramebuffer->texture(1), _ssaoPass->texture(), _cubemap});
 	_lightingFramebuffer->unbind();
 
 	// --- FXAA pass -------
@@ -63,7 +63,7 @@ void GameRenderer::drawPlayer(const Player & player, Framebuffer & framebuffer) 
 	framebuffer.setViewport();
 	_fxaaProgram->use();
 	_fxaaProgram->uniform("inverseScreenSize", invRenderSize);
-	ScreenQuad::draw(_lightingFramebuffer->textureId());
+	ScreenQuad::draw(_lightingFramebuffer->texture());
 	framebuffer.unbind();
 
 }

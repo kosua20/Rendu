@@ -38,16 +38,16 @@ void PostProcessStack::process(const Texture * texture, Framebuffer & framebuffe
 		_bloomBuffer->unbind();
 		
 		// --- Bloom blur pass ------
-		_blurBuffer->process(_bloomBuffer->textureId());
+		_blurBuffer->process(_bloomBuffer->texture());
 		
 		// Draw the blurred bloom back into the scene framebuffer.
 		_bloomBuffer->bind();
 		_bloomBuffer->setViewport();
 		_bloomCompositeProgram->use();
 		_bloomCompositeProgram->uniform("mixFactor", _settings.bloomMix);
-		ScreenQuad::draw({texture, _blurBuffer->textureId()});
+		ScreenQuad::draw({texture, _blurBuffer->texture()});
 		_bloomBuffer->unbind();
-		sceneResult = _bloomBuffer->textureId();
+		sceneResult = _bloomBuffer->texture();
 	}
 	
 	// --- Tonemapping pass ------
@@ -64,7 +64,7 @@ void PostProcessStack::process(const Texture * texture, Framebuffer & framebuffe
 		framebuffer.setViewport();
 		_fxaaProgram->use();
 		_fxaaProgram->uniform("inverseScreenSize", invRenderSize);
-		ScreenQuad::draw(_toneMapBuffer->textureId());
+		ScreenQuad::draw(_toneMapBuffer->texture());
 		framebuffer.unbind();
 	} else {
 		GLUtilities::blit(*_toneMapBuffer, framebuffer, 0, layer, Filter::LINEAR);

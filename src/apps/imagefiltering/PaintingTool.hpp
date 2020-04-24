@@ -36,12 +36,12 @@ public:
 	/** Canvas content texture.
 	 \return the canvas ID
 	 */
-	const Texture * textureId() const { return _canvas->textureId(); }
+	const Texture * texture() const { return _canvas->texture(); }
 
 	/** Texture containing the canvas and the brush shape outline, for visualisation.
 	 \return the texture ID
 	 */
-	const Texture * visuId() const { return _visu->textureId(); }
+	const Texture * visuId() const { return _visu->texture(); }
 
 private:
 	/** \brief The effect of a brush stroke. */
