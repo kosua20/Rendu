@@ -8,10 +8,8 @@
 ForwardRenderer::ForwardRenderer(const glm::vec2 & resolution, ShadowMode mode, bool ssao) :
 	_lightDebugRenderer("object_basic_uniform"), _applySSAO(ssao), _shadowMode(mode) {
 
-	const int renderWidth	   = int(resolution[0]);
-	const int renderHeight	   = int(resolution[1]);
-	const int renderHalfWidth  = int(0.5f * resolution[0]);
-	const int renderHalfHeight = int(0.5f * resolution[1]);
+	const uint renderWidth	   = uint(resolution[0]);
+	const uint renderHeight	   = uint(resolution[1]);
 
 	// Framebuffers.
 	const Descriptor descAmbient = {Layout::RGBA16F, Filter::LINEAR_NEAREST, Wrap::CLAMP};
@@ -20,7 +18,7 @@ ForwardRenderer::ForwardRenderer(const glm::vec2 & resolution, ShadowMode mode, 
 	const Descriptor descDepth = {Layout::DEPTH_COMPONENT32F, Filter::NEAREST_NEAREST, Wrap::CLAMP};
 	const std::vector<Descriptor> descs = { descAmbient, descDirect, descNormal, descDepth};
 	_sceneFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, descs, true));
-	_ssaoPass		  = std::unique_ptr<SSAO>(new SSAO(renderHalfWidth, renderHalfHeight, 0.5f));
+	_ssaoPass		  = std::unique_ptr<SSAO>(new SSAO(renderWidth, renderHeight, 2, 0.5f));
 	_preferredFormat.push_back({Layout::RGB16F, Filter::LINEAR_LINEAR, Wrap::CLAMP});
 	_needsDepth = false;
 
@@ -248,7 +246,7 @@ void ForwardRenderer::draw(const Camera & camera, Framebuffer & framebuffer, siz
 
 	// --- SSAO pass
 	if(_applySSAO) {
-		_ssaoPass->process(proj, _sceneFramebuffer->depthId(), _sceneFramebuffer->texture(2));
+		_ssaoPass->process(proj, _sceneFramebuffer->depthBuffer(), _sceneFramebuffer->texture(2));
 	} else {
 		_ssaoPass->clear();
 	}
@@ -285,7 +283,8 @@ void ForwardRenderer::interface(){
 	ImGui::Combo("Shadow technique", reinterpret_cast<int*>(&_shadowMode), "None\0Basic\0Variance\0\0");
 	ImGui::Checkbox("SSAO", &_applySSAO);
 	if(_applySSAO) {
-		ImGui::SameLine(120);
+		ImGui::SameLine();
+		ImGui::Combo("Blur quality", reinterpret_cast<int*>(&_ssaoPass->quality()), "Low\0Medium\0High\0\0");
 		ImGui::InputFloat("Radius", &_ssaoPass->radius(), 0.5f);
 	}
 }

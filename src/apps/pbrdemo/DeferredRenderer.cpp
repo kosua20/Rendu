@@ -8,20 +8,20 @@
 DeferredRenderer::DeferredRenderer(const glm::vec2 & resolution, ShadowMode mode, bool ssao) :
 	_lightDebugRenderer("light_debug"), _applySSAO(ssao), _shadowMode(mode) {
 
-	const int renderWidth	  = int(resolution[0]);
-	const int renderHeight	  = int(resolution[1]);
-	const int renderHalfWidth  = int(0.5f * resolution[0]);
-	const int renderHalfHeight = int(0.5f * resolution[1]);
+	const uint renderWidth	  = uint(resolution[0]);
+	const uint renderHeight	  = uint(resolution[1]);
+
 
 	// G-buffer setup.
 	const Descriptor albedoDesc			= {Layout::RGBA16F, Filter::NEAREST_NEAREST, Wrap::CLAMP};
 	const Descriptor normalDesc			= {Layout::RGB16F, Filter::NEAREST_NEAREST, Wrap::CLAMP};
 	const Descriptor effectsDesc		= {Layout::RGB8, Filter::NEAREST_NEAREST, Wrap::CLAMP};
 	const Descriptor depthDesc			= {Layout::DEPTH_COMPONENT32F, Filter::NEAREST_NEAREST, Wrap::CLAMP};
+	const Descriptor desc = {Layout::RGB16F, Filter::LINEAR_LINEAR, Wrap::CLAMP};
+
 	const std::vector<Descriptor> descs = {albedoDesc, normalDesc, effectsDesc, depthDesc};
 	_gbuffer							= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, descs, false));
-	_ssaoPass				= std::unique_ptr<SSAO>(new SSAO(renderHalfWidth, renderHalfHeight, 0.5f));
-	const Descriptor desc = {Layout::RGB16F, Filter::LINEAR_LINEAR, Wrap::CLAMP};
+	_ssaoPass							= std::unique_ptr<SSAO>(new SSAO(renderWidth, renderHeight, 2, 0.5f));
 	_lightBuffer						= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, desc, false));
 	_preferredFormat.push_back(desc);
 	_needsDepth = false;
@@ -36,8 +36,8 @@ DeferredRenderer::DeferredRenderer(const glm::vec2 & resolution, ShadowMode mode
 
 	// Lighting passes.
 	_ambientScreen = std::unique_ptr<AmbientQuad>(new AmbientQuad(_gbuffer->texture(0), _gbuffer->texture(1),
-		_gbuffer->texture(2), _gbuffer->depthId(), _ssaoPass->texture()));
-	_lightRenderer = std::unique_ptr<DeferredLight>(new DeferredLight(_gbuffer->texture(0), _gbuffer->texture(1), _gbuffer->depthId(), _gbuffer->texture(2)));
+		_gbuffer->texture(2), _gbuffer->depthBuffer(), _ssaoPass->texture()));
+	_lightRenderer = std::unique_ptr<DeferredLight>(new DeferredLight(_gbuffer->texture(0), _gbuffer->texture(1), _gbuffer->depthBuffer(), _gbuffer->texture(2)));
 	checkGLError();
 }
 
@@ -204,7 +204,7 @@ void DeferredRenderer::draw(const Camera & camera, Framebuffer & framebuffer, si
 
 	// --- SSAO pass
 	if(_applySSAO) {
-		_ssaoPass->process(proj, _gbuffer->depthId(), _gbuffer->texture(int(TextureType::Normal)));
+		_ssaoPass->process(proj, _gbuffer->depthBuffer(), _gbuffer->texture(int(TextureType::Normal)));
 	} else {
 		_ssaoPass->clear();
 	}
@@ -237,7 +237,7 @@ void DeferredRenderer::resize(unsigned int width, unsigned int height) {
 	// Resize the framebuffers.
 	_gbuffer->resize(glm::vec2(width, height));
 	_lightBuffer->resize(glm::vec2(width, height));
-	_ssaoPass->resize(width / 2, height / 2);
+	_ssaoPass->resize(width, height);
 	checkGLError();
 	
 }
@@ -249,7 +249,8 @@ void DeferredRenderer::interface(){
 	ImGui::Combo("Shadow technique", reinterpret_cast<int*>(&_shadowMode), "None\0Basic\0Variance\0\0");
 	ImGui::Checkbox("SSAO", &_applySSAO);
 	if(_applySSAO) {
-		ImGui::SameLine(120);
+		ImGui::SameLine();
+		ImGui::Combo("Blur quality", reinterpret_cast<int*>(&_ssaoPass->quality()), "Low\0Medium\0High\0\0");
 		ImGui::InputFloat("Radius", &_ssaoPass->radius(), 0.5f);
 	}
 
