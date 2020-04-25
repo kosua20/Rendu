@@ -15,13 +15,12 @@ Probe::Probe(const glm::vec3 & position, std::shared_ptr<Renderer> renderer, uin
 
 	_shCoeffs.reset(new Buffer<glm::vec4>(9, BufferType::UNIFORM, DataUse::DYNAMIC));
 	for(int i = 0; i < 9; ++i) {
-		_shCoeffs->at(i) = glm::vec4(0.0f);
+		_shCoeffs->at(i) = glm::vec4(i == 0 ? 0.1f : 0.0f);
 	}
 	_shCoeffs->setup();
 	_shCoeffs->upload();
 
 	// Compute the camera for each face.
-
 	for(uint i = 0; i < 6; ++i) {
 		_cameras[i].pose(position, position + Library::boxCenters[i], Library::boxUps[i]);
 		_cameras[i].projection(1.0f, glm::half_pi<float>(), clippingPlanes[0], clippingPlanes[1]);
@@ -83,12 +82,15 @@ void Probe::estimateIrradiance(float clamp) {
 		_shCoeffs->at(i)[0] = coeffs[i][0];
 		_shCoeffs->at(i)[1] = coeffs[i][1];
 		_shCoeffs->at(i)[2] = coeffs[i][2];
+		_shCoeffs->at(i)[3] = 1.0f;
 	}
 	_shCoeffs->upload();
 }
 
 void Probe::clean() {
 	_framebuffer->clean();
+	_copy->clean();
+	_shCoeffs->clean();
 }
 
 void Probe::extractIrradianceSHCoeffs(const Texture & cubemap, float clamp, std::vector<glm::vec3> & shCoeffs) {

@@ -102,7 +102,7 @@ void PBRDemo::setScene(const std::shared_ptr<Scene> & scene) {
 	// Trigger one-shot data update.
 	// Shadow pass.
 	for(const auto & map : _shadowMaps) {
-			map->draw(*_scenes[_currentScene]);
+		map->draw(*_scenes[_currentScene]);
 	}
 	// Probes pass.
 	for(int i = 0; i < 3; ++i) {
@@ -111,6 +111,7 @@ void PBRDemo::setScene(const std::shared_ptr<Scene> & scene) {
 			probe->convolveRadiance(1.2f, 1, 5);
 			probe->prepareIrradiance();
 			probe->estimateIrradiance(5.0f);
+			GLUtilities::sync();
 		}
 	}
 }
