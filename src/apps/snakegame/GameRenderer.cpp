@@ -49,7 +49,7 @@ void GameRenderer::drawPlayer(const Player & player, Framebuffer & framebuffer) 
 	GLUtilities::setDepthState(false);
 
 	// --- SSAO pass ------
-	_ssaoPass->process(_playerCamera.projection(), _sceneFramebuffer->depthId(), _sceneFramebuffer->texture(0));
+	_ssaoPass->process(_playerCamera.projection(), _sceneFramebuffer->depth(), _sceneFramebuffer->texture(0));
 
 	// --- Lighting pass ------
 	_lightingFramebuffer->bind();

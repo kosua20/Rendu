@@ -125,15 +125,26 @@ public:
 		return &_idColors[i];
 	}
 
+	/** Query the descriptor of one of the color attachments.
+	 \param i the color attachment index (or 0 by default)
+	 \return the descriptor
+	*/
 	const Descriptor & descriptor(unsigned int i = 0) const {
 		return _idColors[i].gpu->descriptor();
+	}
+
+	/** Query the shape of the framebuffer.
+	 \return the texture shape used for all attachments.
+	 */
+	const TextureShape & shape() const {
+		return _shape;
 	}
 
 	/**
 	 Query the 2D texture or renderbuffer backing the depth attachment.
 	 \return the depth texture/renderbuffer
 	 */
-	const Texture * depthId() const { return (_depthUse == Depth::NONE ? nullptr : &_idDepth); }
+	const Texture * depthBuffer() const { return (_depthUse == Depth::NONE ? nullptr : &_idDepth); }
 
 	/**
 	 Query the framebuffer width.
