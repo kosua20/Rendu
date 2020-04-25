@@ -28,7 +28,7 @@ private:
 	std::shared_ptr<Light> _light; 		///< The associated light.
 	const Program * _program;			///< Shadow program.
 	std::unique_ptr<Framebuffer> _map;	///< Raw shadow map result.
-	std::unique_ptr<BoxBlur> _blur;		///< Filtered shadow map result.
+	std::unique_ptr<BoxBlur> _blur;		///< Blur filter.
 	
 };
 
@@ -55,5 +55,6 @@ private:
 	std::shared_ptr<PointLight> _light;		///< The associated light.
 	const Program * _program;				///< Shadow program.
 	std::unique_ptr<Framebuffer> _map;	///< Raw shadow map result.
+	std::unique_ptr<BoxBlur> _blur;		///< Blur filter.
 	
 };

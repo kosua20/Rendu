@@ -60,6 +60,7 @@ VarianceShadowMapCube::VarianceShadowMapCube(const std::shared_ptr<PointLight> &
 	_light = light;
 	const Descriptor descriptor = {Layout::RG16F, Filter::LINEAR, Wrap::CLAMP};
 	_map = std::unique_ptr<Framebuffer>(new Framebuffer( TextureShape::Cube, side, side, 6, 1, {descriptor}, true));
+	_blur = std::unique_ptr<BoxBlur>(new BoxBlur(true));
 	_program = Resources::manager().getProgram("object_cube_depth", "object_basic_texture_worldpos", "light_shadow_linear_variance");
 	_light->registerShadowMap(_map->texture());
 }
@@ -107,10 +108,12 @@ void VarianceShadowMapCube::draw(const Scene & scene) const {
 		}
 	}
 	_map->unbind();
-	// No blurring pass for now.
+	// Blur pass.
 	GLUtilities::setDepthState(false);
+	_blur->process(_map->texture(), *_map);
 }
 
 void VarianceShadowMapCube::clean(){
 	_map->clean();
+	_blur->clean();
 }

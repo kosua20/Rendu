@@ -67,6 +67,7 @@ VarianceShadowMapCubeArray::VarianceShadowMapCubeArray(const std::vector<std::sh
 	_lights = lights;
 	const Descriptor descriptor = {Layout::RG16F, Filter::LINEAR, Wrap::CLAMP};
 	_map = std::unique_ptr<Framebuffer>(new Framebuffer( TextureShape::ArrayCube, side, side, uint(lights.size()), 1,  {descriptor}, true));
+	_blur = std::unique_ptr<BoxBlur>(new BoxBlur(true));
 	_program = Resources::manager().getProgram("object_cube_depth", "light_shadow_linear_vertex", "light_shadow_linear_variance");
 	for(size_t lid = 0; lid < _lights.size(); ++lid){
 		_lights[lid]->registerShadowMap(_map->texture(), lid);
@@ -83,7 +84,7 @@ void VarianceShadowMapCubeArray::draw(const Scene & scene) const {
 	for(size_t lid = 0; lid < _lights.size(); ++lid){
 		const auto & light = _lights[lid];
 		if(!light->castsShadow()){
-			return;
+			continue;
 		}
 		// Udpate the light vp matrices.
 		const auto & faces = light->vpFaces();
@@ -121,10 +122,12 @@ void VarianceShadowMapCubeArray::draw(const Scene & scene) const {
 		}
 	}
 	_map->unbind();
-	// No blurring pass for now.
+	// Apply box blur.
+	_blur->process(_map->texture(), *_map);
 	GLUtilities::setDepthState(false);
 }
 
 void VarianceShadowMapCubeArray::clean(){
 	_map->clean();
+	_blur->clean();
 }
