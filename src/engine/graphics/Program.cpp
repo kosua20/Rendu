@@ -91,6 +91,10 @@ void Program::load() {
 		const GLUtilities::BindingType type = binding.second.type;
 		const int slot = binding.second.location;
 
+		if(_uniforms.count(name) == 0){
+			Log::Warning() << "Binding with name \"" << name << "\" was not registered." << std::endl;
+			continue;
+		}
 		if(type == GLUtilities::BindingType::TEXTURE) {
 			glUniform1i(_uniforms.at(name), slot);
 		} else if(type == GLUtilities::BindingType::UNIFORM_BUFFER) {

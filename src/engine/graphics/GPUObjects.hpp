@@ -281,6 +281,12 @@ public:
 	 **/
 	bool operator==(const Descriptor & other) const;
 
+	/** Non-equality operator.
+	 \param other other descriptor to compare to
+	 \return true if layout, wrapping and filtering are different.
+	 **/
+	bool operator!=(const Descriptor & other) const;
+
 	/** Query if the texture is storing gamma-corrected values.
 	 \return the srgb status
 	 */
