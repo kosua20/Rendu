@@ -19,7 +19,7 @@ out INTERFACE {
 void main(){
 	// We multiply the coordinates by the MVP matrix, and ouput the result.
 	gl_Position = mvp * vec4(v, 1.0);
-	// Store viez space position.
+	// Store view space position.
 	Out.viewSpacePosition = (mv * vec4(v, 1.0)).xyz;
 	// Compute the view space normal.
 	Out.vn = normalize(normalMatrix * n);
