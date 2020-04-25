@@ -14,28 +14,30 @@
  \see GPU::Frag::Blur-dual-filter-down, GPU::Frag::Blur-dual-filter-up
  \ingroup Processing
  */
-class GaussianBlur : public Blur {
+class GaussianBlur {
 
 public:
 	/**
 	 Constructor. The depth of the gaussian pyramid will determine the strength of the blur, and the computational cost.
-	 \param width the internal initial resolution width
-	 \param height the internal initial resolution height
 	 \param depth the number of levels in the downscaling pyramid
-	 \param preciseFormat the precise format of the internal famebuffers
+	 \param downscale work at a lower resolution than the target framebuffer
 	 */
-	GaussianBlur(unsigned int width, unsigned int height, unsigned int depth, Layout preciseFormat);
+	GaussianBlur(uint radius, uint downscale);
 
 	/**
 	 Apply the blurring process to a given texture.
+	 \note It is possible to use the same texture as input and output.
 	 \param texture the ID of the texture to process
+	 \param framebuffer the destination framebuffer
 	 */
-	void process(const Texture * texture);
+	void process(const Texture * texture, Framebuffer & framebuffer);
 
 	/**
 	 Clean internal resources.
 	 */
 	void clean() const;
+
+private:
 
 	/**
 	  Handle screen resizing if needed.
@@ -44,18 +46,9 @@ public:
 	 */
 	void resize(unsigned int width, unsigned int height);
 
-	/** \return the internal processing width */
-	unsigned int width() const {
-		return _frameBuffers.empty() ? 0 : (_frameBuffers[0]->width());
-	}
-
-	/** \return the internal processing height */
-	unsigned int height() const {
-		return _frameBuffers.empty() ? 0 : (_frameBuffers[0]->height());
-	}
-
-private:
 	const Program * _blurProgramDown;						 ///< The downscaling filter.
 	const Program * _blurProgramUp;							 ///< The upscaling filter.
+	const Program * _passthrough;							 ///< The copy program.
 	std::vector<std::unique_ptr<Framebuffer>> _frameBuffers; ///< Downscaled pyramid framebuffers.
+	uint _downscale = 1;									 ///< Initial downscaling factor.
 };

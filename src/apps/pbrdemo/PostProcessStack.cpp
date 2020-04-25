@@ -8,16 +8,14 @@
 PostProcessStack::PostProcessStack(const glm::vec2 & resolution){
 	const int renderWidth	= int(resolution[0]);
 	const int renderHeight	= int(resolution[1]);
-	const int renderHWidth  = int(resolution[0]/2);
-	const int renderHHeight = int(resolution[1]/2);
 	const Descriptor desc = {Layout::RGB16F, Filter::LINEAR_NEAREST, Wrap::CLAMP};
 	_bloomBuffer	= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, desc, false));
 	_toneMapBuffer 	= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, desc, false));
-	_blurBuffer		= std::unique_ptr<GaussianBlur>(new GaussianBlur(renderHWidth, renderHHeight, _settings.bloomRadius, Layout::RGB16F));
+	_blur		= std::unique_ptr<GaussianBlur>(new GaussianBlur(_settings.bloomRadius, 2));
 	_preferredFormat.push_back(desc);
 	_needsDepth = false;
 	_bloomProgram		   = Resources::manager().getProgram2D("bloom");
-	_bloomCompositeProgram = Resources::manager().getProgram2D("bloom-composite");
+	_bloomComposite = Resources::manager().getProgram2D("scale-texture");
 	_toneMappingProgram	   = Resources::manager().getProgram2D("tonemap");
 	_fxaaProgram		   = Resources::manager().getProgram2D("fxaa");
 	checkGLError();
@@ -38,16 +36,19 @@ void PostProcessStack::process(const Texture * texture, Framebuffer & framebuffe
 		_bloomBuffer->unbind();
 		
 		// --- Bloom blur pass ------
-		_blurBuffer->process(_bloomBuffer->texture());
+		_blur->process(_bloomBuffer->texture(), *_bloomBuffer);
 		
-		// Draw the blurred bloom back into the scene framebuffer.
-		_bloomBuffer->bind();
-		_bloomBuffer->setViewport();
-		_bloomCompositeProgram->use();
-		_bloomCompositeProgram->uniform("mixFactor", _settings.bloomMix);
-		ScreenQuad::draw({texture, _blurBuffer->texture()});
-		_bloomBuffer->unbind();
-		sceneResult = _bloomBuffer->texture();
+		// Add back the scene content.
+		framebuffer.bind();
+		framebuffer.setViewport();
+		GLUtilities::setBlendState(true, BlendEquation::ADD, BlendFunction::ONE, BlendFunction::ONE);
+		_bloomComposite->use();
+		_bloomComposite->uniform("scale", _settings.bloomMix);
+		ScreenQuad::draw(_bloomBuffer->texture());
+		GLUtilities::setBlendState(false);
+		framebuffer.unbind();
+		sceneResult = framebuffer.texture();
+		// Tonemapping below ensures that we will always have an intermediate target.
 	}
 	
 	// --- Tonemapping pass ------
@@ -74,13 +75,11 @@ void PostProcessStack::process(const Texture * texture, Framebuffer & framebuffe
 }
 
 void PostProcessStack::updateBlurPass(){
-	const uint bw = _blurBuffer->width();
-	const uint bh = _blurBuffer->height();
-	_blurBuffer.reset(new GaussianBlur(bw, bh, _settings.bloomRadius, Layout::RGB16F));
+	_blur.reset(new GaussianBlur(_settings.bloomRadius, 2));
 }
 
 void PostProcessStack::clean() {
-	_blurBuffer->clean();
+	_blur->clean();
 	_bloomBuffer->clean();
 	_toneMapBuffer->clean();
 }
@@ -89,7 +88,6 @@ void PostProcessStack::resize(unsigned int width, unsigned int height) {
 	const glm::vec2 renderRes(width, height);
 	_toneMapBuffer->resize(renderRes);
 	_bloomBuffer->resize(renderRes);
-	_blurBuffer->resize(width/2, height/2);
 	checkGLError();
 }
 
@@ -101,6 +99,7 @@ void PostProcessStack::interface(){
 
 		ImGui::PushItemWidth(80);
 		if(ImGui::InputInt("Rad.##Bloom", &_settings.bloomRadius, 1, 10)) {
+			_settings.bloomRadius = std::max(1, _settings.bloomRadius);
 			updateBlurPass();
 		}
 		ImGui::PopItemWidth();

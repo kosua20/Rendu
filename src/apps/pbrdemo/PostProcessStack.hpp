@@ -64,10 +64,10 @@ private:
 
 	std::unique_ptr<Framebuffer> _bloomBuffer; 	 ///< Bloom framebuffer
 	std::unique_ptr<Framebuffer> _toneMapBuffer; ///< Tonemapping framebuffer
-	std::unique_ptr<GaussianBlur> _blurBuffer;	 ///< Bloom blur processing.
+	std::unique_ptr<GaussianBlur> _blur;	 ///< Bloom blur processing.
 	
 	const Program * _bloomProgram;			///< Bloom program
-	const Program * _bloomCompositeProgram; ///< Bloom compositing program.
+	const Program * _bloomComposite; 		///< Bloom compositing program.
 	const Program * _toneMappingProgram; 	///< Tonemapping program
 	const Program * _fxaaProgram;		 	///< FXAA program
 	
