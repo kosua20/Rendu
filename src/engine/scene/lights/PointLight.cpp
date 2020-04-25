@@ -1,6 +1,7 @@
 #include "scene/lights/PointLight.hpp"
 #include "graphics/GLUtilities.hpp"
 #include "resources/ResourcesManager.hpp"
+#include "resources/Library.hpp"
 
 PointLight::PointLight(const glm::vec3 & worldPosition, const glm::vec3 & color, float radius) :
 	Light(color),
@@ -52,13 +53,9 @@ void PointLight::setScene(const BoundingBox & sceneBox) {
 	_farPlane				   = far;
 	const glm::mat4 projection = glm::perspective(glm::half_pi<float>(), 1.0f, near, _farPlane);
 
-	// Create the constant view matrices for the 6 faces.
-	const glm::vec3 ups[6]	 = {glm::vec3(0.0, -1.0, 0.0), glm::vec3(0.0, -1.0, 0.0), glm::vec3(0.0, 0.0, 1.0), glm::vec3(0.0, 0.0, -1.0), glm::vec3(0.0, -1.0, 0.0), glm::vec3(0.0, -1.0, 0.0)};
-	const glm::vec3 centers[6] = {glm::vec3(1.0, 0.0, 0.0), glm::vec3(-1.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0), glm::vec3(0.0, -1.0, 0.0), glm::vec3(0.0, 0.0, 1.0), glm::vec3(0.0, 0.0, -1.0)};
-
 	// Udpate the VPs.
 	for(size_t mid = 0; mid < 6; ++mid) {
-		const glm::mat4 view = glm::lookAt(glm::vec3(0.0f), centers[mid], ups[mid]);
+		const glm::mat4 view = Library::boxVs[mid];
 		_vps[mid]			 = projection * view * model;
 	}
 	

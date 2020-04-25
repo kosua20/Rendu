@@ -111,7 +111,6 @@ private:
 	std::shared_ptr<Buffer<glm::vec4>> _shCoeffs; ///< SH representation of the cubemap irradiance.
 
 	std::array<Camera, 6> _cameras; ///< Camera for each face.
-	std::array<glm::mat4, 6> _mvps; ///< MVP for each (centered) face.
 	glm::vec3 _position; ///< The probe location.
 	const Program * _integration; ///< Radiance preconvolution shader.
 	const Mesh * _cube; ///< Skybox cube.
