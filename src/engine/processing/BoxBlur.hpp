@@ -6,34 +6,31 @@
 
 /**
  \brief Applies a box blur of fixed radius 2. Correspond to uniformly averaging values over a square window.
- \see GPU::Frag::Box_blur_1, GPU::Frag::Box_blur_2, GPU::Frag::Box_blur_3, GPU::Frag::Box_blur_4
- \see GPU::Frag::Box_blur_approx_1, GPU::Frag::Box_blur_approx_2, GPU::Frag::Box_blur_approx_3, GPU::Frag::Box_blur_approx_4
  \ingroup Processing
  */
-class BoxBlur : public Blur {
+class BoxBlur {
 
 public:
 	/**
 	 Constructor. Can use either an exhaustive 5x5 box blur (25 samples) or an approximate version with a checkerboard pattern (13 samples).
-	 \param shape the shape of the textures to process
-	 \param width the internal resolution width
-	 \param height the internal resolution height
-	 \param depth the internal texture 3rd dimension
-	 \param descriptor the framebuffer format and wrapping descriptor
 	 \param approximate toggles the approximate box blur
 	 */
-	BoxBlur(TextureShape shape, unsigned int width, unsigned int height, unsigned int depth, const Descriptor & descriptor, bool approximate);
+	BoxBlur(bool approximate);
 
 	/**
 	 Apply the blurring process to a given texture.
+	 \note It is possible to use the same texture as input and output.
 	 \param texture the ID of the texture to process
+	 \param framebuffer the destination framebuffer
 	 */
-	void process(const Texture * texture) const;
+	void process(const Texture * texture, Framebuffer & framebuffer);
 
 	/**
 	 Clean internal resources.
 	 */
 	void clean() const;
+
+private:
 
 	/**
 	  Handle screen resizing if needed.
@@ -42,12 +39,8 @@ public:
 	 */
 	void resize(unsigned int width, unsigned int height) const;
 
-	/**
-	 Clear the final framebuffer texture.
-	 */
-	void clear() const;
-
-private:
-	const Program * _blurProgram;					///< Box blur program
-	std::unique_ptr<Framebuffer> _finalFramebuffer; ///< Final framebuffer.
+	const Program * _blur2D;					///< Box blur program
+	const Program * _blurArray;					///< Box blur program
+	const Program * _blurCube;					///< Box blur program
+	std::unique_ptr<Framebuffer> _intermediate; ///< Intermediate target.
 };

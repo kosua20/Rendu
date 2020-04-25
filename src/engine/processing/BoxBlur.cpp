@@ -1,59 +1,65 @@
 #include "processing/BoxBlur.hpp"
 #include "graphics/GLUtilities.hpp"
 
-BoxBlur::BoxBlur(TextureShape shape, unsigned int width, unsigned int height, unsigned int depth, const Descriptor & descriptor, bool approximate) {
+BoxBlur::BoxBlur(bool approximate) {
 
-	if(shape != TextureShape::D2 && shape != TextureShape::Array2D){
-		Log::Error() << "Unsupported texture shape for blurring.";
-		return;
-	}
-	// Enforce linear filtering.
-	const Descriptor linearDescriptor(descriptor.typedFormat(), Filter::LINEAR_NEAREST, descriptor.wrapping());
-
-
-	std::string blur_type_name = "box-blur-";
+	std::string blurName = "box-blur-";
 	if(approximate){
-		blur_type_name.append("approx-");
+		blurName.append("approx-");
 	}
-	blur_type_name.append(shape == TextureShape::Array2D ? "array-2d" : "2d");
-
-	_blurProgram = Resources::manager().getProgram2D(blur_type_name);
-	// Create one framebuffer.
-	_finalFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(shape, width, height, depth, 1, {linearDescriptor}, false));
-	// Final combining buffer.
-	_finalTexture = _finalFramebuffer->texture();
+	_blur2D = Resources::manager().getProgram2D(blurName + "2d");
+	_blurArray = Resources::manager().getProgram2D(blurName + "array-2d");
 
 	checkGLError();
 }
 
 // Draw function
-void BoxBlur::process(const Texture * texture) const {
-	_finalFramebuffer->setViewport();
-	_blurProgram->use();
-	for(size_t lid = 0; lid < _finalFramebuffer->depth(); ++lid){
-		_finalFramebuffer->bind(lid);
-		GLUtilities::clearColor(glm::vec4(0.0f));
-		_blurProgram->uniform("layer", int(lid));
-		ScreenQuad::draw(texture);
+void BoxBlur::process(const Texture * texture, Framebuffer & framebuffer) {
+
+	// Detect changes of descriptor.
+	if(!_intermediate || _intermediate->descriptor() != framebuffer.descriptor()){
+		if(_intermediate){
+			_intermediate->clean();
+		}
+		_intermediate.reset(new Framebuffer(framebuffer.width(), framebuffer.height(), framebuffer.descriptor(), false));
 	}
-	_finalFramebuffer->unbind();
+	// Detect changes of size.
+	if(_intermediate->width() != framebuffer.width() || _intermediate->height() != framebuffer.height()){
+		resize(framebuffer.width() , framebuffer.height());
+	}
+
+	_intermediate->setViewport();
+	const TextureShape & tgtShape = framebuffer.shape();
+	if(tgtShape == TextureShape::D2){
+		_blur2D->use();
+		_intermediate->bind();
+		ScreenQuad::draw(texture);
+		_intermediate->unbind();
+		GLUtilities::blit(*_intermediate, framebuffer, Filter::NEAREST);
+
+	} else if(tgtShape == TextureShape::Array2D){
+		_blurArray->use();
+		for(size_t lid = 0; lid < framebuffer.depth(); ++lid){
+			_intermediate->bind();
+			_blurArray->uniform("layer", int(lid));
+			ScreenQuad::draw(texture);
+			_intermediate->unbind();
+			GLUtilities::blit(*_intermediate, framebuffer, 0, lid, Filter::NEAREST);
+		}
+	} else {
+		Log::Error() << "Unsupported shape." << std::endl;
+	}
+
 }
 
 // Clean function
 void BoxBlur::clean() const {
-	_finalFramebuffer->clean();
+	if(_intermediate){
+		_intermediate->clean();
+	}
 }
 
 // Handle screen resizing
 void BoxBlur::resize(unsigned int width, unsigned int height) const {
-	_finalFramebuffer->resize(width, height);
-}
-
-void BoxBlur::clear() const {
-	_finalFramebuffer->setViewport();
-	for(size_t lid = 0; lid < _finalFramebuffer->depth(); ++lid){
-		_finalFramebuffer->bind(lid);
-		GLUtilities::clearColor(glm::vec4(1.0f));
-	}
-	_finalFramebuffer->unbind();
+	_intermediate->resize(width, height);
 }
