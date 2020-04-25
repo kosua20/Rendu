@@ -3,12 +3,9 @@
 
 BoxBlur::BoxBlur(bool approximate) {
 
-	std::string blurName = "box-blur-";
-	if(approximate){
-		blurName.append("approx-");
-	}
-	_blur2D = Resources::manager().getProgram2D(blurName + "2d");
-	_blurArray = Resources::manager().getProgram2D(blurName + "array-2d");
+	const std::string suffix = approximate ? "-approx" : "";
+	_blur2D = Resources::manager().getProgram2D("box-blur-2d" + suffix);
+	_blurArray = Resources::manager().getProgram2D("box-blur-2d-array" + suffix);
 
 	checkGLError();
 }

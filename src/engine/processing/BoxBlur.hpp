@@ -5,7 +5,8 @@
 #include "Common.hpp"
 
 /**
- \brief Applies a box blur of fixed radius 2. Correspond to uniformly averaging values over a square window.
+ \brief Applies a box blur of fixed radius 2. Correspond to uniformly averaging values over a 5x5 square window.
+ An approximate (checkboard pattern) version doing half as many fetches is available. his blur can be applied to 2D, cubemap, 2D arrays and cubemap arrays textures.
  \ingroup Processing
  */
 class BoxBlur {
@@ -18,7 +19,7 @@ public:
 	BoxBlur(bool approximate);
 
 	/**
-	 Apply the blurring process to a given texture.
+	 Apply the blurring process to a given texture. 2D, cubemap and their array versions are supported.
 	 \note It is possible to use the same texture as input and output.
 	 \param texture the ID of the texture to process
 	 \param framebuffer the destination framebuffer
@@ -42,5 +43,6 @@ private:
 	const Program * _blur2D;					///< Box blur program
 	const Program * _blurArray;					///< Box blur program
 	const Program * _blurCube;					///< Box blur program
+	const Program * _blurCubeArray;					///< Box blur program
 	std::unique_ptr<Framebuffer> _intermediate; ///< Intermediate target.
 };
