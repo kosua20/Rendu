@@ -89,7 +89,7 @@ public:
 	 */
 	void resize(const glm::ivec2 & size);
 
-	/** Clear all attachments of the framebuffer.
+	/** Clear all levels of all layers of all attachments of the framebuffer.
 	 \param color clear color
 	 \param depth clear depth
 	 */

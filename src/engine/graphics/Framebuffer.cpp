@@ -196,12 +196,17 @@ void Framebuffer::resize(const glm::ivec2 & size) {
 
 void Framebuffer::clear(const glm::vec4 & color, float depth){
 	// Clear depth.
-	bind(0, 0, Mode::WRITE);
-	glClearBufferfv(GL_DEPTH, 0, &depth);
-	for(uint lid = 0; lid < _depth; ++lid){
-		bind(lid, 0, Mode::WRITE);
-		for(uint cid = 0; cid < _idColors.size(); ++cid){
-			glClearBufferfv(GL_COLOR, GLint(cid), &color[0]);
+	for(uint mid = 0; mid < _idDepth.levels; ++mid){
+		bind(0, mid, Mode::WRITE);
+		glClearBufferfv(GL_DEPTH, 0, &depth);
+	}
+
+	for(uint mid = 0; mid < _idColors[0].levels; ++mid){
+		for(uint lid = 0; lid < _depth; ++lid){
+			bind(lid, mid, Mode::WRITE);
+			for(uint cid = 0; cid < _idColors.size(); ++cid){
+				glClearBufferfv(GL_COLOR, GLint(cid), &color[0]);
+			}
 		}
 	}
 
