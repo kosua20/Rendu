@@ -10,7 +10,9 @@ PBRDemo::PBRDemo(RenderingConfig & config) :
 	_defRenderer.reset(new DeferredRenderer(renderRes, ShadowMode::VARIANCE, true));
 	_forRenderer.reset(new ForwardRenderer(renderRes, ShadowMode::VARIANCE, true));
 	_postprocess.reset(new PostProcessStack(renderRes));
-	_finalRender = _defRenderer->createOutput(uint(renderRes[0]), uint(renderRes[1]));
+	_debugRenderer.reset(new DebugRenderer());
+	_finalRender.reset(new Framebuffer(uint(renderRes[0]), uint(renderRes[1]), {Layout::RGB16F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, true));
+
 	_finalProgram = Resources::manager().getProgram2D("sharpening");
 	
 	_probesRenderer.reset(new DeferredRenderer(glm::vec2(256,256), ShadowMode::BASIC, false));
@@ -57,6 +59,7 @@ void PBRDemo::setScene(const std::shared_ptr<Scene> & scene) {
 	_defRenderer->setScene(scene);
 	_forRenderer->setScene(scene);
 	_probesRenderer->setScene(scene);
+	_debugRenderer->setScene(scene);
 
 	// Recreate the shadow maps.
 	// Delete existing shadow maps.
@@ -178,6 +181,12 @@ void PBRDemo::draw() {
 	_postprocess->process(_finalRender->texture(), *_finalRender);
 	_postprocessTime.end();
 
+	if(_showDebug){
+		const Framebuffer & depthSrc = _mode == RendererMode::FORWARD ? _forRenderer->depthFramebuffer() : _defRenderer->depthFramebuffer();
+		GLUtilities::blitDepth(depthSrc, *_finalRender);
+		_debugRenderer->draw(_userCamera, *_finalRender);
+	}
+
 	// We now render a full screen quad in the default framebuffer, using sRGB space.
 	Framebuffer::backbuffer()->bind(Framebuffer::Mode::SRGB);
 	GLUtilities::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
@@ -234,12 +243,18 @@ void PBRDemo::update() {
 
 	// Reopen the Imgui window.
 	if(ImGui::Begin("Renderer")) {
-
 		ImGui::PushItemWidth(110);
 		ImGui::Combo("Renderer##picklist", reinterpret_cast<int *>(&_mode), "Deferred\0Forward\0\0");
 		if(ImGui::InputInt("Vertical res.", &_config.internalVerticalResolution, 50, 200)) {
 			_config.internalVerticalResolution = std::max(8, _config.internalVerticalResolution);
 			resize();
+		}
+
+		ImGui::Checkbox("Show debug objects", &_showDebug);
+		if(_showDebug){
+			if(ImGui::CollapsingHeader("Debug##options")){
+				_debugRenderer->interface();
+			}
 		}
 
 		if(ImGui::CollapsingHeader("Renderer##options")){

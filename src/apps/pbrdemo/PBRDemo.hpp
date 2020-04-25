@@ -3,6 +3,7 @@
 #include "DeferredRenderer.hpp"
 #include "ForwardRenderer.hpp"
 #include "PostProcessStack.hpp"
+#include "DebugRenderer.hpp"
 
 #include "Application.hpp"
 #include "scene/Scene.hpp"
@@ -62,6 +63,7 @@ private:
 	std::unique_ptr<ForwardRenderer> _forRenderer;	 ///< Forward PBR renderer.
 	std::unique_ptr<PostProcessStack> _postprocess; ///< Post-process renderer.
 	std::shared_ptr<DeferredRenderer> _probesRenderer; ///< Renderer for the light probes.
+	std::unique_ptr<DebugRenderer> _debugRenderer;	 ///< Forward PBR renderer.
 	std::unique_ptr<Framebuffer> _finalRender; ///< Final framebuffer.
 	const Program * _finalProgram; ///< Final display program.
 	
@@ -85,4 +87,5 @@ private:
 
 	bool _paused		= false; ///< Pause animations.
 	bool _updateShadows = true; ///< Update the shadow maps.
+	bool _showDebug		= false; ///< Debug scene objects.
 };
