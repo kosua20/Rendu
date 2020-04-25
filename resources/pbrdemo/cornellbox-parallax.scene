@@ -1,6 +1,5 @@
 * probe: 
-	radiance: rgbcube: default_cube
-	irradiance: default_shcoeffs
+	position: 0.0, 1.0, 0.0
 
 * background:
 	color: 0.039,0.039,0.039
