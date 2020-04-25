@@ -6,7 +6,7 @@
 #include <chrono>
 
 ForwardRenderer::ForwardRenderer(const glm::vec2 & resolution, ShadowMode mode, bool ssao) :
-	_lightDebugRenderer("object_basic_uniform"), _applySSAO(ssao), _shadowMode(mode) {
+	_applySSAO(ssao), _shadowMode(mode) {
 
 	const uint renderWidth	   = uint(resolution[0]);
 	const uint renderHeight	   = uint(resolution[1]);
@@ -42,11 +42,8 @@ void ForwardRenderer::setScene(const std::shared_ptr<Scene> & scene) {
 	if(!scene) {
 		return;
 	}
-
 	_scene = scene;
-
 	_lightsGPU.reset(new ForwardLight(_scene->lights.size()));
-
 	checkGLError();
 }
 
@@ -161,18 +158,6 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 		GLUtilities::setCullState(true);
 	}
 	
-	// Render all lights.
-	if(_debugVisualization) {
-		_lightDebugRenderer.updateCameraInfos(view, proj);
-		GLUtilities::setCullState(false);
-		GLUtilities::setPolygonState(PolygonMode::LINE, Faces::ALL);
-		for(auto & light : _scene->lights) {
-			light->draw(_lightDebugRenderer);
-		}
-		GLUtilities::setPolygonState(PolygonMode::FILL, Faces::ALL);
-		GLUtilities::setCullState(true);
-	}
-	
 	// Render the backgound.
 	renderBackground(view, proj, pos);
 	_sceneFramebuffer->unbind();
@@ -277,8 +262,6 @@ void ForwardRenderer::resize(unsigned int width, unsigned int height) {
 }
 
 void ForwardRenderer::interface(){
-	ImGui::Checkbox("Show debug vis.", &_debugVisualization);
-	ImGui::SameLine();
 	ImGui::Checkbox("Freeze culling", &_freezeFrustum);
 	ImGui::Combo("Shadow technique", reinterpret_cast<int*>(&_shadowMode), "None\0Basic\0Variance\0\0");
 	ImGui::Checkbox("SSAO", &_applySSAO);

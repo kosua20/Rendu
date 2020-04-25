@@ -59,6 +59,11 @@ public:
 	/** \copydoc Renderer::interface */
 	void interface() override;
 
+	/** \return the framebuffer containing the scene depth information */
+	const Framebuffer & depthFramebuffer(){
+		return *_gbuffer;
+	}
+
 private:
 	
 	/** Render the scene objects to the G-buffer.
@@ -80,7 +85,6 @@ private:
 	std::unique_ptr<SSAO> _ssaoPass;				///< SSAO processing.
 	std::unique_ptr<AmbientQuad> _ambientScreen;	///< Ambient lighting contribution rendering.
 	std::unique_ptr<DeferredLight> _lightRenderer;	///< The lights renderer.
-	DebugLightRenderer _lightDebugRenderer;			///< The lights debug renderer.
 	
 	const Program * _objectProgram;		 ///< Basic PBR program
 	const Program * _objectNoUVsProgram; ///< Basic PBR program
@@ -93,7 +97,6 @@ private:
 
 	std::shared_ptr<Scene> _scene; 						 ///< The scene to render
 	
-	bool _debugVisualization = false; ///< Toggle the rendering of debug informations in the scene.
 	bool _applySSAO			 = true;  ///< Screen space ambient occlusion.
 	ShadowMode  _shadowMode	 = ShadowMode::VARIANCE;  ///< Shadow mapping technique to use.
 

@@ -6,11 +6,10 @@
 #include <chrono>
 
 DeferredRenderer::DeferredRenderer(const glm::vec2 & resolution, ShadowMode mode, bool ssao) :
-	_lightDebugRenderer("light_debug"), _applySSAO(ssao), _shadowMode(mode) {
+	_applySSAO(ssao), _shadowMode(mode) {
 
 	const uint renderWidth	  = uint(resolution[0]);
 	const uint renderHeight	  = uint(resolution[1]);
-
 
 	// G-buffer setup.
 	const Descriptor albedoDesc			= {Layout::RGBA16F, Filter::NEAREST_NEAREST, Wrap::CLAMP};
@@ -127,18 +126,6 @@ void DeferredRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & pro
 		GLUtilities::setCullState(true);
 	}
 	
-	// Lights wireframe debug.
-	if(_debugVisualization){
-		_lightDebugRenderer.updateCameraInfos(view, proj);
-		GLUtilities::setPolygonState(PolygonMode::LINE, Faces::ALL);
-		GLUtilities::setCullState(false);
-		for(const auto & light : _scene->lights){
-			light->draw(_lightDebugRenderer);
-		}
-		GLUtilities::setCullState(true);
-		GLUtilities::setPolygonState(PolygonMode::FILL, Faces::ALL);
-	}
-	
 	renderBackground(view, proj, pos);
 
 	// Unbind the full scene framebuffer.
@@ -243,8 +230,6 @@ void DeferredRenderer::resize(unsigned int width, unsigned int height) {
 }
 
 void DeferredRenderer::interface(){
-	ImGui::Checkbox("Show debug vis.", &_debugVisualization);
-	ImGui::SameLine();
 	ImGui::Checkbox("Freeze culling", &_freezeFrustum);
 	ImGui::Combo("Shadow technique", reinterpret_cast<int*>(&_shadowMode), "None\0Basic\0Variance\0\0");
 	ImGui::Checkbox("SSAO", &_applySSAO);
