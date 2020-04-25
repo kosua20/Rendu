@@ -23,8 +23,8 @@ FilteringApp::FilteringApp(RenderingConfig & config) :
 	// Create the Poisson filling and Laplacian integration pyramids, with a lowered internal resolution to speed things up.
 	_pyramidFiller	 = std::unique_ptr<PoissonFiller>(new PoissonFiller(renderWidth, renderHeight, _fillDownscale));
 	_pyramidIntegrator = std::unique_ptr<LaplacianIntegrator>(new LaplacianIntegrator(renderWidth, renderHeight, _intDownscale));
-	_gaussianBlur	  = std::unique_ptr<GaussianBlur>(new GaussianBlur(renderWidth, renderHeight, _blurLevel, Layout::RGB8));
-	_boxBlur		   = std::unique_ptr<BoxBlur>(new BoxBlur(TextureShape::D2, renderWidth, renderHeight, 1,  {Layout::RGB8, Filter::NEAREST_NEAREST, Wrap::CLAMP}, false));
+	_gaussianBlur	  = std::unique_ptr<GaussianBlur>(new GaussianBlur(_blurLevel, 1));
+	_boxBlur		   = std::unique_ptr<BoxBlur>(new BoxBlur(false));
 	_floodFill		   = std::unique_ptr<FloodFiller>(new FloodFiller(renderWidth, renderHeight));
 
 	_painter = std::unique_ptr<PaintingTool>(new PaintingTool(renderWidth, renderHeight));
@@ -84,12 +84,12 @@ void FilteringApp::draw() {
 			finalTexID = _showProcInput ? _pyramidIntegrator->preprocId() : _pyramidIntegrator->texture();
 			break;
 		case Processing::GAUSSBLUR:
-			_gaussianBlur->process(srcTexID);
-			finalTexID = _gaussianBlur->texture();
+			_gaussianBlur->process(srcTexID, *_sceneBuffer);
+			finalTexID = _sceneBuffer->texture();
 			break;
 		case Processing::BOXBLUR:
-			_boxBlur->process(srcTexID);
-			finalTexID = _boxBlur->texture();
+			_boxBlur->process(srcTexID, *_sceneBuffer);
+			finalTexID = _sceneBuffer->texture();
 			break;
 		case Processing::FLOODFILL:
 			_floodFill->process(srcTexID, _showProcInput ? FloodFiller::Output::DISTANCE : FloodFiller::Output::COLOR);
@@ -188,7 +188,7 @@ void FilteringApp::showModeOptions() {
 			if(ImGui::InputInt("Levels", &_blurLevel, 1, 2)) {
 				_blurLevel = std::min(std::max(1, _blurLevel), 10);
 				_gaussianBlur->clean();
-				_gaussianBlur = std::unique_ptr<GaussianBlur>(new GaussianBlur(width, height, _blurLevel, Layout::RGB8));
+				_gaussianBlur.reset(new GaussianBlur(_blurLevel, 1));
 			}
 			break;
 		case Processing::FILL:
@@ -237,8 +237,6 @@ void FilteringApp::resize() {
 	const uint lheight = uint(renderResolution[1]);
 	_pyramidFiller->resize(lwidth, lheight);
 	_pyramidIntegrator->resize(lwidth, lheight);
-	_gaussianBlur->resize(lwidth, lheight);
-	_boxBlur->resize(lwidth, lheight);
 	_floodFill->resize(lwidth, lheight);
 	_painter->resize(lwidth, lheight);
 

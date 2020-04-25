@@ -24,8 +24,9 @@ GameRenderer::GameRenderer(const glm::vec2 & resolution) {
 	_fxaaProgram		= Resources::manager().getProgram2D("fxaa");
 	_compositingProgram = Resources::manager().getProgram2D("game_composite");
 
-	_ssaoPass = std::unique_ptr<SSAO>(new SSAO(renderWidth / 2, renderHeight / 2, 1.5f));
-
+	_ssaoPass = std::unique_ptr<SSAO>(new SSAO(renderWidth/2, renderHeight/2, 1.5f, 1));
+	_ssaoPass->quality() = SSAO::Quality::MEDIUM;
+	
 	_coloredProgram = Resources::manager().getProgram("colored_object");
 	_ground			= Resources::manager().getMesh("ground", Storage::GPU);
 	_head			= Resources::manager().getMesh("head", Storage::GPU);
@@ -49,7 +50,7 @@ void GameRenderer::drawPlayer(const Player & player, Framebuffer & framebuffer) 
 	GLUtilities::setDepthState(false);
 
 	// --- SSAO pass ------
-	_ssaoPass->process(_playerCamera.projection(), _sceneFramebuffer->depth(), _sceneFramebuffer->texture(0));
+	_ssaoPass->process(_playerCamera.projection(), _sceneFramebuffer->depthBuffer(), _sceneFramebuffer->texture(0));
 
 	// --- Lighting pass ------
 	_lightingFramebuffer->bind();

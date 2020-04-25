@@ -28,7 +28,8 @@ void GameConfig::save(){
 Game::Game(GameConfig & config) :
 	_config(config), _inGameRenderer(_config.screenResolution) {
 
-	_bgBlur = std::unique_ptr<GaussianBlur>(new GaussianBlur(_config.initialWidth, _config.initialHeight, 3, Layout::RGB8));
+	_bgBlur = std::unique_ptr<GaussianBlur>(new GaussianBlur(3, 1));
+	_bgBlurBuffer = _inGameRenderer.createOutput(uint(_config.screenResolution[0]), uint(_config.screenResolution[1]));
 	_finalProgram = Resources::manager().getProgram2D("sharpening");
 	_gameFramebuffer = _inGameRenderer.createOutput(uint(_config.screenResolution[0]), uint(_config.screenResolution[1]));
 
@@ -50,7 +51,7 @@ Game::Game(GameConfig & config) :
 	_menus[Status::MAINMENU].images.emplace_back(glm::vec2(0.0f, 0.47f), 0.5f,
 		Resources::manager().getTexture("title", commonDesc, Storage::GPU));
 
-	_menus[Status::PAUSED].backgroundImage = _bgBlur->texture();
+	_menus[Status::PAUSED].backgroundImage = _bgBlurBuffer->texture();
 	_menus[Status::PAUSED].buttons.emplace_back(glm::vec2(0.0f, 0.10f), meshSize, displayScale, RESUME,
 		Resources::manager().getTexture("button-resume", commonDesc, Storage::GPU));
 	_menus[Status::PAUSED].buttons.emplace_back(glm::vec2(0.0f, -0.25f), meshSize, displayScale, BACKTOMENU,
@@ -75,7 +76,7 @@ Game::Game(GameConfig & config) :
 	_menus[Status::OPTIONS].images.emplace_back(glm::vec2(0.0f, 0.55f), 0.5f,
 		Resources::manager().getTexture("title-options", commonDesc, Storage::GPU));
 
-	_menus[Status::DEAD].backgroundImage = _bgBlur->texture();
+	_menus[Status::DEAD].backgroundImage = _bgBlurBuffer->texture();
 	_menus[Status::DEAD].buttons.emplace_back(glm::vec2(0.0f, -0.20f), meshSize, displayScale, NEWGAME,
 		Resources::manager().getTexture("button-newgame"));
 	_menus[Status::DEAD].buttons.emplace_back(glm::vec2(0.0f, -0.55f), meshSize, displayScale, BACKTOMENU,
@@ -150,8 +151,8 @@ Window::Action Game::update() {
 		if(!_player->alive()) {
 			_status = Status::DEAD;
 			// Make sure the blur effect buffer is the right size.
-			_bgBlur->resize(_gameFramebuffer->width(), _gameFramebuffer->height());
-			_bgBlur->process(_gameFramebuffer->texture());
+			_bgBlurBuffer->resize(_gameFramebuffer->width(), _gameFramebuffer->height());
+			_bgBlur->process(_gameFramebuffer->texture(), *_bgBlurBuffer);
 			_menus[Status::DEAD].labels[0].update(std::to_string(_player->score()));
 
 			// Save the final score.
@@ -214,8 +215,8 @@ Window::Action Game::handleButton(ButtonAction tag) {
 			_status = Status::OPTIONS;
 			break;
 		case PAUSE: {
-			_bgBlur->resize(_gameFramebuffer->width(), _gameFramebuffer->height());
-			_bgBlur->process(_gameFramebuffer->texture());
+			_bgBlurBuffer->resize(_gameFramebuffer->width(), _gameFramebuffer->height());
+			_bgBlur->process(_gameFramebuffer->texture(), *_bgBlurBuffer);
 			_status = Status::PAUSED;
 			break;
 		}
@@ -273,5 +274,6 @@ void Game::resize(unsigned int width, unsigned int height) {
 void Game::clean() {
 	_inGameRenderer.clean();
 	_bgBlur->clean();
+	_bgBlurBuffer->clean();
 	_gameFramebuffer->clean();
 }
