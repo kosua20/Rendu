@@ -1,5 +1,6 @@
 #pragma once
 
+#include "processing/BilateralBlur.hpp"
 #include "processing/BoxBlur.hpp"
 #include "graphics/Framebuffer.hpp"
 #include "Common.hpp"
@@ -12,13 +13,21 @@
 class SSAO {
 
 public:
+
+	enum class Quality : int {
+		LOW = 0, ///< Bilinear upscaling.
+		MEDIUM = 1, ///< Approximate box blur and bilinear upscaling.
+		HIGH = 2 ///< Bilateral blur.
+	};
+
 	/**
 	 Constructor.
 	 \param width the internal resolution width
 	 \param height the internal resolution height
+	 \param downscale the downscaling factor for the resolution when computing AO
 	 \param radius the SSAO intersection test radius
 	 */
-	SSAO(unsigned int width, unsigned int height, float radius);
+	SSAO(uint width, uint height, uint downscale, float radius);
 
 	/**
 	 Compute SSAO using the input depth and normal buffers.
@@ -26,7 +35,7 @@ public:
 	 \param depthTex the depth texture
 	 \param normalTex the view-space normal texture
 	 */
-	void process(const glm::mat4 & projection, const Texture * depthTex, const Texture * normalTex) const;
+	void process(const glm::mat4 & projection, const Texture * depthTex, const Texture * normalTex);
 
 	/** Cleanup rssources.
 	 */
@@ -37,7 +46,7 @@ public:
 	 \param width the new width
 	 \param height the new height
 	 */
-	void resize(unsigned int width, unsigned int height) const;
+	void resize(uint width, uint height) const;
 
 	/**
 	 Clear the final framebuffer texture.
@@ -55,11 +64,20 @@ public:
 	 */
 	float & radius();
 
-private:
-	std::unique_ptr<Framebuffer> _ssaoFramebuffer; ///< SSAO framebuffer
-	std::unique_ptr<BoxBlur> _blurSSAOBuffer;	  ///< SSAO blur processing.
-	Program * _programSSAO;						   ///< The SSAO program.
+	/** Quality of the blur applied to the SSAO result.
+	 \return a reference to the option
+	 */
+	Quality & quality();
 
+private:
+	std::unique_ptr<Framebuffer> _ssaoFramebuffer;  ///< SSAO framebuffer
+	std::unique_ptr<Framebuffer> _finalFramebuffer; ///< SSAO framebuffer
+	BilateralBlur _highBlur;	  					///< High quality blur.
+	BoxBlur _mediumBlur;			///< Medium quality blur.
+	Program * _programSSAO;						    ///< The SSAO program.
+
+	Texture _noisetexture; 	///< Random noise texture.
 	float _radius = 0.5f;	///< SSAO intersection test radius.
-	Texture _noisetexture; ///< Random noise texture.
+	uint _downscale = 1; 	///< SSAO internal resolution downscaling.
+	Quality _quality = Quality::HIGH; ///< Quality of the upscaling/blurring.
 };

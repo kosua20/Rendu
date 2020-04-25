@@ -2,12 +2,16 @@
 #include "system/Random.hpp"
 #include "graphics/GPUObjects.hpp"
 #include "graphics/GLUtilities.hpp"
+#include "graphics/ScreenQuad.hpp"
+#include "resources/ResourcesManager.hpp"
 
-SSAO::SSAO(unsigned int width, unsigned int height, float radius) :
-	_radius(radius) {
-		_ssaoFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, Descriptor(Layout::R8, Filter::LINEAR_NEAREST, Wrap::CLAMP), false));
-	_blurSSAOBuffer  = std::unique_ptr<BoxBlur>(new BoxBlur(TextureShape::D2, width, height, 1, Descriptor(Layout::R8, Filter::LINEAR_LINEAR, Wrap::CLAMP), true));
-	_programSSAO	 = Resources::manager().getProgram2D("ssao");
+SSAO::SSAO(uint width, uint height, uint downscale, float radius) :
+	_mediumBlur(true), _radius(radius), _downscale(downscale) {
+
+	const Descriptor desc = Descriptor(Layout::R8, Filter::LINEAR_NEAREST, Wrap::CLAMP);
+	_ssaoFramebuffer.reset(new Framebuffer(width/_downscale, height/_downscale, desc, false));
+	_finalFramebuffer.reset(new Framebuffer(width, height, desc, false));
+	_programSSAO = Resources::manager().getProgram2D("ssao");
 
 	// Generate samples.
 	std::vector<glm::vec3> samples;
@@ -57,7 +61,7 @@ SSAO::SSAO(unsigned int width, unsigned int height, float radius) :
 }
 
 // Draw function
-void SSAO::process(const glm::mat4 & projection, const Texture * depthTex, const Texture * normalTex) const {
+void SSAO::process(const glm::mat4 & projection, const Texture * depthTex, const Texture * normalTex) {
 
 	_ssaoFramebuffer->bind();
 	_ssaoFramebuffer->setViewport();
@@ -68,29 +72,43 @@ void SSAO::process(const glm::mat4 & projection, const Texture * depthTex, const
 	_ssaoFramebuffer->unbind();
 
 	// Blurring pass
-	_blurSSAOBuffer->process(_ssaoFramebuffer->texture());
+	if(_quality == Quality::HIGH){
+		_highBlur.process(projection, _ssaoFramebuffer->texture(), depthTex, normalTex, *_finalFramebuffer);
+	} else if(_quality == Quality::MEDIUM){
+		_mediumBlur.process(_ssaoFramebuffer->texture(), *_ssaoFramebuffer);
+		GLUtilities::blit(*_ssaoFramebuffer, *_finalFramebuffer, Filter::LINEAR);
+	} else {
+		GLUtilities::blit(*_ssaoFramebuffer, *_finalFramebuffer, Filter::LINEAR);
+	}
 }
 
 // Clean function
 void SSAO::clean() const {
-	_blurSSAOBuffer->clean();
+	_highBlur.clean();
+	_mediumBlur.clean();
+	_finalFramebuffer->clean();
 	_ssaoFramebuffer->clean();
 }
 
 void SSAO::clear() const {
-	_blurSSAOBuffer->clear();
+	_finalFramebuffer->clear(glm::vec4(1.0f), 1.0f);
 }
 
 // Handle screen resizing
-void SSAO::resize(unsigned int width, unsigned int height) const {
-	_blurSSAOBuffer->resize(width, height);
-	_ssaoFramebuffer->resize(width, height);
+void SSAO::resize(uint width, uint height) const {
+	_ssaoFramebuffer->resize(width/_downscale, height/_downscale);
+	_finalFramebuffer->resize(width, height);
+	// The blurs resize automatically.
 }
 
 const Texture * SSAO::texture() const {
-	return _blurSSAOBuffer->texture();
+	return _finalFramebuffer->texture();
 }
 
 float & SSAO::radius() {
 	return _radius;
+}
+
+SSAO::Quality & SSAO::quality() {
+	return _quality;
 }
