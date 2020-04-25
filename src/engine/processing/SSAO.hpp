@@ -14,6 +14,7 @@ class SSAO {
 
 public:
 
+	/** SSAO upscaling/blurring algorithm. */
 	enum class Quality : int {
 		LOW = 0, ///< Bilinear upscaling.
 		MEDIUM = 1, ///< Approximate box blur and bilinear upscaling.

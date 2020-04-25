@@ -19,7 +19,7 @@ class GaussianBlur {
 public:
 	/**
 	 Constructor. The depth of the gaussian pyramid will determine the strength of the blur, and the computational cost.
-	 \param depth the number of levels in the downscaling pyramid
+	 \param radius the number of levels in the downscaling pyramid
 	 \param downscale work at a lower resolution than the target framebuffer
 	 */
 	GaussianBlur(uint radius, uint downscale);

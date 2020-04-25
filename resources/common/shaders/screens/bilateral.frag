@@ -47,6 +47,15 @@ float computeWeight(vec3 n, float z, vec3 nNeigh, float zNeigh){
 	return nWeight * zWeight;
 }
 
+/** Compute the bilateral weight of a neighboring texel and apply it.
+ \param uvNeigh the texel UV coordinates
+ \param n the reference texel surface normal
+ \param z the reference texel surface depth (view space)
+ \param blurWeight gaussian blur weight
+ \param minWeight lowest weight uncountered yet (for monotonous enforcement)
+ \param sum normalization sum
+ \return the weighted color sample
+ */
 vec4 weightedColor(vec2 uvNeigh, vec3 n, float z, float blurWeight, inout float minWeight, inout float sum){
 	vec3 nNeigh = normalize(2.0 * textureLod(normal, uvNeigh, 0.0).rgb - 1.0);
 	float zNeigh = linearizeDepth(textureLod(depth, uvNeigh, 0.0).r, projParams);

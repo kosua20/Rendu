@@ -276,7 +276,7 @@ public:
 	 \param src the source framebuffer
 	 \param dst the destination framebuffer
 	 \param filter the filtering to use for resizing
-	 \warn Only the first color attachment will be blit.
+	 \warning Only the first color attachment will be blit.
 	 */
 	static void blit(const Framebuffer & src, const Framebuffer & dst, Filter filter);
 

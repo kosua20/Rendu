@@ -15,7 +15,7 @@ layout(binding = 4) uniform sampler2D ssaoTexture; ///< The SSAO texture.
 layout(binding = 5) uniform sampler2D brdfPrecalc; ///< Preintegrated BRDF lookup table.
 layout(binding = 6) uniform samplerCube textureCubeMap; ///< Background environment cubemap (with preconvoluted versions of increasing roughness in mipmap levels).
 
-///< SH approximation of the environment irradiance (UBO).
+/// SH approximation of the environment irradiance (UBO).
 layout(std140, binding = 0) uniform SHCoeffs {
 	vec4 shCoeffs[9];
 };
