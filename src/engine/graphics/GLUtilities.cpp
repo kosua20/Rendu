@@ -897,6 +897,14 @@ void GLUtilities::setPolygonState(PolygonMode mode, Faces selectedFaces) {
 	glPolygonMode(faces.at(selectedFaces), modes.at(mode));
 }
 
+void GLUtilities::blitDepth(const Framebuffer & src, const Framebuffer & dst) {
+	src.bind(Framebuffer::Mode::READ);
+	dst.bind(Framebuffer::Mode::WRITE);
+	glBlitFramebuffer(0, 0, src.width(), src.height(), 0, 0, dst.width(), dst.height(), GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+	src.unbind();
+	dst.unbind();
+}
+
 void GLUtilities::blit(const Framebuffer & src, const Framebuffer & dst, Filter filter) {
 	src.bind(Framebuffer::Mode::READ);
 	dst.bind(Framebuffer::Mode::WRITE);

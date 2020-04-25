@@ -272,6 +272,14 @@ public:
 	 */
 	static void setPolygonState(PolygonMode mode, Faces selectedFaces);
 
+	/** Blit the content of a depthbuffer into another one.
+	 \param src the source framebuffer
+	 \param dst the destination framebuffer
+	 \note Depth is necessarily filtered using nearest neighbour.
+	 \warning This treat the current depth buffer setup as a 2D texture.
+	 */
+	static void blitDepth(const Framebuffer & src, const Framebuffer & dst);
+
 	/** Blit the content of a framebuffer into another one, resizing the content accordingly.
 	 \param src the source framebuffer
 	 \param dst the destination framebuffer
