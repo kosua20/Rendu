@@ -442,7 +442,7 @@ public:
 };
 
 
-/** Represent a GPU query, automatically buffered and retrieved.
+/** \brief Represent a GPU query, automatically buffered and retrieved.
  \warning You cannot have multiple queries of the same type running at the same time.
  \ingroup Graphics
  */

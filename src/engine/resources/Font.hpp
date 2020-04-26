@@ -6,7 +6,7 @@
 
 /**
  \brief Font loading and storage: texture atlas, codepoints supported, dimensions of each glyph.
- Assumes that the supported codepoints form a continuous range.
+ \note Assumes that the supported codepoints form a continuous range.
  \ingroup Resources
  */
 class Font {

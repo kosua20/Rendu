@@ -6,7 +6,7 @@
 
 
 /**
- The library provides a few commonly-used resources without
+ \brief The library provides a few commonly-used resources without
  having to set them up or query them from the resources manager.
  \ingroup Resources
  */

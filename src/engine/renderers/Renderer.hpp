@@ -5,7 +5,7 @@
 #include "graphics/Framebuffer.hpp"
 
 /**
- \brief Base structure of a renderer. The result of the renderer is available through result().
+ \brief Base structure of a renderer.
  \ingroup Renderers
  */
 class Renderer {

@@ -12,7 +12,7 @@
 /**
  \brief Apply post process effects to a HDR rendering of a scene.
  \details The effects currently provided are:
-	- depth of field (scatter-as-you-gather approach (as described by Dennis Gustafsson in "Bokeh depth of field in a single pass")
+	- depth of field (scatter-as-you-gather approach as described in "Bokeh depth of field in a single pass" by Dennis Gustafsson, 2018 (http://tuxedolabs.blogspot.com/2018/05/bokeh-depth-of-field-in-single-pass.html))
 	- bloom (thresholding and blurring bright spots)
 	- tonemapping (basic Reinhardt operator)
 	- antialiasing (using FXXA)

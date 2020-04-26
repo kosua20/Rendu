@@ -5,7 +5,7 @@
 
 /**
  \brief Represent a rendering target, of any size, format and type, backed by an OpenGL framebuffer.
- Framebuffer can use different shapes: 2D, cubemap, 2D array, cubemap array, but you can only render to one 2D layer at a time.
+ \details Framebuffer can use different shapes: 2D, cubemap, 2D array, cubemap array, but you can only render to one 2D layer at a time.
  For cubemaps and arrays you can select the ayer when binding.
  \ingroup Graphics
  */

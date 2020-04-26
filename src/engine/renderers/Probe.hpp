@@ -9,7 +9,7 @@
 
 /**
  \brief A probe can be used to capture the appareance of a scene at a given location as a 360° cubemap.
- This is often used to render realistic real-time reflections and global illumination effects. It is
+ \details This is often used to render realistic real-time reflections and global illumination effects. It is
  recommended to split the rendering, radiance precomputation for GGX shading and irradiance SH decomposition
  over multiple frames as those steps are costly. Additional synchronization constraints are described
  for each function below.

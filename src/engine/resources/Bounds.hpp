@@ -91,7 +91,7 @@ public:
 };
 
 
-/** Represent a 3D frustum, volume defined by the intersection of six planes.
+/** \brief Represent a 3D frustum, volume defined by the intersection of six planes.
   \ingroup Resources
  */
 class Frustum {

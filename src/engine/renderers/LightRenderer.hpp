@@ -6,7 +6,8 @@ class PointLight;
 class SpotLight;
 
 /**
- \brief Base structure of a per-light specialized renderer. It can be applied to a light by calling light->draw(renderer), which will then call the corresponding method below.
+ \brief Base structure of a per-light specialized renderer.
+ \details It can be applied to a light by calling light->draw(renderer), which will then call the corresponding method below.
  \ingroup Renderers
  */
 class LightRenderer {

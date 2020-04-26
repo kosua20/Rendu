@@ -6,7 +6,7 @@
 
 /**
  \brief Applies a box blur of fixed radius 2. Correspond to uniformly averaging values over a 5x5 square window.
- An approximate (checkboard pattern) version doing half as many fetches is available. his blur can be applied to 2D, cubemap, 2D arrays and cubemap arrays textures.
+ \details An approximate (checkboard pattern) version doing half as many fetches is available. his blur can be applied to 2D, cubemap, 2D arrays and cubemap arrays textures.
  \ingroup Processing
  */
 class BoxBlur {
