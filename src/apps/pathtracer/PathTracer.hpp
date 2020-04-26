@@ -64,11 +64,12 @@ private:
 
 	/** Evalutation the contribution from the scene background.
 	 \param rayDir the direction of the ray that intersected
+	 \param rayPos the ray world space position
 	 \param ndcPos the current pixel in the final image
 	 \param directHit was it a direct hit or a hit after bounces
 	 \return the background contribution
 	 */
-	glm::vec3 evalBackground(const glm::vec3 & rayDir, const glm::vec2 & ndcPos, bool directHit) const;
+	glm::vec3 evalBackground(const glm::vec3 & rayDir, const glm::vec3 & rayPos, const glm::vec2 & ndcPos, bool directHit) const;
 
 	Raycaster _raycaster;		   ///< The internal raycaster.
 	std::shared_ptr<Scene> _scene; ///< The scene.

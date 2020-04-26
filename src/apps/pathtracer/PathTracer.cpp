@@ -1,5 +1,8 @@
 #include "PathTracer.hpp"
 #include "MaterialGGX.hpp"
+#include "MaterialSky.hpp"
+
+#include "scene/Sky.hpp"
 
 #include "system/System.hpp"
 #include "system/Random.hpp"
@@ -17,7 +20,7 @@ PathTracer::PathTracer(const std::shared_ptr<Scene> & scene) {
 	_scene = scene;
 }
 
-glm::vec3 PathTracer::evalBackground(const glm::vec3 & rayDir, const glm::vec2 & ndcPos, bool directHit) const {
+glm::vec3 PathTracer::evalBackground(const glm::vec3 & rayDir, const glm::vec3 & rayPos, const glm::vec2 & ndcPos, bool directHit) const {
 	const Scene::Background mode = _scene->backgroundMode;
 
 	glm::vec3 color(0.0f);
@@ -29,17 +32,22 @@ glm::vec3 PathTracer::evalBackground(const glm::vec3 & rayDir, const glm::vec2 &
 		} else if(mode == Scene::Background::SKYBOX) {
 			const Texture * tex = _scene->background->textures()[0];
 			color = tex->sampleCubemap(glm::normalize(rayDir));
+		} else if(mode == Scene::Background::ATMOSPHERE) {
+			const glm::vec3 & sunDir = dynamic_cast<const Sky *>(_scene->background.get())->direction();
+			color = MaterialSky::eval(rayPos, glm::normalize(rayDir), sunDir);
 		} else {
 			color = _scene->backgroundColor;
 		}
-		// \todo Support sampling atmospheric simulation.
 		return color;
 	}
 
-	// Else, only environment maps contribute to indirect illumination (for now).
+	// Else, only environment maps and atmospheric simulations contribute to indirect illumination.
 	if(mode == Scene::Background::SKYBOX) {
 		const Texture * tex = _scene->background->textures()[0];
 		color = tex->sampleCubemap(glm::normalize(rayDir));
+	} else if(mode == Scene::Background::ATMOSPHERE) {
+		const glm::vec3 & sunDir = dynamic_cast<const Sky *>(_scene->background.get())->direction();
+		color = MaterialSky::eval(rayPos, glm::normalize(rayDir), sunDir);
 	}
 	return color;
 }
@@ -187,7 +195,7 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 					const Raycaster::Hit hit = _raycaster.intersects(rayPos, rayDir);
 					// If no hit, background.
 					if(!hit.hit) {
-						sampleColor += attenuation * evalBackground(rayDir, ndcPos, did == 0);
+						sampleColor += attenuation * evalBackground(rayDir, rayPos, ndcPos, did == 0);
 						break;
 					}
 
