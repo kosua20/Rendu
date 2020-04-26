@@ -119,9 +119,9 @@ void PBRDemo::setScene(const std::shared_ptr<Scene> & scene) {
 void PBRDemo::updateMaps(){
 	// Light shadows pass.
 	_shadowTime.begin();
-		for(const auto & map : _shadowMaps) {
-			map->draw(*_scenes[_currentScene]);
-		}
+	for(const auto & map : _shadowMaps) {
+		map->draw(*_scenes[_currentScene]);
+	}
 	_shadowTime.end();
 
 	// Probes pass.
@@ -176,12 +176,13 @@ void PBRDemo::draw() {
 	}
 	_rendererTime.end();
 
+	const Framebuffer & depthSrc = _mode == RendererMode::FORWARD ? _forRenderer->depthFramebuffer() : _defRenderer->depthFramebuffer();
+
 	_postprocessTime.begin();
-	_postprocess->process(_finalRender->texture(), *_finalRender);
+	_postprocess->process(_finalRender->texture(), _userCamera.projection(), depthSrc.depthBuffer(), *_finalRender);
 	_postprocessTime.end();
 
 	if(_showDebug){
-		const Framebuffer & depthSrc = _mode == RendererMode::FORWARD ? _forRenderer->depthFramebuffer() : _defRenderer->depthFramebuffer();
 		GLUtilities::blitDepth(depthSrc, *_finalRender);
 		_debugRenderer->draw(_userCamera, *_finalRender);
 	}
