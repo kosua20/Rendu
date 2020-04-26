@@ -331,11 +331,18 @@ void Mesh::computeTangentsAndBinormals(bool force) {
 	}
 	// Finally, enforce orthogonality and good orientation of the basis.
 	for(size_t tid = 0; tid < tangents.size(); ++tid) {
+
+		// Detect tangent cancellations and orthogonality.
+		if(glm::all(glm::equal(glm::cross(tangents[tid], normals[tid]), glm::vec3(0.0f)))){
+			// Assume normal is never zero.
+			tangents[tid] = glm::cross(glm::normalize(binormals[tid]), normals[tid]);
+		}
+		// Re-update tangent.
 		tangents[tid] = glm::normalize(tangents[tid] - normals[tid] * glm::dot(normals[tid], tangents[tid]));
 		if(glm::dot(glm::cross(normals[tid], tangents[tid]), binormals[tid]) < 0.0f) {
 			tangents[tid] *= -1.0f;
 		}
-		// Detect cancellations.
+		// Detect binormal cancellations.
 		if(glm::length(binormals[tid]) < 0.1f){
 			binormals[tid] = glm::cross(normals[tid], tangents[tid]);
 		}
