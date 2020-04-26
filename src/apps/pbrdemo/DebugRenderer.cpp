@@ -177,11 +177,12 @@ void DebugRenderer::interface(){
 	ImGui::Checkbox("Show lights", &_showLights); ImGui::SameLine();
 	ImGui::Checkbox("Show probe", &_showProbe);
 	if(_showProbe){
+		ImGui::PushItemWidth(80);
 		ImGui::Combo("Mode##debugProbe", reinterpret_cast<int*>(&_probeMode), "Irradiance\0Radiance\0\0");
 		ImGui::SameLine();
 		if(ImGui::SliderFloat("Roughness##debugProbe", &_probeRoughness, 0.0f, 1.0f)){
 			_probeRoughness = glm::clamp(_probeRoughness, 0.0f, 1.0f);
 		}
-
+		ImGui::PopItemWidth();
 	}
 }

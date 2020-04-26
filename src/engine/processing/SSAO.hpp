@@ -80,5 +80,5 @@ private:
 	Texture _noisetexture; 	///< Random noise texture.
 	float _radius = 0.5f;	///< SSAO intersection test radius.
 	uint _downscale = 1; 	///< SSAO internal resolution downscaling.
-	Quality _quality = Quality::HIGH; ///< Quality of the upscaling/blurring.
+	Quality _quality = Quality::MEDIUM; ///< Quality of the upscaling/blurring.
 };

@@ -6,11 +6,6 @@ void Renderer::draw(const Camera &, Framebuffer &, size_t){
 	assert(false);
 }
 
-void Renderer::process(const Texture *, Framebuffer &, size_t){
-	Log::Error() << "Renderer: Unimplemented draw function." << std::endl;
-	assert(false);
-}
-
 void Renderer::interface(){
 	Log::Error() << "Renderer: Unimplemented interface function." << std::endl;
 	assert(false);

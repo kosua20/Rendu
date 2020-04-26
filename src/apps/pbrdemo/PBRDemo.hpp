@@ -86,6 +86,5 @@ private:
 	int _frameID		= 0; 	 ///< Current frame count (will loop)
 
 	bool _paused		= false; ///< Pause animations.
-	bool _updateShadows = true; ///< Update the shadow maps.
 	bool _showDebug		= false; ///< Debug scene objects.
 };

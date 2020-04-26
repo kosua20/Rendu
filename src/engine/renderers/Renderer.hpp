@@ -22,13 +22,6 @@ public:
 	 */
 	virtual void draw(const Camera & camera, Framebuffer & framebuffer, size_t layer = 0);
 	
-	/** Process a given input texture.
-	 \param texture the texture to process
-	 \param framebuffer the destination target
-	 \param layer the layer to write to in the target
-	 */
-	virtual void process(const Texture * texture, Framebuffer & framebuffer, size_t layer = 0);
-	
 	/** Clean internal resources. */
 	virtual void clean();
 	

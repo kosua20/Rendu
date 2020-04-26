@@ -119,11 +119,9 @@ void PBRDemo::setScene(const std::shared_ptr<Scene> & scene) {
 void PBRDemo::updateMaps(){
 	// Light shadows pass.
 	_shadowTime.begin();
-	if(_updateShadows) {
 		for(const auto & map : _shadowMaps) {
 			map->draw(*_scenes[_currentScene]);
 		}
-	}
 	_shadowTime.end();
 
 	// Probes pass.
@@ -165,7 +163,7 @@ void PBRDemo::draw() {
 		return;
 	}
 
-	if(_scenes[_currentScene]->animated()){
+	if(_scenes[_currentScene]->animated() && !_paused){
 		updateMaps();
 	}
 
@@ -300,7 +298,6 @@ void PBRDemo::update() {
 		}
 
 		ImGui::Checkbox("Pause animation", &_paused); ImGui::SameLine();
-		ImGui::Checkbox("Update shadows", &_updateShadows);
 		ImGui::PopItemWidth();
 		ImGui::ColorEdit3("Background", &(_scenes[_currentScene]->backgroundColor[0]), ImGuiColorEditFlags_Float);
 	}
