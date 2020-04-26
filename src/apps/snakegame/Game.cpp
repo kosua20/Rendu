@@ -2,6 +2,8 @@
 #include "Game.hpp"
 #include "input/Input.hpp"
 #include "graphics/GLUtilities.hpp"
+#include "graphics/ScreenQuad.hpp"
+#include "resources/ResourcesManager.hpp"
 #include "Common.hpp"
 
 GameConfig::GameConfig(const std::vector<std::string> & argv) :

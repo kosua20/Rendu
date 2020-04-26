@@ -1,5 +1,8 @@
 #include "processing/GaussianBlur.hpp"
 #include "graphics/GLUtilities.hpp"
+#include "graphics/ScreenQuad.hpp"
+#include "resources/ResourcesManager.hpp"
+
 
 GaussianBlur::GaussianBlur(uint radius, uint downscale) : _downscale(downscale) {
 	_passthrough 		= Resources::manager().getProgram("passthrough");

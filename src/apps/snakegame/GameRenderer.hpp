@@ -4,6 +4,7 @@
 #include "input/Camera.hpp"
 #include "Player.hpp"
 #include "processing/SSAO.hpp"
+#include "resources/Mesh.hpp"
 
 /**
  \brief Renders the main game scene.

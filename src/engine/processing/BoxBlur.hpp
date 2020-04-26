@@ -1,7 +1,7 @@
 #pragma once
 
-#include "processing/Blur.hpp"
 #include "graphics/Framebuffer.hpp"
+#include "graphics/Program.hpp"
 #include "Common.hpp"
 
 /**

@@ -1,6 +1,8 @@
 
 #include "GameRenderer.hpp"
 #include "graphics/GLUtilities.hpp"
+#include "graphics/ScreenQuad.hpp"
+#include "resources/ResourcesManager.hpp"
 #include "Common.hpp"
 
 GameRenderer::GameRenderer(const glm::vec2 & resolution) {

@@ -3,6 +3,7 @@
 #include "scene/Sky.hpp"
 #include "system/System.hpp"
 #include "graphics/GLUtilities.hpp"
+#include "graphics/ScreenQuad.hpp"
 
 PostProcessStack::PostProcessStack(const glm::vec2 & resolution){
 	const int renderWidth	= int(resolution[0]);

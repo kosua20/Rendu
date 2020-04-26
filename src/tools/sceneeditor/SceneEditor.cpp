@@ -1,5 +1,6 @@
 #include "SceneEditor.hpp"
 #include "graphics/GLUtilities.hpp"
+#include "graphics/ScreenQuad.hpp"
 
 SceneEditor::SceneEditor(RenderingConfig & config) : CameraApp(config) {
 	_cameraFOV = _userCamera.fov() * 180.0f / glm::pi<float>();

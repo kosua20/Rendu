@@ -1,6 +1,8 @@
 #include "processing/BoxBlur.hpp"
 #include "graphics/GLUtilities.hpp"
+#include "graphics/ScreenQuad.hpp"
 #include "resources/Library.hpp"
+#include "resources/ResourcesManager.hpp"
 
 BoxBlur::BoxBlur(bool approximate) {
 

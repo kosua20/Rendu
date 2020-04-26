@@ -1,5 +1,6 @@
 #include "DeferredLight.hpp"
 #include "graphics/GLUtilities.hpp"
+#include "graphics/ScreenQuad.hpp"
 
 DeferredLight::DeferredLight(const Texture * texAlbedo, const Texture * texNormals, const Texture * texDepth, const Texture * texEffects){
 	_textures = {texAlbedo, texNormals, texDepth, texEffects};
