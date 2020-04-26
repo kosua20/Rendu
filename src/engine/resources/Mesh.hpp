@@ -4,7 +4,8 @@
 #include "Common.hpp"
 
 /**
- \brief Represents a geometric mesh composed of vertices and triangles. For now, material information and elements/groups are not represented.
+ \brief Represents a geometric mesh composed of vertices, other attributes and triangles.
+ \details For now, material information and elements/groups are not represented.
  Can store both the CPU and GPU representations. Provides utilities to load and process geometric meshes.
  \ingroup Resources
 */
