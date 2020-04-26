@@ -48,6 +48,5 @@ private:
 	int _selectedObject = -1; ///< Currently selected object.
 	
 	size_t _currentScene = 0; ///< Currently selected scene.
-	float _cameraFOV	 = 70.0f;	///< The adjustable camera fov in degrees.
 	bool _paused = false;			///< Pause the scene animations.
 };

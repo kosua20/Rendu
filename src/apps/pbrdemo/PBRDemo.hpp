@@ -80,8 +80,6 @@ private:
 
 	RendererMode _mode	 = RendererMode::DEFERRED; ///< Active renderer.
 	size_t _currentScene = 0; ///< Currently selected scene.
-	glm::vec2 _cplanes  = glm::vec2(0.01f, 100.0f); ///< Camera clipping planes.
-	float _cameraFOV	= 50.0f; ///< Camera field of view in degrees.
 	const int _frameCount = 3;	 ///< Number of frames to count before looping.
 	int _frameID		= 0; 	 ///< Current frame count (will loop)
 

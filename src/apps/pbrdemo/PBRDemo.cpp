@@ -16,10 +16,6 @@ PBRDemo::PBRDemo(RenderingConfig & config) :
 	_finalProgram = Resources::manager().getProgram2D("sharpening");
 	
 	_probesRenderer.reset(new DeferredRenderer(glm::vec2(256,256), ShadowMode::BASIC, false));
-	
-	// Setup camera parameters.
-	_cameraFOV = _userCamera.fov() * 180.0f / glm::pi<float>();
-	_cplanes   = _userCamera.clippingPlanes();
 
 	// Load all existing scenes, with associated names.
 	std::map<std::string, std::string> sceneInfos;
@@ -52,8 +48,6 @@ void PBRDemo::setScene(const std::shared_ptr<Scene> & scene) {
 	const float range		 = glm::length(bbox.getSize());
 	_userCamera.frustum(0.01f * range, 5.0f * range);
 	_userCamera.speed() = 0.2f * range;
-	_cplanes			= _userCamera.clippingPlanes();
-	_cameraFOV			= _userCamera.fov() * 180.0f / glm::pi<float>();
 
 	// Set the scene for the renderer.
 	_defRenderer->setScene(scene);
@@ -270,35 +264,10 @@ void PBRDemo::update() {
 		}
 
 		if(ImGui::CollapsingHeader("Camera")){
-			ImGui::PushItemWidth(110);
-			ImGui::Combo("Camera mode", reinterpret_cast<int *>(&_userCamera.mode()), "FPS\0Turntable\0Joystick\0\0", 3);
-			ImGui::InputFloat("Camera speed", &_userCamera.speed(), 0.1f, 1.0f);
-			if(ImGui::InputFloat("Camera FOV", &_cameraFOV, 1.0f, 10.0f)) {
-				_userCamera.fov(_cameraFOV * glm::pi<float>() / 180.0f);
-			}
-			ImGui::PopItemWidth();
-
-			if(ImGui::DragFloat2("Planes", static_cast<float *>(&_cplanes[0]))) {
-				_userCamera.frustum(_cplanes[0], _cplanes[1]);
-			}
-
-			if(ImGui::Button("Copy camera", ImVec2(104, 0))) {
-				const std::string camDesc = Codable::encode({_userCamera.encode()});
-				ImGui::SetClipboardText(camDesc.c_str());
-			}
-			ImGui::SameLine();
-			if(ImGui::Button("Paste camera", ImVec2(104, 0))) {
-				const std::string camDesc(ImGui::GetClipboardText());
-				const auto cameraCode = Codable::decode(camDesc);
-				if(!cameraCode.empty()) {
-					_userCamera.decode(cameraCode[0]);
-					_cameraFOV = _userCamera.fov() * 180.0f / glm::pi<float>();
-					_cplanes   = _userCamera.clippingPlanes();
-				}
-			}
+			_userCamera.interface();
 		}
 
-		ImGui::Checkbox("Pause animation", &_paused); ImGui::SameLine();
+		ImGui::Checkbox("Pause animation", &_paused);
 		ImGui::PopItemWidth();
 		ImGui::ColorEdit3("Background", &(_scenes[_currentScene]->backgroundColor[0]), ImGuiColorEditFlags_Float);
 	}

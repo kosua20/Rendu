@@ -13,6 +13,7 @@ void ControllableCamera::reset() {
 	_view   = glm::lookAt(_eye, _center, _up);
 	_radius = 1.0;
 	_angles = glm::vec2(glm::half_pi<float>(), 0.0f);
+	_guiFOV = _fov * 180.0f / glm::pi<float>();
 }
 
 void ControllableCamera::pose(const glm::vec3 & position, const glm::vec3 & center, const glm::vec3 & up) {
@@ -243,4 +244,35 @@ void ControllableCamera::updateUsingTurnTable(double frameTime) {
 	_right = normalize(cross(newLook, glm::vec3(0.0f, 1.0f, 0.0f)));
 	// Recompute up as the cross product of  right and look.
 	_up = normalize(cross(_right, newLook));
+}
+
+void ControllableCamera::interface(){
+	ImGui::PushItemWidth(110);
+	ImGui::Combo("Camera mode", reinterpret_cast<int *>(&_mode), "FPS\0Turntable\0Joystick\0\0", 3);
+	ImGui::InputFloat("Camera speed", &_speed, 0.1f, 1.0f);
+	// Display degrees fov.
+	_guiFOV = _fov * 180.0f / glm::pi<float>();
+	if(ImGui::InputFloat("Camera FOV", &_guiFOV, 1.0f, 10.0f)) {
+		fov(_guiFOV * glm::pi<float>() / 180.0f);
+	}
+	ImGui::PopItemWidth();
+
+	if(ImGui::DragFloat2("Planes", static_cast<float *>(&_clippingPlanes[0]))) {
+		updateProjection();
+	}
+
+	if(ImGui::Button("Copy camera", ImVec2(104, 0))) {
+		const std::string camDesc = Codable::encode({encode()});
+		ImGui::SetClipboardText(camDesc.c_str());
+	}
+	ImGui::SameLine();
+	if(ImGui::Button("Paste camera", ImVec2(104, 0))) {
+		const std::string camDesc(ImGui::GetClipboardText());
+		const auto cameraCode = Codable::decode(camDesc);
+		if(!cameraCode.empty()) {
+			decode(cameraCode[0]);
+			_guiFOV = _fov * 180.0f / glm::pi<float>();
+		}
+	}
+	ImGui::PopItemWidth();
 }

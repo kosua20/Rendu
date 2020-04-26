@@ -51,7 +51,6 @@ private:
 	std::unique_ptr<BVHRenderer> _bvhRenderer;	///< The scene debug viewer.
 	std::unique_ptr<Framebuffer> _sceneFramebuffer; ///< Scene buffer.
 
-	float _cameraFOV	 = 70.0f;	///< The adjustable camera fov in degrees.
 	int _samples		 = 8;		///< Samples count.
 	int _depth			 = 5;		///< Depth of each ray.
 	bool _showRender	 = false;	///< Should the result be displayed.

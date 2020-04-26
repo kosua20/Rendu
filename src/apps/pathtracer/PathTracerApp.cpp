@@ -32,7 +32,6 @@ PathTracerApp::PathTracerApp(RenderingConfig & config, const std::shared_ptr<Sce
 	_userCamera.frustum(0.01f * range, 5.0f * range);
 	_userCamera.speed() = 0.2f * range;
 	_userCamera.ratio(config.screenResolution[0] / config.screenResolution[1]);
-	_cameraFOV			= _userCamera.fov() * 180.0f / glm::pi<float>();
 	
 	// Create the path tracer and raycaster.
 	_pathTracer.reset(new PathTracer(_scene));
@@ -177,33 +176,11 @@ void PathTracerApp::update() {
 
 		// Camera settings.
 		if(ImGui::CollapsingHeader("Camera settings")) {
-			ImGui::PushItemWidth(100);
-			ImGui::Combo("Camera mode", reinterpret_cast<int *>(&_userCamera.mode()), "FPS\0Turntable\0Joystick\0\0", 3);
-			ImGui::InputFloat("Camera speed", &_userCamera.speed(), 0.1f, 1.0f);
-			if(ImGui::InputFloat("Camera FOV", &_cameraFOV, 1.0f, 10.0f)) {
-				_userCamera.fov(_cameraFOV * glm::pi<float>() / 180.0f);
-			}
-			ImGui::PopItemWidth();
-
-			// Copy/paste camera to clipboard.
-			if(ImGui::Button("Copy camera")) {
-				const std::string camDesc = Codable::encode({_userCamera.encode()});
-				ImGui::SetClipboardText(camDesc.c_str());
-			}
-			ImGui::SameLine();
-			if(ImGui::Button("Paste camera")) {
-				const std::string camDesc(ImGui::GetClipboardText());
-				const auto cameraCode = Codable::decode(camDesc);
-				if(!cameraCode.empty()) {
-					_userCamera.decode(cameraCode[0]);
-					_cameraFOV = _userCamera.fov() * 180.0f / glm::pi<float>();
-				}
-			}
+			_userCamera.interface();
 			// Reset to the scene reference viewpoint.
 			if(ImGui::Button("Reset")) {
 				_userCamera.apply(_scene->viewpoint());
 				_userCamera.ratio(_config.screenResolution[0] / _config.screenResolution[1]);
-				_cameraFOV = _userCamera.fov() * 180.0f / glm::pi<float>();
 			}
 		}
 	}

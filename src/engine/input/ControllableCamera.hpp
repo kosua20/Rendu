@@ -44,10 +44,8 @@ public:
 	 */
 	float & speed() { return _speed; }
 
-	/** Obtain the mode the camera is currently using.
-	 \return the current mode
-	 */
-	Mode & mode() { return _mode; }
+	/** Display a user interface to edit camera parameters. */
+	void interface();
 
 private:
 	/** Update the camera state based on joystick inputs.
@@ -73,4 +71,6 @@ private:
 	float _radius	  = 1.0f;								    ///< Turntable radius
 
 	Mode _mode = Mode::TurnTable; ///< The current interaction mode
+
+	float _guiFOV; ///< Field of view in degrees for the GUI.
 };
