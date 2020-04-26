@@ -30,7 +30,7 @@ void main(){
 	float light0 = max(0.0, 0.3535*(n.y+n.z) + 0.8);
 	// Add AO.
 	float ao = texture(ssaoMap, In.uv).r;
-	float adjustedAO = 0.7*ao + 0.3;
+	float adjustedAO = 0.9*ao + 0.1;
 	// Combine.
 	baseColor *= light0 * adjustedAO;
 	fragColor.rgb = baseColor;

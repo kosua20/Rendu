@@ -24,7 +24,7 @@ GameRenderer::GameRenderer(const glm::vec2 & resolution) {
 	_fxaaProgram		= Resources::manager().getProgram2D("fxaa");
 	_compositingProgram = Resources::manager().getProgram2D("game_composite");
 
-	_ssaoPass = std::unique_ptr<SSAO>(new SSAO(renderWidth/2, renderHeight/2, 1.5f, 1));
+	_ssaoPass = std::unique_ptr<SSAO>(new SSAO(renderWidth/2, renderHeight/2, 1, 1.5f));
 	_ssaoPass->quality() = SSAO::Quality::MEDIUM;
 	
 	_coloredProgram = Resources::manager().getProgram("colored_object");
