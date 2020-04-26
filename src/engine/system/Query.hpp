@@ -29,7 +29,7 @@ public:
 
 private:
 
-	std::chrono::time_point<std::chrono::steady_clock> _start; ///< Timing start point.
-	std::chrono::time_point<std::chrono::steady_clock> _end; ///< Timing end point.
+	std::chrono::time_point<std::chrono::high_resolution_clock> _start; ///< Timing start point.
+	std::chrono::time_point<std::chrono::high_resolution_clock> _end; ///< Timing end point.
 	bool _running	= false; ///< Is a measurement currently taking place.
 };

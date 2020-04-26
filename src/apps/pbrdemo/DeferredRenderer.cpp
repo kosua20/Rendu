@@ -3,7 +3,6 @@
 #include "scene/Sky.hpp"
 #include "system/System.hpp"
 #include "graphics/GLUtilities.hpp"
-#include <chrono>
 
 DeferredRenderer::DeferredRenderer(const glm::vec2 & resolution, ShadowMode mode, bool ssao) :
 	_applySSAO(ssao), _shadowMode(mode) {

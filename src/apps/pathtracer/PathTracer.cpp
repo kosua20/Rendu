@@ -3,7 +3,7 @@
 
 #include "system/System.hpp"
 #include "system/Random.hpp"
-#include <chrono>
+#include "system/Query.hpp"
 
 PathTracer::PathTracer(const std::shared_ptr<Scene> & scene) {
 	// Add all scene objects to the raycaster.
@@ -162,7 +162,8 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 	const glm::vec2 cellSize = 1.0f / glm::vec2(cellCount);
 
 	// Start chrono.
-	const auto start = std::chrono::steady_clock::now();
+	Query timer;
+	timer.start();
 
 	// Parallelize on each row of the image.
 	System::forParallel(0, size_t(render.height), [&render, samples, &cellCount, &cellSize, &corner, &dx, &dy, &camera, depth, this](size_t y) {
@@ -278,6 +279,6 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 	});
 
 	// Display duration.
-	const auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start);
-	Log::Info() << "[PathTracer] Rendering took " << duration.count() / 1000.0f << "s at " << render.width << "x" << render.height << "." << std::endl;
+	timer.end();
+	Log::Info() << "[PathTracer] Rendering took " << float(timer.value()) / 1000000000.0f << "s at " << render.width << "x" << render.height << "." << std::endl;
 }

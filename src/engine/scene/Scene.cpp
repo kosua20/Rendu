@@ -1,10 +1,10 @@
 #include "scene/Scene.hpp"
 #include "scene/Sky.hpp"
 #include "system/TextUtilities.hpp"
+#include "system/Query.hpp"
 
 #include <map>
 #include <sstream>
-#include <chrono>
 
 Scene::Scene(const std::string & name) {
 	// Append the extension if needed.
@@ -33,7 +33,9 @@ void Scene::init(Storage options) {
 	if(_loaded) {
 		return;
 	}
-	const auto start = std::chrono::steady_clock::now();
+
+	Query timer;
+	timer.begin();
 	
 	// Define loaders for each keyword.
 	std::map<std::string, void (Scene::*)(const KeyValues &, Storage)> loaders = {
@@ -83,8 +85,9 @@ void Scene::init(Storage options) {
 			break;
 		}
 	}
-	const auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start);
-	Log::Info() << Log::Resources << "Loading took " << duration.count() << "ms." << std::endl;
+
+	timer.end();
+	Log::Info() << Log::Resources << "Loading took " << (float(timer.value())/1000000.0f) << "ms." << std::endl;
 }
 
 void Scene::loadObject(const KeyValues & params, Storage options) {
