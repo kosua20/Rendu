@@ -18,9 +18,9 @@ Basic resources to run each project are included in this repository, but you can
 
 | Name  | Description |
 | ------------- | ------------- |
-| [Deferred Physically based rendering](http://kosua20.github.io/Rendu/html/group___deferred_rendering.html) | ![PBR demo preview](docs/img/pbrdemo.png) Real-time rendering of a scene with 'physically-based' materials (GGX BRDF introduced in *Microfacet Models for Refraction through Rough Surfaces*, Walter et al., 2007), using deferred or forward rendering and an HDR pipeline with bloom and SSAO. |
-| [Path Tracer](http://kosua20.github.io/Rendu/html/group___pathtracer_demo.html) | ![Path tracer preview](docs/img/pathtracer.png) Offline unidirectional path tracing for textured materials using Lambert+GGX BRDF. Supports stratified sampling, jittering, a form of next event estimation, environment lighting contribution, emissive objects. Relies on a raycaster with a BVH for fast intersection queries against triangular meshes. Comes with an interactive viewer where the BVH levels can be displayed, and the camera placed for rendering. |
-| [Image Filtering](http://kosua20.github.io/Rendu/html/group___image_filtering.html) | ![Image filtering preview](docs/img/imagefiltering.png) Apply filters to an image, such as gaussian blur, approximate flood-fill (*Jump Flooding in GPU with Applications to Voronoi Diagram and Distance Transform*, Rong et al., 2006) and poisson filling (*Convolution Pyramids*, Farbman et al., 2011), etc. |
+| [Deferred Physically based rendering](http://kosua20.github.io/Rendu/html/group___deferred_rendering.html) | ![PBR demo preview](docs/img/pbrdemo.png) Real-time rendering of a scene with 'physically-based' materials (GGX BRDF introduced in *Microfacet Models for Refraction through Rough Surfaces*, Walter et al., 2007), using deferred or forward rendering, real-time lighting environment and shadows update, and an HDR pipeline with bloom, depth of field and ambient occlusion. |
+| [Path Tracer](http://kosua20.github.io/Rendu/html/group___pathtracer_demo.html) | ![Path tracer preview](docs/img/pathtracer.png) Offline unidirectional path tracing for textured materials using Lambert+GGX BRDF with importance sampling. Supports stratified sampling, jittering, next event estimation, environment lighting contribution, emissive objects. Relies on a raycaster with a BVH for fast intersection queries against triangular meshes. Comes with an interactive viewer where the BVH levels can be displayed, and the camera placed for rendering. |
+| [Image Filtering](http://kosua20.github.io/Rendu/html/group___image_filtering.html) | ![Image filtering preview](docs/img/imagefiltering.png) Apply filters to an image, such as gaussian blur, box-blur, approximate flood-fill (*Jump Flooding in GPU with Applications to Voronoi Diagram and Distance Transform*, Rong et al., 2006) and poisson filling (*Convolution Pyramids*, Farbman et al., 2011), etc. |
 | [Atmospheric scattering](http://kosua20.github.io/Rendu/html/group___atmospheric_scattering.html) | ![Atmospheric scattering preview](docs/img/atmosphere.png) Realistic atmosphere rendering with Rayleigh and Mie scattering (*Precomputed Atmospheric Scattering*, Bruneton et al., 2008). |
 | [Snake Game](http://kosua20.github.io/Rendu/html/group___snake_game.html) | ![Snake game preview](docs/img/snake.png) A basic game of snake, demonstrating game menus, player state, batched rendering. |
 
@@ -61,22 +61,24 @@ On a more detailed level, here are the main features you will find in Rendu.
 - Window and graphics context setup.
 - GPU objects creation and management (shaders, textures, buffers).
 - Resources handling and packing.
-- Shader validation at compilation time.
+- Shader validation at compilation time, with automatic location handling.
 - Input management with controllers support.
 - 3D rendering, including per-fragment shading, normal maps, parallax mapping.
-- Lights: omni/spots/directional lights, batched variance shadow mapping.
-- Environment lighting, using cubemaps, preconvolved irradiance maps and spherical harmonics.
+- Lights: omni/spots/directional lights, batched variance shadow mapping for all lights.
+- Environment lighting, using cubemaps updated in real-time, preconvolved irradiance maps and spherical harmonics (also updated on the fly).
 - Linear lighting pipeline, with HDR, bloom, tonemapping and gamma correction.
-- Screen space techniques: antialiasing, ambient occlusion.
+- Depth of field with controllable focal plane and in-focus band.
+- Screen space techniques: antialiasing (FXAA), ambient occlusion.
 - Image processing techniques, such as fast gaussian blur, Poisson inpainting, flood filling.
 - 2D interface rendering (buttons, checkboxes) with support for font distance fields.
 - A raycaster CPU implementation using a bounding volume hierarchy.
+- Path tracer with GGX importance sampling, 
 
 ## Planned
 
 I would like to add some additional features to Rendu in the near future, mainly to get a better grasp of some techniques and allow for more experimentations.
 
-- Local light probes for reflections, parallax correction.
+- Local light probes using parallax correction.
 - Temporal Antialiasing with reprojection and clamping.
 - Screen-space reflections and shadows (raymarching against the depth buffer).
 - Rendering of a terrain and water using a procedural approach (Perlin/Worley/Fractal noise, maybe tesselation).
@@ -87,4 +89,4 @@ I would like to add some additional features to Rendu in the near future, mainly
 On a more down-to-earth level, some engineering tasks could also help improve the engine.
 
 - Cleanup the way materials are handled right now.
-- Abstract interactions with OpenGL and/or move to Vulkan.
+- Potential move to Vulkan?
