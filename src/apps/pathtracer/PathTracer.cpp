@@ -163,7 +163,7 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 
 	// Start chrono.
 	Query timer;
-	timer.start();
+	timer.begin();
 
 	// Parallelize on each row of the image.
 	System::forParallel(0, size_t(render.height), [&render, samples, &cellCount, &cellSize, &corner, &dx, &dy, &camera, depth, this](size_t y) {
