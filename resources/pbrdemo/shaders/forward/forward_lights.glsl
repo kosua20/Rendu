@@ -1,5 +1,5 @@
 
-#include "common.glsl"
+#include "constants.glsl"
 #include "shadow_maps.glsl"
 
 #define POINT 0

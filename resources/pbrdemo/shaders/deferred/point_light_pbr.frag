@@ -2,6 +2,7 @@
 
 #include "common_pbr.glsl"
 #include "shadow_maps.glsl"
+#include "utils.glsl"
 
 // Uniforms
 layout(binding = 0) uniform sampler2D albedoTexture; ///< Albedo.

@@ -1,4 +1,4 @@
-#include "common.glsl"
+#include "constants.glsl"
 
 const float atmosphereGroundRadius = 6371e3; ///< Radius of the planet.
 const float atmosphereTopRadius = 6471e3; ///< Radius of the atmosphere.

@@ -2,6 +2,7 @@
 
 #include "common_pbr.glsl"
 #include "shadow_maps.glsl"
+#include "utils.glsl"
 
 in INTERFACE {
 	vec2 uv; ///< UV coordinates.

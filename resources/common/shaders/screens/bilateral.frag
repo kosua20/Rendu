@@ -1,5 +1,7 @@
 #version 400
 
+#include "utils.glsl"
+
 in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In ;
@@ -17,16 +19,6 @@ out vec4 fragColor; ///< Blurred color.
 const int radius = 4; ///< Blur radius.
 const int shift = 2; ///< Step between samples (introduce dithering artifacts).
 const float weights[5] = float[](0.153170, 0.144893, 0.122649, 0.092902, 0.062970); ///< Gaussian weights.
-
-/** Estimate the depth of the current fragment in view space.
-\param depth the non-linear depth of the fragment
-\param projPlanes the depth-related coefficients of the projection matrix
-\return the view space depth
-*/
-float linearizeDepth(float depth, vec2 projPlanes){
-	float depth2 = 2.0 * depth - 1.0 ;
-	return -projPlanes.y / (depth2 + projPlanes.x);
-}
 
 /** Compute bilateral weight based on depth and normal differences.
  \param n normal at the center point

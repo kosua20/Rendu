@@ -1,20 +1,5 @@
 
-#include "common.glsl"
-
-/** Estimate the position of the current fragment in view space based on its depth and camera parameters.
-\param depth the depth of the fragment
-\param uv the input uv
-\param projMat the non trivial coefficients of the projection matrix
-\return the view space position
-*/
-vec3 positionFromDepth(float depth, vec2 uv, vec4 projMat){
-	float depth2 = 2.0 * depth - 1.0 ;
-	vec2 ndcPos = 2.0 * uv - 1.0;
-	// Linearize depth -> in view space.
-	float viewDepth = - projMat.w / (depth2 + projMat.z);
-	// Compute the x and y components in view space.
-	return vec3(-ndcPos * viewDepth / projMat.xy , viewDepth);
-}
+#include "constants.glsl"
 
 /** Fresnel approximation.
 	\param F0 fresnel based coefficient
@@ -84,23 +69,6 @@ vec3 ggx(vec3 n, vec3 v, vec3 l, vec3 F0, float roughness){
 
 	return D(NdotH, alpha) * Vfast(NdotL, NdotV, alpha) * F(F0, VdotH);
 }
-
-/** Compute an arbitrary sample of the 2D Hammersley sequence.
-\param i the index in the hammersley sequence
-\param scount the total number of samples
-\return the i-th 2D sample
-*/
-vec2 hammersleySample(uint i, int scount) {
-	uint bits = i;
-	bits = (bits << 16u) | (bits >> 16u);
-	bits = ((bits & 0x55555555u) << 1u) | ((bits & 0xAAAAAAAAu) >> 1u);
-	bits = ((bits & 0x33333333u) << 2u) | ((bits & 0xCCCCCCCCu) >> 2u);
-	bits = ((bits & 0x0F0F0F0Fu) << 4u) | ((bits & 0xF0F0F0F0u) >> 4u);
-	bits = ((bits & 0x00FF00FFu) << 8u) | ((bits & 0xFF00FF00u) >> 8u);
-	float y = float(bits) * 2.3283064365386963e-10; // / 0x100000000
-	return vec2(float(i)/float(scount), y);
-}
-
 
 /** Return the (pre-convolved) radiance for a given normal, view direction and
 	material parameters.

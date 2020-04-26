@@ -1,5 +1,7 @@
 #version 400
 
+#include "utils.glsl"
+
 in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In ;
@@ -14,29 +16,6 @@ uniform vec3 samples[24]; ///< Unique sample directions on a sphere.
 uniform float radius = 0.5; ///< The sampling radius.
 
 layout(location = 0) out float fragColor; ///< SSAO.
-
-/** Linearize a NDC space to view space using the camera projection parameters. 
-\param depth the non-linear depth
-\return the linear depth
-*/
-float linearizeDepth(float depth){
-	float depth2 = 2.0*depth-1.0; // Move from [0,1] to [-1,1].
-	float viewDepth = - projectionMatrix[3][2] / (depth2 + projectionMatrix[2][2] );
-	return viewDepth;
-}
-
-/** Estimate the view space position of a given fragment.
-\param uv The texture coordinates of the fragment
-\return the view space position
-*/
-vec3 positionFromUV(vec2 uv){
-	// Linearize depth -> in view space.
-	float depth = texture(depthTexture, uv).r;
-	float viewDepth = linearizeDepth(depth);
-	// Compute the x and y components in view space.
-	vec2 ndcPos = 2.0 * uv - 1.0;
-	return vec3(- ndcPos * viewDepth / vec2(projectionMatrix[0][0], projectionMatrix[1][1] ) , viewDepth);
-}
 
 /** Estimate the screen space ambient occlusion in the scene. */
 void main(){
@@ -58,8 +37,10 @@ void main(){
 	vec3 b = normalize(cross(n, t));
 	mat3 tbn = mat3(t, b, n);
 
-	// Compute view space position.
-	vec3 position = positionFromUV(In.uv);
+	// Compute the x and y components in view space.
+	vec4 projParams = vec4(projectionMatrix[0][0], projectionMatrix[1][1], projectionMatrix[2][2], projectionMatrix[3][2]);
+	vec3 position = positionFromDepth(texture(depthTexture, In.uv).r, In.uv, projParams);
+
 	
 	// Occlusion accumulation.
 	float occlusion = 0.0;
@@ -70,7 +51,8 @@ void main(){
 		vec4 sampleClipSpace = projectionMatrix * vec4(randomSample, 1.0);
 		vec2 sampleUV = (sampleClipSpace.xy / sampleClipSpace.w) * 0.5 + 0.5;
 		// Read scene depth at the corresponding UV.
-		float sampleDepth = linearizeDepth(texture(depthTexture, sampleUV).r);
+		float sampleDepth = linearizeDepth(texture(depthTexture, sampleUV).r, projParams.zw);
+
 		// Check : if the depth are too different, don't take result into account.
 		float isValid = abs(position.z - sampleDepth) < radius ? 1.0 : 0.0;
 		// If the initial sample is further away from the camera than the surface, it is below the surface, occlusion is increased.
