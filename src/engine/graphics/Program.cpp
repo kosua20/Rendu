@@ -3,29 +3,14 @@
 #include "resources/ResourcesManager.hpp"
 
 
-Program::Program(const std::string & vertexName, const std::string & fragmentName, const std::string & geometryName) :
-	_vertexName(vertexName), _fragmentName(fragmentName), _geometryName(geometryName) {
-	load();
+Program::Program(const std::string & name, const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent) : _name(name) {
+	reload(vertexContent, fragmentContent, geometryContent);
 }
 
-void Program::cacheUniformArray(const std::string & name, const std::vector<glm::vec3> & vals) {
-	// Store the vec3s elements in a cache, to avoid re-setting them at each frame.
-	glUseProgram(_id);
-	for(size_t i = 0; i < vals.size(); ++i) {
-		const std::string elementName = name + "[" + std::to_string(i) + "]";
-		_vec3s[elementName]			  = vals[i];
-		glUniform3fv(_uniforms[elementName], 1, &(_vec3s[elementName][0]));
-	}
-	glUseProgram(0);
-	checkGLError();
-}
-
-void Program::load() {
+void Program::reload(const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent) {
 	GLUtilities::Bindings bindings;
-	const std::string vertexContent   = Resources::manager().getStringWithIncludes(_vertexName + ".vert");
-	const std::string fragmentContent = Resources::manager().getStringWithIncludes(_fragmentName + ".frag");
-	const std::string geometryContent = _geometryName.empty() ? "" : Resources::manager().getStringWithIncludes(_geometryName + ".geom");
-	const std::string debugName		  = "(" + _vertexName + ", " + (_geometryName.empty() ? "" : (_geometryName + ", ")) + _fragmentName + ")";
+
+	const std::string debugName = _name;
 
 	_id = GLUtilities::createProgram(vertexContent, fragmentContent, geometryContent, bindings, debugName);
 	_uniforms.clear();
@@ -108,21 +93,11 @@ void Program::load() {
 	checkGLError();
 }
 
-void Program::reload() {
-	load();
-	// Restore values.
-	glUseProgram(_id);
-	for(const auto & val : _vec3s) {
-		glUniform3fv(_uniforms[val.first], 1, &(val.second[0]));
-	}
-	glUseProgram(0);
-}
-
 void Program::validate() const {
 	glValidateProgram(_id);
 	int status = -2;
 	glGetProgramiv(_id, GL_VALIDATE_STATUS, &status);
-	Log::Error() << Log::OpenGL << "Program with shaders: " << _vertexName << ", " << _fragmentName << " is " << (status == GL_TRUE ? "" : "not ") << "validated." << std::endl;
+	Log::Error() << Log::OpenGL << "Program : " << _name << " is " << (status == GL_TRUE ? "" : "not ") << "validated." << std::endl;
 	int infoLogLength = 0;
 	glGetProgramiv(_id, GL_INFO_LOG_LENGTH, &infoLogLength);
 	if(infoLogLength <= 0) {
@@ -144,14 +119,14 @@ void Program::saveBinary(const std::string & outputPath) const {
 	int length = 0;
 	glGetProgramiv(_id, GL_PROGRAM_BINARY_LENGTH, &length);
 	if(length <= 0) {
-		Log::Error() << Log::OpenGL << "No binary for program using shaders (" << _vertexName << "," << _fragmentName << ")." << std::endl;
+		Log::Error() << Log::OpenGL << "No binary for program " << _name << "." << std::endl;
 		return;
 	}
 	GLenum format;
 	std::vector<char> binary(length);
 	glGetProgramBinary(_id, length, nullptr, &format, &binary[0]);
 
-	Resources::saveRawDataToExternalFile(outputPath + "_(" + _vertexName + "," + _fragmentName + ")_" + std::to_string(uint(format)) + ".bin", &binary[0], binary.size());
+	Resources::saveRawDataToExternalFile(outputPath + "_" + _name + "_" + std::to_string(uint(format)) + ".bin", &binary[0], binary.size());
 }
 
 void Program::use() const {

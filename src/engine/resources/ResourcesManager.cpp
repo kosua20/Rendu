@@ -456,6 +456,12 @@ const Texture * Resources::getTexture(const std::string & name, const Descriptor
 
 // Program/shaders methods.
 
+Resources::ProgramInfos::ProgramInfos(const std::string & vertex, const std::string & fragment, const std::string & geometry){
+	vertexName = vertex;
+	fragmentName = fragment;
+	geomName = geometry;
+}
+
 Program * Resources::getProgram(const std::string & name, const std::string & vertexName, const std::string & fragmentName, const std::string & geometryName) {
 	
 	if(_programs.count(name) > 0) {
@@ -466,9 +472,13 @@ Program * Resources::getProgram(const std::string & name, const std::string & ve
 	const std::string fName = fragmentName.empty() ? name : fragmentName;
 	// For the geometry name, we don't replace by the default name.
 	const std::string gName = geometryName;
-	
-	_programs.emplace(std::make_pair(name, Program(vName, fName, gName)));
 
+	const std::string vContent   = Resources::manager().getStringWithIncludes(vName + ".vert");
+	const std::string fContent = Resources::manager().getStringWithIncludes(fName + ".frag");
+	const std::string gContent = gName.empty() ? "" : Resources::manager().getStringWithIncludes(gName + ".geom");
+
+	_programs.emplace(std::make_pair(name, Program(name, vContent, fContent, gContent)));
+	_progInfos.emplace(std::make_pair(name, ProgramInfos(vName, fName, gName)));
 	return &_programs.at(name);
 }
 
@@ -478,7 +488,11 @@ Program * Resources::getProgram2D(const std::string & name) {
 
 void Resources::reload() {
 	for(auto & prog : _programs) {
-		prog.second.reload();
+		const ProgramInfos & infos = _progInfos.at(prog.first);
+		const std::string vContent   = getStringWithIncludes(infos.vertexName + ".vert");
+		const std::string fContent = getStringWithIncludes(infos.fragmentName + ".frag");
+		const std::string gContent = infos.geomName.empty() ? "" : getStringWithIncludes(infos.geomName + ".geom");
+		prog.second.reload(vContent, fContent, gContent);
 	}
 	Log::Info() << Log::Resources << "Shader programs reloaded." << std::endl;
 }

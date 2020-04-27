@@ -224,9 +224,25 @@ private:
 	/** Destructor (disabled). */
 	~Resources() = default;
 
+	/** Additional program information for reloading. */
+	struct ProgramInfos {
+		
+		/** Basic constructor.
+		 \param vertex vertex shader name
+		 \param fragment fragment shader name
+		\param geometry geometry shader name
+		 */
+		ProgramInfos(const std::string & vertex, const std::string & fragment, const std::string & geometry);
+
+		std::string vertexName; ///< Vertex shader filename.
+		std::string fragmentName; ///< Fragment shader filename.
+		std::string geomName; ///< Geometry shader filename.
+	};
+
 	std::map<std::string, std::string> _files; ///< Listing of available files and their paths.
 	std::map<std::string, Texture> _textures;  ///< Loaded textures, identified by name.
 	std::map<std::string, Mesh> _meshes;	   ///< Loaded meshes, identified by name.
 	std::map<std::string, Font> _fonts;		   ///< Loaded font infos, identified by name.
 	std::map<std::string, Program> _programs;  ///< Loaded shader programs, identified by name.
+	std::map<std::string, ProgramInfos> _progInfos;  ///< Additional info to support shader reloading.
 };
