@@ -42,8 +42,6 @@
  \details A scene can be represented on disk as a text file referencing resources by name. The general scene parameters and environment are setup as follows:
  \verbatim
   * scene:
-		probe: texturetype: texturename
-		irradiance: shcoeffsfilename
 		translation: X,Y,Z
 		scaling: scale
 		orientation: axisX,axisY,axisZ angle
@@ -111,8 +109,19 @@
 		animations:
 		   - ...
  \endverbatim
+ Finally, an environment probe can be defined as follow, either static (using a cubemap and precompute SH coeffs):
+ \verbatim
+ * probe:
+	 radiance: texturetype: texturename
+	 irradiance: shcoeffsfilename
+ \endverbatim
+ or updated on the fly
+ \verbatim
+ * probe:
+	 position: X,Y,Z
+ \endverbatim
  For more details on each parameter, consult each object decode function documentation.
- \see Scene::init, Object::decode, Light::decodeBase, PointLight::decode, DirectionalLight::decode, SpotLight::decode, Animation::decodeBase, BackAndForth::decode, Rotation::decode, Codable::decodeTexture, Sky::decode
+ \see Scene::init, Object::decode, Light::decodeBase, PointLight::decode, DirectionalLight::decode, SpotLight::decode, Animation::decodeBase, BackAndForth::decode, Rotation::decode, Codable::decodeTexture, Sky::decode, LightProbe::decode
  
  
  \defgroup System System

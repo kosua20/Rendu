@@ -26,11 +26,14 @@ public:
 	/** Setup the probe parameters from a list of key-value tuples. The following representations are possible:
 	 either:
 	 \verbatim
-	 probe: texturetype: ...
+	 * probe:
+		radiance: texturetype: ...
+		irradiance: shcoeffs_filename
 	 \endverbatim
 	 for a static environment map or
 	 \verbatim
-	 probe: position: X,Y,Z
+	 * probe:
+		position: X,Y,Z
 	 \endverbatim
 	 for a probe renderered on the fly at the given location
 	 \param params the parameters tuple
