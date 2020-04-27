@@ -207,7 +207,9 @@ int main(int argc, char ** argv) {
 	const Texture * cubemapInfosDefault = Resources::manager().getTexture("debug-cube", {Layout::RGB8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
 
 	Texture cubemapInfos;
-	std::vector<glm::vec3> SCoeffs(9);
+	Buffer<glm::vec4> sCoeffs(9, BufferType::UNIFORM, DataUse::STATIC);
+	sCoeffs.setup();
+	sCoeffs.upload();
 	std::vector<Texture> cubeLevels;
 
 	double timer = System::time();
@@ -242,8 +244,10 @@ int main(int argc, char ** argv) {
 				if(System::showPicker(System::Picker::Load, "../../../resources/pbrdemo/cubemaps/", cubemapPath, "jpg,bmp,png,tga;exr") && !cubemapPath.empty()) {
 					loadCubemap(cubemapPath, cubemapInfos);
 					// Reset state.
-					SCoeffs.clear();
-					SCoeffs.resize(9, glm::vec3(0.0f));
+					for(int i = 0; i < 9; ++i){
+						sCoeffs[i] = glm::vec4(0.0f);
+					}
+					sCoeffs.upload();
 					cubeLevels.clear();
 					mode = INPUT;
 				}
@@ -274,14 +278,18 @@ int main(int argc, char ** argv) {
 
 			// Compute SH irradiance coefficients for the cubemap.
 			if(ImGui::Button("Compute SH coefficients")) {
-				Probe::extractIrradianceSHCoeffs(cubemapInfos, 10000.0f, SCoeffs);
+				std::vector<glm::vec3> coeffs(9);
+				Probe::extractIrradianceSHCoeffs(cubemapInfos, 10000.0f, coeffs);
 				std::stringstream outputStr;
 				for(int i = 0; i < 9; ++i) {
-					outputStr << "\t" << SCoeffs[i][0] << " " << SCoeffs[i][1] << " " << SCoeffs[i][2] << std::endl;
+					outputStr << "\t" << coeffs[i][0] << " " << coeffs[i][1] << " " << coeffs[i][2] << std::endl;
+					sCoeffs[i][0] = coeffs[i][0];
+					sCoeffs[i][1] = coeffs[i][1];
+					sCoeffs[i][2] = coeffs[i][2];
 				}
 				Log::Info() << Log::Utilities << "Coefficients:" << std::endl
 							<< outputStr.str() << std::endl;
-				programSH->cacheUniformArray("shCoeffs", SCoeffs);
+				sCoeffs.upload();
 				mode = SH_COEFFS;
 			}
 
@@ -295,7 +303,7 @@ int main(int argc, char ** argv) {
 				if(System::showPicker(System::Picker::Save, ".", outputPath, "txt") && !outputPath.empty()) {
 					std::stringstream outputStr;
 					for(int i = 0; i < 9; ++i) {
-						outputStr << SCoeffs[i][0] << " " << SCoeffs[i][1] << " " << SCoeffs[i][2] << std::endl;
+						outputStr << sCoeffs[i][0] << " " << sCoeffs[i][1] << " " << sCoeffs[i][2] << std::endl;
 					}
 					Resources::saveStringToExternalFile(outputPath, outputStr.str());
 				}
@@ -356,6 +364,9 @@ int main(int argc, char ** argv) {
 			programToUse->use();
 			GLUtilities::setCullState(false);
 			GLUtilities::bindTexture(texToUse, 0);
+			if(mode == SH_COEFFS){
+				GLUtilities::bindBuffer(sCoeffs, 0);
+			}
 			programToUse->uniform("mvp", mvp);
 			GLUtilities::drawMesh(*mesh);
 			GLUtilities::setDepthState(false);
@@ -379,6 +390,7 @@ int main(int argc, char ** argv) {
 	}
 
 	// Clean resources.
+	sCoeffs.clean();
 	Resources::manager().clean();
 	window.clean();
 
