@@ -3,6 +3,7 @@
 #include "processing/BilateralBlur.hpp"
 #include "processing/BoxBlur.hpp"
 #include "graphics/Framebuffer.hpp"
+#include "resources/Buffer.hpp"
 #include "Common.hpp"
 
 /**
@@ -38,9 +39,9 @@ public:
 	 */
 	void process(const glm::mat4 & projection, const Texture * depthTex, const Texture * normalTex);
 
-	/** Cleanup rssources.
+	/** Cleanup ressources.
 	 */
-	void clean() const;
+	void clean();
 
 	/**
 	 Resize the internal buffers.
@@ -74,9 +75,9 @@ private:
 	std::unique_ptr<Framebuffer> _ssaoFramebuffer;  ///< SSAO framebuffer
 	std::unique_ptr<Framebuffer> _finalFramebuffer; ///< SSAO framebuffer
 	BilateralBlur _highBlur;	  					///< High quality blur.
-	BoxBlur _mediumBlur;			///< Medium quality blur.
+	BoxBlur _mediumBlur;							///< Medium quality blur.
 	Program * _programSSAO;						    ///< The SSAO program.
-
+	Buffer<glm::vec4> _samples; ///< The 3D directional samples.
 	Texture _noisetexture; 	///< Random noise texture.
 	float _radius = 0.5f;	///< SSAO intersection test radius.
 	uint _downscale = 1; 	///< SSAO internal resolution downscaling.

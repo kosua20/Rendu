@@ -11,7 +11,11 @@ layout(binding = 1) uniform sampler2D normalTexture; ///< Normal texture, in [0,
 layout(binding = 2) uniform sampler2D noiseTexture; ///< 5x5 3-components noise texture with float precision.
 
 uniform mat4 projectionMatrix; ///< The camera projection parameters.
-uniform vec3 samples[24]; ///< Unique sample directions on a sphere.
+
+/// Unique sample directions on a sphere.
+layout(std140, binding = 0) uniform Samples {
+	vec4 samples[24];
+};
 
 uniform float radius = 0.5; ///< The sampling radius.
 
@@ -46,7 +50,7 @@ void main(){
 	float occlusion = 0.0;
 	for(int i = 0; i < 24; ++i){
 		// View space position of the sample.
-		vec3 randomSample = position + radius * tbn * samples[i];
+		vec3 randomSample = position + radius * tbn * samples[i].xyz;
 		// Project view space point to clip space then NDC space.
 		vec4 sampleClipSpace = projectionMatrix * vec4(randomSample, 1.0);
 		vec2 sampleUV = (sampleClipSpace.xy / sampleClipSpace.w) * 0.5 + 0.5;

@@ -5,8 +5,8 @@
 #include "graphics/ScreenQuad.hpp"
 #include "resources/ResourcesManager.hpp"
 
-SSAO::SSAO(uint width, uint height, uint downscale, float radius) :
-	_mediumBlur(true), _radius(radius), _downscale(downscale) {
+SSAO::SSAO(uint width, uint height, uint downscale, float radius) : _mediumBlur(true),
+	_samples(25, BufferType::UNIFORM, DataUse::STATIC), _radius(radius), _downscale(downscale) {
 
 	const Descriptor desc = Descriptor(Layout::R8, Filter::LINEAR_NEAREST, Wrap::CLAMP);
 	_ssaoFramebuffer.reset(new Framebuffer(width/_downscale, height/_downscale, desc, false));
@@ -14,21 +14,21 @@ SSAO::SSAO(uint width, uint height, uint downscale, float radius) :
 	_programSSAO = Resources::manager().getProgram2D("ssao");
 
 	// Generate samples.
-	std::vector<glm::vec3> samples;
 	// We need random vectors in the half sphere above z, with more samples close to the center.
 	for(int i = 0; i < 24; ++i) {
-		glm::vec3 randVec = glm::vec3(Random::Float(-1.0f, 1.0f),
+		const glm::vec3 randVec = glm::vec3(Random::Float(-1.0f, 1.0f),
 			Random::Float(-1.0f, 1.0f),
 			Random::Float(0.0f, 1.0f));
-		samples.push_back(glm::normalize(randVec));
-		samples.back() *= Random::Float(0.0f, 1.0f);
+		_samples[i] = glm::vec4(glm::normalize(randVec), 0.0f);
+		_samples[i] *= Random::Float(0.0f, 1.0f);
 		// Skew the distribution towards the center.
 		float scale = float(i) / 24.0f;
 		scale		= 0.1f + 0.9f * scale * scale;
-		samples.back() *= scale;
+		_samples[i] *= scale;
 	}
 	// Send the samples to the GPU.
-	_programSSAO->cacheUniformArray("samples", samples);
+	_samples.setup();
+	_samples.upload();
 
 	// Noise texture (same size as the box blur applied after SSAO computation).
 	// We need to generate two dimensional normalized offsets.
@@ -68,6 +68,7 @@ void SSAO::process(const glm::mat4 & projection, const Texture * depthTex, const
 	_programSSAO->use();
 	_programSSAO->uniform("projectionMatrix", projection);
 	_programSSAO->uniform("radius", _radius);
+	GLUtilities::bindBuffer(_samples, 0);
 	ScreenQuad::draw({depthTex, normalTex, &_noisetexture});
 	_ssaoFramebuffer->unbind();
 
@@ -83,11 +84,12 @@ void SSAO::process(const glm::mat4 & projection, const Texture * depthTex, const
 }
 
 // Clean function
-void SSAO::clean() const {
+void SSAO::clean() {
 	_highBlur.clean();
 	_mediumBlur.clean();
 	_finalFramebuffer->clean();
 	_ssaoFramebuffer->clean();
+	_samples.clean();
 }
 
 void SSAO::clear() const {
