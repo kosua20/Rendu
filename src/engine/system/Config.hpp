@@ -135,10 +135,10 @@ public:
 	bool fullscreen = false;
 
 	/// Initial width of the window in relative pixels.
-	unsigned int initialWidth = 800;
+	unsigned int initialWidth = 1000;
 
 	/// Initial height of the window in relative pixels.
-	unsigned int initialHeight = 600;
+	unsigned int initialHeight = 750;
 
 	/// \brief Internal vertical rendering resolution.
 	/// \note The width should be computed based on the window aspect ratio.
