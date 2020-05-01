@@ -138,67 +138,133 @@ void Program::clean() const {
 }
 
 void Program::uniform(const std::string & name, bool t) const {
-	if(_uniforms.count(name) > 0) {
+	if(_uniforms.count(name) != 0) {
 		glUniform1i(_uniforms.at(name), int(t));
 	}
 }
 
 void Program::uniform(const std::string & name, int t) const {
-	if(_uniforms.count(name) > 0) {
+	if(_uniforms.count(name) != 0) {
 		glUniform1i(_uniforms.at(name), t);
 	}
 }
 
+void Program::uniform(const std::string & name, uint t) const {
+	if(_uniforms.count(name) != 0) {
+		glUniform1ui(_uniforms.at(name), t);
+	}
+}
+
 void Program::uniform(const std::string & name, float t) const {
-	if(_uniforms.count(name) > 0) {
+	if(_uniforms.count(name) != 0) {
 		glUniform1f(_uniforms.at(name), t);
 	}
 }
 
 void Program::uniform(const std::string & name, size_t count, const float * t) const {
-	if(_uniforms.count(name) > 0) {
+	if(_uniforms.count(name) != 0) {
 		glUniform1fv(_uniforms.at(name), GLsizei(count), t);
 	}
 }
 
 void Program::uniform(const std::string & name, const glm::vec2 & t) const {
-	if(_uniforms.count(name) > 0) {
+	if(_uniforms.count(name) != 0) {
 		glUniform2fv(_uniforms.at(name), 1, &t[0]);
 	}
 }
 
 void Program::uniform(const std::string & name, const glm::vec3 & t) const {
-	if(_uniforms.count(name) > 0) {
+	if(_uniforms.count(name) != 0) {
 		glUniform3fv(_uniforms.at(name), 1, &t[0]);
 	}
 }
 
 void Program::uniform(const std::string & name, const glm::vec4 & t) const {
-	if(_uniforms.count(name) > 0) {
+	if(_uniforms.count(name) != 0) {
 		glUniform4fv(_uniforms.at(name), 1, &t[0]);
 	}
 }
 
 void Program::uniform(const std::string & name, const glm::mat3 & t) const {
-	if(_uniforms.count(name) > 0) {
+	if(_uniforms.count(name) != 0) {
 		glUniformMatrix3fv(_uniforms.at(name), 1, GL_FALSE, &t[0][0]);
 	}
 }
 
 void Program::uniform(const std::string & name, const glm::mat4 & t) const {
-	if(_uniforms.count(name) > 0) {
+	if(_uniforms.count(name) != 0) {
 		glUniformMatrix4fv(_uniforms.at(name), 1, GL_FALSE, &t[0][0]);
 	}
 }
 
+bool Program::hasUniform(const std::string & name) const {
+	return _uniforms.count(name) != 0;
+}
+
 void Program::uniformBuffer(const std::string & name, size_t slot) const {
-	if(_uniforms.count(name) > 0) {
+	if(_uniforms.count(name) != 0) {
 		glUniformBlockBinding(_id, _uniforms.at(name), GLuint(slot));
 	}
 }
 
 void Program::uniformTexture(const std::string & name, size_t slot) const {
-	if(_uniforms.count(name) > 0) {
+	if(_uniforms.count(name) != 0) {
 		glUniform1i(_uniforms.at(name), int(slot));
+	}
+}
+
+void Program::getUniform(const std::string & name, bool & t) const {
+	if(_uniforms.count(name) != 0) {
+		int val = int(t);
+		glGetUniformiv(_id, _uniforms.at(name), &val);
+		t = bool(val);
+	}
+}
+
+void Program::getUniform(const std::string & name, int & t) const {
+	if(_uniforms.count(name) != 0) {
+		glGetUniformiv(_id, _uniforms.at(name), &t);
+	}
+}
+
+void Program::getUniform(const std::string & name, uint & t) const {
+	if(_uniforms.count(name) != 0) {
+		glGetUniformuiv(_id, _uniforms.at(name), &t);
+	}
+}
+
+void Program::getUniform(const std::string & name, float & t) const {
+	if(_uniforms.count(name) != 0) {
+		glGetUniformfv(_id, _uniforms.at(name), &t);
+	}
+}
+
+void Program::getUniform(const std::string & name, glm::vec2 & t) const {
+	if(_uniforms.count(name) != 0) {
+		glGetUniformfv(_id, _uniforms.at(name), &t[0]);
+	}
+}
+
+void Program::getUniform(const std::string & name, glm::vec3 & t) const {
+	if(_uniforms.count(name) != 0) {
+		glGetUniformfv(_id, _uniforms.at(name), &t[0]);
+	}
+}
+
+void Program::getUniform(const std::string & name, glm::vec4 & t) const {
+	if(_uniforms.count(name) != 0) {
+		glGetUniformfv(_id, _uniforms.at(name), &t[0]);
+	}
+}
+
+void Program::getUniform(const std::string & name, glm::mat3 & t) const {
+	if(_uniforms.count(name) != 0) {
+		glGetUniformfv(_id, _uniforms.at(name), &t[0][0]);
+	}
+}
+
+void Program::getUniform(const std::string & name, glm::mat4 & t) const {
+	if(_uniforms.count(name) != 0) {
+		glGetUniformfv(_id, _uniforms.at(name), &t[0][0]);
 	}
 }

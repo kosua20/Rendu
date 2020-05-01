@@ -19,7 +19,7 @@ public:
 	 \param fragmentContent the content of the fragment shader
 	 \param geometryContent the content of the geometry shader (can be empty)
 	 */
-	Program(const std::string & name, const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent);
+	Program(const std::string & name, const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent = "");
 
 	/**
 	 Load the program, compiling the shader and updating all uniform locations.
@@ -65,6 +65,12 @@ public:
 	 \param name the uniform name
 	 \param t the value to set the uniform to
 	 */
+	void uniform(const std::string & name, uint t) const;
+
+	/** Set a given uniform value.
+	 \param name the uniform name
+	 \param t the value to set the uniform to
+	 */
 	void uniform(const std::string & name, float t) const;
 
 	/** Set a given float array uniform values.
@@ -104,6 +110,12 @@ public:
 	 */
 	void uniform(const std::string & name, const glm::mat4 & t) const;
 
+	/** Check if the program has a given uniform name in use.
+	 \param name the uniform name to check
+	 \return true if the uniform is exposed by the program
+	 */
+	bool hasUniform(const std::string & name) const;
+
 	/** Set a given uniform buffer binding point.
 	 \param name the uniform name
 	 \param slot the binding point
@@ -115,6 +127,61 @@ public:
 	 \param slot the binding point
 	 */
 	void uniformTexture(const std::string & name, size_t slot) const;
+
+	/** Get a given uniform value.
+	 \param name the uniform name
+	 \param t will contain the value
+	 */
+	void getUniform(const std::string & name, bool & t) const;
+
+	/** Get a given uniform value.
+	\param name the uniform name
+	\param t will contain the value
+	*/
+	void getUniform(const std::string & name, int & t) const;
+
+	/** Get a given uniform value.
+	\param name the uniform name
+	\param t will contain the value
+	*/
+	void getUniform(const std::string & name, uint & t) const;
+
+	/** Get a given uniform value.
+	\param name the uniform name
+	\param t will contain the value
+	*/
+	void getUniform(const std::string & name, float & t) const;
+
+	/** Get a given uniform value.
+	\param name the uniform name
+	\param t will contain the value
+	*/
+	void getUniform(const std::string & name, glm::vec2 & t) const;
+
+	/** Get a given uniform value.
+	\param name the uniform name
+	\param t will contain the value
+	*/
+	void getUniform(const std::string & name, glm::vec3 & t) const;
+
+	/** Get a given uniform value.
+	\param name the uniform name
+	\param t will contain the value
+	*/
+	void getUniform(const std::string & name, glm::vec4 & t) const;
+
+	/** Get a given uniform value.
+	\param name the uniform name
+	\param t will contain the value
+	*/
+	void getUniform(const std::string & name, glm::mat3 & t) const;
+
+	/** Get a given uniform value.
+	\param name the uniform name
+	\param t will contain the value
+	*/
+	void getUniform(const std::string & name, glm::mat4 & t) const;
+
 
 	/** Copy assignment operator (disabled).
 	 \return a reference to the object assigned to
