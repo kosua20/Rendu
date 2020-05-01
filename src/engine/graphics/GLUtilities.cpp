@@ -108,7 +108,7 @@ void GLUtilities::setup() {
 	glDisable(GL_FRAMEBUFFER_SRGB);
 }
 
-GLuint GLUtilities::loadShader(const std::string & prog, GLuint type, Bindings & bindings, std::string & finalLog) {
+GLuint GLUtilities::loadShader(const std::string & prog, ShaderType type, Bindings & bindings, std::string & finalLog) {
 	// We need to detect texture slots and store them, to avoid having to register them in
 	// the rest of the code (object, renderer), while not having support for 'layout(binding=n)' in OpenGL <4.2.
 	std::stringstream inputLines(prog);
@@ -211,7 +211,13 @@ GLuint GLUtilities::loadShader(const std::string & prog, GLuint type, Bindings &
 	}
 
 	// Create shader object.
-	GLuint id = glCreateShader(type);
+	static const std::map<ShaderType, GLenum> types = {
+		{ShaderType::VERTEX, GL_VERTEX_SHADER},
+		{ShaderType::FRAGMENT, GL_FRAGMENT_SHADER},
+		{ShaderType::GEOMETRY, GL_GEOMETRY_SHADER}
+	};
+
+	GLuint id = glCreateShader(types.at(type));
 	checkGLError();
 	// Setup string as source.
 	const char * shaderProg = outputProg.c_str();
@@ -252,7 +258,7 @@ GLuint GLUtilities::createProgram(const std::string & vertexContent, const std::
 	std::string compilationLog;
 	// If vertex program code is given, compile it.
 	if(!vertexContent.empty()) {
-		vp = loadShader(vertexContent, GL_VERTEX_SHADER, bindings, compilationLog);
+		vp = loadShader(vertexContent, ShaderType::VERTEX, bindings, compilationLog);
 		glAttachShader(id, vp);
 		if(!compilationLog.empty()) {
 			Log::Error() << Log::OpenGL << "Vertex shader failed to compile:" << std::endl
@@ -261,7 +267,7 @@ GLuint GLUtilities::createProgram(const std::string & vertexContent, const std::
 	}
 	// If fragment program code is given, compile it.
 	if(!fragmentContent.empty()) {
-		fp = loadShader(fragmentContent, GL_FRAGMENT_SHADER, bindings, compilationLog);
+		fp = loadShader(fragmentContent, ShaderType::FRAGMENT, bindings, compilationLog);
 		glAttachShader(id, fp);
 		if(!compilationLog.empty()) {
 			Log::Error() << Log::OpenGL << "Fragment shader failed to compile:" << std::endl
@@ -270,7 +276,7 @@ GLuint GLUtilities::createProgram(const std::string & vertexContent, const std::
 	}
 	// If geometry program code is given, compile it.
 	if(!geometryContent.empty()) {
-		gp = loadShader(geometryContent, GL_GEOMETRY_SHADER, bindings, compilationLog);
+		gp = loadShader(geometryContent, ShaderType::GEOMETRY, bindings, compilationLog);
 		glAttachShader(id, gp);
 		if(!compilationLog.empty()) {
 			Log::Error() << Log::OpenGL << "Geometry shader failed to compile:" << std::endl
@@ -327,13 +333,13 @@ GLuint GLUtilities::createProgram(const std::string & vertexContent, const std::
 void GLUtilities::saveFramebuffer(const Framebuffer & framebuffer, unsigned int width, unsigned int height, const std::string & path, bool flip, bool ignoreAlpha) {
 
 	GLint currentBoundFB = 0;
-	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentBoundFB);
+	glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &currentBoundFB);
 
-	framebuffer.bind();
+	framebuffer.bind(Framebuffer::Mode::READ);
 	const std::unique_ptr<GPUTexture> & gpu = framebuffer.texture()->gpu;
 	GLUtilities::savePixels(gpu->type, gpu->format, width, height, gpu->channels, path, flip, ignoreAlpha);
 
-	glBindFramebuffer(GL_FRAMEBUFFER, GLuint(currentBoundFB));
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, GLuint(currentBoundFB));
 }
 
 void GLUtilities::bindTexture(const Texture * texture, size_t slot) {

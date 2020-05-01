@@ -62,12 +62,12 @@ public:
 
 	/** Create a shader of a given type from a string. Extract additional informations from the shader.
 	 \param prog the content of the shader
-	 \param type the type of shader (GL_VERTEX_SHADER,...)
+	 \param type the type of shader (vertex, fragment,...)
 	 \param bindings will be filled with the samplers/buffers present in the shader and their user-defined locations
 	 \param finalLog will contain the compilation log of the shader
 	 \return the OpenGL ID of the shader object
 	 */
-	static GLuint loadShader(const std::string & prog, GLuint type, Bindings & bindings, std::string & finalLog);
+	static GLuint loadShader(const std::string & prog, ShaderType type, Bindings & bindings, std::string & finalLog);
 
 	/** Create and link a GLProgram using the shader code contained in the given strings.
 	 \param vertexContent the vertex shader string

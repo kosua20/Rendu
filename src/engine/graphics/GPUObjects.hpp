@@ -3,6 +3,15 @@
 #include "Common.hpp"
 #include <array>
 
+/**
+\brief The type of a shader.
+\ingroup Resources
+*/
+enum class ShaderType : uint {
+	VERTEX, ///< Vertex shader.
+	FRAGMENT, ///< Fragment shader.
+	GEOMETRY ///< Geometry shader.
+};
 
 /**
 \brief The type of data a buffer is storing, determining its use.
