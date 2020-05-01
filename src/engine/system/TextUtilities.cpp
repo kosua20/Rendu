@@ -9,7 +9,7 @@ std::string TextUtilities::trim(const std::string & str, const std::string & del
 	return str.substr(firstNotDel, lastNotDel - firstNotDel + 1);
 }
 
-std::string TextUtilities::removeExtension(std::string & str) {
+std::string TextUtilities::splitExtension(std::string & str) {
 	const std::string::size_type pos = str.find_last_of('.');
 	if(pos == std::string::npos) {
 		return "";
@@ -17,6 +17,14 @@ std::string TextUtilities::removeExtension(std::string & str) {
 	const std::string ext(str.substr(pos));
 	str.erase(str.begin() + pos, str.end());
 	return ext;
+}
+
+std::string TextUtilities::extractFilename(const std::string & str){
+	const std::string::size_type loc = str.find_last_of("/\\");
+	if(loc == std::string::npos) {
+		return str;
+	}
+	return str.substr(loc+1);
 }
 
 void TextUtilities::replace(std::string & source, const std::string & fromString, const std::string & toString) {

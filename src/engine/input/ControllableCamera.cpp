@@ -255,11 +255,11 @@ void ControllableCamera::interface(){
 	if(ImGui::InputFloat("Camera FOV", &_guiFOV, 1.0f, 10.0f)) {
 		fov(_guiFOV * glm::pi<float>() / 180.0f);
 	}
-	ImGui::PopItemWidth();
 
 	if(ImGui::DragFloat2("Planes", static_cast<float *>(&_clippingPlanes[0]))) {
 		updateProjection();
 	}
+	ImGui::PopItemWidth();
 
 	if(ImGui::Button("Copy camera", ImVec2(104, 0))) {
 		const std::string camDesc = Codable::encode({encode()});
@@ -274,5 +274,4 @@ void ControllableCamera::interface(){
 			_guiFOV = _fov * 180.0f / glm::pi<float>();
 		}
 	}
-	ImGui::PopItemWidth();
 }

@@ -15,11 +15,17 @@ public:
 	 */
 	static std::string trim(const std::string & str, const std::string & del);
 
-	/** Remove file extension from the end of a string.
+	/** Remove file extension from the end of a string and extract it.
 	 \param str the string to remove the extension from
 	 \return the extension string
 	 */
-	static std::string removeExtension(std::string & str);
+	static std::string splitExtension(std::string & str);
+
+	/** Extract the filename from the end of a string (extension will be included).
+	\param str the string to extract the filename from
+	\return the filename string
+	*/
+	static std::string extractFilename(const std::string & str);
 
 	/** Replace all occurences of a substring in a string by another string.
 	 \param source the string in which substitutions should happen

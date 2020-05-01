@@ -6,6 +6,7 @@ in INTERFACE {
 	vec3 pos; ///< Position in model space.
 } In ;
 
+/// SH approximation of the environment irradiance (UBO).
 layout(std140, binding = 0) uniform SHCoeffs {
 	vec4 shCoeffs[9];
 };

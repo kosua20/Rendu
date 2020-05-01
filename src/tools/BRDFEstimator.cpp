@@ -38,7 +38,7 @@ const std::vector<std::string> suffixes = {"_px", "_nx", "_py", "_ny", "_pz", "_
  */
 void loadCubemap(const std::string & inputPath, Texture & cubemapInfos) {
 	std::string cubemapPath = inputPath;
-	const std::string ext   = TextUtilities::removeExtension(cubemapPath);
+	const std::string ext   = TextUtilities::splitExtension(cubemapPath);
 	cubemapPath				= cubemapPath.substr(0, cubemapPath.size() - 3);
 	Log::Info() << "Loading " << cubemapPath << "..." << std::endl;
 	std::vector<std::string> pathSides(6);
@@ -313,7 +313,7 @@ int main(int argc, char ** argv) {
 			if(ImGui::Button("Export convolved BRDF maps...")) {
 				std::string outputPath;
 				if(System::showPicker(System::Picker::Save, ".", outputPath, "exr") && !outputPath.empty()) {
-					TextUtilities::removeExtension(outputPath);
+					TextUtilities::splitExtension(outputPath);
 					exportCubemapConvolution(cubeLevels, outputPath);
 				}
 			}
@@ -322,7 +322,7 @@ int main(int argc, char ** argv) {
 			if(ImGui::Button("Export BRDF look-up table...")) {
 				std::string outputPath;
 				if(System::showPicker(System::Picker::Save, ".", outputPath, "exr") && !outputPath.empty()) {
-					TextUtilities::removeExtension(outputPath);
+					TextUtilities::splitExtension(outputPath);
 					computeAndExportLookupTable(outputSide, outputPath);
 				}
 			}
