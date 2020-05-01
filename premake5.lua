@@ -173,6 +173,9 @@ project("PathTracer")
 project("ImageFiltering")
 	AppSetup("imagefiltering")
 
+project("ShaderBench")
+	AppSetup("shaderbench")
+
 
 group("Tools")
 
