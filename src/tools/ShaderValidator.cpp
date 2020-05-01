@@ -105,7 +105,11 @@ int main(int argc, char ** argv) {
 	Resources::manager().getFiles("glsl", includeFiles);
 
 	// Test all shaders.
-	const std::map<GLuint, std::string> types = { {GL_VERTEX_SHADER, "vert" },  {GL_GEOMETRY_SHADER, "geom" },  {GL_FRAGMENT_SHADER, "frag" } };
+	const std::map<ShaderType, std::string> types = {
+		{ShaderType::VERTEX, "vert" },
+		{ShaderType::GEOMETRY, "geom" },
+		{ShaderType::FRAGMENT, "frag" }
+	};
 	bool encounteredIssues = false;
 	
 	for(const auto & type : types) {
@@ -126,7 +130,7 @@ int main(int argc, char ** argv) {
 			// Replace the include names by the full paths.
 			for(size_t nid = 1; nid < names.size(); ++nid) {
 				auto& name = names[nid];
-				TextUtilities::removeExtension(name);
+				TextUtilities::splitExtension(name);
 				if(includeFiles.count(name) > 0) {
 					name = includeFiles[name];
 				}
