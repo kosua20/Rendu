@@ -378,7 +378,7 @@ int main(int argc, char ** argv) {
 					}
 
 					// Overlay the controller transparent texture.
-					ImGui::Image(reinterpret_cast<void *>(static_cast<long long>(controllerTex->gpu->id)), ImVec2(450, 300), ImVec2(0, 1), ImVec2(1, 0));
+					ImGui::Image(*controllerTex, ImVec2(450, 300), ImVec2(0, 1), ImVec2(1, 0));
 
 					ImGui::EndChild();
 					ImGui::SameLine();

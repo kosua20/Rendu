@@ -221,7 +221,7 @@ void ShaderEditor::update() {
 		if(ImGui::Begin("Render", nullptr, ImGuiWindowFlags_NoBringToFrontOnFocus)){
 			// Adjust the texture display to the window size.
 			const ImVec2 winSize = ImGui::GetContentRegionAvail();
-			ImGui::ImageButton((void*)(uintptr_t)(_currFrame->texture()->gpu->id), ImVec2(winSize.x, winSize.y), ImVec2(0.0,1.0), ImVec2(1.0,0.0), 0);
+			ImGui::ImageButton(*_currFrame->texture(), ImVec2(winSize.x, winSize.y), ImVec2(0.0,1.0), ImVec2(1.0,0.0), 0);
 			if (ImGui::IsItemHovered()) {
 				ImGui::CaptureMouseFromApp(false);
 				ImGui::CaptureKeyboardFromApp(false);
@@ -375,7 +375,7 @@ void ShaderEditor::update() {
 			for(uint i = 0; i < _textures.size(); ++i){
 				// Small square display.
 				ImGui::Text("Location %d", i);
-				ImGui::Image((void*)(uintptr_t)(_textures[i]->gpu->id), ImVec2(100,100), ImVec2(0,1), ImVec2(1, 0));
+				ImGui::Image(*_textures[i], ImVec2(100,100), ImVec2(0,1), ImVec2(1, 0));
 				ImGui::NextColumn();
 			}
 			ImGui::Columns();

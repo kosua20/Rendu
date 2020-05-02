@@ -98,3 +98,11 @@ glm::vec3 Texture::sampleCubemap(const glm::vec3 & dir) const {
 const std::string & Texture::name() const {
 	return _name;
 }
+
+void ImGui::Image(const Texture & texture, const ImVec2& size, const ImVec2& uv0, const ImVec2& uv1, const ImVec4& tint_col, const ImVec4& border_col){
+	ImGui::Image(reinterpret_cast<void *>(static_cast<uintptr_t>(texture.gpu->id)), size, uv0, uv1, tint_col, border_col);
+}
+
+bool ImGui::ImageButton(const Texture & texture, const ImVec2& size, const ImVec2& uv0,  const ImVec2& uv1, int frame_padding, const ImVec4& bg_col, const ImVec4& tint_col){
+	return ImGui::ImageButton(reinterpret_cast<void *>(static_cast<uintptr_t>(texture.gpu->id)), size, uv0, uv1, frame_padding, bg_col, tint_col);
+}
