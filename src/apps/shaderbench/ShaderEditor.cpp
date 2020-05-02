@@ -43,7 +43,7 @@ ShaderEditor::ShaderEditor(RenderingConfig & config) : CameraApp(config) {
 		Image & noiseImg = _noise.images[0];
 		System::forParallel(0, size_t(noiseImg.height), [&noiseImg](size_t y){
 			for(uint x = 0; x < noiseImg.width; ++x){
-				noiseImg.rgba(x, y) = glm::vec4(Random::Float(), Random::Float(), Random::Float(), Random::Float());
+				noiseImg.rgba(int(x), int(y)) = glm::vec4(Random::Float(), Random::Float(), Random::Float(), Random::Float());
 			}
 		});
 		_noise.upload({Layout::RGBA32F, Filter::LINEAR, Wrap::REPEAT}, false);
@@ -57,7 +57,7 @@ ShaderEditor::ShaderEditor(RenderingConfig & config) : CameraApp(config) {
 		Image & dirImg = _directions.images[0];
 		System::forParallel(0, size_t(dirImg.height), [&dirImg](size_t y){
 			for(uint x = 0; x < dirImg.width; ++x){
-				dirImg.rgb(x, y) = glm::normalize(Random::sampleSphere());
+				dirImg.rgb(int(x), int(y)) = glm::normalize(Random::sampleSphere());
 			}
 		});
 		_directions.upload({Layout::RGB32F, Filter::LINEAR, Wrap::CLAMP}, false);
@@ -261,7 +261,7 @@ void ShaderEditor::update() {
 	if(ImGui::Begin("Shader editor", &_showGUI)) {
 		// Adjust the number of columns based on panel size.
 		// Each small column is 100px, the large columns 200.
-		const uint widthPix = ImGui::GetWindowSize().x;
+		const uint widthPix = uint(ImGui::GetWindowSize().x);
 		const uint columnsCount = widthPix/100;
 
 		// Shader load/image save.
@@ -480,7 +480,7 @@ void ShaderEditor::displayUniforms(uint columnsCount){
 	if(ImGui::TreeNode("Scalars")){
 		for(size_t i = 0; i < _floats.size(); ++i){
 			// Display a slider, and fields to set the min/max values.
-			ImGui::PushID(i);
+			ImGui::PushID(int(i));
 			ImGui::PushItemWidth(160);
 			ImGui::SliderFloat(_floats[i].name.c_str(), &_floats[i].value, _floats[i].min, _floats[i].max); ImGui::SameLine();
 			ImGui::PopItemWidth();

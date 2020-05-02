@@ -28,16 +28,16 @@ DebugRenderer::DebugRenderer() : _lightDebugRenderer("object_basic_uniform") {
 			glm::vec3(1.0f-2.0f*arrowLength,  arrowLength, -arrowLength)
 		};
 		const std::vector<uint> indices = { 0, 1, 0, 1, 2, 1, 1, 3, 1, 1, 4, 1, 1, 5, 1, 2, 3, 2, 3, 4, 3, 4, 5, 4, 5, 2, 5};
-		for(size_t i = 0; i < 3; ++i){
-			const size_t id0 = i;
-			const size_t id1 = (i+1)%3;
-			const size_t id2 = (i+2)%3;
-			const glm::vec3 axeColor(i == 0, i == 1, i == 2);
+		for(uint i = 0; i < 3; ++i) {
+			const uint id0 = i;
+			const uint id1	 = (i + 1) % 3;
+			const uint id2 = (i + 2) % 3;
+			const glm::vec3 axeColor(float(i == 0), float(i == 1), float(i == 2));
 			for(const auto & pos : positions){
 				_frame.positions.emplace_back(pos[id0], pos[id1], pos[id2]);
 				_frame.colors.emplace_back(axeColor);
 			}
-			const uint baseId = i * positions.size();
+			const uint baseId = i * uint(positions.size());
 			for(const auto ind : indices){
 				_frame.indices.push_back(ind + baseId);
 			}
@@ -45,7 +45,7 @@ DebugRenderer::DebugRenderer() : _lightDebugRenderer("object_basic_uniform") {
 		// Y = 0 grid
 		const float extent = 10.0f;
 		for(float dz = -extent; dz <= extent; ++dz){
-			const uint baseId = _frame.positions.size();
+			const uint baseId = uint(_frame.positions.size());
 			_frame.positions.emplace_back(-extent, 0.0f, dz);
 			_frame.positions.emplace_back( extent, 0.0f, dz);
 			_frame.colors.emplace_back(0.3f, 0.3f, 0.3f);
@@ -55,7 +55,7 @@ DebugRenderer::DebugRenderer() : _lightDebugRenderer("object_basic_uniform") {
 			_frame.indices.push_back(baseId);
 		}
 		for(float dx = -extent; dx <= extent; ++dx){
-			const uint baseId = _frame.positions.size();
+			const uint baseId = uint(_frame.positions.size());
 			_frame.positions.emplace_back(dx, 0.0f, -extent);
 			_frame.positions.emplace_back(dx, 0.0f,  extent);
 			_frame.colors.emplace_back(0.3f, 0.3f, 0.3f);

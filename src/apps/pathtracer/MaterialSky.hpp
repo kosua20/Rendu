@@ -48,11 +48,11 @@ private:
 	/** \brief Atmosphere parameters. */
 	struct SkyParameters {
 		const glm::vec3 sunColor = glm::vec3(1.474f, 1.8504f, 1.91198f); ///< Sun direct color.
-		const glm::vec3 kRayleigh = glm::vec3(5.5e-6, 13.0e-6, 22.4e-6); ///< Rayleigh coefficients.
-		const float groundRadius = 6371e3; ///< Radius of the planet.
-		const float topRadius = 6471e3; ///< Radius of the atmosphere.
+		const glm::vec3 kRayleigh = glm::vec3(5.5e-6f, 13.0e-6f, 22.4e-6f); ///< Rayleigh coefficients.
+		const float groundRadius = 6371e3f; ///< Radius of the planet.
+		const float topRadius = 6471e3f; ///< Radius of the atmosphere.
 		const float sunIntensity = 20.0f; ///< Sun intensity.
-		const float kMie = 21e-6; ///< Mie coefficients.
+		const float kMie = 21e-6f; ///< Mie coefficients.
 		const float heightRayleigh = 8000.0f; ///< Mie characteristic height.
 		const float heightMie = 1200.0f; ///< Mie characteristic height.
 		const float gMie = 0.758f; ///< Mie g constant.
