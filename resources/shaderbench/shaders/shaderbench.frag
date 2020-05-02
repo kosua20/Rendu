@@ -30,20 +30,23 @@ layout(binding = 4) uniform sampler2D directionsMap; ///< Random 3D directions o
 
 layout(location = 0) out vec4 fragColor; ///< Output color.
 
-uniform float float0 = 2.2; ///< Gamma correction.
-uniform float float1 = 128.0; ///< Specular exponent.
-uniform float float2 = 0.4; ///< Sphere radius.
-uniform float float3 = 0.001; ///< Raymarching tolerance.
+uniform float gamma = 2.2; ///< Gamma correction.
+uniform float specExponent = 128.0; ///< Specular exponent.
+uniform float radius = 0.5; ///< Sphere radius.
+uniform float epsilon = 0.001; ///< Raymarching tolerance.
 
-uniform vec4 col0 = vec4(0.0352416, 0.0901474, 0.159292, 0); ///< Sky color bottom.
-uniform vec4 col1 = vec4(0, 0.254993, 0.654867, 0); ///< Light color bottom.
-uniform vec4 col2 = vec4(0, 0.681416, 1, 0); ///< Sky color.
-uniform vec4 col3 = vec4(0.99999, 1, 0.999992, 0); ///< Light color.
-uniform vec4 col4 = vec4(0.8, 0.5, 0.2, 1.0); ///< Sphere color.
+uniform vec3 skyBottom = vec3(0.035, 0.090, 0.159); ///< Sky color bottom.
+uniform vec3 skyLight = vec3(0, 0.254, 0.654); ///< Light color bottom.
+uniform vec3 skyTop = vec3(0, 0.681, 1.0); ///< Sky color.
+uniform vec3 lightColor = vec3(1.0, 1.0, 1.0); ///< Light color.
+uniform vec3 sphereColor = vec3(0.8, 0.5, 0.2); ///< Sphere color.
+uniform vec3 ground0 = vec3(0.025, 0.390, 0.473); ///< Ground color 0.
+uniform vec3 ground1 = vec3(0.123, 0.462, 0.527); ///< Ground color 1.
 
-uniform vec4 vect0 = vec4(-1.8, 1.6, 3.8, 0.0); ///< Light direction.
+uniform vec4 lightDirection = vec4(-1.8, 1.6, 1.7, 0.0); ///< Light direction.
 
-uniform int int0 = 64; ///< Maximum step count.
+uniform int stepCount = 128; ///< Maximum step count.
+uniform bool showPlane = true; ///< Show the moving plane.
 
 /** Scene signed distance function.
 \param pos the 3D world position
@@ -51,8 +54,10 @@ uniform int int0 = 64; ///< Maximum step count.
 */
 vec2 map(vec3 pos){
 	// Sphere 0.
-	float dist0 = length(pos - vec3(0.0,0.0,0.0)) - float2;
-	return vec2(dist0, 1.0);
+	float dist0 = length(pos - vec3(0.0,0.1,-0.4)) - radius;
+	float dist1 = abs(pos.y + 0.5);
+	// Skip the plane if asked.
+	return (dist0 < dist1 || !showPlane) ? vec2(dist0, 1.0) : vec2(dist1, 2.0);
 }
 
 /** Raymarch until hitting the scene surface or reaching the max number of steps.
@@ -67,7 +72,7 @@ bool raymarch(vec3 orig, vec3 dir, out float t, out vec2 res){
 	t = 0.0;
 	res = vec2(0.0);
 	// Step through the scene.
-	for(int i = 0; i < int0; ++i){
+	for(int i = 0; i < stepCount; ++i){
 		// Current position.
 		vec3 pos = orig + t * dir;
 		// Query the distance to the closest surface in the scene.
@@ -75,7 +80,7 @@ bool raymarch(vec3 orig, vec3 dir, out float t, out vec2 res){
 		// Move by this distance.
 		t += res.x;
 		// If the distance to the scene is small, we have reached the surface.
-		if(res.x < float3){
+		if(res.x < epsilon){
 			return true;
 		}
 	}
@@ -102,18 +107,14 @@ void main(){
 	vec3 dir = normalize(In.dir);
 	vec3 eye = iCamPos;
 	// Light parameters.
-	vec3 lightDir = normalize(vect0.xyz);
-	vec3 lightColor = col3.rgb;
-	// Add some variation.
-	float modulation = texture(noiseMap, vec2(0.5, iTime*0.01)).r * 0.2 + 0.9;
-	lightColor *= modulation;
+	vec3 lightDir = normalize(lightDirection.xyz);
 
 	// Background color: 
 	// 4-directions gradient, centered on the light.
 	float lightFacing = dot(dir,lightDir)*0.5+0.5;
 	vec3 backgroundColor = mix(
-		mix(col0.rgb, col1.rgb, lightFacing), 
-		mix(col2.rgb, lightColor, lightFacing), 
+		mix(skyBottom, skyLight, lightFacing), 
+		mix(skyTop, lightColor, lightFacing), 
 		smoothstep(-0.1, 0.1, dir.y));
 	vec3 color = backgroundColor;
 
@@ -133,13 +134,23 @@ void main(){
 		// Adjust parameters based on surface hit.
 		vec3 baseColor = vec3(0.0);
 		if(res.y < 1.5){
-			baseColor = col4.rgb;
-			specular = pow(specular, float1);
+			baseColor = sphereColor;
+			specular = pow(specular, specExponent);
+		} else if(res.y < 2.5){
+			vec2 movingUV = hit.xz + vec2(0.5*iTime, 0.0);
+			float noise = texture(noiseMap, 0.005*movingUV).r;
+			// Smooth transition.
+			float intensity = smoothstep(0.45, 0.55, noise);
+			// Mix two colors, diffuse material.
+			baseColor = mix(ground0, ground1, intensity);
+			specular = 0.0;
 		}
 		// Final appearance.
-		color = 0.4 * baseColor + lightColor * (diffuse * baseColor + specular);
+		vec3 objColor = 0.4 * baseColor + lightColor * (diffuse * baseColor + specular);
+		// Apply a fading fog effect based on depth.
+		color = mix(objColor, color, clamp(t-2.0,0.0,1.0));
 	}
 	
 	/// Exposure tweak, output.
-	fragColor = vec4(pow(color, vec3(float0)),1.0);
+	fragColor = vec4(pow(color, vec3(gamma)),1.0);
 }

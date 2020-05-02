@@ -28,26 +28,26 @@ layout(binding = 1) uniform sampler2D sdfFont;
 layout(location = 0) out vec4 fragColor; ///< Color.
 
 
-uniform vec4 col0 = vec4(0.308,0.066,0.327, 1.0);
-uniform vec4 col1 = vec4(0.131,0.204,0.458, 1.0);
-uniform vec4 col2 = vec4(0.957,0.440,0.883, 1.0);
-uniform vec4 col3 = vec4(0.473,0.548,0.919, 1.0);
-uniform vec4 col4 = vec4(0.987,0.746,0.993, 1.0); 
-uniform vec4 col5 = vec4(0.033,0.011,0.057, 1.0);
-uniform vec4 col6 = vec4(0.633,0.145,0.693, 1.0);
-uniform vec4 col7 = vec4(0.977,1.000,1.000, 1.0);
-uniform vec4 col8 = vec4(0.024,0.811,0.924, 1.0);
-uniform vec4 col9 = vec4(0.600,0.960,1.080, 1.0);
-uniform vec4 col10 = vec4(0.494,0.828,0.977, 1.0);
-uniform vec4 col11 = vec4(0.968,0.987,0.999, 1.0);
+uniform vec3 bgCol0 = vec3(0.308,0.066,0.327);
+uniform vec3 bgCol1 = vec3(0.131,0.204,0.458);
+uniform vec3 triCol0 = vec3(0.957,0.440,0.883);
+uniform vec3 triCol1 = vec3(0.473,0.548,0.919);
+uniform vec3 col4 = vec3(0.987,0.746,0.993);
+uniform vec3 col5 = vec3(0.033,0.011,0.057);
+uniform vec3 col6 = vec3(0.633,0.145,0.693);
+uniform vec3 col7 = vec3(0.977,1.000,1.000);
+uniform vec3 col8 = vec3(0.024,0.811,0.924);
+uniform vec3 col9 = vec3(0.600,0.960,1.080);
+uniform vec3 col10 = vec3(0.494,0.828,0.977);
+uniform vec3 col11 = vec3(0.968,0.987,0.999);
 
-uniform int int0 = 10;
-uniform int int1 = 20;
-uniform vec4 vect0 = vec4(0.5, 0.37, 0.0, 0.0);
-uniform float float0 = 0.3;
-uniform float float1 = 1.0;
-uniform bool flag0 = true;
-uniform bool flag1 = true;
+uniform int gridX = 10;
+uniform int gridY = 20;
+uniform vec4 cornerPos = vec4(0.5, 0.37, 0.0, 0.0);
+uniform float gridHeight = 0.3;
+uniform float vignetteScale = 1.0;
+uniform bool showLetters = true;
+uniform bool showGrid = true;
 
 
 /*
@@ -111,11 +111,11 @@ float segmentDistance(vec2 p, vec2 a, vec2 b){
 // Distance from point to triangle edges.
 float triangleDistance(vec2 p, vec4 tri, float width){
 	// Point at the bottom center, shared by all triangles.
-	vec2 point0 = vect0.xy;
+	vec2 pogridX = cornerPos.xy;
 	// Distance to each segment.
-	float minDist = 	   segmentDistance(p, point0, tri.xy) ;
+	float minDist = 	   segmentDistance(p, pogridX, tri.xy) ;
 	minDist = min(minDist, segmentDistance(p, tri.xy, tri.zw));
-	minDist = min(minDist, segmentDistance(p, tri.zw, point0));
+	minDist = min(minDist, segmentDistance(p, tri.zw, pogridX));
 	// Smooth result for transition.
 	return 1.0-smoothstep(0.0, width, minDist);
 }
@@ -146,10 +146,10 @@ vec3 textGradient(float interior, float top, vec2 alphas){
 	// Use squared blend for the interior gradients.
 	vec2 alphas2 = alphas*alphas;
 	// Generate the four possible gradients (interior/edge x upper/lower)
-	vec3 bottomInterior = mix(col4.rgb, col5.rgb, alphas2.x);
-	vec3 bottomExterior = mix(col6.rgb, col7.rgb,  alphas.x);
-	vec3 topInterior 	= mix(col8.rgb, col9.rgb, alphas2.y);
-	vec3 topExterior 	= mix(col10.rgb, col11.rgb,  alphas.y);
+	vec3 bottomInterior = mix(col4, col5, alphas2.x);
+	vec3 bottomExterior = mix(col6, col7,  alphas.x);
+	vec3 topInterior 	= mix(col8, col9, alphas2.y);
+	vec3 topExterior 	= mix(col10, col11,  alphas.y);
 	// Blend based on current location.
 	vec3 gradInterior 	= mix(bottomInterior, topInterior, top);
 	vec3 gradExterior 	= mix(bottomExterior, topExterior, top);
@@ -167,17 +167,16 @@ void main(){
 
 	/// Background.
 	// Color gradient.
-	vec3 finalColor = 1.5*mix(col0.rgb, col1.rgb, uv.x);
+	vec3 finalColor = 1.5*mix(bgCol0, bgCol1, uv.x);
 
-	float gridHeight = float0;
-	if(flag1 && uv.y < gridHeight){
+	if(showGrid && uv.y < gridHeight){
 
 		/// Bottom grid.
 		// Compute local cflipped oordinates for the grid.
 		vec2 localUV = uv*vec2(2.0, -1.0/gridHeight) + vec2(-1.0, 1.0);
 		// Perspective division, scaling, foreshortening and alignment.
         localUV.x = localUV.x/(localUV.y+0.8);
-		localUV *= vec2(int0, int1);
+		localUV *= vec2(gridX, gridY);
 		localUV.y = sqrt(localUV.y);
 		localUV.x += 0.5;
 		// Generate grid smooth lines (translate along time).
@@ -234,7 +233,7 @@ void main(){
 	float intensityTri = 0.9*tri1+0.5*tri2+0.2*tri3+0.6*tri4+0.5*tri5;
 	// Triangles color gradient, from left to right.
 	float alphaTriangles = clamp((uv.x-0.3)/0.4, 0.0, 1.0);
-	vec3 baseTriColor = mix(col2.rgb, col3.rgb, alphaTriangles);
+	vec3 baseTriColor = mix(triCol0, triCol1.rgb, alphaTriangles);
 	// Additive blending.
 	finalColor += intensityTri*baseTriColor;
 
@@ -248,7 +247,7 @@ void main(){
 	/// Letters.
 	// Centered UVs for text box.
 	vec2 textUV = uvCenter * 2.2 * vec2(0.7, 1.0) - vec2(0.0, 0.6);
-	if(flag0 && abs(textUV.x) < 1.0 && abs(textUV.y) < 1.0){
+	if(showLetters && abs(textUV.x) < 1.0 && abs(textUV.y) < 1.0){
 		// Rescale UVs.
 		textUV = textUV*vec2(1.75,0.5)+vec2(1.63,0.5);
 		// Per-sign UV, manual shifts for kerning.
@@ -287,7 +286,7 @@ void main(){
 	/// Vignetting.
 	const float radiusMin = 0.8;
 	const float radiusMax = 1.8;
-	float vignetteIntensity = float1*(length(uvCenter)-radiusMin)/(radiusMax-radiusMin);
+	float vignetteIntensity = vignetteScale*(length(uvCenter)-radiusMin)/(radiusMax-radiusMin);
 	finalColor *= clamp(1.0-vignetteIntensity, 0.0, 1.0);
 
 	/// Exposure tweak, output.
