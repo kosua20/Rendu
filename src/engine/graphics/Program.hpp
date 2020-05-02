@@ -12,6 +12,32 @@
 class Program {
 public:
 
+	/** Uniform reflection information.
+	 Note that GL info are stored separately internally.
+	 */
+	struct Uniform {
+
+		/// Uniform basic type.
+		enum class Type {
+			BOOL, BVEC2, BVEC3, BVEC4,
+			INT, IVEC2, IVEC3, IVEC4,
+			UINT, UVEC2, UVEC3, UVEC4,
+			FLOAT, VEC2, VEC3, VEC4,
+			MAT2, MAT3, MAT4,
+			OTHER
+		};
+
+		/** Constructor.
+		 \param uname uniform name
+		 \param utype uniform type
+		 */
+		Uniform(const std::string & uname, Type utype);
+
+		std::string name; ///< The uniform name.
+		Type type; ///< The uniform type.
+	};
+
+
 	/**
 	 Load, compile and link shaders into an OpenGL program.
 	 \param name the program name for logging
@@ -110,12 +136,6 @@ public:
 	 */
 	void uniform(const std::string & name, const glm::mat4 & t) const;
 
-	/** Check if the program has a given uniform name in use.
-	 \param name the uniform name to check
-	 \return true if the uniform is exposed by the program
-	 */
-	bool hasUniform(const std::string & name) const;
-
 	/** Set a given uniform buffer binding point.
 	 \param name the uniform name
 	 \param slot the binding point
@@ -182,6 +202,11 @@ public:
 	*/
 	void getUniform(const std::string & name, glm::mat4 & t) const;
 
+	/** \return the list of registered basic uniforms.
+	 */
+	const std::vector<Uniform> & uniforms() const {
+		return _uniformInfos;
+	}
 
 	/** Copy assignment operator (disabled).
 	 \return a reference to the object assigned to
@@ -203,6 +228,7 @@ private:
 
 	GLuint _id;								 ///< The OpenGL program ID.
 	std::string _name;				 		 ///< The shader name
-	std::map<std::string, GLint> _uniforms;  ///< The list of automatically registered uniforms and their locations.
+	std::map<std::string, GLint> _uniforms;  ///< Internal list of automatically registered uniforms and their locations. We keep this separate to avoid exposing GL internal types.
+	std::vector<Uniform> _uniformInfos;  ///< Additional uniforms info.
 
 };

@@ -3,6 +3,10 @@
 #include "resources/ResourcesManager.hpp"
 
 
+Program::Uniform::Uniform(const std::string & uname, Program::Uniform::Type utype) :
+	name(uname), type(utype) {
+}
+
 Program::Program(const std::string & name, const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent) : _name(name) {
 	reload(vertexContent, fragmentContent, geometryContent);
 }
@@ -14,6 +18,7 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 
 	_id = GLUtilities::createProgram(vertexContent, fragmentContent, geometryContent, bindings, debugName);
 	_uniforms.clear();
+	_uniformInfos.clear();
 
 	// Get the number of active uniforms and their maximum length.
 	// Note: this will also capture each attribute of each element of a uniform block.
@@ -22,6 +27,28 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 	GLint size  = 0;
 	glGetProgramiv(_id, GL_ACTIVE_UNIFORMS, &count);
 	glGetProgramiv(_id, GL_ACTIVE_UNIFORM_MAX_LENGTH, &size);
+	// We will store the types for future reflection.
+	static const std::map<GLenum, Uniform::Type> types = {
+		{ GL_FLOAT, Uniform::Type::FLOAT },
+		{ GL_FLOAT_VEC2, Uniform::Type::VEC2 },
+		{ GL_FLOAT_VEC3, Uniform::Type::VEC3 },
+		{ GL_FLOAT_VEC4, Uniform::Type::VEC4 },
+		{ GL_INT, Uniform::Type::INT },
+		{ GL_INT_VEC2, Uniform::Type::IVEC2 },
+		{ GL_INT_VEC3, Uniform::Type::IVEC3 },
+		{ GL_INT_VEC4, Uniform::Type::IVEC4 },
+		{ GL_UNSIGNED_INT, Uniform::Type::UINT },
+		{ GL_UNSIGNED_INT_VEC2, Uniform::Type::UVEC2 },
+		{ GL_UNSIGNED_INT_VEC3, Uniform::Type::UVEC3 },
+		{ GL_UNSIGNED_INT_VEC4, Uniform::Type::UVEC4 },
+		{ GL_BOOL, Uniform::Type::BOOL },
+		{ GL_BOOL_VEC2, Uniform::Type::BVEC2 },
+		{ GL_BOOL_VEC3, Uniform::Type::BVEC3 },
+		{ GL_BOOL_VEC4, Uniform::Type::BVEC4 },
+		{ GL_FLOAT_MAT2, Uniform::Type::MAT2 },
+		{ GL_FLOAT_MAT3, Uniform::Type::MAT3 },
+		{ GL_FLOAT_MAT4, Uniform::Type::MAT4 }
+	};
 
 	glUseProgram(_id);
 	for(GLuint i = 0; i < GLuint(count); ++i) {
@@ -39,7 +66,8 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 		// Register uniform using its name.
 		// /!\ the uniform location can be different from the uniform ID.
 		_uniforms[name] = glGetUniformLocation(_id, name.c_str());
-
+		// Store uniform information.
+		_uniformInfos.emplace_back(name, types.count(utype) > 0 ? types.at(utype) : Uniform::Type::OTHER);
 		// If the size of the uniform is > 1, we have an array.
 		if(usize > 1) {
 			// Extract the array name from the 'name[0]' string.
@@ -195,10 +223,6 @@ void Program::uniform(const std::string & name, const glm::mat4 & t) const {
 	if(_uniforms.count(name) != 0) {
 		glUniformMatrix4fv(_uniforms.at(name), 1, GL_FALSE, &t[0][0]);
 	}
-}
-
-bool Program::hasUniform(const std::string & name) const {
-	return _uniforms.count(name) != 0;
 }
 
 void Program::uniformBuffer(const std::string & name, size_t slot) const {
