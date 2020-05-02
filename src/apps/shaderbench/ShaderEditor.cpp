@@ -70,27 +70,6 @@ ShaderEditor::ShaderEditor(RenderingConfig & config) : CameraApp(config) {
 	_textures.push_back(&_noise);
 	_textures.push_back(&_directions);
 
-	// Create default names for all uniforms.
-	_flags.resize(3);
-	for(size_t i = 0; i < _flags.size(); ++i){
-		_flags[i].name = kFlagName + std::to_string(i);
-	}
-	_integers.resize(1);
-	for(size_t i = 0; i < _integers.size(); ++i){
-		_integers[i].name = kIntName + std::to_string(i);
-	}
-	_floats.resize(2);
-	for(size_t i = 0; i < _floats.size(); ++i){
-		_floats[i].name = kFloatName + std::to_string(i);
-	}
-	_vectors.resize(1);
-	for(size_t i = 0; i < _vectors.size(); ++i){
-		_vectors[i].name = kVecName + std::to_string(i);
-	}
-	_colors.resize(3);
-	for(size_t i = 0; i < _colors.size(); ++i){
-		_colors[i].name = kColorName + std::to_string(i);
-	}
 	// If the default shader uses more default uniforms, set them up, and restore all values
 	// so that we have something interesting to show at load time.
 	restoreUniforms();
@@ -545,7 +524,7 @@ void ShaderEditor::displayUniforms(uint columnsCount){
 		ImGui::Columns(columnsCount);
 		// Display a basic picker. Maybe allow HDR values?
 		for(size_t i = 0; i < _colors.size(); ++i){
-			ImGui::ColorEdit4(_colors[i].name.c_str(), &_colors[i].value[0], ImGuiColorEditFlags_Float | ImGuiColorEditFlags_NoInputs);
+			ImGui::ColorEdit3(_colors[i].name.c_str(), &_colors[i].value[0], ImGuiColorEditFlags_Float | ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_HDR);
 			ImGui::NextColumn();
 		}
 		// Add/remove buttons.
@@ -599,75 +578,67 @@ void ShaderEditor::resize() {
 }
 
 void ShaderEditor::restoreUniforms(){
-	// For each type, find the maximum ID used by the shader,
-	// and get the default value back for each used uniform.
-	{
-		uint id = 0;
-		std::string name = kFlagName + std::to_string(id);
-		while (_currProgram->hasUniform(name)) {
-			if(id >= _flags.size()){
-				_flags.resize(id+1);
-			}
-			_flags[id].name = name;
-			_currProgram->getUniform(name, _flags[id].value);
-			++id;
-			name = kFlagName + std::to_string(id);
+	_flags.clear();
+	_integers.clear();
+	_floats.clear();
+	_vectors.clear();
+	_colors.clear();
+
+	const std::vector<std::string> defaultNames = {"iTime", "iTimeDelta", "iFrame", "iResolution", "iMouse", "iCamPos", "iCamUp", "iCamCenter", "iCamFov"};
+
+	const auto & uniforms = _currProgram->uniforms();
+	for(const auto & uniform : uniforms){
+		// Skip predefined uniforms.
+		if(std::find(defaultNames.begin(), defaultNames.end(), uniform.name) != defaultNames.end()){
+			continue;
+		}
+		switch (uniform.type) {
+			case Program::Uniform::Type::BOOL:
+				_flags.emplace_back();
+				_flags.back().name = uniform.name;
+				_currProgram->getUniform(uniform.name, _flags.back().value);
+				break;
+			case Program::Uniform::Type::INT:
+				_integers.emplace_back();
+				_integers.back().name = uniform.name;
+				_currProgram->getUniform(uniform.name, _integers.back().value);
+				break;
+			case Program::Uniform::Type::FLOAT:
+				_floats.emplace_back();
+				_floats.back().name = uniform.name;
+				_currProgram->getUniform(uniform.name, _floats.back().value);
+				_floats.back().min = 0.5f * _floats.back().value;
+				_floats.back().max = 2.0f * _floats.back().value;
+				break;
+			case Program::Uniform::Type::VEC3:
+				_colors.emplace_back();
+				_colors.back().name = uniform.name;
+				_currProgram->getUniform(uniform.name, _colors.back().value);
+				break;
+			case Program::Uniform::Type::VEC4:
+				_vectors.emplace_back();
+				_vectors.back().name = uniform.name;
+				_currProgram->getUniform(uniform.name, _vectors.back().value);
+				break;
+			default:
+				break;
 		}
 	}
-	{
-		uint id = 0;
-		std::string name = kIntName + std::to_string(id);
-		while (_currProgram->hasUniform(name)) {
-			if(id >= _integers.size()){
-				_integers.resize(id+1);
-			}
-			_integers[id].name = name;
-			_currProgram->getUniform(name, _integers[id].value);
-			++id;
-			name = kIntName + std::to_string(id);
-		}
-	}
-	{
-		uint id = 0;
-		std::string name = kFloatName + std::to_string(id);
-		while (_currProgram->hasUniform(name)) {
-			if(id >= _floats.size()){
-				_floats.resize(id+1);
-			}
-			_floats[id].name = name;
-			_currProgram->getUniform(name, _floats[id].value);
-			_floats[id].min = 0.5f *_floats[id].value;
-			_floats[id].max = 2.0f *_floats[id].value;
-			++id;
-			name = kFloatName + std::to_string(id);
-		}
-	}
-	{
-		uint id = 0;
-		std::string name = kVecName + std::to_string(id);
-		while (_currProgram->hasUniform(name)) {
-			if(id >= _vectors.size()){
-				_vectors.resize(id+1);
-			}
-			_vectors[id].name = name;
-			_currProgram->getUniform(name, _vectors[id].value);
-			++id;
-			name = kVecName + std::to_string(id);
-		}
-	}
-	{
-		uint id = 0;
-		std::string name = kColorName + std::to_string(id);
-		while (_currProgram->hasUniform(name)) {
-			if(id >= _colors.size()){
-				_colors.resize(id+1);
-			}
-			_colors[id].name = name;
-			_currProgram->getUniform(name, _colors[id].value);
-			++id;
-			name = kColorName + std::to_string(id);
-		}
-	}
+	std::sort(_flags.begin(), _flags.end(), [](const BoolOption & a, const BoolOption & b){
+		return a.name < b.name;
+	});
+	std::sort(_integers.begin(), _integers.end(), [](const IntOption & a, const IntOption & b){
+		return a.name < b.name;
+	});
+	std::sort(_floats.begin(), _floats.end(), [](const FloatOption & a, const FloatOption & b){
+		return a.name < b.name;
+	});
+	std::sort(_vectors.begin(), _vectors.end(), [](const VecOption & a, const VecOption & b){
+		return a.name < b.name;
+	});
+	std::sort(_colors.begin(), _colors.end(), [](const ColorOption & a, const ColorOption & b){
+		return a.name < b.name;
+	});
 }
 
 std::string ShaderEditor::generateParametersString(const std::string & prefix, bool exportValues){
@@ -701,9 +672,9 @@ std::string ShaderEditor::generateParametersString(const std::string & prefix, b
 		uniformStr << ";\n";
 	}
 	for(size_t i = 0; i < _colors.size(); ++i){
-		uniformStr << prefix << "vec4 " << _colors[i].name;
+		uniformStr << prefix << "vec3 " << _colors[i].name;
 		if(exportValues){
-			uniformStr << " = vec4(" << _colors[i].value[0] << ", " << _colors[i].value[1] << ", " << _colors[i].value[2] << ", " << _colors[i].value[3] << ")";
+			uniformStr << " = vec3(" << _colors[i].value[0] << ", " << _colors[i].value[1] << ", " << _colors[i].value[2] << ")";
 		}
 		uniformStr << ";\n";
 	}

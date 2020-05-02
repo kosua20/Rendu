@@ -86,10 +86,10 @@ private:
 		glm::vec4 value = glm::vec4(0.0f); ///< Uniform value.
 	};
 
-	/// RGBA Color parameter.
+	/// RGB Color parameter.
 	struct ColorOption {
 		std::string name; ///< Uniform name.
-		glm::vec4 value = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f); ///< Uniform value.
+		glm::vec3 value = glm::vec3(1.0f, 0.0f, 0.0f); ///< Uniform value.
 	};
 
 	/// GUI layout options.
