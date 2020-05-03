@@ -70,6 +70,12 @@ public:
 	*/
 	static glm::vec3 sampleCosineHemisphere();
 
+	/** Shuffle elements of a vector randomly, in-place.
+	 \param items the items to shuffle
+	 */
+	template<typename T>
+	static void shuffle(std::vector<T> & items);
+
 private:
 	/** \brief A MT19937 generator seeded using the shared generator.
 	 	Used to provide per-thread MT19937 generators in a thread-safe way.
@@ -88,3 +94,8 @@ private:
 	static std::mutex _lock;				  ///< The lock for the shared generator.
 	static thread_local LocalMT19937 _thread; ///< Per-thread randomness generator, seeded using the shared generator.
 };
+
+template<typename T>
+void Random::shuffle(std::vector<T> & items){
+	std::shuffle(items.begin(), items.end(), _thread.mt);
+}
