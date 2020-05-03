@@ -152,4 +152,7 @@ public:
 
 	/// The last recorded window position and size on screen.
 	glm::ivec4 windowFrame = glm::vec4(0, 0, 800, 600);
+
+	/// Extra resources directory.
+	std::string resourcesPath;
 };

@@ -33,7 +33,10 @@ int main(int argc, char ** argv) {
 	Window window("Playground", config);
 	
 	Resources::manager().addResources("../../../resources/common");
-
+	if(!config.resourcesPath.empty()){
+		Resources::manager().addResources(config.resourcesPath);
+	}
+	
 	// Seed random generator.
 	Random::seed();
 	// Query the renderer identifier, and the supported OpenGL version.

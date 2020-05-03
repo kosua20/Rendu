@@ -133,7 +133,10 @@ int main(int argc, char ** argv) {
 	Resources::manager().addResources("../../../resources/common");
 	Resources::manager().addResources("../../../resources/pbrdemo");
 	Resources::manager().addResources("../../../resources/additional");
-
+	if(!config.resourcesPath.empty()){
+		Resources::manager().addResources(config.resourcesPath);
+	}
+	
 	// Headless mode: use the scene reference camera to perform rendering immediatly and saving it to disk.
 	if(config.directRender) {
 		renderOneShot(config);

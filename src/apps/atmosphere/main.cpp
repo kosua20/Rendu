@@ -123,6 +123,9 @@ int main(int argc, char ** argv) {
 	
 	Resources::manager().addResources("../../../resources/common");
 	Resources::manager().addResources("../../../resources/atmosphere");
+	if(!config.resourcesPath.empty()){
+		Resources::manager().addResources(config.resourcesPath);
+	}
 	
 	// Seed random generator.
 	Random::seed();

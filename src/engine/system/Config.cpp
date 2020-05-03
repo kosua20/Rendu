@@ -212,6 +212,8 @@ RenderingConfig::RenderingConfig(const std::vector<std::string> & argv) :
 			initialHeight = h;
 		} else if(key == "force-aspect" || key == "far") {
 			forceAspectRatio = true;
+		} else if(arg.key == "resources" && !values.empty()) {
+			resourcesPath = values[0];
 		}
 	}
 
@@ -222,6 +224,7 @@ RenderingConfig::RenderingConfig(const std::vector<std::string> & argv) :
 	registerArgument("internal-res", "ivr", "Vertical rendering resolution", "height.");
 	registerArgument("wxh", "", "Window dimensions.", std::vector<std::string> {"width", "height"});
 	registerArgument("force-aspect", "far", "Force window aspect ratio.");
+	registerArgument("resources", "", "Additional resources directory", "path");
 }
 
 glm::vec2 RenderingConfig::renderingResolution(){
