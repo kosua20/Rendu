@@ -461,7 +461,6 @@ void GLUtilities::uploadTexture(const Texture & texture) {
 	}
 
 	const GLenum target		= texture.gpu->target;
-	const GLenum destType	= texture.gpu->type;
 	const GLenum destFormat = texture.gpu->format;
 	// Sanity check the texture destination format.
 	const unsigned int destChannels = texture.gpu->channels;
@@ -470,16 +469,15 @@ void GLUtilities::uploadTexture(const Texture & texture) {
 		return;
 	}
 	// Check that the descriptor type is valid.
-	const bool validType   = destType == GL_FLOAT || destType == GL_UNSIGNED_BYTE;
 	const bool validFormat = destFormat == GL_RED || destFormat == GL_RG || destFormat == GL_RGB || destFormat == GL_RGBA;
-	if(!validType || !validFormat) {
+	if(!validFormat) {
 		Log::Error() << "Invalid descriptor for creating texture from image data." << std::endl;
 		return;
 	}
 
-	// Determine the required pack alignment.
-	const bool defaultAlign = (destType == GL_FLOAT || destType == GL_UNSIGNED_INT || destType == GL_INT) || destChannels == 4;
-	glPixelStorei(GL_UNPACK_ALIGNMENT, defaultAlign ? 4 : 1);
+	// We always upload data as floats (and let the driver convert internally if needed),
+	// so the alignment is always 4.
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 	glBindTexture(target, texture.gpu->id);
 
 	int currentImg = 0;
@@ -491,56 +489,33 @@ void GLUtilities::uploadTexture(const Texture & texture) {
 		for(size_t lid = 0; lid < depth; ++lid) {
 			const Image & image = texture.images[currentImg];
 			currentImg += 1;
-			const size_t destSize = destChannels * image.height * image.width;
-
-			//Perform conversion if needed.
-			const GLubyte * finalDataPtr;
-			GLubyte * finalData = nullptr;
-			if(destType == GL_UNSIGNED_BYTE) {
-				// If we want a uchar image, we convert and scale from [0,1] float to [0, 255] uchars.
-				finalData = new GLubyte[destSize];
-				// Handle the conversion by hand.
-				for(size_t pid = 0; pid < destSize; ++pid) {
-					const float newValue = std::min(255.0f, std::max(0.0f, image.pixels[pid] * 255.0f));
-					finalData[pid]		 = GLubyte(newValue);
-				}
-				finalDataPtr = &finalData[0];
-			} else if(destType == GL_FLOAT) {
-				// Just reinterpret the data.
-				finalDataPtr = reinterpret_cast<const GLubyte *>(image.pixels.data());
-			} else {
-				Log::Error() << Log::OpenGL << "Unsupported texture type for upload." << std::endl;
-				continue;
-			}
-
 			// Upload.
+			const GLubyte * finalDataPtr = reinterpret_cast<const GLubyte *>(image.pixels.data());
 			const GLint mip = GLint(mid);
 			const GLint lev = GLint(lid);
 			const GLsizei w = GLsizei(image.width);
 			const GLsizei h = GLsizei(image.height);
 			if(target == GL_TEXTURE_1D) {
-				glTexSubImage1D(target, mip, 0, w, destFormat, destType, finalDataPtr);
+				glTexSubImage1D(target, mip, 0, w, destFormat, GL_FLOAT, finalDataPtr);
 
 			} else if(target == GL_TEXTURE_2D) {
-				glTexSubImage2D(target, mip, 0, 0, w, h, destFormat, destType, finalDataPtr);
+				glTexSubImage2D(target, mip, 0, 0, w, h, destFormat, GL_FLOAT, finalDataPtr);
 
 			} else if(target == GL_TEXTURE_CUBE_MAP) {
-				glTexSubImage2D(GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + lev), mip, 0, 0, w, h, destFormat, destType, finalDataPtr);
+				glTexSubImage2D(GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + lev), mip, 0, 0, w, h, destFormat, GL_FLOAT, finalDataPtr);
 
 			} else if(target == GL_TEXTURE_2D_ARRAY || target == GL_TEXTURE_CUBE_MAP_ARRAY) {
-				glTexSubImage3D(target, mip, 0, 0, lev, w, h, 1, destFormat, destType, finalDataPtr);
+				glTexSubImage3D(target, mip, 0, 0, lev, w, h, 1, destFormat, GL_FLOAT, finalDataPtr);
 
 			} else if(target == GL_TEXTURE_1D_ARRAY) {
-				glTexSubImage2D(target, mip, 0, lev, w, 1, destFormat, destType, finalDataPtr);
+				glTexSubImage2D(target, mip, 0, lev, w, 1, destFormat, GL_FLOAT, finalDataPtr);
 
 			} else if(target == GL_TEXTURE_3D) {
-				glTexSubImage3D(target, mip, 0, 0, lev, w, h, 1, destFormat, destType, finalDataPtr);
+				glTexSubImage3D(target, mip, 0, 0, lev, w, h, 1, destFormat, GL_FLOAT, finalDataPtr);
 
 			} else {
 				Log::Error() << Log::OpenGL << "Unsupported texture upload destination." << std::endl;
 			}
-
-			delete[] finalData;
 		}
 	}
 	glBindTexture(target, 0);
