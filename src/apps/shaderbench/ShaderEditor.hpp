@@ -109,8 +109,10 @@ private:
 	GPUQuery _timer = GPUQuery(GPUQuery::Type::TIME_ELAPSED); ///< Timer for the user shader pass.
 
 	std::vector<const Texture *> _textures; ///< List of all predefined textures.
-	Texture _noise; ///< Random RGBA uniform noise in [0,1].
+	Texture _noise; ///< Random 2D RGBA uniform noise in [0,1].
 	Texture _directions; ///< Random 3D directions on the sphere.
+	Texture _noise3D; ///< Random 3D RGB uniform noise in [0,1].
+	const Texture * _fallbackTex = nullptr;
 	std::vector<BoolOption> _flags; ///< Predefined boolean parameters.
 	std::vector<IntOption> _integers; ///< Predefined integer parameters.
 	std::vector<FloatOption> _floats; ///< Predefined float parameters.

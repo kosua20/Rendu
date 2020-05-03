@@ -34,11 +34,14 @@ ShaderEditor::ShaderEditor(RenderingConfig & config) : CameraApp(config) {
 	_userCamera.ratio(config.screenResolution[0] / config.screenResolution[1]);
 	_startTime = System::time();
 
+	_fallbackTex = Resources::manager().getTexture("non-2d-texture", {Layout::RGB8, Filter::NEAREST, Wrap::CLAMP}, Storage::GPU);
+
 	// Noise texture.
 	{
 		_noise = Texture("noise");
 		_noise.width = _noise.height = 512;
 		_noise.depth = _noise.levels = 1;
+		_noise.shape = TextureShape::D2;
 		_noise.images.emplace_back(_noise.width, _noise.height, 4);
 		Image & noiseImg = _noise.images[0];
 		System::forParallel(0, size_t(noiseImg.height), [&noiseImg](size_t y){
@@ -53,6 +56,7 @@ ShaderEditor::ShaderEditor(RenderingConfig & config) : CameraApp(config) {
 		_directions = Texture("directions");
 		_directions.width = _directions.height = 64;
 		_directions.depth = _directions.levels = 1;
+		_directions.shape = TextureShape::D2;
 		_directions.images.emplace_back(_directions.width, _directions.height, 3);
 		Image & dirImg = _directions.images[0];
 		System::forParallel(0, size_t(dirImg.height), [&dirImg](size_t y){
@@ -60,7 +64,24 @@ ShaderEditor::ShaderEditor(RenderingConfig & config) : CameraApp(config) {
 				dirImg.rgb(int(x), int(y)) = glm::normalize(Random::sampleSphere());
 			}
 		});
-		_directions.upload({Layout::RGB32F, Filter::LINEAR, Wrap::CLAMP}, false);
+		_directions.upload({Layout::RGB32F, Filter::NEAREST, Wrap::REPEAT}, false);
+	}
+	{
+		_noise3D = Texture("noise3D");
+		_noise3D.width = _noise3D.height = _noise3D.depth = 256;
+		_noise3D.levels = 1;
+		_noise3D.shape = TextureShape::D3;
+
+		for(uint d = 0; d < _noise3D.depth; ++d){
+			_noise3D.images.emplace_back(_noise3D.width, _noise3D.height, 3);
+			auto & img = _noise3D.images[d];
+			System::forParallel(0, size_t(img.height), [&img](size_t y){
+				for(uint x = 0; x < img.width; ++x){
+					img.rgb(int(x), int(y)) = glm::vec3(Random::Float(), Random::Float(), Random::Float());
+				}
+			});
+		}
+		_noise3D.upload({Layout::RGB32F, Filter::LINEAR, Wrap::REPEAT}, false);
 	}
 
 	// Reference textures.
@@ -69,6 +90,7 @@ ShaderEditor::ShaderEditor(RenderingConfig & config) : CameraApp(config) {
 	_textures.push_back(Resources::manager().getTexture("debug-grid", {Layout::RGBA8, Filter::LINEAR, Wrap::REPEAT}, Storage::GPU));
 	_textures.push_back(&_noise);
 	_textures.push_back(&_directions);
+	_textures.push_back(&_noise3D);
 
 	// If the default shader uses more default uniforms, set them up, and restore all values
 	// so that we have something interesting to show at load time.
@@ -250,6 +272,10 @@ void ShaderEditor::update() {
 		ImGui::End();
 	}
 
+	// On my macOS dev machine, fetching a query seems to improve performances
+	// drastically, maybe marking the program as prioritary. So always fetch this query value.
+	const uint frameTime = _timer.value();
+
 	// Don't display the panel if required.
 	if(!_showGUI){
 		return;
@@ -306,8 +332,6 @@ void ShaderEditor::update() {
 			ImGui::SameLine();
 			ImGui::RadioButton("Freeform", (int*)&_layout, int(LayoutMode::FREEFORM));
 			ImGui::SameLine();
-
-			ImGui::SameLine();
 			// Display result in a subwindow.
 			if(ImGui::Checkbox("Windowed", &_windowed)){
 				if(!_windowed){
@@ -317,7 +341,7 @@ void ShaderEditor::update() {
 			}
 
 			// Rendering info.
-			ImGui::Text("Frame time: %5.3fms, resolution: %dx%d", float(_timer.value())/1000000.0f, _currFrame->width(), _currFrame->height());
+			ImGui::Text("Frame time: %5.3fms, resolution: %dx%d", float(frameTime)/1000000.0f, _currFrame->width(), _currFrame->height());
 
 			// Play/pause/reset options and timing info.
 			if(ImGui::Button("Pause##time")){
@@ -375,7 +399,11 @@ void ShaderEditor::update() {
 			for(uint i = 0; i < _textures.size(); ++i){
 				// Small square display.
 				ImGui::Text("Location %d", i);
-				ImGui::Image(*_textures[i], ImVec2(100,100), ImVec2(0,1), ImVec2(1, 0));
+				if(_textures[i]->shape == TextureShape::D2){
+					ImGui::Image(*_textures[i], ImVec2(100,100), ImVec2(0,1), ImVec2(1, 0));
+				} else {
+					ImGui::Image(*_fallbackTex, ImVec2(100,100), ImVec2(0,1), ImVec2(1, 0));
+				}
 				ImGui::NextColumn();
 			}
 			ImGui::Columns();
@@ -565,6 +593,7 @@ void ShaderEditor::clean() {
 	_currProgram->clean();
 	_noise.clean();
 	_directions.clean();
+	_noise3D.clean();
 }
 
 void ShaderEditor::resize() {
