@@ -73,3 +73,7 @@ void CameraApp::freezeCamera(bool shouldFreeze){
 	_freezeCamera = shouldFreeze;
 }
 
+double CameraApp::timeElapsed(){
+	return _timer;
+}
+

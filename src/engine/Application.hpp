@@ -80,7 +80,10 @@ protected:
 	void freezeCamera(bool shouldFreeze);
 	
 	ControllableCamera _userCamera; ///< The interactive camera.
-	
+
+	/// \return the time elapsed since launch
+	double timeElapsed();
+
 private:
 	
 	bool _freezeCamera    = false; 	///< Should the camera be frozen.
