@@ -73,11 +73,13 @@ public:
 	 \param vertexContent the vertex shader string
 	 \param fragmentContent the fragment shader string
 	 \param geometryContent the optional geometry shader string
+	 \param tessControlContent the optional tesselation control shader string
+	 \param tessEvalContent the optional tesselation evaluation shader string
 	 \param bindings will be filled with the samplers present in the shaders and their user-defined locations
 	 \param debugInfos the name of the program, or any custom debug infos that will be logged.
 	 \return the OpenGL ID of the program
 	 */
-	static GLuint createProgram(const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, Bindings & bindings, const std::string & debugInfos);
+	static GLuint createProgram(const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, const std::string & tessControlContent, const std::string & tessEvalContent, Bindings & bindings, const std::string & debugInfos);
 
 	/** Save a given framebuffer content to the disk.
 	 \param framebuffer the framebuffer to save

@@ -214,7 +214,9 @@ GLuint GLUtilities::loadShader(const std::string & prog, ShaderType type, Bindin
 	static const std::map<ShaderType, GLenum> types = {
 		{ShaderType::VERTEX, GL_VERTEX_SHADER},
 		{ShaderType::FRAGMENT, GL_FRAGMENT_SHADER},
-		{ShaderType::GEOMETRY, GL_GEOMETRY_SHADER}
+		{ShaderType::GEOMETRY, GL_GEOMETRY_SHADER},
+		{ShaderType::TESSCONTROL, GL_TESS_CONTROL_SHADER},
+		{ShaderType::TESSEVAL, GL_TESS_EVALUATION_SHADER}
 	};
 
 	GLuint id = glCreateShader(types.at(type));
@@ -248,8 +250,8 @@ GLuint GLUtilities::loadShader(const std::string & prog, ShaderType type, Bindin
 	return id;
 }
 
-GLuint GLUtilities::createProgram(const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, Bindings & bindings, const std::string & debugInfos) {
-	GLuint vp(0), fp(0), gp(0);
+GLuint GLUtilities::createProgram(const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, const std::string & tessControlContent, const std::string & tessEvalContent, Bindings & bindings, const std::string & debugInfos) {
+	GLuint vp(0), fp(0), gp(0), tcp(0), tep(0);
 	const GLuint id = glCreateProgram();
 	checkGLError();
 
@@ -280,6 +282,24 @@ GLuint GLUtilities::createProgram(const std::string & vertexContent, const std::
 		glAttachShader(id, gp);
 		if(!compilationLog.empty()) {
 			Log::Error() << Log::OpenGL << "Geometry shader failed to compile:" << std::endl
+						 << compilationLog << std::endl;
+		}
+	}
+	// If tesselation control program code is given, compile it.
+	if(!tessControlContent.empty()) {
+		tcp = loadShader(tessControlContent, ShaderType::TESSCONTROL, bindings, compilationLog);
+		glAttachShader(id, tcp);
+		if(!compilationLog.empty()) {
+			Log::Error() << Log::OpenGL << "Tessellation control shader failed to compile:" << std::endl
+						 << compilationLog << std::endl;
+		}
+	}
+	// If tessellation evaluation program code is given, compile it.
+	if(!tessEvalContent.empty()) {
+		tep = loadShader(tessEvalContent, ShaderType::TESSEVAL, bindings, compilationLog);
+		glAttachShader(id, tep);
+		if(!compilationLog.empty()) {
+			Log::Error() << Log::OpenGL << "Tessellation evaluation shader failed to compile:" << std::endl
 						 << compilationLog << std::endl;
 		}
 	}
@@ -319,11 +339,19 @@ GLuint GLUtilities::createProgram(const std::string & vertexContent, const std::
 	if(gp != 0) {
 		glDetachShader(id, gp);
 	}
+	if(tcp != 0) {
+		glDetachShader(id, tcp);
+	}
+	if(tep != 0) {
+		glDetachShader(id, tep);
+	}
 	checkGLError();
 	//And deleting them
 	glDeleteShader(vp);
 	glDeleteShader(fp);
 	glDeleteShader(gp);
+	glDeleteShader(tcp);
+	glDeleteShader(tep);
 
 	checkGLError();
 	// Return the id to the successfuly linked GLProgram.

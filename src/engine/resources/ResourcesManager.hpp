@@ -164,9 +164,11 @@ public:
 	 \param vertexName the name of the vertex shader
 	 \param fragmentName the name of the fragment shader
 	 \param geometryName the name of the optional geometry shader
+	 \param tessControlName the name of the optional tessellation control shader
+	 \param tessEvalName the name of the optional tessellation evaluation shader
 	 \return the program informations
 	 */
-	Program * getProgram(const std::string & name, const std::string & vertexName = "", const std::string & fragmentName= "", const std::string & geometryName = "");
+	Program * getProgram(const std::string & name, const std::string & vertexName = "", const std::string & fragmentName= "", const std::string & geometryName = "", const std::string & tessControlName = "", const std::string & tessEvalName = "");
 
 	/** Get an OpenGL program resource for 2D screen processing. It will use GPU::Vert::Passthrough as a vertex shader.
 	 \param name the name of the fragment shader
@@ -230,13 +232,17 @@ private:
 		/** Basic constructor.
 		 \param vertex vertex shader name
 		 \param fragment fragment shader name
-		\param geometry geometry shader name
+		 \param geometry geometry shader name
+		 \param tessControl tessellation control shader name
+		 \param tessEval tessellation evaluation shader name
 		 */
-		ProgramInfos(const std::string & vertex, const std::string & fragment, const std::string & geometry);
+		ProgramInfos(const std::string & vertex, const std::string & fragment, const std::string & geometry, const std::string & tessControl, const std::string & tessEval);
 
 		std::string vertexName; ///< Vertex shader filename.
 		std::string fragmentName; ///< Fragment shader filename.
 		std::string geomName; ///< Geometry shader filename.
+		std::string tessContName; ///< Tessellation control shader filename.
+		std::string tessEvalName; ///< Tessellation evaluation shader filename.
 	};
 
 	std::map<std::string, std::string> _files; ///< Listing of available files and their paths.

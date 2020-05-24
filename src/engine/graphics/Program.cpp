@@ -7,16 +7,16 @@ Program::Uniform::Uniform(const std::string & uname, Program::Uniform::Type utyp
 	name(uname), type(utype) {
 }
 
-Program::Program(const std::string & name, const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent) : _name(name) {
-	reload(vertexContent, fragmentContent, geometryContent);
+Program::Program(const std::string & name, const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, const std::string & tessControlContent, const std::string & tessEvalContent) : _name(name) {
+	reload(vertexContent, fragmentContent, geometryContent, tessControlContent, tessEvalContent);
 }
 
-void Program::reload(const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent) {
+void Program::reload(const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, const std::string & tessControlContent, const std::string & tessEvalContent) {
 	GLUtilities::Bindings bindings;
 
 	const std::string debugName = _name;
 
-	_id = GLUtilities::createProgram(vertexContent, fragmentContent, geometryContent, bindings, debugName);
+	_id = GLUtilities::createProgram(vertexContent, fragmentContent, geometryContent, tessControlContent, tessEvalContent, bindings, debugName);
 	_uniforms.clear();
 	_uniformInfos.clear();
 
