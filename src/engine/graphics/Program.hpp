@@ -132,6 +132,24 @@ public:
 	 \param name the uniform name
 	 \param t the value to set the uniform to
 	 */
+	void uniform(const std::string & name, const glm::ivec2 & t) const;
+
+	/** Set a given uniform value.
+	 \param name the uniform name
+	 \param t the value to set the uniform to
+	 */
+	void uniform(const std::string & name, const glm::ivec3 & t) const;
+
+	/** Set a given uniform value.
+	 \param name the uniform name
+	 \param t the value to set the uniform to
+	 */
+	void uniform(const std::string & name, const glm::ivec4 & t) const;
+
+	/** Set a given uniform value.
+	 \param name the uniform name
+	 \param t the value to set the uniform to
+	 */
 	void uniform(const std::string & name, const glm::mat3 & t) const;
 
 	/** Set a given uniform value.
@@ -193,6 +211,24 @@ public:
 	\param t will contain the value
 	*/
 	void getUniform(const std::string & name, glm::vec4 & t) const;
+
+	/** Get a given uniform value.
+	\param name the uniform name
+	\param t will contain the value
+	*/
+	void getUniform(const std::string & name, glm::ivec2 & t) const;
+
+	/** Get a given uniform value.
+	\param name the uniform name
+	\param t will contain the value
+	*/
+	void getUniform(const std::string & name, glm::ivec3 & t) const;
+
+	/** Get a given uniform value.
+	\param name the uniform name
+	\param t will contain the value
+	*/
+	void getUniform(const std::string & name, glm::ivec4 & t) const;
 
 	/** Get a given uniform value.
 	\param name the uniform name

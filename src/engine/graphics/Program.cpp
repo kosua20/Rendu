@@ -213,6 +213,24 @@ void Program::uniform(const std::string & name, const glm::vec4 & t) const {
 	}
 }
 
+void Program::uniform(const std::string & name, const glm::ivec2 & t) const {
+	if(_uniforms.count(name) != 0) {
+		glUniform2iv(_uniforms.at(name), 1, &t[0]);
+	}
+}
+
+void Program::uniform(const std::string & name, const glm::ivec3 & t) const {
+	if(_uniforms.count(name) != 0) {
+		glUniform3iv(_uniforms.at(name), 1, &t[0]);
+	}
+}
+
+void Program::uniform(const std::string & name, const glm::ivec4 & t) const {
+	if(_uniforms.count(name) != 0) {
+		glUniform4iv(_uniforms.at(name), 1, &t[0]);
+	}
+}
+
 void Program::uniform(const std::string & name, const glm::mat3 & t) const {
 	if(_uniforms.count(name) != 0) {
 		glUniformMatrix3fv(_uniforms.at(name), 1, GL_FALSE, &t[0][0]);
@@ -278,6 +296,24 @@ void Program::getUniform(const std::string & name, glm::vec3 & t) const {
 void Program::getUniform(const std::string & name, glm::vec4 & t) const {
 	if(_uniforms.count(name) != 0) {
 		glGetUniformfv(_id, _uniforms.at(name), &t[0]);
+	}
+}
+
+void Program::getUniform(const std::string & name, glm::ivec2 & t) const {
+	if(_uniforms.count(name) != 0) {
+		glGetUniformiv(_id, _uniforms.at(name), &t[0]);
+	}
+}
+
+void Program::getUniform(const std::string & name, glm::ivec3 & t) const {
+	if(_uniforms.count(name) != 0) {
+		glGetUniformiv(_id, _uniforms.at(name), &t[0]);
+	}
+}
+
+void Program::getUniform(const std::string & name, glm::ivec4 & t) const {
+	if(_uniforms.count(name) != 0) {
+		glGetUniformiv(_id, _uniforms.at(name), &t[0]);
 	}
 }
 
