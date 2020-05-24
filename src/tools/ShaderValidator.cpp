@@ -108,7 +108,9 @@ int main(int argc, char ** argv) {
 	const std::map<ShaderType, std::string> types = {
 		{ShaderType::VERTEX, "vert" },
 		{ShaderType::GEOMETRY, "geom" },
-		{ShaderType::FRAGMENT, "frag" }
+		{ShaderType::FRAGMENT, "frag" },
+		{ShaderType::TESSCONTROL, "tessc" },
+		{ShaderType::TESSEVAL, "tesse" }
 	};
 	bool encounteredIssues = false;
 	
