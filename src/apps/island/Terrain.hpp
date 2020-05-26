@@ -27,6 +27,21 @@ public:
 		int size = 112;
 		int levels = 4;
 	};
+
+	struct ErosionSettings {
+		float inertia = 0.6f;
+		float gravity = 10.0f;
+		float minSlope = 0.01f;
+		float capacityBase = 12.0f;
+		float erosion = 0.75f;
+		float evaporation = 0.02f;
+		float deposition = 0.2f;
+		int gatherRadius = 3;
+		int dropsCount = 50000;
+		int stepsMax = 256;
+		bool apply = true;
+	};
+
 	/** Constructor
 	 \param config rendering config
 	 */
@@ -57,6 +72,9 @@ public:
 	}
 
 private:
+
+	void erode(Image & img);
+
 	void transferAndUpdateMap(Image & heightMap);
 
 	PerlinNoise _perlin;
@@ -65,6 +83,8 @@ private:
 
 	GenerationSettings _genOpts;
 	MeshSettings _mshOpts;
+	ErosionSettings _erOpts;
+
 	int _resolution;
 	uint _seed;
 	float _texelSize = 0.05f;

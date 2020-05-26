@@ -137,9 +137,113 @@ void Terrain::generateMap(){
 			heightMap.r(x,y) = _genOpts.maxHeight * (scale * (val + 1.0f) - 1.0f);
 		}
 	}
+	// Erosion.
+	if(_erOpts.apply){
+		erode(heightMap);
+	}
+
 	// Compute normals and mips.
 	transferAndUpdateMap(heightMap);
 
+}
+
+void Terrain::erode(Image & img){
+
+	const glm::ivec2 maxPos = glm::ivec2(img.width-1);
+	for(int did = 0; did < _erOpts.dropsCount; ++did){
+		// Draw a point at random.
+		glm::vec2 pos(Random::Float(0.0f, maxPos[0]), Random::Float(0.0f, maxPos[1]));
+		glm::vec2 dir(0.0f, 0.0f);
+		float velocity = 1.0f;
+		float water = 1.0f;
+		float sediment = 0.0f;
+
+		for(int sid = 0; sid < _erOpts.stepsMax; ++sid){
+			if(water < 0.00001f){
+				break;
+			}
+			// Gradient computation based on the four surrounding texels.
+			glm::ivec2 ipos = glm::floor(pos); // nodeXY
+			ipos = glm::clamp(ipos, glm::ivec2(0), maxPos);
+			const glm::ivec2 inpos = glm::min(ipos+1, maxPos);
+
+			const glm::vec2 dpos = pos - glm::vec2(ipos); // cellOffset
+			const float h00 = img.r( ipos[0],  ipos[1]);
+			const float h10 = img.r(inpos[0],  ipos[1]);
+			const float h01 = img.r( ipos[0], inpos[1]);
+			const float h11 = img.r(inpos[0], inpos[1]);
+			const glm::vec2 grad((h10 - h00) * (1.0f - dpos.y) + (h11 - h01) * (dpos.y),
+								 (h01 - h00) * (1.0f - dpos.x) + (h11 - h10) * (dpos.x));
+
+			// We go down the slope, with some inertia.
+			dir = _erOpts.inertia * dir - (1.0f - _erOpts.inertia) * grad;
+			if(dir[0] != 0.0f || dir[1] != 0.0f){
+				dir = glm::normalize(dir);
+			}
+
+			const glm::vec2 oldPos = pos;
+			pos += dir;
+
+			if((dir[0] == 0.0f && dir[1] == 0.0f) || pos[0] < 0.0f || pos[1] < 0.0f || pos[0] >= maxPos[0] || pos[1] >= maxPos[1]){
+				break;
+			}
+			const float oldHeight = h00 * (1.0f - dpos.x) * (1.0f - dpos.y) + h10 * (1.0f - dpos.y) * dpos.x + h01 * (1.0f - dpos.x) * dpos.y + h11 * dpos.x * dpos.y;
+			float newHeight = oldHeight;
+			{
+				glm::ivec2 nipos = glm::floor(pos);
+				nipos = glm::clamp(nipos, glm::ivec2(0), maxPos);
+				const glm::ivec2 ninpos = glm::min(nipos+1, maxPos);
+				const glm::vec2 ndpos = pos - glm::vec2(nipos);
+				const float nh00 = img.r( nipos[0],  nipos[1]);
+				const float nh10 = img.r(ninpos[0],  nipos[1]);
+				const float nh01 = img.r( nipos[0], ninpos[1]);
+				const float nh11 = img.r(ninpos[0], ninpos[1]);
+				newHeight = nh00 * (1.0f - ndpos.x) * (1.0f - ndpos.y) + nh10 * (1.0f - ndpos.y) * ndpos.x + nh01 * (1.0f - ndpos.x) * ndpos.y + nh11 * ndpos.x * ndpos.y;
+			}
+
+			const float dHeight = newHeight - oldHeight;
+			const float capacity = std::max(-dHeight, _erOpts.minSlope) * velocity * water * _erOpts.capacityBase;
+
+			if(sediment > capacity || dHeight > 0.0){
+				// Deposit at the old location.
+				const float deposit = dHeight > 0.0 ? std::min(sediment, dHeight) : ((sediment - capacity) * _erOpts.deposition);
+				sediment -= deposit;
+				img.r( ipos[0],  ipos[1]) += (1.0f - dpos.x) * (1.0f - dpos.y) * deposit;
+				img.r( ipos[0], inpos[1]) += (1.0f - dpos.x) * (dpos.y) * deposit;
+				img.r(inpos[0],  ipos[1]) += (dpos.x) * (1.0f - dpos.y) * deposit;
+				img.r(inpos[0], inpos[1]) += (dpos.x) * (dpos.y) * deposit;
+			} else {
+
+				// Take some from the old location surroundings.
+				float gather = std::min((capacity - sediment) * _erOpts.erosion, -dHeight);
+				sediment += gather;
+				float total = 0.0f;
+				const int rad = _erOpts.gatherRadius;
+				const int tsize = 2*rad+1;
+				std::vector<std::vector<float>> wis(tsize, std::vector<float>(tsize));
+				for(int dy = -rad; dy <= rad; ++dy){
+					for(int dx = -rad; dx <= rad; ++dx){
+						const float wi = std::max(0.0f, rad - glm::distance(glm::vec2(ipos[0]+dx, ipos[1]+dy), oldPos));
+						total += wi;
+						wis[dy+rad][dx+rad] = wi;
+					}
+				}
+				for(int dy = -rad; dy <= rad; ++dy){
+					for(int dx = -rad; dx <= rad; ++dx){
+						const glm::ivec2 nnpos = ipos + glm::ivec2(dx, dy);
+						if(nnpos[0] < 0 || nnpos[1] < 0 || nnpos[0] > maxPos[0] || nnpos[1] > maxPos[1]){
+							continue;
+						}
+						img.r(nnpos[0], nnpos[1]) -= gather * wis[dy+rad][dx+rad]/total;
+					}
+				}
+
+			}
+			water *= (1.0 - _erOpts.evaporation);
+			velocity = std::sqrt(std::max(0.0f, velocity*velocity + dHeight * _erOpts.gravity));
+		}
+
+	}
 }
 
 void Terrain::transferAndUpdateMap(Image & heightMap){
@@ -228,7 +332,9 @@ void Terrain::interface(){
 		}
 		ImGui::TreePop();
 	}
+
 	bool dirtyTerrain = false;
+	bool dirtyErosion = false;
 
 	if(ImGui::TreeNode("Perlin FBM")){
 		dirtyTerrain = ImGui::InputInt("Resolution", &_resolution) || dirtyTerrain;
@@ -240,6 +346,24 @@ void Terrain::interface(){
 		dirtyTerrain = ImGui::SliderFloat("Falloff", &_genOpts.falloff, 1.0f, 10.0f) || dirtyTerrain;
 		dirtyTerrain = ImGui::SliderFloat("Rescale", &_genOpts.rescale, 0.5f, 3.0f) || dirtyTerrain;
 		ImGui::TreePop();
+	}
+
+	if(ImGui::TreeNode("Erosion")){
+		dirtyErosion = ImGui::Checkbox("Apply erosion", &_erOpts.apply) || dirtyErosion;
+		dirtyErosion = ImGui::InputInt("Drops count", &_erOpts.dropsCount) || dirtyErosion;
+		dirtyErosion = ImGui::InputInt("Drop step", &_erOpts.stepsMax) || dirtyErosion;
+		dirtyErosion = ImGui::InputInt("Gather radius", &_erOpts.gatherRadius) || dirtyErosion;
+		dirtyErosion = ImGui::SliderFloat("Inertia", &_erOpts.inertia, 0.0f, 1.0f) || dirtyErosion;
+		dirtyErosion = ImGui::SliderFloat("Gravity", &_erOpts.gravity, 2.0f, 18.0f) || dirtyErosion;
+		dirtyErosion = ImGui::SliderFloat("Min Slope", &_erOpts.minSlope, 0.0f, 0.1f) || dirtyErosion;
+		dirtyErosion = ImGui::SliderFloat("Capacity Base", &_erOpts.capacityBase, 2.0f, 16.0f) || dirtyErosion;
+		dirtyErosion = ImGui::SliderFloat("Erosion", &_erOpts.erosion, 0.0f, 1.0f) || dirtyErosion;
+		dirtyErosion = ImGui::SliderFloat("Evaporation", &_erOpts.evaporation, 0.0f, 0.1f) || dirtyErosion;
+		dirtyErosion = ImGui::SliderFloat("Deposition", &_erOpts.deposition, 0.0f, 1.0f) || dirtyErosion;
+		ImGui::TreePop();
+	}
+	if(dirtyTerrain || dirtyErosion){
+		generateMap();
 	}
 }
 
