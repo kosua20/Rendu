@@ -176,6 +176,9 @@ project("ImageFiltering")
 project("ShaderBench")
 	AppSetup("shaderbench")
 
+project("Island")
+	AppSetup("Island")
+
 
 group("Tools")
 
