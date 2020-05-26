@@ -57,6 +57,8 @@ public:
 	}
 
 private:
+	void transferAndUpdateMap(Image & heightMap);
+
 	PerlinNoise _perlin;
 	Mesh _mesh;
 	Texture _map;

@@ -137,8 +137,86 @@ void Terrain::generateMap(){
 			heightMap.r(x,y) = _genOpts.maxHeight * (scale * (val + 1.0f) - 1.0f);
 		}
 	}
+	// Compute normals and mips.
+	transferAndUpdateMap(heightMap);
 
 }
+
+void Terrain::transferAndUpdateMap(Image & heightMap){
+
+	_map.width = _map.height = _resolution;
+	_map.levels = _map.depth = 1;
+	_map.shape = TextureShape::D2;
+	_map.clean();
+
+	_map.images.emplace_back(_map.width, _map.height, 4);
+	const glm::ivec2 maxPos = glm::ivec2(_map.width-1);
+	const int rad = 4;
+	const float dWorld = 2.0f * float(rad) * _texelSize;
+	for(uint y = 0; y < _map.height; ++y){
+		for(uint x = 0; x < _map.width; ++x){
+			// Compute normal using smooth finite differences.
+			glm::vec2 dh(0.0f);
+			float total = 0.0f;
+			for(int ds = -2; ds < 2; ++ds){
+				const float weight = 1.0f / (std::abs(ds) + 1.0f);
+				total += weight;
+				for(int dds = 1; dds <= rad; ++dds){
+
+					const glm::ivec2 pixXp = glm::clamp(glm::ivec2(x + dds, y + ds), glm::ivec2(0), maxPos);
+					const float heightXp = heightMap.r(pixXp[0], pixXp[1]);
+					const glm::ivec2 pixXm = glm::clamp(glm::ivec2(x - dds, y - ds), glm::ivec2(0), maxPos);
+					const float heightXm = heightMap.r(pixXm[0], pixXm[1]);
+					dh[0] += weight * (heightXp - heightXm);
+
+					const glm::ivec2 pixZp = glm::clamp(glm::ivec2(x + ds, y + dds), glm::ivec2(0), maxPos);
+					const float heightZp = heightMap.r(pixZp[0], pixZp[1]);
+					const glm::ivec2 pixZm = glm::clamp(glm::ivec2(x - ds, y - dds), glm::ivec2(0), maxPos);
+					const float heightZm = heightMap.r(pixZm[0], pixZm[1]);
+					dh[1] += weight * (heightZp - heightZm);
+				}
+			}
+			dh /= (float(rad) * total);
+
+			glm::vec3 n = glm::cross(glm::vec3(0.0f, dh[1], dWorld), glm::vec3(dWorld, dh[0], 0.0f));
+			n = glm::normalize(n);
+
+			_map.images[0].rgba(x,y) = glm::vec4(heightMap.r(x,y), n);
+
+		}
+	}
+	
+	// Build mipmaps.
+	_map.levels = _map.getMaxMipLevel();
+	std::array<float, 9> weights = {1.0f/16.0f, 1.0f/8.0f, 1.0f/16.0f, 1.0f/8.0f, 1.0f/4.0f, 1.0f/8.0f, 1.0f/16.0f, 1.0f/8.0f, 1.0f/16.0f};
+	for(uint lid = 1; lid < _map.levels; ++lid){
+		const uint w = _map.width / (1 << lid);
+		const uint h = _map.height / (1 << lid);
+		_map.images.emplace_back(w, h, 4);
+		const glm::ivec2 maxPos(w*2-1, h*2-1);
+		Image & currImg = _map.images[lid];
+		Image & prevImg = _map.images[lid-1];
+		for(uint y = 0; y < h; ++y){
+			for(uint x = 0; x < w; ++x){
+				const glm::vec2 prevCoords = 2.0f * glm::vec2(x,y) - 0.5f;
+				glm::vec4 total(0.0f);
+				for(int dy = -1; dy <= 1; ++dy){
+					for(int dx = -1; dx <= 1; ++dx){
+						glm::ivec2 coords = glm::ivec2(prevCoords + glm::vec2(dx, dy));
+						coords = glm::clamp(coords, glm::ivec2(0), maxPos);
+						const float & weight = weights[3*dy + dx];
+						total += weight * prevImg.rgba(coords[0], coords[1]);
+					}
+				}
+				currImg.rgba(x,y) = total;
+			}
+		}
+	}
+	
+	// Send to the GPU.
+	_map.upload({Layout::RGBA32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, false);
+}
+
 void Terrain::interface(){
 
 	if(ImGui::TreeNode("Mesh")){
