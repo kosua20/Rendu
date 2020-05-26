@@ -3,6 +3,7 @@
 
 Terrain::Terrain(uint resolution, uint seed) : _resolution(resolution), _seed(seed) {
 	generateMesh();
+	generateMap();
 }
 
 void Terrain::generateMesh(){
@@ -116,6 +117,28 @@ void Terrain::generateMesh(){
 	_mesh.upload();
 }
 
+void Terrain::generateMap(){
+
+	Random::seed(_seed);
+
+	Image heightMap(_resolution, _resolution, 1);
+	// Generate FBM noise with multiple layers of Perlin noise.
+	_perlin.generateLayers(heightMap, _genOpts.octaves, _genOpts.gain, _genOpts.lacunarity, _genOpts.scale);
+
+	// Adjust to create the island overall shape and scale.
+	const float invSize = 1.0f/float(heightMap.width);
+	for(uint y = 0; y < heightMap.height; ++y){
+		for(uint x = 0; x < heightMap.width; ++x){
+			// Compute UV.
+			const glm::vec2 uv = 2.0f * invSize * glm::vec2(x,y) - 1.0f;
+			const float dst2 = glm::dot(uv, uv);
+			const float scale = _genOpts.rescale * std::pow(std::max(1.0f - dst2, 0.0f), _genOpts.falloff);
+			const float val = heightMap.r(x,y);
+			heightMap.r(x,y) = _genOpts.maxHeight * (scale * (val + 1.0f) - 1.0f);
+		}
+	}
+
+}
 void Terrain::interface(){
 
 	if(ImGui::TreeNode("Mesh")){
@@ -125,6 +148,19 @@ void Terrain::interface(){
 		if(ImGui::Button("Update mesh")){
 			generateMesh();
 		}
+		ImGui::TreePop();
+	}
+	bool dirtyTerrain = false;
+
+	if(ImGui::TreeNode("Perlin FBM")){
+		dirtyTerrain = ImGui::InputInt("Resolution", &_resolution) || dirtyTerrain;
+		dirtyTerrain = ImGui::InputInt("Octaves", &_genOpts.octaves) || dirtyTerrain;
+		dirtyTerrain = ImGui::SliderFloat("Lacunarity", &_genOpts.lacunarity, 0.0f, 10.0f) || dirtyTerrain;
+		dirtyTerrain = ImGui::SliderFloat("Gain", &_genOpts.gain, 0.0f, 1.0f) || dirtyTerrain;
+		dirtyTerrain = ImGui::SliderFloat("Scale", &_genOpts.scale, 0.0f, 0.1f) || dirtyTerrain;
+		dirtyTerrain = ImGui::SliderFloat("Max height", &_genOpts.maxHeight, 1.0f, 10.0f) || dirtyTerrain;
+		dirtyTerrain = ImGui::SliderFloat("Falloff", &_genOpts.falloff, 1.0f, 10.0f) || dirtyTerrain;
+		dirtyTerrain = ImGui::SliderFloat("Rescale", &_genOpts.rescale, 0.5f, 3.0f) || dirtyTerrain;
 		ImGui::TreePop();
 	}
 }

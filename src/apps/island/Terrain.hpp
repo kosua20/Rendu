@@ -12,6 +12,16 @@
 class Terrain {
 public:
 
+	// Terrain options.
+	struct GenerationSettings {
+		float lacunarity = 2.0f;
+		float gain = 0.5f;
+		float scale = 0.02f;
+		float maxHeight = 2.5f;
+		float falloff = 4.0f;
+		float rescale = 1.5f;
+		int octaves = 8;
+	};
 
 	struct MeshSettings {
 		int size = 112;
@@ -24,6 +34,7 @@ public:
 
 	void generateMesh();
 
+	void generateMap();
 
 	void interface();
 
@@ -46,9 +57,11 @@ public:
 	}
 
 private:
+	PerlinNoise _perlin;
 	Mesh _mesh;
 	Texture _map;
 
+	GenerationSettings _genOpts;
 	MeshSettings _mshOpts;
 	int _resolution;
 	uint _seed;
