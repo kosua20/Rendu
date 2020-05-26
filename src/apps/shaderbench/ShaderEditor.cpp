@@ -3,7 +3,7 @@
 #include "system/System.hpp"
 #include "graphics/GLUtilities.hpp"
 #include "graphics/ScreenQuad.hpp"
-#include "system/Random.hpp"
+#include "generation/Random.hpp"
 #include "system/TextUtilities.hpp"
 #include "resources/Texture.hpp"
 

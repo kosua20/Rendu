@@ -1,4 +1,4 @@
-#include "system/Random.hpp"
+#include "generation/Random.hpp"
 
 void Random::seed() {
 	std::random_device rd;

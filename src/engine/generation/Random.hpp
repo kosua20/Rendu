@@ -6,7 +6,7 @@
 
 /**
  \brief Generate seedable random numbers of various types and in multiple intervals. Handles per-thread random number generators.
- \ingroup System
+ \ingroup Generation
  */
 class Random {
 public:

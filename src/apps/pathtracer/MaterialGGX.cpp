@@ -1,6 +1,6 @@
 #include "MaterialGGX.hpp"
 #include "system/System.hpp"
-#include "system/Random.hpp"
+#include "generation/Random.hpp"
 
 glm::vec3 MaterialGGX::F(glm::vec3 F0, float VdotH){
 	return F0 + std::pow(1.0f - VdotH, 5.0f) * (glm::vec3(1.0f) - F0);

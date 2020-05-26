@@ -1,7 +1,7 @@
 #include "PathTracerApp.hpp"
 #include "scene/Scene.hpp"
 #include "resources/ResourcesManager.hpp"
-#include "system/Random.hpp"
+#include "generation/Random.hpp"
 #include "system/System.hpp"
 #include "system/Window.hpp"
 #include "system/Config.hpp"

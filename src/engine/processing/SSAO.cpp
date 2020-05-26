@@ -1,5 +1,5 @@
 #include "processing/SSAO.hpp"
-#include "system/Random.hpp"
+#include "generation/Random.hpp"
 #include "graphics/GPUObjects.hpp"
 #include "graphics/GLUtilities.hpp"
 #include "graphics/ScreenQuad.hpp"

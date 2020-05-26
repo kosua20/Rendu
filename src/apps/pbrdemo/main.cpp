@@ -1,5 +1,5 @@
 #include "PBRDemo.hpp"
-#include "system/Random.hpp"
+#include "generation/Random.hpp"
 #include "input/Input.hpp"
 #include "system/Window.hpp"
 #include "system/System.hpp"

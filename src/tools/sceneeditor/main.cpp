@@ -4,7 +4,7 @@
 #include "input/Input.hpp"
 #include "system/Window.hpp"
 #include "system/System.hpp"
-#include "system/Random.hpp"
+#include "generation/Random.hpp"
 #include "Common.hpp"
 #include <map>
 

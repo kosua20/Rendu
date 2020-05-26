@@ -10,7 +10,10 @@
  \defgroup Graphics Graphics
  \brief Contain items and functions interacting with the graphics API.
  \details This module provides wrapper around GPU primitives, such as framebuffers, textures, meshes and shader programs. Utilities are also provided to render screen quads, alter the rendering state and populate/save GPU data. The interface is currently based on the OpenGL API.
- 
+
+ \defgroup Generation Generation
+ \brief Generation of randomness, noise and other procedural content.
+ \details Utilities can be used to randomly samples various spaces and distributions, and to generate image content following certain procedural rules (Perlin noise,...).
  
  \defgroup Input Input
  \brief Handle user input through keyboard, mouse and controllers and provide controllable cameras.

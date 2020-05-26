@@ -5,7 +5,7 @@
 #include "scene/Sky.hpp"
 
 #include "system/System.hpp"
-#include "system/Random.hpp"
+#include "generation/Random.hpp"
 #include "system/Query.hpp"
 
 PathTracer::PathTracer(const std::shared_ptr<Scene> & scene) {

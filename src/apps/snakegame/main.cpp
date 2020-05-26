@@ -1,7 +1,7 @@
 #include "Game.hpp"
 
 #include "input/Input.hpp"
-#include "system/Random.hpp"
+#include "generation/Random.hpp"
 #include "system/Window.hpp"
 #include "system/System.hpp"
 #include "resources/ResourcesManager.hpp"
