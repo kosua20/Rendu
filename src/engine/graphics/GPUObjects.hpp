@@ -464,6 +464,7 @@ public:
 	enum class Type : uint {
 		TIME_ELAPSED, ///< Time taken by GPU operations between the beginning and end of the query.
 		SAMPLES_DRAWN, ///< Number of samples passing the tests while the query is active.
+		PRIMITIVES_GENERATED, 
 		ANY_DRAWN ///< Was any sample drawn while the query was active.
 	};
 

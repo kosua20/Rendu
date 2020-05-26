@@ -68,7 +68,8 @@ GPUQuery::GPUQuery(Type type) {
 	static const std::map<GPUQuery::Type, GLenum> types = {
 		{ Type::TIME_ELAPSED, GL_TIME_ELAPSED},
 		{ Type::SAMPLES_DRAWN, GL_SAMPLES_PASSED},
-		{ Type::ANY_DRAWN, GL_ANY_SAMPLES_PASSED}
+		{ Type::ANY_DRAWN, GL_ANY_SAMPLES_PASSED},
+		{ Type::PRIMITIVES_GENERATED, GL_PRIMITIVES_GENERATED}
 	};
 	_internalType = types.at(type);
 	glGenQueries(GLsizei(_ids.size()), &_ids[0]);
