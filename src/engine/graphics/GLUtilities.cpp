@@ -375,6 +375,11 @@ void GLUtilities::bindTexture(const Texture * texture, size_t slot) {
 	glBindTexture(texture->gpu->target, texture->gpu->id);
 }
 
+void GLUtilities::bindTexture(const Texture & texture, size_t slot) {
+	glActiveTexture(GLenum(GL_TEXTURE0 + slot));
+	glBindTexture(texture.gpu->target, texture.gpu->id);
+}
+
 void GLUtilities::bindTextures(const std::vector<const Texture *> & textures, size_t startingSlot) {
 	for(size_t i = 0; i < textures.size(); ++i) {
 		const Texture * infos = textures[i];

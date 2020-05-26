@@ -96,6 +96,12 @@ public:
 	const glm::vec3 & center() const { return _center; }
 
 	/**
+	 Obtain the current world space view direction.
+	 \return the current direction
+	 */
+	const glm::vec3 direction() const { return glm::normalize(_center - _eye); }
+
+	/**
 	 Obtain the current world space camera position.
 	 \return the current position
 	 */

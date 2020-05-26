@@ -99,6 +99,12 @@ public:
 	 \param slot the binding slot
 	 */
 	static void bindTexture(const Texture * texture, size_t slot);
+
+	/** Bind a texture to some texture slot.
+	 \param texture the infos of the texture to bind
+	 \param slot the binding slot
+	 */
+	static void bindTexture(const Texture & texture, size_t slot);
 	
 	/** Bind a series of textures to some texture slots, in order.
 	 \param textures the infos of the textures to bind
