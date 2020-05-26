@@ -137,6 +137,29 @@ void Terrain::generateMap(){
 			heightMap.r(x,y) = _genOpts.maxHeight * (scale * (val + 1.0f) - 1.0f);
 		}
 	}
+	// Then smooth to avoid pinches.
+	Image dst(heightMap.width, heightMap.height, 1);
+	for(int y = 0; y < int(heightMap.height); ++y){
+		for(int x = 0; x < int(heightMap.width); ++x){
+			const int xm = std::max(x-1, 0);
+			const int xp = std::min(x+1, int(heightMap.width)-1);
+			const int ym = std::max(y-1, 0);
+			const int yp = std::min(y+1, int(heightMap.height)-1);
+			const float & rN = heightMap.r(xm, y);
+			const float & rS = heightMap.r(xp, y);
+			const float & rW = heightMap.r(x, ym);
+			const float & rE = heightMap.r(x, yp);
+			const float & r  = heightMap.r(x,y);
+			const float newHeight = 0.35f * r + 0.25f * 0.65f * (rN + rS + rW + rE);
+			dst.r(x,y) = newHeight;
+		}
+	}
+	for(int y = 0; y < int(_map.height); ++y){
+		for(int x = 0; x < int(_map.width); ++x){
+			heightMap.r(x,y) = dst.r(x,y);
+		}
+	}
+
 	// Erosion.
 	if(_erOpts.apply){
 		erode(heightMap);
