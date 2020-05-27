@@ -11,6 +11,9 @@ void Terrain::generateMesh(){
 	const int numLevels = _mshOpts.levels;
 	const int baseLevelTexelSize = _mshOpts.size;
 	const int elementCount = baseLevelTexelSize/2;
+	// Update the world space mesh side size.
+	_meshSize = float((1 << numLevels) * (elementCount + 1));
+
 	std::vector<glm::vec3> positions;
 	std::vector<uint> indices;
 	uint baseId = 0;
@@ -19,7 +22,6 @@ void Terrain::generateMesh(){
 		const int currSize = 1 << lid;
 		const int currHalfSize = currSize/2;
 		const int prevSize = std::max(1 << (lid-1), 0);
-
 		const int rad = currSize * (elementCount + 1);
 
 		for(int z = -rad; z < rad; z += currSize){
@@ -137,6 +139,7 @@ void Terrain::generateMap(){
 			heightMap.r(x,y) = _genOpts.maxHeight * (scale * (val + 1.0f) - 1.0f);
 		}
 	}
+
 	// Then smooth to avoid pinches.
 	Image dst(heightMap.width, heightMap.height, 1);
 	for(int y = 0; y < int(heightMap.height); ++y){
@@ -154,8 +157,8 @@ void Terrain::generateMap(){
 			dst.r(x,y) = newHeight;
 		}
 	}
-	for(int y = 0; y < int(_map.height); ++y){
-		for(int x = 0; x < int(_map.width); ++x){
+	for(int y = 0; y < int(heightMap.height); ++y){
+		for(int x = 0; x < int(heightMap.width); ++x){
 			heightMap.r(x,y) = dst.r(x,y);
 		}
 	}

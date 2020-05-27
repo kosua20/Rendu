@@ -63,6 +63,10 @@ public:
 		return _mshOpts.size;
 	}
 
+	float meshSize() const {
+		return _meshSize * _texelSize;
+	}
+
 	const Texture & map() const {
 		return _map;
 	}
@@ -88,5 +92,6 @@ private:
 	int _resolution;
 	uint _seed;
 	float _texelSize = 0.05f;
+	float _meshSize = 0.0f;
 
 };
