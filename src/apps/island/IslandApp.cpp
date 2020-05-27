@@ -1,4 +1,4 @@
-
+#include "IslandApp.hpp"
 
 IslandApp::IslandApp(RenderingConfig & config) : CameraApp(config) {
 	_userCamera.projection(config.screenResolution[0] / config.screenResolution[1], 1.34f, 0.1f, 100.0f);
@@ -26,6 +26,8 @@ IslandApp::IslandApp(RenderingConfig & config) : CameraApp(config) {
 
 	checkGLError();
 
+}
+
 void IslandApp::draw() {
 
 	const glm::mat4 camToWorld = glm::inverse(_userCamera.view());
@@ -36,6 +38,9 @@ void IslandApp::draw() {
 
 	const glm::vec3 camDir = _userCamera.direction();
 	const glm::vec3 frontPos = _userCamera.position() + camDir;
+	// Clamp based on the terrain heightmap dimensions in world space.
+	const float extent = 0.5f * std::abs(float(_terrain->map().width) * _terrain->texelSize() - 0.5f*_terrain->meshSize());
+	const glm::vec3 frontPosClamped = glm::clamp(frontPos, -extent, extent);
 
 
 	// Draw the atmosphere.
@@ -48,7 +53,7 @@ void IslandApp::draw() {
 	// Render the ground.
 	_groundProgram->use();
 	_groundProgram->uniform("mvp", mvp);
-	_groundProgram->uniform("shift", frontPos);
+	_groundProgram->uniform("shift", frontPosClamped);
 
 	_groundProgram->uniform("maxLevelX", _maxLevelX);
 	_groundProgram->uniform("maxLevelY", _maxLevelY);
@@ -102,8 +107,9 @@ void IslandApp::draw() {
 void IslandApp::update() {
 	CameraApp::update();
 
+	_prims.value();
 	if(ImGui::Begin("Island")){
-		ImGui::Text("%.1f ms, %.1f fps", ImGui::GetIO().DeltaTime * 1000.0f, ImGui::GetIO().Framerate);
+		ImGui::Text("%.1f ms, %.1f fps", frameTime() * 1000.0f, frameRate());
 		ImGui::Text("Ground: %llu primitives.", _prims.value());
 		if(ImGui::DragFloat3("Light dir", &_lightDirection[0], 0.05f, -1.0f, 1.0f)) {
 			_lightDirection = glm::normalize(_lightDirection);
