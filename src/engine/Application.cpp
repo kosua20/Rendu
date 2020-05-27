@@ -7,6 +7,8 @@
 
 Application::Application(RenderingConfig & config) :
 	_config(config) {
+	_startTime = System::time();
+	_timer = _startTime;
 }
 
 void Application::update() {
@@ -27,10 +29,26 @@ void Application::update() {
 	if(Input::manager().triggered(Input::Key::P)) {
 		Resources::manager().reload();
 	}
+
+	// Compute the time elapsed since last frame
+	const double currentTime = System::time();
+	_frameTime		 = currentTime - _timer;
+	_timer			 = currentTime;
+}
+
+double Application::timeElapsed(){
+	return _timer - _startTime;
+}
+
+double Application::frameTime(){
+	return _frameTime;
+}
+
+double Application::frameRate(){
+	return 1.0 / _frameTime;
 }
 
 CameraApp::CameraApp(RenderingConfig & config) : Application(config) {
-	_timer = System::time();
 	_userCamera.ratio(config.screenResolution[0] / config.screenResolution[1]);
 }
 
@@ -39,18 +57,11 @@ void CameraApp::update(){
 	_userCamera.update();
 	
 	// We separate punctual events from the main physics/movement update loop.
-	// Compute the time elapsed since last frame
-	const double currentTime = System::time();
-	double frameTime		 = currentTime - _timer;
-	_timer					 = currentTime;
-	
 	// Physics simulation
 	// First avoid super high frametime by clamping.
-	if(frameTime > 0.2) {
-		frameTime = 0.2;
-	}
+	const double frameTimeUpdate = std::min(frameTime(), 0.2);
 	// Accumulate new frame time.
-	_remainingTime += frameTime;
+	_remainingTime += frameTimeUpdate;
 	// Instead of bounding at dt, we lower our requirement (1 order of magnitude).
 	while(_remainingTime > 0.2 * _dt) {
 		const double deltaTime = std::min(_remainingTime, _dt);
@@ -72,8 +83,3 @@ void CameraApp::physics(double, double){
 void CameraApp::freezeCamera(bool shouldFreeze){
 	_freezeCamera = shouldFreeze;
 }
-
-double CameraApp::timeElapsed(){
-	return _timer;
-}
-

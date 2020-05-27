@@ -26,6 +26,15 @@ public:
 	/** Handle a window resize event, the configuration has been updated with the new size. */
 	virtual void resize() = 0;
 
+	/// \return the time elapsed since launch
+	double timeElapsed();
+
+	/// \return the last frame time
+	double frameTime();
+
+	/// \return the current frame rate
+	double frameRate();
+
 	/** Destructor */
 	virtual ~Application() = default;
 
@@ -48,6 +57,13 @@ public:
 protected:
 
 	RenderingConfig & _config; ///< The current configuration.
+
+private:
+
+	double _timer = 0.0; 		///< Absolute timer.
+	double _startTime = 0.0; 	///< TImer value at app start.
+	double _frameTime = 0.0; 	///< Last frame duration.
+
 };
 
 /**
@@ -81,13 +97,9 @@ protected:
 	
 	ControllableCamera _userCamera; ///< The interactive camera.
 
-	/// \return the time elapsed since launch
-	double timeElapsed();
-
 private:
 	
 	bool _freezeCamera    = false; 	///< Should the camera be frozen.
-	double _timer		  = 0.0; 	///< Absolute timer.
 	double _fullTime	  = 0.0; 	///< Time elapsed since the app launch.
 	double _remainingTime = 0.0;	///< Remaining accumulated time to process.
 	const double _dt = 1.0 / 120.0; ///< Small physics timestep.
