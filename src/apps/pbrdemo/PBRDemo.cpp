@@ -196,7 +196,7 @@ void PBRDemo::update() {
 
 	// Performances window.
 	if(ImGui::Begin("Performance")){
-		ImGui::Text("%.1f ms, %.1f fps", ImGui::GetIO().DeltaTime * 1000.0f, ImGui::GetIO().Framerate);
+		ImGui::Text("%.1f ms, %.1f fps", frameTime() * 1000.0f, frameRate());
 		ImGui::Text("Shadow maps update: %05.1fms", float(_shadowTime.value())/1000000.0f);
 		ImGui::Text("Probes update: %05.1fms", float(_probesTime.value())/1000000.0f);
 		ImGui::Text("Probes integration: %05.1fms", float(_inteTime.value())/1000000.0f);

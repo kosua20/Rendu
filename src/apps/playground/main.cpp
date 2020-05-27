@@ -119,7 +119,7 @@ int main(int argc, char ** argv) {
 		ImGui::Text("ImGui is functional!");
 		ImGui::SameLine();
 		ImGui::Checkbox("Show demo", &showImGuiDemo);
-		ImGui::Text("%.1f FPS / %.1f ms", ImGui::GetIO().Framerate, ImGui::GetIO().DeltaTime * 1000.0f);
+		ImGui::Text("%.1f ms, %.1f fps", frameTime() * 1000.0f, frameRate());
 		ImGui::Separator();
 
 		ImGui::Text("OpengGL vendor: %s", vendor.c_str());

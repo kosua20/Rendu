@@ -115,7 +115,7 @@ void FilteringApp::update() {
 	ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_Once);
 	if(ImGui::Begin("Filtering")) {
 		// Infos.
-		ImGui::Text("%.2f ms, %.1f fps", ImGui::GetIO().DeltaTime * 1000.0f, 1.0f / ImGui::GetIO().DeltaTime);
+		ImGui::Text("%.1f ms, %.1f fps", frameTime() * 1000.0f, frameRate());
 		ImGui::Text("Input resolution: %ix%i", _sceneBuffer->width(), _sceneBuffer->height());
 		ImGui::Separator();
 

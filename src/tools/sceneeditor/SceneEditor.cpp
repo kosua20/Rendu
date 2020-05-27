@@ -69,7 +69,7 @@ void SceneEditor::update() {
 	
 	// Handle scene switching.
 	if(ImGui::Begin("Scene")) {
-		ImGui::Text("%.1f ms, %.1f fps", ImGui::GetIO().DeltaTime * 1000.0f, ImGui::GetIO().Framerate);
+		ImGui::Text("%.1f ms, %.1f fps", frameTime() * 1000.0f, frameRate());
 		
 		const std::string & currentName = _sceneNames[_currentScene];
 		if(ImGui::BeginCombo("Scene", currentName.c_str(), ImGuiComboFlags_None)) {
