@@ -53,6 +53,9 @@ private:
 	glm::vec3 _lightDirection; ///< Sun light direction.
 
 	std::unique_ptr<Terrain> _terrain;
-
+	
 	GPUQuery _prims = GPUQuery(GPUQuery::Type::PRIMITIVES_GENERATED);
+
+	bool _showTerrain = false;
+	bool _showOcean = true;
 };

@@ -48,16 +48,13 @@ void IslandApp::draw() {
 	_sceneBuffer->setViewport();
 	GLUtilities::setDepthState(true);
 	GLUtilities::clearColorAndDepth({0.0f,0.0f,0.0f,1.0f}, 1.0f);
+	_prims.begin();
 
-	//GLUtilities::setPolygonState(PolygonMode::LINE, Faces::ALL);
 	// Render the ground.
+	if(_showTerrain){
 	_groundProgram->use();
 	_groundProgram->uniform("mvp", mvp);
 	_groundProgram->uniform("shift", frontPosClamped);
-
-	_groundProgram->uniform("maxLevelX", _maxLevelX);
-	_groundProgram->uniform("maxLevelY", _maxLevelY);
-	_groundProgram->uniform("distanceScale", _distanceScale);
 	_groundProgram->uniform("lightDirection", _lightDirection);
 
 	_groundProgram->uniform("camPos", _userCamera.position());
@@ -67,11 +64,9 @@ void IslandApp::draw() {
 	_groundProgram->uniform("invMapSize", 1.0f/float(_terrain->map().width));
 	_groundProgram->uniform("invGridSize", 1.0f/float(_terrain->gridSize()));
 
-
 	GLUtilities::bindTexture(_terrain->map(), 0);
-	_prims.begin();
 	GLUtilities::drawMesh(_terrain->mesh());
-	_prims.end();
+
 	if(_showWire){
 		GLUtilities::setPolygonState(PolygonMode::LINE, Faces::ALL);
 		GLUtilities::setDepthState(true, DepthEquation::LEQUAL);
@@ -80,6 +75,9 @@ void IslandApp::draw() {
 		GLUtilities::setPolygonState(PolygonMode::FILL, Faces::ALL);
 		GLUtilities::setDepthState(true, DepthEquation::LESS);
 	}
+	}
+	_prims.end();
+
 	GLUtilities::setPolygonState(PolygonMode::FILL, Faces::ALL);
 
 	// Render the sky.
@@ -114,6 +112,10 @@ void IslandApp::update() {
 		if(ImGui::DragFloat3("Light dir", &_lightDirection[0], 0.05f, -1.0f, 1.0f)) {
 			_lightDirection = glm::normalize(_lightDirection);
 		}
+
+		ImGui::Checkbox("Terrain##showcheck", &_showTerrain);
+		ImGui::SameLine();
+		ImGui::Checkbox("Show wire", &_showWire);
 		if(ImGui::CollapsingHeader("Terrain")){
 			_terrain->interface();
 		}
