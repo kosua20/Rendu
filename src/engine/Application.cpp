@@ -9,6 +9,9 @@ Application::Application(RenderingConfig & config) :
 	_config(config) {
 	_startTime = System::time();
 	_timer = _startTime;
+	for(uint fid = 0; fid < _frameTimes.size(); ++fid){
+		_frameTimes[fid] = 0.0f;
+	}
 }
 
 void Application::update() {
@@ -34,6 +37,12 @@ void Application::update() {
 	const double currentTime = System::time();
 	_frameTime		 = currentTime - _timer;
 	_timer			 = currentTime;
+
+	// Keep accumulating smoothed time.
+	_smoothTime -= _frameTimes[_currFrame];
+	_frameTimes[_currFrame] = _frameTime;
+	_smoothTime += _frameTimes[_currFrame];
+	_currFrame = (_currFrame + 1) % _framesCount;
 }
 
 double Application::timeElapsed(){
@@ -45,7 +54,7 @@ double Application::frameTime(){
 }
 
 double Application::frameRate(){
-	return 1.0 / _frameTime;
+	return double(_framesCount) / _smoothTime;
 }
 
 CameraApp::CameraApp(RenderingConfig & config) : Application(config) {

@@ -32,7 +32,7 @@ public:
 	/// \return the last frame time
 	double frameTime();
 
-	/// \return the current frame rate
+	/// \return the frame rate, smoothed over the last 30 frames.
 	double frameRate();
 
 	/** Destructor */
@@ -64,6 +64,10 @@ private:
 	double _startTime = 0.0; 	///< TImer value at app start.
 	double _frameTime = 0.0; 	///< Last frame duration.
 
+	static const size_t _framesCount = 30;
+	std::array<double, _framesCount> _frameTimes;
+	double _smoothTime = 0.0;
+	size_t _currFrame = 0;
 };
 
 /**
