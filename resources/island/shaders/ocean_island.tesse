@@ -21,6 +21,7 @@ in INTERFACE {
 
 out INTERFACE {
 	vec3 pos;
+	vec3 srcPos;
 } Out ;
 
 void main(){
@@ -32,6 +33,8 @@ void main(){
 			gl_TessCoord.y);
 	worldPos.y = 0.0;
 
+	Out.srcPos = worldPos;
+	
 	// Apply perturbation.
 	// High frequency waves.
 	vec3 posDelta = vec3(0.0);

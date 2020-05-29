@@ -201,6 +201,7 @@ void IslandApp::draw() {
 		GLUtilities::bindTexture(_waterEffects->texture(1), 2);
 		GLUtilities::bindTexture(_waterEffectsBlur->texture(0), 3);
 		GLUtilities::bindTexture(_absorbScatterOcean, 4);
+		GLUtilities::bindTexture(_waveNormals, 5);
 		GLUtilities::drawTesselatedMesh(_oceanMesh, 4);
 
 		// Debug view.
@@ -232,6 +233,7 @@ void IslandApp::draw() {
 		GLUtilities::bindTexture(_waterEffects->texture(1), 2);
 		GLUtilities::bindTexture(_waterEffectsBlur->texture(0), 3);
 		GLUtilities::bindTexture(_absorbScatterOcean, 4);
+		GLUtilities::bindTexture(_waveNormals, 5);
 		GLUtilities::drawMesh(_farOceanMesh);
 
 		// Debug view.

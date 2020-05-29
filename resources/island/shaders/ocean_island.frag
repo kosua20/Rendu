@@ -22,6 +22,7 @@ layout(binding = 1) uniform sampler2D terrainColor;
 layout(binding = 2) uniform sampler2D terrainPos;
 layout(binding = 3) uniform sampler2D terrainColorBlur;
 layout(binding = 4) uniform sampler2D absorpScatterLUT;
+layout(binding = 5) uniform sampler2D waveNormals;
 
 layout(std140, binding = 0) uniform Waves {
 	Wave waves[8];
@@ -74,7 +75,14 @@ void main(){
 	tn.z += 1.0;
 	bn.x += 1.0;
 	nn.y += 1.0;
-	vec3 n = normalize(nn);
+	nn = normalize(nn);
+	bn = normalize(bn);
+	tn = normalize(tn);
+	mat3 tbn = mat3(tn, bn, nn);
+	// Read high frequency normal map based on undistorted world position.
+	vec2 warpUV = srcPos.xz;
+	vec3 warpN = texture(waveNormals, warpUV).xyz * 2.0 - 1.0;
+	vec3 n = normalize(tbn * mix(warpN, vec3(0.0,0.0,1.0), clamp(viewDist/10.0, 0.0, 1.0)));
 
 	vec2 screenUV = (gl_FragCoord.xy)*invTargetSize;
 	// Compute length of the ray underwater.
