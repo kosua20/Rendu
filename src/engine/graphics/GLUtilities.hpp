@@ -248,7 +248,7 @@ public:
 	 \param equation the test equation
 	 \param write should the depth be written to the depth buffer
 	 */
-	static void setDepthState(bool test, DepthEquation equation, bool write = false);
+	static void setDepthState(bool test, DepthEquation equation, bool write);
 
 	/** Enable or disable blending.
 	\param test should blending be enabled
