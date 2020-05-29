@@ -1,5 +1,6 @@
 #version 400
 in INTERFACE {
+	vec3 pos;
 	vec2 uv;
 } In ;
 
@@ -8,7 +9,8 @@ layout(binding=1) uniform sampler2D noiseTransition;
 layout(binding=2) uniform sampler2DArray materials;
 layout(binding=3) uniform sampler2DArray materialNormals;
 
-layout (location = 0) out vec4 fragColor;
+layout (location = 0) out vec3 fragColor;
+layout (location = 1) out vec3 fragWorldPos;
 
 uniform vec3 lightDirection;
 uniform bool debugCol;
@@ -22,6 +24,9 @@ const vec3 sunColor = vec3(1.474, 1.8504, 1.91198);
 
 /** Shade the object, applying lighting. */
 void main(){
+
+	fragWorldPos = In.pos;
+
 	// Get clean normal and height.
 	vec4 heightAndNor = textureLod(heightMap, In.uv, 0.0);
 	vec3 n = normalize(heightAndNor.yzw);
@@ -29,10 +34,10 @@ void main(){
 	// Determine materials to use based on terrain height and orientation.
 	float height = heightAndNor.x;
 	// Disturb normal to break transitions between biomes.
-	height += 1.5*textureLod(noiseTransition, In.uv*3.0, 0.0).x;
+	height -= abs(1.5*textureLod(noiseTransition, In.uv*3.0, 0.0).x);
 	float shoreToGround = smoothstep(0.0, 0.5, height);
 	float groundToMountain = smoothstep(2.0, 2.5, height);
-	float flatToSteep = pow(1.0-abs(n.y), 2.0);
+	float flatToSteep = clamp((1.0-1.2*abs(n.y))*8.0, 0.0, 1.0);
 	// Determine the four materials to blend (two regions, two orientations)
 	int id0Flat, id0Steep, id1Flat, id1Steep;
 	float regionTrans;
@@ -86,6 +91,5 @@ void main(){
 	if(debugCol){
 		color = vec3(0.9,0.9,0.9);
 	}
-
-	fragColor = vec4(color,1.0);
+	fragColor = color;
 }

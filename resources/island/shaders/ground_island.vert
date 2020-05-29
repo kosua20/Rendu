@@ -12,6 +12,7 @@ uniform float invGridSize;
 layout(binding=0) uniform sampler2D heightMap;
 
 out INTERFACE {
+	vec3 pos;
 	vec2 uv;
 } Out ;
 
@@ -45,4 +46,5 @@ void main(){
 	worldPos.y = mix(lowHeight, nextHeight, fracLod);
     gl_Position = mvp * vec4(worldPos, 1.0);
 	Out.uv = (uv + 0.5) * invMapSize + 0.5;
+	Out.pos = worldPos;
 }
