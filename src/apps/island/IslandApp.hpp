@@ -39,6 +39,8 @@ public:
 
 private:
 
+	void generateWaves();
+
 	std::unique_ptr<Framebuffer> _sceneBuffer; ///< Scene framebuffer.
 	const Mesh * _skyMesh;
 	Mesh _oceanMesh;
@@ -68,4 +70,11 @@ private:
 
 	bool _showTerrain = true;
 	bool _showOcean = true;
+
+	struct GerstnerWave {
+		glm::vec4 DiAngleActive = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+		glm::vec4 AQwp = glm::vec4(0.2f, 0.5f, 0.5f, 0.2f);
+	};
+	Buffer<GerstnerWave> _waves;
+	
 };

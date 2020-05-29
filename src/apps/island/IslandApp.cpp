@@ -1,6 +1,9 @@
 #include "IslandApp.hpp"
 
-IslandApp::IslandApp(RenderingConfig & config) : CameraApp(config) {
+#include "resources/Library.hpp"
+
+IslandApp::IslandApp(RenderingConfig & config) : CameraApp(config), _waves(8, BufferType::UNIFORM, DataUse::STATIC)
+{
 	_userCamera.projection(config.screenResolution[0] / config.screenResolution[1], 1.34f, 0.1f, 100.0f);
 	_userCamera.pose(glm::vec3(-2.234801,3.446842,-6.892219), glm::vec3(-1.869996,2.552125,-5.859552), glm::vec3(0.210734,0.774429,0.596532));
 	
@@ -46,7 +49,46 @@ IslandApp::IslandApp(RenderingConfig & config) : CameraApp(config) {
 	_maxLevelY = pSize;
 	_distanceScale = 1.0f / (float(_sceneBuffer->width()) / 1920.0f) * 4.0f;
 
+	generateWaves();
 
+}
+
+void IslandApp::generateWaves(){
+	// Compute Gerstner waves parameters with some variance.
+	// Generate a set of low and high frequency waves.
+	const float baseALow = 0.025f;
+	const float baseAHigh = 0.02f;
+	const float angleVar = 0.5f;
+	const float basewLow = 2.5f;
+	const float basewHigh = 10.0f;
+
+	for(int i = 0; i < 3; ++i){
+		auto & wv = _waves[i];
+		wv.AQwp[0] = baseALow + Random::Float(-0.01f, 0.01f);
+		wv.AQwp[1] = Random::Float(0.1f, 0.5f);
+		wv.AQwp[2] = basewLow + Random::Float(-1.5f, 1.5f);
+		wv.AQwp[3] = Random::Float(0.2f, 1.5f);
+		// Angle.
+		wv.DiAngleActive[2] = (2.0f/3.0f) * (i + Random::Float(-angleVar, angleVar)) * glm::pi<float>();
+		wv.DiAngleActive[0] = std::cos(wv.DiAngleActive[2]);
+		wv.DiAngleActive[1] = std::sin(wv.DiAngleActive[2]);
+		// Ensure Q normalization.
+		wv.AQwp[1] /= (wv.AQwp[0] * wv.AQwp[2] * 8.0f);
+	}
+	for(int i = 3; i < 8; ++i){
+		auto & wv = _waves[i];
+		wv.AQwp[0] = baseAHigh + Random::Float(-0.01f, 0.01f);
+		wv.AQwp[1] = Random::Float(0.6f, 1.0f);
+		wv.AQwp[2] = basewHigh + Random::Float(-3.0f, 8.0f);
+		wv.AQwp[3] = Random::Float(1.0f, 3.0f);
+		// Angle.
+		wv.DiAngleActive[2] = ((2.0f/5.0f) * (i + Random::Float(-angleVar, angleVar)) - 1.0f) * glm::pi<float>();
+		wv.DiAngleActive[0] = std::cos(wv.DiAngleActive[2]);
+		wv.DiAngleActive[1] = std::sin(wv.DiAngleActive[2]);
+		// Ensure Q normalization.
+		wv.AQwp[1] /= (wv.AQwp[0] * wv.AQwp[2] * 8.0f);
+	}
+	_waves.upload();
 }
 
 void IslandApp::draw() {
@@ -121,6 +163,8 @@ void IslandApp::draw() {
 		_oceanProgram->uniform("texelSize", _terrain->texelSize());
 		_oceanProgram->uniform("invMapSize", 1.0f/float(_terrain->map().width));
 		_oceanProgram->uniform("invGridSize", 1.0f/float(_terrain->gridSize()));
+
+		GLUtilities::bindBuffer(_waves, 0);
 		GLUtilities::bindTexture(_terrain->map(), 0);
 		GLUtilities::drawTesselatedMesh(_oceanMesh, 4);
 
