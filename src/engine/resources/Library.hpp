@@ -19,6 +19,21 @@ public:
 	static const std::array<glm::vec3, 6> boxRights; ///< Skybox faces horizontal direction.
 	static const std::array<glm::mat4, 6> boxVs; ///< Skybox faces view matrices.
 	static const std::array<glm::mat4, 6> boxVPs; ///< Skybox faces view-projection matrices.
-	
+
+	/** Generate a XZ planar grid mesh.
+	 \param resolution number of cells on each axis
+	 \param scale dimension of each cell
+	 \return the mesh
+	 */
+	static Mesh generateGrid(uint resolution, float scale);
+
+	/** Generate a Y-axis cylinder mesh.
+	 \param resolution the number of faces
+	 \param radius the cylinder radius
+	 \param height the cylinder height
+	 \return the mesh
+	 */
+	static Mesh generateCylinder(uint resolution, float radius, float height);
+
 };
 
