@@ -157,9 +157,15 @@ void Terrain::generateMap(){
 			dst.r(x,y) = newHeight;
 		}
 	}
+	// Final copy and distribution tweak.
 	for(int y = 0; y < int(heightMap.height); ++y){
 		for(int x = 0; x < int(heightMap.width); ++x){
-			heightMap.r(x,y) = dst.r(x,y);
+			const float & h = dst.r(x,y);
+			heightMap.r(x,y) = h;
+			// Flatten shores.
+			if(std::abs(h) < 1.0f){
+				heightMap.r(x,y) *= std::abs(h);
+			}
 		}
 	}
 
