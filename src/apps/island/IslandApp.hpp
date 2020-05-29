@@ -2,6 +2,7 @@
 
 #include "Application.hpp"
 #include "input/Input.hpp"
+#include "processing/BoxBlur.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "graphics/ScreenQuad.hpp"
 #include "graphics/Framebuffer.hpp"
@@ -42,6 +43,8 @@ private:
 	void generateWaves();
 
 	std::unique_ptr<Framebuffer> _sceneBuffer; ///< Scene framebuffer.
+	std::unique_ptr<Framebuffer> _waterEffects; ///< Scene framebuffer.
+	std::unique_ptr<Framebuffer> _waterEffectsBlur; ///< Scene framebuffer.
 	const Mesh * _skyMesh;
 	Mesh _oceanMesh;
 	Mesh _farOceanMesh;
@@ -51,6 +54,7 @@ private:
 	const Program * _groundProgram;
 	const Program * _oceanProgram;
 	const Program * _farOceanProgram;
+	const Program * _waterCopy;
 
 	const Program * _skyProgram; ///< Atmospheric scattering shader.
 	const Texture * _precomputedScattering; ///< Precomputed lookup table.

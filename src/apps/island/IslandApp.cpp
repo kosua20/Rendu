@@ -9,7 +9,10 @@ IslandApp::IslandApp(RenderingConfig & config) : CameraApp(config), _waves(8, Bu
 	
 	// Framebuffer to store the rendered atmosphere result before tonemapping and upscaling to the window size.
 	const glm::vec2 renderRes = _config.renderingResolution();
-	_sceneBuffer.reset(new Framebuffer(uint(renderRes[0]), uint(renderRes[1]), {{Layout::RGB32F, Filter::LINEAR_NEAREST, Wrap::CLAMP}, {Layout::DEPTH_COMPONENT32F, Filter::NEAREST, Wrap::CLAMP}}, false));
+	const std::vector<Descriptor> descriptors = {{Layout::RGB32F, Filter::LINEAR_NEAREST, Wrap::CLAMP}, {Layout::RGB32F, Filter::LINEAR_NEAREST, Wrap::CLAMP}};
+	_sceneBuffer.reset(new Framebuffer(uint(renderRes[0]), uint(renderRes[1]), descriptors, true));
+	_waterEffects.reset(new Framebuffer(uint(renderRes[0])/2, uint(renderRes[1])/2, descriptors, false));
+	_waterEffectsBlur.reset(new Framebuffer(uint(renderRes[0])/2, uint(renderRes[1])/2, {descriptors[0]}, false));
 	// Lookup table.
 	_precomputedScattering = Resources::manager().getTexture("scattering-precomputed", {Layout::RGB32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
 	// Atmosphere screen quad.
@@ -17,6 +20,8 @@ IslandApp::IslandApp(RenderingConfig & config) : CameraApp(config), _waves(8, Bu
 	_groundProgram = Resources::manager().getProgram("ground_island");
 	_oceanProgram = Resources::manager().getProgram("ocean_island", "ocean_island", "ocean_island", "", "ocean_island", "ocean_island");
 	_farOceanProgram = Resources::manager().getProgram("far_ocean_island", "far_ocean_island", "ocean_island");
+	_waterCopy = Resources::manager().getProgram2D("water_copy");
+
 	// Final tonemapping screen quad.
 	_tonemap = Resources::manager().getProgram2D("tonemap");
 
@@ -107,9 +112,10 @@ void IslandApp::draw() {
 
 	_sceneBuffer->bind();
 	_sceneBuffer->setViewport();
+	_sceneBuffer->clear(glm::vec4(10000.0f), 1.0f);
 	GLUtilities::setDepthState(true);
 	GLUtilities::setBlendState(false);
-	GLUtilities::clearColorAndDepth({0.0f,0.0f,0.0f,1.0f}, 1.0f);
+	GLUtilities::clearColor({0.0f,0.0f,0.0f,1.0f});
 	_prims.begin();
 
 	// Render the ground.
@@ -150,7 +156,21 @@ void IslandApp::draw() {
 
 	// Render the ocean.
 	if(_showOcean){
+		// Start by copying the visible terrain.
+		_waterEffects->bind();
+		GLUtilities::setDepthState(false);
+		_waterEffects->setViewport();
+		_waterCopy->use();
+		GLUtilities::bindTexture(_sceneBuffer->texture(0), 0);
+		GLUtilities::bindTexture(_sceneBuffer->texture(1), 1);
+		ScreenQuad::draw();
+		GLUtilities::setDepthState(true);
+		_waterEffects->unbind();
 
+		_blur.process(_waterEffects->texture(0), *_waterEffectsBlur);
+
+		_sceneBuffer->bind();
+		_sceneBuffer->setViewport();
 		_oceanProgram->use();
 		_oceanProgram->uniform("mvp", mvp);
 		_oceanProgram->uniform("shift", camPos );
@@ -170,6 +190,9 @@ void IslandApp::draw() {
 
 		GLUtilities::bindBuffer(_waves, 0);
 		GLUtilities::bindTexture(_terrain->map(), 0);
+		GLUtilities::bindTexture(_waterEffects->texture(0), 1);
+		GLUtilities::bindTexture(_waterEffects->texture(1), 2);
+		GLUtilities::bindTexture(_waterEffectsBlur->texture(0), 3);
 		GLUtilities::drawTesselatedMesh(_oceanMesh, 4);
 
 		// Debug view.
@@ -196,6 +219,9 @@ void IslandApp::draw() {
 
 		GLUtilities::bindBuffer(_waves, 0);
 		GLUtilities::bindTexture(_terrain->map(), 0);
+		GLUtilities::bindTexture(_waterEffects->texture(0), 1);
+		GLUtilities::bindTexture(_waterEffects->texture(1), 2);
+		GLUtilities::bindTexture(_waterEffectsBlur->texture(0), 3);
 		GLUtilities::drawMesh(_farOceanMesh);
 
 		// Debug view.
@@ -301,9 +327,14 @@ void IslandApp::update() {
 
 void IslandApp::resize() {
 	_sceneBuffer->resize(_config.renderingResolution());
+	_waterEffects->resize(_config.renderingResolution()/2.0f);
+	_waterEffectsBlur->resize(_config.renderingResolution()/2.0f);
 }
 
 void IslandApp::clean() {
 	_sceneBuffer->clean();
+	_waterEffects->clean();
+	_waterEffectsBlur->clean();
+	_blur.clean();
 	_terrain->clean();
 }
