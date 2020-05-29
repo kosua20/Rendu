@@ -41,10 +41,12 @@ private:
 
 	std::unique_ptr<Framebuffer> _sceneBuffer; ///< Scene framebuffer.
 	const Mesh * _skyMesh;
+	Mesh _oceanMesh;
 	Texture _transitionNoise;
 	const Texture * _materials;
 	const Texture * _materialNormals;
 	const Program * _groundProgram;
+	const Program * _oceanProgram;
 	const Program * _skyProgram; ///< Atmospheric scattering shader.
 	const Texture * _precomputedScattering; ///< Precomputed lookup table.
 
@@ -54,6 +56,11 @@ private:
 
 	// Atmosphere options.
 	glm::vec3 _lightDirection; ///< Sun light direction.
+
+	// Ocean options.
+	float _maxLevelX = 12;
+	float _maxLevelY = 8;
+	float _distanceScale = 1.0;
 
 	std::unique_ptr<Terrain> _terrain;
 	

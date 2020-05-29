@@ -12,6 +12,7 @@ IslandApp::IslandApp(RenderingConfig & config) : CameraApp(config) {
 	// Atmosphere screen quad.
 	_skyProgram = Resources::manager().getProgram("atmosphere_island", "background_infinity", "atmosphere_island");
 	_groundProgram = Resources::manager().getProgram("ground_island");
+	_oceanProgram = Resources::manager().getProgram("ocean_island", "ocean_island", "ocean_island", "", "ocean_island", "ocean_island");
 	// Final tonemapping screen quad.
 	_tonemap = Resources::manager().getProgram2D("tonemap");
 
@@ -32,9 +33,19 @@ IslandApp::IslandApp(RenderingConfig & config) : CameraApp(config) {
 	PerlinNoise generator;
 	generator.generateLayers(_transitionNoise.images[0], 4, 0.5f, 2.0f, 0.01f);
 	_transitionNoise.upload({Layout::R32F, Filter::LINEAR, Wrap::REPEAT}, false);
+
+	// Ocean.
+	_oceanMesh = Library::generateGrid(64, 1.0f);
+	_oceanMesh.upload();
 	GLUtilities::setDepthState(true);
 
 	checkGLError();
+	// Tesselation options.
+	const float pSize = 128.0f;
+	_maxLevelX = std::log2(pSize);
+	_maxLevelY = pSize;
+	_distanceScale = 1.0f / (float(_sceneBuffer->width()) / 1920.0f) * 4.0f;
+
 
 }
 
@@ -90,9 +101,41 @@ void IslandApp::draw() {
 			GLUtilities::setDepthState(true, DepthEquation::LESS, true);
 	}
 	}
-	_prims.end();
 
+	// Render the ocean.
+	if(_showOcean){
+
+		_oceanProgram->use();
+		_oceanProgram->uniform("mvp", mvp);
+		_oceanProgram->uniform("shift", camPos );
+		_oceanProgram->uniform("maxLevelX", _maxLevelX);
+		_oceanProgram->uniform("maxLevelY", _maxLevelY);
+		_oceanProgram->uniform("distanceScale", _distanceScale);
+		_oceanProgram->uniform("lightDirection", _lightDirection);
+		_oceanProgram->uniform("debugCol", false);
+		_oceanProgram->uniform("lodPos", camPos);
+		_oceanProgram->uniform("camDir", camDir);
+		_oceanProgram->uniform("camPos", camPos);
+		_oceanProgram->uniform("raycast", false);
+		_oceanProgram->uniform("time", float(timeElapsed()));
+		_oceanProgram->uniform("texelSize", _terrain->texelSize());
+		_oceanProgram->uniform("invMapSize", 1.0f/float(_terrain->map().width));
+		_oceanProgram->uniform("invGridSize", 1.0f/float(_terrain->gridSize()));
+		GLUtilities::bindTexture(_terrain->map(), 0);
+		GLUtilities::drawTesselatedMesh(_oceanMesh, 4);
+
+		// Debug view.
+		if(_showWire){
+			GLUtilities::setPolygonState(PolygonMode::LINE, Faces::ALL);
+			GLUtilities::setDepthState(true, DepthEquation::LEQUAL, true);
+			_oceanProgram->uniform("debugCol", true);
+			GLUtilities::drawTesselatedMesh(_oceanMesh, 4);
 	GLUtilities::setPolygonState(PolygonMode::FILL, Faces::ALL);
+			GLUtilities::setDepthState(true, DepthEquation::LESS, true);
+		}
+
+	}
+	_prims.end();
 
 	// Render the sky.
 	GLUtilities::setDepthState(true, DepthEquation::LEQUAL, false);
@@ -128,10 +171,22 @@ void IslandApp::update() {
 
 		ImGui::Checkbox("Terrain##showcheck", &_showTerrain);
 		ImGui::SameLine();
+		ImGui::Checkbox("Ocean##showcheck", &_showOcean);
 		ImGui::Checkbox("Show wire", &_showWire);
+		if(ImGui::CollapsingHeader("Tessellation")){
+			ImGui::DragFloat("maxLevelX", &_maxLevelX);
+			ImGui::DragFloat("maxLevelY", &_maxLevelY);
+			ImGui::DragFloat("distanceScale", &_distanceScale);
+
+		}
+
 		if(ImGui::CollapsingHeader("Terrain")){
 			_terrain->interface();
 		}
+
+		if(ImGui::CollapsingHeader("Ocean")){
+		}
+
 		if(ImGui::CollapsingHeader("Camera")){
 			_userCamera.interface();
 		}
