@@ -22,6 +22,16 @@ IslandApp::IslandApp(RenderingConfig & config) : CameraApp(config) {
 	// Ground.
 	_terrain.reset(new Terrain(1024, 4567));
 
+	_materials = Resources::manager().getTexture("island_material_diff", {Layout::SRGB8, Filter::LINEAR_LINEAR, Wrap::REPEAT}, Storage::GPU);
+	_materialNormals = Resources::manager().getTexture("island_material_nor", {Layout::RGB8, Filter::LINEAR_LINEAR, Wrap::REPEAT}, Storage::GPU);
+
+	_transitionNoise.width = _transitionNoise.height = 512;
+	_transitionNoise.depth = _transitionNoise.levels = 1,
+	_transitionNoise.shape = TextureShape::D2;
+	_transitionNoise.images.emplace_back(_transitionNoise.width, _transitionNoise.height, 1);
+	PerlinNoise generator;
+	generator.generateLayers(_transitionNoise.images[0], 4, 0.5f, 2.0f, 0.01f);
+	_transitionNoise.upload({Layout::R32F, Filter::LINEAR, Wrap::REPEAT}, false);
 	GLUtilities::setDepthState(true);
 
 	checkGLError();
@@ -37,10 +47,7 @@ void IslandApp::draw() {
 	const glm::mat4 mvp = _userCamera.projection() * _userCamera.view();
 
 	const glm::vec3 camDir = _userCamera.direction();
-	const glm::vec3 frontPos = _userCamera.position() + camDir;
-	// Clamp based on the terrain heightmap dimensions in world space.
-	const float extent = 0.5f * std::abs(float(_terrain->map().width) * _terrain->texelSize() - 0.5f*_terrain->meshSize());
-	const glm::vec3 frontPosClamped = glm::clamp(frontPos, -extent, extent);
+	const glm::vec3 & camPos = _userCamera.position();
 
 
 	// Draw the atmosphere.
@@ -52,12 +59,18 @@ void IslandApp::draw() {
 
 	// Render the ground.
 	if(_showTerrain){
+
+		const glm::vec3 frontPos = camPos + camDir;
+		// Clamp based on the terrain heightmap dimensions in world space.
+		const float extent = 0.5f * std::abs(float(_terrain->map().width) * _terrain->texelSize() - 0.5f*_terrain->meshSize());
+		const glm::vec3 frontPosClamped = glm::clamp(frontPos, -extent, extent);
 	_groundProgram->use();
 	_groundProgram->uniform("mvp", mvp);
 	_groundProgram->uniform("shift", frontPosClamped);
 	_groundProgram->uniform("lightDirection", _lightDirection);
 
-	_groundProgram->uniform("camPos", _userCamera.position());
+		_groundProgram->uniform("camDir", camDir);
+		_groundProgram->uniform("camPos", camPos);
 	_groundProgram->uniform("debugCol", false);
 
 	_groundProgram->uniform("texelSize", _terrain->texelSize());
@@ -65,15 +78,18 @@ void IslandApp::draw() {
 	_groundProgram->uniform("invGridSize", 1.0f/float(_terrain->gridSize()));
 
 	GLUtilities::bindTexture(_terrain->map(), 0);
+		GLUtilities::bindTexture(_transitionNoise, 1);
+		GLUtilities::bindTexture(_materials, 2);
+		GLUtilities::bindTexture(_materialNormals, 3);
 	GLUtilities::drawMesh(_terrain->mesh());
 
 	if(_showWire){
 		GLUtilities::setPolygonState(PolygonMode::LINE, Faces::ALL);
-		GLUtilities::setDepthState(true, DepthEquation::LEQUAL);
+			GLUtilities::setDepthState(true, DepthEquation::LEQUAL, true);
 		_groundProgram->uniform("debugCol", true);
 		GLUtilities::drawMesh(_terrain->mesh());
 		GLUtilities::setPolygonState(PolygonMode::FILL, Faces::ALL);
-		GLUtilities::setDepthState(true, DepthEquation::LESS);
+			GLUtilities::setDepthState(true, DepthEquation::LESS, true);
 	}
 	}
 	_prims.end();
@@ -86,7 +102,7 @@ void IslandApp::draw() {
 	_skyProgram->use();
 
 	_skyProgram->uniform("clipToWorld", clipToWorld);
-	_skyProgram->uniform("viewPos", _userCamera.position());
+	_skyProgram->uniform("viewPos", camPos);
 	_skyProgram->uniform("lightDirection", _lightDirection);
 	GLUtilities::bindTexture(_precomputedScattering, 0);
 	GLUtilities::drawMesh(*_skyMesh);

@@ -57,5 +57,6 @@ private:
 	GPUQuery _prims = GPUQuery(GPUQuery::Type::PRIMITIVES_GENERATED);
 
 	bool _showTerrain = false;
+	bool _showTerrain = true;
 	bool _showOcean = true;
 };
