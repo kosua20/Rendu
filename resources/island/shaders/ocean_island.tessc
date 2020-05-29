@@ -1,0 +1,64 @@
+#version 400
+
+layout(vertices = 4) out;
+
+uniform float maxLevelX;
+uniform float maxLevelY;
+uniform float distanceScale;
+
+
+uniform vec3 lodPos;
+uniform vec3 camDir;
+uniform vec3 camPos;
+
+in INTERFACE {
+	vec3 pos;
+} In[] ;
+
+out INTERFACE {
+	vec3 pos;
+} Out[] ;
+
+
+float lodCorner(vec3 pos){
+	float camDist = distance(pos, lodPos);
+	float level = log2((camDist + 0.0001) * distanceScale);
+	return clamp(level, 0.0, maxLevelX);
+}
+
+void main(){
+	Out[gl_InvocationID].pos = In[gl_InvocationID].pos;
+
+	if(gl_InvocationID == 0){
+		if(dot(In[0].pos - lodPos, camDir) < 0.0 &&
+		  dot(In[1].pos - lodPos, camDir) < 0.0 &&
+		  dot(In[2].pos - lodPos, camDir) < 0.0 &&
+		  dot(In[3].pos - lodPos, camDir) < 0.0
+		){
+			gl_TessLevelOuter[0] = -1.0;
+			gl_TessLevelOuter[1] = -1.0;
+			gl_TessLevelOuter[2] = -1.0;
+			gl_TessLevelOuter[3] = -1.0;
+			gl_TessLevelInner[0] = -1.0;
+			gl_TessLevelInner[1] = -1.0;
+			return;
+		}
+		float lod0 = lodCorner(In[0].pos);
+		float lod1 = lodCorner(In[1].pos);
+		float lod2 = lodCorner(In[2].pos);
+		float lod3 = lodCorner(In[3].pos);
+		vec4 lods = vec4(lod0, lod1, lod2, lod3);
+		// For each edge, take the minimal lod.
+		vec4 edgeLods = min(lods.xyzw, lods.wxyz);
+		vec4 outerLevels = maxLevelY * exp2(-edgeLods);
+		float innerLevel = max(max(outerLevels.x, outerLevels.y), max(outerLevels.z, outerLevels.w));
+
+		gl_TessLevelOuter[0] = outerLevels[0];
+		gl_TessLevelOuter[1] = outerLevels[1];
+		gl_TessLevelOuter[2] = outerLevels[2];
+		gl_TessLevelOuter[3] = outerLevels[3];
+		gl_TessLevelInner[0] = innerLevel;
+		gl_TessLevelInner[1] = innerLevel;
+
+	}
+}
