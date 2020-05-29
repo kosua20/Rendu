@@ -1,0 +1,31 @@
+#version 400
+
+
+layout(quads, fractional_even_spacing) in;
+
+uniform mat4 mvp;
+uniform float time;
+uniform float texelSize;
+uniform float invMapSize;
+
+layout(binding = 0) uniform sampler2D heightMap;
+
+in INTERFACE {
+	vec3 pos;
+} In[] ;
+
+out INTERFACE {
+	vec3 pos;
+} Out ;
+
+void main(){
+
+	// Initial position.
+	vec3 worldPos = mix(
+			mix(In[0].pos, In[1].pos, gl_TessCoord.x),
+			mix(In[3].pos, In[2].pos, gl_TessCoord.x),
+			gl_TessCoord.y);
+	worldPos.y = 0.0;
+	gl_Position = mvp * vec4(worldPos, 1.0);
+	Out.pos = worldPos;
+}
