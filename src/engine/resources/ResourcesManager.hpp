@@ -109,6 +109,13 @@ private:
 	 */
 	std::vector<std::string> getCubemapPaths(const std::string & name);
 
+	/** Expand a multi-layer image (array or 3D depending on the suffix) name in its slices path, testing all possibles extensions.
+	 \param name the name of the layered image
+	 \param suffix the suffix to append before the layer number
+	 \return a list of the image paths
+	 */
+	std::vector<std::string> getLayeredPaths(const std::string & name, const std::string & suffix);
+
 	/** Load raw binary data from a resource file
 	 \param path the path to the file
 	 \param size will contain the number of bytes loaded from the file
@@ -143,17 +150,19 @@ public:
 	 */
 	const Mesh * getMesh(const std::string & name, Storage options);
 
-	/** Get a 2D texture resource. Automatically handle custom mipmaps if present.
+	/** Get a texture resource. Automatically handle custom mipmaps if present.
 	 \param name the texture base name
 	 \param descriptor the texture layout to use
 	 \param options data loading and storage options
 	 \param refName the name to use for the texture in future calls
 	 \return the texture informations
 	 \note If the name is the string representation of an RGB(A) color ("1.0,0.0,1.0" for instance), a constant color 2D texture will be allocated using the passed descriptor.
+	 \note Cubemaps will be automatically detected using suffixes _nx, _ny, _nz, _px, _py, _pz.
+	 \note 2D arrays will be automatically detected using suffix _sX where X=0,1..., 3D textures using suffix _zX where X=0,1...
 	 */
 	const Texture * getTexture(const std::string & name, const Descriptor & descriptor, Storage options, const std::string & refName = "");
 
-	/** Get an existing 2D texture resource.
+	/** Get an existing texture resource.
 	 \param name the texture base name
 	 \return the texture informations
 	 */

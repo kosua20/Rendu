@@ -119,22 +119,6 @@ void Resources::parseDirectory(const std::string & directoryPath) {
 
 // Image path utilities.
 
-std::vector<std::string> Resources::getCubemapPaths(const std::string & name) {
-	const std::vector<std::string> names {name + "_px", name + "_nx", name + "_py", name + "_ny", name + "_pz", name + "_nz"};
-	std::vector<std::string> paths;
-	paths.reserve(6);
-	for(auto & faceName : names) {
-		const std::string filePath = getImagePath(faceName);
-		// If a face is missing, cancel the whole loading.
-		if(filePath.empty()) {
-			return std::vector<std::string>();
-		}
-		// Else append the path.
-		paths.push_back(filePath);
-	}
-	return paths;
-}
-
 std::string Resources::getImagePath(const std::string & name) {
 	std::string path;
 	// Check if the file exists with an image extension.
@@ -152,6 +136,34 @@ std::string Resources::getImagePath(const std::string & name) {
 		path = _files[name + ".exr"];
 	}
 	return path;
+}
+
+std::vector<std::string> Resources::getCubemapPaths(const std::string & name) {
+	const std::vector<std::string> names {name + "_px", name + "_nx", name + "_py", name + "_ny", name + "_pz", name + "_nz"};
+	std::vector<std::string> paths;
+	paths.reserve(6);
+	for(auto & faceName : names) {
+		const std::string filePath = getImagePath(faceName);
+		// If a face is missing, cancel the whole loading.
+		if(filePath.empty()) {
+			return std::vector<std::string>();
+		}
+		// Else append the path.
+		paths.push_back(filePath);
+	}
+	return paths;
+}
+
+std::vector<std::string> Resources::getLayeredPaths(const std::string & name, const std::string & suffix) {
+	std::vector<std::string> paths;
+	std::string filePath = getImagePath(name + "_" + suffix + "0");
+	uint id = 0;
+	while(!filePath.empty()) {
+		paths.push_back(filePath);
+		++id;
+		filePath = getImagePath(name + "_" + suffix + std::to_string(id));
+	}
+	return paths;
 }
 
 // Base methods.
@@ -335,18 +347,24 @@ const Texture * Resources::getTexture(const std::string & name, const Descriptor
 	// * "file", "file_0": 2D
 	// * "file_nx", "file_0_nx": cubemap
 	// * "r,g,b,a", "r,g,b", "r,g", "r": generate a constant value 8x8 texture, using the provided descriptor.
-	// Future support:
 	// * "file_s0", "file_0_s0": array 2D
-	// * "file_nx_s0", "file_0_nx_s0": array cubemap
 	// * "file_z0",  "file_0_z0": 3D
+	// Future support:
+	// * "file_nx_s0", "file_0_nx_s0": array cubemap
 
 	std::vector<std::vector<std::string>> paths;
 	// We need to detect the constant color case. A naive proxy is to check that the string only contains [0-9,.-] characters.
 	const bool isColorString = !name.empty() && (name.find_first_not_of("0123456789,.-") == std::string::npos);
 	const std::string path2D					= getImagePath(name);
-	const std::string path2DMip					= getImagePath(name + "_0");
-	const std::vector<std::string> pathCubes	= getCubemapPaths(name);
-	const std::vector<std::string> pathCubesMip = getCubemapPaths(name + "_0");
+	// Shortcut for the most common loading path.
+	const bool notFound = path2D.empty();
+	const std::string path2DMip					= notFound ? getImagePath(name + "_0") : "";
+	const std::vector<std::string> pathCubes	= notFound ? getCubemapPaths(name) : std::vector<std::string>();
+	const std::vector<std::string> pathCubesMip = notFound ? getCubemapPaths(name + "_0") : std::vector<std::string>();
+	const std::vector<std::string> pathArray	= notFound ? getLayeredPaths(name, "s") : std::vector<std::string>();
+	const std::vector<std::string> pathArrayMip = notFound ? getLayeredPaths(name + "_0", "s") : std::vector<std::string>();
+	const std::vector<std::string> path3D	 	= notFound ? getLayeredPaths(name, "z") : std::vector<std::string>();
+	const std::vector<std::string> path3DMip 	= notFound ? getLayeredPaths(name + "_0", "z") : std::vector<std::string>();
 
 	TextureShape shape = TextureShape::D2;
 
@@ -361,6 +379,14 @@ const Texture * Resources::getTexture(const std::string & name, const Descriptor
 	} else if(!pathCubes.empty()) {
 		shape = TextureShape::Cube;
 		paths.push_back(pathCubes);
+
+	} else if(!pathArray.empty()){
+		shape = TextureShape::Array2D;
+		paths.push_back(pathArray);
+
+	} else if(!path3D.empty()){
+		shape = TextureShape::D3;
+		paths.push_back(path3D);
 
 	} else if(!path2DMip.empty()) {
 		shape = TextureShape::D2;
@@ -386,6 +412,30 @@ const Texture * Resources::getTexture(const std::string & name, const Descriptor
 			++currLevel;
 			// Next name to test.
 			mipmapPaths = getCubemapPaths(name + "_" + std::to_string(currLevel));
+		}
+	} else if(!pathArrayMip.empty()) {
+		shape = TextureShape::Array2D;
+		// We need to find the number of mipmap levels.
+		unsigned int currLevel				 = 0;
+		std::vector<std::string> mipmapPaths = pathArrayMip;
+		while(!mipmapPaths.empty()) {
+			// Transfer them to the final paths vector.
+			paths.push_back(mipmapPaths);
+			++currLevel;
+			// Next name to test.
+			mipmapPaths = getLayeredPaths(name + "_" + std::to_string(currLevel), "s");
+		}
+	} else if(!path3DMip.empty()) {
+		shape = TextureShape::D3;
+		// We need to find the number of mipmap levels.
+		unsigned int currLevel				 = 0;
+		std::vector<std::string> mipmapPaths = path3DMip;
+		while(!mipmapPaths.empty()) {
+			// Transfer them to the final paths vector.
+			paths.push_back(mipmapPaths);
+			++currLevel;
+			// Next name to test.
+			mipmapPaths = getLayeredPaths(name + "_" + std::to_string(currLevel), "z");
 		}
 	}
 
