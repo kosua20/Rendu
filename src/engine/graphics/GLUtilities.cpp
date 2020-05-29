@@ -795,6 +795,14 @@ void GLUtilities::drawMesh(const Mesh & mesh) {
 	glBindVertexArray(0);
 }
 
+
+void GLUtilities::drawTesselatedMesh(const Mesh & mesh, uint patchSize){
+	glPatchParameteri(GL_PATCH_VERTICES, GLint(patchSize));
+	glBindVertexArray(mesh.gpu->id);
+	glDrawElements(GL_PATCHES, mesh.gpu->count, GL_UNSIGNED_INT, static_cast<void *>(nullptr));
+	glBindVertexArray(0);
+}
+
 void GLUtilities::sync() {
 	glFlush();
 	glFinish();

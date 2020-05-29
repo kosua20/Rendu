@@ -197,6 +197,12 @@ public:
 	 */
 	static void drawMesh(const Mesh & mesh);
 
+	/** Draw tessellated geometry.
+	 \param mesh the mesh to tessellate and render
+	 \param patchSize number of vertices to use in a patch
+	 */
+	static void drawTesselatedMesh(const Mesh & mesh, uint patchSize);
+
 	/** Flush the GPU command pipelines and wait for all processing to be done.
 	 */
 	static void sync();
