@@ -16,6 +16,7 @@ IslandApp::IslandApp(RenderingConfig & config) : CameraApp(config), _waves(8, Bu
 	_skyProgram = Resources::manager().getProgram("atmosphere_island", "background_infinity", "atmosphere_island");
 	_groundProgram = Resources::manager().getProgram("ground_island");
 	_oceanProgram = Resources::manager().getProgram("ocean_island", "ocean_island", "ocean_island", "", "ocean_island", "ocean_island");
+	_farOceanProgram = Resources::manager().getProgram("far_ocean_island", "far_ocean_island", "ocean_island");
 	// Final tonemapping screen quad.
 	_tonemap = Resources::manager().getProgram2D("tonemap");
 
@@ -40,6 +41,9 @@ IslandApp::IslandApp(RenderingConfig & config) : CameraApp(config), _waves(8, Bu
 	// Ocean.
 	_oceanMesh = Library::generateGrid(64, 1.0f);
 	_oceanMesh.upload();
+	_farOceanMesh = Library::generateCylinder(64, 128.0f, 256.0f);
+	_farOceanMesh.upload();
+
 	GLUtilities::setDepthState(true);
 
 	checkGLError();
@@ -116,32 +120,32 @@ void IslandApp::draw() {
 		const float extent = 0.5f * std::abs(float(_terrain->map().width) * _terrain->texelSize() - 0.5f*_terrain->meshSize());
 		const glm::vec3 frontPosClamped = glm::clamp(frontPos, -extent, extent);
 
-	_groundProgram->use();
-	_groundProgram->uniform("mvp", mvp);
-	_groundProgram->uniform("shift", frontPosClamped);
-	_groundProgram->uniform("lightDirection", _lightDirection);
+		_groundProgram->use();
+		_groundProgram->uniform("mvp", mvp);
+		_groundProgram->uniform("shift", frontPosClamped);
+		_groundProgram->uniform("lightDirection", _lightDirection);
 		_groundProgram->uniform("camDir", camDir);
 		_groundProgram->uniform("camPos", camPos);
-	_groundProgram->uniform("debugCol", false);
-	_groundProgram->uniform("texelSize", _terrain->texelSize());
-	_groundProgram->uniform("invMapSize", 1.0f/float(_terrain->map().width));
-	_groundProgram->uniform("invGridSize", 1.0f/float(_terrain->gridSize()));
+		_groundProgram->uniform("debugCol", false);
+		_groundProgram->uniform("texelSize", _terrain->texelSize());
+		_groundProgram->uniform("invMapSize", 1.0f/float(_terrain->map().width));
+		_groundProgram->uniform("invGridSize", 1.0f/float(_terrain->gridSize()));
 
-	GLUtilities::bindTexture(_terrain->map(), 0);
+		GLUtilities::bindTexture(_terrain->map(), 0);
 		GLUtilities::bindTexture(_transitionNoise, 1);
 		GLUtilities::bindTexture(_materials, 2);
 		GLUtilities::bindTexture(_materialNormals, 3);
-	GLUtilities::drawMesh(_terrain->mesh());
+		GLUtilities::drawMesh(_terrain->mesh());
 
 		// Debug view.
-	if(_showWire){
-		GLUtilities::setPolygonState(PolygonMode::LINE, Faces::ALL);
+		if(_showWire){
+			GLUtilities::setPolygonState(PolygonMode::LINE, Faces::ALL);
 			GLUtilities::setDepthState(true, DepthEquation::LEQUAL, true);
-		_groundProgram->uniform("debugCol", true);
-		GLUtilities::drawMesh(_terrain->mesh());
-		GLUtilities::setPolygonState(PolygonMode::FILL, Faces::ALL);
+			_groundProgram->uniform("debugCol", true);
+			GLUtilities::drawMesh(_terrain->mesh());
+			GLUtilities::setPolygonState(PolygonMode::FILL, Faces::ALL);
 			GLUtilities::setDepthState(true, DepthEquation::LESS, true);
-	}
+		}
 	}
 
 	// Render the ocean.
@@ -174,7 +178,33 @@ void IslandApp::draw() {
 			GLUtilities::setDepthState(true, DepthEquation::LEQUAL, true);
 			_oceanProgram->uniform("debugCol", true);
 			GLUtilities::drawTesselatedMesh(_oceanMesh, 4);
-	GLUtilities::setPolygonState(PolygonMode::FILL, Faces::ALL);
+			GLUtilities::setPolygonState(PolygonMode::FILL, Faces::ALL);
+			GLUtilities::setDepthState(true, DepthEquation::LESS, true);
+		}
+
+		// Far ocean, using a cylinder as support to cast rays intersecting the ocean plane.
+		_farOceanProgram->use();
+		_farOceanProgram->uniform("mvp", mvp);
+		_farOceanProgram->uniform("camPos", camPos);
+		_farOceanProgram->uniform("lightDirection", _lightDirection);
+		_farOceanProgram->uniform("debugCol", false);
+		_farOceanProgram->uniform("time", float(timeElapsed()));
+		_farOceanProgram->uniform("texelSize", _terrain->texelSize());
+		_farOceanProgram->uniform("raycast", true);
+		_farOceanProgram->uniform("invMapSize", 1.0f/float(_terrain->map().width));
+		_farOceanProgram->uniform("invGridSize", 1.0f/float(_terrain->gridSize()));
+
+		GLUtilities::bindBuffer(_waves, 0);
+		GLUtilities::bindTexture(_terrain->map(), 0);
+		GLUtilities::drawMesh(_farOceanMesh);
+
+		// Debug view.
+		if(_showWire){
+			GLUtilities::setPolygonState(PolygonMode::LINE, Faces::ALL);
+			GLUtilities::setDepthState(true, DepthEquation::LEQUAL, true);
+			_farOceanProgram->uniform("debugCol", true);
+			GLUtilities::drawMesh(_farOceanMesh);
+			GLUtilities::setPolygonState(PolygonMode::FILL, Faces::ALL);
 			GLUtilities::setDepthState(true, DepthEquation::LESS, true);
 		}
 

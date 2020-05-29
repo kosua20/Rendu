@@ -30,16 +30,31 @@ void main(){
 	vec3 worldPos;
 	float viewDist;
 	vec3 vdir;
+
+	if(raycast){
+		// For the distant cylinder mesh, raycast from the camera and intersect the ocean plane.
+		vec3 rayDir = normalize(In.pos - camPos);
+		if(rayDir.y >= -0.001){
+			discard;
+		}
+		float lambda = -camPos.y / rayDir.y;
+		worldPos = camPos + lambda * rayDir;
+		viewDist = lambda;
+		vdir = rayDir;
+
+	} else {
+		// For the tessellated grid just use the input info.
 		worldPos = In.pos;
 		vec3 dView = worldPos - camPos;
 		viewDist = length(dView);
 		vdir = dView/max(viewDist, 0.001);
+	}
 
-	// Apply a basic Phong lobe for now.
 	vec3 nn = vec3(0.0);
 	vec3 tn = vec3(0.0);
 	vec3 bn = vec3(0.0);
 
+	// Compute waves normal, applying a fade out when in the distance to avoid aliasing.
 	float dist2 = viewDist*viewDist;
 	float adjust = 1000.0f;
 	for(int i = 7; i >= 0; --i){
@@ -47,13 +62,12 @@ void main(){
 		float distWeight = exp(-dist2*pow(i+0.5, 2.0)/adjust);
 		gerstnerFrame(waves[i], worldPos, time, tn, bn, nn, distWeight);
 	}
-
-
 	tn.z += 1.0;
 	bn.x += 1.0;
 	nn.y += 1.0;
 	vec3 n = normalize(nn);
 
+	// Apply a basic Phong lobe for now.
 	float diffuse = max(0.0, dot(lightDirection, n));
 	vec3 ldir = reflect(vdir, n);
 	float specular = pow(max(0.0, dot(ldir, lightDirection)), 1024.0);
