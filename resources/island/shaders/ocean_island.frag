@@ -1,5 +1,7 @@
 #version 400
 
+#include "gerstner_waves.glsl"
+
 in INTERFACE {
 	vec3 pos;
 } In ;
@@ -14,6 +16,9 @@ uniform bool raycast;
 
 layout(binding = 0) uniform sampler2D heightMap;
 
+layout(std140, binding = 0) uniform Waves {
+	Wave waves[8];
+};
 
 layout (location = 0) out vec4 fragColor;
 
@@ -32,6 +37,20 @@ void main(){
 
 	// Apply a basic Phong lobe for now.
 	vec3 nn = vec3(0.0);
+	vec3 tn = vec3(0.0);
+	vec3 bn = vec3(0.0);
+
+	float dist2 = viewDist*viewDist;
+	float adjust = 1000.0f;
+	for(int i = 7; i >= 0; --i){
+		// Fade out high frequencies when far away.
+		float distWeight = exp(-dist2*pow(i+0.5, 2.0)/adjust);
+		gerstnerFrame(waves[i], worldPos, time, tn, bn, nn, distWeight);
+	}
+
+
+	tn.z += 1.0;
+	bn.x += 1.0;
 	nn.y += 1.0;
 	vec3 n = normalize(nn);
 

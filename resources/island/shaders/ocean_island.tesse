@@ -1,5 +1,6 @@
 #version 400
 
+#include "gerstner_waves.glsl"
 
 layout(quads, fractional_even_spacing) in;
 
@@ -9,6 +10,10 @@ uniform float texelSize;
 uniform float invMapSize;
 
 layout(binding = 0) uniform sampler2D heightMap;
+
+layout(std140, binding = 0) uniform Waves {
+	Wave waves[8];
+};
 
 in INTERFACE {
 	vec3 pos;
@@ -26,6 +31,22 @@ void main(){
 			mix(In[3].pos, In[2].pos, gl_TessCoord.x),
 			gl_TessCoord.y);
 	worldPos.y = 0.0;
+
+	// Apply perturbation.
+	// High frequency waves.
+	vec3 posDelta = vec3(0.0);
+	for(int i = 7; i > 2; --i){
+		posDelta += gerstner(waves[i], worldPos.xz, time);
+	}
+	// Update position.
+	worldPos += posDelta;
+	// Low frequency waves.
+	posDelta = vec3(0.0);
+	for(int i = 2; i >= 0; --i){
+		posDelta += gerstner(waves[i], worldPos.xz, time);
+	}
+	worldPos += posDelta;
+
 	gl_Position = mvp * vec4(worldPos, 1.0);
 	Out.pos = worldPos;
 }
