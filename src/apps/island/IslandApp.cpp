@@ -48,7 +48,7 @@ IslandApp::IslandApp(RenderingConfig & config) : CameraApp(config), _waves(8, Bu
 	_oceanMesh.upload();
 	_farOceanMesh = Library::generateCylinder(64, 128.0f, 256.0f);
 	_farOceanMesh.upload();
-
+	_absorbScatterOcean = Resources::manager().getTexture("absorbscatterwater", {Layout::SRGB8, Filter::LINEAR, Wrap::CLAMP}, Storage::GPU);
 	GLUtilities::setDepthState(true);
 
 	checkGLError();
@@ -195,6 +195,7 @@ void IslandApp::draw() {
 		GLUtilities::bindTexture(_waterEffects->texture(0), 1);
 		GLUtilities::bindTexture(_waterEffects->texture(1), 2);
 		GLUtilities::bindTexture(_waterEffectsBlur->texture(0), 3);
+		GLUtilities::bindTexture(_absorbScatterOcean, 4);
 		GLUtilities::drawTesselatedMesh(_oceanMesh, 4);
 
 		// Debug view.
@@ -225,6 +226,7 @@ void IslandApp::draw() {
 		GLUtilities::bindTexture(_waterEffects->texture(0), 1);
 		GLUtilities::bindTexture(_waterEffects->texture(1), 2);
 		GLUtilities::bindTexture(_waterEffectsBlur->texture(0), 3);
+		GLUtilities::bindTexture(_absorbScatterOcean, 4);
 		GLUtilities::drawMesh(_farOceanMesh);
 
 		// Debug view.

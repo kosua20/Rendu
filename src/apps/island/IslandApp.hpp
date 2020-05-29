@@ -58,6 +58,7 @@ private:
 
 	const Program * _skyProgram; ///< Atmospheric scattering shader.
 	const Texture * _precomputedScattering; ///< Precomputed lookup table.
+	const Texture * _absorbScatterOcean; ///< Precomputed lookup table.
 
 	const Program * _tonemap; ///< Tonemapping shader.
 
@@ -83,5 +84,7 @@ private:
 		glm::vec4 AQwp = glm::vec4(0.2f, 0.5f, 0.5f, 0.2f);
 	};
 	Buffer<GerstnerWave> _waves;
+
+	BoxBlur _blur = BoxBlur(true);
 	
 };
