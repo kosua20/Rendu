@@ -49,6 +49,8 @@ IslandApp::IslandApp(RenderingConfig & config) : CameraApp(config), _waves(8, Bu
 	_farOceanMesh = Library::generateCylinder(64, 128.0f, 256.0f);
 	_farOceanMesh.upload();
 	_absorbScatterOcean = Resources::manager().getTexture("absorbscatterwater", {Layout::SRGB8, Filter::LINEAR, Wrap::CLAMP}, Storage::GPU);
+	_caustics = Resources::manager().getTexture("caustics", {Layout::R8, Filter::LINEAR, Wrap::REPEAT}, Storage::GPU);
+	_waveNormals = Resources::manager().getTexture("wave_normals", {Layout::RGB8, Filter::LINEAR, Wrap::REPEAT}, Storage::GPU);
 	GLUtilities::setDepthState(true);
 
 	checkGLError();
@@ -164,6 +166,9 @@ void IslandApp::draw() {
 		_waterCopy->use();
 		GLUtilities::bindTexture(_sceneBuffer->texture(0), 0);
 		GLUtilities::bindTexture(_sceneBuffer->texture(1), 1);
+		GLUtilities::bindTexture(_caustics, 2);
+		GLUtilities::bindTexture(_waveNormals, 3);
+		_waterCopy->uniform("time", float(timeElapsed()));
 		ScreenQuad::draw();
 		GLUtilities::setDepthState(true);
 		_waterEffects->unbind();
