@@ -13,8 +13,13 @@ uniform float time;
 uniform float texelSize;
 uniform float invMapSize;
 uniform bool raycast;
+uniform vec2 invTargetSize;
+
 
 layout(binding = 0) uniform sampler2D heightMap;
+layout(binding = 1) uniform sampler2D terrainColor;
+layout(binding = 2) uniform sampler2D terrainPos;
+layout(binding = 3) uniform sampler2D terrainColorBlur;
 
 layout(std140, binding = 0) uniform Waves {
 	Wave waves[8];
@@ -67,13 +72,22 @@ void main(){
 	nn.y += 1.0;
 	vec3 n = normalize(nn);
 
+	vec2 screenUV = (gl_FragCoord.xy)*invTargetSize;
+	// Compute length of the ray underwater.
+	vec3 oceanFloorPos = textureLod(terrainPos, screenUV, 0.0).xyz;
+	float distPos = distance(oceanFloorPos, worldPos);
+	// Put the floor at 1.0 unit below approx.
+	float scalingDist = 1.0/2.0;
+	float distUnderWater = clamp(distPos * scalingDist, 0.0, 1.0);
+
+	// Blend blurred version of the floor in deeper regions.
+	vec3 oceanFloor = textureLod(terrainColor, screenUV, 0.0).rgb;
+	vec3 oceanFloorBlur = textureLod(terrainColorBlur, screenUV, 0.0).rgb;
+	vec3 floorColor = mix(oceanFloor, oceanFloorBlur, distUnderWater);
 	// Apply a basic Phong lobe for now.
-	float diffuse = max(0.0, dot(lightDirection, n));
 	vec3 ldir = reflect(vdir, n);
 	float specular = pow(max(0.0, dot(ldir, lightDirection)), 1024.0);
-	vec3 baseColor = vec3(0.02, 0.1, 0.2);
-
-	vec3 color = sunColor * (specular + (diffuse + 0.01) * baseColor);
+	vec3 color = (specular + baseColor);
 	if(debugCol){
 		color = vec3(0.9);
 	}

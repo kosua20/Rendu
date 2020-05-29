@@ -109,6 +109,7 @@ void IslandApp::draw() {
 	const glm::mat4 mvp = _userCamera.projection() * _userCamera.view();
 	const glm::vec3 camDir = _userCamera.direction();
 	const glm::vec3 & camPos = _userCamera.position();
+	const glm::vec2 invRenderSize = 1.0f / glm::vec2(_sceneBuffer->width(), _sceneBuffer->height());
 
 	_sceneBuffer->bind();
 	_sceneBuffer->setViewport();
@@ -187,6 +188,7 @@ void IslandApp::draw() {
 		_oceanProgram->uniform("texelSize", _terrain->texelSize());
 		_oceanProgram->uniform("invMapSize", 1.0f/float(_terrain->map().width));
 		_oceanProgram->uniform("invGridSize", 1.0f/float(_terrain->gridSize()));
+		_oceanProgram->uniform("invTargetSize", invRenderSize);
 
 		GLUtilities::bindBuffer(_waves, 0);
 		GLUtilities::bindTexture(_terrain->map(), 0);
@@ -216,6 +218,7 @@ void IslandApp::draw() {
 		_farOceanProgram->uniform("raycast", true);
 		_farOceanProgram->uniform("invMapSize", 1.0f/float(_terrain->map().width));
 		_farOceanProgram->uniform("invGridSize", 1.0f/float(_terrain->gridSize()));
+		_farOceanProgram->uniform("invTargetSize", invRenderSize);
 
 		GLUtilities::bindBuffer(_waves, 0);
 		GLUtilities::bindTexture(_terrain->map(), 0);
