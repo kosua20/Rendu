@@ -16,7 +16,7 @@ out INTERFACE {
  */
 void main(){
 	// Scale based on the camera distance above the ocean plane.
-	float scale = exp2(max(floor(log2(abs(camPos.y)))-3.0, 0.0));
+	float scale = exp2(max(floor(log2(abs(camPos.y)))-0.5, 0.0));
 	// Center to camera location, but only step by integer amount wrt the grid cell size.
 	vec2 rshift = round(shift.xz/scale);
 	Out.pos = scale * (v + vec3(rshift.x, 0.0, rshift.y));

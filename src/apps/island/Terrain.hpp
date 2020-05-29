@@ -25,7 +25,7 @@ public:
 
 	struct MeshSettings {
 		int size = 96;
-		int levels = 4;
+		int levels = 5;
 	};
 
 	struct ErosionSettings {
