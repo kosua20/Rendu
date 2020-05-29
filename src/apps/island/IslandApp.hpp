@@ -41,6 +41,9 @@ private:
 
 	std::unique_ptr<Framebuffer> _sceneBuffer; ///< Scene framebuffer.
 	const Mesh * _skyMesh;
+	Texture _transitionNoise;
+	const Texture * _materials;
+	const Texture * _materialNormals;
 	const Program * _groundProgram;
 	const Program * _skyProgram; ///< Atmospheric scattering shader.
 	const Texture * _precomputedScattering; ///< Precomputed lookup table.
@@ -56,7 +59,6 @@ private:
 	
 	GPUQuery _prims = GPUQuery(GPUQuery::Type::PRIMITIVES_GENERATED);
 
-	bool _showTerrain = false;
 	bool _showTerrain = true;
 	bool _showOcean = true;
 };

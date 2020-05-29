@@ -24,7 +24,7 @@ public:
 	};
 
 	struct MeshSettings {
-		int size = 112;
+		int size = 96;
 		int levels = 4;
 	};
 

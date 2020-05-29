@@ -18,6 +18,8 @@ vec3 mixNormals(vec3 n1, vec3 n2, float alpha){
 	return normalize(vec3(base, 1.0));
 }
 
+const vec3 sunColor = vec3(1.474, 1.8504, 1.91198);
+
 /** Shade the object, applying lighting. */
 void main(){
 	// Get clean normal and height.
@@ -79,7 +81,7 @@ void main(){
 	vec3 finalN = normalize(tbn * baseN);
 	// Diffuse shading with extra tweak for snow.
 	float light = max(0.0, dot(lightDirection, finalN))+(id1Flat == 4 ? 3.0 : 1.0) * 0.01;
-	vec3 color = light * baseCol;
+	vec3 color = sunColor * light * baseCol;
 
 	if(debugCol){
 		color = vec3(0.9,0.9,0.9);
