@@ -17,7 +17,7 @@ vec3 gerstner(Wave gw, vec2 p, float t){
 	return float(gw.DiAngleActive.w > 0.001) * vec3(horiz.x, vert, horiz.y);
 }
 
-void gerstnerFrame(Wave gw, vec3 pos, float t, out vec3 tn, inout vec3 bn, inout vec3 nn, float distWeight){
+void gerstnerFrame(Wave gw, vec3 pos, float t, inout vec3 tn, inout vec3 bn, inout vec3 nn, float distWeight){
 	vec2 Di = gw.DiAngleActive.xy;
 	float Ai = gw.Aqwp.x;
 	float Qi = gw.Aqwp.y;

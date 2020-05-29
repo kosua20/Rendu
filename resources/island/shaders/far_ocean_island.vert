@@ -7,6 +7,7 @@ uniform vec3 camPos;
 
 out INTERFACE {
 	vec3 pos;
+	vec3 srcPos;
 } Out;
 
 void main(){
@@ -15,4 +16,5 @@ void main(){
 	// Send to almost maximal depth.
 	gl_Position.z = gl_Position.w*0.9999;
 	Out.pos = worldPos;
+	Out.srcPos = worldPos;
 }

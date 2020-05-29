@@ -4,6 +4,7 @@
 
 in INTERFACE {
 	vec3 pos;
+	vec3 srcPos;
 } In ;
 
 uniform vec3 camPos;
@@ -34,6 +35,7 @@ const vec3 sunColor = vec3(1.474, 1.8504, 1.91198);
 void main(){
 
 	vec3 worldPos;
+	vec3 srcPos;
 	float viewDist;
 	vec3 vdir;
 
@@ -47,13 +49,14 @@ void main(){
 		worldPos = camPos + lambda * rayDir;
 		viewDist = lambda;
 		vdir = rayDir;
-
+		srcPos = worldPos;
 	} else {
 		// For the tessellated grid just use the input info.
 		worldPos = In.pos;
 		vec3 dView = worldPos - camPos;
 		viewDist = length(dView);
 		vdir = dView/max(viewDist, 0.001);
+		srcPos = In.srcPos;
 	}
 
 	vec3 nn = vec3(0.0);
