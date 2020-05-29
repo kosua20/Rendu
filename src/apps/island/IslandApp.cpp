@@ -229,6 +229,37 @@ void IslandApp::update() {
 		}
 
 		if(ImGui::CollapsingHeader("Ocean")){
+			bool dirtyWaves = false;
+			for(int i = 0; i < 8; ++i){
+				auto & wave = _waves[i];
+				const std::string name = "Wave " + std::to_string(i);
+				if(ImGui::TreeNode(name.c_str())){
+					bool active = wave.DiAngleActive[3] > 0.001f;
+					if(ImGui::Checkbox("Enabled", &active)){
+						wave.DiAngleActive[3] = active ? 1.0f : 0.0f;
+						dirtyWaves = true;
+					}
+					if(active){
+						dirtyWaves = ImGui::SliderFloat("Ai", &wave.AQwp[0], 0.0f, 1.0f) || dirtyWaves;
+						dirtyWaves = ImGui::SliderFloat("Qi", &wave.AQwp[1], 0.0f, 1.0f) || dirtyWaves;
+						dirtyWaves = ImGui::SliderFloat("wi", &wave.AQwp[2], 0.0f, 1.0f) || dirtyWaves;
+						dirtyWaves = ImGui::SliderFloat("phi", &wave.AQwp[3], 0.0f, glm::pi<float>()) || dirtyWaves;
+						if(ImGui::SliderFloat("Angle", &wave.DiAngleActive[2], 0.0f, glm::two_pi<float>())){
+							dirtyWaves = true;
+							wave.DiAngleActive[0] = std::cos(wave.DiAngleActive[2]);
+							wave.DiAngleActive[1] = std::sin(wave.DiAngleActive[2]);
+						}
+					}
+					ImGui::TreePop();
+				}
+				if(i == 2){
+					ImGui::Separator();
+				}
+			}
+			if(dirtyWaves){
+				_waves.upload();
+			}
+
 		}
 
 		if(ImGui::CollapsingHeader("Camera")){
