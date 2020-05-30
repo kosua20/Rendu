@@ -15,14 +15,16 @@ layout(location = 0) out vec3 fragColor; ///< Color.
 
 /** Just pass the input image as-is, without any resizing. */
 void main(){
-	vec2 fragPos = textureLod(posTexture, In.uv, 0.0).xz;
+	vec3 fragPos = textureLod(posTexture, In.uv, 0.0).xyz;
 	// Compute world-space based UV coordinates.
-	vec2 uvs = fragPos + sin(0.1 * time * vec2(0.1, 0.7));
+	vec2 uvs = fragPos.xz + sin(0.1 * time * vec2(0.1, 0.7));
 	// Fetch displacement vector from low-frequency normal map.
 	vec2 disp =	texture(normalMap, 0.1*uvs).xy;
 	// Fetch caustic intensity.
-	float caust = texture(caustics, fragPos + 2.0*sin(disp)).x;
-	caust *= 10.0*caust;
+	float caust = texture(caustics, fragPos.xz + 2.0*sin(disp)).x;
+	caust *= caust*caust;
+	// Soft transition on the shore edges.
+	float edgeScale = 15.0*clamp(-5.0*fragPos.y, 0.0, 1.0);
 	// Combine ocean floor color and caustics.
-	fragColor = (1.0 + caust) *textureLod(colorTexture, In.uv, 0.0).rgb;
+	fragColor = (1.0 + edgeScale * caust) * textureLod(colorTexture, In.uv, 0.0).rgb;
 }

@@ -154,7 +154,7 @@ void main(){
 		vec2 bubblesUV = mix(srcPos.xz, worldPos.xz, 0.7) + 0.05 * time * vec2(0.5, 0.8) + 0.02 * n.xz;
 		bubblesUV += 0.1 * vdir.xz / NdotV;
 		vec4 bubbles = texture(foamMap, 0.5*bubblesUV, 2.0);
-		baseColor += bubbles.a * bubbles.rgb / max(1.0, viewDist);
+		baseColor += bubbles.a * bubbles.rgb / max(1.0, dist2);
 	}
 
 	// Apply a basic Phong lobe for now.
@@ -175,9 +175,10 @@ void main(){
 		vec3 foam = texture(foamMap, foamUV).rgb;
 		color += foamAtten * foam;
 	}
+	// At edges, mix with the shore color to ensure soft transitions.
+	fragColor = mix(floorColor, color, clamp(distUnderWater*20.0, 0.0, 1.0));
 
 	if(debugCol){
-		color = vec3(0.9);
+		fragColor = vec3(0.9);
 	}
-	fragColor = color;
 }
