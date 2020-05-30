@@ -43,7 +43,8 @@ private:
 	void generateWaves();
 
 	std::unique_ptr<Framebuffer> _sceneBuffer; ///< Scene framebuffer.
-	std::unique_ptr<Framebuffer> _waterEffects; ///< Scene framebuffer.
+	std::unique_ptr<Framebuffer> _waterEffectsHalf; ///< Scene framebuffer.
+	std::unique_ptr<Framebuffer> _waterPos; ///< Scene framebuffer.
 	std::unique_ptr<Framebuffer> _waterEffectsBlur; ///< Scene framebuffer.
 	std::unique_ptr<Framebuffer> _environment; ///< Scene framebuffer.
 	const Mesh * _skyMesh;

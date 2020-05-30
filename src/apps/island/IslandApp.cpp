@@ -11,7 +11,8 @@ IslandApp::IslandApp(RenderingConfig & config) : CameraApp(config), _waves(8, Bu
 	const glm::vec2 renderRes = _config.renderingResolution();
 	const std::vector<Descriptor> descriptors = {{Layout::RGB32F, Filter::LINEAR_NEAREST, Wrap::CLAMP}, {Layout::RGB32F, Filter::LINEAR_NEAREST, Wrap::CLAMP}};
 	_sceneBuffer.reset(new Framebuffer(uint(renderRes[0]), uint(renderRes[1]), descriptors, true));
-	_waterEffects.reset(new Framebuffer(uint(renderRes[0])/2, uint(renderRes[1])/2, descriptors, false));
+	_waterPos.reset(new Framebuffer(uint(renderRes[0]), uint(renderRes[1]), {descriptors[1]}, false));
+	_waterEffectsHalf.reset(new Framebuffer(uint(renderRes[0])/2, uint(renderRes[1])/2, {descriptors[0]}, false));
 	_waterEffectsBlur.reset(new Framebuffer(uint(renderRes[0])/2, uint(renderRes[1])/2, {descriptors[0]}, false));
 	_environment.reset(new Framebuffer(TextureShape::Cube, 256, 256, 6, 1, {{Layout::RGB16F, Filter::LINEAR, Wrap::CLAMP}}, false));
 
@@ -189,9 +190,9 @@ void IslandApp::draw() {
 	if(_showOcean){
 
 		// Start by copying the visible terrain.
-		_waterEffects->bind();
+		_waterEffectsHalf->bind();
 		GLUtilities::setDepthState(false);
-		_waterEffects->setViewport();
+		_waterEffectsHalf->setViewport();
 		_waterCopy->use();
 		GLUtilities::bindTexture(_sceneBuffer->texture(0), 0);
 		GLUtilities::bindTexture(_sceneBuffer->texture(1), 1);
@@ -200,9 +201,12 @@ void IslandApp::draw() {
 		_waterCopy->uniform("time", time);
 		ScreenQuad::draw();
 		GLUtilities::setDepthState(true);
-		_waterEffects->unbind();
+		_waterEffectsHalf->unbind();
 
-		_blur.process(_waterEffects->texture(0), *_waterEffectsBlur);
+		_blur.process(_waterEffectsHalf->texture(0), *_waterEffectsBlur);
+
+		// Blit full res position map.
+		GLUtilities::blit(*_sceneBuffer->texture(1), *_waterPos, Filter::NEAREST);
 
 		_sceneBuffer->bind();
 		_sceneBuffer->setViewport();
@@ -225,8 +229,8 @@ void IslandApp::draw() {
 
 		GLUtilities::bindBuffer(_waves, 0);
 		GLUtilities::bindTexture(_foam, 0);
-		GLUtilities::bindTexture(_waterEffects->texture(0), 1);
-		GLUtilities::bindTexture(_waterEffects->texture(1), 2);
+		GLUtilities::bindTexture(_waterEffectsHalf->texture(0), 1);
+		GLUtilities::bindTexture(_waterPos->texture(0), 2);
 		GLUtilities::bindTexture(_waterEffectsBlur->texture(0), 3);
 		GLUtilities::bindTexture(_absorbScatterOcean, 4);
 		GLUtilities::bindTexture(_waveNormals, 5);
@@ -247,9 +251,9 @@ void IslandApp::draw() {
 			GLUtilities::setCullState(true, Faces::BACK);
 			// We have to redo the low-res copy and blur, because we need the blurred surface to appear.
 			// But we won't render the sky.
-			_waterEffects->bind();
+			_waterEffectsHalf->bind();
 			GLUtilities::setDepthState(false);
-			_waterEffects->setViewport();
+			_waterEffectsHalf->setViewport();
 			_waterCopy->use();
 			GLUtilities::bindTexture(_sceneBuffer->texture(0), 0);
 			GLUtilities::bindTexture(_sceneBuffer->texture(1), 1);
@@ -258,9 +262,12 @@ void IslandApp::draw() {
 			_waterCopy->uniform("time", time);
 			ScreenQuad::draw();
 			GLUtilities::setDepthState(true);
-			_waterEffects->unbind();
+			_waterEffectsHalf->unbind();
 
-			_blur.process(_waterEffects->texture(0), *_waterEffectsBlur);
+			_blur.process(_waterEffectsHalf->texture(0), *_waterEffectsBlur);
+
+			// Blit full res position map.
+			GLUtilities::blit(*_sceneBuffer->texture(1), *_waterPos, Filter::NEAREST);
 
 			// Render full screen effect.
 			_sceneBuffer->bind();
@@ -275,8 +282,8 @@ void IslandApp::draw() {
 
 			GLUtilities::bindBuffer(_waves, 0);
 			GLUtilities::bindTexture(_foam, 0);
-			GLUtilities::bindTexture(_waterEffects->texture(0), 1);
-			GLUtilities::bindTexture(_waterEffects->texture(1), 2);
+			GLUtilities::bindTexture(_waterEffectsHalf->texture(0), 1);
+			GLUtilities::bindTexture(_waterPos->texture(0), 2);
 			GLUtilities::bindTexture(_waterEffectsBlur->texture(0), 3);
 			GLUtilities::bindTexture(_absorbScatterOcean, 4);
 			GLUtilities::bindTexture(_waveNormals, 5);
@@ -302,8 +309,8 @@ void IslandApp::draw() {
 
 			GLUtilities::bindBuffer(_waves, 0);
 			GLUtilities::bindTexture(_foam, 0);
-			GLUtilities::bindTexture(_waterEffects->texture(0), 1);
-			GLUtilities::bindTexture(_waterEffects->texture(1), 2);
+			GLUtilities::bindTexture(_waterEffectsHalf->texture(0), 1);
+			GLUtilities::bindTexture(_waterPos->texture(0), 2);
 			GLUtilities::bindTexture(_waterEffectsBlur->texture(0), 3);
 			GLUtilities::bindTexture(_absorbScatterOcean, 4);
 			GLUtilities::bindTexture(_waveNormals, 5);
@@ -422,14 +429,16 @@ void IslandApp::update() {
 
 void IslandApp::resize() {
 	_sceneBuffer->resize(_config.renderingResolution());
-	_waterEffects->resize(_config.renderingResolution()/2.0f);
+	_waterPos->resize(_config.renderingResolution());
+	_waterEffectsHalf->resize(_config.renderingResolution()/2.0f);
 	_waterEffectsBlur->resize(_config.renderingResolution()/2.0f);
 }
 
 void IslandApp::clean() {
 	_sceneBuffer->clean();
-	_waterEffects->clean();
+	_waterEffectsHalf->clean();
 	_waterEffectsBlur->clean();
+	_waterPos->clean();
 	_environment->clean();
 	_blur.clean();
 	_terrain->clean();

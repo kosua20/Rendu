@@ -57,12 +57,11 @@ void main(){
 		float lambda = -camPos.y / rayDir.y;
 		worldPos = camPos + lambda * rayDir;
 		// Skip if we are in the region of the high quality grid.
-		if(all(lessThan(abs(worldPos.xz-camPos.xz), vec2(waterGridHalf)))){
+		if(all(lessThan(abs(worldPos.xz-camPos.xz), vec2(0.95*waterGridHalf)))){
 			discard;
 		}
 		// Skip for all points above see level.
-		vec2 screenUV = (gl_FragCoord.xy)*invTargetSize;
-		oceanFloorPosEarly = textureLod(terrainPos, screenUV, 0.0).xyz;
+		oceanFloorPosEarly = texelFetch(terrainPos, ivec2(gl_FragCoord.xy), 0).xyz;
 		if(oceanFloorPosEarly.y > 0.0){
 			discard;
 		}
@@ -120,7 +119,7 @@ void main(){
 
 	if(!distantProxy){
 		// Perturb ocean floor UVs based on normal and water depth.
-		vec3 oceanFloorPosInit = textureLod(terrainPos, screenUV, 0.0).xyz;
+		vec3 oceanFloorPosInit = texelFetch(terrainPos, ivec2(gl_FragCoord.xy), 0).xyz;
 		float distPosInit = distance(oceanFloorPosInit, worldPos);
 		screenUV += 0.05 * n.xz * min(1.0, 0.1+distPosInit);
 		// Compute length of the ray underwater.
