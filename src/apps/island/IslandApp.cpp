@@ -46,7 +46,7 @@ IslandApp::IslandApp(RenderingConfig & config) : CameraApp(config), _waves(8, Bu
 	_transitionNoise.upload({Layout::R32F, Filter::LINEAR, Wrap::REPEAT}, false);
 
 	// Ocean.
-	_oceanMesh = Library::generateGrid(64, 1.0f);
+	_oceanMesh = Library::generateGrid(_gridOceanRes, 1.0f);
 	_oceanMesh.upload();
 	_farOceanMesh = Library::generateCylinder(64, 128.0f, 256.0f);
 	_farOceanMesh.upload();
@@ -210,7 +210,7 @@ void IslandApp::draw() {
 		}
 		_oceanProgram->use();
 		_oceanProgram->uniform("mvp", mvp);
-		_oceanProgram->uniform("shift", camPos );
+		_oceanProgram->uniform("shift", glm::round(camPos));
 		_oceanProgram->uniform("maxLevelX", _maxLevelX);
 		_oceanProgram->uniform("maxLevelY", _maxLevelY);
 		_oceanProgram->uniform("distanceScale", _distanceScale);
@@ -241,8 +241,8 @@ void IslandApp::draw() {
 			GLUtilities::setDepthState(true, DepthEquation::LESS, true);
 		}
 
-		GLUtilities::setCullState(true, Faces::BACK);
 		if(isUnderwater){
+			GLUtilities::setCullState(true, Faces::BACK);
 			// We have to redo the low-res copy and blur, because we need the blurred surface to appear.
 			// But we won't render the sky.
 			_waterEffects->bind();
@@ -286,12 +286,16 @@ void IslandApp::draw() {
 
 		// Far ocean, using a cylinder as support to cast rays intersecting the ocean plane.
 		if(!isUnderwater){
+
+			GLUtilities::setDepthState(true, DepthEquation::ALWAYS, true);
 			_farOceanProgram->use();
 			_farOceanProgram->uniform("mvp", mvp);
 			_farOceanProgram->uniform("camPos", camPos);
 			_farOceanProgram->uniform("debugCol", false);
 			_farOceanProgram->uniform("time", time);
 			_farOceanProgram->uniform("distantProxy", true);
+			_farOceanProgram->uniform("waterGridHalf", float(_gridOceanRes-2)*0.5f);
+			_farOceanProgram->uniform("groundGridHalf", _terrain->meshSize()*0.5f);
 			_farOceanProgram->uniform("invTargetSize", invRenderSize);
 
 			GLUtilities::bindBuffer(_waves, 0);
@@ -313,6 +317,7 @@ void IslandApp::draw() {
 				GLUtilities::setPolygonState(PolygonMode::FILL, Faces::ALL);
 				GLUtilities::setDepthState(true, DepthEquation::LESS, true);
 			}
+			GLUtilities::setDepthState(true, DepthEquation::LESS, true);
 		}
 
 	}

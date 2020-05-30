@@ -76,6 +76,7 @@ private:
 	bool _shouldUpdateSky = true;
 
 	// Ocean options.
+	const int _gridOceanRes = 64;
 	float _maxLevelX = 12;
 	float _maxLevelY = 8;
 	float _distanceScale = 1.0;

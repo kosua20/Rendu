@@ -13,6 +13,9 @@ uniform bool debugCol;
 uniform float time;
 uniform bool distantProxy;
 uniform vec2 invTargetSize;
+uniform float waterGridHalf;
+uniform float groundGridHalf;
+uniform vec3 shift;
 
 layout(binding = 0) uniform sampler2D foamMap;
 layout(binding = 1) uniform sampler2D terrainColor;
@@ -30,8 +33,8 @@ layout (location = 0) out vec3 fragColor;
 layout (location = 1) out vec3 fragWorldPos;
 
 float fresnelWater(float NdotV){
-	float F0 = (1.0-1.33)/(1.0 + 1.33);
-	F0 *= F0;
+	// F0 = ((eta_air - eta_water) / (eta_air + eta_water))^2
+	const float F0 = 0.0200593122;
 	return F0 + (1.0 - F0) * pow(1.0 - NdotV, 5.0);
 }
 
@@ -44,6 +47,7 @@ void main(){
 	vec3 prevPos;
 	vec3 vdir;
 
+	vec3 oceanFloorPosEarly;
 	if(distantProxy){
 		// For the distant cylinder mesh, raycast from the camera and intersect the ocean plane.
 		vec3 rayDir = normalize(In.pos - camPos);
@@ -52,6 +56,16 @@ void main(){
 		}
 		float lambda = -camPos.y / rayDir.y;
 		worldPos = camPos + lambda * rayDir;
+		// Skip if we are in the region of the high quality grid.
+		if(all(lessThan(abs(worldPos.xz-camPos.xz), vec2(waterGridHalf)))){
+			discard;
+		}
+		// Skip for all points above see level.
+		vec2 screenUV = (gl_FragCoord.xy)*invTargetSize;
+		oceanFloorPosEarly = textureLod(terrainPos, screenUV, 0.0).xyz;
+		if(oceanFloorPosEarly.y > 0.0){
+			discard;
+		}
 		viewDist = lambda;
 		vdir = rayDir;
 		srcPos = worldPos;
@@ -94,16 +108,18 @@ void main(){
 	tn = normalize(tn);
 	mat3 tbn = mat3(tn, bn, nn);
 
+	vec3 floorColor = vec3(0.0);
+	float distUnderWater = 1.0;
+	const float scalingDist = 1.0/2.0;
+	vec2 screenUV = (gl_FragCoord.xy)*invTargetSize;
+	
 	// Read high frequency normal map based on undistorted world position.
 	vec2 warpUV = 2.0*srcPos.xz;
 	vec3 warpN = texture(waveNormals, warpUV, log2(viewDist)).xyz * 2.0 - 1.0;
 	vec3 n = normalize(tbn * warpN);
 
-	vec3 floorColor = vec3(0.0);
-	float distUnderWater = 1.0;
 	if(!distantProxy){
 		// Perturb ocean floor UVs based on normal and water depth.
-		vec2 screenUV = (gl_FragCoord.xy)*invTargetSize;
 		vec3 oceanFloorPosInit = textureLod(terrainPos, screenUV, 0.0).xyz;
 		float distPosInit = distance(oceanFloorPosInit, worldPos);
 		screenUV += 0.05 * n.xz * min(1.0, 0.1+distPosInit);
@@ -118,6 +134,14 @@ void main(){
 		vec3 oceanFloor = textureLod(terrainColor, screenUV, 0.0).rgb;
 		vec3 oceanFloorBlur = textureLod(terrainColorBlur, screenUV, 0.0).rgb;
 		floorColor = mix(oceanFloor, oceanFloorBlur, distUnderWater);
+
+	} else if(all(lessThan(abs(worldPos.xz), vec2(groundGridHalf)))){
+		// Only do this around the island region
+		vec3 oceanFloorPosInit = oceanFloorPosEarly;
+		float distPosInit = distance(oceanFloorPosInit, worldPos);
+		distUnderWater = clamp(distPosInit * scalingDist, 0.0, 1.0);
+		vec3 oceanFloorBlur = textureLod(terrainColor, screenUV, 0.0).rgb;
+		floorColor = oceanFloorBlur;
 	}
 
 	// Lookup absorption and scattering values for the given distance under water.
