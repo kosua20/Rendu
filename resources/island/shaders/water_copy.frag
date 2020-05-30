@@ -22,8 +22,8 @@ void main(){
 	// Fetch displacement vector from low-frequency normal map.
 	vec2 disp =	texture(normalMap, 0.1*uvs).xy;
 	// Fetch caustic intensity.
-	float caust = texture(caustics, fragPos.xz + sin(disp)).x;
-	caust *= caust;
+	float caust = texture(caustics, fragPos.xz + 2.0*sin(disp)).x;
+	caust *= 10.0*caust;
 	// Combine ocean floor color and caustics.
-	fragColor = textureLod(colorTexture, In.uv, 0.0).rgb + caust;
+	fragColor = (1.0 + caust) *textureLod(colorTexture, In.uv, 0.0).rgb;
 }
