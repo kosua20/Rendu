@@ -61,6 +61,7 @@ private:
 	const Program * _oceanProgram;
 	const Program * _farOceanProgram;
 	const Program * _waterCopy;
+	const Program * _underwaterProgram;
 
 	const Program * _skyProgram; ///< Atmospheric scattering shader.
 	const Texture * _precomputedScattering; ///< Precomputed lookup table.

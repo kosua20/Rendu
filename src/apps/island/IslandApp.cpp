@@ -23,7 +23,7 @@ IslandApp::IslandApp(RenderingConfig & config) : CameraApp(config), _waves(8, Bu
 	_oceanProgram = Resources::manager().getProgram("ocean_island", "ocean_island", "ocean_island", "", "ocean_island", "ocean_island");
 	_farOceanProgram = Resources::manager().getProgram("far_ocean_island", "far_ocean_island", "ocean_island");
 	_waterCopy = Resources::manager().getProgram2D("water_copy");
-
+	_underwaterProgram = Resources::manager().getProgram2D("ocean_underwater");
 	// Final tonemapping screen quad.
 	_tonemap = Resources::manager().getProgram2D("tonemap");
 
@@ -183,7 +183,9 @@ void IslandApp::draw() {
 	}
 
 	// Render the ocean.
+	const bool isUnderwater = camPos.y < 0.00f;
 	if(_showOcean){
+
 		// Start by copying the visible terrain.
 		_waterEffects->bind();
 		GLUtilities::setDepthState(false);
@@ -202,6 +204,10 @@ void IslandApp::draw() {
 
 		_sceneBuffer->bind();
 		_sceneBuffer->setViewport();
+
+		if(isUnderwater){
+			GLUtilities::setCullState(true, Faces::FRONT);
+		}
 		_oceanProgram->use();
 		_oceanProgram->uniform("mvp", mvp);
 		_oceanProgram->uniform("shift", camPos );
@@ -235,48 +241,94 @@ void IslandApp::draw() {
 			GLUtilities::setDepthState(true, DepthEquation::LESS, true);
 		}
 
+		GLUtilities::setCullState(true, Faces::BACK);
+		if(isUnderwater){
+			// We have to redo the low-res copy and blur, because we need the blurred surface to appear.
+			// But we won't render the sky.
+			_waterEffects->bind();
+			GLUtilities::setDepthState(false);
+			_waterEffects->setViewport();
+			_waterCopy->use();
+			GLUtilities::bindTexture(_sceneBuffer->texture(0), 0);
+			GLUtilities::bindTexture(_sceneBuffer->texture(1), 1);
+			GLUtilities::bindTexture(_caustics, 2);
+			GLUtilities::bindTexture(_waveNormals, 3);
+			_waterCopy->uniform("time", time);
+			ScreenQuad::draw();
+			GLUtilities::setDepthState(true);
+			_waterEffects->unbind();
+
+			_blur.process(_waterEffects->texture(0), *_waterEffectsBlur);
+
+			// Render full screen effect.
+			_sceneBuffer->bind();
+			_sceneBuffer->setViewport();
+			GLUtilities::setDepthState(false);
+			_underwaterProgram->use();
+			_underwaterProgram->uniform("mvp", mvp);
+			_underwaterProgram->uniform("camDir", camDir);
+			_underwaterProgram->uniform("camPos", camPos);
+			_underwaterProgram->uniform("time", time);
+			_underwaterProgram->uniform("invTargetSize", invRenderSize);
+
+			GLUtilities::bindBuffer(_waves, 0);
+			GLUtilities::bindTexture(_foam, 0);
+			GLUtilities::bindTexture(_waterEffects->texture(0), 1);
+			GLUtilities::bindTexture(_waterEffects->texture(1), 2);
+			GLUtilities::bindTexture(_waterEffectsBlur->texture(0), 3);
+			GLUtilities::bindTexture(_absorbScatterOcean, 4);
+			GLUtilities::bindTexture(_waveNormals, 5);
+			GLUtilities::bindTexture(_environment->texture(), 6);
+			ScreenQuad::draw();
+			GLUtilities::setDepthState(true);
+
+		}
+
 		// Far ocean, using a cylinder as support to cast rays intersecting the ocean plane.
-		_farOceanProgram->use();
-		_farOceanProgram->uniform("mvp", mvp);
-		_farOceanProgram->uniform("camPos", camPos);
-		_farOceanProgram->uniform("debugCol", false);
-		_farOceanProgram->uniform("time", time);
-		_farOceanProgram->uniform("distantProxy", true);
-		_farOceanProgram->uniform("invTargetSize", invRenderSize);
+		if(!isUnderwater){
+			_farOceanProgram->use();
+			_farOceanProgram->uniform("mvp", mvp);
+			_farOceanProgram->uniform("camPos", camPos);
+			_farOceanProgram->uniform("debugCol", false);
+			_farOceanProgram->uniform("time", time);
+			_farOceanProgram->uniform("distantProxy", true);
+			_farOceanProgram->uniform("invTargetSize", invRenderSize);
 
-		GLUtilities::bindBuffer(_waves, 0);
-		GLUtilities::bindTexture(_foam, 0);
-		GLUtilities::bindTexture(_waterEffects->texture(0), 1);
-		GLUtilities::bindTexture(_waterEffects->texture(1), 2);
-		GLUtilities::bindTexture(_waterEffectsBlur->texture(0), 3);
-		GLUtilities::bindTexture(_absorbScatterOcean, 4);
-		GLUtilities::bindTexture(_waveNormals, 5);
-		GLUtilities::bindTexture(_environment->texture(), 6);
-		GLUtilities::drawMesh(_farOceanMesh);
-
-		// Debug view.
-		if(_showWire){
-			GLUtilities::setPolygonState(PolygonMode::LINE, Faces::ALL);
-			GLUtilities::setDepthState(true, DepthEquation::LEQUAL, true);
-			_farOceanProgram->uniform("debugCol", true);
+			GLUtilities::bindBuffer(_waves, 0);
+			GLUtilities::bindTexture(_foam, 0);
+			GLUtilities::bindTexture(_waterEffects->texture(0), 1);
+			GLUtilities::bindTexture(_waterEffects->texture(1), 2);
+			GLUtilities::bindTexture(_waterEffectsBlur->texture(0), 3);
+			GLUtilities::bindTexture(_absorbScatterOcean, 4);
+			GLUtilities::bindTexture(_waveNormals, 5);
+			GLUtilities::bindTexture(_environment->texture(), 6);
 			GLUtilities::drawMesh(_farOceanMesh);
-			GLUtilities::setPolygonState(PolygonMode::FILL, Faces::ALL);
-			GLUtilities::setDepthState(true, DepthEquation::LESS, true);
+
+			// Debug view.
+			if(_showWire){
+				GLUtilities::setPolygonState(PolygonMode::LINE, Faces::ALL);
+				GLUtilities::setDepthState(true, DepthEquation::LEQUAL, true);
+				_farOceanProgram->uniform("debugCol", true);
+				GLUtilities::drawMesh(_farOceanMesh);
+				GLUtilities::setPolygonState(PolygonMode::FILL, Faces::ALL);
+				GLUtilities::setDepthState(true, DepthEquation::LESS, true);
+			}
 		}
 
 	}
 	_prims.end();
 
 	// Render the sky.
-	GLUtilities::setDepthState(true, DepthEquation::LEQUAL, false);
+	if(!(_showOcean && isUnderwater)){
+		GLUtilities::setDepthState(true, DepthEquation::LEQUAL, false);
 
-	_skyProgram->use();
-	_skyProgram->uniform("clipToWorld", clipToWorld);
-	_skyProgram->uniform("viewPos", camPos);
-	_skyProgram->uniform("lightDirection", _lightDirection);
-	GLUtilities::bindTexture(_precomputedScattering, 0);
-	GLUtilities::drawMesh(*_skyMesh);
-
+		_skyProgram->use();
+		_skyProgram->uniform("clipToWorld", clipToWorld);
+		_skyProgram->uniform("viewPos", camPos);
+		_skyProgram->uniform("lightDirection", _lightDirection);
+		GLUtilities::bindTexture(_precomputedScattering, 0);
+		GLUtilities::drawMesh(*_skyMesh);
+	}
 	_sceneBuffer->unbind();
 
 	GLUtilities::setDepthState(false, DepthEquation::LESS, true);
