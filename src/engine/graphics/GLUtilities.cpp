@@ -1003,6 +1003,49 @@ void GLUtilities::blit(const Texture & src, Texture & dst, Filter filter) {
 	glDeleteFramebuffers(1, &dstFb);
 }
 
+void GLUtilities::blit(const Texture & src, Framebuffer & dst, Filter filter) {
+	// Prepare the destination.
+	if(src.levels != 1) {
+		Log::Warning() << Log::OpenGL << "Only the first mipmap level will be used." << std::endl;
+	}
+	if(src.shape != dst.shape()){
+		Log::Error() << Log::OpenGL << "The texture and framebuffer don't have the same shape." << std::endl;
+		return;
+	}
+
+	// Create two framebuffers.
+	GLuint srcFb;
+	glGenFramebuffers(1, &srcFb);
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, srcFb);
+	const GLenum filterGL = filter == Filter::LINEAR ? GL_LINEAR : GL_NEAREST;
+
+	if(src.shape == TextureShape::Cube) {
+		for(size_t i = 0; i < 6; ++i) {
+			glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), src.gpu->id, 0);
+			checkGLFramebufferError();
+			dst.bind(i, 0, Framebuffer::Mode::WRITE);
+			glBlitFramebuffer(0, 0, src.width, src.height, 0, 0, dst.width(), dst.height(), GL_COLOR_BUFFER_BIT, filterGL);
+		}
+	} else {
+		if(src.shape == TextureShape::D1) {
+			glFramebufferTexture1D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, src.gpu->target, src.gpu->id, 0);
+
+		} else if(src.shape == TextureShape::D2) {
+			glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, src.gpu->target, src.gpu->id, 0);
+
+		} else {
+			Log::Error() << Log::OpenGL << "Unsupported texture shape for blitting." << std::endl;
+			return;
+		}
+		checkGLFramebufferError();
+		dst.bind(0, 0, Framebuffer::Mode::WRITE);
+		glBlitFramebuffer(0, 0, src.width, src.height, 0, 0, dst.width(), dst.height(), GL_COLOR_BUFFER_BIT, filterGL);
+	}
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glDeleteFramebuffers(1, &srcFb);
+}
+
 void GLUtilities::savePixels(GLenum type, GLenum format, unsigned int width, unsigned int height, unsigned int components, const std::string & path, bool flip, bool ignoreAlpha) {
 
 	GLUtilities::sync();

@@ -329,6 +329,14 @@ public:
 	 */
 	static void blit(const Texture & src, Texture & dst, Filter filter);
 
+	/** Blit the content of a texture into a framebuffer first attachment, resizing the content accordingly.
+	 \param src the source texture
+	 \param dst the destination framebuffer
+	 \param filter the filtering to use for resizing
+	 \note This can be used to easily blit a color attachment that is not the first one.
+	 */
+	static void blit(const Texture & src, Framebuffer & dst, Filter filter);
+
 private:
 	/** Read back the currently bound framebuffer to the CPU and save it in the best possible format on disk.
 	 \param type the type of the framebuffer
