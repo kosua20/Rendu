@@ -24,6 +24,7 @@ layout(binding = 3) uniform sampler2D terrainColorBlur;
 layout(binding = 4) uniform sampler2D absorpScatterLUT;
 layout(binding = 5) uniform sampler2D waveNormals;
 layout(binding = 6) uniform samplerCube envmap;
+layout(binding = 7) uniform sampler2D brdfCoeffs;
 
 layout(std140, binding = 0) uniform Waves {
 	Wave waves[8];
@@ -164,8 +165,11 @@ void main(){
 	// Clamp to avoid fireflies.
 	vec3 reflection = min(texture(envmap, ldir).rgb, 5.0);
 	// Combine specular and fresnel.
-	vec3 color = baseColor + fresnelWater(NdotV) * reflection;
+	float Fs = fresnelWater(NdotV);
+	vec2 brdfParams = texture(brdfCoeffs, vec2(NdotV, 0.1)).rg;
+	float specular = (brdfParams.x * Fs + brdfParams.y);
 
+	vec3 color = baseColor + specular * reflection;
 	if(!distantProxy){
 		// Apply foam on top of the shaded water.
 		float foamAtten = 1.0-clamp(distUnderWater*10.0, 0.0, 1.0);

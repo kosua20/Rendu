@@ -56,6 +56,7 @@ private:
 	const Texture * _caustics;
 	const Texture * _waveNormals;
 	const Texture * _foam;
+	const Texture * _brdfLUT;
 
 
 	const Program * _groundProgram;

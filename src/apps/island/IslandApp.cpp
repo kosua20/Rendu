@@ -14,7 +14,7 @@ IslandApp::IslandApp(RenderingConfig & config) : CameraApp(config), _waves(8, Bu
 	_waterPos.reset(new Framebuffer(uint(renderRes[0]), uint(renderRes[1]), {descriptors[1]}, false));
 	_waterEffectsHalf.reset(new Framebuffer(uint(renderRes[0])/2, uint(renderRes[1])/2, {descriptors[0]}, false));
 	_waterEffectsBlur.reset(new Framebuffer(uint(renderRes[0])/2, uint(renderRes[1])/2, {descriptors[0]}, false));
-	_environment.reset(new Framebuffer(TextureShape::Cube, 256, 256, 6, 1, {{Layout::RGB16F, Filter::LINEAR, Wrap::CLAMP}}, false));
+	_environment.reset(new Framebuffer(TextureShape::Cube, 512, 512, 6, 1, {{Layout::RGB16F, Filter::LINEAR_NEAREST, Wrap::CLAMP}}, false));
 
 	// Lookup table.
 	_precomputedScattering = Resources::manager().getTexture("scattering-precomputed", {Layout::RGB32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
@@ -55,6 +55,7 @@ IslandApp::IslandApp(RenderingConfig & config) : CameraApp(config), _waves(8, Bu
 	_caustics = Resources::manager().getTexture("caustics", {Layout::R8, Filter::LINEAR_LINEAR, Wrap::REPEAT}, Storage::GPU);
 	_waveNormals = Resources::manager().getTexture("wave_normals", {Layout::RGB8, Filter::LINEAR_LINEAR, Wrap::REPEAT}, Storage::GPU);
 	_foam = Resources::manager().getTexture("foam", {Layout::SRGB8_ALPHA8, Filter::LINEAR_LINEAR, Wrap::REPEAT}, Storage::GPU);
+	_brdfLUT = Resources::manager().getTexture("brdf-precomputed", {Layout::RG32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
 
 	GLUtilities::setDepthState(true);
 
@@ -235,6 +236,7 @@ void IslandApp::draw() {
 		GLUtilities::bindTexture(_absorbScatterOcean, 4);
 		GLUtilities::bindTexture(_waveNormals, 5);
 		GLUtilities::bindTexture(_environment->texture(), 6);
+		GLUtilities::bindTexture(_brdfLUT, 7);
 		GLUtilities::drawTesselatedMesh(_oceanMesh, 4);
 
 		// Debug view.
@@ -315,6 +317,7 @@ void IslandApp::draw() {
 			GLUtilities::bindTexture(_absorbScatterOcean, 4);
 			GLUtilities::bindTexture(_waveNormals, 5);
 			GLUtilities::bindTexture(_environment->texture(), 6);
+			GLUtilities::bindTexture(_brdfLUT, 7);
 			GLUtilities::drawMesh(_farOceanMesh);
 
 			// Debug view.
