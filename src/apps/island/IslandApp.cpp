@@ -13,7 +13,7 @@ IslandApp::IslandApp(RenderingConfig & config) : CameraApp(config), _waves(8, Bu
 	_sceneBuffer.reset(new Framebuffer(uint(renderRes[0]), uint(renderRes[1]), descriptors, true));
 	_waterEffects.reset(new Framebuffer(uint(renderRes[0])/2, uint(renderRes[1])/2, descriptors, false));
 	_waterEffectsBlur.reset(new Framebuffer(uint(renderRes[0])/2, uint(renderRes[1])/2, {descriptors[0]}, false));
-	_environment.reset(new Framebuffer(TextureShape::Cube, 256, 256, 6, 1, {descriptors[0]}, false));
+	_environment.reset(new Framebuffer(TextureShape::Cube, 256, 256, 6, 1, {{Layout::RGB16F, Filter::LINEAR, Wrap::CLAMP}}, false));
 
 	// Lookup table.
 	_precomputedScattering = Resources::manager().getTexture("scattering-precomputed", {Layout::RGB32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
@@ -62,7 +62,7 @@ IslandApp::IslandApp(RenderingConfig & config) : CameraApp(config), _waves(8, Bu
 	const float pSize = 128.0f;
 	_maxLevelX = std::log2(pSize);
 	_maxLevelY = pSize;
-	_distanceScale = 1.0f / (float(_sceneBuffer->width()) / 1920.0f) * 4.0f;
+	_distanceScale = 1.0f / (float(_sceneBuffer->width()) / 1920.0f) * 6.0f;
 
 	generateWaves();
 

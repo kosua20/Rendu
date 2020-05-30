@@ -26,7 +26,8 @@ layout(std140, binding = 0) uniform Waves {
 	Wave waves[8];
 };
 
-layout (location = 0) out vec4 fragColor;
+layout (location = 0) out vec3 fragColor;
+layout (location = 1) out vec3 fragWorldPos;
 
 float fresnelWater(float NdotV){
 	float F0 = (1.0-1.33)/(1.0 + 1.33);
@@ -64,6 +65,7 @@ void main(){
 		srcPos = In.srcPos;
 		prevPos = In.prevPos;
 	}
+	fragWorldPos = worldPos;
 
 	vec3 nn = vec3(0.0);
 	vec3 tn = vec3(0.0);
@@ -136,7 +138,8 @@ void main(){
 	vec3 ldir = reflect(vdir, n);
 	ldir.y = max(0.001, ldir.y);
 	// Fetch from envmap for now.
-	vec3 reflection = texture(envmap, ldir).rgb;
+	// Clamp to avoid fireflies.
+	vec3 reflection = min(texture(envmap, ldir).rgb, 5.0);
 	// Combine specular and fresnel.
 	vec3 color = baseColor + fresnelWater(NdotV) * reflection;
 
@@ -153,5 +156,5 @@ void main(){
 	if(debugCol){
 		color = vec3(0.9);
 	}
-	fragColor = vec4(color,1.0);
+	fragColor = color;
 }
