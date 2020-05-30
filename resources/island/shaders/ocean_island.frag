@@ -86,12 +86,16 @@ void main(){
 	bn = normalize(bn);
 	tn = normalize(tn);
 	mat3 tbn = mat3(tn, bn, nn);
+
 	// Read high frequency normal map based on undistorted world position.
 	vec2 warpUV = 2.0*srcPos.xz;
 	vec3 warpN = texture(waveNormals, warpUV, log2(viewDist)).xyz * 2.0 - 1.0;
-	vec3 n = normalize(tbn * warpN);//mix(warpN, vec3(0.0,0.0,1.0), clamp(viewDist/10.0, 0.0, 1.0)));
-
+	vec3 n = normalize(tbn * warpN);
+	// Perturb ocean floor UVs based on normal and water depth.
 	vec2 screenUV = (gl_FragCoord.xy)*invTargetSize;
+	vec3 oceanFloorPosInit = textureLod(terrainPos, screenUV, 0.0).xyz;
+	float distPosInit = distance(oceanFloorPosInit, worldPos);
+	screenUV += 0.05 * n.xz * min(1.0, 0.1+distPosInit);
 	// Compute length of the ray underwater.
 	vec3 oceanFloorPos = textureLod(terrainPos, screenUV, 0.0).xyz;
 	float distPos = distance(oceanFloorPos, worldPos);
