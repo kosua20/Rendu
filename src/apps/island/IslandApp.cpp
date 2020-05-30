@@ -114,7 +114,7 @@ void IslandApp::draw() {
 	const glm::vec3 camDir = _userCamera.direction();
 	const glm::vec3 & camPos = _userCamera.position();
 	const glm::vec2 invRenderSize = 1.0f / glm::vec2(_sceneBuffer->width(), _sceneBuffer->height());
-
+	const float time = _stopTime ? 0.1f : float(timeElapsed());
 	// If needed, update the skybox.
 	if(_shouldUpdateSky){
 		GLUtilities::setDepthState(false);
@@ -191,7 +191,7 @@ void IslandApp::draw() {
 		GLUtilities::bindTexture(_sceneBuffer->texture(1), 1);
 		GLUtilities::bindTexture(_caustics, 2);
 		GLUtilities::bindTexture(_waveNormals, 3);
-		_waterCopy->uniform("time", float(timeElapsed()));
+		_waterCopy->uniform("time", time);
 		ScreenQuad::draw();
 		GLUtilities::setDepthState(true);
 		_waterEffects->unbind();
@@ -301,7 +301,9 @@ void IslandApp::update() {
 		ImGui::Checkbox("Terrain##showcheck", &_showTerrain);
 		ImGui::SameLine();
 		ImGui::Checkbox("Ocean##showcheck", &_showOcean);
-		ImGui::Checkbox("Show wire", &_showWire);
+		ImGui::Checkbox("Show wire", &_showWire); ImGui::SameLine();
+		ImGui::Checkbox("Stop time", &_stopTime);
+
 		if(ImGui::CollapsingHeader("Tessellation")){
 			ImGui::DragFloat("maxLevelX", &_maxLevelX);
 			ImGui::DragFloat("maxLevelY", &_maxLevelY);

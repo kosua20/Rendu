@@ -90,5 +90,5 @@ private:
 	Buffer<GerstnerWave> _waves;
 
 	BoxBlur _blur = BoxBlur(true);
-	
+	bool _stopTime = false;
 };
