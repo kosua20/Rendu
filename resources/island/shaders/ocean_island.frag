@@ -14,7 +14,6 @@ uniform float time;
 uniform bool distantProxy;
 uniform vec2 invTargetSize;
 
-
 layout(binding = 0) uniform sampler2D foamMap;
 layout(binding = 1) uniform sampler2D terrainColor;
 layout(binding = 2) uniform sampler2D terrainPos;
@@ -74,7 +73,7 @@ void main(){
 	float dist2 = viewDist*viewDist;
 	float adjust = 1000.0f;
 	// We use the same split as when displacing the vertex.
-	float biasGerstner = distantProxy ? 2.0 : 0.0;
+	float biasGerstner = 0.75;
 	for(int i = 7; i > 2; --i){
 		// Fade out high frequencies when far away.
 		float distWeight = exp(-dist2*pow(i+biasGerstner, 2.0)/adjust);
@@ -97,22 +96,27 @@ void main(){
 	vec2 warpUV = 2.0*srcPos.xz;
 	vec3 warpN = texture(waveNormals, warpUV, log2(viewDist)).xyz * 2.0 - 1.0;
 	vec3 n = normalize(tbn * warpN);
-	// Perturb ocean floor UVs based on normal and water depth.
-	vec2 screenUV = (gl_FragCoord.xy)*invTargetSize;
-	vec3 oceanFloorPosInit = textureLod(terrainPos, screenUV, 0.0).xyz;
-	float distPosInit = distance(oceanFloorPosInit, worldPos);
-	screenUV += 0.05 * n.xz * min(1.0, 0.1+distPosInit);
-	// Compute length of the ray underwater.
-	vec3 oceanFloorPos = textureLod(terrainPos, screenUV, 0.0).xyz;
-	float distPos = distance(oceanFloorPos, worldPos);
-	// Put the floor at 1.0 unit below approx.
-	float scalingDist = 1.0/2.0;
-	float distUnderWater = clamp(distPos * scalingDist, 0.0, 1.0);
 
-	// Blend blurred version of the floor in deeper regions.
-	vec3 oceanFloor = textureLod(terrainColor, screenUV, 0.0).rgb;
-	vec3 oceanFloorBlur = textureLod(terrainColorBlur, screenUV, 0.0).rgb;
-	vec3 floorColor = mix(oceanFloor, oceanFloorBlur, distUnderWater);
+	vec3 floorColor = vec3(0.0);
+	float distUnderWater = 1.0;
+	if(!distantProxy){
+		// Perturb ocean floor UVs based on normal and water depth.
+		vec2 screenUV = (gl_FragCoord.xy)*invTargetSize;
+		vec3 oceanFloorPosInit = textureLod(terrainPos, screenUV, 0.0).xyz;
+		float distPosInit = distance(oceanFloorPosInit, worldPos);
+		screenUV += 0.05 * n.xz * min(1.0, 0.1+distPosInit);
+		// Compute length of the ray underwater.
+		vec3 oceanFloorPos = textureLod(terrainPos, screenUV, 0.0).xyz;
+		float distPos = distance(oceanFloorPos, worldPos);
+		// Put the floor at 1.0 unit below approx.
+		float scalingDist = 1.0/2.0;
+		distUnderWater = clamp(distPos * scalingDist, 0.0, 1.0);
+
+		// Blend blurred version of the floor in deeper regions.
+		vec3 oceanFloor = textureLod(terrainColor, screenUV, 0.0).rgb;
+		vec3 oceanFloorBlur = textureLod(terrainColorBlur, screenUV, 0.0).rgb;
+		floorColor = mix(oceanFloor, oceanFloorBlur, distUnderWater);
+	}
 
 	// Lookup absorption and scattering values for the given distance under water.
 	vec3 absorp = textureLod(absorpScatterLUT, vec2(distUnderWater, 0.75), 0.0).rgb;

@@ -6,10 +6,6 @@ layout(quads, fractional_even_spacing) in;
 
 uniform mat4 mvp;
 uniform float time;
-uniform float texelSize;
-uniform float invMapSize;
-
-layout(binding = 0) uniform sampler2D heightMap;
 
 layout(std140, binding = 0) uniform Waves {
 	Wave waves[8];
