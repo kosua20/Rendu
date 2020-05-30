@@ -16,14 +16,14 @@ layout (location = 0) out vec4 fragColor;
 
 /** Shade the object, applying lighting. */
 void main(){
-	vec2 screenUV = (gl_FragCoord.xy)*invTargetSize;
-	vec3 oceanFloorPos = textureLod(terrainPos, screenUV, 0.0).rgb;
+	vec3 oceanFloorPos = texelFetch(terrainPos, ivec2(gl_FragCoord.xy), 0).rgb;
 	float distPos = distance(oceanFloorPos, camPos);
 	// Put the floor at 1.0 unit below approx.
 	float scalingDist = 1.0/3.0;
 	float distUnderWater = clamp(distPos * scalingDist, 0.0, 1.0);
 
 	// Blend blurred version of the floor in deeper regions.
+	vec2 screenUV = (gl_FragCoord.xy)*invTargetSize;
 	vec3 oceanFloor = textureLod(terrainColor, screenUV, 0.0).rgb;
 	vec3 oceanFloorBlur = textureLod(terrainColorBlur, screenUV, 0.0).rgb;
 	vec3 floorColor = mix(oceanFloor, oceanFloorBlur, distUnderWater);
