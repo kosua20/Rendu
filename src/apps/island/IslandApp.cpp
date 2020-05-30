@@ -78,7 +78,7 @@ void IslandApp::generateWaves(){
 	for(int i = 0; i < 3; ++i){
 		auto & wv = _waves[i];
 		wv.AQwp[0] = baseALow + Random::Float(-0.01f, 0.01f);
-		wv.AQwp[1] = 4.0f*Random::Float(0.1f, 0.5f);
+		wv.AQwp[1] = 3.0f*Random::Float(0.1f, 0.5f);
 		wv.AQwp[2] = basewLow + Random::Float(-1.5f, 1.5f);
 		wv.AQwp[3] = Random::Float(0.2f, 1.5f);
 		// Angle.
@@ -91,7 +91,7 @@ void IslandApp::generateWaves(){
 	for(int i = 3; i < 8; ++i){
 		auto & wv = _waves[i];
 		wv.AQwp[0] = baseAHigh + Random::Float(-0.01f, 0.01f);
-		wv.AQwp[1] = 4.0f*Random::Float(0.6f, 1.0f);
+		wv.AQwp[1] = 3.0f*Random::Float(0.6f, 1.0f);
 		wv.AQwp[2] = basewHigh + Random::Float(-3.0f, 8.0f);
 		wv.AQwp[3] = Random::Float(1.0f, 3.0f);
 		// Angle.
@@ -220,7 +220,7 @@ void IslandApp::draw() {
 		GLUtilities::bindTexture(_waterEffectsBlur->texture(0), 3);
 		GLUtilities::bindTexture(_absorbScatterOcean, 4);
 		GLUtilities::bindTexture(_waveNormals, 5);
-		GLUtilities::bindTexture(_environment->texture(), 7);
+		GLUtilities::bindTexture(_environment->texture(), 6);
 		GLUtilities::drawTesselatedMesh(_oceanMesh, 4);
 
 		// Debug view.
@@ -249,7 +249,7 @@ void IslandApp::draw() {
 		GLUtilities::bindTexture(_waterEffectsBlur->texture(0), 3);
 		GLUtilities::bindTexture(_absorbScatterOcean, 4);
 		GLUtilities::bindTexture(_waveNormals, 5);
-		GLUtilities::bindTexture(_environment->texture(), 7);
+		GLUtilities::bindTexture(_environment->texture(), 6);
 		GLUtilities::drawMesh(_farOceanMesh);
 
 		// Debug view.

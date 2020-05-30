@@ -21,15 +21,13 @@ layout(binding = 2) uniform sampler2D terrainPos;
 layout(binding = 3) uniform sampler2D terrainColorBlur;
 layout(binding = 4) uniform sampler2D absorpScatterLUT;
 layout(binding = 5) uniform sampler2D waveNormals;
-layout(binding = 7) uniform samplerCube envmap;
+layout(binding = 6) uniform samplerCube envmap;
 
 layout(std140, binding = 0) uniform Waves {
 	Wave waves[8];
 };
 
 layout (location = 0) out vec4 fragColor;
-
-const vec3 sunColor = vec3(1.474, 1.8504, 1.91198);
 
 float fresnelWater(float NdotV){
 	float F0 = (1.0-1.33)/(1.0 + 1.33);
@@ -121,12 +119,13 @@ void main(){
 	vec3 scatter = textureLod(absorpScatterLUT, vec2(distUnderWater, 0.25), 0.0).rgb;
 	vec3 baseColor = absorp * mix(floorColor, scatter, distUnderWater);
 
+	float NdotV = max(0.0, dot(n, -vdir));
 	// Apply a basic Phong lobe for now.
 	vec3 ldir = reflect(vdir, n);
+	ldir.y = max(0.001, ldir.y);
 	// Fetch from envmap for now.
 	vec3 reflection = texture(envmap, ldir).rgb;
-
-	float NdotV = max(0.0, dot(n, -vdir));
+	// Combine specular and fresnel.
 	vec3 color = baseColor + fresnelWater(NdotV) * reflection;
 	if(debugCol){
 		color = vec3(0.9);
