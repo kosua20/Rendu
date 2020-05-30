@@ -54,6 +54,9 @@ private:
 	const Texture * _materialNormals;
 	const Texture * _caustics;
 	const Texture * _waveNormals;
+	const Texture * _foam;
+
+
 	const Program * _groundProgram;
 	const Program * _oceanProgram;
 	const Program * _farOceanProgram;

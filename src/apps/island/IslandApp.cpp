@@ -53,6 +53,8 @@ IslandApp::IslandApp(RenderingConfig & config) : CameraApp(config), _waves(8, Bu
 	_absorbScatterOcean = Resources::manager().getTexture("absorbscatterwater", {Layout::SRGB8, Filter::LINEAR, Wrap::CLAMP}, Storage::GPU);
 	_caustics = Resources::manager().getTexture("caustics", {Layout::R8, Filter::LINEAR_LINEAR, Wrap::REPEAT}, Storage::GPU);
 	_waveNormals = Resources::manager().getTexture("wave_normals", {Layout::RGB8, Filter::LINEAR_LINEAR, Wrap::REPEAT}, Storage::GPU);
+	_foam = Resources::manager().getTexture("foam", {Layout::SRGB8_ALPHA8, Filter::LINEAR_LINEAR, Wrap::REPEAT}, Storage::GPU);
+
 	GLUtilities::setDepthState(true);
 
 	checkGLError();
@@ -214,7 +216,7 @@ void IslandApp::draw() {
 		_oceanProgram->uniform("invTargetSize", invRenderSize);
 
 		GLUtilities::bindBuffer(_waves, 0);
-		GLUtilities::bindTexture(_terrain->map(), 0);
+		GLUtilities::bindTexture(_foam, 0);
 		GLUtilities::bindTexture(_waterEffects->texture(0), 1);
 		GLUtilities::bindTexture(_waterEffects->texture(1), 2);
 		GLUtilities::bindTexture(_waterEffectsBlur->texture(0), 3);
@@ -243,7 +245,7 @@ void IslandApp::draw() {
 		_farOceanProgram->uniform("invTargetSize", invRenderSize);
 
 		GLUtilities::bindBuffer(_waves, 0);
-		GLUtilities::bindTexture(_terrain->map(), 0);
+		GLUtilities::bindTexture(_foam, 0);
 		GLUtilities::bindTexture(_waterEffects->texture(0), 1);
 		GLUtilities::bindTexture(_waterEffects->texture(1), 2);
 		GLUtilities::bindTexture(_waterEffectsBlur->texture(0), 3);

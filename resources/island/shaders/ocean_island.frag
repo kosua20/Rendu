@@ -15,7 +15,7 @@ uniform bool distantProxy;
 uniform vec2 invTargetSize;
 
 
-layout(binding = 0) uniform sampler2D heightMap;
+layout(binding = 0) uniform sampler2D foamMap;
 layout(binding = 1) uniform sampler2D terrainColor;
 layout(binding = 2) uniform sampler2D terrainPos;
 layout(binding = 3) uniform sampler2D terrainColorBlur;
@@ -119,7 +119,15 @@ void main(){
 	vec3 scatter = textureLod(absorpScatterLUT, vec2(distUnderWater, 0.25), 0.0).rgb;
 	vec3 baseColor = absorp * mix(floorColor, scatter, distUnderWater);
 
+	// Add underwater bubbles, using the same foam texture but at a lower LOD to blur (see CREST presentation).
 	float NdotV = max(0.0, dot(n, -vdir));
+	if(!distantProxy){
+		vec2 bubblesUV = mix(srcPos.xz, worldPos.xz, 0.7) + 0.05 * time * vec2(0.5, 0.8) + 0.02 * n.xz;
+		bubblesUV += 0.1 * vdir.xz / NdotV;
+		vec4 bubbles = texture(foamMap, 0.5*bubblesUV, 2.0);
+		baseColor += bubbles.a * bubbles.rgb / max(1.0, viewDist);
+	}
+
 	// Apply a basic Phong lobe for now.
 	vec3 ldir = reflect(vdir, n);
 	ldir.y = max(0.001, ldir.y);
@@ -127,6 +135,17 @@ void main(){
 	vec3 reflection = texture(envmap, ldir).rgb;
 	// Combine specular and fresnel.
 	vec3 color = baseColor + fresnelWater(NdotV) * reflection;
+
+	if(!distantProxy){
+		// Apply foam on top of the shaded water.
+		float foamAtten = 1.0-clamp(distUnderWater*10.0, 0.0, 1.0);
+		foamAtten += (1.0-abs(n.y))/max(1.0, viewDist/2.0);
+		foamAtten = sqrt(min(foamAtten, 1.0));
+		vec2 foamUV = 1.5 * srcPos.xz + 0.02 * time;
+		vec3 foam = texture(foamMap, foamUV).rgb;
+		color += foamAtten * foam;
+	}
+
 	if(debugCol){
 		color = vec3(0.9);
 	}
