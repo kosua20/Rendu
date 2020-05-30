@@ -83,10 +83,12 @@ private:
 
 	std::unique_ptr<Terrain> _terrain;
 	
-	GPUQuery _prims = GPUQuery(GPUQuery::Type::PRIMITIVES_GENERATED);
+	GPUQuery _primsGround = GPUQuery(GPUQuery::Type::PRIMITIVES_GENERATED);
+	GPUQuery _primsOcean = GPUQuery(GPUQuery::Type::PRIMITIVES_GENERATED);
 
 	bool _showTerrain = true;
 	bool _showOcean = true;
+	bool _showSky = true;
 
 	struct GerstnerWave {
 		glm::vec4 DiAngleActive = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);

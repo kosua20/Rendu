@@ -144,8 +144,8 @@ void IslandApp::draw() {
 	GLUtilities::setDepthState(true);
 	GLUtilities::setBlendState(false);
 	GLUtilities::clearColor({0.0f,0.0f,0.0f,1.0f});
-	_prims.begin();
 
+	_primsGround.begin();
 	// Render the ground.
 	if(_showTerrain){
 
@@ -181,8 +181,10 @@ void IslandApp::draw() {
 			GLUtilities::setDepthState(true, DepthEquation::LESS, true);
 		}
 	}
+	_primsGround.end();
 
 	// Render the ocean.
+	_primsOcean.begin();
 	const bool isUnderwater = camPos.y < 0.00f;
 	if(_showOcean){
 
@@ -321,10 +323,10 @@ void IslandApp::draw() {
 		}
 
 	}
-	_prims.end();
+	_primsOcean.end();
 
 	// Render the sky.
-	if(!(_showOcean && isUnderwater)){
+	if(_showSky && !(_showOcean && isUnderwater)){
 		GLUtilities::setDepthState(true, DepthEquation::LEQUAL, false);
 
 		_skyProgram->use();
@@ -348,10 +350,11 @@ void IslandApp::draw() {
 void IslandApp::update() {
 	CameraApp::update();
 
-	_prims.value();
+	_primsGround.value();
 	if(ImGui::Begin("Island")){
 		ImGui::Text("%.1f ms, %.1f fps", frameTime() * 1000.0f, frameRate());
-		ImGui::Text("Ground: %llu primitives.", _prims.value());
+		ImGui::Text("Rendering res.: %ux%u", _sceneBuffer->width(), _sceneBuffer->height());
+		ImGui::Text("Ground: %llu primitives, ocean: %llu primitives ", _primsGround.value(), _primsOcean.value());
 		if(ImGui::DragFloat3("Light dir", &_lightDirection[0], 0.001f, -1.0f, 1.0f)) {
 			_lightDirection = glm::normalize(_lightDirection);
 			_shouldUpdateSky = true;
@@ -360,6 +363,8 @@ void IslandApp::update() {
 		ImGui::Checkbox("Terrain##showcheck", &_showTerrain);
 		ImGui::SameLine();
 		ImGui::Checkbox("Ocean##showcheck", &_showOcean);
+		ImGui::SameLine();
+		ImGui::Checkbox("Sky##showcheck", &_showSky);
 		ImGui::Checkbox("Show wire", &_showWire); ImGui::SameLine();
 		ImGui::Checkbox("Stop time", &_stopTime);
 
