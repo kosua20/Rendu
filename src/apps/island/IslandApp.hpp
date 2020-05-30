@@ -45,6 +45,7 @@ private:
 	std::unique_ptr<Framebuffer> _sceneBuffer; ///< Scene framebuffer.
 	std::unique_ptr<Framebuffer> _waterEffects; ///< Scene framebuffer.
 	std::unique_ptr<Framebuffer> _waterEffectsBlur; ///< Scene framebuffer.
+	std::unique_ptr<Framebuffer> _environment; ///< Scene framebuffer.
 	const Mesh * _skyMesh;
 	Mesh _oceanMesh;
 	Mesh _farOceanMesh;
@@ -68,6 +69,7 @@ private:
 
 	// Atmosphere options.
 	glm::vec3 _lightDirection; ///< Sun light direction.
+	bool _shouldUpdateSky = true;
 
 	// Ocean options.
 	float _maxLevelX = 12;

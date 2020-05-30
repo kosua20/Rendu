@@ -13,6 +13,8 @@ IslandApp::IslandApp(RenderingConfig & config) : CameraApp(config), _waves(8, Bu
 	_sceneBuffer.reset(new Framebuffer(uint(renderRes[0]), uint(renderRes[1]), descriptors, true));
 	_waterEffects.reset(new Framebuffer(uint(renderRes[0])/2, uint(renderRes[1])/2, descriptors, false));
 	_waterEffectsBlur.reset(new Framebuffer(uint(renderRes[0])/2, uint(renderRes[1])/2, {descriptors[0]}, false));
+	_environment.reset(new Framebuffer(TextureShape::Cube, 256, 256, 6, 1, {descriptors[0]}, false));
+
 	// Lookup table.
 	_precomputedScattering = Resources::manager().getTexture("scattering-precomputed", {Layout::RGB32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
 	// Atmosphere screen quad.
@@ -49,8 +51,8 @@ IslandApp::IslandApp(RenderingConfig & config) : CameraApp(config), _waves(8, Bu
 	_farOceanMesh = Library::generateCylinder(64, 128.0f, 256.0f);
 	_farOceanMesh.upload();
 	_absorbScatterOcean = Resources::manager().getTexture("absorbscatterwater", {Layout::SRGB8, Filter::LINEAR, Wrap::CLAMP}, Storage::GPU);
-	_caustics = Resources::manager().getTexture("caustics", {Layout::R8, Filter::LINEAR, Wrap::REPEAT}, Storage::GPU);
-	_waveNormals = Resources::manager().getTexture("wave_normals", {Layout::RGB8, Filter::LINEAR, Wrap::REPEAT}, Storage::GPU);
+	_caustics = Resources::manager().getTexture("caustics", {Layout::R8, Filter::LINEAR_LINEAR, Wrap::REPEAT}, Storage::GPU);
+	_waveNormals = Resources::manager().getTexture("wave_normals", {Layout::RGB8, Filter::LINEAR_LINEAR, Wrap::REPEAT}, Storage::GPU);
 	GLUtilities::setDepthState(true);
 
 	checkGLError();
@@ -112,6 +114,27 @@ void IslandApp::draw() {
 	const glm::vec3 camDir = _userCamera.direction();
 	const glm::vec3 & camPos = _userCamera.position();
 	const glm::vec2 invRenderSize = 1.0f / glm::vec2(_sceneBuffer->width(), _sceneBuffer->height());
+
+	// If needed, update the skybox.
+	if(_shouldUpdateSky){
+		GLUtilities::setDepthState(false);
+		GLUtilities::setBlendState(false);
+		_environment->setViewport();
+
+		_skyProgram->use();
+		_skyProgram->uniform("viewPos", glm::vec3(0.0f));
+		_skyProgram->uniform("lightDirection", _lightDirection);
+		GLUtilities::bindTexture(_precomputedScattering, 0);
+
+		for(uint lid = 0; lid < 6; ++lid){
+			_environment->bind(lid);
+			const glm::mat4 clipToWorldFace  = glm::inverse(Library::boxVPs[lid]);
+			_skyProgram->uniform("clipToWorld", clipToWorldFace);
+			GLUtilities::drawMesh(*_skyMesh);
+		}
+		_environment->unbind();
+		_shouldUpdateSky = false;
+	}
 
 	_sceneBuffer->bind();
 	_sceneBuffer->setViewport();
@@ -202,6 +225,7 @@ void IslandApp::draw() {
 		GLUtilities::bindTexture(_waterEffectsBlur->texture(0), 3);
 		GLUtilities::bindTexture(_absorbScatterOcean, 4);
 		GLUtilities::bindTexture(_waveNormals, 5);
+		GLUtilities::bindTexture(_environment->texture(), 7);
 		GLUtilities::drawTesselatedMesh(_oceanMesh, 4);
 
 		// Debug view.
@@ -234,6 +258,7 @@ void IslandApp::draw() {
 		GLUtilities::bindTexture(_waterEffectsBlur->texture(0), 3);
 		GLUtilities::bindTexture(_absorbScatterOcean, 4);
 		GLUtilities::bindTexture(_waveNormals, 5);
+		GLUtilities::bindTexture(_environment->texture(), 7);
 		GLUtilities::drawMesh(_farOceanMesh);
 
 		// Debug view.
@@ -277,8 +302,9 @@ void IslandApp::update() {
 	if(ImGui::Begin("Island")){
 		ImGui::Text("%.1f ms, %.1f fps", frameTime() * 1000.0f, frameRate());
 		ImGui::Text("Ground: %llu primitives.", _prims.value());
-		if(ImGui::DragFloat3("Light dir", &_lightDirection[0], 0.05f, -1.0f, 1.0f)) {
+		if(ImGui::DragFloat3("Light dir", &_lightDirection[0], 0.001f, -1.0f, 1.0f)) {
 			_lightDirection = glm::normalize(_lightDirection);
+			_shouldUpdateSky = true;
 		}
 
 		ImGui::Checkbox("Terrain##showcheck", &_showTerrain);
@@ -347,6 +373,7 @@ void IslandApp::clean() {
 	_sceneBuffer->clean();
 	_waterEffects->clean();
 	_waterEffectsBlur->clean();
+	_environment->clean();
 	_blur.clean();
 	_terrain->clean();
 }

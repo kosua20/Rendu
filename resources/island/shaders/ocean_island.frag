@@ -23,6 +23,7 @@ layout(binding = 2) uniform sampler2D terrainPos;
 layout(binding = 3) uniform sampler2D terrainColorBlur;
 layout(binding = 4) uniform sampler2D absorpScatterLUT;
 layout(binding = 5) uniform sampler2D waveNormals;
+layout(binding = 7) uniform samplerCube envmap;
 
 layout(std140, binding = 0) uniform Waves {
 	Wave waves[8];
@@ -31,6 +32,12 @@ layout(std140, binding = 0) uniform Waves {
 layout (location = 0) out vec4 fragColor;
 
 const vec3 sunColor = vec3(1.474, 1.8504, 1.91198);
+
+float fresnelWater(float NdotV){
+	float F0 = (1.0-1.33)/(1.0 + 1.33);
+	F0 *= F0;
+	return F0 + (1.0 - F0) * pow(1.0 - NdotV, 5.0);
+}
 
 /** Shade the object, applying lighting. */
 void main(){
@@ -80,9 +87,9 @@ void main(){
 	tn = normalize(tn);
 	mat3 tbn = mat3(tn, bn, nn);
 	// Read high frequency normal map based on undistorted world position.
-	vec2 warpUV = srcPos.xz;
-	vec3 warpN = texture(waveNormals, warpUV).xyz * 2.0 - 1.0;
-	vec3 n = normalize(tbn * mix(warpN, vec3(0.0,0.0,1.0), clamp(viewDist/10.0, 0.0, 1.0)));
+	vec2 warpUV = 2.0*srcPos.xz;
+	vec3 warpN = texture(waveNormals, warpUV, log2(viewDist)).xyz * 2.0 - 1.0;
+	vec3 n = normalize(tbn * warpN);//mix(warpN, vec3(0.0,0.0,1.0), clamp(viewDist/10.0, 0.0, 1.0)));
 
 	vec2 screenUV = (gl_FragCoord.xy)*invTargetSize;
 	// Compute length of the ray underwater.
@@ -101,10 +108,14 @@ void main(){
 	vec3 absorp = textureLod(absorpScatterLUT, vec2(distUnderWater, 0.75), 0.0).rgb;
 	vec3 scatter = textureLod(absorpScatterLUT, vec2(distUnderWater, 0.25), 0.0).rgb;
 	vec3 baseColor = absorp * mix(floorColor, scatter, distUnderWater);
+
 	// Apply a basic Phong lobe for now.
 	vec3 ldir = reflect(vdir, n);
-	float specular = pow(max(0.0, dot(ldir, lightDirection)), 1024.0);
-	vec3 color = (specular + baseColor);
+	// Fetch from envmap for now.
+	vec3 reflection = texture(envmap, ldir).rgb;
+
+	float NdotV = max(0.0, dot(n, -vdir));
+	vec3 color = baseColor + fresnelWater(NdotV) * reflection;
 	if(debugCol){
 		color = vec3(0.9);
 	}
