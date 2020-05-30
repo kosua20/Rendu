@@ -176,7 +176,7 @@ void main(){
 		color += foamAtten * foam;
 	}
 	// At edges, mix with the shore color to ensure soft transitions.
-	fragColor = mix(floorColor, color, clamp(distUnderWater*20.0, 0.0, 1.0));
+	fragColor = mix(floorColor, color, clamp(distUnderWater*30.0, 0.0, 1.0));
 
 	if(debugCol){
 		fragColor = vec3(0.9);
