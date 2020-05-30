@@ -5,15 +5,13 @@
 in INTERFACE {
 	vec3 pos;
 	vec3 srcPos;
+	vec3 prevPos;
 } In ;
 
 uniform vec3 camPos;
-uniform vec3 lightDirection;
 uniform bool debugCol;
 uniform float time;
-uniform float texelSize;
-uniform float invMapSize;
-uniform bool raycast;
+uniform bool distantProxy;
 uniform vec2 invTargetSize;
 
 
@@ -45,9 +43,10 @@ void main(){
 	vec3 worldPos;
 	vec3 srcPos;
 	float viewDist;
+	vec3 prevPos;
 	vec3 vdir;
 
-	if(raycast){
+	if(distantProxy){
 		// For the distant cylinder mesh, raycast from the camera and intersect the ocean plane.
 		vec3 rayDir = normalize(In.pos - camPos);
 		if(rayDir.y >= -0.001){
@@ -58,6 +57,7 @@ void main(){
 		viewDist = lambda;
 		vdir = rayDir;
 		srcPos = worldPos;
+		prevPos = worldPos;
 	} else {
 		// For the tessellated grid just use the input info.
 		worldPos = In.pos;
@@ -65,6 +65,7 @@ void main(){
 		viewDist = length(dView);
 		vdir = dView/max(viewDist, 0.001);
 		srcPos = In.srcPos;
+		prevPos = In.prevPos;
 	}
 
 	vec3 nn = vec3(0.0);
@@ -74,10 +75,17 @@ void main(){
 	// Compute waves normal, applying a fade out when in the distance to avoid aliasing.
 	float dist2 = viewDist*viewDist;
 	float adjust = 1000.0f;
-	for(int i = 7; i >= 0; --i){
+	// We use the same split as when displacing the vertex.
+	float biasGerstner = distantProxy ? 2.0 : 0.0;
+	for(int i = 7; i > 2; --i){
 		// Fade out high frequencies when far away.
-		float distWeight = exp(-dist2*pow(i+0.5, 2.0)/adjust);
-		gerstnerFrame(waves[i], worldPos, time, tn, bn, nn, distWeight);
+		float distWeight = exp(-dist2*pow(i+biasGerstner, 2.0)/adjust);
+		gerstnerFrame(waves[i], srcPos, time, tn, bn, nn, distWeight);
+	}
+	for(int i = 2; i >= 0; --i){
+		// Fade out high frequencies when far away.
+		float distWeight = exp(-dist2*pow(i+biasGerstner, 2.0)/adjust);
+		gerstnerFrame(waves[i], prevPos, time, tn, bn, nn, distWeight);
 	}
 	tn.z += 1.0;
 	bn.x += 1.0;

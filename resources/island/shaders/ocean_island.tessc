@@ -6,8 +6,6 @@ uniform float maxLevelX;
 uniform float maxLevelY;
 uniform float distanceScale;
 
-
-uniform vec3 lodPos;
 uniform vec3 camDir;
 uniform vec3 camPos;
 
@@ -21,7 +19,7 @@ out INTERFACE {
 
 
 float lodCorner(vec3 pos){
-	float camDist = distance(pos, lodPos);
+	float camDist = distance(pos, camPos);
 	float level = log2((camDist + 0.0001) * distanceScale);
 	return clamp(level, 0.0, maxLevelX);
 }
@@ -30,10 +28,10 @@ void main(){
 	Out[gl_InvocationID].pos = In[gl_InvocationID].pos;
 
 	if(gl_InvocationID == 0){
-		if(dot(In[0].pos - lodPos, camDir) < 0.0 &&
-		  dot(In[1].pos - lodPos, camDir) < 0.0 &&
-		  dot(In[2].pos - lodPos, camDir) < 0.0 &&
-		  dot(In[3].pos - lodPos, camDir) < 0.0
+		if(dot(In[0].pos - camPos, camDir) < 0.0 &&
+		  dot(In[1].pos - camPos, camDir) < 0.0 &&
+		  dot(In[2].pos - camPos, camDir) < 0.0 &&
+		  dot(In[3].pos - camPos, camDir) < 0.0
 		){
 			gl_TessLevelOuter[0] = -1.0;
 			gl_TessLevelOuter[1] = -1.0;

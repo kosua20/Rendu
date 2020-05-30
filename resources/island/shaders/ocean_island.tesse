@@ -22,6 +22,7 @@ in INTERFACE {
 out INTERFACE {
 	vec3 pos;
 	vec3 srcPos;
+	vec3 prevPos;
 } Out ;
 
 void main(){
@@ -34,7 +35,7 @@ void main(){
 	worldPos.y = 0.0;
 
 	Out.srcPos = worldPos;
-	
+
 	// Apply perturbation.
 	// High frequency waves.
 	vec3 posDelta = vec3(0.0);
@@ -43,6 +44,8 @@ void main(){
 	}
 	// Update position.
 	worldPos += posDelta;
+	Out.prevPos = worldPos;
+	
 	// Low frequency waves.
 	posDelta = vec3(0.0);
 	for(int i = 2; i >= 0; --i){

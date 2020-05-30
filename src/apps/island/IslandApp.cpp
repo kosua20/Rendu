@@ -206,16 +206,11 @@ void IslandApp::draw() {
 		_oceanProgram->uniform("maxLevelX", _maxLevelX);
 		_oceanProgram->uniform("maxLevelY", _maxLevelY);
 		_oceanProgram->uniform("distanceScale", _distanceScale);
-		_oceanProgram->uniform("lightDirection", _lightDirection);
 		_oceanProgram->uniform("debugCol", false);
-		_oceanProgram->uniform("lodPos", camPos);
 		_oceanProgram->uniform("camDir", camDir);
 		_oceanProgram->uniform("camPos", camPos);
-		_oceanProgram->uniform("raycast", false);
-		_oceanProgram->uniform("time", float(timeElapsed()));
-		_oceanProgram->uniform("texelSize", _terrain->texelSize());
-		_oceanProgram->uniform("invMapSize", 1.0f/float(_terrain->map().width));
-		_oceanProgram->uniform("invGridSize", 1.0f/float(_terrain->gridSize()));
+		_oceanProgram->uniform("distantProxy", false);
+		_oceanProgram->uniform("time", time);
 		_oceanProgram->uniform("invTargetSize", invRenderSize);
 
 		GLUtilities::bindBuffer(_waves, 0);
@@ -242,13 +237,9 @@ void IslandApp::draw() {
 		_farOceanProgram->use();
 		_farOceanProgram->uniform("mvp", mvp);
 		_farOceanProgram->uniform("camPos", camPos);
-		_farOceanProgram->uniform("lightDirection", _lightDirection);
 		_farOceanProgram->uniform("debugCol", false);
-		_farOceanProgram->uniform("time", float(timeElapsed()));
-		_farOceanProgram->uniform("texelSize", _terrain->texelSize());
-		_farOceanProgram->uniform("raycast", true);
-		_farOceanProgram->uniform("invMapSize", 1.0f/float(_terrain->map().width));
-		_farOceanProgram->uniform("invGridSize", 1.0f/float(_terrain->gridSize()));
+		_farOceanProgram->uniform("time", time);
+		_farOceanProgram->uniform("distantProxy", true);
 		_farOceanProgram->uniform("invTargetSize", invRenderSize);
 
 		GLUtilities::bindBuffer(_waves, 0);

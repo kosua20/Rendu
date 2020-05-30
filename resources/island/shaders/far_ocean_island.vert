@@ -8,6 +8,7 @@ uniform vec3 camPos;
 out INTERFACE {
 	vec3 pos;
 	vec3 srcPos;
+	vec3 prevPos;
 } Out;
 
 void main(){
@@ -17,4 +18,5 @@ void main(){
 	gl_Position.z = gl_Position.w*0.9999;
 	Out.pos = worldPos;
 	Out.srcPos = worldPos;
+	Out.prevPos = worldPos;
 }
