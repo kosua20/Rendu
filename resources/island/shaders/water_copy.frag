@@ -18,7 +18,7 @@ layout(location = 1) out vec3 fragPos; ///< Position.
 void main(){
 	fragPos = textureLod(posTexture, In.uv, 0.0).rgb;
 	// Compute world-space based UV coordinates.
-	vec2 uvs = fragPos.xz + 0.1 * time * vec2(0.1, 0.7);
+	vec2 uvs = fragPos.xz + sin(0.1 * time * vec2(0.1, 0.7));
 	// Fetch displacement vector from low-frequency normal map.
 	vec2 disp =	texture(normalMap, 0.1*uvs).xy;
 	// Fetch caustic intensity.
