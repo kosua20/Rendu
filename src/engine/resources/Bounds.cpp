@@ -4,6 +4,11 @@ BoundingSphere::BoundingSphere(const glm::vec3 & aCenter, float aRadius) :
 	center(aCenter), radius(aRadius) {
 }
 
+BoundingBox::BoundingBox(const glm::vec3 & v0, const glm::vec3 & v1) {
+	minis = glm::min(v0, v1);
+	maxis = glm::max(v0, v1);
+}
+
 BoundingBox::BoundingBox(const glm::vec3 & v0, const glm::vec3 & v1, const glm::vec3 & v2) {
 	minis = glm::min(glm::min(v0, v1), v2);
 	maxis = glm::max(glm::max(v0, v1), v2);

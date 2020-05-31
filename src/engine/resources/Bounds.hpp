@@ -30,6 +30,12 @@ public:
 	/** Empty box constructor. */
 	BoundingBox() = default;
 
+	/** Corner-based box constructor.
+	 \param v0 first corner
+	 \param v1 second corner
+	 */
+	BoundingBox(const glm::vec3 & v0, const glm::vec3 & v1);
+
 	/** Triangle-based box constructor.
 	 \param v0 first triangle vertex
 	 \param v1 second triangle vertex
