@@ -153,8 +153,7 @@ void IslandApp::draw() {
 
 		const glm::vec3 frontPos = camPos + camDir;
 		// Clamp based on the terrain heightmap dimensions in world space.
-		const float extent = 0.5f * std::abs(float(_terrain->map().width) * _terrain->texelSize() - 0.5f*_terrain->meshSize());
-		const glm::vec3 frontPosClamped = glm::clamp(frontPos, -extent, extent);
+		const float extent = 0.25f * std::abs(float(_terrain->map().width) * _terrain->texelSize() - 0.5f*_terrain->meshSize());
 		glm::vec3 frontPosClamped = glm::clamp(frontPos, -extent, extent);
 		frontPosClamped[1] = 0.0f;
 
@@ -190,16 +189,16 @@ void IslandApp::draw() {
 			_groundProgram->uniform("debugCol", false);
 			GLUtilities::drawMesh(cell.mesh);
 
-		// Debug view.
-		if(_showWire){
-			GLUtilities::setPolygonState(PolygonMode::LINE, Faces::ALL);
-			GLUtilities::setDepthState(true, DepthEquation::LEQUAL, true);
-			_groundProgram->uniform("debugCol", true);
+			// Debug view.
+			if(_showWire){
+				GLUtilities::setPolygonState(PolygonMode::LINE, Faces::ALL);
+				GLUtilities::setDepthState(true, DepthEquation::LEQUAL, true);
+				_groundProgram->uniform("debugCol", true);
 				GLUtilities::drawMesh(cell.mesh);
-			GLUtilities::setPolygonState(PolygonMode::FILL, Faces::ALL);
-			GLUtilities::setDepthState(true, DepthEquation::LESS, true);
+				GLUtilities::setPolygonState(PolygonMode::FILL, Faces::ALL);
+				GLUtilities::setDepthState(true, DepthEquation::LESS, true);
+			}
 		}
-	}
 	}
 	_primsGround.end();
 
