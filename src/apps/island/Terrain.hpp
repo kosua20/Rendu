@@ -2,7 +2,7 @@
 #include "resources/Image.hpp"
 #include "resources/Texture.hpp"
 #include "resources/Mesh.hpp"
-#include "processing/BoxBlur.hpp"
+#include "processing/GaussianBlur.hpp"
 #include "graphics/Framebuffer.hpp"
 #include "generation/PerlinNoise.hpp"
 #include "generation/Random.hpp"
@@ -97,8 +97,9 @@ private:
 	PerlinNoise _perlin;
 	std::vector<Cell> _cells;
 	Texture _map;
+	Texture _mapLowRes;
 	std::unique_ptr<Framebuffer> _shadowBuffer;
-	BoxBlur _boxBlur;
+	GaussianBlur _gaussBlur;
 
 	GenerationSettings _genOpts;
 	MeshSettings _mshOpts;

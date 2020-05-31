@@ -4,10 +4,10 @@
 #include "graphics/ScreenQuad.hpp"
 
 
-Terrain::Terrain(uint resolution, uint seed) : _boxBlur(false),  _resolution(resolution), _seed(seed) {
+Terrain::Terrain(uint resolution, uint seed) : _gaussBlur(2, 1), _resolution(resolution), _seed(seed) {
 	generateMesh();
 	generateMap();
-	_shadowBuffer.reset(new Framebuffer(resolution, resolution, {Layout::R8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, false));
+	_shadowBuffer.reset(new Framebuffer(resolution, resolution, {Layout::RG8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, false));
 }
 
 void Terrain::generateMesh(){
@@ -379,21 +379,47 @@ void Terrain::transferAndUpdateMap(Image & heightMap){
 	
 	// Send to the GPU.
 	_map.upload({Layout::RGBA32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, false);
+
+	// Build low res version, with conservative depth estimation.
+	_mapLowRes.width = _mapLowRes.height = _resolution/2;
+	_mapLowRes.levels = _mapLowRes.depth = 1;
+	_mapLowRes.shape = TextureShape::D2;
+	_mapLowRes.clean();
+	_mapLowRes.images.emplace_back(_mapLowRes.width, _mapLowRes.height, 1);
+
+	for(uint y = 0; y < _mapLowRes.height; ++y){
+		for(uint x = 0; x < _mapLowRes.width; ++x){
+			const glm::ivec2 pix(2*x, 2*y);
+			const glm::ivec2 pixi = glm::min(pix+1, maxPos);
+			const float & h00 = _map.images[0].r( pix.x,  pix.y);
+			const float & h10 = _map.images[0].r(pixi.x,  pix.y);
+			const float & h01 = _map.images[0].r( pix.x, pixi.y);
+			const float & h11 = _map.images[0].r(pixi.x, pixi.y);
+			_mapLowRes.images[0].r(x,y) = std::min(std::min(h00, h01), std::min(h10, h11));
+		}
+	}
+	_mapLowRes.upload({Layout::R32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, false);
 }
 
 
 void Terrain::generateShadowMap(const glm::vec3 & lightDir){
 
 	const auto prog = Resources::manager().getProgram2D("shadow_island");
+
+	const Texture & map = _mapLowRes;
+	// Adjust texel size for potentially smaller map.
+	const float texelSize = _texelSize * float(_map.width) / float(_mapLowRes.width);
+	const uint stepCount = 2 * std::max(map.width, map.height);
+	// Make sure light direction is normalized.
 	const glm::vec3 lDir = glm::normalize(lightDir);
-	const uint stepCount = 2 * std::max(_map.width, _map.height);
-	const float horiz = _texelSize * lDir.y / std::sqrt(lDir.x*lDir.x + lDir.z * lDir.z);
+	// Increment in height when moving by one texel.
+	const float horiz = texelSize * lDir.y / std::sqrt(lDir.x*lDir.x + lDir.z * lDir.z);
+	// Projection in the plane.
 	const glm::vec2 lDir2 = glm::normalize(glm::vec2(lDir.x, lDir.z));
 	float tmaxX = lDir2.x != 0.0f ? 1.0f : std::abs(lDir2.y / lDir2.x);
 	float tmaxY = lDir2.x != 0.0f ? std::abs(lDir2.x / lDir2.y) : 1.0f;
-	const float tDeltaX = 2 * tmaxX;
-	const float tDeltaY = 2 * tmaxY;
-
+	const float tDeltaX = 2.0f * tmaxX;
+	const float tDeltaY = 2.0f * tmaxY;
 
 	_shadowBuffer->bind();
 	_shadowBuffer->setViewport();
@@ -407,11 +433,11 @@ void Terrain::generateShadowMap(const glm::vec3 & lightDir){
 	prog->uniform("tMaxInit", glm::vec2(tmaxX, tmaxY));
 	prog->uniform("tDelta", glm::vec2(tDeltaX, tDeltaY));
 
-	GLUtilities::bindTexture(_map, 0);
+	GLUtilities::bindTexture(map, 0);
 	ScreenQuad::draw();
 	_shadowBuffer->unbind();
 
-	_boxBlur.process(_shadowBuffer->texture(0), *_shadowBuffer);
+	_gaussBlur.process(_shadowBuffer->texture(0), *_shadowBuffer);
 }
 
 void Terrain::interface(){
@@ -463,7 +489,7 @@ void Terrain::interface(){
 void Terrain::clean() {
 	_map.clean();
 	_shadowBuffer->clean();
-	_boxBlur.clean();
+	_gaussBlur.clean();
 	for(Cell & cell : _cells){
 		cell.mesh.clean();
 	}
