@@ -8,6 +8,7 @@ layout(binding=0) uniform sampler2D heightMap;
 layout(binding=1) uniform sampler2D noiseTransition;
 layout(binding=2) uniform sampler2DArray materials;
 layout(binding=3) uniform sampler2DArray materialNormals;
+layout(binding=4) uniform sampler2D shadowMap;
 
 layout (location = 0) out vec3 fragColor;
 layout (location = 1) out vec3 fragWorldPos;
@@ -86,7 +87,8 @@ void main(){
 	vec3 finalN = normalize(tbn * baseN);
 	// Diffuse shading with extra tweak for snow.
 	float light = max(0.0, dot(lightDirection, finalN))+(id1Flat == 4 ? 3.0 : 1.0) * 0.01;
-	vec3 color = sunColor * light * baseCol;
+	float shadow = textureLod(shadowMap, In.uv, 0.0).r;
+	vec3 color = (shadow * sunColor * light + 0.1) * baseCol;
 
 	if(debugCol){
 		color = vec3(0.9,0.9,0.9);

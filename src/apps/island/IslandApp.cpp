@@ -137,6 +137,8 @@ void IslandApp::draw() {
 			GLUtilities::drawMesh(*_skyMesh);
 		}
 		_environment->unbind();
+
+		_terrain->generateShadowMap(_lightDirection);
 		_shouldUpdateSky = false;
 	}
 
@@ -174,6 +176,7 @@ void IslandApp::draw() {
 		GLUtilities::bindTexture(_transitionNoise, 1);
 		GLUtilities::bindTexture(_materials, 2);
 		GLUtilities::bindTexture(_materialNormals, 3);
+		GLUtilities::bindTexture(_terrain->shadowMap(), 4);
 
 
 		for(const Terrain::Cell & cell : _terrain->cells()){
