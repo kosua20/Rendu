@@ -2,6 +2,8 @@
 #include "resources/Image.hpp"
 #include "resources/Texture.hpp"
 #include "resources/Mesh.hpp"
+#include "processing/BoxBlur.hpp"
+#include "graphics/Framebuffer.hpp"
 #include "generation/PerlinNoise.hpp"
 #include "generation/Random.hpp"
 #include "Common.hpp"
@@ -56,6 +58,8 @@ public:
 
 	void generateMap();
 
+	void generateShadowMap(const glm::vec3 & lightDir);
+
 	void interface();
 
 	void clean();
@@ -76,6 +80,10 @@ public:
 		return _map;
 	}
 
+	const Texture * shadowMap() const {
+		return _shadowBuffer->texture(0);
+	}
+
 	const std::vector<Cell> & cells() const {
 		return _cells;
 	}
@@ -89,6 +97,8 @@ private:
 	PerlinNoise _perlin;
 	std::vector<Cell> _cells;
 	Texture _map;
+	std::unique_ptr<Framebuffer> _shadowBuffer;
+	BoxBlur _boxBlur;
 
 	GenerationSettings _genOpts;
 	MeshSettings _mshOpts;

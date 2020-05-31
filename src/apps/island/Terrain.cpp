@@ -1,9 +1,13 @@
 #include "Terrain.hpp"
+#include "resources/ResourcesManager.hpp"
+#include "graphics/GLUtilities.hpp"
+#include "graphics/ScreenQuad.hpp"
 
 
-Terrain::Terrain(uint resolution, uint seed) : _resolution(resolution), _seed(seed) {
+Terrain::Terrain(uint resolution, uint seed) : _boxBlur(false),  _resolution(resolution), _seed(seed) {
 	generateMesh();
 	generateMap();
+	_shadowBuffer.reset(new Framebuffer(resolution, resolution, {Layout::R8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, false));
 }
 
 void Terrain::generateMesh(){
@@ -377,6 +381,39 @@ void Terrain::transferAndUpdateMap(Image & heightMap){
 	_map.upload({Layout::RGBA32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, false);
 }
 
+
+void Terrain::generateShadowMap(const glm::vec3 & lightDir){
+
+	const auto prog = Resources::manager().getProgram2D("shadow_island");
+	const glm::vec3 lDir = glm::normalize(lightDir);
+	const uint stepCount = 2 * std::max(_map.width, _map.height);
+	const float horiz = _texelSize * lDir.y / std::sqrt(lDir.x*lDir.x + lDir.z * lDir.z);
+	const glm::vec2 lDir2 = glm::normalize(glm::vec2(lDir.x, lDir.z));
+	float tmaxX = lDir2.x != 0.0f ? 1.0f : std::abs(lDir2.y / lDir2.x);
+	float tmaxY = lDir2.x != 0.0f ? std::abs(lDir2.x / lDir2.y) : 1.0f;
+	const float tDeltaX = 2 * tmaxX;
+	const float tDeltaY = 2 * tmaxY;
+
+
+	_shadowBuffer->bind();
+	_shadowBuffer->setViewport();
+	GLUtilities::setDepthState(false);
+	prog->use();
+	prog->uniform("lDir", lDir);
+	prog->uniform("stepCount", stepCount);
+	prog->uniform("horiz", horiz);
+	prog->uniform("lDir2", lDir2);
+	prog->uniform("lDir", lDir);
+	prog->uniform("tMaxInit", glm::vec2(tmaxX, tmaxY));
+	prog->uniform("tDelta", glm::vec2(tDeltaX, tDeltaY));
+
+	GLUtilities::bindTexture(_map, 0);
+	ScreenQuad::draw();
+	_shadowBuffer->unbind();
+
+	_boxBlur.process(_shadowBuffer->texture(0), *_shadowBuffer);
+}
+
 void Terrain::interface(){
 
 	if(ImGui::TreeNode("Mesh")){
@@ -425,6 +462,8 @@ void Terrain::interface(){
 
 void Terrain::clean() {
 	_map.clean();
+	_shadowBuffer->clean();
+	_boxBlur.clean();
 	for(Cell & cell : _cells){
 		cell.mesh.clean();
 	}
