@@ -42,6 +42,11 @@ public:
 		bool apply = true;
 	};
 
+	struct Cell {
+		Mesh mesh;
+		uint level;
+	};
+
 	/** Constructor
 	 \param config rendering config
 	 */
@@ -71,8 +76,8 @@ public:
 		return _map;
 	}
 
-	const Mesh & mesh() const {
-		return _mesh;
+	const std::vector<Cell> & cells() const {
+		return _cells;
 	}
 
 private:
@@ -82,7 +87,7 @@ private:
 	void transferAndUpdateMap(Image & heightMap);
 
 	PerlinNoise _perlin;
-	Mesh _mesh;
+	std::vector<Cell> _cells;
 	Texture _map;
 
 	GenerationSettings _genOpts;
