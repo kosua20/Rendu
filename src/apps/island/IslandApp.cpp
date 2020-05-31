@@ -155,6 +155,11 @@ void IslandApp::draw() {
 		// Clamp based on the terrain heightmap dimensions in world space.
 		const float extent = 0.5f * std::abs(float(_terrain->map().width) * _terrain->texelSize() - 0.5f*_terrain->meshSize());
 		const glm::vec3 frontPosClamped = glm::clamp(frontPos, -extent, extent);
+		glm::vec3 frontPosClamped = glm::clamp(frontPos, -extent, extent);
+		frontPosClamped[1] = 0.0f;
+
+		// Compensate for grid translation.
+		const Frustum camFrustum(mvp);
 
 		_groundProgram->use();
 		_groundProgram->uniform("mvp", mvp);
@@ -162,7 +167,6 @@ void IslandApp::draw() {
 		_groundProgram->uniform("lightDirection", _lightDirection);
 		_groundProgram->uniform("camDir", camDir);
 		_groundProgram->uniform("camPos", camPos);
-		_groundProgram->uniform("debugCol", false);
 		_groundProgram->uniform("texelSize", _terrain->texelSize());
 		_groundProgram->uniform("invMapSize", 1.0f/float(_terrain->map().width));
 		_groundProgram->uniform("invGridSize", 1.0f/float(_terrain->gridSize()));
@@ -171,17 +175,31 @@ void IslandApp::draw() {
 		GLUtilities::bindTexture(_transitionNoise, 1);
 		GLUtilities::bindTexture(_materials, 2);
 		GLUtilities::bindTexture(_materialNormals, 3);
-		GLUtilities::drawMesh(_terrain->mesh());
+
+
+		for(const Terrain::Cell & cell : _terrain->cells()){
+			// Compute equivalent of vertex shader vertex transformation.
+			const float levelSize = std::exp2(float(cell.level)) * _terrain->texelSize();
+			glm::vec3 mini = _terrain->texelSize() * cell.mesh.bbox.minis + glm::round(frontPosClamped/levelSize) * levelSize;
+			glm::vec3 maxi = _terrain->texelSize() * cell.mesh.bbox.maxis + glm::round(frontPosClamped/levelSize) * levelSize;
+			mini[1] = -5.0f; maxi[1] = 5.0f;
+			BoundingBox box(mini, maxi);
+			if(!camFrustum.intersects(box)){
+				continue;
+			}
+			_groundProgram->uniform("debugCol", false);
+			GLUtilities::drawMesh(cell.mesh);
 
 		// Debug view.
 		if(_showWire){
 			GLUtilities::setPolygonState(PolygonMode::LINE, Faces::ALL);
 			GLUtilities::setDepthState(true, DepthEquation::LEQUAL, true);
 			_groundProgram->uniform("debugCol", true);
-			GLUtilities::drawMesh(_terrain->mesh());
+				GLUtilities::drawMesh(cell.mesh);
 			GLUtilities::setPolygonState(PolygonMode::FILL, Faces::ALL);
 			GLUtilities::setDepthState(true, DepthEquation::LESS, true);
 		}
+	}
 	}
 	_primsGround.end();
 
@@ -189,7 +207,6 @@ void IslandApp::draw() {
 	_primsOcean.begin();
 	const bool isUnderwater = camPos.y < 0.00f;
 	if(_showOcean){
-
 		// Start by copying the visible terrain.
 		_waterEffectsHalf->bind();
 		GLUtilities::setDepthState(false);
