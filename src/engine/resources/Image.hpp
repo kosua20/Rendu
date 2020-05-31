@@ -61,6 +61,14 @@ public:
 	 */
 	const glm::vec3 & rgb(int x, int y) const;
 
+	/** Const accessor to the red/first component of a pixel
+	 \param x horizontal coordinate
+	 \param y vertical coordinate
+	 \return reference to the given pixel first component
+	 \warning no access or component check is done
+	 */
+	const float & r(int x, int y) const;
+
 	/** Bilinear UV image read.
 	 \param x horizontal unit float coordinate
 	 \param y vertical unit float coordinate

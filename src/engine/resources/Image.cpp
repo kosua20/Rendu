@@ -47,6 +47,10 @@ const glm::vec3 & Image::rgb(int x, int y) const {
 	return reinterpret_cast<const glm::vec3 *>(&pixels[(y * width + x) * components])[0];
 }
 
+const float & Image::r(int x, int y) const {
+	return pixels[(y * width + x) * components];
+}
+
 glm::vec3 Image::rgbn(float x, float y) const {
 	const float xi = x * float(width);
 	const float yi = y * float(height);
