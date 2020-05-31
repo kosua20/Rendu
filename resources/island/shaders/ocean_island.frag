@@ -16,6 +16,8 @@ uniform vec2 invTargetSize;
 uniform float waterGridHalf;
 uniform float groundGridHalf;
 uniform vec3 shift;
+uniform float invTexelSize;
+uniform float invMapSize;
 
 layout(binding = 0) uniform sampler2D foamMap;
 layout(binding = 1) uniform sampler2D terrainColor;
@@ -25,6 +27,7 @@ layout(binding = 4) uniform sampler2D absorpScatterLUT;
 layout(binding = 5) uniform sampler2D waveNormals;
 layout(binding = 6) uniform samplerCube envmap;
 layout(binding = 7) uniform sampler2D brdfCoeffs;
+layout(binding = 8) uniform sampler2D shadowMap;
 
 layout(std140, binding = 0) uniform Waves {
 	Wave waves[8];
@@ -151,11 +154,20 @@ void main(){
 
 	// Add underwater bubbles, using the same foam texture but at a lower LOD to blur (see CREST presentation).
 	float NdotV = max(0.0, dot(n, -vdir));
+	float shadow = 1.0;
 	if(!distantProxy){
+		// Compute heightmap UV and read shadow map.
+		// To be more acurate, we should shift the UV to read the value at the proper ray-ground intersection.
+		// But this would require an extra read in the height map.
+		vec2 uvGround = ((worldPos.xz* invTexelSize) + 0.5) * invMapSize;
+		// Attenuate on edges.
+		float attenShadow = exp(-18.0 * dot(uvGround, uvGround));
+		shadow = 1.0 - (attenShadow * (1.0 - textureLod(shadowMap, uvGround + 0.5, 0.0).r));
+
 		vec2 bubblesUV = mix(srcPos.xz, worldPos.xz, 0.7) + 0.05 * time * vec2(0.5, 0.8) + 0.02 * n.xz;
 		bubblesUV += 0.1 * vdir.xz / NdotV;
 		vec4 bubbles = texture(foamMap, 0.5*bubblesUV, 2.0);
-		baseColor += bubbles.a * bubbles.rgb / max(1.0, dist2);
+		baseColor += shadow * bubbles.a * bubbles.rgb / max(1.0, dist2);
 	}
 
 	// Apply a basic Phong lobe for now.
@@ -169,7 +181,7 @@ void main(){
 	vec2 brdfParams = texture(brdfCoeffs, vec2(NdotV, 0.1)).rg;
 	float specular = (brdfParams.x * Fs + brdfParams.y);
 
-	vec3 color = baseColor + specular * reflection;
+	vec3 color = baseColor + shadow * specular * reflection;
 	if(!distantProxy){
 		// Apply foam on top of the shaded water.
 		float foamAtten = 1.0-clamp(distUnderWater*10.0, 0.0, 1.0);
@@ -177,7 +189,7 @@ void main(){
 		foamAtten = sqrt(min(foamAtten, 1.0));
 		vec2 foamUV = 1.5 * srcPos.xz + 0.02 * time;
 		vec3 foam = texture(foamMap, foamUV).rgb;
-		color += foamAtten * foam;
+		color += shadow * foamAtten * foam;
 	}
 	// At edges, mix with the shore color to ensure soft transitions.
 	fragColor = mix(floorColor, color, clamp(distUnderWater*30.0, 0.0, 1.0));

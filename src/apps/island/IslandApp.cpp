@@ -246,6 +246,8 @@ void IslandApp::draw() {
 		_oceanProgram->uniform("distantProxy", false);
 		_oceanProgram->uniform("time", time);
 		_oceanProgram->uniform("invTargetSize", invRenderSize);
+		_oceanProgram->uniform("invTexelSize", 1.0f/_terrain->texelSize());
+		_oceanProgram->uniform("invMapSize", 1.0f/float(_terrain->map().width));
 
 		GLUtilities::bindBuffer(_waves, 0);
 		GLUtilities::bindTexture(_foam, 0);
@@ -256,6 +258,7 @@ void IslandApp::draw() {
 		GLUtilities::bindTexture(_waveNormals, 5);
 		GLUtilities::bindTexture(_environment->texture(), 6);
 		GLUtilities::bindTexture(_brdfLUT, 7);
+		GLUtilities::bindTexture(_terrain->shadowMap(), 8);
 		GLUtilities::drawTesselatedMesh(_oceanMesh, 4);
 
 		// Debug view.
