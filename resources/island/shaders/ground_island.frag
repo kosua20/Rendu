@@ -88,8 +88,8 @@ void main(){
 	// Diffuse shading with extra tweak for snow.
 	float light = max(0.0, dot(lightDirection, finalN))+(id1Flat == 4 ? 3.0 : 1.0) * 0.01;
 	float shadow = textureLod(shadowMap, In.uv, 0.0).r;
-	vec3 color = (shadow * sunColor * light + 0.1) * baseCol;
-
+	vec3 color = min(shadow * sunColor * light + 0.05, 1.0) * baseCol;
+	
 	if(debugCol){
 		color = vec3(0.9,0.9,0.9);
 	}

@@ -330,6 +330,8 @@ void IslandApp::draw() {
 			_farOceanProgram->uniform("waterGridHalf", float(_gridOceanRes-2)*0.5f);
 			_farOceanProgram->uniform("groundGridHalf", _terrain->meshSize()*0.5f);
 			_farOceanProgram->uniform("invTargetSize", invRenderSize);
+			_farOceanProgram->uniform("invTexelSize", 1.0f/_terrain->texelSize());
+			_farOceanProgram->uniform("invMapSize", 1.0f/float(_terrain->map().width));
 
 			GLUtilities::bindBuffer(_waves, 0);
 			GLUtilities::bindTexture(_foam, 0);
@@ -340,6 +342,7 @@ void IslandApp::draw() {
 			GLUtilities::bindTexture(_waveNormals, 5);
 			GLUtilities::bindTexture(_environment->texture(), 6);
 			GLUtilities::bindTexture(_brdfLUT, 7);
+			GLUtilities::bindTexture(_terrain->shadowMap(), 8);
 			GLUtilities::drawMesh(_farOceanMesh);
 
 			// Debug view.
