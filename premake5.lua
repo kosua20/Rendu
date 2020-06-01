@@ -177,7 +177,7 @@ project("ShaderBench")
 	AppSetup("shaderbench")
 
 project("Island")
-	AppSetup("Island")
+	AppSetup("island")
 
 
 group("Tools")
