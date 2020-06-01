@@ -12,7 +12,8 @@ uniform vec3 lightDirection; ///< The light direction in world space.
 
 layout(binding = 0) uniform sampler2D precomputedScattering; ///< Secondary scattering lookup table.
 
-layout(location = 0) out vec4 fragColor; ///< Atmosphere color.
+layout(location = 0) out vec3 fragColor; ///< Atmosphere color.
+layout(location = 1) out vec3 fragPos; ///< Atmosphere color.
 //layout(location = 1) out vec3 fragDirect; ///< Direct lighting.
 //layout(location = 2) out vec3 fragNormal; ///< Normal.
 
@@ -22,12 +23,14 @@ void main(){
 	vec4 clipVertex = vec4(-1.0+2.0*In.uv, 0.0, 1.0);
 	// Then to world space.
 	vec3 viewRay = normalize((clipToWorld * clipVertex).xyz);
+	// Skip below ground.
+	if(viewRay.y < -0.001){
+		discard;
+	}
 	// We then move to the planet model space, where its center is in (0,0,0).
 	vec3 planetSpaceViewPos = viewPos + vec3(0,atmosphereGroundRadius,0) + vec3(0.0,1.0,0.0);
 	vec3 atmosphereColor = computeAtmosphereRadiance(planetSpaceViewPos, viewRay, lightDirection, precomputedScattering);
 	fragColor.rgb = atmosphereColor;
-	fragColor.a = -1.0;
-	//fragDirect = vec3(0.0);
-	//fragNormal = vec3(0.5);
+	fragPos = viewPos + 10000.0 * viewRay;
 }
 
