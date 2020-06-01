@@ -204,32 +204,53 @@ void IslandApp::draw() {
 		}
 	}
 	_primsGround.end();
+	
+	// Render the sky.
+	if(_showSky){
+		GLUtilities::setDepthState(true, DepthEquation::LEQUAL, false);
+
+		_skyProgram->use();
+		_skyProgram->uniform("clipToWorld", clipToWorld);
+		_skyProgram->uniform("viewPos", camPos);
+		_skyProgram->uniform("lightDirection", _lightDirection);
+		GLUtilities::bindTexture(_precomputedScattering, 0);
+		GLUtilities::drawMesh(*_skyMesh);
+	}
 
 	// Render the ocean.
 	_primsOcean.begin();
-	const bool isUnderwater = camPos.y < 0.00f;
+
 	if(_showOcean){
-		// Start by copying the visible terrain.
-		_waterEffectsHalf->bind();
-		GLUtilities::setDepthState(false);
-		_waterEffectsHalf->setViewport();
-		_waterCopy->use();
-		GLUtilities::bindTexture(_sceneBuffer->texture(0), 0);
-		GLUtilities::bindTexture(_sceneBuffer->texture(1), 1);
-		GLUtilities::bindTexture(_caustics, 2);
-		GLUtilities::bindTexture(_waveNormals, 3);
-		_waterCopy->uniform("time", time);
-		ScreenQuad::draw();
-		GLUtilities::setDepthState(true);
-		_waterEffectsHalf->unbind();
+		const bool isUnderwater = camPos.y < 0.00f;
 
-		_blur.process(_waterEffectsHalf->texture(0), *_waterEffectsBlur);
-
+		// Start by copying the visible terrain info.
 		// Blit full res position map.
 		GLUtilities::blit(*_sceneBuffer->texture(1), *_waterPos, Filter::NEAREST);
 
+		if(isUnderwater){
+			// Blit color as-is if underwater (blur will happen later)
+			GLUtilities::blit(*_sceneBuffer->texture(0), *_waterEffectsHalf, Filter::LINEAR);
+		} else {
+			// Else copy, downscale, apply caustics and blur.
+			_waterEffectsHalf->bind();
+			GLUtilities::setDepthState(false);
+			_waterEffectsHalf->setViewport();
+			_waterCopy->use();
+			GLUtilities::bindTexture(_sceneBuffer->texture(0), 0);
+			GLUtilities::bindTexture(_sceneBuffer->texture(1), 1);
+			GLUtilities::bindTexture(_caustics, 2);
+			GLUtilities::bindTexture(_waveNormals, 3);
+			_waterCopy->uniform("time", time);
+			ScreenQuad::draw();
+			GLUtilities::setDepthState(true);
+			_waterEffectsHalf->unbind();
+			_blur.process(_waterEffectsHalf->texture(0), *_waterEffectsBlur);
+		}
+
+		// Render the ocean waves.
 		_sceneBuffer->bind();
 		_sceneBuffer->setViewport();
+		GLUtilities::setDepthState(true, DepthEquation::LESS, true);
 
 		if(isUnderwater){
 			GLUtilities::setCullState(true, Faces::FRONT);
@@ -240,6 +261,7 @@ void IslandApp::draw() {
 		_oceanProgram->uniform("maxLevelX", _maxLevelX);
 		_oceanProgram->uniform("maxLevelY", _maxLevelY);
 		_oceanProgram->uniform("distanceScale", _distanceScale);
+		_oceanProgram->uniform("underwater", isUnderwater);
 		_oceanProgram->uniform("debugCol", false);
 		_oceanProgram->uniform("camDir", camDir);
 		_oceanProgram->uniform("camPos", camPos);
@@ -272,9 +294,8 @@ void IslandApp::draw() {
 		}
 
 		if(isUnderwater){
+			// We do the low-res copy and blur now, because we need the blurred ocean surface to be visible.
 			GLUtilities::setCullState(true, Faces::BACK);
-			// We have to redo the low-res copy and blur, because we need the blurred surface to appear.
-			// But we won't render the sky.
 			_waterEffectsHalf->bind();
 			GLUtilities::setDepthState(false);
 			_waterEffectsHalf->setViewport();
@@ -285,7 +306,6 @@ void IslandApp::draw() {
 			GLUtilities::bindTexture(_waveNormals, 3);
 			_waterCopy->uniform("time", time);
 			ScreenQuad::draw();
-			GLUtilities::setDepthState(true);
 			_waterEffectsHalf->unbind();
 
 			_blur.process(_waterEffectsHalf->texture(0), *_waterEffectsBlur);
@@ -315,12 +335,10 @@ void IslandApp::draw() {
 			ScreenQuad::draw();
 			GLUtilities::setDepthState(true);
 
-		}
-
-		// Far ocean, using a cylinder as support to cast rays intersecting the ocean plane.
-		if(!isUnderwater){
-
+		} else {
+			// Far ocean, using a cylinder as support to cast rays intersecting the ocean plane.
 			GLUtilities::setDepthState(true, DepthEquation::ALWAYS, true);
+
 			_farOceanProgram->use();
 			_farOceanProgram->uniform("mvp", mvp);
 			_farOceanProgram->uniform("camPos", camPos);
@@ -330,6 +348,7 @@ void IslandApp::draw() {
 			_farOceanProgram->uniform("waterGridHalf", float(_gridOceanRes-2)*0.5f);
 			_farOceanProgram->uniform("groundGridHalf", _terrain->meshSize()*0.5f);
 			_farOceanProgram->uniform("invTargetSize", invRenderSize);
+			_farOceanProgram->uniform("underwater", isUnderwater);
 			_farOceanProgram->uniform("invTexelSize", 1.0f/_terrain->texelSize());
 			_farOceanProgram->uniform("invMapSize", 1.0f/float(_terrain->map().width));
 
@@ -345,6 +364,8 @@ void IslandApp::draw() {
 			GLUtilities::bindTexture(_terrain->shadowMap(), 8);
 			GLUtilities::drawMesh(_farOceanMesh);
 
+			GLUtilities::setDepthState(true, DepthEquation::LESS, true);
+
 			// Debug view.
 			if(_showWire){
 				GLUtilities::setPolygonState(PolygonMode::LINE, Faces::ALL);
@@ -354,27 +375,15 @@ void IslandApp::draw() {
 				GLUtilities::setPolygonState(PolygonMode::FILL, Faces::ALL);
 				GLUtilities::setDepthState(true, DepthEquation::LESS, true);
 			}
-			GLUtilities::setDepthState(true, DepthEquation::LESS, true);
 		}
 
 	}
 	_primsOcean.end();
 
-	// Render the sky.
-	if(_showSky && !(_showOcean && isUnderwater)){
-		GLUtilities::setDepthState(true, DepthEquation::LEQUAL, false);
-
-		_skyProgram->use();
-		_skyProgram->uniform("clipToWorld", clipToWorld);
-		_skyProgram->uniform("viewPos", camPos);
-		_skyProgram->uniform("lightDirection", _lightDirection);
-		GLUtilities::bindTexture(_precomputedScattering, 0);
-		GLUtilities::drawMesh(*_skyMesh);
-	}
 	_sceneBuffer->unbind();
 
-	GLUtilities::setDepthState(false, DepthEquation::LESS, true);
 	// Tonemapping and final screen.
+	GLUtilities::setDepthState(false, DepthEquation::LESS, true);
 	GLUtilities::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 	Framebuffer::backbuffer()->bind(Framebuffer::Mode::SRGB);
 	_tonemap->use();
