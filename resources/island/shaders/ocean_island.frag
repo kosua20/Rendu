@@ -18,6 +18,7 @@ uniform float groundGridHalf;
 uniform vec3 shift;
 uniform float invTexelSize;
 uniform float invMapSize;
+uniform bool underwater;
 
 layout(binding = 0) uniform sampler2D foamMap;
 layout(binding = 1) uniform sampler2D terrainColor;
@@ -132,11 +133,11 @@ void main(){
 		float distPos = distance(oceanFloorPos, worldPos);
 		// Put the floor at 1.0 unit below approx.
 		float scalingDist = 1.0/2.0;
-		distUnderWater = clamp(distPos * scalingDist, 0.0, 1.0);
+		distUnderWater = underwater ? 0.05 : clamp(distPos * scalingDist, 0.0, 1.0);
 
 		// Blend blurred version of the floor in deeper regions.
 		vec3 oceanFloor = textureLod(terrainColor, screenUV, 0.0).rgb;
-		vec3 oceanFloorBlur = textureLod(terrainColorBlur, screenUV, 0.0).rgb;
+		vec3 oceanFloorBlur = underwater ? oceanFloor : textureLod(terrainColorBlur, screenUV, 0.0).rgb;
 		floorColor = mix(oceanFloor, oceanFloorBlur, distUnderWater);
 
 	} else if(aroundIsland){
