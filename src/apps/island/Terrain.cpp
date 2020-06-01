@@ -440,7 +440,7 @@ void Terrain::generateShadowMap(const glm::vec3 & lightDir){
 	_gaussBlur.process(_shadowBuffer->texture(0), *_shadowBuffer);
 }
 
-void Terrain::interface(){
+bool Terrain::interface(){
 
 	if(ImGui::TreeNode("Mesh")){
 		ImGui::InputInt("Grid size", &_mshOpts.size);
@@ -483,7 +483,9 @@ void Terrain::interface(){
 	}
 	if(dirtyTerrain || dirtyErosion){
 		generateMap();
+		return true;
 	}
+	return false;
 }
 
 void Terrain::clean() {

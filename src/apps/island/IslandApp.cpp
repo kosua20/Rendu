@@ -420,7 +420,10 @@ void IslandApp::update() {
 		}
 
 		if(ImGui::CollapsingHeader("Terrain")){
-			_terrain->interface();
+			const bool dirtyShadowMap = _terrain->interface();
+			if(dirtyShadowMap){
+				_terrain->generateShadowMap(_lightDirection);
+			}
 		}
 
 		if(ImGui::CollapsingHeader("Ocean")){

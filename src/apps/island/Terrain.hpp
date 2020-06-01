@@ -60,7 +60,7 @@ public:
 
 	void generateShadowMap(const glm::vec3 & lightDir);
 
-	void interface();
+	bool interface();
 
 	void clean();
 
