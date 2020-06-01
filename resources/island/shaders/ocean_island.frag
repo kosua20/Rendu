@@ -19,6 +19,7 @@ uniform vec3 shift;
 uniform float invTexelSize;
 uniform float invMapSize;
 uniform bool underwater;
+uniform bool useTerrain;
 
 layout(binding = 0) uniform sampler2D foamMap;
 layout(binding = 1) uniform sampler2D terrainColor;
@@ -164,7 +165,7 @@ void main(){
 		// Compute heightmap UV and read shadow map.
 		// The second channel contains shadowing computed for an initial height of 0.0, the ocean plane.
 		vec2 uvGround = ((worldPos.xz * invTexelSize) + 0.5) * invMapSize;
-		float shadow = textureLod(shadowMap, uvGround + 0.5, 0.0).g;
+		float shadow = useTerrain ? textureLod(shadowMap, uvGround + 0.5, 0.0).g : 1.0;
 		// Attenuate on edges.
 		float attenShadow = smoothstep(0.05, 0.25, (dot(uvGround, uvGround)));
 		specularShadow = mix(shadow, 1.0, attenShadow);

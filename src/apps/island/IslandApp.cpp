@@ -270,6 +270,7 @@ void IslandApp::draw() {
 		_oceanProgram->uniform("invTargetSize", invRenderSize);
 		_oceanProgram->uniform("invTexelSize", 1.0f/_terrain->texelSize());
 		_oceanProgram->uniform("invMapSize", 1.0f/float(_terrain->map().width));
+		_oceanProgram->uniform("useTerrain", _showTerrain);
 
 		GLUtilities::bindBuffer(_waves, 0);
 		GLUtilities::bindTexture(_foam, 0);
@@ -351,6 +352,7 @@ void IslandApp::draw() {
 			_farOceanProgram->uniform("underwater", isUnderwater);
 			_farOceanProgram->uniform("invTexelSize", 1.0f/_terrain->texelSize());
 			_farOceanProgram->uniform("invMapSize", 1.0f/float(_terrain->map().width));
+			_farOceanProgram->uniform("useTerrain", _showTerrain);
 
 			GLUtilities::bindBuffer(_waves, 0);
 			GLUtilities::bindTexture(_foam, 0);
