@@ -26,5 +26,6 @@ void main(){
 	// Soft transition on the shore edges.
 	float edgeScale = 15.0*clamp(-5.0*fragPos.y, 0.0, 1.0);
 	// Combine ocean floor color and caustics.
-	fragColor = (1.0 + edgeScale * caust) * textureLod(colorTexture, In.uv, 0.0).rgb;
+	// Clamp to avoid artefacts when blurring.
+	fragColor = min((1.0 + edgeScale * caust) * textureLod(colorTexture, In.uv, 0.0).rgb, 5.0);
 }
