@@ -94,7 +94,7 @@ void main(){
 	float dist2 = viewDist*viewDist;
 	float adjust = 1000.0f;
 	// We use the same split as when displacing the vertex.
-	float biasGerstner = 0.75;
+	float biasGerstner = 1.5;
 	for(int i = 7; i > 2; --i){
 		// Fade out high frequencies when far away.
 		float distWeight = exp(-dist2*pow(i+biasGerstner, 2.0)/adjust);
@@ -120,7 +120,7 @@ void main(){
 	
 	// Read high frequency normal map based on undistorted world position.
 	vec2 warpUV = 2.0*srcPos.xz;
-	vec3 warpN = texture(waveNormals, warpUV, log2(viewDist)).xyz * 2.0 - 1.0;
+	vec3 warpN = textureLod(waveNormals, warpUV, log2(dist2*5.0) ).xyz * 2.0 - 1.0;
 	vec3 n = normalize(tbn * warpN);
 
 	bool aroundIsland = all(lessThan(abs(worldPos.xz), vec2(groundGridHalf)));
