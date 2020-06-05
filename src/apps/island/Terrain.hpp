@@ -18,11 +18,12 @@ public:
 	struct GenerationSettings {
 		float lacunarity = 2.0f;
 		float gain = 0.5f;
-		float scale = 0.02f;
-		float maxHeight = 2.5f;
+		float scale = 0.01f;
+		float maxHeight = 2.0f;
 		float falloff = 4.0f;
-		float rescale = 1.5f;
+		float rescale = 1.25f;
 		int octaves = 8;
+		bool flatten = false;
 	};
 
 	struct MeshSettings {

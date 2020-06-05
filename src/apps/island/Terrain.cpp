@@ -191,7 +191,7 @@ void Terrain::generateMap(){
 			const float & h = dst.r(x,y);
 			heightMap.r(x,y) = h;
 			// Flatten shores.
-			if(std::abs(h) < 1.0f){
+			if(_genOpts.flatten && std::abs(h) < 1.0f) {
 				heightMap.r(x,y) *= std::abs(h);
 			}
 		}
@@ -464,6 +464,7 @@ bool Terrain::interface(){
 		dirtyTerrain = ImGui::SliderFloat("Max height", &_genOpts.maxHeight, 1.0f, 10.0f) || dirtyTerrain;
 		dirtyTerrain = ImGui::SliderFloat("Falloff", &_genOpts.falloff, 1.0f, 10.0f) || dirtyTerrain;
 		dirtyTerrain = ImGui::SliderFloat("Rescale", &_genOpts.rescale, 0.5f, 3.0f) || dirtyTerrain;
+		dirtyTerrain = ImGui::Checkbox("Flatten", &_genOpts.flatten) || dirtyTerrain;
 		ImGui::TreePop();
 	}
 
