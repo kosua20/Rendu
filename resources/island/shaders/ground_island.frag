@@ -31,9 +31,13 @@ void main(){
 	// Colors.
 	vec3 sandColor = vec3(1.0, 0.516, 0.188);
 	vec3 shadowColor = 0.2 * sandColor;
+	vec3 specColor = vec3(1.0, 0.954, 0.814);
+	vec3 specColor2 = vec3(1.0, 0.642, 0.378);
+
 	// Get clean normal and height.
 	vec4 heightAndNor = textureLod(heightMap, In.uv, 0.0);
 	vec3 n = normalize(heightAndNor.yzw);
+	vec3 v = normalize(camPos - fragWorldPos);
 
 	// Transition weight between planar and steep regions, for both X and Z orientations.
 	float wFlat = pow(abs(n.y), 50.0);
@@ -57,11 +61,20 @@ void main(){
 	tn = normalize(cross(bn, n));
 	mat3 tbn = mat3(tn, bn, n);
 	vec3 finalN = normalize(tbn * baseN);
-	// Diffuse shading with extra tweak for snow.
-	float light = max(0.0, dot(lightDirection, finalN))+(id1Flat == 4 ? 3.0 : 1.0) * 0.01;
+
+	// Shadow
 	float shadow = textureLod(shadowMap, In.uv, 0.0).r;
-	vec3 color = min(shadow * sunColor * light + 0.05, 1.0) * baseCol;
-	
+
+	// Tweaked diffuse.
+	float diffuse = clamp(4.0 * dot(vec3(1.0,0.3,1.0) * finalN, lightDirection), 0.0, 1.0);
+	vec3 color = mix(shadowColor, sandColor, shadow * diffuse);
+
+	// Fresnel.
+	float F = pow(1.0 - max(dot(finalN, v), 0.0), 5.0);
+	// Specular lobe.
+	vec3 h = normalize(v + lightDirection);
+	float lobe = pow(max(dot(finalN, h), 0.0), 256.0);
+
 	if(debugCol){
 		color = vec3(0.9,0.9,0.9);
 	}
