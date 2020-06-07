@@ -58,6 +58,7 @@ private:
 	const Texture * _sandMapSteep;
 	const Texture * _sandMapFlat;
 	Texture _surfaceNoise;
+	Texture _glitterNoise;
 
 	const Program * _groundProgram;
 	const Program * _oceanProgram;

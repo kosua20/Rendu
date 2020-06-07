@@ -53,6 +53,29 @@ IslandApp::IslandApp(RenderingConfig & config) : CameraApp(config), _waves(8, Bu
 		}
 	}
 	_surfaceNoise.upload({Layout::RGBA32F, Filter::LINEAR_LINEAR, Wrap::REPEAT}, true);
+	// Additional glitter noise with custom mipmaps.
+	_glitterNoise.width = _glitterNoise.height = 512;
+	_glitterNoise.depth = 1;
+	_glitterNoise.levels = _glitterNoise.getMaxMipLevel()+1;
+	_glitterNoise.shape = TextureShape::D2;
+	_glitterNoise.images.emplace_back(_glitterNoise.width, _glitterNoise.height, 3);
+	for(uint y = 0; y < _glitterNoise.height; ++y){
+		for(uint x = 0; x < _glitterNoise.width; ++x){
+			glm::vec3 dir = Random::sampleSphere();
+			_glitterNoise.images[0].rgb(x,y) = dir;
+		}
+	}
+	for(uint lid = 1; lid < _glitterNoise.levels; ++lid){
+		const uint tw = _glitterNoise.width / (1 << lid);
+		const uint th = _glitterNoise.height / (1 << lid);
+		_glitterNoise.images.emplace_back(tw, th, 3);
+		for(uint y = 0; y < th; ++y){
+			for(uint x = 0; x < tw; ++x){
+				_glitterNoise.images[lid].rgb(x,y) = _glitterNoise.images[lid-1].rgb(2*x,2*y);
+			}
+		}
+	}
+	_glitterNoise.upload({Layout::RGB32F, Filter::LINEAR_LINEAR, Wrap::REPEAT}, false);
 
 	// Ocean.
 	_oceanMesh = Library::generateGrid(_gridOceanRes, 1.0f);
@@ -183,6 +206,7 @@ void IslandApp::draw() {
 		GLUtilities::bindTexture(_terrain->map(), 0);
 		GLUtilities::bindTexture(_terrain->shadowMap(), 1);
 		GLUtilities::bindTexture(_surfaceNoise, 2);
+		GLUtilities::bindTexture(_glitterNoise, 3);
 		GLUtilities::bindTexture(_sandMapSteep, 4);
 		GLUtilities::bindTexture(_sandMapFlat, 5);
 
@@ -493,4 +517,5 @@ void IslandApp::clean() {
 	_blur.clean();
 	_terrain->clean();
 	_surfaceNoise.clean();
+	_glitterNoise.clean();
 }
