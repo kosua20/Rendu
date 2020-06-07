@@ -18,9 +18,14 @@ layout(location = 0) out vec2 shadow; ///< Color.
 /** Just pass the input image as-is, without any resizing. */
 void main(){
 
-	shadow = vec2(1.0);
-	if(abs(lDir.y) >= 0.999){
+
+	if(lDir.y >= 0.999){
 		// Vertical sun, no shadowing.
+		shadow = vec2(1.0);
+		return;
+	} else if(lDir.y < -0.06){
+		// Below horizon, all in shadows.
+		shadow = vec2(0.0);
 		return;
 	}
 
@@ -64,6 +69,8 @@ void main(){
 			break;
 		}
 	}
-	shadow.x = float(!occGround);
-	shadow.y = float(!occWater);
+	// Modulate when getting close to the horizon.
+	float modu = min((lDir.y - -0.06)/0.06, 1.0);
+	shadow.x = modu * float(!occGround);
+	shadow.y = modu * float(!occWater);
 }
