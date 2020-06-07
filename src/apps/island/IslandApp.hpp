@@ -50,14 +50,13 @@ private:
 	const Mesh * _skyMesh;
 	Mesh _oceanMesh;
 	Mesh _farOceanMesh;
-	Texture _transitionNoise;
-	const Texture * _materials;
-	const Texture * _materialNormals;
+	
 	const Texture * _caustics;
 	const Texture * _waveNormals;
 	const Texture * _foam;
 	const Texture * _brdfLUT;
-
+	const Texture * _sandMapSteep;
+	const Texture * _sandMapFlat;
 
 	const Program * _groundProgram;
 	const Program * _oceanProgram;

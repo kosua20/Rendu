@@ -34,17 +34,11 @@ IslandApp::IslandApp(RenderingConfig & config) : CameraApp(config), _waves(8, Bu
 
 	// Ground.
 	_terrain.reset(new Terrain(1024, 4567));
-	_materials = Resources::manager().getTexture("island_material_diff", {Layout::SRGB8, Filter::LINEAR_LINEAR, Wrap::REPEAT}, Storage::GPU);
-	_materialNormals = Resources::manager().getTexture("island_material_nor", {Layout::RGB8, Filter::LINEAR_LINEAR, Wrap::REPEAT}, Storage::GPU);
 
-	// Fbm noise used to disturb smooth transitions.
-	_transitionNoise.width = _transitionNoise.height = 512;
-	_transitionNoise.depth = _transitionNoise.levels = 1,
-	_transitionNoise.shape = TextureShape::D2;
-	_transitionNoise.images.emplace_back(_transitionNoise.width, _transitionNoise.height, 1);
-	PerlinNoise generator;
-	generator.generateLayers(_transitionNoise.images[0], 4, 0.5f, 2.0f, 0.01f);
-	_transitionNoise.upload({Layout::R32F, Filter::LINEAR, Wrap::REPEAT}, false);
+	// Sand normal maps.
+	_sandMapSteep = Resources::manager().getTexture("sand_normal_steep", {Layout::RGB8, Filter::LINEAR_LINEAR, Wrap::REPEAT}, Storage::GPU);
+	_sandMapFlat = Resources::manager().getTexture("sand_normal_flat", {Layout::RGB8, Filter::LINEAR_LINEAR, Wrap::REPEAT}, Storage::GPU);
+
 
 	// Ocean.
 	_oceanMesh = Library::generateGrid(_gridOceanRes, 1.0f);
@@ -173,10 +167,9 @@ void IslandApp::draw() {
 		_groundProgram->uniform("invGridSize", 1.0f/float(_terrain->gridSize()));
 
 		GLUtilities::bindTexture(_terrain->map(), 0);
-		GLUtilities::bindTexture(_transitionNoise, 1);
-		GLUtilities::bindTexture(_materials, 2);
-		GLUtilities::bindTexture(_materialNormals, 3);
-		GLUtilities::bindTexture(_terrain->shadowMap(), 4);
+		GLUtilities::bindTexture(_terrain->shadowMap(), 1);
+		GLUtilities::bindTexture(_sandMapSteep, 4);
+		GLUtilities::bindTexture(_sandMapFlat, 5);
 
 
 		for(const Terrain::Cell & cell : _terrain->cells()){

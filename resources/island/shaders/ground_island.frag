@@ -4,80 +4,48 @@ in INTERFACE {
 	vec2 uv;
 } In ;
 
+uniform vec3 lightDirection;
+uniform bool debugCol;
+uniform vec3 camPos;
+
 layout(binding=0) uniform sampler2D heightMap;
-layout(binding=1) uniform sampler2D noiseTransition;
-layout(binding=2) uniform sampler2DArray materials;
-layout(binding=3) uniform sampler2DArray materialNormals;
-layout(binding=4) uniform sampler2D shadowMap;
+layout(binding=1) uniform sampler2D shadowMap;
+layout(binding=4) uniform sampler2D sandMapSteep;
+layout(binding=5) uniform sampler2D sandMapFlat;
 
 layout (location = 0) out vec3 fragColor;
 layout (location = 1) out vec3 fragWorldPos;
 
-uniform vec3 lightDirection;
-uniform bool debugCol;
+const vec3 sunColor = vec3(1.474, 1.8504, 1.91198);
 
 vec3 mixNormals(vec3 n1, vec3 n2, float alpha){
 	vec2 base = mix(n1.xy/n1.z, n2.xy/n2.z, alpha);
 	return normalize(vec3(base, 1.0));
 }
 
-const vec3 sunColor = vec3(1.474, 1.8504, 1.91198);
-
-/** Shade the object, applying lighting. */
 void main(){
 
 	fragWorldPos = In.pos;
 
+	// Colors.
+	vec3 sandColor = vec3(1.0, 0.516, 0.188);
+	vec3 shadowColor = 0.2 * sandColor;
 	// Get clean normal and height.
 	vec4 heightAndNor = textureLod(heightMap, In.uv, 0.0);
 	vec3 n = normalize(heightAndNor.yzw);
 
-	// Determine materials to use based on terrain height and orientation.
-	float height = heightAndNor.x;
-	// Disturb normal to break transitions between biomes.
-	height -= abs(1.5*textureLod(noiseTransition, In.uv*3.0, 0.0).x);
-	float shoreToGround = smoothstep(0.0, 0.5, height);
-	float groundToMountain = smoothstep(2.0, 2.5, height);
-	float flatToSteep = clamp((1.0-1.2*abs(n.y))*8.0, 0.0, 1.0);
-	// Determine the four materials to blend (two regions, two orientations)
-	int id0Flat, id0Steep, id1Flat, id1Steep;
-	float regionTrans;
-	if(shoreToGround < 1.0){
-		regionTrans = shoreToGround;
-		// 0 is sand/rock
-		id0Flat = 2;
-		id0Steep = 1;
-		// 1 is grass/soil
-		id1Flat = 3;
-		id1Steep = 0;
-	} else {
-		regionTrans = groundToMountain;
-		// 0 is grass/soil
-		id0Flat = 3;
-		id0Steep = 0;
-		// 1 is snow/rock
-		id1Flat = 4;
-		id1Steep = 1;
-	}
+	// Transition weight between planar and steep regions, for both X and Z orientations.
+	float wFlat = pow(abs(n.y), 50.0);
+	float wXdir = abs(n.y) > 0.99 ? 0.0 : clamp(abs(n.x)/max(abs(n.z), 0.001), 0.0, 1.0);
 
-	// Read the colors, with a temporary tweak for snow.
-	vec2 uv = In.uv*40.0;
-	vec3 base0Flat = texture(materials, vec3(uv, id0Flat)).rgb;
-	vec3 base0Steep = texture(materials, vec3(uv, id0Steep)).rgb;
-	vec3 base1Flat = texture(materials, vec3(uv, id1Flat)).rgb;
-	vec3 base1Steep = texture(materials, vec3(uv, id1Steep)).rgb;
-	// Read the normals.
-	vec3 base0FlatN =  texture(materialNormals, vec3(uv, id0Flat)).rgb * 2.0-1.0;
-	vec3 base0SteepN = texture(materialNormals, vec3(uv, id0Steep)).rgb * 2.0-1.0;
-	vec3 base1FlatN =  texture(materialNormals, vec3(uv, id1Flat)).rgb * 2.0-1.0;
-	vec3 base1SteepN = texture(materialNormals, vec3(uv, id1Steep)).rgb * 2.0-1.0;
-	// Blend color and normals.
-	vec3 flatCol = mix(base0Flat, base1Flat, regionTrans);
-	vec3 flatN = mixNormals(base0FlatN, base1FlatN, regionTrans);
-	vec3 steepCol = mix(base0Steep, base1Steep, regionTrans);
-	vec3 steepN = mix(base0SteepN, base1SteepN, regionTrans);
-	vec3 baseCol = mix(flatCol, steepCol, flatToSteep);
-	vec3 baseN = mix(flatN, steepN, flatToSteep);
+	// Sand normal map, blended.
+	vec2 mapsUv = 130.0 * In.uv;
+	vec3 nSteepX = normalize(texture(sandMapSteep, mapsUv).rgb * 2.0 - 1.0);
+	vec3 nSteepZ = normalize(texture(sandMapSteep, mapsUv.yx).rgb * 2.0 - 1.0);
+	vec3 nFlat  = normalize(texture(sandMapFlat, mapsUv).rgb * 2.0 - 1.0);
+	vec3 nSteep = normalize(mix(nSteepZ, nSteepX, wXdir));
+	vec3 nMap = normalize(mix(nSteep, nFlat, wFlat));
+
 
 	// Build an arbitrary normal frame and map local normal.
 	vec3 tn = abs(n.y) < 0.01 ? vec3(0.0,1.0,0.0) : vec3(1.0, 0.0, 0.0);
