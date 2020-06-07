@@ -10,6 +10,7 @@ uniform vec3 camPos;
 
 layout(binding=0) uniform sampler2D heightMap;
 layout(binding=1) uniform sampler2D shadowMap;
+layout(binding=2) uniform sampler2D surfaceNoise;
 layout(binding=4) uniform sampler2D sandMapSteep;
 layout(binding=5) uniform sampler2D sandMapFlat;
 
@@ -46,6 +47,9 @@ void main(){
 	vec3 nSteep = normalize(mix(nSteepZ, nSteepX, wXdir));
 	vec3 nMap = normalize(mix(nSteep, nFlat, wFlat));
 
+	// Add extra perturbation.
+	vec3 surfN = normalize(texture(surfaceNoise, 200.0*In.uv).rgb);
+	vec3 baseN = normalize(mix(nMap, surfN, 0.5));
 
 	// Build an arbitrary normal frame and map local normal.
 	vec3 tn = abs(n.y) < 0.01 ? vec3(0.0,1.0,0.0) : vec3(1.0, 0.0, 0.0);

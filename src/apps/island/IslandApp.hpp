@@ -57,6 +57,7 @@ private:
 	const Texture * _brdfLUT;
 	const Texture * _sandMapSteep;
 	const Texture * _sandMapFlat;
+	Texture _surfaceNoise;
 
 	const Program * _groundProgram;
 	const Program * _oceanProgram;

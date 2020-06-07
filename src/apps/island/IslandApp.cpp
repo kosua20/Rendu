@@ -39,6 +39,20 @@ IslandApp::IslandApp(RenderingConfig & config) : CameraApp(config), _waves(8, Bu
 	_sandMapSteep = Resources::manager().getTexture("sand_normal_steep", {Layout::RGB8, Filter::LINEAR_LINEAR, Wrap::REPEAT}, Storage::GPU);
 	_sandMapFlat = Resources::manager().getTexture("sand_normal_flat", {Layout::RGB8, Filter::LINEAR_LINEAR, Wrap::REPEAT}, Storage::GPU);
 
+	// High detail noise.
+	_surfaceNoise.width = _surfaceNoise.height = 512;
+	_surfaceNoise.depth = _surfaceNoise.levels = 1,
+	_surfaceNoise.shape = TextureShape::D2;
+	_surfaceNoise.images.emplace_back(_surfaceNoise.width, _surfaceNoise.height, 4);
+	for(uint y = 0; y < _surfaceNoise.height; ++y){
+		for(uint x = 0; x < _surfaceNoise.width; ++x){
+			glm::vec3 dir = Random::sampleSphere();
+			dir[2] = std::abs(dir[2]);
+			const float wd = Random::Float();
+			_surfaceNoise.images[0].rgba(x,y) = glm::vec4(dir, wd);
+		}
+	}
+	_surfaceNoise.upload({Layout::RGBA32F, Filter::LINEAR_LINEAR, Wrap::REPEAT}, true);
 
 	// Ocean.
 	_oceanMesh = Library::generateGrid(_gridOceanRes, 1.0f);
@@ -168,6 +182,7 @@ void IslandApp::draw() {
 
 		GLUtilities::bindTexture(_terrain->map(), 0);
 		GLUtilities::bindTexture(_terrain->shadowMap(), 1);
+		GLUtilities::bindTexture(_surfaceNoise, 2);
 		GLUtilities::bindTexture(_sandMapSteep, 4);
 		GLUtilities::bindTexture(_sandMapFlat, 5);
 
@@ -477,4 +492,5 @@ void IslandApp::clean() {
 	_environment->clean();
 	_blur.clean();
 	_terrain->clean();
+	_surfaceNoise.clean();
 }
