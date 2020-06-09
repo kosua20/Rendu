@@ -32,9 +32,7 @@ void main(){
 	// Colors.
 	vec3 sandColor = vec3(1.0, 0.516, 0.188);
 	vec3 shadowColor = 0.2 * sandColor;
-	vec3 specColor = vec3(1.0, 0.954, 0.814);
-	vec3 specColor2 = vec3(1.0, 0.642, 0.378);
-	vec3 glitterColor = vec3(1.0, 0.5, 0.206);
+	vec3 specColor = vec3(1.0, 0.642, 0.378);
 
 	// Get clean normal and height.
 	vec4 heightAndNor = textureLod(heightMap, In.uv, 0.0);
@@ -43,7 +41,7 @@ void main(){
 
 	// Transition weight between planar and steep regions, for both X and Z orientations.
 	float wFlat = pow(abs(n.y), 50.0);
-	float wXdir = abs(n.y) > 0.99 ? 0.0 : clamp(abs(n.x)/max(abs(n.z), 0.001), 0.0, 1.0);
+	float wXdir = abs(n.y) > 0.99 ? 0.0 : (abs(n.x)/sqrt(1.0-n.y*n.y));
 
 	// Sand normal map, blended.
 	vec2 mapsUv = 130.0 * In.uv;
@@ -82,9 +80,11 @@ void main(){
 	vec3 lightBounce = reflect(-lightDirection, glitterN2);
 	float glit = smoothstep(0.9, 1.0, dot(lightBounce, v));
 	// Total specular.
-	vec3 spec = (shadow * 0.9 + 0.1) * (F * specColor + lobe * specColor2 + glit * glitterColor);
+	vec3 spec = (shadow * 0.9 + 0.1) * (F * specColor + lobe * specColor + 2.0 * glit * specColor);
+	
 	color += spec;
-
+	//color *= sunColor;
+	
 	if(debugCol){
 		color = vec3(0.9,0.9,0.9);
 	}
