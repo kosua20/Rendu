@@ -5,11 +5,15 @@
 #include "resources/ResourcesManager.hpp"
 #include "system/System.hpp"
 
-DebugViewer::DebugViewer(){
+DebugViewer::DebugViewer(bool silent){
 	_texDisplay = Resources::manager().getProgram2D("debug_texture_display");
+	_silent		= silent;
 }
 
 void DebugViewer::track(const std::string& name, const Texture* tex) {
+	if(_silent) {
+		return;
+	}
 	if(!tex->gpu) {
 		Log::Warning() << "[DebugViewer] \"" << name << "\" has no GPU data." << std::endl;
 		return;
@@ -24,6 +28,9 @@ void DebugViewer::track(const std::string& name, const Texture* tex) {
 }
 
 void DebugViewer::track(const std::string & name, const Framebuffer * buffer) {
+	if(_silent) {
+		return;
+	}
 	_framebuffers.emplace_back();
 	FramebufferInfos & infos = _framebuffers.back();
 	infos.name				 = name;
@@ -71,6 +78,9 @@ void DebugViewer::registerTexture(const std::string& name, const Texture* tex, I
 }
 
 void DebugViewer::interface() {
+	if(_silent) {
+		return;
+	}
 	// Display menu bar listing all resources.
 	if(ImGui::BeginMainMenuBar()) {
 		if(ImGui::BeginMenu("Textures")) {

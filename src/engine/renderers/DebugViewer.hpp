@@ -13,8 +13,9 @@ class DebugViewer {
 public:
 
 	/** Constructor.
+	\param silent if true, don't register or display anything.
 	 */
-	explicit DebugViewer();
+	explicit DebugViewer(bool silent);
 
 	/** Register a texture for debug.
 	\param name the display name of the texture
@@ -96,4 +97,5 @@ private:
 	std::vector<FramebufferInfos> _framebuffers; ///< The registered framebuffers.
 
 	const Program * _texDisplay; ///< Texture display shader.
+	bool _silent; ///< Don't register or display anything.
 };
