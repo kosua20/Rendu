@@ -12,6 +12,8 @@ Application::Application(RenderingConfig & config) :
 	for(uint fid = 0; fid < _frameTimes.size(); ++fid){
 		_frameTimes[fid] = 0.0f;
 	}
+
+	_debug.reset(new DebugViewer(false));
 }
 
 void Application::update() {
@@ -31,6 +33,14 @@ void Application::update() {
 	// Reload resources.
 	if(Input::manager().triggered(Input::Key::P)) {
 		Resources::manager().reload();
+	}
+
+	// Display debug informations.
+	if(Input::manager().pressed(Input::Key::LeftControl) && Input::manager().triggered(Input::Key::Tab)) {
+		_showDebug = !_showDebug;
+	}
+	if(_showDebug && _debug) {
+		_debug->interface();
 	}
 
 	// Compute the time elapsed since last frame

@@ -1,6 +1,7 @@
 #pragma once
 #include "system/Config.hpp"
 #include "input/ControllableCamera.hpp"
+#include "renderers/DebugViewer.hpp"
 
 /**
  \brief Base structure of an application.
@@ -58,16 +59,19 @@ protected:
 
 	RenderingConfig & _config; ///< The current configuration.
 
+	std::unique_ptr<DebugViewer> _debug; ///< Debug viewer.
+
 private:
 
 	double _timer = 0.0; 		///< Absolute timer.
 	double _startTime = 0.0; 	///< TImer value at app start.
 	double _frameTime = 0.0; 	///< Last frame duration.
 
-	static const size_t _framesCount = 30;
-	std::array<double, _framesCount> _frameTimes;
-	double _smoothTime = 0.0;
-	size_t _currFrame = 0;
+	static const size_t _framesCount = 30; ///< Frames to average over for FPS display.
+	std::array<double, _framesCount> _frameTimes; ///< Last N frame times.
+	double _smoothTime = 0.0; ///< Time elapsed over the last N frames.
+	size_t _currFrame = 0; ///< Current frame index for smoothing.
+	bool _showDebug = false; ///< Show debug viewer.
 };
 
 /**
