@@ -141,28 +141,34 @@ public:
 	}
 
 	/**
-	 Query the 2D texture or renderbuffer backing the depth attachment.
-	 \return the depth texture/renderbuffer
+	 Query the 2D texture backing the depth attachment if it exists.
+	 \return the depth texture or null
 	 */
-	const Texture * depthBuffer() const { return (_depthUse == Depth::NONE ? nullptr : &_idDepth); }
+	const Texture * depthBuffer() const { return (_depthUse == Depth::TEXTURE ? &_idDepth : nullptr); }
 
 	/**
 	 Query the framebuffer width.
 	 \return the width
 	 */
-	unsigned int width() const { return _width; }
+	uint width() const { return _width; }
 
 	/**
 	 Query the framebuffer height.
 	 \return the height
 	 */
-	unsigned int height() const { return _height; }
+	uint height() const { return _height; }
 
 	/**
 	 Query the framebuffer depth.
 	 \return the depth
 	 */
-	unsigned int depth() const { return _depth; }
+	uint depth() const { return _depth; }
+
+	/**
+	 Query the number of color attachments.
+	 \return the number of color attachments
+	 */
+	uint attachments() const;
 
 	/**
 	 Query the window backbuffer infos.

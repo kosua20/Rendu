@@ -232,6 +232,10 @@ glm::vec3 Framebuffer::read(const glm::ivec2 & pos) const {
 	return rgb;
 }
 
+uint Framebuffer::attachments() const {
+	return uint(_idColors.size());
+}
+
 Framebuffer * Framebuffer::_backbuffer = nullptr;
 
 const Framebuffer * Framebuffer::backbuffer() {
