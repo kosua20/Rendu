@@ -120,8 +120,10 @@ void main(){
 	
 	// Read high frequency normal map based on undistorted world position.
 	vec2 warpUV = 2.0*srcPos.xz;
-	vec3 warpN = textureLod(waveNormals, warpUV, log2(dist2*5.0) ).xyz * 2.0 - 1.0;
-	vec3 n = normalize(tbn * warpN);
+	float lodN =  log2(dist2*5.0);
+	float fadeWarpN = smoothstep(9.5, 9.8, lodN);
+	vec3 warpN = textureLod(waveNormals, warpUV, lodN).xyz * 2.0 - 1.0;
+	vec3 n = normalize(mix(normalize(tbn * warpN), nn, fadeWarpN));
 
 	bool aroundIsland = all(lessThan(abs(worldPos.xz), vec2(groundGridHalf)));
 	if(!distantProxy){
@@ -182,7 +184,7 @@ void main(){
 
 	// Apply a basic Phong lobe for now.
 	vec3 ldir = reflect(vdir, n);
-	ldir.y = max(0.001, ldir.y);
+	ldir.y = max(0.0, ldir.y);
 	// Fetch from envmap for now.
 	// Clamp to avoid fireflies.
 	vec3 reflection = min(texture(envmap, ldir).rgb, 5.0);
