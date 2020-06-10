@@ -303,6 +303,11 @@ public:
 	 */
 	bool isSRGB() const;
 
+	/** Query a string representation of the descriptor.
+		\return a string detailing the descriptor settings
+	*/
+	std::string string() const;
+
 private:
 	/** Convert a filtering mode to the corresponding GPU driver value.
 	 \param filter the filtering mode

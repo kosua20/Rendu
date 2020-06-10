@@ -249,3 +249,85 @@ bool Descriptor::operator!=(const Descriptor & other) const {
 bool Descriptor::isSRGB() const {
 	return _typedFormat == Layout::SRGB8 || _typedFormat == Layout::SRGB8_ALPHA8;
 }
+
+std::string Descriptor::string() const {
+
+	#define STRENUM(X) { Layout::X, #X}
+
+	static const std::map<Layout, std::string> strFormats = {
+		STRENUM(R8),
+		STRENUM(RG8),
+		STRENUM(RGB8),
+		STRENUM(RGBA8),
+		STRENUM(SRGB8),
+		STRENUM(SRGB8_ALPHA8),
+		STRENUM(R16),
+		STRENUM(RG16),
+		STRENUM(RGBA16),
+		STRENUM(R8_SNORM),
+		STRENUM(RG8_SNORM),
+		STRENUM(RGB8_SNORM),
+		STRENUM(RGBA8_SNORM),
+		STRENUM(R16_SNORM),
+		STRENUM(RG16_SNORM),
+		STRENUM(RGB16_SNORM),
+		STRENUM(R16F),
+		STRENUM(RG16F),
+		STRENUM(RGB16F),
+		STRENUM(RGBA16F),
+		STRENUM(R32F),
+		STRENUM(RG32F),
+		STRENUM(RGB32F),
+		STRENUM(RGBA32F),
+		STRENUM(RGB5_A1),
+		STRENUM(RGB10_A2),
+		STRENUM(R11F_G11F_B10F),
+		STRENUM(DEPTH_COMPONENT32F),
+		STRENUM(DEPTH24_STENCIL8),
+		STRENUM(DEPTH_COMPONENT16),
+		STRENUM(DEPTH_COMPONENT24),
+		STRENUM(DEPTH32F_STENCIL8),
+		STRENUM(R8UI),
+		STRENUM(R16I),
+		STRENUM(R16UI),
+		STRENUM(R32I),
+		STRENUM(R32UI),
+		STRENUM(RG8I),
+		STRENUM(RG8UI),
+		STRENUM(RG16I),
+		STRENUM(RG16UI),
+		STRENUM(RG32I),
+		STRENUM(RG32UI),
+		STRENUM(RGB8I),
+		STRENUM(RGB8UI),
+		STRENUM(RGB16I),
+		STRENUM(RGB16UI),
+		STRENUM(RGB32I),
+		STRENUM(RGB32UI),
+		STRENUM(RGBA8I),
+		STRENUM(RGBA8UI),
+		STRENUM(RGBA16I),
+		STRENUM(RGBA16UI),
+		STRENUM(RGBA32I),
+		STRENUM(RGBA32UI)
+	};
+
+	#undef STRENUM
+
+	static const std::map<Filter, std::string> strFilters = {
+		{Filter::NEAREST, "Nearest no mip"},		
+		{Filter::LINEAR, "Linear no mip"},			
+		{Filter::NEAREST_NEAREST, "Nearest near. mip"},
+		{Filter::LINEAR_NEAREST, "Linear near. mip"},	
+		{Filter::NEAREST_LINEAR, "Nearest lin. mip"},	
+		{Filter::LINEAR_LINEAR, "Linear lin. mip"}
+	};
+
+	static const std::map<Wrap, std::string> strWraps = {
+		{Wrap::CLAMP, "Clamp"},
+		{Wrap::REPEAT, "Repeat"},
+		{Wrap::MIRROR, "Mirror"}
+	};
+
+	return strFormats.at(_typedFormat) + " - " + strFilters.at(_filtering) + " - " + strWraps.at(_wrapping);
+}
