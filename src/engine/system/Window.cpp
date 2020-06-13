@@ -171,7 +171,7 @@ bool Window::nextFrame() {
 	return !glfwWindowShouldClose(_window);
 }
 
-void Window::clean() {
+Window::~Window() {
 	// Make sure rendering is done.
 	if(_frameStarted){
 		ImGui::EndFrame();

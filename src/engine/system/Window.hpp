@@ -37,9 +37,6 @@ public:
 	 */
 	bool nextFrame();
 	
-	/** Clean resources, delete the window and its context. */
-	void clean();
-	
 	/** Copy constructor.*/
 	Window(const Window &) = delete;
 	
@@ -55,7 +52,10 @@ public:
 	 \return a reference to the object assigned to
 	 */
 	Window & operator=(Window &&) = delete;
-	
+
+	/** Destructor. Clean resources, delete the window and its context. */
+	~Window();
+
 private:
 	/** Setup ImGui with the proper callbacks and style. */
 	void setupImGui();

@@ -212,18 +212,6 @@ void Framebuffer::clear(const glm::vec4 & color, float depth){
 
 }
 
-void Framebuffer::clean() {
-	if(_depthUse == Depth::RENDERBUFFER) {
-		glDeleteRenderbuffers(1, &_idDepth.gpu->id);
-	} else if(_depthUse == Depth::TEXTURE) {
-		_idDepth.clean();
-	}
-	for(Texture & idColor : _idColors) {
-		idColor.clean();
-	}
-	glDeleteFramebuffers(1, &_id);
-}
-
 glm::vec3 Framebuffer::read(const glm::ivec2 & pos) const {
 	glm::vec3 rgb(0.0f);
 	bind(0, 0, Mode::READ);
@@ -234,6 +222,20 @@ glm::vec3 Framebuffer::read(const glm::ivec2 & pos) const {
 
 uint Framebuffer::attachments() const {
 	return uint(_idColors.size());
+}
+
+Framebuffer::~Framebuffer() {
+	if(_depthUse == Depth::RENDERBUFFER) {
+		glDeleteRenderbuffers(1, &_idDepth.gpu->id);
+	} else if(_depthUse == Depth::TEXTURE) {
+		_idDepth.clean();
+	}
+	for(Texture & idColor : _idColors) {
+		idColor.clean();
+	}
+	_idColors.clear();
+	glDeleteFramebuffers(1, &_id);
+	_id = 0;
 }
 
 Framebuffer * Framebuffer::_backbuffer = nullptr;

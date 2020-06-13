@@ -95,10 +95,6 @@ public:
 	 */
 	void clear(const glm::vec4 & color, float depth);
 
-	/** Clean internal resources.
-	 */
-	void clean();
-
 	/** Read back the value at a given pixel in the first color attachment.
 	 \param pos the position in pixels
 	 \return a float RGB color.
@@ -192,7 +188,10 @@ public:
 	
 	/** Move constructor (disabled). */
 	Framebuffer(Framebuffer &&) = delete;
-	
+
+	/** Destructor. */
+	~Framebuffer();
+
 private:
 	/** Default constructor. */
 	Framebuffer() = default;
