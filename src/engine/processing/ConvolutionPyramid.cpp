@@ -104,16 +104,6 @@ void ConvolutionPyramid::process(const Texture * texture) {
 	_shifted->unbind();
 }
 
-void ConvolutionPyramid::clean() const {
-	for(auto & frameBuffer : _levelsIn) {
-		frameBuffer->clean();
-	}
-	for(auto & frameBuffer : _levelsOut) {
-		frameBuffer->clean();
-	}
-	_shifted->clean();
-}
-
 void ConvolutionPyramid::setFilters(const float h1[5], float h2, const float g[3]) {
 	_h1[0] = h1[0];
 	_h1[1] = h1[1];

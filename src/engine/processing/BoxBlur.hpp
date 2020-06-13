@@ -26,11 +26,6 @@ public:
 	 */
 	void process(const Texture * texture, Framebuffer & framebuffer);
 
-	/**
-	 Clean internal resources.
-	 */
-	void clean() const;
-
 private:
 
 	/**

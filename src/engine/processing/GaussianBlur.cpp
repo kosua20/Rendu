@@ -59,14 +59,6 @@ void GaussianBlur::process(const Texture * texture, Framebuffer & framebuffer) {
 	GLUtilities::blit(*_frameBuffers[0], framebuffer, Filter::LINEAR);
 }
 
-void GaussianBlur::clean() const {
-	for(auto & frameBuffer : _frameBuffers) {
-		if(frameBuffer){
-			frameBuffer->clean();
-		}
-	}
-}
-
 void GaussianBlur::resize(unsigned int width, unsigned int height) {
 	const uint dwidth = width/_downscale;
 	const uint dheight = height/_downscale;

@@ -83,15 +83,6 @@ void SSAO::process(const glm::mat4 & projection, const Texture * depthTex, const
 	}
 }
 
-// Clean function
-void SSAO::clean() {
-	_highBlur.clean();
-	_mediumBlur.clean();
-	_finalFramebuffer->clean();
-	_ssaoFramebuffer->clean();
-	_samples.clean();
-}
-
 void SSAO::clear() const {
 	_finalFramebuffer->clear(glm::vec4(1.0f), 1.0f);
 }

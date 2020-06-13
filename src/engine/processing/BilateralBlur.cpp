@@ -14,9 +14,6 @@ BilateralBlur::BilateralBlur() {
 void BilateralBlur::process(const glm::mat4 & projection, const Texture * texture, const Texture * depthTex, const Texture * normalTex, Framebuffer & framebuffer) {
 
 	if(!_intermediate || _intermediate->descriptor() != framebuffer.descriptor()){
-		if(_intermediate){
-			_intermediate->clean();
-		}
 		_intermediate.reset(new Framebuffer(framebuffer.width(), framebuffer.height(), framebuffer.descriptor(), false));
 	}
 
@@ -41,11 +38,6 @@ void BilateralBlur::process(const glm::mat4 & projection, const Texture * textur
 	GLUtilities::bindTexture(_intermediate->texture(), 0);
 	ScreenQuad::draw();
 	framebuffer.unbind();
-}
-void BilateralBlur::clean() const {
-	if(_intermediate){
-		_intermediate->clean();
-	}
 }
 
 void BilateralBlur::resize(unsigned int width, unsigned int height) const {

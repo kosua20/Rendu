@@ -29,10 +29,6 @@ public:
 	 */
 	void process(const glm::mat4 & projection, const Texture * texture, const Texture * depthTex, const Texture * normalTex, Framebuffer & framebuffer);
 
-	/** Cleanup ressources.
-	 */
-	void clean() const;
-
 private:
 
 	/** Resize the internal intermediate buffers.

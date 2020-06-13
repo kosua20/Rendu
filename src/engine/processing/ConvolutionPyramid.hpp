@@ -34,9 +34,6 @@ public:
 	 */
 	void process(const Texture * texture);
 
-	/** Cleanup internal resources. */
-	void clean() const;
-
 	/** Resize the internal buffers.
 	 \param width the new width
 	 \param height the new height

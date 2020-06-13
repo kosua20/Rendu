@@ -20,9 +20,6 @@ void BoxBlur::process(const Texture * texture, Framebuffer & framebuffer) {
 
 	// Detect changes of descriptor.
 	if(!_intermediate || _intermediate->descriptor() != framebuffer.descriptor()){
-		if(_intermediate){
-			_intermediate->clean();
-		}
 		_intermediate.reset(new Framebuffer(framebuffer.width(), framebuffer.height(), framebuffer.descriptor(), false));
 	}
 	// Detect changes of size.
@@ -78,13 +75,6 @@ void BoxBlur::process(const Texture * texture, Framebuffer & framebuffer) {
 		Log::Error() << "Unsupported shape." << std::endl;
 	}
 
-}
-
-// Clean function
-void BoxBlur::clean() const {
-	if(_intermediate){
-		_intermediate->clean();
-	}
 }
 
 // Handle screen resizing

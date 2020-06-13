@@ -43,12 +43,6 @@ void PoissonFiller::process(const Texture * texture) {
 	_compo->unbind();
 }
 
-void PoissonFiller::clean() const {
-	_pyramid.clean();
-	_compo->clean();
-	_preproc->clean();
-}
-
 void PoissonFiller::resize(unsigned int width, unsigned int height) {
 	_pyramid.resize(width / _scale, height / _scale);
 	_preproc->resize(_pyramid.width(), _pyramid.height());

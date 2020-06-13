@@ -47,12 +47,6 @@ void LaplacianIntegrator::process(const Texture * texture) {
 	_compo->unbind();
 }
 
-void LaplacianIntegrator::clean() const {
-	_pyramid.clean();
-	_compo->clean();
-	_preproc->clean();
-}
-
 void LaplacianIntegrator::resize(unsigned int width, unsigned int height) {
 	_pyramid.resize(width / _scale, height / _scale);
 	_preproc->resize(_pyramid.width(), _pyramid.height());

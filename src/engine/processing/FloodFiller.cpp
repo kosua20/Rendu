@@ -57,12 +57,6 @@ void FloodFiller::extractAndPropagate(const Texture * texture) {
 	}
 }
 
-void FloodFiller::clean() const {
-	_ping->clean();
-	_pong->clean();
-	_final->clean();
-}
-
 void FloodFiller::resize(unsigned int width, unsigned int height) {
 	_iterations = int(std::ceil(std::log2(std::max(width, height))));
 	_ping->resize(width, height);

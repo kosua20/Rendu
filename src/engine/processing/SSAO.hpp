@@ -39,10 +39,6 @@ public:
 	 */
 	void process(const glm::mat4 & projection, const Texture * depthTex, const Texture * normalTex);
 
-	/** Cleanup ressources.
-	 */
-	void clean();
-
 	/**
 	 Resize the internal buffers.
 	 \param width the new width
