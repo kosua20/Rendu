@@ -24,9 +24,6 @@ public:
 	void update() override;
 	
 	void physics(double fullTime, double frameTime) override;
-	
-	/** Clean internal resources. */
-	void clean() override;
 
 	/** Handle a window resize event.
 	 */

@@ -126,8 +126,7 @@ void computeCubemapConvolution(const Texture & cubemapInfos, int levelsCount, in
 		cubeLevels.emplace_back();
 		Texture & levelInfos = cubeLevels.back();
 		GLUtilities::blit(*resultFramebuffer.texture(), levelInfos, Filter::NEAREST);
-		resultFramebuffer.clean();
-
+		
 		Log::Info() << std::endl;
 	}
 	GLUtilities::setDepthState(true);
@@ -390,9 +389,7 @@ int main(int argc, char ** argv) {
 	}
 
 	// Clean resources.
-	sCoeffs.clean();
 	Resources::manager().clean();
-	window.clean();
 
 	return 0;
 }

@@ -206,10 +206,6 @@ void SceneEditor::physics(double fullTime, double frameTime) {
 	}
 }
 
-void SceneEditor::clean() {
-	_sceneFramebuffer->clean();
-}
-
 void SceneEditor::resize() {
 	_sceneFramebuffer->resize(_config.renderingResolution());
 }

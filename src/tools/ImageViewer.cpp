@@ -108,7 +108,7 @@ int main(int argc, char ** argv) {
 			program->uniform("gammaOutput", applyGamma);
 			const glm::vec4 chanFilts(channelsFilter);
 			const glm::vec2 flips(flipAxis);
-			const glm::vec2 angles(std::cos(float(currentAngle) * glm::half_pi<float>()), std::sin(float(currentAngle) * glm::pi<float>()));
+			const glm::vec2 angles(std::cos(float(currentAngle) * glm::half_pi<float>()), std::sin(float(currentAngle) * glm::half_pi<float>()));
 
 			program->uniform("channelsFilter", chanFilts);
 			program->uniform("flipAxis", flips);
@@ -279,7 +279,6 @@ int main(int argc, char ** argv) {
 
 	// Clean up.
 	Resources::manager().clean();
-	window.clean();
 
 	return 0;
 }

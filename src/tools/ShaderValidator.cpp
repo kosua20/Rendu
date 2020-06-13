@@ -143,7 +143,6 @@ int main(int argc, char ** argv) {
 		}
 	}
 
-	window.clean();
 	// Has any of the shaders encountered a compilation issue?
 	return encounteredIssues ? 1 : 0;
 }
