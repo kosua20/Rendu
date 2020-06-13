@@ -51,11 +51,6 @@ void VarianceShadowMap2D::draw(const Scene & scene) const {
 	_blur->process(_map->texture(), *_map);
 }
 
-void VarianceShadowMap2D::clean(){
-	_blur->clean();
-	_map->clean();
-}
-
 VarianceShadowMapCube::VarianceShadowMapCube(const std::shared_ptr<PointLight> & light, int side){
 	_light = light;
 	const Descriptor descriptor = {Layout::RG16F, Filter::LINEAR, Wrap::CLAMP};
@@ -111,9 +106,4 @@ void VarianceShadowMapCube::draw(const Scene & scene) const {
 	// Blur pass.
 	GLUtilities::setDepthState(false);
 	_blur->process(_map->texture(), *_map);
-}
-
-void VarianceShadowMapCube::clean(){
-	_map->clean();
-	_blur->clean();
 }

@@ -19,9 +19,6 @@ public:
 	
 	/** \copydoc ShadowMap::draw  */
 	void draw(const Scene & scene) const override;
-	
-	/** \copydoc ShadowMap::clean */
-	void clean() override;
 
 private:
 	
@@ -46,9 +43,6 @@ public:
 	
 	/** \copydoc ShadowMap::draw  */
 	void draw(const Scene & scene) const override;
-	
-	/** \copydoc ShadowMap::clean */
-	void clean() override;
 	
 private:
 	

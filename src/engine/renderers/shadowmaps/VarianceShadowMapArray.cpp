@@ -58,11 +58,6 @@ void VarianceShadowMap2DArray::draw(const Scene & scene) const {
 	_blur->process(_map->texture(), *_map);
 }
 
-void VarianceShadowMap2DArray::clean(){
-	_blur->clean();
-	_map->clean();
-}
-
 VarianceShadowMapCubeArray::VarianceShadowMapCubeArray(const std::vector<std::shared_ptr<PointLight>> & lights, int side){
 	_lights = lights;
 	const Descriptor descriptor = {Layout::RG16F, Filter::LINEAR, Wrap::CLAMP};
@@ -125,9 +120,4 @@ void VarianceShadowMapCubeArray::draw(const Scene & scene) const {
 	// Apply box blur.
 	_blur->process(_map->texture(), *_map);
 	GLUtilities::setDepthState(false);
-}
-
-void VarianceShadowMapCubeArray::clean(){
-	_map->clean();
-	_blur->clean();
 }

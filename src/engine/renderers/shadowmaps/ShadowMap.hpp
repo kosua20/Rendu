@@ -31,9 +31,6 @@ public:
 	 */
 	virtual void draw(const Scene & scene) const = 0;
 	
-	/** Clean internal resources. */
-	virtual void clean() = 0;
-	
 	/** Destructor. */
 	virtual ~ShadowMap() = default;
 	
