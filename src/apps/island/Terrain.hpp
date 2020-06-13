@@ -63,7 +63,7 @@ public:
 
 	bool interface();
 
-	void clean();
+	~Terrain();
 
 	float texelSize() const {
 		return _texelSize;

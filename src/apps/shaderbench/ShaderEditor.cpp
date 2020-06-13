@@ -587,9 +587,7 @@ std::string ShaderEditor::reload(const std::string & shaderPath, bool syncUnifor
 	return log;
 }
 
-void ShaderEditor::clean() {
-	_currFrame->clean();
-	_prevFrame->clean();
+ShaderEditor::~ShaderEditor() {
 	_currProgram->clean();
 	_noise.clean();
 	_directions.clean();

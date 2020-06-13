@@ -489,10 +489,8 @@ bool Terrain::interface(){
 	return false;
 }
 
-void Terrain::clean() {
+Terrain::~Terrain() {
 	_map.clean();
-	_shadowBuffer->clean();
-	_gaussBlur.clean();
 	for(Cell & cell : _cells){
 		cell.mesh.clean();
 	}

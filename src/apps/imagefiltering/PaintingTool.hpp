@@ -24,9 +24,6 @@ public:
 	/** Perform once-per-frame update (buttons, GUI,...) */
 	void update();
 
-	/** Clean internal resources. */
-	void clean() const;
-
 	/** Handle a window resize event.
 	 \param width the new width
 	 \param height the new height

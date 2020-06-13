@@ -187,7 +187,6 @@ void FilteringApp::showModeOptions() {
 		case Processing::GAUSSBLUR:
 			if(ImGui::InputInt("Levels", &_blurLevel, 1, 2)) {
 				_blurLevel = std::min(std::max(1, _blurLevel), 10);
-				_gaussianBlur->clean();
 				_gaussianBlur.reset(new GaussianBlur(_blurLevel, 1));
 			}
 			break;
@@ -195,7 +194,6 @@ void FilteringApp::showModeOptions() {
 			ImGui::Checkbox("Show colored border", &_showProcInput);
 			if(ImGui::InputInt("Pyramid downscale", &_fillDownscale, 1, 2)) {
 				_fillDownscale = std::max(_fillDownscale, 1);
-				_pyramidFiller->clean();
 				_pyramidFiller = std::unique_ptr<PoissonFiller>(new PoissonFiller(width, height, _fillDownscale));
 			}
 			break;
@@ -203,7 +201,6 @@ void FilteringApp::showModeOptions() {
 			ImGui::Checkbox("Show Laplacian", &_showProcInput);
 			if(ImGui::InputInt("Pyramid downscale", &_intDownscale, 1, 2)) {
 				_intDownscale = std::max(_intDownscale, 1);
-				_pyramidIntegrator->clean();
 				_pyramidIntegrator = std::unique_ptr<LaplacianIntegrator>(new LaplacianIntegrator(width, height, _intDownscale));
 			}
 			break;
@@ -216,17 +213,6 @@ void FilteringApp::showModeOptions() {
 }
 
 void FilteringApp::physics(double, double) {
-}
-
-void FilteringApp::clean() {
-	// Clean objects.
-	_sceneBuffer->clean();
-	_pyramidFiller->clean();
-	_pyramidIntegrator->clean();
-	_gaussianBlur->clean();
-	_boxBlur->clean();
-	_floodFill->clean();
-	_painter->clean();
 }
 
 void FilteringApp::resize() {

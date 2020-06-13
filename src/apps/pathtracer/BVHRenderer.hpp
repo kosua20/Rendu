@@ -30,8 +30,8 @@ public:
 	/** \copydoc Renderer::draw */
 	void draw(const Camera & camera, Framebuffer & framebuffer, size_t layer = 0) override;
 
-	/** \copydoc Renderer::clean */
-	void clean() override;
+	/** Destructor. */
+	~BVHRenderer() override;
 
 	/** Generate visualisation for a ray cast from a position.
 	 \param position the ray origin.

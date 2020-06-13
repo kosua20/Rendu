@@ -159,9 +159,7 @@ int main(int argc, char ** argv) {
 	}
 
 	// Clean other resources
-	app.clean();
 	Resources::manager().clean();
-	window.clean();
 
 	return 0;
 }

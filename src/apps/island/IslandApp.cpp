@@ -508,14 +508,7 @@ void IslandApp::resize() {
 	_waterEffectsBlur->resize(_config.renderingResolution()/2.0f);
 }
 
-void IslandApp::clean() {
-	_sceneBuffer->clean();
-	_waterEffectsHalf->clean();
-	_waterEffectsBlur->clean();
-	_waterPos->clean();
-	_environment->clean();
-	_blur.clean();
-	_terrain->clean();
+IslandApp::~IslandApp() {
 	_surfaceNoise.clean();
 	_glitterNoise.clean();
 }

@@ -91,11 +91,6 @@ public:
 		_atmosphereBuffer->resize(_config.renderingResolution());
 	}
 	
-	/** \copydoc CameraApp::clean */
-	void clean() override {
-		_atmosphereBuffer->clean();
-	}
-	
 private:
 	std::unique_ptr<Framebuffer> _atmosphereBuffer; ///< Scene framebuffer.
 	const Program * _atmosphere; ///< Atmospheric scattering shader.
@@ -139,9 +134,7 @@ int main(int argc, char ** argv) {
 	}
 	
 	// Cleaning.
-	app.clean();
 	Resources::manager().clean();
-	window.clean();
 	
 	return 0;
 }

@@ -25,12 +25,12 @@ public:
 	 */
 	void update() override;
 
-	/** \copydoc CameraApp::clean */
-	void clean() override;
-
 	/** \copydoc CameraApp::resize
 	 */
 	void resize() override;
+
+	/** Destructor. */
+	~ShaderEditor() override;
 
 private:
 

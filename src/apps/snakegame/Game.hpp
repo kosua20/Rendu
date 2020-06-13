@@ -61,9 +61,6 @@ public:
 	 */
 	void resize(unsigned int width, unsigned int height);
 
-	/// Cleanup resources.
-	void clean();
-
 private:
 	/**
 	 \brief Game state: either a specific menu or in-game.

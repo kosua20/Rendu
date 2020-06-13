@@ -152,11 +152,6 @@ void PaintingTool::update() {
 	ImGui::End();
 }
 
-void PaintingTool::clean() const {
-	_canvas->clean();
-	_visu->clean();
-}
-
 void PaintingTool::resize(unsigned int width, unsigned int height) const {
 	// We first copy the canvas to a temp framebuffer.
 	const unsigned int w = _canvas->width();
@@ -176,8 +171,7 @@ void PaintingTool::resize(unsigned int width, unsigned int height) const {
 
 	// Copy back the drawing.
 	GLUtilities::blit(tempCanvas, *_canvas, Filter::NEAREST);
-	tempCanvas.clean();
-
+	
 	// The content of the visualisation buffer will be cleaned at the next frame canvas copy.
 	_visu->resize(width, height);
 

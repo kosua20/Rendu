@@ -195,10 +195,8 @@ void PathTracerApp::physics(double, double) {
 	}
 }
 
-void PathTracerApp::clean() {
-	_bvhRenderer->clean();
+PathTracerApp::~PathTracerApp() {
 	_renderTex.clean();
-	_sceneFramebuffer->clean();
 }
 
 void PathTracerApp::resize() {

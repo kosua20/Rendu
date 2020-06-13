@@ -34,12 +34,12 @@ public:
 	 */
 	void physics(double fullTime, double frameTime) override;
 
-	/** \copydoc CameraApp::clean */
-	void clean() override;
-
 	/** \copydoc CameraApp::resize
 	 */
 	void resize() override;
+
+	/** Destructor. */
+	~PathTracerApp() override;
 
 private:
 

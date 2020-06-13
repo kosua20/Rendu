@@ -122,8 +122,3 @@ void GameRenderer::resize(unsigned int width, unsigned int height) {
 	_lightingFramebuffer->resize(res);
 	_ssaoPass->resize(width/2, height/2);
 }
-
-void GameRenderer::clean() {
-	_sceneFramebuffer->clean();
-	_ssaoPass->clean();
-}

@@ -91,9 +91,7 @@ int main() {
 	}
 
 	// Clean resources.
-	game.clean();
 	Resources::manager().clean();
-	window.clean();
 
 	return 0;
 }

@@ -78,7 +78,7 @@ void BVHRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_t 
 	GLUtilities::setCullState(true);
 }
 
-void BVHRenderer::clean() {
+BVHRenderer::~BVHRenderer() {
 	for(Mesh & level : _bvhLevels) {
 		level.clean();
 	}

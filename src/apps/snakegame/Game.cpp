@@ -272,10 +272,3 @@ void Game::resize(unsigned int width, unsigned int height) {
 		currentMenu.update(_config.screenResolution, initialRatio);
 	}
 }
-
-void Game::clean() {
-	_inGameRenderer.clean();
-	_bgBlur->clean();
-	_bgBlurBuffer->clean();
-	_gameFramebuffer->clean();
-}

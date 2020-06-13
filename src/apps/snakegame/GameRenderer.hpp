@@ -28,9 +28,6 @@ public:
 	 \param height new height
 	 */
 	void resize(unsigned int width, unsigned int height) override;
-
-	/** Clean up rendering resources.*/
-	void clean() override;
 	
 private:
 	/** Draw the scene to the current bound framebuffer.

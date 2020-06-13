@@ -48,9 +48,7 @@ int main(int argc, char ** argv) {
 	}
 	
 	// Cleaning.
-	app.clean();
 	Resources::manager().clean();
-	window.clean();
 	
 	return 0;
 }

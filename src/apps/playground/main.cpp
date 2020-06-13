@@ -141,7 +141,6 @@ int main(int argc, char ** argv) {
 
 	// Clean up.
 	Resources::manager().clean();
-	window.clean();
 
 	return 0;
 }

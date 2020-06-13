@@ -35,8 +35,8 @@ public:
 	/** \copydoc CameraApp::resize */
 	void resize() override;
 
-	/** \copydoc CameraApp::clean */
-	void clean() override;
+	
+	~IslandApp() override;
 
 private:
 
