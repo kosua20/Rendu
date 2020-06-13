@@ -49,6 +49,7 @@ GPUBuffer::GPUBuffer(BufferType type, DataUse use){
 
 void GPUBuffer::clean(){
 	glDeleteBuffers(1, &id);
+	id = 0;
 }
 
 void GPUMesh::clean() {

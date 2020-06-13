@@ -25,7 +25,7 @@ void PerlinNoise::generateLayers(Image & image, int octaves, float gain, float l
 		System::forParallel(0, size_t(image.height), [&image, weight, &img](size_t y){
 			for(uint x = 0; x < image.width; ++x){
 				for(uint c = 0; c < image.components; ++c){
-					image.rgba(x,y)[c] += weight * img.rgba(x,y)[c];
+					image.rgba(x, uint(y))[c] += weight * img.rgba(x, uint(y))[c];
 				}
 			}
 		});

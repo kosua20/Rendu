@@ -41,6 +41,7 @@ void Texture::clean() {
 	if(gpu) {
 		gpu->clean();
 	}
+	gpu = nullptr;
 }
 
 glm::vec3 Texture::sampleCubemap(const glm::vec3 & dir) const {
