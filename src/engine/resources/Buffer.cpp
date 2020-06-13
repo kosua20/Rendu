@@ -37,3 +37,7 @@ void BufferBase::clean() {
 		gpu.reset();
 	}
 }
+
+BufferBase::~BufferBase() {
+	clean();
+}

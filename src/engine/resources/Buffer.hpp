@@ -60,6 +60,9 @@ public:
 	/** Move constructor. */
 	BufferBase(BufferBase &&) = delete;
 
+	/** Destructor. */
+	~BufferBase();
+
 	const size_t sizeMax; ///< Buffer size in bytes.
 	const BufferType type; ///< Buffer type.
 	const DataUse usage; ///< Buffer update frequency.
@@ -135,10 +138,6 @@ public:
 	 If the CPU buffer was cleared, it will be reallocated.
 	 */
 	void download();
-	
-	/** Cleanup all data.
-	 */
-	void clean();
 
 	/** Clear CPU data.
 	 */
@@ -159,7 +158,10 @@ public:
 	
 	/** Move constructor. */
 	Buffer(Buffer &&) = default;
-	
+
+	/** Destructor. */
+	~Buffer();
+
 	std::vector<T> data; ///< The CPU data.
 	
 };
@@ -193,7 +195,7 @@ void Buffer<T>::clearCPU() {
 }
 
 template <typename T>
-void Buffer<T>::clean() {
+Buffer<T>::~Buffer() {
 	clearCPU();
-	BufferBase::clean();
+	// The parent destructor will do the GPU cleaning.
 }
