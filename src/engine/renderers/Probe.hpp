@@ -52,10 +52,6 @@ public:
 	 */
 	void estimateIrradiance(float clamp);
 
-	/** Clean internal resources.
-	 */
-	void clean();
-
 	/** The cubemap containing the rendering. Its mip levels will store the preconvolved radiance
 	 if convolveRadiance has been called
 	 \return the cubemap texture

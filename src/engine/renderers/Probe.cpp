@@ -87,12 +87,6 @@ void Probe::estimateIrradiance(float clamp) {
 	_shCoeffs->upload();
 }
 
-void Probe::clean() {
-	_framebuffer->clean();
-	_copy->clean();
-	_shCoeffs->clean();
-}
-
 void Probe::extractIrradianceSHCoeffs(const Texture & cubemap, float clamp, std::vector<glm::vec3> & shCoeffs) {
 	shCoeffs.resize(9);
 

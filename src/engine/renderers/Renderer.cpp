@@ -11,9 +11,6 @@ void Renderer::interface(){
 	assert(false);
 }
 
-void Renderer::clean(){
-}
-
 void Renderer::resize(unsigned int, unsigned int){
 }
 

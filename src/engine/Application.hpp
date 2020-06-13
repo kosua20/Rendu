@@ -21,9 +21,6 @@ public:
 	/** Interactions call. */
 	virtual void update();
 	
-	/** Clean internal resources. */
-	virtual void clean() = 0;
-	
 	/** Handle a window resize event, the configuration has been updated with the new size. */
 	virtual void resize() = 0;
 

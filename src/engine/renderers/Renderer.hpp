@@ -22,9 +22,6 @@ public:
 	 */
 	virtual void draw(const Camera & camera, Framebuffer & framebuffer, size_t layer = 0);
 	
-	/** Clean internal resources. */
-	virtual void clean();
-	
 	/** Handle a window resize event.
 	 \param width the new width
 	 \param height the new height
