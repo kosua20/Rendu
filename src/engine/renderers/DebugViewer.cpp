@@ -1,16 +1,25 @@
 #include "DebugViewer.hpp"
 #include "graphics/GLUtilities.hpp"
 #include "graphics/Framebuffer.hpp"
+#include "resources/Texture.hpp"
 #include "graphics/ScreenQuad.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "system/System.hpp"
 
+static const std::map<TextureShape, std::string> shapeNames = {
+	{TextureShape::D1, "1D"},
+	{TextureShape::Array1D, "1D array"},
+	{TextureShape::D2, "2D"},
+	{TextureShape::Array2D, "2D array"},
+	{TextureShape::Cube, "Cube"},
+	{TextureShape::ArrayCube, "Cube array"},
+	{TextureShape::D3, "3D"}};
 DebugViewer::DebugViewer(bool silent){
 	_texDisplay = Resources::manager().getProgram2D("debug_texture_display");
 	_silent		= silent;
 }
 
-void DebugViewer::track(const std::string& name, const Texture* tex) {
+void DebugViewer::track(const Texture * tex, const std::string & name) {
 	if(_silent) {
 		return;
 	}
@@ -18,8 +27,14 @@ void DebugViewer::track(const std::string& name, const Texture* tex) {
 		Log::Warning() << "[DebugViewer] \"" << name << "\" has no GPU data." << std::endl;
 		return;
 	}
+	// Generate default name if empty.
+	std::string finalName = name;
+	if(name.empty()) {
+		finalName = "Texture " + std::to_string(_textureId++);
+	}
+
 	_textures.emplace_back();
-	registerTexture(name, tex, _textures.back());
+	registerTexture(finalName, tex, _textures.back());
 
 	// Sort textures list.
 	std::sort(_textures.begin(), _textures.end(), [](const Infos & a, const Infos & b) {
@@ -27,24 +42,31 @@ void DebugViewer::track(const std::string& name, const Texture* tex) {
 	});
 }
 
-void DebugViewer::track(const std::string & name, const Framebuffer * buffer) {
+void DebugViewer::track(const Framebuffer * buffer, const std::string & name) {
 	if(_silent) {
 		return;
 	}
+	// Generate default name if empty.
+	std::string finalName = name;
+	if(name.empty()) {
+		finalName = "Framebuffer " + std::to_string(_bufferId++);
+	}
+	finalName.append(" (" + shapeNames.at(buffer->shape()) + ")");
+
 	_framebuffers.emplace_back();
 	FramebufferInfos & infos = _framebuffers.back();
-	infos.name				 = name;
+	infos.name				 = finalName;
 
 	// Register color attachments.
 	for(uint cid = 0; cid < buffer->attachments(); ++cid) {
-		const std::string nameAttach = name + " - Color " + std::to_string(cid); 
+		const std::string nameAttach = finalName + " - Color " + std::to_string(cid); 
 		infos.attachments.emplace_back();
 		registerTexture(nameAttach, buffer->texture(cid), infos.attachments.back());
 	}
 	// Register depth attachment if it's a texture.
 	const Texture * depthAttach = buffer->depthBuffer();
 	if(depthAttach) {
-		const std::string nameAttach = name + " - Depth";
+		const std::string nameAttach = finalName + " - Depth";
 		infos.attachments.emplace_back();
 		registerTexture(nameAttach, depthAttach, infos.attachments.back());
 	}
@@ -64,15 +86,6 @@ void DebugViewer::registerTexture(const std::string& name, const Texture* tex, I
 	infos.display.reset(new Framebuffer(TextureShape::D2, tex->width, tex->height, 1, 1, {desc}, false));
 
 	// Build display full name with details.
-	static const std::map<TextureShape, std::string> shapeNames = {
-		{TextureShape::D1, "1D"},
-		{TextureShape::Array1D, "1D array"},
-		{TextureShape::D2, "2D"},
-		{TextureShape::Array2D, "2D array"},
-		{TextureShape::Cube, "Cube"},
-		{TextureShape::ArrayCube, "Cube array"},
-		{TextureShape::D3, "3D"}};
-
 	const std::string details = shapeNames.at(tex->shape) + " (" + tex->gpu->descriptor().string() + ")";
 	infos.displayName		  = name + " - " + details;
 }
@@ -116,19 +129,6 @@ void DebugViewer::interface() {
 				continue;
 			}
 			displayTexture(tex);
-		}
-	}
-
-
-}
-
-void DebugViewer::clean() {
-	for(Infos & tex : _textures) {
-		tex.display->clean();
-	}
-	for(FramebufferInfos & buffer : _framebuffers) {
-		for(Infos & tex : buffer.attachments) {
-			tex.display->clean();
 		}
 	}
 }

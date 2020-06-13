@@ -1,7 +1,8 @@
 #pragma once
-#include "graphics/Framebuffer.hpp"
 #include "graphics/Program.hpp"
-#include "resources/Texture.hpp"
+
+class Framebuffer;
+class Texture;
 
 /**
  \brief Provide helper GUI to display the content of texture and framebuffer attachments.
@@ -18,22 +19,19 @@ public:
 	explicit DebugViewer(bool silent);
 
 	/** Register a texture for debug.
-	\param name the display name of the texture
 	\param tex the texture to monitor
+	\param name the display name of the texture
 	*/
-	void track(const std::string & name, const Texture * tex);
+	void track(const Texture * tex, const std::string & name);
 
-	/** Register a framebuffer for debug. All attahcment textures will be visible.
-	\param name the display name of the framebuffer
+	/** Register a framebuffer for debug. All attachment textures will be visible.
 	\param buffer the framebuffer to monitor
+	\param name the display name of the framebuffer
 	*/
-	void track(const std::string & name, const Framebuffer * buffer);
+	void track(const Framebuffer * buffer, const std::string & name);
 
 	/** Display interface and monitored data. */
 	void interface();
-	
-	/** Clean internal resources. */
-	void clean();
 
 	/** Destructor */
 	~DebugViewer() = default;
@@ -98,4 +96,6 @@ private:
 
 	const Program * _texDisplay; ///< Texture display shader.
 	bool _silent; ///< Don't register or display anything.
+	uint _textureId = 0;
+	uint _bufferId	= 0;
 };
