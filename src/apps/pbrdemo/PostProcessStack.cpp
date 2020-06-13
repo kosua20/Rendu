@@ -128,15 +128,6 @@ void PostProcessStack::updateBlurPass(){
 	_blur.reset(new GaussianBlur(_settings.bloomRadius, 2));
 }
 
-void PostProcessStack::clean() {
-	_blur->clean();
-	_bloomBuffer->clean();
-	_toneMapBuffer->clean();
-	_resultFramebuffer->clean();
-	_dofCocBuffer->clean();
-	_dofGatherBuffer->clean();
-}
-
 void PostProcessStack::resize(unsigned int width, unsigned int height) {
 	const glm::ivec2 renderRes(width, height);
 	_toneMapBuffer->resize(renderRes);

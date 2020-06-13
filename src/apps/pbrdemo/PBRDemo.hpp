@@ -36,9 +36,6 @@ public:
 	/** \copydoc CameraApp::physics */
 	void physics(double fullTime, double frameTime) override;
 
-	/** \copydoc CameraApp::clean */
-	void clean() override;
-
 	/** \copydoc CameraApp::resize */
 	void resize() override;
 

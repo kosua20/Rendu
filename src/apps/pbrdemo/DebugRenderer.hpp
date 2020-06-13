@@ -31,9 +31,6 @@ public:
 	/** \copydoc Renderer::draw */
 	void draw(const Camera & camera, Framebuffer & framebuffer, size_t layer = 0) override;
 
-	/** \copydoc Renderer::clean */
-	void clean() override;
-
 	/** \copydoc Renderer::interface */
 	void interface() override;
 

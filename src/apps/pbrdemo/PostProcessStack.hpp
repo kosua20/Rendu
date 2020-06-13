@@ -54,10 +54,6 @@ public:
 	 */
 	void interface() override;
 
-	/** \copydoc Renderer::clean
-	 */
-	void clean() override;
-
 	/** \copydoc Renderer::resize
 	 */
 	void resize(unsigned int width, unsigned int height) override;

@@ -248,12 +248,6 @@ void ForwardRenderer::draw(const Camera & camera, Framebuffer & framebuffer, siz
 	framebuffer.unbind();
 }
 
-void ForwardRenderer::clean() {
-	// Clean objects.
-	_ssaoPass->clean();
-	_sceneFramebuffer->clean();
-}
-
 void ForwardRenderer::resize(unsigned int width, unsigned int height) {
 	// Resize the framebuffers.
 	_ssaoPass->resize(width / 2, height / 2);

@@ -58,7 +58,7 @@ void PBRDemo::setScene(const std::shared_ptr<Scene> & scene) {
 	// Recreate the shadow maps.
 	// Delete existing shadow maps.
 	for(auto & map : _shadowMaps) {
-		map->clean();
+		map.reset();
 	}
 	_shadowMaps.clear();
 	// Allocate shadow maps.
@@ -85,7 +85,7 @@ void PBRDemo::setScene(const std::shared_ptr<Scene> & scene) {
 	// Recreate probes
 	// Delete existing probes.
 	for(auto & probe : _probes) {
-		probe->clean();
+		probe.reset();
 	}
 	_probes.clear();
 	// Allocate probes.
@@ -205,6 +205,7 @@ void PBRDemo::update() {
 		ImGui::Text("Scene rendering: %05.1fms", float(_rendererTime.value())/1000000.0f);
 		ImGui::Text("Post processing: %05.1fms", float(_postprocessTime.value())/1000000.0f);
 	}
+	ImGui::End();
 
 	// First part of the ImGui window is always displayed.
 	if(ImGui::Begin("Renderer")) {
@@ -279,21 +280,6 @@ void PBRDemo::physics(double fullTime, double frameTime) {
 	if(_scenes[_currentScene] && !_paused) {
 		_scenes[_currentScene]->update(fullTime, frameTime);
 	}
-}
-
-void PBRDemo::clean() {
-	// Clean objects.
-	_defRenderer->clean();
-	_forRenderer->clean();
-	_postprocess->clean();
-	_probesRenderer->clean();
-	for(auto & map : _shadowMaps) {
-		map->clean();
-	}
-	for(auto & probe : _probes) {
-		probe->clean();
-	}
-	_finalRender->clean();
 }
 
 void PBRDemo::resize() {

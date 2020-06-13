@@ -167,10 +167,6 @@ void DebugRenderer::updateSceneMesh(){
 	_sceneBoxes.upload();
 }
 
-void DebugRenderer::clean() {
-	_sceneBoxes.clean();
-}
-
 void DebugRenderer::interface(){
 	ImGui::Checkbox("Show bboxes", &_showBoxes); ImGui::SameLine();
 	ImGui::Checkbox("Show frame", &_showFrame); 

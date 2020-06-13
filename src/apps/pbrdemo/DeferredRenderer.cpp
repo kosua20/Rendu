@@ -212,13 +212,6 @@ void DeferredRenderer::draw(const Camera & camera, Framebuffer & framebuffer, si
 
 }
 
-void DeferredRenderer::clean() {
-	// Clean objects.
-	_gbuffer->clean();
-	_ssaoPass->clean();
-	_lightBuffer->clean();
-}
-
 void DeferredRenderer::resize(unsigned int width, unsigned int height) {
 	// Resize the framebuffers.
 	_gbuffer->resize(glm::vec2(width, height));
