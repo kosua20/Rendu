@@ -104,3 +104,9 @@ std::vector<std::string> TextUtilities::splitLines(const std::string & str, bool
 	}
 	return tokens;
 }
+
+std::string TextUtilities::padInt(uint number, uint padding) {
+	const std::string numStr = std::to_string(number);
+	const int delta			 = int(padding) - int(numStr.size());
+	return delta <= 0 ? numStr : (std::string(delta, '0') + numStr);
+}

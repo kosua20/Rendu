@@ -70,4 +70,11 @@ public:
 	 */
 	static std::vector<std::string> splitLines(const std::string & str, bool skipEmpty);
 
+	/** Generate a zero-padded string representation of an unsigned integer.
+	\param number the number to represent as a string
+	\param padding the length to pad the number string to
+	\return the number string padded representation
+	*/
+	static std::string padInt(uint number, uint padding);
+
 };
