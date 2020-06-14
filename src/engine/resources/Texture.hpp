@@ -9,10 +9,7 @@
  */
 class Texture {
 public:
-	
-	/** Constructor. */
-	Texture() = default;
-	
+
 	/** Constructor.
 	 \param name the texture identifier
 	 */

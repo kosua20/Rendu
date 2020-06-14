@@ -308,7 +308,7 @@ const Mesh * Resources::getMesh(const std::string & name, Storage options) {
 
 const Texture * Resources::getTexture(const std::string & name) {
 	if(_textures.count(name) > 0) {
-		return &_textures[name];
+		return &(_textures.at(name));
 	}
 	Log::Error() << Log::Resources << "Unable to find existing texture \"" << name << "\"" << std::endl;
 	return nullptr;
@@ -319,7 +319,7 @@ const Texture * Resources::getTexture(const std::string & name, const Descriptor
 
 	// If texture already loaded, return it.
 	if(_textures.count(keyName) > 0) {
-		auto & texture = _textures[keyName];
+		auto & texture = _textures.at(keyName);
 		if(options & Storage::GPU) {
 			// If we want to store the texture on the GPU...
 			if(texture.gpu) {
@@ -339,7 +339,7 @@ const Texture * Resources::getTexture(const std::string & name, const Descriptor
 			Log::Error() << Log::Resources << "Texture \"" << keyName
 						 << "\" exists but is not CPU available." << std::endl;
 		}
-		return &_textures[keyName];
+		return &_textures.at(keyName);
 	}
 
 	// Else, find the corresponding file(s).
@@ -449,8 +449,9 @@ const Texture * Resources::getTexture(const std::string & name, const Descriptor
 	const uint channels = descriptor.getChannelsCount();
 	// Cubemaps don't need to be flipped.
 	const bool flip	= !(shape & TextureShape::Cube);
-	_textures[keyName] = Texture(keyName);
-	Texture & texture  = _textures[keyName];
+	// We know the texture is not in the list, we insert.
+	_textures.insert(std::make_pair<>(keyName, Texture(keyName)));
+	Texture & texture  = _textures.at(keyName);
 
 	if(isColorString){
 		// For now we assume only one level and a 2D image.
@@ -501,7 +502,7 @@ const Texture * Resources::getTexture(const std::string & name, const Descriptor
 	if(!(options & Storage::CPU)) {
 		texture.clearImages();
 	}
-	return &_textures[keyName];
+	return &_textures.at(keyName);
 }
 
 // Program/shaders methods.

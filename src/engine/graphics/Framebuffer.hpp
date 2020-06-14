@@ -202,7 +202,7 @@ private:
 
 	GLuint _id = 0;					///< The framebuffer ID.
 	std::vector<Texture> _idColors; ///< The color textures.
-	Texture _idDepth;				///< The depth renderbuffer.
+	Texture _idDepth = Texture("Depth"); ///< The depth renderbuffer.
 	TextureShape _shape;			///< The texture shape.
 	GLenum _target;					///< The OpenGL texture shape.
 	bool _hasStencil = false;		///< Does the framebuffer has a stencil buffer.

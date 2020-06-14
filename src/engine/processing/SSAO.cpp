@@ -54,8 +54,7 @@ SSAO::SSAO(uint width, uint height, uint downscale, float radius) : _mediumBlur(
 	}
 
 	// Send the texture to the GPU.
-	GLUtilities::setupTexture(_noisetexture, {Layout::RGB32F, Filter::NEAREST, Wrap::REPEAT});
-	GLUtilities::uploadTexture(_noisetexture);
+	_noisetexture.upload({Layout::RGB32F, Filter::NEAREST, Wrap::REPEAT}, false);
 
 	checkGLError();
 }
@@ -104,4 +103,8 @@ float & SSAO::radius() {
 
 SSAO::Quality & SSAO::quality() {
 	return _quality;
+}
+
+SSAO::~SSAO() {
+	_noisetexture.clean();
 }

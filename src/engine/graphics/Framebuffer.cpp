@@ -34,6 +34,7 @@ Framebuffer::Framebuffer(TextureShape shape, uint width, uint height, uint depth
 	glGenFramebuffers(1, &_id);
 	glBindFramebuffer(GL_FRAMEBUFFER, _id);
 
+	uint cid = 0;
 	for(const auto & descriptor : descriptors) {
 		// Create the color texture to store the result.
 		const Layout & format		  = descriptor.typedFormat();
@@ -56,7 +57,7 @@ Framebuffer::Framebuffer(TextureShape shape, uint width, uint height, uint depth
 			glBindTexture(GL_TEXTURE_2D, 0);
 
 		} else {
-			_idColors.emplace_back();
+			_idColors.emplace_back("Color " + std::to_string(cid++));
 			Texture & tex = _idColors.back();
 			tex.width     = _width;
 			tex.height	  = _height;
@@ -244,7 +245,7 @@ const Framebuffer * Framebuffer::backbuffer() {
 	// Initialize a dummy framebuffer representing the backbuffer.
 	if(!_backbuffer) {
 		_backbuffer = new Framebuffer();
-		_backbuffer->_idColors.emplace_back();
+		_backbuffer->_idColors.emplace_back("Color 0");
 		// We don't really need to allocate the texture, just setup its descriptor.
 		Texture & tex = _backbuffer->_idColors.back();
 		tex.shape  = TextureShape::D2;

@@ -51,6 +51,9 @@ public:
 	 */
 	void clear() const;
 
+	/** Destructor. */
+	~SSAO();
+
 	/**
 	 Query the texture containing the result of the SSAO+blur pass.
 	 \return the texture
@@ -74,7 +77,7 @@ private:
 	BoxBlur _mediumBlur;							///< Medium quality blur.
 	Program * _programSSAO;						    ///< The SSAO program.
 	Buffer<glm::vec4> _samples; ///< The 3D directional samples.
-	Texture _noisetexture; 	///< Random noise texture.
+	Texture _noisetexture = Texture("SSAO noise"); 	///< Random noise texture.
 	float _radius = 0.5f;	///< SSAO intersection test radius.
 	uint _downscale = 1; 	///< SSAO internal resolution downscaling.
 	Quality _quality = Quality::MEDIUM; ///< Quality of the upscaling/blurring.
