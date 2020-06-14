@@ -78,7 +78,7 @@ private:
 
 	Processing _mode = Processing::INPUT; ///< Current filter mode.
 	View _viewMode   = View::SCENE;		  ///< Current view mode.
-	Texture _image;						  ///< The image to display in Image view mode.
+	Texture _image = Texture("image");	  ///< The image to display in Image view mode.
 
 	int _blurLevel		= 3;	 ///< Gaussian blur level.
 	int _intDownscale   = 1;	 ///< Integrator internal resolution downscaling.

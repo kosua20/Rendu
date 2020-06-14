@@ -5,7 +5,8 @@
 #include "graphics/ScreenQuad.hpp"
 #include "resources/Texture.hpp"
 
-PathTracerApp::PathTracerApp(RenderingConfig & config, const std::shared_ptr<Scene> & scene) : CameraApp(config) {
+PathTracerApp::PathTracerApp(RenderingConfig & config, const std::shared_ptr<Scene> & scene) :
+	CameraApp(config), _renderTex ("render") {
 
 	_bvhRenderer.reset(new BVHRenderer());
 	const glm::vec2 renderRes = _config.renderingResolution();
@@ -51,13 +52,12 @@ void PathTracerApp::draw() {
 	// If we are rendering live, perform path tracing on the fly.
 	if(_liveRender){
 		_renderTex.clean();
-		GLUtilities::setupTexture(_renderTex, {Layout::SRGB8, Filter::LINEAR, Wrap::CLAMP});
 		// Render.
 		_renderTex.images.emplace_back(_renderTex.width, _renderTex.height, 3);
 		Image & render = _renderTex.images.back();
 		_pathTracer->render(_userCamera, _samples, _depth, render);
 		// Upload to the GPU.
-		GLUtilities::uploadTexture(_renderTex);
+		_renderTex.upload({Layout::SRGB8, Filter::LINEAR, Wrap::CLAMP}, false);
 		_showRender = true;
 	}
 	
@@ -112,13 +112,12 @@ void PathTracerApp::update() {
 		// Perform rendering.
 		if(ImGui::Button("Render")) {
 			_renderTex.clean();
-			GLUtilities::setupTexture(_renderTex, {Layout::SRGB8, Filter::LINEAR, Wrap::CLAMP});
 			// Render.
 			_renderTex.images.emplace_back(_renderTex.width, _renderTex.height, 3);
 			Image & render = _renderTex.images.back();
 			_pathTracer->render(_userCamera, _samples, _depth, render);
 			// Upload to the GPU.
-			GLUtilities::uploadTexture(_renderTex);
+			_renderTex.upload({Layout::SRGB8, Filter::LINEAR, Wrap::CLAMP}, false);
 			_showRender = true;
 		}
 		ImGui::SameLine();

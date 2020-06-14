@@ -2,7 +2,8 @@
 
 #include "resources/Library.hpp"
 
-IslandApp::IslandApp(RenderingConfig & config) : CameraApp(config), _waves(8, BufferType::UNIFORM, DataUse::STATIC)
+IslandApp::IslandApp(RenderingConfig & config) : CameraApp(config), _waves(8, BufferType::UNIFORM, DataUse::STATIC),
+	_surfaceNoise("surface noise"), _glitterNoise("glitter noise")
 {
 	_userCamera.projection(config.screenResolution[0] / config.screenResolution[1], 1.34f, 0.1f, 100.0f);
 	_userCamera.pose(glm::vec3(-2.234801,3.446842,-6.892219), glm::vec3(-1.869996,2.552125,-5.859552), glm::vec3(0.210734,0.774429,0.596532));

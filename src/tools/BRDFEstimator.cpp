@@ -123,7 +123,7 @@ void computeCubemapConvolution(const Texture & cubemapInfos, int levelsCount, in
 
 		// Now resultFramebuffer contain the texture data. But its lifetime is limited to this scope.
 		// Thus we perform a copy to our final texture.
-		cubeLevels.emplace_back();
+		cubeLevels.emplace_back("cube" + std::to_string(level));
 		Texture & levelInfos = cubeLevels.back();
 		GLUtilities::blit(*resultFramebuffer.texture(), levelInfos, Filter::NEAREST);
 		
@@ -205,7 +205,7 @@ int main(int argc, char ** argv) {
 	const auto mesh						= Resources::manager().getMesh("skybox", Storage::GPU);
 	const Texture * cubemapInfosDefault = Resources::manager().getTexture("debug-cube", {Layout::RGB8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
 
-	Texture cubemapInfos;
+	Texture cubemapInfos("cubemap");
 	Buffer<glm::vec4> sCoeffs(9, BufferType::UNIFORM, DataUse::STATIC);
 	sCoeffs.setup();
 	sCoeffs.upload();

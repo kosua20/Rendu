@@ -15,7 +15,7 @@ const std::string kVecName = "vect";
 const std::string kColorName = "col";
 const std::string kHelpMessage = "Reload: Enter or Ctrl/Cmd+B\nReload and reset values: Shift+Enter or Ctrl/Cmd+Shift+B\nPlay/pause: Space\nShow panel: Tab\nCtrl/Cmd+1: horizontal layout\nCtrl/Cmd+2: vertical layout\nCtrl/Cmd+3: freeform layout\nCtrl/Cmd+F: display render in sub-window";
 
-ShaderEditor::ShaderEditor(RenderingConfig & config) : CameraApp(config) {
+ShaderEditor::ShaderEditor(RenderingConfig & config) : CameraApp(config), _noise("2D noise"), _directions("Directions"), _noise3D("3D noise") {
 	// Setup render buffer.
 	const glm::uvec2 res(_config.renderingResolution());
 	const Descriptor desc = {Layout::RGBA32F, Filter::LINEAR, Wrap::CLAMP};

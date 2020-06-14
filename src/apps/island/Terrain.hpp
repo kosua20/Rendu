@@ -97,8 +97,8 @@ private:
 
 	PerlinNoise _perlin;
 	std::vector<Cell> _cells;
-	Texture _map;
-	Texture _mapLowRes;
+	Texture _map = Texture("Terrain");
+	Texture _mapLowRes = Texture("Terrain low-res");
 	std::unique_ptr<Framebuffer> _shadowBuffer;
 	GaussianBlur _gaussBlur;
 

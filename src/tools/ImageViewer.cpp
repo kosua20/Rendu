@@ -39,7 +39,7 @@ int main(int argc, char ** argv) {
 	const Program * program = Resources::manager().getProgram("image_display");
 
 	// Infos on the current texture.
-	Texture imageInfos;
+	Texture imageInfos("image");
 	bool isFloat = false;
 
 	// Settings.
