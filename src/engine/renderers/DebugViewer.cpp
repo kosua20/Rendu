@@ -20,9 +20,10 @@ static const std::string debugSkipName = "@debugViewerSkipItem@";
 
 DebugViewer * DebugViewer::_shared = nullptr;
 
-DebugViewer::DebugViewer(bool silent){
-	_texDisplay = Resources::manager().getProgram2D("debug_texture_display");
-	_silent		= silent;
+DebugViewer::DebugViewer(bool silent) : _silent(silent) {
+	if(!_silent) {
+		_texDisplay = Resources::manager().getProgram2D("debug_texture_display");
+	}
 }
 
 void DebugViewer::track(const Texture * tex) {

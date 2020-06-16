@@ -134,7 +134,7 @@ private:
 	std::vector<FramebufferInfos> _framebuffers; ///< The registered framebuffers.
 
 	const Program * _texDisplay; ///< Texture display shader.
-	bool _silent; ///< Don't register or display anything.
+	const bool _silent; ///< Don't register or display anything.
 	uint _textureId = 0; ///< Default texture name counter.
 	uint _bufferId	= 0; ///< Default framebuffer name counter.
 	uint _winId		= 0; ///< Internal window counter.
