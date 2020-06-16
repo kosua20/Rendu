@@ -1,6 +1,7 @@
 #include "resources/Texture.hpp"
 #include "graphics/GPUObjects.hpp"
 #include "graphics/GLUtilities.hpp"
+#include "renderers/DebugViewer.hpp"
 
 Texture::Texture(const std::string & name){
 	_name = name;
@@ -18,6 +19,9 @@ void Texture::upload(const Descriptor & layout, bool updateMipmaps) {
 		levels = getMaxMipLevel()+1;
 		GLUtilities::generateMipMaps(*this);
 	}
+
+	// Track in debug mode.
+	DebugViewer::trackDefault(this);
 }
 
 uint Texture::getMaxMipLevel() const {
@@ -39,6 +43,7 @@ void Texture::clearImages() {
 void Texture::clean() {
 	clearImages();
 	if(gpu) {
+		DebugViewer::untrackDefault(this);
 		gpu->clean();
 	}
 	gpu = nullptr;

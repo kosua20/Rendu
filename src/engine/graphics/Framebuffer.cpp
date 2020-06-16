@@ -107,6 +107,8 @@ Framebuffer::Framebuffer(TextureShape shape, uint width, uint height, uint depth
 	checkGLFramebufferError();
 	checkGLError();
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	DebugViewer::trackDefault(this);
 }
 
 void Framebuffer::bind() const {
@@ -227,6 +229,8 @@ uint Framebuffer::attachments() const {
 }
 
 Framebuffer::~Framebuffer() {
+	DebugViewer::untrackDefault(this);
+
 	if(_depthUse == Depth::RENDERBUFFER) {
 		glDeleteRenderbuffers(1, &_idDepth.gpu->id);
 	} else if(_depthUse == Depth::TEXTURE) {
