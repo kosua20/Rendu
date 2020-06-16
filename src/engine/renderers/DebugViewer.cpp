@@ -5,6 +5,7 @@
 #include "graphics/ScreenQuad.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "system/System.hpp"
+#include "system/TextUtilities.hpp"
 
 static const std::map<TextureShape, std::string> shapeNames = {
 	{TextureShape::D1, "1D"},
@@ -14,25 +15,39 @@ static const std::map<TextureShape, std::string> shapeNames = {
 	{TextureShape::Cube, "Cube"},
 	{TextureShape::ArrayCube, "Cube array"},
 	{TextureShape::D3, "3D"}};
+
+static const std::string debugSkipName = "@debugViewerSkipItem@";
 DebugViewer::DebugViewer(bool silent){
 	_texDisplay = Resources::manager().getProgram2D("debug_texture_display");
 	_silent		= silent;
 }
 
-void DebugViewer::track(const Texture * tex, const std::string & name) {
-	if(_silent) {
+void DebugViewer::track(const Texture * tex) {
+	if(_silent || tex->name() == debugSkipName) {
 		return;
 	}
 	if(!tex->gpu) {
-		Log::Warning() << "[DebugViewer] \"" << name << "\" has no GPU data." << std::endl;
+		Log::Warning() << "[DebugViewer] \"" << tex->name() << "\" has no GPU data." << std::endl;
 		return;
 	}
 	// Generate default name if empty.
-	std::string finalName = name;
-	if(name.empty()) {
-		finalName = "Texture " + std::to_string(_textureId++);
+	std::string finalName = tex->name();
+	if(finalName.empty()) {
+		finalName = "Texture " + TextUtilities::padInt(_textureId++, 3);
 	}
 
+	// Check if this specific object already is registered, in that case just update the name.
+	for(Infos & infos : _textures) {
+		if(infos.tex == tex) {
+			infos.name = finalName;
+			// Sort framebuffers list.
+			std::sort(_textures.begin(), _textures.end(), [](const Infos & a, const Infos & b) {
+				return a.name < b.name;
+			});
+			return;
+		}
+	}
+	// Else create a new texture infos element.
 	_textures.emplace_back();
 	registerTexture(finalName, tex, _textures.back());
 
@@ -42,33 +57,46 @@ void DebugViewer::track(const Texture * tex, const std::string & name) {
 	});
 }
 
-void DebugViewer::track(const Framebuffer * buffer, const std::string & name) {
-	if(_silent) {
+void DebugViewer::track(const Framebuffer * buffer) {
+	if(_silent || buffer->name() == debugSkipName) {
 		return;
 	}
+	
 	// Generate default name if empty.
-	std::string finalName = name;
-	if(name.empty()) {
-		finalName = "Framebuffer " + std::to_string(_bufferId++);
+	std::string finalName = buffer->name();
+	if(finalName.empty()) {
+		finalName = "Framebuffer " + TextUtilities::padInt(_bufferId++, 3);
 	}
 	finalName.append(" (" + shapeNames.at(buffer->shape()) + ")");
 
+	// Check if this specific object already is registered, in that case just update the name.
+	for(FramebufferInfos & infos : _framebuffers) {
+		if(infos.buffer == buffer) {
+			infos.name = finalName;
+			// Sort framebuffers list.
+			std::sort(_framebuffers.begin(), _framebuffers.end(), [](const FramebufferInfos & a, const FramebufferInfos & b) {
+				return a.name < b.name;
+			});
+			return;
+		}
+	}
+	// Else create a new framebuffer infos element.
 	_framebuffers.emplace_back();
 	FramebufferInfos & infos = _framebuffers.back();
+	infos.buffer			 = buffer;
 	infos.name				 = finalName;
 
 	// Register color attachments.
 	for(uint cid = 0; cid < buffer->attachments(); ++cid) {
-		const std::string nameAttach = finalName + " - Color " + std::to_string(cid); 
+		const std::string nameAttach = "Color " + std::to_string(cid); 
 		infos.attachments.emplace_back();
 		registerTexture(nameAttach, buffer->texture(cid), infos.attachments.back());
 	}
 	// Register depth attachment if it's a texture.
 	const Texture * depthAttach = buffer->depthBuffer();
 	if(depthAttach) {
-		const std::string nameAttach = finalName + " - Depth";
 		infos.attachments.emplace_back();
-		registerTexture(nameAttach, depthAttach, infos.attachments.back());
+		registerTexture("Depth", depthAttach, infos.attachments.back());
 	}
 	// Sort framebuffers list.
 	std::sort(_framebuffers.begin(), _framebuffers.end(), [](const FramebufferInfos & a, const FramebufferInfos & b) {
@@ -83,11 +111,12 @@ void DebugViewer::registerTexture(const std::string& name, const Texture* tex, I
 
 	// Setup display framebuffer.
 	const Descriptor desc = {Layout::RGB8, Filter::NEAREST, Wrap::CLAMP};
-	infos.display.reset(new Framebuffer(TextureShape::D2, tex->width, tex->height, 1, 1, {desc}, false));
+	infos.display.reset(new Framebuffer(TextureShape::D2, tex->width, tex->height, 1, 1, {desc}, false, debugSkipName));
 
 	// Build display full name with details.
 	const std::string details = shapeNames.at(tex->shape) + " (" + tex->gpu->descriptor().string() + ")";
-	infos.displayName		  = name + " - " + details;
+	infos.displayName		  = " - " + details + "##" + std::to_string(_winId++);
+}
 }
 
 void DebugViewer::interface() {

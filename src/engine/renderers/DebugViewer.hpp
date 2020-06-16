@@ -20,15 +20,13 @@ public:
 
 	/** Register a texture for debug.
 	\param tex the texture to monitor
-	\param name the display name of the texture
 	*/
-	void track(const Texture * tex, const std::string & name);
+	void track(const Texture * tex);
 
 	/** Register a framebuffer for debug. All attachment textures will be visible.
 	\param buffer the framebuffer to monitor
-	\param name the display name of the framebuffer
 	*/
-	void track(const Framebuffer * buffer, const std::string & name);
+	void track(const Framebuffer * buffer);
 
 	/** Display interface and monitored data. */
 	void interface();
@@ -70,6 +68,7 @@ private:
 
 	/** Framebuffer display information */
 	struct FramebufferInfos {
+		const Framebuffer * buffer = nullptr; ///< The framebuffer to track.
 		std::string name; ///< The framebuffer name.
 		std::vector<Infos> attachments; ///< Color and depth attachment infos.
 	};
@@ -98,4 +97,5 @@ private:
 	bool _silent; ///< Don't register or display anything.
 	uint _textureId = 0;
 	uint _bufferId	= 0;
+	uint _winId		= 0;
 };
