@@ -37,9 +37,10 @@ public:
 	 the output of this renderer when calling process/draw.
 	 \param width the framebuffer width
 	 \param height the framebuffer height
+	 \param name the framebuffer name
 	 \return the allocated framebuffer
 	 */
-	std::unique_ptr<Framebuffer> createOutput(uint width, uint height) const;
+	std::unique_ptr<Framebuffer> createOutput(uint width, uint height, const std::string & name) const;
 
 	/** Create a framebuffer with the recommended settings for it to be used as
 	the output of this renderer when calling process/draw.
@@ -48,9 +49,10 @@ public:
 	\param height the framebuffer height
 	\param depth the framebuffer depth
 	\param mips the number of mip levels for the framebuffer
+	\param name the framebuffer name
 	\return the allocated framebuffer
 	*/
-	std::unique_ptr<Framebuffer> createOutput(TextureShape shape, uint width, uint height, uint depth, uint mips) const;
+	std::unique_ptr<Framebuffer> createOutput(TextureShape shape, uint width, uint height, uint depth, uint mips, const std::string & name) const;
 
 	/** Destructor */
 	virtual ~Renderer() = default;
