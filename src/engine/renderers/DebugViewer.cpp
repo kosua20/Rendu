@@ -123,22 +123,27 @@ void DebugViewer::interface() {
 	if(_silent) {
 		return;
 	}
+
 	// Display menu bar listing all resources.
 	if(ImGui::BeginMainMenuBar()) {
 		if(ImGui::BeginMenu("Textures")) {
 			for(Infos & tex : _textures) {
+				ImGui::PushID(tex.tex);
 				ImGui::MenuItem(tex.name.c_str(), nullptr, &tex.visible);
+				ImGui::PopID();
 			}
 			ImGui::EndMenu();
 		}
 		if(ImGui::BeginMenu("Framebuffers")) {
 			for(FramebufferInfos & buffer : _framebuffers) {
+				ImGui::PushID(buffer.buffer);
 				if(ImGui::BeginMenu(buffer.name.c_str())) {
 					for(Infos & tex : buffer.attachments) {
 						ImGui::MenuItem(tex.name.c_str(), nullptr, &tex.visible);
 					}
 					ImGui::EndMenu();
 				}
+				ImGui::PopID();
 			}
 			ImGui::EndMenu();
 		}
@@ -146,23 +151,24 @@ void DebugViewer::interface() {
 	}
 
 	// Display all active windows.
-	for(Infos & tex : _textures) {
+	for(int tid = 0; tid < _textures.size(); ++tid) {
+		Infos & tex = _textures[tid];
 		if(!tex.visible) {
 			continue;
 		}
-		displayTexture(tex);
+		displayTexture(tex, "");
 	}
 	for(FramebufferInfos & buffer : _framebuffers) {
 		for(Infos & tex : buffer.attachments) {
 			if(!tex.visible) {
 				continue;
 			}
-			displayTexture(tex);
+			displayTexture(tex, buffer.name + " - ");
 		}
 	}
 }
 
-void DebugViewer::displayTexture(Infos & tex) {
+void DebugViewer::displayTexture(Infos & tex, const std::string & prefix) {
 	float aspect = float(tex.tex->width) / std::max(float(tex.tex->height), 1.0f);
 	if(tex.tex->shape & TextureShape::Cube) {
 		aspect = 2.0f;
@@ -170,7 +176,9 @@ void DebugViewer::displayTexture(Infos & tex) {
 	// Fixed width, height takes into account texture aspect ratio and upper settings bar.
 	const float defaultWidth = 550.0f;
 	ImGui::SetNextWindowSize(ImVec2(defaultWidth, defaultWidth / aspect + 75.0f), ImGuiCond_Once);
-	if(ImGui::Begin(tex.displayName.c_str(), &tex.visible)) {
+	const std::string finalWinName = prefix + tex.name + tex.displayName;
+;
+	if(ImGui::Begin(finalWinName.c_str(), &tex.visible)) {
 		ImGui::Columns(2);
 
 		ImGui::PushItemWidth(80);

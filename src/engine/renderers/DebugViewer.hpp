@@ -74,7 +74,7 @@ private:
 	};
 
 	/** Populate texture information based on an input texture.
-	\param name the display name of the texture
+	\param name the name of the texture
 	\param tex the texture to monitor
 	\param infos the information that should be populated
 	*/
@@ -82,8 +82,9 @@ private:
 
 	/** Display a texture with some helper GUI.
 	\param tex the texture information to display
+	\param prefix the display name of the texture
 	*/
-	void displayTexture(Infos & tex);
+	void displayTexture(Infos & tex, const std::string & prefix);
 
 	/** Update the visualization associated to a texture/
 	\param tex the texture to update the display of
