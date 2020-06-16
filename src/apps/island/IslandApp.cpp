@@ -11,11 +11,11 @@ IslandApp::IslandApp(RenderingConfig & config) : CameraApp(config), _waves(8, Bu
 	// Framebuffer to store the rendered atmosphere result before tonemapping and upscaling to the window size.
 	const glm::vec2 renderRes = _config.renderingResolution();
 	const std::vector<Descriptor> descriptors = {{Layout::RGB32F, Filter::LINEAR_NEAREST, Wrap::CLAMP}, {Layout::RGB32F, Filter::LINEAR_NEAREST, Wrap::CLAMP}};
-	_sceneBuffer.reset(new Framebuffer(uint(renderRes[0]), uint(renderRes[1]), descriptors, true));
-	_waterPos.reset(new Framebuffer(uint(renderRes[0]), uint(renderRes[1]), {descriptors[1]}, false));
-	_waterEffectsHalf.reset(new Framebuffer(uint(renderRes[0])/2, uint(renderRes[1])/2, {descriptors[0]}, false));
-	_waterEffectsBlur.reset(new Framebuffer(uint(renderRes[0])/2, uint(renderRes[1])/2, {descriptors[0]}, false));
-	_environment.reset(new Framebuffer(TextureShape::Cube, 512, 512, 6, 1, {{Layout::RGB16F, Filter::LINEAR_NEAREST, Wrap::CLAMP}}, false));
+	_sceneBuffer.reset(new Framebuffer(uint(renderRes[0]), uint(renderRes[1]), descriptors, true, "Scene"));
+	_waterPos.reset(new Framebuffer(uint(renderRes[0]), uint(renderRes[1]), {descriptors[1]}, false, "Water position"));
+	_waterEffectsHalf.reset(new Framebuffer(uint(renderRes[0])/2, uint(renderRes[1])/2, {descriptors[0]}, false, "Water effect half"));
+	_waterEffectsBlur.reset(new Framebuffer(uint(renderRes[0])/2, uint(renderRes[1])/2, {descriptors[0]}, false, "Water effect blur"));
+	_environment.reset(new Framebuffer(TextureShape::Cube, 512, 512, 6, 1, {{Layout::RGB16F, Filter::LINEAR_NEAREST, Wrap::CLAMP}}, false, "Environment"));
 
 	// Lookup table.
 	_precomputedScattering = Resources::manager().getTexture("scattering-precomputed", {Layout::RGB32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);

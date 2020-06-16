@@ -11,7 +11,7 @@ PBRDemo::PBRDemo(RenderingConfig & config) :
 	_forRenderer.reset(new ForwardRenderer(renderRes, ShadowMode::VARIANCE, true));
 	_postprocess.reset(new PostProcessStack(renderRes));
 	_debugRenderer.reset(new DebugRenderer());
-	_finalRender.reset(new Framebuffer(uint(renderRes[0]), uint(renderRes[1]), {Layout::RGB16F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, true));
+	_finalRender.reset(new Framebuffer(uint(renderRes[0]), uint(renderRes[1]), {Layout::RGB16F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, true, "Final render"));
 
 	_finalProgram = Resources::manager().getProgram2D("sharpening");
 	

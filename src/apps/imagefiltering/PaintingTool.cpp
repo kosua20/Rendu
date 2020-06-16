@@ -7,8 +7,8 @@
 PaintingTool::PaintingTool(unsigned int width, unsigned int height) {
 
 	_brushShader = Resources::manager().getProgram("brush_color");
-	_canvas		 = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, {Layout::RGB8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, false));
-	_visu		 = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, {Layout::RGB8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, false));
+	_canvas		 = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, {Layout::RGB8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, false, "Canvas"));
+	_visu		 = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, {Layout::RGB8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, false, "Canvas & brush"));
 
 	// Setup the mesh buffers.
 	_brushes.resize(int(Shape::COUNT));
@@ -156,7 +156,7 @@ void PaintingTool::resize(unsigned int width, unsigned int height) const {
 	// We first copy the canvas to a temp framebuffer.
 	const unsigned int w = _canvas->width();
 	const unsigned int h = _canvas->height();
-	Framebuffer tempCanvas(w, h, {Layout::RGB8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, false);
+	Framebuffer tempCanvas(w, h, {Layout::RGB8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, false, "Canvas copy");
 	_canvas->bind(Framebuffer::Mode::READ);
 	tempCanvas.bind(Framebuffer::Mode::WRITE);
 

@@ -19,8 +19,8 @@ ShaderEditor::ShaderEditor(RenderingConfig & config) : CameraApp(config), _noise
 	// Setup render buffer.
 	const glm::uvec2 res(_config.renderingResolution());
 	const Descriptor desc = {Layout::RGBA32F, Filter::LINEAR, Wrap::CLAMP};
-	_currFrame.reset(new Framebuffer(TextureShape::D2, res[0], res[1], 1, 1, {desc}, false));
-	_prevFrame.reset(new Framebuffer(TextureShape::D2, res[0], res[1], 1, 1, {desc}, false));
+	_currFrame.reset(new Framebuffer(TextureShape::D2, res[0], res[1], 1, 1, {desc}, false, "Current fraame"));
+	_prevFrame.reset(new Framebuffer(TextureShape::D2, res[0], res[1], 1, 1, {desc}, false, "Previous frame"));
 
 	// We don't want the resources manager to alter the program.
 	const std::string vShader = Resources::manager().getStringWithIncludes("shaderbench.vert");
@@ -274,7 +274,7 @@ void ShaderEditor::update() {
 
 	// On my macOS dev machine, fetching a query seems to improve performances
 	// drastically, maybe marking the program as prioritary. So always fetch this query value.
-	const uint frameTime = _timer.value();
+	const uint frameTime = uint(_timer.value());
 
 	// Don't display the panel if required.
 	if(!_showGUI){
@@ -310,7 +310,7 @@ void ShaderEditor::update() {
 			if(System::showPicker(System::Picker::Save, "", outPath, "png") && !outPath.empty()){
 				TextUtilities::splitExtension(outPath);
 				// Create a RGB8 framebuffer to save as png.
-				Framebuffer tmp(_currFrame->width(), _currFrame->height(), {Layout::RGB8, Filter::NEAREST, Wrap::CLAMP}, false);
+				Framebuffer tmp(_currFrame->width(), _currFrame->height(), {Layout::RGB8, Filter::NEAREST, Wrap::CLAMP}, false, "Temp");
 				GLUtilities::blit(*_currFrame, tmp, Filter::NEAREST);
 				GLUtilities::saveFramebuffer(tmp, tmp.width(), tmp.height(), outPath, true, true);
 			}

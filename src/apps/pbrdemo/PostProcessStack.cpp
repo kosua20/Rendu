@@ -9,15 +9,15 @@ PostProcessStack::PostProcessStack(const glm::vec2 & resolution){
 	const int renderWidth	= int(resolution[0]);
 	const int renderHeight	= int(resolution[1]);
 	const Descriptor desc = {Layout::RGB16F, Filter::LINEAR_NEAREST, Wrap::CLAMP};
-	_bloomBuffer	= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, desc, false));
-	_toneMapBuffer 	= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, desc, false));
-	_resultFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, desc, false));
+	_bloomBuffer	= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, desc, false, "Bloom"));
+	_toneMapBuffer 	= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, desc, false, "Tonemap"));
+	_resultFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, desc, false, "Postproc. result"));
 
 	// Depth of field is performed at half resolution.
 	const Descriptor dofCocDesc = {Layout::RG16F, Filter::NEAREST, Wrap::CLAMP};
 	const Descriptor dofGatherDesc = {Layout::RGBA16F, Filter::LINEAR_NEAREST, Wrap::CLAMP};
-	_dofCocBuffer 	= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth/2, renderHeight/2, {desc, dofCocDesc}, false));
-	_dofGatherBuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth/2, renderHeight/2, dofGatherDesc, false));
+	_dofCocBuffer 	= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth/2, renderHeight/2, {desc, dofCocDesc}, false, "DoF CoC"));
+	_dofGatherBuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth/2, renderHeight/2, dofGatherDesc, false, "DoF gather"));
 
 	_blur		= std::unique_ptr<GaussianBlur>(new GaussianBlur(_settings.bloomRadius, 2));
 	_preferredFormat.push_back(desc);

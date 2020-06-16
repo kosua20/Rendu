@@ -10,7 +10,7 @@ PathTracerApp::PathTracerApp(RenderingConfig & config, const std::shared_ptr<Sce
 
 	_bvhRenderer.reset(new BVHRenderer());
 	const glm::vec2 renderRes = _config.renderingResolution();
-	_sceneFramebuffer = _bvhRenderer->createOutput(uint(renderRes[0]), uint(renderRes[1]));
+	_sceneFramebuffer = _bvhRenderer->createOutput(uint(renderRes[0]), uint(renderRes[1]), "Visualization");
 	_passthrough = Resources::manager().getProgram2D("passthrough");
 	
 	// Initial setup for rendering image.

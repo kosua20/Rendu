@@ -17,7 +17,7 @@ ForwardRenderer::ForwardRenderer(const glm::vec2 & resolution, ShadowMode mode, 
 	const Descriptor descNormal = {Layout::RGB16F, Filter::LINEAR_NEAREST, Wrap::CLAMP};
 	const Descriptor descDepth = {Layout::DEPTH_COMPONENT32F, Filter::NEAREST_NEAREST, Wrap::CLAMP};
 	const std::vector<Descriptor> descs = { descAmbient, descDirect, descNormal, descDepth};
-	_sceneFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, descs, true));
+	_sceneFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, descs, true, "Forward lighting"));
 	_ssaoPass		  = std::unique_ptr<SSAO>(new SSAO(renderWidth, renderHeight, 2, 0.5f));
 	_preferredFormat.push_back({Layout::RGB16F, Filter::LINEAR_LINEAR, Wrap::CLAMP});
 	_needsDepth = false;

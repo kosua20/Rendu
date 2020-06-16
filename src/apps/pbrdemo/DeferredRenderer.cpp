@@ -18,9 +18,9 @@ DeferredRenderer::DeferredRenderer(const glm::vec2 & resolution, ShadowMode mode
 	const Descriptor desc = {Layout::RGB16F, Filter::LINEAR_LINEAR, Wrap::CLAMP};
 
 	const std::vector<Descriptor> descs = {albedoDesc, normalDesc, effectsDesc, depthDesc};
-	_gbuffer							= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, descs, false));
+	_gbuffer							= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, descs, false, "G-buffer"));
 	_ssaoPass							= std::unique_ptr<SSAO>(new SSAO(renderWidth, renderHeight, 2, 0.5f));
-	_lightBuffer						= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, desc, false));
+	_lightBuffer						= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, desc, false, "Deferred lighting"));
 	_preferredFormat.push_back(desc);
 	_needsDepth = false;
 

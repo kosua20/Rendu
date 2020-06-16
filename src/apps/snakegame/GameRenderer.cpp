@@ -18,8 +18,8 @@ GameRenderer::GameRenderer(const glm::vec2 & resolution) {
 	const int renderWidth  = int(resolution[0]);
 	const int renderHeight = int(resolution[1]);
 	_sceneFramebuffer	  = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, {{Layout::RGB16F, Filter::NEAREST_NEAREST, Wrap::CLAMP}, {Layout::R8, Filter::NEAREST_NEAREST, Wrap::CLAMP}, {Layout::DEPTH_COMPONENT32F, Filter::NEAREST_NEAREST, Wrap::CLAMP}},
-		 true));
-	_lightingFramebuffer   = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, {Layout::RGB8, Filter::LINEAR_NEAREST, Wrap::CLAMP}, false));
+		 true, "G-buffer"));
+	_lightingFramebuffer   = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, {Layout::RGB8, Filter::LINEAR_NEAREST, Wrap::CLAMP}, false, "Lighting"));
 	_preferredFormat.push_back({Layout::RGBA8,Filter::LINEAR_NEAREST, Wrap::CLAMP});
 	
 

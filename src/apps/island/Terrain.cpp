@@ -7,7 +7,7 @@
 Terrain::Terrain(uint resolution, uint seed) : _gaussBlur(2, 1), _resolution(resolution), _seed(seed) {
 	generateMesh();
 	generateMap();
-	_shadowBuffer.reset(new Framebuffer(resolution, resolution, {Layout::RG8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, false));
+	_shadowBuffer.reset(new Framebuffer(resolution, resolution, {Layout::RG8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, false, "Terrain shadow"));
 }
 
 void Terrain::generateMesh(){

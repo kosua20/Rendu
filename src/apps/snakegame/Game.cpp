@@ -31,9 +31,9 @@ Game::Game(GameConfig & config) :
 	_config(config), _inGameRenderer(_config.screenResolution) {
 
 	_bgBlur = std::unique_ptr<GaussianBlur>(new GaussianBlur(3, 1));
-	_bgBlurBuffer = _inGameRenderer.createOutput(uint(_config.screenResolution[0]), uint(_config.screenResolution[1]));
+	_bgBlurBuffer = _inGameRenderer.createOutput(uint(_config.screenResolution[0]), uint(_config.screenResolution[1]), "BG blur");
 	_finalProgram = Resources::manager().getProgram2D("sharpening");
-	_gameFramebuffer = _inGameRenderer.createOutput(uint(_config.screenResolution[0]), uint(_config.screenResolution[1]));
+	_gameFramebuffer = _inGameRenderer.createOutput(uint(_config.screenResolution[0]), uint(_config.screenResolution[1]), "Game scene");
 
 	// Create menus.
 	const glm::vec2 meshSize = _menuRenderer.getButtonSize();
