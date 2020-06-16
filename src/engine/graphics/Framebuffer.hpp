@@ -24,16 +24,18 @@ public:
 	 \param height the height of the framebuffer
 	 \param descriptor the color attachment texture descriptor (format, filtering,...)
 	 \param depthBuffer should the framebuffer contain a depth buffer to properly handle 3D geometry
+	 \param name the framebuffer debug name
 	 */
-	Framebuffer(uint width, uint height, const Descriptor & descriptor, bool depthBuffer);
+	Framebuffer(uint width, uint height, const Descriptor & descriptor, bool depthBuffer, const std::string & name);
 
 	/** Setup the framebuffer (attachments, renderbuffer, depth buffer, textures IDs,...)
 	 \param width the width of the framebuffer
 	 \param height the height of the framebuffer
 	 \param descriptors the color attachments texture descriptors (format, filtering,...)
 	 \param depthBuffer should the framebuffer contain a depth buffer to properly handle 3D geometry
+	 \param name the framebuffer debug name
 	 */
-	Framebuffer(uint width, uint height, const std::vector<Descriptor> & descriptors, bool depthBuffer);
+	Framebuffer(uint width, uint height, const std::vector<Descriptor> & descriptors, bool depthBuffer, const std::string & name);
 
 	/** Setup the framebuffer (attachments, renderbuffer, depth buffer, textures IDs,...)
 	 \param shape the texture shape (2D, cubemap, array,...)
@@ -43,8 +45,9 @@ public:
 	 \param mips the number of mip levels of the framebuffer
 	 \param descriptors the color attachments texture descriptors (format, filtering,...)
 	 \param depthBuffer should the framebuffer contain a depth buffer to properly handle 3D geometry
+	 \param name the framebuffer debug name
 	 */
-	Framebuffer(TextureShape shape, uint width, uint height, uint depth, uint mips, const std::vector<Descriptor> & descriptors, bool depthBuffer);
+	Framebuffer(TextureShape shape, uint width, uint height, uint depth, uint mips, const std::vector<Descriptor> & descriptors, bool depthBuffer, const std::string & name);
 
 	/**
 	 Bind the framebuffer. Shortcut for writing to a 2D framebuffer.
@@ -142,6 +145,11 @@ public:
 	 */
 	const Texture * depthBuffer() const { return (_depthUse == Depth::TEXTURE ? &_idDepth : nullptr); }
 
+	/** Query the name of the framebuffer, for debugging purposes.
+	\return name the framebuffer name
+	*/
+	const std::string & name() const { return _name; }
+
 	/**
 	 Query the framebuffer width.
 	 \return the width
@@ -196,6 +204,7 @@ private:
 	/** Default constructor. */
 	Framebuffer() = default;
 
+	std::string _name; ///< Framebuffer debug name.
 	unsigned int _width  = 0; ///< The framebuffer width.
 	unsigned int _height = 0; ///< The framebuffer height.
 	unsigned int _depth = 0; ///< The framebuffer depth.
@@ -203,8 +212,8 @@ private:
 	GLuint _id = 0;					///< The framebuffer ID.
 	std::vector<Texture> _idColors; ///< The color textures.
 	Texture _idDepth = Texture("Depth"); ///< The depth renderbuffer.
-	TextureShape _shape;			///< The texture shape.
-	GLenum _target;					///< The OpenGL texture shape.
+	TextureShape _shape = TextureShape::D2;	///< The texture shape.
+	GLenum _target = GL_TEXTURE_2D;			///< The OpenGL texture shape.
 	bool _hasStencil = false;		///< Does the framebuffer has a stencil buffer.
 	
 	/// \brief Type of depth storage structure used.

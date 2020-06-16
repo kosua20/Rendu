@@ -1,17 +1,18 @@
 #include "graphics/Framebuffer.hpp"
 #include "graphics/GPUObjects.hpp"
 #include "graphics/GLUtilities.hpp"
+#include "renderers/DebugViewer.hpp"
 
-Framebuffer::Framebuffer(uint width, uint height, const Descriptor & descriptor, bool depthBuffer) :
-	Framebuffer(TextureShape::D2, width, height, 1, 1, std::vector<Descriptor>(1, descriptor), depthBuffer) {
+Framebuffer::Framebuffer(uint width, uint height, const Descriptor & descriptor, bool depthBuffer, const std::string & name) :
+	Framebuffer(TextureShape::D2, width, height, 1, 1, std::vector<Descriptor>(1, descriptor), depthBuffer, name) {
 }
 
-Framebuffer::Framebuffer(uint width, uint height, const std::vector<Descriptor> & descriptors, bool depthBuffer) :
-	Framebuffer(TextureShape::D2, width, height, 1, 1, descriptors, depthBuffer) {
+Framebuffer::Framebuffer(uint width, uint height, const std::vector<Descriptor> & descriptors, bool depthBuffer, const std::string & name) :
+	Framebuffer(TextureShape::D2, width, height, 1, 1, descriptors, depthBuffer, name) {
 }
 
-Framebuffer::Framebuffer(TextureShape shape, uint width, uint height, uint depth, uint mips, const std::vector<Descriptor> & descriptors, bool depthBuffer) :
-	_width(width), _height(height) {
+Framebuffer::Framebuffer(TextureShape shape, uint width, uint height, uint depth, uint mips, const std::vector<Descriptor> & descriptors, bool depthBuffer, const std::string & name) :
+	_width(width), _height(height), _name(name) {
 
 	// Check that the shape is supported.
 	_shape = shape;
