@@ -96,7 +96,7 @@ void computeCubemapConvolution(const Texture & cubemapInfos, int levelsCount, in
 
 		// Create local framebuffer.
 		const Descriptor resDesc = {Layout::RGB32F, Filter::LINEAR_LINEAR, Wrap::CLAMP};
-		Framebuffer resultFramebuffer(TextureShape::Cube, w, w, 6, 1, {resDesc}, false);
+		Framebuffer resultFramebuffer(TextureShape::Cube, w, w, 6, 1, {resDesc}, false, "Conv. result");
 		
 		// Iterate over faces.
 		for(size_t i = 0; i < 6; ++i) {
@@ -161,7 +161,7 @@ void exportCubemapConvolution(std::vector<Texture> & cubeLevels, const std::stri
 void computeAndExportLookupTable(const int outputSide, const std::string & outputPath) {
 	// Render the lookup table.
 	const Descriptor desc = {Layout::RG32F, Filter::LINEAR_NEAREST, Wrap::CLAMP};
-	const auto bakingFramebuffer = std::make_shared<Framebuffer>(outputSide, outputSide, desc, false);
+	const auto bakingFramebuffer = std::make_shared<Framebuffer>(outputSide, outputSide, desc, false, "LUT");
 	const auto brdfProgram		 = Resources::manager().getProgram2D("brdf_sampler");
 	bakingFramebuffer->bind();
 	GLUtilities::setViewport(0, 0, int(bakingFramebuffer->width()), int(bakingFramebuffer->height()));

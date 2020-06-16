@@ -249,7 +249,7 @@ int main(int argc, char ** argv) {
 					// Create a framebuffer at the right size and format, and render in it.
 					const unsigned int outputWidth  = isHorizontal ? imageInfos.height : imageInfos.width;
 					const unsigned int outputHeight = isHorizontal ? imageInfos.width : imageInfos.height;
-					std::unique_ptr<Framebuffer> framebuffer(new Framebuffer(outputWidth, outputHeight, typedDesc, false));
+					std::unique_ptr<Framebuffer> framebuffer(new Framebuffer(outputWidth, outputHeight, typedDesc, false, "Save output"));
 					framebuffer->bind();
 					framebuffer->setViewport();
 

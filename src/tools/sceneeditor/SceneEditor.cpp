@@ -5,7 +5,7 @@
 SceneEditor::SceneEditor(RenderingConfig & config) : CameraApp(config) {
 	_passthrough = Resources::manager().getProgram2D("passthrough");
 
-	_sceneFramebuffer = _renderer.createOutput(uint(config.renderingResolution()[0]), uint(config.renderingResolution()[1]));
+	_sceneFramebuffer = _renderer.createOutput(uint(config.renderingResolution()[0]), uint(config.renderingResolution()[1]), "Scene render");
 		 
 	// Query existing scenes.
 	std::map<std::string, std::string> sceneInfos;
