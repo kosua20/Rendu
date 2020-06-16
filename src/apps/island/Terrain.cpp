@@ -352,7 +352,9 @@ void Terrain::transferAndUpdateMap(Image & heightMap){
 	
 	// Build mipmaps.
 	_map.levels = _map.getMaxMipLevel();
-	std::array<float, 9> weights = {1.0f/16.0f, 1.0f/8.0f, 1.0f/16.0f, 1.0f/8.0f, 1.0f/4.0f, 1.0f/8.0f, 1.0f/16.0f, 1.0f/8.0f, 1.0f/16.0f};
+	std::array<float, 9> weights = {1.0f/16.0f, 1.0f/8.0f, 1.0f/16.0f,
+									1.0f/8.0f, 1.0f/4.0f, 1.0f/8.0f,
+									1.0f/16.0f, 1.0f/8.0f, 1.0f/16.0f};
 	for(uint lid = 1; lid < _map.levels; ++lid){
 		const uint w = _map.width / (1 << lid);
 		const uint h = _map.height / (1 << lid);
@@ -360,15 +362,16 @@ void Terrain::transferAndUpdateMap(Image & heightMap){
 		const glm::ivec2 maxPos(w*2-1, h*2-1);
 		Image & currImg = _map.images[lid];
 		Image & prevImg = _map.images[lid-1];
+
 		for(uint y = 0; y < h; ++y){
 			for(uint x = 0; x < w; ++x){
-				const glm::vec2 prevCoords = 2.0f * glm::vec2(x,y) - 0.5f;
+				const glm::vec2 prevCoords = 2.0f * glm::vec2(x,y) + 0.5f;
 				glm::vec4 total(0.0f);
 				for(int dy = -1; dy <= 1; ++dy){
 					for(int dx = -1; dx <= 1; ++dx){
-						glm::ivec2 coords = glm::ivec2(prevCoords + glm::vec2(dx, dy));
+						glm::ivec2 coords = glm::ivec2(glm::round(prevCoords + glm::vec2(dx, dy)));
 						coords = glm::clamp(coords, glm::ivec2(0), maxPos);
-						const float & weight = weights[3*dy + dx];
+						const float & weight = weights[3*(dy+1) + (dx+1)];
 						total += weight * prevImg.rgba(coords[0], coords[1]);
 					}
 				}
