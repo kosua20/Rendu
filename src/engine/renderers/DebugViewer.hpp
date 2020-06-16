@@ -60,6 +60,35 @@ public:
 	 */
 	DebugViewer & operator=(DebugViewer &&) = delete;
 
+public:
+
+	/** Register a default debug viewer. */
+	static void setDefault(DebugViewer * viewer);
+
+	/** Register a texture for debug.
+	\param tex the texture to monitor
+	*/
+	static void trackDefault(const Texture * tex);
+
+	/** Register a framebuffer for debug. All attachment textures will be visible.
+	\param buffer the framebuffer to monitor
+	*/
+	static void trackDefault(const Framebuffer * buffer);
+
+	/** Stop monitoring a texture.
+	\param tex the texture to stop tracking
+	*/
+	static void untrackDefault(const Texture * tex);
+
+	/** Stop monitoring a framebuffer.
+	\param buffer the framebuffer to stop tracking
+	*/
+	static void untrackDefault(const Framebuffer * buffer);
+
+private:
+
+	static DebugViewer * _shared; ///< Optional shared debug viewer.
+
 private:
 
 	/** Texture display information */

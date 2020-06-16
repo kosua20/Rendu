@@ -17,6 +17,9 @@ static const std::map<TextureShape, std::string> shapeNames = {
 	{TextureShape::D3, "3D"}};
 
 static const std::string debugSkipName = "@debugViewerSkipItem@";
+
+DebugViewer * DebugViewer::_shared = nullptr;
+
 DebugViewer::DebugViewer(bool silent){
 	_texDisplay = Resources::manager().getProgram2D("debug_texture_display");
 	_silent		= silent;
@@ -263,4 +266,37 @@ void DebugViewer::updateDisplay(const Infos & tex) {
 	GLUtilities::bindTexture(tex.tex, slots.at(tex.tex->shape));
 	ScreenQuad::draw();
 	tex.display->unbind();
+}
+
+void DebugViewer::setDefault(DebugViewer * viewer) {
+	_shared = viewer;
+}
+
+void DebugViewer::trackDefault(const Texture * tex) {
+	if(!_shared) {
+		return;
+	}
+	_shared->track(tex);
+}
+
+void DebugViewer::trackDefault(const Framebuffer * buffer) {
+	if(!_shared) {
+		return;
+	}
+	_shared->track(buffer);
+}
+
+
+void DebugViewer::untrackDefault(const Texture * tex) {
+	if(!_shared) {
+		return;
+	}
+	_shared->untrack(tex);
+}
+
+void DebugViewer::untrackDefault(const Framebuffer * buffer) {
+	if(!_shared) {
+		return;
+	}
+	_shared->untrack(buffer);
 }
