@@ -214,6 +214,8 @@ RenderingConfig::RenderingConfig(const std::vector<std::string> & argv) :
 			forceAspectRatio = true;
 		} else if(arg.key == "resources" && !values.empty()) {
 			resourcesPath = values[0];
+		} else if(arg.key == "nodebug") {
+			trackDebug = false;
 		}
 	}
 
@@ -225,6 +227,7 @@ RenderingConfig::RenderingConfig(const std::vector<std::string> & argv) :
 	registerArgument("wxh", "", "Window dimensions.", std::vector<std::string> {"width", "height"});
 	registerArgument("force-aspect", "far", "Force window aspect ratio.");
 	registerArgument("resources", "", "Additional resources directory", "path");
+	registerArgument("nodebug", "", "Disable resources tracking.");
 }
 
 glm::vec2 RenderingConfig::renderingResolution(){

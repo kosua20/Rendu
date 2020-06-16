@@ -155,4 +155,7 @@ public:
 
 	/// Extra resources directory.
 	std::string resourcesPath;
+
+	/// Should resource tracking and monitoring be enabled.
+	bool trackDebug = true;
 };

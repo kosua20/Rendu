@@ -13,7 +13,13 @@ Application::Application(RenderingConfig & config) :
 		_frameTimes[fid] = 0.0f;
 	}
 
-	_debug.reset(new DebugViewer(false));
+	if(_config.trackDebug) {
+		_debug.reset(new DebugViewer(false));
+		DebugViewer::setDefault(_debug.get());
+	} else {
+		// Create a silent viewer.
+		_debug.reset(new DebugViewer(true));
+	}
 }
 
 void Application::update() {
