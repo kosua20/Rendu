@@ -117,6 +117,20 @@ void DebugViewer::registerTexture(const std::string& name, const Texture* tex, I
 	const std::string details = shapeNames.at(tex->shape) + " (" + tex->gpu->descriptor().string() + ")";
 	infos.displayName		  = " - " + details + "##" + std::to_string(_winId++);
 }
+
+
+void DebugViewer::untrack(const Texture * tex) {
+	auto end = std::remove_if(_textures.begin(), _textures.end(), [tex](const Infos & infos) {
+		return infos.tex == tex;
+	});
+	_textures.erase(end, _textures.end());
+}
+
+void DebugViewer::untrack(const Framebuffer * buffer) {
+	auto end = std::remove_if(_framebuffers.begin(), _framebuffers.end(), [buffer](const FramebufferInfos & infos) {
+		return infos.buffer == buffer;
+	});
+	_framebuffers.erase(end, _framebuffers.end());
 }
 
 void DebugViewer::interface() {

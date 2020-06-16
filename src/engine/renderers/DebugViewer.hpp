@@ -28,6 +28,16 @@ public:
 	*/
 	void track(const Framebuffer * buffer);
 
+	/** Stop monitoring a texture.
+	\param tex the texture to stop tracking
+	*/
+	void untrack(const Texture * tex);
+
+	/** Stop monitoring a framebuffer.
+	\param buffer the framebuffer to stop tracking
+	*/
+	void untrack(const Framebuffer * buffer);
+
 	/** Display interface and monitored data. */
 	void interface();
 
@@ -96,7 +106,7 @@ private:
 
 	const Program * _texDisplay; ///< Texture display shader.
 	bool _silent; ///< Don't register or display anything.
-	uint _textureId = 0;
-	uint _bufferId	= 0;
-	uint _winId		= 0;
+	uint _textureId = 0; ///< Default texture name counter.
+	uint _bufferId	= 0; ///< Default framebuffer name counter.
+	uint _winId		= 0; ///< Internal window counter.
 };

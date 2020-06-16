@@ -63,7 +63,7 @@ void main(){
 		// Highlight edges.
 		vec3 adir = abs(dir);
 		adir /= max(adir.x, max(adir.y, adir.z));
-		if((adir.x + adir.y + adir.z - min(adir.x, min(adir.y, adir.z))) > 1.985){
+		if((adir.x + adir.y + adir.z - min(adir.x, min(adir.y, adir.z))) > 1.97){
 			color = vec4(100000.0);
 		}
 	}
