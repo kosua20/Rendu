@@ -14,7 +14,7 @@ BilateralBlur::BilateralBlur() {
 void BilateralBlur::process(const glm::mat4 & projection, const Texture * texture, const Texture * depthTex, const Texture * normalTex, Framebuffer & framebuffer) {
 
 	if(!_intermediate || _intermediate->descriptor() != framebuffer.descriptor()){
-		_intermediate.reset(new Framebuffer(framebuffer.width(), framebuffer.height(), framebuffer.descriptor(), false));
+		_intermediate.reset(new Framebuffer(framebuffer.width(), framebuffer.height(), framebuffer.descriptor(), false, "Bilateral blur"));
 	}
 
 	if(framebuffer.width() != _intermediate->width() || framebuffer.height() != _intermediate->height()){

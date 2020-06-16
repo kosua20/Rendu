@@ -9,8 +9,8 @@ SSAO::SSAO(uint width, uint height, uint downscale, float radius) : _mediumBlur(
 	_samples(25, BufferType::UNIFORM, DataUse::STATIC), _radius(radius), _downscale(downscale) {
 
 	const Descriptor desc = Descriptor(Layout::R8, Filter::LINEAR_NEAREST, Wrap::CLAMP);
-	_ssaoFramebuffer.reset(new Framebuffer(width/_downscale, height/_downscale, desc, false));
-	_finalFramebuffer.reset(new Framebuffer(width, height, desc, false));
+	_ssaoFramebuffer.reset(new Framebuffer(width/_downscale, height/_downscale, desc, false, "SSAO"));
+	_finalFramebuffer.reset(new Framebuffer(width, height, desc, false, "SSAO final"));
 	_programSSAO = Resources::manager().getProgram2D("ssao");
 
 	// Generate samples.

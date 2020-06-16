@@ -5,13 +5,13 @@
 
 Probe::Probe(const glm::vec3 & position, std::shared_ptr<Renderer> renderer, uint size, uint mips, const glm::vec2 & clippingPlanes) {
 	_renderer	 = renderer;
-	_framebuffer = renderer->createOutput(TextureShape::Cube, size, size, 6, mips);
+	_framebuffer = renderer->createOutput(TextureShape::Cube, size, size, 6, mips, "Probe");
 	_framebuffer->clear(glm::vec4(0.0f), 1.0f);
 	_position	 = position;
 	_integration = Resources::manager().getProgram("cubemap_convo", "skybox_basic", "cubemap_convo");
 	_cube		 = Resources::manager().getMesh("skybox", Storage::GPU);
 	// Texture used to compute irradiance spherical harmonics.
-	_copy = _renderer->createOutput(TextureShape::Cube, 16, 16, 6, 1);
+	_copy = _renderer->createOutput(TextureShape::Cube, 16, 16, 6, 1, "Probe copy");
 
 	_shCoeffs.reset(new Buffer<glm::vec4>(9, BufferType::UNIFORM, DataUse::DYNAMIC));
 	for(int i = 0; i < 9; ++i) {

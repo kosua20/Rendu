@@ -20,7 +20,7 @@ void BoxBlur::process(const Texture * texture, Framebuffer & framebuffer) {
 
 	// Detect changes of descriptor.
 	if(!_intermediate || _intermediate->descriptor() != framebuffer.descriptor()){
-		_intermediate.reset(new Framebuffer(framebuffer.width(), framebuffer.height(), framebuffer.descriptor(), false));
+		_intermediate.reset(new Framebuffer(framebuffer.width(), framebuffer.height(), framebuffer.descriptor(), false, "Box blur"));
 	}
 	// Detect changes of size.
 	if(_intermediate->width() != framebuffer.width() || _intermediate->height() != framebuffer.height()){

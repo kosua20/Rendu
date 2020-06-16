@@ -12,8 +12,8 @@ LaplacianIntegrator::LaplacianIntegrator(unsigned int width, unsigned int height
 
 	const Descriptor descPrep = {Layout::RGBA32F, Filter::NEAREST_NEAREST, Wrap::CLAMP};
 	const Descriptor descCompo = {Layout::RGBA8, Filter::LINEAR_NEAREST, Wrap::CLAMP};
-	_preproc			  = std::unique_ptr<Framebuffer>(new Framebuffer(_pyramid.width(), _pyramid.height(), descPrep, false));
-	_compo				  = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, descCompo, false));
+	_preproc				   = std::unique_ptr<Framebuffer>(new Framebuffer(_pyramid.width(), _pyramid.height(), descPrep, false, "Laplacian preproc."));
+	_compo				  = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, descCompo, false, "Laplacian compo"));
 
 	const float h1[5] = {0.15f, 0.5f, 0.7f, 0.5f, 0.15f};
 	const float h2	= 1.0f;

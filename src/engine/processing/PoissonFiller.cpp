@@ -11,8 +11,8 @@ PoissonFiller::PoissonFiller(unsigned int width, unsigned int height, unsigned i
 
 	const Descriptor descPrep = {Layout::RGBA32F, Filter::NEAREST_NEAREST, Wrap::CLAMP};
 	const Descriptor descCompo = {Layout::RGBA8, Filter::LINEAR_NEAREST, Wrap::CLAMP};
-	_preproc			  = std::unique_ptr<Framebuffer>(new Framebuffer(_pyramid.width(), _pyramid.height(), descPrep, false));
-	_compo				  = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, descCompo, false));
+	_preproc			  = std::unique_ptr<Framebuffer>(new Framebuffer(_pyramid.width(), _pyramid.height(), descPrep, false, "Poisson preproc"));
+	_compo				  = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, descCompo, false, "Poisson compo"));
 
 	const float h1[5] = {0.1507f, 0.6836f, 1.0334f, 0.6836f, 0.1507f};
 	const float h2	= 0.0270f;

@@ -15,7 +15,7 @@ ConvolutionPyramid::ConvolutionPyramid(unsigned int width, unsigned int height, 
 	const Descriptor desc = {Layout::RGBA32F, Filter::NEAREST_NEAREST, Wrap::CLAMP};
 	const Descriptor descSrc = {Layout::RGBA32F, Filter::LINEAR_NEAREST, Wrap::CLAMP};
 	// Output is as the basic required size.
-	_shifted = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, descSrc, false));
+	_shifted = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, descSrc, false, "Conv. pyramid shift"));
 	// Resolution of the pyramid takes into account the filter padding.
 	_resolution = glm::ivec2(width + 2 * _padding, height + 2 * _padding);
 
@@ -28,8 +28,8 @@ ConvolutionPyramid::ConvolutionPyramid(unsigned int width, unsigned int height, 
 	int levelHeight = _resolution[1] + 2 * _size;
 	// Generate framebuffer pyramids.
 	for(size_t i = 0; i < size_t(depth); ++i) {
-		_levelsIn[i]  = std::unique_ptr<Framebuffer>(new Framebuffer(levelWidth, levelHeight, desc, false));
-		_levelsOut[i] = std::unique_ptr<Framebuffer>(new Framebuffer(levelWidth, levelHeight, desc, false));
+		_levelsIn[i]  = std::unique_ptr<Framebuffer>(new Framebuffer(levelWidth, levelHeight, desc, false, "Conv. pyramid in " + std::to_string(i)));
+		_levelsOut[i] = std::unique_ptr<Framebuffer>(new Framebuffer(levelWidth, levelHeight, desc, false, "Conv. pyramid out " + std::to_string(i)));
 		// Downscaling and padding.
 		levelWidth /= 2;
 		levelHeight /= 2;
@@ -138,8 +138,8 @@ void ConvolutionPyramid::resize(unsigned int width, unsigned int height) {
 			_levelsIn[i]->resize(levelWidth, levelHeight);
 			_levelsOut[i]->resize(levelWidth, levelHeight);
 		} else {
-			_levelsIn[i]  = std::unique_ptr<Framebuffer>(new Framebuffer(levelWidth, levelHeight, desc, false));
-			_levelsOut[i] = std::unique_ptr<Framebuffer>(new Framebuffer(levelWidth, levelHeight, desc, false));
+			_levelsIn[i]  = std::unique_ptr<Framebuffer>(new Framebuffer(levelWidth, levelHeight, desc, false, "Conv. pyramid in " + std::to_string(i)));
+			_levelsOut[i] = std::unique_ptr<Framebuffer>(new Framebuffer(levelWidth, levelHeight, desc, false, "Conv. pyramid out " + std::to_string(i)));
 		}
 		// Downscaling and padding.
 		levelWidth /= 2;
