@@ -26,6 +26,7 @@ int main() {
 	config.initialWidth		= 800;
 	config.initialHeight	= 600;
 	config.forceAspectRatio = true;
+	config.trackDebug		= false;
 
 	Window window("SnakeGame", config, false);
 	
