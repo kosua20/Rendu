@@ -286,6 +286,8 @@ public:
 	 */
 	static void setPolygonState(PolygonMode mode, Faces selectedFaces);
 
+	static void getState(GPUState & state);
+
 	/** Blit the content of a depthbuffer into another one.
 	 \param src the source framebuffer
 	 \param dst the destination framebuffer

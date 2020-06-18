@@ -1084,3 +1084,96 @@ void GLUtilities::savePixels(GLenum type, GLenum format, unsigned int width, uns
 		Log::Info() << "Done." << std::endl;
 	}
 }
+
+void GLUtilities::getState(GPUState& state) {
+	
+	// Boolean flags.
+	state.blend = glIsEnabled(GL_BLEND);
+	state.cullFace = glIsEnabled(GL_CULL_FACE);
+	state.depthClamp = glIsEnabled(GL_DEPTH_CLAMP);
+	state.depthTest = glIsEnabled(GL_DEPTH_TEST);
+	state.framebufferSRGB = glIsEnabled(GL_FRAMEBUFFER_SRGB);
+	state.polygonOffsetFill = glIsEnabled(GL_POLYGON_OFFSET_FILL);
+	state.polygonOffsetLine = glIsEnabled(GL_POLYGON_OFFSET_LINE);
+	state.polygonOffsetPoint = glIsEnabled(GL_POLYGON_OFFSET_POINT);
+	state.programPointSize = glIsEnabled(GL_PROGRAM_POINT_SIZE);
+	state.scissorTest = glIsEnabled(GL_SCISSOR_TEST);
+
+	// Blend state.
+	static const std::map<GLenum, BlendEquation> blendEqs = {
+		{GL_FUNC_ADD, BlendEquation::ADD},
+		{GL_FUNC_SUBTRACT, BlendEquation::SUBTRACT},
+		{GL_FUNC_REVERSE_SUBTRACT, BlendEquation::REVERSE_SUBTRACT},
+		{GL_MIN, BlendEquation::MIN},
+		{GL_MAX, BlendEquation::MAX}};
+	GLint ber, bea;
+	glGetIntegerv(GL_BLEND_EQUATION_RGB, &ber);
+	glGetIntegerv(GL_BLEND_EQUATION_ALPHA, &bea);
+	state.blendEquationRGB = blendEqs.at(ber);
+	state.blendEquationAlpha = blendEqs.at(bea);
+
+	static const std::map<GLenum, BlendFunction> funcs = {
+		{GL_ONE, BlendFunction::ONE},
+		{GL_ZERO, BlendFunction::ZERO},
+		{GL_SRC_COLOR, BlendFunction::SRC_COLOR},
+		{GL_ONE_MINUS_SRC_COLOR, BlendFunction::ONE_MINUS_SRC_COLOR},
+		{GL_SRC_ALPHA, BlendFunction::SRC_ALPHA},
+		{GL_ONE_MINUS_SRC_ALPHA, BlendFunction::ONE_MINUS_SRC_ALPHA},
+		{GL_DST_COLOR, BlendFunction::DST_COLOR},
+		{GL_ONE_MINUS_DST_COLOR, BlendFunction::ONE_MINUS_DST_COLOR},
+		{GL_DST_ALPHA, BlendFunction::DST_ALPHA},
+		{GL_ONE_MINUS_DST_ALPHA, BlendFunction::ONE_MINUS_DST_ALPHA}};
+	GLint bsr, bsa, bdr, bda;
+	glGetIntegerv(GL_BLEND_SRC_RGB, &bsr);
+	glGetIntegerv(GL_BLEND_SRC_ALPHA, &bsa);
+	glGetIntegerv(GL_BLEND_DST_RGB, &bdr);
+	glGetIntegerv(GL_BLEND_DST_ALPHA, &bda);
+	state.blendSrcRGB = funcs.at(bsr);
+	state.blendSrcAlpha = funcs.at(bsa);
+	state.blendDstRGB = funcs.at(bdr);
+	state.blendDstAlpha = funcs.at(bda);
+	glGetFloatv(GL_BLEND_COLOR, &state.blendColor[0]);
+	
+	// Color state.
+	glGetFloatv(GL_COLOR_CLEAR_VALUE, &state.colorClearValue[0]);
+	GLboolean cwm[4];
+	glGetBooleanv(GL_COLOR_WRITEMASK, &cwm[0]);
+	state.colorWriteMask = glm::bvec4(cwm[0], cwm[1], cwm[2], cwm[3]);
+
+	// Geometry state.
+	static const std::map<GLenum, Faces> faces = {
+		{GL_FRONT, Faces::FRONT},
+		{GL_BACK, Faces::BACK},
+		{GL_FRONT_AND_BACK, Faces::ALL}};
+	GLint cfm;
+	glGetIntegerv(GL_CULL_FACE_MODE, &cfm);
+	state.cullFaceMode = faces.at(cfm);
+	glGetFloatv(GL_POLYGON_OFFSET_FACTOR, &state.polygonOffsetFactor);
+	glGetFloatv(GL_POLYGON_OFFSET_UNITS, &state.polygonOffsetUnits);
+
+	// Depth state.
+	static const std::map<GLenum, DepthEquation> depthEqs = {
+		{GL_NEVER, DepthEquation::NEVER},
+		{GL_LESS, DepthEquation::LESS},
+		{GL_LEQUAL, DepthEquation::LEQUAL},
+		{GL_EQUAL, DepthEquation::EQUAL},
+		{GL_GREATER, DepthEquation::GREATER},
+		{GL_GEQUAL, DepthEquation::GEQUAL},
+		{GL_NOTEQUAL, DepthEquation::NOTEQUAL},
+		{GL_ALWAYS, DepthEquation::ALWAYS}};
+	GLint dfc;
+	glGetIntegerv(GL_DEPTH_FUNC, &dfc);
+	state.depthFunc = depthEqs.at(dfc);
+	glGetFloatv(GL_DEPTH_CLEAR_VALUE, &state.depthClearValue);
+	glGetFloatv(GL_DEPTH_RANGE, &state.depthRange[0]);
+	GLboolean dwm;
+	glGetBooleanv(GL_DEPTH_WRITEMASK, &dwm);
+	state.depthWriteMask = dwm;
+
+	// Point state.
+	glGetFloatv(GL_POINT_SIZE, &state.pointSize);
+
+	// Viewport and scissor state.
+	glGetFloatv(GL_VIEWPORT, &state.viewport[0]);
+	glGetFloatv(GL_SCISSOR_BOX, &state.scissorBox[0]);
+}

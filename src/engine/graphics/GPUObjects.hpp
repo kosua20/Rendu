@@ -85,7 +85,7 @@ enum class BlendFunction : uint {
 \ingroup Resources
 */
 enum class Faces : uint {
-	FRONT, ///> Front (CCW) faces
+	FRONT, ///< Front (CCW) faces
 	BACK, ///< Back (CW) faces
 	ALL ///< All faces
 };
@@ -497,5 +497,54 @@ private:
 	std::array<GLuint, bufferCount> _ids; ///< OpenGL query object IDs.
 	size_t _current = 0; ///< Current query in use.
 	bool _running = false; ///< Is a measurement currently taking place.
+
+};
+
+/**
+ \beif Internal GPU state ; not all API options are exposed, only the one that can be toggled in Rendu.
+ \ingroup Graphics
+ */
+class GPUState {
+public:
+	// Blend state.
+	glm::vec4 blendColor = glm::vec4(0.0f);
+	BlendFunction blendSrcRGB;
+	BlendFunction blendSrcAlpha;
+	BlendFunction blendDstRGB;
+	BlendFunction blendDstAlpha;
+	BlendEquation blendEquationRGB;
+	BlendEquation blendEquationAlpha;
+	bool blend			 = false;
+
+	// Color state.
+	glm::vec4 colorClearValue = glm::vec4(0.0f);
+	glm::bvec4 colorWriteMask = glm::bvec4(false);
+	bool framebufferSRGB = false;
+
+	// Geometry state.
+	Faces cullFaceMode = Faces::ALL;
+	bool cullFace	  = false;
+	float polygonOffsetFactor = 0.0f;
+	float polygonOffsetUnits = 0.0f;
+	bool polygonOffsetFill	= false;
+	bool polygonOffsetLine	= false;
+	bool polygonOffsetPoint = false;
+
+	// Depth state.
+	float depthClearValue = 0.0f;
+	DepthEquation depthFunc;
+	glm::vec2 depthRange = glm::vec2(0.0f);
+	bool depthTest	= false;
+	bool depthClamp	  = false;
+	bool depthWriteMask	 = false;
+
+	// Point state.
+	float pointSize		  = 0.0f;
+	bool programPointSize	= false;
+
+	// Viewport and scissor state.
+	glm::vec4 viewport {0.0f};
+	glm::vec4 scissorBox {0.0f};
+	bool scissorTest		   = false;
 
 };
