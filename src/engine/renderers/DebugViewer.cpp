@@ -108,6 +108,15 @@ void DebugViewer::track(const Framebuffer * buffer) {
 	});
 }
 
+void DebugViewer::trackState(const std::string & name){
+	// Only update the state if it's currently displayed on screen,
+	// or if it's the very first time it's queried.
+	if(_states[name].visible || !_states[name].populated){
+		GLUtilities::getState(_states[name].state);
+		_states[name].populated = true;
+	}
+}
+
 void DebugViewer::registerTexture(const std::string& name, const Texture* tex, Infos& infos) {
 	infos.name  = name;
 	infos.tex   = tex;
@@ -119,7 +128,7 @@ void DebugViewer::registerTexture(const std::string& name, const Texture* tex, I
 
 	// Build display full name with details.
 	const std::string details = shapeNames.at(tex->shape) + " (" + tex->gpu->descriptor().string() + ")";
-	infos.displayName		  = " - " + details + "##" + std::to_string(_winId++);
+	infos.displayName		  = " - " + std::to_string(tex->width) + "x" + std::to_string(tex->height) + " - " + details + "##" + std::to_string(_winId++);
 }
 
 
@@ -165,12 +174,17 @@ void DebugViewer::interface() {
 			}
 			ImGui::EndMenu();
 		}
+		if(ImGui::BeginMenu("States")) {
+			for(auto & infos : _states) {
+				ImGui::MenuItem(infos.first.c_str(), nullptr, &infos.second.visible);
+			}
+			ImGui::EndMenu();
+		}
 		ImGui::EndMainMenuBar();
 	}
 
 	// Display all active windows.
-	for(int tid = 0; tid < _textures.size(); ++tid) {
-		Infos & tex = _textures[tid];
+	for(Infos & tex : _textures) {
 		if(!tex.visible) {
 			continue;
 		}
@@ -184,6 +198,101 @@ void DebugViewer::interface() {
 			displayTexture(tex, buffer.name + " - ");
 		}
 	}
+	for(auto & infos : _states){
+		if(!infos.second.visible){
+			continue;
+		}
+		displayState(infos.first, infos.second);
+	}
+}
+
+void DebugViewer::displayState(const std::string & name, StateInfos & infos){
+
+	static const std::map<bool, std::string> bools = {{true, "yes"}, {false, "no"}};
+	static const std::map<DepthEquation, std::string> depthEqs = {
+			{DepthEquation::NEVER, "Never"},
+			{DepthEquation::LESS, "Less"},
+			{DepthEquation::LEQUAL, "Less or equal"},
+			{DepthEquation::EQUAL, "Equal"},
+			{DepthEquation::GREATER, "Greater"},
+			{DepthEquation::GEQUAL, "Greater or equal"},
+			{DepthEquation::NOTEQUAL, "Not equal"},
+			{DepthEquation::ALWAYS, "Always"}};
+	static const std::map<BlendEquation, std::string> blendEqs = {
+			{BlendEquation::ADD, "Add"},
+			{BlendEquation::SUBTRACT, "Subtract"},
+			{BlendEquation::REVERSE_SUBTRACT, "Reverse subtract"},
+			{BlendEquation::MIN, "Min"},
+			{BlendEquation::MAX, "Max"}};
+	static const std::map<BlendFunction, std::string> funcs = {
+			{BlendFunction::ONE, "1"},
+			{BlendFunction::ZERO, "0"},
+			{BlendFunction::SRC_COLOR, "Src color"},
+			{BlendFunction::ONE_MINUS_SRC_COLOR, "1 - src color"},
+			{BlendFunction::SRC_ALPHA, "Src alpha"},
+			{BlendFunction::ONE_MINUS_SRC_ALPHA, "1 - src alpha"},
+			{BlendFunction::DST_COLOR, "Dst color"},
+			{BlendFunction::ONE_MINUS_DST_COLOR, "1 - dst color"},
+			{BlendFunction::DST_ALPHA, "Dst alpha"},
+			{BlendFunction::ONE_MINUS_DST_ALPHA, "1 - dst alpha"}};
+	static const std::map<Faces, std::string> faces = {
+		{Faces::FRONT, "Front"},
+		{Faces::BACK, "Back"},
+		{Faces::ALL, "Front & back"}};
+
+	const std::string finalName = "State - " + name;
+	if(ImGui::Begin(finalName.c_str(), &infos.visible)) {
+		const GPUState & st = infos.state;
+
+		if(ImGui::CollapsingHeader("Blending")){
+			std::stringstream str;
+			str << "Blending: " << bools.at(st.blend) << "\n";
+			str << "Blend equation: " << "RGB: " << blendEqs.at(st.blendEquationRGB) << ", A: " << blendEqs.at(st.blendEquationAlpha) << "\n";
+			str << "Blend source: " << "RGB: " << funcs.at(st.blendSrcRGB) << ", A: " << funcs.at(st.blendSrcAlpha) << "\n";
+			str << "Blend desti.: " << "RGB: " << funcs.at(st.blendDstRGB) << ", A: " << funcs.at(st.blendDstAlpha) << "\n";
+			str << "Blend color: " << st.blendColor << "\n";
+			const std::string strRes = str.str();
+			ImGui::Text("%s", strRes.c_str());
+		}
+
+		if(ImGui::CollapsingHeader("Depth")){
+			std::stringstream str;
+			str << "Depth test: " << bools.at(st.depthTest) << ", write: " << bools.at(st.depthWriteMask) << "\n";
+			str << "Depth function: " << depthEqs.at(st.depthFunc) << "\n";
+			str << "Depth clear: " << st.depthClearValue << "\n";
+			str << "Depth range: " << st.depthRange << ", clamp: " << bools.at(st.depthClamp) << "\n";
+			const std::string strRes = str.str();
+			ImGui::Text("%s", strRes.c_str());
+		}
+
+		if(ImGui::CollapsingHeader("Color")){
+			std::stringstream str;
+			str << "Color clear: " << st.colorClearValue << "\n";
+			str << "Color write: " << bools.at(st.colorWriteMask[0]) << ", " << bools.at(st.colorWriteMask[1]) << ", " << bools.at(st.colorWriteMask[2]) << ", " << bools.at(st.colorWriteMask[3]) << "\n";
+			str << "Framebuffer sRGB: " << bools.at(st.framebufferSRGB) << "\n";
+			const std::string strRes = str.str();
+			ImGui::Text("%s", strRes.c_str());
+		}
+
+		if(ImGui::CollapsingHeader("Geometry")){
+			std::stringstream str;
+			str << "Culling: " << bools.at(st.cullFace) << ", " << faces.at(st.cullFaceMode) << "\n";
+			str << "Polygon offset: point: " << bools.at(st.polygonOffsetPoint) << ", line: " << bools.at(st.polygonOffsetLine) << ", fill: " << bools.at(st.polygonOffsetFill) << "\n";
+			str << "Polygon offset: factor: " << st.polygonOffsetFactor << ", units: " << st.polygonOffsetUnits << "\n";
+
+			str << "Point size: " << st.pointSize << ", program: " << bools.at(st.programPointSize) << "\n";
+			const std::string strRes = str.str();
+			ImGui::Text("%s", strRes.c_str());
+		}
+
+		if(ImGui::CollapsingHeader("Viewport")){
+			std::stringstream str;
+			str << "Scissor: test: " << bools.at(st.scissorTest) <<", box: " << st.scissorBox << "\n";
+			str << "Viewport: " << st.viewport;
+			const std::string strRes = str.str();
+			ImGui::Text("%s", strRes.c_str());
+		}
+	}
 }
 
 void DebugViewer::displayTexture(Infos & tex, const std::string & prefix) {
@@ -195,7 +304,7 @@ void DebugViewer::displayTexture(Infos & tex, const std::string & prefix) {
 	const float defaultWidth = 550.0f;
 	ImGui::SetNextWindowSize(ImVec2(defaultWidth, defaultWidth / aspect + 75.0f), ImGuiCond_Once);
 	const std::string finalWinName = prefix + tex.name + tex.displayName;
-;
+
 	if(ImGui::Begin(finalWinName.c_str(), &tex.visible)) {
 		ImGui::Columns(2);
 

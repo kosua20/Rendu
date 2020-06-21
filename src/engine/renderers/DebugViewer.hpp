@@ -1,5 +1,6 @@
 #pragma once
 #include "graphics/Program.hpp"
+#include "graphics/GPUObjects.hpp"
 
 class Framebuffer;
 class Texture;
@@ -27,6 +28,11 @@ public:
 	\param buffer the framebuffer to monitor
 	*/
 	void track(const Framebuffer * buffer);
+
+	/** Track the GPU state at the moment of the call. Can be called at each frame to track varying state.
+	 \param name the display name of the state
+	 */
+	void trackState(const std::string & name);
 
 	/** Stop monitoring a texture.
 	\param tex the texture to stop tracking
@@ -62,7 +68,8 @@ public:
 
 public:
 
-	/** Register a default debug viewer. */
+	/** Register a default debug viewer.
+	 \param viewer the viewer to use as default*/
 	static void setDefault(DebugViewer * viewer);
 
 	/** Register a texture for debug.
@@ -112,6 +119,19 @@ private:
 		std::vector<Infos> attachments; ///< Color and depth attachment infos.
 	};
 
+	/** Monitored GPU state. */
+	struct StateInfos {
+		GPUState state; ///< GPU state to track.
+		bool visible = false; ///< Is the state window visible.
+		bool populated = false; ///< Has the state already been queried.
+	};
+
+	/** Display GPU state in a panel.
+	 \param name name of the state
+	 \param infos the state to display
+	 */
+	void displayState(const std::string & name, StateInfos & infos);
+
 	/** Populate texture information based on an input texture.
 	\param name the name of the texture
 	\param tex the texture to monitor
@@ -132,6 +152,7 @@ private:
 
 	std::vector<Infos> _textures; ///< The registered textures.
 	std::vector<FramebufferInfos> _framebuffers; ///< The registered framebuffers.
+	std::map<std::string, StateInfos> _states; ///< GPU states currently tracked.
 
 	const Program * _texDisplay; ///< Texture display shader.
 	const bool _silent; ///< Don't register or display anything.
