@@ -18,9 +18,11 @@ Basic resources to run each project are included in this repository, but you can
 
 | Name  | Description |
 | ------------- | ------------- |
-| [Deferred Physically based rendering](http://kosua20.github.io/Rendu/html/group___deferred_rendering.html) | ![PBR demo preview](docs/img/pbrdemo.png) Real-time rendering of a scene with 'physically-based' materials (GGX BRDF introduced in *Microfacet Models for Refraction through Rough Surfaces*, Walter et al., 2007), using deferred or forward rendering, real-time lighting environment and shadows update, and an HDR pipeline with bloom, depth of field and ambient occlusion. |
+| [Physically based rendering](http://kosua20.github.io/Rendu/html/group___p_b_r_demo.html) | ![PBR demo preview](docs/img/pbrdemo.png) Real-time rendering of a scene with 'physically-based' materials (GGX BRDF introduced in *Microfacet Models for Refraction through Rough Surfaces*, Walter et al., 2007), using deferred or forward rendering, real-time lighting environment and shadows update, and an HDR pipeline with bloom, depth of field and ambient occlusion. |
 | [Path Tracer](http://kosua20.github.io/Rendu/html/group___pathtracer_demo.html) | ![Path tracer preview](docs/img/pathtracer.png) Offline unidirectional path tracing for textured materials using Lambert+GGX BRDF with importance sampling. Supports stratified sampling, jittering, next event estimation, environment lighting contribution, emissive objects. Relies on a raycaster with a BVH for fast intersection queries against triangular meshes. Comes with an interactive viewer where the BVH levels can be displayed, and the camera placed for rendering. |
+| [Island and ocean rendering](http://kosua20.github.io/Rendu/html/group___island.html) | ![Island and ocean preview](docs/img/island.png) Real-time rendering of an ocean and island, using tesselation, Gerstner waves, custom sand and water shading. Underwater rendering is achieved using absorption/scattering tables, depth based blur and caustics mapping. Sand rendering is performed using high-frequency detail data and triplanar mapping.  |
 | [Image Filtering](http://kosua20.github.io/Rendu/html/group___image_filtering.html) | ![Image filtering preview](docs/img/imagefiltering.png) Apply filters to an image, such as gaussian blur, box-blur, approximate flood-fill (*Jump Flooding in GPU with Applications to Voronoi Diagram and Distance Transform*, Rong et al., 2006) and poisson filling (*Convolution Pyramids*, Farbman et al., 2011), etc. |
+| [Shader playground](http://kosua20.github.io/Rendu/html/group___shader_bench.html) | ![Shader bench preview](docs/img/shaderbench.png) Interactive shader viewer with editable inputs (uniforms, textures) and camera parameters for raymarching, noise generation,... |
 | [Atmospheric scattering](http://kosua20.github.io/Rendu/html/group___atmospheric_scattering.html) | ![Atmospheric scattering preview](docs/img/atmosphere.png) Realistic atmosphere rendering with Rayleigh and Mie scattering (*Precomputed Atmospheric Scattering*, Bruneton et al., 2008). |
 | [Snake Game](http://kosua20.github.io/Rendu/html/group___snake_game.html) | ![Snake game preview](docs/img/snake.png) A basic game of snake, demonstrating game menus, player state, batched rendering. |
 
@@ -40,7 +42,7 @@ Basic resources to run each project are included in this repository, but you can
 This project use `premake5` ([premake.github.io](https://premake.github.io)) for generating the workspace and projects files.
 After cloning Rendu, move to the root of the repository and run
 
-    premake5.exe [vs2017 | xcode | make | ...]
+    premake5.exe [vs2019 | xcode | make | ...]
 
 To generate the desired workspace in the `build` directory.
 
@@ -72,7 +74,9 @@ On a more detailed level, here are the main features you will find in Rendu.
 - Image processing techniques, such as fast gaussian blur, Poisson inpainting, flood filling.
 - 2D interface rendering (buttons, checkboxes) with support for font distance fields.
 - A raycaster CPU implementation using a bounding volume hierarchy.
-- Path tracer with GGX importance sampling, 
+- Path tracer with GGX importance sampling.
+- Generation and rendering of a terrain using Perlin noise, erosion and fixed grid geometry.
+- Ocean rendering using a tesselated plane, far-distance proxy and absorption/scattering look-up table.
 
 ## Planned
 
@@ -81,7 +85,6 @@ I would like to add some additional features to Rendu in the near future, mainly
 - Local light probes using parallax correction.
 - Temporal Antialiasing with reprojection and clamping.
 - Screen-space reflections and shadows (raymarching against the depth buffer).
-- Rendering of a terrain and water using a procedural approach (Perlin/Worley/Fractal noise, maybe tesselation).
 - Particle effects (updated on the GPU).
 - Volumetric effects, such as godrays and lit fog.
 - Support interesting controllers (MIDI controllers, PS4 light bar and touchpad,...)
