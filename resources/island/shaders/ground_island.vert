@@ -4,16 +4,16 @@
 layout(location = 0) in vec3 v; ///< Position.
 
 uniform mat4 mvp; ///< MVP transformation matrix.
-uniform vec3 shift;
-uniform float texelSize;
-uniform float invMapSize;
-uniform float invGridSize;
+uniform vec3 shift; ///< Terrain shift in world space.
+uniform float texelSize; ///< Height map texel world size.
+uniform float invMapSize; ///< Height map inverse size.
+uniform float invGridSize; ///< Grid mesh inverse size.
 
-layout(binding=0) uniform sampler2D heightMap;
+layout(binding=0) uniform sampler2D heightMap; ///< Terrain height map, height in R, normals in GBA.
 
 out INTERFACE {
-	vec3 pos;
-	vec2 uv;
+	vec3 pos; ///< World position.
+	vec2 uv; ///< Texture coordinates.
 } Out ;
 
 /** Apply the transformation to the input vertex.

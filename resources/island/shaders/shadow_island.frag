@@ -4,21 +4,20 @@ in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In ;
 
-uniform vec3 lDir;
-uniform uint stepCount;
-uniform float horiz;
-uniform vec2 lDir2;
-uniform vec2 tMaxInit;
-uniform vec2 tDelta;
+uniform vec3 lDir; ///< Light direction.
+uniform uint stepCount; ///< Raymarching step count.
+uniform float horiz; ///< Shadowing scaling when the light get close to the horizon.
+uniform vec2 lDir2; ///< Light direction projected in the horizontal plane and normalized.
+uniform vec2 tMaxInit; ///< Raymarching step size parameter.
+uniform vec2 tDelta; ///< Raymarching step size parameter.
 
-layout(binding = 0) uniform sampler2D heightMap; ///< Color to output.
+layout(binding = 0) uniform sampler2D heightMap; ///< Height map.
 
-layout(location = 0) out vec2 shadow; ///< Color.
+layout(location = 0) out vec2 shadow; ///< Shadowing factors.
 
-/** Just pass the input image as-is, without any resizing. */
+/** Ray-march against the height map to determine shadows at sea and ground level.*/
 void main(){
-
-
+	
 	if(lDir.y >= 0.999){
 		// Vertical sun, no shadowing.
 		shadow = vec2(1.0);

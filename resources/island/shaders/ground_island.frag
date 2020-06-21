@@ -1,30 +1,24 @@
 #version 400
 in INTERFACE {
-	vec3 pos;
-	vec2 uv;
+	vec3 pos; ///< World position
+	vec2 uv; ///< Texture coordinates
 } In ;
 
-uniform vec3 lightDirection;
-uniform bool debugCol;
-uniform vec3 camPos;
+uniform vec3 lightDirection; ///< Sun light direction.
+uniform bool debugCol; ///< Use debug color instead of shading.
+uniform vec3 camPos; ///< Camera world position.
 
-layout(binding=0) uniform sampler2D heightMap;
-layout(binding=1) uniform sampler2D shadowMap;
-layout(binding=2) uniform sampler2D surfaceNoise;
-layout(binding=3) uniform sampler2D glitterNoise;
-layout(binding=4) uniform sampler2D sandMapSteep;
-layout(binding=5) uniform sampler2D sandMapFlat;
+layout(binding=0) uniform sampler2D heightMap; ///< Terrain height map, height in R, normals in GBA.
+layout(binding=1) uniform sampler2D shadowMap; ///<Terrain shadowing factor, ground level in R, water level in G.
+layout(binding=2) uniform sampler2D surfaceNoise; ///< Noise surface normal map.
+layout(binding=3) uniform sampler2D glitterNoise; ///< Noise specular map.
+layout(binding=4) uniform sampler2D sandMapSteep; ///< Normal map for steep dunes.
+layout(binding=5) uniform sampler2D sandMapFlat; ///< Normal map for flat regions.
 
-layout (location = 0) out vec3 fragColor;
-layout (location = 1) out vec3 fragWorldPos;
+layout (location = 0) out vec3 fragColor; ///< Terrain appearance.
+layout (location = 1) out vec3 fragWorldPos; ///< Terrain world position.
 
-const vec3 sunColor = vec3(1.474, 1.8504, 1.91198);
-
-vec3 mixNormals(vec3 n1, vec3 n2, float alpha){
-	vec2 base = mix(n1.xy/n1.z, n2.xy/n2.z, alpha);
-	return normalize(vec3(base, 1.0));
-}
-
+/** Shade the terrain by simulating sand appearance on dunes. */
 void main(){
 
 	fragWorldPos = In.pos;
@@ -83,7 +77,6 @@ void main(){
 	vec3 spec = (shadow * 0.9 + 0.1) * (F * specColor + lobe * specColor + 2.0 * glit * specColor);
 	
 	color += spec;
-	//color *= sunColor;
 	
 	if(debugCol){
 		color = vec3(0.9,0.9,0.9);
