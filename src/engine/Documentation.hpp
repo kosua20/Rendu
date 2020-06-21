@@ -159,4 +159,10 @@
  \namespace GPU::Geom
  \brief Contains all geometry shaders.
 
+ \namespace GPU::TessControl
+ \brief Contains all tesselation control shaders.
+
+ \namespace GPU::TessEval
+ \brief Contains all tesselation evaluation shaders.
+
  */

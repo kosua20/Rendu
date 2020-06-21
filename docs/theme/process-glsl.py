@@ -8,9 +8,9 @@ import os
 def printout(text):
 	sys.stdout.write(text)
 
-doxyFullNames = {"vert" : "vertex", "frag" : "fragment", "geom" : "geometry", "glsl" : "general" }
-doxySubNamespaces = {"vert" : "Vert", "frag" : "Frag", "geom" : "Geom", "glsl" : "Common" }
-structAddKeyword = {"vert" : "out", "frag" : "in", "geom" : "in", "glsl" : "" }
+doxyFullNames = {"vert" : "vertex", "frag" : "fragment", "geom" : "geometry", "glsl" : "general", "tessc" : "tesselation control", "tesse" : "tesselation evaluation" }
+doxySubNamespaces = {"vert" : "Vert", "frag" : "Frag", "geom" : "Geom", "glsl" : "Common", "tesse" : "TessEval", "tessc" : "TessControl" }
+structAddKeyword = {"vert" : "out", "frag" : "in", "geom" : "in", "glsl" : "", "tessc" : "in", "tesse" : "out" }
 
 if len(sys.argv) != 2:
 	sys.exit(1)

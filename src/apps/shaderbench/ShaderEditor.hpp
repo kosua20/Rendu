@@ -112,7 +112,7 @@ private:
 	Texture _noise; ///< Random 2D RGBA uniform noise in [0,1].
 	Texture _directions; ///< Random 3D directions on the sphere.
 	Texture _noise3D; ///< Random 3D RGB uniform noise in [0,1].
-	const Texture * _fallbackTex = nullptr;
+	const Texture * _fallbackTex = nullptr; ///< Display texture for non-2D inputs.
 	std::vector<BoolOption> _flags; ///< Predefined boolean parameters.
 	std::vector<IntOption> _integers; ///< Predefined integer parameters.
 	std::vector<FloatOption> _floats; ///< Predefined float parameters.
