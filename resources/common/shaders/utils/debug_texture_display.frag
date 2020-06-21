@@ -14,13 +14,13 @@ layout(binding = 4) uniform samplerCube texCube; ///< Image to output.
 layout(binding = 5) uniform samplerCubeArray texCubeArray; ///< Image to output.
 layout(binding = 6) uniform sampler3D tex3D; ///< Image to output.
 
-uniform ivec4 channels;
-uniform vec2 range;
-uniform int level;
-uniform int layer;
-uniform bool gamma;
+uniform ivec4 channels; ///< Channels to display.
+uniform vec2 range; ///< Value range.
+uniform int level; ///< Texture level to display.
+uniform int layer; ///< Texture layer to display.
+uniform bool gamma; ///< Apply gamma correction.
 
-uniform int shape;
+uniform int shape; ///< Type of texture to display.
 
 layout(location = 0) out vec3 fragColor; ///< Color.
 
@@ -34,7 +34,7 @@ layout(location = 0) out vec3 fragColor; ///< Color.
 #define TextureShapeArrayCube (TextureShapeCube | TextureShapeArray)
 
 
-/** Just pass the input image as-is, potentially performing up/down scaling. */
+/** Display the current layer and level of the right texture, adjusting values and channels.. */
 void main(){
 	vec4 color = vec4(1.0,0.5,0.0,0.5);
 
