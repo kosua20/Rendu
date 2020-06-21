@@ -3,10 +3,10 @@
 // Attributes
 layout(location = 0) in vec3 v; ///< Position.
 
-uniform vec3 shift;
+uniform vec3 shift; ///< Grid shift.
 
 out INTERFACE {
-	vec3 pos;
+	vec3 pos; ///< World position.
 } Out ;
 
 /** Apply the transformation to the input vertex.

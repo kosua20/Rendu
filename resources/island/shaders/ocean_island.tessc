@@ -1,33 +1,38 @@
 #version 400
 
-layout(vertices = 4) out;
+layout(vertices = 4) out; ///< Output patches.
 
-uniform float maxLevelX;
-uniform float maxLevelY;
-uniform float distanceScale;
+uniform float maxLevelX; ///< Maximum LOD.
+uniform float maxLevelY; ///< Maximum level scaling.
+uniform float distanceScale; ///< Extra distance scaling.
 
-uniform vec3 camDir;
-uniform vec3 camPos;
+uniform vec3 camDir; ///< Camera direction.
+uniform vec3 camPos; ///< Camera world position.
 
 in INTERFACE {
-	vec3 pos;
+	vec3 pos; ///< Grid positions.
 } In[] ;
 
 out INTERFACE {
-	vec3 pos;
+	vec3 pos; ///< World space position.
 } Out[] ;
 
-
+/** Evaluate the LOD at a given position.
+\param pos the world space position
+\return the level of detail.
+*/
 float lodCorner(vec3 pos){
 	float camDist = distance(pos, camPos);
 	float level = log2((camDist + 0.0001) * distanceScale);
 	return clamp(level, 0.0, maxLevelX);
 }
 
+/** Subdivide patches based on distance to camera. */
 void main(){
 	Out[gl_InvocationID].pos = In[gl_InvocationID].pos;
-
+	// Only do the work at the first corner.
 	if(gl_InvocationID == 0){
+		// Half-plane culling.
 		if(dot(In[0].pos - camPos, camDir) < 0.0 &&
 		  dot(In[1].pos - camPos, camDir) < 0.0 &&
 		  dot(In[2].pos - camPos, camDir) < 0.0 &&
@@ -41,6 +46,7 @@ void main(){
 			gl_TessLevelInner[1] = -1.0;
 			return;
 		}
+		// Estimate the 4 corner LODs.
 		float lod0 = lodCorner(In[0].pos);
 		float lod1 = lodCorner(In[1].pos);
 		float lod2 = lodCorner(In[2].pos);
@@ -50,13 +56,12 @@ void main(){
 		vec4 edgeLods = min(lods.xyzw, lods.wxyz);
 		vec4 outerLevels = maxLevelY * exp2(-edgeLods);
 		float innerLevel = max(max(outerLevels.x, outerLevels.y), max(outerLevels.z, outerLevels.w));
-
+		// Output levels.
 		gl_TessLevelOuter[0] = outerLevels[0];
 		gl_TessLevelOuter[1] = outerLevels[1];
 		gl_TessLevelOuter[2] = outerLevels[2];
 		gl_TessLevelOuter[3] = outerLevels[3];
 		gl_TessLevelInner[0] = innerLevel;
 		gl_TessLevelInner[1] = innerLevel;
-
 	}
 }

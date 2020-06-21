@@ -9,16 +9,17 @@
 
 /**
  \defgroup Island Island
- \brief
+ \brief Render an island in the middle of the ocean
+ \sa IslandApp
  \ingroup Applications
  */
 
 /**
- The main function of the atmospheric scattering demo.
+ The main function of the island and ocean rendering demo.
  \param argc the number of input arguments.
  \param argv a pointer to the raw input arguments.
  \return a general error code.
- \ingroup AtmosphericScattering
+ \ingroup Island
  */
 int main(int argc, char ** argv) {
 	

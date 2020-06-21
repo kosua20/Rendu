@@ -1,20 +1,20 @@
 #version 400
 
 in INTERFACE {
-	vec2 uv;
+	vec2 uv; ///< Texture coordinates.
 } In ;
 
-uniform vec3 camPos;
-uniform vec2 invTargetSize;
+uniform vec3 camPos; ///< Camera world position.
+uniform vec2 invTargetSize; ///< Inverse framebuffer size.
 
-layout(binding = 1) uniform sampler2D terrainColor;
-layout(binding = 2) uniform sampler2D terrainPos;
-layout(binding = 3) uniform sampler2D terrainColorBlur;
-layout(binding = 4) uniform sampler2D absorpScatterLUT;
+layout(binding = 1) uniform sampler2D terrainColor; ///< Shaded terrain (with caustics)
+layout(binding = 2) uniform sampler2D terrainPos; ///< Terrain world position map.
+layout(binding = 3) uniform sampler2D terrainColorBlur; ///< Blurred shaded terrain.
+layout(binding = 4) uniform sampler2D absorpScatterLUT; ///< Absorption/scattering look-up table.
 
-layout (location = 0) out vec4 fragColor;
+layout (location = 0) out vec4 fragColor; ///< Underwater appearance.
 
-/** Shade the object, applying lighting. */
+/** Apply scattering and absorption on top of the rendered terrain, with depth-aware effects. */
 void main(){
 	vec3 oceanFloorPos = texelFetch(terrainPos, ivec2(gl_FragCoord.xy), 0).rgb;
 	float distPos = distance(oceanFloorPos, camPos);

@@ -4,7 +4,7 @@ in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In ;
 
-uniform float time;
+uniform float time; ///< Current time.
 
 layout(binding = 0) uniform sampler2D colorTexture; ///< Color to output.
 layout(binding = 1) uniform sampler2D posTexture; ///< Position to output.
@@ -13,7 +13,7 @@ layout(binding = 3) uniform sampler2D normalMap; ///< Position to output.
 
 layout(location = 0) out vec3 fragColor; ///< Color.
 
-/** Just pass the input image as-is, without any resizing. */
+/** Copy the scene, applying moving caustics. */
 void main(){
 	vec3 fragPos = textureLod(posTexture, In.uv, 0.0).xyz;
 	// Compute world-space based UV coordinates.

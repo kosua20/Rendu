@@ -2,25 +2,27 @@
 
 #include "gerstner_waves.glsl"
 
-layout(quads, fractional_even_spacing) in;
+layout(quads, fractional_even_spacing) in; ///< Output quads with smooth transitions.
 
-uniform mat4 mvp;
-uniform float time;
+uniform mat4 mvp; ///< Transformation matrix.
+uniform float time; ///< Elapsed time.
 
+/** Gerstner waves parameters buffer. */
 layout(std140, binding = 0) uniform Waves {
-	Wave waves[8];
+	Wave waves[8]; ///< Waves parameters.
 };
 
 in INTERFACE {
-	vec3 pos;
+	vec3 pos; ///< World position.
 } In[] ;
 
 out INTERFACE {
-	vec3 pos;
-	vec3 srcPos;
-	vec3 prevPos;
+	vec3 pos; ///< World space position.
+	vec3 srcPos; ///< World space position before waves perturbation.
+	vec3 prevPos; ///< World space position before small scale waves perturbation.
 } Out ;
 
+/** Apply Gerstner waves pertubrations to ocean plane. */
 void main(){
 
 	// Initial position.

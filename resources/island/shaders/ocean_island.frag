@@ -3,48 +3,52 @@
 #include "gerstner_waves.glsl"
 
 in INTERFACE {
-	vec3 pos;
-	vec3 srcPos;
-	vec3 prevPos;
+	vec3 pos; ///< World position.
+	vec3 srcPos; ///< World position before waves perturbation.
+	vec3 prevPos; ///< World position before small scale waves perturbation.
 } In ;
 
-uniform vec3 camPos;
-uniform bool debugCol;
-uniform float time;
-uniform bool distantProxy;
-uniform vec2 invTargetSize;
-uniform float waterGridHalf;
-uniform float groundGridHalf;
-uniform vec3 shift;
-uniform float invTexelSize;
-uniform float invMapSize;
-uniform bool underwater;
-uniform bool useTerrain;
+uniform vec3 camPos; ///< Camera world position.
+uniform bool debugCol; ///< Use debug color instead of shading.
+uniform float time; ///< Elapsed time.
+uniform bool distantProxy; ///< Are we currently rendering the distant proxy.
+uniform vec2 invTargetSize; ///< Destination framebuffer size.
+uniform float waterGridHalf; ///< Half-size of the water grid.
+uniform float groundGridHalf; ///< Half-size of the terrain grid.
+uniform float invTexelSize; ///< Size of a terrain map texel in world space.
+uniform float invMapSize; ///< Inverse terrain map size.
+uniform bool underwater; ///< Is the camera underwater.
+uniform bool useTerrain; ///< Is the terrain currently renderer (for shadows)
 
-layout(binding = 0) uniform sampler2D foamMap;
-layout(binding = 1) uniform sampler2D terrainColor;
-layout(binding = 2) uniform sampler2D terrainPos;
-layout(binding = 3) uniform sampler2D terrainColorBlur;
-layout(binding = 4) uniform sampler2D absorpScatterLUT;
-layout(binding = 5) uniform sampler2D waveNormals;
-layout(binding = 6) uniform samplerCube envmap;
-layout(binding = 7) uniform sampler2D brdfCoeffs;
-layout(binding = 8) uniform sampler2D shadowMap;
+layout(binding = 0) uniform sampler2D foamMap; ///< Foam effects map.
+layout(binding = 1) uniform sampler2D terrainColor; ///< Shaded terrain with effects.
+layout(binding = 2) uniform sampler2D terrainPos; ///< Terrain world position map.
+layout(binding = 3) uniform sampler2D terrainColorBlur; ///< Blurred shaded terrain.
+layout(binding = 4) uniform sampler2D absorpScatterLUT; ///< Ocean absorption/scattering look-up table.
+layout(binding = 5) uniform sampler2D waveNormals; ///< Waves normal map.
+layout(binding = 6) uniform samplerCube envmap; ///< Environment map.
+layout(binding = 7) uniform sampler2D brdfCoeffs; ///< Linearized BRDF look-up table.
+layout(binding = 8) uniform sampler2D shadowMap; ///< Terrain shadow map (ocean level in the G channel).
 
+/** Gerstner waves parameters. */
 layout(std140, binding = 0) uniform Waves {
-	Wave waves[8];
+	Wave waves[8]; ///< Gerstner waves.
 };
 
-layout (location = 0) out vec3 fragColor;
-layout (location = 1) out vec3 fragWorldPos;
+layout (location = 0) out vec3 fragColor; ///< Water shading.
+layout (location = 1) out vec3 fragWorldPos; ///< Ocean world position.
 
+/** Evaluate Fresnel coefficient for air/water interface.
+ \param NdotV angle difference between the surface normal and the view direction
+ \return the Fresnel coefficient
+ */
 float fresnelWater(float NdotV){
 	// F0 = ((eta_air - eta_water) / (eta_air + eta_water))^2
 	const float F0 = 0.0200593122;
 	return F0 + (1.0 - F0) * pow(1.0 - NdotV, 5.0);
 }
 
-/** Shade the object, applying lighting. */
+/** Ocean shading, applying absorption, scattering, foam, waves shading. */
 void main(){
 
 	vec3 worldPos;
@@ -105,12 +109,7 @@ void main(){
 		float distWeight = exp(-dist2*pow(i+biasGerstner, 2.0)/adjust);
 		gerstnerFrame(waves[i], prevPos, time, tn, bn, nn, distWeight);
 	}
-	tn.z += 1.0;
-	bn.x += 1.0;
-	nn.y += 1.0;
-	nn = normalize(nn);
-	bn = normalize(bn);
-	tn = normalize(tn);
+	gerstnerFrameFinalize(tn, bn, nn);
 	mat3 tbn = mat3(tn, bn, nn);
 
 	vec3 floorColor = vec3(0.0);
