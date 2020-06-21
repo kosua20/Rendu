@@ -501,50 +501,52 @@ private:
 };
 
 /**
- \beif Internal GPU state ; not all API options are exposed, only the one that can be toggled in Rendu.
+ \brief Internal GPU state ; not all API options are exposed, only these that can be toggled in Rendu.
+ \note This is only provided as a read-only state. Modifying attributes won't affect the current GPU state.
  \ingroup Graphics
  */
 class GPUState {
 public:
+
 	// Blend state.
-	glm::vec4 blendColor = glm::vec4(0.0f);
-	BlendFunction blendSrcRGB;
-	BlendFunction blendSrcAlpha;
-	BlendFunction blendDstRGB;
-	BlendFunction blendDstAlpha;
-	BlendEquation blendEquationRGB;
-	BlendEquation blendEquationAlpha;
-	bool blend			 = false;
+	glm::vec4 blendColor {0.0f}; ///< Blend color for constant blend mode.
+	BlendFunction blendSrcRGB; ///< Blending source type for RGB channels.
+	BlendFunction blendSrcAlpha; ///< Blending source type for alpha channel.
+	BlendFunction blendDstRGB; ///< Blending destination type for RGB channels.
+	BlendFunction blendDstAlpha; ///< Blending destination type for alpha channel.
+	BlendEquation blendEquationRGB; ///< Blending equation for RGB channels.
+	BlendEquation blendEquationAlpha; ///< Blending equation for alpha channel.
+	bool blend = false; ///< Blending enabled or not.
 
 	// Color state.
-	glm::vec4 colorClearValue = glm::vec4(0.0f);
-	glm::bvec4 colorWriteMask = glm::bvec4(false);
-	bool framebufferSRGB = false;
+	glm::vec4 colorClearValue {0.0f}; ///< Color for clearing framebuffer.
+	glm::bvec4 colorWriteMask {false}; ///< Which channels should be written to when rendering.
+	bool framebufferSRGB = false; ///< Framebuffer sRGB conversion enabled or not.
 
 	// Geometry state.
-	Faces cullFaceMode = Faces::ALL;
-	bool cullFace	  = false;
-	float polygonOffsetFactor = 0.0f;
-	float polygonOffsetUnits = 0.0f;
-	bool polygonOffsetFill	= false;
-	bool polygonOffsetLine	= false;
-	bool polygonOffsetPoint = false;
+	Faces cullFaceMode = Faces::ALL; ///< Which faces should be culled.
+	float polygonOffsetFactor = 0.0f; ///< Polygon offset depth scaling.
+	float polygonOffsetUnits = 0.0f; ///< Polygon offset depth shifting.
+	bool polygonOffsetFill	= false; ///< Is polygon offset enabled for points or not.
+	bool polygonOffsetLine	= false; ///< Is polygon offset enabled for lines or not.
+	bool polygonOffsetPoint = false; ///< Is polygon offset enabled for faces or not.
+	bool cullFace	  = false; ///< Is backface culling enabled or not.
 
 	// Depth state.
-	float depthClearValue = 0.0f;
-	DepthEquation depthFunc;
-	glm::vec2 depthRange = glm::vec2(0.0f);
-	bool depthTest	= false;
-	bool depthClamp	  = false;
-	bool depthWriteMask	 = false;
+	glm::vec2 depthRange {0.0f}; ///< Depth value valid range.
+	DepthEquation depthFunc; ///< Depth test function.
+	float depthClearValue = 0.0f; ///< Depth for clearing depth buffer.
+	bool depthTest	= false; ///< Is depth test enabled or not.
+	bool depthClamp	  = false; ///< Should depth be clamped to the valid range or not.
+	bool depthWriteMask	 = false; ///< Should depth be written to the depth buffer or not.
 
 	// Point state.
-	float pointSize		  = 0.0f;
-	bool programPointSize	= false;
+	float pointSize		  = 0.0f; ///< Fixed point size value.
+	bool programPointSize	= false; ///< Can the point size be defined in the vertex shader.
 
 	// Viewport and scissor state.
-	glm::vec4 viewport {0.0f};
-	glm::vec4 scissorBox {0.0f};
-	bool scissorTest		   = false;
+	glm::vec4 viewport {0.0f}; ///< Current viewport region.
+	glm::vec4 scissorBox {0.0f}; ///< Current scissor region.
+	bool scissorTest = false; ///< Is geometry tested against the scissor region or not.
 
 };

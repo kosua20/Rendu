@@ -11,8 +11,8 @@ Framebuffer::Framebuffer(uint width, uint height, const std::vector<Descriptor> 
 	Framebuffer(TextureShape::D2, width, height, 1, 1, descriptors, depthBuffer, name) {
 }
 
-Framebuffer::Framebuffer(TextureShape shape, uint width, uint height, uint depth, uint mips, const std::vector<Descriptor> & descriptors, bool depthBuffer, const std::string & name) :
-	_width(width), _height(height), _name(name) {
+Framebuffer::Framebuffer(TextureShape shape, uint width, uint height, uint depth, uint mips, const std::vector<Descriptor> & descriptors, bool depthBuffer, const std::string & name) : _name(name), 
+	_width(width), _height(height) {
 
 	// Check that the shape is supported.
 	_shape = shape;

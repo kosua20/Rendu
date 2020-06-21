@@ -286,6 +286,9 @@ public:
 	 */
 	static void setPolygonState(PolygonMode mode, Faces selectedFaces);
 
+	/** Query the current GPU state.
+	 \param state will be populated with the current GPU settings
+	 */
 	static void getState(GPUState & state);
 
 	/** Blit the content of a depthbuffer into another one.

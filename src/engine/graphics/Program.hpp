@@ -44,8 +44,8 @@ public:
 	 \param vertexContent the content of the vertex shader
 	 \param fragmentContent the content of the fragment shader
 	 \param geometryContent the content of the geometry shader (can be empty)
-	 \param tesselControlContent the content of the tessellation control shader (can be empty)
-	 \param tesselEvalContent the content of the tessellation evaluation shader (can be empty)
+	 \param tessControlContent the content of the tessellation control shader (can be empty)
+	 \param tessEvalContent the content of the tessellation evaluation shader (can be empty)
 	 */
 	Program(const std::string & name, const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent = "", const std::string & tessControlContent = "", const std::string & tessEvalContent = "");
 
@@ -54,8 +54,8 @@ public:
 	 \param vertexContent the content of the vertex shader
 	 \param fragmentContent the content of the fragment shader
 	 \param geometryContent the content of the geometry shader (can be empty)
-	 \param tesselControlContent the content of the tessellation control shader (can be empty)
-	 \param tesselEvalContent the content of the tessellation evaluation shader (can be empty)
+	 \param tessControlContent the content of the tessellation control shader (can be empty)
+	 \param tessEvalContent the content of the tessellation evaluation shader (can be empty)
 	 */
 	void reload(const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, const std::string & tessControlContent = "", const std::string & tessEvalContent = "");
 

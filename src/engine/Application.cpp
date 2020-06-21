@@ -42,7 +42,7 @@ void Application::update() {
 	}
 
 	// Display debug informations.
-	if(Input::manager().pressed(Input::Key::LeftControl) && Input::manager().triggered(Input::Key::Tab)) {
+	if((Input::manager().pressed(Input::Key::LeftControl) || Input::manager().pressed(Input::Key::LeftAlt)) && Input::manager().triggered(Input::Key::Tab)) {
 		_showDebug = !_showDebug;
 	}
 	if(_showDebug && _debug) {
