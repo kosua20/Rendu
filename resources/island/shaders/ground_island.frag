@@ -23,11 +23,6 @@ void main(){
 
 	fragWorldPos = In.pos;
 
-	// Colors.
-	vec3 sandColor = vec3(1.0, 0.516, 0.188);
-	vec3 shadowColor = 0.2 * sandColor;
-	vec3 specColor = vec3(1.0, 0.642, 0.378);
-
 	// Get clean normal and height.
 	vec4 heightAndNor = textureLod(heightMap, In.uv, 0.0);
 	vec3 n = normalize(heightAndNor.yzw);
@@ -58,6 +53,14 @@ void main(){
 
 	// Shadow
 	float shadow = textureLod(shadowMap, In.uv, 0.0).r;
+	
+	// Colors.
+	float colorBlend = texture(surfaceNoise, 150.0*(In.uv + vec2(0.73, 0.19))).a;
+	vec3 sandColorDark = vec3(0.3, 0.22, 0.15);
+	vec3 sandColorLight = vec3(1.0, 0.516, 0.188);
+	vec3 sandColor = mix(sandColorLight, sandColorDark, colorBlend);
+	vec3 shadowColor = 0.2 * sandColor;
+	vec3 specColor = vec3(1.0, 0.642, 0.378);
 
 	// Tweaked diffuse.
 	float diffuse = clamp(4.0 * dot(vec3(1.0,0.3,1.0) * finalN, lightDirection), 0.0, 1.0);
@@ -67,7 +70,7 @@ void main(){
 	float F = pow(1.0 - max(dot(finalN, v), 0.0), 5.0);
 	// Specular lobe.
 	vec3 h = normalize(v + lightDirection);
-	float lobe = pow(max(dot(finalN, h), 0.0), 256.0);
+	float lobe = pow(max(dot(finalN, h), 0.0), 64.0);
 	// Extra glitter
 	vec2 glitterUV = 50.0 * In.uv + vec2(0.71, 0.23);
 	vec3 glitterN2 = normalize(texture(glitterNoise, glitterUV).rgb);
