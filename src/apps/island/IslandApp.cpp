@@ -3,6 +3,7 @@
 #include "resources/Library.hpp"
 
 IslandApp::IslandApp(RenderingConfig & config) : CameraApp(config),
+	_oceanMesh("Ocean"), _farOceanMesh("Far ocean"),
 	_surfaceNoise("surface noise"), _glitterNoise("glitter noise"),
 	 _waves(8, BufferType::UNIFORM, DataUse::STATIC)
 {

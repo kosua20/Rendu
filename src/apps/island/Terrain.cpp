@@ -3,6 +3,8 @@
 #include "graphics/GLUtilities.hpp"
 #include "graphics/ScreenQuad.hpp"
 
+Terrain::Cell::Cell(uint l, uint x, uint z) : mesh("Cell (" + std::to_string(l) + "," + std::to_string(x) + "," + std::to_string(z) + ")"), level(l) {
+}
 
 Terrain::Terrain(uint resolution, uint seed) : _gaussBlur(2, 1), _resolution(resolution), _seed(seed) {
 	generateMesh();
@@ -132,7 +134,7 @@ void Terrain::generateMesh(){
 				if(positions.empty()){
 					continue;
 				}
-				_cells.emplace_back();
+				_cells.emplace_back(lid, cellX, cellZ);
 				_cells.back().level = lid;
 				Mesh & mesh = _cells.back().mesh;
 				mesh.clean();

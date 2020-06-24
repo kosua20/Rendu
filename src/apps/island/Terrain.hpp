@@ -19,6 +19,13 @@ public:
 	struct Cell {
 		Mesh mesh; ///< The geometry covering this cell.
 		uint level; ///< The density level used to generate the mesh of this cell.
+
+		/** Constructor.
+		 \param l the level of detail
+		 \param x cell x coordinate
+		 \param z cell z coordinate
+		 */
+		Cell(uint l, uint x, uint z);
 	};
 
 	/** Constructor
