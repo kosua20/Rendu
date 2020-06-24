@@ -270,7 +270,7 @@ std::string Resources::getStringWithIncludes(const std::string& filename) {
 
 const Mesh * Resources::getMesh(const std::string & name, Storage options) {
 	if(_meshes.count(name) > 0) {
-		return &_meshes[name];
+		return &_meshes.at(name);
 	}
 
 	const std::string meshText = getString(name + ".obj");
@@ -282,7 +282,7 @@ const Mesh * Resources::getMesh(const std::string & name, Storage options) {
 	std::stringstream meshStream(meshText);
 	_meshes.emplace(std::make_pair(name, Mesh(meshStream, Mesh::Load::Indexed, name)));
 	
-	auto & mesh = _meshes[name];
+	auto & mesh = _meshes.at(name);
 	const bool forceFrame = options & Storage::FORCE_FRAME;
 	if(forceFrame && mesh.normals.empty()){
 		mesh.computeNormals();
@@ -301,7 +301,7 @@ const Mesh * Resources::getMesh(const std::string & name, Storage options) {
 		mesh.clearGeometry();
 	}
 
-	return &_meshes[name];
+	return &_meshes.at(name);
 }
 
 // Texture methods.

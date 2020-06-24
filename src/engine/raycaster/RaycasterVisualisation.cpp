@@ -115,7 +115,9 @@ void RaycasterVisualisation::createBVHMeshes(const std::vector<DisplayNode> & no
 		maxDepth = std::max(maxDepth, displayNode.depth);
 	}
 	meshes.clear();
-	meshes.resize(maxDepth + 1);
+	for(size_t did = 0; did < maxDepth + 1; ++did) {
+		meshes.emplace_back("Level " + std::to_string(did));
+	}
 	// Setup degenerate triangles for each line of a cube.
 	const std::vector<unsigned int> indices = {
 		0, 1, 0, 0, 2, 0, 1, 3, 1, 2, 3, 2, 4, 5, 4, 4, 6, 4, 5, 7, 5, 6, 7, 6, 1, 5, 1, 0, 4, 0, 2, 6, 2, 3, 7, 3};

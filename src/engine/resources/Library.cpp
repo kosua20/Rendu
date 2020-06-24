@@ -50,7 +50,7 @@ Mesh Library::generateGrid(uint resolution, float scale){
 	const int res = int(resolution);
 	const int hres = (res-1)/2;
 
-	Mesh mesh;
+	Mesh mesh("Grid-" + std::to_string(resolution) + "-" + std::to_string(scale));
 	mesh.positions.reserve(res * res);
 	mesh.texcoords.reserve(res * res);
 	mesh.normals.reserve(res * res);
@@ -74,7 +74,7 @@ Mesh Library::generateGrid(uint resolution, float scale){
 }
 
 Mesh Library::generateCylinder(uint resolution, float radius, float height){
-	Mesh mesh;
+	Mesh mesh("Cylinder-" + std::to_string(resolution) + "-" + std::to_string(radius) + "-" + std::to_string(height));
 	mesh.positions.reserve(2 * resolution);
 	mesh.texcoords.reserve(2 * resolution);
 	mesh.normals.reserve(2 * resolution);
