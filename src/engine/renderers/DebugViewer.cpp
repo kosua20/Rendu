@@ -489,6 +489,12 @@ void DebugViewer::trackDefault(const Framebuffer * buffer) {
 	_shared->track(buffer);
 }
 
+void DebugViewer::trackDefault(const Mesh * mesh) {
+	if(!_shared) {
+		return;
+	}
+	_shared->track(mesh);
+}
 
 void DebugViewer::untrackDefault(const Texture * tex) {
 	if(!_shared) {
@@ -502,4 +508,11 @@ void DebugViewer::untrackDefault(const Framebuffer * buffer) {
 		return;
 	}
 	_shared->untrack(buffer);
+}
+
+void DebugViewer::untrackDefault(const Mesh * mesh) {
+	if(!_shared) {
+		return;
+	}
+	_shared->untrack(mesh);
 }

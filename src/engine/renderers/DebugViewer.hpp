@@ -93,6 +93,11 @@ public:
 	*/
 	static void trackDefault(const Framebuffer * buffer);
 
+	/** Register a mesh for debug.
+	\param mesh the mesh to monitor
+	*/
+	static void trackDefault(const Mesh * mesh);
+
 	/** Stop monitoring a texture.
 	\param tex the texture to stop tracking
 	*/
@@ -102,6 +107,12 @@ public:
 	\param buffer the framebuffer to stop tracking
 	*/
 	static void untrackDefault(const Framebuffer * buffer);
+
+	/** Stop monitoring a mesh.
+	\param mesh the mesh to stop tracking
+	*/
+	static void untrackDefault(const Mesh * mesh);
+
 
 private:
 
