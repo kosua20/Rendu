@@ -248,6 +248,11 @@ public:
 		return _uniformInfos;
 	}
 
+	/** \return the program name */
+	const std::string & name() const {
+		return _name;
+	}
+
 	/** Copy assignment operator (disabled).
 	 \return a reference to the object assigned to
 	 */

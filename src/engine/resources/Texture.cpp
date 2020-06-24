@@ -3,8 +3,7 @@
 #include "graphics/GLUtilities.hpp"
 #include "renderers/DebugViewer.hpp"
 
-Texture::Texture(const std::string & name){
-	_name = name;
+Texture::Texture(const std::string & name) : _name(name) {
 }
 
 void Texture::upload(const Descriptor & layout, bool updateMipmaps) {
