@@ -80,6 +80,10 @@ bool BoundingBox::contains(const glm::vec3 & point) const {
 	return glm::all(glm::greaterThanEqual(point, minis)) && glm::all(glm::lessThanEqual(point, maxis));
 }
 
+bool BoundingBox::empty() const {
+	// Use the first component of minis as a canary.
+	return minis[0] == std::numeric_limits<float>::max();
+}
 
 Frustum::Frustum(const glm::mat4 & vp){
 	// We have to access rows easily, so transpose.

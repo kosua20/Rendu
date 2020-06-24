@@ -92,6 +92,9 @@ public:
 	 */
 	bool contains(const glm::vec3 & point) const;
 
+	/** \return true if no point has been added to the bounding box */
+	bool empty() const;
+
 	glm::vec3 minis = glm::vec3(std::numeric_limits<float>::max());	///< Lower-back-left corner of the box.
 	glm::vec3 maxis = glm::vec3(std::numeric_limits<float>::lowest()); ///< Higher-top-right corner of the box.
 };
