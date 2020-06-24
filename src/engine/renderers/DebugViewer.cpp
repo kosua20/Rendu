@@ -2,6 +2,7 @@
 #include "graphics/GLUtilities.hpp"
 #include "graphics/Framebuffer.hpp"
 #include "resources/Texture.hpp"
+#include "resources/Mesh.hpp"
 #include "graphics/ScreenQuad.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "system/System.hpp"
@@ -108,6 +109,43 @@ void DebugViewer::track(const Framebuffer * buffer) {
 	});
 }
 
+void DebugViewer::track(const Mesh * mesh) {
+	if(_silent) {
+		return;
+	}
+	if(!mesh->gpu) {
+		Log::Warning() << "[DebugViewer] \"" << mesh->name() << "\" has no GPU data." << std::endl;
+		return;
+	}
+	// Generate default name if empty.
+	std::string finalName = mesh->name();
+	if(finalName.empty()) {
+		finalName = "Mesh " + TextUtilities::padInt(_meshId++, 3);
+	}
+
+	// Check if this specific object already is registered, in that case just update the name.
+	for(MeshInfos & infos : _meshes) {
+		if(infos.mesh == mesh) {
+			infos.name = finalName;
+			// Sort meshes list.
+			std::sort(_meshes.begin(), _meshes.end(), [](const MeshInfos & a, const MeshInfos & b) {
+				return a.name < b.name;
+			});
+			return;
+		}
+	}
+	// Else create a new meshes infos element.
+	_meshes.emplace_back();
+	MeshInfos & infos = _meshes.back();
+	infos.name = finalName;
+	infos.mesh = mesh;
+
+	// Sort meshes list.
+	std::sort(_meshes.begin(), _meshes.end(), [](const MeshInfos & a, const MeshInfos & b) {
+		return a.name < b.name;
+	});
+}
+
 void DebugViewer::trackState(const std::string & name){
 	// Only update the state if it's currently displayed on screen,
 	// or if it's the very first time it's queried.
@@ -146,6 +184,13 @@ void DebugViewer::untrack(const Framebuffer * buffer) {
 	_framebuffers.erase(end, _framebuffers.end());
 }
 
+void DebugViewer::untrack(const Mesh * mesh) {
+	auto end = std::remove_if(_meshes.begin(), _meshes.end(), [mesh](const MeshInfos & infos) {
+		return infos.mesh == mesh;
+	});
+	_meshes.erase(end, _meshes.end());
+}
+
 void DebugViewer::interface() {
 	if(_silent) {
 		return;
@@ -174,6 +219,14 @@ void DebugViewer::interface() {
 			}
 			ImGui::EndMenu();
 		}
+		if(ImGui::BeginMenu("Meshes")) {
+			for(MeshInfos & mesh : _meshes) {
+				ImGui::PushID(mesh.mesh);
+				ImGui::MenuItem(mesh.name.c_str(), nullptr, &mesh.visible);
+				ImGui::PopID();
+			}
+			ImGui::EndMenu();
+		}
 		if(ImGui::BeginMenu("States")) {
 			for(auto & infos : _states) {
 				ImGui::MenuItem(infos.first.c_str(), nullptr, &infos.second.visible);
@@ -196,7 +249,11 @@ void DebugViewer::interface() {
 				continue;
 			}
 			displayTexture(tex, buffer.name + " - ");
+	for(MeshInfos & mesh : _meshes) {
+		if(!mesh.visible) {
+			continue;
 		}
+		displayMesh(mesh);
 	}
 	for(auto & infos : _states){
 		if(!infos.second.visible){
@@ -296,6 +353,36 @@ void DebugViewer::displayState(const std::string & name, StateInfos & infos){
 }
 
 void DebugViewer::displayTexture(Infos & tex, const std::string & prefix) {
+void DebugViewer::displayMesh(MeshInfos & mesh) {
+
+	ImGui::SetNextWindowSize(ImVec2(280, 130), ImGuiCond_Once);
+	const std::string finalWinName = "Mesh - " + mesh.name;
+
+	if(ImGui::Begin(finalWinName.c_str(), &mesh.visible)) {
+		ImGui::Columns(2);
+		ImGui::Text("Vertices: %lu", mesh.mesh->positions.size());
+		ImGui::NextColumn();
+		ImGui::Text("Normals: %lu", mesh.mesh->normals.size());
+		ImGui::NextColumn();
+		ImGui::Text("Tangents: %lu", mesh.mesh->tangents.size());
+		ImGui::NextColumn();
+		ImGui::Text("Binormals: %lu", mesh.mesh->binormals.size());
+		ImGui::NextColumn();
+		ImGui::Text("Colors: %lu", mesh.mesh->colors.size());
+		ImGui::NextColumn();
+		ImGui::Text("UVs: %lu", mesh.mesh->texcoords.size());
+		ImGui::NextColumn();
+		ImGui::Text("Indices: %lu", mesh.mesh->indices.size());
+		ImGui::Columns(0);
+		const auto & bbox = mesh.mesh->bbox;
+		if(!bbox.empty()){
+			ImGui::Text("Bbox: min: %.3f, %.3f, %.3f", bbox.minis[0], bbox.minis[1], bbox.minis[2]);
+			ImGui::Text("      max: %.3f, %.3f, %.3f", bbox.maxis[0], bbox.maxis[1], bbox.maxis[2]);
+		}
+
+	}
+	ImGui::End();
+}
 	float aspect = float(tex.tex->width) / std::max(float(tex.tex->height), 1.0f);
 	if(tex.tex->shape & TextureShape::Cube) {
 		aspect = 2.0f;

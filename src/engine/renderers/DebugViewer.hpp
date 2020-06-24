@@ -4,6 +4,7 @@
 
 class Framebuffer;
 class Texture;
+class Mesh;
 
 /**
  \brief Provide helper GUI to display the content of texture and framebuffer attachments.
@@ -29,6 +30,11 @@ public:
 	*/
 	void track(const Framebuffer * buffer);
 
+	/** Register a mesh for debug.
+	\param mesh the mesh to monitor
+	*/
+	void track(const Mesh * mesh);
+
 	/** Track the GPU state at the moment of the call. Can be called at each frame to track varying state.
 	 \param name the display name of the state
 	 */
@@ -43,6 +49,11 @@ public:
 	\param buffer the framebuffer to stop tracking
 	*/
 	void untrack(const Framebuffer * buffer);
+
+	/** Stop monitoring a mesh.
+	\param mesh the mesh to stop tracking
+	*/
+	void untrack(const Mesh * mesh);
 
 	/** Display interface and monitored data. */
 	void interface();
@@ -117,6 +128,11 @@ private:
 		const Framebuffer * buffer = nullptr; ///< The framebuffer to track.
 		std::string name; ///< The framebuffer name.
 		std::vector<Infos> attachments; ///< Color and depth attachment infos.
+	/** Mesh information. */
+	struct MeshInfos {
+		const Mesh * mesh = nullptr; ///< Mesh to track.
+		std::string name; ///< Mesh display name.
+		bool visible = false; ///< Are the mesh details displayed.
 	};
 
 	/** Monitored GPU state. */
@@ -131,6 +147,11 @@ private:
 	 \param infos the state to display
 	 */
 	void displayState(const std::string & name, StateInfos & infos);
+
+	/** Display a mesh information in a panel.
+	 \param mesh the mesh to display
+	 */
+	void displayMesh(MeshInfos & mesh);
 
 	/** Populate texture information based on an input texture.
 	\param name the name of the texture
@@ -152,11 +173,13 @@ private:
 
 	std::vector<Infos> _textures; ///< The registered textures.
 	std::vector<FramebufferInfos> _framebuffers; ///< The registered framebuffers.
+	std::vector<MeshInfos> _meshes; ///< The registered meshes.
 	std::map<std::string, StateInfos> _states; ///< GPU states currently tracked.
 
 	const Program * _texDisplay; ///< Texture display shader.
 	const bool _silent; ///< Don't register or display anything.
 	uint _textureId = 0; ///< Default texture name counter.
 	uint _bufferId	= 0; ///< Default framebuffer name counter.
+	uint _meshId    = 0; ///< Default mesh name counter.
 	uint _winId		= 0; ///< Internal window counter.
 };
