@@ -110,7 +110,7 @@ private:
 private:
 
 	/** Texture display information */
-	struct Infos {
+	struct TextureInfos {
 		const Texture * tex = nullptr; ///< The texture to display.
 		std::string name; ///< Texture name.
 		std::unique_ptr<Framebuffer> display; ///< Framebuffer used for visualization.
@@ -127,7 +127,9 @@ private:
 	struct FramebufferInfos {
 		const Framebuffer * buffer = nullptr; ///< The framebuffer to track.
 		std::string name; ///< The framebuffer name.
-		std::vector<Infos> attachments; ///< Color and depth attachment infos.
+		std::vector<TextureInfos> attachments; ///< Color and depth attachment infos.
+	};
+
 	/** Mesh information. */
 	struct MeshInfos {
 		const Mesh * mesh = nullptr; ///< Mesh to track.
@@ -158,20 +160,20 @@ private:
 	\param tex the texture to monitor
 	\param infos the information that should be populated
 	*/
-	void registerTexture(const std::string & name, const Texture * tex, Infos & infos);
+	void registerTexture(const std::string & name, const Texture * tex, TextureInfos & infos);
 
 	/** Display a texture with some helper GUI.
-	\param tex the texture information to display
 	\param prefix the display name of the texture
+	\param tex the texture information to display
 	*/
-	void displayTexture(Infos & tex, const std::string & prefix);
+	void displayTexture(const std::string & prefix, TextureInfos & tex);
 
 	/** Update the visualization associated to a texture/
 	\param tex the texture to update the display of
 	*/
-	void updateDisplay(const Infos & tex);
+	void updateDisplay(const TextureInfos & tex);
 
-	std::vector<Infos> _textures; ///< The registered textures.
+	std::vector<TextureInfos> _textures; ///< The registered textures.
 	std::vector<FramebufferInfos> _framebuffers; ///< The registered framebuffers.
 	std::vector<MeshInfos> _meshes; ///< The registered meshes.
 	std::map<std::string, StateInfos> _states; ///< GPU states currently tracked.

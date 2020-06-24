@@ -42,11 +42,11 @@ void DebugViewer::track(const Texture * tex) {
 	}
 
 	// Check if this specific object already is registered, in that case just update the name.
-	for(Infos & infos : _textures) {
+	for(TextureInfos & infos : _textures) {
 		if(infos.tex == tex) {
 			infos.name = finalName;
 			// Sort framebuffers list.
-			std::sort(_textures.begin(), _textures.end(), [](const Infos & a, const Infos & b) {
+			std::sort(_textures.begin(), _textures.end(), [](const TextureInfos & a, const TextureInfos & b) {
 				return a.name < b.name;
 			});
 			return;
@@ -57,7 +57,7 @@ void DebugViewer::track(const Texture * tex) {
 	registerTexture(finalName, tex, _textures.back());
 
 	// Sort textures list.
-	std::sort(_textures.begin(), _textures.end(), [](const Infos & a, const Infos & b) {
+	std::sort(_textures.begin(), _textures.end(), [](const TextureInfos & a, const TextureInfos & b) {
 		return a.name < b.name;
 	});
 }
@@ -147,6 +147,9 @@ void DebugViewer::track(const Mesh * mesh) {
 }
 
 void DebugViewer::trackState(const std::string & name){
+	if(_silent){
+		return;
+	}
 	// Only update the state if it's currently displayed on screen,
 	// or if it's the very first time it's queried.
 	if(_states[name].visible || !_states[name].populated){
@@ -155,7 +158,7 @@ void DebugViewer::trackState(const std::string & name){
 	}
 }
 
-void DebugViewer::registerTexture(const std::string& name, const Texture* tex, Infos& infos) {
+void DebugViewer::registerTexture(const std::string& name, const Texture* tex, TextureInfos & infos) {
 	infos.name  = name;
 	infos.tex   = tex;
 	infos.gamma = tex->gpu->descriptor().isSRGB();
@@ -171,7 +174,7 @@ void DebugViewer::registerTexture(const std::string& name, const Texture* tex, I
 
 
 void DebugViewer::untrack(const Texture * tex) {
-	auto end = std::remove_if(_textures.begin(), _textures.end(), [tex](const Infos & infos) {
+	auto end = std::remove_if(_textures.begin(), _textures.end(), [tex](const TextureInfos & infos) {
 		return infos.tex == tex;
 	});
 	_textures.erase(end, _textures.end());
@@ -199,7 +202,7 @@ void DebugViewer::interface() {
 	// Display menu bar listing all resources.
 	if(ImGui::BeginMainMenuBar()) {
 		if(ImGui::BeginMenu("Textures")) {
-			for(Infos & tex : _textures) {
+			for(TextureInfos & tex : _textures) {
 				ImGui::PushID(tex.tex);
 				ImGui::MenuItem(tex.name.c_str(), nullptr, &tex.visible);
 				ImGui::PopID();
@@ -210,7 +213,7 @@ void DebugViewer::interface() {
 			for(FramebufferInfos & buffer : _framebuffers) {
 				ImGui::PushID(buffer.buffer);
 				if(ImGui::BeginMenu(buffer.name.c_str())) {
-					for(Infos & tex : buffer.attachments) {
+					for(TextureInfos & tex : buffer.attachments) {
 						ImGui::MenuItem(tex.name.c_str(), nullptr, &tex.visible);
 					}
 					ImGui::EndMenu();
@@ -237,18 +240,20 @@ void DebugViewer::interface() {
 	}
 
 	// Display all active windows.
-	for(Infos & tex : _textures) {
+	for(TextureInfos & tex : _textures) {
 		if(!tex.visible) {
 			continue;
 		}
-		displayTexture(tex, "");
+		displayTexture("", tex);
 	}
 	for(FramebufferInfos & buffer : _framebuffers) {
-		for(Infos & tex : buffer.attachments) {
+		for(TextureInfos & tex : buffer.attachments) {
 			if(!tex.visible) {
 				continue;
 			}
-			displayTexture(tex, buffer.name + " - ");
+			displayTexture(buffer.name + " - ", tex);
+		}
+	}
 	for(MeshInfos & mesh : _meshes) {
 		if(!mesh.visible) {
 			continue;
@@ -352,7 +357,6 @@ void DebugViewer::displayState(const std::string & name, StateInfos & infos){
 	}
 }
 
-void DebugViewer::displayTexture(Infos & tex, const std::string & prefix) {
 void DebugViewer::displayMesh(MeshInfos & mesh) {
 
 	ImGui::SetNextWindowSize(ImVec2(280, 130), ImGuiCond_Once);
@@ -383,6 +387,8 @@ void DebugViewer::displayMesh(MeshInfos & mesh) {
 	}
 	ImGui::End();
 }
+
+void DebugViewer::displayTexture(const std::string & prefix, TextureInfos & tex) {
 	float aspect = float(tex.tex->width) / std::max(float(tex.tex->height), 1.0f);
 	if(tex.tex->shape & TextureShape::Cube) {
 		aspect = 2.0f;
@@ -438,7 +444,7 @@ void DebugViewer::displayMesh(MeshInfos & mesh) {
 	ImGui::End();
 }
 
-void DebugViewer::updateDisplay(const Infos & tex) {
+void DebugViewer::updateDisplay(const TextureInfos & tex) {
 
 	static const std::map<TextureShape, uint> slots = {
 		{TextureShape::D1, 0},
