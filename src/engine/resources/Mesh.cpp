@@ -1,4 +1,5 @@
 #include "resources/Mesh.hpp"
+#include "renderers/DebugViewer.hpp"
 #include "graphics/GPUObjects.hpp"
 #include "graphics/GLUtilities.hpp"
 #include "system/TextUtilities.hpp"
@@ -6,6 +7,10 @@
 #include <sstream>
 #include <fstream>
 #include <cstddef>
+
+Mesh::Mesh(const std::string & name) : _name(name) {
+
+}
 
 Mesh::Mesh(std::istream & in, Mesh::Load mode, const std::string & name) {
 	_name = name;
@@ -181,6 +186,7 @@ Mesh::Mesh(std::istream & in, Mesh::Load mode, const std::string & name) {
 
 void Mesh::upload() {
 	GLUtilities::setupMesh(*this);
+	DebugViewer::trackDefault(this);
 }
 
 void Mesh::clearGeometry() {
@@ -197,6 +203,7 @@ void Mesh::clean() {
 	bbox = BoundingBox();
 	if(gpu) {
 		gpu->clean();
+		DebugViewer::untrackDefault(this);
 	}
 }
 

@@ -18,16 +18,19 @@ public:
 		Points,   ///< Load the vertices without any connectivity
 		Indexed   ///< Duplicate only vertices that are shared between faces with attributes with different values.
 	};
+
+	/** Default constructor.
+	 \param name the mesh identifier
+	 */
+	Mesh(const std::string & name);
 	
 	/** Load an .obj file from disk into a mesh structure.
 	 \param in the input string stream from which the geometry will be loaded
 	 \param mode the preprocessing mode
-	 \param name the identifier
+	 \param name the mesh identifier
 	 */
 	Mesh(std::istream & in, Load mode, const std::string & name);
-	
-	/** Default constructor. */
-	Mesh() = default;
+
 	
 	/** Send to the GPU. */
 	void upload();
