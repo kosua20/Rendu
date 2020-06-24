@@ -50,7 +50,7 @@ struct Object {
 		 \param aName the name of the object.
 		 */
 	explicit Object(const std::string & aName) :
-		name(aName) {
+		mesh(aName), name(aName) {
 	}
 };
 

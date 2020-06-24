@@ -10,10 +10,8 @@ PaintingTool::PaintingTool(unsigned int width, unsigned int height) {
 	_canvas		 = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, {Layout::RGB8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, false, "Canvas"));
 	_visu		 = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, {Layout::RGB8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, false, "Canvas & brush"));
 
-	// Setup the mesh buffers.
-	_brushes.resize(int(Shape::COUNT));
-
 	// Generate a disk mesh.
+	_brushes.emplace_back("disk");
 	Mesh & disk				  = _brushes[0];
 	const int diskResolution  = 360;
 	const float radResolution = glm::two_pi<float>() / float(diskResolution);
@@ -36,6 +34,7 @@ PaintingTool::PaintingTool(unsigned int width, unsigned int height) {
 	disk.clearGeometry();
 
 	// Generate a square mesh.
+	_brushes.emplace_back("square");
 	Mesh & square	= _brushes[1];
 	square.positions = {{0.0f, 0.0f, 0.0f}, {-1.0f, -1.0f, 0.0f}, {1.0f, -1.0f, 0.0f}, {1.0f, 1.0f, 0.0f}, {-1.0f, 1.0f, 0.0f}};
 	square.indices   = {0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 1};
@@ -43,6 +42,7 @@ PaintingTool::PaintingTool(unsigned int width, unsigned int height) {
 	square.clearGeometry();
 
 	// Generate a diamond mesh.
+	_brushes.emplace_back("diamond");
 	Mesh & diamond	= _brushes[2];
 	diamond.positions = {{0.0f, 0.0f, 0.0f}, {-1.41f, 0.0f, 0.0f}, {0.0f, -1.41f, 0.0f}, {1.41f, 0.0f, 0.0f}, {0.0f, 1.41f, 0.0f}};
 	diamond.indices   = {0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 1};

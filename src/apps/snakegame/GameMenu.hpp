@@ -104,7 +104,7 @@ public:
 	 */
 	void update(const std::string & text);
 
-	Mesh mesh;							   ///< Label mesh.
+	Mesh mesh = Mesh("");				   ///< Label mesh.
 	glm::vec2 pos		= glm::vec2(0.0f); ///< Label position.
 	const Texture * tid = nullptr;		   ///< Font texture shortcut.
 

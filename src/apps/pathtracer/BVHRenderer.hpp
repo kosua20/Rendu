@@ -65,7 +65,7 @@ private:
 	const Program * _bvhProgram;	///< BVH visualisation program.
 	std::vector<Mesh> _bvhLevels;   ///< The BVH visualisation mesh.
 	std::vector<Mesh> _rayLevels;   ///< BVH nodes intersected with a ray.
-	Mesh _rayVis;					///< Mesh representing a ray and its intersected triangle.
+	Mesh _rayVis = Mesh("rayVis");	///< Mesh representing a ray and its intersected triangle.
 	
 	std::shared_ptr<Scene> _scene;						 ///< The scene to render.
 	std::unique_ptr<RaycasterVisualisation> _visuHelper; ///< Helper for raycaster internal data visualisation.
