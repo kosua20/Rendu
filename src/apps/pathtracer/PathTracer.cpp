@@ -84,8 +84,10 @@ glm::vec2 PathTracer::getSamplePosition(size_t sid, const glm::ivec2 & cellCount
 glm::mat3 PathTracer::buildLocalFrame(const Object & obj, const Raycaster::Hit & hit, const glm::vec3 & rayDir, const glm::vec2 & uv){
 	const auto & mesh = *obj.mesh();
 	const glm::vec3 n = glm::normalize(Raycaster::interpolateAttribute(hit, mesh, mesh.normals));
-	const glm::vec3 t = glm::normalize(Raycaster::interpolateAttribute(hit, mesh, mesh.tangents));
-	const glm::vec3 b = glm::normalize(Raycaster::interpolateAttribute(hit, mesh, mesh.binormals));
+	glm::vec3 t = glm::normalize(Raycaster::interpolateAttribute(hit, mesh, mesh.tangents));
+	// Ensure that the resulting frame is orthogonal.
+	const glm::vec3 b = glm::normalize(glm::cross(n, t));
+	t = glm::normalize(glm::cross(b, n));
 	// Convert to world frame.
 	const glm::mat3 invtp = glm::inverse(glm::transpose(glm::mat3(obj.model())));
 	// From tangent space to world space.
