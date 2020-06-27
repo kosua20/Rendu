@@ -79,7 +79,7 @@ public:
 		
 		if(ImGui::Begin("Atmosphere")){
 			ImGui::Text("%.1f ms, %.1f fps", frameTime() * 1000.0f, frameRate());
-			if(ImGui::DragFloat3("Light dir", &_lightDirection[0], 0.05f, -1.0f, 1.0f)) {
+			if(ImGui::DragFloat3("Light dir", &_lightDirection[0], 0.005f, -1.0f, 1.0f)) {
 				_lightDirection = glm::normalize(_lightDirection);
 			}
 		}
