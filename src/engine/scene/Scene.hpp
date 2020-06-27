@@ -25,8 +25,9 @@ public:
 
 	/** Performs initialization against the graphics API, loading data.
 	 \param options data loading and storage options.
+	 \return the initialization success
 	 */
-	void init(Storage options);
+	bool init(Storage options);
 
 	/** Update the animations in the scene.
 	 \param fullTime the time elapsed since the beginning of the render loop

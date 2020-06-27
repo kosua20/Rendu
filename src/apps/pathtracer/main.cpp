@@ -87,7 +87,9 @@ void renderOneShot(const PathTracerConfig & config) {
 	// Load geometry and create raycaster.
 	std::shared_ptr<Scene> scene(new Scene(config.scene));
 	// For offline renders we only need the CPU data.
-	scene->init(Storage::CPU | Storage::FORCE_FRAME);
+	if(!scene->init(Storage::CPU | Storage::FORCE_FRAME)) {
+		return;
+	}
 
 	// Create the result image.
 	Image render(config.size.x, config.size.y, 3);

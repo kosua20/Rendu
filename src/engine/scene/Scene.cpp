@@ -29,9 +29,9 @@ void printToken(const KeyValues & tk, const std::string & shift) {
 	}
 }
 
-void Scene::init(Storage options) {
+bool Scene::init(Storage options) {
 	if(_loaded) {
-		return;
+		return true;
 	}
 
 	Query timer;
@@ -43,6 +43,9 @@ void Scene::init(Storage options) {
 
 	// Parse the file.
 	const std::string sceneFile			   = Resources::manager().getString(_name);
+	if(sceneFile.empty()) {
+		return false;
+	}
 	const std::vector<KeyValues> allParams = Codable::decode(sceneFile);
 
 	// Process each group of keyvalues.
@@ -88,6 +91,7 @@ void Scene::init(Storage options) {
 
 	timer.end();
 	Log::Info() << Log::Resources << "Loading took " << (float(timer.value())/1000000.0f) << "ms." << std::endl;
+	return true;
 }
 
 void Scene::loadObject(const KeyValues & params, Storage options) {
