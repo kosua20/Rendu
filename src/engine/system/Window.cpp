@@ -17,9 +17,11 @@ Window::Window(const std::string & name, RenderingConfig & config, bool escapeQu
 		Log::Error() << Log::OpenGL << "Could not start GLFW3" << std::endl;
 		return;
 	}
+	const int openGLMajor = 4;
+	const int openGLMinor = 0;
 
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, openGLMajor);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, openGLMinor);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_VISIBLE, hidden ? GLFW_FALSE : GLFW_TRUE);
@@ -54,8 +56,8 @@ Window::Window(const std::string & name, RenderingConfig & config, bool escapeQu
 		Log::Error() << Log::OpenGL << "Failed to initialize OpenGL" << std::endl;
 		return;
 	}
-	if(!gl3wIsSupported(3, 2)) {
-		Log::Error() << Log::OpenGL << "OpenGL 3.2 not supported\n"
+	if(!gl3wIsSupported(openGLMajor, openGLMinor)) {
+		Log::Error() << Log::OpenGL << "OpenGL " << openGLMajor << "." << openGLMinor << " not supported\n"
 					 << std::endl;
 		return;
 	}
