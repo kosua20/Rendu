@@ -230,6 +230,12 @@ void DeferredRenderer::interface(){
 		ImGui::Combo("Blur quality", reinterpret_cast<int*>(&_ssaoPass->quality()), "Low\0Medium\0High\0\0");
 		ImGui::InputFloat("Radius", &_ssaoPass->radius(), 0.5f);
 	}
+}
 
+const Framebuffer * DeferredRenderer::sceneDepth() const {
+	return _gbuffer.get();
+}
 
+const Texture * DeferredRenderer::sceneNormal() const {
+	return _gbuffer->texture(1);
 }

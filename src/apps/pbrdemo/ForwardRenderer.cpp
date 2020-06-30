@@ -265,3 +265,11 @@ void ForwardRenderer::interface(){
 		ImGui::InputFloat("Radius", &_ssaoPass->radius(), 0.5f);
 	}
 }
+
+const Framebuffer * ForwardRenderer::sceneDepth() const {
+	return _sceneFramebuffer.get();
+}
+
+const Texture * ForwardRenderer::sceneNormal() const {
+	return _sceneFramebuffer->texture(2);
+}

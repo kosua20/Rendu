@@ -170,14 +170,14 @@ void PBRDemo::draw() {
 	}
 	_rendererTime.end();
 
-	const Framebuffer & depthSrc = _mode == RendererMode::FORWARD ? _forRenderer->depthFramebuffer() : _defRenderer->depthFramebuffer();
+	const Framebuffer * depthSrc = _mode == RendererMode::FORWARD ? _forRenderer->sceneDepth() : _defRenderer->sceneDepth();
 
 	_postprocessTime.begin();
-	_postprocess->process(_finalRender->texture(), _userCamera.projection(), depthSrc.depthBuffer(), *_finalRender);
+	_postprocess->process(_finalRender->texture(), _userCamera.projection(), depthSrc->depthBuffer(), *_finalRender);
 	_postprocessTime.end();
 
 	if(_showDebug){
-		GLUtilities::blitDepth(depthSrc, *_finalRender);
+		GLUtilities::blitDepth(*depthSrc, *_finalRender);
 		_debugRenderer->draw(_userCamera, *_finalRender);
 	}
 

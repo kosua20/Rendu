@@ -46,9 +46,10 @@ public:
 	void interface() override;
 
 	/** \return the framebuffer containing the scene depth information */
-	const Framebuffer & depthFramebuffer() const {
-		return *_sceneFramebuffer;
-	}
+	const Framebuffer * sceneDepth() const;
+
+	/** \return the texture containing the scene normal information */
+	const Texture * sceneNormal() const;
 	
 private:
 
