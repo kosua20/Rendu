@@ -1,5 +1,7 @@
 #version 400
 
+#include "colors.glsl"
+
 in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In ;
@@ -16,14 +18,6 @@ uniform vec2 inverseScreenSize; ///< Size of one-pixel in UV space.
 
 // Output: the fragment color
 layout(location = 0) out vec3 fragColor; ///< Color.
-
-/** Evalute the luma value in perceptual space for a given RGB color in linear space.
-\param rgb the input RGB color
-\return the perceptual luma
-*/
-float rgb2luma(vec3 rgb){
-	return sqrt(dot(rgb, vec3(0.299, 0.587, 0.114)));
-}
 
 /** Performs FXAA post-process anti-aliasing as described in the Nvidia FXAA white paper and the associated shader code.
 */
