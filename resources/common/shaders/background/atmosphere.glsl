@@ -3,7 +3,7 @@
 const float atmosphereGroundRadius = 6371e3; ///< Radius of the planet.
 const float atmosphereTopRadius = 6471e3; ///< Radius of the atmosphere.
 const float sunIntensity = 20.0; ///< Sun intensity.
-const vec3 sunColor = vec3(1.474, 1.8504, 1.91198); ///< Sun direct color.
+const vec3 defaultSunColor = vec3(1.474, 1.8504, 1.91198); ///< Sun direct color.
 const vec3 kRayleigh = vec3(5.5e-6, 13.0e-6, 22.4e-6); ///< Rayleigh coefficients.
 const float kMie = 21e-6; ///< Mie coefficients.
 const float heightRayleigh = 8000.0; ///< Mie characteristic height.
@@ -62,10 +62,11 @@ float miePhase(float cosAngle){
 	\param rayOrigin the ray origin
 	\param rayDir the ray direction
 	\param sunDir the light direction
+	\param sunColor the color of the sun disk itself
 	\param scatterTable the precomputed secondary scattering lookup table
 	\return the estimated radiance
 */
-vec3 computeAtmosphereRadiance(vec3 rayOrigin, vec3 rayDir, vec3 sunDir, sampler2D scatterTable){
+vec3 computeAtmosphereRadiance(vec3 rayOrigin, vec3 rayDir, vec3 sunDir, vec3 sunColor, sampler2D scatterTable) {
 	// Check intersection with atmosphere.
 	vec2 interTop, interGround;
 	bool didHitTop = intersects(rayOrigin, rayDir, atmosphereTopRadius, interTop);
