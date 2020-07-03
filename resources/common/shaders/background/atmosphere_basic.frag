@@ -9,6 +9,7 @@ in INTERFACE {
 uniform mat4 clipToWorld; ///< Clip-to-world space transformation matrix.
 uniform vec3 viewPos; ///< The position in view space.
 uniform vec3 lightDirection; ///< The light direction in world space.
+uniform float altitude; ///< height above the planet surface.
 
 layout(binding = 0) uniform sampler2D precomputedScattering; ///< Secondary scattering lookup table.
 
@@ -21,7 +22,7 @@ void main(){
 	// Then to world space.
 	vec3 viewRay = normalize((clipToWorld * clipVertex).xyz);
 	// We then move to the planet model space, where its center is in (0,0,0).
-	vec3 planetSpaceViewPos = viewPos + vec3(0,atmosphereGroundRadius,0) + vec3(0.0,1.0,0.0);
+	vec3 planetSpaceViewPos = viewPos + vec3(0.0, atmosphereGroundRadius, 0.0) + vec3(0.0, altitude, 0.0);
 	vec3 atmosphereColor = computeAtmosphereRadiance(planetSpaceViewPos, viewRay, lightDirection, defaultSunColor, precomputedScattering);
 	fragColor = atmosphereColor;
 }

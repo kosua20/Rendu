@@ -62,6 +62,7 @@ public:
 		_atmosphere->uniform("clipToWorld", clipToWorld);
 		_atmosphere->uniform("viewPos", _userCamera.position());
 		_atmosphere->uniform("lightDirection", _lightDirection);
+		_atmosphere->uniform("altitude", _altitude);
 		ScreenQuad::draw(_precomputedScattering);
 		_atmosphereBuffer->unbind();
 		
@@ -82,6 +83,7 @@ public:
 			if(ImGui::DragFloat3("Light dir", &_lightDirection[0], 0.005f, -1.0f, 1.0f)) {
 				_lightDirection = glm::normalize(_lightDirection);
 			}
+			ImGui::DragFloat("Altitude", &_altitude, 10.0f, 0.0f, 0.0f, "%.0fm", 2.0f);
 		}
 		ImGui::End();
 	}
@@ -97,6 +99,7 @@ private:
 	const Program * _tonemap; ///< Tonemapping shader.
 	const Texture * _precomputedScattering; ///< Precomputed lookup table.
 	glm::vec3 _lightDirection; ///< Sun light direction.
+	float _altitude = 1.0f; ///< View altitude above the planet surface.
 };
 
 /**
