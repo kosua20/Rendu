@@ -29,27 +29,29 @@ void main(){
 	vec3 v = normalize(camPos - fragWorldPos);
 
 	// Transition weight between planar and steep regions, for both X and Z orientations.
-	float wFlat = pow(abs(n.y), 50.0);
+	float wFlat = pow(abs(n.y), 8.0);
 	float wXdir = abs(n.y) > 0.99 ? 0.0 : (abs(n.x)/sqrt(1.0-n.y*n.y));
+	vec3 blend = vec3(wXdir*(1.0-wFlat), wFlat, (1.0-wXdir)*(1.0-wFlat));
 
 	// Sand normal map, blended.
-	vec2 mapsUv = 130.0 * In.uv;
-	vec3 nSteepX = normalize(texture(sandMapSteep, mapsUv).rgb * 2.0 - 1.0);
-	vec3 nSteepZ = normalize(texture(sandMapSteep, mapsUv.yx).rgb * 2.0 - 1.0);
-	vec3 nFlat  = normalize(texture(sandMapFlat, mapsUv).rgb * 2.0 - 1.0);
-	vec3 nSteep = normalize(mix(nSteepZ, nSteepX, wXdir));
-	vec3 nMap = normalize(mix(nSteep, nFlat, wFlat));
+	vec3 mapsUV = 3.0*fragWorldPos;
+	vec2 mapsUvX = mapsUV.yz;
+	vec2 mapsUvY = mapsUV.zx;
+	vec2 mapsUvZ = mapsUV.yx;
+
+	vec3 nSandX = normalize(texture(sandMapSteep, mapsUvX).rgb * 2.0 - 1.0);
+	vec3 nSandZ = normalize(texture(sandMapSteep, mapsUvZ).rgb * 2.0 - 1.0);
+	vec3 nSandY = normalize(texture(sandMapFlat, mapsUvY).rgb * 2.0 - 1.0);
+
+	nSandX = vec3(nSandX.xy + n.zy, abs(nSandX.z) * n.x);
+	nSandY = vec3(nSandY.xy + n.xz, abs(nSandY.z) * n.y);
+	nSandZ = vec3(nSandZ.xy + n.xy, abs(nSandZ.z) * n.z);
+
+	vec3 nMap = normalize(nSandX.zyx * blend.x + nSandY.xzy * blend.y + nSandZ.xyz * blend.z);
 
 	// Add extra perturbation.
 	vec3 surfN = normalize(texture(surfaceNoise, 200.0*In.uv).rgb);
-	vec3 baseN = normalize(mix(nMap, surfN, 0.5));
-
-	// Build an arbitrary normal frame and map local normal.
-	vec3 tn = abs(n.y) < 0.01 ? vec3(0.0,1.0,0.0) : vec3(1.0, 0.0, 0.0);
-	vec3 bn = normalize(cross(n, tn));
-	tn = normalize(cross(bn, n));
-	mat3 tbn = mat3(tn, bn, n);
-	vec3 finalN = normalize(tbn * baseN);
+	vec3 finalN = normalize(vec3(nMap.xy + surfN.xy, nMap.z*surfN.z));
 
 	// Shadow
 	float shadow = textureLod(shadowMap, In.uv, 0.0).r;
@@ -63,7 +65,7 @@ void main(){
 	vec3 specColor = vec3(1.0, 0.642, 0.378);
 
 	// Tweaked diffuse.
-	float diffuse = clamp(4.0 * dot(vec3(1.0,0.3,1.0) * finalN, lightDirection), 0.0, 1.0);
+	float diffuse = clamp(2.0 * dot(vec3(1.0,0.3,1.0) * finalN, lightDirection), 0.0, 1.0);
 	vec3 color = mix(shadowColor, sandColor, shadow * diffuse);
 
 	// Fresnel.
@@ -77,7 +79,7 @@ void main(){
 	vec3 lightBounce = reflect(-lightDirection, glitterN2);
 	float glit = smoothstep(0.9, 1.0, dot(lightBounce, v));
 	// Total specular.
-	vec3 spec = (shadow * 0.9 + 0.1) * (F * specColor + lobe * specColor + 2.0 * glit * specColor);
+	vec3 spec = (shadow * 0.9 + 0.1) * (F * specColor + lobe * specColor + glit * specColor);
 	
 	color += spec;
 	
