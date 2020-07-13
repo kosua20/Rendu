@@ -26,7 +26,7 @@ void main(){
 	}
 
 	vec2 wh = textureSize(heightMap, 0).xy;
-	float hStart = texelFetch(heightMap, ivec2(In.uv * wh), 0).r;
+	float hStart = textureLod(heightMap, In.uv, 0.0).r;
 
 	// Compute ray height.
 	bool occGround = false;
@@ -40,12 +40,11 @@ void main(){
 		vec3 pos = initPos + (float(i)) * texelSize * lDir;
 		// Reproject onto the texture plane.
 		vec2 grPos = pos.xz / texSize + 0.5;
-		ivec2 pixPos = ivec2(grPos * wh);
-		if(any(lessThan(pixPos, ivec2(0))) || any(greaterThanEqual(pixPos, ivec2(wh)))){
+		if(any(lessThan(grPos, vec2(0.0))) || any(greaterThanEqual(grPos, vec2(1.0)))){
 			break;
 		}
 		// Read corresponding height and compare, for both the ground and water height.
-		float hRef = texelFetch(heightMap, pixPos, 0).r;
+		float hRef = textureLod(heightMap, grPos, 0.0).r;
 		if(pos.y < hRef){
 			occGround = true;
 		}
