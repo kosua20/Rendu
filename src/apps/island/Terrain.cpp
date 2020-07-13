@@ -395,7 +395,7 @@ void Terrain::transferAndUpdateMap(Image & heightMap){
 			const float & h10 = _map.images[0].r(pixi.x,  pix.y);
 			const float & h01 = _map.images[0].r( pix.x, pixi.y);
 			const float & h11 = _map.images[0].r(pixi.x, pixi.y);
-			_mapLowRes.images[0].r(x,y) = std::min(std::min(h00, h01), std::min(h10, h11));
+			_mapLowRes.images[0].r(x,y) = std::max(std::max(h00, h01), std::max(h10, h11));
 		}
 	}
 	_mapLowRes.upload({Layout::R32F, Filter::LINEAR_NEAREST, Wrap::CLAMP}, false);
