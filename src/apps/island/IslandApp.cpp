@@ -32,7 +32,7 @@ IslandApp::IslandApp(RenderingConfig & config) : CameraApp(config),
 	_tonemap = Resources::manager().getProgram2D("tonemap");
 
 	// Sun direction.
-	_lightDirection = glm::normalize(glm::vec3(0.437f, 0.482f, -0.896f));
+	_lightDirection = glm::normalize(glm::vec3(0.660619f, 0.660619f, -0.661131f));//0.437f, 0.482f, -0.896f));
 	_skyMesh = Resources::manager().getMesh("plane", Storage::GPU);
 
 	// Ground.
@@ -436,10 +436,24 @@ void IslandApp::update() {
 		ImGui::Text("%.1f ms, %.1f fps", frameTime() * 1000.0f, frameRate());
 		ImGui::Text("Rendering res.: %ux%u", _sceneBuffer->width(), _sceneBuffer->height());
 		ImGui::Text("Ground: %llu primitives, ocean: %llu primitives ", _primsGround.value(), _primsOcean.value());
-		if(ImGui::DragFloat3("Light dir", &_lightDirection[0], 0.001f, -1.0f, 1.0f)) {
-			_lightDirection = glm::normalize(_lightDirection);
+
+		// Light parameters.
+		ImGui::PushItemWidth(120);
+		if(ImGui::DragFloat("Azimuth", &_lightAzimuth, 1.0f, 0.0f, 360.0f, "%.1f°")){
+			_lightAzimuth = glm::clamp(_lightAzimuth, 0.0f, 360.0f);
 			_shouldUpdateSky = true;
 		}
+		ImGui::SameLine();
+		if(ImGui::DragFloat("Elevation", &_lightElevation, 1.0f, -15.0f, 90.0f, "%.1f°")){
+			_lightElevation = glm::clamp(_lightElevation, -15.0f, 90.0f);
+			_shouldUpdateSky = true;
+		}
+		if(_shouldUpdateSky){
+			const float elevRad = _lightElevation / 180 * glm::pi<float>();
+			const float azimRad = _lightAzimuth / 180 * glm::pi<float>();
+			_lightDirection = glm::vec3(std::cos(azimRad) * std::cos(elevRad), std::sin(elevRad), std::sin(azimRad) * std::cos(elevRad));
+		}
+		ImGui::PopItemWidth();
 
 		ImGui::Checkbox("Terrain##showcheck", &_showTerrain);
 		ImGui::SameLine();
