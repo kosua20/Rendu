@@ -439,12 +439,12 @@ void IslandApp::update() {
 
 		// Light parameters.
 		ImGui::PushItemWidth(120);
-		if(ImGui::DragFloat("Azimuth", &_lightAzimuth, 1.0f, 0.0f, 360.0f, "%.1f°")){
+		if(ImGui::DragFloat("Azimuth", &_lightAzimuth, 0.1f, 0.0f, 360.0f, "%.1f°")){
 			_lightAzimuth = glm::clamp(_lightAzimuth, 0.0f, 360.0f);
 			_shouldUpdateSky = true;
 		}
 		ImGui::SameLine();
-		if(ImGui::DragFloat("Elevation", &_lightElevation, 1.0f, -15.0f, 90.0f, "%.1f°")){
+		if(ImGui::DragFloat("Elevation", &_lightElevation, 0.1f, -15.0f, 90.0f, "%.1f°")){
 			_lightElevation = glm::clamp(_lightElevation, -15.0f, 90.0f);
 			_shouldUpdateSky = true;
 		}

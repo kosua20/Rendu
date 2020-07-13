@@ -398,7 +398,7 @@ void Terrain::transferAndUpdateMap(Image & heightMap){
 			_mapLowRes.images[0].r(x,y) = std::min(std::min(h00, h01), std::min(h10, h11));
 		}
 	}
-	_mapLowRes.upload({Layout::R32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, false);
+	_mapLowRes.upload({Layout::R32F, Filter::LINEAR_NEAREST, Wrap::CLAMP}, false);
 }
 
 
