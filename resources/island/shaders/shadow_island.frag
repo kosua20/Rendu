@@ -6,10 +6,7 @@ in INTERFACE {
 
 uniform vec3 lDir; ///< Light direction.
 uniform uint stepCount; ///< Raymarching step count.
-uniform float horiz; ///< Shadowing scaling when the light get close to the horizon.
-uniform vec2 lDir2; ///< Light direction projected in the horizontal plane and normalized.
-uniform vec2 tMaxInit; ///< Raymarching step size parameter.
-uniform vec2 tDelta; ///< Raymarching step size parameter.
+uniform float texelSize; ///< Size of a texel in world space.
 
 layout(binding = 0) uniform sampler2D heightMap; ///< Height map.
 
@@ -28,40 +25,31 @@ void main(){
 		return;
 	}
 
-	// Precompute the steps using a conservative stepping computation.
-	// Base on A Fast Voxel Traversal Algorithm for Ray Tracing, J. Amanatides and A. Woo, Eurographics, 1987
-	int dx = lDir2.x >= 0.0 ? 1 : -1;
-	int dy = lDir2.y >= 0.0 ? 1 : -1;
-
-	ivec2 wh = ivec2(textureSize(heightMap, 0).xy);
-	ivec2 p = ivec2(In.uv * wh);
-	ivec2 sp = p;
-	vec2 tMax = tMaxInit;
-	float hStart = texelFetch(heightMap, sp, 0).r;
+	vec2 wh = textureSize(heightMap, 0).xy;
+	float hStart = texelFetch(heightMap, ivec2(In.uv * wh), 0).r;
 
 	// Compute ray height.
 	bool occGround = false;
 	bool occWater = false;
+	vec2 texSize = wh * texelSize;
+	vec2 initPosPlane = texSize * (In.uv - 0.5);
+	vec3 initPos = vec3(initPosPlane.x, hStart, initPosPlane.y);
 
 	for(uint i = 0; i < stepCount; ++i){
-		if(tMax.x < tMax.y){
-			tMax.x += tDelta.x;
-			sp.x += dx;
-		} else {
-			tMax.y += tDelta.y;
-			sp.y += dy;
-		}
-		// Check if we are outside the map.
-		if(any(lessThan(sp, ivec2(0))) || any(greaterThanEqual(sp, wh))){
+		// Jut step based on 3D dir.
+		vec3 pos = initPos + (float(i)) * texelSize * lDir;
+		// Reproject onto the texture plane.
+		vec2 grPos = pos.xz / texSize + 0.5;
+		ivec2 pixPos = ivec2(grPos * wh);
+		if(any(lessThan(pixPos, ivec2(0))) || any(greaterThanEqual(pixPos, ivec2(wh)))){
 			break;
 		}
-
-		float hDelta = horiz * length(vec2(sp - p));
-		float hRef = texelFetch(heightMap, sp, 0).r;
-		if(hStart + hDelta < hRef){
+		// Read corresponding height and compare, for both the ground and water height.
+		float hRef = texelFetch(heightMap, pixPos, 0).r;
+		if(pos.y < hRef){
 			occGround = true;
 		}
-		if(hDelta < hRef){
+		if(pos.y - hStart < hRef){
 			occWater = true;
 		}
 		if(occGround && occWater){

@@ -408,35 +408,24 @@ void Terrain::generateShadowMap(const glm::vec3 & lightDir){
 
 	const Texture & map = _mapLowRes;
 	// Adjust texel size for potentially smaller map.
-	const float texelSize = _texelSize * float(_map.width) / float(_mapLowRes.width);
+	const float texelSize = _texelSize * float(_map.width) / float(map.width);
 	const uint stepCount = 2 * std::max(map.width, map.height);
 	// Make sure light direction is normalized.
 	const glm::vec3 lDir = glm::normalize(lightDir);
-	// Increment in height when moving by one texel.
-	const float horiz = texelSize * lDir.y / std::sqrt(lDir.x*lDir.x + lDir.z * lDir.z);
-	// Projection in the plane.
-	const glm::vec2 lDir2 = glm::normalize(glm::vec2(lDir.x, lDir.z));
-	float tmaxX = lDir2.x != 0.0f ? 1.0f : std::abs(lDir2.y / lDir2.x);
-	float tmaxY = lDir2.x != 0.0f ? std::abs(lDir2.x / lDir2.y) : 1.0f;
-	const float tDeltaX = 2.0f * tmaxX;
-	const float tDeltaY = 2.0f * tmaxY;
 
 	_shadowBuffer->bind();
 	_shadowBuffer->setViewport();
 	GLUtilities::setDepthState(false);
 	prog->use();
-	prog->uniform("lDir", lDir);
 	prog->uniform("stepCount", stepCount);
-	prog->uniform("horiz", horiz);
-	prog->uniform("lDir2", lDir2);
 	prog->uniform("lDir", lDir);
-	prog->uniform("tMaxInit", glm::vec2(tmaxX, tmaxY));
-	prog->uniform("tDelta", glm::vec2(tDeltaX, tDeltaY));
+	prog->uniform("texelSize", texelSize);
 
 	GLUtilities::bindTexture(map, 0);
 	ScreenQuad::draw();
 	_shadowBuffer->unbind();
 
+	// Post process shadow map.
 	_gaussBlur.process(_shadowBuffer->texture(0), *_shadowBuffer);
 }
 
