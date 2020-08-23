@@ -1,7 +1,7 @@
 #include "MaterialSky.hpp"
 #include "resources/ResourcesManager.hpp"
 
-const MaterialSky::SkyParameters MaterialSky::sky;
+const Sky::AtmosphereParameters MaterialSky::sky;
 
 glm::vec3 MaterialSky::eval(const glm::vec3 & rayOrigin, const glm::vec3 & rayDir, const glm::vec3 & sunDir){
 
@@ -22,7 +22,7 @@ glm::vec3 MaterialSky::eval(const glm::vec3 & rayOrigin, const glm::vec3 & rayDi
 	// Distance to the closest intersection.
 	const float distanceToInter = std::min(interTop.y, didHitGround ? interGround.x : 0.0f);
 	// Divide the distance traveled through the atmosphere in samplesCount parts.
-	const float stepSize = (distanceToInter - interTop.x)/float(sky.samplesCount);
+	const float stepSize = (distanceToInter - interTop.x)/float(samplesCount);
 	// Angle between the sun direction and the ray.
 	const float cosViewSun = glm::dot(rayDir, sunDir);
 
@@ -35,13 +35,13 @@ glm::vec3 MaterialSky::eval(const glm::vec3 & rayOrigin, const glm::vec3 & rayDi
 	glm::vec3 transmittance = glm::vec3(0.0f);
 
 	// March along the ray.
-	for(uint i = 0; i < sky.samplesCount; ++i){
+	for(uint i = 0; i < samplesCount; ++i){
 		// Compute the current position along the ray, ...
 		const glm::vec3 currPos = planetPos + (float(i)+0.5f) * stepSize * rayDir;
 		// ...and its distance to the ground (as we are in planet space).
 		float currHeight = glm::length(currPos) - sky.groundRadius;
 		// ... there is an artifact similar to clipping when close to the planet surface if we allow for negative heights.
-		if(i == (sky.samplesCount-1) && currHeight < 0.0f){
+		if(i == (samplesCount-1) && currHeight < 0.0f){
 			currHeight = 0.0f;
 		}
 		// Compute density based on the characteristic height of Rayleigh and Mie.
