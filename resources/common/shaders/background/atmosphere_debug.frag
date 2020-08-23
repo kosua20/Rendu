@@ -16,25 +16,28 @@ layout (location = 0) out vec4 fragColor; ///< Atmosphere color.
 	\param rayOrigin the ray origin
 	\param rayDir the ray direction
 	\param sunDir the light direction
-	\param sunColor the sun color
+	\param params the atmosphere parameters
 	\return the estimated radiance
 */
-vec3 computeEstimate(vec3 rayOrigin, vec3 rayDir, vec3 sunDir, vec3 sunColor){
+vec3 computeEstimate(vec3 rayOrigin, vec3 rayDir, vec3 sunDir, AtmosphereParameters params){
+	// Move the planet center to the origin.
+	rayOrigin += vec3(0,6371e3,0);
+	
 	// Check intersection with atmosphere.
 	vec2 interTop, interGround;
-	bool didHitTop = intersects(rayOrigin, rayDir, atmosphereTopRadius, interTop);
+	bool didHitTop = intersects(rayOrigin, rayDir, params.topRadius, interTop);
 	// If no intersection with the atmosphere, it's the dark void of space.
 	if(!didHitTop){
 		return vec3(0.0);
 	}
 	// Now intersect with the planet.
-	bool didHitGround = intersects(rayOrigin, rayDir, atmosphereGroundRadius, interGround);
+	bool didHitGround = intersects(rayOrigin, rayDir, params.groundRadius, interGround);
 	
 	// The sun itself if we're looking at it.
 	vec3 sunRadiance = vec3(0.0);
 	bool didHitGroundForward = didHitGround && interGround.y > 0;
-	if(!didHitGroundForward && dot(rayDir, sunDir) > sunAngularRadiusCos){
-		sunRadiance = sunColor / (M_PI * sunAngularRadius * sunAngularRadius);
+	if(!didHitGroundForward && dot(rayDir, sunDir) > params.sunAngularRadiusCos){
+		sunRadiance = params.sunColor / (M_PI * params.sunAngularRadius * params.sunAngularRadius);
 	}
 
 	float sunHeight = clamp(sunDir.y, 0.0, 1.0);
@@ -52,9 +55,9 @@ void main(){
 	vec4 clipVertex = vec4(-1.0+2.0*In.uv, 0.0, 1.0);
 	// Then to world space.
 	vec3 viewRay = normalize((clipToWorld * clipVertex).xyz);
-	// We then move to the planet model space, where its center is in (0,0,0).
-	vec3 planetSpaceViewPos = viewPos + vec3(0,6371e3,0) + vec3(0.0,1.0,0.0);
-	vec3 atmosphereColor = computeEstimate(planetSpaceViewPos, viewRay, lightDirection, defaultSunColor);
+	// We then move to the ground space, where the ground is at y=0.
+	vec3 groundSpaceViewPos = viewPos + vec3(0.0,1.0,0.0);
+	vec3 atmosphereColor = computeEstimate(groundSpaceViewPos, viewRay, lightDirection, defaultAtmosphere);
 	fragColor.rgb = atmosphereColor;
 	fragColor.a = 1.0;
 }

@@ -21,9 +21,9 @@ void main(){
 	vec4 clipVertex = vec4(-1.0+2.0*In.uv, 0.0, 1.0);
 	// Then to world space.
 	vec3 viewRay = normalize((clipToWorld * clipVertex).xyz);
-	// We then move to the planet model space, where its center is in (0,0,0).
-	vec3 planetSpaceViewPos = viewPos + vec3(0.0, atmosphereGroundRadius, 0.0) + vec3(0.0, altitude, 0.0);
-	vec3 atmosphereColor = computeAtmosphereRadiance(planetSpaceViewPos, viewRay, lightDirection, defaultSunColor, precomputedScattering);
+	// We then move to the ground model space, where the ground is at y=0.
+	vec3 groundSpaceViewPos = viewPos + vec3(0.0, altitude, 0.0);
+	vec3 atmosphereColor = computeAtmosphereRadiance(groundSpaceViewPos, viewRay, lightDirection, precomputedScattering, defaultAtmosphere);
 	fragColor = atmosphereColor;
 }
 

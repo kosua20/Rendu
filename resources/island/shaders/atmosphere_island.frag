@@ -14,8 +14,6 @@ layout(binding = 0) uniform sampler2D precomputedScattering; ///< Secondary scat
 
 layout(location = 0) out vec3 fragColor; ///< Atmosphere color.
 layout(location = 1) out vec3 fragPos; ///< Atmosphere color.
-//layout(location = 1) out vec3 fragDirect; ///< Direct lighting.
-//layout(location = 2) out vec3 fragNormal; ///< Normal.
 
 /** Simulate sky color based on an atmospheric scattering approximate model. */
 void main(){
@@ -27,9 +25,11 @@ void main(){
 	if(viewRay.y < -0.001){
 		discard;
 	}
-	// We then move to the planet model space, where its center is in (0,0,0).
-	vec3 planetSpaceViewPos = viewPos + vec3(0,atmosphereGroundRadius,0) + vec3(0.0,1.0,0.0);
-	vec3 atmosphereColor = computeAtmosphereRadiance(planetSpaceViewPos, viewRay, lightDirection, defaultSunColor, precomputedScattering);
+
+	// We then move to the ground model space, where the ground is at y=0.
+	vec3 groundSpaceViewPos = viewPos + vec3(0.0, 1.0, 0.0);
+	vec3 atmosphereColor = computeAtmosphereRadiance(groundSpaceViewPos, viewRay, lightDirection, precomputedScattering, defaultAtmosphere);
+
 	fragColor.rgb = atmosphereColor;
 	fragPos = viewPos + 10000.0 * viewRay;
 }
