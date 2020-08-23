@@ -1,9 +1,6 @@
-#include "input/Input.hpp"
-#include "Application.hpp"
+
+#include "AtmosphereApp.hpp"
 #include "resources/ResourcesManager.hpp"
-#include "graphics/ScreenQuad.hpp"
-#include "graphics/Framebuffer.hpp"
-#include "graphics/GLUtilities.hpp"
 #include "system/Window.hpp"
 #include "system/System.hpp"
 #include "generation/Random.hpp"
@@ -17,90 +14,44 @@
  \ingroup Applications
  */
 
-/** \brief Demo application for the atmospheric scattering shader.
+
+/**
+ \brief Atmospheric scattering configuration. Parameters for precomputation.
  \ingroup AtmosphericScattering
  */
-class AtmosphereApp final : public CameraApp {
+class AtmosphereConfig : public RenderingConfig {
 public:
-	
-	/** Constructor
-	 \param config rendering config
+	/** Initialize a new config object, parsing the input arguments and filling the attributes with their values.
+	 	\param argv the raw input arguments
 	 */
-	AtmosphereApp(RenderingConfig & config) : CameraApp(config) {
-		_userCamera.projection(config.screenResolution[0] / config.screenResolution[1], 1.34f, 0.1f, 100.0f);
-		// Framebuffer to store the rendered atmosphere result before tonemapping and upscaling to the window size.
-		const glm::vec2 renderRes = _config.renderingResolution();
-		_atmosphereBuffer.reset(new Framebuffer(uint(renderRes[0]), uint(renderRes[1]), {Layout::RGB32F, Filter::LINEAR_NEAREST, Wrap::CLAMP}, false, "Atmosphere"));
-		// Lookup table.
-		_precomputedScattering = Resources::manager().getTexture("scattering-precomputed", {Layout::RGB32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
-		// Atmosphere screen quad.
-		_atmosphere = Resources::manager().getProgram2D("atmosphere_basic");
-		// Final tonemapping screen quad.
-		_tonemap = Resources::manager().getProgram2D("tonemap");
-		// Sun direction.
-		_lightDirection = glm::normalize(glm::vec3(0.437f, 0.082f, -0.896f));
-		
-		GLUtilities::setDepthState(true);
-		checkGLError();
-	}
-	
-	/** \copydoc CameraApp::draw */
-	void draw() override {
-		// Render.
-		const glm::mat4 camToWorld = glm::inverse(_userCamera.view());
-		const glm::mat4 clipToCam  = glm::inverse(_userCamera.projection());
-		
-		// Draw the atmosphere.
-		GLUtilities::setDepthState(false);
-		_atmosphereBuffer->bind();
-		_atmosphereBuffer->setViewport();
-		GLUtilities::clearColor({0.0f, 0.0f, 0.0f, 1.0f});
-		
-		_atmosphere->use();
-		const glm::mat4 camToWorldNoT = glm::mat4(glm::mat3(camToWorld));
-		const glm::mat4 clipToWorld   = camToWorldNoT * clipToCam;
-		_atmosphere->uniform("clipToWorld", clipToWorld);
-		_atmosphere->uniform("viewPos", _userCamera.position());
-		_atmosphere->uniform("lightDirection", _lightDirection);
-		_atmosphere->uniform("altitude", _altitude);
-		ScreenQuad::draw(_precomputedScattering);
-		_atmosphereBuffer->unbind();
-		
-		// Tonemapping and final screen.
-		GLUtilities::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
-		Framebuffer::backbuffer()->bind(Framebuffer::Mode::SRGB);
-		_tonemap->use();
-		ScreenQuad::draw(_atmosphereBuffer->texture());
-		Framebuffer::backbuffer()->unbind();
-	}
-	
-	/** \copydoc CameraApp::update */
-	void update() override {
-		CameraApp::update();
-		
-		if(ImGui::Begin("Atmosphere")){
-			ImGui::Text("%.1f ms, %.1f fps", frameTime() * 1000.0f, frameRate());
-			if(ImGui::DragFloat3("Light dir", &_lightDirection[0], 0.005f, -1.0f, 1.0f)) {
-				_lightDirection = glm::normalize(_lightDirection);
+	explicit AtmosphereConfig(const std::vector<std::string> & argv) :
+		RenderingConfig(argv) {
+		for(const auto & arg : arguments()) {
+			const std::string key					= arg.key;
+			const std::vector<std::string> & values = arg.values;
+
+			if(key == "output" && !values.empty()) {
+				outputPath = values[0];
+			} else if(key == "samples" && !values.empty()) {
+				samples = std::stoi(values[0]);
+			} else if(key == "resolution" && !values.empty()) {
+				resolution = size_t(std::stoi(values[0]));
 			}
-			ImGui::DragFloat("Altitude", &_altitude, 10.0f, 0.0f, 0.0f, "%.0fm", 2.0f);
 		}
-		ImGui::End();
+
+		registerSection("Atmospheric scattering");
+		registerArgument("output", "", "Output lookup table path (if specified, will only precompute and save the table).", "path/to/output.exr");
+		registerArgument("samples", "", "Number of samples per-pixel.", "count");
+		registerArgument("resolution", "", "Output image side size.", "size");
 	}
-	
-	/** \copydoc CameraApp::resize */
-	void resize() override {
-		_atmosphereBuffer->resize(_config.renderingResolution());
-	}
-	
-private:
-	std::unique_ptr<Framebuffer> _atmosphereBuffer; ///< Scene framebuffer.
-	const Program * _atmosphere; ///< Atmospheric scattering shader.
-	const Program * _tonemap; ///< Tonemapping shader.
-	const Texture * _precomputedScattering; ///< Precomputed lookup table.
-	glm::vec3 _lightDirection; ///< Sun light direction.
-	float _altitude = 1.0f; ///< View altitude above the planet surface.
+
+	std::string outputPath = ""; ///< Lookup table output path.
+
+	unsigned int samples = 256; ///< Number of samples for iterative sampling.
+
+	size_t resolution = 512; ///< Output image resolution.
 };
+
 
 /**
  The main function of the atmospheric scattering demo.
@@ -112,11 +63,24 @@ private:
 int main(int argc, char ** argv) {
 	
 	// First, init/parse/load configuration.
-	RenderingConfig config(std::vector<std::string>(argv, argv + argc));
+	AtmosphereConfig config(std::vector<std::string>(argv, argv + argc));
 	if(config.showHelp()) {
 		return 0;
 	}
-	
+
+	// If an output path has been specified, precompute the table and save
+	if(!config.outputPath.empty()){
+
+		Log::Info() << Log::Utilities << "Generating scattering lookup table." << std::endl;
+
+		Image transmittanceTable(int(config.resolution), int(config.resolution), 3);
+		AtmosphereApp::precomputeTable(transmittanceTable, config.samples);
+		transmittanceTable.save(config.outputPath, true);
+
+		Log::Info() << Log::Utilities << "Done." << std::endl;
+		return 0;
+	}
+
 	Window window("Atmosphere", config);
 	
 	Resources::manager().addResources("../../../resources/common");
