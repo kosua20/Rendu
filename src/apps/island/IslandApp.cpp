@@ -32,7 +32,7 @@ IslandApp::IslandApp(RenderingConfig & config) : CameraApp(config),
 	_tonemap = Resources::manager().getProgram2D("tonemap");
 
 	// Sun direction.
-	_lightDirection = glm::normalize(glm::vec3(0.660619f, 0.660619f, -0.661131f));//0.437f, 0.482f, -0.896f));
+	_lightDirection = glm::normalize(glm::vec3(0.660619f, 0.660619f, -0.661131f));
 	_skyMesh = Resources::manager().getMesh("plane", Storage::GPU);
 
 	// Ground.

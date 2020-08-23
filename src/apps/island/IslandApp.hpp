@@ -92,8 +92,8 @@ private:
 
 	// Atmosphere options.
 	glm::vec3 _lightDirection; ///< Sun light direction.
-	float _lightElevation = 6.0f;
-	float _lightAzimuth = 43.0f;
+	float _lightElevation = 6.0f; ///< Sun angular elevation.
+	float _lightAzimuth = 43.0f; ///< Sun horizontal orientation.
 	bool _shouldUpdateSky = true; ///< Should the environment map be updated at this frame.
 
 	// Ocean options.
