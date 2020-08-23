@@ -12,13 +12,13 @@ glm::vec3 MaterialSky::eval(const glm::vec3 & rayOrigin, const glm::vec3 & rayDi
 	// Check intersection with atmosphere.
 	glm::vec2 interTop(0.0f);
 	glm::vec2 interGround(0.0f);
-	const bool didHitTop = intersects(planetPos, rayDir, sky.topRadius, interTop);
+	const bool didHitTop = Intersection::sphere(planetPos, rayDir, sky.topRadius, interTop);
 	// If no intersection with the atmosphere, it's the dark void of space.
 	if(!didHitTop){
 		return glm::vec3(0.0f);
 	}
 	// Now intersect with the planet.
-	const bool didHitGround = intersects(planetPos, rayDir, sky.groundRadius, interGround);
+	const bool didHitGround = Intersection::sphere(planetPos, rayDir, sky.groundRadius, interGround);
 	// Distance to the closest intersection.
 	const float distanceToInter = std::min(interTop.y, didHitGround ? interGround.x : 0.0f);
 	// Divide the distance traveled through the atmosphere in samplesCount parts.
@@ -84,21 +84,6 @@ glm::vec3 MaterialSky::eval(const glm::vec3 & rayOrigin, const glm::vec3 & rayDi
 	}
 
 	return sky.sunIntensity * (rayleighParticipation + mieParticipation) + transmittance * sunRadiance;
-}
-
-bool MaterialSky::intersects(const glm::vec3 & rayOrigin, const glm::vec3 & rayDir, float radius, glm::vec2 & roots){
-	const float a = glm::dot(rayDir,rayDir);
-	const float b = glm::dot(rayOrigin, rayDir);
-	const float c = glm::dot(rayOrigin, rayOrigin) - radius*radius;
-	const float delta = b*b - a*c;
-	// No intersection if the polynome has no real roots.
-	if(delta < 0.0f){
-		return false;
-	}
-	// If it intersects, return the two roots.
-	const float dsqrt = std::sqrt(delta);
-	roots = (glm::vec2(-b-dsqrt,-b+dsqrt))/a;
-	return true;
 }
 
 float MaterialSky::rayleighPhase(float cosAngle){

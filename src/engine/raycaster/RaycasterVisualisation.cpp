@@ -34,13 +34,13 @@ void RaycasterVisualisation::getAllLevels(std::vector<Mesh> & meshes) const {
 
 Raycaster::Hit RaycasterVisualisation::getRayLevels(const glm::vec3 & origin, const glm::vec3 & direction, std::vector<Mesh> & meshes, float mini, float maxi) const {
 
-	const Raycaster::Ray ray(origin, direction);
+	const Ray ray(origin, direction);
 	std::vector<DisplayNode> selectedNodes;
 	std::stack<DisplayNode> nodesToTest;
 	// Start by testing each object.
 	for(size_t nid = 0; nid < _raycaster._meshCount; ++nid) {
 		// If the ray doesn't intersect the bounding box, move to the next node.
-		if(!Raycaster::intersects(ray, _raycaster._hierarchy[nid].box, mini, maxi)) {
+		if(!Intersection::box(ray, _raycaster._hierarchy[nid].box, mini, maxi)) {
 			continue;
 		}
 		nodesToTest.push({nid, 0});
@@ -69,10 +69,10 @@ Raycaster::Hit RaycasterVisualisation::getRayLevels(const glm::vec3 & origin, co
 			continue;
 		}
 		// Else, intersect both child nodes.
-		if(Raycaster::intersects(ray, _raycaster._hierarchy[node.left].box, mini, maxi)) {
+		if(Intersection::box(ray, _raycaster._hierarchy[node.left].box, mini, maxi)) {
 			nodesToTest.push({node.left, depth + 1});
 		}
-		if(Raycaster::intersects(ray, _raycaster._hierarchy[node.right].box, mini, maxi)) {
+		if(Intersection::box(ray, _raycaster._hierarchy[node.right].box, mini, maxi)) {
 			nodesToTest.push({node.right, depth + 1});
 		}
 	}

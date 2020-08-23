@@ -22,17 +22,6 @@ public:
 
 private:
 
-	/** Check if a sphere of a given radius is intersected by a ray defined by an
-		origin wrt to the sphere center and a normalized direction.
-		\param rayOrigin the origin of the ray
-		\param rayDir the direction of the ray (normalized)
-		\param radius the radius of the sphere to intersect
-		\param roots will contain the two roots of the associated polynomial, ordered.
-		\return true if there is intersection.
-		\warning The intersection can be in the negative direction along the ray. Check the sign of the roots to know.
-	*/
-	static bool intersects(const glm::vec3 & rayOrigin, const glm::vec3 & rayDir, float radius, glm::vec2 & roots);
-
 	/** Compute the Rayleigh phase.
 		\param cosAngle Cosine of the angle between the ray and the light directions
 		\return the phase

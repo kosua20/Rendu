@@ -3,10 +3,6 @@
 #include <queue>
 #include <stack>
 
-Raycaster::Ray::Ray(const glm::vec3 & origin, const glm::vec3 & direction) :
-	pos(origin), dir(glm::normalize(direction)), invdir(1.0f / glm::normalize(direction)) {
-}
-
 Raycaster::Hit::Hit() :
 	hit(false), dist(std::numeric_limits<float>::max()), u(0.0f), v(0.0f), w(0.0f), localId(0), meshId(0), internalId(0) {
 }
@@ -152,7 +148,7 @@ Raycaster::Hit Raycaster::intersects(const glm::vec3 & origin, const glm::vec3 &
 	// Start by testing each object.
 	for(size_t nid = 0; nid < _meshCount; ++nid) {
 		// If the ray doesn't intersect the bounding box, move to the next node.
-		if(!Raycaster::intersects(ray, _hierarchy[nid].box, mini, maxi)) {
+		if(!Intersection::box(ray, _hierarchy[nid].box, mini, maxi)) {
 			continue;
 		}
 		nodesToTest.push(nid);
@@ -178,10 +174,10 @@ Raycaster::Hit Raycaster::intersects(const glm::vec3 & origin, const glm::vec3 &
 			continue;
 		}
 		// Else, intersect both child nodes.
-		if(Raycaster::intersects(ray, _hierarchy[node.left].box, mini, maxi)) {
+		if(Intersection::box(ray, _hierarchy[node.left].box, mini, maxi)) {
 			nodesToTest.push(node.left);
 		}
-		if(Raycaster::intersects(ray, _hierarchy[node.right].box, mini, maxi)) {
+		if(Intersection::box(ray, _hierarchy[node.right].box, mini, maxi)) {
 			nodesToTest.push(node.right);
 		}
 	}
@@ -195,7 +191,7 @@ bool Raycaster::intersectsAny(const glm::vec3 & origin, const glm::vec3 & direct
 	// Start by testing each object.
 	for(size_t nid = 0; nid < _meshCount; ++nid) {
 		// If the ray doesn't intersect the bounding box, move to the next node.
-		if(!Raycaster::intersects(ray, _hierarchy[nid].box, mini, maxi)) {
+		if(!Intersection::box(ray, _hierarchy[nid].box, mini, maxi)) {
 			continue;
 		}
 		nodesToTest.push(nid);
@@ -217,10 +213,10 @@ bool Raycaster::intersectsAny(const glm::vec3 & origin, const glm::vec3 & direct
 			continue;
 		}
 		// Check if any of the children is hit.
-		if(Raycaster::intersects(ray, _hierarchy[node.left].box, mini, maxi)) {
+		if(Intersection::box(ray, _hierarchy[node.left].box, mini, maxi)) {
 			nodesToTest.push(node.left);
 		}
-		if(Raycaster::intersects(ray, _hierarchy[node.right].box, mini, maxi)) {
+		if(Intersection::box(ray, _hierarchy[node.right].box, mini, maxi)) {
 			nodesToTest.push(node.right);
 		}
 	}
@@ -233,7 +229,7 @@ bool Raycaster::visible(const glm::vec3 & p0, const glm::vec3 & p1) const {
 	return !intersectsAny(p0, direction, 0.0001f, maxi);
 }
 
-Raycaster::Hit Raycaster::intersects(const Raycaster::Ray & ray, const TriangleInfos & tri, float mini, float maxi) const {
+Raycaster::Hit Raycaster::intersects(const Ray & ray, const TriangleInfos & tri, float mini, float maxi) const {
 	// Implement Moller-Trumbore intersection test.
 	const glm::vec3 & v0 = _vertices[tri.v0];
 	const glm::vec3 v01  = _vertices[tri.v1] - v0;
@@ -263,16 +259,4 @@ Raycaster::Hit Raycaster::intersects(const Raycaster::Ray & ray, const TriangleI
 		return {t, u, v, tri.localId, tri.meshId};
 	}
 	return {};
-}
-
-bool Raycaster::intersects(const Raycaster::Ray & ray, const BoundingBox & box, float mini, float maxi) {
-	const glm::vec3 minRatio = (box.minis - ray.pos) * ray.invdir;
-	const glm::vec3 maxRatio = (box.maxis - ray.pos) * ray.invdir;
-	const glm::vec3 minFinal = glm::min(minRatio, maxRatio);
-	const glm::vec3 maxFinal = glm::max(minRatio, maxRatio);
-
-	const float closest  = std::max(minFinal[0], std::max(minFinal[1], minFinal[2]));
-	const float furthest = std::min(maxFinal[0], std::min(maxFinal[1], maxFinal[2]));
-
-	return std::max(closest, mini) <= std::min(furthest, maxi);
 }

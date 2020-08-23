@@ -1,6 +1,7 @@
 #pragma once
 #include "resources/Mesh.hpp"
 #include "Common.hpp"
+#include "raycaster/Intersection.hpp"
 
 /**
  \brief Allows to cast rays against a polygonal mesh, on the CPU. Relies on an internal acceleration structure to speed up intersection queries.
@@ -120,18 +121,6 @@ private:
 		unsigned long v2	  = 0; ///< Third vertex index.
 		unsigned long localId = 0; ///< Position of the triangle first vertex in the mesh initial index buffer.
 		unsigned int meshId   = 0; ///< Index of the mesh this triangle belongs to.
-	};
-
-	/** Represent a ray, shot from a given position in a specific direction. */
-	struct Ray {
-		const glm::vec3 pos;	///< Ray position.
-		const glm::vec3 dir;	///< Ray direction (normalized).
-		const glm::vec3 invdir; ///< Ray reciprocal direction (normalized).
-		/** Constructor.
-		 \param origin the position the ray was shot from
-		 \param direction the direction of the ray (will be normalized)
-		 */
-		Ray(const glm::vec3 & origin, const glm::vec3 & direction);
 	};
 
 	/** Base element of the acceleration structure. */
