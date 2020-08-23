@@ -182,10 +182,6 @@ project("Island")
 
 group("Tools")
 
-project("AtmosphericScatteringEstimator")
-	ExecutableSetup()
-	files({ "src/tools/AtmosphericScatteringEstimator.cpp" })
-
 project("BRDFEstimator")
 	ExecutableSetup()
 	ShaderValidation()
