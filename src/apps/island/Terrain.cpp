@@ -209,7 +209,7 @@ void Terrain::erode(Image & img){
 	const glm::ivec2 maxPos = glm::ivec2(img.width-1);
 	for(int did = 0; did < _erOpts.dropsCount; ++did){
 		// Draw a point at random.
-		glm::vec2 pos(Random::Float(0.0f, maxPos[0]), Random::Float(0.0f, maxPos[1]));
+		glm::vec2 pos(Random::Float(0.0f, float(maxPos[0])), Random::Float(0.0f, float(maxPos[1])));
 		glm::vec2 dir(0.0f, 0.0f);
 		float velocity = 1.0f;
 		float water = 1.0f;
@@ -296,7 +296,7 @@ void Terrain::erode(Image & img){
 				}
 
 			}
-			water *= (1.0 - _erOpts.evaporation);
+			water *= (1.0f - _erOpts.evaporation);
 			velocity = std::sqrt(std::max(0.0f, velocity*velocity + dHeight * _erOpts.gravity));
 		}
 
