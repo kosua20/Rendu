@@ -18,19 +18,19 @@ AtmosphereApp::AtmosphereApp(RenderingConfig & config) : CameraApp(config) {
 	// Framebuffer to store the rendered atmosphere result before tonemapping and upscaling to the window size.
 	const glm::vec2 renderRes = _config.renderingResolution();
 	_atmosphereBuffer.reset(new Framebuffer(uint(renderRes[0]), uint(renderRes[1]), {Layout::RGB32F, Filter::LINEAR_NEAREST, Wrap::CLAMP}, false, "Atmosphere"));
-	// Lookup table.
-	_precomputedScattering = Resources::manager().getTexture("scattering-precomputed", {Layout::RGB32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
 	// Atmosphere screen quad.
 	_atmosphere = Resources::manager().getProgram2D("atmosphere_params");
 	// Final tonemapping screen quad.
 	_tonemap = Resources::manager().getProgram2D("tonemap");
 	// Sun direction.
 	_lightDirection = glm::normalize(glm::vec3(0.337f, 0.174f, -0.925f));
+	// Populate lookup table.
+	updateSky();
 
 	GLUtilities::setDepthState(true);
 	checkGLError();
 }
-	
+
 void AtmosphereApp::draw() {
 	// Render.
 	const glm::mat4 camToWorld = glm::inverse(_userCamera.view());
@@ -44,7 +44,7 @@ void AtmosphereApp::draw() {
 
 	_atmosphere->use();
 	const glm::mat4 camToWorldNoT = glm::mat4(glm::mat3(camToWorld));
-	const glm::mat4 clipToWorld   = camToWorldNoT * clipToCam;
+	const glm::mat4 clipToWorld	  = camToWorldNoT * clipToCam;
 	_atmosphere->uniform("clipToWorld", clipToWorld);
 	_atmosphere->uniform("viewPos", _userCamera.position());
 	_atmosphere->uniform("lightDirection", _lightDirection);
@@ -62,7 +62,7 @@ void AtmosphereApp::draw() {
 	_atmosphere->uniform("atmoParams.sunAngularRadius", _atmoParams.sunRadius);
 	_atmosphere->uniform("atmoParams.sunAngularRadiusCos", _atmoParams.sunRadiusCos);
 
-	ScreenQuad::draw(_precomputedScattering);
+	ScreenQuad::draw(_scattering);
 	_atmosphereBuffer->unbind();
 
 	// Tonemapping and final screen.
@@ -72,53 +72,80 @@ void AtmosphereApp::draw() {
 	ScreenQuad::draw(_atmosphereBuffer->texture());
 	Framebuffer::backbuffer()->unbind();
 }
-	
+
 void AtmosphereApp::update() {
 	CameraApp::update();
 
-	if(ImGui::Begin("Atmosphere")){
+	if(ImGui::Begin("Atmosphere")) {
 		ImGui::Text("%.1f ms, %.1f fps", frameTime() * 1000.0f, frameRate());
 
 		// Sun parameters.
 		ImGui::PushItemWidth(120);
 		bool shouldUpdateSky = false;
-		if(ImGui::DragFloat("Azimuth", &_lightAzimuth, 0.1f, 0.0f, 360.0f, "%.1f°")){
-			_lightAzimuth = glm::clamp(_lightAzimuth, 0.0f, 360.0f);
+		if(ImGui::DragFloat("Azimuth", &_lightAzimuth, 0.1f, 0.0f, 360.0f, "%.1f°")) {
+			_lightAzimuth	= glm::clamp(_lightAzimuth, 0.0f, 360.0f);
 			shouldUpdateSky = true;
 		}
 		ImGui::SameLine();
-		if(ImGui::DragFloat("Elevation", &_lightElevation, 0.1f, -15.0f, 90.0f, "%.1f°")){
+		if(ImGui::DragFloat("Elevation", &_lightElevation, 0.1f, -15.0f, 90.0f, "%.1f°")) {
 			_lightElevation = glm::clamp(_lightElevation, -15.0f, 90.0f);
 			shouldUpdateSky = true;
 		}
-		if(shouldUpdateSky){
+		ImGui::PopItemWidth();
+		
+		if(shouldUpdateSky) {
 			const float elevRad = _lightElevation / 180 * glm::pi<float>();
 			const float azimRad = _lightAzimuth / 180 * glm::pi<float>();
-			_lightDirection = glm::vec3(std::cos(azimRad) * std::cos(elevRad), std::sin(elevRad), std::sin(azimRad) * std::cos(elevRad));
+			_lightDirection		= glm::vec3(std::cos(azimRad) * std::cos(elevRad), std::sin(elevRad), std::sin(azimRad) * std::cos(elevRad));
 		}
 
 		ImGui::DragFloat("Altitude", &_altitude, 10.0f, 0.0f, 0.0f, "%.0fm", 2.0f);
+
+		if(ImGui::CollapsingHeader("Atmosphere parameters")) {
+			bool updateScattering = false;
+
+			updateScattering = ImGui::InputInt("Resolution", &_tableRes) || updateScattering;
+			updateScattering = ImGui::InputInt("Samples", &_tableSamples) || updateScattering;
+
+			if(ImGui::Button("Reset")) {
+				_atmoParams		 = Sky::AtmosphereParameters();
+				updateScattering = true;
+			}
+			updateScattering = ImGui::SliderFloat("Mie height", &_atmoParams.heightMie, 100.0f, 20000.0f) || updateScattering;
+
+			updateScattering = ImGui::SliderFloat("Mie K", &_atmoParams.kMie, 1e-6f, 100e-6f, "%.6f") || updateScattering;
+
+			updateScattering = ImGui::SliderFloat("Rayleigh height", &_atmoParams.heightRayleigh, 100.0f, 20000.0f) || updateScattering;
+			updateScattering = ImGui::SliderFloat3("Rayleigh K", &_atmoParams.kRayleigh[0], 1e-6f, 100e-6f, "%.6f") || updateScattering;
+
+			updateScattering = ImGui::SliderFloat("Ground radius", &_atmoParams.groundRadius, 1e6f, 10e6f) || updateScattering;
+			updateScattering = ImGui::SliderFloat("Atmosphere radius", &_atmoParams.topRadius, 1e6f, 10e6f) || updateScattering;
+
+			if(updateScattering) {
+				updateSky();
+			}
+
+			ImGui::SliderFloat("Mie G", &_atmoParams.gMie, 0.0f, 1.0f);
+			if(ImGui::SliderFloat("Sun diameter", &_atmoParams.sunRadius, 0.0f, 0.1f)) {
+				_atmoParams.sunRadiusCos = std::cos(_atmoParams.sunRadius);
+			}
+			ImGui::SliderFloat("Sun intensity", &_atmoParams.sunIntensity, 0.0f, 20.0f);
+			
+		}
 	}
 	ImGui::End();
 }
-	
+
 void AtmosphereApp::resize() {
 	_atmosphereBuffer->resize(_config.renderingResolution());
 }
 
-void AtmosphereApp::precomputeTable(Image & table, uint samples) {
+void AtmosphereApp::precomputeTable(const Sky::AtmosphereParameters & params, uint samples, Image & table) {
 
 	// Parameters.
-	const float groundRadius   = 6371e3f;
-	const float topRadius	  = 6471e3f;
-	const glm::vec3 kRayleigh  = glm::vec3(5.5e-6f, 13.0e-6f, 22.4e-6f);
-	const float heightRayleigh = 8000.0f;
-	const float heightMie	  = 1200.0f;
-	const float kMie		   = 21e-6f;
-
 	const uint res = table.width;
 
-	System::forParallel(0, res, [&](uint y){
+	System::forParallel(0, res, [&](size_t y) {
 		for(size_t x = 0; x < res; ++x) {
 			// Move to 0,1.
 			// No need to take care of the 0.5 shift as we are working with indices
@@ -127,13 +154,13 @@ void AtmosphereApp::precomputeTable(Image & table, uint samples) {
 			// Position and ray direction.
 			// x becomes the height
 			// y become the cosine
-			const glm::vec3 currPos = glm::vec3(0.0f, (topRadius - groundRadius) * xf + groundRadius, 0.0f);
+			const glm::vec3 currPos = glm::vec3(0.0f, (params.topRadius - params.groundRadius) * xf + params.groundRadius, 0.0f);
 			const float cosA		= 2.0f * yf - 1.0f;
 			const float sinA		= std::sqrt(1.0f - cosA * cosA);
-			const glm::vec3 sunDir  = -glm::normalize(glm::vec3(sinA, cosA, 0.0f));
+			const glm::vec3 sunDir	= -glm::normalize(glm::vec3(sinA, cosA, 0.0f));
 			// Check when the ray leaves the atmosphere.
 			glm::vec2 interSecondTop;
-			const bool didHitSecondTop = Intersection::sphere(currPos, sunDir, topRadius, interSecondTop);
+			const bool didHitSecondTop = Intersection::sphere(currPos, sunDir, params.topRadius, interSecondTop);
 			// Divide the distance traveled through the atmosphere in samplesCount parts.
 			const float secondStepSize = didHitSecondTop ? interSecondTop.y / float(samples) : 0.0f;
 
@@ -146,19 +173,34 @@ void AtmosphereApp::precomputeTable(Image & table, uint samples) {
 				// Compute the current position along the ray, ...
 				const glm::vec3 currSecondPos = currPos + (float(j) + 0.5f) * secondStepSize * sunDir;
 				// ...and its distance to the ground (as we are in planet space).
-				const float currSecondHeight = glm::length(currSecondPos) - groundRadius;
+				const float currSecondHeight = glm::length(currSecondPos) - params.groundRadius;
 				// Compute density based on the characteristic height of Rayleigh and Mie.
-				const float rayleighSecondStep = exp(-currSecondHeight / heightRayleigh) * secondStepSize;
-				const float mieSecondStep	  = exp(-currSecondHeight / heightMie) * secondStepSize;
+				const float rayleighSecondStep = exp(-currSecondHeight / params.heightRayleigh) * secondStepSize;
+				const float mieSecondStep	   = exp(-currSecondHeight / params.heightMie) * secondStepSize;
 				// Accumulate optical distances.
 				rayleighSecondDist += rayleighSecondStep;
 				mieSecondDist += mieSecondStep;
 			}
 
 			// Compute associated attenuation.
-			const glm::vec3 secondaryAttenuation = exp(-(kMie * mieSecondDist + kRayleigh * rayleighSecondDist));
-			table.rgb(x, y) = secondaryAttenuation;
+			const glm::vec3 secondaryAttenuation = exp(-(params.kMie * mieSecondDist + params.kRayleigh * rayleighSecondDist));
+			table.rgb(int(x), int(y))			 = secondaryAttenuation;
 		}
 	});
 }
 
+void AtmosphereApp::updateSky() {
+	Log::Info() << Log::Resources << "Updating sky..." << std::flush;
+	_scattering.width = _scattering.height = uint(_tableRes);
+	_scattering.levels = _scattering.depth = 1;
+	_scattering.shape					   = TextureShape::D2;
+	_scattering.clean();
+	_scattering.images.emplace_back(_scattering.width, _scattering.height, 3);
+
+	// Update the lookup table.
+	precomputeTable(_atmoParams, uint(_tableSamples), _scattering.images[0]);
+
+	_scattering.upload({Layout::RGB32F, Filter::LINEAR, Wrap::CLAMP}, false);
+
+	Log::Info() << " done." << std::endl;
+}
