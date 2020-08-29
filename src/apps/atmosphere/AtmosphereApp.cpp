@@ -13,7 +13,7 @@
 
 #include "AtmosphereApp.hpp"
 
-AtmosphereApp::AtmosphereApp(RenderingConfig & config) : CameraApp(config) {
+AtmosphereApp::AtmosphereApp(RenderingConfig & config) : CameraApp(config), _scattering("Scattering LUT") {
 	_userCamera.projection(config.screenResolution[0] / config.screenResolution[1], 1.34f, 0.1f, 100.0f);
 	// Framebuffer to store the rendered atmosphere result before tonemapping and upscaling to the window size.
 	const glm::vec2 renderRes = _config.renderingResolution();
