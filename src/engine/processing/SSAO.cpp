@@ -6,7 +6,7 @@
 #include "resources/ResourcesManager.hpp"
 
 SSAO::SSAO(uint width, uint height, uint downscale, float radius) : _mediumBlur(true),
-	_samples(25, BufferType::UNIFORM, DataUse::STATIC), _radius(radius), _downscale(downscale) {
+	_samples(16, BufferType::UNIFORM, DataUse::STATIC), _radius(radius), _downscale(downscale) {
 
 	const Descriptor desc = Descriptor(Layout::R8, Filter::LINEAR_NEAREST, Wrap::CLAMP);
 	_ssaoFramebuffer.reset(new Framebuffer(width/_downscale, height/_downscale, desc, false, "SSAO"));
@@ -15,14 +15,14 @@ SSAO::SSAO(uint width, uint height, uint downscale, float radius) : _mediumBlur(
 
 	// Generate samples.
 	// We need random vectors in the half sphere above z, with more samples close to the center.
-	for(int i = 0; i < 24; ++i) {
+	for(int i = 0; i < 16; ++i) {
 		const glm::vec3 randVec = glm::vec3(Random::Float(-1.0f, 1.0f),
 			Random::Float(-1.0f, 1.0f),
 			Random::Float(0.0f, 1.0f));
 		_samples[i] = glm::vec4(glm::normalize(randVec), 0.0f);
 		_samples[i] *= Random::Float(0.0f, 1.0f);
 		// Skew the distribution towards the center.
-		float scale = float(i) / 24.0f;
+		float scale = float(i) / 16.0f;
 		scale		= 0.1f + 0.9f * scale * scale;
 		_samples[i] *= scale;
 	}

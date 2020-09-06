@@ -14,7 +14,7 @@ uniform mat4 projectionMatrix; ///< The camera projection parameters.
 
 /// Unique sample directions on a sphere.
 layout(std140, binding = 0) uniform Samples {
-	vec4 samples[24];
+	vec4 samples[16];
 };
 
 uniform float radius = 0.5; ///< The sampling radius.
@@ -48,7 +48,7 @@ void main(){
 	
 	// Occlusion accumulation.
 	float occlusion = 0.0;
-	for(int i = 0; i < 24; ++i){
+	for(int i = 0; i < 16; ++i){
 		// View space position of the sample.
 		vec3 randomSample = position + radius * tbn * samples[i].xyz;
 		// Project view space point to clip space then NDC space.
@@ -64,6 +64,6 @@ void main(){
 	}
 	
 	// Normalize and reverse occlusion.
-	occlusion = 1.0 - (occlusion/24.0);
+	occlusion = 1.0 - (occlusion/16.0);
 	fragColor = occlusion;
 }
