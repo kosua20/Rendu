@@ -34,5 +34,10 @@ public:
 	
 private:
 
+	std::unique_ptr<Framebuffer> _sceneFramebuffer; ///< Scene framebuffer
 	std::shared_ptr<Scene> _scene; ///< The scene to render
+	
+	Program * _objectProgram; ///< Basic stencil program
+	Program * _fillProgram; ///< Final screen filling.
+
 };
