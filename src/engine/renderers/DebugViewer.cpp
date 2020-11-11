@@ -496,6 +496,13 @@ void DebugViewer::trackDefault(const Mesh * mesh) {
 	_shared->track(mesh);
 }
 
+void DebugViewer::trackStateDefault(const std::string & name) {
+	if(!_shared) {
+		return;
+	}
+	_shared->trackState(name);
+}
+
 void DebugViewer::untrackDefault(const Texture * tex) {
 	if(!_shared) {
 		return;

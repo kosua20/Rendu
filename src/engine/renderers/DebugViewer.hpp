@@ -98,6 +98,11 @@ public:
 	*/
 	static void trackDefault(const Mesh * mesh);
 
+	/** Register current GPU state for debug;
+	 \param name how to name the state in the list
+	 */
+	static void trackStateDefault(const std::string & name);
+
 	/** Stop monitoring a texture.
 	\param tex the texture to stop tracking
 	*/
