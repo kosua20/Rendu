@@ -136,7 +136,7 @@ void DeferredRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 
 	// Background.
 	// No need to write the skybox depth to the framebuffer.
 	// Accept a depth of 1.0 (far plane).
-	GLUtilities::setDepthState(true, DepthEquation::LEQUAL, false);
+	GLUtilities::setDepthState(true, TestFunction::LEQUAL, false);
 	const Object * background	= _scene->background.get();
 	const Scene::Background mode = _scene->backgroundMode;
 	
@@ -176,7 +176,7 @@ void DeferredRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 
 		}
 		GLUtilities::drawMesh(*background->mesh());
 	}
-	GLUtilities::setDepthState(true, DepthEquation::LESS, true);
+	GLUtilities::setDepthState(true, TestFunction::LESS, true);
 }
 
 void DeferredRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_t layer) {

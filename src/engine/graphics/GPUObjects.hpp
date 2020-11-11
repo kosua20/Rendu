@@ -35,10 +35,10 @@ enum class DataUse : uint {
 };
 
 /**
-\brief Depth test equation.
+\brief Depth or stencil test function.
 \ingroup Resources
 */
-enum class DepthEquation : uint {
+enum class TestFunction : uint {
 	NEVER, ///< Fail in all cases
 	LESS, ///< Pass if lower
 	LEQUAL, ///< Pass if lower or equal
@@ -534,7 +534,7 @@ public:
 
 	// Depth state.
 	glm::vec2 depthRange {0.0f}; ///< Depth value valid range.
-	DepthEquation depthFunc; ///< Depth test function.
+	TestFunction depthFunc; ///< Depth test function.
 	float depthClearValue = 0.0f; ///< Depth for clearing depth buffer.
 	bool depthTest	= false; ///< Is depth test enabled or not.
 	bool depthClamp	  = false; ///< Should depth be clamped to the valid range or not.

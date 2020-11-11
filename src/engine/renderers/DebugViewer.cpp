@@ -271,15 +271,15 @@ void DebugViewer::interface() {
 void DebugViewer::displayState(const std::string & name, StateInfos & infos){
 
 	static const std::map<bool, std::string> bools = {{true, "yes"}, {false, "no"}};
-	static const std::map<DepthEquation, std::string> depthEqs = {
-			{DepthEquation::NEVER, "Never"},
-			{DepthEquation::LESS, "Less"},
-			{DepthEquation::LEQUAL, "Less or equal"},
-			{DepthEquation::EQUAL, "Equal"},
-			{DepthEquation::GREATER, "Greater"},
-			{DepthEquation::GEQUAL, "Greater or equal"},
-			{DepthEquation::NOTEQUAL, "Not equal"},
-			{DepthEquation::ALWAYS, "Always"}};
+	static const std::map<TestFunction, std::string> testEqs = {
+			{TestFunction::NEVER, "Never"},
+			{TestFunction::LESS, "Less"},
+			{TestFunction::LEQUAL, "Less or equal"},
+			{TestFunction::EQUAL, "Equal"},
+			{TestFunction::GREATER, "Greater"},
+			{TestFunction::GEQUAL, "Greater or equal"},
+			{TestFunction::NOTEQUAL, "Not equal"},
+			{TestFunction::ALWAYS, "Always"}};
 	static const std::map<BlendEquation, std::string> blendEqs = {
 			{BlendEquation::ADD, "Add"},
 			{BlendEquation::SUBTRACT, "Subtract"},
@@ -320,7 +320,7 @@ void DebugViewer::displayState(const std::string & name, StateInfos & infos){
 		if(ImGui::CollapsingHeader("Depth")){
 			std::stringstream str;
 			str << "Depth test: " << bools.at(st.depthTest) << ", write: " << bools.at(st.depthWriteMask) << "\n";
-			str << "Depth function: " << depthEqs.at(st.depthFunc) << "\n";
+			str << "Depth function: " << testEqs.at(st.depthFunc) << "\n";
 			str << "Depth clear: " << st.depthClearValue << "\n";
 			str << "Depth range: " << st.depthRange << ", clamp: " << bools.at(st.depthClamp) << "\n";
 			const std::string strRes = str.str();

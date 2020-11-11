@@ -249,10 +249,10 @@ public:
 
 	/** Configure depth testing.
 	 \param test should depth test be performed
-	 \param equation the test equation
+	 \param function the test function
 	 \param write should the depth be written to the depth buffer
 	 */
-	static void setDepthState(bool test, DepthEquation equation, bool write);
+	static void setDepthState(bool test, TestFunction function, bool write);
 
 	/** Enable or disable blending.
 	\param test should blending be enabled

@@ -168,7 +168,7 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 void ForwardRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 & proj, const glm::vec3 & pos) {
 	// No need to write the skybox depth to the framebuffer.
 	// Accept a depth of 1.0 (far plane).
-	GLUtilities::setDepthState(true, DepthEquation::LEQUAL, false);
+	GLUtilities::setDepthState(true, TestFunction::LEQUAL, false);
 	GLUtilities::setBlendState(false);
 	const Object * background	 = _scene->background.get();
 	const Scene::Background mode = _scene->backgroundMode;
@@ -210,7 +210,7 @@ void ForwardRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 &
 		GLUtilities::drawMesh(*background->mesh());
 	}
 
-	GLUtilities::setDepthState(true, DepthEquation::LESS, true);
+	GLUtilities::setDepthState(true, TestFunction::LESS, true);
 }
 
 void ForwardRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_t layer) {

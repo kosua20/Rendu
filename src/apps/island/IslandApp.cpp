@@ -230,11 +230,11 @@ void IslandApp::draw() {
 			// Debug view.
 			if(_showWire){
 				GLUtilities::setPolygonState(PolygonMode::LINE, Faces::ALL);
-				GLUtilities::setDepthState(true, DepthEquation::LEQUAL, true);
+				GLUtilities::setDepthState(true, TestFunction::LEQUAL, true);
 				_groundProgram->uniform("debugCol", true);
 				GLUtilities::drawMesh(cell.mesh);
 				GLUtilities::setPolygonState(PolygonMode::FILL, Faces::ALL);
-				GLUtilities::setDepthState(true, DepthEquation::LESS, true);
+				GLUtilities::setDepthState(true, TestFunction::LESS, true);
 			}
 		}
 	}
@@ -242,7 +242,7 @@ void IslandApp::draw() {
 	
 	// Render the sky.
 	if(_showSky){
-		GLUtilities::setDepthState(true, DepthEquation::LEQUAL, false);
+		GLUtilities::setDepthState(true, TestFunction::LEQUAL, false);
 
 		_skyProgram->use();
 		_skyProgram->uniform("clipToWorld", clipToWorld);
@@ -285,7 +285,7 @@ void IslandApp::draw() {
 		// Render the ocean waves.
 		_sceneBuffer->bind();
 		_sceneBuffer->setViewport();
-		GLUtilities::setDepthState(true, DepthEquation::LESS, true);
+		GLUtilities::setDepthState(true, TestFunction::LESS, true);
 
 		if(isUnderwater){
 			GLUtilities::setCullState(true, Faces::FRONT);
@@ -322,11 +322,11 @@ void IslandApp::draw() {
 		// Debug view.
 		if(_showWire){
 			GLUtilities::setPolygonState(PolygonMode::LINE, Faces::ALL);
-			GLUtilities::setDepthState(true, DepthEquation::LEQUAL, true);
+			GLUtilities::setDepthState(true, TestFunction::LEQUAL, true);
 			_oceanProgram->uniform("debugCol", true);
 			GLUtilities::drawTesselatedMesh(_oceanMesh, 4);
 			GLUtilities::setPolygonState(PolygonMode::FILL, Faces::ALL);
-			GLUtilities::setDepthState(true, DepthEquation::LESS, true);
+			GLUtilities::setDepthState(true, TestFunction::LESS, true);
 		}
 
 		if(isUnderwater){
@@ -373,7 +373,7 @@ void IslandApp::draw() {
 
 		} else {
 			// Far ocean, using a cylinder as support to cast rays intersecting the ocean plane.
-			GLUtilities::setDepthState(true, DepthEquation::ALWAYS, true);
+			GLUtilities::setDepthState(true, TestFunction::ALWAYS, true);
 
 			_farOceanProgram->use();
 			_farOceanProgram->uniform("mvp", mvp);
@@ -401,16 +401,16 @@ void IslandApp::draw() {
 			GLUtilities::bindTexture(_terrain->shadowMap(), 8);
 			GLUtilities::drawMesh(_farOceanMesh);
 
-			GLUtilities::setDepthState(true, DepthEquation::LESS, true);
+			GLUtilities::setDepthState(true, TestFunction::LESS, true);
 
 			// Debug view.
 			if(_showWire){
 				GLUtilities::setPolygonState(PolygonMode::LINE, Faces::ALL);
-				GLUtilities::setDepthState(true, DepthEquation::LEQUAL, true);
+				GLUtilities::setDepthState(true, TestFunction::LEQUAL, true);
 				_farOceanProgram->uniform("debugCol", true);
 				GLUtilities::drawMesh(_farOceanMesh);
 				GLUtilities::setPolygonState(PolygonMode::FILL, Faces::ALL);
-				GLUtilities::setDepthState(true, DepthEquation::LESS, true);
+				GLUtilities::setDepthState(true, TestFunction::LESS, true);
 			}
 		}
 
@@ -420,7 +420,7 @@ void IslandApp::draw() {
 	_sceneBuffer->unbind();
 
 	// Tonemapping and final screen.
-	GLUtilities::setDepthState(false, DepthEquation::LESS, true);
+	GLUtilities::setDepthState(false, TestFunction::LESS, true);
 	GLUtilities::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 	Framebuffer::backbuffer()->bind(Framebuffer::Mode::SRGB);
 	_tonemap->use();

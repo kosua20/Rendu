@@ -855,17 +855,17 @@ void GLUtilities::setDepthState(bool test) {
 	(test ? glEnable : glDisable)(GL_DEPTH_TEST);
 }
 
-void GLUtilities::setDepthState(bool test, DepthEquation equation, bool write) {
+void GLUtilities::setDepthState(bool test, TestFunction equation, bool write) {
 	(test ? glEnable : glDisable)(GL_DEPTH_TEST);
-	static const std::map<DepthEquation, GLenum> eqs = {
-		{DepthEquation::NEVER, GL_NEVER},
-		{DepthEquation::LESS, GL_LESS},
-		{DepthEquation::LEQUAL, GL_LEQUAL},
-		{DepthEquation::EQUAL, GL_EQUAL},
-		{DepthEquation::GREATER, GL_GREATER},
-		{DepthEquation::GEQUAL, GL_GEQUAL},
-		{DepthEquation::NOTEQUAL, GL_NOTEQUAL},
-		{DepthEquation::ALWAYS, GL_ALWAYS}};
+	static const std::map<TestFunction, GLenum> eqs = {
+		{TestFunction::NEVER, GL_NEVER},
+		{TestFunction::LESS, GL_LESS},
+		{TestFunction::LEQUAL, GL_LEQUAL},
+		{TestFunction::EQUAL, GL_EQUAL},
+		{TestFunction::GREATER, GL_GREATER},
+		{TestFunction::GEQUAL, GL_GEQUAL},
+		{TestFunction::NOTEQUAL, GL_NOTEQUAL},
+		{TestFunction::ALWAYS, GL_ALWAYS}};
 	glDepthFunc(eqs.at(equation));
 	glDepthMask(write ? GL_TRUE : GL_FALSE);
 }
@@ -1152,18 +1152,18 @@ void GLUtilities::getState(GPUState& state) {
 	glGetFloatv(GL_POLYGON_OFFSET_UNITS, &state.polygonOffsetUnits);
 
 	// Depth state.
-	static const std::map<GLenum, DepthEquation> depthEqs = {
-		{GL_NEVER, DepthEquation::NEVER},
-		{GL_LESS, DepthEquation::LESS},
-		{GL_LEQUAL, DepthEquation::LEQUAL},
-		{GL_EQUAL, DepthEquation::EQUAL},
-		{GL_GREATER, DepthEquation::GREATER},
-		{GL_GEQUAL, DepthEquation::GEQUAL},
-		{GL_NOTEQUAL, DepthEquation::NOTEQUAL},
-		{GL_ALWAYS, DepthEquation::ALWAYS}};
+	static const std::map<GLenum, TestFunction> testFuncs = {
+		{GL_NEVER, 		TestFunction::NEVER},
+		{GL_LESS, 		TestFunction::LESS},
+		{GL_LEQUAL, 	TestFunction::LEQUAL},
+		{GL_EQUAL, 		TestFunction::EQUAL},
+		{GL_GREATER, 	TestFunction::GREATER},
+		{GL_GEQUAL, 	TestFunction::GEQUAL},
+		{GL_NOTEQUAL, 	TestFunction::NOTEQUAL},
+		{GL_ALWAYS, 	TestFunction::ALWAYS}};
 	GLint dfc;
 	glGetIntegerv(GL_DEPTH_FUNC, &dfc);
-	state.depthFunc = depthEqs.at(dfc);
+	state.depthFunc = testFuncs.at(dfc);
 	glGetFloatv(GL_DEPTH_CLEAR_VALUE, &state.depthClearValue);
 	glGetFloatv(GL_DEPTH_RANGE, &state.depthRange[0]);
 	GLboolean dwm;

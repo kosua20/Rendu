@@ -11,7 +11,7 @@ GameRenderer::GameRenderer(const glm::vec2 & resolution) {
 
 	// GL options
 
-	GLUtilities::setDepthState(true, DepthEquation::LESS, true);
+	GLUtilities::setDepthState(true, TestFunction::LESS, true);
 	GLUtilities::setCullState(true, Faces::BACK);
 	GLUtilities::setBlendState(false, BlendEquation::ADD, BlendFunction::SRC_ALPHA, BlendFunction::ONE_MINUS_SRC_ALPHA);
 
