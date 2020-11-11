@@ -180,7 +180,15 @@ public:
 	 \note Can be used in conjonction with saveFramebuffer() to save the content of the window.
 	 */
 	static const Framebuffer * backbuffer();
-	
+
+	/**
+	 Update the stored resolution of the backbuffer.
+	 \param w the width
+	 \param h the height
+	 \warning This will not resize the backbuffer, only update the stored dimensions.
+	 */
+	static void backbufferResized(uint w, uint h);
+
 	/** Copy assignment operator (disabled).
 	 \return a reference to the object assigned to
 	 */

@@ -149,7 +149,7 @@ void Framebuffer::bind(size_t layer, size_t mip, Mode mode) const {
 
 	if(_depthUse == Depth::TEXTURE){
 		glBindTexture(GL_TEXTURE_2D, _idDepth.gpu->id);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, (_hasStencil ? GL_DEPTH_STENCIL_ATTACHMENT : GL_DEPTH_ATTACHMENT), GL_TEXTURE_2D, _idDepth.gpu->id, mid);
+		glFramebufferTexture2D(target, (_hasStencil ? GL_DEPTH_STENCIL_ATTACHMENT : GL_DEPTH_ATTACHMENT), GL_TEXTURE_2D, _idDepth.gpu->id, mid);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
@@ -259,4 +259,12 @@ const Framebuffer * Framebuffer::backbuffer() {
 		tex.gpu.reset(new GPUTexture(Descriptor(Layout::SRGB8_ALPHA8, Filter::NEAREST, Wrap::CLAMP), tex.shape));
 	}
 	return _backbuffer;
+}
+
+void Framebuffer::backbufferResized(uint w, uint h){
+	Framebuffer::backbuffer();
+	_backbuffer->_width  = w > 0 ? w : 1;
+	_backbuffer->_height = h > 0 ? h : 1;
+	_backbuffer->_idColors.back().width = _backbuffer->_width;
+	_backbuffer->_idColors.back().height = _backbuffer->_height;
 }
