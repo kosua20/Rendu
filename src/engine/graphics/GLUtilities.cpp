@@ -978,6 +978,10 @@ void GLUtilities::setPolygonState(PolygonMode mode, Faces selectedFaces) {
 	glPolygonMode(faces.at(selectedFaces), modes.at(mode));
 }
 
+void GLUtilities::setColorState(bool writeRed, bool writeGreen, bool writeBlue, bool writeAlpha){
+	glColorMask(writeRed ? GL_TRUE : GL_FALSE, writeGreen ? GL_TRUE : GL_FALSE, writeBlue ? GL_TRUE : GL_FALSE, writeAlpha ? GL_TRUE : GL_FALSE);
+}
+
 void GLUtilities::blitDepth(const Framebuffer & src, const Framebuffer & dst) {
 	src.bind(Framebuffer::Mode::READ);
 	dst.bind(Framebuffer::Mode::WRITE);

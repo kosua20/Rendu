@@ -313,6 +313,14 @@ public:
 	 */
 	static void setPolygonState(PolygonMode mode, Faces selectedFaces);
 
+	/** Set the color write mask.
+	 \param writeRed allow writes to the red channel
+	 \param writeGreen allow writes to the green channel
+	 \param writeBlue allow writes to the blue channel
+	 \param writeAlpha allow writes to the alpha channel
+	 */
+	static void setColorState(bool writeRed, bool writeGreen, bool writeBlue, bool writeAlpha);
+
 	/** Query the current GPU state.
 	 \param state will be populated with the current GPU settings
 	 */
