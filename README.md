@@ -25,6 +25,7 @@ Basic resources to run each project are included in this repository, but you can
 | [Shader playground](http://kosua20.github.io/Rendu-documentation/group___shader_bench.html) | ![Shader bench preview](docs/img/shaderbench.png) Interactive shader viewer with editable inputs (uniforms, textures) and camera parameters for raymarching, noise generation,... |
 | [Atmospheric scattering](http://kosua20.github.io/Rendu-documentation/group___atmospheric_scattering.html) | ![Atmospheric scattering preview](docs/img/atmosphere.png) Realistic atmosphere rendering with Rayleigh and Mie scattering (*Precomputed Atmospheric Scattering*, Bruneton et al., 2008). Support on-the-fly lookup table updates and export. |
 | [Snake Game](http://kosua20.github.io/Rendu-documentation/group___snake_game.html) | ![Snake game preview](docs/img/snake.png) A basic game of snake, demonstrating game menus, player state, batched rendering. |
+| [Stencil demo](http://kosua20.github.io/Rendu-documentation/group___stencil_demo.html) | ![Stencil demo preview](docs/img/stencil.png) An example of using the stencil buffer for counting primitives, creating a black and wide stylized scene rendering. |
 
 ## Tools
 
@@ -91,4 +92,5 @@ I would like to add some additional features to Rendu in the near future, mainly
 On a more down-to-earth level, some engineering tasks could also help improve the engine.
 
 - Cleanup the way materials are handled right now.
+- Add a specialized SceneApp, abstract frustum culling with draw lists?
 - Potential move to Vulkan?
