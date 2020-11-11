@@ -312,7 +312,7 @@ void ShaderEditor::update() {
 				// Create a RGB8 framebuffer to save as png.
 				Framebuffer tmp(_currFrame->width(), _currFrame->height(), {Layout::RGB8, Filter::NEAREST, Wrap::CLAMP}, false, "Temp");
 				GLUtilities::blit(*_currFrame, tmp, Filter::NEAREST);
-				GLUtilities::saveFramebuffer(tmp, tmp.width(), tmp.height(), outPath, true, true);
+				GLUtilities::saveFramebuffer(tmp, outPath, true, true);
 			}
 		}
 		ImGui::SameLine();

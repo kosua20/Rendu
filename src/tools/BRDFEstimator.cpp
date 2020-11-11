@@ -164,14 +164,14 @@ void computeAndExportLookupTable(const int outputSide, const std::string & outpu
 	const auto bakingFramebuffer = std::make_shared<Framebuffer>(outputSide, outputSide, desc, false, "LUT");
 	const auto brdfProgram		 = Resources::manager().getProgram2D("brdf_sampler");
 	bakingFramebuffer->bind();
-	GLUtilities::setViewport(0, 0, int(bakingFramebuffer->width()), int(bakingFramebuffer->height()));
+	GLUtilities::setViewport(0, 0, outputSide, outputSide);
 	GLUtilities::clearColor(glm::vec4(0.0f));
 	GLUtilities::setDepthState(false);
 	brdfProgram->use();
 	ScreenQuad::draw();
 	bakingFramebuffer->unbind();
 	GLUtilities::setDepthState(true);
-	GLUtilities::saveFramebuffer(*bakingFramebuffer, uint(outputSide), uint(outputSide), outputPath, true);
+	GLUtilities::saveFramebuffer(*bakingFramebuffer, outputPath, true);
 }
 
 /**

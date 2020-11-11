@@ -83,15 +83,13 @@ public:
 
 	/** Save a given framebuffer content to the disk.
 	 \param framebuffer the framebuffer to save
-	 \param width the width of the region to save
-	 \param height the height of the region to save
 	 \param path the output image path
 	 \param flip should the image be vertically fliped before saving
 	 \param ignoreAlpha should the alpha channel be ignored if it exists
 	 \note The output image extension will be automatically added based on the framebuffer type and format.
 	 \warning Export of small size GL_FLOAT framebuffers can create artifacts.
 	 */
-	static void saveFramebuffer(const Framebuffer & framebuffer, unsigned int width, unsigned int height, const std::string & path, bool flip = true, bool ignoreAlpha = false);
+	static void saveFramebuffer(const Framebuffer & framebuffer, const std::string & path, bool flip = true, bool ignoreAlpha = false);
 
 
 	/** Bind a texture to some texture slot.
@@ -346,8 +344,8 @@ private:
 	/** Read back the currently bound framebuffer to the CPU and save it in the best possible format on disk.
 	 \param type the type of the framebuffer
 	 \param format the format of the framebuffer
-	 \param width the width of the framebuffer
-	 \param height the height of the framebuffer
+	 \param width the width of the region to save
+	 \param height the height of the region to save
 	 \param components the number of components of the framebuffer
 	 \param path the output image path
 	 \param flip should the image be vertically fliped before saving

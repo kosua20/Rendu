@@ -358,14 +358,14 @@ GLuint GLUtilities::createProgram(const std::string & vertexContent, const std::
 	return id;
 }
 
-void GLUtilities::saveFramebuffer(const Framebuffer & framebuffer, unsigned int width, unsigned int height, const std::string & path, bool flip, bool ignoreAlpha) {
+void GLUtilities::saveFramebuffer(const Framebuffer & framebuffer, const std::string & path, bool flip, bool ignoreAlpha) {
 
 	GLint currentBoundFB = 0;
 	glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &currentBoundFB);
 
 	framebuffer.bind(Framebuffer::Mode::READ);
 	const std::unique_ptr<GPUTexture> & gpu = framebuffer.texture()->gpu;
-	GLUtilities::savePixels(gpu->type, gpu->format, width, height, gpu->channels, path, flip, ignoreAlpha);
+	GLUtilities::savePixels(gpu->type, gpu->format, framebuffer.width(), framebuffer.height(), gpu->channels, path, flip, ignoreAlpha);
 
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, GLuint(currentBoundFB));
 }
