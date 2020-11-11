@@ -43,11 +43,59 @@ void StenciledRenderer::draw(const Camera & camera, Framebuffer & framebuffer, s
 	_sceneFramebuffer->bind();
 	_sceneFramebuffer->setViewport();
 
+	// Clear colorbuffer to white, don't write to it for now.
+	GLUtilities::clearColorDepthStencil({1.0f, 1.0f, 1.0f, 1.0f}, 1.0f, 0x00);
+	GLUtilities::setColorState(false, false, false, false);
+	// Always pass stencil test and flip all bits. As triangles are rendered successively to a pixel,
+	// they will flip the value between 0x00 (even count) and 0xFF (odd count).
+	GLUtilities::setStencilState(true, TestFunction::ALWAYS, StencilOp::KEEP, StencilOp::INVERT, StencilOp::INVERT, 0x00);
+
+	DebugViewer::trackStateDefault("Object");
+
+	// Scene objects.
+	// Render all objects with a simple program.
+	_objectProgram->use();
+	const glm::mat4 VP = proj*view;
+	const Frustum camFrustum(VP);
+	for(auto & object : _scene->objects) {
+		// Check visibility.
+		if(!camFrustum.intersects(object.boundingBox())){
+			continue;
+		}
+		// Combine the three matrices.
+		const glm::mat4 MVP = VP * object.model();
+
+		// Upload the matrices.
+		_objectProgram->uniform("mvp", MVP);
+		
+		// Backface culling state.
+		if(object.twoSided()) {
+			GLUtilities::setCullState(false);
+		}
+		GLUtilities::drawMesh(*object.mesh());
+		// Restore state.
+		GLUtilities::setCullState(true);
+	}
+
+	// Render a black quad only where the stencil buffer is non zero (ie odd count of covering primitives).
+	GLUtilities::setStencilState(true, TestFunction::NOTEQUAL, StencilOp::KEEP, StencilOp::KEEP, StencilOp::KEEP, 0x00);
+	GLUtilities::setColorState(true, true, true, true);
+
+	DebugViewer::trackStateDefault("Screen");
+
+	_fillProgram->use();
+	_fillProgram->uniform("color", glm::vec4(0.0f));
+	ScreenQuad::draw();
+
 	_sceneFramebuffer->unbind();
 
 	// Restore states.
+	GLUtilities::setStencilState(false, false);
 	GLUtilities::setDepthState(false);
 	GLUtilities::setCullState(true);
+
+	DebugViewer::trackStateDefault("Off stencil");
+
 	// Output result.
 	GLUtilities::blit(*_sceneFramebuffer, framebuffer, 0, layer, Filter::LINEAR);
 }
