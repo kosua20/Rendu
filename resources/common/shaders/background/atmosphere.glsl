@@ -15,6 +15,7 @@ struct AtmosphereParameters {
 	float sunAngularRadiusCos; ///< Cosine of the sun angular radius.
 };
 
+/** Default atmosphere parameters. */
 AtmosphereParameters defaultAtmosphere = AtmosphereParameters(vec3(1.474, 1.8504, 1.91198), vec3(5.5e-6, 13.0e-6, 22.4e-6), 6371e3, 6471e3, 20.0, 21e-6, 8000.0, 1200.0, 0.758, 0.04675, 0.998);
 
 #define SAMPLES_COUNT_ATMO 16
