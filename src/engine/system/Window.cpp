@@ -3,6 +3,7 @@
 #include "input/InputCallbacks.hpp"
 #include "input/Input.hpp"
 #include "graphics/GLUtilities.hpp"
+#include "graphics/Framebuffer.hpp"
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_opengl3.h>
@@ -93,6 +94,7 @@ Window::Window(const std::string & name, RenderingConfig & config, bool escapeQu
 
 	// Update the resolution.
 	Input::manager().resizeEvent(width, height);
+	Framebuffer::backbufferResized(width, height);
 }
 
 void Window::perform(Action action) {
@@ -164,6 +166,12 @@ bool Window::nextFrame() {
 	// Handle quitting.
 	if(_allowEscape && Input::manager().pressed(Input::Key::Escape)) {
 		perform(Action::Quit);
+	}
+	// Check if the backbuffer was resized.
+	if(Input::manager().resized()){
+		const uint w = uint(Input::manager().size()[0]);
+		const uint h = uint(Input::manager().size()[1]);
+		Framebuffer::backbufferResized(w, h);
 	}
 	// Start new GUI frame.
 	ImGui_ImplOpenGL3_NewFrame();
