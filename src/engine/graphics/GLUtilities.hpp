@@ -236,11 +236,23 @@ public:
 	 */
 	static void clearDepth(float depth);
 
+	/** Clear stencil for the current framebuffer.
+	 \param stencil the stencil clear
+	 */
+	static void clearStencil(uchar stencil);
+
 	/** Clear color and depth for the current framebuffer.
 	 \param color the RGBA float clear color
 	 \param depth the depth clear
 	 */
 	static void clearColorAndDepth(const glm::vec4 & color, float depth);
+
+	/** Clear color depth and stencil for the current framebuffer.
+	 \param color the RGBA float clear color
+	 \param depth the depth clear
+	 \param stencil the stencil clear
+	 */
+	static void clearColorDepthStencil(const glm::vec4 & color, float depth, uchar stencil);
 
 	/** Enable or disable the depth test.
 	 \param test should depth test be performed
@@ -253,6 +265,23 @@ public:
 	 \param write should the depth be written to the depth buffer
 	 */
 	static void setDepthState(bool test, TestFunction function, bool write);
+
+	/** Enable or disable the stencil test.
+	 \param test should stencil test be performed
+	 \param write should the stencil be written to the stencil buffer
+	 */
+	static void setStencilState(bool test, bool write);
+
+	/** Configure stencil testing.
+	 \param test should stencil test be performed
+	 \param function the test function
+	 \param fail operation to perform if the stencil test fails
+	 \param pass operation to perform if the stencil and depth tests succeed, or if the stencil test is disabled
+	 \param depthFail operation to perform if the stencil test succeeds but not the depth test
+	 \param value reference value used for comparison
+	 \warning Stencil writing still happens even if testing is disabled.
+	 */
+	static void setStencilState(bool test, TestFunction function, StencilOp fail, StencilOp pass, StencilOp depthFail, uchar value);
 
 	/** Enable or disable blending.
 	\param test should blending be enabled

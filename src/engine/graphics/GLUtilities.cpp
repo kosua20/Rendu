@@ -845,10 +845,36 @@ void GLUtilities::clearDepth(float depth) {
 	glClear(GL_DEPTH_BUFFER_BIT);
 }
 
+void GLUtilities::clearStencil(uchar stencil) {
+	// The stencil mask applies to clearing.
+	GLint swm;
+	glGetIntegerv(GL_STENCIL_WRITEMASK, &swm);
+	glStencilMask(0xFF);
+
+	glClearStencil(GLint(stencil));
+	glClear(GL_STENCIL_BUFFER_BIT);
+	
+	glStencilMask(swm);
+}
+
 void GLUtilities::clearColorAndDepth(const glm::vec4 & color, float depth) {
 	glClearColor(color[0], color[1], color[2], color[3]);
 	glClearDepth(depth);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+void GLUtilities::clearColorDepthStencil(const glm::vec4 & color, float depth, uchar stencil) {
+	// The stencil mask applies to clearing.
+	GLint swm;
+	glGetIntegerv(GL_STENCIL_WRITEMASK, &swm);
+	glStencilMask(0xFF);
+
+	glClearColor(color[0], color[1], color[2], color[3]);
+	glClearDepth(depth);
+	glClearStencil(GLint(stencil));
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+	glStencilMask(swm);
 }
 
 void GLUtilities::setDepthState(bool test) {
@@ -868,6 +894,39 @@ void GLUtilities::setDepthState(bool test, TestFunction equation, bool write) {
 		{TestFunction::ALWAYS, GL_ALWAYS}};
 	glDepthFunc(eqs.at(equation));
 	glDepthMask(write ? GL_TRUE : GL_FALSE);
+}
+
+void GLUtilities::setStencilState(bool test, bool write){
+	(test ? glEnable : glDisable)(GL_STENCIL_TEST);
+	glStencilMask(write ? 0xFF : 0x00);
+}
+
+void GLUtilities::setStencilState(bool test, TestFunction function, StencilOp fail, StencilOp pass, StencilOp depthFail, uchar value){
+	(test ? glEnable : glDisable)(GL_STENCIL_TEST);
+
+	static const std::map<TestFunction, GLenum> funs = {
+		{TestFunction::NEVER, GL_NEVER},
+		{TestFunction::LESS, GL_LESS},
+		{TestFunction::LEQUAL, GL_LEQUAL},
+		{TestFunction::EQUAL, GL_EQUAL},
+		{TestFunction::GREATER, GL_GREATER},
+		{TestFunction::GEQUAL, GL_GEQUAL},
+		{TestFunction::NOTEQUAL, GL_NOTEQUAL},
+		{TestFunction::ALWAYS, GL_ALWAYS}};
+
+	static const std::map<StencilOp, GLenum> ops = {
+		{ StencilOp::KEEP, GL_KEEP },
+		{ StencilOp::ZERO, GL_ZERO },
+		{ StencilOp::REPLACE, GL_REPLACE },
+		{ StencilOp::INCR, GL_INCR },
+		{ StencilOp::INCRWRAP, GL_INCR_WRAP },
+		{ StencilOp::DECR, GL_DECR },
+		{ StencilOp::DECRWRAP, GL_DECR_WRAP },
+		{ StencilOp::INVERT, GL_INVERT }};
+
+	glStencilFunc(funs.at(function), GLint(value), 0xFF);
+	glStencilMask(0xFF);
+	glStencilOp(ops.at(fail), ops.at(depthFail), ops.at(pass));
 }
 
 void GLUtilities::setBlendState(bool test) {
