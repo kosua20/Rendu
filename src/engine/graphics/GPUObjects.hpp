@@ -50,6 +50,21 @@ enum class TestFunction : uint {
 };
 
 /**
+\brief Stencil operation to perform.
+\ingroup Resources
+*/
+enum class StencilOp : uint {
+	KEEP, ///< Keep current value.
+	ZERO,	///< Set value to zero.
+	REPLACE,	///< Set value to reference.
+	INCR,	///< Increment value and clamp.
+	INCRWRAP, ///< Increment value and wrap.
+	DECR,	///< Decrement value and clamp.
+	DECRWRAP, ///< Decrement value and wrap.
+	INVERT ///< Invert value bitwise.
+};
+
+/**
 \brief Blending mix equation for each component. Below we use src and dst to denote
  the (modulated by the blend functions) values to blend.
  Note that min and max do not apply the modulation factor to each term.
@@ -539,6 +554,15 @@ public:
 	bool depthTest	= false; ///< Is depth test enabled or not.
 	bool depthClamp	  = false; ///< Should depth be clamped to the valid range or not.
 	bool depthWriteMask	 = false; ///< Should depth be written to the depth buffer or not.
+
+	// Stencil state
+	TestFunction stencilFunc; ///< Stencil test function.
+	StencilOp stencilFail; ///< Operation when the stencil test fails.
+	StencilOp stencilPass; ///< Operation when the stencil test passes but the depth test fails.
+	StencilOp stencilDepthPass; ///< Operation when the stencil and depth tests passes.
+	uchar stencilValue = 0; ///< Stencil reference value.
+	bool stencilTest = false; ///< Is the stencil test enabled or not.
+	bool stencilWriteMask = true; ///< should stencil be written to the stencil buffer or not.
 
 	// Point state.
 	float pointSize		  = 0.0f; ///< Fixed point size value.

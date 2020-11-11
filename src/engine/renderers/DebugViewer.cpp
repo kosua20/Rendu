@@ -301,6 +301,15 @@ void DebugViewer::displayState(const std::string & name, StateInfos & infos){
 		{Faces::FRONT, "Front"},
 		{Faces::BACK, "Back"},
 		{Faces::ALL, "Front & back"}};
+	static const std::map<StencilOp, std::string> ops = {
+			{ StencilOp::KEEP, "Keep" },
+			{ StencilOp::ZERO, "Zero" },
+			{ StencilOp::REPLACE, "Replace" },
+			{ StencilOp::INCR, "Increment & clamp" },
+			{ StencilOp::INCRWRAP, "Increment & wrap" },
+			{ StencilOp::DECR, "Decrement & clamp" },
+			{ StencilOp::DECRWRAP, "Decrement & wrap" },
+			{ StencilOp::INVERT, "Invert bitwise" }};
 
 	const std::string finalName = "State - " + name;
 	if(ImGui::Begin(finalName.c_str(), &infos.visible)) {
@@ -323,6 +332,17 @@ void DebugViewer::displayState(const std::string & name, StateInfos & infos){
 			str << "Depth function: " << testEqs.at(st.depthFunc) << "\n";
 			str << "Depth clear: " << st.depthClearValue << "\n";
 			str << "Depth range: " << st.depthRange << ", clamp: " << bools.at(st.depthClamp) << "\n";
+			const std::string strRes = str.str();
+			ImGui::Text("%s", strRes.c_str());
+		}
+
+		if(ImGui::CollapsingHeader("Stencil")){
+			std::stringstream str;
+			str << "Stencil test: " << bools.at(st.stencilTest) << ", write: " << bools.at(st.stencilWriteMask) << "\n";
+			str << "Stencil function: " << testEqs.at(st.stencilFunc) << "\n";
+			str << "Stencil operations: " << "Fail: " << ops.at(st.stencilFail) << "\n";
+			str << "\t Pass: stencil: " << ops.at(st.stencilPass) << ", depth: " << ops.at(st.stencilDepthPass) << "\n";
+			str << "Stencil value: " << std::hex << uint(st.stencilValue) << "\n";
 			const std::string strRes = str.str();
 			ImGui::Text("%s", strRes.c_str());
 		}

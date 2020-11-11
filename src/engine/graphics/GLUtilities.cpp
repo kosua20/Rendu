@@ -1098,6 +1098,7 @@ void GLUtilities::getState(GPUState& state) {
 	state.polygonOffsetPoint = glIsEnabled(GL_POLYGON_OFFSET_POINT);
 	state.programPointSize = glIsEnabled(GL_PROGRAM_POINT_SIZE);
 	state.scissorTest = glIsEnabled(GL_SCISSOR_TEST);
+	state.stencilTest = glIsEnabled(GL_STENCIL_TEST);
 
 	// Blend state.
 	static const std::map<GLenum, BlendEquation> blendEqs = {
@@ -1169,6 +1170,31 @@ void GLUtilities::getState(GPUState& state) {
 	GLboolean dwm;
 	glGetBooleanv(GL_DEPTH_WRITEMASK, &dwm);
 	state.depthWriteMask = dwm;
+
+	// Stencil state
+	static const std::map<GLenum, StencilOp> ops = {
+		{ GL_KEEP, StencilOp::KEEP },
+		{ GL_ZERO, StencilOp::ZERO },
+		{ GL_REPLACE, StencilOp::REPLACE },
+		{ GL_INCR, StencilOp::INCR },
+		{ GL_INCR_WRAP, StencilOp::INCRWRAP },
+		{ GL_DECR, StencilOp::DECR },
+		{ GL_DECR_WRAP, StencilOp::DECRWRAP },
+		{ GL_INVERT, StencilOp::INVERT }};
+	GLint sfc, sof, sos, sod;
+	glGetIntegerv(GL_STENCIL_FUNC, &sfc);
+	glGetIntegerv(GL_STENCIL_FAIL, &sof);
+	glGetIntegerv(GL_STENCIL_PASS_DEPTH_FAIL, &sos);
+	glGetIntegerv(GL_STENCIL_PASS_DEPTH_PASS, &sod);
+	state.stencilFunc = testFuncs.at(sfc);
+	state.stencilFail = ops.at(sof);
+	state.stencilPass = ops.at(sos);
+	state.stencilDepthPass = ops.at(sod);
+	GLint swm, srv;
+	glGetIntegerv(GL_STENCIL_WRITEMASK, &swm);
+	glGetIntegerv(GL_STENCIL_REF, &srv);
+	state.stencilWriteMask = (swm != 0);
+	state.stencilValue = uchar(srv);
 
 	// Point state.
 	glGetFloatv(GL_POINT_SIZE, &state.pointSize);
