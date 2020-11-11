@@ -179,6 +179,9 @@ project("ShaderBench")
 project("Island")
 	AppSetup("island")
 
+project("Stenciled")
+	AppSetup("stenciled")
+
 
 group("Tools")
 
