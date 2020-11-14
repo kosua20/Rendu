@@ -229,11 +229,11 @@ void IslandApp::draw() {
 
 			// Debug view.
 			if(_showWire){
-				GLUtilities::setPolygonState(PolygonMode::LINE, Faces::ALL);
+				GLUtilities::setPolygonState(PolygonMode::LINE);
 				GLUtilities::setDepthState(true, TestFunction::LEQUAL, true);
 				_groundProgram->uniform("debugCol", true);
 				GLUtilities::drawMesh(cell.mesh);
-				GLUtilities::setPolygonState(PolygonMode::FILL, Faces::ALL);
+				GLUtilities::setPolygonState(PolygonMode::FILL);
 				GLUtilities::setDepthState(true, TestFunction::LESS, true);
 			}
 		}
@@ -321,11 +321,11 @@ void IslandApp::draw() {
 
 		// Debug view.
 		if(_showWire){
-			GLUtilities::setPolygonState(PolygonMode::LINE, Faces::ALL);
+			GLUtilities::setPolygonState(PolygonMode::LINE);
 			GLUtilities::setDepthState(true, TestFunction::LEQUAL, true);
 			_oceanProgram->uniform("debugCol", true);
 			GLUtilities::drawTesselatedMesh(_oceanMesh, 4);
-			GLUtilities::setPolygonState(PolygonMode::FILL, Faces::ALL);
+			GLUtilities::setPolygonState(PolygonMode::FILL);
 			GLUtilities::setDepthState(true, TestFunction::LESS, true);
 		}
 
@@ -405,11 +405,11 @@ void IslandApp::draw() {
 
 			// Debug view.
 			if(_showWire){
-				GLUtilities::setPolygonState(PolygonMode::LINE, Faces::ALL);
+				GLUtilities::setPolygonState(PolygonMode::LINE);
 				GLUtilities::setDepthState(true, TestFunction::LEQUAL, true);
 				_farOceanProgram->uniform("debugCol", true);
 				GLUtilities::drawMesh(_farOceanMesh);
-				GLUtilities::setPolygonState(PolygonMode::FILL, Faces::ALL);
+				GLUtilities::setPolygonState(PolygonMode::FILL);
 				GLUtilities::setDepthState(true, TestFunction::LESS, true);
 			}
 		}

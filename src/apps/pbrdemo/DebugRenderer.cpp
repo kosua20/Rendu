@@ -95,7 +95,7 @@ void DebugRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_
 	GLUtilities::setDepthState(true);
 
 
-	GLUtilities::setPolygonState(PolygonMode::LINE, Faces::ALL);
+	GLUtilities::setPolygonState(PolygonMode::LINE);
 	GLUtilities::setCullState(false);
 
 	if(_showLights){
@@ -122,7 +122,7 @@ void DebugRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_
 	}
 
 	GLUtilities::setCullState(true);
-	GLUtilities::setPolygonState(PolygonMode::FILL, Faces::ALL);
+	GLUtilities::setPolygonState(PolygonMode::FILL);
 	// Render probe.
 	if(_showProbe){
 		// Combine the three matrices.

@@ -52,7 +52,7 @@ void BVHRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_t 
 	}
 
 	// Debug wireframe visualisation.
-	GLUtilities::setPolygonState(PolygonMode::LINE, Faces::ALL);
+	GLUtilities::setPolygonState(PolygonMode::LINE);
 	_bvhProgram->use();
 	_bvhProgram->uniform("mvp", VP);
 	// If there is a ray mesh, show it.
@@ -72,7 +72,7 @@ void BVHRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_t 
 		}
 	}
 
-	GLUtilities::setPolygonState(PolygonMode::FILL, Faces::ALL);
+	GLUtilities::setPolygonState(PolygonMode::FILL);
 	framebuffer.unbind();
 	GLUtilities::setDepthState(false);
 	GLUtilities::setCullState(true);

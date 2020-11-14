@@ -58,11 +58,11 @@ void EditorRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size
 	
 	// Render all lights.
 	_lightsDebug.updateCameraInfos(view, proj);
-	GLUtilities::setPolygonState(PolygonMode::LINE, Faces::ALL);
+	GLUtilities::setPolygonState(PolygonMode::LINE);
 	for(auto & light : _scene->lights) {
 		light->draw(_lightsDebug);
 	}
-	GLUtilities::setPolygonState(PolygonMode::FILL, Faces::ALL);
+	GLUtilities::setPolygonState(PolygonMode::FILL);
 	
 	// Render the background.
 	renderBackground(view, proj, camera.position());
