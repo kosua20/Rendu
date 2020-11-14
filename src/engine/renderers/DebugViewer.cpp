@@ -342,7 +342,8 @@ void DebugViewer::displayState(const std::string & name, StateInfos & infos){
 			str << "Stencil function: " << testEqs.at(st.stencilFunc) << "\n";
 			str << "Stencil operations: " << "Fail: " << ops.at(st.stencilFail) << "\n";
 			str << "\t Pass: stencil: " << ops.at(st.stencilPass) << ", depth: " << ops.at(st.stencilDepthPass) << "\n";
-			str << "Stencil value: " << std::hex << uint(st.stencilValue) << "\n";
+			str << "Stencil value: " << std::hex << uint(st.stencilValue);
+			str << ", stencil clear: " << std::hex << uint(st.stencilClearValue) << "\n";
 			const std::string strRes = str.str();
 			ImGui::Text("%s", strRes.c_str());
 		}
