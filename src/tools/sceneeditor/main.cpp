@@ -29,7 +29,7 @@ int main(int argc, char ** argv) {
 	}
 	config.initialWidth = 1280;
 	config.initialHeight = 700;
-	Window window("Scene Editor", config);
+	Window window("Scene Editor", config, true);
 	// Lad commons and existing scenes.
 	// For now we only support editing/adding objects that are already in the resource directories.
 	Resources::manager().addResources("../../../resources/common");

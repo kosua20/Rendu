@@ -30,7 +30,7 @@ int main(int argc, char ** argv) {
 		return 0;
 	}
 
-	Window window("Image viewer", config);
+	Window window("Image viewer", config, false);
 	
 	Resources::manager().addResources("../../../resources/common");
 	Resources::manager().addResources("../../../resources/imageviewer");

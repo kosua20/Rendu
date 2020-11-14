@@ -201,7 +201,7 @@ int main(int argc, char ** argv) {
 	// Override window dimensions.
 	config.initialWidth  = 800;
 	config.initialHeight = 800;
-	Window window("Controller test", config);
+	Window window("Controller test", config, false);
 	
 	Resources::manager().addResources("../../../resources/common");
 

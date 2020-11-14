@@ -67,7 +67,7 @@ void AtmosphereApp::draw() {
 
 	// Tonemapping and final screen.
 	GLUtilities::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
-	Framebuffer::backbuffer()->bind(Framebuffer::Mode::SRGB);
+	Framebuffer::backbuffer()->bind();
 	_tonemap->use();
 	ScreenQuad::draw(_atmosphereBuffer->texture());
 	Framebuffer::backbuffer()->unbind();

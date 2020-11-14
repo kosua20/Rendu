@@ -28,7 +28,7 @@ int main() {
 	config.forceAspectRatio = true;
 	config.trackDebug		= false;
 
-	Window window("SnakeGame", config, false);
+	Window window("SnakeGame", config, true, false);
 	
 	// Disable Imgui saving.
 	ImGui::GetIO().IniFilename = nullptr;

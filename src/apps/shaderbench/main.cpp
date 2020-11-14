@@ -28,7 +28,7 @@ int main(int argc, char ** argv) {
 		return 0;
 	}
 	
-	Window window("Shader Editor", config);
+	Window window("Shader Editor", config, false);
 
 	Resources::manager().addResources("../../../resources/common");
 	Resources::manager().addResources("../../../resources/shaderbench");

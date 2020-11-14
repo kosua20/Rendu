@@ -422,7 +422,7 @@ void IslandApp::draw() {
 	// Tonemapping and final screen.
 	GLUtilities::setDepthState(false, TestFunction::LESS, true);
 	GLUtilities::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
-	Framebuffer::backbuffer()->bind(Framebuffer::Mode::SRGB);
+	Framebuffer::backbuffer()->bind();
 	_tonemap->use();
 	ScreenQuad::draw(_sceneBuffer->texture());
 	Framebuffer::backbuffer()->unbind();

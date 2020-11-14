@@ -107,7 +107,7 @@ void Game::draw() {
 		_inGameRenderer.drawPlayer(*_player, *_gameFramebuffer);
 		
 		GLUtilities::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
-		Framebuffer::backbuffer()->bind(Framebuffer::Mode::SRGB);
+		Framebuffer::backbuffer()->bind();
 		_finalProgram->use();
 		ScreenQuad::draw(_gameFramebuffer->texture());
 		Framebuffer::backbuffer()->unbind();

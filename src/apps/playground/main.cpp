@@ -30,7 +30,7 @@ int main(int argc, char ** argv) {
 		return 0;
 	}
 
-	Window window("Playground", config);
+	Window window("Playground", config, false);
 	
 	Resources::manager().addResources("../../../resources/common");
 	if(!config.resourcesPath.empty()){

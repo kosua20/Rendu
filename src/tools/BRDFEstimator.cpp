@@ -191,7 +191,7 @@ int main(int argc, char ** argv) {
 	Resources::manager().addResources("../../../resources/common");
 	Resources::manager().addResources("../../../resources/pbrdemo");
 
-	Window window("BRDF Extractor", config);
+	Window window("BRDF Extractor", config, false);
 
 	// Seed random generator.
 	Random::seed();

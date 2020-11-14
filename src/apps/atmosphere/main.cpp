@@ -82,7 +82,7 @@ int main(int argc, char ** argv) {
 		return 0;
 	}
 
-	Window window("Atmosphere", config);
+	Window window("Atmosphere", config, true);
 	
 	Resources::manager().addResources("../../../resources/common");
 	Resources::manager().addResources("../../../resources/atmosphere");
