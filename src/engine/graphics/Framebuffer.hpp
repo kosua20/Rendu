@@ -73,12 +73,6 @@ public:
 	void setViewport() const;
 
 	/**
-	 Unbind the framebuffer.
-	 \note Technically bind the window backbuffer with sRGB conversion disabled.
-	 */
-	void unbind() const;
-
-	/**
 	 Resize the framebuffer to new dimensions.
 	 \param width the new width
 	 \param height the new height

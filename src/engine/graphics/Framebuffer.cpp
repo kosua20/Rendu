@@ -154,11 +154,6 @@ void Framebuffer::setViewport() const {
 	GLUtilities::setViewport(0, 0, int(_width), int(_height));
 }
 
-void Framebuffer::unbind() const {
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
-}
-
 void Framebuffer::resize(uint width, uint height) {
 	_width  = width;
 	_height = height;
@@ -211,7 +206,6 @@ glm::vec3 Framebuffer::read(const glm::ivec2 & pos) const {
 	glm::vec3 rgb(0.0f);
 	bind(0, 0, Mode::READ);
 	glReadPixels(pos.x, pos.y, 1, 1, GL_RGB, GL_FLOAT, &rgb[0]);
-	unbind();
 	return rgb;
 }
 
