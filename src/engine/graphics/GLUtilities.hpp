@@ -87,6 +87,18 @@ public:
 	 \param program the program to use
 	 */
 	static void bindProgram(const Program & program);
+
+	/** Bind a framebuffer as a draw destination.
+	 \param framebuffer the framebuffer to bind as draw destination
+	 */
+	static void bindFramebuffer(const Framebuffer & framebuffer);
+
+	/** Bind a framebuffer as a read or draw destination.
+	 \param framebuffer the framebuffer to bind as a destination
+	 \param mode the read or write mode to bind the framebuffer to
+	 */
+	static void bindFramebuffer(const Framebuffer & framebuffer, Framebuffer::Mode mode);
+
 	/** Save a given framebuffer content to the disk.
 	 \param framebuffer the framebuffer to save
 	 \param path the output image path

@@ -576,6 +576,8 @@ public:
 	bool scissorTest = false; ///< Is geometry tested against the scissor region or not.
 
 	// Binding state.
+	GLuint readFramebuffer; ///< Currently bound read framebuffer.
+	GLuint drawFramebuffer; ///< Currently bound draw framebuffer.
 	GLuint program; ///< Currently bound shader program.
 
 };

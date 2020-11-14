@@ -232,4 +232,7 @@ private:
 	Depth _depthUse = Depth::NONE; ///< The type of depth backing the framebuffer.
 
 	static Framebuffer * _backbuffer; ///< Dummy backbuffer framebuffer.
+	
+	friend class GLUtilities;
+	
 };

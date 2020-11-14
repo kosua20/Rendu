@@ -369,16 +369,34 @@ void GLUtilities::bindProgram(const Program & program){
 		glUseProgram(program._id);
 	}
 }
+
+void GLUtilities::bindFramebuffer(const Framebuffer & framebuffer){
+	if(_state.drawFramebuffer != framebuffer._id){
+		_state.drawFramebuffer = framebuffer._id;
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer._id);
+	}
+}
+
+void GLUtilities::bindFramebuffer(const Framebuffer & framebuffer, Framebuffer::Mode mode){
+	if(mode == Framebuffer::Mode::WRITE && _state.drawFramebuffer != framebuffer._id){
+		_state.drawFramebuffer = framebuffer._id;
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer._id);
+	} else if(mode == Framebuffer::Mode::READ && _state.readFramebuffer != framebuffer._id){
+		_state.readFramebuffer = framebuffer._id;
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer._id);
+	}
+
+}
+
 void GLUtilities::saveFramebuffer(const Framebuffer & framebuffer, const std::string & path, bool flip, bool ignoreAlpha) {
 
-	GLint currentBoundFB = 0;
-	glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &currentBoundFB);
+	// Don't alter the GPU state, this is a temporary action.
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer._id);
 
-	framebuffer.bind(Framebuffer::Mode::READ);
 	const std::unique_ptr<GPUTexture> & gpu = framebuffer.texture()->gpu;
 	GLUtilities::savePixels(gpu->type, gpu->format, framebuffer.width(), framebuffer.height(), gpu->channels, path, flip, ignoreAlpha);
-
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, GLuint(currentBoundFB));
+	
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, _state.readFramebuffer);
 }
 
 void GLUtilities::bindTexture(const Texture * texture, size_t slot) {
@@ -1114,8 +1132,6 @@ void GLUtilities::blitDepth(const Framebuffer & src, const Framebuffer & dst) {
 	src.bind(Framebuffer::Mode::READ);
 	dst.bind(Framebuffer::Mode::WRITE);
 	glBlitFramebuffer(0, 0, src.width(), src.height(), 0, 0, dst.width(), dst.height(), GL_DEPTH_BUFFER_BIT, GL_NEAREST);
-	src.unbind();
-	dst.unbind();
 }
 
 void GLUtilities::blit(const Framebuffer & src, const Framebuffer & dst, Filter filter) {
@@ -1123,8 +1139,6 @@ void GLUtilities::blit(const Framebuffer & src, const Framebuffer & dst, Filter 
 	dst.bind(Framebuffer::Mode::WRITE);
 	const GLenum filterGL = filter == Filter::LINEAR ? GL_LINEAR : GL_NEAREST;
 	glBlitFramebuffer(0, 0, src.width(), src.height(), 0, 0, dst.width(), dst.height(), GL_COLOR_BUFFER_BIT, filterGL);
-	src.unbind();
-	dst.unbind();
 }
 
 void GLUtilities::blit(const Framebuffer & src, const Framebuffer & dst, size_t lSrc, size_t lDst, Filter filter) {
@@ -1136,8 +1150,6 @@ void GLUtilities::blit(const Framebuffer & src, const Framebuffer & dst, size_t 
 	dst.bind(lDst, mipDst, Framebuffer::Mode::WRITE);
 	const GLenum filterGL = filter == Filter::LINEAR ? GL_LINEAR : GL_NEAREST;
 	glBlitFramebuffer(0, 0, src.width() / (1 << mipSrc), src.height() / (1 << mipSrc), 0, 0, dst.width() / (1 << mipDst), dst.height() / (1 << mipDst), GL_COLOR_BUFFER_BIT, filterGL);
-	src.unbind();
-	dst.unbind();
 }
 
 void GLUtilities::blit(const Texture & src, Texture & dst, Filter filter) {
@@ -1159,7 +1171,8 @@ void GLUtilities::blit(const Texture & src, Texture & dst, Filter filter) {
 	GLuint srcFb, dstFb;
 	glGenFramebuffers(1, &srcFb);
 	glGenFramebuffers(1, &dstFb);
-
+	// Because these two are temporary and will be unbound at the end of the call
+	// we do not update the cached GPU state.
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, srcFb);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, dstFb);
 
@@ -1188,8 +1201,9 @@ void GLUtilities::blit(const Texture & src, Texture & dst, Filter filter) {
 		checkGLFramebufferError();
 		glBlitFramebuffer(0, 0, src.width, src.height, 0, 0, dst.width, dst.height, GL_COLOR_BUFFER_BIT, filterGL);
 	}
-	// Unbind everything.
-	Framebuffer::backbuffer()->unbind();
+	// Restore the proper framebuffers from the cache.
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, _state.readFramebuffer);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _state.drawFramebuffer);
 	glDeleteFramebuffers(1, &srcFb);
 	glDeleteFramebuffers(1, &dstFb);
 }
@@ -1207,6 +1221,8 @@ void GLUtilities::blit(const Texture & src, Framebuffer & dst, Filter filter) {
 	// Create one framebuffer.
 	GLuint srcFb;
 	glGenFramebuffers(1, &srcFb);
+	// Because it's temporary and will be unbound at the end of the call
+	// we do not update the cached GPU state.
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, srcFb);
 	const GLenum filterGL = filter == Filter::LINEAR ? GL_LINEAR : GL_NEAREST;
 
@@ -1232,8 +1248,8 @@ void GLUtilities::blit(const Texture & src, Framebuffer & dst, Filter filter) {
 		dst.bind(0, 0, Framebuffer::Mode::WRITE);
 		glBlitFramebuffer(0, 0, src.width, src.height, 0, 0, dst.width(), dst.height(), GL_COLOR_BUFFER_BIT, filterGL);
 	}
-	// Unbind everything.
-	Framebuffer::backbuffer()->unbind();
+	// Restore the proper framebuffer from the cache.
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, _state.readFramebuffer);
 	glDeleteFramebuffers(1, &srcFb);
 }
 
@@ -1398,7 +1414,12 @@ void GLUtilities::getState(GPUState& state) {
 
 	// Binding state.
 	GLint fbr, fbd, pgb;
+	glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &fbr);
+	glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &fbd);
 	glGetIntegerv(GL_CURRENT_PROGRAM, &pgb);
+
+	state.readFramebuffer = fbr;
+	state.drawFramebuffer = fbd;
 	state.program = pgb;
 }
 

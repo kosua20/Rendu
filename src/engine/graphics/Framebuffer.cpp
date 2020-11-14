@@ -33,7 +33,8 @@ Framebuffer::Framebuffer(TextureShape shape, uint width, uint height, uint depth
 	_target = GLUtilities::targetFromShape(_shape);
 	// Create a framebuffer.
 	glGenFramebuffers(1, &_id);
-	glBindFramebuffer(GL_FRAMEBUFFER, _id);
+	GLUtilities::bindFramebuffer(*this, Mode::WRITE);
+	GLUtilities::bindFramebuffer(*this, Mode::READ);
 
 	uint cid = 0;
 	for(const auto & descriptor : descriptors) {
@@ -106,22 +107,24 @@ Framebuffer::Framebuffer(TextureShape shape, uint width, uint height, uint depth
 	glDrawBuffers(GLsizei(drawBuffers.size()), &drawBuffers[0]);
 	checkGLFramebufferError();
 	checkGLError();
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	GLUtilities::bindFramebuffer(*Framebuffer::backbuffer(), Mode::WRITE);
+	GLUtilities::bindFramebuffer(*Framebuffer::backbuffer(), Mode::READ);
 
 	DebugViewer::trackDefault(this);
 }
 
 void Framebuffer::bind() const {
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _id);
+	GLUtilities::bindFramebuffer(*this);
 }
 
 void Framebuffer::bind(Mode mode) const {
-	glBindFramebuffer(mode == Mode::READ ? GL_READ_FRAMEBUFFER : GL_DRAW_FRAMEBUFFER, _id);
+	GLUtilities::bindFramebuffer(*this, mode);
 }
 
 void Framebuffer::bind(size_t layer, size_t mip, Mode mode) const {
 
-	bind(mode);
+	GLUtilities::bindFramebuffer(*this, mode);
 
 	const GLint mid = GLint(mip);
 	const GLenum target = mode == Mode::READ ? GL_READ_FRAMEBUFFER : GL_DRAW_FRAMEBUFFER;
