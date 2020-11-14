@@ -4,6 +4,8 @@
 #include "resources/Texture.hpp"
 #include "resources/Buffer.hpp"
 #include "graphics/GPUObjects.hpp"
+#include "graphics/Framebuffer.hpp"
+#include "graphics/Program.hpp"
 #include "Common.hpp"
 #include <map>
 
@@ -81,6 +83,10 @@ public:
 	 */
 	static GLuint createProgram(const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, const std::string & tessControlContent, const std::string & tessEvalContent, Bindings & bindings, const std::string & debugInfos);
 
+	/** Bind a program to use for rendering
+	 \param program the program to use
+	 */
+	static void bindProgram(const Program & program);
 	/** Save a given framebuffer content to the disk.
 	 \param framebuffer the framebuffer to save
 	 \param path the output image path

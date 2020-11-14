@@ -276,4 +276,5 @@ private:
 	std::map<std::string, GLint> _uniforms;  ///< Internal list of automatically registered uniforms and their locations. We keep this separate to avoid exposing GL internal types.
 	std::vector<Uniform> _uniformInfos;  ///< Additional uniforms info.
 
+	friend class GLUtilities;
 };

@@ -363,6 +363,12 @@ GLuint GLUtilities::createProgram(const std::string & vertexContent, const std::
 	return id;
 }
 
+void GLUtilities::bindProgram(const Program & program){
+	if(_state.program != program._id){
+		_state.program = program._id;
+		glUseProgram(program._id);
+	}
+}
 void GLUtilities::saveFramebuffer(const Framebuffer & framebuffer, const std::string & path, bool flip, bool ignoreAlpha) {
 
 	GLint currentBoundFB = 0;
@@ -1389,6 +1395,11 @@ void GLUtilities::getState(GPUState& state) {
 	// Viewport and scissor state.
 	glGetFloatv(GL_VIEWPORT, &state.viewport[0]);
 	glGetFloatv(GL_SCISSOR_BOX, &state.scissorBox[0]);
+
+	// Binding state.
+	GLint fbr, fbd, pgb;
+	glGetIntegerv(GL_CURRENT_PROGRAM, &pgb);
+	state.program = pgb;
 }
 
 GPUState GLUtilities::_state;

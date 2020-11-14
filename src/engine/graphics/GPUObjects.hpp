@@ -575,4 +575,7 @@ public:
 	glm::vec4 scissorBox {0.0f}; ///< Current scissor region.
 	bool scissorTest = false; ///< Is geometry tested against the scissor region or not.
 
+	// Binding state.
+	GLuint program; ///< Currently bound shader program.
+
 };

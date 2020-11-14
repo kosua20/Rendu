@@ -50,7 +50,8 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 		{ GL_FLOAT_MAT4, Uniform::Type::MAT4 }
 	};
 
-	glUseProgram(_id);
+	GLUtilities::bindProgram(*this);
+
 	for(GLuint i = 0; i < GLuint(count); ++i) {
 		// Get infos (name, name length, type,...) of each uniform.
 		std::vector<GLchar> uname(size);
@@ -117,7 +118,6 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 
 	}
 
-	glUseProgram(0);
 	checkGLError();
 }
 
@@ -158,7 +158,7 @@ void Program::saveBinary(const std::string & outputPath) const {
 }
 
 void Program::use() const {
-	glUseProgram(_id);
+	GLUtilities::bindProgram(*this);
 }
 
 void Program::clean() const {
