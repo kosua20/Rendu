@@ -13,10 +13,11 @@ public:
 	/** Create a new window backed by an OpenGL context.
 	 \param name the name of the window
 	 \param config the configuration to use (additional info will be added to it)
+	 \param convertToSRGB should writes to the backbuffer be considered linear
 	 \param escapeQuit allows the user to close the window by pressing escape
 	 \param hidden should the window be hidden (for preprocess for instance)
 	*/
-	Window(const std::string & name, RenderingConfig & config, bool escapeQuit = true, bool hidden = false);
+	Window(const std::string & name, RenderingConfig & config, bool convertToSRGB, bool escapeQuit = true, bool hidden = false);
 
 	/** System actions that can be executed by the window. */
 	enum class Action : uint {
@@ -64,4 +65,5 @@ private:
 	GLFWwindow * _window = nullptr; ///< Internal window handle.
 	bool _frameStarted = false; ///< Has a frame been started.
 	bool _allowEscape = false; ///< Can the window be closed by pressing escape.
+	bool _convertToSRGB = false; ///< Should writes to the backbuffer be considered linear.
 };

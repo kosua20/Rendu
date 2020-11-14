@@ -11,8 +11,8 @@
 
 #include <GLFW/glfw3.h>
 
-Window::Window(const std::string & name, RenderingConfig & config, bool escapeQuit, bool hidden) :
-	_config(config), _allowEscape(escapeQuit) {
+Window::Window(const std::string & name, RenderingConfig & config, bool convertToSRGB, bool escapeQuit, bool hidden) :
+	_config(config), _allowEscape(escapeQuit), _convertToSRGB(convertToSRGB) {
 	// Initialize glfw, which will create and setup an OpenGL context.
 	if(!glfwInit()) {
 		Log::Error() << Log::OpenGL << "Could not start GLFW3" << std::endl;
@@ -27,7 +27,8 @@ Window::Window(const std::string & name, RenderingConfig & config, bool escapeQu
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_VISIBLE, hidden ? GLFW_FALSE : GLFW_TRUE);
 	glfwWindowHint(GLFW_FOCUSED, hidden ? GLFW_FALSE : GLFW_TRUE);
-	
+	glfwWindowHint(GLFW_SRGB_CAPABLE, GLFW_TRUE);
+
 	if(config.fullscreen) {
 		const GLFWvidmode * mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 		glfwWindowHint(GLFW_RED_BITS, mode->redBits);
@@ -65,6 +66,7 @@ Window::Window(const std::string & name, RenderingConfig & config, bool escapeQu
 
 	// Setup the GPU state.
 	GLUtilities::setup();
+	GLUtilities::setSRGBState(_convertToSRGB);
 
 	// Setup callbacks for various interactions and inputs.
 	glfwSetFramebufferSizeCallback(_window, resize_callback);		  // Resizing the window
@@ -157,7 +159,14 @@ bool Window::nextFrame() {
 	if(_frameStarted){
 		// Render the interface.
 		ImGui::Render();
+		// ImGui is not sRGB aware, we have to disable linear to
+		// sRGB conversion when writing to the backbuffer.
+		GLUtilities::setSRGBState(false);
+		// Draw ImGui as-is...
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+		// ...and restore.
+		GLUtilities::setSRGBState(_convertToSRGB);
+		
 		//Display the result for the current rendering loop.
 		glfwSwapBuffers(_window);
 	}
@@ -218,7 +227,7 @@ void Window::setupImGui() {
 	colors[ImGuiCol_ScrollbarGrabActive]  = ImVec4(0.41f, 0.41f, 0.41f, 1.00f);
 	colors[ImGuiCol_CheckMark]			  = ImVec4(0.84f, 0.84f, 0.84f, 1.00f);
 	colors[ImGuiCol_SliderGrab]			  = ImVec4(0.30f, 0.30f, 0.30f, 1.00f);
-	colors[ImGuiCol_SliderGrabActive]	 = ImVec4(0.64f, 0.64f, 0.64f, 1.00f);
+	colors[ImGuiCol_SliderGrabActive]	  = ImVec4(0.64f, 0.64f, 0.64f, 1.00f);
 	colors[ImGuiCol_Button]				  = ImVec4(0.68f, 0.68f, 0.68f, 0.40f);
 	colors[ImGuiCol_ButtonHovered]		  = ImVec4(0.40f, 0.40f, 0.40f, 1.00f);
 	colors[ImGuiCol_ButtonActive]		  = ImVec4(0.53f, 0.53f, 0.53f, 1.00f);
@@ -226,12 +235,12 @@ void Window::setupImGui() {
 	colors[ImGuiCol_HeaderHovered]		  = ImVec4(0.49f, 0.49f, 0.49f, 0.80f);
 	colors[ImGuiCol_HeaderActive]		  = ImVec4(0.52f, 0.52f, 0.52f, 1.00f);
 	colors[ImGuiCol_Separator]			  = ImVec4(0.41f, 0.41f, 0.41f, 0.50f);
-	colors[ImGuiCol_SeparatorHovered]	 = ImVec4(0.43f, 0.43f, 0.43f, 0.78f);
+	colors[ImGuiCol_SeparatorHovered]	  = ImVec4(0.43f, 0.43f, 0.43f, 0.78f);
 	colors[ImGuiCol_SeparatorActive]	  = ImVec4(0.44f, 0.44f, 0.44f, 1.00f);
 	colors[ImGuiCol_ResizeGrip]			  = ImVec4(1.00f, 1.00f, 1.00f, 0.25f);
-	colors[ImGuiCol_ResizeGripHovered]	= ImVec4(0.84f, 0.84f, 0.84f, 0.67f);
-	colors[ImGuiCol_ResizeGripActive]	 = ImVec4(0.88f, 0.88f, 0.88f, 0.95f);
-	colors[ImGuiCol_PlotLinesHovered]	 = ImVec4(0.96f, 0.96f, 0.96f, 1.00f);
+	colors[ImGuiCol_ResizeGripHovered]	  = ImVec4(0.84f, 0.84f, 0.84f, 0.67f);
+	colors[ImGuiCol_ResizeGripActive]	  = ImVec4(0.88f, 0.88f, 0.88f, 0.95f);
+	colors[ImGuiCol_PlotLinesHovered]	  = ImVec4(0.96f, 0.96f, 0.96f, 1.00f);
 	colors[ImGuiCol_PlotHistogram]		  = ImVec4(0.62f, 0.62f, 0.62f, 1.00f);
 	colors[ImGuiCol_PlotHistogramHovered] = ImVec4(0.90f, 0.90f, 0.90f, 1.00f);
 	colors[ImGuiCol_TextSelectedBg]		  = ImVec4(0.67f, 0.67f, 0.67f, 0.35f);
