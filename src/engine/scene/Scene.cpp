@@ -75,6 +75,11 @@ bool Scene::init(Storage options) {
 	}
 	_loaded = true;
 
+	// Sort objects by material.
+	std::sort(objects.begin(), objects.end(), [](const Object & a, const Object & b){
+		return int(a.type()) < int(b.type());
+	});
+
 	// Check if the scene is static.
 	for(const auto & obj : objects){
 		if(obj.animated()){
