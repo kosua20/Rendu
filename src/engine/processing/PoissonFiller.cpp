@@ -30,7 +30,6 @@ void PoissonFiller::process(const Texture * texture) {
 	GLUtilities::clearColor(glm::vec4(0.0f));
 	_prepare->use();
 	ScreenQuad::draw(texture);
-	_preproc->unbind();
 
 	// Run the convolutional pyramid filter.
 	_pyramid.process(_preproc->texture());
@@ -40,7 +39,6 @@ void PoissonFiller::process(const Texture * texture) {
 	_compo->setViewport();
 	_composite->use();
 	ScreenQuad::draw({_pyramid.texture(), texture});
-	_compo->unbind();
 }
 
 void PoissonFiller::resize(unsigned int width, unsigned int height) {

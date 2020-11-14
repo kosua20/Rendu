@@ -33,7 +33,6 @@ void BoxBlur::process(const Texture * texture, Framebuffer & framebuffer) {
 		_blur2D->use();
 		_intermediate->bind();
 		ScreenQuad::draw(texture);
-		_intermediate->unbind();
 		GLUtilities::blit(*_intermediate, framebuffer, Filter::NEAREST);
 
 	} else if(tgtShape == TextureShape::Array2D){
@@ -42,7 +41,6 @@ void BoxBlur::process(const Texture * texture, Framebuffer & framebuffer) {
 			_intermediate->bind();
 			_blurArray->uniform("layer", int(lid));
 			ScreenQuad::draw(texture);
-			_intermediate->unbind();
 			GLUtilities::blit(*_intermediate, framebuffer, 0, lid, Filter::NEAREST);
 		}
 	} else if(tgtShape == TextureShape::Cube){
@@ -54,7 +52,6 @@ void BoxBlur::process(const Texture * texture, Framebuffer & framebuffer) {
 			_blurCube->uniform("right", Library::boxRights[fid]);
 			_blurCube->uniform("center", Library::boxCenters[fid]);
 			ScreenQuad::draw(texture);
-			_intermediate->unbind();
 			GLUtilities::blit(*_intermediate, framebuffer, 0, fid, Filter::NEAREST);
 		}
 	} else if(tgtShape == TextureShape::ArrayCube){
@@ -68,7 +65,6 @@ void BoxBlur::process(const Texture * texture, Framebuffer & framebuffer) {
 			_blurCubeArray->uniform("right", Library::boxRights[fid]);
 			_blurCubeArray->uniform("center", Library::boxCenters[fid]);
 			ScreenQuad::draw(texture);
-			_intermediate->unbind();
 			GLUtilities::blit(*_intermediate, framebuffer, 0, lid, Filter::NEAREST);
 		}
 	} else {

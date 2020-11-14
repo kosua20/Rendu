@@ -51,7 +51,6 @@ void VarianceShadowMap2DArray::draw(const Scene & scene) const {
 			GLUtilities::setCullState(true);
 		}
 	}
-	_map->unbind();
 	
 	// --- Blur pass --------
 	GLUtilities::setDepthState(false);
@@ -116,7 +115,6 @@ void VarianceShadowMapCubeArray::draw(const Scene & scene) const {
 			}
 		}
 	}
-	_map->unbind();
 	// Apply box blur.
 	_blur->process(_map->texture(), *_map);
 	GLUtilities::setDepthState(false);

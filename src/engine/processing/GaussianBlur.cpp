@@ -34,7 +34,6 @@ void GaussianBlur::process(const Texture * texture, Framebuffer & framebuffer) {
 	_frameBuffers[0]->setViewport();
 	_passthrough->use();
 	ScreenQuad::draw(texture);
-	_frameBuffers[0]->unbind();
 
 	// Downscale filter.
 	_blurProgramDown->use();
@@ -43,7 +42,6 @@ void GaussianBlur::process(const Texture * texture, Framebuffer & framebuffer) {
 		_frameBuffers[d]->setViewport();
 		GLUtilities::clearColor(glm::vec4(0.0f));
 		ScreenQuad::draw(_frameBuffers[d - 1]->texture());
-		_frameBuffers[d]->unbind();
 	}
 
 	// Upscale filter.
@@ -53,7 +51,6 @@ void GaussianBlur::process(const Texture * texture, Framebuffer & framebuffer) {
 		_frameBuffers[d]->setViewport();
 		GLUtilities::clearColor(glm::vec4(0.0f));
 		ScreenQuad::draw(_frameBuffers[d + 1]->texture());
-		_frameBuffers[d]->unbind();
 	}
 	// Copy from the last framebuffer used to the destination.
 	GLUtilities::blit(*_frameBuffers[0], framebuffer, Filter::LINEAR);

@@ -49,7 +49,6 @@ void ConvolutionPyramid::process(const Texture * texture) {
 	_padder->use();
 	_padder->uniform("padding", _size);
 	ScreenQuad::draw(texture);
-	_levelsIn[0]->unbind();
 
 	// Then iterate over all framebuffers, cascading down the filtered results.
 	/// \note Those filters are separable, and could be applied in two passes (vertical and horizontal) to reduce the texture fetches count.
@@ -65,7 +64,6 @@ void ConvolutionPyramid::process(const Texture * texture) {
 		GLUtilities::setViewport(_size, _size, int(_levelsIn[i]->width()) - 2 * _size, int(_levelsIn[i]->height()) - 2 * _size);
 		// Filter and downscale.
 		ScreenQuad::draw(_levelsIn[i - 1]->texture());
-		_levelsIn[i]->unbind();
 	}
 
 	// Filter the last level with g.
@@ -77,7 +75,6 @@ void ConvolutionPyramid::process(const Texture * texture) {
 	lastLevel->bind();
 	lastLevel->setViewport();
 	ScreenQuad::draw(_levelsIn.back()->texture());
-	lastLevel->unbind();
 
 	// Flatten the pyramid from the bottom, combining the filtered current result and the next level.
 	_upscale->use();
@@ -91,7 +88,6 @@ void ConvolutionPyramid::process(const Texture * texture) {
 		_levelsOut[i]->setViewport();
 		// Upscale with zeros, filter and combine.
 		ScreenQuad::draw({_levelsIn[i]->texture(), _levelsOut[i + 1]->texture()});
-		_levelsOut[i]->unbind();
 	}
 
 	// Compensate the initial padding.
@@ -101,7 +97,6 @@ void ConvolutionPyramid::process(const Texture * texture) {
 	// Need to also compensate for the potential extra padding.
 	_padder->uniform("padding", -_size - _padding);
 	ScreenQuad::draw(_levelsOut[0]->texture());
-	_shifted->unbind();
 }
 
 void ConvolutionPyramid::setFilters(const float h1[5], float h2, const float g[3]) {
@@ -123,7 +118,7 @@ void ConvolutionPyramid::resize(unsigned int width, unsigned int height) {
 
 	const int currentDepth = int(_levelsIn.size());
 
-	const int newDepth = int(std::ceil(std::log2(std::min(_resolution[0], _resolution[1]))));
+	const int newDepth = std::max(int(std::ceil(std::log2(std::min(_resolution[0], _resolution[1])))), 1);
 	// Create a series of framebuffers smaller and smaller.
 	const Descriptor desc = {Layout::RGBA32F, Filter::NEAREST_NEAREST, Wrap::CLAMP};
 	_levelsIn.resize(newDepth);

@@ -34,7 +34,6 @@ void LaplacianIntegrator::process(const Texture * texture) {
 	_prepare->use();
 	_prepare->uniform("scale", _scale);
 	ScreenQuad::draw(texture);
-	_preproc->unbind();
 
 	// Run the convolutional pyramid filter.
 	_pyramid.process(_preproc->texture());
@@ -44,7 +43,6 @@ void LaplacianIntegrator::process(const Texture * texture) {
 	_compo->setViewport();
 	_composite->use();
 	ScreenQuad::draw(_pyramid.texture());
-	_compo->unbind();
 }
 
 void LaplacianIntegrator::resize(unsigned int width, unsigned int height) {

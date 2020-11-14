@@ -489,7 +489,6 @@ void DebugViewer::updateDisplay(const TextureInfos & tex) {
 
 	GLUtilities::bindTexture(tex.tex, slots.at(tex.tex->shape));
 	ScreenQuad::draw();
-	tex.display->unbind();
 }
 
 void DebugViewer::setDefault(DebugViewer * viewer) {

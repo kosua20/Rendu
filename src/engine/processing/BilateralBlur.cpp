@@ -31,13 +31,11 @@ void BilateralBlur::process(const glm::mat4 & projection, const Texture * textur
 	_filter->uniform("axis", 0);
 	GLUtilities::bindTexture(texture, 0);
 	ScreenQuad::draw();
-	_intermediate->unbind();
 
 	framebuffer.bind();
 	_filter->uniform("axis", 1);
 	GLUtilities::bindTexture(_intermediate->texture(), 0);
 	ScreenQuad::draw();
-	framebuffer.unbind();
 }
 
 void BilateralBlur::resize(unsigned int width, unsigned int height) const {

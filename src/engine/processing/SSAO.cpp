@@ -69,7 +69,6 @@ void SSAO::process(const glm::mat4 & projection, const Texture * depthTex, const
 	_programSSAO->uniform("radius", _radius);
 	GLUtilities::bindBuffer(_samples, 0);
 	ScreenQuad::draw({depthTex, normalTex, &_noisetexture});
-	_ssaoFramebuffer->unbind();
 
 	// Blurring pass
 	if(_quality == Quality::HIGH){

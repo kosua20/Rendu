@@ -61,7 +61,6 @@ void Probe::convolveRadiance(float clamp, size_t first, size_t count) {
 			GLUtilities::drawMesh(*_cube);
 		}
 	}
-	_framebuffer->unbind();
 }
 
 void Probe::prepareIrradiance() {
