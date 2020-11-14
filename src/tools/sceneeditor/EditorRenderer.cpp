@@ -67,7 +67,6 @@ void EditorRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size
 	// Render the background.
 	renderBackground(view, proj, camera.position());
 	
-	framebuffer.unbind();
 	GLUtilities::setDepthState(false);
 	GLUtilities::setCullState(true);
 

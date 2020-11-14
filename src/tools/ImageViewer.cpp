@@ -124,10 +124,9 @@ int main(int argc, char ** argv) {
 			// Read back color under cursor when right-clicking.
 			if(Input::manager().pressed(Input::Mouse::Right)) {
 				const glm::vec2 mousePosition = Input::manager().mouse(true);
-				fgColor						  = Framebuffer::backbuffer()->read(glm::ivec2(mousePosition));
+				fgColor = Framebuffer::backbuffer()->read(glm::ivec2(mousePosition));
 			}
 		}
-		Framebuffer::backbuffer()->unbind();
 
 		// Interface.
 		ImGui::SetNextWindowPos(ImVec2(10, 10));
@@ -265,8 +264,6 @@ int main(int argc, char ** argv) {
 					program->uniform("mouseShift", zeros);
 					ScreenQuad::draw(imageInfos);
 					GLUtilities::setBlendState(false);
-
-					framebuffer->unbind();
 
 					// Then save it to the given path.
 					GLUtilities::saveFramebuffer(*framebuffer, destinationPath.substr(0, destinationPath.size() - 4), true, false);

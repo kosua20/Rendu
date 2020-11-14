@@ -115,7 +115,6 @@ void computeCubemapConvolution(const Texture & cubemapInfos, int levelsCount, in
 			// Attach source cubemap and compute.
 			GLUtilities::bindTexture(&cubemapInfos, 0);
 			GLUtilities::drawMesh(*mesh);
-			resultFramebuffer.unbind();
 			GLUtilities::setDepthState(false);
 			// Force synchronization.
 			GLUtilities::sync();
@@ -169,7 +168,6 @@ void computeAndExportLookupTable(const int outputSide, const std::string & outpu
 	GLUtilities::setDepthState(false);
 	brdfProgram->use();
 	ScreenQuad::draw();
-	bakingFramebuffer->unbind();
 	GLUtilities::setDepthState(true);
 	GLUtilities::saveFramebuffer(*bakingFramebuffer, outputPath, true);
 }
@@ -384,7 +382,6 @@ int main(int argc, char ** argv) {
 		GLUtilities::drawMesh(*mesh);
 		GLUtilities::setDepthState(false);
 		GLUtilities::setViewport(0, 0, screenSize[0], screenSize[1]);
-		Framebuffer::backbuffer()->unbind();
 		
 	}
 

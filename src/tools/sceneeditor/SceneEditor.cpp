@@ -49,7 +49,6 @@ void SceneEditor::draw() {
 	if(!_scenes[_currentScene]) {
 		Framebuffer::backbuffer()->bind();
 		GLUtilities::clearColorAndDepth({0.2f, 0.2f, 0.2f, 1.0f}, 1.0f);
-		Framebuffer::backbuffer()->unbind();
 		return;
 	}
 
@@ -61,7 +60,6 @@ void SceneEditor::draw() {
 	_passthrough->use();
 	_passthrough->uniform("flip", 0);
 	ScreenQuad::draw(_sceneFramebuffer->texture());
-	Framebuffer::backbuffer()->unbind();
 	checkGLError();
 }
 void SceneEditor::update() {

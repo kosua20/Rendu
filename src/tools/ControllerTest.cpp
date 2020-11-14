@@ -271,8 +271,7 @@ int main(int argc, char ** argv) {
 		Framebuffer::backbuffer()->bind();
 		GLUtilities::setViewport(0, 0, screenSize[0], screenSize[1]);
 		GLUtilities::clearColor({0.0f, 0.0f, 0.0f, 1.0f});
-		Framebuffer::backbuffer()->unbind();
-
+		
 		// Set a fullscreen fixed window.
 		ImGui::SetNextWindowPos(ImVec2(0, 0));
 		ImGui::SetNextWindowBgAlpha(1.0f);
