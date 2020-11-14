@@ -105,7 +105,8 @@ void GLUtilities::setup() {
 	glDepthMask(GL_TRUE);
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	glDepthFunc(GL_LESS);
-	glDisable(GL_FRAMEBUFFER_SRGB);
+	glEnable(GL_FRAMEBUFFER_SRGB);
+	Framebuffer::backbuffer()->bind();
 }
 
 GLuint GLUtilities::loadShader(const std::string & prog, ShaderType type, Bindings & bindings, std::string & finalLog) {
@@ -980,6 +981,9 @@ void GLUtilities::setPolygonState(PolygonMode mode) {
 
 void GLUtilities::setColorState(bool writeRed, bool writeGreen, bool writeBlue, bool writeAlpha){
 	glColorMask(writeRed ? GL_TRUE : GL_FALSE, writeGreen ? GL_TRUE : GL_FALSE, writeBlue ? GL_TRUE : GL_FALSE, writeAlpha ? GL_TRUE : GL_FALSE);
+}
+void GLUtilities::setSRGBState(bool convert){
+		(convert ? glEnable : glDisable)(GL_FRAMEBUFFER_SRGB);
 }
 
 void GLUtilities::blitDepth(const Framebuffer & src, const Framebuffer & dst) {

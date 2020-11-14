@@ -116,22 +116,15 @@ void Framebuffer::bind() const {
 }
 
 void Framebuffer::bind(Mode mode) const {
-	if(mode == Mode::READ){
-		glBindFramebuffer(GL_READ_FRAMEBUFFER, _id);
-	} else if(mode == Mode::WRITE){
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _id);
-	} else if(mode == Mode::SRGB){
-		// When mode is SRGB, we assume we want to write.
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _id);
-		glEnable(GL_FRAMEBUFFER_SRGB);
-	}
+	glBindFramebuffer(mode == Mode::READ ? GL_READ_FRAMEBUFFER : GL_DRAW_FRAMEBUFFER, _id);
 }
 
 void Framebuffer::bind(size_t layer, size_t mip, Mode mode) const {
-	// When mode is SRGB, we assume we want to write.
+
+	bind(mode);
+
+	const GLint mid = GLint(mip);
 	const GLenum target = mode == Mode::READ ? GL_READ_FRAMEBUFFER : GL_DRAW_FRAMEBUFFER;
-	const GLint mid		= GLint(mip);
-	glBindFramebuffer(target, _id);
 	// Bind the proper slice for each color attachment.
 	for(uint cid = 0; cid < _idColors.size(); ++cid){
 		glBindTexture(_target, _idColors[cid].gpu->id);
@@ -152,10 +145,6 @@ void Framebuffer::bind(size_t layer, size_t mip, Mode mode) const {
 		glFramebufferTexture2D(target, (_hasStencil ? GL_DEPTH_STENCIL_ATTACHMENT : GL_DEPTH_ATTACHMENT), GL_TEXTURE_2D, _idDepth.gpu->id, mid);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
-
-	if(mode == Mode::SRGB){
-		glEnable(GL_FRAMEBUFFER_SRGB);
-	}
 }
 
 void Framebuffer::setViewport() const {
@@ -165,7 +154,6 @@ void Framebuffer::setViewport() const {
 void Framebuffer::unbind() const {
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
-	glDisable(GL_FRAMEBUFFER_SRGB);
 }
 
 void Framebuffer::resize(uint width, uint height) {

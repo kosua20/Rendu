@@ -15,8 +15,7 @@ public:
 	/// \brief Framebuffer binding mode.
 	enum class Mode {
 		READ,  ///< Read mode.
-		WRITE, ///< Write mode.
-		SRGB   ///< Perform linear-to-sRGB conversion when writing/reading (if the framebuffer is backed by an sRGB texture).
+		WRITE ///< Write mode.
 	};
 
 	/** Setup the framebuffer (attachments, renderbuffer, depth buffer, textures IDs,...)

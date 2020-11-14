@@ -320,6 +320,11 @@ public:
 	 */
 	static void setColorState(bool writeRed, bool writeGreen, bool writeBlue, bool writeAlpha);
 
+	/** Set if writes to sRGB should be converted automatically.
+	 \param convert should conversion be applied
+	 */
+	static void setSRGBState(bool convert);
+
 	/** Query the current GPU state.
 	 \param state will be populated with the current GPU settings
 	 */
