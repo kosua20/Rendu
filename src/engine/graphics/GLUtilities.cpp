@@ -960,22 +960,22 @@ void GLUtilities::setCullState(bool cull) {
 	(cull ? glEnable : glDisable)(GL_CULL_FACE);
 }
 
-static const std::map<Faces, GLenum> faces = {
-	{Faces::FRONT, GL_FRONT},
-	{Faces::BACK, GL_BACK},
-	{Faces::ALL, GL_FRONT_AND_BACK}};
-
 void GLUtilities::setCullState(bool cull, Faces culledFaces) {
-	(cull ? glEnable : glDisable)(GL_CULL_FACE);
-	glCullFace(faces.at(culledFaces));
+		(cull ? glEnable : glDisable)(GL_CULL_FACE);
+	static const std::map<Faces, GLenum> faces = {
+	 {Faces::FRONT, GL_FRONT},
+	 {Faces::BACK, GL_BACK},
+	 {Faces::ALL, GL_FRONT_AND_BACK}};
+		glCullFace(faces.at(culledFaces));
 }
 
-void GLUtilities::setPolygonState(PolygonMode mode, Faces selectedFaces) {
+void GLUtilities::setPolygonState(PolygonMode mode) {
+	
 	static const std::map<PolygonMode, GLenum> modes = {
 		{PolygonMode::FILL, GL_FILL},
 		{PolygonMode::LINE, GL_LINE},
 		{PolygonMode::POINT, GL_POINT}};
-	glPolygonMode(faces.at(selectedFaces), modes.at(mode));
+		glPolygonMode(GL_FRONT_AND_BACK, modes.at(mode));
 }
 
 void GLUtilities::setColorState(bool writeRed, bool writeGreen, bool writeBlue, bool writeAlpha){
@@ -1060,8 +1060,8 @@ void GLUtilities::blit(const Texture & src, Texture & dst, Filter filter) {
 		checkGLFramebufferError();
 		glBlitFramebuffer(0, 0, src.width, src.height, 0, 0, dst.width, dst.height, GL_COLOR_BUFFER_BIT, filterGL);
 	}
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	// Unbind everything.
+	Framebuffer::backbuffer()->unbind();
 	glDeleteFramebuffers(1, &srcFb);
 	glDeleteFramebuffers(1, &dstFb);
 }
@@ -1076,7 +1076,7 @@ void GLUtilities::blit(const Texture & src, Framebuffer & dst, Filter filter) {
 		return;
 	}
 
-	// Create two framebuffers.
+	// Create one framebuffer.
 	GLuint srcFb;
 	glGenFramebuffers(1, &srcFb);
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, srcFb);
@@ -1104,8 +1104,8 @@ void GLUtilities::blit(const Texture & src, Framebuffer & dst, Filter filter) {
 		dst.bind(0, 0, Framebuffer::Mode::WRITE);
 		glBlitFramebuffer(0, 0, src.width, src.height, 0, 0, dst.width(), dst.height(), GL_COLOR_BUFFER_BIT, filterGL);
 	}
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	// Unbind everything.
+	Framebuffer::backbuffer()->unbind();
 	glDeleteFramebuffers(1, &srcFb);
 }
 
@@ -1253,12 +1253,14 @@ void GLUtilities::getState(GPUState& state) {
 	state.stencilFail = ops.at(sof);
 	state.stencilPass = ops.at(sos);
 	state.stencilDepthPass = ops.at(sod);
-	GLint swm, srv;
+	GLint swm, scv, srv;
 	glGetIntegerv(GL_STENCIL_WRITEMASK, &swm);
+	glGetIntegerv(GL_STENCIL_CLEAR_VALUE, &scv);
 	glGetIntegerv(GL_STENCIL_REF, &srv);
 	state.stencilWriteMask = (swm != 0);
 	state.stencilValue = uchar(srv);
-
+	state.stencilClearValue = uchar(scv);
+	
 	// Point state.
 	glGetFloatv(GL_POINT_SIZE, &state.pointSize);
 

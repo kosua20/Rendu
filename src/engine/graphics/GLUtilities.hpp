@@ -309,9 +309,8 @@ public:
 
 	/** Set the polygon rasterization mode.
 	 \param mode the mode (filled, lines, points)
-	 \param selectedFaces the faces to apply the mode to
 	 */
-	static void setPolygonState(PolygonMode mode, Faces selectedFaces);
+	static void setPolygonState(PolygonMode mode);
 
 	/** Set the color write mask.
 	 \param writeRed allow writes to the red channel

@@ -480,7 +480,7 @@ public:
 class GPUQuery {
 public:
 
-	/** Type fo query to perform. */
+	/** Type for query to perform. */
 	enum class Type : uint {
 		TIME_ELAPSED, ///< Time taken by GPU operations between the beginning and end of the query.
 		SAMPLES_DRAWN, ///< Number of samples passing the tests while the query is active.
@@ -540,6 +540,7 @@ public:
 
 	// Geometry state.
 	Faces cullFaceMode = Faces::ALL; ///< Which faces should be culled.
+	PolygonMode polygonMode = PolygonMode::FILL; ///< How should polygons be processed.
 	float polygonOffsetFactor = 0.0f; ///< Polygon offset depth scaling.
 	float polygonOffsetUnits = 0.0f; ///< Polygon offset depth shifting.
 	bool polygonOffsetFill	= false; ///< Is polygon offset enabled for points or not.
@@ -561,6 +562,7 @@ public:
 	StencilOp stencilPass; ///< Operation when the stencil test passes but the depth test fails.
 	StencilOp stencilDepthPass; ///< Operation when the stencil and depth tests passes.
 	uchar stencilValue = 0; ///< Stencil reference value.
+	uchar stencilClearValue = 0; ///< Stencil clear value.
 	bool stencilTest = false; ///< Is the stencil test enabled or not.
 	bool stencilWriteMask = true; ///< should stencil be written to the stencil buffer or not.
 
