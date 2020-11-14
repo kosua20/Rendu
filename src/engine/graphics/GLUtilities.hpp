@@ -394,4 +394,6 @@ private:
 	 \note The output image extension will be automatically added based on the framebuffer type and format.
 	 */
 	static void savePixels(GLenum type, GLenum format, unsigned int width, unsigned int height, unsigned int components, const std::string & path, bool flip, bool ignoreAlpha);
+
+	static GPUState _state; ///< Current GPU state for caching.
 };

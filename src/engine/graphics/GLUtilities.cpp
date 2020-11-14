@@ -107,6 +107,10 @@ void GLUtilities::setup() {
 	glDepthFunc(GL_LESS);
 	glEnable(GL_FRAMEBUFFER_SRGB);
 	Framebuffer::backbuffer()->bind();
+
+	// Cache initial state.
+	GLUtilities::getState(_state);
+	_state.polygonMode = PolygonMode::FILL;
 }
 
 GLuint GLUtilities::loadShader(const std::string & prog, ShaderType type, Bindings & bindings, std::string & finalLog) {
@@ -833,57 +837,99 @@ std::vector<std::string> GLUtilities::deviceExtensions() {
 }
 
 void GLUtilities::setViewport(int x, int y, int w, int h) {
-	glViewport(GLsizei(x), GLsizei(y), GLsizei(w), GLsizei(h));
+	if(_state.viewport[0] != x || _state.viewport[1] != y || _state.viewport[2] != w || _state.viewport[3] != h){
+		_state.viewport[0] = x;
+		_state.viewport[1] = y;
+		_state.viewport[2] = w;
+		_state.viewport[3] = h;
+		glViewport(GLsizei(x), GLsizei(y), GLsizei(w), GLsizei(h));
+	}
 }
 
 void GLUtilities::clearColor(const glm::vec4 & color) {
-	glClearColor(color[0], color[1], color[2], color[3]);
+	if(_state.colorClearValue != color){
+		_state.colorClearValue = color;
+		glClearColor(color[0], color[1], color[2], color[3]);
+	}
 	glClear(GL_COLOR_BUFFER_BIT);
 }
 
 void GLUtilities::clearDepth(float depth) {
-	glClearDepth(depth);
+	if(_state.depthClearValue != depth){
+		_state.depthClearValue = depth;
+		glClearDepth(depth);
+	}
 	glClear(GL_DEPTH_BUFFER_BIT);
 }
 
 void GLUtilities::clearStencil(uchar stencil) {
 	// The stencil mask applies to clearing.
-	GLint swm;
-	glGetIntegerv(GL_STENCIL_WRITEMASK, &swm);
-	glStencilMask(0xFF);
+	// Disable it temporarily.
+	if(!_state.stencilWriteMask){
+		glStencilMask(0xFF);
+	}
 
-	glClearStencil(GLint(stencil));
+	if(_state.stencilClearValue != stencil){
+		_state.stencilClearValue = stencil;
+		glClearStencil(GLint(stencil));
+	}
 	glClear(GL_STENCIL_BUFFER_BIT);
-	
-	glStencilMask(swm);
+
+	if(!_state.stencilWriteMask){
+		glStencilMask(0x00);
+	}
 }
 
 void GLUtilities::clearColorAndDepth(const glm::vec4 & color, float depth) {
-	glClearColor(color[0], color[1], color[2], color[3]);
-	glClearDepth(depth);
+	if(_state.colorClearValue != color){
+		_state.colorClearValue = color;
+		glClearColor(color[0], color[1], color[2], color[3]);
+	}
+	if(_state.depthClearValue != depth){
+		_state.depthClearValue = depth;
+		glClearDepth(depth);
+	}
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void GLUtilities::clearColorDepthStencil(const glm::vec4 & color, float depth, uchar stencil) {
 	// The stencil mask applies to clearing.
-	GLint swm;
-	glGetIntegerv(GL_STENCIL_WRITEMASK, &swm);
-	glStencilMask(0xFF);
-
-	glClearColor(color[0], color[1], color[2], color[3]);
-	glClearDepth(depth);
-	glClearStencil(GLint(stencil));
+	// Disable it temporarily.
+	if(!_state.stencilWriteMask){
+		glStencilMask(0xFF);
+	}
+	if(_state.colorClearValue != color){
+		_state.colorClearValue = color;
+		glClearColor(color[0], color[1], color[2], color[3]);
+	}
+	if(_state.depthClearValue != depth){
+		_state.depthClearValue = depth;
+		glClearDepth(depth);
+	}
+	if(_state.stencilClearValue != stencil){
+		_state.stencilClearValue = stencil;
+		glClearStencil(GLint(stencil));
+	}
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-	glStencilMask(swm);
+	if(!_state.stencilWriteMask){
+		glStencilMask(0x00);
+	}
 }
 
 void GLUtilities::setDepthState(bool test) {
-	(test ? glEnable : glDisable)(GL_DEPTH_TEST);
+	if(_state.depthTest != test){
+		_state.depthTest = test;
+		(test ? glEnable : glDisable)(GL_DEPTH_TEST);
+	}
 }
 
 void GLUtilities::setDepthState(bool test, TestFunction equation, bool write) {
-	(test ? glEnable : glDisable)(GL_DEPTH_TEST);
+	if(_state.depthTest != test){
+		_state.depthTest = test;
+		(test ? glEnable : glDisable)(GL_DEPTH_TEST);
+	}
+
 	static const std::map<TestFunction, GLenum> eqs = {
 		{TestFunction::NEVER, GL_NEVER},
 		{TestFunction::LESS, GL_LESS},
@@ -893,17 +939,35 @@ void GLUtilities::setDepthState(bool test, TestFunction equation, bool write) {
 		{TestFunction::GEQUAL, GL_GEQUAL},
 		{TestFunction::NOTEQUAL, GL_NOTEQUAL},
 		{TestFunction::ALWAYS, GL_ALWAYS}};
-	glDepthFunc(eqs.at(equation));
-	glDepthMask(write ? GL_TRUE : GL_FALSE);
+
+	if(_state.depthFunc != equation){
+		_state.depthFunc = equation;
+		glDepthFunc(eqs.at(equation));
+	}
+
+	if(_state.depthWriteMask != write){
+		_state.depthWriteMask = write;
+		glDepthMask(write ? GL_TRUE : GL_FALSE);
+	}
 }
 
 void GLUtilities::setStencilState(bool test, bool write){
-	(test ? glEnable : glDisable)(GL_STENCIL_TEST);
-	glStencilMask(write ? 0xFF : 0x00);
+	if(_state.stencilTest != test){
+		_state.stencilTest = test;
+		(test ? glEnable : glDisable)(GL_STENCIL_TEST);
+	}
+	if(_state.stencilWriteMask != write){
+		_state.stencilWriteMask = write;
+		glStencilMask(write ? 0xFF : 0x00);
+	}
 }
 
 void GLUtilities::setStencilState(bool test, TestFunction function, StencilOp fail, StencilOp pass, StencilOp depthFail, uchar value){
-	(test ? glEnable : glDisable)(GL_STENCIL_TEST);
+
+	if(_state.stencilTest != test){
+		_state.stencilTest = test;
+		(test ? glEnable : glDisable)(GL_STENCIL_TEST);
+	}
 
 	static const std::map<TestFunction, GLenum> funs = {
 		{TestFunction::NEVER, GL_NEVER},
@@ -925,16 +989,36 @@ void GLUtilities::setStencilState(bool test, TestFunction function, StencilOp fa
 		{ StencilOp::DECRWRAP, GL_DECR_WRAP },
 		{ StencilOp::INVERT, GL_INVERT }};
 
-	glStencilFunc(funs.at(function), GLint(value), 0xFF);
-	glStencilMask(0xFF);
-	glStencilOp(ops.at(fail), ops.at(depthFail), ops.at(pass));
+	if(_state.stencilFunc != function){
+		_state.stencilFunc = function;
+		glStencilFunc(funs.at(function), GLint(value), 0xFF);
+	}
+	if(!_state.stencilWriteMask){
+		_state.stencilWriteMask = true;
+		glStencilMask(0xFF);
+	}
+	if(_state.stencilFail != fail || _state.stencilPass != depthFail || _state.stencilDepthPass != pass){
+		_state.stencilFail = fail;
+		_state.stencilPass = depthFail;
+		_state.stencilDepthPass = pass;
+		glStencilOp(ops.at(fail), ops.at(depthFail), ops.at(pass));
+	}
 }
 
 void GLUtilities::setBlendState(bool test) {
-	(test ? glEnable : glDisable)(GL_BLEND);
+	if(_state.blend != test){
+		_state.blend = test;
+		(test ? glEnable : glDisable)(GL_BLEND);
+	}
 }
 
 void GLUtilities::setBlendState(bool test, BlendEquation equation, BlendFunction src, BlendFunction dst) {
+
+	if(_state.blend != test){
+		_state.blend = test;
+		(test ? glEnable : glDisable)(GL_BLEND);
+	}
+
 	static const std::map<BlendEquation, GLenum> eqs = {
 		{BlendEquation::ADD, GL_FUNC_ADD},
 		{BlendEquation::SUBTRACT, GL_FUNC_SUBTRACT},
@@ -952,22 +1036,42 @@ void GLUtilities::setBlendState(bool test, BlendEquation equation, BlendFunction
 		{BlendFunction::ONE_MINUS_DST_COLOR, GL_ONE_MINUS_DST_COLOR},
 		{BlendFunction::DST_ALPHA, GL_DST_ALPHA},
 		{BlendFunction::ONE_MINUS_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA}};
-	glBlendFunc(funcs.at(src), funcs.at(dst));
-	glBlendEquation(eqs.at(equation));
-	(test ? glEnable : glDisable)(GL_BLEND);
+
+	if(_state.blendEquationRGB != equation){
+		_state.blendEquationRGB = _state.blendEquationAlpha = equation;
+		glBlendEquation(eqs.at(equation));
+	}
+
+	if(_state.blendSrcRGB != src || _state.blendDstRGB != dst){
+		_state.blendSrcRGB = _state.blendSrcAlpha = src;
+		_state.blendDstRGB = _state.blendDstAlpha = dst;
+		glBlendFunc(funcs.at(src), funcs.at(dst));
+	}
+
 }
 
 void GLUtilities::setCullState(bool cull) {
-	(cull ? glEnable : glDisable)(GL_CULL_FACE);
+	if(_state.cullFace != cull){
+		_state.cullFace = cull;
+		(cull ? glEnable : glDisable)(GL_CULL_FACE);
+	}
 }
 
 void GLUtilities::setCullState(bool cull, Faces culledFaces) {
+	if(_state.cullFace != cull){
+		_state.cullFace = cull;
 		(cull ? glEnable : glDisable)(GL_CULL_FACE);
+	}
+
 	static const std::map<Faces, GLenum> faces = {
 	 {Faces::FRONT, GL_FRONT},
 	 {Faces::BACK, GL_BACK},
 	 {Faces::ALL, GL_FRONT_AND_BACK}};
+
+	if(_state.cullFaceMode != culledFaces){
+		_state.cullFaceMode = culledFaces;
 		glCullFace(faces.at(culledFaces));
+	}
 }
 
 void GLUtilities::setPolygonState(PolygonMode mode) {
@@ -976,14 +1080,28 @@ void GLUtilities::setPolygonState(PolygonMode mode) {
 		{PolygonMode::FILL, GL_FILL},
 		{PolygonMode::LINE, GL_LINE},
 		{PolygonMode::POINT, GL_POINT}};
+
+	if(_state.polygonMode != mode){
+		_state.polygonMode = mode;
 		glPolygonMode(GL_FRONT_AND_BACK, modes.at(mode));
+	}
 }
 
 void GLUtilities::setColorState(bool writeRed, bool writeGreen, bool writeBlue, bool writeAlpha){
-	glColorMask(writeRed ? GL_TRUE : GL_FALSE, writeGreen ? GL_TRUE : GL_FALSE, writeBlue ? GL_TRUE : GL_FALSE, writeAlpha ? GL_TRUE : GL_FALSE);
+	if(_state.colorWriteMask.r != writeRed || _state.colorWriteMask.g != writeGreen || _state.colorWriteMask.b != writeBlue || _state.colorWriteMask.a != writeAlpha){
+		_state.colorWriteMask.r = writeRed;
+		_state.colorWriteMask.g = writeGreen;
+		_state.colorWriteMask.b = writeBlue;
+		_state.colorWriteMask.a = writeAlpha;
+		glColorMask(writeRed ? GL_TRUE : GL_FALSE, writeGreen ? GL_TRUE : GL_FALSE, writeBlue ? GL_TRUE : GL_FALSE, writeAlpha ? GL_TRUE : GL_FALSE);
+	}
+
 }
 void GLUtilities::setSRGBState(bool convert){
+	if(_state.framebufferSRGB != convert){
+		_state.framebufferSRGB = convert;
 		(convert ? glEnable : glDisable)(GL_FRAMEBUFFER_SRGB);
+	}
 }
 
 void GLUtilities::blitDepth(const Framebuffer & src, const Framebuffer & dst) {
@@ -1272,3 +1390,5 @@ void GLUtilities::getState(GPUState& state) {
 	glGetFloatv(GL_VIEWPORT, &state.viewport[0]);
 	glGetFloatv(GL_SCISSOR_BOX, &state.scissorBox[0]);
 }
+
+GPUState GLUtilities::_state;
