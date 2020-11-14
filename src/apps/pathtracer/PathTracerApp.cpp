@@ -68,7 +68,6 @@ void PathTracerApp::draw() {
 		_passthrough->use();
 		_passthrough->uniform("flip", 1);
 		ScreenQuad::draw(_renderTex);
-		Framebuffer::backbuffer()->unbind();
 		return;
 	}
 	
@@ -80,7 +79,6 @@ void PathTracerApp::draw() {
 	_passthrough->use();
 	_passthrough->uniform("flip", 0);
 	ScreenQuad::draw(_sceneFramebuffer->texture());
-	Framebuffer::backbuffer()->unbind();
 }
 
 void PathTracerApp::update() {

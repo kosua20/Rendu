@@ -188,7 +188,6 @@ void PBRDemo::draw() {
 	GLUtilities::setDepthState(false);
 	GLUtilities::setCullState(true);
 	ScreenQuad::draw(_finalRender->texture());
-	Framebuffer::backbuffer()->unbind();
 }
 
 void PBRDemo::update() {

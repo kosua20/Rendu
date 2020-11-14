@@ -48,7 +48,6 @@ void GameRenderer::drawPlayer(const Player & player, Framebuffer & framebuffer) 
 	GLUtilities::clearColorAndDepth(glm::vec4(0.0f), 1.0f);
 	GLUtilities::setDepthState(true);
 	drawScene(player);
-	_sceneFramebuffer->unbind();
 	GLUtilities::setDepthState(false);
 
 	// --- SSAO pass ------
@@ -59,7 +58,6 @@ void GameRenderer::drawPlayer(const Player & player, Framebuffer & framebuffer) 
 	_lightingFramebuffer->setViewport();
 	_compositingProgram->use();
 	ScreenQuad::draw({_sceneFramebuffer->texture(0), _sceneFramebuffer->texture(1), _ssaoPass->texture(), _cubemap});
-	_lightingFramebuffer->unbind();
 
 	// --- FXAA pass -------
 	framebuffer.bind();
@@ -67,7 +65,6 @@ void GameRenderer::drawPlayer(const Player & player, Framebuffer & framebuffer) 
 	_fxaaProgram->use();
 	_fxaaProgram->uniform("inverseScreenSize", invRenderSize);
 	ScreenQuad::draw(_lightingFramebuffer->texture());
-	framebuffer.unbind();
 
 }
 

@@ -160,7 +160,6 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 	
 	// Render the backgound.
 	renderBackground(view, proj, pos);
-	_sceneFramebuffer->unbind();
 	GLUtilities::setDepthState(false);
 	GLUtilities::setCullState(true);
 }
@@ -245,7 +244,6 @@ void ForwardRenderer::draw(const Camera & camera, Framebuffer & framebuffer, siz
 	GLUtilities::bindTexture(_sceneFramebuffer->texture(1), 1);
 	GLUtilities::bindTexture(_ssaoPass->texture(), 2);
 	ScreenQuad::draw();
-	framebuffer.unbind();
 }
 
 void ForwardRenderer::resize(unsigned int width, unsigned int height) {

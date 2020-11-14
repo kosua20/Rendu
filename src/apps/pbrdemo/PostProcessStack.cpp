@@ -67,14 +67,12 @@ void PostProcessStack::process(const Texture * texture, const glm::mat4 & proj, 
 		GLUtilities::bindTexture(texture, 0);
 		GLUtilities::bindTexture(_dofGatherBuffer->texture(), 1);
 		ScreenQuad::draw();
-		_resultFramebuffer->unbind();
 	} else {
 		// Else just copy the input texture to our internal result.
 		_resultFramebuffer->bind();
 		_resultFramebuffer->setViewport();
 		Resources::manager().getProgram2D("passthrough-pixelperfect")->use();
 		ScreenQuad::draw(texture);
-		_resultFramebuffer->unbind();
 	}
 
 	if(_settings.bloom) {
@@ -84,7 +82,6 @@ void PostProcessStack::process(const Texture * texture, const glm::mat4 & proj, 
 		_bloomProgram->use();
 		_bloomProgram->uniform("luminanceTh", _settings.bloomTh);
 		ScreenQuad::draw(_resultFramebuffer->texture());
-		_bloomBuffer->unbind();
 		
 		// --- Bloom blur pass ------
 		_blur->process(_bloomBuffer->texture(), *_bloomBuffer);
@@ -97,7 +94,6 @@ void PostProcessStack::process(const Texture * texture, const glm::mat4 & proj, 
 		_bloomComposite->uniform("scale", _settings.bloomMix);
 		ScreenQuad::draw(_bloomBuffer->texture());
 		GLUtilities::setBlendState(false);
-		_resultFramebuffer->unbind();
 		// Steps below ensures that we will always have an intermediate target.
 	}
 
@@ -108,7 +104,6 @@ void PostProcessStack::process(const Texture * texture, const glm::mat4 & proj, 
 	_toneMappingProgram->uniform("customExposure", _settings.exposure);
 	_toneMappingProgram->uniform("apply", _settings.tonemap);
 	ScreenQuad::draw(_resultFramebuffer->texture());
-	_toneMapBuffer->unbind();
 
 	if(_settings.fxaa) {
 		framebuffer.bind(layer);
@@ -116,7 +111,6 @@ void PostProcessStack::process(const Texture * texture, const glm::mat4 & proj, 
 		_fxaaProgram->use();
 		_fxaaProgram->uniform("inverseScreenSize", invRenderSize);
 		ScreenQuad::draw(_toneMapBuffer->texture());
-		framebuffer.unbind();
 	} else {
 		GLUtilities::blit(*_toneMapBuffer, framebuffer, 0, layer, Filter::LINEAR);
 	}

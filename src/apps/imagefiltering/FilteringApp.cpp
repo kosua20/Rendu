@@ -48,7 +48,6 @@ void FilteringApp::draw() {
 		_sceneShader->use();
 		_sceneShader->uniform("mvp", MVP);
 		GLUtilities::drawMesh(*_mesh);
-		_sceneBuffer->unbind();
 
 	} else if(_viewMode == View::IMAGE) {
 		GLUtilities::setDepthState(false);
@@ -60,7 +59,6 @@ void FilteringApp::draw() {
 		} else {
 			GLUtilities::clearColor({0.0f, 0.0f, 0.0f, 1.0f});
 		}
-		_sceneBuffer->unbind();
 
 	} else {
 		GLUtilities::setDepthState(false);
@@ -106,7 +104,6 @@ void FilteringApp::draw() {
 	GLUtilities::setViewport(0, 0, screenSize[0], screenSize[1]);
 	_passthrough->use();
 	ScreenQuad::draw(finalTexID);
-	Framebuffer::backbuffer()->unbind();
 }
 
 void FilteringApp::update() {

@@ -141,7 +141,6 @@ void DebugRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_
 		GLUtilities::drawMesh(*_sphere);
 	}
 	GLUtilities::setDepthState(false);
-	framebuffer.unbind();
 
 	checkGLError();
 }

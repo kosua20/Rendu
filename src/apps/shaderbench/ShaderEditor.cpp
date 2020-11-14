@@ -188,7 +188,6 @@ void ShaderEditor::draw() {
 	_timer.begin();
 	ScreenQuad::draw();
 	_timer.end();
-	_currFrame->unbind();
 	
 	// To best mimic other tools, no default gamma correction is applied here.
 	Framebuffer::backbuffer()->bind();
@@ -200,7 +199,6 @@ void ShaderEditor::draw() {
 		_passthrough->uniform("flip", 0);
 		ScreenQuad::draw(_currFrame->texture());
 	}
-	Framebuffer::backbuffer()->unbind();
 
 	std::swap(_currFrame, _prevFrame);
 	_textures[0] = _prevFrame->texture();

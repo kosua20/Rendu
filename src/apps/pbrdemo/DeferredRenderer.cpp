@@ -127,8 +127,6 @@ void DeferredRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & pro
 	
 	renderBackground(view, proj, pos);
 
-	// Unbind the full scene framebuffer.
-	_gbuffer->unbind();
 	GLUtilities::setDepthState(false);
 }
 
@@ -206,7 +204,6 @@ void DeferredRenderer::draw(const Camera & camera, Framebuffer & framebuffer, si
 		light->draw(*_lightRenderer);
 	}
 	GLUtilities::setBlendState(false);
-	_lightBuffer->unbind();
 	// Copy to the final framebuffer.
 	GLUtilities::blit(*_lightBuffer, framebuffer, 0, layer, Filter::NEAREST);
 

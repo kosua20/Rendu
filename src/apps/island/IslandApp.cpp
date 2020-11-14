@@ -170,7 +170,6 @@ void IslandApp::draw() {
 			_skyProgram->uniform("clipToWorld", clipToWorldFace);
 			GLUtilities::drawMesh(*_skyMesh);
 		}
-		_environment->unbind();
 
 		_terrain->generateShadowMap(_lightDirection);
 		_shouldUpdateSky = false;
@@ -278,7 +277,6 @@ void IslandApp::draw() {
 			_waterCopy->uniform("time", time);
 			ScreenQuad::draw();
 			GLUtilities::setDepthState(true);
-			_waterEffectsHalf->unbind();
 			_blur.process(_waterEffectsHalf->texture(0), *_waterEffectsBlur);
 		}
 
@@ -342,7 +340,6 @@ void IslandApp::draw() {
 			GLUtilities::bindTexture(_waveNormals, 3);
 			_waterCopy->uniform("time", time);
 			ScreenQuad::draw();
-			_waterEffectsHalf->unbind();
 
 			_blur.process(_waterEffectsHalf->texture(0), *_waterEffectsBlur);
 
@@ -417,15 +414,12 @@ void IslandApp::draw() {
 	}
 	_primsOcean.end();
 
-	_sceneBuffer->unbind();
-
 	// Tonemapping and final screen.
 	GLUtilities::setDepthState(false, TestFunction::LESS, true);
 	GLUtilities::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 	Framebuffer::backbuffer()->bind();
 	_tonemap->use();
 	ScreenQuad::draw(_sceneBuffer->texture());
-	Framebuffer::backbuffer()->unbind();
 }
 
 void IslandApp::update() {

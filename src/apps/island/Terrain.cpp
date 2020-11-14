@@ -423,7 +423,6 @@ void Terrain::generateShadowMap(const glm::vec3 & lightDir){
 
 	GLUtilities::bindTexture(map, 0);
 	ScreenQuad::draw();
-	_shadowBuffer->unbind();
 
 	// Post process shadow map.
 	_gaussBlur.process(_shadowBuffer->texture(0), *_shadowBuffer);

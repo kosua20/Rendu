@@ -73,7 +73,6 @@ void BVHRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_t 
 	}
 
 	GLUtilities::setPolygonState(PolygonMode::FILL);
-	framebuffer.unbind();
 	GLUtilities::setDepthState(false);
 	GLUtilities::setCullState(true);
 }

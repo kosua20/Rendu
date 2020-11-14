@@ -120,7 +120,6 @@ void GameMenuRenderer::drawMenu(const GameMenu & menu, const glm::vec2 & finalRe
 		GLUtilities::drawMesh(label.mesh);
 	}
 	GLUtilities::setBlendState(false);
-	Framebuffer::backbuffer()->unbind();
 	checkGLError();
 }
 

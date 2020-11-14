@@ -87,8 +87,6 @@ void StenciledRenderer::draw(const Camera & camera, Framebuffer & framebuffer, s
 	_fillProgram->uniform("color", glm::vec4(0.0f));
 	ScreenQuad::draw();
 
-	_sceneFramebuffer->unbind();
-
 	// Restore states.
 	GLUtilities::setStencilState(false, false);
 	GLUtilities::setDepthState(false);

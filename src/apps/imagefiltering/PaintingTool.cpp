@@ -79,8 +79,6 @@ void PaintingTool::draw() {
 		GLUtilities::drawMesh(_brushes[int(_shape)]);
 	}
 
-	_canvas->unbind();
-
 	// Copy the canvas to the visualisation framebuffer.
 	GLUtilities::blit(*_canvas, *_visu, Filter::NEAREST);
 
@@ -98,7 +96,6 @@ void PaintingTool::draw() {
 	_brushShader->uniform("radiusPx", radiusF);
 	_brushShader->uniform("color", white);
 	GLUtilities::drawMesh(_brushes[int(_shape)]);
-	_visu->unbind();
 }
 
 void PaintingTool::update() {
@@ -167,8 +164,7 @@ void PaintingTool::resize(unsigned int width, unsigned int height) const {
 	// Clean up the canvas.
 	_canvas->bind();
 	GLUtilities::clearColor(glm::vec4(_bgColor, 1.0f));
-	_canvas->unbind();
-
+	
 	// Copy back the drawing.
 	GLUtilities::blit(tempCanvas, *_canvas, Filter::NEAREST);
 	

@@ -110,7 +110,6 @@ void Game::draw() {
 		Framebuffer::backbuffer()->bind();
 		_finalProgram->use();
 		ScreenQuad::draw(_gameFramebuffer->texture());
-		Framebuffer::backbuffer()->unbind();
 		checkGLError();
 		
 	}
