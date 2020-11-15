@@ -25,13 +25,13 @@ vec3 computeEstimate(vec3 rayOrigin, vec3 rayDir, vec3 sunDir, AtmosphereParamet
 	
 	// Check intersection with atmosphere.
 	vec2 interTop, interGround;
-	bool didHitTop = intersects(rayOrigin, rayDir, params.topRadius, interTop);
+	bool didHitTop = intersectSphere(rayOrigin, rayDir, params.topRadius, interTop);
 	// If no intersection with the atmosphere, it's the dark void of space.
 	if(!didHitTop){
 		return vec3(0.0);
 	}
 	// Now intersect with the planet.
-	bool didHitGround = intersects(rayOrigin, rayDir, params.groundRadius, interGround);
+	bool didHitGround = intersectSphere(rayOrigin, rayDir, params.groundRadius, interGround);
 	
 	// The sun itself if we're looking at it.
 	vec3 sunRadiance = vec3(0.0);

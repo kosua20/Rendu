@@ -1,4 +1,5 @@
 #include "constants.glsl"
+#include "geometry.glsl"
 
 /** Atmosphere parameters. */
 struct AtmosphereParameters {
@@ -20,29 +21,6 @@ AtmosphereParameters defaultAtmosphere = AtmosphereParameters(vec3(1.474, 1.8504
 
 #define SAMPLES_COUNT_ATMO 16
 
-/** Check if a sphere of a given radius is intersected by a ray defined by an 
-	origin wrt to the sphere center and a normalized direction.
-	\param rayOrigin the origin of the ray
-	\param rayDir the direction of the ray (normalized)
-	\param radius the radius of the sphere to intersect
-	\param roots will contain the two roots of the associated polynomial, ordered.
-	\return true if there is intersection.
-	\warning The intersection can be in the negative direction along the ray. Check the sign of the roots to know.
-*/
-bool intersects(vec3 rayOrigin, vec3 rayDir, float radius, out vec2 roots){
-	float a = dot(rayDir,rayDir);
-	float b = dot(rayOrigin, rayDir);
-	float c = dot(rayOrigin, rayOrigin) - radius*radius;
-	float delta = b*b - a*c;
-	// No intersection if the polynome has no real roots.
-	if(delta < 0.0){
-		return false;
-	}
-	// If it intersects, return the two roots.
-	float dsqrt = sqrt(delta);
-	roots = (-b+vec2(-dsqrt,dsqrt))/a;
-	return true;
-}
 
 /** Compute the Rayleigh phase.
 	\param cosAngle Cosine of the angle between the ray and the light directions
@@ -77,13 +55,13 @@ vec3 computeAtmosphereRadiance(vec3 rayOrigin, vec3 rayDir, vec3 sunDir, sampler
 	rayOrigin += vec3(0.0, params.groundRadius, 0.0);
 	// Check intersection with atmosphere.
 	vec2 interTop, interGround;
-	bool didHitTop = intersects(rayOrigin, rayDir, params.topRadius, interTop);
+	bool didHitTop = intersectSphere(rayOrigin, rayDir, params.topRadius, interTop);
 	// If no intersection with the atmosphere, it's the dark void of space.
 	if(!didHitTop){
 		return vec3(0.0);
 	}
 	// Now intersect with the planet.
-	bool didHitGround = intersects(rayOrigin, rayDir, params.groundRadius, interGround);
+	bool didHitGround = intersectSphere(rayOrigin, rayDir, params.groundRadius, interGround);
 	// Distance to the closest intersection.
 	float distanceToInter = min(interTop.y, didHitGround ? interGround.x : 0.0);
 	// Divide the distance traveled through the atmosphere in SAMPLES_COUNT_ATMO parts.
