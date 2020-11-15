@@ -57,7 +57,8 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 	GLUtilities::clearDepth(1.0f);
 	GLUtilities::clearColor({0.0f,0.0f,0.0f,1.0f});
 
-	const float cubeLod		= float(_scene->environment.map()->levels - 1);
+	const LightProbe & environment = _scene->environment;
+	const float cubeLod		= float(environment.map()->levels - 1);
 	const glm::mat4 invView = glm::inverse(view);
 	// Update shared data for the three programs.
 	{
@@ -65,14 +66,28 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 		_parallaxProgram->uniform("p", proj);
 		_parallaxProgram->uniform("inverseV", invView);
 		_parallaxProgram->uniform("maxLod", cubeLod);
+		_parallaxProgram->uniform("cubemapPos", environment.position());
+		_parallaxProgram->uniform("cubemapCenter", environment.center());
+		_parallaxProgram->uniform("cubemapExtent", environment.extent());
+		_parallaxProgram->uniform("cubemapCosSin", environment.rotationCosSin());
 		_parallaxProgram->uniform("lightsCount", int(_lightsGPU->count()));
+
 		_objectProgram->use();
 		_objectProgram->uniform("inverseV", invView);
 		_objectProgram->uniform("maxLod", cubeLod);
+		_objectProgram->uniform("cubemapPos", environment.position());
+		_objectProgram->uniform("cubemapCenter", environment.center());
+		_objectProgram->uniform("cubemapExtent", environment.extent());
+		_objectProgram->uniform("cubemapCosSin", environment.rotationCosSin());
 		_objectProgram->uniform("lightsCount", int(_lightsGPU->count()));
+		
 		_objectNoUVsProgram->use();
 		_objectNoUVsProgram->uniform("inverseV", invView);
 		_objectNoUVsProgram->uniform("maxLod", cubeLod);
+		_objectNoUVsProgram->uniform("cubemapPos", environment.position());
+		_objectNoUVsProgram->uniform("cubemapCenter", environment.center());
+		_objectNoUVsProgram->uniform("cubemapExtent", environment.extent());
+		_objectNoUVsProgram->uniform("cubemapCosSin", environment.rotationCosSin());
 		_objectNoUVsProgram->uniform("lightsCount", int(_lightsGPU->count()));
 	}
 	const auto & shadowMaps = _lightsGPU->shadowMaps();
