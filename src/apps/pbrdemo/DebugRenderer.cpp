@@ -4,7 +4,7 @@
 #include "graphics/GLUtilities.hpp"
 
 
-DebugRenderer::DebugRenderer() : _lightDebugRenderer("object_basic_uniform"), _sceneBoxes("Debug scene box"), _frame("Debug frame") {
+DebugRenderer::DebugRenderer() : _lightDebugRenderer("object_basic_uniform"), _sceneBoxes("Debug scene box"), _frame("Debug frame"), _cubeLines("Debug cube") {
 
 	const Descriptor desc = {Layout::RGBA8, Filter::LINEAR_LINEAR, Wrap::CLAMP};
 	_preferredFormat.push_back(desc);
@@ -64,8 +64,17 @@ DebugRenderer::DebugRenderer() : _lightDebugRenderer("object_basic_uniform"), _s
 			_frame.indices.push_back(baseId + 1);
 			_frame.indices.push_back(baseId);
 		}
+		_frame.upload();
 	}
-	_frame.upload();
+
+	// Create wireframe cube mesh.
+	{
+		// Degenerate lines.
+		_cubeLines.indices = { 0, 1, 0, 0, 2, 0, 1, 3, 1, 2, 3, 2, 4, 5, 4, 4, 6, 4, 5, 7, 5, 6, 7, 6, 1, 5, 1, 0, 4, 0, 2, 6, 2, 3, 7, 3};
+		BoundingBox cubeBbox(glm::vec3(-0.5f), glm::vec3(0.5f));
+		_cubeLines.positions = cubeBbox.getCorners();
+		_cubeLines.upload();
+	}
 	checkGLError();
 }
 
@@ -121,12 +130,29 @@ void DebugRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_
 
 	}
 
-	GLUtilities::setCullState(true);
-	GLUtilities::setPolygonState(PolygonMode::FILL);
 	// Render probe.
 	if(_showProbe){
+		const LightProbe & probe = _scene->environment;
+		// Render the extent box if parallax corrected.
+		if(probe.extent()[0] > 0.0f){
+			const glm::mat4 baseModel = glm::rotate(glm::translate(glm::mat4(1.0f), probe.center()), probe.rotation(), glm::vec3(0.0f, 1.0f, 0.0f));
+			const glm::mat4 mvpBox = vp * glm::scale(baseModel, 2.0f * probe.extent());
+			const glm::mat4 mvpCenter = vp * glm::scale(baseModel, glm::vec3(0.05f));
+
+			_boxesProgram->use();
+			_boxesProgram->uniform("color", glm::vec4(0.2f, 0.9f, 1.0f, 1.0f));
+
+			_boxesProgram->uniform("mvp", mvpBox);
+			GLUtilities::drawMesh(_cubeLines);
+
+			_boxesProgram->uniform("mvp", mvpCenter);
+			GLUtilities::drawMesh(*_sphere);
+		}
+
+		GLUtilities::setCullState(true);
+		GLUtilities::setPolygonState(PolygonMode::FILL);
 		// Combine the three matrices.
-		const glm::mat4 model = glm::scale(glm::translate(glm::mat4(1.0f),  _scene->environment.position()), glm::vec3(0.15f));
+		const glm::mat4 model = glm::scale(glm::translate(glm::mat4(1.0f), probe.position()), glm::vec3(0.15f));
 		const glm::mat4 MVP = vp * model;
 		const glm::mat3 normalMat(glm::inverse(glm::transpose(model)));
 		_probeProgram->use();
@@ -134,12 +160,14 @@ void DebugRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_
 		_probeProgram->uniform("m", model);
 		_probeProgram->uniform("normalMatrix", normalMat);
 		_probeProgram->uniform("camPos", camera.position());
-		_probeProgram->uniform("lod", _probeRoughness * _scene->environment.map()->levels);
+		_probeProgram->uniform("lod", _probeRoughness * probe.map()->levels);
 		_probeProgram->uniform("mode", int(_probeMode));
-		GLUtilities::bindTexture(_scene->environment.map(), 0);
-		GLUtilities::bindBuffer(*_scene->environment.shCoeffs(), 0);
+		GLUtilities::bindTexture(probe.map(), 0);
+		GLUtilities::bindBuffer(*probe.shCoeffs(), 0);
 		GLUtilities::drawMesh(*_sphere);
 	}
+	GLUtilities::setCullState(true);
+	GLUtilities::setPolygonState(PolygonMode::FILL);
 	GLUtilities::setDepthState(false);
 
 	checkGLError();
@@ -149,9 +177,7 @@ void DebugRenderer::updateSceneMesh(){
 	// Compute bounding boxes mesh and upload.
 	_sceneBoxes.clean();
 
-	// Degenerate lines.
-	const std::vector<unsigned int> indices = { 0, 1, 0, 0, 2, 0, 1, 3, 1, 2, 3, 2, 4, 5, 4, 4, 6, 4, 5, 7, 5, 6, 7, 6, 1, 5, 1, 0, 4, 0, 2, 6, 2, 3, 7, 3};
-
+	const auto & indices = _cubeLines.indices;
 	// Generate the geometry for all objects.
 	for(const auto & obj : _scene->objects) {
 		const unsigned int firstIndex = uint(_sceneBoxes.positions.size());

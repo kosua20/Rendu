@@ -55,6 +55,7 @@ private:
 
 	Mesh _sceneBoxes; ///< Bounding boxes of all scene objects.
 	Mesh _frame; ///< Gizmo and grid in world space.
+	Mesh _cubeLines; ///< General wireframe cube.
 
 	ProbeMode _probeMode = ProbeMode::RADIANCE; ///< Probe info to display.
 	float _probeRoughness = 0.0f; ///< Radiance level to display.
