@@ -4,11 +4,23 @@ void LightProbe::decode(const KeyValues & params, Storage options) {
 	// Assume a static probe initially.
 	_type = LightProbe::Type::STATIC;
 
+	bool setCenter = false;
 	for(const auto & param : params.elements){
 
 		if(param.key == "position"){
 			_type = LightProbe::Type::DYNAMIC;
 			_position = Codable::decodeVec3(param);
+
+		} else if(param.key == "center"){
+			_center = Codable::decodeVec3(param);
+			setCenter = true;
+
+		} else if(param.key == "extent"){
+			_extent = Codable::decodeVec3(param);
+
+		} else if(param.key == "rotation" && !param.values.empty()){
+			_rotation = std::stof(param.values[0]);
+			_rotCosSin = glm::vec2(std::cos(_rotation), std::sin(_rotation));
 
 		} else if(param.key == "irradiance" && !param.values.empty()){
 			_shCoeffs.reset(new Buffer<glm::vec4>(9, BufferType::UNIFORM, DataUse::STATIC));
@@ -25,6 +37,10 @@ void LightProbe::decode(const KeyValues & params, Storage options) {
 			const auto texInfos = Codable::decodeTexture(param.elements[0]);
 			_envmap = Resources::manager().getTexture(texInfos.first, texInfos.second, options);
 		}
+	}
+
+	if(!setCenter){
+		_center = _position;
 	}
 
 	// for the static case, check that everything has been provided.
@@ -50,6 +66,12 @@ KeyValues LightProbe::encode() const {
 	if(_type == Type::DYNAMIC){
 		probe.elements.emplace_back("position");
 		probe.elements.back().values.push_back(Codable::encode(_position));
+		probe.elements.emplace_back("extent");
+		probe.elements.back().values.push_back(Codable::encode(_extent));
+		probe.elements.emplace_back("center");
+		probe.elements.back().values.push_back(Codable::encode(_center));
+		probe.elements.emplace_back("rotation");
+		probe.elements.back().values.push_back(std::to_string(_rotation));
 	} else {
 		probe.elements.emplace_back("radiance");
 		probe.elements.back().elements.push_back(Codable::encode(_envmap));

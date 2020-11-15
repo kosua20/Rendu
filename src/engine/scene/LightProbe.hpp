@@ -62,6 +62,22 @@ public:
 	 */
 	const glm::vec3 & position() const { return _position; }
 
+	/** \return the probe parallax proxy extent (or -1 for probes at infinity)
+	 */
+	const glm::vec3 & extent() const { return _extent; }
+
+	/** \return the probe parallax proxy center
+	 */
+	const glm::vec3 & center() const { return _center; }
+
+	/** \return the probe orientation.
+	 */
+	const float & rotation() const { return _rotation; }
+
+	/** \return the probe precomputed orientation (cos(angleY), sin(angleY)).
+	 */
+	const glm::vec2 & rotationCosSin() const { return _rotCosSin; }
+
 	/** \return the environment map */
 	const Texture * map() const { return _envmap; }
 
@@ -75,5 +91,8 @@ private:
 	
 	Type _type = Type::DEFAULT; ///< The type of probe.
 	glm::vec3 _position = glm::vec3(0.0f); ///< The probe location.
-
+	glm::vec3 _extent = glm::vec3(-1.0f); ///< The probe parallax proxy extent.
+	glm::vec3 _center = glm::vec3(0.0f); ///< The probe parallax proxy center.
+	glm::vec2 _rotCosSin = glm::vec2(1.0f, 0.0f); ///< Probe orientation trigonometric cached values.
+	float _rotation = 0.0f; ///< The probe orientation around a vertical axis,
 };
