@@ -227,6 +227,6 @@ private:
 
 	static Framebuffer * _backbuffer; ///< Dummy backbuffer framebuffer.
 	
-	friend class GLUtilities;
+	friend class GLUtilities; ///< Utilities will need to access GPU handle.
 	
 };
