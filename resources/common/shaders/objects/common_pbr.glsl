@@ -1,5 +1,6 @@
 
 #include "constants.glsl"
+#include "geometry.glsl"
 
 /** Fresnel approximation.
 	\param F0 fresnel based coefficient
@@ -71,20 +72,35 @@ vec3 ggx(vec3 n, vec3 v, vec3 l, vec3 F0, float roughness){
 }
 
 /** Return the (pre-convolved) radiance for a given normal, view direction and
-	material parameters.
-	\param n the surface normal
-	\param v the view direction
-	\param inverseV inverse view direction
+	material parameters. Directions are in world space.
+	\param n the surface normal (world space)
+	\param v the view direction (world space)
+	\param p the surface position (world space)
 	\param roughness the surface roughness
 	\param cubeMap the environment map texture
+	\param cubePos position of the cubemap
+	\param cubeCenter center of the parallax correction box
+	\param cubeExtent half size of the parallax correction box (infinity if < 0.0)
+	\param cubeRotCosSin precomputed cos/sin of the parallax correction box orientation
 	\param upLod the maximal mip level to fetch
 	\return the radiance value
 	*/
-vec3 radiance(vec3 n, vec3 v, float roughness, mat4 inverseV, samplerCube cubeMap, float upLod){
-	// Compute local frame.
+vec3 radiance(vec3 n, vec3 v, vec3 p, float roughness, samplerCube cubeMap, vec3 cubePos, vec3 cubeCenter, vec3 cubeExtent, vec2 cubeRotCosSin, float upLod){
+	// Reflect the ray
 	vec3 r = -reflect(v,n);
-	r = normalize((inverseV * vec4(r, 0.0)).xyz);
 
+	// Compute the direction to fetch in the cubemap.
+	if(cubeExtent.x > 0.0){
+		// We go from world to box frame.
+		vec3 rBox = rotateY(r, cubeRotCosSin);
+		vec3 pBox = rotateY(p - cubeCenter, cubeRotCosSin);
+		vec2 roots;
+		if(intersectBox(pBox, rBox, cubeExtent, roots)){
+			float dist = max(roots.x, roots.y);
+			vec3 hitPos = p + dist * r;
+			r = (hitPos - cubePos);
+		}
+	}
 	vec3 specularColor = textureLod(cubeMap, r, upLod * roughness).rgb;
 	return specularColor;
 }
