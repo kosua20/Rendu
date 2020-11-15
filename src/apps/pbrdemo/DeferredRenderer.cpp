@@ -198,7 +198,7 @@ void DeferredRenderer::draw(const Camera & camera, Framebuffer & framebuffer, si
 	_lightRenderer->updateShadowMapInfos(_shadowMode, 0.002f);
 	_lightBuffer->bind();
 	_lightBuffer->setViewport();
-	_ambientScreen->draw(view, proj, _scene->environment.map(), *_scene->environment.shCoeffs());
+	_ambientScreen->draw(view, proj, _scene->environment);
 	GLUtilities::setBlendState(true, BlendEquation::ADD, BlendFunction::ONE, BlendFunction::ONE);
 	for(auto & light : _scene->lights) {
 		light->draw(*_lightRenderer);

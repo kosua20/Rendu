@@ -22,18 +22,22 @@ AmbientQuad::AmbientQuad(const Texture * texAlbedo, const Texture * texNormals, 
 	checkGLError();
 }
 
-void AmbientQuad::draw(const glm::mat4 & viewMatrix, const glm::mat4 & projectionMatrix, const Texture * envmap, const Buffer<glm::vec4> & shCoeffs) {
+void AmbientQuad::draw(const glm::mat4 & viewMatrix, const glm::mat4 & projectionMatrix, const LightProbe & environment) {
 
 	const glm::mat4 invView = glm::inverse(viewMatrix);
 	// Store the four variable coefficients of the projection matrix.
 	const glm::vec4 projectionVector = glm::vec4(projectionMatrix[0][0], projectionMatrix[1][1], projectionMatrix[2][2], projectionMatrix[3][2]);
-	_textures[6] = envmap;
+	_textures[6] = environment.map();
 
 	_program->use();
 	_program->uniform("inverseV", invView);
 	_program->uniform("projectionMatrix", projectionVector);
 	_program->uniform("maxLod", float(_textures[6]->levels-1));
-	GLUtilities::bindBuffer(shCoeffs, 0);
+	_program->uniform("cubemapPos", environment.position());
+	_program->uniform("cubemapCenter", environment.center());
+	_program->uniform("cubemapExtent", environment.extent());
+	_program->uniform("cubemapCosSin", environment.rotationCosSin());
+	GLUtilities::bindBuffer(*environment.shCoeffs(), 0);
 	
 	ScreenQuad::draw(_textures);
 }

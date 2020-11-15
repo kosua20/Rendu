@@ -22,6 +22,11 @@ layout(std140, binding = 0) uniform SHCoeffs {
 };
 uniform mat4 inverseV; ///< The view to world transformation matrix.
 uniform vec4 projectionMatrix; ///< The camera projection matrix.
+
+uniform vec3 cubemapPos; ///< The cubemap location
+uniform vec3 cubemapCenter; ///< The cubemap parallax box center
+uniform vec3 cubemapExtent; ///< The cubemap parallax box half size
+uniform vec2 cubemapCosSin; ///< The cubemap parallax box orientation (precomputed cos/sin).
 uniform float maxLod; ///< Mip level count for background map.
 
 layout(location = 0) out vec3 fragColor; ///< Color.
@@ -53,9 +58,12 @@ void main(){
 	float aoSpecular = approximateSpecularAO(aoDiffuse, NdotV, roughness);
 
 	// Sample illumination envmap using world space normal and SH pre-computed coefficients.
-	vec3 worldNormal = normalize(vec3(inverseV * vec4(n,0.0)));
-	vec3 irradiance = applySH(worldNormal, shCoeffs);
-	vec3 radiance = radiance(n, v, roughness, inverseV, textureCubeMap, maxLod);
+	vec3 worldN = normalize(vec3(inverseV * vec4(n,0.0)));
+	vec3 irradiance = applySH(worldN, shCoeffs);
+	// Sample radiance in world space too.
+	vec3 worldP = vec3(inverseV * vec4(position, 1.0));
+	vec3 worldV = normalize(inverseV[3].xyz - worldP);
+	vec3 radiance = radiance(worldN, worldV, worldP, roughness, textureCubeMap, cubemapPos, cubemapCenter, cubemapExtent, cubemapCosSin, maxLod);
 	
 	// BRDF contributions.
 	vec3 diffuse, specular;

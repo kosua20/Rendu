@@ -2,6 +2,7 @@
 
 #include "graphics/ScreenQuad.hpp"
 #include "resources/Buffer.hpp"
+#include "scene/LightProbe.hpp"
 #include "Common.hpp"
 
 /**
@@ -24,10 +25,9 @@ public:
 	/** Draw the ambient lighting contribution to the scene.
 	 \param viewMatrix the current camera view matrix
 	 \param projectionMatrix the current camera projection matrix
-	 \param envmap the environment cubemap (ideally containing radiance convolved with increasing roughness lobes in the mipmap levels)
-	 \param shCoeffs the irradiance spherical harmonic representation
+	 \param environment the environment (cubemap  with preconvolved glossiness, irradiance spherical harmonics)
 	 */
-	void draw(const glm::mat4 & viewMatrix, const glm::mat4 & projectionMatrix, const Texture * envmap, const Buffer<glm::vec4> & shCoeffs);
+	void draw(const glm::mat4 & viewMatrix, const glm::mat4 & projectionMatrix, const LightProbe & environment);
 
 private:
 	Program * _program;						///< The ambient lighting program.
