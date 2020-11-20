@@ -59,19 +59,19 @@ jobs:
           
       - name: Configure
         shell: bash
-        working-directory: ${{runner.workspace}}
+        working-directory: ${{github.workspace}}
         run: |
           ls -l -a
           ./premake5 ${{matrix.premake-opts}} --skip_shader_validation
           
       - name: Build-gmake
         if: startsWith(matrix.os, 'macOS') || startsWith(matrix.os, 'ubuntu')
-        working-directory: ${{runner.workspace}}/build
+        working-directory: ${{github.workspace}}/build
         shell: bash
         run: make ALL
       
       - name: Build-msvc
         if: startsWith(matrix.os, 'windows')
-        working-directory: ${{runner.workspace}}/build
+        working-directory: ${{github.workspace}}/build
         shell: bash
         run: MSBuild.exe Rendu.sln -t:Meta\\ALL -nologo -v:minimal -p:Configuration=Release -p:Platform=x64
