@@ -61,6 +61,7 @@ jobs:
         shell: bash
         working-directory: ${{runner.workspace}}
         run: |
+          ls -l -a
           ./premake5 ${{matrix.premake-opts}} --skip_shader_validation
           
       - name: Build-gmake
