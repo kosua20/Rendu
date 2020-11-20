@@ -59,10 +59,6 @@ jobs:
           choco install wget
           wget -O premake.zip ${{env.premake_url}}-windows.zip
           7z e premake.zip
-          
-      - name: Toolchain-windows
-        if: startsWith(matrix.os, 'windows')
-        uses: microsoft/setup-msbuild@v1
         
       - name: Configure
         shell: bash
