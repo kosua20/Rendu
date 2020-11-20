@@ -80,5 +80,4 @@ jobs:
       - name: Build-msvc
         if: startsWith(matrix.os, 'windows')
         working-directory: ${{github.workspace}}/build
-        shell: bash
-        run: msbuild Rendu.sln -t:Meta\\ALL -nologo -v:minimal -p:Configuration=Release -p:Platform=x64
+        run: C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild.exe Rendu.sln -t:Meta\\ALL -nologo -v:minimal -p:Configuration=Release -p:Platform=x64
