@@ -13,7 +13,7 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 env:
-  premake-download-root: https://github.com/premake/premake-core/releases/download/v5.0.0-alpha14/premake-5.0.0-alpha14-
+  premake_url: https://github.com/premake/premake-core/releases/download/v5.0.0-alpha14/premake-5.0.0-alpha14-
 
 jobs:
   build:
@@ -38,7 +38,7 @@ jobs:
         shell: bash
         run: |
           sudo apt-get update -y && sudo apt-get install -yq xorg-dev libgtk-3-dev
-          wget -O premake.tar.gz ${{premake-download-root}}-linux.tar.gz
+          wget -O premake.tar.gz ${{env.premake_url}}-linux.tar.gz
           tar -xzf premake.tar.gz
 
       - name: Dependencies-macos
@@ -46,7 +46,7 @@ jobs:
         shell: bash
         run: |
           brew install wget
-          wget -O premake.tar.gz ${{premake-download-root}}-macosx.tar.gz
+          wget -O premake.tar.gz ${{env.premake_url}}-macosx.tar.gz
           tar -xzf premake.tar.gz
 
       - name: Dependencies-windows
@@ -54,7 +54,7 @@ jobs:
         shell: bash
         run: |
           choco install wget unzip
-          wget -O premake.zip ${{premake-download-root}}-windows.zip
+          wget -O premake.zip ${{env.premake_url}}-windows.zip
           unzip -xzf premake.zip
           
       - name: Configure
