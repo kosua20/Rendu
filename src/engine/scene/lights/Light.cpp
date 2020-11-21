@@ -33,7 +33,7 @@ void Light::decodeBase(const KeyValues & params) {
 KeyValues Light::encode() const {
 	KeyValues light("light");
 	light.elements.emplace_back("intensity");
-	light.elements.back().values = { Codable::encode(_color) };
+	light.elements.back().values = Codable::encode(_color);
 	light.elements.emplace_back("shadows");
 	light.elements.back().values = { Codable::encode(_castShadows) };
 	light.elements.emplace_back("animations");

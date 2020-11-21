@@ -91,14 +91,14 @@ void Camera::decode(const KeyValues & params) {
 KeyValues Camera::encode() const {
 	KeyValues cam("camera");
 	cam.elements.emplace_back("position");
-	cam.elements.back().values = {Codable::encode(_eye)};
+	cam.elements.back().values = Codable::encode(_eye);
 	cam.elements.emplace_back("center");
-	cam.elements.back().values = {Codable::encode(_center)};
+	cam.elements.back().values = Codable::encode(_center);
 	cam.elements.emplace_back("up");
-	cam.elements.back().values = {Codable::encode(_up)};
+	cam.elements.back().values = Codable::encode(_up);
 	cam.elements.emplace_back("fov");
 	cam.elements.back().values = {std::to_string(_fov)};
 	cam.elements.emplace_back("planes");
-	cam.elements.back().values = {Codable::encode(_clippingPlanes)};
+	cam.elements.back().values = Codable::encode(_clippingPlanes);
 	return cam;
 }

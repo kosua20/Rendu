@@ -24,6 +24,20 @@ public:
 	 \return the string representation
 	 */
 	static std::string encode(bool b);
+
+	/** Decode a 2D vector from a parameters tuple, starting at a specified position.
+	 A 2D vector is described as a set of 2 floats separated by spaces or commas: X,Y.
+	 \param param the parameters tuple
+	 \param position index of the first vector component in the values array
+	 \return a 2D vector
+	 */
+	static glm::vec2 decodeVec2(const KeyValues & param, unsigned int position = 0);
+
+	/** Encode a 2D vector into a vector of strings {"X","Y"}
+	\param v the vector to encode
+	\return the vector of strings representation
+	*/
+	static std::vector<std::string> encode(const glm::vec2 & v);
 	
 	/** Decode a 3D vector from a parameters tuple, starting at a specified position.
 	 A 3D vector is described as a set of 3 floats separated by spaces or commas: X,Y,Z.
@@ -33,25 +47,25 @@ public:
 	 */
 	static glm::vec3 decodeVec3(const KeyValues & param, unsigned int position = 0);
 	
-	/** Encode a 3D vector into a comma-separated string "X,Y,Z"
+	/** Encode a 3D vector into a vector of strings {"X","Y","Z"}
 	\param v the vector to encode
-	\return the string representation
+	\return the vector of strings representation
 	*/
-	static std::string encode(const glm::vec3 & v);
-	
-	/** Decode a 2D vector from a parameters tuple, starting at a specified position.
-	 A 2D vector is described as a set of 2 floats separated by spaces or commas: X,Y.
+	static std::vector<std::string> encode(const glm::vec3 & v);
+
+	/** Decode a 4D vector from a parameters tuple, starting at a specified position.
+	 A 4D vector is described as a set of 4 floats separated by spaces or commas: X,Y,Z,W.
 	 \param param the parameters tuple
 	 \param position index of the first vector component in the values array
-	 \return a 2D vector
+	 \return a 4D vector
 	 */
-	static glm::vec2 decodeVec2(const KeyValues & param, unsigned int position = 0);
-	
-	/** Encode a 2D vector into a comma-separated string "X,Y"
+	static glm::vec4 decodeVec4(const KeyValues & param, unsigned int position = 0);
+
+	/** Encode a 4D vector into a vector of strings {"X","Y","Z","W"}
 	\param v the vector to encode
-	\return the string representation
+	\return the vector of strings representation
 	*/
-	static std::string encode(const glm::vec2 & v);
+	static std::vector<std::string> encode(const glm::vec4 & v);
 
 	/** Decode a transformation from a series of parameters tuple. For now this function look for three keywords in the whole params vector: translation, orientation, scaling.  A transformation is described as follows:
 	 \verbatim

@@ -16,7 +16,7 @@ void Sky::decode(const KeyValues & params, Storage options) {
 KeyValues Sky::encode() const {
 	KeyValues obj = Object::encode();
 	obj.elements.emplace_back("sun");
-	obj.elements.back().values = {Codable::encode(_sunDirection.initial())};
+	obj.elements.back().values = Codable::encode(_sunDirection.initial());
 	return obj;
 }
 

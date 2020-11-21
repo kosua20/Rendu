@@ -37,8 +37,26 @@ glm::vec3 Codable::decodeVec3(const KeyValues & param, unsigned int position) {
 	return vec;
 }
 
-std::string Codable::encode(const glm::vec3 & v){
-	return std::to_string(v[0]) + "," + std::to_string(v[1]) + "," + std::to_string(v[2]);
+std::vector<std::string> Codable::encode(const glm::vec3 & v){
+	return { std::to_string(v[0]), std::to_string(v[1]), std::to_string(v[2]) };
+}
+
+glm::vec4 Codable::decodeVec4(const KeyValues & param, unsigned int position) {
+	// Filter erroneous case.
+	if(param.values.size() < position + 4) {
+		Log::Error() << "Unable to decode vec4 from string." << std::endl;
+		return glm::vec4(0.0f);
+	}
+	glm::vec4 vec(0.0f);
+	vec[0] = std::stof(param.values[position + 0]);
+	vec[1] = std::stof(param.values[position + 1]);
+	vec[2] = std::stof(param.values[position + 2]);
+	vec[3] = std::stof(param.values[position + 3]);
+	return vec;
+}
+
+std::vector<std::string> Codable::encode(const glm::vec4 & v){
+	return { std::to_string(v[0]), std::to_string(v[1]), std::to_string(v[2]), std::to_string(v[3])};
 }
 
 glm::vec2 Codable::decodeVec2(const KeyValues & param, unsigned int position) {
@@ -53,8 +71,8 @@ glm::vec2 Codable::decodeVec2(const KeyValues & param, unsigned int position) {
 	return vec;
 }
 
-std::string Codable::encode(const glm::vec2 & v){
-	return std::to_string(v[0]) + "," + std::to_string(v[1]);
+std::vector<std::string> Codable::encode(const glm::vec2 & v){
+	return { std::to_string(v[0]), std::to_string(v[1])};
 }
 
 glm::mat4 Codable::decodeTransformation(const std::vector<KeyValues> & params) {
@@ -101,11 +119,11 @@ std::vector<KeyValues> Codable::encode(const glm::mat4 & transfo) {
 		scale[0] = (scale[0] + scale[1] + scale[2])/3.0f;
 	}
 	scaling.values = {std::to_string(scale[0])};
-	translation.values = {encode(trans)};
+	translation.values = encode(trans);
 	
 	const glm::vec3 axis = glm::axis(orient);
 	const float angle = glm::angle(orient);
-	orientation.values = {encode(axis), std::to_string(angle)};
+	orientation.values = encode(glm::vec4(axis, angle));
 	return {scaling, translation, orientation};
 	
 }

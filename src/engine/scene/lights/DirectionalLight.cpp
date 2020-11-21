@@ -56,6 +56,6 @@ KeyValues DirectionalLight::encode() const {
 	KeyValues light = Light::encode();
 	light.key = "directional";
 	light.elements.emplace_back("direction");
-	light.elements.back().values = { Codable::encode(_lightDirection.initial()) };
+	light.elements.back().values = Codable::encode(_lightDirection.initial());
 	return light;
 }

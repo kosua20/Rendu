@@ -65,11 +65,11 @@ KeyValues LightProbe::encode() const {
 	KeyValues probe("probe");
 	if(_type == Type::DYNAMIC){
 		probe.elements.emplace_back("position");
-		probe.elements.back().values.push_back(Codable::encode(_position));
+		probe.elements.back().values = Codable::encode(_position);
 		probe.elements.emplace_back("extent");
-		probe.elements.back().values.push_back(Codable::encode(_extent));
+		probe.elements.back().values = Codable::encode(_extent);
 		probe.elements.emplace_back("center");
-		probe.elements.back().values.push_back(Codable::encode(_center));
+		probe.elements.back().values = Codable::encode(_center);
 		probe.elements.emplace_back("rotation");
 		probe.elements.back().values.push_back(std::to_string(_rotation));
 	} else {

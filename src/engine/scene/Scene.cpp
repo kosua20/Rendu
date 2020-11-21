@@ -182,7 +182,7 @@ std::vector<KeyValues> Scene::encode() const {
 	switch (backgroundMode) {
 		case Background::COLOR:
 			bgNode.elements.emplace_back("color");
-			bgNode.elements.back().values = { Codable::encode(backgroundColor) };
+			bgNode.elements.back().values = Codable::encode(backgroundColor);
 			break;
 		case Background::IMAGE:
 			bgNode.elements.emplace_back("image");

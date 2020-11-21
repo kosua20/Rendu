@@ -70,7 +70,8 @@ void Rotation::decode(const KeyValues & params) {
 KeyValues Rotation::encode() const {
 	KeyValues base = Animation::encode();
 	base.key = "rotation";
-	base.values.emplace_back(Codable::encode(_axis));
+	auto axis = Codable::encode(_axis);
+	base.values.insert(base.values.end(), axis.begin(), axis.end());
 	return base;
 }
 
@@ -110,7 +111,8 @@ void BackAndForth::decode(const KeyValues & params) {
 KeyValues BackAndForth::encode() const {
 	KeyValues base = Animation::encode();
 	base.key = "backandforth";
-	base.values.emplace_back(Codable::encode(_axis));
+	const auto axis = Codable::encode(_axis);
+	base.values.insert(base.values.end(), axis.begin(), axis.end());
 	base.values.emplace_back(std::to_string(_amplitude));
 	return base;
 }

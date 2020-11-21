@@ -103,9 +103,9 @@ KeyValues SpotLight::encode() const {
 	KeyValues light = Light::encode();
 	light.key = "spot";
 	light.elements.emplace_back("position");
-	light.elements.back().values = { Codable::encode(_lightPosition.initial()) };
+	light.elements.back().values = Codable::encode(_lightPosition.initial());
 	light.elements.emplace_back("direction");
-	light.elements.back().values = { Codable::encode(_lightDirection.initial()) };
+	light.elements.back().values = Codable::encode(_lightDirection.initial());
 	light.elements.emplace_back("radius");
 	light.elements.back().values = { std::to_string(_radius) };
 	light.elements.emplace_back("cone");

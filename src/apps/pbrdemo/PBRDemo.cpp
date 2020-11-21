@@ -232,7 +232,11 @@ void PBRDemo::update() {
 	// Reload the scene metadata.
 	if(Input::manager().triggered(Input::Key::LeftBracket)) {
 		_scenes[_currentScene].reset(new Scene(_sceneNames[_currentScene]));
+		// Save the viewpoint.
+		const auto cam = _userCamera.encode();
 		setScene(_scenes[_currentScene]);
+		// Restore the viewpoint.
+		_userCamera.decode(cam);
 	}
 
 	// Reopen the Imgui window.
