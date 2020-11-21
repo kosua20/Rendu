@@ -12,11 +12,36 @@ on:
   workflow_dispatch:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
-env:
-  premake_url: https://github.com/premake/premake-core/releases/download/v5.0.0-alpha14/premake-5.0.0-alpha14
 
 jobs:
+  
+  document:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
+        with:
+          repository: kosua20/Rendu-documentation
+      - name: Build doc
+        working-directory: ${{github.workspace}}
+        run: |
+          sudo apt-get update -y && sudo apt-get install -yq doxygen
+          doxygen docs/Doxyfile
+      - name: Upload doc
+        working-directory: ${{runner.workspace}}/Rendu-documentation/
+        run: |
+          cp -r ${{github.workspace}}/docs/html/ ./
+          git config user.name "Simon Rodriguez"
+          git config user.email kosua20@gmail.com
+          git add .
+          git commit -m "Documentation: update (via CI)."
+          git push
+      
+    
   build:
+    env:
+      PREMAKE_URL: https://github.com/premake/premake-core/releases/download/v5.0.0-alpha14/premake-5.0.0-alpha14
 
     strategy:
       matrix:
@@ -39,7 +64,7 @@ jobs:
         working-directory: ${{github.workspace}}
         run: |
           sudo apt-get update -y && sudo apt-get install -yq xorg-dev libgtk-3-dev
-          wget -O premake.tar.gz ${{env.premake_url}}-linux.tar.gz
+          wget -O premake.tar.gz ${PREMAKE_URL}-linux.tar.gz
           tar -xzf premake.tar.gz
 
       - name: Dependencies-macos
@@ -48,7 +73,7 @@ jobs:
         working-directory: ${{github.workspace}}
         run: |
           brew install wget
-          wget -O premake.tar.gz ${{env.premake_url}}-macosx.tar.gz
+          wget -O premake.tar.gz ${PREMAKE_URL}-macosx.tar.gz
           tar -xzf premake.tar.gz
 
       - name: Dependencies-windows
@@ -57,7 +82,7 @@ jobs:
         working-directory: ${{github.workspace}}
         run: |
           choco install wget
-          wget -O premake.zip ${{env.premake_url}}-windows.zip
+          wget -O premake.zip ${PREMAKE_URL}-windows.zip
           7z e premake.zip
         
       - name: Configure
