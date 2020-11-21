@@ -25,7 +25,6 @@ jobs:
       - name: Build doc
         working-directory: ${{github.workspace}}/rendu
         run: |
-          ls -l -a
           sudo apt-get update -y && sudo apt-get install -yq doxygen
           doxygen docs/Doxyfile
           
@@ -33,12 +32,12 @@ jobs:
         with:
           repository: kosua20/Rendu-documentation
           path: doc
+          persist-credentials: false
       
       - name: Upload doc
         working-directory: ${{github.workspace}}/doc
         run: |
-          ls -l -a
-          cp -r ../rendu/docs/html/ ./
+          cp -r ../rendu/docs/html/* ./
           git config user.name "Simon Rodriguez"
           git config user.email kosua20@gmail.com
           git add .
