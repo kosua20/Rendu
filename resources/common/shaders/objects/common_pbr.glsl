@@ -95,11 +95,10 @@ vec3 radiance(vec3 n, vec3 v, vec3 p, float roughness, samplerCube cubeMap, vec3
 		vec3 rBox = rotateY(r, cubeRotCosSin);
 		vec3 pBox = rotateY(p - cubeCenter, cubeRotCosSin);
 		vec2 roots;
-		if(intersectBox(pBox, rBox, cubeExtent, roots)){
-			float dist = max(roots.x, roots.y);
-			vec3 hitPos = p + dist * r;
-			r = (hitPos - cubePos);
-		}
+		intersectBox(pBox, rBox, cubeExtent, roots);
+		float dist = max(roots.x, roots.y);
+		vec3 hitPos = p + dist * r;
+		r = (hitPos - cubePos);
 	}
 	vec3 specularColor = textureLod(cubeMap, r, upLod * roughness).rgb;
 	return specularColor;
