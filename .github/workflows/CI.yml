@@ -35,7 +35,7 @@ jobs:
         working-directory: ${{github.workspace}}
         run: |
           ls -l -a
-          cp -r ${{runner.workspace}}/Rendu/docs/html/ ./
+          cp -r ../Rendu/docs/html/ ./
           git config user.name "Simon Rodriguez"
           git config user.email kosua20@gmail.com
           git add .
