@@ -47,5 +47,5 @@ jobs:
           git rm -rf .
           cp -r ../rendu/docs/html/* ./
           git add .
-          git commit -a -m "Documentation: update (via CI)."
+          git diff-index --quiet HEAD || git commit -a -m "Documentation: update (via CI)."
           git push
