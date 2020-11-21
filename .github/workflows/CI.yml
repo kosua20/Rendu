@@ -26,6 +26,7 @@ jobs:
       - name: Build doc
         working-directory: ${{github.workspace}}
         run: |
+          ls -l -a
           sudo apt-get update -y && sudo apt-get install -yq doxygen
           doxygen docs/Doxyfile
       - name: Upload doc
@@ -39,68 +40,4 @@ jobs:
           git push
       
     
-  build:
-    env:
-      PREMAKE_URL: https://github.com/premake/premake-core/releases/download/v5.0.0-alpha14/premake-5.0.0-alpha14
-
-    strategy:
-      matrix:
-        include:
-          - os: ubuntu-latest
-            premake-opts: gmake2
-          - os: windows-latest
-            premake-opts: vs2019
-          - os: macos-10.15
-            premake-opts: gmake2
-    
-    runs-on: ${{ matrix.os }}
-    
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Dependencies-ubuntu
-        if: startsWith(matrix.os, 'ubuntu')
-        shell: bash
-        working-directory: ${{github.workspace}}
-        run: |
-          sudo apt-get update -y && sudo apt-get install -yq xorg-dev libgtk-3-dev
-          wget -O premake.tar.gz ${PREMAKE_URL}-linux.tar.gz
-          tar -xzf premake.tar.gz
-
-      - name: Dependencies-macos
-        if: startsWith(matrix.os, 'macOS')
-        shell: bash
-        working-directory: ${{github.workspace}}
-        run: |
-          brew install wget
-          wget -O premake.tar.gz ${PREMAKE_URL}-macosx.tar.gz
-          tar -xzf premake.tar.gz
-
-      - name: Dependencies-windows
-        if: startsWith(matrix.os, 'windows')
-        shell: bash
-        working-directory: ${{github.workspace}}
-        run: |
-          choco install wget
-          wget -O premake.zip ${PREMAKE_URL}-windows.zip
-          7z e premake.zip
-        
-      - name: Configure
-        shell: bash
-        working-directory: ${{github.workspace}}
-        run: |
-          ls -l -a
-          ./premake5 ${{matrix.premake-opts}} --skip_shader_validation
-          
-      - name: Build-gmake
-        if: startsWith(matrix.os, 'macOS') || startsWith(matrix.os, 'ubuntu')
-        working-directory: ${{github.workspace}}/build
-        shell: bash
-        run: make ALL
-      
-      - name: Build-msvc
-        if: startsWith(matrix.os, 'windows')
-        working-directory: ${{github.workspace}}/build
-        shell: cmd
-        run: |
-          "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe" .\Rendu.sln -t:Meta\ALL -nologo -v:minimal -p:Configuration=Release -p:Platform=x64
+  
