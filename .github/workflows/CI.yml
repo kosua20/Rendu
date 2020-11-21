@@ -20,19 +20,22 @@ jobs:
     
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/checkout@v2
-        with:
-          repository: kosua20/Rendu-documentation
       - name: Build doc
         working-directory: ${{github.workspace}}
         run: |
           ls -l -a
           sudo apt-get update -y && sudo apt-get install -yq doxygen
           doxygen docs/Doxyfile
+          
+      - uses: actions/checkout@v2
+        with:
+          repository: kosua20/Rendu-documentation
+      
       - name: Upload doc
-        working-directory: ${{runner.workspace}}/Rendu-documentation/
+        working-directory: ${{github.workspace}}
         run: |
-          cp -r ${{github.workspace}}/docs/html/ ./
+          ls -l -a
+          cp -r ${{runner.workspace}}/Rendu/docs/html/ ./
           git config user.name "Simon Rodriguez"
           git config user.email kosua20@gmail.com
           git add .
