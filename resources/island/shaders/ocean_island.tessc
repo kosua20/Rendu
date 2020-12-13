@@ -1,4 +1,3 @@
-#version 400
 
 layout(vertices = 4) out; ///< Output patches.
 

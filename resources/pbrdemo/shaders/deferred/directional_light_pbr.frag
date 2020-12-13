@@ -1,4 +1,3 @@
-#version 400
 
 #include "common_pbr.glsl"
 #include "shadow_maps.glsl"

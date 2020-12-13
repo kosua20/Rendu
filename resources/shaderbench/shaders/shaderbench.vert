@@ -1,4 +1,3 @@
-#version 400
 
 uniform mat4 iViewProjInv; ///< Inverse view proj matrix.
 

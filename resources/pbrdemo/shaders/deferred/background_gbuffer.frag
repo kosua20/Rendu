@@ -1,4 +1,3 @@
-#version 400
 
 #define MATERIAL_ID 0 ///< The material ID.
 

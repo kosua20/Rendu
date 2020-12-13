@@ -1,4 +1,3 @@
-#version 400
 
 uniform vec4 color; ///< The button color.
 

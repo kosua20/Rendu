@@ -1,4 +1,3 @@
-#version 400
 in INTERFACE {
 	vec3 pos; ///< World position
 	vec2 uv; ///< Texture coordinates

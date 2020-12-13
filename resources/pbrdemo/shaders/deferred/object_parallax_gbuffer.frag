@@ -1,4 +1,3 @@
-#version 400
 
 #include "common_parallax.glsl"
 
