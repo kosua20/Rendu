@@ -157,6 +157,7 @@ void PBRDemo::draw() {
 		return;
 	}
 
+	_totalTime.begin();
 	if(_scenes[_currentScene]->animated() && !_paused){
 		updateMaps();
 	}
@@ -188,6 +189,8 @@ void PBRDemo::draw() {
 	GLUtilities::setDepthState(false);
 	GLUtilities::setCullState(true);
 	ScreenQuad::draw(_finalRender->texture());
+
+	_totalTime.end();
 }
 
 void PBRDemo::update() {
@@ -196,6 +199,7 @@ void PBRDemo::update() {
 	// Performances window.
 	if(ImGui::Begin("Performance")){
 		ImGui::Text("%.1f ms, %.1f fps", frameTime() * 1000.0f, frameRate());
+		ImGui::Text("Total CPU time: %05.1fms", float(_totalTime.value())/1000000.0f);
 		ImGui::Text("Shadow maps update: %05.1fms", float(_shadowTime.value())/1000000.0f);
 		ImGui::Text("Probes update: %05.1fms", float(_probesTime.value())/1000000.0f);
 		ImGui::Text("Probes integration: %05.1fms", float(_inteTime.value())/1000000.0f);

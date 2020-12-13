@@ -74,6 +74,7 @@ private:
 	GPUQuery _rendererTime;    ///< Timing for the scene rendering.
 	GPUQuery _postprocessTime; ///< Timing for the postprocessing.
 	Query _copyTimeCPU;	       ///< CPU timing for the probe irradiance SH coeffs.
+	Query _totalTime;	       ///< CPU timing for one full frame
 
 	RendererMode _mode	 = RendererMode::DEFERRED; ///< Active renderer.
 	size_t _currentScene = 0; ///< Currently selected scene.
