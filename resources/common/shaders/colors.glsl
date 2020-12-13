@@ -1,3 +1,4 @@
+#include "constants.glsl"
 
 /** Convert a temperature color to an RGB triplet.
 Based on the analytical fit described by Neil Bartlett in his 

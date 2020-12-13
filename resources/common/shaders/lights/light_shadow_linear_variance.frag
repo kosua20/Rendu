@@ -1,4 +1,3 @@
-#version 400
 
 in INTERFACE {
 	vec3 worldPos; ///< World space position.

@@ -1,3 +1,4 @@
+#include "constants.glsl"
 
 /** Check if a sphere of a given radius is intersected by a ray defined by an
 	origin wrt to the sphere center and a normalized direction.

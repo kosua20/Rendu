@@ -1,4 +1,3 @@
-#version 400
 
 uniform bool flip = false; ///< Flip vertically.
 

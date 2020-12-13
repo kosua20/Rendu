@@ -1,4 +1,3 @@
-#version 400
 
 out INTERFACE {
 	vec3 pos; ///< Position.

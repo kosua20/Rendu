@@ -1,4 +1,3 @@
-#version 400
 
 #include "constants.glsl"
 
