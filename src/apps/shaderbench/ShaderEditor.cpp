@@ -570,7 +570,8 @@ void ShaderEditor::displayUniforms(uint columnsCount){
 std::string ShaderEditor::reload(const std::string & shaderPath, bool syncUniforms){
 	// Reload from disk.
 	const std::string vShader = Resources::manager().getStringWithIncludes("shaderbench.vert");
-	const std::string fShader = Resources::loadStringFromExternalFile(shaderPath);
+	std::string fShader = Resources::loadStringFromExternalFile(shaderPath);
+	TextUtilities::replace(fShader, "#version", "#define UNUSED_VERSION_INDICATOR_OPENGL");
 	// Before updating the program, try to compile the fragment shader and abort if there is some error.
 	GLUtilities::Bindings binds;
 	std::string log;

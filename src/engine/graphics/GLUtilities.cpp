@@ -210,7 +210,8 @@ GLuint GLUtilities::loadShader(const std::string & prog, ShaderType type, Bindin
 		bindings[name].type		= isSampler ? BindingType::TEXTURE : BindingType::UNIFORM_BUFFER;
 		Log::Verbose() << Log::OpenGL << "Detected binding (" << name << ", " << slot << ") => " << outputLines.back() << std::endl;
 	}
-	std::string outputProg;
+	// Add OpenGL version.
+	std::string outputProg = "#version 400\n#line 1 0\n";
 	for(const auto & outputLine : outputLines) {
 		outputProg.append(outputLine + "\n");
 	}
