@@ -221,13 +221,18 @@ std::string Resources::getString(const std::string & filename) {
 std::string Resources::getStringWithIncludes(const std::string & filename, std::vector<std::string>& names){
 	
 	const auto lines = TextUtilities::splitLines(getString(filename), false);
-	std::string newStr;
+	// Enclose in an ifdef based on the file name to guard from multiple inclusions.
+	std::string defineName(filename);
+	TextUtilities::replace(defineName, ".+-*/", '_');
+	std::string newStr = "#ifndef " + defineName + "\n" + "#define " + defineName + "\n";
 	// Special case: if names is empty, we are at the root and no special name was specified, add the filename.
 	if(names.empty()) {
 		names.push_back(filename);
 	}
-	// Current location is the last one encountered.
-	const size_t currentLoc = names.size()-1;
+	// Reset line count for the current file.
+	const std::string currentLoc = std::to_string(names.size() - 1);
+	newStr.append("#line 1 " + currentLoc + "\n");
+
 	// Check if some lines are include.
 	for(size_t lid = 0; lid < lines.size(); ++lid){
 		const std::string & line = lines[lid];
@@ -248,16 +253,14 @@ std::string Resources::getStringWithIncludes(const std::string & filename, std::
 		const std::string subname = line.substr(bpos + 1, epos - (bpos + 1));
 		names.push_back(subname);
 
-		// Insert a line reset before the file.
-		const size_t loc = names.size() - 1;
-		newStr.append("#line 1 " + std::to_string(loc) + "\n");
 		// Insert the content.
 		const std::string content = getStringWithIncludes(subname,  names);
 		newStr.append(content);
 		newStr.append("\n");
-		// And reset to where we were before in the parent file.
-		newStr.append("#line " + std::to_string(lid+2) + " " + std::to_string(currentLoc) + "\n");
+		// And reset to where we were before in the current file.
+		newStr.append("#line " + std::to_string(lid+2) + " " + currentLoc + "\n");
 	}
+	newStr.append("\n#endif\n");
 	return newStr;
 }
 
@@ -528,11 +531,11 @@ Program * Resources::getProgram(const std::string & name, const std::string & ve
 	const std::string tcName = tessControlName;
 	const std::string teName = tessEvalName;
 
-	const std::string vContent   = Resources::manager().getStringWithIncludes(vName + ".vert");
-	const std::string fContent = Resources::manager().getStringWithIncludes(fName + ".frag");
-	const std::string gContent = gName.empty() ? "" : Resources::manager().getStringWithIncludes(gName + ".geom");
-	const std::string tcContent = tcName.empty() ? "" : Resources::manager().getStringWithIncludes(tcName + ".tessc");
-	const std::string teContent = teName.empty() ? "" : Resources::manager().getStringWithIncludes(teName + ".tesse");
+	const std::string vContent = getStringWithIncludes(vName + ".vert");
+	const std::string fContent = getStringWithIncludes(fName + ".frag");
+	const std::string gContent = gName.empty() ? "" : getStringWithIncludes(gName + ".geom");
+	const std::string tcContent = tcName.empty() ? "" : getStringWithIncludes(tcName + ".tessc");
+	const std::string teContent = teName.empty() ? "" : getStringWithIncludes(teName + ".tesse");
 
 	_programs.emplace(std::make_pair(name, Program(name, vContent, fContent, gContent, tcContent, teContent)));
 	_progInfos.emplace(std::make_pair(name, ProgramInfos(vName, fName, gName, tcName, teName)));
@@ -546,11 +549,11 @@ Program * Resources::getProgram2D(const std::string & name) {
 void Resources::reload() {
 	for(auto & prog : _programs) {
 		const ProgramInfos & infos = _progInfos.at(prog.first);
-		const std::string vContent   = getStringWithIncludes(infos.vertexName + ".vert");
+		const std::string vContent = getStringWithIncludes(infos.vertexName + ".vert");
 		const std::string fContent = getStringWithIncludes(infos.fragmentName + ".frag");
 		const std::string gContent = infos.geomName.empty() ? "" : getStringWithIncludes(infos.geomName + ".geom");
-		const std::string tcContent = infos.tessContName.empty() ? "" : Resources::manager().getStringWithIncludes(infos.tessContName + ".tessc");
-		const std::string teContent = infos.tessEvalName.empty() ? "" : Resources::manager().getStringWithIncludes(infos.tessEvalName + ".tesse");
+		const std::string tcContent = infos.tessContName.empty() ? "" : getStringWithIncludes(infos.tessContName + ".tessc");
+		const std::string teContent = infos.tessEvalName.empty() ? "" : getStringWithIncludes(infos.tessEvalName + ".tesse");
 		prog.second.reload(vContent, fContent, gContent, tcContent, teContent);
 	}
 	Log::Info() << Log::Resources << "Shader programs reloaded." << std::endl;

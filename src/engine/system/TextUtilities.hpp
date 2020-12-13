@@ -34,6 +34,13 @@ public:
 	 */
 	static void replace(std::string & source, const std::string & fromString, const std::string & toString);
 
+	/** Replace all listed characters by another character in a string.
+	 \param source the string in which substitutions should happen
+	 \param fromChars list of characters
+	 \param toChar new character to insert
+	 */
+	static void replace(std::string & source, const std::string & fromChars, const char toChar);
+
 	/** Test if a string is a prefix of another string.
 	 \param source the string to examine
 	 \param prefix the prefix string to test

@@ -37,6 +37,14 @@ void TextUtilities::replace(std::string & source, const std::string & fromString
 	}
 }
 
+void TextUtilities::replace(std::string & source, const std::string & fromChars, const char toChar) {
+	std::string::size_type nextPos = 0;
+	while((nextPos = source.find_first_of(fromChars, nextPos)) != std::string::npos) {
+		source[nextPos] = toChar;
+		nextPos += 1;
+	}
+}
+
 bool TextUtilities::hasPrefix(const std::string & source, const std::string & prefix) {
 	if(prefix.empty() || source.empty()) {
 		return false;
