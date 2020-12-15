@@ -71,6 +71,21 @@ public:
 	 \return the name.
 	 */
 	const std::string & name() const;
+
+	/** Did the mesh contained normals initially.
+	 \return true if it did
+	 */
+	bool hadNormals() const;
+
+	/** Did the mesh contained texture coordinates initially.
+	 \return true if it did
+	 */
+	bool hadTexcoords() const;
+
+	/** Did the mesh contained colors initially.
+	 \return true if it did
+	 */
+	bool hadColors() const;
 	
 	/** Copy assignment operator (disabled).
 	 \return a reference to the object assigned to
@@ -102,4 +117,7 @@ public:
 private:
 	
 	std::string _name; ///< Resource name.
+	bool _hasTexcoords = false;
+	bool _hasNormals = false;
+	bool _hasColors = false;
 };

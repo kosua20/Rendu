@@ -182,6 +182,10 @@ Mesh::Mesh(std::istream & in, Mesh::Load mode, const std::string & name) {
 	texcoords_temp.clear();
 	faces_temp.clear();
 	Log::Verbose() << Log::Resources << "Mesh loaded with " << indices.size() / 3 << " faces, " << positions.size() << " vertices, " << normals.size() << " normals, " << texcoords.size() << " texcoords." << std::endl;
+
+	_hasNormals = !normals.empty();
+	_hasTexcoords = !texcoords.empty();
+	_hasColors = !colors.empty();
 }
 
 void Mesh::upload() {
@@ -271,6 +275,7 @@ void Mesh::computeNormals() {
 	for(auto & n : normals) {
 		n = glm::normalize(n);
 	}
+	_hasNormals = true;
 }
 
 void Mesh::computeTangentsAndBinormals(bool force) {
@@ -404,4 +409,16 @@ int Mesh::saveAsObj(const std::string & path, bool defaultUVs) {
 
 const std::string & Mesh::name() const {
 	return _name;
+}
+
+bool Mesh::hadNormals() const {
+	return _hasNormals;
+}
+
+bool Mesh::hadTexcoords() const {
+	return _hasTexcoords;
+}
+
+bool Mesh::hadColors() const {
+	return _hasColors;
 }
