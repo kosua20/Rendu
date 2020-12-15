@@ -14,6 +14,8 @@ layout (location = 0) out vec4 fragColor; ///< Color.
 layout (location = 1) out vec3 fragNormal; ///< View space normal.
 layout (location = 2) out vec3 fragEffects; ///< Effects.
 
+uniform bool hasUV; ///< Does the mesh have texture coordinates.
+
 /** Transfer albedo and effects along with the material ID, and output the final normal 
 	(combining geometry normal and normal map) in view space. */
 void main(){
@@ -27,9 +29,14 @@ void main(){
 	mat3 tbn = In.tbn;
 	tbn[2] *= (gl_FrontFacing ? 1.0 : -1.0);
 	// Compute the normal at the fragment using the tangent space matrix and the normal read in the normal map.
-	vec3 n = texture(texture1, In.uv).rgb ;
-	n = normalize(n * 2.0 - 1.0);
-	n = normalize(tbn * n);
+	vec3 n;
+	if(hasUV){
+		n = texture(texture1, In.uv).rgb ;
+		n = normalize(n * 2.0 - 1.0);
+		n = normalize(tbn * n);
+	} else {
+		n = normalize(tbn[2]);
+	}
 	
 	// Store values.
 	fragColor.rgb = color.rgb;

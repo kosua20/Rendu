@@ -29,7 +29,6 @@ DeferredRenderer::DeferredRenderer(const glm::vec2 & resolution, ShadowMode mode
 	_atmoProgram		= Resources::manager().getProgram("atmosphere_gbuffer", "background_infinity", "atmosphere_gbuffer");
 	_parallaxProgram	= Resources::manager().getProgram("object_parallax_gbuffer");
 	_objectProgram		= Resources::manager().getProgram("object_gbuffer");
-	_objectNoUVsProgram = Resources::manager().getProgram("object_no_uv_gbuffer");
 	_emissiveProgram	= Resources::manager().getProgram("object_emissive_gbuffer");
 
 	// Lighting passes.
@@ -89,25 +88,20 @@ void DeferredRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & pro
 				_parallaxProgram->uniform("normalMatrix", normalMatrix);
 				break;
 			case Object::PBRNoUVs:
-				_objectNoUVsProgram->use();
-				// Upload the MVP matrix.
-				_objectNoUVsProgram->uniform("mvp", MVP);
-				// Upload the normal matrix.
-				_objectNoUVsProgram->uniform("normalMatrix", normalMatrix);
-				break;
 			case Object::PBRRegular:
 				_objectProgram->use();
 				// Upload the MVP matrix.
 				_objectProgram->uniform("mvp", MVP);
 				// Upload the normal matrix.
 				_objectProgram->uniform("normalMatrix", normalMatrix);
+				_objectProgram->uniform("hasUV", object.mesh()->hadTexcoords());
 				break;
 			case Object::Emissive:
 				_emissiveProgram->use();
 				// Upload the MVP matrix.
 				_emissiveProgram->uniform("mvp", MVP);
 				// Are UV available. Note: we might want to decouple UV use from their existence.
-				_emissiveProgram->uniform("hasUV", !object.mesh()->texcoords.empty());
+				_emissiveProgram->uniform("hasUV", object.mesh()->hadTexcoords());
 				break;
 			default:
 				break;

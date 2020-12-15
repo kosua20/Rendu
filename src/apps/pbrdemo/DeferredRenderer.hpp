@@ -85,7 +85,6 @@ private:
 	std::unique_ptr<DeferredLight> _lightRenderer;	///< The lights renderer.
 	
 	const Program * _objectProgram;		 ///< Basic PBR program
-	const Program * _objectNoUVsProgram; ///< Basic PBR program
 	const Program * _parallaxProgram;	 ///< Parallax mapping PBR program
 	const Program * _emissiveProgram;	 ///< Emissive program
 
