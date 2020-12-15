@@ -52,7 +52,7 @@ void main(){
 
 	// Compute AO.
 	float precomputedAO = infos.b;
-	float realtimeAO = texture(ssaoTexture, In.uv).r;
+	float realtimeAO = textureLod(ssaoTexture, In.uv, 0).r;
 	float aoDiffuse = min(realtimeAO, precomputedAO);
 	float aoSpecular = approximateSpecularAO(aoDiffuse, NdotV, roughness);
 
