@@ -12,8 +12,6 @@ uniform vec3 lightDirection; ///< The light direction in world space.
 layout(binding = 0) uniform sampler2D precomputedScattering; ///< Secondary scattering lookup table.
 
 layout(location = 0) out vec4 fragColor; ///< Atmosphere color.
-layout(location = 1) out vec3 fragDirect; ///< Direct lighting.
-layout(location = 2) out vec3 fragNormal; ///< Normal.
 
 /** Simulate sky color based on an atmospheric scattering approximate model. */
 void main(){
@@ -28,7 +26,5 @@ void main(){
 
 	fragColor.rgb = atmosphereColor;
 	fragColor.a = -1.0;
-	fragDirect = vec3(0.0);
-	fragNormal = vec3(0.5);
 }
 

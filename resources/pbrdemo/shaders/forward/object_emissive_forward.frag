@@ -10,9 +10,7 @@ layout(binding = 0) uniform sampler2D emissiveTexture; ///< Emissive.
 
 // Emissive objects don't receive any light.
 
-layout (location = 0) out vec4 fragAmbient; ///< Ambient contribution.
-layout (location = 1) out vec3 fragDirect; ///< Direct lights contribution.
-layout (location = 2) out vec3 fragNormal; ///< Surface normal.
+layout (location = 0) out vec4 fragColor; ///< Ambient contribution.
 
 /** Shade the object, applying lighting. */
 void main(){
@@ -21,7 +19,6 @@ void main(){
 	if(emissiveColor.a <= 0.01){
 		discard;
 	}
-	fragAmbient = vec4(emissiveColor.rgb, -1.0);
-	fragDirect = vec3(0.0);
-	fragNormal = vec3(0.5);
+
+	fragColor = vec4(emissiveColor.rgb, -1.0);
 }
