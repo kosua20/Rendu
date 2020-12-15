@@ -29,6 +29,7 @@ uniform vec3 cubemapExtent; ///< The cubemap parallax box half size
 uniform vec2 cubemapCosSin; ///< The cubemap parallax box orientation (precomputed cos/sin).
 uniform float maxLod; ///< Mip level count for background map.
 uniform vec2 invScreenSize; ///< Destination size.
+uniform bool hasUV; ///< Does the mesh have UV coordinates.
 
 uniform int lightsCount; ///< Number of active lights.
 /// Store the lights in a continuous buffer (UBO).
@@ -51,9 +52,15 @@ void main(){
 	mat3 tbn = In.tbn;
 	tbn[2] *= (gl_FrontFacing ? 1.0 : -1.0);
 	// Compute the normal at the fragment using the tangent space matrix and the normal read in the normal map.
-	vec3 n = texture(normalTexture, In.uv).rgb ;
-	n = normalize(n * 2.0 - 1.0);
-	n = normalize(tbn * n);
+	// If we dont have UV, use the geometric normal.
+	vec3 n;
+	if(hasUV){
+		n = texture(normalTexture, In.uv).rgb ;
+		n = normalize(n * 2.0 - 1.0);
+		n = normalize(tbn * n);
+	} else {
+		n = normalize(tbn[2]);
+	}
 
 	vec3 infos = texture(effectsTexture, In.uv).rgb;
 	float roughness = max(0.045, infos.r);

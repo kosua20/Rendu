@@ -18,7 +18,6 @@ layout(binding = 4) uniform sampler2D brdfPrecalc; ///< Preintegrated BRDF looku
 layout(binding = 5) uniform samplerCube textureCubeMap; ///< Background environment cubemap (with preconvoluted versions of increasing roughness in mipmap levels).
 layout(binding = 6) uniform sampler2DArray shadowMaps2D; ///< Shadow maps array.
 layout(binding = 7) uniform samplerCubeArray shadowMapsCube; ///< Shadow cubemaps array.
-layout(binding = 8) uniform sampler2D ssaoTexture; ///< Ambient occlusion.
 
 /// SH approximation of the environment irradiance (UBO).
 layout(std140, binding = 1) uniform SHCoeffs {

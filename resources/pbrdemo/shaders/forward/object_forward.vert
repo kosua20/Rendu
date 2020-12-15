@@ -9,6 +9,7 @@ layout(location = 4) in vec3 binor; ///< Binormal.
 uniform mat4 mvp; ///< MVP transformation matrix.
 uniform mat4 mv; ///< MV transformation matrix.
 uniform mat3 normalMatrix; ///< Normal transformation matrix.
+uniform bool hasUV; ///< Does the mesh have UV coordinates.
 
 out INTERFACE {
     mat3 tbn; ///< Normal to view matrix.
@@ -23,12 +24,12 @@ void main(){
 	// We multiply the coordinates by the MVP matrix, and ouput the result.
 	gl_Position = mvp * vec4(v, 1.0);
 
-	Out.uv = uv;
+	Out.uv = hasUV ? uv : vec2(0.5);
 	Out.viewSpacePosition = (mv * vec4(v, 1.0)).xyz;
 
 	// Compute the TBN matrix (from tangent space to view space).
-	vec3 T = normalize(normalMatrix * tang);
-	vec3 B = normalize(normalMatrix * binor);
+	vec3 T = hasUV ? normalize(normalMatrix * tang) : vec3(0.0);
+	vec3 B = hasUV ? normalize(normalMatrix * binor) : vec3(0.0);
 	vec3 N = normalize(normalMatrix * n);
 	Out.tbn = mat3(T, B, N);
 	

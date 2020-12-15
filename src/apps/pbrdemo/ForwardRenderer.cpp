@@ -22,7 +22,6 @@ ForwardRenderer::ForwardRenderer(const glm::vec2 & resolution, ShadowMode mode, 
 
 	_depthPrepass 		= Resources::manager().getProgram("object_prepass_forward");
 	_objectProgram		= Resources::manager().getProgram("object_forward");
-	_objectNoUVsProgram = Resources::manager().getProgram("object_no_uv_forward");
 	_parallaxProgram	= Resources::manager().getProgram("object_parallax_forward");
 	_emissiveProgram	= Resources::manager().getProgram("object_emissive_forward");
 
@@ -145,16 +144,7 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 		_objectProgram->uniform("cubemapCosSin", environment.rotationCosSin());
 		_objectProgram->uniform("lightsCount", int(_lightsGPU->count()));
 		_objectProgram->uniform("invScreenSize", invScreenSize);
-		
-		_objectNoUVsProgram->use();
-		_objectNoUVsProgram->uniform("inverseV", invView);
-		_objectNoUVsProgram->uniform("maxLod", cubeLod);
-		_objectNoUVsProgram->uniform("cubemapPos", environment.position());
-		_objectNoUVsProgram->uniform("cubemapCenter", environment.center());
-		_objectNoUVsProgram->uniform("cubemapExtent", environment.extent());
-		_objectNoUVsProgram->uniform("cubemapCosSin", environment.rotationCosSin());
-		_objectNoUVsProgram->uniform("lightsCount", int(_lightsGPU->count()));
-		_objectNoUVsProgram->uniform("invScreenSize", invScreenSize);
+
 	}
 	const auto & shadowMaps = _lightsGPU->shadowMaps();
 
@@ -185,7 +175,6 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 			continue;
 		}
 
-
 		// Compute the normal matrix
 		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(MV)));
 
@@ -196,10 +185,9 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 				currentProgram = _parallaxProgram;
 				break;
 			case Object::PBRNoUVs:
-				currentProgram = _objectNoUVsProgram;
-				break;
 			case Object::PBRRegular:
 				currentProgram = _objectProgram;
+				currentProgram->uniform("hasUV", object.mesh()->hadTexcoords());
 				break;
 			default:
 				Log::Error() << "Unsupported material type." << std::endl;

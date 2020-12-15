@@ -72,7 +72,6 @@ private:
 	std::unique_ptr<ForwardLight> _lightsGPU;	///< The lights renderer.
 	
 	Program * _objectProgram;		 ///< Basic PBR program
-	Program * _objectNoUVsProgram; ///< Basic PBR program
 	Program * _parallaxProgram;	 ///< Parallax mapping PBR program
 	Program * _emissiveProgram;	 ///< Parallax mapping PBR program
 	const Program * _depthPrepass; ///< Depth prepass program.
