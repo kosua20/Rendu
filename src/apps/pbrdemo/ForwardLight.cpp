@@ -1,6 +1,8 @@
 #include "ForwardLight.hpp"
 #include "graphics/GLUtilities.hpp"
 
+const size_t ForwardLight::_maxLightCount = 50;
+
 ForwardLight::ForwardLight(size_t count) :
 	_lightsData(_maxLightCount, BufferType::UNIFORM, DataUse::DYNAMIC) {
 	_currentCount = count;
