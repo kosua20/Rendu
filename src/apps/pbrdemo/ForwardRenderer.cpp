@@ -25,7 +25,6 @@ ForwardRenderer::ForwardRenderer(const glm::vec2 & resolution, ShadowMode mode, 
 	_objectNoUVsProgram = Resources::manager().getProgram("object_no_uv_forward");
 	_parallaxProgram	= Resources::manager().getProgram("object_parallax_forward");
 	_emissiveProgram	= Resources::manager().getProgram("object_emissive_forward");
-	_compProgram	= Resources::manager().getProgram2D("composite_forward");
 
 	_skyboxProgram = Resources::manager().getProgram("skybox_forward", "skybox_infinity", "skybox_forward");
 	_bgProgram	   = Resources::manager().getProgram("background_forward", "background_infinity", "background_forward");
@@ -308,16 +307,8 @@ void ForwardRenderer::draw(const Camera & camera, Framebuffer & framebuffer, siz
 	// --- Scene pass
 	renderScene(view, proj, pos);
 
-
 	// --- Final composite pass
-	framebuffer.bind(layer);
-	framebuffer.setViewport();
-	_compProgram->use();
-	GLUtilities::setDepthState(false);
-	GLUtilities::bindTexture(_sceneFramebuffer->texture(0), 0);
-	GLUtilities::bindTexture(_sceneFramebuffer->texture(1), 1);
-	GLUtilities::bindTexture(_ssaoPass->texture(), 2);
-	ScreenQuad::draw();
+	GLUtilities::blit(*_sceneFramebuffer, framebuffer, 0, layer, Filter::LINEAR);
 }
 
 void ForwardRenderer::resize(unsigned int width, unsigned int height) {

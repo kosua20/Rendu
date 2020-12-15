@@ -75,7 +75,6 @@ private:
 	Program * _objectNoUVsProgram; ///< Basic PBR program
 	Program * _parallaxProgram;	 ///< Parallax mapping PBR program
 	Program * _emissiveProgram;	 ///< Parallax mapping PBR program
-	const Program * _compProgram;   ///< Final ambient qnd direct compositing.
 	const Program * _depthPrepass; ///< Depth prepass program.
 
 	const Program * _skyboxProgram; ///< Skybox program.
