@@ -19,7 +19,7 @@ void VarianceShadowMap2D::draw(const Scene & scene) const {
 	_map->setViewport();
 	GLUtilities::clearColorAndDepth(glm::vec4(1.0f), 1.0f);
 	GLUtilities::setCullState(true);
-	GLUtilities::setDepthState(true);
+	GLUtilities::setDepthState(true, TestFunction::LESS, true);
 	_program->use();
 
 	const Frustum lightFrustum(_light->vp());
@@ -66,7 +66,7 @@ void VarianceShadowMapCube::draw(const Scene & scene) const {
 	// Udpate the light vp matrices.
 	const auto & faces = _light->vpFaces();
 
-	GLUtilities::setDepthState(true);
+	GLUtilities::setDepthState(true, TestFunction::LESS, true);
 	GLUtilities::setCullState(true);
 	_map->setViewport();
 	_program->use();

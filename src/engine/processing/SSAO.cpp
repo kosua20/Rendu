@@ -74,6 +74,7 @@ void SSAO::process(const glm::mat4 & projection, const Texture * depthTex, const
 	if(_quality == Quality::HIGH){
 		_highBlur.process(projection, _ssaoFramebuffer->texture(), depthTex, normalTex, *_finalFramebuffer);
 	} else if(_quality == Quality::MEDIUM){
+		// Render at potentially low res.
 		_mediumBlur.process(_ssaoFramebuffer->texture(), *_ssaoFramebuffer);
 		GLUtilities::blit(*_ssaoFramebuffer, *_finalFramebuffer, Filter::LINEAR);
 	} else {

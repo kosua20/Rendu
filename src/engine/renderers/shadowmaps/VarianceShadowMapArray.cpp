@@ -16,7 +16,7 @@ VarianceShadowMap2DArray::VarianceShadowMap2DArray(const std::vector<std::shared
 void VarianceShadowMap2DArray::draw(const Scene & scene) const {
 
 	GLUtilities::setCullState(true);
-	GLUtilities::setDepthState(true);
+	GLUtilities::setDepthState(true, TestFunction::LESS, true);
 	_map->setViewport();
 	_program->use();
 
@@ -70,7 +70,7 @@ VarianceShadowMapCubeArray::VarianceShadowMapCubeArray(const std::vector<std::sh
 
 void VarianceShadowMapCubeArray::draw(const Scene & scene) const {
 
-	GLUtilities::setDepthState(true);
+	GLUtilities::setDepthState(true, TestFunction::LESS, true);
 	GLUtilities::setCullState(true);
 	_map->setViewport();
 	_program->use();
