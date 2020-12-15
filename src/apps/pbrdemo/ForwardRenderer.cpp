@@ -12,16 +12,15 @@ ForwardRenderer::ForwardRenderer(const glm::vec2 & resolution, ShadowMode mode, 
 	const uint renderHeight	   = uint(resolution[1]);
 
 	// Framebuffers.
-	const Descriptor descAmbient = {Layout::RGBA16F, Filter::LINEAR_NEAREST, Wrap::CLAMP};
-	const Descriptor descDirect = {Layout::RGB16F, Filter::LINEAR_NEAREST, Wrap::CLAMP};
-	const Descriptor descNormal = {Layout::RGB16F, Filter::LINEAR_NEAREST, Wrap::CLAMP};
+	const Descriptor desc = {Layout::RGBA16F, Filter::LINEAR_NEAREST, Wrap::CLAMP};
 	const Descriptor descDepth = {Layout::DEPTH_COMPONENT32F, Filter::NEAREST_NEAREST, Wrap::CLAMP};
-	const std::vector<Descriptor> descs = { descAmbient, descDirect, descNormal, descDepth};
+	const std::vector<Descriptor> descs = { desc, descDepth};
 	_sceneFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, descs, true, "Forward lighting"));
 	_ssaoPass		  = std::unique_ptr<SSAO>(new SSAO(renderWidth, renderHeight, 2, 0.5f));
 	_preferredFormat.push_back({Layout::RGB16F, Filter::LINEAR_LINEAR, Wrap::CLAMP});
 	_needsDepth = false;
 
+	_depthPrepass 		= Resources::manager().getProgram("object_prepass_forward");
 	_objectProgram		= Resources::manager().getProgram("object_forward");
 	_objectNoUVsProgram = Resources::manager().getProgram("object_no_uv_forward");
 	_parallaxProgram	= Resources::manager().getProgram("object_parallax_forward");
@@ -49,17 +48,82 @@ void ForwardRenderer::setScene(const std::shared_ptr<Scene> & scene) {
 
 
 void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj, const glm::vec3 & pos) {
-	// Draw the scene.
-	GLUtilities::setDepthState(true);
+	GLUtilities::setDepthState(true, TestFunction::LESS, true);
 	GLUtilities::setCullState(true);
 	_sceneFramebuffer->bind();
 	_sceneFramebuffer->setViewport();
 	GLUtilities::clearDepth(1.0f);
-	GLUtilities::clearColor({0.0f,0.0f,0.0f,1.0f});
+	GLUtilities::clearColor({0.5f,0.5f,0.5f,1.0f});
+
+	// Build the camera frustum for culling.
+	if(!_freezeFrustum){
+		_frustumMat = proj*view;
+	}
+
+	// Depth prepass and visibility.
+	const size_t objCount = _scene->objects.size();
+	std::vector<bool> visibles(objCount, false);
+	const Frustum camFrustum(_frustumMat);
+
+	_depthPrepass->use();
+	for(size_t tid = 0; tid < objCount; ++tid) {
+		const auto & object = _scene->objects[tid];
+		// Skip transparent objects.
+		if(object.type() == Object::Transparent){
+			continue;
+		}
+		// Check visibility.
+		if(!camFrustum.intersects(object.boundingBox())){
+			continue;
+		}
+		visibles[tid] = true;
+
+		// Render using prepass shader.
+		// We skip parallax mapped objects as their depth is going to change.
+		// But we still mark them as visible for the shading pass, as they are opaque.
+		if(object.type() == Object::PBRParallax){
+			continue;
+		}
+
+		// Upload the matrices.
+		const glm::mat4 MV	= view * object.model();
+		const glm::mat4 MVP = proj * MV;
+		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(MV)));
+
+		_depthPrepass->uniform("mvp", MVP);
+		_depthPrepass->uniform("normalMatrix", normalMatrix);
+		// Alpha mask if needed.
+		_depthPrepass->uniform("hasMask", object.masked());
+		_depthPrepass->uniform("hasUV", object.mesh()->hadTexcoords());
+		
+		if(object.masked()) {
+			GLUtilities::bindTexture(object.textures()[0], 0);
+		}
+		// Backface culling state.
+		if(object.twoSided()) {
+			GLUtilities::setCullState(false);
+		}
+		GLUtilities::drawMesh(*object.mesh());
+		// Restore state.
+		GLUtilities::setCullState(true);
+	}
+
+	// --- SSAO pass
+	if(_applySSAO) {
+		_ssaoPass->process(proj, _sceneFramebuffer->depthBuffer(), _sceneFramebuffer->texture());
+	} else {
+		_ssaoPass->clear();
+	}
+
+	GLUtilities::setDepthState(true, TestFunction::LEQUAL, true);
+	GLUtilities::setCullState(true);
+	_sceneFramebuffer->bind();
+	_sceneFramebuffer->setViewport();
 
 	const LightProbe & environment = _scene->environment;
 	const float cubeLod		= float(environment.map()->levels - 1);
 	const glm::mat4 invView = glm::inverse(view);
+	const glm::vec2 invScreenSize = 1.0f / glm::vec2(_sceneFramebuffer->width(), _sceneFramebuffer->height());
 	// Update shared data for the three programs.
 	{
 		_parallaxProgram->use();
@@ -71,6 +135,7 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 		_parallaxProgram->uniform("cubemapExtent", environment.extent());
 		_parallaxProgram->uniform("cubemapCosSin", environment.rotationCosSin());
 		_parallaxProgram->uniform("lightsCount", int(_lightsGPU->count()));
+		_parallaxProgram->uniform("invScreenSize", invScreenSize);
 
 		_objectProgram->use();
 		_objectProgram->uniform("inverseV", invView);
@@ -80,6 +145,7 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 		_objectProgram->uniform("cubemapExtent", environment.extent());
 		_objectProgram->uniform("cubemapCosSin", environment.rotationCosSin());
 		_objectProgram->uniform("lightsCount", int(_lightsGPU->count()));
+		_objectProgram->uniform("invScreenSize", invScreenSize);
 		
 		_objectNoUVsProgram->use();
 		_objectNoUVsProgram->uniform("inverseV", invView);
@@ -89,20 +155,18 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 		_objectNoUVsProgram->uniform("cubemapExtent", environment.extent());
 		_objectNoUVsProgram->uniform("cubemapCosSin", environment.rotationCosSin());
 		_objectNoUVsProgram->uniform("lightsCount", int(_lightsGPU->count()));
+		_objectNoUVsProgram->uniform("invScreenSize", invScreenSize);
 	}
 	const auto & shadowMaps = _lightsGPU->shadowMaps();
 
-	// Build the camera frustum for culling.
-	if(!_freezeFrustum){
-		_frustumMat = proj*view;
-	}
-	const Frustum camFrustum(_frustumMat);
+
 	// Scene objects.
-	for(auto & object : _scene->objects) {
-		// Check visibility.
-		if(!camFrustum.intersects(object.boundingBox())){
+	for(size_t tid = 0; tid < objCount; ++tid) {
+		if(!visibles[tid]){
 			continue;
 		}
+		const auto & object = _scene->objects[tid];
+
 		// Combine the three matrices.
 		const glm::mat4 MV	= view * object.model();
 		const glm::mat4 MVP = proj * MV;
@@ -111,7 +175,7 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 		if(object.type() == Object::Type::Emissive){
 			_emissiveProgram->use();
 			_emissiveProgram->uniform("mvp", MVP);
-			_emissiveProgram->uniform("hasUV", !object.mesh()->texcoords.empty());
+			_emissiveProgram->uniform("hasUV", object.mesh()->hadTexcoords());
 			if(object.twoSided()) {
 				GLUtilities::setCullState(false);
 			}
@@ -168,6 +232,7 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 		if(shadowMaps[1]){
 			GLUtilities::bindTexture(shadowMaps[1], 7);
 		}
+		GLUtilities::bindTexture(_ssaoPass->texture(), 8);
 		GLUtilities::drawMesh(*object.mesh());
 		// Restore state.
 		GLUtilities::setCullState(true);
@@ -175,7 +240,7 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 	
 	// Render the backgound.
 	renderBackground(view, proj, pos);
-	GLUtilities::setDepthState(false);
+	GLUtilities::setDepthState(false, TestFunction::LESS, true);
 	GLUtilities::setCullState(true);
 }
 
@@ -243,12 +308,6 @@ void ForwardRenderer::draw(const Camera & camera, Framebuffer & framebuffer, siz
 	// --- Scene pass
 	renderScene(view, proj, pos);
 
-	// --- SSAO pass
-	if(_applySSAO) {
-		_ssaoPass->process(proj, _sceneFramebuffer->depthBuffer(), _sceneFramebuffer->texture(2));
-	} else {
-		_ssaoPass->clear();
-	}
 
 	// --- Final composite pass
 	framebuffer.bind(layer);
