@@ -85,7 +85,7 @@
 
 * object:
 	mesh: sphere
-	shadows: false
+	shadows: true
 	twosided: false
 	type: PBRNoUVs
 	textures:
