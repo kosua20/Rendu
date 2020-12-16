@@ -809,7 +809,8 @@ void GLUtilities::setupMesh(Mesh & mesh) {
 	GLUtilities::uploadBuffer(indexBuffer, inSize, reinterpret_cast<unsigned char *>(mesh.indices.data()));
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer.gpu->id);
-	glBindVertexArray(0);
+	// Restore previously bound vertex array.
+	glBindVertexArray(_state.vertexArray);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
@@ -820,17 +821,23 @@ void GLUtilities::setupMesh(Mesh & mesh) {
 }
 
 void GLUtilities::drawMesh(const Mesh & mesh) {
-	glBindVertexArray(mesh.gpu->id);
+	if(_state.vertexArray != mesh.gpu->id){
+		_state.vertexArray = mesh.gpu->id;
+		glBindVertexArray(mesh.gpu->id);
+	}
 	glDrawElements(GL_TRIANGLES, mesh.gpu->count, GL_UNSIGNED_INT, static_cast<void *>(nullptr));
-	glBindVertexArray(0);
+
 }
 
 
 void GLUtilities::drawTesselatedMesh(const Mesh & mesh, uint patchSize){
 	glPatchParameteri(GL_PATCH_VERTICES, GLint(patchSize));
-	glBindVertexArray(mesh.gpu->id);
+	if(_state.vertexArray != mesh.gpu->id){
+		_state.vertexArray = mesh.gpu->id;
+		glBindVertexArray(mesh.gpu->id);
+	}
 	glDrawElements(GL_PATCHES, mesh.gpu->count, GL_UNSIGNED_INT, static_cast<void *>(nullptr));
-	glBindVertexArray(0);
+
 }
 
 void GLUtilities::sync() {
@@ -1448,6 +1455,13 @@ void GLUtilities::getState(GPUState& state) {
 		}
 	}
 	glActiveTexture(state.activeTexture);
+}
+
+void GLUtilities::bindVertexArray(GLuint vao){
+	if(_state.vertexArray != vao){
+		_state.vertexArray = vao;
+		glBindVertexArray(vao);
+	}
 }
 }
 

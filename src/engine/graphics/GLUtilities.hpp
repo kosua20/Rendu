@@ -36,12 +36,15 @@ int checkGLFramebufferError();
 /**@}*/
 
 class Framebuffer;
+class ScreenQuad;
 
 /**
  \brief Provide utility functions to communicate with the driver and GPU.
  \ingroup Graphics
  */
 class GLUtilities {
+
+	friend ScreenQuad;
 
 public:
 	/** Setup the GPU in its initial state.
@@ -413,5 +416,11 @@ private:
 	 */
 	static void savePixels(GLenum type, GLenum format, unsigned int width, unsigned int height, unsigned int components, const std::string & path, bool flip, bool ignoreAlpha);
 
+
+	/** Register and perform vertex array binding
+	 \param vao the vertex array to bind
+	 \note For Screenquad only
+	 */
+	static void bindVertexArray(GLuint vao);
 	static GPUState _state; ///< Current GPU state for caching.
 };
