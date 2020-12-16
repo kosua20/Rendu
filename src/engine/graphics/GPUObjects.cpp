@@ -31,7 +31,7 @@ void GPUTexture::setFiltering(Filter filtering) {
 	glBindTexture(target, id);
 	glTexParameteri(target, GL_TEXTURE_MAG_FILTER, magFiltering);
 	glTexParameteri(target, GL_TEXTURE_MIN_FILTER, minFiltering);
-	glBindTexture(target, 0);
+	GLUtilities::restoreTexture(_shape);
 }
 
 GPUBuffer::GPUBuffer(BufferType type, DataUse use){

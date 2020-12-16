@@ -56,7 +56,7 @@ Framebuffer::Framebuffer(TextureShape shape, uint width, uint height, uint depth
 			// Link the texture to the depth attachment of the framebuffer.
 			glBindTexture(GL_TEXTURE_2D, _idDepth.gpu->id);
 			glFramebufferTexture2D(GL_FRAMEBUFFER, (_hasStencil ? GL_DEPTH_STENCIL_ATTACHMENT : GL_DEPTH_ATTACHMENT), GL_TEXTURE_2D, _idDepth.gpu->id, 0);
-			glBindTexture(GL_TEXTURE_2D, 0);
+			GLUtilities::restoreTexture(_idDepth.shape);
 
 		} else {
 			_idColors.emplace_back("Color " + std::to_string(cid++));
@@ -79,7 +79,7 @@ Framebuffer::Framebuffer(TextureShape shape, uint width, uint height, uint depth
 			} else {
 				glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + slot, tex.gpu->id, 0, 0);
 			}
-			glBindTexture(_target, 0);
+			GLUtilities::restoreTexture(tex.shape);
 			checkGLError();
 		}
 	}
@@ -140,13 +140,13 @@ void Framebuffer::bind(size_t layer, size_t mip, Mode mode) const {
 		} else {
 			glFramebufferTextureLayer(target, slot, id, mid, GLint(layer));
 		}
-		glBindTexture(_target, 0);
+		GLUtilities::restoreTexture(_idColors[cid].shape);
 	}
 
 	if(_depthUse == Depth::TEXTURE){
 		glBindTexture(GL_TEXTURE_2D, _idDepth.gpu->id);
 		glFramebufferTexture2D(target, (_hasStencil ? GL_DEPTH_STENCIL_ATTACHMENT : GL_DEPTH_ATTACHMENT), GL_TEXTURE_2D, _idDepth.gpu->id, mid);
-		glBindTexture(GL_TEXTURE_2D, 0);
+		GLUtilities::restoreTexture(_idDepth.shape);
 	}
 }
 

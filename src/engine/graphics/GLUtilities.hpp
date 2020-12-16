@@ -44,6 +44,8 @@ class ScreenQuad;
  */
 class GLUtilities {
 
+	friend GPUTexture;
+	friend Framebuffer;
 	friend ScreenQuad;
 
 public:
@@ -416,6 +418,11 @@ private:
 	 */
 	static void savePixels(GLenum type, GLenum format, unsigned int width, unsigned int height, unsigned int components, const std::string & path, bool flip, bool ignoreAlpha);
 
+	/** Restore the texture bound to the given shape for the current slot.
+	 \param shape the shape to restore
+	 \note For internal use mainly
+	 */
+	static void restoreTexture(TextureShape shape);
 
 	/** Register and perform vertex array binding
 	 \param vao the vertex array to bind

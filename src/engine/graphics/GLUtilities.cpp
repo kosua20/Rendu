@@ -401,20 +401,37 @@ void GLUtilities::saveFramebuffer(const Framebuffer & framebuffer, const std::st
 }
 
 void GLUtilities::bindTexture(const Texture * texture, size_t slot) {
-	glActiveTexture(GLenum(GL_TEXTURE0 + slot));
-	glBindTexture(texture->gpu->target, texture->gpu->id);
+	auto & currId = _state.textures[slot][texture->gpu->target];
+	if(currId != texture->gpu->id){
+		currId = texture->gpu->id;
+		_state.activeTexture = GLenum(GL_TEXTURE0 + slot);
+		glActiveTexture(_state.activeTexture);
+		glBindTexture(texture->gpu->target, texture->gpu->id);
+	}
 }
 
 void GLUtilities::bindTexture(const Texture & texture, size_t slot) {
-	glActiveTexture(GLenum(GL_TEXTURE0 + slot));
-	glBindTexture(texture.gpu->target, texture.gpu->id);
+	auto & currId = _state.textures[slot][texture.gpu->target];
+	if(currId != texture.gpu->id){
+		currId = texture.gpu->id;
+		_state.activeTexture = GLenum(GL_TEXTURE0 + slot);
+		glActiveTexture(_state.activeTexture);
+		glBindTexture(texture.gpu->target, texture.gpu->id);
+	}
 }
 
 void GLUtilities::bindTextures(const std::vector<const Texture *> & textures, size_t startingSlot) {
 	for(size_t i = 0; i < textures.size(); ++i) {
 		const Texture * infos = textures[i];
-		glActiveTexture(GLenum(GL_TEXTURE0 + startingSlot + i));
-		glBindTexture(infos->gpu->target, infos->gpu->id);
+		const int slot = startingSlot + i;
+		auto & currId = _state.textures[slot][infos->gpu->target];
+
+		if(currId != infos->gpu->id){
+			currId = infos->gpu->id;
+			_state.activeTexture = GLenum(GL_TEXTURE0 + slot);
+			glActiveTexture(_state.activeTexture);
+			glBindTexture(infos->gpu->target, infos->gpu->id);
+		}
 	}
 }
 
@@ -442,7 +459,8 @@ void GLUtilities::setupTexture(Texture & texture, const Descriptor & descriptor)
 	glTexParameteri(target, GL_TEXTURE_WRAP_R, wrap);
 	glTexParameteri(target, GL_TEXTURE_WRAP_S, wrap);
 	glTexParameteri(target, GL_TEXTURE_WRAP_T, wrap);
-	glBindTexture(target, 0);
+
+	GLUtilities::restoreTexture(texture.shape);
 
 	// Allocate.
 	GLUtilities::allocateTexture(texture);
@@ -510,7 +528,7 @@ void GLUtilities::allocateTexture(const Texture & texture) {
 			return;
 		}
 	}
-	glBindTexture(target, 0);
+	GLUtilities::restoreTexture(texture.shape);
 }
 
 void GLUtilities::uploadTexture(const Texture & texture) {
@@ -581,7 +599,7 @@ void GLUtilities::uploadTexture(const Texture & texture) {
 			}
 		}
 	}
-	glBindTexture(target, 0);
+	GLUtilities::restoreTexture(texture.shape);
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 }
 
@@ -635,7 +653,7 @@ void GLUtilities::downloadTexture(Texture & texture, int level) {
 			}
 		}
 	}
-	glBindTexture(target, 0);
+	GLUtilities::restoreTexture(texture.shape);
 }
 
 void GLUtilities::generateMipMaps(const Texture & texture) {
@@ -647,7 +665,7 @@ void GLUtilities::generateMipMaps(const Texture & texture) {
 	glBindTexture(target, texture.gpu->id);
 	glTexParameteri(target, GL_TEXTURE_MAX_LEVEL, texture.levels - 1);
 	glGenerateMipmap(target);
-	glBindTexture(target, 0);
+	GLUtilities::restoreTexture(texture.shape);
 }
 
 GLenum GLUtilities::targetFromShape(const TextureShape & shape) {
@@ -1455,6 +1473,12 @@ void GLUtilities::getState(GPUState& state) {
 		}
 	}
 	glActiveTexture(state.activeTexture);
+}
+
+void GLUtilities::restoreTexture(TextureShape shape){
+	const GLenum target = GLUtilities::targetFromShape(shape);
+	const int slot = _state.activeTexture - int(GL_TEXTURE0);
+	glBindTexture(target, _state.textures[slot][target]);
 }
 
 void GLUtilities::bindVertexArray(GLuint vao){
