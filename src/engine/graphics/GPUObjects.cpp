@@ -15,6 +15,7 @@ GPUTexture::GPUTexture(const Descriptor & texDescriptor, TextureShape shape) :
 
 void GPUTexture::clean() {
 	glDeleteTextures(1, &id);
+	GLUtilities::deleted(*this);
 	id = 0;
 }
 
@@ -60,6 +61,7 @@ void GPUMesh::clean() {
 		indexBuffer->clean();
 	}
 	glDeleteVertexArrays(1, &id);
+	GLUtilities::deleted(*this);
 	vertexBuffer.reset();
 	indexBuffer.reset();
 	count = id = 0;

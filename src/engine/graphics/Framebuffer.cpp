@@ -226,6 +226,7 @@ Framebuffer::~Framebuffer() {
 	}
 	_idColors.clear();
 	glDeleteFramebuffers(1, &_id);
+	GLUtilities::deleted(*this);
 	_id = 0;
 }
 

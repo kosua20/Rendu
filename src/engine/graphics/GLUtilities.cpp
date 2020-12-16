@@ -1487,6 +1487,29 @@ void GLUtilities::bindVertexArray(GLuint vao){
 		glBindVertexArray(vao);
 	}
 }
+
+void GLUtilities::deleted(GPUTexture & tex){
+	// If any active slot is using it, set it to 0.
+	for(auto& bind : _state.textures){
+		if(bind[tex.target] == tex.id){
+			bind[tex.target] = 0;
+		}
+	}
+}
+
+void GLUtilities::deleted(Framebuffer & framebuffer){
+	if(_state.drawFramebuffer == framebuffer._id){
+		_state.drawFramebuffer = 0;
+	}
+	if(_state.readFramebuffer == framebuffer._id){
+		_state.readFramebuffer = 0;
+	}
+}
+
+void GLUtilities::deleted(GPUMesh & mesh){
+	if(_state.vertexArray == mesh.id){
+		_state.vertexArray = 0;
+	}
 }
 
 GPUState GLUtilities::_state;

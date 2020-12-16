@@ -45,6 +45,8 @@ class ScreenQuad;
 class GLUtilities {
 
 	friend GPUTexture;
+	friend GPUBuffer;
+	friend GPUMesh;
 	friend Framebuffer;
 	friend ScreenQuad;
 
@@ -429,5 +431,24 @@ private:
 	 \note For Screenquad only
 	 */
 	static void bindVertexArray(GLuint vao);
+
+	/** Update the cache to remove input object if it was used.
+	 \param tex the texture that was deleted
+	 \note See the OpenGL specification for update of bindings when named object is deleted.
+	 */
+	static void deleted(GPUTexture & tex);
+
+	/** Update the cache to remove input object if it was used.
+	 \param framebuffer the framebuffer that was deleted
+	 \note See the OpenGL specification for update of bindings when named object is deleted.
+	 */
+	static void deleted(Framebuffer & framebuffer);
+
+	/** Update the cache to remove input object if it was used.
+	 \param mesh the mesh that was deleted
+	 \note See the OpenGL specification for update of bindings when named object is deleted.
+	 */
+	static void deleted(GPUMesh & mesh);
+
 	static GPUState _state; ///< Current GPU state for caching.
 };
