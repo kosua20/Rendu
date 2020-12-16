@@ -9,7 +9,7 @@ GPUTexture::GPUTexture(const Descriptor & texDescriptor, TextureShape shape) :
 	magFiltering(texDescriptor.getGPUMagnificationFilter()),
 	wrapping(texDescriptor.getGPUWrapping()),
 	channels(texDescriptor.getGPULayout(typedFormat, type, format)),
-	_descriptor(texDescriptor) {
+	_descriptor(texDescriptor), _shape(shape) {
 	texDescriptor.getGPULayout(typedFormat, type, format);
 }
 
@@ -331,4 +331,17 @@ std::string Descriptor::string() const {
 	};
 
 	return strFormats.at(_typedFormat) + " - " + strFilters.at(_filtering) + " - " + strWraps.at(_wrapping);
+}
+
+
+GPUState::GPUState(){
+	for(auto & texbind : textures){
+		texbind[GL_TEXTURE_1D] = 0;
+		texbind[GL_TEXTURE_2D] = 0;
+		texbind[GL_TEXTURE_3D] = 0;
+		texbind[GL_TEXTURE_CUBE_MAP] = 0;
+		texbind[GL_TEXTURE_1D_ARRAY] = 0;
+		texbind[GL_TEXTURE_2D_ARRAY] = 0;
+		texbind[GL_TEXTURE_CUBE_MAP_ARRAY] = 0;
+	}
 }

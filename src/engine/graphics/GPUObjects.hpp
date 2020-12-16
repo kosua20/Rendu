@@ -2,6 +2,7 @@
 
 #include "Common.hpp"
 #include <array>
+#include <unordered_map>
 
 /**
 \brief The type of a shader.
@@ -395,6 +396,7 @@ public:
 	
 private:
 	Descriptor _descriptor; ///< Layout used.
+	TextureShape _shape; ///< Shape used.
 };
 
 
@@ -523,6 +525,9 @@ private:
 class GPUState {
 public:
 
+	/// Constructor.
+	GPUState();
+
 	// Blend state.
 	glm::vec4 blendColor {0.0f}; ///< Blend color for constant blend mode.
 	BlendFunction blendSrcRGB; ///< Blending source type for RGB channels.
@@ -576,8 +581,11 @@ public:
 	bool scissorTest = false; ///< Is geometry tested against the scissor region or not.
 
 	// Binding state.
-	GLuint readFramebuffer; ///< Currently bound read framebuffer.
-	GLuint drawFramebuffer; ///< Currently bound draw framebuffer.
-	GLuint program; ///< Currently bound shader program.
-
+	using TextureBindings = std::unordered_map<GLenum, GLuint>;
+	std::array<TextureBindings, 32> textures; ///< Textures bound at each target for each slot.
+	GLuint readFramebuffer = 0; ///< Currently bound read framebuffer.
+	GLuint drawFramebuffer = 0; ///< Currently bound draw framebuffer.
+	GLuint program = 0; ///< Currently bound shader program.
+	GLenum activeTexture = GL_TEXTURE0; ///< Currently active texture slot.
+	GLuint vertexArray = 0; ///< Currently bound vertex array.
 };

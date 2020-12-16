@@ -1414,14 +1414,41 @@ void GLUtilities::getState(GPUState& state) {
 	glGetFloatv(GL_SCISSOR_BOX, &state.scissorBox[0]);
 
 	// Binding state.
-	GLint fbr, fbd, pgb;
+	GLint fbr, fbd, pgb, ats, vab;
 	glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &fbr);
 	glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &fbd);
 	glGetIntegerv(GL_CURRENT_PROGRAM, &pgb);
+	glGetIntegerv(GL_ACTIVE_TEXTURE, &ats);
+	glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &vab);
 
 	state.readFramebuffer = fbr;
 	state.drawFramebuffer = fbd;
 	state.program = pgb;
+	state.activeTexture = GLenum(ats);
+	state.vertexArray = vab;
+
+	static const std::vector<GLenum> bindings = {
+		GL_TEXTURE_BINDING_1D, GL_TEXTURE_BINDING_2D,
+		GL_TEXTURE_BINDING_3D, GL_TEXTURE_BINDING_CUBE_MAP,
+		GL_TEXTURE_BINDING_1D_ARRAY, GL_TEXTURE_BINDING_2D_ARRAY,
+		GL_TEXTURE_BINDING_CUBE_MAP_ARRAY,
+	};
+	static const std::vector<GLenum> shapes = {
+		GL_TEXTURE_1D, GL_TEXTURE_2D,
+		GL_TEXTURE_3D, GL_TEXTURE_CUBE_MAP,
+		GL_TEXTURE_1D_ARRAY, GL_TEXTURE_2D_ARRAY,
+		GL_TEXTURE_CUBE_MAP_ARRAY,
+	};
+	for(size_t tid = 0; tid < state.textures.size(); ++tid){
+		glActiveTexture(GLenum(GL_TEXTURE0 + tid));
+		for(size_t bid = 0; bid < bindings.size(); ++bid){
+			GLint texId = 0;
+			glGetIntegerv(bindings[bid], &texId);
+			state.textures[tid][shapes[bid]] = GLuint(texId);
+		}
+	}
+	glActiveTexture(state.activeTexture);
+}
 }
 
 GPUState GLUtilities::_state;
