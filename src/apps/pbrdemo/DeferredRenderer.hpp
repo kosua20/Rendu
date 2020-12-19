@@ -7,6 +7,7 @@
 #include "AmbientQuad.hpp"
 #include "scene/Scene.hpp"
 #include "renderers/Renderer.hpp"
+#include "renderers/Culler.hpp"
 
 #include "graphics/Framebuffer.hpp"
 #include "input/ControllableCamera.hpp"
@@ -94,9 +95,8 @@ private:
 
 	std::shared_ptr<Scene> _scene; 						 ///< The scene to render
 	
+	std::unique_ptr<Culler>	_culler;	///< Objects culler.
+
 	bool _applySSAO			 = true;  ///< Screen space ambient occlusion.
 	ShadowMode  _shadowMode	 = ShadowMode::VARIANCE;  ///< Shadow mapping technique to use.
-
-	glm::mat4 _frustumMat = glm::mat4(1.0f); ///< View projection matrix backup.
-	bool _freezeFrustum = false;			 ///< Freeze the frustum used for culling.
 };

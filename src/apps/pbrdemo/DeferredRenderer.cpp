@@ -44,11 +44,12 @@ void DeferredRenderer::setScene(const std::shared_ptr<Scene> & scene) {
 		return;
 	}
 	_scene = scene;
+	_culler.reset(new Culler(_scene->objects));
 	checkGLError();
 }
 
 void DeferredRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj, const glm::vec3 & pos) {
-	GLUtilities::setDepthState(true);
+	GLUtilities::setDepthState(true, TestFunction::LESS, true);
 	
 	// Bind the full scene framebuffer.
 	_gbuffer->bind();
@@ -57,17 +58,17 @@ void DeferredRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & pro
 	// Clear the depth buffer (we know we will draw everywhere, no need to clear color).
 	GLUtilities::clearDepth(1.0f);
 
-	// Build the camera frustum for culling.
-	if(!_freezeFrustum){
-		_frustumMat = proj*view;
-	}
-	const Frustum camFrustum(_frustumMat);
+	// Request list of visible objects from culler.
+	const auto & visibles = _culler->cullAndSort(view, proj, pos);
+
 	// Scene objects.
-	for(auto & object : _scene->objects) {
-		// Check visibility.
-		if(!camFrustum.intersects(object.boundingBox())){
-			continue;
+	for(const long & objectId : visibles) {
+		// Once we get a -1, there is no other object to render.
+		if(objectId == -1){
+			break;
 		}
+		const Object & object = _scene->objects[objectId];
+
 		// Combine the three matrices.
 		const glm::mat4 MV  = view * object.model();
 		const glm::mat4 MVP = proj * MV;
