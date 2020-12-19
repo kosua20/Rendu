@@ -217,14 +217,14 @@ int saveDescription(const std::vector<CompositeObj::Object> & objects, const std
 		if(materials.count(object.material) > 0) {
 			const auto & materialDetails = materials.at(object.material);
 			// Pick the type based on available infos.
-			std::string typeName = "PBRRegular";
+			std::string typeName = "Regular";
 			if(!materialDetails.depthName.empty()) {
-				typeName = "PBRParallax";
-			} else if(object.mesh.texcoords.empty()) {
-				typeName = "PBRNoUVs";
+				typeName = "Parallax";
 			}
+
 			sceneFile << "\ttype: " << typeName << std::endl;
 			sceneFile << "\tmasked: " << (materialDetails.hasAlpha ? "true" : "false") << std::endl;
+			sceneFile << "\tskipuvs: " << (object.mesh.texcoords.empty() ? "true" : "false") << std::endl;
 			sceneFile << "\ttextures:" << std::endl;
 			sceneFile << "\t\t- srgb: " << materialDetails.colorName << std::endl;
 			sceneFile << "\t\t- rgb: " << materialDetails.normalName << std::endl;
