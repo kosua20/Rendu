@@ -13,7 +13,8 @@
 	planes: 0.01,20.0
 
 * object:
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	mesh: groundplane
 	translation: 0.0,0.0,0.0
 	scaling: 11.0
@@ -153,7 +154,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -10.0,0.0,-10.0
 	orientation: 0.0,1.0,0.0 1.43247
 	scaling: 0.400403
@@ -168,7 +170,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -10.0,0.438862,-10.0
 	orientation: 0.0,1.0,0.0 0.528604
 	scaling: 0.438862
@@ -181,7 +184,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -10.0,0.234059,-9.0
 	orientation: 0.0,1.0,0.0 0.265383
 	scaling: 0.234059
@@ -196,7 +200,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -10.0,0.559086,-8.0
 	orientation: 0.0,1.0,0.0 0.1412
 	scaling: 0.559086
@@ -211,7 +216,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -10.0,0.521832,-7.0
 	orientation: 0.0,1.0,0.0 1.49509
 	scaling: 0.521832
@@ -226,7 +232,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -10.0,0.369454,-6.0
 	orientation: 0.0,1.0,0.0 0.765773
 	scaling: 0.369454
@@ -241,7 +248,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -10.0,0.361108,-5.0
 	orientation: 0.0,1.0,0.0 0.145828
 	scaling: 0.361108
@@ -254,7 +262,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -10.0,0.215789,-4.0
 	orientation: 0.0,1.0,0.0 0.0840595
 	scaling: 0.215789
@@ -267,7 +276,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -10.0,0.233066,-3.0
 	orientation: 0.0,1.0,0.0 1.08781
 	scaling: 0.233066
@@ -282,7 +292,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -10.0,0.224418,-2.0
 	orientation: 0.0,1.0,0.0 1.21854
 	scaling: 0.224418
@@ -295,7 +306,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -10.0,0.567756,-1.0
 	orientation: 0.0,1.0,0.0 0.0440646
 	scaling: 0.567756
@@ -310,7 +322,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -10.0,0.477292,0.0
 	orientation: 0.0,1.0,0.0 1.16443
 	scaling: 0.477292
@@ -325,7 +338,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -10.0,0.527493,1.0
 	orientation: 0.0,1.0,0.0 1.31082
 	scaling: 0.527493
@@ -338,7 +352,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -10.0,0.499234,2.0
 	orientation: 0.0,1.0,0.0 0.758516
 	scaling: 0.499234
@@ -351,7 +366,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -10.0,0.469564,3.0
 	orientation: 0.0,1.0,0.0 0.87008
 	scaling: 0.469564
@@ -366,7 +382,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -10.0,0.275606,4.0
 	orientation: 0.0,1.0,0.0 1.55228
 	scaling: 0.275606
@@ -379,7 +396,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -10.0,0.193095,5.0
 	orientation: 0.0,1.0,0.0 0.607555
 	scaling: 0.193095
@@ -394,7 +412,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -10.0,0.519563,6.0
 	orientation: 0.0,1.0,0.0 0.0797669
 	scaling: 0.519563
@@ -409,7 +428,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -10.0,0.443138,7.0
 	orientation: 0.0,1.0,0.0 0.0523093
 	scaling: 0.443138
@@ -422,7 +442,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -10.0,0.716335,8.0
 	orientation: 0.0,1.0,0.0 1.14742
 	scaling: 0.716335
@@ -435,7 +456,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -10.0,0.514047,9.0
 	orientation: 0.0,1.0,0.0 1.51653
 	scaling: 0.514047
@@ -450,7 +472,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -10.0,0.298471,10.0
 	orientation: 0.0,1.0,0.0 0.304411
 	scaling: 0.298471
@@ -463,7 +486,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -9.0,0.365744,-10.0
 	orientation: 0.0,1.0,0.0 1.11138
 	scaling: 0.365744
@@ -478,7 +502,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -9.0,0.661409,-9.0
 	orientation: 0.0,1.0,0.0 0.339313
 	scaling: 0.661409
@@ -493,7 +518,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -9.0,0.271475,-8.0
 	orientation: 0.0,1.0,0.0 1.55505
 	scaling: 0.271475
@@ -506,7 +532,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -9.0,0.281269,-7.0
 	orientation: 0.0,1.0,0.0 0.607547
 	scaling: 0.281269
@@ -521,7 +548,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -9.0,0.467303,-6.0
 	orientation: 0.0,1.0,0.0 1.09583
 	scaling: 0.467303
@@ -534,7 +562,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -9.0,0.288573,-5.0
 	orientation: 0.0,1.0,0.0 0.641042
 	scaling: 0.288573
@@ -549,7 +578,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -9.0,0.776068,-4.0
 	orientation: 0.0,1.0,0.0 1.46753
 	scaling: 0.776068
@@ -562,7 +592,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -9.0,0.45984,-3.0
 	orientation: 0.0,1.0,0.0 1.3576
 	scaling: 0.45984
@@ -577,7 +608,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -9.0,0.602646,-2.0
 	orientation: 0.0,1.0,0.0 1.53217
 	scaling: 0.602646
@@ -590,7 +622,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -9.0,0.277959,-1.0
 	orientation: 0.0,1.0,0.0 0.668023
 	scaling: 0.277959
@@ -605,7 +638,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -9.0,0.358232,0.0
 	orientation: 0.0,1.0,0.0 0.764558
 	scaling: 0.358232
@@ -618,7 +652,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -9.0,0.753529,1.0
 	orientation: 0.0,1.0,0.0 0.80444
 	scaling: 0.753529
@@ -631,7 +666,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -9.0,0.112238,2.0
 	orientation: 0.0,1.0,0.0 1.28462
 	scaling: 0.112238
@@ -644,7 +680,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -9.0,0.547967,3.0
 	orientation: 0.0,1.0,0.0 0.901022
 	scaling: 0.547967
@@ -659,7 +696,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -9.0,0.646863,4.0
 	orientation: 0.0,1.0,0.0 0.575571
 	scaling: 0.646863
@@ -672,7 +710,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -9.0,0.523053,5.0
 	orientation: 0.0,1.0,0.0 1.55287
 	scaling: 0.523053
@@ -685,7 +724,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -9.0,0.22474,6.0
 	orientation: 0.0,1.0,0.0 0.261169
 	scaling: 0.22474
@@ -698,7 +738,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -9.0,0.127267,7.0
 	orientation: 0.0,1.0,0.0 0.222828
 	scaling: 0.127267
@@ -711,7 +752,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -9.0,0.663037,8.0
 	orientation: 0.0,1.0,0.0 0.671563
 	scaling: 0.663037
@@ -726,7 +768,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -9.0,0.283971,9.0
 	orientation: 0.0,1.0,0.0 0.867361
 	scaling: 0.283971
@@ -739,7 +782,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -9.0,0.742444,10.0
 	orientation: 0.0,1.0,0.0 0.259871
 	scaling: 0.742444
@@ -752,7 +796,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -8.0,0.707927,-10.0
 	orientation: 0.0,1.0,0.0 0.345285
 	scaling: 0.707927
@@ -767,7 +812,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -8.0,0.343868,-9.0
 	orientation: 0.0,1.0,0.0 1.24016
 	scaling: 0.343868
@@ -782,7 +828,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -8.0,0.719087,-8.0
 	orientation: 0.0,1.0,0.0 1.15004
 	scaling: 0.719087
@@ -797,7 +844,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -8.0,0.581699,-7.0
 	orientation: 0.0,1.0,0.0 0.269095
 	scaling: 0.581699
@@ -810,7 +858,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -8.0,0.125589,-6.0
 	orientation: 0.0,1.0,0.0 0.272366
 	scaling: 0.125589
@@ -823,7 +872,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -8.0,0.459775,-5.0
 	orientation: 0.0,1.0,0.0 0.467847
 	scaling: 0.459775
@@ -836,7 +886,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -8.0,0.4349,-4.0
 	orientation: 0.0,1.0,0.0 0.624459
 	scaling: 0.4349
@@ -849,7 +900,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -8.0,0.44811,-3.0
 	orientation: 0.0,1.0,0.0 0.28723
 	scaling: 0.44811
@@ -862,7 +914,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -8.0,0.500466,-2.0
 	orientation: 0.0,1.0,0.0 0.308866
 	scaling: 0.500466
@@ -875,7 +928,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -8.0,0.215548,-1.0
 	orientation: 0.0,1.0,0.0 0.9447
 	scaling: 0.215548
@@ -890,7 +944,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -8.0,0.224686,0.0
 	orientation: 0.0,1.0,0.0 0.17361
 	scaling: 0.224686
@@ -903,7 +958,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -8.0,0.253358,1.0
 	orientation: 0.0,1.0,0.0 0.263544
 	scaling: 0.253358
@@ -916,7 +972,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -8.0,0.293954,2.0
 	orientation: 0.0,1.0,0.0 0.420943
 	scaling: 0.293954
@@ -931,7 +988,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -8.0,0.154258,3.0
 	orientation: 0.0,1.0,0.0 1.52943
 	scaling: 0.154258
@@ -944,7 +1002,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -8.0,0.111551,4.0
 	orientation: 0.0,1.0,0.0 1.27369
 	scaling: 0.111551
@@ -957,7 +1016,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -8.0,0.527252,5.0
 	orientation: 0.0,1.0,0.0 0.670582
 	scaling: 0.527252
@@ -970,7 +1030,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -8.0,0.10127,6.0
 	orientation: 0.0,1.0,0.0 1.35882
 	scaling: 0.10127
@@ -985,7 +1046,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -8.0,0.669926,7.0
 	orientation: 0.0,1.0,0.0 0.742064
 	scaling: 0.669926
@@ -1000,7 +1062,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -8.0,0.365634,8.0
 	orientation: 0.0,1.0,0.0 1.42868
 	scaling: 0.365634
@@ -1013,7 +1076,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -8.0,0.260287,9.0
 	orientation: 0.0,1.0,0.0 0.620368
 	scaling: 0.260287
@@ -1026,7 +1090,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -8.0,0.325398,10.0
 	orientation: 0.0,1.0,0.0 0.0316048
 	scaling: 0.325398
@@ -1039,7 +1104,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -7.0,0.583413,-10.0
 	orientation: 0.0,1.0,0.0 0.854263
 	scaling: 0.583413
@@ -1054,7 +1120,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -7.0,0.46346,-9.0
 	orientation: 0.0,1.0,0.0 1.19277
 	scaling: 0.46346
@@ -1067,7 +1134,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -7.0,0.34456,-8.0
 	orientation: 0.0,1.0,0.0 0.641688
 	scaling: 0.34456
@@ -1082,7 +1150,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -7.0,0.337943,-7.0
 	orientation: 0.0,1.0,0.0 0.0784741
 	scaling: 0.337943
@@ -1095,7 +1164,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -7.0,0.183144,-6.0
 	orientation: 0.0,1.0,0.0 0.14737
 	scaling: 0.183144
@@ -1108,7 +1178,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -7.0,0.510693,-5.0
 	orientation: 0.0,1.0,0.0 0.413519
 	scaling: 0.510693
@@ -1121,7 +1192,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -7.0,0.788276,-4.0
 	orientation: 0.0,1.0,0.0 0.169687
 	scaling: 0.788276
@@ -1134,7 +1206,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -7.0,0.680581,-3.0
 	orientation: 0.0,1.0,0.0 1.52705
 	scaling: 0.680581
@@ -1149,7 +1222,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -7.0,0.281044,-2.0
 	orientation: 0.0,1.0,0.0 0.383328
 	scaling: 0.281044
@@ -1162,7 +1236,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -7.0,0.46452,-1.0
 	orientation: 0.0,1.0,0.0 0.667113
 	scaling: 0.46452
@@ -1175,7 +1250,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -7.0,0.739656,0.0
 	orientation: 0.0,1.0,0.0 1.12314
 	scaling: 0.739656
@@ -1188,7 +1264,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -7.0,0.12522,1.0
 	orientation: 0.0,1.0,0.0 1.54373
 	scaling: 0.12522
@@ -1203,7 +1280,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -7.0,0.559199,2.0
 	orientation: 0.0,1.0,0.0 0.709173
 	scaling: 0.559199
@@ -1216,7 +1294,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -7.0,0.562658,3.0
 	orientation: 0.0,1.0,0.0 1.11963
 	scaling: 0.562658
@@ -1229,7 +1308,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -7.0,0.735578,4.0
 	orientation: 0.0,1.0,0.0 0.965894
 	scaling: 0.735578
@@ -1242,7 +1322,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -7.0,0.43845,5.0
 	orientation: 0.0,1.0,0.0 1.50868
 	scaling: 0.43845
@@ -1255,7 +1336,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -7.0,0.571058,6.0
 	orientation: 0.0,1.0,0.0 1.42008
 	scaling: 0.571058
@@ -1268,7 +1350,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -7.0,0.575293,7.0
 	orientation: 0.0,1.0,0.0 0.516566
 	scaling: 0.575293
@@ -1281,7 +1364,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -7.0,0.593082,8.0
 	orientation: 0.0,1.0,0.0 1.29683
 	scaling: 0.593082
@@ -1296,7 +1380,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -7.0,0.335471,9.0
 	orientation: 0.0,1.0,0.0 1.41385
 	scaling: 0.335471
@@ -1309,7 +1394,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -7.0,0.707403,10.0
 	orientation: 0.0,1.0,0.0 0.979501
 	scaling: 0.707403
@@ -1322,7 +1408,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -6.0,0.2853,-10.0
 	orientation: 0.0,1.0,0.0 0.98171
 	scaling: 0.2853
@@ -1335,7 +1422,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -6.0,0.253902,-9.0
 	orientation: 0.0,1.0,0.0 1.14025
 	scaling: 0.253902
@@ -1350,7 +1438,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -6.0,0.148233,-8.0
 	orientation: 0.0,1.0,0.0 1.40179
 	scaling: 0.148233
@@ -1363,7 +1452,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -6.0,0.1686,-7.0
 	orientation: 0.0,1.0,0.0 1.18056
 	scaling: 0.1686
@@ -1378,7 +1468,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -6.0,0.476742,-6.0
 	orientation: 0.0,1.0,0.0 0.523764
 	scaling: 0.476742
@@ -1391,7 +1482,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -6.0,0.594515,-5.0
 	orientation: 0.0,1.0,0.0 0.2093
 	scaling: 0.594515
@@ -1406,7 +1498,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -6.0,0.700361,-4.0
 	orientation: 0.0,1.0,0.0 1.40921
 	scaling: 0.700361
@@ -1419,7 +1512,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -6.0,0.22919,-3.0
 	orientation: 0.0,1.0,0.0 1.29707
 	scaling: 0.22919
@@ -1432,7 +1526,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -6.0,0.334034,-2.0
 	orientation: 0.0,1.0,0.0 1.20604
 	scaling: 0.334034
@@ -1445,7 +1540,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -6.0,0.161416,-1.0
 	orientation: 0.0,1.0,0.0 0.957076
 	scaling: 0.161416
@@ -1460,7 +1556,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -6.0,0.63919,0.0
 	orientation: 0.0,1.0,0.0 0.0524434
 	scaling: 0.63919
@@ -1473,7 +1570,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -6.0,0.213682,1.0
 	orientation: 0.0,1.0,0.0 0.157189
 	scaling: 0.213682
@@ -1486,7 +1584,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -6.0,0.655352,2.0
 	orientation: 0.0,1.0,0.0 0.211791
 	scaling: 0.655352
@@ -1499,7 +1598,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -6.0,0.550822,3.0
 	orientation: 0.0,1.0,0.0 0.443933
 	scaling: 0.550822
@@ -1514,7 +1614,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -6.0,0.259225,4.0
 	orientation: 0.0,1.0,0.0 0.0982154
 	scaling: 0.259225
@@ -1529,7 +1630,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -6.0,0.693042,5.0
 	orientation: 0.0,1.0,0.0 0.88803
 	scaling: 0.693042
@@ -1542,7 +1644,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -6.0,0.617546,6.0
 	orientation: 0.0,1.0,0.0 0.343102
 	scaling: 0.617546
@@ -1555,7 +1658,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -6.0,0.216937,7.0
 	orientation: 0.0,1.0,0.0 1.38194
 	scaling: 0.216937
@@ -1568,7 +1672,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -6.0,0.685271,8.0
 	orientation: 0.0,1.0,0.0 0.821266
 	scaling: 0.685271
@@ -1581,7 +1686,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -6.0,0.396599,9.0
 	orientation: 0.0,1.0,0.0 1.06876
 	scaling: 0.396599
@@ -1596,7 +1702,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -6.0,0.611177,10.0
 	orientation: 0.0,1.0,0.0 0.182259
 	scaling: 0.611177
@@ -1611,7 +1718,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -5.0,0.22403,-10.0
 	orientation: 0.0,1.0,0.0 1.30985
 	scaling: 0.22403
@@ -1624,7 +1732,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -5.0,0.282605,-9.0
 	orientation: 0.0,1.0,0.0 1.07794
 	scaling: 0.282605
@@ -1637,7 +1746,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -5.0,0.295127,-8.0
 	orientation: 0.0,1.0,0.0 0.0642817
 	scaling: 0.295127
@@ -1650,7 +1760,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -5.0,0.587586,-7.0
 	orientation: 0.0,1.0,0.0 0.876821
 	scaling: 0.587586
@@ -1665,7 +1776,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -5.0,0.742793,-6.0
 	orientation: 0.0,1.0,0.0 0.46996
 	scaling: 0.742793
@@ -1678,7 +1790,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -5.0,0.680498,-5.0
 	orientation: 0.0,1.0,0.0 0.824917
 	scaling: 0.680498
@@ -1691,7 +1804,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -5.0,0.661624,-4.0
 	orientation: 0.0,1.0,0.0 0.698652
 	scaling: 0.661624
@@ -1704,7 +1818,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -5.0,0.418031,-3.0
 	orientation: 0.0,1.0,0.0 1.31432
 	scaling: 0.418031
@@ -1719,7 +1834,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -5.0,0.513575,-2.0
 	orientation: 0.0,1.0,0.0 1.2757
 	scaling: 0.513575
@@ -1732,7 +1848,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -5.0,0.359166,-1.0
 	orientation: 0.0,1.0,0.0 0.488026
 	scaling: 0.359166
@@ -1745,7 +1862,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -5.0,0.370899,0.0
 	orientation: 0.0,1.0,0.0 1.46478
 	scaling: 0.370899
@@ -1758,7 +1876,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -5.0,0.508053,1.0
 	orientation: 0.0,1.0,0.0 0.157545
 	scaling: 0.508053
@@ -1771,7 +1890,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -5.0,0.502747,2.0
 	orientation: 0.0,1.0,0.0 1.27777
 	scaling: 0.502747
@@ -1784,7 +1904,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -5.0,0.554872,3.0
 	orientation: 0.0,1.0,0.0 0.256697
 	scaling: 0.554872
@@ -1799,7 +1920,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -5.0,0.476065,4.0
 	orientation: 0.0,1.0,0.0 1.39699
 	scaling: 0.476065
@@ -1814,7 +1936,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -5.0,0.556925,5.0
 	orientation: 0.0,1.0,0.0 1.07406
 	scaling: 0.556925
@@ -1827,7 +1950,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -5.0,0.745201,6.0
 	orientation: 0.0,1.0,0.0 0.424386
 	scaling: 0.745201
@@ -1840,7 +1964,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -5.0,0.325415,7.0
 	orientation: 0.0,1.0,0.0 1.16915
 	scaling: 0.325415
@@ -1853,7 +1978,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -5.0,0.601473,8.0
 	orientation: 0.0,1.0,0.0 0.00374993
 	scaling: 0.601473
@@ -1866,7 +1992,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -5.0,0.245026,9.0
 	orientation: 0.0,1.0,0.0 0.00195138
 	scaling: 0.245026
@@ -1879,7 +2006,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -5.0,0.298951,10.0
 	orientation: 0.0,1.0,0.0 0.77616
 	scaling: 0.298951
@@ -1894,7 +2022,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -4.0,0.105656,-10.0
 	orientation: 0.0,1.0,0.0 0.593127
 	scaling: 0.105656
@@ -1909,7 +2038,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -4.0,0.199301,-9.0
 	orientation: 0.0,1.0,0.0 1.49548
 	scaling: 0.199301
@@ -1922,7 +2052,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -4.0,0.437011,-8.0
 	orientation: 0.0,1.0,0.0 0.524156
 	scaling: 0.437011
@@ -1935,7 +2066,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -4.0,0.182243,-7.0
 	orientation: 0.0,1.0,0.0 0.757223
 	scaling: 0.182243
@@ -1948,7 +2080,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -4.0,0.126547,-6.0
 	orientation: 0.0,1.0,0.0 0.0311262
 	scaling: 0.126547
@@ -1961,7 +2094,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -4.0,0.453147,-5.0
 	orientation: 0.0,1.0,0.0 0.545436
 	scaling: 0.453147
@@ -1976,7 +2110,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -4.0,0.218641,-4.0
 	orientation: 0.0,1.0,0.0 0.988849
 	scaling: 0.218641
@@ -1989,7 +2124,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -4.0,0.384462,-3.0
 	orientation: 0.0,1.0,0.0 0.154265
 	scaling: 0.384462
@@ -2002,7 +2138,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -4.0,0.147496,-2.0
 	orientation: 0.0,1.0,0.0 1.46488
 	scaling: 0.147496
@@ -2015,7 +2152,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -4.0,0.112897,-1.0
 	orientation: 0.0,1.0,0.0 1.00999
 	scaling: 0.112897
@@ -2030,7 +2168,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -4.0,0.327891,0.0
 	orientation: 0.0,1.0,0.0 0.269145
 	scaling: 0.327891
@@ -2045,7 +2184,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -4.0,0.270145,1.0
 	orientation: 0.0,1.0,0.0 0.875992
 	scaling: 0.270145
@@ -2058,7 +2198,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -4.0,0.213882,2.0
 	orientation: 0.0,1.0,0.0 0.788281
 	scaling: 0.213882
@@ -2071,7 +2212,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -4.0,0.368173,3.0
 	orientation: 0.0,1.0,0.0 0.729088
 	scaling: 0.368173
@@ -2084,7 +2226,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -4.0,0.680619,4.0
 	orientation: 0.0,1.0,0.0 0.119597
 	scaling: 0.680619
@@ -2097,7 +2240,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -4.0,0.207243,5.0
 	orientation: 0.0,1.0,0.0 1.36193
 	scaling: 0.207243
@@ -2110,7 +2254,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -4.0,0.504618,6.0
 	orientation: 0.0,1.0,0.0 0.556454
 	scaling: 0.504618
@@ -2125,7 +2270,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -4.0,0.301648,7.0
 	orientation: 0.0,1.0,0.0 0.368204
 	scaling: 0.301648
@@ -2140,7 +2286,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -4.0,0.112647,8.0
 	orientation: 0.0,1.0,0.0 0.945973
 	scaling: 0.112647
@@ -2153,7 +2300,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -4.0,0.188446,9.0
 	orientation: 0.0,1.0,0.0 0.13884
 	scaling: 0.188446
@@ -2166,7 +2314,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -4.0,0.421554,10.0
 	orientation: 0.0,1.0,0.0 1.14462
 	scaling: 0.421554
@@ -2181,7 +2330,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -3.0,0.575165,-10.0
 	orientation: 0.0,1.0,0.0 1.03595
 	scaling: 0.575165
@@ -2194,7 +2344,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -3.0,0.795606,-9.0
 	orientation: 0.0,1.0,0.0 1.20353
 	scaling: 0.795606
@@ -2207,7 +2358,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -3.0,0.266786,-8.0
 	orientation: 0.0,1.0,0.0 0.00450336
 	scaling: 0.266786
@@ -2220,7 +2372,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -3.0,0.78468,-7.0
 	orientation: 0.0,1.0,0.0 1.34555
 	scaling: 0.78468
@@ -2233,7 +2386,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -3.0,0.61447,-6.0
 	orientation: 0.0,1.0,0.0 0.0688936
 	scaling: 0.61447
@@ -2248,7 +2402,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -3.0,0.11834,-5.0
 	orientation: 0.0,1.0,0.0 0.99623
 	scaling: 0.11834
@@ -2261,7 +2416,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -3.0,0.244281,-4.0
 	orientation: 0.0,1.0,0.0 0.0833707
 	scaling: 0.244281
@@ -2274,7 +2430,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -3.0,0.58516,-3.0
 	orientation: 0.0,1.0,0.0 0.848901
 	scaling: 0.58516
@@ -2289,7 +2446,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -3.0,0.215414,-2.0
 	orientation: 0.0,1.0,0.0 0.965408
 	scaling: 0.215414
@@ -2302,7 +2460,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -3.0,0.33312,-1.0
 	orientation: 0.0,1.0,0.0 0.00533495
 	scaling: 0.33312
@@ -2315,7 +2474,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -3.0,0.110665,0.0
 	orientation: 0.0,1.0,0.0 1.39951
 	scaling: 0.110665
@@ -2328,7 +2488,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -3.0,0.427302,1.0
 	orientation: 0.0,1.0,0.0 0.183194
 	scaling: 0.427302
@@ -2343,7 +2504,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -3.0,0.529418,2.0
 	orientation: 0.0,1.0,0.0 1.39538
 	scaling: 0.529418
@@ -2356,7 +2518,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -3.0,0.515978,3.0
 	orientation: 0.0,1.0,0.0 0.929431
 	scaling: 0.515978
@@ -2369,7 +2532,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -3.0,0.351985,4.0
 	orientation: 0.0,1.0,0.0 1.29964
 	scaling: 0.351985
@@ -2382,7 +2546,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -3.0,0.585529,5.0
 	orientation: 0.0,1.0,0.0 1.35554
 	scaling: 0.585529
@@ -2395,7 +2560,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -3.0,0.159689,6.0
 	orientation: 0.0,1.0,0.0 0.120821
 	scaling: 0.159689
@@ -2408,7 +2574,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -3.0,0.205358,7.0
 	orientation: 0.0,1.0,0.0 1.44925
 	scaling: 0.205358
@@ -2421,7 +2588,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -3.0,0.304173,8.0
 	orientation: 0.0,1.0,0.0 0.587148
 	scaling: 0.304173
@@ -2436,7 +2604,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -3.0,0.624993,9.0
 	orientation: 0.0,1.0,0.0 0.275621
 	scaling: 0.624993
@@ -2449,7 +2618,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -3.0,0.227756,10.0
 	orientation: 0.0,1.0,0.0 1.49616
 	scaling: 0.227756
@@ -2462,7 +2632,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -2.0,0.559221,-10.0
 	orientation: 0.0,1.0,0.0 0.124523
 	scaling: 0.559221
@@ -2475,7 +2646,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -2.0,0.1582,-9.0
 	orientation: 0.0,1.0,0.0 0.127016
 	scaling: 0.1582
@@ -2488,7 +2660,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -2.0,0.297131,-8.0
 	orientation: 0.0,1.0,0.0 0.0174807
 	scaling: 0.297131
@@ -2501,7 +2674,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -2.0,0.514498,-7.0
 	orientation: 0.0,1.0,0.0 0.154462
 	scaling: 0.514498
@@ -2516,7 +2690,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -2.0,0.670663,-6.0
 	orientation: 0.0,1.0,0.0 0.666792
 	scaling: 0.670663
@@ -2531,7 +2706,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -2.0,0.696203,-5.0
 	orientation: 0.0,1.0,0.0 0.0494028
 	scaling: 0.696203
@@ -2546,7 +2722,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -2.0,0.4032,-4.0
 	orientation: 0.0,1.0,0.0 0.337739
 	scaling: 0.4032
@@ -2559,7 +2736,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -2.0,0.382649,-3.0
 	orientation: 0.0,1.0,0.0 0.576253
 	scaling: 0.382649
@@ -2572,7 +2750,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -2.0,0.30016,-2.0
 	orientation: 0.0,1.0,0.0 0.5078
 	scaling: 0.30016
@@ -2585,7 +2764,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -2.0,0.337397,-1.0
 	orientation: 0.0,1.0,0.0 1.1747
 	scaling: 0.337397
@@ -2598,7 +2778,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -2.0,0.437551,0.0
 	orientation: 0.0,1.0,0.0 0.697321
 	scaling: 0.437551
@@ -2611,7 +2792,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -2.0,0.567864,1.0
 	orientation: 0.0,1.0,0.0 1.07414
 	scaling: 0.567864
@@ -2624,7 +2806,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -2.0,0.111234,2.0
 	orientation: 0.0,1.0,0.0 0.135485
 	scaling: 0.111234
@@ -2637,7 +2820,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -2.0,0.59648,3.0
 	orientation: 0.0,1.0,0.0 0.835138
 	scaling: 0.59648
@@ -2650,7 +2834,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -2.0,0.255486,4.0
 	orientation: 0.0,1.0,0.0 0.763889
 	scaling: 0.255486
@@ -2663,7 +2848,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -2.0,0.326621,5.0
 	orientation: 0.0,1.0,0.0 0.598934
 	scaling: 0.326621
@@ -2676,7 +2862,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -2.0,0.13764,6.0
 	orientation: 0.0,1.0,0.0 0.122727
 	scaling: 0.13764
@@ -2689,7 +2876,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -2.0,0.166244,7.0
 	orientation: 0.0,1.0,0.0 0.811714
 	scaling: 0.166244
@@ -2704,7 +2892,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -2.0,0.360954,8.0
 	orientation: 0.0,1.0,0.0 0.806193
 	scaling: 0.360954
@@ -2719,7 +2908,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -2.0,0.533355,9.0
 	orientation: 0.0,1.0,0.0 1.05281
 	scaling: 0.533355
@@ -2732,7 +2922,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -2.0,0.664046,10.0
 	orientation: 0.0,1.0,0.0 1.28104
 	scaling: 0.664046
@@ -2745,7 +2936,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -1.0,0.594784,-10.0
 	orientation: 0.0,1.0,0.0 1.52146
 	scaling: 0.594784
@@ -2758,7 +2950,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -1.0,0.297805,-9.0
 	orientation: 0.0,1.0,0.0 0.486528
 	scaling: 0.297805
@@ -2771,7 +2964,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -1.0,0.177084,-8.0
 	orientation: 0.0,1.0,0.0 1.22955
 	scaling: 0.177084
@@ -2784,7 +2978,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -1.0,0.688191,-7.0
 	orientation: 0.0,1.0,0.0 1.42279
 	scaling: 0.688191
@@ -2799,7 +2994,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -1.0,0.45399,-6.0
 	orientation: 0.0,1.0,0.0 1.35084
 	scaling: 0.45399
@@ -2814,7 +3010,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -1.0,0.285886,-5.0
 	orientation: 0.0,1.0,0.0 0.329948
 	scaling: 0.285886
@@ -2827,7 +3024,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -1.0,0.50167,-4.0
 	orientation: 0.0,1.0,0.0 0.554614
 	scaling: 0.50167
@@ -2840,7 +3038,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -1.0,0.205959,-3.0
 	orientation: 0.0,1.0,0.0 1.10326
 	scaling: 0.205959
@@ -2853,7 +3052,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -1.0,0.470907,-2.0
 	orientation: 0.0,1.0,0.0 0.668208
 	scaling: 0.470907
@@ -2866,7 +3066,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -1.0,0.587617,-1.0
 	orientation: 0.0,1.0,0.0 1.50652
 	scaling: 0.587617
@@ -2879,7 +3080,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -1.0,0.193513,0.0
 	orientation: 0.0,1.0,0.0 0.981858
 	scaling: 0.193513
@@ -2894,7 +3096,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -1.0,0.278593,1.0
 	orientation: 0.0,1.0,0.0 0.575137
 	scaling: 0.278593
@@ -2907,7 +3110,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -1.0,0.384333,2.0
 	orientation: 0.0,1.0,0.0 1.01535
 	scaling: 0.384333
@@ -2920,7 +3124,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -1.0,0.734362,3.0
 	orientation: 0.0,1.0,0.0 0.571663
 	scaling: 0.734362
@@ -2933,7 +3138,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -1.0,0.315751,4.0
 	orientation: 0.0,1.0,0.0 0.871016
 	scaling: 0.315751
@@ -2946,7 +3152,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -1.0,0.759995,5.0
 	orientation: 0.0,1.0,0.0 0.645575
 	scaling: 0.759995
@@ -2961,7 +3168,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -1.0,0.340417,6.0
 	orientation: 0.0,1.0,0.0 0.938497
 	scaling: 0.340417
@@ -2974,7 +3182,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -1.0,0.325957,7.0
 	orientation: 0.0,1.0,0.0 1.38842
 	scaling: 0.325957
@@ -2987,7 +3196,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -1.0,0.390219,8.0
 	orientation: 0.0,1.0,0.0 1.55748
 	scaling: 0.390219
@@ -3000,7 +3210,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -1.0,0.450184,9.0
 	orientation: 0.0,1.0,0.0 0.171511
 	scaling: 0.450184
@@ -3015,7 +3226,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: -1.0,0.556296,10.0
 	orientation: 0.0,1.0,0.0 1.43155
 	scaling: 0.556296
@@ -3028,7 +3240,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 0.0,0.384282,-10.0
 	orientation: 0.0,1.0,0.0 0.199163
 	scaling: 0.384282
@@ -3041,7 +3254,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 0.0,0.503194,-9.0
 	orientation: 0.0,1.0,0.0 1.36869
 	scaling: 0.503194
@@ -3054,7 +3268,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 0.0,0.234665,-8.0
 	orientation: 0.0,1.0,0.0 0.292536
 	scaling: 0.234665
@@ -3067,7 +3282,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 0.0,0.303361,-7.0
 	orientation: 0.0,1.0,0.0 1.17488
 	scaling: 0.303361
@@ -3080,7 +3296,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 0.0,0.4123,-6.0
 	orientation: 0.0,1.0,0.0 1.37772
 	scaling: 0.4123
@@ -3095,7 +3312,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 0.0,0.59461,-5.0
 	orientation: 0.0,1.0,0.0 1.19805
 	scaling: 0.59461
@@ -3108,7 +3326,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 0.0,0.464047,-4.0
 	orientation: 0.0,1.0,0.0 0.606561
 	scaling: 0.464047
@@ -3121,7 +3340,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 0.0,0.5711,-3.0
 	orientation: 0.0,1.0,0.0 0.00560939
 	scaling: 0.5711
@@ -3136,7 +3356,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 0.0,0.102107,-2.0
 	orientation: 0.0,1.0,0.0 1.45191
 	scaling: 0.102107
@@ -3149,7 +3370,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 0.0,0.528351,-1.0
 	orientation: 0.0,1.0,0.0 1.43534
 	scaling: 0.528351
@@ -3162,7 +3384,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 0.0,0.233085,0.0
 	orientation: 0.0,1.0,0.0 0.89427
 	scaling: 0.233085
@@ -3177,7 +3400,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 0.0,0.521495,1.0
 	orientation: 0.0,1.0,0.0 0.516318
 	scaling: 0.521495
@@ -3190,7 +3414,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 0.0,0.344294,2.0
 	orientation: 0.0,1.0,0.0 1.09423
 	scaling: 0.344294
@@ -3203,7 +3428,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 0.0,0.208996,3.0
 	orientation: 0.0,1.0,0.0 0.359461
 	scaling: 0.208996
@@ -3216,7 +3442,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 0.0,0.785261,4.0
 	orientation: 0.0,1.0,0.0 1.04535
 	scaling: 0.785261
@@ -3229,7 +3456,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 0.0,0.204088,5.0
 	orientation: 0.0,1.0,0.0 0.72061
 	scaling: 0.204088
@@ -3244,7 +3472,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 0.0,0.170429,6.0
 	orientation: 0.0,1.0,0.0 0.631348
 	scaling: 0.170429
@@ -3257,7 +3486,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 0.0,0.278116,7.0
 	orientation: 0.0,1.0,0.0 1.41058
 	scaling: 0.278116
@@ -3270,7 +3500,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 0.0,0.142147,8.0
 	orientation: 0.0,1.0,0.0 0.159181
 	scaling: 0.142147
@@ -3283,7 +3514,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 0.0,0.514583,9.0
 	orientation: 0.0,1.0,0.0 0.957286
 	scaling: 0.514583
@@ -3296,7 +3528,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 0.0,0.787373,10.0
 	orientation: 0.0,1.0,0.0 0.553155
 	scaling: 0.787373
@@ -3309,7 +3542,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 1.0,0.592549,-10.0
 	orientation: 0.0,1.0,0.0 1.35504
 	scaling: 0.592549
@@ -3322,7 +3556,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 1.0,0.646062,-9.0
 	orientation: 0.0,1.0,0.0 1.17097
 	scaling: 0.646062
@@ -3335,7 +3570,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 1.0,0.673613,-8.0
 	orientation: 0.0,1.0,0.0 0.322492
 	scaling: 0.673613
@@ -3348,7 +3584,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 1.0,0.678253,-7.0
 	orientation: 0.0,1.0,0.0 0.409758
 	scaling: 0.678253
@@ -3363,7 +3600,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 1.0,0.651423,-6.0
 	orientation: 0.0,1.0,0.0 1.08362
 	scaling: 0.651423
@@ -3378,7 +3616,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 1.0,0.480867,-5.0
 	orientation: 0.0,1.0,0.0 0.575406
 	scaling: 0.480867
@@ -3391,7 +3630,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 1.0,0.422638,-4.0
 	orientation: 0.0,1.0,0.0 1.30241
 	scaling: 0.422638
@@ -3404,7 +3644,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 1.0,0.309163,-3.0
 	orientation: 0.0,1.0,0.0 0.537508
 	scaling: 0.309163
@@ -3417,7 +3658,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 1.0,0.632366,-2.0
 	orientation: 0.0,1.0,0.0 0.416561
 	scaling: 0.632366
@@ -3430,7 +3672,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 1.0,0.186605,-1.0
 	orientation: 0.0,1.0,0.0 0.162374
 	scaling: 0.186605
@@ -3443,7 +3686,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 1.0,0.435129,0.0
 	orientation: 0.0,1.0,0.0 0.496589
 	scaling: 0.435129
@@ -3456,7 +3700,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 1.0,0.503692,1.0
 	orientation: 0.0,1.0,0.0 0.396864
 	scaling: 0.503692
@@ -3469,7 +3714,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 1.0,0.121305,2.0
 	orientation: 0.0,1.0,0.0 1.00246
 	scaling: 0.121305
@@ -3484,7 +3730,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 1.0,0.26134,3.0
 	orientation: 0.0,1.0,0.0 0.616229
 	scaling: 0.26134
@@ -3497,7 +3744,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 1.0,0.599239,4.0
 	orientation: 0.0,1.0,0.0 0.15625
 	scaling: 0.599239
@@ -3510,7 +3758,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 1.0,0.581421,5.0
 	orientation: 0.0,1.0,0.0 0.225918
 	scaling: 0.581421
@@ -3523,7 +3772,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 1.0,0.473994,6.0
 	orientation: 0.0,1.0,0.0 0.927024
 	scaling: 0.473994
@@ -3536,7 +3786,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 1.0,0.146761,7.0
 	orientation: 0.0,1.0,0.0 1.31929
 	scaling: 0.146761
@@ -3549,7 +3800,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 1.0,0.182332,8.0
 	orientation: 0.0,1.0,0.0 0.946637
 	scaling: 0.182332
@@ -3564,7 +3816,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 1.0,0.2287,9.0
 	orientation: 0.0,1.0,0.0 0.198212
 	scaling: 0.2287
@@ -3577,7 +3830,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 1.0,0.247202,10.0
 	orientation: 0.0,1.0,0.0 0.909525
 	scaling: 0.247202
@@ -3590,7 +3844,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 2.0,0.589832,-10.0
 	orientation: 0.0,1.0,0.0 0.989246
 	scaling: 0.589832
@@ -3603,7 +3858,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 2.0,0.190761,-9.0
 	orientation: 0.0,1.0,0.0 0.0384697
 	scaling: 0.190761
@@ -3616,7 +3872,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 2.0,0.115524,-8.0
 	orientation: 0.0,1.0,0.0 0.942226
 	scaling: 0.115524
@@ -3629,7 +3886,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 2.0,0.310464,-7.0
 	orientation: 0.0,1.0,0.0 1.03943
 	scaling: 0.310464
@@ -3642,7 +3900,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 2.0,0.576451,-6.0
 	orientation: 0.0,1.0,0.0 0.52292
 	scaling: 0.576451
@@ -3657,7 +3916,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 2.0,0.642975,-5.0
 	orientation: 0.0,1.0,0.0 0.0570936
 	scaling: 0.642975
@@ -3672,7 +3932,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 2.0,0.165368,-4.0
 	orientation: 0.0,1.0,0.0 0.91691
 	scaling: 0.165368
@@ -3685,7 +3946,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 2.0,0.488432,-3.0
 	orientation: 0.0,1.0,0.0 0.300822
 	scaling: 0.488432
@@ -3698,7 +3960,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 2.0,0.463282,-2.0
 	orientation: 0.0,1.0,0.0 0.113613
 	scaling: 0.463282
@@ -3711,7 +3974,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 2.0,0.511939,-1.0
 	orientation: 0.0,1.0,0.0 0.407671
 	scaling: 0.511939
@@ -3724,7 +3988,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 2.0,0.737933,0.0
 	orientation: 0.0,1.0,0.0 1.41049
 	scaling: 0.737933
@@ -3737,7 +4002,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 2.0,0.261779,1.0
 	orientation: 0.0,1.0,0.0 0.155781
 	scaling: 0.261779
@@ -3750,7 +4016,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 2.0,0.561725,2.0
 	orientation: 0.0,1.0,0.0 0.703623
 	scaling: 0.561725
@@ -3763,7 +4030,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 2.0,0.707297,3.0
 	orientation: 0.0,1.0,0.0 0.0680438
 	scaling: 0.707297
@@ -3776,7 +4044,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 2.0,0.201395,4.0
 	orientation: 0.0,1.0,0.0 1.3548
 	scaling: 0.201395
@@ -3789,7 +4058,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 2.0,0.62112,5.0
 	orientation: 0.0,1.0,0.0 0.79722
 	scaling: 0.62112
@@ -3802,7 +4072,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 2.0,0.644863,6.0
 	orientation: 0.0,1.0,0.0 0.517502
 	scaling: 0.644863
@@ -3815,7 +4086,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 2.0,0.286459,7.0
 	orientation: 0.0,1.0,0.0 0.787436
 	scaling: 0.286459
@@ -3828,7 +4100,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 2.0,0.747219,8.0
 	orientation: 0.0,1.0,0.0 0.988638
 	scaling: 0.747219
@@ -3841,7 +4114,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 2.0,0.722754,9.0
 	orientation: 0.0,1.0,0.0 1.23114
 	scaling: 0.722754
@@ -3856,7 +4130,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 2.0,0.289477,10.0
 	orientation: 0.0,1.0,0.0 1.09631
 	scaling: 0.289477
@@ -3871,7 +4146,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 3.0,0.318933,-10.0
 	orientation: 0.0,1.0,0.0 0.477672
 	scaling: 0.318933
@@ -3886,7 +4162,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 3.0,0.639885,-9.0
 	orientation: 0.0,1.0,0.0 0.600928
 	scaling: 0.639885
@@ -3899,7 +4176,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 3.0,0.58016,-8.0
 	orientation: 0.0,1.0,0.0 0.192635
 	scaling: 0.58016
@@ -3912,7 +4190,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 3.0,0.748972,-7.0
 	orientation: 0.0,1.0,0.0 1.52033
 	scaling: 0.748972
@@ -3925,7 +4204,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 3.0,0.159356,-6.0
 	orientation: 0.0,1.0,0.0 0.888759
 	scaling: 0.159356
@@ -3938,7 +4218,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 3.0,0.466604,-5.0
 	orientation: 0.0,1.0,0.0 0.702697
 	scaling: 0.466604
@@ -3951,7 +4232,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 3.0,0.571798,-4.0
 	orientation: 0.0,1.0,0.0 0.891203
 	scaling: 0.571798
@@ -3964,7 +4246,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 3.0,0.519018,-3.0
 	orientation: 0.0,1.0,0.0 0.645028
 	scaling: 0.519018
@@ -3977,7 +4260,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 3.0,0.246445,-2.0
 	orientation: 0.0,1.0,0.0 0.732377
 	scaling: 0.246445
@@ -3990,7 +4274,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 3.0,0.584282,-1.0
 	orientation: 0.0,1.0,0.0 1.27099
 	scaling: 0.584282
@@ -4003,7 +4288,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 3.0,0.696196,0.0
 	orientation: 0.0,1.0,0.0 0.705735
 	scaling: 0.696196
@@ -4016,7 +4302,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 3.0,0.118728,1.0
 	orientation: 0.0,1.0,0.0 1.12681
 	scaling: 0.118728
@@ -4031,7 +4318,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 3.0,0.713067,2.0
 	orientation: 0.0,1.0,0.0 1.02688
 	scaling: 0.713067
@@ -4044,7 +4332,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 3.0,0.674739,3.0
 	orientation: 0.0,1.0,0.0 0.318332
 	scaling: 0.674739
@@ -4057,7 +4346,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 3.0,0.489903,4.0
 	orientation: 0.0,1.0,0.0 0.945153
 	scaling: 0.489903
@@ -4070,7 +4360,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 3.0,0.546852,5.0
 	orientation: 0.0,1.0,0.0 1.22251
 	scaling: 0.546852
@@ -4083,7 +4374,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 3.0,0.180261,6.0
 	orientation: 0.0,1.0,0.0 0.597293
 	scaling: 0.180261
@@ -4098,7 +4390,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 3.0,0.365398,7.0
 	orientation: 0.0,1.0,0.0 1.02247
 	scaling: 0.365398
@@ -4111,7 +4404,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 3.0,0.404109,8.0
 	orientation: 0.0,1.0,0.0 0.112524
 	scaling: 0.404109
@@ -4124,7 +4418,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 3.0,0.251186,9.0
 	orientation: 0.0,1.0,0.0 0.645325
 	scaling: 0.251186
@@ -4137,7 +4432,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 3.0,0.435704,10.0
 	orientation: 0.0,1.0,0.0 1.26631
 	scaling: 0.435704
@@ -4150,7 +4446,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 4.0,0.246127,-10.0
 	orientation: 0.0,1.0,0.0 0.523996
 	scaling: 0.246127
@@ -4163,7 +4460,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 4.0,0.344491,-9.0
 	orientation: 0.0,1.0,0.0 0.611524
 	scaling: 0.344491
@@ -4178,7 +4476,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 4.0,0.136018,-8.0
 	orientation: 0.0,1.0,0.0 1.11772
 	scaling: 0.136018
@@ -4191,7 +4490,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 4.0,0.181669,-7.0
 	orientation: 0.0,1.0,0.0 0.0420945
 	scaling: 0.181669
@@ -4206,7 +4506,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 4.0,0.605564,-6.0
 	orientation: 0.0,1.0,0.0 0.4038
 	scaling: 0.605564
@@ -4219,7 +4520,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 4.0,0.557583,-5.0
 	orientation: 0.0,1.0,0.0 1.0612
 	scaling: 0.557583
@@ -4232,7 +4534,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 4.0,0.14277,-4.0
 	orientation: 0.0,1.0,0.0 0.724931
 	scaling: 0.14277
@@ -4245,7 +4548,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 4.0,0.597402,-3.0
 	orientation: 0.0,1.0,0.0 0.28462
 	scaling: 0.597402
@@ -4258,7 +4562,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 4.0,0.782291,-2.0
 	orientation: 0.0,1.0,0.0 0.829486
 	scaling: 0.782291
@@ -4271,7 +4576,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 4.0,0.1037,-1.0
 	orientation: 0.0,1.0,0.0 0.343745
 	scaling: 0.1037
@@ -4284,7 +4590,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 4.0,0.26087,0.0
 	orientation: 0.0,1.0,0.0 0.680563
 	scaling: 0.26087
@@ -4297,7 +4604,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 4.0,0.194302,1.0
 	orientation: 0.0,1.0,0.0 1.43966
 	scaling: 0.194302
@@ -4310,7 +4618,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 4.0,0.24824,2.0
 	orientation: 0.0,1.0,0.0 0.524189
 	scaling: 0.24824
@@ -4323,7 +4632,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 4.0,0.527569,3.0
 	orientation: 0.0,1.0,0.0 0.932284
 	scaling: 0.527569
@@ -4336,7 +4646,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 4.0,0.703547,4.0
 	orientation: 0.0,1.0,0.0 0.764253
 	scaling: 0.703547
@@ -4349,7 +4660,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 4.0,0.445211,5.0
 	orientation: 0.0,1.0,0.0 1.2659
 	scaling: 0.445211
@@ -4364,7 +4676,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 4.0,0.440554,6.0
 	orientation: 0.0,1.0,0.0 1.23588
 	scaling: 0.440554
@@ -4377,7 +4690,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 4.0,0.269502,7.0
 	orientation: 0.0,1.0,0.0 1.52473
 	scaling: 0.269502
@@ -4390,7 +4704,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 4.0,0.581853,8.0
 	orientation: 0.0,1.0,0.0 0.096397
 	scaling: 0.581853
@@ -4403,7 +4718,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 4.0,0.376924,9.0
 	orientation: 0.0,1.0,0.0 0.257851
 	scaling: 0.376924
@@ -4418,7 +4734,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 4.0,0.399147,10.0
 	orientation: 0.0,1.0,0.0 0.415331
 	scaling: 0.399147
@@ -4431,7 +4748,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 5.0,0.126745,-10.0
 	orientation: 0.0,1.0,0.0 0.816188
 	scaling: 0.126745
@@ -4446,7 +4764,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 5.0,0.262202,-9.0
 	orientation: 0.0,1.0,0.0 0.831388
 	scaling: 0.262202
@@ -4459,7 +4778,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 5.0,0.345601,-8.0
 	orientation: 0.0,1.0,0.0 0.0146558
 	scaling: 0.345601
@@ -4472,7 +4792,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 5.0,0.782164,-7.0
 	orientation: 0.0,1.0,0.0 1.5284
 	scaling: 0.782164
@@ -4485,7 +4806,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 5.0,0.717668,-6.0
 	orientation: 0.0,1.0,0.0 0.49787
 	scaling: 0.717668
@@ -4498,7 +4820,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 5.0,0.199762,-5.0
 	orientation: 0.0,1.0,0.0 1.29559
 	scaling: 0.199762
@@ -4511,7 +4834,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 5.0,0.29837,-4.0
 	orientation: 0.0,1.0,0.0 0.697449
 	scaling: 0.29837
@@ -4524,7 +4848,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 5.0,0.651008,-3.0
 	orientation: 0.0,1.0,0.0 0.905226
 	scaling: 0.651008
@@ -4537,7 +4862,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 5.0,0.555252,-2.0
 	orientation: 0.0,1.0,0.0 1.3569
 	scaling: 0.555252
@@ -4552,7 +4878,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 5.0,0.420539,-1.0
 	orientation: 0.0,1.0,0.0 0.492287
 	scaling: 0.420539
@@ -4565,7 +4892,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 5.0,0.212276,0.0
 	orientation: 0.0,1.0,0.0 1.11
 	scaling: 0.212276
@@ -4578,7 +4906,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 5.0,0.484825,1.0
 	orientation: 0.0,1.0,0.0 1.02168
 	scaling: 0.484825
@@ -4591,7 +4920,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 5.0,0.377702,2.0
 	orientation: 0.0,1.0,0.0 0.109455
 	scaling: 0.377702
@@ -4604,7 +4934,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 5.0,0.733467,3.0
 	orientation: 0.0,1.0,0.0 0.496913
 	scaling: 0.733467
@@ -4617,7 +4948,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 5.0,0.484922,4.0
 	orientation: 0.0,1.0,0.0 0.140611
 	scaling: 0.484922
@@ -4630,7 +4962,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 5.0,0.474486,5.0
 	orientation: 0.0,1.0,0.0 1.47598
 	scaling: 0.474486
@@ -4643,7 +4976,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 5.0,0.225989,6.0
 	orientation: 0.0,1.0,0.0 0.168456
 	scaling: 0.225989
@@ -4656,7 +4990,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 5.0,0.191784,7.0
 	orientation: 0.0,1.0,0.0 0.527101
 	scaling: 0.191784
@@ -4669,7 +5004,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 5.0,0.441973,8.0
 	orientation: 0.0,1.0,0.0 1.54495
 	scaling: 0.441973
@@ -4682,7 +5018,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 5.0,0.124625,9.0
 	orientation: 0.0,1.0,0.0 0.392937
 	scaling: 0.124625
@@ -4695,7 +5032,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 5.0,0.552095,10.0
 	orientation: 0.0,1.0,0.0 1.32196
 	scaling: 0.552095
@@ -4710,7 +5048,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 6.0,0.790695,-10.0
 	orientation: 0.0,1.0,0.0 0.818022
 	scaling: 0.790695
@@ -4723,7 +5062,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 6.0,0.576408,-9.0
 	orientation: 0.0,1.0,0.0 0.318396
 	scaling: 0.576408
@@ -4738,7 +5078,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 6.0,0.677055,-8.0
 	orientation: 0.0,1.0,0.0 1.0824
 	scaling: 0.677055
@@ -4751,7 +5092,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 6.0,0.52861,-7.0
 	orientation: 0.0,1.0,0.0 0.370323
 	scaling: 0.52861
@@ -4766,7 +5108,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 6.0,0.616795,-6.0
 	orientation: 0.0,1.0,0.0 0.254791
 	scaling: 0.616795
@@ -4779,7 +5122,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 6.0,0.245662,-5.0
 	orientation: 0.0,1.0,0.0 1.35431
 	scaling: 0.245662
@@ -4792,7 +5136,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 6.0,0.571618,-4.0
 	orientation: 0.0,1.0,0.0 1.12518
 	scaling: 0.571618
@@ -4805,7 +5150,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 6.0,0.708334,-3.0
 	orientation: 0.0,1.0,0.0 0.502479
 	scaling: 0.708334
@@ -4818,7 +5164,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 6.0,0.381341,-2.0
 	orientation: 0.0,1.0,0.0 1.39601
 	scaling: 0.381341
@@ -4831,7 +5178,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 6.0,0.585616,-1.0
 	orientation: 0.0,1.0,0.0 0.479852
 	scaling: 0.585616
@@ -4844,7 +5192,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 6.0,0.592621,0.0
 	orientation: 0.0,1.0,0.0 0.456314
 	scaling: 0.592621
@@ -4857,7 +5206,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 6.0,0.729207,1.0
 	orientation: 0.0,1.0,0.0 1.04839
 	scaling: 0.729207
@@ -4870,7 +5220,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 6.0,0.784916,2.0
 	orientation: 0.0,1.0,0.0 1.55724
 	scaling: 0.784916
@@ -4883,7 +5234,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 6.0,0.14717,3.0
 	orientation: 0.0,1.0,0.0 0.507402
 	scaling: 0.14717
@@ -4896,7 +5248,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 6.0,0.560904,4.0
 	orientation: 0.0,1.0,0.0 1.2616
 	scaling: 0.560904
@@ -4909,7 +5262,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 6.0,0.321282,5.0
 	orientation: 0.0,1.0,0.0 0.802943
 	scaling: 0.321282
@@ -4924,7 +5278,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 6.0,0.719376,6.0
 	orientation: 0.0,1.0,0.0 1.47826
 	scaling: 0.719376
@@ -4939,7 +5294,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 6.0,0.301503,7.0
 	orientation: 0.0,1.0,0.0 1.3253
 	scaling: 0.301503
@@ -4952,7 +5308,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 6.0,0.346129,8.0
 	orientation: 0.0,1.0,0.0 1.34692
 	scaling: 0.346129
@@ -4967,7 +5324,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 6.0,0.324296,9.0
 	orientation: 0.0,1.0,0.0 0.792261
 	scaling: 0.324296
@@ -4980,7 +5338,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 6.0,0.721473,10.0
 	orientation: 0.0,1.0,0.0 0.137388
 	scaling: 0.721473
@@ -4993,7 +5352,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 7.0,0.674376,-10.0
 	orientation: 0.0,1.0,0.0 0.436687
 	scaling: 0.674376
@@ -5006,7 +5366,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 7.0,0.593533,-9.0
 	orientation: 0.0,1.0,0.0 0.333147
 	scaling: 0.593533
@@ -5019,7 +5380,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 7.0,0.397788,-8.0
 	orientation: 0.0,1.0,0.0 0.139974
 	scaling: 0.397788
@@ -5032,7 +5394,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 7.0,0.335441,-7.0
 	orientation: 0.0,1.0,0.0 0.48571
 	scaling: 0.335441
@@ -5047,7 +5410,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 7.0,0.683227,-6.0
 	orientation: 0.0,1.0,0.0 0.0195415
 	scaling: 0.683227
@@ -5060,7 +5424,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 7.0,0.717901,-5.0
 	orientation: 0.0,1.0,0.0 0.00700157
 	scaling: 0.717901
@@ -5073,7 +5438,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 7.0,0.329095,-4.0
 	orientation: 0.0,1.0,0.0 0.722051
 	scaling: 0.329095
@@ -5086,7 +5452,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 7.0,0.525469,-3.0
 	orientation: 0.0,1.0,0.0 0.50476
 	scaling: 0.525469
@@ -5101,7 +5468,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 7.0,0.205277,-2.0
 	orientation: 0.0,1.0,0.0 0.62886
 	scaling: 0.205277
@@ -5114,7 +5482,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 7.0,0.591796,-1.0
 	orientation: 0.0,1.0,0.0 0.513041
 	scaling: 0.591796
@@ -5127,7 +5496,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 7.0,0.513552,0.0
 	orientation: 0.0,1.0,0.0 0.320537
 	scaling: 0.513552
@@ -5140,7 +5510,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 7.0,0.28933,1.0
 	orientation: 0.0,1.0,0.0 1.17477
 	scaling: 0.28933
@@ -5153,7 +5524,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 7.0,0.42432,2.0
 	orientation: 0.0,1.0,0.0 0.636423
 	scaling: 0.42432
@@ -5166,7 +5538,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 7.0,0.328873,3.0
 	orientation: 0.0,1.0,0.0 0.824421
 	scaling: 0.328873
@@ -5179,7 +5552,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 7.0,0.600838,4.0
 	orientation: 0.0,1.0,0.0 1.34986
 	scaling: 0.600838
@@ -5192,7 +5566,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 7.0,0.723267,5.0
 	orientation: 0.0,1.0,0.0 0.558156
 	scaling: 0.723267
@@ -5205,7 +5580,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 7.0,0.233528,6.0
 	orientation: 0.0,1.0,0.0 0.382803
 	scaling: 0.233528
@@ -5218,7 +5594,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 7.0,0.517164,7.0
 	orientation: 0.0,1.0,0.0 1.4489
 	scaling: 0.517164
@@ -5231,7 +5608,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 7.0,0.438389,8.0
 	orientation: 0.0,1.0,0.0 1.56849
 	scaling: 0.438389
@@ -5244,7 +5622,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 7.0,0.218076,9.0
 	orientation: 0.0,1.0,0.0 0.828894
 	scaling: 0.218076
@@ -5257,7 +5636,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 7.0,0.415681,10.0
 	orientation: 0.0,1.0,0.0 0.219424
 	scaling: 0.415681
@@ -5270,7 +5650,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 8.0,0.667827,-10.0
 	orientation: 0.0,1.0,0.0 0.765164
 	scaling: 0.667827
@@ -5283,7 +5664,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 8.0,0.751084,-9.0
 	orientation: 0.0,1.0,0.0 1.11748
 	scaling: 0.751084
@@ -5298,7 +5680,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 8.0,0.340665,-8.0
 	orientation: 0.0,1.0,0.0 0.340989
 	scaling: 0.340665
@@ -5311,7 +5694,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 8.0,0.245784,-7.0
 	orientation: 0.0,1.0,0.0 0.985864
 	scaling: 0.245784
@@ -5326,7 +5710,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 8.0,0.319405,-6.0
 	orientation: 0.0,1.0,0.0 0.0258036
 	scaling: 0.319405
@@ -5341,7 +5726,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 8.0,0.46553,-5.0
 	orientation: 0.0,1.0,0.0 0.583334
 	scaling: 0.46553
@@ -5354,7 +5740,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 8.0,0.261239,-4.0
 	orientation: 0.0,1.0,0.0 1.43549
 	scaling: 0.261239
@@ -5367,7 +5754,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 8.0,0.306502,-3.0
 	orientation: 0.0,1.0,0.0 0.177644
 	scaling: 0.306502
@@ -5380,7 +5768,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 8.0,0.130006,-2.0
 	orientation: 0.0,1.0,0.0 0.825767
 	scaling: 0.130006
@@ -5393,7 +5782,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 8.0,0.364806,-1.0
 	orientation: 0.0,1.0,0.0 0.220747
 	scaling: 0.364806
@@ -5406,7 +5796,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 8.0,0.586528,0.0
 	orientation: 0.0,1.0,0.0 0.30049
 	scaling: 0.586528
@@ -5419,7 +5810,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 8.0,0.147757,1.0
 	orientation: 0.0,1.0,0.0 0.487076
 	scaling: 0.147757
@@ -5432,7 +5824,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 8.0,0.457746,2.0
 	orientation: 0.0,1.0,0.0 0.805486
 	scaling: 0.457746
@@ -5445,7 +5838,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 8.0,0.440998,3.0
 	orientation: 0.0,1.0,0.0 1.30235
 	scaling: 0.440998
@@ -5458,7 +5852,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 8.0,0.503135,4.0
 	orientation: 0.0,1.0,0.0 0.222879
 	scaling: 0.503135
@@ -5473,7 +5868,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 8.0,0.247406,5.0
 	orientation: 0.0,1.0,0.0 0.805555
 	scaling: 0.247406
@@ -5488,7 +5884,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 8.0,0.738466,6.0
 	orientation: 0.0,1.0,0.0 1.14197
 	scaling: 0.738466
@@ -5501,7 +5898,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 8.0,0.183476,7.0
 	orientation: 0.0,1.0,0.0 0.811539
 	scaling: 0.183476
@@ -5516,7 +5914,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 8.0,0.33154,8.0
 	orientation: 0.0,1.0,0.0 0.707993
 	scaling: 0.33154
@@ -5529,7 +5928,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 8.0,0.115836,9.0
 	orientation: 0.0,1.0,0.0 0.129729
 	scaling: 0.115836
@@ -5542,7 +5942,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 8.0,0.570611,10.0
 	orientation: 0.0,1.0,0.0 1.22809
 	scaling: 0.570611
@@ -5555,7 +5956,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 9.0,0.387423,-10.0
 	orientation: 0.0,1.0,0.0 0.0703272
 	scaling: 0.387423
@@ -5568,7 +5970,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 9.0,0.264908,-9.0
 	orientation: 0.0,1.0,0.0 0.486136
 	scaling: 0.264908
@@ -5581,7 +5984,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 9.0,0.443093,-8.0
 	orientation: 0.0,1.0,0.0 0.783872
 	scaling: 0.443093
@@ -5596,7 +6000,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 9.0,0.750517,-7.0
 	orientation: 0.0,1.0,0.0 0.898798
 	scaling: 0.750517
@@ -5609,7 +6014,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 9.0,0.521569,-6.0
 	orientation: 0.0,1.0,0.0 0.99558
 	scaling: 0.521569
@@ -5622,7 +6028,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 9.0,0.280845,-5.0
 	orientation: 0.0,1.0,0.0 0.154139
 	scaling: 0.280845
@@ -5635,7 +6042,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 9.0,0.341684,-4.0
 	orientation: 0.0,1.0,0.0 0.901268
 	scaling: 0.341684
@@ -5648,7 +6056,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 9.0,0.544478,-3.0
 	orientation: 0.0,1.0,0.0 1.43941
 	scaling: 0.544478
@@ -5661,7 +6070,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 9.0,0.368817,-2.0
 	orientation: 0.0,1.0,0.0 0.0365693
 	scaling: 0.368817
@@ -5674,7 +6084,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 9.0,0.769892,-1.0
 	orientation: 0.0,1.0,0.0 1.52759
 	scaling: 0.769892
@@ -5687,7 +6098,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 9.0,0.132965,0.0
 	orientation: 0.0,1.0,0.0 0.644684
 	scaling: 0.132965
@@ -5700,7 +6112,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 9.0,0.438297,1.0
 	orientation: 0.0,1.0,0.0 1.1895
 	scaling: 0.438297
@@ -5715,7 +6128,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 9.0,0.102403,2.0
 	orientation: 0.0,1.0,0.0 0.984397
 	scaling: 0.102403
@@ -5728,7 +6142,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 9.0,0.108967,3.0
 	orientation: 0.0,1.0,0.0 0.503629
 	scaling: 0.108967
@@ -5743,7 +6158,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 9.0,0.397379,4.0
 	orientation: 0.0,1.0,0.0 0.64858
 	scaling: 0.397379
@@ -5756,7 +6172,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 9.0,0.603543,5.0
 	orientation: 0.0,1.0,0.0 0.0154059
 	scaling: 0.603543
@@ -5769,7 +6186,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 9.0,0.193517,6.0
 	orientation: 0.0,1.0,0.0 0.914565
 	scaling: 0.193517
@@ -5782,7 +6200,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 9.0,0.512387,7.0
 	orientation: 0.0,1.0,0.0 1.52453
 	scaling: 0.512387
@@ -5795,7 +6214,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 9.0,0.677045,8.0
 	orientation: 0.0,1.0,0.0 1.32177
 	scaling: 0.677045
@@ -5808,7 +6228,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 9.0,0.415391,9.0
 	orientation: 0.0,1.0,0.0 0.848884
 	scaling: 0.415391
@@ -5821,7 +6242,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 9.0,0.44002,10.0
 	orientation: 0.0,1.0,0.0 0.400638
 	scaling: 0.44002
@@ -5834,7 +6256,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 10.0,0.474326,-10.0
 	orientation: 0.0,1.0,0.0 0.166944
 	scaling: 0.474326
@@ -5847,7 +6270,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 10.0,0.191286,-9.0
 	orientation: 0.0,1.0,0.0 0.342983
 	scaling: 0.191286
@@ -5862,7 +6286,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 10.0,0.503908,-8.0
 	orientation: 0.0,1.0,0.0 0.416799
 	scaling: 0.503908
@@ -5875,7 +6300,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 10.0,0.259287,-7.0
 	orientation: 0.0,1.0,0.0 0.842572
 	scaling: 0.259287
@@ -5888,7 +6314,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 10.0,0.397858,-6.0
 	orientation: 0.0,1.0,0.0 0.0445718
 	scaling: 0.397858
@@ -5903,7 +6330,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 10.0,0.168432,-5.0
 	orientation: 0.0,1.0,0.0 0.971435
 	scaling: 0.168432
@@ -5916,7 +6344,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 10.0,0.662593,-4.0
 	orientation: 0.0,1.0,0.0 0.0231584
 	scaling: 0.662593
@@ -5929,7 +6358,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 10.0,0.65742,-3.0
 	orientation: 0.0,1.0,0.0 0.271438
 	scaling: 0.65742
@@ -5942,7 +6372,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 10.0,0.599207,-2.0
 	orientation: 0.0,1.0,0.0 0.757224
 	scaling: 0.599207
@@ -5955,7 +6386,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 10.0,0.259773,-1.0
 	orientation: 0.0,1.0,0.0 1.30866
 	scaling: 0.259773
@@ -5968,7 +6400,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 10.0,0.522005,0.0
 	orientation: 0.0,1.0,0.0 1.09608
 	scaling: 0.522005
@@ -5983,7 +6416,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 10.0,0.285717,1.0
 	orientation: 0.0,1.0,0.0 0.979558
 	scaling: 0.285717
@@ -5996,7 +6430,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 10.0,0.704078,2.0
 	orientation: 0.0,1.0,0.0 1.45816
 	scaling: 0.704078
@@ -6009,7 +6444,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 10.0,0.65629,3.0
 	orientation: 0.0,1.0,0.0 0.77415
 	scaling: 0.65629
@@ -6022,7 +6458,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 10.0,0.101369,4.0
 	orientation: 0.0,1.0,0.0 1.23338
 	scaling: 0.101369
@@ -6035,7 +6472,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 10.0,0.190486,5.0
 	orientation: 0.0,1.0,0.0 1.05505
 	scaling: 0.190486
@@ -6050,7 +6488,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 10.0,0.319205,6.0
 	orientation: 0.0,1.0,0.0 0.706869
 	scaling: 0.319205
@@ -6063,7 +6502,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 10.0,0.556381,7.0
 	orientation: 0.0,1.0,0.0 0.713501
 	scaling: 0.556381
@@ -6076,7 +6516,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 10.0,0.159665,8.0
 	orientation: 0.0,1.0,0.0 0.719503
 	scaling: 0.159665
@@ -6091,7 +6532,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 10.0,0.455467,9.0
 	orientation: 0.0,1.0,0.0 0.00330291
 	scaling: 0.455467
@@ -6104,7 +6546,8 @@
 	mesh: cube
 	shadows: true
 	twosided: false
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	translation: 10.0,0.309536,10.0
 	orientation: 0.0,1.0,0.0 1.34016
 	scaling: 0.309536

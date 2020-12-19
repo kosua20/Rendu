@@ -26,7 +26,8 @@
 	mesh: cornellbox_backWall_12
 	shadows: true
 	twosided: true
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	textures:
 		- srgb: cornellbox_grey
 		- rgb: default_normal
@@ -35,7 +36,7 @@
 * object:
 	mesh: cornellbox_floor_0
 	shadows: false
-	type: PBRParallax
+	type: Parallax
 	textures:
 		- srgb: ground_leaves_color
 		- rgb: ground_leaves_normal
@@ -46,7 +47,7 @@
 * object:
 	mesh: cornellbox_sphere
 	shadows: true
-	type: PBRParallax
+	type: Parallax
 	textures:
 		- srgb: leather_color
 		- rgb:  leather_normal

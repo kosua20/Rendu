@@ -22,7 +22,8 @@
 	mesh: cornellbox_floor_0
 	shadows: true
 	twosided: true
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	textures:
 		- srgb: cornellbox_grey
 		- rgb: default_normal
@@ -32,7 +33,8 @@
 	mesh: cornellbox_ceiling_6
 	shadows: true
 	twosided: true
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	textures:
 		- srgb: cornellbox_grey
 		- rgb: default_normal
@@ -42,7 +44,8 @@
 	mesh: cornellbox_backWall_12
 	shadows: true
 	twosided: true
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	textures:
 		- srgb: cornellbox_grey
 		- rgb: default_normal
@@ -52,7 +55,8 @@
 	mesh: cornellbox_rightWall_18
 	shadows: true
 	twosided: true
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	textures:
 		- srgb: cornellbox_red
 		- rgb: default_normal
@@ -62,7 +66,8 @@
 	mesh: cornellbox_leftWall_24
 	shadows: true
 	twosided: true
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	textures:
 		- srgb: cornellbox_green
 		- rgb: default_normal
@@ -71,7 +76,8 @@
 * object:
 	mesh: cornellbox_smallBox_30
 	shadows: true
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	textures:
 		- srgb: cornellbox_grey
 		- rgb: default_normal
@@ -80,7 +86,8 @@
 * object:
 	mesh: cornellbox_largeBox_60
 	shadows: true
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	textures:
 		- srgb: cornellbox_grey
 		- rgb: default_normal
@@ -90,7 +97,8 @@
 	mesh: cornellbox_light_90
 	shadows: true
 	twosided: true
-	type: PBRNoUVs
+	type: Regular
+	skipuvs: true
 	textures:
 		- srgb: cornellbox_white
 		- rgb: default_normal
