@@ -40,6 +40,7 @@ void ForwardRenderer::setScene(const std::shared_ptr<Scene> & scene) {
 		return;
 	}
 	_scene = scene;
+	_culler.reset(new Culler(_scene->objects));
 	_lightsGPU.reset(new ForwardLight(_scene->lights.size()));
 	checkGLError();
 }
@@ -53,28 +54,18 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 	GLUtilities::clearDepth(1.0f);
 	GLUtilities::clearColor({0.5f,0.5f,0.5f,1.0f});
 
-	// Build the camera frustum for culling.
-	if(!_freezeFrustum){
-		_frustumMat = proj*view;
-	}
+	const auto & visibles = _culler->cullAndSort(view, proj, pos);
 
-	// Depth prepass and visibility.
-	const size_t objCount = _scene->objects.size();
-	std::vector<bool> visibles(objCount, false);
-	const Frustum camFrustum(_frustumMat);
 
+	// Depth prepass.
 	_depthPrepass->use();
-	for(size_t tid = 0; tid < objCount; ++tid) {
-		const auto & object = _scene->objects[tid];
-		// Skip transparent objects.
-		if(object.type() == Object::Transparent){
-			continue;
+	for(const long & objectId : visibles) {
+		// Once we get a -1, there is no other object to render.
+		if(objectId == -1){
+			break;
 		}
-		// Check visibility.
-		if(!camFrustum.intersects(object.boundingBox())){
-			continue;
-		}
-		visibles[tid] = true;
+
+		const auto & object = _scene->objects[objectId];
 
 		// Render using prepass shader.
 		// We skip parallax mapped objects as their depth is going to change.
@@ -150,11 +141,13 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 
 
 	// Scene objects.
-	for(size_t tid = 0; tid < objCount; ++tid) {
-		if(!visibles[tid]){
-			continue;
+	for(const long & objectId : visibles) {
+		// Once we get a -1, there is no other object to render.
+		if(objectId == -1){
+			break;
 		}
-		const auto & object = _scene->objects[tid];
+
+		const auto & object = _scene->objects[objectId];
 
 		// Combine the three matrices.
 		const glm::mat4 MV	= view * object.model();
@@ -307,13 +300,16 @@ void ForwardRenderer::resize(unsigned int width, unsigned int height) {
 }
 
 void ForwardRenderer::interface(){
-	ImGui::Checkbox("Freeze culling", &_freezeFrustum);
+
 	ImGui::Combo("Shadow technique", reinterpret_cast<int*>(&_shadowMode), "None\0Basic\0Variance\0\0");
 	ImGui::Checkbox("SSAO", &_applySSAO);
 	if(_applySSAO) {
 		ImGui::SameLine();
 		ImGui::Combo("Blur quality", reinterpret_cast<int*>(&_ssaoPass->quality()), "Low\0Medium\0High\0\0");
 		ImGui::InputFloat("Radius", &_ssaoPass->radius(), 0.5f);
+	}
+	if(_culler){
+		_culler->interface();
 	}
 }
 
