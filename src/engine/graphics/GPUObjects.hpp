@@ -577,7 +577,7 @@ public:
 	bool scissorTest = false; ///< Is geometry tested against the scissor region or not.
 
 	// Binding state.
-	using TextureBindings = std::unordered_map<GLenum, GLuint>;
+	using TextureBindings = std::unordered_map<GLenum, GLuint>; ///< List of texture shapes and handles.
 	std::array<TextureBindings, 32> textures; ///< Textures bound at each target for each slot.
 	GLuint readFramebuffer = 0; ///< Currently bound read framebuffer.
 	GLuint drawFramebuffer = 0; ///< Currently bound draw framebuffer.

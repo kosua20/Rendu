@@ -6,7 +6,7 @@ layout(location = 2) in vec2 uv; ///< Texture coordinates.
 
 uniform mat4 mvp; ///< MVP transformation matrix.
 uniform mat3 normalMatrix; ///< Normal transformation matrix.
-uniform bool hasUV;
+uniform bool hasUV; ///< Does the mesh have UV.
 
 out INTERFACE {
 	vec3 n; ///< Normal direction.

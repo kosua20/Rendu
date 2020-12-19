@@ -117,7 +117,7 @@ public:
 private:
 	
 	std::string _name; ///< Resource name.
-	bool _hasTexcoords = false;
-	bool _hasNormals = false;
-	bool _hasColors = false;
+	bool _hasTexcoords = false; ///< Did the loaded mesh had texcoords.
+	bool _hasNormals = false; ///< Did the loaded mesh had normals.
+	bool _hasColors = false; ///< Did the loaded mesh had colors.
 };

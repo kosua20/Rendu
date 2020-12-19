@@ -4,8 +4,8 @@
 #include "scene/Object.hpp"
 
 /**
- \brief
- \details
+ \brief Select and sort objects based on visibility and distance criteria.
+ \details This can be used to limit the number of objects drawn based on if they fall inside a camera frustum. Their ordering can also be optimized, for instance to maximize depth rejection or ensure transparent objects are rendered back to front.
  \ingroup Renderers
  */
 class Culler {
@@ -28,6 +28,7 @@ public:
 	/** Detect objects that are inside the view frustum and sort them based on their type. This returns the object indices in a list padded to the objects count with -1s.
 	 \param view the view matrix
 	 \param proj the projection matrix
+	 \param pos the camera position in world space
 	 \return indices of the objects to be rendered
 	 \note As soon as a -1 is encountered in the list, all further indices will also be -1.
 	 */

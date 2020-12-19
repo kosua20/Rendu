@@ -44,11 +44,10 @@ class ScreenQuad;
  */
 class GLUtilities {
 
-	friend GPUTexture;
-	friend GPUBuffer;
-	friend GPUMesh;
-	friend Framebuffer;
-	friend ScreenQuad;
+	friend class GPUTexture; ///< Access to deletion notifier for cached state update.
+	friend class GPUBuffer; ///< Access to deletion notifier for cached state update.
+	friend class GPUMesh; ///< Access to deletion notifier for cached state update.
+	friend class Framebuffer; ///< Access to deletion notifier for cached state update.
 
 public:
 	/** Setup the GPU in its initial state.
