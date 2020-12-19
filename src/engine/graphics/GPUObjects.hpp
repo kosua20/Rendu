@@ -571,10 +571,6 @@ public:
 	bool stencilTest = false; ///< Is the stencil test enabled or not.
 	bool stencilWriteMask = true; ///< should stencil be written to the stencil buffer or not.
 
-	// Point state.
-	float pointSize		  = 0.0f; ///< Fixed point size value.
-	bool programPointSize	= false; ///< Can the point size be defined in the vertex shader.
-
 	// Viewport and scissor state.
 	glm::vec4 viewport {0.0f}; ///< Current viewport region.
 	glm::vec4 scissorBox {0.0f}; ///< Current scissor region.

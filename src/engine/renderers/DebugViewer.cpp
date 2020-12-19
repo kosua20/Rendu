@@ -363,7 +363,6 @@ void DebugViewer::displayState(const std::string & name, StateInfos & infos){
 			str << "Polygon offset: point: " << bools.at(st.polygonOffsetPoint) << ", line: " << bools.at(st.polygonOffsetLine) << ", fill: " << bools.at(st.polygonOffsetFill) << "\n";
 			str << "Polygon offset: factor: " << st.polygonOffsetFactor << ", units: " << st.polygonOffsetUnits << "\n";
 
-			str << "Point size: " << st.pointSize << ", program: " << bools.at(st.programPointSize) << "\n";
 			const std::string strRes = str.str();
 			ImGui::Text("%s", strRes.c_str());
 		}

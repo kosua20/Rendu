@@ -35,8 +35,4 @@ public:
 	/// Constructor.
 	ScreenQuad() = delete;
 	
-private:
-
-	static GLuint _vao; ///< The unique empty VAO.
-	static bool _init;  ///< Has the common VAO been setup?
 };

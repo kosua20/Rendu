@@ -226,6 +226,9 @@ public:
 	 */
 	static void drawTesselatedMesh(const Mesh & mesh, uint patchSize);
 
+	/** Draw a fullscreen quad.*/
+	static void drawQuad();
+
 	/** Flush the GPU command pipelines and wait for all processing to be done.
 	 */
 	static void sync();
@@ -426,12 +429,6 @@ private:
 	 */
 	static void restoreTexture(TextureShape shape);
 
-	/** Register and perform vertex array binding
-	 \param vao the vertex array to bind
-	 \note For Screenquad only
-	 */
-	static void bindVertexArray(GLuint vao);
-
 	/** Update the cache to remove input object if it was used.
 	 \param tex the texture that was deleted
 	 \note See the OpenGL specification for update of bindings when named object is deleted.
@@ -451,4 +448,5 @@ private:
 	static void deleted(GPUMesh & mesh);
 
 	static GPUState _state; ///< Current GPU state for caching.
+	static GLuint _vao; ///< The unique empty screenquad VAO.
 };

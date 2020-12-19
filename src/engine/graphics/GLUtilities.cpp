@@ -106,11 +106,18 @@ void GLUtilities::setup() {
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	glDepthFunc(GL_LESS);
 	glEnable(GL_FRAMEBUFFER_SRGB);
+	glEnable(GL_PROGRAM_POINT_SIZE);
 	Framebuffer::backbuffer()->bind();
 
 	// Cache initial state.
 	GLUtilities::getState(_state);
 	_state.polygonMode = PolygonMode::FILL;
+
+	// Create empty VAO for screenquad.
+	glGenVertexArrays(1, &_vao);
+	glBindVertexArray(_vao);
+	glBindVertexArray(0);
+	_state.vertexArray = 0;
 }
 
 GLuint GLUtilities::loadShader(const std::string & prog, ShaderType type, Bindings & bindings, std::string & finalLog) {
@@ -847,7 +854,6 @@ void GLUtilities::drawMesh(const Mesh & mesh) {
 
 }
 
-
 void GLUtilities::drawTesselatedMesh(const Mesh & mesh, uint patchSize){
 	glPatchParameteri(GL_PATCH_VERTICES, GLint(patchSize));
 	if(_state.vertexArray != mesh.gpu->id){
@@ -856,6 +862,14 @@ void GLUtilities::drawTesselatedMesh(const Mesh & mesh, uint patchSize){
 	}
 	glDrawElements(GL_PATCHES, mesh.gpu->count, GL_UNSIGNED_INT, static_cast<void *>(nullptr));
 
+}
+
+void GLUtilities::drawQuad(){
+	if(_state.vertexArray != _vao){
+		_state.vertexArray = _vao;
+		glBindVertexArray(_vao);
+	}
+	glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
 void GLUtilities::sync() {
@@ -1329,7 +1343,6 @@ void GLUtilities::getState(GPUState& state) {
 	state.polygonOffsetFill = glIsEnabled(GL_POLYGON_OFFSET_FILL);
 	state.polygonOffsetLine = glIsEnabled(GL_POLYGON_OFFSET_LINE);
 	state.polygonOffsetPoint = glIsEnabled(GL_POLYGON_OFFSET_POINT);
-	state.programPointSize = glIsEnabled(GL_PROGRAM_POINT_SIZE);
 	state.scissorTest = glIsEnabled(GL_SCISSOR_TEST);
 	state.stencilTest = glIsEnabled(GL_STENCIL_TEST);
 
@@ -1430,9 +1443,6 @@ void GLUtilities::getState(GPUState& state) {
 	state.stencilWriteMask = (swm != 0);
 	state.stencilValue = uchar(srv);
 	state.stencilClearValue = uchar(scv);
-	
-	// Point state.
-	glGetFloatv(GL_POINT_SIZE, &state.pointSize);
 
 	// Viewport and scissor state.
 	glGetFloatv(GL_VIEWPORT, &state.viewport[0]);
@@ -1481,13 +1491,6 @@ void GLUtilities::restoreTexture(TextureShape shape){
 	glBindTexture(target, _state.textures[slot][target]);
 }
 
-void GLUtilities::bindVertexArray(GLuint vao){
-	if(_state.vertexArray != vao){
-		_state.vertexArray = vao;
-		glBindVertexArray(vao);
-	}
-}
-
 void GLUtilities::deleted(GPUTexture & tex){
 	// If any active slot is using it, set it to 0.
 	for(auto& bind : _state.textures){
@@ -1513,3 +1516,4 @@ void GLUtilities::deleted(GPUMesh & mesh){
 }
 
 GPUState GLUtilities::_state;
+GLuint GLUtilities::_vao = 0;
