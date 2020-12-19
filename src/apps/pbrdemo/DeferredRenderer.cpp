@@ -77,7 +77,7 @@ void DeferredRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & pro
 
 		// Select the program (and shaders).
 		switch(object.type()) {
-			case Object::PBRParallax:
+			case Object::Parallax:
 				_parallaxProgram->use();
 				// Upload the MVP matrix.
 				_parallaxProgram->uniform("mvp", MVP);
@@ -88,21 +88,20 @@ void DeferredRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & pro
 				// Upload the normal matrix.
 				_parallaxProgram->uniform("normalMatrix", normalMatrix);
 				break;
-			case Object::PBRNoUVs:
-			case Object::PBRRegular:
+			case Object::Regular:
 				_objectProgram->use();
 				// Upload the MVP matrix.
 				_objectProgram->uniform("mvp", MVP);
 				// Upload the normal matrix.
 				_objectProgram->uniform("normalMatrix", normalMatrix);
-				_objectProgram->uniform("hasUV", object.mesh()->hadTexcoords());
+				_objectProgram->uniform("hasUV", object.useTexCoords());
 				break;
 			case Object::Emissive:
 				_emissiveProgram->use();
 				// Upload the MVP matrix.
 				_emissiveProgram->uniform("mvp", MVP);
 				// Are UV available. Note: we might want to decouple UV use from their existence.
-				_emissiveProgram->uniform("hasUV", object.mesh()->hadTexcoords());
+				_emissiveProgram->uniform("hasUV", object.useTexCoords());
 				break;
 			default:
 				break;

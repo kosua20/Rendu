@@ -70,7 +70,7 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 		// Render using prepass shader.
 		// We skip parallax mapped objects as their depth is going to change.
 		// But we still mark them as visible for the shading pass, as they are opaque.
-		if(object.type() == Object::PBRParallax){
+		if(object.type() == Object::Parallax){
 			continue;
 		}
 
@@ -83,7 +83,7 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 		_depthPrepass->uniform("normalMatrix", normalMatrix);
 		// Alpha mask if needed.
 		_depthPrepass->uniform("hasMask", object.masked());
-		_depthPrepass->uniform("hasUV", object.mesh()->hadTexcoords());
+		_depthPrepass->uniform("hasUV", object.useTexCoords());
 		
 		if(object.masked()) {
 			GLUtilities::bindTexture(object.textures()[0], 0);
@@ -157,7 +157,7 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 		if(object.type() == Object::Type::Emissive){
 			_emissiveProgram->use();
 			_emissiveProgram->uniform("mvp", MVP);
-			_emissiveProgram->uniform("hasUV", object.mesh()->hadTexcoords());
+			_emissiveProgram->uniform("hasUV", object.useTexCoords());
 			if(object.twoSided()) {
 				GLUtilities::setCullState(false);
 			}
@@ -174,13 +174,12 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 		// Select the program (and shaders).
 		Program * currentProgram = nullptr;
 		switch(object.type()) {
-			case Object::PBRParallax:
+			case Object::Parallax:
 				currentProgram = _parallaxProgram;
 				break;
-			case Object::PBRNoUVs:
-			case Object::PBRRegular:
+			case Object::Regular:
 				currentProgram = _objectProgram;
-				currentProgram->uniform("hasUV", object.mesh()->hadTexcoords());
+				currentProgram->uniform("hasUV", object.useTexCoords());
 				break;
 			default:
 				Log::Error() << "Unsupported material type." << std::endl;

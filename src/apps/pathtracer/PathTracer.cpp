@@ -103,7 +103,7 @@ glm::mat3 PathTracer::buildLocalFrame(const Object & obj, const Raycaster::Hit &
 	}
 
 	// If we have a normal map, perturb the local normal and udpate the frame.
-	if(obj.type() != Object::Type::PBRNoUVs && obj.type() != Object::Type::Emissive){
+	if(obj.useTexCoords() && obj.type() != Object::Type::Emissive){
 		const glm::vec3 imgNormal = glm::vec3(obj.textures()[1]->images[0].rgbal(uv.x, uv.y));
 		const glm::vec3 localNormal = glm::normalize(2.0f * imgNormal - 1.0f);
 		// Convert local normal to world.
@@ -126,8 +126,8 @@ bool PathTracer::checkVisibility(const glm::vec3 & startPos, const glm::vec3 & r
 		}
 		// If we hit, two cases.
 		const auto & lobj = _scene->objects[lhit.meshId];
-		if(!lobj.masked()){
-			// If the object has no masj, geometric occlusion is always valid.
+		if(!lobj.masked() || !lobj.useTexCoords()){
+			// If the object has no mask or no uvs, geometric occlusion is always valid.
 			return false;
 		} else {
 			// We have to sample the object alpha mask.
@@ -206,7 +206,7 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 					const Mesh & mesh  = *obj.mesh();
 					const glm::vec3 p  = rayPos + hit.dist * rayDir;
 					// Fetch material texel information.
-					const bool noUVs = obj.type() == Object::Type::PBRNoUVs || mesh.texcoords.empty();
+					const bool noUVs = !obj.useTexCoords();
 					const glm::vec2 uv = noUVs ? glm::vec2(0.5f, 0.5f) :  Raycaster::interpolateAttribute(hit, mesh, mesh.texcoords);
 					const Image & image  = obj.textures()[0]->images[0];
 					const glm::vec4 bCol = image.rgbal(uv.x, uv.y);
