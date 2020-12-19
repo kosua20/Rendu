@@ -213,7 +213,7 @@ void DeferredRenderer::resize(unsigned int width, unsigned int height) {
 }
 
 void DeferredRenderer::interface(){
-	ImGui::Checkbox("Freeze culling", &_freezeFrustum);
+
 	ImGui::Combo("Shadow technique", reinterpret_cast<int*>(&_shadowMode), "None\0Basic\0Variance\0\0");
 	ImGui::Checkbox("SSAO", &_applySSAO);
 	if(_applySSAO) {
@@ -221,6 +221,10 @@ void DeferredRenderer::interface(){
 		ImGui::Combo("Blur quality", reinterpret_cast<int*>(&_ssaoPass->quality()), "Low\0Medium\0High\0\0");
 		ImGui::InputFloat("Radius", &_ssaoPass->radius(), 0.5f);
 	}
+	if(_culler){
+		_culler->interface();
+	}
+	
 }
 
 const Framebuffer * DeferredRenderer::sceneDepth() const {
