@@ -8,21 +8,21 @@
 
 
 static const std::map<Object::Type, std::string> typesToStr = {
-	REGISTER_TYPESTR(Common),
-	REGISTER_TYPESTR(PBRRegular),
-	REGISTER_TYPESTR(PBRParallax),
-	REGISTER_TYPESTR(PBRNoUVs),
-	REGISTER_TYPESTR(Emissive)};
+	REGISTER_TYPESTR(None),
+	REGISTER_TYPESTR(Regular),
+	REGISTER_TYPESTR(Parallax),
+	REGISTER_TYPESTR(Emissive),
 
 static const std::map<std::string, Object::Type> strToTypes = {
-	REGISTER_STRTYPE(Common),
-	REGISTER_STRTYPE(PBRRegular),
-	REGISTER_STRTYPE(PBRParallax),
-	REGISTER_STRTYPE(PBRNoUVs),
-	REGISTER_STRTYPE(Emissive)};
+	REGISTER_STRTYPE(None),
+	REGISTER_STRTYPE(Regular),
+	REGISTER_STRTYPE(Parallax),
+	REGISTER_STRTYPE(Emissive),
 
 Object::Object(const Type type, const Mesh * mesh, bool castShadows) :
 	_mesh(mesh), _material(type), _castShadow(castShadows) {
+	// Skip UVs if not available.
+	_skipUVs = !_mesh->hadTexcoords();
 }
 
 void Object::decode(const KeyValues & params, Storage options) {
@@ -57,8 +57,13 @@ void Object::decode(const KeyValues & params, Storage options) {
 			_twoSided = Codable::decodeBool(param);
 		} else if(param.key == "masked") {
 			_masked = Codable::decodeBool(param);
+		} else if(param.key == "skipuvs") {
+			_skipUVs = Codable::decodeBool(param);
 		}
 	}
+
+	// If the mesh doesn't have texture coordinates, skip UVs.
+	_skipUVs = _skipUVs || (!_mesh->hadTexcoords());
 }
 
 KeyValues Object::encode() const {
@@ -73,6 +78,8 @@ KeyValues Object::encode() const {
 	obj.elements.back().values = {Codable::encode(_twoSided)};
 	obj.elements.emplace_back("masked");
 	obj.elements.back().values = {Codable::encode(_masked)};
+	obj.elements.emplace_back("skipuvs");
+	obj.elements.back().values = {Codable::encode(_skipUVs)};
 	
 	if(_mesh){
 		obj.elements.emplace_back("mesh");

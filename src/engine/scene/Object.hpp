@@ -15,11 +15,10 @@ class Object {
 public:
 	/// \brief Type of shading/effects.
 	enum Type : int {
-		Common = 0,  ///< Any type of shading.
-		PBRRegular,  ///< PBR shading. \see GPU::Vert::Object_gbuffer, GPU::Frag::Object_gbuffer
-		PBRParallax, ///< PBR with parallax mapping. \see GPU::Vert::Object_parallax_gbuffer, GPU::Frag::Object_parallax_gbuffer
-		PBRNoUVs,	 ///< PBR for objects with no UVs.
-		Emissive  ///< Emissive objects (no shading, pure emitter)
+		None = 0,  ///< Any type of shading.
+		Regular,  ///< PBR shading. \see GPU::Vert::Object_gbuffer, GPU::Frag::Object_gbuffer
+		Parallax, ///< PBR with parallax mapping. \see GPU::Vert::Object_parallax_gbuffer, GPU::Frag::Object_parallax_gbuffer
+		Emissive,  	 ///< Emissive objects (no shading, pure emitter)
 	};
 
 	/** Constructor */
@@ -95,6 +94,11 @@ public:
 	 */
 	bool masked() const { return _masked; }
 
+	/** Should the object use its texture coordinates (if they exist)
+	 \return a boolean denoting if the UV should be used
+	 */
+	bool useTexCoords() const { return !_skipUVs; }
+
 	/** Check if the object is moving over time.
 	 \return a boolean denoting if animations are applied to the object
 	 */
@@ -109,6 +113,7 @@ public:
 	 orientation: axisX,axisY,axisZ angle
 	 shadows: bool
 	 twosided: bool
+	 skipuvs: bool
 	 masked: bool
 	 textures:
 	 	- texturetype: ...
@@ -152,9 +157,11 @@ protected:
 	std::vector<std::shared_ptr<Animation>> _animations; ///< Animations list (applied in order).
 	Animated<glm::mat4> _model { glm::mat4(1.0f) };		///< The transformation matrix of the 3D model, updated by the animations.
 	mutable BoundingBox _bbox;							///< The world space object bounding box.
-	Type _material   = Type::Common;					 ///< The material type.
-	bool _castShadow = true;							 ///< Can the object casts shadows.
-	bool _twoSided   = false;							 ///< Should faces of the object be visible from the two sides.
-	bool _masked	 = false;							 ///< The object RGB texture has a non-empty alpha channel.
-	mutable bool _dirtyBbox  = true;					 ///< Has the bounding box been updated following an animation update.
+	Type _material   = Type::None;		 ///< The material type.
+	bool _castShadow = true;			 ///< Can the object casts shadows.
+	bool _twoSided   = false;			 ///< Should faces of the object be visible from the two sides.
+	bool _masked	 = false;			 ///< The object RGB texture has a non-empty alpha channel.
+	bool _skipUVs	 = false;			 ///< The object doesn't use UV coordinates.
+
+	mutable bool _dirtyBbox  = true;	 ///< Has the bounding box been updated following an animation update.
 };
