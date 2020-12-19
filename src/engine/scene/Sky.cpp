@@ -1,7 +1,7 @@
 #include "scene/Sky.hpp"
 
 Sky::Sky(Storage options) :
-	Object(Object::Type::Common, Resources::manager().getMesh("plane", options), false) {
+	Object(Object::Type::None, Resources::manager().getMesh("plane", options), false) {
 }
 
 void Sky::decode(const KeyValues & params, Storage options) {

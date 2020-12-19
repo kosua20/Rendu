@@ -116,7 +116,7 @@ void Scene::loadCamera(const KeyValues & params, Storage) {
 }
 
 void Scene::loadBackground(const KeyValues & params, Storage options) {
-	background = std::unique_ptr<Object>(new Object(Object::Type::Common, Resources::manager().getMesh("plane", options), false));
+	background = std::unique_ptr<Object>(new Object(Object::Type::None, Resources::manager().getMesh("plane", options), false));
 
 	for(const auto & param : params.elements) {
 		if(param.key == "color") {
@@ -134,7 +134,7 @@ void Scene::loadBackground(const KeyValues & params, Storage options) {
 		} else if(param.key == "cube" && !param.elements.empty()) {
 			backgroundMode = Background::SKYBOX;
 			// Object is a textured skybox.
-			background = std::unique_ptr<Object>(new Object(Object::Type::Common, Resources::manager().getMesh("skybox", options), false));
+			background = std::unique_ptr<Object>(new Object(Object::Type::None, Resources::manager().getMesh("skybox", options), false));
 			background->decode(params, options);
 			// Load cubemap described as subelement.
 			const auto texInfos = Codable::decodeTexture(param.elements[0]);
