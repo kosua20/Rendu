@@ -12,6 +12,8 @@ class Culler {
 
 public:
 
+	using List = std::vector<long>; ///< Indices of selected objects.
+
 	/** Constructor
 	 \param objects the list of objects to process
 	 */
@@ -23,7 +25,7 @@ public:
 	 \return indices of the objects to be rendered
 	 \note As soon as a -1 is encountered in the list, all further indices will also be -1.
 	 */
-	const std::vector<long> & cull(const glm::mat4 & view, const glm::mat4 & proj);
+	const List & cull(const glm::mat4 & view, const glm::mat4 & proj);
 
 	/** Detect objects that are inside the view frustum and sort them based on their type. This returns the object indices in a list padded to the objects count with -1s.
 	 \param view the view matrix
@@ -32,7 +34,7 @@ public:
 	 \return indices of the objects to be rendered
 	 \note As soon as a -1 is encountered in the list, all further indices will also be -1.
 	 */
-	const std::vector<long> & cullAndSort(const glm::mat4 & view, const glm::mat4 & proj, const glm::vec3 & pos);
+	const List & cullAndSort(const glm::mat4 & view, const glm::mat4 & proj, const glm::vec3 & pos);
 
 	/** Display culling options GUI. */
 	void interface();
@@ -56,12 +58,13 @@ public:
 private:
 
 	const std::vector<Object> & _objects; ///< Reference to the objects to process.
-	std::vector<long> _order; ///< Will contain the indices of the objects selected.
+	List _order; ///< Will contain the indices of the objects selected.
 
 	/** Information for object sorting. */
 	struct DistPair {
 		long id = -1; ///< Index of the object.
 		double distance = std::numeric_limits<double>::max(); ///< Distance.
+		long material = -1; ///< Material set (lower is closer).
 	};
 	std::vector<DistPair> _distances; ///< Intermediate storage for sorting.
 

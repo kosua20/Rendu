@@ -7,7 +7,7 @@ Culler::Culler(const std::vector<Object> & objects) : _objects(objects), _frustu
 	_maxCount = (unsigned long)(objects.size());
 }
 
-const std::vector<long> & Culler::cull(const glm::mat4 & view, const glm::mat4 & proj){
+const Culler::List & Culler::cull(const glm::mat4 & view, const glm::mat4 & proj){
 	// Handle scene changes.
 	const size_t objCount = _objects.size();
 	if(_order.size() != objCount){
@@ -37,7 +37,7 @@ const std::vector<long> & Culler::cull(const glm::mat4 & view, const glm::mat4 &
 	return _order;
 }
 
-const std::vector<long> & Culler::cullAndSort(const glm::mat4 & view, const glm::mat4 & proj, const glm::vec3 & pos){
+const Culler::List & Culler::cullAndSort(const glm::mat4 & view, const glm::mat4 & proj, const glm::vec3 & pos){
 	// Handle scene changes.
 	const size_t objCount = _objects.size();
 	if(_order.size() != objCount){
@@ -68,7 +68,12 @@ const std::vector<long> & Culler::cullAndSort(const glm::mat4 & view, const glm:
 	}
 	// Sort wrt distances.
 	std::sort(_distances.begin(), _distances.begin() + cid, [](const DistPair & a, const DistPair & b){
-		return a.distance < b.distance;
+		if(a.material < b.material){
+			return true;
+		} else if( a.material > b.material){
+			return false;
+		}
+		return (a.distance < b.distance);
 	});
 
 	// Select the first maxCount visible objects at most,
