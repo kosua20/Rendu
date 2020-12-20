@@ -13,6 +13,10 @@ BilateralBlur::BilateralBlur() {
 // Draw function
 void BilateralBlur::process(const glm::mat4 & projection, const Texture * texture, const Texture * depthTex, const Texture * normalTex, Framebuffer & framebuffer) {
 
+	GLUtilities::setDepthState(false);
+	GLUtilities::setBlendState(false);
+	GLUtilities::setCullState(true, Faces::BACK);
+
 	if(!_intermediate || _intermediate->descriptor() != framebuffer.descriptor()){
 		_intermediate.reset(new Framebuffer(framebuffer.width(), framebuffer.height(), framebuffer.descriptor(), false, "Bilateral blur"));
 	}

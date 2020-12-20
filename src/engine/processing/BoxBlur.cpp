@@ -18,6 +18,10 @@ BoxBlur::BoxBlur(bool approximate) {
 // Draw function
 void BoxBlur::process(const Texture * texture, Framebuffer & framebuffer) {
 
+	GLUtilities::setDepthState(false);
+	GLUtilities::setBlendState(false);
+	GLUtilities::setCullState(true, Faces::BACK);
+	
 	// Detect changes of descriptor.
 	if(!_intermediate || _intermediate->descriptor() != framebuffer.descriptor()){
 		_intermediate.reset(new Framebuffer(framebuffer.width(), framebuffer.height(), framebuffer.descriptor(), false, "Box blur"));

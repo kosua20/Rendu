@@ -27,6 +27,8 @@ void LaplacianIntegrator::process(const Texture * texture) {
 
 	// First, compute the laplacian of each color channel (adding a 1px zero margin).
 	GLUtilities::setDepthState(false);
+	GLUtilities::setBlendState(false);
+	GLUtilities::setCullState(true, Faces::BACK);
 
 	_preproc->bind();
 	_preproc->setViewport();
@@ -39,6 +41,10 @@ void LaplacianIntegrator::process(const Texture * texture) {
 	_pyramid.process(_preproc->texture());
 
 	// Upscale to the final resolution.
+	GLUtilities::setDepthState(false);
+	GLUtilities::setBlendState(false);
+	GLUtilities::setCullState(true, Faces::BACK);
+	
 	_compo->bind();
 	_compo->setViewport();
 	_composite->use();

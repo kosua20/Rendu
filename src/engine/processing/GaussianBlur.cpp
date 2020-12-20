@@ -18,6 +18,11 @@ void GaussianBlur::process(const Texture * texture, Framebuffer & framebuffer) {
 	if(_frameBuffers.empty()) {
 		return;
 	}
+
+	GLUtilities::setDepthState(false);
+	GLUtilities::setBlendState(false);
+	GLUtilities::setCullState(true, Faces::BACK);
+
 	const uint width = framebuffer.width() / _downscale;
 	const uint height = framebuffer.height() / _downscale;
 	if(!_frameBuffers[0] || _frameBuffers[0]->descriptor() != framebuffer.descriptor()){

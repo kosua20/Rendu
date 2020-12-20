@@ -21,6 +21,10 @@ void FloodFiller::process(const Texture * texture, Output mode) {
 
 	extractAndPropagate(texture);
 
+	GLUtilities::setDepthState(false);
+	GLUtilities::setBlendState(false);
+	GLUtilities::setCullState(true, Faces::BACK);
+
 	_final->bind();
 	_final->setViewport();
 
@@ -37,6 +41,9 @@ void FloodFiller::process(const Texture * texture, Output mode) {
 void FloodFiller::extractAndPropagate(const Texture * texture) {
 	// Render seed positions in a 2 channels framebuffer (each non-black pixel is a seed).
 	GLUtilities::setDepthState(false);
+	GLUtilities::setBlendState(false);
+	GLUtilities::setCullState(true, Faces::BACK);
+
 	_ping->bind();
 	_ping->setViewport();
 	_extract->use();

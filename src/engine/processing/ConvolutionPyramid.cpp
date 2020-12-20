@@ -39,7 +39,10 @@ ConvolutionPyramid::ConvolutionPyramid(unsigned int width, unsigned int height, 
 }
 
 void ConvolutionPyramid::process(const Texture * texture) {
-
+	GLUtilities::setDepthState(false);
+	GLUtilities::setBlendState(false);
+	GLUtilities::setCullState(true, Faces::BACK);
+	
 	// Pad by the size of the filter.
 	_levelsIn[0]->bind();
 	// Shift the viewport and fill the padded region with 0s.

@@ -62,6 +62,10 @@ SSAO::SSAO(uint width, uint height, uint downscale, float radius) : _mediumBlur(
 // Draw function
 void SSAO::process(const glm::mat4 & projection, const Texture * depthTex, const Texture * normalTex) {
 
+	GLUtilities::setDepthState(false);
+	GLUtilities::setBlendState(false);
+	GLUtilities::setCullState(true, Faces::BACK);
+
 	_ssaoFramebuffer->bind();
 	_ssaoFramebuffer->setViewport();
 	_programSSAO->use();
