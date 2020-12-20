@@ -15,8 +15,10 @@ VarianceShadowMap2DArray::VarianceShadowMap2DArray(const std::vector<std::shared
 
 void VarianceShadowMap2DArray::draw(const Scene & scene) const {
 
-	GLUtilities::setCullState(true);
 	GLUtilities::setDepthState(true, TestFunction::LESS, true);
+	GLUtilities::setBlendState(false);
+	GLUtilities::setCullState(true, Faces::BACK);
+
 	_map->setViewport();
 	_program->use();
 
@@ -38,9 +40,8 @@ void VarianceShadowMap2DArray::draw(const Scene & scene) const {
 			if(!lightFrustum.intersects(object.boundingBox())){
 				continue;
 			}
-			if(object.twoSided()) {
-				GLUtilities::setCullState(false);
-			}
+			GLUtilities::setCullState(!object.twoSided(), Faces::BACK);
+
 			_program->uniform("hasMask", object.masked());
 			if(object.masked()) {
 				GLUtilities::bindTexture(object.textures()[0], 0);
@@ -48,12 +49,10 @@ void VarianceShadowMap2DArray::draw(const Scene & scene) const {
 			const glm::mat4 lightMVP = light->vp() * object.model();
 			_program->uniform("mvp", lightMVP);
 			GLUtilities::drawMesh(*(object.mesh()));
-			GLUtilities::setCullState(true);
 		}
 	}
 	
-	// --- Blur pass --------
-	GLUtilities::setDepthState(false);
+	// Apply box blur.
 	_blur->process(_map->texture(), *_map);
 }
 
@@ -71,7 +70,8 @@ VarianceShadowMapCubeArray::VarianceShadowMapCubeArray(const std::vector<std::sh
 void VarianceShadowMapCubeArray::draw(const Scene & scene) const {
 
 	GLUtilities::setDepthState(true, TestFunction::LESS, true);
-	GLUtilities::setCullState(true);
+	GLUtilities::setCullState(true, Faces::BACK);
+	GLUtilities::setBlendState(false);
 	_map->setViewport();
 	_program->use();
 
@@ -100,9 +100,8 @@ void VarianceShadowMapCubeArray::draw(const Scene & scene) const {
 				if(!lightFrustum.intersects(object.boundingBox())){
 					continue;
 				}
-				if(object.twoSided()) {
-					GLUtilities::setCullState(false);
-				}
+
+				GLUtilities::setCullState(!object.twoSided(), Faces::BACK);
 				const glm::mat4 mvp = faces[i] * object.model();
 				_program->uniform("mvp", mvp);
 				_program->uniform("m", object.model());
@@ -111,11 +110,9 @@ void VarianceShadowMapCubeArray::draw(const Scene & scene) const {
 					GLUtilities::bindTexture(object.textures()[0], 0);
 				}
 				GLUtilities::drawMesh(*(object.mesh()));
-				GLUtilities::setCullState(true);
 			}
 		}
 	}
 	// Apply box blur.
 	_blur->process(_map->texture(), *_map);
-	GLUtilities::setDepthState(false);
 }

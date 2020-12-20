@@ -15,11 +15,15 @@ void VarianceShadowMap2D::draw(const Scene & scene) const {
 	if(!_light->castsShadow()){
 		return;
 	}
+
+	GLUtilities::setCullState(true, Faces::BACK);
+	GLUtilities::setBlendState(false);
+	GLUtilities::setDepthState(true, TestFunction::LESS, true);
+
 	_map->bind();
 	_map->setViewport();
 	GLUtilities::clearColorAndDepth(glm::vec4(1.0f), 1.0f);
-	GLUtilities::setCullState(true);
-	GLUtilities::setDepthState(true, TestFunction::LESS, true);
+
 	_program->use();
 
 	const Frustum lightFrustum(_light->vp());
@@ -32,9 +36,7 @@ void VarianceShadowMap2D::draw(const Scene & scene) const {
 		if(!lightFrustum.intersects(object.boundingBox())){
 			continue;
 		}
-		if(object.twoSided()) {
-			GLUtilities::setCullState(false);
-		}
+		GLUtilities::setCullState(!object.twoSided(), Faces::BACK);
 		_program->uniform("hasMask", object.masked());
 		if(object.masked()) {
 			GLUtilities::bindTexture(object.textures()[0], 0);
@@ -42,11 +44,9 @@ void VarianceShadowMap2D::draw(const Scene & scene) const {
 		const glm::mat4 lightMVP = _light->vp() * object.model();
 		_program->uniform("mvp", lightMVP);
 		GLUtilities::drawMesh(*(object.mesh()));
-		GLUtilities::setCullState(true);
 	}
 	
-	// --- Blur pass --------
-	GLUtilities::setDepthState(false);
+	// Blur pass.
 	_blur->process(_map->texture(), *_map);
 }
 
@@ -63,11 +63,14 @@ void VarianceShadowMapCube::draw(const Scene & scene) const {
 	if(!_light->castsShadow()){
 		return;
 	}
+
+	GLUtilities::setDepthState(true, TestFunction::LESS, true);
+	GLUtilities::setCullState(true, Faces::BACK);
+	GLUtilities::setBlendState(false);
+
 	// Udpate the light vp matrices.
 	const auto & faces = _light->vpFaces();
 
-	GLUtilities::setDepthState(true, TestFunction::LESS, true);
-	GLUtilities::setCullState(true);
 	_map->setViewport();
 	_program->use();
 	// Pass the world space light position, and the projection matrix far plane.
@@ -87,9 +90,7 @@ void VarianceShadowMapCube::draw(const Scene & scene) const {
 			if(!lightFrustum.intersects(object.boundingBox())){
 				continue;
 			}
-			if(object.twoSided()) {
-				GLUtilities::setCullState(false);
-			}
+			GLUtilities::setCullState(!object.twoSided(), Faces::BACK);
 			const glm::mat4 mvp = faces[i] * object.model();
 			_program->uniform("mvp", mvp);
 			_program->uniform("m", object.model());
@@ -98,10 +99,8 @@ void VarianceShadowMapCube::draw(const Scene & scene) const {
 				GLUtilities::bindTexture(object.textures()[0], 0);
 			}
 			GLUtilities::drawMesh(*(object.mesh()));
-			GLUtilities::setCullState(true);
 		}
 	}
 	// Blur pass.
-	GLUtilities::setDepthState(false);
 	_blur->process(_map->texture(), *_map);
 }
