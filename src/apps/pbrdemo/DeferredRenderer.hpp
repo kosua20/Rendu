@@ -93,8 +93,7 @@ private:
 	const Program * _bgProgram;		///< Planar background program.
 	const Program * _atmoProgram;   ///< Atmospheric scattering program.
 
-	std::shared_ptr<Scene> _scene; 						 ///< The scene to render
-	
+	std::shared_ptr<Scene> _scene;	///< The scene to render
 	std::unique_ptr<Culler>	_culler;	///< Objects culler.
 
 	bool _applySSAO			 = true;  ///< Screen space ambient occlusion.

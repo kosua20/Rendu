@@ -182,12 +182,15 @@ void PBRDemo::draw() {
 		_debugRenderer->draw(_userCamera, *_finalRender);
 	}
 
-	// We now render a full screen quad in the default framebuffer, using sRGB space.
+	// We now render a full screen quad in the default framebuffer.
+
+	GLUtilities::setDepthState(false);
+	GLUtilities::setCullState(true, Faces::BACK);
+	GLUtilities::setBlendState(false);
+
 	Framebuffer::backbuffer()->bind();
 	GLUtilities::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 	_finalProgram->use();
-	GLUtilities::setDepthState(false);
-	GLUtilities::setCullState(true);
 	ScreenQuad::draw(_finalRender->texture());
 
 	_totalTime.end();

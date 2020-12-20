@@ -39,6 +39,7 @@ void PostProcessStack::process(const Texture * texture, const glm::mat4 & proj, 
 
 	GLUtilities::setDepthState(false);
 	GLUtilities::setBlendState(false);
+	GLUtilities::setCullState(true, Faces::BACK);
 
 	if(_settings.dof){
 		// --- DoF pass ------
@@ -115,7 +116,6 @@ void PostProcessStack::process(const Texture * texture, const glm::mat4 & proj, 
 		GLUtilities::blit(*_toneMapBuffer, framebuffer, 0, layer, Filter::LINEAR);
 	}
 
-	checkGLError();
 }
 
 void PostProcessStack::updateBlurPass(){

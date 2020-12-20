@@ -101,11 +101,11 @@ void DebugRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_
 	_lightDebugRenderer.updateCameraInfos(view, proj);
 
 	framebuffer.bind(layer);
-	GLUtilities::setDepthState(true);
-
-
-	GLUtilities::setPolygonState(PolygonMode::LINE);
+	GLUtilities::setDepthState(true, TestFunction::LEQUAL, true);
+	GLUtilities::setBlendState(false);
 	GLUtilities::setCullState(false);
+	// Wireframe mode.
+	GLUtilities::setPolygonState(PolygonMode::LINE);
 
 	if(_showLights){
 		for(const auto & light : _scene->lights){
@@ -130,6 +130,8 @@ void DebugRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_
 
 	}
 
+	GLUtilities::setPolygonState(PolygonMode::FILL);
+
 	// Render probe.
 	if(_showProbe){
 		const LightProbe & probe = _scene->environment;
@@ -149,8 +151,7 @@ void DebugRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_
 			GLUtilities::drawMesh(*_sphere);
 		}
 
-		GLUtilities::setCullState(true);
-		GLUtilities::setPolygonState(PolygonMode::FILL);
+		GLUtilities::setCullState(true, Faces::BACK);
 		// Combine the three matrices.
 		const glm::mat4 model = glm::scale(glm::translate(glm::mat4(1.0f), probe.position()), glm::vec3(0.15f));
 		const glm::mat4 MVP = vp * model;
@@ -166,11 +167,7 @@ void DebugRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_
 		GLUtilities::bindBuffer(*probe.shCoeffs(), 0);
 		GLUtilities::drawMesh(*_sphere);
 	}
-	GLUtilities::setCullState(true);
-	GLUtilities::setPolygonState(PolygonMode::FILL);
-	GLUtilities::setDepthState(false);
 
-	checkGLError();
 }
 
 void DebugRenderer::updateSceneMesh(){

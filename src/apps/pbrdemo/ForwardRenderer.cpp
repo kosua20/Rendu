@@ -48,11 +48,11 @@ void ForwardRenderer::setScene(const std::shared_ptr<Scene> & scene) {
 
 void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj, const glm::vec3 & pos) {
 	GLUtilities::setDepthState(true, TestFunction::LESS, true);
-	GLUtilities::setCullState(true);
+	GLUtilities::setCullState(true, Faces::BACK);
+	GLUtilities::setBlendState(false);
+
 	_sceneFramebuffer->bind();
 	_sceneFramebuffer->setViewport();
-	GLUtilities::clearDepth(1.0f);
-	GLUtilities::clearColor({0.5f,0.5f,0.5f,1.0f});
 
 	const auto & visibles = _culler->cullAndSort(view, proj, pos);
 
@@ -89,12 +89,8 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 			GLUtilities::bindTexture(object.textures()[0], 0);
 		}
 		// Backface culling state.
-		if(object.twoSided()) {
-			GLUtilities::setCullState(false);
-		}
+		GLUtilities::setCullState(!object.twoSided(), Faces::BACK);
 		GLUtilities::drawMesh(*object.mesh());
-		// Restore state.
-		GLUtilities::setCullState(true);
 	}
 
 	// --- SSAO pass

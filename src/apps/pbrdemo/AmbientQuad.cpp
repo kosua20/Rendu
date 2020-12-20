@@ -24,6 +24,10 @@ AmbientQuad::AmbientQuad(const Texture * texAlbedo, const Texture * texNormals, 
 
 void AmbientQuad::draw(const glm::mat4 & viewMatrix, const glm::mat4 & projectionMatrix, const LightProbe & environment) {
 
+	GLUtilities::setDepthState(false);
+	GLUtilities::setCullState(true, Faces::BACK);
+	GLUtilities::setBlendState(false);
+
 	const glm::mat4 invView = glm::inverse(viewMatrix);
 	// Store the four variable coefficients of the projection matrix.
 	const glm::vec4 projectionVector = glm::vec4(projectionMatrix[0][0], projectionMatrix[1][1], projectionMatrix[2][2], projectionMatrix[3][2]);

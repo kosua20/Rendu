@@ -50,7 +50,9 @@ void DeferredRenderer::setScene(const std::shared_ptr<Scene> & scene) {
 
 void DeferredRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj, const glm::vec3 & pos) {
 	GLUtilities::setDepthState(true, TestFunction::LESS, true);
-	
+	GLUtilities::setBlendState(false);
+	GLUtilities::setCullState(true, Faces::BACK);
+
 	// Bind the full scene framebuffer.
 	_gbuffer->bind();
 	// Set screen viewport
@@ -100,7 +102,7 @@ void DeferredRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & pro
 				_emissiveProgram->use();
 				// Upload the MVP matrix.
 				_emissiveProgram->uniform("mvp", MVP);
-				// Are UV available. Note: we might want to decouple UV use from their existence.
+				// Are UV available.
 				_emissiveProgram->uniform("hasUV", object.useTexCoords());
 				break;
 			default:
@@ -108,20 +110,14 @@ void DeferredRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & pro
 		}
 
 		// Backface culling state.
-		if(object.twoSided()) {
-			GLUtilities::setCullState(false);
-		}
+		GLUtilities::setCullState(!object.twoSided(), Faces::BACK);
 
 		// Bind the textures.
 		GLUtilities::bindTextures(object.textures());
 		GLUtilities::drawMesh(*object.mesh());
-		// Restore state.
-		GLUtilities::setCullState(true);
 	}
 	
 	renderBackground(view, proj, pos);
-
-	GLUtilities::setDepthState(false);
 }
 
 void DeferredRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 & proj, const glm::vec3 & pos){
@@ -129,6 +125,9 @@ void DeferredRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 
 	// No need to write the skybox depth to the framebuffer.
 	// Accept a depth of 1.0 (far plane).
 	GLUtilities::setDepthState(true, TestFunction::LEQUAL, false);
+	GLUtilities::setBlendState(false);
+	GLUtilities::setCullState(true, Faces::BACK);
+
 	const Object * background	= _scene->background.get();
 	const Scene::Background mode = _scene->backgroundMode;
 	
@@ -168,7 +167,6 @@ void DeferredRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 
 		}
 		GLUtilities::drawMesh(*background->mesh());
 	}
-	GLUtilities::setDepthState(true, TestFunction::LESS, true);
 }
 
 void DeferredRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_t layer) {
@@ -193,11 +191,11 @@ void DeferredRenderer::draw(const Camera & camera, Framebuffer & framebuffer, si
 	_lightBuffer->bind();
 	_lightBuffer->setViewport();
 	_ambientScreen->draw(view, proj, _scene->environment);
-	GLUtilities::setBlendState(true, BlendEquation::ADD, BlendFunction::ONE, BlendFunction::ONE);
+
 	for(auto & light : _scene->lights) {
 		light->draw(*_lightRenderer);
 	}
-	GLUtilities::setBlendState(false);
+
 	// Copy to the final framebuffer.
 	GLUtilities::blit(*_lightBuffer, framebuffer, 0, layer, Filter::NEAREST);
 
