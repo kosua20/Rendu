@@ -27,7 +27,6 @@ AtmosphereApp::AtmosphereApp(RenderingConfig & config) : CameraApp(config), _sca
 	// Populate lookup table.
 	updateSky();
 
-	GLUtilities::setDepthState(true);
 	checkGLError();
 }
 
@@ -38,6 +37,9 @@ void AtmosphereApp::draw() {
 
 	// Draw the atmosphere.
 	GLUtilities::setDepthState(false);
+	GLUtilities::setBlendState(false);
+	GLUtilities::setCullState(false);
+	
 	_atmosphereBuffer->bind();
 	_atmosphereBuffer->setViewport();
 	GLUtilities::clearColor({0.0f, 0.0f, 0.0f, 1.0f});

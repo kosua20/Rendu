@@ -63,6 +63,9 @@ void PathTracerApp::draw() {
 	
 	// Directly render the result texture without drawing the scene.
 	if(_showRender) {
+		GLUtilities::setBlendState(false);
+		GLUtilities::setDepthState(false);
+		GLUtilities::setCullState(true, Faces::BACK);
 		Framebuffer::backbuffer()->bind();
 		GLUtilities::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 		_passthrough->use();
@@ -73,7 +76,10 @@ void PathTracerApp::draw() {
 	
 	// Draw the real time visualization.
 	_bvhRenderer->draw(_userCamera, *_sceneFramebuffer);
-	// We now render a full screen quad in the default framebuffer, using sRGB space.
+	// We now render a full screen quad in the default framebuffer.
+	GLUtilities::setBlendState(false);
+	GLUtilities::setDepthState(false);
+	GLUtilities::setCullState(true, Faces::BACK);
 	Framebuffer::backbuffer()->bind();
 	GLUtilities::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 	_passthrough->use();

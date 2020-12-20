@@ -416,6 +416,8 @@ void Terrain::generateShadowMap(const glm::vec3 & lightDir){
 	_shadowBuffer->bind();
 	_shadowBuffer->setViewport();
 	GLUtilities::setDepthState(false);
+	GLUtilities::setBlendState(false);
+	GLUtilities::setCullState(true, Faces::BACK);
 	prog->use();
 	prog->uniform("stepCount", stepCount);
 	prog->uniform("lDir", lDir);

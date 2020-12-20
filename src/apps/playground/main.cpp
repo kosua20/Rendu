@@ -58,7 +58,9 @@ int main(int argc, char ** argv) {
 	}
 	const std::string titleHeader = "Extensions (" + std::to_string(extensions.size()) + ")";
 
-	GLUtilities::setDepthState(true);
+	GLUtilities::setDepthState(true, TestFunction::LESS, true);
+	GLUtilities::setCullState(true, Faces::BACK);
+	GLUtilities::setBlendState(false);
 
 	// Setup the timer.
 	double timer		 = System::time();

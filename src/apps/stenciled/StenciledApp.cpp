@@ -51,11 +51,10 @@ void StenciledApp::draw() {
 		GLUtilities::clearColorAndDepth({1.0f, 1.0f, 1.0f, 1.0f}, 1.0f);
 		return;
 	}
-	checkGLError();
 	_renderer->draw(_userCamera, *_finalRender);
-	checkGLError();
+	
 	GLUtilities::blit(*_finalRender, *Framebuffer::backbuffer(), Filter::LINEAR);
-	checkGLError();
+
 }
 
 void StenciledApp::update() {

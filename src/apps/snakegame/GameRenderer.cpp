@@ -46,12 +46,15 @@ void GameRenderer::drawPlayer(const Player & player, Framebuffer & framebuffer) 
 	_sceneFramebuffer->bind();
 	_sceneFramebuffer->setViewport();
 	GLUtilities::clearColorAndDepth(glm::vec4(0.0f), 1.0f);
-	GLUtilities::setDepthState(true);
+
 	drawScene(player);
-	GLUtilities::setDepthState(false);
 
 	// --- SSAO pass ------
 	_ssaoPass->process(_playerCamera.projection(), _sceneFramebuffer->depthBuffer(), _sceneFramebuffer->texture(0));
+
+	GLUtilities::setCullState(true, Faces::BACK);
+	GLUtilities::setBlendState(false);
+	GLUtilities::setDepthState(false);
 
 	// --- Lighting pass ------
 	_lightingFramebuffer->bind();
@@ -69,6 +72,10 @@ void GameRenderer::drawPlayer(const Player & player, Framebuffer & framebuffer) 
 }
 
 void GameRenderer::drawScene(const Player & player) const {
+	GLUtilities::setDepthState(true, TestFunction::LESS, true);
+	GLUtilities::setCullState(true, Faces::BACK);
+	GLUtilities::setBlendState(false);
+
 	// Lighting and reflections will be computed in world space in the shaders.
 	// So the normal matrix only takes the model matrix into account.
 

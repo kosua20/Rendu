@@ -55,6 +55,9 @@ PaintingTool::PaintingTool(unsigned int width, unsigned int height) {
 void PaintingTool::draw() {
 
 	GLUtilities::setDepthState(false);
+	GLUtilities::setBlendState(false);
+	GLUtilities::setCullState(true, Faces::BACK);
+	
 	_canvas->bind();
 	_canvas->setViewport();
 

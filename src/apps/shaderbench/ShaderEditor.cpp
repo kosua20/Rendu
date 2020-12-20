@@ -134,6 +134,10 @@ void ShaderEditor::draw() {
 	mouseState[3] = float(Input::manager().triggered(Input::Mouse::Right));
 
 	// Clear content.
+	GLUtilities::setDepthState(false);
+	GLUtilities::setBlendState(false);
+	GLUtilities::setCullState(true, Faces::BACK);
+
 	_currFrame->bind();
 	_currFrame->setViewport();
 	GLUtilities::clearColorAndDepth(glm::vec4(0.0f), 1.0f);

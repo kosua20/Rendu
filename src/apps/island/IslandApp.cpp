@@ -91,8 +91,6 @@ IslandApp::IslandApp(RenderingConfig & config) : CameraApp(config),
 	_foam = Resources::manager().getTexture("foam", {Layout::SRGB8_ALPHA8, Filter::LINEAR_LINEAR, Wrap::REPEAT}, Storage::GPU);
 	_brdfLUT = Resources::manager().getTexture("brdf-precomputed", {Layout::RG32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
 
-	GLUtilities::setDepthState(true);
-
 	checkGLError();
 	// Tesselation options.
 	const float pSize = 128.0f;
@@ -157,6 +155,7 @@ void IslandApp::draw() {
 	if(_shouldUpdateSky){
 		GLUtilities::setDepthState(false);
 		GLUtilities::setBlendState(false);
+		GLUtilities::setCullState(true, Faces::BACK);
 		_environment->setViewport();
 
 		_skyProgram->use();
@@ -178,7 +177,8 @@ void IslandApp::draw() {
 	_sceneBuffer->bind();
 	_sceneBuffer->setViewport();
 	_sceneBuffer->clear(glm::vec4(10000.0f), 1.0f);
-	GLUtilities::setDepthState(true);
+	GLUtilities::setDepthState(true, TestFunction::LESS, true);
+	GLUtilities::setCullState(true, Faces::BACK);
 	GLUtilities::setBlendState(false);
 	GLUtilities::clearColor({0.0f,0.0f,0.0f,1.0f});
 
@@ -242,6 +242,8 @@ void IslandApp::draw() {
 	// Render the sky.
 	if(_showSky){
 		GLUtilities::setDepthState(true, TestFunction::LEQUAL, false);
+		GLUtilities::setCullState(true, Faces::BACK);
+		GLUtilities::setBlendState(false);
 
 		_skyProgram->use();
 		_skyProgram->uniform("clipToWorld", clipToWorld);
@@ -266,8 +268,11 @@ void IslandApp::draw() {
 			GLUtilities::blit(*_sceneBuffer->texture(0), *_waterEffectsHalf, Filter::LINEAR);
 		} else {
 			// Else copy, downscale, apply caustics and blur.
-			_waterEffectsHalf->bind();
 			GLUtilities::setDepthState(false);
+			GLUtilities::setCullState(true, Faces::BACK);
+			GLUtilities::setBlendState(false);
+
+			_waterEffectsHalf->bind();
 			_waterEffectsHalf->setViewport();
 			_waterCopy->use();
 			GLUtilities::bindTexture(_sceneBuffer->texture(0), 0);
@@ -276,7 +281,7 @@ void IslandApp::draw() {
 			GLUtilities::bindTexture(_waveNormals, 3);
 			_waterCopy->uniform("time", time);
 			ScreenQuad::draw();
-			GLUtilities::setDepthState(true);
+
 			_blur.process(_waterEffectsHalf->texture(0), *_waterEffectsBlur);
 		}
 
@@ -284,10 +289,9 @@ void IslandApp::draw() {
 		_sceneBuffer->bind();
 		_sceneBuffer->setViewport();
 		GLUtilities::setDepthState(true, TestFunction::LESS, true);
+		GLUtilities::setBlendState(false);
+		GLUtilities::setCullState(true, isUnderwater ? Faces::FRONT : Faces::BACK);
 
-		if(isUnderwater){
-			GLUtilities::setCullState(true, Faces::FRONT);
-		}
 		_oceanProgram->use();
 		_oceanProgram->uniform("mvp", mvp);
 		_oceanProgram->uniform("shift", glm::round(camPos));
@@ -324,14 +328,16 @@ void IslandApp::draw() {
 			_oceanProgram->uniform("debugCol", true);
 			GLUtilities::drawTesselatedMesh(_oceanMesh, 4);
 			GLUtilities::setPolygonState(PolygonMode::FILL);
-			GLUtilities::setDepthState(true, TestFunction::LESS, true);
+			// GLUtilities::setDepthState(true, TestFunction::LESS, true);
 		}
 
 		if(isUnderwater){
 			// We do the low-res copy and blur now, because we need the blurred ocean surface to be visible.
 			GLUtilities::setCullState(true, Faces::BACK);
-			_waterEffectsHalf->bind();
 			GLUtilities::setDepthState(false);
+			GLUtilities::setBlendState(false);
+
+			_waterEffectsHalf->bind();
 			_waterEffectsHalf->setViewport();
 			_waterCopy->use();
 			GLUtilities::bindTexture(_sceneBuffer->texture(0), 0);
@@ -349,7 +355,10 @@ void IslandApp::draw() {
 			// Render full screen effect.
 			_sceneBuffer->bind();
 			_sceneBuffer->setViewport();
+			GLUtilities::setCullState(true, Faces::BACK);
 			GLUtilities::setDepthState(false);
+			GLUtilities::setBlendState(false);
+
 			_underwaterProgram->use();
 			_underwaterProgram->uniform("mvp", mvp);
 			_underwaterProgram->uniform("camDir", camDir);
@@ -366,11 +375,13 @@ void IslandApp::draw() {
 			GLUtilities::bindTexture(_waveNormals, 5);
 			GLUtilities::bindTexture(_environment->texture(), 6);
 			ScreenQuad::draw();
-			GLUtilities::setDepthState(true);
+			GLUtilities::setDepthState(true, TestFunction::LESS, true);
 
 		} else {
 			// Far ocean, using a cylinder as support to cast rays intersecting the ocean plane.
 			GLUtilities::setDepthState(true, TestFunction::ALWAYS, true);
+			GLUtilities::setCullState(true, Faces::BACK);
+			GLUtilities::setBlendState(false);
 
 			_farOceanProgram->use();
 			_farOceanProgram->uniform("mvp", mvp);
@@ -398,8 +409,6 @@ void IslandApp::draw() {
 			GLUtilities::bindTexture(_terrain->shadowMap(), 8);
 			GLUtilities::drawMesh(_farOceanMesh);
 
-			GLUtilities::setDepthState(true, TestFunction::LESS, true);
-
 			// Debug view.
 			if(_showWire){
 				GLUtilities::setPolygonState(PolygonMode::LINE);
@@ -407,7 +416,6 @@ void IslandApp::draw() {
 				_farOceanProgram->uniform("debugCol", true);
 				GLUtilities::drawMesh(_farOceanMesh);
 				GLUtilities::setPolygonState(PolygonMode::FILL);
-				GLUtilities::setDepthState(true, TestFunction::LESS, true);
 			}
 		}
 
@@ -416,6 +424,9 @@ void IslandApp::draw() {
 
 	// Tonemapping and final screen.
 	GLUtilities::setDepthState(false, TestFunction::LESS, true);
+	GLUtilities::setBlendState(false);
+	GLUtilities::setCullState(true, Faces::BACK);
+	
 	GLUtilities::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 	Framebuffer::backbuffer()->bind();
 	_tonemap->use();

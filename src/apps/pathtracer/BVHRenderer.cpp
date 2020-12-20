@@ -31,11 +31,13 @@ void BVHRenderer::setScene(const std::shared_ptr<Scene> & scene, const Raycaster
 void BVHRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_t layer) {
 
 	// Draw the scene.
-	GLUtilities::setDepthState(true);
+	GLUtilities::setDepthState(true, TestFunction::LESS, true);
+	GLUtilities::setCullState(false);
+	GLUtilities::setBlendState(false);
+
 	framebuffer.bind(layer);
 	framebuffer.setViewport();
 	GLUtilities::clearColorAndDepth(glm::vec4(0.0f), 1.0f);
-	GLUtilities::setCullState(false);
 
 	const glm::mat4 & view = camera.view();
 	const glm::mat4 & proj = camera.projection();
@@ -73,8 +75,7 @@ void BVHRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_t 
 	}
 
 	GLUtilities::setPolygonState(PolygonMode::FILL);
-	GLUtilities::setDepthState(false);
-	GLUtilities::setCullState(true);
+	
 }
 
 BVHRenderer::~BVHRenderer() {

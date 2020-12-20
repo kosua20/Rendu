@@ -38,7 +38,8 @@ void StenciledRenderer::draw(const Camera & camera, Framebuffer & framebuffer, s
 	const glm::mat4 & proj = camera.projection();
 
 	GLUtilities::setDepthState(false);
-	GLUtilities::setCullState(true);
+	GLUtilities::setCullState(true, Faces::BACK);
+	GLUtilities::setBlendState(false);
 
 	_sceneFramebuffer->bind();
 	_sceneFramebuffer->setViewport();
@@ -69,12 +70,8 @@ void StenciledRenderer::draw(const Camera & camera, Framebuffer & framebuffer, s
 		_objectProgram->uniform("mvp", MVP);
 		
 		// Backface culling state.
-		if(object.twoSided()) {
-			GLUtilities::setCullState(false);
-		}
+		GLUtilities::setCullState(!object.twoSided(), Faces::BACK);
 		GLUtilities::drawMesh(*object.mesh());
-		// Restore state.
-		GLUtilities::setCullState(true);
 	}
 
 	// Render a black quad only where the stencil buffer is non zero (ie odd count of covering primitives).
@@ -87,10 +84,8 @@ void StenciledRenderer::draw(const Camera & camera, Framebuffer & framebuffer, s
 	_fillProgram->uniform("color", glm::vec4(0.0f));
 	ScreenQuad::draw();
 
-	// Restore states.
+	// Restore stencil state.
 	GLUtilities::setStencilState(false, false);
-	GLUtilities::setDepthState(false);
-	GLUtilities::setCullState(true);
 
 	DebugViewer::trackStateDefault("Off stencil");
 

@@ -45,8 +45,8 @@ void GameMenuRenderer::drawMenu(const GameMenu & menu, const glm::vec2 & finalRe
 		ScreenQuad::draw(menu.backgroundImage);
 	}
 
-	GLUtilities::setDepthState(true);
-	GLUtilities::setBlendState(true);
+	GLUtilities::setDepthState(true, TestFunction::LESS, true);
+	GLUtilities::setBlendState(true, BlendEquation::ADD, BlendFunction::SRC_ALPHA, BlendFunction::ONE_MINUS_SRC_ALPHA);
 
 	// Images.
 	_imageProgram->use();

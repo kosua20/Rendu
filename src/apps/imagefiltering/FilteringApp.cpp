@@ -29,9 +29,6 @@ FilteringApp::FilteringApp(RenderingConfig & config) :
 
 	_painter = std::unique_ptr<PaintingTool>(new PaintingTool(renderWidth, renderHeight));
 
-	// GL options
-	GLUtilities::setDepthState(true);
-	GLUtilities::setCullState(true);
 	checkGLError();
 }
 
@@ -40,7 +37,9 @@ void FilteringApp::draw() {
 	const Texture * srcTexID = _sceneBuffer->texture();
 	// Render the scene.
 	if(_viewMode == View::SCENE) {
-		GLUtilities::setDepthState(true);
+		GLUtilities::setDepthState(true, TestFunction::LESS, true);
+		GLUtilities::setBlendState(false);
+		GLUtilities::setCullState(true, Faces::BACK);
 		_sceneBuffer->bind();
 		_sceneBuffer->setViewport();
 		GLUtilities::clearColorAndDepth({0.0f, 0.0f, 0.0f, 1.0f}, 1.0f);
@@ -51,6 +50,8 @@ void FilteringApp::draw() {
 
 	} else if(_viewMode == View::IMAGE) {
 		GLUtilities::setDepthState(false);
+		GLUtilities::setBlendState(false);
+		GLUtilities::setCullState(true, Faces::BACK);
 		_sceneBuffer->bind();
 		_sceneBuffer->setViewport();
 		_passthrough->use();
@@ -61,14 +62,11 @@ void FilteringApp::draw() {
 		}
 
 	} else {
-		GLUtilities::setDepthState(false);
 		_painter->draw();
 		// If we are in INPUT mode, we want to display the frame with the brush outline visible.
 		// On the other hand, if we apply any processing, hide the brush and use the canvas frame.
 		srcTexID = _mode == Processing::INPUT ? _painter->visuId() : _painter->texture();
 	}
-
-	GLUtilities::setDepthState(false);
 
 	const Texture * finalTexID = srcTexID;
 
@@ -99,6 +97,10 @@ void FilteringApp::draw() {
 	}
 
 	// Render the output on screen.
+	GLUtilities::setDepthState(false);
+	GLUtilities::setBlendState(false);
+	GLUtilities::setCullState(true, Faces::BACK);
+	
 	Framebuffer::backbuffer()->bind();
 	const glm::ivec2 screenSize = Input::manager().size();
 	GLUtilities::setViewport(0, 0, screenSize[0], screenSize[1]);
