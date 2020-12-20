@@ -835,9 +835,10 @@ void GLUtilities::setupMesh(Mesh & mesh) {
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer.gpu->id);
 	// Restore previously bound vertex array.
-	glBindVertexArray(_state.vertexArray);
+	glBindVertexArray(0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(_state.vertexArray);
 
 	mesh.gpu->id		   = vao;
 	mesh.gpu->count		   = GLsizei(mesh.indices.size());
