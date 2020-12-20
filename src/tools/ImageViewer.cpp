@@ -95,7 +95,9 @@ int main(int argc, char ** argv) {
 			float imageRatio  = imageSize[1 - widthIndex] / imageSize[widthIndex];
 			float widthRatio  = float(screenSize[0]) / imageSize[0] * imageSize[widthIndex] / imageSize[0];
 
-			GLUtilities::setBlendState(true);
+			GLUtilities::setBlendState(true, BlendEquation::ADD, BlendFunction::SRC_ALPHA, BlendFunction::ONE_MINUS_SRC_ALPHA);
+			GLUtilities::setDepthState(false);
+			GLUtilities::setCullState(false);
 
 			// Render the image.
 			program->use();
@@ -118,8 +120,6 @@ int main(int argc, char ** argv) {
 
 			// Draw.
 			ScreenQuad::draw(imageInfos);
-
-			GLUtilities::setBlendState(false);
 
 			// Read back color under cursor when right-clicking.
 			if(Input::manager().pressed(Input::Mouse::Right)) {
@@ -253,7 +253,10 @@ int main(int argc, char ** argv) {
 					framebuffer->setViewport();
 
 					// Render the image in it.
-					GLUtilities::setBlendState(true);
+					GLUtilities::setBlendState(true, BlendEquation::ADD, BlendFunction::SRC_ALPHA, BlendFunction::ONE_MINUS_SRC_ALPHA);
+					GLUtilities::setDepthState(false);
+					GLUtilities::setCullState(false);
+
 					program->use();
 					// No scaling or translation.
 					const glm::vec2 zeros(0.0f);
@@ -263,7 +266,6 @@ int main(int argc, char ** argv) {
 					program->uniform("pixelScale", 1.0f);
 					program->uniform("mouseShift", zeros);
 					ScreenQuad::draw(imageInfos);
-					GLUtilities::setBlendState(false);
 
 					// Then save it to the given path.
 					GLUtilities::saveFramebuffer(*framebuffer, destinationPath.substr(0, destinationPath.size() - 4), true, false);

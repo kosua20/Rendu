@@ -33,7 +33,7 @@ void EditorRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size
 	const glm::mat4 VP	   = proj * view;
 	
 	// Draw the scene.
-	GLUtilities::setDepthState(true);
+	GLUtilities::setDepthState(true, TestFunction::LESS, true);
 	GLUtilities::setCullState(false);
 	framebuffer.bind(layer);
 	framebuffer.setViewport();
@@ -68,7 +68,7 @@ void EditorRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size
 	renderBackground(view, proj, camera.position());
 	
 	GLUtilities::setDepthState(false);
-	GLUtilities::setCullState(true);
+	GLUtilities::setCullState(true, Faces::BACK);
 
 }
 
