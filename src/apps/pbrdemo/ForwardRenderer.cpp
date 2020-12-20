@@ -45,19 +45,18 @@ void ForwardRenderer::setScene(const std::shared_ptr<Scene> & scene) {
 	checkGLError();
 }
 
+void ForwardRenderer::renderDepth(const Culler::List & visibles, const glm::mat4 & view, const glm::mat4 & proj){
 
-void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj, const glm::vec3 & pos) {
 	GLUtilities::setDepthState(true, TestFunction::LESS, true);
 	GLUtilities::setCullState(true, Faces::BACK);
 	GLUtilities::setBlendState(false);
 
 	_sceneFramebuffer->bind();
 	_sceneFramebuffer->setViewport();
+	// We use the depth prepass to store packed normals in the color target.
+	// We initialize using null normal.
+	GLUtilities::clearColorAndDepth({0.5f,0.5f,0.5f,1.0f}, 1.0f);
 
-	const auto & visibles = _culler->cullAndSort(view, proj, pos);
-
-
-	// Depth prepass.
 	_depthPrepass->use();
 	for(const long & objectId : visibles) {
 		// Once we get a -1, there is no other object to render.
@@ -69,8 +68,8 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 
 		// Render using prepass shader.
 		// We skip parallax mapped objects as their depth is going to change.
-		// But we still mark them as visible for the shading pass, as they are opaque.
-		if(object.type() == Object::Parallax){
+		// We also skip all transparent/refractive objects
+		if(object.type() == Object::Parallax || object.type() == Object::Transparent){
 			continue;
 		}
 
@@ -92,49 +91,18 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 		GLUtilities::setCullState(!object.twoSided(), Faces::BACK);
 		GLUtilities::drawMesh(*object.mesh());
 	}
+}
 
-	// --- SSAO pass
-	if(_applySSAO) {
-		_ssaoPass->process(proj, _sceneFramebuffer->depthBuffer(), _sceneFramebuffer->texture());
-	} else {
-		_ssaoPass->clear();
-	}
+void ForwardRenderer::renderOpaque(const Culler::List & visibles, const glm::mat4 & view, const glm::mat4 & proj){
 
 	GLUtilities::setDepthState(true, TestFunction::LEQUAL, true);
-	GLUtilities::setCullState(true);
+	GLUtilities::setCullState(true, Faces::BACK);
+	GLUtilities::setBlendState(false);
+
 	_sceneFramebuffer->bind();
 	_sceneFramebuffer->setViewport();
 
-	const LightProbe & environment = _scene->environment;
-	const float cubeLod		= float(environment.map()->levels - 1);
-	const glm::mat4 invView = glm::inverse(view);
-	const glm::vec2 invScreenSize = 1.0f / glm::vec2(_sceneFramebuffer->width(), _sceneFramebuffer->height());
-	// Update shared data for the three programs.
-	{
-		_parallaxProgram->use();
-		_parallaxProgram->uniform("p", proj);
-		_parallaxProgram->uniform("inverseV", invView);
-		_parallaxProgram->uniform("maxLod", cubeLod);
-		_parallaxProgram->uniform("cubemapPos", environment.position());
-		_parallaxProgram->uniform("cubemapCenter", environment.center());
-		_parallaxProgram->uniform("cubemapExtent", environment.extent());
-		_parallaxProgram->uniform("cubemapCosSin", environment.rotationCosSin());
-		_parallaxProgram->uniform("lightsCount", int(_lightsGPU->count()));
-		_parallaxProgram->uniform("invScreenSize", invScreenSize);
-
-		_objectProgram->use();
-		_objectProgram->uniform("inverseV", invView);
-		_objectProgram->uniform("maxLod", cubeLod);
-		_objectProgram->uniform("cubemapPos", environment.position());
-		_objectProgram->uniform("cubemapCenter", environment.center());
-		_objectProgram->uniform("cubemapExtent", environment.extent());
-		_objectProgram->uniform("cubemapCosSin", environment.rotationCosSin());
-		_objectProgram->uniform("lightsCount", int(_lightsGPU->count()));
-		_objectProgram->uniform("invScreenSize", invScreenSize);
-
-	}
 	const auto & shadowMaps = _lightsGPU->shadowMaps();
-
 
 	// Scene objects.
 	for(const long & objectId : visibles) {
@@ -144,6 +112,10 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 		}
 
 		const auto & object = _scene->objects[objectId];
+		// Skip transparent objects.
+		if(object.type() == Object::Type::Transparent){
+			continue;
+		}
 
 		// Combine the three matrices.
 		const glm::mat4 MV	= view * object.model();
@@ -160,12 +132,9 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 			// Bind the textures.
 			GLUtilities::bindTextures(object.textures());
 			GLUtilities::drawMesh(*object.mesh());
-			GLUtilities::setCullState(true);
+			GLUtilities::setCullState(true, Faces::BACK);
 			continue;
 		}
-
-		// Compute the normal matrix
-		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(MV)));
 
 		// Select the program (and shaders).
 		Program * currentProgram = nullptr;
@@ -175,24 +144,24 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 				break;
 			case Object::Regular:
 				currentProgram = _objectProgram;
-				currentProgram->uniform("hasUV", object.useTexCoords());
 				break;
 			default:
 				Log::Error() << "Unsupported material type." << std::endl;
 				continue;
 				break;
 		}
+		// Compute the normal matrix
+		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(MV)));
 
-		currentProgram->use();
 		// Upload the matrices.
+		currentProgram->use();
+		currentProgram->uniform("hasUV", object.useTexCoords());
 		currentProgram->uniform("mvp", MVP);
 		currentProgram->uniform("mv", MV);
 		currentProgram->uniform("normalMatrix", normalMatrix);
 
 		// Backface culling state.
-		if(object.twoSided()) {
-			GLUtilities::setCullState(false);
-		}
+		GLUtilities::setCullState(!object.twoSided(), Faces::BACK);
 		// Bind the lights.
 		GLUtilities::bindBuffer(_lightsGPU->data(), 0);
 		GLUtilities::bindBuffer(*_scene->environment.shCoeffs(), 1);
@@ -209,14 +178,11 @@ void ForwardRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj
 		}
 		GLUtilities::bindTexture(_ssaoPass->texture(), 8);
 		GLUtilities::drawMesh(*object.mesh());
-		// Restore state.
-		GLUtilities::setCullState(true);
 	}
-	
-	// Render the backgound.
-	renderBackground(view, proj, pos);
-	GLUtilities::setDepthState(false, TestFunction::LESS, true);
-	GLUtilities::setCullState(true);
+
+}
+
+void ForwardRenderer::renderTransparent(const Culler::List & visibles, const glm::mat4 & view, const glm::mat4 & proj){
 }
 
 void ForwardRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 & proj, const glm::vec3 & pos) {
@@ -224,6 +190,7 @@ void ForwardRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 &
 	// Accept a depth of 1.0 (far plane).
 	GLUtilities::setDepthState(true, TestFunction::LEQUAL, false);
 	GLUtilities::setBlendState(false);
+	GLUtilities::setCullState(true, Faces::BACK);
 	const Object * background	 = _scene->background.get();
 	const Scene::Background mode = _scene->backgroundMode;
 
@@ -264,7 +231,6 @@ void ForwardRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 &
 		GLUtilities::drawMesh(*background->mesh());
 	}
 
-	GLUtilities::setDepthState(true, TestFunction::LESS, true);
 }
 
 void ForwardRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_t layer) {
@@ -280,10 +246,50 @@ void ForwardRenderer::draw(const Camera & camera, Framebuffer & framebuffer, siz
 	}
 	_lightsGPU->data().upload();
 
-	// --- Scene pass
-	renderScene(view, proj, pos);
+	// Select visible objects.
+	const auto & visibles = _culler->cullAndSort(view, proj, pos);
 
-	// --- Final composite pass
+	// Depth and normas prepass.
+	renderDepth(visibles, view, proj);
+
+	// SSAO pass
+	if(_applySSAO) {
+		_ssaoPass->process(proj, _sceneFramebuffer->depthBuffer(), _sceneFramebuffer->texture());
+	} else {
+		_ssaoPass->clear();
+	}
+
+	// Update all shaders shared parameters.
+	{
+		const LightProbe & environment = _scene->environment;
+		const float cubeLod		= float(environment.map()->levels - 1);
+		const glm::mat4 invView = glm::inverse(view);
+		const glm::vec2 invScreenSize = 1.0f / glm::vec2(_sceneFramebuffer->width(), _sceneFramebuffer->height());
+		// Update shared data for the three programs.
+		Program * programs[] = {_parallaxProgram, _objectProgram };
+		for(Program * prog : programs){
+			prog->use();
+			prog->uniform("inverseV", invView);
+			prog->uniform("maxLod", cubeLod);
+			prog->uniform("cubemapPos", environment.position());
+			prog->uniform("cubemapCenter", environment.center());
+			prog->uniform("cubemapExtent", environment.extent());
+			prog->uniform("cubemapCosSin", environment.rotationCosSin());
+			prog->uniform("lightsCount", int(_lightsGPU->count()));
+			prog->uniform("invScreenSize", invScreenSize);
+		}
+		_parallaxProgram->use();
+		_parallaxProgram->uniform("p", proj);
+	}
+
+	// Render opaque objects.
+	renderOpaque(visibles, view, proj);
+	// Render the backgound.
+	renderBackground(view, proj, pos);
+	// Render transparent objects.
+	renderTransparent(visibles, view, proj);
+
+	// Final composite pass
 	GLUtilities::blit(*_sceneFramebuffer, framebuffer, 0, layer, Filter::LINEAR);
 }
 

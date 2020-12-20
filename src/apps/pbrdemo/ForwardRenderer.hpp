@@ -54,14 +54,26 @@ public:
 	
 private:
 
-	/** Render the scene objects to the G-buffer.
+	/** Render the scene object depth (prepass).
 	 \param view the camera view matrix
 	 \param proj the camera projection matrix
-	 \param pos the camera position
+	 \note Transparent and parallax objects will be skipped.
 	 */
-	void renderScene(const glm::mat4 & view, const glm::mat4 & proj, const glm::vec3 & pos);
-	
-	/** Render the scene background to the G-buffer.
+	void renderDepth(const Culler::List & visibles, const glm::mat4 & view, const glm::mat4 & proj);
+
+	/** Render the scene opaque objects.
+	 \param view the camera view matrix
+	 \param proj the camera projection matrix
+	 */
+	void renderOpaque(const Culler::List & visibles, const glm::mat4 & view, const glm::mat4 & proj);
+
+	/** Render the scene transparent objects.
+	 \param view the camera view matrix
+	 \param proj the camera projection matrix
+	 */
+	void renderTransparent(const Culler::List & visibles, const glm::mat4 & view, const glm::mat4 & proj);
+
+	/** Render the scene background.
 	 \param view the camera view matrix
 	 \param proj the camera projection matrix
 	 \param pos the camera position
