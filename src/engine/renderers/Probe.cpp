@@ -37,7 +37,7 @@ void Probe::convolveRadiance(float clamp, size_t first, size_t count) {
 
 	GLUtilities::setDepthState(false);
 	GLUtilities::setBlendState(false);
-	GLUtilities::setCullState(true);
+	GLUtilities::setCullState(true, Faces::BACK);
 
 	_integration->use();
 	_integration->uniform("clampMax", clamp);
