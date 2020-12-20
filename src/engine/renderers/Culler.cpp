@@ -52,6 +52,22 @@ const Culler::List & Culler::cullAndSort(const glm::mat4 & view, const glm::mat4
 		_frustum = Frustum(proj * view);
 	}
 
+	// Predefined sorting order.
+	static const std::map<Object::Type, Ordering> orders = {
+		{ Object::None, 		Ordering::FRONT_TO_BACK },
+		{ Object::Regular, 		Ordering::FRONT_TO_BACK },
+		{ Object::Parallax, 	Ordering::FRONT_TO_BACK },
+		{ Object::Emissive, 	Ordering::FRONT_TO_BACK },
+		{ Object::Transparent, 	Ordering::BACK_TO_FRONT },
+	};
+	static const std::map<Object::Type, long> sets = {
+		{ Object::None, 		0 },
+		{ Object::Regular, 		1 },
+		{ Object::Parallax, 	1 },
+		{ Object::Emissive, 	1 },
+		{ Object::Transparent, 	2 },
+	};
+
 	// Culling and distance computation.
 	size_t cid = 0;
 	for(size_t oid = 0; oid < objCount; ++oid){
@@ -59,20 +75,26 @@ const Culler::List & Culler::cullAndSort(const glm::mat4 & view, const glm::mat4
 		const BoundingBox & bbox = _objects[oid].boundingBox();
 		if(_frustum.intersects(bbox)){
 			_distances[cid].id = long(oid);
-			// For now use euclidean distance.
+
+			const Object::Type & type = _objects[oid].type();
+			const double sign = orders.at(type) == Ordering::FRONT_TO_BACK ? 1.0 : -1.0;
 			const glm::vec3 dist = pos - bbox.getCentroid();
-			_distances[cid].distance = glm::dot(dist, dist);
+
+			_distances[cid].distance = sign * double(glm::dot(dist, dist));
+			_distances[cid].material = sets.at(type);
 
 			++cid;
 		}
 	}
 	// Sort wrt distances.
 	std::sort(_distances.begin(), _distances.begin() + cid, [](const DistPair & a, const DistPair & b){
+		// Prioritize materials.
 		if(a.material < b.material){
 			return true;
 		} else if( a.material > b.material){
 			return false;
 		}
+		// Else look at distance.
 		return (a.distance < b.distance);
 	});
 

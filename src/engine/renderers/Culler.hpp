@@ -57,6 +57,12 @@ public:
 
 private:
 
+	/// Define ordering of sorted objects.
+	enum class Ordering {
+		FRONT_TO_BACK, ///< Closest first.
+		BACK_TO_FRONT  ///< Furthest first.
+	};
+
 	const std::vector<Object> & _objects; ///< Reference to the objects to process.
 	List _order; ///< Will contain the indices of the objects selected.
 
