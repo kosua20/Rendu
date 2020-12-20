@@ -1,0 +1,102 @@
+* probe: 
+	position: 0.0,1.0,0.0
+	center: 0.0,1.0,10.0
+	extent: 1.0,1.0,11.0
+	rotation: 0.0
+
+* background:
+	cube: rgb32cube: kiara_dawn
+
+* camera:
+	position: 0.0,1.0,2.5
+	center: 0.0,1.0,1.0
+	up: 0.0,1.0,0.0
+	fov: 1.3
+	planes: 0.01,20.0
+
+* point:
+	intensity: 9.0,8.4,6.0
+	shadows: true
+	position: -0.03,1.75,0.0
+	radius: 3.0
+	
+* object:
+	mesh: cornellbox_floor_0
+	shadows: true
+	twosided: true
+	type: Regular
+	textures:
+		- srgb: wood_floor_color
+		- rgb: wood_floor_normal
+		- rgb: wood_floor_rough_met_ao
+
+* object:
+	mesh: cornellbox_ceiling_6
+	shadows: true
+	twosided: true
+	type: Regular
+	skipuvs: true
+	textures:
+		- srgb: 0.9,0.2,0.7
+		- rgb: default_normal
+		- rgb: cornellbox_rough_met_ao
+
+* object:
+	mesh: cornellbox_backWall_12
+	shadows: true
+	twosided: true
+	type: Regular
+	skipuvs: true
+	textures:
+		- srgb: cornellbox_grey
+		- rgb: default_normal
+		- rgb: cornellbox_rough_met_ao
+
+* object:
+	mesh: cornellbox_rightWall_18
+	shadows: true
+	twosided: true
+	type: Regular
+	skipuvs: true
+	textures:
+		- srgb: 0.2,0.8,0.7
+		- rgb: default_normal
+		- rgb: cornellbox_rough_met_ao
+
+
+
+* object:
+	mesh: cornellbox_smallBox_30
+	shadows: true
+	twosided: true
+	type: Transparent      
+	textures:
+		- srgb: ceramic_tiles_blue_color
+		- rgb: ceramic_tiles_blue_normal
+		- rgb: ceramic_tiles_blue_rough_met_ao
+
+
+
+* object:
+	mesh: cornellbox_light_90
+	shadows: true
+	twosided: true
+	type: Regular
+	skipuvs: true
+	textures:
+		- srgb: cornellbox_white
+		- rgb: default_normal
+		- rgb: cornellbox_rough_met_ao
+
+* object:
+	mesh: sphere
+	shadows: true
+	type: Transparent
+	twosided: true
+	textures:
+		- srgb: 1.0,1.0,1.0
+		- rgb: default_normal
+		- rgb: 0.6,1.0,1.0
+	translation: -0.35,1.0,-0.25
+	scaling: 0.5
+	
