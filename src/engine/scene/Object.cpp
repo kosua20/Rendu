@@ -12,12 +12,16 @@ static const std::map<Object::Type, std::string> typesToStr = {
 	REGISTER_TYPESTR(Regular),
 	REGISTER_TYPESTR(Parallax),
 	REGISTER_TYPESTR(Emissive),
+	REGISTER_TYPESTR(Transparent),
+};
 
 static const std::map<std::string, Object::Type> strToTypes = {
 	REGISTER_STRTYPE(None),
 	REGISTER_STRTYPE(Regular),
 	REGISTER_STRTYPE(Parallax),
 	REGISTER_STRTYPE(Emissive),
+	REGISTER_STRTYPE(Transparent),
+};
 
 Object::Object(const Type type, const Mesh * mesh, bool castShadows) :
 	_mesh(mesh), _material(type), _castShadow(castShadows) {

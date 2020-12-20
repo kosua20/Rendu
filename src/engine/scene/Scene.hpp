@@ -58,6 +58,9 @@ public:
 	/** \return true if the scene contains animations */
 	bool animated() const { return _animated; }
 
+	/** \return true if the scene contains transparent objects */
+	bool transparent() const { return _transparent; }
+
 	std::vector<Object> objects;				///< The objects in the scene.
 	std::vector<std::shared_ptr<Light>> lights; ///< Lights present in the scene.
 
@@ -138,4 +141,5 @@ private:
 	std::string _name;						 ///< The scene file name.
 	bool _loaded = false;					 ///< Has the scene already been loaded from disk.
 	bool _animated = false;					 ///< Is the scene using animations.
+	bool _transparent = false;					 ///< Is the scene containing transparent objects.
 };

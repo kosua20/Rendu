@@ -19,6 +19,7 @@ public:
 		Regular,  ///< PBR shading. \see GPU::Vert::Object_gbuffer, GPU::Frag::Object_gbuffer
 		Parallax, ///< PBR with parallax mapping. \see GPU::Vert::Object_parallax_gbuffer, GPU::Frag::Object_parallax_gbuffer
 		Emissive,  	 ///< Emissive objects (no shading, pure emitter)
+		Transparent, ///< Transparent object
 	};
 
 	/** Constructor */

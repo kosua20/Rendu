@@ -84,8 +84,11 @@ bool Scene::init(Storage options) {
 	for(const auto & obj : objects){
 		if(obj.animated()){
 			_animated = true;
-			break;
 		}
+		if(obj.type() == Object::Transparent){
+			_transparent = true;
+		}
+
 	}
 	for(const auto & light : lights){
 		if(light->animated()){
