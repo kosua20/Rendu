@@ -24,6 +24,7 @@ ForwardRenderer::ForwardRenderer(const glm::vec2 & resolution, ShadowMode mode, 
 	_objectProgram		= Resources::manager().getProgram("object_forward");
 	_parallaxProgram	= Resources::manager().getProgram("object_parallax_forward");
 	_emissiveProgram	= Resources::manager().getProgram("object_emissive_forward");
+	_transparentProgram = Resources::manager().getProgram("object_transparent_forward", "object_forward", "object_transparent_forward");
 
 	_skyboxProgram = Resources::manager().getProgram("skybox_forward", "skybox_infinity", "skybox_forward");
 	_bgProgram	   = Resources::manager().getProgram("background_forward", "background_infinity", "background_forward");
@@ -98,9 +99,6 @@ void ForwardRenderer::renderOpaque(const Culler::List & visibles, const glm::mat
 	GLUtilities::setDepthState(true, TestFunction::LEQUAL, true);
 	GLUtilities::setCullState(true, Faces::BACK);
 	GLUtilities::setBlendState(false);
-
-	_sceneFramebuffer->bind();
-	_sceneFramebuffer->setViewport();
 
 	const auto & shadowMaps = _lightsGPU->shadowMaps();
 
@@ -183,6 +181,62 @@ void ForwardRenderer::renderOpaque(const Culler::List & visibles, const glm::mat
 }
 
 void ForwardRenderer::renderTransparent(const Culler::List & visibles, const glm::mat4 & view, const glm::mat4 & proj){
+
+	const auto & shadowMaps = _lightsGPU->shadowMaps();
+
+	GLUtilities::setBlendState(true, BlendEquation::ADD, BlendFunction::ONE, BlendFunction::ONE_MINUS_SRC_ALPHA);
+	GLUtilities::setDepthState(true, TestFunction::LEQUAL, false);
+	GLUtilities::setCullState(true, Faces::BACK);
+
+	_transparentProgram->use();
+	for(const long & objectId : visibles) {
+		// Once we get a -1, there is no other object to render.
+		if(objectId == -1){
+			break;
+		}
+
+		const auto & object = _scene->objects[objectId];
+		// Skip non transparent objects.
+		if(object.type() != Object::Type::Transparent){
+			continue;
+		}
+
+		// Combine the three matrices.
+		const glm::mat4 MV	= view * object.model();
+		const glm::mat4 MVP = proj * MV;
+		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(MV)));
+
+		// Upload the matrices.
+		_transparentProgram->uniform("hasUV", object.useTexCoords());
+		_transparentProgram->uniform("mvp", MVP);
+		_transparentProgram->uniform("mv", MV);
+		_transparentProgram->uniform("normalMatrix", normalMatrix);
+
+		// Bind the lights.
+		GLUtilities::bindBuffer(_lightsGPU->data(), 0);
+		GLUtilities::bindBuffer(*_scene->environment.shCoeffs(), 1);
+		// Bind the textures.
+		GLUtilities::bindTextures(object.textures());
+		GLUtilities::bindTexture(_textureBrdf, 4);
+		GLUtilities::bindTexture(_scene->environment.map(), 5);
+		// Bind available shadow maps.
+		if(shadowMaps[0]){
+			GLUtilities::bindTexture(shadowMaps[0], 6);
+		}
+		if(shadowMaps[1]){
+			GLUtilities::bindTexture(shadowMaps[1], 7);
+		}
+		// No SSAO as the objects are not rendered in it.
+
+		// To approximately handle two sided objects properly, draw the back faces first, then the front faces.
+		// This won't solve all issues in case of concavities.
+		if(object.twoSided()) {
+			GLUtilities::setCullState(true, Faces::FRONT);
+			GLUtilities::drawMesh(*object.mesh());
+			GLUtilities::setCullState(true, Faces::BACK);
+		}
+		GLUtilities::drawMesh(*object.mesh());
+	}
 }
 
 void ForwardRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 & proj, const glm::vec3 & pos) {
@@ -266,7 +320,7 @@ void ForwardRenderer::draw(const Camera & camera, Framebuffer & framebuffer, siz
 		const glm::mat4 invView = glm::inverse(view);
 		const glm::vec2 invScreenSize = 1.0f / glm::vec2(_sceneFramebuffer->width(), _sceneFramebuffer->height());
 		// Update shared data for the three programs.
-		Program * programs[] = {_parallaxProgram, _objectProgram };
+		Program * programs[] = {_parallaxProgram, _objectProgram, _transparentProgram };
 		for(Program * prog : programs){
 			prog->use();
 			prog->uniform("inverseV", invView);
@@ -282,6 +336,9 @@ void ForwardRenderer::draw(const Camera & camera, Framebuffer & framebuffer, siz
 		_parallaxProgram->uniform("p", proj);
 	}
 
+	// Objects rendering.
+	_sceneFramebuffer->bind();
+	_sceneFramebuffer->setViewport();
 	// Render opaque objects.
 	renderOpaque(visibles, view, proj);
 	// Render the backgound.

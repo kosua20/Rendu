@@ -55,6 +55,7 @@ public:
 private:
 
 	/** Render the scene object depth (prepass).
+	 \param visibles list of indices of visible objects
 	 \param view the camera view matrix
 	 \param proj the camera projection matrix
 	 \note Transparent and parallax objects will be skipped.
@@ -62,12 +63,14 @@ private:
 	void renderDepth(const Culler::List & visibles, const glm::mat4 & view, const glm::mat4 & proj);
 
 	/** Render the scene opaque objects.
+	 \param visibles list of indices of visible objects
 	 \param view the camera view matrix
 	 \param proj the camera projection matrix
 	 */
 	void renderOpaque(const Culler::List & visibles, const glm::mat4 & view, const glm::mat4 & proj);
 
 	/** Render the scene transparent objects.
+	 \param visibles list of indices of visible objects 
 	 \param view the camera view matrix
 	 \param proj the camera projection matrix
 	 */
@@ -87,6 +90,7 @@ private:
 	Program * _objectProgram;		 ///< Basic PBR program
 	Program * _parallaxProgram;	 ///< Parallax mapping PBR program
 	Program * _emissiveProgram;	 ///< Parallax mapping PBR program
+	Program * _transparentProgram;	 ///< Transparent PBR program
 	const Program * _depthPrepass; ///< Depth prepass program.
 
 	const Program * _skyboxProgram; ///< Skybox program.
