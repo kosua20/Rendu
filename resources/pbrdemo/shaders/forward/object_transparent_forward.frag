@@ -3,7 +3,7 @@
 #include "forward_lights.glsl"
 
 in INTERFACE {
-    mat3 tbn; ///< Normal to view matrix.
+	mat3 tbn; ///< Normal to view matrix.
 	vec3 viewSpacePosition; ///< View space position.
 	vec2 uv; ///< UV coordinates.
 } In ;
@@ -15,7 +15,6 @@ layout(binding = 4) uniform sampler2D brdfPrecalc; ///< Preintegrated BRDF looku
 layout(binding = 5) uniform samplerCube textureCubeMap; ///< Background environment cubemap (with preconvoluted versions of increasing roughness in mipmap levels).
 layout(binding = 6) uniform sampler2DArray shadowMaps2D; ///< Shadow maps array.
 layout(binding = 7) uniform samplerCubeArray shadowMapsCube; ///< Shadow cubemaps array.
-layout(binding = 8) uniform sampler2D ssaoTexture; ///< Ambient occlusion.
 
 
 /** SH approximation of the environment irradiance (UBO). */
@@ -41,13 +40,13 @@ layout (location = 0) out vec4 fragColor; ///< Shading result.
 
 /** Shade the object, applying lighting. */
 void main(){
-	
+
 	vec4 albedoInfos = texture(albedoTexture, In.uv);
 	if(albedoInfos.a <= 0.01){
 		discard;
 	}
 	vec3 baseColor = albedoInfos.rgb;
-	
+
 	// Flip the up of the local frame for back facing fragments.
 	mat3 tbn = In.tbn;
 	tbn[2] *= (gl_FrontFacing ? 1.0 : -1.0);
@@ -75,24 +74,22 @@ void main(){
 	vec3 worldP = vec3(inverseV * vec4(In.viewSpacePosition, 1.0));
 	vec3 worldV = normalize(inverseV[3].xyz - worldP);
 	vec3 radiance = radiance(worldN, worldV, worldP, roughness, textureCubeMap, cubemapPos, cubemapCenter, cubemapExtent, cubemapCosSin, maxLod);
-	
+
 	// BRDF contributions.
 	vec3 diffuse, specular;
 	ambientBrdf(baseColor, metallic, roughness, NdotV, brdfPrecalc, diffuse, specular);
 
-	vec2 screenUV = gl_FragCoord.xy * invScreenSize;
-	float realtimeAO = textureLod(ssaoTexture, screenUV, 0).r;
 	float precomputedAO = infos.b;
-	float aoDiffuse = min(realtimeAO, precomputedAO);
+	float aoDiffuse = precomputedAO;
 	float aoSpecular = approximateSpecularAO(aoDiffuse, NdotV, roughness);
 
-	fragColor = vec4(aoDiffuse * diffuse * irradiance + aoSpecular * specular * radiance, 1.0);
+	fragColor = vec4(albedoInfos.a * aoDiffuse * diffuse * irradiance + aoSpecular * specular * radiance, albedoInfos.a);
 
 	// Compute F0 (fresnel coeff).
 	// Dielectrics have a constant low coeff, metals use the baseColor (ie reflections are tinted).
 	vec3 F0 = mix(vec3(0.04), baseColor, metallic);
 	// Normalized diffuse contribution. Metallic materials have no diffuse contribution.
-	vec3 diffuseL = INV_M_PI * (1.0 - metallic) * baseColor * (1.0 - F0);
+	vec3 diffuseL = albedoInfos.a * INV_M_PI * (1.0 - metallic) * baseColor * (1.0 - F0);
 
 	for(int lid = 0; lid < MAX_LIGHTS_COUNT; ++lid){
 		if(lid >= lightsCount){
