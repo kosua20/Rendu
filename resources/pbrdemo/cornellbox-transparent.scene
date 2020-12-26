@@ -1,7 +1,7 @@
 * probe: 
 	position: 0.0,1.0,0.0
-	center: 0.0,1.0,10.0
-	extent: 1.0,1.0,11.0
+	center: -10.0,1.0,10.0
+	extent: 11.0,1.0,11.0
 	rotation: 0.0
 
 * background:
@@ -37,20 +37,19 @@
 	type: Regular
 	skipuvs: true
 	textures:
-		- srgb: 0.9,0.2,0.7
+		- srgb: 0.7,0.7,0.7
 		- rgb: default_normal
-		- rgb: cornellbox_rough_met_ao
+		- rgb: 0.4,1.0,1.0
 
 * object:
 	mesh: cornellbox_backWall_12
 	shadows: true
 	twosided: true
-	type: Regular
-	skipuvs: true
+	type: Transparent
 	textures:
-		- srgb: cornellbox_grey
-		- rgb: default_normal
-		- rgb: cornellbox_rough_met_ao
+		- srgb: vitrail_color
+		- rgb: vitrail_normal
+		- rgb: vitrail_rough_met_ao
 
 * object:
 	mesh: cornellbox_rightWall_18
@@ -59,7 +58,7 @@
 	type: Regular
 	skipuvs: true
 	textures:
-		- srgb: 0.2,0.8,0.7
+		- srgb: 0.8,0.8,0.8
 		- rgb: default_normal
 		- rgb: cornellbox_rough_met_ao
 
@@ -71,9 +70,9 @@
 	twosided: true
 	type: Transparent      
 	textures:
-		- srgb: ceramic_tiles_blue_color
-		- rgb: ceramic_tiles_blue_normal
-		- rgb: ceramic_tiles_blue_rough_met_ao
+		- srgb: 1.0,0.0,0.0,0.5
+		- rgb: 0.5,0.5,1.0
+		- rgb: squares_rough_met_ao
 
 
 
@@ -94,9 +93,9 @@
 	type: Transparent
 	twosided: true
 	textures:
-		- srgb: 1.0,1.0,1.0
-		- rgb: default_normal
-		- rgb: 0.6,1.0,1.0
+		- srgb: 0.0,0.8,0.8,0.5
+		- rgb: 0.5,0.5,1.0
+		- rgb: 0.0,0.0,1.0
 	translation: -0.35,1.0,-0.25
 	scaling: 0.5
 	
