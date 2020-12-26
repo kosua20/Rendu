@@ -1,6 +1,8 @@
 * probe: 
-	radiance: rgbcube: default_cube
-	irradiance: default_shcoeffs
+	position: 0.0,1.0,-0.5
+	center: 0.0,1.0,10.0
+	extent: 1.0,1.0,11.0
+	rotation: 0.0
 
 * background:
 	color: 0.0,0.0,0.0
@@ -70,7 +72,7 @@
 	type: Regular
 	skipuvs: true
 	textures:
-		- srgb: cornellbox_grey
+		- srgb: 0.3,0.2,0.8
 		- rgb: default_normal
 		- rgb: cornellbox_rough_met_ao
 
@@ -81,7 +83,7 @@
 	type: Regular
 	skipuvs: true
 	textures:
-		- srgb: cornellbox_grey
+		- srgb: 0.2,0.5,0.7
 		- rgb: default_normal
 		- rgb: cornellbox_rough_met_ao
 

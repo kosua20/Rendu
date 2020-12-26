@@ -1,5 +1,5 @@
 * probe: 
-	position: 0.0,1.0,0.0
+	position: 0.0,1.5,0.0
 	center: 0.0,1.0,10.0
 	extent: 1.0,1.0,11.0
 	rotation: 0.0
@@ -40,34 +40,28 @@
 	mesh: cornellbox_backWall_12
 	shadows: true
 	twosided: true
-	type: Regular
+	type: Emissive
 	skipuvs: true
 	textures:
-		- srgb: cornellbox_grey
-		- rgb: default_normal
-		- rgb: cornellbox_rough_met_ao
+		- rgb32: 0.0,1.25,0.0
 
 * object:
 	mesh: cornellbox_rightWall_18
 	shadows: true
 	twosided: true
-	type: Regular
+	type: Emissive
 	skipuvs: true
 	textures:
-		- srgb: cornellbox_grey
-		- rgb: default_normal
-		- rgb: cornellbox_rough_met_ao
+		- rgb32: 0.0,0.0,1.25
 
 * object:
 	mesh: cornellbox_leftWall_24
 	shadows: true
 	twosided: true
-	type: Regular
+	type: Emissive
 	skipuvs: true
 	textures:
-		- srgb: cornellbox_grey
-		- rgb: default_normal
-		- rgb: cornellbox_rough_met_ao
+		- rgb32: 1.25,0.0,0.0
 
 * object:
 	mesh: cornellbox_smallBox_30
@@ -79,8 +73,11 @@
 * object:
 	mesh: cornellbox_largeBox_60
 	shadows: true
-	type: Emissive
+	type: Regular
+	skipuvs: true
 	textures:
-		- rgb32: 2.0,2.0,2.0
+		- srgb: 1.0,1.0,1.0
+		- rgb: 0.5,0.5,1.0
+		- rgb: 1.0,0.0,1.0
 
 
