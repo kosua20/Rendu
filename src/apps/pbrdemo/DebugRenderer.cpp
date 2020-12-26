@@ -137,6 +137,9 @@ void DebugRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_
 		const LightProbe & probe = _scene->environment;
 		// Render the extent box if parallax corrected.
 		if(probe.extent()[0] > 0.0f){
+			// Wireframe
+			GLUtilities::setPolygonState(PolygonMode::LINE);
+			GLUtilities::setCullState(false);
 			const glm::mat4 baseModel = glm::rotate(glm::translate(glm::mat4(1.0f), probe.center()), probe.rotation(), glm::vec3(0.0f, 1.0f, 0.0f));
 			const glm::mat4 mvpBox = vp * glm::scale(baseModel, 2.0f * probe.extent());
 			const glm::mat4 mvpCenter = vp * glm::scale(baseModel, glm::vec3(0.05f));
@@ -151,6 +154,7 @@ void DebugRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_
 			GLUtilities::drawMesh(*_sphere);
 		}
 
+		GLUtilities::setPolygonState(PolygonMode::FILL);
 		GLUtilities::setCullState(true, Faces::BACK);
 		// Combine the three matrices.
 		const glm::mat4 model = glm::scale(glm::translate(glm::mat4(1.0f), probe.position()), glm::vec3(0.15f));
