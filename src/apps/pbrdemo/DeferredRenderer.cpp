@@ -15,13 +15,13 @@ DeferredRenderer::DeferredRenderer(const glm::vec2 & resolution, ShadowMode mode
 	const Descriptor normalDesc			= {Layout::RGB16F, Filter::NEAREST_NEAREST, Wrap::CLAMP};
 	const Descriptor effectsDesc		= {Layout::RGB8, Filter::NEAREST_NEAREST, Wrap::CLAMP};
 	const Descriptor depthDesc			= {Layout::DEPTH_COMPONENT32F, Filter::NEAREST_NEAREST, Wrap::CLAMP};
-	const Descriptor desc = {Layout::RGB16F, Filter::LINEAR_LINEAR, Wrap::CLAMP};
+	const Descriptor lightDesc = {Layout::RGB16F, Filter::LINEAR_LINEAR, Wrap::CLAMP};
 
 	const std::vector<Descriptor> descs = {albedoDesc, normalDesc, effectsDesc, depthDesc};
 	_gbuffer							= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, descs, false, "G-buffer"));
 	_ssaoPass							= std::unique_ptr<SSAO>(new SSAO(renderWidth, renderHeight, 2, 0.5f));
-	_lightBuffer						= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, desc, false, "Deferred lighting"));
-	_preferredFormat.push_back(desc);
+	_lightBuffer						= std::unique_ptr<Framebuffer>(new Framebuffer(TextureShape::D2, renderWidth, renderHeight, 1, 1, {lightDesc, depthDesc}, false, "Deferred lighting"));
+	_preferredFormat.push_back(lightDesc);
 	_needsDepth = false;
 
 	_skyboxProgram		= Resources::manager().getProgram("skybox_gbuffer", "skybox_infinity", "skybox_gbuffer");
@@ -30,11 +30,14 @@ DeferredRenderer::DeferredRenderer(const glm::vec2 & resolution, ShadowMode mode
 	_parallaxProgram	= Resources::manager().getProgram("object_parallax_gbuffer");
 	_objectProgram		= Resources::manager().getProgram("object_gbuffer");
 	_emissiveProgram	= Resources::manager().getProgram("object_emissive_gbuffer");
+	_transparentProgram = Resources::manager().getProgram("object_transparent_forward", "object_forward", "object_transparent_forward");
 
 	// Lighting passes.
 	_ambientScreen = std::unique_ptr<AmbientQuad>(new AmbientQuad(_gbuffer->texture(0), _gbuffer->texture(1),
 		_gbuffer->texture(2), _gbuffer->depthBuffer(), _ssaoPass->texture()));
 	_lightRenderer = std::unique_ptr<DeferredLight>(new DeferredLight(_gbuffer->texture(0), _gbuffer->texture(1), _gbuffer->depthBuffer(), _gbuffer->texture(2)));
+
+	_textureBrdf = Resources::manager().getTexture("brdf-precomputed", {Layout::RG32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
 	checkGLError();
 }
 
@@ -45,23 +48,18 @@ void DeferredRenderer::setScene(const std::shared_ptr<Scene> & scene) {
 	}
 	_scene = scene;
 	_culler.reset(new Culler(_scene->objects));
+	_fwdLightsGPU.reset(new ForwardLight(_scene->lights.size()));
 	checkGLError();
 }
 
-void DeferredRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & proj, const glm::vec3 & pos) {
+void DeferredRenderer::renderOpaque(const Culler::List & visibles, const glm::mat4 & view, const glm::mat4 & proj) {
+	
 	GLUtilities::setDepthState(true, TestFunction::LESS, true);
 	GLUtilities::setBlendState(false);
 	GLUtilities::setCullState(true, Faces::BACK);
 
-	// Bind the full scene framebuffer.
-	_gbuffer->bind();
-	// Set screen viewport
-	_gbuffer->setViewport();
 	// Clear the depth buffer (we know we will draw everywhere, no need to clear color).
 	GLUtilities::clearDepth(1.0f);
-
-	// Request list of visible objects from culler.
-	const auto & visibles = _culler->cullAndSort(view, proj, pos);
 
 	// Scene objects.
 	for(const long & objectId : visibles) {
@@ -70,7 +68,11 @@ void DeferredRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & pro
 			break;
 		}
 		const Object & object = _scene->objects[objectId];
-
+		// Skip transparent objects.
+		if(object.type() == Object::Transparent){
+			continue;
+		}
+		
 		// Combine the three matrices.
 		const glm::mat4 MV  = view * object.model();
 		const glm::mat4 MVP = proj * MV;
@@ -116,8 +118,82 @@ void DeferredRenderer::renderScene(const glm::mat4 & view, const glm::mat4 & pro
 		GLUtilities::bindTextures(object.textures());
 		GLUtilities::drawMesh(*object.mesh());
 	}
-	
-	renderBackground(view, proj, pos);
+
+}
+
+void DeferredRenderer::renderTransparent(const Culler::List & visibles, const glm::mat4 & view, const glm::mat4 & proj){
+
+	const auto & shadowMaps = _fwdLightsGPU->shadowMaps();
+
+	GLUtilities::setBlendState(true, BlendEquation::ADD, BlendFunction::ONE, BlendFunction::ONE_MINUS_SRC_ALPHA);
+	GLUtilities::setDepthState(true, TestFunction::LEQUAL, false);
+	GLUtilities::setCullState(true, Faces::BACK);
+
+	_transparentProgram->use();
+
+	// Update all shaders shared parameters.
+	const LightProbe & environment = _scene->environment;
+	const float cubeLod		= float(environment.map()->levels - 1);
+	const glm::mat4 invView = glm::inverse(view);
+	const glm::vec2 invScreenSize = 1.0f / glm::vec2(_lightBuffer->width(), _lightBuffer->height());
+	// Update shared data.
+	_transparentProgram->uniform("inverseV", invView);
+	_transparentProgram->uniform("maxLod", cubeLod);
+	_transparentProgram->uniform("cubemapPos", environment.position());
+	_transparentProgram->uniform("cubemapCenter", environment.center());
+	_transparentProgram->uniform("cubemapExtent", environment.extent());
+	_transparentProgram->uniform("cubemapCosSin", environment.rotationCosSin());
+	_transparentProgram->uniform("lightsCount", int(_fwdLightsGPU->count()));
+	_transparentProgram->uniform("invScreenSize", invScreenSize);
+
+	for(const long & objectId : visibles) {
+		// Once we get a -1, there is no other object to render.
+		if(objectId == -1){
+			break;
+		}
+
+		const auto & object = _scene->objects[objectId];
+		// Skip non transparent objects.
+		if(object.type() != Object::Type::Transparent){
+			continue;
+		}
+
+		// Combine the three matrices.
+		const glm::mat4 MV	= view * object.model();
+		const glm::mat4 MVP = proj * MV;
+		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(MV)));
+
+		// Upload the matrices.
+		_transparentProgram->uniform("hasUV", object.useTexCoords());
+		_transparentProgram->uniform("mvp", MVP);
+		_transparentProgram->uniform("mv", MV);
+		_transparentProgram->uniform("normalMatrix", normalMatrix);
+
+		// Bind the lights.
+		GLUtilities::bindBuffer(_fwdLightsGPU->data(), 0);
+		GLUtilities::bindBuffer(*_scene->environment.shCoeffs(), 1);
+		// Bind the textures.
+		GLUtilities::bindTextures(object.textures());
+		GLUtilities::bindTexture(_textureBrdf, 4);
+		GLUtilities::bindTexture(_scene->environment.map(), 5);
+		// Bind available shadow maps.
+		if(shadowMaps[0]){
+			GLUtilities::bindTexture(shadowMaps[0], 6);
+		}
+		if(shadowMaps[1]){
+			GLUtilities::bindTexture(shadowMaps[1], 7);
+		}
+		// No SSAO as the objects are not rendered in it.
+
+		// To approximately handle two sided objects properly, draw the back faces first, then the front faces.
+		// This won't solve all issues in case of concavities.
+		if(object.twoSided()) {
+			GLUtilities::setCullState(true, Faces::FRONT);
+			GLUtilities::drawMesh(*object.mesh());
+			GLUtilities::setCullState(true, Faces::BACK);
+		}
+		GLUtilities::drawMesh(*object.mesh());
+	}
 }
 
 void DeferredRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 & proj, const glm::vec3 & pos){
@@ -175,17 +251,23 @@ void DeferredRenderer::draw(const Camera & camera, Framebuffer & framebuffer, si
 	const glm::mat4 & proj = camera.projection();
 	const glm::vec3 & pos = camera.position();
 
-	// --- Scene pass -------
-	renderScene(view, proj, pos);
+	// Request list of visible objects from culler.
+	const auto & visibles = _culler->cullAndSort(view, proj, pos);
 
-	// --- SSAO pass
+	// Render opaque objects and the background to the Gbuffer.
+	_gbuffer->bind();
+	_gbuffer->setViewport();
+	renderOpaque(visibles, view, proj);
+	renderBackground(view, proj, pos);
+
+	// SSAO pass
 	if(_applySSAO) {
 		_ssaoPass->process(proj, _gbuffer->depthBuffer(), _gbuffer->texture(int(TextureType::Normal)));
 	} else {
 		_ssaoPass->clear();
 	}
 
-	// --- Gbuffer composition pass
+	// Gbuffer lighting pass
 	_lightRenderer->updateCameraInfos(view, proj);
 	_lightRenderer->updateShadowMapInfos(_shadowMode, 0.002f);
 	_lightBuffer->bind();
@@ -196,6 +278,20 @@ void DeferredRenderer::draw(const Camera & camera, Framebuffer & framebuffer, si
 		light->draw(*_lightRenderer);
 	}
 
+	// Update forward light data.
+	_fwdLightsGPU->updateCameraInfos(view, proj);
+	_fwdLightsGPU->updateShadowMapInfos(_shadowMode, 0.002f);
+	for(const auto & light : _scene->lights) {
+		light->draw(*_fwdLightsGPU);
+	}
+	_fwdLightsGPU->data().upload();
+	// Blit the depth.
+	GLUtilities::blitDepth(*_gbuffer, *_lightBuffer);
+	// Now render transparent effects in a forward fashion.
+	_lightBuffer->bind();
+	_lightBuffer->setViewport();
+	renderTransparent(visibles, view, proj);
+
 	// Copy to the final framebuffer.
 	GLUtilities::blit(*_lightBuffer, framebuffer, 0, layer, Filter::NEAREST);
 
@@ -203,8 +299,9 @@ void DeferredRenderer::draw(const Camera & camera, Framebuffer & framebuffer, si
 
 void DeferredRenderer::resize(unsigned int width, unsigned int height) {
 	// Resize the framebuffers.
-	_gbuffer->resize(glm::vec2(width, height));
-	_lightBuffer->resize(glm::vec2(width, height));
+	const glm::vec2 nSize(width, height);
+	_gbuffer->resize(nSize);
+	_lightBuffer->resize(nSize);
 	_ssaoPass->resize(width, height);
 	checkGLError();
 	

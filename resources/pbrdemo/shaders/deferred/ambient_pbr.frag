@@ -28,16 +28,17 @@ uniform vec3 cubemapExtent; ///< The cubemap parallax box half size
 uniform vec2 cubemapCosSin; ///< The cubemap parallax box orientation (precomputed cos/sin).
 uniform float maxLod; ///< Mip level count for background map.
 
-layout(location = 0) out vec3 fragColor; ///< Color.
+layout(location = 0) out vec4 fragColor; ///< Color.
 
 /** Compute the environment ambient lighting contribution on the scene. */
 void main(){
-	
+	fragColor.a = 1.0;
+
 	vec4 albedoInfo = texture(albedoTexture,In.uv);
 	
 	if(albedoInfo.a == 0){
 		// If emissive (skybox or object), use directly the albedo color.
-		fragColor = albedoInfo.rgb;
+		fragColor.rgb = albedoInfo.rgb;
 		return;
 	}
 	
@@ -68,5 +69,5 @@ void main(){
 	vec3 diffuse, specular;
 	ambientBrdf(baseColor, infos.g, roughness, NdotV, brdfPrecalc, diffuse, specular);
 	
-	fragColor = aoDiffuse * diffuse * irradiance + aoSpecular * specular * radiance;
+	fragColor.rgb = aoDiffuse * diffuse * irradiance + aoSpecular * specular * radiance;
 }

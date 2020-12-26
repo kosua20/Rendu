@@ -1,6 +1,7 @@
 #pragma once
 
 #include "DeferredLight.hpp"
+#include "ForwardLight.hpp"
 
 #include "renderers/DebugLightRenderer.hpp"
 
@@ -64,13 +65,20 @@ public:
 	const Texture * sceneNormal() const;
 
 private:
-	
-	/** Render the scene objects to the G-buffer.
+
+	/** Render the scene opaque objects.
+	 \param visibles list of indices of visible objects
 	 \param view the camera view matrix
 	 \param proj the camera projection matrix
-	 \param pos the camera position
 	 */
-	void renderScene(const glm::mat4 & view, const glm::mat4 & proj, const glm::vec3 & pos);
+	void renderOpaque(const Culler::List & visibles, const glm::mat4 & view, const glm::mat4 & proj);
+
+	/** Render the scene transparent objects.
+	 \param visibles list of indices of visible objects 
+	 \param view the camera view matrix
+	 \param proj the camera projection matrix
+	 */
+	void renderTransparent(const Culler::List & visibles, const glm::mat4 & view, const glm::mat4 & proj);
 	
 	/** Render the scene background to the G-buffer.
 	 \param view the camera view matrix
@@ -84,14 +92,18 @@ private:
 	std::unique_ptr<SSAO> _ssaoPass;				///< SSAO processing.
 	std::unique_ptr<AmbientQuad> _ambientScreen;	///< Ambient lighting contribution rendering.
 	std::unique_ptr<DeferredLight> _lightRenderer;	///< The lights renderer.
+	std::unique_ptr<ForwardLight> _fwdLightsGPU;	///< The lights forward renderer for transparent objects.
 	
 	const Program * _objectProgram;		 ///< Basic PBR program
 	const Program * _parallaxProgram;	 ///< Parallax mapping PBR program
 	const Program * _emissiveProgram;	 ///< Emissive program
+	const Program * _transparentProgram; ///< Transparent PBR program
 
 	const Program * _skyboxProgram; ///< Skybox program.
 	const Program * _bgProgram;		///< Planar background program.
 	const Program * _atmoProgram;   ///< Atmospheric scattering program.
+
+	const Texture * _textureBrdf; ///< The BRDF lookup table.
 
 	std::shared_ptr<Scene> _scene;	///< The scene to render
 	std::unique_ptr<Culler>	_culler;	///< Objects culler.
