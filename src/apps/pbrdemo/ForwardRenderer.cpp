@@ -185,7 +185,7 @@ void ForwardRenderer::renderTransparent(const Culler::List & visibles, const glm
 	const auto & shadowMaps = _lightsGPU->shadowMaps();
 
 	GLUtilities::setBlendState(true, BlendEquation::ADD, BlendFunction::ONE, BlendFunction::ONE_MINUS_SRC_ALPHA);
-	GLUtilities::setDepthState(true, TestFunction::LEQUAL, false);
+	GLUtilities::setDepthState(true, TestFunction::LEQUAL, true);
 	GLUtilities::setCullState(true, Faces::BACK);
 
 	_transparentProgram->use();

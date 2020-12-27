@@ -42,9 +42,7 @@ layout (location = 0) out vec4 fragColor; ///< Shading result.
 void main(){
 
 	vec4 albedoInfos = texture(albedoTexture, In.uv);
-	if(albedoInfos.a <= 0.01){
-		discard;
-	}
+	// No clipping, specular component is always present.
 	vec3 baseColor = albedoInfos.rgb;
 
 	// Flip the up of the local frame for back facing fragments.

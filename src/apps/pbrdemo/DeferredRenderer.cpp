@@ -126,7 +126,7 @@ void DeferredRenderer::renderTransparent(const Culler::List & visibles, const gl
 	const auto & shadowMaps = _fwdLightsGPU->shadowMaps();
 
 	GLUtilities::setBlendState(true, BlendEquation::ADD, BlendFunction::ONE, BlendFunction::ONE_MINUS_SRC_ALPHA);
-	GLUtilities::setDepthState(true, TestFunction::LEQUAL, false);
+	GLUtilities::setDepthState(true, TestFunction::LEQUAL, true);
 	GLUtilities::setCullState(true, Faces::BACK);
 
 	_transparentProgram->use();
@@ -323,7 +323,7 @@ void DeferredRenderer::interface(){
 }
 
 const Framebuffer * DeferredRenderer::sceneDepth() const {
-	return _gbuffer.get();
+	return _lightBuffer.get();
 }
 
 const Texture * DeferredRenderer::sceneNormal() const {
