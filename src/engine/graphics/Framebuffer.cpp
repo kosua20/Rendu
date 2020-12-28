@@ -105,7 +105,7 @@ Framebuffer::Framebuffer(TextureShape shape, uint width, uint height, uint depth
 		drawBuffers[i] = GL_COLOR_ATTACHMENT0 + GLuint(i);
 	}
 	glDrawBuffers(GLsizei(drawBuffers.size()), &drawBuffers[0]);
-	checkGLFramebufferError();
+	GLUtilities::checkFramebufferStatus();
 	checkGLError();
 
 	GLUtilities::bindFramebuffer(*Framebuffer::backbuffer(), Mode::WRITE);

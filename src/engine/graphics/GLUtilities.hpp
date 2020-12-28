@@ -16,22 +16,9 @@
  */
 
 /// This macro is used to check for OpenGL errors with access to the file and line number where the error is detected.
-#define checkGLError() _checkGLError(__FILE__, __LINE__, "")
+#define checkGLError() GLUtilities::checkError(__FILE__, __LINE__, "");
 /// This macro is used to check for OpenGL errors with access to the file and line number where the error is detected, along with additional user informations.
-#define checkGLErrorInfos(infos) _checkGLError(__FILE__, __LINE__, infos)
-
-/** Check if any OpenGL error has been detected and log it.
- \param file the current file
- \param line the current line
- \param infos additional user info
- \return non zero if an error was encountered
- */
-int _checkGLError(const char * file, int line, const std::string & infos);
-
-/** Check if any OpenGL has been detected after setting up a framebuffer.
- \return non zero if an error was encountered
- */
-int checkGLFramebufferError();
+#define checkGLErrorInfos(infos) GLUtilities::checkError(__FILE__, __LINE__, infos);
 
 /**@}*/
 
@@ -50,9 +37,6 @@ class GLUtilities {
 	friend class Framebuffer; ///< Access to deletion notifier for cached state update.
 
 public:
-	/** Setup the GPU in its initial state.
-	 */
-	static void setup();
 
 	/** Type of shader uniform binding */
 	enum class BindingType : uint {
@@ -67,6 +51,23 @@ public:
 
 	/** Bindings list */
 	using Bindings = std::map<std::string, Binding>;
+
+	/** Check if any OpenGL error has been detected and log it.
+	 \param file the current file
+	 \param line the current line
+	 \param infos additional user info
+	 \return non zero if an error was encountered
+	 */
+	static int checkError(const char * file, int line, const std::string & infos);
+
+	/** Check if any OpenGL has been detected after setting up a framebuffer.
+	  \return non zero if an error was encountered
+	  */
+	static int checkFramebufferStatus();
+	
+	/** Setup the GPU in its initial state.
+	 */
+	static void setup();
 
 	/** Create a shader of a given type from a string. Extract additional informations from the shader.
 	 \param prog the content of the shader

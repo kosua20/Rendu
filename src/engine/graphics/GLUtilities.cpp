@@ -10,7 +10,7 @@
  \param error the OpenGl error value
  \return the corresponding string
  */
-std::string getGLErrorString(GLenum error) {
+static std::string getGLErrorString(GLenum error) {
 	std::string msg;
 	switch(error) {
 		case GL_INVALID_ENUM:
@@ -37,7 +37,53 @@ std::string getGLErrorString(GLenum error) {
 	return msg;
 }
 
-int checkGLFramebufferError() {
+void GLUtilities::setup() {
+	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+	glFrontFace(GL_CCW);
+	glCullFace(GL_BACK);
+	glBlendEquation(GL_FUNC_ADD);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+	glDisable(GL_BLEND);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glDepthMask(GL_TRUE);
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	glDepthFunc(GL_LESS);
+	glEnable(GL_FRAMEBUFFER_SRGB);
+	glEnable(GL_PROGRAM_POINT_SIZE);
+	Framebuffer::backbuffer()->bind();
+
+	// Cache initial state.
+	GLUtilities::getState(_state);
+	_state.polygonMode = PolygonMode::FILL;
+
+	// Create empty VAO for screenquad.
+	glGenVertexArrays(1, &_vao);
+	glBindVertexArray(_vao);
+	glBindVertexArray(0);
+	_state.vertexArray = 0;
+}
+
+int GLUtilities::checkError(const char * file, int line, const std::string & infos) {
+	const GLenum glErr = glGetError();
+	if(glErr != GL_NO_ERROR) {
+		const std::string filePath(file);
+		size_t pos = std::min(filePath.find_last_of('/'), filePath.find_last_of('\\'));
+		if(pos == std::string::npos) {
+			pos = 0;
+		}
+		Log::Error() << Log::OpenGL << "Error " << getGLErrorString(glErr) << " in " << filePath.substr(pos + 1) << " (" << line << ").";
+		if(!infos.empty()) {
+			Log::Error() << " Infos: " << infos;
+		}
+		Log::Error() << std::endl;
+		return 1;
+	}
+	return 0;
+}
+
+int GLUtilities::checkFramebufferStatus() {
 	const GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 	if(status != GL_FRAMEBUFFER_COMPLETE) {
 		switch(status) {
@@ -72,52 +118,6 @@ int checkGLFramebufferError() {
 		return 1;
 	}
 	return 0;
-}
-
-int _checkGLError(const char * file, int line, const std::string & infos) {
-	const GLenum glErr = glGetError();
-	if(glErr != GL_NO_ERROR) {
-		const std::string filePath(file);
-		size_t pos = std::min(filePath.find_last_of('/'), filePath.find_last_of('\\'));
-		if(pos == std::string::npos) {
-			pos = 0;
-		}
-		Log::Error() << Log::OpenGL << "Error " << getGLErrorString(glErr) << " in " << filePath.substr(pos + 1) << " (" << line << ").";
-		if(!infos.empty()) {
-			Log::Error() << " Infos: " << infos;
-		}
-		Log::Error() << std::endl;
-		return 1;
-	}
-	return 0;
-}
-
-void GLUtilities::setup() {
-	glDisable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
-	glFrontFace(GL_CCW);
-	glCullFace(GL_BACK);
-	glBlendEquation(GL_FUNC_ADD);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-	glDisable(GL_BLEND);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glDepthMask(GL_TRUE);
-	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-	glDepthFunc(GL_LESS);
-	glEnable(GL_FRAMEBUFFER_SRGB);
-	glEnable(GL_PROGRAM_POINT_SIZE);
-	Framebuffer::backbuffer()->bind();
-
-	// Cache initial state.
-	GLUtilities::getState(_state);
-	_state.polygonMode = PolygonMode::FILL;
-
-	// Create empty VAO for screenquad.
-	glGenVertexArrays(1, &_vao);
-	glBindVertexArray(_vao);
-	glBindVertexArray(0);
-	_state.vertexArray = 0;
 }
 
 GLuint GLUtilities::loadShader(const std::string & prog, ShaderType type, Bindings & bindings, std::string & finalLog) {
@@ -1223,7 +1223,7 @@ void GLUtilities::blit(const Texture & src, Texture & dst, Filter filter) {
 		for(size_t i = 0; i < 6; ++i) {
 			glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), src.gpu->id, 0);
 			glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), dst.gpu->id, 0);
-			checkGLFramebufferError();
+			GLUtilities::checkFramebufferStatus();
 			glBlitFramebuffer(0, 0, src.width, src.height, 0, 0, dst.width, dst.height, GL_COLOR_BUFFER_BIT, filterGL);
 		}
 	} else {
@@ -1239,7 +1239,7 @@ void GLUtilities::blit(const Texture & src, Texture & dst, Filter filter) {
 			Log::Error() << Log::OpenGL << "Unsupported texture shape for blitting." << std::endl;
 			return;
 		}
-		checkGLFramebufferError();
+		GLUtilities::checkFramebufferStatus();
 		glBlitFramebuffer(0, 0, src.width, src.height, 0, 0, dst.width, dst.height, GL_COLOR_BUFFER_BIT, filterGL);
 	}
 	// Restore the proper framebuffers from the cache.
@@ -1270,7 +1270,7 @@ void GLUtilities::blit(const Texture & src, Framebuffer & dst, Filter filter) {
 	if(src.shape == TextureShape::Cube) {
 		for(size_t i = 0; i < 6; ++i) {
 			glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), src.gpu->id, 0);
-			checkGLFramebufferError();
+			GLUtilities::checkFramebufferStatus();
 			dst.bind(i, 0, Framebuffer::Mode::WRITE);
 			glBlitFramebuffer(0, 0, src.width, src.height, 0, 0, dst.width(), dst.height(), GL_COLOR_BUFFER_BIT, filterGL);
 		}
@@ -1285,7 +1285,7 @@ void GLUtilities::blit(const Texture & src, Framebuffer & dst, Filter filter) {
 			Log::Error() << Log::OpenGL << "Unsupported texture shape for blitting." << std::endl;
 			return;
 		}
-		checkGLFramebufferError();
+		GLUtilities::checkFramebufferStatus();
 		dst.bind(0, 0, Framebuffer::Mode::WRITE);
 		glBlitFramebuffer(0, 0, src.width, src.height, 0, 0, dst.width(), dst.height(), GL_COLOR_BUFFER_BIT, filterGL);
 	}
