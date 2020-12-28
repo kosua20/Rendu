@@ -168,90 +168,105 @@ void Program::clean() const {
 void Program::uniform(const std::string & name, bool t) const {
 	if(_uniforms.count(name) != 0) {
 		glUniform1i(_uniforms.at(name), int(t));
+		updateUniformMetric();
 	}
 }
 
 void Program::uniform(const std::string & name, int t) const {
 	if(_uniforms.count(name) != 0) {
 		glUniform1i(_uniforms.at(name), t);
+		updateUniformMetric();
 	}
 }
 
 void Program::uniform(const std::string & name, uint t) const {
 	if(_uniforms.count(name) != 0) {
 		glUniform1ui(_uniforms.at(name), t);
+		updateUniformMetric();
 	}
 }
 
 void Program::uniform(const std::string & name, float t) const {
 	if(_uniforms.count(name) != 0) {
 		glUniform1f(_uniforms.at(name), t);
+		updateUniformMetric();
 	}
 }
 
 void Program::uniform(const std::string & name, size_t count, const float * t) const {
 	if(_uniforms.count(name) != 0) {
 		glUniform1fv(_uniforms.at(name), GLsizei(count), t);
+		updateUniformMetric();
 	}
 }
 
 void Program::uniform(const std::string & name, const glm::vec2 & t) const {
 	if(_uniforms.count(name) != 0) {
 		glUniform2fv(_uniforms.at(name), 1, &t[0]);
+		updateUniformMetric();
 	}
 }
 
 void Program::uniform(const std::string & name, const glm::vec3 & t) const {
 	if(_uniforms.count(name) != 0) {
 		glUniform3fv(_uniforms.at(name), 1, &t[0]);
+		updateUniformMetric();
 	}
 }
 
 void Program::uniform(const std::string & name, const glm::vec4 & t) const {
 	if(_uniforms.count(name) != 0) {
 		glUniform4fv(_uniforms.at(name), 1, &t[0]);
+		updateUniformMetric();
 	}
 }
 
 void Program::uniform(const std::string & name, const glm::ivec2 & t) const {
 	if(_uniforms.count(name) != 0) {
 		glUniform2iv(_uniforms.at(name), 1, &t[0]);
+		updateUniformMetric();
 	}
 }
 
 void Program::uniform(const std::string & name, const glm::ivec3 & t) const {
 	if(_uniforms.count(name) != 0) {
 		glUniform3iv(_uniforms.at(name), 1, &t[0]);
+		updateUniformMetric();
 	}
 }
 
 void Program::uniform(const std::string & name, const glm::ivec4 & t) const {
 	if(_uniforms.count(name) != 0) {
 		glUniform4iv(_uniforms.at(name), 1, &t[0]);
+		updateUniformMetric();
 	}
 }
 
 void Program::uniform(const std::string & name, const glm::mat3 & t) const {
 	if(_uniforms.count(name) != 0) {
 		glUniformMatrix3fv(_uniforms.at(name), 1, GL_FALSE, &t[0][0]);
+		updateUniformMetric();
 	}
 }
 
 void Program::uniform(const std::string & name, const glm::mat4 & t) const {
 	if(_uniforms.count(name) != 0) {
 		glUniformMatrix4fv(_uniforms.at(name), 1, GL_FALSE, &t[0][0]);
+		updateUniformMetric();
 	}
 }
 
 void Program::uniformBuffer(const std::string & name, size_t slot) const {
 	if(_uniforms.count(name) != 0) {
 		glUniformBlockBinding(_id, _uniforms.at(name), GLuint(slot));
+		updateUniformMetric();
 	}
 }
 
 void Program::uniformTexture(const std::string & name, size_t slot) const {
 	if(_uniforms.count(name) != 0) {
 		glUniform1i(_uniforms.at(name), int(slot));
+		updateUniformMetric();
 	}
 }
 
@@ -327,4 +342,11 @@ void Program::getUniform(const std::string & name, glm::mat4 & t) const {
 	if(_uniforms.count(name) != 0) {
 		glGetUniformfv(_id, _uniforms.at(name), &t[0][0]);
 	}
+}
+
+void Program::updateUniformMetric() const {
+#define UDPATE_METRICS
+#ifdef UDPATE_METRICS
+	GLUtilities::_metrics.uniforms += 1;
+#endif
 }

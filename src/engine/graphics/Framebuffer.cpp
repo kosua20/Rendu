@@ -55,6 +55,7 @@ Framebuffer::Framebuffer(TextureShape shape, uint width, uint height, uint depth
 
 			// Link the texture to the depth attachment of the framebuffer.
 			glBindTexture(GL_TEXTURE_2D, _idDepth.gpu->id);
+			GLUtilities::_metrics.textureBindings += 1;
 			glFramebufferTexture2D(GL_FRAMEBUFFER, (_hasStencil ? GL_DEPTH_STENCIL_ATTACHMENT : GL_DEPTH_ATTACHMENT), GL_TEXTURE_2D, _idDepth.gpu->id, 0);
 			GLUtilities::restoreTexture(_idDepth.shape);
 
@@ -70,6 +71,7 @@ Framebuffer::Framebuffer(TextureShape shape, uint width, uint height, uint depth
 
 			// Link the texture to the color attachment (ie output) of the framebuffer.
 			glBindTexture(_target, tex.gpu->id); // might not be needed.
+			GLUtilities::_metrics.textureBindings += 1;
 			const GLuint slot = GLuint(int(_idColors.size()) - 1);
 			// Two cases: 2D texture or array (either 2D array, cubemap, or cubemap array).
 			if(_shape == TextureShape::D2){
@@ -93,6 +95,7 @@ Framebuffer::Framebuffer(TextureShape shape, uint width, uint height, uint depth
 		// Create the renderbuffer (depth buffer).
 		glGenRenderbuffers(1, &_idDepth.gpu->id);
 		glBindRenderbuffer(GL_RENDERBUFFER, _idDepth.gpu->id);
+		GLUtilities::_metrics.textureBindings += 1;
 		// Setup the depth buffer storage.
 		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32F, GLsizei(_width), GLsizei(_height));
 		// Link the renderbuffer to the framebuffer.
@@ -131,6 +134,7 @@ void Framebuffer::bind(size_t layer, size_t mip, Mode mode) const {
 	// Bind the proper slice for each color attachment.
 	for(uint cid = 0; cid < _idColors.size(); ++cid){
 		glBindTexture(_target, _idColors[cid].gpu->id);
+		GLUtilities::_metrics.textureBindings += 1;
 		const GLenum slot = GL_COLOR_ATTACHMENT0 + GLuint(cid);
 		const GLuint id = _idColors[cid].gpu->id;
 		if(_shape == TextureShape::D2){
@@ -145,6 +149,7 @@ void Framebuffer::bind(size_t layer, size_t mip, Mode mode) const {
 
 	if(_depthUse == Depth::TEXTURE){
 		glBindTexture(GL_TEXTURE_2D, _idDepth.gpu->id);
+		GLUtilities::_metrics.textureBindings += 1;
 		glFramebufferTexture2D(target, (_hasStencil ? GL_DEPTH_STENCIL_ATTACHMENT : GL_DEPTH_ATTACHMENT), GL_TEXTURE_2D, _idDepth.gpu->id, mid);
 		GLUtilities::restoreTexture(_idDepth.shape);
 	}
@@ -165,6 +170,7 @@ void Framebuffer::resize(uint width, uint height) {
 		glBindRenderbuffer(GL_RENDERBUFFER, _idDepth.gpu->id);
 		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32F, GLsizei(_width), GLsizei(_height));
 		glBindRenderbuffer(GL_RENDERBUFFER, 0);
+		GLUtilities::_metrics.textureBindings += 2;
 
 	} else if(_depthUse == Depth::TEXTURE) {
 		_idDepth.width  = _width;
@@ -189,6 +195,7 @@ void Framebuffer::clear(const glm::vec4 & color, float depth){
 	for(uint mid = 0; mid < _idDepth.levels; ++mid){
 		bind(0, mid, Mode::WRITE);
 		glClearBufferfv(GL_DEPTH, 0, &depth);
+		GLUtilities::_metrics.clearAndBlits += 1;
 	}
 
 	for(uint mid = 0; mid < _idColors[0].levels; ++mid){
@@ -196,6 +203,7 @@ void Framebuffer::clear(const glm::vec4 & color, float depth){
 			bind(lid, mid, Mode::WRITE);
 			for(uint cid = 0; cid < _idColors.size(); ++cid){
 				glClearBufferfv(GL_COLOR, GLint(cid), &color[0]);
+				GLUtilities::_metrics.clearAndBlits += 1;
 			}
 		}
 	}
@@ -206,6 +214,7 @@ glm::vec3 Framebuffer::read(const glm::ivec2 & pos) const {
 	glm::vec3 rgb(0.0f);
 	bind(0, 0, Mode::READ);
 	glReadPixels(pos.x, pos.y, 1, 1, GL_RGB, GL_FLOAT, &rgb[0]);
+	GLUtilities::_metrics.downloads += 1;
 	return rgb;
 }
 

@@ -271,6 +271,8 @@ public:
 	
 private:
 
+	void updateUniformMetric() const; ///< Update internal metrics.
+	
 	GLuint _id;								 ///< The OpenGL program ID.
 	std::string _name;				 		 ///< The shader name
 	std::map<std::string, GLint> _uniforms;  ///< Internal list of automatically registered uniforms and their locations. We keep this separate to avoid exposing GL internal types.

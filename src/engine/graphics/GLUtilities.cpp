@@ -375,6 +375,7 @@ void GLUtilities::bindProgram(const Program & program){
 	if(_state.program != program._id){
 		_state.program = program._id;
 		glUseProgram(program._id);
+		_metrics.programBindings += 1;
 	}
 }
 
@@ -382,6 +383,7 @@ void GLUtilities::bindFramebuffer(const Framebuffer & framebuffer){
 	if(_state.drawFramebuffer != framebuffer._id){
 		_state.drawFramebuffer = framebuffer._id;
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer._id);
+		_metrics.framebufferBindings += 1;
 	}
 }
 
@@ -389,9 +391,11 @@ void GLUtilities::bindFramebuffer(const Framebuffer & framebuffer, Framebuffer::
 	if(mode == Framebuffer::Mode::WRITE && _state.drawFramebuffer != framebuffer._id){
 		_state.drawFramebuffer = framebuffer._id;
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer._id);
+		_metrics.framebufferBindings += 1;
 	} else if(mode == Framebuffer::Mode::READ && _state.readFramebuffer != framebuffer._id){
 		_state.readFramebuffer = framebuffer._id;
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer._id);
+		_metrics.framebufferBindings += 1;
 	}
 
 }
@@ -405,6 +409,7 @@ void GLUtilities::saveFramebuffer(const Framebuffer & framebuffer, const std::st
 	GLUtilities::savePixels(gpu->type, gpu->format, framebuffer.width(), framebuffer.height(), gpu->channels, path, flip, ignoreAlpha);
 	
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, _state.readFramebuffer);
+	_metrics.framebufferBindings += 2;
 }
 
 void GLUtilities::bindTexture(const Texture * texture, size_t slot) {
@@ -414,6 +419,7 @@ void GLUtilities::bindTexture(const Texture * texture, size_t slot) {
 		_state.activeTexture = GLenum(GL_TEXTURE0 + slot);
 		glActiveTexture(_state.activeTexture);
 		glBindTexture(texture->gpu->target, texture->gpu->id);
+		_metrics.textureBindings += 1;
 	}
 }
 
@@ -424,6 +430,7 @@ void GLUtilities::bindTexture(const Texture & texture, size_t slot) {
 		_state.activeTexture = GLenum(GL_TEXTURE0 + slot);
 		glActiveTexture(_state.activeTexture);
 		glBindTexture(texture.gpu->target, texture.gpu->id);
+		_metrics.textureBindings += 1;
 	}
 }
 
@@ -438,6 +445,7 @@ void GLUtilities::bindTextures(const std::vector<const Texture *> & textures, si
 			_state.activeTexture = GLenum(GL_TEXTURE0 + slot);
 			glActiveTexture(_state.activeTexture);
 			glBindTexture(infos->gpu->target, infos->gpu->id);
+			_metrics.textureBindings += 1;
 		}
 	}
 }
@@ -457,6 +465,7 @@ void GLUtilities::setupTexture(Texture & texture, const Descriptor & descriptor)
 	const GLenum wrap	= texture.gpu->wrapping;
 
 	glBindTexture(target, textureId);
+	_metrics.textureBindings += 1;
 
 	// Set proper max mipmap level.
 	glTexParameteri(target, GL_TEXTURE_MAX_LEVEL, texture.levels - 1);
@@ -484,6 +493,7 @@ void GLUtilities::allocateTexture(const Texture & texture) {
 	const GLenum type		= texture.gpu->type;
 	const GLenum format		= texture.gpu->format;
 	glBindTexture(target, texture.gpu->id);
+	_metrics.textureBindings += 1;
 
 	for(size_t mid = 0; mid < texture.levels; ++mid) {
 		// Mipmap dimensions.
@@ -566,7 +576,9 @@ void GLUtilities::uploadTexture(const Texture & texture) {
 	// We always upload data as floats (and let the driver convert internally if needed),
 	// so the alignment is always 4.
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+	_metrics.stateChanges += 1;
 	glBindTexture(target, texture.gpu->id);
+	_metrics.textureBindings += 1;
 
 	int currentImg = 0;
 	// For each mip level.
@@ -604,10 +616,12 @@ void GLUtilities::uploadTexture(const Texture & texture) {
 			} else {
 				Log::Error() << Log::OpenGL << "Unsupported texture upload destination." << std::endl;
 			}
+			_metrics.uploads += 1;
 		}
 	}
 	GLUtilities::restoreTexture(texture.shape);
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+	_metrics.stateChanges += 1;
 }
 
 void GLUtilities::downloadTexture(Texture & texture) {
@@ -635,7 +649,9 @@ void GLUtilities::downloadTexture(Texture & texture, int level) {
 
 	// We enforce float type, we can use 4 alignment.
 	glPixelStorei(GL_PACK_ALIGNMENT, 4);
+	_metrics.stateChanges += 1;
 	glBindTexture(target, texture.gpu->id);
+	_metrics.textureBindings += 1;
 
 	// For each mip level.
 	for(size_t mid = 0; mid < texture.levels; ++mid) {
@@ -650,13 +666,14 @@ void GLUtilities::downloadTexture(Texture & texture, int level) {
 			texture.images[mid] = Image(w, h, channels);
 			Image & image		= texture.images[mid];
 			glGetTexImage(GL_TEXTURE_2D, mip, format, type, &image.pixels[0]);
-
+			_metrics.downloads += 1;
 		} else if(texture.shape == TextureShape::Cube) {
 			for(size_t lid = 0; lid < texture.depth; ++lid) {
 				const size_t id	   = mid * texture.levels + lid;
 				texture.images[id] = Image(w, h, channels);
 				Image & image	   = texture.images[id];
 				glGetTexImage(GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + lid), mip, format, type, &image.pixels[0]);
+				_metrics.downloads += 1;
 			}
 		}
 	}
@@ -670,6 +687,7 @@ void GLUtilities::generateMipMaps(const Texture & texture) {
 	}
 	const GLenum target = texture.gpu->target;
 	glBindTexture(target, texture.gpu->id);
+	_metrics.textureBindings += 1;
 	glTexParameteri(target, GL_TEXTURE_MAX_LEVEL, texture.levels - 1);
 	glGenerateMipmap(target);
 	GLUtilities::restoreTexture(texture.shape);
@@ -692,6 +710,8 @@ void GLUtilities::bindBuffer(const BufferBase & buffer, size_t slot) {
 	glBindBuffer(GL_UNIFORM_BUFFER, buffer.gpu->id);
 	glBindBufferBase(GL_UNIFORM_BUFFER, GLuint(slot), buffer.gpu->id);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+	_metrics.bufferBindings += 2;
+	_metrics.uniforms += 1;
 }
 
 void GLUtilities::setupBuffer(BufferBase & buffer) {
@@ -717,6 +737,7 @@ void GLUtilities::allocateBuffer(const BufferBase & buffer) {
 	glBindBuffer(target, buffer.gpu->id);
 	glBufferData(target, buffer.sizeMax, nullptr, buffer.gpu->usage);
 	glBindBuffer(target, 0);
+	_metrics.bufferBindings += 2;
 }
 
 void GLUtilities::uploadBuffer(const BufferBase & buffer, size_t size, unsigned char * data, size_t offset) {
@@ -736,7 +757,9 @@ void GLUtilities::uploadBuffer(const BufferBase & buffer, size_t size, unsigned 
 	const GLenum target = buffer.gpu->target;
 	glBindBuffer(target, buffer.gpu->id);
 	glBufferSubData(target, offset, size, data);
+	_metrics.uploads += 1;
 	glBindBuffer(target, 0);
+	_metrics.bufferBindings += 2;
 }
 
 void GLUtilities::downloadBuffer(const BufferBase & buffer, size_t size, unsigned char * data, size_t offset) {
@@ -752,7 +775,9 @@ void GLUtilities::downloadBuffer(const BufferBase & buffer, size_t size, unsigne
 	const GLenum target = buffer.gpu->target;
 	glBindBuffer(target, buffer.gpu->id);
 	glGetBufferSubData(target, offset, size, data);
+	_metrics.downloads += 1;
 	glBindBuffer(target, 0);
+	_metrics.bufferBindings += 2;
 }
 
 void GLUtilities::setupMesh(Mesh & mesh) {
@@ -764,6 +789,7 @@ void GLUtilities::setupMesh(Mesh & mesh) {
 	GLuint vao = 0;
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
+	_metrics.vertexBindings += 1;
 
 	// Compute full allocation size.
 	size_t totalSize = 0;
@@ -783,6 +809,7 @@ void GLUtilities::setupMesh(Mesh & mesh) {
 		const size_t size = sizeof(GLfloat) * 3 * mesh.positions.size();
 		GLUtilities::uploadBuffer(vertexBuffer, size, reinterpret_cast<unsigned char *>(mesh.positions.data()), offset);
 		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.gpu->id);
+		_metrics.bufferBindings += 1;
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<void *>(offset));
 		offset += size;
@@ -791,6 +818,7 @@ void GLUtilities::setupMesh(Mesh & mesh) {
 		const size_t size = sizeof(GLfloat) * 3 * mesh.normals.size();
 		GLUtilities::uploadBuffer(vertexBuffer, size, reinterpret_cast<unsigned char *>(mesh.normals.data()), offset);
 		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.gpu->id);
+		_metrics.bufferBindings += 1;
 		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<void *>(offset));
 		offset += size;
@@ -799,6 +827,7 @@ void GLUtilities::setupMesh(Mesh & mesh) {
 		const size_t size = sizeof(GLfloat) * 2 * mesh.texcoords.size();
 		GLUtilities::uploadBuffer(vertexBuffer, size, reinterpret_cast<unsigned char *>(mesh.texcoords.data()), offset);
 		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.gpu->id);
+		_metrics.bufferBindings += 1;
 		glEnableVertexAttribArray(2);
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<void *>(offset));
 		offset += size;
@@ -807,6 +836,7 @@ void GLUtilities::setupMesh(Mesh & mesh) {
 		const size_t size = sizeof(GLfloat) * 3 * mesh.tangents.size();
 		GLUtilities::uploadBuffer(vertexBuffer, size, reinterpret_cast<unsigned char *>(mesh.tangents.data()), offset);
 		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.gpu->id);
+		_metrics.bufferBindings += 1;
 		glEnableVertexAttribArray(3);
 		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<void *>(offset));
 		offset += size;
@@ -815,6 +845,7 @@ void GLUtilities::setupMesh(Mesh & mesh) {
 		const size_t size = sizeof(GLfloat) * 3 * mesh.binormals.size();
 		GLUtilities::uploadBuffer(vertexBuffer, size, reinterpret_cast<unsigned char *>(mesh.binormals.data()), offset);
 		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.gpu->id);
+		_metrics.bufferBindings += 1;
 		glEnableVertexAttribArray(4);
 		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<void *>(offset));
 		offset += size;
@@ -823,6 +854,7 @@ void GLUtilities::setupMesh(Mesh & mesh) {
 		const size_t size = sizeof(GLfloat) * 3 * mesh.colors.size();
 		GLUtilities::uploadBuffer(vertexBuffer, size, reinterpret_cast<unsigned char *>(mesh.colors.data()), offset);
 		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.gpu->id);
+		_metrics.bufferBindings += 1;
 		glEnableVertexAttribArray(5);
 		glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<void *>(offset));
 	}
@@ -839,6 +871,8 @@ void GLUtilities::setupMesh(Mesh & mesh) {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(_state.vertexArray);
+	_metrics.vertexBindings += 2;
+	_metrics.bufferBindings += 2;
 
 	mesh.gpu->id		   = vao;
 	mesh.gpu->count		   = GLsizei(mesh.indices.size());
@@ -850,9 +884,10 @@ void GLUtilities::drawMesh(const Mesh & mesh) {
 	if(_state.vertexArray != mesh.gpu->id){
 		_state.vertexArray = mesh.gpu->id;
 		glBindVertexArray(mesh.gpu->id);
+		_metrics.vertexBindings += 1;
 	}
 	glDrawElements(GL_TRIANGLES, mesh.gpu->count, GL_UNSIGNED_INT, static_cast<void *>(nullptr));
-
+	_metrics.drawCalls += 1;
 }
 
 void GLUtilities::drawTesselatedMesh(const Mesh & mesh, uint patchSize){
@@ -860,8 +895,10 @@ void GLUtilities::drawTesselatedMesh(const Mesh & mesh, uint patchSize){
 	if(_state.vertexArray != mesh.gpu->id){
 		_state.vertexArray = mesh.gpu->id;
 		glBindVertexArray(mesh.gpu->id);
+		_metrics.vertexBindings += 1;
 	}
 	glDrawElements(GL_PATCHES, mesh.gpu->count, GL_UNSIGNED_INT, static_cast<void *>(nullptr));
+	_metrics.drawCalls += 1;
 
 }
 
@@ -869,13 +906,21 @@ void GLUtilities::drawQuad(){
 	if(_state.vertexArray != _vao){
 		_state.vertexArray = _vao;
 		glBindVertexArray(_vao);
+		_metrics.vertexBindings += 1;
 	}
 	glDrawArrays(GL_TRIANGLES, 0, 3);
+	_metrics.quadCalls += 1;
 }
 
-void GLUtilities::sync() {
+void GLUtilities::sync(){
 	glFlush();
 	glFinish();
+}
+
+void GLUtilities::nextFrame(){
+	// Save and reset stats.
+	_metricsPrevious = _metrics;
+	_metrics = Metrics();
 }
 
 void GLUtilities::deviceInfos(std::string & vendor, std::string & renderer, std::string & version, std::string & shaderVersion) {
@@ -908,6 +953,7 @@ void GLUtilities::setViewport(int x, int y, int w, int h) {
 		_state.viewport[2] = w;
 		_state.viewport[3] = h;
 		glViewport(GLsizei(x), GLsizei(y), GLsizei(w), GLsizei(h));
+		_metrics.stateChanges += 1;
 	}
 }
 
@@ -915,16 +961,20 @@ void GLUtilities::clearColor(const glm::vec4 & color) {
 	if(_state.colorClearValue != color){
 		_state.colorClearValue = color;
 		glClearColor(color[0], color[1], color[2], color[3]);
+		_metrics.stateChanges += 1;
 	}
 	glClear(GL_COLOR_BUFFER_BIT);
+	_metrics.clearAndBlits += 1;
 }
 
 void GLUtilities::clearDepth(float depth) {
 	if(_state.depthClearValue != depth){
 		_state.depthClearValue = depth;
 		glClearDepth(depth);
+		_metrics.stateChanges += 1;
 	}
 	glClear(GL_DEPTH_BUFFER_BIT);
+	_metrics.clearAndBlits += 1;
 }
 
 void GLUtilities::clearStencil(uchar stencil) {
@@ -932,16 +982,20 @@ void GLUtilities::clearStencil(uchar stencil) {
 	// Disable it temporarily.
 	if(!_state.stencilWriteMask){
 		glStencilMask(0xFF);
+		_metrics.stateChanges += 1;
 	}
 
 	if(_state.stencilClearValue != stencil){
 		_state.stencilClearValue = stencil;
 		glClearStencil(GLint(stencil));
+		_metrics.stateChanges += 1;
 	}
 	glClear(GL_STENCIL_BUFFER_BIT);
+	_metrics.clearAndBlits += 1;
 
 	if(!_state.stencilWriteMask){
 		glStencilMask(0x00);
+		_metrics.stateChanges += 1;
 	}
 }
 
@@ -949,12 +1003,15 @@ void GLUtilities::clearColorAndDepth(const glm::vec4 & color, float depth) {
 	if(_state.colorClearValue != color){
 		_state.colorClearValue = color;
 		glClearColor(color[0], color[1], color[2], color[3]);
+		_metrics.stateChanges += 1;
 	}
 	if(_state.depthClearValue != depth){
 		_state.depthClearValue = depth;
 		glClearDepth(depth);
+		_metrics.stateChanges += 1;
 	}
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	_metrics.clearAndBlits += 1;
 }
 
 void GLUtilities::clearColorDepthStencil(const glm::vec4 & color, float depth, uchar stencil) {
@@ -962,23 +1019,30 @@ void GLUtilities::clearColorDepthStencil(const glm::vec4 & color, float depth, u
 	// Disable it temporarily.
 	if(!_state.stencilWriteMask){
 		glStencilMask(0xFF);
+		_metrics.stateChanges += 1;
 	}
 	if(_state.colorClearValue != color){
 		_state.colorClearValue = color;
 		glClearColor(color[0], color[1], color[2], color[3]);
+		_metrics.stateChanges += 1;
 	}
 	if(_state.depthClearValue != depth){
 		_state.depthClearValue = depth;
 		glClearDepth(depth);
+		_metrics.stateChanges += 1;
 	}
 	if(_state.stencilClearValue != stencil){
 		_state.stencilClearValue = stencil;
 		glClearStencil(GLint(stencil));
+		_metrics.stateChanges += 1;
 	}
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	_metrics.clearAndBlits += 1;
 
 	if(!_state.stencilWriteMask){
 		glStencilMask(0x00);
+		_metrics.stateChanges += 1;
 	}
 }
 
@@ -986,6 +1050,7 @@ void GLUtilities::setDepthState(bool test) {
 	if(_state.depthTest != test){
 		_state.depthTest = test;
 		(test ? glEnable : glDisable)(GL_DEPTH_TEST);
+		_metrics.stateChanges += 1;
 	}
 }
 
@@ -993,6 +1058,7 @@ void GLUtilities::setDepthState(bool test, TestFunction equation, bool write) {
 	if(_state.depthTest != test){
 		_state.depthTest = test;
 		(test ? glEnable : glDisable)(GL_DEPTH_TEST);
+		_metrics.stateChanges += 1;
 	}
 
 	static const std::map<TestFunction, GLenum> eqs = {
@@ -1008,11 +1074,13 @@ void GLUtilities::setDepthState(bool test, TestFunction equation, bool write) {
 	if(_state.depthFunc != equation){
 		_state.depthFunc = equation;
 		glDepthFunc(eqs.at(equation));
+		_metrics.stateChanges += 1;
 	}
 
 	if(_state.depthWriteMask != write){
 		_state.depthWriteMask = write;
 		glDepthMask(write ? GL_TRUE : GL_FALSE);
+		_metrics.stateChanges += 1;
 	}
 }
 
@@ -1020,10 +1088,12 @@ void GLUtilities::setStencilState(bool test, bool write){
 	if(_state.stencilTest != test){
 		_state.stencilTest = test;
 		(test ? glEnable : glDisable)(GL_STENCIL_TEST);
+		_metrics.stateChanges += 1;
 	}
 	if(_state.stencilWriteMask != write){
 		_state.stencilWriteMask = write;
 		glStencilMask(write ? 0xFF : 0x00);
+		_metrics.stateChanges += 1;
 	}
 }
 
@@ -1032,6 +1102,7 @@ void GLUtilities::setStencilState(bool test, TestFunction function, StencilOp fa
 	if(_state.stencilTest != test){
 		_state.stencilTest = test;
 		(test ? glEnable : glDisable)(GL_STENCIL_TEST);
+		_metrics.stateChanges += 1;
 	}
 
 	static const std::map<TestFunction, GLenum> funs = {
@@ -1057,16 +1128,19 @@ void GLUtilities::setStencilState(bool test, TestFunction function, StencilOp fa
 	if(_state.stencilFunc != function){
 		_state.stencilFunc = function;
 		glStencilFunc(funs.at(function), GLint(value), 0xFF);
+		_metrics.stateChanges += 1;
 	}
 	if(!_state.stencilWriteMask){
 		_state.stencilWriteMask = true;
 		glStencilMask(0xFF);
+		_metrics.stateChanges += 1;
 	}
 	if(_state.stencilFail != fail || _state.stencilPass != depthFail || _state.stencilDepthPass != pass){
 		_state.stencilFail = fail;
 		_state.stencilPass = depthFail;
 		_state.stencilDepthPass = pass;
 		glStencilOp(ops.at(fail), ops.at(depthFail), ops.at(pass));
+		_metrics.stateChanges += 1;
 	}
 }
 
@@ -1074,6 +1148,7 @@ void GLUtilities::setBlendState(bool test) {
 	if(_state.blend != test){
 		_state.blend = test;
 		(test ? glEnable : glDisable)(GL_BLEND);
+		_metrics.stateChanges += 1;
 	}
 }
 
@@ -1082,6 +1157,7 @@ void GLUtilities::setBlendState(bool test, BlendEquation equation, BlendFunction
 	if(_state.blend != test){
 		_state.blend = test;
 		(test ? glEnable : glDisable)(GL_BLEND);
+		_metrics.stateChanges += 1;
 	}
 
 	static const std::map<BlendEquation, GLenum> eqs = {
@@ -1105,12 +1181,14 @@ void GLUtilities::setBlendState(bool test, BlendEquation equation, BlendFunction
 	if(_state.blendEquationRGB != equation){
 		_state.blendEquationRGB = _state.blendEquationAlpha = equation;
 		glBlendEquation(eqs.at(equation));
+		_metrics.stateChanges += 1;
 	}
 
 	if(_state.blendSrcRGB != src || _state.blendDstRGB != dst){
 		_state.blendSrcRGB = _state.blendSrcAlpha = src;
 		_state.blendDstRGB = _state.blendDstAlpha = dst;
 		glBlendFunc(funcs.at(src), funcs.at(dst));
+		_metrics.stateChanges += 1;
 	}
 
 }
@@ -1119,6 +1197,7 @@ void GLUtilities::setCullState(bool cull) {
 	if(_state.cullFace != cull){
 		_state.cullFace = cull;
 		(cull ? glEnable : glDisable)(GL_CULL_FACE);
+		_metrics.stateChanges += 1;
 	}
 }
 
@@ -1126,6 +1205,7 @@ void GLUtilities::setCullState(bool cull, Faces culledFaces) {
 	if(_state.cullFace != cull){
 		_state.cullFace = cull;
 		(cull ? glEnable : glDisable)(GL_CULL_FACE);
+		_metrics.stateChanges += 1;
 	}
 
 	static const std::map<Faces, GLenum> faces = {
@@ -1136,6 +1216,7 @@ void GLUtilities::setCullState(bool cull, Faces culledFaces) {
 	if(_state.cullFaceMode != culledFaces){
 		_state.cullFaceMode = culledFaces;
 		glCullFace(faces.at(culledFaces));
+		_metrics.stateChanges += 1;
 	}
 }
 
@@ -1149,6 +1230,7 @@ void GLUtilities::setPolygonState(PolygonMode mode) {
 	if(_state.polygonMode != mode){
 		_state.polygonMode = mode;
 		glPolygonMode(GL_FRONT_AND_BACK, modes.at(mode));
+		_metrics.stateChanges += 1;
 	}
 }
 
@@ -1159,6 +1241,7 @@ void GLUtilities::setColorState(bool writeRed, bool writeGreen, bool writeBlue, 
 		_state.colorWriteMask.b = writeBlue;
 		_state.colorWriteMask.a = writeAlpha;
 		glColorMask(writeRed ? GL_TRUE : GL_FALSE, writeGreen ? GL_TRUE : GL_FALSE, writeBlue ? GL_TRUE : GL_FALSE, writeAlpha ? GL_TRUE : GL_FALSE);
+		_metrics.stateChanges += 1;
 	}
 
 }
@@ -1166,6 +1249,7 @@ void GLUtilities::setSRGBState(bool convert){
 	if(_state.framebufferSRGB != convert){
 		_state.framebufferSRGB = convert;
 		(convert ? glEnable : glDisable)(GL_FRAMEBUFFER_SRGB);
+		_metrics.stateChanges += 1;
 	}
 }
 
@@ -1173,6 +1257,7 @@ void GLUtilities::blitDepth(const Framebuffer & src, const Framebuffer & dst) {
 	src.bind(Framebuffer::Mode::READ);
 	dst.bind(Framebuffer::Mode::WRITE);
 	glBlitFramebuffer(0, 0, src.width(), src.height(), 0, 0, dst.width(), dst.height(), GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+	_metrics.clearAndBlits += 1;
 }
 
 void GLUtilities::blit(const Framebuffer & src, const Framebuffer & dst, Filter filter) {
@@ -1180,6 +1265,7 @@ void GLUtilities::blit(const Framebuffer & src, const Framebuffer & dst, Filter 
 	dst.bind(Framebuffer::Mode::WRITE);
 	const GLenum filterGL = filter == Filter::LINEAR ? GL_LINEAR : GL_NEAREST;
 	glBlitFramebuffer(0, 0, src.width(), src.height(), 0, 0, dst.width(), dst.height(), GL_COLOR_BUFFER_BIT, filterGL);
+	_metrics.clearAndBlits += 1;
 }
 
 void GLUtilities::blit(const Framebuffer & src, const Framebuffer & dst, size_t lSrc, size_t lDst, Filter filter) {
@@ -1191,6 +1277,7 @@ void GLUtilities::blit(const Framebuffer & src, const Framebuffer & dst, size_t 
 	dst.bind(lDst, mipDst, Framebuffer::Mode::WRITE);
 	const GLenum filterGL = filter == Filter::LINEAR ? GL_LINEAR : GL_NEAREST;
 	glBlitFramebuffer(0, 0, src.width() / (1 << mipSrc), src.height() / (1 << mipSrc), 0, 0, dst.width() / (1 << mipDst), dst.height() / (1 << mipDst), GL_COLOR_BUFFER_BIT, filterGL);
+	_metrics.clearAndBlits += 1;
 }
 
 void GLUtilities::blit(const Texture & src, Texture & dst, Filter filter) {
@@ -1216,6 +1303,7 @@ void GLUtilities::blit(const Texture & src, Texture & dst, Filter filter) {
 	// we do not update the cached GPU state.
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, srcFb);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, dstFb);
+	_metrics.framebufferBindings += 2;
 
 	const GLenum filterGL = filter == Filter::LINEAR ? GL_LINEAR : GL_NEAREST;
 
@@ -1225,6 +1313,7 @@ void GLUtilities::blit(const Texture & src, Texture & dst, Filter filter) {
 			glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), dst.gpu->id, 0);
 			GLUtilities::checkFramebufferStatus();
 			glBlitFramebuffer(0, 0, src.width, src.height, 0, 0, dst.width, dst.height, GL_COLOR_BUFFER_BIT, filterGL);
+			_metrics.clearAndBlits += 1;
 		}
 	} else {
 		if(src.shape == TextureShape::D1) {
@@ -1241,10 +1330,12 @@ void GLUtilities::blit(const Texture & src, Texture & dst, Filter filter) {
 		}
 		GLUtilities::checkFramebufferStatus();
 		glBlitFramebuffer(0, 0, src.width, src.height, 0, 0, dst.width, dst.height, GL_COLOR_BUFFER_BIT, filterGL);
+		_metrics.clearAndBlits += 1;
 	}
 	// Restore the proper framebuffers from the cache.
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, _state.readFramebuffer);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _state.drawFramebuffer);
+	_metrics.framebufferBindings += 2;
 	glDeleteFramebuffers(1, &srcFb);
 	glDeleteFramebuffers(1, &dstFb);
 }
@@ -1265,6 +1356,7 @@ void GLUtilities::blit(const Texture & src, Framebuffer & dst, Filter filter) {
 	// Because it's temporary and will be unbound at the end of the call
 	// we do not update the cached GPU state.
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, srcFb);
+	_metrics.framebufferBindings += 1;
 	const GLenum filterGL = filter == Filter::LINEAR ? GL_LINEAR : GL_NEAREST;
 
 	if(src.shape == TextureShape::Cube) {
@@ -1273,6 +1365,7 @@ void GLUtilities::blit(const Texture & src, Framebuffer & dst, Filter filter) {
 			GLUtilities::checkFramebufferStatus();
 			dst.bind(i, 0, Framebuffer::Mode::WRITE);
 			glBlitFramebuffer(0, 0, src.width, src.height, 0, 0, dst.width(), dst.height(), GL_COLOR_BUFFER_BIT, filterGL);
+			_metrics.clearAndBlits += 1;
 		}
 	} else {
 		if(src.shape == TextureShape::D1) {
@@ -1288,9 +1381,11 @@ void GLUtilities::blit(const Texture & src, Framebuffer & dst, Filter filter) {
 		GLUtilities::checkFramebufferStatus();
 		dst.bind(0, 0, Framebuffer::Mode::WRITE);
 		glBlitFramebuffer(0, 0, src.width, src.height, 0, 0, dst.width(), dst.height(), GL_COLOR_BUFFER_BIT, filterGL);
+		_metrics.clearAndBlits += 1;
 	}
 	// Restore the proper framebuffer from the cache.
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, _state.readFramebuffer);
+	_metrics.framebufferBindings += 1;
 	glDeleteFramebuffers(1, &srcFb);
 }
 
@@ -1305,10 +1400,12 @@ void GLUtilities::savePixels(GLenum type, GLenum format, unsigned int width, uns
 	Image image(width, height, components);
 
 	glPixelStorei(GL_PACK_ALIGNMENT, 1);
+	_metrics.stateChanges += 1;
 	const size_t fullSize = image.width * image.height * image.components;
 	if(hdr) {
 		// Get back values.
 		glReadPixels(0, 0, GLsizei(image.width), GLsizei(image.height), format, type, &image.pixels[0]);
+		_metrics.downloads += 1;
 		// Save data.
 		ret = image.save(path + ".exr", flip, ignoreAlpha);
 
@@ -1316,6 +1413,7 @@ void GLUtilities::savePixels(GLenum type, GLenum format, unsigned int width, uns
 		// Get back values.
 		GLubyte * data = new GLubyte[fullSize];
 		glReadPixels(0, 0, GLsizei(image.width), GLsizei(image.height), format, type, &data[0]);
+		_metrics.downloads += 1;
 		// Convert to image float format.
 		for(size_t pid = 0; pid < fullSize; ++pid) {
 			image.pixels[pid] = float(data[pid]) / 255.0f;
@@ -1325,6 +1423,7 @@ void GLUtilities::savePixels(GLenum type, GLenum format, unsigned int width, uns
 		delete[] data;
 	}
 	glPixelStorei(GL_PACK_ALIGNMENT, 4);
+	_metrics.stateChanges += 1;
 
 	if(ret != 0) {
 		Log::Error() << "Error." << std::endl;
@@ -1486,10 +1585,16 @@ void GLUtilities::getState(GPUState& state) {
 	glActiveTexture(state.activeTexture);
 }
 
+
+const GLUtilities::Metrics & GLUtilities::getMetrics(){
+	return _metricsPrevious;
+}
+
 void GLUtilities::restoreTexture(TextureShape shape){
 	const GLenum target = GLUtilities::targetFromShape(shape);
 	const int slot = _state.activeTexture - int(GL_TEXTURE0);
 	glBindTexture(target, _state.textures[slot][target]);
+	_metrics.textureBindings += 1;
 }
 
 void GLUtilities::deleted(GPUTexture & tex){
@@ -1517,4 +1622,6 @@ void GLUtilities::deleted(GPUMesh & mesh){
 }
 
 GPUState GLUtilities::_state;
+GLUtilities::Metrics GLUtilities::_metrics;
+GLUtilities::Metrics GLUtilities::_metricsPrevious;
 GLuint GLUtilities::_vao = 0;

@@ -170,6 +170,9 @@ bool Window::nextFrame() {
 		//Display the result for the current rendering loop.
 		glfwSwapBuffers(_window);
 	}
+	// Notify GPU for book-keeping.
+	GLUtilities::nextFrame();
+
 	// Update events (inputs,...).
 	Input::manager().update();
 	// Handle quitting.

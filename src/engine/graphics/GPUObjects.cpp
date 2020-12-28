@@ -30,6 +30,7 @@ void GPUTexture::setFiltering(Filter filtering) {
 	magFiltering = _descriptor.getGPUMagnificationFilter();
 
 	glBindTexture(target, id);
+	GLUtilities::_metrics.textureBindings += 1;
 	glTexParameteri(target, GL_TEXTURE_MAG_FILTER, magFiltering);
 	glTexParameteri(target, GL_TEXTURE_MIN_FILTER, minFiltering);
 	GLUtilities::restoreTexture(_shape);

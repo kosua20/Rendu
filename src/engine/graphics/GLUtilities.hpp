@@ -35,6 +35,7 @@ class GLUtilities {
 	friend class GPUBuffer; ///< Access to deletion notifier for cached state update.
 	friend class GPUMesh; ///< Access to deletion notifier for cached state update.
 	friend class Framebuffer; ///< Access to deletion notifier for cached state update.
+	friend class Program; ///< Access to metrics.
 
 public:
 
@@ -51,6 +52,22 @@ public:
 
 	/** Bindings list */
 	using Bindings = std::map<std::string, Binding>;
+
+	/** Internal operation metrics. */
+	struct Metrics {
+		unsigned long drawCalls = 0; ///< Mesh draw call.
+		unsigned long quadCalls = 0; ///< Full screen quad.
+		unsigned long stateChanges = 0; ///< State changes.
+		unsigned long textureBindings = 0; ///<
+		unsigned long framebufferBindings = 0; ///<
+		unsigned long bufferBindings = 0; ///<
+		unsigned long vertexBindings = 0; ///<
+		unsigned long programBindings = 0; ///<
+		unsigned long clearAndBlits = 0; ///< Framebuffer clearing and blitting operations.
+		unsigned long uploads = 0; ///< Data upload to the GPU.
+		unsigned long downloads = 0; ///< Data download from the GPU.
+		unsigned long uniforms = 0; ///< Uniform update.
+	};
 
 	/** Check if any OpenGL error has been detected and log it.
 	 \param file the current file
@@ -233,6 +250,10 @@ public:
 	 */
 	static void sync();
 
+	/** Prepare GPU for next frame.
+	 */
+	static void nextFrame();
+
 	/** Query the GPU driver and API infos.
 	 \param vendor will contain the vendor name
 	 \param renderer will contain the renderer name
@@ -358,6 +379,9 @@ public:
 	 */
 	static void getState(GPUState & state);
 
+	/** \return internal metrics for the current frame */
+	static const Metrics & getMetrics();
+
 	/** Blit the content of a depthbuffer into another one.
 	 \param src the source framebuffer
 	 \param dst the destination framebuffer
@@ -448,5 +472,7 @@ private:
 	static void deleted(GPUMesh & mesh);
 
 	static GPUState _state; ///< Current GPU state for caching.
+	static Metrics _metrics; ///< Internal metrics (draw count, state changes,...).
+	static Metrics _metricsPrevious; ///< Internal metrics for the last completed frame.
 	static GLuint _vao; ///< The unique empty screenquad VAO.
 };
