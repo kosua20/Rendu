@@ -160,6 +160,10 @@ private:
 		bool populated = false; ///< Has the state already been queried.
 	};
 
+	/** Display GPU metrics for the last completed frame in a panel.
+	 */
+	void displayMetrics();
+
 	/** Display GPU state in a panel.
 	 \param name name of the state
 	 \param infos the state to display

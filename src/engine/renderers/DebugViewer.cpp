@@ -266,6 +266,28 @@ void DebugViewer::interface() {
 		}
 		displayState(infos.first, infos.second);
 	}
+
+	// Display raw metrics.
+	displayMetrics();
+}
+
+void DebugViewer::displayMetrics(){
+	const GLUtilities::Metrics & metrics = GLUtilities::getMetrics();
+	if(ImGui::Begin("Metrics##DEBUGVIEWER")){
+		ImGui::Text("State changes: %lu", metrics.stateChanges);
+		ImGui::Text("Clear & blits: %lu", metrics.clearAndBlits);
+		ImGui::Text("Screen quads: %lu", metrics.quadCalls);
+		ImGui::Text("Draw calls: %lu", metrics.drawCalls);
+		ImGui::Text("VAO bindings: %lu", metrics.textureBindings);
+		ImGui::Text("Texture bindings: %lu", metrics.textureBindings);
+		ImGui::Text("Framebuffer bindings: %lu", metrics.framebufferBindings);
+		ImGui::Text("Data buffer bindings: %lu", metrics.bufferBindings);
+		ImGui::Text("Program bindings: %lu", metrics.programBindings);
+		ImGui::Text("Uniforms: %lu", metrics.uniforms);
+		ImGui::Text("Uploads: %lu", metrics.uploads);
+		ImGui::Text("Downloads: %lu", metrics.downloads);
+	}
+	ImGui::End();
 }
 
 void DebugViewer::displayState(const std::string & name, StateInfos & infos){
