@@ -277,20 +277,23 @@ void DeferredRenderer::draw(const Camera & camera, Framebuffer & framebuffer, si
 	for(auto & light : _scene->lights) {
 		light->draw(*_lightRenderer);
 	}
-
-	// Update forward light data.
-	_fwdLightsGPU->updateCameraInfos(view, proj);
-	_fwdLightsGPU->updateShadowMapInfos(_shadowMode, 0.002f);
-	for(const auto & light : _scene->lights) {
-		light->draw(*_fwdLightsGPU);
-	}
-	_fwdLightsGPU->data().upload();
 	// Blit the depth.
 	GLUtilities::blitDepth(*_gbuffer, *_lightBuffer);
-	// Now render transparent effects in a forward fashion.
-	_lightBuffer->bind();
-	_lightBuffer->setViewport();
-	renderTransparent(visibles, view, proj);
+	
+	// If transparent objects are present, prepare the forward pass.
+	if(_scene->transparent()){
+		// Update forward light data.
+		_fwdLightsGPU->updateCameraInfos(view, proj);
+		_fwdLightsGPU->updateShadowMapInfos(_shadowMode, 0.002f);
+		for(const auto & light : _scene->lights) {
+			light->draw(*_fwdLightsGPU);
+		}
+		_fwdLightsGPU->data().upload();
+		// Now render transparent effects in a forward fashion.
+		_lightBuffer->bind();
+		_lightBuffer->setViewport();
+		renderTransparent(visibles, view, proj);
+	}
 
 	// Copy to the final framebuffer.
 	GLUtilities::blit(*_lightBuffer, framebuffer, 0, layer, Filter::NEAREST);
