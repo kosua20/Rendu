@@ -34,8 +34,13 @@ public:
 	 \verbatim
 	 * probe:
 		position: X,Y,Z
+		center: X,Y,Z
+		extent: W,H,D
+		rotation: angle
 	 \endverbatim
-	 for a probe renderered on the fly at the given location
+	 for a probe renderered on the fly at the given location.
+	 center, extent and rotation are used to define an oriented box used as a local scene proxy. If extent is negative,
+	 the environment is assumed to be at infinity.
 	 \param params the parameters tuple
 	 \param options data loading and storage options
 	 */
