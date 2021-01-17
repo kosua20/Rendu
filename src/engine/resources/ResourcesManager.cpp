@@ -220,19 +220,16 @@ std::string Resources::getString(const std::string & filename) {
 
 std::string Resources::getStringWithIncludes(const std::string & filename, std::vector<std::string>& names){
 	
-	const auto lines = TextUtilities::splitLines(getString(filename), false);
-	// Enclose in an ifdef based on the file name to guard from multiple inclusions.
-	std::string defineName(filename);
-	TextUtilities::replace(defineName, ".+-*/", '_');
-	std::string newStr = "#ifndef " + defineName + "\n" + "#define " + defineName + "\n";
 	// Special case: if names is empty, we are at the root and no special name was specified, add the filename.
 	if(names.empty()) {
 		names.push_back(filename);
 	}
+
 	// Reset line count for the current file.
 	const std::string currentLoc = std::to_string(names.size() - 1);
-	newStr.append("#line 1 " + currentLoc + "\n");
+	std::string newStr = "#line 1 " + currentLoc + "\n";
 
+	const auto lines = TextUtilities::splitLines(getString(filename), false);
 	// Check if some lines are include.
 	for(size_t lid = 0; lid < lines.size(); ++lid){
 		const std::string & line = lines[lid];
@@ -249,18 +246,24 @@ std::string Resources::getStringWithIncludes(const std::string & filename, std::
 			newStr.append("\n");
 			continue;
 		}
-		// Save the file name.
+		// Extract the file name.
 		const std::string subname = line.substr(bpos + 1, epos - (bpos + 1));
-		names.push_back(subname);
 
+		// If the file has already been included, skip it.
+		if(std::find(names.begin(), names.end(), subname) != names.end()){
+			newStr.append("\n");
+			continue;
+		}
+
+		names.push_back(subname);
 		// Insert the content.
 		const std::string content = getStringWithIncludes(subname,  names);
 		newStr.append(content);
 		newStr.append("\n");
 		// And reset to where we were before in the current file.
 		newStr.append("#line " + std::to_string(lid+2) + " " + currentLoc + "\n");
+		
 	}
-	newStr.append("\n#endif\n");
 	return newStr;
 }
 
