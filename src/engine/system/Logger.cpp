@@ -32,16 +32,23 @@ Log::Log() {
 	// Setup glm objects delimiters.
 	_stream << glm::io::delimeter<char>('(', ')', ',');
 
-	// Check if the output is indeed a terminal, and not piped.
 #ifdef _WIN32
-	const bool isTerminal = _isatty(_fileno(stdout));
-	char * env_p		  = nullptr;
-	size_t size			  = 0;
-	_dupenv_s(&env_p, &size, "TERM");
+	// Enable color output.
+	HANDLE h = GetStdHandle( STD_OUTPUT_HANDLE );
+	if( h != INVALID_HANDLE_VALUE ) {
+		DWORD dwMode = 0;
+		if( GetConsoleMode( h, &dwMode ) ) {
+			dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+			if( SetConsoleMode( h, dwMode ) ) {
+				_useColors = true;
+			}
+		}
+	}
+	
 #else
+	// Check if the output is indeed a terminal, and not piped.
 	const bool isTerminal = isatty(fileno(stdout));
 	char * env_p		  = std::getenv("TERM");
-#endif
 	if(isTerminal && env_p) {
 		// Check if the output support colors.
 		const std::vector<std::string> terms = {"xterm", "xterm-256", "xterm-256color", "vt100", "color", "ansi", "cygwin", "linux"};
@@ -53,6 +60,7 @@ Log::Log() {
 			}
 		}
 	}
+#endif
 }
 
 Log::Log(const std::string & filePath, bool logToStdin, bool verbose) :
