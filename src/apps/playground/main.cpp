@@ -32,7 +32,6 @@ int main(int argc, char ** argv) {
 
 	Window window("Playground", config, false);
 	
-	Resources::manager().addResources("../../../resources/common");
 	if(!config.resourcesPath.empty()){
 		Resources::manager().addResources(config.resourcesPath);
 	}
@@ -139,9 +138,6 @@ int main(int argc, char ** argv) {
 
 
 	}
-
-	// Clean up.
-	Resources::manager().clean();
 
 	return 0;
 }

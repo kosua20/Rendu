@@ -31,7 +31,6 @@ int main(int argc, char ** argv) {
 
 	Window window("Image filtering", config, false);
 
-	Resources::manager().addResources("../../../resources/common");
 	Resources::manager().addResources("../../../resources/imagefiltering");
 
 	// Seed random generator.
@@ -44,9 +43,6 @@ int main(int argc, char ** argv) {
 		app.update();
 		app.draw();
 	}
-	
-	// Clean resources.
-	Resources::manager().clean();
 
 	return 0;
 }

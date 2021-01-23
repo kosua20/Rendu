@@ -32,7 +32,6 @@ int main(int argc, char ** argv) {
 
 	Window window("Image viewer", config, false);
 	
-	Resources::manager().addResources("../../../resources/common");
 	Resources::manager().addResources("../../../resources/imageviewer");
 
 	// Create the rendering program.
@@ -275,9 +274,6 @@ int main(int argc, char ** argv) {
 		ImGui::End();
 
 	}
-
-	// Clean up.
-	Resources::manager().clean();
 
 	return 0;
 }

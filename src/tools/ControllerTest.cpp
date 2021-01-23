@@ -202,8 +202,6 @@ int main(int argc, char ** argv) {
 	config.initialWidth  = 800;
 	config.initialHeight = 800;
 	Window window("Controller test", config, false);
-	
-	Resources::manager().addResources("../../../resources/common");
 
 	// Enable raw mode for the input, that way all controllers will be raw controllers.
 	Input::manager().preferRawControllers(true);
@@ -475,9 +473,6 @@ int main(int argc, char ** argv) {
 		}
 		ImGui::End();
 	}
-
-	// Clean up.
-	Resources::manager().clean();
 	
 	return 0;
 }

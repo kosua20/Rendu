@@ -30,7 +30,6 @@ int main(int argc, char ** argv) {
 	
 	Window window("Shader Editor", config, false);
 
-	Resources::manager().addResources("../../../resources/common");
 	Resources::manager().addResources("../../../resources/shaderbench");
 	if(!config.resourcesPath.empty()){
 		Resources::manager().addResources(config.resourcesPath);
@@ -46,9 +45,6 @@ int main(int argc, char ** argv) {
 		app.update();
 		app.draw();
 	}
-	
-	// Cleaning.
-	Resources::manager().clean();
 	
 	return 0;
 }

@@ -32,7 +32,6 @@ int main(int argc, char ** argv) {
 	Window window("Scene Editor", config, true);
 	// Lad commons and existing scenes.
 	// For now we only support editing/adding objects that are already in the resource directories.
-	Resources::manager().addResources("../../../resources/common");
 	Resources::manager().addResources("../../../resources/pbrdemo");
 	Resources::manager().addResources("../../../resources/additional");
 	
@@ -48,9 +47,6 @@ int main(int argc, char ** argv) {
 		app.update();
 		app.draw();
 	}
-	
-	// Clean other resources
-	Resources::manager().clean();
 
 	return 0;
 }

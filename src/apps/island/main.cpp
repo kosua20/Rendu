@@ -31,7 +31,6 @@ int main(int argc, char ** argv) {
 	
 	Window window("Island", config, true);
 	
-	Resources::manager().addResources("../../../resources/common");
 	Resources::manager().addResources("../../../resources/island");
 	if(!config.resourcesPath.empty()){
 		Resources::manager().addResources(config.resourcesPath);
@@ -47,9 +46,6 @@ int main(int argc, char ** argv) {
 		app.update();
 		app.draw();
 	}
-	
-	// Cleaning.
-	Resources::manager().clean();
 	
 	return 0;
 }

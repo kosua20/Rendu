@@ -31,7 +31,6 @@ int main(int argc, char ** argv) {
 
 	Window window("PBR demo", config, true);
 	
-	Resources::manager().addResources("../../../resources/common");
 	Resources::manager().addResources("../../../resources/pbrdemo");
 	Resources::manager().addResources("../../../resources/additional");
 	if(!config.resourcesPath.empty()){
@@ -49,9 +48,6 @@ int main(int argc, char ** argv) {
 		app.update();
 		app.draw();
 	}
-
-	// Clean other resources
-	Resources::manager().clean();
 
 	return 0;
 }

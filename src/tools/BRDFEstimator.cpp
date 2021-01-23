@@ -190,7 +190,6 @@ int main(int argc, char ** argv) {
 		return 0;
 	}
 
-	Resources::manager().addResources("../../../resources/common");
 	Resources::manager().addResources("../../../resources/pbrdemo");
 
 	Window window("BRDF Extractor", config, false);
@@ -385,9 +384,6 @@ int main(int argc, char ** argv) {
 		GLUtilities::drawMesh(*mesh);
 		
 	}
-
-	// Clean resources.
-	Resources::manager().clean();
 
 	return 0;
 }
