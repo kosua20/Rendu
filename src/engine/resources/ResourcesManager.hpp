@@ -38,6 +38,9 @@ inline bool operator&(Storage t0, Storage t1) {
 	return bool(static_cast<uint>(t0) & static_cast<uint>(t1));
 }
 
+/// Define raw binary blob as vectors.
+using Data = std::vector<char>;
+
 /**
  \brief The Resources manager is responsible for all resources loading and setup.
  \details It provides an abstraction over the file system: resources can be loaded directly from files on disk, or from a zip archive.
@@ -192,6 +195,14 @@ public:
 	 */
 	Font * getFont(const std::string & name);
 
+	/** Load arbitrary data from the resources.
+	 \param name the data file base name
+	 \return the data (internally managed)
+	 */
+	const Data * getData(const std::string & filename);
+
+public:
+
 	/** Load raw binary data from an external file
 	 \param path the path to the file on disk
 	 \param size will contain the number of bytes loaded from the file
@@ -258,6 +269,7 @@ private:
 	std::map<std::string, Texture> _textures;  ///< Loaded textures, identified by name.
 	std::map<std::string, Mesh> _meshes;	   ///< Loaded meshes, identified by name.
 	std::map<std::string, Font> _fonts;		   ///< Loaded font infos, identified by name.
+	std::map<std::string, Data> _blobs;  	   ///< Loaded binary blobs, identified by name.
 	std::map<std::string, Program> _programs;  ///< Loaded shader programs, identified by name.
 	std::map<std::string, ProgramInfos> _progInfos;  ///< Additional info to support shader reloading.
 };

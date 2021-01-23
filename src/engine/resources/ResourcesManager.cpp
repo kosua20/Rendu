@@ -218,6 +218,33 @@ std::string Resources::getString(const std::string & filename) {
 	return content;
 }
 
+const Data * Resources::getData(const std::string & filename){
+	if(_blobs.count(filename) > 0) {
+		return &(_blobs.at(filename));
+	}
+
+	std::string path;
+	if(_files.count(filename) > 0) {
+		path = _files[filename];
+	} else if(_files.count(filename + ".bin") > 0) {
+		path = _files[filename + ".bin"];
+	} else {
+		Log::Error() << Log::Resources << "Unable to find data file named \"" << filename << "\"." << std::endl;
+		return nullptr;
+	}
+	size_t rawSize	= 0;
+	char * rawContent = Resources::manager().getRawData(path, rawSize);
+	if(rawContent == nullptr || rawSize == 0){
+		Log::Error() << Log::Resources << "Unable to load data file named \"" << filename << "\"." << std::endl;
+		return nullptr;
+	}
+
+	_blobs.insert(std::make_pair<>(filename, std::vector<char>(rawSize)));
+	std::memcpy(_blobs.at(filename).data(), rawContent, rawSize);
+	delete[] rawContent;
+	return &(_blobs.at(filename));
+}
+
 std::string Resources::getStringWithIncludes(const std::string & filename, std::vector<std::string>& names){
 	
 	// Special case: if names is empty, we are at the root and no special name was specified, add the filename.
@@ -677,5 +704,6 @@ void Resources::clean() {
 	_meshes.clear();
 	_fonts.clear();
 	_programs.clear();
+	_blobs.clear();
 	_files.clear();
 }
