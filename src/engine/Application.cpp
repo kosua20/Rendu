@@ -22,6 +22,12 @@ Application::Application(RenderingConfig & config) :
 	}
 }
 
+Application::~Application(){
+	if(_config.trackDebug){
+		DebugViewer::setDefault(nullptr);
+	}
+}
+
 void Application::update() {
 	// Handle window resize.
 	if(Input::manager().resized()) {

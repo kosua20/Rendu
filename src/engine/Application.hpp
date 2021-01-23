@@ -34,7 +34,7 @@ public:
 	double frameRate();
 
 	/** Destructor */
-	virtual ~Application() = default;
+	virtual ~Application();
 
 	/** Copy constructor.*/
 	Application(const Application &) = delete;
