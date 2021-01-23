@@ -4,6 +4,7 @@
 #include "input/Input.hpp"
 #include "graphics/GLUtilities.hpp"
 #include "graphics/Framebuffer.hpp"
+#include "resources/ResourcesManager.hpp"
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_opengl3.h>
@@ -79,6 +80,8 @@ Window::Window(const std::string & name, RenderingConfig & config, bool convertT
 	glfwSetWindowIconifyCallback(_window, iconify_callback);			  // Window minimization
 	glfwSwapInterval(_config.vsync ? (_config.rate == 30 ? 2 : 1) : 0); // 60 FPS V-sync
 
+	// We will need basic resources for ImGui.
+	Resources::manager().addResources("../../../resources/common");
 	setupImGui();
 
 	// Check the window position and size (if we are on a screen smaller than the initial size).
@@ -203,6 +206,8 @@ Window::~Window() {
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
+	// Clean other resources
+	Resources::manager().clean();
 	// Close GL context and any other GLFW resources.
 	glfwDestroyWindow(_window);
 	glfwTerminate();
