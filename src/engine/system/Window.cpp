@@ -228,16 +228,24 @@ void Window::setupImGui() {
 		io.Fonts->AddFont(&font);
 	}
 	ImGui_ImplGlfw_InitForOpenGL(_window, false);
-	ImGui_ImplOpenGL3_Init("#version 400");
+	ImGui_ImplOpenGL3_Init("#version 410");
 	
 	// Customize the style.
 	ImGui::StyleColorsDark();
 	ImGuiStyle & style = ImGui::GetStyle();
 	// Colors.
 	ImVec4 * colors						    = style.Colors;
-	colors[ImGuiCol_Text]                   = ImVec4(0.82f, 0.82f, 0.82f, 1.00f);
+	const ImVec4 bgColor					= ImVec4(0.10f, 0.10f, 0.10f, 1.00f);
+	const ImVec4 buttonColor				= ImVec4(0.24f, 0.24f, 0.24f, 1.00f);
+	const ImVec4 buttonHoverColor			= ImVec4(0.35f, 0.35f, 0.35f, 1.00f);
+	const ImVec4 buttonActiveColor			= ImVec4(0.44f, 0.44f, 0.44f, 1.00f);
+	const ImVec4 textColor					= ImVec4(0.82f, 0.82f, 0.82f, 1.00f);
+
+	colors[ImGuiCol_Text]                   = textColor;
 	colors[ImGuiCol_TextDisabled]           = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
-	colors[ImGuiCol_WindowBg]               = ImVec4(0.10f, 0.10f, 0.10f, 1.00f);
+	colors[ImGuiCol_CheckMark]              = textColor;
+
+	colors[ImGuiCol_WindowBg]               = bgColor;
 	colors[ImGuiCol_ChildBg]                = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
 	colors[ImGuiCol_PopupBg]                = ImVec4(0.13f, 0.13f, 0.13f, 1.00f);
 	colors[ImGuiCol_Border]                 = ImVec4(0.00f, 0.00f, 0.00f, 0.50f);
@@ -245,31 +253,30 @@ void Window::setupImGui() {
 	colors[ImGuiCol_FrameBg]                = ImVec4(0.06f, 0.06f, 0.06f, 1.00f);
 	colors[ImGuiCol_FrameBgHovered]         = ImVec4(0.17f, 0.17f, 0.17f, 1.00f);
 	colors[ImGuiCol_FrameBgActive]          = ImVec4(0.26f, 0.26f, 0.26f, 1.00f);
-	colors[ImGuiCol_TitleBg]                = ImVec4(0.10f, 0.10f, 0.10f, 1.00f);
+	colors[ImGuiCol_TitleBg]                = bgColor;
 	colors[ImGuiCol_TitleBgActive]          = ImVec4(0.16f, 0.16f, 0.16f, 1.00f);
-	colors[ImGuiCol_TitleBgCollapsed]       = ImVec4(0.10f, 0.10f, 0.10f, 1.00f);
+	colors[ImGuiCol_TitleBgCollapsed]       = bgColor;
 	colors[ImGuiCol_MenuBarBg]              = ImVec4(0.16f, 0.16f, 0.16f, 1.00f);
 	colors[ImGuiCol_ScrollbarBg]            = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
-	colors[ImGuiCol_ScrollbarGrab]          = ImVec4(0.24f, 0.24f, 0.24f, 1.00f);
-	colors[ImGuiCol_ScrollbarGrabHovered]   = ImVec4(0.35f, 0.35f, 0.35f, 1.00f);
-	colors[ImGuiCol_ScrollbarGrabActive]    = ImVec4(0.44f, 0.44f, 0.44f, 1.00f);
-	colors[ImGuiCol_CheckMark]              = ImVec4(0.84f, 0.84f, 0.84f, 1.00f);
-	colors[ImGuiCol_SliderGrab]             = ImVec4(0.24f, 0.24f, 0.24f, 1.00f);
-	colors[ImGuiCol_SliderGrabActive]       = ImVec4(0.44f, 0.44f, 0.44f, 1.00f);
-	colors[ImGuiCol_Button]                 = ImVec4(0.24f, 0.24f, 0.24f, 1.00f);
-	colors[ImGuiCol_ButtonHovered]          = ImVec4(0.35f, 0.35f, 0.35f, 1.00f);
-	colors[ImGuiCol_ButtonActive]           = ImVec4(0.44f, 0.44f, 0.44f, 1.00f);
-	colors[ImGuiCol_Header]                 = ImVec4(0.24f, 0.24f, 0.24f, 1.00f);
-	colors[ImGuiCol_HeaderHovered]          = ImVec4(0.35f, 0.35f, 0.35f, 1.00f);
-	colors[ImGuiCol_HeaderActive]           = ImVec4(0.44f, 0.44f, 0.44f, 1.00f);
-	colors[ImGuiCol_Separator]              = ImVec4(0.24f, 0.24f, 0.24f, 1.00f);
-	colors[ImGuiCol_SeparatorHovered]       = ImVec4(0.35f, 0.35f, 0.35f, 0.78f);
-	colors[ImGuiCol_SeparatorActive]        = ImVec4(0.44f, 0.44f, 0.44f, 1.00f);
-	colors[ImGuiCol_ResizeGrip]             = ImVec4(0.24f, 0.24f, 0.24f, 1.00f);
-	colors[ImGuiCol_ResizeGripHovered]      = ImVec4(0.35f, 0.35f, 0.35f, 1.00f);
-	colors[ImGuiCol_ResizeGripActive]       = ImVec4(0.44f, 0.44f, 0.44f, 1.00f);
-	colors[ImGuiCol_Tab]                    = ImVec4(0.24f, 0.24f, 0.24f, 1.00f);
-	colors[ImGuiCol_TabHovered]             = ImVec4(0.35f, 0.35f, 0.35f, 1.00f);
+	colors[ImGuiCol_ScrollbarGrab]          = buttonColor;
+	colors[ImGuiCol_ScrollbarGrabHovered]   = buttonHoverColor;
+	colors[ImGuiCol_ScrollbarGrabActive]    = buttonActiveColor;
+	colors[ImGuiCol_SliderGrab]             = buttonColor;
+	colors[ImGuiCol_SliderGrabActive]       = buttonActiveColor;
+	colors[ImGuiCol_Button]                 = buttonColor;
+	colors[ImGuiCol_ButtonHovered]          = buttonHoverColor;
+	colors[ImGuiCol_ButtonActive]           = buttonActiveColor;
+	colors[ImGuiCol_Header]                 = buttonColor;
+	colors[ImGuiCol_HeaderHovered]          = buttonHoverColor;
+	colors[ImGuiCol_HeaderActive]           = buttonActiveColor;
+	colors[ImGuiCol_Separator]              = buttonColor;
+	colors[ImGuiCol_SeparatorHovered]       = buttonHoverColor;
+	colors[ImGuiCol_SeparatorActive]        = buttonActiveColor;
+	colors[ImGuiCol_ResizeGrip]             = buttonColor;
+	colors[ImGuiCol_ResizeGripHovered]      = buttonHoverColor;
+	colors[ImGuiCol_ResizeGripActive]       = buttonActiveColor;
+	colors[ImGuiCol_Tab]                    = buttonColor;
+	colors[ImGuiCol_TabHovered]             = buttonHoverColor;
 	colors[ImGuiCol_TabActive]              = ImVec4(0.41f, 0.41f, 0.41f, 1.00f);
 	colors[ImGuiCol_TabUnfocused]           = ImVec4(0.16f, 0.16f, 0.16f, 0.97f);
 	colors[ImGuiCol_TabUnfocusedActive]     = ImVec4(0.43f, 0.43f, 0.43f, 1.00f);
@@ -282,12 +289,12 @@ void Window::setupImGui() {
 	colors[ImGuiCol_TableBorderLight]       = ImVec4(0.47f, 0.47f, 0.47f, 1.00f);
 	colors[ImGuiCol_TableRowBg]             = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
 	colors[ImGuiCol_TableRowBgAlt]          = ImVec4(0.22f, 0.22f, 0.22f, 1.00f);
-	colors[ImGuiCol_TextSelectedBg]         = ImVec4(0.24f, 0.24f, 0.24f, 1.00f);
-	colors[ImGuiCol_DragDropTarget]         = ImVec4(0.83f, 0.83f, 0.83f, 0.90f);
+	colors[ImGuiCol_TextSelectedBg]         = buttonColor;
+	colors[ImGuiCol_DragDropTarget]         = textColor;
 	colors[ImGuiCol_NavHighlight]           = ImVec4(0.88f, 0.88f, 0.88f, 1.00f);
 	colors[ImGuiCol_NavWindowingHighlight]  = ImVec4(1.00f, 1.00f, 1.00f, 0.70f);
 	colors[ImGuiCol_NavWindowingDimBg]      = ImVec4(0.80f, 0.80f, 0.80f, 0.20f);
-	colors[ImGuiCol_ModalWindowDimBg]       = ImVec4(0.80f, 0.80f, 0.80f, 0.35f);
+	colors[ImGuiCol_ModalWindowDimBg]       = ImVec4(0.50f, 0.50f, 0.50f, 0.35f);
 
 	// Frames.
 	style.FrameRounding		 = 5.0f;
