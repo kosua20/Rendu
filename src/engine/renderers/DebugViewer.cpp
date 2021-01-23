@@ -134,7 +134,7 @@ void DebugViewer::track(const Mesh * mesh) {
 			return;
 		}
 	}
-	// Else create a new meshes infos element.
+	// Else create a new mesh infos element.
 	_meshes.emplace_back();
 	MeshInfos & infos = _meshes.back();
 	infos.name = finalName;
@@ -401,29 +401,30 @@ void DebugViewer::displayState(const std::string & name, StateInfos & infos){
 
 void DebugViewer::displayMesh(MeshInfos & mesh) {
 
-	ImGui::SetNextWindowSize(ImVec2(280, 130), ImGuiCond_Once);
+	ImGui::SetNextWindowSize(ImVec2(280, 160), ImGuiCond_Once);
 	const std::string finalWinName = "Mesh - " + mesh.name;
 
 	if(ImGui::Begin(finalWinName.c_str(), &mesh.visible)) {
+		const Mesh::Metrics & metrics = mesh.mesh->metrics();
 		ImGui::Columns(2);
-		ImGui::Text("Vertices: %lu", mesh.mesh->positions.size());
+		ImGui::Text("Vertices: %lu", metrics.vertices);
 		ImGui::NextColumn();
-		ImGui::Text("Normals: %lu", mesh.mesh->normals.size());
+		ImGui::Text("Normals: %lu", metrics.normals);
 		ImGui::NextColumn();
-		ImGui::Text("Tangents: %lu", mesh.mesh->tangents.size());
+		ImGui::Text("Tangents: %lu", metrics.tangents);
 		ImGui::NextColumn();
-		ImGui::Text("Binormals: %lu", mesh.mesh->binormals.size());
+		ImGui::Text("Binormals: %lu", metrics.binormals);
 		ImGui::NextColumn();
-		ImGui::Text("Colors: %lu", mesh.mesh->colors.size());
+		ImGui::Text("Colors: %lu", metrics.colors);
 		ImGui::NextColumn();
-		ImGui::Text("UVs: %lu", mesh.mesh->texcoords.size());
+		ImGui::Text("UVs: %lu", metrics.texcoords);
 		ImGui::NextColumn();
-		ImGui::Text("Indices: %lu", mesh.mesh->indices.size());
+		ImGui::Text("Indices: %lu", metrics.indices);
 		ImGui::Columns();
 		const auto & bbox = mesh.mesh->bbox;
 		if(!bbox.empty()){
 			ImGui::Text("Bbox: min: %.3f, %.3f, %.3f", bbox.minis[0], bbox.minis[1], bbox.minis[2]);
-			ImGui::Text("      max: %.3f, %.3f, %.3f", bbox.maxis[0], bbox.maxis[1], bbox.maxis[2]);
+			ImGui::Text("              max: %.3f, %.3f, %.3f", bbox.maxis[0], bbox.maxis[1], bbox.maxis[2]);
 		}
 
 	}
@@ -436,7 +437,7 @@ void DebugViewer::displayTexture(const std::string & prefix, TextureInfos & tex)
 		aspect = 2.0f;
 	}
 	// Fixed width, height takes into account texture aspect ratio and upper settings bar.
-	const float defaultWidth = 550.0f;
+	const float defaultWidth = 570.0f;
 	ImGui::SetNextWindowSize(ImVec2(defaultWidth, defaultWidth / aspect + 75.0f), ImGuiCond_Once);
 	const std::string finalWinName = prefix + tex.name + tex.displayName;
 

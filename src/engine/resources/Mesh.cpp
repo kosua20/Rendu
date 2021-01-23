@@ -183,9 +183,7 @@ Mesh::Mesh(std::istream & in, Mesh::Load mode, const std::string & name) {
 	faces_temp.clear();
 	Log::Verbose() << Log::Resources << "Mesh loaded with " << indices.size() / 3 << " faces, " << positions.size() << " vertices, " << normals.size() << " normals, " << texcoords.size() << " texcoords." << std::endl;
 
-	_hasNormals = !normals.empty();
-	_hasTexcoords = !texcoords.empty();
-	_hasColors = !colors.empty();
+	updateMetrics();
 }
 
 void Mesh::upload() {
@@ -200,6 +198,7 @@ void Mesh::clearGeometry() {
 	binormals.clear();
 	texcoords.clear();
 	indices.clear();
+	// Don't update the metrics automatically
 }
 
 void Mesh::clean() {
@@ -209,6 +208,8 @@ void Mesh::clean() {
 		gpu->clean();
 		DebugViewer::untrackDefault(this);
 	}
+	// Both CPU and GPU are reset, so we can update the metrics.
+	updateMetrics();
 }
 
 BoundingBox Mesh::computeBoundingBox() {
@@ -222,32 +223,10 @@ BoundingBox Mesh::computeBoundingBox() {
 		bbox.minis = glm::min(bbox.minis, positions[vid]);
 		bbox.maxis = glm::max(bbox.maxis, positions[vid]);
 	}
+
+	updateMetrics();
+
 	return bbox;
-}
-
-void Mesh::centerAndUnit() {
-	// Compute the centroid.
-	glm::vec3 centroid = glm::vec3(0.0);
-	float maxi		   = positions[0].x;
-	for(const auto & pos : positions) {
-		centroid += pos;
-	}
-	centroid /= positions.size();
-
-	for(auto & pos : positions) {
-		// Translate  the vertex.
-		pos -= centroid;
-		// Find the maximal distance from a vertex to the center.
-		maxi = std::abs(pos.x) > maxi ? std::abs(pos.x) : maxi;
-		maxi = std::abs(pos.y) > maxi ? std::abs(pos.y) : maxi;
-		maxi = std::abs(pos.z) > maxi ? std::abs(pos.z) : maxi;
-	}
-	maxi = maxi == 0.0f ? 1.0f : maxi;
-
-	// Scale the mesh.
-	for(auto & pos : positions) {
-		pos /= maxi;
-	}
 }
 
 void Mesh::computeNormals() {
@@ -275,7 +254,8 @@ void Mesh::computeNormals() {
 	for(auto & n : normals) {
 		n = glm::normalize(n);
 	}
-	_hasNormals = true;
+
+	updateMetrics();
 }
 
 void Mesh::computeTangentsAndBinormals(bool force) {
@@ -361,6 +341,8 @@ void Mesh::computeTangentsAndBinormals(bool force) {
 		binormals[tid] = glm::normalize(binormals[tid]);
 	}
 	Log::Verbose() << Log::Resources << "Mesh: " << tangents.size() << " tangents and binormals computed." << std::endl;
+
+	updateMetrics();
 }
 
 int Mesh::saveAsObj(const std::string & path, bool defaultUVs) {
@@ -412,13 +394,27 @@ const std::string & Mesh::name() const {
 }
 
 bool Mesh::hadNormals() const {
-	return _hasNormals;
+	return _metrics.normals != 0;
 }
 
 bool Mesh::hadTexcoords() const {
-	return _hasTexcoords;
+	return _metrics.texcoords != 0;
 }
 
 bool Mesh::hadColors() const {
-	return _hasColors;
+	return _metrics.colors != 0;
+}
+
+const Mesh::Metrics & Mesh::metrics() const {
+	return _metrics;
+}
+
+void Mesh::updateMetrics(){
+	_metrics.vertices = positions.size();
+	_metrics.normals = normals.size();
+	_metrics.tangents = tangents.size();
+	_metrics.binormals = binormals.size();
+	_metrics.colors = colors.size();
+	_metrics.texcoords = texcoords.size();
+	_metrics.indices = indices.size();
 }

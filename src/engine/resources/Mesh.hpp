@@ -19,6 +19,17 @@ public:
 		Indexed   ///< Duplicate only vertices that are shared between faces with attributes with different values.
 	};
 
+	/// \brief Information on a geometric mesh.
+	struct Metrics {
+		size_t vertices = 0; ///< Vertex count.
+		size_t normals = 0; ///< Normal count.
+		size_t tangents = 0; ///< Tangent count.
+		size_t binormals = 0; ///< Binormal count.
+		size_t colors = 0; ///< Color count.
+		size_t texcoords = 0; ///< UV count.
+		size_t indices = 0; ///< Index count.
+	};
+
 	/** Default constructor.
 	 \param name the mesh identifier
 	 */
@@ -31,7 +42,6 @@ public:
 	 */
 	Mesh(std::istream & in, Load mode, const std::string & name);
 
-	
 	/** Send to the GPU. */
 	void upload();
 	
@@ -46,10 +56,6 @@ public:
 	 \return the bounding box
 	 */
 	BoundingBox computeBoundingBox();
-
-	/** Center a mesh and scale it to fit in a sphere of radius 1.0.
-	 */
-	void centerAndUnit();
 
 	/** Compute per-vertex normals based on the faces orientation.
 	 */
@@ -86,6 +92,9 @@ public:
 	 \return true if it did
 	 */
 	bool hadColors() const;
+
+	/** \return the mesh current metrics (vertex count,...) */
+	const Metrics & metrics() const;
 	
 	/** Copy assignment operator (disabled).
 	 \return a reference to the object assigned to
@@ -115,9 +124,11 @@ public:
 	std::unique_ptr<GPUMesh> gpu; ///< The GPU buffers infos (optional).
 
 private:
-	
+
+	/** Update mesh metrics based on the current CPU content. */
+	void updateMetrics();
+
+	Metrics _metrics; ///< Resource stats.
 	std::string _name; ///< Resource name.
-	bool _hasTexcoords = false; ///< Did the loaded mesh had texcoords.
-	bool _hasNormals = false; ///< Did the loaded mesh had normals.
-	bool _hasColors = false; ///< Did the loaded mesh had colors.
+
 };
