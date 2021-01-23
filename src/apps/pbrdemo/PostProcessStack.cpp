@@ -5,7 +5,7 @@
 #include "graphics/GLUtilities.hpp"
 #include "graphics/ScreenQuad.hpp"
 
-PostProcessStack::PostProcessStack(const glm::vec2 & resolution){
+PostProcessStack::PostProcessStack(const glm::vec2 & resolution) : Renderer("Post process stack"){
 	const int renderWidth	= int(resolution[0]);
 	const int renderHeight	= int(resolution[1]);
 	const Descriptor desc = {Layout::RGB16F, Filter::LINEAR_NEAREST, Wrap::CLAMP};
@@ -19,7 +19,7 @@ PostProcessStack::PostProcessStack(const glm::vec2 & resolution){
 	_dofCocBuffer 	= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth/2, renderHeight/2, {desc, dofCocDesc}, false, "DoF CoC"));
 	_dofGatherBuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth/2, renderHeight/2, dofGatherDesc, false, "DoF gather"));
 
-	_blur		= std::unique_ptr<GaussianBlur>(new GaussianBlur(_settings.bloomRadius, 2));
+	_blur		= std::unique_ptr<GaussianBlur>(new GaussianBlur(_settings.bloomRadius, 2, "Bloom"));
 	_preferredFormat.push_back(desc);
 	_needsDepth = false;
 	_bloomProgram		= Resources::manager().getProgram2D("bloom");
@@ -119,7 +119,7 @@ void PostProcessStack::process(const Texture * texture, const glm::mat4 & proj, 
 }
 
 void PostProcessStack::updateBlurPass(){
-	_blur.reset(new GaussianBlur(_settings.bloomRadius, 2));
+	_blur.reset(new GaussianBlur(_settings.bloomRadius, 2, "Bloom"));
 }
 
 void PostProcessStack::resize(unsigned int width, unsigned int height) {

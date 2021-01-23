@@ -6,7 +6,7 @@
 #include "graphics/Framebuffer.hpp"
 #include "Common.hpp"
 
-GameMenuRenderer::GameMenuRenderer() {
+GameMenuRenderer::GameMenuRenderer() : Renderer("Menu") {
 	_buttonProgram	   = Resources::manager().getProgram("menu_button");
 	_backgroundProgram = Resources::manager().getProgram2D("passthrough");
 	_imageProgram	   = Resources::manager().getProgram("menu_image");

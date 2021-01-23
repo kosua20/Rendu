@@ -5,7 +5,7 @@
 #include "renderers/DebugViewer.hpp"
 
 
-StenciledRenderer::StenciledRenderer(const glm::vec2 & resolution) {
+StenciledRenderer::StenciledRenderer(const glm::vec2 & resolution) : Renderer("Stenciled"){
 
 	const uint renderWidth	   = uint(resolution[0]);
 	const uint renderHeight	   = uint(resolution[1]);
@@ -14,7 +14,7 @@ StenciledRenderer::StenciledRenderer(const glm::vec2 & resolution) {
 	const Descriptor descColor = {Layout::RGB8, Filter::LINEAR_LINEAR, Wrap::CLAMP};
 	const Descriptor descDepth = {Layout::DEPTH24_STENCIL8, Filter::NEAREST_NEAREST, Wrap::CLAMP};
 	const std::vector<Descriptor> descs = { descColor, descDepth};
-	_sceneFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, descs, true, "Stenciled rendering"));
+	_sceneFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, descs, true, _name + " rendering"));
 
 	_objectProgram	= Resources::manager().getProgram("object_basic_uniform", "object_basic", "object_basic_uniform");
 	_fillProgram 	= Resources::manager().getProgram2D("fill-color");

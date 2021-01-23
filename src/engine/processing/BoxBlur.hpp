@@ -15,8 +15,9 @@ public:
 	/**
 	 Constructor. Can use either an exhaustive 5x5 box blur (25 samples) or an approximate version with a checkerboard pattern (13 samples).
 	 \param approximate toggles the approximate box blur
+	 \param name debug name for internal buffers
 	 */
-	BoxBlur(bool approximate);
+	BoxBlur(bool approximate, const std::string & name);
 
 	/**
 	 Apply the blurring process to a given texture. 2D, cubemap and their array versions are supported.
@@ -38,6 +39,7 @@ private:
 	const Program * _blur2D;					///< Box blur program
 	const Program * _blurArray;					///< Box blur program
 	const Program * _blurCube;					///< Box blur program
-	const Program * _blurCubeArray;					///< Box blur program
+	const Program * _blurCubeArray;				///< Box blur program
 	std::unique_ptr<Framebuffer> _intermediate; ///< Intermediate target.
+	const std::string _name;					///< Debug name
 };

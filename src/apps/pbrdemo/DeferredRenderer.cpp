@@ -4,8 +4,8 @@
 #include "system/System.hpp"
 #include "graphics/GLUtilities.hpp"
 
-DeferredRenderer::DeferredRenderer(const glm::vec2 & resolution, ShadowMode mode, bool ssao) :
-	_applySSAO(ssao), _shadowMode(mode) {
+DeferredRenderer::DeferredRenderer(const glm::vec2 & resolution, ShadowMode mode, bool ssao, const std::string & name) :
+	Renderer(name), _applySSAO(ssao), _shadowMode(mode) {
 
 	const uint renderWidth	  = uint(resolution[0]);
 	const uint renderHeight	  = uint(resolution[1]);
@@ -18,9 +18,9 @@ DeferredRenderer::DeferredRenderer(const glm::vec2 & resolution, ShadowMode mode
 	const Descriptor lightDesc = {Layout::RGB16F, Filter::LINEAR_LINEAR, Wrap::CLAMP};
 
 	const std::vector<Descriptor> descs = {albedoDesc, normalDesc, effectsDesc, depthDesc};
-	_gbuffer							= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, descs, false, "G-buffer"));
-	_ssaoPass							= std::unique_ptr<SSAO>(new SSAO(renderWidth, renderHeight, 2, 0.5f));
-	_lightBuffer						= std::unique_ptr<Framebuffer>(new Framebuffer(TextureShape::D2, renderWidth, renderHeight, 1, 1, {lightDesc, depthDesc}, false, "Deferred lighting"));
+	_gbuffer							= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, descs, false, _name + " G-buffer "));
+	_ssaoPass							= std::unique_ptr<SSAO>(new SSAO(renderWidth, renderHeight, 2, 0.5f, _name));
+	_lightBuffer						= std::unique_ptr<Framebuffer>(new Framebuffer(TextureShape::D2, renderWidth, renderHeight, 1, 1, {lightDesc, depthDesc}, false, _name + " Lighting"));
 	_preferredFormat.push_back(lightDesc);
 	_needsDepth = false;
 

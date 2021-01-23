@@ -12,8 +12,10 @@ class Renderer {
 	
 public:
 	
-	/** Default constructor.*/
-	Renderer() = default;
+	/** Default constructor.
+	 \param name the debug name of the renderer
+	 */
+	Renderer(const std::string & name);
 	
 	/** Draw from a given viewpoint.
 	 \param camera the rendering viewpoint
@@ -75,6 +77,7 @@ public:
 
 protected:
 
+	std::string _name; ///< Debug name.
 	std::vector<Descriptor> _preferredFormat; ///< The preferred output format for a given renderer.
 	bool _needsDepth = false; ///< Does the output needs a depth buffer or not.
 };

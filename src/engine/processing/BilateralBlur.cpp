@@ -4,7 +4,7 @@
 #include "graphics/ScreenQuad.hpp"
 #include "resources/ResourcesManager.hpp"
 
-BilateralBlur::BilateralBlur() {
+BilateralBlur::BilateralBlur(const std::string & name) : _name(name) {
 
 	_filter	 = Resources::manager().getProgram2D("bilateral");
 	checkGLError();
@@ -18,7 +18,7 @@ void BilateralBlur::process(const glm::mat4 & projection, const Texture * textur
 	GLUtilities::setCullState(true, Faces::BACK);
 
 	if(!_intermediate || _intermediate->descriptor() != framebuffer.descriptor()){
-		_intermediate.reset(new Framebuffer(framebuffer.width(), framebuffer.height(), framebuffer.descriptor(), false, "Bilateral blur"));
+		_intermediate.reset(new Framebuffer(framebuffer.width(), framebuffer.height(), framebuffer.descriptor(), false, _name + " Bilateral blur"));
 	}
 
 	if(framebuffer.width() != _intermediate->width() || framebuffer.height() != _intermediate->height()){

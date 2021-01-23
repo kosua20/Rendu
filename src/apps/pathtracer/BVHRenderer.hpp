@@ -58,8 +58,6 @@ public:
 	int maxLevel();
 	
 private:
-	
-	std::unique_ptr<Framebuffer> _sceneFramebuffer; ///< Scene buffer.
 
 	const Program * _objectProgram; ///< Basic object program.
 	const Program * _bvhProgram;	///< BVH visualisation program.

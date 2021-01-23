@@ -7,15 +7,15 @@ PBRDemo::PBRDemo(RenderingConfig & config) :
 	CameraApp(config) {
 
 	const glm::vec2 renderRes = _config.renderingResolution();
-	_defRenderer.reset(new DeferredRenderer(renderRes, ShadowMode::VARIANCE, true));
-	_forRenderer.reset(new ForwardRenderer(renderRes, ShadowMode::VARIANCE, true));
+	_defRenderer.reset(new DeferredRenderer(renderRes, ShadowMode::VARIANCE, true, "Deferred"));
+	_forRenderer.reset(new ForwardRenderer(renderRes, ShadowMode::VARIANCE, true, "Forward"));
 	_postprocess.reset(new PostProcessStack(renderRes));
 	_debugRenderer.reset(new DebugRenderer());
 	_finalRender.reset(new Framebuffer(uint(renderRes[0]), uint(renderRes[1]), {Layout::RGB16F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, true, "Final render"));
 
 	_finalProgram = Resources::manager().getProgram2D("sharpening");
 	
-	_probesRenderer.reset(new DeferredRenderer(glm::vec2(256,256), ShadowMode::BASIC, false));
+	_probesRenderer.reset(new DeferredRenderer(glm::vec2(256,256), ShadowMode::BASIC, false, "Probes"));
 
 	// Load all existing scenes, with associated names.
 	std::map<std::string, std::string> sceneInfos;

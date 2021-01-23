@@ -5,7 +5,7 @@
 #include "resources/ResourcesManager.hpp"
 #include "Common.hpp"
 
-GameRenderer::GameRenderer(const glm::vec2 & resolution) {
+GameRenderer::GameRenderer(const glm::vec2 & resolution) : Renderer("Game") {
 	_playerCamera.pose(glm::vec3(0.0f, -5.0f, 24.0f), glm::vec3(0.0f, 0.5f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	_playerCamera.projection(resolution[0] / resolution[1], 0.6f, 1.0f, 30.0f);
 
@@ -26,7 +26,7 @@ GameRenderer::GameRenderer(const glm::vec2 & resolution) {
 	_fxaaProgram		= Resources::manager().getProgram2D("fxaa");
 	_compositingProgram = Resources::manager().getProgram2D("game_composite");
 
-	_ssaoPass = std::unique_ptr<SSAO>(new SSAO(renderWidth/2, renderHeight/2, 1, 1.5f));
+	_ssaoPass = std::unique_ptr<SSAO>(new SSAO(renderWidth/2, renderHeight/2, 1, 1.5f, _name));
 	_ssaoPass->quality() = SSAO::Quality::MEDIUM;
 	
 	_coloredProgram = Resources::manager().getProgram("colored_object");

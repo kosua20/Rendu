@@ -27,9 +27,10 @@ public:
 	/** Constructor.
 	 \param resolution the initial rendering resolution
 	 \param mode the shadow rendering algorithm
-	 \param ssao should screen space ambient occlusion be computed	 
+	 \param ssao should screen space ambient occlusion be computed
+	 \param name the debug name
 	 */
-	explicit ForwardRenderer(const glm::vec2 & resolution, ShadowMode mode, bool ssao);
+	explicit ForwardRenderer(const glm::vec2 & resolution, ShadowMode mode, bool ssao, const std::string & name);
 
 	/** Set the scene to render.
 	 \param scene the new scene

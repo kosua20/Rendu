@@ -21,8 +21,9 @@ public:
 	 Constructor. The depth of the gaussian pyramid will determine the strength of the blur, and the computational cost.
 	 \param radius the number of levels in the downscaling pyramid
 	 \param downscale work at a lower resolution than the target framebuffer
+	 \param name debug name for internal buffers
 	 */
-	GaussianBlur(uint radius, uint downscale);
+	GaussianBlur(uint radius, uint downscale, const std::string & name);
 
 	/**
 	 Apply the blurring process to a given texture.
@@ -45,5 +46,6 @@ private:
 	const Program * _blurProgramUp;							 ///< The upscaling filter.
 	const Program * _passthrough;							 ///< The copy program.
 	std::vector<std::unique_ptr<Framebuffer>> _frameBuffers; ///< Downscaled pyramid framebuffers.
+	const std::string _name;								 ///< Debug name
 	uint _downscale = 1;									 ///< Initial downscaling factor.
 };

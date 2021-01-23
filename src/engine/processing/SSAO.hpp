@@ -28,8 +28,9 @@ public:
 	 \param height the internal resolution height
 	 \param downscale the downscaling factor for the resolution when computing AO
 	 \param radius the SSAO intersection test radius
+	 \param name the debug name for internal buffers
 	 */
-	SSAO(uint width, uint height, uint downscale, float radius);
+	SSAO(uint width, uint height, uint downscale, float radius, const std::string & name);
 
 	/**
 	 Compute SSAO using the input depth and normal buffers.

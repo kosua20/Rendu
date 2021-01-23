@@ -1,5 +1,8 @@
 #include "Renderer.hpp"
 
+Renderer::Renderer(const std::string & name) : _name(name) {
+
+}
 
 void Renderer::draw(const Camera &, Framebuffer &, size_t){
 	Log::Error() << "Renderer: Unimplemented draw function." << std::endl;

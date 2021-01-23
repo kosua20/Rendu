@@ -61,7 +61,7 @@ private:
 	std::unique_ptr<Framebuffer> _waterPos; ///< Underwater terrain world positions.
 	std::unique_ptr<Framebuffer> _waterEffectsBlur; ///< Blurred underwater terrain.
 	std::unique_ptr<Framebuffer> _environment; ///< Environment cubemap.
-	BoxBlur _blur = BoxBlur(true); ///< Underwater terrain blurring.
+	BoxBlur _blur = BoxBlur(true, "Water"); ///< Underwater terrain blurring.
 
 	// Geometry.
 	std::unique_ptr<Terrain> _terrain; ///< Terrain generator and rendering data.

@@ -4,7 +4,7 @@
 #include "resources/Library.hpp"
 #include "resources/ResourcesManager.hpp"
 
-BoxBlur::BoxBlur(bool approximate) {
+BoxBlur::BoxBlur(bool approximate, const std::string & name) : _name(name) {
 
 	const std::string suffix = approximate ? "-approx" : "";
 	_blur2D = Resources::manager().getProgram2D("box-blur-2d" + suffix);
@@ -24,7 +24,7 @@ void BoxBlur::process(const Texture * texture, Framebuffer & framebuffer) {
 	
 	// Detect changes of descriptor.
 	if(!_intermediate || _intermediate->descriptor() != framebuffer.descriptor()){
-		_intermediate.reset(new Framebuffer(framebuffer.width(), framebuffer.height(), framebuffer.descriptor(), false, "Box blur"));
+		_intermediate.reset(new Framebuffer(framebuffer.width(), framebuffer.height(), framebuffer.descriptor(), false, _name + " Box blur"));
 	}
 	// Detect changes of size.
 	if(_intermediate->width() != framebuffer.width() || _intermediate->height() != framebuffer.height()){

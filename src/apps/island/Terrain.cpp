@@ -6,7 +6,7 @@
 Terrain::Cell::Cell(uint l, uint x, uint z) : mesh("Cell (" + std::to_string(l) + "," + std::to_string(x) + "," + std::to_string(z) + ")"), level(l) {
 }
 
-Terrain::Terrain(uint resolution, uint seed) : _gaussBlur(2, 1), _resolution(resolution), _seed(seed) {
+Terrain::Terrain(uint resolution, uint seed) : _gaussBlur(2, 1, "Terrain"), _resolution(resolution), _seed(seed) {
 	generateMesh();
 	generateMap();
 	_shadowBuffer.reset(new Framebuffer(resolution, resolution, {Layout::RG8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, false, "Terrain shadow"));

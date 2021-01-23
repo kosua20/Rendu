@@ -5,12 +5,12 @@
 #include "graphics/ScreenQuad.hpp"
 #include "resources/ResourcesManager.hpp"
 
-SSAO::SSAO(uint width, uint height, uint downscale, float radius) : _mediumBlur(true),
+SSAO::SSAO(uint width, uint height, uint downscale, float radius, const std::string & name) : _highBlur(name + " SSAO"), _mediumBlur(true, name + " SSAO"),
 	_samples(16, BufferType::UNIFORM, DataUse::STATIC), _radius(radius), _downscale(downscale) {
 
 	const Descriptor desc = Descriptor(Layout::R8, Filter::LINEAR_NEAREST, Wrap::CLAMP);
-	_ssaoFramebuffer.reset(new Framebuffer(width/_downscale, height/_downscale, desc, false, "SSAO"));
-	_finalFramebuffer.reset(new Framebuffer(width, height, desc, false, "SSAO final"));
+	_ssaoFramebuffer.reset(new Framebuffer(width/_downscale, height/_downscale, desc, false, name + " SSAO"));
+	_finalFramebuffer.reset(new Framebuffer(width, height, desc, false, name + " SSAO final"));
 	_programSSAO = Resources::manager().getProgram2D("ssao");
 
 	// Generate samples.

@@ -5,7 +5,7 @@
 #include "graphics/ScreenQuad.hpp"
 #include "resources/Texture.hpp"
 
-BVHRenderer::BVHRenderer() {
+BVHRenderer::BVHRenderer() : Renderer("BVH renderer") {
 	// GL setup
 	_preferredFormat.push_back({Layout::RGB8, Filter::LINEAR_NEAREST, Wrap::CLAMP});
 	_needsDepth = true;

@@ -7,7 +7,7 @@
 #include "scene/Sky.hpp"
 
 EditorRenderer::EditorRenderer() :
-	_lightsDebug("object_basic_uniform") {
+	Renderer("Editor"), _lightsDebug("object_basic_uniform") {
 
 	_preferredFormat.push_back({Layout::RGB8, Filter::LINEAR_NEAREST, Wrap::CLAMP});
 	_needsDepth = true;

@@ -4,7 +4,7 @@
 #include "graphics/GLUtilities.hpp"
 
 
-DebugRenderer::DebugRenderer() : _lightDebugRenderer("object_basic_uniform"), _sceneBoxes("Debug scene box"), _frame("Debug frame"), _cubeLines("Debug cube") {
+DebugRenderer::DebugRenderer() : Renderer("Debug renderer"), _lightDebugRenderer("object_basic_uniform"), _sceneBoxes("Debug scene box"), _frame("Debug frame"), _cubeLines("Debug cube") {
 
 	const Descriptor desc = {Layout::RGBA8, Filter::LINEAR_LINEAR, Wrap::CLAMP};
 	_preferredFormat.push_back(desc);

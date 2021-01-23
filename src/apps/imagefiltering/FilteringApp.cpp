@@ -23,8 +23,8 @@ FilteringApp::FilteringApp(RenderingConfig & config) :
 	// Create the Poisson filling and Laplacian integration pyramids, with a lowered internal resolution to speed things up.
 	_pyramidFiller	 = std::unique_ptr<PoissonFiller>(new PoissonFiller(renderWidth, renderHeight, _fillDownscale));
 	_pyramidIntegrator = std::unique_ptr<LaplacianIntegrator>(new LaplacianIntegrator(renderWidth, renderHeight, _intDownscale));
-	_gaussianBlur	  = std::unique_ptr<GaussianBlur>(new GaussianBlur(_blurLevel, 1));
-	_boxBlur		   = std::unique_ptr<BoxBlur>(new BoxBlur(false));
+	_gaussianBlur	  = std::unique_ptr<GaussianBlur>(new GaussianBlur(_blurLevel, 1, "Filter"));
+	_boxBlur		   = std::unique_ptr<BoxBlur>(new BoxBlur(false, "Filter"));
 	_floodFill		   = std::unique_ptr<FloodFiller>(new FloodFiller(renderWidth, renderHeight));
 
 	_painter = std::unique_ptr<PaintingTool>(new PaintingTool(renderWidth, renderHeight));
@@ -186,7 +186,7 @@ void FilteringApp::showModeOptions() {
 		case Processing::GAUSSBLUR:
 			if(ImGui::InputInt("Levels", &_blurLevel, 1, 2)) {
 				_blurLevel = std::min(std::max(1, _blurLevel), 10);
-				_gaussianBlur.reset(new GaussianBlur(_blurLevel, 1));
+				_gaussianBlur.reset(new GaussianBlur(_blurLevel, 1, "Filter"));
 			}
 			break;
 		case Processing::FILL:

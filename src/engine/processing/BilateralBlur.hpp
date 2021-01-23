@@ -15,8 +15,9 @@ class BilateralBlur {
 public:
 	/**
 	 Constructor.
+	 \param name debug name for internal buffers
 	 */
-	BilateralBlur();
+	BilateralBlur(const std::string & name);
 
 	/**
 	 Apply the bilateral blur to a texture and write the result in a framebuffer.
@@ -38,5 +39,6 @@ private:
 	void resize(unsigned int width, unsigned int height) const;
 
 	std::unique_ptr<Framebuffer> _intermediate; ///< Intermediate framebuffer.
-	const Program * _filter; ///< Bialteral hader.
+	const Program * _filter; ///< Bilateral hader.
+	std::string _name; ///< Debug name.
 };
