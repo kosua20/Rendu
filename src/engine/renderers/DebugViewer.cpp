@@ -419,7 +419,7 @@ void DebugViewer::displayMesh(MeshInfos & mesh) {
 		ImGui::Text("UVs: %lu", mesh.mesh->texcoords.size());
 		ImGui::NextColumn();
 		ImGui::Text("Indices: %lu", mesh.mesh->indices.size());
-		ImGui::Columns(0);
+		ImGui::Columns();
 		const auto & bbox = mesh.mesh->bbox;
 		if(!bbox.empty()){
 			ImGui::Text("Bbox: min: %.3f, %.3f, %.3f", bbox.minis[0], bbox.minis[1], bbox.minis[2]);

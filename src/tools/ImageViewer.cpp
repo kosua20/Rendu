@@ -229,7 +229,7 @@ int main(int argc, char ** argv) {
 			ImGui::ColorEdit3("Background", &bgColor[0]);
 
 			// Scaling speed.
-			ImGui::SliderFloat("Zoom speed", &zoomSpeed, 0.001f, 0.1f, "%.3f", 4.0f);
+			ImGui::SliderFloat("Zoom speed", &zoomSpeed, 0.001f, 0.1f, "%.3f", ImGuiSliderFlags_Logarithmic | ImGuiSliderFlags_NoRoundToFormat);
 			// Position
 			if(ImGui::Button("Reset pos.")) {
 				pixelScale = 1.0f;

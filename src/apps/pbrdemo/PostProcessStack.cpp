@@ -141,7 +141,7 @@ void PostProcessStack::interface(){
 	if(_settings.dof) {
 		ImGui::Text("DoF  "); ImGui::SameLine();
 		ImGui::PushItemWidth(80);
-		ImGui::SliderFloat("Dist.##DoF", &_settings.focusDist, 0.1f, 10.0f, "%.3f", 2.0f);
+		ImGui::SliderFloat("Dist.##DoF", &_settings.focusDist, 0.1f, 10.0f, "%.3f", ImGuiSliderFlags_Logarithmic | ImGuiSliderFlags_NoRoundToFormat);
 		ImGui::SameLine();
 		ImGui::SliderFloat("Str.##DoF", &_settings.focusScale, 1.0f, 30.0f);
 		ImGui::PopItemWidth();
