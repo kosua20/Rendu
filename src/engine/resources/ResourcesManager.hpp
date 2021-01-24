@@ -196,7 +196,7 @@ public:
 	Font * getFont(const std::string & name);
 
 	/** Load arbitrary data from the resources.
-	 \param name the data file base name
+	 \param filename the data file base name
 	 \return the data (internally managed)
 	 */
 	const Data * getData(const std::string & filename);

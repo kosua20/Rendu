@@ -14,6 +14,10 @@ if not _OPTIONS["nfd_linux_backend"] then
 	 _OPTIONS["nfd_linux_backend"] = "gtk3"
 end
 
+-- On Linux we have to query the includes of gtk+3 for NFD, we do this on the host for now.
+if os.ishost("linux") then
+	gtkFlags, code = os.outputof("pkg-config --cflags gtk+-3.0")
+end
 
 project("nfd")
 	kind("StaticLib")
@@ -36,7 +40,7 @@ project("nfd")
 	filter({"system:linux", "options:nfd_linux_backend=gtk3"})
 		language("C")
 		files({"nfd_gtk.c"})
-		buildoptions({"`pkg-config --cflags gtk+-3.0`"})
+		buildoptions(gtkFlags)
 
 	filter({"system:linux", "options:nfd_linux_backend=zenity"})
 		language("C")
