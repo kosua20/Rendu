@@ -8,7 +8,15 @@
 #	include <sys/stat.h>
 #endif
 
-
+// On Windows, we can notify both AMD and Nvidia drivers that we prefer discrete GPUs.
+#ifdef _WIN32
+extern "C" {
+	// See https://gpuopen.com/learn/amdpowerxpressrequesthighperformance/
+	_declspec(dllexport) DWORD AmdPowerXpressRequestHighPerformance = 0x00000001;
+	// See https://docs.nvidia.com/gameworks/content/technologies/desktop/optimus.htm
+	_declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+}
+#endif
 
 bool System::showPicker(Picker mode, const std::string & startDir, std::string & outPath, const std::string & extensions) {
 	nfdchar_t * outPathRaw = nullptr;
