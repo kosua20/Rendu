@@ -8,6 +8,7 @@
 #include <miniz/miniz.h>
 #include <fstream>
 #include <sstream>
+#include <cstring>
 
 /** By enabling RESOURCES_PACKAGED, the resources will be loaded from a zip archive
  instead of the resources directory. Basic text files can still be read from disk

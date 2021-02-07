@@ -8,6 +8,10 @@
 #ifdef _WIN32
 #	include <io.h>
 #	include <cstdio>
+#	include <windows.h>
+#	ifdef ERROR
+#		undef ERROR
+#	endif
 #else
 #	include <unistd.h>
 #endif
