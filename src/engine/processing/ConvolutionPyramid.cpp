@@ -1,6 +1,6 @@
 #include "processing/ConvolutionPyramid.hpp"
 #include "graphics/ScreenQuad.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 
 ConvolutionPyramid::ConvolutionPyramid(unsigned int width, unsigned int height, unsigned int inoutPadding) :
 	_padding(int(inoutPadding)) {
@@ -39,15 +39,15 @@ ConvolutionPyramid::ConvolutionPyramid(unsigned int width, unsigned int height, 
 }
 
 void ConvolutionPyramid::process(const Texture * texture) {
-	GLUtilities::setDepthState(false);
-	GLUtilities::setBlendState(false);
-	GLUtilities::setCullState(true, Faces::BACK);
+	GPU::setDepthState(false);
+	GPU::setBlendState(false);
+	GPU::setCullState(true, Faces::BACK);
 	
 	// Pad by the size of the filter.
 	_levelsIn[0]->bind();
 	// Shift the viewport and fill the padded region with 0s.
-	GLUtilities::setViewport(_size, _size, int(_levelsIn[0]->width()) - 2 * _size, int(_levelsIn[0]->height()) - 2 * _size);
-	GLUtilities::clearColor(glm::vec4(0.0f));
+	GPU::setViewport(_size, _size, int(_levelsIn[0]->width()) - 2 * _size, int(_levelsIn[0]->height()) - 2 * _size);
+	GPU::clearColor(glm::vec4(0.0f));
 	// Transfer the boundary content.
 	_padder->use();
 	_padder->uniform("padding", _size);
@@ -63,8 +63,8 @@ void ConvolutionPyramid::process(const Texture * texture) {
 	for(size_t i = 1; i < _levelsIn.size(); ++i) {
 		_levelsIn[i]->bind();
 		// Shift the viewport and fill the padded region with 0s.
-		GLUtilities::clearColor(glm::vec4(0.0f));
-		GLUtilities::setViewport(_size, _size, int(_levelsIn[i]->width()) - 2 * _size, int(_levelsIn[i]->height()) - 2 * _size);
+		GPU::clearColor(glm::vec4(0.0f));
+		GPU::setViewport(_size, _size, int(_levelsIn[i]->width()) - 2 * _size, int(_levelsIn[i]->height()) - 2 * _size);
 		// Filter and downscale.
 		ScreenQuad::draw(_levelsIn[i - 1]->texture());
 	}

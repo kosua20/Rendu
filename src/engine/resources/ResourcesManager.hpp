@@ -171,7 +171,7 @@ public:
 	 */
 	const Texture * getTexture(const std::string & name);
 
-	/** Get an OpenGL program resource.
+	/** Get a GPU program resource.
 	 \param name the name to represent the program
 	 \param vertexName the name of the vertex shader
 	 \param fragmentName the name of the fragment shader
@@ -182,7 +182,7 @@ public:
 	 */
 	Program * getProgram(const std::string & name, const std::string & vertexName = "", const std::string & fragmentName= "", const std::string & geometryName = "", const std::string & tessControlName = "", const std::string & tessEvalName = "");
 
-	/** Get an OpenGL program resource for 2D screen processing. It will use GPU::Vert::Passthrough as a vertex shader.
+	/** Get a GPU program resource for 2D screen processing. It will use GPU::Vert::Passthrough as a vertex shader.
 	 \param name the name of the fragment shader
 	 \return the program informations
 	 \see GPU::Vert::Passthrough

@@ -1,13 +1,13 @@
 #include "resources/Buffer.hpp"
 #include "graphics/GPUObjects.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 
 BufferBase::BufferBase(size_t sizeInBytes, BufferType atype, DataUse ausage) :
 	sizeMax(sizeInBytes), type(atype), usage(ausage) {
 }
 
 void BufferBase::setup(){
-	GLUtilities::setupBuffer(*this);
+	GPU::setupBuffer(*this);
 }
 
 void BufferBase::upload(size_t sizeInBytes, unsigned char * data, size_t offset){
@@ -17,10 +17,10 @@ void BufferBase::upload(size_t sizeInBytes, unsigned char * data, size_t offset)
 	}
 	if(sizeInBytes == sizeMax){
 		// Orphan the buffer so that we don't need to wait for it to be unused before overwriting it.
-		GLUtilities::allocateBuffer(*this);
+		GPU::allocateBuffer(*this);
 	}
 	// Then upload the data.
-	GLUtilities::uploadBuffer(*this, sizeInBytes, data, offset);
+	GPU::uploadBuffer(*this, sizeInBytes, data, offset);
 }
 
 void BufferBase::download(size_t sizeInBytes, unsigned char * data, size_t offset){
@@ -28,7 +28,7 @@ void BufferBase::download(size_t sizeInBytes, unsigned char * data, size_t offse
 		Log::Warning() << "No GPU data to download for the buffer." << std::endl;
 		return;
 	}
-	GLUtilities::downloadBuffer(*this, sizeInBytes, data, offset);
+	GPU::downloadBuffer(*this, sizeInBytes, data, offset);
 }
 
 void BufferBase::clean() {

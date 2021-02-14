@@ -5,7 +5,7 @@
 #include "resources/ResourcesManager.hpp"
 #include "input/controller/RawController.hpp"
 #include "graphics/Framebuffer.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 #include "Common.hpp"
 
 /**
@@ -267,8 +267,8 @@ int main(int argc, char ** argv) {
 		// Render nothing.
 		const glm::ivec2 screenSize = Input::manager().size();
 		Framebuffer::backbuffer()->bind();
-		GLUtilities::setViewport(0, 0, screenSize[0], screenSize[1]);
-		GLUtilities::clearColor({0.0f, 0.0f, 0.0f, 1.0f});
+		GPU::setViewport(0, 0, screenSize[0], screenSize[1]);
+		GPU::clearColor({0.0f, 0.0f, 0.0f, 1.0f});
 		
 		// Set a fullscreen fixed window.
 		ImGui::SetNextWindowPos(ImVec2(0, 0));

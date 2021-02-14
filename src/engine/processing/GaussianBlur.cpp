@@ -1,5 +1,5 @@
 #include "processing/GaussianBlur.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 #include "graphics/ScreenQuad.hpp"
 #include "resources/ResourcesManager.hpp"
 
@@ -19,9 +19,9 @@ void GaussianBlur::process(const Texture * texture, Framebuffer & framebuffer) {
 		return;
 	}
 
-	GLUtilities::setDepthState(false);
-	GLUtilities::setBlendState(false);
-	GLUtilities::setCullState(true, Faces::BACK);
+	GPU::setDepthState(false);
+	GPU::setBlendState(false);
+	GPU::setCullState(true, Faces::BACK);
 
 	const uint width = framebuffer.width() / _downscale;
 	const uint height = framebuffer.height() / _downscale;
@@ -45,7 +45,7 @@ void GaussianBlur::process(const Texture * texture, Framebuffer & framebuffer) {
 	for(size_t d = 1; d < _frameBuffers.size(); ++d) {
 		_frameBuffers[d]->bind();
 		_frameBuffers[d]->setViewport();
-		GLUtilities::clearColor(glm::vec4(0.0f));
+		GPU::clearColor(glm::vec4(0.0f));
 		ScreenQuad::draw(_frameBuffers[d - 1]->texture());
 	}
 
@@ -54,11 +54,11 @@ void GaussianBlur::process(const Texture * texture, Framebuffer & framebuffer) {
 	for(int d = int(_frameBuffers.size()) - 2; d >= 0; --d) {
 		_frameBuffers[d]->bind();
 		_frameBuffers[d]->setViewport();
-		GLUtilities::clearColor(glm::vec4(0.0f));
+		GPU::clearColor(glm::vec4(0.0f));
 		ScreenQuad::draw(_frameBuffers[d + 1]->texture());
 	}
 	// Copy from the last framebuffer used to the destination.
-	GLUtilities::blit(*_frameBuffers[0], framebuffer, Filter::LINEAR);
+	GPU::blit(*_frameBuffers[0], framebuffer, Filter::LINEAR);
 }
 
 void GaussianBlur::resize(unsigned int width, unsigned int height) {

@@ -1,6 +1,6 @@
 #include "VarianceShadowMapArray.hpp"
 #include "scene/Scene.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 
 VarianceShadowMap2DArray::VarianceShadowMap2DArray(const std::vector<std::shared_ptr<Light>> & lights, const glm::vec2 & resolution){
 	_lights = lights;
@@ -15,9 +15,9 @@ VarianceShadowMap2DArray::VarianceShadowMap2DArray(const std::vector<std::shared
 
 void VarianceShadowMap2DArray::draw(const Scene & scene) const {
 
-	GLUtilities::setDepthState(true, TestFunction::LESS, true);
-	GLUtilities::setBlendState(false);
-	GLUtilities::setCullState(true, Faces::BACK);
+	GPU::setDepthState(true, TestFunction::LESS, true);
+	GPU::setBlendState(false);
+	GPU::setCullState(true, Faces::BACK);
 
 	_map->setViewport();
 	_program->use();
@@ -28,7 +28,7 @@ void VarianceShadowMap2DArray::draw(const Scene & scene) const {
 			continue;
 		}
 		_map->bind(lid);
-		GLUtilities::clearColorAndDepth(glm::vec4(1.0f), 1.0f);
+		GPU::clearColorAndDepth(glm::vec4(1.0f), 1.0f);
 
 		const Frustum lightFrustum(light->vp());
 
@@ -40,15 +40,15 @@ void VarianceShadowMap2DArray::draw(const Scene & scene) const {
 			if(!lightFrustum.intersects(object.boundingBox())){
 				continue;
 			}
-			GLUtilities::setCullState(!object.twoSided(), Faces::BACK);
+			GPU::setCullState(!object.twoSided(), Faces::BACK);
 
 			_program->uniform("hasMask", object.masked());
 			if(object.masked()) {
-				GLUtilities::bindTexture(object.textures()[0], 0);
+				GPU::bindTexture(object.textures()[0], 0);
 			}
 			const glm::mat4 lightMVP = light->vp() * object.model();
 			_program->uniform("mvp", lightMVP);
-			GLUtilities::drawMesh(*(object.mesh()));
+			GPU::drawMesh(*(object.mesh()));
 		}
 	}
 	
@@ -69,9 +69,9 @@ VarianceShadowMapCubeArray::VarianceShadowMapCubeArray(const std::vector<std::sh
 
 void VarianceShadowMapCubeArray::draw(const Scene & scene) const {
 
-	GLUtilities::setDepthState(true, TestFunction::LESS, true);
-	GLUtilities::setCullState(true, Faces::BACK);
-	GLUtilities::setBlendState(false);
+	GPU::setDepthState(true, TestFunction::LESS, true);
+	GPU::setCullState(true, Faces::BACK);
+	GPU::setBlendState(false);
 	_map->setViewport();
 	_program->use();
 
@@ -89,7 +89,7 @@ void VarianceShadowMapCubeArray::draw(const Scene & scene) const {
 		for(int i = 0; i < 6; ++i){
 			// We render each face sequentially, culling objects that are not visible.
 			_map->bind(lid * 6 + i);
-			GLUtilities::clearColorAndDepth(glm::vec4(1.0f), 1.0f);
+			GPU::clearColorAndDepth(glm::vec4(1.0f), 1.0f);
 			const Frustum lightFrustum(faces[i]);
 
 			for(auto & object : scene.objects) {
@@ -101,15 +101,15 @@ void VarianceShadowMapCubeArray::draw(const Scene & scene) const {
 					continue;
 				}
 
-				GLUtilities::setCullState(!object.twoSided(), Faces::BACK);
+				GPU::setCullState(!object.twoSided(), Faces::BACK);
 				const glm::mat4 mvp = faces[i] * object.model();
 				_program->uniform("mvp", mvp);
 				_program->uniform("m", object.model());
 				_program->uniform("hasMask", object.masked());
 				if(object.masked()) {
-					GLUtilities::bindTexture(object.textures()[0], 0);
+					GPU::bindTexture(object.textures()[0], 0);
 				}
-				GLUtilities::drawMesh(*(object.mesh()));
+				GPU::drawMesh(*(object.mesh()));
 			}
 		}
 	}

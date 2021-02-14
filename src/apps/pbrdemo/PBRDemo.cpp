@@ -1,6 +1,6 @@
 #include "PBRDemo.hpp"
 #include "renderers/shadowmaps/VarianceShadowMapArray.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 #include "input/Input.hpp"
 
 PBRDemo::PBRDemo(RenderingConfig & config) :
@@ -105,7 +105,7 @@ void PBRDemo::setScene(const std::shared_ptr<Scene> & scene) {
 			probe->convolveRadiance(1.2f, 1, 5);
 			probe->prepareIrradiance();
 			probe->estimateIrradiance(5.0f);
-			GLUtilities::sync();
+			GPU::sync();
 		}
 	}
 }
@@ -153,7 +153,7 @@ void PBRDemo::draw() {
 	_frameID = (_frameID + 1)%_frameCount;
 
 	if(!_scenes[_currentScene]) {
-		GLUtilities::clearColorAndDepth({0.2f, 0.2f, 0.2f, 1.0f}, 1.0f);
+		GPU::clearColorAndDepth({0.2f, 0.2f, 0.2f, 1.0f}, 1.0f);
 		return;
 	}
 
@@ -178,18 +178,18 @@ void PBRDemo::draw() {
 	_postprocessTime.end();
 
 	if(_showDebug){
-		GLUtilities::blitDepth(*depthSrc, *_finalRender);
+		GPU::blitDepth(*depthSrc, *_finalRender);
 		_debugRenderer->draw(_userCamera, *_finalRender);
 	}
 
 	// We now render a full screen quad in the default framebuffer.
 
-	GLUtilities::setDepthState(false);
-	GLUtilities::setCullState(true, Faces::BACK);
-	GLUtilities::setBlendState(false);
+	GPU::setDepthState(false);
+	GPU::setCullState(true, Faces::BACK);
+	GPU::setBlendState(false);
 
 	Framebuffer::backbuffer()->bind();
-	GLUtilities::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
+	GPU::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 	_finalProgram->use();
 	ScreenQuad::draw(_finalRender->texture());
 

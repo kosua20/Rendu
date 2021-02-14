@@ -1,7 +1,7 @@
 
 #include "Game.hpp"
 #include "input/Input.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 #include "graphics/ScreenQuad.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "Common.hpp"
@@ -106,7 +106,7 @@ void Game::draw() {
 		_player->updateModels();
 		_inGameRenderer.drawPlayer(*_player, *_gameFramebuffer);
 		
-		GLUtilities::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
+		GPU::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 		Framebuffer::backbuffer()->bind();
 		_finalProgram->use();
 		ScreenQuad::draw(_gameFramebuffer->texture());

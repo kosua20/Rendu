@@ -1,7 +1,7 @@
 #include "DebugRenderer.hpp"
 #include "scene/lights/Light.hpp"
 #include "system/System.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 
 
 DebugRenderer::DebugRenderer() : Renderer("Debug renderer"), _lightDebugRenderer("object_basic_uniform"), _sceneBoxes("Debug scene box"), _frame("Debug frame"), _cubeLines("Debug cube") {
@@ -101,11 +101,11 @@ void DebugRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_
 	_lightDebugRenderer.updateCameraInfos(view, proj);
 
 	framebuffer.bind(layer);
-	GLUtilities::setDepthState(true, TestFunction::LEQUAL, true);
-	GLUtilities::setBlendState(false);
-	GLUtilities::setCullState(false);
+	GPU::setDepthState(true, TestFunction::LEQUAL, true);
+	GPU::setBlendState(false);
+	GPU::setCullState(false);
 	// Wireframe mode.
-	GLUtilities::setPolygonState(PolygonMode::LINE);
+	GPU::setPolygonState(PolygonMode::LINE);
 
 	if(_showLights){
 		for(const auto & light : _scene->lights){
@@ -120,17 +120,17 @@ void DebugRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_
 		_boxesProgram->use();
 		_boxesProgram->uniform("mvp", vp);
 		_boxesProgram->uniform("color", glm::vec4(1.0f,0.9f,0.2f, 1.0f));
-		GLUtilities::drawMesh(_sceneBoxes);
+		GPU::drawMesh(_sceneBoxes);
 	}
 
 	if(_showFrame){
 		_frameProgram->use();
 		_frameProgram->uniform("mvp", vp);
-		GLUtilities::drawMesh(_frame);
+		GPU::drawMesh(_frame);
 
 	}
 
-	GLUtilities::setPolygonState(PolygonMode::FILL);
+	GPU::setPolygonState(PolygonMode::FILL);
 
 	// Render probe.
 	if(_showProbe){
@@ -138,8 +138,8 @@ void DebugRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_
 		// Render the extent box if parallax corrected.
 		if(probe.extent()[0] > 0.0f){
 			// Wireframe
-			GLUtilities::setPolygonState(PolygonMode::LINE);
-			GLUtilities::setCullState(false);
+			GPU::setPolygonState(PolygonMode::LINE);
+			GPU::setCullState(false);
 			const glm::mat4 baseModel = glm::rotate(glm::translate(glm::mat4(1.0f), probe.center()), probe.rotation(), glm::vec3(0.0f, 1.0f, 0.0f));
 			const glm::mat4 mvpBox = vp * glm::scale(baseModel, 2.0f * probe.extent());
 			const glm::mat4 mvpCenter = vp * glm::scale(baseModel, glm::vec3(0.05f));
@@ -148,14 +148,14 @@ void DebugRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_
 			_boxesProgram->uniform("color", glm::vec4(0.2f, 0.9f, 1.0f, 1.0f));
 
 			_boxesProgram->uniform("mvp", mvpBox);
-			GLUtilities::drawMesh(_cubeLines);
+			GPU::drawMesh(_cubeLines);
 
 			_boxesProgram->uniform("mvp", mvpCenter);
-			GLUtilities::drawMesh(*_sphere);
+			GPU::drawMesh(*_sphere);
 		}
 
-		GLUtilities::setPolygonState(PolygonMode::FILL);
-		GLUtilities::setCullState(true, Faces::BACK);
+		GPU::setPolygonState(PolygonMode::FILL);
+		GPU::setCullState(true, Faces::BACK);
 		// Combine the three matrices.
 		const glm::mat4 model = glm::scale(glm::translate(glm::mat4(1.0f), probe.position()), glm::vec3(0.15f));
 		const glm::mat4 MVP = vp * model;
@@ -167,9 +167,9 @@ void DebugRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_
 		_probeProgram->uniform("camPos", camera.position());
 		_probeProgram->uniform("lod", _probeRoughness * probe.map()->levels);
 		_probeProgram->uniform("mode", int(_probeMode));
-		GLUtilities::bindTexture(probe.map(), 0);
-		GLUtilities::bindBuffer(*probe.shCoeffs(), 0);
-		GLUtilities::drawMesh(*_sphere);
+		GPU::bindTexture(probe.map(), 0);
+		GPU::bindBuffer(*probe.shCoeffs(), 0);
+		GPU::drawMesh(*_sphere);
 	}
 
 }

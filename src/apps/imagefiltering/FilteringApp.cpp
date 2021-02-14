@@ -2,7 +2,7 @@
 
 #include "input/Input.hpp"
 #include "system/System.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 
 FilteringApp::FilteringApp(RenderingConfig & config) :
 	CameraApp(config) {
@@ -37,28 +37,28 @@ void FilteringApp::draw() {
 	const Texture * srcTexID = _sceneBuffer->texture();
 	// Render the scene.
 	if(_viewMode == View::SCENE) {
-		GLUtilities::setDepthState(true, TestFunction::LESS, true);
-		GLUtilities::setBlendState(false);
-		GLUtilities::setCullState(true, Faces::BACK);
+		GPU::setDepthState(true, TestFunction::LESS, true);
+		GPU::setBlendState(false);
+		GPU::setCullState(true, Faces::BACK);
 		_sceneBuffer->bind();
 		_sceneBuffer->setViewport();
-		GLUtilities::clearColorAndDepth({0.0f, 0.0f, 0.0f, 1.0f}, 1.0f);
+		GPU::clearColorAndDepth({0.0f, 0.0f, 0.0f, 1.0f}, 1.0f);
 		const glm::mat4 MVP = _userCamera.projection() * _userCamera.view();
 		_sceneShader->use();
 		_sceneShader->uniform("mvp", MVP);
-		GLUtilities::drawMesh(*_mesh);
+		GPU::drawMesh(*_mesh);
 
 	} else if(_viewMode == View::IMAGE) {
-		GLUtilities::setDepthState(false);
-		GLUtilities::setBlendState(false);
-		GLUtilities::setCullState(true, Faces::BACK);
+		GPU::setDepthState(false);
+		GPU::setBlendState(false);
+		GPU::setCullState(true, Faces::BACK);
 		_sceneBuffer->bind();
 		_sceneBuffer->setViewport();
 		_passthrough->use();
 		if(_image.width > 0) {
 			ScreenQuad::draw(_image);
 		} else {
-			GLUtilities::clearColor({0.0f, 0.0f, 0.0f, 1.0f});
+			GPU::clearColor({0.0f, 0.0f, 0.0f, 1.0f});
 		}
 
 	} else {
@@ -97,13 +97,13 @@ void FilteringApp::draw() {
 	}
 
 	// Render the output on screen.
-	GLUtilities::setDepthState(false);
-	GLUtilities::setBlendState(false);
-	GLUtilities::setCullState(true, Faces::BACK);
+	GPU::setDepthState(false);
+	GPU::setBlendState(false);
+	GPU::setCullState(true, Faces::BACK);
 	
 	Framebuffer::backbuffer()->bind();
 	const glm::ivec2 screenSize = Input::manager().size();
-	GLUtilities::setViewport(0, 0, screenSize[0], screenSize[1]);
+	GPU::setViewport(0, 0, screenSize[0], screenSize[1]);
 	_passthrough->use();
 	ScreenQuad::draw(finalTexID);
 }

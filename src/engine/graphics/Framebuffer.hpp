@@ -4,7 +4,7 @@
 #include "Common.hpp"
 
 /**
- \brief Represent a rendering target, of any size, format and type, backed by an OpenGL framebuffer.
+ \brief Represent a rendering target, of any size, format and type, backed by a GPU framebuffer.
  \details Framebuffer can use different shapes: 2D, cubemap, 2D array, cubemap array, but you can only render to one 2D layer at a time.
  For cubemaps and arrays you can select the ayer when binding.
  \ingroup Graphics
@@ -214,7 +214,7 @@ private:
 	std::vector<Texture> _idColors; ///< The color textures.
 	Texture _idDepth = Texture("Depth"); ///< The depth renderbuffer.
 	TextureShape _shape = TextureShape::D2;	///< The texture shape.
-	GLenum _target = GL_TEXTURE_2D;			///< The OpenGL texture shape.
+	GLenum _target = GL_TEXTURE_2D;			///< The GPU texture shape.
 	bool _hasStencil = false;		///< Does the framebuffer has a stencil buffer.
 	
 	/// \brief Type of depth storage structure used.
@@ -227,6 +227,6 @@ private:
 
 	static Framebuffer * _backbuffer; ///< Dummy backbuffer framebuffer.
 	
-	friend class GLUtilities; ///< Utilities will need to access GPU handle.
+	friend class GPU; ///< Utilities will need to access GPU handle.
 	
 };

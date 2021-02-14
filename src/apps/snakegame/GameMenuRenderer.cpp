@@ -2,7 +2,7 @@
 #include "GameMenuRenderer.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "graphics/ScreenQuad.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 #include "graphics/Framebuffer.hpp"
 #include "Common.hpp"
 
@@ -36,8 +36,8 @@ void GameMenuRenderer::drawMenu(const GameMenu & menu, const glm::vec2 & finalRe
 
 	// Make sure we are rendering directly in the window.
 	Framebuffer::backbuffer()->bind();
-	GLUtilities::setViewport(0, 0, int(finalRes[0]), int(finalRes[1]));
-	GLUtilities::clearDepth(1.0f);
+	GPU::setViewport(0, 0, int(finalRes[0]), int(finalRes[1]));
+	GPU::clearDepth(1.0f);
 
 	// Background image.
 	if(menu.backgroundImage) {
@@ -45,8 +45,8 @@ void GameMenuRenderer::drawMenu(const GameMenu & menu, const glm::vec2 & finalRe
 		ScreenQuad::draw(menu.backgroundImage);
 	}
 
-	GLUtilities::setDepthState(true, TestFunction::LESS, true);
-	GLUtilities::setBlendState(true, BlendEquation::ADD, BlendFunction::SRC_ALPHA, BlendFunction::ONE_MINUS_SRC_ALPHA);
+	GPU::setDepthState(true, TestFunction::LESS, true);
+	GPU::setBlendState(true, BlendEquation::ADD, BlendFunction::SRC_ALPHA, BlendFunction::ONE_MINUS_SRC_ALPHA);
 
 	// Images.
 	_imageProgram->use();
@@ -56,8 +56,8 @@ void GameMenuRenderer::drawMenu(const GameMenu & menu, const glm::vec2 & finalRe
 		_imageProgram->uniform("scale", image.scale);
 
 		_imageProgram->uniform("depth", 0.95f);
-		GLUtilities::bindTexture(image.tid, 0);
-		GLUtilities::drawMesh(*_quad);
+		GPU::bindTexture(image.tid, 0);
+		GPU::drawMesh(*_quad);
 	}
 
 	// Buttons.
@@ -68,19 +68,19 @@ void GameMenuRenderer::drawMenu(const GameMenu & menu, const glm::vec2 & finalRe
 		// Draw the inside half-transparent region.
 		_buttonProgram->uniform("depth", 0.5f);
 		_buttonProgram->uniform("color", innerColors.at(button.state));
-		GLUtilities::drawMesh(*_buttonIn);
+		GPU::drawMesh(*_buttonIn);
 		// Draw the border of the button.
 		_buttonProgram->uniform("depth", 0.9f);
 		_buttonProgram->uniform("color", borderColors.at(button.state));
-		GLUtilities::drawMesh(*_button);
+		GPU::drawMesh(*_button);
 		// Draw the text image.
 		_imageProgram->use();
 		_imageProgram->uniform("position", button.pos);
 		const glm::vec2 newScale = button.scale * 0.7f * glm::vec2(1.0f, button.size[1] / button.size[0]);
 		_imageProgram->uniform("scale", newScale);
 		_imageProgram->uniform("depth", 0.2f);
-		GLUtilities::bindTexture(button.tid, 0);
-		GLUtilities::drawMesh(*_quad);
+		GPU::bindTexture(button.tid, 0);
+		GPU::drawMesh(*_quad);
 	}
 
 	// Toggles.
@@ -91,11 +91,11 @@ void GameMenuRenderer::drawMenu(const GameMenu & menu, const glm::vec2 & finalRe
 		_buttonProgram->uniform("depth", 0.9f);
 		// Outside border.
 		_buttonProgram->uniform("color", borderColors.at(MenuButton::State::OFF));
-		GLUtilities::drawMesh(*_toggle);
+		GPU::drawMesh(*_toggle);
 		// If checked, fill the box.
 		if(toggle.state == MenuButton::State::ON) {
 			_buttonProgram->uniform("color", innerColors.at(MenuButton::State::OFF));
-			GLUtilities::drawMesh(*_toggleIn);
+			GPU::drawMesh(*_toggleIn);
 		}
 		// Text display.
 		const glm::vec2 newScale = toggle.scale * 0.7f * glm::vec2(1.0f, toggle.size[1] / toggle.size[0]);
@@ -103,23 +103,23 @@ void GameMenuRenderer::drawMenu(const GameMenu & menu, const glm::vec2 & finalRe
 		_imageProgram->uniform("position", toggle.posImg);
 		_imageProgram->uniform("scale", newScale);
 		_imageProgram->uniform("depth", 0.2f);
-		GLUtilities::bindTexture(toggle.tid, 0);
-		GLUtilities::drawMesh(*_quad);
+		GPU::bindTexture(toggle.tid, 0);
+		GPU::drawMesh(*_quad);
 	}
-	GLUtilities::setDepthState(false);
+	GPU::setDepthState(false);
 
 	// Labels
 	_fontProgram->use();
 	for(const auto & label : menu.labels) {
-		GLUtilities::bindTexture(label.tid, 0);
+		GPU::bindTexture(label.tid, 0);
 		_fontProgram->uniform("ratio", aspectRatio);
 		_fontProgram->uniform("position", label.pos);
 		_fontProgram->uniform("color", labelsColor);
 		_fontProgram->uniform("edgeColor", labelsEdgeColor);
 		_fontProgram->uniform("edgeWidth", labelsEdgeWidth);
-		GLUtilities::drawMesh(label.mesh);
+		GPU::drawMesh(label.mesh);
 	}
-	GLUtilities::setBlendState(false);
+	GPU::setBlendState(false);
 	checkGLError();
 }
 

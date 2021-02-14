@@ -1,5 +1,5 @@
 #include "resources/ResourcesManager.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 #include "system/Window.hpp"
 #include "Common.hpp"
 #include <iostream>
@@ -93,12 +93,12 @@ int main(int argc, char ** argv) {
 	RenderingConfig config({ "ShaderValidator", "wxh", "100", "100"});
 	Window window("Validation", config, false, false, true);
 
-	// Query the renderer identifier, and the supported OpenGL version.
+	// Query the renderer identifier, and the supported GPU API version.
 	std::string vendor, renderer, version, shaderVersion;
-	GLUtilities::deviceInfos(vendor, renderer, version, shaderVersion);
-	Log::Info() << Log::OpenGL << "Vendor: " << vendor << "." << std::endl;
-	Log::Info() << Log::OpenGL << "Internal renderer: " << renderer << "." << std::endl;
-	Log::Info() << Log::OpenGL << "Versions: Driver: " << version << ", GLSL: " << shaderVersion << "." << std::endl;
+	GPU::deviceInfos(vendor, renderer, version, shaderVersion);
+	Log::Info() << Log::GPU << "Vendor: " << vendor << "." << std::endl;
+	Log::Info() << Log::GPU << "Internal renderer: " << renderer << "." << std::endl;
+	Log::Info() << Log::GPU << "Versions: Driver: " << version << ", GLSL: " << shaderVersion << "." << std::endl;
 
 	// We will need all glsl files for include support.
 	std::map<std::string, std::string> includeFiles;
@@ -119,7 +119,7 @@ int main(int argc, char ** argv) {
 		std::map<std::string, std::string> files;
 		Resources::manager().getFiles(type.second, files);
 		for (auto& file : files) {
-			GLUtilities::Bindings bindings;
+			GPU::Bindings bindings;
 			std::string compilationLog;
 			// Keep track of the include files used.
 			// File with ID 0 is the base file, already set its name.
@@ -128,7 +128,7 @@ int main(int argc, char ** argv) {
 			const std::string fullName = file.first + "." + type.second;
 			const std::string shader = Resources::manager().getStringWithIncludes(fullName, names);
 			// Compile the shader.
-			GLUtilities::loadShader(shader, type.first, bindings, compilationLog);
+			GPU::loadShader(shader, type.first, bindings, compilationLog);
 			// Replace the include names by the full paths.
 			for(size_t nid = 1; nid < names.size(); ++nid) {
 				auto& name = names[nid];

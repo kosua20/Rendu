@@ -1,7 +1,7 @@
 #include "EditorRenderer.hpp"
 #include "input/Input.hpp"
 #include "system/System.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 #include "graphics/ScreenQuad.hpp"
 #include "resources/Texture.hpp"
 #include "scene/Sky.hpp"
@@ -33,11 +33,11 @@ void EditorRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size
 	const glm::mat4 VP	   = proj * view;
 	
 	// Draw the scene.
-	GLUtilities::setDepthState(true, TestFunction::LESS, true);
-	GLUtilities::setCullState(false);
+	GPU::setDepthState(true, TestFunction::LESS, true);
+	GPU::setCullState(false);
 	framebuffer.bind(layer);
 	framebuffer.setViewport();
-	GLUtilities::clearColorAndDepth(glm::vec4(0.0f), 1.0f);
+	GPU::clearColorAndDepth(glm::vec4(0.0f), 1.0f);
 	
 	// Render all objects.
 	_objectProgram->use();
@@ -52,30 +52,30 @@ void EditorRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size
 		if(!object.textures().empty()){
 			tex = object.textures()[0];
 		}
-		GLUtilities::bindTexture(tex, 0);
-		GLUtilities::drawMesh(*object.mesh());
+		GPU::bindTexture(tex, 0);
+		GPU::drawMesh(*object.mesh());
 	}
 	
 	// Render all lights.
 	_lightsDebug.updateCameraInfos(view, proj);
-	GLUtilities::setPolygonState(PolygonMode::LINE);
+	GPU::setPolygonState(PolygonMode::LINE);
 	for(auto & light : _scene->lights) {
 		light->draw(_lightsDebug);
 	}
-	GLUtilities::setPolygonState(PolygonMode::FILL);
+	GPU::setPolygonState(PolygonMode::FILL);
 	
 	// Render the background.
 	renderBackground(view, proj, camera.position());
 	
-	GLUtilities::setDepthState(false);
-	GLUtilities::setCullState(true, Faces::BACK);
+	GPU::setDepthState(false);
+	GPU::setCullState(true, Faces::BACK);
 
 }
 
 void EditorRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 & proj, const glm::vec3 & pos){
 	// No need to write the skybox depth to the framebuffer.
 	// Accept a depth of 1.0 (far plane).
-	GLUtilities::setDepthState(true, TestFunction::LEQUAL, false);
+	GPU::setDepthState(true, TestFunction::LEQUAL, false);
 	const Object * background	= _scene->background.get();
 	const Scene::Background mode = _scene->backgroundMode;
 	
@@ -86,8 +86,8 @@ void EditorRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 & 
 		_skyboxProgram->use();
 		// Upload the MVP matrix.
 		_skyboxProgram->uniform("mvp", backgroundMVP);
-		GLUtilities::bindTextures(background->textures());
-		GLUtilities::drawMesh(*background->mesh());
+		GPU::bindTextures(background->textures());
+		GPU::drawMesh(*background->mesh());
 		
 	} else if(mode == Scene::Background::ATMOSPHERE) {
 		// Atmosphere screen quad.
@@ -100,20 +100,20 @@ void EditorRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 & 
 		_atmoProgram->uniform("clipToWorld", clipToWorldNoT);
 		_atmoProgram->uniform("viewPos", pos);
 		_atmoProgram->uniform("lightDirection", sunDir);
-		//GLUtilities::bindTextures(background->textures());
-		GLUtilities::drawMesh(*background->mesh());
+		//GPU::bindTextures(background->textures());
+		GPU::drawMesh(*background->mesh());
 		
 	} else {
 		// Background color or 2D image.
 		_bgProgram->use();
 		if(mode == Scene::Background::IMAGE) {
 			_bgProgram->uniform("useTexture", 1);
-			GLUtilities::bindTextures(background->textures());
+			GPU::bindTextures(background->textures());
 		} else {
 			_bgProgram->uniform("useTexture", 0);
 			_bgProgram->uniform("bgColor", _scene->backgroundColor);
 		}
-		GLUtilities::drawMesh(*background->mesh());
+		GPU::drawMesh(*background->mesh());
 	}
-	GLUtilities::setDepthState(true, TestFunction::LESS, true);
+	GPU::setDepthState(true, TestFunction::LESS, true);
 }

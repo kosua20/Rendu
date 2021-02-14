@@ -1,6 +1,6 @@
 #include "processing/FloodFiller.hpp"
 #include "graphics/ScreenQuad.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 
 FloodFiller::FloodFiller(unsigned int width, unsigned int height) {
 
@@ -21,9 +21,9 @@ void FloodFiller::process(const Texture * texture, Output mode) {
 
 	extractAndPropagate(texture);
 
-	GLUtilities::setDepthState(false);
-	GLUtilities::setBlendState(false);
-	GLUtilities::setCullState(true, Faces::BACK);
+	GPU::setDepthState(false);
+	GPU::setBlendState(false);
+	GPU::setCullState(true, Faces::BACK);
 
 	_final->bind();
 	_final->setViewport();
@@ -40,9 +40,9 @@ void FloodFiller::process(const Texture * texture, Output mode) {
 
 void FloodFiller::extractAndPropagate(const Texture * texture) {
 	// Render seed positions in a 2 channels framebuffer (each non-black pixel is a seed).
-	GLUtilities::setDepthState(false);
-	GLUtilities::setBlendState(false);
-	GLUtilities::setCullState(true, Faces::BACK);
+	GPU::setDepthState(false);
+	GPU::setBlendState(false);
+	GPU::setCullState(true, Faces::BACK);
 
 	_ping->bind();
 	_ping->setViewport();

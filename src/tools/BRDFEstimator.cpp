@@ -4,7 +4,7 @@
 #include "renderers/Probe.hpp"
 #include "graphics/Framebuffer.hpp"
 #include "graphics/ScreenQuad.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 #include "input/Input.hpp"
 #include "input/ControllableCamera.hpp"
 #include "system/System.hpp"
@@ -104,12 +104,12 @@ void computeCubemapConvolution(const Texture & cubemapInfos, int levelsCount, in
 
 			resultFramebuffer.bind(i);
 			// Clear texture slice.
-			GLUtilities::clearColorAndDepth({0.0f, 0.0f, 0.0f, 1.0f}, 1.0f);
-			GLUtilities::setViewport(0, 0, int(w), int(h));
+			GPU::clearColorAndDepth({0.0f, 0.0f, 0.0f, 1.0f}, 1.0f);
+			GPU::setViewport(0, 0, int(w), int(h));
 
-			GLUtilities::setDepthState(false);
-			GLUtilities::setBlendState(false);
-			GLUtilities::setCullState(false);
+			GPU::setDepthState(false);
+			GPU::setBlendState(false);
+			GPU::setCullState(false);
 
 			programCubemap->use();
 			// Pass roughness parameters.
@@ -117,21 +117,21 @@ void computeCubemapConvolution(const Texture & cubemapInfos, int levelsCount, in
 			programCubemap->uniform("mvp", Library::boxVPs[i]);
 			programCubemap->uniform("samplesCount", samplesCount);
 			// Attach source cubemap and compute.
-			GLUtilities::bindTexture(&cubemapInfos, 0);
-			GLUtilities::drawMesh(*mesh);
+			GPU::bindTexture(&cubemapInfos, 0);
+			GPU::drawMesh(*mesh);
 			// Force synchronization.
-			GLUtilities::sync();
+			GPU::sync();
 		}
 
 		// Now resultFramebuffer contain the texture data. But its lifetime is limited to this scope.
 		// Thus we perform a copy to our final texture.
 		cubeLevels.emplace_back("cube" + std::to_string(level));
 		Texture & levelInfos = cubeLevels.back();
-		GLUtilities::blit(*resultFramebuffer.texture(), levelInfos, Filter::NEAREST);
+		GPU::blit(*resultFramebuffer.texture(), levelInfos, Filter::NEAREST);
 		
 		Log::Info() << std::endl;
 	}
-	GLUtilities::setDepthState(true, TestFunction::LESS, true);
+	GPU::setDepthState(true, TestFunction::LESS, true);
 }
 
 /** Export the pre-convolved cubemap levels.
@@ -142,7 +142,7 @@ void computeCubemapConvolution(const Texture & cubemapInfos, int levelsCount, in
 void exportCubemapConvolution(std::vector<Texture> & cubeLevels, const std::string & outputPath) {
 	for(int level = 0; level < int(cubeLevels.size()); ++level) {
 		Texture & texture = cubeLevels[level];
-		GLUtilities::downloadTexture(texture);
+		GPU::downloadTexture(texture);
 
 		const std::string levelPath = outputPath + "_" + std::to_string(level);
 		for(int i = 0; i < 6; ++i) {
@@ -166,14 +166,14 @@ void computeAndExportLookupTable(const int outputSide, const std::string & outpu
 	const auto bakingFramebuffer = std::make_shared<Framebuffer>(outputSide, outputSide, desc, false, "LUT");
 	const auto brdfProgram		 = Resources::manager().getProgram2D("brdf_sampler");
 	bakingFramebuffer->bind();
-	GLUtilities::setViewport(0, 0, outputSide, outputSide);
-	GLUtilities::clearColor(glm::vec4(0.0f));
-	GLUtilities::setDepthState(false);
-	GLUtilities::setBlendState(false);
-	GLUtilities::setCullState(false);
+	GPU::setViewport(0, 0, outputSide, outputSide);
+	GPU::clearColor(glm::vec4(0.0f));
+	GPU::setDepthState(false);
+	GPU::setBlendState(false);
+	GPU::setCullState(false);
 	brdfProgram->use();
 	ScreenQuad::draw();
-	GLUtilities::saveFramebuffer(*bakingFramebuffer, outputPath, true);
+	GPU::saveFramebuffer(*bakingFramebuffer, outputPath, true);
 }
 
 /**
@@ -348,13 +348,13 @@ int main(int argc, char ** argv) {
 		const glm::mat4 mvp		   = camera.projection() * camera.view();
 
 
-		GLUtilities::setDepthState(true, TestFunction::LESS, true);
-		GLUtilities::setBlendState(false);
-		GLUtilities::setCullState(false);
+		GPU::setDepthState(true, TestFunction::LESS, true);
+		GPU::setBlendState(false);
+		GPU::setCullState(false);
 
 		Framebuffer::backbuffer()->bind();
-		GLUtilities::setViewport(0, 0, screenSize[0], screenSize[1]);
-		GLUtilities::clearColorAndDepth({0.5f, 0.5f, 0.5f, 1.0f}, 1.0f);
+		GPU::setViewport(0, 0, screenSize[0], screenSize[1]);
+		GPU::clearColorAndDepth({0.5f, 0.5f, 0.5f, 1.0f}, 1.0f);
 
 		// Render main cubemap.
 		if(cubemapInfos.gpu) {
@@ -365,23 +365,23 @@ int main(int argc, char ** argv) {
 			}
 
 			programToUse->use();
-			GLUtilities::bindTexture(texToUse, 0);
+			GPU::bindTexture(texToUse, 0);
 			if(mode == SH_COEFFS){
-				GLUtilities::bindBuffer(sCoeffs, 0);
+				GPU::bindBuffer(sCoeffs, 0);
 			}
 			programToUse->uniform("mvp", mvp);
-			GLUtilities::drawMesh(*mesh);
+			GPU::drawMesh(*mesh);
 		}
 
 		// Render reference cubemap in the bottom right corner.
-		GLUtilities::clearDepth(1.0f);
+		GPU::clearDepth(1.0f);
 		const float gizmoScale	   = 0.2f;
 		const glm::ivec2 gizmoSize = glm::ivec2(gizmoScale * glm::vec2(screenSize));
-		GLUtilities::setViewport(0, 0, gizmoSize[0], gizmoSize[1]);
+		GPU::setViewport(0, 0, gizmoSize[0], gizmoSize[1]);
 		program->use();
-		GLUtilities::bindTexture(cubemapInfosDefault, 0);
+		GPU::bindTexture(cubemapInfosDefault, 0);
 		program->uniform("mvp", mvp);
-		GLUtilities::drawMesh(*mesh);
+		GPU::drawMesh(*mesh);
 		
 	}
 

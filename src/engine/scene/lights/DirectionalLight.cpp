@@ -1,5 +1,5 @@
 #include "scene/lights/DirectionalLight.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 
 DirectionalLight::DirectionalLight(const glm::vec3 & worldDirection, const glm::vec3 & color) :
 	Light(color),

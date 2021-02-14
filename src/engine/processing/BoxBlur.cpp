@@ -1,5 +1,5 @@
 #include "processing/BoxBlur.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 #include "graphics/ScreenQuad.hpp"
 #include "resources/Library.hpp"
 #include "resources/ResourcesManager.hpp"
@@ -18,9 +18,9 @@ BoxBlur::BoxBlur(bool approximate, const std::string & name) : _name(name) {
 // Draw function
 void BoxBlur::process(const Texture * texture, Framebuffer & framebuffer) {
 
-	GLUtilities::setDepthState(false);
-	GLUtilities::setBlendState(false);
-	GLUtilities::setCullState(true, Faces::BACK);
+	GPU::setDepthState(false);
+	GPU::setBlendState(false);
+	GPU::setCullState(true, Faces::BACK);
 	
 	// Detect changes of descriptor.
 	if(!_intermediate || _intermediate->descriptor() != framebuffer.descriptor()){
@@ -37,7 +37,7 @@ void BoxBlur::process(const Texture * texture, Framebuffer & framebuffer) {
 		_blur2D->use();
 		_intermediate->bind();
 		ScreenQuad::draw(texture);
-		GLUtilities::blit(*_intermediate, framebuffer, Filter::NEAREST);
+		GPU::blit(*_intermediate, framebuffer, Filter::NEAREST);
 
 	} else if(tgtShape == TextureShape::Array2D){
 		_blurArray->use();
@@ -45,7 +45,7 @@ void BoxBlur::process(const Texture * texture, Framebuffer & framebuffer) {
 			_intermediate->bind();
 			_blurArray->uniform("layer", int(lid));
 			ScreenQuad::draw(texture);
-			GLUtilities::blit(*_intermediate, framebuffer, 0, lid, Filter::NEAREST);
+			GPU::blit(*_intermediate, framebuffer, 0, lid, Filter::NEAREST);
 		}
 	} else if(tgtShape == TextureShape::Cube){
 		_blurCube->use();
@@ -56,7 +56,7 @@ void BoxBlur::process(const Texture * texture, Framebuffer & framebuffer) {
 			_blurCube->uniform("right", Library::boxRights[fid]);
 			_blurCube->uniform("center", Library::boxCenters[fid]);
 			ScreenQuad::draw(texture);
-			GLUtilities::blit(*_intermediate, framebuffer, 0, fid, Filter::NEAREST);
+			GPU::blit(*_intermediate, framebuffer, 0, fid, Filter::NEAREST);
 		}
 	} else if(tgtShape == TextureShape::ArrayCube){
 		_blurCubeArray->use();
@@ -69,7 +69,7 @@ void BoxBlur::process(const Texture * texture, Framebuffer & framebuffer) {
 			_blurCubeArray->uniform("right", Library::boxRights[fid]);
 			_blurCubeArray->uniform("center", Library::boxCenters[fid]);
 			ScreenQuad::draw(texture);
-			GLUtilities::blit(*_intermediate, framebuffer, 0, lid, Filter::NEAREST);
+			GPU::blit(*_intermediate, framebuffer, 0, lid, Filter::NEAREST);
 		}
 	} else {
 		Log::Error() << "Unsupported shape." << std::endl;

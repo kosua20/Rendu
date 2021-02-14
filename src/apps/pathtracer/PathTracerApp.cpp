@@ -1,7 +1,7 @@
 #include "PathTracerApp.hpp"
 #include "input/Input.hpp"
 #include "system/System.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 #include "graphics/ScreenQuad.hpp"
 #include "resources/Texture.hpp"
 
@@ -19,7 +19,7 @@ PathTracerApp::PathTracerApp(RenderingConfig & config, const std::shared_ptr<Sce
 	_renderTex.depth  = 1;
 	_renderTex.width  = int(renderRes[0]);
 	_renderTex.height = int(renderRes[1]);
-	GLUtilities::setupTexture(_renderTex, {Layout::SRGB8, Filter::LINEAR, Wrap::CLAMP});
+	GPU::setupTexture(_renderTex, {Layout::SRGB8, Filter::LINEAR, Wrap::CLAMP});
 	checkGLError();
 	
 	_scene = scene;
@@ -45,7 +45,7 @@ void PathTracerApp::draw() {
 
 	// If no scene, just clear.
 	if(!_scene) {
-		GLUtilities::clearColorAndDepth({0.2f, 0.2f, 0.2f, 1.0f}, 1.0f);
+		GPU::clearColorAndDepth({0.2f, 0.2f, 0.2f, 1.0f}, 1.0f);
 		return;
 	}
 	
@@ -63,11 +63,11 @@ void PathTracerApp::draw() {
 	
 	// Directly render the result texture without drawing the scene.
 	if(_showRender) {
-		GLUtilities::setBlendState(false);
-		GLUtilities::setDepthState(false);
-		GLUtilities::setCullState(true, Faces::BACK);
+		GPU::setBlendState(false);
+		GPU::setDepthState(false);
+		GPU::setCullState(true, Faces::BACK);
 		Framebuffer::backbuffer()->bind();
-		GLUtilities::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
+		GPU::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 		_passthrough->use();
 		_passthrough->uniform("flip", 1);
 		ScreenQuad::draw(_renderTex);
@@ -77,11 +77,11 @@ void PathTracerApp::draw() {
 	// Draw the real time visualization.
 	_bvhRenderer->draw(_userCamera, *_sceneFramebuffer);
 	// We now render a full screen quad in the default framebuffer.
-	GLUtilities::setBlendState(false);
-	GLUtilities::setDepthState(false);
-	GLUtilities::setCullState(true, Faces::BACK);
+	GPU::setBlendState(false);
+	GPU::setDepthState(false);
+	GPU::setCullState(true, Faces::BACK);
 	Framebuffer::backbuffer()->bind();
-	GLUtilities::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
+	GPU::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 	_passthrough->use();
 	_passthrough->uniform("flip", 0);
 	ScreenQuad::draw(_sceneFramebuffer->texture());

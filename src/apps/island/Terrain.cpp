@@ -1,6 +1,6 @@
 #include "Terrain.hpp"
 #include "resources/ResourcesManager.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 #include "graphics/ScreenQuad.hpp"
 
 Terrain::Cell::Cell(uint l, uint x, uint z) : mesh("Cell (" + std::to_string(l) + "," + std::to_string(x) + "," + std::to_string(z) + ")"), level(l) {
@@ -415,15 +415,15 @@ void Terrain::generateShadowMap(const glm::vec3 & lightDir){
 
 	_shadowBuffer->bind();
 	_shadowBuffer->setViewport();
-	GLUtilities::setDepthState(false);
-	GLUtilities::setBlendState(false);
-	GLUtilities::setCullState(true, Faces::BACK);
+	GPU::setDepthState(false);
+	GPU::setBlendState(false);
+	GPU::setCullState(true, Faces::BACK);
 	prog->use();
 	prog->uniform("stepCount", stepCount);
 	prog->uniform("lDir", lDir);
 	prog->uniform("texelSize", texelSize);
 
-	GLUtilities::bindTexture(map, 0);
+	GPU::bindTexture(map, 0);
 	ScreenQuad::draw();
 
 	// Post process shadow map.

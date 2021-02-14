@@ -10,7 +10,7 @@ struct GLFWwindow;
 class Window {
 public:
 	
-	/** Create a new window backed by an OpenGL context.
+	/** Create a new window backed by a GPU context.
 	 \param name the name of the window
 	 \param config the configuration to use (additional info will be added to it)
 	 \param convertToSRGB should writes to the backbuffer be considered linear

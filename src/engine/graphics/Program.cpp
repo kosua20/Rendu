@@ -1,5 +1,5 @@
 #include "graphics/Program.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 #include "resources/ResourcesManager.hpp"
 
 
@@ -12,11 +12,11 @@ Program::Program(const std::string & name, const std::string & vertexContent, co
 }
 
 void Program::reload(const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, const std::string & tessControlContent, const std::string & tessEvalContent) {
-	GLUtilities::Bindings bindings;
+	GPU::Bindings bindings;
 
 	const std::string debugName = _name;
 
-	_id = GLUtilities::createProgram(vertexContent, fragmentContent, geometryContent, tessControlContent, tessEvalContent, bindings, debugName);
+	_id = GPU::createProgram(vertexContent, fragmentContent, geometryContent, tessControlContent, tessEvalContent, bindings, debugName);
 	_uniforms.clear();
 	_uniformInfos.clear();
 
@@ -50,7 +50,7 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 		{ GL_FLOAT_MAT4, Uniform::Type::MAT4 }
 	};
 
-	GLUtilities::bindProgram(*this);
+	GPU::bindProgram(*this);
 
 	for(GLuint i = 0; i < GLuint(count); ++i) {
 		// Get infos (name, name length, type,...) of each uniform.
@@ -102,16 +102,16 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 	// Register texture slots.
 	for(auto & binding : bindings) {
 		const std::string & name = binding.first;
-		const GLUtilities::BindingType type = binding.second.type;
+		const GPU::BindingType type = binding.second.type;
 		const int slot = binding.second.location;
 
 		if(_uniforms.count(name) == 0){
 			Log::Warning() << "Binding with name \"" << name << "\" was not registered." << std::endl;
 			continue;
 		}
-		if(type == GLUtilities::BindingType::TEXTURE) {
+		if(type == GPU::BindingType::TEXTURE) {
 			glUniform1i(_uniforms.at(name), slot);
-		} else if(type == GLUtilities::BindingType::UNIFORM_BUFFER) {
+		} else if(type == GPU::BindingType::UNIFORM_BUFFER) {
 			glUniformBlockBinding(_id, _uniforms.at(name), GLuint(slot));
 		}
 		checkGLErrorInfos("Unused binding \"" + name + "\" in program " + debugName + ".");
@@ -125,29 +125,29 @@ void Program::validate() const {
 	glValidateProgram(_id);
 	int status = -2;
 	glGetProgramiv(_id, GL_VALIDATE_STATUS, &status);
-	Log::Error() << Log::OpenGL << "Program : " << _name << " is " << (status == GL_TRUE ? "" : "not ") << "validated." << std::endl;
+	Log::Error() << Log::GPU << "Program : " << _name << " is " << (status == GL_TRUE ? "" : "not ") << "validated." << std::endl;
 	int infoLogLength = 0;
 	glGetProgramiv(_id, GL_INFO_LOG_LENGTH, &infoLogLength);
 	if(infoLogLength <= 0) {
-		Log::Error() << Log::OpenGL << "No log for validation." << std::endl;
+		Log::Error() << Log::GPU << "No log for validation." << std::endl;
 		return;
 	}
 	std::vector<char> infoLog(infoLogLength);
 	glGetProgramInfoLog(_id, infoLogLength, nullptr, &infoLog[0]);
-	Log::Error() << Log::OpenGL << "Log for validation: " << &infoLog[0] << std::endl;
+	Log::Error() << Log::GPU << "Log for validation: " << &infoLog[0] << std::endl;
 }
 
 void Program::saveBinary(const std::string & outputPath) const {
 	int count = 0;
 	glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &count);
 	if(count <= 0) {
-		Log::Error() << Log::OpenGL << "GL driver does not support program binary export." << std::endl;
+		Log::Error() << Log::GPU << "GL driver does not support program binary export." << std::endl;
 		return;
 	}
 	int length = 0;
 	glGetProgramiv(_id, GL_PROGRAM_BINARY_LENGTH, &length);
 	if(length <= 0) {
-		Log::Error() << Log::OpenGL << "No binary for program " << _name << "." << std::endl;
+		Log::Error() << Log::GPU << "No binary for program " << _name << "." << std::endl;
 		return;
 	}
 	GLenum format;
@@ -158,7 +158,7 @@ void Program::saveBinary(const std::string & outputPath) const {
 }
 
 void Program::use() const {
-	GLUtilities::bindProgram(*this);
+	GPU::bindProgram(*this);
 }
 
 void Program::clean() const {
@@ -347,6 +347,6 @@ void Program::getUniform(const std::string & name, glm::mat4 & t) const {
 void Program::updateUniformMetric() const {
 #define UDPATE_METRICS
 #ifdef UDPATE_METRICS
-	GLUtilities::_metrics.uniforms += 1;
+	GPU::_metrics.uniforms += 1;
 #endif
 }

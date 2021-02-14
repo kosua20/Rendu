@@ -1,6 +1,6 @@
 #include "processing/LaplacianIntegrator.hpp"
 #include "graphics/ScreenQuad.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 
 LaplacianIntegrator::LaplacianIntegrator(unsigned int width, unsigned int height, unsigned int downscaling) :
 	_pyramid(width / downscaling, height / downscaling, 1),
@@ -26,13 +26,13 @@ LaplacianIntegrator::LaplacianIntegrator(unsigned int width, unsigned int height
 void LaplacianIntegrator::process(const Texture * texture) {
 
 	// First, compute the laplacian of each color channel (adding a 1px zero margin).
-	GLUtilities::setDepthState(false);
-	GLUtilities::setBlendState(false);
-	GLUtilities::setCullState(true, Faces::BACK);
+	GPU::setDepthState(false);
+	GPU::setBlendState(false);
+	GPU::setCullState(true, Faces::BACK);
 
 	_preproc->bind();
 	_preproc->setViewport();
-	GLUtilities::clearColor(glm::vec4(0.0f));
+	GPU::clearColor(glm::vec4(0.0f));
 	_prepare->use();
 	_prepare->uniform("scale", _scale);
 	ScreenQuad::draw(texture);
@@ -41,9 +41,9 @@ void LaplacianIntegrator::process(const Texture * texture) {
 	_pyramid.process(_preproc->texture());
 
 	// Upscale to the final resolution.
-	GLUtilities::setDepthState(false);
-	GLUtilities::setBlendState(false);
-	GLUtilities::setCullState(true, Faces::BACK);
+	GPU::setDepthState(false);
+	GPU::setBlendState(false);
+	GPU::setCullState(true, Faces::BACK);
 	
 	_compo->bind();
 	_compo->setViewport();

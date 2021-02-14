@@ -1,5 +1,5 @@
 #include "scene/lights/SpotLight.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 
 SpotLight::SpotLight(const glm::vec3 & worldPosition, const glm::vec3 & worldDirection, const glm::vec3 & color, float innerAngle, float outerAngle, float radius) :
 	Light(color),

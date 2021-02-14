@@ -19,7 +19,7 @@ class Log {
 public:
 	/// \brief Domain prefix that will be appended before a line.
 	enum Domain {
-		OpenGL = 0,
+		GPU = 0,
 		Resources,
 		Input,
 		Utilities,
@@ -41,7 +41,7 @@ private:
 	 */
 	void set(Level l);
 
-	const std::vector<std::string> _domainStrings = {"OpenGL", "Resources", "Input", "Utilities", "Config"}; ///< Domain prefix strings.
+	const std::vector<std::string> _domainStrings = {"GPU", "Resources", "Input", "Utilities", "Config"}; ///< Domain prefix strings.
 
 	const std::vector<std::string> _levelStrings = {"", "(!) ", "(X) ", ""}; ///< Levels prefix strings.
 

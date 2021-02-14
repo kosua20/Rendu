@@ -1,5 +1,5 @@
 #include "DebugViewer.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 #include "graphics/Framebuffer.hpp"
 #include "resources/Texture.hpp"
 #include "resources/Mesh.hpp"
@@ -153,7 +153,7 @@ void DebugViewer::trackState(const std::string & name){
 	// Only update the state if it's currently displayed on screen,
 	// or if it's the very first time it's queried.
 	if(_states[name].visible || !_states[name].populated){
-		GLUtilities::getState(_states[name].state);
+		GPU::getState(_states[name].state);
 		_states[name].populated = true;
 	}
 }
@@ -272,7 +272,7 @@ void DebugViewer::interface() {
 }
 
 void DebugViewer::displayMetrics(){
-	const GLUtilities::Metrics & metrics = GLUtilities::getMetrics();
+	const GPU::Metrics & metrics = GPU::getMetrics();
 	if(ImGui::Begin("Metrics##DEBUGVIEWER")){
 		ImGui::Text("State changes: %lu", metrics.stateChanges);
 		ImGui::Text("Clear & blits: %lu", metrics.clearAndBlits);
@@ -509,7 +509,7 @@ void DebugViewer::updateDisplay(const TextureInfos & tex) {
 	_texDisplay->uniform("gamma", tex.gamma);
 	_texDisplay->uniform("shape", int(tex.tex->shape));
 
-	GLUtilities::bindTexture(tex.tex, slots.at(tex.tex->shape));
+	GPU::bindTexture(tex.tex, slots.at(tex.tex->shape));
 	ScreenQuad::draw();
 }
 

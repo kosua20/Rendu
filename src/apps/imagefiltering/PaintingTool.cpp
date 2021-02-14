@@ -2,7 +2,7 @@
 
 #include "input/Input.hpp"
 #include "system/System.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 
 PaintingTool::PaintingTool(unsigned int width, unsigned int height) {
 
@@ -54,9 +54,9 @@ PaintingTool::PaintingTool(unsigned int width, unsigned int height) {
 
 void PaintingTool::draw() {
 
-	GLUtilities::setDepthState(false);
-	GLUtilities::setBlendState(false);
-	GLUtilities::setCullState(true, Faces::BACK);
+	GPU::setDepthState(false);
+	GPU::setBlendState(false);
+	GPU::setCullState(true, Faces::BACK);
 	
 	_canvas->bind();
 	_canvas->setViewport();
@@ -64,7 +64,7 @@ void PaintingTool::draw() {
 	// Clear if needed.
 	if(_shoudClear) {
 		_shoudClear = false;
-		GLUtilities::clearColor(glm::vec4(_bgColor, 1.0f));
+		GPU::clearColor(glm::vec4(_bgColor, 1.0f));
 	}
 
 	// Draw brush if needed.
@@ -79,11 +79,11 @@ void PaintingTool::draw() {
 		_brushShader->uniform("radius", radii);
 		_brushShader->uniform("outline", 0);
 		_brushShader->uniform("color", color);
-		GLUtilities::drawMesh(_brushes[int(_shape)]);
+		GPU::drawMesh(_brushes[int(_shape)]);
 	}
 
 	// Copy the canvas to the visualisation framebuffer.
-	GLUtilities::blit(*_canvas, *_visu, Filter::NEAREST);
+	GPU::blit(*_canvas, *_visu, Filter::NEAREST);
 
 	// Draw the brush outline.
 	_visu->bind();
@@ -98,7 +98,7 @@ void PaintingTool::draw() {
 	_brushShader->uniform("outline", 1);
 	_brushShader->uniform("radiusPx", radiusF);
 	_brushShader->uniform("color", white);
-	GLUtilities::drawMesh(_brushes[int(_shape)]);
+	GPU::drawMesh(_brushes[int(_shape)]);
 }
 
 void PaintingTool::update() {
@@ -160,16 +160,16 @@ void PaintingTool::resize(unsigned int width, unsigned int height) const {
 	_canvas->bind(Framebuffer::Mode::READ);
 	tempCanvas.bind(Framebuffer::Mode::WRITE);
 
-	GLUtilities::blit(*_canvas, tempCanvas, Filter::NEAREST);
+	GPU::blit(*_canvas, tempCanvas, Filter::NEAREST);
 
 	// We can then resize the canvas.
 	_canvas->resize(width, height);
 	// Clean up the canvas.
 	_canvas->bind();
-	GLUtilities::clearColor(glm::vec4(_bgColor, 1.0f));
+	GPU::clearColor(glm::vec4(_bgColor, 1.0f));
 	
 	// Copy back the drawing.
-	GLUtilities::blit(tempCanvas, *_canvas, Filter::NEAREST);
+	GPU::blit(tempCanvas, *_canvas, Filter::NEAREST);
 	
 	// The content of the visualisation buffer will be cleaned at the next frame canvas copy.
 	_visu->resize(width, height);

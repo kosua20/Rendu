@@ -2,7 +2,7 @@
 #include "scene/lights/Light.hpp"
 #include "scene/Sky.hpp"
 #include "system/System.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 #include "graphics/ScreenQuad.hpp"
 
 ForwardRenderer::ForwardRenderer(const glm::vec2 & resolution, ShadowMode mode, bool ssao, const std::string & name) :
@@ -48,15 +48,15 @@ void ForwardRenderer::setScene(const std::shared_ptr<Scene> & scene) {
 
 void ForwardRenderer::renderDepth(const Culler::List & visibles, const glm::mat4 & view, const glm::mat4 & proj){
 
-	GLUtilities::setDepthState(true, TestFunction::LESS, true);
-	GLUtilities::setCullState(true, Faces::BACK);
-	GLUtilities::setBlendState(false);
+	GPU::setDepthState(true, TestFunction::LESS, true);
+	GPU::setCullState(true, Faces::BACK);
+	GPU::setBlendState(false);
 
 	_sceneFramebuffer->bind();
 	_sceneFramebuffer->setViewport();
 	// We use the depth prepass to store packed normals in the color target.
 	// We initialize using null normal.
-	GLUtilities::clearColorAndDepth({0.5f,0.5f,0.5f,1.0f}, 1.0f);
+	GPU::clearColorAndDepth({0.5f,0.5f,0.5f,1.0f}, 1.0f);
 
 	_depthPrepass->use();
 	for(const long & objectId : visibles) {
@@ -86,19 +86,19 @@ void ForwardRenderer::renderDepth(const Culler::List & visibles, const glm::mat4
 		_depthPrepass->uniform("hasUV", object.useTexCoords());
 		
 		if(object.masked()) {
-			GLUtilities::bindTexture(object.textures()[0], 0);
+			GPU::bindTexture(object.textures()[0], 0);
 		}
 		// Backface culling state.
-		GLUtilities::setCullState(!object.twoSided(), Faces::BACK);
-		GLUtilities::drawMesh(*object.mesh());
+		GPU::setCullState(!object.twoSided(), Faces::BACK);
+		GPU::drawMesh(*object.mesh());
 	}
 }
 
 void ForwardRenderer::renderOpaque(const Culler::List & visibles, const glm::mat4 & view, const glm::mat4 & proj){
 
-	GLUtilities::setDepthState(true, TestFunction::LEQUAL, true);
-	GLUtilities::setCullState(true, Faces::BACK);
-	GLUtilities::setBlendState(false);
+	GPU::setDepthState(true, TestFunction::LEQUAL, true);
+	GPU::setCullState(true, Faces::BACK);
+	GPU::setBlendState(false);
 
 	const auto & shadowMaps = _lightsGPU->shadowMaps();
 
@@ -125,12 +125,12 @@ void ForwardRenderer::renderOpaque(const Culler::List & visibles, const glm::mat
 			_emissiveProgram->uniform("mvp", MVP);
 			_emissiveProgram->uniform("hasUV", object.useTexCoords());
 			if(object.twoSided()) {
-				GLUtilities::setCullState(false);
+				GPU::setCullState(false);
 			}
 			// Bind the textures.
-			GLUtilities::bindTextures(object.textures());
-			GLUtilities::drawMesh(*object.mesh());
-			GLUtilities::setCullState(true, Faces::BACK);
+			GPU::bindTextures(object.textures());
+			GPU::drawMesh(*object.mesh());
+			GPU::setCullState(true, Faces::BACK);
 			continue;
 		}
 
@@ -159,23 +159,23 @@ void ForwardRenderer::renderOpaque(const Culler::List & visibles, const glm::mat
 		currentProgram->uniform("normalMatrix", normalMatrix);
 
 		// Backface culling state.
-		GLUtilities::setCullState(!object.twoSided(), Faces::BACK);
+		GPU::setCullState(!object.twoSided(), Faces::BACK);
 		// Bind the lights.
-		GLUtilities::bindBuffer(_lightsGPU->data(), 0);
-		GLUtilities::bindBuffer(*_scene->environment.shCoeffs(), 1);
+		GPU::bindBuffer(_lightsGPU->data(), 0);
+		GPU::bindBuffer(*_scene->environment.shCoeffs(), 1);
 		// Bind the textures.
-		GLUtilities::bindTextures(object.textures());
-		GLUtilities::bindTexture(_textureBrdf, 4);
-		GLUtilities::bindTexture(_scene->environment.map(), 5);
+		GPU::bindTextures(object.textures());
+		GPU::bindTexture(_textureBrdf, 4);
+		GPU::bindTexture(_scene->environment.map(), 5);
 		// Bind available shadow maps.
 		if(shadowMaps[0]){
-			GLUtilities::bindTexture(shadowMaps[0], 6);
+			GPU::bindTexture(shadowMaps[0], 6);
 		}
 		if(shadowMaps[1]){
-			GLUtilities::bindTexture(shadowMaps[1], 7);
+			GPU::bindTexture(shadowMaps[1], 7);
 		}
-		GLUtilities::bindTexture(_ssaoPass->texture(), 8);
-		GLUtilities::drawMesh(*object.mesh());
+		GPU::bindTexture(_ssaoPass->texture(), 8);
+		GPU::drawMesh(*object.mesh());
 	}
 
 }
@@ -184,9 +184,9 @@ void ForwardRenderer::renderTransparent(const Culler::List & visibles, const glm
 
 	const auto & shadowMaps = _lightsGPU->shadowMaps();
 
-	GLUtilities::setBlendState(true, BlendEquation::ADD, BlendFunction::ONE, BlendFunction::ONE_MINUS_SRC_ALPHA);
-	GLUtilities::setDepthState(true, TestFunction::LEQUAL, true);
-	GLUtilities::setCullState(true, Faces::BACK);
+	GPU::setBlendState(true, BlendEquation::ADD, BlendFunction::ONE, BlendFunction::ONE_MINUS_SRC_ALPHA);
+	GPU::setDepthState(true, TestFunction::LEQUAL, true);
+	GPU::setCullState(true, Faces::BACK);
 
 	_transparentProgram->use();
 	for(const long & objectId : visibles) {
@@ -213,38 +213,38 @@ void ForwardRenderer::renderTransparent(const Culler::List & visibles, const glm
 		_transparentProgram->uniform("normalMatrix", normalMatrix);
 
 		// Bind the lights.
-		GLUtilities::bindBuffer(_lightsGPU->data(), 0);
-		GLUtilities::bindBuffer(*_scene->environment.shCoeffs(), 1);
+		GPU::bindBuffer(_lightsGPU->data(), 0);
+		GPU::bindBuffer(*_scene->environment.shCoeffs(), 1);
 		// Bind the textures.
-		GLUtilities::bindTextures(object.textures());
-		GLUtilities::bindTexture(_textureBrdf, 4);
-		GLUtilities::bindTexture(_scene->environment.map(), 5);
+		GPU::bindTextures(object.textures());
+		GPU::bindTexture(_textureBrdf, 4);
+		GPU::bindTexture(_scene->environment.map(), 5);
 		// Bind available shadow maps.
 		if(shadowMaps[0]){
-			GLUtilities::bindTexture(shadowMaps[0], 6);
+			GPU::bindTexture(shadowMaps[0], 6);
 		}
 		if(shadowMaps[1]){
-			GLUtilities::bindTexture(shadowMaps[1], 7);
+			GPU::bindTexture(shadowMaps[1], 7);
 		}
 		// No SSAO as the objects are not rendered in it.
 
 		// To approximately handle two sided objects properly, draw the back faces first, then the front faces.
 		// This won't solve all issues in case of concavities.
 		if(object.twoSided()) {
-			GLUtilities::setCullState(true, Faces::FRONT);
-			GLUtilities::drawMesh(*object.mesh());
-			GLUtilities::setCullState(true, Faces::BACK);
+			GPU::setCullState(true, Faces::FRONT);
+			GPU::drawMesh(*object.mesh());
+			GPU::setCullState(true, Faces::BACK);
 		}
-		GLUtilities::drawMesh(*object.mesh());
+		GPU::drawMesh(*object.mesh());
 	}
 }
 
 void ForwardRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 & proj, const glm::vec3 & pos) {
 	// No need to write the skybox depth to the framebuffer.
 	// Accept a depth of 1.0 (far plane).
-	GLUtilities::setDepthState(true, TestFunction::LEQUAL, false);
-	GLUtilities::setBlendState(false);
-	GLUtilities::setCullState(true, Faces::BACK);
+	GPU::setDepthState(true, TestFunction::LEQUAL, false);
+	GPU::setBlendState(false);
+	GPU::setCullState(true, Faces::BACK);
 	const Object * background	 = _scene->background.get();
 	const Scene::Background mode = _scene->backgroundMode;
 
@@ -255,8 +255,8 @@ void ForwardRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 &
 		_skyboxProgram->use();
 		// Upload the MVP matrix.
 		_skyboxProgram->uniform("mvp", backgroundMVP);
-		GLUtilities::bindTextures(background->textures());
-		GLUtilities::drawMesh(*background->mesh());
+		GPU::bindTextures(background->textures());
+		GPU::drawMesh(*background->mesh());
 
 	} else if(mode == Scene::Background::ATMOSPHERE) {
 		// Atmosphere screen quad.
@@ -269,20 +269,20 @@ void ForwardRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 &
 		_atmoProgram->uniform("clipToWorld", clipToWorldNoT);
 		_atmoProgram->uniform("viewPos", pos);
 		_atmoProgram->uniform("lightDirection", sunDir);
-		GLUtilities::bindTextures(background->textures());
-		GLUtilities::drawMesh(*background->mesh());
+		GPU::bindTextures(background->textures());
+		GPU::drawMesh(*background->mesh());
 
 	} else {
 		// Background color or 2D image.
 		_bgProgram->use();
 		if(mode == Scene::Background::IMAGE) {
 			_bgProgram->uniform("useTexture", 1);
-			GLUtilities::bindTextures(background->textures());
+			GPU::bindTextures(background->textures());
 		} else {
 			_bgProgram->uniform("useTexture", 0);
 			_bgProgram->uniform("bgColor", _scene->backgroundColor);
 		}
-		GLUtilities::drawMesh(*background->mesh());
+		GPU::drawMesh(*background->mesh());
 	}
 
 }
@@ -347,7 +347,7 @@ void ForwardRenderer::draw(const Camera & camera, Framebuffer & framebuffer, siz
 	renderTransparent(visibles, view, proj);
 
 	// Final composite pass
-	GLUtilities::blit(*_sceneFramebuffer, framebuffer, 0, layer, Filter::LINEAR);
+	GPU::blit(*_sceneFramebuffer, framebuffer, 0, layer, Filter::LINEAR);
 }
 
 void ForwardRenderer::resize(unsigned int width, unsigned int height) {

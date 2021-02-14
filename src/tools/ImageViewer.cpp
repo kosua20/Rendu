@@ -2,7 +2,7 @@
 #include "system/System.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "graphics/ScreenQuad.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 #include "resources/Image.hpp"
 #include "graphics/Framebuffer.hpp"
 #include "system/Config.hpp"
@@ -78,8 +78,8 @@ int main(int argc, char ** argv) {
 		// Render the background.
 		Framebuffer::backbuffer()->bind();
 		const glm::ivec2 screenSize = Input::manager().size();
-		GLUtilities::setViewport(0, 0, screenSize[0], screenSize[1]);
-		GLUtilities::clearColorAndDepth(glm::vec4(bgColor, 1.0f), 1.0f);
+		GPU::setViewport(0, 0, screenSize[0], screenSize[1]);
+		GPU::clearColorAndDepth(glm::vec4(bgColor, 1.0f), 1.0f);
 
 		// Render the image if non empty.
 		bool hasImage			= imageInfos.width > 0 && imageInfos.height > 0;
@@ -94,9 +94,9 @@ int main(int argc, char ** argv) {
 			float imageRatio  = imageSize[1 - widthIndex] / imageSize[widthIndex];
 			float widthRatio  = float(screenSize[0]) / imageSize[0] * imageSize[widthIndex] / imageSize[0];
 
-			GLUtilities::setBlendState(true, BlendEquation::ADD, BlendFunction::SRC_ALPHA, BlendFunction::ONE_MINUS_SRC_ALPHA);
-			GLUtilities::setDepthState(false);
-			GLUtilities::setCullState(false);
+			GPU::setBlendState(true, BlendEquation::ADD, BlendFunction::SRC_ALPHA, BlendFunction::ONE_MINUS_SRC_ALPHA);
+			GPU::setDepthState(false);
+			GPU::setCullState(false);
 
 			// Render the image.
 			program->use();
@@ -252,9 +252,9 @@ int main(int argc, char ** argv) {
 					framebuffer->setViewport();
 
 					// Render the image in it.
-					GLUtilities::setBlendState(true, BlendEquation::ADD, BlendFunction::SRC_ALPHA, BlendFunction::ONE_MINUS_SRC_ALPHA);
-					GLUtilities::setDepthState(false);
-					GLUtilities::setCullState(false);
+					GPU::setBlendState(true, BlendEquation::ADD, BlendFunction::SRC_ALPHA, BlendFunction::ONE_MINUS_SRC_ALPHA);
+					GPU::setDepthState(false);
+					GPU::setCullState(false);
 
 					program->use();
 					// No scaling or translation.
@@ -267,7 +267,7 @@ int main(int argc, char ** argv) {
 					ScreenQuad::draw(imageInfos);
 
 					// Then save it to the given path.
-					GLUtilities::saveFramebuffer(*framebuffer, destinationPath.substr(0, destinationPath.size() - 4), true, false);
+					GPU::saveFramebuffer(*framebuffer, destinationPath.substr(0, destinationPath.size() - 4), true, false);
 				}
 			}
 		}

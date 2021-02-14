@@ -1,6 +1,6 @@
 #include "StenciledRenderer.hpp"
 #include "system/System.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 #include "graphics/ScreenQuad.hpp"
 #include "renderers/DebugViewer.hpp"
 
@@ -37,19 +37,19 @@ void StenciledRenderer::draw(const Camera & camera, Framebuffer & framebuffer, s
 	const glm::mat4 & view = camera.view();
 	const glm::mat4 & proj = camera.projection();
 
-	GLUtilities::setDepthState(false);
-	GLUtilities::setCullState(true, Faces::BACK);
-	GLUtilities::setBlendState(false);
+	GPU::setDepthState(false);
+	GPU::setCullState(true, Faces::BACK);
+	GPU::setBlendState(false);
 
 	_sceneFramebuffer->bind();
 	_sceneFramebuffer->setViewport();
 
 	// Clear colorbuffer to white, don't write to it for now.
-	GLUtilities::clearColorDepthStencil({1.0f, 1.0f, 1.0f, 1.0f}, 1.0f, 0x00);
-	GLUtilities::setColorState(false, false, false, false);
+	GPU::clearColorDepthStencil({1.0f, 1.0f, 1.0f, 1.0f}, 1.0f, 0x00);
+	GPU::setColorState(false, false, false, false);
 	// Always pass stencil test and flip all bits. As triangles are rendered successively to a pixel,
 	// they will flip the value between 0x00 (even count) and 0xFF (odd count).
-	GLUtilities::setStencilState(true, TestFunction::ALWAYS, StencilOp::KEEP, StencilOp::INVERT, StencilOp::INVERT, 0x00);
+	GPU::setStencilState(true, TestFunction::ALWAYS, StencilOp::KEEP, StencilOp::INVERT, StencilOp::INVERT, 0x00);
 
 	DebugViewer::trackStateDefault("Object");
 
@@ -70,13 +70,13 @@ void StenciledRenderer::draw(const Camera & camera, Framebuffer & framebuffer, s
 		_objectProgram->uniform("mvp", MVP);
 		
 		// Backface culling state.
-		GLUtilities::setCullState(!object.twoSided(), Faces::BACK);
-		GLUtilities::drawMesh(*object.mesh());
+		GPU::setCullState(!object.twoSided(), Faces::BACK);
+		GPU::drawMesh(*object.mesh());
 	}
 
 	// Render a black quad only where the stencil buffer is non zero (ie odd count of covering primitives).
-	GLUtilities::setStencilState(true, TestFunction::NOTEQUAL, StencilOp::KEEP, StencilOp::KEEP, StencilOp::KEEP, 0x00);
-	GLUtilities::setColorState(true, true, true, true);
+	GPU::setStencilState(true, TestFunction::NOTEQUAL, StencilOp::KEEP, StencilOp::KEEP, StencilOp::KEEP, 0x00);
+	GPU::setColorState(true, true, true, true);
 
 	DebugViewer::trackStateDefault("Screen");
 
@@ -85,12 +85,12 @@ void StenciledRenderer::draw(const Camera & camera, Framebuffer & framebuffer, s
 	ScreenQuad::draw();
 
 	// Restore stencil state.
-	GLUtilities::setStencilState(false, false);
+	GPU::setStencilState(false, false);
 
 	DebugViewer::trackStateDefault("Off stencil");
 
 	// Output result.
-	GLUtilities::blit(*_sceneFramebuffer, framebuffer, 0, layer, Filter::LINEAR);
+	GPU::blit(*_sceneFramebuffer, framebuffer, 0, layer, Filter::LINEAR);
 }
 
 void StenciledRenderer::resize(unsigned int width, unsigned int height) {

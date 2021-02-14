@@ -15,10 +15,10 @@
  @{
  */
 
-/// This macro is used to check for OpenGL errors with access to the file and line number where the error is detected.
-#define checkGLError() GLUtilities::checkError(__FILE__, __LINE__, "");
-/// This macro is used to check for OpenGL errors with access to the file and line number where the error is detected, along with additional user informations.
-#define checkGLErrorInfos(infos) GLUtilities::checkError(__FILE__, __LINE__, infos);
+/// This macro is used to check for GPU errors with access to the file and line number where the error is detected.
+#define checkGPUError() GPU::checkError(__FILE__, __LINE__, "");
+/// This macro is used to check for GPU errors with access to the file and line number where the error is detected, along with additional user informations.
+#define checkGPUErrorInfos(infos) GPU::checkError(__FILE__, __LINE__, infos);
 
 /**@}*/
 
@@ -29,7 +29,7 @@ class ScreenQuad;
  \brief Provide utility functions to communicate with the driver and GPU.
  \ingroup Graphics
  */
-class GLUtilities {
+class GPU {
 
 	friend class GPUTexture; ///< Access to deletion notifier for cached state update.
 	friend class GPUBuffer; ///< Access to deletion notifier for cached state update.
@@ -69,7 +69,7 @@ public:
 		unsigned long uniforms = 0; ///< Uniform update.
 	};
 
-	/** Check if any OpenGL error has been detected and log it.
+	/** Check if any GPU error has been detected and log it.
 	 \param file the current file
 	 \param line the current line
 	 \param infos additional user info
@@ -77,7 +77,7 @@ public:
 	 */
 	static int checkError(const char * file, int line, const std::string & infos);
 
-	/** Check if any OpenGL has been detected after setting up a framebuffer.
+	/** Check if any GPU has been detected after setting up a framebuffer.
 	  \return non zero if an error was encountered
 	  */
 	static int checkFramebufferStatus();
@@ -91,7 +91,7 @@ public:
 	 \param type the type of shader (vertex, fragment,...)
 	 \param bindings will be filled with the samplers/buffers present in the shader and their user-defined locations
 	 \param finalLog will contain the compilation log of the shader
-	 \return the OpenGL ID of the shader object
+	 \return the GPU ID of the shader object
 	 */
 	static GLuint loadShader(const std::string & prog, ShaderType type, Bindings & bindings, std::string & finalLog);
 
@@ -103,7 +103,7 @@ public:
 	 \param tessEvalContent the optional tesselation evaluation shader string
 	 \param bindings will be filled with the samplers present in the shaders and their user-defined locations
 	 \param debugInfos the name of the program, or any custom debug infos that will be logged.
-	 \return the OpenGL ID of the program
+	 \return the GPU ID of the program
 	 */
 	static GLuint createProgram(const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, const std::string & tessControlContent, const std::string & tessEvalContent, Bindings & bindings, const std::string & debugInfos);
 
@@ -187,7 +187,7 @@ public:
 	 */
 	static void generateMipMaps(const Texture & texture);
 
-	/** Convert a texture shape to an OpenGL texture format enum.
+	/** Convert a texture shape to a GPU texture format enum.
 	 \param shape the texture shape
 	 \return the corresponding target
 	 */
@@ -455,19 +455,19 @@ private:
 
 	/** Update the cache to remove input object if it was used.
 	 \param tex the texture that was deleted
-	 \note See the OpenGL specification for update of bindings when named object is deleted.
+	 \note See the GPU specification for update of bindings when named object is deleted.
 	 */
 	static void deleted(GPUTexture & tex);
 
 	/** Update the cache to remove input object if it was used.
 	 \param framebuffer the framebuffer that was deleted
-	 \note See the OpenGL specification for update of bindings when named object is deleted.
+	 \note See the GPU specification for update of bindings when named object is deleted.
 	 */
 	static void deleted(Framebuffer & framebuffer);
 
 	/** Update the cache to remove input object if it was used.
 	 \param mesh the mesh that was deleted
-	 \note See the OpenGL specification for update of bindings when named object is deleted.
+	 \note See the GPU specification for update of bindings when named object is deleted.
 	 */
 	static void deleted(GPUMesh & mesh);
 

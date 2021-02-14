@@ -1,7 +1,7 @@
 #include "processing/SSAO.hpp"
 #include "generation/Random.hpp"
 #include "graphics/GPUObjects.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 #include "graphics/ScreenQuad.hpp"
 #include "resources/ResourcesManager.hpp"
 
@@ -62,16 +62,16 @@ SSAO::SSAO(uint width, uint height, uint downscale, float radius, const std::str
 // Draw function
 void SSAO::process(const glm::mat4 & projection, const Texture * depthTex, const Texture * normalTex) {
 
-	GLUtilities::setDepthState(false);
-	GLUtilities::setBlendState(false);
-	GLUtilities::setCullState(true, Faces::BACK);
+	GPU::setDepthState(false);
+	GPU::setBlendState(false);
+	GPU::setCullState(true, Faces::BACK);
 
 	_ssaoFramebuffer->bind();
 	_ssaoFramebuffer->setViewport();
 	_programSSAO->use();
 	_programSSAO->uniform("projectionMatrix", projection);
 	_programSSAO->uniform("radius", _radius);
-	GLUtilities::bindBuffer(_samples, 0);
+	GPU::bindBuffer(_samples, 0);
 	ScreenQuad::draw({depthTex, normalTex, &_noisetexture});
 
 	// Blurring pass
@@ -80,9 +80,9 @@ void SSAO::process(const glm::mat4 & projection, const Texture * depthTex, const
 	} else if(_quality == Quality::MEDIUM){
 		// Render at potentially low res.
 		_mediumBlur.process(_ssaoFramebuffer->texture(), *_ssaoFramebuffer);
-		GLUtilities::blit(*_ssaoFramebuffer, *_finalFramebuffer, Filter::LINEAR);
+		GPU::blit(*_ssaoFramebuffer, *_finalFramebuffer, Filter::LINEAR);
 	} else {
-		GLUtilities::blit(*_ssaoFramebuffer, *_finalFramebuffer, Filter::LINEAR);
+		GPU::blit(*_ssaoFramebuffer, *_finalFramebuffer, Filter::LINEAR);
 	}
 }
 

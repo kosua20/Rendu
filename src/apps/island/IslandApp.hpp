@@ -6,7 +6,7 @@
 #include "resources/ResourcesManager.hpp"
 #include "graphics/ScreenQuad.hpp"
 #include "graphics/Framebuffer.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 #include "graphics/GPUObjects.hpp"
 #include "generation/PerlinNoise.hpp"
 #include "generation/Random.hpp"

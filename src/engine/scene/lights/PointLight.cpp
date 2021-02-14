@@ -1,5 +1,5 @@
 #include "scene/lights/PointLight.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "resources/Library.hpp"
 

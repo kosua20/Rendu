@@ -1,7 +1,7 @@
 #include "input/Input.hpp"
 #include "input/ControllableCamera.hpp"
 #include "resources/ResourcesManager.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 #include "graphics/Framebuffer.hpp"
 #include "system/Config.hpp"
 #include "system/System.hpp"
@@ -38,18 +38,18 @@ int main(int argc, char ** argv) {
 	
 	// Seed random generator.
 	Random::seed();
-	// Query the renderer identifier, and the supported OpenGL version.
+	// Query the renderer identifier, and the supported GPU API version.
 	std::string vendor, renderer, version, shaderVersion;
-	GLUtilities::deviceInfos(vendor, renderer, version, shaderVersion);
-	Log::Info() << Log::OpenGL << "Vendor: " << vendor << "." << std::endl;
-	Log::Info() << Log::OpenGL << "Internal renderer: " << renderer << "." << std::endl;
-	Log::Info() << Log::OpenGL << "Versions: Driver: " << version << ", GLSL: " << shaderVersion << "." << std::endl;
+	GPU::deviceInfos(vendor, renderer, version, shaderVersion);
+	Log::Info() << Log::GPU << "Vendor: " << vendor << "." << std::endl;
+	Log::Info() << Log::GPU << "Internal renderer: " << renderer << "." << std::endl;
+	Log::Info() << Log::GPU << "Versions: Driver: " << version << ", GLSL: " << shaderVersion << "." << std::endl;
 
 	// Query the extensions.
-	const std::vector<std::string> extensions = GLUtilities::deviceExtensions();
+	const std::vector<std::string> extensions = GPU::deviceExtensions();
 	// Log extensions.
 	if(!extensions.empty()) {
-		Log::Info() << Log::OpenGL << "Extensions detected (" << extensions.size() << ")" << std::flush;
+		Log::Info() << Log::GPU << "Extensions detected (" << extensions.size() << ")" << std::flush;
 		for(size_t i = 0; i < extensions.size(); ++i) {
 			Log::Verbose() << (i == 0 ? ": " : ", ") << extensions[i] << std::flush;
 		}
@@ -57,9 +57,9 @@ int main(int argc, char ** argv) {
 	}
 	const std::string titleHeader = "Extensions (" + std::to_string(extensions.size()) + ")";
 
-	GLUtilities::setDepthState(true, TestFunction::LESS, true);
-	GLUtilities::setCullState(true, Faces::BACK);
-	GLUtilities::setBlendState(false);
+	GPU::setDepthState(true, TestFunction::LESS, true);
+	GPU::setCullState(true, Faces::BACK);
+	GPU::setBlendState(false);
 
 	// Setup the timer.
 	double timer		 = System::time();
@@ -111,11 +111,11 @@ int main(int argc, char ** argv) {
 		const glm::mat4 MVP		   = camera.projection() * camera.view();
 
 		Framebuffer::backbuffer()->bind();
-		GLUtilities::setViewport(0, 0, screenSize[0], screenSize[1]);
-		GLUtilities::clearColorAndDepth({0.2f, 0.3f, 0.25f, 1.0f}, 1.0f);
+		GPU::setViewport(0, 0, screenSize[0], screenSize[1]);
+		GPU::clearColorAndDepth({0.2f, 0.3f, 0.25f, 1.0f}, 1.0f);
 		program->use();
 		program->uniform("mvp", MVP);
-		GLUtilities::drawMesh(*mesh);
+		GPU::drawMesh(*mesh);
 
 		ImGui::Text("ImGui is functional!");
 		ImGui::SameLine();

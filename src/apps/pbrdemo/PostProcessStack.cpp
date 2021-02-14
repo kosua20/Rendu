@@ -2,7 +2,7 @@
 #include "scene/lights/Light.hpp"
 #include "scene/Sky.hpp"
 #include "system/System.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 #include "graphics/ScreenQuad.hpp"
 
 PostProcessStack::PostProcessStack(const glm::vec2 & resolution) : Renderer("Post process stack"){
@@ -37,9 +37,9 @@ void PostProcessStack::process(const Texture * texture, const glm::mat4 & proj, 
 
 	const glm::vec2 invRenderSize = 1.0f / glm::vec2(framebuffer.width(), framebuffer.height());
 
-	GLUtilities::setDepthState(false);
-	GLUtilities::setBlendState(false);
-	GLUtilities::setCullState(true, Faces::BACK);
+	GPU::setDepthState(false);
+	GPU::setBlendState(false);
+	GPU::setCullState(true, Faces::BACK);
 
 	if(_settings.dof){
 		// --- DoF pass ------
@@ -50,23 +50,23 @@ void PostProcessStack::process(const Texture * texture, const glm::mat4 & proj, 
 		_dofCocProgram->uniform("projParams", glm::vec2(proj[2][2], proj[3][2]));
 		_dofCocProgram->uniform("focusDist", _settings.focusDist);
 		_dofCocProgram->uniform("focusScale", _settings.focusScale);
-		GLUtilities::bindTexture(texture, 0);
-		GLUtilities::bindTexture(depth, 1);
+		GPU::bindTexture(texture, 0);
+		GPU::bindTexture(depth, 1);
 		ScreenQuad::draw();
 		// Gather from neighbor samples.
 		_dofGatherBuffer->bind();
 		_dofGatherBuffer->setViewport();
 		_dofGatherProgram->use();
 		_dofGatherProgram->uniform("invSize", 1.0f/glm::vec2(_dofCocBuffer->width(), _dofCocBuffer->height()));
-		GLUtilities::bindTexture(_dofCocBuffer->texture(0), 0);
-		GLUtilities::bindTexture(_dofCocBuffer->texture(1), 1);
+		GPU::bindTexture(_dofCocBuffer->texture(0), 0);
+		GPU::bindTexture(_dofCocBuffer->texture(1), 1);
 		ScreenQuad::draw();
 		// Finally composite back with full res image.
 		_resultFramebuffer->bind();
 		_resultFramebuffer->setViewport();
 		_dofCompositeProgram->use();
-		GLUtilities::bindTexture(texture, 0);
-		GLUtilities::bindTexture(_dofGatherBuffer->texture(), 1);
+		GPU::bindTexture(texture, 0);
+		GPU::bindTexture(_dofGatherBuffer->texture(), 1);
 		ScreenQuad::draw();
 	} else {
 		// Else just copy the input texture to our internal result.
@@ -90,11 +90,11 @@ void PostProcessStack::process(const Texture * texture, const glm::mat4 & proj, 
 		// Add back the scene content.
 		_resultFramebuffer->bind();
 		_resultFramebuffer->setViewport();
-		GLUtilities::setBlendState(true, BlendEquation::ADD, BlendFunction::ONE, BlendFunction::ONE);
+		GPU::setBlendState(true, BlendEquation::ADD, BlendFunction::ONE, BlendFunction::ONE);
 		_bloomComposite->use();
 		_bloomComposite->uniform("scale", _settings.bloomMix);
 		ScreenQuad::draw(_bloomBuffer->texture());
-		GLUtilities::setBlendState(false);
+		GPU::setBlendState(false);
 		// Steps below ensures that we will always have an intermediate target.
 	}
 
@@ -113,7 +113,7 @@ void PostProcessStack::process(const Texture * texture, const glm::mat4 & proj, 
 		_fxaaProgram->uniform("inverseScreenSize", invRenderSize);
 		ScreenQuad::draw(_toneMapBuffer->texture());
 	} else {
-		GLUtilities::blit(*_toneMapBuffer, framebuffer, 0, layer, Filter::LINEAR);
+		GPU::blit(*_toneMapBuffer, framebuffer, 0, layer, Filter::LINEAR);
 	}
 
 }

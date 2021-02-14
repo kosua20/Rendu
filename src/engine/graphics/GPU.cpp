@@ -1,4 +1,4 @@
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 #include "graphics/Framebuffer.hpp"
 #include "resources/Texture.hpp"
 #include "resources/Image.hpp"
@@ -7,7 +7,7 @@
 #include <sstream>
 
 /** Converts a GLenum error number into a human-readable string.
- \param error the OpenGl error value
+ \param error the GPU error value
  \return the corresponding string
  */
 static std::string getGLErrorString(GLenum error) {
@@ -37,7 +37,7 @@ static std::string getGLErrorString(GLenum error) {
 	return msg;
 }
 
-void GLUtilities::setup() {
+void GPU::setup() {
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glFrontFace(GL_CCW);
@@ -55,7 +55,7 @@ void GLUtilities::setup() {
 	Framebuffer::backbuffer()->bind();
 
 	// Cache initial state.
-	GLUtilities::getState(_state);
+	GPU::getState(_state);
 	_state.polygonMode = PolygonMode::FILL;
 
 	// Create empty VAO for screenquad.
@@ -65,7 +65,7 @@ void GLUtilities::setup() {
 	_state.vertexArray = 0;
 }
 
-int GLUtilities::checkError(const char * file, int line, const std::string & infos) {
+int GPU::checkError(const char * file, int line, const std::string & infos) {
 	const GLenum glErr = glGetError();
 	if(glErr != GL_NO_ERROR) {
 		const std::string filePath(file);
@@ -73,7 +73,7 @@ int GLUtilities::checkError(const char * file, int line, const std::string & inf
 		if(pos == std::string::npos) {
 			pos = 0;
 		}
-		Log::Error() << Log::OpenGL << "Error " << getGLErrorString(glErr) << " in " << filePath.substr(pos + 1) << " (" << line << ").";
+		Log::Error() << Log::GPU << "Error " << getGLErrorString(glErr) << " in " << filePath.substr(pos + 1) << " (" << line << ").";
 		if(!infos.empty()) {
 			Log::Error() << " Infos: " << infos;
 		}
@@ -83,36 +83,36 @@ int GLUtilities::checkError(const char * file, int line, const std::string & inf
 	return 0;
 }
 
-int GLUtilities::checkFramebufferStatus() {
+int GPU::checkFramebufferStatus() {
 	const GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 	if(status != GL_FRAMEBUFFER_COMPLETE) {
 		switch(status) {
 			case GL_FRAMEBUFFER_UNDEFINED:
-				Log::Error() << Log::OpenGL << "Error GL_FRAMEBUFFER_UNDEFINED" << std::endl;
+				Log::Error() << Log::GPU << "Error GL_FRAMEBUFFER_UNDEFINED" << std::endl;
 				break;
 			case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
-				Log::Error() << Log::OpenGL << "Error GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT" << std::endl;
+				Log::Error() << Log::GPU << "Error GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT" << std::endl;
 				break;
 			case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
-				Log::Error() << Log::OpenGL << "Error GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT" << std::endl;
+				Log::Error() << Log::GPU << "Error GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT" << std::endl;
 				break;
 			case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
-				Log::Error() << Log::OpenGL << "Error GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER" << std::endl;
+				Log::Error() << Log::GPU << "Error GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER" << std::endl;
 				break;
 			case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
-				Log::Error() << Log::OpenGL << "Error GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER" << std::endl;
+				Log::Error() << Log::GPU << "Error GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER" << std::endl;
 				break;
 			case GL_FRAMEBUFFER_UNSUPPORTED:
-				Log::Error() << Log::OpenGL << "Error GL_FRAMEBUFFER_UNSUPPORTED" << std::endl;
+				Log::Error() << Log::GPU << "Error GL_FRAMEBUFFER_UNSUPPORTED" << std::endl;
 				break;
 			case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE:
-				Log::Error() << Log::OpenGL << "Error GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE" << std::endl;
+				Log::Error() << Log::GPU << "Error GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE" << std::endl;
 				break;
 			case GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS:
-				Log::Error() << Log::OpenGL << "Error GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS" << std::endl;
+				Log::Error() << Log::GPU << "Error GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS" << std::endl;
 				break;
 			default:
-				Log::Error() << Log::OpenGL << "Unknown framebuffer error." << std::endl;
+				Log::Error() << Log::GPU << "Unknown framebuffer error." << std::endl;
 				break;
 		}
 		return 1;
@@ -120,7 +120,7 @@ int GLUtilities::checkFramebufferStatus() {
 	return 0;
 }
 
-GLuint GLUtilities::loadShader(const std::string & prog, ShaderType type, Bindings & bindings, std::string & finalLog) {
+GLuint GPU::loadShader(const std::string & prog, ShaderType type, Bindings & bindings, std::string & finalLog) {
 	// We need to detect texture slots and store them, to avoid having to register them in
 	// the rest of the code (object, renderer), while not having support for 'layout(binding=n)' in OpenGL <4.2.
 	std::stringstream inputLines(prog);
@@ -211,11 +211,11 @@ GLuint GLUtilities::loadShader(const std::string & prog, ShaderType type, Bindin
 		}
 
 		if(bindings.count(name) > 0 && bindings[name].location != slot) {
-			Log::Warning() << Log::OpenGL << "Inconsistent binding location between linked shaders for \"" << name << "\"." << std::endl;
+			Log::Warning() << Log::GPU << "Inconsistent binding location between linked shaders for \"" << name << "\"." << std::endl;
 		}
 		bindings[name].location = slot;
 		bindings[name].type		= isSampler ? BindingType::TEXTURE : BindingType::UNIFORM_BUFFER;
-		Log::Verbose() << Log::OpenGL << "Detected binding (" << name << ", " << slot << ") => " << outputLines.back() << std::endl;
+		Log::Verbose() << Log::GPU << "Detected binding (" << name << ", " << slot << ") => " << outputLines.back() << std::endl;
 	}
 	// Add OpenGL version.
 	std::string outputProg = "#version 400\n#line 1 0\n";
@@ -263,12 +263,12 @@ GLuint GLUtilities::loadShader(const std::string & prog, ShaderType type, Bindin
 	return id;
 }
 
-GLuint GLUtilities::createProgram(const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, const std::string & tessControlContent, const std::string & tessEvalContent, Bindings & bindings, const std::string & debugInfos) {
+GLuint GPU::createProgram(const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, const std::string & tessControlContent, const std::string & tessEvalContent, Bindings & bindings, const std::string & debugInfos) {
 	GLuint vp(0), fp(0), gp(0), tcp(0), tep(0);
 	const GLuint id = glCreateProgram();
 	checkGLError();
 
-	Log::Verbose() << Log::OpenGL << "Compiling " << debugInfos << "." << std::endl;
+	Log::Verbose() << Log::GPU << "Compiling " << debugInfos << "." << std::endl;
 
 	std::string compilationLog;
 	// If vertex program code is given, compile it.
@@ -276,7 +276,7 @@ GLuint GLUtilities::createProgram(const std::string & vertexContent, const std::
 		vp = loadShader(vertexContent, ShaderType::VERTEX, bindings, compilationLog);
 		glAttachShader(id, vp);
 		if(!compilationLog.empty()) {
-			Log::Error() << Log::OpenGL << "Vertex shader failed to compile:" << std::endl
+			Log::Error() << Log::GPU << "Vertex shader failed to compile:" << std::endl
 						 << compilationLog << std::endl;
 		}
 	}
@@ -285,7 +285,7 @@ GLuint GLUtilities::createProgram(const std::string & vertexContent, const std::
 		fp = loadShader(fragmentContent, ShaderType::FRAGMENT, bindings, compilationLog);
 		glAttachShader(id, fp);
 		if(!compilationLog.empty()) {
-			Log::Error() << Log::OpenGL << "Fragment shader failed to compile:" << std::endl
+			Log::Error() << Log::GPU << "Fragment shader failed to compile:" << std::endl
 						 << compilationLog << std::endl;
 		}
 	}
@@ -294,7 +294,7 @@ GLuint GLUtilities::createProgram(const std::string & vertexContent, const std::
 		gp = loadShader(geometryContent, ShaderType::GEOMETRY, bindings, compilationLog);
 		glAttachShader(id, gp);
 		if(!compilationLog.empty()) {
-			Log::Error() << Log::OpenGL << "Geometry shader failed to compile:" << std::endl
+			Log::Error() << Log::GPU << "Geometry shader failed to compile:" << std::endl
 						 << compilationLog << std::endl;
 		}
 	}
@@ -303,7 +303,7 @@ GLuint GLUtilities::createProgram(const std::string & vertexContent, const std::
 		tcp = loadShader(tessControlContent, ShaderType::TESSCONTROL, bindings, compilationLog);
 		glAttachShader(id, tcp);
 		if(!compilationLog.empty()) {
-			Log::Error() << Log::OpenGL << "Tessellation control shader failed to compile:" << std::endl
+			Log::Error() << Log::GPU << "Tessellation control shader failed to compile:" << std::endl
 						 << compilationLog << std::endl;
 		}
 	}
@@ -312,7 +312,7 @@ GLuint GLUtilities::createProgram(const std::string & vertexContent, const std::
 		tep = loadShader(tessEvalContent, ShaderType::TESSEVAL, bindings, compilationLog);
 		glAttachShader(id, tep);
 		if(!compilationLog.empty()) {
-			Log::Error() << Log::OpenGL << "Tessellation evaluation shader failed to compile:" << std::endl
+			Log::Error() << Log::GPU << "Tessellation evaluation shader failed to compile:" << std::endl
 						 << compilationLog << std::endl;
 		}
 	}
@@ -337,7 +337,7 @@ GLuint GLUtilities::createProgram(const std::string & vertexContent, const std::
 		TextUtilities::replace(infoLogString, "\n", "\n\t");
 		infoLogString.insert(0, "\t");
 		// Output.
-		Log::Error() << Log::OpenGL
+		Log::Error() << Log::GPU
 					 << "Failed linking program " << debugInfos << ": " << std::endl
 					 << infoLogString << std::endl;
 		return 0;
@@ -371,7 +371,7 @@ GLuint GLUtilities::createProgram(const std::string & vertexContent, const std::
 	return id;
 }
 
-void GLUtilities::bindProgram(const Program & program){
+void GPU::bindProgram(const Program & program){
 	if(_state.program != program._id){
 		_state.program = program._id;
 		glUseProgram(program._id);
@@ -379,7 +379,7 @@ void GLUtilities::bindProgram(const Program & program){
 	}
 }
 
-void GLUtilities::bindFramebuffer(const Framebuffer & framebuffer){
+void GPU::bindFramebuffer(const Framebuffer & framebuffer){
 	if(_state.drawFramebuffer != framebuffer._id){
 		_state.drawFramebuffer = framebuffer._id;
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer._id);
@@ -387,7 +387,7 @@ void GLUtilities::bindFramebuffer(const Framebuffer & framebuffer){
 	}
 }
 
-void GLUtilities::bindFramebuffer(const Framebuffer & framebuffer, Framebuffer::Mode mode){
+void GPU::bindFramebuffer(const Framebuffer & framebuffer, Framebuffer::Mode mode){
 	if(mode == Framebuffer::Mode::WRITE && _state.drawFramebuffer != framebuffer._id){
 		_state.drawFramebuffer = framebuffer._id;
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer._id);
@@ -400,19 +400,19 @@ void GLUtilities::bindFramebuffer(const Framebuffer & framebuffer, Framebuffer::
 
 }
 
-void GLUtilities::saveFramebuffer(const Framebuffer & framebuffer, const std::string & path, bool flip, bool ignoreAlpha) {
+void GPU::saveFramebuffer(const Framebuffer & framebuffer, const std::string & path, bool flip, bool ignoreAlpha) {
 
 	// Don't alter the GPU state, this is a temporary action.
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer._id);
 
 	const std::unique_ptr<GPUTexture> & gpu = framebuffer.texture()->gpu;
-	GLUtilities::savePixels(gpu->type, gpu->format, framebuffer.width(), framebuffer.height(), gpu->channels, path, flip, ignoreAlpha);
+	GPU::savePixels(gpu->type, gpu->format, framebuffer.width(), framebuffer.height(), gpu->channels, path, flip, ignoreAlpha);
 	
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, _state.readFramebuffer);
 	_metrics.framebufferBindings += 2;
 }
 
-void GLUtilities::bindTexture(const Texture * texture, size_t slot) {
+void GPU::bindTexture(const Texture * texture, size_t slot) {
 	auto & currId = _state.textures[slot][texture->gpu->target];
 	if(currId != texture->gpu->id){
 		currId = texture->gpu->id;
@@ -423,7 +423,7 @@ void GLUtilities::bindTexture(const Texture * texture, size_t slot) {
 	}
 }
 
-void GLUtilities::bindTexture(const Texture & texture, size_t slot) {
+void GPU::bindTexture(const Texture & texture, size_t slot) {
 	auto & currId = _state.textures[slot][texture.gpu->target];
 	if(currId != texture.gpu->id){
 		currId = texture.gpu->id;
@@ -434,7 +434,7 @@ void GLUtilities::bindTexture(const Texture & texture, size_t slot) {
 	}
 }
 
-void GLUtilities::bindTextures(const std::vector<const Texture *> & textures, size_t startingSlot) {
+void GPU::bindTextures(const std::vector<const Texture *> & textures, size_t startingSlot) {
 	for(size_t i = 0; i < textures.size(); ++i) {
 		const Texture * infos = textures[i];
 		const int slot = startingSlot + i;
@@ -450,7 +450,7 @@ void GLUtilities::bindTextures(const std::vector<const Texture *> & textures, si
 	}
 }
 
-void GLUtilities::setupTexture(Texture & texture, const Descriptor & descriptor) {
+void GPU::setupTexture(Texture & texture, const Descriptor & descriptor) {
 
 	if(texture.gpu) {
 		texture.gpu->clean();
@@ -476,15 +476,15 @@ void GLUtilities::setupTexture(Texture & texture, const Descriptor & descriptor)
 	glTexParameteri(target, GL_TEXTURE_WRAP_S, wrap);
 	glTexParameteri(target, GL_TEXTURE_WRAP_T, wrap);
 
-	GLUtilities::restoreTexture(texture.shape);
+	GPU::restoreTexture(texture.shape);
 
 	// Allocate.
-	GLUtilities::allocateTexture(texture);
+	GPU::allocateTexture(texture);
 }
 
-void GLUtilities::allocateTexture(const Texture & texture) {
+void GPU::allocateTexture(const Texture & texture) {
 	if(!texture.gpu) {
-		Log::Error() << Log::OpenGL << "Uninitialized GPU texture." << std::endl;
+		Log::Error() << Log::GPU << "Uninitialized GPU texture." << std::endl;
 		return;
 	}
 
@@ -511,7 +511,7 @@ void GLUtilities::allocateTexture(const Texture & texture) {
 		} else if(texture.shape == TextureShape::Cube) {
 			// Here the number of levels is 6.
 			if(texture.depth != 6) {
-				Log::Error() << Log::OpenGL << "Incorrect number of levels in a cubemap (" << texture.depth << ")." << std::endl;
+				Log::Error() << Log::GPU << "Incorrect number of levels in a cubemap (" << texture.depth << ")." << std::endl;
 				return;
 			}
 			// In that case each level is a cubemap face.
@@ -535,26 +535,26 @@ void GLUtilities::allocateTexture(const Texture & texture) {
 		} else if(texture.shape == TextureShape::ArrayCube) {
 			// Here the number of levels is a multiple of 6.
 			if(texture.depth % 6 != 0) {
-				Log::Error() << Log::OpenGL << "Incorrect number of levels in a cubemap array (" << texture.depth << ")." << std::endl;
+				Log::Error() << Log::GPU << "Incorrect number of levels in a cubemap array (" << texture.depth << ")." << std::endl;
 				return;
 			}
 			glTexImage3D(GL_TEXTURE_CUBE_MAP_ARRAY, mip, typeFormat, w, h, texture.depth, 0, format, type, nullptr);
 
 		} else {
-			Log::Error() << Log::OpenGL << "Unsupported texture shape." << std::endl;
+			Log::Error() << Log::GPU << "Unsupported texture shape." << std::endl;
 			return;
 		}
 	}
-	GLUtilities::restoreTexture(texture.shape);
+	GPU::restoreTexture(texture.shape);
 }
 
-void GLUtilities::uploadTexture(const Texture & texture) {
+void GPU::uploadTexture(const Texture & texture) {
 	if(!texture.gpu) {
-		Log::Error() << Log::OpenGL << "Uninitialized GPU texture." << std::endl;
+		Log::Error() << Log::GPU << "Uninitialized GPU texture." << std::endl;
 		return;
 	}
 	if(texture.images.empty()) {
-		Log::Warning() << Log::OpenGL << "No images to upload." << std::endl;
+		Log::Warning() << Log::GPU << "No images to upload." << std::endl;
 		return;
 	}
 
@@ -563,7 +563,7 @@ void GLUtilities::uploadTexture(const Texture & texture) {
 	// Sanity check the texture destination format.
 	const unsigned int destChannels = texture.gpu->channels;
 	if(destChannels != texture.images[0].components) {
-		Log::Error() << Log::OpenGL << "Not enough values in source data for texture upload." << std::endl;
+		Log::Error() << Log::GPU << "Not enough values in source data for texture upload." << std::endl;
 		return;
 	}
 	// Check that the descriptor type is valid.
@@ -614,31 +614,31 @@ void GLUtilities::uploadTexture(const Texture & texture) {
 				glTexSubImage3D(target, mip, 0, 0, lev, w, h, 1, destFormat, GL_FLOAT, finalDataPtr);
 
 			} else {
-				Log::Error() << Log::OpenGL << "Unsupported texture upload destination." << std::endl;
+				Log::Error() << Log::GPU << "Unsupported texture upload destination." << std::endl;
 			}
 			_metrics.uploads += 1;
 		}
 	}
-	GLUtilities::restoreTexture(texture.shape);
+	GPU::restoreTexture(texture.shape);
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 	_metrics.stateChanges += 1;
 }
 
-void GLUtilities::downloadTexture(Texture & texture) {
+void GPU::downloadTexture(Texture & texture) {
 	downloadTexture(texture, -1);
 }
 
-void GLUtilities::downloadTexture(Texture & texture, int level) {
+void GPU::downloadTexture(Texture & texture, int level) {
 	if(!texture.gpu) {
-		Log::Error() << Log::OpenGL << "Uninitialized GPU texture." << std::endl;
+		Log::Error() << Log::GPU << "Uninitialized GPU texture." << std::endl;
 		return;
 	}
 	if(texture.shape != TextureShape::D2 && texture.shape != TextureShape::Cube) {
-		Log::Error() << Log::OpenGL << "Unsupported download format." << std::endl;
+		Log::Error() << Log::GPU << "Unsupported download format." << std::endl;
 		return;
 	}
 	if(!texture.images.empty()) {
-		Log::Verbose() << Log::OpenGL << "Texture already contain CPU data, will be erased." << std::endl;
+		Log::Verbose() << Log::GPU << "Texture already contain CPU data, will be erased." << std::endl;
 	}
 	texture.images.resize(texture.depth * texture.levels);
 
@@ -677,12 +677,12 @@ void GLUtilities::downloadTexture(Texture & texture, int level) {
 			}
 		}
 	}
-	GLUtilities::restoreTexture(texture.shape);
+	GPU::restoreTexture(texture.shape);
 }
 
-void GLUtilities::generateMipMaps(const Texture & texture) {
+void GPU::generateMipMaps(const Texture & texture) {
 	if(!texture.gpu) {
-		Log::Error() << Log::OpenGL << "Uninitialized GPU texture." << std::endl;
+		Log::Error() << Log::GPU << "Uninitialized GPU texture." << std::endl;
 		return;
 	}
 	const GLenum target = texture.gpu->target;
@@ -690,10 +690,10 @@ void GLUtilities::generateMipMaps(const Texture & texture) {
 	_metrics.textureBindings += 1;
 	glTexParameteri(target, GL_TEXTURE_MAX_LEVEL, texture.levels - 1);
 	glGenerateMipmap(target);
-	GLUtilities::restoreTexture(texture.shape);
+	GPU::restoreTexture(texture.shape);
 }
 
-GLenum GLUtilities::targetFromShape(const TextureShape & shape) {
+GLenum GPU::targetFromShape(const TextureShape & shape) {
 
 	static const std::map<TextureShape, GLenum> shapesTargets = {
 		{TextureShape::D1, GL_TEXTURE_1D},
@@ -706,7 +706,7 @@ GLenum GLUtilities::targetFromShape(const TextureShape & shape) {
 	return shapesTargets.at(shape);
 }
 
-void GLUtilities::bindBuffer(const BufferBase & buffer, size_t slot) {
+void GPU::bindBuffer(const BufferBase & buffer, size_t slot) {
 	glBindBuffer(GL_UNIFORM_BUFFER, buffer.gpu->id);
 	glBindBufferBase(GL_UNIFORM_BUFFER, GLuint(slot), buffer.gpu->id);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
@@ -714,7 +714,7 @@ void GLUtilities::bindBuffer(const BufferBase & buffer, size_t slot) {
 	_metrics.uniforms += 1;
 }
 
-void GLUtilities::setupBuffer(BufferBase & buffer) {
+void GPU::setupBuffer(BufferBase & buffer) {
 	if(buffer.gpu) {
 		buffer.gpu->clean();
 	}
@@ -724,12 +724,12 @@ void GLUtilities::setupBuffer(BufferBase & buffer) {
 	glGenBuffers(1, &bufferId);
 	buffer.gpu->id = bufferId;
 	// Allocate.
-	GLUtilities::allocateBuffer(buffer);
+	GPU::allocateBuffer(buffer);
 }
 
-void GLUtilities::allocateBuffer(const BufferBase & buffer) {
+void GPU::allocateBuffer(const BufferBase & buffer) {
 	if(!buffer.gpu) {
-		Log::Error() << Log::OpenGL << "Uninitialized GPU buffer." << std::endl;
+		Log::Error() << Log::GPU << "Uninitialized GPU buffer." << std::endl;
 		return;
 	}
 
@@ -740,17 +740,17 @@ void GLUtilities::allocateBuffer(const BufferBase & buffer) {
 	_metrics.bufferBindings += 2;
 }
 
-void GLUtilities::uploadBuffer(const BufferBase & buffer, size_t size, unsigned char * data, size_t offset) {
+void GPU::uploadBuffer(const BufferBase & buffer, size_t size, unsigned char * data, size_t offset) {
 	if(!buffer.gpu) {
-		Log::Error() << Log::OpenGL << "Uninitialized GPU buffer." << std::endl;
+		Log::Error() << Log::GPU << "Uninitialized GPU buffer." << std::endl;
 		return;
 	}
 	if(size == 0) {
-		Log::Warning() << Log::OpenGL << "No data to upload." << std::endl;
+		Log::Warning() << Log::GPU << "No data to upload." << std::endl;
 		return;
 	}
 	if(offset + size > buffer.sizeMax) {
-		Log::Warning() << Log::OpenGL << "Not enough allocated space to upload." << std::endl;
+		Log::Warning() << Log::GPU << "Not enough allocated space to upload." << std::endl;
 		return;
 	}
 
@@ -762,13 +762,13 @@ void GLUtilities::uploadBuffer(const BufferBase & buffer, size_t size, unsigned 
 	_metrics.bufferBindings += 2;
 }
 
-void GLUtilities::downloadBuffer(const BufferBase & buffer, size_t size, unsigned char * data, size_t offset) {
+void GPU::downloadBuffer(const BufferBase & buffer, size_t size, unsigned char * data, size_t offset) {
 	if(!buffer.gpu) {
-		Log::Error() << Log::OpenGL << "Uninitialized GPU buffer." << std::endl;
+		Log::Error() << Log::GPU << "Uninitialized GPU buffer." << std::endl;
 		return;
 	}
 	if(offset + size > buffer.sizeMax) {
-		Log::Warning() << Log::OpenGL << "Not enough available data to download." << std::endl;
+		Log::Warning() << Log::GPU << "Not enough available data to download." << std::endl;
 		return;
 	}
 
@@ -780,7 +780,7 @@ void GLUtilities::downloadBuffer(const BufferBase & buffer, size_t size, unsigne
 	_metrics.bufferBindings += 2;
 }
 
-void GLUtilities::setupMesh(Mesh & mesh) {
+void GPU::setupMesh(Mesh & mesh) {
 	if(mesh.gpu) {
 		mesh.gpu->clean();
 	}
@@ -802,12 +802,12 @@ void GLUtilities::setupMesh(Mesh & mesh) {
 
 	// Create an array buffer to host the geometry data.
 	BufferBase vertexBuffer(sizeof(GLfloat) * totalSize, BufferType::VERTEX, DataUse::STATIC);
-	GLUtilities::setupBuffer(vertexBuffer);
+	GPU::setupBuffer(vertexBuffer);
 	// Fill in subregions.
 	size_t offset = 0;
 	if(!mesh.positions.empty()) {
 		const size_t size = sizeof(GLfloat) * 3 * mesh.positions.size();
-		GLUtilities::uploadBuffer(vertexBuffer, size, reinterpret_cast<unsigned char *>(mesh.positions.data()), offset);
+		GPU::uploadBuffer(vertexBuffer, size, reinterpret_cast<unsigned char *>(mesh.positions.data()), offset);
 		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.gpu->id);
 		_metrics.bufferBindings += 1;
 		glEnableVertexAttribArray(0);
@@ -816,7 +816,7 @@ void GLUtilities::setupMesh(Mesh & mesh) {
 	}
 	if(!mesh.normals.empty()) {
 		const size_t size = sizeof(GLfloat) * 3 * mesh.normals.size();
-		GLUtilities::uploadBuffer(vertexBuffer, size, reinterpret_cast<unsigned char *>(mesh.normals.data()), offset);
+		GPU::uploadBuffer(vertexBuffer, size, reinterpret_cast<unsigned char *>(mesh.normals.data()), offset);
 		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.gpu->id);
 		_metrics.bufferBindings += 1;
 		glEnableVertexAttribArray(1);
@@ -825,7 +825,7 @@ void GLUtilities::setupMesh(Mesh & mesh) {
 	}
 	if(!mesh.texcoords.empty()) {
 		const size_t size = sizeof(GLfloat) * 2 * mesh.texcoords.size();
-		GLUtilities::uploadBuffer(vertexBuffer, size, reinterpret_cast<unsigned char *>(mesh.texcoords.data()), offset);
+		GPU::uploadBuffer(vertexBuffer, size, reinterpret_cast<unsigned char *>(mesh.texcoords.data()), offset);
 		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.gpu->id);
 		_metrics.bufferBindings += 1;
 		glEnableVertexAttribArray(2);
@@ -834,7 +834,7 @@ void GLUtilities::setupMesh(Mesh & mesh) {
 	}
 	if(!mesh.tangents.empty()) {
 		const size_t size = sizeof(GLfloat) * 3 * mesh.tangents.size();
-		GLUtilities::uploadBuffer(vertexBuffer, size, reinterpret_cast<unsigned char *>(mesh.tangents.data()), offset);
+		GPU::uploadBuffer(vertexBuffer, size, reinterpret_cast<unsigned char *>(mesh.tangents.data()), offset);
 		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.gpu->id);
 		_metrics.bufferBindings += 1;
 		glEnableVertexAttribArray(3);
@@ -843,7 +843,7 @@ void GLUtilities::setupMesh(Mesh & mesh) {
 	}
 	if(!mesh.binormals.empty()) {
 		const size_t size = sizeof(GLfloat) * 3 * mesh.binormals.size();
-		GLUtilities::uploadBuffer(vertexBuffer, size, reinterpret_cast<unsigned char *>(mesh.binormals.data()), offset);
+		GPU::uploadBuffer(vertexBuffer, size, reinterpret_cast<unsigned char *>(mesh.binormals.data()), offset);
 		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.gpu->id);
 		_metrics.bufferBindings += 1;
 		glEnableVertexAttribArray(4);
@@ -852,7 +852,7 @@ void GLUtilities::setupMesh(Mesh & mesh) {
 	}
 	if(!mesh.colors.empty()) {
 		const size_t size = sizeof(GLfloat) * 3 * mesh.colors.size();
-		GLUtilities::uploadBuffer(vertexBuffer, size, reinterpret_cast<unsigned char *>(mesh.colors.data()), offset);
+		GPU::uploadBuffer(vertexBuffer, size, reinterpret_cast<unsigned char *>(mesh.colors.data()), offset);
 		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.gpu->id);
 		_metrics.bufferBindings += 1;
 		glEnableVertexAttribArray(5);
@@ -862,8 +862,8 @@ void GLUtilities::setupMesh(Mesh & mesh) {
 	// We load the indices data
 	const size_t inSize = sizeof(unsigned int) * mesh.indices.size();
 	BufferBase indexBuffer(inSize, BufferType::INDEX, DataUse::STATIC);
-	GLUtilities::setupBuffer(indexBuffer);
-	GLUtilities::uploadBuffer(indexBuffer, inSize, reinterpret_cast<unsigned char *>(mesh.indices.data()));
+	GPU::setupBuffer(indexBuffer);
+	GPU::uploadBuffer(indexBuffer, inSize, reinterpret_cast<unsigned char *>(mesh.indices.data()));
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer.gpu->id);
 	// Restore previously bound vertex array.
@@ -880,7 +880,7 @@ void GLUtilities::setupMesh(Mesh & mesh) {
 	mesh.gpu->vertexBuffer = std::move(vertexBuffer.gpu);
 }
 
-void GLUtilities::drawMesh(const Mesh & mesh) {
+void GPU::drawMesh(const Mesh & mesh) {
 	if(_state.vertexArray != mesh.gpu->id){
 		_state.vertexArray = mesh.gpu->id;
 		glBindVertexArray(mesh.gpu->id);
@@ -890,7 +890,7 @@ void GLUtilities::drawMesh(const Mesh & mesh) {
 	_metrics.drawCalls += 1;
 }
 
-void GLUtilities::drawTesselatedMesh(const Mesh & mesh, uint patchSize){
+void GPU::drawTesselatedMesh(const Mesh & mesh, uint patchSize){
 	glPatchParameteri(GL_PATCH_VERTICES, GLint(patchSize));
 	if(_state.vertexArray != mesh.gpu->id){
 		_state.vertexArray = mesh.gpu->id;
@@ -902,7 +902,7 @@ void GLUtilities::drawTesselatedMesh(const Mesh & mesh, uint patchSize){
 
 }
 
-void GLUtilities::drawQuad(){
+void GPU::drawQuad(){
 	if(_state.vertexArray != _vao){
 		_state.vertexArray = _vao;
 		glBindVertexArray(_vao);
@@ -912,18 +912,18 @@ void GLUtilities::drawQuad(){
 	_metrics.quadCalls += 1;
 }
 
-void GLUtilities::sync(){
+void GPU::sync(){
 	glFlush();
 	glFinish();
 }
 
-void GLUtilities::nextFrame(){
+void GPU::nextFrame(){
 	// Save and reset stats.
 	_metricsPrevious = _metrics;
 	_metrics = Metrics();
 }
 
-void GLUtilities::deviceInfos(std::string & vendor, std::string & renderer, std::string & version, std::string & shaderVersion) {
+void GPU::deviceInfos(std::string & vendor, std::string & renderer, std::string & version, std::string & shaderVersion) {
 	const GLubyte * vendorString	  = glGetString(GL_VENDOR);
 	const GLubyte * rendererString	  = glGetString(GL_RENDERER);
 	const GLubyte * versionString	  = glGetString(GL_VERSION);
@@ -934,7 +934,7 @@ void GLUtilities::deviceInfos(std::string & vendor, std::string & renderer, std:
 	shaderVersion					  = std::string(reinterpret_cast<const char *>(glslVersionString));
 }
 
-std::vector<std::string> GLUtilities::deviceExtensions() {
+std::vector<std::string> GPU::deviceExtensions() {
 	int extensionCount = 0;
 	glGetIntegerv(GL_NUM_EXTENSIONS, &extensionCount);
 	std::vector<std::string> extensions(extensionCount);
@@ -946,7 +946,7 @@ std::vector<std::string> GLUtilities::deviceExtensions() {
 	return extensions;
 }
 
-void GLUtilities::setViewport(int x, int y, int w, int h) {
+void GPU::setViewport(int x, int y, int w, int h) {
 	if(_state.viewport[0] != x || _state.viewport[1] != y || _state.viewport[2] != w || _state.viewport[3] != h){
 		_state.viewport[0] = x;
 		_state.viewport[1] = y;
@@ -957,7 +957,7 @@ void GLUtilities::setViewport(int x, int y, int w, int h) {
 	}
 }
 
-void GLUtilities::clearColor(const glm::vec4 & color) {
+void GPU::clearColor(const glm::vec4 & color) {
 	if(_state.colorClearValue != color){
 		_state.colorClearValue = color;
 		glClearColor(color[0], color[1], color[2], color[3]);
@@ -967,7 +967,7 @@ void GLUtilities::clearColor(const glm::vec4 & color) {
 	_metrics.clearAndBlits += 1;
 }
 
-void GLUtilities::clearDepth(float depth) {
+void GPU::clearDepth(float depth) {
 	if(_state.depthClearValue != depth){
 		_state.depthClearValue = depth;
 		glClearDepth(depth);
@@ -977,7 +977,7 @@ void GLUtilities::clearDepth(float depth) {
 	_metrics.clearAndBlits += 1;
 }
 
-void GLUtilities::clearStencil(uchar stencil) {
+void GPU::clearStencil(uchar stencil) {
 	// The stencil mask applies to clearing.
 	// Disable it temporarily.
 	if(!_state.stencilWriteMask){
@@ -999,7 +999,7 @@ void GLUtilities::clearStencil(uchar stencil) {
 	}
 }
 
-void GLUtilities::clearColorAndDepth(const glm::vec4 & color, float depth) {
+void GPU::clearColorAndDepth(const glm::vec4 & color, float depth) {
 	if(_state.colorClearValue != color){
 		_state.colorClearValue = color;
 		glClearColor(color[0], color[1], color[2], color[3]);
@@ -1014,7 +1014,7 @@ void GLUtilities::clearColorAndDepth(const glm::vec4 & color, float depth) {
 	_metrics.clearAndBlits += 1;
 }
 
-void GLUtilities::clearColorDepthStencil(const glm::vec4 & color, float depth, uchar stencil) {
+void GPU::clearColorDepthStencil(const glm::vec4 & color, float depth, uchar stencil) {
 	// The stencil mask applies to clearing.
 	// Disable it temporarily.
 	if(!_state.stencilWriteMask){
@@ -1046,7 +1046,7 @@ void GLUtilities::clearColorDepthStencil(const glm::vec4 & color, float depth, u
 	}
 }
 
-void GLUtilities::setDepthState(bool test) {
+void GPU::setDepthState(bool test) {
 	if(_state.depthTest != test){
 		_state.depthTest = test;
 		(test ? glEnable : glDisable)(GL_DEPTH_TEST);
@@ -1054,7 +1054,7 @@ void GLUtilities::setDepthState(bool test) {
 	}
 }
 
-void GLUtilities::setDepthState(bool test, TestFunction equation, bool write) {
+void GPU::setDepthState(bool test, TestFunction equation, bool write) {
 	if(_state.depthTest != test){
 		_state.depthTest = test;
 		(test ? glEnable : glDisable)(GL_DEPTH_TEST);
@@ -1084,7 +1084,7 @@ void GLUtilities::setDepthState(bool test, TestFunction equation, bool write) {
 	}
 }
 
-void GLUtilities::setStencilState(bool test, bool write){
+void GPU::setStencilState(bool test, bool write){
 	if(_state.stencilTest != test){
 		_state.stencilTest = test;
 		(test ? glEnable : glDisable)(GL_STENCIL_TEST);
@@ -1097,7 +1097,7 @@ void GLUtilities::setStencilState(bool test, bool write){
 	}
 }
 
-void GLUtilities::setStencilState(bool test, TestFunction function, StencilOp fail, StencilOp pass, StencilOp depthFail, uchar value){
+void GPU::setStencilState(bool test, TestFunction function, StencilOp fail, StencilOp pass, StencilOp depthFail, uchar value){
 
 	if(_state.stencilTest != test){
 		_state.stencilTest = test;
@@ -1144,7 +1144,7 @@ void GLUtilities::setStencilState(bool test, TestFunction function, StencilOp fa
 	}
 }
 
-void GLUtilities::setBlendState(bool test) {
+void GPU::setBlendState(bool test) {
 	if(_state.blend != test){
 		_state.blend = test;
 		(test ? glEnable : glDisable)(GL_BLEND);
@@ -1152,7 +1152,7 @@ void GLUtilities::setBlendState(bool test) {
 	}
 }
 
-void GLUtilities::setBlendState(bool test, BlendEquation equation, BlendFunction src, BlendFunction dst) {
+void GPU::setBlendState(bool test, BlendEquation equation, BlendFunction src, BlendFunction dst) {
 
 	if(_state.blend != test){
 		_state.blend = test;
@@ -1193,7 +1193,7 @@ void GLUtilities::setBlendState(bool test, BlendEquation equation, BlendFunction
 
 }
 
-void GLUtilities::setCullState(bool cull) {
+void GPU::setCullState(bool cull) {
 	if(_state.cullFace != cull){
 		_state.cullFace = cull;
 		(cull ? glEnable : glDisable)(GL_CULL_FACE);
@@ -1201,7 +1201,7 @@ void GLUtilities::setCullState(bool cull) {
 	}
 }
 
-void GLUtilities::setCullState(bool cull, Faces culledFaces) {
+void GPU::setCullState(bool cull, Faces culledFaces) {
 	if(_state.cullFace != cull){
 		_state.cullFace = cull;
 		(cull ? glEnable : glDisable)(GL_CULL_FACE);
@@ -1220,7 +1220,7 @@ void GLUtilities::setCullState(bool cull, Faces culledFaces) {
 	}
 }
 
-void GLUtilities::setPolygonState(PolygonMode mode) {
+void GPU::setPolygonState(PolygonMode mode) {
 	
 	static const std::map<PolygonMode, GLenum> modes = {
 		{PolygonMode::FILL, GL_FILL},
@@ -1234,7 +1234,7 @@ void GLUtilities::setPolygonState(PolygonMode mode) {
 	}
 }
 
-void GLUtilities::setColorState(bool writeRed, bool writeGreen, bool writeBlue, bool writeAlpha){
+void GPU::setColorState(bool writeRed, bool writeGreen, bool writeBlue, bool writeAlpha){
 	if(_state.colorWriteMask.r != writeRed || _state.colorWriteMask.g != writeGreen || _state.colorWriteMask.b != writeBlue || _state.colorWriteMask.a != writeAlpha){
 		_state.colorWriteMask.r = writeRed;
 		_state.colorWriteMask.g = writeGreen;
@@ -1245,7 +1245,7 @@ void GLUtilities::setColorState(bool writeRed, bool writeGreen, bool writeBlue, 
 	}
 
 }
-void GLUtilities::setSRGBState(bool convert){
+void GPU::setSRGBState(bool convert){
 	if(_state.framebufferSRGB != convert){
 		_state.framebufferSRGB = convert;
 		(convert ? glEnable : glDisable)(GL_FRAMEBUFFER_SRGB);
@@ -1253,14 +1253,14 @@ void GLUtilities::setSRGBState(bool convert){
 	}
 }
 
-void GLUtilities::blitDepth(const Framebuffer & src, const Framebuffer & dst) {
+void GPU::blitDepth(const Framebuffer & src, const Framebuffer & dst) {
 	src.bind(Framebuffer::Mode::READ);
 	dst.bind(Framebuffer::Mode::WRITE);
 	glBlitFramebuffer(0, 0, src.width(), src.height(), 0, 0, dst.width(), dst.height(), GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 	_metrics.clearAndBlits += 1;
 }
 
-void GLUtilities::blit(const Framebuffer & src, const Framebuffer & dst, Filter filter) {
+void GPU::blit(const Framebuffer & src, const Framebuffer & dst, Filter filter) {
 	src.bind(Framebuffer::Mode::READ);
 	dst.bind(Framebuffer::Mode::WRITE);
 	const GLenum filterGL = filter == Filter::LINEAR ? GL_LINEAR : GL_NEAREST;
@@ -1268,11 +1268,11 @@ void GLUtilities::blit(const Framebuffer & src, const Framebuffer & dst, Filter 
 	_metrics.clearAndBlits += 1;
 }
 
-void GLUtilities::blit(const Framebuffer & src, const Framebuffer & dst, size_t lSrc, size_t lDst, Filter filter) {
-	GLUtilities::blit(src, dst, lSrc, lDst, 0, 0, filter);
+void GPU::blit(const Framebuffer & src, const Framebuffer & dst, size_t lSrc, size_t lDst, Filter filter) {
+	GPU::blit(src, dst, lSrc, lDst, 0, 0, filter);
 }
 
-void GLUtilities::blit(const Framebuffer & src, const Framebuffer & dst, size_t lSrc, size_t lDst, size_t mipSrc, size_t mipDst, Filter filter) {
+void GPU::blit(const Framebuffer & src, const Framebuffer & dst, size_t lSrc, size_t lDst, size_t mipSrc, size_t mipDst, Filter filter) {
 	src.bind(lSrc, mipSrc, Framebuffer::Mode::READ);
 	dst.bind(lDst, mipDst, Framebuffer::Mode::WRITE);
 	const GLenum filterGL = filter == Filter::LINEAR ? GL_LINEAR : GL_NEAREST;
@@ -1280,7 +1280,7 @@ void GLUtilities::blit(const Framebuffer & src, const Framebuffer & dst, size_t 
 	_metrics.clearAndBlits += 1;
 }
 
-void GLUtilities::blit(const Texture & src, Texture & dst, Filter filter) {
+void GPU::blit(const Texture & src, Texture & dst, Filter filter) {
 	// Prepare the destination.
 	dst.width  = src.width;
 	dst.height = src.height;
@@ -1288,12 +1288,12 @@ void GLUtilities::blit(const Texture & src, Texture & dst, Filter filter) {
 	dst.levels = 1;
 	dst.shape  = src.shape;
 	if(src.levels != 1) {
-		Log::Warning() << Log::OpenGL << "Only the first mipmap level will be used." << std::endl;
+		Log::Warning() << Log::GPU << "Only the first mipmap level will be used." << std::endl;
 	}
 	if(!src.images.empty()) {
-		Log::Warning() << Log::OpenGL << "CPU data won't be copied." << std::endl;
+		Log::Warning() << Log::GPU << "CPU data won't be copied." << std::endl;
 	}
-	GLUtilities::setupTexture(dst, src.gpu->descriptor());
+	GPU::setupTexture(dst, src.gpu->descriptor());
 
 	// Create two framebuffers.
 	GLuint srcFb, dstFb;
@@ -1311,7 +1311,7 @@ void GLUtilities::blit(const Texture & src, Texture & dst, Filter filter) {
 		for(size_t i = 0; i < 6; ++i) {
 			glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), src.gpu->id, 0);
 			glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), dst.gpu->id, 0);
-			GLUtilities::checkFramebufferStatus();
+			GPU::checkFramebufferStatus();
 			glBlitFramebuffer(0, 0, src.width, src.height, 0, 0, dst.width, dst.height, GL_COLOR_BUFFER_BIT, filterGL);
 			_metrics.clearAndBlits += 1;
 		}
@@ -1325,10 +1325,10 @@ void GLUtilities::blit(const Texture & src, Texture & dst, Filter filter) {
 			glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, dst.gpu->target, dst.gpu->id, 0);
 
 		} else {
-			Log::Error() << Log::OpenGL << "Unsupported texture shape for blitting." << std::endl;
+			Log::Error() << Log::GPU << "Unsupported texture shape for blitting." << std::endl;
 			return;
 		}
-		GLUtilities::checkFramebufferStatus();
+		GPU::checkFramebufferStatus();
 		glBlitFramebuffer(0, 0, src.width, src.height, 0, 0, dst.width, dst.height, GL_COLOR_BUFFER_BIT, filterGL);
 		_metrics.clearAndBlits += 1;
 	}
@@ -1340,13 +1340,13 @@ void GLUtilities::blit(const Texture & src, Texture & dst, Filter filter) {
 	glDeleteFramebuffers(1, &dstFb);
 }
 
-void GLUtilities::blit(const Texture & src, Framebuffer & dst, Filter filter) {
+void GPU::blit(const Texture & src, Framebuffer & dst, Filter filter) {
 	// Prepare the destination.
 	if(src.levels != 1) {
-		Log::Warning() << Log::OpenGL << "Only the first mipmap level will be used." << std::endl;
+		Log::Warning() << Log::GPU << "Only the first mipmap level will be used." << std::endl;
 	}
 	if(src.shape != dst.shape()){
-		Log::Error() << Log::OpenGL << "The texture and framebuffer don't have the same shape." << std::endl;
+		Log::Error() << Log::GPU << "The texture and framebuffer don't have the same shape." << std::endl;
 		return;
 	}
 
@@ -1362,7 +1362,7 @@ void GLUtilities::blit(const Texture & src, Framebuffer & dst, Filter filter) {
 	if(src.shape == TextureShape::Cube) {
 		for(size_t i = 0; i < 6; ++i) {
 			glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), src.gpu->id, 0);
-			GLUtilities::checkFramebufferStatus();
+			GPU::checkFramebufferStatus();
 			dst.bind(i, 0, Framebuffer::Mode::WRITE);
 			glBlitFramebuffer(0, 0, src.width, src.height, 0, 0, dst.width(), dst.height(), GL_COLOR_BUFFER_BIT, filterGL);
 			_metrics.clearAndBlits += 1;
@@ -1375,10 +1375,10 @@ void GLUtilities::blit(const Texture & src, Framebuffer & dst, Filter filter) {
 			glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, src.gpu->target, src.gpu->id, 0);
 
 		} else {
-			Log::Error() << Log::OpenGL << "Unsupported texture shape for blitting." << std::endl;
+			Log::Error() << Log::GPU << "Unsupported texture shape for blitting." << std::endl;
 			return;
 		}
-		GLUtilities::checkFramebufferStatus();
+		GPU::checkFramebufferStatus();
 		dst.bind(0, 0, Framebuffer::Mode::WRITE);
 		glBlitFramebuffer(0, 0, src.width, src.height, 0, 0, dst.width(), dst.height(), GL_COLOR_BUFFER_BIT, filterGL);
 		_metrics.clearAndBlits += 1;
@@ -1389,13 +1389,13 @@ void GLUtilities::blit(const Texture & src, Framebuffer & dst, Filter filter) {
 	glDeleteFramebuffers(1, &srcFb);
 }
 
-void GLUtilities::savePixels(GLenum type, GLenum format, unsigned int width, unsigned int height, unsigned int components, const std::string & path, bool flip, bool ignoreAlpha) {
+void GPU::savePixels(GLenum type, GLenum format, unsigned int width, unsigned int height, unsigned int components, const std::string & path, bool flip, bool ignoreAlpha) {
 
-	GLUtilities::sync();
+	GPU::sync();
 
 	const bool hdr = type == GL_FLOAT;
 
-	Log::Info() << Log::OpenGL << "Saving framebuffer to file " << path << (hdr ? ".exr" : ".png") << "... " << std::flush;
+	Log::Info() << Log::GPU << "Saving framebuffer to file " << path << (hdr ? ".exr" : ".png") << "... " << std::flush;
 	int ret;
 	Image image(width, height, components);
 
@@ -1432,7 +1432,7 @@ void GLUtilities::savePixels(GLenum type, GLenum format, unsigned int width, uns
 	}
 }
 
-void GLUtilities::getState(GPUState& state) {
+void GPU::getState(GPUState& state) {
 	
 	// Boolean flags.
 	state.blend = glIsEnabled(GL_BLEND);
@@ -1586,18 +1586,18 @@ void GLUtilities::getState(GPUState& state) {
 }
 
 
-const GLUtilities::Metrics & GLUtilities::getMetrics(){
+const GPU::Metrics & GPU::getMetrics(){
 	return _metricsPrevious;
 }
 
-void GLUtilities::restoreTexture(TextureShape shape){
-	const GLenum target = GLUtilities::targetFromShape(shape);
+void GPU::restoreTexture(TextureShape shape){
+	const GLenum target = GPU::targetFromShape(shape);
 	const int slot = _state.activeTexture - int(GL_TEXTURE0);
 	glBindTexture(target, _state.textures[slot][target]);
 	_metrics.textureBindings += 1;
 }
 
-void GLUtilities::deleted(GPUTexture & tex){
+void GPU::deleted(GPUTexture & tex){
 	// If any active slot is using it, set it to 0.
 	for(auto& bind : _state.textures){
 		if(bind[tex.target] == tex.id){
@@ -1606,7 +1606,7 @@ void GLUtilities::deleted(GPUTexture & tex){
 	}
 }
 
-void GLUtilities::deleted(Framebuffer & framebuffer){
+void GPU::deleted(Framebuffer & framebuffer){
 	if(_state.drawFramebuffer == framebuffer._id){
 		_state.drawFramebuffer = 0;
 	}
@@ -1615,13 +1615,13 @@ void GLUtilities::deleted(Framebuffer & framebuffer){
 	}
 }
 
-void GLUtilities::deleted(GPUMesh & mesh){
+void GPU::deleted(GPUMesh & mesh){
 	if(_state.vertexArray == mesh.id){
 		_state.vertexArray = 0;
 	}
 }
 
-GPUState GLUtilities::_state;
-GLUtilities::Metrics GLUtilities::_metrics;
-GLUtilities::Metrics GLUtilities::_metricsPrevious;
-GLuint GLUtilities::_vao = 0;
+GPUState GPU::_state;
+GPU::Metrics GPU::_metrics;
+GPU::Metrics GPU::_metricsPrevious;
+GLuint GPU::_vao = 0;

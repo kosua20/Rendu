@@ -129,7 +129,7 @@
  
  \defgroup System System
  \brief Interactions with the operating system.
- \details General purpose helpers to process text, generate random numbers, perform logging and (de)serialization, parse command-line arguments, create a system window backed by an OpenGL context,  create directories, present a file picker...
+ \details General purpose helpers to process text, generate random numbers, perform logging and (de)serialization, parse command-line arguments, create a system window backed by a GPU context,  create directories, present a file picker...
  
  
  \defgroup Applications Applications

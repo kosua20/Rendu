@@ -1,7 +1,7 @@
 #include "resources/Mesh.hpp"
 #include "renderers/DebugViewer.hpp"
 #include "graphics/GPUObjects.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 #include "system/TextUtilities.hpp"
 
 #include <sstream>
@@ -187,7 +187,7 @@ Mesh::Mesh(std::istream & in, Mesh::Load mode, const std::string & name) {
 }
 
 void Mesh::upload() {
-	GLUtilities::setupMesh(*this);
+	GPU::setupMesh(*this);
 	DebugViewer::trackDefault(this);
 }
 

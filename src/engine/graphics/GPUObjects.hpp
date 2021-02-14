@@ -392,7 +392,7 @@ public:
 	GLenum typedFormat;			 ///< Detailed format.
 	GLenum format;				 ///< General format.
 	GLenum type;				 ///< Data type.
-	GLuint id = 0; ///< The OpenGL texture ID.
+	GLuint id = 0; ///< The GPU texture ID.
 	
 private:
 	Descriptor _descriptor; ///< Layout used.
@@ -407,7 +407,7 @@ private:
 class GPUBuffer {
 public:
 
-	GLuint id = 0; ///< The buffer OpenGL ID.
+	GLuint id = 0; ///< The buffer GPU ID.
 	GLenum target; ///< The buffer type.
 	GLenum usage; ///< The buffer usage.
 
@@ -449,7 +449,7 @@ public:
 	std::unique_ptr<GPUBuffer> indexBuffer; ///< Index element buffer.
 
 	GLsizei count = 0; ///< The number of vertices (cached).
-	GLuint id	= 0; ///< The vertex buffer objects OpenGL ID.
+	GLuint id	= 0; ///< The vertex buffer objects GPU ID.
 	
 	/** Clean internal GPU buffers. */
 	void clean();
@@ -510,8 +510,8 @@ public:
 private:
 
 	static const size_t bufferCount = 3; ///< Number of internal buffered queries.
-	GLenum _internalType; ///< OpenGL query type.
-	std::array<GLuint, bufferCount> _ids; ///< OpenGL query object IDs.
+	GLenum _internalType; ///< GPU query type.
+	std::array<GLuint, bufferCount> _ids; ///< GPU query object IDs.
 	size_t _current = 0; ///< Current query in use.
 	bool _running = false; ///< Is a measurement currently taking place.
 

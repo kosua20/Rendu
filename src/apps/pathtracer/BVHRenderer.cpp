@@ -1,7 +1,7 @@
 #include "BVHRenderer.hpp"
 #include "input/Input.hpp"
 #include "system/System.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 #include "graphics/ScreenQuad.hpp"
 #include "resources/Texture.hpp"
 
@@ -20,7 +20,7 @@ void BVHRenderer::setScene(const std::shared_ptr<Scene> & scene, const Raycaster
 	// Build the BVH mesh.
 	_visuHelper->getAllLevels(_bvhLevels);
 	for(Mesh & level : _bvhLevels) {
-		// Setup the OpenGL mesh, don't keep the CPU mesh.
+		// Setup the GPU mesh, don't keep the CPU mesh.
 		level.upload();
 		level.clearGeometry();
 	}
@@ -31,13 +31,13 @@ void BVHRenderer::setScene(const std::shared_ptr<Scene> & scene, const Raycaster
 void BVHRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_t layer) {
 
 	// Draw the scene.
-	GLUtilities::setDepthState(true, TestFunction::LESS, true);
-	GLUtilities::setCullState(false);
-	GLUtilities::setBlendState(false);
+	GPU::setDepthState(true, TestFunction::LESS, true);
+	GPU::setCullState(false);
+	GPU::setBlendState(false);
 
 	framebuffer.bind(layer);
 	framebuffer.setViewport();
-	GLUtilities::clearColorAndDepth(glm::vec4(0.0f), 1.0f);
+	GPU::clearColorAndDepth(glm::vec4(0.0f), 1.0f);
 
 	const glm::mat4 & view = camera.view();
 	const glm::mat4 & proj = camera.projection();
@@ -50,31 +50,31 @@ void BVHRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_t 
 		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(object.model())));
 		_objectProgram->uniform("mvp", MVP);
 		_objectProgram->uniform("normalMatrix", normalMatrix);
-		GLUtilities::drawMesh(*object.mesh());
+		GPU::drawMesh(*object.mesh());
 	}
 
 	// Debug wireframe visualisation.
-	GLUtilities::setPolygonState(PolygonMode::LINE);
+	GPU::setPolygonState(PolygonMode::LINE);
 	_bvhProgram->use();
 	_bvhProgram->uniform("mvp", VP);
 	// If there is a ray mesh, show it.
 	if(_rayVis.gpu && _rayVis.gpu->count > 0) {
-		GLUtilities::drawMesh(_rayVis);
+		GPU::drawMesh(_rayVis);
 		if(_showBVH) {
 			for(int lid = _bvhRange.x; lid <= _bvhRange.y; ++lid) {
 				if(lid >= int(_rayLevels.size())) {
 					break;
 				}
-				GLUtilities::drawMesh(_rayLevels[lid]);
+				GPU::drawMesh(_rayLevels[lid]);
 			}
 		}
 	} else if(_showBVH) {
 		for(int lid = _bvhRange.x; lid <= _bvhRange.y; ++lid) {
-			GLUtilities::drawMesh(_bvhLevels[lid]);
+			GPU::drawMesh(_bvhLevels[lid]);
 		}
 	}
 
-	GLUtilities::setPolygonState(PolygonMode::FILL);
+	GPU::setPolygonState(PolygonMode::FILL);
 	
 }
 
@@ -94,7 +94,7 @@ void BVHRenderer::castRay(const glm::vec3 & position, const glm::vec3 & directio
 	const Raycaster::Hit hit = _visuHelper->getRayLevels(position, direction, _rayLevels);
 	// Level meshes.
 	for(Mesh & level : _rayLevels) {
-		// Setup the OpenGL mesh, don't keep the CPU mesh.
+		// Setup the GPU mesh, don't keep the CPU mesh.
 		level.upload();
 		level.clearGeometry();
 	}

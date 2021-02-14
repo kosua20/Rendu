@@ -1,5 +1,5 @@
 #include "ForwardLight.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 
 const size_t ForwardLight::_maxLightCount = 50;
 

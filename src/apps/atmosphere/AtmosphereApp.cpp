@@ -4,7 +4,7 @@
 #include "resources/ResourcesManager.hpp"
 #include "graphics/ScreenQuad.hpp"
 #include "graphics/Framebuffer.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 #include "system/Window.hpp"
 #include "system/System.hpp"
 #include "generation/Random.hpp"
@@ -36,13 +36,13 @@ void AtmosphereApp::draw() {
 	const glm::mat4 clipToCam  = glm::inverse(_userCamera.projection());
 
 	// Draw the atmosphere.
-	GLUtilities::setDepthState(false);
-	GLUtilities::setBlendState(false);
-	GLUtilities::setCullState(false);
+	GPU::setDepthState(false);
+	GPU::setBlendState(false);
+	GPU::setCullState(false);
 	
 	_atmosphereBuffer->bind();
 	_atmosphereBuffer->setViewport();
-	GLUtilities::clearColor({0.0f, 0.0f, 0.0f, 1.0f});
+	GPU::clearColor({0.0f, 0.0f, 0.0f, 1.0f});
 
 	_atmosphere->use();
 	const glm::mat4 camToWorldNoT = glm::mat4(glm::mat3(camToWorld));
@@ -67,7 +67,7 @@ void AtmosphereApp::draw() {
 	ScreenQuad::draw(_scattering);
 
 	// Tonemapping and final screen.
-	GLUtilities::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
+	GPU::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 	Framebuffer::backbuffer()->bind();
 	_tonemap->use();
 	ScreenQuad::draw(_atmosphereBuffer->texture());

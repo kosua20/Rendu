@@ -1,6 +1,6 @@
 #include "resources/Texture.hpp"
 #include "graphics/GPUObjects.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 #include "renderers/DebugViewer.hpp"
 
 Texture::Texture(const std::string & name) : _name(name) {
@@ -9,14 +9,14 @@ Texture::Texture(const std::string & name) : _name(name) {
 void Texture::upload(const Descriptor & layout, bool updateMipmaps) {
 
 	// Create texture.
-	GLUtilities::setupTexture(*this, layout);
-	GLUtilities::uploadTexture(*this);
+	GPU::setupTexture(*this, layout);
+	GPU::uploadTexture(*this);
 
 	// Generate mipmaps pyramid automatically.
 	if(updateMipmaps) {
 		// Compute the last mip level.
 		levels = getMaxMipLevel()+1;
-		GLUtilities::generateMipMaps(*this);
+		GPU::generateMipMaps(*this);
 	}
 
 	// Track in debug mode.

@@ -39,7 +39,7 @@ public:
 
 
 	/**
-	 Load, compile and link shaders into an OpenGL program.
+	 Load, compile and link shaders into a GPU program.
 	 \param name the program name for logging
 	 \param vertexContent the content of the vertex shader
 	 \param fragmentContent the content of the fragment shader
@@ -273,10 +273,10 @@ private:
 
 	void updateUniformMetric() const; ///< Update internal metrics.
 	
-	GLuint _id;								 ///< The OpenGL program ID.
+	GLuint _id;								 ///< The GPU program ID.
 	std::string _name;				 		 ///< The shader name
 	std::map<std::string, GLint> _uniforms;  ///< Internal list of automatically registered uniforms and their locations. We keep this separate to avoid exposing GL internal types.
 	std::vector<Uniform> _uniformInfos;  ///< Additional uniforms info.
 
-	friend class GLUtilities; ///< Utilities will need to access GPU handle.
+	friend class GPU; ///< Utilities will need to access GPU handle.
 };

@@ -1,5 +1,5 @@
 #include "StenciledApp.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 #include "input/Input.hpp"
 
 StenciledApp::StenciledApp(RenderingConfig & config) :
@@ -48,12 +48,12 @@ void StenciledApp::setScene(const std::shared_ptr<Scene> & scene) {
 
 void StenciledApp::draw() {
 	if(!_scenes[_currentScene]) {
-		GLUtilities::clearColorAndDepth({1.0f, 1.0f, 1.0f, 1.0f}, 1.0f);
+		GPU::clearColorAndDepth({1.0f, 1.0f, 1.0f, 1.0f}, 1.0f);
 		return;
 	}
 	_renderer->draw(_userCamera, *_finalRender);
 	
-	GLUtilities::blit(*_finalRender, *Framebuffer::backbuffer(), Filter::LINEAR);
+	GPU::blit(*_finalRender, *Framebuffer::backbuffer(), Filter::LINEAR);
 
 }
 

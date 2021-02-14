@@ -1,5 +1,5 @@
 #include "SceneEditor.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 #include "graphics/ScreenQuad.hpp"
 
 SceneEditor::SceneEditor(RenderingConfig & config) : CameraApp(config) {
@@ -48,7 +48,7 @@ void SceneEditor::draw() {
 	// If no scene, just clear.
 	if(!_scenes[_currentScene]) {
 		Framebuffer::backbuffer()->bind();
-		GLUtilities::clearColorAndDepth({0.2f, 0.2f, 0.2f, 1.0f}, 1.0f);
+		GPU::clearColorAndDepth({0.2f, 0.2f, 0.2f, 1.0f}, 1.0f);
 		return;
 	}
 
@@ -56,7 +56,7 @@ void SceneEditor::draw() {
 
 	// We now render a full screen quad in the default framebuffer, using sRGB space.
 	Framebuffer::backbuffer()->bind();
-	GLUtilities::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
+	GPU::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 	_passthrough->use();
 	_passthrough->uniform("flip", 0);
 	ScreenQuad::draw(_sceneFramebuffer->texture());

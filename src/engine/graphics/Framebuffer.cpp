@@ -1,6 +1,6 @@
 #include "graphics/Framebuffer.hpp"
 #include "graphics/GPUObjects.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 #include "renderers/DebugViewer.hpp"
 
 Framebuffer::Framebuffer(uint width, uint height, const Descriptor & descriptor, bool depthBuffer, const std::string & name) :
@@ -17,7 +17,7 @@ Framebuffer::Framebuffer(TextureShape shape, uint width, uint height, uint depth
 	// Check that the shape is supported.
 	_shape = shape;
 	if(_shape != TextureShape::D2 && _shape != TextureShape::Array2D && _shape != TextureShape::Cube && _shape != TextureShape::ArrayCube){
-		Log::Error() << Log::OpenGL << "Unsupported framebuffer shape." << std::endl;
+		Log::Error() << Log::GPU << "Unsupported framebuffer shape." << std::endl;
 		return;
 	}
 	if(shape == TextureShape::D2){
@@ -30,11 +30,11 @@ Framebuffer::Framebuffer(TextureShape shape, uint width, uint height, uint depth
 		_depth = depth;
 	}
 	_depthUse = Depth::NONE;
-	_target = GLUtilities::targetFromShape(_shape);
+	_target = GPU::targetFromShape(_shape);
 	// Create a framebuffer.
 	glGenFramebuffers(1, &_id);
-	GLUtilities::bindFramebuffer(*this, Mode::WRITE);
-	GLUtilities::bindFramebuffer(*this, Mode::READ);
+	GPU::bindFramebuffer(*this, Mode::WRITE);
+	GPU::bindFramebuffer(*this, Mode::READ);
 
 	uint cid = 0;
 	for(const auto & descriptor : descriptors) {
@@ -51,13 +51,13 @@ Framebuffer::Framebuffer(TextureShape shape, uint width, uint height, uint depth
 			_idDepth.levels = mips;
 			// For now we don't support layered rendering, depth is always a TEXTURE_2D.
 			_idDepth.shape  = TextureShape::D2;
-			GLUtilities::setupTexture(_idDepth, descriptor);
+			GPU::setupTexture(_idDepth, descriptor);
 
 			// Link the texture to the depth attachment of the framebuffer.
 			glBindTexture(GL_TEXTURE_2D, _idDepth.gpu->id);
-			GLUtilities::_metrics.textureBindings += 1;
+			GPU::_metrics.textureBindings += 1;
 			glFramebufferTexture2D(GL_FRAMEBUFFER, (_hasStencil ? GL_DEPTH_STENCIL_ATTACHMENT : GL_DEPTH_ATTACHMENT), GL_TEXTURE_2D, _idDepth.gpu->id, 0);
-			GLUtilities::restoreTexture(_idDepth.shape);
+			GPU::restoreTexture(_idDepth.shape);
 
 		} else {
 			_idColors.emplace_back("Color " + std::to_string(cid++));
@@ -67,11 +67,11 @@ Framebuffer::Framebuffer(TextureShape shape, uint width, uint height, uint depth
 			tex.depth	  = _depth;
 			tex.levels	  = mips;
 			tex.shape	  = shape;
-			GLUtilities::setupTexture(tex, descriptor);
+			GPU::setupTexture(tex, descriptor);
 
 			// Link the texture to the color attachment (ie output) of the framebuffer.
 			glBindTexture(_target, tex.gpu->id); // might not be needed.
-			GLUtilities::_metrics.textureBindings += 1;
+			GPU::_metrics.textureBindings += 1;
 			const GLuint slot = GLuint(int(_idColors.size()) - 1);
 			// Two cases: 2D texture or array (either 2D array, cubemap, or cubemap array).
 			if(_shape == TextureShape::D2){
@@ -81,7 +81,7 @@ Framebuffer::Framebuffer(TextureShape shape, uint width, uint height, uint depth
 			} else {
 				glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + slot, tex.gpu->id, 0, 0);
 			}
-			GLUtilities::restoreTexture(tex.shape);
+			GPU::restoreTexture(tex.shape);
 			checkGLError();
 		}
 	}
@@ -95,7 +95,7 @@ Framebuffer::Framebuffer(TextureShape shape, uint width, uint height, uint depth
 		// Create the renderbuffer (depth buffer).
 		glGenRenderbuffers(1, &_idDepth.gpu->id);
 		glBindRenderbuffer(GL_RENDERBUFFER, _idDepth.gpu->id);
-		GLUtilities::_metrics.textureBindings += 1;
+		GPU::_metrics.textureBindings += 1;
 		// Setup the depth buffer storage.
 		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32F, GLsizei(_width), GLsizei(_height));
 		// Link the renderbuffer to the framebuffer.
@@ -108,33 +108,33 @@ Framebuffer::Framebuffer(TextureShape shape, uint width, uint height, uint depth
 		drawBuffers[i] = GL_COLOR_ATTACHMENT0 + GLuint(i);
 	}
 	glDrawBuffers(GLsizei(drawBuffers.size()), &drawBuffers[0]);
-	GLUtilities::checkFramebufferStatus();
+	GPU::checkFramebufferStatus();
 	checkGLError();
 
-	GLUtilities::bindFramebuffer(*Framebuffer::backbuffer(), Mode::WRITE);
-	GLUtilities::bindFramebuffer(*Framebuffer::backbuffer(), Mode::READ);
+	GPU::bindFramebuffer(*Framebuffer::backbuffer(), Mode::WRITE);
+	GPU::bindFramebuffer(*Framebuffer::backbuffer(), Mode::READ);
 
 	DebugViewer::trackDefault(this);
 }
 
 void Framebuffer::bind() const {
-	GLUtilities::bindFramebuffer(*this);
+	GPU::bindFramebuffer(*this);
 }
 
 void Framebuffer::bind(Mode mode) const {
-	GLUtilities::bindFramebuffer(*this, mode);
+	GPU::bindFramebuffer(*this, mode);
 }
 
 void Framebuffer::bind(size_t layer, size_t mip, Mode mode) const {
 
-	GLUtilities::bindFramebuffer(*this, mode);
+	GPU::bindFramebuffer(*this, mode);
 
 	const GLint mid = GLint(mip);
 	const GLenum target = mode == Mode::READ ? GL_READ_FRAMEBUFFER : GL_DRAW_FRAMEBUFFER;
 	// Bind the proper slice for each color attachment.
 	for(uint cid = 0; cid < _idColors.size(); ++cid){
 		glBindTexture(_target, _idColors[cid].gpu->id);
-		GLUtilities::_metrics.textureBindings += 1;
+		GPU::_metrics.textureBindings += 1;
 		const GLenum slot = GL_COLOR_ATTACHMENT0 + GLuint(cid);
 		const GLuint id = _idColors[cid].gpu->id;
 		if(_shape == TextureShape::D2){
@@ -144,19 +144,19 @@ void Framebuffer::bind(size_t layer, size_t mip, Mode mode) const {
 		} else {
 			glFramebufferTextureLayer(target, slot, id, mid, GLint(layer));
 		}
-		GLUtilities::restoreTexture(_idColors[cid].shape);
+		GPU::restoreTexture(_idColors[cid].shape);
 	}
 
 	if(_depthUse == Depth::TEXTURE){
 		glBindTexture(GL_TEXTURE_2D, _idDepth.gpu->id);
-		GLUtilities::_metrics.textureBindings += 1;
+		GPU::_metrics.textureBindings += 1;
 		glFramebufferTexture2D(target, (_hasStencil ? GL_DEPTH_STENCIL_ATTACHMENT : GL_DEPTH_ATTACHMENT), GL_TEXTURE_2D, _idDepth.gpu->id, mid);
-		GLUtilities::restoreTexture(_idDepth.shape);
+		GPU::restoreTexture(_idDepth.shape);
 	}
 }
 
 void Framebuffer::setViewport() const {
-	GLUtilities::setViewport(0, 0, int(_width), int(_height));
+	GPU::setViewport(0, 0, int(_width), int(_height));
 }
 
 void Framebuffer::resize(uint width, uint height) {
@@ -170,19 +170,19 @@ void Framebuffer::resize(uint width, uint height) {
 		glBindRenderbuffer(GL_RENDERBUFFER, _idDepth.gpu->id);
 		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32F, GLsizei(_width), GLsizei(_height));
 		glBindRenderbuffer(GL_RENDERBUFFER, 0);
-		GLUtilities::_metrics.textureBindings += 2;
+		GPU::_metrics.textureBindings += 2;
 
 	} else if(_depthUse == Depth::TEXTURE) {
 		_idDepth.width  = _width;
 		_idDepth.height = _height;
-		GLUtilities::allocateTexture(_idDepth);
+		GPU::allocateTexture(_idDepth);
 	}
 
 	// Resize the textures.
 	for(auto & idColor : _idColors) {
 		idColor.width  = _width;
 		idColor.height = _height;
-		GLUtilities::allocateTexture(idColor);
+		GPU::allocateTexture(idColor);
 	}
 }
 
@@ -195,7 +195,7 @@ void Framebuffer::clear(const glm::vec4 & color, float depth){
 	for(uint mid = 0; mid < _idDepth.levels; ++mid){
 		bind(0, mid, Mode::WRITE);
 		glClearBufferfv(GL_DEPTH, 0, &depth);
-		GLUtilities::_metrics.clearAndBlits += 1;
+		GPU::_metrics.clearAndBlits += 1;
 	}
 
 	for(uint mid = 0; mid < _idColors[0].levels; ++mid){
@@ -203,7 +203,7 @@ void Framebuffer::clear(const glm::vec4 & color, float depth){
 			bind(lid, mid, Mode::WRITE);
 			for(uint cid = 0; cid < _idColors.size(); ++cid){
 				glClearBufferfv(GL_COLOR, GLint(cid), &color[0]);
-				GLUtilities::_metrics.clearAndBlits += 1;
+				GPU::_metrics.clearAndBlits += 1;
 			}
 		}
 	}
@@ -214,7 +214,7 @@ glm::vec3 Framebuffer::read(const glm::ivec2 & pos) const {
 	glm::vec3 rgb(0.0f);
 	bind(0, 0, Mode::READ);
 	glReadPixels(pos.x, pos.y, 1, 1, GL_RGB, GL_FLOAT, &rgb[0]);
-	GLUtilities::_metrics.downloads += 1;
+	GPU::_metrics.downloads += 1;
 	return rgb;
 }
 
@@ -235,7 +235,7 @@ Framebuffer::~Framebuffer() {
 	}
 	_idColors.clear();
 	glDeleteFramebuffers(1, &_id);
-	GLUtilities::deleted(*this);
+	GPU::deleted(*this);
 	_id = 0;
 }
 

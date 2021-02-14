@@ -1,6 +1,6 @@
 #include "AmbientQuad.hpp"
 #include "resources/ResourcesManager.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 
 AmbientQuad::AmbientQuad(const Texture * texAlbedo, const Texture * texNormals, const Texture * texEffects, const Texture * texDepth, const Texture * texSSAO) {
 
@@ -24,9 +24,9 @@ AmbientQuad::AmbientQuad(const Texture * texAlbedo, const Texture * texNormals, 
 
 void AmbientQuad::draw(const glm::mat4 & viewMatrix, const glm::mat4 & projectionMatrix, const LightProbe & environment) {
 
-	GLUtilities::setDepthState(false);
-	GLUtilities::setCullState(true, Faces::BACK);
-	GLUtilities::setBlendState(false);
+	GPU::setDepthState(false);
+	GPU::setCullState(true, Faces::BACK);
+	GPU::setBlendState(false);
 
 	const glm::mat4 invView = glm::inverse(viewMatrix);
 	// Store the four variable coefficients of the projection matrix.
@@ -41,7 +41,7 @@ void AmbientQuad::draw(const glm::mat4 & viewMatrix, const glm::mat4 & projectio
 	_program->uniform("cubemapCenter", environment.center());
 	_program->uniform("cubemapExtent", environment.extent());
 	_program->uniform("cubemapCosSin", environment.rotationCosSin());
-	GLUtilities::bindBuffer(*environment.shCoeffs(), 0);
+	GPU::bindBuffer(*environment.shCoeffs(), 0);
 	
 	ScreenQuad::draw(_textures);
 }

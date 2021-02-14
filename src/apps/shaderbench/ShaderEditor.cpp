@@ -1,7 +1,7 @@
 #include "ShaderEditor.hpp"
 #include "input/Input.hpp"
 #include "system/System.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 #include "graphics/ScreenQuad.hpp"
 #include "generation/Random.hpp"
 #include "system/TextUtilities.hpp"
@@ -134,13 +134,13 @@ void ShaderEditor::draw() {
 	mouseState[3] = float(Input::manager().triggered(Input::Mouse::Right));
 
 	// Clear content.
-	GLUtilities::setDepthState(false);
-	GLUtilities::setBlendState(false);
-	GLUtilities::setCullState(true, Faces::BACK);
+	GPU::setDepthState(false);
+	GPU::setBlendState(false);
+	GPU::setCullState(true, Faces::BACK);
 
 	_currFrame->bind();
 	_currFrame->setViewport();
-	GLUtilities::clearColorAndDepth(glm::vec4(0.0f), 1.0f);
+	GPU::clearColorAndDepth(glm::vec4(0.0f), 1.0f);
 	_currProgram->use();
 
 	// Predefined uniforms.
@@ -183,9 +183,9 @@ void ShaderEditor::draw() {
 	}
 
 	// First texture is the prevous frame.
-	GLUtilities::bindTexture(_prevFrame->texture(), 0);
+	GPU::bindTexture(_prevFrame->texture(), 0);
 	for(size_t i = 1; i < _textures.size(); ++i){
-		GLUtilities::bindTexture(_textures[i], i);
+		GPU::bindTexture(_textures[i], i);
 	}
 
 	// Render user shader and time it.
@@ -195,8 +195,8 @@ void ShaderEditor::draw() {
 	
 	// To best mimic other tools, no default gamma correction is applied here.
 	Framebuffer::backbuffer()->bind();
-	GLUtilities::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
-	GLUtilities::clearColor(glm::vec4(0.3f,0.3f,0.3f, 1.0f));
+	GPU::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
+	GPU::clearColor(glm::vec4(0.3f,0.3f,0.3f, 1.0f));
 	// If not in window mode, directly blit to the screne.
 	if(!_windowed){
 		_passthrough->use();
@@ -313,8 +313,8 @@ void ShaderEditor::update() {
 				TextUtilities::splitExtension(outPath);
 				// Create a RGB8 framebuffer to save as png.
 				Framebuffer tmp(_currFrame->width(), _currFrame->height(), {Layout::RGB8, Filter::NEAREST, Wrap::CLAMP}, false, "Temp");
-				GLUtilities::blit(*_currFrame, tmp, Filter::NEAREST);
-				GLUtilities::saveFramebuffer(tmp, outPath, true, true);
+				GPU::blit(*_currFrame, tmp, Filter::NEAREST);
+				GPU::saveFramebuffer(tmp, outPath, true, true);
 			}
 		}
 		ImGui::SameLine();
@@ -575,11 +575,11 @@ std::string ShaderEditor::reload(const std::string & shaderPath, bool syncUnifor
 	// Reload from disk.
 	const std::string vShader = Resources::manager().getStringWithIncludes("shaderbench.vert");
 	std::string fShader = Resources::loadStringFromExternalFile(shaderPath);
-	TextUtilities::replace(fShader, "#version", "#define UNUSED_VERSION_INDICATOR_OPENGL");
+	TextUtilities::replace(fShader, "#version", "#define UNUSED_VERSION_INDICATOR_GPU_SHADER_LANGUAGE");
 	// Before updating the program, try to compile the fragment shader and abort if there is some error.
-	GLUtilities::Bindings binds;
+	GPU::Bindings binds;
 	std::string log;
-	GLUtilities::loadShader(fShader, ShaderType::FRAGMENT, binds, log);
+	GPU::loadShader(fShader, ShaderType::FRAGMENT, binds, log);
 	if(!log.empty()){
 		return log;
 	}

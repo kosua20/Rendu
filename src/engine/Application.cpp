@@ -1,6 +1,6 @@
 #include "Application.hpp"
 #include "input/Input.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 #include "graphics/Framebuffer.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "system/System.hpp"
@@ -40,7 +40,7 @@ void Application::update() {
 	// Perform screenshot capture in the current working directory.
 	if(Input::manager().triggered(Input::Key::O) || (Input::manager().controllerAvailable() && Input::manager().controller()->triggered(Controller::ButtonView))) {
 		const std::string filename = System::timestamp();
-		GLUtilities::saveFramebuffer(*Framebuffer::backbuffer(), "./" + filename, true, true);
+		GPU::saveFramebuffer(*Framebuffer::backbuffer(), "./" + filename, true, true);
 	}
 	// Reload resources.
 	if(Input::manager().triggered(Input::Key::P)) {

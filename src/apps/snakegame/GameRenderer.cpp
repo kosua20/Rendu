@@ -1,6 +1,6 @@
 
 #include "GameRenderer.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 #include "graphics/ScreenQuad.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "Common.hpp"
@@ -11,9 +11,9 @@ GameRenderer::GameRenderer(const glm::vec2 & resolution) : Renderer("Game") {
 
 	// GL options
 
-	GLUtilities::setDepthState(true, TestFunction::LESS, true);
-	GLUtilities::setCullState(true, Faces::BACK);
-	GLUtilities::setBlendState(false, BlendEquation::ADD, BlendFunction::SRC_ALPHA, BlendFunction::ONE_MINUS_SRC_ALPHA);
+	GPU::setDepthState(true, TestFunction::LESS, true);
+	GPU::setCullState(true, Faces::BACK);
+	GPU::setBlendState(false, BlendEquation::ADD, BlendFunction::SRC_ALPHA, BlendFunction::ONE_MINUS_SRC_ALPHA);
 
 	const int renderWidth  = int(resolution[0]);
 	const int renderHeight = int(resolution[1]);
@@ -45,16 +45,16 @@ void GameRenderer::drawPlayer(const Player & player, Framebuffer & framebuffer) 
 	// --- Scene pass ------
 	_sceneFramebuffer->bind();
 	_sceneFramebuffer->setViewport();
-	GLUtilities::clearColorAndDepth(glm::vec4(0.0f), 1.0f);
+	GPU::clearColorAndDepth(glm::vec4(0.0f), 1.0f);
 
 	drawScene(player);
 
 	// --- SSAO pass ------
 	_ssaoPass->process(_playerCamera.projection(), _sceneFramebuffer->depthBuffer(), _sceneFramebuffer->texture(0));
 
-	GLUtilities::setCullState(true, Faces::BACK);
-	GLUtilities::setBlendState(false);
-	GLUtilities::setDepthState(false);
+	GPU::setCullState(true, Faces::BACK);
+	GPU::setBlendState(false);
+	GPU::setDepthState(false);
 
 	// --- Lighting pass ------
 	_lightingFramebuffer->bind();
@@ -72,9 +72,9 @@ void GameRenderer::drawPlayer(const Player & player, Framebuffer & framebuffer) 
 }
 
 void GameRenderer::drawScene(const Player & player) const {
-	GLUtilities::setDepthState(true, TestFunction::LESS, true);
-	GLUtilities::setCullState(true, Faces::BACK);
-	GLUtilities::setBlendState(false);
+	GPU::setDepthState(true, TestFunction::LESS, true);
+	GPU::setCullState(true, Faces::BACK);
+	GPU::setBlendState(false);
 
 	// Lighting and reflections will be computed in world space in the shaders.
 	// So the normal matrix only takes the model matrix into account.
@@ -89,7 +89,7 @@ void GameRenderer::drawScene(const Player & player) const {
 		_coloredProgram->uniform("mvp", MVP);
 		_coloredProgram->uniform("normalMat", normalMatrix);
 		_coloredProgram->uniform("matID", 1);
-		GLUtilities::drawMesh(*_ground);
+		GPU::drawMesh(*_ground);
 	}
 	// Render the head.
 	{
@@ -98,7 +98,7 @@ void GameRenderer::drawScene(const Player & player) const {
 		_coloredProgram->uniform("mvp", MVP);
 		_coloredProgram->uniform("normalMat", normalMatrix);
 		_coloredProgram->uniform("matID", 2);
-		GLUtilities::drawMesh(*_head);
+		GPU::drawMesh(*_head);
 	}
 	// Render body elements and items.
 	for(int i = 0; i < int(player.modelsBody.size()); ++i) {
@@ -107,7 +107,7 @@ void GameRenderer::drawScene(const Player & player) const {
 		_coloredProgram->uniform("mvp", MVP);
 		_coloredProgram->uniform("normalMat", normalMatrix);
 		_coloredProgram->uniform("matID", player.looksBody[i]);
-		GLUtilities::drawMesh(*_bodyElement);
+		GPU::drawMesh(*_bodyElement);
 	}
 	for(int i = 0; i < int(player.modelsItem.size()); ++i) {
 		const glm::mat4 MVP			 = VP * player.modelsItem[i];
@@ -115,7 +115,7 @@ void GameRenderer::drawScene(const Player & player) const {
 		_coloredProgram->uniform("mvp", MVP);
 		_coloredProgram->uniform("normalMat", normalMatrix);
 		_coloredProgram->uniform("matID", player.looksItem[i]);
-		GLUtilities::drawMesh(*_bodyElement);
+		GPU::drawMesh(*_bodyElement);
 	}
 }
 

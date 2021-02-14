@@ -2,7 +2,7 @@
 
 #include "input/InputCallbacks.hpp"
 #include "input/Input.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 #include "graphics/Framebuffer.hpp"
 #include "resources/ResourcesManager.hpp"
 
@@ -14,9 +14,9 @@
 
 Window::Window(const std::string & name, RenderingConfig & config, bool convertToSRGB, bool escapeQuit, bool hidden) :
 	_config(config), _allowEscape(escapeQuit), _convertToSRGB(convertToSRGB) {
-	// Initialize glfw, which will create and setup an OpenGL context.
+	// Initialize glfw, which will create and setup a GPU context.
 	if(!glfwInit()) {
-		Log::Error() << Log::OpenGL << "Could not start GLFW3" << std::endl;
+		Log::Error() << Log::GPU << "Could not start GLFW3" << std::endl;
 		return;
 	}
 	const int openGLMajor = 4;
@@ -44,7 +44,7 @@ Window::Window(const std::string & name, RenderingConfig & config, bool convertT
 	}
 
 	if(!_window) {
-		Log::Error() << Log::OpenGL << "Could not open window with GLFW3" << std::endl;
+		Log::Error() << Log::GPU << "Could not open window with GLFW3" << std::endl;
 		glfwTerminate();
 		return;
 	}
@@ -56,18 +56,18 @@ Window::Window(const std::string & name, RenderingConfig & config, bool convertT
 	glfwMakeContextCurrent(_window);
 
 	if(gl3wInit()) {
-		Log::Error() << Log::OpenGL << "Failed to initialize OpenGL" << std::endl;
+		Log::Error() << Log::GPU << "Failed to initialize OpenGL" << std::endl;
 		return;
 	}
 	if(!gl3wIsSupported(openGLMajor, openGLMinor)) {
-		Log::Error() << Log::OpenGL << "OpenGL " << openGLMajor << "." << openGLMinor << " not supported\n"
+		Log::Error() << Log::GPU << "OpenGL " << openGLMajor << "." << openGLMinor << " not supported\n"
 					 << std::endl;
 		return;
 	}
 
 	// Setup the GPU state.
-	GLUtilities::setup();
-	GLUtilities::setSRGBState(_convertToSRGB);
+	GPU::setup();
+	GPU::setSRGBState(_convertToSRGB);
 
 	// Setup callbacks for various interactions and inputs.
 	glfwSetFramebufferSizeCallback(_window, resize_callback);		  // Resizing the window
@@ -164,17 +164,17 @@ bool Window::nextFrame() {
 		ImGui::Render();
 		// ImGui is not sRGB aware, we have to disable linear to
 		// sRGB conversion when writing to the backbuffer.
-		GLUtilities::setSRGBState(false);
+		GPU::setSRGBState(false);
 		// Draw ImGui as-is...
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		// ...and restore.
-		GLUtilities::setSRGBState(_convertToSRGB);
+		GPU::setSRGBState(_convertToSRGB);
 		
 		//Display the result for the current rendering loop.
 		glfwSwapBuffers(_window);
 	}
 	// Notify GPU for book-keeping.
-	GLUtilities::nextFrame();
+	GPU::nextFrame();
 
 	// Update events (inputs,...).
 	Input::manager().update();
@@ -201,7 +201,7 @@ Window::~Window() {
 	if(_frameStarted){
 		ImGui::EndFrame();
 	}
-	GLUtilities::sync();
+	GPU::sync();
 	// Clean the interface.
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();

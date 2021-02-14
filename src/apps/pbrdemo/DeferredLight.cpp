@@ -1,5 +1,5 @@
 #include "DeferredLight.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 #include "graphics/ScreenQuad.hpp"
 
 DeferredLight::DeferredLight(const Texture * texAlbedo, const Texture * texNormals, const Texture * texDepth, const Texture * texEffects){
@@ -31,9 +31,9 @@ void DeferredLight::draw(const SpotLight * light) {
 	const glm::mat4 mvp			= _proj * _view * light->model();
 	const glm::mat4 viewToLight = light->vp() * glm::inverse(_view);
 
-	GLUtilities::setDepthState(false);
-	GLUtilities::setBlendState(true, BlendEquation::ADD, BlendFunction::ONE, BlendFunction::ONE);
-	GLUtilities::setCullState(true, Faces::FRONT);
+	GPU::setDepthState(false);
+	GPU::setBlendState(true, BlendEquation::ADD, BlendFunction::ONE, BlendFunction::ONE);
+	GPU::setCullState(true, Faces::FRONT);
 
 	_spotProgram->use();
 	_spotProgram->uniform("mvp", mvp);
@@ -46,10 +46,10 @@ void DeferredLight::draw(const SpotLight * light) {
 	_spotProgram->uniform("viewToLight", viewToLight);
 	
 	// Active screen texture.
-	GLUtilities::bindTextures(_textures);
+	GPU::bindTextures(_textures);
 	if(light->castsShadow()) {
 		const auto & shadowInfos = light->shadowMap();
-		GLUtilities::bindTexture(shadowInfos.map, _textures.size());
+		GPU::bindTexture(shadowInfos.map, _textures.size());
 		_spotProgram->uniform("shadowLayer", int(shadowInfos.layer));
 		_spotProgram->uniform("shadowBias", _shadowBias);
 		_spotProgram->uniform("shadowMode", int(_shadowMode));
@@ -57,7 +57,7 @@ void DeferredLight::draw(const SpotLight * light) {
 		_spotProgram->uniform("shadowMode", int(ShadowMode::NONE));
 	}
 	// Select the geometry.
-	GLUtilities::drawMesh(*_cone);
+	GPU::drawMesh(*_cone);
 }
 
 void DeferredLight::draw(const PointLight * light) {
@@ -68,9 +68,9 @@ void DeferredLight::draw(const PointLight * light) {
 	const glm::mat4 mvp		 = _proj * _view * light->model();
 	const glm::mat3 viewToLight = glm::mat3(glm::inverse(_view));
 
-	GLUtilities::setDepthState(false);
-	GLUtilities::setBlendState(true, BlendEquation::ADD, BlendFunction::ONE, BlendFunction::ONE);
-	GLUtilities::setCullState(true, Faces::FRONT);
+	GPU::setDepthState(false);
+	GPU::setBlendState(true, BlendEquation::ADD, BlendFunction::ONE, BlendFunction::ONE);
+	GPU::setCullState(true, Faces::FRONT);
 
 	_pointProgram->use();
 	_pointProgram->uniform("mvp", mvp);
@@ -82,10 +82,10 @@ void DeferredLight::draw(const PointLight * light) {
 	_pointProgram->uniform("lightFarPlane", light->farPlane());
 	
 	 // Active screen texture.
-	GLUtilities::bindTextures(_textures);
+	GPU::bindTextures(_textures);
 	if(light->castsShadow()) {
 		const auto & shadowInfos = light->shadowMap();
-		GLUtilities::bindTexture(shadowInfos.map, _textures.size());
+		GPU::bindTexture(shadowInfos.map, _textures.size());
 		_pointProgram->uniform("shadowLayer", int(shadowInfos.layer));
 		_pointProgram->uniform("shadowBias", _shadowBias);
 		_pointProgram->uniform("shadowMode", int(_shadowMode));
@@ -93,7 +93,7 @@ void DeferredLight::draw(const PointLight * light) {
 		_pointProgram->uniform("shadowMode", int(ShadowMode::NONE));
 	}
 	// Select the geometry.
-	GLUtilities::drawMesh(*_sphere);
+	GPU::drawMesh(*_sphere);
 }
 
 void DeferredLight::draw(const DirectionalLight * light) {
@@ -102,9 +102,9 @@ void DeferredLight::draw(const DirectionalLight * light) {
 	const glm::vec4 projectionVector = glm::vec4(_proj[0][0], _proj[1][1], _proj[2][2], _proj[3][2]);
 	const glm::vec3 lightDirectionViewSpace = glm::vec3(_view * glm::vec4(light->direction(), 0.0));
 
-	GLUtilities::setDepthState(false);
-	GLUtilities::setBlendState(true, BlendEquation::ADD, BlendFunction::ONE, BlendFunction::ONE);
-	GLUtilities::setCullState(true, Faces::BACK);
+	GPU::setDepthState(false);
+	GPU::setBlendState(true, BlendEquation::ADD, BlendFunction::ONE, BlendFunction::ONE);
+	GPU::setCullState(true, Faces::BACK);
 
 	_dirProgram->use();
 	_dirProgram->uniform("lightDirection", lightDirectionViewSpace);
@@ -112,10 +112,10 @@ void DeferredLight::draw(const DirectionalLight * light) {
 	_dirProgram->uniform("projectionMatrix", projectionVector);
 	_dirProgram->uniform("viewToLight", viewToLight);
 
-	GLUtilities::bindTextures(_textures);
+	GPU::bindTextures(_textures);
 	if(light->castsShadow()) {
 		const auto & shadowInfos = light->shadowMap();
-		GLUtilities::bindTexture(shadowInfos.map, _textures.size());
+		GPU::bindTexture(shadowInfos.map, _textures.size());
 		_dirProgram->uniform("shadowLayer", int(shadowInfos.layer));
 		_dirProgram->uniform("shadowBias", _shadowBias);
 		_dirProgram->uniform("shadowMode", int(_shadowMode));

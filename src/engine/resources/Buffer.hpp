@@ -3,8 +3,8 @@
 #include "Common.hpp"
 
 /** \brief General purpose GPU/CPU buffer, without a CPU backing store.
- \details This allows the class to be template-free (to avoid exposing GLUtilities/GPUObjects details
- in headers), while preserving the "pass general Object to GLUtilities for setup/upload &
+ \details This allows the class to be template-free (to avoid exposing GPU/GPUObjects details
+ in headers), while preserving the "pass general Object to GPU for setup/upload &
  GPUObject only stores ID and enums" approach followed by Texture and Mesh.
  In practice you will want to use Buffer to benefit from CPU storage and simplified upload.
  \ingroup Resources

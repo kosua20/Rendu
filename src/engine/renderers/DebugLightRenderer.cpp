@@ -1,5 +1,5 @@
 #include "DebugLightRenderer.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 
 DebugLightRenderer::DebugLightRenderer(const std::string & fragmentShader){
 	_sphere  = Resources::manager().getMesh("light_sphere", Storage::GPU);
@@ -21,7 +21,7 @@ void DebugLightRenderer::draw(const SpotLight * light) {
 	_program->use();
 	_program->uniform("mvp", mvp);
 	_program->uniform("color", glm::vec4(colorLow, 1.0f));
-	GLUtilities::drawMesh(*_cone);
+	GPU::drawMesh(*_cone);
 }
 
 void DebugLightRenderer::draw(const PointLight * light) {
@@ -34,10 +34,10 @@ void DebugLightRenderer::draw(const PointLight * light) {
 	_program->use();
 	_program->uniform("mvp", mvp);
 	_program->uniform("color", glm::vec4(colorLow, 1.0f));
-	GLUtilities::drawMesh(*_sphere);
+	GPU::drawMesh(*_sphere);
 	_program->uniform("mvp", mvp1);
 	_program->uniform("color", glm::vec4(color, 1.0f));
-	GLUtilities::drawMesh(*_sphere);
+	GPU::drawMesh(*_sphere);
 }
 
 void DebugLightRenderer::draw(const DirectionalLight * light) {
@@ -48,6 +48,6 @@ void DebugLightRenderer::draw(const DirectionalLight * light) {
 	_program->use();
 	_program->uniform("mvp", vp);
 	_program->uniform("color", glm::vec4(colorLow, 1.0f));
-	GLUtilities::drawMesh(*_arrow);
+	GPU::drawMesh(*_arrow);
 	
 }

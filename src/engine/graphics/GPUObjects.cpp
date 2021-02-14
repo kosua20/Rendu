@@ -1,10 +1,10 @@
 #include "graphics/GPUObjects.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 
 #include <map>
 
 GPUTexture::GPUTexture(const Descriptor & texDescriptor, TextureShape shape) :
-	target(GLUtilities::targetFromShape(shape)),
+	target(GPU::targetFromShape(shape)),
 	minFiltering(texDescriptor.getGPUMinificationFilter()),
 	magFiltering(texDescriptor.getGPUMagnificationFilter()),
 	wrapping(texDescriptor.getGPUWrapping()),
@@ -15,7 +15,7 @@ GPUTexture::GPUTexture(const Descriptor & texDescriptor, TextureShape shape) :
 
 void GPUTexture::clean() {
 	glDeleteTextures(1, &id);
-	GLUtilities::deleted(*this);
+	GPU::deleted(*this);
 	id = 0;
 }
 
@@ -30,10 +30,10 @@ void GPUTexture::setFiltering(Filter filtering) {
 	magFiltering = _descriptor.getGPUMagnificationFilter();
 
 	glBindTexture(target, id);
-	GLUtilities::_metrics.textureBindings += 1;
+	GPU::_metrics.textureBindings += 1;
 	glTexParameteri(target, GL_TEXTURE_MAG_FILTER, magFiltering);
 	glTexParameteri(target, GL_TEXTURE_MIN_FILTER, minFiltering);
-	GLUtilities::restoreTexture(_shape);
+	GPU::restoreTexture(_shape);
 }
 
 GPUBuffer::GPUBuffer(BufferType type, DataUse use){
@@ -62,7 +62,7 @@ void GPUMesh::clean() {
 		indexBuffer->clean();
 	}
 	glDeleteVertexArrays(1, &id);
-	GLUtilities::deleted(*this);
+	GPU::deleted(*this);
 	vertexBuffer.reset();
 	indexBuffer.reset();
 	count = id = 0;
@@ -200,7 +200,7 @@ unsigned int Descriptor::getGPULayout(GLenum & detailedFormat, GLenum & type, GL
 		return (oneChannel ? 1 : (format == GL_RG ? 2 : (format == GL_RGB ? 3 : 4)));
 	}
 
-	Log::Error() << Log::OpenGL << "Unable to find type and format (typed format " << uint(_typedFormat) << ")." << std::endl;
+	Log::Error() << Log::GPU << "Unable to find type and format (typed format " << uint(_typedFormat) << ")." << std::endl;
 	return 0;
 }
 

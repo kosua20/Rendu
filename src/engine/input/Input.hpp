@@ -205,7 +205,7 @@ public:
 
 	/**
 	 Query the current mouse position.
-	 \param inFramebuffer should the position be expressed in an OpenGL compatible fashion
+	 \param inFramebuffer should the position be expressed in a GPU compatible fashion
 	 \return the current mouse position in unit coordinates or pixels
 	 \note The mouse position will be expressed by default in the [0,1] range, from the bottom left corner. If inFramebuffer is set to true, the position will be expressed in pixels, from the top left corner, clamped to the window size.
 	 */

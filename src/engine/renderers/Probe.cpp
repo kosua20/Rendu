@@ -1,6 +1,6 @@
 #include "Probe.hpp"
 #include "graphics/GPUObjects.hpp"
-#include "graphics/GLUtilities.hpp"
+#include "graphics/GPU.hpp"
 #include "resources/Library.hpp"
 
 Probe::Probe(const glm::vec3 & position, std::shared_ptr<Renderer> renderer, uint size, uint mips, const glm::vec2 & clippingPlanes) {
@@ -35,9 +35,9 @@ void Probe::draw() {
 
 void Probe::convolveRadiance(float clamp, size_t first, size_t count) {
 
-	GLUtilities::setDepthState(false);
-	GLUtilities::setBlendState(false);
-	GLUtilities::setCullState(true, Faces::BACK);
+	GPU::setDepthState(false);
+	GPU::setBlendState(false);
+	GPU::setCullState(true, Faces::BACK);
 
 	_integration->use();
 	_integration->uniform("clampMax", clamp);
@@ -50,15 +50,15 @@ void Probe::convolveRadiance(float clamp, size_t first, size_t count) {
 		const float roughness  = float(mid) / float((_framebuffer->texture()->levels) - 1);
 		const int samplesCount = (mid == 1 ? 64 : 128);
 
-		GLUtilities::setViewport(0, 0, int(wh), int(wh));
+		GPU::setViewport(0, 0, int(wh), int(wh));
 		_integration->uniform("mipmapRoughness", roughness);
 		_integration->uniform("samplesCount", samplesCount);
 
 		for(size_t lid = 0; lid < 6; ++lid) {
 			_framebuffer->bind(lid, mid);
 			_integration->uniform("mvp", Library::boxVPs[lid]);
-			GLUtilities::bindTexture(_framebuffer->texture(), 0);
-			GLUtilities::drawMesh(*_cube);
+			GPU::bindTexture(_framebuffer->texture(), 0);
+			GPU::drawMesh(*_cube);
 		}
 	}
 }
@@ -66,14 +66,14 @@ void Probe::convolveRadiance(float clamp, size_t first, size_t count) {
 void Probe::prepareIrradiance() {
 	// Downscale radiance to a smaller texture, to be copied on the CPU for SH decomposition.
 	for(uint lid = 0; lid < 6; ++lid) {
-		GLUtilities::blit(*_framebuffer, *_copy, lid, lid, 0, 0, Filter::LINEAR);
+		GPU::blit(*_framebuffer, *_copy, lid, lid, 0, 0, Filter::LINEAR);
 	}
 }
 
 void Probe::estimateIrradiance(float clamp) {
 	// Download the texture to the CPU.
 	Texture & tex = *_copy->texture();
-	GLUtilities::downloadTexture(tex, 0);
+	GPU::downloadTexture(tex, 0);
 	// Compute SH coeffs.
 	std::vector<glm::vec3> coeffs(9);
 	extractIrradianceSHCoeffs(tex, clamp, coeffs);
