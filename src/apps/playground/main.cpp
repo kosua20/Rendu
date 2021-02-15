@@ -43,15 +43,15 @@ int main(int argc, char ** argv) {
 	GPU::deviceInfos(vendor, renderer, version, shaderVersion);
 	Log::Info() << Log::GPU << "Vendor: " << vendor << "." << std::endl;
 	Log::Info() << Log::GPU << "Internal renderer: " << renderer << "." << std::endl;
-	Log::Info() << Log::GPU << "Versions: Driver: " << version << ", GLSL: " << shaderVersion << "." << std::endl;
+	Log::Info() << Log::GPU << "Versions: Driver: " << version << ", API: " << shaderVersion << "." << std::endl;
 
 	// Query the extensions.
-	const std::vector<std::string> extensions = GPU::deviceExtensions();
+	const std::vector<std::string> extensions = GPU::supportedExtensions();
 	// Log extensions.
 	if(!extensions.empty()) {
 		Log::Info() << Log::GPU << "Extensions detected (" << extensions.size() << ")" << std::flush;
 		for(size_t i = 0; i < extensions.size(); ++i) {
-			Log::Verbose() << (i == 0 ? ": " : ", ") << extensions[i] << std::flush;
+			Log::Info() << (i == 0 ? ": " : ", ") << extensions[i] << std::flush;
 		}
 		Log::Info() << std::endl;
 	}

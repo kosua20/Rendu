@@ -939,10 +939,64 @@ void GPU::nextFrame(){
 }
 
 void GPU::deviceInfos(std::string & vendor, std::string & renderer, std::string & version, std::string & shaderVersion) {
+	vendor = renderer = version = shaderVersion = "";
+
+	const std::unordered_map<uint32_t, std::string> vendors = {
+		{ 0x1002, "AMD" }, { 0x10DE, "NVIDIA" }, { 0x8086, "INTEL" }, { 0x13B5, "ARM" }
+	};
+
+
+	if(_physicalDevice != VK_NULL_HANDLE){
+		VkPhysicalDeviceProperties properties;
+		vkGetPhysicalDeviceProperties(_physicalDevice, &properties);
+
+		const uint32_t vendorId = properties.vendorID;
+		vendor = vendors.count(vendorId) ? vendors.at(vendorId) : std::to_string(vendorId);
+
+		renderer = std::string(properties.deviceName);
+		version = std::to_string(properties.driverVersion);
+
+		const uint32_t vMaj = VK_VERSION_MAJOR(properties.apiVersion);
+		const uint32_t vMin = VK_VERSION_MINOR(properties.apiVersion);
+		const uint32_t vPat = VK_VERSION_PATCH(properties.apiVersion);
+		shaderVersion = std::to_string(vMaj) + "." + std::to_string(vMin) + "." + std::to_string(vPat);
 	}
 }
 
+std::vector<std::string> GPU::supportedExtensions() {
+	std::vector<std::string> names;
+	names.emplace_back("-- Instance ------");
+	// Get available extensions.
+	uint32_t instanceExtsCount = 0;
+	vkEnumerateInstanceExtensionProperties(nullptr, &instanceExtsCount, nullptr);
+	std::vector<VkExtensionProperties> instanceExts(instanceExtsCount);
+	vkEnumerateInstanceExtensionProperties(nullptr, &instanceExtsCount, instanceExts.data());
+	for(const auto& ext : instanceExts){
+		names.emplace_back(ext.extensionName);
 	}
+	// Layers too.
+	names.emplace_back("-- Layers --------");
+	uint32_t layerCount;
+	vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
+	std::vector<VkLayerProperties> availableLayers(layerCount);
+	vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
+	for(const auto& layer : availableLayers){
+		names.emplace_back(layer.layerName);
+	}
+	// Get available device extensions.
+	if(_physicalDevice != VK_NULL_HANDLE){
+		names.emplace_back("-- Device --------");
+		uint32_t deviceExtsCount;
+		vkEnumerateDeviceExtensionProperties(_physicalDevice, nullptr, &deviceExtsCount, nullptr);
+		std::vector<VkExtensionProperties> deviceExts(deviceExtsCount);
+		vkEnumerateDeviceExtensionProperties(_physicalDevice, nullptr, &deviceExtsCount, deviceExts.data());
+		for(const auto& ext : deviceExts){
+			names.emplace_back(ext.extensionName);
+		}
+	}
+	return names;
+}
+
 void GPU::setViewport(int x, int y, int w, int h) {
 //	if(_state.viewport[0] != x || _state.viewport[1] != y || _state.viewport[2] != w || _state.viewport[3] != h){
 //		_state.viewport[0] = x;

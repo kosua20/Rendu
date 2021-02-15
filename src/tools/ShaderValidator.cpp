@@ -98,7 +98,7 @@ int main(int argc, char ** argv) {
 	GPU::deviceInfos(vendor, renderer, version, shaderVersion);
 	Log::Info() << Log::GPU << "Vendor: " << vendor << "." << std::endl;
 	Log::Info() << Log::GPU << "Internal renderer: " << renderer << "." << std::endl;
-	Log::Info() << Log::GPU << "Versions: Driver: " << version << ", GLSL: " << shaderVersion << "." << std::endl;
+	Log::Info() << Log::GPU << "Versions: Driver: " << version << ", API: " << shaderVersion << "." << std::endl;
 
 	// We will need all glsl files for include support.
 	std::map<std::string, std::string> includeFiles;

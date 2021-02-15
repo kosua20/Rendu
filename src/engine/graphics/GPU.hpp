@@ -267,7 +267,7 @@ public:
 	/** Query the GPU supported extensions.
 	 \return a list of extensions names
 	 */
-	static std::vector<std::string> deviceExtensions();
+	static std::vector<std::string> supportedExtensions();
 
 	/** Set the current viewport.
 	 \param x horizontal coordinate
