@@ -35,7 +35,7 @@ GameRenderer::GameRenderer(const glm::vec2 & resolution) : Renderer("Game") {
 	_bodyElement	= Resources::manager().getMesh("body", Storage::GPU);
 	_cubemap		= Resources::manager().getTexture("env", {Layout::RGB8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
 
-	checkGLError();
+	checkGPUError();
 }
 
 void GameRenderer::drawPlayer(const Player & player, Framebuffer & framebuffer) const {

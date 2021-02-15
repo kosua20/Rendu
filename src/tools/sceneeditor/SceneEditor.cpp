@@ -60,7 +60,7 @@ void SceneEditor::draw() {
 	_passthrough->use();
 	_passthrough->uniform("flip", 0);
 	ScreenQuad::draw(_sceneFramebuffer->texture());
-	checkGLError();
+	checkGPUError();
 }
 void SceneEditor::update() {
 	CameraApp::update();

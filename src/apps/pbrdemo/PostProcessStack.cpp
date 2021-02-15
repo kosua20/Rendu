@@ -30,7 +30,7 @@ PostProcessStack::PostProcessStack(const glm::vec2 & resolution) : Renderer("Pos
 	_dofCocProgram = Resources::manager().getProgram2D("dof-coc");
 	_dofGatherProgram = Resources::manager().getProgram2D("dof-gather");
 	_dofCompositeProgram = Resources::manager().getProgram2D("dof-composite");
-	checkGLError();
+	checkGPUError();
 }
 
 void PostProcessStack::process(const Texture * texture, const glm::mat4 & proj, const Texture * depth, Framebuffer & framebuffer, size_t layer) {
@@ -129,7 +129,7 @@ void PostProcessStack::resize(unsigned int width, unsigned int height) {
 	_resultFramebuffer->resize(renderRes);
 	_dofGatherBuffer->resize(renderRes/4);
 	_dofCocBuffer->resize(renderRes/4);
-	checkGLError();
+	checkGPUError();
 }
 
 void PostProcessStack::interface(){

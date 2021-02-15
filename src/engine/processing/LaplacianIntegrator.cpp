@@ -20,7 +20,7 @@ LaplacianIntegrator::LaplacianIntegrator(unsigned int width, unsigned int height
 	const float g[3]  = {0.175f, 0.547f, 0.175f};
 	_pyramid.setFilters(h1, h2, g);
 
-	checkGLError();
+	checkGPUError();
 }
 
 void LaplacianIntegrator::process(const Texture * texture) {

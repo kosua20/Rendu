@@ -38,7 +38,7 @@ DeferredRenderer::DeferredRenderer(const glm::vec2 & resolution, ShadowMode mode
 	_lightRenderer = std::unique_ptr<DeferredLight>(new DeferredLight(_gbuffer->texture(0), _gbuffer->texture(1), _gbuffer->depthBuffer(), _gbuffer->texture(2)));
 
 	_textureBrdf = Resources::manager().getTexture("brdf-precomputed", {Layout::RG32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
-	checkGLError();
+	checkGPUError();
 }
 
 void DeferredRenderer::setScene(const std::shared_ptr<Scene> & scene) {
@@ -49,7 +49,7 @@ void DeferredRenderer::setScene(const std::shared_ptr<Scene> & scene) {
 	_scene = scene;
 	_culler.reset(new Culler(_scene->objects));
 	_fwdLightsGPU.reset(new ForwardLight(_scene->lights.size()));
-	checkGLError();
+	checkGPUError();
 }
 
 void DeferredRenderer::renderOpaque(const Culler::List & visibles, const glm::mat4 & view, const glm::mat4 & proj) {
@@ -306,7 +306,7 @@ void DeferredRenderer::resize(unsigned int width, unsigned int height) {
 	_gbuffer->resize(nSize);
 	_lightBuffer->resize(nSize);
 	_ssaoPass->resize(width, height);
-	checkGLError();
+	checkGPUError();
 	
 }
 

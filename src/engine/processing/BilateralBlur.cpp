@@ -7,7 +7,7 @@
 BilateralBlur::BilateralBlur(const std::string & name) : _name(name) {
 
 	_filter	 = Resources::manager().getProgram2D("bilateral");
-	checkGLError();
+	checkGPUError();
 }
 
 // Draw function

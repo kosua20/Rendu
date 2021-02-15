@@ -12,7 +12,7 @@ BoxBlur::BoxBlur(bool approximate, const std::string & name) : _name(name) {
 	_blurCube = Resources::manager().getProgram("box-blur-cube" + suffix, "box-blur-cube", "box-blur-cube" + suffix);
 	_blurCubeArray = Resources::manager().getProgram("box-blur-cube-array" + suffix, "box-blur-cube","box-blur-cube-array" + suffix);
 
-	checkGLError();
+	checkGPUError();
 }
 
 // Draw function

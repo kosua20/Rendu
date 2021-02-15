@@ -11,7 +11,7 @@ GaussianBlur::GaussianBlur(uint radius, uint downscale, const std::string & name
 	if(radius > 0){
 		_frameBuffers = std::vector<std::unique_ptr<Framebuffer>>(radius);
 	}
-	checkGLError();
+	checkGPUError();
 }
 
 void GaussianBlur::process(const Texture * texture, Framebuffer & framebuffer) {

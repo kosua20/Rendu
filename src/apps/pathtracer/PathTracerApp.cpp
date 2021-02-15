@@ -20,7 +20,7 @@ PathTracerApp::PathTracerApp(RenderingConfig & config, const std::shared_ptr<Sce
 	_renderTex.width  = int(renderRes[0]);
 	_renderTex.height = int(renderRes[1]);
 	GPU::setupTexture(_renderTex, {Layout::SRGB8, Filter::LINEAR, Wrap::CLAMP});
-	checkGLError();
+	checkGPUError();
 	
 	_scene = scene;
 	if(!scene) {
@@ -208,5 +208,5 @@ void PathTracerApp::resize() {
 	_sceneFramebuffer->resize(renderRes);
 	// Udpate the image resolution, using the new aspect ratio.
 	_renderTex.width = uint(std::round(_config.screenResolution[0] / _config.screenResolution[1] * float(_renderTex.height)));
-	checkGLError();
+	checkGPUError();
 }
