@@ -64,6 +64,11 @@ function CommonSetup()
 	-- Common include dirs
 	-- System headers are used to support angled brackets in Xcode.
 	sysincludedirs({ "src/libs/", "src/libs/glfw/include/" })
+	
+	-- System headers are used to support angled brackets in Xcode.
+	filter("system:macosx")
+		sysincludedirs({ "/usr/local/include/" })
+
 end	
 
 function ExecutableSetup()
@@ -77,14 +82,14 @@ function ExecutableSetup()
 
 	-- Libraries for each platform.
 	filter("system:macosx")
-		links({"OpenGL.framework", "Cocoa.framework", "IOKit.framework", "CoreVideo.framework", "AppKit.framework"})
+		links({"Cocoa.framework", "IOKit.framework", "CoreVideo.framework", "AppKit.framework"})
 
 	filter("system:windows")
-		links({"opengl32", "comctl32"})
+		links({"comctl32"})
 
 	filter("system:linux")
 		-- We have to query the dependencies of gtk+3 for NFD, and convert them to a list of libraries.
-		links({"GL", "X11", "Xi", "Xrandr", "Xxf86vm", "Xinerama", "Xcursor", "Xext", "Xrender", "Xfixes", "xcb", "Xau", "Xdmcp", "rt", "m", "pthread", "dl", gtkLibs})
+		links({"X11", "Xi", "Xrandr", "Xxf86vm", "Xinerama", "Xcursor", "Xext", "Xrender", "Xfixes", "xcb", "Xau", "Xdmcp", "rt", "m", "pthread", "dl", gtkLibs})
 	
 	filter({})
 
@@ -99,12 +104,12 @@ function ShaderValidation()
 	end
 	-- Run the shader validator on all existing shaders.
 	-- Output IDE compatible error messages.
-	dependson({"ShaderValidator"})
+	-- dependson({"ShaderValidator"})
 	
-	filter("configurations:*")
-		postbuildcommands({ 
-			path.translate(cwd.."/build/ShaderValidator/%{cfg.longname}/ShaderValidator"..ext.." "..cwd.."/resources/", sep)
-		})
+	--filter("configurations:*")
+	--	postbuildcommands({ 
+	--		path.translate(cwd.."/build/ShaderValidator/%{cfg.longname}/ShaderValidator"..ext.." "..cwd.."/resources/", sep)
+	--	})
 	filter({})
 end	
 
@@ -143,6 +148,7 @@ project("Engine")
 	removefiles { "src/libs/nfd/*" }
 	removefiles { "src/libs/glfw/*" }
 	removefiles({"**.DS_STORE", "**.thumbs"})
+	
 	-- Virtual path allow us to get rid of the on-disk hierarchy.
 	vpaths({
 	   ["Engine/*"] = {"src/engine/**"},
@@ -151,6 +157,17 @@ project("Engine")
 	   [""] = { "*.*" },
 	-- ["Scenes/*"] = {"resources/**.scene"},
 	})
+
+	filter("system:macosx")
+		defines({"VK_USE_PLATFORM_MACOS_MVK"})
+
+	filter("system:windows")
+		defines({"VK_USE_PLATFORM_WIN32_KHR"})
+
+	filter("system:linux")
+		defines({"VK_USE_PLATFORM_XLIB_KHR"})
+	
+
 
 
 group("Apps")
