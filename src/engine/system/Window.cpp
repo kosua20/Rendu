@@ -60,6 +60,16 @@ _config(config), _allowEscape(escapeQuit), _convertToSRGB(convertToSRGB) {
 	glfwSetJoystickCallback(joystick_callback);						  // Joystick
 	glfwSetWindowIconifyCallback(_window, iconify_callback);			  // Window minimization
 	//glfwSwapInterval(_config.vsync ? (_config.rate == 30 ? 2 : 1) : 0); // 60 FPS V-sync
+
+	// Setup the GPU and create the swapchain.
+	if(!GPU::setup(name)){
+		glfwDestroyWindow(_window);
+		glfwTerminate();
+		return;
+	}
+	// Create a swapchain associated to the window.
+	GPU::setupSwapchain(_swapchain, _window);
+
 	// Setup the GPU state.
 	GPU::setSRGBState(_convertToSRGB);
 

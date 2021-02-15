@@ -1,6 +1,7 @@
 #pragma once
 #include "system/Config.hpp"
 #include "Common.hpp"
+#include "graphics/Swapchain.hpp"
 
 struct GLFWwindow;
 
@@ -63,6 +64,7 @@ private:
 	
 	RenderingConfig & _config; ///< The window configuration.
 	GLFWwindow * _window = nullptr; ///< Internal window handle.
+	Swapchain _swapchain;
 	bool _frameStarted = false; ///< Has a frame been started.
 	bool _allowEscape = false; ///< Can the window be closed by pressing escape.
 	bool _convertToSRGB = false; ///< Should writes to the backbuffer be considered linear.
