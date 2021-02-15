@@ -4,7 +4,12 @@
 #include "resources/Image.hpp"
 #include "system/TextUtilities.hpp"
 
+#define VOLK_IMPLEMENTATION
+#include <volk/volk.h>
+
 #include <sstream>
+#include <GLFW/glfw3.h>
+
 
 /** Converts a GLenum error number into a human-readable string.
  \param error the GPU error value

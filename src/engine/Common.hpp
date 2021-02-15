@@ -4,6 +4,8 @@
 #	define NOMINMAX
 #endif
 
+#define GLM_FORCE_RADIANS
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/color_space.hpp>
@@ -11,7 +13,6 @@
 #include <glm/gtx/io.hpp>
 #include <glm/gtc/constants.hpp>
 
-#include <gl3w/gl3w.h>
 #include <imgui/imgui.h>
 
 #include <string>
