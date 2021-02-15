@@ -210,11 +210,11 @@ private:
 	unsigned int _height = 0; ///< The framebuffer height.
 	unsigned int _depth = 0; ///< The framebuffer depth.
 
-	GLuint _id = 0;					///< The framebuffer ID.
+	//GLuint _id = 0;					///< The framebuffer ID.
 	std::vector<Texture> _idColors; ///< The color textures.
 	Texture _idDepth = Texture("Depth"); ///< The depth renderbuffer.
 	TextureShape _shape = TextureShape::D2;	///< The texture shape.
-	GLenum _target = GL_TEXTURE_2D;			///< The GPU texture shape.
+	//GLenum _target = GL_TEXTURE_2D;			///< The GPU texture shape.
 	bool _hasStencil = false;		///< Does the framebuffer has a stencil buffer.
 	
 	/// \brief Type of depth storage structure used.

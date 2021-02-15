@@ -285,22 +285,22 @@ public:
 	 \param format will contain the general layout (GL_RG,...)
 	 \return the number of channels
 	 */
-	unsigned int getGPULayout(GLenum & detailedFormat, GLenum & type, GLenum & format) const;
+	//unsigned int getGPULayout(GLenum & detailedFormat, GLenum & type, GLenum & format) const;
 
 	/** Obtain the GPU texture magnification filter, removing the mipmaping qualifier.
 	 \return the magnification filter
 	 */
-	GLenum getGPUMagnificationFilter() const;
+	//GLenum getGPUMagnificationFilter() const;
 
 	/** Obtain the GPU texture minification filter.
 	 \return the minification filter
 	 */
-	GLenum getGPUMinificationFilter() const;
+	//GLenum getGPUMinificationFilter() const;
 
 	/** Obtain the GPU texture wrapping mode.
 	 \return the wrapping mode
 	 */
-	GLenum getGPUWrapping() const;
+	//GLenum getGPUWrapping() const;
 
 	/** Equality operator.
 	 \param other other descriptor to compare to
@@ -329,7 +329,7 @@ private:
 	 \param filter the filtering mode
 	 \return the corresponding driver value
 	 */
-	static GLenum getGPUFilter(Filter filter);
+	//static GLenum getGPUFilter(Filter filter);
 
 	Layout _typedFormat; ///< The precise typed format.
 	Filter _filtering;   ///< Minification filtering mode.
@@ -384,15 +384,15 @@ public:
 	GPUTexture(GPUTexture &&) = delete;
 	
 	// Cached GPU settings.
-	const GLenum target;		 ///< Texture target.
-	GLenum minFiltering;		 ///< Minification filter.
-	GLenum magFiltering;		 ///< Magnification filter.
-	GLenum wrapping;			 ///< Wrapping mode.
+	//const GLenum target;		 ///< Texture target.
+	//GLenum minFiltering;		 ///< Minification filter.
+	//GLenum magFiltering;		 ///< Magnification filter.
+	//GLenum wrapping;			 ///< Wrapping mode.
 	const unsigned int channels; ///< Number of channels.
-	GLenum typedFormat;			 ///< Detailed format.
-	GLenum format;				 ///< General format.
-	GLenum type;				 ///< Data type.
-	GLuint id = 0; ///< The GPU texture ID.
+	//GLenum typedFormat;			 ///< Detailed format.
+	//GLenum format;				 ///< General format.
+	//GLenum type;				 ///< Data type.
+	//GLuint id = 0; ///< The GPU texture ID.
 	
 private:
 	Descriptor _descriptor; ///< Layout used.
@@ -407,9 +407,9 @@ private:
 class GPUBuffer {
 public:
 
-	GLuint id = 0; ///< The buffer GPU ID.
-	GLenum target; ///< The buffer type.
-	GLenum usage; ///< The buffer usage.
+	//GLuint id = 0; ///< The buffer GPU ID.
+	//GLenum target; ///< The buffer type.
+	//GLenum usage; ///< The buffer usage.
 
 	/** Constructor.
 	 \param type the type of buffer
@@ -448,8 +448,8 @@ public:
 	std::unique_ptr<GPUBuffer> vertexBuffer; ///< Vertex data buffer.
 	std::unique_ptr<GPUBuffer> indexBuffer; ///< Index element buffer.
 
-	GLsizei count = 0; ///< The number of vertices (cached).
-	GLuint id	= 0; ///< The vertex buffer objects GPU ID.
+	size_t count = 0; ///< The number of vertices (cached).
+	//GLuint id	= 0; ///< The vertex buffer objects GPU ID.
 	
 	/** Clean internal GPU buffers. */
 	void clean();
@@ -510,8 +510,8 @@ public:
 private:
 
 	static const size_t bufferCount = 3; ///< Number of internal buffered queries.
-	GLenum _internalType; ///< GPU query type.
-	std::array<GLuint, bufferCount> _ids; ///< GPU query object IDs.
+	//GLenum _internalType; ///< GPU query type.
+	//std::array<GLuint, bufferCount> _ids; ///< GPU query object IDs.
 	size_t _current = 0; ///< Current query in use.
 	bool _running = false; ///< Is a measurement currently taking place.
 
@@ -577,11 +577,11 @@ public:
 	bool scissorTest = false; ///< Is geometry tested against the scissor region or not.
 
 	// Binding state.
-	using TextureBindings = std::unordered_map<GLenum, GLuint>; ///< List of texture shapes and handles.
-	std::array<TextureBindings, 32> textures; ///< Textures bound at each target for each slot.
-	GLuint readFramebuffer = 0; ///< Currently bound read framebuffer.
-	GLuint drawFramebuffer = 0; ///< Currently bound draw framebuffer.
-	GLuint program = 0; ///< Currently bound shader program.
-	GLenum activeTexture = GL_TEXTURE0; ///< Currently active texture slot.
-	GLuint vertexArray = 0; ///< Currently bound vertex array.
+	//using TextureBindings = std::unordered_map<GLenum, GLuint>; ///< List of texture shapes and handles.
+	//std::array<TextureBindings, 32> textures; ///< Textures bound at each target for each slot.
+	//GLuint readFramebuffer = 0; ///< Currently bound read framebuffer.
+	//GLuint drawFramebuffer = 0; ///< Currently bound draw framebuffer.
+	//GLuint program = 0; ///< Currently bound shader program.
+	//GLenum activeTexture = GL_TEXTURE0; ///< Currently active texture slot.
+	//GLuint vertexArray = 0; ///< Currently bound vertex array.
 };

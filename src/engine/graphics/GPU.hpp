@@ -39,6 +39,8 @@ class GPU {
 
 public:
 
+	using Handle = int;
+
 	/** Type of shader uniform binding */
 	enum class BindingType : uint {
 		TEXTURE, UNIFORM_BUFFER
@@ -93,7 +95,7 @@ public:
 	 \param finalLog will contain the compilation log of the shader
 	 \return the GPU ID of the shader object
 	 */
-	static GLuint loadShader(const std::string & prog, ShaderType type, Bindings & bindings, std::string & finalLog);
+	static Handle loadShader(const std::string & prog, ShaderType type, Bindings & bindings, std::string & finalLog);
 
 	/** Create and link a GLProgram using the shader code contained in the given strings.
 	 \param vertexContent the vertex shader string
@@ -105,7 +107,7 @@ public:
 	 \param debugInfos the name of the program, or any custom debug infos that will be logged.
 	 \return the GPU ID of the program
 	 */
-	static GLuint createProgram(const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, const std::string & tessControlContent, const std::string & tessEvalContent, Bindings & bindings, const std::string & debugInfos);
+	static Handle createProgram(const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, const std::string & tessControlContent, const std::string & tessEvalContent, Bindings & bindings, const std::string & debugInfos);
 
 	/** Bind a program to use for rendering
 	 \param program the program to use
@@ -129,7 +131,7 @@ public:
 	 \param flip should the image be vertically fliped before saving
 	 \param ignoreAlpha should the alpha channel be ignored if it exists
 	 \note The output image extension will be automatically added based on the framebuffer type and format.
-	 \warning Export of small size GL_FLOAT framebuffers can create artifacts.
+	 \warning Export of small size float framebuffers can create artifacts.
 	 */
 	static void saveFramebuffer(const Framebuffer & framebuffer, const std::string & path, bool flip = true, bool ignoreAlpha = false);
 
@@ -191,7 +193,7 @@ public:
 	 \param shape the texture shape
 	 \return the corresponding target
 	 */
-	static GLenum targetFromShape(const TextureShape & shape);
+	//static GLenum targetFromShape(const TextureShape & shape);
 
 	/** Bind a uniform buffer to a shader slot.
 	 \param buffer the infos of the buffer to bind
@@ -445,7 +447,7 @@ private:
 	 \param ignoreAlpha should the alpha channel be ignored if it exists
 	 \note The output image extension will be automatically added based on the framebuffer type and format.
 	 */
-	static void savePixels(GLenum type, GLenum format, unsigned int width, unsigned int height, unsigned int components, const std::string & path, bool flip, bool ignoreAlpha);
+	//static void savePixels(GLenum type, GLenum format, unsigned int width, unsigned int height, unsigned int components, const std::string & path, bool flip, bool ignoreAlpha);
 
 	/** Restore the texture bound to the given shape for the current slot.
 	 \param shape the shape to restore
@@ -474,5 +476,6 @@ private:
 	static GPUState _state; ///< Current GPU state for caching.
 	static Metrics _metrics; ///< Internal metrics (draw count, state changes,...).
 	static Metrics _metricsPrevious; ///< Internal metrics for the last completed frame.
-	static GLuint _vao; ///< The unique empty screenquad VAO.
+	//static Handle _vao; ///< The unique empty screenquad VAO.
+
 };
