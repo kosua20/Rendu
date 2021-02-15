@@ -15,19 +15,14 @@
 #include <GLFW/glfw3.h>
 
 Window::Window(const std::string & name, RenderingConfig & config, bool convertToSRGB, bool escapeQuit, bool hidden) :
-	_config(config), _allowEscape(escapeQuit), _convertToSRGB(convertToSRGB) {
-	// Initialize glfw, which will create and setup a GPU context.
+_config(config), _allowEscape(escapeQuit), _convertToSRGB(convertToSRGB) {
+	// Initialize glfw.
 	if(!glfwInit()) {
 		Log::Error() << Log::GPU << "Could not start GLFW3" << std::endl;
 		return;
 	}
-	const int openGLMajor = 4;
-	const int openGLMinor = 0;
 
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, openGLMajor);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, openGLMinor);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 	glfwWindowHint(GLFW_VISIBLE, hidden ? GLFW_FALSE : GLFW_TRUE);
 	glfwWindowHint(GLFW_FOCUSED, hidden ? GLFW_FALSE : GLFW_TRUE);
 	glfwWindowHint(GLFW_SRGB_CAPABLE, GLFW_TRUE);
@@ -54,22 +49,6 @@ Window::Window(const std::string & name, RenderingConfig & config, bool convertT
 	if(_config.forceAspectRatio) {
 		glfwSetWindowAspectRatio(_window, int(_config.initialWidth), int(_config.initialHeight));
 	}
-	// Bind the OpenGL context and the new window.
-	glfwMakeContextCurrent(_window);
-
-	if(gl3wInit()) {
-		Log::Error() << Log::GPU << "Failed to initialize OpenGL" << std::endl;
-		return;
-	}
-	if(!gl3wIsSupported(openGLMajor, openGLMinor)) {
-		Log::Error() << Log::GPU << "OpenGL " << openGLMajor << "." << openGLMinor << " not supported\n"
-					 << std::endl;
-		return;
-	}
-
-	// Setup the GPU state.
-	GPU::setup();
-	GPU::setSRGBState(_convertToSRGB);
 
 	// Setup callbacks for various interactions and inputs.
 	glfwSetFramebufferSizeCallback(_window, resize_callback);		  // Resizing the window
@@ -80,7 +59,9 @@ Window::Window(const std::string & name, RenderingConfig & config, bool convertT
 	glfwSetScrollCallback(_window, scroll_callback);					  // Scrolling
 	glfwSetJoystickCallback(joystick_callback);						  // Joystick
 	glfwSetWindowIconifyCallback(_window, iconify_callback);			  // Window minimization
-	glfwSwapInterval(_config.vsync ? (_config.rate == 30 ? 2 : 1) : 0); // 60 FPS V-sync
+	//glfwSwapInterval(_config.vsync ? (_config.rate == 30 ? 2 : 1) : 0); // 60 FPS V-sync
+	// Setup the GPU state.
+	GPU::setSRGBState(_convertToSRGB);
 
 	// We will need basic resources for ImGui.
 	Resources::manager().addResources("../../../resources/common");
@@ -168,12 +149,12 @@ bool Window::nextFrame() {
 		// sRGB conversion when writing to the backbuffer.
 		GPU::setSRGBState(false);
 		// Draw ImGui as-is...
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+		//ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		// ...and restore.
 		GPU::setSRGBState(_convertToSRGB);
 		
 		//Display the result for the current rendering loop.
-		glfwSwapBuffers(_window);
+		//glfwSwapBuffers(_window);
 	}
 	// Notify GPU for book-keeping.
 	GPU::nextFrame();
@@ -191,7 +172,7 @@ bool Window::nextFrame() {
 		Framebuffer::backbufferResized(w, h);
 	}
 	// Start new GUI frame.
-	ImGui_ImplOpenGL3_NewFrame();
+	//ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 	_frameStarted = true;
@@ -205,7 +186,7 @@ Window::~Window() {
 	}
 	GPU::sync();
 	// Clean the interface.
-	ImGui_ImplOpenGL3_Shutdown();
+	//ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
 	// Clean other resources
@@ -221,16 +202,20 @@ void Window::setupImGui() {
 	// Load font.
 	const auto * fontData = Resources::manager().getData("Lato-Regular.ttf");
 	if(fontData){
-		ImFontConfig font = ImFontConfig();
-		font.FontData = (void*)(fontData->data());
-		font.FontDataSize = fontData->size();
-		font.SizePixels = 16.0f;
-		// Font data is managed by the resource manager.
-		font.FontDataOwnedByAtlas = false;
-		io.Fonts->AddFont(&font);
+//		ImFontConfig font = ImFontConfig();
+//		font.FontData = (void*)(fontData->data());
+//		font.FontDataSize = fontData->size();
+//		font.SizePixels = 16.0f;
+//		// Font data is managed by the resource manager.
+//		font.FontDataOwnedByAtlas = false;
+//		io.Fonts->AddFont(&font);
 	}
-	ImGui_ImplGlfw_InitForOpenGL(_window, false);
-	ImGui_ImplOpenGL3_Init("#version 410");
+	unsigned char* pixels;
+	int width, height;
+	io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);
+	io.Fonts->TexID = 0;
+	ImGui_ImplGlfw_InitForVulkan(_window, false);
+	//ImGui_ImplOpenGL3_Init("#version 410");
 	
 	// Customize the style.
 	ImGui::StyleColorsDark();
