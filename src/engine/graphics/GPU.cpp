@@ -10,6 +10,18 @@
 #include <sstream>
 #include <GLFW/glfw3.h>
 
+#include <set>
+
+#define FORCE_DEBUG_VULKAN
+
+#define VK_RETURN_CHECK(F, L) do {\
+VkResult res = (F);\
+if(res != VK_SUCCESS){\
+Log::Error() << Log::GPU << "Return error at line " << L << std::endl;\
+}\
+} while(0);
+
+#define VK_RET(F) VK_RETURN_CHECK((F), __LINE__)
 
 /** Converts a GLenum error number into a human-readable string.
  \param error the GPU error value
@@ -42,13 +54,59 @@
 //	return msg;
 //}
 
-}
-
+bool checkLayersSupport(const std::vector<const char*> & requestedLayers){
+	// Get available layers.
+	uint32_t layerCount;
+	vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
+	std::vector<VkLayerProperties> availableLayers(layerCount);
+	vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
+	// Cross check with those we want.
+	for(const char* layerName : requestedLayers){
+		bool layerFound = false;
+		for(const auto& layerProperties : availableLayers){
+			if(strcmp(layerName, layerProperties.layerName) == 0){
+				layerFound = true;
+				break;
+			}
 		}
+		if(!layerFound){
+			return false;
 		}
 	}
 }
 
+bool checkExtensionsSupport(const std::vector<const char*> & requestedExtensions){
+	// Get available extensions.
+	uint32_t extensionCount = 0;
+	vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
+	std::vector<VkExtensionProperties> availableExtensions(extensionCount);
+	vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, availableExtensions.data());
+	for(const char* extensionName : requestedExtensions){
+		bool extensionFound = false;
+		for(const auto& extensionProperties: availableExtensions){
+			if(strcmp(extensionName, extensionProperties.extensionName) == 0){
+				extensionFound = true;
+				break;
+			}
+		}
+		if(!extensionFound){
+			return false;
+		}
+	}
+	return true;
+}
+
+std::vector<const char*> getRequiredInstanceExtensions(const bool enableValidationLayers){
+	// Default Vulkan has no notion of surface/window. GLFW provide an implementation of the corresponding KHR extensions.
+	uint32_t glfwExtensionCount = 0;
+	const char** glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
+	std::vector<const char*> extensions(glfwExtensions, glfwExtensions + glfwExtensionCount);
+	// If the validation layers are enabled, add associated extensions.
+	if(enableValidationLayers) {
+		extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+	}
+	return extensions;
+}
 				break;
 		}
 	}
@@ -62,20 +120,146 @@
 
 	}
 
+static VkInstance _instance = VK_NULL_HANDLE;
+static VkDebugUtilsMessengerEXT _debugMessenger= VK_NULL_HANDLE;
+static VkPhysicalDevice _physicalDevice= VK_NULL_HANDLE;
 
+
+VKAPI_ATTR VkBool32 VKAPI_CALL vkDebugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageType, const VkDebugUtilsMessengerCallbackDataEXT* callbackData, void* userData)
+{
+	// Build message.
+	std::string message = "";
+	if(messageType & VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT){
+		message = "Validation: ";
+	} else if(messageType & VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT){
+		message = "Performance: ";
 	}
+	message.append(callbackData->pMessage);
+
+	if(messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT){
+		Log::Error() << Log::GPU << message << std::endl;
+	} else if(messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT){
+		Log::Warning() << Log::GPU << message << std::endl;
+	} else if(messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT){
+		Log::Info() << Log::GPU << message << std::endl;
+	} else if(messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT){
+		Log::Verbose() << Log::GPU << message << std::endl;
+	}
+	return VK_FALSE;
 }
 
 
+const std::vector<const char*> validationLayers = { "VK_LAYER_KHRONOS_validation" };
+const std::vector<const char*> validationExtensions = { VK_EXT_DEBUG_UTILS_EXTENSION_NAME };
+
+bool GPU::setup(const std::string & appName) {
+
+	if(volkInitialize() != VK_SUCCESS){
+		Log::Error() << Log::GPU << "Could not load Vulkan" << std::endl;
+		return false;
+	}
+
+	bool debugEnabled = false;
+#if defined(_DEBUG) || defined(FORCE_DEBUG_VULKAN)
+	// Only enable if the layers are supported.
+	debugEnabled = checkLayersSupport(validationLayers) && checkExtensionsSupport(validationExtensions);
+#endif
+
+	VkApplicationInfo appInfo = {};
+	appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+	appInfo.pApplicationName = appName.c_str();
+	appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
+	appInfo.pEngineName = "Rendu";
+	appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
+	appInfo.apiVersion = VK_API_VERSION_1_1;
+
+	VkInstanceCreateInfo instanceInfo = {};
+	instanceInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+	instanceInfo.pApplicationInfo = &appInfo;
+
+	// We have to tell Vulkan the extensions we need.
+	const std::vector<const char*> extensions = getRequiredInstanceExtensions(debugEnabled);
+	if(!checkExtensionsSupport(extensions)){
+		Log::Error() << Log::GPU << "Unsupported extensions." << std::endl;
+		return false;
+	}
+	instanceInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
+	instanceInfo.ppEnabledExtensionNames = extensions.data();
+
+	// Validation layers.
+	instanceInfo.enabledLayerCount = 0;
+	if(debugEnabled){
+		instanceInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
+		instanceInfo.ppEnabledLayerNames = validationLayers.data();
+	}
+
+	// Debug callbacks if supported.
+	VkDebugUtilsMessengerCreateInfoEXT debugInfo = {};
+	if(debugEnabled){
+		debugInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+		debugInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+		debugInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+		debugInfo.pfnUserCallback = vkDebugCallback;
+		debugInfo.pUserData = nullptr;
+		instanceInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT*)&debugInfo;
+	}
+
+	if(vkCreateInstance(&instanceInfo, nullptr, &_instance) != VK_SUCCESS){
+		Log::Info() << Log::GPU << "Unable to create a Vulkan instance." << std::endl;
+		return false;
+	}
+
+	volkLoadInstance(_instance);
+
+	if(debugEnabled){
+		VK_RET(vkCreateDebugUtilsMessengerEXT(_instance, &debugInfo, nullptr, &_debugMessenger));
+		//vkDestroyDebugUtilsMessengerEXT(_instance, _debugMessenger, nullptr);
+	}
+
+	// Pick a physical device.
+	uint32_t deviceCount = 0;
+	vkEnumeratePhysicalDevices(_instance, &deviceCount, nullptr);
+	std::vector<VkPhysicalDevice> devices(deviceCount);
+	vkEnumeratePhysicalDevices(_instance, &deviceCount, devices.data());
+
+	VkPhysicalDevice selectedDevice = VK_NULL_HANDLE;
+	// Check which one is ok for our requirements.
+	for(const auto& device : devices) {
+		// We want a device with swapchain support.
+		const bool supportExtensions = checkDeviceExtensionsSupport(device, deviceExtensions);
+		// Ask for anisotropy and tessellation.
+		VkPhysicalDeviceFeatures features;
+		vkGetPhysicalDeviceFeatures(device, &features);
+		const bool hasFeatures = features.samplerAnisotropy && features.tessellationShader;
+
+		if(supportExtensions && hasFeatures){
+			// Prefere a discrete GPU if possible.
+			VkPhysicalDeviceProperties properties;
+			vkGetPhysicalDeviceProperties(device, &properties);
+			const bool isDiscrete = properties.deviceType;
+
+			if(selectedDevice == VK_NULL_HANDLE || isDiscrete){
+				selectedDevice = device;
+				//uniformOffset = properties.limits.minUniformBufferOffsetAlignment;
+			}
+		}
 
 	}
-	}
-	}
-	}
+
+	if(selectedDevice == VK_NULL_HANDLE){
+		Log::Error() << Log::GPU << "Unable to find proper physical device." << std::endl;
+		return false;
 	}
 
-	}
-	}
+	_physicalDevice = selectedDevice;
+
+	// Create empty VAO for screenquad.
+	//	glGenVertexArrays(1, &_vao);
+	//	glBindVertexArray(_vao);
+	//	glBindVertexArray(0);
+	//	_state.vertexArray = 0;
+	return true;
+}
 	}
 	}
 	}

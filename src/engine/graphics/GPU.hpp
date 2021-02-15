@@ -84,9 +84,11 @@ public:
 	  */
 	static int checkFramebufferStatus();
 	
-	/** Setup the GPU in its initial state.
+	/** Setup the GPU device in its initial state.
+	 \param appName the name of the current executable
+	 \return true if the setup was successful
 	 */
-	static void setup();
+	static bool setup(const std::string & appName);
 
 	/** Create a shader of a given type from a string. Extract additional informations from the shader.
 	 \param prog the content of the shader
