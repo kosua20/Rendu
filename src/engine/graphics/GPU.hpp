@@ -6,6 +6,7 @@
 #include "graphics/GPUObjects.hpp"
 #include "graphics/Framebuffer.hpp"
 #include "graphics/Program.hpp"
+#include "graphics/Swapchain.hpp"
 #include "Common.hpp"
 #include <map>
 
@@ -24,6 +25,7 @@
 
 class Framebuffer;
 class ScreenQuad;
+struct GLFWwindow;
 
 /**
  \brief Provide utility functions to communicate with the driver and GPU.
@@ -89,6 +91,8 @@ public:
 	 \return true if the setup was successful
 	 */
 	static bool setup(const std::string & appName);
+
+	static bool setupSwapchain(Swapchain & swapchain, GLFWwindow* window);
 
 	/** Create a shader of a given type from a string. Extract additional informations from the shader.
 	 \param prog the content of the shader

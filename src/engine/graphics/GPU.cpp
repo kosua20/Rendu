@@ -107,18 +107,64 @@ std::vector<const char*> getRequiredInstanceExtensions(const bool enableValidati
 	}
 	return extensions;
 }
+
+bool checkDeviceExtensionsSupport(VkPhysicalDevice device, const std::vector<const char*> & requestedExtensions) {
+	// Get available device extensions.
+	uint32_t extensionCount;
+	vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
+	std::vector<VkExtensionProperties> availableExtensions(extensionCount);
+	vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, availableExtensions.data());
+
+	// Check if the required device extensions are available.
+	for(const auto& extensionName : requestedExtensions) {
+		bool extensionFound = false;
+		for(const auto& extensionProperties: availableExtensions){
+			if(strcmp(extensionName, extensionProperties.extensionName) == 0){
+				extensionFound = true;
 				break;
+			}
+		}
+		if(!extensionFound){
+			return false;
 		}
 	}
+	return true;
 }
 
+bool getQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface, uint & graphicsFamily, uint & presentFamily){
+	// Get all queues.
+	uint32_t queueFamilyCount = 0;
+	vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
+	std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
+	vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
+	// Find queue with graphics or presentation support.
+	int i = 0;
+	for(const auto& queueFamily : queueFamilies){
+		// Check if queue support graphics.
+		if(queueFamily.queueCount == 0){
+			++i;
+			continue;
 		}
 
+		if(queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+			graphicsFamily = i;
 		}
+		// CHeck if queue support presentation.
+		VkBool32 presentSupport = false;
+		vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &presentSupport);
+		if(presentSupport) {
+			presentFamily = i;
 		}
+		// If we have found both queues, exit.
+		if(graphicsFamily >= 0 && presentFamily >= 0){
+			return true;
 		}
 
+		++i;
 	}
+	return false;
+}
+
 
 static VkInstance _instance = VK_NULL_HANDLE;
 static VkDebugUtilsMessengerEXT _debugMessenger= VK_NULL_HANDLE;
@@ -151,6 +197,7 @@ VKAPI_ATTR VkBool32 VKAPI_CALL vkDebugCallback(VkDebugUtilsMessageSeverityFlagBi
 
 const std::vector<const char*> validationLayers = { "VK_LAYER_KHRONOS_validation" };
 const std::vector<const char*> validationExtensions = { VK_EXT_DEBUG_UTILS_EXTENSION_NAME };
+const std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
 bool GPU::setup(const std::string & appName) {
 
@@ -260,10 +307,67 @@ bool GPU::setup(const std::string & appName) {
 	//	_state.vertexArray = 0;
 	return true;
 }
+
+bool GPU::setupSwapchain(Swapchain & swapchain, GLFWwindow* window){
+	// Create a surface.
+	VkSurfaceKHR surface;
+	if(glfwCreateWindowSurface(_instance, window, nullptr, &surface) != VK_SUCCESS) {
+		Log::Error() << Log::GPU << "Unable to create surface." << std::endl;
+		return false;
 	}
+	// Query the available queues.
+	uint graphicsFamily, presentFamily;
+	bool found = getQueueFamilies(_physicalDevice, surface, graphicsFamily, presentFamily);
+	if(!found){
+		Log::Error() << Log::GPU << "Unable to find compatible queue families." << std::endl;
+		return false;
 	}
+
+	// Select queues.
+	std::set<uint> families;
+	families.insert(graphicsFamily);
+	families.insert(presentFamily);
+
+	float queuePriority = 1.0f;
+	std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
+	for(int queueFamily : families) {
+		VkDeviceQueueCreateInfo queueCreateInfo = {};
+		queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+		queueCreateInfo.queueFamilyIndex = queueFamily;
+		queueCreateInfo.queueCount = 1;
+		queueCreateInfo.pQueuePriorities = &queuePriority;
+		queueCreateInfos.push_back(queueCreateInfo);
 	}
+
+	// Device setup.
+	VkDeviceCreateInfo deviceInfo = {};
+	deviceInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+	deviceInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
+	deviceInfo.pQueueCreateInfos = queueCreateInfos.data();
+	// Features we want.
+	VkPhysicalDeviceFeatures features = {};
+	features.samplerAnisotropy = VK_TRUE;
+	features.tessellationShader = VK_TRUE;
+	deviceInfo.pEnabledFeatures = &features;
+	// Extensions.
+	deviceInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
+	deviceInfo.ppEnabledExtensionNames = deviceExtensions.data();
+
+	VkDevice device;
+	if(vkCreateDevice(_physicalDevice, &deviceInfo, nullptr, &device) != VK_SUCCESS) {
+		Log::Error() << Log::GPU << "Unable to create logical device." << std::endl;
+		return false;
 	}
+	VkQueue graphicsQueue;
+	VkQueue presentQueue;
+	vkGetDeviceQueue(device, graphicsFamily, 0, &graphicsQueue);
+	vkGetDeviceQueue(device, presentFamily, 0, &presentQueue);
+
+	//swapchain.init(_instance, _physicalDevice, surface, etc.);
+	//bool isComplete = getGraphicsQueueFamilyIndex(adevice, asurface).isComplete()
+	return true;
+}
+
 int GPU::checkError(const char * file, int line, const std::string & infos) {
 //	const GLenum glErr = glGetError();
 //	if(glErr != GL_NO_ERROR) {
