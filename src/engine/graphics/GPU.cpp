@@ -591,100 +591,118 @@ void GPU::bindTextures(const std::vector<const Texture *> & textures, size_t sta
 
 void GPU::setupTexture(Texture & texture, const Descriptor & descriptor) {
 
-//	if(texture.gpu) {
-//		texture.gpu->clean();
-//	}
-//
-//	texture.gpu.reset(new GPUTexture(descriptor, texture.shape));
-//	GLuint textureId;
-//	glGenTextures(1, &textureId);
-//	texture.gpu->id = textureId;
-//
-//	const GLenum target = texture.gpu->target;
-//	const GLenum wrap	= texture.gpu->wrapping;
-//
-//	glBindTexture(target, textureId);
-//	_metrics.textureBindings += 1;
-//
-//	// Set proper max mipmap level.
-//	glTexParameteri(target, GL_TEXTURE_MAX_LEVEL, texture.levels - 1);
-//	// Texture settings.
-//	glTexParameteri(target, GL_TEXTURE_MIN_FILTER, texture.gpu->minFiltering);
-//	glTexParameteri(target, GL_TEXTURE_MAG_FILTER, texture.gpu->magFiltering);
-//	glTexParameteri(target, GL_TEXTURE_WRAP_R, wrap);
-//	glTexParameteri(target, GL_TEXTURE_WRAP_S, wrap);
-//	glTexParameteri(target, GL_TEXTURE_WRAP_T, wrap);
-//
-//	GPU::restoreTexture(texture.shape);
-//
-//	// Allocate.
-//	GPU::allocateTexture(texture);
+	if(texture.gpu) {
+		texture.gpu->clean();
+	}
+
+	texture.gpu.reset(new GPUTexture(descriptor, texture.shape));
+
+	const bool is3D = texture.gpu->type == VK_IMAGE_TYPE_3D;
+	const bool isCube = texture.shape & TextureShape::Cube;
+	const bool isArray = texture.shape & TextureShape::Array;
+
+	VkImageUsageFlags usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT;
+	// Create image.
+	VkImageCreateInfo imageInfo = {};
+	imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+	imageInfo.imageType = texture.gpu->type;
+	imageInfo.extent.width = static_cast<uint32_t>(texture.width);
+	imageInfo.extent.height = static_cast<uint32_t>(texture.height);
+	imageInfo.extent.depth = is3D ? texture.depth : 1;
+	imageInfo.mipLevels = texture.levels;
+	imageInfo.arrayLayers = (isCube || isArray) ? texture.depth : 1;
+	imageInfo.format = texture.gpu->format;
+	imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
+	imageInfo.initialLayout = texture.gpu->layout;
+	imageInfo.usage = usage;
+	imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+	imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
+	imageInfo.flags = 0;
+	if(isCube){
+		imageInfo.flags = VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT;
+	} else if(texture.shape == TextureShape::Array2D){
+		// Only for 2D arrays apparently.
+		imageInfo.flags = VK_IMAGE_CREATE_2D_ARRAY_COMPATIBLE_BIT;
+	}
+
+	if (vkCreateImage(_context.device, &imageInfo, nullptr, &(texture.gpu->image)) != VK_SUCCESS) {
+		Log::Error() << Log::GPU << "Unable to create texture image." << std::endl;
+		return;
+	}
+
+	const Layout & layout = descriptor.typedFormat();
+	VkImageAspectFlags aspectFlags = VK_IMAGE_ASPECT_COLOR_BIT;
+	if(layout == Layout::DEPTH_COMPONENT16 || layout == Layout::DEPTH_COMPONENT24 || layout == Layout::DEPTH_COMPONENT32F){
+		aspectFlags = VK_IMAGE_ASPECT_DEPTH_BIT;
+	}
+	if(layout == Layout::DEPTH24_STENCIL8 || layout == Layout::DEPTH32F_STENCIL8){
+		aspectFlags = VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
+	}
+
+	// Create view.
+	VkImageViewCreateInfo viewInfo = {};
+	viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+	viewInfo.image = texture.gpu->image;
+	viewInfo.viewType = texture.gpu->viewType;
+	viewInfo.format = texture.gpu->format;
+	viewInfo.subresourceRange.aspectMask = aspectFlags;
+	viewInfo.subresourceRange.baseMipLevel = 0;
+	viewInfo.subresourceRange.levelCount = texture.levels;
+	viewInfo.subresourceRange.baseArrayLayer = 0;
+	viewInfo.subresourceRange.layerCount = imageInfo.arrayLayers;
+
+	VkImageView imageView;
+	if (vkCreateImageView(_context.device, &viewInfo, nullptr, &(texture.gpu->view)) != VK_SUCCESS) {
+		Log::Error() << Log::GPU << "Unable to create image view." << std::endl;
+		return;
+	}
+
+	// Create associated sampler.
+	VkSamplerCreateInfo samplerInfo = {};
+	samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+	samplerInfo.magFilter = texture.gpu->imgFiltering;
+	samplerInfo.minFilter = texture.gpu->imgFiltering;
+	samplerInfo.addressModeU = texture.gpu->wrapping;
+	samplerInfo.addressModeV = texture.gpu->wrapping;
+	samplerInfo.addressModeW = texture.gpu->wrapping;
+	samplerInfo.anisotropyEnable = VK_TRUE;
+	samplerInfo.maxAnisotropy = 16;
+	samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
+	samplerInfo.unnormalizedCoordinates = VK_FALSE;
+	samplerInfo.compareEnable = VK_FALSE;
+	samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;
+	samplerInfo.mipmapMode = texture.gpu->mipFiltering;
+	samplerInfo.mipLodBias = 0.0f;
+	samplerInfo.minLod = 0.0f;
+	samplerInfo.maxLod = float(texture.levels);
+	if (vkCreateSampler(_context.device, &samplerInfo, nullptr, &(texture.gpu->sampler)) != VK_SUCCESS) {
+		Log::Error() << Log::GPU << "Unable to create a sampler." << std::endl;
+	}
+
+	// Allocate.
+	GPU::allocateTexture(texture);
+
 }
 
 void GPU::allocateTexture(const Texture & texture) {
-//	if(!texture.gpu) {
-//		Log::Error() << Log::GPU << "Uninitialized GPU texture." << std::endl;
-//		return;
-//	}
+	if(!texture.gpu) {
+		Log::Error() << Log::GPU << "Uninitialized GPU texture." << std::endl;
+		return;
+	}
 
-//	const GLenum target		= texture.gpu->target;
-//	const GLenum typeFormat = texture.gpu->typedFormat;
-//	const GLenum type		= texture.gpu->type;
-//	const GLenum format		= texture.gpu->format;
-//	glBindTexture(target, texture.gpu->id);
-//	_metrics.textureBindings += 1;
-//
-//	for(size_t mid = 0; mid < texture.levels; ++mid) {
-//		// Mipmap dimensions.
-//		const GLsizei w = GLsizei(std::max<uint>(1, texture.width / (1 << mid)));
-//		const GLsizei h = GLsizei(std::max<uint>(1, texture.height / (1 << mid)));
-//
-//		const GLint mip = GLint(mid);
-//
-//		if(texture.shape == TextureShape::D1) {
-//			glTexImage1D(target, mip, typeFormat, w, 0, format, type, nullptr);
-//
-//		} else if(texture.shape == TextureShape::D2) {
-//			glTexImage2D(target, mip, typeFormat, w, h, 0, format, type, nullptr);
-//
-//		} else if(texture.shape == TextureShape::Cube) {
-//			// Here the number of levels is 6.
-//			if(texture.depth != 6) {
-//				Log::Error() << Log::GPU << "Incorrect number of levels in a cubemap (" << texture.depth << ")." << std::endl;
-//				return;
-//			}
-//			// In that case each level is a cubemap face.
-//			for(size_t lid = 0; lid < texture.depth; ++lid) {
-//				// We need to allocate each level
-//				glTexImage2D(GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + lid), mip, typeFormat, w, h, 0, format, type, nullptr);
-//			}
-//
-//		} else if(texture.shape == TextureShape::D3) {
-//			const GLsizei d = GLsizei(std::max<uint>(1, texture.depth / (1 << mid)));
-//			glTexImage3D(target, mip, typeFormat, w, h, d, 0, format, type, nullptr);
-//
-//		} else if(texture.shape == TextureShape::Array1D) {
-//			// For 1D texture arrays, we do a one-shot allocation using 2D.
-//			glTexImage2D(target, mip, typeFormat, w, texture.depth, 0, format, type, nullptr);
-//
-//		} else if(texture.shape == TextureShape::Array2D) {
-//			// For 2D texture arrays, we do a one-shot allocation using 3D.
-//			glTexImage3D(target, mip, typeFormat, w, h, texture.depth, 0, format, type, nullptr);
-//
-//		} else if(texture.shape == TextureShape::ArrayCube) {
-//			// Here the number of levels is a multiple of 6.
-//			if(texture.depth % 6 != 0) {
-//				Log::Error() << Log::GPU << "Incorrect number of levels in a cubemap array (" << texture.depth << ")." << std::endl;
-//				return;
-//			}
-//			glTexImage3D(GL_TEXTURE_CUBE_MAP_ARRAY, mip, typeFormat, w, h, texture.depth, 0, format, type, nullptr);
-//
-//		} else {
-//			Log::Error() << Log::GPU << "Unsupported texture shape." << std::endl;
-//			return;
-//		}
-//	}
-//	GPU::restoreTexture(texture.shape);
+	// Allocate memory for image.
+	VkMemoryRequirements requirements;
+	vkGetImageMemoryRequirements(_context.device, texture.gpu->image, &requirements);
+	VkMemoryAllocateInfo allocInfo = {};
+	allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+	allocInfo.allocationSize = requirements.size;
+	allocInfo.memoryTypeIndex = VkUtils::findMemoryType(requirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, _context.physicalDevice);
+	if (vkAllocateMemory(_context.device, &allocInfo, nullptr, &(texture.gpu->data)) != VK_SUCCESS) {
+		Log::Error() << Log::GPU << "Unable to allocate texture memory." << std::endl;
+		return;
+	}
+	vkBindImageMemory(_context.device, texture.gpu->image, texture.gpu->data, 0);
+
 }
 
 void GPU::uploadTexture(const Texture & texture) {
@@ -1070,9 +1088,9 @@ void GPU::deviceInfos(std::string & vendor, std::string & renderer, std::string 
 	};
 
 
-	if(_physicalDevice != VK_NULL_HANDLE){
+	if(_context.physicalDevice != VK_NULL_HANDLE){
 		VkPhysicalDeviceProperties properties;
-		vkGetPhysicalDeviceProperties(_physicalDevice, &properties);
+		vkGetPhysicalDeviceProperties(_context.physicalDevice, &properties);
 
 		const uint32_t vendorId = properties.vendorID;
 		vendor = vendors.count(vendorId) ? vendors.at(vendorId) : std::to_string(vendorId);
@@ -1108,12 +1126,12 @@ std::vector<std::string> GPU::supportedExtensions() {
 		names.emplace_back(layer.layerName);
 	}
 	// Get available device extensions.
-	if(_physicalDevice != VK_NULL_HANDLE){
+	if(_context.physicalDevice != VK_NULL_HANDLE){
 		names.emplace_back("-- Device --------");
 		uint32_t deviceExtsCount;
-		vkEnumerateDeviceExtensionProperties(_physicalDevice, nullptr, &deviceExtsCount, nullptr);
+		vkEnumerateDeviceExtensionProperties(_context.physicalDevice, nullptr, &deviceExtsCount, nullptr);
 		std::vector<VkExtensionProperties> deviceExts(deviceExtsCount);
-		vkEnumerateDeviceExtensionProperties(_physicalDevice, nullptr, &deviceExtsCount, deviceExts.data());
+		vkEnumerateDeviceExtensionProperties(_context.physicalDevice, nullptr, &deviceExtsCount, deviceExts.data());
 		for(const auto& ext : deviceExts){
 			names.emplace_back(ext.extensionName);
 		}
@@ -1800,3 +1818,4 @@ GPUState GPU::_state;
 GPU::Metrics GPU::_metrics;
 GPU::Metrics GPU::_metricsPrevious;
 //GPU::Handle GPU::_vao = 0;
+

@@ -6,7 +6,6 @@
 #include "graphics/GPUObjects.hpp"
 #include "graphics/Framebuffer.hpp"
 #include "graphics/Program.hpp"
-#include "graphics/Swapchain.hpp"
 #include "Common.hpp"
 #include <map>
 
@@ -434,6 +433,8 @@ public:
 	 \note This can be used to easily blit a color attachment that is not the first one.
 	 */
 	static void blit(const Texture & src, Framebuffer & dst, Filter filter);
+
+	static void * getInternal();
 
 private:
 	/** Read back the currently bound framebuffer to the CPU and save it in the best possible format on disk.
