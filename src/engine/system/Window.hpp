@@ -9,6 +9,8 @@ struct GLFWwindow;
  \ingroup System
  */
 class Window {
+	friend class GPU;
+	
 public:
 	
 	/** Create a new window backed by a GPU context.

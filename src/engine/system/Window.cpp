@@ -61,22 +61,6 @@ _config(config), _allowEscape(escapeQuit), _convertToSRGB(convertToSRGB) {
 	glfwSetWindowIconifyCallback(_window, iconify_callback);			  // Window minimization
 	//glfwSwapInterval(_config.vsync ? (_config.rate == 30 ? 2 : 1) : 0); // 60 FPS V-sync
 
-	// Setup the GPU and create the swapchain.
-	if(!GPU::setup(name)){
-		glfwDestroyWindow(_window);
-		glfwTerminate();
-		return;
-	}
-	// Create a swapchain associated to the window.
-	GPU::setupSwapchain(_swapchain, _window);
-
-	// Setup the GPU state.
-	GPU::setSRGBState(_convertToSRGB);
-
-	// We will need basic resources for ImGui.
-	Resources::manager().addResources("../../../resources/common");
-	setupImGui();
-
 	// Check the window position and size (if we are on a screen smaller than the initial size).
 	glfwGetWindowPos(_window, &_config.windowFrame[0], &_config.windowFrame[1]);
 	glfwGetWindowSize(_window, &_config.windowFrame[2], &_config.windowFrame[3]);
@@ -89,6 +73,22 @@ _config(config), _allowEscape(escapeQuit), _convertToSRGB(convertToSRGB) {
 	// Compute point density by computing the ratio.
 	const float screenDensity = float(width) / float(_config.windowFrame[2]);
 	Input::manager().densityEvent(screenDensity);
+
+	// Setup the GPU and create the swapchain.
+	if(!GPU::setup(name)){
+		glfwDestroyWindow(_window);
+		glfwTerminate();
+		return;
+	}
+	// Create a swapchain associated to the window.
+	GPU::setupWindow(this);
+
+	// Setup the GPU state.
+	GPU::setSRGBState(_convertToSRGB);
+
+	// We will need basic resources for ImGui.
+	Resources::manager().addResources("../../../resources/common");
+	setupImGui();
 
 	// Update the resolution.
 	Input::manager().resizeEvent(width, height);
