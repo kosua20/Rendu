@@ -3,201 +3,24 @@
 #include "resources/Texture.hpp"
 #include "resources/Image.hpp"
 #include "system/TextUtilities.hpp"
+#include "system/Window.hpp"
 
-#define VOLK_IMPLEMENTATION
-#include <volk/volk.h>
+
+#include "graphics/GPUInternal.hpp"
 
 #include <sstream>
 #include <GLFW/glfw3.h>
 
 #include <set>
 
-#define FORCE_DEBUG_VULKAN
-
-#define VK_RETURN_CHECK(F, L) do {\
-VkResult res = (F);\
-if(res != VK_SUCCESS){\
-Log::Error() << Log::GPU << "Return error at line " << L << std::endl;\
-}\
-} while(0);
-
-#define VK_RET(F) VK_RETURN_CHECK((F), __LINE__)
-
-/** Converts a GLenum error number into a human-readable string.
- \param error the GPU error value
- \return the corresponding string
- */
-//static std::string getGLErrorString(GLenum error) {
-//	std::string msg;
-//	switch(error) {
-//		case GL_INVALID_ENUM:
-//			msg = "GL_INVALID_ENUM";
-//			break;
-//		case GL_INVALID_VALUE:
-//			msg = "GL_INVALID_VALUE";
-//			break;
-//		case GL_INVALID_OPERATION:
-//			msg = "GL_INVALID_OPERATION";
-//			break;
-//		case GL_INVALID_FRAMEBUFFER_OPERATION:
-//			msg = "GL_INVALID_FRAMEBUFFER_OPERATION";
-//			break;
-//		case GL_NO_ERROR:
-//			msg = "GL_NO_ERROR";
-//			break;
-//		case GL_OUT_OF_MEMORY:
-//			msg = "GL_OUT_OF_MEMORY";
-//			break;
-//		default:
-//			msg = "UNKNOWN_GL_ERROR";
-//	}
-//	return msg;
-//}
-
-bool checkLayersSupport(const std::vector<const char*> & requestedLayers){
-	// Get available layers.
-	uint32_t layerCount;
-	vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
-	std::vector<VkLayerProperties> availableLayers(layerCount);
-	vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
-	// Cross check with those we want.
-	for(const char* layerName : requestedLayers){
-		bool layerFound = false;
-		for(const auto& layerProperties : availableLayers){
-			if(strcmp(layerName, layerProperties.layerName) == 0){
-				layerFound = true;
-				break;
-			}
-		}
-		if(!layerFound){
-			return false;
-		}
-	}
-}
-
-bool checkExtensionsSupport(const std::vector<const char*> & requestedExtensions){
-	// Get available extensions.
-	uint32_t extensionCount = 0;
-	vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
-	std::vector<VkExtensionProperties> availableExtensions(extensionCount);
-	vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, availableExtensions.data());
-	for(const char* extensionName : requestedExtensions){
-		bool extensionFound = false;
-		for(const auto& extensionProperties: availableExtensions){
-			if(strcmp(extensionName, extensionProperties.extensionName) == 0){
-				extensionFound = true;
-				break;
-			}
-		}
-		if(!extensionFound){
-			return false;
-		}
-	}
-	return true;
-}
-
-std::vector<const char*> getRequiredInstanceExtensions(const bool enableValidationLayers){
-	// Default Vulkan has no notion of surface/window. GLFW provide an implementation of the corresponding KHR extensions.
-	uint32_t glfwExtensionCount = 0;
-	const char** glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
-	std::vector<const char*> extensions(glfwExtensions, glfwExtensions + glfwExtensionCount);
-	// If the validation layers are enabled, add associated extensions.
-	if(enableValidationLayers) {
-		extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
-	}
-	return extensions;
-}
-
-bool checkDeviceExtensionsSupport(VkPhysicalDevice device, const std::vector<const char*> & requestedExtensions) {
-	// Get available device extensions.
-	uint32_t extensionCount;
-	vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
-	std::vector<VkExtensionProperties> availableExtensions(extensionCount);
-	vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, availableExtensions.data());
-
-	// Check if the required device extensions are available.
-	for(const auto& extensionName : requestedExtensions) {
-		bool extensionFound = false;
-		for(const auto& extensionProperties: availableExtensions){
-			if(strcmp(extensionName, extensionProperties.extensionName) == 0){
-				extensionFound = true;
-				break;
-			}
-		}
-		if(!extensionFound){
-			return false;
-		}
-	}
-	return true;
-}
-
-bool getQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface, uint & graphicsFamily, uint & presentFamily){
-	// Get all queues.
-	uint32_t queueFamilyCount = 0;
-	vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
-	std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
-	vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
-	// Find queue with graphics or presentation support.
-	int i = 0;
-	for(const auto& queueFamily : queueFamilies){
-		// Check if queue support graphics.
-		if(queueFamily.queueCount == 0){
-			++i;
-			continue;
-		}
-
-		if(queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
-			graphicsFamily = i;
-		}
-		// CHeck if queue support presentation.
-		VkBool32 presentSupport = false;
-		vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &presentSupport);
-		if(presentSupport) {
-			presentFamily = i;
-		}
-		// If we have found both queues, exit.
-		if(graphicsFamily >= 0 && presentFamily >= 0){
-			return true;
-		}
-
-		++i;
-	}
-	return false;
-}
-
-
-static VkInstance _instance = VK_NULL_HANDLE;
-static VkDebugUtilsMessengerEXT _debugMessenger= VK_NULL_HANDLE;
-static VkPhysicalDevice _physicalDevice= VK_NULL_HANDLE;
-
-
-VKAPI_ATTR VkBool32 VKAPI_CALL vkDebugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageType, const VkDebugUtilsMessengerCallbackDataEXT* callbackData, void* userData)
-{
-	// Build message.
-	std::string message = "";
-	if(messageType & VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT){
-		message = "Validation: ";
-	} else if(messageType & VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT){
-		message = "Performance: ";
-	}
-	message.append(callbackData->pMessage);
-
-	if(messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT){
-		Log::Error() << Log::GPU << message << std::endl;
-	} else if(messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT){
-		Log::Warning() << Log::GPU << message << std::endl;
-	} else if(messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT){
-		Log::Info() << Log::GPU << message << std::endl;
-	} else if(messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT){
-		Log::Verbose() << Log::GPU << message << std::endl;
-	}
-	return VK_FALSE;
-}
-
-
 const std::vector<const char*> validationLayers = { "VK_LAYER_KHRONOS_validation" };
-const std::vector<const char*> validationExtensions = { VK_EXT_DEBUG_UTILS_EXTENSION_NAME };
 const std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+
+GPUContext _context;
+
+void * GPU::getInternal(){
+	return (void*)&_context;
+}
 
 bool GPU::setup(const std::string & appName) {
 
@@ -209,7 +32,7 @@ bool GPU::setup(const std::string & appName) {
 	bool debugEnabled = false;
 #if defined(_DEBUG) || defined(FORCE_DEBUG_VULKAN)
 	// Only enable if the layers are supported.
-	debugEnabled = checkLayersSupport(validationLayers) && checkExtensionsSupport(validationExtensions);
+	debugEnabled = VkUtils::checkLayersSupport(validationLayers) && VkUtils::checkExtensionsSupport({ VK_EXT_DEBUG_UTILS_EXTENSION_NAME });
 #endif
 
 	VkApplicationInfo appInfo = {};
@@ -225,8 +48,8 @@ bool GPU::setup(const std::string & appName) {
 	instanceInfo.pApplicationInfo = &appInfo;
 
 	// We have to tell Vulkan the extensions we need.
-	const std::vector<const char*> extensions = getRequiredInstanceExtensions(debugEnabled);
-	if(!checkExtensionsSupport(extensions)){
+	const std::vector<const char*> extensions = VkUtils::getRequiredInstanceExtensions(debugEnabled);
+	if(!VkUtils::checkExtensionsSupport(extensions)){
 		Log::Error() << Log::GPU << "Unsupported extensions." << std::endl;
 		return false;
 	}
@@ -251,29 +74,29 @@ bool GPU::setup(const std::string & appName) {
 		instanceInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT*)&debugInfo;
 	}
 
-	if(vkCreateInstance(&instanceInfo, nullptr, &_instance) != VK_SUCCESS){
+	if(vkCreateInstance(&instanceInfo, nullptr, &_context.instance) != VK_SUCCESS){
 		Log::Info() << Log::GPU << "Unable to create a Vulkan instance." << std::endl;
 		return false;
 	}
 
-	volkLoadInstance(_instance);
+	volkLoadInstance(_context.instance);
 
 	if(debugEnabled){
-		VK_RET(vkCreateDebugUtilsMessengerEXT(_instance, &debugInfo, nullptr, &_debugMessenger));
+		VK_RET(vkCreateDebugUtilsMessengerEXT(_context.instance, &debugInfo, nullptr, &_context.debugMessenger));
 		//vkDestroyDebugUtilsMessengerEXT(_instance, _debugMessenger, nullptr);
 	}
 
 	// Pick a physical device.
 	uint32_t deviceCount = 0;
-	vkEnumeratePhysicalDevices(_instance, &deviceCount, nullptr);
+	vkEnumeratePhysicalDevices(_context.instance, &deviceCount, nullptr);
 	std::vector<VkPhysicalDevice> devices(deviceCount);
-	vkEnumeratePhysicalDevices(_instance, &deviceCount, devices.data());
+	vkEnumeratePhysicalDevices(_context.instance, &deviceCount, devices.data());
 
 	VkPhysicalDevice selectedDevice = VK_NULL_HANDLE;
 	// Check which one is ok for our requirements.
 	for(const auto& device : devices) {
 		// We want a device with swapchain support.
-		const bool supportExtensions = checkDeviceExtensionsSupport(device, deviceExtensions);
+		const bool supportExtensions = VkUtils::checkDeviceExtensionsSupport(device, deviceExtensions);
 		// Ask for anisotropy and tessellation.
 		VkPhysicalDeviceFeatures features;
 		vkGetPhysicalDeviceFeatures(device, &features);
@@ -298,7 +121,7 @@ bool GPU::setup(const std::string & appName) {
 		return false;
 	}
 
-	_physicalDevice = selectedDevice;
+	_context.physicalDevice = selectedDevice;
 
 	// Create empty VAO for screenquad.
 	//	glGenVertexArrays(1, &_vao);
@@ -308,16 +131,15 @@ bool GPU::setup(const std::string & appName) {
 	return true;
 }
 
-bool GPU::setupSwapchain(Swapchain & swapchain, GLFWwindow* window){
+bool GPU::setupWindow(Window * window){
 	// Create a surface.
-	VkSurfaceKHR surface;
-	if(glfwCreateWindowSurface(_instance, window, nullptr, &surface) != VK_SUCCESS) {
+	if(glfwCreateWindowSurface(_context.instance, window->_window, nullptr, &_context.surface) != VK_SUCCESS) {
 		Log::Error() << Log::GPU << "Unable to create surface." << std::endl;
 		return false;
 	}
 	// Query the available queues.
-	uint graphicsFamily, presentFamily;
-	bool found = getQueueFamilies(_physicalDevice, surface, graphicsFamily, presentFamily);
+	uint graphicsIndex, presentIndex;
+	bool found = VkUtils::getQueueFamilies(_context.physicalDevice, _context.surface, graphicsIndex, presentIndex);
 	if(!found){
 		Log::Error() << Log::GPU << "Unable to find compatible queue families." << std::endl;
 		return false;
@@ -325,25 +147,25 @@ bool GPU::setupSwapchain(Swapchain & swapchain, GLFWwindow* window){
 
 	// Select queues.
 	std::set<uint> families;
-	families.insert(graphicsFamily);
-	families.insert(presentFamily);
+	families.insert(graphicsIndex);
+	families.insert(presentIndex);
 
 	float queuePriority = 1.0f;
-	std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
+	std::vector<VkDeviceQueueCreateInfo> queueInfos;
 	for(int queueFamily : families) {
-		VkDeviceQueueCreateInfo queueCreateInfo = {};
-		queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-		queueCreateInfo.queueFamilyIndex = queueFamily;
-		queueCreateInfo.queueCount = 1;
-		queueCreateInfo.pQueuePriorities = &queuePriority;
-		queueCreateInfos.push_back(queueCreateInfo);
+		VkDeviceQueueCreateInfo queueInfo = {};
+		queueInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+		queueInfo.queueFamilyIndex = queueFamily;
+		queueInfo.queueCount = 1;
+		queueInfo.pQueuePriorities = &queuePriority;
+		queueInfos.push_back(queueInfo);
 	}
 
 	// Device setup.
 	VkDeviceCreateInfo deviceInfo = {};
 	deviceInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-	deviceInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
-	deviceInfo.pQueueCreateInfos = queueCreateInfos.data();
+	deviceInfo.queueCreateInfoCount = static_cast<uint32_t>(queueInfos.size());
+	deviceInfo.pQueueCreateInfos = queueInfos.data();
 	// Features we want.
 	VkPhysicalDeviceFeatures features = {};
 	features.samplerAnisotropy = VK_TRUE;
@@ -353,18 +175,32 @@ bool GPU::setupSwapchain(Swapchain & swapchain, GLFWwindow* window){
 	deviceInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
 	deviceInfo.ppEnabledExtensionNames = deviceExtensions.data();
 
-	VkDevice device;
-	if(vkCreateDevice(_physicalDevice, &deviceInfo, nullptr, &device) != VK_SUCCESS) {
+	if(vkCreateDevice(_context.physicalDevice, &deviceInfo, nullptr, &_context.device) != VK_SUCCESS) {
 		Log::Error() << Log::GPU << "Unable to create logical device." << std::endl;
 		return false;
 	}
-	VkQueue graphicsQueue;
-	VkQueue presentQueue;
-	vkGetDeviceQueue(device, graphicsFamily, 0, &graphicsQueue);
-	vkGetDeviceQueue(device, presentFamily, 0, &presentQueue);
+	_context.graphicsId = graphicsIndex;
+	_context.presentId = presentIndex;
+	vkGetDeviceQueue(_context.device, graphicsIndex, 0, &_context.graphicsQueue);
+	vkGetDeviceQueue(_context.device, presentIndex, 0, &_context.presentQueue);
 
-	//swapchain.init(_instance, _physicalDevice, surface, etc.);
-	//bool isComplete = getGraphicsQueueFamilyIndex(adevice, asurface).isComplete()
+	// Create the command pool.
+	VkCommandPoolCreateInfo poolInfo = {};
+	poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+	poolInfo.queueFamilyIndex = graphicsIndex;
+	poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+
+	if(vkCreateCommandPool(_context.device, &poolInfo, nullptr, &_context.commandPool) != VK_SUCCESS) {
+		Log::Error() << Log::GPU << "Unable to create command pool." << std::endl;
+		return false;
+	}
+
+
+	// Finally setup the swapchain.
+	window->_swapchain.init(_context, window->_config);
+
+
+	
 	return true;
 }
 

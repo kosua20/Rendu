@@ -25,7 +25,7 @@
 
 class Framebuffer;
 class ScreenQuad;
-struct GLFWwindow;
+class Window;
 
 /**
  \brief Provide utility functions to communicate with the driver and GPU.
@@ -92,7 +92,7 @@ public:
 	 */
 	static bool setup(const std::string & appName);
 
-	static bool setupSwapchain(Swapchain & swapchain, GLFWwindow* window);
+	static bool setupWindow(Window * window);
 
 	/** Create a shader of a given type from a string. Extract additional informations from the shader.
 	 \param prog the content of the shader
@@ -194,12 +194,6 @@ public:
 	 \note This will set the number of levels to 1000.
 	 */
 	static void generateMipMaps(const Texture & texture);
-
-	/** Convert a texture shape to a GPU texture format enum.
-	 \param shape the texture shape
-	 \return the corresponding target
-	 */
-	//static GLenum targetFromShape(const TextureShape & shape);
 
 	/** Bind a uniform buffer to a shader slot.
 	 \param buffer the infos of the buffer to bind
