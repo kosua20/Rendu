@@ -4,6 +4,8 @@
 #include <array>
 #include <unordered_map>
 
+#include <volk/volk.h>
+
 /**
 \brief The type of a shader.
 \ingroup Resources
@@ -280,27 +282,20 @@ public:
 	Wrap wrapping() const { return _wrapping; }
 
 	/** Obtain the separate GPU type, format, typed format and channel count of the descriptor.
-	 \param detailedFormat will contain the type format (GL_RG32F,...)
-	 \param type will contain the type (GL_FLOAT,...)
-	 \param format will contain the general layout (GL_RG,...)
+	 \param
 	 \return the number of channels
 	 */
-	//unsigned int getGPULayout(GLenum & detailedFormat, GLenum & type, GLenum & format) const;
+	unsigned int getGPULayout(VkFormat & format) const;
 
-	/** Obtain the GPU texture magnification filter, removing the mipmaping qualifier.
-	 \return the magnification filter
+	/** Obtain the GPU
+	 \return
 	 */
-	//GLenum getGPUMagnificationFilter() const;
-
-	/** Obtain the GPU texture minification filter.
-	 \return the minification filter
-	 */
-	//GLenum getGPUMinificationFilter() const;
+	void getGPUFilter(VkFilter & imgFiltering, VkSamplerMipmapMode & mipFiltering) const;
 
 	/** Obtain the GPU texture wrapping mode.
 	 \return the wrapping mode
 	 */
-	//GLenum getGPUWrapping() const;
+	VkSamplerAddressMode getGPUWrapping() const;
 
 	/** Equality operator.
 	 \param other other descriptor to compare to
@@ -325,11 +320,6 @@ public:
 	std::string string() const;
 
 private:
-	/** Convert a filtering mode to the corresponding GPU driver value.
-	 \param filter the filtering mode
-	 \return the corresponding driver value
-	 */
-	//static GLenum getGPUFilter(Filter filter);
 
 	Layout _typedFormat; ///< The precise typed format.
 	Filter _filtering;   ///< Minification filtering mode.
@@ -382,18 +372,22 @@ public:
 	
 	/** Move constructor. */
 	GPUTexture(GPUTexture &&) = delete;
-	
-	// Cached GPU settings.
-	//const GLenum target;		 ///< Texture target.
-	//GLenum minFiltering;		 ///< Minification filter.
-	//GLenum magFiltering;		 ///< Magnification filter.
-	//GLenum wrapping;			 ///< Wrapping mode.
-	const unsigned int channels; ///< Number of channels.
-	//GLenum typedFormat;			 ///< Detailed format.
-	//GLenum format;				 ///< General format.
-	//GLenum type;				 ///< Data type.
-	//GLuint id = 0; ///< The GPU texture ID.
-	
+
+	VkImageType type;
+	VkImageViewType viewType;
+	VkFormat format;
+	VkSamplerAddressMode wrapping;
+	VkFilter imgFiltering;
+	VkSamplerMipmapMode mipFiltering;
+	uint channels; ///< Number of channels.
+
+	VkImage image;
+	VkImageView view;
+	VkDeviceMemory data;
+	VkSampler sampler;
+
+	VkImageLayout layout = VK_IMAGE_LAYOUT_UNDEFINED;
+
 private:
 	Descriptor _descriptor; ///< Layout used.
 	TextureShape _shape; ///< Shape used.

@@ -1,16 +1,16 @@
 #include "graphics/GPUObjects.hpp"
 #include "graphics/GPU.hpp"
+#include "graphics/GPUInternal.hpp"
 
 #include <map>
 
 GPUTexture::GPUTexture(const Descriptor & texDescriptor, TextureShape shape) :
-	//target(GPU::targetFromShape(shape)),
-	//minFiltering(texDescriptor.getGPUMinificationFilter()),
-	//magFiltering(texDescriptor.getGPUMagnificationFilter()),
-	//wrapping(texDescriptor.getGPUWrapping()),
-	channels(0),//texDescriptor.getGPULayout(typedFormat, type, format)),
 	_descriptor(texDescriptor), _shape(shape) {
-	//texDescriptor.getGPULayout(typedFormat, type, format);
+
+	VkUtils::typesFromShape(shape, type, viewType);
+	channels = texDescriptor.getGPULayout(format);
+	wrapping = texDescriptor.getGPUWrapping();
+	texDescriptor.getGPUFilter(imgFiltering, mipFiltering);
 }
 
 void GPUTexture::clean() {
@@ -127,123 +127,110 @@ Descriptor::Descriptor() :
 Descriptor::Descriptor(Layout typedFormat, Filter filtering, Wrap wrapping) :
 	_typedFormat(typedFormat), _filtering(filtering), _wrapping(wrapping) {
 }
-//
-//unsigned int Descriptor::getGPULayout(GLenum & detailedFormat, GLenum & type, GLenum & format) const {
-//
-//	struct GPULayout {
-//		GLenum detailedFormat;
-//		GLenum format;
-//		GLenum type;
-//	};
-//
-//	static const std::map<Layout, GPULayout> formatInfos = {
-//		{Layout::R8, {GL_R8, GL_RED, GL_UNSIGNED_BYTE}},
-//		{Layout::RG8, {GL_RG8, GL_RG, GL_UNSIGNED_BYTE}},
-//		{Layout::RGB8, {GL_RGB8, GL_RGB, GL_UNSIGNED_BYTE}},
-//		{Layout::RGBA8, {GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE}},
-//		{Layout::SRGB8, {GL_SRGB8, GL_RGB, GL_UNSIGNED_BYTE}},
-//		{Layout::SRGB8_ALPHA8, {GL_SRGB8_ALPHA8, GL_RGBA, GL_UNSIGNED_BYTE}},
-//		{Layout::R16, {GL_R16, GL_RED, GL_UNSIGNED_SHORT}},
-//		{Layout::RG16, {GL_RG16, GL_RG, GL_UNSIGNED_SHORT}},
-//		{Layout::RGBA16, {GL_RGBA16, GL_RGBA, GL_UNSIGNED_SHORT}},
-//		{Layout::R8_SNORM, {GL_R8_SNORM, GL_RED, GL_BYTE}},
-//		{Layout::RG8_SNORM, {GL_RG8_SNORM, GL_RG, GL_BYTE}},
-//		{Layout::RGB8_SNORM, {GL_RGB8_SNORM, GL_RGB, GL_BYTE}},
-//		{Layout::RGBA8_SNORM, {GL_RGBA8_SNORM, GL_RGBA, GL_BYTE}},
-//		{Layout::R16_SNORM, {GL_R16_SNORM, GL_RED, GL_SHORT}},
-//		{Layout::RG16_SNORM, {GL_RG16_SNORM, GL_RG, GL_SHORT}},
-//		{Layout::RGB16_SNORM, {GL_RGB16_SNORM, GL_RGB, GL_SHORT}},
-//		{Layout::R16F, {GL_R16F, GL_RED, GL_HALF_FLOAT}},
-//		{Layout::RG16F, {GL_RG16F, GL_RG, GL_HALF_FLOAT}},
-//		{Layout::RGB16F, {GL_RGB16F, GL_RGB, GL_HALF_FLOAT}},
-//		{Layout::RGBA16F, {GL_RGBA16F, GL_RGBA, GL_HALF_FLOAT}},
-//		{Layout::R32F, {GL_R32F, GL_RED, GL_FLOAT}},
-//		{Layout::RG32F, {GL_RG32F, GL_RG, GL_FLOAT}},
-//		{Layout::RGB32F, {GL_RGB32F, GL_RGB, GL_FLOAT}},
-//		{Layout::RGBA32F, {GL_RGBA32F, GL_RGBA, GL_FLOAT}},
-//		{Layout::RGB5_A1, {GL_RGB5_A1, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1}},
-//		{Layout::RGB10_A2, {GL_RGB10_A2, GL_RGBA, GL_UNSIGNED_INT_2_10_10_10_REV}},
-//		{Layout::R11F_G11F_B10F, {GL_R11F_G11F_B10F, GL_RGB, GL_UNSIGNED_INT_10F_11F_11F_REV}},
-//		{Layout::DEPTH_COMPONENT16, {GL_DEPTH_COMPONENT16, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT}},
-//		{Layout::DEPTH_COMPONENT24, {GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT}},
-//		{Layout::DEPTH_COMPONENT32F, {GL_DEPTH_COMPONENT32F, GL_DEPTH_COMPONENT, GL_FLOAT}},
-//		{Layout::DEPTH24_STENCIL8, {GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8}},
-//		{Layout::DEPTH32F_STENCIL8, {GL_DEPTH32F_STENCIL8, GL_DEPTH_STENCIL, GL_FLOAT_32_UNSIGNED_INT_24_8_REV}},
-//		{Layout::R8UI, {GL_R8UI, GL_RED_INTEGER, GL_UNSIGNED_BYTE}},
-//		{Layout::R16I, {GL_R16I, GL_RED_INTEGER, GL_SHORT}},
-//		{Layout::R16UI, {GL_R16UI, GL_RED_INTEGER, GL_UNSIGNED_SHORT}},
-//		{Layout::R32I, {GL_R32I, GL_RED_INTEGER, GL_INT}},
-//		{Layout::R32UI, {GL_R32UI, GL_RED_INTEGER, GL_UNSIGNED_INT}},
-//		{Layout::RG8I, {GL_RG8I, GL_RG_INTEGER, GL_BYTE}},
-//		{Layout::RG8UI, {GL_RG8UI, GL_RG_INTEGER, GL_UNSIGNED_BYTE}},
-//		{Layout::RG16I, {GL_RG16I, GL_RG_INTEGER, GL_SHORT}},
-//		{Layout::RG16UI, {GL_RG16UI, GL_RG_INTEGER, GL_UNSIGNED_SHORT}},
-//		{Layout::RG32I, {GL_RG32I, GL_RG_INTEGER, GL_INT}},
-//		{Layout::RG32UI, {GL_RG32UI, GL_RG_INTEGER, GL_UNSIGNED_INT}},
-//		{Layout::RGB8I, {GL_RGB8I, GL_RGB_INTEGER, GL_BYTE}},
-//		{Layout::RGB8UI, {GL_RGB8UI, GL_RGB_INTEGER, GL_UNSIGNED_BYTE}},
-//		{Layout::RGB16I, {GL_RGB16I, GL_RGB_INTEGER, GL_SHORT}},
-//		{Layout::RGB16UI, {GL_RGB16UI, GL_RGB_INTEGER, GL_UNSIGNED_SHORT}},
-//		{Layout::RGB32I, {GL_RGB32I, GL_RGB_INTEGER, GL_INT}},
-//		{Layout::RGB32UI, {GL_RGB32UI, GL_RGB_INTEGER, GL_UNSIGNED_INT}},
-//		{Layout::RGBA8I, {GL_RGBA8I, GL_RGBA_INTEGER, GL_BYTE}},
-//		{Layout::RGBA8UI, {GL_RGBA8UI, GL_RGBA_INTEGER, GL_UNSIGNED_BYTE}},
-//		{Layout::RGBA16I, {GL_RGBA16I, GL_RGBA_INTEGER, GL_SHORT}},
-//		{Layout::RGBA16UI, {GL_RGBA16UI, GL_RGBA_INTEGER, GL_UNSIGNED_SHORT}},
-//		{Layout::RGBA32I, {GL_RGBA32I, GL_RGBA_INTEGER, GL_INT}},
-//		{Layout::RGBA32UI, {GL_RGBA32UI, GL_RGBA_INTEGER, GL_UNSIGNED_INT}}};
-//
-//	if(formatInfos.count(_typedFormat) > 0) {
-//		const auto & infos	= formatInfos.at(_typedFormat);
-//		detailedFormat		  = infos.detailedFormat;
-//		type				  = infos.type;
-//		format				  = infos.format;
-//		const bool oneChannel = (format == GL_RED || format == GL_DEPTH_COMPONENT || format == GL_DEPTH_STENCIL);
-//		return (oneChannel ? 1 : (format == GL_RG ? 2 : (format == GL_RGB ? 3 : 4)));
-//	}
-//
-//	Log::Error() << Log::GPU << "Unable to find type and format (typed format " << uint(_typedFormat) << ")." << std::endl;
-//	return 0;
-//}
 
-//GLenum Descriptor::getGPUFilter(Filter filter) {
-//	static const std::map<Filter, GLenum> filters = {
-//		{Filter::NEAREST, GL_NEAREST},
-//		{Filter::LINEAR, GL_LINEAR},
-//		{Filter::NEAREST_NEAREST, GL_NEAREST_MIPMAP_NEAREST},
-//		{Filter::LINEAR_NEAREST, GL_LINEAR_MIPMAP_NEAREST},
-//		{Filter::NEAREST_LINEAR, GL_NEAREST_MIPMAP_LINEAR},
-//		{Filter::LINEAR_LINEAR, GL_LINEAR_MIPMAP_LINEAR}};
-//	return filters.at(filter);
-//}
+unsigned int Descriptor::getGPULayout(VkFormat & format) const {
 
-//GLenum Descriptor::getGPUMagnificationFilter() const {
-//	if(_filtering == Filter::NEAREST_NEAREST || _filtering == Filter::NEAREST_LINEAR) {
-//		return getGPUFilter(Filter::NEAREST);
-//	}
-//	if(_filtering == Filter::LINEAR_NEAREST || _filtering == Filter::LINEAR_LINEAR) {
-//		return getGPUFilter(Filter::LINEAR);
-//	}
-//	return getGPUFilter(_filtering);
-//}
+	struct FormatAndChannels {
+		VkFormat format;
+		int channels;
+	};
 
-unsigned int Descriptor::getChannelsCount() const {
-	//GLenum typeFormat, format, type;
-	//return getGPULayout(typeFormat, type, format);
-	return 1;
+	static const std::map<Layout, FormatAndChannels> formatInfos = {
+		{Layout::R8, { VK_FORMAT_R8_UNORM, 1 }},
+		{Layout::RG8, { VK_FORMAT_R8G8_UNORM, 2 }},
+		{Layout::RGB8, { VK_FORMAT_R8G8B8_UNORM, 3 }},
+		{Layout::RGBA8, { VK_FORMAT_R8G8B8A8_UNORM, 4 }},
+		{Layout::SRGB8, { VK_FORMAT_R8G8B8_SRGB, 3 }},
+		{Layout::SRGB8_ALPHA8, { VK_FORMAT_R8G8B8A8_SRGB, 4 }},
+		{Layout::R16, { VK_FORMAT_R16_UNORM, 1 }},
+		{Layout::RG16, { VK_FORMAT_R16G16_UNORM, 2 }},
+		{Layout::RGBA16, { VK_FORMAT_R16G16B16A16_UNORM, 4 }},
+		{Layout::R8_SNORM, { VK_FORMAT_R8_SNORM, 1 }},
+		{Layout::RG8_SNORM, { VK_FORMAT_R8G8_SNORM, 2 }},
+		{Layout::RGB8_SNORM, { VK_FORMAT_R8G8B8_SNORM, 3 }},
+		{Layout::RGBA8_SNORM, { VK_FORMAT_R8G8B8A8_SNORM, 4 }},
+		{Layout::R16_SNORM, { VK_FORMAT_R16_SNORM, 1 }},
+		{Layout::RG16_SNORM, { VK_FORMAT_R16G16_SNORM, 2 }},
+		{Layout::RGB16_SNORM, { VK_FORMAT_R16G16B16_SNORM, 3 }},
+		{Layout::R16F, { VK_FORMAT_R16_SFLOAT, 1 }},
+		{Layout::RG16F, { VK_FORMAT_R16G16_SFLOAT, 2 }},
+		{Layout::RGB16F, { VK_FORMAT_R16G16B16_SFLOAT, 3 }},
+		{Layout::RGBA16F, { VK_FORMAT_R16G16B16A16_SFLOAT, 4 }},
+		{Layout::R32F, { VK_FORMAT_R32_SFLOAT, 1 }},
+		{Layout::RG32F, { VK_FORMAT_R32G32_SFLOAT, 2 }},
+		{Layout::RGB32F, { VK_FORMAT_R32G32B32_SFLOAT, 3 }},
+		{Layout::RGBA32F, { VK_FORMAT_R32G32B32A32_SFLOAT, 4 }},
+		{Layout::RGB5_A1, { VK_FORMAT_R5G5B5A1_UNORM_PACK16, 4 }},
+		{Layout::RGB10_A2, { VK_FORMAT_A2R10G10B10_UNORM_PACK32, 4 }},
+		{Layout::R11F_G11F_B10F, { VK_FORMAT_B10G11R11_UFLOAT_PACK32, 3 }},
+		{Layout::DEPTH_COMPONENT16, { VK_FORMAT_D16_UNORM, 1 }},
+		{Layout::DEPTH_COMPONENT32F, { VK_FORMAT_D32_SFLOAT, 1 }},
+		{Layout::DEPTH24_STENCIL8, { VK_FORMAT_D24_UNORM_S8_UINT, 1 }},
+		{Layout::DEPTH32F_STENCIL8, { VK_FORMAT_D32_SFLOAT_S8_UINT, 1 }},
+		{Layout::R8UI, { VK_FORMAT_R8_UINT, 1 }},
+		{Layout::R16I, { VK_FORMAT_R16_SINT, 1 }},
+		{Layout::R16UI, { VK_FORMAT_R16_UINT, 1 }},
+		{Layout::R32I, { VK_FORMAT_R32_SINT, 1 }},
+		{Layout::R32UI, { VK_FORMAT_R32_UINT, 1 }},
+		{Layout::RG8I, { VK_FORMAT_R8G8_SINT, 2 }},
+		{Layout::RG8UI, { VK_FORMAT_R8G8_UINT, 2 }},
+		{Layout::RG16I, { VK_FORMAT_R16G16_SINT, 2 }},
+		{Layout::RG16UI, { VK_FORMAT_R16G16_UINT, 2 }},
+		{Layout::RG32I, { VK_FORMAT_R32G32_SINT, 2 }},
+		{Layout::RG32UI, { VK_FORMAT_R32G32_UINT, 2 }},
+		{Layout::RGB8I, { VK_FORMAT_R8G8B8_SINT, 3 }},
+		{Layout::RGB8UI, { VK_FORMAT_R8G8B8_UINT, 3 }},
+		{Layout::RGB16I, { VK_FORMAT_R16G16B16_SINT, 3 }},
+		{Layout::RGB16UI, { VK_FORMAT_R16G16B16_UINT, 3 }},
+		{Layout::RGB32I, { VK_FORMAT_R32G32B32_SINT, 3 }},
+		{Layout::RGB32UI, { VK_FORMAT_R32G32B32_UINT, 3 }},
+		{Layout::RGBA8I, { VK_FORMAT_R8G8B8A8_SINT, 4 }},
+		{Layout::RGBA8UI, { VK_FORMAT_R8G8B8A8_UINT, 4 }},
+		{Layout::RGBA16I, { VK_FORMAT_R16G16B16A16_SINT, 4 }},
+		{Layout::RGBA16UI, { VK_FORMAT_R16G16B16A16_UINT, 4 }},
+		{Layout::RGBA32I, { VK_FORMAT_R32G32B32A32_SINT, 4 }},
+		{Layout::RGBA32UI, { VK_FORMAT_R32G32B32A32_UINT, 4 }}
+	};
+
+	if(formatInfos.count(_typedFormat) > 0) {
+		const auto & infos	= formatInfos.at(_typedFormat);
+		format = infos.format;
+		return infos.channels;
+	}
+
+	Log::Error() << Log::GPU << "Unable to find type and format (typed format " << uint(_typedFormat) << ")." << std::endl;
+	return 0;
 }
 
-//GLenum Descriptor::getGPUMinificationFilter() const {
-//	return getGPUFilter(_filtering);
-//}
+void Descriptor::getGPUFilter(VkFilter & imgFiltering, VkSamplerMipmapMode & mipFiltering) const {
+	struct Filters {
+		VkFilter img;
+		VkSamplerMipmapMode mip;
+	};
+	static const std::map<Filter, Filters> filters = {
+		{Filter::NEAREST, {VK_FILTER_NEAREST, VK_SAMPLER_MIPMAP_MODE_NEAREST}},
+		{Filter::LINEAR, {VK_FILTER_LINEAR, VK_SAMPLER_MIPMAP_MODE_NEAREST}},
+		{Filter::NEAREST_NEAREST, {VK_FILTER_NEAREST, VK_SAMPLER_MIPMAP_MODE_NEAREST}},
+		{Filter::LINEAR_NEAREST, {VK_FILTER_LINEAR, VK_SAMPLER_MIPMAP_MODE_NEAREST}},
+		{Filter::NEAREST_LINEAR, {VK_FILTER_NEAREST, VK_SAMPLER_MIPMAP_MODE_LINEAR}},
+		{Filter::LINEAR_LINEAR, {VK_FILTER_LINEAR, VK_SAMPLER_MIPMAP_MODE_LINEAR}}};
+	const auto & infos = filters.at(_filtering);
+	imgFiltering = infos.img;
+	mipFiltering = infos.mip;
+}
 
-//GLenum Descriptor::getGPUWrapping() const {
-//	static const std::map<Wrap, GLenum> wraps = {
-//		{Wrap::CLAMP, GL_CLAMP_TO_EDGE},
-//		{Wrap::REPEAT, GL_REPEAT},
-//		{Wrap::MIRROR, GL_MIRRORED_REPEAT}};
-//	return wraps.at(_wrapping);
-//}
+unsigned int Descriptor::getChannelsCount() const {
+	VkFormat format;
+	return getGPULayout(format);
+}
+
+VkSamplerAddressMode Descriptor::getGPUWrapping() const {
+	static const std::map<Wrap, VkSamplerAddressMode> wraps = {
+		{Wrap::CLAMP, VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE},
+		{Wrap::REPEAT, VK_SAMPLER_ADDRESS_MODE_REPEAT},
+		{Wrap::MIRROR, VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT}};
+	return wraps.at(_wrapping);
+}
 
 bool Descriptor::operator==(const Descriptor & other) const {
 	return other._typedFormat == _typedFormat && other._filtering == _filtering && other._wrapping == _wrapping;
@@ -292,7 +279,6 @@ std::string Descriptor::string() const {
 		STRENUM(DEPTH_COMPONENT32F),
 		STRENUM(DEPTH24_STENCIL8),
 		STRENUM(DEPTH_COMPONENT16),
-		STRENUM(DEPTH_COMPONENT24),
 		STRENUM(DEPTH32F_STENCIL8),
 		STRENUM(R8UI),
 		STRENUM(R16I),
