@@ -610,7 +610,7 @@ void GPU::setupTexture(Texture & texture, const Descriptor & descriptor) {
 	const bool isCube = texture.shape & TextureShape::Cube;
 	const bool isArray = texture.shape & TextureShape::Array;
 
-	VkImageUsageFlags usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT;
+	VkImageUsageFlags usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
 	// Create image.
 	VkImageCreateInfo imageInfo = {};
 	imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -660,7 +660,6 @@ void GPU::setupTexture(Texture & texture, const Descriptor & descriptor) {
 	viewInfo.subresourceRange.baseArrayLayer = 0;
 	viewInfo.subresourceRange.layerCount = imageInfo.arrayLayers;
 
-	VkImageView imageView;
 	if (vkCreateImageView(_context.device, &viewInfo, nullptr, &(texture.gpu->view)) != VK_SUCCESS) {
 		Log::Error() << Log::GPU << "Unable to create image view." << std::endl;
 		return;
@@ -715,98 +714,109 @@ void GPU::allocateTexture(const Texture & texture) {
 }
 
 void GPU::uploadTexture(const Texture & texture) {
-//	if(!texture.gpu) {
-//		Log::Error() << Log::GPU << "Uninitialized GPU texture." << std::endl;
-//		return;
-//	}
-//	if(texture.images.empty()) {
-//		Log::Warning() << Log::GPU << "No images to upload." << std::endl;
-//		return;
-//	}
+	if(!texture.gpu) {
+		Log::Error() << Log::GPU << "Uninitialized GPU texture." << std::endl;
+		return;
+	}
+	if(texture.images.empty()) {
+		Log::Warning() << Log::GPU << "No images to upload." << std::endl;
+		return;
+	}
 
-//	const GLenum target		= texture.gpu->target;
-//	const GLenum destFormat = texture.gpu->format;
-//	// Sanity check the texture destination format.
-//	const unsigned int destChannels = texture.gpu->channels;
-//	if(destChannels != texture.images[0].components) {
-//		Log::Error() << Log::GPU << "Not enough values in source data for texture upload." << std::endl;
-//		return;
-//	}
-//	// Check that the descriptor type is valid.
-//	const bool validFormat = destFormat == GL_RED || destFormat == GL_RG || destFormat == GL_RGB || destFormat == GL_RGBA;
-//	if(!validFormat) {
-//		Log::Error() << "Invalid descriptor for creating texture from image data." << std::endl;
-//		return;
-//	}
-//
-//	// We always upload data as floats (and let the driver convert internally if needed),
-//	// so the alignment is always 4.
-//	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-//	_metrics.stateChanges += 1;
-//	glBindTexture(target, texture.gpu->id);
-//	_metrics.textureBindings += 1;
-//
-//	int currentImg = 0;
-//	// For each mip level.
-//	for(size_t mid = 0; mid < texture.levels; ++mid) {
-//		// For 3D textures, the number of layers decreases with the mip level.
-//		const size_t depth = target == GL_TEXTURE_3D ? (texture.depth / (1 << mid)) : texture.depth;
-//		// For each layer.
-//		for(size_t lid = 0; lid < depth; ++lid) {
-//			const Image & image = texture.images[currentImg];
-//			currentImg += 1;
-//			// Upload.
-//			const GLubyte * finalDataPtr = reinterpret_cast<const GLubyte *>(image.pixels.data());
-//			const GLint mip = GLint(mid);
-//			const GLint lev = GLint(lid);
-//			const GLsizei w = GLsizei(image.width);
-//			const GLsizei h = GLsizei(image.height);
-//			if(target == GL_TEXTURE_1D) {
-//				glTexSubImage1D(target, mip, 0, w, destFormat, GL_FLOAT, finalDataPtr);
-//
-//			} else if(target == GL_TEXTURE_2D) {
-//				glTexSubImage2D(target, mip, 0, 0, w, h, destFormat, GL_FLOAT, finalDataPtr);
-//
-//			} else if(target == GL_TEXTURE_CUBE_MAP) {
-//				glTexSubImage2D(GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + lev), mip, 0, 0, w, h, destFormat, GL_FLOAT, finalDataPtr);
-//
-//			} else if(target == GL_TEXTURE_2D_ARRAY || target == GL_TEXTURE_CUBE_MAP_ARRAY) {
-//				glTexSubImage3D(target, mip, 0, 0, lev, w, h, 1, destFormat, GL_FLOAT, finalDataPtr);
-//
-//			} else if(target == GL_TEXTURE_1D_ARRAY) {
-//				glTexSubImage2D(target, mip, 0, lev, w, 1, destFormat, GL_FLOAT, finalDataPtr);
-//
-//			} else if(target == GL_TEXTURE_3D) {
-//				glTexSubImage3D(target, mip, 0, 0, lev, w, h, 1, destFormat, GL_FLOAT, finalDataPtr);
-//
-//			} else {
-//				Log::Error() << Log::GPU << "Unsupported texture upload destination." << std::endl;
-//			}
-//			_metrics.uploads += 1;
-//		}
-//	}
-//	GPU::restoreTexture(texture.shape);
-//	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-//	_metrics.stateChanges += 1;
+	// Sanity check the texture destination format.
+	const unsigned int destChannels = texture.gpu->channels;
+	if(destChannels != texture.images[0].components) {
+		Log::Error() << Log::GPU << "Not enough values in source data for texture upload." << std::endl;
+		return;
+	}
+
+	// Compute total texture size on the CPU.
+	size_t totalSize = 0;
+	for(const auto & img: texture.images) {
+		// \todo Handle conversion to other formats.
+		const size_t imgSize = img.pixels.size() * sizeof(float);
+		totalSize += imgSize;
+	}
+
+	// Transfer the complete CPU image data to a staging buffer.
+	BufferBase transferBuffer(totalSize, BufferType::CPUTOGPU, DataUse::STATIC);
+	GPU::setupBuffer(transferBuffer);
+	void* dataImg = nullptr;
+	vkMapMemory(_context.device, transferBuffer.gpu->data, 0, totalSize, 0, &dataImg);
+
+	size_t currentOffset = 0;
+	for(const auto & img: texture.images) {
+		const size_t imgSize = img.pixels.size() * sizeof(float);
+		memcpy((uchar*)dataImg + currentOffset, img.pixels.data(), imgSize);
+		currentOffset += imgSize;
+	}
+	vkUnmapMemory(_context.device, transferBuffer.gpu->data);
+
+	VkUtils::transitionImageLayout(_context, texture.gpu->image, texture.gpu->format, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, texture.levels, texture.depth);
+
+	VkCommandBuffer commandBuffer = VkUtils::startOneTimeCommandBuffer(_context);
+
+	// Copy operation for each mip level that is available on the CPU.
+	size_t currentImg = 0;
+	currentOffset = 0;
+
+	for(size_t mid = 0; mid < texture.levels; ++mid) {
+		// How deep is the image for 3D textures.
+		const size_t depth = texture.shape == TextureShape::D3 ? (texture.depth / (1 << mid)) : 1;
+		// How many images in the mip level (for arrays and cubes)
+		const size_t layers = texture.shape == TextureShape::D3 ? 1 : texture.depth;
+
+		// First image of the mip level (they all have the same size.
+		const Image & image = texture.images[currentImg];
+		const size_t imgSize = image.pixels.size() * sizeof(float);
+
+		// Perform copy for this mip level.
+		VkBufferImageCopy region = {};
+		region.bufferOffset = currentOffset;
+		region.bufferRowLength = 0; // Tightly packed.
+		region.bufferImageHeight = 0; // Tightly packed.
+		region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		region.imageSubresource.mipLevel = mid;
+		region.imageSubresource.baseArrayLayer = 0;
+		region.imageSubresource.layerCount = layers;
+		// Offset *in the subregion*
+		region.imageOffset = {0, 0, 0};
+		region.imageExtent = { image.width, image.height, (uint32_t)depth};
+
+		vkCmdCopyBufferToImage(commandBuffer, transferBuffer.gpu->buffer, texture.gpu->image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
+
+		currentImg += depth;
+		currentOffset += depth * imgSize;
+		// We might have more levels allocated on the GPU than we had available on the CPU.
+		// Stop, these will be generated automatically.
+		if(currentImg >= texture.images.size()){
+			break;
+		}
+
+	}
+	VkUtils::endOneTimeCommandBuffer(commandBuffer, _context);
+
+	transferBuffer.clean();
+
 }
 
 void GPU::downloadTexture(Texture & texture) {
-//	downloadTexture(texture, -1);
+	downloadTexture(texture, -1);
 }
 
 void GPU::downloadTexture(Texture & texture, int level) {
-//	if(!texture.gpu) {
-//		Log::Error() << Log::GPU << "Uninitialized GPU texture." << std::endl;
-//		return;
-//	}
-//	if(texture.shape != TextureShape::D2 && texture.shape != TextureShape::Cube) {
-//		Log::Error() << Log::GPU << "Unsupported download format." << std::endl;
-//		return;
-//	}
-//	if(!texture.images.empty()) {
-//		Log::Verbose() << Log::GPU << "Texture already contain CPU data, will be erased." << std::endl;
-//	}
-//	texture.images.resize(texture.depth * texture.levels);
+	if(!texture.gpu) {
+		Log::Error() << Log::GPU << "Uninitialized GPU texture." << std::endl;
+		return;
+	}
+	if(texture.shape != TextureShape::D2 && texture.shape != TextureShape::Cube) {
+		Log::Error() << Log::GPU << "Unsupported download format." << std::endl;
+		return;
+	}
+	if(!texture.images.empty()) {
+		Log::Verbose() << Log::GPU << "Texture already contain CPU data, will be erased." << std::endl;
+	}
+	texture.images.resize(texture.depth * texture.levels);
 //
 //	const GLenum target			= texture.gpu->target;
 //	const GLenum type			= GL_FLOAT;
@@ -847,30 +857,90 @@ void GPU::downloadTexture(Texture & texture, int level) {
 }
 
 void GPU::generateMipMaps(const Texture & texture) {
-//	if(!texture.gpu) {
-//		Log::Error() << Log::GPU << "Uninitialized GPU texture." << std::endl;
-//		return;
-//	}
-//	const GLenum target = texture.gpu->target;
-//	glBindTexture(target, texture.gpu->id);
-//	_metrics.textureBindings += 1;
-//	glTexParameteri(target, GL_TEXTURE_MAX_LEVEL, texture.levels - 1);
-//	glGenerateMipmap(target);
-//	GPU::restoreTexture(texture.shape);
+	if(!texture.gpu) {
+		Log::Error() << Log::GPU << "Uninitialized GPU texture." << std::endl;
+		return;
+	}
+	// Do we support blitting?
+	VkFormatProperties formatProperties;
+	vkGetPhysicalDeviceFormatProperties(_context.physicalDevice, texture.gpu->format, &formatProperties);
+	if (!(formatProperties.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT)) {
+		Log::Error() << Log::GPU << "Bliting not supported for this format." << std::endl;
+		return;
+	}
+
+	const bool isCube = texture.shape & TextureShape::Cube;
+	const bool isArray = texture.shape & TextureShape::Array;
+	const size_t layers = (isCube || isArray) ? texture.depth : 1;
+	size_t width = texture.width;
+	size_t height = texture.height;
+	size_t depth = texture.shape == TextureShape::D3 ? texture.depth : 1;
+
+	// Prepare barrier that we will reuse at each level.
+	VkImageMemoryBarrier barrier = {};
+	barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+	barrier.image = texture.gpu->image;
+	barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	barrier.subresourceRange.baseArrayLayer = 0;
+	barrier.subresourceRange.layerCount = layers;
+	barrier.subresourceRange.baseMipLevel = 0;
+	barrier.subresourceRange.levelCount = 1;
+
+	// Blit the texture to each mip level.
+	VkCommandBuffer commandBuffer = VkUtils::startOneTimeCommandBuffer(_context);
+
+	// For now, don't bother with existing mip data (potentially uploaded from the CPU).
+	for (size_t mid = 1; mid < texture.levels; mid++) {
+
+		// Transition level i-1 to transfer layout.
+		barrier.subresourceRange.baseMipLevel = mid - 1;
+		barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+		barrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+		barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+		barrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+		vkCmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0, 0, nullptr,  0, nullptr, 1, &barrier);
+		// Then, blit to level i.
+		VkImageBlit blit = {};
+		blit.srcOffsets[0] = { 0, 0, 0 };
+		blit.srcOffsets[1] = { (int32_t)width, (int32_t)height, (int32_t)depth };
+		blit.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		blit.srcSubresource.mipLevel = mid - 1;
+		blit.srcSubresource.baseArrayLayer = 0;
+		blit.srcSubresource.layerCount = layers;
+		blit.dstOffsets[0] = { 0, 0, 0 };
+
+		// Divide all dimensions by 2 if possible.
+		width  = (width  > 1 ? (width/2)  : 1);
+		height = (height > 1 ? (height/2) : 1);
+		depth  = (depth  > 1 ? (depth/2)  : 1);
+
+		blit.dstOffsets[1] = { (int32_t)width, (int32_t)height, (int32_t)depth };
+		blit.dstSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		blit.dstSubresource.mipLevel = mid;
+		blit.dstSubresource.baseArrayLayer = 0;
+		blit.dstSubresource.layerCount = layers;
+		// Blit using linear filtering for smoother downscaling.
+		vkCmdBlitImage(commandBuffer, texture.gpu->image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, texture.gpu->image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &blit, VK_FILTER_LINEAR);
+		// Force sync and move previous layer to shader readable format.
+		// \todo Could be done for all levels at once at the end ? but it has a different old layout.
+		barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+		barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		barrier.srcAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+		barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+		vkCmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, nullptr, 0, nullptr, 1, &barrier);
+	}
+	// Transition the last level.
+	barrier.subresourceRange.baseMipLevel = int(texture.levels)-1;
+	barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+	barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+	barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+	barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+	vkCmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, nullptr, 0, nullptr, 1, &barrier);
+	// Submit the commands.
+	VkUtils::endOneTimeCommandBuffer(commandBuffer, _context);
 }
-//
-//GLenum GPU::targetFromShape(const TextureShape & shape) {
-//
-//	static const std::map<TextureShape, GLenum> shapesTargets = {
-//		{TextureShape::D1, GL_TEXTURE_1D},
-//		{TextureShape::D2, GL_TEXTURE_2D},
-//		{TextureShape::D3, GL_TEXTURE_3D},
-//		{TextureShape::Cube, GL_TEXTURE_CUBE_MAP},
-//		{TextureShape::Array1D, GL_TEXTURE_1D_ARRAY},
-//		{TextureShape::Array2D, GL_TEXTURE_2D_ARRAY},
-//		{TextureShape::ArrayCube, GL_TEXTURE_CUBE_MAP_ARRAY}};
-//	return shapesTargets.at(shape);
-//}
 
 void GPU::bindBuffer(const BufferBase & buffer, size_t slot) {
 //	glBindBuffer(GL_UNIFORM_BUFFER, buffer.gpu->id);
@@ -1095,7 +1165,6 @@ void GPU::deviceInfos(std::string & vendor, std::string & renderer, std::string 
 	const std::unordered_map<uint32_t, std::string> vendors = {
 		{ 0x1002, "AMD" }, { 0x10DE, "NVIDIA" }, { 0x8086, "INTEL" }, { 0x13B5, "ARM" }
 	};
-
 
 	if(_context.physicalDevice != VK_NULL_HANDLE){
 		VkPhysicalDeviceProperties properties;
@@ -1792,29 +1861,18 @@ const GPU::Metrics & GPU::getMetrics(){
 	return _metricsPrevious;
 }
 
-void GPU::restoreTexture(TextureShape shape){
-//	const GLenum target = GPU::targetFromShape(shape);
-//	const int slot = _state.activeTexture - int(GL_TEXTURE0);
-//	glBindTexture(target, _state.textures[slot][target]);
-//	_metrics.textureBindings += 1;
+
+void GPU::clean(GPUTexture & tex){
+	vkDestroyImageView(_context.device, tex.view, nullptr);
+	vkDestroySampler(_context.device, tex.sampler, nullptr);
+	vkDestroyImage(_context.device, tex.image, nullptr);
+	vkFreeMemory(_context.device, tex.data, nullptr);
 }
 
-void GPU::deleted(GPUTexture & tex){
-	// If any active slot is using it, set it to 0.
-//	for(auto& bind : _state.textures){
-//		if(bind[tex.target] == tex.id){
-//			bind[tex.target] = 0;
-//		}
-//	}
+void GPU::clean(Framebuffer & framebuffer){
+
 }
 
-void GPU::deleted(Framebuffer & framebuffer){
-//	if(_state.drawFramebuffer == framebuffer._id){
-//		_state.drawFramebuffer = 0;
-//	}
-//	if(_state.readFramebuffer == framebuffer._id){
-//		_state.readFramebuffer = 0;
-//	}
 }
 
 void GPU::deleted(GPUMesh & mesh){

@@ -450,23 +450,12 @@ private:
 	 */
 	//static void savePixels(GLenum type, GLenum format, unsigned int width, unsigned int height, unsigned int components, const std::string & path, bool flip, bool ignoreAlpha);
 
-	/** Restore the texture bound to the given shape for the current slot.
-	 \param shape the shape to restore
-	 \note For internal use mainly
-	 */
-	static void restoreTexture(TextureShape shape);
 
-	/** Update the cache to remove input object if it was used.
-	 \param tex the texture that was deleted
-	 \note See the GPU specification for update of bindings when named object is deleted.
-	 */
-	static void deleted(GPUTexture & tex);
+	static void clean(GPUTexture & tex);
 
-	/** Update the cache to remove input object if it was used.
-	 \param framebuffer the framebuffer that was deleted
-	 \note See the GPU specification for update of bindings when named object is deleted.
-	 */
-	static void deleted(Framebuffer & framebuffer);
+
+
+	static void clean(Framebuffer & framebuffer);
 
 	/** Update the cache to remove input object if it was used.
 	 \param mesh the mesh that was deleted

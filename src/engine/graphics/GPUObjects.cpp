@@ -14,9 +14,7 @@ GPUTexture::GPUTexture(const Descriptor & texDescriptor, TextureShape shape) :
 }
 
 void GPUTexture::clean() {
-	//glDeleteTextures(1, &id);
-	//GPU::deleted(*this);
-	//id = 0;
+	GPU::clean(*this);
 }
 
 bool GPUTexture::hasSameLayoutAs(const Descriptor & other) const {
@@ -24,11 +22,12 @@ bool GPUTexture::hasSameLayoutAs(const Descriptor & other) const {
 }
 
 void GPUTexture::setFiltering(Filter filtering) {
+	(void)filtering;
 	// Update the descriptor.
 	//_descriptor  = Descriptor(_descriptor.typedFormat(), filtering, _descriptor.wrapping());
 	//minFiltering = _descriptor.getGPUMinificationFilter();
 	//magFiltering = _descriptor.getGPUMagnificationFilter();
-
+	// Change the associated sampler.
 	//glBindTexture(target, id);
 	//GPU::_metrics.textureBindings += 1;
 	//glTexParameteri(target, GL_TEXTURE_MAG_FILTER, magFiltering);

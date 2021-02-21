@@ -8,14 +8,17 @@ Texture::Texture(const std::string & name) : _name(name) {
 
 void Texture::upload(const Descriptor & layout, bool updateMipmaps) {
 
+	// Compute the last mip level if needed.
+	if(updateMipmaps) {
+		levels = getMaxMipLevel()+1;
+	}
+
 	// Create texture.
 	GPU::setupTexture(*this, layout);
 	GPU::uploadTexture(*this);
 
 	// Generate mipmaps pyramid automatically.
 	if(updateMipmaps) {
-		// Compute the last mip level.
-		levels = getMaxMipLevel()+1;
 		GPU::generateMipMaps(*this);
 	}
 
