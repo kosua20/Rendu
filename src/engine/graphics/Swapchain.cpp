@@ -13,12 +13,12 @@ void Swapchain::init(GPUContext & context, const RenderingConfig & config){
 	// Query swapchain properties and pick settings.
 	// Basic capabilities.
 	VkSurfaceCapabilitiesKHR capabilities;
-	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(context.physicalDevice, context.surface, &capabilities);
+	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(_context.physicalDevice, _context.surface, &capabilities);
 	// Number of items in the swapchain.
-	uint32_t count = capabilities.minImageCount + 1;
+	_count = capabilities.minImageCount + 1;
 	// maxImageCount = 0 if there is no upper constraint.
 	if(capabilities.maxImageCount > 0) {
-		count = std::min(count, capabilities.maxImageCount);
+		_count = std::min(_count, capabilities.maxImageCount);
 	}
 
 	// Compute size.
@@ -30,9 +30,9 @@ void Swapchain::init(GPUContext & context, const RenderingConfig & config){
 	// Supported formats.
 	std::vector<VkSurfaceFormatKHR> formats;
 	uint32_t formatCount;
-	vkGetPhysicalDeviceSurfaceFormatsKHR(context.physicalDevice, context.surface, &formatCount, nullptr);
+	vkGetPhysicalDeviceSurfaceFormatsKHR(_context.physicalDevice, _context.surface, &formatCount, nullptr);
 	formats.resize(formatCount);
-	vkGetPhysicalDeviceSurfaceFormatsKHR(context.physicalDevice, context.surface, &formatCount, formats.data());
+	vkGetPhysicalDeviceSurfaceFormatsKHR(_context.physicalDevice, _context.surface, &formatCount, formats.data());
 
 	// Ideally RGBA8 with a sRGB display.
 	VkSurfaceFormatKHR surfaceParams = { VK_FORMAT_B8G8R8A8_UNORM, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR };
@@ -54,9 +54,9 @@ void Swapchain::init(GPUContext & context, const RenderingConfig & config){
 	// Supported modes.
 	std::vector<VkPresentModeKHR> presentModes;
 	uint32_t presentModeCount;
-	vkGetPhysicalDeviceSurfacePresentModesKHR(context.physicalDevice, context.surface, &presentModeCount, nullptr);
+	vkGetPhysicalDeviceSurfacePresentModesKHR(_context.physicalDevice, _context.surface, &presentModeCount, nullptr);
 	presentModes.resize(presentModeCount);
-	vkGetPhysicalDeviceSurfacePresentModesKHR(context.physicalDevice, context.surface, &presentModeCount, presentModes.data());
+	vkGetPhysicalDeviceSurfacePresentModesKHR(_context.physicalDevice, _context.surface, &presentModeCount, presentModes.data());
 
 	// By default only FIFO (~V-sync mode) is always available.
 	VkPresentModeKHR presentMode = VK_PRESENT_MODE_FIFO_KHR;
@@ -74,8 +74,8 @@ void Swapchain::init(GPUContext & context, const RenderingConfig & config){
 	// Swap chain setup.
 	VkSwapchainCreateInfoKHR swapInfo = {};
 	swapInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-	swapInfo.surface = context.surface;
-	swapInfo.minImageCount = count;
+	swapInfo.surface = _context.surface;
+	swapInfo.minImageCount = _count;
 	swapInfo.imageFormat = surfaceParams.format;
 	swapInfo.imageColorSpace = surfaceParams.colorSpace;
 	swapInfo.imageExtent = extent;
@@ -83,7 +83,7 @@ void Swapchain::init(GPUContext & context, const RenderingConfig & config){
 	swapInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
 	// Establish a link with both queues, handling the case where they are the same.
-	uint32_t queueFamilyIndices[] = { context.graphicsId, context.presentId };
+	uint32_t queueFamilyIndices[] = { _context.graphicsId, _context.presentId };
 	if(queueFamilyIndices[0] != queueFamilyIndices[1]){
 		swapInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
 		swapInfo.queueFamilyIndexCount = 2;
@@ -99,7 +99,7 @@ void Swapchain::init(GPUContext & context, const RenderingConfig & config){
 	swapInfo.clipped = VK_TRUE;
 	swapInfo.oldSwapchain = _swapchain;
 
-	if(vkCreateSwapchainKHR(context.device, &swapInfo, nullptr, &_swapchain) != VK_SUCCESS) {
+	if(vkCreateSwapchainKHR(_context.device, &swapInfo, nullptr, &_swapchain) != VK_SUCCESS) {
 		Log::Error() << Log::GPU << "Unable to create swap chain." << std::endl;
 		return;
 	}
@@ -145,22 +145,12 @@ void Swapchain::init(GPUContext & context, const RenderingConfig & config){
 //	}
 //
 //
-//	// Command buffers.
-//	_commandBuffers.resize(count);
-//	VkCommandBufferAllocateInfo allocInfo = {};
-//	allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-//	allocInfo.commandPool = commandPool;
-//	allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-//	allocInfo.commandBufferCount = static_cast<uint32_t>(_commandBuffers.size());
-//	if(vkAllocateCommandBuffers(device, &allocInfo, _commandBuffers.data()) != VK_SUCCESS) {
-//		std::cerr << "Unable to create command buffers." << std::endl;
-//	}
 
-	/// Only once: Semaphores and fences.
-	// todo cleanup
-	_imageAvailableSemaphores.resize(count);
-	_renderFinishedSemaphores.resize(count);
-	_inFlightFences.resize(count);
+
+	// Only once: Semaphores and fences.
+	_imagesAvailable.resize(_count);
+	_framesFinished.resize(_count);
+	_framesInFlight.resize(_count);
 
 	VkSemaphoreCreateInfo semaphoreInfo = {};
 	semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
@@ -169,10 +159,12 @@ void Swapchain::init(GPUContext & context, const RenderingConfig & config){
 	fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 	fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
-	for(size_t i = 0; i < _inFlightFences.size(); i++) {
-		if(vkCreateSemaphore(_context.device, &semaphoreInfo, nullptr, &_imageAvailableSemaphores[i]) != VK_SUCCESS ||
-		   vkCreateSemaphore(_context.device, &semaphoreInfo, nullptr, &_renderFinishedSemaphores[i]) != VK_SUCCESS ||
-		   vkCreateFence(_context.device, &fenceInfo, nullptr, &_inFlightFences[i]) != VK_SUCCESS) {
+	for(size_t i = 0; i < _count; i++) {
+		VkResult availRes = vkCreateSemaphore(_context.device, &semaphoreInfo, nullptr, &_imagesAvailable[i]);
+		VkResult finishRes = vkCreateSemaphore(_context.device, &semaphoreInfo, nullptr, &_framesFinished[i]);
+		VkResult inflightRes = vkCreateFence(_context.device, &fenceInfo, nullptr, &_framesInFlight[i]);
+
+		if(availRes != VK_SUCCESS || finishRes != VK_SUCCESS || inflightRes != VK_SUCCESS){
 			Log::Error() << Log::GPU << "Unable to create semaphores and fences." << std::endl;
 		}
 	}
