@@ -35,22 +35,30 @@ void GPUTexture::setFiltering(Filter filtering) {
 	//GPU::restoreTexture(_shape);
 }
 
-GPUBuffer::GPUBuffer(BufferType type, DataUse use){
-//	static const std::map<BufferType, GLenum> types = {
-//	{BufferType::VERTEX, GL_ARRAY_BUFFER},
-//	{BufferType::INDEX, GL_ELEMENT_ARRAY_BUFFER},
-//	{BufferType::UNIFORM, GL_UNIFORM_BUFFER}};
-//	target = types.at(type);
-//
-//	static const std::map<DataUse, GLenum> usages = {
-//	{DataUse::STATIC, GL_STATIC_DRAW},
-//	{DataUse::DYNAMIC, GL_DYNAMIC_DRAW}};
-//	usage = usages.at(use);
+GPUBuffer::GPUBuffer(BufferType atype, DataUse use){
+	// \todo "use" doesn't make sense on Vulkan in its current form.
+	(void)use;
+
+	static const std::map<BufferType, VkBufferUsageFlags> types = {
+		{ BufferType::VERTEX, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT },
+		{ BufferType::INDEX, VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT },
+		{ BufferType::UNIFORM, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT },
+		{ BufferType::CPUTOGPU, VK_BUFFER_USAGE_TRANSFER_SRC_BIT },
+		{ BufferType::GPUTOCPU, VK_BUFFER_USAGE_TRANSFER_DST_BIT }};
+	type = types.at(atype);
+
+	static const std::map<BufferType, VkMemoryPropertyFlags> usages = {
+		{ BufferType::VERTEX, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT },
+		{ BufferType::INDEX, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT },
+		{ BufferType::UNIFORM, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT },
+		{ BufferType::CPUTOGPU, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT },
+		{ BufferType::GPUTOCPU, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT }};
+
+	options = usages.at(atype);
 }
 
 void GPUBuffer::clean(){
-	//glDeleteBuffers(1, &id);
-	//id = 0;
+	GPU::clean(*this);
 }
 
 void GPUMesh::clean() {

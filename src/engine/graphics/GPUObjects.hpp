@@ -25,7 +25,9 @@ enum class ShaderType : uint {
 enum class BufferType : uint {
 	VERTEX, ///< Vertex data.
 	INDEX, ///< Element indices.
-	UNIFORM ///< Uniform data.
+	UNIFORM, ///< Uniform data.
+	CPUTOGPU, ///< Transfer.
+	GPUTOCPU ///< Transfer.
 };
 
 /**
@@ -406,10 +408,10 @@ public:
 	//GLenum usage; ///< The buffer usage.
 
 	/** Constructor.
-	 \param type the type of buffer
+	 \param atype the type of buffer
 	 \param use the update frequency
 	 */
-	GPUBuffer(BufferType type, DataUse use);
+	GPUBuffer(BufferType atype, DataUse use);
 
 	/** Clean internal GPU buffer. */
 	void clean();
@@ -429,6 +431,13 @@ public:
 
 	/** Move constructor. */
 	GPUBuffer(GPUBuffer &&) = delete;
+
+	VkBufferUsageFlags type;
+	VkMemoryPropertyFlags options;
+
+	VkBuffer buffer;
+	VkDeviceMemory data;
+	
 };
 
 

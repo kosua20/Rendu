@@ -217,7 +217,7 @@ public:
 	 \param data pointer to the data to upload
 	 \param offset optional offset in the buffer store
 	 */
-	static void uploadBuffer(const BufferBase & buffer, size_t size, unsigned char * data, size_t offset = 0);
+	static void uploadBuffer(const BufferBase & buffer, size_t size, uchar * data, size_t offset = 0);
 
 	/** Download data from a buffer on the GPU. It's possible to download a subrange of the buffer data store.
 	 \param buffer the buffer to download from
@@ -225,7 +225,7 @@ public:
 	 \param data pointer to the storage destination
 	 \param offset optional offset in the buffer store
 	 */
-	static void downloadBuffer(const BufferBase & buffer, size_t size, unsigned char * data, size_t offset = 0);
+	static void downloadBuffer(const BufferBase & buffer, size_t size, uchar * data, size_t offset = 0);
 
 	/** Mesh loading: send a mesh data to the GPU and set the input mesh GPU infos accordingly.
 	 \param mesh the mesh to upload
@@ -454,6 +454,7 @@ private:
 	static void clean(GPUTexture & tex);
 
 
+	static void clean(GPUBuffer & buffer);
 
 	static void clean(Framebuffer & framebuffer);
 

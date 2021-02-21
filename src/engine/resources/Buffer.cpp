@@ -17,7 +17,7 @@ void BufferBase::upload(size_t sizeInBytes, unsigned char * data, size_t offset)
 	}
 	if(sizeInBytes == sizeMax){
 		// Orphan the buffer so that we don't need to wait for it to be unused before overwriting it.
-		GPU::allocateBuffer(*this);
+		//GPU::allocateBuffer(*this);
 	}
 	// Then upload the data.
 	GPU::uploadBuffer(*this, sizeInBytes, data, offset);

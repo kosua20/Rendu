@@ -951,69 +951,118 @@ void GPU::bindBuffer(const BufferBase & buffer, size_t slot) {
 }
 
 void GPU::setupBuffer(BufferBase & buffer) {
-//	if(buffer.gpu) {
-//		buffer.gpu->clean();
-//	}
-//	// Create.
-//	buffer.gpu.reset(new GPUBuffer(buffer.type, buffer.usage));
-////	GLuint bufferId;
-////	glGenBuffers(1, &bufferId);
-////	buffer.gpu->id = bufferId;
-//	// Allocate.
-//	GPU::allocateBuffer(buffer);
+	if(buffer.gpu) {
+		buffer.gpu->clean();
+	}
+	// Create.
+	buffer.gpu.reset(new GPUBuffer(buffer.type, buffer.usage));
+
+	VkBufferCreateInfo bufferInfo = {};
+	bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+	bufferInfo.size = buffer.sizeMax;
+	bufferInfo.usage = buffer.gpu->type;
+	bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+	if(vkCreateBuffer(_context.device, &bufferInfo, nullptr, &(buffer.gpu->buffer)) != VK_SUCCESS) {
+		Log::Error() << Log::GPU << "Failed to create buffer." << std::endl;
+		return;
+	}
+
+	// Allocate.
+	GPU::allocateBuffer(buffer);
 }
 
 void GPU::allocateBuffer(const BufferBase & buffer) {
-//	if(!buffer.gpu) {
-//		Log::Error() << Log::GPU << "Uninitialized GPU buffer." << std::endl;
-//		return;
-//	}
-//
-////	const GLenum target = buffer.gpu->target;
-////	glBindBuffer(target, buffer.gpu->id);
-////	glBufferData(target, buffer.sizeMax, nullptr, buffer.gpu->usage);
-////	glBindBuffer(target, 0);
+	if(!buffer.gpu) {
+		Log::Error() << Log::GPU << "Uninitialized GPU buffer." << std::endl;
+		return;
+	}
+
+	// Allocate memory for buffer.
+	VkMemoryRequirements memRequirements;
+	vkGetBufferMemoryRequirements(_context.device, buffer.gpu->buffer, &memRequirements);
+	VkMemoryAllocateInfo allocInfo = {};
+	allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+	allocInfo.allocationSize = memRequirements.size;
+	allocInfo.memoryTypeIndex = VkUtils::findMemoryType(memRequirements.memoryTypeBits, buffer.gpu->options, _context.physicalDevice);
+	if(vkAllocateMemory(_context.device, &allocInfo, nullptr, &(buffer.gpu->data)) != VK_SUCCESS) {
+		Log::Error() << Log::GPU << "Failed to allocate buffer." << std::endl;
+		return;
+	}
+	// Bind buffer to memory.
+	vkBindBufferMemory(_context.device, buffer.gpu->buffer, buffer.gpu->data, 0);
 //	_metrics.bufferBindings += 2;
 }
 
-void GPU::uploadBuffer(const BufferBase & buffer, size_t size, unsigned char * data, size_t offset) {
-//	if(!buffer.gpu) {
-//		Log::Error() << Log::GPU << "Uninitialized GPU buffer." << std::endl;
-//		return;
-//	}
-//	if(size == 0) {
-//		Log::Warning() << Log::GPU << "No data to upload." << std::endl;
-//		return;
-//	}
-//	if(offset + size > buffer.sizeMax) {
-//		Log::Warning() << Log::GPU << "Not enough allocated space to upload." << std::endl;
-//		return;
-//	}
+void GPU::uploadBuffer(const BufferBase & buffer, size_t size, uchar * data, size_t offset) {
+	if(!buffer.gpu) {
+		Log::Error() << Log::GPU << "Uninitialized GPU buffer." << std::endl;
+		return;
+	}
+	if(size == 0) {
+		Log::Warning() << Log::GPU << "No data to upload." << std::endl;
+		return;
+	}
+	if(offset + size > buffer.sizeMax) {
+		Log::Warning() << Log::GPU << "Not enough allocated space to upload." << std::endl;
+		return;
+	}
 
-//	const GLenum target = buffer.gpu->target;
-//	glBindBuffer(target, buffer.gpu->id);
-//	glBufferSubData(target, offset, size, data);
-//	_metrics.uploads += 1;
-//	glBindBuffer(target, 0);
-//	_metrics.bufferBindings += 2;
+	// If the buffer is visible from the CPU side, we don't need an intermediate staging buffer.
+	if((buffer.gpu->options & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) && (buffer.gpu->options & VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)){
+		void* dstData = nullptr;
+		// Only map the region we need.
+		vkMapMemory(_context.device, buffer.gpu->data, offset, size, 0, &dstData);
+		memcpy((uchar*)dstData, data, size);
+		vkUnmapMemory(_context.device, buffer.gpu->data);
+		return;
+	}
+
+	// Otherwise, create a transfer buffer.
+	BufferBase transferBuffer(size, BufferType::CPUTOGPU, DataUse::STATIC);
+	transferBuffer.upload(size, data, 0);
+	// Copy operation.
+	VkCommandBuffer commandBuffer = VkUtils::startOneTimeCommandBuffer(_context);
+	VkBufferCopy copyRegion = {};
+	copyRegion.srcOffset = 0;
+	copyRegion.dstOffset = offset;
+	copyRegion.size = size;
+	vkCmdCopyBuffer(commandBuffer, transferBuffer.gpu->buffer, buffer.gpu->buffer, 1, &copyRegion);
+	VkUtils::endOneTimeCommandBuffer(commandBuffer, _context);
+	transferBuffer.clean();
 }
 
-void GPU::downloadBuffer(const BufferBase & buffer, size_t size, unsigned char * data, size_t offset) {
-//	if(!buffer.gpu) {
-//		Log::Error() << Log::GPU << "Uninitialized GPU buffer." << std::endl;
-//		return;
-//	}
-//	if(offset + size > buffer.sizeMax) {
-//		Log::Warning() << Log::GPU << "Not enough available data to download." << std::endl;
-//		return;
-//	}
-//
-////	const GLenum target = buffer.gpu->target;
-////	glBindBuffer(target, buffer.gpu->id);
-////	glGetBufferSubData(target, offset, size, data);
-//	_metrics.downloads += 1;
-////	glBindBuffer(target, 0);
-//	_metrics.bufferBindings += 2;
+void GPU::downloadBuffer(const BufferBase & buffer, size_t size, uchar * data, size_t offset) {
+	if(!buffer.gpu) {
+		Log::Error() << Log::GPU << "Uninitialized GPU buffer." << std::endl;
+		return;
+	}
+	if(offset + size > buffer.sizeMax) {
+		Log::Warning() << Log::GPU << "Not enough available data to download." << std::endl;
+		return;
+	}
+
+	// If the buffer is visible from the CPU side, we don't need an intermediate staging buffer.
+	if((buffer.gpu->options & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) && (buffer.gpu->options & VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)){
+		void* srcData = nullptr;
+		// Only map the region we need.
+		vkMapMemory(_context.device, buffer.gpu->data, offset, size, 0, &srcData);
+		memcpy(data, (uchar*)srcData, size);
+		vkUnmapMemory(_context.device, buffer.gpu->data);
+		return;
+	}
+
+	// Otherwise, create a transfer buffer.
+	BufferBase transferBuffer(size, BufferType::GPUTOCPU, DataUse::STATIC);
+	// Copy operation.
+	VkCommandBuffer commandBuffer = VkUtils::startOneTimeCommandBuffer(_context);
+	VkBufferCopy copyRegion = {};
+	copyRegion.srcOffset = offset;
+	copyRegion.dstOffset = 0;
+	copyRegion.size = size;
+	vkCmdCopyBuffer(commandBuffer, buffer.gpu->buffer, transferBuffer.gpu->buffer, 1, &copyRegion);
+	VkUtils::endOneTimeCommandBuffer(commandBuffer, _context);
+	transferBuffer.download(size, data, 0);
+	transferBuffer.clean();
 }
 
 void GPU::setupMesh(Mesh & mesh) {
@@ -1879,6 +1928,9 @@ void GPU::deleted(GPUMesh & mesh){
 //	if(_state.vertexArray == mesh.id){
 //		_state.vertexArray = 0;
 //	}
+void GPU::clean(GPUBuffer & buffer){
+	vkDestroyBuffer(_context.device, buffer.buffer, nullptr);
+	vkFreeMemory(_context.device, buffer.data, nullptr);
 }
 
 GPUState GPU::_state;
