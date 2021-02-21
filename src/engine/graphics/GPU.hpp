@@ -453,16 +453,12 @@ private:
 
 	static void clean(GPUTexture & tex);
 
+	static void clean(GPUMesh & mesh);
 
 	static void clean(GPUBuffer & buffer);
 
 	static void clean(Framebuffer & framebuffer);
 
-	/** Update the cache to remove input object if it was used.
-	 \param mesh the mesh that was deleted
-	 \note See the GPU specification for update of bindings when named object is deleted.
-	 */
-	static void deleted(GPUMesh & mesh);
 
 	static GPUState _state; ///< Current GPU state for caching.
 	static Metrics _metrics; ///< Internal metrics (draw count, state changes,...).

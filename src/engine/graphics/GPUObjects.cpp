@@ -62,18 +62,17 @@ void GPUBuffer::clean(){
 }
 
 void GPUMesh::clean() {
-//	if(vertexBuffer){
-//		vertexBuffer->clean();
-//	}
-//	if(indexBuffer){
-//		indexBuffer->clean();
-//	}
-//	//glDeleteVertexArrays(1, &id);
-//	GPU::deleted(*this);
-//	vertexBuffer.reset();
-//	indexBuffer.reset();
-//	count = 0;
-	//id = 0;
+	if(vertexBuffer){
+		vertexBuffer->clean();
+	}
+	if(indexBuffer){
+		indexBuffer->clean();
+	}
+	vertexBuffer.reset();
+	indexBuffer.reset();
+	count = 0;
+	
+	GPU::clean(*this);
 }
 
 GPUQuery::GPUQuery(Type type) {

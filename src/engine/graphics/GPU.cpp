@@ -1066,103 +1066,78 @@ void GPU::downloadBuffer(const BufferBase & buffer, size_t size, uchar * data, s
 }
 
 void GPU::setupMesh(Mesh & mesh) {
-//	if(mesh.gpu) {
-//		mesh.gpu->clean();
-//	}
-//	mesh.gpu.reset(new GPUMesh());
-	// Generate a vertex array.
-//	GLuint vao = 0;
-//	glGenVertexArrays(1, &vao);
-//	glBindVertexArray(vao);
-//	_metrics.vertexBindings += 1;
-//
-//	// Compute full allocation size.
-//	size_t totalSize = 0;
-//	totalSize += 3 * mesh.positions.size();
-//	totalSize += 3 * mesh.normals.size();
-//	totalSize += 2 * mesh.texcoords.size();
-//	totalSize += 3 * mesh.tangents.size();
-//	totalSize += 3 * mesh.binormals.size();
-//	totalSize += 3 * mesh.colors.size();
-//
-//	// Create an array buffer to host the geometry data.
-//	BufferBase vertexBuffer(sizeof(GLfloat) * totalSize, BufferType::VERTEX, DataUse::STATIC);
-//	GPU::setupBuffer(vertexBuffer);
-//	// Fill in subregions.
-//	size_t offset = 0;
-//	if(!mesh.positions.empty()) {
-//		const size_t size = sizeof(GLfloat) * 3 * mesh.positions.size();
-//		GPU::uploadBuffer(vertexBuffer, size, reinterpret_cast<unsigned char *>(mesh.positions.data()), offset);
-//		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.gpu->id);
-//		_metrics.bufferBindings += 1;
-//		glEnableVertexAttribArray(0);
-//		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<void *>(offset));
-//		offset += size;
-//	}
-//	if(!mesh.normals.empty()) {
-//		const size_t size = sizeof(GLfloat) * 3 * mesh.normals.size();
-//		GPU::uploadBuffer(vertexBuffer, size, reinterpret_cast<unsigned char *>(mesh.normals.data()), offset);
-//		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.gpu->id);
-//		_metrics.bufferBindings += 1;
-//		glEnableVertexAttribArray(1);
-//		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<void *>(offset));
-//		offset += size;
-//	}
-//	if(!mesh.texcoords.empty()) {
-//		const size_t size = sizeof(GLfloat) * 2 * mesh.texcoords.size();
-//		GPU::uploadBuffer(vertexBuffer, size, reinterpret_cast<unsigned char *>(mesh.texcoords.data()), offset);
-//		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.gpu->id);
-//		_metrics.bufferBindings += 1;
-//		glEnableVertexAttribArray(2);
-//		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<void *>(offset));
-//		offset += size;
-//	}
-//	if(!mesh.tangents.empty()) {
-//		const size_t size = sizeof(GLfloat) * 3 * mesh.tangents.size();
-//		GPU::uploadBuffer(vertexBuffer, size, reinterpret_cast<unsigned char *>(mesh.tangents.data()), offset);
-//		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.gpu->id);
-//		_metrics.bufferBindings += 1;
-//		glEnableVertexAttribArray(3);
-//		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<void *>(offset));
-//		offset += size;
-//	}
-//	if(!mesh.binormals.empty()) {
-//		const size_t size = sizeof(GLfloat) * 3 * mesh.binormals.size();
-//		GPU::uploadBuffer(vertexBuffer, size, reinterpret_cast<unsigned char *>(mesh.binormals.data()), offset);
-//		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.gpu->id);
-//		_metrics.bufferBindings += 1;
-//		glEnableVertexAttribArray(4);
-//		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<void *>(offset));
-//		offset += size;
-//	}
-//	if(!mesh.colors.empty()) {
-//		const size_t size = sizeof(GLfloat) * 3 * mesh.colors.size();
-//		GPU::uploadBuffer(vertexBuffer, size, reinterpret_cast<unsigned char *>(mesh.colors.data()), offset);
-//		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.gpu->id);
-//		_metrics.bufferBindings += 1;
-//		glEnableVertexAttribArray(5);
-//		glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<void *>(offset));
-//	}
-//
-//	// We load the indices data
-//	const size_t inSize = sizeof(unsigned int) * mesh.indices.size();
-//	BufferBase indexBuffer(inSize, BufferType::INDEX, DataUse::STATIC);
-//	GPU::setupBuffer(indexBuffer);
-//	GPU::uploadBuffer(indexBuffer, inSize, reinterpret_cast<unsigned char *>(mesh.indices.data()));
-//
-//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer.gpu->id);
-//	// Restore previously bound vertex array.
-//	glBindVertexArray(0);
-//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-//	glBindBuffer(GL_ARRAY_BUFFER, 0);
-//	glBindVertexArray(_state.vertexArray);
-//	_metrics.vertexBindings += 2;
-//	_metrics.bufferBindings += 2;
-//
-//	mesh.gpu->id		   = vao;
-//	mesh.gpu->count		   = GLsizei(mesh.indices.size());
-//	mesh.gpu->indexBuffer  = std::move(indexBuffer.gpu);
-//	mesh.gpu->vertexBuffer = std::move(vertexBuffer.gpu);
+	if(mesh.gpu) {
+		mesh.gpu->clean();
+	}
+	mesh.gpu.reset(new GPUMesh());
+
+
+	// Compute full allocation size.
+	size_t totalSize = 0;
+	totalSize += 3 * mesh.positions.size();
+	totalSize += 3 * mesh.normals.size();
+	totalSize += 2 * mesh.texcoords.size();
+	totalSize += 3 * mesh.tangents.size();
+	totalSize += 3 * mesh.binormals.size();
+	totalSize += 3 * mesh.colors.size();
+	totalSize *= sizeof(float);
+
+	// Create a staging buffer to host the geometry data (to avoid creating a staging buffer for each sub-upload).
+	BufferBase stageVertexBuffer(totalSize, BufferType::CPUTOGPU, DataUse::STATIC);
+	GPU::setupBuffer(stageVertexBuffer);
+
+	// Fill in subregions.
+	size_t offset = 0;
+	if(!mesh.positions.empty()) {
+		const size_t size = sizeof(float) * 3 * mesh.positions.size();
+		GPU::uploadBuffer(stageVertexBuffer, size, reinterpret_cast<unsigned char *>(mesh.positions.data()), offset);
+		offset += size;
+	}
+	if(!mesh.normals.empty()) {
+		const size_t size = sizeof(GLfloat) * 3 * mesh.normals.size();
+		GPU::uploadBuffer(stageVertexBuffer, size, reinterpret_cast<unsigned char *>(mesh.normals.data()), offset);
+		offset += size;
+	}
+	if(!mesh.texcoords.empty()) {
+		const size_t size = sizeof(GLfloat) * 2 * mesh.texcoords.size();
+		GPU::uploadBuffer(stageVertexBuffer, size, reinterpret_cast<unsigned char *>(mesh.texcoords.data()), offset);
+		offset += size;
+	}
+	if(!mesh.tangents.empty()) {
+		const size_t size = sizeof(GLfloat) * 3 * mesh.tangents.size();
+		GPU::uploadBuffer(stageVertexBuffer, size, reinterpret_cast<unsigned char *>(mesh.tangents.data()), offset);
+		offset += size;
+	}
+	if(!mesh.binormals.empty()) {
+		const size_t size = sizeof(GLfloat) * 3 * mesh.binormals.size();
+		GPU::uploadBuffer(stageVertexBuffer, size, reinterpret_cast<unsigned char *>(mesh.binormals.data()), offset);
+		offset += size;
+	}
+	if(!mesh.colors.empty()) {
+		const size_t size = sizeof(GLfloat) * 3 * mesh.colors.size();
+		GPU::uploadBuffer(stageVertexBuffer, size, reinterpret_cast<unsigned char *>(mesh.colors.data()), offset);
+	}
+
+	// Copy from the staging buffer.
+	BufferBase vertexBuffer(totalSize, BufferType::VERTEX, DataUse::STATIC);
+	GPU::setupBuffer(vertexBuffer);
+	VkCommandBuffer commandBuffer = VkUtils::startOneTimeCommandBuffer(_context);
+	VkBufferCopy copyRegion = {};
+	copyRegion.srcOffset = 0;
+	copyRegion.dstOffset = 0;
+	copyRegion.size = totalSize;
+	vkCmdCopyBuffer(commandBuffer, stageVertexBuffer.gpu->buffer, vertexBuffer.gpu->buffer, 1, &copyRegion);
+	VkUtils::endOneTimeCommandBuffer(commandBuffer, _context);
+
+	// We load the indices data directly (staging will be handled internally).
+	const size_t inSize = sizeof(unsigned int) * mesh.indices.size();
+	BufferBase indexBuffer(inSize, BufferType::INDEX, DataUse::STATIC);
+	GPU::setupBuffer(indexBuffer);
+	GPU::uploadBuffer(indexBuffer, inSize, reinterpret_cast<unsigned char *>(mesh.indices.data()));
+
+	mesh.gpu->count		   = GLsizei(mesh.indices.size());
+	mesh.gpu->indexBuffer  = std::move(indexBuffer.gpu);
+	mesh.gpu->vertexBuffer = std::move(vertexBuffer.gpu);
 }
 
 void GPU::drawMesh(const Mesh & mesh) {
@@ -1922,12 +1897,10 @@ void GPU::clean(Framebuffer & framebuffer){
 
 }
 
+void GPU::clean(GPUMesh & mesh){
+
 }
 
-void GPU::deleted(GPUMesh & mesh){
-//	if(_state.vertexArray == mesh.id){
-//		_state.vertexArray = 0;
-//	}
 void GPU::clean(GPUBuffer & buffer){
 	vkDestroyBuffer(_context.device, buffer.buffer, nullptr);
 	vkFreeMemory(_context.device, buffer.data, nullptr);

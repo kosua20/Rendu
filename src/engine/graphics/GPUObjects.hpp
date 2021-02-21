@@ -475,6 +475,7 @@ public:
 	
 	/** Move constructor. */
 	GPUMesh(GPUMesh &&) = delete;
+
 };
 
 
