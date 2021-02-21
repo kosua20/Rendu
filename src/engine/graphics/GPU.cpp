@@ -113,7 +113,6 @@ bool GPU::setup(const std::string & appName) {
 				//uniformOffset = properties.limits.minUniformBufferOffsetAlignment;
 			}
 		}
-
 	}
 
 	if(selectedDevice == VK_NULL_HANDLE){
@@ -199,7 +198,17 @@ bool GPU::setupWindow(Window * window){
 	// Finally setup the swapchain.
 	window->_swapchain.init(_context, window->_config);
 
-
+	// Create command buffers.
+	_context.commandBuffers.resize(window->_swapchain.count());
+	VkCommandBufferAllocateInfo allocInfo = {};
+	allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+	allocInfo.commandPool = _context.commandPool;
+	allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+	allocInfo.commandBufferCount = static_cast<uint32_t>(_context.commandBuffers.size());
+	if(vkAllocateCommandBuffers(_context.device, &allocInfo, _context.commandBuffers.data()) != VK_SUCCESS) {
+		Log::Error() << Log::GPU  << "Unable to create command buffers." << std::endl;
+		return false;
+	}
 	
 	return true;
 }

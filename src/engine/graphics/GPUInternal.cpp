@@ -155,79 +155,6 @@ VkFormat VkUtils::findSupportedFormat(const VkPhysicalDevice & physicalDevice, c
 
 	return VK_FORMAT_UNDEFINED;
 }
-/*
-
-void VulkanUtilities::transitionImageLayout(const VkDevice & device, const VkCommandPool & commandPool, const VkQueue & queue, VkImage & image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, const bool cube, const uint32_t & mipCount) {
-	VkCommandBuffer commandBuffer = beginOneShotCommandBuffer(device, commandPool);
-
-	VkPipelineStageFlags sourceStage;
-	VkPipelineStageFlags destinationStage;
-
-	VkImageMemoryBarrier barrier = {};
-	barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-	barrier.oldLayout = oldLayout;
-	barrier.newLayout = newLayout;
-	barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED; // We don't change queue here.
-	barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	barrier.image = image;
-	barrier.subresourceRange.baseMipLevel = 0;
-	barrier.subresourceRange.levelCount = mipCount;
-	barrier.subresourceRange.baseArrayLayer = 0;
-	barrier.subresourceRange.layerCount = cube ? 6 : 1;
-	// Aspect mask.
-	if (newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) {
-		barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
-		if (hasStencilComponent(format)) {
-			barrier.subresourceRange.aspectMask |= VK_IMAGE_ASPECT_STENCIL_BIT;
-		}
-	} else {
-		barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-	}
-
-	// Masks for triggers.
-	if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL) {
-		barrier.srcAccessMask = 0; //  As soon as possible.
-		barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT; // Before transfer.
-		sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
-		destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
-	} else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
-		barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT; // After a transfer.
-		barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT; // Before the shader.
-		sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
-		destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
-	} else if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) {
-		barrier.srcAccessMask = 0; //  As soon as possible.
-		barrier.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT; // Before using it.
-		sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
-		destinationStage = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
-	} else {
-		std::cerr << "Unsupported layout transition." << std::endl;
-	}
-
-	vkCmdPipelineBarrier(commandBuffer, sourceStage, destinationStage, 0, 0, nullptr,  0, nullptr,  1, &barrier );
-
-	endOneShotCommandBuffer(commandBuffer, device, commandPool, queue);
-}
-
-VkImageView VulkanUtilities::createImageView(const VkDevice & device, const VkImage & image, const VkFormat format, const VkImageAspectFlags aspectFlags, const bool cube, const uint32_t & mipCount) {
-	VkImageViewCreateInfo viewInfo = {};
-	viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-	viewInfo.image = image;
-	viewInfo.viewType = cube ? VK_IMAGE_VIEW_TYPE_CUBE : VK_IMAGE_VIEW_TYPE_2D;
-	viewInfo.format = format;
-	viewInfo.subresourceRange.aspectMask = aspectFlags;
-	viewInfo.subresourceRange.baseMipLevel = 0;
-	viewInfo.subresourceRange.levelCount = mipCount;
-	viewInfo.subresourceRange.baseArrayLayer = 0;
-	viewInfo.subresourceRange.layerCount = cube ? 6 : 1;
-
-	VkImageView imageView;
-	if (vkCreateImageView(device, &viewInfo, nullptr, &imageView) != VK_SUCCESS) {
-		std::cerr << "Unable to create image view." << std::endl;
-	}
-	return imageView;
-}
-*/
 
 void VkUtils::typesFromShape(const TextureShape & shape, VkImageType & imgType, VkImageViewType & viewType){
 	imgType = VK_IMAGE_TYPE_2D;
@@ -259,4 +186,91 @@ uint32_t VkUtils::findMemoryType(const uint32_t typeFilter, const VkMemoryProper
 	}
 	Log::Error() << Log::GPU << "Unable to find proper memory." << std::endl;
 	return 0;
+}
+
+VkCommandBuffer VkUtils::startOneTimeCommandBuffer(GPUContext & context){
+	// Create short-lived command buffer.
+	VkCommandBufferAllocateInfo allocInfo = {};
+	allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+	allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+	allocInfo.commandPool = context.commandPool;
+	allocInfo.commandBufferCount = 1;
+
+	VkCommandBuffer commandBuffer;
+	vkAllocateCommandBuffers(context.device, &allocInfo, &commandBuffer);
+
+	// Record in it immediatly.
+	VkCommandBufferBeginInfo beginInfo = {};
+	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+	vkBeginCommandBuffer(commandBuffer, &beginInfo);
+	return commandBuffer;
+}
+
+void VkUtils::endOneTimeCommandBuffer(VkCommandBuffer & commandBuffer, GPUContext & context){
+	vkEndCommandBuffer(commandBuffer);
+	// Submit it.
+	VkSubmitInfo submitInfo = {};
+	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+	submitInfo.commandBufferCount = 1;
+	submitInfo.pCommandBuffers = &commandBuffer;
+	vkQueueSubmit(context.graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
+	vkQueueWaitIdle(context.graphicsQueue);
+	vkFreeCommandBuffers(context.device, context.commandPool, 1, &commandBuffer);
+	commandBuffer = VK_NULL_HANDLE;
+}
+
+void VkUtils::transitionImageLayout(GPUContext & context, VkImage & image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, int mipCount, int layerCount) {
+
+	VkCommandBuffer commandBuffer = VkUtils::startOneTimeCommandBuffer(context);
+
+	VkPipelineStageFlags sourceStage;
+	VkPipelineStageFlags destinationStage;
+
+	VkImageMemoryBarrier barrier = {};
+	barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+	barrier.oldLayout = oldLayout;
+	barrier.newLayout = newLayout;
+	barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED; // We don't change queue here.
+	barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	barrier.image = image;
+	barrier.subresourceRange.baseMipLevel = 0;
+	barrier.subresourceRange.levelCount = mipCount;
+	barrier.subresourceRange.baseArrayLayer = 0;
+	barrier.subresourceRange.layerCount = layerCount;
+	// Aspect mask.
+	if(newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL){
+		barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+		// Also stencil if this is a mixed format.
+		if(format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT){
+			barrier.subresourceRange.aspectMask |= VK_IMAGE_ASPECT_STENCIL_BIT;
+		}
+	} else {
+		barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	}
+
+	// Masks for triggers.
+	if(oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL){
+		barrier.srcAccessMask = 0; //  As soon as possible.
+		barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT; // Before transfer.
+		sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+		destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+	} else if(oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL){
+		barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT; // After a transfer.
+		barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT; // Before the shader.
+		sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+		destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+	} else if(oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) {
+		barrier.srcAccessMask = 0; //  As soon as possible.
+		barrier.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT; // Before using it.
+		sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+		destinationStage = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+	} else {
+		Log::Error() << Log::GPU << "Unsupported layout transition." << std::endl;
+		return;
+	}
+
+	vkCmdPipelineBarrier(commandBuffer, sourceStage, destinationStage, 0, 0, nullptr,  0, nullptr,  1, &barrier );
+
+	VkUtils::endOneTimeCommandBuffer(commandBuffer, context);
 }

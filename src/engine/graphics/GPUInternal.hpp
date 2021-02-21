@@ -27,6 +27,7 @@ struct GPUContext {
 	VkDevice device = VK_NULL_HANDLE;
 	VkSurfaceKHR surface = VK_NULL_HANDLE;
 	VkCommandPool commandPool = VK_NULL_HANDLE;
+	std::vector<VkCommandBuffer> commandBuffers;
 	VkQueue graphicsQueue= VK_NULL_HANDLE;
 	VkQueue presentQueue= VK_NULL_HANDLE;
 	uint32_t graphicsId = 0;
@@ -55,4 +56,10 @@ namespace VkUtils {
 	void typesFromShape(const TextureShape & shape, VkImageType & imgType, VkImageViewType & viewType);
 
 	uint32_t findMemoryType(const uint32_t typeFilter, const VkMemoryPropertyFlags & properties, const VkPhysicalDevice & physicalDevice);
+
+	VkCommandBuffer startOneTimeCommandBuffer(GPUContext & context);
+
+	void endOneTimeCommandBuffer(VkCommandBuffer & commandBuffer, GPUContext & context);
+
+	void transitionImageLayout(GPUContext & context, VkImage & image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, int mipCount, int layerCount);
 }
