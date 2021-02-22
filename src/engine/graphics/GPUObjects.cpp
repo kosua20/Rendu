@@ -76,53 +76,95 @@ void GPUMesh::clean() {
 }
 
 GPUQuery::GPUQuery(Type type) {
-//	static const std::map<GPUQuery::Type, GLenum> types = {
-//		{ Type::TIME_ELAPSED, GL_TIME_ELAPSED},
-//		{ Type::SAMPLES_DRAWN, GL_SAMPLES_PASSED},
-//		{ Type::ANY_DRAWN, GL_ANY_SAMPLES_PASSED},
-//		{ Type::PRIMITIVES_GENERATED, GL_PRIMITIVES_GENERATED}
-//	};
-	//_internalType = types.at(type);
-	//glGenQueries(GLsizei(_ids.size()), &_ids[0]);
-	// Do dummy initial queries.
-	//for(int i = 0; i < 2; ++i){
-	//	begin();
-	//	end();
-	//}
+	_type = type;
+	_count = type == Type::TIME_ELAPSED ? 2 : 1;
+	static const std::map<GPUQuery::Type, VkQueryType> types = {
+		{ Type::TIME_ELAPSED, VK_QUERY_TYPE_TIMESTAMP},
+		{ Type::SAMPLES_DRAWN, VK_QUERY_TYPE_OCCLUSION},
+		{ Type::ANY_DRAWN, VK_QUERY_TYPE_OCCLUSION},
+		{ Type::PRIMITIVES_GENERATED, VK_QUERY_TYPE_PIPELINE_STATISTICS}
+	};
+
+	VkQueryPoolCreateInfo poolInfo = {};
+	poolInfo.sType = VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO;
+	poolInfo.queryType = types.at(type);
+	poolInfo.queryCount = _count;
+	poolInfo.pipelineStatistics = type == Type::PRIMITIVES_GENERATED ? VK_QUERY_PIPELINE_STATISTIC_CLIPPING_INVOCATIONS_BIT : 0;
+
+	GPUContext* context = (GPUContext*)GPU::getInternal();
+	for(size_t i = 0; i < _pools.size(); ++i){
+		if(vkCreateQueryPool(context->device, &poolInfo, nullptr, &_pools[i]) != VK_SUCCESS){
+			Log::Error() << Log::GPU << "Unable to create query pool." << std::endl;
+		}
+	}
+
+	if(_type == Type::SAMPLES_DRAWN){
+		_flags = VK_QUERY_PIPELINE_STATISTIC_CLIPPING_INVOCATIONS_BIT;
+	}
 }
 
 void GPUQuery::begin(){
-	//if(_running){
-		//	Log::Warning() << "A query is already running. Ignoring the restart." << std::endl;
-		//	return;
-		//}
+	if(_running){
+		Log::Warning() << "A query is already running. Ignoring the restart." << std::endl;
+		return;
+	}
+
+	GPUContext* context = (GPUContext*)GPU::getInternal();
+	vkCmdResetQueryPool(context->getCurrentCommandBuffer(), _pools[_current], 0, _type == GPUQuery::Type::TIME_ELAPSED ? 2 : 1);
 	//glBeginQuery(_internalType, _ids[_current]);
-	//_running = true;
+	if(_type == GPUQuery::Type::TIME_ELAPSED){
+		vkCmdWriteTimestamp(context->getCurrentCommandBuffer(), VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, _pools[_current], 0);
+	} else {
+		vkCmdBeginQuery(context->getCurrentCommandBuffer(), _pools[_current], 0, _flags);
+	}
+	_running = true;
 }
 
 void GPUQuery::end(){
-	//if(!_running){
-	//	Log::Warning() << "No query running currently. Ignoring the stop." << std::endl;
-	//	return;
-	//}
-	//glEndQuery(_internalType);
-	//_running = false;
-	//_current = (_current + 1) % _ids.size();
+	if(!_running){
+		Log::Warning() << "No query running currently. Ignoring the stop." << std::endl;
+		return;
+	}
+
+	GPUContext* context = (GPUContext*)GPU::getInternal();
+
+	if(_type == GPUQuery::Type::TIME_ELAPSED){
+		vkCmdWriteTimestamp(context->getCurrentCommandBuffer(), VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, _pools[_current], 1);
+	} else {
+		vkCmdEndQuery(context->getCurrentCommandBuffer(), _pools[_current], 0);
+	}
+
+	_running = false;
+	_current = (_current + 1) % _pools.size();
 }
 
 uint64_t GPUQuery::value(){
-	//if(_running){
-	//	Log::Warning() << "A query is currently running, stopping it first." << std::endl;
-	//	end();
-	//}
+	if(_running){
+		Log::Warning() << "A query is currently running, stopping it first." << std::endl;
+		end();
+	}
 	// We have incremented to the next query index when ending.
 	// Furthermore, the previous index was done at the same frame, so low chance of it being ready.
 	// So fetch two before, except if we only have one query (will stall).
-	//const size_t finished = _ids.size() == 1 ? 0 : ((_current + _ids.size() - 2) % _ids.size());
-	//GLuint64 data = 0;
-	//glGetQueryObjectui64v(_ids[finished], GL_QUERY_RESULT, &data);
-	return 0;
-	//return uint64_t(data);
+	// \todo Check if this is still motivated under Vulkan, is there a risk of querying before the pool reset is applied?
+	const size_t finished = _pools.size() == 1 ? 0 : ((_current + _pools.size() - 2) % _pools.size());
+
+	GPUContext* context = (GPUContext*)GPU::getInternal();
+
+	uint64_t data[2] = {0, 0};
+	vkGetQueryPoolResults(context->device, _pools[finished], 0, _count, 2 * sizeof(uint64_t), &data[0], sizeof(uint64_t), VK_QUERY_RESULT_64_BIT | VK_QUERY_RESULT_WAIT_BIT);
+
+	// For duration elapsed, we compute the time between the two timestamps.
+	if(_type == GPUQuery::Type::TIME_ELAPSED){
+		// Weird thing happened, ignore.
+		if(data[0] > data[1]){
+			return 0;
+		}
+		const double duration = double(data[1] - data[0]);
+		return uint64_t(context->timestep * duration);
+	}
+	// Else we just return the first number.
+	return data[0];
 }
 
 
@@ -329,17 +371,4 @@ std::string Descriptor::string() const {
 	};
 
 	return strFormats.at(_typedFormat) + " - " + strFilters.at(_filtering) + " - " + strWraps.at(_wrapping);
-}
-
-
-GPUState::GPUState(){
-//	for(auto & texbind : textures){
-//		texbind[GL_TEXTURE_1D] = 0;
-//		texbind[GL_TEXTURE_2D] = 0;
-//		texbind[GL_TEXTURE_3D] = 0;
-//		texbind[GL_TEXTURE_CUBE_MAP] = 0;
-//		texbind[GL_TEXTURE_1D_ARRAY] = 0;
-//		texbind[GL_TEXTURE_2D_ARRAY] = 0;
-//		texbind[GL_TEXTURE_CUBE_MAP_ARRAY] = 0;
-//	}
 }

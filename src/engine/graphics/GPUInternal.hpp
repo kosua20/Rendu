@@ -32,6 +32,14 @@ struct GPUContext {
 	VkQueue presentQueue= VK_NULL_HANDLE;
 	uint32_t graphicsId = 0;
 	uint32_t presentId = 0;
+	uint32_t currentFrame = 0;
+
+	double timestep = 0.0;
+	size_t uniformAlignment = 0;
+
+	VkCommandBuffer& getCurrentCommandBuffer(){
+		return commandBuffers[currentFrame];
+	}
 
 };
 

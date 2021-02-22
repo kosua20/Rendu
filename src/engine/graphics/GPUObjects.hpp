@@ -515,10 +515,12 @@ private:
 
 	static const size_t bufferCount = 3; ///< Number of internal buffered queries.
 	//GLenum _internalType; ///< GPU query type.
-	//std::array<GLuint, bufferCount> _ids; ///< GPU query object IDs.
-	size_t _current = 0; ///< Current query in use.
+	std::array<VkQueryPool, bufferCount> _pools; ///< GPU query object pools.
+	size_t _current = 0; ///< Current pool in use.
 	bool _running = false; ///< Is a measurement currently taking place.
-
+	Type _type = GPUQuery::Type::TIME_ELAPSED;
+	VkQueryControlFlags _flags = 0;
+	uint _count = 2;
 };
 
 /**
@@ -530,7 +532,7 @@ class GPUState {
 public:
 
 	/// Constructor.
-	GPUState();
+	GPUState() = default;
 
 	// Blend state.
 	glm::vec4 blendColor {0.0f}; ///< Blend color for constant blend mode.

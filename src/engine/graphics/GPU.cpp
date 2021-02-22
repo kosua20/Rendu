@@ -122,6 +122,17 @@ bool GPU::setup(const std::string & appName) {
 
 	_context.physicalDevice = selectedDevice;
 
+	// Query a few infos.
+	VkPhysicalDeviceProperties properties;
+	vkGetPhysicalDeviceProperties(_context.physicalDevice, &properties);
+	if(!properties.limits.timestampComputeAndGraphics){
+		Log::Warning() << Log::GPU << "Timestamp queries are not supported on the selected device." << std::endl;
+	}
+
+	_context.timestep = double(properties.limits.timestampPeriod);
+	_context.uniformAlignment = properties.limits.minUniformBufferOffsetAlignment;
+	// minImageTransferGranularity is guaranteed to be (1,1,1) on graphics/compute queues
+
 	// Create empty VAO for screenquad.
 	//	glGenVertexArrays(1, &_vao);
 	//	glBindVertexArray(_vao);
