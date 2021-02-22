@@ -95,8 +95,9 @@ bool GPU::setup(const std::string & appName) {
 	VkPhysicalDevice selectedDevice = VK_NULL_HANDLE;
 	// Check which one is ok for our requirements.
 	for(const auto& device : devices) {
+		bool hasPortability = false;
 		// We want a device with swapchain support.
-		const bool supportExtensions = VkUtils::checkDeviceExtensionsSupport(device, deviceExtensions);
+		const bool supportExtensions = VkUtils::checkDeviceExtensionsSupport(device, deviceExtensions, hasPortability);
 		// Ask for anisotropy and tessellation.
 		VkPhysicalDeviceFeatures features;
 		vkGetPhysicalDeviceFeatures(device, &features);
@@ -110,6 +111,7 @@ bool GPU::setup(const std::string & appName) {
 
 			if(selectedDevice == VK_NULL_HANDLE || isDiscrete){
 				selectedDevice = device;
+				_context.portability = hasPortability;
 				//uniformOffset = properties.limits.minUniformBufferOffsetAlignment;
 			}
 		}
@@ -182,8 +184,13 @@ bool GPU::setupWindow(Window * window){
 	features.tessellationShader = VK_TRUE;
 	deviceInfo.pEnabledFeatures = &features;
 	// Extensions.
-	deviceInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
-	deviceInfo.ppEnabledExtensionNames = deviceExtensions.data();
+	auto extensions = deviceExtensions;
+	// If portability is available, we have to enabled it.
+	if(_context.portability){
+		extensions.push_back("VK_KHR_portability_subset");
+	}
+	deviceInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
+	deviceInfo.ppEnabledExtensionNames = extensions.data();
 
 	if(vkCreateDevice(_context.physicalDevice, &deviceInfo, nullptr, &_context.device) != VK_SUCCESS) {
 		Log::Error() << Log::GPU << "Unable to create logical device." << std::endl;

@@ -62,17 +62,26 @@ std::vector<const char*> VkUtils::getRequiredInstanceExtensions(const bool enabl
 	return extensions;
 }
 
-bool VkUtils::checkDeviceExtensionsSupport(VkPhysicalDevice device, const std::vector<const char*> & requestedExtensions) {
+bool VkUtils::checkDeviceExtensionsSupport(VkPhysicalDevice device, const std::vector<const char*> & requestedExtensions, bool& hasPortability) {
 	// Get available device extensions.
 	uint32_t extensionCount;
 	vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
 	std::vector<VkExtensionProperties> availableExtensions(extensionCount);
 	vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, availableExtensions.data());
 
+	// Check for portability support.
+	hasPortability = false;
+	for(const auto& extensionProperties: availableExtensions){
+		if(strcmp("VK_KHR_portability_subset", extensionProperties.extensionName) == 0){
+			hasPortability = true;
+			break;
+		}
+	}
+
 	// Check if the required device extensions are available.
 	for(const auto& extensionName : requestedExtensions) {
 		bool extensionFound = false;
-		for(const auto& extensionProperties: availableExtensions){
+		for(const auto& extensionProperties : availableExtensions){
 			if(strcmp(extensionName, extensionProperties.extensionName) == 0){
 				extensionFound = true;
 				break;

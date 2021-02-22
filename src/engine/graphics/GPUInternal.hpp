@@ -36,7 +36,8 @@ struct GPUContext {
 
 	double timestep = 0.0;
 	size_t uniformAlignment = 0;
-
+	bool portability = false;
+	
 	VkCommandBuffer& getCurrentCommandBuffer(){
 		return commandBuffers[currentFrame];
 	}
@@ -55,7 +56,7 @@ namespace VkUtils {
 
 	std::vector<const char*> getRequiredInstanceExtensions(const bool enableValidationLayers);
 
-	bool checkDeviceExtensionsSupport(VkPhysicalDevice device, const std::vector<const char*> & requestedExtensions);
+	bool checkDeviceExtensionsSupport(VkPhysicalDevice device, const std::vector<const char*> & requestedExtensions, bool & hasPortability);
 
 	bool getQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface, uint & graphicsFamily, uint & presentFamily);
 
