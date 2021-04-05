@@ -7,8 +7,8 @@ in INTERFACE {
 uniform float iTime;
 uniform vec3 iResolution;
 layout(binding = 3) uniform sampler2D noiseMap; ///< RGBA uniform noise in [0,1], uncorrelated.
-layout(binding = 4) uniform sampler2D directionsMap; ///< Random 3D directions on the unit sphere.
-layout(binding = 5) uniform sampler3D noise3DMap; ///< Random 3D directions on the unit sphere.
+layout(binding = 5) uniform sampler2D directionsMap; ///< Random 3D directions on the unit sphere.
+layout(binding = 6) uniform sampler3D noise3DMap; ///< Random 3D directions on the unit sphere.
 
 layout(location = 0) out vec4 fragColor; ///< Output color.
 uniform float scaleSpace = 10.0;

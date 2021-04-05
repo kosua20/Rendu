@@ -21,11 +21,15 @@ uniform vec3 iCamUp; ///< Camera up vector.
 uniform vec3 iCamCenter; ///< Camera lookat position.
 uniform float iCamFov; ///< Camera field of view.
 
+
 layout(binding = 0) uniform sampler2D previousFrame; ///< Previous frame.
 layout(binding = 1) uniform sampler2D sdfFont; ///< Font SDF texture.
 layout(binding = 2) uniform sampler2D gridMap; ///< Debug grid texture.
-layout(binding = 3) uniform sampler2D noiseMap; ///< RGBA uniform noise in [0,1], uncorrelated.
-layout(binding = 4) uniform sampler2D directionsMap; ///< Random 3D directions on the unit sphere.
+layout(binding = 3) uniform sampler2D noise2DMap; ///< RGBA uniform noise in [0,1], uncorrelated.
+layout(binding = 4) uniform sampler2D perlin2DMap; ///< RGBA tiling perlin noise in [0,1], four different scales and offsets.
+layout(binding = 5) uniform sampler2D directionsMap; ///< Random 3D directions on the unit sphere.
+layout(binding = 6) uniform sampler3D noise3DMap; ///< RGBA 3D uniform noise in [0,1], uncorrelated.
+layout(binding = 7) uniform sampler3D perlin3DMap; ///< RGBA 3D tiling perlin noise in [0,1], four different scales and offsets.
 
 layout(location = 0) out vec4 fragColor; ///< Output color.
 
@@ -137,7 +141,7 @@ void main(){
 			specular = pow(specular, specExponent);
 		} else if(res.y < 2.5){
 			vec2 movingUV = hit.xz + vec2(0.5*iTime, 0.0);
-			float noise = texture(noiseMap, 0.005*movingUV).r;
+			float noise = texture(noise2DMap, 0.005*movingUV).r;
 			// Smooth transition.
 			float intensity = smoothstep(0.45, 0.55, noise);
 			// Mix two colors, diffuse material.

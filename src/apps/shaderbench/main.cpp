@@ -27,13 +27,14 @@ int main(int argc, char ** argv) {
 	if(config.showHelp()) {
 		return 0;
 	}
+
+	if(!config.resourcesPath.empty()){
+		Resources::manager().addResources(config.resourcesPath);
+	}
 	
 	Window window("Shader Editor", config, false);
 
 	Resources::manager().addResources("../../../resources/shaderbench");
-	if(!config.resourcesPath.empty()){
-		Resources::manager().addResources(config.resourcesPath);
-	}
 
 	// Seed random generator in a reproducible fashion.
 	Random::seed(0x0decafe);
