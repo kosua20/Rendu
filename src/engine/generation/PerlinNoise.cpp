@@ -33,7 +33,7 @@ void PerlinNoise::generateLayers(Image & image, uint channel, int octaves, float
 	float weight = 1.0f;
 	for(int i = 0; i < octaves; ++i){
 		Image img(image.width, image.height, 1);
-		generate(img, 0.0f, 0, scale, offset);
+		generate(img, 0, scale, 0.0f, offset);
 		System::forParallel(0, size_t(image.height), [&image, channel, weight, &img](size_t y){
 			for(uint x = 0; x < image.width; ++x){
 				image.rgba(x, uint(y))[channel] += weight * img.rgba(x, uint(y))[0];
