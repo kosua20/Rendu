@@ -4,9 +4,15 @@
 #include "graphics/GLUtilities.hpp"
 #include "graphics/ScreenQuad.hpp"
 #include "generation/Random.hpp"
+#include "generation/PerlinNoise.hpp"
 #include "system/TextUtilities.hpp"
 #include "resources/Texture.hpp"
 
+const uint kShaderEditorVersionMajor = 1;
+const uint kShaderEditorVersionMinor = 0;
+const uint kShaderEditorVersionFixes = 0;
+
+const float kPerlinNoiseScale = 0.25f;
 
 const std::string kFlagName = "flag";
 const std::string kIntName = "int";
@@ -15,11 +21,11 @@ const std::string kVecName = "vect";
 const std::string kColorName = "col";
 const std::string kHelpMessage = "Reload: Enter or Ctrl/Cmd+B\nReload and reset values: Shift+Enter or Ctrl/Cmd+Shift+B\nPlay/pause: Space\nShow panel: Tab\nCtrl/Cmd+1: horizontal layout\nCtrl/Cmd+2: vertical layout\nCtrl/Cmd+3: freeform layout\nCtrl/Cmd+F: display render in sub-window";
 
-ShaderEditor::ShaderEditor(RenderingConfig & config) : CameraApp(config), _noise("2D noise"), _directions("Directions"), _noise3D("3D noise") {
+ShaderEditor::ShaderEditor(RenderingConfig & config) : CameraApp(config), _noise("Uniform 2D"), _perlin("Perlin 2D"), _directions("Directions"), _noise3D("Uniform 3D"), _perlin3D("Perlin 3D") {
 	// Setup render buffer.
 	const glm::uvec2 res(_config.renderingResolution());
 	const Descriptor desc = {Layout::RGBA32F, Filter::LINEAR, Wrap::CLAMP};
-	_currFrame.reset(new Framebuffer(TextureShape::D2, res[0], res[1], 1, 1, {desc}, false, "Current fraame"));
+	_currFrame.reset(new Framebuffer(TextureShape::D2, res[0], res[1], 1, 1, {desc}, false, "Current frame"));
 	_prevFrame.reset(new Framebuffer(TextureShape::D2, res[0], res[1], 1, 1, {desc}, false, "Previous frame"));
 
 	// We don't want the resources manager to alter the program.
@@ -38,7 +44,6 @@ ShaderEditor::ShaderEditor(RenderingConfig & config) : CameraApp(config), _noise
 
 	// Noise texture.
 	{
-		_noise = Texture("noise");
 		_noise.width = _noise.height = 512;
 		_noise.depth = _noise.levels = 1;
 		_noise.shape = TextureShape::D2;
@@ -51,9 +56,35 @@ ShaderEditor::ShaderEditor(RenderingConfig & config) : CameraApp(config), _noise
 		});
 		_noise.upload({Layout::RGBA32F, Filter::LINEAR, Wrap::REPEAT}, false);
 	}
+	// Perlin noise texture.
+	{
+		_perlin.width = _perlin.height = 1024;
+		_perlin.depth = _perlin.levels = 1;
+		_perlin.shape = TextureShape::D2;
+		_perlin.images.emplace_back(_perlin.width, _perlin.height, 4);
+		Image& img = _perlin.images[0];
+
+		PerlinNoise perlinGen;
+		for(uint cid = 0; cid < img.components; ++cid)
+		{
+			// Large offset to ensure different values in the different channels.
+			const glm::vec3 offset(float(_perlin.width * cid));
+			// Scale to have multiple octaves available.
+			const uint scaleDenom = cid + 2;
+			const float scale = kPerlinNoiseScale / float(scaleDenom * scaleDenom);
+			perlinGen.generatePeriodic(img, cid, scale, 0.0f, offset);
+		}
+
+		System::forParallel(0, size_t(img.height), [&img](size_t y){
+			for(uint x = 0; x < img.width; ++x){
+				img.rgba(x, y) = 0.5f * img.rgba(x, y) + 0.5f;
+			}
+		});
+		_perlin.upload({Layout::RGBA32F, Filter::LINEAR, Wrap::REPEAT}, false);
+	}
+
 	// Random directions texture.
 	{
-		_directions = Texture("directions");
 		_directions.width = _directions.height = 64;
 		_directions.depth = _directions.levels = 1;
 		_directions.shape = TextureShape::D2;
@@ -67,21 +98,51 @@ ShaderEditor::ShaderEditor(RenderingConfig & config) : CameraApp(config), _noise
 		_directions.upload({Layout::RGB32F, Filter::NEAREST, Wrap::REPEAT}, false);
 	}
 	{
-		_noise3D = Texture("noise3D");
 		_noise3D.width = _noise3D.height = _noise3D.depth = 256;
 		_noise3D.levels = 1;
 		_noise3D.shape = TextureShape::D3;
 
 		for(uint d = 0; d < _noise3D.depth; ++d){
-			_noise3D.images.emplace_back(_noise3D.width, _noise3D.height, 3);
+			_noise3D.images.emplace_back(_noise3D.width, _noise3D.height, 4);
 			auto & img = _noise3D.images[d];
 			System::forParallel(0, size_t(img.height), [&img](size_t y){
 				for(uint x = 0; x < img.width; ++x){
-					img.rgb(int(x), int(y)) = glm::vec3(Random::Float(), Random::Float(), Random::Float());
+					img.rgba(int(x), int(y)) = glm::vec4(Random::Float(), Random::Float(), Random::Float(), Random::Float());
 				}
 			});
 		}
-		_noise3D.upload({Layout::RGB32F, Filter::LINEAR, Wrap::REPEAT}, false);
+		_noise3D.upload({Layout::RGBA32F, Filter::LINEAR, Wrap::REPEAT}, false);
+	}
+
+	{
+		_perlin3D.width = _perlin3D.height = _perlin3D.depth = 256;
+		_perlin3D.levels = 1;
+		_perlin3D.shape = TextureShape::D3;
+		PerlinNoise perlinGen;
+		for(uint d = 0; d < _perlin3D.depth; ++d){
+			_perlin3D.images.emplace_back(_perlin3D.width, _perlin3D.height, 4);
+			auto & img = _perlin3D.images[d];
+
+			for(uint cid = 0; cid < img.components; ++cid)
+			{
+				// Large offset to ensure different values in the different channels.
+				// along with different values from the 2D Perlin noise.
+				const float baseOffset = float(_perlin.width * 10 + cid * _perlin3D.width);
+				const glm::vec3 offset(baseOffset);
+				// Scale to have multiple octaves available.
+				const uint scaleDenom = cid + 1;
+				const float scale = kPerlinNoiseScale / float(scaleDenom * scaleDenom);
+				perlinGen.generatePeriodic(img, cid, scale, float(d), offset);
+			}
+
+			System::forParallel(0, size_t(img.height), [&img](size_t y){
+				for(uint x = 0; x < img.width; ++x){
+					img.rgba(x, y) = 0.5f * img.rgba(x, y) + 0.5f;
+				}
+			});
+
+		}
+		_perlin3D.upload({Layout::RGBA32F, Filter::LINEAR, Wrap::REPEAT}, false);
 	}
 
 	// Reference textures.
@@ -89,8 +150,10 @@ ShaderEditor::ShaderEditor(RenderingConfig & config) : CameraApp(config), _noise
 	_textures.push_back(Resources::manager().getTexture("shadertoy-font", {Layout::RGBA8, Filter::LINEAR, Wrap::CLAMP}, Storage::GPU));
 	_textures.push_back(Resources::manager().getTexture("debug-grid", {Layout::RGBA8, Filter::LINEAR, Wrap::REPEAT}, Storage::GPU));
 	_textures.push_back(&_noise);
+	_textures.push_back(&_perlin);
 	_textures.push_back(&_directions);
 	_textures.push_back(&_noise3D);
+	_textures.push_back(&_perlin3D);
 
 	// If the default shader uses more default uniforms, set them up, and restore all values
 	// so that we have something interesting to show at load time.
@@ -318,7 +381,7 @@ void ShaderEditor::update() {
 			}
 		}
 		ImGui::SameLine();
-		ImGui::TextDisabled("(?) Hover for commands");
+		ImGui::TextDisabled("Version %d.%d.%d (?)", kShaderEditorVersionMajor, kShaderEditorVersionMinor, kShaderEditorVersionFixes);
 		if(ImGui::IsItemHovered()){
 			ImGui::SetTooltip("%s", kHelpMessage.c_str());
 		}
@@ -400,7 +463,7 @@ void ShaderEditor::update() {
 			ImGui::Columns((columnsCount*3)/4);
 			for(uint i = 0; i < _textures.size(); ++i){
 				// Small square display.
-				ImGui::Text("Location %d", i);
+				ImGui::Text("%d: %s", i, _textures[i]->name().c_str());
 				if(_textures[i]->shape == TextureShape::D2){
 					ImGui::Image(*_textures[i], ImVec2(100,100), ImVec2(0,1), ImVec2(1, 0));
 				} else {
@@ -593,8 +656,10 @@ std::string ShaderEditor::reload(const std::string & shaderPath, bool syncUnifor
 ShaderEditor::~ShaderEditor() {
 	_currProgram->clean();
 	_noise.clean();
+	_perlin.clean();
 	_directions.clean();
 	_noise3D.clean();
+	_perlin3D.clean();
 }
 
 void ShaderEditor::resize() {
