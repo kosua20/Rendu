@@ -32,6 +32,8 @@ public:
 	/** Destructor. */
 	~ShaderEditor() override;
 
+	void loadShader(const std::string& path);
+
 private:
 
 	/** React to user key inputs. */

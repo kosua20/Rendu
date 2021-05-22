@@ -10,7 +10,7 @@
 
 const uint kShaderEditorVersionMajor = 1;
 const uint kShaderEditorVersionMinor = 0;
-const uint kShaderEditorVersionFixes = 0;
+const uint kShaderEditorVersionFixes = 1;
 
 const float kPerlinNoiseScale = 0.25f;
 
@@ -363,10 +363,7 @@ void ShaderEditor::update() {
 		if(ImGui::Button("Load shader...")){
 			std::string outPath;
 			if(System::showPicker(System::Picker::Load, "", outPath) && !outPath.empty()){
-				_shaderPath = outPath;
-				_shaderName = TextUtilities::extractFilename(_shaderPath);
-				TextUtilities::splitExtension(_shaderName);
-				_compilationLog = reload(_shaderPath, true);
+				loadShader(outPath);
 			}
 		}
 		ImGui::SameLine();
@@ -660,6 +657,13 @@ ShaderEditor::~ShaderEditor() {
 	_directions.clean();
 	_noise3D.clean();
 	_perlin3D.clean();
+}
+
+void ShaderEditor::loadShader(const std::string & path){
+	_shaderPath = path;
+	_shaderName = TextUtilities::extractFilename(_shaderPath);
+	TextUtilities::splitExtension(_shaderName);
+	_compilationLog = reload(_shaderPath, true);
 }
 
 void ShaderEditor::resize() {
