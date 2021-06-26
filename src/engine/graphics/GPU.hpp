@@ -436,6 +436,8 @@ public:
 
 	static void * getInternal();
 
+	static void cleanup();
+	
 private:
 	/** Read back the currently bound framebuffer to the CPU and save it in the best possible format on disk.
 	 \param type the type of the framebuffer

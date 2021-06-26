@@ -2,20 +2,27 @@
 #include "graphics/GPU.hpp"
 
 
-Swapchain::Swapchain(){
-	
+Swapchain::Swapchain() : _depthTexture("Backbuffer depth"){
+	_imageIndex = 0;
 }
 
 
 void Swapchain::init(GPUContext & context, const RenderingConfig & config){
-	_context = context;
+	_context = &context;
+	_vsync = config.vsync;
 
+	setup(config.screenResolution.x, config.screenResolution.y);
+}
+
+void Swapchain::setup(uint32_t width, uint32_t height){
+	_frameStarted = false;
 	// Query swapchain properties and pick settings.
 	// Basic capabilities.
 	VkSurfaceCapabilitiesKHR capabilities;
-	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(_context.physicalDevice, _context.surface, &capabilities);
+	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(_context->physicalDevice, _context->surface, &capabilities);
 	// Number of items in the swapchain.
-	_count = capabilities.minImageCount + 1;
+	_minCount = capabilities.minImageCount;
+	_count = _minCount + 1;
 	// maxImageCount = 0 if there is no upper constraint.
 	if(capabilities.maxImageCount > 0) {
 		_count = std::min(_count, capabilities.maxImageCount);
@@ -23,16 +30,16 @@ void Swapchain::init(GPUContext & context, const RenderingConfig & config){
 
 	// Compute size.
 	VkExtent2D extent;
-	extent.width = glm::clamp((uint32_t)config.screenResolution.x, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
-	extent.height = glm::clamp((uint32_t)config.screenResolution.y, capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
+	extent.width = glm::clamp(width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
+	extent.height = glm::clamp(height, capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
 
 	// Look for a viable format
 	// Supported formats.
 	std::vector<VkSurfaceFormatKHR> formats;
 	uint32_t formatCount;
-	vkGetPhysicalDeviceSurfaceFormatsKHR(_context.physicalDevice, _context.surface, &formatCount, nullptr);
+	vkGetPhysicalDeviceSurfaceFormatsKHR(_context->physicalDevice, _context->surface, &formatCount, nullptr);
 	formats.resize(formatCount);
-	vkGetPhysicalDeviceSurfaceFormatsKHR(_context.physicalDevice, _context.surface, &formatCount, formats.data());
+	vkGetPhysicalDeviceSurfaceFormatsKHR(_context->physicalDevice, _context->surface, &formatCount, formats.data());
 
 	// Ideally RGBA8 with a sRGB display.
 	VkSurfaceFormatKHR surfaceParams = { VK_FORMAT_B8G8R8A8_UNORM, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR };
@@ -54,9 +61,9 @@ void Swapchain::init(GPUContext & context, const RenderingConfig & config){
 	// Supported modes.
 	std::vector<VkPresentModeKHR> presentModes;
 	uint32_t presentModeCount;
-	vkGetPhysicalDeviceSurfacePresentModesKHR(_context.physicalDevice, _context.surface, &presentModeCount, nullptr);
+	vkGetPhysicalDeviceSurfacePresentModesKHR(_context->physicalDevice, _context->surface, &presentModeCount, nullptr);
 	presentModes.resize(presentModeCount);
-	vkGetPhysicalDeviceSurfacePresentModesKHR(_context.physicalDevice, _context.surface, &presentModeCount, presentModes.data());
+	vkGetPhysicalDeviceSurfacePresentModesKHR(_context->physicalDevice, _context->surface, &presentModeCount, presentModes.data());
 
 	// By default only FIFO (~V-sync mode) is always available.
 	VkPresentModeKHR presentMode = VK_PRESENT_MODE_FIFO_KHR;
@@ -65,7 +72,7 @@ void Swapchain::init(GPUContext & context, const RenderingConfig & config){
 		if(availableMode == VK_PRESENT_MODE_MAILBOX_KHR) {
 			presentMode = availableMode;
 		}
-		if((availableMode == VK_PRESENT_MODE_IMMEDIATE_KHR) && !config.vsync) {
+		if((availableMode == VK_PRESENT_MODE_IMMEDIATE_KHR) && !_vsync) {
 			// Uncapped framerate.
 			presentMode = availableMode;
 		}
@@ -74,7 +81,7 @@ void Swapchain::init(GPUContext & context, const RenderingConfig & config){
 	// Swap chain setup.
 	VkSwapchainCreateInfoKHR swapInfo = {};
 	swapInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-	swapInfo.surface = _context.surface;
+	swapInfo.surface = _context->surface;
 	swapInfo.minImageCount = _count;
 	swapInfo.imageFormat = surfaceParams.format;
 	swapInfo.imageColorSpace = surfaceParams.colorSpace;
@@ -83,7 +90,7 @@ void Swapchain::init(GPUContext & context, const RenderingConfig & config){
 	swapInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
 	// Establish a link with both queues, handling the case where they are the same.
-	uint32_t queueFamilyIndices[] = { _context.graphicsId, _context.presentId };
+	uint32_t queueFamilyIndices[] = { _context->graphicsId, _context->presentId };
 	if(queueFamilyIndices[0] != queueFamilyIndices[1]){
 		swapInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
 		swapInfo.queueFamilyIndexCount = 2;
@@ -97,55 +104,84 @@ void Swapchain::init(GPUContext & context, const RenderingConfig & config){
 	swapInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
 	swapInfo.presentMode = presentMode;
 	swapInfo.clipped = VK_TRUE;
-	swapInfo.oldSwapchain = _swapchain;
+	swapInfo.oldSwapchain = VK_NULL_HANDLE;
 
-	if(vkCreateSwapchainKHR(_context.device, &swapInfo, nullptr, &_swapchain) != VK_SUCCESS) {
+	if(vkCreateSwapchainKHR(_context->device, &swapInfo, nullptr, &_swapchain) != VK_SUCCESS) {
 		Log::Error() << Log::GPU << "Unable to create swap chain." << std::endl;
 		return;
 	}
 
 	// Find a proper depth format.
-	const VkFormat depthFormat = VkUtils::findSupportedFormat(_context.physicalDevice,  {VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT}, VK_IMAGE_TILING_OPTIMAL, VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
+	const VkFormat depthFormat = VkUtils::findSupportedFormat(_context->physicalDevice,  {VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT}, VK_IMAGE_TILING_OPTIMAL, VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
 
 	_pass = createMainRenderpass(depthFormat, surfaceParams.format);
 
-	// Create depth buffer.
-//	const glm::uvec2 tgtSize(parameters.extent.width, parameters.extent.height;
-//							 )
-//	VkUtils::createImage(_context, size, 1, depthFormat , VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, false, _depthImage, _depthImageMemory);
-//	_depthImageView = VkUtils::createImageView(_context, _depthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT, false, 1);
-//	VkUtils::transitionImageLayout(_context, _depthImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, false, 1);
-//
-//	// Retrieve images in the swap chain.
-//	vkGetSwapchainImagesKHR(_context.device, _swapchain, &count, nullptr);
-//	_colors.resize(count);
-//	Log::Info() << Log::GPU << "Swapchain using " << count << " images."<< std::endl;
-//	vkGetSwapchainImagesKHR(_context.device, _swapchain, &count, _colors.data());
-//	// Create views for each image.
-//	_colorViews.resize(count);
-//	for(size_t i = 0; i < count; i++) {
-//		_colorViews[i] = VkUtils::createImageView(device, _colors[i], surfaceInfos.format, VK_IMAGE_ASPECT_COLOR_BIT, false, 1);
-//	}
-//	// Framebuffers.
-//	_colorBuffers.resize(count);
-//	for(size_t i = 0; i < count; ++i){
-//		std::array<VkImageView, 2> attachments = { _colorViews[i], _depthView };
-//
-//		VkFramebufferCreateInfo framebufferInfo = {};
-//		framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-//		framebufferInfo.renderPass = finalRenderPass;
-//		framebufferInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
-//		framebufferInfo.pAttachments = attachments.data();
-//		framebufferInfo.width = parameters.extent.width;
-//		framebufferInfo.height = parameters.extent.height;
-//		framebufferInfo.layers = 1;
-//		if(vkCreateFramebuffer(device, &framebufferInfo, nullptr, &_colorBuffers[i]) != VK_SUCCESS) {
-//			Log::Error() << Log::GPU << "Unable to create swap framebuffers." << std::endl;
-//		}
-//	}
-//
-//
 
+	// TODO: see how to wrap this in a standard framebuffer.
+
+	// Create depth buffer.
+	static const std::map<VkFormat, Layout> formatInfos = {
+		{ VK_FORMAT_D16_UNORM, Layout::DEPTH_COMPONENT16 },
+		{ VK_FORMAT_D32_SFLOAT, Layout::DEPTH_COMPONENT32F },
+		{ VK_FORMAT_D24_UNORM_S8_UINT, Layout::DEPTH24_STENCIL8 },
+		{ VK_FORMAT_D32_SFLOAT_S8_UINT, Layout::DEPTH32F_STENCIL8 },
+	};
+
+	_depthTexture.width  = extent.width;
+	_depthTexture.height = extent.height;
+	_depthTexture.depth  = 1;
+	_depthTexture.levels = 1;
+	_depthTexture.shape  = TextureShape::D2;
+
+	Descriptor desc(formatInfos.at(depthFormat), Filter::LINEAR, Wrap::CLAMP);
+	GPU::setupTexture(_depthTexture, desc);
+
+	VkUtils::transitionImageLayout(*_context, _depthTexture.gpu->image, _depthTexture.gpu->format, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, _depthTexture.levels, _depthTexture.depth);
+
+	// Retrieve images in the swap chain.
+	vkGetSwapchainImagesKHR(_context->device, _swapchain, &_count, nullptr);
+	_colors.resize(_count);
+
+	Log::Info() << Log::GPU << "Swapchain using " << _count << " images."<< std::endl;
+	vkGetSwapchainImagesKHR(_context->device, _swapchain, &_count, _colors.data());
+	// Create views for each image.
+	_colorViews.resize(_count);
+
+
+	for(size_t i = 0; i < _count; i++) {
+
+		VkImageViewCreateInfo viewInfo = {};
+		viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+		viewInfo.image = _colors[i];
+		viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+		viewInfo.format = surfaceParams.format;
+		viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		viewInfo.subresourceRange.baseMipLevel = 0;
+		viewInfo.subresourceRange.levelCount = 1;
+		viewInfo.subresourceRange.baseArrayLayer = 0;
+		viewInfo.subresourceRange.layerCount = 1;
+
+		vkCreateImageView(_context->device, &viewInfo, nullptr, &(_colorViews[i]));
+		//_colorViews[i] = VkUtils::createImageView(_context->device, _colors[i], surfaceInfos.format, VK_IMAGE_ASPECT_COLOR_BIT, false, 1);
+	}
+
+	// Framebuffers.
+	_colorBuffers.resize(_count);
+	for(size_t i = 0; i < _count; ++i){
+		std::array<VkImageView, 2> attachments = { _colorViews[i], _depthTexture.gpu->view };
+
+		VkFramebufferCreateInfo framebufferInfo = {};
+		framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+		framebufferInfo.renderPass = _pass;
+		framebufferInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
+		framebufferInfo.pAttachments = attachments.data();
+		framebufferInfo.width = extent.width;
+		framebufferInfo.height = extent.height;
+		framebufferInfo.layers = 1;
+		if(vkCreateFramebuffer(_context->device, &framebufferInfo, nullptr, &_colorBuffers[i]) != VK_SUCCESS) {
+			Log::Error() << Log::GPU << "Unable to create swap framebuffers." << std::endl;
+		}
+	}
 
 	// Only once: Semaphores and fences.
 	_imagesAvailable.resize(_count);
@@ -160,14 +196,18 @@ void Swapchain::init(GPUContext & context, const RenderingConfig & config){
 	fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
 	for(size_t i = 0; i < _count; i++) {
-		VkResult availRes = vkCreateSemaphore(_context.device, &semaphoreInfo, nullptr, &_imagesAvailable[i]);
-		VkResult finishRes = vkCreateSemaphore(_context.device, &semaphoreInfo, nullptr, &_framesFinished[i]);
-		VkResult inflightRes = vkCreateFence(_context.device, &fenceInfo, nullptr, &_framesInFlight[i]);
+		VkResult availRes = vkCreateSemaphore(_context->device, &semaphoreInfo, nullptr, &_imagesAvailable[i]);
+		VkResult finishRes = vkCreateSemaphore(_context->device, &semaphoreInfo, nullptr, &_framesFinished[i]);
+		VkResult inflightRes = vkCreateFence(_context->device, &fenceInfo, nullptr, &_framesInFlight[i]);
 
 		if(availRes != VK_SUCCESS || finishRes != VK_SUCCESS || inflightRes != VK_SUCCESS){
 			Log::Error() << Log::GPU << "Unable to create semaphores and fences." << std::endl;
 		}
 	}
+
+	// Create command buffers.
+	VkUtils::createCommandBuffers(*_context, _count);
+	
 }
 
 VkRenderPass Swapchain::createMainRenderpass(const VkFormat & depth, const VkFormat & color){
@@ -230,8 +270,164 @@ VkRenderPass Swapchain::createMainRenderpass(const VkFormat & depth, const VkFor
 	renderPassInfo.pDependencies = &dependency;
 
 	VkRenderPass pass = VK_NULL_HANDLE;
-	if(vkCreateRenderPass(_context.device, &renderPassInfo, nullptr, &pass) != VK_SUCCESS) {
+	if(vkCreateRenderPass(_context->device, &renderPassInfo, nullptr, &pass) != VK_SUCCESS) {
 		Log::Error() << Log::GPU << "Unable to create main render pass." << std::endl;
 	}
 	return pass;
+}
+
+
+void Swapchain::resize(uint width, uint height){
+	if(width == _depthTexture.width && height == _depthTexture.height){
+		return;
+	}
+	// TODO: some semaphores can leave the queue eternally waiting.
+	destroy();
+	// Recreate swapchain.
+	setup((uint32_t)width, (uint32_t)height);
+}
+
+bool Swapchain::finishFrame(){
+	// TODO: do outside
+	{
+		// Finish final pass and command buffer.
+		vkCmdEndRenderPass(_context->getCurrentCommandBuffer());
+	}
+
+	// Finish the frame command buffer.
+	vkEndCommandBuffer(_context->getCurrentCommandBuffer());
+
+	// Submit the last command buffer.
+	VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+	VkSubmitInfo submitInfo = {};
+	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+	submitInfo.waitSemaphoreCount = 1;
+	submitInfo.pWaitSemaphores = &_imagesAvailable[_context->currentFrame];
+	submitInfo.pWaitDstStageMask = waitStages;
+	submitInfo.commandBufferCount = 1;
+	submitInfo.pCommandBuffers = &_context->getCurrentCommandBuffer();
+	// Semaphore for when the command buffer is done, so that we can present the image.
+	submitInfo.signalSemaphoreCount = 1;
+	submitInfo.pSignalSemaphores = &_framesFinished[_context->currentFrame];
+	// Add the fence so that we don't reuse the command buffer while it's in use.
+	vkResetFences(_context->device, 1, &_framesInFlight[_context->currentFrame]);
+	vkQueueSubmit(_context->graphicsQueue, 1, &submitInfo, _framesInFlight[_context->currentFrame]);
+
+	// Present swap chain.
+	VkPresentInfoKHR presentInfo = {};
+	presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+	presentInfo.waitSemaphoreCount = 1;
+	// Check for the command buffer to be done.
+	presentInfo.pWaitSemaphores = &_framesFinished[_context->currentFrame];
+	presentInfo.swapchainCount = 1;
+	presentInfo.pSwapchains = &_swapchain;
+	presentInfo.pImageIndices = &_imageIndex;
+	VkResult status = vkQueuePresentKHR(_context->presentQueue, &presentInfo);
+
+	// Here we could also be notified of a resize or invalidation.
+	if(status == VK_ERROR_OUT_OF_DATE_KHR || status == VK_SUBOPTIMAL_KHR){
+		return false;
+	}
+	return true;
+}
+
+bool Swapchain::nextFrame(){
+
+	// Present on swap chain.
+	const bool hadPreviousFrame = _frameStarted;
+
+	if(_frameStarted){
+
+		bool valid = finishFrame();
+		// Move to next frame in all cases.
+		_context->currentFrame = (_context->currentFrame + 1) % _count;
+		_frameStarted = false;
+		if(!valid){
+			return false;
+		}
+	}
+
+	// Wait for the current commands buffer to be done.
+	vkWaitForFences(_context->device, 1, &_framesInFlight[_context->currentFrame], VK_TRUE, std::numeric_limits<uint64_t>::max());
+
+	// Acquire image from next frame.
+	// Use a semaphore to know when the image is available.
+	VkResult status = vkAcquireNextImageKHR(_context->device, _swapchain, std::numeric_limits<uint64_t>::max(), _imagesAvailable[_context->currentFrame], VK_NULL_HANDLE, &_imageIndex);
+
+	// Populate infos.
+	VkRenderPassBeginInfo infos = {};
+	infos.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+	infos.renderPass = _pass;
+	infos.framebuffer = _colorBuffers[_imageIndex];
+	infos.renderArea.offset = { 0, 0 };
+	infos.renderArea.extent = {(uint32_t)_depthTexture.width, (uint32_t)_depthTexture.height};
+
+	// We should resize the swapachain.
+	if(status != VK_SUCCESS && status != VK_SUBOPTIMAL_KHR) {
+
+		// If VK_SUBOPTIMAL_KHR, we can still render a frame.
+		// Immediatly step to the next frame after resize.
+		if(!hadPreviousFrame){
+			_context->currentFrame = (_context->currentFrame + 1) % _count;
+		}
+		return false;
+	}
+
+	// prepare command buffer.
+
+	VkCommandBufferBeginInfo beginInfo = {};
+	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
+
+	vkBeginCommandBuffer(_context->getCurrentCommandBuffer(), &beginInfo);
+	_frameStarted = true;
+	
+	// Record actions (to be replaced)
+	{
+		std::array<VkClearValue, 2> clearValues = {};
+		clearValues[0].color = { {0.0f, 1.0f, 0.0f, 1.0f} };
+		clearValues[1].depthStencil = { 1.0f, 0 };
+		infos.clearValueCount = static_cast<uint32_t>(clearValues.size());
+		infos.pClearValues = clearValues.data();
+		// Submit final pass.
+		vkCmdBeginRenderPass(_context->getCurrentCommandBuffer(), &infos, VK_SUBPASS_CONTENTS_INLINE);
+		//...
+
+	}
+
+	return true;
+}
+
+void Swapchain::clean(){
+	// Make sure all commands are finished before deleting anything.
+	if(_frameStarted){
+		_frameStarted = false;
+		finishFrame();
+	}
+
+	destroy();
+
+	for(size_t i = 0; i < _count; i++) {
+		vkDestroySemaphore(_context->device, _framesFinished[i], nullptr);
+		vkDestroySemaphore(_context->device, _imagesAvailable[i], nullptr);
+		vkDestroyFence(_context->device, _framesInFlight[i], nullptr);
+	}
+	
+}
+
+void Swapchain::destroy() {
+	vkDeviceWaitIdle(_context->device);
+	
+	for(size_t i = 0; i < _count; i++) {
+		vkDestroyFramebuffer(_context->device, _colorBuffers[i], nullptr);
+	}
+
+	vkFreeCommandBuffers(_context->device, _context->commandPool, static_cast<uint32_t>(_context->commandBuffers.size()), _context->commandBuffers.data());
+
+	vkDestroyRenderPass(_context->device, _pass, nullptr);
+	for(size_t i = 0; i < _count; i++) {
+		vkDestroyImageView(_context->device, _colorViews[i], nullptr);
+	}
+	_depthTexture.clean();
+	vkDestroySwapchainKHR(_context->device, _swapchain, nullptr);
 }

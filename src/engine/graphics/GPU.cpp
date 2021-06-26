@@ -112,7 +112,6 @@ bool GPU::setup(const std::string & appName) {
 			if(selectedDevice == VK_NULL_HANDLE || isDiscrete){
 				selectedDevice = device;
 				_context.portability = hasPortability;
-				//uniformOffset = properties.limits.minUniformBufferOffsetAlignment;
 			}
 		}
 	}
@@ -212,22 +211,10 @@ bool GPU::setupWindow(Window * window){
 		return false;
 	}
 
-
 	// Finally setup the swapchain.
 	window->_swapchain.init(_context, window->_config);
 
-	// Create command buffers.
-	_context.commandBuffers.resize(window->_swapchain.count());
-	VkCommandBufferAllocateInfo allocInfo = {};
-	allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-	allocInfo.commandPool = _context.commandPool;
-	allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-	allocInfo.commandBufferCount = static_cast<uint32_t>(_context.commandBuffers.size());
-	if(vkAllocateCommandBuffers(_context.device, &allocInfo, _context.commandBuffers.data()) != VK_SUCCESS) {
-		Log::Error() << Log::GPU  << "Unable to create command buffers." << std::endl;
-		return false;
 	}
-	
 	return true;
 }
 
@@ -628,7 +615,11 @@ void GPU::setupTexture(Texture & texture, const Descriptor & descriptor) {
 	const bool isCube = texture.shape & TextureShape::Cube;
 	const bool isArray = texture.shape & TextureShape::Array;
 
-	VkImageUsageFlags usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+	const Layout & layout = descriptor.typedFormat();
+	const bool isDepth = layout == Layout::DEPTH_COMPONENT16 || layout == Layout::DEPTH_COMPONENT24 || layout == Layout::DEPTH_COMPONENT32F || layout == Layout::DEPTH24_STENCIL8 || layout == Layout::DEPTH32F_STENCIL8;
+	const bool isStencil = layout == Layout::DEPTH24_STENCIL8 || layout == Layout::DEPTH32F_STENCIL8;
+
+	VkImageUsageFlags usage = (isDepth ? VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT : VK_IMAGE_USAGE_TRANSFER_DST_BIT) | VK_IMAGE_USAGE_SAMPLED_BIT;
 	// Create image.
 	VkImageCreateInfo imageInfo = {};
 	imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -657,13 +648,12 @@ void GPU::setupTexture(Texture & texture, const Descriptor & descriptor) {
 		return;
 	}
 
-	const Layout & layout = descriptor.typedFormat();
-	VkImageAspectFlags aspectFlags = VK_IMAGE_ASPECT_COLOR_BIT;
-	if(layout == Layout::DEPTH_COMPONENT16 || layout == Layout::DEPTH_COMPONENT24 || layout == Layout::DEPTH_COMPONENT32F){
-		aspectFlags = VK_IMAGE_ASPECT_DEPTH_BIT;
-	}
-	if(layout == Layout::DEPTH24_STENCIL8 || layout == Layout::DEPTH32F_STENCIL8){
-		aspectFlags = VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
+	// Allocate.
+	GPU::allocateTexture(texture);
+
+	VkImageAspectFlags aspectFlags = isDepth ? VK_IMAGE_ASPECT_DEPTH_BIT : VK_IMAGE_ASPECT_COLOR_BIT;
+	if(isStencil){
+		aspectFlags |= VK_IMAGE_ASPECT_STENCIL_BIT;
 	}
 
 	// Create view.
@@ -705,8 +695,6 @@ void GPU::setupTexture(Texture & texture, const Descriptor & descriptor) {
 		Log::Error() << Log::GPU << "Unable to create a sampler." << std::endl;
 	}
 
-	// Allocate.
-	GPU::allocateTexture(texture);
 
 }
 
@@ -1193,6 +1181,7 @@ void GPU::drawQuad(){
 void GPU::sync(){
 //	glFlush();
 //	glFinish();
+	vkDeviceWaitIdle(_context.device);
 }
 
 void GPU::nextFrame(){
@@ -1901,6 +1890,12 @@ void GPU::getState(GPUState& state) {
 
 const GPU::Metrics & GPU::getMetrics(){
 	return _metricsPrevious;
+}
+
+void GPU::cleanup(){
+	GPU::sync();
+	vkDestroyCommandPool(_context.device, _context.commandPool, nullptr);
+	//vkDestroyDevice(_context.device, nullptr);
 }
 
 

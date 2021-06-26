@@ -74,7 +74,7 @@ _config(config), _allowEscape(escapeQuit), _convertToSRGB(convertToSRGB) {
 	const float screenDensity = float(width) / float(_config.windowFrame[2]);
 	Input::manager().densityEvent(screenDensity);
 
-	// Setup the GPU and create the swapchain.
+	// Setup the GPU.
 	if(!GPU::setup(name)){
 		glfwDestroyWindow(_window);
 		glfwTerminate();
@@ -164,23 +164,30 @@ bool Window::nextFrame() {
 		GPU::setSRGBState(_convertToSRGB);
 		
 		//Display the result for the current rendering loop.
-		//glfwSwapBuffers(_window);
 	}
-	// Notify GPU for book-keeping.
-	GPU::nextFrame();
 
-	// Update events (inputs,...).
-	Input::manager().update();
-	// Handle quitting.
-	if(_allowEscape && Input::manager().pressed(Input::Key::Escape)) {
-		perform(Action::Quit);
-	}
-	// Check if the backbuffer was resized.
-	if(Input::manager().resized()){
-		const uint w = uint(Input::manager().size()[0]);
-		const uint h = uint(Input::manager().size()[1]);
-		Framebuffer::backbufferResized(w, h);
-	}
+	// Notify GPU for book-keeping.
+	// GPU::nextFrame();
+	bool validSwapchain = _swapchain.nextFrame();
+
+	do {
+		// Update events (inputs,...).
+		Input::manager().update();
+		// Handle quitting.
+		if(_allowEscape && Input::manager().pressed(Input::Key::Escape)) {
+			perform(Action::Quit);
+		}
+		// Check if the backbuffer was resized.
+		if(Input::manager().resized() || !validSwapchain){
+			const uint w = uint(Input::manager().size()[0]);
+			const uint h = uint(Input::manager().size()[1]);
+			//Framebuffer::backbufferResized(w, h);
+			_swapchain.resize(w, h);
+			// We should probably jump to the next frame here.
+			validSwapchain = _swapchain.nextFrame();
+		}
+	} while(!validSwapchain);
+
 	// Start new GUI frame.
 	//ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
@@ -194,14 +201,15 @@ Window::~Window() {
 	if(_frameStarted){
 		ImGui::EndFrame();
 	}
-	GPU::sync();
+	_swapchain.clean();
 	// Clean the interface.
 	//ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
 	// Clean other resources
 	Resources::manager().clean();
-	// Close GL context and any other GLFW resources.
+	// Close context and any other GLFW resources.
+	GPU::cleanup();
 	glfwDestroyWindow(_window);
 	glfwTerminate();
 }

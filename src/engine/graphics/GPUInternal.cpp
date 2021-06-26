@@ -283,3 +283,17 @@ void VkUtils::transitionImageLayout(GPUContext & context, VkImage & image, VkFor
 
 	VkUtils::endOneTimeCommandBuffer(commandBuffer, context);
 }
+
+void VkUtils::createCommandBuffers(GPUContext & context, uint count){
+	// See if we can move their creation and deletion outside of the swapchain
+	context.commandBuffers.resize(count);
+	VkCommandBufferAllocateInfo allocInfo = {};
+	allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+	allocInfo.commandPool = context.commandPool;
+	allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+	allocInfo.commandBufferCount = static_cast<uint32_t>(count);
+	if(vkAllocateCommandBuffers(context.device, &allocInfo, context.commandBuffers.data()) != VK_SUCCESS) {
+		Log::Error() << Log::GPU  << "Unable to create command buffers." << std::endl;
+		return;
+	}
+}
