@@ -159,6 +159,7 @@ bool Window::nextFrame() {
 		// sRGB conversion when writing to the backbuffer.
 		GPU::setSRGBState(false);
 		// Draw ImGui as-is...
+		ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), ((GPUContext*)GPU::getInternal())->getCurrentCommandBuffer());
 		//ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		// ...and restore.
 		GPU::setSRGBState(_convertToSRGB);
@@ -185,11 +186,12 @@ bool Window::nextFrame() {
 			_swapchain.resize(w, h);
 			// We should probably jump to the next frame here.
 			validSwapchain = _swapchain.nextFrame();
+			ImGui_ImplVulkan_SetMinImageCount(_swapchain.minCount());
 		}
 	} while(!validSwapchain);
 
 	// Start new GUI frame.
-	//ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplVulkan_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 	_frameStarted = true;
@@ -203,7 +205,7 @@ Window::~Window() {
 	}
 	_swapchain.clean();
 	// Clean the interface.
-	//ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplVulkan_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
 	// Clean other resources
@@ -220,20 +222,45 @@ void Window::setupImGui() {
 	// Load font.
 	const auto * fontData = Resources::manager().getData("Lato-Regular.ttf");
 	if(fontData){
-//		ImFontConfig font = ImFontConfig();
-//		font.FontData = (void*)(fontData->data());
-//		font.FontDataSize = fontData->size();
-//		font.SizePixels = 16.0f;
-//		// Font data is managed by the resource manager.
-//		font.FontDataOwnedByAtlas = false;
-//		io.Fonts->AddFont(&font);
+		ImFontConfig font = ImFontConfig();
+		font.FontData = (void*)(fontData->data());
+		font.FontDataSize = fontData->size();
+		font.SizePixels = 16.0f;
+		// Font data is managed by the resource manager.
+		font.FontDataOwnedByAtlas = false;
+		io.Fonts->AddFont(&font);
 	}
 	unsigned char* pixels;
 	int width, height;
 	io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);
 	io.Fonts->TexID = 0;
 	ImGui_ImplGlfw_InitForVulkan(_window, false);
-	//ImGui_ImplOpenGL3_Init("#version 410");
+
+	_imgui = new ImGui_ImplVulkan_InitInfo;
+	std::memset(_imgui, 0, sizeof(ImGui_ImplVulkan_InitInfo));
+
+	GPUContext* context = (GPUContext*)GPU::getInternal();
+	_imgui->Instance = context->instance;
+	_imgui->PhysicalDevice = context->physicalDevice;
+	_imgui->Device = context->device;
+	_imgui->QueueFamily = context->graphicsId;
+	_imgui->Queue = context->graphicsQueue;
+	_imgui->PipelineCache = VK_NULL_HANDLE;
+	_imgui->DescriptorPool = context->descriptorPool;
+	_imgui->Subpass = 0;
+	_imgui->MinImageCount = _swapchain.minCount();
+	_imgui->ImageCount = _swapchain.count();
+	_imgui->MSAASamples = VK_SAMPLE_COUNT_1_BIT;
+	_imgui->Allocator = nullptr;
+	_imgui->CheckVkResultFn = &VkUtils::checkResult;
+
+	ImGui_ImplVulkan_Init(_imgui, _swapchain.getMainPass());
+
+	// Upload font.
+	VkCommandBuffer uploadCommandBuffer = VkUtils::startOneTimeCommandBuffer(*context);
+	ImGui_ImplVulkan_CreateFontsTexture(uploadCommandBuffer);
+	VkUtils::endOneTimeCommandBuffer(uploadCommandBuffer, *context);
+	ImGui_ImplVulkan_DestroyFontUploadObjects();
 	
 	// Customize the style.
 	ImGui::StyleColorsDark();

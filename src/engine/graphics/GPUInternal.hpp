@@ -30,6 +30,8 @@ struct GPUContext {
 	std::vector<VkCommandBuffer> commandBuffers;
 	VkQueue graphicsQueue= VK_NULL_HANDLE;
 	VkQueue presentQueue= VK_NULL_HANDLE;
+	VkDescriptorPool descriptorPool;
+	
 	uint32_t graphicsId = 0;
 	uint32_t presentId = 0;
 	uint32_t currentFrame = 0;
@@ -73,5 +75,7 @@ namespace VkUtils {
 	void transitionImageLayout(GPUContext & context, VkImage & image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, int mipCount, int layerCount);
 
 	void createCommandBuffers(GPUContext & context, uint count);
+
+	void checkResult(VkResult status);
 
 }

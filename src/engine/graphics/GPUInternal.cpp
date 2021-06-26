@@ -297,3 +297,54 @@ void VkUtils::createCommandBuffers(GPUContext & context, uint count){
 		return;
 	}
 }
+
+
+void VkUtils::checkResult(VkResult status){
+	std::string errorType;
+	switch(status){
+		case VK_NOT_READY : { errorType = "VK_NOT_READY"; break; }
+		case VK_TIMEOUT : { errorType = "VK_TIMEOUT"; break; }
+		case VK_EVENT_SET : { errorType = "VK_EVENT_SET"; break; }
+		case VK_EVENT_RESET : { errorType = "VK_EVENT_RESET"; break; }
+		case VK_INCOMPLETE : { errorType = "VK_INCOMPLETE"; break; }
+		case VK_ERROR_OUT_OF_HOST_MEMORY : { errorType = "VK_ERROR_OUT_OF_HOST_MEMORY"; break; }
+		case VK_ERROR_OUT_OF_DEVICE_MEMORY : { errorType = "VK_ERROR_OUT_OF_DEVICE_MEMORY"; break; }
+		case VK_ERROR_INITIALIZATION_FAILED : { errorType = "VK_ERROR_INITIALIZATION_FAILED"; break; }
+		case VK_ERROR_DEVICE_LOST : { errorType = "VK_ERROR_DEVICE_LOST"; break; }
+		case VK_ERROR_MEMORY_MAP_FAILED : { errorType = "VK_ERROR_MEMORY_MAP_FAILED"; break; }
+		case VK_ERROR_LAYER_NOT_PRESENT : { errorType = "VK_ERROR_LAYER_NOT_PRESENT"; break; }
+		case VK_ERROR_EXTENSION_NOT_PRESENT : { errorType = "VK_ERROR_EXTENSION_NOT_PRESENT"; break; }
+		case VK_ERROR_FEATURE_NOT_PRESENT : { errorType = "VK_ERROR_FEATURE_NOT_PRESENT"; break; }
+		case VK_ERROR_INCOMPATIBLE_DRIVER : { errorType = "VK_ERROR_INCOMPATIBLE_DRIVER"; break; }
+		case VK_ERROR_TOO_MANY_OBJECTS : { errorType = "VK_ERROR_TOO_MANY_OBJECTS"; break; }
+		case VK_ERROR_FORMAT_NOT_SUPPORTED : { errorType = "VK_ERROR_FORMAT_NOT_SUPPORTED"; break; }
+		case VK_ERROR_FRAGMENTED_POOL : { errorType = "VK_ERROR_FRAGMENTED_POOL"; break; }
+		case VK_ERROR_UNKNOWN : { errorType = "VK_ERROR_UNKNOWN"; break; }
+		case VK_ERROR_OUT_OF_POOL_MEMORY : { errorType = "VK_ERROR_OUT_OF_POOL_MEMORY"; break; }
+		case VK_ERROR_INVALID_EXTERNAL_HANDLE : { errorType = "VK_ERROR_INVALID_EXTERNAL_HANDLE"; break; }
+		case VK_ERROR_FRAGMENTATION : { errorType = "VK_ERROR_FRAGMENTATION"; break; }
+		case VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS : { errorType = "VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS"; break; }
+		case VK_ERROR_SURFACE_LOST_KHR : { errorType = "VK_ERROR_SURFACE_LOST_KHR"; break; }
+		case VK_ERROR_NATIVE_WINDOW_IN_USE_KHR : { errorType = "VK_ERROR_NATIVE_WINDOW_IN_USE_KHR"; break; }
+		case VK_SUBOPTIMAL_KHR : { errorType = "VK_SUBOPTIMAL_KHR"; break; }
+		case VK_ERROR_OUT_OF_DATE_KHR : { errorType = "VK_ERROR_OUT_OF_DATE_KHR"; break; }
+		case VK_ERROR_INCOMPATIBLE_DISPLAY_KHR : { errorType = "VK_ERROR_INCOMPATIBLE_DISPLAY_KHR"; break; }
+		case VK_ERROR_VALIDATION_FAILED_EXT : { errorType = "VK_ERROR_VALIDATION_FAILED_EXT"; break; }
+		case VK_ERROR_INVALID_SHADER_NV : { errorType = "VK_ERROR_INVALID_SHADER_NV"; break; }
+		case VK_ERROR_INVALID_DRM_FORMAT_MODIFIER_PLANE_LAYOUT_EXT : { errorType = "VK_ERROR_INVALID_DRM_FORMAT_MODIFIER_PLANE_LAYOUT_EXT"; break; }
+		case VK_ERROR_NOT_PERMITTED_EXT : { errorType = "VK_ERROR_NOT_PERMITTED_EXT"; break; }
+		case VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT : { errorType = "VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT"; break; }
+		case VK_THREAD_IDLE_KHR : { errorType = "VK_THREAD_IDLE_KHR"; break; }
+		case VK_THREAD_DONE_KHR : { errorType = "VK_THREAD_DONE_KHR"; break; }
+		case VK_OPERATION_DEFERRED_KHR : { errorType = "VK_OPERATION_DEFERRED_KHR"; break; }
+		case VK_OPERATION_NOT_DEFERRED_KHR : { errorType = "VK_OPERATION_NOT_DEFERRED_KHR"; break; }
+		case VK_PIPELINE_COMPILE_REQUIRED_EXT : { errorType = "VK_PIPELINE_COMPILE_REQUIRED_EXT"; break; }
+		case VK_SUCCESS:
+		default:
+			return;
+			break;
+	}
+
+	Log::Error() << "Vulkan error : " << errorType << std::endl;
+
+}

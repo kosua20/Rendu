@@ -17,7 +17,8 @@
 // Need GLM types for casting.
 #include <glm/glm.hpp>
 // Override function loader for OpenGL, as we use a custom location for the gl3w header.
-#define IMGUI_IMPL_OPENGL_LOADER_CUSTOM "gl3w/gl3w.h"
+//#define IMGUI_IMPL_OPENGL_LOADER_CUSTOM "gl3w/gl3w.h"
+//#define IMGUI_IMPL_VULKAN_NO_PROTOTYPES
 
 //---- Define assertion handler. Defaults to calling assert().
 // If your macro uses multiple statements, make sure is enclosed in a 'do { .. } while (0)' block so it can be used as a single statement.
