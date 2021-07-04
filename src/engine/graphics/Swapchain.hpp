@@ -22,9 +22,9 @@ public:
 
 	bool nextFrame();
 
-	uint count(){ return _count; }
+	uint count(){ return _imageCount; }
 	// TODO: count might be enough if double buffered
-	uint minCount(){ return _minCount; }
+	uint minCount(){ return _minImageCount; }
 
 	void clean();
 
@@ -55,8 +55,8 @@ private:
 	std::vector<VkFence> _framesInFlight;
 
 	VkRenderPass _pass;
-	uint _count = 0;
-	uint _minCount = 0;
+	uint _imageCount = 0;
+	uint _minImageCount = 0;
 	bool _vsync = false;
 	uint32_t _imageIndex = 0;
 	bool _frameStarted = false;

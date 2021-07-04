@@ -39,7 +39,12 @@ struct GPUContext {
 	double timestep = 0.0;
 	size_t uniformAlignment = 0;
 	bool portability = false;
-	
+	const uint frameCount = 2;
+
+	void nextFrame(){
+		currentFrame = (currentFrame + 1) % frameCount;
+	}
+
 	VkCommandBuffer& getCurrentCommandBuffer(){
 		return commandBuffers[currentFrame];
 	}

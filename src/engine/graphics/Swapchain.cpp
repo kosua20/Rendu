@@ -20,12 +20,17 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 	// Basic capabilities.
 	VkSurfaceCapabilitiesKHR capabilities;
 	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(_context->physicalDevice, _context->surface, &capabilities);
+	// We want three images in our swapchain.
+	_minImageCount = _imageCount = 3;
 	// Number of items in the swapchain.
-	_minCount = capabilities.minImageCount;
-	_count = _minCount + 1;
+	if(_imageCount < capabilities.minImageCount){
+		Log::Error() << Log::GPU << "Swapchain doesn't allow for " << _imageCount << " images." << std::endl;
+		return;
+	}
 	// maxImageCount = 0 if there is no upper constraint.
-	if(capabilities.maxImageCount > 0) {
-		_count = std::min(_count, capabilities.maxImageCount);
+	if((capabilities.maxImageCount != 0) && (capabilities.maxImageCount < _imageCount) ){
+		Log::Error() << Log::GPU << "Swapchain doesn't allow for " << _imageCount << " images." << std::endl;
+		return;
 	}
 
 	// Compute size.
@@ -82,7 +87,7 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 	VkSwapchainCreateInfoKHR swapInfo = {};
 	swapInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
 	swapInfo.surface = _context->surface;
-	swapInfo.minImageCount = _count;
+	swapInfo.minImageCount = _imageCount;
 	swapInfo.imageFormat = surfaceParams.format;
 	swapInfo.imageColorSpace = surfaceParams.colorSpace;
 	swapInfo.imageExtent = extent;
@@ -138,17 +143,17 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 
 	VkUtils::transitionImageLayout(*_context, _depthTexture.gpu->image, _depthTexture.gpu->format, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, _depthTexture.levels, _depthTexture.depth);
 
-	// Retrieve images in the swap chain.
-	vkGetSwapchainImagesKHR(_context->device, _swapchain, &_count, nullptr);
-	_colors.resize(_count);
-
-	Log::Info() << Log::GPU << "Swapchain using " << _count << " images."<< std::endl;
-	vkGetSwapchainImagesKHR(_context->device, _swapchain, &_count, _colors.data());
+	// Retrieve image count in the swap chain.
+	vkGetSwapchainImagesKHR(_context->device, _swapchain, &_imageCount, nullptr);
+	_colors.resize(_imageCount);
+	Log::Info() << Log::GPU << "Swapchain using " << _imageCount << " images, requested " << _minImageCount << "."<< std::endl;
+	// Retrieve the images themselves.
+	vkGetSwapchainImagesKHR(_context->device, _swapchain, &_imageCount, _colors.data());
 	// Create views for each image.
-	_colorViews.resize(_count);
+	_colorViews.resize(_imageCount);
 
 
-	for(size_t i = 0; i < _count; i++) {
+	for(size_t i = 0; i < _imageCount; i++) {
 
 		VkImageViewCreateInfo viewInfo = {};
 		viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
@@ -162,12 +167,12 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 		viewInfo.subresourceRange.layerCount = 1;
 
 		vkCreateImageView(_context->device, &viewInfo, nullptr, &(_colorViews[i]));
-		//_colorViews[i] = VkUtils::createImageView(_context->device, _colors[i], surfaceInfos.format, VK_IMAGE_ASPECT_COLOR_BIT, false, 1);
+
 	}
 
 	// Framebuffers.
-	_colorBuffers.resize(_count);
-	for(size_t i = 0; i < _count; ++i){
+	_colorBuffers.resize(_imageCount);
+	for(size_t i = 0; i < _imageCount; ++i){
 		std::array<VkImageView, 2> attachments = { _colorViews[i], _depthTexture.gpu->view };
 
 		VkFramebufferCreateInfo framebufferInfo = {};
@@ -184,9 +189,9 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 	}
 
 	// Only once: Semaphores and fences.
-	_imagesAvailable.resize(_count);
-	_framesFinished.resize(_count);
-	_framesInFlight.resize(_count);
+	_imagesAvailable.resize(_context->frameCount);
+	_framesFinished.resize(_context->frameCount);
+	_framesInFlight.resize(_context->frameCount);
 
 	VkSemaphoreCreateInfo semaphoreInfo = {};
 	semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
@@ -195,7 +200,7 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 	fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 	fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
-	for(size_t i = 0; i < _count; i++) {
+	for(size_t i = 0; i < _framesFinished.size(); i++) {
 		VkResult availRes = vkCreateSemaphore(_context->device, &semaphoreInfo, nullptr, &_imagesAvailable[i]);
 		VkResult finishRes = vkCreateSemaphore(_context->device, &semaphoreInfo, nullptr, &_framesFinished[i]);
 		VkResult inflightRes = vkCreateFence(_context->device, &fenceInfo, nullptr, &_framesInFlight[i]);
@@ -205,8 +210,7 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 		}
 	}
 
-	// Create command buffers.
-	VkUtils::createCommandBuffers(*_context, _count);
+	VkUtils::createCommandBuffers(*_context, _context->frameCount);
 	
 }
 
@@ -298,27 +302,29 @@ bool Swapchain::finishFrame(){
 	vkEndCommandBuffer(_context->getCurrentCommandBuffer());
 
 	// Submit the last command buffer.
+	const uint frameIndex = _context->currentFrame;
+
 	VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
 	VkSubmitInfo submitInfo = {};
 	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 	submitInfo.waitSemaphoreCount = 1;
-	submitInfo.pWaitSemaphores = &_imagesAvailable[_context->currentFrame];
+	submitInfo.pWaitSemaphores = &_imagesAvailable[frameIndex];
 	submitInfo.pWaitDstStageMask = waitStages;
 	submitInfo.commandBufferCount = 1;
 	submitInfo.pCommandBuffers = &_context->getCurrentCommandBuffer();
 	// Semaphore for when the command buffer is done, so that we can present the image.
 	submitInfo.signalSemaphoreCount = 1;
-	submitInfo.pSignalSemaphores = &_framesFinished[_context->currentFrame];
+	submitInfo.pSignalSemaphores = &_framesFinished[frameIndex];
 	// Add the fence so that we don't reuse the command buffer while it's in use.
-	vkResetFences(_context->device, 1, &_framesInFlight[_context->currentFrame]);
-	vkQueueSubmit(_context->graphicsQueue, 1, &submitInfo, _framesInFlight[_context->currentFrame]);
+	vkResetFences(_context->device, 1, &_framesInFlight[frameIndex]);
+	vkQueueSubmit(_context->graphicsQueue, 1, &submitInfo, _framesInFlight[frameIndex]);
 
 	// Present swap chain.
 	VkPresentInfoKHR presentInfo = {};
 	presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
 	presentInfo.waitSemaphoreCount = 1;
 	// Check for the command buffer to be done.
-	presentInfo.pWaitSemaphores = &_framesFinished[_context->currentFrame];
+	presentInfo.pWaitSemaphores = &_framesFinished[frameIndex];
 	presentInfo.swapchainCount = 1;
 	presentInfo.pSwapchains = &_swapchain;
 	presentInfo.pImageIndices = &_imageIndex;
@@ -340,7 +346,7 @@ bool Swapchain::nextFrame(){
 
 		bool valid = finishFrame();
 		// Move to next frame in all cases.
-		_context->currentFrame = (_context->currentFrame + 1) % _count;
+		_context->nextFrame();
 		_frameStarted = false;
 		if(!valid){
 			return false;
@@ -364,11 +370,10 @@ bool Swapchain::nextFrame(){
 
 	// We should resize the swapachain.
 	if(status != VK_SUCCESS && status != VK_SUBOPTIMAL_KHR) {
-
 		// If VK_SUBOPTIMAL_KHR, we can still render a frame.
 		// Immediatly step to the next frame after resize.
 		if(!hadPreviousFrame){
-			_context->currentFrame = (_context->currentFrame + 1) % _count;
+			_context->nextFrame();
 		}
 		return false;
 	}
@@ -407,7 +412,7 @@ void Swapchain::clean(){
 
 	destroy();
 
-	for(size_t i = 0; i < _count; i++) {
+	for(size_t i = 0; i < _framesFinished.size(); i++) {
 		vkDestroySemaphore(_context->device, _framesFinished[i], nullptr);
 		vkDestroySemaphore(_context->device, _imagesAvailable[i], nullptr);
 		vkDestroyFence(_context->device, _framesInFlight[i], nullptr);
@@ -418,14 +423,12 @@ void Swapchain::clean(){
 void Swapchain::destroy() {
 	vkDeviceWaitIdle(_context->device);
 	
-	for(size_t i = 0; i < _count; i++) {
+	for(size_t i = 0; i < _imageCount; i++) {
 		vkDestroyFramebuffer(_context->device, _colorBuffers[i], nullptr);
 	}
-
-	vkFreeCommandBuffers(_context->device, _context->commandPool, static_cast<uint32_t>(_context->commandBuffers.size()), _context->commandBuffers.data());
-
+	vkFreeCommandBuffers(_context->device, _context->commandPool, _context->commandBuffers.size(), _context->commandBuffers.data());
 	vkDestroyRenderPass(_context->device, _pass, nullptr);
-	for(size_t i = 0; i < _count; i++) {
+	for(size_t i = 0; i < _imageCount; i++) {
 		vkDestroyImageView(_context->device, _colorViews[i], nullptr);
 	}
 	_depthTexture.clean();
