@@ -466,6 +466,6 @@ private:
 	static GPUState _state; ///< Current GPU state for caching.
 	static Metrics _metrics; ///< Internal metrics (draw count, state changes,...).
 	static Metrics _metricsPrevious; ///< Internal metrics for the last completed frame.
-	//static Handle _vao; ///< The unique empty screenquad VAO.
+	static std::unique_ptr<GPUBuffer> _quadBuffer; ///< The unique empty screenquad VAO.
 
 };

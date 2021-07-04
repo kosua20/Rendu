@@ -135,12 +135,6 @@ bool GPU::setup(const std::string & appName) {
 	_context.timestep = double(properties.limits.timestampPeriod);
 	_context.uniformAlignment = properties.limits.minUniformBufferOffsetAlignment;
 	// minImageTransferGranularity is guaranteed to be (1,1,1) on graphics/compute queues
-
-	// Create empty VAO for screenquad.
-	//	glGenVertexArrays(1, &_vao);
-	//	glBindVertexArray(_vao);
-	//	glBindVertexArray(0);
-	//	_state.vertexArray = 0;
 	
 	if(!glslang::InitializeProcess()){
 		Log::Error() << Log::GPU << "Unable to initialize shader compiler." << std::endl;
@@ -216,6 +210,21 @@ bool GPU::setupWindow(Window * window){
 	if(vkCreateCommandPool(_context.device, &poolInfo, nullptr, &_context.commandPool) != VK_SUCCESS) {
 		Log::Error() << Log::GPU << "Unable to create command pool." << std::endl;
 		return false;
+	}
+
+	// Create basic vertex array for screenquad.
+	{
+		std::vector<glm::vec3> quadVertices = {
+			glm::vec3(-1.0f, -1.0f, 0.0f),
+			glm::vec3(3.0f, -1.0f, 0.0f),
+			glm::vec3(-1.0f, 3.0f, 0.0f),
+		};
+
+		const size_t vertSize = 3 * 3 * sizeof(float);
+		BufferBase quadSetupBuffer(vertSize, BufferType::VERTEX, DataUse::STATIC);
+		GPU::setupBuffer(quadSetupBuffer);
+		GPU::uploadBuffer(quadSetupBuffer, vertSize, reinterpret_cast<unsigned char *>(quadVertices.data()));
+		_quadBuffer = std::move(quadSetupBuffer.gpu);
 	}
 
 	// Finally setup the swapchain.
@@ -1148,7 +1157,7 @@ void GPU::setupMesh(Mesh & mesh) {
 	GPU::setupBuffer(indexBuffer);
 	GPU::uploadBuffer(indexBuffer, inSize, reinterpret_cast<unsigned char *>(mesh.indices.data()));
 
-	mesh.gpu->count		   = GLsizei(mesh.indices.size());
+	mesh.gpu->count		   = mesh.indices.size();
 	mesh.gpu->indexBuffer  = std::move(indexBuffer.gpu);
 	mesh.gpu->vertexBuffer = std::move(vertexBuffer.gpu);
 }
@@ -1159,6 +1168,11 @@ void GPU::drawMesh(const Mesh & mesh) {
 //		glBindVertexArray(mesh.gpu->id);
 //		_metrics.vertexBindings += 1;
 //	}
+	// TODO: vkCmdBindPipeline
+	VkDeviceSize offset = 0;
+	vkCmdBindVertexBuffers(_context.getCurrentCommandBuffer(), 0, 1, &(mesh.gpu->vertexBuffer->buffer), &offset);
+	vkCmdBindIndexBuffer(_context.getCurrentCommandBuffer(), mesh.gpu->indexBuffer->buffer, 0, VK_INDEX_TYPE_UINT32);
+	vkCmdDrawIndexed(_context.getCurrentCommandBuffer(), static_cast<uint32_t>(mesh.gpu->count), 1, 0, 0, 0);
 //	glDrawElements(GL_TRIANGLES, mesh.gpu->count, GL_UNSIGNED_INT, static_cast<void *>(nullptr));
 //	_metrics.drawCalls += 1;
 }
@@ -1170,6 +1184,9 @@ void GPU::drawTesselatedMesh(const Mesh & mesh, uint patchSize){
 //		glBindVertexArray(mesh.gpu->id);
 //		_metrics.vertexBindings += 1;
 //	}
+	// TODO: vkCmdBindPipeline
+	// TODO: check if we need to specify the patch size or if it's specified in the shader
+	drawMesh(mesh);
 //	glDrawElements(GL_PATCHES, mesh.gpu->count, GL_UNSIGNED_INT, static_cast<void *>(nullptr));
 //	_metrics.drawCalls += 1;
 
@@ -1181,7 +1198,11 @@ void GPU::drawQuad(){
 //		glBindVertexArray(_vao);
 //		_metrics.vertexBindings += 1;
 //	}
-//	glDrawArrays(GL_TRIANGLES, 0, 3);
+	// TODO: vkCmdBindPipeline
+	VkDeviceSize offset = 0;
+	vkCmdBindVertexBuffers(_context.getCurrentCommandBuffer(), 0, 1, &(_quadBuffer->buffer), &offset);
+	vkCmdDraw(_context.getCurrentCommandBuffer(), 3, 1, 0, 0);
+	//	glDrawArrays(GL_TRIANGLES, 0, 3);
 //	_metrics.quadCalls += 1;
 }
 
@@ -1901,8 +1922,12 @@ const GPU::Metrics & GPU::getMetrics(){
 
 void GPU::cleanup(){
 	GPU::sync();
+
 	vkDestroyCommandPool(_context.device, _context.commandPool, nullptr);
+
+	GPU::clean(*_quadBuffer);
 	//vkDestroyDevice(_context.device, nullptr);
+
 	glslang::FinalizeProcess();
 }
 
@@ -1945,5 +1970,5 @@ void GPU::clean(Program & program){
 GPUState GPU::_state;
 GPU::Metrics GPU::_metrics;
 GPU::Metrics GPU::_metricsPrevious;
-//GPU::Handle GPU::_vao = 0;
+std::unique_ptr<GPUBuffer> GPU::_quadBuffer = nullptr;
 
