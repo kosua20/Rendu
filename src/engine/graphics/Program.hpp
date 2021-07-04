@@ -3,6 +3,7 @@
 #include "Common.hpp"
 #include <map>
 
+#include <volk/volk.h>
 
 /**
  \brief Represents a group of shaders used for rendering.
@@ -77,7 +78,7 @@ public:
 
 	/** Delete the program on the GPU.
 	 */
-	void clean() const;
+	void clean();
 
 	/** Set a given uniform value.
 	 \param name the uniform name
@@ -272,7 +273,13 @@ public:
 private:
 
 	void updateUniformMetric() const; ///< Update internal metrics.
-	
+
+	VkShaderModule vertex = VK_NULL_HANDLE;
+	VkShaderModule geometry = VK_NULL_HANDLE;
+	VkShaderModule tesscontrol = VK_NULL_HANDLE;
+	VkShaderModule tesseval = VK_NULL_HANDLE;
+	VkShaderModule fragment = VK_NULL_HANDLE;
+
 	//GLuint _id;								 ///< The GPU program ID.
 	std::string _name;				 		 ///< The shader name
 	//std::map<std::string, GLint> _uniforms;  ///< Internal list of automatically registered uniforms and their locations. We keep this separate to avoid exposing GL internal types.

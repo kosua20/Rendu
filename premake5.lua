@@ -68,7 +68,7 @@ function CommonSetup()
 	-- System headers are used to support angled brackets in Xcode.
 	filter("system:macosx")
 		sysincludedirs({ "/usr/local/include/" })
-
+		libdirs({ "/usr/local/lib" })
 end	
 
 function ExecutableSetup()
@@ -78,11 +78,12 @@ function ExecutableSetup()
 	-- Link with compiled librarires
 	includedirs({ "src/engine" })
 	links({"Engine"})
+	links({"glslang", "OSDependent", "MachineIndependent", "GenericCodeGen", "OGLCompiler", "SPIRV", "SPIRV-Tools", "SPIRV-Tools-opt" })
 	links({"nfd", "glfw3"})
-
+	
 	-- Libraries for each platform.
 	filter("system:macosx")
-		links({"Cocoa.framework", "IOKit.framework", "CoreVideo.framework", "AppKit.framework"})
+		links({"Cocoa.framework", "IOKit.framework", "CoreVideo.framework", "AppKit.framework", "pthread"})
 
 	filter("system:windows")
 		links({"comctl32"})

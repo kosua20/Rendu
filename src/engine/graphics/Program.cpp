@@ -12,11 +12,13 @@ Program::Program(const std::string & name, const std::string & vertexContent, co
 }
 
 void Program::reload(const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, const std::string & tessControlContent, const std::string & tessEvalContent) {
-	GPU::Bindings bindings;
 
-//	const std::string debugName = _name;
-//
-//	//_id = GPU::createProgram(vertexContent, fragmentContent, geometryContent, tessControlContent, tessEvalContent, bindings, debugName);
+	GPU::clean(*this);
+	
+	GPU::Bindings bindings;
+	
+	const std::string debugName = _name;
+	GPU::createProgram(*this, vertexContent, fragmentContent, geometryContent, tessControlContent, tessEvalContent, bindings, debugName);
 //	_uniforms.clear();
 //	_uniformInfos.clear();
 
@@ -161,8 +163,8 @@ void Program::use() const {
 	//GPU::bindProgram(*this);
 }
 
-void Program::clean() const {
-	//glDeleteProgram(_id);
+void Program::clean() {
+	GPU::clean(*this);
 }
 
 void Program::uniform(const std::string & name, bool t) const {

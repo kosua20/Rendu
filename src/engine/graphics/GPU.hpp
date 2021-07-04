@@ -100,7 +100,7 @@ public:
 	 \param finalLog will contain the compilation log of the shader
 	 \return the GPU ID of the shader object
 	 */
-	static Handle loadShader(const std::string & prog, ShaderType type, Bindings & bindings, std::string & finalLog);
+	static VkShaderModule loadShader(const std::string & prog, ShaderType type, Bindings & bindings, std::string & finalLog);
 
 	/** Create and link a GLProgram using the shader code contained in the given strings.
 	 \param vertexContent the vertex shader string
@@ -112,7 +112,7 @@ public:
 	 \param debugInfos the name of the program, or any custom debug infos that will be logged.
 	 \return the GPU ID of the program
 	 */
-	static Handle createProgram(const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, const std::string & tessControlContent, const std::string & tessEvalContent, Bindings & bindings, const std::string & debugInfos);
+	static void createProgram(Program & program, const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, const std::string & tessControlContent, const std::string & tessEvalContent, Bindings & bindings, const std::string & debugInfos);
 
 	/** Bind a program to use for rendering
 	 \param program the program to use
@@ -461,6 +461,7 @@ private:
 
 	static void clean(Framebuffer & framebuffer);
 
+	static void clean(Program & program);
 
 	static GPUState _state; ///< Current GPU state for caching.
 	static Metrics _metrics; ///< Internal metrics (draw count, state changes,...).

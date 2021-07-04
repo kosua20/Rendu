@@ -10,6 +10,8 @@
 
 #include <sstream>
 #include <GLFW/glfw3.h>
+#include <glslang/Public/ShaderLang.h>
+#include <glslang/SPIRV/GlslangToSpv.h>
 
 #include <set>
 
@@ -139,6 +141,11 @@ bool GPU::setup(const std::string & appName) {
 	//	glBindVertexArray(_vao);
 	//	glBindVertexArray(0);
 	//	_state.vertexArray = 0;
+	
+	if(!glslang::InitializeProcess()){
+		Log::Error() << Log::GPU << "Unable to initialize shader compiler." << std::endl;
+		return false;
+	}
 	return true;
 }
 
@@ -296,255 +303,232 @@ int GPU::checkFramebufferStatus() {
 	return 0;
 }
 
-GPU::Handle GPU::loadShader(const std::string & prog, ShaderType type, Bindings & bindings, std::string & finalLog) {
-	// We need to detect texture slots and store them, to avoid having to register them in
-	// the rest of the code (object, renderer), while not having support for 'layout(binding=n)' in OpenGL <4.2.
-//	std::stringstream inputLines(prog);
-//	std::vector<std::string> outputLines;
-//	std::string line;
-//	bool isInMultiLineComment = false;
-//	while(std::getline(inputLines, line)) {
-//
-//		// Comment handling.
-//		const std::string::size_type commentPosBegin = line.find("/*");
-//		const std::string::size_type commentPosEnd	 = line.rfind("*/");
-//		const std::string::size_type commentMonoPos	 = line.find("//");
-//		// We suppose no multi-line comment nesting, that way we can tackle them linearly.
-//		if(commentPosBegin != std::string::npos && commentPosEnd != std::string::npos) {
-//			// Both token exist.
-//			// Either this is "end begin", in which case we are still in a comment.
-//			// Or this is "begin end", ie a single ligne comment.
-//			isInMultiLineComment = commentPosBegin > commentPosEnd;
-//		} else if(commentPosEnd != std::string::npos) {
-//			// Only an end token.
-//			isInMultiLineComment = false;
-//		} else if(commentPosBegin != std::string::npos) {
-//			// Only a begin token.
-//			isInMultiLineComment = true;
-//		}
-//
-//		// Find a line containing "layout...binding...uniform..."
-//		const std::string::size_type layoutPos	= line.find("layout");
-//		const std::string::size_type bindingPos = line.find("binding");
-//		const std::string::size_type uniformPos = line.find("uniform");
-//
-//		const bool isNotALayoutBindingUniform		 = (layoutPos == std::string::npos || bindingPos == std::string::npos || uniformPos == std::string::npos);
-//		const bool isALayoutInsideAMultiLineComment	 = isInMultiLineComment && (layoutPos > commentPosBegin || uniformPos < commentPosEnd);
-//		const bool isALayoutInsideASingleLineComment = commentMonoPos != std::string::npos && layoutPos > commentMonoPos;
-//		if(isNotALayoutBindingUniform || isALayoutInsideAMultiLineComment || isALayoutInsideASingleLineComment) {
-//			// We don't modify the line.
-//			outputLines.push_back(line);
-//			continue;
-//		}
-//		// Extract the statement.
-//		const std::string::size_type startStatement = std::min(layoutPos, uniformPos);
-//		const std::string::size_type endStatement	= line.find_first_of(";{", startStatement);
-//		int slot									= 0;
-//		std::string name;
-//		{
-//			const std::string statement = TextUtilities::trim(line.substr(startStatement, endStatement - startStatement), "\t ");
-//			// Extract the location and the name.
-//			const std::string::size_type bindingPosSub = statement.find("binding");
-//			const std::string::size_type firstSlotPos  = statement.find_first_of("0123456789", bindingPosSub);
-//			const std::string::size_type lastSlotPos   = statement.find_first_not_of("0123456789", firstSlotPos) - 1;
-//			const std::string::size_type startPosName  = statement.find_last_of(" \t") + 1;
-//			name									   = statement.substr(startPosName);
-//			slot									   = std::stoi(statement.substr(firstSlotPos, lastSlotPos - firstSlotPos + 1));
-//		}
-//		// Two possibles cases, sampler or buffer.
-//		const std::string::size_type samplerPos = line.find("sampler", layoutPos);
-//		const bool isSampler					= samplerPos != std::string::npos;
-//		if(isSampler) {
-//			const std::string::size_type endSamplerPos	 = line.find_first_of(' ', samplerPos) - 1;
-//			const std::string::size_type startSamplerPos = line.find_last_of(' ', samplerPos) + 1;
-//			const std::string samplerType				 = line.substr(startSamplerPos, endSamplerPos - startSamplerPos + 1);
-//			std::string outputLine						 = "uniform " + samplerType + " ";
-//			outputLine += name + ";";
-//			outputLines.push_back(outputLine);
-//		} else {
-//			// We just need to remove the binding spec from the layout.
-//			const std::string::size_type layoutContentStart = line.find_first_of("(", layoutPos) + 1;
-//			const std::string::size_type layoutContentEnd	= line.find_first_of(")", layoutContentStart);
-//			// Two options: either binding is the only argument.
-//			const std::string::size_type splitPos = line.find_first_of(",", layoutContentStart, layoutContentEnd - layoutContentStart);
-//			if(splitPos == std::string::npos) {
-//				// Remove layout entirely.
-//				const std::string outputLine = line.substr(0, layoutPos) + line.substr(layoutContentEnd + 1);
-//				outputLines.push_back(outputLine);
-//			} else {
-//				// Or there are other specifiers to preserve.
-//				std::string::size_type sepBefore = line.find_last_of("(,", bindingPos);
-//				std::string::size_type sepAfter	 = line.find_first_of("),", bindingPos);
-//				if(line[sepBefore] == '(') {
-//					sepBefore += 1;
-//				}
-//				if(line[sepAfter] == ')') {
-//					sepAfter -= 1;
-//				}
-//				const std::string outputLine = line.substr(0, sepBefore) + line.substr(sepAfter + 1);
-//				outputLines.push_back(outputLine);
-//			}
-//		}
-//
-//		if(bindings.count(name) > 0 && bindings[name].location != slot) {
-//			Log::Warning() << Log::GPU << "Inconsistent binding location between linked shaders for \"" << name << "\"." << std::endl;
-//		}
-//		bindings[name].location = slot;
-//		bindings[name].type		= isSampler ? BindingType::TEXTURE : BindingType::UNIFORM_BUFFER;
-//		Log::Verbose() << Log::GPU << "Detected binding (" << name << ", " << slot << ") => " << outputLines.back() << std::endl;
-//	}
-//	// Add OpenGL version.
-//	std::string outputProg = "#version 400\n#line 1 0\n";
-//	for(const auto & outputLine : outputLines) {
-//		outputProg.append(outputLine + "\n");
-//	}
-//
-//	// Create shader object.
-//	static const std::map<ShaderType, GLenum> types = {
-//		{ShaderType::VERTEX, GL_VERTEX_SHADER},
-//		{ShaderType::FRAGMENT, GL_FRAGMENT_SHADER},
-//		{ShaderType::GEOMETRY, GL_GEOMETRY_SHADER},
-//		{ShaderType::TESSCONTROL, GL_TESS_CONTROL_SHADER},
-//		{ShaderType::TESSEVAL, GL_TESS_EVALUATION_SHADER}
-//	};
-//
-//	GLuint id = glCreateShader(types.at(type));
-//	checkGPUError();
-//	// Setup string as source.
-//	const char * shaderProg = outputProg.c_str();
-//	glShaderSource(id, 1, &shaderProg, static_cast<const GLint *>(nullptr));
-//	// Compile the shader on the GPU.
-//	glCompileShader(id);
-//	checkGPUError();
-//
-//	GLint success;
-//	glGetShaderiv(id, GL_COMPILE_STATUS, &success);
-//	finalLog = "";
-//	// If compilation failed, get information and display it.
-//	if(success != GL_TRUE) {
-//		// Get the log string length for allocation.
-//		GLint infoLogLength;
-//		glGetShaderiv(id, GL_INFO_LOG_LENGTH, &infoLogLength);
-//		// Get the log string.
-//		std::vector<char> infoLog(size_t(std::max(infoLogLength, int(1))));
-//		glGetShaderInfoLog(id, infoLogLength, nullptr, &infoLog[0]);
-//		// Indent and clean.
-//		std::string infoLogString(infoLog.data(), infoLogLength);
-//
-//		TextUtilities::replace(infoLogString, "\n", "\n\t");
-//		infoLogString.insert(0, "\t");
-//		finalLog = infoLogString;
-//	}
-	// Return the id to the successfuly compiled shader program.
-	return 0;
+VkShaderModule GPU::loadShader(const std::string & prog, ShaderType type, Bindings & bindings, std::string & finalLog) {
+
+	// Add GLSL version.
+	std::string outputProg = "#version 450\n#line 1 0\n";
+	outputProg.append(prog);
+
+	// Create shader object.
+	static const std::map<ShaderType, EShLanguage> types = {
+		{ShaderType::VERTEX, EShLangVertex},
+		{ShaderType::FRAGMENT, EShLangFragment},
+		{ShaderType::GEOMETRY, EShLangGeometry},
+		{ShaderType::TESSCONTROL, EShLangTessControl},
+		{ShaderType::TESSEVAL, EShLangTessEvaluation}
+	};
+	const char* progStr = outputProg.c_str();
+	const EShLanguage stage = types.at(type);
+	glslang::TShader shader(stage);
+	shader.setStrings(&progStr, 1);
+	shader.setEntryPoint("main");
+	shader.setEnvInput(glslang::EShSourceGlsl, stage, glslang::EShClientVulkan, 100);
+	shader.setEnvClient(glslang::EShClientVulkan, glslang::EShTargetVulkan_1_1);
+	shader.setEnvTarget(glslang::EShTargetSpv, glslang::EShTargetSpv_1_3);
+
+	// Urgh, from glslang standalone example
+	static const TBuiltInResource defaultBuiltInResources = {
+		/* .MaxLights = */ 32, /* .MaxClipPlanes = */ 6, /* .MaxTextureUnits = */ 32,
+		/* .MaxTextureCoords = */ 32,
+		/* .MaxVertexAttribs = */ 64,
+		/* .MaxVertexUniformComponents = */ 4096,
+		/* .MaxVaryingFloats = */ 64,
+		/* .MaxVertexTextureImageUnits = */ 32,
+		/* .MaxCombinedTextureImageUnits = */ 80,
+		/* .MaxTextureImageUnits = */ 32,
+		/* .MaxFragmentUniformComponents = */ 4096,
+		/* .MaxDrawBuffers = */ 32,
+		/* .MaxVertexUniformVectors = */ 128,
+		/* .MaxVaryingVectors = */ 8,
+		/* .MaxFragmentUniformVectors = */ 16,
+		/* .MaxVertexOutputVectors = */ 16,
+		/* .MaxFragmentInputVectors = */ 15,
+		/* .MinProgramTexelOffset = */ -8,
+		/* .MaxProgramTexelOffset = */ 7,
+		/* .MaxClipDistances = */ 8,
+		/* .MaxComputeWorkGroupCountX = */ 65535,
+		/* .MaxComputeWorkGroupCountY = */ 65535,
+		/* .MaxComputeWorkGroupCountZ = */ 65535,
+		/* .MaxComputeWorkGroupSizeX = */ 1024,
+		/* .MaxComputeWorkGroupSizeY = */ 1024,
+		/* .MaxComputeWorkGroupSizeZ = */ 64,
+		/* .MaxComputeUniformComponents = */ 1024,
+		/* .MaxComputeTextureImageUnits = */ 16,
+		/* .MaxComputeImageUniforms = */ 8,
+		/* .MaxComputeAtomicCounters = */ 8,
+		/* .MaxComputeAtomicCounterBuffers = */ 1,
+		/* .MaxVaryingComponents = */ 60,
+		/* .MaxVertexOutputComponents = */ 64,
+		/* .MaxGeometryInputComponents = */ 64,
+		/* .MaxGeometryOutputComponents = */ 128,
+		/* .MaxFragmentInputComponents = */ 128,
+		/* .MaxImageUnits = */ 8,
+		/* .MaxCombinedImageUnitsAndFragmentOutputs = */ 8,
+		/* .MaxCombinedShaderOutputResources = */ 8,
+		/* .MaxImageSamples = */ 0,
+		/* .MaxVertexImageUniforms = */ 0,
+		/* .MaxTessControlImageUniforms = */ 0,
+		/* .MaxTessEvaluationImageUniforms = */ 0,
+		/* .MaxGeometryImageUniforms = */ 0,
+		/* .MaxFragmentImageUniforms = */ 8,
+		/* .MaxCombinedImageUniforms = */ 8,
+		/* .MaxGeometryTextureImageUnits = */ 16,
+		/* .MaxGeometryOutputVertices = */ 256,
+		/* .MaxGeometryTotalOutputComponents = */ 1024,
+		/* .MaxGeometryUniformComponents = */ 1024,
+		/* .MaxGeometryVaryingComponents = */ 64,
+		/* .MaxTessControlInputComponents = */ 128,
+		/* .MaxTessControlOutputComponents = */ 128,
+		/* .MaxTessControlTextureImageUnits = */ 16,
+		/* .MaxTessControlUniformComponents = */ 1024,
+		/* .MaxTessControlTotalOutputComponents = */ 4096,
+		/* .MaxTessEvaluationInputComponents = */ 128,
+		/* .MaxTessEvaluationOutputComponents = */ 128,
+		/* .MaxTessEvaluationTextureImageUnits = */ 16,
+		/* .MaxTessEvaluationUniformComponents = */ 1024,
+		/* .MaxTessPatchComponents = */ 120,
+		/* .MaxPatchVertices = */ 32,
+		/* .MaxTessGenLevel = */ 64,
+		/* .MaxViewports = */ 16,
+		/* .MaxVertexAtomicCounters = */ 0,
+		/* .MaxTessControlAtomicCounters = */ 0,
+		/* .MaxTessEvaluationAtomicCounters = */ 0,
+		/* .MaxGeometryAtomicCounters = */ 0,
+		/* .MaxFragmentAtomicCounters = */ 8,
+		/* .MaxCombinedAtomicCounters = */ 8,
+		/* .MaxAtomicCounterBindings = */ 1,
+		/* .MaxVertexAtomicCounterBuffers = */ 0,
+		/* .MaxTessControlAtomicCounterBuffers = */ 0,
+		/* .MaxTessEvaluationAtomicCounterBuffers = */ 0,
+		/* .MaxGeometryAtomicCounterBuffers = */ 0,
+		/* .MaxFragmentAtomicCounterBuffers = */ 1,
+		/* .MaxCombinedAtomicCounterBuffers = */ 1,
+		/* .MaxAtomicCounterBufferSize = */ 16384,
+		/* .MaxTransformFeedbackBuffers = */ 4,
+		/* .MaxTransformFeedbackInterleavedComponents = */ 64,
+		/* .MaxCullDistances = */ 8,
+		/* .MaxCombinedClipAndCullDistances = */ 8,
+		/* .MaxSamples = */ 4,
+		/* .maxMeshOutputVerticesNV = */ 256,
+		/* .maxMeshOutputPrimitivesNV = */ 512,
+		/* .maxMeshWorkGroupSizeX_NV = */ 32,
+		/* .maxMeshWorkGroupSizeY_NV = */ 1,
+		/* .maxMeshWorkGroupSizeZ_NV = */ 1,
+		/* .maxTaskWorkGroupSizeX_NV = */ 32,
+		/* .maxTaskWorkGroupSizeY_NV = */ 1,
+		/* .maxTaskWorkGroupSizeZ_NV = */ 1,
+		/* .maxMeshViewCountNV = */ 4,
+		/* .maxDualSourceDrawBuffersEXT = */ 1,
+
+		/* .limits = */ {
+			/* .nonInductiveForLoops = */ 1,
+			/* .whileLoops = */ 1,
+			/* .doWhileLoops = */ 1,
+			/* .generalUniformIndexing = */ 1,
+			/* .generalAttributeMatrixVectorIndexing = */ 1,
+			/* .generalVaryingIndexing = */ 1,
+			/* .generalSamplerIndexing = */ 1,
+			/* .generalVariableIndexing = */ 1,
+			/* .generalConstantMatrixVectorIndexing = */ 1,
+		}};
+	finalLog = "";
+	const EShMessages messages = (EShMessages)(EShMsgDefault | EShMsgSpvRules | EShMsgVulkanRules);
+	bool success = shader.parse(&defaultBuiltInResources, 110, true, messages);
+	if(!success){
+		std::string infoLogString(shader.getInfoLog());
+		TextUtilities::replace(infoLogString, "\n", "\n\t");
+		infoLogString.insert(0, "\t");
+		finalLog = infoLogString;
+		return VK_NULL_HANDLE;
+	}
+
+	glslang::TProgram program;
+	program.addShader(&shader);
+	success = program.link(messages);
+	if(!success){
+		std::string infoLogString(program.getInfoLog());
+		finalLog = infoLogString;
+		return VK_NULL_HANDLE;
+	}
+	if(!program.mapIO()){
+		finalLog = "Unable to map IO.";
+		return VK_NULL_HANDLE;
+	}
+
+
+	std::vector<unsigned int> spirv;
+	glslang::SpvOptions spvOptions;
+	spvOptions.generateDebugInfo = false;
+	spvOptions.disableOptimizer = false;
+	spvOptions.optimizeSize = true;
+	spvOptions.disassemble = false;
+	spvOptions.validate = false;
+	glslang::GlslangToSpv(*program.getIntermediate(stage), spirv, &spvOptions);
+	if(spirv.empty()){
+		finalLog = "Unable to generate SPIRV.";
+		return VK_NULL_HANDLE;
+	}
+
+	VkShaderModuleCreateInfo createInfo{};
+	createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+	createInfo.codeSize = spirv.size() * sizeof(unsigned int);
+	createInfo.pCode = reinterpret_cast<const uint32_t*>(spirv.data());
+	VkShaderModule shaderModule;
+	if(vkCreateShaderModule(_context.device, &createInfo, nullptr, &shaderModule) != VK_SUCCESS) {
+		finalLog = "Unable to create shader module.";
+		return VK_NULL_HANDLE;
+	}
+
+	return shaderModule;
 }
 
-GPU::Handle GPU::createProgram(const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, const std::string & tessControlContent, const std::string & tessEvalContent, Bindings & bindings, const std::string & debugInfos) {
-//	GLuint vp(0), fp(0), gp(0), tcp(0), tep(0);
-//	const GLuint id = glCreateProgram();
-//	checkGPUError();
-//
-//	Log::Verbose() << Log::GPU << "Compiling " << debugInfos << "." << std::endl;
-//
-//	std::string compilationLog;
-//	// If vertex program code is given, compile it.
-//	if(!vertexContent.empty()) {
-//		vp = loadShader(vertexContent, ShaderType::VERTEX, bindings, compilationLog);
-//		glAttachShader(id, vp);
-//		if(!compilationLog.empty()) {
-//			Log::Error() << Log::GPU << "Vertex shader failed to compile:" << std::endl
-//						 << compilationLog << std::endl;
-//		}
-//	}
-//	// If fragment program code is given, compile it.
-//	if(!fragmentContent.empty()) {
-//		fp = loadShader(fragmentContent, ShaderType::FRAGMENT, bindings, compilationLog);
-//		glAttachShader(id, fp);
-//		if(!compilationLog.empty()) {
-//			Log::Error() << Log::GPU << "Fragment shader failed to compile:" << std::endl
-//						 << compilationLog << std::endl;
-//		}
-//	}
-//	// If geometry program code is given, compile it.
-//	if(!geometryContent.empty()) {
-//		gp = loadShader(geometryContent, ShaderType::GEOMETRY, bindings, compilationLog);
-//		glAttachShader(id, gp);
-//		if(!compilationLog.empty()) {
-//			Log::Error() << Log::GPU << "Geometry shader failed to compile:" << std::endl
-//						 << compilationLog << std::endl;
-//		}
-//	}
-//	// If tesselation control program code is given, compile it.
-//	if(!tessControlContent.empty()) {
-//		tcp = loadShader(tessControlContent, ShaderType::TESSCONTROL, bindings, compilationLog);
-//		glAttachShader(id, tcp);
-//		if(!compilationLog.empty()) {
-//			Log::Error() << Log::GPU << "Tessellation control shader failed to compile:" << std::endl
-//						 << compilationLog << std::endl;
-//		}
-//	}
-//	// If tessellation evaluation program code is given, compile it.
-//	if(!tessEvalContent.empty()) {
-//		tep = loadShader(tessEvalContent, ShaderType::TESSEVAL, bindings, compilationLog);
-//		glAttachShader(id, tep);
-//		if(!compilationLog.empty()) {
-//			Log::Error() << Log::GPU << "Tessellation evaluation shader failed to compile:" << std::endl
-//						 << compilationLog << std::endl;
-//		}
-//	}
-//
-//	// Link everything
-//	glLinkProgram(id);
-//	checkGPUError();
-//	//Check linking status.
-//	GLint success = GL_FALSE;
-//	glGetProgramiv(id, GL_LINK_STATUS, &success);
-//
-//	// If linking failed, query info and display it.
-//	if(!success) {
-//		// Get the log string length for allocation.
-//		GLint infoLogLength;
-//		glGetProgramiv(id, GL_INFO_LOG_LENGTH, &infoLogLength);
-//		// Get the log string.
-//		std::vector<char> infoLog(size_t(std::max(infoLogLength, int(1))));
-//		glGetProgramInfoLog(id, infoLogLength, nullptr, &infoLog[0]);
-//		// Indent and clean.
-//		std::string infoLogString(infoLog.data(), infoLogLength);
-//		TextUtilities::replace(infoLogString, "\n", "\n\t");
-//		infoLogString.insert(0, "\t");
-//		// Output.
-//		Log::Error() << Log::GPU
-//					 << "Failed linking program " << debugInfos << ": " << std::endl
-//					 << infoLogString << std::endl;
-//		return 0;
-//	}
-//	// We can now clean the shaders objects, by first detaching them
-//	if(vp != 0) {
-//		glDetachShader(id, vp);
-//	}
-//	if(fp != 0) {
-//		glDetachShader(id, fp);
-//	}
-//	if(gp != 0) {
-//		glDetachShader(id, gp);
-//	}
-//	if(tcp != 0) {
-//		glDetachShader(id, tcp);
-//	}
-//	if(tep != 0) {
-//		glDetachShader(id, tep);
-//	}
-//	checkGPUError();
-//	//And deleting them
-//	glDeleteShader(vp);
-//	glDeleteShader(fp);
-//	glDeleteShader(gp);
-//	glDeleteShader(tcp);
-//	glDeleteShader(tep);
-//
-//	checkGPUError();
-	// Return the id to the successfuly linked GLProgram.
-	return 0;
+void GPU::createProgram(Program& program, const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, const std::string & tessControlContent, const std::string & tessEvalContent, Bindings & bindings, const std::string & debugInfos) {
+
+	Log::Verbose() << Log::GPU << "Compiling " << debugInfos << "." << std::endl;
+
+	std::string compilationLog;
+	// If vertex program code is given, compile it.
+	if(!vertexContent.empty()) {
+		program.vertex = loadShader(vertexContent, ShaderType::VERTEX, bindings, compilationLog);
+		if(!compilationLog.empty()) {
+			Log::Error() << Log::GPU << "Vertex shader failed to compile:" << std::endl
+						 << compilationLog << std::endl;
+		}
+	}
+	// If fragment program code is given, compile it.
+	if(!fragmentContent.empty()) {
+		program.fragment = loadShader(fragmentContent, ShaderType::FRAGMENT, bindings, compilationLog);
+		if(!compilationLog.empty()) {
+			Log::Error() << Log::GPU << "Fragment shader failed to compile:" << std::endl
+						 << compilationLog << std::endl;
+		}
+	}
+	// If geometry program code is given, compile it.
+	if(!geometryContent.empty()) {
+		program.geometry = loadShader(geometryContent, ShaderType::GEOMETRY, bindings, compilationLog);
+		if(!compilationLog.empty()) {
+			Log::Error() << Log::GPU << "Geometry shader failed to compile:" << std::endl
+						 << compilationLog << std::endl;
+		}
+	}
+	// If tesselation control program code is given, compile it.
+	if(!tessControlContent.empty()) {
+		program.tesscontrol = loadShader(tessControlContent, ShaderType::TESSCONTROL, bindings, compilationLog);
+		if(!compilationLog.empty()) {
+			Log::Error() << Log::GPU << "Tessellation control shader failed to compile:" << std::endl
+						 << compilationLog << std::endl;
+		}
+	}
+	// If tessellation evaluation program code is given, compile it.
+	if(!tessEvalContent.empty()) {
+		program.tesseval = loadShader(tessEvalContent, ShaderType::TESSEVAL, bindings, compilationLog);
+		if(!compilationLog.empty()) {
+			Log::Error() << Log::GPU << "Tessellation evaluation shader failed to compile:" << std::endl
+						 << compilationLog << std::endl;
+		}
+	}
+
+	//checkGPUError();
 }
 
 void GPU::bindProgram(const Program & program){
@@ -1919,6 +1903,7 @@ void GPU::cleanup(){
 	GPU::sync();
 	vkDestroyCommandPool(_context.device, _context.commandPool, nullptr);
 	//vkDestroyDevice(_context.device, nullptr);
+	glslang::FinalizeProcess();
 }
 
 
@@ -1934,12 +1919,27 @@ void GPU::clean(Framebuffer & framebuffer){
 }
 
 void GPU::clean(GPUMesh & mesh){
-
+	// Nothing to do, buffers will all be cleaned up.
 }
 
 void GPU::clean(GPUBuffer & buffer){
 	vkDestroyBuffer(_context.device, buffer.buffer, nullptr);
 	vkFreeMemory(_context.device, buffer.data, nullptr);
+}
+
+void GPU::clean(Program & program){
+	vkDestroyShaderModule(_context.device, program.vertex, nullptr);
+	vkDestroyShaderModule(_context.device, program.geometry, nullptr);
+	vkDestroyShaderModule(_context.device, program.tesscontrol, nullptr);
+	vkDestroyShaderModule(_context.device, program.tesseval, nullptr);
+	vkDestroyShaderModule(_context.device, program.fragment, nullptr);
+
+	program.vertex = VK_NULL_HANDLE;
+	program.geometry = VK_NULL_HANDLE;
+	program.tesscontrol = VK_NULL_HANDLE;
+	program.tesseval = VK_NULL_HANDLE;
+	program.fragment = VK_NULL_HANDLE;
+
 }
 
 GPUState GPU::_state;
