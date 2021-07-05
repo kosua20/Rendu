@@ -476,6 +476,14 @@ public:
 	/** Move constructor. */
 	GPUMesh(GPUMesh &&) = delete;
 
+	struct InputState {
+		std::vector<VkVertexInputAttributeDescription> attributes;
+		std::vector<VkVertexInputBindingDescription> bindings;
+		std::vector<VkBuffer> buffers;
+		std::vector<VkDeviceSize> offsets;
+	};
+
+	InputState state;
 };
 
 
@@ -523,6 +531,9 @@ private:
 	uint _count = 2;
 };
 
+class Program;
+class Framebuffer;
+
 /**
  \brief Internal GPU state ; not all API options are exposed, only these that can be toggled in Rendu.
  \note This is only provided as a read-only state. Modifying attributes won't affect the current GPU state.
@@ -534,60 +545,52 @@ public:
 	/// Constructor.
 	GPUState() = default;
 
+	bool isEquivalent(const GPUState& other) const;
+
 	// Blend state.
-	glm::vec4 blendColor {0.0f}; ///< Blend color for constant blend mode.
-	BlendFunction blendSrcRGB; ///< Blending source type for RGB channels.
-	BlendFunction blendSrcAlpha; ///< Blending source type for alpha channel.
-	BlendFunction blendDstRGB; ///< Blending destination type for RGB channels.
-	BlendFunction blendDstAlpha; ///< Blending destination type for alpha channel.
-	BlendEquation blendEquationRGB; ///< Blending equation for RGB channels.
-	BlendEquation blendEquationAlpha; ///< Blending equation for alpha channel.
+	//glm::vec4 blendColor {0.0f}; ///< Blend color for constant blend mode.
+	BlendFunction blendSrcRGB = BlendFunction::ONE; ///< Blending source type for RGB channels.
+	BlendFunction blendSrcAlpha = BlendFunction::ONE; ///< Blending source type for alpha channel.
+	BlendFunction blendDstRGB = BlendFunction::ONE; ///< Blending destination type for RGB channels.
+	BlendFunction blendDstAlpha = BlendFunction::ONE; ///< Blending destination type for alpha channel.
+	BlendEquation blendEquationRGB = BlendEquation::ADD; ///< Blending equation for RGB channels.
+	BlendEquation blendEquationAlpha = BlendEquation::ADD; ///< Blending equation for alpha channel.
 	bool blend = false; ///< Blending enabled or not.
 
 	// Color state.
-	glm::vec4 colorClearValue {0.0f}; ///< Color for clearing framebuffer.
-	glm::bvec4 colorWriteMask {false}; ///< Which channels should be written to when rendering.
-	bool framebufferSRGB = false; ///< Framebuffer sRGB conversion enabled or not.
+	//glm::vec4 colorClearValue {0.0f}; ///< Color for clearing framebuffer.
+	glm::bvec4 colorWriteMask {true}; ///< Which channels should be written to when rendering.
 
 	// Geometry state.
-	Faces cullFaceMode = Faces::ALL; ///< Which faces should be culled.
+	Faces cullFaceMode = Faces::BACK; ///< Which faces should be culled.
 	PolygonMode polygonMode = PolygonMode::FILL; ///< How should polygons be processed.
-	float polygonOffsetFactor = 0.0f; ///< Polygon offset depth scaling.
-	float polygonOffsetUnits = 0.0f; ///< Polygon offset depth shifting.
-	bool polygonOffsetFill	= false; ///< Is polygon offset enabled for points or not.
-	bool polygonOffsetLine	= false; ///< Is polygon offset enabled for lines or not.
-	bool polygonOffsetPoint = false; ///< Is polygon offset enabled for faces or not.
+	//float polygonOffsetFactor = 0.0f; ///< Polygon offset depth scaling.
+	//float polygonOffsetUnits = 0.0f; ///< Polygon offset depth shifting.
+	//bool polygonOffset	= false; ///< Is polygon offset enabled or not.
 	bool cullFace	  = false; ///< Is backface culling enabled or not.
 
 	// Depth state.
-	glm::vec2 depthRange {0.0f}; ///< Depth value valid range.
-	TestFunction depthFunc; ///< Depth test function.
-	float depthClearValue = 0.0f; ///< Depth for clearing depth buffer.
+	//glm::vec2 depthRange {0.0f, 1.f}; ///< Depth value valid range.
+	TestFunction depthFunc = TestFunction::LESS; ///< Depth test function.
+	//float depthClearValue = 1.0f; ///< Depth for clearing depth buffer.
 	bool depthTest	= false; ///< Is depth test enabled or not.
-	bool depthClamp	  = false; ///< Should depth be clamped to the valid range or not.
-	bool depthWriteMask	 = false; ///< Should depth be written to the depth buffer or not.
+	//bool depthClamp	  = false; ///< Should depth be clamped to the valid range or not.
+	bool depthWriteMask	 = true; ///< Should depth be written to the depth buffer or not.
 
 	// Stencil state
-	TestFunction stencilFunc; ///< Stencil test function.
-	StencilOp stencilFail; ///< Operation when the stencil test fails.
-	StencilOp stencilPass; ///< Operation when the stencil test passes but the depth test fails.
-	StencilOp stencilDepthPass; ///< Operation when the stencil and depth tests passes.
+	TestFunction stencilFunc = TestFunction::ALWAYS; ///< Stencil test function.
+	StencilOp stencilFail = StencilOp::KEEP; ///< Operation when the stencil test fails.
+	StencilOp stencilPass = StencilOp::KEEP; ///< Operation when the stencil test passes but the depth test fails.
+	StencilOp stencilDepthPass = StencilOp::KEEP; ///< Operation when the stencil and depth tests passes.
 	uchar stencilValue = 0; ///< Stencil reference value.
-	uchar stencilClearValue = 0; ///< Stencil clear value.
 	bool stencilTest = false; ///< Is the stencil test enabled or not.
 	bool stencilWriteMask = true; ///< should stencil be written to the stencil buffer or not.
 
 	// Viewport and scissor state.
-	glm::vec4 viewport {0.0f}; ///< Current viewport region.
-	glm::vec4 scissorBox {0.0f}; ///< Current scissor region.
-	bool scissorTest = false; ///< Is geometry tested against the scissor region or not.
-
+	//glm::vec4 viewport {0.0f}; ///< Current viewport region.
+	bool sentinel = false;
 	// Binding state.
-	//using TextureBindings = std::unordered_map<GLenum, GLuint>; ///< List of texture shapes and handles.
-	//std::array<TextureBindings, 32> textures; ///< Textures bound at each target for each slot.
-	//GLuint readFramebuffer = 0; ///< Currently bound read framebuffer.
-	//GLuint drawFramebuffer = 0; ///< Currently bound draw framebuffer.
-	//GLuint program = 0; ///< Currently bound shader program.
-	//GLenum activeTexture = GL_TEXTURE0; ///< Currently active texture slot.
-	//GLuint vertexArray = 0; ///< Currently bound vertex array.
+	const Program* program = nullptr;
+	const GPUMesh* mesh = nullptr;
+	//const Framebuffer* framebuffer = nullptr;
 };

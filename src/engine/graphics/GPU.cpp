@@ -7,6 +7,7 @@
 
 
 #include "graphics/GPUInternal.hpp"
+#include "graphics/PipelineCache.hpp"
 
 #include <sstream>
 #include <GLFW/glfw3.h>
@@ -19,6 +20,8 @@ const std::vector<const char*> validationLayers = { "VK_LAYER_KHRONOS_validation
 const std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
 GPUContext _context;
+
+PipelineCache _pipelineCache;
 
 void * GPU::getInternal(){
 	return (void*)&_context;
@@ -214,21 +217,26 @@ bool GPU::setupWindow(Window * window){
 
 	// Create basic vertex array for screenquad.
 	{
-		std::vector<glm::vec3> quadVertices = {
+		_quad.positions = {
 			glm::vec3(-1.0f, -1.0f, 0.0f),
 			glm::vec3(3.0f, -1.0f, 0.0f),
 			glm::vec3(-1.0f, 3.0f, 0.0f),
 		};
-
-		const size_t vertSize = 3 * 3 * sizeof(float);
-		BufferBase quadSetupBuffer(vertSize, BufferType::VERTEX, DataUse::STATIC);
-		GPU::setupBuffer(quadSetupBuffer);
-		GPU::uploadBuffer(quadSetupBuffer, vertSize, reinterpret_cast<unsigned char *>(quadVertices.data()));
-		_quadBuffer = std::move(quadSetupBuffer.gpu);
+		_quad.indices = {0, 1, 2};
+		_quad.upload();
 	}
 
 	// Finally setup the swapchain.
 	window->_swapchain.init(_context, window->_config);
+	_context.mainRenderPass = window->_swapchain.getMainPass();
+	
+	// Create a pipeline cache.
+	VkPipelineCacheCreateInfo cacheInfos{};
+	cacheInfos.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
+	cacheInfos.flags = 0;
+	cacheInfos.initialDataSize = 0;
+	cacheInfos.pInitialData = nullptr;
+	vkCreatePipelineCache(_context.device, &cacheInfos, nullptr, &_context.pipelineCache);
 
 	// For now create a uniqe descriptor pool (for imgui)
 	{
@@ -494,7 +502,7 @@ VkShaderModule GPU::loadShader(const std::string & prog, ShaderType type, Bindin
 void GPU::createProgram(Program& program, const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, const std::string & tessControlContent, const std::string & tessEvalContent, Bindings & bindings, const std::string & debugInfos) {
 
 	Log::Verbose() << Log::GPU << "Compiling " << debugInfos << "." << std::endl;
-
+	
 	std::string compilationLog;
 	// If vertex program code is given, compile it.
 	if(!vertexContent.empty()) {
@@ -541,6 +549,7 @@ void GPU::createProgram(Program& program, const std::string & vertexContent, con
 }
 
 void GPU::bindProgram(const Program & program){
+	_state.program = &program;
 //	if(_state.program != program._id){
 //		_state.program = program._id;
 //		glUseProgram(program._id);
@@ -549,6 +558,7 @@ void GPU::bindProgram(const Program & program){
 }
 
 void GPU::bindFramebuffer(const Framebuffer & framebuffer){
+//	_state.framebuffer = &framebuffer;
 //	if(_state.drawFramebuffer != framebuffer._id){
 //		_state.drawFramebuffer = framebuffer._id;
 //		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer._id);
@@ -556,7 +566,7 @@ void GPU::bindFramebuffer(const Framebuffer & framebuffer){
 //	}
 }
 
-void GPU::bindFramebuffer(const Framebuffer & framebuffer, Framebuffer::Mode mode){
+//void GPU::bindFramebuffer(const Framebuffer & framebuffer, Framebuffer::Mode mode){
 	//if(mode == Framebuffer::Mode::WRITE && _state.drawFramebuffer != framebuffer._id){
 	//	_state.drawFramebuffer = framebuffer._id;
 	//	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer._id);
@@ -567,7 +577,7 @@ void GPU::bindFramebuffer(const Framebuffer & framebuffer, Framebuffer::Mode mod
 	//	_metrics.framebufferBindings += 1;
 	//}
 
-}
+//}
 
 void GPU::saveFramebuffer(const Framebuffer & framebuffer, const std::string & path, bool flip, bool ignoreAlpha) {
 
@@ -1108,36 +1118,140 @@ void GPU::setupMesh(Mesh & mesh) {
 	BufferBase stageVertexBuffer(totalSize, BufferType::CPUTOGPU, DataUse::STATIC);
 	GPU::setupBuffer(stageVertexBuffer);
 
+	GPUMesh::InputState& state = mesh.gpu->state;
+	state.attributes.clear();
+	state.bindings.clear();
+	state.offsets.clear();
+
 	// Fill in subregions.
 	size_t offset = 0;
+	//size_t vertexSize = 0;
+	uint bindingIndex = 0;
+	
 	if(!mesh.positions.empty()) {
-		const size_t size = sizeof(float) * 3 * mesh.positions.size();
+		const size_t elementSize = sizeof(float) * 3;
+		// Setup attribute.
+		state.attributes.emplace_back();
+		state.attributes.back().binding = bindingIndex;
+		state.attributes.back().location = 0;
+		state.attributes.back().offset = 0;
+		state.attributes.back().format = VK_FORMAT_R32G32B32_SFLOAT;
+		// Setup binding.
+		state.bindings.emplace_back();
+		state.bindings.back().binding = bindingIndex;
+		state.bindings.back().stride = elementSize;
+		state.bindings.back().inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+		state.offsets.emplace_back(offset);
+		++bindingIndex;
+		// Copy data.
+		const size_t size = elementSize * mesh.positions.size();
 		GPU::uploadBuffer(stageVertexBuffer, size, reinterpret_cast<unsigned char *>(mesh.positions.data()), offset);
 		offset += size;
 	}
+
 	if(!mesh.normals.empty()) {
-		const size_t size = sizeof(GLfloat) * 3 * mesh.normals.size();
+		const size_t elementSize = sizeof(float) * 3;
+		// Setup attribute.
+		state.attributes.emplace_back();
+		state.attributes.back().binding = bindingIndex;
+		state.attributes.back().location = 1;
+		state.attributes.back().offset = 0;
+		state.attributes.back().format = VK_FORMAT_R32G32B32_SFLOAT;
+		// Setup binding.
+		state.bindings.emplace_back();
+		state.bindings.back().binding = bindingIndex;
+		state.bindings.back().stride = elementSize;
+		state.bindings.back().inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+		state.offsets.emplace_back(offset);
+		++bindingIndex;
+		// Copy data.
+		const size_t size = elementSize * mesh.normals.size();
 		GPU::uploadBuffer(stageVertexBuffer, size, reinterpret_cast<unsigned char *>(mesh.normals.data()), offset);
 		offset += size;
 	}
+
 	if(!mesh.texcoords.empty()) {
-		const size_t size = sizeof(GLfloat) * 2 * mesh.texcoords.size();
+		const size_t elementSize = sizeof(float) * 2;
+		// Setup attribute.
+		state.attributes.emplace_back();
+		state.attributes.back().binding = bindingIndex;
+		state.attributes.back().location = 2;
+		state.attributes.back().offset = 0;
+		state.attributes.back().format = VK_FORMAT_R32G32_SFLOAT;
+		// Setup binding.
+		state.bindings.emplace_back();
+		state.bindings.back().binding = bindingIndex;
+		state.bindings.back().stride = elementSize;
+		state.bindings.back().inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+		state.offsets.emplace_back(offset);
+		++bindingIndex;
+		// Copy data.
+		const size_t size = elementSize * mesh.texcoords.size();
 		GPU::uploadBuffer(stageVertexBuffer, size, reinterpret_cast<unsigned char *>(mesh.texcoords.data()), offset);
 		offset += size;
 	}
+
 	if(!mesh.tangents.empty()) {
-		const size_t size = sizeof(GLfloat) * 3 * mesh.tangents.size();
+		const size_t elementSize = sizeof(float) * 3;
+		// Setup attribute.
+		state.attributes.emplace_back();
+		state.attributes.back().binding = bindingIndex;
+		state.attributes.back().location = 3;
+		state.attributes.back().offset = 0;
+		state.attributes.back().format = VK_FORMAT_R32G32B32_SFLOAT;
+		// Setup binding.
+		state.bindings.emplace_back();
+		state.bindings.back().binding = bindingIndex;
+		state.bindings.back().stride = elementSize;
+		state.bindings.back().inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+		state.offsets.emplace_back(offset);
+		++bindingIndex;
+		// Copy data.
+		const size_t size = elementSize * mesh.tangents.size();
 		GPU::uploadBuffer(stageVertexBuffer, size, reinterpret_cast<unsigned char *>(mesh.tangents.data()), offset);
 		offset += size;
 	}
+
 	if(!mesh.binormals.empty()) {
-		const size_t size = sizeof(GLfloat) * 3 * mesh.binormals.size();
+		const size_t elementSize = sizeof(float) * 3;
+		// Setup attribute.
+		state.attributes.emplace_back();
+		state.attributes.back().binding = bindingIndex;
+		state.attributes.back().location = 4;
+		state.attributes.back().offset = 0;
+		state.attributes.back().format = VK_FORMAT_R32G32B32_SFLOAT;
+		// Setup binding.
+		state.bindings.emplace_back();
+		state.bindings.back().binding = bindingIndex;
+		state.bindings.back().stride = elementSize;
+		state.bindings.back().inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+		state.offsets.emplace_back(offset);
+		++bindingIndex;
+		// Copy data.
+		const size_t size = elementSize * mesh.binormals.size();
 		GPU::uploadBuffer(stageVertexBuffer, size, reinterpret_cast<unsigned char *>(mesh.binormals.data()), offset);
 		offset += size;
 	}
+
 	if(!mesh.colors.empty()) {
-		const size_t size = sizeof(GLfloat) * 3 * mesh.colors.size();
+		const size_t elementSize = sizeof(float) * 3;
+		// Setup attribute.
+		state.attributes.emplace_back();
+		state.attributes.back().binding = bindingIndex;
+		state.attributes.back().location = 5;
+		state.attributes.back().offset = 0;
+		state.attributes.back().format = VK_FORMAT_R32G32B32_SFLOAT;
+		// Setup binding.
+		state.bindings.emplace_back();
+		state.bindings.back().binding = bindingIndex;
+		state.bindings.back().stride = elementSize;
+		state.bindings.back().inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+		state.offsets.emplace_back(offset);
+		++bindingIndex;
+		// Copy data.
+		const size_t size = elementSize * mesh.colors.size();
 		GPU::uploadBuffer(stageVertexBuffer, size, reinterpret_cast<unsigned char *>(mesh.colors.data()), offset);
+		offset += size;
 	}
 
 	// Copy from the staging buffer.
@@ -1150,7 +1264,8 @@ void GPU::setupMesh(Mesh & mesh) {
 	copyRegion.size = totalSize;
 	vkCmdCopyBuffer(commandBuffer, stageVertexBuffer.gpu->buffer, vertexBuffer.gpu->buffer, 1, &copyRegion);
 	VkUtils::endOneTimeCommandBuffer(commandBuffer, _context);
-
+	// Replicate the buffer as many times as needed.
+	state.buffers.resize(state.offsets.size(), vertexBuffer.gpu->buffer);
 	// We load the indices data directly (staging will be handled internally).
 	const size_t inSize = sizeof(unsigned int) * mesh.indices.size();
 	BufferBase indexBuffer(inSize, BufferType::INDEX, DataUse::STATIC);
@@ -1163,14 +1278,32 @@ void GPU::setupMesh(Mesh & mesh) {
 }
 
 void GPU::drawMesh(const Mesh & mesh) {
+	_state.mesh = mesh.gpu.get();
+
+	// Possibilities:
+	// state is outdated, create/retrieve new pipeline
+	bool shouldBindPipeline = _context.newRenderPass;
+	_context.newRenderPass = false;
+	// TODO: use hash for equivalence.
+	if(!_state.isEquivalent(_lastState)){
+		_context.pipeline = _pipelineCache.getPipeline(_state);
+		_lastState = _state;
+		shouldBindPipeline = true;
+	}
+
+	// if new render pass begun, bind pipeline
+	// if pipeline updated, bind pipeline
+	if(shouldBindPipeline){
+		vkCmdBindPipeline(_context.getCurrentCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, _context.pipeline);
+
+	}
+
 //	if(_state.vertexArray != mesh.gpu->id){
 //		_state.vertexArray = mesh.gpu->id;
 //		glBindVertexArray(mesh.gpu->id);
 //		_metrics.vertexBindings += 1;
 //	}
-	// TODO: vkCmdBindPipeline
-	VkDeviceSize offset = 0;
-	vkCmdBindVertexBuffers(_context.getCurrentCommandBuffer(), 0, 1, &(mesh.gpu->vertexBuffer->buffer), &offset);
+	vkCmdBindVertexBuffers(_context.getCurrentCommandBuffer(), 0, mesh.gpu->state.offsets.size(), mesh.gpu->state.buffers.data(), mesh.gpu->state.offsets.data());
 	vkCmdBindIndexBuffer(_context.getCurrentCommandBuffer(), mesh.gpu->indexBuffer->buffer, 0, VK_INDEX_TYPE_UINT32);
 	vkCmdDrawIndexed(_context.getCurrentCommandBuffer(), static_cast<uint32_t>(mesh.gpu->count), 1, 0, 0, 0);
 //	glDrawElements(GL_TRIANGLES, mesh.gpu->count, GL_UNSIGNED_INT, static_cast<void *>(nullptr));
@@ -1178,13 +1311,13 @@ void GPU::drawMesh(const Mesh & mesh) {
 }
 
 void GPU::drawTesselatedMesh(const Mesh & mesh, uint patchSize){
+//	_state.mesh = mesh.gpu.get();
 //	glPatchParameteri(GL_PATCH_VERTICES, GLint(patchSize));
 //	if(_state.vertexArray != mesh.gpu->id){
 //		_state.vertexArray = mesh.gpu->id;
 //		glBindVertexArray(mesh.gpu->id);
 //		_metrics.vertexBindings += 1;
 //	}
-	// TODO: vkCmdBindPipeline
 	// TODO: check if we need to specify the patch size or if it's specified in the shader
 	drawMesh(mesh);
 //	glDrawElements(GL_PATCHES, mesh.gpu->count, GL_UNSIGNED_INT, static_cast<void *>(nullptr));
@@ -1193,6 +1326,12 @@ void GPU::drawTesselatedMesh(const Mesh & mesh, uint patchSize){
 }
 
 void GPU::drawQuad(){
+	_state.mesh = _quad.gpu.get();
+	if(!_state.isEquivalent(_lastState)){
+		_context.pipeline = _pipelineCache.getPipeline(_state);
+		_lastState = _state;
+		vkCmdBindPipeline(_context.getCurrentCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, _context.pipeline);
+	}
 //	if(_state.vertexArray != _vao){
 //		_state.vertexArray = _vao;
 //		glBindVertexArray(_vao);
@@ -1200,7 +1339,7 @@ void GPU::drawQuad(){
 //	}
 	// TODO: vkCmdBindPipeline
 	VkDeviceSize offset = 0;
-	vkCmdBindVertexBuffers(_context.getCurrentCommandBuffer(), 0, 1, &(_quadBuffer->buffer), &offset);
+	vkCmdBindVertexBuffers(_context.getCurrentCommandBuffer(), 0, 1, &(_quad.gpu->vertexBuffer->buffer), &offset);
 	vkCmdDraw(_context.getCurrentCommandBuffer(), 3, 1, 0, 0);
 	//	glDrawArrays(GL_TRIANGLES, 0, 3);
 //	_metrics.quadCalls += 1;
@@ -1277,14 +1416,28 @@ std::vector<std::string> GPU::supportedExtensions() {
 }
 
 void GPU::setViewport(int x, int y, int w, int h) {
-//	if(_state.viewport[0] != x || _state.viewport[1] != y || _state.viewport[2] != w || _state.viewport[3] != h){
+	//if(_state.viewport[0] != x || _state.viewport[1] != y || _state.viewport[2] != w || _state.viewport[3] != h){
 //		_state.viewport[0] = x;
 //		_state.viewport[1] = y;
 //		_state.viewport[2] = w;
 //		_state.viewport[3] = h;
+		VkViewport vp;
+		vp.x = x;
+		vp.y = y;
+		vp.width = w;
+		vp.height = h;
+		vp.minDepth = 0.0f;
+		vp.maxDepth = 1.0f;
+		vkCmdSetViewport(_context.getCurrentCommandBuffer(), 0, 1, &vp);
+		VkRect2D scissor;
+		scissor.offset.x = x;
+		scissor.offset.y = y;
+		scissor.extent.width = w;
+		scissor.extent.height = h;
+		vkCmdSetScissor(_context.getCurrentCommandBuffer(), 0, 1, &scissor);
 //		glViewport(GLsizei(x), GLsizei(y), GLsizei(w), GLsizei(h));
 //		_metrics.stateChanges += 1;
-//	}
+	//}
 }
 
 void GPU::clearColor(const glm::vec4 & color) {
@@ -1331,7 +1484,7 @@ void GPU::clearStencil(uchar stencil) {
 
 void GPU::clearColorAndDepth(const glm::vec4 & color, float depth) {
 //	if(_state.colorClearValue != color){
-//		_state.colorClearValue = color;
+	//	_state.colorClearValue = color;
 //		glClearColor(color[0], color[1], color[2], color[3]);
 //		_metrics.stateChanges += 1;
 //	}
@@ -1378,7 +1531,7 @@ void GPU::clearColorDepthStencil(const glm::vec4 & color, float depth, uchar ste
 
 void GPU::setDepthState(bool test) {
 //	if(_state.depthTest != test){
-//		_state.depthTest = test;
+		_state.depthTest = test;
 //		(test ? glEnable : glDisable)(GL_DEPTH_TEST);
 //		_metrics.stateChanges += 1;
 //	}
@@ -1386,7 +1539,7 @@ void GPU::setDepthState(bool test) {
 
 void GPU::setDepthState(bool test, TestFunction equation, bool write) {
 //	if(_state.depthTest != test){
-//		_state.depthTest = test;
+		_state.depthTest = test;
 //		(test ? glEnable : glDisable)(GL_DEPTH_TEST);
 //		_metrics.stateChanges += 1;
 //	}
@@ -1402,13 +1555,13 @@ void GPU::setDepthState(bool test, TestFunction equation, bool write) {
 //		{TestFunction::ALWAYS, GL_ALWAYS}};
 //
 //	if(_state.depthFunc != equation){
-//		_state.depthFunc = equation;
+		_state.depthFunc = equation;
 //		glDepthFunc(eqs.at(equation));
 //		_metrics.stateChanges += 1;
 //	}
 //
 //	if(_state.depthWriteMask != write){
-//		_state.depthWriteMask = write;
+		_state.depthWriteMask = write;
 //		glDepthMask(write ? GL_TRUE : GL_FALSE);
 //		_metrics.stateChanges += 1;
 //	}
@@ -1416,12 +1569,12 @@ void GPU::setDepthState(bool test, TestFunction equation, bool write) {
 
 void GPU::setStencilState(bool test, bool write){
 //	if(_state.stencilTest != test){
-//		_state.stencilTest = test;
+		_state.stencilTest = test;
 //		(test ? glEnable : glDisable)(GL_STENCIL_TEST);
 //		_metrics.stateChanges += 1;
 //	}
 //	if(_state.stencilWriteMask != write){
-//		_state.stencilWriteMask = write;
+		_state.stencilWriteMask = write;
 //		glStencilMask(write ? 0xFF : 0x00);
 //		_metrics.stateChanges += 1;
 //	}
@@ -1429,152 +1582,45 @@ void GPU::setStencilState(bool test, bool write){
 
 void GPU::setStencilState(bool test, TestFunction function, StencilOp fail, StencilOp pass, StencilOp depthFail, uchar value){
 
-//	if(_state.stencilTest != test){
-//		_state.stencilTest = test;
-//		(test ? glEnable : glDisable)(GL_STENCIL_TEST);
-//		_metrics.stateChanges += 1;
-//	}
-//
-//	static const std::map<TestFunction, GLenum> funs = {
-//		{TestFunction::NEVER, GL_NEVER},
-//		{TestFunction::LESS, GL_LESS},
-//		{TestFunction::LEQUAL, GL_LEQUAL},
-//		{TestFunction::EQUAL, GL_EQUAL},
-//		{TestFunction::GREATER, GL_GREATER},
-//		{TestFunction::GEQUAL, GL_GEQUAL},
-//		{TestFunction::NOTEQUAL, GL_NOTEQUAL},
-//		{TestFunction::ALWAYS, GL_ALWAYS}};
-//
-//	static const std::map<StencilOp, GLenum> ops = {
-//		{ StencilOp::KEEP, GL_KEEP },
-//		{ StencilOp::ZERO, GL_ZERO },
-//		{ StencilOp::REPLACE, GL_REPLACE },
-//		{ StencilOp::INCR, GL_INCR },
-//		{ StencilOp::INCRWRAP, GL_INCR_WRAP },
-//		{ StencilOp::DECR, GL_DECR },
-//		{ StencilOp::DECRWRAP, GL_DECR_WRAP },
-//		{ StencilOp::INVERT, GL_INVERT }};
-//
-//	if(_state.stencilFunc != function){
-//		_state.stencilFunc = function;
-//		glStencilFunc(funs.at(function), GLint(value), 0xFF);
-//		_metrics.stateChanges += 1;
-//	}
-//	if(!_state.stencilWriteMask){
-//		_state.stencilWriteMask = true;
-//		glStencilMask(0xFF);
-//		_metrics.stateChanges += 1;
-//	}
-//	if(_state.stencilFail != fail || _state.stencilPass != depthFail || _state.stencilDepthPass != pass){
-//		_state.stencilFail = fail;
-//		_state.stencilPass = depthFail;
-//		_state.stencilDepthPass = pass;
-//		glStencilOp(ops.at(fail), ops.at(depthFail), ops.at(pass));
-//		_metrics.stateChanges += 1;
-//	}
+	_state.stencilTest = test;
+	_state.stencilFunc = function;
+	_state.stencilWriteMask = true;
+	_state.stencilFail = fail;
+	_state.stencilPass = depthFail;
+	_state.stencilDepthPass = pass;
 }
 
 void GPU::setBlendState(bool test) {
-//	if(_state.blend != test){
-//		_state.blend = test;
-//		(test ? glEnable : glDisable)(GL_BLEND);
-//		_metrics.stateChanges += 1;
-//	}
+	_state.blend = test;
 }
 
 void GPU::setBlendState(bool test, BlendEquation equation, BlendFunction src, BlendFunction dst) {
-//
-//	if(_state.blend != test){
-//		_state.blend = test;
-//		(test ? glEnable : glDisable)(GL_BLEND);
-//		_metrics.stateChanges += 1;
-//	}
-//
-//	static const std::map<BlendEquation, GLenum> eqs = {
-//		{BlendEquation::ADD, GL_FUNC_ADD},
-//		{BlendEquation::SUBTRACT, GL_FUNC_SUBTRACT},
-//		{BlendEquation::REVERSE_SUBTRACT, GL_FUNC_REVERSE_SUBTRACT},
-//		{BlendEquation::MIN, GL_MIN},
-//		{BlendEquation::MAX, GL_MAX}};
-//	static const std::map<BlendFunction, GLenum> funcs = {
-//		{BlendFunction::ONE, GL_ONE},
-//		{BlendFunction::ZERO, GL_ZERO},
-//		{BlendFunction::SRC_COLOR, GL_SRC_COLOR},
-//		{BlendFunction::ONE_MINUS_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR},
-//		{BlendFunction::SRC_ALPHA, GL_SRC_ALPHA},
-//		{BlendFunction::ONE_MINUS_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA},
-//		{BlendFunction::DST_COLOR, GL_DST_COLOR},
-//		{BlendFunction::ONE_MINUS_DST_COLOR, GL_ONE_MINUS_DST_COLOR},
-//		{BlendFunction::DST_ALPHA, GL_DST_ALPHA},
-//		{BlendFunction::ONE_MINUS_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA}};
-//
-//	if(_state.blendEquationRGB != equation){
-//		_state.blendEquationRGB = _state.blendEquationAlpha = equation;
-//		glBlendEquation(eqs.at(equation));
-//		_metrics.stateChanges += 1;
-//	}
-//
-//	if(_state.blendSrcRGB != src || _state.blendDstRGB != dst){
-//		_state.blendSrcRGB = _state.blendSrcAlpha = src;
-//		_state.blendDstRGB = _state.blendDstAlpha = dst;
-//		glBlendFunc(funcs.at(src), funcs.at(dst));
-//		_metrics.stateChanges += 1;
-//	}
-
+	_state.blend = test;
+	_state.blendEquationRGB = _state.blendEquationAlpha = equation;
+	_state.blendSrcRGB = _state.blendSrcAlpha = src;
+	_state.blendDstRGB = _state.blendDstAlpha = dst;
 }
 
 void GPU::setCullState(bool cull) {
-//	if(_state.cullFace != cull){
-//		_state.cullFace = cull;
-//		(cull ? glEnable : glDisable)(GL_CULL_FACE);
-//		_metrics.stateChanges += 1;
-//	}
+	_state.cullFace = cull;
 }
 
 void GPU::setCullState(bool cull, Faces culledFaces) {
-//	if(_state.cullFace != cull){
-//		_state.cullFace = cull;
-//		(cull ? glEnable : glDisable)(GL_CULL_FACE);
-//		_metrics.stateChanges += 1;
-//	}
-//
-//	static const std::map<Faces, GLenum> faces = {
-//	 {Faces::FRONT, GL_FRONT},
-//	 {Faces::BACK, GL_BACK},
-//	 {Faces::ALL, GL_FRONT_AND_BACK}};
-//
-//	if(_state.cullFaceMode != culledFaces){
-//		_state.cullFaceMode = culledFaces;
-//		glCullFace(faces.at(culledFaces));
-//		_metrics.stateChanges += 1;
-//	}
+	_state.cullFace = cull;
+	_state.cullFaceMode = culledFaces;
 }
 
 void GPU::setPolygonState(PolygonMode mode) {
-//
-//	static const std::map<PolygonMode, GLenum> modes = {
-//		{PolygonMode::FILL, GL_FILL},
-//		{PolygonMode::LINE, GL_LINE},
-//		{PolygonMode::POINT, GL_POINT}};
-//
-//	if(_state.polygonMode != mode){
-//		_state.polygonMode = mode;
-//		glPolygonMode(GL_FRONT_AND_BACK, modes.at(mode));
-//		_metrics.stateChanges += 1;
-//	}
+	_state.polygonMode = mode;
 }
 
 void GPU::setColorState(bool writeRed, bool writeGreen, bool writeBlue, bool writeAlpha){
-//	if(_state.colorWriteMask.r != writeRed || _state.colorWriteMask.g != writeGreen || _state.colorWriteMask.b != writeBlue || _state.colorWriteMask.a != writeAlpha){
-//		_state.colorWriteMask.r = writeRed;
-//		_state.colorWriteMask.g = writeGreen;
-//		_state.colorWriteMask.b = writeBlue;
-//		_state.colorWriteMask.a = writeAlpha;
-//		glColorMask(writeRed ? GL_TRUE : GL_FALSE, writeGreen ? GL_TRUE : GL_FALSE, writeBlue ? GL_TRUE : GL_FALSE, writeAlpha ? GL_TRUE : GL_FALSE);
-//		_metrics.stateChanges += 1;
-//	}
-
+	_state.colorWriteMask.r = writeRed;
+	_state.colorWriteMask.g = writeGreen;
+	_state.colorWriteMask.b = writeBlue;
+	_state.colorWriteMask.a = writeAlpha;
 }
+
 void GPU::setSRGBState(bool convert){
 //	if(_state.framebufferSRGB != convert){
 //		_state.framebufferSRGB = convert;
@@ -1924,8 +1970,9 @@ void GPU::cleanup(){
 	GPU::sync();
 
 	vkDestroyCommandPool(_context.device, _context.commandPool, nullptr);
+	vkDestroyPipelineCache(_context.device, _context.pipelineCache, nullptr);
 
-	GPU::clean(*_quadBuffer);
+	_quad.clean();
 	//vkDestroyDevice(_context.device, nullptr);
 
 	glslang::FinalizeProcess();
@@ -1968,7 +2015,8 @@ void GPU::clean(Program & program){
 }
 
 GPUState GPU::_state;
+GPUState GPU::_lastState;
 GPU::Metrics GPU::_metrics;
 GPU::Metrics GPU::_metricsPrevious;
-std::unique_ptr<GPUBuffer> GPU::_quadBuffer = nullptr;
+Mesh GPU::_quad("Quad");
 

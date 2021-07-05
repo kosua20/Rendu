@@ -5,7 +5,7 @@
 
 #include <volk/volk.h>
 
-#define FORCE_DEBUG_VULKAN
+//#define FORCE_DEBUG_VULKAN
 
 #define VK_RETURN_CHECK(F, L) do {\
 VkResult res = (F);\
@@ -30,7 +30,10 @@ struct GPUContext {
 	std::vector<VkCommandBuffer> commandBuffers;
 	VkQueue graphicsQueue= VK_NULL_HANDLE;
 	VkQueue presentQueue= VK_NULL_HANDLE;
+	VkPipelineCache pipelineCache = VK_NULL_HANDLE;
 	VkDescriptorPool descriptorPool;
+	VkRenderPass mainRenderPass = VK_NULL_HANDLE;
+	VkPipeline pipeline = VK_NULL_HANDLE;
 	
 	uint32_t graphicsId = 0;
 	uint32_t presentId = 0;
@@ -40,7 +43,8 @@ struct GPUContext {
 	size_t uniformAlignment = 0;
 	bool portability = false;
 	const uint frameCount = 2;
-
+	bool newRenderPass = true;
+	
 	void nextFrame(){
 		currentFrame = (currentFrame + 1) % frameCount;
 	}
@@ -50,8 +54,6 @@ struct GPUContext {
 	}
 
 };
-
-
 
 VKAPI_ATTR VkBool32 VKAPI_CALL vkDebugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageType, const VkDebugUtilsMessengerCallbackDataEXT* callbackData, void* userData);
 

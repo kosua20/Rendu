@@ -19,6 +19,40 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 	
 	const std::string debugName = _name;
 	GPU::createProgram(*this, vertexContent, fragmentContent, geometryContent, tessControlContent, tessEvalContent, bindings, debugName);
+
+	// Build state.
+	_state.stages.clear();
+
+	if(vertex != VK_NULL_HANDLE){
+		_state.stages.emplace_back();
+		_state.stages.back().stage = VK_SHADER_STAGE_VERTEX_BIT;
+		_state.stages.back().module = vertex;
+	}
+	if(geometry != VK_NULL_HANDLE){
+		_state.stages.emplace_back();
+		_state.stages.back().stage = VK_SHADER_STAGE_GEOMETRY_BIT;
+		_state.stages.back().module = geometry;
+	}
+	if(tesscontrol != VK_NULL_HANDLE){
+		_state.stages.emplace_back();
+		_state.stages.back().stage = VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT;
+		_state.stages.back().module = tesscontrol;
+	}
+	if(tesseval != VK_NULL_HANDLE){
+		_state.stages.emplace_back();
+		_state.stages.back().stage = VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT;
+		_state.stages.back().module = tesseval;
+	}
+	if(fragment != VK_NULL_HANDLE){
+		_state.stages.emplace_back();
+		_state.stages.back().stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+		_state.stages.back().module = fragment;
+	}
+
+	for(auto& stage : _state.stages){
+		stage.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+		stage.pName = "main";
+	}
 //	_uniforms.clear();
 //	_uniformInfos.clear();
 
@@ -160,7 +194,7 @@ void Program::saveBinary(const std::string & outputPath) const {
 }
 
 void Program::use() const {
-	//GPU::bindProgram(*this);
+	GPU::bindProgram(*this);
 }
 
 void Program::clean() {

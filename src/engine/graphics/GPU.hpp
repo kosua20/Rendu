@@ -128,7 +128,7 @@ public:
 	 \param framebuffer the framebuffer to bind as a destination
 	 \param mode the read or write mode to bind the framebuffer to
 	 */
-	static void bindFramebuffer(const Framebuffer & framebuffer, Framebuffer::Mode mode);
+	//static void bindFramebuffer(const Framebuffer & framebuffer, Framebuffer::Mode mode);
 
 	/** Save a given framebuffer content to the disk.
 	 \param framebuffer the framebuffer to save
@@ -451,7 +451,7 @@ private:
 	 \note The output image extension will be automatically added based on the framebuffer type and format.
 	 */
 	//static void savePixels(GLenum type, GLenum format, unsigned int width, unsigned int height, unsigned int components, const std::string & path, bool flip, bool ignoreAlpha);
-
+	static VkPipeline buildPipelineState(const GPUState& state);
 
 	static void clean(GPUTexture & tex);
 
@@ -464,8 +464,9 @@ private:
 	static void clean(Program & program);
 
 	static GPUState _state; ///< Current GPU state for caching.
+	static GPUState _lastState; ///< Current GPU state for caching.
 	static Metrics _metrics; ///< Internal metrics (draw count, state changes,...).
 	static Metrics _metricsPrevious; ///< Internal metrics for the last completed frame.
-	static std::unique_ptr<GPUBuffer> _quadBuffer; ///< The unique empty screenquad VAO.
+	static Mesh _quad; ///< The unique empty screenquad VAO.
 
 };

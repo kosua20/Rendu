@@ -38,6 +38,9 @@ public:
 		Type type; ///< The uniform type.
 	};
 
+	struct StagesState {
+		std::vector<VkPipelineShaderStageCreateInfo> stages;
+	};
 
 	/**
 	 Load, compile and link shaders into a GPU program.
@@ -269,7 +272,11 @@ public:
 	
 	/** Move constructor. */
 	Program(Program &&) = default;
-	
+
+	const StagesState& getState() const {
+		return _state;
+	}
+
 private:
 
 	void updateUniformMetric() const; ///< Update internal metrics.
@@ -284,6 +291,6 @@ private:
 	std::string _name;				 		 ///< The shader name
 	//std::map<std::string, GLint> _uniforms;  ///< Internal list of automatically registered uniforms and their locations. We keep this separate to avoid exposing GL internal types.
 	std::vector<Uniform> _uniformInfos;  ///< Additional uniforms info.
-
+	StagesState _state;
 	friend class GPU; ///< Utilities will need to access GPU handle.
 };

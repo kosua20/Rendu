@@ -18,6 +18,12 @@ public:
 		WRITE ///< Write mode.
 	};
 
+	enum class Load {
+		LOAD,
+		CLEAR,
+		DONTCARE
+	};
+
 	/** Setup the framebuffer (attachments, renderbuffer, depth buffer, textures IDs,...)
 	 \param width the width of the framebuffer
 	 \param height the height of the framebuffer
@@ -48,16 +54,27 @@ public:
 	 */
 	Framebuffer(TextureShape shape, uint width, uint height, uint depth, uint mips, const std::vector<Descriptor> & descriptors, bool depthBuffer, const std::string & name);
 
+
+	struct LoadOperation {
+
+		LoadOperation() {};
+
+		LoadOperation(Load mod) : mode(mod) {};
+
+		LoadOperation(const glm::vec4& val) : value(val), mode(Load::CLEAR) {};
+
+		LoadOperation(float val) : value(val), mode(Load::CLEAR) {};
+
+		LoadOperation(uchar val) : value(float(val)), mode(Load::CLEAR) {};
+
+		glm::vec4 value{1.0f};
+		Load mode = Load::LOAD;
+	};
+	
 	/**
 	 Bind the framebuffer. Shortcut for writing to a 2D framebuffer.
 	 */
-	void bind() const;
-
-	/**
-	 Bind the framebuffer with specific options.
-	 \param mode the mode to use
-	 */
-	void bind(Mode mode) const;
+	void bind(const LoadOperation& colorOp, const LoadOperation& depthOp = {}, const LoadOperation& stencilOp = {}) const;
 
 	/**
 	 Bind a specific layer of the framebuffer
@@ -65,7 +82,7 @@ public:
 	 \param mip the mip level to bind
 	 \param mode the mode to use
 	 */
-	void bind(size_t layer, size_t mip = 0, Mode mode = Mode::WRITE) const;
+	void bind(size_t layer, size_t mip, const LoadOperation& colorOp, const LoadOperation& depthOp = {}, const LoadOperation& stencilOp = {}) const;
 
 	/**
 	 Set the viewport to the size of the framebuffer.

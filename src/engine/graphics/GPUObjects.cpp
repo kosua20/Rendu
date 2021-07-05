@@ -4,6 +4,74 @@
 
 #include <map>
 
+bool GPUState::isEquivalent(const GPUState& other) const {
+	// Program: pure comparison.
+	if(program != other.program){
+		return false;
+	}
+	/*if(!framebuffer || !other.framebuffer){
+		return false;
+	}*/
+	if(!mesh || !other.mesh){
+		return false;
+	}
+
+	if( //(blendColor != other.blendColor) ||
+	   (blendSrcRGB != other.blendSrcRGB) ||
+	   (blendSrcAlpha != other.blendSrcAlpha) ||
+	   (blendDstRGB != other.blendDstRGB) ||
+	   (blendDstAlpha != other.blendDstAlpha) ||
+	   (blendEquationRGB != other.blendEquationRGB) ||
+	   (blendEquationAlpha != other.blendEquationAlpha) ||
+	   (blend != other.blend) ||
+	   (colorWriteMask != other.colorWriteMask) ||
+	   (cullFaceMode != other.cullFaceMode) ||
+	   (polygonMode != other.polygonMode) ||
+	   (cullFace != other.cullFace) ||
+	   (depthFunc != other.depthFunc) ||
+	   (depthTest != other.depthTest) ||
+	   (depthWriteMask != other.depthWriteMask) ||
+	   (stencilFunc != other.stencilFunc) ||
+	   (stencilFail != other.stencilFail) ||
+	   (stencilPass != other.stencilPass) ||
+	   (stencilDepthPass != other.stencilDepthPass) ||
+	   (stencilValue != other.stencilValue) ||
+	   (stencilTest != other.stencilTest) ||
+	   (stencilWriteMask != other.stencilWriteMask)){
+		return false;
+	}
+
+	// Framebuffer: same attachment count, same layouts (== compatible render passes: format, sample count, )
+	/*if(framebuffer->attachments() != other.framebuffer->attachments()){
+		return false;
+	}*/
+
+	// Mesh: same bindings, same attributes. Offsets and buffers are dynamic.
+	const size_t bindingCount = mesh->state.bindings.size();
+	for(uint i = 0; i < bindingCount; ++i){
+		const auto& bind = mesh->state.bindings[i];
+		const auto& obind = other.mesh->state.bindings[i];
+		if((bind.binding != obind.binding) ||
+		   (bind.stride != obind.stride) ||
+		   (bind.inputRate != obind.inputRate)){
+			return false;
+		}
+	}
+	
+	const size_t attributeCount = mesh->state.attributes.size();
+	for(uint i = 0; i < attributeCount; ++i){
+		const auto& attr = mesh->state.attributes[i];
+		const auto& ottr = other.mesh->state.attributes[i];
+		if((attr.binding != ottr.binding) ||
+		   (attr.format != ottr.format) ||
+		   (attr.location != ottr.location) ||
+		   (attr.offset != ottr.offset)){
+			return false;
+		}
+	}
+	return true;
+}
+
 GPUTexture::GPUTexture(const Descriptor & texDescriptor, TextureShape shape) :
 	_descriptor(texDescriptor), _shape(shape) {
 

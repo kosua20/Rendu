@@ -120,7 +120,7 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 	const VkFormat depthFormat = VkUtils::findSupportedFormat(_context->physicalDevice,  {VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT}, VK_IMAGE_TILING_OPTIMAL, VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
 
 	_pass = createMainRenderpass(depthFormat, surfaceParams.format);
-
+	_context->mainRenderPass = _pass;
 
 	// TODO: see how to wrap this in a standard framebuffer.
 
@@ -303,7 +303,7 @@ bool Swapchain::finishFrame(){
 
 	// Submit the last command buffer.
 	const uint frameIndex = _context->currentFrame;
-
+	// Maybe use VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT instead ?
 	VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
 	VkSubmitInfo submitInfo = {};
 	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -397,6 +397,7 @@ bool Swapchain::nextFrame(){
 		// Submit final pass.
 		vkCmdBeginRenderPass(_context->getCurrentCommandBuffer(), &infos, VK_SUBPASS_CONTENTS_INLINE);
 		//...
+		_context->newRenderPass = true;
 
 	}
 

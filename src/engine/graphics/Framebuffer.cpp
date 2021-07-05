@@ -117,17 +117,17 @@ Framebuffer::Framebuffer(TextureShape shape, uint width, uint height, uint depth
 //	DebugViewer::trackDefault(this);
 }
 
-void Framebuffer::bind() const {
-	//GPU::bindFramebuffer(*this);
+void Framebuffer::bind(const LoadOperation& colorOp, const LoadOperation& depthOp, const LoadOperation& stencilOp) const {
+	GPU::bindFramebuffer(*this);
 }
 
-void Framebuffer::bind(Mode mode) const {
+//void Framebuffer::bind(Mode mode) const {
 	//GPU::bindFramebuffer(*this, mode);
-}
+//}
 
-void Framebuffer::bind(size_t layer, size_t mip, Mode mode) const {
+void Framebuffer::bind(size_t layer, size_t mip, const LoadOperation& colorOp, const LoadOperation& depthOp, const LoadOperation& stencilOp) const {
 
-//	GPU::bindFramebuffer(*this, mode);
+	GPU::bindFramebuffer(*this);
 //
 //	const GLint mid = GLint(mip);
 //	//const GLenum target = mode == Mode::READ ? GL_READ_FRAMEBUFFER : GL_DRAW_FRAMEBUFFER;
