@@ -52,11 +52,10 @@ void ForwardRenderer::renderDepth(const Culler::List & visibles, const glm::mat4
 	GPU::setCullState(true, Faces::BACK);
 	GPU::setBlendState(false);
 
-	_sceneFramebuffer->bind();
+	_sceneFramebuffer->bind({0.5f,0.5f,0.5f,1.0f}, 1.0f);
 	_sceneFramebuffer->setViewport();
 	// We use the depth prepass to store packed normals in the color target.
 	// We initialize using null normal.
-	GPU::clearColorAndDepth({0.5f,0.5f,0.5f,1.0f}, 1.0f);
 
 	_depthPrepass->use();
 	for(const long & objectId : visibles) {
@@ -337,7 +336,7 @@ void ForwardRenderer::draw(const Camera & camera, Framebuffer & framebuffer, siz
 	}
 
 	// Objects rendering.
-	_sceneFramebuffer->bind();
+	_sceneFramebuffer->bind(glm::vec4(0.0f), 1.0f);
 	_sceneFramebuffer->setViewport();
 	// Render opaque objects.
 	renderOpaque(visibles, view, proj);

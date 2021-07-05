@@ -35,7 +35,7 @@ void GaussianBlur::process(const Texture * texture, Framebuffer & framebuffer) {
 	}
 
 	// First, copy the input texture to the first framebuffer.
-	_frameBuffers[0]->bind();
+	_frameBuffers[0]->bind(Framebuffer::Load::DONTCARE);
 	_frameBuffers[0]->setViewport();
 	_passthrough->use();
 	ScreenQuad::draw(texture);
@@ -43,18 +43,16 @@ void GaussianBlur::process(const Texture * texture, Framebuffer & framebuffer) {
 	// Downscale filter.
 	_blurProgramDown->use();
 	for(size_t d = 1; d < _frameBuffers.size(); ++d) {
-		_frameBuffers[d]->bind();
+		_frameBuffers[d]->bind(glm::vec4(0.0f));
 		_frameBuffers[d]->setViewport();
-		GPU::clearColor(glm::vec4(0.0f));
 		ScreenQuad::draw(_frameBuffers[d - 1]->texture());
 	}
 
 	// Upscale filter.
 	_blurProgramUp->use();
 	for(int d = int(_frameBuffers.size()) - 2; d >= 0; --d) {
-		_frameBuffers[d]->bind();
+		_frameBuffers[d]->bind(glm::vec4(0.0f));
 		_frameBuffers[d]->setViewport();
-		GPU::clearColor(glm::vec4(0.0f));
 		ScreenQuad::draw(_frameBuffers[d + 1]->texture());
 	}
 	// Copy from the last framebuffer used to the destination.

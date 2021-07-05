@@ -35,9 +35,8 @@ void EditorRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size
 	// Draw the scene.
 	GPU::setDepthState(true, TestFunction::LESS, true);
 	GPU::setCullState(false);
-	framebuffer.bind(layer);
+	framebuffer.bind(layer, 0, glm::vec4(0.0f), 1.0f);
 	framebuffer.setViewport();
-	GPU::clearColorAndDepth(glm::vec4(0.0f), 1.0f);
 	
 	// Render all objects.
 	_objectProgram->use();

@@ -35,9 +35,8 @@ void BVHRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_t 
 	GPU::setCullState(false);
 	GPU::setBlendState(false);
 
-	framebuffer.bind(layer);
+	framebuffer.bind(layer, 0, glm::vec4(0.0f), 1.0f);
 	framebuffer.setViewport();
-	GPU::clearColorAndDepth(glm::vec4(0.0f), 1.0f);
 
 	const glm::mat4 & view = camera.view();
 	const glm::mat4 & proj = camera.projection();

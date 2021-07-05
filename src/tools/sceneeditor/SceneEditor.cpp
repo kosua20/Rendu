@@ -47,8 +47,7 @@ void SceneEditor::draw() {
 
 	// If no scene, just clear.
 	if(!_scenes[_currentScene]) {
-		Framebuffer::backbuffer()->bind();
-		GPU::clearColorAndDepth({0.2f, 0.2f, 0.2f, 1.0f}, 1.0f);
+		Framebuffer::backbuffer()->bind({0.2f, 0.2f, 0.2f, 1.0f}, 1.0f);
 		return;
 	}
 

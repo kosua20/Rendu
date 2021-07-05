@@ -43,9 +43,8 @@ void GameRenderer::drawPlayer(const Player & player, Framebuffer & framebuffer) 
 	const glm::vec2 invRenderSize = 1.0f / glm::vec2(framebuffer.width(), framebuffer.height());
 
 	// --- Scene pass ------
-	_sceneFramebuffer->bind();
+	_sceneFramebuffer->bind(glm::vec4(0.0f), 1.0f);
 	_sceneFramebuffer->setViewport();
-	GPU::clearColorAndDepth(glm::vec4(0.0f), 1.0f);
 
 	drawScene(player);
 
@@ -57,13 +56,13 @@ void GameRenderer::drawPlayer(const Player & player, Framebuffer & framebuffer) 
 	GPU::setDepthState(false);
 
 	// --- Lighting pass ------
-	_lightingFramebuffer->bind();
+	_lightingFramebuffer->bind(Framebuffer::Load::LOAD);
 	_lightingFramebuffer->setViewport();
 	_compositingProgram->use();
 	ScreenQuad::draw({_sceneFramebuffer->texture(0), _sceneFramebuffer->texture(1), _ssaoPass->texture(), _cubemap});
 
 	// --- FXAA pass -------
-	framebuffer.bind();
+	framebuffer.bind(Framebuffer::Load::LOAD);
 	framebuffer.setViewport();
 	_fxaaProgram->use();
 	_fxaaProgram->uniform("inverseScreenSize", invRenderSize);

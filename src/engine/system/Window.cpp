@@ -84,7 +84,7 @@ _config(config), _allowEscape(escapeQuit), _convertToSRGB(convertToSRGB) {
 	GPU::setupWindow(this);
 
 	// Setup the GPU state.
-	GPU::setSRGBState(_convertToSRGB);
+	//GPU::setSRGBState(_convertToSRGB);
 
 	// We will need basic resources for ImGui.
 	Resources::manager().addResources("../../../resources/common");
@@ -157,12 +157,12 @@ bool Window::nextFrame() {
 		ImGui::Render();
 		// ImGui is not sRGB aware, we have to disable linear to
 		// sRGB conversion when writing to the backbuffer.
-		GPU::setSRGBState(false);
+		//GPU::setSRGBState(false);
 		// Draw ImGui as-is...
 		ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), ((GPUContext*)GPU::getInternal())->getCurrentCommandBuffer());
 		//ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		// ...and restore.
-		GPU::setSRGBState(_convertToSRGB);
+		//GPU::setSRGBState(_convertToSRGB);
 		
 		//Display the result for the current rendering loop.
 	}

@@ -343,7 +343,7 @@ void DebugViewer::displayState(const std::string & name, StateInfos & infos){
 			str << "Blend equation: " << "RGB: " << blendEqs.at(st.blendEquationRGB) << ", A: " << blendEqs.at(st.blendEquationAlpha) << "\n";
 			str << "Blend source: " << "RGB: " << funcs.at(st.blendSrcRGB) << ", A: " << funcs.at(st.blendSrcAlpha) << "\n";
 			str << "Blend desti.: " << "RGB: " << funcs.at(st.blendDstRGB) << ", A: " << funcs.at(st.blendDstAlpha) << "\n";
-			str << "Blend color: " << st.blendColor << "\n";
+			//str << "Blend color: " << st.blendColor << "\n";
 			const std::string strRes = str.str();
 			ImGui::Text("%s", strRes.c_str());
 		}
@@ -352,8 +352,8 @@ void DebugViewer::displayState(const std::string & name, StateInfos & infos){
 			std::stringstream str;
 			str << "Depth test: " << bools.at(st.depthTest) << ", write: " << bools.at(st.depthWriteMask) << "\n";
 			str << "Depth function: " << testEqs.at(st.depthFunc) << "\n";
-			str << "Depth clear: " << st.depthClearValue << "\n";
-			str << "Depth range: " << st.depthRange << ", clamp: " << bools.at(st.depthClamp) << "\n";
+			//str << "Depth clear: " << st.depthClearValue << "\n";
+			//str << "Depth range: " << st.depthRange << ", clamp: " << bools.at(st.depthClamp) << "\n";
 			const std::string strRes = str.str();
 			ImGui::Text("%s", strRes.c_str());
 		}
@@ -365,16 +365,16 @@ void DebugViewer::displayState(const std::string & name, StateInfos & infos){
 			str << "Stencil operations: " << "Fail: " << ops.at(st.stencilFail) << "\n";
 			str << "\t Pass: stencil: " << ops.at(st.stencilPass) << ", depth: " << ops.at(st.stencilDepthPass) << "\n";
 			str << "Stencil value: " << std::hex << uint(st.stencilValue);
-			str << ", stencil clear: " << std::hex << uint(st.stencilClearValue) << "\n";
+			//str << ", stencil clear: " << std::hex << uint(st.stencilClearValue) << "\n";
 			const std::string strRes = str.str();
 			ImGui::Text("%s", strRes.c_str());
 		}
 
 		if(ImGui::CollapsingHeader("Color")){
 			std::stringstream str;
-			str << "Color clear: " << st.colorClearValue << "\n";
+			//str << "Color clear: " << st.colorClearValue << "\n";
 			str << "Color write: " << bools.at(st.colorWriteMask[0]) << ", " << bools.at(st.colorWriteMask[1]) << ", " << bools.at(st.colorWriteMask[2]) << ", " << bools.at(st.colorWriteMask[3]) << "\n";
-			str << "Framebuffer sRGB: " << bools.at(st.framebufferSRGB) << "\n";
+			//str << "Framebuffer sRGB: " << bools.at(st.framebufferSRGB) << "\n";
 			const std::string strRes = str.str();
 			ImGui::Text("%s", strRes.c_str());
 		}
@@ -382,8 +382,8 @@ void DebugViewer::displayState(const std::string & name, StateInfos & infos){
 		if(ImGui::CollapsingHeader("Geometry")){
 			std::stringstream str;
 			str << "Culling: " << bools.at(st.cullFace) << ", " << faces.at(st.cullFaceMode) << "\n";
-			str << "Polygon offset: point: " << bools.at(st.polygonOffsetPoint) << ", line: " << bools.at(st.polygonOffsetLine) << ", fill: " << bools.at(st.polygonOffsetFill) << "\n";
-			str << "Polygon offset: factor: " << st.polygonOffsetFactor << ", units: " << st.polygonOffsetUnits << "\n";
+			//str << "Polygon offset: " << bools.at(st.polygonOffset) << "\n";
+			//str << "Polygon offset: factor: " << st.polygonOffsetFactor << ", units: " << st.polygonOffsetUnits << "\n";
 
 			const std::string strRes = str.str();
 			ImGui::Text("%s", strRes.c_str());
@@ -391,8 +391,8 @@ void DebugViewer::displayState(const std::string & name, StateInfos & infos){
 
 		if(ImGui::CollapsingHeader("Viewport")){
 			std::stringstream str;
-			str << "Scissor: test: " << bools.at(st.scissorTest) <<", box: " << st.scissorBox << "\n";
-			str << "Viewport: " << st.viewport;
+			//str << "Scissor: test: " << bools.at(st.scissorTest) <<", box: " << st.scissorBox << "\n";
+			//str << "Viewport: " << st.viewport;
 			const std::string strRes = str.str();
 			ImGui::Text("%s", strRes.c_str());
 		}
@@ -498,7 +498,7 @@ void DebugViewer::updateDisplay(const TextureInfos & tex) {
 		{TextureShape::ArrayCube, 5},
 		{TextureShape::D3, 6}};
 
-	tex.display->bind();
+	tex.display->bind(Framebuffer::Load::DONTCARE);
 	tex.display->setViewport();
 
 	_texDisplay->use();

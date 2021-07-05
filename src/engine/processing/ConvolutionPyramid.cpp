@@ -44,10 +44,9 @@ void ConvolutionPyramid::process(const Texture * texture) {
 	GPU::setCullState(true, Faces::BACK);
 	
 	// Pad by the size of the filter.
-	_levelsIn[0]->bind();
+	_levelsIn[0]->bind(glm::vec4(0.0f));
 	// Shift the viewport and fill the padded region with 0s.
 	GPU::setViewport(_size, _size, int(_levelsIn[0]->width()) - 2 * _size, int(_levelsIn[0]->height()) - 2 * _size);
-	GPU::clearColor(glm::vec4(0.0f));
 	// Transfer the boundary content.
 	_padder->use();
 	_padder->uniform("padding", _size);
@@ -61,9 +60,8 @@ void ConvolutionPyramid::process(const Texture * texture) {
 
 	// Do: l[i] = downscale(filter(l[i-1], h1))
 	for(size_t i = 1; i < _levelsIn.size(); ++i) {
-		_levelsIn[i]->bind();
+		_levelsIn[i]->bind(glm::vec4(0.0f));
 		// Shift the viewport and fill the padded region with 0s.
-		GPU::clearColor(glm::vec4(0.0f));
 		GPU::setViewport(_size, _size, int(_levelsIn[i]->width()) - 2 * _size, int(_levelsIn[i]->height()) - 2 * _size);
 		// Filter and downscale.
 		ScreenQuad::draw(_levelsIn[i - 1]->texture());
@@ -75,7 +73,7 @@ void ConvolutionPyramid::process(const Texture * texture) {
 	_filter->uniform("g[0]", 3, &_g[0]);
 	// Do:  f[end] = filter(l[end], g)
 	const auto & lastLevel = _levelsOut.back();
-	lastLevel->bind();
+	lastLevel->bind(Framebuffer::Load::DONTCARE);
 	lastLevel->setViewport();
 	ScreenQuad::draw(_levelsIn.back()->texture());
 
@@ -87,14 +85,14 @@ void ConvolutionPyramid::process(const Texture * texture) {
 
 	// Do: f[i] = filter(l[i], g) + filter(upscale(f[i+1], h2)
 	for(int i = int(_levelsOut.size() - 2); i >= 0; --i) {
-		_levelsOut[i]->bind();
+		_levelsOut[i]->bind(Framebuffer::Load::DONTCARE);
 		_levelsOut[i]->setViewport();
 		// Upscale with zeros, filter and combine.
 		ScreenQuad::draw({_levelsIn[i]->texture(), _levelsOut[i + 1]->texture()});
 	}
 
 	// Compensate the initial padding.
-	_shifted->bind();
+	_shifted->bind(Framebuffer::Load::DONTCARE);
 	_shifted->setViewport();
 	_padder->use();
 	// Need to also compensate for the potential extra padding.

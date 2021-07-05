@@ -27,8 +27,7 @@ void VarianceShadowMap2DArray::draw(const Scene & scene) const {
 		if(!light->castsShadow()){
 			continue;
 		}
-		_map->bind(lid);
-		GPU::clearColorAndDepth(glm::vec4(1.0f), 1.0f);
+		_map->bind(lid, 0, glm::vec4(1.0f), 1.0f);
 
 		const Frustum lightFrustum(light->vp());
 
@@ -88,8 +87,7 @@ void VarianceShadowMapCubeArray::draw(const Scene & scene) const {
 		_program->uniform("lightFarPlane", light->farPlane());
 		for(int i = 0; i < 6; ++i){
 			// We render each face sequentially, culling objects that are not visible.
-			_map->bind(lid * 6 + i);
-			GPU::clearColorAndDepth(glm::vec4(1.0f), 1.0f);
+			_map->bind(lid * 6 + i, 0, glm::vec4(1.0f), 1.0f);
 			const Frustum lightFrustum(faces[i]);
 
 			for(auto & object : scene.objects) {

@@ -41,11 +41,10 @@ void StenciledRenderer::draw(const Camera & camera, Framebuffer & framebuffer, s
 	GPU::setCullState(true, Faces::BACK);
 	GPU::setBlendState(false);
 
-	_sceneFramebuffer->bind();
+	_sceneFramebuffer->bind({1.0f, 1.0f, 1.0f, 1.0f}, 1.0f, (uchar)0x0);
 	_sceneFramebuffer->setViewport();
 
 	// Clear colorbuffer to white, don't write to it for now.
-	GPU::clearColorDepthStencil({1.0f, 1.0f, 1.0f, 1.0f}, 1.0f, 0x00);
 	GPU::setColorState(false, false, false, false);
 	// Always pass stencil test and flip all bits. As triangles are rendered successively to a pixel,
 	// they will flip the value between 0x00 (even count) and 0xFF (odd count).

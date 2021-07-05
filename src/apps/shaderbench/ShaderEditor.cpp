@@ -138,9 +138,8 @@ void ShaderEditor::draw() {
 	GPU::setBlendState(false);
 	GPU::setCullState(true, Faces::BACK);
 
-	_currFrame->bind();
+	_currFrame->bind(glm::vec4(0.0f), 1.0f);
 	_currFrame->setViewport();
-	GPU::clearColorAndDepth(glm::vec4(0.0f), 1.0f);
 	_currProgram->use();
 
 	// Predefined uniforms.
@@ -194,9 +193,9 @@ void ShaderEditor::draw() {
 	_timer.end();
 	
 	// To best mimic other tools, no default gamma correction is applied here.
-	Framebuffer::backbuffer()->bind();
+	Framebuffer::backbuffer()->bind(glm::vec4(0.3f,0.3f,0.3f, 1.0f));
 	GPU::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
-	GPU::clearColor(glm::vec4(0.3f,0.3f,0.3f, 1.0f));
+	
 	// If not in window mode, directly blit to the screne.
 	if(!_windowed){
 		_passthrough->use();

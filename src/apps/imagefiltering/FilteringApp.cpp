@@ -40,9 +40,8 @@ void FilteringApp::draw() {
 		GPU::setDepthState(true, TestFunction::LESS, true);
 		GPU::setBlendState(false);
 		GPU::setCullState(true, Faces::BACK);
-		_sceneBuffer->bind();
+		_sceneBuffer->bind({0.0f, 0.0f, 0.0f, 1.0f}, 1.0f);
 		_sceneBuffer->setViewport();
-		GPU::clearColorAndDepth({0.0f, 0.0f, 0.0f, 1.0f}, 1.0f);
 		const glm::mat4 MVP = _userCamera.projection() * _userCamera.view();
 		_sceneShader->use();
 		_sceneShader->uniform("mvp", MVP);
@@ -52,13 +51,11 @@ void FilteringApp::draw() {
 		GPU::setDepthState(false);
 		GPU::setBlendState(false);
 		GPU::setCullState(true, Faces::BACK);
-		_sceneBuffer->bind();
+		_sceneBuffer->bind(_image.width > 0 ? {0.0f, 0.0f, 0.0f, 1.0f} : Framebuffer::Load::DONTCARE);
 		_sceneBuffer->setViewport();
 		_passthrough->use();
 		if(_image.width > 0) {
 			ScreenQuad::draw(_image);
-		} else {
-			GPU::clearColor({0.0f, 0.0f, 0.0f, 1.0f});
 		}
 
 	} else {
@@ -101,7 +98,7 @@ void FilteringApp::draw() {
 	GPU::setBlendState(false);
 	GPU::setCullState(true, Faces::BACK);
 	
-	Framebuffer::backbuffer()->bind();
+	Framebuffer::backbuffer()->bind(Framebuffer::Load::DONTCARE);
 	const glm::ivec2 screenSize = Input::manager().size();
 	GPU::setViewport(0, 0, screenSize[0], screenSize[1]);
 	_passthrough->use();

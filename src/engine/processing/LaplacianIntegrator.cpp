@@ -30,9 +30,8 @@ void LaplacianIntegrator::process(const Texture * texture) {
 	GPU::setBlendState(false);
 	GPU::setCullState(true, Faces::BACK);
 
-	_preproc->bind();
+	_preproc->bind(glm::vec4(0.0f));
 	_preproc->setViewport();
-	GPU::clearColor(glm::vec4(0.0f));
 	_prepare->use();
 	_prepare->uniform("scale", _scale);
 	ScreenQuad::draw(texture);
@@ -45,7 +44,7 @@ void LaplacianIntegrator::process(const Texture * texture) {
 	GPU::setBlendState(false);
 	GPU::setCullState(true, Faces::BACK);
 	
-	_compo->bind();
+	_compo->bind(Framebuffer::Load::DONTCARE);
 	_compo->setViewport();
 	_composite->use();
 	ScreenQuad::draw(_pyramid.texture());

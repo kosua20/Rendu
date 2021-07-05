@@ -110,9 +110,8 @@ int main(int argc, char ** argv) {
 		const glm::ivec2 screenSize = Input::manager().size();
 		const glm::mat4 MVP		   = camera.projection() * camera.view();
 
-		Framebuffer::backbuffer()->bind();
+		Framebuffer::backbuffer()->bind(glm::vec4(0.2f, 0.3f, 0.25f, 1.0f), 1.0f);
 		GPU::setViewport(0, 0, screenSize[0], screenSize[1]);
-		GPU::clearColorAndDepth({0.2f, 0.3f, 0.25f, 1.0f}, 1.0f);
 		program->use();
 		program->uniform("mvp", MVP);
 		GPU::drawMesh(*mesh);

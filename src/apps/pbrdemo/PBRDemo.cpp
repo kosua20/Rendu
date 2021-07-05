@@ -153,7 +153,7 @@ void PBRDemo::draw() {
 	_frameID = (_frameID + 1)%_frameCount;
 
 	if(!_scenes[_currentScene]) {
-		GPU::clearColorAndDepth({0.2f, 0.2f, 0.2f, 1.0f}, 1.0f);
+		Framebuffer::backbuffer()->bind({0.2f, 0.2f, 0.2f, 1.0f}, 1.0f);
 		return;
 	}
 
@@ -188,7 +188,7 @@ void PBRDemo::draw() {
 	GPU::setCullState(true, Faces::BACK);
 	GPU::setBlendState(false);
 
-	Framebuffer::backbuffer()->bind();
+	Framebuffer::backbuffer()->bind(Framebuffer::Load::DONTCARE);
 	GPU::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 	_finalProgram->use();
 	ScreenQuad::draw(_finalRender->texture());

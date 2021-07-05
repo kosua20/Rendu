@@ -102,9 +102,8 @@ void computeCubemapConvolution(const Texture & cubemapInfos, int levelsCount, in
 		for(size_t i = 0; i < 6; ++i) {
 			Log::Info() << "." << std::flush;
 
-			resultFramebuffer.bind(i);
+			resultFramebuffer.bind(i, 0, {0.0f, 0.0f, 0.0f, 1.0f}, 1.0f);
 			// Clear texture slice.
-			GPU::clearColorAndDepth({0.0f, 0.0f, 0.0f, 1.0f}, 1.0f);
 			GPU::setViewport(0, 0, int(w), int(h));
 
 			GPU::setDepthState(false);
@@ -165,9 +164,8 @@ void computeAndExportLookupTable(const int outputSide, const std::string & outpu
 	const Descriptor desc = {Layout::RG32F, Filter::LINEAR_NEAREST, Wrap::CLAMP};
 	const auto bakingFramebuffer = std::make_shared<Framebuffer>(outputSide, outputSide, desc, false, "LUT");
 	const auto brdfProgram		 = Resources::manager().getProgram2D("brdf_sampler");
-	bakingFramebuffer->bind();
+	bakingFramebuffer->bind(glm::vec4(0.0f));
 	GPU::setViewport(0, 0, outputSide, outputSide);
-	GPU::clearColor(glm::vec4(0.0f));
 	GPU::setDepthState(false);
 	GPU::setBlendState(false);
 	GPU::setCullState(false);
@@ -352,9 +350,8 @@ int main(int argc, char ** argv) {
 		GPU::setBlendState(false);
 		GPU::setCullState(false);
 
-		Framebuffer::backbuffer()->bind();
+		Framebuffer::backbuffer()->bind({0.5f, 0.5f, 0.5f, 1.0f}, 1.0f);
 		GPU::setViewport(0, 0, screenSize[0], screenSize[1]);
-		GPU::clearColorAndDepth({0.5f, 0.5f, 0.5f, 1.0f}, 1.0f);
 
 		// Render main cubemap.
 		if(cubemapInfos.gpu) {
@@ -374,7 +371,7 @@ int main(int argc, char ** argv) {
 		}
 
 		// Render reference cubemap in the bottom right corner.
-		GPU::clearDepth(1.0f);
+		Framebuffer::backbuffer()->bind(Framebuffer::Load::LOAD, 1.0f);
 		const float gizmoScale	   = 0.2f;
 		const glm::ivec2 gizmoSize = glm::ivec2(gizmoScale * glm::vec2(screenSize));
 		GPU::setViewport(0, 0, gizmoSize[0], gizmoSize[1]);

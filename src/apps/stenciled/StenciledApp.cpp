@@ -48,7 +48,7 @@ void StenciledApp::setScene(const std::shared_ptr<Scene> & scene) {
 
 void StenciledApp::draw() {
 	if(!_scenes[_currentScene]) {
-		GPU::clearColorAndDepth({1.0f, 1.0f, 1.0f, 1.0f}, 1.0f);
+		Framebuffer::backbuffer()->bind({1.0f, 1.0f, 1.0f, 1.0f}, 1.0f);
 		return;
 	}
 	_renderer->draw(_userCamera, *_finalRender);

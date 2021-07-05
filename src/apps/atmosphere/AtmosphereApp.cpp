@@ -40,9 +40,8 @@ void AtmosphereApp::draw() {
 	GPU::setBlendState(false);
 	GPU::setCullState(false);
 	
-	_atmosphereBuffer->bind();
+	_atmosphereBuffer->bind({0.0f, 0.0f, 0.0f, 1.0f});
 	_atmosphereBuffer->setViewport();
-	GPU::clearColor({0.0f, 0.0f, 0.0f, 1.0f});
 
 	_atmosphere->use();
 	const glm::mat4 camToWorldNoT = glm::mat4(glm::mat3(camToWorld));
@@ -68,7 +67,7 @@ void AtmosphereApp::draw() {
 
 	// Tonemapping and final screen.
 	GPU::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
-	Framebuffer::backbuffer()->bind();
+	Framebuffer::backbuffer()->bind(Framebuffer::Load::DONTCARE, Framebuffer::Load::DONTCARE);
 	_tonemap->use();
 	ScreenQuad::draw(_atmosphereBuffer->texture());
 }

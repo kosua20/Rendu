@@ -76,10 +76,9 @@ int main(int argc, char ** argv) {
 		}
 
 		// Render the background.
-		Framebuffer::backbuffer()->bind();
+		Framebuffer::backbuffer()->bind(glm::vec4(bgColor, 1.0f), 1.0f);
 		const glm::ivec2 screenSize = Input::manager().size();
 		GPU::setViewport(0, 0, screenSize[0], screenSize[1]);
-		GPU::clearColorAndDepth(glm::vec4(bgColor, 1.0f), 1.0f);
 
 		// Render the image if non empty.
 		bool hasImage			= imageInfos.width > 0 && imageInfos.height > 0;

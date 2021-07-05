@@ -107,7 +107,7 @@ void Game::draw() {
 		_inGameRenderer.drawPlayer(*_player, *_gameFramebuffer);
 		
 		GPU::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
-		Framebuffer::backbuffer()->bind();
+		Framebuffer::backbuffer()->bind(Framebuffer::Load::DONTCARE);
 		_finalProgram->use();
 		ScreenQuad::draw(_gameFramebuffer->texture());
 		checkGPUError();

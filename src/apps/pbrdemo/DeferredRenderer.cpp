@@ -58,9 +58,6 @@ void DeferredRenderer::renderOpaque(const Culler::List & visibles, const glm::ma
 	GPU::setBlendState(false);
 	GPU::setCullState(true, Faces::BACK);
 
-	// Clear the depth buffer (we know we will draw everywhere, no need to clear color).
-	GPU::clearDepth(1.0f);
-
 	// Scene objects.
 	for(const long & objectId : visibles) {
 		// Once we get a -1, there is no other object to render.
@@ -255,8 +252,10 @@ void DeferredRenderer::draw(const Camera & camera, Framebuffer & framebuffer, si
 	const auto & visibles = _culler->cullAndSort(view, proj, pos);
 
 	// Render opaque objects and the background to the Gbuffer.
-	_gbuffer->bind();
+	// Clear the depth buffer (we know we will draw everywhere, no need to clear color).
+	_gbuffer->bind(Framebuffer::Load::DONTCARE, 1.0f);
 	_gbuffer->setViewport();
+
 	renderOpaque(visibles, view, proj);
 	renderBackground(view, proj, pos);
 
@@ -270,7 +269,7 @@ void DeferredRenderer::draw(const Camera & camera, Framebuffer & framebuffer, si
 	// Gbuffer lighting pass
 	_lightRenderer->updateCameraInfos(view, proj);
 	_lightRenderer->updateShadowMapInfos(_shadowMode, 0.002f);
-	_lightBuffer->bind();
+	_lightBuffer->bind(Framebuffer::Load::DONTCARE);
 	_lightBuffer->setViewport();
 	_ambientScreen->draw(view, proj, _scene->environment);
 
@@ -290,7 +289,7 @@ void DeferredRenderer::draw(const Camera & camera, Framebuffer & framebuffer, si
 		}
 		_fwdLightsGPU->data().upload();
 		// Now render transparent effects in a forward fashion.
-		_lightBuffer->bind();
+		_lightBuffer->bind(Framebuffer::Load::LOAD, Framebuffer::Load::LOAD);
 		_lightBuffer->setViewport();
 		renderTransparent(visibles, view, proj);
 	}

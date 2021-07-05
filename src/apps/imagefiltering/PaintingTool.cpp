@@ -57,15 +57,12 @@ void PaintingTool::draw() {
 	GPU::setDepthState(false);
 	GPU::setBlendState(false);
 	GPU::setCullState(true, Faces::BACK);
-	
-	_canvas->bind();
-	_canvas->setViewport();
 
 	// Clear if needed.
-	if(_shoudClear) {
-		_shoudClear = false;
-		GPU::clearColor(glm::vec4(_bgColor, 1.0f));
-	}
+	_canvas->bind(_shouldClear ? glm::vec4(_bgColor, 1.0f) : Framebuffer::Load::LOAD);
+	_canvas->setViewport();
+	_shoudClear = false;
+
 
 	// Draw brush if needed.
 	const float radiusF = float(_radius);
@@ -86,7 +83,7 @@ void PaintingTool::draw() {
 	GPU::blit(*_canvas, *_visu, Filter::NEAREST);
 
 	// Draw the brush outline.
-	_visu->bind();
+	_visu->bind(Framebuffer::Load::LOAD);
 	_visu->setViewport();
 	_brushShader->use();
 
@@ -157,16 +154,15 @@ void PaintingTool::resize(unsigned int width, unsigned int height) const {
 	const unsigned int w = _canvas->width();
 	const unsigned int h = _canvas->height();
 	Framebuffer tempCanvas(w, h, {Layout::RGB8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, false, "Canvas copy");
-	_canvas->bind(Framebuffer::Mode::READ);
-	tempCanvas.bind(Framebuffer::Mode::WRITE);
+	//_canvas->bind(Framebuffer::Mode::READ);
+	//tempCanvas.bind(Framebuffer::Mode::WRITE);
 
 	GPU::blit(*_canvas, tempCanvas, Filter::NEAREST);
 
 	// We can then resize the canvas.
 	_canvas->resize(width, height);
 	// Clean up the canvas.
-	_canvas->bind();
-	GPU::clearColor(glm::vec4(_bgColor, 1.0f));
+	_canvas->bind(glm::vec4(_bgColor, 1.0f));
 	
 	// Copy back the drawing.
 	GPU::blit(tempCanvas, *_canvas, Filter::NEAREST);

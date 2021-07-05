@@ -174,13 +174,13 @@ void IslandApp::draw() {
 		_shouldUpdateSky = false;
 	}
 
-	_sceneBuffer->bind();
+	_sceneBuffer->bind({0.0f,0.0f,0.0f,1.0f});
 	_sceneBuffer->setViewport();
 	_sceneBuffer->clear(glm::vec4(10000.0f), 1.0f);
 	GPU::setDepthState(true, TestFunction::LESS, true);
 	GPU::setCullState(true, Faces::BACK);
 	GPU::setBlendState(false);
-	GPU::clearColor({0.0f,0.0f,0.0f,1.0f});
+	
 
 	_primsGround.begin();
 	// Render the ground.

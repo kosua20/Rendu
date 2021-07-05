@@ -45,7 +45,7 @@ void PathTracerApp::draw() {
 
 	// If no scene, just clear.
 	if(!_scene) {
-		GPU::clearColorAndDepth({0.2f, 0.2f, 0.2f, 1.0f}, 1.0f);
+		Framebuffer::backbuffer()->bind({0.2f, 0.2f, 0.2f, 1.0f}, 1.0f);
 		return;
 	}
 	
@@ -66,7 +66,7 @@ void PathTracerApp::draw() {
 		GPU::setBlendState(false);
 		GPU::setDepthState(false);
 		GPU::setCullState(true, Faces::BACK);
-		Framebuffer::backbuffer()->bind();
+		Framebuffer::backbuffer()->bind(Framebuffer::Load::DONTCARE);
 		GPU::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 		_passthrough->use();
 		_passthrough->uniform("flip", 1);
@@ -80,7 +80,7 @@ void PathTracerApp::draw() {
 	GPU::setBlendState(false);
 	GPU::setDepthState(false);
 	GPU::setCullState(true, Faces::BACK);
-	Framebuffer::backbuffer()->bind();
+	Framebuffer::backbuffer()->bind(Framebuffer::Load::DONTCARE);
 	GPU::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 	_passthrough->use();
 	_passthrough->uniform("flip", 0);
