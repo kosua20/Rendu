@@ -481,6 +481,8 @@ public:
 		std::vector<VkVertexInputBindingDescription> bindings;
 		std::vector<VkBuffer> buffers;
 		std::vector<VkDeviceSize> offsets;
+
+		bool isEquivalent(const InputState& other) const;
 	};
 
 	InputState state;
@@ -548,7 +550,7 @@ public:
 	bool isEquivalent(const GPUState& other) const;
 
 	// Blend state.
-	//glm::vec4 blendColor {0.0f}; ///< Blend color for constant blend mode.
+	glm::vec4 blendColor {0.0f}; ///< Blend color for constant blend mode.
 	BlendFunction blendSrcRGB = BlendFunction::ONE; ///< Blending source type for RGB channels.
 	BlendFunction blendSrcAlpha = BlendFunction::ONE; ///< Blending source type for alpha channel.
 	BlendFunction blendDstRGB = BlendFunction::ONE; ///< Blending destination type for RGB channels.
@@ -558,7 +560,6 @@ public:
 	bool blend = false; ///< Blending enabled or not.
 
 	// Color state.
-	//glm::vec4 colorClearValue {0.0f}; ///< Color for clearing framebuffer.
 	glm::bvec4 colorWriteMask {true}; ///< Which channels should be written to when rendering.
 
 	// Geometry state.

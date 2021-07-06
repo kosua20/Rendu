@@ -16,28 +16,7 @@ bool GPUState::isEquivalent(const GPUState& other) const {
 		return false;
 	}
 
-	if( //(blendColor != other.blendColor) ||
-	   (blendSrcRGB != other.blendSrcRGB) ||
-	   (blendSrcAlpha != other.blendSrcAlpha) ||
-	   (blendDstRGB != other.blendDstRGB) ||
-	   (blendDstAlpha != other.blendDstAlpha) ||
-	   (blendEquationRGB != other.blendEquationRGB) ||
-	   (blendEquationAlpha != other.blendEquationAlpha) ||
-	   (blend != other.blend) ||
-	   (colorWriteMask != other.colorWriteMask) ||
-	   (cullFaceMode != other.cullFaceMode) ||
-	   (polygonMode != other.polygonMode) ||
-	   (cullFace != other.cullFace) ||
-	   (depthFunc != other.depthFunc) ||
-	   (depthTest != other.depthTest) ||
-	   (depthWriteMask != other.depthWriteMask) ||
-	   (stencilFunc != other.stencilFunc) ||
-	   (stencilFail != other.stencilFail) ||
-	   (stencilPass != other.stencilPass) ||
-	   (stencilDepthPass != other.stencilDepthPass) ||
-	   (stencilValue != other.stencilValue) ||
-	   (stencilTest != other.stencilTest) ||
-	   (stencilWriteMask != other.stencilWriteMask)){
+	if(std::memcmp(this, &other, offsetof(GPUState, sentinel)) != 0){
 		return false;
 	}
 
@@ -47,27 +26,8 @@ bool GPUState::isEquivalent(const GPUState& other) const {
 	}*/
 
 	// Mesh: same bindings, same attributes. Offsets and buffers are dynamic.
-	const size_t bindingCount = mesh->state.bindings.size();
-	for(uint i = 0; i < bindingCount; ++i){
-		const auto& bind = mesh->state.bindings[i];
-		const auto& obind = other.mesh->state.bindings[i];
-		if((bind.binding != obind.binding) ||
-		   (bind.stride != obind.stride) ||
-		   (bind.inputRate != obind.inputRate)){
-			return false;
-		}
-	}
-	
-	const size_t attributeCount = mesh->state.attributes.size();
-	for(uint i = 0; i < attributeCount; ++i){
-		const auto& attr = mesh->state.attributes[i];
-		const auto& ottr = other.mesh->state.attributes[i];
-		if((attr.binding != ottr.binding) ||
-		   (attr.format != ottr.format) ||
-		   (attr.location != ottr.location) ||
-		   (attr.offset != ottr.offset)){
-			return false;
-		}
+	if(!(mesh->state.isEquivalent(other.mesh->state))){
+		return false;
 	}
 	return true;
 }
@@ -141,6 +101,39 @@ void GPUMesh::clean() {
 	count = 0;
 	
 	GPU::clean(*this);
+}
+
+bool GPUMesh::InputState::isEquivalent(const GPUMesh::InputState& other) const {
+	if(bindings.size() != other.bindings.size()){
+		return false;
+	}
+	if(attributes.size() != other.attributes.size()){
+		return false;
+	}
+	const size_t bindingCount = bindings.size();
+	const size_t attributeCount = attributes.size();
+
+	for(size_t bid = 0; bid < bindingCount; ++bid){
+		const auto& bind = bindings[bid];
+		const auto& obind = other.bindings[bid];
+		if((bind.binding != obind.binding) ||
+			(bind.stride != obind.stride) ||
+			(bind.inputRate != obind.inputRate)){
+			return false;
+		}
+	}
+
+	for(size_t aid = 0; aid < attributeCount; ++aid){
+		const auto& attr = attributes[aid];
+		const auto& ottr = other.attributes[aid];
+		if((attr.binding != ottr.binding) ||
+		   (attr.format != ottr.format) ||
+		   (attr.location != ottr.location) ||
+		   (attr.offset != ottr.offset)){
+			return false;
+		}
+	}
+	return true;
 }
 
 GPUQuery::GPUQuery(Type type) {

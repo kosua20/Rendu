@@ -343,7 +343,7 @@ void DebugViewer::displayState(const std::string & name, StateInfos & infos){
 			str << "Blend equation: " << "RGB: " << blendEqs.at(st.blendEquationRGB) << ", A: " << blendEqs.at(st.blendEquationAlpha) << "\n";
 			str << "Blend source: " << "RGB: " << funcs.at(st.blendSrcRGB) << ", A: " << funcs.at(st.blendSrcAlpha) << "\n";
 			str << "Blend desti.: " << "RGB: " << funcs.at(st.blendDstRGB) << ", A: " << funcs.at(st.blendDstAlpha) << "\n";
-			//str << "Blend color: " << st.blendColor << "\n";
+			str << "Blend color: " << st.blendColor << "\n";
 			const std::string strRes = str.str();
 			ImGui::Text("%s", strRes.c_str());
 		}

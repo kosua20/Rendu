@@ -7,55 +7,47 @@
 #include <xxhash/xxhash.h>
 
 VkPipeline PipelineCache::getPipeline(const GPUState & state){
-	// Compute the hash.
+	// Compute the hash (used in all cases).
 	const uint64_t hash = XXH3_64bits(&state, offsetof(GPUState, sentinel));
-	auto its = _pipelines.equal_range(hash);
-	if(its.first != _pipelines.end()){
-		for(auto it = its.first; it != its.second; ++it){
-			const Entry& entry = it->second;
-			if(entry.program != state.program){
-				continue;
-			}
-			bool compatible = true;
-			const size_t bindingCount = state.mesh->state.bindings.size();
-			for(uint i = 0; i < bindingCount; ++i){
-				const auto& bind = state.mesh->state.bindings[i];
-				const auto& obind = entry.mesh->state.bindings[i];
-				if((bind.binding != obind.binding) ||
-				   (bind.stride != obind.stride) ||
-				   (bind.inputRate != obind.inputRate)){
-					compatible = false;
-					break;
-				}
-			}
-			if(!compatible){
-				continue;
-			}
 
-			const size_t attributeCount = state.mesh->state.attributes.size();
-			for(uint i = 0; i < attributeCount; ++i){
-				const auto& attr = state.mesh->state.attributes[i];
-				const auto& ottr = entry.mesh->state.attributes[i];
-				if((attr.binding != ottr.binding) ||
-				   (attr.format != ottr.format) ||
-				   (attr.location != ottr.location) ||
-				   (attr.offset != ottr.offset)){
-					compatible = false;
-					break;
-				}
-			}
-			if(!compatible){
-				continue;
-			}
-			return entry.pipeline;
-		}
+	// \todo Might have to invalidate program pipelines after a reload, as the layout will change.
+
+	// First check if we already have pipelines for the current program.
+	auto sameProgramPipelinesIt = _pipelines.find(state.program);
+	// If not found, create new program cache and generate pipeline.
+	if(sameProgramPipelinesIt == _pipelines.end()){
+		_pipelines[state.program] = ProgramPipelines();
+		return createNewPipeline(state, hash);
 	}
+
+	const auto& sameProgramPipelines = sameProgramPipelinesIt->second;
+	// Else, query all program pipelines with the same state.
+	auto sameStatePipelines = sameProgramPipelines.equal_range(hash);
+	// If not found, create a new pipeline in the existing program cache.
+	if(sameStatePipelines.first == sameProgramPipelines.end()){
+		return createNewPipeline(state, hash);
+	}
+	// Else, find a pipeline with the same mesh layout.
+	for(auto pipeline = sameStatePipelines.first; pipeline != sameStatePipelines.second; ++pipeline){
+		const Entry& entry = pipeline->second;
+
+		// Test mesh layout compatibility.
+		if(!entry.mesh->state.isEquivalent(entry.mesh->state)){
+			continue;
+		}
+		return entry.pipeline;
+	}
+
 	// Else we have to create the pipeline
+	return createNewPipeline(state, hash);
+}
+
+VkPipeline PipelineCache::createNewPipeline(const GPUState& state, const uint64_t hash){
 	Entry entry;
 	entry.pipeline = buildPipeline(state);
 	entry.program = state.program;
 	entry.mesh = state.mesh;
-	_pipelines.insert(std::make_pair(hash, entry));
+	_pipelines[state.program].insert(std::make_pair(hash, entry));
 	return entry.pipeline;
 }
 
@@ -65,7 +57,8 @@ VkPipeline PipelineCache::buildPipeline(const GPUState& state){
 	VkGraphicsPipelineCreateInfo pipelineInfo{};
 	pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 	// Assert no null data.
-
+	assert(state.program); assert(state.mesh);
+	
 	// Program
 	{
 		const Program::StagesState& programState = state.program->getState();
@@ -215,10 +208,10 @@ VkPipeline PipelineCache::buildPipeline(const GPUState& state){
 			{BlendFunction::ONE_MINUS_DST_ALPHA, VK_BLEND_FACTOR_ONE_MINUS_DST_ALPHA}};
 
 		colorState.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
-		colorState.blendConstants[0] = 0.0f;
-		colorState.blendConstants[1] = 0.0f;
-		colorState.blendConstants[2] = 0.0f;
-		colorState.blendConstants[3] = 1.0f;
+		colorState.blendConstants[0] = state.blendColor[0];
+		colorState.blendConstants[1] = state.blendColor[1];
+		colorState.blendConstants[2] = state.blendColor[2];
+		colorState.blendConstants[3] = state.blendColor[3];
 		colorState.logicOpEnable = VK_FALSE;
 		colorState.logicOp = VK_LOGIC_OP_COPY;
 		// Per attachment blending.

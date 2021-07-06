@@ -20,8 +20,11 @@ private:
 		// Framebuffer* framebuffer;
 	};
 
+	VkPipeline createNewPipeline(const GPUState& state, const uint64_t hash);
+
 	VkPipeline buildPipeline(const GPUState& state);
 
-	using Cache = std::unordered_multimap<uint64_t, Entry>;
+	using ProgramPipelines = std::unordered_multimap<uint64_t, Entry>;
+	using Cache = std::unordered_map<const Program*, ProgramPipelines>;
 	Cache _pipelines;
 };
