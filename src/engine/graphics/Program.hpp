@@ -3,6 +3,8 @@
 #include "Common.hpp"
 #include <map>
 
+#include "graphics/GPUObjects.hpp"
+
 #include <volk/volk.h>
 
 /**
@@ -14,9 +16,8 @@ class Program {
 public:
 
 	/** Uniform reflection information.
-	 Note that GL info are stored separately internally.
 	 */
-	struct Uniform {
+	struct UniformDef {
 
 		/// Uniform basic type.
 		enum class Type {
@@ -32,10 +33,34 @@ public:
 		 \param uname uniform name
 		 \param utype uniform type
 		 */
-		Uniform(const std::string & uname, Type utype);
+		//Uniform(const std::string & uname, Type utype);
 
 		std::string name; ///< The uniform name.
 		Type type; ///< The uniform type.
+
+		struct Location {
+			uint set;
+			uint binding;
+			uint offset;
+		};
+
+		std::vector<Location> locations;
+
+	};
+
+
+	struct SamplerDef {
+		std::string name;
+		uint binding;
+		uint set;
+	};
+
+	struct BufferDef {
+		std::string name;
+		uint binding;
+		uint size;
+		uint set;
+		std::vector<UniformDef> members;
 	};
 
 	struct StagesState {
@@ -248,9 +273,9 @@ public:
 
 	/** \return the list of registered basic uniforms.
 	 */
-	const std::vector<Uniform> & uniforms() const {
+	/*const std::vector<Uniform> & uniforms() const {
 		return _uniformInfos;
-	}
+	}*/
 
 	/** \return the program name */
 	const std::string & name() const {
@@ -277,20 +302,33 @@ public:
 		return _state;
 	}
 
+	struct Stage {
+		std::vector<SamplerDef> samplers;
+		std::vector<BufferDef> buffers;
+		VkShaderModule module = VK_NULL_HANDLE;
+
+		void reset(){
+			samplers.clear();
+			buffers.clear();
+			module = VK_NULL_HANDLE;
+		}
+	};
+
+	Stage& stage(ShaderType type){
+		return _stages[uint(type)];
+	}
+
 private:
 
 	void updateUniformMetric() const; ///< Update internal metrics.
 
-	VkShaderModule vertex = VK_NULL_HANDLE;
-	VkShaderModule geometry = VK_NULL_HANDLE;
-	VkShaderModule tesscontrol = VK_NULL_HANDLE;
-	VkShaderModule tesseval = VK_NULL_HANDLE;
-	VkShaderModule fragment = VK_NULL_HANDLE;
+
+	std::array<Stage, int(ShaderType::COUNT)> _stages;
 
 	//GLuint _id;								 ///< The GPU program ID.
 	std::string _name;				 		 ///< The shader name
 	//std::map<std::string, GLint> _uniforms;  ///< Internal list of automatically registered uniforms and their locations. We keep this separate to avoid exposing GL internal types.
-	std::vector<Uniform> _uniformInfos;  ///< Additional uniforms info.
+	//std::vector<Uniform> _uniformInfos;  ///< Additional uniforms info.
 	StagesState _state;
 	friend class GPU; ///< Utilities will need to access GPU handle.
 };

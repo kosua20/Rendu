@@ -43,18 +43,18 @@ public:
 	using Handle = int;
 
 	/** Type of shader uniform binding */
-	enum class BindingType : uint {
+	/*enum class BindingType : uint {
 		TEXTURE, UNIFORM_BUFFER
-	};
+	};*/
 
 	/** A binding declared in a shader, corresponding to a location slot. */
-	struct Binding {
+	/*struct Binding {
 		BindingType type; ///< The type of binding.
 		int location; ///< The binding slot.
-	};
+	};*/
 
 	/** Bindings list */
-	using Bindings = std::map<std::string, Binding>;
+	//using Bindings = std::map<std::string, Binding>;
 
 	/** Internal operation metrics. */
 	struct Metrics {
@@ -100,7 +100,7 @@ public:
 	 \param finalLog will contain the compilation log of the shader
 	 \return the GPU ID of the shader object
 	 */
-	static VkShaderModule loadShader(const std::string & prog, ShaderType type, Bindings & bindings, std::string & finalLog);
+	//static void loadShader(const std::string & prog, ShaderType type, Program::Stage & stage, std::string & finalLog);
 
 	/** Create and link a GLProgram using the shader code contained in the given strings.
 	 \param vertexContent the vertex shader string
@@ -108,11 +108,10 @@ public:
 	 \param geometryContent the optional geometry shader string
 	 \param tessControlContent the optional tesselation control shader string
 	 \param tessEvalContent the optional tesselation evaluation shader string
-	 \param bindings will be filled with the samplers present in the shaders and their user-defined locations
 	 \param debugInfos the name of the program, or any custom debug infos that will be logged.
 	 \return the GPU ID of the program
 	 */
-	static void createProgram(Program & program, const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, const std::string & tessControlContent, const std::string & tessEvalContent, Bindings & bindings, const std::string & debugInfos);
+	static void createProgram(Program & program, const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, const std::string & tessControlContent, const std::string & tessEvalContent,const std::string & debugInfos);
 
 	/** Bind a program to use for rendering
 	 \param program the program to use

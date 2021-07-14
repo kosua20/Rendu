@@ -1,18 +1,16 @@
 #include "graphics/GPU.hpp"
+#include "graphics/ShaderCompiler.hpp"
 #include "graphics/Framebuffer.hpp"
 #include "resources/Texture.hpp"
 #include "resources/Image.hpp"
 #include "system/TextUtilities.hpp"
 #include "system/Window.hpp"
 
-
 #include "graphics/GPUInternal.hpp"
 #include "graphics/PipelineCache.hpp"
 
 #include <sstream>
 #include <GLFW/glfw3.h>
-#include <glslang/Public/ShaderLang.h>
-#include <glslang/SPIRV/GlslangToSpv.h>
 
 #include <set>
 
@@ -138,8 +136,8 @@ bool GPU::setup(const std::string & appName) {
 	_context.timestep = double(properties.limits.timestampPeriod);
 	_context.uniformAlignment = properties.limits.minUniformBufferOffsetAlignment;
 	// minImageTransferGranularity is guaranteed to be (1,1,1) on graphics/compute queues
-	
-	if(!glslang::InitializeProcess()){
+
+	if(!ShaderCompiler::init()){
 		Log::Error() << Log::GPU << "Unable to initialize shader compiler." << std::endl;
 		return false;
 	}
@@ -320,193 +318,14 @@ int GPU::checkFramebufferStatus() {
 	return 0;
 }
 
-VkShaderModule GPU::loadShader(const std::string & prog, ShaderType type, Bindings & bindings, std::string & finalLog) {
-
-	// Add GLSL version.
-	std::string outputProg = "#version 450\n#line 1 0\n";
-	outputProg.append(prog);
-
-	// Create shader object.
-	static const std::map<ShaderType, EShLanguage> types = {
-		{ShaderType::VERTEX, EShLangVertex},
-		{ShaderType::FRAGMENT, EShLangFragment},
-		{ShaderType::GEOMETRY, EShLangGeometry},
-		{ShaderType::TESSCONTROL, EShLangTessControl},
-		{ShaderType::TESSEVAL, EShLangTessEvaluation}
-	};
-	const char* progStr = outputProg.c_str();
-	const EShLanguage stage = types.at(type);
-	glslang::TShader shader(stage);
-	shader.setStrings(&progStr, 1);
-	shader.setEntryPoint("main");
-	shader.setEnvInput(glslang::EShSourceGlsl, stage, glslang::EShClientVulkan, 100);
-	shader.setEnvClient(glslang::EShClientVulkan, glslang::EShTargetVulkan_1_1);
-	shader.setEnvTarget(glslang::EShTargetSpv, glslang::EShTargetSpv_1_3);
-
-	// Urgh, from glslang standalone example
-	static const TBuiltInResource defaultBuiltInResources = {
-		/* .MaxLights = */ 32, /* .MaxClipPlanes = */ 6, /* .MaxTextureUnits = */ 32,
-		/* .MaxTextureCoords = */ 32,
-		/* .MaxVertexAttribs = */ 64,
-		/* .MaxVertexUniformComponents = */ 4096,
-		/* .MaxVaryingFloats = */ 64,
-		/* .MaxVertexTextureImageUnits = */ 32,
-		/* .MaxCombinedTextureImageUnits = */ 80,
-		/* .MaxTextureImageUnits = */ 32,
-		/* .MaxFragmentUniformComponents = */ 4096,
-		/* .MaxDrawBuffers = */ 32,
-		/* .MaxVertexUniformVectors = */ 128,
-		/* .MaxVaryingVectors = */ 8,
-		/* .MaxFragmentUniformVectors = */ 16,
-		/* .MaxVertexOutputVectors = */ 16,
-		/* .MaxFragmentInputVectors = */ 15,
-		/* .MinProgramTexelOffset = */ -8,
-		/* .MaxProgramTexelOffset = */ 7,
-		/* .MaxClipDistances = */ 8,
-		/* .MaxComputeWorkGroupCountX = */ 65535,
-		/* .MaxComputeWorkGroupCountY = */ 65535,
-		/* .MaxComputeWorkGroupCountZ = */ 65535,
-		/* .MaxComputeWorkGroupSizeX = */ 1024,
-		/* .MaxComputeWorkGroupSizeY = */ 1024,
-		/* .MaxComputeWorkGroupSizeZ = */ 64,
-		/* .MaxComputeUniformComponents = */ 1024,
-		/* .MaxComputeTextureImageUnits = */ 16,
-		/* .MaxComputeImageUniforms = */ 8,
-		/* .MaxComputeAtomicCounters = */ 8,
-		/* .MaxComputeAtomicCounterBuffers = */ 1,
-		/* .MaxVaryingComponents = */ 60,
-		/* .MaxVertexOutputComponents = */ 64,
-		/* .MaxGeometryInputComponents = */ 64,
-		/* .MaxGeometryOutputComponents = */ 128,
-		/* .MaxFragmentInputComponents = */ 128,
-		/* .MaxImageUnits = */ 8,
-		/* .MaxCombinedImageUnitsAndFragmentOutputs = */ 8,
-		/* .MaxCombinedShaderOutputResources = */ 8,
-		/* .MaxImageSamples = */ 0,
-		/* .MaxVertexImageUniforms = */ 0,
-		/* .MaxTessControlImageUniforms = */ 0,
-		/* .MaxTessEvaluationImageUniforms = */ 0,
-		/* .MaxGeometryImageUniforms = */ 0,
-		/* .MaxFragmentImageUniforms = */ 8,
-		/* .MaxCombinedImageUniforms = */ 8,
-		/* .MaxGeometryTextureImageUnits = */ 16,
-		/* .MaxGeometryOutputVertices = */ 256,
-		/* .MaxGeometryTotalOutputComponents = */ 1024,
-		/* .MaxGeometryUniformComponents = */ 1024,
-		/* .MaxGeometryVaryingComponents = */ 64,
-		/* .MaxTessControlInputComponents = */ 128,
-		/* .MaxTessControlOutputComponents = */ 128,
-		/* .MaxTessControlTextureImageUnits = */ 16,
-		/* .MaxTessControlUniformComponents = */ 1024,
-		/* .MaxTessControlTotalOutputComponents = */ 4096,
-		/* .MaxTessEvaluationInputComponents = */ 128,
-		/* .MaxTessEvaluationOutputComponents = */ 128,
-		/* .MaxTessEvaluationTextureImageUnits = */ 16,
-		/* .MaxTessEvaluationUniformComponents = */ 1024,
-		/* .MaxTessPatchComponents = */ 120,
-		/* .MaxPatchVertices = */ 32,
-		/* .MaxTessGenLevel = */ 64,
-		/* .MaxViewports = */ 16,
-		/* .MaxVertexAtomicCounters = */ 0,
-		/* .MaxTessControlAtomicCounters = */ 0,
-		/* .MaxTessEvaluationAtomicCounters = */ 0,
-		/* .MaxGeometryAtomicCounters = */ 0,
-		/* .MaxFragmentAtomicCounters = */ 8,
-		/* .MaxCombinedAtomicCounters = */ 8,
-		/* .MaxAtomicCounterBindings = */ 1,
-		/* .MaxVertexAtomicCounterBuffers = */ 0,
-		/* .MaxTessControlAtomicCounterBuffers = */ 0,
-		/* .MaxTessEvaluationAtomicCounterBuffers = */ 0,
-		/* .MaxGeometryAtomicCounterBuffers = */ 0,
-		/* .MaxFragmentAtomicCounterBuffers = */ 1,
-		/* .MaxCombinedAtomicCounterBuffers = */ 1,
-		/* .MaxAtomicCounterBufferSize = */ 16384,
-		/* .MaxTransformFeedbackBuffers = */ 4,
-		/* .MaxTransformFeedbackInterleavedComponents = */ 64,
-		/* .MaxCullDistances = */ 8,
-		/* .MaxCombinedClipAndCullDistances = */ 8,
-		/* .MaxSamples = */ 4,
-		/* .maxMeshOutputVerticesNV = */ 256,
-		/* .maxMeshOutputPrimitivesNV = */ 512,
-		/* .maxMeshWorkGroupSizeX_NV = */ 32,
-		/* .maxMeshWorkGroupSizeY_NV = */ 1,
-		/* .maxMeshWorkGroupSizeZ_NV = */ 1,
-		/* .maxTaskWorkGroupSizeX_NV = */ 32,
-		/* .maxTaskWorkGroupSizeY_NV = */ 1,
-		/* .maxTaskWorkGroupSizeZ_NV = */ 1,
-		/* .maxMeshViewCountNV = */ 4,
-		/* .maxDualSourceDrawBuffersEXT = */ 1,
-
-		/* .limits = */ {
-			/* .nonInductiveForLoops = */ 1,
-			/* .whileLoops = */ 1,
-			/* .doWhileLoops = */ 1,
-			/* .generalUniformIndexing = */ 1,
-			/* .generalAttributeMatrixVectorIndexing = */ 1,
-			/* .generalVaryingIndexing = */ 1,
-			/* .generalSamplerIndexing = */ 1,
-			/* .generalVariableIndexing = */ 1,
-			/* .generalConstantMatrixVectorIndexing = */ 1,
-		}};
-	finalLog = "";
-	const EShMessages messages = (EShMessages)(EShMsgDefault | EShMsgSpvRules | EShMsgVulkanRules);
-	bool success = shader.parse(&defaultBuiltInResources, 110, true, messages);
-	if(!success){
-		std::string infoLogString(shader.getInfoLog());
-		TextUtilities::replace(infoLogString, "\n", "\n\t");
-		infoLogString.insert(0, "\t");
-		finalLog = infoLogString;
-		return VK_NULL_HANDLE;
-	}
-
-	glslang::TProgram program;
-	program.addShader(&shader);
-	success = program.link(messages);
-	if(!success){
-		std::string infoLogString(program.getInfoLog());
-		finalLog = infoLogString;
-		return VK_NULL_HANDLE;
-	}
-	if(!program.mapIO()){
-		finalLog = "Unable to map IO.";
-		return VK_NULL_HANDLE;
-	}
-
-
-	std::vector<unsigned int> spirv;
-	glslang::SpvOptions spvOptions;
-	spvOptions.generateDebugInfo = false;
-	spvOptions.disableOptimizer = false;
-	spvOptions.optimizeSize = true;
-	spvOptions.disassemble = false;
-	spvOptions.validate = false;
-	glslang::GlslangToSpv(*program.getIntermediate(stage), spirv, &spvOptions);
-	if(spirv.empty()){
-		finalLog = "Unable to generate SPIRV.";
-		return VK_NULL_HANDLE;
-	}
-
-	VkShaderModuleCreateInfo createInfo{};
-	createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-	createInfo.codeSize = spirv.size() * sizeof(unsigned int);
-	createInfo.pCode = reinterpret_cast<const uint32_t*>(spirv.data());
-	VkShaderModule shaderModule;
-	if(vkCreateShaderModule(_context.device, &createInfo, nullptr, &shaderModule) != VK_SUCCESS) {
-		finalLog = "Unable to create shader module.";
-		return VK_NULL_HANDLE;
-	}
-
-	return shaderModule;
-}
-
-void GPU::createProgram(Program& program, const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, const std::string & tessControlContent, const std::string & tessEvalContent, Bindings & bindings, const std::string & debugInfos) {
+void GPU::createProgram(Program& program, const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, const std::string & tessControlContent, const std::string & tessEvalContent, const std::string & debugInfos) {
 
 	Log::Verbose() << Log::GPU << "Compiling " << debugInfos << "." << std::endl;
 	
 	std::string compilationLog;
 	// If vertex program code is given, compile it.
 	if(!vertexContent.empty()) {
-		program.vertex = loadShader(vertexContent, ShaderType::VERTEX, bindings, compilationLog);
+		ShaderCompiler::compile(vertexContent, ShaderType::VERTEX, program.stage(ShaderType::VERTEX), compilationLog);
 		if(!compilationLog.empty()) {
 			Log::Error() << Log::GPU << "Vertex shader failed to compile:" << std::endl
 						 << compilationLog << std::endl;
@@ -514,7 +333,7 @@ void GPU::createProgram(Program& program, const std::string & vertexContent, con
 	}
 	// If fragment program code is given, compile it.
 	if(!fragmentContent.empty()) {
-		program.fragment = loadShader(fragmentContent, ShaderType::FRAGMENT, bindings, compilationLog);
+		ShaderCompiler::compile(fragmentContent, ShaderType::FRAGMENT, program.stage(ShaderType::FRAGMENT), compilationLog);
 		if(!compilationLog.empty()) {
 			Log::Error() << Log::GPU << "Fragment shader failed to compile:" << std::endl
 						 << compilationLog << std::endl;
@@ -522,7 +341,7 @@ void GPU::createProgram(Program& program, const std::string & vertexContent, con
 	}
 	// If geometry program code is given, compile it.
 	if(!geometryContent.empty()) {
-		program.geometry = loadShader(geometryContent, ShaderType::GEOMETRY, bindings, compilationLog);
+		ShaderCompiler::compile(geometryContent, ShaderType::GEOMETRY, program.stage(ShaderType::GEOMETRY), compilationLog);
 		if(!compilationLog.empty()) {
 			Log::Error() << Log::GPU << "Geometry shader failed to compile:" << std::endl
 						 << compilationLog << std::endl;
@@ -530,7 +349,7 @@ void GPU::createProgram(Program& program, const std::string & vertexContent, con
 	}
 	// If tesselation control program code is given, compile it.
 	if(!tessControlContent.empty()) {
-		program.tesscontrol = loadShader(tessControlContent, ShaderType::TESSCONTROL, bindings, compilationLog);
+		ShaderCompiler::compile(tessControlContent, ShaderType::TESSCONTROL, program.stage(ShaderType::TESSCONTROL), compilationLog);
 		if(!compilationLog.empty()) {
 			Log::Error() << Log::GPU << "Tessellation control shader failed to compile:" << std::endl
 						 << compilationLog << std::endl;
@@ -538,7 +357,7 @@ void GPU::createProgram(Program& program, const std::string & vertexContent, con
 	}
 	// If tessellation evaluation program code is given, compile it.
 	if(!tessEvalContent.empty()) {
-		program.tesseval = loadShader(tessEvalContent, ShaderType::TESSEVAL, bindings, compilationLog);
+		ShaderCompiler::compile(tessEvalContent, ShaderType::TESSEVAL, program.stage(ShaderType::TESSEVAL), compilationLog);
 		if(!compilationLog.empty()) {
 			Log::Error() << Log::GPU << "Tessellation evaluation shader failed to compile:" << std::endl
 						 << compilationLog << std::endl;
@@ -1974,8 +1793,7 @@ void GPU::cleanup(){
 
 	_quad.clean();
 	//vkDestroyDevice(_context.device, nullptr);
-
-	glslang::FinalizeProcess();
+	ShaderCompiler::cleanup();
 }
 
 
@@ -2000,18 +1818,11 @@ void GPU::clean(GPUBuffer & buffer){
 }
 
 void GPU::clean(Program & program){
-	vkDestroyShaderModule(_context.device, program.vertex, nullptr);
-	vkDestroyShaderModule(_context.device, program.geometry, nullptr);
-	vkDestroyShaderModule(_context.device, program.tesscontrol, nullptr);
-	vkDestroyShaderModule(_context.device, program.tesseval, nullptr);
-	vkDestroyShaderModule(_context.device, program.fragment, nullptr);
-
-	program.vertex = VK_NULL_HANDLE;
-	program.geometry = VK_NULL_HANDLE;
-	program.tesscontrol = VK_NULL_HANDLE;
-	program.tesseval = VK_NULL_HANDLE;
-	program.fragment = VK_NULL_HANDLE;
-
+	for(uint sid = 0; sid < uint(ShaderType::COUNT); ++sid){
+		Program::Stage& stage = program.stage(ShaderType(sid));
+		vkDestroyShaderModule(_context.device, stage.module, nullptr);
+		stage.reset();
+	}
 }
 
 GPUState GPU::_state;

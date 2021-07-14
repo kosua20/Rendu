@@ -3,9 +3,7 @@
 #include "resources/ResourcesManager.hpp"
 
 
-Program::Uniform::Uniform(const std::string & uname, Program::Uniform::Type utype) :
-	name(uname), type(utype) {
-}
+
 
 Program::Program(const std::string & name, const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, const std::string & tessControlContent, const std::string & tessEvalContent) : _name(name) {
 	reload(vertexContent, fragmentContent, geometryContent, tessControlContent, tessEvalContent);
@@ -14,181 +12,94 @@ Program::Program(const std::string & name, const std::string & vertexContent, co
 void Program::reload(const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, const std::string & tessControlContent, const std::string & tessEvalContent) {
 
 	GPU::clean(*this);
-	
-	GPU::Bindings bindings;
-	
-	const std::string debugName = _name;
-	GPU::createProgram(*this, vertexContent, fragmentContent, geometryContent, tessControlContent, tessEvalContent, bindings, debugName);
 
-	// Build state.
+	const std::string debugName = _name;
+	GPU::createProgram(*this, vertexContent, fragmentContent, geometryContent, tessControlContent, tessEvalContent, debugName);
+
+	// Reflection information has been populated. Merge uniform infos, build descriptor layout, prepare descriptors.
+#define LOG_REFLECTION
+#ifdef LOG_REFLECTION
+
+	static const std::map<Program::UniformDef::Type, std::string> typeNames = {
+		{ Program::UniformDef::Type::BOOL, "BOOL" },
+		{ Program::UniformDef::Type::BVEC2, "BVEC2" },
+		{ Program::UniformDef::Type::BVEC3, "BVEC3" },
+		{ Program::UniformDef::Type::BVEC4, "BVEC4" },
+		{ Program::UniformDef::Type::INT, "INT" },
+		{ Program::UniformDef::Type::IVEC2, "IVEC2" },
+		{ Program::UniformDef::Type::IVEC3, "IVEC3" },
+		{ Program::UniformDef::Type::IVEC4, "IVEC4" },
+		{ Program::UniformDef::Type::UINT, "UINT" },
+		{ Program::UniformDef::Type::UVEC2, "UVEC2" },
+		{ Program::UniformDef::Type::UVEC3, "UVEC3" },
+		{ Program::UniformDef::Type::UVEC4, "UVEC4" },
+		{ Program::UniformDef::Type::FLOAT, "FLOAT" },
+		{ Program::UniformDef::Type::VEC2, "VEC2" },
+		{ Program::UniformDef::Type::VEC3, "VEC3" },
+		{ Program::UniformDef::Type::VEC4, "VEC4" },
+		{ Program::UniformDef::Type::MAT2, "MAT2" },
+		{ Program::UniformDef::Type::MAT3, "MAT3" },
+		{ Program::UniformDef::Type::MAT4, "MAT4" },
+		{ Program::UniformDef::Type::OTHER, "OTHER" },
+	};
+
+	Log::Info()  << "-- Reflection: ----" << std::endl;
+
+	uint id = 0;
+	for(const auto& stage : _stages){
+
+		Log::Info() << "Stage: " << id << std::endl;
+		for(const auto& buffer : stage.buffers){
+			Log::Info() << "* Buffer: (" << buffer.set << ", " << buffer.binding << ")" << std::endl;
+			for(const auto& member : buffer.members){
+				const auto& loc = member.locations[0];
+				Log::Info() << "\t" << member.name  << " at (" << loc.set << ", " << loc.binding << ") off " << loc.offset << " of type " << typeNames.at(member.type) << std::endl;
+			}
+		}
+
+		for(const auto& sampler : stage.samplers){
+			Log::Info() << "* Sampler" << sampler.name << " at (" << sampler.set << ", " << sampler.binding << ")" << std::endl;
+		}
+		++id;
+	}
+
+#endif
+
+	}
+	
+	// Build state for the pipeline state objects.
 	_state.stages.clear();
 
-	if(vertex != VK_NULL_HANDLE){
+	static const std::map<ShaderType, VkShaderStageFlagBits> stageBits = {
+		{ShaderType::VERTEX, VK_SHADER_STAGE_VERTEX_BIT},
+		{ShaderType::GEOMETRY, VK_SHADER_STAGE_GEOMETRY_BIT},
+		{ShaderType::FRAGMENT, VK_SHADER_STAGE_FRAGMENT_BIT},
+		{ShaderType::TESSCONTROL, VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT},
+		{ShaderType::TESSEVAL, VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT},
+	};
+	for(uint sid = 0; sid < uint(ShaderType::COUNT); ++sid){
+		const ShaderType type = ShaderType(sid);
+		const VkShaderModule& module = stage(type).module;
+		if(module == VK_NULL_HANDLE){
+			continue;
+		}
 		_state.stages.emplace_back();
-		_state.stages.back().stage = VK_SHADER_STAGE_VERTEX_BIT;
-		_state.stages.back().module = vertex;
-	}
-	if(geometry != VK_NULL_HANDLE){
-		_state.stages.emplace_back();
-		_state.stages.back().stage = VK_SHADER_STAGE_GEOMETRY_BIT;
-		_state.stages.back().module = geometry;
-	}
-	if(tesscontrol != VK_NULL_HANDLE){
-		_state.stages.emplace_back();
-		_state.stages.back().stage = VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT;
-		_state.stages.back().module = tesscontrol;
-	}
-	if(tesseval != VK_NULL_HANDLE){
-		_state.stages.emplace_back();
-		_state.stages.back().stage = VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT;
-		_state.stages.back().module = tesseval;
-	}
-	if(fragment != VK_NULL_HANDLE){
-		_state.stages.emplace_back();
-		_state.stages.back().stage = VK_SHADER_STAGE_FRAGMENT_BIT;
-		_state.stages.back().module = fragment;
+		_state.stages.back().stage = stageBits.at(type);
+		_state.stages.back().module = module;
 	}
 
 	for(auto& stage : _state.stages){
 		stage.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 		stage.pName = "main";
 	}
-//	_uniforms.clear();
-//	_uniformInfos.clear();
 
-	// Get the number of active uniforms and their maximum length.
-	// Note: this will also capture each attribute of each element of a uniform block.
-	// We just process them as other uniforms but won't use them afterwards.
-//	GLint count = 0;
-//	GLint size  = 0;
-//	glGetProgramiv(_id, GL_ACTIVE_UNIFORMS, &count);
-//	glGetProgramiv(_id, GL_ACTIVE_UNIFORM_MAX_LENGTH, &size);
-	// We will store the types for future reflection.
-//	static const std::map<GLenum, Uniform::Type> types = {
-//		{ GL_FLOAT, Uniform::Type::FLOAT },
-//		{ GL_FLOAT_VEC2, Uniform::Type::VEC2 },
-//		{ GL_FLOAT_VEC3, Uniform::Type::VEC3 },
-//		{ GL_FLOAT_VEC4, Uniform::Type::VEC4 },
-//		{ GL_INT, Uniform::Type::INT },
-//		{ GL_INT_VEC2, Uniform::Type::IVEC2 },
-//		{ GL_INT_VEC3, Uniform::Type::IVEC3 },
-//		{ GL_INT_VEC4, Uniform::Type::IVEC4 },
-//		{ GL_UNSIGNED_INT, Uniform::Type::UINT },
-//		{ GL_UNSIGNED_INT_VEC2, Uniform::Type::UVEC2 },
-//		{ GL_UNSIGNED_INT_VEC3, Uniform::Type::UVEC3 },
-//		{ GL_UNSIGNED_INT_VEC4, Uniform::Type::UVEC4 },
-//		{ GL_BOOL, Uniform::Type::BOOL },
-//		{ GL_BOOL_VEC2, Uniform::Type::BVEC2 },
-//		{ GL_BOOL_VEC3, Uniform::Type::BVEC3 },
-//		{ GL_BOOL_VEC4, Uniform::Type::BVEC4 },
-//		{ GL_FLOAT_MAT2, Uniform::Type::MAT2 },
-//		{ GL_FLOAT_MAT3, Uniform::Type::MAT3 },
-//		{ GL_FLOAT_MAT4, Uniform::Type::MAT4 }
-//	};
-
-//	GPU::bindProgram(*this);
-
-//	for(GLuint i = 0; i < GLuint(count); ++i) {
-//		// Get infos (name, name length, type,...) of each uniform.
-//		std::vector<GLchar> uname(size);
-//		GLenum utype;
-//		GLint usize		= 0;
-//		GLsizei ulength = 0;
-//		glGetActiveUniform(_id, i, size, &ulength, &usize, &utype, &uname[0]);
-//		const std::string name(&uname[0]);
-//		// Skip empty or default uniforms (starting with 'gl_').
-//		if(usize == 0 || name.empty() || (name.size() > 3 && name.substr(0, 3) == "gl_")) {
-//			continue;
-//		}
-//		// Register uniform using its name.
-//		// /!\ the uniform location can be different from the uniform ID.
-//		_uniforms[name] = glGetUniformLocation(_id, name.c_str());
-//		// Store uniform information.
-//		_uniformInfos.emplace_back(name, types.count(utype) > 0 ? types.at(utype) : Uniform::Type::OTHER);
-//		// If the size of the uniform is > 1, we have an array.
-//		if(usize > 1) {
-//			// Extract the array name from the 'name[0]' string.
-//			const std::string subname = name.substr(0, name.find_first_of('['));
-//			// Get the location of the other array elements.
-//			for(GLsizei j = 1; j < usize; ++j) {
-//				const std::string vname = subname + "[" + std::to_string(j) + "]";
-//				_uniforms[vname]		= glGetUniformLocation(_id, vname.c_str());
-//			}
-//		}
-//	}
-
-	// Parse uniform blocks.
-	//glGetProgramiv(_id, GL_ACTIVE_UNIFORM_BLOCKS, &count);
-	//glGetProgramiv(_id, GL_ACTIVE_UNIFORM_BLOCK_MAX_NAME_LENGTH, &size);
-
-//	for(GLuint i = 0; i < GLuint(count); ++i) {
-//		// Get infos (name, name length) of each block.
-//		std::vector<GLchar> uname(size);
-//		GLsizei ulength = 0;
-//		glGetActiveUniformBlockName(_id, i, size, &ulength, &uname[0]);
-//		const std::string name(&uname[0]);
-//		// Skip empty or default uniforms (starting with 'gl_').
-//		if(name.empty() || (name.size() > 3 && name.substr(0, 3) == "gl_")) {
-//			continue;
-//		}
-//		_uniforms[name] = glGetUniformBlockIndex(_id, name.c_str());
-//	}
-//	checkGPUError();
-
-	// Register texture slots.
-//	for(auto & binding : bindings) {
-//		const std::string & name = binding.first;
-//		const GPU::BindingType type = binding.second.type;
-//		const int slot = binding.second.location;
-//
-//		if(_uniforms.count(name) == 0){
-//			Log::Warning() << "Binding with name \"" << name << "\" was not registered." << std::endl;
-//			continue;
-//		}
-//		if(type == GPU::BindingType::TEXTURE) {
-//			//glUniform1i(_uniforms.at(name), slot);
-//		} else if(type == GPU::BindingType::UNIFORM_BUFFER) {
-//			//glUniformBlockBinding(_id, _uniforms.at(name), GLuint(slot));
-//		}
-//		checkGPUErrorInfos("Unused binding \"" + name + "\" in program " + debugName + ".");
-//
-//	}
-
-//	checkGPUError();
 }
 
 void Program::validate() const {
-	//glValidateProgram(_id);
-	//int status = -2;
-	//glGetProgramiv(_id, GL_VALIDATE_STATUS, &status);
-	//Log::Error() << Log::GPU << "Program : " << _name << " is " << (status == GL_TRUE ? "" : "not ") << "validated." << std::endl;
-	//int infoLogLength = 0;
-	//glGetProgramiv(_id, GL_INFO_LOG_LENGTH, &infoLogLength);
-	//if(infoLogLength <= 0) {
-	//	Log::Error() << Log::GPU << "No log for validation." << std::endl;
-	//	return;
-	//}
-	//std::vector<char> infoLog(infoLogLength);
-	//glGetProgramInfoLog(_id, infoLogLength, nullptr, &infoLog[0]);
-	//Log::Error() << Log::GPU << "Log for validation: " << &infoLog[0] << std::endl;
+
 }
 
 void Program::saveBinary(const std::string & outputPath) const {
-	//int count = 0;
-	//glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &count);
-	//if(count <= 0) {
-	//	Log::Error() << Log::GPU << "GL driver does not support program binary export." << std::endl;
-	//	return;
-	//}
-	//int length = 0;
-	//glGetProgramiv(_id, GL_PROGRAM_BINARY_LENGTH, &length);
-	//if(length <= 0) {
-	//	Log::Error() << Log::GPU << "No binary for program " << _name << "." << std::endl;
-	//	return;
-	//}
-	//GLenum format;
-	//std::vector<char> binary(length);
-	//glGetProgramBinary(_id, length, nullptr, &format, &binary[0]);
 
 	//Resources::saveRawDataToExternalFile(outputPath + "_" + _name + "_" + std::to_string(uint(format)) + ".bin", &binary[0], binary.size());
 }
