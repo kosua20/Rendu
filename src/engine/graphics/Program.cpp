@@ -65,6 +65,32 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 
 #endif
 
+	// Merge all uniforms
+	for(const auto& stage : _stages){
+		for(const auto& buffer : stage.buffers){
+
+			// Allocate a CPU buffer with the proper size.
+			if(_buffers.count(buffer.set) == 0){
+				_buffers[buffer.set] = {};
+			}
+			auto& setMap = _buffers.at(buffer.set);
+
+			if(setMap.count(buffer.binding) != 0){
+				Log::Warning() << Log::GPU << "Buffer already created, collision between stages." << std::endl;
+				continue;
+			}
+			setMap[buffer.binding].resize(buffer.size);
+			
+			// Add uniforms to look-up table.
+			for(const auto& uniform : buffer.members){
+				auto uniDef = _uniforms.find(uniform.name);
+				if(uniDef == _uniforms.end()){
+					_uniforms[uniform.name] = uniform;
+				} else {
+					uniDef->second.locations.emplace_back(uniform.locations[0]);
+				}
+			}
+		}
 	}
 	
 	// Build state for the pipeline state objects.
@@ -112,183 +138,246 @@ void Program::clean() {
 	GPU::clean(*this);
 }
 
-void Program::uniform(const std::string & name, bool t) const {
-	//if(_uniforms.count(name) != 0) {
-		//glUniform1i(_uniforms.at(name), int(t));
-	//	updateUniformMetric();
-	//}
+void Program::uniform(const std::string & name, bool t) {
+	auto uni = _uniforms.find(name);
+	if(uni != _uniforms.end()) {
+		const int val = t ? 1 : 0;
+		for(const UniformDef::Location& loc : uni->second.locations){
+			uchar* dst = retrieveUniformNonConst(loc);
+			std::memcpy(dst, &val, sizeof(int));
+		}
+		updateUniformMetric();
+	}
 }
 
-void Program::uniform(const std::string & name, int t) const {
-	//if(_uniforms.count(name) != 0) {
-		//glUniform1i(_uniforms.at(name), t);
-	//	updateUniformMetric();
-	//}
+void Program::uniform(const std::string & name, int t) {
+	auto uni = _uniforms.find(name);
+	if(uni != _uniforms.end()) {
+		for(const UniformDef::Location& loc : uni->second.locations){
+			uchar* dst = retrieveUniformNonConst(loc);
+			std::memcpy(dst, &t, sizeof(int));
+		}
+		updateUniformMetric();
+	}
 }
 
-void Program::uniform(const std::string & name, uint t) const {
-	//if(_uniforms.count(name) != 0) {
-		//glUniform1ui(_uniforms.at(name), t);
-	//	updateUniformMetric();
-	//}
+void Program::uniform(const std::string & name, uint t) {
+	auto uni = _uniforms.find(name);
+	if(uni != _uniforms.end()) {
+		for(const UniformDef::Location& loc : uni->second.locations){
+			uchar* dst = retrieveUniformNonConst(loc);
+			std::memcpy(dst, &t, sizeof(uint));
+		}
+		updateUniformMetric();
+	}
 }
 
-void Program::uniform(const std::string & name, float t) const {
-	//if(_uniforms.count(name) != 0) {
-		//glUniform1f(_uniforms.at(name), t);
-	//	updateUniformMetric();
-	//}
+void Program::uniform(const std::string & name, float t) {
+	auto uni = _uniforms.find(name);
+	if(uni != _uniforms.end()) {
+		for(const UniformDef::Location& loc : uni->second.locations){
+			uchar* dst = retrieveUniformNonConst(loc);
+			std::memcpy(dst, &t, sizeof(float));
+		}
+		updateUniformMetric();
+	}
 }
 
-void Program::uniform(const std::string & name, size_t count, const float * t) const {
-	//if(_uniforms.count(name) != 0) {
-		//glUniform1fv(_uniforms.at(name), GLsizei(count), t);
-	//	updateUniformMetric();
-	//}
+void Program::uniform(const std::string & name, size_t count, const float * t) {
+	// The name (including "[0]") should be present in the list.
+	auto uni = _uniforms.find(name);
+	if(uni != _uniforms.end()) {
+		for(const UniformDef::Location& loc : uni->second.locations){
+			uchar* dst = retrieveUniformNonConst(loc);
+			std::memcpy(dst, t, sizeof(float) * count);
+		}
+		updateUniformMetric();
+	}
 }
 
-void Program::uniform(const std::string & name, const glm::vec2 & t) const {
-	//if(_uniforms.count(name) != 0) {
-		//glUniform2fv(_uniforms.at(name), 1, &t[0]);
-	//	updateUniformMetric();
-	//}
+void Program::uniform(const std::string & name, const glm::vec2 & t) {
+	auto uni = _uniforms.find(name);
+	if(uni != _uniforms.end()) {
+		for(const UniformDef::Location& loc : uni->second.locations){
+			uchar* dst = retrieveUniformNonConst(loc);
+			std::memcpy(dst, &t[0], sizeof(glm::vec2));
+		}
+		updateUniformMetric();
+	}
 }
 
-void Program::uniform(const std::string & name, const glm::vec3 & t) const {
-	//if(_uniforms.count(name) != 0) {
-		//glUniform3fv(_uniforms.at(name), 1, &t[0]);
-	//	updateUniformMetric();
-	//}
+void Program::uniform(const std::string & name, const glm::vec3 & t) {
+	auto uni = _uniforms.find(name);
+	if(uni != _uniforms.end()) {
+		for(const UniformDef::Location& loc : uni->second.locations){
+			uchar* dst = retrieveUniformNonConst(loc);
+			std::memcpy(dst, &t[0], sizeof(glm::vec3));
+		}
+		updateUniformMetric();
+	}
 }
 
-void Program::uniform(const std::string & name, const glm::vec4 & t) const {
-	//if(_uniforms.count(name) != 0) {
-		//glUniform4fv(_uniforms.at(name), 1, &t[0]);
-	//	updateUniformMetric();
-	//}
+void Program::uniform(const std::string & name, const glm::vec4 & t) {
+	auto uni = _uniforms.find(name);
+	if(uni != _uniforms.end()) {
+		for(const UniformDef::Location& loc : uni->second.locations){
+			uchar* dst = retrieveUniformNonConst(loc);
+			std::memcpy(dst, &t[0], sizeof(glm::vec4));
+		}
+		updateUniformMetric();
+	}
 }
 
-void Program::uniform(const std::string & name, const glm::ivec2 & t) const {
-	//if(_uniforms.count(name) != 0) {
-		//glUniform2iv(_uniforms.at(name), 1, &t[0]);
-	//	updateUniformMetric();
-	//}
+void Program::uniform(const std::string & name, const glm::ivec2 & t) {
+	auto uni = _uniforms.find(name);
+	if(uni != _uniforms.end()) {
+		for(const UniformDef::Location& loc : uni->second.locations){
+			uchar* dst = retrieveUniformNonConst(loc);
+			std::memcpy(dst, &t[0], sizeof(glm::ivec2));
+		}
+		updateUniformMetric();
+	}
 }
 
-void Program::uniform(const std::string & name, const glm::ivec3 & t) const {
-	//if(_uniforms.count(name) != 0) {
-		//glUniform3iv(_uniforms.at(name), 1, &t[0]);
-	//	updateUniformMetric();
-	//}
+void Program::uniform(const std::string & name, const glm::ivec3 & t) {
+	auto uni = _uniforms.find(name);
+	if(uni != _uniforms.end()) {
+		for(const UniformDef::Location& loc : uni->second.locations){
+			uchar* dst = retrieveUniformNonConst(loc);
+			std::memcpy(dst, &t[0], sizeof(glm::ivec3));
+		}
+		updateUniformMetric();
+	}
 }
 
-void Program::uniform(const std::string & name, const glm::ivec4 & t) const {
-	//if(_uniforms.count(name) != 0) {
-		//glUniform4iv(_uniforms.at(name), 1, &t[0]);
-	//	updateUniformMetric();
-	//}
+void Program::uniform(const std::string & name, const glm::ivec4 & t) {
+	auto uni = _uniforms.find(name);
+	if(uni != _uniforms.end()) {
+		for(const UniformDef::Location& loc : uni->second.locations){
+			uchar* dst = retrieveUniformNonConst(loc);
+			std::memcpy(dst, &t[0], sizeof(glm::ivec4));
+		}
+		updateUniformMetric();
+	}
 }
 
-void Program::uniform(const std::string & name, const glm::mat3 & t) const {
-	//if(_uniforms.count(name) != 0) {
-		//glUniformMatrix3fv(_uniforms.at(name), 1, GL_FALSE, &t[0][0]);
-	//	updateUniformMetric();
-	//}
+void Program::uniform(const std::string & name, const glm::mat3 & t) {
+	auto uni = _uniforms.find(name);
+	if(uni != _uniforms.end()) {
+		for(const UniformDef::Location& loc : uni->second.locations){
+			uchar* dst = retrieveUniformNonConst(loc);
+			std::memcpy(dst, &t[0][0], sizeof(glm::mat3));
+		}
+		updateUniformMetric();
+	}
 }
 
-void Program::uniform(const std::string & name, const glm::mat4 & t) const {
-	//if(_uniforms.count(name) != 0) {
-		//glUniformMatrix4fv(_uniforms.at(name), 1, GL_FALSE, &t[0][0]);
-	//	updateUniformMetric();
-	//}
-}
-
-void Program::uniformBuffer(const std::string & name, size_t slot) const {
-	//if(_uniforms.count(name) != 0) {
-		//glUniformBlockBinding(_id, _uniforms.at(name), GLuint(slot));
-		//	updateUniformMetric();
-		//}
-}
-
-void Program::uniformTexture(const std::string & name, size_t slot) const {
-	//if(_uniforms.count(name) != 0) {
-		//glUniform1i(_uniforms.at(name), int(slot));
-		//	updateUniformMetric();
-		//}
+void Program::uniform(const std::string & name, const glm::mat4 & t) {
+	auto uni = _uniforms.find(name);
+	if(uni != _uniforms.end()) {
+		for(const UniformDef::Location& loc : uni->second.locations){
+			uchar* dst = retrieveUniformNonConst(loc);
+			std::memcpy(dst, &t[0][0], sizeof(glm::mat4));
+		}
+		updateUniformMetric();
+	}
 }
 
 void Program::getUniform(const std::string & name, bool & t) const {
-	//if(_uniforms.count(name) != 0) {
-	//	int val = int(t);
-		//glGetUniformiv(_id, _uniforms.at(name), &val);
-	//	t = bool(val);
-	//}
+	const auto uni = _uniforms.find(name);
+	if(uni != _uniforms.end()) {
+		const UniformDef::Location& loc = uni->second.locations[0];
+		int val = *reinterpret_cast<const int*>(retrieveUniform(loc));
+		t = bool(val);
+	}
 }
 
 void Program::getUniform(const std::string & name, int & t) const {
-	//if(_uniforms.count(name) != 0) {
-		//glGetUniformiv(_id, _uniforms.at(name), &t);
-	//}
+	const auto uni = _uniforms.find(name);
+	if(uni != _uniforms.end()) {
+		const UniformDef::Location& loc = uni->second.locations[0];
+		t = *reinterpret_cast<const int*>(retrieveUniform(loc));
+	}
 }
 
 void Program::getUniform(const std::string & name, uint & t) const {
-	//if(_uniforms.count(name) != 0) {
-		//glGetUniformuiv(_id, _uniforms.at(name), &t);
-	//}
+	const auto uni = _uniforms.find(name);
+	if(uni != _uniforms.end()) {
+		const UniformDef::Location& loc = uni->second.locations[0];
+		t = *reinterpret_cast<const uint*>(retrieveUniform(loc));
+	}
 }
 
 void Program::getUniform(const std::string & name, float & t) const {
-	//if(_uniforms.count(name) != 0) {
-		//glGetUniformfv(_id, _uniforms.at(name), &t);
-	//}
+	const auto uni = _uniforms.find(name);
+	if(uni != _uniforms.end()) {
+		const UniformDef::Location& loc = uni->second.locations[0];
+		t = *reinterpret_cast<const float*>(retrieveUniform(loc));
+	}
 }
 
 void Program::getUniform(const std::string & name, glm::vec2 & t) const {
-	//if(_uniforms.count(name) != 0) {
-		//glGetUniformfv(_id, _uniforms.at(name), &t[0]);
-	//}
+	const auto uni = _uniforms.find(name);
+	if(uni != _uniforms.end()) {
+		const UniformDef::Location& loc = uni->second.locations[0];
+		t = *reinterpret_cast<const glm::vec2*>(retrieveUniform(loc));
+	}
 }
 
 void Program::getUniform(const std::string & name, glm::vec3 & t) const {
-	//if(_uniforms.count(name) != 0) {
-		//glGetUniformfv(_id, _uniforms.at(name), &t[0]);
-	//}
+	const auto uni = _uniforms.find(name);
+	if(uni != _uniforms.end()) {
+		const UniformDef::Location& loc = uni->second.locations[0];
+		t = *reinterpret_cast<const glm::vec3*>(retrieveUniform(loc));
+	}
 }
 
 void Program::getUniform(const std::string & name, glm::vec4 & t) const {
-	//if(_uniforms.count(name) != 0) {
-		//glGetUniformfv(_id, _uniforms.at(name), &t[0]);
-	//}
+	const auto uni = _uniforms.find(name);
+	if(uni != _uniforms.end()) {
+		const UniformDef::Location& loc = uni->second.locations[0];
+		t = *reinterpret_cast<const glm::vec4*>(retrieveUniform(loc));
+	}
 }
 
 void Program::getUniform(const std::string & name, glm::ivec2 & t) const {
-	//if(_uniforms.count(name) != 0) {
-		//glGetUniformiv(_id, _uniforms.at(name), &t[0]);
-	//}
+	const auto uni = _uniforms.find(name);
+	if(uni != _uniforms.end()) {
+		const UniformDef::Location& loc = uni->second.locations[0];
+		t = *reinterpret_cast<const glm::ivec2*>(retrieveUniform(loc));
+	}
 }
 
 void Program::getUniform(const std::string & name, glm::ivec3 & t) const {
-	//if(_uniforms.count(name) != 0) {
-		//glGetUniformiv(_id, _uniforms.at(name), &t[0]);
-	//}
+	const auto uni = _uniforms.find(name);
+	if(uni != _uniforms.end()) {
+		const UniformDef::Location& loc = uni->second.locations[0];
+		t = *reinterpret_cast<const glm::ivec3*>(retrieveUniform(loc));
+	}
 }
 
 void Program::getUniform(const std::string & name, glm::ivec4 & t) const {
-	//if(_uniforms.count(name) != 0) {
-		//glGetUniformiv(_id, _uniforms.at(name), &t[0]);
-		//}
+	const auto uni = _uniforms.find(name);
+	if(uni != _uniforms.end()) {
+		const UniformDef::Location& loc = uni->second.locations[0];
+		t = *reinterpret_cast<const glm::ivec4*>(retrieveUniform(loc));
+	}
 }
 
 void Program::getUniform(const std::string & name, glm::mat3 & t) const {
-	//if(_uniforms.count(name) != 0) {
-		//glGetUniformfv(_id, _uniforms.at(name), &t[0][0]);
-		//}
+	const auto uni = _uniforms.find(name);
+	if(uni != _uniforms.end()) {
+		const UniformDef::Location& loc = uni->second.locations[0];
+		t = *reinterpret_cast<const glm::mat3*>(retrieveUniform(loc));
+	}
 }
 
 void Program::getUniform(const std::string & name, glm::mat4 & t) const {
-	//if(_uniforms.count(name) != 0) {
-		//glGetUniformfv(_id, _uniforms.at(name), &t[0][0]);
-		//}
+	const auto uni = _uniforms.find(name);
+	if(uni != _uniforms.end()) {
+		const UniformDef::Location& loc = uni->second.locations[0];
+		t = *reinterpret_cast<const glm::mat4*>(retrieveUniform(loc));
+	}
 }
 
 void Program::updateUniformMetric() const {

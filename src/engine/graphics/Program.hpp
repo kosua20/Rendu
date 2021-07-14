@@ -112,92 +112,92 @@ public:
 	 \param name the uniform name
 	 \param t the value to set the uniform to
 	 */
-	void uniform(const std::string & name, bool t) const;
+	void uniform(const std::string & name, bool t);
 
 	/** Set a given uniform value.
 	 \param name the uniform name
 	 \param t the value to set the uniform to
 	 */
-	void uniform(const std::string & name, int t) const;
+	void uniform(const std::string & name, int t);
 
 	/** Set a given uniform value.
 	 \param name the uniform name
 	 \param t the value to set the uniform to
 	 */
-	void uniform(const std::string & name, uint t) const;
+	void uniform(const std::string & name, uint t);
 
 	/** Set a given uniform value.
 	 \param name the uniform name
 	 \param t the value to set the uniform to
 	 */
-	void uniform(const std::string & name, float t) const;
+	void uniform(const std::string & name, float t);
 
 	/** Set a given float array uniform values.
 	 \param name the uniform name (including "[0]")
 	 \param count the number of values in the float array
 	 \param t the values to set the uniform to
 	 */
-	void uniform(const std::string & name, size_t count, const float * t) const;
+	void uniform(const std::string & name, size_t count, const float * t);
 
 	/** Set a given uniform value.
 	 \param name the uniform name
 	 \param t the value to set the uniform to
 	 */
-	void uniform(const std::string & name, const glm::vec2 & t) const;
+	void uniform(const std::string & name, const glm::vec2 & t);
 
 	/** Set a given uniform value.
 	 \param name the uniform name
 	 \param t the value to set the uniform to
 	 */
-	void uniform(const std::string & name, const glm::vec3 & t) const;
+	void uniform(const std::string & name, const glm::vec3 & t);
 
 	/** Set a given uniform value.
 	 \param name the uniform name
 	 \param t the value to set the uniform to
 	 */
-	void uniform(const std::string & name, const glm::vec4 & t) const;
+	void uniform(const std::string & name, const glm::vec4 & t);
 
 	/** Set a given uniform value.
 	 \param name the uniform name
 	 \param t the value to set the uniform to
 	 */
-	void uniform(const std::string & name, const glm::ivec2 & t) const;
+	void uniform(const std::string & name, const glm::ivec2 & t);
 
 	/** Set a given uniform value.
 	 \param name the uniform name
 	 \param t the value to set the uniform to
 	 */
-	void uniform(const std::string & name, const glm::ivec3 & t) const;
+	void uniform(const std::string & name, const glm::ivec3 & t);
 
 	/** Set a given uniform value.
 	 \param name the uniform name
 	 \param t the value to set the uniform to
 	 */
-	void uniform(const std::string & name, const glm::ivec4 & t) const;
+	void uniform(const std::string & name, const glm::ivec4 & t);
 
 	/** Set a given uniform value.
 	 \param name the uniform name
 	 \param t the value to set the uniform to
 	 */
-	void uniform(const std::string & name, const glm::mat3 & t) const;
+	void uniform(const std::string & name, const glm::mat3 & t);
 
 	/** Set a given uniform value.
 	 \param name the uniform name
 	 \param t the value to set the uniform to
 	 */
-	void uniform(const std::string & name, const glm::mat4 & t) const;
+	void uniform(const std::string & name, const glm::mat4 & t);
 
 	/** Set a given uniform buffer binding point.
 	 \param name the uniform name
 	 \param slot the binding point
 	 */
-	void uniformBuffer(const std::string & name, size_t slot) const;
+	//void uniformBuffer(const std::string & name, size_t slot) const;
 
 	/** Set a given uniform sampler binding point.
 	 \param name the uniform name
 	 \param slot the binding point
 	 */
-	void uniformTexture(const std::string & name, size_t slot) const;
+	//void uniformTexture(const std::string & name, size_t slot) const;
 
 	/** Get a given uniform value.
 	 \param name the uniform name
@@ -322,6 +322,13 @@ private:
 
 	void updateUniformMetric() const; ///< Update internal metrics.
 
+	inline const uchar* retrieveUniform(const UniformDef::Location& location) const {
+		return &(_buffers.at(location.set).at(location.binding).data[location.offset]);
+	}
+
+	inline uchar* retrieveUniformNonConst(const UniformDef::Location& location) {
+		return &(_buffers.at(location.set).at(location.binding).data[location.offset]);
+	}
 
 	std::array<Stage, int(ShaderType::COUNT)> _stages;
 
@@ -330,5 +337,20 @@ private:
 	//std::map<std::string, GLint> _uniforms;  ///< Internal list of automatically registered uniforms and their locations. We keep this separate to avoid exposing GL internal types.
 	//std::vector<Uniform> _uniformInfos;  ///< Additional uniforms info.
 	StagesState _state;
+
+	struct BufferCPU {
+		std::vector<uchar> data;
+		size_t size = 0;
+		bool dirty = true;
+		
+		void resize(size_t asize){
+			size = asize;
+			data.resize(asize);
+			dirty = true;
+		}
+	};
+
+	std::unordered_map<std::string, UniformDef> _uniforms;
+	std::unordered_map<int, std::unordered_map<int, BufferCPU> > _buffers;
 	friend class GPU; ///< Utilities will need to access GPU handle.
 };
