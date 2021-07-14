@@ -47,8 +47,8 @@ VkPipeline PipelineCache::createNewPipeline(const GPUState& state, const uint64_
 	entry.pipeline = buildPipeline(state);
 	entry.program = state.program;
 	entry.mesh = state.mesh;
-	_pipelines[state.program].insert(std::make_pair(hash, entry));
-	return entry.pipeline;
+	auto it = _pipelines[state.program].insert(std::make_pair(hash, entry));
+	return it->second.pipeline;
 }
 
 VkPipeline PipelineCache::buildPipeline(const GPUState& state){

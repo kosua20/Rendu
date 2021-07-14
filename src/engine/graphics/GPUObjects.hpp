@@ -15,7 +15,8 @@ enum class ShaderType : uint {
 	FRAGMENT, ///< Fragment shader.
 	GEOMETRY, ///< Geometry shader.
 	TESSCONTROL, ///< Tesselation control shader.
-	TESSEVAL ///< Tesselation evaluation shader.
+	TESSEVAL, ///< Tesselation evaluation shader.
+	COUNT
 };
 
 /**
