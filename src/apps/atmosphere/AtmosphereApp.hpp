@@ -40,8 +40,8 @@ private:
 	void updateSky();
 
 	std::unique_ptr<Framebuffer> _atmosphereBuffer; ///< Scene framebuffer.
-	const Program * _atmosphere; ///< Atmospheric scattering shader.
-	const Program * _tonemap; ///< Tonemapping shader.
+	Program * _atmosphere; ///< Atmospheric scattering shader.
+	Program * _tonemap; ///< Tonemapping shader.
 	Texture _scattering; ///< Scattering lookup table.
 
 	// Atmosphere parameters.

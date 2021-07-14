@@ -105,7 +105,7 @@ private:
 	std::string _shaderPath; ///< Path of the current shader on disk.
 	std::string _shaderName; ///< Name of the current shader (for display).
 	std::unique_ptr<Program> _currProgram; ///< Current shader program.
-	const Program * _passthrough; ///< Passthrough program.
+	Program * _passthrough; ///< Passthrough program.
 	GPUQuery _timer = GPUQuery(GPUQuery::Type::TIME_ELAPSED); ///< Timer for the user shader pass.
 
 	std::vector<const Texture *> _textures; ///< List of all predefined textures.

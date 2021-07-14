@@ -43,7 +43,7 @@ public:
 
 private:
 
-	const Program * _passthrough;	///< Passthrough program.
+	Program * _passthrough;	///< Passthrough program.
 	Texture _renderTex;				///< The result texture and image.
 
 	std::shared_ptr<Scene> _scene;				///< The scene to render.

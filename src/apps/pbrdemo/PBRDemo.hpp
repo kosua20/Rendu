@@ -62,7 +62,7 @@ private:
 	std::shared_ptr<DeferredRenderer> _probesRenderer; ///< Renderer for the light probes.
 	std::unique_ptr<DebugRenderer> _debugRenderer;	 ///< Forward PBR renderer.
 	std::unique_ptr<Framebuffer> _finalRender; ///< Final framebuffer.
-	const Program * _finalProgram; ///< Final display program.
+	Program * _finalProgram; ///< Final display program.
 	
 	std::vector<std::shared_ptr<Scene>> _scenes; ///< The existing scenes.
 	std::vector<std::string> _sceneNames; ///< The associated scene names.

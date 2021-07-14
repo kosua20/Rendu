@@ -198,7 +198,7 @@ private:
 	std::vector<MeshInfos> _meshes; ///< The registered meshes.
 	std::map<std::string, StateInfos> _states; ///< GPU states currently tracked.
 
-	const Program * _texDisplay; ///< Texture display shader.
+	Program * _texDisplay; ///< Texture display shader.
 	const bool _silent; ///< Don't register or display anything.
 	uint _textureId = 0; ///< Default texture name counter.
 	uint _bufferId	= 0; ///< Default framebuffer name counter.

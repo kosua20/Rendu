@@ -67,7 +67,7 @@ int main(int argc, char ** argv) {
 	double remainingTime = 0.0;
 	const double dt		 = 1.0 / 120.0; // Small physics timestep.
 
-	const Program * program = Resources::manager().getProgram("object", "object_basic", "object_basic_random");
+	Program * program = Resources::manager().getProgram("object", "object_basic", "object_basic_random");
 	const Mesh * mesh		= Resources::manager().getMesh("light_sphere", Storage::GPU);
 	ControllableCamera camera;
 	camera.pose(glm::vec3(0.0f,0.0f,3.0f), glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));

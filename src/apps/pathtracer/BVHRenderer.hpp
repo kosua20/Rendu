@@ -59,8 +59,8 @@ public:
 	
 private:
 
-	const Program * _objectProgram; ///< Basic object program.
-	const Program * _bvhProgram;	///< BVH visualisation program.
+	Program * _objectProgram; ///< Basic object program.
+	Program * _bvhProgram;	///< BVH visualisation program.
 	std::vector<Mesh> _bvhLevels;   ///< The BVH visualisation mesh.
 	std::vector<Mesh> _rayLevels;   ///< BVH nodes intersected with a ray.
 	Mesh _rayVis = Mesh("rayVis");	///< Mesh representing a ray and its intersected triangle.

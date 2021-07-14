@@ -39,9 +39,9 @@ private:
 	std::unique_ptr<Framebuffer> _lightingFramebuffer; ///< Framebuffer containing the lit result.
 	std::unique_ptr<SSAO> _ssaoPass;				   ///< Screen space ambient occlusion pass.
 
-	const Program * _fxaaProgram;		 ///< Antialiasing program.
-	const Program * _coloredProgram;	 ///< Base scene rendering program.
-	const Program * _compositingProgram; ///< Lighting program.
+	Program * _fxaaProgram;		 ///< Antialiasing program.
+	Program * _coloredProgram;	 ///< Base scene rendering program.
+	Program * _compositingProgram; ///< Lighting program.
 
 	const Mesh * _ground;	  ///< Terrain mesh.
 	const Mesh * _head;		   ///< Snake head mesh.

@@ -82,13 +82,13 @@ private:
 	Texture _glitterNoise; ///< Specular sand noise.
 
 	// Shaders.
-	const Program * _groundProgram; ///< Terrain shader.
-	const Program * _oceanProgram; ///< Ocean shader.
-	const Program * _farOceanProgram; ///< Distant ocean simplified shader.
-	const Program * _waterCopy; ///< Apply underwater terrain effects (caustics).
-	const Program * _underwaterProgram; ///< Underwater rendering.
-	const Program * _skyProgram; ///< Atmospheric scattering shader.
-	const Program * _tonemap; ///< Tonemapping shader.
+	Program * _groundProgram; ///< Terrain shader.
+	Program * _oceanProgram; ///< Ocean shader.
+	Program * _farOceanProgram; ///< Distant ocean simplified shader.
+	Program * _waterCopy; ///< Apply underwater terrain effects (caustics).
+	Program * _underwaterProgram; ///< Underwater rendering.
+	Program * _skyProgram; ///< Atmospheric scattering shader.
+	Program * _tonemap; ///< Tonemapping shader.
 
 	// Atmosphere options.
 	glm::vec3 _lightDirection; ///< Sun light direction.

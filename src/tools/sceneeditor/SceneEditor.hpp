@@ -38,7 +38,7 @@ private:
 	
 	EditorRenderer _renderer; ///< Scene renderer.
 	std::unique_ptr<Framebuffer> _sceneFramebuffer; ///< Scene buffer.
-	const Program * _passthrough;   ///< Passthrough program.
+	Program * _passthrough;   ///< Passthrough program.
 	
 	std::vector<std::shared_ptr<Scene>> _scenes; ///< The existing scenes.
 	std::vector<std::string> _sceneNames; ///< The associated scene names.

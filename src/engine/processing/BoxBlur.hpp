@@ -36,10 +36,10 @@ private:
 	 */
 	void resize(unsigned int width, unsigned int height) const;
 
-	const Program * _blur2D;					///< Box blur program
-	const Program * _blurArray;					///< Box blur program
-	const Program * _blurCube;					///< Box blur program
-	const Program * _blurCubeArray;				///< Box blur program
+	Program * _blur2D;					///< Box blur program
+	Program * _blurArray;					///< Box blur program
+	Program * _blurCube;					///< Box blur program
+	Program * _blurCubeArray;				///< Box blur program
 	std::unique_ptr<Framebuffer> _intermediate; ///< Intermediate target.
 	const std::string _name;					///< Debug name
 };

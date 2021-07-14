@@ -18,12 +18,12 @@ public:
 	explicit VarianceShadowMap2DArray(const std::vector<std::shared_ptr<Light>> & lights, const glm::vec2 & resolution);
 	
 	/** \copydoc ShadowMap::draw  */
-	void draw(const Scene & scene) const override;
+	void draw(const Scene & scene) override;
 
 private:
 	
 	std::vector<std::shared_ptr<Light>> _lights; ///< The associated light.
-	const Program * _program;			///< Shadow program.
+	Program * _program;			///< Shadow program.
 	std::unique_ptr<Framebuffer> _map;	///< Raw shadow map result.
 	std::unique_ptr<BoxBlur> _blur;		///< Blur filter.
 	
@@ -42,12 +42,12 @@ public:
 	explicit VarianceShadowMapCubeArray(const std::vector<std::shared_ptr<PointLight>> & lights, int side);
 	
 	/** \copydoc ShadowMap::draw  */
-	void draw(const Scene & scene) const override;
+	void draw(const Scene & scene) override;
 	
 private:
 	
 	std::vector<std::shared_ptr<PointLight>> _lights; ///< The associated lights.
-	const Program * _program;			///< Shadow program.
+	Program * _program;			///< Shadow program.
 	std::unique_ptr<Framebuffer> _map;	///< Raw shadow map result.
 	std::unique_ptr<BoxBlur> _blur;		///< Blur filter.
 	

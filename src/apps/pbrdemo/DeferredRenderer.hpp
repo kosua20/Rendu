@@ -95,14 +95,14 @@ private:
 	std::unique_ptr<DeferredLight> _lightRenderer;	///< The lights renderer.
 	std::unique_ptr<ForwardLight> _fwdLightsGPU;	///< The lights forward renderer for transparent objects.
 	
-	const Program * _objectProgram;		 ///< Basic PBR program
-	const Program * _parallaxProgram;	 ///< Parallax mapping PBR program
-	const Program * _emissiveProgram;	 ///< Emissive program
-	const Program * _transparentProgram; ///< Transparent PBR program
+	Program * _objectProgram;		 ///< Basic PBR program
+	Program * _parallaxProgram;	 ///< Parallax mapping PBR program
+	Program * _emissiveProgram;	 ///< Emissive program
+	Program * _transparentProgram; ///< Transparent PBR program
 
-	const Program * _skyboxProgram; ///< Skybox program.
-	const Program * _bgProgram;		///< Planar background program.
-	const Program * _atmoProgram;   ///< Atmospheric scattering program.
+	Program * _skyboxProgram; ///< Skybox program.
+	Program * _bgProgram;		///< Planar background program.
+	Program * _atmoProgram;   ///< Atmospheric scattering program.
 
 	const Texture * _textureBrdf; ///< The BRDF lookup table.
 

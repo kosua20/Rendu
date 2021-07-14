@@ -92,11 +92,11 @@ private:
 	Program * _parallaxProgram;	 ///< Parallax mapping PBR program
 	Program * _emissiveProgram;	 ///< Parallax mapping PBR program
 	Program * _transparentProgram;	 ///< Transparent PBR program
-	const Program * _depthPrepass; ///< Depth prepass program.
+	Program * _depthPrepass; ///< Depth prepass program.
 
-	const Program * _skyboxProgram; ///< Skybox program.
-	const Program * _bgProgram;		///< Planar background program.
-	const Program * _atmoProgram;   ///< Atmospheric scattering program.
+	Program * _skyboxProgram; ///< Skybox program.
+	Program * _bgProgram;		///< Planar background program.
+	Program * _atmoProgram;   ///< Atmospheric scattering program.
 
 	const Texture * _textureBrdf; ///< The BRDF lookup table.
 

@@ -60,9 +60,9 @@ private:
 	const Mesh * _sphere; ///< Point light supporting geometry.
 	const Mesh * _cone;   ///< Spot light supporting geometry.
 	
-	const Program * _dirProgram; 	///< Directional light shader.
-	const Program * _pointProgram;	///< Point light shader.
-	const Program * _spotProgram;	///< Spot light shader.
+	Program * _dirProgram; 	///< Directional light shader.
+	Program * _pointProgram;	///< Point light shader.
+	Program * _spotProgram;	///< Spot light shader.
 	
 	glm::mat4 _view = glm::mat4(1.0f); ///< Cached camera view matrix.
 	glm::mat4 _proj = glm::mat4(1.0f); ///< Cached camera projection matrix.

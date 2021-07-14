@@ -41,8 +41,8 @@ public:
 
 private:
 	ConvolutionPyramid _pyramid;		   ///< The convolution pyramid.
-	const Program * _prepare;			   ///< Shader to compute the laplacian field of a RGB image.
-	const Program * _composite;			   ///< Passthrough to output the result.
+	Program * _prepare;			   ///< Shader to compute the laplacian field of a RGB image.
+	Program * _composite;			   ///< Passthrough to output the result.
 	std::unique_ptr<Framebuffer> _preproc; ///< Contains the computed laplacian field.
 	std::unique_ptr<Framebuffer> _compo;   ///< Contains the integrated result at input resolution.
 	int _scale;							   ///< The downscaling factor.

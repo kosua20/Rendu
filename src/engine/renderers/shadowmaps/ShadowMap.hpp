@@ -29,7 +29,7 @@ public:
 	/** Update the shadow map.
 	 \param scene the objcts to draw in the map.
 	 */
-	virtual void draw(const Scene & scene) const = 0;
+	virtual void draw(const Scene & scene) = 0;
 	
 	/** Destructor. */
 	virtual ~ShadowMap() = default;

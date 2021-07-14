@@ -75,13 +75,13 @@ private:
 	std::unique_ptr<Framebuffer> _resultFramebuffer; ///< In-progress result of the stack.
 	std::unique_ptr<GaussianBlur> _blur;	 ///< Bloom blur processing.
 	
-	const Program * _bloomProgram;			///< Bloom program
-	const Program * _bloomComposite; 		///< Bloom compositing program.
-	const Program * _toneMappingProgram; 	///< Tonemapping program
-	const Program * _dofCocProgram; 		///< CoC computation.
-	const Program * _dofGatherProgram; 		///< DoF gathering step.
-	const Program * _dofCompositeProgram; 	///< Composite DoF and input.
-	const Program * _fxaaProgram;		 	///< FXAA program
+	Program * _bloomProgram;			///< Bloom program
+	Program * _bloomComposite; 		///< Bloom compositing program.
+	Program * _toneMappingProgram; 	///< Tonemapping program
+	Program * _dofCocProgram; 		///< CoC computation.
+	Program * _dofGatherProgram; 		///< DoF gathering step.
+	Program * _dofCompositeProgram; 	///< Composite DoF and input.
+	Program * _fxaaProgram;		 	///< FXAA program
 	
 	Settings _settings; ///< The processing settings.
 	

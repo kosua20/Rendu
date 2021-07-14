@@ -11,7 +11,7 @@ VarianceShadowMap2D::VarianceShadowMap2D(const std::shared_ptr<Light> & light, c
 	_light->registerShadowMap(_map->texture());
 }
 
-void VarianceShadowMap2D::draw(const Scene & scene) const {
+void VarianceShadowMap2D::draw(const Scene & scene) {
 	if(!_light->castsShadow()){
 		return;
 	}
@@ -58,7 +58,7 @@ VarianceShadowMapCube::VarianceShadowMapCube(const std::shared_ptr<PointLight> &
 	_light->registerShadowMap(_map->texture());
 }
 
-void VarianceShadowMapCube::draw(const Scene & scene) const {
+void VarianceShadowMapCube::draw(const Scene & scene) {
 	if(!_light->castsShadow()){
 		return;
 	}

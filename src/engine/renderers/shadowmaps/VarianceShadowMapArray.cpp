@@ -13,7 +13,7 @@ VarianceShadowMap2DArray::VarianceShadowMap2DArray(const std::vector<std::shared
 	}
 }
 
-void VarianceShadowMap2DArray::draw(const Scene & scene) const {
+void VarianceShadowMap2DArray::draw(const Scene & scene) {
 
 	GPU::setDepthState(true, TestFunction::LESS, true);
 	GPU::setBlendState(false);
@@ -66,7 +66,7 @@ VarianceShadowMapCubeArray::VarianceShadowMapCubeArray(const std::vector<std::sh
 	}
 }
 
-void VarianceShadowMapCubeArray::draw(const Scene & scene) const {
+void VarianceShadowMapCubeArray::draw(const Scene & scene) {
 
 	GPU::setDepthState(true, TestFunction::LESS, true);
 	GPU::setCullState(true, Faces::BACK);

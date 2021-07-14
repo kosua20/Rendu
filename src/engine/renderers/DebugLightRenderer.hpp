@@ -49,7 +49,7 @@ private:
 	const Mesh * _cone;   ///< Spot light supporting geometry.
 	const Mesh * _arrow;  ///< Spot light supporting geometry.
 	
-	const Program * _program; ///< Light mesh shader.
+	Program * _program; ///< Light mesh shader.
 	
 	glm::mat4 _view = glm::mat4(1.0f); ///< Cached camera view matrix.
 	glm::mat4 _proj = glm::mat4(1.0f); ///< Cached camera projection matrix.

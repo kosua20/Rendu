@@ -38,10 +38,10 @@ private:
 
 	DebugLightRenderer _lightsDebug; ///< Lights wireframe renderer.
 
-	const Program * _objectProgram; ///< Basic object program.
-	const Program * _skyboxProgram; ///< Skybox program.
-	const Program * _bgProgram;		///< 2D background program.
-	const Program * _atmoProgram;	///< Atmosphere shader.
+	Program * _objectProgram; ///< Basic object program.
+	Program * _skyboxProgram; ///< Skybox program.
+	Program * _bgProgram;		///< 2D background program.
+	Program * _atmoProgram;	///< Atmosphere shader.
 	std::shared_ptr<Scene> _scene;	///< The scene to render.
 	
 };

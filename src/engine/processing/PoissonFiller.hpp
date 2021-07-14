@@ -41,8 +41,8 @@ public:
 
 private:
 	ConvolutionPyramid _pyramid;		   ///< The convolution pyramid.
-	const Program * _prepare;			   ///< Shader to compute the colored border of black regions in the input image.
-	const Program * _composite;			   ///< Composite the filled field with the input image.
+	Program * _prepare;			   ///< Shader to compute the colored border of black regions in the input image.
+	Program * _composite;			   ///< Composite the filled field with the input image.
 	std::unique_ptr<Framebuffer> _preproc; ///< Contains the computed colored border.
 	std::unique_ptr<Framebuffer> _compo;   ///< Contains the composited filled result at input resolution.
 	int _scale;							   ///< The downscaling factor.

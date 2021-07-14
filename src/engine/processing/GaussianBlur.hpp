@@ -42,9 +42,9 @@ private:
 	 */
 	void resize(unsigned int width, unsigned int height);
 
-	const Program * _blurProgramDown;						 ///< The downscaling filter.
-	const Program * _blurProgramUp;							 ///< The upscaling filter.
-	const Program * _passthrough;							 ///< The copy program.
+	Program * _blurProgramDown;						 ///< The downscaling filter.
+	Program * _blurProgramUp;							 ///< The upscaling filter.
+	Program * _passthrough;							 ///< The copy program.
 	std::vector<std::unique_ptr<Framebuffer>> _frameBuffers; ///< Downscaled pyramid framebuffers.
 	const std::string _name;								 ///< Debug name
 	uint _downscale = 1;									 ///< Initial downscaling factor.

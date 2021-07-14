@@ -35,7 +35,7 @@ int main(int argc, char ** argv) {
 	Resources::manager().addResources("../../../resources/imageviewer");
 
 	// Create the rendering program.
-	const Program * program = Resources::manager().getProgram("image_display");
+	Program * program = Resources::manager().getProgram("image_display");
 
 	// Infos on the current texture.
 	Texture imageInfos("image");

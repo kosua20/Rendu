@@ -39,6 +39,6 @@ private:
 	void resize(unsigned int width, unsigned int height) const;
 
 	std::unique_ptr<Framebuffer> _intermediate; ///< Intermediate framebuffer.
-	const Program * _filter; ///< Bilateral hader.
+	Program * _filter; ///< Bilateral hader.
 	std::string _name; ///< Debug name.
 };

@@ -102,7 +102,7 @@ private:
 	std::unique_ptr<GaussianBlur> _bgBlur; ///< Blurring pass for the paused/dead menus background.
 	std::unique_ptr<Framebuffer> _gameFramebuffer; ///< Game scene framebuffer.
 	std::unique_ptr<Framebuffer> _bgBlurBuffer; ///< Game scene framebuffer.
-	const Program * _finalProgram;		   ///< Final upscaling program.
+	Program * _finalProgram;		   ///< Final upscaling program.
 
 	Status _status = Status::MAINMENU; ///< Current game sattus (specific menu or in-game)
 	std::map<Status, GameMenu> _menus; ///< Menus for each game status.

@@ -49,9 +49,9 @@ private:
 	std::shared_ptr<Scene> _scene;			///< The scene to render
 
 	const Mesh * _sphere = nullptr;			///< Sphere mesh.
-	const Program * _probeProgram = nullptr;///< Light probe visu.
-	const Program * _boxesProgram = nullptr;///< Bounding boxes visu.
-	const Program * _frameProgram = nullptr;///< Frame and gizmo visu.
+	Program * _probeProgram = nullptr;///< Light probe visu.
+	Program * _boxesProgram = nullptr;///< Bounding boxes visu.
+	Program * _frameProgram = nullptr;///< Frame and gizmo visu.
 
 	Mesh _sceneBoxes; ///< Bounding boxes of all scene objects.
 	Mesh _frame; ///< Gizmo and grid in world space.

@@ -18,12 +18,12 @@ public:
 	explicit VarianceShadowMap2D(const std::shared_ptr<Light> & light, const glm::vec2 & resolution);
 	
 	/** \copydoc ShadowMap::draw  */
-	void draw(const Scene & scene) const override;
+	void draw(const Scene & scene) override;
 
 private:
 	
 	std::shared_ptr<Light> _light; 		///< The associated light.
-	const Program * _program;			///< Shadow program.
+	Program * _program;			///< Shadow program.
 	std::unique_ptr<Framebuffer> _map;	///< Raw shadow map result.
 	std::unique_ptr<BoxBlur> _blur;		///< Blur filter.
 	
@@ -42,12 +42,12 @@ public:
 	explicit VarianceShadowMapCube(const std::shared_ptr<PointLight> & light, int side);
 	
 	/** \copydoc ShadowMap::draw  */
-	void draw(const Scene & scene) const override;
+	void draw(const Scene & scene) override;
 	
 private:
 	
 	std::shared_ptr<PointLight> _light;		///< The associated light.
-	const Program * _program;				///< Shadow program.
+	Program * _program;				///< Shadow program.
 	std::unique_ptr<Framebuffer> _map;	///< Raw shadow map result.
 	std::unique_ptr<BoxBlur> _blur;		///< Blur filter.
 	
