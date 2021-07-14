@@ -37,7 +37,9 @@ struct GPUContext {
 	
 	uint32_t graphicsId = 0;
 	uint32_t presentId = 0;
-	uint32_t currentFrame = 0;
+
+	uint32_t swapIndex = 0;
+	uint32_t frameIndex = 0;
 
 	double timestep = 0.0;
 	size_t uniformAlignment = 0;
@@ -46,11 +48,12 @@ struct GPUContext {
 	bool newRenderPass = true;
 	
 	void nextFrame(){
-		currentFrame = (currentFrame + 1) % frameCount;
+		++frameIndex;
+		swapIndex = frameIndex % frameCount;
 	}
 
 	VkCommandBuffer& getCurrentCommandBuffer(){
-		return commandBuffers[currentFrame];
+		return commandBuffers[swapIndex];
 	}
 
 };

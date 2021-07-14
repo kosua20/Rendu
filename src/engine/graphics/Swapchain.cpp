@@ -302,29 +302,29 @@ bool Swapchain::finishFrame(){
 	vkEndCommandBuffer(_context->getCurrentCommandBuffer());
 
 	// Submit the last command buffer.
-	const uint frameIndex = _context->currentFrame;
+	const uint swapIndex = _context->swapIndex;
 	// Maybe use VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT instead ?
 	VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
 	VkSubmitInfo submitInfo = {};
 	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 	submitInfo.waitSemaphoreCount = 1;
-	submitInfo.pWaitSemaphores = &_imagesAvailable[frameIndex];
+	submitInfo.pWaitSemaphores = &_imagesAvailable[swapIndex];
 	submitInfo.pWaitDstStageMask = waitStages;
 	submitInfo.commandBufferCount = 1;
 	submitInfo.pCommandBuffers = &_context->getCurrentCommandBuffer();
 	// Semaphore for when the command buffer is done, so that we can present the image.
 	submitInfo.signalSemaphoreCount = 1;
-	submitInfo.pSignalSemaphores = &_framesFinished[frameIndex];
+	submitInfo.pSignalSemaphores = &_framesFinished[swapIndex];
 	// Add the fence so that we don't reuse the command buffer while it's in use.
-	vkResetFences(_context->device, 1, &_framesInFlight[frameIndex]);
-	vkQueueSubmit(_context->graphicsQueue, 1, &submitInfo, _framesInFlight[frameIndex]);
+	vkResetFences(_context->device, 1, &_framesInFlight[swapIndex]);
+	vkQueueSubmit(_context->graphicsQueue, 1, &submitInfo, _framesInFlight[swapIndex]);
 
 	// Present swap chain.
 	VkPresentInfoKHR presentInfo = {};
 	presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
 	presentInfo.waitSemaphoreCount = 1;
 	// Check for the command buffer to be done.
-	presentInfo.pWaitSemaphores = &_framesFinished[frameIndex];
+	presentInfo.pWaitSemaphores = &_framesFinished[swapIndex];
 	presentInfo.swapchainCount = 1;
 	presentInfo.pSwapchains = &_swapchain;
 	presentInfo.pImageIndices = &_imageIndex;
@@ -354,11 +354,11 @@ bool Swapchain::nextFrame(){
 	}
 
 	// Wait for the current commands buffer to be done.
-	vkWaitForFences(_context->device, 1, &_framesInFlight[_context->currentFrame], VK_TRUE, std::numeric_limits<uint64_t>::max());
+	vkWaitForFences(_context->device, 1, &_framesInFlight[_context->swapIndex], VK_TRUE, std::numeric_limits<uint64_t>::max());
 
 	// Acquire image from next frame.
 	// Use a semaphore to know when the image is available.
-	VkResult status = vkAcquireNextImageKHR(_context->device, _swapchain, std::numeric_limits<uint64_t>::max(), _imagesAvailable[_context->currentFrame], VK_NULL_HANDLE, &_imageIndex);
+	VkResult status = vkAcquireNextImageKHR(_context->device, _swapchain, std::numeric_limits<uint64_t>::max(), _imagesAvailable[_context->swapIndex], VK_NULL_HANDLE, &_imageIndex);
 
 	// Populate infos.
 	VkRenderPassBeginInfo infos = {};
