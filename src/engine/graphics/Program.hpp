@@ -65,6 +65,8 @@ public:
 
 	struct StagesState {
 		std::vector<VkPipelineShaderStageCreateInfo> stages;
+		std::vector<VkDescriptorSetLayout> setLayouts;
+		VkPipelineLayout layout = VK_NULL_HANDLE;
 	};
 
 	/**
@@ -356,6 +358,7 @@ private:
 
 	std::unordered_map<std::string, UniformDef> _uniforms;
 	std::unordered_map<int, std::unordered_map<int, BufferCPU> > _buffers;
+	std::unordered_map<int, std::unordered_map<int, SamplerDef> > _samplers;
 	bool _reloaded = false;
 
 	friend class GPU; ///< Utilities will need to access GPU handle.

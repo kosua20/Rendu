@@ -1,8 +1,8 @@
 #include "graphics/Program.hpp"
 #include "graphics/GPU.hpp"
 #include "resources/ResourcesManager.hpp"
-
-
+#include "graphics/GPUInternal.hpp"
+#include <set>
 
 
 Program::Program(const std::string & name, const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, const std::string & tessControlContent, const std::string & tessEvalContent) : _name(name) {
@@ -18,7 +18,7 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 	GPU::createProgram(*this, vertexContent, fragmentContent, geometryContent, tessControlContent, tessEvalContent, debugName);
 
 	// Reflection information has been populated. Merge uniform infos, build descriptor layout, prepare descriptors.
-#define LOG_REFLECTION
+
 #ifdef LOG_REFLECTION
 
 	static const std::map<Program::UniformDef::Type, std::string> typeNames = {
@@ -67,17 +67,21 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 #endif
 
 	// Merge all uniforms
+	std::set<uint> existingSets;
+
 	for(const auto& stage : _stages){
 		for(const auto& buffer : stage.buffers){
 
 			// Allocate a CPU buffer with the proper size.
-			if(_buffers.count(buffer.set) == 0){
-				_buffers[buffer.set] = {};
+			const uint set = buffer.set;
+			if(_buffers.count(set) == 0){
+				_buffers[set] = {};
 			}
-			auto& setMap = _buffers.at(buffer.set);
+			auto& setMap = _buffers.at(set);
+			existingSets.insert(set);
 
 			if(setMap.count(buffer.binding) != 0){
-				Log::Warning() << Log::GPU << "Buffer already created, collision between stages." << std::endl;
+				Log::Warning() << Log::GPU << "Buffer already created, collision between stages for set " << buffer.set << " at binding " << buffer.binding << "." << std::endl;
 				continue;
 			}
 			setMap[buffer.binding].resize(buffer.size);
@@ -92,10 +96,39 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 				}
 			}
 		}
+
+		for(const auto& sampler : stage.samplers){
+			const uint set = sampler.set;
+			if(_samplers.count(set) == 0){
+				_samplers[set] = {};
+			}
+			auto& setMap = _samplers.at(set);
+			existingSets.insert(set);
+
+			if(setMap.count(sampler.binding) != 0){
+				Log::Warning() << Log::GPU << "Sampler already created, collision between stages for set " << sampler.set << " at binding " << sampler.binding << "." << std::endl;
+				continue;
+			}
+			setMap[sampler.binding] = sampler;
+		}
+	}
+
+	// Validation:
+	for(const auto& set : existingSets){
+
+		const auto samplerSet = _samplers.find(set);
+		const auto bufferSet = _buffers.find(set);
+
+		if(samplerSet != _samplers.end() && bufferSet != _buffers.end()){
+			for(const auto& buffer : bufferSet->second){
+				if(samplerSet->second.find(buffer.first) != samplerSet->second.end()){
+					Log::Error() << Log::GPU << "Sampler/buffer collision in set " << bufferSet->first << " at binding " << buffer.first << "." << std::endl;
+				}
+			}
+		}
 	}
 	
 	// Build state for the pipeline state objects.
-	_state.stages.clear();
 
 	static const std::map<ShaderType, VkShaderStageFlagBits> stageBits = {
 		{ShaderType::VERTEX, VK_SHADER_STAGE_VERTEX_BIT},
@@ -120,6 +153,61 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 		stage.pName = "main";
 	}
 
+	// Build the pipeline
+	GPUContext* context = static_cast<GPUContext*>(GPU::getInternal());
+
+	const uint setCount = *std::max_element(existingSets.begin(), existingSets.end()) + 1;
+
+	_state.setLayouts.resize(setCount);
+
+	for(uint set = 0; set < setCount; ++set){
+		std::vector<VkDescriptorSetLayoutBinding> bindingLayouts;
+
+		const auto samplerSet = _samplers.find(set);
+		const auto bufferSet = _buffers.find(set);
+
+		if(bufferSet != _buffers.end()){
+			for(const auto& buffer : bufferSet->second){
+				VkDescriptorSetLayoutBinding bufferBinding{};
+				bufferBinding.binding = buffer.first;
+				bufferBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+				bufferBinding.descriptorCount = 1;
+				bufferBinding.stageFlags = VK_SHADER_STAGE_ALL;
+				bindingLayouts.emplace_back(bufferBinding);
+			}
+		}
+
+		if(samplerSet != _samplers.end()){
+			for(const auto& sampler : samplerSet->second){
+				VkDescriptorSetLayoutBinding samplerBinding{};
+				samplerBinding.binding = sampler.first;
+				samplerBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+				samplerBinding.descriptorCount = 1;
+				samplerBinding.stageFlags = VK_SHADER_STAGE_ALL;
+				bindingLayouts.emplace_back(samplerBinding);
+			}
+		}
+
+		VkDescriptorSetLayoutCreateInfo setInfo{};
+		setInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+		setInfo.flags = 0;
+		setInfo.pBindings = bindingLayouts.data();
+		setInfo.bindingCount = bindingLayouts.size();
+
+		if(vkCreateDescriptorSetLayout(context->device, &setInfo, nullptr, &_state.setLayouts[set]) != VK_SUCCESS){
+			Log::Error() << Log::GPU << "Unable to create set layout." << std::endl;
+		}
+	}
+
+	VkPipelineLayoutCreateInfo layoutInfo{};
+	layoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+	layoutInfo.setLayoutCount = _state.setLayouts.size();
+	layoutInfo.pSetLayouts = _state.setLayouts.data();
+	layoutInfo.pushConstantRangeCount = 0;
+	layoutInfo.pPushConstantRanges = nullptr;
+	if(vkCreatePipelineLayout(context->device, &layoutInfo, nullptr, &_state.layout) != VK_SUCCESS){
+		Log::Error() << Log::GPU << "Unable to create pipeline layout." << std::endl;
+	}
 }
 
 void Program::validate() const {
@@ -131,12 +219,42 @@ void Program::saveBinary(const std::string & outputPath) const {
 	//Resources::saveRawDataToExternalFile(outputPath + "_" + _name + "_" + std::to_string(uint(format)) + ".bin", &binary[0], binary.size());
 }
 
+bool Program::reloaded() const {
+	return _reloaded;
+}
+
+bool Program::reloaded(bool absorb){
+	const bool wasReloaded = _reloaded;
+	if(absorb){
+		_reloaded = false;
+	}
+	return wasReloaded;
+}
+
 void Program::use() const {
 	GPU::bindProgram(*this);
 }
 
 void Program::clean() {
+	GPUContext* context = static_cast<GPUContext*>(GPU::getInternal());
+	vkDestroyPipelineLayout(context->device, _state.layout, nullptr);
+	for(VkDescriptorSetLayout& setLayout : _state.setLayouts){
+		vkDestroyDescriptorSetLayout(context->device, setLayout, nullptr);
+	}
+	for(Stage& stage : _stages){
+		vkDestroyShaderModule(context->device, stage.module, nullptr);
+		stage.reset();
+	}
+
+	// \todo Unsure if the above should be moved in GPU.
 	GPU::clean(*this);
+	// Clear CPU infos.
+	_buffers.clear();
+	_uniforms.clear();
+	_samplers.clear();
+	_state.setLayouts.clear();
+	_state.stages.clear();
+	
 }
 
 void Program::uniform(const std::string & name, bool t) {
