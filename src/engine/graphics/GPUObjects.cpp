@@ -9,9 +9,15 @@ bool GPUState::isEquivalent(const GPUState& other) const {
 	if(program != other.program){
 		return false;
 	}
+	// If program just reloaded, pipeline layout might have been invalidated.
+	if(program->reloaded()){
+		return false;
+	}
+
 	/*if(!framebuffer || !other.framebuffer){
 		return false;
 	}*/
+
 	if(!mesh || !other.mesh){
 		return false;
 	}

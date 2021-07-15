@@ -3,17 +3,49 @@
 #include "graphics/GPUInternal.hpp"
 #include "graphics/PipelineCache.hpp"
 
+#include "resources/ResourcesManager.hpp"
+
 #define XXH_INLINE_ALL
 #include <xxhash/xxhash.h>
+
+#define PIPELINE_CACHE_FILE "pipeline_cache_vulkan.bin"
+
+void PipelineCache::init(){
+	GPUContext* context = static_cast<GPUContext*>(GPU::getInternal());
+
+	size_t pipelineSize = 0;
+	char * pipelineData = Resources::loadRawDataFromExternalFile(PIPELINE_CACHE_FILE, pipelineSize);
+	
+	VkPipelineCacheCreateInfo cacheInfos{};
+	cacheInfos.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
+	cacheInfos.flags = 0;
+	cacheInfos.initialDataSize = pipelineSize;
+	cacheInfos.pInitialData = pipelineData;
+
+	vkCreatePipelineCache(context->device, &cacheInfos, nullptr, &_vulkanCache);
+	free(pipelineData);
+}
 
 VkPipeline PipelineCache::getPipeline(const GPUState & state){
 	// Compute the hash (used in all cases).
 	const uint64_t hash = XXH3_64bits(&state, offsetof(GPUState, sentinel));
 
-	// \todo Might have to invalidate program pipelines after a reload, as the layout will change.
-
 	// First check if we already have pipelines for the current program.
 	auto sameProgramPipelinesIt = _pipelines.find(state.program);
+
+	// We have to invalidate program pipelines after a reload, as the layout might change.
+	if(sameProgramPipelinesIt != _pipelines.end() && state.program->reloaded(true)){
+		// Delete the pipelines corresponding to this program.
+		GPUContext* context = static_cast<GPUContext*>(GPU::getInternal());
+		for(auto& pipelineInfo : sameProgramPipelinesIt->second){
+			vkDestroyPipeline(context->device, pipelineInfo.second.pipeline, nullptr);
+		}
+		sameProgramPipelinesIt->second.clear();
+		_pipelines.erase(state.program);
+		sameProgramPipelinesIt = _pipelines.end();
+	}
+
+
 	// If not found, create new program cache and generate pipeline.
 	if(sameProgramPipelinesIt == _pipelines.end()){
 		_pipelines[state.program] = ProgramPipelines();
@@ -42,6 +74,28 @@ VkPipeline PipelineCache::getPipeline(const GPUState & state){
 	return createNewPipeline(state, hash);
 }
 
+void PipelineCache::clean(){
+	GPUContext* context = static_cast<GPUContext*>(GPU::getInternal());
+
+	// Retrieve cache data.
+	size_t pipelineSize = 0;
+	vkGetPipelineCacheData(context->device, _vulkanCache, &pipelineSize, nullptr);
+	if(pipelineSize != 0){
+		char* pipelineData = new char[pipelineSize];
+		vkGetPipelineCacheData(context->device, _vulkanCache, &pipelineSize, pipelineData);
+		Resources::saveRawDataToExternalFile(PIPELINE_CACHE_FILE, pipelineData, pipelineSize);
+	}
+
+	for(auto& programPipelines : _pipelines){
+		for(auto& pipeline : programPipelines.second){
+			vkDestroyPipeline(context->device, pipeline.second.pipeline, nullptr);
+		}
+	}
+
+	vkDestroyPipelineCache(context->device, _vulkanCache, nullptr);
+
+}
+
 VkPipeline PipelineCache::createNewPipeline(const GPUState& state, const uint64_t hash){
 	Entry entry;
 	entry.pipeline = buildPipeline(state);
@@ -52,7 +106,7 @@ VkPipeline PipelineCache::createNewPipeline(const GPUState& state, const uint64_
 }
 
 VkPipeline PipelineCache::buildPipeline(const GPUState& state){
-	GPUContext* context = (GPUContext*)GPU::getInternal();
+	GPUContext* context = static_cast<GPUContext*>(GPU::getInternal());
 
 	VkGraphicsPipelineCreateInfo pipelineInfo{};
 	pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
@@ -64,7 +118,9 @@ VkPipeline PipelineCache::buildPipeline(const GPUState& state){
 		const Program::StagesState& programState = state.program->getState();
 		pipelineInfo.stageCount = programState.stages.size();
 		pipelineInfo.pStages = programState.stages.data();
+		pipelineInfo.layout = programState.layout;
 	}
+	
 	// Vertex input.
 	VkPipelineVertexInputStateCreateInfo vertexState{};
 	{
@@ -186,7 +242,7 @@ VkPipeline PipelineCache::buildPipeline(const GPUState& state){
 	}
 	// Color blending
 	VkPipelineColorBlendStateCreateInfo colorState{};
-	const uint attachmentCount = 1;//state.framebuffer->attachments(); // TODO: retrieve from framebuffer.
+	const uint attachmentCount = 1;//state.framebuffer->attachments(); // \todo Retrieve from framebuffer.
 	std::vector<VkPipelineColorBlendAttachmentState> attachmentStates(attachmentCount);
 	{
 		static const std::map<BlendEquation, VkBlendOp> eqs = {
@@ -256,27 +312,9 @@ VkPipeline PipelineCache::buildPipeline(const GPUState& state){
 		pipelineInfo.basePipelineIndex = -1;
 	}
 
-	// Shader layout
-	VkPipelineLayout pipelineLayout = VK_NULL_HANDLE;
-	{
-		VkPipelineLayoutCreateInfo layoutInfo{};
-		layoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-		layoutInfo.setLayoutCount = 0;
-		layoutInfo.pSetLayouts = nullptr;
-		layoutInfo.pushConstantRangeCount = 0;
-		layoutInfo.pPushConstantRanges = nullptr;
-		if(vkCreatePipelineLayout(context->device, &layoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS){
-			Log::Error() << "Unable to create pipeline layout." << std::endl;
-		}
-		pipelineInfo.layout = pipelineLayout;
-	}
-
 	VkPipeline pipeline;
-	if(vkCreateGraphicsPipelines(context->device, context->pipelineCache, 1, &pipelineInfo, nullptr, &pipeline) != VK_SUCCESS){
+	if(vkCreateGraphicsPipelines(context->device, _vulkanCache, 1, &pipelineInfo, nullptr, &pipeline) != VK_SUCCESS){
 		Log::Error() << Log::GPU << "Unable to create pipeline." << std::endl;
 	}
-	// We will have to
-	// vkDestroyPipelineLayout(device, pipeline.layout, nullptr);
-	// vkDestroyPipeline(device, pipeline, nullptr);
 	return pipeline;
 }

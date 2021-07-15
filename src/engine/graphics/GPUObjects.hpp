@@ -592,7 +592,7 @@ public:
 	//glm::vec4 viewport {0.0f}; ///< Current viewport region.
 	bool sentinel = false;
 	// Binding state.
-	const Program* program = nullptr;
+	Program* program = nullptr;
 	const GPUMesh* mesh = nullptr;
 	//const Framebuffer* framebuffer = nullptr;
 };

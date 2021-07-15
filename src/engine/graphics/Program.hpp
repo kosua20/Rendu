@@ -100,6 +100,10 @@ public:
 	 */
 	void saveBinary(const std::string & outputPath) const;
 
+	bool reloaded() const;
+	
+	bool reloaded(bool absorb);
+
 	/** Activate the program shaders.
 	 */
 	void use() const;
@@ -352,5 +356,7 @@ private:
 
 	std::unordered_map<std::string, UniformDef> _uniforms;
 	std::unordered_map<int, std::unordered_map<int, BufferCPU> > _buffers;
+	bool _reloaded = false;
+
 	friend class GPU; ///< Utilities will need to access GPU handle.
 };

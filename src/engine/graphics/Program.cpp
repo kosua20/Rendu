@@ -11,8 +11,9 @@ Program::Program(const std::string & name, const std::string & vertexContent, co
 
 void Program::reload(const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, const std::string & tessControlContent, const std::string & tessEvalContent) {
 
-	GPU::clean(*this);
-
+	clean();
+	_reloaded = true;
+	
 	const std::string debugName = _name;
 	GPU::createProgram(*this, vertexContent, fragmentContent, geometryContent, tessControlContent, tessEvalContent, debugName);
 

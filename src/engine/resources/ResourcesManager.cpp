@@ -632,7 +632,7 @@ char * Resources::loadRawDataFromExternalFile(const std::string & path, size_t &
 
 	std::ifstream inputFile(System::widen(path), std::ios::binary | std::ios::ate);
 	if(inputFile.bad() || inputFile.fail()) {
-		Log::Error() << Log::Resources << "Unable to load file at path \"" << path << "\"." << std::endl;
+		Log::Warning() << Log::Resources << "Unable to load file at path \"" << path << "\"." << std::endl;
 		size = 0;
 		return nullptr;
 	}

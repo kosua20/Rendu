@@ -9,8 +9,12 @@
 class PipelineCache {
 public:
 
+	void init();
+
 	VkPipeline getPipeline(const GPUState & state);
 
+	void clean();
+	
 private:
 
 	struct Entry {
@@ -27,4 +31,5 @@ private:
 	using ProgramPipelines = std::unordered_multimap<uint64_t, Entry>;
 	using Cache = std::unordered_map<const Program*, ProgramPipelines>;
 	Cache _pipelines;
+	VkPipelineCache _vulkanCache = VK_NULL_HANDLE;
 };

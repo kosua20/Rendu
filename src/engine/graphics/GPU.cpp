@@ -229,12 +229,7 @@ bool GPU::setupWindow(Window * window){
 	_context.mainRenderPass = window->_swapchain.getMainPass();
 	
 	// Create a pipeline cache.
-	VkPipelineCacheCreateInfo cacheInfos{};
-	cacheInfos.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
-	cacheInfos.flags = 0;
-	cacheInfos.initialDataSize = 0;
-	cacheInfos.pInitialData = nullptr;
-	vkCreatePipelineCache(_context.device, &cacheInfos, nullptr, &_context.pipelineCache);
+	_pipelineCache.init();
 
 	// For now create a uniqe descriptor pool (for imgui)
 	{
@@ -368,7 +363,7 @@ void GPU::createProgram(Program& program, const std::string & vertexContent, con
 }
 
 void GPU::bindProgram(const Program & program){
-	_state.program = &program;
+	_state.program = (Program*)&program;
 //	if(_state.program != program._id){
 //		_state.program = program._id;
 //		glUseProgram(program._id);
@@ -1103,7 +1098,7 @@ void GPU::drawMesh(const Mesh & mesh) {
 	// state is outdated, create/retrieve new pipeline
 	bool shouldBindPipeline = _context.newRenderPass;
 	_context.newRenderPass = false;
-	// TODO: use hash for equivalence.
+	// \todo Use hash for equivalence.
 	if(!_state.isEquivalent(_lastState)){
 		_context.pipeline = _pipelineCache.getPipeline(_state);
 		_lastState = _state;
@@ -1137,7 +1132,7 @@ void GPU::drawTesselatedMesh(const Mesh & mesh, uint patchSize){
 //		glBindVertexArray(mesh.gpu->id);
 //		_metrics.vertexBindings += 1;
 //	}
-	// TODO: check if we need to specify the patch size or if it's specified in the shader
+	// \todo check if we need to specify the patch size or if it's specified in the shader
 	drawMesh(mesh);
 //	glDrawElements(GL_PATCHES, mesh.gpu->count, GL_UNSIGNED_INT, static_cast<void *>(nullptr));
 //	_metrics.drawCalls += 1;
@@ -1156,7 +1151,6 @@ void GPU::drawQuad(){
 //		glBindVertexArray(_vao);
 //		_metrics.vertexBindings += 1;
 //	}
-	// TODO: vkCmdBindPipeline
 	VkDeviceSize offset = 0;
 	vkCmdBindVertexBuffers(_context.getCurrentCommandBuffer(), 0, 1, &(_quad.gpu->vertexBuffer->buffer), &offset);
 	vkCmdDraw(_context.getCurrentCommandBuffer(), 3, 1, 0, 0);
@@ -1788,9 +1782,10 @@ const GPU::Metrics & GPU::getMetrics(){
 void GPU::cleanup(){
 	GPU::sync();
 
-	vkDestroyCommandPool(_context.device, _context.commandPool, nullptr);
-	vkDestroyPipelineCache(_context.device, _context.pipelineCache, nullptr);
+	_pipelineCache.clean();
 
+	vkDestroyCommandPool(_context.device, _context.commandPool, nullptr);
+	
 	_quad.clean();
 	//vkDestroyDevice(_context.device, nullptr);
 	ShaderCompiler::cleanup();
@@ -1818,11 +1813,7 @@ void GPU::clean(GPUBuffer & buffer){
 }
 
 void GPU::clean(Program & program){
-	for(uint sid = 0; sid < uint(ShaderType::COUNT); ++sid){
-		Program::Stage& stage = program.stage(ShaderType(sid));
-		vkDestroyShaderModule(_context.device, stage.module, nullptr);
-		stage.reset();
-	}
+	
 }
 
 GPUState GPU::_state;
