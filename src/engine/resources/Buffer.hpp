@@ -19,27 +19,6 @@ public:
 	 */
 	BufferBase(size_t sizeInBytes, BufferType atype, DataUse ausage);
 
-	/** Setup the buffer, allocating it on the GPU.
-	 */
-	void setup();
-
-	/** Upload data to the buffer. You have to take care of synchronization if
-	 updating a subregion of the buffer that is currently in use, except if
-	 sizeInBytes == size of the buffer, in which case the current buffer is
-	 orphaned and a new one used (if the driver is nice).
-	 \param sizeInBytes the size of the data to upload, in bytes
-	 \param data the data to upload
-	 \param offset offset in the buffer
-	 */
-	void upload(size_t sizeInBytes, unsigned char * data, size_t offset);
-
-	/** Download data from the buffer.
-	 \param sizeInBytes the size of the data to download, in bytes
-	 \param data the storage to download to
-	 \param offset offset in the buffer
-	 */
-	void download(size_t sizeInBytes, unsigned char * data, size_t offset);
-
 	/** Cleanup all data.
 	 */
 	void clean();
@@ -61,14 +40,93 @@ public:
 	BufferBase(BufferBase &&) = delete;
 
 	/** Destructor. */
-	~BufferBase();
+	virtual ~BufferBase();
 
-	const size_t sizeMax; ///< Buffer size in bytes.
 	const BufferType type; ///< Buffer type.
 	const DataUse usage; ///< Buffer update frequency.
+	size_t sizeMax; ///< Buffer size in bytes.
 
 	std::unique_ptr<GPUBuffer> gpu; ///< The GPU data (optional).
 
+};
+
+class TransferBuffer : public BufferBase {
+public:
+
+	TransferBuffer(size_t sizeInBytes, BufferType atype);
+
+	/** Upload data to the buffer. You have to take care of synchronization if
+	 updating a subregion of the buffer that is currently in use, except if
+	 sizeInBytes == size of the buffer, in which case the current buffer is
+	 orphaned and a new one used (if the driver is nice).
+	 \param sizeInBytes the size of the data to upload, in bytes
+	 \param data the data to upload
+	 \param offset offset in the buffer
+	 */
+	void upload(size_t sizeInBytes, unsigned char * data, size_t offset);
+
+	/** Download data from the buffer.
+	 \param sizeInBytes the size of the data to download, in bytes
+	 \param data the storage to download to
+	 \param offset offset in the buffer
+	 */
+	void download(size_t sizeInBytes, unsigned char * data, size_t offset);
+
+	/** Copy assignment operator (disabled).
+	 \return a reference to the object assigned to
+	 */
+	TransferBuffer & operator=(const TransferBuffer &) = delete;
+
+	/** Copy constructor (disabled). */
+	TransferBuffer(const TransferBuffer &) = delete;
+
+	/** Move assignment operator .
+	 \return a reference to the object assigned to
+	 */
+	TransferBuffer & operator=(TransferBuffer &&) = delete;
+
+	/** Move constructor. */
+	TransferBuffer(TransferBuffer &&) = delete;
+
+};
+
+class UniformBufferBase : public BufferBase {
+public:
+
+	UniformBufferBase(size_t sizeInBytes, DataUse use);
+
+	void upload(unsigned char * data);
+
+	void clean();
+
+	size_t currentOffset() const { return _offset; }
+
+	size_t baseSize() const { return _baseSize; }
+
+	/** Copy assignment operator (disabled).
+	 \return a reference to the object assigned to
+	 */
+	UniformBufferBase & operator=(const UniformBufferBase &) = delete;
+
+	/** Copy constructor (disabled). */
+	UniformBufferBase(const UniformBufferBase &) = delete;
+
+	/** Move assignment operator .
+	 \return a reference to the object assigned to
+	 */
+	UniformBufferBase & operator=(UniformBufferBase &&) = delete;
+
+	/** Move constructor. */
+	UniformBufferBase(UniformBufferBase &&) = delete;
+
+	~UniformBufferBase();
+
+private:
+
+	const size_t _baseSize;
+	size_t _alignment = 0;
+	size_t _offset = 0;
+	char* _mappedData = nullptr;
 };
 
 /**
@@ -76,15 +134,14 @@ public:
  \ingroup Resources
  */
 template<typename T>
-class Buffer : public BufferBase {
+class UniformBuffer : public UniformBufferBase {
 public:
 
 	/** Constructor.
 	 \param count the number of elements
-	 \param type the target of the buffer (uniform, index, vertex)
 	 \param usage the update frequency of the buffer content
 	 */
-	Buffer(size_t count, BufferType type, DataUse usage);
+	UniformBuffer(size_t count, DataUse usage);
 
 	/** Accessor.
 	 \param i the location of the item to retrieve
@@ -123,6 +180,10 @@ public:
 		return data.size();
 	}
 
+	/*T* data(){
+		return data.data();
+	}*/
+
 	/** Send the buffer data to the GPU.
 	 Previously uploaded content will potentially be erased.
 	 */
@@ -132,51 +193,42 @@ public:
 	 \param count number of elements to upload
 	 \param offset location of the first element to upload
 	*/
-	void upload(size_t offset, size_t count);
-
-	/** Download data from the GPU buffer to the CPU.
-	 If the CPU buffer was cleared, it will be reallocated.
-	 */
-	void download();
-
-	/** Clear CPU data.
-	 */
-	void clearCPU();
+	//void upload(size_t offset, size_t count);
 
 	/** Copy assignment operator (disabled).
 	 \return a reference to the object assigned to
 	 */
-	Buffer & operator=(const Buffer &) = delete;
+	UniformBuffer & operator=(const UniformBuffer &) = delete;
 	
 	/** Copy constructor (disabled). */
-	Buffer(const Buffer &) = delete;
+	UniformBuffer(const UniformBuffer &) = delete;
 	
 	/** Move assignment operator .
 	 \return a reference to the object assigned to
 	 */
-	Buffer & operator=(Buffer &&) = default;
+	UniformBuffer & operator=(UniformBuffer &&) = default;
 	
 	/** Move constructor. */
-	Buffer(Buffer &&) = default;
+	UniformBuffer(UniformBuffer &&) = default;
 
 	/** Destructor. */
-	~Buffer();
+	~UniformBuffer() = default;
 
 	std::vector<T> data; ///< The CPU data.
 	
 };
 
 template <typename T>
-Buffer<T>::Buffer(size_t count, BufferType type, DataUse usage) :
-	BufferBase(count * sizeof(T), type, usage) {
+UniformBuffer<T>::UniformBuffer(size_t count, DataUse usage) :
+	UniformBufferBase(count * sizeof(T), usage) {
 	data.resize(count);
 }
 
 template <typename T>
-void Buffer<T>::upload() {
-	BufferBase::upload(data.size() * sizeof(T), reinterpret_cast<unsigned char*>(data.data()), 0);
+void UniformBuffer<T>::upload() {
+	UniformBufferBase::upload(reinterpret_cast<unsigned char*>(data.data()));
 }
-
+/*
 template <typename T>
 void Buffer<T>::upload(size_t offset, size_t count) {
 	BufferBase::upload(count * sizeof(T), reinterpret_cast<unsigned char*>(data.data()), offset);
@@ -193,9 +245,4 @@ template <typename T>
 void Buffer<T>::clearCPU() {
 	data.clear();
 }
-
-template <typename T>
-Buffer<T>::~Buffer() {
-	clearCPU();
-	// The parent destructor will do the GPU cleaning.
-}
+ */

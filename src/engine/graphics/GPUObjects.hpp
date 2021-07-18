@@ -37,7 +37,8 @@ enum class BufferType : uint {
 */
 enum class DataUse : uint {
 	STATIC, ///< Data won't be updated after upload.
-	DYNAMIC ///< Data will be updated many times.
+	FRAME,  ///< Data will be updated at most once per frame
+	DYNAMIC ///< Data will be updated many times per frame.
 };
 
 /**
@@ -403,10 +404,6 @@ private:
  */
 class GPUBuffer {
 public:
-
-	//GLuint id = 0; ///< The buffer GPU ID.
-	//GLenum target; ///< The buffer type.
-	//GLenum usage; ///< The buffer usage.
 
 	/** Constructor.
 	 \param atype the type of buffer
