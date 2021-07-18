@@ -11,7 +11,7 @@ ForwardLight::ForwardLight(size_t count) :
 	}
 
 	// Initial buffers creation and allocation.
-	_lightsData.setup();
+	_lightsData.upload();
 	_shadowMaps.resize(2, nullptr);
 }
 

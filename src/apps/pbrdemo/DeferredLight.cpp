@@ -46,10 +46,10 @@ void DeferredLight::draw(const SpotLight * light) {
 	_spotProgram->uniform("viewToLight", viewToLight);
 	
 	// Active screen texture.
-	GPU::bindTextures(_textures);
+	_spotProgram->textures(_textures);
 	if(light->castsShadow()) {
 		const auto & shadowInfos = light->shadowMap();
-		GPU::bindTexture(shadowInfos.map, _textures.size());
+		_spotProgram->texture(shadowInfos.map, _textures.size());
 		_spotProgram->uniform("shadowLayer", int(shadowInfos.layer));
 		_spotProgram->uniform("shadowBias", _shadowBias);
 		_spotProgram->uniform("shadowMode", int(_shadowMode));
@@ -82,10 +82,10 @@ void DeferredLight::draw(const PointLight * light) {
 	_pointProgram->uniform("lightFarPlane", light->farPlane());
 	
 	 // Active screen texture.
-	GPU::bindTextures(_textures);
+	_pointProgram->textures(_textures);
 	if(light->castsShadow()) {
 		const auto & shadowInfos = light->shadowMap();
-		GPU::bindTexture(shadowInfos.map, _textures.size());
+		_pointProgram->texture(shadowInfos.map, _textures.size());
 		_pointProgram->uniform("shadowLayer", int(shadowInfos.layer));
 		_pointProgram->uniform("shadowBias", _shadowBias);
 		_pointProgram->uniform("shadowMode", int(_shadowMode));
@@ -112,10 +112,10 @@ void DeferredLight::draw(const DirectionalLight * light) {
 	_dirProgram->uniform("projectionMatrix", projectionVector);
 	_dirProgram->uniform("viewToLight", viewToLight);
 
-	GPU::bindTextures(_textures);
+	_dirProgram->textures(_textures);
 	if(light->castsShadow()) {
 		const auto & shadowInfos = light->shadowMap();
-		GPU::bindTexture(shadowInfos.map, _textures.size());
+		_dirProgram->texture(shadowInfos.map, _textures.size());
 		_dirProgram->uniform("shadowLayer", int(shadowInfos.layer));
 		_dirProgram->uniform("shadowBias", _shadowBias);
 		_dirProgram->uniform("shadowMode", int(_shadowMode));

@@ -76,10 +76,13 @@ void DeferredRenderer::renderOpaque(const Culler::List & visibles, const glm::ma
 		// Compute the normal matrix
 		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(MV)));
 
+		Program* program = nullptr;
+
 		// Select the program (and shaders).
 		switch(object.type()) {
 			case Object::Parallax:
 				_parallaxProgram->use();
+				program = _parallaxProgram;
 				// Upload the MVP matrix.
 				_parallaxProgram->uniform("mvp", MVP);
 				// Upload the projection matrix.
@@ -91,6 +94,7 @@ void DeferredRenderer::renderOpaque(const Culler::List & visibles, const glm::ma
 				break;
 			case Object::Regular:
 				_objectProgram->use();
+				program = _objectProgram;
 				// Upload the MVP matrix.
 				_objectProgram->uniform("mvp", MVP);
 				// Upload the normal matrix.
@@ -99,6 +103,7 @@ void DeferredRenderer::renderOpaque(const Culler::List & visibles, const glm::ma
 				break;
 			case Object::Emissive:
 				_emissiveProgram->use();
+				program = _emissiveProgram;
 				// Upload the MVP matrix.
 				_emissiveProgram->uniform("mvp", MVP);
 				// Are UV available.
@@ -112,7 +117,7 @@ void DeferredRenderer::renderOpaque(const Culler::List & visibles, const glm::ma
 		GPU::setCullState(!object.twoSided(), Faces::BACK);
 
 		// Bind the textures.
-		GPU::bindTextures(object.textures());
+		program->textures(object.textures());
 		GPU::drawMesh(*object.mesh());
 	}
 
@@ -167,18 +172,19 @@ void DeferredRenderer::renderTransparent(const Culler::List & visibles, const gl
 		_transparentProgram->uniform("normalMatrix", normalMatrix);
 
 		// Bind the lights.
-		GPU::bindBuffer(_fwdLightsGPU->data(), 0);
-		GPU::bindBuffer(*_scene->environment.shCoeffs(), 1);
+		_transparentProgram->buffer(_fwdLightsGPU->data(), 0);
+		_transparentProgram->buffer(*_scene->environment.shCoeffs(), 1);
+		
 		// Bind the textures.
-		GPU::bindTextures(object.textures());
-		GPU::bindTexture(_textureBrdf, 4);
-		GPU::bindTexture(_scene->environment.map(), 5);
+		_transparentProgram->textures(object.textures());
+		_transparentProgram->texture(_textureBrdf, 4);
+		_transparentProgram->texture(_scene->environment.map(), 5);
 		// Bind available shadow maps.
 		if(shadowMaps[0]){
-			GPU::bindTexture(shadowMaps[0], 6);
+			_transparentProgram->texture(shadowMaps[0], 6);
 		}
 		if(shadowMaps[1]){
-			GPU::bindTexture(shadowMaps[1], 7);
+			_transparentProgram->texture(shadowMaps[1], 7);
 		}
 		// No SSAO as the objects are not rendered in it.
 
@@ -211,7 +217,7 @@ void DeferredRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 
 		_skyboxProgram->use();
 		// Upload the MVP matrix.
 		_skyboxProgram->uniform("mvp", backgroundMVP);
-		GPU::bindTextures(background->textures());
+		_skyboxProgram->textures(background->textures());
 		GPU::drawMesh(*background->mesh());
 		
 	} else if(mode == Scene::Background::ATMOSPHERE) {
@@ -225,7 +231,7 @@ void DeferredRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 
 		_atmoProgram->uniform("clipToWorld", clipToWorldNoT);
 		_atmoProgram->uniform("viewPos", pos);
 		_atmoProgram->uniform("lightDirection", sunDir);
-		GPU::bindTextures(background->textures());
+		_atmoProgram->textures(background->textures());
 		GPU::drawMesh(*background->mesh());
 		
 	} else {
@@ -233,7 +239,7 @@ void DeferredRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 
 		_bgProgram->use();
 		if(mode == Scene::Background::IMAGE) {
 			_bgProgram->uniform("useTexture", 1);
-			GPU::bindTextures(background->textures());
+			_bgProgram->textures(background->textures());
 		} else {
 			_bgProgram->uniform("useTexture", 0);
 			_bgProgram->uniform("bgColor", _scene->backgroundColor);

@@ -58,7 +58,8 @@ void SceneEditor::draw() {
 	GPU::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 	_passthrough->use();
 	_passthrough->uniform("flip", 0);
-	ScreenQuad::draw(_sceneFramebuffer->texture());
+	_passthrough->texture(_sceneFramebuffer->texture(), 0);
+	ScreenQuad::draw();
 	checkGPUError();
 }
 void SceneEditor::update() {

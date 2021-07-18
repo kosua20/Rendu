@@ -50,30 +50,31 @@ void PostProcessStack::process(const Texture * texture, const glm::mat4 & proj, 
 		_dofCocProgram->uniform("projParams", glm::vec2(proj[2][2], proj[3][2]));
 		_dofCocProgram->uniform("focusDist", _settings.focusDist);
 		_dofCocProgram->uniform("focusScale", _settings.focusScale);
-		GPU::bindTexture(texture, 0);
-		GPU::bindTexture(depth, 1);
+		_dofCocProgram->texture(texture, 0);
+		_dofCocProgram->texture(depth, 1);
 		ScreenQuad::draw();
 		// Gather from neighbor samples.
 		_dofGatherBuffer->bind(Framebuffer::Load::DONTCARE);
 		_dofGatherBuffer->setViewport();
 		_dofGatherProgram->use();
 		_dofGatherProgram->uniform("invSize", 1.0f/glm::vec2(_dofCocBuffer->width(), _dofCocBuffer->height()));
-		GPU::bindTexture(_dofCocBuffer->texture(0), 0);
-		GPU::bindTexture(_dofCocBuffer->texture(1), 1);
+		_dofGatherProgram->texture(_dofCocBuffer->texture(0), 0);
+		_dofGatherProgram->texture(_dofCocBuffer->texture(1), 1);
 		ScreenQuad::draw();
 		// Finally composite back with full res image.
 		_resultFramebuffer->bind(Framebuffer::Load::DONTCARE);
 		_resultFramebuffer->setViewport();
 		_dofCompositeProgram->use();
-		GPU::bindTexture(texture, 0);
-		GPU::bindTexture(_dofGatherBuffer->texture(), 1);
+		_dofCompositeProgram->texture(texture, 0);
+		_dofCompositeProgram->texture(_dofGatherBuffer->texture(), 1);
 		ScreenQuad::draw();
 	} else {
 		// Else just copy the input texture to our internal result.
 		_resultFramebuffer->bind(Framebuffer::Load::DONTCARE);
 		_resultFramebuffer->setViewport();
 		Resources::manager().getProgram2D("passthrough-pixelperfect")->use();
-		ScreenQuad::draw(texture);
+		Resources::manager().getProgram2D("passthrough-pixelperfect")->texture(texture);
+		ScreenQuad::draw();
 	}
 
 	if(_settings.bloom) {
@@ -82,7 +83,8 @@ void PostProcessStack::process(const Texture * texture, const glm::mat4 & proj, 
 		_bloomBuffer->setViewport();
 		_bloomProgram->use();
 		_bloomProgram->uniform("luminanceTh", _settings.bloomTh);
-		ScreenQuad::draw(_resultFramebuffer->texture());
+		_bloomProgram->texture(_resultFramebuffer->texture(), 0);
+		ScreenQuad::draw();
 		
 		// --- Bloom blur pass ------
 		_blur->process(_bloomBuffer->texture(), *_bloomBuffer);
@@ -93,7 +95,8 @@ void PostProcessStack::process(const Texture * texture, const glm::mat4 & proj, 
 		GPU::setBlendState(true, BlendEquation::ADD, BlendFunction::ONE, BlendFunction::ONE);
 		_bloomComposite->use();
 		_bloomComposite->uniform("scale", _settings.bloomMix);
-		ScreenQuad::draw(_bloomBuffer->texture());
+		_bloomComposite->texture(_bloomBuffer->texture(), 0);
+		ScreenQuad::draw();
 		GPU::setBlendState(false);
 		// Steps below ensures that we will always have an intermediate target.
 	}
@@ -104,14 +107,16 @@ void PostProcessStack::process(const Texture * texture, const glm::mat4 & proj, 
 	_toneMappingProgram->use();
 	_toneMappingProgram->uniform("customExposure", _settings.exposure);
 	_toneMappingProgram->uniform("apply", _settings.tonemap);
-	ScreenQuad::draw(_resultFramebuffer->texture());
+	_toneMappingProgram->texture(_resultFramebuffer->texture(), 0);
+	ScreenQuad::draw();
 
 	if(_settings.fxaa) {
 		framebuffer.bind(layer, 0, Framebuffer::Load::LOAD);
 		framebuffer.setViewport();
 		_fxaaProgram->use();
 		_fxaaProgram->uniform("inverseScreenSize", invRenderSize);
-		ScreenQuad::draw(_toneMapBuffer->texture());
+		_fxaaProgram->texture(_toneMapBuffer->texture(), 0);
+		ScreenQuad::draw();
 	} else {
 		GPU::blit(*_toneMapBuffer, framebuffer, 0, layer, Filter::LINEAR);
 	}

@@ -62,14 +62,15 @@ void AtmosphereApp::draw() {
 	_atmosphere->uniform("atmoParams.gMie", _atmoParams.gMie);
 	_atmosphere->uniform("atmoParams.sunAngularRadius", _atmoParams.sunRadius);
 	_atmosphere->uniform("atmoParams.sunAngularRadiusCos", _atmoParams.sunRadiusCos);
-
-	ScreenQuad::draw(_scattering);
+	_atmosphere->texture(_scattering, 0);
+	ScreenQuad::draw();
 
 	// Tonemapping and final screen.
 	GPU::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 	Framebuffer::backbuffer()->bind(Framebuffer::Load::DONTCARE, Framebuffer::Load::DONTCARE);
 	_tonemap->use();
-	ScreenQuad::draw(_atmosphereBuffer->texture());
+	_tonemap->texture(_atmosphereBuffer->texture(), 0);
+	ScreenQuad::draw();
 }
 
 void AtmosphereApp::update() {

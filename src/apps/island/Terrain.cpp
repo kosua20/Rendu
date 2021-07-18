@@ -423,7 +423,7 @@ void Terrain::generateShadowMap(const glm::vec3 & lightDir){
 	prog->uniform("lDir", lDir);
 	prog->uniform("texelSize", texelSize);
 
-	GPU::bindTexture(map, 0);
+	prog->texture(map, 0);
 	ScreenQuad::draw();
 
 	// Post process shadow map.

@@ -59,14 +59,16 @@ void GameRenderer::drawPlayer(const Player & player, Framebuffer & framebuffer) 
 	_lightingFramebuffer->bind(Framebuffer::Load::LOAD);
 	_lightingFramebuffer->setViewport();
 	_compositingProgram->use();
-	ScreenQuad::draw({_sceneFramebuffer->texture(0), _sceneFramebuffer->texture(1), _ssaoPass->texture(), _cubemap});
+	_compositingProgram->textures({_sceneFramebuffer->texture(0), _sceneFramebuffer->texture(1), _ssaoPass->texture(), _cubemap});
+	ScreenQuad::draw();
 
 	// --- FXAA pass -------
 	framebuffer.bind(Framebuffer::Load::LOAD);
 	framebuffer.setViewport();
 	_fxaaProgram->use();
 	_fxaaProgram->uniform("inverseScreenSize", invRenderSize);
-	ScreenQuad::draw(_lightingFramebuffer->texture());
+	_fxaaProgram->texture(_lightingFramebuffer->texture(), 0);
+	ScreenQuad::draw();
 
 }
 

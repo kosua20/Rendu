@@ -115,9 +115,9 @@ int main(int argc, char ** argv) {
 			program->uniform("angleTrig", angles);
 			program->uniform("pixelScale", pixelScale);
 			program->uniform("mouseShift", mouseShift);
-
+			program->texture(imageInfos, 0);
 			// Draw.
-			ScreenQuad::draw(imageInfos);
+			ScreenQuad::draw();
 
 			// Read back color under cursor when right-clicking.
 			if(Input::manager().pressed(Input::Mouse::Right)) {
@@ -263,7 +263,8 @@ int main(int argc, char ** argv) {
 					program->uniform("widthRatio", 1.0f);
 					program->uniform("pixelScale", 1.0f);
 					program->uniform("mouseShift", zeros);
-					ScreenQuad::draw(imageInfos);
+					program->texture(imageInfos, 0);
+					ScreenQuad::draw();
 
 					// Then save it to the given path.
 					GPU::saveFramebuffer(*framebuffer, destinationPath.substr(0, destinationPath.size() - 4), true, false);

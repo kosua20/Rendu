@@ -161,7 +161,7 @@ void IslandApp::draw() {
 		_skyProgram->use();
 		_skyProgram->uniform("viewPos", glm::vec3(0.0f));
 		_skyProgram->uniform("lightDirection", _lightDirection);
-		GPU::bindTexture(_precomputedScattering, 0);
+		_skyProgram->texture(_precomputedScattering, 0);
 
 		for(uint lid = 0; lid < 6; ++lid){
 			_environment->bind(lid);
@@ -205,12 +205,12 @@ void IslandApp::draw() {
 		_groundProgram->uniform("invMapSize", 1.0f/float(_terrain->map().width));
 		_groundProgram->uniform("invGridSize", 1.0f/float(_terrain->gridSize()));
 
-		GPU::bindTexture(_terrain->map(), 0);
-		GPU::bindTexture(_terrain->shadowMap(), 1);
-		GPU::bindTexture(_surfaceNoise, 2);
-		GPU::bindTexture(_glitterNoise, 3);
-		GPU::bindTexture(_sandMapSteep, 4);
-		GPU::bindTexture(_sandMapFlat, 5);
+		_groundProgram->texture(_terrain->map(), 0);
+		_groundProgram->texture(_terrain->shadowMap(), 1);
+		_groundProgram->texture(_surfaceNoise, 2);
+		_groundProgram->texture(_glitterNoise, 3);
+		_groundProgram->texture(_sandMapSteep, 4);
+		_groundProgram->texture(_sandMapFlat, 5);
 
 
 		for(const Terrain::Cell & cell : _terrain->cells()){
@@ -249,7 +249,7 @@ void IslandApp::draw() {
 		_skyProgram->uniform("clipToWorld", clipToWorld);
 		_skyProgram->uniform("viewPos", camPos);
 		_skyProgram->uniform("lightDirection", _lightDirection);
-		GPU::bindTexture(_precomputedScattering, 0);
+		_skyProgram->texture(_precomputedScattering, 0);
 		GPU::drawMesh(*_skyMesh);
 	}
 
@@ -275,10 +275,10 @@ void IslandApp::draw() {
 			_waterEffectsHalf->bind();
 			_waterEffectsHalf->setViewport();
 			_waterCopy->use();
-			GPU::bindTexture(_sceneBuffer->texture(0), 0);
-			GPU::bindTexture(_sceneBuffer->texture(1), 1);
-			GPU::bindTexture(_caustics, 2);
-			GPU::bindTexture(_waveNormals, 3);
+			_waterCopy->texture(_sceneBuffer->texture(0), 0);
+			_waterCopy->texture(_sceneBuffer->texture(1), 1);
+			_waterCopy->texture(_caustics, 2);
+			_waterCopy->texture(_waveNormals, 3);
 			_waterCopy->uniform("time", time);
 			ScreenQuad::draw();
 
@@ -309,16 +309,16 @@ void IslandApp::draw() {
 		_oceanProgram->uniform("invMapSize", 1.0f/float(_terrain->map().width));
 		_oceanProgram->uniform("useTerrain", _showTerrain);
 
-		GPU::bindBuffer(_waves, 0);
-		GPU::bindTexture(_foam, 0);
-		GPU::bindTexture(_waterEffectsHalf->texture(0), 1);
-		GPU::bindTexture(_waterPos->texture(0), 2);
-		GPU::bindTexture(_waterEffectsBlur->texture(0), 3);
-		GPU::bindTexture(_absorbScatterOcean, 4);
-		GPU::bindTexture(_waveNormals, 5);
-		GPU::bindTexture(_environment->texture(), 6);
-		GPU::bindTexture(_brdfLUT, 7);
-		GPU::bindTexture(_terrain->shadowMap(), 8);
+		_oceanProgram->buffer(_waves, 0);
+		_oceanProgram->texture(_foam, 0);
+		_oceanProgram->texture(_waterEffectsHalf->texture(0), 1);
+		_oceanProgram->texture(_waterPos->texture(0), 2);
+		_oceanProgram->texture(_waterEffectsBlur->texture(0), 3);
+		_oceanProgram->texture(_absorbScatterOcean, 4);
+		_oceanProgram->texture(_waveNormals, 5);
+		_oceanProgram->texture(_environment->texture(), 6);
+		_oceanProgram->texture(_brdfLUT, 7);
+		_oceanProgram->texture(_terrain->shadowMap(), 8);
 		GPU::drawTesselatedMesh(_oceanMesh, 4);
 
 		// Debug view.
@@ -340,10 +340,10 @@ void IslandApp::draw() {
 			_waterEffectsHalf->bind();
 			_waterEffectsHalf->setViewport();
 			_waterCopy->use();
-			GPU::bindTexture(_sceneBuffer->texture(0), 0);
-			GPU::bindTexture(_sceneBuffer->texture(1), 1);
-			GPU::bindTexture(_caustics, 2);
-			GPU::bindTexture(_waveNormals, 3);
+			_waterCopy->texture(_sceneBuffer->texture(0), 0);
+			_waterCopy->texture(_sceneBuffer->texture(1), 1);
+			_waterCopy->texture(_caustics, 2);
+			_waterCopy->texture(_waveNormals, 3);
 			_waterCopy->uniform("time", time);
 			ScreenQuad::draw();
 
@@ -366,14 +366,14 @@ void IslandApp::draw() {
 			_underwaterProgram->uniform("time", time);
 			_underwaterProgram->uniform("invTargetSize", invRenderSize);
 
-			GPU::bindBuffer(_waves, 0);
-			GPU::bindTexture(_foam, 0);
-			GPU::bindTexture(_waterEffectsHalf->texture(0), 1);
-			GPU::bindTexture(_waterPos->texture(0), 2);
-			GPU::bindTexture(_waterEffectsBlur->texture(0), 3);
-			GPU::bindTexture(_absorbScatterOcean, 4);
-			GPU::bindTexture(_waveNormals, 5);
-			GPU::bindTexture(_environment->texture(), 6);
+			_underwaterProgram->buffer(_waves, 0);
+			_underwaterProgram->texture(_foam, 0);
+			_underwaterProgram->texture(_waterEffectsHalf->texture(0), 1);
+			_underwaterProgram->texture(_waterPos->texture(0), 2);
+			_underwaterProgram->texture(_waterEffectsBlur->texture(0), 3);
+			_underwaterProgram->texture(_absorbScatterOcean, 4);
+			_underwaterProgram->texture(_waveNormals, 5);
+			_underwaterProgram->texture(_environment->texture(), 6);
 			ScreenQuad::draw();
 			GPU::setDepthState(true, TestFunction::LESS, true);
 
@@ -397,16 +397,16 @@ void IslandApp::draw() {
 			_farOceanProgram->uniform("invMapSize", 1.0f/float(_terrain->map().width));
 			_farOceanProgram->uniform("useTerrain", _showTerrain);
 
-			GPU::bindBuffer(_waves, 0);
-			GPU::bindTexture(_foam, 0);
-			GPU::bindTexture(_waterEffectsHalf->texture(0), 1);
-			GPU::bindTexture(_waterPos->texture(0), 2);
-			GPU::bindTexture(_waterEffectsBlur->texture(0), 3);
-			GPU::bindTexture(_absorbScatterOcean, 4);
-			GPU::bindTexture(_waveNormals, 5);
-			GPU::bindTexture(_environment->texture(), 6);
-			GPU::bindTexture(_brdfLUT, 7);
-			GPU::bindTexture(_terrain->shadowMap(), 8);
+			_farOceanProgram->buffer(_waves, 0);
+			_farOceanProgram->texture(_foam, 0);
+			_farOceanProgram->texture(_waterEffectsHalf->texture(0), 1);
+			_farOceanProgram->texture(_waterPos->texture(0), 2);
+			_farOceanProgram->texture(_waterEffectsBlur->texture(0), 3);
+			_farOceanProgram->texture(_absorbScatterOcean, 4);
+			_farOceanProgram->texture(_waveNormals, 5);
+			_farOceanProgram->texture(_environment->texture(), 6);
+			_farOceanProgram->texture(_brdfLUT, 7);
+			_farOceanProgram->texture(_terrain->shadowMap(), 8);
 			GPU::drawMesh(_farOceanMesh);
 
 			// Debug view.
@@ -430,7 +430,8 @@ void IslandApp::draw() {
 	GPU::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 	Framebuffer::backbuffer()->bind();
 	_tonemap->use();
-	ScreenQuad::draw(_sceneBuffer->texture());
+	_tonemap->texture(_sceneBuffer->texture(), 0);
+	ScreenQuad::draw();
 }
 
 void IslandApp::update() {

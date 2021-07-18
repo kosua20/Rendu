@@ -41,7 +41,8 @@ void GameMenuRenderer::drawMenu(const GameMenu & menu, const glm::vec2 & finalRe
 	// Background image.
 	if(menu.backgroundImage) {
 		_backgroundProgram->use();
-		ScreenQuad::draw(menu.backgroundImage);
+		_backgroundProgram->texture(menu.backgroundImage, 0);
+		ScreenQuad::draw();
 	}
 
 	GPU::setDepthState(true, TestFunction::LESS, true);
@@ -55,7 +56,7 @@ void GameMenuRenderer::drawMenu(const GameMenu & menu, const glm::vec2 & finalRe
 		_imageProgram->uniform("scale", image.scale);
 
 		_imageProgram->uniform("depth", 0.95f);
-		GPU::bindTexture(image.tid, 0);
+		_imageProgram->texture(image.tid, 0);
 		GPU::drawMesh(*_quad);
 	}
 
@@ -78,7 +79,7 @@ void GameMenuRenderer::drawMenu(const GameMenu & menu, const glm::vec2 & finalRe
 		const glm::vec2 newScale = button.scale * 0.7f * glm::vec2(1.0f, button.size[1] / button.size[0]);
 		_imageProgram->uniform("scale", newScale);
 		_imageProgram->uniform("depth", 0.2f);
-		GPU::bindTexture(button.tid, 0);
+		_imageProgram->texture(button.tid, 0);
 		GPU::drawMesh(*_quad);
 	}
 
@@ -102,7 +103,7 @@ void GameMenuRenderer::drawMenu(const GameMenu & menu, const glm::vec2 & finalRe
 		_imageProgram->uniform("position", toggle.posImg);
 		_imageProgram->uniform("scale", newScale);
 		_imageProgram->uniform("depth", 0.2f);
-		GPU::bindTexture(toggle.tid, 0);
+		_imageProgram->texture(toggle.tid, 0);
 		GPU::drawMesh(*_quad);
 	}
 	GPU::setDepthState(false);
@@ -110,7 +111,7 @@ void GameMenuRenderer::drawMenu(const GameMenu & menu, const glm::vec2 & finalRe
 	// Labels
 	_fontProgram->use();
 	for(const auto & label : menu.labels) {
-		GPU::bindTexture(label.tid, 0);
+		_fontProgram->texture(label.tid, 0);
 		_fontProgram->uniform("ratio", aspectRatio);
 		_fontProgram->uniform("position", label.pos);
 		_fontProgram->uniform("color", labelsColor);

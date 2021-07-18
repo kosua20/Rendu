@@ -182,9 +182,9 @@ void ShaderEditor::draw() {
 	}
 
 	// First texture is the prevous frame.
-	GPU::bindTexture(_prevFrame->texture(), 0);
+	_currProgram->texture(_prevFrame->texture(), 0);
 	for(size_t i = 1; i < _textures.size(); ++i){
-		GPU::bindTexture(_textures[i], i);
+		_currProgram->texture(_textures[i], i);
 	}
 
 	// Render user shader and time it.
@@ -200,7 +200,8 @@ void ShaderEditor::draw() {
 	if(!_windowed){
 		_passthrough->use();
 		_passthrough->uniform("flip", 0);
-		ScreenQuad::draw(_currFrame->texture());
+		_passthrough->texture(_currFrame->texture(), 0);
+		ScreenQuad::draw();
 	}
 
 	std::swap(_currFrame, _prevFrame);

@@ -55,7 +55,8 @@ void FilteringApp::draw() {
 		_sceneBuffer->setViewport();
 		_passthrough->use();
 		if(_image.width > 0) {
-			ScreenQuad::draw(_image);
+			_passthrough->texture(_image, 0);
+			ScreenQuad::draw();
 		}
 
 	} else {
@@ -102,7 +103,8 @@ void FilteringApp::draw() {
 	const glm::ivec2 screenSize = Input::manager().size();
 	GPU::setViewport(0, 0, screenSize[0], screenSize[1]);
 	_passthrough->use();
-	ScreenQuad::draw(finalTexID);
+	_passthrough->texture(finalTexID, 0);
+	ScreenQuad::draw();
 }
 
 void FilteringApp::update() {

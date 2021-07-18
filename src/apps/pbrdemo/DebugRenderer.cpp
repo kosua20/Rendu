@@ -167,8 +167,8 @@ void DebugRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_
 		_probeProgram->uniform("camPos", camera.position());
 		_probeProgram->uniform("lod", _probeRoughness * probe.map()->levels);
 		_probeProgram->uniform("mode", int(_probeMode));
-		GPU::bindTexture(probe.map(), 0);
-		GPU::bindBuffer(*probe.shCoeffs(), 0);
+		_probeProgram->texture(probe.map(), 0);
+		_probeProgram->buffer(*probe.shCoeffs(), 0);
 		GPU::drawMesh(*_sphere);
 	}
 

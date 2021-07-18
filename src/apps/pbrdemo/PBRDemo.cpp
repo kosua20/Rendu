@@ -191,7 +191,8 @@ void PBRDemo::draw() {
 	Framebuffer::backbuffer()->bind(Framebuffer::Load::DONTCARE);
 	GPU::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 	_finalProgram->use();
-	ScreenQuad::draw(_finalRender->texture());
+	_finalProgram->texture(finalRender->texture());
+	ScreenQuad::draw(_);
 
 	_totalTime.end();
 }

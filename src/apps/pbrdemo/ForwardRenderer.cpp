@@ -85,7 +85,7 @@ void ForwardRenderer::renderDepth(const Culler::List & visibles, const glm::mat4
 		_depthPrepass->uniform("hasUV", object.useTexCoords());
 		
 		if(object.masked()) {
-			GPU::bindTexture(object.textures()[0], 0);
+			_depthPrepass->texture(object.textures()[0], 0);
 		}
 		// Backface culling state.
 		GPU::setCullState(!object.twoSided(), Faces::BACK);
@@ -127,7 +127,7 @@ void ForwardRenderer::renderOpaque(const Culler::List & visibles, const glm::mat
 				GPU::setCullState(false);
 			}
 			// Bind the textures.
-			GPU::bindTextures(object.textures());
+			_emissiveProgram->textures(object.textures());
 			GPU::drawMesh(*object.mesh());
 			GPU::setCullState(true, Faces::BACK);
 			continue;
@@ -160,20 +160,20 @@ void ForwardRenderer::renderOpaque(const Culler::List & visibles, const glm::mat
 		// Backface culling state.
 		GPU::setCullState(!object.twoSided(), Faces::BACK);
 		// Bind the lights.
-		GPU::bindBuffer(_lightsGPU->data(), 0);
-		GPU::bindBuffer(*_scene->environment.shCoeffs(), 1);
+		currentProgram->buffer(_lightsGPU->data(), 0);
+		currentProgram->buffer(*_scene->environment.shCoeffs(), 1);
 		// Bind the textures.
-		GPU::bindTextures(object.textures());
-		GPU::bindTexture(_textureBrdf, 4);
-		GPU::bindTexture(_scene->environment.map(), 5);
+		currentProgram->textures(object.textures());
+		currentProgram->texture(_textureBrdf, 4);
+		currentProgram->texture(_scene->environment.map(), 5);
 		// Bind available shadow maps.
 		if(shadowMaps[0]){
-			GPU::bindTexture(shadowMaps[0], 6);
+			currentProgram->texture(shadowMaps[0], 6);
 		}
 		if(shadowMaps[1]){
-			GPU::bindTexture(shadowMaps[1], 7);
+			currentProgram->texture(shadowMaps[1], 7);
 		}
-		GPU::bindTexture(_ssaoPass->texture(), 8);
+		currentProgram->texture(_ssaoPass->texture(), 8);
 		GPU::drawMesh(*object.mesh());
 	}
 
@@ -212,18 +212,18 @@ void ForwardRenderer::renderTransparent(const Culler::List & visibles, const glm
 		_transparentProgram->uniform("normalMatrix", normalMatrix);
 
 		// Bind the lights.
-		GPU::bindBuffer(_lightsGPU->data(), 0);
-		GPU::bindBuffer(*_scene->environment.shCoeffs(), 1);
+		_transparentProgram->buffer(_lightsGPU->data(), 0);
+		_transparentProgram->buffer(*_scene->environment.shCoeffs(), 1);
 		// Bind the textures.
-		GPU::bindTextures(object.textures());
-		GPU::bindTexture(_textureBrdf, 4);
-		GPU::bindTexture(_scene->environment.map(), 5);
+		_transparentProgram->textures(object.textures());
+		_transparentProgram->texture(_textureBrdf, 4);
+		_transparentProgram->texture(_scene->environment.map(), 5);
 		// Bind available shadow maps.
 		if(shadowMaps[0]){
-			GPU::bindTexture(shadowMaps[0], 6);
+			_transparentProgram->texture(shadowMaps[0], 6);
 		}
 		if(shadowMaps[1]){
-			GPU::bindTexture(shadowMaps[1], 7);
+			_transparentProgram->texture(shadowMaps[1], 7);
 		}
 		// No SSAO as the objects are not rendered in it.
 
@@ -254,7 +254,7 @@ void ForwardRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 &
 		_skyboxProgram->use();
 		// Upload the MVP matrix.
 		_skyboxProgram->uniform("mvp", backgroundMVP);
-		GPU::bindTextures(background->textures());
+		_skyboxProgram->textures(background->textures());
 		GPU::drawMesh(*background->mesh());
 
 	} else if(mode == Scene::Background::ATMOSPHERE) {
@@ -268,7 +268,7 @@ void ForwardRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 &
 		_atmoProgram->uniform("clipToWorld", clipToWorldNoT);
 		_atmoProgram->uniform("viewPos", pos);
 		_atmoProgram->uniform("lightDirection", sunDir);
-		GPU::bindTextures(background->textures());
+		_atmoProgram->textures(background->textures());
 		GPU::drawMesh(*background->mesh());
 
 	} else {
@@ -276,7 +276,7 @@ void ForwardRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 &
 		_bgProgram->use();
 		if(mode == Scene::Background::IMAGE) {
 			_bgProgram->uniform("useTexture", 1);
-			GPU::bindTextures(background->textures());
+			_bgProgram->textures(background->textures());
 		} else {
 			_bgProgram->uniform("useTexture", 0);
 			_bgProgram->uniform("bgColor", _scene->backgroundColor);

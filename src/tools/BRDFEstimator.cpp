@@ -116,7 +116,7 @@ void computeCubemapConvolution(const Texture & cubemapInfos, int levelsCount, in
 			programCubemap->uniform("mvp", Library::boxVPs[i]);
 			programCubemap->uniform("samplesCount", samplesCount);
 			// Attach source cubemap and compute.
-			GPU::bindTexture(&cubemapInfos, 0);
+			programCubemap->texture(&cubemapInfos, 0);
 			GPU::drawMesh(*mesh);
 			// Force synchronization.
 			GPU::sync();
@@ -206,7 +206,6 @@ int main(int argc, char ** argv) {
 
 	Texture cubemapInfos("cubemap");
 	Buffer<glm::vec4> sCoeffs(9, BufferType::UNIFORM, DataUse::STATIC);
-	sCoeffs.setup();
 	sCoeffs.upload();
 	std::vector<Texture> cubeLevels;
 
@@ -362,9 +361,9 @@ int main(int argc, char ** argv) {
 			}
 
 			programToUse->use();
-			GPU::bindTexture(texToUse, 0);
+			programToUse->texture(texToUse, 0);
 			if(mode == SH_COEFFS){
-				GPU::bindBuffer(sCoeffs, 0);
+				programToUse->buffer(sCoeffs, 0);
 			}
 			programToUse->uniform("mvp", mvp);
 			GPU::drawMesh(*mesh);
@@ -376,7 +375,7 @@ int main(int argc, char ** argv) {
 		const glm::ivec2 gizmoSize = glm::ivec2(gizmoScale * glm::vec2(screenSize));
 		GPU::setViewport(0, 0, gizmoSize[0], gizmoSize[1]);
 		program->use();
-		GPU::bindTexture(cubemapInfosDefault, 0);
+		program->texture(cubemapInfosDefault, 0);
 		program->uniform("mvp", mvp);
 		GPU::drawMesh(*mesh);
 		

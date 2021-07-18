@@ -41,7 +41,7 @@ void AmbientQuad::draw(const glm::mat4 & viewMatrix, const glm::mat4 & projectio
 	_program->uniform("cubemapCenter", environment.center());
 	_program->uniform("cubemapExtent", environment.extent());
 	_program->uniform("cubemapCosSin", environment.rotationCosSin());
-	GPU::bindBuffer(*environment.shCoeffs(), 0);
-	
-	ScreenQuad::draw(_textures);
+	_program->buffer(*environment.shCoeffs(), 0);
+	_program->textures(_textures);
+	ScreenQuad::draw();
 }
