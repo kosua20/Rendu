@@ -2,6 +2,7 @@
 
 #include "Common.hpp"
 #include "graphics/GPUObjects.hpp"
+#include "graphics/DescriptorAllocator.hpp"
 
 #include <volk/volk.h>
 
@@ -26,12 +27,11 @@ struct GPUContext {
 	VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
 	VkDevice device = VK_NULL_HANDLE;
 	VkSurfaceKHR surface = VK_NULL_HANDLE;
-	VkCommandPool commandPool = VK_NULL_HANDLE;
+	VkCommandPool commandPool = VK_NULL_HANDLE; // \todo 2 command pools ?
 	std::vector<VkCommandBuffer> commandBuffers;
 	VkQueue graphicsQueue= VK_NULL_HANDLE;
 	VkQueue presentQueue= VK_NULL_HANDLE;
-	VkPipelineCache pipelineCache = VK_NULL_HANDLE;
-	VkDescriptorPool descriptorPool;
+	DescriptorAllocator descriptorAllocator;
 	VkRenderPass mainRenderPass = VK_NULL_HANDLE;
 	VkPipeline pipeline = VK_NULL_HANDLE;
 	
@@ -43,6 +43,7 @@ struct GPUContext {
 
 	double timestep = 0.0;
 	size_t uniformAlignment = 0;
+	size_t mappingAlignment = 0;
 	bool portability = false;
 	const uint frameCount = 2;
 	bool newRenderPass = true;

@@ -246,7 +246,7 @@ void Window::setupImGui() {
 	_imgui->QueueFamily = context->graphicsId;
 	_imgui->Queue = context->graphicsQueue;
 	_imgui->PipelineCache = VK_NULL_HANDLE;
-	_imgui->DescriptorPool = context->descriptorPool;
+	_imgui->DescriptorPool = context->descriptorAllocator.getImGuiPool();
 	_imgui->Subpass = 0;
 	_imgui->MinImageCount = _swapchain.minCount();
 	_imgui->ImageCount = _swapchain.count();
