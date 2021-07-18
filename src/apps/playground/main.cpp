@@ -48,14 +48,22 @@ int main(int argc, char ** argv) {
 	// Query the extensions.
 	const std::vector<std::string> extensions = GPU::supportedExtensions();
 	// Log extensions.
+	size_t extensionCount = extensions.size();
+	for(const auto& ext : extensions){
+		if(ext[0] == '-'){
+			--extensionCount;
+		}
+	}
+
 	if(!extensions.empty()) {
-		Log::Info() << Log::GPU << "Extensions detected (" << extensions.size() << ")" << std::flush;
+		Log::Info() << Log::GPU << "Extensions detected (" << extensionCount << "): " << std::endl;
 		for(size_t i = 0; i < extensions.size(); ++i) {
-			Log::Info() << (i == 0 ? ": " : ", ") << extensions[i] << std::flush;
+			const bool isHeader = extensions[i][0] == '-';
+			Log::Info() << (isHeader ? "\n" : "") << extensions[i] << (isHeader ? "\n" : ", ") << std::flush;
 		}
 		Log::Info() << std::endl;
 	}
-	const std::string titleHeader = "Extensions (" + std::to_string(extensions.size()) + ")";
+	const std::string titleHeader = "Extensions (" + std::to_string(extensionCount) + ")";
 
 	GPU::setDepthState(true, TestFunction::LESS, true);
 	GPU::setCullState(true, Faces::BACK);
@@ -69,11 +77,35 @@ int main(int argc, char ** argv) {
 
 	Program * program = Resources::manager().getProgram("object", "object_basic", "object_basic_random");
 	const Mesh * mesh		= Resources::manager().getMesh("light_sphere", Storage::GPU);
+
+	Program * program2 = Resources::manager().getProgram("object_basic_color");
+	Mesh mesh2("Plane");
+	mesh2.positions = {glm::vec3(-0.5f, -0.5f, 0.5f), glm::vec3(0.5f, -0.5f, 0.5f), glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(-0.5f, 0.5f, 0.5f)};
+	mesh2.colors = {glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f)};
+	mesh2.indices = {0, 1, 2, 0, 2, 3};
+	mesh2.upload();
+
+	Mesh mesh3("Triangle");
+	mesh3.positions = {glm::vec3(-0.5f, -0.5f, 0.1f), glm::vec3(0.5f, -0.5f, 0.1f), glm::vec3(0.0f, 1.0f, 0.1f)};
+	mesh3.colors = {glm::vec3(1.0f, 1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 1.0f), glm::vec3(1.0f, 0.0f, 1.0f)};
+	mesh3.indices = {0, 2, 1};
+	mesh3.upload();
+
+
 	ControllableCamera camera;
+
 	camera.pose(glm::vec3(0.0f,0.0f,3.0f), glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	camera.projection(config.screenResolution[0] / config.screenResolution[1], 1.34f, 0.1f, 100.0f);
 	bool showImGuiDemo = false;
 
+//	 glm::mat4 MVP		   = glm::mat4(
+//										   0.947,    0.000,    0.000,   -0.000,
+//											 0.000,    1.262,    0.000,    0.000,
+//											 0.000,    0.000,   -1.001,    2.284,
+//											 0.000,    0.000,   -1.000,    2.381);
+	//MVP = glm::transpose(MVP);
+	//program->uniform("mvp", MVP);
+	//program2->uniform("mvp", MVP);
 	// Start the display/interaction loop.
 	while(window.nextFrame()) {
 		
@@ -109,12 +141,25 @@ int main(int argc, char ** argv) {
 		// Render.
 		const glm::ivec2 screenSize = Input::manager().size();
 		const glm::mat4 MVP		   = camera.projection() * camera.view();
-
 		Framebuffer::backbuffer()->bind(glm::vec4(0.2f, 0.3f, 0.25f, 1.0f), 1.0f);
 		GPU::setViewport(0, 0, screenSize[0], screenSize[1]);
 		program->use();
 		program->uniform("mvp", MVP);
 		GPU::drawMesh(*mesh);
+
+		program2->use();
+		program2->uniform("mvp", MVP);
+		program2->uniform("color", glm::vec3(1.0f, 0.5f, 0.0f));
+		GPU::drawMesh(mesh2);
+		//GPU::setCullState(true, Faces::BACK);
+		program2->uniform("color", glm::vec3(0.0f, 0.5f, 1.0f));
+		GPU::drawMesh(mesh3);
+
+		//GPU::setViewport(screenSize[0]/2, 0, screenSize[0]/2, screenSize[1]);
+		//GPU::drawMesh(mesh2);
+		//GPU::drawMesh(mesh3);
+
+
 
 		ImGui::Text("ImGui is functional!");
 		ImGui::SameLine();

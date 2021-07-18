@@ -1,4 +1,6 @@
 
+layout(location = 0) in float vertexID;
+
 layout(location = 0) out vec4 fragColor; ///< Color.
 
 // Random number generation:
@@ -29,6 +31,6 @@ vec3 hash31(int x) {
 
 /** Color each face with a random color. */
 void main(){
-	// We multiply the coordinates by the MVP matrix, and ouput the result.
-	fragColor = vec4(hash31(gl_PrimitiveID), 1.0);	
+
+	fragColor = vec4(1.0, hash31(int(vertexID)).xy, 1.0);
 }
