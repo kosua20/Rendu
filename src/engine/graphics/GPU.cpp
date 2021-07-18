@@ -565,7 +565,6 @@ void GPU::uploadTexture(const Texture & texture) {
 
 	// Transfer the complete CPU image data to a staging buffer.
 	TransferBuffer transferBuffer(totalSize, BufferType::CPUTOGPU);
-	GPU::setupBuffer(transferBuffer);
 	void* dataImg = nullptr;
 	vkMapMemory(_context.device, transferBuffer.gpu->data, 0, totalSize, 0, &dataImg);
 
@@ -577,9 +576,9 @@ void GPU::uploadTexture(const Texture & texture) {
 	}
 	vkUnmapMemory(_context.device, transferBuffer.gpu->data);
 
-	VkUtils::transitionImageLayout(_context, texture.gpu->image, texture.gpu->format, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, texture.levels, texture.depth);
-
 	VkCommandBuffer commandBuffer = VkUtils::startOneTimeCommandBuffer(_context);
+
+	VkUtils::transitionImageLayout(commandBuffer, texture.gpu->image, texture.gpu->format, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, texture.levels, texture.depth);
 
 	// Copy operation for each mip level that is available on the CPU.
 	size_t currentImg = 0;
@@ -619,6 +618,9 @@ void GPU::uploadTexture(const Texture & texture) {
 		}
 
 	}
+
+	VkUtils::transitionImageLayout(commandBuffer, texture.gpu->image, texture.gpu->format, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, texture.levels, texture.depth);
+
 	VkUtils::endOneTimeCommandBuffer(commandBuffer, _context);
 
 	transferBuffer.clean();
@@ -878,6 +880,7 @@ void GPU::downloadBuffer(const BufferBase & buffer, size_t size, uchar * data, s
 
 	// Otherwise, create a transfer buffer.
 	TransferBuffer transferBuffer(size, BufferType::GPUTOCPU);
+
 	// Copy operation.
 	VkCommandBuffer commandBuffer = VkUtils::startOneTimeCommandBuffer(_context);
 	VkBufferCopy copyRegion = {};
@@ -909,7 +912,6 @@ void GPU::setupMesh(Mesh & mesh) {
 
 	// Create a staging buffer to host the geometry data (to avoid creating a staging buffer for each sub-upload).
 	TransferBuffer stageVertexBuffer(totalSize, BufferType::CPUTOGPU);
-	GPU::setupBuffer(stageVertexBuffer);
 
 	GPUMesh::InputState& state = mesh.gpu->state;
 	state.attributes.clear();
@@ -1049,7 +1051,7 @@ void GPU::setupMesh(Mesh & mesh) {
 
 	// Copy from the staging buffer.
 	TransferBuffer vertexBuffer(totalSize, BufferType::VERTEX);
-	GPU::setupBuffer(vertexBuffer);
+	
 	VkCommandBuffer commandBuffer = VkUtils::startOneTimeCommandBuffer(_context);
 	VkBufferCopy copyRegion = {};
 	copyRegion.srcOffset = 0;
@@ -1062,7 +1064,7 @@ void GPU::setupMesh(Mesh & mesh) {
 	// We load the indices data directly (staging will be handled internally).
 	const size_t inSize = sizeof(unsigned int) * mesh.indices.size();
 	TransferBuffer indexBuffer(inSize, BufferType::INDEX);
-	GPU::setupBuffer(indexBuffer);
+	
 	GPU::uploadBuffer(indexBuffer, inSize, reinterpret_cast<unsigned char *>(mesh.indices.data()));
 
 	mesh.gpu->count		   = mesh.indices.size();

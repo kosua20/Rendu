@@ -149,7 +149,7 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 	}
 
 	// Build the pipeline
-	GPUContext* context = static_cast<GPUContext*>(GPU::getInternal());
+	GPUContext* context = GPU::getInternal();
 
 
 	_dirtySets.fill(false);
@@ -294,7 +294,7 @@ void Program::update(){
 		}
 
 		// We can't just update the current descriptor set as it might be in use.
-		VkDescriptorSet set = GPU::getInternal()->descriptorAllocator.allocateSet(_state.setLayouts[0]);
+		VkDescriptorSet set = context->descriptorAllocator.allocateSet(_state.setLayouts[0]);
 
 		std::vector< VkDescriptorBufferInfo> infos(_dynamicBuffers.size());
 		std::vector< VkWriteDescriptorSet> writes;
@@ -325,7 +325,7 @@ void Program::update(){
 
 	if(_dirtySets[1]){
 		// We can't just update the current descriptor set as it might be in use.
-		VkDescriptorSet set = GPU::getInternal()->descriptorAllocator.allocateSet(_state.setLayouts[1]);
+		VkDescriptorSet set = context->descriptorAllocator.allocateSet(_state.setLayouts[1]);
 
 		std::vector< VkDescriptorImageInfo> imageInfos(_textures.size());
 		std::vector< VkWriteDescriptorSet> writes;
@@ -355,7 +355,7 @@ void Program::update(){
 
 	if(_dirtySets[2]){
 		// We can't just update the current descriptor set as it might be in use.
-		VkDescriptorSet set = GPU::getInternal()->descriptorAllocator.allocateSet(_state.setLayouts[2]);
+		VkDescriptorSet set = context->descriptorAllocator.allocateSet(_state.setLayouts[2]);
 
 		std::vector< VkDescriptorBufferInfo> infos(_staticBuffers.size());
 		std::vector< VkWriteDescriptorSet> writes;
@@ -407,7 +407,7 @@ void Program::use() const {
 }
 
 void Program::clean() {
-	GPUContext* context = static_cast<GPUContext*>(GPU::getInternal());
+	GPUContext* context = GPU::getInternal();
 	vkDestroyPipelineLayout(context->device, _state.layout, nullptr);
 	for(VkDescriptorSetLayout& setLayout : _state.setLayouts){
 		vkDestroyDescriptorSetLayout(context->device, setLayout, nullptr);

@@ -23,12 +23,12 @@ public:
 	bool nextFrame();
 
 	uint count(){ return _imageCount; }
-	// TODO: count might be enough if double buffered
+	// \todo count might be enough if double buffered
 	uint minCount(){ return _minImageCount; }
 
 	void clean();
 
-	// TODO: leaking Vulkan here.
+	// \todo leaking Vulkan here.
 	const VkRenderPass& getMainPass() const { return _pass; }
 	
 private:

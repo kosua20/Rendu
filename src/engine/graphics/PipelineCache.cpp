@@ -11,7 +11,7 @@
 #define PIPELINE_CACHE_FILE "pipeline_cache_vulkan.bin"
 
 void PipelineCache::init(){
-	GPUContext* context = static_cast<GPUContext*>(GPU::getInternal());
+	GPUContext* context = GPU::getInternal();
 
 	size_t pipelineSize = 0;
 	char * pipelineData = Resources::loadRawDataFromExternalFile(PIPELINE_CACHE_FILE, pipelineSize);
@@ -36,7 +36,7 @@ VkPipeline PipelineCache::getPipeline(const GPUState & state){
 	// We have to invalidate program pipelines after a reload, as the layout might change.
 	if(sameProgramPipelinesIt != _pipelines.end() && state.program->reloaded(true)){
 		// Delete the pipelines corresponding to this program.
-		GPUContext* context = static_cast<GPUContext*>(GPU::getInternal());
+		GPUContext* context = GPU::getInternal();
 		for(auto& pipelineInfo : sameProgramPipelinesIt->second){
 			vkDestroyPipeline(context->device, pipelineInfo.second.pipeline, nullptr);
 		}
@@ -75,7 +75,7 @@ VkPipeline PipelineCache::getPipeline(const GPUState & state){
 }
 
 void PipelineCache::clean(){
-	GPUContext* context = static_cast<GPUContext*>(GPU::getInternal());
+	GPUContext* context = GPU::getInternal();
 
 	// Retrieve cache data.
 	size_t pipelineSize = 0;
@@ -106,7 +106,7 @@ VkPipeline PipelineCache::createNewPipeline(const GPUState& state, const uint64_
 }
 
 VkPipeline PipelineCache::buildPipeline(const GPUState& state){
-	GPUContext* context = static_cast<GPUContext*>(GPU::getInternal());
+	GPUContext* context = GPU::getInternal();
 
 	VkGraphicsPipelineCreateInfo pipelineInfo{};
 	pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;

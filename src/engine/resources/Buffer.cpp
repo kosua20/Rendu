@@ -27,6 +27,7 @@ BufferBase::~BufferBase() {
 
 TransferBuffer::TransferBuffer(size_t sizeInBytes, BufferType atype) :
 	BufferBase(sizeInBytes, atype, DataUse::STATIC) {
+		GPU::setupBuffer(*this);
 }
 
 void TransferBuffer::upload(size_t sizeInBytes, unsigned char * data, size_t offset){

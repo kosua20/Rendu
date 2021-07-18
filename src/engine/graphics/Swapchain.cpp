@@ -122,7 +122,7 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 	_pass = createMainRenderpass(depthFormat, surfaceParams.format);
 	_context->mainRenderPass = _pass;
 
-	// TODO: see how to wrap this in a standard framebuffer.
+	// \todo See how to wrap this in a standard framebuffer.
 
 	// Create depth buffer.
 	static const std::map<VkFormat, Layout> formatInfos = {
@@ -141,7 +141,9 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 	Descriptor desc(formatInfos.at(depthFormat), Filter::LINEAR, Wrap::CLAMP);
 	GPU::setupTexture(_depthTexture, desc);
 
-	VkUtils::transitionImageLayout(*_context, _depthTexture.gpu->image, _depthTexture.gpu->format, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, _depthTexture.levels, _depthTexture.depth);
+	VkCommandBuffer commandBuffer = VkUtils::startOneTimeCommandBuffer(*_context);
+	VkUtils::transitionImageLayout(commandBuffer, _depthTexture.gpu->image, _depthTexture.gpu->format, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, _depthTexture.levels, _depthTexture.depth);
+	VkUtils::endOneTimeCommandBuffer(commandBuffer, *_context);
 
 	// Retrieve image count in the swap chain.
 	vkGetSwapchainImagesKHR(_context->device, _swapchain, &_imageCount, nullptr);
@@ -285,14 +287,13 @@ void Swapchain::resize(uint width, uint height){
 	if(width == _depthTexture.width && height == _depthTexture.height){
 		return;
 	}
-	// TODO: some semaphores can leave the queue eternally waiting.
 	destroy();
 	// Recreate swapchain.
 	setup((uint32_t)width, (uint32_t)height);
 }
 
 bool Swapchain::finishFrame(){
-	// TODO: do outside
+	// \todo Do outside
 	{
 		// Finish final pass and command buffer.
 		vkCmdEndRenderPass(_context->getCurrentCommandBuffer());

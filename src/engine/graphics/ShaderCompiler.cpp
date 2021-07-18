@@ -189,7 +189,7 @@ void ShaderCompiler::compile(const std::string & prog, ShaderType type, Program:
 	createInfo.codeSize = spirv.size() * sizeof(unsigned int);
 	createInfo.pCode = reinterpret_cast<const uint32_t*>(spirv.data());
 	VkShaderModule shaderModule;
-	GPUContext* context = static_cast<GPUContext*>(GPU::getInternal());
+	GPUContext* context = GPU::getInternal();
 	if(vkCreateShaderModule(context->device, &createInfo, nullptr, &shaderModule) != VK_SUCCESS) {
 		finalLog = "Unable to create shader module.";
 		return;

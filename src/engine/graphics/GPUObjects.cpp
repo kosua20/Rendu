@@ -158,7 +158,7 @@ GPUQuery::GPUQuery(Type type) {
 	poolInfo.queryCount = _count;
 	poolInfo.pipelineStatistics = type == Type::PRIMITIVES_GENERATED ? VK_QUERY_PIPELINE_STATISTIC_CLIPPING_INVOCATIONS_BIT : 0;
 
-	GPUContext* context = (GPUContext*)GPU::getInternal();
+	GPUContext* context = GPU::getInternal();
 	for(size_t i = 0; i < _pools.size(); ++i){
 		if(vkCreateQueryPool(context->device, &poolInfo, nullptr, &_pools[i]) != VK_SUCCESS){
 			Log::Error() << Log::GPU << "Unable to create query pool." << std::endl;
@@ -176,7 +176,7 @@ void GPUQuery::begin(){
 		return;
 	}
 
-	GPUContext* context = (GPUContext*)GPU::getInternal();
+	GPUContext* context = GPU::getInternal();
 	vkCmdResetQueryPool(context->getCurrentCommandBuffer(), _pools[_current], 0, _type == GPUQuery::Type::TIME_ELAPSED ? 2 : 1);
 	//glBeginQuery(_internalType, _ids[_current]);
 	if(_type == GPUQuery::Type::TIME_ELAPSED){
@@ -193,7 +193,7 @@ void GPUQuery::end(){
 		return;
 	}
 
-	GPUContext* context = (GPUContext*)GPU::getInternal();
+	GPUContext* context = GPU::getInternal();
 
 	if(_type == GPUQuery::Type::TIME_ELAPSED){
 		vkCmdWriteTimestamp(context->getCurrentCommandBuffer(), VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, _pools[_current], 1);
@@ -216,7 +216,7 @@ uint64_t GPUQuery::value(){
 	// \todo Check if this is still motivated under Vulkan, is there a risk of querying before the pool reset is applied?
 	const size_t finished = _pools.size() == 1 ? 0 : ((_current + _pools.size() - 2) % _pools.size());
 
-	GPUContext* context = (GPUContext*)GPU::getInternal();
+	GPUContext* context = GPU::getInternal();
 
 	uint64_t data[2] = {0, 0};
 	vkGetQueryPoolResults(context->device, _pools[finished], 0, _count, 2 * sizeof(uint64_t), &data[0], sizeof(uint64_t), VK_QUERY_RESULT_64_BIT | VK_QUERY_RESULT_WAIT_BIT);

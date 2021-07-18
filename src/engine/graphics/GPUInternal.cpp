@@ -229,9 +229,7 @@ void VkUtils::endOneTimeCommandBuffer(VkCommandBuffer & commandBuffer, GPUContex
 	commandBuffer = VK_NULL_HANDLE;
 }
 
-void VkUtils::transitionImageLayout(GPUContext & context, VkImage & image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, int mipCount, int layerCount) {
-
-	VkCommandBuffer commandBuffer = VkUtils::startOneTimeCommandBuffer(context);
+void VkUtils::transitionImageLayout(VkCommandBuffer& commandBuffer, VkImage & image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, int mipCount, int layerCount) {
 
 	VkPipelineStageFlags sourceStage;
 	VkPipelineStageFlags destinationStage;
@@ -281,7 +279,7 @@ void VkUtils::transitionImageLayout(GPUContext & context, VkImage & image, VkFor
 
 	vkCmdPipelineBarrier(commandBuffer, sourceStage, destinationStage, 0, 0, nullptr,  0, nullptr,  1, &barrier );
 
-	VkUtils::endOneTimeCommandBuffer(commandBuffer, context);
+
 }
 
 void VkUtils::createCommandBuffers(GPUContext & context, uint count){

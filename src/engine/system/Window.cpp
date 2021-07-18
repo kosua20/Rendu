@@ -159,7 +159,7 @@ bool Window::nextFrame() {
 		// sRGB conversion when writing to the backbuffer.
 		//GPU::setSRGBState(false);
 		// Draw ImGui as-is...
-		ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), ((GPUContext*)GPU::getInternal())->getCurrentCommandBuffer());
+		ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), GPU::getInternal()->getCurrentCommandBuffer());
 		//ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		// ...and restore.
 		//GPU::setSRGBState(_convertToSRGB);
@@ -239,7 +239,7 @@ void Window::setupImGui() {
 	_imgui = new ImGui_ImplVulkan_InitInfo;
 	std::memset(_imgui, 0, sizeof(ImGui_ImplVulkan_InitInfo));
 
-	GPUContext* context = (GPUContext*)GPU::getInternal();
+	GPUContext* context = GPU::getInternal();
 	_imgui->Instance = context->instance;
 	_imgui->PhysicalDevice = context->physicalDevice;
 	_imgui->Device = context->device;
