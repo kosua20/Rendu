@@ -98,6 +98,8 @@ int main(int argc, char ** argv) {
 	camera.projection(config.screenResolution[0] / config.screenResolution[1], 1.34f, 0.1f, 100.0f);
 	bool showImGuiDemo = false;
 
+	const Texture* tex = Resources::manager().getTexture("debug-grid", {Layout::RGBA32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
+
 //	 glm::mat4 MVP		   = glm::mat4(
 //										   0.947,    0.000,    0.000,   -0.000,
 //											 0.000,    1.262,    0.000,    0.000,
@@ -150,6 +152,7 @@ int main(int argc, char ** argv) {
 		program2->use();
 		program2->uniform("mvp", MVP);
 		program2->uniform("color", glm::vec3(1.0f, 0.5f, 0.0f));
+		program2->texture(tex, 0);
 		GPU::drawMesh(mesh2);
 		//GPU::setCullState(true, Faces::BACK);
 		program2->uniform("color", glm::vec3(0.0f, 0.5f, 1.0f));
