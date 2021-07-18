@@ -135,6 +135,7 @@ bool GPU::setup(const std::string & appName) {
 
 	_context.timestep = double(properties.limits.timestampPeriod);
 	_context.uniformAlignment = properties.limits.minUniformBufferOffsetAlignment;
+	_context.mappingAlignment = properties.limits.nonCoherentAtomSize;
 	// minImageTransferGranularity is guaranteed to be (1,1,1) on graphics/compute queues
 
 	if(!ShaderCompiler::init()){
@@ -383,7 +384,7 @@ void GPU::saveFramebuffer(const Framebuffer & framebuffer, const std::string & p
 	//_metrics.framebufferBindings += 2;
 }
 
-void GPU::bindTexture(const Texture * texture, size_t slot) {
+//void GPU::bindTexture(const Texture * texture, size_t slot) {
 	//auto & currId = _state.textures[slot][texture->gpu->target];
 	//if(currId != texture->gpu->id){
 	//	currId = texture->gpu->id;
@@ -392,9 +393,9 @@ void GPU::bindTexture(const Texture * texture, size_t slot) {
 	//	glBindTexture(texture->gpu->target, texture->gpu->id);
 	//	_metrics.textureBindings += 1;
 	//}
-}
+//}
 
-void GPU::bindTexture(const Texture & texture, size_t slot) {
+//void GPU::bindTexture(const Texture & texture, size_t slot) {
 //	auto & currId = _state.textures[slot][texture.gpu->target];
 //	if(currId != texture.gpu->id){
 //		currId = texture.gpu->id;
@@ -403,11 +404,11 @@ void GPU::bindTexture(const Texture & texture, size_t slot) {
 //		glBindTexture(texture.gpu->target, texture.gpu->id);
 	//		_metrics.textureBindings += 1;
 //	}
-}
+//}
 
-void GPU::bindTextures(const std::vector<const Texture *> & textures, size_t startingSlot) {
-	for(size_t i = 0; i < textures.size(); ++i) {
-		const Texture * infos = textures[i];
+//void GPU::bindTextures(const std::vector<const Texture *> & textures, size_t startingSlot) {
+//	for(size_t i = 0; i < textures.size(); ++i) {
+//		const Texture * infos = textures[i];
 //		const int slot = startingSlot + i;
 //		auto & currId = _state.textures[slot][infos->gpu->target];
 //
@@ -418,8 +419,8 @@ void GPU::bindTextures(const std::vector<const Texture *> & textures, size_t sta
 //			glBindTexture(infos->gpu->target, infos->gpu->id);
 		//			_metrics.textureBindings += 1;
 //		}
-	}
-}
+//	}
+//}
 
 void GPU::setupTexture(Texture & texture, const Descriptor & descriptor) {
 
@@ -766,13 +767,13 @@ void GPU::generateMipMaps(const Texture & texture) {
 	VkUtils::endOneTimeCommandBuffer(commandBuffer, _context);
 }
 
-void GPU::bindBuffer(const BufferBase & buffer, size_t slot) {
+//void GPU::bindBuffer(const BufferBase & buffer, size_t slot) {
 //	glBindBuffer(GL_UNIFORM_BUFFER, buffer.gpu->id);
 //	glBindBufferBase(GL_UNIFORM_BUFFER, GLuint(slot), buffer.gpu->id);
 //	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 //	_metrics.bufferBindings += 2;
 //	_metrics.uniforms += 1;
-}
+//}
 
 void GPU::setupBuffer(BufferBase & buffer) {
 	if(buffer.gpu) {

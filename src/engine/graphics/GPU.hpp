@@ -145,19 +145,19 @@ public:
 	 \param texture the infos of the texture to bind
 	 \param slot the binding slot
 	 */
-	static void bindTexture(const Texture * texture, size_t slot);
+	//static void bindTexture(const Texture * texture, size_t slot);
 
 	/** Bind a texture to some texture slot.
 	 \param texture the infos of the texture to bind
 	 \param slot the binding slot
 	 */
-	static void bindTexture(const Texture & texture, size_t slot);
+	//static void bindTexture(const Texture & texture, size_t slot);
 	
 	/** Bind a series of textures to some texture slots, in order.
 	 \param textures the infos of the textures to bind
 	 \param startingSlot the optional index of the first binding slot
 	 */
-	static void bindTextures(const std::vector<const Texture *> & textures, size_t startingSlot = 0);
+	//static void bindTextures(const std::vector<const Texture *> & textures, size_t startingSlot = 0);
 
 	/** Create a GPU texture with a given layout and allocate it.
 	 \param texture the texture to setup on the GPU
@@ -199,7 +199,7 @@ public:
 	 \param slot the binding slot
 	 \note This will bind the buffer as a uniform buffer.
 	 */
-	static void bindBuffer(const BufferBase & buffer, size_t slot);
+	//static void bindBuffer(const BufferBase & buffer, size_t slot);
 
 	/** Create and allocate a GPU buffer.
 	 \param buffer the buffer to setup on the GPU
