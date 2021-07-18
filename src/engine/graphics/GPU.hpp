@@ -25,6 +25,7 @@
 class Framebuffer;
 class ScreenQuad;
 class Window;
+struct GPUContext;
 
 /**
  \brief Provide utility functions to communicate with the driver and GPU.
@@ -433,7 +434,7 @@ public:
 	 */
 	static void blit(const Texture & src, Framebuffer & dst, Filter filter);
 
-	static void * getInternal();
+	static GPUContext* getInternal();
 
 	static void cleanup();
 	

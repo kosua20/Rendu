@@ -67,24 +67,35 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 #endif
 
 	// Merge all uniforms
-	std::set<uint> existingSets;
 
 	for(const auto& stage : _stages){
 		for(const auto& buffer : stage.buffers){
-
-			// Allocate a CPU buffer with the proper size.
 			const uint set = buffer.set;
-			if(_buffers.count(set) == 0){
-				_buffers[set] = {};
-			}
-			auto& setMap = _buffers.at(set);
-			existingSets.insert(set);
 
-			if(setMap.count(buffer.binding) != 0){
+			// We only internally manage dynamic UBOs, in set 0.
+			if(set != 0){
+				// Other sets are just initialized.
+				if(set != 2){
+					Log::Error() << "Low frequency UBOs should be in set 2, skipping." << std::endl;
+					continue;
+				}
+				if(_staticBuffers.count(buffer.binding) != 0){
+					Log::Warning() << Log::GPU << "Buffer already created, collision between stages for set " << buffer.set << " at binding " << buffer.binding << "." << std::endl;
+					continue;
+				}
+
+				_staticBuffers.emplace(std::make_pair(buffer.binding, nullptr));
+				continue;
+			}
+
+
+			if(_dynamicBuffers.count(buffer.binding) != 0){
 				Log::Warning() << Log::GPU << "Buffer already created, collision between stages for set " << buffer.set << " at binding " << buffer.binding << "." << std::endl;
 				continue;
 			}
-			setMap[buffer.binding].resize(buffer.size);
+
+			_dynamicBuffers[buffer.binding].buffer.reset(new UniformBuffer<char>(buffer.size, DataUse::DYNAMIC));
+			_dynamicBuffers[buffer.binding].dirty = true;
 			
 			// Add uniforms to look-up table.
 			for(const auto& uniform : buffer.members){
@@ -97,39 +108,23 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 			}
 		}
 
-		for(const auto& sampler : stage.samplers){
-			const uint set = sampler.set;
-			if(_samplers.count(set) == 0){
-				_samplers[set] = {};
-			}
-			auto& setMap = _samplers.at(set);
-			existingSets.insert(set);
+		for(const auto& image : stage.samplers){
+			const uint set = image.set;
 
-			if(setMap.count(sampler.binding) != 0){
-				Log::Warning() << Log::GPU << "Sampler already created, collision between stages for set " << sampler.set << " at binding " << sampler.binding << "." << std::endl;
+			if(set != 1){
+				Log::Error() << "Textures should be in set 1 only, ignoring." << std::endl;
 				continue;
 			}
-			setMap[sampler.binding] = sampler;
-		}
-	}
 
-	// Validation:
-	for(const auto& set : existingSets){
-
-		const auto samplerSet = _samplers.find(set);
-		const auto bufferSet = _buffers.find(set);
-
-		if(samplerSet != _samplers.end() && bufferSet != _buffers.end()){
-			for(const auto& buffer : bufferSet->second){
-				if(samplerSet->second.find(buffer.first) != samplerSet->second.end()){
-					Log::Error() << Log::GPU << "Sampler/buffer collision in set " << bufferSet->first << " at binding " << buffer.first << "." << std::endl;
-				}
+			if(_textures.count(image.binding) != 0){
+				Log::Warning() << Log::GPU << "Sampler already created, collision between stages for set " << image.set << " at binding " << image.binding << "." << std::endl;
+				continue;
 			}
+			_textures.emplace(std::make_pair(image.binding, nullptr));
 		}
 	}
 	
 	// Build state for the pipeline state objects.
-
 	static const std::map<ShaderType, VkShaderStageFlagBits> stageBits = {
 		{ShaderType::VERTEX, VK_SHADER_STAGE_VERTEX_BIT},
 		{ShaderType::GEOMETRY, VK_SHADER_STAGE_GEOMETRY_BIT},
@@ -156,36 +151,26 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 	// Build the pipeline
 	GPUContext* context = static_cast<GPUContext*>(GPU::getInternal());
 
-	const uint setCount = *std::max_element(existingSets.begin(), existingSets.end()) + 1;
 
-	_state.setLayouts.resize(setCount);
+	_dirtySets.fill(false);
+	if(!_dynamicBuffers.empty()){
+		_dirtySets[0] = true;
+	}
+	if(!_textures.empty()){
+		_dirtySets[1] = true;
+	}
+	_state.setLayouts.resize(_dirtySets.size());
 
-	for(uint set = 0; set < setCount; ++set){
+	// \todo Cleanup the setup.
+	{
 		std::vector<VkDescriptorSetLayoutBinding> bindingLayouts;
-
-		const auto samplerSet = _samplers.find(set);
-		const auto bufferSet = _buffers.find(set);
-
-		if(bufferSet != _buffers.end()){
-			for(const auto& buffer : bufferSet->second){
-				VkDescriptorSetLayoutBinding bufferBinding{};
-				bufferBinding.binding = buffer.first;
-				bufferBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-				bufferBinding.descriptorCount = 1;
-				bufferBinding.stageFlags = VK_SHADER_STAGE_ALL;
-				bindingLayouts.emplace_back(bufferBinding);
-			}
-		}
-
-		if(samplerSet != _samplers.end()){
-			for(const auto& sampler : samplerSet->second){
-				VkDescriptorSetLayoutBinding samplerBinding{};
-				samplerBinding.binding = sampler.first;
-				samplerBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-				samplerBinding.descriptorCount = 1;
-				samplerBinding.stageFlags = VK_SHADER_STAGE_ALL;
-				bindingLayouts.emplace_back(samplerBinding);
-			}
+		for(const auto& buffer : _dynamicBuffers){
+			VkDescriptorSetLayoutBinding bufferBinding{};
+			bufferBinding.binding = buffer.first;
+			bufferBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+			bufferBinding.descriptorCount = 1;
+			bufferBinding.stageFlags = VK_SHADER_STAGE_ALL;
+			bindingLayouts.emplace_back(bufferBinding);
 		}
 
 		VkDescriptorSetLayoutCreateInfo setInfo{};
@@ -194,7 +179,51 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 		setInfo.pBindings = bindingLayouts.data();
 		setInfo.bindingCount = bindingLayouts.size();
 
-		if(vkCreateDescriptorSetLayout(context->device, &setInfo, nullptr, &_state.setLayouts[set]) != VK_SUCCESS){
+		if(vkCreateDescriptorSetLayout(context->device, &setInfo, nullptr, &_state.setLayouts[0]) != VK_SUCCESS){
+			Log::Error() << Log::GPU << "Unable to create set layout." << std::endl;
+		}
+	}
+
+	{
+		std::vector<VkDescriptorSetLayoutBinding> bindingLayouts;
+		for(const auto& image : _textures){
+			VkDescriptorSetLayoutBinding imageBinding{};
+			imageBinding.binding = image.first;
+			imageBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+			imageBinding.descriptorCount = 1;
+			imageBinding.stageFlags = VK_SHADER_STAGE_ALL;
+			bindingLayouts.emplace_back(imageBinding);
+		}
+
+		VkDescriptorSetLayoutCreateInfo setInfo{};
+		setInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+		setInfo.flags = 0;
+		setInfo.pBindings = bindingLayouts.data();
+		setInfo.bindingCount = bindingLayouts.size();
+
+		if(vkCreateDescriptorSetLayout(context->device, &setInfo, nullptr, &_state.setLayouts[1]) != VK_SUCCESS){
+			Log::Error() << Log::GPU << "Unable to create set layout." << std::endl;
+		}
+	}
+
+	{
+		std::vector<VkDescriptorSetLayoutBinding> bindingLayouts;
+		for(const auto& buffer : _staticBuffers){
+			VkDescriptorSetLayoutBinding bufferBinding{};
+			bufferBinding.binding = buffer.first;
+			bufferBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+			bufferBinding.descriptorCount = 1;
+			bufferBinding.stageFlags = VK_SHADER_STAGE_ALL;
+			bindingLayouts.emplace_back(bufferBinding);
+		}
+
+		VkDescriptorSetLayoutCreateInfo setInfo{};
+		setInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+		setInfo.flags = 0;
+		setInfo.pBindings = bindingLayouts.data();
+		setInfo.bindingCount = bindingLayouts.size();
+
+		if(vkCreateDescriptorSetLayout(context->device, &setInfo, nullptr, &_state.setLayouts[2]) != VK_SUCCESS){
 			Log::Error() << Log::GPU << "Unable to create set layout." << std::endl;
 		}
 	}
@@ -208,7 +237,40 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 	if(vkCreatePipelineLayout(context->device, &layoutInfo, nullptr, &_state.layout) != VK_SUCCESS){
 		Log::Error() << Log::GPU << "Unable to create pipeline layout." << std::endl;
 	}
+
+	// Initialize dynamic UBO descriptors.
+	_currentOffsets.assign(_dynamicBuffers.size(), 0);
+
+	/*VkDescriptorSet set = context->descriptorAllocator.allocateSet(_state.setLayouts[0]);
+
+	std::vector< VkDescriptorBufferInfo> infos(_dynamicBuffers.size());
+	std::vector< VkWriteDescriptorSet> writes;
+	uint tid = 0;
+	for(const auto& buffer : _dynamicBuffers){
+		infos[tid] = {};
+		infos[tid].buffer = buffer.second.buffer->gpu->buffer;
+		infos[tid].offset = 0;
+		infos[tid].range = buffer.second.buffer->baseSize();
+
+		VkWriteDescriptorSet write{};
+		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		write.dstSet = set;
+		write.dstBinding = buffer.first;
+		write.dstArrayElement = 0;
+		write.descriptorCount = 1;
+		write.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
+		write.pBufferInfo = &infos[tid];
+		writes.push_back(write);
+		++tid;
+	}
+
+	vkUpdateDescriptorSets(context->device, writes.size(), writes.data(), 0, nullptr);
+
+	_currentSets[0] = set;*/
+
+
 }
+
 
 void Program::validate() const {
 
@@ -217,6 +279,115 @@ void Program::validate() const {
 void Program::saveBinary(const std::string & outputPath) const {
 
 	//Resources::saveRawDataToExternalFile(outputPath + "_" + _name + "_" + std::to_string(uint(format)) + ".bin", &binary[0], binary.size());
+}
+
+void Program::update(){
+
+	GPUContext* context = GPU::getInternal();
+	// Upload all dirty uniform buffers
+	if(_dirtySets[0]){
+		for(const auto& buffer : _dynamicBuffers){
+			if(buffer.second.dirty){
+				buffer.second.buffer->upload();
+			}
+			_currentOffsets[buffer.first] = buffer.second.buffer->currentOffset();
+		}
+
+		// We can't just update the current descriptor set as it might be in use.
+		VkDescriptorSet set = GPU::getInternal()->descriptorAllocator.allocateSet(_state.setLayouts[0]);
+
+		std::vector< VkDescriptorBufferInfo> infos(_dynamicBuffers.size());
+		std::vector< VkWriteDescriptorSet> writes;
+		uint tid = 0;
+		for(const auto& buffer : _dynamicBuffers){
+			infos[tid] = {};
+			infos[tid].buffer = buffer.second.buffer->gpu->buffer;
+			infos[tid].offset = buffer.second.buffer->currentOffset();
+			infos[tid].range = buffer.second.buffer->baseSize();
+
+			VkWriteDescriptorSet write{};
+			write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+			write.dstSet = set;
+			write.dstBinding = buffer.first;
+			write.dstArrayElement = 0;
+			write.descriptorCount = 1;
+			write.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+			write.pBufferInfo = &infos[tid];
+			writes.push_back(write);
+			++tid;
+		}
+
+		vkUpdateDescriptorSets(context->device, writes.size(), writes.data(), 0, nullptr);
+		_currentSets[0] = set;
+		_dirtySets[0] = false;
+	}
+	// Update the texture descriptors
+
+	if(_dirtySets[1]){
+		// We can't just update the current descriptor set as it might be in use.
+		VkDescriptorSet set = GPU::getInternal()->descriptorAllocator.allocateSet(_state.setLayouts[1]);
+
+		std::vector< VkDescriptorImageInfo> imageInfos(_textures.size());
+		std::vector< VkWriteDescriptorSet> writes;
+		uint tid = 0;
+		for(const auto& image : _textures){
+			imageInfos[tid] = {};
+			imageInfos[tid].imageView = image.second->gpu->view;
+			imageInfos[tid].sampler = image.second->gpu->sampler;
+			imageInfos[tid].imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+			VkWriteDescriptorSet write{};
+			write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+			write.dstSet = set;
+			write.dstBinding = image.first;
+			write.dstArrayElement = 0;
+			write.descriptorCount = 1;
+			write.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+			write.pImageInfo = &imageInfos[tid];
+			writes.push_back(write);
+			++tid;
+		}
+
+		vkUpdateDescriptorSets(context->device, writes.size(), writes.data(), 0, nullptr);
+
+		_currentSets[1] = set;
+		_dirtySets[1] = false;
+	}
+
+	if(_dirtySets[2]){
+		// We can't just update the current descriptor set as it might be in use.
+		VkDescriptorSet set = GPU::getInternal()->descriptorAllocator.allocateSet(_state.setLayouts[2]);
+
+		std::vector< VkDescriptorBufferInfo> infos(_staticBuffers.size());
+		std::vector< VkWriteDescriptorSet> writes;
+		uint tid = 0;
+		for(const auto& buffer : _staticBuffers){
+			infos[tid] = {};
+			infos[tid].buffer = buffer.second->gpu->buffer;
+			infos[tid].offset = buffer.second->currentOffset();
+			infos[tid].range = buffer.second->baseSize();
+			
+			VkWriteDescriptorSet write{};
+			write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+			write.dstSet = set;
+			write.dstBinding = buffer.first;
+			write.dstArrayElement = 0;
+			write.descriptorCount = 1;
+			write.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+			write.pBufferInfo = &infos[tid];
+			writes.push_back(write);
+			++tid;
+		}
+
+		vkUpdateDescriptorSets(context->device, writes.size(), writes.data(), 0, nullptr);
+		_currentSets[2] = set;
+		_dirtySets[2] = false;
+	}
+
+	//vkCmdBindDescriptorSets(context->getCurrentCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, _state.layout, 0, 1, &_currentSets[0], _currentOffsets.size(), _currentOffsets.data());
+
+	vkCmdBindDescriptorSets(context->getCurrentCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, _state.layout, 0, 3, &_currentSets[0], 0, nullptr);
+
+
 }
 
 bool Program::reloaded() const {
@@ -249,12 +420,53 @@ void Program::clean() {
 	// \todo Unsure if the above should be moved in GPU.
 	GPU::clean(*this);
 	// Clear CPU infos.
-	_buffers.clear();
 	_uniforms.clear();
-	_samplers.clear();
+	_textures.clear();
+	_dynamicBuffers.clear();
+	_staticBuffers.clear();
 	_state.setLayouts.clear();
 	_state.stages.clear();
 	
+}
+
+void Program::buffer(const UniformBufferBase& buffer, uint slot){
+	const UniformBufferBase* refBuff = _staticBuffers.at(slot);
+	if(refBuff != &buffer){
+		_staticBuffers[slot] = &buffer;
+		_dirtySets[2] = true;
+	}
+}
+
+void Program::texture(const Texture* texture, uint slot){
+	const Texture* refTex = _textures.at(slot);
+	if(refTex != texture){
+		_textures[slot] = texture;
+		_dirtySets[1] = true;
+	}
+
+	// \todo Handle layout.
+}
+
+void Program::texture(const Texture& texture, uint slot){
+	const Texture* refTex = _textures.at(slot);
+	if(refTex != &texture){
+		_textures[slot] = &texture;
+		_dirtySets[1] = true;
+	}
+	// \todo Handle layout.
+}
+
+void Program::textures(const std::vector<const Texture *> & textures, size_t startingSlot){
+	const uint texCount = uint(textures.size());
+	for(uint tid = 0; tid < texCount; ++tid){
+		const uint slot = startingSlot + tid;
+		const Texture* refTex = _textures.at(slot);
+		if(refTex != textures[tid]){
+			_textures[slot] = textures[tid];
+			_dirtySets[1] = true;
+		}
+		// \todo Handle layout.
+	}
 }
 
 void Program::uniform(const std::string & name, bool t) {
@@ -262,7 +474,7 @@ void Program::uniform(const std::string & name, bool t) {
 	if(uni != _uniforms.end()) {
 		const int val = t ? 1 : 0;
 		for(const UniformDef::Location& loc : uni->second.locations){
-			uchar* dst = retrieveUniformNonConst(loc);
+			char* dst = retrieveUniformNonConst(loc);
 			std::memcpy(dst, &val, sizeof(int));
 		}
 		updateUniformMetric();
@@ -273,7 +485,7 @@ void Program::uniform(const std::string & name, int t) {
 	auto uni = _uniforms.find(name);
 	if(uni != _uniforms.end()) {
 		for(const UniformDef::Location& loc : uni->second.locations){
-			uchar* dst = retrieveUniformNonConst(loc);
+			char* dst = retrieveUniformNonConst(loc);
 			std::memcpy(dst, &t, sizeof(int));
 		}
 		updateUniformMetric();
@@ -284,7 +496,7 @@ void Program::uniform(const std::string & name, uint t) {
 	auto uni = _uniforms.find(name);
 	if(uni != _uniforms.end()) {
 		for(const UniformDef::Location& loc : uni->second.locations){
-			uchar* dst = retrieveUniformNonConst(loc);
+			char* dst = retrieveUniformNonConst(loc);
 			std::memcpy(dst, &t, sizeof(uint));
 		}
 		updateUniformMetric();
@@ -295,7 +507,7 @@ void Program::uniform(const std::string & name, float t) {
 	auto uni = _uniforms.find(name);
 	if(uni != _uniforms.end()) {
 		for(const UniformDef::Location& loc : uni->second.locations){
-			uchar* dst = retrieveUniformNonConst(loc);
+			char* dst = retrieveUniformNonConst(loc);
 			std::memcpy(dst, &t, sizeof(float));
 		}
 		updateUniformMetric();
@@ -307,7 +519,7 @@ void Program::uniform(const std::string & name, size_t count, const float * t) {
 	auto uni = _uniforms.find(name);
 	if(uni != _uniforms.end()) {
 		for(const UniformDef::Location& loc : uni->second.locations){
-			uchar* dst = retrieveUniformNonConst(loc);
+			char* dst = retrieveUniformNonConst(loc);
 			std::memcpy(dst, t, sizeof(float) * count);
 		}
 		updateUniformMetric();
@@ -318,7 +530,7 @@ void Program::uniform(const std::string & name, const glm::vec2 & t) {
 	auto uni = _uniforms.find(name);
 	if(uni != _uniforms.end()) {
 		for(const UniformDef::Location& loc : uni->second.locations){
-			uchar* dst = retrieveUniformNonConst(loc);
+			char* dst = retrieveUniformNonConst(loc);
 			std::memcpy(dst, &t[0], sizeof(glm::vec2));
 		}
 		updateUniformMetric();
@@ -329,7 +541,7 @@ void Program::uniform(const std::string & name, const glm::vec3 & t) {
 	auto uni = _uniforms.find(name);
 	if(uni != _uniforms.end()) {
 		for(const UniformDef::Location& loc : uni->second.locations){
-			uchar* dst = retrieveUniformNonConst(loc);
+			char* dst = retrieveUniformNonConst(loc);
 			std::memcpy(dst, &t[0], sizeof(glm::vec3));
 		}
 		updateUniformMetric();
@@ -340,7 +552,7 @@ void Program::uniform(const std::string & name, const glm::vec4 & t) {
 	auto uni = _uniforms.find(name);
 	if(uni != _uniforms.end()) {
 		for(const UniformDef::Location& loc : uni->second.locations){
-			uchar* dst = retrieveUniformNonConst(loc);
+			char* dst = retrieveUniformNonConst(loc);
 			std::memcpy(dst, &t[0], sizeof(glm::vec4));
 		}
 		updateUniformMetric();
@@ -351,7 +563,7 @@ void Program::uniform(const std::string & name, const glm::ivec2 & t) {
 	auto uni = _uniforms.find(name);
 	if(uni != _uniforms.end()) {
 		for(const UniformDef::Location& loc : uni->second.locations){
-			uchar* dst = retrieveUniformNonConst(loc);
+			char* dst = retrieveUniformNonConst(loc);
 			std::memcpy(dst, &t[0], sizeof(glm::ivec2));
 		}
 		updateUniformMetric();
@@ -362,7 +574,7 @@ void Program::uniform(const std::string & name, const glm::ivec3 & t) {
 	auto uni = _uniforms.find(name);
 	if(uni != _uniforms.end()) {
 		for(const UniformDef::Location& loc : uni->second.locations){
-			uchar* dst = retrieveUniformNonConst(loc);
+			char* dst = retrieveUniformNonConst(loc);
 			std::memcpy(dst, &t[0], sizeof(glm::ivec3));
 		}
 		updateUniformMetric();
@@ -373,7 +585,7 @@ void Program::uniform(const std::string & name, const glm::ivec4 & t) {
 	auto uni = _uniforms.find(name);
 	if(uni != _uniforms.end()) {
 		for(const UniformDef::Location& loc : uni->second.locations){
-			uchar* dst = retrieveUniformNonConst(loc);
+			char* dst = retrieveUniformNonConst(loc);
 			std::memcpy(dst, &t[0], sizeof(glm::ivec4));
 		}
 		updateUniformMetric();
@@ -384,7 +596,7 @@ void Program::uniform(const std::string & name, const glm::mat3 & t) {
 	auto uni = _uniforms.find(name);
 	if(uni != _uniforms.end()) {
 		for(const UniformDef::Location& loc : uni->second.locations){
-			uchar* dst = retrieveUniformNonConst(loc);
+			char* dst = retrieveUniformNonConst(loc);
 			std::memcpy(dst, &t[0][0], sizeof(glm::mat3));
 		}
 		updateUniformMetric();
@@ -395,7 +607,7 @@ void Program::uniform(const std::string & name, const glm::mat4 & t) {
 	auto uni = _uniforms.find(name);
 	if(uni != _uniforms.end()) {
 		for(const UniformDef::Location& loc : uni->second.locations){
-			uchar* dst = retrieveUniformNonConst(loc);
+			char* dst = retrieveUniformNonConst(loc);
 			std::memcpy(dst, &t[0][0], sizeof(glm::mat4));
 		}
 		updateUniformMetric();

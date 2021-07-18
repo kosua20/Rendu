@@ -4,6 +4,8 @@
 #include <map>
 
 #include "graphics/GPUObjects.hpp"
+#include "resources/Buffer.hpp"
+#include "resources/Texture.hpp"
 
 #include <volk/volk.h>
 
@@ -39,7 +41,6 @@ public:
 		Type type; ///< The uniform type.
 
 		struct Location {
-			uint set;
 			uint binding;
 			uint offset;
 		};
@@ -113,6 +114,13 @@ public:
 	/** Delete the program on the GPU.
 	 */
 	void clean();
+
+	void buffer(const UniformBufferBase& buffer, uint slot);
+	void texture(const Texture* texture, uint slot);
+	void texture(const Texture& texture, uint slot);
+	void textures(const std::vector<const Texture *> & textures, size_t startingSlot = 0);
+
+	void update();
 
 	/** Set a given uniform value.
 	 \param name the uniform name
@@ -328,12 +336,15 @@ private:
 
 	void updateUniformMetric() const; ///< Update internal metrics.
 
-	inline const uchar* retrieveUniform(const UniformDef::Location& location) const {
-		return &(_buffers.at(location.set).at(location.binding).data[location.offset]);
+	inline const char* retrieveUniform(const UniformDef::Location& location) const {
+		return &(_dynamicBuffers.at(location.binding).buffer->data[location.offset]);
 	}
 
-	inline uchar* retrieveUniformNonConst(const UniformDef::Location& location) {
-		return &(_buffers.at(location.set).at(location.binding).data[location.offset]);
+	inline char* retrieveUniformNonConst(const UniformDef::Location& location) {
+		DynamicBufferState& buffState = _dynamicBuffers.at(location.binding);
+		buffState.dirty = true;
+		_dirtySets[0] = true;
+		return &(buffState.buffer->data[location.offset]);
 	}
 
 	std::array<Stage, int(ShaderType::COUNT)> _stages;
@@ -344,21 +355,21 @@ private:
 	//std::vector<Uniform> _uniformInfos;  ///< Additional uniforms info.
 	StagesState _state;
 
-	struct BufferCPU {
-		std::vector<uchar> data;
-		size_t size = 0;
+	struct DynamicBufferState {
+		std::shared_ptr<UniformBuffer<char>> buffer;
 		bool dirty = true;
-		
-		void resize(size_t asize){
-			size = asize;
-			data.resize(asize);
-			dirty = true;
-		}
 	};
 
 	std::unordered_map<std::string, UniformDef> _uniforms;
-	std::unordered_map<int, std::unordered_map<int, BufferCPU> > _buffers;
-	std::unordered_map<int, std::unordered_map<int, SamplerDef> > _samplers;
+
+	std::unordered_map<int, DynamicBufferState> _dynamicBuffers; // set 0
+	std::unordered_map<int, const Texture *> _textures; // set 1
+	std::unordered_map<int, const UniformBufferBase *> _staticBuffers; // set 2
+
+	std::array<bool, 3> _dirtySets;
+	std::array<VkDescriptorSet, 3> _currentSets;
+	std::vector<uint32_t> _currentOffsets;
+
 	bool _reloaded = false;
 
 	friend class GPU; ///< Utilities will need to access GPU handle.

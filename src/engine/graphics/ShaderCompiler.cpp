@@ -310,7 +310,6 @@ void ShaderCompiler::reflect(glslang::TProgram & program, Program::Stage & stage
 				def.name = finalName + "[" + std::to_string(iid) + "]";
 				def.type = elemType;
 				Program::UniformDef::Location location;
-				location.set = containingBuffer.set;
 				location.binding = containingBuffer.binding;
 				location.offset = uniform.offset + iid * elemOffset;
 				def.locations.emplace_back(location);
@@ -322,7 +321,6 @@ void ShaderCompiler::reflect(glslang::TProgram & program, Program::Stage & stage
 			def.name = uniform.name;
 			def.type = convertType(type);
 			Program::UniformDef::Location location;
-			location.set = containingBuffer.set;
 			location.binding = containingBuffer.binding;
 			location.offset = uniform.offset;
 			def.locations.emplace_back(location);

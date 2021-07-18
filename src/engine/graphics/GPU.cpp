@@ -21,8 +21,8 @@ GPUContext _context;
 
 PipelineCache _pipelineCache;
 
-void * GPU::getInternal(){
-	return (void*)&_context;
+GPUContext* GPU::getInternal(){
+	return &_context;
 }
 
 bool GPU::setup(const std::string & appName) {
@@ -1089,6 +1089,8 @@ void GPU::drawMesh(const Mesh & mesh) {
 		vkCmdBindPipeline(_context.getCurrentCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, _context.pipeline);
 
 	}
+
+	_state.program->update();
 
 //	if(_state.vertexArray != mesh.gpu->id){
 //		_state.vertexArray = mesh.gpu->id;
