@@ -50,7 +50,8 @@ void ConvolutionPyramid::process(const Texture * texture) {
 	// Transfer the boundary content.
 	_padder->use();
 	_padder->uniform("padding", _size);
-	ScreenQuad::draw(texture);
+	_padder->texture(texture, 0);
+	ScreenQuad::draw();
 
 	// Then iterate over all framebuffers, cascading down the filtered results.
 	/// \note Those filters are separable, and could be applied in two passes (vertical and horizontal) to reduce the texture fetches count.
@@ -64,7 +65,8 @@ void ConvolutionPyramid::process(const Texture * texture) {
 		// Shift the viewport and fill the padded region with 0s.
 		GPU::setViewport(_size, _size, int(_levelsIn[i]->width()) - 2 * _size, int(_levelsIn[i]->height()) - 2 * _size);
 		// Filter and downscale.
-		ScreenQuad::draw(_levelsIn[i - 1]->texture());
+		_downscale->texture(_levelsIn[i - 1]->texture(), 0);
+		ScreenQuad::draw();
 	}
 
 	// Filter the last level with g.
@@ -75,7 +77,8 @@ void ConvolutionPyramid::process(const Texture * texture) {
 	const auto & lastLevel = _levelsOut.back();
 	lastLevel->bind(Framebuffer::Load::DONTCARE);
 	lastLevel->setViewport();
-	ScreenQuad::draw(_levelsIn.back()->texture());
+	_filter->texture(_levelsIn.back()->texture(), 0);
+	ScreenQuad::draw();
 
 	// Flatten the pyramid from the bottom, combining the filtered current result and the next level.
 	_upscale->use();
@@ -88,7 +91,8 @@ void ConvolutionPyramid::process(const Texture * texture) {
 		_levelsOut[i]->bind(Framebuffer::Load::DONTCARE);
 		_levelsOut[i]->setViewport();
 		// Upscale with zeros, filter and combine.
-		ScreenQuad::draw({_levelsIn[i]->texture(), _levelsOut[i + 1]->texture()});
+		_upscale->textures({_levelsIn[i]->texture(), _levelsOut[i + 1]->texture()});
+		ScreenQuad::draw();
 	}
 
 	// Compensate the initial padding.
@@ -97,7 +101,8 @@ void ConvolutionPyramid::process(const Texture * texture) {
 	_padder->use();
 	// Need to also compensate for the potential extra padding.
 	_padder->uniform("padding", -_size - _padding);
-	ScreenQuad::draw(_levelsOut[0]->texture());
+	_padder->texture(_levelsOut[0]->texture(), 0);
+	ScreenQuad::draw();
 }
 
 void ConvolutionPyramid::setFilters(const float h1[5], float h2, const float g[3]) {

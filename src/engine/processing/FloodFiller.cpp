@@ -30,10 +30,12 @@ void FloodFiller::process(const Texture * texture, Output mode) {
 
 	if(mode == Output::COLOR) {
 		_compositeColor->use();
-		ScreenQuad::draw({_ping->texture(), texture});
+		_compositeColor->textures({_ping->texture(), texture});
+		ScreenQuad::draw();
 	} else if(mode == Output::DISTANCE) {
 		_compositeDist->use();
-		ScreenQuad::draw(_ping->texture());
+		_compositeDist->texture(_ping->texture(), 0);
+		ScreenQuad::draw();
 	}
 
 }
@@ -47,7 +49,8 @@ void FloodFiller::extractAndPropagate(const Texture * texture) {
 	_ping->bind(Framebuffer::Load::DONTCARE);
 	_ping->setViewport();
 	_extract->use();
-	ScreenQuad::draw(texture);
+	_extract->texture(texture, 0);
+	ScreenQuad::draw();
 
 	// Propagate closest seeds with decreasing step size.
 	_floodfill->use();
@@ -56,7 +59,8 @@ void FloodFiller::extractAndPropagate(const Texture * texture) {
 		_pong->bind(Framebuffer::Load::DONTCARE);
 		_pong->setViewport();
 		_floodfill->uniform("stepDist", step);
-		ScreenQuad::draw(_ping->texture());
+		_floodfill->texture(_ping->texture(), 0);
+		ScreenQuad::draw();
 		std::swap(_ping, _pong);
 	}
 }

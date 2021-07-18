@@ -23,7 +23,7 @@ void LightProbe::decode(const KeyValues & params, Storage options) {
 			_rotCosSin = glm::vec2(std::cos(_rotation), std::sin(_rotation));
 
 		} else if(param.key == "irradiance" && !param.values.empty()){
-			_shCoeffs.reset(new Buffer<glm::vec4>(9, BufferType::UNIFORM, DataUse::STATIC));
+			_shCoeffs.reset(new UniformBuffer<glm::vec4>(9, DataUse::STATIC));
 			// Load the SH coefficients from the corresponding text file.
 			const std::string coeffsRaw = Resources::manager().getString(param.values[0]);
 			std::stringstream coeffsStream(coeffsRaw);
@@ -49,13 +49,12 @@ void LightProbe::decode(const KeyValues & params, Storage options) {
 			_envmap = Resources::manager().getTexture("default_cube", {Layout::RGB8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, options);
 		}
 		if(!_shCoeffs){
-			_shCoeffs.reset(new Buffer<glm::vec4>(9, BufferType::UNIFORM, DataUse::STATIC));
+			_shCoeffs.reset(new UniformBuffer<glm::vec4>(9, DataUse::STATIC));
 			for(int i = 0; i < 9; ++i){
 				_shCoeffs->at(i) = glm::vec4(0.0f);
 			}
 		}
 		if(options & Storage::GPU){
-			_shCoeffs->setup();
 			_shCoeffs->upload();
 		}
 	}
@@ -82,7 +81,7 @@ KeyValues LightProbe::encode() const {
 	return probe;
 }
 
-void LightProbe::registerEnvironment(const Texture * envmap, const std::shared_ptr<Buffer<glm::vec4>> & shCoeffs){
+void LightProbe::registerEnvironment(const Texture * envmap, const std::shared_ptr<UniformBuffer<glm::vec4>> & shCoeffs){
 	_envmap = envmap;
 	_shCoeffs = shCoeffs;
 }

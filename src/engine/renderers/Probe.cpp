@@ -13,11 +13,10 @@ Probe::Probe(const glm::vec3 & position, std::shared_ptr<Renderer> renderer, uin
 	// Texture used to compute irradiance spherical harmonics.
 	_copy = _renderer->createOutput(TextureShape::Cube, 16, 16, 6, 1, "Probe copy");
 
-	_shCoeffs.reset(new Buffer<glm::vec4>(9, BufferType::UNIFORM, DataUse::DYNAMIC));
+	_shCoeffs.reset(new UniformBuffer<glm::vec4>(9, DataUse::FRAME));
 	for(int i = 0; i < 9; ++i) {
 		_shCoeffs->at(i) = glm::vec4(i == 0 ? 0.1f : 0.0f);
 	}
-	_shCoeffs->setup();
 	_shCoeffs->upload();
 
 	// Compute the camera for each face.
@@ -57,7 +56,7 @@ void Probe::convolveRadiance(float clamp, size_t first, size_t count) {
 		for(size_t lid = 0; lid < 6; ++lid) {
 			_framebuffer->bind(lid, mid, Framebuffer::Load::DONTCARE);
 			_integration->uniform("mvp", Library::boxVPs[lid]);
-			GPU::bindTexture(_framebuffer->texture(), 0);
+			_integration->texture(_framebuffer->texture(), 0);
 			GPU::drawMesh(*_cube);
 		}
 	}

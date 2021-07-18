@@ -38,7 +38,7 @@ void VarianceShadowMap2D::draw(const Scene & scene) {
 		GPU::setCullState(!object.twoSided(), Faces::BACK);
 		_program->uniform("hasMask", object.masked());
 		if(object.masked()) {
-			GPU::bindTexture(object.textures()[0], 0);
+			_program->texture(object.textures()[0], 0);
 		}
 		const glm::mat4 lightMVP = _light->vp() * object.model();
 		_program->uniform("mvp", lightMVP);
@@ -95,7 +95,7 @@ void VarianceShadowMapCube::draw(const Scene & scene) {
 			_program->uniform("m", object.model());
 			_program->uniform("hasMask", object.masked());
 			if(object.masked()) {
-				GPU::bindTexture(object.textures()[0], 0);
+				_program->texture(object.textures()[0], 0);
 			}
 			GPU::drawMesh(*(object.mesh()));
 		}

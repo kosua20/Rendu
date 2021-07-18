@@ -25,20 +25,20 @@ void BilateralBlur::process(const glm::mat4 & projection, const Texture * textur
 		resize(framebuffer.width(), framebuffer.height());
 	}
 	_filter->use();
-	GPU::bindTexture(depthTex, 1);
-	GPU::bindTexture(normalTex, 2);
+	_filter->texture(depthTex, 1);
+	_filter->texture(normalTex, 2);
 	_filter->uniform("invDstSize", 1.0f/glm::vec2(framebuffer.width(), framebuffer.height()));
 	_filter->uniform("projParams", glm::vec2( projection[2][2], projection[3][2]));
 	framebuffer.setViewport();
 
 	_intermediate->bind(Framebuffer::Load::DONTCARE);
 	_filter->uniform("axis", 0);
-	GPU::bindTexture(texture, 0);
+	_filter->texture(texture, 0);
 	ScreenQuad::draw();
 
 	framebuffer.bind(Framebuffer::Load::DONTCARE);
 	_filter->uniform("axis", 1);
-	GPU::bindTexture(_intermediate->texture(), 0);
+	_filter->texture(_intermediate->texture(), 0);
 	ScreenQuad::draw();
 }
 

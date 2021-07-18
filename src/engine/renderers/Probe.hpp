@@ -63,7 +63,7 @@ public:
 	/** The cubemap irradiance SH representation, if estimateIrradiance has been called.
 	 \return the irradiance SH coefficients
 	 */
-	const std::shared_ptr<Buffer<glm::vec4>> & shCoeffs() const {
+	const std::shared_ptr<UniformBuffer<glm::vec4>> & shCoeffs() const {
 		return _shCoeffs;
 	}
 	
@@ -104,7 +104,7 @@ private:
 	std::unique_ptr<Framebuffer> _framebuffer; ///< The cubemap content.
 	std::shared_ptr<Renderer> _renderer; ///< The renderer to use.
 	std::unique_ptr<Framebuffer> _copy; ///< Downscaled copy of the cubemap content.
-	std::shared_ptr<Buffer<glm::vec4>> _shCoeffs; ///< SH representation of the cubemap irradiance.
+	std::shared_ptr<UniformBuffer<glm::vec4>> _shCoeffs; ///< SH representation of the cubemap irradiance.
 
 	std::array<Camera, 6> _cameras; ///< Camera for each face.
 	glm::vec3 _position; ///< The probe location.

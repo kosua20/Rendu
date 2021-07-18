@@ -509,7 +509,7 @@ void DebugViewer::updateDisplay(const TextureInfos & tex) {
 	_texDisplay->uniform("gamma", tex.gamma);
 	_texDisplay->uniform("shape", int(tex.tex->shape));
 
-	GPU::bindTexture(tex.tex, slots.at(tex.tex->shape));
+	_texDisplay->texture(tex.tex, slots.at(tex.tex->shape));
 	ScreenQuad::draw();
 }
 

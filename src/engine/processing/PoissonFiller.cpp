@@ -31,7 +31,8 @@ void PoissonFiller::process(const Texture * texture) {
 	_preproc->bind(glm::vec4(0.0f));
 	_preproc->setViewport();
 	_prepare->use();
-	ScreenQuad::draw(texture);
+	_prepare->texture(texture, 0);
+	ScreenQuad::draw();
 
 	// Run the convolutional pyramid filter.
 	_pyramid.process(_preproc->texture());
@@ -44,7 +45,8 @@ void PoissonFiller::process(const Texture * texture) {
 	_compo->bind(Framebuffer::Load::DONTCARE);
 	_compo->setViewport();
 	_composite->use();
-	ScreenQuad::draw({_pyramid.texture(), texture});
+	_composite->textures({_pyramid.texture(), texture});
+	ScreenQuad::draw();
 }
 
 void PoissonFiller::resize(unsigned int width, unsigned int height) {

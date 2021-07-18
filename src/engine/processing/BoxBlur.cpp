@@ -36,7 +36,8 @@ void BoxBlur::process(const Texture * texture, Framebuffer & framebuffer) {
 	if(tgtShape == TextureShape::D2){
 		_blur2D->use();
 		_intermediate->bind(Framebuffer::Load::DONTCARE);
-		ScreenQuad::draw(texture);
+		_blur2D->texture(texture, 0);
+		ScreenQuad::draw();
 		GPU::blit(*_intermediate, framebuffer, Filter::NEAREST);
 
 	} else if(tgtShape == TextureShape::Array2D){
@@ -44,7 +45,8 @@ void BoxBlur::process(const Texture * texture, Framebuffer & framebuffer) {
 		for(size_t lid = 0; lid < framebuffer.depth(); ++lid){
 			_intermediate->bind(Framebuffer::Load::DONTCARE);
 			_blurArray->uniform("layer", int(lid));
-			ScreenQuad::draw(texture);
+			_blurArray->texture(texture, 0);
+			ScreenQuad::draw();
 			GPU::blit(*_intermediate, framebuffer, 0, lid, Filter::NEAREST);
 		}
 	} else if(tgtShape == TextureShape::Cube){
@@ -55,7 +57,8 @@ void BoxBlur::process(const Texture * texture, Framebuffer & framebuffer) {
 			_blurCube->uniform("up", Library::boxUps[fid]);
 			_blurCube->uniform("right", Library::boxRights[fid]);
 			_blurCube->uniform("center", Library::boxCenters[fid]);
-			ScreenQuad::draw(texture);
+			_blurCube->texture(texture, 0);
+			ScreenQuad::draw();
 			GPU::blit(*_intermediate, framebuffer, 0, fid, Filter::NEAREST);
 		}
 	} else if(tgtShape == TextureShape::ArrayCube){
@@ -68,7 +71,8 @@ void BoxBlur::process(const Texture * texture, Framebuffer & framebuffer) {
 			_blurCubeArray->uniform("up", Library::boxUps[fid]);
 			_blurCubeArray->uniform("right", Library::boxRights[fid]);
 			_blurCubeArray->uniform("center", Library::boxCenters[fid]);
-			ScreenQuad::draw(texture);
+			_blurCubeArray->texture(texture, 0);
+			ScreenQuad::draw();
 			GPU::blit(*_intermediate, framebuffer, 0, lid, Filter::NEAREST);
 		}
 	} else {

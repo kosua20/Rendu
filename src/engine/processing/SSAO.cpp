@@ -6,7 +6,7 @@
 #include "resources/ResourcesManager.hpp"
 
 SSAO::SSAO(uint width, uint height, uint downscale, float radius, const std::string & name) : _highBlur(name + " SSAO"), _mediumBlur(true, name + " SSAO"),
-	_samples(16, BufferType::UNIFORM, DataUse::STATIC), _radius(radius), _downscale(downscale) {
+	_samples(16, DataUse::STATIC), _radius(radius), _downscale(downscale) {
 
 	const Descriptor desc = Descriptor(Layout::R8, Filter::LINEAR_NEAREST, Wrap::CLAMP);
 	_ssaoFramebuffer.reset(new Framebuffer(width/_downscale, height/_downscale, desc, false, name + " SSAO"));
@@ -27,7 +27,6 @@ SSAO::SSAO(uint width, uint height, uint downscale, float radius, const std::str
 		_samples[i] *= scale;
 	}
 	// Send the samples to the GPU.
-	_samples.setup();
 	_samples.upload();
 
 	// Noise texture (same size as the box blur applied after SSAO computation).
@@ -71,8 +70,9 @@ void SSAO::process(const glm::mat4 & projection, const Texture * depthTex, const
 	_programSSAO->use();
 	_programSSAO->uniform("projectionMatrix", projection);
 	_programSSAO->uniform("radius", _radius);
-	GPU::bindBuffer(_samples, 0);
-	ScreenQuad::draw({depthTex, normalTex, &_noisetexture});
+	_programSSAO->buffer(_samples, 0);
+	_programSSAO->textures({depthTex, normalTex, &_noisetexture});
+	ScreenQuad::draw();
 
 	// Blurring pass
 	if(_quality == Quality::HIGH){
