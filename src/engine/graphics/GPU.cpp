@@ -944,7 +944,8 @@ void GPU::setupMesh(Mesh & mesh) {
 	totalSize *= sizeof(float);
 
 	// Create a staging buffer to host the geometry data (to avoid creating a staging buffer for each sub-upload).
-	TransferBuffer stageVertexBuffer(totalSize, BufferType::CPUTOGPU);
+	std::vector<uchar> vertexBufferData(totalSize);
+	//TransferBuffer stageVertexBuffer(totalSize, BufferType::CPUTOGPU);
 
 	GPUMesh::InputState& state = mesh.gpu->state;
 	state.attributes.clear();
@@ -952,153 +953,63 @@ void GPU::setupMesh(Mesh & mesh) {
 	state.offsets.clear();
 
 	// Fill in subregions.
+
+	struct AttribInfos {
+		uchar* data;
+		size_t size;
+		size_t components;
+	};
+
+	const std::vector<AttribInfos> attribs = {
+		{ reinterpret_cast<uchar*>(mesh.positions.data()), mesh.positions.size(), 3},
+		{ reinterpret_cast<uchar*>(mesh.normals.data()), mesh.normals.size(), 3},
+		{ reinterpret_cast<uchar*>(mesh.texcoords.data()), mesh.texcoords.size(), 2},
+		{ reinterpret_cast<uchar*>(mesh.tangents.data()), mesh.tangents.size(), 3},
+		{ reinterpret_cast<uchar*>(mesh.binormals.data()), mesh.binormals.size(), 3},
+		{ reinterpret_cast<uchar*>(mesh.colors.data()), mesh.colors.size(), 3},
+	};
+
 	size_t offset = 0;
-	//size_t vertexSize = 0;
+	uint location = 0;
 	uint bindingIndex = 0;
-	
-	if(!mesh.positions.empty()) {
-		const size_t elementSize = sizeof(float) * 3;
+
+	for(const AttribInfos& attrib : attribs){
+		if(attrib.size == 0){
+			++location;
+			continue;
+		}
 		// Setup attribute.
 		state.attributes.emplace_back();
 		state.attributes.back().binding = bindingIndex;
-		state.attributes.back().location = 0;
+		state.attributes.back().location = location;
 		state.attributes.back().offset = 0;
-		state.attributes.back().format = VK_FORMAT_R32G32B32_SFLOAT;
+		state.attributes.back().format = attrib.components == 3 ? VK_FORMAT_R32G32B32_SFLOAT : VK_FORMAT_R32G32_SFLOAT;
 		// Setup binding.
+		const size_t elementSize = sizeof(float) * attrib.components;
 		state.bindings.emplace_back();
 		state.bindings.back().binding = bindingIndex;
 		state.bindings.back().stride = elementSize;
 		state.bindings.back().inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 		state.offsets.emplace_back(offset);
-		++bindingIndex;
 		// Copy data.
-		const size_t size = elementSize * mesh.positions.size();
-		GPU::uploadBuffer(stageVertexBuffer, size, reinterpret_cast<unsigned char *>(mesh.positions.data()), offset);
+		const size_t size = elementSize * attrib.size;
+		std::memcpy(vertexBufferData.data() + offset, attrib.data, size);
 		offset += size;
+		++bindingIndex;
+		++location;
 	}
 
-	if(!mesh.normals.empty()) {
-		const size_t elementSize = sizeof(float) * 3;
-		// Setup attribute.
-		state.attributes.emplace_back();
-		state.attributes.back().binding = bindingIndex;
-		state.attributes.back().location = 1;
-		state.attributes.back().offset = 0;
-		state.attributes.back().format = VK_FORMAT_R32G32B32_SFLOAT;
-		// Setup binding.
-		state.bindings.emplace_back();
-		state.bindings.back().binding = bindingIndex;
-		state.bindings.back().stride = elementSize;
-		state.bindings.back().inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-		state.offsets.emplace_back(offset);
-		++bindingIndex;
-		// Copy data.
-		const size_t size = elementSize * mesh.normals.size();
-		GPU::uploadBuffer(stageVertexBuffer, size, reinterpret_cast<unsigned char *>(mesh.normals.data()), offset);
-		offset += size;
-	}
-
-	if(!mesh.texcoords.empty()) {
-		const size_t elementSize = sizeof(float) * 2;
-		// Setup attribute.
-		state.attributes.emplace_back();
-		state.attributes.back().binding = bindingIndex;
-		state.attributes.back().location = 2;
-		state.attributes.back().offset = 0;
-		state.attributes.back().format = VK_FORMAT_R32G32_SFLOAT;
-		// Setup binding.
-		state.bindings.emplace_back();
-		state.bindings.back().binding = bindingIndex;
-		state.bindings.back().stride = elementSize;
-		state.bindings.back().inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-		state.offsets.emplace_back(offset);
-		++bindingIndex;
-		// Copy data.
-		const size_t size = elementSize * mesh.texcoords.size();
-		GPU::uploadBuffer(stageVertexBuffer, size, reinterpret_cast<unsigned char *>(mesh.texcoords.data()), offset);
-		offset += size;
-	}
-
-	if(!mesh.tangents.empty()) {
-		const size_t elementSize = sizeof(float) * 3;
-		// Setup attribute.
-		state.attributes.emplace_back();
-		state.attributes.back().binding = bindingIndex;
-		state.attributes.back().location = 3;
-		state.attributes.back().offset = 0;
-		state.attributes.back().format = VK_FORMAT_R32G32B32_SFLOAT;
-		// Setup binding.
-		state.bindings.emplace_back();
-		state.bindings.back().binding = bindingIndex;
-		state.bindings.back().stride = elementSize;
-		state.bindings.back().inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-		state.offsets.emplace_back(offset);
-		++bindingIndex;
-		// Copy data.
-		const size_t size = elementSize * mesh.tangents.size();
-		GPU::uploadBuffer(stageVertexBuffer, size, reinterpret_cast<unsigned char *>(mesh.tangents.data()), offset);
-		offset += size;
-	}
-
-	if(!mesh.binormals.empty()) {
-		const size_t elementSize = sizeof(float) * 3;
-		// Setup attribute.
-		state.attributes.emplace_back();
-		state.attributes.back().binding = bindingIndex;
-		state.attributes.back().location = 4;
-		state.attributes.back().offset = 0;
-		state.attributes.back().format = VK_FORMAT_R32G32B32_SFLOAT;
-		// Setup binding.
-		state.bindings.emplace_back();
-		state.bindings.back().binding = bindingIndex;
-		state.bindings.back().stride = elementSize;
-		state.bindings.back().inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-		state.offsets.emplace_back(offset);
-		++bindingIndex;
-		// Copy data.
-		const size_t size = elementSize * mesh.binormals.size();
-		GPU::uploadBuffer(stageVertexBuffer, size, reinterpret_cast<unsigned char *>(mesh.binormals.data()), offset);
-		offset += size;
-	}
-
-	if(!mesh.colors.empty()) {
-		const size_t elementSize = sizeof(float) * 3;
-		// Setup attribute.
-		state.attributes.emplace_back();
-		state.attributes.back().binding = bindingIndex;
-		state.attributes.back().location = 5;
-		state.attributes.back().offset = 0;
-		state.attributes.back().format = VK_FORMAT_R32G32B32_SFLOAT;
-		// Setup binding.
-		state.bindings.emplace_back();
-		state.bindings.back().binding = bindingIndex;
-		state.bindings.back().stride = elementSize;
-		state.bindings.back().inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-		state.offsets.emplace_back(offset);
-		++bindingIndex;
-		// Copy data.
-		const size_t size = elementSize * mesh.colors.size();
-		GPU::uploadBuffer(stageVertexBuffer, size, reinterpret_cast<unsigned char *>(mesh.colors.data()), offset);
-		offset += size;
-	}
-
-	// Copy from the staging buffer.
-	TransferBuffer vertexBuffer(totalSize, BufferType::VERTEX);
-	
-	VkCommandBuffer commandBuffer = VkUtils::startOneTimeCommandBuffer(_context);
-	VkBufferCopy copyRegion = {};
-	copyRegion.srcOffset = 0;
-	copyRegion.dstOffset = 0;
-	copyRegion.size = totalSize;
-	vkCmdCopyBuffer(commandBuffer, stageVertexBuffer.gpu->buffer, vertexBuffer.gpu->buffer, 1, &copyRegion);
-	VkUtils::endOneTimeCommandBuffer(commandBuffer, _context);
-	// Replicate the buffer as many times as needed.
-	state.buffers.resize(state.offsets.size(), vertexBuffer.gpu->buffer);
-	// We load the indices data directly (staging will be handled internally).
 	const size_t inSize = sizeof(unsigned int) * mesh.indices.size();
+
+	// Upload data to the buffers. Staging will be handled internally.
+	TransferBuffer vertexBuffer(totalSize, BufferType::VERTEX);
 	TransferBuffer indexBuffer(inSize, BufferType::INDEX);
-	
-	GPU::uploadBuffer(indexBuffer, inSize, reinterpret_cast<unsigned char *>(mesh.indices.data()));
+
+	vertexBuffer.upload(totalSize, vertexBufferData.data(), 0);
+	indexBuffer.upload(inSize, reinterpret_cast<unsigned char *>(mesh.indices.data()), 0);
+
+	// Replicate the buffer as many times as needed for each attribute.
+	state.buffers.resize(state.offsets.size(), vertexBuffer.gpu->buffer);
 
 	mesh.gpu->count		   = mesh.indices.size();
 	mesh.gpu->indexBuffer  = std::move(indexBuffer.gpu);
@@ -1157,16 +1068,27 @@ void GPU::drawTesselatedMesh(const Mesh & mesh, uint patchSize){
 
 void GPU::drawQuad(){
 	_state.mesh = _quad.gpu.get();
+
+	// Possibilities:
+	// state is outdated, create/retrieve new pipeline
+	bool shouldBindPipeline = _context.newRenderPass;
+	_context.newRenderPass = false;
+	// \todo Use hash for equivalence.
 	if(!_state.isEquivalent(_lastState)){
 		_context.pipeline = _pipelineCache.getPipeline(_state);
 		_lastState = _state;
-		vkCmdBindPipeline(_context.getCurrentCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, _context.pipeline);
+		shouldBindPipeline = true;
 	}
-//	if(_state.vertexArray != _vao){
-//		_state.vertexArray = _vao;
-//		glBindVertexArray(_vao);
-//		_metrics.vertexBindings += 1;
-//	}
+
+	// if new render pass begun, bind pipeline
+	// if pipeline updated, bind pipeline
+	if(shouldBindPipeline){
+		vkCmdBindPipeline(_context.getCurrentCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, _context.pipeline);
+
+	}
+
+	_state.program->update();
+
 	VkDeviceSize offset = 0;
 	vkCmdBindVertexBuffers(_context.getCurrentCommandBuffer(), 0, 1, &(_quad.gpu->vertexBuffer->buffer), &offset);
 	vkCmdDraw(_context.getCurrentCommandBuffer(), 3, 1, 0, 0);
