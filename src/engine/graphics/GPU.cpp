@@ -9,6 +9,14 @@
 #include "graphics/GPUInternal.hpp"
 #include "graphics/PipelineCache.hpp"
 
+#define VMA_STATIC_VULKAN_FUNCTIONS 0
+#define VMA_IMPLEMENTATION
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wmissing-field-initializers"
+#include <vma/vk_mem_alloc.h>
+#pragma clang diagnostic pop
+
 #include <sstream>
 #include <GLFW/glfw3.h>
 
@@ -20,6 +28,8 @@ const std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_N
 GPUContext _context;
 
 PipelineCache _pipelineCache;
+VmaAllocator _allocator = VK_NULL_HANDLE;
+VmaVulkanFunctions _vulkanFunctions;
 
 GPUContext* GPU::getInternal(){
 	return &_context;
@@ -202,6 +212,45 @@ bool GPU::setupWindow(Window * window){
 	_context.presentId = presentIndex;
 	vkGetDeviceQueue(_context.device, graphicsIndex, 0, &_context.graphicsQueue);
 	vkGetDeviceQueue(_context.device, presentIndex, 0, &_context.presentQueue);
+
+	// Setup allocator.
+	VmaAllocatorCreateInfo allocatorInfo = {};
+	allocatorInfo.vulkanApiVersion = VK_API_VERSION_1_1;
+	allocatorInfo.physicalDevice = _context.physicalDevice;
+	allocatorInfo.device = _context.device;
+	allocatorInfo.instance = _context.instance;
+
+	_vulkanFunctions.vkAllocateMemory = vkAllocateMemory;
+	_vulkanFunctions.vkMapMemory = vkMapMemory;
+	_vulkanFunctions.vkUnmapMemory = vkUnmapMemory;
+	_vulkanFunctions.vkInvalidateMappedMemoryRanges = vkInvalidateMappedMemoryRanges;
+	_vulkanFunctions.vkFlushMappedMemoryRanges = vkFlushMappedMemoryRanges;
+	_vulkanFunctions.vkFreeMemory = vkFreeMemory;
+
+	_vulkanFunctions.vkBindBufferMemory = vkBindBufferMemory;
+	_vulkanFunctions.vkCreateBuffer = vkCreateBuffer;
+	_vulkanFunctions.vkDestroyBuffer = vkDestroyBuffer;
+	_vulkanFunctions.vkGetBufferMemoryRequirements = vkGetBufferMemoryRequirements;
+
+	_vulkanFunctions.vkBindImageMemory = vkBindImageMemory;
+	_vulkanFunctions.vkCreateImage = vkCreateImage;
+	_vulkanFunctions.vkDestroyImage = vkDestroyImage;
+	_vulkanFunctions.vkGetImageMemoryRequirements = vkGetImageMemoryRequirements;
+
+	_vulkanFunctions.vkCmdCopyBuffer = vkCmdCopyBuffer;
+	_vulkanFunctions.vkGetPhysicalDeviceMemoryProperties = vkGetPhysicalDeviceMemoryProperties;
+	_vulkanFunctions.vkGetPhysicalDeviceProperties = vkGetPhysicalDeviceProperties;
+
+	_vulkanFunctions.vkBindImageMemory2KHR = vkBindImageMemory2;
+	_vulkanFunctions.vkBindBufferMemory2KHR = vkBindBufferMemory2;
+	_vulkanFunctions.vkGetImageMemoryRequirements2KHR = vkGetImageMemoryRequirements2;
+	_vulkanFunctions.vkGetBufferMemoryRequirements2KHR = vkGetBufferMemoryRequirements2;
+	_vulkanFunctions.vkGetPhysicalDeviceMemoryProperties2KHR = vkGetPhysicalDeviceMemoryProperties2;
+
+
+	allocatorInfo.pVulkanFunctions = &_vulkanFunctions;
+	vmaCreateAllocator(&allocatorInfo, &_allocator);
+
 
 	// Create the command pool.
 	VkCommandPoolCreateInfo poolInfo = {};
@@ -462,13 +511,15 @@ void GPU::setupTexture(Texture & texture, const Descriptor & descriptor) {
 		imageInfo.flags = VK_IMAGE_CREATE_2D_ARRAY_COMPATIBLE_BIT;
 	}
 
+	VmaAllocationCreateInfo allocInfo = {};
+	allocInfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
+
 	if (vkCreateImage(_context.device, &imageInfo, nullptr, &(texture.gpu->image)) != VK_SUCCESS) {
 		Log::Error() << Log::GPU << "Unable to create texture image." << std::endl;
 		return;
 	}
 
-	// Allocate.
-	GPU::allocateTexture(texture);
+	vmaCreateImage(_allocator, &imageInfo, &allocInfo, &(texture.gpu->image), &(texture.gpu->data), nullptr);
 
 	VkImageAspectFlags aspectFlags = isDepth ? VK_IMAGE_ASPECT_DEPTH_BIT : VK_IMAGE_ASPECT_COLOR_BIT;
 	if(isStencil){
@@ -517,27 +568,6 @@ void GPU::setupTexture(Texture & texture, const Descriptor & descriptor) {
 
 }
 
-void GPU::allocateTexture(const Texture & texture) {
-	if(!texture.gpu) {
-		Log::Error() << Log::GPU << "Uninitialized GPU texture." << std::endl;
-		return;
-	}
-
-	// Allocate memory for image.
-	VkMemoryRequirements requirements;
-	vkGetImageMemoryRequirements(_context.device, texture.gpu->image, &requirements);
-	VkMemoryAllocateInfo allocInfo = {};
-	allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-	allocInfo.allocationSize = requirements.size;
-	allocInfo.memoryTypeIndex = VkUtils::findMemoryType(requirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, _context.physicalDevice);
-	if (vkAllocateMemory(_context.device, &allocInfo, nullptr, &(texture.gpu->data)) != VK_SUCCESS) {
-		Log::Error() << Log::GPU << "Unable to allocate texture memory." << std::endl;
-		return;
-	}
-	vkBindImageMemory(_context.device, texture.gpu->image, texture.gpu->data, 0);
-
-}
-
 void GPU::uploadTexture(const Texture & texture) {
 	if(!texture.gpu) {
 		Log::Error() << Log::GPU << "Uninitialized GPU texture." << std::endl;
@@ -565,16 +595,13 @@ void GPU::uploadTexture(const Texture & texture) {
 
 	// Transfer the complete CPU image data to a staging buffer.
 	TransferBuffer transferBuffer(totalSize, BufferType::CPUTOGPU);
-	void* dataImg = nullptr;
-	vkMapMemory(_context.device, transferBuffer.gpu->data, 0, totalSize, 0, &dataImg);
-
 	size_t currentOffset = 0;
 	for(const auto & img: texture.images) {
 		const size_t imgSize = img.pixels.size() * sizeof(float);
-		memcpy((uchar*)dataImg + currentOffset, img.pixels.data(), imgSize);
+		std::memcpy(transferBuffer.gpu->mapped + currentOffset, img.pixels.data(), imgSize);
 		currentOffset += imgSize;
 	}
-	vkUnmapMemory(_context.device, transferBuffer.gpu->data);
+	// flush?
 
 	VkCommandBuffer commandBuffer = VkUtils::startOneTimeCommandBuffer(_context);
 
@@ -769,14 +796,6 @@ void GPU::generateMipMaps(const Texture & texture) {
 	VkUtils::endOneTimeCommandBuffer(commandBuffer, _context);
 }
 
-//void GPU::bindBuffer(const BufferBase & buffer, size_t slot) {
-//	glBindBuffer(GL_UNIFORM_BUFFER, buffer.gpu->id);
-//	glBindBufferBase(GL_UNIFORM_BUFFER, GLuint(slot), buffer.gpu->id);
-//	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-//	_metrics.bufferBindings += 2;
-//	_metrics.uniforms += 1;
-//}
-
 void GPU::setupBuffer(BufferBase & buffer) {
 	if(buffer.gpu) {
 		buffer.gpu->clean();
@@ -784,40 +803,44 @@ void GPU::setupBuffer(BufferBase & buffer) {
 	// Create.
 	buffer.gpu.reset(new GPUBuffer(buffer.type, buffer.usage));
 
+	static const std::map<BufferType, VkBufferUsageFlags> types = {
+		{ BufferType::VERTEX, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT },
+		{ BufferType::INDEX, VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT },
+		{ BufferType::UNIFORM, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT },
+		{ BufferType::CPUTOGPU, VK_BUFFER_USAGE_TRANSFER_SRC_BIT },
+		{ BufferType::GPUTOCPU, VK_BUFFER_USAGE_TRANSFER_DST_BIT }};
+	const VkBufferUsageFlags type = types.at(buffer.type);
+
+	static const std::map<BufferType, VmaMemoryUsage> usages = {
+		{ BufferType::VERTEX, VMA_MEMORY_USAGE_GPU_ONLY },
+		{ BufferType::INDEX, VMA_MEMORY_USAGE_GPU_ONLY },
+		{ BufferType::UNIFORM, VMA_MEMORY_USAGE_CPU_TO_GPU  },
+		{ BufferType::CPUTOGPU, VMA_MEMORY_USAGE_CPU_ONLY },
+		{ BufferType::GPUTOCPU, VMA_MEMORY_USAGE_GPU_TO_CPU }};
+
+	const VmaMemoryUsage usage = usages.at(buffer.type);
+
 	VkBufferCreateInfo bufferInfo = {};
 	bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
 	bufferInfo.size = buffer.sizeMax;
-	bufferInfo.usage = buffer.gpu->type;
+	bufferInfo.usage = type;
 	bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-	if(vkCreateBuffer(_context.device, &bufferInfo, nullptr, &(buffer.gpu->buffer)) != VK_SUCCESS) {
-		Log::Error() << Log::GPU << "Failed to create buffer." << std::endl;
-		return;
-	}
 
-	// Allocate.
-	GPU::allocateBuffer(buffer);
-}
-
-void GPU::allocateBuffer(const BufferBase & buffer) {
-	if(!buffer.gpu) {
-		Log::Error() << Log::GPU << "Uninitialized GPU buffer." << std::endl;
-		return;
+	VmaAllocationCreateInfo allocInfo = {};
+	allocInfo.usage = usage;
+	if(buffer.gpu->mappable){
+		allocInfo.flags = VMA_ALLOCATION_CREATE_MAPPED_BIT;
 	}
+	VmaAllocationInfo resultInfos = {};
 
-	// Allocate memory for buffer.
-	VkMemoryRequirements memRequirements;
-	vkGetBufferMemoryRequirements(_context.device, buffer.gpu->buffer, &memRequirements);
-	VkMemoryAllocateInfo allocInfo = {};
-	allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-	allocInfo.allocationSize = memRequirements.size;
-	allocInfo.memoryTypeIndex = VkUtils::findMemoryType(memRequirements.memoryTypeBits, buffer.gpu->options, _context.physicalDevice);
-	if(vkAllocateMemory(_context.device, &allocInfo, nullptr, &(buffer.gpu->data)) != VK_SUCCESS) {
-		Log::Error() << Log::GPU << "Failed to allocate buffer." << std::endl;
-		return;
+	vmaCreateBuffer(_allocator, &bufferInfo, &allocInfo, &(buffer.gpu->buffer), &(buffer.gpu->data), &resultInfos);
+
+	if(buffer.gpu->mappable){
+		buffer.gpu->mapped = (char*)resultInfos.pMappedData;
+	} else {
+		buffer.gpu->mapped = nullptr;
 	}
-	// Bind buffer to memory.
-	vkBindBufferMemory(_context.device, buffer.gpu->buffer, buffer.gpu->data, 0);
-//	_metrics.bufferBindings += 2;
+	
 }
 
 void GPU::uploadBuffer(const BufferBase & buffer, size_t size, uchar * data, size_t offset) {
@@ -825,6 +848,7 @@ void GPU::uploadBuffer(const BufferBase & buffer, size_t size, uchar * data, siz
 		Log::Error() << Log::GPU << "Uninitialized GPU buffer." << std::endl;
 		return;
 	}
+
 	if(size == 0) {
 		Log::Warning() << Log::GPU << "No data to upload." << std::endl;
 		return;
@@ -835,12 +859,12 @@ void GPU::uploadBuffer(const BufferBase & buffer, size_t size, uchar * data, siz
 	}
 
 	// If the buffer is visible from the CPU side, we don't need an intermediate staging buffer.
-	if((buffer.gpu->options & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) && (buffer.gpu->options & VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)){
-		void* dstData = nullptr;
-		// Only map the region we need.
-		vkMapMemory(_context.device, buffer.gpu->data, offset, size, 0, &dstData);
-		memcpy((uchar*)dstData, data, size);
-		vkUnmapMemory(_context.device, buffer.gpu->data);
+	if(buffer.gpu->mappable){
+		if(!buffer.gpu->mapped){
+			vmaMapMemory(_allocator, buffer.gpu->data, (void**)&buffer.gpu->mapped);
+		}
+		std::memcpy(buffer.gpu->mapped + offset, data, size);
+		flushBuffer(buffer, size, offset);
 		return;
 	}
 
@@ -869,12 +893,13 @@ void GPU::downloadBuffer(const BufferBase & buffer, size_t size, uchar * data, s
 	}
 
 	// If the buffer is visible from the CPU side, we don't need an intermediate staging buffer.
-	if((buffer.gpu->options & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) && (buffer.gpu->options & VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)){
-		void* srcData = nullptr;
-		// Only map the region we need.
-		vkMapMemory(_context.device, buffer.gpu->data, offset, size, 0, &srcData);
-		memcpy(data, (uchar*)srcData, size);
-		vkUnmapMemory(_context.device, buffer.gpu->data);
+	if(buffer.gpu->mappable){
+
+		if(!buffer.gpu->mapped){
+			vmaMapMemory(_allocator, buffer.gpu->data, (void**)&buffer.gpu->mapped);
+		}
+		vmaInvalidateAllocation(_allocator, buffer.gpu->data, offset, size);
+		std::memcpy(data, buffer.gpu->mapped + offset, size);
 		return;
 	}
 
@@ -891,6 +916,14 @@ void GPU::downloadBuffer(const BufferBase & buffer, size_t size, uchar * data, s
 	VkUtils::endOneTimeCommandBuffer(commandBuffer, _context);
 	transferBuffer.download(size, data, 0);
 	transferBuffer.clean();
+}
+
+void GPU::flushBuffer(const BufferBase & buffer, size_t size, size_t offset){
+	if(buffer.gpu->mapped == nullptr){
+		Log::Error() << Log::GPU << "Buffer is not mapped." << std::endl;
+		return;
+	}
+	vmaFlushAllocation(_allocator, buffer.gpu->data, offset, size);
 }
 
 void GPU::setupMesh(Mesh & mesh) {
@@ -1771,6 +1804,8 @@ void GPU::cleanup(){
 	vkDestroyCommandPool(_context.device, _context.commandPool, nullptr);
 
 	_quad.clean();
+	vmaDestroyAllocator(_allocator);
+
 	//vkDestroyDevice(_context.device, nullptr);
 	ShaderCompiler::cleanup();
 }
@@ -1779,8 +1814,7 @@ void GPU::cleanup(){
 void GPU::clean(GPUTexture & tex){
 	vkDestroyImageView(_context.device, tex.view, nullptr);
 	vkDestroySampler(_context.device, tex.sampler, nullptr);
-	vkDestroyImage(_context.device, tex.image, nullptr);
-	vkFreeMemory(_context.device, tex.data, nullptr);
+	vmaDestroyImage(_allocator, tex.image, tex.data);
 }
 
 void GPU::clean(Framebuffer & framebuffer){
@@ -1792,8 +1826,7 @@ void GPU::clean(GPUMesh & mesh){
 }
 
 void GPU::clean(GPUBuffer & buffer){
-	vkDestroyBuffer(_context.device, buffer.buffer, nullptr);
-	vkFreeMemory(_context.device, buffer.data, nullptr);
+	vmaDestroyBuffer(_allocator, buffer.buffer, buffer.data);
 }
 
 void GPU::clean(Program & program){

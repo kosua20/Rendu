@@ -126,7 +126,7 @@ private:
 	const size_t _baseSize;
 	size_t _alignment = 0;
 	size_t _offset = 0;
-	char* _mappedData = nullptr;
+
 };
 
 /**

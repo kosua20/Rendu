@@ -5,6 +5,7 @@
 #include <unordered_map>
 
 #include <volk/volk.h>
+#include <vma/vk_mem_alloc.h>
 
 /**
 \brief The type of a shader.
@@ -387,7 +388,7 @@ public:
 
 	VkImage image;
 	VkImageView view;
-	VkDeviceMemory data;
+	VmaAllocation data;
 	VkSampler sampler;
 
 	VkImageLayout layout = VK_IMAGE_LAYOUT_UNDEFINED;
@@ -430,11 +431,13 @@ public:
 	/** Move constructor. */
 	GPUBuffer(GPUBuffer &&) = delete;
 
-	VkBufferUsageFlags type;
-	VkMemoryPropertyFlags options;
+	//VkBufferUsageFlags type;
+	//VkMemoryPropertyFlags options;
 
 	VkBuffer buffer;
-	VkDeviceMemory data;
+	VmaAllocation data;
+	char* mapped = nullptr;
+	bool mappable = false;
 	
 };
 

@@ -165,11 +165,6 @@ public:
 	 */
 	static void setupTexture(Texture & texture, const Descriptor & descriptor);
 
-	/** Allocate GPU memory for an existing texture.
-	 \param texture the texture to allocate memory for
-	 */
-	static void allocateTexture(const Texture & texture);
-
 	/** Upload a texture images data to the GPU.
 	 \param texture the texture to upload
 	 */
@@ -206,11 +201,6 @@ public:
 	 */
 	static void setupBuffer(BufferBase & buffer);
 
-	/** Allocate GPU memory for an existing buffer.
-	 \param buffer the buffer to allocate memory for
-	 */
-	static void allocateBuffer(const BufferBase & buffer);
-
 	/** Upload data to a buffer on the GPU. It's possible to upload a subrange of the buffer data store.
 	 \param buffer the buffer to upload to
 	 \param size the amount of data to upload, in bytes
@@ -226,6 +216,8 @@ public:
 	 \param offset optional offset in the buffer store
 	 */
 	static void downloadBuffer(const BufferBase & buffer, size_t size, uchar * data, size_t offset = 0);
+
+	static void flushBuffer(const BufferBase & buffer, size_t size, size_t offset);
 
 	/** Mesh loading: send a mesh data to the GPU and set the input mesh GPU infos accordingly.
 	 \param mesh the mesh to upload

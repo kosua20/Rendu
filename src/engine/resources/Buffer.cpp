@@ -9,7 +9,7 @@ BufferBase::BufferBase(size_t sizeInBytes, BufferType atype, DataUse ausage) : t
 	if(usage == DataUse::FRAME){
 		multipler = 2;
 	} else if(usage == DataUse::DYNAMIC){
-		multipler = 1000;
+		multipler = 1024;
 	}
 	sizeMax = multipler * sizeInBytes;
 }
@@ -53,9 +53,7 @@ UniformBufferBase::UniformBufferBase(size_t sizeInBytes, DataUse use) : BufferBa
 	GPU::setupBuffer(*this);
 	// Then map permanently the buffer.
 	GPUContext* context = GPU::getInternal();
-	void* tmpMap = nullptr;
-	vkMapMemory(context->device, gpu->data, 0, sizeMax, 0, &tmpMap);
-	_mappedData = (char*)tmpMap;
+	
 	_alignment = (sizeInBytes + context->uniformAlignment - 1) & ~(context->uniformAlignment - 1);
 	_offset = sizeMax;
 }
@@ -68,33 +66,17 @@ void UniformBufferBase::upload(unsigned char * data){
 	}
 
 	// Copy data.
-	std::memcpy(_mappedData + _offset, data, _baseSize);
+	std::memcpy(gpu->mapped + _offset, data, _baseSize);
 
 	GPUContext* context = GPU::getInternal();
-	// Flush changes.
-	VkMappedMemoryRange range{};
-	range.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
-	range.memory = gpu->data;
-	size_t begin = _offset;
-	size_t end = _offset + _baseSize - 1;
-	// Round begin and end to multiples of nonCoherentAtomSize containing the range.
-	const size_t mapAlign = context->mappingAlignment;
-	begin = (begin / mapAlign) * mapAlign;
-	const size_t targetEnd = (end / mapAlign) * mapAlign;
-	end = targetEnd + (targetEnd != end ? mapAlign : 0);
 
-	range.offset = begin;
-	range.size = end + 1 - begin;
-
-	vkFlushMappedMemoryRanges(context->device, 1, &range);
-
+	GPU::flushBuffer(*this, _offset, _baseSize);
 
 }
 
 void UniformBufferBase::clean(){
 	if(gpu){
 		GPUContext* context = GPU::getInternal();
-		vkUnmapMemory(context->device, gpu->data);
 		BufferBase::clean();
 	}
 }
