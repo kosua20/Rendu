@@ -7378,7 +7378,7 @@ typedef struct {
   unsigned char pad[3];
 } ChannelInfo;
 
-typedef struct {
+typedef struct HeaderInfo_t {
   std::vector<tinyexr::ChannelInfo> channels;
   std::vector<EXRAttribute> attributes;
 
