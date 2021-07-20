@@ -241,6 +241,8 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 	// Initialize dynamic UBO descriptors.
 	_currentOffsets.assign(_dynamicBuffers.size(), 0);
 
+	_currentSets.fill(VK_NULL_HANDLE);
+
 	/*VkDescriptorSet set = context->descriptorAllocator.allocateSet(_state.setLayouts[0]);
 
 	std::vector< VkDescriptorBufferInfo> infos(_dynamicBuffers.size());
@@ -341,7 +343,7 @@ void Program::update(){
 			write.dstBinding = image.first;
 			write.dstArrayElement = 0;
 			write.descriptorCount = 1;
-			write.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+			write.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 			write.pImageInfo = &imageInfos[tid];
 			writes.push_back(write);
 			++tid;
@@ -385,7 +387,13 @@ void Program::update(){
 
 	//vkCmdBindDescriptorSets(context->getCurrentCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, _state.layout, 0, 1, &_currentSets[0], _currentOffsets.size(), _currentOffsets.data());
 
-	vkCmdBindDescriptorSets(context->getCurrentCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, _state.layout, 0, 3, &_currentSets[0], 0, nullptr);
+	for(uint sid = 0; sid < _currentSets.size(); ++sid){
+		if(_currentSets[sid] != VK_NULL_HANDLE){
+			vkCmdBindDescriptorSets(context->getCurrentCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, _state.layout, sid, 1, &_currentSets[sid], 0, nullptr);
+		}
+
+	}
+
 
 
 }

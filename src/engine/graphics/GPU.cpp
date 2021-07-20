@@ -43,7 +43,7 @@ bool GPU::setup(const std::string & appName) {
 	}
 
 	bool debugEnabled = false;
-#if defined(_DEBUG) || defined(FORCE_DEBUG_VULKAN)
+#if defined(DEBUG) || defined(FORCE_DEBUG_VULKAN)
 	// Only enable if the layers are supported.
 	debugEnabled = VkUtils::checkLayersSupport(validationLayers) && VkUtils::checkExtensionsSupport({ VK_EXT_DEBUG_UTILS_EXTENSION_NAME });
 #endif
@@ -487,7 +487,7 @@ void GPU::setupTexture(Texture & texture, const Descriptor & descriptor) {
 	const bool isDepth = layout == Layout::DEPTH_COMPONENT16 || layout == Layout::DEPTH_COMPONENT24 || layout == Layout::DEPTH_COMPONENT32F || layout == Layout::DEPTH24_STENCIL8 || layout == Layout::DEPTH32F_STENCIL8;
 	const bool isStencil = layout == Layout::DEPTH24_STENCIL8 || layout == Layout::DEPTH32F_STENCIL8;
 
-	VkImageUsageFlags usage = (isDepth ? VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT : VK_IMAGE_USAGE_TRANSFER_DST_BIT) | VK_IMAGE_USAGE_SAMPLED_BIT;
+	VkImageUsageFlags usage = (isDepth ? VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT : (VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT)) | VK_IMAGE_USAGE_SAMPLED_BIT;
 	// Create image.
 	VkImageCreateInfo imageInfo = {};
 	imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -646,7 +646,7 @@ void GPU::uploadTexture(const Texture & texture) {
 
 	}
 
-	VkUtils::transitionImageLayout(commandBuffer, texture.gpu->image, texture.gpu->format, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, texture.levels, texture.depth);
+	//VkUtils::transitionImageLayout(commandBuffer, texture.gpu->image, texture.gpu->format, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, texture.levels, texture.depth);
 
 	VkUtils::endOneTimeCommandBuffer(commandBuffer, _context);
 
