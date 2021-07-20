@@ -33,12 +33,14 @@ VkPipeline PipelineCache::getPipeline(const GPUState & state){
 	// First check if we already have pipelines for the current program.
 	auto sameProgramPipelinesIt = _pipelines.find(state.program);
 
+	const bool programReloaded = state.program->reloaded(true);
 	// We have to invalidate program pipelines after a reload, as the layout might change.
-	if(sameProgramPipelinesIt != _pipelines.end() && state.program->reloaded(true)){
+	if(sameProgramPipelinesIt != _pipelines.end() && programReloaded){
 		// Delete the pipelines corresponding to this program.
 		GPUContext* context = GPU::getInternal();
+		// If we immediatly destroy a pipeline that was in use earlier in the frame, we might get a crash.
 		for(auto& pipelineInfo : sameProgramPipelinesIt->second){
-			vkDestroyPipeline(context->device, pipelineInfo.second.pipeline, nullptr);
+			_pipelinesToDelete.push_back(pipelineInfo.second.pipeline);
 		}
 		sameProgramPipelinesIt->second.clear();
 		_pipelines.erase(state.program);
@@ -74,9 +76,17 @@ VkPipeline PipelineCache::getPipeline(const GPUState & state){
 	return createNewPipeline(state, hash);
 }
 
+void PipelineCache::freeOutdatedPipelines(){
+	GPUContext* context = GPU::getInternal();
+	for(VkPipeline& pipeline: _pipelinesToDelete){
+		vkDestroyPipeline(context->device, pipeline, nullptr);
+	}
+	_pipelinesToDelete.clear();
+}
+
 void PipelineCache::clean(){
 	GPUContext* context = GPU::getInternal();
-
+	freeOutdatedPipelines();
 	// Retrieve cache data.
 	size_t pipelineSize = 0;
 	vkGetPipelineCacheData(context->device, _vulkanCache, &pipelineSize, nullptr);

@@ -1103,6 +1103,8 @@ void GPU::sync(){
 }
 
 void GPU::nextFrame(){
+	_context.nextFrame();
+	_pipelineCache.freeOutdatedPipelines();
 	// Save and reset stats.
 //	_metricsPrevious = _metrics;
 //	_metrics = Metrics();

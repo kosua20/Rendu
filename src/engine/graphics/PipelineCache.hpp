@@ -13,6 +13,8 @@ public:
 
 	VkPipeline getPipeline(const GPUState & state);
 
+	void freeOutdatedPipelines();
+
 	void clean();
 	
 private:
@@ -32,4 +34,5 @@ private:
 	using Cache = std::unordered_map<const Program*, ProgramPipelines>;
 	Cache _pipelines;
 	VkPipelineCache _vulkanCache = VK_NULL_HANDLE;
+	std::vector<VkPipeline> _pipelinesToDelete;
 };

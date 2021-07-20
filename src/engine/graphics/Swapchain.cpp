@@ -347,7 +347,7 @@ bool Swapchain::nextFrame(){
 
 		bool valid = finishFrame();
 		// Move to next frame in all cases.
-		_context->nextFrame();
+		GPU::nextFrame();
 		_frameStarted = false;
 		if(!valid){
 			return false;
