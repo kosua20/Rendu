@@ -69,6 +69,11 @@ function CommonSetup()
 	filter("system:macosx")
 		sysincludedirs({ "/usr/local/include/" })
 		libdirs({ "/usr/local/lib" })
+
+	filter("system:windows")
+		sysincludedirs({ "$(VULKAN_SDK)/include"})
+		libdirs({ "$(VULKAN_SDK)/lib" })
+	filter({})
 end	
 
 function ExecutableSetup()
@@ -78,19 +83,27 @@ function ExecutableSetup()
 	-- Link with compiled librarires
 	includedirs({ "src/engine" })
 	links({"Engine"})
-	links({"glslang", "OSDependent", "MachineIndependent", "GenericCodeGen", "OGLCompiler", "SPIRV", "SPIRV-Tools", "SPIRV-Tools-opt" })
+
 	links({"nfd", "glfw3"})
 	
 	-- Libraries for each platform.
 	filter("system:macosx")
 		links({"Cocoa.framework", "IOKit.framework", "CoreVideo.framework", "AppKit.framework", "pthread"})
+		links({"glslang", "OSDependent", "MachineIndependent", "GenericCodeGen", "OGLCompiler", "SPIRV", "SPIRV-Tools", "SPIRV-Tools-opt" })
 
-	filter("system:windows")
+	filter({"configurations:Dev", "system:windows"})
 		links({"comctl32"})
+		links({"glslangd", "OSDependentd", "MachineIndependentd", "GenericCodeGend", "OGLCompilerd", "SPIRVd", "SPIRV-Toolsd", "SPIRV-Tools-optd" })
+	
+
+	filter({"configurations:Release", "system:windows"})
+		links({"comctl32"})
+		links({"glslang", "OSDependent", "MachineIndependent", "GenericCodeGen", "OGLCompiler", "SPIRV", "SPIRV-Tools", "SPIRV-Tools-opt" })
 
 	filter("system:linux")
 		-- We have to query the dependencies of gtk+3 for NFD, and convert them to a list of libraries.
 		links({"X11", "Xi", "Xrandr", "Xxf86vm", "Xinerama", "Xcursor", "Xext", "Xrender", "Xfixes", "xcb", "Xau", "Xdmcp", "rt", "m", "pthread", "dl", gtkLibs})
+		links({"glslang", "OSDependent", "MachineIndependent", "GenericCodeGen", "OGLCompiler", "SPIRV", "SPIRV-Tools", "SPIRV-Tools-opt" })
 	
 	filter({})
 

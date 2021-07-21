@@ -5,7 +5,17 @@
 #include <unordered_map>
 
 #include <volk/volk.h>
+
+// todo Avoid alloc inclusion here to avoid windows.h inclusion.
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
+#endif
 #include <vma/vk_mem_alloc.h>
+#ifdef _WIN32
+#	undef near
+#	undef far
+#	undef ERROR
+#endif
 
 /**
 \brief The type of a shader.

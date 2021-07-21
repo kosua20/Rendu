@@ -94,13 +94,13 @@ public:
 	 \param str a UTF8 standard string
 	 \return the corresponding system string
 	 */
-	static WCHAR * widen(const std::string & str);
+	static wchar_t * widen(const std::string & str);
 	
 	/** Convert a string from the system representation.
 	 \param str a system string
 	 \return the corresponding UTF8 standard string
 	 */
-	static std::string narrow(WCHAR * str);
+	static std::string narrow(wchar_t * str);
 
 	#else
 

@@ -6,6 +6,8 @@
 
 #ifndef _WIN32
 #	include <sys/stat.h>
+#else
+#	include <Windows.h>
 #endif
 
 // On Windows, we can notify both AMD and Nvidia drivers that we prefer discrete GPUs.
@@ -89,7 +91,7 @@ std::string System::timestamp(){
 
 #ifdef _WIN32
 
-WCHAR * System::widen(const std::string & str) {
+wchar_t * System::widen(const std::string & str) {
 	const int size = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, nullptr, 0);
 	WCHAR * arr	= new WCHAR[size];
 	MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, static_cast<LPWSTR>(arr), size);
@@ -97,7 +99,7 @@ WCHAR * System::widen(const std::string & str) {
 	return arr;
 }
 
-std::string System::narrow(WCHAR * str) {
+std::string System::narrow(wchar_t * str) {
 	const int size = WideCharToMultiByte(CP_UTF8, 0, str, -1, nullptr, 0, nullptr, nullptr);
 	std::string res(size - 1, 0);
 	WideCharToMultiByte(CP_UTF8, 0, str, -1, &res[0], size, nullptr, nullptr);
