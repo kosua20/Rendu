@@ -139,10 +139,10 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 	_depthTexture.shape  = TextureShape::D2;
 
 	Descriptor desc(formatInfos.at(depthFormat), Filter::LINEAR, Wrap::CLAMP);
-	GPU::setupTexture(_depthTexture, desc);
+	GPU::setupTexture(_depthTexture, desc, true);
 
 	VkCommandBuffer commandBuffer = VkUtils::startOneTimeCommandBuffer(*_context);
-	VkUtils::transitionImageLayout(commandBuffer, _depthTexture.gpu->image, _depthTexture.gpu->format, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, _depthTexture.levels, _depthTexture.depth);
+	VkUtils::imageLayoutBarrier(commandBuffer, *_depthTexture.gpu, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, 0, _depthTexture.levels, 0, _depthTexture.depth);
 	VkUtils::endOneTimeCommandBuffer(commandBuffer, *_context);
 
 	// Retrieve image count in the swap chain.

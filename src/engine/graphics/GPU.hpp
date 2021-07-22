@@ -114,7 +114,7 @@ public:
 	 \param texture the texture to setup on the GPU
 	 \param descriptor type and format information
 	 */
-	static void setupTexture(Texture & texture, const Descriptor & descriptor);
+	static void setupTexture(Texture & texture, const Descriptor & descriptor, bool drawable);
 
 	/** Upload a texture images data to the GPU.
 	 \param texture the texture to upload

@@ -45,6 +45,15 @@ GPUTexture::GPUTexture(const Descriptor & texDescriptor, TextureShape shape) :
 	channels = texDescriptor.getGPULayout(format);
 	wrapping = texDescriptor.getGPUWrapping();
 	texDescriptor.getGPUFilter(imgFiltering, mipFiltering);
+
+	const Layout layout = texDescriptor.typedFormat();
+	const bool isDepth = layout == Layout::DEPTH_COMPONENT16 || layout == Layout::DEPTH_COMPONENT24 || layout == Layout::DEPTH_COMPONENT32F || layout == Layout::DEPTH24_STENCIL8 || layout == Layout::DEPTH32F_STENCIL8;
+	const bool isStencil = layout == Layout::DEPTH24_STENCIL8 || layout == Layout::DEPTH32F_STENCIL8;
+
+	aspect = isDepth ? VK_IMAGE_ASPECT_DEPTH_BIT : VK_IMAGE_ASPECT_COLOR_BIT;
+	if(isStencil){
+		aspect |= VK_IMAGE_ASPECT_STENCIL_BIT;
+	}
 }
 
 void GPUTexture::clean() {

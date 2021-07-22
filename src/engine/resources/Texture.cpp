@@ -14,7 +14,7 @@ void Texture::upload(const Descriptor & layout, bool updateMipmaps) {
 	}
 
 	// Create texture.
-	GPU::setupTexture(*this, layout);
+	GPU::setupTexture(*this, layout, false);
 	GPU::uploadTexture(*this);
 
 	// Generate mipmaps pyramid automatically.

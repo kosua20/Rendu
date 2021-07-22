@@ -83,7 +83,7 @@ namespace VkUtils {
 
 	void endOneTimeCommandBuffer(VkCommandBuffer & commandBuffer, GPUContext & context);
 
-	void transitionImageLayout(VkCommandBuffer& commandBuffer, VkImage & image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, int mipCount, int layerCount);
+	void imageLayoutBarrier(VkCommandBuffer& commandBuffer, GPUTexture& texture, VkImageLayout newLayout, uint mipStart, uint mipCount, uint layerStart, uint layerCount);
 
 	void createCommandBuffers(GPUContext & context, uint count);
 

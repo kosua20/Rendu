@@ -35,6 +35,13 @@ GPUContext* GPU::getInternal(){
 	return &_context;
 }
 
+void textureLayoutBarrier(VkCommandBuffer& commandBuffer, const Texture& texture, VkImageLayout newLayout){
+	const bool isCube = texture.shape & TextureShape::Cube;
+	const bool isArray = texture.shape & TextureShape::Array;
+	const uint layers = (isCube || isArray) ? texture.depth : 1;
+	VkUtils::imageLayoutBarrier(commandBuffer, *texture.gpu, newLayout, 0, texture.levels, 0, layers);
+}
+
 bool GPU::setup(const std::string & appName) {
 
 	if(volkInitialize() != VK_SUCCESS){
@@ -394,8 +401,7 @@ void GPU::saveFramebuffer(const Framebuffer & framebuffer, const std::string & p
 	//_metrics.framebufferBindings += 2;
 }
 
-
-void GPU::setupTexture(Texture & texture, const Descriptor & descriptor) {
+void GPU::setupTexture(Texture & texture, const Descriptor & descriptor, bool drawable) {
 
 	if(texture.gpu) {
 		texture.gpu->clean();
@@ -406,12 +412,24 @@ void GPU::setupTexture(Texture & texture, const Descriptor & descriptor) {
 	const bool is3D = texture.shape & TextureShape::D3;
 	const bool isCube = texture.shape & TextureShape::Cube;
 	const bool isArray = texture.shape & TextureShape::Array;
+	const bool isDepth = texture.gpu->aspect & VK_IMAGE_ASPECT_DEPTH_BIT;
+	const bool isStencil = texture.gpu->aspect & VK_IMAGE_ASPECT_STENCIL_BIT;
 
-	const Layout & layout = descriptor.typedFormat();
-	const bool isDepth = layout == Layout::DEPTH_COMPONENT16 || layout == Layout::DEPTH_COMPONENT24 || layout == Layout::DEPTH_COMPONENT32F || layout == Layout::DEPTH24_STENCIL8 || layout == Layout::DEPTH32F_STENCIL8;
-	const bool isStencil = layout == Layout::DEPTH24_STENCIL8 || layout == Layout::DEPTH32F_STENCIL8;
+	VkImageUsageFlags usage = VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
+	VkImageLayout imgLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	if(drawable){
+		usage |= isDepth ? VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT : VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+		//imgLayout = isDepth ? VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL : VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+		// Should this be something else for the initial clear ?
+	}
 
-	VkImageUsageFlags usage = (isDepth ? VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT : (VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT)) | VK_IMAGE_USAGE_SAMPLED_BIT;
+	const uint layers = (isCube || isArray) ? texture.depth : 1;
+
+	texture.gpu->layouts.resize(texture.levels);
+	for(uint mipId = 0; mipId < texture.levels; ++mipId){
+		texture.gpu->layouts[mipId].resize(layers, imgLayout);
+	}
+
 	// Create image.
 	VkImageCreateInfo imageInfo = {};
 	imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -420,10 +438,10 @@ void GPU::setupTexture(Texture & texture, const Descriptor & descriptor) {
 	imageInfo.extent.height = static_cast<uint32_t>(texture.height);
 	imageInfo.extent.depth = is3D ? texture.depth : 1;
 	imageInfo.mipLevels = texture.levels;
-	imageInfo.arrayLayers = (isCube || isArray) ? texture.depth : 1;
+	imageInfo.arrayLayers = layers;
 	imageInfo.format = texture.gpu->format;
 	imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
-	imageInfo.initialLayout = texture.gpu->layout;
+	imageInfo.initialLayout = imgLayout; // we will have to set it on all subresources.
 	imageInfo.usage = usage;
 	imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 	imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
@@ -500,7 +518,6 @@ void GPU::uploadTexture(const Texture & texture) {
 	// Compute total texture size on the CPU.
 	size_t totalSize = 0;
 	for(const auto & img: texture.images) {
-		// \todo Handle conversion to other formats.
 		const size_t imgSize = img.pixels.size() * sizeof(float);
 		totalSize += imgSize;
 	}
@@ -513,11 +530,10 @@ void GPU::uploadTexture(const Texture & texture) {
 		std::memcpy(transferBuffer.gpu->mapped + currentOffset, img.pixels.data(), imgSize);
 		currentOffset += imgSize;
 	}
-	// flush?
+
 
 	VkCommandBuffer commandBuffer = VkUtils::startOneTimeCommandBuffer(_context);
-
-	VkUtils::transitionImageLayout(commandBuffer, texture.gpu->image, texture.gpu->format, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, texture.levels, texture.depth);
+	textureLayoutBarrier(commandBuffer, texture, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 
 	// Copy operation for each mip level that is available on the CPU.
 	size_t currentImg = 0;
@@ -558,7 +574,7 @@ void GPU::uploadTexture(const Texture & texture) {
 
 	}
 
-	//VkUtils::transitionImageLayout(commandBuffer, texture.gpu->image, texture.gpu->format, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, texture.levels, texture.depth);
+	textureLayoutBarrier(commandBuffer, texture, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
 	VkUtils::endOneTimeCommandBuffer(commandBuffer, _context);
 
@@ -642,31 +658,18 @@ void GPU::generateMipMaps(const Texture & texture) {
 	size_t height = texture.height;
 	size_t depth = texture.shape == TextureShape::D3 ? texture.depth : 1;
 
-	// Prepare barrier that we will reuse at each level.
-	VkImageMemoryBarrier barrier = {};
-	barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-	barrier.image = texture.gpu->image;
-	barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-	barrier.subresourceRange.baseArrayLayer = 0;
-	barrier.subresourceRange.layerCount = layers;
-	barrier.subresourceRange.baseMipLevel = 0;
-	barrier.subresourceRange.levelCount = 1;
 
 	// Blit the texture to each mip level.
 	VkCommandBuffer commandBuffer = VkUtils::startOneTimeCommandBuffer(_context);
+
+	textureLayoutBarrier(commandBuffer, texture, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 
 	// For now, don't bother with existing mip data (potentially uploaded from the CPU).
 	for (size_t mid = 1; mid < texture.levels; mid++) {
 
 		// Transition level i-1 to transfer layout.
-		barrier.subresourceRange.baseMipLevel = mid - 1;
-		barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-		barrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
-		barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-		barrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
-		vkCmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0, 0, nullptr,  0, nullptr, 1, &barrier);
+		VkUtils::imageLayoutBarrier(commandBuffer, *texture.gpu, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, mid - 1, 1, 0, layers);
+
 		// Then, blit to level i.
 		VkImageBlit blit = {};
 		blit.srcOffsets[0] = { 0, 0, 0 };
@@ -691,19 +694,21 @@ void GPU::generateMipMaps(const Texture & texture) {
 		vkCmdBlitImage(commandBuffer, texture.gpu->image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, texture.gpu->image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &blit, VK_FILTER_LINEAR);
 		// Force sync and move previous layer to shader readable format.
 		// \todo Could be done for all levels at once at the end ? but it has a different old layout.
-		barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
-		barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		barrier.srcAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
-		barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
-		vkCmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, nullptr, 0, nullptr, 1, &barrier);
+		//barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+		//barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		//barrier.srcAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+		//barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+		//vkCmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_VERTEX_SHADER_BIT, 0, 0, nullptr, 0, nullptr, 1, &barrier);
 	}
-	// Transition the last level.
-	barrier.subresourceRange.baseMipLevel = int(texture.levels)-1;
-	barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-	barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-	barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-	barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
-	vkCmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, nullptr, 0, nullptr, 1, &barrier);
+	// Transition
+	textureLayoutBarrier(commandBuffer, texture, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+	
+	//barrier.subresourceRange.baseMipLevel = int(texture.levels)-1;
+	//barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+	//barrier.newLayout = ;
+	//barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+	//barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+	//vkCmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_VERTEX_SHADER_BIT, 0, 0, nullptr, 0, nullptr, 1, &barrier);
 	// Submit the commands.
 	VkUtils::endOneTimeCommandBuffer(commandBuffer, _context);
 }

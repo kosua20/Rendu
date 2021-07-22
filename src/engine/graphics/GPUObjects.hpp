@@ -395,7 +395,7 @@ public:
 	VmaAllocation data;
 	VkSampler sampler;
 
-	VkImageLayout layout = VK_IMAGE_LAYOUT_UNDEFINED;
+	std::vector<std::vector<VkImageLayout>> layouts;
 
 private:
 	Descriptor _descriptor; ///< Layout used.
