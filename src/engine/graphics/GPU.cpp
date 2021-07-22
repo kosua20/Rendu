@@ -257,7 +257,6 @@ bool GPU::setupWindow(Window * window){
 	poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
 	poolInfo.queueFamilyIndex = graphicsIndex;
 	poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-
 	if(vkCreateCommandPool(_context.device, &poolInfo, nullptr, &_context.commandPool) != VK_SUCCESS) {
 		Log::Error() << Log::GPU << "Unable to create command pool." << std::endl;
 		return false;
@@ -282,7 +281,6 @@ bool GPU::setupWindow(Window * window){
 	_pipelineCache.init();
 
 	_context.descriptorAllocator.init(&_context, 1024);
-
 	return true;
 }
 
@@ -299,43 +297,6 @@ int GPU::checkError(const char * file, int line, const std::string & infos) {
 //			Log::Error() << " Infos: " << infos;
 //		}
 //		Log::Error() << std::endl;
-//		return 1;
-//	}
-	return 0;
-}
-
-int GPU::checkFramebufferStatus() {
-//	const GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-//	if(status != GL_FRAMEBUFFER_COMPLETE) {
-//		switch(status) {
-//			case GL_FRAMEBUFFER_UNDEFINED:
-//				Log::Error() << Log::GPU << "Error GL_FRAMEBUFFER_UNDEFINED" << std::endl;
-//				break;
-//			case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
-//				Log::Error() << Log::GPU << "Error GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT" << std::endl;
-//				break;
-//			case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
-//				Log::Error() << Log::GPU << "Error GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT" << std::endl;
-//				break;
-//			case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
-//				Log::Error() << Log::GPU << "Error GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER" << std::endl;
-//				break;
-//			case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
-//				Log::Error() << Log::GPU << "Error GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER" << std::endl;
-//				break;
-//			case GL_FRAMEBUFFER_UNSUPPORTED:
-//				Log::Error() << Log::GPU << "Error GL_FRAMEBUFFER_UNSUPPORTED" << std::endl;
-//				break;
-//			case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE:
-//				Log::Error() << Log::GPU << "Error GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE" << std::endl;
-//				break;
-//			case GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS:
-//				Log::Error() << Log::GPU << "Error GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS" << std::endl;
-//				break;
-//			default:
-//				Log::Error() << Log::GPU << "Unknown framebuffer error." << std::endl;
-//				break;
-//		}
 //		return 1;
 //	}
 	return 0;
@@ -433,43 +394,6 @@ void GPU::saveFramebuffer(const Framebuffer & framebuffer, const std::string & p
 	//_metrics.framebufferBindings += 2;
 }
 
-//void GPU::bindTexture(const Texture * texture, size_t slot) {
-	//auto & currId = _state.textures[slot][texture->gpu->target];
-	//if(currId != texture->gpu->id){
-	//	currId = texture->gpu->id;
-	//	_state.activeTexture = GLenum(GL_TEXTURE0 + slot);
-	//	glActiveTexture(_state.activeTexture);
-	//	glBindTexture(texture->gpu->target, texture->gpu->id);
-	//	_metrics.textureBindings += 1;
-	//}
-//}
-
-//void GPU::bindTexture(const Texture & texture, size_t slot) {
-//	auto & currId = _state.textures[slot][texture.gpu->target];
-//	if(currId != texture.gpu->id){
-//		currId = texture.gpu->id;
-//		_state.activeTexture = GLenum(GL_TEXTURE0 + slot);
-//		glActiveTexture(_state.activeTexture);
-//		glBindTexture(texture.gpu->target, texture.gpu->id);
-	//		_metrics.textureBindings += 1;
-//	}
-//}
-
-//void GPU::bindTextures(const std::vector<const Texture *> & textures, size_t startingSlot) {
-//	for(size_t i = 0; i < textures.size(); ++i) {
-//		const Texture * infos = textures[i];
-//		const int slot = startingSlot + i;
-//		auto & currId = _state.textures[slot][infos->gpu->target];
-//
-//		if(currId != infos->gpu->id){
-//			currId = infos->gpu->id;
-//			_state.activeTexture = GLenum(GL_TEXTURE0 + slot);
-//			glActiveTexture(_state.activeTexture);
-//			glBindTexture(infos->gpu->target, infos->gpu->id);
-		//			_metrics.textureBindings += 1;
-//		}
-//	}
-//}
 
 void GPU::setupTexture(Texture & texture, const Descriptor & descriptor) {
 
@@ -479,7 +403,7 @@ void GPU::setupTexture(Texture & texture, const Descriptor & descriptor) {
 
 	texture.gpu.reset(new GPUTexture(descriptor, texture.shape));
 
-	const bool is3D = texture.gpu->type == VK_IMAGE_TYPE_3D;
+	const bool is3D = texture.shape & TextureShape::D3;
 	const bool isCube = texture.shape & TextureShape::Cube;
 	const bool isArray = texture.shape & TextureShape::Array;
 
@@ -507,24 +431,12 @@ void GPU::setupTexture(Texture & texture, const Descriptor & descriptor) {
 	if(isCube){
 		imageInfo.flags = VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT;
 	} else if(texture.shape == TextureShape::Array2D){
-		// Only for 2D arrays apparently.
 		imageInfo.flags = VK_IMAGE_CREATE_2D_ARRAY_COMPATIBLE_BIT;
 	}
 
 	VmaAllocationCreateInfo allocInfo = {};
 	allocInfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
-
-	if (vkCreateImage(_context.device, &imageInfo, nullptr, &(texture.gpu->image)) != VK_SUCCESS) {
-		Log::Error() << Log::GPU << "Unable to create texture image." << std::endl;
-		return;
-	}
-
 	vmaCreateImage(_allocator, &imageInfo, &allocInfo, &(texture.gpu->image), &(texture.gpu->data), nullptr);
-
-	VkImageAspectFlags aspectFlags = isDepth ? VK_IMAGE_ASPECT_DEPTH_BIT : VK_IMAGE_ASPECT_COLOR_BIT;
-	if(isStencil){
-		aspectFlags |= VK_IMAGE_ASPECT_STENCIL_BIT;
-	}
 
 	// Create view.
 	VkImageViewCreateInfo viewInfo = {};
@@ -532,7 +444,7 @@ void GPU::setupTexture(Texture & texture, const Descriptor & descriptor) {
 	viewInfo.image = texture.gpu->image;
 	viewInfo.viewType = texture.gpu->viewType;
 	viewInfo.format = texture.gpu->format;
-	viewInfo.subresourceRange.aspectMask = aspectFlags;
+	viewInfo.subresourceRange.aspectMask = texture.gpu->aspect;
 	viewInfo.subresourceRange.baseMipLevel = 0;
 	viewInfo.subresourceRange.levelCount = texture.levels;
 	viewInfo.subresourceRange.baseArrayLayer = 0;
@@ -945,7 +857,6 @@ void GPU::setupMesh(Mesh & mesh) {
 
 	// Create a staging buffer to host the geometry data (to avoid creating a staging buffer for each sub-upload).
 	std::vector<uchar> vertexBufferData(totalSize);
-	//TransferBuffer stageVertexBuffer(totalSize, BufferType::CPUTOGPU);
 
 	GPUMesh::InputState& state = mesh.gpu->state;
 	state.attributes.clear();
@@ -1016,8 +927,7 @@ void GPU::setupMesh(Mesh & mesh) {
 	mesh.gpu->vertexBuffer = std::move(vertexBuffer.gpu);
 }
 
-void GPU::drawMesh(const Mesh & mesh) {
-	_state.mesh = mesh.gpu.get();
+void GPU::bindPipelineIfNeeded(){
 
 	// Possibilities:
 	// state is outdated, create/retrieve new pipeline
@@ -1034,71 +944,39 @@ void GPU::drawMesh(const Mesh & mesh) {
 	// if pipeline updated, bind pipeline
 	if(shouldBindPipeline){
 		vkCmdBindPipeline(_context.getCurrentCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, _context.pipeline);
-
 	}
+}
+
+void GPU::drawMesh(const Mesh & mesh) {
+	_state.mesh = mesh.gpu.get();
+
+	bindPipelineIfNeeded();
 
 	_state.program->update();
 
-//	if(_state.vertexArray != mesh.gpu->id){
-//		_state.vertexArray = mesh.gpu->id;
-//		glBindVertexArray(mesh.gpu->id);
-//		_metrics.vertexBindings += 1;
-//	}
 	vkCmdBindVertexBuffers(_context.getCurrentCommandBuffer(), 0, mesh.gpu->state.offsets.size(), mesh.gpu->state.buffers.data(), mesh.gpu->state.offsets.data());
 	vkCmdBindIndexBuffer(_context.getCurrentCommandBuffer(), mesh.gpu->indexBuffer->buffer, 0, VK_INDEX_TYPE_UINT32);
 	vkCmdDrawIndexed(_context.getCurrentCommandBuffer(), static_cast<uint32_t>(mesh.gpu->count), 1, 0, 0, 0);
-//	glDrawElements(GL_TRIANGLES, mesh.gpu->count, GL_UNSIGNED_INT, static_cast<void *>(nullptr));
-//	_metrics.drawCalls += 1;
 }
 
 void GPU::drawTesselatedMesh(const Mesh & mesh, uint patchSize){
-//	_state.mesh = mesh.gpu.get();
-//	glPatchParameteri(GL_PATCH_VERTICES, GLint(patchSize));
-//	if(_state.vertexArray != mesh.gpu->id){
-//		_state.vertexArray = mesh.gpu->id;
-//		glBindVertexArray(mesh.gpu->id);
-//		_metrics.vertexBindings += 1;
-//	}
 	// \todo check if we need to specify the patch size or if it's specified in the shader
 	drawMesh(mesh);
-//	glDrawElements(GL_PATCHES, mesh.gpu->count, GL_UNSIGNED_INT, static_cast<void *>(nullptr));
-//	_metrics.drawCalls += 1;
-
 }
 
 void GPU::drawQuad(){
 	_state.mesh = _quad.gpu.get();
 
-	// Possibilities:
-	// state is outdated, create/retrieve new pipeline
-	bool shouldBindPipeline = _context.newRenderPass;
-	_context.newRenderPass = false;
-	// \todo Use hash for equivalence.
-	if(!_state.isEquivalent(_lastState)){
-		_context.pipeline = _pipelineCache.getPipeline(_state);
-		_lastState = _state;
-		shouldBindPipeline = true;
-	}
-
-	// if new render pass begun, bind pipeline
-	// if pipeline updated, bind pipeline
-	if(shouldBindPipeline){
-		vkCmdBindPipeline(_context.getCurrentCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, _context.pipeline);
-
-	}
+	bindPipelineIfNeeded();
 
 	_state.program->update();
 
 	VkDeviceSize offset = 0;
 	vkCmdBindVertexBuffers(_context.getCurrentCommandBuffer(), 0, 1, &(_quad.gpu->vertexBuffer->buffer), &offset);
 	vkCmdDraw(_context.getCurrentCommandBuffer(), 3, 1, 0, 0);
-	//	glDrawArrays(GL_TRIANGLES, 0, 3);
-//	_metrics.quadCalls += 1;
 }
 
 void GPU::sync(){
-//	glFlush();
-//	glFinish();
 	vkDeviceWaitIdle(_context.device);
 }
 
@@ -1106,8 +984,8 @@ void GPU::nextFrame(){
 	_context.nextFrame();
 	_pipelineCache.freeOutdatedPipelines();
 	// Save and reset stats.
-//	_metricsPrevious = _metrics;
-//	_metrics = Metrics();
+	_metricsPrevious = _metrics;
+	_metrics = Metrics();
 }
 
 void GPU::deviceInfos(std::string & vendor, std::string & renderer, std::string & version, std::string & shaderVersion) {
@@ -1169,28 +1047,20 @@ std::vector<std::string> GPU::supportedExtensions() {
 }
 
 void GPU::setViewport(int x, int y, int w, int h) {
-	//if(_state.viewport[0] != x || _state.viewport[1] != y || _state.viewport[2] != w || _state.viewport[3] != h){
-//		_state.viewport[0] = x;
-//		_state.viewport[1] = y;
-//		_state.viewport[2] = w;
-//		_state.viewport[3] = h;
-		VkViewport vp;
-		vp.x = x;
-		vp.y = y;
-		vp.width = w;
-		vp.height = h;
-		vp.minDepth = 0.0f;
-		vp.maxDepth = 1.0f;
-		vkCmdSetViewport(_context.getCurrentCommandBuffer(), 0, 1, &vp);
-		VkRect2D scissor;
-		scissor.offset.x = x;
-		scissor.offset.y = y;
-		scissor.extent.width = w;
-		scissor.extent.height = h;
-		vkCmdSetScissor(_context.getCurrentCommandBuffer(), 0, 1, &scissor);
-//		glViewport(GLsizei(x), GLsizei(y), GLsizei(w), GLsizei(h));
-//		_metrics.stateChanges += 1;
-	//}
+	VkViewport vp;
+	vp.x = x;
+	vp.y = y;
+	vp.width = w;
+	vp.height = h;
+	vp.minDepth = 0.0f;
+	vp.maxDepth = 1.0f;
+	vkCmdSetViewport(_context.getCurrentCommandBuffer(), 0, 1, &vp);
+	VkRect2D scissor;
+	scissor.offset.x = x;
+	scissor.offset.y = y;
+	scissor.extent.width = w;
+	scissor.extent.height = h;
+	vkCmdSetScissor(_context.getCurrentCommandBuffer(), 0, 1, &scissor);
 }
 
 void GPU::clearColor(const glm::vec4 & color) {
@@ -1283,58 +1153,21 @@ void GPU::clearColorDepthStencil(const glm::vec4 & color, float depth, uchar ste
 }
 
 void GPU::setDepthState(bool test) {
-//	if(_state.depthTest != test){
-		_state.depthTest = test;
-//		(test ? glEnable : glDisable)(GL_DEPTH_TEST);
-//		_metrics.stateChanges += 1;
-//	}
+	_state.depthTest = test;
 }
 
 void GPU::setDepthState(bool test, TestFunction equation, bool write) {
-//	if(_state.depthTest != test){
-		_state.depthTest = test;
-//		(test ? glEnable : glDisable)(GL_DEPTH_TEST);
-//		_metrics.stateChanges += 1;
-//	}
-//
-//	static const std::map<TestFunction, GLenum> eqs = {
-//		{TestFunction::NEVER, GL_NEVER},
-//		{TestFunction::LESS, GL_LESS},
-//		{TestFunction::LEQUAL, GL_LEQUAL},
-//		{TestFunction::EQUAL, GL_EQUAL},
-//		{TestFunction::GREATER, GL_GREATER},
-//		{TestFunction::GEQUAL, GL_GEQUAL},
-//		{TestFunction::NOTEQUAL, GL_NOTEQUAL},
-//		{TestFunction::ALWAYS, GL_ALWAYS}};
-//
-//	if(_state.depthFunc != equation){
-		_state.depthFunc = equation;
-//		glDepthFunc(eqs.at(equation));
-//		_metrics.stateChanges += 1;
-//	}
-//
-//	if(_state.depthWriteMask != write){
-		_state.depthWriteMask = write;
-//		glDepthMask(write ? GL_TRUE : GL_FALSE);
-//		_metrics.stateChanges += 1;
-//	}
+	_state.depthTest = test;
+	_state.depthFunc = equation;
+	_state.depthWriteMask = write;
 }
 
 void GPU::setStencilState(bool test, bool write){
-//	if(_state.stencilTest != test){
-		_state.stencilTest = test;
-//		(test ? glEnable : glDisable)(GL_STENCIL_TEST);
-//		_metrics.stateChanges += 1;
-//	}
-//	if(_state.stencilWriteMask != write){
-		_state.stencilWriteMask = write;
-//		glStencilMask(write ? 0xFF : 0x00);
-//		_metrics.stateChanges += 1;
-//	}
+	_state.stencilTest = test;
+	_state.stencilWriteMask = write;
 }
 
 void GPU::setStencilState(bool test, TestFunction function, StencilOp fail, StencilOp pass, StencilOp depthFail, uchar value){
-
 	_state.stencilTest = test;
 	_state.stencilFunc = function;
 	_state.stencilWriteMask = true;
@@ -1372,14 +1205,6 @@ void GPU::setColorState(bool writeRed, bool writeGreen, bool writeBlue, bool wri
 	_state.colorWriteMask.g = writeGreen;
 	_state.colorWriteMask.b = writeBlue;
 	_state.colorWriteMask.a = writeAlpha;
-}
-
-void GPU::setSRGBState(bool convert){
-//	if(_state.framebufferSRGB != convert){
-//		_state.framebufferSRGB = convert;
-//		(convert ? glEnable : glDisable)(GL_FRAMEBUFFER_SRGB);
-//		_metrics.stateChanges += 1;
-//	}
 }
 
 void GPU::blitDepth(const Framebuffer & src, const Framebuffer & dst) {
@@ -1562,156 +1387,7 @@ void GPU::blit(const Texture & src, Framebuffer & dst, Filter filter) {
 //}
 
 void GPU::getState(GPUState& state) {
-	
-	// Boolean flags.
-//	state.blend = glIsEnabled(GL_BLEND);
-//	state.cullFace = glIsEnabled(GL_CULL_FACE);
-//	state.depthClamp = glIsEnabled(GL_DEPTH_CLAMP);
-//	state.depthTest = glIsEnabled(GL_DEPTH_TEST);
-//	state.framebufferSRGB = glIsEnabled(GL_FRAMEBUFFER_SRGB);
-//	state.polygonOffsetFill = glIsEnabled(GL_POLYGON_OFFSET_FILL);
-//	state.polygonOffsetLine = glIsEnabled(GL_POLYGON_OFFSET_LINE);
-//	state.polygonOffsetPoint = glIsEnabled(GL_POLYGON_OFFSET_POINT);
-//	state.scissorTest = glIsEnabled(GL_SCISSOR_TEST);
-//	state.stencilTest = glIsEnabled(GL_STENCIL_TEST);
-//
-//	// Blend state.
-//	static const std::map<GLenum, BlendEquation> blendEqs = {
-//		{GL_FUNC_ADD, BlendEquation::ADD},
-//		{GL_FUNC_SUBTRACT, BlendEquation::SUBTRACT},
-//		{GL_FUNC_REVERSE_SUBTRACT, BlendEquation::REVERSE_SUBTRACT},
-//		{GL_MIN, BlendEquation::MIN},
-//		{GL_MAX, BlendEquation::MAX}};
-//	GLint ber, bea;
-//	glGetIntegerv(GL_BLEND_EQUATION_RGB, &ber);
-//	glGetIntegerv(GL_BLEND_EQUATION_ALPHA, &bea);
-//	state.blendEquationRGB = blendEqs.at(ber);
-//	state.blendEquationAlpha = blendEqs.at(bea);
-//
-//	static const std::map<GLenum, BlendFunction> funcs = {
-//		{GL_ONE, BlendFunction::ONE},
-//		{GL_ZERO, BlendFunction::ZERO},
-//		{GL_SRC_COLOR, BlendFunction::SRC_COLOR},
-//		{GL_ONE_MINUS_SRC_COLOR, BlendFunction::ONE_MINUS_SRC_COLOR},
-//		{GL_SRC_ALPHA, BlendFunction::SRC_ALPHA},
-//		{GL_ONE_MINUS_SRC_ALPHA, BlendFunction::ONE_MINUS_SRC_ALPHA},
-//		{GL_DST_COLOR, BlendFunction::DST_COLOR},
-//		{GL_ONE_MINUS_DST_COLOR, BlendFunction::ONE_MINUS_DST_COLOR},
-//		{GL_DST_ALPHA, BlendFunction::DST_ALPHA},
-//		{GL_ONE_MINUS_DST_ALPHA, BlendFunction::ONE_MINUS_DST_ALPHA}};
-//	GLint bsr, bsa, bdr, bda;
-//	glGetIntegerv(GL_BLEND_SRC_RGB, &bsr);
-//	glGetIntegerv(GL_BLEND_SRC_ALPHA, &bsa);
-//	glGetIntegerv(GL_BLEND_DST_RGB, &bdr);
-//	glGetIntegerv(GL_BLEND_DST_ALPHA, &bda);
-//	state.blendSrcRGB = funcs.at(bsr);
-//	state.blendSrcAlpha = funcs.at(bsa);
-//	state.blendDstRGB = funcs.at(bdr);
-//	state.blendDstAlpha = funcs.at(bda);
-//	glGetFloatv(GL_BLEND_COLOR, &state.blendColor[0]);
-//
-//	// Color state.
-//	glGetFloatv(GL_COLOR_CLEAR_VALUE, &state.colorClearValue[0]);
-//	GLboolean cwm[4];
-//	glGetBooleanv(GL_COLOR_WRITEMASK, &cwm[0]);
-//	state.colorWriteMask = glm::bvec4(cwm[0], cwm[1], cwm[2], cwm[3]);
-//
-//	// Geometry state.
-//	static const std::map<GLenum, Faces> faces = {
-//		{GL_FRONT, Faces::FRONT},
-//		{GL_BACK, Faces::BACK},
-//		{GL_FRONT_AND_BACK, Faces::ALL}};
-//	GLint cfm;
-//	glGetIntegerv(GL_CULL_FACE_MODE, &cfm);
-//	state.cullFaceMode = faces.at(cfm);
-//	glGetFloatv(GL_POLYGON_OFFSET_FACTOR, &state.polygonOffsetFactor);
-//	glGetFloatv(GL_POLYGON_OFFSET_UNITS, &state.polygonOffsetUnits);
-//
-//	// Depth state.
-//	static const std::map<GLenum, TestFunction> testFuncs = {
-//		{GL_NEVER, 		TestFunction::NEVER},
-//		{GL_LESS, 		TestFunction::LESS},
-//		{GL_LEQUAL, 	TestFunction::LEQUAL},
-//		{GL_EQUAL, 		TestFunction::EQUAL},
-//		{GL_GREATER, 	TestFunction::GREATER},
-//		{GL_GEQUAL, 	TestFunction::GEQUAL},
-//		{GL_NOTEQUAL, 	TestFunction::NOTEQUAL},
-//		{GL_ALWAYS, 	TestFunction::ALWAYS}};
-//	GLint dfc;
-//	glGetIntegerv(GL_DEPTH_FUNC, &dfc);
-//	state.depthFunc = testFuncs.at(dfc);
-//	glGetFloatv(GL_DEPTH_CLEAR_VALUE, &state.depthClearValue);
-//	glGetFloatv(GL_DEPTH_RANGE, &state.depthRange[0]);
-//	GLboolean dwm;
-//	glGetBooleanv(GL_DEPTH_WRITEMASK, &dwm);
-//	state.depthWriteMask = dwm;
-//
-//	// Stencil state
-//	static const std::map<GLenum, StencilOp> ops = {
-//		{ GL_KEEP, StencilOp::KEEP },
-//		{ GL_ZERO, StencilOp::ZERO },
-//		{ GL_REPLACE, StencilOp::REPLACE },
-//		{ GL_INCR, StencilOp::INCR },
-//		{ GL_INCR_WRAP, StencilOp::INCRWRAP },
-//		{ GL_DECR, StencilOp::DECR },
-//		{ GL_DECR_WRAP, StencilOp::DECRWRAP },
-//		{ GL_INVERT, StencilOp::INVERT }};
-//	GLint sfc, sof, sos, sod;
-//	glGetIntegerv(GL_STENCIL_FUNC, &sfc);
-//	glGetIntegerv(GL_STENCIL_FAIL, &sof);
-//	glGetIntegerv(GL_STENCIL_PASS_DEPTH_FAIL, &sos);
-//	glGetIntegerv(GL_STENCIL_PASS_DEPTH_PASS, &sod);
-//	state.stencilFunc = testFuncs.at(sfc);
-//	state.stencilFail = ops.at(sof);
-//	state.stencilPass = ops.at(sos);
-//	state.stencilDepthPass = ops.at(sod);
-//	GLint swm, scv, srv;
-//	glGetIntegerv(GL_STENCIL_WRITEMASK, &swm);
-//	glGetIntegerv(GL_STENCIL_CLEAR_VALUE, &scv);
-//	glGetIntegerv(GL_STENCIL_REF, &srv);
-//	state.stencilWriteMask = (swm != 0);
-//	state.stencilValue = uchar(srv);
-//	state.stencilClearValue = uchar(scv);
-//
-//	// Viewport and scissor state.
-//	glGetFloatv(GL_VIEWPORT, &state.viewport[0]);
-//	glGetFloatv(GL_SCISSOR_BOX, &state.scissorBox[0]);
-//
-//	// Binding state.
-//	GLint fbr, fbd, pgb, ats, vab;
-//	glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &fbr);
-//	glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &fbd);
-//	glGetIntegerv(GL_CURRENT_PROGRAM, &pgb);
-//	glGetIntegerv(GL_ACTIVE_TEXTURE, &ats);
-//	glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &vab);
-//
-//	state.readFramebuffer = fbr;
-//	state.drawFramebuffer = fbd;
-//	state.program = pgb;
-//	state.activeTexture = GLenum(ats);
-//	state.vertexArray = vab;
-//
-//	static const std::vector<GLenum> bindings = {
-//		GL_TEXTURE_BINDING_1D, GL_TEXTURE_BINDING_2D,
-//		GL_TEXTURE_BINDING_3D, GL_TEXTURE_BINDING_CUBE_MAP,
-//		GL_TEXTURE_BINDING_1D_ARRAY, GL_TEXTURE_BINDING_2D_ARRAY,
-//		GL_TEXTURE_BINDING_CUBE_MAP_ARRAY,
-//	};
-//	static const std::vector<GLenum> shapes = {
-//		GL_TEXTURE_1D, GL_TEXTURE_2D,
-//		GL_TEXTURE_3D, GL_TEXTURE_CUBE_MAP,
-//		GL_TEXTURE_1D_ARRAY, GL_TEXTURE_2D_ARRAY,
-//		GL_TEXTURE_CUBE_MAP_ARRAY,
-//	};
-//	for(size_t tid = 0; tid < state.textures.size(); ++tid){
-//		glActiveTexture(GLenum(GL_TEXTURE0 + tid));
-//		for(size_t bid = 0; bid < bindings.size(); ++bid){
-//			GLint texId = 0;
-//			glGetIntegerv(bindings[bid], &texId);
-//			state.textures[tid][shapes[bid]] = GLuint(texId);
-//		}
-//	}
-//	glActiveTexture(state.activeTexture);
+	state = _state;
 }
 
 
@@ -1762,4 +1438,3 @@ GPUState GPU::_lastState;
 GPU::Metrics GPU::_metrics;
 GPU::Metrics GPU::_metricsPrevious;
 Mesh GPU::_quad("Quad");
-

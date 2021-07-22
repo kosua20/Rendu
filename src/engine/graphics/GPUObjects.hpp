@@ -6,16 +6,8 @@
 
 #include <volk/volk.h>
 
-// todo Avoid alloc inclusion here to avoid windows.h inclusion.
-#ifdef _WIN32
-#define WIN32_LEAN_AND_MEAN
-#endif
-#include <vma/vk_mem_alloc.h>
-#ifdef _WIN32
-#	undef near
-#	undef far
-#	undef ERROR
-#endif
+// Forward declaration.
+VK_DEFINE_HANDLE(VmaAllocation)
 
 /**
 \brief The type of a shader.
@@ -389,11 +381,13 @@ public:
 	GPUTexture(GPUTexture &&) = delete;
 
 	VkImageType type;
-	VkImageViewType viewType;
+	VkImageViewType viewType; // gpu shape
 	VkFormat format;
 	VkSamplerAddressMode wrapping;
 	VkFilter imgFiltering;
 	VkSamplerMipmapMode mipFiltering;
+	VkImageAspectFlags aspect;
+	
 	uint channels; ///< Number of channels.
 
 	VkImage image;
@@ -440,9 +434,6 @@ public:
 
 	/** Move constructor. */
 	GPUBuffer(GPUBuffer &&) = delete;
-
-	//VkBufferUsageFlags type;
-	//VkMemoryPropertyFlags options;
 
 	VkBuffer buffer;
 	VmaAllocation data;

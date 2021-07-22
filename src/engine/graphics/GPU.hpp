@@ -41,22 +41,6 @@ class GPU {
 
 public:
 
-	using Handle = int;
-
-	/** Type of shader uniform binding */
-	/*enum class BindingType : uint {
-		TEXTURE, UNIFORM_BUFFER
-	};*/
-
-	/** A binding declared in a shader, corresponding to a location slot. */
-	/*struct Binding {
-		BindingType type; ///< The type of binding.
-		int location; ///< The binding slot.
-	};*/
-
-	/** Bindings list */
-	//using Bindings = std::map<std::string, Binding>;
-
 	/** Internal operation metrics. */
 	struct Metrics {
 		unsigned long drawCalls = 0; ///< Mesh draw call.
@@ -80,11 +64,6 @@ public:
 	 \return non zero if an error was encountered
 	 */
 	static int checkError(const char * file, int line, const std::string & infos);
-
-	/** Check if any GPU has been detected after setting up a framebuffer.
-	  \return non zero if an error was encountered
-	  */
-	static int checkFramebufferStatus();
 	
 	/** Setup the GPU device in its initial state.
 	 \param appName the name of the current executable
@@ -93,15 +72,6 @@ public:
 	static bool setup(const std::string & appName);
 
 	static bool setupWindow(Window * window);
-
-	/** Create a shader of a given type from a string. Extract additional informations from the shader.
-	 \param prog the content of the shader
-	 \param type the type of shader (vertex, fragment,...)
-	 \param bindings will be filled with the samplers/buffers present in the shader and their user-defined locations
-	 \param finalLog will contain the compilation log of the shader
-	 \return the GPU ID of the shader object
-	 */
-	//static void loadShader(const std::string & prog, ShaderType type, Program::Stage & stage, std::string & finalLog);
 
 	/** Create and link a GLProgram using the shader code contained in the given strings.
 	 \param vertexContent the vertex shader string
@@ -140,25 +110,6 @@ public:
 	 */
 	static void saveFramebuffer(const Framebuffer & framebuffer, const std::string & path, bool flip = true, bool ignoreAlpha = false);
 
-
-	/** Bind a texture to some texture slot.
-	 \param texture the infos of the texture to bind
-	 \param slot the binding slot
-	 */
-	//static void bindTexture(const Texture * texture, size_t slot);
-
-	/** Bind a texture to some texture slot.
-	 \param texture the infos of the texture to bind
-	 \param slot the binding slot
-	 */
-	//static void bindTexture(const Texture & texture, size_t slot);
-	
-	/** Bind a series of textures to some texture slots, in order.
-	 \param textures the infos of the textures to bind
-	 \param startingSlot the optional index of the first binding slot
-	 */
-	//static void bindTextures(const std::vector<const Texture *> & textures, size_t startingSlot = 0);
-
 	/** Create a GPU texture with a given layout and allocate it.
 	 \param texture the texture to setup on the GPU
 	 \param descriptor type and format information
@@ -188,13 +139,6 @@ public:
 	 \note This will set the number of levels to 1000.
 	 */
 	static void generateMipMaps(const Texture & texture);
-
-	/** Bind a uniform buffer to a shader slot.
-	 \param buffer the infos of the buffer to bind
-	 \param slot the binding slot
-	 \note This will bind the buffer as a uniform buffer.
-	 */
-	//static void bindBuffer(const BufferBase & buffer, size_t slot);
 
 	/** Create and allocate a GPU buffer.
 	 \param buffer the buffer to setup on the GPU
@@ -443,7 +387,8 @@ private:
 	 \note The output image extension will be automatically added based on the framebuffer type and format.
 	 */
 	//static void savePixels(GLenum type, GLenum format, unsigned int width, unsigned int height, unsigned int components, const std::string & path, bool flip, bool ignoreAlpha);
-	static VkPipeline buildPipelineState(const GPUState& state);
+
+	static void bindPipelineIfNeeded();
 
 	static void clean(GPUTexture & tex);
 

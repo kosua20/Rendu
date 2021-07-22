@@ -71,9 +71,7 @@ void GPUTexture::setFiltering(Filter filtering) {
 
 GPUBuffer::GPUBuffer(BufferType atype, DataUse use){
 	// \todo "use" is only used on UBOs for custom size.
-
 	mappable = (atype == BufferType::UNIFORM || atype == BufferType::CPUTOGPU || atype == BufferType::GPUTOCPU);
-	//options = usages.at(atype);
 }
 
 void GPUBuffer::clean(){

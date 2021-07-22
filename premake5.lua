@@ -66,7 +66,7 @@ function CommonSetup()
 	sysincludedirs({ "src/libs/", "src/libs/glfw/include/" })
 	
 	-- System headers are used to support angled brackets in Xcode.
-	filter("system:macosx")
+	filter("system:macosx" or "system:linux")
 		sysincludedirs({ "/usr/local/include/" })
 		libdirs({ "/usr/local/lib" })
 
@@ -89,22 +89,24 @@ function ExecutableSetup()
 	-- Libraries for each platform.
 	filter("system:macosx")
 		links({"Cocoa.framework", "IOKit.framework", "CoreVideo.framework", "AppKit.framework", "pthread"})
-		links({"glslang", "OSDependent", "MachineIndependent", "GenericCodeGen", "OGLCompiler", "SPIRV", "SPIRV-Tools", "SPIRV-Tools-opt" })
-
-	filter({"configurations:Dev", "system:windows"})
-		links({"comctl32"})
-		links({"glslangd", "OSDependentd", "MachineIndependentd", "GenericCodeGend", "OGLCompilerd", "SPIRVd", "SPIRV-Toolsd", "SPIRV-Tools-optd" })
-	
-
-	filter({"configurations:Release", "system:windows"})
-		links({"comctl32"})
-		links({"glslang", "OSDependent", "MachineIndependent", "GenericCodeGen", "OGLCompiler", "SPIRV", "SPIRV-Tools", "SPIRV-Tools-opt" })
-
+		
 	filter("system:linux")
 		-- We have to query the dependencies of gtk+3 for NFD, and convert them to a list of libraries.
 		links({"X11", "Xi", "Xrandr", "Xxf86vm", "Xinerama", "Xcursor", "Xext", "Xrender", "Xfixes", "xcb", "Xau", "Xdmcp", "rt", "m", "pthread", "dl", gtkLibs})
+	
+	filter("system:windows")
+		links({"comctl32"})
+
+	-- Vulkan dependencies
+	filter("system:macosx" or "system:linux")
 		links({"glslang", "OSDependent", "MachineIndependent", "GenericCodeGen", "OGLCompiler", "SPIRV", "SPIRV-Tools", "SPIRV-Tools-opt" })
 	
+	filter({"system:windows", "configurations:Dev"})
+		links({"glslangd", "OSDependentd", "MachineIndependentd", "GenericCodeGend", "OGLCompilerd", "SPIRVd", "SPIRV-Toolsd", "SPIRV-Tools-optd" })
+	
+	filter({"system:windows", "configurations:Release" })
+		links({"glslang", "OSDependent", "MachineIndependent", "GenericCodeGen", "OGLCompiler", "SPIRV", "SPIRV-Tools", "SPIRV-Tools-opt" })
+
 	filter({})
 
 	-- Register in the projects list for the ALL target.
