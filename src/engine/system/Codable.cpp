@@ -130,14 +130,15 @@ std::vector<KeyValues> Codable::encode(const glm::mat4 & transfo) {
 
 std::pair<std::string, Descriptor> Codable::decodeTexture(const KeyValues & param) {
 	// Subset of descriptors supported by the scene serialization model.
+	// \todo Rename rgb32 to rgbf and use 16 bit half floats.
 	const std::map<std::string, Descriptor> descriptors = {
 		{"srgb", {Layout::SRGB8_ALPHA8, Filter::LINEAR_LINEAR, Wrap::REPEAT}},
 		{"rgb", {Layout::RGBA8, Filter::LINEAR_LINEAR, Wrap::REPEAT}},
-		{"rgb32", {Layout::RGB32F, Filter::LINEAR_LINEAR, Wrap::REPEAT}},
+		{"rgb32", {Layout::RGBA32F, Filter::LINEAR_LINEAR, Wrap::REPEAT}},
 
 		{"srgbcube", {Layout::SRGB8_ALPHA8, Filter::LINEAR_LINEAR, Wrap::CLAMP}},
 		{"rgbcube", {Layout::RGBA8, Filter::LINEAR_LINEAR, Wrap::CLAMP}},
-		{"rgb32cube", {Layout::RGB32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}},
+		{"rgb32cube", {Layout::RGBA32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}},
 	};
 	// Check if the required format exists.
 	if(descriptors.count(param.key) == 0 || param.values.empty()) {
@@ -153,11 +154,11 @@ KeyValues Codable::encode(const Texture * texture){
 	const std::vector<std::pair<std::string, Descriptor>> descriptors = {
 		{"srgb", {Layout::SRGB8_ALPHA8, Filter::LINEAR_LINEAR, Wrap::REPEAT}},
 		{"rgb", {Layout::RGBA8, Filter::LINEAR_LINEAR, Wrap::REPEAT}},
-		{"rgb32", {Layout::RGB32F, Filter::LINEAR_LINEAR, Wrap::REPEAT}},
+		{"rgb32", {Layout::RGBA32F, Filter::LINEAR_LINEAR, Wrap::REPEAT}},
 
 		{"srgbcube", {Layout::SRGB8_ALPHA8, Filter::LINEAR_LINEAR, Wrap::CLAMP}},
 		{"rgbcube", {Layout::RGBA8, Filter::LINEAR_LINEAR, Wrap::CLAMP}},
-		{"rgb32cube", {Layout::RGB32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}},
+		{"rgb32cube", {Layout::RGBA32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}},
 	};
 	KeyValues token("rgb");
 	if(texture->gpu){

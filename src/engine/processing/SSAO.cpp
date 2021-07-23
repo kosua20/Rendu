@@ -53,7 +53,7 @@ SSAO::SSAO(uint width, uint height, uint downscale, float radius, const std::str
 	}
 
 	// Send the texture to the GPU.
-	_noisetexture.upload({Layout::RGB32F, Filter::NEAREST, Wrap::REPEAT}, false);
+	_noisetexture.upload({Layout::RGBA32F, Filter::NEAREST, Wrap::REPEAT}, false);
 
 	checkGPUError();
 }

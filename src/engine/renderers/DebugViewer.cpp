@@ -164,7 +164,7 @@ void DebugViewer::registerTexture(const std::string& name, const Texture* tex, T
 	infos.gamma = tex->gpu->descriptor().isSRGB();
 
 	// Setup display framebuffer.
-	const Descriptor desc = {Layout::RGB8, Filter::NEAREST, Wrap::CLAMP};
+	const Descriptor desc = {Layout::RGBA8, Filter::NEAREST, Wrap::CLAMP};
 	infos.display.reset(new Framebuffer(TextureShape::D2, tex->width, tex->height, 1, 1, {desc}, false, debugSkipName));
 
 	// Build display full name with details.

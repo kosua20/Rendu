@@ -228,7 +228,7 @@ uint64_t GPUQuery::value(){
 
 
 Descriptor::Descriptor() :
-	_typedFormat(Layout::RGB8), _filtering(Filter::LINEAR_LINEAR), _wrapping(Wrap::CLAMP) {
+	_typedFormat(Layout::RGBA8), _filtering(Filter::LINEAR_LINEAR), _wrapping(Wrap::CLAMP) {
 }
 
 Descriptor::Descriptor(Layout typedFormat, Filter filtering, Wrap wrapping) :
@@ -245,31 +245,24 @@ unsigned int Descriptor::getGPULayout(VkFormat & format) const {
 	static const std::map<Layout, FormatAndChannels> formatInfos = {
 		{Layout::R8, { VK_FORMAT_R8_UNORM, 1 }},
 		{Layout::RG8, { VK_FORMAT_R8G8_UNORM, 2 }},
-		{Layout::RGB8, { VK_FORMAT_R8G8B8_UNORM, 3 }},
 		{Layout::RGBA8, { VK_FORMAT_R8G8B8A8_UNORM, 4 }},
-		{Layout::SRGB8, { VK_FORMAT_R8G8B8_SRGB, 3 }},
 		{Layout::SRGB8_ALPHA8, { VK_FORMAT_R8G8B8A8_SRGB, 4 }},
 		{Layout::R16, { VK_FORMAT_R16_UNORM, 1 }},
 		{Layout::RG16, { VK_FORMAT_R16G16_UNORM, 2 }},
 		{Layout::RGBA16, { VK_FORMAT_R16G16B16A16_UNORM, 4 }},
 		{Layout::R8_SNORM, { VK_FORMAT_R8_SNORM, 1 }},
 		{Layout::RG8_SNORM, { VK_FORMAT_R8G8_SNORM, 2 }},
-		{Layout::RGB8_SNORM, { VK_FORMAT_R8G8B8_SNORM, 3 }},
 		{Layout::RGBA8_SNORM, { VK_FORMAT_R8G8B8A8_SNORM, 4 }},
 		{Layout::R16_SNORM, { VK_FORMAT_R16_SNORM, 1 }},
 		{Layout::RG16_SNORM, { VK_FORMAT_R16G16_SNORM, 2 }},
-		{Layout::RGB16_SNORM, { VK_FORMAT_R16G16B16_SNORM, 3 }},
 		{Layout::R16F, { VK_FORMAT_R16_SFLOAT, 1 }},
 		{Layout::RG16F, { VK_FORMAT_R16G16_SFLOAT, 2 }},
-		{Layout::RGB16F, { VK_FORMAT_R16G16B16_SFLOAT, 3 }},
 		{Layout::RGBA16F, { VK_FORMAT_R16G16B16A16_SFLOAT, 4 }},
 		{Layout::R32F, { VK_FORMAT_R32_SFLOAT, 1 }},
 		{Layout::RG32F, { VK_FORMAT_R32G32_SFLOAT, 2 }},
-		{Layout::RGB32F, { VK_FORMAT_R32G32B32_SFLOAT, 3 }},
 		{Layout::RGBA32F, { VK_FORMAT_R32G32B32A32_SFLOAT, 4 }},
 		{Layout::RGB5_A1, { VK_FORMAT_R5G5B5A1_UNORM_PACK16, 4 }},
 		{Layout::RGB10_A2, { VK_FORMAT_A2R10G10B10_UNORM_PACK32, 4 }},
-		{Layout::R11F_G11F_B10F, { VK_FORMAT_B10G11R11_UFLOAT_PACK32, 3 }},
 		{Layout::DEPTH_COMPONENT16, { VK_FORMAT_D16_UNORM, 1 }},
 		{Layout::DEPTH_COMPONENT32F, { VK_FORMAT_D32_SFLOAT, 1 }},
 		{Layout::DEPTH24_STENCIL8, { VK_FORMAT_D24_UNORM_S8_UINT, 1 }},
@@ -285,12 +278,6 @@ unsigned int Descriptor::getGPULayout(VkFormat & format) const {
 		{Layout::RG16UI, { VK_FORMAT_R16G16_UINT, 2 }},
 		{Layout::RG32I, { VK_FORMAT_R32G32_SINT, 2 }},
 		{Layout::RG32UI, { VK_FORMAT_R32G32_UINT, 2 }},
-		{Layout::RGB8I, { VK_FORMAT_R8G8B8_SINT, 3 }},
-		{Layout::RGB8UI, { VK_FORMAT_R8G8B8_UINT, 3 }},
-		{Layout::RGB16I, { VK_FORMAT_R16G16B16_SINT, 3 }},
-		{Layout::RGB16UI, { VK_FORMAT_R16G16B16_UINT, 3 }},
-		{Layout::RGB32I, { VK_FORMAT_R32G32B32_SINT, 3 }},
-		{Layout::RGB32UI, { VK_FORMAT_R32G32B32_UINT, 3 }},
 		{Layout::RGBA8I, { VK_FORMAT_R8G8B8A8_SINT, 4 }},
 		{Layout::RGBA8UI, { VK_FORMAT_R8G8B8A8_UINT, 4 }},
 		{Layout::RGBA16I, { VK_FORMAT_R16G16B16A16_SINT, 4 }},
@@ -348,7 +335,7 @@ bool Descriptor::operator!=(const Descriptor & other) const {
 }
 
 bool Descriptor::isSRGB() const {
-	return _typedFormat == Layout::SRGB8 || _typedFormat == Layout::SRGB8_ALPHA8;
+	return _typedFormat == Layout::SRGB8_ALPHA8;
 }
 
 std::string Descriptor::string() const {
@@ -358,31 +345,24 @@ std::string Descriptor::string() const {
 	static const std::map<Layout, std::string> strFormats = {
 		STRENUM(R8),
 		STRENUM(RG8),
-		STRENUM(RGB8),
 		STRENUM(RGBA8),
-		STRENUM(SRGB8),
 		STRENUM(SRGB8_ALPHA8),
 		STRENUM(R16),
 		STRENUM(RG16),
 		STRENUM(RGBA16),
 		STRENUM(R8_SNORM),
 		STRENUM(RG8_SNORM),
-		STRENUM(RGB8_SNORM),
 		STRENUM(RGBA8_SNORM),
 		STRENUM(R16_SNORM),
 		STRENUM(RG16_SNORM),
-		STRENUM(RGB16_SNORM),
 		STRENUM(R16F),
 		STRENUM(RG16F),
-		STRENUM(RGB16F),
 		STRENUM(RGBA16F),
 		STRENUM(R32F),
 		STRENUM(RG32F),
-		STRENUM(RGB32F),
 		STRENUM(RGBA32F),
 		STRENUM(RGB5_A1),
 		STRENUM(RGB10_A2),
-		STRENUM(R11F_G11F_B10F),
 		STRENUM(DEPTH_COMPONENT32F),
 		STRENUM(DEPTH24_STENCIL8),
 		STRENUM(DEPTH_COMPONENT16),
@@ -398,12 +378,6 @@ std::string Descriptor::string() const {
 		STRENUM(RG16UI),
 		STRENUM(RG32I),
 		STRENUM(RG32UI),
-		STRENUM(RGB8I),
-		STRENUM(RGB8UI),
-		STRENUM(RGB16I),
-		STRENUM(RGB16UI),
-		STRENUM(RGB32I),
-		STRENUM(RGB32UI),
 		STRENUM(RGBA8I),
 		STRENUM(RGBA8UI),
 		STRENUM(RGBA16I),

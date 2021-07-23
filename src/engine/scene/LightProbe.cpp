@@ -46,7 +46,7 @@ void LightProbe::decode(const KeyValues & params, Storage options) {
 	// for the static case, check that everything has been provided.
 	if(_type == LightProbe::Type::STATIC){
 		if(!_envmap){
-			_envmap = Resources::manager().getTexture("default_cube", {Layout::RGB8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, options);
+			_envmap = Resources::manager().getTexture("default_cube", {Layout::RGBA8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, options);
 		}
 		if(!_shCoeffs){
 			_shCoeffs.reset(new UniformBuffer<glm::vec4>(9, DataUse::STATIC));
