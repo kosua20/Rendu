@@ -151,7 +151,6 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 	// Build the pipeline
 	GPUContext* context = GPU::getInternal();
 
-
 	_dirtySets.fill(false);
 	if(!_dynamicBuffers.empty()){
 		_dirtySets[0] = true;
@@ -439,29 +438,32 @@ void Program::clean() {
 
 void Program::buffer(const UniformBufferBase& buffer, uint slot){
 	const UniformBufferBase* refBuff = _staticBuffers.at(slot);
-	if(refBuff != &buffer){
+	//if(refBuff != &buffer){
 		_staticBuffers[slot] = &buffer;
-		_dirtySets[2] = true;
-	}
+	//}
+	_dirtySets[2] = true;
 }
 
 void Program::texture(const Texture* texture, uint slot){
 	const Texture* refTex = _textures.at(slot);
-	if(refTex != texture){
+	// \todo We are currently not able to detect when a texture content has been updated (new vkImage/...)
+	// To do this, we could: test equality of vulkan objects (img, sampler, view) (can we read them back from the stored descriptors ?)
+	// or we could ha a dirty flag that is live for one entire frame. Requires some kind of nextFrame on all resources, called by the GPU context.
+	//if(refTex != texture){
 		_textures[slot] = texture;
-		_dirtySets[1] = true;
-	}
+	//}
+	_dirtySets[1] = true;
 
-	// \todo Handle layout.
+	// \todo Handle layout transitions.
 }
 
 void Program::texture(const Texture& texture, uint slot){
 	const Texture* refTex = _textures.at(slot);
-	if(refTex != &texture){
+	//if(refTex != &texture){
 		_textures[slot] = &texture;
 		_dirtySets[1] = true;
-	}
-	// \todo Handle layout.
+	//}
+	// \todo Handle layout transitions.
 }
 
 void Program::textures(const std::vector<const Texture *> & textures, size_t startingSlot){
@@ -469,11 +471,11 @@ void Program::textures(const std::vector<const Texture *> & textures, size_t sta
 	for(uint tid = 0; tid < texCount; ++tid){
 		const uint slot = startingSlot + tid;
 		const Texture* refTex = _textures.at(slot);
-		if(refTex != textures[tid]){
+		//if(refTex != textures[tid]){
 			_textures[slot] = textures[tid];
 			_dirtySets[1] = true;
-		}
-		// \todo Handle layout.
+		//}
+		// \todo Handle layout transitions.
 	}
 }
 

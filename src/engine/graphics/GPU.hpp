@@ -400,6 +400,8 @@ private:
 
 	static void clean(Program & program);
 
+	static void cleanFrame();
+
 	static GPUState _state; ///< Current GPU state for caching.
 	static GPUState _lastState; ///< Current GPU state for caching.
 	static Metrics _metrics; ///< Internal metrics (draw count, state changes,...).

@@ -223,6 +223,9 @@ void VkUtils::endOneTimeCommandBuffer(VkCommandBuffer & commandBuffer, GPUContex
 	submitInfo.commandBufferCount = 1;
 	submitInfo.pCommandBuffers = &commandBuffer;
 	vkQueueSubmit(context.graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
+	// \todo Instead of waiting for the queue to complete before submitting the next one, we could insert an event to
+	// get a commandBuffer -> main command buffer dependency.
+	// If we also insert a main command buffer -> command buffer dependency at the beginning, this will implicitely order auxiliary command buffers between them.
 	vkQueueWaitIdle(context.graphicsQueue);
 	vkFreeCommandBuffers(context.device, context.commandPool, 1, &commandBuffer);
 	commandBuffer = VK_NULL_HANDLE;

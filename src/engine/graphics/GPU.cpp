@@ -152,7 +152,6 @@ bool GPU::setup(const std::string & appName) {
 
 	_context.timestep = double(properties.limits.timestampPeriod);
 	_context.uniformAlignment = properties.limits.minUniformBufferOffsetAlignment;
-	_context.mappingAlignment = properties.limits.nonCoherentAtomSize;
 	// minImageTransferGranularity is guaranteed to be (1,1,1) on graphics/compute queues
 
 	if(!ShaderCompiler::init()){
@@ -986,6 +985,7 @@ void GPU::sync(){
 }
 
 void GPU::nextFrame(){
+	cleanFrame();
 	_context.nextFrame();
 	_pipelineCache.freeOutdatedPipelines();
 	// Save and reset stats.
@@ -1416,10 +1416,25 @@ void GPU::cleanup(){
 }
 
 
+struct ResourceToDelete {
+	VkImageView view = VK_NULL_HANDLE;
+	VkSampler sampler = VK_NULL_HANDLE;
+	VkImage image = VK_NULL_HANDLE;
+	VkBuffer buffer = VK_NULL_HANDLE;
+	VmaAllocation data = VK_NULL_HANDLE;
+	uint64_t frame = 0;
+};
+
+std::deque<ResourceToDelete> _resourcesToDelete;
+
 void GPU::clean(GPUTexture & tex){
-	vkDestroyImageView(_context.device, tex.view, nullptr);
-	vkDestroySampler(_context.device, tex.sampler, nullptr);
-	vmaDestroyImage(_allocator, tex.image, tex.data);
+	_resourcesToDelete.emplace_back();
+	ResourceToDelete& rsc = _resourcesToDelete.back();
+	rsc.view = tex.view;
+	rsc.sampler = tex.sampler;
+	rsc.image = tex.image;
+	rsc.data = tex.data;
+	rsc.frame = _context.frameIndex;
 }
 
 void GPU::clean(Framebuffer & framebuffer){
@@ -1431,11 +1446,42 @@ void GPU::clean(GPUMesh & mesh){
 }
 
 void GPU::clean(GPUBuffer & buffer){
-	vmaDestroyBuffer(_allocator, buffer.buffer, buffer.data);
+	_resourcesToDelete.emplace_back();
+	ResourceToDelete& rsc = _resourcesToDelete.back();
+	rsc.buffer = buffer.buffer;
+	rsc.data = buffer.data;
+	rsc.frame = _context.frameIndex;
 }
 
 void GPU::clean(Program & program){
 	
+}
+
+
+void GPU::cleanFrame(){
+	const uint64_t currentFrame = _context.frameIndex;
+
+	if(_resourcesToDelete.empty() || (currentFrame < 2)){
+		return;
+	}
+
+	ResourceToDelete& rsc = _resourcesToDelete.front();
+	while(rsc.frame < currentFrame - 2){
+		if(rsc.view){
+			vkDestroyImageView(_context.device, rsc.view, nullptr);
+		}
+		if(rsc.sampler){
+			vkDestroySampler(_context.device, rsc.sampler, nullptr);
+		}
+		if(rsc.image){
+			vmaDestroyImage(_allocator, rsc.image, rsc.data);
+		}
+		if(rsc.buffer){
+			vmaDestroyBuffer(_allocator, rsc.buffer, rsc.data);
+		}
+		_resourcesToDelete.pop_front();
+		rsc = _resourcesToDelete.front();
+	}
 }
 
 GPUState GPU::_state;
