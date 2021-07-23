@@ -98,16 +98,19 @@ int main(int argc, char ** argv) {
 	camera.projection(config.screenResolution[0] / config.screenResolution[1], 1.34f, 0.1f, 100.0f);
 	bool showImGuiDemo = false;
 
-	const Texture* tex = Resources::manager().getTexture("debug-grid", {Layout::RGBA32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
+	const Texture* tex = Resources::manager().getTexture("debug-grid", {Layout::RGBA16F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
 
-//	 glm::mat4 MVP		   = glm::mat4(
-//										   0.947,    0.000,    0.000,   -0.000,
-//											 0.000,    1.262,    0.000,    0.000,
-//											 0.000,    0.000,   -1.001,    2.284,
-//											 0.000,    0.000,   -1.000,    2.381);
-	//MVP = glm::transpose(MVP);
-	//program->uniform("mvp", MVP);
-	//program2->uniform("mvp", MVP);
+	Texture tex2("textest");
+	tex2.width = tex2.height = 8;
+	tex2.depth = tex2.levels = 1;
+	tex2.shape = TextureShape::D2;
+	tex2.images.emplace_back(tex2.width, tex2.height, 4);
+	auto& texData = tex2.images.back();
+
+
+
+	uint count = 0;
+	
 	// Start the display/interaction loop.
 	while(window.nextFrame()) {
 		
@@ -147,7 +150,34 @@ int main(int argc, char ** argv) {
 		GPU::setViewport(0, 0, screenSize[0], screenSize[1]);
 		program->use();
 		program->uniform("mvp", MVP);
-		GPU::drawMesh(*mesh);
+		//GPU::drawMesh(*mesh);
+		//GPU::setBlendState(true, BlendEquation::ADD, BlendFunction::SRC_ALPHA, BlendFunction::ONE_MINUS_SRC_ALPHA);
+
+		for(uint dy = 0; dy < tex2.height; ++dy){
+			for(uint dx = 0; dx < tex2.width; ++dx){
+				float r = 0.0f; float g = 0.0f; float b = 0.0f;
+				uint x = (dx + count)%8;
+				uint y = (dy + count)%8;
+				if(x < 2){
+					r = 1.0f;
+				} else if (x < 4){
+					g = 1.0f;
+				} else if(x < 6){
+					b = 1.0f;
+				}
+				if(y < 2){
+					b = 0.5f;
+				} else if (y < 4){
+					r = 0.5f;
+				} else if(y < 6){
+					g = 0.5f;
+				}
+				r = float(count % 60)/60.0f;
+				texData.rgba(x,y) = glm::vec4(r,g,b,0.5f);
+			}
+		}
+		++count;
+		tex2.upload({Layout::RGBA32F, Filter::NEAREST_LINEAR, Wrap::CLAMP}, true);
 
 		program2->use();
 		program2->uniform("mvp", MVP);
@@ -155,6 +185,15 @@ int main(int argc, char ** argv) {
 		program2->texture(tex, 0);
 		GPU::drawMesh(mesh2);
 		//GPU::setCullState(true, Faces::BACK);
+		//GPU::setBlendState(false);
+		float angle = float(count % 360)/360.0 * glm::two_pi<float>();
+		glm::mat3 rot = glm::mat3(glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 0.0f, 1.0f)));
+
+		mesh3.positions.clear();
+		mesh3.positions = {rot * glm::vec3(-0.5f, -0.5f, 0.1f), rot * glm::vec3(0.5f, -0.5f, 0.1f), rot * glm::vec3(0.0f, 1.0f, 0.1f)};
+		mesh3.upload();
+
+		program2->texture(tex2, 0);
 		program2->uniform("color", glm::vec3(0.0f, 0.5f, 1.0f));
 		GPU::drawMesh(mesh3);
 
