@@ -582,5 +582,5 @@ public:
 	// Binding state.
 	Program* program = nullptr;
 	const GPUMesh* mesh = nullptr;
-	//const Framebuffer* framebuffer = nullptr;
+	const Framebuffer* framebuffer = nullptr;
 };

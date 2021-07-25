@@ -94,12 +94,6 @@ public:
 	 */
 	static void bindFramebuffer(const Framebuffer & framebuffer);
 
-	/** Bind a framebuffer as a read or draw destination.
-	 \param framebuffer the framebuffer to bind as a destination
-	 \param mode the read or write mode to bind the framebuffer to
-	 */
-	//static void bindFramebuffer(const Framebuffer & framebuffer, Framebuffer::Mode mode);
-
 	/** Save a given framebuffer content to the disk.
 	 \param framebuffer the framebuffer to save
 	 \param path the output image path
@@ -211,34 +205,6 @@ public:
 	 \param h height
 	 */
 	static void setViewport(int x, int y, int w, int h);
-	
-	/** Clear color for the current framebuffer.
-	 \param color the RGBA float clear color
-	 */
-	static void clearColor(const glm::vec4 & color);
-	
-	/** Clear depth for the current framebuffer.
-	 \param depth the depth clear
-	 */
-	static void clearDepth(float depth);
-
-	/** Clear stencil for the current framebuffer.
-	 \param stencil the stencil clear
-	 */
-	static void clearStencil(uchar stencil);
-
-	/** Clear color and depth for the current framebuffer.
-	 \param color the RGBA float clear color
-	 \param depth the depth clear
-	 */
-	static void clearColorAndDepth(const glm::vec4 & color, float depth);
-
-	/** Clear color depth and stencil for the current framebuffer.
-	 \param color the RGBA float clear color
-	 \param depth the depth clear
-	 \param stencil the stencil clear
-	 */
-	static void clearColorDepthStencil(const glm::vec4 & color, float depth, uchar stencil);
 
 	/** Enable or disable the depth test.
 	 \param test should depth test be performed
@@ -305,11 +271,6 @@ public:
 	 \param writeAlpha allow writes to the alpha channel
 	 */
 	static void setColorState(bool writeRed, bool writeGreen, bool writeBlue, bool writeAlpha);
-
-	/** Set if writes to sRGB should be converted automatically.
-	 \param convert should conversion be applied
-	 */
-	static void setSRGBState(bool convert);
 
 	/** Query the current GPU state.
 	 \param state will be populated with the current GPU settings

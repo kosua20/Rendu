@@ -23,7 +23,7 @@ private:
 		VkPipeline pipeline;
 		const GPUMesh* mesh;
 		const Program* program;
-		// Framebuffer* framebuffer;
+		const Framebuffer* framebuffer;
 	};
 
 	VkPipeline createNewPipeline(const GPUState& state, const uint64_t hash);

@@ -359,34 +359,11 @@ void GPU::createProgram(Program& program, const std::string & vertexContent, con
 
 void GPU::bindProgram(const Program & program){
 	_state.program = (Program*)&program;
-//	if(_state.program != program._id){
-//		_state.program = program._id;
-//		glUseProgram(program._id);
-//		_metrics.programBindings += 1;
-//	}
 }
 
 void GPU::bindFramebuffer(const Framebuffer & framebuffer){
-//	_state.framebuffer = &framebuffer;
-//	if(_state.drawFramebuffer != framebuffer._id){
-//		_state.drawFramebuffer = framebuffer._id;
-//		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer._id);
-	//		_metrics.framebufferBindings += 1;
-//	}
+	_state.framebuffer = &framebuffer;
 }
-
-//void GPU::bindFramebuffer(const Framebuffer & framebuffer, Framebuffer::Mode mode){
-	//if(mode == Framebuffer::Mode::WRITE && _state.drawFramebuffer != framebuffer._id){
-	//	_state.drawFramebuffer = framebuffer._id;
-	//	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer._id);
-	//	_metrics.framebufferBindings += 1;
-	//} else if(mode == Framebuffer::Mode::READ && _state.readFramebuffer != framebuffer._id){
-	//	_state.readFramebuffer = framebuffer._id;
-	//	glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer._id);
-	//	_metrics.framebufferBindings += 1;
-	//}
-
-//}
 
 void GPU::saveFramebuffer(const Framebuffer & framebuffer, const std::string & path, bool flip, bool ignoreAlpha) {
 
@@ -395,7 +372,45 @@ void GPU::saveFramebuffer(const Framebuffer & framebuffer, const std::string & p
 
 	//const std::unique_ptr<GPUTexture> & gpu = framebuffer.texture()->gpu;
 	//GPU::savePixels(gpu->type, gpu->format, framebuffer.width(), framebuffer.height(), gpu->channels, path, flip, ignoreAlpha);
-	
+	//	GPU::sync();
+	//
+	//	const bool hdr = type == GL_FLOAT;
+	//
+	//	Log::Info() << Log::GPU << "Saving framebuffer to file " << path << (hdr ? ".exr" : ".png") << "... " << std::flush;
+	//	int ret;
+	//	Image image(width, height, components);
+	//
+	//	glPixelStorei(GL_PACK_ALIGNMENT, 1);
+	//	_metrics.stateChanges += 1;
+	//	const size_t fullSize = image.width * image.height * image.components;
+	//	if(hdr) {
+	//		// Get back values.
+	//		glReadPixels(0, 0, GLsizei(image.width), GLsizei(image.height), format, type, &image.pixels[0]);
+	//		_metrics.downloads += 1;
+	//		// Save data.
+	//		ret = image.save(path + ".exr", flip, ignoreAlpha);
+	//
+	//	} else {
+	//		// Get back values.
+	//		GLubyte * data = new GLubyte[fullSize];
+	//		glReadPixels(0, 0, GLsizei(image.width), GLsizei(image.height), format, type, &data[0]);
+	//		_metrics.downloads += 1;
+	//		// Convert to image float format.
+	//		for(size_t pid = 0; pid < fullSize; ++pid) {
+	//			image.pixels[pid] = float(data[pid]) / 255.0f;
+	//		}
+	//		// Save data.
+	//		ret = image.save(path + ".png", flip, ignoreAlpha);
+	//		delete[] data;
+	//	}
+	//	glPixelStorei(GL_PACK_ALIGNMENT, 4);
+	//	_metrics.stateChanges += 1;
+	//
+	//	if(ret != 0) {
+	//		Log::Error() << "Error." << std::endl;
+	//	} else {
+	//		Log::Info() << "Done." << std::endl;
+	//	}
 	//glBindFramebuffer(GL_READ_FRAMEBUFFER, _state.readFramebuffer);
 	//_metrics.framebufferBindings += 2;
 }
@@ -643,6 +658,8 @@ void GPU::downloadTexture(Texture & texture, int level) {
 		Log::Verbose() << Log::GPU << "Texture already contain CPU data, will be erased." << std::endl;
 	}
 	texture.images.resize(texture.depth * texture.levels);
+
+
 //
 //	const GLenum target			= texture.gpu->target;
 //	const GLenum type			= GL_FLOAT;
@@ -1111,95 +1128,6 @@ void GPU::setViewport(int x, int y, int w, int h) {
 	vkCmdSetScissor(_context.getCurrentCommandBuffer(), 0, 1, &scissor);
 }
 
-void GPU::clearColor(const glm::vec4 & color) {
-//	if(_state.colorClearValue != color){
-//		_state.colorClearValue = color;
-//		glClearColor(color[0], color[1], color[2], color[3]);
-//		_metrics.stateChanges += 1;
-//	}
-//	glClear(GL_COLOR_BUFFER_BIT);
-//	_metrics.clearAndBlits += 1;
-}
-
-void GPU::clearDepth(float depth) {
-//	if(_state.depthClearValue != depth){
-//		_state.depthClearValue = depth;
-//		glClearDepth(depth);
-//		_metrics.stateChanges += 1;
-//	}
-//	glClear(GL_DEPTH_BUFFER_BIT);
-//	_metrics.clearAndBlits += 1;
-}
-
-void GPU::clearStencil(uchar stencil) {
-	// The stencil mask applies to clearing.
-	// Disable it temporarily.
-//	if(!_state.stencilWriteMask){
-//		glStencilMask(0xFF);
-//		_metrics.stateChanges += 1;
-//	}
-//
-//	if(_state.stencilClearValue != stencil){
-//		_state.stencilClearValue = stencil;
-//		glClearStencil(GLint(stencil));
-//		_metrics.stateChanges += 1;
-//	}
-//	glClear(GL_STENCIL_BUFFER_BIT);
-//	_metrics.clearAndBlits += 1;
-//
-//	if(!_state.stencilWriteMask){
-//		glStencilMask(0x00);
-//		_metrics.stateChanges += 1;
-//	}
-}
-
-void GPU::clearColorAndDepth(const glm::vec4 & color, float depth) {
-//	if(_state.colorClearValue != color){
-	//	_state.colorClearValue = color;
-//		glClearColor(color[0], color[1], color[2], color[3]);
-//		_metrics.stateChanges += 1;
-//	}
-//	if(_state.depthClearValue != depth){
-//		_state.depthClearValue = depth;
-//		glClearDepth(depth);
-//		_metrics.stateChanges += 1;
-//	}
-//	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//	_metrics.clearAndBlits += 1;
-}
-
-void GPU::clearColorDepthStencil(const glm::vec4 & color, float depth, uchar stencil) {
-	// The stencil mask applies to clearing.
-	// Disable it temporarily.
-//	if(!_state.stencilWriteMask){
-//		glStencilMask(0xFF);
-//		_metrics.stateChanges += 1;
-//	}
-//	if(_state.colorClearValue != color){
-//		_state.colorClearValue = color;
-//		glClearColor(color[0], color[1], color[2], color[3]);
-//		_metrics.stateChanges += 1;
-//	}
-//	if(_state.depthClearValue != depth){
-//		_state.depthClearValue = depth;
-//		glClearDepth(depth);
-//		_metrics.stateChanges += 1;
-//	}
-//	if(_state.stencilClearValue != stencil){
-//		_state.stencilClearValue = stencil;
-//		glClearStencil(GLint(stencil));
-//		_metrics.stateChanges += 1;
-//	}
-//
-//	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-//	_metrics.clearAndBlits += 1;
-//
-//	if(!_state.stencilWriteMask){
-//		glStencilMask(0x00);
-//		_metrics.stateChanges += 1;
-//	}
-}
-
 void GPU::setDepthState(bool test) {
 	_state.depthTest = test;
 }
@@ -1375,49 +1303,6 @@ void GPU::blitTexture(VkCommandBuffer& commandBuffer, const Texture& src, const 
 
 	vkCmdBlitImage(commandBuffer, src.gpu->image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, dst.gpu->image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, blitRegions.size(), blitRegions.data(), filterVk);
 }
-
-//void GPU::savePixels(GLenum type, GLenum format, unsigned int width, unsigned int height, unsigned int components, const std::string & path, bool flip, bool ignoreAlpha) {
-
-//	GPU::sync();
-//
-//	const bool hdr = type == GL_FLOAT;
-//
-//	Log::Info() << Log::GPU << "Saving framebuffer to file " << path << (hdr ? ".exr" : ".png") << "... " << std::flush;
-//	int ret;
-//	Image image(width, height, components);
-//
-//	glPixelStorei(GL_PACK_ALIGNMENT, 1);
-//	_metrics.stateChanges += 1;
-//	const size_t fullSize = image.width * image.height * image.components;
-//	if(hdr) {
-//		// Get back values.
-//		glReadPixels(0, 0, GLsizei(image.width), GLsizei(image.height), format, type, &image.pixels[0]);
-//		_metrics.downloads += 1;
-//		// Save data.
-//		ret = image.save(path + ".exr", flip, ignoreAlpha);
-//
-//	} else {
-//		// Get back values.
-//		GLubyte * data = new GLubyte[fullSize];
-//		glReadPixels(0, 0, GLsizei(image.width), GLsizei(image.height), format, type, &data[0]);
-//		_metrics.downloads += 1;
-//		// Convert to image float format.
-//		for(size_t pid = 0; pid < fullSize; ++pid) {
-//			image.pixels[pid] = float(data[pid]) / 255.0f;
-//		}
-//		// Save data.
-//		ret = image.save(path + ".png", flip, ignoreAlpha);
-//		delete[] data;
-//	}
-//	glPixelStorei(GL_PACK_ALIGNMENT, 4);
-//	_metrics.stateChanges += 1;
-//
-//	if(ret != 0) {
-//		Log::Error() << "Error." << std::endl;
-//	} else {
-//		Log::Info() << "Done." << std::endl;
-//	}
-//}
 
 void GPU::getState(GPUState& state) {
 	state = _state;
