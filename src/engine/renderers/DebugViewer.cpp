@@ -498,7 +498,7 @@ void DebugViewer::updateDisplay(const TextureInfos & tex) {
 		{TextureShape::ArrayCube, 5},
 		{TextureShape::D3, 6}};
 
-	tex.display->bind(Framebuffer::Load::DONTCARE);
+	tex.display->bind(Framebuffer::Operation::DONTCARE);
 	tex.display->setViewport();
 
 	_texDisplay->use();

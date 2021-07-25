@@ -75,7 +75,7 @@ void ConvolutionPyramid::process(const Texture * texture) {
 	_filter->uniform("g[0]", 3, &_g[0]);
 	// Do:  f[end] = filter(l[end], g)
 	const auto & lastLevel = _levelsOut.back();
-	lastLevel->bind(Framebuffer::Load::DONTCARE);
+	lastLevel->bind(Framebuffer::Operation::DONTCARE);
 	lastLevel->setViewport();
 	_filter->texture(_levelsIn.back()->texture(), 0);
 	ScreenQuad::draw();
@@ -88,7 +88,7 @@ void ConvolutionPyramid::process(const Texture * texture) {
 
 	// Do: f[i] = filter(l[i], g) + filter(upscale(f[i+1], h2)
 	for(int i = int(_levelsOut.size() - 2); i >= 0; --i) {
-		_levelsOut[i]->bind(Framebuffer::Load::DONTCARE);
+		_levelsOut[i]->bind(Framebuffer::Operation::DONTCARE);
 		_levelsOut[i]->setViewport();
 		// Upscale with zeros, filter and combine.
 		_upscale->textures({_levelsIn[i]->texture(), _levelsOut[i + 1]->texture()});
@@ -96,7 +96,7 @@ void ConvolutionPyramid::process(const Texture * texture) {
 	}
 
 	// Compensate the initial padding.
-	_shifted->bind(Framebuffer::Load::DONTCARE);
+	_shifted->bind(Framebuffer::Operation::DONTCARE);
 	_shifted->setViewport();
 	_padder->use();
 	// Need to also compensate for the potential extra padding.

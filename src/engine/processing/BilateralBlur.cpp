@@ -31,12 +31,12 @@ void BilateralBlur::process(const glm::mat4 & projection, const Texture * textur
 	_filter->uniform("projParams", glm::vec2( projection[2][2], projection[3][2]));
 	framebuffer.setViewport();
 
-	_intermediate->bind(Framebuffer::Load::DONTCARE);
+	_intermediate->bind(Framebuffer::Operation::DONTCARE);
 	_filter->uniform("axis", 0);
 	_filter->texture(texture, 0);
 	ScreenQuad::draw();
 
-	framebuffer.bind(Framebuffer::Load::DONTCARE);
+	framebuffer.bind(Framebuffer::Operation::DONTCARE);
 	_filter->uniform("axis", 1);
 	_filter->texture(_intermediate->texture(), 0);
 	ScreenQuad::draw();

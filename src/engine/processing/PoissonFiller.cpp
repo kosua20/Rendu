@@ -42,7 +42,7 @@ void PoissonFiller::process(const Texture * texture) {
 	GPU::setBlendState(false);
 	GPU::setCullState(true, Faces::BACK);
 
-	_compo->bind(Framebuffer::Load::DONTCARE);
+	_compo->bind(Framebuffer::Operation::DONTCARE);
 	_compo->setViewport();
 	_composite->use();
 	_composite->textures({_pyramid.texture(), texture});

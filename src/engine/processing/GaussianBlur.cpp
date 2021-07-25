@@ -35,7 +35,7 @@ void GaussianBlur::process(const Texture * texture, Framebuffer & framebuffer) {
 	}
 
 	// First, copy the input texture to the first framebuffer.
-	_frameBuffers[0]->bind(Framebuffer::Load::DONTCARE);
+	_frameBuffers[0]->bind(Framebuffer::Operation::DONTCARE);
 	_frameBuffers[0]->setViewport();
 	_passthrough->use();
 	_passthrough->texture(texture, 0);
