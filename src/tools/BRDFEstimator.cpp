@@ -370,7 +370,7 @@ int main(int argc, char ** argv) {
 		}
 
 		// Render reference cubemap in the bottom right corner.
-		Framebuffer::backbuffer()->bind(Framebuffer::Load::LOAD, 1.0f);
+		Framebuffer::backbuffer()->bind(Framebuffer::Operation::LOAD, 1.0f);
 		const float gizmoScale	   = 0.2f;
 		const glm::ivec2 gizmoSize = glm::ivec2(gizmoScale * glm::vec2(screenSize));
 		GPU::setViewport(0, 0, gizmoSize[0], gizmoSize[1]);

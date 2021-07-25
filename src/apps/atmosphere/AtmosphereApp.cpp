@@ -67,7 +67,7 @@ void AtmosphereApp::draw() {
 
 	// Tonemapping and final screen.
 	GPU::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
-	Framebuffer::backbuffer()->bind(Framebuffer::Load::DONTCARE, Framebuffer::Load::DONTCARE);
+	Framebuffer::backbuffer()->bind(Framebuffer::Operation::DONTCARE, Framebuffer::Operation::DONTCARE);
 	_tonemap->use();
 	_tonemap->texture(_atmosphereBuffer->texture(), 0);
 	ScreenQuad::draw();

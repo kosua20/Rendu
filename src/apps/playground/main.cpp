@@ -110,6 +110,8 @@ int main(int argc, char ** argv) {
 
 
 	uint count = 0;
+	Descriptor desc = {Layout::RGBA8, Filter::LINEAR, Wrap::CLAMP};
+	Framebuffer fb(400, 300, desc , true, "testfb");
 	
 	// Start the display/interaction loop.
 	while(window.nextFrame()) {
@@ -143,10 +145,14 @@ int main(int argc, char ** argv) {
 			remainingTime -= deltaTime;
 		}
 
+		if(Input::manager().resized()){
+			fb.resize(Input::manager().size());
+		}
+
 		// Render.
 		const glm::ivec2 screenSize = Input::manager().size();
 		const glm::mat4 MVP		   = camera.projection() * camera.view();
-		Framebuffer::backbuffer()->bind(glm::vec4(0.2f, 0.3f, 0.25f, 1.0f), 1.0f);
+		fb.bind(glm::vec4(0.2f, 0.3f, 0.25f, 1.0f), 1.0f);
 		GPU::setViewport(0, 0, screenSize[0], screenSize[1]);
 		program->use();
 		program->uniform("mvp", MVP);
@@ -201,6 +207,7 @@ int main(int argc, char ** argv) {
 		//GPU::drawMesh(mesh2);
 		//GPU::drawMesh(mesh3);
 
+		//Framebuffer::backbuffer()->bind();
 
 
 		ImGui::Text("ImGui is functional!");

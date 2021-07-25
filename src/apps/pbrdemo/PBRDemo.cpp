@@ -188,7 +188,7 @@ void PBRDemo::draw() {
 	GPU::setCullState(true, Faces::BACK);
 	GPU::setBlendState(false);
 
-	Framebuffer::backbuffer()->bind(Framebuffer::Load::DONTCARE);
+	Framebuffer::backbuffer()->bind(Framebuffer::Operation::DONTCARE);
 	GPU::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 	_finalProgram->use();
 	_finalProgram->texture(finalRender->texture());

@@ -51,7 +51,7 @@ void FilteringApp::draw() {
 		GPU::setDepthState(false);
 		GPU::setBlendState(false);
 		GPU::setCullState(true, Faces::BACK);
-		_sceneBuffer->bind(_image.width > 0 ? {0.0f, 0.0f, 0.0f, 1.0f} : Framebuffer::Load::DONTCARE);
+		_sceneBuffer->bind(_image.width > 0 ? {0.0f, 0.0f, 0.0f, 1.0f} : Framebuffer::Operation::DONTCARE);
 		_sceneBuffer->setViewport();
 		_passthrough->use();
 		if(_image.width > 0) {
@@ -99,7 +99,7 @@ void FilteringApp::draw() {
 	GPU::setBlendState(false);
 	GPU::setCullState(true, Faces::BACK);
 	
-	Framebuffer::backbuffer()->bind(Framebuffer::Load::DONTCARE);
+	Framebuffer::backbuffer()->bind(Framebuffer::Operation::DONTCARE);
 	const glm::ivec2 screenSize = Input::manager().size();
 	GPU::setViewport(0, 0, screenSize[0], screenSize[1]);
 	_passthrough->use();

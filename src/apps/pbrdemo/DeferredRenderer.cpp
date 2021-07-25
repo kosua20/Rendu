@@ -259,7 +259,7 @@ void DeferredRenderer::draw(const Camera & camera, Framebuffer & framebuffer, si
 
 	// Render opaque objects and the background to the Gbuffer.
 	// Clear the depth buffer (we know we will draw everywhere, no need to clear color).
-	_gbuffer->bind(Framebuffer::Load::DONTCARE, 1.0f);
+	_gbuffer->bind(Framebuffer::Operation::DONTCARE, 1.0f);
 	_gbuffer->setViewport();
 
 	renderOpaque(visibles, view, proj);
@@ -275,7 +275,7 @@ void DeferredRenderer::draw(const Camera & camera, Framebuffer & framebuffer, si
 	// Gbuffer lighting pass
 	_lightRenderer->updateCameraInfos(view, proj);
 	_lightRenderer->updateShadowMapInfos(_shadowMode, 0.002f);
-	_lightBuffer->bind(Framebuffer::Load::DONTCARE);
+	_lightBuffer->bind(Framebuffer::Operation::DONTCARE);
 	_lightBuffer->setViewport();
 	_ambientScreen->draw(view, proj, _scene->environment);
 
@@ -295,7 +295,7 @@ void DeferredRenderer::draw(const Camera & camera, Framebuffer & framebuffer, si
 		}
 		_fwdLightsGPU->data().upload();
 		// Now render transparent effects in a forward fashion.
-		_lightBuffer->bind(Framebuffer::Load::LOAD, Framebuffer::Load::LOAD);
+		_lightBuffer->bind(Framebuffer::Operation::LOAD, Framebuffer::Operation::LOAD);
 		_lightBuffer->setViewport();
 		renderTransparent(visibles, view, proj);
 	}
