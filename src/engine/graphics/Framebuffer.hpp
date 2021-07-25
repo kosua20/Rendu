@@ -18,7 +18,7 @@ public:
 		WRITE ///< Write mode.
 	};
 
-	enum class Load {
+	enum class Operation : uint {
 		LOAD,
 		CLEAR,
 		DONTCARE
@@ -59,16 +59,16 @@ public:
 
 		LoadOperation() {};
 
-		LoadOperation(Load mod) : mode(mod) {};
+		LoadOperation(Operation mod) : mode(mod) {};
 
-		LoadOperation(const glm::vec4& val) : value(val), mode(Load::CLEAR) {};
+		LoadOperation(const glm::vec4& val) : value(val), mode(Operation::CLEAR) {};
 
-		LoadOperation(float val) : value(val), mode(Load::CLEAR) {};
+		LoadOperation(float val) : value(val), mode(Operation::CLEAR) {};
 
-		LoadOperation(uchar val) : value(float(val)), mode(Load::CLEAR) {};
+		LoadOperation(uchar val) : value(float(val)), mode(Operation::CLEAR) {};
 
 		glm::vec4 value{1.0f};
-		Load mode = Load::LOAD;
+		Operation mode = Operation::LOAD;
 	};
 	
 	/**
@@ -120,8 +120,8 @@ public:
 	 \return the texture
 	 */
 	const Texture * texture(unsigned int i = 0) const {
-		// _idColors will never be modified after initialization, so this can be done.
-		return &_idColors[i];
+		// _colors will never be modified after initialization, so this can be done.
+		return &_colors[i];
 	}
 
 	/**
@@ -130,8 +130,8 @@ public:
 	 \return the texture
 	 */
 	Texture * texture(unsigned int i = 0) {
-		// _idColors will never be modified after initialization, so this can be done.
-		return &_idColors[i];
+		// _colors will never be modified after initialization, so this can be done.
+		return &_colors[i];
 	}
 
 	/** Query the descriptor of one of the color attachments.
@@ -139,7 +139,7 @@ public:
 	 \return the descriptor
 	*/
 	const Descriptor & descriptor(unsigned int i = 0) const {
-		return _idColors[i].gpu->descriptor();
+		return _colors[i].gpu->descriptor();
 	}
 
 	/** Query the shape of the framebuffer.
@@ -153,7 +153,7 @@ public:
 	 Query the 2D texture backing the depth attachment if it exists.
 	 \return the depth texture or null
 	 */
-	const Texture * depthBuffer() const { return (_depthUse == Depth::TEXTURE ? &_idDepth : nullptr); }
+	const Texture * depthBuffer() const { return (_depthUse == Depth::TEXTURE ? &_depth : nullptr); }
 
 	/** Query the name of the framebuffer, for debugging purposes.
 	\return name the framebuffer name
@@ -176,7 +176,7 @@ public:
 	 Query the framebuffer depth.
 	 \return the depth
 	 */
-	uint depth() const { return _depth; }
+	uint depth() const { return _layers; }
 
 	/**
 	 Query the number of color attachments.
@@ -219,21 +219,39 @@ public:
 	~Framebuffer();
 
 private:
+
+
+	struct Slice {
+		VkFramebuffer framebuffer = VK_NULL_HANDLE; ///< The framebuffer ID.
+		std::vector<VkImageView> attachments;
+	};
+
+	VkRenderPass createRenderpass(Operation colorOp, Operation depthOp, Operation stencilOp);
+	void finalizeFramebuffer();
+	void bind(const Slice& slice, size_t layer, size_t layerCount, size_t mip, size_t mipCount, const LoadOperation& colorOp, const LoadOperation& depthOp, const LoadOperation& stencilOp) const;
+
 	/** Default constructor. */
 	Framebuffer() = default;
 
 	std::string _name; ///< Framebuffer debug name.
-	unsigned int _width  = 0; ///< The framebuffer width.
-	unsigned int _height = 0; ///< The framebuffer height.
-	unsigned int _depth = 0; ///< The framebuffer depth.
+	uint _width  = 0; ///< The framebuffer width.
+	uint _height = 0; ///< The framebuffer height.
+	uint _layers = 1; ///< The framebuffer depth.
+	uint _mips = 1;
 
-	//GLuint _id = 0;					///< The framebuffer ID.
-	std::vector<Texture> _idColors; ///< The color textures.
-	Texture _idDepth = Texture("Depth"); ///< The depth renderbuffer.
+	std::vector<std::vector<Slice>> _framebuffers;
+	Slice _fullFramebuffer;
+
+	std::vector<Texture> _colors; ///< The color textures.
+	Texture _depth = Texture("Depth"); ///< The depth renderbuffer.
+
 	TextureShape _shape = TextureShape::D2;	///< The texture shape.
-	//GLenum _target = GL_TEXTURE_2D;			///< The GPU texture shape.
+	VkImageType _target = VK_IMAGE_TYPE_2D;
 	bool _hasStencil = false;		///< Does the framebuffer has a stencil buffer.
-	
+
+	std::vector<VkImageView> _views;
+	std::array<std::array<std::array<VkRenderPass, 3>, 3>, 3> _renderPasses;
+
 	/// \brief Type of depth storage structure used.
 	enum class Depth {
 		NONE,
