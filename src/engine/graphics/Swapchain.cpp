@@ -217,7 +217,7 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 }
 
 VkRenderPass Swapchain::createMainRenderpass(const VkFormat & depth, const VkFormat & color){
-	// We might want to abstract this for all renderpasses based on framebuffer info.
+	// \todo We might want to abstract this for all renderpasses based on framebuffer info.
 	// Depth attachment.
 	VkAttachmentDescription depthAttachment = {};
 	depthAttachment.format = depth;
@@ -294,7 +294,7 @@ void Swapchain::resize(uint width, uint height){
 
 bool Swapchain::finishFrame(){
 	// \todo Do outside
-	{
+	if(_context->inRenderPass){
 		// Finish final pass and command buffer.
 		vkCmdEndRenderPass(_context->getCurrentCommandBuffer());
 	}

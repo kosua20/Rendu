@@ -390,6 +390,8 @@ private:
 
 	static void bindPipelineIfNeeded();
 
+	static void blitTexture(VkCommandBuffer& commandBuffer, const Texture& src, const Texture& dst, uint mipStartSrc, uint mipStartDst, uint mipCount, uint layerStartSrc, uint layerStartDst, uint layerCount, Filter filter);
+
 	static void clean(GPUTexture & tex);
 
 	static void clean(GPUMesh & mesh);

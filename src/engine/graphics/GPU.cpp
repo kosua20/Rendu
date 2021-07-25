@@ -35,7 +35,7 @@ GPUContext* GPU::getInternal(){
 	return &_context;
 }
 
-void textureLayoutBarrier(VkCommandBuffer& commandBuffer, const Texture& texture, VkImageLayout newLayout){
+static void textureLayoutBarrier(VkCommandBuffer& commandBuffer, const Texture& texture, VkImageLayout newLayout){
 	const bool isCube = texture.shape & TextureShape::Cube;
 	const bool isArray = texture.shape & TextureShape::Array;
 	const uint layers = (isCube || isArray) ? texture.depth : 1;
@@ -1255,139 +1255,124 @@ void GPU::setColorState(bool writeRed, bool writeGreen, bool writeBlue, bool wri
 }
 
 void GPU::blitDepth(const Framebuffer & src, const Framebuffer & dst) {
-//	src.bind(Framebuffer::Mode::READ);
-//	dst.bind(Framebuffer::Mode::WRITE);
-//	glBlitFramebuffer(0, 0, src.width(), src.height(), 0, 0, dst.width(), dst.height(), GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+	VkCommandBuffer& commandBuffer = _context.getCurrentCommandBuffer();
+
+	if(!src.depthBuffer() || !dst.depthBuffer()){
+		Log::Warning() << Log::GPU << "No depth buffer to blit." << std::endl;
+		return;
+	}
+	const Texture& srcTex = *src.depthBuffer();
+	const Texture& dstTex = *dst.depthBuffer();
+
+	const uint layerCount = srcTex.shape == TextureShape::D3 ? 1 : srcTex.depth;
+	GPU::blitTexture(commandBuffer, srcTex, dstTex, 0, 0, srcTex.levels, 0, 0, layerCount, Filter::NEAREST);
+
 //	_metrics.clearAndBlits += 1;
 }
 
 void GPU::blit(const Framebuffer & src, const Framebuffer & dst, Filter filter) {
-//	src.bind(Framebuffer::Mode::READ);
-//	dst.bind(Framebuffer::Mode::WRITE);
-//	const GLenum filterGL = filter == Filter::LINEAR ? GL_LINEAR : GL_NEAREST;
-//	glBlitFramebuffer(0, 0, src.width(), src.height(), 0, 0, dst.width(), dst.height(), GL_COLOR_BUFFER_BIT, filterGL);
-//	_metrics.clearAndBlits += 1;
+	VkCommandBuffer& commandBuffer = _context.getCurrentCommandBuffer();
+	const uint count = std::min(src.attachments(), dst.attachments());
+
+	for(uint cid = 0; cid < count; ++cid){
+		const Texture& srcTex = *src.texture(cid);
+		const Texture& dstTex = *dst.texture(cid);
+		const uint layerCount = srcTex.shape == TextureShape::D3 ? 1 : srcTex.depth;
+		GPU::blitTexture(commandBuffer, srcTex, dstTex, 0, 0, srcTex.levels, 0, 0, layerCount, filter);
+	}
 }
 
 void GPU::blit(const Framebuffer & src, const Framebuffer & dst, size_t lSrc, size_t lDst, Filter filter) {
-	//GPU::blit(src, dst, lSrc, lDst, 0, 0, filter);
+	GPU::blit(src, dst, lSrc, lDst, 0, 0, filter);
 }
 
 void GPU::blit(const Framebuffer & src, const Framebuffer & dst, size_t lSrc, size_t lDst, size_t mipSrc, size_t mipDst, Filter filter) {
-//	src.bind(lSrc, mipSrc, Framebuffer::Mode::READ);
-//	dst.bind(lDst, mipDst, Framebuffer::Mode::WRITE);
-//	const GLenum filterGL = filter == Filter::LINEAR ? GL_LINEAR : GL_NEAREST;
-//	glBlitFramebuffer(0, 0, src.width() / (1 << mipSrc), src.height() / (1 << mipSrc), 0, 0, dst.width() / (1 << mipDst), dst.height() / (1 << mipDst), GL_COLOR_BUFFER_BIT, filterGL);
-//	_metrics.clearAndBlits += 1;
+
+	VkCommandBuffer& commandBuffer = _context.getCurrentCommandBuffer();
+	const uint count = std::min(src.attachments(), dst.attachments());
+
+	for(uint cid = 0; cid < count; ++cid){
+		const Texture& srcTex = *src.texture(cid);
+		const Texture& dstTex = *dst.texture(cid);
+		GPU::blitTexture(commandBuffer, srcTex, dstTex, mipSrc, mipDst, 1, lSrc, lDst, 1, filter);
+	}
 }
 
 void GPU::blit(const Texture & src, Texture & dst, Filter filter) {
+
 	// Prepare the destination.
-//	dst.width  = src.width;
-//	dst.height = src.height;
-//	dst.depth  = src.depth;
-//	dst.levels = 1;
-//	dst.shape  = src.shape;
-//	if(src.levels != 1) {
-//		Log::Warning() << Log::GPU << "Only the first mipmap level will be used." << std::endl;
-//	}
-//	if(!src.images.empty()) {
-//		Log::Warning() << Log::GPU << "CPU data won't be copied." << std::endl;
-//	}
-//	GPU::setupTexture(dst, src.gpu->descriptor());
-//
-//	// Create two framebuffers.
-//	GLuint srcFb, dstFb;
-//	glGenFramebuffers(1, &srcFb);
-//	glGenFramebuffers(1, &dstFb);
-//	// Because these two are temporary and will be unbound at the end of the call
-//	// we do not update the cached GPU state.
-//	glBindFramebuffer(GL_READ_FRAMEBUFFER, srcFb);
-//	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, dstFb);
-//	_metrics.framebufferBindings += 2;
-//
-//	const GLenum filterGL = filter == Filter::LINEAR ? GL_LINEAR : GL_NEAREST;
-//
-//	if(src.shape == TextureShape::Cube) {
-//		for(size_t i = 0; i < 6; ++i) {
-//			glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), src.gpu->id, 0);
-//			glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), dst.gpu->id, 0);
-//			GPU::checkFramebufferStatus();
-//			glBlitFramebuffer(0, 0, src.width, src.height, 0, 0, dst.width, dst.height, GL_COLOR_BUFFER_BIT, filterGL);
-//			_metrics.clearAndBlits += 1;
-//		}
-//	} else {
-//		if(src.shape == TextureShape::D1) {
-//			glFramebufferTexture1D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, src.gpu->target, src.gpu->id, 0);
-//			glFramebufferTexture1D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, dst.gpu->target, dst.gpu->id, 0);
-//
-//		} else if(src.shape == TextureShape::D2) {
-//			glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, src.gpu->target, src.gpu->id, 0);
-//			glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, dst.gpu->target, dst.gpu->id, 0);
-//
-//		} else {
-//			Log::Error() << Log::GPU << "Unsupported texture shape for blitting." << std::endl;
-//			return;
-//		}
-//		GPU::checkFramebufferStatus();
-//		glBlitFramebuffer(0, 0, src.width, src.height, 0, 0, dst.width, dst.height, GL_COLOR_BUFFER_BIT, filterGL);
-//		_metrics.clearAndBlits += 1;
-//	}
-//	// Restore the proper framebuffers from the cache.
-//	glBindFramebuffer(GL_READ_FRAMEBUFFER, _state.readFramebuffer);
-//	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _state.drawFramebuffer);
-//	_metrics.framebufferBindings += 2;
-//	glDeleteFramebuffers(1, &srcFb);
-//	glDeleteFramebuffers(1, &dstFb);
+	dst.width  = src.width;
+	dst.height = src.height;
+	dst.depth  = src.depth;
+	dst.levels = src.levels;
+	dst.shape  = src.shape;
+
+	if(!src.images.empty()) {
+		Log::Warning() << Log::GPU << "CPU data won't be copied." << std::endl;
+	}
+	GPU::setupTexture(dst, src.gpu->descriptor(), false);
+
+	const uint layerCount = src.shape == TextureShape::D3 ? 1 : src.depth;
+	GPU::blitTexture(_context.getCurrentCommandBuffer(), src, dst, 0, 0, src.levels, 0, 0, layerCount, filter);
+
 }
 
 void GPU::blit(const Texture & src, Framebuffer & dst, Filter filter) {
 	// Prepare the destination.
-//	if(src.levels != 1) {
-//		Log::Warning() << Log::GPU << "Only the first mipmap level will be used." << std::endl;
-//	}
-//	if(src.shape != dst.shape()){
-//		Log::Error() << Log::GPU << "The texture and framebuffer don't have the same shape." << std::endl;
-//		return;
-//	}
-//
-//	// Create one framebuffer.
-//	GLuint srcFb;
-//	glGenFramebuffers(1, &srcFb);
-//	// Because it's temporary and will be unbound at the end of the call
-//	// we do not update the cached GPU state.
-//	glBindFramebuffer(GL_READ_FRAMEBUFFER, srcFb);
-//	_metrics.framebufferBindings += 1;
-//	const GLenum filterGL = filter == Filter::LINEAR ? GL_LINEAR : GL_NEAREST;
-//
-//	if(src.shape == TextureShape::Cube) {
-//		for(size_t i = 0; i < 6; ++i) {
-//			glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i), src.gpu->id, 0);
-//			GPU::checkFramebufferStatus();
-//			dst.bind(i, 0, Framebuffer::Mode::WRITE);
-//			glBlitFramebuffer(0, 0, src.width, src.height, 0, 0, dst.width(), dst.height(), GL_COLOR_BUFFER_BIT, filterGL);
-//			_metrics.clearAndBlits += 1;
-//		}
-//	} else {
-//		if(src.shape == TextureShape::D1) {
-//			glFramebufferTexture1D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, src.gpu->target, src.gpu->id, 0);
-//
-//		} else if(src.shape == TextureShape::D2) {
-//			glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, src.gpu->target, src.gpu->id, 0);
-//
-//		} else {
-//			Log::Error() << Log::GPU << "Unsupported texture shape for blitting." << std::endl;
-//			return;
-//		}
-//		GPU::checkFramebufferStatus();
-//		dst.bind(0, 0, Framebuffer::Mode::WRITE);
-//		glBlitFramebuffer(0, 0, src.width, src.height, 0, 0, dst.width(), dst.height(), GL_COLOR_BUFFER_BIT, filterGL);
-//		_metrics.clearAndBlits += 1;
-//	}
-//	// Restore the proper framebuffer from the cache.
-//	glBindFramebuffer(GL_READ_FRAMEBUFFER, _state.readFramebuffer);
-//	_metrics.framebufferBindings += 1;
-//	glDeleteFramebuffers(1, &srcFb);
+	if(src.shape != dst.shape()){
+		Log::Error() << Log::GPU << "The texture and framebuffer don't have the same shape." << std::endl;
+		return;
+	}
+
+	const uint layerCount = src.shape == TextureShape::D3 ? 1 : src.depth;
+	blitTexture(_context.getCurrentCommandBuffer(), src, *dst.texture(), 0, 0, src.levels, 0, 0, layerCount, filter);
+
+}
+
+void GPU::blitTexture(VkCommandBuffer& commandBuffer, const Texture& src, const Texture& dst, uint mipStartSrc, uint mipStartDst, uint mipCount, uint layerStartSrc, uint layerStartDst, uint layerCount, Filter filter){
+
+	const uint srcLayers = src.shape != TextureShape::D3 ? src.depth : 1;
+	const uint dstLayers = dst.shape != TextureShape::D3 ? dst.depth : 1;
+
+	const uint mipEffectiveCount = std::min(std::min(src.levels, dst.levels), mipCount);
+	const uint layerEffectiveCount = std::min(std::min(srcLayers, dstLayers), layerCount);
+
+	VkUtils::imageLayoutBarrier(commandBuffer, *src.gpu, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, mipStartSrc, mipEffectiveCount, layerStartSrc, layerEffectiveCount);
+	VkUtils::imageLayoutBarrier(commandBuffer, *dst.gpu, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, mipStartDst, mipEffectiveCount, layerStartDst, layerEffectiveCount);
+
+	std::vector<VkImageBlit> blitRegions(mipEffectiveCount);
+
+	const uint srcBaseDepth = src.shape == TextureShape::D3 ? src.depth : 1;
+	const uint dstBaseDepth = dst.shape == TextureShape::D3 ? dst.depth : 1;
+
+	const VkFilter filterVk = filter == Filter::LINEAR ? VK_FILTER_LINEAR : VK_FILTER_NEAREST;
+
+	for(size_t mid = 0; mid < mipEffectiveCount; ++mid) {
+		const uint srcMip = mipStartSrc + mid;
+		const uint dstMip = mipStartDst + mid;
+
+		const uint srcWidth  = std::max(src.width >> srcMip, uint(1));
+		const uint srcHeight = std::max(src.height >> srcMip, uint(1));
+		const uint srcDepth  = std::max(srcBaseDepth >> srcMip, uint(1));
+		const uint dstWidth  = std::max(dst.width >> dstMip, uint(1));
+		const uint dstHeight = std::max(dst.height >> dstMip, uint(1));
+		const uint dstDepth  = std::max(dstBaseDepth >> dstMip, uint(1));
+
+		blitRegions[mid].srcOffsets[0] = { 0, 0, 0};
+		blitRegions[mid].dstOffsets[0] = { 0, 0, 0};
+		blitRegions[mid].srcOffsets[1] = { int32_t(srcWidth), int32_t(srcHeight), int32_t(srcDepth)};
+		blitRegions[mid].dstOffsets[1] = { int32_t(dstWidth), int32_t(dstHeight), int32_t(dstDepth)};
+		blitRegions[mid].srcSubresource.aspectMask = src.gpu->aspect;
+		blitRegions[mid].srcSubresource.mipLevel = srcMip;
+		blitRegions[mid].dstSubresource.mipLevel = dstMip;
+		blitRegions[mid].srcSubresource.baseArrayLayer = layerStartSrc;
+		blitRegions[mid].dstSubresource.baseArrayLayer = layerStartDst;
+		blitRegions[mid].srcSubresource.layerCount = layerEffectiveCount;
+		blitRegions[mid].dstSubresource.layerCount = layerEffectiveCount;
+
+	}
+
+	vkCmdBlitImage(commandBuffer, src.gpu->image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, dst.gpu->image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, blitRegions.size(), blitRegions.data(), filterVk);
 }
 
 //void GPU::savePixels(GLenum type, GLenum format, unsigned int width, unsigned int height, unsigned int components, const std::string & path, bool flip, bool ignoreAlpha) {
@@ -1464,6 +1449,7 @@ struct ResourceToDelete {
 	VkImage image = VK_NULL_HANDLE;
 	VkBuffer buffer = VK_NULL_HANDLE;
 	VmaAllocation data = VK_NULL_HANDLE;
+	VkFramebuffer framebuffer = VK_NULL_HANDLE;
 	uint64_t frame = 0;
 };
 
@@ -1477,9 +1463,33 @@ void GPU::clean(GPUTexture & tex){
 	rsc.image = tex.image;
 	rsc.data = tex.data;
 	rsc.frame = _context.frameIndex;
+
 }
 
 void GPU::clean(Framebuffer & framebuffer){
+
+	for(auto& slices : framebuffer._framebuffers){
+
+		for(auto& slice : slices){
+			_resourcesToDelete.emplace_back();
+			ResourceToDelete& rsc = _resourcesToDelete.back();
+			rsc.framebuffer = slice.framebuffer;
+			rsc.frame = _context.frameIndex;
+
+			for(auto& view : slice.attachments){
+				_resourcesToDelete.emplace_back();
+				ResourceToDelete& rsc = _resourcesToDelete.back();
+				rsc.view = view;
+				rsc.frame = _context.frameIndex;
+			}
+		}
+	}
+
+	_resourcesToDelete.emplace_back();
+	ResourceToDelete& rsc = _resourcesToDelete.back();
+	rsc.framebuffer = framebuffer._fullFramebuffer.framebuffer;
+	rsc.frame = _context.frameIndex;
+	// Don't delete the views as these are the ones created by the textures.
 
 }
 
@@ -1520,6 +1530,9 @@ void GPU::cleanFrame(){
 		}
 		if(rsc.buffer){
 			vmaDestroyBuffer(_allocator, rsc.buffer, rsc.data);
+		}
+		if(rsc.framebuffer){
+			vkDestroyFramebuffer(_context.device, rsc.framebuffer, nullptr);
 		}
 		_resourcesToDelete.pop_front();
 		rsc = _resourcesToDelete.front();

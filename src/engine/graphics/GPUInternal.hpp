@@ -46,6 +46,7 @@ struct GPUContext {
 	bool portability = false;
 	const uint frameCount = 2;
 	bool newRenderPass = true;
+	bool inRenderPass = false;
 	
 	void nextFrame(){
 		++frameIndex;
