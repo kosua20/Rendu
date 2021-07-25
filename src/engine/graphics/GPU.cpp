@@ -759,7 +759,7 @@ void GPU::setupBuffer(BufferBase & buffer) {
 		buffer.gpu->clean();
 	}
 	// Create.
-	buffer.gpu.reset(new GPUBuffer(buffer.type, buffer.usage));
+	buffer.gpu.reset(new GPUBuffer(buffer.type));
 
 	static const std::map<BufferType, VkBufferUsageFlags> types = {
 		{ BufferType::VERTEX, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT },
@@ -976,9 +976,10 @@ void GPU::setupMesh(Mesh & mesh) {
 void GPU::bindPipelineIfNeeded(){
 
 	// Possibilities:
-	// state is outdated, create/retrieve new pipeline
+	// * we have started a new render pass
 	bool shouldBindPipeline = _context.newRenderPass;
 	_context.newRenderPass = false;
+	// * state is outdated, create/retrieve new pipeline
 	// \todo Use hash for equivalence.
 	if(!_state.isEquivalent(_lastState)){
 		_context.pipeline = _pipelineCache.getPipeline(_state);

@@ -401,7 +401,7 @@ public:
 	 \param atype the type of buffer
 	 \param use the update frequency
 	 */
-	GPUBuffer(BufferType atype, DataUse use);
+	GPUBuffer(BufferType atype);
 
 	/** Clean internal GPU buffer. */
 	void clean();

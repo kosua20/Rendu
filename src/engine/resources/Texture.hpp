@@ -64,10 +64,10 @@ public:
 	std::vector<Image> images;		 ///< The images CPU data (optional).
 	std::unique_ptr<GPUTexture> gpu; ///< The GPU data (optional).
 	
-	unsigned int width  = 0; ///< The texture width.
-	unsigned int height = 0; ///< The texture height.
-	unsigned int depth  = 1; ///< The texture depth.
-	unsigned int levels = 1; ///< The mipmap count.
+	uint width  = 0; ///< The texture width.
+	uint height = 0; ///< The texture height.
+	uint depth  = 1; ///< The texture depth.
+	uint levels = 1; ///< The mipmap count.
 	
 	TextureShape shape = TextureShape::D2; ///< Texure type.
 	

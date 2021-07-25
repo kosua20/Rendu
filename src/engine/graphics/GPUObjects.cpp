@@ -78,7 +78,7 @@ void GPUTexture::setFiltering(Filter filtering) {
 	//GPU::restoreTexture(_shape);
 }
 
-GPUBuffer::GPUBuffer(BufferType atype, DataUse use){
+GPUBuffer::GPUBuffer(BufferType atype){
 	// \todo "use" is only used on UBOs for custom size.
 	mappable = (atype == BufferType::UNIFORM || atype == BufferType::CPUTOGPU || atype == BufferType::GPUTOCPU);
 }
