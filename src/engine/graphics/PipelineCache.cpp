@@ -66,7 +66,10 @@ VkPipeline PipelineCache::getPipeline(const GPUState & state){
 		const Entry& entry = pipeline->second;
 
 		// Test mesh layout compatibility.
-		if(!entry.mesh->state.isEquivalent(entry.mesh->state)){
+		if(!entry.mesh->isEquivalent(*entry.mesh)){
+			continue;
+		}
+		if(!entry.framebuffer->isEquivalent(*entry.framebuffer)){
 			continue;
 		}
 		return entry.pipeline;
@@ -121,7 +124,7 @@ VkPipeline PipelineCache::buildPipeline(const GPUState& state){
 	VkGraphicsPipelineCreateInfo pipelineInfo{};
 	pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 	// Assert no null data.
-	assert(state.program); assert(state.mesh);
+	assert(state.program); assert(state.mesh); assert(state.framebuffer);
 	
 	// Program
 	{
@@ -252,7 +255,7 @@ VkPipeline PipelineCache::buildPipeline(const GPUState& state){
 	}
 	// Color blending
 	VkPipelineColorBlendStateCreateInfo colorState{};
-	const uint attachmentCount = 1;//state.framebuffer->attachments(); // \todo Retrieve from framebuffer.
+	const uint attachmentCount = state.framebuffer->attachments();
 	std::vector<VkPipelineColorBlendAttachmentState> attachmentStates(attachmentCount);
 	{
 		static const std::map<BlendEquation, VkBlendOp> eqs = {
@@ -313,7 +316,7 @@ VkPipeline PipelineCache::buildPipeline(const GPUState& state){
 
 	// Render pass
 	{
-		pipelineInfo.renderPass = context->mainRenderPass;
+		pipelineInfo.renderPass = state.framebuffer->getRenderPass();
 		pipelineInfo.subpass = 0;
 	}
 	// No inheritance

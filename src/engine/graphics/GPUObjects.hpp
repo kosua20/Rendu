@@ -441,10 +441,11 @@ public:
 	std::unique_ptr<GPUBuffer> indexBuffer; ///< Index element buffer.
 
 	size_t count = 0; ///< The number of vertices (cached).
-	//GLuint id	= 0; ///< The vertex buffer objects GPU ID.
 	
 	/** Clean internal GPU buffers. */
 	void clean();
+
+	bool isEquivalent(const GPUMesh& other) const;
 	
 	/** Constructor. */
 	GPUMesh() = default;

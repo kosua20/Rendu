@@ -14,9 +14,9 @@ bool GPUState::isEquivalent(const GPUState& other) const {
 		return false;
 	}
 
-	/*if(!framebuffer || !other.framebuffer){
+	if(!framebuffer || !other.framebuffer){
 		return false;
-	}*/
+	}
 
 	if(!mesh || !other.mesh){
 		return false;
@@ -27,12 +27,12 @@ bool GPUState::isEquivalent(const GPUState& other) const {
 	}
 
 	// Framebuffer: same attachment count, same layouts (== compatible render passes: format, sample count, )
-	/*if(framebuffer->attachments() != other.framebuffer->attachments()){
+	if(!(framebuffer->isEquivalent(*other.framebuffer))){
 		return false;
-	}*/
+	}
 
 	// Mesh: same bindings, same attributes. Offsets and buffers are dynamic.
-	if(!(mesh->state.isEquivalent(other.mesh->state))){
+	if(!(mesh->isEquivalent(*other.mesh))){
 		return false;
 	}
 	return true;
@@ -66,7 +66,7 @@ bool GPUTexture::hasSameLayoutAs(const Descriptor & other) const {
 
 void GPUTexture::setFiltering(Filter filtering) {
 	(void)filtering;
-	// Update the descriptor.
+	// \todo Update the descriptor and sampler.
 	//_descriptor  = Descriptor(_descriptor.typedFormat(), filtering, _descriptor.wrapping());
 	//minFiltering = _descriptor.getGPUMinificationFilter();
 	//magFiltering = _descriptor.getGPUMagnificationFilter();
@@ -79,7 +79,6 @@ void GPUTexture::setFiltering(Filter filtering) {
 }
 
 GPUBuffer::GPUBuffer(BufferType atype){
-	// \todo "use" is only used on UBOs for custom size.
 	mappable = (atype == BufferType::UNIFORM || atype == BufferType::CPUTOGPU || atype == BufferType::GPUTOCPU);
 }
 
@@ -99,6 +98,10 @@ void GPUMesh::clean() {
 	count = 0;
 	
 	GPU::clean(*this);
+}
+
+bool GPUMesh::isEquivalent(const GPUMesh& other) const {
+	return state.isEquivalent(other.state);
 }
 
 bool GPUMesh::InputState::isEquivalent(const GPUMesh::InputState& other) const {

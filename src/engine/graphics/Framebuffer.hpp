@@ -108,6 +108,10 @@ public:
 	 */
 	void clear(const glm::vec4 & color, float depth);
 
+	bool isEquivalent(const Framebuffer& other) const;
+
+	VkRenderPass getRenderPass() const { return _renderPasses[0][0][0]; }
+
 	/** Read back the value at a given pixel in the first color attachment.
 	 \param pos the position in pixels
 	 \return a float RGB color.

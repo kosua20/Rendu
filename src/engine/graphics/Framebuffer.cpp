@@ -314,6 +314,8 @@ void Framebuffer::bind(size_t layer, size_t mip, const LoadOperation& colorOp, c
 void Framebuffer::bind(const Framebuffer::Slice& slice, size_t layer, size_t layerCount, size_t mip, size_t mipCount, const LoadOperation& colorOp, const LoadOperation& depthOp, const LoadOperation& stencilOp) const {
 	const VkRenderPass& pass = _renderPasses[uint(colorOp.mode)][uint(depthOp.mode)][uint(stencilOp.mode)];
 
+	GPU::bindFramebuffer(*this);
+
 	GPUContext* context = GPU::getInternal();
 	VkCommandBuffer& commandBuffer = context->getCurrentCommandBuffer();
 
@@ -390,10 +392,44 @@ void Framebuffer::resize(const glm::ivec2 & size) {
 }
 
 void Framebuffer::clear(const glm::vec4 & color, float depth){
-
+	// Start a new pass with clearing instructions
 	bind(_fullFramebuffer, 0, _layers, 0, _mips, color, depth, Operation::LOAD);
+	// Finish it.
 	vkCmdEndRenderPass(GPU::getInternal()->getCurrentCommandBuffer());
 
+}
+
+bool Framebuffer::isEquivalent(const Framebuffer& other) const {
+	const uint colorCount = attachments();
+	if(colorCount != other.attachments()){
+		return false;
+	}
+
+	if(_depthUse != other._depthUse){
+		return false;
+	}
+
+	// Two attachment references are compatible if they have matching format and sample count.
+	// We can ignore: resolve, image layouts, load/store operations.
+	
+	if(_depthUse != Depth::NONE){
+		// We can safely compare depths.
+		const Descriptor& ref = depthBuffer()->gpu->descriptor();
+		const Descriptor& oth = other.depthBuffer()->gpu->descriptor();
+		if(ref.typedFormat() != oth.typedFormat()){
+			return false;
+		}
+	}
+
+	// We can safely compare color attachments.
+	for(uint cid = 0; cid < colorCount; ++cid){
+		const Descriptor& ref = descriptor(cid);
+		const Descriptor& oth = other.descriptor(cid);
+		if(ref.typedFormat() != oth.typedFormat()){
+			return false;
+		}
+	}
+	return true;
 }
 
 glm::vec3 Framebuffer::read(const glm::ivec2 & pos) const {
