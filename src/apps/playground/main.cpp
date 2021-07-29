@@ -152,8 +152,10 @@ int main(int argc, char ** argv) {
 		// Render.
 		const glm::ivec2 screenSize = Input::manager().size();
 		const glm::mat4 MVP		   = camera.projection() * camera.view();
-		fb.bind(glm::vec4(0.2f, 0.3f, 0.25f, 1.0f), 1.0f);
-		GPU::setViewport(0, 0, screenSize[0], screenSize[1]);
+		fb.bind(glm::vec4(0.2f, 0.3f, 0.25f, 1.0f), 1.0f, Framebuffer::Operation::DONTCARE);
+
+		fb.setViewport();
+
 		program->use();
 		program->uniform("mvp", MVP);
 		//GPU::drawMesh(*mesh);
@@ -207,7 +209,9 @@ int main(int argc, char ** argv) {
 		//GPU::drawMesh(mesh2);
 		//GPU::drawMesh(mesh3);
 
-		//Framebuffer::backbuffer()->bind();
+		//Framebuffer::backbuffer()->bind(glm::vec4(1.0f, 0.5f, 0.2f, 1.0f), 1.0f, Framebuffer::Operation::DONTCARE);
+		//Framebuffer::backbuffer()->setViewport();
+		GPU::blit(fb, *Framebuffer::backbuffer(), Filter::LINEAR);
 
 
 		ImGui::Text("ImGui is functional!");
