@@ -21,9 +21,9 @@ private:
 
 	struct Entry {
 		VkPipeline pipeline;
-		const GPUMesh* mesh;
+		GPUMesh::InputState mesh;
+		Framebuffer::LayoutState framebuffer;
 		const Program* program;
-		const Framebuffer* framebuffer;
 	};
 
 	VkPipeline createNewPipeline(const GPUState& state, const uint64_t hash);

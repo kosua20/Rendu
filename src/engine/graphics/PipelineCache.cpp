@@ -66,10 +66,10 @@ VkPipeline PipelineCache::getPipeline(const GPUState & state){
 		const Entry& entry = pipeline->second;
 
 		// Test mesh layout compatibility.
-		if(!entry.mesh->isEquivalent(*entry.mesh)){
+		if(!entry.mesh.isEquivalent(state.mesh->state)){
 			continue;
 		}
-		if(!entry.framebuffer->isEquivalent(*entry.framebuffer)){
+		if(!entry.framebuffer.isEquivalent(state.framebuffer->getLayoutState())){
 			continue;
 		}
 		return entry.pipeline;
@@ -113,7 +113,9 @@ VkPipeline PipelineCache::createNewPipeline(const GPUState& state, const uint64_
 	Entry entry;
 	entry.pipeline = buildPipeline(state);
 	entry.program = state.program;
-	entry.mesh = state.mesh;
+	entry.mesh = state.mesh->state;
+	entry.framebuffer = state.framebuffer->getLayoutState();
+
 	auto it = _pipelines[state.program].insert(std::make_pair(hash, entry));
 	return it->second.pipeline;
 }
