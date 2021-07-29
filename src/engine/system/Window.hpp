@@ -67,7 +67,7 @@ private:
 	
 	RenderingConfig & _config; ///< The window configuration.
 	GLFWwindow * _window = nullptr; ///< Internal window handle.
-	Swapchain _swapchain;
+	std::unique_ptr<Swapchain> _swapchain;
 	ImGui_ImplVulkan_InitInfo * _imgui = nullptr;
 	bool _frameStarted = false; ///< Has a frame been started.
 	bool _allowEscape = false; ///< Can the window be closed by pressing escape.

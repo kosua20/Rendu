@@ -19,10 +19,9 @@ Framebuffer::Framebuffer(uint width, uint height, const std::vector<Descriptor> 
 	Framebuffer(TextureShape::D2, width, height, 1, 1, descriptors, depthBuffer, name) {
 }
 
-VkRenderPass Framebuffer::createRenderpass(Operation colorOp, Operation depthOp, Operation stencilOp){
+VkRenderPass Framebuffer::createRenderpass(Operation colorOp, Operation depthOp, Operation stencilOp, bool presentable){
 
-	const bool hasDepth = _depthUse != Depth::NONE;
-	const size_t attachCount = _colors.size() + (hasDepth ? 1 : 0);
+	const size_t attachCount = _colors.size() + (_hasDepth ? 1 : 0);
 	std::vector<VkAttachmentDescription> attachDescs(attachCount);
 	std::vector<VkAttachmentReference> attachRefs(attachCount);
 
@@ -44,7 +43,7 @@ VkRenderPass Framebuffer::createRenderpass(Operation colorOp, Operation depthOp,
 		desc.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 		desc.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
 		desc.initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-		desc.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+		desc.finalLayout = presentable ? VK_IMAGE_LAYOUT_PRESENT_SRC_KHR : VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
 		VkAttachmentReference& ref = attachRefs[cid];
 		ref.attachment = cid;
@@ -52,7 +51,7 @@ VkRenderPass Framebuffer::createRenderpass(Operation colorOp, Operation depthOp,
 	}
 
 	// Depth is the last attachment.
-	if(hasDepth){
+	if(_hasDepth){
 		VkAttachmentDescription& desc = attachDescs.back();
 		desc.format = _depth.gpu->format;
 		desc.samples = VK_SAMPLE_COUNT_1_BIT;
@@ -122,7 +121,6 @@ Framebuffer::Framebuffer(TextureShape shape, uint width, uint height, uint depth
 	} else {
 		_layers = depth;
 	}
-	_depthUse = Depth::NONE;
 
 	VkImageType type;
 	VkImageViewType viewType;
@@ -133,10 +131,10 @@ Framebuffer::Framebuffer(TextureShape shape, uint width, uint height, uint depth
 		// Create the color texture to store the result.
 		const Layout & format		  = descriptor.typedFormat();
 		const bool isDepthComp		  = format == Layout::DEPTH_COMPONENT16 || format == Layout::DEPTH_COMPONENT24 || format == Layout::DEPTH_COMPONENT32F;
-		_hasStencil = format == Layout::DEPTH24_STENCIL8 || format == Layout::DEPTH32F_STENCIL8;
+		const bool hasStencil = format == Layout::DEPTH24_STENCIL8 || format == Layout::DEPTH32F_STENCIL8;
 
-		if(isDepthComp || _hasStencil) {
-			_depthUse	  = Depth::TEXTURE;
+		if(isDepthComp || hasStencil) {
+			_hasDepth	  = true;
 			_depth.width  = _width;
 			_depth.height = _height;
 			_depth.levels = _mips;
@@ -158,25 +156,19 @@ Framebuffer::Framebuffer(TextureShape shape, uint width, uint height, uint depth
 		}
 	}
 
-	if(_depthUse == Depth::NONE && depthBuffer) {
+	if(!_hasDepth && depthBuffer) {
 		_depth.width  = _width;
 		_depth.height = _height;
-		_depth.levels = 1;
+		_depth.levels = _mips;
 		_depth.depth  = 1;
 		_depth.shape  = TextureShape::D2;
 		GPU::setupTexture(_depth, {Layout::DEPTH_COMPONENT32F, Filter::NEAREST, Wrap::CLAMP}, true);
-		_depthUse = Depth::RENDERBUFFER;
+		_hasDepth = true;
 	}
 
 	// Populate all render passes. If this is too wasteful (27 render passes), we could create them on request and cache them.
-	const uint operationCount = _renderPasses.size();
-	for(uint cid = 0; cid < operationCount; ++cid){
-		for(uint did = 0; did < operationCount; ++did){
-			for(uint sid = 0; sid < operationCount; ++sid){
-				_renderPasses[cid][did][sid] = createRenderpass(Operation(cid), Operation(did), Operation(sid));
-			}
-		}
-	}
+	populateRenderPasses(false);
+	populateLayoutState();
 
 	// Create the framebuffer.
 	finalizeFramebuffer();
@@ -184,9 +176,28 @@ Framebuffer::Framebuffer(TextureShape shape, uint width, uint height, uint depth
 	DebugViewer::trackDefault(this);
 }
 
-void Framebuffer::finalizeFramebuffer(){
+void Framebuffer::populateRenderPasses(bool isBackbuffer){
+	const uint operationCount = _renderPasses.size();
+	for(uint cid = 0; cid < operationCount; ++cid){
+		for(uint did = 0; did < operationCount; ++did){
+			for(uint sid = 0; sid < operationCount; ++sid){
+				_renderPasses[cid][did][sid] = createRenderpass(Operation(cid), Operation(did), Operation(sid), isBackbuffer);
+			}
+		}
+	}
+}
 
-	const bool hasDepth = _depthUse != Depth::NONE;
+void Framebuffer::populateLayoutState(){
+	for(uint cid = 0; cid < _colors.size(); ++cid){
+		_state.colors.push_back(_colors[cid].gpu->descriptor().typedFormat());
+	}
+	if(_hasDepth){
+		_state.hasDepth = true;
+		_state.depth = _depth.gpu->descriptor().typedFormat();
+	}
+}
+
+void Framebuffer::finalizeFramebuffer(){
 
 	// Finalize the texture layouts.
 	GPUContext* context = GPU::getInternal();
@@ -194,12 +205,12 @@ void Framebuffer::finalizeFramebuffer(){
 	for(size_t cid = 0; cid < _colors.size(); ++cid){
 		textureLayoutBarrier(commandBuffer, _colors[cid], VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 	}
-	if(hasDepth){
+	if(_hasDepth){
 		textureLayoutBarrier(commandBuffer, _depth, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 	}
 	VkUtils::endOneTimeCommandBuffer(commandBuffer, *context);
 
-	const uint attachCount = _colors.size() + (hasDepth ? 1 : 0);
+	const uint attachCount = _colors.size() + (_hasDepth ? 1 : 0);
 
 	_framebuffers.resize(_mips);
 	// Generate per-mip per-layer framebuffers.
@@ -212,14 +223,14 @@ void Framebuffer::finalizeFramebuffer(){
 
 			//Register which attachments to draw to.
 			for(size_t cid = 0; cid < _colors.size(); ++cid){
-				;
+				
 					// Create a custom one-level one-layer view.
 				VkImageViewCreateInfo viewInfo = {};
 				viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 				viewInfo.image = _colors[cid].gpu->image;
 				viewInfo.viewType =  VK_IMAGE_VIEW_TYPE_2D;//_colors[cid].gpu->viewType;
 				viewInfo.format =  _colors[cid].gpu->format;
-				viewInfo.subresourceRange.aspectMask =  _colors[cid].gpu->aspect;
+				viewInfo.subresourceRange.aspectMask = _colors[cid].gpu->aspect;
 				viewInfo.subresourceRange.baseMipLevel = mid;
 				viewInfo.subresourceRange.levelCount = 1;
 				viewInfo.subresourceRange.baseArrayLayer = lid;
@@ -232,7 +243,7 @@ void Framebuffer::finalizeFramebuffer(){
 			}
 
 			// Depth attachment is last, and is always 2D.
-			if(hasDepth){
+			if(_hasDepth){
 				VkImageViewCreateInfo viewInfo = {};
 				viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 				viewInfo.image = _depth.gpu->image;
@@ -279,7 +290,7 @@ void Framebuffer::finalizeFramebuffer(){
 		}
 
 		// Depth attachment is last, and is always 2D.
-		if(hasDepth){
+		if(_hasDepth){
 			slice.attachments[_colors.size()] = _depth.gpu->view;
 		}
 
@@ -300,6 +311,17 @@ void Framebuffer::finalizeFramebuffer(){
 
 }
 
+void Framebuffer::cleanRenderPasses(){
+	GPUContext* context = GPU::getInternal();
+	for(const auto& passes2 : _renderPasses){
+		for(const auto& passes1 : passes2){
+			for(const auto& pass : passes1){
+				vkDestroyRenderPass(context->device, pass, nullptr);
+			}
+		}
+	}
+}
+
 void Framebuffer::bind(const LoadOperation& colorOp, const LoadOperation& depthOp, const LoadOperation& stencilOp) const {
 	bind(0, 0, colorOp, depthOp, stencilOp);
 }
@@ -314,18 +336,15 @@ void Framebuffer::bind(size_t layer, size_t mip, const LoadOperation& colorOp, c
 void Framebuffer::bind(const Framebuffer::Slice& slice, size_t layer, size_t layerCount, size_t mip, size_t mipCount, const LoadOperation& colorOp, const LoadOperation& depthOp, const LoadOperation& stencilOp) const {
 	const VkRenderPass& pass = _renderPasses[uint(colorOp.mode)][uint(depthOp.mode)][uint(stencilOp.mode)];
 
+
+	GPU::endRenderPassIfNeeded();
 	GPU::bindFramebuffer(*this);
 
 	GPUContext* context = GPU::getInternal();
 	VkCommandBuffer& commandBuffer = context->getCurrentCommandBuffer();
 
-	if(context->inRenderPass){
-		vkCmdEndRenderPass(commandBuffer);
-	}
-	const bool hasDepth = _depthUse != Depth::NONE;
-
 	// Retrieve clear colors and transition the regions of the resources we need.
-	const uint attachCount = _colors.size() + (hasDepth ? 1 : 0);
+	const uint attachCount = _colors.size() + (_hasDepth ? 1 : 0);
 	std::vector<VkClearValue> clearVals(attachCount);
 
 	for(uint cid = 0; cid < _colors.size(); ++cid){
@@ -336,11 +355,11 @@ void Framebuffer::bind(const Framebuffer::Slice& slice, size_t layer, size_t lay
 		VkUtils::imageLayoutBarrier(commandBuffer, *_colors[cid].gpu, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, mip, mipCount, layer, layerCount);
 
 	}
-	if(hasDepth){
+	if(_hasDepth){
 		clearVals.back().depthStencil.depth = depthOp.value[0];
 		clearVals.back().depthStencil.stencil = uint32_t(stencilOp.value[0]);
 		// \note We use only one 2D depth buffer.
-		VkUtils::imageLayoutBarrier(commandBuffer, *_depth.gpu, VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL, 0, 1, 0, 1);
+		VkUtils::imageLayoutBarrier(commandBuffer, *_depth.gpu, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, 0, 1, 0, 1);
 	}
 
 	VkRenderPassBeginInfo info = {};
@@ -356,6 +375,7 @@ void Framebuffer::bind(const Framebuffer::Slice& slice, size_t layer, size_t lay
 	vkCmdBeginRenderPass(commandBuffer, &info, VK_SUBPASS_CONTENTS_INLINE);
 	context->newRenderPass = true;
 	context->inRenderPass = true;
+	context->lastRenderPass = pass;
 	
 }
 
@@ -370,7 +390,7 @@ void Framebuffer::resize(uint width, uint height) {
 	GPU::clean(*this);
 
 	// Resize the renderbuffer.
-	if(_depthUse != Depth::NONE) {
+	if(_hasDepth) {
 		_depth.width  = _width;
 		_depth.height = _height;
 		GPU::setupTexture(_depth, _depth.gpu->descriptor(), true);
@@ -392,44 +412,18 @@ void Framebuffer::resize(const glm::ivec2 & size) {
 }
 
 void Framebuffer::clear(const glm::vec4 & color, float depth){
+	// See https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/vkspec.html#clears
+	// for possibilities.
+	
 	// Start a new pass with clearing instructions
 	bind(_fullFramebuffer, 0, _layers, 0, _mips, color, depth, Operation::LOAD);
 	// Finish it.
-	vkCmdEndRenderPass(GPU::getInternal()->getCurrentCommandBuffer());
+	GPU::endRenderPassIfNeeded();
 
 }
 
 bool Framebuffer::isEquivalent(const Framebuffer& other) const {
-	const uint colorCount = attachments();
-	if(colorCount != other.attachments()){
-		return false;
-	}
-
-	if(_depthUse != other._depthUse){
-		return false;
-	}
-
-	// Two attachment references are compatible if they have matching format and sample count.
-	// We can ignore: resolve, image layouts, load/store operations.
-	
-	if(_depthUse != Depth::NONE){
-		// We can safely compare depths.
-		const Descriptor& ref = depthBuffer()->gpu->descriptor();
-		const Descriptor& oth = other.depthBuffer()->gpu->descriptor();
-		if(ref.typedFormat() != oth.typedFormat()){
-			return false;
-		}
-	}
-
-	// We can safely compare color attachments.
-	for(uint cid = 0; cid < colorCount; ++cid){
-		const Descriptor& ref = descriptor(cid);
-		const Descriptor& oth = other.descriptor(cid);
-		if(ref.typedFormat() != oth.typedFormat()){
-			return false;
-		}
-	}
-	return true;
+	return _state.isEquivalent(other.getLayoutState());
 }
 
 glm::vec3 Framebuffer::read(const glm::ivec2 & pos) const {
@@ -444,26 +438,56 @@ uint Framebuffer::attachments() const {
 	return uint(_colors.size());
 }
 
+const Framebuffer::LayoutState& Framebuffer::getLayoutState() const {
+	return _state;
+}
+
+bool Framebuffer::LayoutState::isEquivalent(const Framebuffer::LayoutState& other) const {
+	if(other.colors.size() != colors.size()){
+		return false;
+	}
+
+	if(hasDepth != other.hasDepth){
+		return false;
+	}
+
+	// Two attachment references are compatible if they have matching format and sample count.
+	// We can ignore: resolve, image layouts, load/store operations.
+
+	if(hasDepth){
+		// We can safely compare depths.
+		if(depth != other.depth){
+			return false;
+		}
+	}
+
+	// We can safely compare color attachments.
+	for(uint cid = 0; cid < colors.size(); ++cid){
+		if(colors[cid] != other.colors[cid]){
+			return false;
+		}
+	}
+	return true;
+}
+
 Framebuffer::~Framebuffer() {
+	if(_isBackbuffer){
+		return;
+	}
+
 	DebugViewer::untrackDefault(this);
 
 	GPU::clean(*this);
 
 	// \todo Should this be move in GPU::clean? or not because these objects live longer than
 	// the framebuffer object(s) (when resizing for instance).
-	GPUContext* context = GPU::getInternal();
-	for(const auto& passes2 : _renderPasses){
-		for(const auto& passes1 : passes2){
-			for(const auto& pass : passes1){
-				vkDestroyRenderPass(context->device, pass, nullptr);
-			}
-		}
-	}
+	cleanRenderPasses();
+	
 	for(Texture& texture : _colors){
 		texture.clean();
 	}
 	_colors.clear();
-	if(_depthUse != Depth::NONE){
+	if(_hasDepth){
 		_depth.clean();
 	}
 
@@ -472,24 +496,5 @@ Framebuffer::~Framebuffer() {
 Framebuffer * Framebuffer::_backbuffer = nullptr;
 
 const Framebuffer * Framebuffer::backbuffer() {
-	// Initialize a dummy framebuffer representing the backbuffer.
-	if(!_backbuffer) {
-		_backbuffer = new Framebuffer();
-//		_backbuffer->_idColors.emplace_back("Backbuffer 0");
-//		// We don't really need to allocate the texture, just setup its descriptor.
-//		Texture & tex = _backbuffer->_idColors.back();
-//		tex.shape  = TextureShape::D2;
-//		tex.levels = 1;
-//		tex.depth  = 1;
-//		tex.gpu.reset(new GPUTexture(Descriptor(Layout::SRGB8_ALPHA8, Filter::NEAREST, Wrap::CLAMP), tex.shape));
-	}
 	return _backbuffer;
-}
-
-void Framebuffer::backbufferResized(uint w, uint h){
-	Framebuffer::backbuffer();
-//	_backbuffer->_width  = w > 0 ? w : 1;
-//	_backbuffer->_height = h > 0 ? h : 1;
-//	_backbuffer->_idColors.back().width = _backbuffer->_width;
-//	_backbuffer->_idColors.back().height = _backbuffer->_height;
 }

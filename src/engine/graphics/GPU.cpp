@@ -280,8 +280,8 @@ bool GPU::setupWindow(Window * window){
 	}
 
 	// Finally setup the swapchain.
-	window->_swapchain.init(_context, window->_config);
-	_context.mainRenderPass = window->_swapchain.getMainPass();
+	window->_swapchain.reset(new Swapchain(_context, window->_config));
+	//_context.mainRenderPass = window->_swapchain->getRenderPass();
 	
 	// Create a pipeline cache.
 	_pipelineCache.init();
@@ -990,8 +990,12 @@ void GPU::setupMesh(Mesh & mesh) {
 	mesh.gpu->vertexBuffer = std::move(vertexBuffer.gpu);
 }
 
-void GPU::bindPipelineIfNeeded(){
 
+void GPU::bindPipelineIfNeeded(){
+	if(!_context.inRenderPass){
+		Log::Error() << Log::GPU << "We are not in a render pass." << std::endl;
+		return;
+	}
 	// Possibilities:
 	// * we have started a new render pass
 	bool shouldBindPipeline = _context.newRenderPass;
@@ -1184,6 +1188,8 @@ void GPU::setColorState(bool writeRed, bool writeGreen, bool writeBlue, bool wri
 }
 
 void GPU::blitDepth(const Framebuffer & src, const Framebuffer & dst) {
+	GPU::endRenderPassIfNeeded();
+
 	VkCommandBuffer& commandBuffer = _context.getCurrentCommandBuffer();
 
 	if(!src.depthBuffer() || !dst.depthBuffer()){
@@ -1200,6 +1206,8 @@ void GPU::blitDepth(const Framebuffer & src, const Framebuffer & dst) {
 }
 
 void GPU::blit(const Framebuffer & src, const Framebuffer & dst, Filter filter) {
+	GPU::endRenderPassIfNeeded();
+
 	VkCommandBuffer& commandBuffer = _context.getCurrentCommandBuffer();
 	const uint count = std::min(src.attachments(), dst.attachments());
 
@@ -1217,6 +1225,7 @@ void GPU::blit(const Framebuffer & src, const Framebuffer & dst, size_t lSrc, si
 
 void GPU::blit(const Framebuffer & src, const Framebuffer & dst, size_t lSrc, size_t lDst, size_t mipSrc, size_t mipDst, Filter filter) {
 
+	GPU::endRenderPassIfNeeded();
 	VkCommandBuffer& commandBuffer = _context.getCurrentCommandBuffer();
 	const uint count = std::min(src.attachments(), dst.attachments());
 
@@ -1239,6 +1248,8 @@ void GPU::blit(const Texture & src, Texture & dst, Filter filter) {
 	if(!src.images.empty()) {
 		Log::Warning() << Log::GPU << "CPU data won't be copied." << std::endl;
 	}
+	GPU::endRenderPassIfNeeded();
+
 	GPU::setupTexture(dst, src.gpu->descriptor(), false);
 
 	const uint layerCount = src.shape == TextureShape::D3 ? 1 : src.depth;
@@ -1252,9 +1263,10 @@ void GPU::blit(const Texture & src, Framebuffer & dst, Filter filter) {
 		Log::Error() << Log::GPU << "The texture and framebuffer don't have the same shape." << std::endl;
 		return;
 	}
-
 	const uint layerCount = src.shape == TextureShape::D3 ? 1 : src.depth;
-	blitTexture(_context.getCurrentCommandBuffer(), src, *dst.texture(), 0, 0, src.levels, 0, 0, layerCount, filter);
+
+	GPU::endRenderPassIfNeeded();
+	GPU::blitTexture(_context.getCurrentCommandBuffer(), src, *dst.texture(), 0, 0, src.levels, 0, 0, layerCount, filter);
 
 }
 
@@ -1292,6 +1304,7 @@ void GPU::blitTexture(VkCommandBuffer& commandBuffer, const Texture& src, const 
 		blitRegions[mid].srcOffsets[1] = { int32_t(srcWidth), int32_t(srcHeight), int32_t(srcDepth)};
 		blitRegions[mid].dstOffsets[1] = { int32_t(dstWidth), int32_t(dstHeight), int32_t(dstDepth)};
 		blitRegions[mid].srcSubresource.aspectMask = src.gpu->aspect;
+		blitRegions[mid].dstSubresource.aspectMask = dst.gpu->aspect;
 		blitRegions[mid].srcSubresource.mipLevel = srcMip;
 		blitRegions[mid].dstSubresource.mipLevel = dstMip;
 		blitRegions[mid].srcSubresource.baseArrayLayer = layerStartSrc;
@@ -1302,6 +1315,15 @@ void GPU::blitTexture(VkCommandBuffer& commandBuffer, const Texture& src, const 
 	}
 
 	vkCmdBlitImage(commandBuffer, src.gpu->image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, dst.gpu->image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, blitRegions.size(), blitRegions.data(), filterVk);
+}
+
+
+void GPU::endRenderPassIfNeeded(){
+	if(_context.inRenderPass){
+		vkCmdEndRenderPass(_context.getCurrentCommandBuffer());
+		_context.inRenderPass = false;
+	}
+	_state.framebuffer = nullptr;
 }
 
 void GPU::getState(GPUState& state) {

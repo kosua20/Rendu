@@ -92,7 +92,6 @@ _config(config), _allowEscape(escapeQuit), _convertToSRGB(convertToSRGB) {
 
 	// Update the resolution.
 	Input::manager().resizeEvent(width, height);
-	Framebuffer::backbufferResized(width, height);
 }
 
 void Window::perform(Action action) {
@@ -159,6 +158,7 @@ bool Window::nextFrame() {
 		// sRGB conversion when writing to the backbuffer.
 		//GPU::setSRGBState(false);
 		// Draw ImGui as-is...
+		Framebuffer::backbuffer()->bind(Framebuffer::Operation::LOAD, Framebuffer::Operation::LOAD, Framebuffer::Operation::LOAD);
 		ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), GPU::getInternal()->getCurrentCommandBuffer());
 		//ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		// ...and restore.
@@ -169,7 +169,7 @@ bool Window::nextFrame() {
 
 	// Notify GPU for book-keeping.
 	// GPU::nextFrame();
-	bool validSwapchain = _swapchain.nextFrame();
+	bool validSwapchain = _swapchain->nextFrame();
 
 	do {
 		// Update events (inputs,...).
@@ -182,11 +182,10 @@ bool Window::nextFrame() {
 		if(Input::manager().resized() || !validSwapchain){
 			const uint w = uint(Input::manager().size()[0]);
 			const uint h = uint(Input::manager().size()[1]);
-			Framebuffer::backbufferResized(w, h);
-			_swapchain.resize(w, h);
+			_swapchain->resize(w, h);
 			// We should probably jump to the next frame here.
-			validSwapchain = _swapchain.nextFrame();
-			ImGui_ImplVulkan_SetMinImageCount(_swapchain.minCount());
+			validSwapchain = _swapchain->nextFrame();
+			ImGui_ImplVulkan_SetMinImageCount(_swapchain->minCount());
 		}
 	} while(!validSwapchain);
 
@@ -195,7 +194,11 @@ bool Window::nextFrame() {
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 	_frameStarted = true;
-	return !glfwWindowShouldClose(_window);
+	const bool shouldClose = glfwWindowShouldClose(_window);
+	if(shouldClose){
+		GPU::sync();
+	}
+	return !shouldClose;
 }
 
 Window::~Window() {
@@ -203,7 +206,8 @@ Window::~Window() {
 	if(_frameStarted){
 		ImGui::EndFrame();
 	}
-	_swapchain.clean();
+	_swapchain.reset(nullptr);
+
 	// Clean the interface.
 	ImGui_ImplVulkan_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
@@ -248,13 +252,13 @@ void Window::setupImGui() {
 	_imgui->PipelineCache = VK_NULL_HANDLE;
 	_imgui->DescriptorPool = context->descriptorAllocator.getImGuiPool();
 	_imgui->Subpass = 0;
-	_imgui->MinImageCount = _swapchain.minCount();
-	_imgui->ImageCount = _swapchain.count();
+	_imgui->MinImageCount = _swapchain->minCount();
+	_imgui->ImageCount = _swapchain->count();
 	_imgui->MSAASamples = VK_SAMPLE_COUNT_1_BIT;
 	_imgui->Allocator = nullptr;
 	_imgui->CheckVkResultFn = &VkUtils::checkResult;
 
-	ImGui_ImplVulkan_Init(_imgui, _swapchain.getMainPass());
+	ImGui_ImplVulkan_Init(_imgui, _swapchain->getRenderPass());
 
 	// Upload font.
 	VkCommandBuffer uploadCommandBuffer = VkUtils::startOneTimeCommandBuffer(*context);

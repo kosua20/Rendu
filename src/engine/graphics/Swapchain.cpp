@@ -2,16 +2,12 @@
 #include "graphics/GPU.hpp"
 
 
-Swapchain::Swapchain() : _depthTexture("Backbuffer depth"){
+Swapchain::Swapchain(GPUContext & context, const RenderingConfig & config) : _depth("Shared depth") {
 	_imageIndex = 0;
-}
-
-
-void Swapchain::init(GPUContext & context, const RenderingConfig & config){
 	_context = &context;
 	_vsync = config.vsync;
-
 	setup(config.screenResolution.x, config.screenResolution.y);
+
 }
 
 void Swapchain::setup(uint32_t width, uint32_t height){
@@ -47,7 +43,7 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 	vkGetPhysicalDeviceSurfaceFormatsKHR(_context->physicalDevice, _context->surface, &formatCount, formats.data());
 
 	// Ideally RGBA8 with a sRGB display.
-	VkSurfaceFormatKHR surfaceParams = { VK_FORMAT_B8G8R8A8_UNORM, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR };
+	VkSurfaceFormatKHR surfaceParams = { VK_FORMAT_R8G8B8A8_UNORM, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR };
 	// If only Undefined is present, we can use whatever we want.
 	bool useDefaultFormat = (formats.size() == 1 && formats[0].format == VK_FORMAT_UNDEFINED);
 	// Otherwise, check if our default format is in the list.
@@ -92,7 +88,7 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 	swapInfo.imageColorSpace = surfaceParams.colorSpace;
 	swapInfo.imageExtent = extent;
 	swapInfo.imageArrayLayers = 1;
-	swapInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+	swapInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
 
 	// Establish a link with both queues, handling the case where they are the same.
 	uint32_t queueFamilyIndices[] = { _context->graphicsId, _context->presentId };
@@ -119,47 +115,129 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 	// Find a proper depth format.
 	const VkFormat depthFormat = VkUtils::findSupportedFormat(_context->physicalDevice,  {VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT}, VK_IMAGE_TILING_OPTIMAL, VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
 
-	_pass = createMainRenderpass(depthFormat, surfaceParams.format);
-	_context->mainRenderPass = _pass;
+	//_pass = createMainRenderpass(depthFormat, surfaceParams.format);
+	//_context->mainRenderPass = _pass;
 
 	// \todo See how to wrap this in a standard framebuffer.
 
-	// Create depth buffer.
 	static const std::map<VkFormat, Layout> formatInfos = {
+		{ VK_FORMAT_R8_UNORM, Layout::R8 },
+		{ VK_FORMAT_R8G8_UNORM, Layout::RG8 },
+		{ VK_FORMAT_R8G8B8A8_UNORM, Layout::RGBA8 },
+		{ VK_FORMAT_B8G8R8A8_UNORM, Layout::BGRA8 },
+		{ VK_FORMAT_R8G8B8A8_SRGB, Layout::SRGB8_ALPHA8 },
+		{ VK_FORMAT_B8G8R8A8_SRGB, Layout::SBGR8_ALPHA8 },
+		{ VK_FORMAT_R16_UNORM, Layout::R16 },
+		{ VK_FORMAT_R16G16_UNORM, Layout::RG16 },
+		{ VK_FORMAT_R16G16B16A16_UNORM, Layout::RGBA16 },
+		{ VK_FORMAT_R8_SNORM, Layout::R8_SNORM },
+		{ VK_FORMAT_R8G8_SNORM, Layout::RG8_SNORM },
+		{ VK_FORMAT_R8G8B8A8_SNORM, Layout::RGBA8_SNORM },
+		{ VK_FORMAT_R16_SNORM, Layout::R16_SNORM },
+		{ VK_FORMAT_R16G16_SNORM, Layout::RG16_SNORM },
+		{ VK_FORMAT_R16_SFLOAT, Layout::R16F },
+		{ VK_FORMAT_R16G16_SFLOAT, Layout::RG16F },
+		{ VK_FORMAT_R16G16B16A16_SFLOAT, Layout::RGBA16F },
+		{ VK_FORMAT_R32_SFLOAT, Layout::R32F },
+		{ VK_FORMAT_R32G32_SFLOAT, Layout::RG32F },
+		{ VK_FORMAT_R32G32B32A32_SFLOAT, Layout::RGBA32F },
+		{ VK_FORMAT_R5G5B5A1_UNORM_PACK16, Layout::RGB5_A1 },
+		{ VK_FORMAT_A2R10G10B10_UNORM_PACK32, Layout::A2_RGB10 },
+		{ VK_FORMAT_A2B10G10R10_UNORM_PACK32, Layout::A2_BGR10 },
 		{ VK_FORMAT_D16_UNORM, Layout::DEPTH_COMPONENT16 },
 		{ VK_FORMAT_D32_SFLOAT, Layout::DEPTH_COMPONENT32F },
 		{ VK_FORMAT_D24_UNORM_S8_UINT, Layout::DEPTH24_STENCIL8 },
 		{ VK_FORMAT_D32_SFLOAT_S8_UINT, Layout::DEPTH32F_STENCIL8 },
+		{ VK_FORMAT_R8_UINT, Layout::R8UI },
+		{ VK_FORMAT_R16_SINT, Layout::R16I },
+		{ VK_FORMAT_R16_UINT, Layout::R16UI },
+		{ VK_FORMAT_R32_SINT, Layout::R32I },
+		{ VK_FORMAT_R32_UINT, Layout::R32UI },
+		{ VK_FORMAT_R8G8_SINT, Layout::RG8I },
+		{ VK_FORMAT_R8G8_UINT, Layout::RG8UI },
+		{ VK_FORMAT_R16G16_SINT, Layout::RG16I },
+		{ VK_FORMAT_R16G16_UINT, Layout::RG16UI },
+		{ VK_FORMAT_R32G32_SINT, Layout::RG32I },
+		{ VK_FORMAT_R32G32_UINT, Layout::RG32UI },
+		{ VK_FORMAT_R8G8B8A8_SINT, Layout::RGBA8I },
+		{ VK_FORMAT_R8G8B8A8_UINT, Layout::RGBA8UI },
+		{ VK_FORMAT_R16G16B16A16_SINT, Layout::RGBA16I },
+		{ VK_FORMAT_R16G16B16A16_UINT, Layout::RGBA16UI },
+		{ VK_FORMAT_R32G32B32A32_SINT, Layout::RGBA32I },
+		{ VK_FORMAT_R32G32B32A32_UINT, Layout::RGBA32UI }
 	};
 
-	_depthTexture.width  = extent.width;
-	_depthTexture.height = extent.height;
-	_depthTexture.depth  = 1;
-	_depthTexture.levels = 1;
-	_depthTexture.shape  = TextureShape::D2;
+	// Create shared depth buffer.
+	_depth.width  = extent.width;
+	_depth.height = extent.height;
+	_depth.depth  = 1;
+	_depth.levels = 1;
+	_depth.shape  = TextureShape::D2;
+
 
 	Descriptor desc(formatInfos.at(depthFormat), Filter::LINEAR, Wrap::CLAMP);
-	GPU::setupTexture(_depthTexture, desc, true);
+	GPU::setupTexture(_depth, desc, true);
 
 	VkCommandBuffer commandBuffer = VkUtils::startOneTimeCommandBuffer(*_context);
-	VkUtils::imageLayoutBarrier(commandBuffer, *_depthTexture.gpu, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, 0, _depthTexture.levels, 0, _depthTexture.depth);
+	VkUtils::imageLayoutBarrier(commandBuffer, *_depth.gpu, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, 0, _depth.levels, 0, _depth.depth);
 	VkUtils::endOneTimeCommandBuffer(commandBuffer, *_context);
 
 	// Retrieve image count in the swap chain.
+	std::vector<VkImage> colorImages;
 	vkGetSwapchainImagesKHR(_context->device, _swapchain, &_imageCount, nullptr);
-	_colors.resize(_imageCount);
+	colorImages.resize(_imageCount);
 	Log::Info() << Log::GPU << "Swapchain using " << _imageCount << " images, requested " << _minImageCount << "."<< std::endl;
 	// Retrieve the images themselves.
-	vkGetSwapchainImagesKHR(_context->device, _swapchain, &_imageCount, _colors.data());
-	// Create views for each image.
-	_colorViews.resize(_imageCount);
+	vkGetSwapchainImagesKHR(_context->device, _swapchain, &_imageCount, colorImages.data());
 
+	Descriptor colorDesc(formatInfos.at(surfaceParams.format), Filter::LINEAR, Wrap::CLAMP);
 
-	for(size_t i = 0; i < _imageCount; i++) {
+	_framebuffers.resize(_imageCount);
+
+	for(uint i = 0; i < _imageCount; ++i){
+		_framebuffers[i].reset(new Framebuffer());
+		
+		Framebuffer& fb = *_framebuffers[i];
+
+		fb._width = extent.width;
+		fb._height = extent.height;
+		fb._mips = 1;
+		fb._layers = 1;
+		fb._shape = TextureShape::D2;
+		fb._name = "Backbuffer " + std::to_string(i);
+		fb._hasDepth = true;
+		fb._isBackbuffer = true;
+		
+		fb._depth = Texture("Depth");
+		fb._depth.width = extent.width;
+		fb._depth.height = extent.height;
+		fb._depth.depth = 1;
+		fb._depth.levels = 1;
+		fb._depth.shape = TextureShape::D2;
+		fb._depth.gpu.reset(new GPUTexture(_depth.gpu->descriptor(), TextureShape::D2));
+		fb._depth.gpu->image = _depth.gpu->image;
+		fb._depth.gpu->data = _depth.gpu->data;
+		fb._depth.gpu->view = _depth.gpu->view;
+		fb._depth.gpu->layouts = _depth.gpu->layouts;
+		fb._depth.gpu->sampler = _depth.gpu->sampler;
+		
+
+		fb._colors.clear();
+		fb._colors.emplace_back("Color");
+		fb._colors[0].width = extent.width;
+		fb._colors[0].height = extent.height;
+		fb._colors[0].depth = 1;
+		fb._colors[0].levels = 1;
+		fb._colors[0].shape = TextureShape::D2;
+		fb._colors[0].gpu.reset(new GPUTexture(colorDesc, TextureShape::D2));
+		fb._colors[0].gpu->image = colorImages[i];
+		// \todo detemrine proper layout.
+		fb._colors[0].gpu->layouts.resize(1, std::vector<VkImageLayout>(1, VK_IMAGE_LAYOUT_UNDEFINED));
+		fb._colors[0].gpu->sampler = VK_NULL_HANDLE;
 
 		VkImageViewCreateInfo viewInfo = {};
 		viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-		viewInfo.image = _colors[i];
+		viewInfo.image = colorImages[i];
 		viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
 		viewInfo.format = surfaceParams.format;
 		viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
@@ -167,27 +245,30 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 		viewInfo.subresourceRange.levelCount = 1;
 		viewInfo.subresourceRange.baseArrayLayer = 0;
 		viewInfo.subresourceRange.layerCount = 1;
+		vkCreateImageView(_context->device, &viewInfo, nullptr, &(fb._colors[0].gpu->view));
 
-		vkCreateImageView(_context->device, &viewInfo, nullptr, &(_colorViews[i]));
-
-	}
-
-	// Framebuffers.
-	_colorBuffers.resize(_imageCount);
-	for(size_t i = 0; i < _imageCount; ++i){
-		std::array<VkImageView, 2> attachments = { _colorViews[i], _depthTexture.gpu->view };
+		// Generate the render passes.
+		fb.populateRenderPasses(false);
+		fb.populateLayoutState();
+		
+		fb._framebuffers.resize(1);
+		fb._framebuffers[0].resize(1);
+		fb._framebuffers[0][0].attachments = { fb._colors[0].gpu->view, fb._depth.gpu->view };
 
 		VkFramebufferCreateInfo framebufferInfo = {};
 		framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-		framebufferInfo.renderPass = _pass;
-		framebufferInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
-		framebufferInfo.pAttachments = attachments.data();
+		framebufferInfo.renderPass = fb._renderPasses[0][0][0];
+		framebufferInfo.attachmentCount = static_cast<uint32_t>(fb._framebuffers[0][0].attachments.size());
+		framebufferInfo.pAttachments = fb._framebuffers[0][0].attachments.data();
 		framebufferInfo.width = extent.width;
 		framebufferInfo.height = extent.height;
 		framebufferInfo.layers = 1;
-		if(vkCreateFramebuffer(_context->device, &framebufferInfo, nullptr, &_colorBuffers[i]) != VK_SUCCESS) {
+		if(vkCreateFramebuffer(_context->device, &framebufferInfo, nullptr, &fb._framebuffers[0][0].framebuffer) != VK_SUCCESS) {
 			Log::Error() << Log::GPU << "Unable to create swap framebuffers." << std::endl;
 		}
+
+		fb._fullFramebuffer = fb._framebuffers[0][0];
+
 	}
 
 	// Only once: Semaphores and fences.
@@ -215,7 +296,7 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 	VkUtils::createCommandBuffers(*_context, _context->frameCount);
 	
 }
-
+/*
 VkRenderPass Swapchain::createMainRenderpass(const VkFormat & depth, const VkFormat & color){
 	// \todo We might want to abstract this for all renderpasses based on framebuffer info.
 	// Depth attachment.
@@ -282,9 +363,9 @@ VkRenderPass Swapchain::createMainRenderpass(const VkFormat & depth, const VkFor
 	return pass;
 }
 
-
+*/
 void Swapchain::resize(uint width, uint height){
-	if(width == _depthTexture.width && height == _depthTexture.height){
+	if(width == _depth.width && height == _depth.height){
 		return;
 	}
 	destroy();
@@ -292,12 +373,15 @@ void Swapchain::resize(uint width, uint height){
 	setup((uint32_t)width, (uint32_t)height);
 }
 
+VkRenderPass Swapchain::getRenderPass(){
+	return _framebuffers[0]->getRenderPass();
+}
+
 bool Swapchain::finishFrame(){
-	// \todo Do outside
-	if(_context->inRenderPass){
-		// Finish final pass and command buffer.
-		vkCmdEndRenderPass(_context->getCurrentCommandBuffer());
-	}
+
+	GPU::endRenderPassIfNeeded();
+
+	VkUtils::imageLayoutBarrier(_context->getCurrentCommandBuffer(), *(Framebuffer::backbuffer()->texture(0)->gpu), VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, 0, 1, 0, 1);
 
 	// Finish the frame command buffer.
 	vkEndCommandBuffer(_context->getCurrentCommandBuffer());
@@ -361,13 +445,6 @@ bool Swapchain::nextFrame(){
 	// Use a semaphore to know when the image is available.
 	VkResult status = vkAcquireNextImageKHR(_context->device, _swapchain, std::numeric_limits<uint64_t>::max(), _imagesAvailable[_context->swapIndex], VK_NULL_HANDLE, &_imageIndex);
 
-	// Populate infos.
-	VkRenderPassBeginInfo infos = {};
-	infos.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-	infos.renderPass = _pass;
-	infos.framebuffer = _colorBuffers[_imageIndex];
-	infos.renderArea.offset = { 0, 0 };
-	infos.renderArea.extent = {(uint32_t)_depthTexture.width, (uint32_t)_depthTexture.height};
 
 	// We should resize the swapachain.
 	if(status != VK_SUCCESS && status != VK_SUBOPTIMAL_KHR) {
@@ -387,9 +464,17 @@ bool Swapchain::nextFrame(){
 
 	vkBeginCommandBuffer(_context->getCurrentCommandBuffer(), &beginInfo);
 	_frameStarted = true;
-	
+	Framebuffer::_backbuffer = _framebuffers[_imageIndex].get();
+
 	// Record actions (to be replaced)
-	{
+	/*{
+		VkRenderPassBeginInfo infos = {};
+		infos.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+		infos.renderPass = _pass;
+		infos.framebuffer = _colorBuffers[_imageIndex];
+		infos.renderArea.offset = { 0, 0 };
+		infos.renderArea.extent = {(uint32_t)_depthTexture.width, (uint32_t)_depthTexture.height};
+
 		std::array<VkClearValue, 2> clearValues = {};
 		clearValues[0].color = { {0.0f, 1.0f, 0.0f, 1.0f} };
 		clearValues[1].depthStencil = { 1.0f, 0 };
@@ -399,13 +484,14 @@ bool Swapchain::nextFrame(){
 		vkCmdBeginRenderPass(_context->getCurrentCommandBuffer(), &infos, VK_SUBPASS_CONTENTS_INLINE);
 		//...
 		_context->newRenderPass = true;
+		_context->inRenderPass = true;
 
-	}
+	}*/
 
 	return true;
 }
 
-void Swapchain::clean(){
+Swapchain::~Swapchain(){
 	// Make sure all commands are finished before deleting anything.
 	if(_frameStarted){
 		_frameStarted = false;
@@ -423,16 +509,38 @@ void Swapchain::clean(){
 }
 
 void Swapchain::destroy() {
-	vkDeviceWaitIdle(_context->device);
-	
-	for(size_t i = 0; i < _imageCount; i++) {
-		vkDestroyFramebuffer(_context->device, _colorBuffers[i], nullptr);
+	GPU::sync();
+
+	/*
+	 DebugViewer::untrackDefault(this);
+
+	 GPU::clean(*this);
+
+	 // \todo Should this be move in GPU::clean? or not because these objects live longer than
+	 // the framebuffer object(s) (when resizing for instance).
+	 cleanRenderPasses();
+
+	 for(Texture& texture : _colors){
+		 texture.clean();
+	 }
+
+	 */
+	// We have to manually delete the framebuffers, because they don't own their color images (system created) nor their depth texture (shared).
+	// issue with pipeline objects in the cache. Either delete the ones corresponding to a deleted framebuffer, or avoid storing a pointer to the framebuffer and just keep the relevant format info
+	for(size_t i = 0; i < _imageCount; ++i) {
+		Framebuffer& fb = *_framebuffers[i];
+		vkDestroyFramebuffer(_context->device, fb._framebuffers[0][0].framebuffer, nullptr);
+
+		// Cleanup render passes.
+		fb.cleanRenderPasses();
+
+		vkDestroyImageView(_context->device, fb._colors[0].gpu->view, nullptr);
+		// We don't own the vkImage, and there are no samplers.
 	}
 	vkFreeCommandBuffers(_context->device, _context->commandPool, _context->commandBuffers.size(), _context->commandBuffers.data());
-	vkDestroyRenderPass(_context->device, _pass, nullptr);
-	for(size_t i = 0; i < _imageCount; i++) {
-		vkDestroyImageView(_context->device, _colorViews[i], nullptr);
-	}
-	_depthTexture.clean();
+
+	_depth.clean();
 	vkDestroySwapchainKHR(_context->device, _swapchain, nullptr);
+	_framebuffers.clear();
+
 }

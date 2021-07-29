@@ -157,7 +157,7 @@ public:
 	 Query the 2D texture backing the depth attachment if it exists.
 	 \return the depth texture or null
 	 */
-	const Texture * depthBuffer() const { return (_depthUse == Depth::TEXTURE ? &_depth : nullptr); }
+	const Texture * depthBuffer() const { return (_hasDepth ? &_depth : nullptr); }
 
 	/** Query the name of the framebuffer, for debugging purposes.
 	\return name the framebuffer name
@@ -188,6 +188,17 @@ public:
 	 */
 	uint attachments() const;
 
+	struct LayoutState {
+		std::vector<Layout> colors;
+		Layout depth;
+		bool hasDepth = false;
+
+		bool isEquivalent(const LayoutState& other) const;
+
+	};
+
+	const LayoutState& getLayoutState() const;
+
 	/**
 	 Query the window backbuffer infos.
 	 \return a reference to a placeholder representing the backbuffer
@@ -201,7 +212,6 @@ public:
 	 \param h the height
 	 \warning This will not resize the backbuffer, only update the stored dimensions.
 	 */
-	static void backbufferResized(uint w, uint h);
 
 	/** Copy assignment operator (disabled).
 	 \return a reference to the object assigned to
@@ -224,14 +234,21 @@ public:
 
 private:
 
-
 	struct Slice {
 		VkFramebuffer framebuffer = VK_NULL_HANDLE; ///< The framebuffer ID.
 		std::vector<VkImageView> attachments;
 	};
 
-	VkRenderPass createRenderpass(Operation colorOp, Operation depthOp, Operation stencilOp);
+	VkRenderPass createRenderpass(Operation colorOp, Operation depthOp, Operation stencilOp, bool presentable);
+
+	void populateRenderPasses(bool isBackbuffer);
+	
+	void populateLayoutState();
+
 	void finalizeFramebuffer();
+
+	void cleanRenderPasses();
+
 	void bind(const Slice& slice, size_t layer, size_t layerCount, size_t mip, size_t mipCount, const LoadOperation& colorOp, const LoadOperation& depthOp, const LoadOperation& stencilOp) const;
 
 	/** Default constructor. */
@@ -250,22 +267,16 @@ private:
 	Texture _depth = Texture("Depth"); ///< The depth renderbuffer.
 
 	TextureShape _shape = TextureShape::D2;	///< The texture shape.
-	VkImageType _target = VK_IMAGE_TYPE_2D;
-	bool _hasStencil = false;		///< Does the framebuffer has a stencil buffer.
-
-	std::vector<VkImageView> _views;
+	
 	std::array<std::array<std::array<VkRenderPass, 3>, 3>, 3> _renderPasses;
 
-	/// \brief Type of depth storage structure used.
-	enum class Depth {
-		NONE,
-		RENDERBUFFER,
-		TEXTURE
-	};
-	Depth _depthUse = Depth::NONE; ///< The type of depth backing the framebuffer.
+	LayoutState _state;
+
+	bool _hasDepth = false; ///< The type of depth backing the framebuffer.
+	bool _isBackbuffer = false;
 
 	static Framebuffer * _backbuffer; ///< Dummy backbuffer framebuffer.
 	
 	friend class GPU; ///< Utilities will need to access GPU handle.
-	
+	friend class Swapchain;
 };

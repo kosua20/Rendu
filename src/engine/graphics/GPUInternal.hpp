@@ -32,7 +32,8 @@ struct GPUContext {
 	VkQueue graphicsQueue= VK_NULL_HANDLE;
 	VkQueue presentQueue= VK_NULL_HANDLE;
 	DescriptorAllocator descriptorAllocator;
-	VkRenderPass mainRenderPass = VK_NULL_HANDLE;
+	//VkRenderPass mainRenderPass = VK_NULL_HANDLE;
+	VkRenderPass lastRenderPass = VK_NULL_HANDLE;
 	VkPipeline pipeline = VK_NULL_HANDLE;
 	
 	uint32_t graphicsId = 0;

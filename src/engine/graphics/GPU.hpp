@@ -334,7 +334,9 @@ public:
 	static GPUContext* getInternal();
 
 	static void cleanup();
-	
+
+	static void endRenderPassIfNeeded(); //unbindIfNeeded?
+
 private:
 	/** Read back the currently bound framebuffer to the CPU and save it in the best possible format on disk.
 	 \param type the type of the framebuffer
