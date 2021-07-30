@@ -68,15 +68,12 @@ void UniformBufferBase::upload(unsigned char * data){
 	// Copy data.
 	std::memcpy(gpu->mapped + _offset, data, _baseSize);
 
-	GPUContext* context = GPU::getInternal();
-
 	GPU::flushBuffer(*this, _offset, _baseSize);
 
 }
 
 void UniformBufferBase::clean(){
 	if(gpu){
-		GPUContext* context = GPU::getInternal();
 		BufferBase::clean();
 	}
 }

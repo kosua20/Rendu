@@ -296,74 +296,7 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 	VkUtils::createCommandBuffers(*_context, _context->frameCount);
 	
 }
-/*
-VkRenderPass Swapchain::createMainRenderpass(const VkFormat & depth, const VkFormat & color){
-	// \todo We might want to abstract this for all renderpasses based on framebuffer info.
-	// Depth attachment.
-	VkAttachmentDescription depthAttachment = {};
-	depthAttachment.format = depth;
-	depthAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
-	depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-	depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-	depthAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-	depthAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-	depthAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-	depthAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
-	// Color attachment.
-	VkAttachmentDescription colorAttachment = {};
-	colorAttachment.format = color;
-	colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
-	colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-	colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-	colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-	colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-	colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-	colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-
-	// Subpass.
-	VkSubpassDescription subpass = {};
-	subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-	subpass.colorAttachmentCount = 1;
-
-	VkAttachmentReference colorAttachmentRef = {};
-	colorAttachmentRef.attachment = 0;
-	colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-	subpass.pColorAttachments = &colorAttachmentRef;
-
-	VkAttachmentReference depthAttachmentRef = {};
-	depthAttachmentRef.attachment = 1;
-	depthAttachmentRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-	subpass.pDepthStencilAttachment = &depthAttachmentRef;
-
-	// Dependencies.
-	VkSubpassDependency dependency = {};
-	dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
-	dependency.dstSubpass = 0;
-	dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-	dependency.srcAccessMask = 0;
-	dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-	dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-
-	// Render pass.
-	std::array<VkAttachmentDescription, 2> attachments = {colorAttachment, depthAttachment};
-	VkRenderPassCreateInfo renderPassInfo = {};
-	renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-	renderPassInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
-	renderPassInfo.pAttachments = attachments.data();
-	renderPassInfo.subpassCount = 1;
-	renderPassInfo.pSubpasses = &subpass;
-	renderPassInfo.dependencyCount = 1;
-	renderPassInfo.pDependencies = &dependency;
-
-	VkRenderPass pass = VK_NULL_HANDLE;
-	if(vkCreateRenderPass(_context->device, &renderPassInfo, nullptr, &pass) != VK_SUCCESS) {
-		Log::Error() << Log::GPU << "Unable to create main render pass." << std::endl;
-	}
-	return pass;
-}
-
-*/
 void Swapchain::resize(uint width, uint height){
 	if(width == _depth.width && height == _depth.height){
 		return;
@@ -381,6 +314,7 @@ bool Swapchain::finishFrame(){
 
 	GPU::endRenderPassIfNeeded();
 
+	// Make sure that the backbuffer is presentable.
 	VkUtils::imageLayoutBarrier(_context->getCurrentCommandBuffer(), *(Framebuffer::backbuffer()->texture(0)->gpu), VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, 0, 1, 0, 1);
 
 	// Finish the frame command buffer.
@@ -466,28 +400,6 @@ bool Swapchain::nextFrame(){
 	_frameStarted = true;
 	Framebuffer::_backbuffer = _framebuffers[_imageIndex].get();
 
-	// Record actions (to be replaced)
-	/*{
-		VkRenderPassBeginInfo infos = {};
-		infos.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-		infos.renderPass = _pass;
-		infos.framebuffer = _colorBuffers[_imageIndex];
-		infos.renderArea.offset = { 0, 0 };
-		infos.renderArea.extent = {(uint32_t)_depthTexture.width, (uint32_t)_depthTexture.height};
-
-		std::array<VkClearValue, 2> clearValues = {};
-		clearValues[0].color = { {0.0f, 1.0f, 0.0f, 1.0f} };
-		clearValues[1].depthStencil = { 1.0f, 0 };
-		infos.clearValueCount = static_cast<uint32_t>(clearValues.size());
-		infos.pClearValues = clearValues.data();
-		// Submit final pass.
-		vkCmdBeginRenderPass(_context->getCurrentCommandBuffer(), &infos, VK_SUBPASS_CONTENTS_INLINE);
-		//...
-		_context->newRenderPass = true;
-		_context->inRenderPass = true;
-
-	}*/
-
 	return true;
 }
 
@@ -511,20 +423,6 @@ Swapchain::~Swapchain(){
 void Swapchain::destroy() {
 	GPU::sync();
 
-	/*
-	 DebugViewer::untrackDefault(this);
-
-	 GPU::clean(*this);
-
-	 // \todo Should this be move in GPU::clean? or not because these objects live longer than
-	 // the framebuffer object(s) (when resizing for instance).
-	 cleanRenderPasses();
-
-	 for(Texture& texture : _colors){
-		 texture.clean();
-	 }
-
-	 */
 	// We have to manually delete the framebuffers, because they don't own their color images (system created) nor their depth texture (shared).
 	// issue with pipeline objects in the cache. Either delete the ones corresponding to a deleted framebuffer, or avoid storing a pointer to the framebuffer and just keep the relevant format info
 	for(size_t i = 0; i < _imageCount; ++i) {

@@ -47,10 +47,6 @@ private:
 
 	std::vector<std::shared_ptr<Framebuffer>> _framebuffers;
 	Texture _depth;
-	//std::vector<VkImage> _colors;
-	//std::vector<VkImageView> _colorViews;
-	//std::vector<VkFramebuffer> _colorBuffers;
-	//Texture _depthTexture;
 
 	std::vector<VkSemaphore> _imagesAvailable;
 	std::vector<VkSemaphore> _framesFinished;
