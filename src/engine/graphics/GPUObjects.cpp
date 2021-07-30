@@ -14,7 +14,7 @@ bool GPUState::isEquivalent(const GPUState& other) const {
 		return false;
 	}
 
-	if(!framebuffer || !other.framebuffer){
+	if(!pass.framebuffer || !other.pass.framebuffer){
 		return false;
 	}
 
@@ -27,7 +27,7 @@ bool GPUState::isEquivalent(const GPUState& other) const {
 	}
 
 	// Framebuffer: same attachment count, same layouts (== compatible render passes: format, sample count, )
-	if(!(framebuffer->isEquivalent(*other.framebuffer))){
+	if(!(pass.framebuffer->isEquivalent(*other.pass.framebuffer))){
 		return false;
 	}
 

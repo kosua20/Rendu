@@ -33,7 +33,7 @@ struct GPUContext {
 	VkQueue presentQueue= VK_NULL_HANDLE;
 	DescriptorAllocator descriptorAllocator;
 	//VkRenderPass mainRenderPass = VK_NULL_HANDLE;
-	VkRenderPass lastRenderPass = VK_NULL_HANDLE;
+	//VkRenderPass lastRenderPass = VK_NULL_HANDLE;
 	VkPipeline pipeline = VK_NULL_HANDLE;
 	
 	uint32_t graphicsId = 0;
@@ -60,6 +60,8 @@ struct GPUContext {
 
 };
 
+class Texture;
+
 VKAPI_ATTR VkBool32 VKAPI_CALL vkDebugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageType, const VkDebugUtilsMessengerCallbackDataEXT* callbackData, void* userData);
 
 namespace VkUtils {
@@ -85,6 +87,8 @@ namespace VkUtils {
 	void endOneTimeCommandBuffer(VkCommandBuffer & commandBuffer, GPUContext & context);
 
 	void imageLayoutBarrier(VkCommandBuffer& commandBuffer, GPUTexture& texture, VkImageLayout newLayout, uint mipStart, uint mipCount, uint layerStart, uint layerCount);
+
+	void textureLayoutBarrier(VkCommandBuffer& commandBuffer, const Texture& texture, VkImageLayout newLayout);
 
 	void createCommandBuffers(GPUContext & context, uint count);
 

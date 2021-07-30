@@ -37,8 +37,8 @@ VkPipeline PipelineCache::getPipeline(const GPUState & state){
 	// We have to invalidate program pipelines after a reload, as the layout might change.
 	if(sameProgramPipelinesIt != _pipelines.end() && programReloaded){
 		// Delete the pipelines corresponding to this program.
-		GPUContext* context = GPU::getInternal();
 		// If we immediatly destroy a pipeline that was in use earlier in the frame, we might get a crash.
+		// So instead schedule the deletion and remove the records.
 		for(auto& pipelineInfo : sameProgramPipelinesIt->second){
 			_pipelinesToDelete.push_back(pipelineInfo.second.pipeline);
 		}
@@ -69,7 +69,7 @@ VkPipeline PipelineCache::getPipeline(const GPUState & state){
 		if(!entry.mesh.isEquivalent(state.mesh->state)){
 			continue;
 		}
-		if(!entry.framebuffer.isEquivalent(state.framebuffer->getLayoutState())){
+		if(!entry.framebuffer.isEquivalent(state.pass.framebuffer->getLayoutState())){
 			continue;
 		}
 		return entry.pipeline;
@@ -114,7 +114,7 @@ VkPipeline PipelineCache::createNewPipeline(const GPUState& state, const uint64_
 	entry.pipeline = buildPipeline(state);
 	entry.program = state.program;
 	entry.mesh = state.mesh->state;
-	entry.framebuffer = state.framebuffer->getLayoutState();
+	entry.framebuffer = state.pass.framebuffer->getLayoutState();
 
 	auto it = _pipelines[state.program].insert(std::make_pair(hash, entry));
 	return it->second.pipeline;
@@ -126,7 +126,7 @@ VkPipeline PipelineCache::buildPipeline(const GPUState& state){
 	VkGraphicsPipelineCreateInfo pipelineInfo{};
 	pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 	// Assert no null data.
-	assert(state.program); assert(state.mesh); assert(state.framebuffer);
+	assert(state.program); assert(state.mesh); assert(state.pass.framebuffer);
 	
 	// Program
 	{
@@ -257,7 +257,7 @@ VkPipeline PipelineCache::buildPipeline(const GPUState& state){
 	}
 	// Color blending
 	VkPipelineColorBlendStateCreateInfo colorState{};
-	const uint attachmentCount = state.framebuffer->attachments();
+	const uint attachmentCount = state.pass.framebuffer->attachments();
 	std::vector<VkPipelineColorBlendAttachmentState> attachmentStates(attachmentCount);
 	{
 		static const std::map<BlendEquation, VkBlendOp> eqs = {
@@ -318,7 +318,7 @@ VkPipeline PipelineCache::buildPipeline(const GPUState& state){
 
 	// Render pass
 	{
-		pipelineInfo.renderPass = state.framebuffer->getRenderPass();
+		pipelineInfo.renderPass = state.pass.framebuffer->getRenderPass();
 		pipelineInfo.subpass = 0;
 	}
 	// No inheritance

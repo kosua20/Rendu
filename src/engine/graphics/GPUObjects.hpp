@@ -586,5 +586,15 @@ public:
 	// Binding state.
 	Program* program = nullptr;
 	const GPUMesh* mesh = nullptr;
-	const Framebuffer* framebuffer = nullptr;
+
+
+	struct FramebufferInfos {
+		const Framebuffer* framebuffer = nullptr;
+		uint mipStart = 0;
+		uint mipCount = 1;
+		uint layerStart = 0;
+		uint layerCount = 1;
+	};
+
+	FramebufferInfos pass;
 };

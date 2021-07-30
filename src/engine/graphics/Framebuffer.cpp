@@ -4,12 +4,6 @@
 #include "graphics/GPUInternal.hpp"
 #include "renderers/DebugViewer.hpp"
 
-static void textureLayoutBarrier(VkCommandBuffer& commandBuffer, const Texture& texture, VkImageLayout newLayout){
-	const bool isCube = texture.shape & TextureShape::Cube;
-	const bool isArray = texture.shape & TextureShape::Array;
-	const uint layers = (isCube || isArray) ? texture.depth : 1;
-	VkUtils::imageLayoutBarrier(commandBuffer, *texture.gpu, newLayout, 0, texture.levels, 0, layers);
-}
 
 Framebuffer::Framebuffer(uint width, uint height, const Descriptor & descriptor, bool depthBuffer, const std::string & name) :
 	Framebuffer(TextureShape::D2, width, height, 1, 1, std::vector<Descriptor>(1, descriptor), depthBuffer, name) {
@@ -75,24 +69,24 @@ VkRenderPass Framebuffer::createRenderpass(Operation colorOp, Operation depthOp,
 	subpass.pDepthStencilAttachment = &attachRefs.back();
 
 	// Dependencies.
-	VkSubpassDependency dependency = {};
-	dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
-	dependency.dstSubpass = 0;
-	dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
-	dependency.srcAccessMask = 0;
-	dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
-	dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+	std::array<VkSubpassDependency, 1> dependencies;
+	dependencies[0].srcSubpass = VK_SUBPASS_EXTERNAL;
+	dependencies[0].dstSubpass = 0;
+	dependencies[0].srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+	dependencies[0].srcAccessMask = 0;
+	dependencies[0].dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+	dependencies[0].dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+	dependencies[0].dependencyFlags = 0;
 
 	// Render pass.
-
 	VkRenderPassCreateInfo renderPassInfo = {};
 	renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
 	renderPassInfo.attachmentCount = static_cast<uint32_t>(attachDescs.size());
 	renderPassInfo.pAttachments = attachDescs.data();
 	renderPassInfo.subpassCount = 1;
 	renderPassInfo.pSubpasses = &subpass;
-	renderPassInfo.dependencyCount = 1;
-	renderPassInfo.pDependencies = &dependency;
+	renderPassInfo.dependencyCount = dependencies.size();
+	renderPassInfo.pDependencies = dependencies.data();
 
 	GPUContext* context = GPU::getInternal();
 	VkRenderPass pass = VK_NULL_HANDLE;
@@ -137,10 +131,9 @@ Framebuffer::Framebuffer(TextureShape shape, uint width, uint height, uint depth
 			_hasDepth	  = true;
 			_depth.width  = _width;
 			_depth.height = _height;
+			_depth.depth  = _layers;
 			_depth.levels = _mips;
-			// For now we don't support layered rendering, depth is always a TEXTURE_2D.
-			_depth.depth  = 1;
-			_depth.shape  = TextureShape::D2;
+			_depth.shape  = shape;
 			GPU::setupTexture(_depth, descriptor, true);
 
 		} else {
@@ -203,10 +196,10 @@ void Framebuffer::finalizeFramebuffer(){
 	GPUContext* context = GPU::getInternal();
 	VkCommandBuffer commandBuffer = VkUtils::startOneTimeCommandBuffer(*context);
 	for(size_t cid = 0; cid < _colors.size(); ++cid){
-		textureLayoutBarrier(commandBuffer, _colors[cid], VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+		VkUtils::textureLayoutBarrier(commandBuffer, _colors[cid], VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 	}
 	if(_hasDepth){
-		textureLayoutBarrier(commandBuffer, _depth, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+		VkUtils::textureLayoutBarrier(commandBuffer, _depth, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 	}
 	VkUtils::endOneTimeCommandBuffer(commandBuffer, *context);
 
@@ -228,7 +221,7 @@ void Framebuffer::finalizeFramebuffer(){
 				VkImageViewCreateInfo viewInfo = {};
 				viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 				viewInfo.image = _colors[cid].gpu->image;
-				viewInfo.viewType =  VK_IMAGE_VIEW_TYPE_2D;//_colors[cid].gpu->viewType;
+				viewInfo.viewType =  VK_IMAGE_VIEW_TYPE_2D;
 				viewInfo.format =  _colors[cid].gpu->format;
 				viewInfo.subresourceRange.aspectMask = _colors[cid].gpu->aspect;
 				viewInfo.subresourceRange.baseMipLevel = mid;
@@ -242,19 +235,18 @@ void Framebuffer::finalizeFramebuffer(){
 				}
 			}
 
-			// Depth attachment is last, and is always 2D.
+			// Depth attachment is last.
 			if(_hasDepth){
 				VkImageViewCreateInfo viewInfo = {};
 				viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 				viewInfo.image = _depth.gpu->image;
-				viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;// _depth.gpu->viewType;
+				viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
 				viewInfo.format =  _depth.gpu->format;
 				viewInfo.subresourceRange.aspectMask =  _depth.gpu->aspect;
-				viewInfo.subresourceRange.baseMipLevel = 0;
+				viewInfo.subresourceRange.baseMipLevel = mid;
 				viewInfo.subresourceRange.levelCount = 1;
-				viewInfo.subresourceRange.baseArrayLayer = 0;
+				viewInfo.subresourceRange.baseArrayLayer = lid;
 				viewInfo.subresourceRange.layerCount = 1;
-				// Depth is the last attachment.
 				if (vkCreateImageView(context->device, &viewInfo, nullptr, &(slice.attachments.back())) != VK_SUCCESS) {
 					Log::Error() << Log::GPU << "Unable to create image view for framebuffer." << std::endl;
 					return;
@@ -289,7 +281,7 @@ void Framebuffer::finalizeFramebuffer(){
 			slice.attachments[cid] = _colors[cid].gpu->view;
 		}
 
-		// Depth attachment is last, and is always 2D.
+		// Depth attachment is last.
 		if(_hasDepth){
 			slice.attachments[_colors.size()] = _depth.gpu->view;
 		}
@@ -338,7 +330,8 @@ void Framebuffer::bind(const Framebuffer::Slice& slice, size_t layer, size_t lay
 
 
 	GPU::endRenderPassIfNeeded();
-	GPU::bindFramebuffer(*this);
+
+	GPU::bindFramebuffer(*this, layer, layerCount, mip, mipCount);
 
 	GPUContext* context = GPU::getInternal();
 	VkCommandBuffer& commandBuffer = context->getCurrentCommandBuffer();
@@ -353,13 +346,11 @@ void Framebuffer::bind(const Framebuffer::Slice& slice, size_t layer, size_t lay
 		clearVals[cid].color.float32[2] = colorOp.value[2];
 		clearVals[cid].color.float32[3] = colorOp.value[3];
 		VkUtils::imageLayoutBarrier(commandBuffer, *_colors[cid].gpu, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, mip, mipCount, layer, layerCount);
-
 	}
 	if(_hasDepth){
 		clearVals.back().depthStencil.depth = depthOp.value[0];
 		clearVals.back().depthStencil.stencil = uint32_t(stencilOp.value[0]);
-		// \note We use only one 2D depth buffer.
-		VkUtils::imageLayoutBarrier(commandBuffer, *_depth.gpu, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, 0, 1, 0, 1);
+		VkUtils::imageLayoutBarrier(commandBuffer, *_depth.gpu, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, mip, mipCount, layer, layerClount);
 	}
 
 	VkRenderPassBeginInfo info = {};
@@ -374,8 +365,6 @@ void Framebuffer::bind(const Framebuffer::Slice& slice, size_t layer, size_t lay
 
 	vkCmdBeginRenderPass(commandBuffer, &info, VK_SUBPASS_CONTENTS_INLINE);
 	context->newRenderPass = true;
-	context->inRenderPass = true;
-	context->lastRenderPass = pass;
 	
 }
 

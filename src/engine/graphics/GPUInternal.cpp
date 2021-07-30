@@ -308,8 +308,8 @@ void VkUtils::imageLayoutBarrier(VkCommandBuffer& commandBuffer, GPUTexture& tex
 
 			const BarrierSetting& srcSetting = settings.at(oldLayout);
 			const BarrierSetting& dstSetting = settings.at(newLayout);
-			barrier.srcAccessMask = srcSetting.access; //  As soon as possible.
-			barrier.dstAccessMask = dstSetting.access; // Before transfer.
+			barrier.srcAccessMask = srcSetting.access;
+			barrier.dstAccessMask = dstSetting.access;
 			
 			srcStage |= srcSetting.srcStage;
 			dstStage |= dstSetting.dstStage;
@@ -325,6 +325,13 @@ void VkUtils::imageLayoutBarrier(VkCommandBuffer& commandBuffer, GPUTexture& tex
 
 	vkCmdPipelineBarrier(commandBuffer, srcStage, dstStage, 0, 0, nullptr, 0, nullptr, barriers.size(), barriers.data() );
 
+}
+
+void VkUtils::textureLayoutBarrier(VkCommandBuffer& commandBuffer, const Texture& texture, VkImageLayout newLayout){
+	const bool isCube = texture.shape & TextureShape::Cube;
+	const bool isArray = texture.shape & TextureShape::Array;
+	const uint layers = (isCube || isArray) ? texture.depth : 1;
+	VkUtils::imageLayoutBarrier(commandBuffer, *texture.gpu, newLayout, 0, texture.levels, 0, layers);
 }
 
 void VkUtils::createCommandBuffers(GPUContext & context, uint count){

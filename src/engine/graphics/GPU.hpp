@@ -92,7 +92,7 @@ public:
 	/** Bind a framebuffer as a draw destination.
 	 \param framebuffer the framebuffer to bind as draw destination
 	 */
-	static void bindFramebuffer(const Framebuffer & framebuffer);
+	static void bindFramebuffer(const Framebuffer & framebuffer, size_t layer, size_t layerCount, size_t mip, size_t mipCount);
 
 	/** Save a given framebuffer content to the disk.
 	 \param framebuffer the framebuffer to save
@@ -353,7 +353,7 @@ private:
 
 	static void bindPipelineIfNeeded();
 
-	static void blitTexture(VkCommandBuffer& commandBuffer, const Texture& src, const Texture& dst, uint mipStartSrc, uint mipStartDst, uint mipCount, uint layerStartSrc, uint layerStartDst, uint layerCount, Filter filter);
+	static void blitTexture(VkCommandBuffer& commandBuffer, const Texture& src, const Texture& dst, uint mipStartSrc, uint mipStartDst, uint mipCount, uint layerStartSrc, uint layerStartDst, uint layerCount, Filter filter, bool dstIsBackbuffer);
 
 	static void clean(GPUTexture & tex);
 
