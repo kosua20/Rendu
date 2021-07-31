@@ -350,7 +350,7 @@ void Framebuffer::bind(const Framebuffer::Slice& slice, size_t layer, size_t lay
 	if(_hasDepth){
 		clearVals.back().depthStencil.depth = depthOp.value[0];
 		clearVals.back().depthStencil.stencil = uint32_t(stencilOp.value[0]);
-		VkUtils::imageLayoutBarrier(commandBuffer, *_depth.gpu, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, mip, mipCount, layer, layerClount);
+		VkUtils::imageLayoutBarrier(commandBuffer, *_depth.gpu, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, mip, mipCount, layer, layerCount);
 	}
 
 	VkRenderPassBeginInfo info = {};

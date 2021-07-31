@@ -360,11 +360,22 @@ private:
 		bool dirty = true;
 	};
 
+	struct TextureState {
+		VkImageView view = VK_NULL_HANDLE;
+		VkSampler sampler = VK_NULL_HANDLE;
+	};
+
+	struct StaticBufferState {
+		VkBuffer buffer = VK_NULL_HANDLE;
+		uint offset = 0;
+		uint size = 0;
+	};
+
 	std::unordered_map<std::string, UniformDef> _uniforms;
 
 	std::unordered_map<int, DynamicBufferState> _dynamicBuffers; // set 0
-	std::unordered_map<int, const Texture *> _textures; // set 1
-	std::unordered_map<int, const UniformBufferBase *> _staticBuffers; // set 2
+	std::unordered_map<int, TextureState> _textures; // set 1
+	std::unordered_map<int, StaticBufferState> _staticBuffers; // set 2
 
 	std::array<bool, 3> _dirtySets;
 	std::array<DescriptorSet, 3> _currentSets;

@@ -84,7 +84,7 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 					continue;
 				}
 
-				_staticBuffers.emplace(std::make_pair(buffer.binding, nullptr));
+				_staticBuffers[buffer.binding] = StaticBufferState();
 				continue;
 			}
 
@@ -112,15 +112,15 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 			const uint set = image.set;
 
 			if(set != 1){
-				Log::Error() << "Textures should be in set 1 only, ignoring." << std::endl;
+				Log::Error() << "Sampler image should be in set 1 only, ignoring." << std::endl;
 				continue;
 			}
 
 			if(_textures.count(image.binding) != 0){
-				Log::Warning() << Log::GPU << "Sampler already created, collision between stages for set " << image.set << " at binding " << image.binding << "." << std::endl;
+				Log::Warning() << Log::GPU << "Sampler image already created, collision between stages for set " << image.set << " at binding " << image.binding << "." << std::endl;
 				continue;
 			}
-			_textures.emplace(std::make_pair(image.binding, nullptr));
+			_textures[image.binding] = TextureState();
 		}
 	}
 	
@@ -276,14 +276,14 @@ void Program::validate() const {
 
 }
 
-void Program::saveBinary(const std::string & outputPath) const {
+void Program::saveBinary(const std::string & ) const {
 
 	//Resources::saveRawDataToExternalFile(outputPath + "_" + _name + "_" + std::to_string(uint(format)) + ".bin", &binary[0], binary.size());
 }
 
 void Program::update(){
-
 	GPUContext* context = GPU::getInternal();
+
 	// Upload all dirty uniform buffers
 	if(_dirtySets[0]){
 		for(const auto& buffer : _dynamicBuffers){
@@ -337,8 +337,8 @@ void Program::update(){
 		uint tid = 0;
 		for(const auto& image : _textures){
 			imageInfos[tid] = {};
-			imageInfos[tid].imageView = image.second->gpu->view;
-			imageInfos[tid].sampler = image.second->gpu->sampler;
+			imageInfos[tid].imageView = image.second.view;
+			imageInfos[tid].sampler = image.second.sampler;
 			imageInfos[tid].imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 			VkWriteDescriptorSet write{};
 			write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -368,9 +368,10 @@ void Program::update(){
 		uint tid = 0;
 		for(const auto& buffer : _staticBuffers){
 			infos[tid] = {};
-			infos[tid].buffer = buffer.second->gpu->buffer;
-			infos[tid].offset = buffer.second->currentOffset();
-			infos[tid].range = buffer.second->baseSize();
+			// \todo Should we use the real buffer current offset here, if an update happened under the hood ?
+			infos[tid].buffer = buffer.second.buffer;
+			infos[tid].offset = buffer.second.offset;
+			infos[tid].range = buffer.second.size;
 			
 			VkWriteDescriptorSet write{};
 			write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -442,45 +443,34 @@ void Program::clean() {
 }
 
 void Program::buffer(const UniformBufferBase& buffer, uint slot){
-	const UniformBufferBase* refBuff = _staticBuffers.at(slot);
-	//if(refBuff != &buffer){
-		_staticBuffers[slot] = &buffer;
-	//}
+	const StaticBufferState refBuff = _staticBuffers.at(slot);
+	if((refBuff.buffer != buffer.gpu->buffer) || (refBuff.offset != buffer.currentOffset()) || (refBuff.size != buffer.baseSize())){
+		_staticBuffers[slot].buffer = buffer.gpu->buffer;
+		_staticBuffers[slot].offset = buffer.currentOffset();
+		_staticBuffers[slot].size = buffer.baseSize();
+	}
 	_dirtySets[2] = true;
 }
 
-void Program::texture(const Texture* texture, uint slot){
-	const Texture* refTex = _textures.at(slot);
-	// \todo We are currently not able to detect when a texture content has been updated (new vkImage/...)
-	// To do this, we could: test equality of vulkan objects (img, sampler, view) (can we read them back from the stored descriptors ?)
-	// or we could ha a dirty flag that is live for one entire frame. Requires some kind of nextFrame on all resources, called by the GPU context.
-	//if(refTex != texture){
-		_textures[slot] = texture;
-	//}
-	_dirtySets[1] = true;
-
-	// \todo Handle layout transitions.
-}
 
 void Program::texture(const Texture& texture, uint slot){
-	const Texture* refTex = _textures.at(slot);
-	//if(refTex != &texture){
-		_textures[slot] = &texture;
+	const TextureState & refTex = _textures.at(slot);
+	if((refTex.view != texture.gpu->view) || (refTex.sampler != texture.gpu->sampler)){
+		_textures[slot].view = texture.gpu->view;
+		_textures[slot].sampler = texture.gpu->sampler;
 		_dirtySets[1] = true;
-	//}
-	// \todo Handle layout transitions.
+	}
+}
+
+void Program::texture(const Texture* texture, uint slot){
+	Program::texture(*texture, slot);
 }
 
 void Program::textures(const std::vector<const Texture *> & textures, size_t startingSlot){
 	const uint texCount = uint(textures.size());
 	for(uint tid = 0; tid < texCount; ++tid){
 		const uint slot = startingSlot + tid;
-		const Texture* refTex = _textures.at(slot);
-		//if(refTex != textures[tid]){
-			_textures[slot] = textures[tid];
-			_dirtySets[1] = true;
-		//}
-		// \todo Handle layout transitions.
+		texture(*textures[tid], slot);
 	}
 }
 

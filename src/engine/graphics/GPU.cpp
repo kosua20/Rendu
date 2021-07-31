@@ -1446,8 +1446,12 @@ void GPU::cleanFrame(){
 		return;
 	}
 
-	while(!_resourcesToDelete.empty() && (_resourcesToDelete.front().frame < currentFrame - 2)){
+	while(!_resourcesToDelete.empty()){
 		ResourceToDelete& rsc = _resourcesToDelete.front();
+		// If the following resources are too recent, they might still be used by in flight frames.
+		if(rsc.frame >= currentFrame - 2){
+			break;
+		}
 		if(rsc.view){
 			vkDestroyImageView(_context.device, rsc.view, nullptr);
 		}

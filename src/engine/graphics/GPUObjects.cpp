@@ -66,6 +66,7 @@ bool GPUTexture::hasSameLayoutAs(const Descriptor & other) const {
 
 void GPUTexture::setFiltering(Filter filtering) {
 	(void)filtering;
+	Log::Error() << "Unsupported for now. In the future, might be a shader option with fixed samplers." << std::endl;
 	// \todo Update the descriptor and sampler.
 	//_descriptor  = Descriptor(_descriptor.typedFormat(), filtering, _descriptor.wrapping());
 	//minFiltering = _descriptor.getGPUMinificationFilter();
