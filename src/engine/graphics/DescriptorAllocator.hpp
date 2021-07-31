@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Common.hpp"
+#include "graphics/GPUObjects.hpp"
 
 #include <volk/volk.h>
 #include <deque>
@@ -12,19 +13,28 @@ public:
 
 	void init(GPUContext* context, uint poolCount);
 
-	VkDescriptorSet allocateSet(VkDescriptorSetLayout& setLayout);
+	DescriptorSet allocateSet(VkDescriptorSetLayout& setLayout);
+
+	void freeSet(const DescriptorSet& set);
 
 	void clean();
 
-	VkDescriptorPool getImGuiPool(){ return _imguiPool; }
+	VkDescriptorPool getImGuiPool(){ return _imguiPool.handle; }
 	
 private:
 
-	VkDescriptorPool createPool(uint count);
+	struct DescriptorPool {
+		VkDescriptorPool handle = VK_NULL_HANDLE;
+		uint allocated = 0;
+		uint id = 0;
+	};
+
+	DescriptorPool createPool(uint count);
 
 	GPUContext* _context = nullptr;
-	std::deque<VkDescriptorPool> _pools;
-	VkDescriptorPool _imguiPool = VK_NULL_HANDLE;
+	std::deque<DescriptorPool> _pools;
+	DescriptorPool _imguiPool;
+
 	uint _maxPoolCount = 2;
 	uint _currentPoolCount = 0;
 };

@@ -598,3 +598,8 @@ public:
 
 	FramebufferInfos pass;
 };
+
+struct DescriptorSet {
+	VkDescriptorSet handle = VK_NULL_HANDLE;
+	uint pool = 0;
+};

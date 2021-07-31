@@ -367,7 +367,7 @@ private:
 	std::unordered_map<int, const UniformBufferBase *> _staticBuffers; // set 2
 
 	std::array<bool, 3> _dirtySets;
-	std::array<VkDescriptorSet, 3> _currentSets;
+	std::array<DescriptorSet, 3> _currentSets;
 	std::vector<uint32_t> _currentOffsets;
 
 	bool _reloaded = false;

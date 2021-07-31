@@ -240,7 +240,6 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 	// Initialize dynamic UBO descriptors.
 	_currentOffsets.assign(_dynamicBuffers.size(), 0);
 
-	_currentSets.fill(VK_NULL_HANDLE);
 
 	/*VkDescriptorSet set = context->descriptorAllocator.allocateSet(_state.setLayouts[0]);
 
@@ -294,8 +293,10 @@ void Program::update(){
 			_currentOffsets[buffer.first] = buffer.second.buffer->currentOffset();
 		}
 
+		context->descriptorAllocator.freeSet(_currentSets[0]);
+
 		// We can't just update the current descriptor set as it might be in use.
-		VkDescriptorSet set = context->descriptorAllocator.allocateSet(_state.setLayouts[0]);
+		DescriptorSet set = context->descriptorAllocator.allocateSet(_state.setLayouts[0]);
 
 		std::vector< VkDescriptorBufferInfo> infos(_dynamicBuffers.size());
 		std::vector< VkWriteDescriptorSet> writes;
@@ -308,7 +309,7 @@ void Program::update(){
 
 			VkWriteDescriptorSet write{};
 			write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-			write.dstSet = set;
+			write.dstSet = set.handle;
 			write.dstBinding = buffer.first;
 			write.dstArrayElement = 0;
 			write.descriptorCount = 1;
@@ -325,8 +326,11 @@ void Program::update(){
 	// Update the texture descriptors
 
 	if(_dirtySets[1]){
+
 		// We can't just update the current descriptor set as it might be in use.
-		VkDescriptorSet set = context->descriptorAllocator.allocateSet(_state.setLayouts[1]);
+		context->descriptorAllocator.freeSet(_currentSets[1]);
+
+		DescriptorSet set = context->descriptorAllocator.allocateSet(_state.setLayouts[1]);
 
 		std::vector< VkDescriptorImageInfo> imageInfos(_textures.size());
 		std::vector< VkWriteDescriptorSet> writes;
@@ -338,7 +342,7 @@ void Program::update(){
 			imageInfos[tid].imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 			VkWriteDescriptorSet write{};
 			write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-			write.dstSet = set;
+			write.dstSet = set.handle;
 			write.dstBinding = image.first;
 			write.dstArrayElement = 0;
 			write.descriptorCount = 1;
@@ -356,10 +360,11 @@ void Program::update(){
 
 	if(_dirtySets[2]){
 		// We can't just update the current descriptor set as it might be in use.
-		VkDescriptorSet set = context->descriptorAllocator.allocateSet(_state.setLayouts[2]);
+		context->descriptorAllocator.freeSet(_currentSets[2]);
+		DescriptorSet set = context->descriptorAllocator.allocateSet(_state.setLayouts[2]);
 
-		std::vector< VkDescriptorBufferInfo> infos(_staticBuffers.size());
-		std::vector< VkWriteDescriptorSet> writes;
+		std::vector<VkDescriptorBufferInfo> infos(_staticBuffers.size());
+		std::vector<VkWriteDescriptorSet> writes;
 		uint tid = 0;
 		for(const auto& buffer : _staticBuffers){
 			infos[tid] = {};
@@ -369,7 +374,7 @@ void Program::update(){
 			
 			VkWriteDescriptorSet write{};
 			write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-			write.dstSet = set;
+			write.dstSet = set.handle;
 			write.dstBinding = buffer.first;
 			write.dstArrayElement = 0;
 			write.descriptorCount = 1;
@@ -387,8 +392,8 @@ void Program::update(){
 	//vkCmdBindDescriptorSets(context->getCurrentCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, _state.layout, 0, 1, &_currentSets[0], _currentOffsets.size(), _currentOffsets.data());
 
 	for(uint sid = 0; sid < _currentSets.size(); ++sid){
-		if(_currentSets[sid] != VK_NULL_HANDLE){
-			vkCmdBindDescriptorSets(context->getCurrentCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, _state.layout, sid, 1, &_currentSets[sid], 0, nullptr);
+		if(_currentSets[sid].handle != VK_NULL_HANDLE){
+			vkCmdBindDescriptorSets(context->getCurrentCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, _state.layout, sid, 1, &_currentSets[sid].handle, 0, nullptr);
 		}
 
 	}

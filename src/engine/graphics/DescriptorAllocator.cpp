@@ -13,52 +13,91 @@ void DescriptorAllocator::init(GPUContext* context, uint poolCount){
 
 }
 
-VkDescriptorSet DescriptorAllocator::allocateSet(VkDescriptorSetLayout& setLayout){
+DescriptorSet DescriptorAllocator::allocateSet(VkDescriptorSetLayout& setLayout){
 
 	VkDescriptorSetAllocateInfo allocInfo{};
 	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
 	allocInfo.descriptorSetCount = 1;
 	allocInfo.pSetLayouts = &setLayout;
-	allocInfo.descriptorPool = _pools.back();
 
-	VkDescriptorSet set;
-	if(vkAllocateDescriptorSets(_context->device, &allocInfo, &set) != VK_SUCCESS) {
-		VkDescriptorPool newPool = createPool(DEFAULT_SET_COUNT);
+	DescriptorSet set;
 
-		if(newPool == VK_NULL_HANDLE){
-			// No space left, try to reuse an old pool.
-			Log::Warning() << "Unable to allocate new pool, recycling oldest one." << std::endl;
-			VkDescriptorPool oldestPool = _pools.front();
-			vkResetDescriptorPool(_context->device, oldestPool, 0);
-			_pools.pop_front();
-			newPool = oldestPool;
-		}
-
-		_pools.push_back(newPool);
-		// Try to allocate in newly create pool.
-		allocInfo.descriptorPool = _pools.back();
-		if(vkAllocateDescriptorSets(_context->device, &allocInfo, &set) != VK_SUCCESS) {
-			Log::Error() << "Allocation failed." << std::endl;
-			return VK_NULL_HANDLE;
-		}
+	// Attempt to allocate from the current pool.
+	DescriptorPool& currentPool = _pools.back();
+	allocInfo.descriptorPool = currentPool.handle;
+	if(vkAllocateDescriptorSets(_context->device, &allocInfo, &set.handle) == VK_SUCCESS) {
+		// Success.
+		currentPool.allocated += 1;
+		set.pool = currentPool.id;
+		return set;
 	}
 
-	return set;
+	// Else, try to find an existing pool where all sets have been freed.
+	bool found = false;
+	for(auto poolIt = _pools.begin(); poolIt != _pools.end(); ++poolIt){
+		if(poolIt->allocated == 0){
+			// Copy the pool infos.
+			DescriptorPool pool = DescriptorPool(*poolIt);
+			vkResetDescriptorPool(_context->device, pool.handle, 0);
+			_pools.erase(poolIt);
+			_pools.push_back(pool);
+			found = true;
+			break;
+		}
+	}
+	// Finally, if all pools are in use, create a new one.
+	if(!found){
+		DescriptorPool newPool = createPool(DEFAULT_SET_COUNT);
+		_pools.push_back(newPool);
+	}
+
+	// Try to allocate in reused/new pool
+	DescriptorPool& newPool = _pools.back();
+	allocInfo.descriptorPool = newPool.handle;
+	if(vkAllocateDescriptorSets(_context->device, &allocInfo, &set.handle) == VK_SUCCESS) {
+		// Success.
+		newPool.allocated += 1;
+		set.pool = newPool.id;
+		return set;
+	}
+
+	Log::Error() << "Allocation failed." << std::endl;
+	return DescriptorSet();
+
+}
+
+void DescriptorAllocator::freeSet(const DescriptorSet& set){
+	// Set was never allocated.
+	if(set.handle == VK_NULL_HANDLE){
+		return;
+	}
+
+	for(auto& pool : _pools){
+		if(pool.id == set.pool){
+#ifdef DEBUG
+			if(pool.allocated == 0){
+				Log::Error() << "A descriptor set has probably been double-freed." << std::endl;
+				return;
+			}
+#endif
+			pool.allocated -= 1;
+		}
+	}
 }
 
 void DescriptorAllocator::clean(){
 	for(auto& pool : _pools){
-		vkDestroyDescriptorPool(_context->device, pool, nullptr);
+		vkDestroyDescriptorPool(_context->device, pool.handle, nullptr);
 	}
 	_pools.clear();
-	vkDestroyDescriptorPool(_context->device, _imguiPool, nullptr);
-	_imguiPool = VK_NULL_HANDLE;
+	vkDestroyDescriptorPool(_context->device, _imguiPool.handle, nullptr);
+	_imguiPool.handle = VK_NULL_HANDLE;
 }
 
 
-VkDescriptorPool DescriptorAllocator::createPool(uint count){
+DescriptorAllocator::DescriptorPool DescriptorAllocator::createPool(uint count){
 	if(_currentPoolCount > _maxPoolCount){
-		return VK_NULL_HANDLE;
+		return DescriptorPool();
 	}
 	++_currentPoolCount;
 
@@ -76,15 +115,20 @@ VkDescriptorPool DescriptorAllocator::createPool(uint count){
 	//	{ VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, count },
 	//	{ VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, count }
 	};
+
+	DescriptorPool pool;
+	pool.id = _currentPoolCount - 1;
+	pool.allocated = 0;
+
 	VkDescriptorPoolCreateInfo poolInfo = {};
 	poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 	poolInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
 	poolInfo.maxSets = count * IM_ARRAYSIZE(poolSizes);
 	poolInfo.poolSizeCount = (uint32_t)IM_ARRAYSIZE(poolSizes);
 	poolInfo.pPoolSizes = poolSizes;
-	VkDescriptorPool pool;
-	if(vkCreateDescriptorPool(_context->device, &poolInfo, nullptr, &pool) != VK_SUCCESS){
-		return VK_NULL_HANDLE;
+
+	if(vkCreateDescriptorPool(_context->device, &poolInfo, nullptr, &pool.handle) != VK_SUCCESS){
+		return DescriptorPool();
 	}
 	return pool;
 }
