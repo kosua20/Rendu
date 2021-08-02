@@ -266,7 +266,9 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 
 	}
 
-	// Only once: Semaphores and fences.
+	VkUtils::createCommandBuffers(*_context, _context->frameCount);
+
+	// Semaphores and fences.
 	_imagesAvailable.resize(_context->frameCount);
 	_framesFinished.resize(_context->frameCount);
 	_framesInFlight.resize(_context->frameCount);
@@ -287,8 +289,6 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 			Log::Error() << Log::GPU << "Unable to create semaphores and fences." << std::endl;
 		}
 	}
-
-	VkUtils::createCommandBuffers(*_context, _context->frameCount);
 	
 }
 
@@ -385,8 +385,7 @@ bool Swapchain::nextFrame(){
 		return false;
 	}
 
-	// prepare command buffer.
-
+	// Prepare command buffer.
 	VkCommandBufferBeginInfo beginInfo = {};
 	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
@@ -407,11 +406,6 @@ Swapchain::~Swapchain(){
 
 	destroy();
 
-	for(size_t i = 0; i < _framesFinished.size(); i++) {
-		vkDestroySemaphore(_context->device, _framesFinished[i], nullptr);
-		vkDestroySemaphore(_context->device, _imagesAvailable[i], nullptr);
-		vkDestroyFence(_context->device, _framesInFlight[i], nullptr);
-	}
 	
 }
 
@@ -435,5 +429,12 @@ void Swapchain::destroy() {
 	_depth.clean();
 	vkDestroySwapchainKHR(_context->device, _swapchain, nullptr);
 	_framebuffers.clear();
+
+
+	for(size_t i = 0; i < _framesFinished.size(); ++i) {
+		vkDestroySemaphore(_context->device, _framesFinished[i], nullptr);
+		vkDestroySemaphore(_context->device, _imagesAvailable[i], nullptr);
+		vkDestroyFence(_context->device, _framesInFlight[i], nullptr);
+	}
 
 }
