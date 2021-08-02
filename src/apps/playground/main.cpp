@@ -3,6 +3,7 @@
 #include "resources/ResourcesManager.hpp"
 #include "graphics/GPU.hpp"
 #include "graphics/Framebuffer.hpp"
+#include "graphics/ScreenQuad.hpp"
 #include "system/Config.hpp"
 #include "system/System.hpp"
 #include "system/Window.hpp"
@@ -76,6 +77,7 @@ int main(int argc, char ** argv) {
 	const double dt		 = 1.0 / 120.0; // Small physics timestep.
 
 	Program * program = Resources::manager().getProgram("object", "object_basic", "object_basic_random");
+	Program * program3 = Resources::manager().getProgram2D("passthrough");
 	const Mesh * mesh		= Resources::manager().getMesh("light_sphere", Storage::GPU);
 
 	Program * program2 = Resources::manager().getProgram("object_basic_color");
@@ -107,12 +109,42 @@ int main(int argc, char ** argv) {
 	tex2.images.emplace_back(tex2.width, tex2.height, 4);
 	auto& texData = tex2.images.back();
 
-
-
 	uint count = 0;
 	Descriptor desc = {Layout::RGBA8, Filter::LINEAR, Wrap::CLAMP};
 	Framebuffer fb(400, 300, desc , true, "testfb");
-	
+
+
+	for(uint dy = 0; dy < tex2.height; ++dy){
+	   for(uint dx = 0; dx < tex2.width; ++dx){
+		   float r = 0.0f; float g = 0.0f; float b = 0.0f;
+		   uint x = (dx + 1)%8;
+		   uint y = (dy + 1)%8;
+		   if(x < 2){
+			   r = 1.0f;
+		   } else if (x < 4){
+			   g = 1.0f;
+		   } else if(x < 6){
+			   b = 1.0f;
+		   }
+		   if(y < 2){
+			   b = 0.5f;
+		   } else if (y < 4){
+			   r = 0.5f;
+		   } else if(y < 6){
+			   g = 0.5f;
+		   }
+		   r = float(9 % 60)/60.0f;
+		   texData.rgba(x,y) = glm::vec4(r,g,b,0.5f);
+	   }
+   }
+   tex2.upload({Layout::RGBA32F, Filter::NEAREST_LINEAR, Wrap::CLAMP}, true);
+
+   mesh3.positions.clear();
+   mesh3.positions = {glm::vec3(-0.5f, -0.5f, 0.1f), glm::vec3(0.5f, -0.5f, 0.1f), glm::vec3(0.0f, 1.0f, 0.1f)};
+   mesh3.upload();
+
+	Filter imageInterp = Filter::LINEAR;
+
 	// Start the display/interaction loop.
 	while(window.nextFrame()) {
 		
@@ -150,42 +182,18 @@ int main(int argc, char ** argv) {
 		}
 
 		// Render.
-		const glm::ivec2 screenSize = Input::manager().size();
 		const glm::mat4 MVP		   = camera.projection() * camera.view();
+		GPU::setDepthState(true, TestFunction::LESS, true);
 		fb.bind(glm::vec4(0.2f, 0.3f, 0.25f, 1.0f), 1.0f, Framebuffer::Operation::DONTCARE);
 
 		fb.setViewport();
 
-		program->use();
-		program->uniform("mvp", MVP);
-		//GPU::drawMesh(*mesh);
+		if(ImGui::Combo("Filtering", reinterpret_cast<int *>(&imageInterp), "Nearest\0Linear\0\0")) {
+			tex->gpu->setFiltering(imageInterp);
+		}
 		//GPU::setBlendState(true, BlendEquation::ADD, BlendFunction::SRC_ALPHA, BlendFunction::ONE_MINUS_SRC_ALPHA);
 
-		for(uint dy = 0; dy < tex2.height; ++dy){
-			for(uint dx = 0; dx < tex2.width; ++dx){
-				float r = 0.0f; float g = 0.0f; float b = 0.0f;
-				uint x = (dx + count)%8;
-				uint y = (dy + count)%8;
-				if(x < 2){
-					r = 1.0f;
-				} else if (x < 4){
-					g = 1.0f;
-				} else if(x < 6){
-					b = 1.0f;
-				}
-				if(y < 2){
-					b = 0.5f;
-				} else if (y < 4){
-					r = 0.5f;
-				} else if(y < 6){
-					g = 0.5f;
-				}
-				r = float(count % 60)/60.0f;
-				texData.rgba(x,y) = glm::vec4(r,g,b,0.5f);
-			}
-		}
 		++count;
-		tex2.upload({Layout::RGBA32F, Filter::NEAREST_LINEAR, Wrap::CLAMP}, true);
 
 		program2->use();
 		program2->uniform("mvp", MVP);
@@ -197,11 +205,8 @@ int main(int argc, char ** argv) {
 		float angle = float(count % 360)/360.0 * glm::two_pi<float>();
 		glm::mat3 rot = glm::mat3(glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 0.0f, 1.0f)));
 
-		mesh3.positions.clear();
-		mesh3.positions = {rot * glm::vec3(-0.5f, -0.5f, 0.1f), rot * glm::vec3(0.5f, -0.5f, 0.1f), rot * glm::vec3(0.0f, 1.0f, 0.1f)};
-		mesh3.upload();
 
-		program2->texture(tex2, 0);
+		//program2->texture(tex2, 0);
 		program2->uniform("color", glm::vec3(0.0f, 0.5f, 1.0f));
 		GPU::drawMesh(mesh3);
 
@@ -212,7 +217,18 @@ int main(int argc, char ** argv) {
 		//Framebuffer::backbuffer()->bind(glm::vec4(1.0f, 0.5f, 0.2f, 1.0f), 1.0f, Framebuffer::Operation::DONTCARE);
 		//Framebuffer::backbuffer()->setViewport();
 		GPU::blit(fb, *Framebuffer::backbuffer(), Filter::LINEAR);
+		Framebuffer::backbuffer()->bind(Framebuffer::Operation::LOAD);
+		Framebuffer::backbuffer()->setViewport();
+		GPU::setDepthState(false);
 
+		program->use();
+		program->uniform("mvp", MVP);
+		GPU::drawMesh(*mesh);
+
+		GPU::setViewport(0, 0, 300, 520);
+		program3->use();
+		program3->texture(fb.texture(), 0);
+		ScreenQuad::draw();
 
 		ImGui::Text("ImGui is functional!");
 		ImGui::SameLine();
