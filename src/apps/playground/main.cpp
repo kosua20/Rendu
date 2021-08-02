@@ -202,8 +202,6 @@ int main(int argc, char ** argv) {
 		GPU::drawMesh(mesh2);
 		//GPU::setCullState(true, Faces::BACK);
 		//GPU::setBlendState(false);
-		float angle = float(count % 360)/360.0 * glm::two_pi<float>();
-		glm::mat3 rot = glm::mat3(glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 0.0f, 1.0f)));
 
 
 		//program2->texture(tex2, 0);
@@ -251,6 +249,10 @@ int main(int argc, char ** argv) {
 
 
 	}
+
+	tex2.clean();
+	mesh2.clean();
+	mesh3.clean();
 
 	return 0;
 }

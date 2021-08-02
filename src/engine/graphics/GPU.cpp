@@ -16,6 +16,7 @@
 #pragma clang diagnostic ignored "-Wmissing-field-initializers"
 #pragma clang diagnostic ignored "-Wunused-parameter"
 #pragma clang diagnostic ignored "-Wunused-variable"
+#pragma clang diagnostic ignored "-Wunused-private-field"
 #include <vma/vk_mem_alloc.h>
 #pragma clang diagnostic pop
 
@@ -296,7 +297,7 @@ bool GPU::setupWindow(Window * window){
 	return true;
 }
 
-int GPU::checkError(const char * file, int line, const std::string & infos) {
+int GPU::checkError(const char * , int , const std::string & ) {
 //	const GLenum glErr = glGetError();
 //	if(glErr != GL_NO_ERROR) {
 //		const std::string filePath(file);
@@ -359,8 +360,6 @@ void GPU::createProgram(Program& program, const std::string & vertexContent, con
 						 << compilationLog << std::endl;
 		}
 	}
-
-	//checkGPUError();
 }
 
 void GPU::bindProgram(const Program & program){
@@ -496,10 +495,10 @@ void GPU::setupTexture(Texture & texture, const Descriptor & descriptor, bool dr
 		return;
 	}
 
-	setupSampler(*texture.gpu, descriptor);
+	setupSampler(*texture.gpu);
 }
 
-void GPU::setupSampler(GPUTexture & texture, const Descriptor & descriptor) {
+void GPU::setupSampler(GPUTexture & texture) {
 
 	if(texture.sampler != VK_NULL_HANDLE){
 		_resourcesToDelete.emplace_back();
@@ -678,44 +677,28 @@ void GPU::downloadTexture(Texture & texture, int level) {
 	}
 	texture.images.resize(texture.depth * texture.levels);
 
+	const uint channels = texture.gpu->channels;
+	// For each mip level.
+	for(size_t mid = 0; mid < texture.levels; ++mid) {
+		if(level >= 0 && int(mid) != level) {
+			continue;
+		}
+		const uint w = std::max<uint>(1, texture.width / (1 << mid));
+		const uint h = std::max<uint>(1, texture.height / (1 << mid));
 
-//
-//	const GLenum target			= texture.gpu->target;
-//	const GLenum type			= GL_FLOAT;
-//	const GLenum format			= texture.gpu->format;
-//	const unsigned int channels = texture.gpu->channels;
-//
-//	// We enforce float type, we can use 4 alignment.
-//	glPixelStorei(GL_PACK_ALIGNMENT, 4);
-//	_metrics.stateChanges += 1;
-//	glBindTexture(target, texture.gpu->id);
-//	_metrics.textureBindings += 1;
-//
-//	// For each mip level.
-//	for(size_t mid = 0; mid < texture.levels; ++mid) {
-//		if(level >= 0 && int(mid) != level) {
-//			continue;
-//		}
-//		const GLsizei w = GLsizei(std::max<uint>(1, texture.width / (1 << mid)));
-//		const GLsizei h = GLsizei(std::max<uint>(1, texture.height / (1 << mid)));
-//		const GLint mip = GLint(mid);
-//
-//		if(texture.shape == TextureShape::D2) {
-//			texture.images[mid] = Image(w, h, channels);
-//			Image & image		= texture.images[mid];
-//			glGetTexImage(GL_TEXTURE_2D, mip, format, type, &image.pixels[0]);
-//			_metrics.downloads += 1;
-//		} else if(texture.shape == TextureShape::Cube) {
-//			for(size_t lid = 0; lid < texture.depth; ++lid) {
-//				const size_t id	   = mid * texture.levels + lid;
-//				texture.images[id] = Image(w, h, channels);
-//				Image & image	   = texture.images[id];
-//				glGetTexImage(GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + lid), mip, format, type, &image.pixels[0]);
-//				_metrics.downloads += 1;
-//			}
-//		}
-//	}
-//	GPU::restoreTexture(texture.shape);
+		if(texture.shape == TextureShape::D2) {
+			texture.images[mid] = Image(w, h, channels);
+			Image & image		= texture.images[mid];
+			//glGetTexImage(GL_TEXTURE_2D, mip, format, type, &image.pixels[0]);
+		} else if(texture.shape == TextureShape::Cube) {
+			for(size_t lid = 0; lid < texture.depth; ++lid) {
+				const size_t id	   = mid * texture.levels + lid;
+				texture.images[id] = Image(w, h, channels);
+				Image & image	   = texture.images[id];
+				//glGetTexImage(GLenum(GL_TEXTURE_CUBE_MAP_POSITIVE_X + lid), mip, format, type, &image.pixels[0]);
+			}
+		}
+	}
 }
 
 void GPU::generateMipMaps(const Texture & texture) {
@@ -926,7 +909,6 @@ void GPU::setupMesh(Mesh & mesh) {
 	}
 	mesh.gpu.reset(new GPUMesh());
 
-
 	// Compute full allocation size.
 	size_t totalSize = 0;
 	totalSize += 3 * mesh.positions.size();
@@ -1026,8 +1008,6 @@ void GPU::bindPipelineIfNeeded(){
 		shouldBindPipeline = true;
 	}
 
-	// if new render pass begun, bind pipeline
-	// if pipeline updated, bind pipeline
 	if(shouldBindPipeline){
 		vkCmdBindPipeline(_context.getCurrentCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, _context.pipeline);
 	}
@@ -1172,6 +1152,7 @@ void GPU::setStencilState(bool test, TestFunction function, StencilOp fail, Sten
 	_state.stencilFail = fail;
 	_state.stencilPass = depthFail;
 	_state.stencilDepthPass = pass;
+	_state.stencilValue = value;
 }
 
 void GPU::setBlendState(bool test) {
@@ -1295,8 +1276,6 @@ void GPU::blitTexture(VkCommandBuffer& commandBuffer, const Texture& src, const 
 
 	const uint mipEffectiveCount = std::min(std::min(src.levels, dst.levels), mipCount);
 	const uint layerEffectiveCount = std::min(std::min(srcLayers, dstLayers), layerCount);
-
-	const VkImageLayout dstOldLayout = src.gpu->layouts[mipStartDst][layerStartDst];
 	
 	VkUtils::imageLayoutBarrier(commandBuffer, *src.gpu, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, mipStartSrc, mipEffectiveCount, layerStartSrc, layerEffectiveCount);
 	VkUtils::imageLayoutBarrier(commandBuffer, *dst.gpu, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, mipStartDst, mipEffectiveCount, layerStartDst, layerEffectiveCount);
@@ -1379,15 +1358,20 @@ const GPU::Metrics & GPU::getMetrics(){
 void GPU::cleanup(){
 	GPU::sync();
 
+	// Clean all remaining resources.
+	_quad.clean();
+	_context.frameIndex = (uint64_t)(-1);
+	cleanFrame();
+	assert(_resourcesToDelete.empty());
+	
 	_pipelineCache.clean();
 	_context.descriptorAllocator.clean();
 	
 	vkDestroyCommandPool(_context.device, _context.commandPool, nullptr);
 
-	_quad.clean();
 	vmaDestroyAllocator(_allocator);
 
-	//vkDestroyDevice(_context.device, nullptr);
+	vkDestroyDevice(_context.device, nullptr);
 	ShaderCompiler::cleanup();
 }
 
@@ -1431,6 +1415,7 @@ void GPU::clean(Framebuffer & framebuffer){
 
 void GPU::clean(GPUMesh & mesh){
 	// Nothing to do, buffers will all be cleaned up.
+	(void)mesh;
 }
 
 void GPU::clean(GPUBuffer & buffer){
@@ -1442,7 +1427,7 @@ void GPU::clean(GPUBuffer & buffer){
 }
 
 void GPU::clean(Program & program){
-	
+	(void)program;
 }
 
 

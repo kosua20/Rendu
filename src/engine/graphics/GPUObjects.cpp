@@ -71,7 +71,7 @@ void GPUTexture::setFiltering(Filter filtering) {
 	wrapping = _descriptor.getGPUWrapping();
 	_descriptor.getGPUFilter(imgFiltering, mipFiltering);
 	// Recreate sampler.
-	GPU::setupSampler(*this, _descriptor);
+	GPU::setupSampler(*this);
 }
 
 GPUBuffer::GPUBuffer(BufferType atype){

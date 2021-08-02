@@ -110,7 +110,7 @@ public:
 	 */
 	static void setupTexture(Texture & texture, const Descriptor & descriptor, bool drawable);
 
-	static void setupSampler(GPUTexture & texture, const Descriptor & descriptor);
+	static void setupSampler(GPUTexture & texture);
 
 	/** Upload a texture images data to the GPU.
 	 \param texture the texture to upload
