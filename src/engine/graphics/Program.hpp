@@ -31,12 +31,6 @@ public:
 			OTHER
 		};
 
-		/** Constructor.
-		 \param uname uniform name
-		 \param utype uniform type
-		 */
-		//Uniform(const std::string & uname, Type utype);
-
 		std::string name; ///< The uniform name.
 		Type type; ///< The uniform type.
 
@@ -49,6 +43,7 @@ public:
 
 	};
 
+	using Uniforms = std::unordered_map<std::string, UniformDef>;
 
 	struct SamplerDef {
 		std::string name;
@@ -116,8 +111,11 @@ public:
 	void clean();
 
 	void buffer(const UniformBufferBase& buffer, uint slot);
+
 	void texture(const Texture* texture, uint slot);
+
 	void texture(const Texture& texture, uint slot);
+
 	void textures(const std::vector<const Texture *> & textures, size_t startingSlot = 0);
 
 	void update();
@@ -287,9 +285,9 @@ public:
 
 	/** \return the list of registered basic uniforms.
 	 */
-	/*const std::vector<Uniform> & uniforms() const {
-		return _uniformInfos;
-	}*/
+	const Uniforms & uniforms() const {
+		return _uniforms;
+	}
 
 	/** \return the program name */
 	const std::string & name() const {
@@ -349,10 +347,7 @@ private:
 
 	std::array<Stage, int(ShaderType::COUNT)> _stages;
 
-	//GLuint _id;								 ///< The GPU program ID.
-	std::string _name;				 		 ///< The shader name
-	//std::map<std::string, GLint> _uniforms;  ///< Internal list of automatically registered uniforms and their locations. We keep this separate to avoid exposing GL internal types.
-	//std::vector<Uniform> _uniformInfos;  ///< Additional uniforms info.
+	std::string _name;
 	StagesState _state;
 
 	struct DynamicBufferState {

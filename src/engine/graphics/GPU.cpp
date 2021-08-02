@@ -33,6 +33,18 @@ PipelineCache _pipelineCache;
 VmaAllocator _allocator = VK_NULL_HANDLE;
 VmaVulkanFunctions _vulkanFunctions;
 
+struct ResourceToDelete {
+	VkImageView view = VK_NULL_HANDLE;
+	VkSampler sampler = VK_NULL_HANDLE;
+	VkImage image = VK_NULL_HANDLE;
+	VkBuffer buffer = VK_NULL_HANDLE;
+	VmaAllocation data = VK_NULL_HANDLE;
+	VkFramebuffer framebuffer = VK_NULL_HANDLE;
+	uint64_t frame = 0;
+};
+
+std::deque<ResourceToDelete> _resourcesToDelete;
+
 GPUContext* GPU::getInternal(){
 	return &_context;
 }
@@ -276,7 +288,6 @@ bool GPU::setupWindow(Window * window){
 
 	// Finally setup the swapchain.
 	window->_swapchain.reset(new Swapchain(_context, window->_config));
-	//_context.mainRenderPass = window->_swapchain->getRenderPass();
 	
 	// Create a pipeline cache.
 	_pipelineCache.init();
@@ -999,7 +1010,6 @@ void GPU::bindPipelineIfNeeded(){
 	bool shouldBindPipeline = _context.newRenderPass;
 	_context.newRenderPass = false;
 	// * state is outdated, create/retrieve new pipeline
-	// \todo Use hash for equivalence.
 	if(!_state.isEquivalent(_lastState)){
 		_context.pipeline = _pipelineCache.getPipeline(_state);
 		_lastState = _state;
@@ -1186,7 +1196,7 @@ void GPU::setColorState(bool writeRed, bool writeGreen, bool writeBlue, bool wri
 }
 
 void GPU::blitDepth(const Framebuffer & src, const Framebuffer & dst) {
-	GPU::endRenderPassIfNeeded();
+	GPU::unbindFramebufferIfNeeded();
 
 	VkCommandBuffer& commandBuffer = _context.getCurrentCommandBuffer();
 
@@ -1204,7 +1214,7 @@ void GPU::blitDepth(const Framebuffer & src, const Framebuffer & dst) {
 }
 
 void GPU::blit(const Framebuffer & src, const Framebuffer & dst, Filter filter) {
-	GPU::endRenderPassIfNeeded();
+	GPU::unbindFramebufferIfNeeded();
 
 	VkCommandBuffer& commandBuffer = _context.getCurrentCommandBuffer();
 	const uint count = std::min(src.attachments(), dst.attachments());
@@ -1223,7 +1233,7 @@ void GPU::blit(const Framebuffer & src, const Framebuffer & dst, size_t lSrc, si
 
 void GPU::blit(const Framebuffer & src, const Framebuffer & dst, size_t lSrc, size_t lDst, size_t mipSrc, size_t mipDst, Filter filter) {
 
-	GPU::endRenderPassIfNeeded();
+	GPU::unbindFramebufferIfNeeded();
 	VkCommandBuffer& commandBuffer = _context.getCurrentCommandBuffer();
 	const uint count = std::min(src.attachments(), dst.attachments());
 
@@ -1246,7 +1256,7 @@ void GPU::blit(const Texture & src, Texture & dst, Filter filter) {
 	if(!src.images.empty()) {
 		Log::Warning() << Log::GPU << "CPU data won't be copied." << std::endl;
 	}
-	GPU::endRenderPassIfNeeded();
+	GPU::unbindFramebufferIfNeeded();
 
 	GPU::setupTexture(dst, src.gpu->descriptor(), false);
 
@@ -1263,7 +1273,7 @@ void GPU::blit(const Texture & src, Framebuffer & dst, Filter filter) {
 	}
 	const uint layerCount = src.shape == TextureShape::D3 ? 1 : src.depth;
 
-	GPU::endRenderPassIfNeeded();
+	GPU::unbindFramebufferIfNeeded();
 	GPU::blitTexture(_context.getCurrentCommandBuffer(), src, *dst.texture(), 0, 0, src.levels, 0, 0, layerCount, filter, dst._isBackbuffer);
 
 }
@@ -1325,26 +1335,26 @@ void GPU::blitTexture(VkCommandBuffer& commandBuffer, const Texture& src, const 
 }
 
 
-void GPU::endRenderPassIfNeeded(){
-	if(_state.pass.framebuffer){
-		VkCommandBuffer& commandBuffer = _context.getCurrentCommandBuffer();
-		vkCmdEndRenderPass(commandBuffer);
-
-		const Framebuffer& fb = *_state.pass.framebuffer;
-		const VkImageLayout dstLayoutColor = fb._isBackbuffer ? VK_IMAGE_LAYOUT_PRESENT_SRC_KHR : VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		const VkImageLayout dstLayoutDepth = fb._isBackbuffer ? VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL : VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		
-		// \todo Move in framebuffer or some kind of unbind.
-		const uint attachCount = fb.attachments();
-		for(uint cid = 0; cid < attachCount; ++cid ){
-			const Texture* color = fb.texture(cid);
-			VkUtils::imageLayoutBarrier(commandBuffer, *(color->gpu), dstLayoutColor, _state.pass.mipStart, _state.pass.mipCount, _state.pass.layerStart, _state.pass.layerCount);
-		}
-		if(fb.depthBuffer()){
-			VkUtils::imageLayoutBarrier(commandBuffer, *(fb.depthBuffer()->gpu), dstLayoutDepth, _state.pass.mipStart, _state.pass.mipCount, _state.pass.layerStart, _state.pass.layerCount);
-		}
-		_state.pass.framebuffer = nullptr;
+void GPU::unbindFramebufferIfNeeded(){
+	if(_state.pass.framebuffer == nullptr){
+		return;
 	}
+	VkCommandBuffer& commandBuffer = _context.getCurrentCommandBuffer();
+	vkCmdEndRenderPass(commandBuffer);
+
+	const Framebuffer& fb = *_state.pass.framebuffer;
+	const VkImageLayout dstLayoutColor = fb._isBackbuffer ? VK_IMAGE_LAYOUT_PRESENT_SRC_KHR : VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+	const VkImageLayout dstLayoutDepth = fb._isBackbuffer ? VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL : VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+
+	const uint attachCount = fb.attachments();
+	for(uint cid = 0; cid < attachCount; ++cid ){
+		const Texture* color = fb.texture(cid);
+		VkUtils::imageLayoutBarrier(commandBuffer, *(color->gpu), dstLayoutColor, _state.pass.mipStart, _state.pass.mipCount, _state.pass.layerStart, _state.pass.layerCount);
+	}
+	if(fb.depthBuffer()){
+		VkUtils::imageLayoutBarrier(commandBuffer, *(fb.depthBuffer()->gpu), dstLayoutDepth, _state.pass.mipStart, _state.pass.mipCount, _state.pass.layerStart, _state.pass.layerCount);
+	}
+	_state.pass.framebuffer = nullptr;
 }
 
 void GPU::getState(GPUState& state) {
@@ -1370,19 +1380,6 @@ void GPU::cleanup(){
 	//vkDestroyDevice(_context.device, nullptr);
 	ShaderCompiler::cleanup();
 }
-
-
-struct ResourceToDelete {
-	VkImageView view = VK_NULL_HANDLE;
-	VkSampler sampler = VK_NULL_HANDLE;
-	VkImage image = VK_NULL_HANDLE;
-	VkBuffer buffer = VK_NULL_HANDLE;
-	VmaAllocation data = VK_NULL_HANDLE;
-	VkFramebuffer framebuffer = VK_NULL_HANDLE;
-	uint64_t frame = 0;
-};
-
-std::deque<ResourceToDelete> _resourcesToDelete;
 
 void GPU::clean(GPUTexture & tex){
 	_resourcesToDelete.emplace_back();
@@ -1452,19 +1449,19 @@ void GPU::cleanFrame(){
 		if(rsc.frame >= currentFrame - 2){
 			break;
 		}
-		if(rsc.view){
+		if(rsc.view != VK_NULL_HANDLE){
 			vkDestroyImageView(_context.device, rsc.view, nullptr);
 		}
-		if(rsc.sampler){
+		if(rsc.sampler != VK_NULL_HANDLE){
 			vkDestroySampler(_context.device, rsc.sampler, nullptr);
 		}
-		if(rsc.image){
+		if(rsc.image != VK_NULL_HANDLE){
 			vmaDestroyImage(_allocator, rsc.image, rsc.data);
 		}
-		if(rsc.buffer){
+		if(rsc.buffer != VK_NULL_HANDLE){
 			vmaDestroyBuffer(_allocator, rsc.buffer, rsc.data);
 		}
-		if(rsc.framebuffer){
+		if(rsc.framebuffer != VK_NULL_HANDLE){
 			vkDestroyFramebuffer(_context.device, rsc.framebuffer, nullptr);
 		}
 		_resourcesToDelete.pop_front();

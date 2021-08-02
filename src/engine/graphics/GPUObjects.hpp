@@ -380,10 +380,10 @@ public:
 	
 	uint channels; ///< Number of channels.
 
-	VkImage image;
-	VkImageView view;
-	VmaAllocation data;
-	VkSampler sampler;
+	VkImage image = VK_NULL_HANDLE;
+	VkImageView view = VK_NULL_HANDLE;
+	VmaAllocation data = VK_NULL_HANDLE;
+	VkSampler sampler = VK_NULL_HANDLE;
 
 	std::vector<std::vector<VkImageLayout>> layouts;
 
@@ -425,8 +425,8 @@ public:
 	/** Move constructor. */
 	GPUBuffer(GPUBuffer &&) = delete;
 
-	VkBuffer buffer;
-	VmaAllocation data;
+	VkBuffer buffer = VK_NULL_HANDLE;
+	VmaAllocation data = VK_NULL_HANDLE;
 	char* mapped = nullptr;
 	bool mappable = false;
 	

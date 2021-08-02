@@ -329,7 +329,7 @@ void Framebuffer::bind(const Framebuffer::Slice& slice, size_t layer, size_t lay
 	const VkRenderPass& pass = _renderPasses[uint(colorOp.mode)][uint(depthOp.mode)][uint(stencilOp.mode)];
 
 
-	GPU::endRenderPassIfNeeded();
+	GPU::unbindFramebufferIfNeeded();
 
 	GPU::bindFramebuffer(*this, layer, layerCount, mip, mipCount);
 
@@ -407,7 +407,7 @@ void Framebuffer::clear(const glm::vec4 & color, float depth){
 	// Start a new pass with clearing instructions
 	bind(_fullFramebuffer, 0, _layers, 0, _mips, color, depth, Operation::LOAD);
 	// Finish it.
-	GPU::endRenderPassIfNeeded();
+	GPU::unbindFramebufferIfNeeded();
 
 }
 
@@ -470,6 +470,7 @@ Framebuffer::~Framebuffer() {
 
 	// \todo Should this be move in GPU::clean? or not because these objects live longer than
 	// the framebuffer object(s) (when resizing for instance).
+	// Check swapchain too, to mutualize of possible.
 	cleanRenderPasses();
 	
 	for(Texture& texture : _colors){

@@ -335,7 +335,7 @@ public:
 
 	static void cleanup();
 
-	static void endRenderPassIfNeeded(); //unbindIfNeeded?
+	static void unbindFramebufferIfNeeded();
 
 private:
 	/** Read back the currently bound framebuffer to the CPU and save it in the best possible format on disk.

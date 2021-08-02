@@ -27,9 +27,6 @@ public:
 
 	~Swapchain();
 
-	// \todo leaking Vulkan here.
-	//const VkRenderPass& getMainPass() const { return _pass; }
-
 	VkRenderPass getRenderPass();
 
 private:

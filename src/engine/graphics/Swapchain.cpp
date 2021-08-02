@@ -115,10 +115,6 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 	// Find a proper depth format.
 	const VkFormat depthFormat = VkUtils::findSupportedFormat(_context->physicalDevice,  {VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT}, VK_IMAGE_TILING_OPTIMAL, VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
 
-	//_pass = createMainRenderpass(depthFormat, surfaceParams.format);
-	//_context->mainRenderPass = _pass;
-
-	// \todo See how to wrap this in a standard framebuffer.
 
 	static const std::map<VkFormat, Layout> formatInfos = {
 		{ VK_FORMAT_R8_UNORM, Layout::R8 },
@@ -231,7 +227,6 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 		fb._colors[0].shape = TextureShape::D2;
 		fb._colors[0].gpu.reset(new GPUTexture(colorDesc, TextureShape::D2));
 		fb._colors[0].gpu->image = colorImages[i];
-		// \todo detemrine proper layout.
 		fb._colors[0].gpu->layouts.resize(1, std::vector<VkImageLayout>(1, VK_IMAGE_LAYOUT_UNDEFINED));
 		fb._colors[0].gpu->sampler = VK_NULL_HANDLE;
 
@@ -312,7 +307,7 @@ VkRenderPass Swapchain::getRenderPass(){
 
 bool Swapchain::finishFrame(){
 
-	GPU::endRenderPassIfNeeded();
+	GPU::unbindFramebufferIfNeeded();
 
 	// Make sure that the backbuffer is presentable.
 	VkUtils::imageLayoutBarrier(_context->getCurrentCommandBuffer(), *(Framebuffer::backbuffer()->texture(0)->gpu), VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, 0, 1, 0, 1);
