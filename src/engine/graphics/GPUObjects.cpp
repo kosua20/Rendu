@@ -66,17 +66,12 @@ bool GPUTexture::hasSameLayoutAs(const Descriptor & other) const {
 
 void GPUTexture::setFiltering(Filter filtering) {
 	(void)filtering;
-	Log::Error() << "Unsupported for now. In the future, might be a shader option with fixed samplers." << std::endl;
-	// \todo Update the descriptor and sampler.
-	//_descriptor  = Descriptor(_descriptor.typedFormat(), filtering, _descriptor.wrapping());
-	//minFiltering = _descriptor.getGPUMinificationFilter();
-	//magFiltering = _descriptor.getGPUMagnificationFilter();
-	// Change the associated sampler.
-	//glBindTexture(target, id);
-	//GPU::_metrics.textureBindings += 1;
-	//glTexParameteri(target, GL_TEXTURE_MAG_FILTER, magFiltering);
-	//glTexParameteri(target, GL_TEXTURE_MIN_FILTER, minFiltering);
-	//GPU::restoreTexture(_shape);
+	_descriptor  = Descriptor(_descriptor.typedFormat(), filtering, _descriptor.wrapping());
+	// Update sampler parameters.
+	wrapping = _descriptor.getGPUWrapping();
+	_descriptor.getGPUFilter(imgFiltering, mipFiltering);
+	// Recreate sampler.
+	GPU::setupSampler(*this, _descriptor);
 }
 
 GPUBuffer::GPUBuffer(BufferType atype){

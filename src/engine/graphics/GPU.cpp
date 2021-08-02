@@ -496,29 +496,39 @@ void GPU::setupTexture(Texture & texture, const Descriptor & descriptor, bool dr
 		return;
 	}
 
+	setupSampler(*texture.gpu, descriptor);
+}
+
+void GPU::setupSampler(GPUTexture & texture, const Descriptor & descriptor) {
+
+	if(texture.sampler != VK_NULL_HANDLE){
+		_resourcesToDelete.emplace_back();
+		ResourceToDelete& rsc = _resourcesToDelete.back();
+		rsc.sampler = texture.sampler;
+		rsc.frame = _context.frameIndex;
+	}
+
 	// Create associated sampler.
 	VkSamplerCreateInfo samplerInfo = {};
 	samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
-	samplerInfo.magFilter = texture.gpu->imgFiltering;
-	samplerInfo.minFilter = texture.gpu->imgFiltering;
-	samplerInfo.addressModeU = texture.gpu->wrapping;
-	samplerInfo.addressModeV = texture.gpu->wrapping;
-	samplerInfo.addressModeW = texture.gpu->wrapping;
+	samplerInfo.magFilter = texture.imgFiltering;
+	samplerInfo.minFilter = texture.imgFiltering;
+	samplerInfo.addressModeU = texture.wrapping;
+	samplerInfo.addressModeV = texture.wrapping;
+	samplerInfo.addressModeW = texture.wrapping;
 	samplerInfo.anisotropyEnable = VK_TRUE;
 	samplerInfo.maxAnisotropy = 16;
 	samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
 	samplerInfo.unnormalizedCoordinates = VK_FALSE;
 	samplerInfo.compareEnable = VK_FALSE;
 	samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;
-	samplerInfo.mipmapMode = texture.gpu->mipFiltering;
+	samplerInfo.mipmapMode = texture.mipFiltering;
 	samplerInfo.mipLodBias = 0.0f;
 	samplerInfo.minLod = 0.0f;
-	samplerInfo.maxLod = float(texture.levels);
-	if (vkCreateSampler(_context.device, &samplerInfo, nullptr, &(texture.gpu->sampler)) != VK_SUCCESS) {
+	samplerInfo.maxLod = VK_LOD_CLAMP_NONE;
+	if (vkCreateSampler(_context.device, &samplerInfo, nullptr, &(texture.sampler)) != VK_SUCCESS) {
 		Log::Error() << Log::GPU << "Unable to create a sampler." << std::endl;
 	}
-
-
 }
 
 void GPU::uploadTexture(const Texture & texture) {
