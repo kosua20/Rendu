@@ -1,9 +1,9 @@
 
-in INTERFACE {
+layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In ;
 
-layout(binding = 0) uniform sampler2D screenTexture; ///< Image to output.
+layout(set = 1, binding = 0) uniform sampler2D screenTexture; ///< Image to output.
 
 layout(location = 0) out vec4 fragColor; ///< Color.
 
