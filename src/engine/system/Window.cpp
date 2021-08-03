@@ -180,8 +180,16 @@ bool Window::nextFrame() {
 		}
 		// Check if the backbuffer was resized.
 		if(Input::manager().resized() || !validSwapchain){
-			const uint w = uint(Input::manager().size()[0]);
-			const uint h = uint(Input::manager().size()[1]);
+			uint w = uint(Input::manager().size()[0]);
+			uint h = uint(Input::manager().size()[1]);
+
+			// If minimized and undetected, waiting for events is not working, poll in a loop.
+			while(w == 0 || h == 0){
+				Input::manager().update();
+				w = uint(Input::manager().size()[0]);
+				h = uint(Input::manager().size()[1]);
+			}
+
 			_swapchain->resize(w, h);
 			// We should probably jump to the next frame here.
 			validSwapchain = _swapchain->nextFrame();
