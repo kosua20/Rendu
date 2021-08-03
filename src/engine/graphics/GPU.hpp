@@ -102,7 +102,7 @@ public:
 	 \note The output image extension will be automatically added based on the framebuffer type and format.
 	 \warning Export of small size float framebuffers can create artifacts.
 	 */
-	static void saveFramebuffer(const Framebuffer & framebuffer, const std::string & path, bool flip = true, bool ignoreAlpha = false);
+	static void saveFramebuffer(Framebuffer & framebuffer, const std::string & path, bool flip = true, bool ignoreAlpha = false);
 
 	/** Create a GPU texture with a given layout and allocate it.
 	 \param texture the texture to setup on the GPU
@@ -355,7 +355,7 @@ private:
 
 	static void bindPipelineIfNeeded();
 
-	static void blitTexture(VkCommandBuffer& commandBuffer, const Texture& src, const Texture& dst, uint mipStartSrc, uint mipStartDst, uint mipCount, uint layerStartSrc, uint layerStartDst, uint layerCount, Filter filter, bool dstIsBackbuffer);
+	static void blitTexture(VkCommandBuffer& commandBuffer, const Texture& src, const Texture& dst, uint mipStartSrc, uint mipStartDst, uint mipCount, uint layerStartSrc, uint layerStartDst, uint layerCount, Filter filter, VkImageLayout dstFinalLayout);
 
 	static void clean(GPUTexture & tex);
 
