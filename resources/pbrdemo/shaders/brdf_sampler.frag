@@ -2,16 +2,13 @@
 #include "common_pbr.glsl"
 #include "utils.glsl"
 
-in INTERFACE {
+layout(location = 0) in INTERFACE {
 	vec2 uv; ///< Texture coordinates.
 } In ;
-
 
 #define SAMPLE_COUNT 1024u
 
 layout(location = 0) out vec2 fragColor; ///< BRDF linear coefficients.
-
-
 
 /** Evaluated the GGX BRDF for a given surface normal, view direction and roughness.
 \param NdotV dot product of the view direction with the surface normal

@@ -2,16 +2,17 @@
 #include "common_pbr.glsl"
 #include "utils.glsl"
 
-in INTERFACE {
+layout(location = 0) in INTERFACE {
 	vec3 pos;  ///< World position.
 } In ;
 
+layout(set = 1, binding = 0) uniform samplerCube texture0; ///< Input cubemap to process.
 
-uniform int samplesCount = 32768; ///< Number of samples to take, higher count helps avoiding artifacts in bright areas.
-
-layout(binding = 0) uniform samplerCube texture0; ///< Input cubemap to process.
-uniform float mipmapRoughness; ///< The roughness to use for the convolution lobe.
-uniform float clampMax = 100000.0; ///< Clamp input HDR values to avoid artefacts.
+layout(set = 0, binding = 0) uniform UniformBlock {
+	float mipmapRoughness; ///< The roughness to use for the convolution lobe.
+	float clampMax; ///< Clamp input HDR values to avoid artefacts.
+	int samplesCount; ///< Number of samples to take, higher count helps avoiding artifacts in bright areas.
+};
 
 layout(location = 0) out vec3 fragColor; ///< Color.
 

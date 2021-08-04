@@ -115,11 +115,13 @@ void computeCubemapConvolution(const Texture & cubemapInfos, int levelsCount, in
 			programCubemap->uniform("mipmapRoughness", roughness);
 			programCubemap->uniform("mvp", Library::boxVPs[i]);
 			programCubemap->uniform("samplesCount", samplesCount);
+			programCubemap->uniform("clampMax", 10000.0f);
+			programCubemap->uniform("flip", false);
+
 			// Attach source cubemap and compute.
 			programCubemap->texture(&cubemapInfos, 0);
 			GPU::drawMesh(*mesh);
-			// Force synchronization.
-			GPU::sync();
+
 		}
 
 		// Now resultFramebuffer contain the texture data. But its lifetime is limited to this scope.
@@ -171,7 +173,7 @@ void computeAndExportLookupTable(const int outputSide, const std::string & outpu
 	GPU::setCullState(false);
 	brdfProgram->use();
 	ScreenQuad::draw();
-	GPU::saveFramebuffer(*bakingFramebuffer, outputPath, true);
+	GPU::saveFramebuffer(*bakingFramebuffer, outputPath, false);
 }
 
 /**
@@ -245,6 +247,9 @@ int main(int argc, char ** argv) {
 						sCoeffs[i] = glm::vec4(0.0f);
 					}
 					sCoeffs.upload();
+					for(Texture& tex : cubeLevels){
+						tex.clean();
+					}
 					cubeLevels.clear();
 					mode = INPUT;
 				}
@@ -344,13 +349,12 @@ int main(int argc, char ** argv) {
 		const glm::ivec2 screenSize = Input::manager().size();
 		const glm::mat4 mvp		   = camera.projection() * camera.view();
 
+		Framebuffer::backbuffer()->bind(glm::vec4(0.5f, 0.5f, 0.5f, 1.0f), 1.0f, Framebuffer::Operation::DONTCARE);
+		GPU::setViewport(0, 0, screenSize[0], screenSize[1]);
 
 		GPU::setDepthState(true, TestFunction::LESS, true);
 		GPU::setBlendState(false);
 		GPU::setCullState(false);
-
-		Framebuffer::backbuffer()->bind(glm::vec4(0.5f, 0.5f, 0.5f, 1.0f), 1.0f, Framebuffer::Operation::DONTCARE);
-		GPU::setViewport(0, 0, screenSize[0], screenSize[1]);
 
 		// Render main cubemap.
 		if(cubemapInfos.gpu) {
@@ -361,25 +365,34 @@ int main(int argc, char ** argv) {
 			}
 
 			programToUse->use();
-			programToUse->texture(texToUse, 0);
+
 			if(mode == SH_COEFFS){
 				programToUse->buffer(sCoeffs, 0);
+			} else {
+				programToUse->texture(texToUse, 0);
 			}
 			programToUse->uniform("mvp", mvp);
+			programToUse->uniform("flip", true);
 			GPU::drawMesh(*mesh);
 		}
 
 		// Render reference cubemap in the bottom right corner.
-		Framebuffer::backbuffer()->bind(Framebuffer::Operation::LOAD, 1.0f);
+		Framebuffer::backbuffer()->bind(Framebuffer::Operation::LOAD, 1.0f, Framebuffer::Operation::DONTCARE);
 		const float gizmoScale	   = 0.2f;
 		const glm::ivec2 gizmoSize = glm::ivec2(gizmoScale * glm::vec2(screenSize));
-		GPU::setViewport(0, 0, gizmoSize[0], gizmoSize[1]);
+		GPU::setViewport(0, screenSize[1] - gizmoSize[1], gizmoSize[0], gizmoSize[1]);
 		program->use();
 		program->texture(cubemapInfosDefault, 0);
 		program->uniform("mvp", mvp);
+		program->uniform("flip", true);
 		GPU::drawMesh(*mesh);
 		
 	}
 
+	sCoeffs.clean();
+	cubemapInfos.clean();
+	for(Texture& tex : cubeLevels){
+		tex.clean();
+	}
 	return 0;
 }
