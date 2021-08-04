@@ -376,36 +376,45 @@ void GPU::bindFramebuffer(const Framebuffer & framebuffer, size_t layer, size_t 
 
 }
 
+struct ResourceToSave {
+	std::unique_ptr<Texture> dst;
+	std::shared_ptr<TransferBuffer> data;
+	std::string path;
+	glm::uvec2 range{0.0f,0.0f};
+	uint64_t frame = 0;
+	bool hdr;
+	bool flip = false;
+	bool ignoreAlpha = false;
+};
+
+std::deque<ResourceToSave> _resourcesToSave;
+
 void GPU::saveFramebuffer(Framebuffer & framebuffer, const std::string & path, bool flip, bool ignoreAlpha) {
+	static const std::vector<Layout> hdrLayouts = {
+		Layout::R16F, Layout::RG16F, Layout::RGBA16F, Layout::R32F, Layout::RG32F, Layout::RGBA32F, Layout::A2_BGR10, Layout::A2_RGB10,
+		Layout::DEPTH_COMPONENT32F, Layout::DEPTH24_STENCIL8, Layout::DEPTH_COMPONENT16, Layout::DEPTH_COMPONENT24, Layout::DEPTH32F_STENCIL8,
+	};
+
 	// Make sure we are not currently using this framebuffer.
 	if(_state.pass.framebuffer == &framebuffer){
 		GPU::unbindFramebufferIfNeeded();
 	}
 
-	Texture& texture = *framebuffer.texture();
+	Texture& srcTexture = *framebuffer.texture();
 
-	static const std::vector<Layout> hdrLayouts = {
-		Layout::R16F, Layout::RG16F, Layout::RGBA16F, Layout::R32F, Layout::RG32F, Layout::RGBA32F, Layout::A2_BGR10, Layout::A2_RGB10,
-		Layout::DEPTH_COMPONENT32F, Layout::DEPTH24_STENCIL8, Layout::DEPTH_COMPONENT16, Layout::DEPTH_COMPONENT24, Layout::DEPTH32F_STENCIL8,
-	};
-	const bool hdr = std::find(hdrLayouts.begin(), hdrLayouts.end(), texture.gpu->descriptor().typedFormat()) != hdrLayouts.end();
-	const std::string ext = hdr ? ".exr" : ".png";
+	// Store a save request to execute once the frame is complete.
+	_resourcesToSave.emplace_back();
+	ResourceToSave& request = _resourcesToSave.back();
+	request.path = path;
+	request.flip = flip;
+	request.ignoreAlpha = ignoreAlpha;
+	request.frame = _context.frameIndex;
+	request.dst.reset(new Texture("SaveRequest"));
 
-	Log::Info() << Log::GPU << "Saving framebuffer to file " << path << ext << "... " << std::endl;
-	GPU::downloadTexture(texture, 0);
+	request.hdr = std::find(hdrLayouts.begin(), hdrLayouts.end(), srcTexture.gpu->descriptor().typedFormat()) != hdrLayouts.end();
 
-	const uint imageCount = texture.images.size();
+	request.range = GPU::copyTextureRegionToBufferAndPrepare(_context.getCurrentCommandBuffer(), srcTexture, *request.dst, request.data, 0, 1);
 
-	for(uint i = 0; i < imageCount; ++i){
-		const std::string imgPath = path + (imageCount > 1 ? ("-" + std::to_string(i)) : "");
-		const int ret = texture.images[i].save(imgPath + ext, flip, ignoreAlpha);
-
-		if(ret != 0) {
-			Log::Error() << "Error for image at path " << imgPath << ext << "." << std::endl;
-		}
-	}
-
-	// Maybe clear the images afterwards?
 }
 
 void GPU::setupTexture(Texture & texture, const Descriptor & descriptor, bool drawable) {
@@ -613,9 +622,91 @@ void GPU::uploadTexture(const Texture & texture) {
 
 }
 
-void GPU::downloadTexture(Texture & texture) {
-	downloadTexture(texture, -1);
+glm::uvec2 GPU::copyTextureRegionToBufferAndPrepare(VkCommandBuffer& commandBuffer, Texture & srcTexture, Texture & dstTexture, std::shared_ptr<TransferBuffer> & dstBuffer, uint mipStart, uint mipCount){
+
+	const Layout floatFormats[5] = {Layout(0), Layout::R32F, Layout::RG32F, Layout::RGBA32F /* no 3 channels format */, Layout::RGBA32F};
+
+	const bool is3D = srcTexture.shape == TextureShape::D3;
+	const uint layers = is3D ? 1 : srcTexture.depth;
+	const uint depth = is3D ? srcTexture.depth : 1;
+	const uint channels = srcTexture.gpu->channels;
+
+	const uint wBase = std::max<uint>(1u, srcTexture.width >> mipStart);
+	const uint hBase = std::max<uint>(1u, srcTexture.height >> mipStart);
+	const uint dBase = std::max<uint>(1u, depth >> mipStart);
+
+	Texture transferTexture("tmpTexture");
+	transferTexture.width = wBase;
+	transferTexture.height = hBase;
+	transferTexture.depth = srcTexture.shape == TextureShape::D3 ? dBase : layers;
+	transferTexture.levels = mipCount;
+	transferTexture.shape = srcTexture.shape;
+
+	GPU::setupTexture(transferTexture, {floatFormats[channels], Filter::LINEAR, Wrap::CLAMP}, false);
+	// Final usage of the transfer texture after the blit.
+	transferTexture.gpu->defaultLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+	// This will reset the input texture to its default state.
+	GPU::blitTexture(commandBuffer, srcTexture, transferTexture, mipStart, 0, mipCount, 0, 0, layers, Filter::NEAREST);
+
+	// Compute the total size of the requested texture levels.
+	if(&dstTexture != &srcTexture){
+		dstTexture.width = srcTexture.width;
+		dstTexture.height = srcTexture.height;
+		dstTexture.depth = srcTexture.depth;
+		dstTexture.levels = srcTexture.levels;
+		dstTexture.shape = srcTexture.shape;
+	}
+	dstTexture.images.resize(srcTexture.depth * srcTexture.levels);
+
+	// Compute the index of the first image we will fill.
+	size_t firstImage = 0;
+	for(uint lid = 0; lid < mipStart; ++lid){
+		firstImage += is3D ? std::max<uint>(1u, depth >> lid) : layers;
+	}
+
+	std::vector<VkBufferImageCopy> blitRegions(mipCount);
+	size_t currentCount = 0;
+	size_t currentSize = 0;
+	for(uint lid = mipStart; lid < mipStart + mipCount; ++lid){
+		// Compute the size of an image.
+		const uint w = std::max<uint>(1u, srcTexture.width >> lid);
+		const uint h = std::max<uint>(1u, srcTexture.height >> lid);
+		const uint d = std::max<uint>(1u, depth >> lid);
+
+		// Copy region for this mip level.
+		const uint rid = lid - mipStart;
+		blitRegions[rid].bufferOffset = currentSize;
+		blitRegions[rid].bufferRowLength = 0; // Tightly packed.
+		blitRegions[rid].bufferImageHeight = 0; // Tightly packed.
+		blitRegions[rid].imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		blitRegions[rid].imageSubresource.mipLevel = lid;
+		blitRegions[rid].imageSubresource.baseArrayLayer = 0;
+		blitRegions[rid].imageSubresource.layerCount = layers;
+		blitRegions[rid].imageOffset = {0, 0, 0};
+		blitRegions[rid].imageExtent = { (uint32_t)w, (uint32_t)h, (uint32_t)d};
+
+		// Number of images.
+		const uint imageSize = w * h * sizeof(float) * channels;
+		const uint imageCount = is3D ? d : layers;
+
+		// Initialize the images.
+		for(uint iid = 0; iid < imageCount; ++iid){
+			dstTexture.images[firstImage + currentCount + iid] = Image(w, h, channels);
+		}
+
+		currentSize += imageSize * imageCount;
+		currentCount += imageCount;
+	}
+
+	dstBuffer.reset(new TransferBuffer(currentSize, BufferType::GPUTOCPU));
+
+	// Copy from the intermediate texture.
+	vkCmdCopyImageToBuffer(commandBuffer, transferTexture.gpu->image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, dstBuffer->gpu->buffer, blitRegions.size(), blitRegions.data());
+
+	transferTexture.clean();
+	return glm::uvec2(firstImage, currentCount);
 }
+
 
 void GPU::downloadTexture(Texture & texture, int level) {
 	if(!texture.gpu) {
@@ -631,10 +722,6 @@ void GPU::downloadTexture(Texture & texture, int level) {
 		Log::Verbose() << Log::GPU << "Texture already contain CPU data, will be erased." << std::endl;
 	}
 
-	const uint channels = texture.gpu->channels;
-	const bool is3D = texture.shape == TextureShape::D3;
-	const uint layers = is3D ? 1 : texture.depth;
-	const uint depth = is3D ? texture.depth : 1;
 
 	const uint firstLevel = level >= 0 ? uint(level) : 0u;
 	const uint lastLevel = level >= 0 ? uint(level) : (texture.levels - 1u);
@@ -652,86 +739,25 @@ void GPU::downloadTexture(Texture & texture, int level) {
 	}
 
 	VkCommandBuffer commandBuffer = VkUtils::startOneTimeCommandBuffer(_context);
-
-	const Layout floatFormats[5] = {Layout(0), Layout::R32F, Layout::RG32F, Layout::RGBA32F /* no 3 channels format */, Layout::RGBA32F};
-
-	const uint wBase = std::max<uint>(1u, texture.width >> firstLevel);
-	const uint hBase = std::max<uint>(1u, texture.height >> firstLevel);
-	const uint dBase = std::max<uint>(1u, depth >> firstLevel);
-
-	Texture transferTexture("tmpTexture");
-	transferTexture.width = wBase;
-	transferTexture.height = hBase;
-	transferTexture.depth = texture.shape == TextureShape::D3 ? dBase : layers;
-	transferTexture.levels = levelCount;
-	transferTexture.shape = texture.shape;
-
-	GPU::setupTexture(transferTexture, {floatFormats[channels], Filter::LINEAR, Wrap::CLAMP}, false);
-	// Final usage of the transfer texture after the blit.
-	transferTexture.gpu->defaultLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
-	// This will reset the input texture to its default state.
-	GPU::blitTexture(commandBuffer, texture, transferTexture, firstLevel, 0, levelCount, 0, 0, layers, Filter::NEAREST);
-
-	// Compute the total size of the requested texture levels.
-	texture.images.resize(texture.depth * texture.levels);
-	size_t currentCount = 0;
-	size_t currentSize = 0;
-	size_t firstImage = 0;
-	std::vector<VkBufferImageCopy> blitRegions(levelCount);
-
-	for(uint lid = 0; lid < firstLevel; ++lid){
-		firstImage += is3D ? std::max<uint>(1u, depth >> lid) : layers;
-	}
-
-	for(uint lid = firstLevel; lid <= lastLevel; ++lid){
-		// Compute the size of an image.
-		const uint w = std::max<uint>(1u, texture.width >> lid);
-		const uint h = std::max<uint>(1u, texture.height >> lid);
-		const uint d = std::max<uint>(1u, depth >> lid);
-
-		// Copy region for this mip level.
-		const uint rid = lid - firstLevel;
-		blitRegions[rid].bufferOffset = currentSize;
-		blitRegions[rid].bufferRowLength = 0; // Tightly packed.
-		blitRegions[rid].bufferImageHeight = 0; // Tightly packed.
-		blitRegions[rid].imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-		blitRegions[rid].imageSubresource.mipLevel = lid;
-		blitRegions[rid].imageSubresource.baseArrayLayer = 0;
-		blitRegions[rid].imageSubresource.layerCount = layers;
-		blitRegions[rid].imageOffset = {0, 0, 0};
-		blitRegions[rid].imageExtent = { (uint32_t)w, (uint32_t)h, (uint32_t)d};
-
-		// Number of images.
-		const uint imageSize = w * h * sizeof(float) * channels;
-		const uint imageCount = is3D ? d : layers;
-
-		// Initialize the images.
-		for(uint iid = 0; iid < imageCount; ++iid){
-			texture.images[firstImage + currentCount + iid] = Image(w, h, channels);
-		}
-
-		currentSize += imageSize * imageCount;
-		currentCount += imageCount;
-	}
-
-	TransferBuffer transferBuffer(currentSize, BufferType::GPUTOCPU);
-	// Copy from the intermediate texture.
-	vkCmdCopyImageToBuffer(commandBuffer, transferTexture.gpu->image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, transferBuffer.gpu->buffer, blitRegions.size(), blitRegions.data());
+	std::shared_ptr<TransferBuffer> dstBuffer;
+	const glm::vec2 imgRange = GPU::copyTextureRegionToBufferAndPrepare(commandBuffer, texture, texture, dstBuffer, firstLevel, levelCount);
 	VkUtils::endOneTimeCommandBuffer(commandBuffer, _context);
-	GPU::flushBuffer(transferBuffer, currentSize, 0);
+	GPU::flushBuffer(*dstBuffer, dstBuffer->sizeMax, 0);
 
 	// Finally copy from the buffer to each image.
 	size_t currentOffset = 0;
-	for(uint iid = 0; iid < currentCount ; ++iid){
-		Image& img = texture.images[firstImage + iid];
+	for(uint iid = 0; iid < imgRange[1]; ++iid){
+		Image& img = texture.images[imgRange[0] + iid];
 		const size_t imgSize = img.pixels.size() * sizeof(float);
-		std::memcpy(img.pixels.data(), transferBuffer.gpu->mapped + currentOffset, imgSize);
+		std::memcpy(img.pixels.data(), dstBuffer->gpu->mapped + currentOffset, imgSize);
 		currentOffset += imgSize;
 	}
 
-	transferBuffer.clean();
-	transferTexture.clean();
+	dstBuffer->clean();
+}
 
+void GPU::downloadTexture(Texture & texture) {
+	downloadTexture(texture, -1);
 }
 
 void GPU::generateMipMaps(const Texture & texture) {
@@ -754,21 +780,34 @@ void GPU::generateMipMaps(const Texture & texture) {
 	const size_t baseHeight = texture.height;
 	const size_t baseDepth = texture.shape == TextureShape::D3 ? texture.depth : 1;
 
-
 	// Blit the texture to each mip level.
 	VkCommandBuffer commandBuffer = VkUtils::startOneTimeCommandBuffer(_context);
 
 	VkUtils::textureLayoutBarrier(commandBuffer, texture, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 
 	// Respect existing (already uploaded) mip levels.
-	const size_t firstLevelToGenerate = std::max(size_t(1), texture.images.size());
+	const uint presentCount = uint(texture.images.size());
+	uint totalCount = 0;
+	uint firstLevelToGenerate = 0xFFFFFFFF;
+	for(uint lid = 0; lid < texture.levels; ++lid){
+		// Number of images at this level:
+		const uint imageCount = texture.shape == TextureShape::D3 ? std::max<uint>(texture.depth >> lid, 1u) : layers;
+		totalCount += imageCount;
+		if(totalCount > presentCount){
+			firstLevelToGenerate = lid;
+			break;
+		}
+	}
+	if(firstLevelToGenerate == 0xFFFFFFFF){
+		Log::Info() << "No mip level left to generate, all are already present." << std::endl;
+		return;
+	}
+	const uint srcMip = firstLevelToGenerate - 1;
+	uint width = baseWidth > 1 ? (baseWidth >> srcMip) : 1;
+	uint height = baseHeight > 1 ? (baseHeight >> srcMip) : 1;
+	uint depth = baseDepth > 1 ? (baseDepth >> srcMip) : 1;
 
-	const size_t srcMip = firstLevelToGenerate - 1;
-	size_t width = baseWidth > 1 ? (baseWidth >> srcMip) : 1;
-	size_t height = baseHeight > 1 ? (baseHeight >> srcMip) : 1;
-	size_t depth = baseDepth > 1 ? (baseDepth >> srcMip) : 1;
-
-	for (size_t mid = firstLevelToGenerate; mid < texture.levels; mid++) {
+	for(uint mid = firstLevelToGenerate; mid < texture.levels; mid++) {
 
 		// Transition level i-1 to transfer source layout.
 		VkUtils::imageLayoutBarrier(commandBuffer, *texture.gpu, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, mid - 1, 1, 0, layers);
@@ -1080,7 +1119,9 @@ void GPU::sync(){
 }
 
 void GPU::nextFrame(){
-	cleanFrame();
+	processSaveRequests();
+	processDestructionRequests();
+
 	_context.nextFrame();
 	_pipelineCache.freeOutdatedPipelines();
 	// Save and reset stats.
@@ -1389,8 +1430,14 @@ void GPU::cleanup(){
 
 	// Clean all remaining resources.
 	_quad.clean();
-	_context.frameIndex = (uint64_t)(-1);
-	cleanFrame();
+
+	_context.frameIndex += 100;
+	processSaveRequests();
+
+	_context.frameIndex += 100;
+	processDestructionRequests();
+
+	assert(_resourcesToSave.empty());
 	assert(_resourcesToDelete.empty());
 	
 	_pipelineCache.clean();
@@ -1484,7 +1531,7 @@ void GPU::clean(Program & program){
 }
 
 
-void GPU::cleanFrame(){
+void GPU::processDestructionRequests(){
 	const uint64_t currentFrame = _context.frameIndex;
 
 	if(_resourcesToDelete.empty() || (currentFrame < 2)){
@@ -1516,6 +1563,53 @@ void GPU::cleanFrame(){
 			vkDestroyRenderPass(_context.device, rsc.renderPass, nullptr);
 		}
 		_resourcesToDelete.pop_front();
+	}
+}
+
+void GPU::processSaveRequests(){
+	const uint64_t currentFrame = _context.frameIndex;
+
+	if(_resourcesToSave.empty() || (currentFrame < 2)){
+		return;
+	}
+
+	while(!_resourcesToSave.empty()){
+		ResourceToSave& rsc = _resourcesToSave.front();
+		// If the following requests are too recent, they might not have completed yet.
+		if(rsc.frame >= currentFrame - 2){
+			break;
+		}
+
+		// Make sure the buffer is flushed.
+		GPU::flushBuffer(*rsc.data, rsc.data->sizeMax, 0);
+
+		const std::string ext = rsc.hdr ? ".exr" : ".png";
+		Log::Info() << Log::GPU << "Saving framebuffer to file " << rsc.path << ext << "... " << std::endl;
+
+		// Finally copy from the buffer to each image.
+		size_t currentOffset = 0;
+		const uint firstImage = rsc.range[0];
+		const uint imageCount = rsc.range[1];
+
+		for(uint iid = firstImage; iid < firstImage + imageCount; ++iid){
+			Image& img = rsc.dst->images[iid];
+
+			// Copy the data to the image.
+			const size_t imgSize = img.pixels.size() * sizeof(float);
+			std::memcpy(img.pixels.data(), rsc.data->gpu->mapped + currentOffset, imgSize);
+			currentOffset += imgSize;
+
+			// Save the image to the disk.
+			const std::string imgPath = rsc.path + (imageCount > 1 ? ("-" + std::to_string(iid)) : "");
+			const int ret = img.save(imgPath + ext, rsc.flip, rsc.ignoreAlpha);
+			if(ret != 0) {
+				Log::Error() << "Error for image at path " << imgPath << ext << "." << std::endl;
+			}
+		}
+
+		rsc.dst->clean();
+		rsc.data->clean();
+		_resourcesToSave.pop_front();
 	}
 }
 

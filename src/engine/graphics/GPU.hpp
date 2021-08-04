@@ -356,6 +356,8 @@ private:
 
 	static void bindPipelineIfNeeded();
 
+	static glm::uvec2 copyTextureRegionToBufferAndPrepare(VkCommandBuffer& commandBuffer, Texture & srcTexture, Texture & dstTexture, std::shared_ptr<TransferBuffer> & dstBuffer, uint mipStart, uint mipCount);
+
 	static void blitTexture(VkCommandBuffer& commandBuffer, const Texture& src, const Texture& dst, uint mipStartSrc, uint mipStartDst, uint mipCount, uint layerStartSrc, uint layerStartDst, uint layerCount, Filter filter);
 
 	static void clean(GPUTexture & tex);
@@ -368,7 +370,9 @@ private:
 
 	static void clean(Program & program);
 
-	static void cleanFrame();
+	static void processDestructionRequests();
+
+	static void processSaveRequests();
 
 	static GPUState _state; ///< Current GPU state for caching.
 	static GPUState _lastState; ///< Current GPU state for caching.
