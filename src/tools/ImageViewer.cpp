@@ -57,9 +57,6 @@ int main(int argc, char ** argv) {
 	glm::vec2 mouseShift = glm::vec2(0.0f, 0.0f);
 	glm::vec2 mousePrev  = glm::vec2(0.0f, 0.0f);
 	glm::vec3 fgColor(0.6f);
-	// Export data.
-	std::unique_ptr<Framebuffer> framebuffer(nullptr);
-	std::string destinationPath;
 
 	// Start the display/interaction loop.
 	while(window.nextFrame()) {
@@ -239,17 +236,9 @@ int main(int argc, char ** argv) {
 			ImGui::SameLine();
 			ImGui::Text("%.1f%%, (%d,%d)", 100.0f / pixelScale, int((-mouseShift.x + 0.5) * imageInfos.width), int((mouseShift.y + 0.5) * imageInfos.height));
 
-			// Buffered save from the previous frame.
-			if(framebuffer && !destinationPath.empty()){
-				// Then save it to the given path.
-				GPU::saveFramebuffer(*framebuffer, destinationPath.substr(0, destinationPath.size() - 4), false, false);
-				framebuffer.reset(nullptr);
-				destinationPath = "";
-			}
-
 			// Save the image in its current flip/rotation/channels/exposure/gamma settings.
 			if(saveImage) {
-
+				std::string destinationPath;
 				// Export either in LDR or HDR.
 				bool res = System::showPicker(System::Picker::Save, "../../../resources", destinationPath, "png;exr");
 				if(res && !destinationPath.empty()) {
@@ -257,9 +246,9 @@ int main(int argc, char ** argv) {
 					// Create a framebuffer at the right size and format, and render in it.
 					const unsigned int outputWidth  = isHorizontal ? imageInfos.height : imageInfos.width;
 					const unsigned int outputHeight = isHorizontal ? imageInfos.width : imageInfos.height;
-					framebuffer.reset(new Framebuffer(outputWidth, outputHeight, typedDesc, false, "Save output"));
-					framebuffer->bind(glm::vec4(0.0f,0.0f,0.0f,1.0f), Framebuffer::Operation::DONTCARE, Framebuffer::Operation::DONTCARE);
-					framebuffer->setViewport();
+					Framebuffer framebuffer(outputWidth, outputHeight, typedDesc, false, "Save output");
+					framebuffer.bind(glm::vec4(0.0f,0.0f,0.0f,1.0f), Framebuffer::Operation::DONTCARE, Framebuffer::Operation::DONTCARE);
+					framebuffer.setViewport();
 
 					// Render the image in it.
 					GPU::setBlendState(true, BlendEquation::ADD, BlendFunction::SRC_ALPHA, BlendFunction::ONE_MINUS_SRC_ALPHA);
@@ -276,14 +265,16 @@ int main(int argc, char ** argv) {
 					program->uniform("mouseShift", zeros);
 					program->texture(imageInfos, 0);
 					ScreenQuad::draw();
-					// Framebuffer will be saved at the next frame, once the work is submitted and complete.
+
+					// Then save it to the given path.
+					GPU::saveFramebuffer(framebuffer, destinationPath.substr(0, destinationPath.size() - 4), false, false);
+
 				}
 			}
 		}
 		ImGui::End();
 
 	}
-	framebuffer.reset(nullptr);
 	imageInfos.clean();
 	return 0;
 }

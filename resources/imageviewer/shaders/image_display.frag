@@ -2,9 +2,9 @@ layout(location = 0) in INTERFACE {
 	vec2 uv; ///< Texture coordinates.
 } In ;
 
-layout(binding = 0, set = 1) uniform sampler2D screenTexture; ///< Image to output.
+layout(set = 1, binding = 0) uniform sampler2D screenTexture; ///< Image to output.
 
-layout(binding = 1) uniform UniformBlock {
+layout(set = 0, binding = 0) uniform UniformBlock {
 	vec4 channelsFilter; ///< Which channels should be displayed.
 	float exposure; ///< User selected exposure.
 	bool gammaOutput; ///< Should gamma correction be applied.

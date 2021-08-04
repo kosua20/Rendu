@@ -4,7 +4,7 @@ layout(location = 0) out INTERFACE {
 	vec2 uv; ///< Texture coordinates.
 } Out ;
 
-layout(binding = 0) uniform UniformBlock {
+layout(set = 0, binding = 1) uniform UniformBlock {
 	vec2 flipAxis; ///< Denotes if a flipping has been applied on each axis.
 	vec2 angleTrig; ///< Applied rotation precomputed cosine and sine.
 	vec2 mouseShift; ///< Translation.
@@ -35,7 +35,6 @@ void main(){
 	// Flipping
 	uv  *= 1.0 - flipAxis * 2.0;
 	Out.uv = uv * 0.5 + 0.5;
-
 
 	gl_Position.y *= -1;
 }
