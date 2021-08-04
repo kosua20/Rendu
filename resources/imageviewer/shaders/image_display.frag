@@ -1,14 +1,15 @@
-
-in INTERFACE {
+layout(location = 0) in INTERFACE {
 	vec2 uv; ///< Texture coordinates.
 } In ;
 
-layout(binding = 0) uniform sampler2D screenTexture; ///< Image to output.
+layout(binding = 0, set = 1) uniform sampler2D screenTexture; ///< Image to output.
 
-uniform bool isHDR; ///< Is the image an HDR one.
-uniform float exposure; ///< User selected exposure.
-uniform bool gammaOutput; ///< Should gamma correction be applied.
-uniform vec4 channelsFilter; ///< Which channels should be displayed.
+layout(binding = 1) uniform UniformBlock {
+	vec4 channelsFilter; ///< Which channels should be displayed.
+	float exposure; ///< User selected exposure.
+	bool gammaOutput; ///< Should gamma correction be applied.
+	bool isHDR; ///< Is the image an HDR one.
+};
 
 layout(location = 0) out vec4 fragColor; ///< Color.
 
@@ -38,7 +39,7 @@ void main(){
 		discard;
 	}
 	
-	fragColor = texture(screenTexture, uv);
+	fragColor = textureLod(screenTexture, uv, 0.0);
 	
 	if(isHDR){
 		vec3 exposedColor = simpleExposure(fragColor.rgb, exposure);
