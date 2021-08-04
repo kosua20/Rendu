@@ -1,4 +1,5 @@
 #include "resources/ResourcesManager.hpp"
+#include "graphics/ShaderCompiler.hpp"
 #include "graphics/GPU.hpp"
 #include "system/Window.hpp"
 #include "Common.hpp"
@@ -13,6 +14,20 @@
  \brief Validate shaders compilation on the GPU and output IDE-compliant error messages.
  \ingroup Tools
  */
+
+/** Output an error message in an IDE compatible format. This can be picked up by Visual Studio / Xcode and displayed as errors in their GUI.
+ \param file the path to the file containing the error, relative to the root build directory
+ \param line the line in the file containing the error
+ \param message the error message
+*/
+void outputError(const std::string& file, uint line, const std::string& message){
+	// Output in an IDE compatible format, to display warning and errors properly.
+	#ifdef _WIN32
+	std::cerr << file << "(" << line << "): error: " << message << std::endl;
+	#else
+	std::cerr << file << ":" << line << ": error: " << message << std::endl;
+	#endif
+}
 
 /**  Convert a shader compilation log into a IDE-compatible error reporting format and output it to stderr.
  	\param compilationLog the compilation log to process.
@@ -59,13 +74,9 @@ bool processLog(const std::string & compilationLog, const std::vector<std::strin
 				errorMessage = line.substr(firstMessagePos);
 			}
 
-			// The path should be relative to the root build directory.
-			// Output in an IDE compatible format, to display warning and errors properly.
-#ifdef _WIN32
-			std::cerr << finalFilePath << "(" << lineId << "): error: " << errorMessage << std::endl;
-#else
-			std::cerr << finalFilePath << ":" << lineId << ": error: " << errorMessage << std::endl;
-#endif
+			// Log the error.
+			outputError(finalFilePath, lineId, errorMessage);
+
 		}
 		// At least one issue was encountered.
 		return true;
@@ -119,7 +130,7 @@ int main(int argc, char ** argv) {
 		std::map<std::string, std::string> files;
 		Resources::manager().getFiles(type.second, files);
 		for (auto& file : files) {
-			GPU::Bindings bindings;
+
 			std::string compilationLog;
 			// Keep track of the include files used.
 			// File with ID 0 is the base file, already set its name.
@@ -128,7 +139,9 @@ int main(int argc, char ** argv) {
 			const std::string fullName = file.first + "." + type.second;
 			const std::string shader = Resources::manager().getStringWithIncludes(fullName, names);
 			// Compile the shader.
-			GPU::loadShader(shader, type.first, bindings, compilationLog);
+			Program::Stage stage;
+			ShaderCompiler::compile(shader, type.first, stage, compilationLog);
+
 			// Replace the include names by the full paths.
 			for(size_t nid = 1; nid < names.size(); ++nid) {
 				auto& name = names[nid];
@@ -140,6 +153,22 @@ int main(int argc, char ** argv) {
 			// Process the log.
 			const bool newIssues = processLog(compilationLog, names);
 			encounteredIssues = encounteredIssues || newIssues;
+
+			// Extra validation.
+			for(const auto& image : stage.samplers){
+				if(image.set != 1){
+					outputError(names[0], 0, "Sampled image should always be in set 1.");
+				}
+			}
+			for(const auto& buffer : stage.buffers){
+				const uint set = buffer.set;
+				// We only internally manage dynamic UBOs, in set 0. And static buffers are in set 2.
+				if(set != 0 && set != 2){
+					outputError(names[0], 0, "Uniform buffer should always be in set 0 (dynamic) or 2 (static)");
+				}
+			}
+
+			ShaderCompiler::clean(stage);
 		}
 	}
 

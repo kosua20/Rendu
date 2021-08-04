@@ -30,6 +30,8 @@ public:
 	static bool init();
 
 	static void cleanup();
+
+	static void clean(Program::Stage & stage);
 	
 private:
 

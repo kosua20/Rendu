@@ -123,6 +123,12 @@ void ShaderCompiler::cleanup(){
 	glslang::FinalizeProcess();
 }
 
+void ShaderCompiler::clean(Program::Stage & stage){
+	GPUContext* context = GPU::getInternal();
+	vkDestroyShaderModule(context->device, stage.module, nullptr);
+	stage.reset();
+}
+
 void ShaderCompiler::compile(const std::string & prog, ShaderType type, Program::Stage & stage, std::string & finalLog) {
 
 	// Add GLSL version.
