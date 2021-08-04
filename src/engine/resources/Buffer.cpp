@@ -61,7 +61,7 @@ UniformBufferBase::UniformBufferBase(size_t sizeInBytes, DataUse use) : BufferBa
 void UniformBufferBase::upload(unsigned char * data){
 	// Move to the next copy in the buffer, warpping around.
 	_offset += _alignment;
-	if(_offset >= sizeMax){
+	if(_offset + _baseSize >= sizeMax){
 		_offset = 0;
 	}
 
