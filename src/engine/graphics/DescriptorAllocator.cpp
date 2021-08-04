@@ -28,6 +28,7 @@ DescriptorSet DescriptorAllocator::allocateSet(VkDescriptorSetLayout& setLayout)
 	if(vkAllocateDescriptorSets(_context->device, &allocInfo, &set.handle) == VK_SUCCESS) {
 		// Success.
 		currentPool.allocated += 1;
+		currentPool.lastFrame = _context->frameIndex;
 		set.pool = currentPool.id;
 		return set;
 	}
@@ -35,7 +36,7 @@ DescriptorSet DescriptorAllocator::allocateSet(VkDescriptorSetLayout& setLayout)
 	// Else, try to find an existing pool where all sets have been freed.
 	bool found = false;
 	for(auto poolIt = _pools.begin(); poolIt != _pools.end(); ++poolIt){
-		if(poolIt->allocated == 0){
+		if(poolIt->allocated == 0 && (poolIt->lastFrame + 2 < _context->frameIndex)){
 			// Copy the pool infos.
 			DescriptorPool pool = DescriptorPool(*poolIt);
 			vkResetDescriptorPool(_context->device, pool.handle, 0);
@@ -57,6 +58,7 @@ DescriptorSet DescriptorAllocator::allocateSet(VkDescriptorSetLayout& setLayout)
 	if(vkAllocateDescriptorSets(_context->device, &allocInfo, &set.handle) == VK_SUCCESS) {
 		// Success.
 		newPool.allocated += 1;
+		newPool.lastFrame = _context->frameIndex;
 		set.pool = newPool.id;
 		return set;
 	}
@@ -81,6 +83,7 @@ void DescriptorAllocator::freeSet(const DescriptorSet& set){
 			}
 #endif
 			pool.allocated -= 1;
+			pool.lastFrame = _context->frameIndex;
 		}
 	}
 }
@@ -119,6 +122,7 @@ DescriptorAllocator::DescriptorPool DescriptorAllocator::createPool(uint count){
 	DescriptorPool pool;
 	pool.id = _currentPoolCount - 1;
 	pool.allocated = 0;
+	pool.lastFrame = _context->frameIndex;
 
 	VkDescriptorPoolCreateInfo poolInfo = {};
 	poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;

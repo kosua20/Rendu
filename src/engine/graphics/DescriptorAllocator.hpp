@@ -25,6 +25,7 @@ private:
 
 	struct DescriptorPool {
 		VkDescriptorPool handle = VK_NULL_HANDLE;
+		uint64_t lastFrame = 0;
 		uint allocated = 0;
 		uint id = 0;
 	};
