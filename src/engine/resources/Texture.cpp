@@ -2,6 +2,7 @@
 #include "graphics/GPUObjects.hpp"
 #include "graphics/GPU.hpp"
 #include "renderers/DebugViewer.hpp"
+#include <imgui/imgui_impl_vulkan.h>
 
 Texture::Texture(const std::string & name) : _name(name) {
 }
@@ -108,12 +109,15 @@ const std::string & Texture::name() const {
 }
 
 void ImGui::Image(const Texture & texture, const ImVec2& size, const ImVec2& uv0, const ImVec2& uv1, const ImVec4& tint_col, const ImVec4& border_col){
-	(void)texture; (void)size; (void)uv0; (void)uv1; (void)tint_col; (void)border_col;
-	//ImGui::Image(reinterpret_cast<void *>(static_cast<uintptr_t>(texture.gpu->id)), size, uv0, uv1, tint_col, border_col);
+	if(texture.gpu->imgui == VK_NULL_HANDLE){
+		texture.gpu->imgui = ImGui_ImplVulkan_AddTexture(texture.gpu->sampler, texture.gpu->view, texture.gpu->defaultLayout);
+	}
+	ImGui::Image((ImTextureID)texture.gpu->imgui, size, uv0, uv1, tint_col, border_col);
 }
 
 bool ImGui::ImageButton(const Texture & texture, const ImVec2& size, const ImVec2& uv0,  const ImVec2& uv1, int frame_padding, const ImVec4& bg_col, const ImVec4& tint_col){
-	(void)texture; (void)size; (void)uv0; (void)uv1; (void)frame_padding; (void)bg_col; (void)tint_col;
-	return false;
-	//ImGui::ImageButton(reinterpret_cast<void *>(static_cast<uintptr_t>(texture.gpu->id)), size, uv0, uv1, frame_padding, bg_col, tint_col);
+	if(texture.gpu->imgui == VK_NULL_HANDLE){
+		texture.gpu->imgui = ImGui_ImplVulkan_AddTexture(texture.gpu->sampler, texture.gpu->view, texture.gpu->defaultLayout);
+	}
+	return ImGui::ImageButton((ImTextureID)texture.gpu->imgui, size, uv0, uv1, frame_padding, bg_col, tint_col);
 }

@@ -382,6 +382,7 @@ public:
 	VkImageView view = VK_NULL_HANDLE;
 	VmaAllocation data = VK_NULL_HANDLE;
 	VkSampler sampler = VK_NULL_HANDLE;
+	ImTextureID imgui = (ImTextureID)VK_NULL_HANDLE;
 
 	std::vector<std::vector<VkImageLayout>> layouts;
 	VkImageLayout defaultLayout;

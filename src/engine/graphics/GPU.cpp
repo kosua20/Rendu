@@ -390,7 +390,7 @@ void GPU::saveFramebuffer(Framebuffer & framebuffer, const std::string & path, b
 	const bool hdr = std::find(hdrLayouts.begin(), hdrLayouts.end(), texture.gpu->descriptor().typedFormat()) != hdrLayouts.end();
 	const std::string ext = hdr ? ".exr" : ".png";
 
-	Log::Info() << Log::GPU << "Saving framebuffer to file " << path << ext << "... " << std::flush;
+	Log::Info() << Log::GPU << "Saving framebuffer to file " << path << ext << "... " << std::endl;
 	GPU::downloadTexture(texture, 0);
 
 	const uint imageCount = texture.images.size();
