@@ -41,6 +41,7 @@ struct ResourceToDelete {
 	VkBuffer buffer = VK_NULL_HANDLE;
 	VmaAllocation data = VK_NULL_HANDLE;
 	VkFramebuffer framebuffer = VK_NULL_HANDLE;
+	VkRenderPass renderPass = VK_NULL_HANDLE;
 	uint64_t frame = 0;
 };
 
@@ -1415,30 +1416,54 @@ void GPU::clean(GPUTexture & tex){
 }
 
 void GPU::clean(Framebuffer & framebuffer){
+	// Avoid double deletion in some cases.
+	VkFramebuffer firstFramebuffer = VK_NULL_HANDLE;
 
 	for(auto& slices : framebuffer._framebuffers){
 
 		for(auto& slice : slices){
+			// Delete the framebuffer.
 			_resourcesToDelete.emplace_back();
 			ResourceToDelete& rsc = _resourcesToDelete.back();
 			rsc.framebuffer = slice.framebuffer;
 			rsc.frame = _context.frameIndex;
 
-			for(auto& view : slice.attachments){
-				_resourcesToDelete.emplace_back();
-				ResourceToDelete& rsc = _resourcesToDelete.back();
-				rsc.view = view;
-				rsc.frame = _context.frameIndex;
+			if(firstFramebuffer == VK_NULL_HANDLE){
+				firstFramebuffer = slice.framebuffer;
+			}
+
+			// Delete the attachment views if the framebuffer owned them.
+			if(!framebuffer._isBackbuffer){
+				for(auto& view : slice.attachments){
+					_resourcesToDelete.emplace_back();
+					ResourceToDelete& rsc = _resourcesToDelete.back();
+					rsc.view = view;
+					rsc.frame = _context.frameIndex;
+				}
 			}
 		}
 	}
 
-	_resourcesToDelete.emplace_back();
-	ResourceToDelete& rsc = _resourcesToDelete.back();
-	rsc.framebuffer = framebuffer._fullFramebuffer.framebuffer;
-	rsc.frame = _context.frameIndex;
-	// Don't delete the views as these are the ones created by the textures.
+	// Delete the full framebuffer if it wasn't already done.
+	if(framebuffer._fullFramebuffer.framebuffer != firstFramebuffer){
+		_resourcesToDelete.emplace_back();
+		ResourceToDelete& rsc = _resourcesToDelete.back();
+		rsc.framebuffer = framebuffer._fullFramebuffer.framebuffer;
+		rsc.frame = _context.frameIndex;
+	}
 
+	// Delete the render passes.
+	for(const auto& passes2 : framebuffer._renderPasses){
+		for(const auto& passes1 : passes2){
+			for(const VkRenderPass& pass : passes1){
+				_resourcesToDelete.emplace_back();
+				ResourceToDelete& rsc = _resourcesToDelete.back();
+				rsc.renderPass = pass;
+				rsc.frame = _context.frameIndex;
+			}
+		}
+	}
+	
 }
 
 void GPU::clean(GPUMesh & mesh){
@@ -1486,6 +1511,9 @@ void GPU::cleanFrame(){
 		}
 		if(rsc.framebuffer != VK_NULL_HANDLE){
 			vkDestroyFramebuffer(_context.device, rsc.framebuffer, nullptr);
+		}
+		if(rsc.renderPass != VK_NULL_HANDLE){
+			vkDestroyRenderPass(_context.device, rsc.renderPass, nullptr);
 		}
 		_resourcesToDelete.pop_front();
 	}

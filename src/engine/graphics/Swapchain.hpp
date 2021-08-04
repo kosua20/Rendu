@@ -37,7 +37,7 @@ private:
 
 	bool finishFrame();
 	
-	void destroy();
+	void clean();
 
 	GPUContext* _context;
 	VkSwapchainKHR _swapchain = VK_NULL_HANDLE;

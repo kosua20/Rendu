@@ -247,8 +247,6 @@ private:
 
 	void finalizeFramebuffer();
 
-	void cleanRenderPasses();
-
 	void bind(const Slice& slice, size_t layer, size_t layerCount, size_t mip, size_t mipCount, const LoadOperation& colorOp, const LoadOperation& depthOp, const LoadOperation& stencilOp) const;
 
 	/** Default constructor. */

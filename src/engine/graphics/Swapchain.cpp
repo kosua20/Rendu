@@ -1,7 +1,6 @@
 #include "graphics/Swapchain.hpp"
 #include "graphics/GPU.hpp"
 
-
 Swapchain::Swapchain(GPUContext & context, const RenderingConfig & config) : _depth("Shared depth") {
 	_imageIndex = 0;
 	_context = &context;
@@ -298,7 +297,7 @@ void Swapchain::resize(uint width, uint height){
 	if(width == _depth.width && height == _depth.height){
 		return;
 	}
-	destroy();
+	clean();
 	// Recreate swapchain.
 	setup((uint32_t)width, (uint32_t)height);
 }
@@ -406,32 +405,25 @@ Swapchain::~Swapchain(){
 		finishFrame();
 	}
 
-	destroy();
-
-	
+	clean();
 }
 
-void Swapchain::destroy() {
+void Swapchain::clean() {
 	GPU::sync();
 
 	// We have to manually delete the framebuffers, because they don't own their color images (system created) nor their depth texture (shared).
-	// issue with pipeline objects in the cache. Either delete the ones corresponding to a deleted framebuffer, or avoid storing a pointer to the framebuffer and just keep the relevant format info
 	for(size_t i = 0; i < _imageCount; ++i) {
-		Framebuffer& fb = *_framebuffers[i];
-		vkDestroyFramebuffer(_context->device, fb._framebuffers[0][0].framebuffer, nullptr);
-
-		// Cleanup render passes.
-		fb.cleanRenderPasses();
-
-		vkDestroyImageView(_context->device, fb._colors[0].gpu->view, nullptr);
-		// We don't own the vkImage, and there are no samplers.
+		// Destroy the view but not the image, as we don't own it (and there is no sampler).
+		vkDestroyImageView(_context->device, _framebuffers[i]->_colors[0].gpu->view, nullptr);
+		_framebuffers[i].reset();
 	}
-	vkFreeCommandBuffers(_context->device, _context->commandPool, _context->commandBuffers.size(), _context->commandBuffers.data());
-
-	_depth.clean();
-	vkDestroySwapchainKHR(_context->device, _swapchain, nullptr);
 	_framebuffers.clear();
 
+	// We own the shared depth, clean it.
+	_depth.clean();
+
+	vkFreeCommandBuffers(_context->device, _context->commandPool, _context->commandBuffers.size(), _context->commandBuffers.data());
+	vkDestroySwapchainKHR(_context->device, _swapchain, nullptr);
 
 	for(size_t i = 0; i < _framesFinished.size(); ++i) {
 		vkDestroySemaphore(_context->device, _framesFinished[i], nullptr);

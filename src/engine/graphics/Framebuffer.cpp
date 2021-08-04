@@ -301,17 +301,6 @@ void Framebuffer::finalizeFramebuffer(){
 
 }
 
-void Framebuffer::cleanRenderPasses(){
-	GPUContext* context = GPU::getInternal();
-	for(const auto& passes2 : _renderPasses){
-		for(const auto& passes1 : passes2){
-			for(const auto& pass : passes1){
-				vkDestroyRenderPass(context->device, pass, nullptr);
-			}
-		}
-	}
-}
-
 void Framebuffer::bind(const LoadOperation& colorOp, const LoadOperation& depthOp, const LoadOperation& stencilOp) const {
 	bind(0, 0, colorOp, depthOp, stencilOp);
 }
@@ -458,25 +447,18 @@ bool Framebuffer::LayoutState::isEquivalent(const Framebuffer::LayoutState& othe
 }
 
 Framebuffer::~Framebuffer() {
-	if(_isBackbuffer){
-		return;
-	}
-
 	DebugViewer::untrackDefault(this);
 
 	GPU::clean(*this);
 
-	// \todo Should this be move in GPU::clean? or not because these objects live longer than
-	// the framebuffer object(s) (when resizing for instance).
-	// Check swapchain too, to mutualize of possible.
-	cleanRenderPasses();
-	
-	for(Texture& texture : _colors){
-		texture.clean();
-	}
-	_colors.clear();
-	if(_hasDepth){
-		_depth.clean();
+	if(!_isBackbuffer){
+		for(Texture& texture : _colors){
+			texture.clean();
+		}
+		_colors.clear();
+		if(_hasDepth){
+			_depth.clean();
+		}
 	}
 
 }
