@@ -737,7 +737,7 @@ static void ImGui_ImplVulkan_CreateDescriptorSetLayout(VkDevice device, const Vk
         return;
 
     ImGui_ImplVulkan_CreateFontSampler(device, allocator);
-    VkSampler sampler[1] = { bd->FontSampler };
+    //VkSampler sampler[1] = { bd->FontSampler };
     VkDescriptorSetLayoutBinding binding[1] = {};
     binding[0].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
     binding[0].descriptorCount = 1;

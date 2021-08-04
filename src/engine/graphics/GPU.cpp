@@ -325,7 +325,7 @@ void GPU::createProgram(Program& program, const std::string & vertexContent, con
 	if(!vertexContent.empty()) {
 		ShaderCompiler::compile(vertexContent, ShaderType::VERTEX, program.stage(ShaderType::VERTEX), compilationLog);
 		if(!compilationLog.empty()) {
-			Log::Error() << Log::GPU << "Vertex shader failed to compile:" << std::endl
+			Log::Error() << Log::GPU << "Vertex shader (for " << program.name() << ") failed to compile:" << std::endl
 						 << compilationLog << std::endl;
 		}
 	}
@@ -333,7 +333,7 @@ void GPU::createProgram(Program& program, const std::string & vertexContent, con
 	if(!fragmentContent.empty()) {
 		ShaderCompiler::compile(fragmentContent, ShaderType::FRAGMENT, program.stage(ShaderType::FRAGMENT), compilationLog);
 		if(!compilationLog.empty()) {
-			Log::Error() << Log::GPU << "Fragment shader failed to compile:" << std::endl
+			Log::Error() << Log::GPU << "Fragment shader (for " << program.name() << ") failed to compile:" << std::endl
 						 << compilationLog << std::endl;
 		}
 	}
@@ -341,7 +341,7 @@ void GPU::createProgram(Program& program, const std::string & vertexContent, con
 	if(!geometryContent.empty()) {
 		ShaderCompiler::compile(geometryContent, ShaderType::GEOMETRY, program.stage(ShaderType::GEOMETRY), compilationLog);
 		if(!compilationLog.empty()) {
-			Log::Error() << Log::GPU << "Geometry shader failed to compile:" << std::endl
+			Log::Error() << Log::GPU << "Geometry shader (for " << program.name() << ") failed to compile:" << std::endl
 						 << compilationLog << std::endl;
 		}
 	}
@@ -349,7 +349,7 @@ void GPU::createProgram(Program& program, const std::string & vertexContent, con
 	if(!tessControlContent.empty()) {
 		ShaderCompiler::compile(tessControlContent, ShaderType::TESSCONTROL, program.stage(ShaderType::TESSCONTROL), compilationLog);
 		if(!compilationLog.empty()) {
-			Log::Error() << Log::GPU << "Tessellation control shader failed to compile:" << std::endl
+			Log::Error() << Log::GPU << "Tessellation control shader (for " << program.name() << ") failed to compile:" << std::endl
 						 << compilationLog << std::endl;
 		}
 	}
@@ -357,7 +357,7 @@ void GPU::createProgram(Program& program, const std::string & vertexContent, con
 	if(!tessEvalContent.empty()) {
 		ShaderCompiler::compile(tessEvalContent, ShaderType::TESSEVAL, program.stage(ShaderType::TESSEVAL), compilationLog);
 		if(!compilationLog.empty()) {
-			Log::Error() << Log::GPU << "Tessellation evaluation shader failed to compile:" << std::endl
+			Log::Error() << Log::GPU << "Tessellation evaluation shader (for " << program.name() << ") failed to compile:" << std::endl
 						 << compilationLog << std::endl;
 		}
 	}

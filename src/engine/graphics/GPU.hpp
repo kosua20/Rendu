@@ -38,6 +38,7 @@ class GPU {
 	friend class GPUMesh; ///< Access to deletion notifier for cached state update.
 	friend class Framebuffer; ///< Access to deletion notifier for cached state update.
 	friend class Program; ///< Access to metrics.
+	friend class Swapchain; ///< Access to framebuffer cleanup.
 
 public:
 
