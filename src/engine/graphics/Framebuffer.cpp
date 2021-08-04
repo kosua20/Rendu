@@ -66,7 +66,7 @@ VkRenderPass Framebuffer::createRenderpass(Operation colorOp, Operation depthOp,
 	subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
 	subpass.colorAttachmentCount = static_cast<uint32_t>(_colors.size());
 	subpass.pColorAttachments = attachRefs.data();
-	subpass.pDepthStencilAttachment = &attachRefs.back();
+	subpass.pDepthStencilAttachment = _hasDepth ? &attachRefs.back() : nullptr;
 
 	// Dependencies.
 	std::array<VkSubpassDependency, 1> dependencies;
