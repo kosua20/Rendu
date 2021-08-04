@@ -161,6 +161,7 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 	_state.setLayouts.resize(_dirtySets.size());
 
 	// Basic uniforms buffer descriptors will use a dynamic offset.
+	uint maxDescriptorCount = 0;
 	{
 		std::vector<VkDescriptorSetLayoutBinding> bindingLayouts;
 		for(const auto& buffer : _dynamicBuffers){
@@ -170,6 +171,7 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 			bufferBinding.descriptorCount = 1;
 			bufferBinding.stageFlags = VK_SHADER_STAGE_ALL;
 			bindingLayouts.emplace_back(bufferBinding);
+			maxDescriptorCount = std::max(uint(buffer.first) + 1u, maxDescriptorCount);
 		}
 
 		VkDescriptorSetLayoutCreateInfo setInfo{};
@@ -241,11 +243,22 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 
 	// Initialize dynamic UBO descriptors.
 	_currentOffsets.assign(_dynamicBuffers.size(), 0);
+	// We need to store the offsets in order.
+	uint currentIndex = 0;
+	for(int did = 0; did < int(maxDescriptorCount); ++did){
+		auto desc = _dynamicBuffers.find(did);
+		if(desc == _dynamicBuffers.end()){
+			continue;
+		}
+		desc->second.descriptorIndex = currentIndex;
+		++currentIndex;
+	}
+
 	context->descriptorAllocator.freeSet(_currentSets[0]);
 	_currentSets[0] = context->descriptorAllocator.allocateSet(_state.setLayouts[0]);
 
-	std::vector< VkDescriptorBufferInfo> infos(_dynamicBuffers.size());
-	std::vector< VkWriteDescriptorSet> writes;
+	std::vector<VkDescriptorBufferInfo> infos(_dynamicBuffers.size());
+	std::vector<VkWriteDescriptorSet> writes;
 	uint tid = 0;
 	for(const auto& buffer : _dynamicBuffers){
 		infos[tid] = {};
@@ -286,7 +299,7 @@ void Program::update(){
 			if(buffer.second.dirty){
 				buffer.second.buffer->upload();
 			}
-			_currentOffsets[buffer.first] = buffer.second.buffer->currentOffset();
+			_currentOffsets[buffer.second.descriptorIndex] = buffer.second.buffer->currentOffset();
 		}
 		_dirtySets[0] = false;
 	}

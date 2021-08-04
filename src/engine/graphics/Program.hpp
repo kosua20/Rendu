@@ -352,6 +352,7 @@ private:
 
 	struct DynamicBufferState {
 		std::shared_ptr<UniformBuffer<char>> buffer;
+		uint descriptorIndex = 0;
 		bool dirty = true;
 	};
 
