@@ -88,7 +88,7 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 	swapInfo.imageColorSpace = surfaceParams.colorSpace;
 	swapInfo.imageExtent = extent;
 	swapInfo.imageArrayLayers = 1;
-	swapInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
+	swapInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
 
 	// Establish a link with both queues, handling the case where they are the same.
 	uint32_t queueFamilyIndices[] = { _context->graphicsId, _context->presentId };
@@ -173,6 +173,7 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 
 	Descriptor desc(formatInfos.at(depthFormat), Filter::LINEAR, Wrap::CLAMP);
 	GPU::setupTexture(_depth, desc, true);
+	_depth.gpu->defaultLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
 	VkCommandBuffer commandBuffer = VkUtils::startOneTimeCommandBuffer(*_context);
 	VkUtils::imageLayoutBarrier(commandBuffer, *_depth.gpu, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, 0, _depth.levels, 0, _depth.depth);
@@ -216,7 +217,7 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 		fb._depth.gpu->view = _depth.gpu->view;
 		fb._depth.gpu->layouts = _depth.gpu->layouts;
 		fb._depth.gpu->sampler = _depth.gpu->sampler;
-		
+		fb._depth.gpu->defaultLayout = _depth.gpu->defaultLayout;
 
 		fb._colors.clear();
 		fb._colors.emplace_back("Color");
@@ -229,6 +230,7 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 		fb._colors[0].gpu->image = colorImages[i];
 		fb._colors[0].gpu->layouts.resize(1, std::vector<VkImageLayout>(1, VK_IMAGE_LAYOUT_UNDEFINED));
 		fb._colors[0].gpu->sampler = VK_NULL_HANDLE;
+		fb._colors[0].gpu->defaultLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
 		VkImageViewCreateInfo viewInfo = {};
 		viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;

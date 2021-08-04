@@ -204,7 +204,7 @@ public:
 	 \return a reference to a placeholder representing the backbuffer
 	 \note Can be used in conjonction with saveFramebuffer() to save the content of the window.
 	 */
-	static const Framebuffer * backbuffer();
+	static Framebuffer * backbuffer();
 
 	/**
 	 Update the stored resolution of the backbuffer.

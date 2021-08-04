@@ -189,6 +189,8 @@ void Framebuffer::populateLayoutState(){
 void Framebuffer::finalizeFramebuffer(){
 
 	// Finalize the texture layouts.
+	// By not using the default (shader read only) layout, we ensure that we don't try to read in a framebuffer
+	// texture before having filled it with some data (clear or draw).
 	GPUContext* context = GPU::getInternal();
 	VkCommandBuffer commandBuffer = VkUtils::startOneTimeCommandBuffer(*context);
 	for(size_t cid = 0; cid < _colors.size(); ++cid){
@@ -481,6 +483,6 @@ Framebuffer::~Framebuffer() {
 
 Framebuffer * Framebuffer::_backbuffer = nullptr;
 
-const Framebuffer * Framebuffer::backbuffer() {
+Framebuffer * Framebuffer::backbuffer() {
 	return _backbuffer;
 }
