@@ -78,8 +78,6 @@ namespace VkUtils {
 
 	void typesFromShape(const TextureShape & shape, VkImageType & imgType, VkImageViewType & viewType);
 
-	uint32_t findMemoryType(const uint32_t typeFilter, const VkMemoryPropertyFlags & properties, const VkPhysicalDevice & physicalDevice);
-
 	VkCommandBuffer startOneTimeCommandBuffer(GPUContext & context);
 
 	void endOneTimeCommandBuffer(VkCommandBuffer & commandBuffer, GPUContext & context);

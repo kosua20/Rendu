@@ -333,7 +333,7 @@ public:
 	 \param texDescriptor the layout descriptor
 	 \param shape the texture dimensionality
 	 */
-	GPUTexture(const Descriptor & texDescriptor, TextureShape shape);
+	GPUTexture(const Descriptor & texDescriptor);
 
 	/** Clean internal GPU buffer. */
 	void clean();
@@ -370,8 +370,6 @@ public:
 	/** Move constructor. */
 	GPUTexture(GPUTexture &&) = delete;
 
-	VkImageType type;
-	VkImageViewType viewType; // gpu shape
 	VkFormat format;
 	VkSamplerAddressMode wrapping;
 	VkFilter imgFiltering;
@@ -386,10 +384,10 @@ public:
 	VkSampler sampler = VK_NULL_HANDLE;
 
 	std::vector<std::vector<VkImageLayout>> layouts;
+	VkImageLayout defaultLayout;
 
 private:
 	Descriptor _descriptor; ///< Layout used.
-	TextureShape _shape; ///< Shape used.
 };
 
 

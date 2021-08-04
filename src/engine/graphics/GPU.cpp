@@ -409,7 +409,7 @@ void GPU::setupTexture(Texture & texture, const Descriptor & descriptor, bool dr
 		texture.gpu->clean();
 	}
 
-	texture.gpu.reset(new GPUTexture(descriptor, texture.shape));
+	texture.gpu.reset(new GPUTexture(descriptor));
 
 	const bool is3D = texture.shape & TextureShape::D3;
 	const bool isCube = texture.shape & TextureShape::Cube;
@@ -429,11 +429,14 @@ void GPU::setupTexture(Texture & texture, const Descriptor & descriptor, bool dr
 	for(uint mipId = 0; mipId < texture.levels; ++mipId){
 		texture.gpu->layouts[mipId].resize(layers, imgLayout);
 	}
+	VkImageType imgType;
+	VkImageViewType viewType;
+	VkUtils::typesFromShape(texture.shape, imgType, viewType);
 
 	// Create image.
 	VkImageCreateInfo imageInfo = {};
 	imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-	imageInfo.imageType = texture.gpu->type;
+	imageInfo.imageType = imgType;
 	imageInfo.extent.width = static_cast<uint32_t>(texture.width);
 	imageInfo.extent.height = static_cast<uint32_t>(texture.height);
 	imageInfo.extent.depth = is3D ? texture.depth : 1;
@@ -460,7 +463,7 @@ void GPU::setupTexture(Texture & texture, const Descriptor & descriptor, bool dr
 	VkImageViewCreateInfo viewInfo = {};
 	viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 	viewInfo.image = texture.gpu->image;
-	viewInfo.viewType = texture.gpu->viewType;
+	viewInfo.viewType = viewType;
 	viewInfo.format = texture.gpu->format;
 	viewInfo.subresourceRange.aspectMask = texture.gpu->aspect;
 	viewInfo.subresourceRange.baseMipLevel = 0;

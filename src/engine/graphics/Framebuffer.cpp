@@ -116,10 +116,6 @@ Framebuffer::Framebuffer(TextureShape shape, uint width, uint height, uint depth
 		_layers = depth;
 	}
 
-	VkImageType type;
-	VkImageViewType viewType;
-	VkUtils::typesFromShape(_shape, type, viewType);
-
 	uint cid = 0;
 	for(const auto & descriptor : descriptors) {
 		// Create the color texture to store the result.

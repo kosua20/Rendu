@@ -38,10 +38,9 @@ bool GPUState::isEquivalent(const GPUState& other) const {
 	return true;
 }
 
-GPUTexture::GPUTexture(const Descriptor & texDescriptor, TextureShape shape) :
-	_descriptor(texDescriptor), _shape(shape) {
+GPUTexture::GPUTexture(const Descriptor & texDescriptor) :
+	_descriptor(texDescriptor) {
 
-	VkUtils::typesFromShape(shape, type, viewType);
 	channels = texDescriptor.getGPULayout(format);
 	wrapping = texDescriptor.getGPUWrapping();
 	texDescriptor.getGPUFilter(imgFiltering, mipFiltering);

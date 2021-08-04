@@ -210,7 +210,7 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 		fb._depth.depth = 1;
 		fb._depth.levels = 1;
 		fb._depth.shape = TextureShape::D2;
-		fb._depth.gpu.reset(new GPUTexture(_depth.gpu->descriptor(), TextureShape::D2));
+		fb._depth.gpu.reset(new GPUTexture(_depth.gpu->descriptor()));
 		fb._depth.gpu->image = _depth.gpu->image;
 		fb._depth.gpu->data = _depth.gpu->data;
 		fb._depth.gpu->view = _depth.gpu->view;
@@ -225,7 +225,7 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 		fb._colors[0].depth = 1;
 		fb._colors[0].levels = 1;
 		fb._colors[0].shape = TextureShape::D2;
-		fb._colors[0].gpu.reset(new GPUTexture(colorDesc, TextureShape::D2));
+		fb._colors[0].gpu.reset(new GPUTexture(colorDesc));
 		fb._colors[0].gpu->image = colorImages[i];
 		fb._colors[0].gpu->layouts.resize(1, std::vector<VkImageLayout>(1, VK_IMAGE_LAYOUT_UNDEFINED));
 		fb._colors[0].gpu->sampler = VK_NULL_HANDLE;
