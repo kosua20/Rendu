@@ -95,14 +95,14 @@ void computeCubemapConvolution(const Texture & cubemapInfos, int levelsCount, in
 		Log::Info() << Log::Utilities << "Level " << level << " (size=" << w << ", r=" << roughness << "): " << std::flush;
 
 		// Create local framebuffer.
-		const Descriptor resDesc = {Layout::RGB32F, Filter::LINEAR_LINEAR, Wrap::CLAMP};
+		const Descriptor resDesc = {Layout::RGBA32F, Filter::LINEAR_LINEAR, Wrap::CLAMP};
 		Framebuffer resultFramebuffer(TextureShape::Cube, w, w, 6, 1, {resDesc}, false, "Conv. result");
 
 		// Iterate over faces.
 		for(size_t i = 0; i < 6; ++i) {
 			Log::Info() << "." << std::flush;
 
-			resultFramebuffer.bind(i, 0, {0.0f, 0.0f, 0.0f, 1.0f}, 1.0f);
+			resultFramebuffer.bind(i, 0, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), 1.0f, Framebuffer::Operation::DONTCARE);
 			// Clear texture slice.
 			GPU::setViewport(0, 0, int(w), int(h));
 
@@ -202,10 +202,10 @@ int main(int argc, char ** argv) {
 	const auto program					= Resources::manager().getProgram("skybox_basic");
 	const auto programSH				= Resources::manager().getProgram("skybox_shcoeffs", "skybox_basic", "skybox_shcoeffs");
 	const auto mesh						= Resources::manager().getMesh("skybox", Storage::GPU);
-	const Texture * cubemapInfosDefault = Resources::manager().getTexture("debug-cube", {Layout::RGB8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
+	const Texture * cubemapInfosDefault = Resources::manager().getTexture("debug-cube", {Layout::RGBA8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
 
 	Texture cubemapInfos("cubemap");
-	Buffer<glm::vec4> sCoeffs(9, BufferType::UNIFORM, DataUse::STATIC);
+	UniformBuffer<glm::vec4> sCoeffs(9, DataUse::STATIC);
 	sCoeffs.upload();
 	std::vector<Texture> cubeLevels;
 
@@ -349,7 +349,7 @@ int main(int argc, char ** argv) {
 		GPU::setBlendState(false);
 		GPU::setCullState(false);
 
-		Framebuffer::backbuffer()->bind({0.5f, 0.5f, 0.5f, 1.0f}, 1.0f);
+		Framebuffer::backbuffer()->bind(glm::vec4(0.5f, 0.5f, 0.5f, 1.0f), 1.0f, Framebuffer::Operation::DONTCARE);
 		GPU::setViewport(0, 0, screenSize[0], screenSize[1]);
 
 		// Render main cubemap.
