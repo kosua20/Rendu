@@ -1,11 +1,14 @@
 
-in INTERFACE {
+layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In ;
 
-layout(binding = 0) uniform sampler2D screenTexture; ///< Image to tonemap.
-uniform float customExposure = 1.0; ///< Exposure
-uniform bool apply = true; ///< Apply the tonemapping operator (or just clamp).
+layout(set = 1, binding = 0) uniform sampler2D screenTexture; ///< Image to tonemap.
+
+layout(set = 0, binding = 0) uniform UniformBlock {
+	float customExposure; ///< Exposure
+	bool apply; ///< Apply the tonemapping operator (or just clamp).
+};
 
 layout(location = 0) out vec3 fragColor; ///< Color.
 

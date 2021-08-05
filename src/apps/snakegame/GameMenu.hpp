@@ -126,6 +126,8 @@ public:
 	 */
 	void update(const glm::vec2 & screenResolution, float initialRatio);
 
+	~GameMenu();
+
 	std::vector<MenuButton> buttons;		   ///< The menu buttons.
 	std::vector<MenuToggle> toggles;		   ///< The menu toggles.
 	std::vector<MenuImage> images;			   ///< The menu images.

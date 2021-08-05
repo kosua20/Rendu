@@ -46,3 +46,9 @@ void GameMenu::update(const glm::vec2 & screenResolution, float initialRatio) {
 		image.scale = image.size * glm::vec2(ratioFix, initialRatio);
 	}
 }
+
+GameMenu::~GameMenu(){
+	for(MenuLabel & label : labels){
+		label.mesh.clean();
+	}
+}

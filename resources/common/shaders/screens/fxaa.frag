@@ -1,12 +1,15 @@
 
 #include "colors.glsl"
 
-in INTERFACE {
+layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In ;
 
-layout(binding = 0) uniform sampler2D screenTexture; ///< Image to filter.
-uniform vec2 inverseScreenSize; ///< Size of one-pixel in UV space.
+layout(set = 1, binding = 0) uniform sampler2D screenTexture; ///< Image to filter.
+
+layout(set = 0, binding = 0) uniform UniformBlock {
+	vec2 inverseScreenSize; ///< Size of one-pixel in UV space.
+};
 
 // Settings for FXAA.
 #define EDGE_THRESHOLD_MIN 0.0312

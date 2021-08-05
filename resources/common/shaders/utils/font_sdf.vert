@@ -3,10 +3,12 @@
 layout(location = 0) in vec3 v;///< Position.
 layout(location = 2) in vec2 uv;///< Uv coordinates.
 
-uniform float ratio = 1.0f; ///< The screen aspect ratio.
-uniform vec2 position; ///< The position of the anchor point on screen.
+layout(set = 0, binding = 1) uniform UniformBlock {
+	vec2 position; ///< The position of the anchor point on screen.
+	float ratio; ///< The screen aspect ratio.
+};
 
-out INTERFACE {
+layout(location = 0) out INTERFACE {
 	vec2 uv; ///< Texture coordinates.
 } Out ;
 
@@ -16,4 +18,5 @@ void main(){
 	gl_Position.xy = position + v.xy * vec2(ratio, 1.0);
 	gl_Position.zw = vec2(1.0);
 	Out.uv = uv ;
+	
 }

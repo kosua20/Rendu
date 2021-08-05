@@ -44,50 +44,50 @@ Game::Game(GameConfig & config) :
 	const Texture * backgroundTexture = Resources::manager().getTexture("menubg", commonDesc, Storage::GPU);
 
 	_menus[Status::MAINMENU].backgroundImage = backgroundTexture;
-	_menus[Status::MAINMENU].buttons.emplace_back(glm::vec2(0.0f, 0.10f), meshSize, displayScale, NEWGAME,
+	_menus[Status::MAINMENU].buttons.emplace_back(glm::vec2(0.0f, -0.10f), meshSize, displayScale, NEWGAME,
 		Resources::manager().getTexture("button-newgame", commonDesc, Storage::GPU));
-	_menus[Status::MAINMENU].buttons.emplace_back(glm::vec2(0.0f, -0.25f), meshSize, displayScale, OPTIONS,
+	_menus[Status::MAINMENU].buttons.emplace_back(glm::vec2(0.0f, 0.25f), meshSize, displayScale, OPTIONS,
 		Resources::manager().getTexture("button-options", commonDesc, Storage::GPU));
-	_menus[Status::MAINMENU].buttons.emplace_back(glm::vec2(0.0f, -0.60f), meshSize, displayScale, QUIT,
+	_menus[Status::MAINMENU].buttons.emplace_back(glm::vec2(0.0f, 0.60f), meshSize, displayScale, QUIT,
 		Resources::manager().getTexture("button-quit", commonDesc, Storage::GPU));
-	_menus[Status::MAINMENU].images.emplace_back(glm::vec2(0.0f, 0.47f), 0.5f,
+	_menus[Status::MAINMENU].images.emplace_back(glm::vec2(0.0f, -0.47f), 0.5f,
 		Resources::manager().getTexture("title", commonDesc, Storage::GPU));
 
 	_menus[Status::PAUSED].backgroundImage = _bgBlurBuffer->texture();
-	_menus[Status::PAUSED].buttons.emplace_back(glm::vec2(0.0f, 0.10f), meshSize, displayScale, RESUME,
+	_menus[Status::PAUSED].buttons.emplace_back(glm::vec2(0.0f, -0.10f), meshSize, displayScale, RESUME,
 		Resources::manager().getTexture("button-resume", commonDesc, Storage::GPU));
-	_menus[Status::PAUSED].buttons.emplace_back(glm::vec2(0.0f, -0.25f), meshSize, displayScale, BACKTOMENU,
+	_menus[Status::PAUSED].buttons.emplace_back(glm::vec2(0.0f, 0.25f), meshSize, displayScale, BACKTOMENU,
 		Resources::manager().getTexture("button-menu", commonDesc, Storage::GPU));
-	_menus[Status::PAUSED].images.emplace_back(glm::vec2(0.0f, 0.47f), 0.5f,
+	_menus[Status::PAUSED].images.emplace_back(glm::vec2(0.0f, -0.47f), 0.5f,
 		Resources::manager().getTexture("title-pause", commonDesc, Storage::GPU));
 
 	_menus[Status::OPTIONS].backgroundImage = backgroundTexture;
 
-	_menus[Status::OPTIONS].toggles.emplace_back(glm::vec2(0.0f, 0.20f), meshSize, displayScale, OPTION_FULLSCREEN,
+	_menus[Status::OPTIONS].toggles.emplace_back(glm::vec2(0.0f, -0.20f), meshSize, displayScale, OPTION_FULLSCREEN,
 		Resources::manager().getTexture("button-fullscreen", commonDesc, Storage::GPU));
 	_menus[Status::OPTIONS].toggles.back().state = config.fullscreen ? MenuButton::State::ON : MenuButton::State::OFF;
-	_menus[Status::OPTIONS].toggles.emplace_back(glm::vec2(0.0f, -0.10f), meshSize, displayScale, OPTION_VSYNC,
+	_menus[Status::OPTIONS].toggles.emplace_back(glm::vec2(0.0f, 0.10f), meshSize, displayScale, OPTION_VSYNC,
 		Resources::manager().getTexture("button-vsync", commonDesc, Storage::GPU));
 	_menus[Status::OPTIONS].toggles.back().state = config.vsync ? MenuButton::State::ON : MenuButton::State::OFF;
-	_menus[Status::OPTIONS].toggles.emplace_back(glm::vec2(0.0f, -0.40f), meshSize, displayScale, OPTION_HALFRES,
+	_menus[Status::OPTIONS].toggles.emplace_back(glm::vec2(0.0f, 0.40f), meshSize, displayScale, OPTION_HALFRES,
 			Resources::manager().getTexture("button-halfres", commonDesc, Storage::GPU));
 		_menus[Status::OPTIONS].toggles.back().state = config.lowRes ? MenuButton::State::ON : MenuButton::State::OFF;
 
-		_menus[Status::OPTIONS].buttons.emplace_back(glm::vec2(0.0f, -0.80f), meshSize, displayScale, BACKTOMENU,
+		_menus[Status::OPTIONS].buttons.emplace_back(glm::vec2(0.0f, 0.80f), meshSize, displayScale, BACKTOMENU,
 		Resources::manager().getTexture("button-back", commonDesc, Storage::GPU));
-	_menus[Status::OPTIONS].images.emplace_back(glm::vec2(0.0f, 0.55f), 0.5f,
+	_menus[Status::OPTIONS].images.emplace_back(glm::vec2(0.0f, -0.55f), 0.5f,
 		Resources::manager().getTexture("title-options", commonDesc, Storage::GPU));
 
 	_menus[Status::DEAD].backgroundImage = _bgBlurBuffer->texture();
-	_menus[Status::DEAD].buttons.emplace_back(glm::vec2(0.0f, -0.20f), meshSize, displayScale, NEWGAME,
+	_menus[Status::DEAD].buttons.emplace_back(glm::vec2(0.0f, 0.20f), meshSize, displayScale, NEWGAME,
 		Resources::manager().getTexture("button-newgame"));
-	_menus[Status::DEAD].buttons.emplace_back(glm::vec2(0.0f, -0.55f), meshSize, displayScale, BACKTOMENU,
+	_menus[Status::DEAD].buttons.emplace_back(glm::vec2(0.0f, 0.55f), meshSize, displayScale, BACKTOMENU,
 		Resources::manager().getTexture("button-menu"));
-	_menus[Status::DEAD].images.emplace_back(glm::vec2(0.0f, 0.47f), 0.5f,
+	_menus[Status::DEAD].images.emplace_back(glm::vec2(0.0f, -0.47f), 0.5f,
 		Resources::manager().getTexture("title-dead", commonDesc, Storage::GPU));
-	_menus[Status::DEAD].labels.emplace_back(glm::vec2(0.0f, 0.05f), 0.25f, font, Font::Alignment::CENTER);
+	_menus[Status::DEAD].labels.emplace_back(glm::vec2(0.0f, -0.27f), 0.25f, font, Font::Alignment::CENTER);
 
-	_menus[Status::INGAME].labels.emplace_back(glm::vec2(0.0f, 0.70f), 0.2f, font, Font::Alignment::CENTER);
+	_menus[Status::INGAME].labels.emplace_back(glm::vec2(0.0f, -0.90f), 0.2f, font, Font::Alignment::CENTER);
 
 	// Initialize each menu buttons sizes.
 	const float initialRatio = float(_config.initialWidth) / float(_config.initialHeight);
@@ -165,7 +165,7 @@ Window::Action Game::update() {
 		// We are in a menu.
 		GameMenu & currentMenu = _menus[_status];
 		// Check if any button is hovered or pressed.
-		const glm::vec2 mousePos = (Input::manager().mouse() * 2.0f - 1.0f) * glm::vec2(1.0f, -1.0f);
+		const glm::vec2 mousePos = (Input::manager().mouse() * 2.0f - 1.0f);
 		for(MenuButton & button : currentMenu.buttons) {
 			button.state = MenuButton::State::OFF;
 			// Check if mouse inside.

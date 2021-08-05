@@ -1,12 +1,12 @@
 
-in INTERFACE {
+layout(location = 0) in INTERFACE {
 	vec2 uv; ///< Texture coordinates.
 } In ;
 
-layout(binding = 0) uniform sampler2D normalMap; ///< Normal map.
-layout(binding = 1) uniform sampler2D materialMap; ///< Material index.
-layout(binding = 2) uniform sampler2D ssaoMap; ///< SSAO result.
-layout(binding = 3) uniform samplerCube envMap; ///< Environment map.
+layout(set = 1, binding = 0) uniform sampler2D normalMap; ///< Normal map.
+layout(set = 1, binding = 1) uniform sampler2D materialMap; ///< Material index.
+layout(set = 1, binding = 2) uniform sampler2D ssaoMap; ///< SSAO result.
+layout(set = 1, binding = 3) uniform samplerCube envMap; ///< Environment map.
 
 layout(location = 0) out vec4 fragColor; ///< Color.
 
@@ -32,6 +32,6 @@ void main(){
 	float adjustedAO = 0.9*ao + 0.1;
 	// Combine.
 	baseColor *= light0 * adjustedAO;
-	fragColor.rgb = baseColor;
+	fragColor.rgb = sqrt(baseColor);
 	fragColor.a = 1.0f;
 }

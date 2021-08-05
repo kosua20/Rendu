@@ -17,9 +17,9 @@ GameRenderer::GameRenderer(const glm::vec2 & resolution) : Renderer("Game") {
 
 	const int renderWidth  = int(resolution[0]);
 	const int renderHeight = int(resolution[1]);
-	_sceneFramebuffer	  = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, {{Layout::RGB16F, Filter::NEAREST_NEAREST, Wrap::CLAMP}, {Layout::R8, Filter::NEAREST_NEAREST, Wrap::CLAMP}, {Layout::DEPTH_COMPONENT32F, Filter::NEAREST_NEAREST, Wrap::CLAMP}},
+	_sceneFramebuffer	  = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, {{Layout::RGBA16F, Filter::NEAREST_NEAREST, Wrap::CLAMP}, {Layout::R8, Filter::NEAREST_NEAREST, Wrap::CLAMP}, {Layout::DEPTH_COMPONENT32F, Filter::NEAREST_NEAREST, Wrap::CLAMP}},
 		 true, "G-buffer"));
-	_lightingFramebuffer   = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, {Layout::RGB8, Filter::LINEAR_NEAREST, Wrap::CLAMP}, false, "Lighting"));
+	_lightingFramebuffer   = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, {Layout::RGBA8, Filter::LINEAR_NEAREST, Wrap::CLAMP}, false, "Lighting"));
 	_preferredFormat.push_back({Layout::RGBA8,Filter::LINEAR_NEAREST, Wrap::CLAMP});
 	
 
@@ -33,7 +33,7 @@ GameRenderer::GameRenderer(const glm::vec2 & resolution) : Renderer("Game") {
 	_ground			= Resources::manager().getMesh("ground", Storage::GPU);
 	_head			= Resources::manager().getMesh("head", Storage::GPU);
 	_bodyElement	= Resources::manager().getMesh("body", Storage::GPU);
-	_cubemap		= Resources::manager().getTexture("env", {Layout::RGB8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
+	_cubemap		= Resources::manager().getTexture("env", {Layout::RGBA8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
 
 	checkGPUError();
 }
@@ -88,7 +88,7 @@ void GameRenderer::drawScene(const Player & player) const {
 		const glm::mat4 MVP			 = VP * groundModel;
 		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(groundModel)));
 		_coloredProgram->uniform("mvp", MVP);
-		_coloredProgram->uniform("normalMat", normalMatrix);
+		_coloredProgram->uniform("normalMat", glm::mat4(normalMatrix));
 		_coloredProgram->uniform("matID", 1);
 		GPU::drawMesh(*_ground);
 	}
@@ -97,7 +97,7 @@ void GameRenderer::drawScene(const Player & player) const {
 		const glm::mat4 MVP			 = VP * player.modelHead;
 		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(player.modelHead)));
 		_coloredProgram->uniform("mvp", MVP);
-		_coloredProgram->uniform("normalMat", normalMatrix);
+		_coloredProgram->uniform("normalMat", glm::mat4(normalMatrix));
 		_coloredProgram->uniform("matID", 2);
 		GPU::drawMesh(*_head);
 	}
@@ -106,7 +106,7 @@ void GameRenderer::drawScene(const Player & player) const {
 		const glm::mat4 MVP			 = VP * player.modelsBody[i];
 		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(player.modelsBody[i])));
 		_coloredProgram->uniform("mvp", MVP);
-		_coloredProgram->uniform("normalMat", normalMatrix);
+		_coloredProgram->uniform("normalMat", glm::mat4(normalMatrix));
 		_coloredProgram->uniform("matID", player.looksBody[i]);
 		GPU::drawMesh(*_bodyElement);
 	}
@@ -114,7 +114,7 @@ void GameRenderer::drawScene(const Player & player) const {
 		const glm::mat4 MVP			 = VP * player.modelsItem[i];
 		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(player.modelsItem[i])));
 		_coloredProgram->uniform("mvp", MVP);
-		_coloredProgram->uniform("normalMat", normalMatrix);
+		_coloredProgram->uniform("normalMat", glm::mat4(normalMatrix));
 		_coloredProgram->uniform("matID", player.looksItem[i]);
 		GPU::drawMesh(*_bodyElement);
 	}

@@ -1,14 +1,15 @@
 
-in INTERFACE {
+layout(location = 0) in INTERFACE {
 	vec2 uv; ///< Texture coordinates.
 } In ;
 
-uniform vec4 color; ///< The inner glyph color.
-uniform vec4 edgeColor; ///< The outer glyph color.
-uniform float edgeWidth = 0.0f;  ///< The outer edge width
+layout(set = 0, binding = 0) uniform UniformBlock {
+	vec4 color; ///< The inner glyph color.
+	vec4 edgeColor; ///< The outer glyph color.
+	float edgeWidth;  ///< The outer edge width
+};
 
-
-layout(binding = 0) uniform sampler2D fontSdfTexture; ///< The font signed-distance-function atlas.
+layout(set = 1, binding = 0) uniform sampler2D fontSdfTexture; ///< The font signed-distance-function atlas.
 layout(location = 0) out vec4 fragColor; ///< Color.
 
 /** Find the isolines of the corresponding glyph to display it on screen. */
