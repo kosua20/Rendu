@@ -7,7 +7,7 @@ StenciledApp::StenciledApp(RenderingConfig & config) :
 
 	const glm::vec2 renderRes = _config.renderingResolution();
 	_renderer.reset(new StenciledRenderer(renderRes));
-	_finalRender.reset(new Framebuffer(uint(renderRes[0]), uint(renderRes[1]), {Layout::RGB8, Filter::LINEAR_NEAREST, Wrap::CLAMP}, false, "Final render"));
+	_finalRender.reset(new Framebuffer(uint(renderRes[0]), uint(renderRes[1]), {Layout::RGBA8, Filter::LINEAR_NEAREST, Wrap::CLAMP}, false, "Final render"));
 
 	// Load all existing scenes, with associated names.
 	std::map<std::string, std::string> sceneInfos;
@@ -48,7 +48,7 @@ void StenciledApp::setScene(const std::shared_ptr<Scene> & scene) {
 
 void StenciledApp::draw() {
 	if(!_scenes[_currentScene]) {
-		Framebuffer::backbuffer()->bind({1.0f, 1.0f, 1.0f, 1.0f}, 1.0f);
+		Framebuffer::backbuffer()->bind(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 1.0f, Framebuffer::Operation::DONTCARE);
 		return;
 	}
 	_renderer->draw(_userCamera, *_finalRender);

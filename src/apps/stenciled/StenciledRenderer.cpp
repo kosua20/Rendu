@@ -11,8 +11,8 @@ StenciledRenderer::StenciledRenderer(const glm::vec2 & resolution) : Renderer("S
 	const uint renderHeight	   = uint(resolution[1]);
 
 	// Framebuffer.
-	const Descriptor descColor = {Layout::RGB8, Filter::LINEAR_LINEAR, Wrap::CLAMP};
-	const Descriptor descDepth = {Layout::DEPTH24_STENCIL8, Filter::NEAREST_NEAREST, Wrap::CLAMP};
+	const Descriptor descColor = {Layout::RGBA8, Filter::LINEAR_LINEAR, Wrap::CLAMP};
+	const Descriptor descDepth = {Layout::DEPTH32F_STENCIL8, Filter::NEAREST_NEAREST, Wrap::CLAMP};
 	const std::vector<Descriptor> descs = { descColor, descDepth};
 	_sceneFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, descs, true, _name + " rendering"));
 
@@ -41,7 +41,7 @@ void StenciledRenderer::draw(const Camera & camera, Framebuffer & framebuffer, s
 	GPU::setCullState(true, Faces::BACK);
 	GPU::setBlendState(false);
 
-	_sceneFramebuffer->bind({1.0f, 1.0f, 1.0f, 1.0f}, 1.0f, (uchar)0x0);
+	_sceneFramebuffer->bind(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 1.0f, (uchar)0x0);
 	_sceneFramebuffer->setViewport();
 
 	// Clear colorbuffer to white, don't write to it for now.
@@ -55,6 +55,7 @@ void StenciledRenderer::draw(const Camera & camera, Framebuffer & framebuffer, s
 	// Scene objects.
 	// Render all objects with a simple program.
 	_objectProgram->use();
+	_objectProgram->uniform("color", glm::vec4(1.0f));
 	const glm::mat4 VP = proj*view;
 	const Frustum camFrustum(VP);
 	for(auto & object : _scene->objects) {
@@ -76,7 +77,8 @@ void StenciledRenderer::draw(const Camera & camera, Framebuffer & framebuffer, s
 	// Render a black quad only where the stencil buffer is non zero (ie odd count of covering primitives).
 	GPU::setStencilState(true, TestFunction::NOTEQUAL, StencilOp::KEEP, StencilOp::KEEP, StencilOp::KEEP, 0x00);
 	GPU::setColorState(true, true, true, true);
-
+	GPU::setCullState(true, Faces::BACK);
+	
 	DebugViewer::trackStateDefault("Screen");
 
 	_fillProgram->use();
