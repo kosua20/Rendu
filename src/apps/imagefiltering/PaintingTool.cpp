@@ -7,8 +7,8 @@
 PaintingTool::PaintingTool(unsigned int width, unsigned int height) {
 
 	_brushShader = Resources::manager().getProgram("brush_color");
-	_canvas		 = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, {Layout::RGB8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, false, "Canvas"));
-	_visu		 = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, {Layout::RGB8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, false, "Canvas & brush"));
+	_canvas		 = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, {Layout::RGBA8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, false, "Canvas"));
+	_visu		 = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, {Layout::RGBA8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, false, "Canvas & brush"));
 
 	// Generate a disk mesh.
 	_brushes.emplace_back("disk");
@@ -27,8 +27,8 @@ PaintingTool::PaintingTool(unsigned int width, unsigned int height) {
 	for(int i = 1; i <= diskResolution; ++i) {
 		const int baseId		 = 3 * (i - 1);
 		disk.indices[baseId]	 = 0;
-		disk.indices[baseId + 1] = i == diskResolution ? 1 : i + 1;
-		disk.indices[baseId + 2] = i;
+		disk.indices[baseId + 1] = i;
+		disk.indices[baseId + 2] = i == diskResolution ? 1 : i + 1;
 	}
 	disk.upload();
 	disk.clearGeometry();
@@ -37,7 +37,7 @@ PaintingTool::PaintingTool(unsigned int width, unsigned int height) {
 	_brushes.emplace_back("square");
 	Mesh & square	= _brushes[1];
 	square.positions = {{0.0f, 0.0f, 0.0f}, {-1.0f, -1.0f, 0.0f}, {1.0f, -1.0f, 0.0f}, {1.0f, 1.0f, 0.0f}, {-1.0f, 1.0f, 0.0f}};
-	square.indices   = {0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 1};
+	square.indices   = {0, 2, 1, 0, 3, 2, 0, 4, 3, 0, 1, 4};
 	square.upload();
 	square.clearGeometry();
 
@@ -45,7 +45,7 @@ PaintingTool::PaintingTool(unsigned int width, unsigned int height) {
 	_brushes.emplace_back("diamond");
 	Mesh & diamond	= _brushes[2];
 	diamond.positions = {{0.0f, 0.0f, 0.0f}, {-1.41f, 0.0f, 0.0f}, {0.0f, -1.41f, 0.0f}, {1.41f, 0.0f, 0.0f}, {0.0f, 1.41f, 0.0f}};
-	diamond.indices   = {0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 1};
+	diamond.indices   = {0, 2, 1, 0, 3, 2, 0, 4, 3, 0, 1, 4};
 	diamond.upload();
 	diamond.clearGeometry();
 
@@ -59,9 +59,10 @@ void PaintingTool::draw() {
 	GPU::setCullState(true, Faces::BACK);
 
 	// Clear if needed.
-	_canvas->bind(_shouldClear ? glm::vec4(_bgColor, 1.0f) : Framebuffer::Operation::LOAD);
+	Framebuffer::LoadOperation colorOp(glm::vec4(_bgColor, 1.0f));
+	_canvas->bind(_shouldClear ? colorOp : Framebuffer::Operation::LOAD, Framebuffer::Operation::DONTCARE, Framebuffer::Operation::DONTCARE);
 	_canvas->setViewport();
-	_shoudClear = false;
+	_shouldClear = false;
 
 
 	// Draw brush if needed.
@@ -106,7 +107,7 @@ void PaintingTool::update() {
 		const unsigned int w	  = _canvas->width();
 		const unsigned int h	  = _canvas->height();
 		const glm::vec2 pos		  = Input::manager().mouse();
-		glm::vec2 mousePositionGL = glm::floor(glm::vec2(pos.x * float(w), (1.0f - pos.y) * float(h)));
+		glm::vec2 mousePositionGL = glm::floor(glm::vec2(pos.x * float(w), pos.y * float(h)));
 		mousePositionGL			  = glm::clamp(mousePositionGL, glm::vec2(0.0f), glm::vec2(w, h));
 		// Read back from the framebuffer.
 		_fgColor = _canvas->read(glm::ivec2(mousePositionGL));
@@ -114,7 +115,6 @@ void PaintingTool::update() {
 
 	// If left-pressing, draw to the canvas.
 	_drawPos   = 2.0f * Input::manager().mouse() - 1.0f;
-	_drawPos.y = -_drawPos.y;
 	if(Input::manager().pressed(Input::Mouse::Left)) {
 		_shouldDraw = true;
 	}
@@ -142,7 +142,7 @@ void PaintingTool::update() {
 		ImGui::ColorEdit3("Foreground", &_fgColor[0]);
 		ImGui::ColorEdit3("Background", &_bgColor[0]);
 		if(ImGui::Button("Clear")) {
-			_shoudClear = true;
+			_shouldClear = true;
 		}
 		ImGui::PopItemWidth();
 	}
@@ -153,11 +153,9 @@ void PaintingTool::resize(unsigned int width, unsigned int height) const {
 	// We first copy the canvas to a temp framebuffer.
 	const unsigned int w = _canvas->width();
 	const unsigned int h = _canvas->height();
-	Framebuffer tempCanvas(w, h, {Layout::RGB8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, false, "Canvas copy");
-	//_canvas->bind(Framebuffer::Mode::READ);
-	//tempCanvas.bind(Framebuffer::Mode::WRITE);
+	Framebuffer tempCanvas(w, h, {Layout::RGBA8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, false, "Canvas copy");
 
-	GPU::blit(*_canvas, tempCanvas, Filter::NEAREST);
+	GPU::blit(*_canvas, tempCanvas, Filter::LINEAR);
 
 	// We can then resize the canvas.
 	_canvas->resize(width, height);
@@ -165,10 +163,16 @@ void PaintingTool::resize(unsigned int width, unsigned int height) const {
 	_canvas->bind(glm::vec4(_bgColor, 1.0f));
 	
 	// Copy back the drawing.
-	GPU::blit(tempCanvas, *_canvas, Filter::NEAREST);
+	GPU::blit(tempCanvas, *_canvas, Filter::LINEAR);
 	
 	// The content of the visualisation buffer will be cleaned at the next frame canvas copy.
 	_visu->resize(width, height);
 
 	checkGPUError();
+}
+
+PaintingTool::~PaintingTool(){
+	for(Mesh& brush : _brushes){
+		brush.clean();
+	}
 }

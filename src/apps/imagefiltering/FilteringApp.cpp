@@ -15,10 +15,10 @@ FilteringApp::FilteringApp(RenderingConfig & config) :
 	const int renderHeight = int(renderResolution[1]);
 
 	_passthrough = Resources::manager().getProgram2D("passthrough");
-	_sceneShader = Resources::manager().getProgram("object", "object_basic", "object_basic_random");
+	_sceneShader = Resources::manager().getProgram("object", "object_basic_random", "object_basic_color");
 	_mesh		 = Resources::manager().getMesh("light_sphere", Storage::GPU);
 
-	_sceneBuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, {Layout::RGB8, Filter::NEAREST_NEAREST, Wrap::CLAMP}, true, "Scene"));
+	_sceneBuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, {Layout::RGBA8, Filter::NEAREST_NEAREST, Wrap::CLAMP}, true, "Scene"));
 
 	// Create the Poisson filling and Laplacian integration pyramids, with a lowered internal resolution to speed things up.
 	_pyramidFiller	 = std::unique_ptr<PoissonFiller>(new PoissonFiller(renderWidth, renderHeight, _fillDownscale));
@@ -40,7 +40,7 @@ void FilteringApp::draw() {
 		GPU::setDepthState(true, TestFunction::LESS, true);
 		GPU::setBlendState(false);
 		GPU::setCullState(true, Faces::BACK);
-		_sceneBuffer->bind({0.0f, 0.0f, 0.0f, 1.0f}, 1.0f);
+		_sceneBuffer->bind(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), 1.0f, Framebuffer::Operation::DONTCARE);
 		_sceneBuffer->setViewport();
 		const glm::mat4 MVP = _userCamera.projection() * _userCamera.view();
 		_sceneShader->use();
@@ -51,7 +51,8 @@ void FilteringApp::draw() {
 		GPU::setDepthState(false);
 		GPU::setBlendState(false);
 		GPU::setCullState(true, Faces::BACK);
-		_sceneBuffer->bind(_image.width > 0 ? {0.0f, 0.0f, 0.0f, 1.0f} : Framebuffer::Operation::DONTCARE);
+		Framebuffer::LoadOperation colorOp(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+		_sceneBuffer->bind(_image.width > 0 ? colorOp : Framebuffer::Operation::DONTCARE, Framebuffer::Operation::DONTCARE, Framebuffer::Operation::DONTCARE);
 		_sceneBuffer->setViewport();
 		_passthrough->use();
 		if(_image.width > 0) {
@@ -142,7 +143,7 @@ void FilteringApp::update() {
 				_image.levels = 1;
 				_image.images.emplace_back();
 				Image & img   = _image.images.back();
-				const int ret = img.load(newImagePath, 4, true, false);
+				const int ret = img.load(newImagePath, 4, false, false);
 				if(ret != 0) {
 					Log::Error() << Log::Resources << "Unable to load the texture at path " << newImagePath << "." << std::endl;
 				} else {
@@ -225,4 +226,8 @@ void FilteringApp::resize() {
 	_painter->resize(lwidth, lheight);
 
 	checkGPUError();
+}
+
+FilteringApp::~FilteringApp(){
+	_image.clean();
 }

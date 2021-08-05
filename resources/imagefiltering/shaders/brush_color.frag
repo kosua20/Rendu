@@ -1,11 +1,13 @@
 
-in float dist; ///< Pseudo-distance to the brush center.
+layout(location = 0) in float dist; ///< Pseudo-distance to the brush center.
 
-uniform vec3 color; ///< Brush color.
-uniform bool outline; ///< Are we in outline mode.
-uniform float radiusPx; ///< Radius of the brush in pixels.
+layout(set = 0, binding = 0) uniform UniformBlock {
+	vec3 color; ///< Brush color.
+	bool outline; ///< Are we in outline mode.
+	float radiusPx; ///< Radius of the brush in pixels.
+};
 
-out vec3 fragColor; ///< Output color.
+layout(location = 0) out vec3 fragColor; ///< Output color.
 
 /** Draw the full brush or its outline. */
 void main(){

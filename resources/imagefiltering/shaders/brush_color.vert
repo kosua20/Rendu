@@ -2,10 +2,12 @@
 // Attributes
 layout(location = 0) in vec3 v; ///< Brush vertex position.
 
-uniform vec2 radius; ///< Brush radius.
-uniform vec2 position; ///< Brush center position.
+layout(set = 0, binding = 1) uniform UniformBlock {
+	vec2 radius; ///< Brush radius.
+	vec2 position; ///< Brush center position.
+};
 
-out float dist; ///< Pseudo-distance to the brush center.
+layout(location = 0) out float dist; ///< Pseudo-distance to the brush center.
 
 /** Place the brush on screen. */
 void main(){
@@ -13,5 +15,7 @@ void main(){
 	dist = all(equal(v.xy, vec2(0.0))) ? 0.0 : 1.0;
 	gl_Position.xy = position + radius * v.xy;
 	gl_Position.zw = vec2(0.0, 1.0);
+
+	
 }
 

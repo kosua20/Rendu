@@ -30,6 +30,8 @@ public:
 	 */
 	void resize(unsigned int width, unsigned int height) const;
 
+	~PaintingTool();
+	
 	/** Canvas content texture.
 	 \return the canvas ID
 	 */
@@ -67,6 +69,6 @@ private:
 	int _radius		   = 40;			  ///< Brush radius, in pixels.
 	Mode _mode		   = Mode::DRAW;	  ///< Current brush effect.
 	Shape _shape	   = Shape::CIRCLE;   ///< Current brush shape.
-	bool _shoudClear   = true;			  ///< Clear the canvas at the next frame.
+	bool _shouldClear   = true;			  ///< Clear the canvas at the next frame.
 	bool _shouldDraw   = false;			  ///< Apply the brush to the canvas at the next frame.
 };

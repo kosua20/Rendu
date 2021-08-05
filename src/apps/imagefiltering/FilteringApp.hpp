@@ -42,6 +42,8 @@ public:
 	/** \copydoc CameraApp::resize */
 	void resize() override;
 
+	~FilteringApp();
+
 private:
 	/** \brief The filter to apply. */
 	enum class Processing : int {
