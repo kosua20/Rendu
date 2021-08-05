@@ -129,6 +129,7 @@ float getLetter(int lid, vec2 uv){
 	int vlid = lid/16;
 	int hlid = lid - 16*vlid;
 	vec2 fontUV = (vec2(hlid, vlid) + uv)/16.0;
+	fontUV.y = 1.0 - fontUV.y;
 	// Fetch in a 3x3 neighborhood to box blur
 	float accum = 0.0;
 	for(int i = -1; i < 2; ++i){

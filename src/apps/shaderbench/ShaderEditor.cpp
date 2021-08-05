@@ -213,14 +213,11 @@ void ShaderEditor::draw() {
 	Framebuffer::backbuffer()->bind(glm::vec4(0.3f,0.3f,0.3f, 1.0f));
 	GPU::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 
-	_passthrough->use();
-	_passthrough->uniform("flip", 0);
-	_passthrough->texture(_currFrame->texture(), 0);
-	ScreenQuad::draw();
-
 	// If not in window mode, directly blit to the screne.
 	if(!_windowed){
-
+		_passthrough->use();
+		_passthrough->texture(_currFrame->texture(), 0);
+		ScreenQuad::draw();
 	}
 
 	std::swap(_currFrame, _prevFrame);
@@ -264,7 +261,7 @@ void ShaderEditor::update() {
 		if(ImGui::Begin("Render", nullptr, ImGuiWindowFlags_NoBringToFrontOnFocus)){
 			// Adjust the texture display to the window size.
 			const ImVec2 winSize = ImGui::GetContentRegionAvail();
-			ImGui::ImageButton(*_currFrame->texture(), ImVec2(winSize.x, winSize.y), ImVec2(0.0,1.0), ImVec2(1.0,0.0), 0);
+			ImGui::ImageButton(*_currFrame->texture(), ImVec2(winSize.x, winSize.y), ImVec2(0.0,0.0), ImVec2(1.0,1.0), 0);
 			if (ImGui::IsItemHovered()) {
 				ImGui::CaptureMouseFromApp(false);
 				ImGui::CaptureKeyboardFromApp(false);
@@ -334,7 +331,7 @@ void ShaderEditor::update() {
 				// Create a RGB8 framebuffer to save as png.
 				Framebuffer tmp(_currFrame->width(), _currFrame->height(), {Layout::RGBA8, Filter::NEAREST, Wrap::CLAMP}, false, "Temp");
 				GPU::blit(*_currFrame, tmp, Filter::NEAREST);
-				GPU::saveFramebuffer(tmp, outPath, true, true);
+				GPU::saveFramebuffer(tmp, outPath, false, true);
 			}
 		}
 		ImGui::SameLine();
@@ -422,9 +419,9 @@ void ShaderEditor::update() {
 				// Small square display.
 				ImGui::Text("Location %d", i);
 				if(_textures[i]->shape == TextureShape::D2){
-					ImGui::Image(*_textures[i], ImVec2(100,100), ImVec2(0,1), ImVec2(1, 0));
+					ImGui::Image(*_textures[i], ImVec2(100,100));
 				} else {
-					ImGui::Image(*_fallbackTex, ImVec2(100,100), ImVec2(0,1), ImVec2(1, 0));
+					ImGui::Image(*_fallbackTex, ImVec2(100,100));
 				}
 				ImGui::NextColumn();
 			}

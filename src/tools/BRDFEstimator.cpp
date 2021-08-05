@@ -118,7 +118,6 @@ void computeCubemapConvolution(const Texture & cubemapInfos, int levelsCount, in
 			programCubemap->uniform("mvp", Library::boxVPs[i]);
 			programCubemap->uniform("samplesCount", samplesCount);
 			programCubemap->uniform("clampMax", 10000.0f);
-			programCubemap->uniform("flip", false);
 
 			// Attach source cubemap and compute.
 			programCubemap->texture(&cubemapInfos, 0);
@@ -374,7 +373,6 @@ int main(int argc, char ** argv) {
 				programToUse->texture(texToUse, 0);
 			}
 			programToUse->uniform("mvp", mvp);
-			programToUse->uniform("flip", true);
 			GPU::drawMesh(*mesh);
 		}
 
@@ -386,7 +384,6 @@ int main(int argc, char ** argv) {
 		program->use();
 		program->texture(cubemapInfosDefault, 0);
 		program->uniform("mvp", mvp);
-		program->uniform("flip", true);
 		GPU::drawMesh(*mesh);
 		
 	}

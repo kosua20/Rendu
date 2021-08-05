@@ -15,7 +15,7 @@ void main(){
 	Out.uv = temp;
 	gl_Position.xy = v.xy;
 	gl_Position.zw = vec2(1.0);
-	gl_Position.y *= -1;
+	
 	// Perform back projection to get a world space ray dir.
 	Out.dir = vec3(iViewProjInv * gl_Position);
 

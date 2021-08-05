@@ -46,7 +46,6 @@ void AtmosphereApp::draw() {
 	_atmosphere->use();
 	const glm::mat4 camToWorldNoT = glm::mat4(glm::mat3(camToWorld));
 	const glm::mat4 clipToWorld	  = camToWorldNoT * clipToCam;
-	_atmosphere->uniform("flip", true);
 	_atmosphere->uniform("clipToWorld", clipToWorld);
 	_atmosphere->uniform("viewPos", _userCamera.position());
 	_atmosphere->uniform("lightDirection", _lightDirection);
@@ -187,7 +186,7 @@ void AtmosphereApp::precomputeTable(const Sky::AtmosphereParameters & params, ui
 
 			// Compute associated attenuation.
 			const glm::vec3 secondaryAttenuation = exp(-(params.kMie * mieSecondDist + params.kRayleigh * rayleighSecondDist));
-			table.rgba(int(x), int(y))			 = glm::vec4(secondaryAttenuation, 0.0f);
+			table.rgba(int(x), int(y))			 = glm::vec4(secondaryAttenuation, 1.0f);
 		}
 	});
 }

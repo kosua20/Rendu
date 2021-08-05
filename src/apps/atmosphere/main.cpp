@@ -74,9 +74,9 @@ int main(int argc, char ** argv) {
 		Log::Info() << Log::Utilities << "Generating scattering lookup table." << std::endl;
 		// Default Earth-like atmosphere.
 		const auto params = Sky::AtmosphereParameters();
-		Image transmittanceTable(int(config.resolution), int(config.resolution), 3);
+		Image transmittanceTable(int(config.resolution), int(config.resolution), 4);
 		AtmosphereApp::precomputeTable(params, config.samples, transmittanceTable);
-		transmittanceTable.save(config.outputPath, true);
+		transmittanceTable.save(config.outputPath, false);
 
 		Log::Info() << Log::Utilities << "Done." << std::endl;
 		return 0;
