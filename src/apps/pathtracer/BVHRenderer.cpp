@@ -7,7 +7,7 @@
 
 BVHRenderer::BVHRenderer() : Renderer("BVH renderer") {
 	// GL setup
-	_preferredFormat.push_back({Layout::RGB8, Filter::LINEAR_NEAREST, Wrap::CLAMP});
+	_preferredFormat.push_back({Layout::RGBA8, Filter::LINEAR_NEAREST, Wrap::CLAMP});
 	_needsDepth = true;
 	_objectProgram = Resources::manager().getProgram("object_basic_lit");
 	_bvhProgram = Resources::manager().getProgram("object_basic_color");
@@ -43,12 +43,13 @@ void BVHRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_t 
 	const glm::mat4 VP	 = proj * view;
 
 	_objectProgram->use();
+	_objectProgram->uniform("lightDir", glm::vec3(0.577f));
 	for(auto & object : _scene->objects) {
 		// Combine the three matrices.
 		const glm::mat4 MVP			 = VP * object.model();
 		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(object.model())));
 		_objectProgram->uniform("mvp", MVP);
-		_objectProgram->uniform("normalMatrix", normalMatrix);
+		_objectProgram->uniform("normalMatrix", glm::mat4(normalMatrix));
 		GPU::drawMesh(*object.mesh());
 	}
 

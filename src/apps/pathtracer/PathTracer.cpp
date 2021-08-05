@@ -156,7 +156,7 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 		Log::Error() << "[PathTracer] No scene available." << std::endl;
 		return;
 	}
-	if(render.components != 3) {
+	if(render.components < 3) {
 		Log::Warning() << "[PathTracer] Expected a RGB image." << std::endl;
 	}
 	const size_t samplesOld = samples;
@@ -285,6 +285,12 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 		for(size_t x = 0; x < (render.width); ++x) {
 			const glm::vec3 color	  = render.rgb(int(x), int(y)) / float(samples);
 			render.rgb(int(x), int(y)) = glm::pow(color, glm::vec3(1.0f / 2.2f));
+		}
+		// Ensure full opacity if RGBA image.
+		if(render.components == 4){
+			for(size_t x = 0; x < (render.width); ++x) {
+				render.rgba(int(x), int(y))[3] = 1.0f;
+			}
 		}
 	});
 

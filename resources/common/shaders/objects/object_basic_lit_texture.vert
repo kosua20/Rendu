@@ -5,10 +5,12 @@ layout(location = 1) in vec3 n; ///< Normal.
 layout(location = 2) in vec2 uv; ///< UV.
 
 // Uniform: the MVP.
-uniform mat4 mvp; ///< The transformation matrix.
-uniform mat3 normalMatrix; ///< The normal transformation matrix.
+layout(set = 0, binding = 1) uniform UniformBlock {
+	mat4 mvp; ///< The transformation matrix.
+	//mat4 normalMatrix; ///< The normal transformation matrix.
+};
 
-out INTERFACE {
+layout(location = 0) out INTERFACE {
 	vec3 vn; ///< World space normal.
 	vec2 uv; ///< Texture coordinates.
 } Out ;
@@ -21,4 +23,5 @@ void main(){
 	gl_Position = mvp * vec4(v, 1.0);
 	Out.vn = normalize(n);
 	Out.uv = uv;
+	
 }

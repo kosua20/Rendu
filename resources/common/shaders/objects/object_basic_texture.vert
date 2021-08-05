@@ -4,11 +4,13 @@ layout(location = 0) in vec3 v;///< Position.
 layout(location = 2) in vec2 uv;///< UV.
 
 // Uniform: the MVP.
-uniform mat4 mvp; ///< The transformation matrix.
+layout(set = 0, binding = 1) uniform UniformBlock {
+	mat4 mvp; ///< The transformation matrix.
+};
 
-out INTERFACE {
+layout(location = 0) out INTERFACE {
 	vec2 uv; ///< Texture coordinates.
-} Out ;
+} Out;
 
 /** Apply the MVP transformation to the input vertex. */
 void main(){

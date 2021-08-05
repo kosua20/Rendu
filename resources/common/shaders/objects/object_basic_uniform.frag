@@ -1,5 +1,6 @@
-
-uniform vec4 color = vec4(1.0,0.0,0.0,1.0); ///< User-picked color.
+layout(set = 0, binding = 0) uniform UniformBlock {
+	vec4 color; ///< User-picked color.
+};
 
 layout(location = 0) out vec4 fragColor; ///< Color.
 

@@ -4,12 +4,13 @@ layout(location = 0) in vec3 v;///< Position.
 layout(location = 1) in vec3 n;///< Normal.
 
 // Uniform: the MVP.
-uniform mat4 mvp; ///< The transformation matrix.
-uniform mat3 normalMatrix; ///< The normal transformation matrix.
+layout(set = 0, binding = 1) uniform UniformBlock {
+	mat4 mvp; ///< The transformation matrix.
+};
 
-out INTERFACE {
+layout(location = 0) out INTERFACE {
 	vec3 vn;///< World space normal.
-} Out ;
+} Out;
 
 /** Apply the transformation to the input vertex.
  Compute the world space normal.

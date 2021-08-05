@@ -211,6 +211,7 @@ bool GPU::setupWindow(Window * window){
 	features.samplerAnisotropy = VK_TRUE;
 	features.tessellationShader = VK_TRUE;
 	features.imageCubeArray = VK_TRUE;
+	features.fillModeNonSolid = VK_TRUE;
 	deviceInfo.pEnabledFeatures = &features;
 	// Extensions.
 	auto extensions = deviceExtensions;

@@ -109,12 +109,16 @@ void RaycasterVisualisation::getRayMesh(const glm::vec3 & rayPos, const glm::vec
 }
 
 void RaycasterVisualisation::createBVHMeshes(const std::vector<DisplayNode> & nodes, std::vector<Mesh> & meshes) const {
+	// Cleanup.
+	for(Mesh& mesh : meshes){
+		mesh.clean();
+	}
+	meshes.clear();
 	// Compute the max depth.
 	size_t maxDepth = 0;
 	for(const auto & displayNode : nodes) {
 		maxDepth = std::max(maxDepth, displayNode.depth);
 	}
-	meshes.clear();
 	for(size_t did = 0; did < maxDepth + 1; ++did) {
 		meshes.emplace_back("Level " + std::to_string(did));
 	}

@@ -19,7 +19,7 @@ PathTracerApp::PathTracerApp(RenderingConfig & config, const std::shared_ptr<Sce
 	_renderTex.depth  = 1;
 	_renderTex.width  = int(renderRes[0]);
 	_renderTex.height = int(renderRes[1]);
-	GPU::setupTexture(_renderTex, {Layout::SRGB8, Filter::LINEAR, Wrap::CLAMP});
+	GPU::setupTexture(_renderTex, {Layout::SRGB8_ALPHA8, Filter::LINEAR, Wrap::CLAMP}, false);
 	checkGPUError();
 	
 	_scene = scene;
@@ -45,7 +45,7 @@ void PathTracerApp::draw() {
 
 	// If no scene, just clear.
 	if(!_scene) {
-		Framebuffer::backbuffer()->bind({0.2f, 0.2f, 0.2f, 1.0f}, 1.0f);
+		Framebuffer::backbuffer()->bind(glm::vec4(0.2f, 0.2f, 0.2f, 1.0f), 1.0f, Framebuffer::Operation::DONTCARE);
 		return;
 	}
 	
@@ -53,11 +53,11 @@ void PathTracerApp::draw() {
 	if(_liveRender){
 		_renderTex.clean();
 		// Render.
-		_renderTex.images.emplace_back(_renderTex.width, _renderTex.height, 3);
+		_renderTex.images.emplace_back(_renderTex.width, _renderTex.height, 4);
 		Image & render = _renderTex.images.back();
 		_pathTracer->render(_userCamera, _samples, _depth, render);
 		// Upload to the GPU.
-		_renderTex.upload({Layout::SRGB8, Filter::LINEAR, Wrap::CLAMP}, false);
+		_renderTex.upload({Layout::SRGB8_ALPHA8, Filter::LINEAR, Wrap::CLAMP}, false);
 		_showRender = true;
 	}
 	
@@ -119,11 +119,11 @@ void PathTracerApp::update() {
 		if(ImGui::Button("Render")) {
 			_renderTex.clean();
 			// Render.
-			_renderTex.images.emplace_back(_renderTex.width, _renderTex.height, 3);
+			_renderTex.images.emplace_back(_renderTex.width, _renderTex.height, 4);
 			Image & render = _renderTex.images.back();
 			_pathTracer->render(_userCamera, _samples, _depth, render);
 			// Upload to the GPU.
-			_renderTex.upload({Layout::SRGB8, Filter::LINEAR, Wrap::CLAMP}, false);
+			_renderTex.upload({Layout::SRGB8_ALPHA8, Filter::LINEAR, Wrap::CLAMP}, false);
 			_showRender = true;
 		}
 		ImGui::SameLine();

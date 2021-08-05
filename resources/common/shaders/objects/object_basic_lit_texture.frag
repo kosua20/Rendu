@@ -1,12 +1,14 @@
 
-in INTERFACE {
+layout(location = 0) in INTERFACE {
 	vec3 vn; ///< World space normal.
 	vec2 uv; ///< Texture coordinates.
 } In ;
 
-uniform vec3 lightDir = vec3(0.577); ///< Light direction.
+layout(set = 0, binding = 0) uniform UniformBlock {
+	vec3 lightDir; ///< Light direction.
+};
 
-layout(binding = 0) uniform sampler2D texture0; ///< Color texture.
+layout(set = 1, binding = 0) uniform sampler2D texture0; ///< Color texture.
 
 layout(location = 0) out vec4 fragColor; ///< Color.
 
