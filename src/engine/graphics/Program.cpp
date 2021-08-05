@@ -406,7 +406,15 @@ void Program::clean() {
 	_staticBuffers.clear();
 	_state.setLayouts.clear();
 	_state.stages.clear();
-	
+	_state.layout = VK_NULL_HANDLE;
+	_dirtySets.fill(false);
+
+	for(uint i = 0; i < _currentSets.size(); ++i){
+		GPU::getInternal()->descriptorAllocator.freeSet(_currentSets[i]);
+		_currentSets[i].handle = VK_NULL_HANDLE;
+		_currentSets[i].pool = 0;
+	}
+	_currentOffsets.clear();
 }
 
 void Program::buffer(const UniformBufferBase& buffer, uint slot){
