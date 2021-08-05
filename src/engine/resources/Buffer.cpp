@@ -11,7 +11,14 @@ BufferBase::BufferBase(size_t sizeInBytes, BufferType atype, DataUse ausage) : t
 	} else if(usage == DataUse::DYNAMIC){
 		multipler = 1024;
 	}
-	sizeMax = multipler * sizeInBytes;
+	// Assume an alignment of 256.
+	const uint alignedSize = (sizeInBytes + 256 - 1) & ~(256 - 1);
+	if(multipler > 1){
+		sizeMax = multipler * alignedSize;
+	} else {
+		sizeMax = sizeInBytes;
+	}
+
 }
 
 void BufferBase::clean() {
