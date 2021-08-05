@@ -1,51 +1,49 @@
 
-in INTERFACE {
+layout(location = 0) in INTERFACE {
 	vec3 dir; ///< View world direction.
 	vec2 uv; ///< Texture coordinates.
 } In ;
 
-uniform float iTime; ///< Time since beginning of playback.
-uniform float iTimeDelta; ///< Time since last frame.
-uniform float iFrame; ///< Frame count since beginning of playback.
-uniform vec3 iResolution; ///< Screen resolution.
-uniform vec4 iMouse; ///< xy: mouse position if left button pressed, zw: left/right button clicked?
-uniform mat4 iView; ///< View matrix.
-uniform mat4 iProj; ///< Projection matrix.
-uniform mat4 iViewProj; ///< View projection matrix.
-uniform mat4 iViewInv; ///< Inverse view matrix.
-uniform mat4 iProjInv; ///< Inverse projection matrix.
-uniform mat4 iViewProjInv; ///< Inverse view projection matrix.
-uniform mat4 iNormalMat; ///< Normal transformation matrix.
-uniform vec3 iCamPos; ///< Camera position.
-uniform vec3 iCamUp; ///< Camera up vector.
-uniform vec3 iCamCenter; ///< Camera lookat position.
-uniform float iCamFov; ///< Camera field of view.
+layout(set = 1, binding = 0) uniform sampler2D previousFrame; ///< Previous frame.
+layout(set = 1, binding = 1) uniform sampler2D sdfFont; ///< Font SDF texture.
+layout(set = 1, binding = 2) uniform sampler2D gridMap; ///< Debug grid texture.
+layout(set = 1, binding = 3) uniform sampler2D noiseMap; ///< RGBA uniform noise in [0,1], uncorrelated.
+layout(set = 1, binding = 4) uniform sampler2D directionsMap; ///< Random 3D directions on the unit sphere.
 
-layout(binding = 0) uniform sampler2D previousFrame; ///< Previous frame.
-layout(binding = 1) uniform sampler2D sdfFont; ///< Font SDF texture.
-layout(binding = 2) uniform sampler2D gridMap; ///< Debug grid texture.
-layout(binding = 3) uniform sampler2D noiseMap; ///< RGBA uniform noise in [0,1], uncorrelated.
-layout(binding = 4) uniform sampler2D directionsMap; ///< Random 3D directions on the unit sphere.
+layout(set = 0, binding = 0) uniform UniformBlock {
+	float iTime; ///< Time since beginning of playback.
+	float iTimeDelta; ///< Time since last frame.
+	float iFrame; ///< Frame count since beginning of playback.
+	vec3 iResolution; ///< Screen resolution.
+	vec4 iMouse; ///< xy: mouse position if left button pressed, zw: left/right button clicked?
+	mat4 iView; ///< View matrix.
+	mat4 iProj; ///< Projection matrix.
+	mat4 iViewProj; ///< View projection matrix.
+	mat4 iViewInv; ///< Inverse view matrix.
+	mat4 iProjInv; ///< Inverse projection matrix.
+	mat4 iViewProjInv; ///< Inverse view projection matrix.
+	mat4 iNormalMat; ///< Normal transformation matrix.
+	vec3 iCamPos; ///< Camera position.
+	vec3 iCamUp; ///< Camera up vector.
+	vec3 iCamCenter; ///< Camera lookat position.
+	float iCamFov; ///< Camera field of view.
+	float gamma; ///< Gamma correction.
+	float specExponent; ///< Specular exponent.
+	float radius; ///< Sphere radius.
+	float epsilon; ///< Raymarching tolerance.
+	vec3 skyBottom; ///< Sky color bottom.
+	vec3 skyLight; ///< Light color bottom.
+	vec3 skyTop; ///< Sky color.
+	vec3 lightColor; ///< Light color.
+	vec3 sphereColor; ///< Sphere color.
+	vec3 ground0; ///< Ground color 0.
+	vec3 ground1; ///< Ground color 1.
+	vec4 lightDirection; ///< Light direction.
+	int stepCount; ///< Maximum step count.
+	bool showPlane; ///< Show the moving plane.
+};
 
 layout(location = 0) out vec4 fragColor; ///< Output color.
-
-uniform float gamma = 2.2; ///< Gamma correction.
-uniform float specExponent = 128.0; ///< Specular exponent.
-uniform float radius = 0.5; ///< Sphere radius.
-uniform float epsilon = 0.001; ///< Raymarching tolerance.
-
-uniform vec3 skyBottom = vec3(0.035, 0.090, 0.159); ///< Sky color bottom.
-uniform vec3 skyLight = vec3(0, 0.254, 0.654); ///< Light color bottom.
-uniform vec3 skyTop = vec3(0, 0.681, 1.0); ///< Sky color.
-uniform vec3 lightColor = vec3(1.0, 1.0, 1.0); ///< Light color.
-uniform vec3 sphereColor = vec3(0.8, 0.5, 0.2); ///< Sphere color.
-uniform vec3 ground0 = vec3(0.025, 0.390, 0.473); ///< Ground color 0.
-uniform vec3 ground1 = vec3(0.123, 0.462, 0.527); ///< Ground color 1.
-
-uniform vec4 lightDirection = vec4(-1.8, 1.6, 1.7, 0.0); ///< Light direction.
-
-uniform int stepCount = 128; ///< Maximum step count.
-uniform bool showPlane = true; ///< Show the moving plane.
 
 /** Scene signed distance function.
 \param pos the 3D world position
@@ -151,5 +149,5 @@ void main(){
 	}
 	
 	/// Exposure tweak, output.
-	fragColor = vec4(pow(color, vec3(gamma)),1.0);
+	fragColor = vec4(pow(color, vec3(gamma)), 1.0);
 }

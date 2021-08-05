@@ -1,53 +1,52 @@
 
-in INTERFACE {
+layout(location = 0) in INTERFACE {
 	vec3 dir;
 	vec2 uv; ///< Texture coordinates.
 } In ;
 
-uniform float iTime;
-uniform float iTimeDelta;
-uniform float iFrame;
-uniform vec3 iResolution;
-uniform vec4 iMouse;
-uniform mat4 iView;
-uniform mat4 iProj;
-uniform mat4 iViewProj;
-uniform mat4 iViewInv;
-uniform mat4 iProjInv;
-uniform mat4 iViewProjInv;
-uniform mat4 iNormalMat;
-uniform vec3 iCamPos;
-uniform vec3 iCamUp;
-uniform vec3 iCamCenter;
-uniform float iCamFov;
+layout(set = 0, binding = 0) uniform UniformBlock {
+	float iTime;
+	float iTimeDelta;
+	float iFrame;
+	vec3 iResolution;
+	vec4 iMouse;
+	mat4 iView;
+	mat4 iProj;
+	mat4 iViewProj;
+	mat4 iViewInv;
+	mat4 iProjInv;
+	mat4 iViewProjInv;
+	mat4 iNormalMat;
+	vec3 iCamPos;
+	vec3 iCamUp;
+	vec3 iCamCenter;
+	float iCamFov;
+	vec3 bgCol0;// = vec3(0.308,0.066,0.327);
+	vec3 bgCol1;// = vec3(0.131,0.204,0.458);
+	vec3 triCol0;// = vec3(0.957,0.440,0.883);
+	vec3 triCol1;// = vec3(0.473,0.548,0.919);
+	vec3 col4;// = vec3(0.987,0.746,0.993);
+	vec3 col5;// = vec3(0.033,0.011,0.057);
+	vec3 col6;// = vec3(0.633,0.145,0.693);
+	vec3 col7;// = vec3(0.977,1.000,1.000);
+	vec3 col8;// = vec3(0.024,0.811,0.924);
+	vec3 col9;// = vec3(0.600,0.960,1.080);
+	vec3 col10;// = vec3(0.494,0.828,0.977);
+	vec3 col11;// = vec3(0.968,0.987,0.999);
 
-layout(binding = 0) uniform sampler2D previousFrame;
-layout(binding = 1) uniform sampler2D sdfFont;
+	int gridX;// = 10;
+	int gridY;// = 20;
+	vec4 cornerPos;// = vec4(0.5, 0.37, 0.0, 0.0);
+	float gridHeight;// = 0.3;
+	float vignetteScale;// = 1.0;
+	bool showLetters;// = true;
+	bool showGrid;// = true;
+};
+
+layout(set = 1, binding = 0) uniform sampler2D previousFrame;
+layout(set = 1, binding = 1) uniform sampler2D sdfFont;
 
 layout(location = 0) out vec4 fragColor; ///< Color.
-
-
-uniform vec3 bgCol0 = vec3(0.308,0.066,0.327);
-uniform vec3 bgCol1 = vec3(0.131,0.204,0.458);
-uniform vec3 triCol0 = vec3(0.957,0.440,0.883);
-uniform vec3 triCol1 = vec3(0.473,0.548,0.919);
-uniform vec3 col4 = vec3(0.987,0.746,0.993);
-uniform vec3 col5 = vec3(0.033,0.011,0.057);
-uniform vec3 col6 = vec3(0.633,0.145,0.693);
-uniform vec3 col7 = vec3(0.977,1.000,1.000);
-uniform vec3 col8 = vec3(0.024,0.811,0.924);
-uniform vec3 col9 = vec3(0.600,0.960,1.080);
-uniform vec3 col10 = vec3(0.494,0.828,0.977);
-uniform vec3 col11 = vec3(0.968,0.987,0.999);
-
-uniform int gridX = 10;
-uniform int gridY = 20;
-uniform vec4 cornerPos = vec4(0.5, 0.37, 0.0, 0.0);
-uniform float gridHeight = 0.3;
-uniform float vignetteScale = 1.0;
-uniform bool showLetters = true;
-uniform bool showGrid = true;
-
 
 /*
 	ShaderWave - A recreation of a 80's nostalgia-fueled meme image.
@@ -160,8 +159,11 @@ vec3 textGradient(float interior, float top, vec2 alphas){
 
 void main(){
 	// Normalized pixel coordinates.
-	vec2 uvCenter = 2.0 * In.uv - 1.0;
+	vec2 uvCenter = vec2(2.0, 2.0) * In.uv - 1.0;
+
 	uvCenter *= max(iResolution.xy/iResolution.yx, 1.0);
+	uvCenter.y *= -1.0;
+	
 	vec2 uv = 0.5*uvCenter+0.5;
 
 	/// Background.

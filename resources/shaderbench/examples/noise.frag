@@ -1,21 +1,24 @@
 
-in INTERFACE {
+layout(location = 0) in INTERFACE {
 	vec3 dir; ///< View world direction.
 	vec2 uv; ///< Texture coordinates.
 } In ;
 
-uniform float iTime;
-uniform vec3 iResolution;
-layout(binding = 3) uniform sampler2D noiseMap; ///< RGBA uniform noise in [0,1], uncorrelated.
-layout(binding = 4) uniform sampler2D directionsMap; ///< Random 3D directions on the unit sphere.
-layout(binding = 5) uniform sampler3D noise3DMap; ///< Random 3D directions on the unit sphere.
+layout(set = 1, binding = 3) uniform sampler2D noiseMap; ///< RGBA uniform noise in [0,1], uncorrelated.
+layout(set = 1, binding = 4) uniform sampler2D directionsMap; ///< Random 3D directions on the unit sphere.
+layout(set = 1, binding = 5) uniform sampler3D noise3DMap; ///< Random 3D directions on the unit sphere.
+
+layout(set = 0, binding = 0) uniform UniformBlock {
+	float iTime;
+	vec3 iResolution;
+	float scaleSpace;// = 10.0;
+	float scaleTime;// = 2.0;
+	int octaveCount;// = 4;
+	float scaleExpansion;// = 2.0;
+	float weightDecay;// = 0.5;
+};
 
 layout(location = 0) out vec4 fragColor; ///< Output color.
-uniform float scaleSpace = 10.0;
-uniform float scaleTime = 2.0;
-uniform int octaveCount = 4;
-uniform float scaleExpansion = 2.0;
-uniform float weightDecay = 0.5;
 
 
 const int hashes[512] = int[](224, 169, 176, 19, 114, 187, 23, 16, 27, 252, 181, 88, 21, 198, 223, 57, 203, 119, 63, 13, 230, 56, 167, 41, 115, 75, 28, 251, 155, 47, 113, 59, 103, 144, 53, 178, 191, 46, 236, 205, 60, 141, 15, 66, 50, 58, 133, 190, 12, 197, 239, 69, 51, 138, 248, 124, 64, 164, 146, 165, 97, 204, 244, 235, 189, 195, 93, 5, 196, 32, 3, 183, 6, 219, 111, 44, 171, 149, 100, 38, 145, 229, 70, 162, 194, 54, 241, 127, 243, 22, 62, 199, 221, 140, 160, 0, 170, 92, 112, 82, 131, 123, 9, 154, 71, 253, 137, 172, 126, 233, 2, 238, 135, 84, 142, 242, 226, 86, 25, 201, 227, 87, 134, 143, 217, 83, 107, 210, 81, 118, 216, 247, 173, 153, 151, 214, 215, 206, 99, 246, 55, 207, 61, 213, 128, 184, 200, 231, 73, 139, 125, 208, 177, 36, 202, 186, 249, 108, 29, 179, 158, 136, 77, 45, 85, 163, 102, 212, 232, 209, 159, 30, 228, 240, 72, 43, 150, 10, 68, 245, 161, 192, 96, 48, 120, 98, 14, 104, 105, 166, 237, 101, 89, 106, 26, 90, 8, 250, 76, 78, 17, 193, 95, 91, 11, 132, 18, 185, 1, 94, 218, 24, 182, 31, 74, 109, 152, 234, 148, 157, 255, 254, 40, 33, 129, 175, 42, 117, 222, 156, 174, 116, 211, 122, 7, 168, 37, 49, 4, 65, 79, 188, 80, 34, 52, 130, 147, 180, 110, 35, 220, 121, 39, 225, 20, 67,

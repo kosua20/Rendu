@@ -1,26 +1,26 @@
-in INTERFACE {
+layout(location = 0) in INTERFACE {
 	vec3 dir;
 	vec2 uv; ///< Texture coordinates.
 } In ;
 
-uniform float iTime;
-uniform float iTimeDelta;
-uniform float iFrame;
-uniform vec3 iResolution;
-uniform vec4 iMouse;
-uniform mat4 iView;
-uniform mat4 iProj;
-uniform mat4 iViewProj;
-uniform mat4 iViewInv;
-uniform mat4 iProjInv;
-uniform mat4 iViewProjInv;
-uniform mat4 iNormalMat;
-uniform vec3 iCamPos;
-uniform vec3 iCamUp;
-uniform vec3 iCamCenter;
-uniform float iCamFov;
-
-layout(binding = 0) uniform sampler2D previousFrame;
+layout(set = 0, binding = 0) uniform UniformBlock {
+	float iTime;
+	float iTimeDelta;
+	float iFrame;
+	vec3 iResolution;
+	vec4 iMouse;
+	mat4 iView;
+	mat4 iProj;
+	mat4 iViewProj;
+	mat4 iViewInv;
+	mat4 iProjInv;
+	mat4 iViewProjInv;
+	mat4 iNormalMat;
+	vec3 iCamPos;
+	vec3 iCamUp;
+	vec3 iCamCenter;
+	float iCamFov;
+};
 
 layout(location = 0) out vec4 fragColor; ///< Color.
 

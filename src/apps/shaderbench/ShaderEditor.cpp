@@ -3,6 +3,7 @@
 #include "system/System.hpp"
 #include "graphics/GPU.hpp"
 #include "graphics/ScreenQuad.hpp"
+#include "graphics/ShaderCompiler.hpp"
 #include "generation/Random.hpp"
 #include "system/TextUtilities.hpp"
 #include "resources/Texture.hpp"
@@ -34,7 +35,7 @@ ShaderEditor::ShaderEditor(RenderingConfig & config) : CameraApp(config), _noise
 	_userCamera.ratio(config.screenResolution[0] / config.screenResolution[1]);
 	_startTime = System::time();
 
-	_fallbackTex = Resources::manager().getTexture("non-2d-texture", {Layout::RGB8, Filter::NEAREST, Wrap::CLAMP}, Storage::GPU);
+	_fallbackTex = Resources::manager().getTexture("non-2d-texture", {Layout::RGBA8, Filter::NEAREST, Wrap::CLAMP}, Storage::GPU);
 
 	// Noise texture.
 	{
@@ -57,14 +58,14 @@ ShaderEditor::ShaderEditor(RenderingConfig & config) : CameraApp(config), _noise
 		_directions.width = _directions.height = 64;
 		_directions.depth = _directions.levels = 1;
 		_directions.shape = TextureShape::D2;
-		_directions.images.emplace_back(_directions.width, _directions.height, 3);
+		_directions.images.emplace_back(_directions.width, _directions.height, 4);
 		Image & dirImg = _directions.images[0];
 		System::forParallel(0, size_t(dirImg.height), [&dirImg](size_t y){
 			for(uint x = 0; x < dirImg.width; ++x){
 				dirImg.rgb(int(x), int(y)) = glm::normalize(Random::sampleSphere());
 			}
 		});
-		_directions.upload({Layout::RGB32F, Filter::NEAREST, Wrap::REPEAT}, false);
+		_directions.upload({Layout::RGBA32F, Filter::NEAREST, Wrap::REPEAT}, false);
 	}
 	{
 		_noise3D = Texture("noise3D");
@@ -73,7 +74,7 @@ ShaderEditor::ShaderEditor(RenderingConfig & config) : CameraApp(config), _noise
 		_noise3D.shape = TextureShape::D3;
 
 		for(uint d = 0; d < _noise3D.depth; ++d){
-			_noise3D.images.emplace_back(_noise3D.width, _noise3D.height, 3);
+			_noise3D.images.emplace_back(_noise3D.width, _noise3D.height, 4);
 			auto & img = _noise3D.images[d];
 			System::forParallel(0, size_t(img.height), [&img](size_t y){
 				for(uint x = 0; x < img.width; ++x){
@@ -81,7 +82,7 @@ ShaderEditor::ShaderEditor(RenderingConfig & config) : CameraApp(config), _noise
 				}
 			});
 		}
-		_noise3D.upload({Layout::RGB32F, Filter::LINEAR, Wrap::REPEAT}, false);
+		_noise3D.upload({Layout::RGBA32F, Filter::LINEAR, Wrap::REPEAT}, false);
 	}
 
 	// Reference textures.
@@ -92,6 +93,23 @@ ShaderEditor::ShaderEditor(RenderingConfig & config) : CameraApp(config), _noise
 	_textures.push_back(&_directions);
 	_textures.push_back(&_noise3D);
 
+	// Set all values for the default shader.
+	{
+		_currProgram->uniform("gamma", 2.2f);
+		_currProgram->uniform("specExponent", 128.0f);
+		_currProgram->uniform("radius", 0.5f);
+		_currProgram->uniform("epsilon", 0.001f);
+		_currProgram->uniform("skyBottom", glm::vec3(0.035f, 0.090f, 0.159f));
+		_currProgram->uniform("skyLight", glm::vec3(0.0f, 0.254f, 0.654f));
+		_currProgram->uniform("skyTop", glm::vec3(0.0f, 0.681f, 1.0f));
+		_currProgram->uniform("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
+		_currProgram->uniform("sphereColor", glm::vec3(0.8f, 0.5f, 0.2f));
+		_currProgram->uniform("ground0", glm::vec3(0.025f, 0.390f, 0.473f));
+		_currProgram->uniform("ground1", glm::vec3(0.123f, 0.462f, 0.527f));
+		_currProgram->uniform("lightDirection", glm::vec4(-1.8f, 1.6f, 1.7f, 0.0f));
+		_currProgram->uniform("stepCount", 128);
+		_currProgram->uniform("showPlane", true);
+	}
 	// If the default shader uses more default uniforms, set them up, and restore all values
 	// so that we have something interesting to show at load time.
 	restoreUniforms();
@@ -191,17 +209,18 @@ void ShaderEditor::draw() {
 	_timer.begin();
 	ScreenQuad::draw();
 	_timer.end();
-	
-	// To best mimic other tools, no default gamma correction is applied here.
+
 	Framebuffer::backbuffer()->bind(glm::vec4(0.3f,0.3f,0.3f, 1.0f));
 	GPU::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
-	
+
+	_passthrough->use();
+	_passthrough->uniform("flip", 0);
+	_passthrough->texture(_currFrame->texture(), 0);
+	ScreenQuad::draw();
+
 	// If not in window mode, directly blit to the screne.
 	if(!_windowed){
-		_passthrough->use();
-		_passthrough->uniform("flip", 0);
-		_passthrough->texture(_currFrame->texture(), 0);
-		ScreenQuad::draw();
+
 	}
 
 	std::swap(_currFrame, _prevFrame);
@@ -254,7 +273,8 @@ void ShaderEditor::update() {
 			// If the aspect ratio changed, trigger a resize.
 			const float ratioCurr = float(_currFrame->width()) / float(_currFrame->height());
 			const float ratioWin = winSize.x / winSize.y;
-			if(std::abs(ratioWin - ratioCurr) > 0.001f){
+			// \todo Derive a more robust threshold.
+			if(std::abs(ratioWin - ratioCurr) > 0.01f){
 				const glm::vec2 renderRes = float(_config.internalVerticalResolution) / float(winSize.y) * glm::vec2(winSize.x, winSize.y);
 				_currFrame->resize(renderRes);
 				_prevFrame->resize(renderRes);
@@ -312,7 +332,7 @@ void ShaderEditor::update() {
 			if(System::showPicker(System::Picker::Save, "", outPath, "png") && !outPath.empty()){
 				TextUtilities::splitExtension(outPath);
 				// Create a RGB8 framebuffer to save as png.
-				Framebuffer tmp(_currFrame->width(), _currFrame->height(), {Layout::RGB8, Filter::NEAREST, Wrap::CLAMP}, false, "Temp");
+				Framebuffer tmp(_currFrame->width(), _currFrame->height(), {Layout::RGBA8, Filter::NEAREST, Wrap::CLAMP}, false, "Temp");
 				GPU::blit(*_currFrame, tmp, Filter::NEAREST);
 				GPU::saveFramebuffer(tmp, outPath, true, true);
 			}
@@ -371,15 +391,15 @@ void ShaderEditor::update() {
 		if(ImGui::CollapsingHeader("Uniforms")){
 			// Copy uniforms for new shaders.
 			if(ImGui::Button("Copy uniforms")){
-				std::string res = generateParametersString("uniform ", false);
+				std::string res = generateParametersString("", false);
 				// Brace yourself.
 				std::stringstream uniformStr;
-				uniformStr << "uniform float iTime;\n" << "uniform float iTimeDelta;\n" << "uniform float iFrame;\n";
-				uniformStr << "uniform vec3 iResolution;\n" << "uniform vec4 iMouse;\n" << "uniform mat4 iView;\n";
-				uniformStr << "uniform mat4 iProj;\n" << "uniform mat4 iViewProj;\n" << "uniform mat4 iViewInv;\n";
-				uniformStr << "uniform mat4 iProjInv;\n" << "uniform mat4 iViewProjInv;\n" << "uniform mat4 iNormalMat;\n";
-				uniformStr << "uniform vec3 iCamPos;\n" << "uniform vec3 iCamUp;\n" << "uniform vec3 iCamCenter;\n";
-				uniformStr << "uniform float iCamFov;\n";
+				uniformStr << "float iTime;\n" << "float iTimeDelta;\n" << "float iFrame;\n";
+				uniformStr << "vec3 iResolution;\n" << "vec4 iMouse;\n" << "mat4 iView;\n";
+				uniformStr << "mat4 iProj;\n" << "mat4 iViewProj;\n" << "mat4 iViewInv;\n";
+				uniformStr << "mat4 iProjInv;\n" << "mat4 iViewProjInv;\n" << "mat4 iNormalMat;\n";
+				uniformStr << "vec3 iCamPos;\n" << "vec3 iCamUp;\n" << "vec3 iCamCenter;\n";
+				uniformStr << "float iCamFov;\n";
 				res.append(uniformStr.str());
 				ImGui::SetClipboardText(res.c_str());
 			}
@@ -387,7 +407,7 @@ void ShaderEditor::update() {
 			// Copy currently set values for final shader export.
 			if(ImGui::Button("Copy current values")){
 				// Here we don't copy the internal parameters.
-				const std::string res = generateParametersString("uniform ", true);
+				const std::string res = generateParametersString("", true);
 				ImGui::SetClipboardText(res.c_str());
 			}
 
@@ -577,9 +597,10 @@ std::string ShaderEditor::reload(const std::string & shaderPath, bool syncUnifor
 	std::string fShader = Resources::loadStringFromExternalFile(shaderPath);
 	TextUtilities::replace(fShader, "#version", "#define UNUSED_VERSION_INDICATOR_GPU_SHADER_LANGUAGE");
 	// Before updating the program, try to compile the fragment shader and abort if there is some error.
-	GPU::Bindings binds;
+	Program::Stage stage;
 	std::string log;
-	GPU::loadShader(fShader, ShaderType::FRAGMENT, binds, log);
+	ShaderCompiler::compile(fShader, ShaderType::FRAGMENT, stage, log);
+	ShaderCompiler::clean(stage);
 	if(!log.empty()){
 		return log;
 	}
@@ -616,36 +637,39 @@ void ShaderEditor::restoreUniforms(){
 
 	const std::vector<std::string> defaultNames = {"iTime", "iTimeDelta", "iFrame", "iResolution", "iMouse", "iCamPos", "iCamUp", "iCamCenter", "iCamFov"};
 
-	const auto & uniforms = _currProgram->uniforms();
-	for(const auto & uniform : uniforms){
+	const Program::Uniforms & uniforms = _currProgram->uniforms();
+	for(const auto & def : uniforms){
+		const Program::UniformDef& uniform = def.second;
+
 		// Skip predefined uniforms.
 		if(std::find(defaultNames.begin(), defaultNames.end(), uniform.name) != defaultNames.end()){
 			continue;
 		}
+		
 		switch (uniform.type) {
-			case Program::Uniform::Type::BOOL:
+			case Program::UniformDef::Type::BOOL:
 				_flags.emplace_back();
 				_flags.back().name = uniform.name;
 				_currProgram->getUniform(uniform.name, _flags.back().value);
 				break;
-			case Program::Uniform::Type::INT:
+			case Program::UniformDef::Type::INT:
 				_integers.emplace_back();
 				_integers.back().name = uniform.name;
 				_currProgram->getUniform(uniform.name, _integers.back().value);
 				break;
-			case Program::Uniform::Type::FLOAT:
+			case Program::UniformDef::Type::FLOAT:
 				_floats.emplace_back();
 				_floats.back().name = uniform.name;
 				_currProgram->getUniform(uniform.name, _floats.back().value);
 				_floats.back().min = 0.5f * _floats.back().value;
-				_floats.back().max = 2.0f * _floats.back().value;
+				_floats.back().max = _floats.back().value != 0.0f ? (2.0f * _floats.back().value) : 1.0f;
 				break;
-			case Program::Uniform::Type::VEC3:
+			case Program::UniformDef::Type::VEC3:
 				_colors.emplace_back();
 				_colors.back().name = uniform.name;
 				_currProgram->getUniform(uniform.name, _colors.back().value);
 				break;
-			case Program::Uniform::Type::VEC4:
+			case Program::UniformDef::Type::VEC4:
 				_vectors.emplace_back();
 				_vectors.back().name = uniform.name;
 				_currProgram->getUniform(uniform.name, _vectors.back().value);

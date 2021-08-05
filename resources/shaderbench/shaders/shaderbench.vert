@@ -1,17 +1,22 @@
+layout(location = 0) in vec3 v;///< Position.
 
-uniform mat4 iViewProjInv; ///< Inverse view proj matrix.
+layout(set = 0, binding = 1) uniform UniformBlock {
+	mat4 iViewProjInv; ///< Inverse view proj matrix.
+};
 
-out INTERFACE {
+layout(location = 0) out INTERFACE {
 	vec3 dir; ///< View world direction.
 	vec2 uv; ///< Texture coordinates.
 } Out ;
 
 /** Render triangle on screen. Interpolate UV and view direction.*/
 void main(){
-	vec2 temp = 2.0 * vec2(gl_VertexID == 1, gl_VertexID == 2);
+	vec2 temp = 0.5 * v.xy + 0.5;
 	Out.uv = temp;
-	gl_Position.xy = 2.0 * temp - 1.0;
+	gl_Position.xy = v.xy;
 	gl_Position.zw = vec2(1.0);
+	gl_Position.y *= -1;
 	// Perform back projection to get a world space ray dir.
 	Out.dir = vec3(iViewProjInv * gl_Position);
+
 }
