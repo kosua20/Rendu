@@ -397,6 +397,11 @@ bool Swapchain::nextFrame(){
 	_frameStarted = true;
 	Framebuffer::_backbuffer = _framebuffers[_imageIndex].get();
 
+	// Reset queries for the new frame (we need the command buffer to be active).
+	for(auto& alloc : _context->queryAllocators){
+		alloc.second.resetPool();
+	}
+
 	return true;
 }
 

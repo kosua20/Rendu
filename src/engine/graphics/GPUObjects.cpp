@@ -135,29 +135,8 @@ bool GPUMesh::InputState::isEquivalent(const GPUMesh::InputState& other) const {
 GPUQuery::GPUQuery(Type type) {
 	_type = type;
 	_count = type == Type::TIME_ELAPSED ? 2 : 1;
-	static const std::map<GPUQuery::Type, VkQueryType> types = {
-		{ Type::TIME_ELAPSED, VK_QUERY_TYPE_TIMESTAMP},
-		{ Type::SAMPLES_DRAWN, VK_QUERY_TYPE_OCCLUSION},
-		{ Type::ANY_DRAWN, VK_QUERY_TYPE_OCCLUSION},
-		{ Type::PRIMITIVES_GENERATED, VK_QUERY_TYPE_PIPELINE_STATISTICS}
-	};
 
-	VkQueryPoolCreateInfo poolInfo = {};
-	poolInfo.sType = VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO;
-	poolInfo.queryType = types.at(type);
-	poolInfo.queryCount = _count;
-	poolInfo.pipelineStatistics = type == Type::PRIMITIVES_GENERATED ? VK_QUERY_PIPELINE_STATISTIC_CLIPPING_INVOCATIONS_BIT : 0;
-
-	GPUContext* context = GPU::getInternal();
-	for(size_t i = 0; i < _pools.size(); ++i){
-		if(vkCreateQueryPool(context->device, &poolInfo, nullptr, &_pools[i]) != VK_SUCCESS){
-			Log::Error() << Log::GPU << "Unable to create query pool." << std::endl;
-		}
-	}
-
-	if(_type == Type::SAMPLES_DRAWN){
-		_flags = VK_QUERY_PIPELINE_STATISTIC_CLIPPING_INVOCATIONS_BIT;
-	}
+	_offset = GPU::getInternal()->queryAllocators.at(_type).allocate();
 }
 
 void GPUQuery::begin(){
@@ -167,14 +146,14 @@ void GPUQuery::begin(){
 	}
 
 	GPUContext* context = GPU::getInternal();
-	vkCmdResetQueryPool(context->getCurrentCommandBuffer(), _pools[_current], 0, _type == GPUQuery::Type::TIME_ELAPSED ? 2 : 1);
-	//glBeginQuery(_internalType, _ids[_current]);
+	VkQueryPool& pool = context->queryAllocators.at(_type).getCurrentPool();
 	if(_type == GPUQuery::Type::TIME_ELAPSED){
-		vkCmdWriteTimestamp(context->getCurrentCommandBuffer(), VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, _pools[_current], 0);
+		vkCmdWriteTimestamp(context->getCurrentCommandBuffer(), VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, pool, _offset);
 	} else {
-		vkCmdBeginQuery(context->getCurrentCommandBuffer(), _pools[_current], 0, _flags);
+		vkCmdBeginQuery(context->getCurrentCommandBuffer(), pool, _offset, _flags);
 	}
 	_running = true;
+	_neverRan = false;
 }
 
 void GPUQuery::end(){
@@ -184,32 +163,32 @@ void GPUQuery::end(){
 	}
 
 	GPUContext* context = GPU::getInternal();
-
+	VkQueryPool& pool = context->queryAllocators.at(_type).getCurrentPool();
 	if(_type == GPUQuery::Type::TIME_ELAPSED){
-		vkCmdWriteTimestamp(context->getCurrentCommandBuffer(), VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, _pools[_current], 1);
+		vkCmdWriteTimestamp(context->getCurrentCommandBuffer(), VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, pool, _offset + 1u);
 	} else {
-		vkCmdEndQuery(context->getCurrentCommandBuffer(), _pools[_current], 0);
+		vkCmdEndQuery(context->getCurrentCommandBuffer(), pool, _offset);
 	}
 
 	_running = false;
-	_current = (_current + 1) % _pools.size();
 }
 
 uint64_t GPUQuery::value(){
+	if(_neverRan){
+		return 0;
+	}
+
 	if(_running){
 		Log::Warning() << "A query is currently running, stopping it first." << std::endl;
 		end();
 	}
-	// We have incremented to the next query index when ending.
-	// Furthermore, the previous index was done at the same frame, so low chance of it being ready.
-	// So fetch two before, except if we only have one query (will stall).
-	// \todo Check if this is still motivated under Vulkan, is there a risk of querying before the pool reset is applied?
-	const size_t finished = _pools.size() == 1 ? 0 : ((_current + _pools.size() - 2) % _pools.size());
 
 	GPUContext* context = GPU::getInternal();
+	
+	VkQueryPool& pool = context->queryAllocators.at(_type).getPreviousPool();
 
 	uint64_t data[2] = {0, 0};
-	vkGetQueryPoolResults(context->device, _pools[finished], 0, _count, 2 * sizeof(uint64_t), &data[0], sizeof(uint64_t), VK_QUERY_RESULT_64_BIT | VK_QUERY_RESULT_WAIT_BIT);
+	vkGetQueryPoolResults(context->device, pool, _offset, _count, 2 * sizeof(uint64_t), &data[0], sizeof(uint64_t), VK_QUERY_RESULT_64_BIT | VK_QUERY_RESULT_WAIT_BIT);
 
 	// For duration elapsed, we compute the time between the two timestamps.
 	if(_type == GPUQuery::Type::TIME_ELAPSED){

@@ -5,9 +5,9 @@
 #include "resources/Image.hpp"
 #include "system/TextUtilities.hpp"
 #include "system/Window.hpp"
-
 #include "graphics/GPUInternal.hpp"
 #include "graphics/PipelineCache.hpp"
+#include "graphics/QueryAllocator.hpp"
 
 #define VMA_STATIC_VULKAN_FUNCTIONS 0
 #define VMA_IMPLEMENTATION
@@ -278,6 +278,13 @@ bool GPU::setupWindow(Window * window){
 		Log::Error() << Log::GPU << "Unable to create command pool." << std::endl;
 		return false;
 	}
+
+
+	// Create query pools.
+	_context.queryAllocators[GPUQuery::Type::TIME_ELAPSED].init(GPUQuery::Type::TIME_ELAPSED, 1024);
+	_context.queryAllocators[GPUQuery::Type::ANY_DRAWN].init(GPUQuery::Type::ANY_DRAWN, 1024);
+	_context.queryAllocators[GPUQuery::Type::SAMPLES_DRAWN].init(GPUQuery::Type::SAMPLES_DRAWN, 1024);
+
 
 	// Create basic vertex array for screenquad.
 	{
@@ -1127,6 +1134,7 @@ void GPU::nextFrame(){
 
 	_context.nextFrame();
 	_pipelineCache.freeOutdatedPipelines();
+
 	// Save and reset stats.
 	_metricsPrevious = _metrics;
 	_metrics = Metrics();
@@ -1433,6 +1441,10 @@ void GPU::cleanup(){
 
 	// Clean all remaining resources.
 	_quad.clean();
+
+	for(auto& alloc : _context.queryAllocators){
+		alloc.second.clean();
+	}
 
 	_context.frameIndex += 100;
 	processSaveRequests();

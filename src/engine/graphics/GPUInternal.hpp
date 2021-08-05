@@ -3,6 +3,7 @@
 #include "Common.hpp"
 #include "graphics/GPUObjects.hpp"
 #include "graphics/DescriptorAllocator.hpp"
+#include "graphics/QueryAllocator.hpp"
 
 #include <volk/volk.h>
 
@@ -32,6 +33,7 @@ struct GPUContext {
 	VkQueue graphicsQueue= VK_NULL_HANDLE;
 	VkQueue presentQueue= VK_NULL_HANDLE;
 	DescriptorAllocator descriptorAllocator;
+	std::unordered_map<GPUQuery::Type, QueryAllocator> queryAllocators;
 	VkPipeline pipeline = VK_NULL_HANDLE;
 	
 	uint32_t graphicsId = 0;
