@@ -421,11 +421,14 @@ void Program::buffer(const UniformBufferBase& buffer, uint slot){
 
 
 void Program::texture(const Texture& texture, uint slot){
-	const TextureState & refTex = _textures.at(slot);
-	if((refTex.view != texture.gpu->view) || (refTex.sampler != texture.gpu->sampler)){
-		_textures[slot].view = texture.gpu->view;
-		_textures[slot].sampler = texture.gpu->sampler;
-		_dirtySets[1] = true;
+	auto existingTex = _textures.find(slot);
+	if(existingTex != _textures.end()) {
+		const TextureState & refTex = existingTex->second;
+		if((refTex.view != texture.gpu->view) || (refTex.sampler != texture.gpu->sampler)){
+			_textures[slot].view = texture.gpu->view;
+			_textures[slot].sampler = texture.gpu->sampler;
+			_dirtySets[1] = true;
+		}
 	}
 }
 
