@@ -1439,13 +1439,13 @@ void GPU::cleanup(){
 
 	_context.frameIndex += 100;
 	processDestructionRequests();
-
-	assert(_resourcesToSave.empty());
-	assert(_resourcesToDelete.empty());
 	
 	_pipelineCache.clean();
 	_context.descriptorAllocator.clean();
-	
+
+	assert(_resourcesToSave.empty());
+	assert(_resourcesToDelete.empty());
+
 	vkDestroyCommandPool(_context.device, _context.commandPool, nullptr);
 
 	vmaDestroyAllocator(_allocator);
@@ -1537,7 +1537,15 @@ void GPU::clean(GPUBuffer & buffer){
 }
 
 void GPU::clean(Program & program){
-	(void)program;
+	
+	vkDestroyPipelineLayout(_context.device, program._state.layout, nullptr);
+	for(VkDescriptorSetLayout& setLayout : program._state.setLayouts){
+		vkDestroyDescriptorSetLayout(_context.device, setLayout, nullptr);
+	}
+	for(Program::Stage& stage : program._stages){
+		vkDestroyShaderModule(_context.device, stage.module, nullptr);
+		stage.reset();
+	}
 }
 
 

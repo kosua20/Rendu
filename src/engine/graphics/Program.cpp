@@ -397,17 +397,7 @@ void Program::use() const {
 }
 
 void Program::clean() {
-	GPUContext* context = GPU::getInternal();
-	vkDestroyPipelineLayout(context->device, _state.layout, nullptr);
-	for(VkDescriptorSetLayout& setLayout : _state.setLayouts){
-		vkDestroyDescriptorSetLayout(context->device, setLayout, nullptr);
-	}
-	for(Stage& stage : _stages){
-		vkDestroyShaderModule(context->device, stage.module, nullptr);
-		stage.reset();
-	}
-
-	// \todo Unsure if the above should be moved in GPU.
+	
 	GPU::clean(*this);
 	// Clear CPU infos.
 	_uniforms.clear();
