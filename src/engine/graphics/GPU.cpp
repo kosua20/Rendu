@@ -1466,7 +1466,7 @@ void GPU::clean(GPUTexture & tex){
 
 }
 
-void GPU::clean(Framebuffer & framebuffer){
+void GPU::clean(Framebuffer & framebuffer, bool deleteRenderPasses){
 	// Avoid double deletion in some cases.
 	VkFramebuffer firstFramebuffer = VK_NULL_HANDLE;
 
@@ -1506,15 +1506,17 @@ void GPU::clean(Framebuffer & framebuffer){
 		rsc.name = framebuffer.name();
 	}
 
-	// Delete the render passes.
-	for(const auto& passes2 : framebuffer._renderPasses){
-		for(const auto& passes1 : passes2){
-			for(const VkRenderPass& pass : passes1){
-				_resourcesToDelete.emplace_back();
-				ResourceToDelete& rsc = _resourcesToDelete.back();
-				rsc.renderPass = pass;
-				rsc.frame = _context.frameIndex;
+	// Delete the render passes if requested.
+	if(deleteRenderPasses){
+		for(const auto& passes2 : framebuffer._renderPasses){
+			for(const auto& passes1 : passes2){
+				for(const VkRenderPass& pass : passes1){
+					_resourcesToDelete.emplace_back();
+					ResourceToDelete& rsc = _resourcesToDelete.back();
+					rsc.renderPass = pass;
+					rsc.frame = _context.frameIndex;
 					rsc.name = framebuffer.name();
+				}
 			}
 		}
 	}

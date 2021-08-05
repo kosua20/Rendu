@@ -366,7 +366,7 @@ private:
 
 	static void clean(GPUBuffer & buffer);
 
-	static void clean(Framebuffer & framebuffer);
+	static void clean(Framebuffer & framebuffer, bool deleteRenderPasses);
 
 	static void clean(Program & program);
 

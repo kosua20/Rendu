@@ -363,7 +363,8 @@ void Framebuffer::resize(uint width, uint height) {
 	_width  = width;
 	_height = height;
 
-	GPU::clean(*this);
+	// We want to preserve existing renderpasses.
+	GPU::clean(*this, false);
 
 	// Resize the renderbuffer.
 	if(_hasDepth) {
@@ -449,7 +450,7 @@ bool Framebuffer::LayoutState::isEquivalent(const Framebuffer::LayoutState& othe
 Framebuffer::~Framebuffer() {
 	DebugViewer::untrackDefault(this);
 
-	GPU::clean(*this);
+	GPU::clean(*this, true);
 
 	if(!_isBackbuffer){
 		for(Texture& texture : _colors){
