@@ -1,16 +1,19 @@
 
 #include "atmosphere.glsl"
 
-in INTERFACE {
+layout(location = 0) in INTERFACE {
 	vec2 uv; ///< Texture coordinates.
 } In ;
 
-uniform mat4 clipToWorld; ///< Clip-to-world space transformation matrix.
-uniform vec3 viewPos; ///< The position in view space.
-uniform vec3 lightDirection; ///< The light direction in world space.
-uniform float altitude; ///< height above the planet surface.
-uniform AtmosphereParameters atmoParams; ///< Custom atmosphere parameters.
-layout(binding = 0) uniform sampler2D precomputedScattering; ///< Secondary scattering lookup table.
+layout(set = 0, binding = 0) uniform UniformBlock {
+	AtmosphereParameters atmoParams; ///< Custom atmosphere parameters.
+	mat4 clipToWorld; ///< Clip-to-world space transformation matrix.
+	vec3 viewPos; ///< The position in view space.
+	vec3 lightDirection; ///< The light direction in world space.
+	float altitude; ///< height above the planet surface.
+};
+
+layout(set = 1, binding = 0) uniform sampler2D precomputedScattering; ///< Secondary scattering lookup table.
 
 layout(location = 0) out vec3 fragColor; ///< Atmosphere color.
 

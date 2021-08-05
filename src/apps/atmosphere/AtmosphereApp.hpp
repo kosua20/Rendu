@@ -26,6 +26,8 @@ public:
 	/** \copydoc CameraApp::resize */
 	void resize() override;
 
+	~AtmosphereApp();
+
 	/**
 	 Compute a scattering lookup table for real-time atmosphere rendering.
 	 \param params the atmosphere parameters

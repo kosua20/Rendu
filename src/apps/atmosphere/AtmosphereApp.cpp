@@ -17,7 +17,7 @@ AtmosphereApp::AtmosphereApp(RenderingConfig & config) : CameraApp(config), _sca
 	_userCamera.projection(config.screenResolution[0] / config.screenResolution[1], 1.34f, 0.1f, 100.0f);
 	// Framebuffer to store the rendered atmosphere result before tonemapping and upscaling to the window size.
 	const glm::vec2 renderRes = _config.renderingResolution();
-	_atmosphereBuffer.reset(new Framebuffer(uint(renderRes[0]), uint(renderRes[1]), {Layout::RGB32F, Filter::LINEAR_NEAREST, Wrap::CLAMP}, false, "Atmosphere"));
+	_atmosphereBuffer.reset(new Framebuffer(uint(renderRes[0]), uint(renderRes[1]), {Layout::RGBA32F, Filter::LINEAR_NEAREST, Wrap::CLAMP}, false, "Atmosphere"));
 	// Atmosphere screen quad.
 	_atmosphere = Resources::manager().getProgram2D("atmosphere_params");
 	// Final tonemapping screen quad.
@@ -40,12 +40,13 @@ void AtmosphereApp::draw() {
 	GPU::setBlendState(false);
 	GPU::setCullState(false);
 	
-	_atmosphereBuffer->bind({0.0f, 0.0f, 0.0f, 1.0f});
+	_atmosphereBuffer->bind(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), Framebuffer::Operation::DONTCARE, Framebuffer::Operation::DONTCARE);
 	_atmosphereBuffer->setViewport();
 
 	_atmosphere->use();
 	const glm::mat4 camToWorldNoT = glm::mat4(glm::mat3(camToWorld));
 	const glm::mat4 clipToWorld	  = camToWorldNoT * clipToCam;
+	_atmosphere->uniform("flip", true);
 	_atmosphere->uniform("clipToWorld", clipToWorld);
 	_atmosphere->uniform("viewPos", _userCamera.position());
 	_atmosphere->uniform("lightDirection", _lightDirection);
@@ -69,6 +70,8 @@ void AtmosphereApp::draw() {
 	GPU::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 	Framebuffer::backbuffer()->bind(Framebuffer::Operation::DONTCARE, Framebuffer::Operation::DONTCARE);
 	_tonemap->use();
+	_tonemap->uniform("customExposure", 1.0f);
+	_tonemap->uniform("apply", true);
 	_tonemap->texture(_atmosphereBuffer->texture(), 0);
 	ScreenQuad::draw();
 }
@@ -99,7 +102,7 @@ void AtmosphereApp::update() {
 			_lightDirection		= glm::vec3(std::cos(azimRad) * std::cos(elevRad), std::sin(elevRad), std::sin(azimRad) * std::cos(elevRad));
 		}
 
-		ImGui::DragFloat("Altitude", &_altitude, 10.0f, 0.0f, 0.0f, "%.0fm", 2.0f);
+		ImGui::DragFloat("Altitude", &_altitude, 10.0f, 0.0f, 10000.0f, "%.0fm", ImGuiSliderFlags_NoRoundToFormat | ImGuiSliderFlags_Logarithmic);
 
 		if(ImGui::CollapsingHeader("Atmosphere parameters")) {
 			bool updateScattering = false;
@@ -184,23 +187,27 @@ void AtmosphereApp::precomputeTable(const Sky::AtmosphereParameters & params, ui
 
 			// Compute associated attenuation.
 			const glm::vec3 secondaryAttenuation = exp(-(params.kMie * mieSecondDist + params.kRayleigh * rayleighSecondDist));
-			table.rgb(int(x), int(y))			 = secondaryAttenuation;
+			table.rgba(int(x), int(y))			 = glm::vec4(secondaryAttenuation, 0.0f);
 		}
 	});
+}
+
+AtmosphereApp::~AtmosphereApp(){
+	_scattering.clean();
 }
 
 void AtmosphereApp::updateSky() {
 	Log::Info() << Log::Resources << "Updating sky..." << std::flush;
 	_scattering.width = _scattering.height = uint(_tableRes);
 	_scattering.levels = _scattering.depth = 1;
-	_scattering.shape					   = TextureShape::D2;
+	_scattering.shape = TextureShape::D2;
 	_scattering.clean();
-	_scattering.images.emplace_back(_scattering.width, _scattering.height, 3);
+	_scattering.images.emplace_back(_scattering.width, _scattering.height, 4);
 
 	// Update the lookup table.
 	precomputeTable(_atmoParams, uint(_tableSamples), _scattering.images[0]);
 
-	_scattering.upload({Layout::RGB32F, Filter::LINEAR, Wrap::CLAMP}, false);
+	_scattering.upload({Layout::RGBA32F, Filter::LINEAR, Wrap::CLAMP}, false);
 
 	Log::Info() << " done." << std::endl;
 }
