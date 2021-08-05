@@ -1,13 +1,15 @@
 
-in INTERFACE {
+layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In;
 
-layout(binding = 0) uniform sampler2D screenTexture; ///< Level to filter.
+layout(set = 1, binding = 0) uniform sampler2D screenTexture; ///< Level to filter.
 
 layout(location = 0) out vec4 fragColor; ///< Color.
 
-uniform float g[3]; ///< g filter parameters.
+layout(set = 0, binding = 0) uniform UniformBlock {
+	float g[3]; ///< g filter parameters.
+};
 
 /** Denotes if a pixel falls outside an image.
  \param pos the pixel position

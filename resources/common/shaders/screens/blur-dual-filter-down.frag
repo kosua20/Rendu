@@ -1,11 +1,11 @@
 
-in INTERFACE {
+layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In ;
 
-layout(binding = 0) uniform sampler2D screenTexture; ///< Image to blur.
+layout(set = 1, binding = 0) uniform sampler2D screenTexture; ///< Image to blur.
 
-out vec3 fragColor; ///< Blurred color.
+layout(location = 0) out vec3 fragColor; ///< Blurred color.
 
 /** Downscaling step of the dual filtering. */
 void main(){

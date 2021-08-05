@@ -1,9 +1,13 @@
 
-in INTERFACE {
+layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In ;
 
-layout(binding = 0) uniform usampler2D screenTexture; ///< Current seed map.
+layout(set = 1, binding = 0) uniform usampler2D screenTexture; ///< Current seed map.
+
+layout(set = 0, binding = 0) uniform UniformBlock {
+	int stepDist; ///< The distance between samples.
+};
 
 layout(location = 0) out uvec2 fragCoords; ///< Closest seed coordinates.
 
@@ -15,8 +19,6 @@ layout(location = 0) out uvec2 fragCoords; ///< Closest seed coordinates.
 bool isOutside(ivec2 pos, ivec2 size){
 	return (pos.x < 0 || pos.y < 0 || pos.x >= size.x || pos.y >= size.y);
 }
-
-uniform int stepDist; ///< The distance between samples.
 
 /** Look at the closest seed for a set of neighbours, and keep the closest one for the current pixel. */
 void main(){

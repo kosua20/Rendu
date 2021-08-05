@@ -1,13 +1,15 @@
 
-in INTERFACE {
+layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In ; 
 
-layout(binding = 0) uniform sampler2D screenTexture; ///< Input level to filter and downscale.
+layout(set = 1, binding = 0) uniform sampler2D screenTexture; ///< Input level to filter and downscale.
 
 layout(location = 0) out vec4 fragColor; ///< Color.
 
-uniform float h1[5]; ///< h1 filter parameters.
+layout(set = 0, binding = 0) uniform UniformBlock {
+	float h1[5]; ///< h1 filter parameters.
+};
 
 /** Denotes if a pixel falls outside an image.
  \param pos the pixel position
@@ -33,7 +35,7 @@ void main(){
 			if(isOutside(newPix, size)){
 				continue;
 			}
-			accum += h1[dx+2] * h1[dy+2] * texelFetch(screenTexture, newPix,0);
+			accum += h1[dx+2] * h1[dy+2] * texelFetch(screenTexture, newPix, 0);
 		}
 	}
 	fragColor = accum;

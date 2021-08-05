@@ -40,7 +40,7 @@ SSAO::SSAO(uint width, uint height, uint downscale, float radius, const std::str
 	Image & img	= _noisetexture.images.back();
 	img.width	  = 5;
 	img.height	 = 5;
-	img.components = 3;
+	img.components = 4;
 
 	for(int i = 0; i < 25; ++i) {
 		const glm::vec3 randVec = glm::vec3(Random::Float(-1.0f, 1.0f),
@@ -50,6 +50,7 @@ SSAO::SSAO(uint width, uint height, uint downscale, float radius, const std::str
 		img.pixels.push_back(norVec[0]);
 		img.pixels.push_back(norVec[1]);
 		img.pixels.push_back(norVec[2]);
+		img.pixels.push_back(0.0f);
 	}
 
 	// Send the texture to the GPU.
@@ -65,7 +66,7 @@ void SSAO::process(const glm::mat4 & projection, const Texture * depthTex, const
 	GPU::setBlendState(false);
 	GPU::setCullState(true, Faces::BACK);
 
-	_ssaoFramebuffer->bind(Framebuffer::Operation::DONTCARE);
+	_ssaoFramebuffer->bind(Framebuffer::Operation::DONTCARE, Framebuffer::Operation::DONTCARE, Framebuffer::Operation::DONTCARE);
 	_ssaoFramebuffer->setViewport();
 	_programSSAO->use();
 	_programSSAO->uniform("projectionMatrix", projection);

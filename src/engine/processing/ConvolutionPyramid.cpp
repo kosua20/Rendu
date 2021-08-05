@@ -44,7 +44,7 @@ void ConvolutionPyramid::process(const Texture * texture) {
 	GPU::setCullState(true, Faces::BACK);
 	
 	// Pad by the size of the filter.
-	_levelsIn[0]->bind(glm::vec4(0.0f));
+	_levelsIn[0]->bind(glm::vec4(0.0f), Framebuffer::Operation::DONTCARE, Framebuffer::Operation::DONTCARE);
 	// Shift the viewport and fill the padded region with 0s.
 	GPU::setViewport(_size, _size, int(_levelsIn[0]->width()) - 2 * _size, int(_levelsIn[0]->height()) - 2 * _size);
 	// Transfer the boundary content.
@@ -57,11 +57,15 @@ void ConvolutionPyramid::process(const Texture * texture) {
 	/// \note Those filters are separable, and could be applied in two passes (vertical and horizontal) to reduce the texture fetches count.
 	// Send parameters.
 	_downscale->use();
-	_downscale->uniform("h1[0]", 5, &_h1[0]);
+	_downscale->uniform("h1[0]", _h1[0]);
+	_downscale->uniform("h1[1]", _h1[1]);
+	_downscale->uniform("h1[2]", _h1[2]);
+	_downscale->uniform("h1[3]", _h1[3]);
+	_downscale->uniform("h1[4]", _h1[4]);
 
 	// Do: l[i] = downscale(filter(l[i-1], h1))
 	for(size_t i = 1; i < _levelsIn.size(); ++i) {
-		_levelsIn[i]->bind(glm::vec4(0.0f));
+		_levelsIn[i]->bind(glm::vec4(0.0f), Framebuffer::Operation::DONTCARE, Framebuffer::Operation::DONTCARE);
 		// Shift the viewport and fill the padded region with 0s.
 		GPU::setViewport(_size, _size, int(_levelsIn[i]->width()) - 2 * _size, int(_levelsIn[i]->height()) - 2 * _size);
 		// Filter and downscale.
@@ -72,7 +76,10 @@ void ConvolutionPyramid::process(const Texture * texture) {
 	// Filter the last level with g.
 	// Send parameters.
 	_filter->use();
-	_filter->uniform("g[0]", 3, &_g[0]);
+	_filter->uniform("g[0]", _g[0]);
+	_filter->uniform("g[1]", _g[1]);
+	_filter->uniform("g[2]", _g[2]);
+
 	// Do:  f[end] = filter(l[end], g)
 	const auto & lastLevel = _levelsOut.back();
 	lastLevel->bind(Framebuffer::Operation::DONTCARE);
@@ -82,8 +89,14 @@ void ConvolutionPyramid::process(const Texture * texture) {
 
 	// Flatten the pyramid from the bottom, combining the filtered current result and the next level.
 	_upscale->use();
-	_upscale->uniform("h1[0]", 5, &_h1[0]);
-	_upscale->uniform("g[0]", 3, &_g[0]);
+	_upscale->uniform("h1[0]", _h1[0]);
+	_upscale->uniform("h1[1]", _h1[1]);
+	_upscale->uniform("h1[2]", _h1[2]);
+	_upscale->uniform("h1[3]", _h1[3]);
+	_upscale->uniform("h1[4]", _h1[4]);
+	_upscale->uniform("g[0]", _g[0]);
+	_upscale->uniform("g[1]", _g[1]);
+	_upscale->uniform("g[2]", _g[2]);
 	_upscale->uniform("h2", _h2);
 
 	// Do: f[i] = filter(l[i], g) + filter(upscale(f[i+1], h2)
@@ -91,7 +104,8 @@ void ConvolutionPyramid::process(const Texture * texture) {
 		_levelsOut[i]->bind(Framebuffer::Operation::DONTCARE);
 		_levelsOut[i]->setViewport();
 		// Upscale with zeros, filter and combine.
-		_upscale->textures({_levelsIn[i]->texture(), _levelsOut[i + 1]->texture()});
+		_upscale->texture(_levelsIn[i]->texture(), 0);
+		_upscale->texture(_levelsOut[i + 1]->texture(), 1);
 		ScreenQuad::draw();
 	}
 

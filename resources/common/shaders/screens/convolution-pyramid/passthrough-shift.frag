@@ -1,13 +1,15 @@
 
-in INTERFACE {
+layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In ;
 
-layout(binding = 0) uniform sampler2D screenTexture; ///< Image to pad.
+layout(set = 1, binding = 0) uniform sampler2D screenTexture; ///< Image to pad.
+
+layout(set = 0, binding = 0) uniform UniformBlock {
+	int padding; ///< The padding to apply.
+};
 
 layout(location = 0) out vec4 fragColor; ///< Color.
-
-uniform int padding = 0; ///< The padding to apply.
 
 /** Denotes if a pixel falls outside an image.
  \param pos the pixel position

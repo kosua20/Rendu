@@ -1,22 +1,23 @@
 
 #include "utils.glsl"
 
-in INTERFACE {
+layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In ;
 
-layout(binding = 0) uniform sampler2D depthTexture; ///< Depth texture.
-layout(binding = 1) uniform sampler2D normalTexture; ///< Normal texture, in [0,1].
-layout(binding = 2) uniform sampler2D noiseTexture; ///< 5x5 3-components noise texture with float precision.
+layout(set = 1, binding = 0) uniform sampler2D depthTexture; ///< Depth texture.
+layout(set = 1, binding = 1) uniform sampler2D normalTexture; ///< Normal texture, in [0,1].
+layout(set = 1, binding = 2) uniform sampler2D noiseTexture; ///< 5x5 3-components noise texture with float precision.
 
-uniform mat4 projectionMatrix; ///< The camera projection parameters.
-
-/// Unique sample directions on a sphere.
-layout(std140, binding = 0) uniform Samples {
-	vec4 samples[16];
+layout(set = 0, binding = 0) uniform UniformBlock {
+	mat4 projectionMatrix; ///< The camera projection parameters.
+	float radius; ///< The sampling radius.
 };
 
-uniform float radius = 0.5; ///< The sampling radius.
+/// Unique sample directions on a sphere.
+layout(std140, set = 2, binding = 0) uniform Samples {
+	vec4 samples[16];
+};
 
 layout(location = 0) out float fragColor; ///< SSAO.
 

@@ -1,10 +1,14 @@
 
-in INTERFACE {
+layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In;
 
-layout(binding = 0) uniform sampler2DArray screenTexture; ///< Image to blur.
-uniform int layer; ///< The array layer to sample.
+layout(set = 1, binding = 0) uniform sampler2DArray screenTexture; ///< Image to blur.
+
+layout(set = 0, binding = 0) uniform UniformBlock {
+	int layer; ///< The array layer to sample.
+};
+
 layout(location = 0) out vec4 fragColor; ///< Color.
 
 /** Perform an approximate 5x5 blur using only 13 samples in a checkerboard pattern. */

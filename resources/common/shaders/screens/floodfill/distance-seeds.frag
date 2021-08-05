@@ -1,9 +1,9 @@
 
-in INTERFACE {
+layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In ;
 
-layout(binding = 0) uniform usampler2D coordsTexture; ///< Seeds coordinates map.
+layout(set = 1, binding = 0) uniform usampler2D coordsTexture; ///< Seeds coordinates map.
 
 layout(location = 0) out vec4 fragCoords; ///< Distance.
 

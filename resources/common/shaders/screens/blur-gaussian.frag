@@ -1,12 +1,15 @@
 
-in INTERFACE {
+layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In ;
 
-layout(binding = 0) uniform sampler2D screenTexture; ///< Image to blur.
-uniform vec2 fetchOffset; ///< Texture coordinates offset along the correct axis.
+layout(set = 1, binding = 0) uniform sampler2D screenTexture; ///< Image to blur.
 
-out vec3 fragColor; ///< Blurred color.
+layout(set = 0, binding = 0) uniform UniformBlock {
+	vec2 fetchOffset; ///< Texture coordinates offset along the correct axis.
+};
+
+layout(location = 0) out vec3 fragColor; ///< Blurred color.
 
 /** Performs an approximate 5x5 gaussian blur using two separable passes and three texture fetches in each direction. */
 void main(){

@@ -1,14 +1,16 @@
 
-in INTERFACE {
+layout(location = 0) in INTERFACE {
 	vec3 pos; ///< Position.
 } In;
 
-layout(binding = 0) uniform samplerCubeArray screenTexture; ///< Image to blur.
+layout(set = 1, binding = 0) uniform samplerCubeArray screenTexture; ///< Image to blur.
 
-uniform float invHalfSize;  ///< Inverse half size of the sampled texture.
-uniform int layer; 			///< The layer to process.
-uniform vec3 up; 			///< Face vertical vector.
-uniform vec3 right; 		///< Face horizontal vector.
+layout(set = 0, binding = 0) uniform UniformBlock {
+	vec3 up; 			///< Face vertical vector.
+	vec3 right; 		///< Face horizontal vector.
+	float invHalfSize;  ///< Inverse half size of the sampled texture.
+	int layer; 			///< The layer to process.
+};
 
 layout(location = 0) out vec4 fragColor; ///< Color.
 

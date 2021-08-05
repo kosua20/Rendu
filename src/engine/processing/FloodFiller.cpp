@@ -25,7 +25,7 @@ void FloodFiller::process(const Texture * texture, Output mode) {
 	GPU::setBlendState(false);
 	GPU::setCullState(true, Faces::BACK);
 
-	_final->bind(Framebuffer::Operation::DONTCARE);
+	_final->bind(Framebuffer::Operation::DONTCARE, Framebuffer::Operation::DONTCARE, Framebuffer::Operation::DONTCARE);
 	_final->setViewport();
 
 	if(mode == Output::COLOR) {
@@ -46,7 +46,7 @@ void FloodFiller::extractAndPropagate(const Texture * texture) {
 	GPU::setBlendState(false);
 	GPU::setCullState(true, Faces::BACK);
 
-	_ping->bind(Framebuffer::Operation::DONTCARE);
+	_ping->bind(Framebuffer::Operation::DONTCARE, Framebuffer::Operation::DONTCARE, Framebuffer::Operation::DONTCARE);
 	_ping->setViewport();
 	_extract->use();
 	_extract->texture(texture, 0);
@@ -56,7 +56,7 @@ void FloodFiller::extractAndPropagate(const Texture * texture) {
 	_floodfill->use();
 	for(int i = 0; i < _iterations; ++i) {
 		const int step = int(std::pow(2, std::max(0, _iterations - i - 1)));
-		_pong->bind(Framebuffer::Operation::DONTCARE);
+		_pong->bind(Framebuffer::Operation::DONTCARE, Framebuffer::Operation::DONTCARE, Framebuffer::Operation::DONTCARE);
 		_pong->setViewport();
 		_floodfill->uniform("stepDist", step);
 		_floodfill->texture(_ping->texture(), 0);

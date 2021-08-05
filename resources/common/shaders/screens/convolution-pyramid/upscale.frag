@@ -1,16 +1,18 @@
 
-in INTERFACE {
+layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In ;
 
-layout(binding = 0) uniform sampler2D unfilteredCurrent; ///< Current h1 filtered level.
-layout(binding = 1) uniform sampler2D filteredSmaller; ///< Previous h1+g filtered level.
+layout(set = 1, binding = 0) uniform sampler2D unfilteredCurrent; ///< Current h1 filtered level.
+layout(set = 1, binding = 1) uniform sampler2D filteredSmaller; ///< Previous h1+g filtered level.
+
+layout(set = 0, binding = 0) uniform UniformBlock {
+	float h1[5]; ///< h1 filter parameters.
+	float g[3]; ///< g filter parameters.
+	float h2; ///< h2 scaling parameter.
+};
 
 layout(location = 0) out vec4 fragColor; ///< Color.
-
-uniform float h1[5]; ///< h1 filter parameters.
-uniform float h2; ///< h2 scaling parameter.
-uniform float g[3]; ///< g filter parameters.
 
 /** Denotes if a pixel falls outside an image.
  \param pos the pixel position

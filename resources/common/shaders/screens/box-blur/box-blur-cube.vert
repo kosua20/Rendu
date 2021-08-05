@@ -1,11 +1,14 @@
+layout(location = 0) in vec3 v;///< Position.
 
-out INTERFACE {
+layout(location = 0) out INTERFACE {
 	vec3 pos; ///< Position.
 } Out ;
 
-uniform vec3 up; ///< Face vertical vector.
-uniform vec3 right; ///< Face horizontal vector.
-uniform vec3 center; ///< Face center location.
+layout(set = 0, binding = 1) uniform UniformBlock {
+	vec3 up; ///< Face vertical vector.
+	vec3 right; ///< Face horizontal vector.
+	vec3 center; ///< Face center location.
+};
 
 /**
   Generate one triangle covering the whole screen,
@@ -13,8 +16,8 @@ uniform vec3 center; ///< Face center location.
  \sa GLSL::Vert::Passthrough
 */
 void main(){
-	vec2 temp = 2.0 * vec2(gl_VertexID == 1, gl_VertexID == 2);
-	gl_Position.xy = 2.0 * temp - 1.0;
+	gl_Position.xy = v.xy;
 	gl_Position.zw = vec2(1.0);
 	Out.pos = center + gl_Position.x * right + gl_Position.y * up;
+	
 }

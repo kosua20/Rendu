@@ -1,9 +1,13 @@
 
-in INTERFACE {
+layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In ;
 
-layout(binding = 0) uniform sampler2D screenTexture; ///< Image to process.
+layout(set = 1, binding = 0) uniform sampler2D screenTexture; ///< Image to process.
+
+layout(set = 0, binding = 0) uniform UniformBlock {
+	int scale; ///< The downscaling applied to the input image.
+};
 
 layout(location = 0) out vec4 fragColor; ///< Color.
 
@@ -14,8 +18,6 @@ layout(location = 0) out vec4 fragColor; ///< Color.
 bool isOutside(vec2 pos){
 	return (pos.x < 0.0 || pos.y < 0.0 || pos.x > 1.0 || pos.y > 1.0);
 }
-
-uniform int scale = 1; ///< The downscaling applied to the input image.
 
 /** Compute the Laplacian field of an input RGB image, adding a 1px black border around it before computing the gradients and divergence. */
 void main(){
