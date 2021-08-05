@@ -481,8 +481,6 @@ const Texture * Resources::getTexture(const std::string & name, const Descriptor
 
 	// Format and orientation.
 	const uint channels = descriptor.getChannelsCount();
-	// Cubemaps don't need to be flipped.
-	const bool flip	= !(shape & TextureShape::Cube);
 	// We know the texture is not in the list, we insert.
 	_textures.insert(std::make_pair<>(keyName, Texture(keyName)));
 	Texture & texture  = _textures.at(keyName);
@@ -513,7 +511,7 @@ const Texture * Resources::getTexture(const std::string & name, const Descriptor
 			for(const auto & filePath : levelPaths) {
 				texture.images.emplace_back();
 				Image & image = texture.images.back();
-				const int ret = image.load(filePath, channels, flip, false);
+				const int ret = image.load(filePath, channels, false, false);
 				if(ret != 0) {
 					Log::Error() << Log::Resources << "Unable to load the texture at path " << filePath << "." << std::endl;
 				}

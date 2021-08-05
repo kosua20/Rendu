@@ -66,7 +66,7 @@ Mesh::Mesh(std::istream & in, Mesh::Load mode, const std::string & name) {
 			if(tokens.size() < 3) {
 				continue;
 			}
-			glm::vec2 uv = glm::vec2(stof(tokens[1], nullptr), stof(tokens[2], nullptr));
+			glm::vec2 uv = glm::vec2(stof(tokens[1], nullptr), 1.0f - stof(tokens[2], nullptr));
 			texcoords_temp.push_back(uv);
 
 		} else if(tokens[0] == "f") { // Face indices.

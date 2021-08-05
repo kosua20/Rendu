@@ -11,5 +11,5 @@ layout(set = 0, binding = 1) uniform UniformBlock {
 void main(){
 	// We multiply the coordinates by the MVP matrix, and ouput the result.
 	gl_Position = mvp * vec4(v, 1.0);
-	gl_Position.y *= -1;
+	
 }

@@ -42,5 +42,5 @@ void main(){
 	Out.col = hash31(gl_VertexIndex);
 	// We multiply the coordinates by the MVP matrix, and ouput the result.
 	gl_Position = mvp * vec4(v, 1.0);
-	gl_Position.y *= -1;
+	
 }

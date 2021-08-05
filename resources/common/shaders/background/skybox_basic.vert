@@ -18,6 +18,6 @@ void main(){
 	gl_Position = mvp * vec4(v, 1.0);
 	Out.pos = v;
 	if(flip){
-		gl_Position.y *= -1;
+		
 	}
 }

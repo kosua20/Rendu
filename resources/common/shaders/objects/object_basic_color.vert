@@ -17,5 +17,5 @@ void main(){
 	// We multiply the coordinates by the MVP matrix, and ouput the result.
 	gl_Position = mvp * vec4(v, 1.0);
 	Out.col = c;
-	gl_Position.y *= -1;
+	
 }

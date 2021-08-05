@@ -375,7 +375,7 @@ int main(int argc, char ** argv) {
 					}
 
 					// Overlay the controller transparent texture.
-					ImGui::Image(*controllerTex, ImVec2(450, 300), ImVec2(0, 1), ImVec2(1, 0));
+					ImGui::Image(*controllerTex, ImVec2(450, 300));
 
 					ImGui::EndChild();
 					ImGui::SameLine();

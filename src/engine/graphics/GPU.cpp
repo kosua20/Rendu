@@ -290,8 +290,8 @@ bool GPU::setupWindow(Window * window){
 	{
 		_quad.positions = {
 			glm::vec3(-1.0f, -1.0f, 0.0f),
-			glm::vec3(3.0f, -1.0f, 0.0f),
 			glm::vec3(-1.0f, 3.0f, 0.0f),
+			glm::vec3(3.0f, -1.0f, 0.0f),
 		};
 		_quad.indices = {0, 1, 2};
 		_quad.upload();
