@@ -40,7 +40,9 @@ VkPipeline PipelineCache::getPipeline(const GPUState & state){
 		// If we immediatly destroy a pipeline that was in use earlier in the frame, we might get a crash.
 		// So instead schedule the deletion and remove the records.
 		for(auto& pipelineInfo : sameProgramPipelinesIt->second){
-			_pipelinesToDelete.push_back(pipelineInfo.second.pipeline);
+			_pipelinesToDelete.emplace_back();
+			_pipelinesToDelete.back().pipeline = pipelineInfo.second.pipeline;
+			_pipelinesToDelete.back().frame = GPU::getInternal()->frameIndex;
 		}
 		sameProgramPipelinesIt->second.clear();
 		_pipelines.erase(state.program);
@@ -81,16 +83,31 @@ VkPipeline PipelineCache::getPipeline(const GPUState & state){
 
 void PipelineCache::freeOutdatedPipelines(){
 	GPUContext* context = GPU::getInternal();
-	for(VkPipeline& pipeline: _pipelinesToDelete){
-		vkDestroyPipeline(context->device, pipeline, nullptr);
+
+	const uint64_t currentFrame = context->frameIndex;
+
+	if(_pipelinesToDelete.empty() || (currentFrame < 2)){
+		return;
 	}
-	_pipelinesToDelete.clear();
+
+	while(!_pipelinesToDelete.empty()){
+		PipelineToDelete& pip = _pipelinesToDelete.front();
+		// If the following resources are too recent, they might still be used by in flight frames.
+		if(pip.frame >= currentFrame - 2){
+			break;
+		}
+		vkDestroyPipeline(context->device, pip.pipeline, nullptr);
+		_pipelinesToDelete.pop_front();
+	}
 }
 
 void PipelineCache::clean(){
-	GPUContext* context = GPU::getInternal();
+	// Free remaining pipelines waiting to be deleted.
 	freeOutdatedPipelines();
+	assert(_pipelinesToDelete.empty());
+
 	// Retrieve cache data.
+	GPUContext* context = GPU::getInternal();
 	size_t pipelineSize = 0;
 	vkGetPipelineCacheData(context->device, _vulkanCache, &pipelineSize, nullptr);
 	if(pipelineSize != 0){

@@ -2,6 +2,7 @@
 
 #include "Common.hpp"
 #include <unordered_map>
+#include <deque>
 
 #include <volk/volk.h>
 
@@ -34,5 +35,11 @@ private:
 	using Cache = std::unordered_map<const Program*, ProgramPipelines>;
 	Cache _pipelines;
 	VkPipelineCache _vulkanCache = VK_NULL_HANDLE;
-	std::vector<VkPipeline> _pipelinesToDelete;
+
+	struct PipelineToDelete {
+		VkPipeline pipeline;
+		uint64_t frame = 0;
+	};
+
+	std::deque<PipelineToDelete> _pipelinesToDelete;
 };
