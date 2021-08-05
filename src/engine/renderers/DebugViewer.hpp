@@ -59,7 +59,7 @@ public:
 	void interface();
 
 	/** Destructor */
-	~DebugViewer() = default;
+	~DebugViewer();
 
 	/** Copy constructor.*/
 	DebugViewer(const DebugViewer &) = delete;
@@ -197,6 +197,8 @@ private:
 	std::vector<FramebufferInfos> _framebuffers; ///< The registered framebuffers.
 	std::vector<MeshInfos> _meshes; ///< The registered meshes.
 	std::map<std::string, StateInfos> _states; ///< GPU states currently tracked.
+
+	std::unordered_map<TextureShape, Texture> _defaultTextures;
 
 	Program * _texDisplay; ///< Texture display shader.
 	const bool _silent; ///< Don't register or display anything.

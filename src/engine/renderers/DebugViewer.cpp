@@ -22,8 +22,42 @@ static const std::string debugSkipName = "@debugViewerSkipItem@";
 DebugViewer * DebugViewer::_shared = nullptr;
 
 DebugViewer::DebugViewer(bool silent) : _silent(silent) {
+	// \todo Avoid silent and use a null debug viewer instead?
 	if(!_silent) {
 		_texDisplay = Resources::manager().getProgram2D("debug_texture_display");
+
+		_defaultTextures.emplace(std::make_pair(TextureShape::D1, Texture("debug_texture_1d")));
+		_defaultTextures.emplace(std::make_pair(TextureShape::Array1D, Texture("debug_texture_1d_array")));
+		_defaultTextures.emplace(std::make_pair(TextureShape::D2, Texture("debug_texture_2d")));
+		_defaultTextures.emplace(std::make_pair(TextureShape::Array2D, Texture("debug_texture_2d_array")));
+		_defaultTextures.emplace(std::make_pair(TextureShape::Cube, Texture("debug_texture_cube")));
+		_defaultTextures.emplace(std::make_pair(TextureShape::ArrayCube, Texture("debug_texture_cube_array")));
+		_defaultTextures.emplace(std::make_pair(TextureShape::D3, Texture("debug_texture_3d")));
+
+		for(auto& defaultTex : _defaultTextures){
+			Texture& tex = defaultTex.second;
+			tex.shape = defaultTex.first;
+
+			const bool is1D = tex.shape & TextureShape::D1;
+			const bool is3D = tex.shape == TextureShape::D3;
+			const bool isLayered = (tex.shape & TextureShape::Array) || (tex.shape & TextureShape::Cube);
+
+			tex.width = 4;
+			tex.height = is1D ? 1 : 4;
+			tex.depth = is3D ? 4 : (isLayered ? 6 : 1);
+			tex.levels = 1;
+			tex.images.resize(tex.depth);
+			for(uint iid = 0; iid < tex.depth; ++iid){
+				tex.images[iid] = Image(tex.width, tex.height, 4, 1.0f);
+			}
+			tex.upload({Layout::RGBA8, Filter::NEAREST, Wrap::CLAMP}, false);
+		}
+	}
+}
+
+DebugViewer::~DebugViewer(){
+	for(auto& tex : _defaultTextures){
+		tex.second.clean();
 	}
 }
 
@@ -397,6 +431,7 @@ void DebugViewer::displayState(const std::string & name, StateInfos & infos){
 			ImGui::Text("%s", strRes.c_str());
 		}
 	}
+	ImGui::End();
 }
 
 void DebugViewer::displayMesh(MeshInfos & mesh) {
@@ -498,7 +533,7 @@ void DebugViewer::updateDisplay(const TextureInfos & tex) {
 		{TextureShape::ArrayCube, 5},
 		{TextureShape::D3, 6}};
 
-	tex.display->bind(Framebuffer::Operation::DONTCARE);
+	tex.display->bind(Framebuffer::Operation::DONTCARE,Framebuffer::Operation::DONTCARE, Framebuffer::Operation::DONTCARE);
 	tex.display->setViewport();
 
 	_texDisplay->use();
@@ -509,7 +544,14 @@ void DebugViewer::updateDisplay(const TextureInfos & tex) {
 	_texDisplay->uniform("gamma", tex.gamma);
 	_texDisplay->uniform("shape", int(tex.tex->shape));
 
-	_texDisplay->texture(tex.tex, slots.at(tex.tex->shape));
+	for(const auto& texSlot : slots){
+		if(tex.tex->shape == texSlot.first){
+			_texDisplay->texture(tex.tex, texSlot.second);
+		} else {
+			_texDisplay->texture(_defaultTextures.at(texSlot.first), texSlot.second);
+		}
+	}
+
 	ScreenQuad::draw();
 }
 

@@ -167,6 +167,11 @@ inline TextureShape & operator|=(TextureShape & t0, TextureShape & t1) {
 	return t0 = t0 | t1;
 }
 
+/** Hash specialization for unordered_map/set */
+template <> struct std::hash<TextureShape> {
+	std::size_t operator()(const TextureShape& t) const { return static_cast<uint>(t); }
+};
+
 /**
  \brief The filtering mode of a texture: we deduce the magnification
  filter from the minification filter for now.

@@ -1,27 +1,28 @@
 
 #include "constants.glsl"
 
-in INTERFACE {
+layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In ;
 
-layout(binding = 0) uniform sampler1D tex1D; ///< Image to output.
-layout(binding = 1) uniform sampler1DArray tex1DArray; ///< Image to output.
-layout(binding = 2) uniform sampler2D tex2D; ///< Image to output.
-layout(binding = 3) uniform sampler2DArray tex2DArray; ///< Image to output.
-layout(binding = 4) uniform samplerCube texCube; ///< Image to output.
-layout(binding = 5) uniform samplerCubeArray texCubeArray; ///< Image to output.
-layout(binding = 6) uniform sampler3D tex3D; ///< Image to output.
+layout(set = 1, binding = 0) uniform sampler1D tex1D; ///< Image to output.
+layout(set = 1, binding = 1) uniform sampler1DArray tex1DArray; ///< Image to output.
+layout(set = 1, binding = 2) uniform sampler2D tex2D; ///< Image to output.
+layout(set = 1, binding = 3) uniform sampler2DArray tex2DArray; ///< Image to output.
+layout(set = 1, binding = 4) uniform samplerCube texCube; ///< Image to output.
+layout(set = 1, binding = 5) uniform samplerCubeArray texCubeArray; ///< Image to output.
+layout(set = 1, binding = 6) uniform sampler3D tex3D; ///< Image to output.
 
-uniform ivec4 channels; ///< Channels to display.
-uniform vec2 range; ///< Value range.
-uniform int level; ///< Texture level to display.
-uniform int layer; ///< Texture layer to display.
-uniform bool gamma; ///< Apply gamma correction.
+layout(set = 0, binding = 0) uniform UniformBlock {
+	ivec4 channels; ///< Channels to display.
+	vec2 range; ///< Value range.
+	int level; ///< Texture level to display.
+	int layer; ///< Texture layer to display.
+	int shape; ///< Type of texture to display.
+	bool gamma; ///< Apply gamma correction.
+};
 
-uniform int shape; ///< Type of texture to display.
-
-layout(location = 0) out vec3 fragColor; ///< Color.
+layout(location = 0) out vec4 fragColor; ///< Color.
 
 #define TextureShapeD1 (1<<1)
 #define TextureShapeD2 (1<<2)
@@ -96,6 +97,6 @@ void main(){
 	int gridId = int(mod(gridCoords.x + gridCoords.y,2));
 	vec3 bg = gridId == 0 ? vec3(0.55) : vec3(0.45);
 
-	fragColor = mix(bg, color.rgb, color.a);
-
+	fragColor.rgb = mix(bg, color.rgb, color.a);
+	fragColor.a = 1.0;
 }
