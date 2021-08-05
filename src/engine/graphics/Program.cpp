@@ -497,7 +497,7 @@ void Program::uniform(const std::string & name, float t) {
 	}
 }
 
-void Program::uniform(const std::string & name, size_t count, const float * t) {
+/*void Program::uniform(const std::string & name, size_t count, const float * t) {
 	// The name (including "[0]") should be present in the list.
 	auto uni = _uniforms.find(name);
 	if(uni != _uniforms.end()) {
@@ -507,7 +507,7 @@ void Program::uniform(const std::string & name, size_t count, const float * t) {
 		}
 		updateUniformMetric();
 	}
-}
+}*/
 
 void Program::uniform(const std::string & name, const glm::vec2 & t) {
 	auto uni = _uniforms.find(name);
@@ -576,6 +576,7 @@ void Program::uniform(const std::string & name, const glm::ivec4 & t) {
 }
 
 void Program::uniform(const std::string & name, const glm::mat3 & t) {
+	Log::Warning() << "Deprecated due to alignment issues." << std::endl;
 	auto uni = _uniforms.find(name);
 	if(uni != _uniforms.end()) {
 		for(const UniformDef::Location& loc : uni->second.locations){

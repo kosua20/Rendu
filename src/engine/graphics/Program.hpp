@@ -144,13 +144,6 @@ public:
 	 */
 	void uniform(const std::string & name, float t);
 
-	/** Set a given float array uniform values.
-	 \param name the uniform name (including "[0]")
-	 \param count the number of values in the float array
-	 \param t the values to set the uniform to
-	 */
-	void uniform(const std::string & name, size_t count, const float * t);
-
 	/** Set a given uniform value.
 	 \param name the uniform name
 	 \param t the value to set the uniform to
