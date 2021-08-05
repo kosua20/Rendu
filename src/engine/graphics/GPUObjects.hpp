@@ -387,6 +387,7 @@ public:
 	std::vector<std::vector<VkImageLayout>> layouts;
 	VkImageLayout defaultLayout;
 
+	std::string name;
 private:
 	Descriptor _descriptor; ///< Layout used.
 };

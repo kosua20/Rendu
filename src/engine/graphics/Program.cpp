@@ -80,7 +80,7 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 					continue;
 				}
 				if(_staticBuffers.count(buffer.binding) != 0){
-					Log::Warning() << Log::GPU << "Buffer already created, collision between stages for set " << buffer.set << " at binding " << buffer.binding << "." << std::endl;
+					Log::Warning() << Log::GPU << "Program " << name() << ": Buffer already created, collision between stages for set " << buffer.set << " at binding " << buffer.binding << "." << std::endl;
 					continue;
 				}
 
@@ -90,7 +90,7 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 
 
 			if(_dynamicBuffers.count(buffer.binding) != 0){
-				Log::Warning() << Log::GPU << "Buffer already created, collision between stages for set " << buffer.set << " at binding " << buffer.binding << "." << std::endl;
+				Log::Warning() << Log::GPU << "Program " << name() << ": Buffer already created, collision between stages for set " << buffer.set << " at binding " << buffer.binding << "." << std::endl;
 				continue;
 			}
 
@@ -112,12 +112,12 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 			const uint set = image.set;
 
 			if(set != 1){
-				Log::Error() << "Sampler image should be in set 1 only, ignoring." << std::endl;
+				Log::Error() << "Program " << name() << ": Sampler image should be in set 1 only, ignoring." << std::endl;
 				continue;
 			}
 
 			if(_textures.count(image.binding) != 0){
-				Log::Warning() << Log::GPU << "Sampler image already created, collision between stages for set " << image.set << " at binding " << image.binding << "." << std::endl;
+				Log::Warning() << Log::GPU << "Program " << name() << ": Sampler image already created, collision between stages for set " << image.set << " at binding " << image.binding << "." << std::endl;
 				continue;
 			}
 			_textures[image.binding] = TextureState();

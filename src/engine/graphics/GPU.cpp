@@ -35,6 +35,7 @@ VmaAllocator _allocator = VK_NULL_HANDLE;
 VmaVulkanFunctions _vulkanFunctions;
 
 struct ResourceToDelete {
+	std::string name;
 	VkImageView view = VK_NULL_HANDLE;
 	VkSampler sampler = VK_NULL_HANDLE;
 	VkImage image = VK_NULL_HANDLE;
@@ -424,6 +425,7 @@ void GPU::setupTexture(Texture & texture, const Descriptor & descriptor, bool dr
 	}
 
 	texture.gpu.reset(new GPUTexture(descriptor));
+	texture.gpu->name = texture.name();
 
 	const bool is3D = texture.shape & TextureShape::D3;
 	const bool isCube = texture.shape & TextureShape::Cube;
@@ -500,6 +502,7 @@ void GPU::setupSampler(GPUTexture & texture) {
 		ResourceToDelete& rsc = _resourcesToDelete.back();
 		rsc.sampler = texture.sampler;
 		rsc.frame = _context.frameIndex;
+		rsc.name = texture.name;
 	}
 
 	// Create associated sampler.
@@ -1459,6 +1462,7 @@ void GPU::clean(GPUTexture & tex){
 	rsc.image = tex.image;
 	rsc.data = tex.data;
 	rsc.frame = _context.frameIndex;
+	rsc.name = tex.name;
 
 }
 
@@ -1474,6 +1478,7 @@ void GPU::clean(Framebuffer & framebuffer){
 			ResourceToDelete& rsc = _resourcesToDelete.back();
 			rsc.framebuffer = slice.framebuffer;
 			rsc.frame = _context.frameIndex;
+			rsc.name = framebuffer.name();
 
 			if(firstFramebuffer == VK_NULL_HANDLE){
 				firstFramebuffer = slice.framebuffer;
@@ -1486,6 +1491,7 @@ void GPU::clean(Framebuffer & framebuffer){
 					ResourceToDelete& rsc = _resourcesToDelete.back();
 					rsc.view = view;
 					rsc.frame = _context.frameIndex;
+					rsc.name = framebuffer.name();
 				}
 			}
 		}
@@ -1497,6 +1503,7 @@ void GPU::clean(Framebuffer & framebuffer){
 		ResourceToDelete& rsc = _resourcesToDelete.back();
 		rsc.framebuffer = framebuffer._fullFramebuffer.framebuffer;
 		rsc.frame = _context.frameIndex;
+		rsc.name = framebuffer.name();
 	}
 
 	// Delete the render passes.
@@ -1507,6 +1514,7 @@ void GPU::clean(Framebuffer & framebuffer){
 				ResourceToDelete& rsc = _resourcesToDelete.back();
 				rsc.renderPass = pass;
 				rsc.frame = _context.frameIndex;
+					rsc.name = framebuffer.name();
 			}
 		}
 	}
