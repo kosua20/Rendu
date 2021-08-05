@@ -95,19 +95,19 @@ Frustum::Frustum(const glm::mat4 & vp){
 	_planes[RIGHT]  = tvp[3] - tvp[0];
 	_planes[TOP]    = tvp[3] - tvp[1];
 	_planes[BOTTOM] = tvp[3] + tvp[1];
-	_planes[NEAR]   = tvp[3] + tvp[2];
+	_planes[NEAR]   = tvp[2];
 	_planes[FAR]    = tvp[3] - tvp[2];
 
 	// Reproject the 8 corners of the frustum from NDC to world space.
 	static const std::array<glm::vec4, 8> ndcCorner = {
-		glm::vec4(-1.0f, -1.0f, -1.0f, 1.0f),
-		glm::vec4(-1.0f, -1.0f,  1.0f, 1.0f),
-		glm::vec4(-1.0f,  1.0f, -1.0f, 1.0f),
-		glm::vec4(-1.0f,  1.0f,  1.0f, 1.0f),
-		glm::vec4( 1.0f, -1.0f, -1.0f, 1.0f),
-		glm::vec4( 1.0f, -1.0f,  1.0f, 1.0f),
-		glm::vec4( 1.0f,  1.0f, -1.0f, 1.0f),
-		glm::vec4( 1.0f,  1.0f,  1.0f, 1.0f)};
+		glm::vec4(-1.0f, -1.0f, 0.0f, 1.0f),
+		glm::vec4(-1.0f, -1.0f, 1.0f, 1.0f),
+		glm::vec4(-1.0f,  1.0f, 0.0f, 1.0f),
+		glm::vec4(-1.0f,  1.0f, 1.0f, 1.0f),
+		glm::vec4( 1.0f, -1.0f, 0.0f, 1.0f),
+		glm::vec4( 1.0f, -1.0f, 1.0f, 1.0f),
+		glm::vec4( 1.0f,  1.0f, 0.0f, 1.0f),
+		glm::vec4( 1.0f,  1.0f, 1.0f, 1.0f)};
 
 	for(uint i = 0; i < 8; ++i){
 		const glm::vec4 corn = ivp * ndcCorner[i];
