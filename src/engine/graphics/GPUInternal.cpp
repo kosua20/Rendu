@@ -165,14 +165,20 @@ VkFormat VkUtils::findSupportedFormat(const VkPhysicalDevice & physicalDevice, c
 }
 
 void VkUtils::typesFromShape(const TextureShape & shape, VkImageType & imgType, VkImageViewType & viewType){
-	imgType = VK_IMAGE_TYPE_2D;
-	if(shape & TextureShape::D3){
-		imgType = VK_IMAGE_TYPE_3D;
-	} else if(shape & TextureShape::D1){
-		imgType = VK_IMAGE_TYPE_1D;
-	}
 
-	const std::map<TextureShape, VkImageViewType> viewTypes = {
+	static const std::map<TextureShape, VkImageType> imgTypes = {
+		{TextureShape::D1, VK_IMAGE_TYPE_1D},
+		{TextureShape::D2, VK_IMAGE_TYPE_2D},
+		{TextureShape::D3, VK_IMAGE_TYPE_3D},
+
+		{TextureShape::Cube, VK_IMAGE_TYPE_2D},
+		{TextureShape::Array1D, VK_IMAGE_TYPE_1D},
+		{TextureShape::Array2D, VK_IMAGE_TYPE_2D},
+		{TextureShape::ArrayCube, VK_IMAGE_TYPE_2D}};
+
+	imgType = imgTypes.at(shape);
+
+	static const std::map<TextureShape, VkImageViewType> viewTypes = {
 		{TextureShape::D1, VK_IMAGE_VIEW_TYPE_1D},
 		{TextureShape::D2, VK_IMAGE_VIEW_TYPE_2D},
 		{TextureShape::D3, VK_IMAGE_VIEW_TYPE_3D},

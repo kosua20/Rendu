@@ -131,7 +131,7 @@ bool GPU::setup(const std::string & appName) {
 		// Ask for anisotropy and tessellation.
 		VkPhysicalDeviceFeatures features;
 		vkGetPhysicalDeviceFeatures(device, &features);
-		const bool hasFeatures = features.samplerAnisotropy && features.tessellationShader;
+		const bool hasFeatures = features.samplerAnisotropy && features.tessellationShader && features.imageCubeArray;
 
 		if(supportExtensions && hasFeatures){
 			// Prefere a discrete GPU if possible.
@@ -210,6 +210,7 @@ bool GPU::setupWindow(Window * window){
 	VkPhysicalDeviceFeatures features = {};
 	features.samplerAnisotropy = VK_TRUE;
 	features.tessellationShader = VK_TRUE;
+	features.imageCubeArray = VK_TRUE;
 	deviceInfo.pEnabledFeatures = &features;
 	// Extensions.
 	auto extensions = deviceExtensions;
@@ -467,8 +468,6 @@ void GPU::setupTexture(Texture & texture, const Descriptor & descriptor, bool dr
 	imageInfo.flags = 0;
 	if(isCube){
 		imageInfo.flags = VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT;
-	} else if(texture.shape == TextureShape::Array2D){
-		imageInfo.flags = VK_IMAGE_CREATE_2D_ARRAY_COMPATIBLE_BIT;
 	}
 
 	VmaAllocationCreateInfo allocInfo = {};
@@ -481,7 +480,8 @@ void GPU::setupTexture(Texture & texture, const Descriptor & descriptor, bool dr
 	viewInfo.image = texture.gpu->image;
 	viewInfo.viewType = viewType;
 	viewInfo.format = texture.gpu->format;
-	viewInfo.subresourceRange.aspectMask = texture.gpu->aspect;
+	// Remove the stencil bit when reading from the texture via the view.
+	viewInfo.subresourceRange.aspectMask = (texture.gpu->aspect & ~VK_IMAGE_ASPECT_STENCIL_BIT);
 	viewInfo.subresourceRange.baseMipLevel = 0;
 	viewInfo.subresourceRange.levelCount = texture.levels;
 	viewInfo.subresourceRange.baseArrayLayer = 0;
