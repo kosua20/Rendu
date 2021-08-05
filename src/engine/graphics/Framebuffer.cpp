@@ -189,15 +189,14 @@ void Framebuffer::populateLayoutState(){
 void Framebuffer::finalizeFramebuffer(){
 
 	// Finalize the texture layouts.
-	// By not using the default (shader read only) layout, we ensure that we don't try to read in a framebuffer
-	// texture before having filled it with some data (clear or draw).
+	
 	GPUContext* context = GPU::getInternal();
 	VkCommandBuffer commandBuffer = VkUtils::startOneTimeCommandBuffer(*context);
 	for(size_t cid = 0; cid < _colors.size(); ++cid){
-		VkUtils::textureLayoutBarrier(commandBuffer, _colors[cid], VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+		VkUtils::textureLayoutBarrier(commandBuffer, _colors[cid], _colors[cid].gpu->defaultLayout);
 	}
 	if(_hasDepth){
-		VkUtils::textureLayoutBarrier(commandBuffer, _depth, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+		VkUtils::textureLayoutBarrier(commandBuffer, _depth, _depth.gpu->defaultLayout);
 	}
 	VkUtils::endOneTimeCommandBuffer(commandBuffer, *context);
 
@@ -240,7 +239,7 @@ void Framebuffer::finalizeFramebuffer(){
 				viewInfo.image = _depth.gpu->image;
 				viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
 				viewInfo.format =  _depth.gpu->format;
-				viewInfo.subresourceRange.aspectMask =  _depth.gpu->aspect;
+				viewInfo.subresourceRange.aspectMask = _depth.gpu->aspect;
 				viewInfo.subresourceRange.baseMipLevel = mid;
 				viewInfo.subresourceRange.levelCount = 1;
 				viewInfo.subresourceRange.baseArrayLayer = lid;
