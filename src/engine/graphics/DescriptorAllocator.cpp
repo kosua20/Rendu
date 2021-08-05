@@ -9,7 +9,7 @@ void DescriptorAllocator::init(GPUContext* context, uint poolCount){
 	_maxPoolCount = poolCount;
 	
 	_pools.push_back(createPool(DEFAULT_SET_COUNT));
-	_imguiPool = createPool(8);
+	_imguiPool = createPool(DEFAULT_SET_COUNT);
 
 }
 
