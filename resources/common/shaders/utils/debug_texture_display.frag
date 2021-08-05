@@ -70,10 +70,14 @@ void main(){
 
 	// Rescale based on range.
 	color = (color - range.x)/(range.y - range.x);
+	// Saturate.
+	color = clamp(color, vec4(0.0), vec4(1.0));
+
 	// Gamma correct RGB if required.
 	if(gamma){
 		color.rgb = pow(color.rgb, vec3(1.0/2.2));
 	}
+
 	// Apply channel restrictions.
 	int sid = 0;
 	int validChannel = -1;
