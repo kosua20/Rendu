@@ -40,12 +40,13 @@ void EditorRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size
 	
 	// Render all objects.
 	_objectProgram->use();
+	_objectProgram->uniform("lightDir", glm::vec3(0.577f));
 	for(auto & object : _scene->objects) {
 		// Combine the three matrices.
 		const glm::mat4 MVP			 = VP * object.model();
 		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(object.model())));
 		_objectProgram->uniform("mvp", MVP);
-		_objectProgram->uniform("normalMatrix", normalMatrix);
+		_objectProgram->uniform("normalMatrix", glm::mat4(normalMatrix));
 		
 		const Texture * tex = Resources::manager().getTexture("debug-grid");
 		if(!object.textures().empty()){

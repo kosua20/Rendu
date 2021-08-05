@@ -1,17 +1,21 @@
 
 #include "utils.glsl"
 
-in INTERFACE {
+layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In ;
 
-layout(binding = 0) uniform sampler2D source; ///< Image to blur.
-layout(binding = 1) uniform sampler2D depth; ///< Depth information.
-layout(binding = 2) uniform sampler2D normal; ///< Normal information.
-uniform int axis; ///< Dimension to blur along.
-uniform vec2 invDstSize; ///< Inverse of the target resolution.
-uniform vec2 projParams; ///< Projection depth-related coefficients.
-out vec4 fragColor; ///< Blurred color.
+layout(set = 1, binding = 0) uniform sampler2D source; ///< Image to blur.
+layout(set = 1, binding = 1) uniform sampler2D depth; ///< Depth information.
+layout(set = 1, binding = 2) uniform sampler2D normal; ///< Normal information.
+
+layout(set = 0, binding = 0) uniform UniformBlock {
+	vec2 invDstSize; ///< Inverse of the target resolution.
+	vec2 projParams; ///< Projection depth-related coefficients.
+	int axis; ///< Dimension to blur along.
+};
+
+layout(location = 0) out vec4 fragColor; ///< Blurred color.
 
 
 // Fixed parameters of the Gaussian blur.

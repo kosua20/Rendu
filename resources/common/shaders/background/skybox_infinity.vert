@@ -3,11 +3,13 @@
 layout(location = 0) in vec3 v; ///< Position.
 
 // Uniform
-uniform mat4 mvp; ///< MVP transformation matrix.
+layout(set = 0, binding = 1) uniform UniformBlock {
+	mat4 mvp; ///< MVP transformation matrix.
+};
 
-out INTERFACE {
+layout(location = 0) out INTERFACE {
 	vec3 pos; ///< Position in model space.
-} Out ;
+} Out;
 
 /** Apply the transformation to the input vertex, treating it as a vector to ignore the translation part and keep it centered.
  We also ensure the vertex will be set to the maximum depth by tweaking gl_Position.z.
