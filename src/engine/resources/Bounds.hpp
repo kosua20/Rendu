@@ -116,7 +116,10 @@ public:
 	\return true if the bounding box intersects the frustum.
 	*/
 	bool intersects(const BoundingBox & box) const;
-	
+
+
+	static glm::mat4 perspective(float fov, float ratio, float near, float far);
+
 private:
 
 	/** Helper enum for the frustum plane locations. */

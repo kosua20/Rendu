@@ -1,5 +1,6 @@
 #include "scene/lights/SpotLight.hpp"
 #include "graphics/GPU.hpp"
+#include "resources/Bounds.hpp"
 
 SpotLight::SpotLight(const glm::vec3 & worldPosition, const glm::vec3 & worldDirection, const glm::vec3 & color, float innerAngle, float outerAngle, float radius) :
 	Light(color),
@@ -41,7 +42,7 @@ void SpotLight::setScene(const BoundingBox & sceneBox) {
 		near							= std::min(absz1, absz2);
 		far								= std::max(absz1, absz2);
 	}
-	_projectionMatrix = glm::perspective(2.0f * _angles.y, 1.0f, near, far);
+	_projectionMatrix = Frustum::perspective(2.0f * _angles.y, 1.0f, near, far);
 	_vp			  	  = _projectionMatrix * _viewMatrix;
 	// Compute the model matrix to scale the cone based on the outer angle and the radius.
 	const float width			= 2.0f * std::tan(_angles.y);

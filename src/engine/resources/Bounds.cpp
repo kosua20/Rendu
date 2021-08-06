@@ -133,3 +133,12 @@ bool Frustum::intersects(const BoundingBox & box) const {
 	/// \todo Implement frustum corner checks to weed out more false positives.
 	return true;
 }
+
+glm::mat4 Frustum::perspective(float fov, float ratio, float near, float far){
+	glm::mat4 projection = glm::perspective(fov, ratio, near, far);
+	projection[0][1] *= -1.0f;
+	projection[1][1] *= -1.0f;
+	projection[2][1] *= -1.0f;
+	projection[3][1] *= -1.0f;
+	return projection;
+}

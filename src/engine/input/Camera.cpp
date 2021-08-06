@@ -1,4 +1,5 @@
 #include "input/Camera.hpp"
+#include "resources/Bounds.hpp"
 #include <sstream>
 
 Camera::Camera() {
@@ -49,11 +50,7 @@ void Camera::pixelShifts(glm::vec3 & corner, glm::vec3 & dx, glm::vec3 & dy) con
 
 void Camera::updateProjection() {
 	// Perspective projection.
-	_projection = glm::perspective(_fov, _ratio, _clippingPlanes[0], _clippingPlanes[1]);
-	_projection[0][1] *= -1.0f;
-	_projection[1][1] *= -1.0f;
-	_projection[2][1] *= -1.0f;
-	_projection[3][1] *= -1.0f;
+	_projection = Frustum::perspective(_fov, _ratio, _clippingPlanes[0], _clippingPlanes[1]);
 }
 
 void Camera::updateView() {

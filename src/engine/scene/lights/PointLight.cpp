@@ -2,6 +2,7 @@
 #include "graphics/GPU.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "resources/Library.hpp"
+#include "resources/Bounds.hpp"
 
 PointLight::PointLight(const glm::vec3 & worldPosition, const glm::vec3 & color, float radius) :
 	Light(color),
@@ -51,7 +52,7 @@ void PointLight::setScene(const BoundingBox & sceneBox) {
 		far  = size;
 	}
 	_farPlane				   = far;
-	const glm::mat4 projection = glm::perspective(glm::half_pi<float>(), 1.0f, near, _farPlane);
+	const glm::mat4 projection = Frustum::perspective(glm::half_pi<float>(), 1.0f, near, _farPlane);
 
 	// Udpate the VPs.
 	for(size_t mid = 0; mid < 6; ++mid) {

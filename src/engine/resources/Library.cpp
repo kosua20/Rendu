@@ -1,18 +1,19 @@
 #include "resources/Library.hpp"
+#include "resources/Bounds.hpp"
 
 const std::array<glm::vec3, 6> Library::boxUps = {
 	glm::vec3(0.0f, -1.0f, 0.0f),
 	glm::vec3(0.0f, -1.0f, 0.0f),
-	glm::vec3(0.0f, 0.0f, 1.0f),
 	glm::vec3(0.0f, 0.0f, -1.0f),
+	glm::vec3(0.0f, 0.0f, 1.0f),
 	glm::vec3(0.0f, -1.0f, 0.0f),
 	glm::vec3(0.0f, -1.0f, 0.0f)};
 
 const std::array<glm::vec3, 6> Library::boxCenters = {
 	glm::vec3(1.0, 0.0, 0.0),
 	glm::vec3(-1.0, 0.0, 0.0),
-	glm::vec3(0.0, 1.0, 0.0),
 	glm::vec3(0.0, -1.0, 0.0),
+	glm::vec3(0.0, 1.0, 0.0),
 	glm::vec3(0.0, 0.0, 1.0),
 	glm::vec3(0.0, 0.0, -1.0)
 };
@@ -20,8 +21,8 @@ const std::array<glm::vec3, 6> Library::boxCenters = {
 const std::array<glm::vec3, 6> Library::boxRights = {
 	glm::vec3( 0.0f, 0.0f, -1.0f),
 	glm::vec3( 0.0f, 0.0f,  1.0f),
-	glm::vec3( 1.0f, 0.0f,  0.0f),
-	glm::vec3( 1.0f, 0.0f,  0.0f),
+	glm::vec3( -1.0f, 0.0f,  0.0f),
+	glm::vec3( -1.0f, 0.0f,  0.0f),
 	glm::vec3( 1.0f, 0.0f,  0.0f),
 	glm::vec3(-1.0f, 0.0f,  0.0f)
 };
@@ -36,12 +37,12 @@ const std::array<glm::mat4, 6> Library::boxVs = {
 };
 
 const std::array<glm::mat4, 6> Library::boxVPs = {
-	glm::perspective(glm::half_pi<float>(), 1.0f, 0.01f, 10.0f) * boxVs[0],
-	glm::perspective(glm::half_pi<float>(), 1.0f, 0.01f, 10.0f) * boxVs[1],
-	glm::perspective(glm::half_pi<float>(), 1.0f, 0.01f, 10.0f) * boxVs[2],
-	glm::perspective(glm::half_pi<float>(), 1.0f, 0.01f, 10.0f) * boxVs[3],
-	glm::perspective(glm::half_pi<float>(), 1.0f, 0.01f, 10.0f) * boxVs[4],
-	glm::perspective(glm::half_pi<float>(), 1.0f, 0.01f, 10.0f) * boxVs[5]
+	Frustum::perspective(glm::half_pi<float>(), 1.0f, 0.01f, 10.0f) * boxVs[0],
+	Frustum::perspective(glm::half_pi<float>(), 1.0f, 0.01f, 10.0f) * boxVs[1],
+	Frustum::perspective(glm::half_pi<float>(), 1.0f, 0.01f, 10.0f) * boxVs[2],
+	Frustum::perspective(glm::half_pi<float>(), 1.0f, 0.01f, 10.0f) * boxVs[3],
+	Frustum::perspective(glm::half_pi<float>(), 1.0f, 0.01f, 10.0f) * boxVs[4],
+	Frustum::perspective(glm::half_pi<float>(), 1.0f, 0.01f, 10.0f) * boxVs[5]
 };
 
 
