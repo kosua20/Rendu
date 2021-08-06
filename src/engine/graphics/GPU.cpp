@@ -377,12 +377,12 @@ void GPU::bindProgram(const Program & program){
 	_state.program = (Program*)&program;
 }
 
-void GPU::bindFramebuffer(const Framebuffer & framebuffer, size_t layer, size_t layerCount, size_t mip, size_t mipCount){
+void GPU::bindFramebuffer(const Framebuffer & framebuffer, size_t layer, size_t mip){
 	_state.pass.framebuffer = &framebuffer;
 	_state.pass.mipStart = mip;
-	_state.pass.mipCount = mipCount;
+	_state.pass.mipCount = 1;
 	_state.pass.layerStart = layer;
-	_state.pass.layerCount = layerCount;
+	_state.pass.layerCount = 1;
 
 }
 
@@ -1476,8 +1476,6 @@ void GPU::clean(GPUTexture & tex){
 }
 
 void GPU::clean(Framebuffer & framebuffer, bool deleteRenderPasses){
-	// Avoid double deletion in some cases.
-	VkFramebuffer firstFramebuffer = VK_NULL_HANDLE;
 
 	for(auto& slices : framebuffer._framebuffers){
 
@@ -1488,10 +1486,6 @@ void GPU::clean(Framebuffer & framebuffer, bool deleteRenderPasses){
 			rsc.framebuffer = slice.framebuffer;
 			rsc.frame = _context.frameIndex;
 			rsc.name = framebuffer.name();
-
-			if(firstFramebuffer == VK_NULL_HANDLE){
-				firstFramebuffer = slice.framebuffer;
-			}
 
 			// Delete the attachment views if the framebuffer owned them.
 			if(!framebuffer._isBackbuffer){
@@ -1504,15 +1498,6 @@ void GPU::clean(Framebuffer & framebuffer, bool deleteRenderPasses){
 				}
 			}
 		}
-	}
-
-	// Delete the full framebuffer if it wasn't already done.
-	if(framebuffer._fullFramebuffer.framebuffer != firstFramebuffer){
-		_resourcesToDelete.emplace_back();
-		ResourceToDelete& rsc = _resourcesToDelete.back();
-		rsc.framebuffer = framebuffer._fullFramebuffer.framebuffer;
-		rsc.frame = _context.frameIndex;
-		rsc.name = framebuffer.name();
 	}
 
 	// Delete the render passes if requested.

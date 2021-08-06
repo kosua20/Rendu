@@ -93,7 +93,7 @@ public:
 	/** Bind a framebuffer as a draw destination.
 	 \param framebuffer the framebuffer to bind as draw destination
 	 */
-	static void bindFramebuffer(const Framebuffer & framebuffer, size_t layer, size_t layerCount, size_t mip, size_t mipCount);
+	static void bindFramebuffer(const Framebuffer & framebuffer, size_t layer, size_t mip);
 
 	/** Save a given framebuffer content to the disk.
 	 \param framebuffer the framebuffer to save

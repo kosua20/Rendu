@@ -247,7 +247,7 @@ private:
 
 	void finalizeFramebuffer();
 
-	void bind(const Slice& slice, size_t layer, size_t layerCount, size_t mip, size_t mipCount, const LoadOperation& colorOp, const LoadOperation& depthOp, const LoadOperation& stencilOp) const;
+	void bind(const Slice& slice, size_t layer, size_t mip, const LoadOperation& colorOp, const LoadOperation& depthOp, const LoadOperation& stencilOp) const;
 
 	/** Default constructor. */
 	Framebuffer() = default;
@@ -259,7 +259,6 @@ private:
 	uint _mips = 1;
 
 	std::vector<std::vector<Slice>> _framebuffers;
-	Slice _fullFramebuffer;
 
 	std::vector<Texture> _colors; ///< The color textures.
 	Texture _depth = Texture("Depth"); ///< The depth renderbuffer.
