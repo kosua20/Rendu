@@ -200,10 +200,6 @@ void PathTracerApp::physics(double, double) {
 	}
 }
 
-PathTracerApp::~PathTracerApp() {
-	_renderTex.clean();
-}
-
 void PathTracerApp::resize() {
 	// Same aspect ratio as the display resolution
 	const glm::vec2 renderRes = _config.renderingResolution();

@@ -610,9 +610,6 @@ std::string ShaderEditor::reload(const std::string & shaderPath, bool syncUnifor
 
 ShaderEditor::~ShaderEditor() {
 	_currProgram->clean();
-	_noise.clean();
-	_directions.clean();
-	_noise3D.clean();
 }
 
 void ShaderEditor::resize() {

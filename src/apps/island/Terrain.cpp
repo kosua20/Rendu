@@ -479,8 +479,6 @@ bool Terrain::interface(){
 }
 
 Terrain::~Terrain() {
-	_map.clean();
-	_mapLowRes.clean();
 	for(Cell & cell : _cells){
 		cell.mesh.clean();
 	}

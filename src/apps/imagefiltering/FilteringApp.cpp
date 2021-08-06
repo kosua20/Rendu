@@ -227,7 +227,3 @@ void FilteringApp::resize() {
 
 	checkGPUError();
 }
-
-FilteringApp::~FilteringApp(){
-	_image.clean();
-}

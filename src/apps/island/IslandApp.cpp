@@ -527,9 +527,6 @@ void IslandApp::resize() {
 }
 
 IslandApp::~IslandApp() {
-	_surfaceNoise.clean();
-	_glitterNoise.clean();
 	_oceanMesh.clean();
 	_farOceanMesh.clean();
-	_waves.clean();
 }

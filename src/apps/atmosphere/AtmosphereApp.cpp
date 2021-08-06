@@ -191,10 +191,6 @@ void AtmosphereApp::precomputeTable(const Sky::AtmosphereParameters & params, ui
 	});
 }
 
-AtmosphereApp::~AtmosphereApp(){
-	_scattering.clean();
-}
-
 void AtmosphereApp::updateSky() {
 	Log::Info() << Log::Resources << "Updating sky..." << std::flush;
 	_scattering.width = _scattering.height = uint(_tableRes);

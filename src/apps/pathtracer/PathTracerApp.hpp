@@ -38,9 +38,6 @@ public:
 	 */
 	void resize() override;
 
-	/** Destructor. */
-	~PathTracerApp() override;
-
 private:
 
 	Program * _passthrough;	///< Passthrough program.
