@@ -120,12 +120,12 @@ function ShaderValidation()
 	end
 	-- Run the shader validator on all existing shaders.
 	-- Output IDE compatible error messages.
-	-- dependson({"ShaderValidator"})
+	dependson({"ShaderValidator"})
 	
-	--filter("configurations:*")
-	--	postbuildcommands({ 
-	--		path.translate(cwd.."/build/ShaderValidator/%{cfg.longname}/ShaderValidator"..ext.." "..cwd.."/resources/", sep)
-	--	})
+	filter("configurations:*")
+		postbuildcommands({
+			path.translate(cwd.."/build/ShaderValidator/%{cfg.longname}/ShaderValidator"..ext.." "..cwd.."/resources/", sep)
+		})
 	filter({})
 end	
 
