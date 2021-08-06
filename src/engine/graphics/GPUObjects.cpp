@@ -190,7 +190,7 @@ uint64_t GPUQuery::value(){
 	VkQueryPool& pool = context->queryAllocators.at(_type).getPreviousPool();
 
 	uint64_t data[2] = {0, 0};
-	vkGetQueryPoolResults(context->device, pool, _offset, _count, 2 * sizeof(uint64_t), &data[0], sizeof(uint64_t), VK_QUERY_RESULT_64_BIT | VK_QUERY_RESULT_WAIT_BIT);
+	//vkGetQueryPoolResults(context->device, pool, _offset, _count, 2 * sizeof(uint64_t), &data[0], sizeof(uint64_t), VK_QUERY_RESULT_64_BIT | VK_QUERY_RESULT_WAIT_BIT);
 
 	// For duration elapsed, we compute the time between the two timestamps.
 	if(_type == GPUQuery::Type::TIME_ELAPSED){
