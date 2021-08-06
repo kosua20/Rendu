@@ -24,6 +24,7 @@ void VarianceShadowMap2D::draw(const Scene & scene) {
 	_map->setViewport();
 
 	_program->use();
+	_program->defaultTexture(0);
 
 	const Frustum lightFrustum(_light->vp());
 
@@ -75,6 +76,8 @@ void VarianceShadowMapCube::draw(const Scene & scene) {
 	// Pass the world space light position, and the projection matrix far plane.
 	_program->uniform("lightPositionWorld", _light->position());
 	_program->uniform("lightFarPlane", _light->farPlane());
+	_program->defaultTexture(0);
+	
 	for(int i = 0; i < 6; ++i){
 		// We render each face sequentially, culling objects that are not visible.
 		_map->bind(i, 0, glm::vec4(1.0f), 1.0f);

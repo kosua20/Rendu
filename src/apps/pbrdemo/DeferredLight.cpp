@@ -54,6 +54,7 @@ void DeferredLight::draw(const SpotLight * light) {
 		_spotProgram->uniform("shadowBias", _shadowBias);
 		_spotProgram->uniform("shadowMode", int(_shadowMode));
 	} else {
+		_spotProgram->defaultTexture(_textures.size());
 		_spotProgram->uniform("shadowMode", int(ShadowMode::NONE));
 	}
 	// Select the geometry.
@@ -78,7 +79,7 @@ void DeferredLight::draw(const PointLight * light) {
 	_pointProgram->uniform("lightColor", light->intensity());
 	_pointProgram->uniform("lightRadius", light->radius());
 	_pointProgram->uniform("projectionMatrix", projectionVector);
-	_pointProgram->uniform("viewToLight", viewToLight);
+	_pointProgram->uniform("viewToLight", glm::mat4(viewToLight));
 	_pointProgram->uniform("lightFarPlane", light->farPlane());
 	
 	 // Active screen texture.
@@ -90,6 +91,7 @@ void DeferredLight::draw(const PointLight * light) {
 		_pointProgram->uniform("shadowBias", _shadowBias);
 		_pointProgram->uniform("shadowMode", int(_shadowMode));
 	} else {
+		_pointProgram->defaultTexture(_textures.size());
 		_pointProgram->uniform("shadowMode", int(ShadowMode::NONE));
 	}
 	// Select the geometry.
@@ -120,6 +122,7 @@ void DeferredLight::draw(const DirectionalLight * light) {
 		_dirProgram->uniform("shadowBias", _shadowBias);
 		_dirProgram->uniform("shadowMode", int(_shadowMode));
 	} else {
+		_dirProgram->defaultTexture(_textures.size());
 		_dirProgram->uniform("shadowMode", int(ShadowMode::NONE));
 	}
 	ScreenQuad::draw();

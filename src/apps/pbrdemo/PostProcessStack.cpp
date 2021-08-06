@@ -8,7 +8,7 @@
 PostProcessStack::PostProcessStack(const glm::vec2 & resolution) : Renderer("Post process stack"){
 	const int renderWidth	= int(resolution[0]);
 	const int renderHeight	= int(resolution[1]);
-	const Descriptor desc = {Layout::RGB16F, Filter::LINEAR_NEAREST, Wrap::CLAMP};
+	const Descriptor desc = {Layout::RGBA16F, Filter::LINEAR_NEAREST, Wrap::CLAMP};
 	_bloomBuffer	= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, desc, false, "Bloom"));
 	_toneMapBuffer 	= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, desc, false, "Tonemap"));
 	_resultFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, desc, false, "Postproc. result"));
@@ -73,7 +73,7 @@ void PostProcessStack::process(const Texture * texture, const glm::mat4 & proj, 
 		_resultFramebuffer->bind(Framebuffer::Operation::DONTCARE);
 		_resultFramebuffer->setViewport();
 		Resources::manager().getProgram2D("passthrough-pixelperfect")->use();
-		Resources::manager().getProgram2D("passthrough-pixelperfect")->texture(texture);
+		Resources::manager().getProgram2D("passthrough-pixelperfect")->texture(texture, 0);
 		ScreenQuad::draw();
 	}
 

@@ -11,7 +11,7 @@ PBRDemo::PBRDemo(RenderingConfig & config) :
 	_forRenderer.reset(new ForwardRenderer(renderRes, ShadowMode::VARIANCE, true, "Forward"));
 	_postprocess.reset(new PostProcessStack(renderRes));
 	_debugRenderer.reset(new DebugRenderer());
-	_finalRender.reset(new Framebuffer(uint(renderRes[0]), uint(renderRes[1]), {Layout::RGB16F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, true, "Final render"));
+	_finalRender.reset(new Framebuffer(uint(renderRes[0]), uint(renderRes[1]), {Layout::RGBA16F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, true, "Final render"));
 
 	_finalProgram = Resources::manager().getProgram2D("sharpening");
 	
@@ -153,7 +153,7 @@ void PBRDemo::draw() {
 	_frameID = (_frameID + 1)%_frameCount;
 
 	if(!_scenes[_currentScene]) {
-		Framebuffer::backbuffer()->bind({0.2f, 0.2f, 0.2f, 1.0f}, 1.0f);
+		Framebuffer::backbuffer()->bind(glm::vec4(0.2f, 0.2f, 0.2f, 1.0f), 1.0f, Framebuffer::Operation::DONTCARE);
 		return;
 	}
 
@@ -191,8 +191,8 @@ void PBRDemo::draw() {
 	Framebuffer::backbuffer()->bind(Framebuffer::Operation::DONTCARE);
 	GPU::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 	_finalProgram->use();
-	_finalProgram->texture(finalRender->texture());
-	ScreenQuad::draw(_);
+	_finalProgram->texture(_finalRender->texture(), 0);
+	ScreenQuad::draw();
 
 	_totalTime.end();
 }

@@ -12,10 +12,10 @@ DeferredRenderer::DeferredRenderer(const glm::vec2 & resolution, ShadowMode mode
 
 	// G-buffer setup.
 	const Descriptor albedoDesc			= {Layout::RGBA16F, Filter::NEAREST_NEAREST, Wrap::CLAMP};
-	const Descriptor normalDesc			= {Layout::RGB16F, Filter::NEAREST_NEAREST, Wrap::CLAMP};
-	const Descriptor effectsDesc		= {Layout::RGB8, Filter::NEAREST_NEAREST, Wrap::CLAMP};
+	const Descriptor normalDesc			= {Layout::RGBA16F, Filter::NEAREST_NEAREST, Wrap::CLAMP};
+	const Descriptor effectsDesc		= {Layout::RGBA8, Filter::NEAREST_NEAREST, Wrap::CLAMP};
 	const Descriptor depthDesc			= {Layout::DEPTH_COMPONENT32F, Filter::NEAREST_NEAREST, Wrap::CLAMP};
-	const Descriptor lightDesc = {Layout::RGB16F, Filter::LINEAR_LINEAR, Wrap::CLAMP};
+	const Descriptor lightDesc = {Layout::RGBA16F, Filter::LINEAR_LINEAR, Wrap::CLAMP};
 
 	const std::vector<Descriptor> descs = {albedoDesc, normalDesc, effectsDesc, depthDesc};
 	_gbuffer							= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, descs, false, _name + " G-buffer "));
@@ -90,7 +90,7 @@ void DeferredRenderer::renderOpaque(const Culler::List & visibles, const glm::ma
 				// Upload the MV matrix.
 				_parallaxProgram->uniform("mv", MV);
 				// Upload the normal matrix.
-				_parallaxProgram->uniform("normalMatrix", normalMatrix);
+				_parallaxProgram->uniform("normalMatrix", glm::mat4(normalMatrix));
 				break;
 			case Object::Regular:
 				_objectProgram->use();
@@ -98,7 +98,7 @@ void DeferredRenderer::renderOpaque(const Culler::List & visibles, const glm::ma
 				// Upload the MVP matrix.
 				_objectProgram->uniform("mvp", MVP);
 				// Upload the normal matrix.
-				_objectProgram->uniform("normalMatrix", normalMatrix);
+				_objectProgram->uniform("normalMatrix", glm::mat4(normalMatrix));
 				_objectProgram->uniform("hasUV", object.useTexCoords());
 				break;
 			case Object::Emissive:
@@ -148,6 +148,12 @@ void DeferredRenderer::renderTransparent(const Culler::List & visibles, const gl
 	_transparentProgram->uniform("lightsCount", int(_fwdLightsGPU->count()));
 	_transparentProgram->uniform("invScreenSize", invScreenSize);
 
+	// \todo This is because after a change of scene shadow maps are reset, but the conditional setup of textures on
+	// the program means that descriptors can still reference the delete textures.
+	_transparentProgram->defaultTexture(6);
+	_transparentProgram->defaultTexture(7);
+
+
 	for(const long & objectId : visibles) {
 		// Once we get a -1, there is no other object to render.
 		if(objectId == -1){
@@ -169,7 +175,7 @@ void DeferredRenderer::renderTransparent(const Culler::List & visibles, const gl
 		_transparentProgram->uniform("hasUV", object.useTexCoords());
 		_transparentProgram->uniform("mvp", MVP);
 		_transparentProgram->uniform("mv", MV);
-		_transparentProgram->uniform("normalMatrix", normalMatrix);
+		_transparentProgram->uniform("normalMatrix", glm::mat4(normalMatrix));
 
 		// Bind the lights.
 		_transparentProgram->buffer(_fwdLightsGPU->data(), 0);
@@ -205,7 +211,7 @@ void DeferredRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 
 	// Accept a depth of 1.0 (far plane).
 	GPU::setDepthState(true, TestFunction::LEQUAL, false);
 	GPU::setBlendState(false);
-	GPU::setCullState(true, Faces::BACK);
+	GPU::setCullState(false, Faces::BACK);
 
 	const Object * background	= _scene->background.get();
 	const Scene::Background mode = _scene->backgroundMode;
@@ -238,10 +244,10 @@ void DeferredRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 
 		// Background color or 2D image.
 		_bgProgram->use();
 		if(mode == Scene::Background::IMAGE) {
-			_bgProgram->uniform("useTexture", 1);
+			_bgProgram->uniform("useTexture", true);
 			_bgProgram->textures(background->textures());
 		} else {
-			_bgProgram->uniform("useTexture", 0);
+			_bgProgram->uniform("useTexture", false);
 			_bgProgram->uniform("bgColor", _scene->backgroundColor);
 		}
 		GPU::drawMesh(*background->mesh());

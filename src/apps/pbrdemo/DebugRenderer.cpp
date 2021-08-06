@@ -100,7 +100,7 @@ void DebugRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_
 
 	_lightDebugRenderer.updateCameraInfos(view, proj);
 
-	framebuffer.bind(layer);
+	framebuffer.bind(layer, 0, Framebuffer::Operation::LOAD, Framebuffer::Operation::LOAD, Framebuffer::Operation::LOAD);
 	GPU::setDepthState(true, TestFunction::LEQUAL, true);
 	GPU::setBlendState(false);
 	GPU::setCullState(false);
@@ -163,7 +163,7 @@ void DebugRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_
 		_probeProgram->use();
 		_probeProgram->uniform("mvp", MVP);
 		_probeProgram->uniform("m", model);
-		_probeProgram->uniform("normalMatrix", normalMat);
+		_probeProgram->uniform("normalMatrix", glm::mat4(normalMat));
 		_probeProgram->uniform("camPos", camera.position());
 		_probeProgram->uniform("lod", _probeRoughness * probe.map()->levels);
 		_probeProgram->uniform("mode", int(_probeMode));

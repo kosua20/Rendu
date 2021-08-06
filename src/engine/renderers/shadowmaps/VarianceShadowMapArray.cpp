@@ -7,7 +7,7 @@ VarianceShadowMap2DArray::VarianceShadowMap2DArray(const std::vector<std::shared
 	const Descriptor descriptor = {Layout::RG32F, Filter::LINEAR, Wrap::CLAMP};
 	_map = std::unique_ptr<Framebuffer>(new Framebuffer(TextureShape::Array2D, uint(resolution.x), uint(resolution.y), uint(lights.size()), 1, {descriptor}, true, "Shadow map 2D array"));
 	_blur = std::unique_ptr<BoxBlur>(new BoxBlur(false, "Shadow maps 2D"));
-	_program = Resources::manager().getProgram("object_depth", "light_shadow_vertex", "light_shadow_variance");
+	_program = Resources::manager().getProgram("object_depth_array", "light_shadow_vertex", "light_shadow_variance");
 	for(size_t lid = 0; lid < _lights.size(); ++lid){
 		_lights[lid]->registerShadowMap(_map->texture(), lid);
 	}
@@ -21,6 +21,7 @@ void VarianceShadowMap2DArray::draw(const Scene & scene) {
 
 	_map->setViewport();
 	_program->use();
+	_program->defaultTexture(0);
 
 	for(size_t lid = 0; lid < _lights.size(); ++lid){
 		const auto & light = _lights[lid];
@@ -60,7 +61,7 @@ VarianceShadowMapCubeArray::VarianceShadowMapCubeArray(const std::vector<std::sh
 	const Descriptor descriptor = {Layout::RG16F, Filter::LINEAR, Wrap::CLAMP};
 	_map = std::unique_ptr<Framebuffer>(new Framebuffer( TextureShape::ArrayCube, side, side, uint(lights.size()), 1,  {descriptor}, true, "Shadow map cube array"));
 	_blur = std::unique_ptr<BoxBlur>(new BoxBlur(true, "Shadow maps cube"));
-	_program = Resources::manager().getProgram("object_cube_depth", "light_shadow_linear_vertex", "light_shadow_linear_variance");
+	_program = Resources::manager().getProgram("object_cube_depth_array", "light_shadow_linear_vertex", "light_shadow_linear_variance");
 	for(size_t lid = 0; lid < _lights.size(); ++lid){
 		_lights[lid]->registerShadowMap(_map->texture(), lid);
 	}
@@ -73,6 +74,7 @@ void VarianceShadowMapCubeArray::draw(const Scene & scene) {
 	GPU::setBlendState(false);
 	_map->setViewport();
 	_program->use();
+	_program->defaultTexture(0);
 
 	for(size_t lid = 0; lid < _lights.size(); ++lid){
 		const auto & light = _lights[lid];

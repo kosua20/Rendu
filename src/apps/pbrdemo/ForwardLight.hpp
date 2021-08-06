@@ -74,7 +74,7 @@ public:
 	}
 
 	/** \return the GPU lights buffer */
-	Buffer<GPULight> & data(){
+	UniformBuffer<GPULight> & data(){
 		return _lightsData;
 	}
 
@@ -83,7 +83,7 @@ private:
 	size_t _currentId = 0; ///< Current insertion location.
 	size_t _currentCount = 0; ///< Number of lights to store.
 	const static size_t _maxLightCount; ///< Maximum allowed number of lights (see forward_lights.glsl).
-	Buffer<GPULight> _lightsData; ///< GPU buffer.
+	UniformBuffer<GPULight> _lightsData; ///< GPU buffer.
 
 	glm::mat4 _view = glm::mat4(1.0f); ///< Cached camera view matrix.
 	glm::mat4 _proj = glm::mat4(1.0f); ///< Cached camera projection matrix.

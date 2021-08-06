@@ -17,7 +17,7 @@ ForwardRenderer::ForwardRenderer(const glm::vec2 & resolution, ShadowMode mode, 
 	const std::vector<Descriptor> descs = { desc, descDepth};
 	_sceneFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, descs, true, _name + " Lighting "));
 	_ssaoPass		  = std::unique_ptr<SSAO>(new SSAO(renderWidth, renderHeight, 2, 0.5f, _name));
-	_preferredFormat.push_back({Layout::RGB16F, Filter::LINEAR_LINEAR, Wrap::CLAMP});
+	_preferredFormat.push_back({Layout::RGBA16F, Filter::LINEAR_LINEAR, Wrap::CLAMP});
 	_needsDepth = false;
 
 	_depthPrepass 		= Resources::manager().getProgram("object_prepass_forward");
@@ -52,12 +52,14 @@ void ForwardRenderer::renderDepth(const Culler::List & visibles, const glm::mat4
 	GPU::setCullState(true, Faces::BACK);
 	GPU::setBlendState(false);
 
-	_sceneFramebuffer->bind({0.5f,0.5f,0.5f,1.0f}, 1.0f);
+	_sceneFramebuffer->bind(glm::vec4(0.5f,0.5f,0.5f,1.0f), 1.0f, Framebuffer::Operation::DONTCARE);
 	_sceneFramebuffer->setViewport();
 	// We use the depth prepass to store packed normals in the color target.
 	// We initialize using null normal.
 
 	_depthPrepass->use();
+	_depthPrepass->defaultTexture(0);
+	
 	for(const long & objectId : visibles) {
 		// Once we get a -1, there is no other object to render.
 		if(objectId == -1){
@@ -79,7 +81,7 @@ void ForwardRenderer::renderDepth(const Culler::List & visibles, const glm::mat4
 		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(MV)));
 
 		_depthPrepass->uniform("mvp", MVP);
-		_depthPrepass->uniform("normalMatrix", normalMatrix);
+		_depthPrepass->uniform("normalMatrix", glm::mat4(normalMatrix));
 		// Alpha mask if needed.
 		_depthPrepass->uniform("hasMask", object.masked());
 		_depthPrepass->uniform("hasUV", object.useTexCoords());
@@ -155,7 +157,7 @@ void ForwardRenderer::renderOpaque(const Culler::List & visibles, const glm::mat
 		currentProgram->uniform("hasUV", object.useTexCoords());
 		currentProgram->uniform("mvp", MVP);
 		currentProgram->uniform("mv", MV);
-		currentProgram->uniform("normalMatrix", normalMatrix);
+		currentProgram->uniform("normalMatrix", glm::mat4(normalMatrix));
 
 		// Backface culling state.
 		GPU::setCullState(!object.twoSided(), Faces::BACK);
@@ -209,7 +211,7 @@ void ForwardRenderer::renderTransparent(const Culler::List & visibles, const glm
 		_transparentProgram->uniform("hasUV", object.useTexCoords());
 		_transparentProgram->uniform("mvp", MVP);
 		_transparentProgram->uniform("mv", MV);
-		_transparentProgram->uniform("normalMatrix", normalMatrix);
+		_transparentProgram->uniform("normalMatrix", glm::mat4(normalMatrix));
 
 		// Bind the lights.
 		_transparentProgram->buffer(_lightsGPU->data(), 0);
@@ -243,7 +245,7 @@ void ForwardRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 &
 	// Accept a depth of 1.0 (far plane).
 	GPU::setDepthState(true, TestFunction::LEQUAL, false);
 	GPU::setBlendState(false);
-	GPU::setCullState(true, Faces::BACK);
+	GPU::setCullState(false, Faces::BACK);
 	const Object * background	 = _scene->background.get();
 	const Scene::Background mode = _scene->backgroundMode;
 
@@ -275,10 +277,10 @@ void ForwardRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 &
 		// Background color or 2D image.
 		_bgProgram->use();
 		if(mode == Scene::Background::IMAGE) {
-			_bgProgram->uniform("useTexture", 1);
+			_bgProgram->uniform("useTexture", true);
 			_bgProgram->textures(background->textures());
 		} else {
-			_bgProgram->uniform("useTexture", 0);
+			_bgProgram->uniform("useTexture", false);
 			_bgProgram->uniform("bgColor", _scene->backgroundColor);
 		}
 		GPU::drawMesh(*background->mesh());
@@ -333,6 +335,16 @@ void ForwardRenderer::draw(const Camera & camera, Framebuffer & framebuffer, siz
 		}
 		_parallaxProgram->use();
 		_parallaxProgram->uniform("p", proj);
+
+		// \todo This is because after a change of scene shadow maps are reset, but the conditional setup of textures on
+		// the program means that descriptors can still reference the delete textures.
+		// Currently there is no mechanism to "unregister" a texture for each shader using it, when deleting the texture.
+		// The texture could keep a record of all programs it has been used in. Or we could look at all programs when deleting.
+		// Or in PBRDemo we reset the textures when setting a scene.
+		_objectProgram->defaultTexture(6);
+		_objectProgram->defaultTexture(7);
+		_parallaxProgram->defaultTexture(6);
+		_parallaxProgram->defaultTexture(7);
 	}
 
 	// Objects rendering.
