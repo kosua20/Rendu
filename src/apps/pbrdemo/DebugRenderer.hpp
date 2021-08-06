@@ -34,6 +34,8 @@ public:
 	/** \copydoc Renderer::interface */
 	void interface() override;
 
+	~DebugRenderer();
+
 private:
 
 	/** Probe info to visualize. */

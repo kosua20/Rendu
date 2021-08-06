@@ -88,6 +88,8 @@ public:
 	/** Move constructor. */
 	TransferBuffer(TransferBuffer &&) = delete;
 
+	~TransferBuffer() = default;
+
 };
 
 class UniformBufferBase : public BufferBase {

@@ -26,6 +26,7 @@ void BufferBase::clean() {
 		gpu->clean();
 		gpu.reset();
 	}
+	gpu = nullptr;
 }
 
 BufferBase::~BufferBase() {
@@ -80,9 +81,7 @@ void UniformBufferBase::upload(unsigned char * data){
 }
 
 void UniformBufferBase::clean(){
-	if(gpu){
-		BufferBase::clean();
-	}
+	BufferBase::clean();
 }
 
 UniformBufferBase::~UniformBufferBase(){

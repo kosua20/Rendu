@@ -208,3 +208,9 @@ void DebugRenderer::interface(){
 		ImGui::PopItemWidth();
 	}
 }
+
+DebugRenderer::~DebugRenderer(){
+	_sceneBoxes.clean();
+	_frame.clean();
+	_cubeLines.clean();
+}
