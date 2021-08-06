@@ -537,6 +537,49 @@ const Texture * Resources::getTexture(const std::string & name, const Descriptor
 	return &_textures.at(keyName);
 }
 
+const Texture * Resources::getDefaultTexture(TextureShape shape){
+
+	static const std::unordered_map<TextureShape, std::string> names = {
+		{TextureShape::D1, "default-texture-1d"},
+		{TextureShape::Array1D, "default-texture-1d-array"},
+		{TextureShape::D2, "default-texture-2d"},
+		{TextureShape::Array2D, "default-texture-2d-array"},
+		{TextureShape::Cube, "default-texture-cube"},
+		{TextureShape::ArrayCube, "default-texture-cube-array"},
+		{TextureShape::D3, "default-texture-3d"},
+	};
+
+	// If the texture already exists, return it.
+	const std::string& name = names.at(shape);
+	if(_textures.count(name) > 0){
+		return &(_textures.at(name));
+	}
+
+	// Else create the default texture.
+	_textures.insert(std::make_pair<>(name, Texture(name)));
+	Texture & texture  = _textures.at(name);
+
+	const bool is1D = shape & TextureShape::D1;
+	const bool is3D = shape == TextureShape::D3;
+	const bool isLayered = (shape & TextureShape::Array) || (shape & TextureShape::Cube);
+
+	texture.shape = shape;
+	texture.width = 4;
+	texture.height = is1D ? 1 : 4;
+	texture.depth = is3D ? 4 : (isLayered ? 6 : 1);
+	texture.levels = 1;
+	texture.images.resize(texture.depth);
+	for(uint iid = 0; iid < texture.depth; ++iid){
+		texture.images[iid] = Image(texture.width, texture.height, 1, 1.0f);
+	}
+
+	// Assume the texture is used on both the CPU and GPU.
+	// Use a default descriptor.
+	texture.upload({Layout::R8, Filter::NEAREST, Wrap::CLAMP}, false);
+	return &(_textures.at(name));
+}
+
+
 // Program/shaders methods.
 
 Resources::ProgramInfos::ProgramInfos(const std::string & vertex, const std::string & fragment, const std::string & geometry,  const std::string & tessControl, const std::string & tessEval){

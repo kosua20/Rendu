@@ -171,6 +171,8 @@ public:
 	 */
 	const Texture * getTexture(const std::string & name);
 
+	const Texture * getDefaultTexture(TextureShape shape);
+
 	/** Get a GPU program resource.
 	 \param name the name to represent the program
 	 \param vertexName the name of the vertex shader
