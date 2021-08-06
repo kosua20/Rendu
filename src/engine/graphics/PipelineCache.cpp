@@ -164,14 +164,25 @@ VkPipeline PipelineCache::buildPipeline(const GPUState& state){
 		vertexState.pVertexAttributeDescriptions = meshState.attributes.data();
 		pipelineInfo.pVertexInputState = &vertexState;
 	}
+	// Tesselation
+	VkPipelineTessellationStateCreateInfo tessellationState{};
+	const bool hasTessellation = state.program->stage(ShaderType::TESSEVAL).module != VK_NULL_HANDLE;
+	if(hasTessellation){
+		tessellationState.sType = VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO;
+		tessellationState.flags = 0;
+		tessellationState.patchControlPoints = state.patchSize;
+		pipelineInfo.pTessellationState = &tessellationState;
+	}
+
 	// Input assembly.
 	VkPipelineInputAssemblyStateCreateInfo assemblyState{};
 	{
 		assemblyState.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
 		assemblyState.primitiveRestartEnable = VK_FALSE;
-		assemblyState.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+		assemblyState.topology = hasTessellation ? VK_PRIMITIVE_TOPOLOGY_PATCH_LIST : VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
 		pipelineInfo.pInputAssemblyState  = &assemblyState;
 	}
+
 	// Viewport (will be dynamic)
 	VkPipelineViewportStateCreateInfo viewportState{};
 	{

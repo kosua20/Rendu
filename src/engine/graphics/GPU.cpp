@@ -1109,7 +1109,8 @@ void GPU::drawMesh(const Mesh & mesh) {
 }
 
 void GPU::drawTesselatedMesh(const Mesh & mesh, uint patchSize){
-	// \todo check if we need to specify the patch size or if it's specified in the shader
+	_state.patchSize = patchSize;
+	
 	drawMesh(mesh);
 }
 

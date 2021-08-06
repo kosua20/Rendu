@@ -554,16 +554,17 @@ public:
 
 	// Blend state.
 	glm::vec4 blendColor {0.0f}; ///< Blend color for constant blend mode.
+
+	// Color state.
+	glm::bvec4 colorWriteMask {true}; ///< Which channels should be written to when rendering.
+
+	//
 	BlendFunction blendSrcRGB = BlendFunction::ONE; ///< Blending source type for RGB channels.
 	BlendFunction blendSrcAlpha = BlendFunction::ONE; ///< Blending source type for alpha channel.
 	BlendFunction blendDstRGB = BlendFunction::ONE; ///< Blending destination type for RGB channels.
 	BlendFunction blendDstAlpha = BlendFunction::ONE; ///< Blending destination type for alpha channel.
 	BlendEquation blendEquationRGB = BlendEquation::ADD; ///< Blending equation for RGB channels.
 	BlendEquation blendEquationAlpha = BlendEquation::ADD; ///< Blending equation for alpha channel.
-	bool blend = false; ///< Blending enabled or not.
-
-	// Color state.
-	glm::bvec4 colorWriteMask {true}; ///< Which channels should be written to when rendering.
 
 	// Geometry state.
 	Faces cullFaceMode = Faces::BACK; ///< Which faces should be culled.
@@ -571,32 +572,34 @@ public:
 	//float polygonOffsetFactor = 0.0f; ///< Polygon offset depth scaling.
 	//float polygonOffsetUnits = 0.0f; ///< Polygon offset depth shifting.
 	//bool polygonOffset	= false; ///< Is polygon offset enabled or not.
-	bool cullFace	  = false; ///< Is backface culling enabled or not.
 
 	// Depth state.
 	//glm::vec2 depthRange {0.0f, 1.f}; ///< Depth value valid range.
 	TestFunction depthFunc = TestFunction::LESS; ///< Depth test function.
-	//float depthClearValue = 1.0f; ///< Depth for clearing depth buffer.
-	bool depthTest	= false; ///< Is depth test enabled or not.
-	//bool depthClamp	  = false; ///< Should depth be clamped to the valid range or not.
-	bool depthWriteMask	 = true; ///< Should depth be written to the depth buffer or not.
-
 	// Stencil state
 	TestFunction stencilFunc = TestFunction::ALWAYS; ///< Stencil test function.
 	StencilOp stencilFail = StencilOp::KEEP; ///< Operation when the stencil test fails.
 	StencilOp stencilPass = StencilOp::KEEP; ///< Operation when the stencil test passes but the depth test fails.
 	StencilOp stencilDepthPass = StencilOp::KEEP; ///< Operation when the stencil and depth tests passes.
+	uint patchSize = 3; ///< Tesselation patch size.
 	uchar stencilValue = 0; ///< Stencil reference value.
 	bool stencilTest = false; ///< Is the stencil test enabled or not.
 	bool stencilWriteMask = true; ///< should stencil be written to the stencil buffer or not.
+	//float depthClearValue = 1.0f; ///< Depth for clearing depth buffer.
+	bool depthTest	= false; ///< Is depth test enabled or not.
+	//bool depthClamp	  = false; ///< Should depth be clamped to the valid range or not.
+	bool depthWriteMask	 = true; ///< Should depth be written to the depth buffer or not.
+	bool cullFace	  = false; ///< Is backface culling enabled or not.
+	bool blend = false; ///< Blending enabled or not.
 
 	// Viewport and scissor state.
 	//glm::vec4 viewport {0.0f}; ///< Current viewport region.
 	bool sentinel = false;
+
+
 	// Binding state.
 	Program* program = nullptr;
 	const GPUMesh* mesh = nullptr;
-
 
 	struct FramebufferInfos {
 		const Framebuffer* framebuffer = nullptr;
