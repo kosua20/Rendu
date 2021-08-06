@@ -129,6 +129,13 @@ bool VkUtils::getQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface, ui
 
 VKAPI_ATTR VkBool32 VKAPI_CALL vkDebugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageType, const VkDebugUtilsMessengerCallbackDataEXT* callbackData, void* userData){
 	(void)userData;
+
+	// Messages to ignore.
+	static const std::vector<int32_t> idsToIgnore = { 0x609a13b /* UNASSIGNED-CoreValidation-Shader-OutputNotConsumed */};
+	if(std::find(idsToIgnore.begin(), idsToIgnore.end(), callbackData->messageIdNumber) != idsToIgnore.end()){
+		return VK_FALSE;
+	}
+
 	// Build message.
 	std::string message = "";
 	if(messageType & VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT){
@@ -140,6 +147,15 @@ VKAPI_ATTR VkBool32 VKAPI_CALL vkDebugCallback(VkDebugUtilsMessageSeverityFlagBi
 
 	if(messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT){
 		Log::Error() << Log::GPU << message << std::endl;
+		// In debug, breakpoint for convenience, after the log.
+#ifdef DEBUG
+	#ifdef _WIN32
+			__debugbreak();
+	#elif defined(__x86_64__)
+			__asm__ volatile("int $0x03");
+	#endif
+#endif
+
 	} else if(messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT){
 		Log::Warning() << Log::GPU << message << std::endl;
 	} else if(messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT){
