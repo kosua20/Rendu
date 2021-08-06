@@ -273,6 +273,13 @@ void ShaderCompiler::reflect(glslang::TProgram & program, Program::Stage & stage
 
 	}
 
+	static const std::map<glslang::TSamplerDim, TextureShape> texShapes = {
+		{glslang::TSamplerDim::Esd1D, TextureShape::D1},
+		{glslang::TSamplerDim::Esd2D, TextureShape::D2},
+		{glslang::TSamplerDim::Esd3D, TextureShape::D3},
+		{glslang::TSamplerDim::EsdCube, TextureShape::Cube}
+	};
+
 	// Retrieve each uniform infos.
 	const size_t uniformCount = program.getNumUniformVariables();
 	for(size_t uid = 0; uid < uniformCount; ++uid){
@@ -280,12 +287,24 @@ void ShaderCompiler::reflect(glslang::TProgram & program, Program::Stage & stage
 		const glslang::TType& type = *uniform.getType();
 
 		const int binding = uniform.getBinding();
+		// If the variable is freely bound, it's a texture.
 		if(binding >= 0){
 			// This is a sampler.
+			const glslang::TSampler& sampler = uniform.getType()->getSampler();
+			if(texShapes.count(sampler.dim) == 0){
+				Log::Error() << "Unsupported texture shape in shader." << std::endl;
+				continue;
+			}
+
 			stage.samplers.emplace_back();
-			stage.samplers.back().name = uniform.name;
-			stage.samplers.back().binding = binding;
-			stage.samplers.back().set = getSetFromType(type);
+			Program::SamplerDef& def = stage.samplers.back();
+			def.name = uniform.name;
+			def.binding = binding;
+			def.set = getSetFromType(type);
+			def.shape = texShapes.at(sampler.dim);
+			if(sampler.isArrayed()){
+				def.shape = def.shape | TextureShape::Array;
+			}
 			continue;
 		}
 		

@@ -125,8 +125,13 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 					continue;
 				}
 			}
+			const Texture* defaultTex = Resources::manager().getDefaultTexture(image.shape);
+
 			_textures[image.binding] = TextureState();
 			_textures[image.binding].name = image.name;
+			_textures[image.binding].view = defaultTex->gpu->view;
+			_textures[image.binding].sampler = defaultTex->gpu->sampler;
+			_textures[image.binding].shape = image.shape;
 		}
 	}
 	
@@ -451,6 +456,14 @@ void Program::texture(const Texture& texture, uint slot){
 
 void Program::texture(const Texture* texture, uint slot){
 	Program::texture(*texture, slot);
+}
+
+void Program::defaultTexture(uint slot){
+	auto existingTex = _textures.find(slot);
+	if(existingTex != _textures.end()) {
+		// Reset the texture by binding the default one with the appropriate shape.
+		texture(Resources::manager().getDefaultTexture(existingTex->second.shape), slot);
+	}
 }
 
 void Program::textures(const std::vector<const Texture *> & textures, size_t startingSlot){

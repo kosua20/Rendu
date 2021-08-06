@@ -47,6 +47,7 @@ public:
 
 	struct SamplerDef {
 		std::string name;
+		TextureShape shape;
 		uint binding;
 		uint set;
 	};
@@ -118,6 +119,8 @@ public:
 
 	void textures(const std::vector<const Texture *> & textures, size_t startingSlot = 0);
 
+	void defaultTexture(uint slot);
+	
 	void update();
 
 	/** Set a given uniform value.
@@ -353,6 +356,7 @@ private:
 		std::string name;
 		VkImageView view = VK_NULL_HANDLE;
 		VkSampler sampler = VK_NULL_HANDLE;
+		TextureShape shape = TextureShape::D2;
 	};
 
 	struct StaticBufferState {
