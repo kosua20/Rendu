@@ -6,13 +6,15 @@ layout(location = 2) in vec2 uv; ///< Texture coordinates.
 layout(location = 3) in vec3 tang; ///< Tangent.
 layout(location = 4) in vec3 binor; ///< Binormal.
 
-uniform mat4 mvp; ///< MVP transformation matrix.
-uniform mat3 normalMatrix; ///< Normal transformation matrix.
-uniform bool hasUV; ///< Does the mesh have texture coordinates.
+layout(set = 0, binding = 1) uniform UniformBlock {
+	mat4 mvp; ///< MVP transformation matrix.
+	mat4 normalMatrix; ///< Normal transformation matrix.
+	bool hasUV; ///< Does the mesh have texture coordinates.
+};
 
-out INTERFACE {
-    mat3 tbn; ///< Normal to view matrix.
-	vec2 uv; ///< UV coordinateS.
+layout(location = 0) out INTERFACE {
+    mat4 tbn; ///< Normal to view matrix.
+	vec4 uv; ///< UV coordinateS.
 } Out ;
 
 /** Apply the transformation to the input vertex.
@@ -22,12 +24,16 @@ void main(){
 	// We multiply the coordinates by the MVP matrix, and ouput the result.
 	gl_Position = mvp * vec4(v, 1.0);
 
-	Out.uv = hasUV ? uv : vec2(0.5);
-
+	Out.uv.xy = hasUV ? uv : vec2(0.5);
+	Out.uv.zw = vec2(0.0);
+	
 	// Compute the TBN matrix (from tangent space to view space).
-	vec3 T = hasUV ? normalize(normalMatrix * tang) : vec3(0.0);
-	vec3 B = hasUV ? normalize(normalMatrix * binor) : vec3(0.0);
-	vec3 N = normalize(normalMatrix * n);
-	Out.tbn = mat3(T, B, N);
+	mat3 nMat = mat3(normalMatrix);
+	vec3 T = hasUV ? normalize(nMat * tang) : vec3(0.0);
+	vec3 B = hasUV ? normalize(nMat * binor) : vec3(0.0);
+	vec3 N = normalize(nMat * n);
+	Out.tbn = mat4(mat3(T, B, N));
+
+	
 	
 }

@@ -1,9 +1,9 @@
 
-in INTERFACE {
+layout(location = 0) in INTERFACE {
 	vec3 pos; ///< Position in model space.
 } In ;
 
-layout(binding = 0) uniform samplerCube texture0; ///< Cubemap color.
+layout(set = 1, binding = 0) uniform samplerCube texture0; ///< Cubemap color.
 
 layout(location = 0) out vec4 fragColor; ///< Color.
 

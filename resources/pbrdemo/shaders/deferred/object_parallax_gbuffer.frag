@@ -3,18 +3,21 @@
 
 #define MATERIAL_ID 2
 
-in INTERFACE {
-    mat3 tbn; ///< Normal to view matrix.
-	vec3 tangentSpacePosition; ///< Tangent space position.
-	vec3 viewSpacePosition; ///< View space position.
+layout(location = 0) in INTERFACE {
+    mat4 tbn; ///< Normal to view matrix.
+	vec4 tangentSpacePosition; ///< Tangent space position.
+	vec4 viewSpacePosition; ///< View space position.
 	vec2 uv; ///< UV coordinates.
 } In ;
 
-layout(binding = 0) uniform sampler2D texture0; ///< Albedo.
-layout(binding = 1) uniform sampler2D texture1; ///< Normal map.
-layout(binding = 2) uniform sampler2D texture2; ///< Effects map.
-layout(binding = 3) uniform sampler2D texture3; ///< Local depth map.
-uniform mat4 p; ///< Projection matrix.
+layout(set = 1, binding = 0) uniform sampler2D texture0; ///< Albedo.
+layout(set = 1, binding = 1) uniform sampler2D texture1; ///< Normal map.
+layout(set = 1, binding = 2) uniform sampler2D texture2; ///< Effects map.
+layout(set = 1, binding = 3) uniform sampler2D texture3; ///< Local depth map.
+
+layout(set = 0, binding = 0) uniform UniformBlock {
+	mat4 p; ///< Projection matrix.
+};
 
 // Output: the fragment color
 layout (location = 0) out vec4 fragColor; ///< Color.
@@ -29,7 +32,7 @@ void main(){
 	vec2 positionShift;
 	
 	// Compute the new uvs, and use them for the remaining steps.
-	vec3 vTangentDir = normalize(- In.tangentSpacePosition);
+	vec3 vTangentDir = normalize(- In.tangentSpacePosition.xyz);
 	localUV = parallax(localUV, vTangentDir, texture3, positionShift);
 	// If UV are outside the texture ([0,1]), we discard the fragment.
 	if(localUV.x > 1.0 || localUV.y  > 1.0 || localUV.x < 0.0 || localUV.y < 0.0){
@@ -43,7 +46,7 @@ void main(){
 	}
 	
 	// Flip the up of the local frame for back facing fragments.
-	mat3 tbn = In.tbn;
+	mat3 tbn = mat3(In.tbn);
 	tbn[2] *= (gl_FrontFacing ? 1.0 : -1.0);
 	// Compute the normal at the fragment using the tangent space matrix and the normal read in the normal map.
 	vec3 n = texture(texture1,localUV).rgb;
@@ -55,6 +58,6 @@ void main(){
 	fragNormal.rgb = n * 0.5 + 0.5;
 	fragEffects.rgb = texture(texture2,localUV).rgb;
 	
-	updateFragmentPosition(localUV, positionShift, In.viewSpacePosition, p, tbn, texture3);
+	updateFragmentPosition(localUV, positionShift, In.viewSpacePosition.xyz, p, tbn, texture3);
 	
 }

@@ -4,23 +4,24 @@
 #include "utils.glsl"
 
 // Uniforms
-layout(binding = 0) uniform sampler2D albedoTexture; ///< Albedo.
-layout(binding = 1) uniform sampler2D normalTexture; ///< Normal.
-layout(binding = 2) uniform sampler2D depthTexture; ///< Depth.
-layout(binding = 3) uniform sampler2D effectsTexture; ///< Effects.
-layout(binding = 4) uniform sampler2DArray shadowMap; ///< Shadow map.
+layout(set = 1, binding = 0) uniform sampler2D albedoTexture; ///< Albedo.
+layout(set = 1, binding = 1) uniform sampler2D normalTexture; ///< Normal.
+layout(set = 1, binding = 2) uniform sampler2D depthTexture; ///< Depth.
+layout(set = 1, binding = 3) uniform sampler2D effectsTexture; ///< Effects.
+layout(set = 1, binding = 4) uniform sampler2DArray shadowMap; ///< Shadow map.
 
-uniform vec4 projectionMatrix; ///< Camera projection matrix
-uniform mat4 viewToLight; ///< View to light space matrix.
-
-uniform vec3 lightPosition; ///< Light position in view space.
-uniform vec3 lightDirection; ///< Light direction in view space.
-uniform vec3 lightColor; ///< Light intensity.
-uniform vec2 intOutAnglesCos; ///< Angular attenuation inner and outer angles.
-uniform float lightRadius; ///< Attenuation radius.
-uniform float shadowBias; ///< shadow depth bias.
-uniform int shadowMode; ///< The shadow map technique.
-uniform int shadowLayer; ///< The shadow map layer.
+layout(set = 0, binding = 0) uniform UniformBlock {
+	mat4 viewToLight; ///< View to light space matrix.
+	vec4 projectionMatrix; ///< Camera projection matrix
+	vec3 lightPosition; ///< Light position in view space.
+	vec3 lightDirection; ///< Light direction in view space.
+	vec3 lightColor; ///< Light intensity.
+	vec2 intOutAnglesCos; ///< Angular attenuation inner and outer angles.
+	float lightRadius; ///< Attenuation radius.
+	float shadowBias; ///< shadow depth bias.
+	int shadowMode; ///< The shadow map technique.
+	int shadowLayer; ///< The shadow map layer.
+};
 
 layout(location = 0) out vec3 fragColor; ///< Color.
 

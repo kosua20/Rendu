@@ -1,37 +1,39 @@
 
 #define MATERIAL_ID 1 ///< The material ID.
 
-in INTERFACE {
-    mat3 tbn; ///< Normal to view matrix.
-	vec2 uv; ///< UV coordinates.
+layout(location = 0) in INTERFACE {
+    mat4 tbn; ///< Normal to view matrix.
+	vec4 uv; ///< UV coordinates.
 } In ;
 
-layout(binding = 0) uniform sampler2D texture0; ///< Albedo.
-layout(binding = 1) uniform sampler2D texture1; ///< Normal map.
-layout(binding = 2) uniform sampler2D texture2; ///< Effects map.
+layout(set = 1, binding = 0) uniform sampler2D texture0; ///< Albedo.
+layout(set = 1, binding = 1) uniform sampler2D texture1; ///< Normal map.
+layout(set = 1, binding = 2) uniform sampler2D texture2; ///< Effects map.
 
 layout (location = 0) out vec4 fragColor; ///< Color.
 layout (location = 1) out vec3 fragNormal; ///< View space normal.
 layout (location = 2) out vec3 fragEffects; ///< Effects.
 
-uniform bool hasUV; ///< Does the mesh have texture coordinates.
+layout(set = 0, binding = 0) uniform UniformBlock {
+	bool hasUV; ///< Does the mesh have texture coordinates.
+};
 
 /** Transfer albedo and effects along with the material ID, and output the final normal 
 	(combining geometry normal and normal map) in view space. */
 void main(){
 	
-	vec4 color = texture(texture0, In.uv);
+	vec4 color = texture(texture0, In.uv.xy);
 	if(color.a <= 0.01){
 		discard;
 	}
 	
 	// Flip the up of the local frame for back facing fragments.
-	mat3 tbn = In.tbn;
+	mat3 tbn = mat3(In.tbn);
 	tbn[2] *= (gl_FrontFacing ? 1.0 : -1.0);
 	// Compute the normal at the fragment using the tangent space matrix and the normal read in the normal map.
 	vec3 n;
 	if(hasUV){
-		n = texture(texture1, In.uv).rgb ;
+		n = texture(texture1, In.uv.xy).rgb;
 		n = normalize(n * 2.0 - 1.0);
 		n = normalize(tbn * n);
 	} else {
@@ -43,6 +45,6 @@ void main(){
 	fragColor.a = float(MATERIAL_ID)/255.0;
 	
 	fragNormal.rgb = n * 0.5 + 0.5;
-	fragEffects.rgb = texture(texture2, In.uv).rgb;
+	fragEffects.rgb = texture(texture2, In.uv.xy).rgb;
 	
 }

@@ -3,10 +3,12 @@
 layout(location = 0) in vec3 v; ///< Position.
 layout(location = 2) in vec2 uv; ///< Texture coordinates.
 
-uniform mat4 mvp; ///< MVP transformation matrix.
-uniform bool hasUV; ///< Does the mesh ave texture coordinates.
+layout(set = 0, binding = 1) uniform UniformBlock {
+	mat4 mvp; ///< MVP transformation matrix.
+	bool hasUV; ///< Does the mesh ave texture coordinates.
+};
 
-out INTERFACE {
+layout(location = 0) out INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } Out ;
 
@@ -18,5 +20,6 @@ void main(){
 	gl_Position = mvp * vec4(v, 1.0);
 
 	Out.uv = hasUV ? uv : vec2(0.5);
+
 	
 }

@@ -3,39 +3,41 @@
 #include "common_parallax.glsl"
 #include "forward_lights.glsl"
 
-in INTERFACE {
-    mat3 tbn; ///< Normal to view matrix.
-	vec3 tangentSpacePosition; ///< Tangent space position.
-	vec3 viewSpacePosition; ///< View space position.
+layout(location = 0) in INTERFACE {
+    mat4 tbn; ///< Normal to view matrix.
+	vec4 tangentSpacePosition; ///< Tangent space position.
+	vec4 viewSpacePosition; ///< View space position.
 	vec2 uv; ///< UV coordinates.
 } In ;
 
-layout(binding = 0) uniform sampler2D albedoTexture; ///< Albedo.
-layout(binding = 1) uniform sampler2D normalTexture; ///< Normal map.
-layout(binding = 2) uniform sampler2D effectsTexture; ///< Effects map.
-layout(binding = 3) uniform sampler2D depthTexture; ///< Effects map.
-layout(binding = 4) uniform sampler2D brdfPrecalc; ///< Preintegrated BRDF lookup table.
-layout(binding = 5) uniform samplerCube textureCubeMap; ///< Background environment cubemap (with preconvoluted versions of increasing roughness in mipmap levels).
-layout(binding = 6) uniform sampler2DArray shadowMaps2D; ///< Shadow maps array.
-layout(binding = 7) uniform samplerCubeArray shadowMapsCube; ///< Shadow cubemaps array.
+layout(set = 1, binding = 0) uniform sampler2D albedoTexture; ///< Albedo.
+layout(set = 1, binding = 1) uniform sampler2D normalTexture; ///< Normal map.
+layout(set = 1, binding = 2) uniform sampler2D effectsTexture; ///< Effects map.
+layout(set = 1, binding = 3) uniform sampler2D depthTexture; ///< Effects map.
+layout(set = 1, binding = 4) uniform sampler2D brdfPrecalc; ///< Preintegrated BRDF lookup table.
+layout(set = 1, binding = 5) uniform samplerCube textureCubeMap; ///< Background environment cubemap (with preconvoluted versions of increasing roughness in mipmap levels).
+layout(set = 1, binding = 6) uniform sampler2DArray shadowMaps2D; ///< Shadow maps array.
+layout(set = 1, binding = 7) uniform samplerCubeArray shadowMapsCube; ///< Shadow cubemaps array.
 
 /// SH approximation of the environment irradiance (UBO).
-layout(std140, binding = 1) uniform SHCoeffs {
+layout(std140, set = 2, binding = 1) uniform SHCoeffs {
 	vec4 shCoeffs[9];
 };
 
-uniform mat4 inverseV; ///< The view to world transformation matrix.
-uniform vec3 cubemapPos; ///< The cubemap location
-uniform vec3 cubemapCenter; ///< The cubemap parallax box center
-uniform vec3 cubemapExtent; ///< The cubemap parallax box half size
-uniform vec2 cubemapCosSin; ///< The cubemap parallax box orientation (precomputed cos/sin).
-uniform float maxLod; ///< Mip level count for background map.
-uniform mat4 p; ///< Projection matrix.
-uniform vec2 invScreenSize; ///< Destination size.
+layout(set = 0, binding = 0) uniform UniformBlock {
+	mat4 inverseV; ///< The view to world transformation matrix.
+	mat4 p; ///< Projection matrix.
+	vec3 cubemapPos; ///< The cubemap location
+	vec3 cubemapCenter; ///< The cubemap parallax box center
+	vec3 cubemapExtent; ///< The cubemap parallax box half size
+	vec2 cubemapCosSin; ///< The cubemap parallax box orientation (precomputed cos/sin).
+	vec2 invScreenSize; ///< Destination size.
+	float maxLod; ///< Mip level count for background map.
+	int lightsCount; ///< Number of active lights.
+};
 
-uniform int lightsCount; ///< Number of active lights.
 /// Store the lights in a continuous buffer (UBO).
-layout(std140, binding = 0) uniform Lights {
+layout(std140, set = 2, binding = 0) uniform Lights {
 	GPULight lights[MAX_LIGHTS_COUNT];
 };
 
@@ -48,7 +50,7 @@ void main(){
 	vec2 positionShift;
 	
 	// Compute the new uvs, and use them for the remaining steps.
-	vec3 vTangentDir = normalize(- In.tangentSpacePosition);
+	vec3 vTangentDir = normalize(- In.tangentSpacePosition.xyz);
 	localUV = parallax(localUV, vTangentDir, depthTexture, positionShift);
 	// If UV are outside the texture ([0,1]), we discard the fragment.
 	if(localUV.x > 1.0 || localUV.y  > 1.0 || localUV.x < 0.0 || localUV.y < 0.0){
@@ -62,14 +64,14 @@ void main(){
 	vec3 baseColor = albedoInfos.rgb;
 	
 	// Flip the up of the local frame for back facing fragments.
-	mat3 tbn = In.tbn;
+	mat3 tbn = mat3(In.tbn);
 	tbn[2] *= (gl_FrontFacing ? 1.0 : -1.0);
 	// Compute the normal at the fragment using the tangent space matrix and the normal read in the normal map.
 	vec3 n = texture(normalTexture, localUV).rgb ;
 	n = normalize(n * 2.0 - 1.0);
 	n = normalize(tbn * n);
 
-	vec3 newViewSpacePosition = updateFragmentPosition(localUV, positionShift, In.viewSpacePosition, p, tbn, depthTexture);
+	vec3 newViewSpacePosition = updateFragmentPosition(localUV, positionShift, In.viewSpacePosition.xyz, p, tbn, depthTexture);
 
 	vec3 infos = texture(effectsTexture, localUV).rgb;
 	float roughness = max(0.045, infos.r);

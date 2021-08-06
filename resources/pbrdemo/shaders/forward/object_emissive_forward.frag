@@ -2,11 +2,11 @@
 #include "common_pbr.glsl"
 #include "forward_lights.glsl"
 
-in INTERFACE {
+layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In ;
 
-layout(binding = 0) uniform sampler2D emissiveTexture; ///< Emissive.
+layout(set = 1, binding = 0) uniform sampler2D emissiveTexture; ///< Emissive.
 
 // Emissive objects don't receive any light.
 

@@ -2,31 +2,32 @@
 #include "common_pbr.glsl"
 #include "utils.glsl"
 
-in INTERFACE {
+layout(location = 0) in INTERFACE {
 	vec2 uv; ///< Texture coordinates.
 } In ;
 
-
-layout(binding = 0) uniform sampler2D albedoTexture; ///< The albedo texture.
-layout(binding = 1) uniform sampler2D normalTexture; ///< The normal texture.
-layout(binding = 2) uniform sampler2D effectsTexture; ///< The effects texture.
-layout(binding = 3) uniform sampler2D depthTexture; ///< The depth texture.
-layout(binding = 4) uniform sampler2D ssaoTexture; ///< The SSAO texture.
-layout(binding = 5) uniform sampler2D brdfPrecalc; ///< Preintegrated BRDF lookup table.
-layout(binding = 6) uniform samplerCube textureCubeMap; ///< Background environment cubemap (with preconvoluted versions of increasing roughness in mipmap levels).
+layout(set = 1, binding = 0) uniform sampler2D albedoTexture; ///< The albedo texture.
+layout(set = 1, binding = 1) uniform sampler2D normalTexture; ///< The normal texture.
+layout(set = 1, binding = 2) uniform sampler2D effectsTexture; ///< The effects texture.
+layout(set = 1, binding = 3) uniform sampler2D depthTexture; ///< The depth texture.
+layout(set = 1, binding = 4) uniform sampler2D ssaoTexture; ///< The SSAO texture.
+layout(set = 1, binding = 5) uniform sampler2D brdfPrecalc; ///< Preintegrated BRDF lookup table.
+layout(set = 1, binding = 6) uniform samplerCube textureCubeMap; ///< Background environment cubemap (with preconvoluted versions of increasing roughness in mipmap levels).
 
 /// SH approximation of the environment irradiance (UBO).
-layout(std140, binding = 0) uniform SHCoeffs {
+layout(std140, set = 2, binding = 0) uniform SHCoeffs {
 	vec4 shCoeffs[9];
 };
-uniform mat4 inverseV; ///< The view to world transformation matrix.
-uniform vec4 projectionMatrix; ///< The camera projection matrix.
 
-uniform vec3 cubemapPos; ///< The cubemap location
-uniform vec3 cubemapCenter; ///< The cubemap parallax box center
-uniform vec3 cubemapExtent; ///< The cubemap parallax box half size
-uniform vec2 cubemapCosSin; ///< The cubemap parallax box orientation (precomputed cos/sin).
-uniform float maxLod; ///< Mip level count for background map.
+layout(set = 0, binding = 0) uniform UniformBlock {
+	mat4 inverseV; ///< The view to world transformation matrix.
+	vec4 projectionMatrix; ///< The camera projection matrix.
+	vec3 cubemapPos; ///< The cubemap location
+	vec3 cubemapCenter; ///< The cubemap parallax box center
+	vec3 cubemapExtent; ///< The cubemap parallax box half size
+	vec2 cubemapCosSin; ///< The cubemap parallax box orientation (precomputed cos/sin).
+	float maxLod; ///< Mip level count for background map.
+};
 
 layout(location = 0) out vec4 fragColor; ///< Color.
 

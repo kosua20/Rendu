@@ -4,23 +4,23 @@
 #include "utils.glsl"
 
 // Uniforms
-layout(binding = 0) uniform sampler2D albedoTexture; ///< Albedo.
-layout(binding = 1) uniform sampler2D normalTexture; ///< Normal.
-layout(binding = 2) uniform sampler2D depthTexture; ///< Depth.
-layout(binding = 3) uniform sampler2D effectsTexture;///< Effects.
-layout(binding = 4) uniform samplerCubeArray shadowMap; ///< Shadow map.
+layout(set = 1, binding = 0) uniform sampler2D albedoTexture; ///< Albedo.
+layout(set = 1, binding = 1) uniform sampler2D normalTexture; ///< Normal.
+layout(set = 1, binding = 2) uniform sampler2D depthTexture; ///< Depth.
+layout(set = 1, binding = 3) uniform sampler2D effectsTexture;///< Effects.
+layout(set = 1, binding = 4) uniform samplerCubeArray shadowMap; ///< Shadow map.
 
-uniform vec4 projectionMatrix; ///< Camera projection matrix
-uniform mat3 viewToLight; ///< Light direction in view space.
-
-uniform vec3 lightPosition; ///< Light position in view space.
-uniform vec3 lightColor; ///< Light intensity.
-uniform float lightRadius; ///< Attenuation radius.
-uniform float lightFarPlane; ///< Light projection far plane.
-uniform float shadowBias; ///< shadow depth bias.
-uniform int shadowMode; ///< The shadow map technique.
-uniform int shadowLayer; ///< The shadow map layer.
-
+layout(set = 0, binding = 0) uniform UniformBlock {
+	mat4 viewToLight; ///< Light direction in view space.
+	vec4 projectionMatrix; ///< Camera projection matrix
+	vec3 lightPosition; ///< Light position in view space.
+	vec3 lightColor; ///< Light intensity.
+	float lightRadius; ///< Attenuation radius.
+	float lightFarPlane; ///< Light projection far plane.
+	float shadowBias; ///< shadow depth bias.
+	int shadowMode; ///< The shadow map technique.
+	int shadowLayer; ///< The shadow map layer.
+};
 
 layout(location = 0) out vec3 fragColor; ///< Color.
 
@@ -63,7 +63,7 @@ void main(){
 	// We only care about the direction, so we don't need the translation.
 	float shadowing = 1.0;
 	if(shadowMode != SHADOW_NONE){
-		vec3 deltaPositionWorld = -viewToLight*deltaPosition;
+		vec3 deltaPositionWorld = -mat3(viewToLight) * deltaPosition;
 		shadowing = shadowCube(shadowMode, deltaPositionWorld, shadowMap, shadowLayer, lightFarPlane, shadowBias);
 	}
 	
