@@ -97,15 +97,13 @@ private:
 	bool _shouldUpdateSky = true; ///< Should the environment map be updated at this frame.
 
 	// Ocean options.
-	Buffer<GerstnerWave> _waves; ///< Waves parameters.
+	UniformBuffer<GerstnerWave> _waves; ///< Waves parameters.
 	const int _gridOceanRes = 64; ///< Ocean grid resolution.
 	float _maxLevelX = 1.0f; ///< Maximum level of detail.
 	float _maxLevelY = 1.0f; ///< Maximum subdivision amount.
 	float _distanceScale = 1.0f; ///< Extra distance scaling.
 
 	// Debug.
-	GPUQuery _primsGround = GPUQuery(GPUQuery::Type::PRIMITIVES_GENERATED); ///< Terrain generated primitives count.
-	GPUQuery _primsOcean = GPUQuery(GPUQuery::Type::PRIMITIVES_GENERATED); ///< Ocean generated primitives count.
 	bool _showTerrain = true; ///< Should the terrain be displayed.
 	bool _showOcean = true; ///< Should the ocean be displayed.
 	bool _showSky = true; ///< Should the sky be displayed.

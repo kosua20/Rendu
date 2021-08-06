@@ -1,16 +1,18 @@
 
-in INTERFACE {
+layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In ;
 
-uniform float time; ///< Current time.
+layout(set = 0, binding = 0) uniform UniformBlock {
+	float time; ///< Current time.
+};
 
-layout(binding = 0) uniform sampler2D colorTexture; ///< Color to output.
-layout(binding = 1) uniform sampler2D posTexture; ///< Position to output.
-layout(binding = 2) uniform sampler2D caustics; ///< Position to output.
-layout(binding = 3) uniform sampler2D normalMap; ///< Position to output.
+layout(set = 1, binding = 0) uniform sampler2D colorTexture; ///< Color to output.
+layout(set = 1, binding = 1) uniform sampler2D posTexture; ///< Position to output.
+layout(set = 1, binding = 2) uniform sampler2D caustics; ///< Position to output.
+layout(set = 1, binding = 3) uniform sampler2D normalMap; ///< Position to output.
 
-layout(location = 0) out vec3 fragColor; ///< Color.
+layout(location = 0) out vec4 fragColor; ///< Color.
 
 /** Copy the scene, applying moving caustics. */
 void main(){
@@ -26,5 +28,6 @@ void main(){
 	float edgeScale = 15.0*clamp(-5.0*fragPos.y, 0.0, 1.0);
 	// Combine ocean floor color and caustics.
 	// Clamp to avoid artefacts when blurring.
-	fragColor = min((1.0 + edgeScale * caust) * textureLod(colorTexture, In.uv, 0.0).rgb, 5.0);
+	fragColor.rgb = min((1.0 + edgeScale * caust) * textureLod(colorTexture, In.uv, 0.0).rgb, 5.0);
+	fragColor.a = 1.0;
 }

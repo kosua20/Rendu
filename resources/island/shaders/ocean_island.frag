@@ -1,41 +1,42 @@
 
 #include "gerstner_waves.glsl"
 
-in INTERFACE {
-	vec3 pos; ///< World position.
-	vec3 srcPos; ///< World position before waves perturbation.
-	vec3 prevPos; ///< World position before small scale waves perturbation.
-} In ;
+layout(location = 0) in vec3 ifPos; ///< World space position.
+layout(location = 1) in vec3 ifSrcPos; ///< World space position before waves perturbation.
+layout(location = 2) in vec3 ifPrevPos; ///< World space position before small scale waves perturbation.
 
-uniform vec3 camPos; ///< Camera world position.
-uniform bool debugCol; ///< Use debug color instead of shading.
-uniform float time; ///< Elapsed time.
-uniform bool distantProxy; ///< Are we currently rendering the distant proxy.
-uniform vec2 invTargetSize; ///< Destination framebuffer size.
-uniform float waterGridHalf; ///< Half-size of the water grid.
-uniform float groundGridHalf; ///< Half-size of the terrain grid.
-uniform float invTexelSize; ///< Size of a terrain map texel in world space.
-uniform float invMapSize; ///< Inverse terrain map size.
-uniform bool underwater; ///< Is the camera underwater.
-uniform bool useTerrain; ///< Is the terrain currently renderer (for shadows)
 
-layout(binding = 0) uniform sampler2D foamMap; ///< Foam effects map.
-layout(binding = 1) uniform sampler2D terrainColor; ///< Shaded terrain with effects.
-layout(binding = 2) uniform sampler2D terrainPos; ///< Terrain world position map.
-layout(binding = 3) uniform sampler2D terrainColorBlur; ///< Blurred shaded terrain.
-layout(binding = 4) uniform sampler2D absorpScatterLUT; ///< Ocean absorption/scattering look-up table.
-layout(binding = 5) uniform sampler2D waveNormals; ///< Waves normal map.
-layout(binding = 6) uniform samplerCube envmap; ///< Environment map.
-layout(binding = 7) uniform sampler2D brdfCoeffs; ///< Linearized BRDF look-up table.
-layout(binding = 8) uniform sampler2D shadowMap; ///< Terrain shadow map (ocean level in the G channel).
+layout(set = 0, binding = 0) uniform UniformBlock {
+	vec3 camPos; ///< Camera world position.
+	vec2 invTargetSize; ///< Destination framebuffer size.
+	float time; ///< Elapsed time.
+	float waterGridHalf; ///< Half-size of the water grid.
+	float groundGridHalf; ///< Half-size of the terrain grid.
+	float invTexelSize; ///< Size of a terrain map texel in world space.
+	float invMapSize; ///< Inverse terrain map size.
+	bool underwater; ///< Is the camera underwater.
+	bool debugCol; ///< Use debug color instead of shading.
+	bool distantProxy; ///< Are we currently rendering the distant proxy.
+	bool useTerrain; ///< Is the terrain currently renderer (for shadows)
+};
+
+layout(set = 1, binding = 0) uniform sampler2D foamMap; ///< Foam effects map.
+layout(set = 1, binding = 1) uniform sampler2D terrainColor; ///< Shaded terrain with effects.
+layout(set = 1, binding = 2) uniform sampler2D terrainPos; ///< Terrain world position map.
+layout(set = 1, binding = 3) uniform sampler2D terrainColorBlur; ///< Blurred shaded terrain.
+layout(set = 1, binding = 4) uniform sampler2D absorpScatterLUT; ///< Ocean absorption/scattering look-up table.
+layout(set = 1, binding = 5) uniform sampler2D waveNormals; ///< Waves normal map.
+layout(set = 1, binding = 6) uniform samplerCube envmap; ///< Environment map.
+layout(set = 1, binding = 7) uniform sampler2D brdfCoeffs; ///< Linearized BRDF look-up table.
+layout(set = 1, binding = 8) uniform sampler2D shadowMap; ///< Terrain shadow map (ocean level in the G channel).
 
 /** Gerstner waves parameters. */
-layout(std140, binding = 0) uniform Waves {
+layout(std140, set = 2, binding = 0) uniform Waves {
 	Wave waves[8]; ///< Gerstner waves.
 };
 
-layout (location = 0) out vec3 fragColor; ///< Water shading.
-layout (location = 1) out vec3 fragWorldPos; ///< Ocean world position.
+layout (location = 0) out vec4 fragColor; ///< Water shading.
+layout (location = 1) out vec4 fragWorldPos; ///< Ocean world position.
 
 /** Evaluate Fresnel coefficient for air/water interface.
  \param NdotV angle difference between the surface normal and the view direction
@@ -59,7 +60,7 @@ void main(){
 	vec3 oceanFloorPosEarly;
 	if(distantProxy){
 		// For the distant cylinder mesh, raycast from the camera and intersect the ocean plane.
-		vec3 rayDir = normalize(In.pos - camPos);
+		vec3 rayDir = normalize(ifPos - camPos);
 		if(rayDir.y >= -0.001){
 			discard;
 		}
@@ -80,14 +81,15 @@ void main(){
 		prevPos = worldPos;
 	} else {
 		// For the tessellated grid just use the input info.
-		worldPos = In.pos;
+		worldPos = ifPos;
 		vec3 dView = worldPos - camPos;
 		viewDist = length(dView);
 		vdir = dView/max(viewDist, 0.001);
-		srcPos = In.srcPos;
-		prevPos = In.prevPos;
+		srcPos = ifSrcPos;
+		prevPos = ifPrevPos;
 	}
-	fragWorldPos = worldPos;
+	fragWorldPos.rgb = worldPos;
+	fragWorldPos.a = 1.0;
 
 	vec3 nn = vec3(0.0);
 	vec3 tn = vec3(0.0);
@@ -95,7 +97,7 @@ void main(){
 
 	// Compute waves normal, applying a fade out when in the distance to avoid aliasing.
 	float dist2 = viewDist*viewDist;
-	float adjust = 1000.0f;
+	float adjust = 2000.0f;
 	// We use the same split as when displacing the vertex.
 	float biasGerstner = 1.5;
 	for(int i = 7; i > 2; --i){
@@ -151,8 +153,8 @@ void main(){
 	}
 
 	// Lookup absorption and scattering values for the given distance under water.
-	vec3 absorp = textureLod(absorpScatterLUT, vec2(distUnderWater, 0.75), 0.0).rgb;
-	vec3 scatter = textureLod(absorpScatterLUT, vec2(distUnderWater, 0.25), 0.0).rgb;
+	vec3 absorp = textureLod(absorpScatterLUT, vec2(distUnderWater, 0.25), 0.0).rgb;
+	vec3 scatter = textureLod(absorpScatterLUT, vec2(distUnderWater, 0.75), 0.0).rgb;
 	vec3 baseColor = absorp * mix(floorColor, scatter, distUnderWater);
 
 	// Add underwater bubbles, using the same foam texture but at a lower LOD to blur (see CREST presentation).
@@ -202,9 +204,10 @@ void main(){
 		color += diffuseShadow * foamAtten * foam;
 	}
 	// At edges, mix with the shore color to ensure soft transitions.
-	fragColor = mix(floorColor, color, clamp(distUnderWater*30.0, 0.0, 1.0));
+	fragColor.rgb  = mix(floorColor, color, clamp(distUnderWater*30.0, 0.0, 1.0));
 
 	if(debugCol){
-		fragColor = vec3(0.9);
+		fragColor.rgb = vec3(0.9);
 	}
+	fragColor.a = 1.0;
 }

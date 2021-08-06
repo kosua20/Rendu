@@ -1,37 +1,35 @@
 
 #include "gerstner_waves.glsl"
 
-layout(quads, fractional_even_spacing) in; ///< Output quads with smooth transitions.
+layout(quads, fractional_even_spacing, cw) in; ///< Output quads with smooth transitions.
 
-uniform mat4 mvp; ///< Transformation matrix.
-uniform float time; ///< Elapsed time.
+layout(set = 0, binding = 3) uniform UniformBlock {
+	mat4 mvp; ///< Transformation matrix.
+	float time; ///< Elapsed time.
+};
 
 /** Gerstner waves parameters buffer. */
-layout(std140, binding = 0) uniform Waves {
+layout(std140, set = 2, binding = 0) uniform Waves {
 	Wave waves[8]; ///< Waves parameters.
 };
 
-in INTERFACE {
-	vec3 pos; ///< World position.
-} In[] ;
+layout(location = 0) in vec3 iPos[]; ///< World position.
 
-out INTERFACE {
-	vec3 pos; ///< World space position.
-	vec3 srcPos; ///< World space position before waves perturbation.
-	vec3 prevPos; ///< World space position before small scale waves perturbation.
-} Out ;
+layout(location = 0) out vec3 oPos; ///< World space position.
+layout(location = 1) out vec3 oSrcPos; ///< World space position before waves perturbation.
+layout(location = 2) out vec3 oPrevPos; ///< World space position before small scale waves perturbation.
 
 /** Apply Gerstner waves pertubrations to ocean plane. */
 void main(){
 
 	// Initial position.
 	vec3 worldPos = mix(
-			mix(In[0].pos, In[1].pos, gl_TessCoord.x),
-			mix(In[3].pos, In[2].pos, gl_TessCoord.x),
+			mix(iPos[0], iPos[1], gl_TessCoord.x),
+			mix(iPos[3], iPos[2], gl_TessCoord.x),
 			gl_TessCoord.y);
 	worldPos.y = 0.0;
 
-	Out.srcPos = worldPos;
+	oSrcPos = worldPos;
 
 	// Apply perturbation.
 	// High frequency waves.
@@ -41,7 +39,7 @@ void main(){
 	}
 	// Update position.
 	worldPos += posDelta;
-	Out.prevPos = worldPos;
+	oPrevPos = worldPos;
 	
 	// Low frequency waves.
 	posDelta = vec3(0.0);
@@ -51,5 +49,7 @@ void main(){
 	worldPos += posDelta;
 
 	gl_Position = mvp * vec4(worldPos, 1.0);
-	Out.pos = worldPos;
+	oPos = worldPos;
+
+	
 }

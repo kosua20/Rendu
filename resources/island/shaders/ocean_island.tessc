@@ -1,20 +1,17 @@
 
 layout(vertices = 4) out; ///< Output patches.
 
-uniform float maxLevelX; ///< Maximum LOD.
-uniform float maxLevelY; ///< Maximum level scaling.
-uniform float distanceScale; ///< Extra distance scaling.
+layout(set = 0, binding = 2) uniform UniformBlock {
+	vec3 camDir; ///< Camera direction.
+	vec3 camPos; ///< Camera world position.
+	float maxLevelX; ///< Maximum LOD.
+	float maxLevelY; ///< Maximum level scaling.
+	float distanceScale; ///< Extra distance scaling.
+};
 
-uniform vec3 camDir; ///< Camera direction.
-uniform vec3 camPos; ///< Camera world position.
+layout(location = 0) in vec3 inPos[];  ///< Grid positions.
 
-in INTERFACE {
-	vec3 pos; ///< Grid positions.
-} In[] ;
-
-out INTERFACE {
-	vec3 pos; ///< World space position.
-} Out[] ;
+layout(location = 0) out vec3 outPos[4]; ///< World space position.
 
 /** Evaluate the LOD at a given position.
 \param pos the world space position
@@ -28,14 +25,15 @@ float lodCorner(vec3 pos){
 
 /** Subdivide patches based on distance to camera. */
 void main(){
-	Out[gl_InvocationID].pos = In[gl_InvocationID].pos;
+	outPos[gl_InvocationID] = inPos[gl_InvocationID];
+
 	// Only do the work at the first corner.
 	if(gl_InvocationID == 0){
 		// Half-plane culling.
-		if(dot(In[0].pos - camPos, camDir) < 0.0 &&
-		  dot(In[1].pos - camPos, camDir) < 0.0 &&
-		  dot(In[2].pos - camPos, camDir) < 0.0 &&
-		  dot(In[3].pos - camPos, camDir) < 0.0
+		if(dot(inPos[0] - camPos, camDir) < 0.0 &&
+		  dot(inPos[1] - camPos, camDir) < 0.0 &&
+		  dot(inPos[2] - camPos, camDir) < 0.0 &&
+		  dot(inPos[3] - camPos, camDir) < 0.0
 		){
 			gl_TessLevelOuter[0] = -1.0;
 			gl_TessLevelOuter[1] = -1.0;
@@ -46,10 +44,10 @@ void main(){
 			return;
 		}
 		// Estimate the 4 corner LODs.
-		float lod0 = lodCorner(In[0].pos);
-		float lod1 = lodCorner(In[1].pos);
-		float lod2 = lodCorner(In[2].pos);
-		float lod3 = lodCorner(In[3].pos);
+		float lod0 = lodCorner(inPos[0]);
+		float lod1 = lodCorner(inPos[1]);
+		float lod2 = lodCorner(inPos[2]);
+		float lod3 = lodCorner(inPos[3]);
 		vec4 lods = vec4(lod0, lod1, lod2, lod3);
 		// For each edge, take the minimal lod.
 		vec4 edgeLods = min(lods.xyzw, lods.wxyz);

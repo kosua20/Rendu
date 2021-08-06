@@ -1,14 +1,16 @@
 
 layout(location = 0) in vec3 v; ///< Position.
 
-uniform mat4 mvp; ///< Transformation matrix.
-uniform vec3 camPos; ///< Camera world position.
+layout(set = 0, binding = 1) uniform UniformBlock {
+	mat4 mvp; ///< Transformation matrix.
+	vec3 camPos; ///< Camera world position.
+};
 
-out INTERFACE {
-	vec3 pos; ///< World position.
-	vec3 srcPos; ///< World position before waves perturbation.
-	vec3 prevPos; ///< World position before small scale waves perturbation.
-} Out;
+
+layout(location = 0) out vec3 oPos; ///< World position.
+layout(location = 1) out vec3 oSrcPos; ///< World position before waves perturbation.
+layout(location = 2) out vec3 oPrevPos; ///< World position before small scale waves perturbation.
+
 
 /** Project the cylinder geoemtry onto the far plane of the scene, centered on the camera. */
 void main(){
@@ -16,7 +18,9 @@ void main(){
 	gl_Position = mvp * vec4(worldPos, 1.0);
 	// Send to almost maximal depth.
 	gl_Position.z = gl_Position.w*0.9999;
-	Out.pos = worldPos;
-	Out.srcPos = worldPos;
-	Out.prevPos = worldPos;
+	oPos = worldPos;
+	oSrcPos = worldPos;
+	oPrevPos = worldPos;
+
+	
 }

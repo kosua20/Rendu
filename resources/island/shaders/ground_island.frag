@@ -1,26 +1,29 @@
-in INTERFACE {
+layout(location = 0) in INTERFACE {
 	vec3 pos; ///< World position
 	vec2 uv; ///< Texture coordinates
 } In ;
 
-uniform vec3 lightDirection; ///< Sun light direction.
-uniform bool debugCol; ///< Use debug color instead of shading.
-uniform vec3 camPos; ///< Camera world position.
+layout(set = 0, binding = 0) uniform UniformBlock {
+	vec3 lightDirection; ///< Sun light direction.
+	bool debugCol; ///< Use debug color instead of shading.
+	vec3 camPos; ///< Camera world position.
+};
 
-layout(binding=0) uniform sampler2D heightMap; ///< Terrain height map, height in R, normals in GBA.
-layout(binding=1) uniform sampler2D shadowMap; ///<Terrain shadowing factor, ground level in R, water level in G.
-layout(binding=2) uniform sampler2D surfaceNoise; ///< Noise surface normal map.
-layout(binding=3) uniform sampler2D glitterNoise; ///< Noise specular map.
-layout(binding=4) uniform sampler2D sandMapSteep; ///< Normal map for steep dunes.
-layout(binding=5) uniform sampler2D sandMapFlat; ///< Normal map for flat regions.
+layout(set = 1, binding = 0) uniform sampler2D heightMap; ///< Terrain height map, height in R, normals in GBA.
+layout(set = 1, binding = 1) uniform sampler2D shadowMap; ///<Terrain shadowing factor, ground level in R, water level in G.
+layout(set = 1, binding = 2) uniform sampler2D surfaceNoise; ///< Noise surface normal map.
+layout(set = 1, binding = 3) uniform sampler2D glitterNoise; ///< Noise specular map.
+layout(set = 1, binding = 4) uniform sampler2D sandMapSteep; ///< Normal map for steep dunes.
+layout(set = 1, binding = 5) uniform sampler2D sandMapFlat; ///< Normal map for flat regions.
 
-layout (location = 0) out vec3 fragColor; ///< Terrain appearance.
-layout (location = 1) out vec3 fragWorldPos; ///< Terrain world position.
+layout (location = 0) out vec4 fragColor; ///< Terrain appearance.
+layout (location = 1) out vec4 fragWorldPos; ///< Terrain world position.
 
 /** Shade the terrain by simulating sand appearance on dunes. */
 void main(){
 
-	fragWorldPos = In.pos;
+	fragWorldPos.xyz = In.pos;
+	fragWorldPos.w = 1.0;
 
 	// Get clean normal and height.
 	vec4 heightAndNor = textureLod(heightMap, In.uv, 0.0);
@@ -85,5 +88,6 @@ void main(){
 	if(debugCol){
 		color = vec3(0.9,0.9,0.9);
 	}
-	fragColor = color;
+	fragColor.rgb = color;
+	fragColor.a = 1.0;
 }

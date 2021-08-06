@@ -1,13 +1,15 @@
 
-in INTERFACE {
+layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In ;
 
-uniform vec3 lDir; ///< Light direction.
-uniform uint stepCount; ///< Raymarching step count.
-uniform float texelSize; ///< Size of a texel in world space.
+layout(set = 0, binding = 0) uniform UniformBlock {
+	vec3 lDir; ///< Light direction.
+	uint stepCount; ///< Raymarching step count.
+	float texelSize; ///< Size of a texel in world space.
+};
 
-layout(binding = 0) uniform sampler2D heightMap; ///< Height map.
+layout(set = 1, binding = 0) uniform sampler2D heightMap; ///< Height map.
 
 layout(location = 0) out vec2 shadow; ///< Shadowing factors.
 

@@ -1,18 +1,20 @@
 
 #include "atmosphere.glsl"
 
-in INTERFACE {
+layout(location = 0) in INTERFACE {
 	vec2 uv; ///< Texture coordinates.
 } In ;
 
-uniform mat4 clipToWorld; ///< Clip-to-world space transformation matrix.
-uniform vec3 viewPos; ///< The position in view space.
-uniform vec3 lightDirection; ///< The light direction in world space.
+layout(set = 0, binding = 0) uniform UniformBlock {
+	mat4 clipToWorld; ///< Clip-to-world space transformation matrix.
+	vec3 viewPos; ///< The position in view space.
+	vec3 lightDirection; ///< The light direction in world space.
+};
 
-layout(binding = 0) uniform sampler2D precomputedScattering; ///< Secondary scattering lookup table.
+layout(set = 1, binding = 0) uniform sampler2D precomputedScattering; ///< Secondary scattering lookup table.
 
-layout(location = 0) out vec3 fragColor; ///< Atmosphere color.
-layout(location = 1) out vec3 fragPos; ///< Atmosphere color.
+layout(location = 0) out vec4 fragColor; ///< Atmosphere color.
+layout(location = 1) out vec4 fragPos; ///< Atmosphere color.
 
 /** Simulate sky color based on an atmospheric scattering approximate model. */
 void main(){
@@ -30,6 +32,8 @@ void main(){
 	vec3 atmosphereColor = computeAtmosphereRadiance(groundSpaceViewPos, viewRay, lightDirection, precomputedScattering, defaultAtmosphere);
 
 	fragColor.rgb = atmosphereColor;
-	fragPos = viewPos + 10000.0 * viewRay;
+	fragColor.a = 1.0;
+	fragPos.rgb = viewPos + 10000.0 * viewRay;
+	fragPos.a = 1.0;
 }
 

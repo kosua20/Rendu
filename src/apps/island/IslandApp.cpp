@@ -5,22 +5,22 @@
 IslandApp::IslandApp(RenderingConfig & config) : CameraApp(config),
 	_oceanMesh("Ocean"), _farOceanMesh("Far ocean"),
 	_surfaceNoise("surface noise"), _glitterNoise("glitter noise"),
-	 _waves(8, BufferType::UNIFORM, DataUse::STATIC)
+	 _waves(8, DataUse::FRAME)
 {
 	_userCamera.projection(config.screenResolution[0] / config.screenResolution[1], 1.34f, 0.1f, 100.0f);
 	_userCamera.pose(glm::vec3(-2.234801,3.446842,-6.892219), glm::vec3(-1.869996,2.552125,-5.859552), glm::vec3(0.210734,0.774429,0.596532));
 	
 	// Framebuffer to store the rendered atmosphere result before tonemapping and upscaling to the window size.
 	const glm::vec2 renderRes = _config.renderingResolution();
-	const std::vector<Descriptor> descriptors = {{Layout::RGB32F, Filter::LINEAR_NEAREST, Wrap::CLAMP}, {Layout::RGB32F, Filter::LINEAR_NEAREST, Wrap::CLAMP}};
+	const std::vector<Descriptor> descriptors = {{Layout::RGBA32F, Filter::LINEAR_NEAREST, Wrap::CLAMP}, {Layout::RGBA32F, Filter::LINEAR_NEAREST, Wrap::CLAMP}};
 	_sceneBuffer.reset(new Framebuffer(uint(renderRes[0]), uint(renderRes[1]), descriptors, true, "Scene"));
 	_waterPos.reset(new Framebuffer(uint(renderRes[0]), uint(renderRes[1]), {descriptors[1]}, false, "Water position"));
 	_waterEffectsHalf.reset(new Framebuffer(uint(renderRes[0])/2, uint(renderRes[1])/2, {descriptors[0]}, false, "Water effect half"));
 	_waterEffectsBlur.reset(new Framebuffer(uint(renderRes[0])/2, uint(renderRes[1])/2, {descriptors[0]}, false, "Water effect blur"));
-	_environment.reset(new Framebuffer(TextureShape::Cube, 512, 512, 6, 1, {{Layout::RGB16F, Filter::LINEAR_NEAREST, Wrap::CLAMP}}, false, "Environment"));
+	_environment.reset(new Framebuffer(TextureShape::Cube, 512, 512, 6, 1, {{Layout::RGBA16F, Filter::LINEAR_NEAREST, Wrap::CLAMP}}, false, "Environment"));
 
 	// Lookup table.
-	_precomputedScattering = Resources::manager().getTexture("scattering-precomputed", {Layout::RGB32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
+	_precomputedScattering = Resources::manager().getTexture("scattering-precomputed", {Layout::RGBA32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
 	// Atmosphere screen quad.
 	_skyProgram = Resources::manager().getProgram("atmosphere_island", "background_infinity", "atmosphere_island");
 	_groundProgram = Resources::manager().getProgram("ground_island");
@@ -39,8 +39,8 @@ IslandApp::IslandApp(RenderingConfig & config) : CameraApp(config),
 	_terrain.reset(new Terrain(1024, 4567));
 
 	// Sand normal maps.
-	_sandMapSteep = Resources::manager().getTexture("sand_normal_steep", {Layout::RGB8, Filter::LINEAR_LINEAR, Wrap::REPEAT}, Storage::GPU);
-	_sandMapFlat = Resources::manager().getTexture("sand_normal_flat", {Layout::RGB8, Filter::LINEAR_LINEAR, Wrap::REPEAT}, Storage::GPU);
+	_sandMapSteep = Resources::manager().getTexture("sand_normal_steep", {Layout::RGBA8, Filter::LINEAR_LINEAR, Wrap::REPEAT}, Storage::GPU);
+	_sandMapFlat = Resources::manager().getTexture("sand_normal_flat", {Layout::RGBA8, Filter::LINEAR_LINEAR, Wrap::REPEAT}, Storage::GPU);
 
 	// High detail noise.
 	_surfaceNoise.width = _surfaceNoise.height = 512;
@@ -61,33 +61,33 @@ IslandApp::IslandApp(RenderingConfig & config) : CameraApp(config),
 	_glitterNoise.depth = 1;
 	_glitterNoise.levels = _glitterNoise.getMaxMipLevel()+1;
 	_glitterNoise.shape = TextureShape::D2;
-	_glitterNoise.images.emplace_back(_glitterNoise.width, _glitterNoise.height, 3);
+	_glitterNoise.images.emplace_back(_glitterNoise.width, _glitterNoise.height, 4);
 	for(uint y = 0; y < _glitterNoise.height; ++y){
 		for(uint x = 0; x < _glitterNoise.width; ++x){
 			glm::vec3 dir = Random::sampleSphere();
-			_glitterNoise.images[0].rgb(x,y) = dir;
+			_glitterNoise.images[0].rgba(x,y) = glm::vec4(dir, 0.0f);
 		}
 	}
 	for(uint lid = 1; lid < _glitterNoise.levels; ++lid){
 		const uint tw = _glitterNoise.width / (1 << lid);
 		const uint th = _glitterNoise.height / (1 << lid);
-		_glitterNoise.images.emplace_back(tw, th, 3);
+		_glitterNoise.images.emplace_back(tw, th, 4);
 		for(uint y = 0; y < th; ++y){
 			for(uint x = 0; x < tw; ++x){
-				_glitterNoise.images[lid].rgb(x,y) = _glitterNoise.images[lid-1].rgb(2*x,2*y);
+				_glitterNoise.images[lid].rgba(x,y) = _glitterNoise.images[lid-1].rgba(2*x,2*y);
 			}
 		}
 	}
-	_glitterNoise.upload({Layout::RGB32F, Filter::LINEAR_LINEAR, Wrap::REPEAT}, false);
+	_glitterNoise.upload({Layout::RGBA32F, Filter::LINEAR_LINEAR, Wrap::REPEAT}, false);
 
 	// Ocean.
 	_oceanMesh = Library::generateGrid(_gridOceanRes, 1.0f);
 	_oceanMesh.upload();
 	_farOceanMesh = Library::generateCylinder(64, 128.0f, 256.0f);
 	_farOceanMesh.upload();
-	_absorbScatterOcean = Resources::manager().getTexture("absorbscatterwater", {Layout::SRGB8, Filter::LINEAR, Wrap::CLAMP}, Storage::GPU);
+	_absorbScatterOcean = Resources::manager().getTexture("absorbscatterwater", {Layout::SRGB8_ALPHA8, Filter::LINEAR, Wrap::CLAMP}, Storage::GPU);
 	_caustics = Resources::manager().getTexture("caustics", {Layout::R8, Filter::LINEAR_LINEAR, Wrap::REPEAT}, Storage::GPU);
-	_waveNormals = Resources::manager().getTexture("wave_normals", {Layout::RGB8, Filter::LINEAR_LINEAR, Wrap::REPEAT}, Storage::GPU);
+	_waveNormals = Resources::manager().getTexture("wave_normals", {Layout::RGBA8, Filter::LINEAR_LINEAR, Wrap::REPEAT}, Storage::GPU);
 	_foam = Resources::manager().getTexture("foam", {Layout::SRGB8_ALPHA8, Filter::LINEAR_LINEAR, Wrap::REPEAT}, Storage::GPU);
 	_brdfLUT = Resources::manager().getTexture("brdf-precomputed", {Layout::RG32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
 
@@ -155,7 +155,7 @@ void IslandApp::draw() {
 	if(_shouldUpdateSky){
 		GPU::setDepthState(false);
 		GPU::setBlendState(false);
-		GPU::setCullState(true, Faces::BACK);
+		GPU::setCullState(false, Faces::BACK);
 		_environment->setViewport();
 
 		_skyProgram->use();
@@ -164,7 +164,7 @@ void IslandApp::draw() {
 		_skyProgram->texture(_precomputedScattering, 0);
 
 		for(uint lid = 0; lid < 6; ++lid){
-			_environment->bind(lid);
+			_environment->bind(lid, 0, Framebuffer::Operation::DONTCARE, Framebuffer::Operation::DONTCARE, Framebuffer::Operation::DONTCARE);
 			const glm::mat4 clipToWorldFace  = glm::inverse(Library::boxVPs[lid]);
 			_skyProgram->uniform("clipToWorld", clipToWorldFace);
 			GPU::drawMesh(*_skyMesh);
@@ -174,15 +174,13 @@ void IslandApp::draw() {
 		_shouldUpdateSky = false;
 	}
 
-	_sceneBuffer->bind(glm::vec4(10000.0f), 1.0f);
+	_sceneBuffer->bind(glm::vec4(0.0f), 1.0f);
 	_sceneBuffer->setViewport();
 	
 	GPU::setDepthState(true, TestFunction::LESS, true);
 	GPU::setCullState(true, Faces::BACK);
 	GPU::setBlendState(false);
-	
 
-	_primsGround.begin();
 	// Render the ground.
 	if(_showTerrain){
 
@@ -237,12 +235,11 @@ void IslandApp::draw() {
 			}
 		}
 	}
-	_primsGround.end();
 	
 	// Render the sky.
 	if(_showSky){
 		GPU::setDepthState(true, TestFunction::LEQUAL, false);
-		GPU::setCullState(true, Faces::BACK);
+		GPU::setCullState(false, Faces::BACK);
 		GPU::setBlendState(false);
 
 		_skyProgram->use();
@@ -254,7 +251,6 @@ void IslandApp::draw() {
 	}
 
 	// Render the ocean.
-	_primsOcean.begin();
 
 	if(_showOcean){
 		const bool isUnderwater = camPos.y < 0.00f;
@@ -272,7 +268,7 @@ void IslandApp::draw() {
 			GPU::setCullState(true, Faces::BACK);
 			GPU::setBlendState(false);
 
-			_waterEffectsHalf->bind();
+			_waterEffectsHalf->bind(Framebuffer::Operation::DONTCARE);
 			_waterEffectsHalf->setViewport();
 			_waterCopy->use();
 			_waterCopy->texture(_sceneBuffer->texture(0), 0);
@@ -286,7 +282,7 @@ void IslandApp::draw() {
 		}
 
 		// Render the ocean waves.
-		_sceneBuffer->bind();
+		_sceneBuffer->bind(Framebuffer::Operation::LOAD, Framebuffer::Operation::LOAD, Framebuffer::Operation::DONTCARE);
 		_sceneBuffer->setViewport();
 		GPU::setDepthState(true, TestFunction::LESS, true);
 		GPU::setBlendState(false);
@@ -337,7 +333,7 @@ void IslandApp::draw() {
 			GPU::setDepthState(false);
 			GPU::setBlendState(false);
 
-			_waterEffectsHalf->bind();
+			_waterEffectsHalf->bind(Framebuffer::Operation::LOAD);
 			_waterEffectsHalf->setViewport();
 			_waterCopy->use();
 			_waterCopy->texture(_sceneBuffer->texture(0), 0);
@@ -353,7 +349,7 @@ void IslandApp::draw() {
 			GPU::blit(*_sceneBuffer->texture(1), *_waterPos, Filter::NEAREST);
 
 			// Render full screen effect.
-			_sceneBuffer->bind();
+			_sceneBuffer->bind(Framebuffer::Operation::LOAD);
 			_sceneBuffer->setViewport();
 			GPU::setCullState(true, Faces::BACK);
 			GPU::setDepthState(false);
@@ -420,7 +416,6 @@ void IslandApp::draw() {
 		}
 
 	}
-	_primsOcean.end();
 
 	// Tonemapping and final screen.
 	GPU::setDepthState(false, TestFunction::LESS, true);
@@ -428,8 +423,10 @@ void IslandApp::draw() {
 	GPU::setCullState(true, Faces::BACK);
 	
 	GPU::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
-	Framebuffer::backbuffer()->bind();
+	Framebuffer::backbuffer()->bind(Framebuffer::Operation::DONTCARE, Framebuffer::Operation::DONTCARE, Framebuffer::Operation::DONTCARE);
 	_tonemap->use();
+	_tonemap->uniform("customExposure", 1.0f);
+	_tonemap->uniform("apply", true);
 	_tonemap->texture(_sceneBuffer->texture(), 0);
 	ScreenQuad::draw();
 }
@@ -437,11 +434,9 @@ void IslandApp::draw() {
 void IslandApp::update() {
 	CameraApp::update();
 
-	_primsGround.value();
 	if(ImGui::Begin("Island")){
 		ImGui::Text("%.1f ms, %.1f fps", frameTime() * 1000.0f, frameRate());
 		ImGui::Text("Rendering res.: %ux%u", _sceneBuffer->width(), _sceneBuffer->height());
-		ImGui::Text("Ground: %llu primitives, ocean: %llu primitives ", _primsGround.value(), _primsOcean.value());
 
 		// Light parameters.
 		ImGui::PushItemWidth(120);
@@ -534,4 +529,7 @@ void IslandApp::resize() {
 IslandApp::~IslandApp() {
 	_surfaceNoise.clean();
 	_glitterNoise.clean();
+	_oceanMesh.clean();
+	_farOceanMesh.clean();
+	_waves.clean();
 }
