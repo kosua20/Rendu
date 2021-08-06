@@ -1,5 +1,5 @@
 layout(location = 0) in INTERFACE {
-	vec3 pos; ///< World position
+	vec4 pos; ///< World position
 	vec2 uv; ///< Texture coordinates
 } In ;
 
@@ -22,13 +22,13 @@ layout (location = 1) out vec4 fragWorldPos; ///< Terrain world position.
 /** Shade the terrain by simulating sand appearance on dunes. */
 void main(){
 
-	fragWorldPos.xyz = In.pos;
+	fragWorldPos.xyz = In.pos.xyz;
 	fragWorldPos.w = 1.0;
 
 	// Get clean normal and height.
 	vec4 heightAndNor = textureLod(heightMap, In.uv, 0.0);
 	vec3 n = normalize(heightAndNor.yzw);
-	vec3 v = normalize(camPos - fragWorldPos);
+	vec3 v = normalize(camPos - fragWorldPos.xyz);
 
 	// Transition weight between planar and steep regions, for both X and Z orientations.
 	float wFlat = pow(abs(n.y), 8.0);
@@ -36,7 +36,7 @@ void main(){
 	vec3 blend = vec3(wXdir*(1.0-wFlat), wFlat, (1.0-wXdir)*(1.0-wFlat));
 
 	// Sand normal map, blended.
-	vec3 mapsUV = 3.0*fragWorldPos;
+	vec3 mapsUV = 3.0*fragWorldPos.xyz;
 	vec2 mapsUvX = mapsUV.yz;
 	vec2 mapsUvY = mapsUV.zx;
 	vec2 mapsUvZ = mapsUV.yx;

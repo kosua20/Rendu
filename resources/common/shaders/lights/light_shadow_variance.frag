@@ -1,10 +1,13 @@
 
-in INTERFACE {
+layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In ;
 
-uniform bool hasMask = false; ///< Should the object alpha mask be applied.
-layout(binding = 0) uniform sampler2D mask; ///< RGBA texture.
+layout(set = 1, binding = 0) uniform sampler2D mask; ///< RGBA texture.
+
+layout(set = 0, binding = 0) uniform UniformBlock {
+	bool hasMask; ///< Should the object alpha mask be applied.
+};
 
 layout(location = 0) out vec2 fragColor; ///< Depth and depth squared.
 

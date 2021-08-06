@@ -13,7 +13,7 @@ layout(set = 0, binding = 1) uniform UniformBlock {
 layout(set = 1, binding = 0) uniform sampler2D heightMap; ///< Terrain height map, height in R, normals in GBA.
 
 layout(location = 0) out INTERFACE {
-	vec3 pos; ///< World position.
+	vec4 pos; ///< World position.
 	vec2 uv; ///< Texture coordinates.
 } Out ;
 
@@ -47,5 +47,6 @@ void main(){
 	worldPos.y = mix(lowHeight, nextHeight, fracLod);
     gl_Position = mvp * vec4(worldPos, 1.0);
 	Out.uv = (uv + 0.5) * invMapSize + 0.5;
-	Out.pos = worldPos;
+	Out.pos.xyz = worldPos;
+	Out.pos.w = 0.0;
 }

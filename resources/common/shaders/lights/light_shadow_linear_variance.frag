@@ -1,13 +1,16 @@
 
-in INTERFACE {
-	vec3 worldPos; ///< World space position.
+layout(location = 0) in INTERFACE {
+	vec4 worldPos; ///< World space position.
 	vec2 uv; ///< Texture coordinates.
 } In ;
 
-layout(binding = 0) uniform sampler2D mask;  ///< RGBA texture.
-uniform vec3 lightPositionWorld; ///< The world space position of the light.
-uniform float lightFarPlane; ///< The light projection matrix far plane.
-uniform bool hasMask = false; ///< Should the object alpha mask be applied.
+layout(set = 1, binding = 0) uniform sampler2D mask;  ///< RGBA texture.
+
+layout(set = 0, binding = 0) uniform UniformBlock {
+	vec3 lightPositionWorld; ///< The world space position of the light.
+	float lightFarPlane; ///< The light projection matrix far plane.
+	bool hasMask; ///< Should the object alpha mask be applied.
+};
 
 layout(location = 0) out vec2 fragColor; ///< World space depth and depth squared.
 
@@ -22,6 +25,6 @@ void main(){
 	}
 	// We compute the distance in world space (or equivalently view space).
 	// We normalize it by the far plane distance to obtain a [0,1] value.
-	float dist = clamp(length(In.worldPos - lightPositionWorld) / lightFarPlane, 0.0, 1.0);
+	float dist = clamp(length(In.worldPos.xyz - lightPositionWorld) / lightFarPlane, 0.0, 1.0);
 	fragColor = vec2(dist, dist*dist);
 }

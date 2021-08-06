@@ -5,7 +5,7 @@ layout(set = 0, binding = 1) uniform UniformBlock {
 };
 
 layout(location = 0) out INTERFACE {
-	vec3 dir; ///< View world direction.
+	vec4 dir; ///< View world direction.
 	vec2 uv; ///< Texture coordinates.
 } Out ;
 
@@ -17,6 +17,7 @@ void main(){
 	gl_Position.zw = vec2(1.0);
 	
 	// Perform back projection to get a world space ray dir.
-	Out.dir = vec3(iViewProjInv * gl_Position);
+	Out.dir.xyz = vec3(iViewProjInv * gl_Position);
+	Out.dir.w = 0.0;
 
 }

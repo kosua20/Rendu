@@ -1,6 +1,6 @@
 
 layout(location = 0) in INTERFACE {
-	vec3 vn; ///< World space normal.
+	vec4 vn; ///< World space normal.
 	vec2 uv; ///< Texture coordinates.
 } In ;
 
@@ -19,7 +19,7 @@ void main(){
 		discard;
 	}
 
-	vec3 nn = normalize(In.vn);
+	vec3 nn = normalize(In.vn.xyz);
 	// Two basic lights.
 	float light0 = 0.8*max(0.0, dot(nn, lightDir));
 	float light1 = 0.6*max(0.0, dot(nn, -lightDir));

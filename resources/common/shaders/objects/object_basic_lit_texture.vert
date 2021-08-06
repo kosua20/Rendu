@@ -11,7 +11,7 @@ layout(set = 0, binding = 1) uniform UniformBlock {
 };
 
 layout(location = 0) out INTERFACE {
-	vec3 vn; ///< World space normal.
+	vec4 vn; ///< World space normal.
 	vec2 uv; ///< Texture coordinates.
 } Out ;
 
@@ -21,7 +21,8 @@ layout(location = 0) out INTERFACE {
 void main(){
 	// We multiply the coordinates by the MVP matrix, and ouput the result.
 	gl_Position = mvp * vec4(v, 1.0);
-	Out.vn = normalize(n);
+	Out.vn.xyz = normalize(n);
+	Out.vn.w = 0.0;
 	Out.uv = uv;
 	
 }

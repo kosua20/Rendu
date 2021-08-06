@@ -1,16 +1,17 @@
 #include "utils.glsl"
 
-in INTERFACE {
+layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In ;
 
-layout(binding = 0) uniform sampler2D colorScene; ///< Scene color.
-layout(binding = 1) uniform sampler2D depthScene; ///< Scene depth.
+layout(set = 1, binding = 0) uniform sampler2D colorScene; ///< Scene color.
+layout(set = 1, binding = 1) uniform sampler2D depthScene; ///< Scene depth.
 
-uniform vec2 projParams; ///< Projection depth-related coefficients.
-
-uniform float focusDist; ///< Distance to the focal plane (in view space).
-uniform float focusScale; ///< Inverse width of the in-focus region.
+layout(set = 0, binding = 0) uniform UniformBlock {
+	vec2 projParams; ///< Projection depth-related coefficients.
+	float focusDist; ///< Distance to the focal plane (in view space).
+	float focusScale; ///< Inverse width of the in-focus region.
+};
 
 layout(location = 0) out vec3 downscaledColor; ///< Scene color.
 layout(location = 1) out vec2 cocDepth; ///< Circle of confusion and depth.

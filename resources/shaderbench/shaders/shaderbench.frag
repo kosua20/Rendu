@@ -1,6 +1,6 @@
 
 layout(location = 0) in INTERFACE {
-	vec3 dir; ///< View world direction.
+	vec4 dir; ///< View world direction.
 	vec2 uv; ///< Texture coordinates.
 } In ;
 
@@ -101,7 +101,7 @@ vec3 normal(vec3 p){
 
 /// Main render function.
 void main(){
-	vec3 dir = normalize(In.dir);
+	vec3 dir = normalize(In.dir.xyz);
 	vec3 eye = iCamPos;
 	// Light parameters.
 	vec3 lightDir = normalize(lightDirection.xyz);

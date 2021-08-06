@@ -1,5 +1,6 @@
-
-uniform vec4 color; ///< The color of the light.
+layout(set = 0, binding = 0) uniform UniformBlock {
+	vec4 color; ///< The color of the light.
+};
 
 // Output: the fragment color
 layout (location = 0) out vec4 fragColor; ///< Color.

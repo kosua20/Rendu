@@ -1,10 +1,13 @@
 
-in INTERFACE {
+layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In ;
 
-layout(binding = 0) uniform sampler2D screenTexture; ///< Lighting buffer to filter. 
-uniform float luminanceTh = 1.0; ///< Luminance minimum threshold.
+layout(set = 1, binding = 0) uniform sampler2D screenTexture; ///< Lighting buffer to filter.
+
+layout(set = 0, binding = 0) uniform UniformBlock {
+	float luminanceTh; ///< Luminance minimum threshold.
+};
 
 layout(location = 0) out vec3 fragColor; ///< Scene color.
 

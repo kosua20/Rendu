@@ -1,12 +1,15 @@
 #include "constants.glsl"
 
-in INTERFACE {
+layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In ;
 
-layout(binding = 0) uniform sampler2D sceneColor; ///< Texture to overlay.
-layout(binding = 1) uniform sampler2D cocDepth; ///< Texture to overlay.
-uniform vec2 invSize; ///< Pixel shift.
+layout(set = 1, binding = 0) uniform sampler2D sceneColor; ///< Texture to overlay.
+layout(set = 1, binding = 1) uniform sampler2D cocDepth; ///< Texture to overlay.
+
+layout(set = 0, binding = 0) uniform UniformBlock {
+	vec2 invSize; ///< Pixel shift.
+};
 
 layout(location = 0) out vec4 fragColor; ///< Scene color.
 
