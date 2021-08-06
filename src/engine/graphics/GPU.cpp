@@ -614,8 +614,8 @@ void GPU::uploadTexture(const Texture & texture) {
 		// Copy to the intermediate texture.
 		vkCmdCopyBufferToImage(commandBuffer, transferBuffer.gpu->buffer, transferTexture.gpu->image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
 
+		currentOffset += d * texture.images[currentImg].pixels.size() * sizeof(float);
 		currentImg += d;
-		currentOffset += d * w * h;
 		// We might have more levels allocated on the GPU than we had available on the CPU.
 		// Stop, these will be generated automatically.
 		if(currentImg >= texture.images.size()){
