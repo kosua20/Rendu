@@ -350,11 +350,13 @@ private:
 	};
 
 	struct TextureState {
+		std::string name;
 		VkImageView view = VK_NULL_HANDLE;
 		VkSampler sampler = VK_NULL_HANDLE;
 	};
 
 	struct StaticBufferState {
+		std::string name;
 		VkBuffer buffer = VK_NULL_HANDLE;
 		uint offset = 0;
 		uint size = 0;

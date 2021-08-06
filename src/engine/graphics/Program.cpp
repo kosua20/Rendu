@@ -80,11 +80,14 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 					continue;
 				}
 				if(_staticBuffers.count(buffer.binding) != 0){
-					Log::Warning() << Log::GPU << "Program " << name() << ": Buffer already created, collision between stages for set " << buffer.set << " at binding " << buffer.binding << "." << std::endl;
-					continue;
+					if(_staticBuffers.at(buffer.binding).name != buffer.name){
+						Log::Warning() << Log::GPU << "Program " << name() << ": Buffer already created, collision between stages for set " << buffer.set << " at binding " << buffer.binding << "." << std::endl;
+						continue;
+					}
 				}
 
 				_staticBuffers[buffer.binding] = StaticBufferState();
+				_staticBuffers[buffer.binding].name = buffer.name;
 				continue;
 			}
 
@@ -117,10 +120,13 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 			}
 
 			if(_textures.count(image.binding) != 0){
-				Log::Warning() << Log::GPU << "Program " << name() << ": Sampler image already created, collision between stages for set " << image.set << " at binding " << image.binding << "." << std::endl;
-				continue;
+				if(_textures.at(image.binding).name != image.name){
+					Log::Warning() << Log::GPU << "Program " << name() << ": Sampler image already created, collision between stages for set " << image.set << " at binding " << image.binding << "." << std::endl;
+					continue;
+				}
 			}
 			_textures[image.binding] = TextureState();
+			_textures[image.binding].name = image.name;
 		}
 	}
 	
@@ -418,13 +424,16 @@ void Program::clean() {
 }
 
 void Program::buffer(const UniformBufferBase& buffer, uint slot){
-	const StaticBufferState refBuff = _staticBuffers.at(slot);
-	if((refBuff.buffer != buffer.gpu->buffer) || (refBuff.offset != buffer.currentOffset()) || (refBuff.size != buffer.baseSize())){
-		_staticBuffers[slot].buffer = buffer.gpu->buffer;
-		_staticBuffers[slot].offset = buffer.currentOffset();
-		_staticBuffers[slot].size = buffer.baseSize();
+	auto existingBuff = _staticBuffers.find(slot);
+	if(existingBuff != _staticBuffers.end()) {
+		const StaticBufferState& refBuff = existingBuff->second;
+		if((refBuff.buffer != buffer.gpu->buffer) || (refBuff.offset != buffer.currentOffset()) || (refBuff.size != buffer.baseSize())){
+			_staticBuffers[slot].buffer = buffer.gpu->buffer;
+			_staticBuffers[slot].offset = buffer.currentOffset();
+			_staticBuffers[slot].size = buffer.baseSize();
+			_dirtySets[2] = true;
+		}
 	}
-	_dirtySets[2] = true;
 }
 
 
