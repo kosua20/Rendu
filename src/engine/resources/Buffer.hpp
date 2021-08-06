@@ -119,7 +119,7 @@ public:
 	/** Move constructor. */
 	UniformBufferBase(UniformBufferBase &&) = delete;
 
-	~UniformBufferBase();
+	virtual ~UniformBufferBase();
 
 private:
 
@@ -228,21 +228,3 @@ template <typename T>
 void UniformBuffer<T>::upload() {
 	UniformBufferBase::upload(reinterpret_cast<unsigned char*>(data.data()));
 }
-/*
-template <typename T>
-void Buffer<T>::upload(size_t offset, size_t count) {
-	BufferBase::upload(count * sizeof(T), reinterpret_cast<unsigned char*>(data.data()), offset);
-}
-
-template <typename T>
-void Buffer<T>::download() {
-	// Resize to make sure that we have enough room.
-	data.resize(sizeMax/sizeof(T));
-	BufferBase::download(data.size() * sizeof(T), reinterpret_cast<unsigned char*>(data.data()), 0);
-}
-
-template <typename T>
-void Buffer<T>::clearCPU() {
-	data.clear();
-}
- */

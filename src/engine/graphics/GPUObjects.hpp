@@ -393,6 +393,7 @@ public:
 	VkImageLayout defaultLayout;
 
 	std::string name;
+	bool owned = true; //< Do we own our Vulkan data.
 private:
 	Descriptor _descriptor; ///< Layout used.
 };

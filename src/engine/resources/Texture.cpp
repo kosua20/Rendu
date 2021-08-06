@@ -52,6 +52,10 @@ void Texture::clean() {
 	gpu = nullptr;
 }
 
+Texture::~Texture(){
+	clean();
+}
+
 glm::vec3 Texture::sampleCubemap(const glm::vec3 & dir) const {
 	// Images are stored in the following order:
 	// px, nx, py, ny, pz, nz

@@ -76,9 +76,6 @@ void loadCubemap(const std::string & inputPath, Texture & cubemapInfos) {
  \ingroup BRDFEstimator
  */
 void computeCubemapConvolution(const Texture & cubemapInfos, int levelsCount, int outputSide, int samplesCount, std::vector<Texture> & cubeLevels) {
-	for(Texture& tex : cubeLevels){
-		tex.clean();
-	}
 	cubeLevels.clear();
 
 	// Create shader program for roughness pre-convolution.
@@ -248,9 +245,6 @@ int main(int argc, char ** argv) {
 						sCoeffs[i] = glm::vec4(0.0f);
 					}
 					sCoeffs.upload();
-					for(Texture& tex : cubeLevels){
-						tex.clean();
-					}
 					cubeLevels.clear();
 					mode = INPUT;
 				}
@@ -388,10 +382,5 @@ int main(int argc, char ** argv) {
 		
 	}
 
-	sCoeffs.clean();
-	cubemapInfos.clean();
-	for(Texture& tex : cubeLevels){
-		tex.clean();
-	}
 	return 0;
 }

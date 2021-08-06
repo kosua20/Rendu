@@ -212,6 +212,7 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 		fb._depth.shape = TextureShape::D2;
 		fb._depth.gpu.reset(new GPUTexture(_depth.gpu->descriptor()));
 		fb._depth.gpu->name = fb._depth.name();
+		fb._depth.gpu->owned = false;
 		fb._depth.gpu->image = _depth.gpu->image;
 		fb._depth.gpu->data = _depth.gpu->data;
 		fb._depth.gpu->view = _depth.gpu->view;
@@ -228,6 +229,7 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 		fb._colors[0].shape = TextureShape::D2;
 		fb._colors[0].gpu.reset(new GPUTexture(colorDesc));
 		fb._colors[0].gpu->name = fb._colors[0].name();
+		fb._colors[0].gpu->owned = false;
 		fb._colors[0].gpu->image = colorImages[i];
 		fb._colors[0].gpu->layouts.resize(1, std::vector<VkImageLayout>(1, VK_IMAGE_LAYOUT_UNDEFINED));
 		fb._colors[0].gpu->sampler = VK_NULL_HANDLE;
@@ -264,9 +266,6 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 		if(vkCreateFramebuffer(_context->device, &framebufferInfo, nullptr, &fb._framebuffers[0][0].framebuffer) != VK_SUCCESS) {
 			Log::Error() << Log::GPU << "Unable to create swap framebuffers." << std::endl;
 		}
-
-		fb._fullFramebuffer = fb._framebuffers[0][0];
-
 	}
 
 	VkUtils::createCommandBuffers(*_context, _context->frameCount);
@@ -422,7 +421,6 @@ void Swapchain::clean() {
 	for(size_t i = 0; i < _imageCount; ++i) {
 		// Destroy the view but not the image, as we don't own it (and there is no sampler).
 		vkDestroyImageView(_context->device, _framebuffers[i]->_colors[0].gpu->view, nullptr);
-		_framebuffers[i].reset();
 	}
 	_framebuffers.clear();
 

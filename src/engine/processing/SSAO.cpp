@@ -109,7 +109,3 @@ float & SSAO::radius() {
 SSAO::Quality & SSAO::quality() {
 	return _quality;
 }
-
-SSAO::~SSAO() {
-	_noisetexture.clean();
-}

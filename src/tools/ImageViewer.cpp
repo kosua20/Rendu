@@ -275,6 +275,5 @@ int main(int argc, char ** argv) {
 		ImGui::End();
 
 	}
-	imageInfos.clean();
 	return 0;
 }

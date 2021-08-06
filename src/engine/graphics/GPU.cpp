@@ -628,9 +628,6 @@ void GPU::uploadTexture(const Texture & texture) {
 
 	VkUtils::endOneTimeCommandBuffer(commandBuffer, _context);
 
-	transferTexture.clean();
-	transferBuffer.clean();
-
 }
 
 glm::uvec2 GPU::copyTextureRegionToBufferAndPrepare(VkCommandBuffer& commandBuffer, Texture & srcTexture, Texture & dstTexture, std::shared_ptr<TransferBuffer> & dstBuffer, uint mipStart, uint mipCount){
@@ -714,7 +711,6 @@ glm::uvec2 GPU::copyTextureRegionToBufferAndPrepare(VkCommandBuffer& commandBuff
 	// Copy from the intermediate texture.
 	vkCmdCopyImageToBuffer(commandBuffer, transferTexture.gpu->image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, dstBuffer->gpu->buffer, blitRegions.size(), blitRegions.data());
 
-	transferTexture.clean();
 	return glm::uvec2(firstImage, currentCount);
 }
 
@@ -764,7 +760,6 @@ void GPU::downloadTexture(Texture & texture, int level) {
 		currentOffset += imgSize;
 	}
 
-	dstBuffer->clean();
 }
 
 void GPU::downloadTexture(Texture & texture) {
@@ -939,7 +934,7 @@ void GPU::uploadBuffer(const BufferBase & buffer, size_t size, uchar * data, siz
 	copyRegion.size = size;
 	vkCmdCopyBuffer(commandBuffer, transferBuffer.gpu->buffer, buffer.gpu->buffer, 1, &copyRegion);
 	VkUtils::endOneTimeCommandBuffer(commandBuffer, _context);
-	transferBuffer.clean();
+
 }
 
 void GPU::downloadBuffer(const BufferBase & buffer, size_t size, uchar * data, size_t offset) {
@@ -975,7 +970,7 @@ void GPU::downloadBuffer(const BufferBase & buffer, size_t size, uchar * data, s
 	vkCmdCopyBuffer(commandBuffer, buffer.gpu->buffer, transferBuffer.gpu->buffer, 1, &copyRegion);
 	VkUtils::endOneTimeCommandBuffer(commandBuffer, _context);
 	transferBuffer.download(size, data, 0);
-	transferBuffer.clean();
+	
 }
 
 void GPU::flushBuffer(const BufferBase & buffer, size_t size, size_t offset){
@@ -1639,8 +1634,8 @@ void GPU::processSaveRequests(){
 			}
 		}
 
-		rsc.dst->clean();
-		rsc.data->clean();
+		//rsc.dst->clean();
+		//rsc.data->clean();
 		_resourcesToSave.pop_front();
 	}
 }

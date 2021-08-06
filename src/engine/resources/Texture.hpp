@@ -60,6 +60,8 @@ public:
 	
 	/** Move constructor. */
 	Texture(Texture &&) = default;
+
+	~Texture();
 	
 	std::vector<Image> images;		 ///< The images CPU data (optional).
 	std::unique_ptr<GPUTexture> gpu; ///< The GPU data (optional).

@@ -448,19 +448,7 @@ bool Framebuffer::LayoutState::isEquivalent(const Framebuffer::LayoutState& othe
 
 Framebuffer::~Framebuffer() {
 	DebugViewer::untrackDefault(this);
-
 	GPU::clean(*this, true);
-
-	if(!_isBackbuffer){
-		for(Texture& texture : _colors){
-			texture.clean();
-		}
-		_colors.clear();
-		if(_hasDepth){
-			_depth.clean();
-		}
-	}
-
 }
 
 Framebuffer * Framebuffer::_backbuffer = nullptr;

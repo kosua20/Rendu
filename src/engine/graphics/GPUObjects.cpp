@@ -56,7 +56,9 @@ GPUTexture::GPUTexture(const Descriptor & texDescriptor) :
 }
 
 void GPUTexture::clean() {
-	GPU::clean(*this);
+	if(owned){
+		GPU::clean(*this);
+	}
 }
 
 bool GPUTexture::hasSameLayoutAs(const Descriptor & other) const {

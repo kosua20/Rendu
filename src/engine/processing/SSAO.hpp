@@ -52,9 +52,6 @@ public:
 	 */
 	void clear() const;
 
-	/** Destructor. */
-	~SSAO();
-
 	/**
 	 Query the texture containing the result of the SSAO+blur pass.
 	 \return the texture
