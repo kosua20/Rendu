@@ -28,7 +28,7 @@ int main(int argc, char ** argv) {
 		return 0;
 	}
 
-	Window window("PBR demo", config, true);
+	Window window("PBR demo", config);
 	
 	Resources::manager().addResources("../../../resources/pbrdemo");
 	Resources::manager().addResources("../../../resources/additional");

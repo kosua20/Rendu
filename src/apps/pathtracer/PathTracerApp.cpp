@@ -69,7 +69,6 @@ void PathTracerApp::draw() {
 		Framebuffer::backbuffer()->bind(Framebuffer::Operation::DONTCARE);
 		GPU::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 		_passthrough->use();
-		_passthrough->uniform("flip", 1);
 		_passthrough->texture(_renderTex, 0);
 		ScreenQuad::draw();
 		return;
@@ -84,7 +83,6 @@ void PathTracerApp::draw() {
 	Framebuffer::backbuffer()->bind(Framebuffer::Operation::DONTCARE);
 	GPU::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 	_passthrough->use();
-	_passthrough->uniform("flip", 0);
 	_passthrough->texture(_sceneFramebuffer->texture(), 0);
 	ScreenQuad::draw();
 }

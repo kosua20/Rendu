@@ -29,7 +29,7 @@ int main(int argc, char ** argv) {
 		return 0;
 	}
 	
-	Window window("Island", config, true);
+	Window window("Island", config);
 	
 	Resources::manager().addResources("../../../resources/island");
 	if(!config.resourcesPath.empty()){

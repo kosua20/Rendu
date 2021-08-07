@@ -31,7 +31,7 @@ int main(int argc, char ** argv) {
 		return 0;
 	}
 
-	Window window("Playground", config, false);
+	Window window("Playground", config);
 	
 	if(!config.resourcesPath.empty()){
 		Resources::manager().addResources(config.resourcesPath);
@@ -118,7 +118,7 @@ int main(int argc, char ** argv) {
 
 		// Render.
 		const glm::mat4 MVP = camera.projection() * camera.view();
-		Framebuffer::backbuffer()->bind(glm::vec4(0.2f, 0.3f, 0.25f, 1.0f), 1.0f, Framebuffer::Operation::DONTCARE);
+		Framebuffer::backbuffer()->bind(glm::vec4(0.04f, 0.09f, 0.07f, 1.0f), 1.0f, Framebuffer::Operation::DONTCARE);
 		Framebuffer::backbuffer()->setViewport();
 		program->use();
 		program->uniform("mvp", MVP);

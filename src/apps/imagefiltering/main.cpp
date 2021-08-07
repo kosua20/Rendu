@@ -29,7 +29,7 @@ int main(int argc, char ** argv) {
 		return 0;
 	}
 
-	Window window("Image filtering", config, false);
+	Window window("Image filtering", config);
 
 	Resources::manager().addResources("../../../resources/imagefiltering");
 

@@ -144,7 +144,7 @@ int main(int argc, char ** argv) {
 		return 0;
 	}
 
-	Window window("Path tracer", config, true);
+	Window window("Path tracer", config);
 	
 	// Load geometry and create raycaster.
 	std::shared_ptr<Scene> scene(new Scene(config.scene));

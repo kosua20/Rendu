@@ -88,7 +88,7 @@ ShaderEditor::ShaderEditor(RenderingConfig & config) : CameraApp(config), _noise
 	// Reference textures.
 	_textures.push_back(_prevFrame->texture());
 	_textures.push_back(Resources::manager().getTexture("shadertoy-font", {Layout::RGBA8, Filter::LINEAR, Wrap::CLAMP}, Storage::GPU));
-	_textures.push_back(Resources::manager().getTexture("debug-grid", {Layout::RGBA8, Filter::LINEAR, Wrap::REPEAT}, Storage::GPU));
+	_textures.push_back(Resources::manager().getTexture("debug-grid", {Layout::SRGB8_ALPHA8, Filter::LINEAR, Wrap::REPEAT}, Storage::GPU));
 	_textures.push_back(&_noise);
 	_textures.push_back(&_directions);
 	_textures.push_back(&_noise3D);

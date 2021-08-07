@@ -30,7 +30,7 @@ void GameMenuRenderer::drawMenu(const GameMenu & menu, const glm::vec2 & finalRe
 		{MenuButton::State::HOVER, glm::vec4(1.0f, 1.0f, 1.0f, 0.5f)},
 		{MenuButton::State::ON, glm::vec4(0.95f, 0.95f, 0.95f, 0.5f)}};
 
-	static const glm::vec4 labelsColor	 = glm::vec4(0.54f, 0.0f, 0.0f, 1.0f);
+	static const glm::vec4 labelsColor	 = glm::vec4(0.3f, 0.0f, 0.0f, 1.0f);
 	static const glm::vec4 labelsEdgeColor = glm::vec4(1.0f);
 	static const float labelsEdgeWidth	 = 0.25f;
 

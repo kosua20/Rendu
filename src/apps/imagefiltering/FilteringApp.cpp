@@ -18,7 +18,7 @@ FilteringApp::FilteringApp(RenderingConfig & config) :
 	_sceneShader = Resources::manager().getProgram("object", "object_basic_random", "object_basic_color");
 	_mesh		 = Resources::manager().getMesh("light_sphere", Storage::GPU);
 
-	_sceneBuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, {Layout::RGBA8, Filter::NEAREST_NEAREST, Wrap::CLAMP}, true, "Scene"));
+	_sceneBuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, {Layout::RGBA8, Filter::LINEAR_NEAREST, Wrap::CLAMP}, true, "Scene"));
 
 	// Create the Poisson filling and Laplacian integration pyramids, with a lowered internal resolution to speed things up.
 	_pyramidFiller	 = std::unique_ptr<PoissonFiller>(new PoissonFiller(renderWidth, renderHeight, _fillDownscale));
@@ -149,7 +149,7 @@ void FilteringApp::update() {
 				} else {
 					_image.width  = img.width;
 					_image.height = img.height;
-					_image.upload({Layout::RGBA8, Filter::NEAREST_NEAREST, Wrap::CLAMP}, false);
+					_image.upload({Layout::SRGB8_ALPHA8, Filter::LINEAR_NEAREST, Wrap::CLAMP}, false);
 					_image.clearImages();
 					_config.screenResolution = {_image.width, _image.height};
 					resize();
