@@ -39,7 +39,7 @@ vec3 hash31(int x) {
 
 /** Apply the MVP transformation to the input vertex. Color each face with a random color. */
 void main(){
-	Out.col = hash31(gl_VertexIndex);
+	Out.col = pow(hash31(gl_VertexIndex), vec3(2.2));
 	// We multiply the coordinates by the MVP matrix, and ouput the result.
 	gl_Position = mvp * vec4(v, 1.0);
 	
