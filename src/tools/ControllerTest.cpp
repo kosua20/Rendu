@@ -201,7 +201,7 @@ int main(int argc, char ** argv) {
 	// Override window dimensions.
 	config.initialWidth  = 800;
 	config.initialHeight = 800;
-	Window window("Controller test", config, false);
+	Window window("Controller test", config);
 
 	// Enable raw mode for the input, that way all controllers will be raw controllers.
 	Input::manager().preferRawControllers(true);

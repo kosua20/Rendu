@@ -30,7 +30,7 @@ int main(int argc, char ** argv) {
 		return 0;
 	}
 
-	Window window("Image viewer", config, false);
+	Window window("Image viewer", config);
 	
 	Resources::manager().addResources("../../../resources/imageviewer");
 
@@ -42,7 +42,7 @@ int main(int argc, char ** argv) {
 	bool isFloat = false;
 
 	// Settings.
-	glm::vec3 bgColor(0.6f);
+	glm::vec3 bgColor(0.3f);
 	float exposure  = 1.0f;
 	bool applyGamma = true;
 	glm::bvec4 channelsFilter(true);
