@@ -442,20 +442,24 @@ void Program::buffer(const UniformBufferBase& buffer, uint slot){
 }
 
 
-void Program::texture(const Texture& texture, uint slot){
+void Program::texture(const Texture& texture, uint slot, uint mip){
 	auto existingTex = _textures.find(slot);
 	if(existingTex != _textures.end()) {
 		const TextureState & refTex = existingTex->second;
-		if((refTex.view != texture.gpu->view) || (refTex.sampler != texture.gpu->sampler)){
-			_textures[slot].view = texture.gpu->view;
+		// Find the view we need.
+		assert(mip == 0xFFFF || mip < texture.gpu->levelViews.size());
+		VkImageView& view = mip == 0xFFFF ? texture.gpu->view : texture.gpu->levelViews[mip];
+
+		if((refTex.view != view) || (refTex.sampler != texture.gpu->sampler)){
+			_textures[slot].view = view;
 			_textures[slot].sampler = texture.gpu->sampler;
 			_dirtySets[1] = true;
 		}
 	}
 }
 
-void Program::texture(const Texture* texture, uint slot){
-	Program::texture(*texture, slot);
+void Program::texture(const Texture* texture, uint slot, uint mip){
+	Program::texture(*texture, slot, mip);
 }
 
 void Program::defaultTexture(uint slot){

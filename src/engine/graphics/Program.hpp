@@ -113,9 +113,9 @@ public:
 
 	void buffer(const UniformBufferBase& buffer, uint slot);
 
-	void texture(const Texture* texture, uint slot);
+	void texture(const Texture* texture, uint slot, uint mip = 0xFFFF);
 
-	void texture(const Texture& texture, uint slot);
+	void texture(const Texture& texture, uint slot, uint mip = 0xFFFF);
 
 	void textures(const std::vector<const Texture *> & textures, size_t startingSlot = 0);
 

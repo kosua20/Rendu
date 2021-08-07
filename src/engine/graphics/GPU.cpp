@@ -500,6 +500,27 @@ void GPU::setupTexture(Texture & texture, const Descriptor & descriptor, bool dr
 		return;
 	}
 
+	// Create per mip view.
+	texture.gpu->levelViews.resize(texture.levels);
+	for(uint mid = 0; mid < texture.levels; ++mid){
+		VkImageViewCreateInfo viewInfoMip = {};
+		viewInfoMip.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+		viewInfoMip.image = texture.gpu->image;
+		viewInfoMip.viewType = viewType;
+		viewInfoMip.format = texture.gpu->format;
+		// Remove the stencil bit when reading from the texture via the view.
+		viewInfoMip.subresourceRange.aspectMask = (texture.gpu->aspect & ~VK_IMAGE_ASPECT_STENCIL_BIT);
+		viewInfoMip.subresourceRange.baseMipLevel = mid;
+		viewInfoMip.subresourceRange.levelCount = 1;
+		viewInfoMip.subresourceRange.baseArrayLayer = 0;
+		viewInfoMip.subresourceRange.layerCount = imageInfo.arrayLayers;
+
+		if (vkCreateImageView(_context.device, &viewInfoMip, nullptr, &(texture.gpu->levelViews[mid])) != VK_SUCCESS) {
+			Log::Error() << Log::GPU << "Unable to create image view." << std::endl;
+			return;
+		}
+	}
+
 	setupSampler(*texture.gpu);
 }
 
@@ -1473,6 +1494,16 @@ void GPU::clean(GPUTexture & tex){
 	rsc.data = tex.data;
 	rsc.frame = _context.frameIndex;
 	rsc.name = tex.name;
+
+	const uint mipCount = tex.levelViews.size();
+	for(uint mid = 0; mid < mipCount; ++mid){
+		_resourcesToDelete.emplace_back();
+		ResourceToDelete& rsc = _resourcesToDelete.back();
+		rsc.view = tex.levelViews[mid];
+		rsc.frame = _context.frameIndex;
+		rsc.name = tex.name;
+	}
+	tex.levelViews.clear();
 
 }
 

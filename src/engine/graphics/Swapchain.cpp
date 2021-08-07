@@ -216,6 +216,7 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 		fb._depth.gpu->image = _depth.gpu->image;
 		fb._depth.gpu->data = _depth.gpu->data;
 		fb._depth.gpu->view = _depth.gpu->view;
+		fb._depth.gpu->levelViews = _depth.gpu->levelViews;
 		fb._depth.gpu->layouts = _depth.gpu->layouts;
 		fb._depth.gpu->sampler = _depth.gpu->sampler;
 		fb._depth.gpu->defaultLayout = _depth.gpu->defaultLayout;
@@ -246,6 +247,19 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 		viewInfo.subresourceRange.baseArrayLayer = 0;
 		viewInfo.subresourceRange.layerCount = 1;
 		vkCreateImageView(_context->device, &viewInfo, nullptr, &(fb._colors[0].gpu->view));
+
+		fb._colors[0].gpu->levelViews.resize(1);
+		VkImageViewCreateInfo viewInfoMip = {};
+		viewInfoMip.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+		viewInfoMip.image = colorImages[i];
+		viewInfoMip.viewType = VK_IMAGE_VIEW_TYPE_2D;
+		viewInfoMip.format = surfaceParams.format;
+		viewInfoMip.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		viewInfoMip.subresourceRange.baseMipLevel = 0;
+		viewInfoMip.subresourceRange.levelCount = 1;
+		viewInfoMip.subresourceRange.baseArrayLayer = 0;
+		viewInfoMip.subresourceRange.layerCount = 1;
+		vkCreateImageView(_context->device, &viewInfoMip, nullptr, &(fb._colors[0].gpu->levelViews[0]));
 
 		// Generate the render passes.
 		fb.populateRenderPasses(false);
@@ -421,6 +435,7 @@ void Swapchain::clean() {
 	for(size_t i = 0; i < _imageCount; ++i) {
 		// Destroy the view but not the image, as we don't own it (and there is no sampler).
 		vkDestroyImageView(_context->device, _framebuffers[i]->_colors[0].gpu->view, nullptr);
+		vkDestroyImageView(_context->device, _framebuffers[i]->_colors[0].gpu->levelViews[0], nullptr);
 	}
 	_framebuffers.clear();
 

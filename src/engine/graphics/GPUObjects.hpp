@@ -385,6 +385,8 @@ public:
 
 	VkImage image = VK_NULL_HANDLE;
 	VkImageView view = VK_NULL_HANDLE;
+	std::vector<VkImageView> levelViews;
+
 	VmaAllocation data = VK_NULL_HANDLE;
 	VkSampler sampler = VK_NULL_HANDLE;
 	ImTextureID imgui = (ImTextureID)VK_NULL_HANDLE;
