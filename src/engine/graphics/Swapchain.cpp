@@ -42,18 +42,28 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 	vkGetPhysicalDeviceSurfaceFormatsKHR(_context->physicalDevice, _context->surface, &formatCount, formats.data());
 
 	// Ideally RGBA8 with a sRGB display. //VK_FORMAT_R8G8B8A8_UNORM, VK_FORMAT_B8G8R8A8_SRGB
-	VkSurfaceFormatKHR surfaceParams = { VK_FORMAT_R8G8B8A8_UNORM, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR };
+	const VkColorSpaceKHR tgtColorSpace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
+	const std::vector<VkFormat> tgtFormats = {VK_FORMAT_B8G8R8A8_SRGB, VK_FORMAT_R8G8B8A8_SRGB, VK_FORMAT_B8G8R8_SRGB, VK_FORMAT_R8G8B8_SRGB};
+	VkSurfaceFormatKHR surfaceParams = {tgtFormats[0], tgtColorSpace};
+
 	// If only Undefined is present, we can use whatever we want.
-	bool useDefaultFormat = (formats.size() == 1 && formats[0].format == VK_FORMAT_UNDEFINED);
-	// Otherwise, check if our default format is in the list.
+	bool foundTargetSurfaceParams = (formats.size() == 1 && formats[0].format == VK_FORMAT_UNDEFINED);
+	// Otherwise, check if our default formats are in the list.
 	for(const auto& availableFormat : formats) {
-		if(availableFormat.format == surfaceParams.format && availableFormat.colorSpace == surfaceParams.colorSpace) {
-			useDefaultFormat = true;
-			break;
+		if(availableFormat.colorSpace != tgtColorSpace) {
+			continue;
 		}
+		if(std::find(tgtFormats.begin(), tgtFormats.end(), availableFormat.format) == tgtFormats.end()){
+			continue;
+		}
+		// We found one, stop.
+		surfaceParams.format = availableFormat.format;
+		foundTargetSurfaceParams = true;
+		break;
 	}
 	// Else just take what is given.
-	if(!useDefaultFormat){
+	if(!foundTargetSurfaceParams){
+		Log::Warning() << "Could not found a target surface format, using whatever is available. Gamma issues might appear." << std::endl;
 		surfaceParams = formats[0];
 	}
 

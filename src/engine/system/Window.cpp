@@ -14,8 +14,8 @@
 
 #include <GLFW/glfw3.h>
 
-Window::Window(const std::string & name, RenderingConfig & config, bool convertToSRGB, bool escapeQuit, bool hidden) :
-_config(config), _allowEscape(escapeQuit), _convertToSRGB(convertToSRGB) {
+Window::Window(const std::string & name, RenderingConfig & config, bool escapeQuit, bool hidden) :
+_config(config), _allowEscape(escapeQuit) {
 	// Initialize glfw.
 	if(!glfwInit()) {
 		Log::Error() << Log::GPU << "Could not start GLFW3" << std::endl;
@@ -82,9 +82,6 @@ _config(config), _allowEscape(escapeQuit), _convertToSRGB(convertToSRGB) {
 	}
 	// Create a swapchain associated to the window.
 	GPU::setupWindow(this);
-
-	// Setup the GPU state.
-	//GPU::setSRGBState(_convertToSRGB);
 
 	// We will need basic resources for ImGui.
 	Resources::manager().addResources("../../../resources/common");
@@ -154,17 +151,11 @@ bool Window::nextFrame() {
 	if(_frameStarted){
 		// Render the interface.
 		ImGui::Render();
-		// ImGui is not sRGB aware, we have to disable linear to
-		// sRGB conversion when writing to the backbuffer.
-		//GPU::setSRGBState(false);
-		// Draw ImGui as-is...
+
+		// Draw ImGui.
 		Framebuffer::backbuffer()->bind(Framebuffer::Operation::LOAD, Framebuffer::Operation::LOAD, Framebuffer::Operation::LOAD);
 		ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), GPU::getInternal()->getCurrentCommandBuffer());
-		//ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-		// ...and restore.
-		//GPU::setSRGBState(_convertToSRGB);
 		
-		//Display the result for the current rendering loop.
 	}
 
 	// Notify GPU for book-keeping.
@@ -279,29 +270,45 @@ void Window::setupImGui() {
 	ImGuiStyle & style = ImGui::GetStyle();
 	// Colors.
 	ImVec4 * colors						    = style.Colors;
-	const ImVec4 bgColor					= ImVec4(0.10f, 0.10f, 0.10f, 1.00f);
-	const ImVec4 buttonColor				= ImVec4(0.24f, 0.24f, 0.24f, 1.00f);
-	const ImVec4 buttonHoverColor			= ImVec4(0.35f, 0.35f, 0.35f, 1.00f);
-	const ImVec4 buttonActiveColor			= ImVec4(0.44f, 0.44f, 0.44f, 1.00f);
-	const ImVec4 textColor					= ImVec4(0.82f, 0.82f, 0.82f, 1.00f);
+	const ImVec4 bgColor					= ImVec4(0.01f, 0.01f, 0.01f, 1.00f);
+	const ImVec4 buttonColor				= ImVec4(0.04f, 0.04f, 0.04f, 1.00f);
+	const ImVec4 buttonHoverColor			= ImVec4(0.10f, 0.10f, 0.10f, 1.00f);
+	const ImVec4 buttonActiveColor			= ImVec4(0.16f, 0.16f, 0.16f, 1.00f);
+	const ImVec4 textColor					= ImVec4(0.65f, 0.65f, 0.65f, 1.00f);
 
-	colors[ImGuiCol_Text]                   = textColor;
-	colors[ImGuiCol_TextDisabled]           = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
-	colors[ImGuiCol_CheckMark]              = textColor;
-
-	colors[ImGuiCol_WindowBg]               = bgColor;
+	colors[ImGuiCol_TextDisabled]           = ImVec4(0.22f, 0.22f, 0.22f, 1.00f);
 	colors[ImGuiCol_ChildBg]                = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
-	colors[ImGuiCol_PopupBg]                = ImVec4(0.13f, 0.13f, 0.13f, 1.00f);
+	colors[ImGuiCol_PopupBg]                = ImVec4(0.01f, 0.01f, 0.01f, 1.00f);
 	colors[ImGuiCol_Border]                 = ImVec4(0.00f, 0.00f, 0.00f, 0.50f);
 	colors[ImGuiCol_BorderShadow]           = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
-	colors[ImGuiCol_FrameBg]                = ImVec4(0.06f, 0.06f, 0.06f, 1.00f);
-	colors[ImGuiCol_FrameBgHovered]         = ImVec4(0.17f, 0.17f, 0.17f, 1.00f);
-	colors[ImGuiCol_FrameBgActive]          = ImVec4(0.26f, 0.26f, 0.26f, 1.00f);
-	colors[ImGuiCol_TitleBg]                = bgColor;
-	colors[ImGuiCol_TitleBgActive]          = ImVec4(0.16f, 0.16f, 0.16f, 1.00f);
-	colors[ImGuiCol_TitleBgCollapsed]       = bgColor;
-	colors[ImGuiCol_MenuBarBg]              = ImVec4(0.16f, 0.16f, 0.16f, 1.00f);
+	colors[ImGuiCol_FrameBg]                = ImVec4(0.01f, 0.01f, 0.01f, 1.00f);
+	colors[ImGuiCol_FrameBgHovered]         = ImVec4(0.02f, 0.02f, 0.02f, 1.00f);
+	colors[ImGuiCol_FrameBgActive]          = ImVec4(0.05f, 0.05f, 0.05f, 1.00f);
+	colors[ImGuiCol_TitleBgActive]          = ImVec4(0.02f, 0.02f, 0.02f, 1.00f);
+	colors[ImGuiCol_MenuBarBg]              = ImVec4(0.02f, 0.02f, 0.02f, 1.00f);
 	colors[ImGuiCol_ScrollbarBg]            = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
+	colors[ImGuiCol_TabActive]              = ImVec4(0.14f, 0.14f, 0.14f, 1.00f);
+	colors[ImGuiCol_TabUnfocused]           = ImVec4(0.02f, 0.02f, 0.02f, 0.97f);
+	colors[ImGuiCol_TabUnfocusedActive]     = ImVec4(0.16f, 0.16f, 0.16f, 1.00f);
+	colors[ImGuiCol_PlotLines]              = ImVec4(0.34f, 0.34f, 0.34f, 1.00f);
+	colors[ImGuiCol_PlotLinesHovered]       = ImVec4(0.91f, 0.91f, 0.91f, 1.00f);
+	colors[ImGuiCol_PlotHistogram]          = ImVec4(0.35f, 0.35f, 0.35f, 1.00f);
+	colors[ImGuiCol_PlotHistogramHovered]   = ImVec4(0.79f, 0.79f, 0.79f, 1.00f);
+	colors[ImGuiCol_TableHeaderBg]          = ImVec4(0.08f, 0.08f, 0.08f, 1.00f);
+	colors[ImGuiCol_TableBorderStrong]      = ImVec4(0.08f, 0.08f, 0.08f, 1.00f);
+	colors[ImGuiCol_TableBorderLight]       = ImVec4(0.19f, 0.19f, 0.19f, 1.00f);
+	colors[ImGuiCol_TableRowBg]             = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
+	colors[ImGuiCol_TableRowBgAlt]          = ImVec4(0.04f, 0.04f, 0.04f, 1.00f);
+	colors[ImGuiCol_NavHighlight]           = ImVec4(0.75f, 0.75f, 0.75f, 1.00f);
+	colors[ImGuiCol_NavWindowingHighlight]  = ImVec4(1.00f, 1.00f, 1.00f, 0.70f);
+	colors[ImGuiCol_NavWindowingDimBg]      = ImVec4(0.61f, 0.61f, 0.61f, 0.20f);
+	colors[ImGuiCol_ModalWindowDimBg]       = ImVec4(0.22f, 0.22f, 0.22f, 0.35f);
+
+	colors[ImGuiCol_Text]                   = textColor;
+	colors[ImGuiCol_CheckMark]              = textColor;
+	colors[ImGuiCol_WindowBg]               = bgColor;
+	colors[ImGuiCol_TitleBg]                = bgColor;
+	colors[ImGuiCol_TitleBgCollapsed]       = bgColor;
 	colors[ImGuiCol_ScrollbarGrab]          = buttonColor;
 	colors[ImGuiCol_ScrollbarGrabHovered]   = buttonHoverColor;
 	colors[ImGuiCol_ScrollbarGrabActive]    = buttonActiveColor;
@@ -321,24 +328,8 @@ void Window::setupImGui() {
 	colors[ImGuiCol_ResizeGripActive]       = buttonActiveColor;
 	colors[ImGuiCol_Tab]                    = buttonColor;
 	colors[ImGuiCol_TabHovered]             = buttonHoverColor;
-	colors[ImGuiCol_TabActive]              = ImVec4(0.41f, 0.41f, 0.41f, 1.00f);
-	colors[ImGuiCol_TabUnfocused]           = ImVec4(0.16f, 0.16f, 0.16f, 0.97f);
-	colors[ImGuiCol_TabUnfocusedActive]     = ImVec4(0.43f, 0.43f, 0.43f, 1.00f);
-	colors[ImGuiCol_PlotLines]              = ImVec4(0.61f, 0.61f, 0.61f, 1.00f);
-	colors[ImGuiCol_PlotLinesHovered]       = ImVec4(0.96f, 0.96f, 0.96f, 1.00f);
-	colors[ImGuiCol_PlotHistogram]          = ImVec4(0.62f, 0.62f, 0.62f, 1.00f);
-	colors[ImGuiCol_PlotHistogramHovered]   = ImVec4(0.90f, 0.90f, 0.90f, 1.00f);
-	colors[ImGuiCol_TableHeaderBg]          = ImVec4(0.31f, 0.31f, 0.31f, 1.00f);
-	colors[ImGuiCol_TableBorderStrong]      = ImVec4(0.31f, 0.31f, 0.31f, 1.00f);
-	colors[ImGuiCol_TableBorderLight]       = ImVec4(0.47f, 0.47f, 0.47f, 1.00f);
-	colors[ImGuiCol_TableRowBg]             = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
-	colors[ImGuiCol_TableRowBgAlt]          = ImVec4(0.22f, 0.22f, 0.22f, 1.00f);
 	colors[ImGuiCol_TextSelectedBg]         = buttonColor;
 	colors[ImGuiCol_DragDropTarget]         = textColor;
-	colors[ImGuiCol_NavHighlight]           = ImVec4(0.88f, 0.88f, 0.88f, 1.00f);
-	colors[ImGuiCol_NavWindowingHighlight]  = ImVec4(1.00f, 1.00f, 1.00f, 0.70f);
-	colors[ImGuiCol_NavWindowingDimBg]      = ImVec4(0.80f, 0.80f, 0.80f, 0.20f);
-	colors[ImGuiCol_ModalWindowDimBg]       = ImVec4(0.50f, 0.50f, 0.50f, 0.35f);
 
 	// Frames.
 	style.FrameRounding		 = 5.0f;

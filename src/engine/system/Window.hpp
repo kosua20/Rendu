@@ -21,7 +21,7 @@ public:
 	 \param escapeQuit allows the user to close the window by pressing escape
 	 \param hidden should the window be hidden (for preprocess for instance)
 	*/
-	Window(const std::string & name, RenderingConfig & config, bool convertToSRGB, bool escapeQuit = true, bool hidden = false);
+	Window(const std::string & name, RenderingConfig & config, bool escapeQuit = true, bool hidden = false);
 
 	/** System actions that can be executed by the window. */
 	enum class Action : uint {
@@ -71,5 +71,4 @@ private:
 	ImGui_ImplVulkan_InitInfo * _imgui = nullptr;
 	bool _frameStarted = false; ///< Has a frame been started.
 	bool _allowEscape = false; ///< Can the window be closed by pressing escape.
-	bool _convertToSRGB = false; ///< Should writes to the backbuffer be considered linear.
 };
