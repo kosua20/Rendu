@@ -591,6 +591,23 @@ void GPU::uploadTexture(const Texture & texture) {
 	}
 
 
+	if(texture.gpu->descriptor().isSRGB()){
+		// \todo Avoid conversions when possible:
+		// * target format is 32F: nothing to do
+		// * target format is 8 + sRGB: convert to uchar, pow, upload directly
+		// * same for 8 ?
+		// Look at timings when loading a scene.
+		for(size_t cid = 0; cid < currentOffset; cid += sizeof(float)) {
+			// Dont convert alpha if present.
+			if(destChannels == 4 && (cid % 16 == 12)){
+				continue;
+			}
+			float* v = reinterpret_cast<float*>(transferBuffer.gpu->mapped + cid);
+			*v = std::pow(*v, 2.2f);
+		}
+	}
+
+
 	Texture transferTexture("tmpTexture");
 	transferTexture.width = texture.width;
 	transferTexture.height = texture.height;

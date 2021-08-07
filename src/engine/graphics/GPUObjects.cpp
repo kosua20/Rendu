@@ -317,7 +317,7 @@ bool Descriptor::operator!=(const Descriptor & other) const {
 }
 
 bool Descriptor::isSRGB() const {
-	return _typedFormat == Layout::SRGB8_ALPHA8;
+	return _typedFormat == Layout::SRGB8_ALPHA8 || _typedFormat == Layout::SBGR8_ALPHA8;
 }
 
 std::string Descriptor::string() const {
