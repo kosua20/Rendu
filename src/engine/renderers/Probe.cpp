@@ -91,11 +91,11 @@ void Probe::extractIrradianceSHCoeffs(const Texture & cubemap, float clamp, std:
 
 	// Indices conversions from cubemap UVs to direction.
 	static const std::vector<int> axisIndices  = {0, 0, 1, 1, 2, 2};
-	static const std::vector<float> axisMul	   = {1.0f, -1.0f, 1.0f, -1.0f, 1.0f, -1.0f};
+	static const std::vector<float> axisMul	   = {1.0f, -1.0f, -1.0f, 1.0f, 1.0f, -1.0f};
 	static const std::vector<int> horizIndices = {2, 2, 0, 0, 0, 0};
-	static const std::vector<float> horizMul   = {-1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f};
+	static const std::vector<float> horizMul   = {-1.0f, 1.0f, 1.0f, 1.0f, 1.0f, -1.0f};
 	static const std::vector<int> vertIndices  = {1, 1, 2, 2, 1, 1};
-	static const std::vector<float> vertMul	   = {-1.0f, -1.0f, 1.0f, -1.0f, -1.0f, -1.0f};
+	static const std::vector<float> vertMul	   = {1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f};
 
 	// Spherical harmonics coefficients.
 	std::array<glm::vec3, 9> LCoeffs = {};

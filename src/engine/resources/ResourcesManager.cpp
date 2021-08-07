@@ -140,7 +140,7 @@ std::string Resources::getImagePath(const std::string & name) {
 }
 
 std::vector<std::string> Resources::getCubemapPaths(const std::string & name) {
-	const std::vector<std::string> names {name + "_px", name + "_nx", name + "_py", name + "_ny", name + "_pz", name + "_nz"};
+	const std::vector<std::string> names {name + "_px", name + "_nx", name + "_ny", name + "_py", name + "_pz", name + "_nz"};
 	std::vector<std::string> paths;
 	paths.reserve(6);
 	for(auto & faceName : names) {
@@ -505,13 +505,14 @@ const Texture * Resources::getTexture(const std::string & name, const Descriptor
 		}
 		
 	} else {
+		const bool flip = (shape & TextureShape::Cube);
 		// Load all images.
 		texture.images.reserve(paths.size() * paths[0].size());
 		for(const auto & levelPaths : paths) {
 			for(const auto & filePath : levelPaths) {
 				texture.images.emplace_back();
 				Image & image = texture.images.back();
-				const int ret = image.load(filePath, channels, false, false);
+				const int ret = image.load(filePath, channels, flip, false);
 				if(ret != 0) {
 					Log::Error() << Log::Resources << "Unable to load the texture at path " << filePath << "." << std::endl;
 				}

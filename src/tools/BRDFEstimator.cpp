@@ -28,7 +28,7 @@
  */
 
 /// Cubemap default prefixes.
-const std::vector<std::string> suffixes = {"_px", "_nx", "_py", "_ny", "_pz", "_nz"};
+const std::vector<std::string> suffixes = {"_px", "_nx", "_ny", "_py", "_pz", "_nz"};
 
 /**
  Load a cubemap on both the CPU and GPU from an input path.
@@ -55,7 +55,7 @@ void loadCubemap(const std::string & inputPath, Texture & cubemapInfos) {
 	for(const auto & filePath : pathSides) {
 		cubemapInfos.images.emplace_back();
 		Image & image = cubemapInfos.images.back();
-		const int ret = image.load(filePath, 4, false, false);
+		const int ret = image.load(filePath, 4, true, false);
 		if(ret != 0) {
 			Log::Error() << Log::Resources << "Unable to load the texture at path " << filePath << "." << std::endl;
 		}
@@ -146,7 +146,7 @@ void exportCubemapConvolution(std::vector<Texture> & cubeLevels, const std::stri
 		const std::string levelPath = outputPath + "_" + std::to_string(level);
 		for(int i = 0; i < 6; ++i) {
 			const std::string faceLevelPath = levelPath + suffixes[i];
-			const int ret					= texture.images[i].save(faceLevelPath + ".exr", false, true);
+			const int ret					= texture.images[i].save(faceLevelPath + ".exr", true, true);
 			if(ret != 0) {
 				Log::Error() << "Unable to save cubemap face to path \"" << faceLevelPath << "\"." << std::endl;
 			}
@@ -190,7 +190,7 @@ int main(int argc, char ** argv) {
 
 	Resources::manager().addResources("../../../resources/pbrdemo");
 
-	Window window("BRDF Extractor", config, false);
+	Window window("BRDF Extractor", config);
 
 	// Seed random generator.
 	Random::seed();
@@ -214,7 +214,7 @@ int main(int argc, char ** argv) {
 	// UI parameters.
 	int outputSide   = 512;
 	int levelsCount  = 6;
-	int samplesCount = 32768;
+	int samplesCount = 2048;
 	int showLevel	= 0;
 	enum VisualizationMode : int {
 		INPUT,
@@ -344,7 +344,7 @@ int main(int argc, char ** argv) {
 		const glm::ivec2 screenSize = Input::manager().size();
 		const glm::mat4 mvp		   = camera.projection() * camera.view();
 
-		Framebuffer::backbuffer()->bind(glm::vec4(0.5f, 0.5f, 0.5f, 1.0f), 1.0f, Framebuffer::Operation::DONTCARE);
+		Framebuffer::backbuffer()->bind(glm::vec4(0.25f, 0.25f, 0.25f, 1.0f), 1.0f, Framebuffer::Operation::DONTCARE);
 		GPU::setViewport(0, 0, screenSize[0], screenSize[1]);
 
 		GPU::setDepthState(true, TestFunction::LESS, true);
