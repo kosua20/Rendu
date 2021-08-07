@@ -112,7 +112,7 @@ int Image::load(const std::string & path, unsigned int channels, bool flip, bool
 	return loadLDR(path, channels, flip, externalFile);
 }
 
-int Image::save(const std::string & path, bool flip, bool ignoreAlpha){
+int Image::save(const std::string & path, bool flip, bool ignoreAlpha) const {
 	if(isFloat(path)) {
 		return saveAsHDR(path, flip, ignoreAlpha);
 	}
@@ -123,7 +123,7 @@ bool Image::isFloat(const std::string & path) {
 	return path.substr(path.size() - 4, 4) == ".exr";
 }
 
-int Image::saveAsLDR(const std::string & path, bool flip, bool ignoreAlpha) {
+int Image::saveAsLDR(const std::string & path, bool flip, bool ignoreAlpha) const {
 	
 	const unsigned int channels = components;
 	
@@ -149,7 +149,7 @@ int Image::saveAsLDR(const std::string & path, bool flip, bool ignoreAlpha) {
 	return ret == 0;
 }
 
-int Image::saveAsHDR(const std::string & path, bool flip, bool ignoreAlpha) {
+int Image::saveAsHDR(const std::string & path, bool flip, bool ignoreAlpha) const {
 	
 	
 	// Assume at least 16x16 pixels.

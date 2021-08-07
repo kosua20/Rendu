@@ -108,7 +108,7 @@ public:
 	 \param ignoreAlpha if true, the alpha channel will be ignored
 	 \return a success/error flag
 	 */
-	int save(const std::string & path, bool flip, bool ignoreAlpha = false);
+	int save(const std::string & path, bool flip, bool ignoreAlpha = false) const;
 	
 	/** Query if a path points to an image loaded in floating point, based on the extension.
 	 \param path the path to the image
@@ -146,7 +146,7 @@ private:
 	 \param ignoreAlpha if true, the alpha channel will be ignored
 	 \return a success/error flag
 	 */
-	int saveAsLDR(const std::string & path, bool flip, bool ignoreAlpha);
+	int saveAsLDR(const std::string & path, bool flip, bool ignoreAlpha) const;
 	
 	/** Save a HDR image to disk using tiny_exr.
 	 \param path the path to the image
@@ -154,7 +154,7 @@ private:
 	 \param ignoreAlpha if true, the alpha channel will be ignored
 	 \return a success/error flag
 	 */
-	int saveAsHDR(const std::string & path,  bool flip, bool ignoreAlpha);
+	int saveAsHDR(const std::string & path,  bool flip, bool ignoreAlpha) const;
 	
 	/** Load a LDR image from disk using stb_image.
 	 \param path the path to the image
