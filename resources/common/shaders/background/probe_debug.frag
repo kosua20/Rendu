@@ -1,4 +1,4 @@
-
+#include "utils.glsl"
 #include "common_pbr.glsl"
 
 #define PROBE_SHCOEFFS 0
@@ -32,7 +32,7 @@ void main(){
 	} else {
 		vec3 v = normalize(In.pos.xyz - camPos);
 		vec3 r = reflect(v, n);
-		fragColor = textureLod(texture0, r, lod);
+		fragColor = textureLod(texture0, toCube(r), lod);
 	}
 
 }

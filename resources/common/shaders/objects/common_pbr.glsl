@@ -1,4 +1,4 @@
-
+#include "utils.glsl"
 #include "constants.glsl"
 #include "geometry.glsl"
 
@@ -100,7 +100,7 @@ vec3 radiance(vec3 n, vec3 v, vec3 p, float roughness, samplerCube cubeMap, vec3
 		vec3 hitPos = p + dist * r;
 		r = (hitPos - cubePos);
 	}
-	vec3 specularColor = textureLod(cubeMap, r, upLod * roughness).rgb;
+	vec3 specularColor = textureLod(cubeMap, toCube(r), upLod * roughness).rgb;
 	return specularColor;
 }
 

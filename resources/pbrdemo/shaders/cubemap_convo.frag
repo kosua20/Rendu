@@ -52,7 +52,7 @@ vec3 convo(vec3 r, float roughness){
 
 		float NdotL = max(dot(n,l), 0.000);
 		if(NdotL > 0.0){
-			sum += NdotL * clamp(textureLod(texture0, l, 0.0).rgb, 0.0, clampMax);
+			sum += NdotL * clamp(textureLod(texture0, toCube(l), 0.0).rgb, 0.0, clampMax);
 			denom += NdotL;
 		}
 	}

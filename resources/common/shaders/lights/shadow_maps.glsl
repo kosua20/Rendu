@@ -1,3 +1,4 @@
+#include "utils.glsl"
 
 #define SHADOW_NONE 0
 #define SHADOW_BASIC 1
@@ -36,7 +37,7 @@ float shadowBasic(vec3 lightSpacePosition, sampler2DArray smap, int layer, float
 */
 float shadowBasicCube(vec3 lightToPosDir, samplerCubeArray smap, int layer, float farPlane, float bias){
 	// Read first and second moment from shadow map.
-	float depth = textureLod(smap, vec4(lightToPosDir, layer), 0.0).r;
+	float depth = textureLod(smap, toCube(lightToPosDir, layer), 0.0).r;
 	if(depth >= 1.0){
 		// No information in the depthmap: no occluder.
 		return 1.0;
@@ -90,7 +91,7 @@ float shadowVSM(vec3 lightSpacePosition, sampler2DArray smap, int layer){
 float shadowVSMCube(vec3 lightToPosDir, samplerCubeArray smap, int layer, float farPlane){
 	float probabilityMax = 1.0;
 	// Read first and second moment from shadow map.
-	vec2 moments = textureLod(smap, vec4(lightToPosDir, layer), 0.0).rg;
+	vec2 moments = textureLod(smap, toCube(lightToPosDir, layer), 0.0).rg;
 	if(moments.x >= 1.0){
 		// No information in the depthmap: no occluder.
 		return 1.0;

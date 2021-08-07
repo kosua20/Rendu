@@ -1,3 +1,4 @@
+#include "utils.glsl"
 
 layout(location = 0) in INTERFACE {
 	vec3 pos; ///< Position.
@@ -22,19 +23,19 @@ void main(){
 	// We shift the fetch direction by moving on the face plane, which is at distance invHalfSize.
 	// To do this we use the right and up vectors of the face as displacement directions.
 	vec4 color;
-	color  = textureLod(screenTexture, vec4(In.pos + invHalfSize * (-2 * right + -2 * up), layer), 0.0);
-	color += textureLod(screenTexture, vec4(In.pos + invHalfSize * (-2 * right          ), layer), 0.0);
-	color += textureLod(screenTexture, vec4(In.pos + invHalfSize * (-2 * right +  2 * up), layer), 0.0);
-	color += textureLod(screenTexture, vec4(In.pos + invHalfSize * (-1 * right + -1 * up), layer), 0.0);
-	color += textureLod(screenTexture, vec4(In.pos + invHalfSize * (-1 * right +  1 * up), layer), 0.0);
-	color += textureLod(screenTexture, vec4(In.pos + invHalfSize * (             -2 * up), layer), 0.0);
-	color += textureLod(screenTexture, vec4(In.pos                                       , layer), 0.0);
-	color += textureLod(screenTexture, vec4(In.pos + invHalfSize * (              2 * up), layer), 0.0);
-	color += textureLod(screenTexture, vec4(In.pos + invHalfSize * ( 1 * right + -1 * up), layer), 0.0);
-	color += textureLod(screenTexture, vec4(In.pos + invHalfSize * ( 1 * right +  1 * up), layer), 0.0);
-	color += textureLod(screenTexture, vec4(In.pos + invHalfSize * ( 2 * right + -2 * up), layer), 0.0);
-	color += textureLod(screenTexture, vec4(In.pos + invHalfSize * ( 2 * right          ), layer), 0.0);
-	color += textureLod(screenTexture, vec4(In.pos + invHalfSize * ( 2 * right +  2 * up), layer), 0.0);
+	color  = textureLod(screenTexture, toCube(In.pos + invHalfSize * (-2 * right + -2 * up), layer), 0.0);
+	color += textureLod(screenTexture, toCube(In.pos + invHalfSize * (-2 * right          ), layer), 0.0);
+	color += textureLod(screenTexture, toCube(In.pos + invHalfSize * (-2 * right +  2 * up), layer), 0.0);
+	color += textureLod(screenTexture, toCube(In.pos + invHalfSize * (-1 * right + -1 * up), layer), 0.0);
+	color += textureLod(screenTexture, toCube(In.pos + invHalfSize * (-1 * right +  1 * up), layer), 0.0);
+	color += textureLod(screenTexture, toCube(In.pos + invHalfSize * (             -2 * up), layer), 0.0);
+	color += textureLod(screenTexture, toCube(In.pos                                       , layer), 0.0);
+	color += textureLod(screenTexture, toCube(In.pos + invHalfSize * (              2 * up), layer), 0.0);
+	color += textureLod(screenTexture, toCube(In.pos + invHalfSize * ( 1 * right + -1 * up), layer), 0.0);
+	color += textureLod(screenTexture, toCube(In.pos + invHalfSize * ( 1 * right +  1 * up), layer), 0.0);
+	color += textureLod(screenTexture, toCube(In.pos + invHalfSize * ( 2 * right + -2 * up), layer), 0.0);
+	color += textureLod(screenTexture, toCube(In.pos + invHalfSize * ( 2 * right          ), layer), 0.0);
+	color += textureLod(screenTexture, toCube(In.pos + invHalfSize * ( 2 * right +  2 * up), layer), 0.0);
 
 	fragColor = color / 13.0;
 }

@@ -1,4 +1,4 @@
-
+#include "utils.glsl"
 #include "gerstner_waves.glsl"
 
 layout(location = 0) in vec3 ifPos; ///< World space position.
@@ -187,7 +187,7 @@ void main(){
 	ldir.y = max(0.0, ldir.y);
 	// Fetch from envmap for now.
 	// Clamp to avoid fireflies.
-	vec3 reflection = min(texture(envmap, ldir).rgb, 5.0);
+	vec3 reflection = min(texture(envmap, toCube(ldir)).rgb, 5.0);
 	// Combine specular and fresnel.
 	float Fs = fresnelWater(NdotV);
 	vec2 brdfParams = texture(brdfCoeffs, vec2(NdotV, 0.1)).rg;

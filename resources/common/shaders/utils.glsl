@@ -5,7 +5,7 @@
 \return the view space depth
 */
 float linearizeDepth(float depth, vec2 projPlanes){
-	float depth2 = 2.0 * depth - 1.0 ;
+	float depth2 = depth;
 	return -projPlanes.y / (depth2 + projPlanes.x);
 }
 
@@ -37,4 +37,20 @@ vec2 hammersleySample(uint i, int scount) {
 	bits = ((bits & 0x00FF00FFu) << 8u) | ((bits & 0xFF00FF00u) >> 8u);
 	float y = float(bits) * 2.3283064365386963e-10; // / 0x100000000
 	return vec2(float(i)/float(scount), y);
+}
+
+/** Transform a world space direction to cubemap space. A vertical flip is needed.
+ \param v the direction to flip
+ \return the direction to use to sample in the cubemap
+ */
+vec3 toCube(vec3 v){
+	return vec3(v.x, -v.y, v.z);
+}
+
+/** Transform a world space direction to cubemap array space. A vertical flip is needed.
+ \param v the direction to flip
+ \return the direction to use to sample in the cubemap
+ */
+vec4 toCube(vec3 v, int layer){
+	return vec4(v.x, -v.y, v.z, float(layer));
 }

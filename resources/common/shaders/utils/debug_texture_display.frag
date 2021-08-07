@@ -1,5 +1,5 @@
-
 #include "constants.glsl"
+#include "utils.glsl"
 
 layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
@@ -51,14 +51,14 @@ void main(){
 		color = textureLod(tex3D, vec3(In.uv, float(layer)/depth), level);
 	} else if(shape == TextureShapeCube || shape == TextureShapeArrayCube){
 		// For now, equirectangular.
-		vec2 angles = M_PI * vec2(2.0, 1.0) * (In.uv - vec2(0.0, 0.5));
+		vec2 angles = M_PI * vec2(2.0, -1.0) * (In.uv - vec2(0.0, 0.5));
 		vec2 cosines = cos(angles);
 		vec2 sines = sin(angles);
 		vec3 dir = vec3(cosines.y * cosines.x, sines.y, cosines.y * sines.x);
 		if(shape == TextureShapeCube){
-			color = textureLod(texCube, dir, level);
+			color = textureLod(texCube, toCube(dir), level);
 		} else {
-			color = textureLod(texCubeArray, vec4(dir, layer/6), level);
+			color = textureLod(texCubeArray, toCube(dir, layer/6), level);
 		}
 		// Highlight edges.
 		vec3 adir = abs(dir);

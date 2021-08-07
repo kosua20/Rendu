@@ -18,6 +18,6 @@ layout(set = 0, binding = 1) uniform UniformBlock {
 void main(){
 	gl_Position.xy = v.xy;
 	gl_Position.zw = vec2(1.0);
-	Out.pos = center + gl_Position.x * right + gl_Position.y * up;
+	Out.pos = center + gl_Position.x * right - gl_Position.y * up;
 	
 }

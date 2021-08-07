@@ -1,3 +1,4 @@
+#include "utils.glsl"
 
 layout(location = 0) in INTERFACE {
 	vec3 pos; ///< Position in model space.
@@ -9,6 +10,6 @@ layout(location = 0) out vec4 fragColor; ///< Color.
 
 /** Use the normalized position to read in the cube map. */
 void main(){
-	fragColor.rgb = textureLod(texture0, normalize(In.pos), 0.0).rgb;
+	fragColor.rgb = textureLod(texture0, toCube(normalize(In.pos)), 0.0).rgb;
 	fragColor.a = -1.0;
 }
