@@ -67,7 +67,8 @@ void main(){
 	if(shadowMode != SHADOW_NONE){
 		vec4 lightSpacePosition = viewToLight * vec4(position,1.0);
 		lightSpacePosition /= lightSpacePosition.w;
-		shadowing = shadow(shadowMode, 0.5*lightSpacePosition.xyz+0.5, shadowMap, shadowLayer, shadowBias);
+		lightSpacePosition.xy = 0.5 * lightSpacePosition.xy + 0.5;
+		shadowing = shadow(shadowMode, lightSpacePosition.xyz, shadowMap, shadowLayer, shadowBias);
 	}
 	// Attenuation with increasing distance to the light.
 	float localRadius2 = dot(deltaPosition, deltaPosition);

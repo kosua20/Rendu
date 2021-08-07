@@ -54,7 +54,8 @@ void main(){
 	// Shadowing
 	float shadowing = 1.0;
 	if(shadowMode != SHADOW_NONE){
-		vec3 lightSpacePosition = 0.5*(viewToLight * vec4(position,1.0)).xyz + 0.5;
+		vec3 lightSpacePosition = (viewToLight * vec4(position,1.0)).xyz;
+		lightSpacePosition.xy = 0.5 * lightSpacePosition.xy + 0.5;
 		shadowing = shadow(shadowMode, lightSpacePosition, shadowMap, shadowLayer, shadowBias);
 	}
 	// BRDF contributions.
