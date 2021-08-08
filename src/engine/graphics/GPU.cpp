@@ -392,14 +392,13 @@ struct ResourceToSave {
 	std::string path;
 	glm::uvec2 range{0.0f,0.0f};
 	uint64_t frame = 0;
-	bool hdr;
-	bool flip = false;
-	bool ignoreAlpha = false;
+	Image::Save options;
+	bool hdr = false;
 };
 
 std::deque<ResourceToSave> _resourcesToSave;
 
-void GPU::saveFramebuffer(Framebuffer & framebuffer, const std::string & path, bool flip, bool ignoreAlpha) {
+void GPU::saveFramebuffer(Framebuffer & framebuffer, const std::string & path, Image::Save options) {
 	static const std::vector<Layout> hdrLayouts = {
 		Layout::R16F, Layout::RG16F, Layout::RGBA16F, Layout::R32F, Layout::RG32F, Layout::RGBA32F, Layout::A2_BGR10, Layout::A2_RGB10,
 		Layout::DEPTH_COMPONENT32F, Layout::DEPTH24_STENCIL8, Layout::DEPTH_COMPONENT16, Layout::DEPTH_COMPONENT24, Layout::DEPTH32F_STENCIL8,
@@ -416,12 +415,14 @@ void GPU::saveFramebuffer(Framebuffer & framebuffer, const std::string & path, b
 	_resourcesToSave.emplace_back();
 	ResourceToSave& request = _resourcesToSave.back();
 	request.path = path;
-	request.flip = flip;
-	request.ignoreAlpha = ignoreAlpha;
 	request.frame = _context.frameIndex;
 	request.dst.reset(new Texture("SaveRequest"));
 
+	// HDR if input is a float format.
 	request.hdr = std::find(hdrLayouts.begin(), hdrLayouts.end(), srcTexture.gpu->descriptor().typedFormat()) != hdrLayouts.end();
+
+	// Gamma correction if the output is LDR.
+	request.options = options | Image::Save::SRGB_LDR;
 
 	request.range = GPU::copyTextureRegionToBufferAndPrepare(_context.getCurrentCommandBuffer(), srcTexture, *request.dst, request.data, 0, 1);
 
@@ -773,7 +774,7 @@ void GPU::downloadTexture(Texture & texture, int level) {
 	const uint lastLevel = level >= 0 ? uint(level) : (texture.levels - 1u);
 	const uint levelCount = lastLevel - firstLevel + 1u;
 
-	// Download will take place on an auxiliary command buffar, so we have to make sure that the texture is in
+	// Download will take place on an auxiliary command buffer, so we have to make sure that the texture is in
 	// its default layout state (the one at the end of a command buffer). We will restore it to the same state afterwards.
 	for(uint lid = firstLevel; lid <= lastLevel; ++lid){
 		for(const VkImageLayout& lay : texture.gpu->layouts[lid]){
@@ -1662,14 +1663,12 @@ void GPU::processSaveRequests(){
 
 			// Save the image to the disk.
 			const std::string imgPath = rsc.path + (imageCount > 1 ? ("-" + std::to_string(iid)) : "");
-			const int ret = img.save(imgPath + ext, rsc.flip, rsc.ignoreAlpha);
+			const int ret = img.save(imgPath + ext, rsc.options);
 			if(ret != 0) {
 				Log::Error() << "Error for image at path " << imgPath << ext << "." << std::endl;
 			}
 		}
 
-		//rsc.dst->clean();
-		//rsc.data->clean();
 		_resourcesToSave.pop_front();
 	}
 }

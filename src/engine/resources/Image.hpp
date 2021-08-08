@@ -8,6 +8,13 @@
 class Image {
 
 public:
+
+	enum class Save : uint {
+		NONE = 0,
+		FLIP = 1 << 0,
+		IGNORE_ALPHA = 1 << 1,
+		SRGB_LDR = 1 << 2
+	};
 	
 	/** Default constructor. */
 	Image() = default;
@@ -108,7 +115,7 @@ public:
 	 \param ignoreAlpha if true, the alpha channel will be ignored
 	 \return a success/error flag
 	 */
-	int save(const std::string & path, bool flip, bool ignoreAlpha = false) const;
+	int save(const std::string & path, Save options) const;
 	
 	/** Query if a path points to an image loaded in floating point, based on the extension.
 	 \param path the path to the image
@@ -146,7 +153,7 @@ private:
 	 \param ignoreAlpha if true, the alpha channel will be ignored
 	 \return a success/error flag
 	 */
-	int saveAsLDR(const std::string & path, bool flip, bool ignoreAlpha) const;
+	int saveAsLDR(const std::string & path, Save options) const;
 	
 	/** Save a HDR image to disk using tiny_exr.
 	 \param path the path to the image
@@ -154,7 +161,7 @@ private:
 	 \param ignoreAlpha if true, the alpha channel will be ignored
 	 \return a success/error flag
 	 */
-	int saveAsHDR(const std::string & path,  bool flip, bool ignoreAlpha) const;
+	int saveAsHDR(const std::string & path, Save options) const;
 	
 	/** Load a LDR image from disk using stb_image.
 	 \param path the path to the image
@@ -183,4 +190,31 @@ private:
  */
 inline int modPos(int x, int w){
 	return ((x%w)+w)%w;
+}
+
+/** Combining operator for TextureShape.
+ \param t0 first flag
+ \param t1 second flag
+ \return the combination of both flags.
+ */
+inline Image::Save operator|( Image::Save t0,  Image::Save t1) {
+	return static_cast< Image::Save>(static_cast<uint>(t0) | static_cast<uint>(t1));
+}
+
+/** Extracting operator for TextureShape.
+ \param t0 reference flag
+ \param t1 flag to extract
+ \return true if t0 'contains' t1
+ */
+inline bool operator&( Image::Save t0,  Image::Save t1) {
+	return bool(static_cast<uint>(t0) & static_cast<uint>(t1));
+}
+
+/** Combining operator for TextureShape.
+ \param t0 first flag
+ \param t1 second flag
+ \return reference to the first flag after combination with the second flag.
+ */
+inline  Image::Save & operator|=( Image::Save & t0,  Image::Save & t1) {
+	return t0 = t0 | t1;
 }

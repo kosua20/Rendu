@@ -103,7 +103,7 @@ public:
 	 \note The output image extension will be automatically added based on the framebuffer type and format.
 	 \warning Export of small size float framebuffers can create artifacts.
 	 */
-	static void saveFramebuffer(Framebuffer & framebuffer, const std::string & path, bool flip = true, bool ignoreAlpha = false);
+	static void saveFramebuffer(Framebuffer & framebuffer, const std::string & path, Image::Save options);
 
 	/** Create a GPU texture with a given layout and allocate it.
 	 \param texture the texture to setup on the GPU

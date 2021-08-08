@@ -112,19 +112,22 @@ int Image::load(const std::string & path, unsigned int channels, bool flip, bool
 	return loadLDR(path, channels, flip, externalFile);
 }
 
-int Image::save(const std::string & path, bool flip, bool ignoreAlpha) const {
+int Image::save(const std::string & path, Image::Save options) const {
 	if(isFloat(path)) {
-		return saveAsHDR(path, flip, ignoreAlpha);
+		return saveAsHDR(path, options);
 	}
-	return saveAsLDR(path, flip, ignoreAlpha);
+	return saveAsLDR(path, options);
 }
 
 bool Image::isFloat(const std::string & path) {
 	return path.substr(path.size() - 4, 4) == ".exr";
 }
 
-int Image::saveAsLDR(const std::string & path, bool flip, bool ignoreAlpha) const {
-	
+int Image::saveAsLDR(const std::string & path, Image::Save options) const {
+
+	const bool ignoreAlpha = options & Save::IGNORE_ALPHA;
+	const bool flip = options & Save::FLIP;
+	const bool gammaCorrect = options & Save::SRGB_LDR;
 	const unsigned int channels = components;
 	
 	stbi_flip_vertically_on_write(flip);
@@ -136,7 +139,12 @@ int Image::saveAsLDR(const std::string & path, bool flip, bool ignoreAlpha) cons
 	for(unsigned int pid = 0; pid < width * height; ++pid) {
 		for(unsigned int cid = 0; cid < channels; ++cid) {
 			const unsigned int currentPix = channels * pid + cid;
-			const float newValue		  = std::min(255.0f, std::max(0.0f, 255.0f * pixels[currentPix]));
+			float value = pixels[currentPix];
+			// Apply gamma correction if requested, except on alpha channel.
+			if(gammaCorrect && (cid != 3)){
+				value = std::pow(value, 1.0f / 2.2f);
+			}
+			const float newValue		  = std::min(255.0f, std::max(0.0f, 255.0f * value));
 			newData[currentPix]			  = static_cast<unsigned char>(newValue);
 			if(cid == 3 && ignoreAlpha) {
 				newData[currentPix] = 255;
@@ -149,7 +157,7 @@ int Image::saveAsLDR(const std::string & path, bool flip, bool ignoreAlpha) cons
 	return ret == 0;
 }
 
-int Image::saveAsHDR(const std::string & path, bool flip, bool ignoreAlpha) const {
+int Image::saveAsHDR(const std::string & path, Image::Save options) const {
 	
 	
 	// Assume at least 16x16 pixels.
@@ -163,7 +171,10 @@ int Image::saveAsHDR(const std::string & path, bool flip, bool ignoreAlpha) cons
 	
 	EXRImage exr_image;
 	InitEXRImage(&exr_image);
-	
+
+	const bool ignoreAlpha = options & Save::IGNORE_ALPHA;
+	const bool flip = options & Save::FLIP;
+
 	// Components: 1, 3, 3, 4
 	const int channels   = int(components == 2 ? 3 : components);
 	exr_image.num_channels = channels;
