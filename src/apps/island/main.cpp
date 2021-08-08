@@ -45,6 +45,7 @@ int main(int argc, char ** argv) {
 	while(window.nextFrame()) {
 		app.update();
 		app.draw();
+		app.finish();
 	}
 	
 	return 0;

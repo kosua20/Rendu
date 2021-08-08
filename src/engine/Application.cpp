@@ -37,20 +37,12 @@ void Application::update() {
 		_config.screenResolution[1] = float(height > 0 ? height : 1);
 		resize();
 	}
-	// Perform screenshot capture in the current working directory.
-	if(Input::manager().triggered(Input::Key::O) || (Input::manager().controllerAvailable() && Input::manager().controller()->triggered(Controller::ButtonView))) {
-		const std::string filename = System::timestamp();
-		GPU::saveFramebuffer(*Framebuffer::backbuffer(), "./" + filename, true, true);
-	}
+
 	// Reload resources.
 	if(Input::manager().triggered(Input::Key::P)) {
 		Resources::manager().reload();
 	}
 
-	// Display debug informations.
-	if((Input::manager().pressed(Input::Key::LeftControl) || Input::manager().pressed(Input::Key::LeftAlt)) && Input::manager().triggered(Input::Key::Tab)) {
-		_showDebug = !_showDebug;
-	}
 	if(_showDebug && _debug) {
 		_debug->interface();
 	}
@@ -65,6 +57,21 @@ void Application::update() {
 	_frameTimes[_currFrame] = _frameTime;
 	_smoothTime += _frameTimes[_currFrame];
 	_currFrame = (_currFrame + 1) % _framesCount;
+}
+
+void Application::finish() {
+	// This will be executed before the GUI is drawn.
+
+	// Perform screenshot capture in the current working directory.
+	if(Input::manager().triggered(Input::Key::O) || (Input::manager().controllerAvailable() && Input::manager().controller()->triggered(Controller::ButtonView))) {
+		const std::string filename = System::timestamp();
+		GPU::saveFramebuffer(*Framebuffer::backbuffer(), "./" + filename, Image::Save::IGNORE_ALPHA);
+	}
+
+	// Display debug informations.
+	if((Input::manager().pressed(Input::Key::LeftControl) || Input::manager().pressed(Input::Key::LeftAlt)) && Input::manager().triggered(Input::Key::Tab)) {
+		_showDebug = !_showDebug;
+	}
 }
 
 double Application::timeElapsed(){

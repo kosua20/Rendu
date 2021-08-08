@@ -20,6 +20,9 @@ public:
 	
 	/** Interactions call. */
 	virtual void update();
+
+	/** End of frame operations (screenshot,...) */
+	virtual void finish();
 	
 	/** Handle a window resize event, the configuration has been updated with the new size. */
 	virtual void resize() = 0;
