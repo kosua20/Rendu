@@ -78,6 +78,6 @@ vec3 updateFragmentPosition(vec2 localUV, vec2 positionShift, vec3 viewPos, mat4
 	// Perspective division.
 	float newDepth = clipPos.z / clipPos.w;
 	// Update the fragment depth, taking into account the depth range parameters.
-	gl_FragDepth = ((gl_DepthRange.diff * newDepth) + gl_DepthRange.near + gl_DepthRange.far)/2.0;
+	gl_FragDepth = newDepth;
 	return newViewSpacePosition;
 }

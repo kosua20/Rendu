@@ -293,9 +293,10 @@ void Mesh::computeTangentsAndBinormals(bool force) {
 			const glm::vec2 & uv0 = texcoords[i0];
 			const glm::vec2 & uv1 = texcoords[i1];
 			const glm::vec2 & uv2 = texcoords[i2];
-			const glm::vec2 deltaUv1 = uv1 - uv0;
-			const glm::vec2 deltaUv2 = uv2 - uv0;
+			const glm::vec2 deltaUv1(uv1[0] - uv0[0], -uv1[1] + uv0[1]);
+			const glm::vec2 deltaUv2(uv2[0] - uv0[0], -uv2[1] + uv0[1]);
 
+			// Note: our UVs are flipped to accomodate Vulkan texture orientation.
 			// Compute tangent and binormal for the face.
 			const float denom  = deltaUv1.x * deltaUv2.y - deltaUv1.y * deltaUv2.x;
 			if(std::abs(denom) >= 0.001f) {
@@ -338,7 +339,8 @@ void Mesh::computeTangentsAndBinormals(bool force) {
 		if(glm::length(binormals[tid]) < 0.1f){
 			binormals[tid] = glm::cross(normals[tid], tangents[tid]);
 		}
-		binormals[tid] = glm::normalize(binormals[tid]);
+		// Flip the binormal to keep the frame properly oriented after the flipped projection.
+		binormals[tid] = glm::normalize(binormals[tid]) * glm::vec3(-1.0f, 1.0f, -1.0f);
 	}
 	Log::Verbose() << Log::Resources << "Mesh: " << tangents.size() << " tangents and binormals computed." << std::endl;
 
@@ -358,7 +360,7 @@ int Mesh::saveAsObj(const std::string & path, bool defaultUVs) {
 		objFile << "v " << v.x << " " << v.y << " " << v.z << std::endl;
 	}
 	for(const auto & t : texcoords) {
-		objFile << "vt " << t.x << " " << t.y << std::endl;
+		objFile << "vt " << t.x << " " << (1.0f - t.y) << std::endl;
 	}
 	for(const auto & n : normals) {
 		objFile << "vn " << n.x << " " << n.y << " " << n.z << std::endl;
