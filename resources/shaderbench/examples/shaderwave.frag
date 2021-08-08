@@ -1,6 +1,6 @@
 
 layout(location = 0) in INTERFACE {
-	vec3 dir;
+	vec4 dir; ///< View world direction.
 	vec2 uv; ///< Texture coordinates.
 } In ;
 

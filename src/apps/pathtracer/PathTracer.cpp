@@ -277,20 +277,9 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 				// Clamp and store.
 				render.rgb(int(x), int(y)) += glm::min(sampleColor, 5.0f);
 			}
-		}
-	});
-
-	// Normalize and gamma correction.
-	System::forParallel(0, size_t(render.height), [&render, &samples](size_t y) {
-		for(size_t x = 0; x < (render.width); ++x) {
+			// Normalize.
 			const glm::vec3 color	  = render.rgb(int(x), int(y)) / float(samples);
-			render.rgb(int(x), int(y)) = glm::pow(color, glm::vec3(1.0f / 2.2f));
-		}
-		// Ensure full opacity if RGBA image.
-		if(render.components == 4){
-			for(size_t x = 0; x < (render.width); ++x) {
-				render.rgba(int(x), int(y))[3] = 1.0f;
-			}
+			render.rgb(int(x), int(y)) = color;
 		}
 	});
 

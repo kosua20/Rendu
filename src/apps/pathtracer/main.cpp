@@ -105,7 +105,8 @@ void renderOneShot(const PathTracerConfig & config) {
 
 	// Save image.
 	Log::Info() << "[PathTracer] Saving to " << config.outputPath << "." << std::endl;
-	render.save(config.outputPath, false);
+	// Convert to sRGB if saving in PNG.
+	render.save(config.outputPath, Image::Save::SRGB_LDR | Image::Save::IGNORE_ALPHA);
 
 	System::ping();
 }

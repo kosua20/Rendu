@@ -27,7 +27,7 @@ vec3 simpleExposure(vec3 hdrColor, float exposure){
  \return gamma correct color for screens
  */
 vec3 gamma(vec3 color){
-	return pow(color, vec3(1.0/2.2));
+	return pow(color, vec3(2.2));
 }
 
 /**

@@ -12,7 +12,7 @@ int saveColor(const std::string & outputPath, const glm::vec3 & color) {
 			combinedImage.rgb(x, y) = color;
 		}
 	}
-	return combinedImage.save(outputPath, false);
+	return combinedImage.save(outputPath, Image::Save::NONE);
 }
 
 Material saveMaterial(const std::string & baseName, const CompositeObj::Material & material, const std::string & outputDirPath) {
@@ -55,7 +55,7 @@ Material saveMaterial(const std::string & baseName, const CompositeObj::Material
 		// Safety check.
 		if(colorMap.width != maskMap.width || colorMap.height != maskMap.height) {
 			Log::Warning() << "Mask and color images have different sizes, keeping only color." << std::endl;
-			colorMap.save(outputColorPath, false);
+			colorMap.save(outputColorPath, Image::Save::NONE);
 		} else {
 			// Combine both.
 			Image combinedImage(int(colorMap.width), int(colorMap.height), 4);
@@ -64,14 +64,14 @@ Material saveMaterial(const std::string & baseName, const CompositeObj::Material
 					combinedImage.rgba(x, y) = glm::vec4(colorMap.rgb(x, y), maskMap.r(x, y));
 				}
 			}
-			combinedImage.save(outputColorPath, false);
+			combinedImage.save(outputColorPath, Image::Save::NONE);
 		}
 
 	} else if(hasTextureColor) {
 		// Just copy the image.
 		Image colorMap;
 		colorMap.load(material.colorTexturePath, 3, false, true);
-		colorMap.save(outputColorPath, false);
+		colorMap.save(outputColorPath, Image::Save::NONE);
 
 	} else if(hasTextureAlpha) {
 		// Load alpha.
@@ -85,7 +85,7 @@ Material saveMaterial(const std::string & baseName, const CompositeObj::Material
 				combinedImage.rgba(x, y) = glm::vec4(color, maskMap.r(x, y));
 			}
 		}
-		combinedImage.save(outputColorPath, false);
+		combinedImage.save(outputColorPath, Image::Save::NONE);
 
 	} else if(material.hasColor) {
 		// Save a small color texture.
@@ -103,7 +103,7 @@ Material saveMaterial(const std::string & baseName, const CompositeObj::Material
 		// Copy normal map.
 		Image normalMap;
 		normalMap.load(material.normalTexturePath, 3, false, true);
-		normalMap.save(outputNormalPath, false);
+		normalMap.save(outputNormalPath, Image::Save::NONE);
 	} else {
 		outMaterial.normalName = "default_normal";
 	}
@@ -154,7 +154,7 @@ Material saveMaterial(const std::string & baseName, const CompositeObj::Material
 				roughMetAo.rgb(x, y)  = glm::vec3(roughImage.r(x, y), metalness, 1.0f);
 			}
 		}
-		roughMetAo.save(outputRmaoPath, false);
+		roughMetAo.save(outputRmaoPath, Image::Save::NONE);
 
 	} else if(hasTextureMetal) {
 		// Load metal image.
@@ -168,7 +168,7 @@ Material saveMaterial(const std::string & baseName, const CompositeObj::Material
 				roughMetAo.rgb(x, y) = glm::vec3(scalarRoughness, metalImage.r(x, y), 1.0f);
 			}
 		}
-		roughMetAo.save(outputRmaoPath, false);
+		roughMetAo.save(outputRmaoPath, Image::Save::NONE);
 
 	} else if(material.hasRough || material.hasSpec || material.hasMetal) {
 		const float roughness = material.hasRough ? material.rough : (material.hasSpec ? (1.0f - material.spec) : 0.5f);
@@ -186,7 +186,7 @@ Material saveMaterial(const std::string & baseName, const CompositeObj::Material
 	if(hasTextureDisplacement) {
 		Image depthMap;
 		depthMap.load(material.displacementTexturePath, 1, false, true);
-		depthMap.save(outputDepthPath, false);
+		depthMap.save(outputDepthPath, Image::Save::NONE);
 	}
 
 	return outMaterial;

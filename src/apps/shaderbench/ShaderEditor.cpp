@@ -99,13 +99,13 @@ ShaderEditor::ShaderEditor(RenderingConfig & config) : CameraApp(config), _noise
 		_currProgram->uniform("specExponent", 128.0f);
 		_currProgram->uniform("radius", 0.5f);
 		_currProgram->uniform("epsilon", 0.001f);
-		_currProgram->uniform("skyBottom", glm::vec3(0.035f, 0.090f, 0.159f));
-		_currProgram->uniform("skyLight", glm::vec3(0.0f, 0.254f, 0.654f));
-		_currProgram->uniform("skyTop", glm::vec3(0.0f, 0.681f, 1.0f));
+		_currProgram->uniform("skyBottom", glm::vec3(0.001f, 0.008f, 0.025f));
+		_currProgram->uniform("skyLight", glm::vec3(0.0f, 0.064f, 0.427f));
+		_currProgram->uniform("skyTop", glm::vec3(0.0f, 0.463f, 1.0f));
 		_currProgram->uniform("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
-		_currProgram->uniform("sphereColor", glm::vec3(0.8f, 0.5f, 0.2f));
-		_currProgram->uniform("ground0", glm::vec3(0.025f, 0.390f, 0.473f));
-		_currProgram->uniform("ground1", glm::vec3(0.123f, 0.462f, 0.527f));
+		_currProgram->uniform("sphereColor", glm::vec3(0.865f, 0.303f, 0.0f));
+		_currProgram->uniform("ground0", glm::vec3(0.0f, 0.15f, 0.22f));
+		_currProgram->uniform("ground1", glm::vec3(0.015f, 0.213f, 0.28f));
 		_currProgram->uniform("lightDirection", glm::vec4(-1.8f, 1.6f, 1.7f, 0.0f));
 		_currProgram->uniform("stepCount", 128);
 		_currProgram->uniform("showPlane", true);
@@ -331,7 +331,7 @@ void ShaderEditor::update() {
 				// Create a RGB8 framebuffer to save as png.
 				Framebuffer tmp(_currFrame->width(), _currFrame->height(), {Layout::RGBA8, Filter::NEAREST, Wrap::CLAMP}, false, "Temp");
 				GPU::blit(*_currFrame, tmp, Filter::NEAREST);
-				GPU::saveFramebuffer(tmp, outPath, false, true);
+				GPU::saveFramebuffer(tmp, outPath, Image::Save::IGNORE_ALPHA);
 			}
 		}
 		ImGui::SameLine();

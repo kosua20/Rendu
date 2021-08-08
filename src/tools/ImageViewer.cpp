@@ -146,8 +146,11 @@ int main(int argc, char ** argv) {
 				if(res && !newImagePath.empty()) {
 					Log::Info() << "Loading " << newImagePath << "." << std::endl;
 					isFloat = Image::isFloat(newImagePath);
-					// Apply the proper format and filtering.
-					const Layout typedFormat = isFloat ? Layout::RGBA32F : Layout::SRGB8_ALPHA8;
+					// Load all images without gamma correction.
+					const Layout typedFormat = isFloat ? Layout::RGBA32F : Layout::RGBA8;
+					// For LDR images we have to apply the gamma correction by default (because we skipped it just above).
+					// For HDR images there is no correction by default.
+					applyGamma = !isFloat;
 
 					imageInfos.clean();
 					imageInfos.shape  = TextureShape::D2;
@@ -267,7 +270,7 @@ int main(int argc, char ** argv) {
 					ScreenQuad::draw();
 
 					// Then save it to the given path.
-					GPU::saveFramebuffer(framebuffer, destinationPath.substr(0, destinationPath.size() - 4), false, false);
+					GPU::saveFramebuffer(framebuffer, destinationPath.substr(0, destinationPath.size() - 4), Image::Save::NONE);
 
 				}
 			}

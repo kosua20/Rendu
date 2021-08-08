@@ -76,7 +76,7 @@ int main(int argc, char ** argv) {
 		const auto params = Sky::AtmosphereParameters();
 		Image transmittanceTable(int(config.resolution), int(config.resolution), 4);
 		AtmosphereApp::precomputeTable(params, config.samples, transmittanceTable);
-		transmittanceTable.save(config.outputPath, false);
+		transmittanceTable.save(config.outputPath, Image::Save::NONE);
 
 		Log::Info() << Log::Utilities << "Done." << std::endl;
 		return 0;

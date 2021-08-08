@@ -1,5 +1,5 @@
 layout(location = 0) in INTERFACE {
-	vec3 dir;
+	vec4 dir; ///< View world direction.
 	vec2 uv; ///< Texture coordinates.
 } In ;
 
@@ -616,7 +616,7 @@ const vec3 groundTint = vec3(0.8, 0.9, 1.0);
 
 void main() {
 	// Compute ray in view space.
-	vec3 dir = normalize(In.dir);
+	vec3 dir = normalize(In.dir.xyz);
 	vec3 eye = iCamPos;
 	// Check if we intersect something along the ray.
 	float t; vec2 res;
@@ -736,6 +736,6 @@ void main() {
 		outColor = mix(vec3(0.24, 0.27, 0.33), 1.5*vec3(0.53, 0.67, 0.72), scale*scale);
 	}
 
-	// Output to screen, apply gamma correction.
-	fragColor = vec4(pow(outColor, vec3(1.0/2.2)), 1.0);
+	// Output to screen.
+	fragColor = vec4(outColor, 1.0);
 }

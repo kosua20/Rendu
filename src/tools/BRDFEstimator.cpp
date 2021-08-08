@@ -146,7 +146,7 @@ void exportCubemapConvolution(std::vector<Texture> & cubeLevels, const std::stri
 		const std::string levelPath = outputPath + "_" + std::to_string(level);
 		for(int i = 0; i < 6; ++i) {
 			const std::string faceLevelPath = levelPath + suffixes[i];
-			const int ret					= texture.images[i].save(faceLevelPath + ".exr", true, true);
+			const int ret					= texture.images[i].save(faceLevelPath + ".exr", Image::Save::FLIP | Image::Save::IGNORE_ALPHA);
 			if(ret != 0) {
 				Log::Error() << "Unable to save cubemap face to path \"" << faceLevelPath << "\"." << std::endl;
 			}
@@ -171,7 +171,7 @@ void computeAndExportLookupTable(const int outputSide, const std::string & outpu
 	GPU::setCullState(false);
 	brdfProgram->use();
 	ScreenQuad::draw();
-	GPU::saveFramebuffer(*bakingFramebuffer, outputPath, false);
+	GPU::saveFramebuffer(*bakingFramebuffer, outputPath, Image::Save::NONE);
 }
 
 /**
