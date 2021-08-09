@@ -206,10 +206,9 @@ public:
 	/**
 	 Query the current mouse position.
 	 \param inFramebuffer should the position be expressed in a GPU compatible fashion
-	 \return the current mouse position in unit coordinates or pixels
-	 \note The mouse position will be expressed by default in the [0,1] range, from the bottom left corner. If inFramebuffer is set to true, the position will be expressed in pixels, from the top left corner, clamped to the window size.
+	 \return the current mouse position in unit coordinates , from the bottom left corner.
 	 */
-	glm::vec2 mouse(bool inFramebuffer = false) const;
+	glm::vec2 mouse() const;
 
 	/**
 	 Query the amount of cursor displacement since a given mouse button started to be held. If the button is not currently pressed, is returns a null displacement.

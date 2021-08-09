@@ -121,8 +121,12 @@ int main(int argc, char ** argv) {
 
 			// Read back color under cursor when right-clicking.
 			if(Input::manager().pressed(Input::Mouse::Right)) {
-				const glm::vec2 mousePosition = Input::manager().mouse(true);
-				fgColor = Framebuffer::backbuffer()->read(glm::ivec2(mousePosition));
+				const glm::vec2 pos = Input::manager().mouse();
+				const uint w = Framebuffer::backbuffer()->width();
+				const uint h = Framebuffer::backbuffer()->height();
+				glm::vec2 mousePosition = glm::floor(glm::vec2(pos.x * float(w), pos.y * float(h)));
+				mousePosition		  = glm::clamp(mousePosition, glm::vec2(0.0f), glm::vec2(w, h));
+				fgColor = Framebuffer::backbuffer()->read(glm::uvec2(mousePosition));
 			}
 		}
 

@@ -355,11 +355,7 @@ bool Input::released(const Mouse & mouseButton, bool absorb) {
 	return res;
 }
 
-glm::vec2 Input::mouse(bool inFramebuffer) const {
-	if(inFramebuffer) {
-		const glm::vec2 mousePosition = glm::floor(glm::vec2(_mouse.x * _width, (1.0f - _mouse.y) * _height));
-		return glm::clamp(mousePosition, glm::vec2(0.0f), glm::vec2(_width, _height));
-	}
+glm::vec2 Input::mouse() const {
 	return glm::vec2(_mouse.x, _mouse.y);
 }
 
