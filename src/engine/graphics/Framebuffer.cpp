@@ -420,26 +420,32 @@ void Framebuffer::clear(const glm::vec4 & color, float depth){
 }
 
 bool Framebuffer::isEquivalent(const Framebuffer& other) const {
-	return _state.isEquivalent(other.getLayoutState());
+	return _state.isEquivalent(other.getState());
 }
 
-glm::vec3 Framebuffer::read(const glm::ivec2 & pos) const {
-	glm::vec3 rgb(0.0f);
-	//bind(0, 0, Mode::READ);
-	//glReadPixels(pos.x, pos.y, 1, 1, GL_RGB, GL_FLOAT, &rgb[0]);
+glm::vec4 Framebuffer::read(const glm::uvec2 & pos) {
+	if(_colors.empty()){
+		return _readColor;
+	}
+
+	_readTask = GPU::downloadTextureAsync( _colors[0], pos, glm::uvec2(2), 1, [this](const Texture& result){
+		_readColor = result.images[0].rgba(0, 0);
+	});
+
 	//GPU::_metrics.downloads += 1;
-	return rgb;
+	// Return the value from the previous frame.
+	return _readColor;
 }
 
 uint Framebuffer::attachments() const {
 	return uint(_colors.size());
 }
 
-const Framebuffer::LayoutState& Framebuffer::getLayoutState() const {
+const Framebuffer::State& Framebuffer::getState() const {
 	return _state;
 }
 
-bool Framebuffer::LayoutState::isEquivalent(const Framebuffer::LayoutState& other) const {
+bool Framebuffer::State::isEquivalent(const Framebuffer::State& other) const {
 	if(other.colors.size() != colors.size()){
 		return false;
 	}
@@ -468,6 +474,7 @@ bool Framebuffer::LayoutState::isEquivalent(const Framebuffer::LayoutState& othe
 }
 
 Framebuffer::~Framebuffer() {
+	GPU::cancelAsyncOperation(_readTask);
 	DebugViewer::untrackDefault(this);
 	GPU::clean(*this, true);
 }

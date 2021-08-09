@@ -24,6 +24,23 @@ public:
 		DONTCARE
 	};
 
+	struct LoadOperation {
+
+		LoadOperation() {};
+
+		LoadOperation(Operation mod) : mode(mod) {};
+
+		LoadOperation(const glm::vec4& val) : value(val), mode(Operation::CLEAR) {};
+
+		LoadOperation(float val) : value(val), mode(Operation::CLEAR) {};
+
+		LoadOperation(uchar val) : value(float(val)), mode(Operation::CLEAR) {};
+
+		glm::vec4 value{1.0f};
+		Operation mode = Operation::LOAD;
+	};
+
+
 	/** Setup the framebuffer (attachments, renderbuffer, depth buffer, textures IDs,...)
 	 \param width the width of the framebuffer
 	 \param height the height of the framebuffer
@@ -55,22 +72,6 @@ public:
 	Framebuffer(TextureShape shape, uint width, uint height, uint depth, uint mips, const std::vector<Descriptor> & descriptors, bool depthBuffer, const std::string & name);
 
 
-	struct LoadOperation {
-
-		LoadOperation() {};
-
-		LoadOperation(Operation mod) : mode(mod) {};
-
-		LoadOperation(const glm::vec4& val) : value(val), mode(Operation::CLEAR) {};
-
-		LoadOperation(float val) : value(val), mode(Operation::CLEAR) {};
-
-		LoadOperation(uchar val) : value(float(val)), mode(Operation::CLEAR) {};
-
-		glm::vec4 value{1.0f};
-		Operation mode = Operation::LOAD;
-	};
-	
 	/**
 	 Bind the framebuffer. Shortcut for writing to a 2D framebuffer.
 	 */
@@ -112,11 +113,11 @@ public:
 
 	VkRenderPass getRenderPass() const { return _renderPasses[0][0][0]; }
 
-	/** Read back the value at a given pixel in the first color attachment.
+	/** Read back the value at a given pixel in the first layer and first level of the first color attachment.
 	 \param pos the position in pixels
-	 \return a float RGB color.
+	 \return a float RGBA color.
 	 */
-	glm::vec3 read(const glm::ivec2 & pos) const;
+	glm::vec4 read(const glm::uvec2 & pos);
 
 	/**
 	 Query the 2D texture backing one of the color attachments.
@@ -188,16 +189,16 @@ public:
 	 */
 	uint attachments() const;
 
-	struct LayoutState {
+	struct State {
 		std::vector<Layout> colors;
 		Layout depth;
 		bool hasDepth = false;
 
-		bool isEquivalent(const LayoutState& other) const;
+		bool isEquivalent(const State& other) const;
 
 	};
 
-	const LayoutState& getLayoutState() const;
+	const State& getState() const;
 
 	/**
 	 Query the window backbuffer infos.
@@ -267,8 +268,10 @@ private:
 	
 	std::array<std::array<std::array<VkRenderPass, 3>, 3>, 3> _renderPasses;
 
-	LayoutState _state;
+	State _state;
 
+	glm::vec4 _readColor = glm::vec4(0.0f);
+	GPUAsyncTask _readTask = 0;
 	bool _hasDepth = false; ///< The type of depth backing the framebuffer.
 	bool _isBackbuffer = false;
 
