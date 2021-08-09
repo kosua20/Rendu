@@ -43,6 +43,41 @@ void Texture::clearImages() {
 	images.clear();
 }
 
+void Texture::allocateImages(uint channels, uint firstMip, uint mipCount){
+
+	const uint effectiveFirstMip = std::min(levels - 1u, firstMip);
+	const uint effectiveMipCount = std::min(mipCount, levels - effectiveFirstMip);
+	const uint effectiveLastMip = effectiveFirstMip + effectiveMipCount - 1u;
+
+	const bool is3D = shape & TextureShape::D3;
+
+	uint totalCount = 0;
+	uint currentCount = 0;
+	for(uint mid = 0; mid < levels; ++mid){
+		if(mid == effectiveFirstMip){
+			currentCount = totalCount;
+		}
+		totalCount += is3D ? std::max<uint>(depth >> mid, 1u) : depth;
+	}
+
+	images.resize(totalCount);
+
+	for(uint mid = effectiveFirstMip; mid <= effectiveLastMip; ++mid){
+		const uint w = std::max<uint>(width >> mid, 1u);
+		const uint h = std::max<uint>(height >> mid, 1u);
+		// Compute the size and count of images.
+		const uint imageCount = is3D ? std::max<uint>(depth >> mid, 1u) : depth;
+		for(uint iid = 0; iid < imageCount; ++iid){
+			const uint imageIndex = currentCount + iid;
+			// Avoid reallocating existing images.
+			if(images[imageIndex].components != channels){
+				images[imageIndex] = Image(w, h, channels);
+			}
+		}
+		currentCount += imageCount;
+	}
+}
+
 void Texture::clean() {
 	clearImages();
 	if(gpu) {

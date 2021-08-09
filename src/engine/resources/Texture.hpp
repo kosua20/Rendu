@@ -23,6 +23,8 @@ public:
 
 	/** Clear CPU images data. */
 	void clearImages();
+
+	void allocateImages(uint channels, uint firstMip = 0, uint mipCount = 0xFFFFFFFF);
 	
 	/** Cleanup all data.
 	 \note The dimensions and shape of the texture are preserved.
