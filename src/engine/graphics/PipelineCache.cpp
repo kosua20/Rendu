@@ -71,7 +71,7 @@ VkPipeline PipelineCache::getPipeline(const GPUState & state){
 		if(!entry.mesh.isEquivalent(state.mesh->state)){
 			continue;
 		}
-		if(!entry.framebuffer.isEquivalent(state.pass.framebuffer->getLayoutState())){
+		if(!entry.framebuffer.isEquivalent(state.pass.framebuffer->getState())){
 			continue;
 		}
 		return entry.pipeline;
@@ -131,7 +131,7 @@ VkPipeline PipelineCache::createNewPipeline(const GPUState& state, const uint64_
 	entry.pipeline = buildPipeline(state);
 	entry.program = state.program;
 	entry.mesh = state.mesh->state;
-	entry.framebuffer = state.pass.framebuffer->getLayoutState();
+	entry.framebuffer = state.pass.framebuffer->getState();
 
 	auto it = _pipelines[state.program].insert(std::make_pair(hash, entry));
 	return it->second.pipeline;
@@ -147,7 +147,7 @@ VkPipeline PipelineCache::buildPipeline(const GPUState& state){
 	
 	// Program
 	{
-		const Program::StagesState& programState = state.program->getState();
+		const Program::State& programState = state.program->getState();
 		pipelineInfo.stageCount = programState.stages.size();
 		pipelineInfo.pStages = programState.stages.data();
 		pipelineInfo.layout = programState.layout;
@@ -156,7 +156,7 @@ VkPipeline PipelineCache::buildPipeline(const GPUState& state){
 	// Vertex input.
 	VkPipelineVertexInputStateCreateInfo vertexState{};
 	{
-		const GPUMesh::InputState& meshState = state.mesh->state;
+		const GPUMesh::State& meshState = state.mesh->state;
 		vertexState.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 		vertexState.vertexBindingDescriptionCount = meshState.bindings.size();
 		vertexState.pVertexBindingDescriptions = meshState.bindings.data();

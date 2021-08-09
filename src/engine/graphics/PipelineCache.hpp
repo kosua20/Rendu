@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Common.hpp"
+#include "graphics/Framebuffer.hpp"
+
 #include <unordered_map>
 #include <deque>
 
@@ -22,8 +24,8 @@ private:
 
 	struct Entry {
 		VkPipeline pipeline;
-		GPUMesh::InputState mesh;
-		Framebuffer::LayoutState framebuffer;
+		GPUMesh::State mesh;
+		Framebuffer::State framebuffer;
 		const Program* program;
 	};
 

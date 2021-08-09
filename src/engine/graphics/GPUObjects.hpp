@@ -479,16 +479,16 @@ public:
 	/** Move constructor. */
 	GPUMesh(GPUMesh &&) = delete;
 
-	struct InputState {
+	struct State {
 		std::vector<VkVertexInputAttributeDescription> attributes;
 		std::vector<VkVertexInputBindingDescription> bindings;
 		std::vector<VkBuffer> buffers;
 		std::vector<VkDeviceSize> offsets;
 
-		bool isEquivalent(const InputState& other) const;
+		bool isEquivalent(const State& other) const;
 	};
 
-	InputState state;
+	State state;
 };
 
 

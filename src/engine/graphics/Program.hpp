@@ -60,7 +60,7 @@ public:
 		std::vector<UniformDef> members;
 	};
 
-	struct StagesState {
+	struct State {
 		std::vector<VkPipelineShaderStageCreateInfo> stages;
 		std::vector<VkDescriptorSetLayout> setLayouts;
 		VkPipelineLayout layout = VK_NULL_HANDLE;
@@ -306,7 +306,7 @@ public:
 	/** Move constructor. */
 	Program(Program &&) = default;
 
-	const StagesState& getState() const {
+	const State& getState() const {
 		return _state;
 	}
 
@@ -344,7 +344,7 @@ private:
 	std::array<Stage, int(ShaderType::COUNT)> _stages;
 
 	std::string _name;
-	StagesState _state;
+	State _state;
 
 	struct DynamicBufferState {
 		std::shared_ptr<UniformBuffer<char>> buffer;

@@ -1,6 +1,7 @@
 #include "graphics/GPUObjects.hpp"
 #include "graphics/GPU.hpp"
 #include "graphics/GPUInternal.hpp"
+#include "graphics/Framebuffer.hpp"
 
 #include <map>
 
@@ -101,7 +102,7 @@ bool GPUMesh::isEquivalent(const GPUMesh& other) const {
 	return state.isEquivalent(other.state);
 }
 
-bool GPUMesh::InputState::isEquivalent(const GPUMesh::InputState& other) const {
+bool GPUMesh::State::isEquivalent(const GPUMesh::State& other) const {
 	if(bindings.size() != other.bindings.size()){
 		return false;
 	}

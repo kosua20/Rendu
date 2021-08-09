@@ -2,11 +2,11 @@
 
 #include "Common.hpp"
 #include "graphics/Framebuffer.hpp"
-#include "graphics/GPUInternal.hpp"
 #include "system/Config.hpp"
 
 #include "resources/Texture.hpp"
 
+struct GPUContext;
 /**
  \brief
  \ingroup Graphics
@@ -22,7 +22,7 @@ public:
 	bool nextFrame();
 
 	uint count(){ return _imageCount; }
-	// \todo count might be enough if double buffered
+	
 	uint minCount(){ return _minImageCount; }
 
 	~Swapchain();
