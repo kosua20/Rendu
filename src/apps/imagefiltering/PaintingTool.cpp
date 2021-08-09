@@ -153,17 +153,17 @@ void PaintingTool::resize(unsigned int width, unsigned int height) const {
 	// We first copy the canvas to a temp framebuffer.
 	const unsigned int w = _canvas->width();
 	const unsigned int h = _canvas->height();
-	Framebuffer tempCanvas(w, h, {Layout::RGBA8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, false, "Canvas copy");
+	Framebuffer tempCanvas(w, h, {Layout::RGBA8, Filter::NEAREST_NEAREST, Wrap::CLAMP}, false, "Canvas copy");
 
-	GPU::blit(*_canvas, tempCanvas, Filter::LINEAR);
+	GPU::blit(*_canvas, tempCanvas, Filter::NEAREST);
 
 	// We can then resize the canvas.
 	_canvas->resize(width, height);
 	// Clean up the canvas.
-	_canvas->bind(glm::vec4(_bgColor, 1.0f));
+	_canvas->clear(glm::vec4(_bgColor, 1.0f), 1.0f);
 	
 	// Copy back the drawing.
-	GPU::blit(tempCanvas, *_canvas, Filter::LINEAR);
+	GPU::blit(tempCanvas, *_canvas, Filter::NEAREST);
 	
 	// The content of the visualisation buffer will be cleaned at the next frame canvas copy.
 	_visu->resize(width, height);
