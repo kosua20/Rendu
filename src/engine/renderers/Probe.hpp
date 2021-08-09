@@ -40,9 +40,6 @@ public:
 	 */
 	void convolveRadiance(float clamp, size_t first, size_t count);
 
-	/** Downscale radiance cubemap info for future irradiance estimation. */
-	void prepareIrradiance();
-
 	/** Estimate the SH representation of the cubemap irradiance. The estimation is done on the CPU,
 	 and relies on downlaoding a (downscaled) copy of the cubemap content. For synchronization reasons,
 	 it is recommended to only update irradiance every other frame, and to trigger the copy
@@ -88,6 +85,8 @@ public:
 	/** Move constructor (disabled). */
 	Probe(Probe &&) = delete;
 
+	~Probe();
+
 	/**
 	\brief Decompose an existing cubemap irradiance onto the nine first elements of the spherical harmonic basis.
 	\details Perform approximated convolution as described in Ramamoorthi, Ravi, and Pat Hanrahan.
@@ -109,5 +108,6 @@ private:
 	std::array<Camera, 6> _cameras; ///< Camera for each face.
 	glm::vec3 _position; ///< The probe location.
 	Program * _integration; ///< Radiance preconvolution shader.
+	GPUAsyncTask _downloadTask = 0;
 	const Mesh * _cube; ///< Skybox cube.
 };

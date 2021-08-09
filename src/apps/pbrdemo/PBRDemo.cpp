@@ -38,6 +38,9 @@ void PBRDemo::setScene(const std::shared_ptr<Scene> & scene) {
 		freezeCamera(true);
 		return;
 	}
+	// Reset frame counter.
+	_frameID = 0;
+
 	freezeCamera(false);
 
 	scene->init(Storage::GPU);
@@ -98,28 +101,12 @@ void PBRDemo::setScene(const std::shared_ptr<Scene> & scene) {
 	for(const auto & map : _shadowMaps) {
 		map->draw(*_scenes[_currentScene]);
 	}
-	// Probes pass.
-	for(int i = 0; i < 3; ++i) {
-		for(auto & probe : _probes) {
-			probe->draw();
-			probe->convolveRadiance(1.2f, 1, 5);
-			probe->prepareIrradiance();
-			probe->estimateIrradiance(5.0f);
-			GPU::sync();
-		}
-	}
+
 }
 
-void PBRDemo::updateMaps(){
-	// Light shadows pass.
-	_shadowTime.begin();
-	for(const auto & map : _shadowMaps) {
-		map->draw(*_scenes[_currentScene]);
-	}
-	_shadowTime.end();
+void PBRDemo::updateProbes(){
 
 	// Probes pass.
-
 	for(auto & probe : _probes) {
 		if(_frameID % _frameCount == 0){
 			_probesTime.begin();
@@ -128,21 +115,21 @@ void PBRDemo::updateMaps(){
 
 		} else if(_frameID % _frameCount == 1){
 
+			_inteTime.begin();
+			probe->convolveRadiance(1.2f, 1, 1);
+			_inteTime.end();
+
 			_copyTimeCPU.begin();
 			_copyTime.begin();
 			probe->estimateIrradiance(5.0f);
 			_copyTime.end();
 			_copyTimeCPU.end();
-			
-			_inteTime.begin();
-			probe->convolveRadiance(1.2f, 1, 2);
-			_inteTime.end();
 
-			probe->prepareIrradiance();
 		} else {
 			_inteTime.begin();
-			probe->convolveRadiance(1.2f, 3, 3);
+			probe->convolveRadiance(1.2f, 2, 3);
 			_inteTime.end();
+
 		}
 	}
 
@@ -158,8 +145,18 @@ void PBRDemo::draw() {
 	}
 
 	_totalTime.begin();
-	if(_scenes[_currentScene]->animated() && !_paused){
-		updateMaps();
+	if((_scenes[_currentScene]->animated() && !_paused)){
+		// Light shadows pass.
+		_shadowTime.begin();
+		for(const auto & map : _shadowMaps) {
+			map->draw(*_scenes[_currentScene]);
+		}
+		_shadowTime.end();
+
+		updateProbes();
+	} else if(_frameID < 4 * _frameCount){
+		// Initialize static probes at lauch.
+		updateProbes();
 	}
 
 	// Renderer and postproc passes.

@@ -63,27 +63,34 @@ void Probe::convolveRadiance(float clamp, size_t first, size_t count) {
 	}
 }
 
-void Probe::prepareIrradiance() {
+void Probe::estimateIrradiance(float clamp) {
 	// Downscale radiance to a smaller texture, to be copied on the CPU for SH decomposition.
 	for(uint lid = 0; lid < 6; ++lid) {
 		GPU::blit(*_framebuffer, *_copy, lid, lid, 0, 0, Filter::LINEAR);
 	}
-}
 
-void Probe::estimateIrradiance(float clamp) {
 	// Download the texture to the CPU.
 	Texture & tex = *_copy->texture();
-	GPU::downloadTexture(tex, 0);
-	// Compute SH coeffs.
-	std::vector<glm::vec3> coeffs(9);
-	extractIrradianceSHCoeffs(tex, clamp, coeffs);
-	for(int i = 0; i < 9; ++i) {
-		_shCoeffs->at(i)[0] = coeffs[i][0];
-		_shCoeffs->at(i)[1] = coeffs[i][1];
-		_shCoeffs->at(i)[2] = coeffs[i][2];
-		_shCoeffs->at(i)[3] = 1.0f;
-	}
-	_shCoeffs->upload();
+
+	_downloadTask = GPU::downloadTextureAsync(tex, glm::uvec2(0,0), glm::uvec2(tex.width, tex.height), 6, [clamp, this](const Texture& result){
+
+		// Compute SH coeffs.
+		std::vector<glm::vec3> coeffs(9);
+		extractIrradianceSHCoeffs(result, clamp, coeffs);
+		for(int i = 0; i < 9; ++i) {
+			_shCoeffs->at(i)[0] = coeffs[i][0];
+			_shCoeffs->at(i)[1] = coeffs[i][1];
+			_shCoeffs->at(i)[2] = coeffs[i][2];
+			_shCoeffs->at(i)[3] = 1.0f;
+		}
+		_shCoeffs->upload();
+	});
+	 
+
+}
+
+Probe::~Probe(){
+	GPU::cancelAsyncOperation(_downloadTask);
 }
 
 void Probe::extractIrradianceSHCoeffs(const Texture & cubemap, float clamp, std::vector<glm::vec3> & shCoeffs) {
