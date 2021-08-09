@@ -4,8 +4,11 @@
 #include "graphics/GPUObjects.hpp"
 #include "graphics/DescriptorAllocator.hpp"
 #include "graphics/QueryAllocator.hpp"
-
+#include "graphics/PipelineCache.hpp"
+#include "resources/Buffer.hpp"
 #include <volk/volk.h>
+#include <deque>
+#include <functional>
 
 //#define FORCE_DEBUG_VULKAN
 
@@ -21,6 +24,29 @@ Log::Error() << Log::GPU << "Return error at line " << L << std::endl;\
 /**
  \ingroup Graphics
  */
+
+
+struct ResourceToDelete {
+	std::string name;
+	VkImageView view = VK_NULL_HANDLE;
+	VkSampler sampler = VK_NULL_HANDLE;
+	VkImage image = VK_NULL_HANDLE;
+	VkBuffer buffer = VK_NULL_HANDLE;
+	VmaAllocation data = VK_NULL_HANDLE;
+	VkFramebuffer framebuffer = VK_NULL_HANDLE;
+	VkRenderPass renderPass = VK_NULL_HANDLE;
+	uint64_t frame = 0;
+};
+
+struct AsyncTextureTask {
+	std::shared_ptr<TransferBuffer> dstBuffer;
+	std::unique_ptr<Texture> dstTexture;
+	std::function<void(const Texture&)> callback;
+	glm::uvec2 dstImageRange{0.0f,0.0f};
+	uint64_t frame = 0;
+	GPUAsyncTask id = 0;
+};
+
 struct GPUContext {
 
 	VkInstance instance = VK_NULL_HANDLE;
@@ -28,13 +54,20 @@ struct GPUContext {
 	VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
 	VkDevice device = VK_NULL_HANDLE;
 	VkSurfaceKHR surface = VK_NULL_HANDLE;
-	VkCommandPool commandPool = VK_NULL_HANDLE; // \todo 2 command pools ?
+	VkCommandPool commandPool = VK_NULL_HANDLE;
 	std::vector<VkCommandBuffer> commandBuffers;
 	VkQueue graphicsQueue= VK_NULL_HANDLE;
 	VkQueue presentQueue= VK_NULL_HANDLE;
 	DescriptorAllocator descriptorAllocator;
 	std::unordered_map<GPUQuery::Type, QueryAllocator> queryAllocators;
+	PipelineCache pipelineCache;
 	VkPipeline pipeline = VK_NULL_HANDLE;
+
+	std::deque<ResourceToDelete> resourcesToDelete;
+	std::deque<AsyncTextureTask> textureTasks;
+	uint64_t tasksCount = 0;
+
+
 	
 	uint32_t graphicsId = 0;
 	uint32_t presentId = 0;

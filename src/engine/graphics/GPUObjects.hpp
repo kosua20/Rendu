@@ -9,6 +9,8 @@
 // Forward declaration.
 VK_DEFINE_HANDLE(VmaAllocation)
 
+using GPUAsyncTask = uint64_t;
+
 /**
 \brief The type of a shader.
 \ingroup Resources

@@ -6,8 +6,6 @@
 #include "system/TextUtilities.hpp"
 #include "system/Window.hpp"
 #include "graphics/GPUInternal.hpp"
-#include "graphics/PipelineCache.hpp"
-#include "graphics/QueryAllocator.hpp"
 
 #define VMA_STATIC_VULKAN_FUNCTIONS 0
 #define VMA_IMPLEMENTATION
@@ -22,7 +20,6 @@
 
 #include <sstream>
 #include <GLFW/glfw3.h>
-
 #include <set>
 
 const std::vector<const char*> validationLayers = { "VK_LAYER_KHRONOS_validation" };
@@ -30,23 +27,9 @@ const std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_N
 
 GPUContext _context;
 
-PipelineCache _pipelineCache;
 VmaAllocator _allocator = VK_NULL_HANDLE;
 VmaVulkanFunctions _vulkanFunctions;
 
-struct ResourceToDelete {
-	std::string name;
-	VkImageView view = VK_NULL_HANDLE;
-	VkSampler sampler = VK_NULL_HANDLE;
-	VkImage image = VK_NULL_HANDLE;
-	VkBuffer buffer = VK_NULL_HANDLE;
-	VmaAllocation data = VK_NULL_HANDLE;
-	VkFramebuffer framebuffer = VK_NULL_HANDLE;
-	VkRenderPass renderPass = VK_NULL_HANDLE;
-	uint64_t frame = 0;
-};
-
-std::deque<ResourceToDelete> _resourcesToDelete;
 
 GPUContext* GPU::getInternal(){
 	return &_context;
@@ -302,28 +285,10 @@ bool GPU::setupWindow(Window * window){
 	window->_swapchain.reset(new Swapchain(_context, window->_config));
 	
 	// Create a pipeline cache.
-	_pipelineCache.init();
+	_context.pipelineCache.init();
 
 	_context.descriptorAllocator.init(&_context, 1024);
 	return true;
-}
-
-int GPU::checkError(const char * , int , const std::string & ) {
-//	const GLenum glErr = glGetError();
-//	if(glErr != GL_NO_ERROR) {
-//		const std::string filePath(file);
-//		size_t pos = std::min(filePath.find_last_of('/'), filePath.find_last_of('\\'));
-//		if(pos == std::string::npos) {
-//			pos = 0;
-//		}
-//		Log::Error() << Log::GPU << "Error " << getGLErrorString(glErr) << " in " << filePath.substr(pos + 1) << " (" << line << ").";
-//		if(!infos.empty()) {
-//			Log::Error() << " Infos: " << infos;
-//		}
-//		Log::Error() << std::endl;
-//		return 1;
-//	}
-	return 0;
 }
 
 void GPU::createProgram(Program& program, const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, const std::string & tessControlContent, const std::string & tessEvalContent, const std::string & debugInfos) {
@@ -386,45 +351,28 @@ void GPU::bindFramebuffer(const Framebuffer & framebuffer, size_t layer, size_t 
 
 }
 
-struct ResourceToSave {
-	std::unique_ptr<Texture> dst;
-	std::shared_ptr<TransferBuffer> data;
-	std::string path;
-	glm::uvec2 range{0.0f,0.0f};
-	uint64_t frame = 0;
-	Image::Save options;
-	bool hdr = false;
-};
-
-std::deque<ResourceToSave> _resourcesToSave;
-
 void GPU::saveFramebuffer(Framebuffer & framebuffer, const std::string & path, Image::Save options) {
 	static const std::vector<Layout> hdrLayouts = {
 		Layout::R16F, Layout::RG16F, Layout::RGBA16F, Layout::R32F, Layout::RG32F, Layout::RGBA32F, Layout::A2_BGR10, Layout::A2_RGB10,
 		Layout::DEPTH_COMPONENT32F, Layout::DEPTH24_STENCIL8, Layout::DEPTH_COMPONENT16, Layout::DEPTH_COMPONENT24, Layout::DEPTH32F_STENCIL8,
 	};
 
-	// Make sure we are not currently using this framebuffer.
-	if(_state.pass.framebuffer == &framebuffer){
-		GPU::unbindFramebufferIfNeeded();
-	}
+	GPU::unbindFramebufferIfNeeded();
 
-	Texture& srcTexture = *framebuffer.texture();
+	const Texture& tex = *framebuffer.texture();
+	const bool isHDR = std::find(hdrLayouts.begin(), hdrLayouts.end(), tex.gpu->descriptor().typedFormat()) != hdrLayouts.end();
 
-	// Store a save request to execute once the frame is complete.
-	_resourcesToSave.emplace_back();
-	ResourceToSave& request = _resourcesToSave.back();
-	request.path = path;
-	request.frame = _context.frameIndex;
-	request.dst.reset(new Texture("SaveRequest"));
-
-	// HDR if input is a float format.
-	request.hdr = std::find(hdrLayouts.begin(), hdrLayouts.end(), srcTexture.gpu->descriptor().typedFormat()) != hdrLayouts.end();
-
-	// Gamma correction if the output is LDR.
-	request.options = options | Image::Save::SRGB_LDR;
-
-	request.range = GPU::copyTextureRegionToBufferAndPrepare(_context.getCurrentCommandBuffer(), srcTexture, *request.dst, request.data, 0, 1);
+	GPU::downloadTextureAsync(tex, glm::uvec2(0), glm::uvec2(tex.width, tex.height), 1, [isHDR, path, options](const Texture& result){
+		// Save the image to the disk.
+		const std::string ext = isHDR ? ".exr" : ".png";
+		const std::string finalPath = path + ext;
+		Log::Info() << Log::GPU << "Saving framebuffer to file " << finalPath << "... " << std::endl;
+		// Gamma correction if the output is LDR.
+		const int ret = result.images[0].save(finalPath, options | Image::Save::SRGB_LDR);
+		if(ret != 0) {
+			Log::Error() << "Error when saving image at path " << finalPath << "." << std::endl;
+		}
+	});
 
 }
 
@@ -528,8 +476,8 @@ void GPU::setupTexture(Texture & texture, const Descriptor & descriptor, bool dr
 void GPU::setupSampler(GPUTexture & texture) {
 
 	if(texture.sampler != VK_NULL_HANDLE){
-		_resourcesToDelete.emplace_back();
-		ResourceToDelete& rsc = _resourcesToDelete.back();
+		_context.resourcesToDelete.emplace_back();
+		ResourceToDelete& rsc = _context.resourcesToDelete.back();
 		rsc.sampler = texture.sampler;
 		rsc.frame = _context.frameIndex;
 		rsc.name = texture.name;
@@ -664,23 +612,25 @@ void GPU::uploadTexture(const Texture & texture) {
 
 	}
 
-	GPU::blitTexture(commandBuffer, transferTexture, texture, 0, 0, texture.levels, 0, 0, layers, Filter::NEAREST);
+	const glm::uvec2 srcSize(transferTexture.width, transferTexture.height);
+	const glm::uvec2 dstSize(texture.width, texture.height);
+	GPU::blitTexture(commandBuffer, transferTexture, texture, 0, 0, texture.levels, 0, 0, layers, glm::uvec2(0), srcSize, glm::uvec2(0), dstSize, Filter::NEAREST);
 
 	VkUtils::endOneTimeCommandBuffer(commandBuffer, _context);
 
 }
 
-glm::uvec2 GPU::copyTextureRegionToBufferAndPrepare(VkCommandBuffer& commandBuffer, Texture & srcTexture, Texture & dstTexture, std::shared_ptr<TransferBuffer> & dstBuffer, uint mipStart, uint mipCount){
+glm::uvec2 GPU::copyTextureRegionToBuffer(VkCommandBuffer& commandBuffer, const Texture & srcTexture, std::shared_ptr<TransferBuffer> & dstBuffer, uint mipStart, uint mipCount, uint layerStart, uint layerCount, const glm::uvec2& offset, const glm::uvec2& size){
 
 	const Layout floatFormats[5] = {Layout(0), Layout::R32F, Layout::RG32F, Layout::RGBA32F /* no 3 channels format */, Layout::RGBA32F};
 
 	const bool is3D = srcTexture.shape == TextureShape::D3;
-	const uint layers = is3D ? 1 : srcTexture.depth;
+	const uint layers = is3D ? 1u : std::min<uint>(srcTexture.depth, layerCount);
 	const uint depth = is3D ? srcTexture.depth : 1;
 	const uint channels = srcTexture.gpu->channels;
 
-	const uint wBase = std::max<uint>(1u, srcTexture.width >> mipStart);
-	const uint hBase = std::max<uint>(1u, srcTexture.height >> mipStart);
+	const uint wBase = std::max<uint>(1u, size[0] >> mipStart);
+	const uint hBase = std::max<uint>(1u, size[1] >> mipStart);
 	const uint dBase = std::max<uint>(1u, depth >> mipStart);
 
 	Texture transferTexture("tmpTexture");
@@ -694,53 +644,35 @@ glm::uvec2 GPU::copyTextureRegionToBufferAndPrepare(VkCommandBuffer& commandBuff
 	// Final usage of the transfer texture after the blit.
 	transferTexture.gpu->defaultLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
 	// This will reset the input texture to its default state.
-	GPU::blitTexture(commandBuffer, srcTexture, transferTexture, mipStart, 0, mipCount, 0, 0, layers, Filter::NEAREST);
+	const glm::uvec2 srcSize(srcTexture.width, srcTexture.height);
+	GPU::blitTexture(commandBuffer, srcTexture, transferTexture, mipStart, 0, mipCount, layerStart, 0, layers,
+					 offset, size, glm::uvec2(0), glm::uvec2(wBase, hBase), Filter::NEAREST);
 
-	// Compute the total size of the requested texture levels.
-	if(&dstTexture != &srcTexture){
-		dstTexture.width = srcTexture.width;
-		dstTexture.height = srcTexture.height;
-		dstTexture.depth = srcTexture.depth;
-		dstTexture.levels = srcTexture.levels;
-		dstTexture.shape = srcTexture.shape;
-	}
-	dstTexture.images.resize(srcTexture.depth * srcTexture.levels);
-
-	// Compute the index of the first image we will fill.
-	size_t firstImage = 0;
-	for(uint lid = 0; lid < mipStart; ++lid){
-		firstImage += is3D ? std::max<uint>(1u, depth >> lid) : layers;
-	}
-
-	std::vector<VkBufferImageCopy> blitRegions(mipCount);
+	std::vector<VkBufferImageCopy> blitRegions(transferTexture.levels);
 	size_t currentCount = 0;
 	size_t currentSize = 0;
-	for(uint lid = mipStart; lid < mipStart + mipCount; ++lid){
+
+	for(uint mid = 0; mid < mipCount; ++mid){
 		// Compute the size of an image.
-		const uint w = std::max<uint>(1u, srcTexture.width >> lid);
-		const uint h = std::max<uint>(1u, srcTexture.height >> lid);
-		const uint d = std::max<uint>(1u, depth >> lid);
+		const uint w = std::max<uint>(1u, transferTexture.width >> mid);
+		const uint h = std::max<uint>(1u, transferTexture.height >> mid);
+		const uint d = transferTexture.shape == TextureShape::D3 ? std::max<uint>(1u, dBase >> mid) : 1;
 
 		// Copy region for this mip level.
-		const uint rid = lid - mipStart;
-		blitRegions[rid].bufferOffset = currentSize;
-		blitRegions[rid].bufferRowLength = 0; // Tightly packed.
-		blitRegions[rid].bufferImageHeight = 0; // Tightly packed.
-		blitRegions[rid].imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-		blitRegions[rid].imageSubresource.mipLevel = lid;
-		blitRegions[rid].imageSubresource.baseArrayLayer = 0;
-		blitRegions[rid].imageSubresource.layerCount = layers;
-		blitRegions[rid].imageOffset = {0, 0, 0};
-		blitRegions[rid].imageExtent = { (uint32_t)w, (uint32_t)h, (uint32_t)d};
+
+		blitRegions[mid].bufferOffset = currentSize;
+		blitRegions[mid].bufferRowLength = 0; // Tightly packed.
+		blitRegions[mid].bufferImageHeight = 0; // Tightly packed.
+		blitRegions[mid].imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		blitRegions[mid].imageSubresource.mipLevel = mid;
+		blitRegions[mid].imageSubresource.baseArrayLayer = 0;
+		blitRegions[mid].imageSubresource.layerCount = layers;
+		blitRegions[mid].imageOffset = {0, 0, 0};
+		blitRegions[mid].imageExtent = { (uint32_t)w, (uint32_t)h, (uint32_t)d};
 
 		// Number of images.
 		const uint imageSize = w * h * sizeof(float) * channels;
 		const uint imageCount = is3D ? d : layers;
-
-		// Initialize the images.
-		for(uint iid = 0; iid < imageCount; ++iid){
-			dstTexture.images[firstImage + currentCount + iid] = Image(w, h, channels);
-		}
 
 		currentSize += imageSize * imageCount;
 		currentCount += imageCount;
@@ -750,6 +682,12 @@ glm::uvec2 GPU::copyTextureRegionToBufferAndPrepare(VkCommandBuffer& commandBuff
 
 	// Copy from the intermediate texture.
 	vkCmdCopyImageToBuffer(commandBuffer, transferTexture.gpu->image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, dstBuffer->gpu->buffer, blitRegions.size(), blitRegions.data());
+
+	// Compute the index of the first image we will fill.
+	size_t firstImage = 0;
+	for(uint lid = 0; lid < mipStart; ++lid){
+		firstImage += is3D ? std::max<uint>(1u, depth >> lid) : layers;
+	}
 
 	return glm::uvec2(firstImage, currentCount);
 }
@@ -786,10 +724,16 @@ void GPU::downloadTexture(Texture & texture, int level) {
 	}
 
 	VkCommandBuffer commandBuffer = VkUtils::startOneTimeCommandBuffer(_context);
+	const uint layersCount = texture.shape == TextureShape::D3? 1 : texture.depth;
+	const glm::uvec2 size(texture.width, texture.height);
+	
 	std::shared_ptr<TransferBuffer> dstBuffer;
-	const glm::vec2 imgRange = GPU::copyTextureRegionToBufferAndPrepare(commandBuffer, texture, texture, dstBuffer, firstLevel, levelCount);
+	const glm::vec2 imgRange = GPU::copyTextureRegionToBuffer(commandBuffer, texture, dstBuffer, firstLevel, levelCount, 0, layersCount, glm::uvec2(0), size);
 	VkUtils::endOneTimeCommandBuffer(commandBuffer, _context);
 	GPU::flushBuffer(*dstBuffer, dstBuffer->sizeMax, 0);
+
+	// Prepare images.
+	texture.allocateImages(texture.gpu->channels, firstLevel, levelCount);
 
 	// Finally copy from the buffer to each image.
 	size_t currentOffset = 0;
@@ -800,6 +744,40 @@ void GPU::downloadTexture(Texture & texture, int level) {
 		currentOffset += imgSize;
 	}
 
+}
+
+GPUAsyncTask GPU::downloadTextureAsync(const Texture& texture, const glm::uvec2& offset, const glm::uvec2& size, uint layerCount, std::function<void(const Texture&)> callback){
+	GPU::unbindFramebufferIfNeeded();
+	
+	const uint texLayerCount = texture.shape == TextureShape::D3 ? 1 : texture.depth;
+	const uint effectiveLayerCount = layerCount == 0 ? texLayerCount : std::min(texLayerCount, layerCount);
+
+	_context.textureTasks.emplace_back();
+	++_context.tasksCount;
+
+	AsyncTextureTask& request = _context.textureTasks.back();
+	request.frame = _context.frameIndex;
+	request.dstImageRange = GPU::copyTextureRegionToBuffer(_context.getCurrentCommandBuffer(), texture, request.dstBuffer, 0, 1, 0, effectiveLayerCount, offset, size);
+	request.dstImageRange[0] = 0;
+	request.dstTexture.reset(new Texture("DstTexture"));
+	request.dstTexture->width = size[0];
+	request.dstTexture->height = size[1];
+	request.dstTexture->depth = effectiveLayerCount;
+	request.dstTexture->levels = 1;
+	request.dstTexture->shape = texture.shape;
+	request.dstTexture->allocateImages(texture.gpu->channels, 0, 1);
+	request.callback = callback;
+	request.id = GPUAsyncTask(_context.tasksCount);
+	return request.id;
+}
+
+void GPU::cancelAsyncOperation(const GPUAsyncTask& id){
+	for(auto op = _context.textureTasks.begin(); op != _context.textureTasks.end(); ++op){
+		if(op->id == id){
+			_context.textureTasks.erase(op);
+			break;
+		}
+	}
 }
 
 void GPU::downloadTexture(Texture & texture) {
@@ -1040,7 +1018,7 @@ void GPU::setupMesh(Mesh & mesh) {
 	// Create a staging buffer to host the geometry data (to avoid creating a staging buffer for each sub-upload).
 	std::vector<uchar> vertexBufferData(totalSize);
 
-	GPUMesh::InputState& state = mesh.gpu->state;
+	GPUMesh::State& state = mesh.gpu->state;
 	state.attributes.clear();
 	state.bindings.clear();
 	state.offsets.clear();
@@ -1121,7 +1099,7 @@ void GPU::bindPipelineIfNeeded(){
 	_context.newRenderPass = false;
 	// * state is outdated, create/retrieve new pipeline
 	if(!_state.isEquivalent(_lastState)){
-		_context.pipeline = _pipelineCache.getPipeline(_state);
+		_context.pipeline = _context.pipelineCache.getPipeline(_state);
 		_lastState = _state;
 		shouldBindPipeline = true;
 	}
@@ -1166,11 +1144,11 @@ void GPU::sync(){
 }
 
 void GPU::nextFrame(){
-	processSaveRequests();
+	processAsyncTasks();
 	processDestructionRequests();
 
 	_context.nextFrame();
-	_pipelineCache.freeOutdatedPipelines();
+	_context.pipelineCache.freeOutdatedPipelines();
 
 	// Save and reset stats.
 	_metricsPrevious = _metrics;
@@ -1322,7 +1300,9 @@ void GPU::blitDepth(const Framebuffer & src, const Framebuffer & dst) {
 
 	const uint layerCount = srcTex.shape == TextureShape::D3 ? 1 : srcTex.depth;
 
-	GPU::blitTexture(commandBuffer, srcTex, dstTex, 0, 0, srcTex.levels, 0, 0, layerCount, Filter::NEAREST);
+	const glm::uvec2 srcSize(srcTex.width, srcTex.height);
+	const glm::uvec2 dstSize(dstTex.width, dstTex.height);
+	GPU::blitTexture(commandBuffer, srcTex, dstTex, 0, 0, srcTex.levels, 0, 0, layerCount, glm::uvec2(0), srcSize, glm::uvec2(0), dstSize, Filter::NEAREST);
 
 //	_metrics.clearAndBlits += 1;
 }
@@ -1333,11 +1313,14 @@ void GPU::blit(const Framebuffer & src, const Framebuffer & dst, Filter filter) 
 	VkCommandBuffer& commandBuffer = _context.getCurrentCommandBuffer();
 	const uint count = std::min(src.attachments(), dst.attachments());
 
+	const glm::uvec2 srcSize(src.width(), src.height());
+	const glm::uvec2 dstSize(dst.width(), dst.height());
+
 	for(uint cid = 0; cid < count; ++cid){
 		const Texture& srcTex = *src.texture(cid);
 		const Texture& dstTex = *dst.texture(cid);
 		const uint layerCount = srcTex.shape == TextureShape::D3 ? 1 : srcTex.depth;
-		GPU::blitTexture(commandBuffer, srcTex, dstTex, 0, 0, srcTex.levels, 0, 0, layerCount, filter);
+		GPU::blitTexture(commandBuffer, srcTex, dstTex, 0, 0, srcTex.levels, 0, 0, layerCount, glm::uvec2(0), srcSize, glm::uvec2(0), dstSize, filter);
 	}
 }
 
@@ -1351,10 +1334,13 @@ void GPU::blit(const Framebuffer & src, const Framebuffer & dst, size_t lSrc, si
 	VkCommandBuffer& commandBuffer = _context.getCurrentCommandBuffer();
 	const uint count = std::min(src.attachments(), dst.attachments());
 
+	const glm::uvec2 srcSize(src.width(), src.height());
+	const glm::uvec2 dstSize(dst.width(), dst.height());
+
 	for(uint cid = 0; cid < count; ++cid){
 		const Texture& srcTex = *src.texture(cid);
 		const Texture& dstTex = *dst.texture(cid);
-		GPU::blitTexture(commandBuffer, srcTex, dstTex, mipSrc, mipDst, 1, lSrc, lDst, 1, filter);
+		GPU::blitTexture(commandBuffer, srcTex, dstTex, mipSrc, mipDst, 1, lSrc, lDst, 1, glm::uvec2(0), srcSize, glm::uvec2(0), dstSize, filter);
 	}
 }
 
@@ -1375,7 +1361,10 @@ void GPU::blit(const Texture & src, Texture & dst, Filter filter) {
 	GPU::setupTexture(dst, src.gpu->descriptor(), false);
 
 	const uint layerCount = src.shape == TextureShape::D3 ? 1 : src.depth;
-	GPU::blitTexture(_context.getCurrentCommandBuffer(), src, dst, 0, 0, src.levels, 0, 0, layerCount, filter);
+	const glm::uvec2 srcSize(src.width, src.height);
+	const glm::uvec2 dstSize(dst.width, dst.height);
+
+	GPU::blitTexture(_context.getCurrentCommandBuffer(), src, dst, 0, 0, src.levels, 0, 0, layerCount, glm::uvec2(0), srcSize, glm::uvec2(0), dstSize, filter);
 
 }
 
@@ -1388,17 +1377,24 @@ void GPU::blit(const Texture & src, Framebuffer & dst, Filter filter) {
 	const uint layerCount = src.shape == TextureShape::D3 ? 1 : src.depth;
 
 	GPU::unbindFramebufferIfNeeded();
-	GPU::blitTexture(_context.getCurrentCommandBuffer(), src, *dst.texture(), 0, 0, src.levels, 0, 0, layerCount, filter);
+
+	const glm::uvec2 srcSize(src.width, src.height);
+	const glm::uvec2 dstSize(dst.width(), dst.height());
+	GPU::blitTexture(_context.getCurrentCommandBuffer(), src, *dst.texture(), 0, 0, src.levels, 0, 0, layerCount, glm::uvec2(0), srcSize, glm::uvec2(0), dstSize, filter);
 
 }
 
-void GPU::blitTexture(VkCommandBuffer& commandBuffer, const Texture& src, const Texture& dst, uint mipStartSrc, uint mipStartDst, uint mipCount, uint layerStartSrc, uint layerStartDst, uint layerCount, Filter filter){
+void GPU::blitTexture(VkCommandBuffer& commandBuffer, const Texture& src, const Texture& dst, uint mipStartSrc, uint mipStartDst, uint mipCount, uint layerStartSrc, uint layerStartDst, uint layerCount, const glm::uvec2& srcBaseOffset, const glm::uvec2& srcBaseSize, const glm::uvec2& dstBaseOffset, const glm::uvec2& dstBaseSize, Filter filter){
 
 	const uint srcLayers = src.shape != TextureShape::D3 ? src.depth : 1;
 	const uint dstLayers = dst.shape != TextureShape::D3 ? dst.depth : 1;
 
 	const uint mipEffectiveCount = std::min(std::min(src.levels, dst.levels), mipCount);
 	const uint layerEffectiveCount = std::min(std::min(srcLayers, dstLayers), layerCount);
+	const uint srcEffectiveWidth = std::min(srcBaseSize[0], src.width - srcBaseOffset[0]);
+	const uint srcEffectiveHeight = std::min(srcBaseSize[1], src.width - srcBaseOffset[1]);
+	const uint dstEffectiveWidth = std::min(dstBaseSize[0], dst.width - dstBaseOffset[0]);
+	const uint dstEffectiveHeight = std::min(dstBaseSize[1], dst.width - dstBaseOffset[1]);
 
 	VkUtils::imageLayoutBarrier(commandBuffer, *src.gpu, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, mipStartSrc, mipEffectiveCount, layerStartSrc, layerEffectiveCount);
 	VkUtils::imageLayoutBarrier(commandBuffer, *dst.gpu, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, mipStartDst, mipEffectiveCount, layerStartDst, layerEffectiveCount);
@@ -1414,17 +1410,20 @@ void GPU::blitTexture(VkCommandBuffer& commandBuffer, const Texture& src, const 
 		const uint srcMip = mipStartSrc + mid;
 		const uint dstMip = mipStartDst + mid;
 
-		const uint srcWidth  = std::max(src.width >> srcMip, uint(1));
-		const uint srcHeight = std::max(src.height >> srcMip, uint(1));
+		const uint srcWidth  = std::max(srcEffectiveWidth >> srcMip, uint(1));
+		const uint srcHeight = std::max(srcEffectiveHeight >> srcMip, uint(1));
 		const uint srcDepth  = std::max(srcBaseDepth >> srcMip, uint(1));
-		const uint dstWidth  = std::max(dst.width >> dstMip, uint(1));
-		const uint dstHeight = std::max(dst.height >> dstMip, uint(1));
-		const uint dstDepth  = std::max(dstBaseDepth >> dstMip, uint(1));
+		const glm::uvec2 srcOffset = srcBaseOffset >> glm::uvec2(srcMip);
 
-		blitRegions[mid].srcOffsets[0] = { 0, 0, 0};
-		blitRegions[mid].dstOffsets[0] = { 0, 0, 0};
-		blitRegions[mid].srcOffsets[1] = { int32_t(srcWidth), int32_t(srcHeight), int32_t(srcDepth)};
-		blitRegions[mid].dstOffsets[1] = { int32_t(dstWidth), int32_t(dstHeight), int32_t(dstDepth)};
+		const uint dstWidth  = std::max(dstEffectiveWidth >> dstMip, uint(1));
+		const uint dstHeight = std::max(dstEffectiveHeight >> dstMip, uint(1));
+		const uint dstDepth  = std::max(dstBaseDepth >> dstMip, uint(1));
+		const glm::uvec2 dstOffset = dstBaseOffset >> glm::uvec2(dstMip);
+
+		blitRegions[mid].srcOffsets[0] = { int32_t(srcOffset[0]), int32_t(srcOffset[1]), 0};
+		blitRegions[mid].dstOffsets[0] = { int32_t(dstOffset[0]), int32_t(dstOffset[1]), 0};
+		blitRegions[mid].srcOffsets[1] = { int32_t(srcOffset[0] + srcWidth), int32_t(srcOffset[1] + srcHeight), int32_t(0 + srcDepth)};
+		blitRegions[mid].dstOffsets[1] = { int32_t(dstOffset[0] + dstWidth), int32_t(dstOffset[1] + dstHeight), int32_t(0 + dstDepth)};
 		blitRegions[mid].srcSubresource.aspectMask = src.gpu->aspect;
 		blitRegions[mid].dstSubresource.aspectMask = dst.gpu->aspect;
 		blitRegions[mid].srcSubresource.mipLevel = srcMip;
@@ -1433,8 +1432,8 @@ void GPU::blitTexture(VkCommandBuffer& commandBuffer, const Texture& src, const 
 		blitRegions[mid].dstSubresource.baseArrayLayer = layerStartDst;
 		blitRegions[mid].srcSubresource.layerCount = layerEffectiveCount;
 		blitRegions[mid].dstSubresource.layerCount = layerEffectiveCount;
-
 	}
+
 
 	vkCmdBlitImage(commandBuffer, src.gpu->image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, dst.gpu->image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, blitRegions.size(), blitRegions.data(), filterVk);
 
@@ -1483,17 +1482,15 @@ void GPU::cleanup(){
 		alloc.second.clean();
 	}
 
-	_context.frameIndex += 100;
-	processSaveRequests();
+	_context.textureTasks.clear();
 
 	_context.frameIndex += 100;
 	processDestructionRequests();
 	
-	_pipelineCache.clean();
+	_context.pipelineCache.clean();
 	_context.descriptorAllocator.clean();
 
-	assert(_resourcesToSave.empty());
-	assert(_resourcesToDelete.empty());
+	assert(_context.resourcesToDelete.empty());
 
 	vkDestroyCommandPool(_context.device, _context.commandPool, nullptr);
 
@@ -1504,8 +1501,8 @@ void GPU::cleanup(){
 }
 
 void GPU::clean(GPUTexture & tex){
-	_resourcesToDelete.emplace_back();
-	ResourceToDelete& rsc = _resourcesToDelete.back();
+	_context.resourcesToDelete.emplace_back();
+	ResourceToDelete& rsc = _context.resourcesToDelete.back();
 	rsc.view = tex.view;
 	rsc.sampler = tex.sampler;
 	rsc.image = tex.image;
@@ -1515,8 +1512,8 @@ void GPU::clean(GPUTexture & tex){
 
 	const uint mipCount = tex.levelViews.size();
 	for(uint mid = 0; mid < mipCount; ++mid){
-		_resourcesToDelete.emplace_back();
-		ResourceToDelete& rsc = _resourcesToDelete.back();
+		_context.resourcesToDelete.emplace_back();
+		ResourceToDelete& rsc = _context.resourcesToDelete.back();
 		rsc.view = tex.levelViews[mid];
 		rsc.frame = _context.frameIndex;
 		rsc.name = tex.name;
@@ -1531,8 +1528,8 @@ void GPU::clean(Framebuffer & framebuffer, bool deleteRenderPasses){
 
 		for(auto& slice : slices){
 			// Delete the framebuffer.
-			_resourcesToDelete.emplace_back();
-			ResourceToDelete& rsc = _resourcesToDelete.back();
+			_context.resourcesToDelete.emplace_back();
+			ResourceToDelete& rsc = _context.resourcesToDelete.back();
 			rsc.framebuffer = slice.framebuffer;
 			rsc.frame = _context.frameIndex;
 			rsc.name = framebuffer.name();
@@ -1540,8 +1537,8 @@ void GPU::clean(Framebuffer & framebuffer, bool deleteRenderPasses){
 			// Delete the attachment views if the framebuffer owned them.
 			if(!framebuffer._isBackbuffer){
 				for(auto& view : slice.attachments){
-					_resourcesToDelete.emplace_back();
-					ResourceToDelete& rsc = _resourcesToDelete.back();
+					_context.resourcesToDelete.emplace_back();
+					ResourceToDelete& rsc = _context.resourcesToDelete.back();
 					rsc.view = view;
 					rsc.frame = _context.frameIndex;
 					rsc.name = framebuffer.name();
@@ -1555,8 +1552,8 @@ void GPU::clean(Framebuffer & framebuffer, bool deleteRenderPasses){
 		for(const auto& passes2 : framebuffer._renderPasses){
 			for(const auto& passes1 : passes2){
 				for(const VkRenderPass& pass : passes1){
-					_resourcesToDelete.emplace_back();
-					ResourceToDelete& rsc = _resourcesToDelete.back();
+					_context.resourcesToDelete.emplace_back();
+					ResourceToDelete& rsc = _context.resourcesToDelete.back();
 					rsc.renderPass = pass;
 					rsc.frame = _context.frameIndex;
 					rsc.name = framebuffer.name();
@@ -1573,8 +1570,8 @@ void GPU::clean(GPUMesh & mesh){
 }
 
 void GPU::clean(GPUBuffer & buffer){
-	_resourcesToDelete.emplace_back();
-	ResourceToDelete& rsc = _resourcesToDelete.back();
+	_context.resourcesToDelete.emplace_back();
+	ResourceToDelete& rsc = _context.resourcesToDelete.back();
 	rsc.buffer = buffer.buffer;
 	rsc.data = buffer.data;
 	rsc.frame = _context.frameIndex;
@@ -1596,12 +1593,12 @@ void GPU::clean(Program & program){
 void GPU::processDestructionRequests(){
 	const uint64_t currentFrame = _context.frameIndex;
 
-	if(_resourcesToDelete.empty() || (currentFrame < 2)){
+	if(_context.resourcesToDelete.empty() || (currentFrame < 2)){
 		return;
 	}
 
-	while(!_resourcesToDelete.empty()){
-		ResourceToDelete& rsc = _resourcesToDelete.front();
+	while(!_context.resourcesToDelete.empty()){
+		ResourceToDelete& rsc = _context.resourcesToDelete.front();
 		// If the following resources are too recent, they might still be used by in flight frames.
 		if(rsc.frame >= currentFrame - 2){
 			break;
@@ -1624,52 +1621,46 @@ void GPU::processDestructionRequests(){
 		if(rsc.renderPass != VK_NULL_HANDLE){
 			vkDestroyRenderPass(_context.device, rsc.renderPass, nullptr);
 		}
-		_resourcesToDelete.pop_front();
+		_context.resourcesToDelete.pop_front();
 	}
 }
 
-void GPU::processSaveRequests(){
+void GPU::processAsyncTasks(){
 	const uint64_t currentFrame = _context.frameIndex;
 
-	if(_resourcesToSave.empty() || (currentFrame < 2)){
+	if(_context.textureTasks.empty() || (currentFrame < 2)){
 		return;
 	}
 
-	while(!_resourcesToSave.empty()){
-		ResourceToSave& rsc = _resourcesToSave.front();
+	while(!_context.textureTasks.empty()){
+		AsyncTextureTask& tsk = _context.textureTasks.front();
 		// If the following requests are too recent, they might not have completed yet.
-		if(rsc.frame >= currentFrame - 2){
+		if(tsk.frame >= currentFrame - 2){
 			break;
 		}
 
 		// Make sure the buffer is flushed.
-		GPU::flushBuffer(*rsc.data, rsc.data->sizeMax, 0);
+		GPU::flushBuffer(*tsk.dstBuffer, tsk.dstBuffer->sizeMax, 0);
 
-		const std::string ext = rsc.hdr ? ".exr" : ".png";
-		Log::Info() << Log::GPU << "Saving framebuffer to file " << rsc.path << ext << "... " << std::endl;
-
-		// Finally copy from the buffer to each image.
+		// Copy from the buffer to each image of the destination.
 		size_t currentOffset = 0;
-		const uint firstImage = rsc.range[0];
-		const uint imageCount = rsc.range[1];
+		const uint firstImage = tsk.dstImageRange[0];
+		const uint imageCount = tsk.dstImageRange[1];
 
 		for(uint iid = firstImage; iid < firstImage + imageCount; ++iid){
-			Image& img = rsc.dst->images[iid];
+			Image& img = tsk.dstTexture->images[iid];
 
 			// Copy the data to the image.
 			const size_t imgSize = img.pixels.size() * sizeof(float);
-			std::memcpy(img.pixels.data(), rsc.data->gpu->mapped + currentOffset, imgSize);
+			std::memcpy(img.pixels.data(), tsk.dstBuffer->gpu->mapped + currentOffset, imgSize);
 			currentOffset += imgSize;
 
-			// Save the image to the disk.
-			const std::string imgPath = rsc.path + (imageCount > 1 ? ("-" + std::to_string(iid)) : "");
-			const int ret = img.save(imgPath + ext, rsc.options);
-			if(ret != 0) {
-				Log::Error() << "Error for image at path " << imgPath << ext << "." << std::endl;
-			}
 		}
 
-		_resourcesToSave.pop_front();
+		// User-defined callback.
+		tsk.callback(*tsk.dstTexture);
+
+		_context.textureTasks.pop_front();
 	}
 }
 

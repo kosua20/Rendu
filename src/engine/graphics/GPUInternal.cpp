@@ -1,8 +1,6 @@
 #include "graphics/GPUInternal.hpp"
 #include "resources/Texture.hpp"
 
-#include <volk/volk.h>
-
 #include <GLFW/glfw3.h>
 #include <map>
 

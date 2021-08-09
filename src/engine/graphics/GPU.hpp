@@ -4,7 +4,6 @@
 #include "resources/Texture.hpp"
 #include "resources/Buffer.hpp"
 #include "graphics/GPUObjects.hpp"
-#include "graphics/Framebuffer.hpp"
 #include "graphics/Program.hpp"
 #include "Common.hpp"
 #include <map>
@@ -16,9 +15,7 @@
  */
 
 /// This macro is used to check for GPU errors with access to the file and line number where the error is detected.
-#define checkGPUError() GPU::checkError(__FILE__, __LINE__, "");
-/// This macro is used to check for GPU errors with access to the file and line number where the error is detected, along with additional user informations.
-#define checkGPUErrorInfos(infos) GPU::checkError(__FILE__, __LINE__, infos);
+#define checkGPUError()
 
 /**@}*/
 
@@ -57,14 +54,6 @@ public:
 		unsigned long downloads = 0; ///< Data download from the GPU.
 		unsigned long uniforms = 0; ///< Uniform update.
 	};
-
-	/** Check if any GPU error has been detected and log it.
-	 \param file the current file
-	 \param line the current line
-	 \param infos additional user info
-	 \return non zero if an error was encountered
-	 */
-	static int checkError(const char * file, int line, const std::string & infos);
 	
 	/** Setup the GPU device in its initial state.
 	 \param appName the name of the current executable
@@ -131,6 +120,10 @@ public:
 	 */
 	static void downloadTexture(Texture & texture, int level);
 
+	static GPUAsyncTask downloadTextureAsync(const Texture& texture, const glm::uvec2& offset, const glm::uvec2& size, uint layerCount, std::function<void(const Texture&)> callback);
+
+	static void cancelAsyncOperation(const GPUAsyncTask& id);
+	
 	/** Generate a texture mipmaps on the GPU.
 	 \param texture the texture to use
 	 \note This will set the number of levels to 1000.
@@ -341,24 +334,14 @@ public:
 	static void unbindFramebufferIfNeeded();
 
 private:
-	/** Read back the currently bound framebuffer to the CPU and save it in the best possible format on disk.
-	 \param type the type of the framebuffer
-	 \param format the format of the framebuffer
-	 \param width the width of the region to save
-	 \param height the height of the region to save
-	 \param components the number of components of the framebuffer
-	 \param path the output image path
-	 \param flip should the image be vertically fliped before saving
-	 \param ignoreAlpha should the alpha channel be ignored if it exists
-	 \note The output image extension will be automatically added based on the framebuffer type and format.
-	 */
-	//static void savePixels(GLenum type, GLenum format, unsigned int width, unsigned int height, unsigned int components, const std::string & path, bool flip, bool ignoreAlpha);
-
+	
 	static void bindPipelineIfNeeded();
 
-	static glm::uvec2 copyTextureRegionToBufferAndPrepare(VkCommandBuffer& commandBuffer, Texture & srcTexture, Texture & dstTexture, std::shared_ptr<TransferBuffer> & dstBuffer, uint mipStart, uint mipCount);
+	/** Offsets and sizes are expressed at mip 0 in all cases */
+	static glm::uvec2 copyTextureRegionToBuffer(VkCommandBuffer& commandBuffer, const Texture & srcTexture, std::shared_ptr<TransferBuffer> & dstBuffer, uint mipStart, uint mipCount, uint layerStart, uint layerCount, const glm::uvec2& offset, const glm::uvec2& size);
 
-	static void blitTexture(VkCommandBuffer& commandBuffer, const Texture& src, const Texture& dst, uint mipStartSrc, uint mipStartDst, uint mipCount, uint layerStartSrc, uint layerStartDst, uint layerCount, Filter filter);
+	/** Offsets and sizes are expressed at mip 0 in all cases */
+	static void blitTexture(VkCommandBuffer& commandBuffer, const Texture& src, const Texture& dst, uint mipStartSrc, uint mipStartDst, uint mipCount, uint layerStartSrc, uint layerStartDst, uint layerCount, const glm::uvec2& srcBaseOffset, const glm::uvec2& srcBaseSize, const glm::uvec2& dstBaseOffset, const glm::uvec2& dstBaseSize, Filter filter);
 
 	static void clean(GPUTexture & tex);
 
@@ -372,7 +355,7 @@ private:
 
 	static void processDestructionRequests();
 
-	static void processSaveRequests();
+	static void processAsyncTasks();
 
 	static GPUState _state; ///< Current GPU state for caching.
 	static GPUState _lastState; ///< Current GPU state for caching.
