@@ -6,7 +6,6 @@
 #include "system/System.hpp"
 #include "generation/Random.hpp"
 #include "Common.hpp"
-#include <map>
 
 /**
  \defgroup SceneEditor Scene editor

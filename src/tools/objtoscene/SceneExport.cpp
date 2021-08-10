@@ -192,7 +192,7 @@ Material saveMaterial(const std::string & baseName, const CompositeObj::Material
 	return outMaterial;
 }
 
-int saveDescription(const std::vector<CompositeObj::Object> & objects, const std::map<std::string, Material> & materials, const std::string & outputPath) {
+int saveDescription(const std::vector<CompositeObj::Object> & objects, const std::unordered_map<std::string, Material> & materials, const std::string & outputPath) {
 
 	std::ofstream sceneFile(outputPath);
 	if(!sceneFile.is_open()) {

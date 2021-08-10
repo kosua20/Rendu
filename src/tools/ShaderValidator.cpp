@@ -4,7 +4,6 @@
 #include "system/Window.hpp"
 #include "Common.hpp"
 #include <iostream>
-#include <map>
 #include <sstream>
 
 #include "system/TextUtilities.hpp"
@@ -112,11 +111,11 @@ int main(int argc, char ** argv) {
 	Log::Info() << Log::GPU << "Versions: Driver: " << version << ", API: " << shaderVersion << "." << std::endl;
 
 	// We will need all glsl files for include support.
-	std::map<std::string, std::string> includeFiles;
+	std::vector<Resources::FileInfos> includeFiles;
 	Resources::manager().getFiles("glsl", includeFiles);
 
 	// Test all shaders.
-	const std::map<ShaderType, std::string> types = {
+	const std::unordered_map<ShaderType, std::string> types = {
 		{ShaderType::VERTEX, "vert" },
 		{ShaderType::GEOMETRY, "geom" },
 		{ShaderType::FRAGMENT, "frag" },
@@ -127,27 +126,30 @@ int main(int argc, char ** argv) {
 	
 	for(const auto & type : types) {
 		// Load shaders from disk.
-		std::map<std::string, std::string> files;
+		std::vector<Resources::FileInfos> files;
 		Resources::manager().getFiles(type.second, files);
 		for (auto& file : files) {
 
 			std::string compilationLog;
 			// Keep track of the include files used.
 			// File with ID 0 is the base file, already set its name.
-			std::vector<std::string> names = { file.second };
+			std::vector<std::string> paths = { file.path };
 			// Load the shader.
-			const std::string fullName = file.first + "." + type.second;
-			const std::string shader = Resources::manager().getStringWithIncludes(fullName, names);
+			const std::string fullName = file.name + "." + type.second;
+			const std::string shader = Resources::manager().getStringWithIncludes(fullName, paths);
 			// Compile the shader.
 			Program::Stage stage;
 			ShaderCompiler::compile(shader, type.first, stage, compilationLog);
 
 			// Replace the include names by the full paths.
-			for(size_t nid = 1; nid < names.size(); ++nid) {
-				auto& name = names[nid];
-				TextUtilities::splitExtension(name);
-				if(includeFiles.count(name) > 0) {
-					name = includeFiles[name];
+			for(size_t nid = 1; nid < paths.size(); ++nid) {
+				auto& name = paths[nid];
+				TextUtilities::splitExtension(path);
+				for(const auto& includeFile : includeFiles){
+					if(includeFile.name == name){
+						name = includeInfos->path;
+						break;
+					}
 				}
 			}
 			// Process the log.

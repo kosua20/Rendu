@@ -173,7 +173,7 @@ void populateMesh(const RawGeometry & geom, size_t lowerBound, size_t upperBound
 	mesh.texcoords.clear();
 
 	// Keep track of previously encountered (position,uv,normal).
-	std::map<std::string, long> indices_used;
+	std::unordered_map<std::string, long> indices_used;
 
 	//Positions
 	long maxInd = 0;
@@ -219,7 +219,7 @@ void populateMesh(const RawGeometry & geom, size_t lowerBound, size_t upperBound
 	 \param rootPath the root path for all texture paths
 	 \param materials contains the materials that might be udpated by this file
 	 */
-void parseMtlFile(std::istream & inMat, const std::string & rootPath, std::map<std::string, Material> & materials) {
+void parseMtlFile(std::istream & inMat, const std::string & rootPath, std::unordered_map<std::string, Material> & materials) {
 	using namespace std;
 
 	string resMat;
@@ -315,7 +315,7 @@ void parseMtlFile(std::istream & inMat, const std::string & rootPath, std::map<s
 	}
 }
 
-int load(const std::string & filePath, std::vector<Object> & objects, std::map<std::string, Material> & materials) {
+int load(const std::string & filePath, std::vector<Object> & objects, std::unordered_map<std::string, Material> & materials) {
 
 	using namespace std;
 

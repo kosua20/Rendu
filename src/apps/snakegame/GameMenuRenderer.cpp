@@ -20,12 +20,12 @@ GameMenuRenderer::GameMenuRenderer() : Renderer("Menu") {
 
 void GameMenuRenderer::drawMenu(const GameMenu & menu, const glm::vec2 & finalRes, float aspectRatio) const {
 
-	static const std::map<MenuButton::State, glm::vec4> borderColors = {
+	static const std::unordered_map<MenuButton::State, glm::vec4> borderColors = {
 		{MenuButton::State::OFF, glm::vec4(0.8f, 0.8f, 0.8f, 1.0f)},
 		{MenuButton::State::HOVER, glm::vec4(0.7f, 0.7f, 0.7f, 1.0f)},
 		{MenuButton::State::ON, glm::vec4(0.95f, 0.95f, 0.95f, 1.0f)}};
 
-	static const std::map<MenuButton::State, glm::vec4> innerColors = {
+	static const std::unordered_map<MenuButton::State, glm::vec4> innerColors = {
 		{MenuButton::State::OFF, glm::vec4(0.9f, 0.9f, 0.9f, 0.5f)},
 		{MenuButton::State::HOVER, glm::vec4(1.0f, 1.0f, 1.0f, 0.5f)},
 		{MenuButton::State::ON, glm::vec4(0.95f, 0.95f, 0.95f, 0.5f)}};

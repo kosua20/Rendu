@@ -6,6 +6,7 @@
 #include "system/Window.hpp"
 #include "system/Config.hpp"
 #include "processing/GaussianBlur.hpp"
+#include <map>
 
 // *** Later improvements: ***
 // \todo Add match-3 mechanics.

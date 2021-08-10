@@ -8,11 +8,11 @@ SceneEditor::SceneEditor(RenderingConfig & config) : CameraApp(config) {
 	_sceneFramebuffer = _renderer.createOutput(uint(config.renderingResolution()[0]), uint(config.renderingResolution()[1]), "Scene render");
 		 
 	// Query existing scenes.
-	std::map<std::string, std::string> sceneInfos;
+	std::vector<Resources::FileInfos> sceneInfos;
 	Resources::manager().getFiles("scene", sceneInfos);
 	_sceneNames.emplace_back("New scene");
 	for(const auto & info : sceneInfos) {
-		_sceneNames.push_back(info.first);
+		_sceneNames.push_back(info.name);
 	}
 	_scenes.push_back(nullptr);
 	for(size_t i = 1; i < _sceneNames.size(); ++i) {

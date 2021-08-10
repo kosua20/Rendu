@@ -10,7 +10,7 @@ StenciledApp::StenciledApp(RenderingConfig & config) :
 	_finalRender.reset(new Framebuffer(uint(renderRes[0]), uint(renderRes[1]), {Layout::RGBA8, Filter::LINEAR_NEAREST, Wrap::CLAMP}, false, "Final render"));
 
 	// Load all existing scenes, with associated names.
-	std::map<std::string, std::string> sceneInfos;
+	std::unordered_map<std::string, std::string> sceneInfos;
 	Resources::manager().getFiles("scene", sceneInfos);
 	_sceneNames.emplace_back("None");
 	for(const auto & info : sceneInfos) {

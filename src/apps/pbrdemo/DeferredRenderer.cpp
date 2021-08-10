@@ -148,8 +148,8 @@ void DeferredRenderer::renderTransparent(const Culler::List & visibles, const gl
 	_transparentProgram->uniform("lightsCount", int(_fwdLightsGPU->count()));
 	_transparentProgram->uniform("invScreenSize", invScreenSize);
 
-	// \todo This is because after a change of scene shadow maps are reset, but the conditional setup of textures on
-	// the program means that descriptors can still reference the delete textures.
+	// This is because after a change of scene shadow maps are reset, but the conditional setup of textures on
+	// the program means that descriptors can still reference the deleted textures.
 	_transparentProgram->defaultTexture(6);
 	_transparentProgram->defaultTexture(7);
 

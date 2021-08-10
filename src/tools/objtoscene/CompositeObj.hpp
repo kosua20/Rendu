@@ -2,7 +2,6 @@
 
 #include "resources/Mesh.hpp"
 #include "Common.hpp"
-#include <map>
 
 /**
  \brief Commposite OBJ files loading.
@@ -60,6 +59,6 @@ struct Object {
 	 \param materials will be filled with the materials infos
 	 \return an error code or 0
 	 */
-int load(const std::string & filePath, std::vector<Object> & objects, std::map<std::string, Material> & materials);
+int load(const std::string & filePath, std::vector<Object> & objects, std::unordered_map<std::string, Material> & materials);
 
 }

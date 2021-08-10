@@ -44,6 +44,12 @@ public:
 	const Texture * tid = nullptr;		   ///< Text texture.
 };
 
+
+/** Hash specialization for unordered_map/set */
+template <> struct std::hash<MenuButton::State> {
+	std::size_t operator()(const MenuButton::State& t) const { return static_cast<uint>(t); }
+};
+
 /**
  \brief Represents a toggle in a menu.
  \ingroup SnakeGame

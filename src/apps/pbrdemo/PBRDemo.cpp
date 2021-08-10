@@ -18,11 +18,11 @@ PBRDemo::PBRDemo(RenderingConfig & config) :
 	_probesRenderer.reset(new DeferredRenderer(glm::vec2(256,256), ShadowMode::BASIC, false, "Probes"));
 
 	// Load all existing scenes, with associated names.
-	std::map<std::string, std::string> sceneInfos;
+	std::vector<Resources::FileInfos> sceneInfos;
 	Resources::manager().getFiles("scene", sceneInfos);
 	_sceneNames.emplace_back("None");
 	for(const auto & info : sceneInfos) {
-		_sceneNames.push_back(info.first);
+		_sceneNames.push_back(info.name);
 	}
 	_scenes.push_back(nullptr);
 	for(size_t i = 1; i < _sceneNames.size(); ++i) {

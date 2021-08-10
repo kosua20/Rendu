@@ -4,7 +4,6 @@
 
 #include "system/System.hpp"
 #include "Common.hpp"
-#include <map>
 
 /**
  \defgroup ObjToScene OBJ to scene converter
@@ -87,7 +86,7 @@ int main(int argc, char ** argv) {
 
 	// Load the meshes and materials.
 	std::vector<CompositeObj::Object> objects;
-	std::map<std::string, CompositeObj::Material> materials;
+	std::unordered_map<std::string, CompositeObj::Material> materials;
 	const int ret = CompositeObj::load(config.inputMeshPath, objects, materials);
 	if(ret != 0) {
 		return ret;
@@ -107,7 +106,7 @@ int main(int argc, char ** argv) {
 	}
 
 	// Save each material, creating textures if needed.
-	std::map<std::string, SceneExport::Material> finalMaterials;
+	std::unordered_map<std::string, SceneExport::Material> finalMaterials;
 	for(auto & materialKey : materials) {
 		const std::string baseName		  = config.outputName + "_" + materialKey.first;
 		finalMaterials[materialKey.first] = SceneExport::saveMaterial(baseName, materialKey.second, config.outputPath);

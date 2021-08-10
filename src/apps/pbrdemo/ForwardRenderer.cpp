@@ -336,9 +336,9 @@ void ForwardRenderer::draw(const Camera & camera, Framebuffer & framebuffer, siz
 		_parallaxProgram->use();
 		_parallaxProgram->uniform("p", proj);
 
-		// \todo This is because after a change of scene shadow maps are reset, but the conditional setup of textures on
-		// the program means that descriptors can still reference the delete textures.
-		// Currently there is no mechanism to "unregister" a texture for each shader using it, when deleting the texture.
+		// This is because after a change of scene shadow maps are reset, but the conditional setup of textures on
+		// the program means that descriptors can still reference the deleted textures.
+		// \todo Currently there is no mechanism to "unregister" a texture for each shader using it, when deleting the texture.
 		// The texture could keep a record of all programs it has been used in. Or we could look at all programs when deleting.
 		// Or in PBRDemo we reset the textures when setting a scene.
 		_objectProgram->defaultTexture(6);

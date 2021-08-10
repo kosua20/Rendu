@@ -3,7 +3,6 @@
 #include "CompositeObj.hpp"
 #include "system/System.hpp"
 #include "Common.hpp"
-#include <map>
 
 /**
  \brief Helpers to export a Rendu scene.
@@ -42,6 +41,6 @@ Material saveMaterial(const std::string & baseName, const CompositeObj::Material
 	 \param outputPath the destination file
 	 \return an error code or 0
 	 */
-int saveDescription(const std::vector<CompositeObj::Object> & objects, const std::map<std::string, Material> & materials, const std::string & outputPath);
+int saveDescription(const std::vector<CompositeObj::Object> & objects, const std::unordered_map<std::string, Material> & materials, const std::string & outputPath);
 
 }
