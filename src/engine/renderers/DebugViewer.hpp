@@ -18,7 +18,7 @@ public:
 	/** Constructor.
 	\param silent if true, don't register or display anything.
 	 */
-	explicit DebugViewer(bool silent);
+	explicit DebugViewer();
 
 	/** Register a texture for debug.
 	\param tex the texture to monitor
@@ -199,7 +199,6 @@ private:
 	std::unordered_map<std::string, StateInfos> _states; ///< GPU states currently tracked.
 
 	Program * _texDisplay; ///< Texture display shader.
-	const bool _silent; ///< Don't register or display anything.
 	uint _textureId = 0; ///< Default texture name counter.
 	uint _bufferId	= 0; ///< Default framebuffer name counter.
 	uint _meshId    = 0; ///< Default mesh name counter.

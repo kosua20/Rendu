@@ -14,11 +14,11 @@ Application::Application(RenderingConfig & config) :
 	}
 
 	if(_config.trackDebug) {
-		_debug.reset(new DebugViewer(false));
+		_debug.reset(new DebugViewer());
 		DebugViewer::setDefault(_debug.get());
 	} else {
-		// Create a silent viewer.
-		_debug.reset(new DebugViewer(true));
+		// No viewer
+		_debug = nullptr;
 	}
 }
 

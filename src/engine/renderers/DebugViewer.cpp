@@ -21,15 +21,12 @@ static const std::string debugSkipName = "@debugViewerSkipItem@";
 
 DebugViewer * DebugViewer::_shared = nullptr;
 
-DebugViewer::DebugViewer(bool silent) : _silent(silent) {
-	// \todo Avoid silent and use a null debug viewer instead?
-	if(!_silent) {
-		_texDisplay = Resources::manager().getProgram2D("debug_texture_display");
-	}
+DebugViewer::DebugViewer() {
+	_texDisplay = Resources::manager().getProgram2D("debug_texture_display");
 }
 
 void DebugViewer::track(const Texture * tex) {
-	if(_silent || tex->name() == debugSkipName) {
+	if(tex->name() == debugSkipName) {
 		return;
 	}
 	if(!tex->gpu) {
@@ -64,7 +61,7 @@ void DebugViewer::track(const Texture * tex) {
 }
 
 void DebugViewer::track(const Framebuffer * buffer) {
-	if(_silent || buffer->name() == debugSkipName) {
+	if(buffer->name() == debugSkipName) {
 		return;
 	}
 	
@@ -111,9 +108,7 @@ void DebugViewer::track(const Framebuffer * buffer) {
 }
 
 void DebugViewer::track(const Mesh * mesh) {
-	if(_silent) {
-		return;
-	}
+	
 	if(!mesh->gpu) {
 		Log::Warning() << "[DebugViewer] \"" << mesh->name() << "\" has no GPU data." << std::endl;
 		return;
@@ -148,9 +143,7 @@ void DebugViewer::track(const Mesh * mesh) {
 }
 
 void DebugViewer::trackState(const std::string & name){
-	if(_silent){
-		return;
-	}
+
 	// Only update the state if it's currently displayed on screen,
 	// or if it's the very first time it's queried.
 	if(_states[name].visible || !_states[name].populated){
@@ -196,9 +189,6 @@ void DebugViewer::untrack(const Mesh * mesh) {
 }
 
 void DebugViewer::interface() {
-	if(_silent) {
-		return;
-	}
 
 	// Display menu bar listing all resources.
 	if(ImGui::BeginMainMenuBar()) {
