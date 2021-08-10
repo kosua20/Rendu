@@ -127,7 +127,7 @@ void PBRDemo::updateProbes(){
 
 		} else {
 			_inteTime.begin();
-			probe->convolveRadiance(1.2f, 2, 3);
+			probe->convolveRadiance(1.2f, 2, 4);
 			_inteTime.end();
 
 		}
