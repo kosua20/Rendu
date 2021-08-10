@@ -13,11 +13,11 @@ public:
 
 	uint allocate();
 
-	void resetPool();
+	void resetWritePool();
 
-	VkQueryPool& getCurrentPool();
+	VkQueryPool& getWritePool();
 
-	VkQueryPool& getPreviousPool();
+	VkQueryPool& getReadPool();
 
 	void clean();
 	

@@ -19,7 +19,7 @@ void QueryAllocator::init(GPUQuery::Type type, uint count){
 	}
 	const VkQueryType rawType = types.at(type);
 
-	for(uint fid = 0; fid < context->frameCount; ++fid){
+	for(uint fid = 0; fid < _pools.size(); ++fid){
 		VkQueryPoolCreateInfo poolInfo = {};
 		poolInfo.sType = VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO;
 		poolInfo.queryType = rawType;
@@ -50,15 +50,17 @@ void QueryAllocator::clean(){
 	_pools.clear();
 }
 
-void QueryAllocator::resetPool(){
+void QueryAllocator::resetWritePool(){
 	GPUContext* context = GPU::getInternal();
 	vkCmdResetQueryPool(context->getCurrentCommandBuffer(), _pools[context->swapIndex], 0, _totalCount);
 }
 
-VkQueryPool& QueryAllocator::getCurrentPool(){
+VkQueryPool& QueryAllocator::getWritePool(){
 	return _pools[GPU::getInternal()->swapIndex];
 }
 
-VkQueryPool& QueryAllocator::getPreviousPool(){
-	return _pools[1 - GPU::getInternal()->swapIndex];
+VkQueryPool& QueryAllocator::getReadPool(){
+	GPUContext* context = GPU::getInternal();
+	const uint32_t ind = (context->swapIndex + 1u)%(context->frameCount);
+	return _pools[ind];
 }

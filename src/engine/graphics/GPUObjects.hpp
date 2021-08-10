@@ -583,11 +583,10 @@ public:
 private:
 	
 	Type _type = GPUQuery::Type::TIME_ELAPSED;
-	VkQueryType _rawType = VK_QUERY_TYPE_TIMESTAMP;
 	VkQueryControlFlags _flags = 0;
 	uint _count = 2;
 	uint _offset = 0;
-	bool _neverRan = true;
+	bool _ranThisFrame = false;
 	bool _running = false; ///< Is a measurement currently taking place.
 
 };

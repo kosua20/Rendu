@@ -147,14 +147,14 @@ void GPUQuery::begin(){
 	}
 
 	GPUContext* context = GPU::getInternal();
-	VkQueryPool& pool = context->queryAllocators.at(_type).getCurrentPool();
+	VkQueryPool& pool = context->queryAllocators.at(_type).getWritePool();
 	if(_type == GPUQuery::Type::TIME_ELAPSED){
 		vkCmdWriteTimestamp(context->getCurrentCommandBuffer(), VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, pool, _offset);
 	} else {
 		vkCmdBeginQuery(context->getCurrentCommandBuffer(), pool, _offset, _flags);
 	}
 	_running = true;
-	_neverRan = false;
+	_ranThisFrame = true;
 }
 
 void GPUQuery::end(){
@@ -164,7 +164,7 @@ void GPUQuery::end(){
 	}
 
 	GPUContext* context = GPU::getInternal();
-	VkQueryPool& pool = context->queryAllocators.at(_type).getCurrentPool();
+	VkQueryPool& pool = context->queryAllocators.at(_type).getWritePool();
 	if(_type == GPUQuery::Type::TIME_ELAPSED){
 		vkCmdWriteTimestamp(context->getCurrentCommandBuffer(), VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, pool, _offset + 1u);
 	} else {
@@ -175,10 +175,10 @@ void GPUQuery::end(){
 }
 
 uint64_t GPUQuery::value(){
-	if(_neverRan){
+	if(!_ranThisFrame){
 		return 0;
 	}
-
+	_ranThisFrame = false;
 	if(_running){
 		Log::Warning() << "A query is currently running, stopping it first." << std::endl;
 		end();
@@ -186,10 +186,10 @@ uint64_t GPUQuery::value(){
 
 	GPUContext* context = GPU::getInternal();
 	
-	VkQueryPool& pool = context->queryAllocators.at(_type).getPreviousPool();
+	VkQueryPool& pool = context->queryAllocators.at(_type).getReadPool();
 
 	uint64_t data[2] = {0, 0};
-	//vkGetQueryPoolResults(context->device, pool, _offset, _count, 2 * sizeof(uint64_t), &data[0], sizeof(uint64_t), VK_QUERY_RESULT_64_BIT | VK_QUERY_RESULT_WAIT_BIT);
+	vkGetQueryPoolResults(context->device, pool, _offset, _count, 2 * sizeof(uint64_t), &data[0], sizeof(uint64_t), VK_QUERY_RESULT_64_BIT | VK_QUERY_RESULT_WAIT_BIT);
 
 	// For duration elapsed, we compute the time between the two timestamps.
 	if(_type == GPUQuery::Type::TIME_ELAPSED){
