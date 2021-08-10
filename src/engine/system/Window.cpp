@@ -5,8 +5,7 @@
 #include "graphics/GPU.hpp"
 #include "graphics/Framebuffer.hpp"
 #include "resources/ResourcesManager.hpp"
-
-#include <volk/volk.h>
+#include "graphics/GPUInternal.hpp"
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_glfw.h>

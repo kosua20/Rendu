@@ -1,5 +1,4 @@
 #include "scene/Object.hpp"
-#include <map>
 
 #define REGISTER_STRTYPE(type) \
 	{ #type, Object::Type::type }
@@ -7,7 +6,7 @@
 { Object::Type::type, #type }
 
 
-static const std::map<Object::Type, std::string> typesToStr = {
+static const std::unordered_map<Object::Type, std::string> typesToStr = {
 	REGISTER_TYPESTR(None),
 	REGISTER_TYPESTR(Regular),
 	REGISTER_TYPESTR(Parallax),
@@ -15,7 +14,7 @@ static const std::map<Object::Type, std::string> typesToStr = {
 	REGISTER_TYPESTR(Transparent),
 };
 
-static const std::map<std::string, Object::Type> strToTypes = {
+static const std::unordered_map<std::string, Object::Type> strToTypes = {
 	REGISTER_STRTYPE(None),
 	REGISTER_STRTYPE(Regular),
 	REGISTER_STRTYPE(Parallax),

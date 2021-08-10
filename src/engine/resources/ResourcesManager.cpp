@@ -648,7 +648,11 @@ Font * Resources::getFont(const std::string & name) {
 	return &_fonts.at(name);
 }
 
-void Resources::getFiles(const std::string & extension, std::map<std::string, std::string> & files) const {
+Resources::FileInfos::FileInfos(const std::string& apath, const std::string& aname):
+	path(apath), name(aname) {
+}
+
+void Resources::getFiles(const std::string & extension, std::vector<FileInfos> & files) const {
 	files.clear();
 	for(const auto & file : _files) {
 		const std::string & fileName = file.first;
@@ -656,16 +660,19 @@ void Resources::getFiles(const std::string & extension, std::map<std::string, st
 		if(lastPoint == std::string::npos) {
 			//No extension, ext should be empty.
 			if(extension.empty()) {
-				files[fileName] = file.second;
+				files.emplace_back(file.second, fileName);
 			}
 			continue;
 		}
 		const std::string fileExt = fileName.substr(lastPoint + 1);
 		if(extension == fileExt) {
 			// Obtain the name without the extension.
-			files[fileName.substr(0, lastPoint)] = file.second;
+			files.emplace_back(file.second, fileName.substr(0, lastPoint));
 		}
 	}
+	std::sort(files.begin(), files.end(), [](const FileInfos& a, const FileInfos& b){
+		return a.name < b.name;
+	});
 }
 
 // Static utilities methods.

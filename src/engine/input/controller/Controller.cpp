@@ -3,7 +3,6 @@
 #include "system/TextUtilities.hpp"
 
 #include <sstream>
-#include <map>
 
 Controller::Controller() {
 	reset();
@@ -94,7 +93,7 @@ bool Controller::parseConfiguration(const std::string & settingsContent, std::ve
 	axesMapping.resize(uint(Controller::Input::InputCount), -1);
 	buttonsMapping.resize(uint(Controller::Input::InputCount), -1);
 
-	static const std::map<std::string, Controller::Input> sdlNamesToInternal = {
+	static const std::unordered_map<std::string, Controller::Input> sdlNamesToInternal = {
 		{"c", Controller::Input::ButtonX}, {"d", Controller::Input::ButtonY}, {"a", Controller::Input::ButtonA}, {"b", Controller::Input::ButtonB},
 		{"leftshoulder", Controller::Input::BumperL1}, {"lefttrigger", Controller::Input::TriggerL2}, {"leftstick", Controller::Input::ButtonL3},
 		{"rightshoulder", Controller::Input::BumperR1}, {"righttrigger", Controller::Input::TriggerR2}, {"rightstick", Controller::Input::ButtonR3},

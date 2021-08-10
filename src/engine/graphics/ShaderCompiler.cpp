@@ -7,6 +7,7 @@
 #include <glslang/Public/ShaderLang.h>
 #include <glslang/SPIRV/GlslangToSpv.h>
 
+#include <map>
 #include <sstream>
 
 // SPIRV compilation settings based on glslang standalone example
@@ -136,7 +137,7 @@ void ShaderCompiler::compile(const std::string & prog, ShaderType type, Program:
 	outputProg.append(prog);
 
 	// Create shader object.
-	static const std::map<ShaderType, EShLanguage> types = {
+	static const std::unordered_map<ShaderType, EShLanguage> types = {
 		{ShaderType::VERTEX, EShLangVertex},
 		{ShaderType::FRAGMENT, EShLangFragment},
 		{ShaderType::GEOMETRY, EShLangGeometry},

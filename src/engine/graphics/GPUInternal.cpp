@@ -180,7 +180,7 @@ VkFormat VkUtils::findSupportedFormat(const VkPhysicalDevice & physicalDevice, c
 
 void VkUtils::typesFromShape(const TextureShape & shape, VkImageType & imgType, VkImageViewType & viewType){
 
-	static const std::map<TextureShape, VkImageType> imgTypes = {
+	static const std::unordered_map<TextureShape, VkImageType> imgTypes = {
 		{TextureShape::D1, VK_IMAGE_TYPE_1D},
 		{TextureShape::D2, VK_IMAGE_TYPE_2D},
 		{TextureShape::D3, VK_IMAGE_TYPE_3D},
@@ -192,7 +192,7 @@ void VkUtils::typesFromShape(const TextureShape & shape, VkImageType & imgType, 
 
 	imgType = imgTypes.at(shape);
 
-	static const std::map<TextureShape, VkImageViewType> viewTypes = {
+	static const std::unordered_map<TextureShape, VkImageViewType> viewTypes = {
 		{TextureShape::D1, VK_IMAGE_VIEW_TYPE_1D},
 		{TextureShape::D2, VK_IMAGE_VIEW_TYPE_2D},
 		{TextureShape::D3, VK_IMAGE_VIEW_TYPE_3D},
@@ -242,7 +242,7 @@ void VkUtils::endOneTimeCommandBuffer(VkCommandBuffer & commandBuffer, GPUContex
 
 void VkUtils::imageLayoutBarrier(VkCommandBuffer& commandBuffer, GPUTexture& texture, VkImageLayout newLayout, uint mipStart, uint mipCount, uint layerStart, uint layerCount){
 
-	static const std::map<VkImageLayout, std::vector<VkImageLayout>> allowedTransitions = {
+	static const std::unordered_map<VkImageLayout, std::vector<VkImageLayout>> allowedTransitions = {
 		{VK_IMAGE_LAYOUT_UNDEFINED, { VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL } },
 
 		{VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, { VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR } },
@@ -264,7 +264,7 @@ void VkUtils::imageLayoutBarrier(VkCommandBuffer& commandBuffer, GPUTexture& tex
 		VkPipelineStageFlags dstStage;
 	};
 	
-	static const std::map<VkImageLayout, BarrierSetting> settings = {
+	static const std::unordered_map<VkImageLayout, BarrierSetting> settings = {
 		{ VK_IMAGE_LAYOUT_UNDEFINED, { 0, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT } },
 		{ VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, { VK_ACCESS_TRANSFER_READ_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT } },
 		{ VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, { VK_ACCESS_TRANSFER_WRITE_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT } },
@@ -274,8 +274,10 @@ void VkUtils::imageLayoutBarrier(VkCommandBuffer& commandBuffer, GPUTexture& tex
 		{ VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, { 0,  VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT } },
 	};
 
+#ifdef DEBUG
 #define VALIDATE_TRANSITIONS
-
+#endif
+	
 	VkPipelineStageFlags srcStage = 0;
 	VkPipelineStageFlags dstStage = 0;
 

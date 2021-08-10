@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Common.hpp"
-#include <map>
 
 #include "graphics/GPUObjects.hpp"
 #include "resources/Buffer.hpp"

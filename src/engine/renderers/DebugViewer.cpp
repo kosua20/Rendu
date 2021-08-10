@@ -8,7 +8,7 @@
 #include "system/System.hpp"
 #include "system/TextUtilities.hpp"
 
-static const std::map<TextureShape, std::string> shapeNames = {
+static const std::unordered_map<TextureShape, std::string> shapeNames = {
 	{TextureShape::D1, "1D"},
 	{TextureShape::Array1D, "1D array"},
 	{TextureShape::D2, "2D"},
@@ -293,8 +293,8 @@ void DebugViewer::displayMetrics(){
 
 void DebugViewer::displayState(const std::string & name, StateInfos & infos){
 
-	static const std::map<bool, std::string> bools = {{true, "yes"}, {false, "no"}};
-	static const std::map<TestFunction, std::string> testEqs = {
+	static const std::unordered_map<bool, std::string> bools = {{true, "yes"}, {false, "no"}};
+	static const std::unordered_map<TestFunction, std::string> testEqs = {
 			{TestFunction::NEVER, "Never"},
 			{TestFunction::LESS, "Less"},
 			{TestFunction::LEQUAL, "Less or equal"},
@@ -303,13 +303,13 @@ void DebugViewer::displayState(const std::string & name, StateInfos & infos){
 			{TestFunction::GEQUAL, "Greater or equal"},
 			{TestFunction::NOTEQUAL, "Not equal"},
 			{TestFunction::ALWAYS, "Always"}};
-	static const std::map<BlendEquation, std::string> blendEqs = {
+	static const std::unordered_map<BlendEquation, std::string> blendEqs = {
 			{BlendEquation::ADD, "Add"},
 			{BlendEquation::SUBTRACT, "Subtract"},
 			{BlendEquation::REVERSE_SUBTRACT, "Reverse subtract"},
 			{BlendEquation::MIN, "Min"},
 			{BlendEquation::MAX, "Max"}};
-	static const std::map<BlendFunction, std::string> funcs = {
+	static const std::unordered_map<BlendFunction, std::string> funcs = {
 			{BlendFunction::ONE, "1"},
 			{BlendFunction::ZERO, "0"},
 			{BlendFunction::SRC_COLOR, "Src color"},
@@ -320,11 +320,11 @@ void DebugViewer::displayState(const std::string & name, StateInfos & infos){
 			{BlendFunction::ONE_MINUS_DST_COLOR, "1 - dst color"},
 			{BlendFunction::DST_ALPHA, "Dst alpha"},
 			{BlendFunction::ONE_MINUS_DST_ALPHA, "1 - dst alpha"}};
-	static const std::map<Faces, std::string> faces = {
+	static const std::unordered_map<Faces, std::string> faces = {
 		{Faces::FRONT, "Front"},
 		{Faces::BACK, "Back"},
 		{Faces::ALL, "Front & back"}};
-	static const std::map<StencilOp, std::string> ops = {
+	static const std::unordered_map<StencilOp, std::string> ops = {
 			{ StencilOp::KEEP, "Keep" },
 			{ StencilOp::ZERO, "Zero" },
 			{ StencilOp::REPLACE, "Replace" },
@@ -491,7 +491,7 @@ void DebugViewer::displayTexture(const std::string & prefix, TextureInfos & tex)
 
 void DebugViewer::updateDisplay(const TextureInfos & tex) {
 
-	static const std::map<TextureShape, uint> slots = {
+	static const std::unordered_map<TextureShape, uint> slots = {
 		{TextureShape::D1, 0},
 		{TextureShape::Array1D, 1},
 		{TextureShape::D2, 2},

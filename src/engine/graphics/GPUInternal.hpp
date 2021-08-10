@@ -126,3 +126,9 @@ namespace VkUtils {
 	void checkResult(VkResult status);
 
 }
+
+
+/** Hash specialization for unordered_map/set */
+template <> struct std::hash<VkImageLayout> {
+	std::size_t operator()(const VkImageLayout& t) const { return static_cast<std::size_t>(t); }
+};

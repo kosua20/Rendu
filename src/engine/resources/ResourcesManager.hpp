@@ -5,7 +5,6 @@
 #include "resources/Font.hpp"
 #include "resources/Mesh.hpp"
 #include "Common.hpp"
-#include <map>
 
 
 /**
@@ -238,11 +237,18 @@ public:
 	 */
 	static bool externalFileExists(const std::string & path);
 
+	struct FileInfos {
+		std::string path;
+		std::string name;
+
+		FileInfos(const std::string& apath, const std::string& aname);
+	};
+
 	/** Query all resource files with a given extension.
 	 \param extension the extension of the files to list
 	 \param files will contain the file names and their paths
 	 */
-	void getFiles(const std::string & extension, std::map<std::string, std::string> & files) const;
+	void getFiles(const std::string & extension, std::vector<FileInfos> & files) const;
 
 private:
 	/** Destructor (disabled). */
@@ -267,11 +273,11 @@ private:
 		std::string tessEvalName; ///< Tessellation evaluation shader filename.
 	};
 
-	std::map<std::string, std::string> _files; ///< Listing of available files and their paths.
-	std::map<std::string, Texture> _textures;  ///< Loaded textures, identified by name.
-	std::map<std::string, Mesh> _meshes;	   ///< Loaded meshes, identified by name.
-	std::map<std::string, Font> _fonts;		   ///< Loaded font infos, identified by name.
-	std::map<std::string, Data> _blobs;  	   ///< Loaded binary blobs, identified by name.
-	std::map<std::string, Program> _programs;  ///< Loaded shader programs, identified by name.
-	std::map<std::string, ProgramInfos> _progInfos;  ///< Additional info to support shader reloading.
+	std::unordered_map<std::string, std::string> _files; ///< Listing of available files and their paths.
+	std::unordered_map<std::string, Texture> _textures;  ///< Loaded textures, identified by name.
+	std::unordered_map<std::string, Mesh> _meshes;	   ///< Loaded meshes, identified by name.
+	std::unordered_map<std::string, Font> _fonts;		   ///< Loaded font infos, identified by name.
+	std::unordered_map<std::string, Data> _blobs;  	   ///< Loaded binary blobs, identified by name.
+	std::unordered_map<std::string, Program> _programs;  ///< Loaded shader programs, identified by name.
+	std::unordered_map<std::string, ProgramInfos> _progInfos;  ///< Additional info to support shader reloading.
 };

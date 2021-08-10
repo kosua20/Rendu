@@ -9,7 +9,7 @@ void QueryAllocator::init(GPUQuery::Type type, uint count){
 	_itemSize = type == GPUQuery::Type::TIME_ELAPSED ? 2 : 1;
 	_totalCount = _itemSize * count;
 
-	static const std::map<GPUQuery::Type, VkQueryType> types = {
+	static const std::unordered_map<GPUQuery::Type, VkQueryType> types = {
 			{ GPUQuery::Type::TIME_ELAPSED, VK_QUERY_TYPE_TIMESTAMP},
 			{ GPUQuery::Type::SAMPLES_DRAWN, VK_QUERY_TYPE_OCCLUSION},
 			{ GPUQuery::Type::ANY_DRAWN, VK_QUERY_TYPE_OCCLUSION},

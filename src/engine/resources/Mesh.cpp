@@ -138,7 +138,7 @@ Mesh::Mesh(std::istream & in, Mesh::Load mode, const std::string & name) {
 		// In this mode, vertices are only duplicated if they were already used in a previous face with a different set of uv/normal coordinates.
 
 		// Keep track of previously encountered (position,uv,normal).
-		map<string, unsigned int> indices_used;
+		unordered_map<string, unsigned int> indices_used;
 
 		//Positions
 		unsigned int maxInd = 0;

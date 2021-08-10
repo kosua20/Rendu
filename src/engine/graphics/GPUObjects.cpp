@@ -3,8 +3,6 @@
 #include "graphics/GPUInternal.hpp"
 #include "graphics/Framebuffer.hpp"
 
-#include <map>
-
 bool GPUState::isEquivalent(const GPUState& other) const {
 	// Program: pure comparison.
 	if(program != other.program){
@@ -222,7 +220,7 @@ unsigned int Descriptor::getGPULayout(VkFormat & format) const {
 		int channels;
 	};
 
-	static const std::map<Layout, FormatAndChannels> formatInfos = {
+	static const std::unordered_map<Layout, FormatAndChannels> formatInfos = {
 		{Layout::R8, { VK_FORMAT_R8_UNORM, 1 }},
 		{Layout::RG8, { VK_FORMAT_R8G8_UNORM, 2 }},
 		{Layout::RGBA8, { VK_FORMAT_R8G8B8A8_UNORM, 4 }},
@@ -284,7 +282,7 @@ void Descriptor::getGPUFilter(VkFilter & imgFiltering, VkSamplerMipmapMode & mip
 		VkFilter img;
 		VkSamplerMipmapMode mip;
 	};
-	static const std::map<Filter, Filters> filters = {
+	static const std::unordered_map<Filter, Filters> filters = {
 		{Filter::NEAREST, {VK_FILTER_NEAREST, VK_SAMPLER_MIPMAP_MODE_NEAREST}},
 		{Filter::LINEAR, {VK_FILTER_LINEAR, VK_SAMPLER_MIPMAP_MODE_NEAREST}},
 		{Filter::NEAREST_NEAREST, {VK_FILTER_NEAREST, VK_SAMPLER_MIPMAP_MODE_NEAREST}},
@@ -302,7 +300,7 @@ unsigned int Descriptor::getChannelsCount() const {
 }
 
 VkSamplerAddressMode Descriptor::getGPUWrapping() const {
-	static const std::map<Wrap, VkSamplerAddressMode> wraps = {
+	static const std::unordered_map<Wrap, VkSamplerAddressMode> wraps = {
 		{Wrap::CLAMP, VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE},
 		{Wrap::REPEAT, VK_SAMPLER_ADDRESS_MODE_REPEAT},
 		{Wrap::MIRROR, VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT}};
@@ -325,7 +323,7 @@ std::string Descriptor::string() const {
 
 	#define STRENUM(X) { Layout::X, #X}
 
-	static const std::map<Layout, std::string> strFormats = {
+	static const std::unordered_map<Layout, std::string> strFormats = {
 		STRENUM(R8),
 		STRENUM(RG8),
 		STRENUM(RGBA8),
@@ -374,7 +372,7 @@ std::string Descriptor::string() const {
 
 	#undef STRENUM
 
-	static const std::map<Filter, std::string> strFilters = {
+	static const std::unordered_map<Filter, std::string> strFilters = {
 		{Filter::NEAREST, "Nearest no mip"},		
 		{Filter::LINEAR, "Linear no mip"},			
 		{Filter::NEAREST_NEAREST, "Nearest near. mip"},
@@ -383,7 +381,7 @@ std::string Descriptor::string() const {
 		{Filter::LINEAR_LINEAR, "Linear lin. mip"}
 	};
 
-	static const std::map<Wrap, std::string> strWraps = {
+	static const std::unordered_map<Wrap, std::string> strWraps = {
 		{Wrap::CLAMP, "Clamp"},
 		{Wrap::REPEAT, "Repeat"},
 		{Wrap::MIRROR, "Mirror"}

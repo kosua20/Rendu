@@ -2,6 +2,8 @@
 #include "graphics/GPU.hpp"
 #include "graphics/GPUInternal.hpp"
 
+#include <map>
+
 Swapchain::Swapchain(GPUContext & context, const RenderingConfig & config) : _depth("Shared depth") {
 	_imageIndex = 0;
 	_context = &context;

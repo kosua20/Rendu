@@ -3,7 +3,7 @@
 #include "input/controller/RawController.hpp"
 
 #include <GLFW/glfw3.h>
-#include <map>
+#include <unordered_map>
 
 // Singleton.
 Input & Input::manager() {
@@ -44,7 +44,7 @@ void Input::keyPressedEvent(int key, int action) {
 		return;
 	}
 	
-	static const std::map<int, Key> glfwKeyToInternal = {
+	static const std::unordered_map<int, Key> glfwKeyToInternal = {
 		{GLFW_KEY_SPACE, Key::Space},
 		{GLFW_KEY_APOSTROPHE, Key::Apostrophe},
 		{GLFW_KEY_COMMA, Key::Comma},
@@ -227,7 +227,7 @@ void Input::joystickEvent(int joy, int event) {
 
 void Input::mousePressedEvent(int button, int action) {
 	
-	static const std::map<int, Mouse> glfwMouseToInternal = {
+	static const std::unordered_map<int, Mouse> glfwMouseToInternal = {
 		{GLFW_MOUSE_BUTTON_LEFT  , Mouse::Left},
 		{GLFW_MOUSE_BUTTON_RIGHT , Mouse::Right},
 		{GLFW_MOUSE_BUTTON_MIDDLE, Mouse::Middle}

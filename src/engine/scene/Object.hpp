@@ -166,3 +166,8 @@ protected:
 
 	mutable bool _dirtyBbox  = true;	 ///< Has the bounding box been updated following an animation update.
 };
+
+/** Hash specialization for unordered_map/set */
+template <> struct std::hash<Object::Type> {
+	std::size_t operator()(const Object::Type& t) const { return static_cast<int>(t); }
+};

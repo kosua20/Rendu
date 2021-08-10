@@ -6,7 +6,6 @@
 #include "graphics/GPUObjects.hpp"
 #include "graphics/Program.hpp"
 #include "Common.hpp"
-#include <map>
 
 
 /**

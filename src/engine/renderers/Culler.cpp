@@ -53,14 +53,14 @@ const Culler::List & Culler::cullAndSort(const glm::mat4 & view, const glm::mat4
 	}
 
 	// Predefined sorting order.
-	static const std::map<Object::Type, Ordering> orders = {
+	static const std::unordered_map<Object::Type, Ordering> orders = {
 		{ Object::None, 		Ordering::FRONT_TO_BACK },
 		{ Object::Regular, 		Ordering::FRONT_TO_BACK },
 		{ Object::Parallax, 	Ordering::FRONT_TO_BACK },
 		{ Object::Emissive, 	Ordering::FRONT_TO_BACK },
 		{ Object::Transparent, 	Ordering::BACK_TO_FRONT },
 	};
-	static const std::map<Object::Type, long> sets = {
+	static const std::unordered_map<Object::Type, long> sets = {
 		{ Object::None, 		0 },
 		{ Object::Regular, 		1 },
 		{ Object::Parallax, 	1 },

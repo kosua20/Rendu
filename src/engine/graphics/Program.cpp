@@ -21,7 +21,7 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 
 #ifdef LOG_REFLECTION
 
-	static const std::map<Program::UniformDef::Type, std::string> typeNames = {
+	static const std::unordered_map<Program::UniformDef::Type, std::string> typeNames = {
 		{ Program::UniformDef::Type::BOOL, "BOOL" },
 		{ Program::UniformDef::Type::BVEC2, "BVEC2" },
 		{ Program::UniformDef::Type::BVEC3, "BVEC3" },
@@ -136,7 +136,7 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 	}
 	
 	// Build state for the pipeline state objects.
-	static const std::map<ShaderType, VkShaderStageFlagBits> stageBits = {
+	static const std::unordered_map<ShaderType, VkShaderStageFlagBits> stageBits = {
 		{ShaderType::VERTEX, VK_SHADER_STAGE_VERTEX_BIT},
 		{ShaderType::GEOMETRY, VK_SHADER_STAGE_GEOMETRY_BIT},
 		{ShaderType::FRAGMENT, VK_SHADER_STAGE_FRAGMENT_BIT},

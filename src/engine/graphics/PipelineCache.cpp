@@ -196,11 +196,11 @@ VkPipeline PipelineCache::buildPipeline(const GPUState& state){
 	// Rasterization
 	VkPipelineRasterizationStateCreateInfo rasterizationState{};
 	{
-		static const std::map<PolygonMode, VkPolygonMode> polygon = {
+		static const std::unordered_map<PolygonMode, VkPolygonMode> polygon = {
 					{PolygonMode::FILL, VK_POLYGON_MODE_FILL},
 					{PolygonMode::LINE, VK_POLYGON_MODE_LINE},
 					{PolygonMode::POINT, VK_POLYGON_MODE_POINT}};
-		static const std::map<Faces, VkCullModeFlags> culling = {
+		static const std::unordered_map<Faces, VkCullModeFlags> culling = {
 					{Faces::FRONT, VK_CULL_MODE_FRONT_BIT},
 					{Faces::BACK, VK_CULL_MODE_BACK_BIT},
 					{Faces::ALL, VK_CULL_MODE_FRONT_AND_BACK}};
@@ -236,7 +236,7 @@ VkPipeline PipelineCache::buildPipeline(const GPUState& state){
 	{
 		depthState.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
 
-		static const std::map<TestFunction, VkCompareOp> compare = {
+		static const std::unordered_map<TestFunction, VkCompareOp> compare = {
 			{TestFunction::NEVER, VK_COMPARE_OP_NEVER},
 			{TestFunction::LESS, VK_COMPARE_OP_LESS},
 			{TestFunction::LEQUAL, VK_COMPARE_OP_LESS_OR_EQUAL},
@@ -254,7 +254,7 @@ VkPipeline PipelineCache::buildPipeline(const GPUState& state){
 		depthState.minDepthBounds = 0.0f;
 		depthState.maxDepthBounds = 1.0f;
 
-		static const std::map<StencilOp, VkStencilOp> stencil = {
+		static const std::unordered_map<StencilOp, VkStencilOp> stencil = {
 				{ StencilOp::KEEP, VK_STENCIL_OP_KEEP },
 				{ StencilOp::ZERO, VK_STENCIL_OP_ZERO },
 				{ StencilOp::REPLACE, VK_STENCIL_OP_REPLACE },
@@ -288,13 +288,13 @@ VkPipeline PipelineCache::buildPipeline(const GPUState& state){
 	const uint attachmentCount = state.pass.framebuffer->attachments();
 	std::vector<VkPipelineColorBlendAttachmentState> attachmentStates(attachmentCount);
 	{
-		static const std::map<BlendEquation, VkBlendOp> eqs = {
+		static const std::unordered_map<BlendEquation, VkBlendOp> eqs = {
 			{BlendEquation::ADD, VK_BLEND_OP_ADD},
 			{BlendEquation::SUBTRACT, VK_BLEND_OP_SUBTRACT},
 			{BlendEquation::REVERSE_SUBTRACT, VK_BLEND_OP_REVERSE_SUBTRACT},
 			{BlendEquation::MIN, VK_BLEND_OP_MIN},
 			{BlendEquation::MAX, VK_BLEND_OP_MAX}};
-		static const std::map<BlendFunction, VkBlendFactor> funcs = {
+		static const std::unordered_map<BlendFunction, VkBlendFactor> funcs = {
 			{BlendFunction::ONE, VK_BLEND_FACTOR_ONE},
 			{BlendFunction::ZERO, VK_BLEND_FACTOR_ZERO},
 			{BlendFunction::SRC_COLOR, VK_BLEND_FACTOR_SRC_COLOR},

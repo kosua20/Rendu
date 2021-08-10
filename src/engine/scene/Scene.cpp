@@ -3,7 +3,6 @@
 #include "system/TextUtilities.hpp"
 #include "system/Query.hpp"
 
-#include <map>
 #include <sstream>
 
 Scene::Scene(const std::string & name) {
@@ -38,7 +37,7 @@ bool Scene::init(Storage options) {
 	timer.begin();
 	
 	// Define loaders for each keyword.
-	std::map<std::string, void (Scene::*)(const KeyValues &, Storage)> loaders = {
+	std::unordered_map<std::string, void (Scene::*)(const KeyValues &, Storage)> loaders = {
 		{"scene", &Scene::loadScene}, {"object", &Scene::loadObject}, {"point", &Scene::loadLight}, {"directional", &Scene::loadLight}, {"spot", &Scene::loadLight}, {"camera", &Scene::loadCamera}, {"background", &Scene::loadBackground}, {"probe", &Scene::loadProbe}};
 
 	// Parse the file.

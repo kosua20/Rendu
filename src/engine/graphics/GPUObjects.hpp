@@ -24,6 +24,11 @@ enum class ShaderType : uint {
 	COUNT
 };
 
+/** Hash specialization for unordered_map/set */
+template <> struct std::hash<ShaderType> {
+	std::size_t operator()(const ShaderType& t) const { return static_cast<uint>(t); }
+};
+
 /**
 \brief The type of data a buffer is storing, determining its use.
 \ingroup Resources
@@ -34,6 +39,11 @@ enum class BufferType : uint {
 	UNIFORM, ///< Uniform data.
 	CPUTOGPU, ///< Transfer.
 	GPUTOCPU ///< Transfer.
+};
+
+/** Hash specialization for unordered_map/set */
+template <> struct std::hash<BufferType> {
+	std::size_t operator()(const BufferType& t) const { return static_cast<uint>(t); }
 };
 
 /**
@@ -61,6 +71,11 @@ enum class TestFunction : uint {
 	ALWAYS ///< Always pass
 };
 
+/** Hash specialization for unordered_map/set */
+template <> struct std::hash<TestFunction> {
+	std::size_t operator()(const TestFunction& t) const { return static_cast<uint>(t); }
+};
+
 /**
 \brief Stencil operation to perform.
 \ingroup Resources
@@ -76,6 +91,11 @@ enum class StencilOp : uint {
 	INVERT ///< Invert value bitwise.
 };
 
+/** Hash specialization for unordered_map/set */
+template <> struct std::hash<StencilOp> {
+	std::size_t operator()(const StencilOp& t) const { return static_cast<uint>(t); }
+};
+
 /**
 \brief Blending mix equation for each component. Below we use src and dst to denote
  the (modulated by the blend functions) values to blend.
@@ -89,6 +109,12 @@ enum class BlendEquation : uint {
 	MIN, ///< Perform min(src, dst)
 	MAX ///< Perform max(src, dst)
 };
+
+/** Hash specialization for unordered_map/set */
+template <> struct std::hash<BlendEquation> {
+	std::size_t operator()(const BlendEquation& t) const { return static_cast<uint>(t); }
+};
+
 
 /**
 \brief How the source and destination values to blend are obtained from the pixel data by scaling.
@@ -107,6 +133,11 @@ enum class BlendFunction : uint {
 	ONE_MINUS_DST_ALPHA ///< Multiply by 1-dst scalar alpha
 };
 
+/** Hash specialization for unordered_map/set */
+template <> struct std::hash<BlendFunction> {
+	std::size_t operator()(const BlendFunction& t) const { return static_cast<uint>(t); }
+};
+
 /**
 \brief Used to select a subset of faces. Front faces are defined counter-clockwise.
 \ingroup Resources
@@ -117,6 +148,11 @@ enum class Faces : uint {
 	ALL ///< All faces
 };
 
+/** Hash specialization for unordered_map/set */
+template <> struct std::hash<Faces> {
+	std::size_t operator()(const Faces& t) const { return static_cast<uint>(t); }
+};
+
 /**
 \brief How polygons should be rasterized
 \ingroup Resources
@@ -125,6 +161,11 @@ enum class PolygonMode : uint {
 	FILL, ///< As filled polygons.
 	LINE, ///< As wireframe edges.
 	POINT ///< As vertex points.
+};
+
+/** Hash specialization for unordered_map/set */
+template <> struct std::hash<PolygonMode> {
+	std::size_t operator()(const PolygonMode& t) const { return static_cast<uint>(t); }
 };
 
 /**
@@ -188,6 +229,11 @@ enum class Filter : uint {
 	LINEAR_LINEAR ///< Bilinear, linear blend of mipmaps.
 };
 
+/** Hash specialization for unordered_map/set */
+template <> struct std::hash<Filter> {
+	std::size_t operator()(const Filter& t) const { return static_cast<uint>(t); }
+};
+
 /**
  \brief The wrapping mode of a texture.
  \ingroup Resources
@@ -196,6 +242,11 @@ enum class Wrap : uint {
 	CLAMP = 0, ///< Clamp to the edges of the texture.
 	REPEAT, ///< Repeat the texture.
 	MIRROR ///< Repeat the texture using flipped versions to ensure continuity.
+};
+
+/** Hash specialization for unordered_map/set */
+template <> struct std::hash<Wrap> {
+	std::size_t operator()(const Wrap& t) const { return static_cast<uint>(t); }
 };
 
 /**
@@ -248,6 +299,11 @@ enum class Layout : uint {
 	RGBA16UI,
 	RGBA32I,
 	RGBA32UI
+};
+
+/** Hash specialization for unordered_map/set */
+template <> struct std::hash<Layout> {
+	std::size_t operator()(const Layout& t) const { return static_cast<uint>(t); }
 };
 
 /** \brief Regroups format, type, filtering and wrapping informations for a color buffer.

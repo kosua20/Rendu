@@ -876,7 +876,7 @@ void GPU::setupBuffer(BufferBase & buffer) {
 	// Create.
 	buffer.gpu.reset(new GPUBuffer(buffer.type));
 
-	static const std::map<BufferType, VkBufferUsageFlags> types = {
+	static const std::unordered_map<BufferType, VkBufferUsageFlags> types = {
 		{ BufferType::VERTEX, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT },
 		{ BufferType::INDEX, VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT },
 		{ BufferType::UNIFORM, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT },
@@ -884,7 +884,7 @@ void GPU::setupBuffer(BufferBase & buffer) {
 		{ BufferType::GPUTOCPU, VK_BUFFER_USAGE_TRANSFER_DST_BIT }};
 	const VkBufferUsageFlags type = types.at(buffer.type);
 
-	static const std::map<BufferType, VmaMemoryUsage> usages = {
+	static const std::unordered_map<BufferType, VmaMemoryUsage> usages = {
 		{ BufferType::VERTEX, VMA_MEMORY_USAGE_GPU_ONLY },
 		{ BufferType::INDEX, VMA_MEMORY_USAGE_GPU_ONLY },
 		{ BufferType::UNIFORM, VMA_MEMORY_USAGE_CPU_TO_GPU  },
