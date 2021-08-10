@@ -5,8 +5,8 @@ layout(location = 0) in INTERFACE {
 } In ;
 
 layout(set = 1, binding = 3) uniform sampler2D noiseMap; ///< RGBA uniform noise in [0,1], uncorrelated.
-layout(set = 1, binding = 4) uniform sampler2D directionsMap; ///< Random 3D directions on the unit sphere.
-layout(set = 1, binding = 5) uniform sampler3D noise3DMap; ///< Random 3D directions on the unit sphere.
+layout(set = 1, binding = 5) uniform sampler2D directionsMap; ///< Random 3D directions on the unit sphere.
+layout(set = 1, binding = 6) uniform sampler3D noise3DMap; ///< Random 3D directions on the unit sphere.
 
 layout(set = 0, binding = 0) uniform UniformBlock {
 	float iTime;

@@ -8,8 +8,7 @@
 	\return the Fresnel term
 */
 vec3 F(vec3 F0, float VdotH){
-	float approx = exp2((-5.55473 * VdotH - 6.98316) * VdotH);
-	return F0 + approx * (1.0 - F0);
+	return F0 + pow(1.0 - VdotH, 5) * (1.0 - F0);
 }
 
 /** GGX Distribution term.

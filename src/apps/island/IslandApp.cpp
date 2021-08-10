@@ -12,7 +12,7 @@ IslandApp::IslandApp(RenderingConfig & config) : CameraApp(config),
 	
 	// Framebuffer to store the rendered atmosphere result before tonemapping and upscaling to the window size.
 	const glm::vec2 renderRes = _config.renderingResolution();
-	const std::vector<Descriptor> descriptors = {{Layout::RGBA16F, Filter::LINEAR_NEAREST, Wrap::CLAMP}, {Layout::RGBA32F, Filter::LINEAR_NEAREST, Wrap::CLAMP}};
+	const std::vector<Descriptor> descriptors = {{Layout::RGBA32F, Filter::LINEAR_NEAREST, Wrap::CLAMP}, {Layout::RGBA32F, Filter::LINEAR_NEAREST, Wrap::CLAMP}};
 	_sceneBuffer.reset(new Framebuffer(uint(renderRes[0]), uint(renderRes[1]), descriptors, true, "Scene"));
 	_waterPos.reset(new Framebuffer(uint(renderRes[0]), uint(renderRes[1]), {descriptors[1]}, false, "Water position"));
 	_waterEffectsHalf.reset(new Framebuffer(uint(renderRes[0])/2, uint(renderRes[1])/2, {descriptors[0]}, false, "Water effect half"));

@@ -32,6 +32,8 @@ public:
 	/** Destructor. */
 	~ShaderEditor() override;
 
+	void loadShader(const std::string& path);
+
 private:
 
 	/** React to user key inputs. */
@@ -110,9 +112,12 @@ private:
 
 	std::vector<const Texture *> _textures; ///< List of all predefined textures.
 	Texture _noise; ///< Random 2D RGBA uniform noise in [0,1].
+	Texture _perlin; ///< Random 2D RGBA periodic Perlin noise in [0,1].
 	Texture _directions; ///< Random 3D directions on the sphere.
-	Texture _noise3D; ///< Random 3D RGB uniform noise in [0,1].
+	Texture _noise3D; ///< Random 3D RGBA uniform noise in [0,1].
+	Texture _perlin3D; ///< Random 3D RGBA periodic Perlin noise in [0,1].
 	const Texture * _fallbackTex = nullptr; ///< Display texture for non-2D inputs.
+
 	std::vector<BoolOption> _flags; ///< Predefined boolean parameters.
 	std::vector<IntOption> _integers; ///< Predefined integer parameters.
 	std::vector<FloatOption> _floats; ///< Predefined float parameters.

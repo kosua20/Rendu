@@ -6,27 +6,37 @@ PerlinNoise::PerlinNoise() {
 	reseed();
 }
 
-void PerlinNoise::generate(Image & image, float scale, const glm::vec3 & offset){
-	System::forParallel(0, size_t(image.height), [&image, scale, &offset, this](size_t y){
+void PerlinNoise::generate(Image & image, uint channel, float scale, float z, const glm::vec3 & offset){
+
+	System::forParallel(0, size_t(image.height), [&image, channel, z, scale, &offset, this](size_t y){
 		for(uint x = 0; x < image.width; ++x){
-			for(uint c = 0; c < image.components; ++c){
-				const glm::vec3 p = offset + scale * glm::vec3(x,y,c);
-				image.rgba(int(x), int(y))[c] = perlin(p);
-			}
+			const glm::vec3 p = offset + scale * glm::vec3(x,y,z);
+			image.rgba(int(x), int(y))[channel] = perlin(p);
 		}
 	});
 }
 
-void PerlinNoise::generateLayers(Image & image, int octaves, float gain, float lacunarity, float scale, const glm::vec3 & offset){
+void PerlinNoise::generatePeriodic(Image & image, uint channel, float scale, float z, const glm::vec3 & offset){
+	const float cellCount = std::floor(scale * image.width);
+	const float realScale = cellCount / float(image.width);
+	const glm::ivec3 period((int(cellCount)));
+
+	System::forParallel(0, size_t(image.height), [&image, channel, z, realScale, &offset, &period, this](size_t y){
+		for(uint x = 0; x < image.width; ++x){
+			const glm::vec3 p = offset + realScale * glm::vec3(x,y,z);
+			image.rgba(int(x), int(y))[channel] = perlin(p, period);
+		}
+	});
+}
+
+void PerlinNoise::generateLayers(Image & image, uint channel, int octaves, float gain, float lacunarity, float scale, const glm::vec3 & offset){
 	float weight = 1.0f;
 	for(int i = 0; i < octaves; ++i){
-		Image img(image.width, image.height, image.components);
-		generate(img, scale, offset);
-		System::forParallel(0, size_t(image.height), [&image, weight, &img](size_t y){
+		Image img(image.width, image.height, 1);
+		generate(img, 0, scale, 0.0f, offset);
+		System::forParallel(0, size_t(image.height), [&image, channel, weight, &img](size_t y){
 			for(uint x = 0; x < image.width; ++x){
-				for(uint c = 0; c < image.components; ++c){
-					image.rgba(x, uint(y))[c] += weight * img.rgba(x, uint(y))[c];
-				}
+				image.rgba(x, uint(y))[channel] += weight * img.rgba(x, uint(y))[0];
 			}
 		});
 		scale *= lacunarity;
@@ -36,7 +46,7 @@ void PerlinNoise::generateLayers(Image & image, int octaves, float gain, float l
 
 void PerlinNoise::reseed(){
 	// Generate a permutation of 0-255 indices.
-	std::vector<int> halfHashes(256);
+	std::vector<int> halfHashes(kHashTableSize);
 	for(size_t i = 0; i < halfHashes.size(); ++i){
 		halfHashes[i] = int(i);
 	}
@@ -44,7 +54,7 @@ void PerlinNoise::reseed(){
 	// Pad the shuffled indices to simplify lookup.
 	for(size_t i = 0; i < halfHashes.size(); ++i){
 		_hashes[i] = halfHashes[i];
-		_hashes[i+256] = halfHashes[i];
+		_hashes[i+kHashTableSize] = halfHashes[i];
 	}
 
 	// Sample random unit directions on the sphere.
@@ -62,21 +72,24 @@ float PerlinNoise::dotGrad(const glm::ivec3 & ip, const glm::vec3 & dp){
 	return glm::dot(grad, dp);
 }
 
-float PerlinNoise::perlin(const glm::vec3 & p){
+float PerlinNoise::perlin(const glm::vec3 & p, const glm::ivec3 & w){
 	const glm::vec3 x = p;
-	glm::ivec3 ix = glm::ivec3(glm::floor(x));
+	const glm::ivec3 ix = glm::ivec3(glm::floor(x));
 	const glm::vec3 dx = x - glm::vec3(ix);
-	ix &= (256-1);
+
+	const glm::ivec3 ix0 = (ix % w) & (kHashTableSize-1);
+	const glm::ivec3 ix1 = ((ix+1) % w) & (kHashTableSize-1);
 	// Fetch cell gradients.
 	glm::vec4 g0s, g1s;
-	g0s[0] = dotGrad(ix        , dx        );
-	g0s[1] = dotGrad(ix + glm::ivec3(0, 1, 0), dx - glm::vec3(0, 1, 0));
-	g0s[2] = dotGrad(ix + glm::ivec3(0, 0, 1), dx - glm::vec3(0, 0, 1));
-	g0s[3] = dotGrad(ix + glm::ivec3(0, 1, 1), dx - glm::vec3(0, 1, 1));
-	g1s[0] = dotGrad(ix + glm::ivec3(1, 0, 0), dx - glm::vec3(1, 0, 0));
-	g1s[1] = dotGrad(ix + glm::ivec3(1, 1, 0), dx - glm::vec3(1, 1, 0));
-	g1s[2] = dotGrad(ix + glm::ivec3(1, 0, 1), dx - glm::vec3(1, 0, 1));
-	g1s[3] = dotGrad(ix + glm::ivec3(1, 1, 1), dx - glm::vec3(1, 1, 1));
+	g0s[0] = dotGrad(ix0        , dx        );
+	g0s[1] = dotGrad(glm::ivec3(ix0.x, ix1.y, ix0.z), dx - glm::vec3(0, 1, 0));
+	g0s[2] = dotGrad(glm::ivec3(ix0.x, ix0.y, ix1.z), dx - glm::vec3(0, 0, 1));
+	g0s[3] = dotGrad(glm::ivec3(ix0.x, ix1.y, ix1.z), dx - glm::vec3(0, 1, 1));
+	g1s[0] = dotGrad(glm::ivec3(ix1.x, ix0.y, ix0.z), dx - glm::vec3(1, 0, 0));
+	g1s[1] = dotGrad(glm::ivec3(ix1.x, ix1.y, ix0.z), dx - glm::vec3(1, 1, 0));
+	g1s[2] = dotGrad(glm::ivec3(ix1.x, ix0.y, ix1.z), dx - glm::vec3(1, 0, 1));
+	g1s[3] = dotGrad(glm::ivec3(ix1.x, ix1.y, ix1.z), dx - glm::vec3(1, 1, 1));
+
 	// Compute weights.
 	const glm::vec3 dx3 = dx * dx * dx;
 	const glm::vec3 weights = ((6.0f * dx - 15.0f) * dx + 10.0f) * dx3;

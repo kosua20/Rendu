@@ -155,7 +155,7 @@ void Terrain::generateMap(){
 
 	Image heightMap(_resolution, _resolution, 1);
 	// Generate FBM noise with multiple layers of Perlin noise.
-	_perlin.generateLayers(heightMap, _genOpts.octaves, _genOpts.gain, _genOpts.lacunarity, _genOpts.scale);
+	_perlin.generateLayers(heightMap, 0, _genOpts.octaves, _genOpts.gain, _genOpts.lacunarity, _genOpts.scale);
 
 	// Adjust to create the island overall shape and scale.
 	const float invSize = 1.0f/float(heightMap.width);
