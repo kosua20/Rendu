@@ -8,7 +8,9 @@
 
 Rendu is a rendering engine designed for experimentation. The computer graphics academic and industrial litterature is full of interesting techniques and approaches than can be cumbersome to implement without some basic building blocks. This project aims to provide those building blocks, along with examples of interesting methods or papers. It also contains more general demo applications, such as a small snake game or a gamepad configurator. See it in action: [video (Youtube)](https://youtu.be/-5NT7JpZ1Oc).
 
-Rendu requires OpenGL 4 and builds on macOS (main test machine), Windows (regular testing) and Linux. After cloning the Rendu repository, see the [Building](#building) section to get the engine running! You can also check [the full documentation](https://kosua20.github.io/Rendu-documentation/).
+> Rendu has recently been moved from OpenGL to Vulkan. This is a work in progress: all apps should be running properly albeit at subpar performances. Improvements, documentation and CI support will be delivered in the near future. The legacy OpenGL 4 version can be found on the `opengl` branch.
+
+Rendu requires Vulkan 1.1 and builds on macOS (main test machine), Windows (regular testing) and Linux. After cloning the Rendu repository, see the [Building](#building) section to get the engine running! You can also check [the full documentation](https://kosua20.github.io/Rendu-documentation/).
 
 Basic resources to run each project are included in this repository, but you can download many additional scenes from an [auxiliary repository](https://github.com/kosua20/Rendu-resources) for some of the applications.
 
@@ -93,4 +95,3 @@ On a more down-to-earth level, some engineering tasks could also help improve th
 
 - Cleanup the way materials are handled right now.
 - Add a specialized SceneApp, abstract frustum culling with draw lists?
-- Potential move to Vulkan?
