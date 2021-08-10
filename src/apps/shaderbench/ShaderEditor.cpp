@@ -19,7 +19,7 @@ const std::string kHelpMessage = "Reload: Enter or Ctrl/Cmd+B\nReload and reset 
 ShaderEditor::ShaderEditor(RenderingConfig & config) : CameraApp(config), _noise("2D noise"), _directions("Directions"), _noise3D("3D noise") {
 	// Setup render buffer.
 	const glm::uvec2 res(_config.renderingResolution());
-	const Descriptor desc = {Layout::RGBA32F, Filter::LINEAR, Wrap::CLAMP};
+	const Descriptor desc = {Layout::RGBA16F, Filter::LINEAR, Wrap::CLAMP};
 	_currFrame.reset(new Framebuffer(TextureShape::D2, res[0], res[1], 1, 1, {desc}, false, "Current fraame"));
 	_prevFrame.reset(new Framebuffer(TextureShape::D2, res[0], res[1], 1, 1, {desc}, false, "Previous frame"));
 

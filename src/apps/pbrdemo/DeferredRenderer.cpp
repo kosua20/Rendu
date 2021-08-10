@@ -37,7 +37,7 @@ DeferredRenderer::DeferredRenderer(const glm::vec2 & resolution, ShadowMode mode
 		_gbuffer->texture(2), _gbuffer->depthBuffer(), _ssaoPass->texture()));
 	_lightRenderer = std::unique_ptr<DeferredLight>(new DeferredLight(_gbuffer->texture(0), _gbuffer->texture(1), _gbuffer->depthBuffer(), _gbuffer->texture(2)));
 
-	_textureBrdf = Resources::manager().getTexture("brdf-precomputed", {Layout::RG32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
+	_textureBrdf = Resources::manager().getTexture("brdf-precomputed", {Layout::RG16F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
 	checkGPUError();
 }
 
