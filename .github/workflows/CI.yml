@@ -109,7 +109,7 @@ jobs:
         run: |
           $env:VULKAN_SDK="$(pwd)/vulkansdk"
           premake5 ${{matrix.premake-opts}} --skip_shader_validation
-          dir build
+          cd build
           "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe" .\Rendu.sln -t:Meta\ALL -nologo -v:minimal -p:Configuration=Release -p:Platform=x64
 
     
