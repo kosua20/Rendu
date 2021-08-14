@@ -3,7 +3,7 @@
 #include "graphics/GPUInternal.hpp"
 #include "resources/ResourcesManager.hpp"
 #include <set>
-
+#include <cstring>
 
 Program::Program(const std::string & name, const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, const std::string & tessControlContent, const std::string & tessEvalContent) : _name(name) {
 	reload(vertexContent, fragmentContent, geometryContent, tessControlContent, tessEvalContent);

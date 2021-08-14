@@ -2,6 +2,7 @@
 #include "graphics/GPU.hpp"
 #include "graphics/GPUInternal.hpp"
 #include "graphics/Framebuffer.hpp"
+#include <cstring>
 
 bool GPUState::isEquivalent(const GPUState& other) const {
 	// Program: pure comparison.

@@ -14,6 +14,8 @@
 
 #include <GLFW/glfw3.h>
 
+#include <cstring>
+
 Window::Window(const std::string & name, RenderingConfig & config, bool escapeQuit, bool hidden) :
 _config(config), _allowEscape(escapeQuit) {
 	// Initialize glfw.

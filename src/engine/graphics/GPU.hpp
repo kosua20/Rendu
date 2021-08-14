@@ -7,6 +7,7 @@
 #include "graphics/Program.hpp"
 #include "Common.hpp"
 
+#include <functional>
 
 /**
  \addtogroup Graphics

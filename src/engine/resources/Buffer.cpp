@@ -3,6 +3,8 @@
 #include "graphics/GPU.hpp"
 #include "graphics/GPUInternal.hpp"
 
+#include <cstring>
+
 BufferBase::BufferBase(size_t sizeInBytes, BufferType atype, DataUse ausage) : type(atype), usage(ausage) {
 	// Size depends on the usage.
 	int multipler = 1;
