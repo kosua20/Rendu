@@ -63,16 +63,15 @@ function CommonSetup()
 	filter({})
 	-- Common include dirs
 	-- System headers are used to support angled brackets in Xcode.
-	sysincludedirs({ "src/libs/", "src/libs/glfw/include/" })
+	sysincludedirs({ "src/libs/", "src/libs/glfw/include/", "$(VULKAN_SDK)/include" })
+	libdirs({ "$(VULKAN_SDK)/lib" })
 	
 	-- System headers are used to support angled brackets in Xcode.
 	filter("system:macosx" or "system:linux")
 		sysincludedirs({ "/usr/local/include/" })
 		libdirs({ "/usr/local/lib" })
 
-	filter("system:windows")
-		sysincludedirs({ "$(VULKAN_SDK)/include"})
-		libdirs({ "$(VULKAN_SDK)/lib" })
+	
 	filter({})
 end	
 
