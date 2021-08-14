@@ -20,10 +20,10 @@ jobs:
         include:
           - os: ubuntu-latest
             premake-opts: gmake2
-          - os: windows-latest
-            premake-opts: vs2019
-          - os: macos-10.15
-            premake-opts: gmake2
+          # - os: windows-latest
+          #   premake-opts: vs2019
+          # - os: macos-10.15
+          #   premake-opts: gmake2
     
     runs-on: ${{ matrix.os }}
     
@@ -92,22 +92,24 @@ jobs:
           
       - name: Build using Make
         if: startsWith(matrix.os, 'macos') || startsWith(matrix.os, 'ubuntu')
-        working-directory: ${{github.workspace}}/build
+        working-directory: ${{github.workspace}}
         shell: bash
         run: |
           export VULKAN_SDK=`pwd`/vulkansdk/x86_64
           export PATH=$VULKAN_SDK/bin:$PATH
           export LD_LIBRARY_PATH=$VULKAN_SDK/lib:$LD_LIBRARY_PATH
           ./premake5 ${{matrix.premake-opts}} --skip_shader_validation
+          cd build
           make ALL
       
       - name: Build using MSVC
         if: startsWith(matrix.os, 'windows')
-        working-directory: ${{github.workspace}}/build
+        working-directory: ${{github.workspace}}
         shell: cmd
         run: |
           $env:VULKAN_SDK="$(pwd)/vulkansdk"
-          ./premake5 ${{matrix.premake-opts}} --skip_shader_validation
+          premake5 ${{matrix.premake-opts}} --skip_shader_validation
+          dir build
           "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe" .\Rendu.sln -t:Meta\ALL -nologo -v:minimal -p:Configuration=Release -p:Platform=x64
 
     
