@@ -115,7 +115,7 @@ jobs:
           "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe" .\Rendu.sln -t:Meta\ALL -nologo -v:minimal -p:Configuration=Release -p:Platform=x64
   
       - uses: actions/upload-artifact@v1
-          with:
+        with:
           name: result
           path: ${{ github.workspace }}/result.zip
   
