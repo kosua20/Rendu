@@ -1,5 +1,5 @@
 #include "Probe.hpp"
-#include "graphics/GPUObjects.hpp"
+#include "graphics/GPUTypes.hpp"
 #include "graphics/GPU.hpp"
 #include "resources/Library.hpp"
 

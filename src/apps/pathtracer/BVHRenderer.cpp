@@ -2,6 +2,7 @@
 #include "input/Input.hpp"
 #include "system/System.hpp"
 #include "graphics/GPU.hpp"
+#include "graphics/GPUObjects.hpp"
 #include "graphics/ScreenQuad.hpp"
 #include "resources/Texture.hpp"
 

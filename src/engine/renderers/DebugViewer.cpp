@@ -1,5 +1,6 @@
 #include "DebugViewer.hpp"
 #include "graphics/GPU.hpp"
+#include "graphics/GPUObjects.hpp"
 #include "graphics/Framebuffer.hpp"
 #include "resources/Texture.hpp"
 #include "resources/Mesh.hpp"

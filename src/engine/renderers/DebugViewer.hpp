@@ -1,6 +1,6 @@
 #pragma once
 #include "graphics/Program.hpp"
-#include "graphics/GPUObjects.hpp"
+#include "graphics/GPUTypes.hpp"
 
 class Framebuffer;
 class Texture;

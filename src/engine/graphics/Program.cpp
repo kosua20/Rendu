@@ -1,7 +1,7 @@
 #include "graphics/Program.hpp"
 #include "graphics/GPU.hpp"
-#include "resources/ResourcesManager.hpp"
 #include "graphics/GPUInternal.hpp"
+#include "resources/ResourcesManager.hpp"
 #include <set>
 
 
@@ -134,32 +134,7 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 			_textures[image.binding].shape = image.shape;
 		}
 	}
-	
-	// Build state for the pipeline state objects.
-	static const std::unordered_map<ShaderType, VkShaderStageFlagBits> stageBits = {
-		{ShaderType::VERTEX, VK_SHADER_STAGE_VERTEX_BIT},
-		{ShaderType::GEOMETRY, VK_SHADER_STAGE_GEOMETRY_BIT},
-		{ShaderType::FRAGMENT, VK_SHADER_STAGE_FRAGMENT_BIT},
-		{ShaderType::TESSCONTROL, VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT},
-		{ShaderType::TESSEVAL, VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT},
-	};
-	for(uint sid = 0; sid < uint(ShaderType::COUNT); ++sid){
-		const ShaderType type = ShaderType(sid);
-		const VkShaderModule& module = stage(type).module;
-		if(module == VK_NULL_HANDLE){
-			continue;
-		}
-		_state.stages.emplace_back();
-		_state.stages.back().stage = stageBits.at(type);
-		_state.stages.back().module = module;
-	}
 
-	for(auto& stage : _state.stages){
-		stage.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-		stage.pName = "main";
-	}
-
-	// Build the pipeline
 	GPUContext* context = GPU::getInternal();
 
 	_dirtySets.fill(false);
@@ -416,7 +391,6 @@ void Program::clean() {
 	_dynamicBuffers.clear();
 	_staticBuffers.clear();
 	_state.setLayouts.clear();
-	_state.stages.clear();
 	_state.layout = VK_NULL_HANDLE;
 	_dirtySets.fill(false);
 

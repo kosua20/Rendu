@@ -1,7 +1,9 @@
 #pragma once
 #include "resources/Image.hpp"
-#include "graphics/GPUObjects.hpp"
+#include "graphics/GPUTypes.hpp"
 #include "Common.hpp"
+
+class GPUTexture;
 
 /**
  \brief Represents a texture containing one or more images, stored on the CPU and/or GPU.
@@ -61,7 +63,7 @@ public:
 	Texture & operator=(Texture &&) = default;
 	
 	/** Move constructor. */
-	Texture(Texture &&) = default;
+	Texture(Texture &&);
 
 	~Texture();
 	

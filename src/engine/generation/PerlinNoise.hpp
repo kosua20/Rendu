@@ -2,7 +2,7 @@
 
 #include "resources/Texture.hpp"
 #include "Common.hpp"
-
+#include <array>
 /**
  \brief Generate 3D perlin noise and multi-layered noise.
  \ingroup Generation

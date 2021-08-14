@@ -420,3 +420,10 @@ void Mesh::updateMetrics(){
 	_metrics.texcoords = texcoords.size();
 	_metrics.indices = indices.size();
 }
+
+Mesh & Mesh::operator=(Mesh &&) = default;
+
+Mesh::Mesh(Mesh &&) = default;
+
+Mesh::~Mesh() = default;
+

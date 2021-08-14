@@ -1,6 +1,6 @@
 #pragma once
 
-#include "graphics/GPUObjects.hpp"
+#include "graphics/GPUTypes.hpp"
 #include "graphics/Program.hpp"
 #include "resources/Font.hpp"
 #include "resources/Mesh.hpp"
@@ -132,14 +132,14 @@ public:
 	 */
 	std::string getString(const std::string & filename);
 
-	/** Get a text file resource, following \#include directives.
+	/** Get a text file resource, following include directives.
 	 \param filename the file name
 	 \param names will contain the included file names
 	 \return the string content of the file
 	 */
 	std::string getStringWithIncludes(const std::string & filename, std::vector<std::string> & names);
 
-	/** Get a text file resource, following \#include directives.
+	/** Get a text file resource, following include directives.
 	 \param filename the file name
 	 \return the string content of the file
 	 */

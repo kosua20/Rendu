@@ -144,12 +144,34 @@ VkPipeline PipelineCache::buildPipeline(const GPUState& state){
 	pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 	// Assert no null data.
 	assert(state.program); assert(state.mesh); assert(state.pass.framebuffer);
-	
+
+	std::vector<VkPipelineShaderStageCreateInfo> stages;
 	// Program
 	{
 		const Program::State& programState = state.program->getState();
-		pipelineInfo.stageCount = programState.stages.size();
-		pipelineInfo.pStages = programState.stages.data();
+		// Build state for the pipeline state objects.
+		static const std::unordered_map<ShaderType, VkShaderStageFlagBits> stageBits = {
+			{ShaderType::VERTEX, VK_SHADER_STAGE_VERTEX_BIT},
+			{ShaderType::GEOMETRY, VK_SHADER_STAGE_GEOMETRY_BIT},
+			{ShaderType::FRAGMENT, VK_SHADER_STAGE_FRAGMENT_BIT},
+			{ShaderType::TESSCONTROL, VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT},
+			{ShaderType::TESSEVAL, VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT},
+		};
+		for(uint sid = 0; sid < uint(ShaderType::COUNT); ++sid){
+			const ShaderType type = ShaderType(sid);
+			const VkShaderModule& module = state.program->stage(type).module;
+			if(module == VK_NULL_HANDLE){
+				continue;
+			}
+			stages.emplace_back();
+			stages.back().stage = stageBits.at(type);
+			stages.back().module = module;
+			stages.back().sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+			stages.back().pName = "main";
+		}
+
+		pipelineInfo.stageCount = stages.size();
+		pipelineInfo.pStages = stages.data();
 		pipelineInfo.layout = programState.layout;
 	}
 	

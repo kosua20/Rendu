@@ -1,6 +1,5 @@
 #pragma once
 
-#include "resources/ResourcesManager.hpp"
 #include "Common.hpp"
 
 /**

@@ -125,6 +125,20 @@ namespace VkUtils {
 
 	void checkResult(VkResult status);
 
+	VkSamplerAddressMode getGPUWrapping(Wrap mode);
+
+	void getGPUFilter(Filter filtering, VkFilter & imgFiltering, VkSamplerMipmapMode & mipFiltering);
+
+	unsigned int getGPULayout(Layout typedFormat, VkFormat & format);
+
+
+
+	/** Offsets and sizes are expressed at mip 0 in all cases */
+	glm::uvec2 copyTextureRegionToBuffer(VkCommandBuffer& commandBuffer, const Texture & srcTexture, std::shared_ptr<TransferBuffer> & dstBuffer, uint mipStart, uint mipCount, uint layerStart, uint layerCount, const glm::uvec2& offset, const glm::uvec2& size);
+
+	/** Offsets and sizes are expressed at mip 0 in all cases */
+	void blitTexture(VkCommandBuffer& commandBuffer, const Texture& src, const Texture& dst, uint mipStartSrc, uint mipStartDst, uint mipCount, uint layerStartSrc, uint layerStartDst, uint layerCount, const glm::uvec2& srcBaseOffset, const glm::uvec2& srcBaseSize, const glm::uvec2& dstBaseOffset, const glm::uvec2& dstBaseSize, Filter filter);
+
 }
 
 

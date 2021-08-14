@@ -3,6 +3,7 @@
 #include "resources/ResourcesManager.hpp"
 #include "graphics/ScreenQuad.hpp"
 #include "graphics/GPU.hpp"
+#include "graphics/GPUObjects.hpp"
 #include "resources/Image.hpp"
 #include "graphics/Framebuffer.hpp"
 #include "system/Config.hpp"

@@ -437,6 +437,10 @@ glm::vec4 Framebuffer::read(const glm::uvec2 & pos) {
 	return _readColor;
 }
 
+const Descriptor & Framebuffer::descriptor(unsigned int i) const {
+   return _colors[i].gpu->descriptor();
+}
+
 uint Framebuffer::attachments() const {
 	return uint(_colors.size());
 }

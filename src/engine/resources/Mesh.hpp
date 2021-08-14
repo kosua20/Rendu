@@ -1,7 +1,9 @@
 #pragma once
 #include "resources/Bounds.hpp"
-#include "graphics/GPUObjects.hpp"
+#include "graphics/GPUTypes.hpp"
 #include "Common.hpp"
+
+class GPUMesh;
 
 /**
  \brief Represents a geometric mesh composed of vertices, other attributes and triangles.
@@ -107,10 +109,12 @@ public:
 	/** Move assignment operator .
 	 \return a reference to the object assigned to
 	 */
-	Mesh & operator=(Mesh &&) = default;
+	Mesh & operator=(Mesh &&);
 	
 	/** Move constructor. */
-	Mesh(Mesh &&) = default;
+	Mesh(Mesh &&);
+
+	~Mesh();
 	
 	std::vector<glm::vec3> positions;  ///< The 3D positions.
 	std::vector<glm::vec3> normals;	///< The surface normals.

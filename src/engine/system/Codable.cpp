@@ -1,7 +1,8 @@
 #include "system/Codable.hpp"
 #include "system/TextUtilities.hpp"
 #include "resources/Texture.hpp"
-
+#include "graphics/GPUObjects.hpp"
+#include <unordered_map>
 #include <map>
 #include <sstream>
 

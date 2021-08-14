@@ -1,7 +1,7 @@
 #pragma once
 
 #include "system/Config.hpp"
-#include "graphics/GPUObjects.hpp"
+#include "graphics/GPUTypes.hpp"
 #include "Common.hpp"
 
 class Texture;

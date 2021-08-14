@@ -1,6 +1,7 @@
 #include "graphics/GPU.hpp"
 #include "graphics/ShaderCompiler.hpp"
 #include "graphics/Framebuffer.hpp"
+#include "graphics/Swapchain.hpp"
 #include "resources/Texture.hpp"
 #include "resources/Image.hpp"
 #include "system/TextUtilities.hpp"
@@ -614,82 +615,10 @@ void GPU::uploadTexture(const Texture & texture) {
 
 	const glm::uvec2 srcSize(transferTexture.width, transferTexture.height);
 	const glm::uvec2 dstSize(texture.width, texture.height);
-	GPU::blitTexture(commandBuffer, transferTexture, texture, 0, 0, texture.levels, 0, 0, layers, glm::uvec2(0), srcSize, glm::uvec2(0), dstSize, Filter::NEAREST);
+	VkUtils::blitTexture(commandBuffer, transferTexture, texture, 0, 0, texture.levels, 0, 0, layers, glm::uvec2(0), srcSize, glm::uvec2(0), dstSize, Filter::NEAREST);
 
 	VkUtils::endOneTimeCommandBuffer(commandBuffer, _context);
 
-}
-
-glm::uvec2 GPU::copyTextureRegionToBuffer(VkCommandBuffer& commandBuffer, const Texture & srcTexture, std::shared_ptr<TransferBuffer> & dstBuffer, uint mipStart, uint mipCount, uint layerStart, uint layerCount, const glm::uvec2& offset, const glm::uvec2& size){
-
-	const Layout floatFormats[5] = {Layout(0), Layout::R32F, Layout::RG32F, Layout::RGBA32F /* no 3 channels format */, Layout::RGBA32F};
-
-	const bool is3D = srcTexture.shape == TextureShape::D3;
-	const uint layers = is3D ? 1u : std::min<uint>(srcTexture.depth, layerCount);
-	const uint depth = is3D ? srcTexture.depth : 1;
-	const uint channels = srcTexture.gpu->channels;
-
-	const uint wBase = std::max<uint>(1u, size[0] >> mipStart);
-	const uint hBase = std::max<uint>(1u, size[1] >> mipStart);
-	const uint dBase = std::max<uint>(1u, depth >> mipStart);
-
-	Texture transferTexture("tmpTexture");
-	transferTexture.width = wBase;
-	transferTexture.height = hBase;
-	transferTexture.depth = srcTexture.shape == TextureShape::D3 ? dBase : layers;
-	transferTexture.levels = mipCount;
-	transferTexture.shape = srcTexture.shape;
-
-	GPU::setupTexture(transferTexture, {floatFormats[channels], Filter::LINEAR, Wrap::CLAMP}, false);
-	// Final usage of the transfer texture after the blit.
-	transferTexture.gpu->defaultLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
-	// This will reset the input texture to its default state.
-	const glm::uvec2 srcSize(srcTexture.width, srcTexture.height);
-	GPU::blitTexture(commandBuffer, srcTexture, transferTexture, mipStart, 0, mipCount, layerStart, 0, layers,
-					 offset, size, glm::uvec2(0), glm::uvec2(wBase, hBase), Filter::NEAREST);
-
-	std::vector<VkBufferImageCopy> blitRegions(transferTexture.levels);
-	size_t currentCount = 0;
-	size_t currentSize = 0;
-
-	for(uint mid = 0; mid < mipCount; ++mid){
-		// Compute the size of an image.
-		const uint w = std::max<uint>(1u, transferTexture.width >> mid);
-		const uint h = std::max<uint>(1u, transferTexture.height >> mid);
-		const uint d = transferTexture.shape == TextureShape::D3 ? std::max<uint>(1u, dBase >> mid) : 1;
-
-		// Copy region for this mip level.
-
-		blitRegions[mid].bufferOffset = currentSize;
-		blitRegions[mid].bufferRowLength = 0; // Tightly packed.
-		blitRegions[mid].bufferImageHeight = 0; // Tightly packed.
-		blitRegions[mid].imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-		blitRegions[mid].imageSubresource.mipLevel = mid;
-		blitRegions[mid].imageSubresource.baseArrayLayer = 0;
-		blitRegions[mid].imageSubresource.layerCount = layers;
-		blitRegions[mid].imageOffset = {0, 0, 0};
-		blitRegions[mid].imageExtent = { (uint32_t)w, (uint32_t)h, (uint32_t)d};
-
-		// Number of images.
-		const uint imageSize = w * h * sizeof(float) * channels;
-		const uint imageCount = is3D ? d : layers;
-
-		currentSize += imageSize * imageCount;
-		currentCount += imageCount;
-	}
-
-	dstBuffer.reset(new TransferBuffer(currentSize, BufferType::GPUTOCPU));
-
-	// Copy from the intermediate texture.
-	vkCmdCopyImageToBuffer(commandBuffer, transferTexture.gpu->image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, dstBuffer->gpu->buffer, blitRegions.size(), blitRegions.data());
-
-	// Compute the index of the first image we will fill.
-	size_t firstImage = 0;
-	for(uint lid = 0; lid < mipStart; ++lid){
-		firstImage += is3D ? std::max<uint>(1u, depth >> lid) : layers;
-	}
-
-	return glm::uvec2(firstImage, currentCount);
 }
 
 
@@ -728,7 +657,7 @@ void GPU::downloadTexture(Texture & texture, int level) {
 	const glm::uvec2 size(texture.width, texture.height);
 	
 	std::shared_ptr<TransferBuffer> dstBuffer;
-	const glm::vec2 imgRange = GPU::copyTextureRegionToBuffer(commandBuffer, texture, dstBuffer, firstLevel, levelCount, 0, layersCount, glm::uvec2(0), size);
+	const glm::vec2 imgRange = VkUtils::copyTextureRegionToBuffer(commandBuffer, texture, dstBuffer, firstLevel, levelCount, 0, layersCount, glm::uvec2(0), size);
 	VkUtils::endOneTimeCommandBuffer(commandBuffer, _context);
 	GPU::flushBuffer(*dstBuffer, dstBuffer->sizeMax, 0);
 
@@ -757,7 +686,7 @@ GPUAsyncTask GPU::downloadTextureAsync(const Texture& texture, const glm::uvec2&
 
 	AsyncTextureTask& request = _context.textureTasks.back();
 	request.frame = _context.frameIndex;
-	request.dstImageRange = GPU::copyTextureRegionToBuffer(_context.getCurrentCommandBuffer(), texture, request.dstBuffer, 0, 1, 0, effectiveLayerCount, offset, size);
+	request.dstImageRange = VkUtils::copyTextureRegionToBuffer(_context.getCurrentCommandBuffer(), texture, request.dstBuffer, 0, 1, 0, effectiveLayerCount, offset, size);
 	request.dstImageRange[0] = 0;
 	request.dstTexture.reset(new Texture("DstTexture"));
 	request.dstTexture->width = size[0];
@@ -1302,7 +1231,7 @@ void GPU::blitDepth(const Framebuffer & src, const Framebuffer & dst) {
 
 	const glm::uvec2 srcSize(srcTex.width, srcTex.height);
 	const glm::uvec2 dstSize(dstTex.width, dstTex.height);
-	GPU::blitTexture(commandBuffer, srcTex, dstTex, 0, 0, srcTex.levels, 0, 0, layerCount, glm::uvec2(0), srcSize, glm::uvec2(0), dstSize, Filter::NEAREST);
+	VkUtils::blitTexture(commandBuffer, srcTex, dstTex, 0, 0, srcTex.levels, 0, 0, layerCount, glm::uvec2(0), srcSize, glm::uvec2(0), dstSize, Filter::NEAREST);
 
 //	_metrics.clearAndBlits += 1;
 }
@@ -1320,7 +1249,7 @@ void GPU::blit(const Framebuffer & src, const Framebuffer & dst, Filter filter) 
 		const Texture& srcTex = *src.texture(cid);
 		const Texture& dstTex = *dst.texture(cid);
 		const uint layerCount = srcTex.shape == TextureShape::D3 ? 1 : srcTex.depth;
-		GPU::blitTexture(commandBuffer, srcTex, dstTex, 0, 0, srcTex.levels, 0, 0, layerCount, glm::uvec2(0), srcSize, glm::uvec2(0), dstSize, filter);
+		VkUtils::blitTexture(commandBuffer, srcTex, dstTex, 0, 0, srcTex.levels, 0, 0, layerCount, glm::uvec2(0), srcSize, glm::uvec2(0), dstSize, filter);
 	}
 }
 
@@ -1340,7 +1269,7 @@ void GPU::blit(const Framebuffer & src, const Framebuffer & dst, size_t lSrc, si
 	for(uint cid = 0; cid < count; ++cid){
 		const Texture& srcTex = *src.texture(cid);
 		const Texture& dstTex = *dst.texture(cid);
-		GPU::blitTexture(commandBuffer, srcTex, dstTex, mipSrc, mipDst, 1, lSrc, lDst, 1, glm::uvec2(0), srcSize, glm::uvec2(0), dstSize, filter);
+		VkUtils::blitTexture(commandBuffer, srcTex, dstTex, mipSrc, mipDst, 1, lSrc, lDst, 1, glm::uvec2(0), srcSize, glm::uvec2(0), dstSize, filter);
 	}
 }
 
@@ -1364,7 +1293,7 @@ void GPU::blit(const Texture & src, Texture & dst, Filter filter) {
 	const glm::uvec2 srcSize(src.width, src.height);
 	const glm::uvec2 dstSize(dst.width, dst.height);
 
-	GPU::blitTexture(_context.getCurrentCommandBuffer(), src, dst, 0, 0, src.levels, 0, 0, layerCount, glm::uvec2(0), srcSize, glm::uvec2(0), dstSize, filter);
+	VkUtils::blitTexture(_context.getCurrentCommandBuffer(), src, dst, 0, 0, src.levels, 0, 0, layerCount, glm::uvec2(0), srcSize, glm::uvec2(0), dstSize, filter);
 
 }
 
@@ -1380,65 +1309,8 @@ void GPU::blit(const Texture & src, Framebuffer & dst, Filter filter) {
 
 	const glm::uvec2 srcSize(src.width, src.height);
 	const glm::uvec2 dstSize(dst.width(), dst.height());
-	GPU::blitTexture(_context.getCurrentCommandBuffer(), src, *dst.texture(), 0, 0, src.levels, 0, 0, layerCount, glm::uvec2(0), srcSize, glm::uvec2(0), dstSize, filter);
+	VkUtils::blitTexture(_context.getCurrentCommandBuffer(), src, *dst.texture(), 0, 0, src.levels, 0, 0, layerCount, glm::uvec2(0), srcSize, glm::uvec2(0), dstSize, filter);
 
-}
-
-void GPU::blitTexture(VkCommandBuffer& commandBuffer, const Texture& src, const Texture& dst, uint mipStartSrc, uint mipStartDst, uint mipCount, uint layerStartSrc, uint layerStartDst, uint layerCount, const glm::uvec2& srcBaseOffset, const glm::uvec2& srcBaseSize, const glm::uvec2& dstBaseOffset, const glm::uvec2& dstBaseSize, Filter filter){
-
-	const uint srcLayers = src.shape != TextureShape::D3 ? src.depth : 1;
-	const uint dstLayers = dst.shape != TextureShape::D3 ? dst.depth : 1;
-
-	const uint mipEffectiveCount = std::min(std::min(src.levels, dst.levels), mipCount);
-	const uint layerEffectiveCount = std::min(std::min(srcLayers, dstLayers), layerCount);
-	const uint srcEffectiveWidth = std::min(srcBaseSize[0], src.width - srcBaseOffset[0]);
-	const uint srcEffectiveHeight = std::min(srcBaseSize[1], src.width - srcBaseOffset[1]);
-	const uint dstEffectiveWidth = std::min(dstBaseSize[0], dst.width - dstBaseOffset[0]);
-	const uint dstEffectiveHeight = std::min(dstBaseSize[1], dst.width - dstBaseOffset[1]);
-
-	VkUtils::imageLayoutBarrier(commandBuffer, *src.gpu, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, mipStartSrc, mipEffectiveCount, layerStartSrc, layerEffectiveCount);
-	VkUtils::imageLayoutBarrier(commandBuffer, *dst.gpu, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, mipStartDst, mipEffectiveCount, layerStartDst, layerEffectiveCount);
-
-	std::vector<VkImageBlit> blitRegions(mipEffectiveCount);
-
-	const uint srcBaseDepth = src.shape == TextureShape::D3 ? src.depth : 1;
-	const uint dstBaseDepth = dst.shape == TextureShape::D3 ? dst.depth : 1;
-
-	const VkFilter filterVk = filter == Filter::LINEAR ? VK_FILTER_LINEAR : VK_FILTER_NEAREST;
-
-	for(size_t mid = 0; mid < mipEffectiveCount; ++mid) {
-		const uint srcMip = mipStartSrc + mid;
-		const uint dstMip = mipStartDst + mid;
-
-		const uint srcWidth  = std::max(srcEffectiveWidth >> srcMip, uint(1));
-		const uint srcHeight = std::max(srcEffectiveHeight >> srcMip, uint(1));
-		const uint srcDepth  = std::max(srcBaseDepth >> srcMip, uint(1));
-		const glm::uvec2 srcOffset = srcBaseOffset >> glm::uvec2(srcMip);
-
-		const uint dstWidth  = std::max(dstEffectiveWidth >> dstMip, uint(1));
-		const uint dstHeight = std::max(dstEffectiveHeight >> dstMip, uint(1));
-		const uint dstDepth  = std::max(dstBaseDepth >> dstMip, uint(1));
-		const glm::uvec2 dstOffset = dstBaseOffset >> glm::uvec2(dstMip);
-
-		blitRegions[mid].srcOffsets[0] = { int32_t(srcOffset[0]), int32_t(srcOffset[1]), 0};
-		blitRegions[mid].dstOffsets[0] = { int32_t(dstOffset[0]), int32_t(dstOffset[1]), 0};
-		blitRegions[mid].srcOffsets[1] = { int32_t(srcOffset[0] + srcWidth), int32_t(srcOffset[1] + srcHeight), int32_t(0 + srcDepth)};
-		blitRegions[mid].dstOffsets[1] = { int32_t(dstOffset[0] + dstWidth), int32_t(dstOffset[1] + dstHeight), int32_t(0 + dstDepth)};
-		blitRegions[mid].srcSubresource.aspectMask = src.gpu->aspect;
-		blitRegions[mid].dstSubresource.aspectMask = dst.gpu->aspect;
-		blitRegions[mid].srcSubresource.mipLevel = srcMip;
-		blitRegions[mid].dstSubresource.mipLevel = dstMip;
-		blitRegions[mid].srcSubresource.baseArrayLayer = layerStartSrc;
-		blitRegions[mid].dstSubresource.baseArrayLayer = layerStartDst;
-		blitRegions[mid].srcSubresource.layerCount = layerEffectiveCount;
-		blitRegions[mid].dstSubresource.layerCount = layerEffectiveCount;
-	}
-
-
-	vkCmdBlitImage(commandBuffer, src.gpu->image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, dst.gpu->image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, blitRegions.size(), blitRegions.data(), filterVk);
-
-	VkUtils::imageLayoutBarrier(commandBuffer, *src.gpu, src.gpu->defaultLayout, mipStartSrc, mipEffectiveCount, layerStartSrc, layerEffectiveCount);
-	VkUtils::imageLayoutBarrier(commandBuffer, *dst.gpu, dst.gpu->defaultLayout, mipStartDst, mipEffectiveCount, layerStartDst, layerEffectiveCount);
 }
 
 

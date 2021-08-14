@@ -1,7 +1,14 @@
 #pragma once
 
+#include "graphics/GPUTypes.hpp"
 #include "resources/Texture.hpp"
 #include "Common.hpp"
+
+#include <array>
+
+VK_DEFINE_HANDLE(VkFramebuffer)
+VK_DEFINE_HANDLE(VkImageView)
+VK_DEFINE_HANDLE(VkRenderPass)
 
 /**
  \brief Represent a rendering target, of any size, format and type, backed by a GPU framebuffer.
@@ -143,9 +150,7 @@ public:
 	 \param i the color attachment index (or 0 by default)
 	 \return the descriptor
 	*/
-	const Descriptor & descriptor(unsigned int i = 0) const {
-		return _colors[i].gpu->descriptor();
-	}
+	const Descriptor & descriptor(unsigned int i = 0) const;
 
 	/** Query the shape of the framebuffer.
 	 \return the texture shape used for all attachments.

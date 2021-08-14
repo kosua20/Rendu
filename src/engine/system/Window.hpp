@@ -1,10 +1,10 @@
 #pragma once
 #include "system/Config.hpp"
 #include "Common.hpp"
-#include "graphics/Swapchain.hpp"
 
 struct GLFWwindow;
 struct ImGui_ImplVulkan_InitInfo;
+class Swapchain;
 
 /** \brief Represent an OS window and its associated rendering context.
  \ingroup System

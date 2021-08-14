@@ -1,5 +1,6 @@
 #include "resources/ResourcesManager.hpp"
 #include "resources/Mesh.hpp"
+#include "graphics/GPUObjects.hpp"
 #include "system/TextUtilities.hpp"
 #include "system/System.hpp"
 

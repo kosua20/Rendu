@@ -133,21 +133,21 @@ int main(int argc, char ** argv) {
 			std::string compilationLog;
 			// Keep track of the include files used.
 			// File with ID 0 is the base file, already set its name.
-			std::vector<std::string> paths = { file.path };
+			std::vector<std::string> names = { file.path };
 			// Load the shader.
 			const std::string fullName = file.name + "." + type.second;
-			const std::string shader = Resources::manager().getStringWithIncludes(fullName, paths);
+			const std::string shader = Resources::manager().getStringWithIncludes(fullName, names);
 			// Compile the shader.
 			Program::Stage stage;
 			ShaderCompiler::compile(shader, type.first, stage, compilationLog);
 
 			// Replace the include names by the full paths.
-			for(size_t nid = 1; nid < paths.size(); ++nid) {
-				auto& name = paths[nid];
-				TextUtilities::splitExtension(path);
+			for(size_t nid = 1; nid < names.size(); ++nid) {
+				auto& name = names[nid];
+				TextUtilities::splitExtension(name);
 				for(const auto& includeFile : includeFiles){
 					if(includeFile.name == name){
-						name = includeInfos->path;
+						name = includeFile.path;
 						break;
 					}
 				}

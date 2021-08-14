@@ -1,6 +1,8 @@
 #pragma once
-#include "graphics/GPUObjects.hpp"
+#include "graphics/GPUTypes.hpp"
 #include "Common.hpp"
+
+class GPUBuffer;
 
 /** \brief General purpose GPU/CPU buffer, without a CPU backing store.
  \details This allows the class to be template-free (to avoid exposing GPU/GPUObjects details

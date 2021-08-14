@@ -87,6 +87,8 @@ void Texture::clean() {
 	gpu = nullptr;
 }
 
+Texture::Texture(Texture &&) = default;
+
 Texture::~Texture(){
 	clean();
 }

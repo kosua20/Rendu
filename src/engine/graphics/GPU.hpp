@@ -3,7 +3,7 @@
 #include "resources/Mesh.hpp"
 #include "resources/Texture.hpp"
 #include "resources/Buffer.hpp"
-#include "graphics/GPUObjects.hpp"
+#include "graphics/GPUTypes.hpp"
 #include "graphics/Program.hpp"
 #include "Common.hpp"
 
@@ -335,12 +335,6 @@ public:
 private:
 	
 	static void bindPipelineIfNeeded();
-
-	/** Offsets and sizes are expressed at mip 0 in all cases */
-	static glm::uvec2 copyTextureRegionToBuffer(VkCommandBuffer& commandBuffer, const Texture & srcTexture, std::shared_ptr<TransferBuffer> & dstBuffer, uint mipStart, uint mipCount, uint layerStart, uint layerCount, const glm::uvec2& offset, const glm::uvec2& size);
-
-	/** Offsets and sizes are expressed at mip 0 in all cases */
-	static void blitTexture(VkCommandBuffer& commandBuffer, const Texture& src, const Texture& dst, uint mipStartSrc, uint mipStartDst, uint mipCount, uint layerStartSrc, uint layerStartDst, uint layerCount, const glm::uvec2& srcBaseOffset, const glm::uvec2& srcBaseSize, const glm::uvec2& dstBaseOffset, const glm::uvec2& dstBaseSize, Filter filter);
 
 	static void clean(GPUTexture & tex);
 

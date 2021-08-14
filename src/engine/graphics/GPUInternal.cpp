@@ -1,4 +1,5 @@
 #include "graphics/GPUInternal.hpp"
+#include "graphics/GPU.hpp"
 #include "resources/Texture.hpp"
 
 #include <GLFW/glfw3.h>
@@ -408,4 +409,223 @@ void VkUtils::checkResult(VkResult status){
 
 	Log::Error() << "Vulkan error : " << errorType << std::endl;
 
+}
+
+VkSamplerAddressMode VkUtils::getGPUWrapping(Wrap mode) {
+	static const std::unordered_map<Wrap, VkSamplerAddressMode> wraps = {
+		{Wrap::CLAMP, VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE},
+		{Wrap::REPEAT, VK_SAMPLER_ADDRESS_MODE_REPEAT},
+		{Wrap::MIRROR, VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT}};
+	return wraps.at(mode);
+}
+
+void VkUtils::getGPUFilter(Filter filtering, VkFilter & imgFiltering, VkSamplerMipmapMode & mipFiltering) {
+	struct Filters {
+		VkFilter img;
+		VkSamplerMipmapMode mip;
+	};
+	static const std::unordered_map<Filter, Filters> filters = {
+		{Filter::NEAREST, {VK_FILTER_NEAREST, VK_SAMPLER_MIPMAP_MODE_NEAREST}},
+		{Filter::LINEAR, {VK_FILTER_LINEAR, VK_SAMPLER_MIPMAP_MODE_NEAREST}},
+		{Filter::NEAREST_NEAREST, {VK_FILTER_NEAREST, VK_SAMPLER_MIPMAP_MODE_NEAREST}},
+		{Filter::LINEAR_NEAREST, {VK_FILTER_LINEAR, VK_SAMPLER_MIPMAP_MODE_NEAREST}},
+		{Filter::NEAREST_LINEAR, {VK_FILTER_NEAREST, VK_SAMPLER_MIPMAP_MODE_LINEAR}},
+		{Filter::LINEAR_LINEAR, {VK_FILTER_LINEAR, VK_SAMPLER_MIPMAP_MODE_LINEAR}}};
+	const auto & infos = filters.at(filtering);
+	imgFiltering = infos.img;
+	mipFiltering = infos.mip;
+}
+
+
+unsigned int VkUtils::getGPULayout(Layout typedFormat, VkFormat & format) {
+
+	struct FormatAndChannels {
+		VkFormat format;
+		int channels;
+	};
+
+	static const std::unordered_map<Layout, FormatAndChannels> formatInfos = {
+		{Layout::R8, { VK_FORMAT_R8_UNORM, 1 }},
+		{Layout::RG8, { VK_FORMAT_R8G8_UNORM, 2 }},
+		{Layout::RGBA8, { VK_FORMAT_R8G8B8A8_UNORM, 4 }},
+		{Layout::BGRA8, { VK_FORMAT_B8G8R8A8_UNORM, 4 }},
+		{Layout::SRGB8_ALPHA8, { VK_FORMAT_R8G8B8A8_SRGB, 4 }},
+		{Layout::SBGR8_ALPHA8, { VK_FORMAT_B8G8R8A8_SRGB, 4 }},
+		{Layout::R16, { VK_FORMAT_R16_UNORM, 1 }},
+		{Layout::RG16, { VK_FORMAT_R16G16_UNORM, 2 }},
+		{Layout::RGBA16, { VK_FORMAT_R16G16B16A16_UNORM, 4 }},
+		{Layout::R8_SNORM, { VK_FORMAT_R8_SNORM, 1 }},
+		{Layout::RG8_SNORM, { VK_FORMAT_R8G8_SNORM, 2 }},
+		{Layout::RGBA8_SNORM, { VK_FORMAT_R8G8B8A8_SNORM, 4 }},
+		{Layout::R16_SNORM, { VK_FORMAT_R16_SNORM, 1 }},
+		{Layout::RG16_SNORM, { VK_FORMAT_R16G16_SNORM, 2 }},
+		{Layout::R16F, { VK_FORMAT_R16_SFLOAT, 1 }},
+		{Layout::RG16F, { VK_FORMAT_R16G16_SFLOAT, 2 }},
+		{Layout::RGBA16F, { VK_FORMAT_R16G16B16A16_SFLOAT, 4 }},
+		{Layout::R32F, { VK_FORMAT_R32_SFLOAT, 1 }},
+		{Layout::RG32F, { VK_FORMAT_R32G32_SFLOAT, 2 }},
+		{Layout::RGBA32F, { VK_FORMAT_R32G32B32A32_SFLOAT, 4 }},
+		{Layout::RGB5_A1, { VK_FORMAT_R5G5B5A1_UNORM_PACK16, 4 }},
+		{Layout::A2_BGR10, { VK_FORMAT_A2B10G10R10_UNORM_PACK32, 4 }},
+		{Layout::A2_RGB10, { VK_FORMAT_A2R10G10B10_UNORM_PACK32, 4 }},
+		{Layout::DEPTH_COMPONENT16, { VK_FORMAT_D16_UNORM, 1 }},
+		{Layout::DEPTH_COMPONENT32F, { VK_FORMAT_D32_SFLOAT, 1 }},
+		{Layout::DEPTH24_STENCIL8, { VK_FORMAT_D24_UNORM_S8_UINT, 1 }},
+		{Layout::DEPTH32F_STENCIL8, { VK_FORMAT_D32_SFLOAT_S8_UINT, 1 }},
+		{Layout::R8UI, { VK_FORMAT_R8_UINT, 1 }},
+		{Layout::R16I, { VK_FORMAT_R16_SINT, 1 }},
+		{Layout::R16UI, { VK_FORMAT_R16_UINT, 1 }},
+		{Layout::R32I, { VK_FORMAT_R32_SINT, 1 }},
+		{Layout::R32UI, { VK_FORMAT_R32_UINT, 1 }},
+		{Layout::RG8I, { VK_FORMAT_R8G8_SINT, 2 }},
+		{Layout::RG8UI, { VK_FORMAT_R8G8_UINT, 2 }},
+		{Layout::RG16I, { VK_FORMAT_R16G16_SINT, 2 }},
+		{Layout::RG16UI, { VK_FORMAT_R16G16_UINT, 2 }},
+		{Layout::RG32I, { VK_FORMAT_R32G32_SINT, 2 }},
+		{Layout::RG32UI, { VK_FORMAT_R32G32_UINT, 2 }},
+		{Layout::RGBA8I, { VK_FORMAT_R8G8B8A8_SINT, 4 }},
+		{Layout::RGBA8UI, { VK_FORMAT_R8G8B8A8_UINT, 4 }},
+		{Layout::RGBA16I, { VK_FORMAT_R16G16B16A16_SINT, 4 }},
+		{Layout::RGBA16UI, { VK_FORMAT_R16G16B16A16_UINT, 4 }},
+		{Layout::RGBA32I, { VK_FORMAT_R32G32B32A32_SINT, 4 }},
+		{Layout::RGBA32UI, { VK_FORMAT_R32G32B32A32_UINT, 4 }}
+	};
+
+	if(formatInfos.count(typedFormat) > 0) {
+		const auto & infos	= formatInfos.at(typedFormat);
+		format = infos.format;
+		return infos.channels;
+	}
+
+	Log::Error() << Log::GPU << "Unable to find type and format (typed format " << uint(typedFormat) << ")." << std::endl;
+	return 0;
+}
+
+glm::uvec2 VkUtils::copyTextureRegionToBuffer(VkCommandBuffer& commandBuffer, const Texture & srcTexture, std::shared_ptr<TransferBuffer> & dstBuffer, uint mipStart, uint mipCount, uint layerStart, uint layerCount, const glm::uvec2& offset, const glm::uvec2& size){
+
+	const Layout floatFormats[5] = {Layout(0), Layout::R32F, Layout::RG32F, Layout::RGBA32F /* no 3 channels format */, Layout::RGBA32F};
+
+	const bool is3D = srcTexture.shape == TextureShape::D3;
+	const uint layers = is3D ? 1u : std::min<uint>(srcTexture.depth, layerCount);
+	const uint depth = is3D ? srcTexture.depth : 1;
+	const uint channels = srcTexture.gpu->channels;
+
+	const uint wBase = std::max<uint>(1u, size[0] >> mipStart);
+	const uint hBase = std::max<uint>(1u, size[1] >> mipStart);
+	const uint dBase = std::max<uint>(1u, depth >> mipStart);
+
+	Texture transferTexture("tmpTexture");
+	transferTexture.width = wBase;
+	transferTexture.height = hBase;
+	transferTexture.depth = srcTexture.shape == TextureShape::D3 ? dBase : layers;
+	transferTexture.levels = mipCount;
+	transferTexture.shape = srcTexture.shape;
+
+	GPU::setupTexture(transferTexture, {floatFormats[channels], Filter::LINEAR, Wrap::CLAMP}, false);
+	// Final usage of the transfer texture after the blit.
+	transferTexture.gpu->defaultLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+	// This will reset the input texture to its default state.
+	const glm::uvec2 srcSize(srcTexture.width, srcTexture.height);
+	VkUtils::blitTexture(commandBuffer, srcTexture, transferTexture, mipStart, 0, mipCount, layerStart, 0, layers,
+					 offset, size, glm::uvec2(0), glm::uvec2(wBase, hBase), Filter::NEAREST);
+
+	std::vector<VkBufferImageCopy> blitRegions(transferTexture.levels);
+	size_t currentCount = 0;
+	size_t currentSize = 0;
+
+	for(uint mid = 0; mid < mipCount; ++mid){
+		// Compute the size of an image.
+		const uint w = std::max<uint>(1u, transferTexture.width >> mid);
+		const uint h = std::max<uint>(1u, transferTexture.height >> mid);
+		const uint d = transferTexture.shape == TextureShape::D3 ? std::max<uint>(1u, dBase >> mid) : 1;
+
+		// Copy region for this mip level.
+
+		blitRegions[mid].bufferOffset = currentSize;
+		blitRegions[mid].bufferRowLength = 0; // Tightly packed.
+		blitRegions[mid].bufferImageHeight = 0; // Tightly packed.
+		blitRegions[mid].imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		blitRegions[mid].imageSubresource.mipLevel = mid;
+		blitRegions[mid].imageSubresource.baseArrayLayer = 0;
+		blitRegions[mid].imageSubresource.layerCount = layers;
+		blitRegions[mid].imageOffset = {0, 0, 0};
+		blitRegions[mid].imageExtent = { (uint32_t)w, (uint32_t)h, (uint32_t)d};
+
+		// Number of images.
+		const uint imageSize = w * h * sizeof(float) * channels;
+		const uint imageCount = is3D ? d : layers;
+
+		currentSize += imageSize * imageCount;
+		currentCount += imageCount;
+	}
+
+	dstBuffer.reset(new TransferBuffer(currentSize, BufferType::GPUTOCPU));
+
+	// Copy from the intermediate texture.
+	vkCmdCopyImageToBuffer(commandBuffer, transferTexture.gpu->image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, dstBuffer->gpu->buffer, blitRegions.size(), blitRegions.data());
+
+	// Compute the index of the first image we will fill.
+	size_t firstImage = 0;
+	for(uint lid = 0; lid < mipStart; ++lid){
+		firstImage += is3D ? std::max<uint>(1u, depth >> lid) : layers;
+	}
+
+	return glm::uvec2(firstImage, currentCount);
+}
+
+void VkUtils::blitTexture(VkCommandBuffer& commandBuffer, const Texture& src, const Texture& dst, uint mipStartSrc, uint mipStartDst, uint mipCount, uint layerStartSrc, uint layerStartDst, uint layerCount, const glm::uvec2& srcBaseOffset, const glm::uvec2& srcBaseSize, const glm::uvec2& dstBaseOffset, const glm::uvec2& dstBaseSize, Filter filter){
+
+	const uint srcLayers = src.shape != TextureShape::D3 ? src.depth : 1;
+	const uint dstLayers = dst.shape != TextureShape::D3 ? dst.depth : 1;
+
+	const uint mipEffectiveCount = std::min(std::min(src.levels, dst.levels), mipCount);
+	const uint layerEffectiveCount = std::min(std::min(srcLayers, dstLayers), layerCount);
+	const uint srcEffectiveWidth = std::min(srcBaseSize[0], src.width - srcBaseOffset[0]);
+	const uint srcEffectiveHeight = std::min(srcBaseSize[1], src.width - srcBaseOffset[1]);
+	const uint dstEffectiveWidth = std::min(dstBaseSize[0], dst.width - dstBaseOffset[0]);
+	const uint dstEffectiveHeight = std::min(dstBaseSize[1], dst.width - dstBaseOffset[1]);
+
+	VkUtils::imageLayoutBarrier(commandBuffer, *src.gpu, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, mipStartSrc, mipEffectiveCount, layerStartSrc, layerEffectiveCount);
+	VkUtils::imageLayoutBarrier(commandBuffer, *dst.gpu, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, mipStartDst, mipEffectiveCount, layerStartDst, layerEffectiveCount);
+
+	std::vector<VkImageBlit> blitRegions(mipEffectiveCount);
+
+	const uint srcBaseDepth = src.shape == TextureShape::D3 ? src.depth : 1;
+	const uint dstBaseDepth = dst.shape == TextureShape::D3 ? dst.depth : 1;
+
+	const VkFilter filterVk = filter == Filter::LINEAR ? VK_FILTER_LINEAR : VK_FILTER_NEAREST;
+
+	for(size_t mid = 0; mid < mipEffectiveCount; ++mid) {
+		const uint srcMip = mipStartSrc + mid;
+		const uint dstMip = mipStartDst + mid;
+
+		const uint srcWidth  = std::max(srcEffectiveWidth >> srcMip, uint(1));
+		const uint srcHeight = std::max(srcEffectiveHeight >> srcMip, uint(1));
+		const uint srcDepth  = std::max(srcBaseDepth >> srcMip, uint(1));
+		const glm::uvec2 srcOffset = srcBaseOffset >> glm::uvec2(srcMip);
+
+		const uint dstWidth  = std::max(dstEffectiveWidth >> dstMip, uint(1));
+		const uint dstHeight = std::max(dstEffectiveHeight >> dstMip, uint(1));
+		const uint dstDepth  = std::max(dstBaseDepth >> dstMip, uint(1));
+		const glm::uvec2 dstOffset = dstBaseOffset >> glm::uvec2(dstMip);
+
+		blitRegions[mid].srcOffsets[0] = { int32_t(srcOffset[0]), int32_t(srcOffset[1]), 0};
+		blitRegions[mid].dstOffsets[0] = { int32_t(dstOffset[0]), int32_t(dstOffset[1]), 0};
+		blitRegions[mid].srcOffsets[1] = { int32_t(srcOffset[0] + srcWidth), int32_t(srcOffset[1] + srcHeight), int32_t(0 + srcDepth)};
+		blitRegions[mid].dstOffsets[1] = { int32_t(dstOffset[0] + dstWidth), int32_t(dstOffset[1] + dstHeight), int32_t(0 + dstDepth)};
+		blitRegions[mid].srcSubresource.aspectMask = src.gpu->aspect;
+		blitRegions[mid].dstSubresource.aspectMask = dst.gpu->aspect;
+		blitRegions[mid].srcSubresource.mipLevel = srcMip;
+		blitRegions[mid].dstSubresource.mipLevel = dstMip;
+		blitRegions[mid].srcSubresource.baseArrayLayer = layerStartSrc;
+		blitRegions[mid].dstSubresource.baseArrayLayer = layerStartDst;
+		blitRegions[mid].srcSubresource.layerCount = layerEffectiveCount;
+		blitRegions[mid].dstSubresource.layerCount = layerEffectiveCount;
+	}
+
+
+	vkCmdBlitImage(commandBuffer, src.gpu->image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, dst.gpu->image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, blitRegions.size(), blitRegions.data(), filterVk);
+
+	VkUtils::imageLayoutBarrier(commandBuffer, *src.gpu, src.gpu->defaultLayout, mipStartSrc, mipEffectiveCount, layerStartSrc, layerEffectiveCount);
+	VkUtils::imageLayoutBarrier(commandBuffer, *dst.gpu, dst.gpu->defaultLayout, mipStartDst, mipEffectiveCount, layerStartDst, layerEffectiveCount);
 }

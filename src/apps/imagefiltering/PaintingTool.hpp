@@ -2,6 +2,7 @@
 
 #include "graphics/Framebuffer.hpp"
 #include "graphics/ScreenQuad.hpp"
+#include "resources/Mesh.hpp"
 
 #include "Common.hpp"
 

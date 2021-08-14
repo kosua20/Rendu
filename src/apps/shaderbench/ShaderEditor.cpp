@@ -8,6 +8,7 @@
 #include "generation/PerlinNoise.hpp"
 #include "system/TextUtilities.hpp"
 #include "resources/Texture.hpp"
+#include "resources/ResourcesManager.hpp"
 
 const uint kShaderEditorVersionMajor = 1;
 const uint kShaderEditorVersionMinor = 0;

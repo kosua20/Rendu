@@ -2,6 +2,7 @@
 
 #include "resources/Mesh.hpp"
 #include "Common.hpp"
+#include <unordered_map>
 
 /**
  \brief Commposite OBJ files loading.

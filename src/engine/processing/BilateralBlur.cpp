@@ -1,5 +1,5 @@
 #include "processing/BilateralBlur.hpp"
-#include "graphics/GPUObjects.hpp"
+#include "graphics/GPUTypes.hpp"
 #include "graphics/GPU.hpp"
 #include "graphics/ScreenQuad.hpp"
 #include "resources/ResourcesManager.hpp"

@@ -3,6 +3,7 @@
 #include "input/Input.hpp"
 #include "system/System.hpp"
 #include "graphics/GPU.hpp"
+#include "resources/ResourcesManager.hpp"
 
 PaintingTool::PaintingTool(unsigned int width, unsigned int height) {
 

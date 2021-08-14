@@ -2,11 +2,19 @@
 
 #include "Common.hpp"
 
-#include "graphics/GPUObjects.hpp"
+#include "graphics/GPUTypes.hpp"
 #include "resources/Buffer.hpp"
 #include "resources/Texture.hpp"
 
-#include <volk/volk.h>
+#include <unordered_map>
+#include <array>
+
+VK_DEFINE_HANDLE(VkBuffer)
+VK_DEFINE_HANDLE(VkImageView)
+VK_DEFINE_HANDLE(VkSampler)
+VK_DEFINE_HANDLE(VkShaderModule)
+VK_DEFINE_HANDLE(VkPipelineLayout)
+VK_DEFINE_HANDLE(VkDescriptorSetLayout)
 
 /**
  \brief Represents a group of shaders used for rendering.
@@ -60,7 +68,6 @@ public:
 	};
 
 	struct State {
-		std::vector<VkPipelineShaderStageCreateInfo> stages;
 		std::vector<VkDescriptorSetLayout> setLayouts;
 		VkPipelineLayout layout = VK_NULL_HANDLE;
 	};
