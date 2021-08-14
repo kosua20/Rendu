@@ -75,7 +75,7 @@ jobs:
         shell: bash
         working-directory: ${{github.workspace}}
         run: |
-          wget -O vulkansdk.tar.gz ${VULKAN_SDK}/${VULKAN_VERSION}/linux/vulkansdk-linux-x86_64-${VULKAN_VERSION}.tar.gz
+          wget -O vulkansdk.tar.gz ${VULKAN_URL}/${VULKAN_VERSION}/linux/vulkansdk-linux-x86_64-${VULKAN_VERSION}.tar.gz
           mkdir vulkansdk && tar -xf vulkansdk.tar.gz -C vulkansdk --strip-components=1
 
       - name: Vulkan for macOS
@@ -83,7 +83,7 @@ jobs:
         shell: bash
         working-directory: ${{github.workspace}}
         run: |
-          wget -O vulkansdk.dmg ${VULKAN_SDK}/${VULKAN_VERSION}/mac/vulkansdk-macos-${VULKAN_VERSION}.dmg
+          wget -O vulkansdk.dmg ${VULKAN_URL}/${VULKAN_VERSION}/mac/vulkansdk-macos-${VULKAN_VERSION}.dmg
           hdiutil attach vulkansdk.dmg
           /Volumes/vulkansdk-macos-${VULKAN_VERSION}/InstallVulkan.app/Contents/MacOS/InstallVulkan --root `pwd`/vulkansdk/ --accept-licenses --default-answer --confirm-command install copy_only=1
           hdiutil detach /Volumes/vulkansdk-macos-${VULKAN_VERSION}
@@ -94,7 +94,7 @@ jobs:
         shell: bash
         working-directory: ${{github.workspace}}
         run: |
-          wget -O vulkansdk.exe ${VULKAN_SDK}/${VULKAN_VERSION}/windows/VulkanSDK-${VULKAN_VERSION}-Installer.exe
+          wget -O vulkansdk.exe ${VULKAN_URL}/${VULKAN_VERSION}/windows/VulkanSDK-${VULKAN_VERSION}-Installer.exe
           7z x -aoa ./vulkansdk.exe -ovulkansdk
           
       - name: Build using Make
