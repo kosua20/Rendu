@@ -65,14 +65,14 @@ function CommonSetup()
 	-- System headers are used to support angled brackets in Xcode.
 	sysincludedirs({ "src/libs/", "src/libs/glfw/include/", "$(VULKAN_SDK)/include" })
 	libdirs({ "$(VULKAN_SDK)/lib" })
-	
+
 	-- System headers are used to support angled brackets in Xcode.
-	filter("system:macosx" or "system:linux")
+	filter("system:macosx or linux")
 		sysincludedirs({ "/usr/local/include/" })
 		libdirs({ "/usr/local/lib" })
-
 	
 	filter({})
+	
 end	
 
 function ExecutableSetup()
@@ -97,9 +97,7 @@ function ExecutableSetup()
 		links({"comctl32"})
 
 	-- Vulkan dependencies
-	filter("system:macosx")
-		links({"glslang", "OSDependent", "MachineIndependent", "GenericCodeGen", "OGLCompiler", "SPIRV", "SPIRV-Tools", "SPIRV-Tools-opt" })
-	filter("system:linux")
+	filter("system:macosx or linux")
 		links({"glslang", "MachineIndependent", "GenericCodeGen", "OGLCompiler", "SPIRV", "SPIRV-Tools-opt", "SPIRV-Tools","OSDependent" })
 	
 	filter({"system:windows", "configurations:Dev"})
@@ -184,8 +182,6 @@ project("Engine")
 	filter("system:linux")
 		defines({"VK_USE_PLATFORM_XCB_KHR"})
 	
-
-
 
 group("Apps")
 
