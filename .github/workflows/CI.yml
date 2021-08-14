@@ -88,7 +88,7 @@ jobs:
         run: |
           wget -O vulkansdk.exe https://sdk.lunarg.com/sdk/download/1.2.182.0/windows/VulkanSDK-1.2.182.0-Installer.exe
           7z x -aoa ./vulkansdk.exe -ovulkansdk
-          ls -la vulkansdk/
+          ls -la vulkansdk/Include
           echo "VULKAN_SDK=`pwd`/vulkansdk" >> $GITHUB_ENV
           
       - name: Build using Make
@@ -108,10 +108,14 @@ jobs:
         working-directory: ${{github.workspace}}
         shell: cmd
         run: |
-          echo %VULKAN_SDK%
+          echo $(VULKAN_SDK)
           premake5 ${{matrix.premake-opts}} --skip_shader_validation
+          7z a result.zip build/*
           cd build
           "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe" .\Rendu.sln -t:Meta\ALL -nologo -v:minimal -p:Configuration=Release -p:Platform=x64
-
-    
+  
+      - uses: actions/upload-artifact@v1
+          with:
+          name: result
+          path: ${{ github.workspace }}/result.zip
   
