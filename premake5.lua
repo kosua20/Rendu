@@ -97,8 +97,10 @@ function ExecutableSetup()
 		links({"comctl32"})
 
 	-- Vulkan dependencies
-	filter("system:macosx" or "system:linux")
+	filter("system:macosx")
 		links({"glslang", "OSDependent", "MachineIndependent", "GenericCodeGen", "OGLCompiler", "SPIRV", "SPIRV-Tools", "SPIRV-Tools-opt" })
+	filter("system:linux")
+		links({"glslang", "MachineIndependent", "GenericCodeGen", "OGLCompiler", "SPIRV", "SPIRV-Tools-opt", "SPIRV-Tools","OSDependent" })
 	
 	filter({"system:windows", "configurations:Dev"})
 		links({"glslangd", "OSDependentd", "MachineIndependentd", "GenericCodeGend", "OGLCompilerd", "SPIRVd", "SPIRV-Toolsd", "SPIRV-Tools-optd" })
@@ -180,7 +182,7 @@ project("Engine")
 		defines({"VK_USE_PLATFORM_WIN32_KHR"})
 
 	filter("system:linux")
-		defines({"VK_USE_PLATFORM_XLIB_KHR"})
+		defines({"VK_USE_PLATFORM_XCB_KHR"})
 	
 
 
