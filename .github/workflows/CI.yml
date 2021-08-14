@@ -41,7 +41,7 @@ jobs:
           wget -O premake.tar.gz ${PREMAKE_URL}-linux.tar.gz
           tar -xzf premake.tar.gz
 
-       - name: Vulkan for Ubuntu
+      - name: Vulkan for Ubuntu
         if: startsWith(matrix.os, 'ubuntu')
         shell: bash
         working-directory: ${{github.workspace}}
@@ -49,7 +49,6 @@ jobs:
           wget -O vulkansdk.tar.gz https://sdk.lunarg.com/sdk/download/1.2.182.0/linux/vulkansdk-linux-x86_64-1.2.182.0.tar.gz
           mkdir vulkansdk && tar -xf vulkansdk.tar.gz -C vulkansdk --strip-components=1
           rm -rf vulkansdk/source
-      
 
       - name: Dependencies for macOS
         if: startsWith(matrix.os, 'macos')
