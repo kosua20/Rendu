@@ -49,6 +49,7 @@ jobs:
           wget -O vulkansdk.tar.gz https://sdk.lunarg.com/sdk/download/1.2.182.0/linux/vulkansdk-linux-x86_64-1.2.182.0.tar.gz
           mkdir vulkansdk && tar -xf vulkansdk.tar.gz -C vulkansdk --strip-components=1
           rm -rf vulkansdk/source
+          ls -la vulkansdk/x86_64
       
 
       - name: Dependencies for macOS
@@ -70,6 +71,7 @@ jobs:
           /Volumes/vulkansdk-macos-1.2.182.0/InstallVulkan.app/Contents/MacOS/InstallVulkan --root `pwd`/vulkansdk/ --accept-licenses --default-answer --confirm-command install copy_only=1
           hdiutil detach /Volumes/vulkansdk-macos-1.2.182.0
           mv vulkansdk/macOS vulkansdk/x86_64
+          ls -la vulkansdk/x86_64
 
       - name: Dependencies for Windows
         if: startsWith(matrix.os, 'windows')
@@ -87,13 +89,7 @@ jobs:
         run: |
           wget -O vulkansdk.exe https://sdk.lunarg.com/sdk/download/1.2.182.0/windows/VulkanSDK-1.2.182.0-Installer.exe
           7z x -aoa ./vulkansdk.exe -ovulkansdk
-        
-      - name: Generate project
-        shell: bash
-        working-directory: ${{github.workspace}}
-        run: |
-          ls -l -a
-          ./premake5 ${{matrix.premake-opts}} --skip_shader_validation
+          ls -la vulkansdk/
           
       - name: Build using Make
         if: startsWith(matrix.os, 'macos') || startsWith(matrix.os, 'ubuntu')
@@ -103,6 +99,7 @@ jobs:
           export VULKAN_SDK=`pwd`/vulkansdk/x86_64
           export PATH=$VULKAN_SDK/bin:$PATH
           export LD_LIBRARY_PATH=$VULKAN_SDK/lib:$LD_LIBRARY_PATH
+          ./premake5 ${{matrix.premake-opts}} --skip_shader_validation
           make ALL
       
       - name: Build using MSVC
@@ -111,6 +108,7 @@ jobs:
         shell: cmd
         run: |
           $env:VULKAN_SDK="$(pwd)/vulkansdk"
+          ./premake5 ${{matrix.premake-opts}} --skip_shader_validation
           "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe" .\Rendu.sln -t:Meta\ALL -nologo -v:minimal -p:Configuration=Release -p:Platform=x64
 
     
