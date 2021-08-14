@@ -13,17 +13,20 @@ jobs:
   build:
     
     env:
-      PREMAKE_URL: https://github.com/premake/premake-core/releases/download/v5.0.0-alpha14/premake-5.0.0-alpha14
+      PREMAKE_URL: https://github.com/premake/premake-core/releases/download/v5.0.0-alpha16/premake-5.0.0-alpha16
+      VULKAN_URL: https://sdk.lunarg.com/sdk/download
+      VULKAN_VERSION: "1.2.182.0"
 
     strategy:
+      fail-fast: false
       matrix:
         include:
-          # - os: ubuntu-latest
-          #   premake-opts: gmake2
+          - os: ubuntu-latest
+            premake-opts: gmake2
           - os: windows-latest
             premake-opts: vs2019
-          # - os: macos-10.15
-          #   premake-opts: gmake2
+          - os: macos-10.15
+            premake-opts: gmake2
     
     runs-on: ${{ matrix.os }}
     
@@ -41,16 +44,6 @@ jobs:
           wget -O premake.tar.gz ${PREMAKE_URL}-linux.tar.gz
           tar -xzf premake.tar.gz
 
-      - name: Vulkan for Ubuntu
-        if: startsWith(matrix.os, 'ubuntu')
-        shell: bash
-        working-directory: ${{github.workspace}}
-        run: |
-          wget -O vulkansdk.tar.gz https://sdk.lunarg.com/sdk/download/1.2.182.0/linux/vulkansdk-linux-x86_64-1.2.182.0.tar.gz
-          mkdir vulkansdk && tar -xf vulkansdk.tar.gz -C vulkansdk --strip-components=1
-          rm -rf vulkansdk/source
-          ls -la vulkansdk/x86_64
-
       - name: Dependencies for macOS
         if: startsWith(matrix.os, 'macos')
         shell: bash
@@ -60,18 +53,6 @@ jobs:
           wget -O premake.tar.gz ${PREMAKE_URL}-macosx.tar.gz
           tar -xzf premake.tar.gz
 
-      - name: Vulkan for macOS
-        if: startsWith(matrix.os, 'macos')
-        shell: bash
-        working-directory: ${{github.workspace}}
-        run: |
-          wget -O vulkansdk.dmg https://sdk.lunarg.com/sdk/download/1.2.182.0/mac/vulkansdk-macos-1.2.182.0.dmg
-          hdiutil attach vulkansdk.dmg
-          /Volumes/vulkansdk-macos-1.2.182.0/InstallVulkan.app/Contents/MacOS/InstallVulkan --root `pwd`/vulkansdk/ --accept-licenses --default-answer --confirm-command install copy_only=1
-          hdiutil detach /Volumes/vulkansdk-macos-1.2.182.0
-          mv vulkansdk/macOS vulkansdk/x86_64
-          ls -la vulkansdk/x86_64
-
       - name: Dependencies for Windows
         if: startsWith(matrix.os, 'windows')
         shell: bash
@@ -80,19 +61,44 @@ jobs:
           choco install wget
           wget -O premake.zip ${PREMAKE_URL}-windows.zip
           7z e premake.zip
+          echo "VULKAN_SDK=`pwd`/vulkansdk" >> $GITHUB_ENV
 
-      - name: Vulkan for Windows
-        if: startsWith(matrix.os, 'windows')
+      - name: Cache Vulkan
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: ${{github.workspace}}/vulkansdk
+          key: ${{ runner.os }}-vulkansdk-${{ env.VULKAN_VERSION }}
+
+      - name: Vulkan for Ubuntu
+        if: startsWith(matrix.os, 'ubuntu') && (steps.cache.outputs.cache-hit != 'true')
         shell: bash
         working-directory: ${{github.workspace}}
         run: |
-          wget -O vulkansdk.exe https://sdk.lunarg.com/sdk/download/1.2.182.0/windows/VulkanSDK-1.2.182.0-Installer.exe
+          wget -O vulkansdk.tar.gz ${VULKAN_SDK}/${VULKAN_VERSION}/linux/vulkansdk-linux-x86_64-${VULKAN_VERSION}.tar.gz
+          mkdir vulkansdk && tar -xf vulkansdk.tar.gz -C vulkansdk --strip-components=1
+
+      - name: Vulkan for macOS
+        if: startsWith(matrix.os, 'macos') && (steps.cache.outputs.cache-hit != 'true')
+        shell: bash
+        working-directory: ${{github.workspace}}
+        run: |
+          wget -O vulkansdk.dmg ${VULKAN_SDK}/${VULKAN_VERSION}/mac/vulkansdk-macos-${VULKAN_VERSION}.dmg
+          hdiutil attach vulkansdk.dmg
+          /Volumes/vulkansdk-macos-${VULKAN_VERSION}/InstallVulkan.app/Contents/MacOS/InstallVulkan --root `pwd`/vulkansdk/ --accept-licenses --default-answer --confirm-command install copy_only=1
+          hdiutil detach /Volumes/vulkansdk-macos-${VULKAN_VERSION}
+          mv vulkansdk/macOS vulkansdk/x86_64
+
+      - name: Vulkan for Windows
+        if: startsWith(matrix.os, 'windows') && (steps.cache.outputs.cache-hit != 'true')
+        shell: bash
+        working-directory: ${{github.workspace}}
+        run: |
+          wget -O vulkansdk.exe ${VULKAN_SDK}/${VULKAN_VERSION}/windows/VulkanSDK-${VULKAN_VERSION}-Installer.exe
           7z x -aoa ./vulkansdk.exe -ovulkansdk
-          ls -la vulkansdk/Include
-          echo "VULKAN_SDK=`pwd`/vulkansdk" >> $GITHUB_ENV
           
       - name: Build using Make
-        if: startsWith(matrix.os, 'macos') || startsWith(matrix.os, 'ubuntu')
+        if: ${{matrix.premake-opts == 'gmake2' }}
         working-directory: ${{github.workspace}}
         shell: bash
         run: |
@@ -104,18 +110,11 @@ jobs:
           make ALL
       
       - name: Build using MSVC
-        if: startsWith(matrix.os, 'windows')
+        if: ${{matrix.premake-opts == 'vs2019' }}
         working-directory: ${{github.workspace}}
         shell: cmd
         run: |
-          echo $(VULKAN_SDK)
           premake5 ${{matrix.premake-opts}} --skip_shader_validation
-          7z a result.zip build/*
           cd build
           "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe" .\Rendu.sln -t:Meta\ALL -nologo -v:minimal -p:Configuration=Release -p:Platform=x64
-  
-      - uses: actions/upload-artifact@v1
-        with:
-          name: result
-          path: ${{ github.workspace }}/result.zip
   
