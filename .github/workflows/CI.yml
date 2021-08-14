@@ -18,12 +18,12 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: ubuntu-latest
-            premake-opts: gmake2
+          # - os: ubuntu-latest
+          #   premake-opts: gmake2
           # - os: windows-latest
           #   premake-opts: vs2019
-          # - os: macos-10.15
-          #   premake-opts: gmake2
+          - os: macos-10.15
+            premake-opts: gmake2
     
     runs-on: ${{ matrix.os }}
     
