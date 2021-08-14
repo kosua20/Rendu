@@ -89,6 +89,7 @@ jobs:
           wget -O vulkansdk.exe https://sdk.lunarg.com/sdk/download/1.2.182.0/windows/VulkanSDK-1.2.182.0-Installer.exe
           7z x -aoa ./vulkansdk.exe -ovulkansdk
           ls -la vulkansdk/
+          echo "VULKAN_SDK=`pwd`/vulkansdk" >> $env:GITHUB_ENV
           
       - name: Build using Make
         if: startsWith(matrix.os, 'macos') || startsWith(matrix.os, 'ubuntu')
@@ -107,7 +108,6 @@ jobs:
         working-directory: ${{github.workspace}}
         shell: cmd
         run: |
-          set VULKAN_SDK="$(pwd)/vulkansdk"
           premake5 ${{matrix.premake-opts}} --skip_shader_validation
           cd build
           "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe" .\Rendu.sln -t:Meta\ALL -nologo -v:minimal -p:Configuration=Release -p:Platform=x64
