@@ -29,7 +29,7 @@ fileLines = fileHandle.readlines()
 fileHandle.close()
 
 # Doxygen infos.
-doxyNamespace = "GPU"
+doxyNamespace = "GPUShaders"
 doxyGroup = "Shaders"
 
 subNamespace = doxySubNamespaces[fileType]
@@ -46,6 +46,7 @@ bodyStr  = "public class " + className + " {" + "\n"
 bodyStr += "public:" + "\n"
 
 inInterfaceBlock = False
+inUniformBlock = False
 referencedFiles = []
 # Content of the shader
 for line in fileLines:
@@ -56,11 +57,17 @@ for line in fileLines:
 	if line.find("INTERFACE")>=0:
 		printLine = False
 		inInterfaceBlock = True
-	if inInterfaceBlock and line.find("}") >= 0:
+	if line.find("uniform")>=0 and line.find("sampler")<0:
+		printLine = False
+		inUniformBlock = True
+	if (inInterfaceBlock or inUniformBlock) and line.find("}") >= 0:
 		printLine = False
 		inInterfaceBlock = False
+		inUniformBlock = False
 	if inInterfaceBlock and len(line) > 0:
 		line = structKeyword + " " + line.lstrip()
+	if inUniformBlock and len(line) > 0:
+		line = "uniform" + " " + line.lstrip()
 	# Skip our include system directives, but keep track 
 	# of them so that we can reference them in the description.
 	incPos = line.find("#include")
@@ -73,13 +80,13 @@ for line in fileLines:
 	if printLine:
 		bodyStr += line
 
-# Close the class, the namespaces, the group.
-bodyStr += "\n}}}\n"
+# Close the class.
+bodyStr += "\n};"
 
 
 # C++ namespaces
-headerStr  = "namespace " + doxyNamespace + "{\n"
-headerStr += "namespace " + subNamespace + "{\n"
+headerStr  = "namespace " + doxyNamespace + " {\n"
+headerStr += "namespace " + subNamespace + " {\n"
 # Class description
 headerStr += "/** \\class " + className + "\n"
 headerStr += "  * \\brief " + classDetails + " " + descripName + " shader." + "\n"
@@ -98,6 +105,8 @@ if(len(referencedFiles) > 0):
 	headerStr += "\n"
 headerStr += "  * \\ingroup " + doxyGroup + "\n*/\n"
 
+# Close the namespaces
+bodyStr += "\n}\n}\n"
 
 printout(headerStr)
 printout(bodyStr)
