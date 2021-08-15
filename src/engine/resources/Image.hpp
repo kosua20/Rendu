@@ -9,11 +9,12 @@ class Image {
 
 public:
 
+	/** \brief Options for saving an image to disk. */
 	enum class Save : uint {
-		NONE = 0,
-		FLIP = 1 << 0,
-		IGNORE_ALPHA = 1 << 1,
-		SRGB_LDR = 1 << 2
+		NONE = 0, ///< No specific options.
+		FLIP = 1 << 0, ///< Flip the image vertically.
+		IGNORE_ALPHA = 1 << 1, ///< Force alpha to 1.
+		SRGB_LDR = 1 << 2 ///< Apply gamma sRGB correction before saving, ignored for HDR images.
 	};
 	
 	/** Default constructor. */
@@ -111,8 +112,7 @@ public:
 	
 	/** Save an image to disk, either in HDR (when using "exr" extension) or in LDR (any other extension).
 	 \param path the path to the image
-	 \param flip should the image be vertically flipped
-	 \param ignoreAlpha if true, the alpha channel will be ignored
+	 \param options options to use when writing the image on disk
 	 \return a success/error flag
 	 */
 	int save(const std::string & path, Save options) const;
@@ -149,16 +149,14 @@ private:
 	
 	/** Save a LDR image to disk using stb_image.
 	 \param path the path to the image
-	 \param flip should the image be vertically flipped
-	 \param ignoreAlpha if true, the alpha channel will be ignored
+	 \param options options to use when writing the image on disk
 	 \return a success/error flag
 	 */
 	int saveAsLDR(const std::string & path, Save options) const;
 	
 	/** Save a HDR image to disk using tiny_exr.
 	 \param path the path to the image
-	 \param flip should the image be vertically flipped
-	 \param ignoreAlpha if true, the alpha channel will be ignored
+	 \param options options to use when writing the image on disk
 	 \return a success/error flag
 	 */
 	int saveAsHDR(const std::string & path, Save options) const;

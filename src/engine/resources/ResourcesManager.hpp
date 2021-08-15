@@ -170,6 +170,10 @@ public:
 	 */
 	const Texture * getTexture(const std::string & name);
 
+	/** Get a default, empty texture of a given shape. This is useful for filling optional texture slots.
+	 \param shape the texture shape
+	 \return the texture information
+	 */
 	const Texture * getDefaultTexture(TextureShape shape);
 
 	/** Get a GPU program resource.
@@ -237,10 +241,15 @@ public:
 	 */
 	static bool externalFileExists(const std::string & path);
 
+	/** \brief Properties of a resource file */
 	struct FileInfos {
-		std::string path;
-		std::string name;
+		std::string path; ///< The file path.
+		std::string name; ///< The file name, without the extension.
 
+		/** Constructor.
+		 \param apath the path to the file
+		 \param aname the file name, without the extension
+		 */
 		FileInfos(const std::string& apath, const std::string& aname);
 	};
 

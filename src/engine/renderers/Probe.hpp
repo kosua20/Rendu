@@ -108,6 +108,6 @@ private:
 	std::array<Camera, 6> _cameras; ///< Camera for each face.
 	glm::vec3 _position; ///< The probe location.
 	Program * _integration; ///< Radiance preconvolution shader.
-	GPUAsyncTask _downloadTask = 0;
+	GPUAsyncTask _downloadTask = 0; ///< Current probe download task (for SH computations on the CPU).
 	const Mesh * _cube; ///< Skybox cube.
 };

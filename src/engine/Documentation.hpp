@@ -9,7 +9,7 @@
  
  \defgroup Graphics Graphics
  \brief Contain items and functions interacting with the graphics API.
- \details This module provides wrapper around GPU primitives, such as framebuffers, textures, meshes and shader programs. Utilities are also provided to render screen quads, alter the rendering state and populate/save GPU data. The interface is currently based on the OpenGL API.
+ \details This module provides wrapper around GPU primitives, such as framebuffers, textures, meshes and shader programs. Utilities are also provided to render screen quads, alter the rendering state and populate/save GPU data. The interface is currently based on the Vulkan API.
 
  \defgroup Generation Generation
  \brief Generation of randomness, noise and other procedural content.
@@ -144,25 +144,25 @@
  \brief GPU shading programs.
  \details Shaders are small programs compiled at runtime and executed by the GPU cores. They can process vertices (vertex shader), primitives (geometry shader) and compute per-pixel values (fragment shader).
  
- \namespace GPU
+ \namespace GPUShaders
  \brief Contains all shaders.
 
- \namespace GPU::Common
+ \namespace GPUShaders::Common
  \brief Contains shared shader code.
 
- \namespace GPU::Vert
+ \namespace GPUShaders::Vert
  \brief Contains all vertex shaders.
  
- \namespace GPU::Frag
+ \namespace GPUShaders::Frag
  \brief Contains all fragment shaders.
  
- \namespace GPU::Geom
+ \namespace GPUShaders::Geom
  \brief Contains all geometry shaders.
 
- \namespace GPU::TessControl
+ \namespace GPUShaders::TessControl
  \brief Contains all tesselation control shaders.
 
- \namespace GPU::TessEval
+ \namespace GPUShaders::TessEval
  \brief Contains all tesselation evaluation shaders.
 
  */

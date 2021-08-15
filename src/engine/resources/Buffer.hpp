@@ -4,11 +4,8 @@
 
 class GPUBuffer;
 
-/** \brief General purpose GPU/CPU buffer, without a CPU backing store.
- \details This allows the class to be template-free (to avoid exposing GPU/GPUObjects details
- in headers), while preserving the "pass general Object to GPU for setup/upload &
- GPUObject only stores ID and enums" approach followed by Texture and Mesh.
- In practice you will want to use Buffer to benefit from CPU storage and simplified upload.
+/** \brief General purpose GPU buffer, capable of handling different update frequency.
+ The internal GPU buffer might be large enough to contain multiple copies of the buffer while respecting alignment constraints.
  \ingroup Resources
  */
 class BufferBase {
@@ -18,6 +15,7 @@ public:
 	\param sizeInBytes the size of the buffer in bytes
 	\param atype the target of the buffer (uniform, index, vertex)
 	\param ausage the update frequency of the buffer content
+	 \note Depending on the update frequency, multiple copies of the buffer might be allocated internally.
 	 */
 	BufferBase(size_t sizeInBytes, BufferType atype, DataUse ausage);
 
@@ -52,15 +50,20 @@ public:
 
 };
 
+/** \brief Buffer used to transfer data from the CPU to the GPU or vice-versa, and to store static data such as vertex/index buffers.
+ \ingroup Resources
+ */
 class TransferBuffer : public BufferBase {
 public:
 
+	/**
+	 \param sizeInBytes the size of the transfer buffer
+	 \param atype how the buffer will be used (CPU to GPU, vertex buffer,...)
+	 */
 	TransferBuffer(size_t sizeInBytes, BufferType atype);
 
-	/** Upload data to the buffer. You have to take care of synchronization if
-	 updating a subregion of the buffer that is currently in use, except if
-	 sizeInBytes == size of the buffer, in which case the current buffer is
-	 orphaned and a new one used (if the driver is nice).
+	/** Upload data to the buffer. You have to take care of synchronization when
+	 updating a subregion of the buffer that is currently in use.
 	 \param sizeInBytes the size of the data to upload, in bytes
 	 \param data the data to upload
 	 \param offset offset in the buffer
@@ -90,21 +93,41 @@ public:
 	/** Move constructor. */
 	TransferBuffer(TransferBuffer &&) = delete;
 
+	/** Destructor. */
 	~TransferBuffer() = default;
 
 };
 
+/** \brief Uniform buffer exposed to all shader stages, that can be updated at varying frequencies.
+ Multiple instances of the GPU data will be maintained internally.
+ \details This allows the class to be template-free (to avoid exposing GPU/GPUObjects details
+ in headers), while preserving the "pass general Object to GPU for setup/upload &
+ GPUObject only stores handle and enums" approach followed by Texture and Mesh.
+ In practice you will want to use UniformBuffer<T> to benefit from CPU storage and simplified upload.
+ \ingroup Resources
+ */
 class UniformBufferBase : public BufferBase {
 public:
 
+	/** Constructor.
+	 \param sizeInBytes size of the uniform buffer
+	 \param use the update frequency
+	 */
 	UniformBufferBase(size_t sizeInBytes, DataUse use);
 
+	/** Upload data. The buffer will internally copy the data (using the internal size)
+	 to a region of mapped GPU memory. Buffering will be handled based on the update frequency.
+	 \param data the data to copy
+	 */
 	void upload(unsigned char * data);
 
+	/** Clean the buffer. */
 	void clean();
 
+	/** \return the current offset in bytes in the internal GPU buffer.*/
 	size_t currentOffset() const { return _offset; }
 
+	/** \return the size of one instance of the buffer */
 	size_t baseSize() const { return _baseSize; }
 
 	/** Copy assignment operator (disabled).
@@ -123,18 +146,20 @@ public:
 	/** Move constructor. */
 	UniformBufferBase(UniformBufferBase &&) = delete;
 
+	/** Destructor. */
 	virtual ~UniformBufferBase();
 
 private:
 
-	const size_t _baseSize;
-	size_t _alignment = 0;
-	size_t _offset = 0;
+	const size_t _baseSize; ///< The buffer base size (one instance).
+	size_t _alignment = 0; ///< The alignment constraint to respect between successive instances.
+	size_t _offset = 0; ///< The current offset in bytes in the array of instances.
 
 };
 
 /**
- \brief Represents a buffer containing arbitrary data, stored on the CPU and/or GPU.
+ \brief Represents a buffer containing uniform data, stored on the CPU and GPU.
+ Depending on the update frequency of the CPU data, the buffer will maintain one or multiple copies of the data on the GPU.
  \ingroup Resources
  */
 template<typename T>
@@ -184,20 +209,10 @@ public:
 		return data.size();
 	}
 
-	/*T* data(){
-		return data.data();
-	}*/
-
 	/** Send the buffer data to the GPU.
 	 Previously uploaded content will potentially be erased.
 	 */
 	void upload();
-
-	/** Send part of the buffer data to the GPU.
-	 \param count number of elements to upload
-	 \param offset location of the first element to upload
-	*/
-	//void upload(size_t offset, size_t count);
 
 	/** Copy assignment operator (disabled).
 	 \return a reference to the object assigned to

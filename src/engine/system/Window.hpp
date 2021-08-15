@@ -17,7 +17,6 @@ public:
 	/** Create a new window backed by a GPU context.
 	 \param name the name of the window
 	 \param config the configuration to use (additional info will be added to it)
-	 \param convertToSRGB should writes to the backbuffer be considered linear
 	 \param escapeQuit allows the user to close the window by pressing escape
 	 \param hidden should the window be hidden (for preprocess for instance)
 	*/
@@ -67,8 +66,8 @@ private:
 	
 	RenderingConfig & _config; ///< The window configuration.
 	GLFWwindow * _window = nullptr; ///< Internal window handle.
-	std::unique_ptr<Swapchain> _swapchain;
-	ImGui_ImplVulkan_InitInfo * _imgui = nullptr;
+	std::unique_ptr<Swapchain> _swapchain; ///< The swapchain displaying backbuffers.
+	ImGui_ImplVulkan_InitInfo * _imgui = nullptr; ///< ImGui setup information.
 	bool _frameStarted = false; ///< Has a frame been started.
 	bool _allowEscape = false; ///< Can the window be closed by pressing escape.
 };

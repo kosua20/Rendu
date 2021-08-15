@@ -26,6 +26,11 @@ public:
 	/** Clear CPU images data. */
 	void clearImages();
 
+	/** Allocate the CPU images in the mip range defined as input. Images outside the given range will be left untouched if present, or created empty if not.
+	 \param channels the number of channels for each image
+	 \param firstMip the first mip to allocate images for
+	 \param mipCount the number of mip to allocate, up to the texture level count
+	 */
 	void allocateImages(uint channels, uint firstMip = 0, uint mipCount = 0xFFFFFFFF);
 	
 	/** Cleanup all data.

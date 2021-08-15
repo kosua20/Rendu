@@ -31,3 +31,8 @@ typedef unsigned long ulong;
 #endif
 
 #include "system/Logger.hpp"
+
+#define STD_HASH(ENUM_NAME) \
+template <> struct std::hash<ENUM_NAME> { \
+	std::size_t operator()(const ENUM_NAME & t) const { return static_cast<std::underlying_type< ENUM_NAME >::type>(t); } \
+};
