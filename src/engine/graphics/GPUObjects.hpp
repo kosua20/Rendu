@@ -16,7 +16,6 @@ class GPUTexture {
 public:
 	/** Constructor from a layout description and a texture shape.
 	 \param texDescriptor the layout descriptor
-	 \param shape the texture dimensionality
 	 */
 	GPUTexture(const Descriptor & texDescriptor);
 
@@ -55,27 +54,28 @@ public:
 	/** Move constructor. */
 	GPUTexture(GPUTexture &&) = delete;
 
-	VkFormat format;
-	VkSamplerAddressMode wrapping;
-	VkFilter imgFiltering;
-	VkSamplerMipmapMode mipFiltering;
-	VkImageAspectFlags aspect;
+	VkFormat format; ///< Texture native format.
+	VkSamplerAddressMode wrapping; ///< Sampler native wrapping.
+	VkFilter imgFiltering; ///< Sampler native filtering.
+	VkSamplerMipmapMode mipFiltering; ///< Sampler native mip filtering.
+	VkImageAspectFlags aspect; ///< Texture aspects.
 	
 	uint channels; ///< Number of channels.
 
-	VkImage image = VK_NULL_HANDLE;
-	VkImageView view = VK_NULL_HANDLE;
-	std::vector<VkImageView> levelViews;
+	VkImage image = VK_NULL_HANDLE; ///< Native image handle.
+	VkImageView view = VK_NULL_HANDLE; ///< Native main image view (all mips).
+	std::vector<VkImageView> levelViews;  ///< Per-mip image views.
 
-	VmaAllocation data = VK_NULL_HANDLE;
-	VkSampler sampler = VK_NULL_HANDLE;
-	ImTextureID imgui = (ImTextureID)VK_NULL_HANDLE;
+	VmaAllocation data = VK_NULL_HANDLE; ///< Internal allocation.
+	VkSampler sampler = VK_NULL_HANDLE; ///< Native sampler handle.
+	ImTextureID imgui = (ImTextureID)VK_NULL_HANDLE; ///< ImGui compatible handle (internally a descriptor set).
 
-	std::vector<std::vector<VkImageLayout>> layouts;
-	VkImageLayout defaultLayout;
+	std::vector<std::vector<VkImageLayout>> layouts; ///< Per-mip per-layer image layout.
+	VkImageLayout defaultLayout; ///< Default layout to restore to in some cases.
 
-	std::string name;
-	bool owned = true; //< Do we own our Vulkan data.
+	std::string name; ///< Debug name. \todo Cleanup
+	bool owned = true; ///< Do we own our Vulkan data (not the case for swapchain images).
+
 private:
 	Descriptor _descriptor; ///< Layout used.
 };
@@ -90,7 +90,6 @@ public:
 
 	/** Constructor.
 	 \param atype the type of buffer
-	 \param use the update frequency
 	 */
 	GPUBuffer(BufferType atype);
 
@@ -113,10 +112,10 @@ public:
 	/** Move constructor. */
 	GPUBuffer(GPUBuffer &&) = delete;
 
-	VkBuffer buffer = VK_NULL_HANDLE;
-	VmaAllocation data = VK_NULL_HANDLE;
-	char* mapped = nullptr;
-	bool mappable = false;
+	VkBuffer buffer = VK_NULL_HANDLE; ///< Buffer native handle.
+	VmaAllocation data = VK_NULL_HANDLE; ///< Internal allocation.
+	char* mapped = nullptr; ///< If the buffer is CPU-mappable, its CPU address.
+	bool mappable = false; ///< Is the buffer mappable on the CPU.
 	
 };
 
@@ -136,6 +135,10 @@ public:
 	/** Clean internal GPU buffers. */
 	void clean();
 
+	/** Test if two meshes have the same input configuration (attributes,...) 
+	 * \param other the mesh to compare to
+	 * \return true if the two are equivalent for a pipeline
+	 */
 	bool isEquivalent(const GPUMesh& other) const;
 	
 	/** Constructor. */
@@ -157,14 +160,19 @@ public:
 	/** Move constructor. */
 	GPUMesh(GPUMesh &&) = delete;
 
+	/** \brief Internal GPU state for pipeline compatibility. */
 	struct State {
-		std::vector<VkVertexInputAttributeDescription> attributes;
-		std::vector<VkVertexInputBindingDescription> bindings;
-		std::vector<VkBuffer> buffers;
-		std::vector<VkDeviceSize> offsets;
+		std::vector<VkVertexInputAttributeDescription> attributes; ///< List of attributes.
+		std::vector<VkVertexInputBindingDescription> bindings; ///< List of bindings.
+		std::vector<VkBuffer> buffers; ///< Buffers used.
+		std::vector<VkDeviceSize> offsets; ///< Offsets in each buffer.
 
+		/** Check if another mesh state is compatible with this one.
+		 * \param other the state to compare to
+		 * \return true if equivalent
+		 */
 		bool isEquivalent(const State& other) const;
 	};
 
-	State state;
+	State state; ///< Internal GPU layout.
 };

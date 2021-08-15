@@ -24,10 +24,7 @@ enum class ShaderType : uint {
 	COUNT
 };
 
-/** Hash specialization for unordered_map/set */
-template <> struct std::hash<ShaderType> {
-	std::size_t operator()(const ShaderType& t) const { return static_cast<uint>(t); }
-};
+STD_HASH(ShaderType);
 
 /**
 \brief The type of data a buffer is storing, determining its use.
@@ -41,10 +38,7 @@ enum class BufferType : uint {
 	GPUTOCPU ///< Transfer.
 };
 
-/** Hash specialization for unordered_map/set */
-template <> struct std::hash<BufferType> {
-	std::size_t operator()(const BufferType& t) const { return static_cast<uint>(t); }
-};
+STD_HASH(BufferType);
 
 /**
 \brief The frequency at which a resources might be updated.
@@ -71,10 +65,7 @@ enum class TestFunction : uint {
 	ALWAYS ///< Always pass
 };
 
-/** Hash specialization for unordered_map/set */
-template <> struct std::hash<TestFunction> {
-	std::size_t operator()(const TestFunction& t) const { return static_cast<uint>(t); }
-};
+STD_HASH(TestFunction);
 
 /**
 \brief Stencil operation to perform.
@@ -91,10 +82,7 @@ enum class StencilOp : uint {
 	INVERT ///< Invert value bitwise.
 };
 
-/** Hash specialization for unordered_map/set */
-template <> struct std::hash<StencilOp> {
-	std::size_t operator()(const StencilOp& t) const { return static_cast<uint>(t); }
-};
+STD_HASH(StencilOp);
 
 /**
 \brief Blending mix equation for each component. Below we use src and dst to denote
@@ -110,10 +98,7 @@ enum class BlendEquation : uint {
 	MAX ///< Perform max(src, dst)
 };
 
-/** Hash specialization for unordered_map/set */
-template <> struct std::hash<BlendEquation> {
-	std::size_t operator()(const BlendEquation& t) const { return static_cast<uint>(t); }
-};
+STD_HASH(BlendEquation);
 
 
 /**
@@ -133,10 +118,7 @@ enum class BlendFunction : uint {
 	ONE_MINUS_DST_ALPHA ///< Multiply by 1-dst scalar alpha
 };
 
-/** Hash specialization for unordered_map/set */
-template <> struct std::hash<BlendFunction> {
-	std::size_t operator()(const BlendFunction& t) const { return static_cast<uint>(t); }
-};
+STD_HASH(BlendFunction);
 
 /**
 \brief Used to select a subset of faces. Front faces are defined counter-clockwise.
@@ -148,10 +130,7 @@ enum class Faces : uint {
 	ALL ///< All faces
 };
 
-/** Hash specialization for unordered_map/set */
-template <> struct std::hash<Faces> {
-	std::size_t operator()(const Faces& t) const { return static_cast<uint>(t); }
-};
+STD_HASH(Faces);
 
 /**
 \brief How polygons should be rasterized
@@ -163,10 +142,7 @@ enum class PolygonMode : uint {
 	POINT ///< As vertex points.
 };
 
-/** Hash specialization for unordered_map/set */
-template <> struct std::hash<PolygonMode> {
-	std::size_t operator()(const PolygonMode& t) const { return static_cast<uint>(t); }
-};
+STD_HASH(PolygonMode);
 
 /**
  \brief The shape of a texture: dimensions, layers organisation.
@@ -210,10 +186,7 @@ inline TextureShape & operator|=(TextureShape & t0, TextureShape & t1) {
 	return t0 = t0 | t1;
 }
 
-/** Hash specialization for unordered_map/set */
-template <> struct std::hash<TextureShape> {
-	std::size_t operator()(const TextureShape& t) const { return static_cast<uint>(t); }
-};
+STD_HASH(TextureShape);
 
 /**
  \brief The filtering mode of a texture: we deduce the magnification
@@ -229,10 +202,7 @@ enum class Filter : uint {
 	LINEAR_LINEAR ///< Bilinear, linear blend of mipmaps.
 };
 
-/** Hash specialization for unordered_map/set */
-template <> struct std::hash<Filter> {
-	std::size_t operator()(const Filter& t) const { return static_cast<uint>(t); }
-};
+STD_HASH(Filter);
 
 /**
  \brief The wrapping mode of a texture.
@@ -244,10 +214,7 @@ enum class Wrap : uint {
 	MIRROR ///< Repeat the texture using flipped versions to ensure continuity.
 };
 
-/** Hash specialization for unordered_map/set */
-template <> struct std::hash<Wrap> {
-	std::size_t operator()(const Wrap& t) const { return static_cast<uint>(t); }
-};
+STD_HASH(Wrap);
 
 /**
  \brief The layout of a texture: components count and type.
@@ -301,10 +268,7 @@ enum class Layout : uint {
 	RGBA32UI
 };
 
-/** Hash specialization for unordered_map/set */
-template <> struct std::hash<Layout> {
-	std::size_t operator()(const Layout& t) const { return static_cast<uint>(t); }
-};
+STD_HASH(Layout);
 
 /** \brief Regroups format, type, filtering and wrapping informations for a color buffer.
   \ingroup Graphics
@@ -382,9 +346,22 @@ class GPUMesh;
 class GPUState {
 public:
 
+	/// \brief Current framebuffer information.
+	struct FramebufferInfos {
+		const Framebuffer* framebuffer = nullptr; ///< The current framebuffer.
+		uint mipStart = 0; ///< First mip to be used in the current render pass.
+		uint mipCount = 1; ///< Number of mips used in the current render pass.
+		uint layerStart = 0; ///< First layer to be used in the current render pass.
+		uint layerCount = 1; ///< Number of layers used in the current render pass.
+	};
+
 	/// Constructor.
 	GPUState() = default;
 
+	/** Test if this state is equivalent (in a Vulkan pipeline state sense) to another.
+	 \param other the state to compare to
+	 \return true if they are compatible
+	 */
 	bool isEquivalent(const GPUState& other) const;
 
 	// Blend state.
@@ -393,7 +370,7 @@ public:
 	// Color state.
 	glm::bvec4 colorWriteMask {true}; ///< Which channels should be written to when rendering.
 
-	//
+	// Blend functions.
 	BlendFunction blendSrcRGB = BlendFunction::ONE; ///< Blending source type for RGB channels.
 	BlendFunction blendSrcAlpha = BlendFunction::ONE; ///< Blending source type for alpha channel.
 	BlendFunction blendDstRGB = BlendFunction::ONE; ///< Blending destination type for RGB channels.
@@ -404,12 +381,8 @@ public:
 	// Geometry state.
 	Faces cullFaceMode = Faces::BACK; ///< Which faces should be culled.
 	PolygonMode polygonMode = PolygonMode::FILL; ///< How should polygons be processed.
-	//float polygonOffsetFactor = 0.0f; ///< Polygon offset depth scaling.
-	//float polygonOffsetUnits = 0.0f; ///< Polygon offset depth shifting.
-	//bool polygonOffset	= false; ///< Is polygon offset enabled or not.
 
 	// Depth state.
-	//glm::vec2 depthRange {0.0f, 1.f}; ///< Depth value valid range.
 	TestFunction depthFunc = TestFunction::LESS; ///< Depth test function.
 	// Stencil state
 	TestFunction stencilFunc = TestFunction::ALWAYS; ///< Stencil test function.
@@ -420,31 +393,17 @@ public:
 	uchar stencilValue = 0; ///< Stencil reference value.
 	bool stencilTest = false; ///< Is the stencil test enabled or not.
 	bool stencilWriteMask = true; ///< should stencil be written to the stencil buffer or not.
-	//float depthClearValue = 1.0f; ///< Depth for clearing depth buffer.
 	bool depthTest	= false; ///< Is depth test enabled or not.
-	//bool depthClamp	  = false; ///< Should depth be clamped to the valid range or not.
 	bool depthWriteMask	 = true; ///< Should depth be written to the depth buffer or not.
 	bool cullFace	  = false; ///< Is backface culling enabled or not.
 	bool blend = false; ///< Blending enabled or not.
-
-	// Viewport and scissor state.
-	//glm::vec4 viewport {0.0f}; ///< Current viewport region.
-	bool sentinel = false;
+	bool sentinel = false; ///< Used to delimit the parameters that can be directly compared in memory.
 
 
 	// Binding state.
-	Program* program = nullptr;
-	const GPUMesh* mesh = nullptr;
-
-	struct FramebufferInfos {
-		const Framebuffer* framebuffer = nullptr;
-		uint mipStart = 0;
-		uint mipCount = 1;
-		uint layerStart = 0;
-		uint layerCount = 1;
-	};
-
-	FramebufferInfos pass;
+	Program* program = nullptr; ///< The current program.
+	const GPUMesh* mesh = nullptr; ///< The current mesh.
+	FramebufferInfos pass; ///< The current framebuffer.
 };
 
 /** \brief Represent a GPU query, automatically buffered and retrieved.
@@ -481,20 +440,20 @@ public:
 
 private:
 
-	Type _type = GPUQuery::Type::TIME_ELAPSED;
-	uint _count = 2;
-	uint _offset = 0;
-	bool _ranThisFrame = false;
+	Type _type = GPUQuery::Type::TIME_ELAPSED; ///< The type of query.
+	uint _count = 2; ///< Number of queries used internally (two for duration queries)
+	uint _offset = 0; ///< Offset of the first query in the query pools.
+	bool _ranThisFrame = false; ///< Has the query been run this frame (else we won't fetch its value).
 	bool _running = false; ///< Is a measurement currently taking place.
 
 };
 
-/** Hash specialization for unordered_map/set */
-template <> struct std::hash<GPUQuery::Type> {
-	std::size_t operator()(const GPUQuery::Type& t) const { return static_cast<uint>(t); }
-};
+STD_HASH(GPUQuery::Type);
 
+/** \brief Descriptor set allocation.
+ \ingroup Graphics
+ */
 struct DescriptorSet {
-	VkDescriptorSet handle = VK_NULL_HANDLE;
-	uint pool = 0;
+	VkDescriptorSet handle = VK_NULL_HANDLE; ///< The native handle.
+	uint pool = 0; ///< The pool in which the descriptor set has been allocated.
 };

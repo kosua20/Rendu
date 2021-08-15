@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include <array>
 
+// Forward declarations
 VK_DEFINE_HANDLE(VkBuffer)
 VK_DEFINE_HANDLE(VkImageView)
 VK_DEFINE_HANDLE(VkSampler)
@@ -19,12 +20,13 @@ VK_DEFINE_HANDLE(VkDescriptorSetLayout)
 /**
  \brief Represents a group of shaders used for rendering.
  \details Internally responsible for handling uniforms locations, shaders reloading and values caching.
+ Uniform sets are predefined: set 0 is for dynamic uniforms, set 1 for image-samplers, set 2 for static/per-frame uniform buffers.
  \ingroup Graphics
  */
 class Program {
 public:
 
-	/** Uniform reflection information.
+	/** \brief Uniform reflection information.
 	 */
 	struct UniformDef {
 
@@ -41,36 +43,36 @@ public:
 		std::string name; ///< The uniform name.
 		Type type; ///< The uniform type.
 
+		/// Uniform location.
 		struct Location {
-			uint binding;
-			uint offset;
+			uint binding; ///< Buffer binding.
+			uint offset; ///< Offset in buffer.
 		};
 
-		std::vector<Location> locations;
+		std::vector<Location> locations; ///< Locations where this uniform is present.
 
 	};
 
-	using Uniforms = std::unordered_map<std::string, UniformDef>;
-
+	/** \brief Image-sampler reflection information.
+	 */
 	struct SamplerDef {
-		std::string name;
-		TextureShape shape;
-		uint binding;
-		uint set;
+		std::string name; ///< Image name.
+		TextureShape shape; ///< Image shape.
+		uint binding; ///< Image-sampler binding location.
+		uint set; ///< Image-sampler binding set.
 	};
 
+	/** \brief Buffer reflection information.
+	 */
 	struct BufferDef {
-		std::string name;
-		uint binding;
-		uint size;
-		uint set;
-		std::vector<UniformDef> members;
+		std::string name; ///< Buffer name.
+		uint binding; ///< Buffer binding location.
+		uint size; ///< Buffer size.
+		uint set; ///< Buffer binding set.
+		std::vector<UniformDef> members; ///< Uniforms in buffer.
 	};
 
-	struct State {
-		std::vector<VkDescriptorSetLayout> setLayouts;
-		VkPipelineLayout layout = VK_NULL_HANDLE;
-	};
+	using Uniforms = std::unordered_map<std::string, UniformDef>; ///< List of named uniforms.
 
 	/**
 	 Load, compile and link shaders into a GPU program.
@@ -80,6 +82,7 @@ public:
 	 \param geometryContent the content of the geometry shader (can be empty)
 	 \param tessControlContent the content of the tessellation control shader (can be empty)
 	 \param tessEvalContent the content of the tessellation evaluation shader (can be empty)
+	 \todo Remove geometry shader.
 	 */
 	Program(const std::string & name, const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent = "", const std::string & tessControlContent = "", const std::string & tessEvalContent = "");
 
@@ -90,6 +93,7 @@ public:
 	 \param geometryContent the content of the geometry shader (can be empty)
 	 \param tessControlContent the content of the tessellation control shader (can be empty)
 	 \param tessEvalContent the content of the tessellation evaluation shader (can be empty)
+	 \todo Remove geometry shader.
 	 */
 	void reload(const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, const std::string & tessControlContent = "", const std::string & tessEvalContent = "");
 
@@ -105,8 +109,13 @@ public:
 	 */
 	void saveBinary(const std::string & outputPath) const;
 
+	/** \return true if the program has been recently reloaded. */
 	bool reloaded() const;
 	
+	/** Check if the program has been recently reloaded.
+	 * \param absorb should the reloaded flag be set to false afterwards
+	 * \return true if reloaded
+	 */
 	bool reloaded(bool absorb);
 
 	/** Activate the program shaders.
@@ -117,16 +126,39 @@ public:
 	 */
 	void clean();
 
+	/** Bind a buffer to a given location.
+	 * \param buffer the buffer to bind
+	 * \param slot the location to bind to
+	 */
 	void buffer(const UniformBufferBase& buffer, uint slot);
 
+	/** Bind a texture to a given location.
+	 * \param texture the texture to bind
+	 * \param slot the location to bind to
+	 * \param mip the mip of the texture to bind (or all mips if left at its default value)
+	 */
 	void texture(const Texture* texture, uint slot, uint mip = 0xFFFF);
 
+	/** Bind a texture to a given location.
+	 * \param texture the texture to bind
+	 * \param slot the location to bind to
+	 * \param mip the mip of the texture to bind (or all mips if left at its default value)
+	 */
 	void texture(const Texture& texture, uint slot, uint mip = 0xFFFF);
 
-	void textures(const std::vector<const Texture *> & textures, size_t startingSlot = 0);
+	/** Bind a set of textures to successive locations.
+	 * \param textures the textures to bind
+	 * \param slot the location to bind the first texture to
+	 * \note Successive textures will be bound to locations slot+1, slot+2,...
+	 */
+	void textures(const std::vector<const Texture *> & textures, size_t slot = 0);
 
+	/** Bind a default texture to a given location.
+	 * \param slot the location to bind the texture to
+	 */
 	void defaultTexture(uint slot);
 	
+	/** Update internal data (descriptors,...) before a draw. */
 	void update();
 
 	/** Set a given uniform value.
@@ -200,18 +232,6 @@ public:
 	 \param t the value to set the uniform to
 	 */
 	void uniform(const std::string & name, const glm::mat4 & t);
-
-	/** Set a given uniform buffer binding point.
-	 \param name the uniform name
-	 \param slot the binding point
-	 */
-	//void uniformBuffer(const std::string & name, size_t slot) const;
-
-	/** Set a given uniform sampler binding point.
-	 \param name the uniform name
-	 \param slot the binding point
-	 */
-	//void uniformTexture(const std::string & name, size_t slot) const;
 
 	/** Get a given uniform value.
 	 \param name the uniform name
@@ -312,15 +332,24 @@ public:
 	/** Move constructor. */
 	Program(Program &&) = default;
 
+	/// \brief Program pipeline state.
+	struct State {
+		std::vector<VkDescriptorSetLayout> setLayouts; ///< Descriptor sets layouts.
+		VkPipelineLayout layout = VK_NULL_HANDLE; ///< Layout handle (pre-created).
+	};
+
+	/// \return the program state for a pipeline
 	const State& getState() const {
 		return _state;
 	}
 
+	/// \brief Per-stage reflection information.
 	struct Stage {
-		std::vector<SamplerDef> samplers;
-		std::vector<BufferDef> buffers;
-		VkShaderModule module = VK_NULL_HANDLE;
+		std::vector<SamplerDef> samplers; ///< Image-samplers definitions.
+		std::vector<BufferDef> buffers; ///< Buffers definitions.
+		VkShaderModule module = VK_NULL_HANDLE; ///< Native shader data.
 
+		/// Reset the stage state.
 		void reset(){
 			samplers.clear();
 			buffers.clear();
@@ -328,18 +357,32 @@ public:
 		}
 	};
 
+	/** Query shader information for a stage.
+	 * \param type the stage to query
+	 * \return the stage reflection information
+	 */
 	Stage& stage(ShaderType type){
 		return _stages[uint(type)];
 	}
 
 private:
 
-	void updateUniformMetric() const; ///< Update internal metrics.
+	/// Update internal metrics.
+	void updateUniformMetric() const;
 
+	/** Obtain a pointer to the CPU memory for a uniform.
+	 * \param location the uniform location to retrieve
+	 * \return a const pointer to CPU memory
+	 */ 
 	inline const char* retrieveUniform(const UniformDef::Location& location) const {
 		return &(_dynamicBuffers.at(location.binding).buffer->data[location.offset]);
 	}
 
+	/** Obtain a pointer to the CPU memory for a uniform.
+	 * \param location the uniform location to retrieve
+	 * \return a pointer to CPU memory
+	 * \note This will mark the corresponding buffer as dirty.
+	 */ 
 	inline char* retrieveUniformNonConst(const UniformDef::Location& location) {
 		DynamicBufferState& buffState = _dynamicBuffers.at(location.binding);
 		buffState.dirty = true;
@@ -347,42 +390,45 @@ private:
 		return &(buffState.buffer->data[location.offset]);
 	}
 
-	std::array<Stage, int(ShaderType::COUNT)> _stages;
-
-	std::string _name;
-	State _state;
-
+	/// \brief Internal state for a dynamic uniform buffer.
 	struct DynamicBufferState {
-		std::shared_ptr<UniformBuffer<char>> buffer;
-		uint descriptorIndex = 0;
-		bool dirty = true;
+		std::shared_ptr<UniformBuffer<char>> buffer; ///< Owned Uniform buffer.
+		uint descriptorIndex = 0; ///< Descriptor index in set.
+		bool dirty = true; ///< Is the buffer dirty since last draw.
 	};
 
+	/// \brief Internal state for an image-sampler.
 	struct TextureState {
-		std::string name;
-		VkImageView view = VK_NULL_HANDLE;
-		VkSampler sampler = VK_NULL_HANDLE;
-		TextureShape shape = TextureShape::D2;
+		std::string name; ///< Name.
+		VkImageView view = VK_NULL_HANDLE; ///< Texture view.
+		VkSampler sampler = VK_NULL_HANDLE; ///< Texture sampler.
+		TextureShape shape = TextureShape::D2; ///< Texture shape.
 	};
 
+	/// \brief Internal state for a static (external) uniform buffer.
 	struct StaticBufferState {
-		std::string name;
-		VkBuffer buffer = VK_NULL_HANDLE;
-		uint offset = 0;
-		uint size = 0;
+		std::string name; ///< Name.
+		VkBuffer buffer = VK_NULL_HANDLE; ///< Native buffer handle.
+		uint offset = 0; ///< Start offset in the buffer.
+		uint size = 0; ///< Region size in the buffer.
 	};
 
-	std::unordered_map<std::string, UniformDef> _uniforms;
 
-	std::unordered_map<int, DynamicBufferState> _dynamicBuffers; // set 0
-	std::unordered_map<int, TextureState> _textures; // set 1
-	std::unordered_map<int, StaticBufferState> _staticBuffers; // set 2
+	std::string _name; ///< Debug name.
+	std::array<Stage, int(ShaderType::COUNT)> _stages; ///< Per-stage reflection data.
+	State _state; ///< Program pipeline state.
 
-	std::array<bool, 3> _dirtySets;
-	std::array<DescriptorSet, 3> _currentSets;
-	std::vector<uint32_t> _currentOffsets;
+	std::unordered_map<std::string, UniformDef> _uniforms; ///< All dynamic uniform definitions.
 
-	bool _reloaded = false;
+	std::unordered_map<int, DynamicBufferState> _dynamicBuffers; ///< Dynamic uniform buffer definitions (set 0).
+	std::unordered_map<int, TextureState> _textures; ///< Dynamic image-sampler definitions (set 1).
+	std::unordered_map<int, StaticBufferState> _staticBuffers; ///< Static uniform buffer definitions (set 2).
+
+	std::array<bool, 3> _dirtySets; ///< Marks which descriptor sets are dirty.
+	std::array<DescriptorSet, 3> _currentSets; ///< Descriptor sets.
+	std::vector<uint32_t> _currentOffsets; ///< Offsets in the descriptor set for dynamic uniform buffers.
+
+	bool _reloaded = false; ///< Has the program been reloaded.
 
 	friend class GPU; ///< Utilities will need to access GPU handle.
 };

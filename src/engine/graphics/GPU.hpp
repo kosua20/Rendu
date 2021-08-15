@@ -19,6 +19,7 @@
 
 /**@}*/
 
+// Forward declarations.
 class Framebuffer;
 class ScreenQuad;
 class Window;
@@ -61,16 +62,20 @@ public:
 	 */
 	static bool setup(const std::string & appName);
 
+	/** Setup a window swapchain, creating backbuffers and resources.
+	 * \param window the window to create a swapchain for
+	 * \return true if the setup was successful
+	 */
 	static bool setupWindow(Window * window);
 
-	/** Create and link a GLProgram using the shader code contained in the given strings.
+	/** Create and link a shader program using the shader code contained in the given strings.
+	 \param program the program to populate
 	 \param vertexContent the vertex shader string
 	 \param fragmentContent the fragment shader string
 	 \param geometryContent the optional geometry shader string
 	 \param tessControlContent the optional tesselation control shader string
 	 \param tessEvalContent the optional tesselation evaluation shader string
 	 \param debugInfos the name of the program, or any custom debug infos that will be logged.
-	 \return the GPU ID of the program
 	 */
 	static void createProgram(Program & program, const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, const std::string & tessControlContent, const std::string & tessEvalContent,const std::string & debugInfos);
 
@@ -81,14 +86,15 @@ public:
 
 	/** Bind a framebuffer as a draw destination.
 	 \param framebuffer the framebuffer to bind as draw destination
+	 \param layer the layer to bind
+	 \param mip the mip level to bind
 	 */
 	static void bindFramebuffer(const Framebuffer & framebuffer, size_t layer, size_t mip);
 
 	/** Save a given framebuffer content to the disk.
 	 \param framebuffer the framebuffer to save
 	 \param path the output image path
-	 \param flip should the image be vertically fliped before saving
-	 \param ignoreAlpha should the alpha channel be ignored if it exists
+	 \param options the modifications to apply when saving
 	 \note The output image extension will be automatically added based on the framebuffer type and format.
 	 \warning Export of small size float framebuffers can create artifacts.
 	 */
@@ -97,9 +103,13 @@ public:
 	/** Create a GPU texture with a given layout and allocate it.
 	 \param texture the texture to setup on the GPU
 	 \param descriptor type and format information
+	 \param drawable will the texture be used as an attachment
 	 */
 	static void setupTexture(Texture & texture, const Descriptor & descriptor, bool drawable);
 
+	/** Create a sampler based on the texture descriptor sampling parameters.
+	 * \param texture the texture to setup a sampler for
+	 */
 	static void setupSampler(GPUTexture & texture);
 
 	/** Upload a texture images data to the GPU.
@@ -107,26 +117,38 @@ public:
 	 */
 	static void uploadTexture(const Texture & texture);
 
-	/** Download a texture images data from the GPU.
+	/** Download a texture images current data from the GPU.
 	 \param texture the texture to download
 	 \warning The CPU images of the texture will be overwritten.
+	 \note The download will be performed when this function is called, so the data might be coming from a previous frame.
 	 */
 	static void downloadTexture(Texture & texture);
 
-	/** Download a texture images data from the GPU.
+	/** Download a texture images current data from the GPU.
 	 \param texture the texture to download
 	 \param level the specific mip level to download
 	 \warning The CPU images of the texture will be overwritten.
+	 \note The download will be performed when this function is called, so the data might be coming from a previous frame.
 	 */
 	static void downloadTexture(Texture & texture, int level);
 
+	/** Copy a texture GPU data at this point of the frame command buffer, and download the copied data once the frame is complete.
+	 * \param texture the texture to download
+	 * \param offset (x,y) offset of the region in the texture to download, from the top-left corner
+	 * \param size dimensions of the region to download
+	 * \param layerCount number of layers to download from
+	 * \param callback function that will be called once the data has been download and stored in the images of the Texture parameter
+	 * \return an async task ID
+	 */ 
 	static GPUAsyncTask downloadTextureAsync(const Texture& texture, const glm::uvec2& offset, const glm::uvec2& size, uint layerCount, std::function<void(const Texture&)> callback);
 
+	/** Cancel an asynchronous download operation.
+	 * \param id the ID of the task to cancel
+	 */
 	static void cancelAsyncOperation(const GPUAsyncTask& id);
 	
 	/** Generate a texture mipmaps on the GPU.
 	 \param texture the texture to use
-	 \note This will set the number of levels to 1000.
 	 */
 	static void generateMipMaps(const Texture & texture);
 
@@ -151,6 +173,11 @@ public:
 	 */
 	static void downloadBuffer(const BufferBase & buffer, size_t size, uchar * data, size_t offset = 0);
 
+	/** Ensure that a buffer region is visible from the CPU and up-to-date.
+	 * \param buffer the buffer to flush
+	 * \param size size of the region to flush
+	 * \param offset start of the region in the buffer
+	 */
 	static void flushBuffer(const BufferBase & buffer, size_t size, size_t offset);
 
 	/** Mesh loading: send a mesh data to the GPU and set the input mesh GPU infos accordingly.
@@ -173,7 +200,8 @@ public:
 	/** Draw a fullscreen quad.*/
 	static void drawQuad();
 
-	/** Flush the GPU command pipelines and wait for all processing to be done.
+	/** Flush the GPU command queue and wait for all processing to be done.
+	 * \note This won't submit command buffers that are currently being filled.
 	 */
 	static void sync();
 
@@ -327,34 +355,56 @@ public:
 	 */
 	static void blit(const Texture & src, Framebuffer & dst, Filter filter);
 
+	/** \return the opaque internal GPU context. */
 	static GPUContext* getInternal();
 
+	/** Clean all created GPU structures. */
 	static void cleanup();
 
+	/** End the current render pass if one is started. */
 	static void unbindFramebufferIfNeeded();
 
 private:
 	
+	/** If the GPU state has changed, retrieve and bind the pipeline corresponding to the new state. */
 	static void bindPipelineIfNeeded();
 
+	/** Clean a texture GPU object. 
+	 * \param tex the object to delete
+	 */
 	static void clean(GPUTexture & tex);
 
+	/** Clean a mesh GPU object. 
+	 * \param mesh the object to delete
+	 */
 	static void clean(GPUMesh & mesh);
 
+	/** Clean a buffer GPU object. 
+	 * \param buffer the object to delete
+	 */
 	static void clean(GPUBuffer & buffer);
 
+	/** Clean a framebuffer GPU object. 
+	 * \param framebuffer the object to delete
+	 * \param deleteRenderPasses should the render passes be deleted (we can skip it for swapchains)
+	 */
 	static void clean(Framebuffer & framebuffer, bool deleteRenderPasses);
 
+	/** Clean a shader program object. 
+	 * \param program the object to delete
+	 */
 	static void clean(Program & program);
 
+	/** Process destruction requests for which we are sure that the resources are not used anymore. */
 	static void processDestructionRequests();
 
+	/** Process async download tasks for frames that are complete. */
 	static void processAsyncTasks();
 
-	static GPUState _state; ///< Current GPU state for caching.
-	static GPUState _lastState; ///< Current GPU state for caching.
+	static GPUState _state; ///< Current GPU state.
+	static GPUState _lastState; ///< Previous draw call GPU state for caching.
 	static Metrics _metrics; ///< Internal metrics (draw count, state changes,...).
 	static Metrics _metricsPrevious; ///< Internal metrics for the last completed frame.
-	static Mesh _quad; ///< The unique empty screenquad VAO.
+	static Mesh _quad; ///< Screen-covering triangle.
 
 };
