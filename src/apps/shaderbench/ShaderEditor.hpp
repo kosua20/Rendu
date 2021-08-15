@@ -32,6 +32,9 @@ public:
 	/** Destructor. */
 	~ShaderEditor() override;
 
+	/** Load an external shader from disk.
+	 \param path the path to the file on disk
+	 */
 	void loadShader(const std::string& path);
 
 private:
