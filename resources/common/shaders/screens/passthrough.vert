@@ -5,11 +5,10 @@ layout(location = 0) out INTERFACE {
 } Out ;
 
 /**
-
+ Passthrough screen covering triangle.
 */
 void main(){
-	vec2 temp = 0.5 * v.xy + 0.5;
-	Out.uv = temp;
+	Out.uv = 0.5 * v.xy + 0.5;
 	gl_Position.xy = v.xy;
 	gl_Position.zw = vec2(1.0);
 }

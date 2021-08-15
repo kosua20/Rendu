@@ -49,6 +49,7 @@ vec3 toCube(vec3 v){
 
 /** Transform a world space direction to cubemap array space. A vertical flip is needed.
  \param v the direction to flip
+ \param layer the array layer index
  \return the direction to use to sample in the cubemap
  */
 vec4 toCube(vec3 v, int layer){
