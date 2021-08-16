@@ -62,9 +62,12 @@ function CommonSetup()
 	cppdialect("C++11")
 	-- Compiler flags
 	filter("toolset:not msc*")
-		buildoptions({ "-Wall", "-Wextra" })
+		buildoptions({ "-Wall", "-Wextra", "-Wno-unknown-pragmas" })
 	filter("toolset:msc*")
-		buildoptions({ "-W3"})
+		-- Ignore unknown pragmas.
+		buildoptions({ "-W3", "-Wd4068"})
+		-- Ignore missing PDBs.
+		linkoptions({ "/IGNORE:4099"})
 	filter({})
 	-- Common include dirs
 	-- System headers are used to support angled brackets in Xcode.
