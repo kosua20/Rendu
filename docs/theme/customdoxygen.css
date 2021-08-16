@@ -22,11 +22,6 @@ h1.groupheader {
 	line-height: 38px;
 }
 
-.image img {
-	max-width: 800px;
-	width:100%;
-}
-
 h2.groupheader {
 	border-bottom: 0px;
 	color: #333;
@@ -366,8 +361,9 @@ img.formulaDsp {
 	
 }
 
-img.formulaInl {
+img.formulaInl, img.inline {
 	vertical-align: middle;
+	max-width: 880px;
 }
 
 div.center {
