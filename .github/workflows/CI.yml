@@ -43,7 +43,6 @@ jobs:
           sudo apt-get update -y && sudo apt-get install -yq xorg-dev libgtk-3-dev
           wget -O premake.tar.gz ${PREMAKE_URL}-linux.tar.gz
           tar -xzf premake.tar.gz
-          echo "VULKAN_SDK=`pwd`/vulkansdk/x86_64" >> $GITHUB_ENV
 
       - name: Dependencies for macOS
         if: startsWith(matrix.os, 'macos')
@@ -53,7 +52,6 @@ jobs:
           brew install wget
           wget -O premake.tar.gz ${PREMAKE_URL}-macosx.tar.gz
           tar -xzf premake.tar.gz
-          echo "VULKAN_SDK=`pwd`/vulkansdk/macOS" >> $GITHUB_ENV
 
       - name: Dependencies for Windows
         if: startsWith(matrix.os, 'windows')
@@ -63,14 +61,13 @@ jobs:
           choco install wget
           wget -O premake.zip ${PREMAKE_URL}-windows.zip
           7z e premake.zip
-          echo "VULKAN_SDK=`pwd`/vulkansdk" >> $GITHUB_ENV
 
       - name: Cache Vulkan
         id: cache
         uses: actions/cache@v2
         with:
           path: ${{github.workspace}}/vulkansdk
-          key: ${{ runner.os }}-vulkansdk-${{ env.VULKAN_VERSION }}-1
+          key: ${{ runner.os }}-vulkansdk-${{ env.VULKAN_VERSION }}
 
       - name: Vulkan for Ubuntu
         if: startsWith(matrix.os, 'ubuntu') && (steps.cache.outputs.cache-hit != 'true')
@@ -89,6 +86,7 @@ jobs:
           hdiutil attach vulkansdk.dmg
           /Volumes/vulkansdk-macos-${VULKAN_VERSION}/InstallVulkan.app/Contents/MacOS/InstallVulkan --root `pwd`/vulkansdk/ --accept-licenses --default-answer --confirm-command install copy_only=1
           hdiutil detach /Volumes/vulkansdk-macos-${VULKAN_VERSION}
+          mv vulkansdk/macOS vulkansdk/x86_64
 
       - name: Vulkan for Windows
         if: startsWith(matrix.os, 'windows') && (steps.cache.outputs.cache-hit != 'true')
@@ -104,6 +102,7 @@ jobs:
         shell: bash
         run: |
           ./premake5 ${{matrix.premake-opts}} --skip_shader_validation --env_vulkan_sdk
+          export VULKAN_SDK=`pwd`/vulkansdk/x86_64
           cd build
           make ALL
       
@@ -112,8 +111,8 @@ jobs:
         working-directory: ${{github.workspace}}
         shell: cmd
         run: |
-          set VULKAN_SDK=%cd%\vulkansdk
           premake5 ${{matrix.premake-opts}} --skip_shader_validation --env_vulkan_sdk
+          set VULKAN_SDK=%cd%\vulkansdk
           cd build
           "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe" .\Rendu.sln -t:Meta\ALL -nologo -v:minimal -p:Configuration=Release -p:Platform=x64
   
