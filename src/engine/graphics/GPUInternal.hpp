@@ -30,7 +30,7 @@ class Texture;
 	} while(0);
 #else
 	/// Macro used to check the return code of Vulkan calls.
-	#define VK_RETURN_CHECK(F, L)
+#define VK_RETURN_CHECK(F, L) (F);
 #endif
 
 /// Macro used to check the return code of Vulkan calls.
