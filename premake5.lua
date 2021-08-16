@@ -65,7 +65,7 @@ function CommonSetup()
 		buildoptions({ "-Wall", "-Wextra", "-Wno-unknown-pragmas" })
 	filter("toolset:msc*")
 		-- Ignore unknown pragmas.
-		buildoptions({ "-W3", "-Wd4068"})
+		buildoptions({ "-W3", "-wd4068"})
 		-- Ignore missing PDBs.
 		linkoptions({ "/IGNORE:4099"})
 	filter({})
