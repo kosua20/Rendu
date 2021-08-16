@@ -263,7 +263,7 @@ void ShaderCompiler::reflect(glslang::TProgram & program, Program::Stage & stage
 	stage.buffers.resize(uboCount);
 
 	for(size_t uid = 0; uid < uboCount; ++uid){
-		const glslang::TObjectReflection& ubo = program.getUniformBlock(uid);
+		const glslang::TObjectReflection& ubo = program.getUniformBlock(int(uid));
 		Program::BufferDef& def = stage.buffers[ubo.index];
 		def.binding = ubo.getBinding();
 		def.name = ubo.name;
@@ -283,7 +283,7 @@ void ShaderCompiler::reflect(glslang::TProgram & program, Program::Stage & stage
 	// Retrieve each uniform infos.
 	const size_t uniformCount = program.getNumUniformVariables();
 	for(size_t uid = 0; uid < uniformCount; ++uid){
-		const glslang::TObjectReflection& uniform = program.getUniform(uid);
+		const glslang::TObjectReflection& uniform = program.getUniform(int(uid));
 		const glslang::TType& type = *uniform.getType();
 
 		const int binding = uniform.getBinding();

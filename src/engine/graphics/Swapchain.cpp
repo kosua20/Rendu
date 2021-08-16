@@ -8,7 +8,7 @@ Swapchain::Swapchain(GPUContext & context, const RenderingConfig & config) : _de
 	_imageIndex = 0;
 	_context = &context;
 	_vsync = config.vsync;
-	setup(config.screenResolution.x, config.screenResolution.y);
+	setup(uint32_t(config.screenResolution.x), uint32_t(config.screenResolution.y));
 
 }
 
@@ -455,7 +455,7 @@ void Swapchain::clean() {
 	// We own the shared depth, clean it.
 	_depth.clean();
 
-	vkFreeCommandBuffers(_context->device, _context->commandPool, _context->commandBuffers.size(), _context->commandBuffers.data());
+	vkFreeCommandBuffers(_context->device, _context->commandPool, uint32_t(_context->commandBuffers.size()), _context->commandBuffers.data());
 	vkDestroySwapchainKHR(_context->device, _swapchain, nullptr);
 
 	for(size_t i = 0; i < _framesFinished.size(); ++i) {

@@ -92,7 +92,8 @@ bool VkUtils::checkDeviceExtensionsSupport(VkPhysicalDevice device, const std::v
 	return true;
 }
 
-bool VkUtils::getQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface, uint & graphicsFamily, uint & presentFamily){
+bool VkUtils::getQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface, int & graphicsFamily, int & presentFamily){
+	graphicsFamily = presentFamily = -1;
 	// Get all queues.
 	uint32_t queueFamilyCount = 0;
 	vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
@@ -335,7 +336,7 @@ void VkUtils::imageLayoutBarrier(VkCommandBuffer& commandBuffer, GPUTexture& tex
 		return;
 	}
 
-	vkCmdPipelineBarrier(commandBuffer, srcStage, dstStage, 0, 0, nullptr, 0, nullptr, barriers.size(), barriers.data());
+	vkCmdPipelineBarrier(commandBuffer, srcStage, dstStage, 0, 0, nullptr, 0, nullptr, uint32_t(barriers.size()), barriers.data());
 
 }
 
@@ -562,7 +563,7 @@ glm::uvec2 VkUtils::copyTextureRegionToBuffer(VkCommandBuffer& commandBuffer, co
 	dstBuffer.reset(new TransferBuffer(currentSize, BufferType::GPUTOCPU));
 
 	// Copy from the intermediate texture.
-	vkCmdCopyImageToBuffer(commandBuffer, transferTexture.gpu->image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, dstBuffer->gpu->buffer, blitRegions.size(), blitRegions.data());
+	vkCmdCopyImageToBuffer(commandBuffer, transferTexture.gpu->image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, dstBuffer->gpu->buffer, uint32_t(blitRegions.size()), blitRegions.data());
 
 	// Compute the index of the first image we will fill.
 	size_t firstImage = 0;
@@ -595,7 +596,7 @@ void VkUtils::blitTexture(VkCommandBuffer& commandBuffer, const Texture& src, co
 
 	const VkFilter filterVk = filter == Filter::LINEAR ? VK_FILTER_LINEAR : VK_FILTER_NEAREST;
 
-	for(size_t mid = 0; mid < mipEffectiveCount; ++mid) {
+	for(uint mid = 0; mid < mipEffectiveCount; ++mid) {
 		const uint srcMip = mipStartSrc + mid;
 		const uint dstMip = mipStartDst + mid;
 
@@ -615,16 +616,16 @@ void VkUtils::blitTexture(VkCommandBuffer& commandBuffer, const Texture& src, co
 		blitRegions[mid].dstOffsets[1] = { int32_t(dstOffset[0] + dstWidth), int32_t(dstOffset[1] + dstHeight), int32_t(0 + dstDepth)};
 		blitRegions[mid].srcSubresource.aspectMask = src.gpu->aspect;
 		blitRegions[mid].dstSubresource.aspectMask = dst.gpu->aspect;
-		blitRegions[mid].srcSubresource.mipLevel = srcMip;
-		blitRegions[mid].dstSubresource.mipLevel = dstMip;
-		blitRegions[mid].srcSubresource.baseArrayLayer = layerStartSrc;
-		blitRegions[mid].dstSubresource.baseArrayLayer = layerStartDst;
+		blitRegions[mid].srcSubresource.mipLevel = uint32_t(srcMip);
+		blitRegions[mid].dstSubresource.mipLevel = uint32_t(dstMip);
+		blitRegions[mid].srcSubresource.baseArrayLayer = uint32_t(layerStartSrc);
+		blitRegions[mid].dstSubresource.baseArrayLayer = uint32_t(layerStartDst);
 		blitRegions[mid].srcSubresource.layerCount = layerEffectiveCount;
 		blitRegions[mid].dstSubresource.layerCount = layerEffectiveCount;
 	}
 
 
-	vkCmdBlitImage(commandBuffer, src.gpu->image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, dst.gpu->image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, blitRegions.size(), blitRegions.data(), filterVk);
+	vkCmdBlitImage(commandBuffer, src.gpu->image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, dst.gpu->image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, uint32_t(blitRegions.size()), blitRegions.data(), filterVk);
 
 	VkUtils::imageLayoutBarrier(commandBuffer, *src.gpu, src.gpu->defaultLayout, mipStartSrc, mipEffectiveCount, layerStartSrc, layerEffectiveCount);
 	VkUtils::imageLayoutBarrier(commandBuffer, *dst.gpu, dst.gpu->defaultLayout, mipStartDst, mipEffectiveCount, layerStartDst, layerEffectiveCount);

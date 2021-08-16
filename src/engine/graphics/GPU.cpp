@@ -161,7 +161,8 @@ bool GPU::setupWindow(Window * window){
 		return false;
 	}
 	// Query the available queues.
-	uint graphicsIndex, presentIndex;
+	int graphicsIndex = -1;
+	int presentIndex = -1;
 	bool found = VkUtils::getQueueFamilies(_context.physicalDevice, _context.surface, graphicsIndex, presentIndex);
 	if(!found){
 		Log::Error() << Log::GPU << "Unable to find compatible queue families." << std::endl;
@@ -170,8 +171,8 @@ bool GPU::setupWindow(Window * window){
 
 	// Select queues.
 	std::set<uint> families;
-	families.insert(graphicsIndex);
-	families.insert(presentIndex);
+	families.insert(uint(graphicsIndex));
+	families.insert(uint(presentIndex));
 
 	float queuePriority = 1.0f;
 	std::vector<VkDeviceQueueCreateInfo> queueInfos;
@@ -209,10 +210,10 @@ bool GPU::setupWindow(Window * window){
 		Log::Error() << Log::GPU << "Unable to create logical device." << std::endl;
 		return false;
 	}
-	_context.graphicsId = graphicsIndex;
-	_context.presentId = presentIndex;
-	vkGetDeviceQueue(_context.device, graphicsIndex, 0, &_context.graphicsQueue);
-	vkGetDeviceQueue(_context.device, presentIndex, 0, &_context.presentQueue);
+	_context.graphicsId = uint(graphicsIndex);
+	_context.presentId = uint(presentIndex);
+	vkGetDeviceQueue(_context.device, _context.graphicsId, 0, &_context.graphicsQueue);
+	vkGetDeviceQueue(_context.device, _context.presentId, 0, &_context.presentQueue);
 
 	// Setup allocator.
 	VmaAllocatorCreateInfo allocatorInfo = {};
@@ -256,7 +257,7 @@ bool GPU::setupWindow(Window * window){
 	// Create the command pool.
 	VkCommandPoolCreateInfo poolInfo = {};
 	poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-	poolInfo.queueFamilyIndex = graphicsIndex;
+	poolInfo.queueFamilyIndex = _context.graphicsId;
 	poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 	if(vkCreateCommandPool(_context.device, &poolInfo, nullptr, &_context.commandPool) != VK_SUCCESS) {
 		Log::Error() << Log::GPU << "Unable to create command pool." << std::endl;
@@ -334,7 +335,7 @@ void GPU::bindProgram(const Program & program){
 	_state.program = (Program*)&program;
 }
 
-void GPU::bindFramebuffer(const Framebuffer & framebuffer, size_t layer, size_t mip){
+void GPU::bindFramebuffer(const Framebuffer & framebuffer, uint layer, uint mip){
 	_state.pass.framebuffer = &framebuffer;
 	_state.pass.mipStart = mip;
 	_state.pass.mipCount = 1;
@@ -566,12 +567,12 @@ void GPU::uploadTexture(const Texture & texture) {
 	VkUtils::textureLayoutBarrier(commandBuffer, transferTexture, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 
 	// How many images in the mip level (for arrays and cubes)
-	const size_t layers = texture.shape == TextureShape::D3 ? 1 : texture.depth;
+	const uint layers = texture.shape == TextureShape::D3 ? 1u : texture.depth;
 	// Copy operation for each mip level that is available on the CPU.
 	size_t currentImg = 0;
 	currentOffset = 0;
 
-	for(size_t mid = 0; mid < texture.levels; ++mid) {
+	for(uint mid = 0; mid < texture.levels; ++mid) {
 		// How deep is the image for 3D textures.
 		const uint d = texture.shape == TextureShape::D3 ? std::max<uint>(texture.depth >> mid, 1u) : 1u;
 		const uint w = std::max<uint>(texture.width >> mid, 1u);
@@ -583,9 +584,9 @@ void GPU::uploadTexture(const Texture & texture) {
 		region.bufferRowLength = 0; // Tightly packed.
 		region.bufferImageHeight = 0; // Tightly packed.
 		region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-		region.imageSubresource.mipLevel = mid;
+		region.imageSubresource.mipLevel = uint32_t(mid);
 		region.imageSubresource.baseArrayLayer = 0;
-		region.imageSubresource.layerCount = layers;
+		region.imageSubresource.layerCount = uint32_t(layers);
 		// Offset *in the subregion*
 		region.imageOffset = {0, 0, 0};
 		region.imageExtent = { (uint32_t)w, (uint32_t)h, (uint32_t)d};
@@ -648,7 +649,7 @@ void GPU::downloadTexture(Texture & texture, int level) {
 	const glm::uvec2 size(texture.width, texture.height);
 	
 	std::shared_ptr<TransferBuffer> dstBuffer;
-	const glm::vec2 imgRange = VkUtils::copyTextureRegionToBuffer(commandBuffer, texture, dstBuffer, firstLevel, levelCount, 0, layersCount, glm::uvec2(0), size);
+	const glm::uvec2 imgRange = VkUtils::copyTextureRegionToBuffer(commandBuffer, texture, dstBuffer, firstLevel, levelCount, 0, layersCount, glm::uvec2(0), size);
 	VkUtils::endOneTimeCommandBuffer(commandBuffer, _context);
 	GPU::flushBuffer(*dstBuffer, dstBuffer->sizeMax, 0);
 
@@ -719,10 +720,10 @@ void GPU::generateMipMaps(const Texture & texture) {
 
 	const bool isCube = texture.shape & TextureShape::Cube;
 	const bool isArray = texture.shape & TextureShape::Array;
-	const size_t layers = (isCube || isArray) ? texture.depth : 1;
-	const size_t baseWidth = texture.width;
-	const size_t baseHeight = texture.height;
-	const size_t baseDepth = texture.shape == TextureShape::D3 ? texture.depth : 1;
+	const uint layers = (isCube || isArray) ? texture.depth : 1u;
+	const uint baseWidth = texture.width;
+	const uint baseHeight = texture.height;
+	const uint baseDepth = texture.shape == TextureShape::D3 ? texture.depth : 1u;
 
 	// Blit the texture to each mip level.
 	VkCommandBuffer commandBuffer = VkUtils::startOneTimeCommandBuffer(_context);
@@ -761,9 +762,9 @@ void GPU::generateMipMaps(const Texture & texture) {
 		blit.srcOffsets[0] = { 0, 0, 0 };
 		blit.srcOffsets[1] = { (int32_t)width, (int32_t)height, (int32_t)depth };
 		blit.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-		blit.srcSubresource.mipLevel = mid - 1;
+		blit.srcSubresource.mipLevel = uint32_t(mid - 1);
 		blit.srcSubresource.baseArrayLayer = 0;
-		blit.srcSubresource.layerCount = layers;
+		blit.srcSubresource.layerCount = uint32_t(layers);
 		blit.dstOffsets[0] = { 0, 0, 0 };
 
 		// Divide all dimensions by 2 if possible.
@@ -773,9 +774,9 @@ void GPU::generateMipMaps(const Texture & texture) {
 
 		blit.dstOffsets[1] = { (int32_t)width, (int32_t)height, (int32_t)depth };
 		blit.dstSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-		blit.dstSubresource.mipLevel = mid;
+		blit.dstSubresource.mipLevel = uint32_t(mid);
 		blit.dstSubresource.baseArrayLayer = 0;
-		blit.dstSubresource.layerCount = layers;
+		blit.dstSubresource.layerCount = uint32_t(layers);
 
 		// Blit using linear filtering for smoother downscaling.
 		vkCmdBlitImage(commandBuffer, texture.gpu->image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, texture.gpu->image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &blit, VK_FILTER_LINEAR);
@@ -979,7 +980,7 @@ void GPU::setupMesh(Mesh & mesh) {
 		const size_t elementSize = sizeof(float) * attrib.components;
 		state.bindings.emplace_back();
 		state.bindings.back().binding = bindingIndex;
-		state.bindings.back().stride = elementSize;
+		state.bindings.back().stride = uint32_t(elementSize);
 		state.bindings.back().inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 		state.offsets.emplace_back(offset);
 		// Copy data.
@@ -1033,10 +1034,9 @@ void GPU::drawMesh(const Mesh & mesh) {
 	_state.mesh = mesh.gpu.get();
 
 	bindPipelineIfNeeded();
-
 	_state.program->update();
 
-	vkCmdBindVertexBuffers(_context.getCurrentCommandBuffer(), 0, mesh.gpu->state.offsets.size(), mesh.gpu->state.buffers.data(), mesh.gpu->state.offsets.data());
+	vkCmdBindVertexBuffers(_context.getCurrentCommandBuffer(), 0, uint32_t(mesh.gpu->state.offsets.size()), mesh.gpu->state.buffers.data(), mesh.gpu->state.offsets.data());
 	vkCmdBindIndexBuffer(_context.getCurrentCommandBuffer(), mesh.gpu->indexBuffer->buffer, 0, VK_INDEX_TYPE_UINT32);
 	vkCmdDrawIndexed(_context.getCurrentCommandBuffer(), static_cast<uint32_t>(mesh.gpu->count), 1, 0, 0, 0);
 }
@@ -1136,18 +1136,18 @@ std::vector<std::string> GPU::supportedExtensions() {
 
 void GPU::setViewport(int x, int y, int w, int h) {
 	VkViewport vp;
-	vp.x = x;
-	vp.y = y;
-	vp.width = w;
-	vp.height = h;
+	vp.x = float(x);
+	vp.y = float(y);
+	vp.width = float(w);
+	vp.height = float(h);
 	vp.minDepth = 0.0f;
 	vp.maxDepth = 1.0f;
 	vkCmdSetViewport(_context.getCurrentCommandBuffer(), 0, 1, &vp);
 	VkRect2D scissor;
-	scissor.offset.x = x;
-	scissor.offset.y = y;
-	scissor.extent.width = w;
-	scissor.extent.height = h;
+	scissor.offset.x = int32_t(x);
+	scissor.offset.y = int32_t(y);
+	scissor.extent.width = uint32_t(w);
+	scissor.extent.height = uint32_t(h);
 	vkCmdSetScissor(_context.getCurrentCommandBuffer(), 0, 1, &scissor);
 }
 
@@ -1253,7 +1253,7 @@ void GPU::blit(const Framebuffer & src, const Framebuffer & dst, size_t lSrc, si
 
 	GPU::unbindFramebufferIfNeeded();
 	VkCommandBuffer& commandBuffer = _context.getCurrentCommandBuffer();
-	const uint count = std::min(src.attachments(), dst.attachments());
+	const uint count = uint(std::min(src.attachments(), dst.attachments()));
 
 	const glm::uvec2 srcSize(src.width(), src.height());
 	const glm::uvec2 dstSize(dst.width(), dst.height());
@@ -1261,7 +1261,7 @@ void GPU::blit(const Framebuffer & src, const Framebuffer & dst, size_t lSrc, si
 	for(uint cid = 0; cid < count; ++cid){
 		const Texture& srcTex = *src.texture(cid);
 		const Texture& dstTex = *dst.texture(cid);
-		VkUtils::blitTexture(commandBuffer, srcTex, dstTex, mipSrc, mipDst, 1, lSrc, lDst, 1, glm::uvec2(0), srcSize, glm::uvec2(0), dstSize, filter);
+		VkUtils::blitTexture(commandBuffer, srcTex, dstTex, uint(mipSrc), uint(mipDst), 1, uint(lSrc), uint(lDst), 1, glm::uvec2(0), srcSize, glm::uvec2(0), dstSize, filter);
 	}
 }
 
@@ -1374,7 +1374,7 @@ void GPU::clean(GPUTexture & tex){
 	rsc.frame = _context.frameIndex;
 	rsc.name = tex.name;
 
-	const uint mipCount = tex.levelViews.size();
+	const uint mipCount = uint(tex.levelViews.size());
 	for(uint mid = 0; mid < mipCount; ++mid){
 		_context.resourcesToDelete.emplace_back();
 		ResourceToDelete& rsc = _context.resourcesToDelete.back();

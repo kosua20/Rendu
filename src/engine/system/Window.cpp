@@ -229,7 +229,7 @@ void Window::setupImGui() {
 	if(fontData){
 		ImFontConfig font = ImFontConfig();
 		font.FontData = (void*)(fontData->data());
-		font.FontDataSize = fontData->size();
+		font.FontDataSize = int(fontData->size());
 		font.SizePixels = 16.0f;
 		// Font data is managed by the resource manager.
 		font.FontDataOwnedByAtlas = false;

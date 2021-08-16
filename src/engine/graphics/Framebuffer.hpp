@@ -108,7 +108,7 @@ public:
 	 \param depthOp the operation to perform on the depth attachment
 	 \param stencilOp the operation to perform on the stencil attachment
 	 */
-	void bind(size_t layer, size_t mip, const LoadOperation& colorOp, const LoadOperation& depthOp = {}, const LoadOperation& stencilOp = {}) const;
+	void bind(uint layer, uint mip, const LoadOperation& colorOp, const LoadOperation& depthOp = {}, const LoadOperation& stencilOp = {}) const;
 
 	/**
 	 Set the viewport to the size of the framebuffer.

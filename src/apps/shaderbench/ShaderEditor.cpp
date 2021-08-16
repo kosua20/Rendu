@@ -81,7 +81,7 @@ ShaderEditor::ShaderEditor(RenderingConfig & config) : CameraApp(config), _noise
 
 		System::forParallel(0, size_t(img.height), [&img](size_t y){
 			for(uint x = 0; x < img.width; ++x){
-				img.rgba(x, y) = 0.5f * img.rgba(x, y) + 0.5f;
+				img.rgba(int(x), int(y)) = 0.5f * img.rgba(int(x), int(y)) + 0.5f;
 			}
 		});
 		_perlin.upload({Layout::RGBA32F, Filter::LINEAR, Wrap::REPEAT}, false);
@@ -141,7 +141,7 @@ ShaderEditor::ShaderEditor(RenderingConfig & config) : CameraApp(config), _noise
 
 			System::forParallel(0, size_t(img.height), [&img](size_t y){
 				for(uint x = 0; x < img.width; ++x){
-					img.rgba(x, y) = 0.5f * img.rgba(x, y) + 0.5f;
+					img.rgba(int(x), int(y)) = 0.5f * img.rgba(int(x), int(y)) + 0.5f;
 				}
 			});
 
@@ -268,7 +268,7 @@ void ShaderEditor::draw() {
 	// First texture is the prevous frame.
 	_currProgram->texture(_prevFrame->texture(), 0);
 	for(size_t i = 1; i < _textures.size(); ++i){
-		_currProgram->texture(_textures[i], i);
+		_currProgram->texture(_textures[i], uint(i));
 	}
 
 	// Render user shader and time it.

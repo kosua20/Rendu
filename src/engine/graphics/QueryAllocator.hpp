@@ -3,8 +3,6 @@
 #include "Common.hpp"
 #include "graphics/GPUObjects.hpp"
 
-#include <volk/volk.h>
-
 /** \brief Manages GPU queries allocation in a set of pools. Pools need to be buffered per frame so that we can retrieve 
  * the previous frame queries while the current queries are running.
  * \ingroup Graphics

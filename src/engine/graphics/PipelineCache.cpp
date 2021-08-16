@@ -169,7 +169,7 @@ VkPipeline PipelineCache::buildPipeline(const GPUState& state){
 			stages.back().pName = "main";
 		}
 
-		pipelineInfo.stageCount = stages.size();
+		pipelineInfo.stageCount = uint32_t(stages.size());
 		pipelineInfo.pStages = stages.data();
 		pipelineInfo.layout = programState.layout;
 	}
@@ -179,9 +179,9 @@ VkPipeline PipelineCache::buildPipeline(const GPUState& state){
 	{
 		const GPUMesh::State& meshState = state.mesh->state;
 		vertexState.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-		vertexState.vertexBindingDescriptionCount = meshState.bindings.size();
+		vertexState.vertexBindingDescriptionCount = uint32_t(meshState.bindings.size());
 		vertexState.pVertexBindingDescriptions = meshState.bindings.data();
-		vertexState.vertexAttributeDescriptionCount = meshState.attributes.size();
+		vertexState.vertexAttributeDescriptionCount = uint32_t(meshState.attributes.size());
 		vertexState.pVertexAttributeDescriptions = meshState.attributes.data();
 		pipelineInfo.pVertexInputState = &vertexState;
 	}
@@ -221,7 +221,7 @@ VkPipeline PipelineCache::buildPipeline(const GPUState& state){
 					{PolygonMode::FILL, VK_POLYGON_MODE_FILL},
 					{PolygonMode::LINE, VK_POLYGON_MODE_LINE},
 					{PolygonMode::POINT, VK_POLYGON_MODE_POINT}};
-		static const std::unordered_map<Faces, VkCullModeFlags> culling = {
+		static const std::unordered_map<Faces, VkCullModeFlagBits> culling = {
 					{Faces::FRONT, VK_CULL_MODE_FRONT_BIT},
 					{Faces::BACK, VK_CULL_MODE_BACK_BIT},
 					{Faces::ALL, VK_CULL_MODE_FRONT_AND_BACK}};

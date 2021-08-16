@@ -3,6 +3,8 @@
 #include "Common.hpp"
 #include "graphics/GPUTypes.hpp"
 
+#undef VK_NULL_HANDLE
+#undef VK_DEFINE_HANDLE
 #include <volk/volk.h>
 
 // Forward declaration.

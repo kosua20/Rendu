@@ -40,7 +40,7 @@ VkRenderPass Framebuffer::createRenderpass(Operation colorOp, Operation depthOp,
 		desc.finalLayout = presentable ? VK_IMAGE_LAYOUT_PRESENT_SRC_KHR : VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
 		VkAttachmentReference& ref = attachRefs[cid];
-		ref.attachment = cid;
+		ref.attachment = uint32_t(cid);
 		ref.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 	}
 
@@ -85,7 +85,7 @@ VkRenderPass Framebuffer::createRenderpass(Operation colorOp, Operation depthOp,
 	renderPassInfo.pAttachments = attachDescs.data();
 	renderPassInfo.subpassCount = 1;
 	renderPassInfo.pSubpasses = &subpass;
-	renderPassInfo.dependencyCount = dependencies.size();
+	renderPassInfo.dependencyCount = uint32_t(dependencies.size());
 	renderPassInfo.pDependencies = dependencies.data();
 
 	GPUContext* context = GPU::getInternal();
@@ -166,7 +166,7 @@ Framebuffer::Framebuffer(TextureShape shape, uint width, uint height, uint depth
 }
 
 void Framebuffer::populateRenderPasses(bool isBackbuffer){
-	const uint operationCount = _renderPasses.size();
+	const uint operationCount(_renderPasses.size());
 	for(uint cid = 0; cid < operationCount; ++cid){
 		for(uint did = 0; did < operationCount; ++did){
 			for(uint sid = 0; sid < operationCount; ++sid){
@@ -200,7 +200,7 @@ void Framebuffer::finalizeFramebuffer(){
 	}
 	VkUtils::endOneTimeCommandBuffer(commandBuffer, *context);
 
-	const uint attachCount = _colors.size() + (_hasDepth ? 1 : 0);
+	const uint attachCount = uint(_colors.size()) + (_hasDepth ? 1 : 0);
 
 	_framebuffers.resize(_mips);
 	// Generate per-mip per-layer framebuffers.
@@ -276,7 +276,7 @@ void Framebuffer::bind(const LoadOperation& colorOp, const LoadOperation& depthO
 	bind(0, 0, colorOp, depthOp, stencilOp);
 }
 
-void Framebuffer::bind(size_t layer, size_t mip, const LoadOperation& colorOp, const LoadOperation& depthOp, const LoadOperation& stencilOp) const {
+void Framebuffer::bind(uint layer, uint mip, const LoadOperation& colorOp, const LoadOperation& depthOp, const LoadOperation& stencilOp) const {
 	GPU::unbindFramebufferIfNeeded();
 
 	// Retrieve the framebuffer slice and render pass.
@@ -289,7 +289,7 @@ void Framebuffer::bind(size_t layer, size_t mip, const LoadOperation& colorOp, c
 	VkCommandBuffer& commandBuffer = context->getCurrentCommandBuffer();
 
 	// Retrieve clear colors and transition the regions of the resources we need.
-	const uint attachCount = _colors.size() + (_hasDepth ? 1 : 0);
+	const uint attachCount = uint(_colors.size()) + (_hasDepth ? 1 : 0);
 	std::vector<VkClearValue> clearVals(attachCount);
 
 	for(uint cid = 0; cid < _colors.size(); ++cid){
@@ -313,7 +313,7 @@ void Framebuffer::bind(size_t layer, size_t mip, const LoadOperation& colorOp, c
 	info.pNext = nullptr;
 	info.framebuffer = slice.framebuffer;
 	info.renderPass = pass;
-	info.clearValueCount = clearVals.size();
+	info.clearValueCount = uint32_t(clearVals.size());
 	info.pClearValues = clearVals.data();
 	info.renderArea.extent = {uint32_t(w), uint32_t(h)};
 	info.renderArea.offset = {0u, 0u};

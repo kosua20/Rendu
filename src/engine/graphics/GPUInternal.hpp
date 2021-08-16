@@ -6,7 +6,7 @@
 #include "graphics/QueryAllocator.hpp"
 #include "graphics/PipelineCache.hpp"
 #include "resources/Buffer.hpp"
-#include <volk/volk.h>
+
 #include <deque>
 #include <functional>
 
@@ -166,7 +166,7 @@ namespace VkUtils {
 	 * \param presentFamily will contain the present queue family index
 	 * \return true if query successful
 	 */
-	bool getQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface, uint & graphicsFamily, uint & presentFamily);
+	bool getQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface, int & graphicsFamily, int & presentFamily);
 
 	/** Find the optimal image format from a list based on tiling and feature constraints
 	 * \param physicalDevice the physical device handle

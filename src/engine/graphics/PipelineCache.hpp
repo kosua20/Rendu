@@ -2,11 +2,10 @@
 
 #include "Common.hpp"
 #include "graphics/Framebuffer.hpp"
+#include "graphics/GPUObjects.hpp"
 
 #include <unordered_map>
 #include <deque>
-
-#include <volk/volk.h>
 
 /** \brief Create and reuse GPU pipelines based on a given state. 
  * \details We use a two-levels cache, first sorting by Program because each program only has one instance 

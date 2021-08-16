@@ -3,7 +3,6 @@
 #include "Common.hpp"
 #include "graphics/GPUObjects.hpp"
 
-#include <volk/volk.h>
 #include <deque>
 
 struct GPUContext;

@@ -78,7 +78,7 @@ public:
 	 \param layer the layer to bind
 	 \param mip the mip level to bind
 	 */
-	static void bindFramebuffer(const Framebuffer & framebuffer, size_t layer, size_t mip);
+	static void bindFramebuffer(const Framebuffer & framebuffer, uint layer, uint mip);
 
 	/** Save a given framebuffer content to the disk.
 	 \param framebuffer the framebuffer to save

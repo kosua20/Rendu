@@ -57,7 +57,7 @@ void Probe::convolveRadiance(float clamp, size_t first, size_t count) {
 			_framebuffer->bind(lid, mid, Framebuffer::Operation::DONTCARE);
 			_integration->uniform("mvp", Library::boxVPs[lid]);
 			// Here we need the previous level.
-			_integration->texture(_framebuffer->texture(), 0, mid-1);
+			_integration->texture(_framebuffer->texture(), 0, uint(mid)-1u);
 			GPU::drawMesh(*_cube);
 		}
 	}

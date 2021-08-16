@@ -49,12 +49,12 @@ void DeferredLight::draw(const SpotLight * light) {
 	_spotProgram->textures(_textures);
 	if(light->castsShadow()) {
 		const auto & shadowInfos = light->shadowMap();
-		_spotProgram->texture(shadowInfos.map, _textures.size());
+		_spotProgram->texture(shadowInfos.map, uint(_textures.size()));
 		_spotProgram->uniform("shadowLayer", int(shadowInfos.layer));
 		_spotProgram->uniform("shadowBias", _shadowBias);
 		_spotProgram->uniform("shadowMode", int(_shadowMode));
 	} else {
-		_spotProgram->defaultTexture(_textures.size());
+		_spotProgram->defaultTexture(uint(_textures.size()));
 		_spotProgram->uniform("shadowMode", int(ShadowMode::NONE));
 	}
 	// Select the geometry.
@@ -86,12 +86,12 @@ void DeferredLight::draw(const PointLight * light) {
 	_pointProgram->textures(_textures);
 	if(light->castsShadow()) {
 		const auto & shadowInfos = light->shadowMap();
-		_pointProgram->texture(shadowInfos.map, _textures.size());
+		_pointProgram->texture(shadowInfos.map, uint(_textures.size()));
 		_pointProgram->uniform("shadowLayer", int(shadowInfos.layer));
 		_pointProgram->uniform("shadowBias", _shadowBias);
 		_pointProgram->uniform("shadowMode", int(_shadowMode));
 	} else {
-		_pointProgram->defaultTexture(_textures.size());
+		_pointProgram->defaultTexture(uint(_textures.size()));
 		_pointProgram->uniform("shadowMode", int(ShadowMode::NONE));
 	}
 	// Select the geometry.
@@ -117,12 +117,12 @@ void DeferredLight::draw(const DirectionalLight * light) {
 	_dirProgram->textures(_textures);
 	if(light->castsShadow()) {
 		const auto & shadowInfos = light->shadowMap();
-		_dirProgram->texture(shadowInfos.map, _textures.size());
+		_dirProgram->texture(shadowInfos.map, uint(_textures.size()));
 		_dirProgram->uniform("shadowLayer", int(shadowInfos.layer));
 		_dirProgram->uniform("shadowBias", _shadowBias);
 		_dirProgram->uniform("shadowMode", int(_shadowMode));
 	} else {
-		_dirProgram->defaultTexture(_textures.size());
+		_dirProgram->defaultTexture(uint(_textures.size()));
 		_dirProgram->uniform("shadowMode", int(ShadowMode::NONE));
 	}
 	ScreenQuad::draw();

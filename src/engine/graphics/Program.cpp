@@ -164,7 +164,7 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 		setInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
 		setInfo.flags = 0;
 		setInfo.pBindings = bindingLayouts.data();
-		setInfo.bindingCount = bindingLayouts.size();
+		setInfo.bindingCount = uint32_t(bindingLayouts.size());
 
 		if(vkCreateDescriptorSetLayout(context->device, &setInfo, nullptr, &_state.setLayouts[0]) != VK_SUCCESS){
 			Log::Error() << Log::GPU << "Unable to create set layout." << std::endl;
@@ -187,7 +187,7 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 		setInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
 		setInfo.flags = 0;
 		setInfo.pBindings = bindingLayouts.data();
-		setInfo.bindingCount = bindingLayouts.size();
+		setInfo.bindingCount = uint32_t(bindingLayouts.size());
 
 		if(vkCreateDescriptorSetLayout(context->device, &setInfo, nullptr, &_state.setLayouts[1]) != VK_SUCCESS){
 			Log::Error() << Log::GPU << "Unable to create set layout." << std::endl;
@@ -210,7 +210,7 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 		setInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
 		setInfo.flags = 0;
 		setInfo.pBindings = bindingLayouts.data();
-		setInfo.bindingCount = bindingLayouts.size();
+		setInfo.bindingCount = uint32_t(bindingLayouts.size());
 
 		if(vkCreateDescriptorSetLayout(context->device, &setInfo, nullptr, &_state.setLayouts[2]) != VK_SUCCESS){
 			Log::Error() << Log::GPU << "Unable to create set layout." << std::endl;
@@ -219,7 +219,7 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 
 	VkPipelineLayoutCreateInfo layoutInfo{};
 	layoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-	layoutInfo.setLayoutCount = _state.setLayouts.size();
+	layoutInfo.setLayoutCount = uint32_t(_state.setLayouts.size());
 	layoutInfo.pSetLayouts = _state.setLayouts.data();
 	layoutInfo.pushConstantRangeCount = 0;
 	layoutInfo.pPushConstantRanges = nullptr;
@@ -263,7 +263,7 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 		writes.push_back(write);
 		++tid;
 	}
-	vkUpdateDescriptorSets(context->device, writes.size(), writes.data(), 0, nullptr);
+	vkUpdateDescriptorSets(context->device, uint32_t(writes.size()), writes.data(), 0, nullptr);
 
 }
 
@@ -285,7 +285,7 @@ void Program::update(){
 			if(buffer.second.dirty){
 				buffer.second.buffer->upload();
 			}
-			_currentOffsets[buffer.second.descriptorIndex] = buffer.second.buffer->currentOffset();
+			_currentOffsets[buffer.second.descriptorIndex] = uint32_t(buffer.second.buffer->currentOffset());
 		}
 		_dirtySets[0] = false;
 	}
@@ -317,7 +317,7 @@ void Program::update(){
 			++tid;
 		}
 
-		vkUpdateDescriptorSets(context->device, writes.size(), writes.data(), 0, nullptr);
+		vkUpdateDescriptorSets(context->device, uint32_t(writes.size()), writes.data(), 0, nullptr);
 		_dirtySets[1] = false;
 	}
 
@@ -349,14 +349,14 @@ void Program::update(){
 			++tid;
 		}
 
-		vkUpdateDescriptorSets(context->device, writes.size(), writes.data(), 0, nullptr);
+		vkUpdateDescriptorSets(context->device, uint32_t(writes.size()), writes.data(), 0, nullptr);
 		_dirtySets[2] = false;
 	}
 
 	// Bind the descriptor sets.
 	
 	// Set 0 needs updated offsets.
-	vkCmdBindDescriptorSets(context->getCurrentCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, _state.layout, 0, 1, &_currentSets[0].handle, _currentOffsets.size(), _currentOffsets.data());
+	vkCmdBindDescriptorSets(context->getCurrentCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, _state.layout, 0, 1, &_currentSets[0].handle, uint32_t(_currentOffsets.size()), _currentOffsets.data());
 
 	// Other sets are bound if present.
 	for(uint sid = 1; sid < _currentSets.size(); ++sid){
@@ -408,8 +408,8 @@ void Program::buffer(const UniformBufferBase& buffer, uint slot){
 		const StaticBufferState& refBuff = existingBuff->second;
 		if((refBuff.buffer != buffer.gpu->buffer) || (refBuff.offset != buffer.currentOffset()) || (refBuff.size != buffer.baseSize())){
 			_staticBuffers[slot].buffer = buffer.gpu->buffer;
-			_staticBuffers[slot].offset = buffer.currentOffset();
-			_staticBuffers[slot].size = buffer.baseSize();
+			_staticBuffers[slot].offset = uint(buffer.currentOffset());
+			_staticBuffers[slot].size = uint(buffer.baseSize());
 			_dirtySets[2] = true;
 		}
 	}
@@ -447,7 +447,7 @@ void Program::defaultTexture(uint slot){
 void Program::textures(const std::vector<const Texture *> & textures, size_t startingSlot){
 	const uint texCount = uint(textures.size());
 	for(uint tid = 0; tid < texCount; ++tid){
-		const uint slot = startingSlot + tid;
+		const uint slot = uint(startingSlot) + tid;
 		texture(*textures[tid], slot);
 	}
 }
