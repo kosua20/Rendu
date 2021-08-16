@@ -25,6 +25,11 @@ newoption {
 	 description = "Do not generate any existing internal projects."
 }
 
+newoption {
+	 trigger     = "env_vulkan_sdk",
+	 description = "Force the use of the Vulkan SDK at the location defined by the VULKAN_SDK environment variable"
+}
+
 -- Workspace definition.
 
 workspace("Rendu")
@@ -63,16 +68,21 @@ function CommonSetup()
 	filter({})
 	-- Common include dirs
 	-- System headers are used to support angled brackets in Xcode.
-	sysincludedirs({ "src/libs/", "src/libs/glfw/include/", "$(VULKAN_SDK)/include" })
-	libdirs({ "$(VULKAN_SDK)/lib" })
+	sysincludedirs({ "src/libs/", "src/libs/glfw/include/"})
 
-	-- System headers are used to support angled brackets in Xcode.
-	filter("system:macosx or linux")
-		sysincludedirs({ "/usr/local/include/" })
-		libdirs({ "/usr/local/lib" })
-	
+	if _OPTIONS["env_vulkan_sdk"] then
+		sysincludedirs({ "$(VULKAN_SDK)/include" })
+		libdirs({ "$(VULKAN_SDK)/lib" })
+	else
+		filter("system:windows")
+			sysincludedirs({ "$(VULKAN_SDK)/include" })
+			libdirs({ "$(VULKAN_SDK)/lib" })
+
+		filter("system:macosx or linux")
+			sysincludedirs({ "/usr/local/include/" })
+			libdirs({ "/usr/local/lib" })
+	end
 	filter({})
-	
 end	
 
 function ExecutableSetup()
