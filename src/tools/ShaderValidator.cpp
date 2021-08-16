@@ -117,7 +117,6 @@ int main(int argc, char ** argv) {
 	// Test all shaders.
 	const std::unordered_map<ShaderType, std::string> types = {
 		{ShaderType::VERTEX, "vert" },
-		{ShaderType::GEOMETRY, "geom" },
 		{ShaderType::FRAGMENT, "frag" },
 		{ShaderType::TESSCONTROL, "tessc" },
 		{ShaderType::TESSEVAL, "tesse" }

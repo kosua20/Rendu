@@ -291,7 +291,7 @@ bool GPU::setupWindow(Window * window){
 	return true;
 }
 
-void GPU::createProgram(Program& program, const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, const std::string & tessControlContent, const std::string & tessEvalContent, const std::string & debugInfos) {
+void GPU::createProgram(Program& program, const std::string & vertexContent, const std::string & fragmentContent, const std::string & tessControlContent, const std::string & tessEvalContent, const std::string & debugInfos) {
 
 	Log::Verbose() << Log::GPU << "Compiling " << debugInfos << "." << std::endl;
 	
@@ -309,14 +309,6 @@ void GPU::createProgram(Program& program, const std::string & vertexContent, con
 		ShaderCompiler::compile(fragmentContent, ShaderType::FRAGMENT, program.stage(ShaderType::FRAGMENT), compilationLog);
 		if(!compilationLog.empty()) {
 			Log::Error() << Log::GPU << "Fragment shader (for " << program.name() << ") failed to compile:" << std::endl
-						 << compilationLog << std::endl;
-		}
-	}
-	// If geometry program code is given, compile it.
-	if(!geometryContent.empty()) {
-		ShaderCompiler::compile(geometryContent, ShaderType::GEOMETRY, program.stage(ShaderType::GEOMETRY), compilationLog);
-		if(!compilationLog.empty()) {
-			Log::Error() << Log::GPU << "Geometry shader (for " << program.name() << ") failed to compile:" << std::endl
 						 << compilationLog << std::endl;
 		}
 	}

@@ -62,12 +62,11 @@ public:
 	 \param program the program to populate
 	 \param vertexContent the vertex shader string
 	 \param fragmentContent the fragment shader string
-	 \param geometryContent the optional geometry shader string
 	 \param tessControlContent the optional tesselation control shader string
 	 \param tessEvalContent the optional tesselation evaluation shader string
 	 \param debugInfos the name of the program, or any custom debug infos that will be logged.
 	 */
-	static void createProgram(Program & program, const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, const std::string & tessControlContent, const std::string & tessEvalContent,const std::string & debugInfos);
+	static void createProgram(Program & program, const std::string & vertexContent, const std::string & fragmentContent, const std::string & tessControlContent, const std::string & tessEvalContent,const std::string & debugInfos);
 
 	/** Bind a program to use for rendering
 	 \param program the program to use

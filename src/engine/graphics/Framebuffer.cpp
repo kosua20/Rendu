@@ -97,8 +97,8 @@ VkRenderPass Framebuffer::createRenderpass(Operation colorOp, Operation depthOp,
 }
 
 
-Framebuffer::Framebuffer(TextureShape shape, uint width, uint height, uint depth, uint mips, const std::vector<Descriptor> & descriptors, bool depthBuffer, const std::string & name) : _name(name), 
-	_width(width), _height(height), _mips(mips), _depth("Depth ## " + name) {
+Framebuffer::Framebuffer(TextureShape shape, uint width, uint height, uint depth, uint mips, const std::vector<Descriptor> & descriptors, bool depthBuffer, const std::string & name) : _depth("Depth ## " + name), _name(name),
+	_width(width), _height(height), _mips(mips) {
 
 	// Check that the shape is supported.
 	_shape = shape;
@@ -277,16 +277,11 @@ void Framebuffer::bind(const LoadOperation& colorOp, const LoadOperation& depthO
 }
 
 void Framebuffer::bind(size_t layer, size_t mip, const LoadOperation& colorOp, const LoadOperation& depthOp, const LoadOperation& stencilOp) const {
-
-	const Slice& slice = _framebuffers[mip][layer];
-	bind(slice, layer, mip, colorOp, depthOp, stencilOp);
-
-}
-
-void Framebuffer::bind(const Framebuffer::Slice& slice, size_t layer, size_t mip, const LoadOperation& colorOp, const LoadOperation& depthOp, const LoadOperation& stencilOp) const {
-	const VkRenderPass& pass = _renderPasses[uint(colorOp.mode)][uint(depthOp.mode)][uint(stencilOp.mode)];
-
 	GPU::unbindFramebufferIfNeeded();
+
+	// Retrieve the framebuffer slice and render pass.
+	const Slice& slice = _framebuffers[mip][layer];
+	const VkRenderPass& pass = _renderPasses[uint(colorOp.mode)][uint(depthOp.mode)][uint(stencilOp.mode)];
 
 	GPU::bindFramebuffer(*this, layer, mip);
 
@@ -325,7 +320,6 @@ void Framebuffer::bind(const Framebuffer::Slice& slice, size_t layer, size_t mip
 
 	vkCmdBeginRenderPass(commandBuffer, &info, VK_SUBPASS_CONTENTS_INLINE);
 	context->newRenderPass = true;
-	
 }
 
 void Framebuffer::setViewport() const {

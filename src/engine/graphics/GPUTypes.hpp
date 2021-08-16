@@ -18,7 +18,6 @@ VK_DEFINE_HANDLE(VkDescriptorSet)
 enum class ShaderType : uint {
 	VERTEX, ///< Vertex shader.
 	FRAGMENT, ///< Fragment shader.
-	GEOMETRY, ///< Geometry shader.
 	TESSCONTROL, ///< Tesselation control shader.
 	TESSEVAL, ///< Tesselation evaluation shader.
 	COUNT

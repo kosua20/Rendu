@@ -288,18 +288,6 @@ private:
 	/** Create all required framebuffer views and structures.*/
 	void finalizeFramebuffer();
 
-	/**
-	 Bind a specific slice of the framebuffer, beginning a new renderpass.
-	 \param slice the framebuffer slice to bind
-	 \param layer the layer to bind
-	 \param mip the mip level to bind
-	 \param colorOp the operation to perform on the color attachments
-	 \param depthOp the operation to perform on the depth attachment
-	 \param stencilOp the operation to perform on the stencil attachment
-	 \todo Cleanup.
-	 */
-	void bind(const Slice& slice, size_t layer, size_t mip, const LoadOperation& colorOp, const LoadOperation& depthOp, const LoadOperation& stencilOp) const;
-
 	/** Default constructor. */
 	Framebuffer() = default;
 

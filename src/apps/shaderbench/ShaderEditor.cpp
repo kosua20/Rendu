@@ -664,7 +664,7 @@ std::string ShaderEditor::reload(const std::string & shaderPath, bool syncUnifor
 	if(!log.empty()){
 		return log;
 	}
-	_currProgram->reload(vShader, fShader, "");
+	_currProgram->reload(vShader, fShader);
 	if(syncUniforms){
 		restoreUniforms();
 	}

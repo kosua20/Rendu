@@ -24,7 +24,7 @@ IslandApp::IslandApp(RenderingConfig & config) : CameraApp(config),
 	// Atmosphere screen quad.
 	_skyProgram = Resources::manager().getProgram("atmosphere_island", "background_infinity", "atmosphere_island");
 	_groundProgram = Resources::manager().getProgram("ground_island");
-	_oceanProgram = Resources::manager().getProgram("ocean_island", "ocean_island", "ocean_island", "", "ocean_island", "ocean_island");
+	_oceanProgram = Resources::manager().getProgram("ocean_island", "ocean_island", "ocean_island", "ocean_island", "ocean_island");
 	_farOceanProgram = Resources::manager().getProgram("far_ocean_island", "far_ocean_island", "ocean_island");
 	_waterCopy = Resources::manager().getProgram2D("water_copy");
 	_underwaterProgram = Resources::manager().getProgram2D("ocean_underwater");

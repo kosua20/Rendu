@@ -56,14 +56,6 @@ private:
 	 */
 	void setup(uint32_t width, uint32_t height);
 
-	/** Create the render pass for the swapchain backbuffer
-	 * \param depth the depth attachment format
-	 * \param color the color attachment format
-	 * \return the newly created render pass
-	 * \todo Cleanup
-	 */
-	VkRenderPass createMainRenderpass(const VkFormat & depth, const VkFormat & color);
-
 	/** Submit the current frame's work.
 	 * \return true if the submission was successful
 	 */

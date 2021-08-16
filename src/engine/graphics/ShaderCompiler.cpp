@@ -140,7 +140,6 @@ void ShaderCompiler::compile(const std::string & prog, ShaderType type, Program:
 	static const std::unordered_map<ShaderType, EShLanguage> types = {
 		{ShaderType::VERTEX, EShLangVertex},
 		{ShaderType::FRAGMENT, EShLangFragment},
-		{ShaderType::GEOMETRY, EShLangGeometry},
 		{ShaderType::TESSCONTROL, EShLangTessControl},
 		{ShaderType::TESSEVAL, EShLangTessEvaluation}
 	};

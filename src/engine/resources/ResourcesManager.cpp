@@ -584,15 +584,14 @@ const Texture * Resources::getDefaultTexture(TextureShape shape){
 
 // Program/shaders methods.
 
-Resources::ProgramInfos::ProgramInfos(const std::string & vertex, const std::string & fragment, const std::string & geometry,  const std::string & tessControl, const std::string & tessEval){
+Resources::ProgramInfos::ProgramInfos(const std::string & vertex, const std::string & fragment, const std::string & tessControl, const std::string & tessEval){
 	vertexName = vertex;
 	fragmentName = fragment;
-	geomName = geometry;
 	tessContName = tessControl;
 	tessEvalName = tessEval;
 }
 
-Program * Resources::getProgram(const std::string & name, const std::string & vertexName, const std::string & fragmentName, const std::string & geometryName, const std::string & tessControlName, const std::string & tessEvalName) {
+Program * Resources::getProgram(const std::string & name, const std::string & vertexName, const std::string & fragmentName, const std::string & tessControlName, const std::string & tessEvalName) {
 	
 	if(_programs.count(name) > 0) {
 		return &_programs.at(name);
@@ -601,18 +600,16 @@ Program * Resources::getProgram(const std::string & name, const std::string & ve
 	const std::string vName = vertexName.empty() ? name : vertexName;
 	const std::string fName = fragmentName.empty() ? name : fragmentName;
 	// For the other stage names, we don't replace by the default name because empty means "disabled".
-	const std::string gName = geometryName;
 	const std::string tcName = tessControlName;
 	const std::string teName = tessEvalName;
 
 	const std::string vContent = getStringWithIncludes(vName + ".vert");
 	const std::string fContent = getStringWithIncludes(fName + ".frag");
-	const std::string gContent = gName.empty() ? "" : getStringWithIncludes(gName + ".geom");
 	const std::string tcContent = tcName.empty() ? "" : getStringWithIncludes(tcName + ".tessc");
 	const std::string teContent = teName.empty() ? "" : getStringWithIncludes(teName + ".tesse");
 
-	_programs.emplace(std::make_pair(name, Program(name, vContent, fContent, gContent, tcContent, teContent)));
-	_progInfos.emplace(std::make_pair(name, ProgramInfos(vName, fName, gName, tcName, teName)));
+	_programs.emplace(std::make_pair(name, Program(name, vContent, fContent, tcContent, teContent)));
+	_progInfos.emplace(std::make_pair(name, ProgramInfos(vName, fName, tcName, teName)));
 	return &_programs.at(name);
 }
 
@@ -625,10 +622,9 @@ void Resources::reload() {
 		const ProgramInfos & infos = _progInfos.at(prog.first);
 		const std::string vContent = getStringWithIncludes(infos.vertexName + ".vert");
 		const std::string fContent = getStringWithIncludes(infos.fragmentName + ".frag");
-		const std::string gContent = infos.geomName.empty() ? "" : getStringWithIncludes(infos.geomName + ".geom");
 		const std::string tcContent = infos.tessContName.empty() ? "" : getStringWithIncludes(infos.tessContName + ".tessc");
 		const std::string teContent = infos.tessEvalName.empty() ? "" : getStringWithIncludes(infos.tessEvalName + ".tesse");
-		prog.second.reload(vContent, fContent, gContent, tcContent, teContent);
+		prog.second.reload(vContent, fContent, tcContent, teContent);
 	}
 	Log::Info() << Log::Resources << "Shader programs reloaded." << std::endl;
 }

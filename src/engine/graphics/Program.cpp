@@ -5,17 +5,17 @@
 #include <set>
 #include <cstring>
 
-Program::Program(const std::string & name, const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, const std::string & tessControlContent, const std::string & tessEvalContent) : _name(name) {
-	reload(vertexContent, fragmentContent, geometryContent, tessControlContent, tessEvalContent);
+Program::Program(const std::string & name, const std::string & vertexContent, const std::string & fragmentContent, const std::string & tessControlContent, const std::string & tessEvalContent) : _name(name) {
+	reload(vertexContent, fragmentContent, tessControlContent, tessEvalContent);
 }
 
-void Program::reload(const std::string & vertexContent, const std::string & fragmentContent, const std::string & geometryContent, const std::string & tessControlContent, const std::string & tessEvalContent) {
+void Program::reload(const std::string & vertexContent, const std::string & fragmentContent, const std::string & tessControlContent, const std::string & tessEvalContent) {
 
 	clean();
 	_reloaded = true;
 	
 	const std::string debugName = _name;
-	GPU::createProgram(*this, vertexContent, fragmentContent, geometryContent, tessControlContent, tessEvalContent, debugName);
+	GPU::createProgram(*this, vertexContent, fragmentContent, tessControlContent, tessEvalContent, debugName);
 
 	// Reflection information has been populated. Merge uniform infos, build descriptor layout, prepare descriptors.
 

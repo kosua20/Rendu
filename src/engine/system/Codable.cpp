@@ -131,7 +131,7 @@ std::vector<KeyValues> Codable::encode(const glm::mat4 & transfo) {
 
 std::pair<std::string, Descriptor> Codable::decodeTexture(const KeyValues & param) {
 	// Subset of descriptors supported by the scene serialization model.
-	// \todo Rename rgb32 to rgbf and use 16 bit half floats.
+	// \todo Rename rgb32 to rgbf.
 	const std::unordered_map<std::string, Descriptor> descriptors = {
 		{"srgb", {Layout::SRGB8_ALPHA8, Filter::LINEAR_LINEAR, Wrap::REPEAT}},
 		{"rgb", {Layout::RGBA8, Filter::LINEAR_LINEAR, Wrap::REPEAT}},

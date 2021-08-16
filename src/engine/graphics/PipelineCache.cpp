@@ -152,7 +152,6 @@ VkPipeline PipelineCache::buildPipeline(const GPUState& state){
 		// Build state for the pipeline state objects.
 		static const std::unordered_map<ShaderType, VkShaderStageFlagBits> stageBits = {
 			{ShaderType::VERTEX, VK_SHADER_STAGE_VERTEX_BIT},
-			{ShaderType::GEOMETRY, VK_SHADER_STAGE_GEOMETRY_BIT},
 			{ShaderType::FRAGMENT, VK_SHADER_STAGE_FRAGMENT_BIT},
 			{ShaderType::TESSCONTROL, VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT},
 			{ShaderType::TESSEVAL, VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT},

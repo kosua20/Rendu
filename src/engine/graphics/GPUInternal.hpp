@@ -100,7 +100,7 @@ struct GPUContext {
 
 	double timestep = 0.0; ///< Query timing timestep.
 	size_t uniformAlignment = 0; ///< Minimal buffer alignment.
-	bool portability = false; ///< \todo Check.
+	bool portability = false; ///< If the portability extension is present, we have to enable it.
 	const uint frameCount = 2; ///< Number of buffered frames (should be lower or equal to the swapchain image count).
 	bool newRenderPass = true; ///< Has a render pass just started (pipeline needs to be re-bound).
 	bool inRenderPass = false; ///< Are we currently in a render pass. 
@@ -220,9 +220,8 @@ namespace VkUtils {
 	 */
 	void createCommandBuffers(GPUContext & context, uint count);
 
-	/** Check a Vulkan result (used by ImGui)
+	/** Log a Vulkan return code as a human-readable string.
 	 * \param status the status to check
-	 * \todo cleanup
 	 */
 	void checkResult(VkResult status);
 
