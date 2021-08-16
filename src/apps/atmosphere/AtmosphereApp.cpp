@@ -27,7 +27,6 @@ AtmosphereApp::AtmosphereApp(RenderingConfig & config) : CameraApp(config), _sca
 	// Populate lookup table.
 	updateSky();
 
-	checkGPUError();
 }
 
 void AtmosphereApp::draw() {

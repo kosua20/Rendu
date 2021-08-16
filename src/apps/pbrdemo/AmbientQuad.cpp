@@ -19,7 +19,6 @@ AmbientQuad::AmbientQuad(const Texture * texAlbedo, const Texture * texNormals, 
 	_textures[5] = textureBrdf;
 	_textures[6] = nullptr;
 
-	checkGPUError();
 }
 
 void AmbientQuad::draw(const glm::mat4 & viewMatrix, const glm::mat4 & projectionMatrix, const LightProbe & environment) {

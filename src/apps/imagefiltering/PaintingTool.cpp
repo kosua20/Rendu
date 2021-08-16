@@ -50,7 +50,6 @@ PaintingTool::PaintingTool(unsigned int width, unsigned int height) {
 	diamond.upload();
 	diamond.clearGeometry();
 
-	checkGPUError();
 }
 
 void PaintingTool::draw() {
@@ -169,7 +168,6 @@ void PaintingTool::resize(unsigned int width, unsigned int height) const {
 	// The content of the visualisation buffer will be cleaned at the next frame canvas copy.
 	_visu->resize(width, height);
 
-	checkGPUError();
 }
 
 PaintingTool::~PaintingTool(){

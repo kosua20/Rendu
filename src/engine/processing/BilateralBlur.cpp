@@ -5,9 +5,7 @@
 #include "resources/ResourcesManager.hpp"
 
 BilateralBlur::BilateralBlur(const std::string & name) : _name(name) {
-
 	_filter	 = Resources::manager().getProgram2D("bilateral");
-	checkGPUError();
 }
 
 // Draw function

@@ -9,16 +9,6 @@
 
 #include <functional>
 
-/**
- \addtogroup Graphics
- @{
- */
-
-/// This macro is used to check for GPU errors with access to the file and line number where the error is detected.
-#define checkGPUError()
-
-/**@}*/
-
 // Forward declarations.
 class Framebuffer;
 class ScreenQuad;

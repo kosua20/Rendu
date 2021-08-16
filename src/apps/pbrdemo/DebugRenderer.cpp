@@ -75,7 +75,6 @@ DebugRenderer::DebugRenderer() : Renderer("Debug renderer"), _lightDebugRenderer
 		_cubeLines.positions = cubeBbox.getCorners();
 		_cubeLines.upload();
 	}
-	checkGPUError();
 }
 
 void DebugRenderer::setScene(const std::shared_ptr<Scene> & scene) {
@@ -85,7 +84,6 @@ void DebugRenderer::setScene(const std::shared_ptr<Scene> & scene) {
 	}
 	_scene = scene;
 	updateSceneMesh();
-	checkGPUError();
 }
 
 void DebugRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_t layer) {

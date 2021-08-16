@@ -32,7 +32,6 @@ ForwardRenderer::ForwardRenderer(const glm::vec2 & resolution, ShadowMode mode, 
 
 	_textureBrdf = Resources::manager().getTexture("brdf-precomputed", {Layout::RG16F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
 
-	checkGPUError();
 }
 
 void ForwardRenderer::setScene(const std::shared_ptr<Scene> & scene) {
@@ -43,7 +42,6 @@ void ForwardRenderer::setScene(const std::shared_ptr<Scene> & scene) {
 	_scene = scene;
 	_culler.reset(new Culler(_scene->objects));
 	_lightsGPU.reset(new ForwardLight(_scene->lights.size()));
-	checkGPUError();
 }
 
 void ForwardRenderer::renderDepth(const Culler::List & visibles, const glm::mat4 & view, const glm::mat4 & proj){
@@ -365,7 +363,6 @@ void ForwardRenderer::resize(unsigned int width, unsigned int height) {
 	// Resize the framebuffers.
 	_ssaoPass->resize(width / 2, height / 2);
 	_sceneFramebuffer->resize(glm::vec2(width, height));
-	checkGPUError();
 }
 
 void ForwardRenderer::interface(){

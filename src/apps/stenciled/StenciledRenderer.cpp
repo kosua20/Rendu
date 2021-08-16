@@ -19,7 +19,6 @@ StenciledRenderer::StenciledRenderer(const glm::vec2 & resolution) : Renderer("S
 	_objectProgram	= Resources::manager().getProgram("object_basic_uniform", "object_basic", "object_basic_uniform");
 	_fillProgram 	= Resources::manager().getProgram2D("fill-color");
 
-	checkGPUError();
 }
 
 void StenciledRenderer::setScene(const std::shared_ptr<Scene> & scene) {
@@ -28,7 +27,6 @@ void StenciledRenderer::setScene(const std::shared_ptr<Scene> & scene) {
 		return;
 	}
 	_scene = scene;
-	checkGPUError();
 }
 
 

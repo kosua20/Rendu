@@ -19,7 +19,6 @@ EditorRenderer::EditorRenderer() :
 		
 	Resources::manager().getTexture("debug-grid", { Layout::RGBA8, Filter::LINEAR_LINEAR, Wrap::REPEAT}, Storage::GPU);
 	
-	checkGPUError();
 }
 
 void EditorRenderer::setScene(const std::shared_ptr<Scene> & scene) {

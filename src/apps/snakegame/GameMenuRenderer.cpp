@@ -121,7 +121,6 @@ void GameMenuRenderer::drawMenu(const GameMenu & menu, const glm::vec2 & finalRe
 		GPU::drawMesh(label.mesh);
 	}
 	GPU::setBlendState(false);
-	checkGPUError();
 }
 
 glm::vec2 GameMenuRenderer::getButtonSize() const {

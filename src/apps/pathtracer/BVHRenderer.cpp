@@ -12,7 +12,6 @@ BVHRenderer::BVHRenderer() : Renderer("BVH renderer") {
 	_needsDepth = true;
 	_objectProgram = Resources::manager().getProgram("object_basic_lit");
 	_bvhProgram = Resources::manager().getProgram("object_basic_color");
-	checkGPUError();
 }
 
 void BVHRenderer::setScene(const std::shared_ptr<Scene> & scene, const Raycaster & raycaster) {
@@ -26,7 +25,6 @@ void BVHRenderer::setScene(const std::shared_ptr<Scene> & scene, const Raycaster
 		level.clearGeometry();
 	}
 	_bvhRange = glm::vec2(0, 0);
-	checkGPUError();
 }
 
 void BVHRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_t layer) {

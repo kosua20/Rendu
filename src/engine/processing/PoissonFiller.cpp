@@ -19,7 +19,6 @@ PoissonFiller::PoissonFiller(unsigned int width, unsigned int height, unsigned i
 	const float g[3]  = {0.0312f, 0.7753f, 0.0312f};
 	_pyramid.setFilters(h1, h2, g);
 
-	checkGPUError();
 }
 
 void PoissonFiller::process(const Texture * texture) {

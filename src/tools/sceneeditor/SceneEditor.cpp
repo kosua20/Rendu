@@ -59,8 +59,8 @@ void SceneEditor::draw() {
 	_passthrough->use();
 	_passthrough->texture(_sceneFramebuffer->texture(), 0);
 	ScreenQuad::draw();
-	checkGPUError();
 }
+
 void SceneEditor::update() {
 	CameraApp::update();
 	

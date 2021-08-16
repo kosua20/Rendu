@@ -111,14 +111,12 @@ void Game::draw() {
 		_finalProgram->use();
 		_finalProgram->texture(_gameFramebuffer->texture(), 0);
 		ScreenQuad::draw();
-		checkGPUError();
 		
 	}
 
 	const float renderRatio = float(_gameFramebuffer->height()) / float(_gameFramebuffer->width());
 	_menuRenderer.drawMenu(_menus[_status], _config.screenResolution, renderRatio);
 
-	checkGPUError();
 }
 
 Window::Action Game::update() {

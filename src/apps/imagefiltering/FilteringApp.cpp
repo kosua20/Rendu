@@ -29,7 +29,6 @@ FilteringApp::FilteringApp(RenderingConfig & config) :
 
 	_painter = std::unique_ptr<PaintingTool>(new PaintingTool(renderWidth, renderHeight));
 
-	checkGPUError();
 }
 
 void FilteringApp::draw() {
@@ -225,5 +224,4 @@ void FilteringApp::resize() {
 	_floodFill->resize(lwidth, lheight);
 	_painter->resize(lwidth, lheight);
 
-	checkGPUError();
 }
