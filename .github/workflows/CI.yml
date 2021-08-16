@@ -112,6 +112,7 @@ jobs:
         working-directory: ${{github.workspace}}
         shell: cmd
         run: |
+          set VULKAN_SDK=%cd%\vulkansdk
           premake5 ${{matrix.premake-opts}} --skip_shader_validation --env_vulkan_sdk
           cd build
           "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe" .\Rendu.sln -t:Meta\ALL -nologo -v:minimal -p:Configuration=Release -p:Platform=x64
