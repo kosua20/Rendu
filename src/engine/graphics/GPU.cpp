@@ -97,14 +97,13 @@ bool GPU::setup(const std::string & appName) {
 
 	if(debugEnabled){
 		VK_RET(vkCreateDebugUtilsMessengerEXT(_context.instance, &debugInfo, nullptr, &_context.debugMessenger));
-		//vkDestroyDebugUtilsMessengerEXT(_instance, _debugMessenger, nullptr);
 	}
 
 	// Pick a physical device.
 	uint32_t deviceCount = 0;
-	vkEnumeratePhysicalDevices(_context.instance, &deviceCount, nullptr);
+	VK_RET(vkEnumeratePhysicalDevices(_context.instance, &deviceCount, nullptr));
 	std::vector<VkPhysicalDevice> devices(deviceCount);
-	vkEnumeratePhysicalDevices(_context.instance, &deviceCount, devices.data());
+	VK_RET(vkEnumeratePhysicalDevices(_context.instance, &deviceCount, devices.data()));
 
 	VkPhysicalDevice selectedDevice = VK_NULL_HANDLE;
 	// Check which one is ok for our requirements.
@@ -251,7 +250,7 @@ bool GPU::setupWindow(Window * window){
 
 
 	allocatorInfo.pVulkanFunctions = &_vulkanFunctions;
-	vmaCreateAllocator(&allocatorInfo, &_allocator);
+	VK_RET(vmaCreateAllocator(&allocatorInfo, &_allocator));
 
 
 	// Create the command pool.
@@ -430,7 +429,7 @@ void GPU::setupTexture(Texture & texture, const Descriptor & descriptor, bool dr
 
 	VmaAllocationCreateInfo allocInfo = {};
 	allocInfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
-	vmaCreateImage(_allocator, &imageInfo, &allocInfo, &(texture.gpu->image), &(texture.gpu->data), nullptr);
+	VK_RET(vmaCreateImage(_allocator, &imageInfo, &allocInfo, &(texture.gpu->image), &(texture.gpu->data), nullptr));
 
 	// Create view.
 	VkImageViewCreateInfo viewInfo = {};
@@ -445,7 +444,7 @@ void GPU::setupTexture(Texture & texture, const Descriptor & descriptor, bool dr
 	viewInfo.subresourceRange.baseArrayLayer = 0;
 	viewInfo.subresourceRange.layerCount = imageInfo.arrayLayers;
 
-	if (vkCreateImageView(_context.device, &viewInfo, nullptr, &(texture.gpu->view)) != VK_SUCCESS) {
+	if(vkCreateImageView(_context.device, &viewInfo, nullptr, &(texture.gpu->view)) != VK_SUCCESS) {
 		Log::Error() << Log::GPU << "Unable to create image view." << std::endl;
 		return;
 	}
@@ -465,7 +464,7 @@ void GPU::setupTexture(Texture & texture, const Descriptor & descriptor, bool dr
 		viewInfoMip.subresourceRange.baseArrayLayer = 0;
 		viewInfoMip.subresourceRange.layerCount = imageInfo.arrayLayers;
 
-		if (vkCreateImageView(_context.device, &viewInfoMip, nullptr, &(texture.gpu->levelViews[mid])) != VK_SUCCESS) {
+		if(vkCreateImageView(_context.device, &viewInfoMip, nullptr, &(texture.gpu->levelViews[mid])) != VK_SUCCESS) {
 			Log::Error() << Log::GPU << "Unable to create image view." << std::endl;
 			return;
 		}
@@ -502,7 +501,7 @@ void GPU::setupSampler(GPUTexture & texture) {
 	samplerInfo.mipLodBias = 0.0f;
 	samplerInfo.minLod = 0.0f;
 	samplerInfo.maxLod = VK_LOD_CLAMP_NONE;
-	if (vkCreateSampler(_context.device, &samplerInfo, nullptr, &(texture.sampler)) != VK_SUCCESS) {
+	if(vkCreateSampler(_context.device, &samplerInfo, nullptr, &(texture.sampler)) != VK_SUCCESS) {
 		Log::Error() << Log::GPU << "Unable to create a sampler." << std::endl;
 	}
 }
@@ -835,7 +834,7 @@ void GPU::setupBuffer(BufferBase & buffer) {
 	}
 	VmaAllocationInfo resultInfos = {};
 
-	vmaCreateBuffer(_allocator, &bufferInfo, &allocInfo, &(buffer.gpu->buffer), &(buffer.gpu->data), &resultInfos);
+	VK_RET(vmaCreateBuffer(_allocator, &bufferInfo, &allocInfo, &(buffer.gpu->buffer), &(buffer.gpu->data), &resultInfos));
 
 	if(buffer.gpu->mappable){
 		buffer.gpu->mapped = (char*)resultInfos.pMappedData;
@@ -863,7 +862,7 @@ void GPU::uploadBuffer(const BufferBase & buffer, size_t size, uchar * data, siz
 	// If the buffer is visible from the CPU side, we don't need an intermediate staging buffer.
 	if(buffer.gpu->mappable){
 		if(!buffer.gpu->mapped){
-			vmaMapMemory(_allocator, buffer.gpu->data, (void**)&buffer.gpu->mapped);
+			VK_RET(vmaMapMemory(_allocator, buffer.gpu->data, (void**)&buffer.gpu->mapped));
 		}
 		std::memcpy(buffer.gpu->mapped + offset, data, size);
 		flushBuffer(buffer, size, offset);
@@ -898,7 +897,7 @@ void GPU::downloadBuffer(const BufferBase & buffer, size_t size, uchar * data, s
 	if(buffer.gpu->mappable){
 
 		if(!buffer.gpu->mapped){
-			vmaMapMemory(_allocator, buffer.gpu->data, (void**)&buffer.gpu->mapped);
+			VK_RET(vmaMapMemory(_allocator, buffer.gpu->data, (void**)&buffer.gpu->mapped));
 		}
 		vmaInvalidateAllocation(_allocator, buffer.gpu->data, offset, size);
 		std::memcpy(data, buffer.gpu->mapped + offset, size);
@@ -1069,7 +1068,8 @@ void GPU::drawQuad(){
 }
 
 void GPU::sync(){
-	vkDeviceWaitIdle(_context.device);
+	// \todo: Submit current command buffer and wait idle before reopening it?
+	VK_RET(vkDeviceWaitIdle(_context.device));
 }
 
 void GPU::nextFrame(){
@@ -1113,18 +1113,18 @@ std::vector<std::string> GPU::supportedExtensions() {
 	names.emplace_back("-- Instance ------");
 	// Get available extensions.
 	uint32_t instanceExtsCount = 0;
-	vkEnumerateInstanceExtensionProperties(nullptr, &instanceExtsCount, nullptr);
+	VK_RET(vkEnumerateInstanceExtensionProperties(nullptr, &instanceExtsCount, nullptr));
 	std::vector<VkExtensionProperties> instanceExts(instanceExtsCount);
-	vkEnumerateInstanceExtensionProperties(nullptr, &instanceExtsCount, instanceExts.data());
+	VK_RET(vkEnumerateInstanceExtensionProperties(nullptr, &instanceExtsCount, instanceExts.data()));
 	for(const auto& ext : instanceExts){
 		names.emplace_back(ext.extensionName);
 	}
 	// Layers too.
 	names.emplace_back("-- Layers --------");
 	uint32_t layerCount;
-	vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
+	VK_RET(vkEnumerateInstanceLayerProperties(&layerCount, nullptr));
 	std::vector<VkLayerProperties> availableLayers(layerCount);
-	vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
+	VK_RET(vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data()));
 	for(const auto& layer : availableLayers){
 		names.emplace_back(layer.layerName);
 	}
@@ -1132,9 +1132,9 @@ std::vector<std::string> GPU::supportedExtensions() {
 	if(_context.physicalDevice != VK_NULL_HANDLE){
 		names.emplace_back("-- Device --------");
 		uint32_t deviceExtsCount;
-		vkEnumerateDeviceExtensionProperties(_context.physicalDevice, nullptr, &deviceExtsCount, nullptr);
+		VK_RET(vkEnumerateDeviceExtensionProperties(_context.physicalDevice, nullptr, &deviceExtsCount, nullptr));
 		std::vector<VkExtensionProperties> deviceExts(deviceExtsCount);
-		vkEnumerateDeviceExtensionProperties(_context.physicalDevice, nullptr, &deviceExtsCount, deviceExts.data());
+		VK_RET(vkEnumerateDeviceExtensionProperties(_context.physicalDevice, nullptr, &deviceExtsCount, deviceExts.data()));
 		for(const auto& ext : deviceExts){
 			names.emplace_back(ext.extensionName);
 		}

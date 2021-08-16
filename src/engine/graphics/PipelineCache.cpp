@@ -22,7 +22,7 @@ void PipelineCache::init(){
 	cacheInfos.initialDataSize = pipelineSize;
 	cacheInfos.pInitialData = pipelineData;
 
-	vkCreatePipelineCache(context->device, &cacheInfos, nullptr, &_vulkanCache);
+	VK_RET(vkCreatePipelineCache(context->device, &cacheInfos, nullptr, &_vulkanCache));
 	free(pipelineData);
 }
 
@@ -109,10 +109,10 @@ void PipelineCache::clean(){
 	// Retrieve cache data.
 	GPUContext* context = GPU::getInternal();
 	size_t pipelineSize = 0;
-	vkGetPipelineCacheData(context->device, _vulkanCache, &pipelineSize, nullptr);
+	VK_RET(vkGetPipelineCacheData(context->device, _vulkanCache, &pipelineSize, nullptr));
 	if(pipelineSize != 0){
 		char* pipelineData = new char[pipelineSize];
-		vkGetPipelineCacheData(context->device, _vulkanCache, &pipelineSize, pipelineData);
+		VK_RET(vkGetPipelineCacheData(context->device, _vulkanCache, &pipelineSize, pipelineData));
 		Resources::saveRawDataToExternalFile(PIPELINE_CACHE_FILE, pipelineData, pipelineSize);
 	}
 

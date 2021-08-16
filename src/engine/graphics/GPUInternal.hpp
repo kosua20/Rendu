@@ -14,20 +14,29 @@
 // Forward declaration.
 class Texture;
 
-// Debug macros.
+/**
+ \addtogroup Graphics
+ @{
+ */
+
 #ifdef DEBUG
+/// Macro used to check the return code of Vulkan calls.
 	#define VK_RETURN_CHECK(F, L) do {\
 		VkResult res = (F);\
 		if(res != VK_SUCCESS){\
-			Log::Error() << Log::GPU << "Return error at line " << L << std::endl;\
+			Log::Error() << Log::GPU << "Vulkan return error at line " << L << std::endl;\
+			VkUtils::checkResult(res);\
 		}\
 	} while(0);
 #else
+	/// Macro used to check the return code of Vulkan calls.
 	#define VK_RETURN_CHECK(F, L)
 #endif
 
+/// Macro used to check the return code of Vulkan calls.
 #define VK_RET(F) VK_RETURN_CHECK((F), __LINE__)
 
+/** @} */
 
 /** \brief Request for the buffered deletion of a resource.
  * Any of the handles stored below is optional, depending on the kind of resource being deleted.

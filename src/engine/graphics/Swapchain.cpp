@@ -17,7 +17,7 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 	// Query swapchain properties and pick settings.
 	// Basic capabilities.
 	VkSurfaceCapabilitiesKHR capabilities;
-	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(_context->physicalDevice, _context->surface, &capabilities);
+	VK_RET(vkGetPhysicalDeviceSurfaceCapabilitiesKHR(_context->physicalDevice, _context->surface, &capabilities));
 	// We want three images in our swapchain.
 	_minImageCount = _imageCount = 3;
 	// Number of items in the swapchain.
@@ -40,9 +40,9 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 	// Supported formats.
 	std::vector<VkSurfaceFormatKHR> formats;
 	uint32_t formatCount;
-	vkGetPhysicalDeviceSurfaceFormatsKHR(_context->physicalDevice, _context->surface, &formatCount, nullptr);
+	VK_RET(vkGetPhysicalDeviceSurfaceFormatsKHR(_context->physicalDevice, _context->surface, &formatCount, nullptr));
 	formats.resize(formatCount);
-	vkGetPhysicalDeviceSurfaceFormatsKHR(_context->physicalDevice, _context->surface, &formatCount, formats.data());
+	VK_RET(vkGetPhysicalDeviceSurfaceFormatsKHR(_context->physicalDevice, _context->surface, &formatCount, formats.data()));
 
 	// Ideally RGBA8 with a sRGB display. //VK_FORMAT_R8G8B8A8_UNORM, VK_FORMAT_B8G8R8A8_SRGB
 	const VkColorSpaceKHR tgtColorSpace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
@@ -74,9 +74,9 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 	// Supported modes.
 	std::vector<VkPresentModeKHR> presentModes;
 	uint32_t presentModeCount;
-	vkGetPhysicalDeviceSurfacePresentModesKHR(_context->physicalDevice, _context->surface, &presentModeCount, nullptr);
+	VK_RET(vkGetPhysicalDeviceSurfacePresentModesKHR(_context->physicalDevice, _context->surface, &presentModeCount, nullptr));
 	presentModes.resize(presentModeCount);
-	vkGetPhysicalDeviceSurfacePresentModesKHR(_context->physicalDevice, _context->surface, &presentModeCount, presentModes.data());
+	VK_RET(vkGetPhysicalDeviceSurfacePresentModesKHR(_context->physicalDevice, _context->surface, &presentModeCount, presentModes.data()));
 
 	// By default only FIFO (~V-sync mode) is always available.
 	VkPresentModeKHR presentMode = VK_PRESENT_MODE_FIFO_KHR;
@@ -193,11 +193,11 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 
 	// Retrieve image count in the swap chain.
 	std::vector<VkImage> colorImages;
-	vkGetSwapchainImagesKHR(_context->device, _swapchain, &_imageCount, nullptr);
+	VK_RET(vkGetSwapchainImagesKHR(_context->device, _swapchain, &_imageCount, nullptr));
 	colorImages.resize(_imageCount);
 	Log::Info() << Log::GPU << "Swapchain using " << _imageCount << " images, requested " << _minImageCount << "."<< std::endl;
 	// Retrieve the images themselves.
-	vkGetSwapchainImagesKHR(_context->device, _swapchain, &_imageCount, colorImages.data());
+	VK_RET(vkGetSwapchainImagesKHR(_context->device, _swapchain, &_imageCount, colorImages.data()));
 
 	Descriptor colorDesc(formatInfos.at(surfaceParams.format), Filter::LINEAR, Wrap::CLAMP);
 
@@ -259,7 +259,7 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 		viewInfo.subresourceRange.levelCount = 1;
 		viewInfo.subresourceRange.baseArrayLayer = 0;
 		viewInfo.subresourceRange.layerCount = 1;
-		vkCreateImageView(_context->device, &viewInfo, nullptr, &(fb._colors[0].gpu->view));
+		VK_RET(vkCreateImageView(_context->device, &viewInfo, nullptr, &(fb._colors[0].gpu->view)));
 
 		fb._colors[0].gpu->levelViews.resize(1);
 		VkImageViewCreateInfo viewInfoMip = {};
@@ -272,7 +272,7 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 		viewInfoMip.subresourceRange.levelCount = 1;
 		viewInfoMip.subresourceRange.baseArrayLayer = 0;
 		viewInfoMip.subresourceRange.layerCount = 1;
-		vkCreateImageView(_context->device, &viewInfoMip, nullptr, &(fb._colors[0].gpu->levelViews[0]));
+		VK_RET(vkCreateImageView(_context->device, &viewInfoMip, nullptr, &(fb._colors[0].gpu->levelViews[0])));
 
 		// Generate the render passes.
 		fb.populateRenderPasses(false);
@@ -342,7 +342,7 @@ bool Swapchain::finishFrame(){
 	VkUtils::imageLayoutBarrier(_context->getCurrentCommandBuffer(), *(Framebuffer::backbuffer()->texture(0)->gpu), VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, 0, 1, 0, 1);
 
 	// Finish the frame command buffer.
-	vkEndCommandBuffer(_context->getCurrentCommandBuffer());
+	VK_RET(vkEndCommandBuffer(_context->getCurrentCommandBuffer()));
 
 	// Submit the last command buffer.
 	const uint swapIndex = _context->swapIndex;
@@ -359,8 +359,8 @@ bool Swapchain::finishFrame(){
 	submitInfo.signalSemaphoreCount = 1;
 	submitInfo.pSignalSemaphores = &_framesFinished[swapIndex];
 	// Add the fence so that we don't reuse the command buffer while it's in use.
-	vkResetFences(_context->device, 1, &_framesInFlight[swapIndex]);
-	vkQueueSubmit(_context->graphicsQueue, 1, &submitInfo, _framesInFlight[swapIndex]);
+	VK_RET(vkResetFences(_context->device, 1, &_framesInFlight[swapIndex]));
+	VK_RET(vkQueueSubmit(_context->graphicsQueue, 1, &submitInfo, _framesInFlight[swapIndex]));
 
 	// Present swap chain.
 	VkPresentInfoKHR presentInfo = {};
@@ -397,7 +397,7 @@ bool Swapchain::nextFrame(){
 	}
 
 	// Wait for the current commands buffer to be done.
-	vkWaitForFences(_context->device, 1, &_framesInFlight[_context->swapIndex], VK_TRUE, std::numeric_limits<uint64_t>::max());
+	VK_RET(vkWaitForFences(_context->device, 1, &_framesInFlight[_context->swapIndex], VK_TRUE, std::numeric_limits<uint64_t>::max()));
 
 	// Acquire image from next frame.
 	// Use a semaphore to know when the image is available.
@@ -419,7 +419,7 @@ bool Swapchain::nextFrame(){
 	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
 
-	vkBeginCommandBuffer(_context->getCurrentCommandBuffer(), &beginInfo);
+	VK_RET(vkBeginCommandBuffer(_context->getCurrentCommandBuffer(), &beginInfo));
 	_frameStarted = true;
 	Framebuffer::_backbuffer = _framebuffers[_imageIndex].get();
 

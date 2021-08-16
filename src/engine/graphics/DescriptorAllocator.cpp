@@ -39,7 +39,7 @@ DescriptorSet DescriptorAllocator::allocateSet(VkDescriptorSetLayout& setLayout)
 		if(poolIt->allocated == 0 && (poolIt->lastFrame + 2 < _context->frameIndex)){
 			// Copy the pool infos.
 			DescriptorPool pool = DescriptorPool(*poolIt);
-			vkResetDescriptorPool(_context->device, pool.handle, 0);
+			VK_RET(vkResetDescriptorPool(_context->device, pool.handle, 0));
 			_pools.erase(poolIt);
 			_pools.push_back(pool);
 			found = true;

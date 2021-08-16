@@ -8,9 +8,9 @@
 bool VkUtils::checkLayersSupport(const std::vector<const char*> & requestedLayers){
 	// Get available layers.
 	uint32_t layerCount;
-	vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
+	VK_RET(vkEnumerateInstanceLayerProperties(&layerCount, nullptr));
 	std::vector<VkLayerProperties> availableLayers(layerCount);
-	vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
+	VK_RET(vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data()));
 	// Cross check with those we want.
 	for(const char* layerName : requestedLayers){
 		bool layerFound = false;
@@ -30,9 +30,9 @@ bool VkUtils::checkLayersSupport(const std::vector<const char*> & requestedLayer
 bool VkUtils::checkExtensionsSupport(const std::vector<const char*> & requestedExtensions){
 	// Get available extensions.
 	uint32_t extensionCount = 0;
-	vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
+	VK_RET(vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr));
 	std::vector<VkExtensionProperties> availableExtensions(extensionCount);
-	vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, availableExtensions.data());
+	VK_RET(vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, availableExtensions.data()));
 	for(const char* extensionName : requestedExtensions){
 		bool extensionFound = false;
 		for(const auto& extensionProperties: availableExtensions){
@@ -63,9 +63,9 @@ std::vector<const char*> VkUtils::getRequiredInstanceExtensions(const bool enabl
 bool VkUtils::checkDeviceExtensionsSupport(VkPhysicalDevice device, const std::vector<const char*> & requestedExtensions, bool& hasPortability) {
 	// Get available device extensions.
 	uint32_t extensionCount;
-	vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
+	VK_RET(vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr));
 	std::vector<VkExtensionProperties> availableExtensions(extensionCount);
-	vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, availableExtensions.data());
+	VK_RET(vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, availableExtensions.data()));
 
 	// Check for portability support.
 	hasPortability = false;
@@ -112,7 +112,7 @@ bool VkUtils::getQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface, ui
 		}
 		// CHeck if queue support presentation.
 		VkBool32 presentSupport = false;
-		vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &presentSupport);
+		VK_RET(vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &presentSupport));
 		if(presentSupport) {
 			presentFamily = i;
 		}
@@ -214,29 +214,29 @@ VkCommandBuffer VkUtils::startOneTimeCommandBuffer(GPUContext & context){
 	allocInfo.commandBufferCount = 1;
 
 	VkCommandBuffer commandBuffer;
-	vkAllocateCommandBuffers(context.device, &allocInfo, &commandBuffer);
+	VK_RET(vkAllocateCommandBuffers(context.device, &allocInfo, &commandBuffer));
 
 	// Record in it immediatly.
 	VkCommandBufferBeginInfo beginInfo = {};
 	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-	vkBeginCommandBuffer(commandBuffer, &beginInfo);
+	VK_RET(vkBeginCommandBuffer(commandBuffer, &beginInfo));
 	return commandBuffer;
 }
 
 void VkUtils::endOneTimeCommandBuffer(VkCommandBuffer & commandBuffer, GPUContext & context){
-	vkEndCommandBuffer(commandBuffer);
+	VK_RET(vkEndCommandBuffer(commandBuffer));
 	// Submit it.
 	VkSubmitInfo submitInfo = {};
 	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 	submitInfo.commandBufferCount = 1;
 	submitInfo.pCommandBuffers = &commandBuffer;
-	vkQueueSubmit(context.graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
+	VK_RET(vkQueueSubmit(context.graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE));
 	// \todo Instead of waiting for the queue to complete before submitting the next one, we could insert an event to
 	// get a commandBuffer -> main command buffer dependency.
 	// If we also insert a main command buffer -> command buffer dependency at the beginning, this will implicitely order auxiliary command buffers between them.
 	// We could also submit to the main command buffer if it exists.
-	vkQueueWaitIdle(context.graphicsQueue);
+	VK_RET(vkQueueWaitIdle(context.graphicsQueue));
 	vkFreeCommandBuffers(context.device, context.commandPool, 1, &commandBuffer);
 	commandBuffer = VK_NULL_HANDLE;
 }
@@ -335,7 +335,7 @@ void VkUtils::imageLayoutBarrier(VkCommandBuffer& commandBuffer, GPUTexture& tex
 		return;
 	}
 
-	vkCmdPipelineBarrier(commandBuffer, srcStage, dstStage, 0, 0, nullptr, 0, nullptr, barriers.size(), barriers.data() );
+	vkCmdPipelineBarrier(commandBuffer, srcStage, dstStage, 0, 0, nullptr, 0, nullptr, barriers.size(), barriers.data());
 
 }
 
@@ -407,7 +407,7 @@ void VkUtils::checkResult(VkResult status){
 			break;
 	}
 
-	Log::Error() << "Vulkan error : " << errorType << std::endl;
+	Log::Error() << "Vulkan error code: " << errorType << std::endl;
 
 }
 
