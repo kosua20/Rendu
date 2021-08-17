@@ -659,7 +659,7 @@ std::string ShaderEditor::reload(const std::string & shaderPath, bool syncUnifor
 	// Before updating the program, try to compile the fragment shader and abort if there is some error.
 	Program::Stage stage;
 	std::string log;
-	ShaderCompiler::compile(fShader, ShaderType::FRAGMENT, stage, log);
+	ShaderCompiler::compile(fShader, ShaderType::FRAGMENT, stage, true, log);
 	ShaderCompiler::clean(stage);
 	if(!log.empty()){
 		return log;

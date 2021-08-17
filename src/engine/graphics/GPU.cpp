@@ -299,7 +299,7 @@ void GPU::createProgram(Program& program, const std::string & vertexContent, con
 	std::string compilationLog;
 	// If vertex program code is given, compile it.
 	if(!vertexContent.empty()) {
-		ShaderCompiler::compile(vertexContent, ShaderType::VERTEX, program.stage(ShaderType::VERTEX), compilationLog);
+		ShaderCompiler::compile(vertexContent, ShaderType::VERTEX, program.stage(ShaderType::VERTEX), true, compilationLog);
 		if(!compilationLog.empty()) {
 			Log::Error() << Log::GPU << "Vertex shader (for " << program.name() << ") failed to compile:" << std::endl
 						 << compilationLog << std::endl;
@@ -307,7 +307,7 @@ void GPU::createProgram(Program& program, const std::string & vertexContent, con
 	}
 	// If fragment program code is given, compile it.
 	if(!fragmentContent.empty()) {
-		ShaderCompiler::compile(fragmentContent, ShaderType::FRAGMENT, program.stage(ShaderType::FRAGMENT), compilationLog);
+		ShaderCompiler::compile(fragmentContent, ShaderType::FRAGMENT, program.stage(ShaderType::FRAGMENT), true, compilationLog);
 		if(!compilationLog.empty()) {
 			Log::Error() << Log::GPU << "Fragment shader (for " << program.name() << ") failed to compile:" << std::endl
 						 << compilationLog << std::endl;
@@ -315,7 +315,7 @@ void GPU::createProgram(Program& program, const std::string & vertexContent, con
 	}
 	// If tesselation control program code is given, compile it.
 	if(!tessControlContent.empty()) {
-		ShaderCompiler::compile(tessControlContent, ShaderType::TESSCONTROL, program.stage(ShaderType::TESSCONTROL), compilationLog);
+		ShaderCompiler::compile(tessControlContent, ShaderType::TESSCONTROL, program.stage(ShaderType::TESSCONTROL), true, compilationLog);
 		if(!compilationLog.empty()) {
 			Log::Error() << Log::GPU << "Tessellation control shader (for " << program.name() << ") failed to compile:" << std::endl
 						 << compilationLog << std::endl;
@@ -323,7 +323,7 @@ void GPU::createProgram(Program& program, const std::string & vertexContent, con
 	}
 	// If tessellation evaluation program code is given, compile it.
 	if(!tessEvalContent.empty()) {
-		ShaderCompiler::compile(tessEvalContent, ShaderType::TESSEVAL, program.stage(ShaderType::TESSEVAL), compilationLog);
+		ShaderCompiler::compile(tessEvalContent, ShaderType::TESSEVAL, program.stage(ShaderType::TESSEVAL), true, compilationLog);
 		if(!compilationLog.empty()) {
 			Log::Error() << Log::GPU << "Tessellation evaluation shader (for " << program.name() << ") failed to compile:" << std::endl
 						 << compilationLog << std::endl;

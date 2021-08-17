@@ -125,12 +125,14 @@ void ShaderCompiler::cleanup(){
 }
 
 void ShaderCompiler::clean(Program::Stage & stage){
-	GPUContext* context = GPU::getInternal();
-	vkDestroyShaderModule(context->device, stage.module, nullptr);
+	if(stage.module != VK_NULL_HANDLE){
+		GPUContext* context = GPU::getInternal();
+		vkDestroyShaderModule(context->device, stage.module, nullptr);
+	}
 	stage.reset();
 }
 
-void ShaderCompiler::compile(const std::string & prog, ShaderType type, Program::Stage & stage, std::string & finalLog) {
+void ShaderCompiler::compile(const std::string & prog, ShaderType type, Program::Stage & stage, bool generateModule, std::string & finalLog) {
 
 	// Add GLSL version.
 	std::string outputProg = "#version 450\n#extension GL_ARB_separate_shader_objects : enable\n#line 1 0\n";
@@ -190,20 +192,23 @@ void ShaderCompiler::compile(const std::string & prog, ShaderType type, Program:
 		return;
 	}
 
-	VkShaderModuleCreateInfo createInfo{};
-	createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-	createInfo.codeSize = spirv.size() * sizeof(unsigned int);
-	createInfo.pCode = reinterpret_cast<const uint32_t*>(spirv.data());
-	VkShaderModule shaderModule;
-	GPUContext* context = GPU::getInternal();
-	if(vkCreateShaderModule(context->device, &createInfo, nullptr, &shaderModule) != VK_SUCCESS) {
-		finalLog = "Unable to create shader module.";
-		return;
-	}
-
-	stage.module = shaderModule;
-
 	reflect(program, stage);
+
+	if(generateModule){
+		VkShaderModuleCreateInfo createInfo{};
+		createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+		createInfo.codeSize = spirv.size() * sizeof(unsigned int);
+		createInfo.pCode = reinterpret_cast<const uint32_t*>(spirv.data());
+		VkShaderModule shaderModule;
+		GPUContext* context = GPU::getInternal();
+		if(vkCreateShaderModule(context->device, &createInfo, nullptr, &shaderModule) != VK_SUCCESS) {
+			finalLog = "Unable to create shader module.";
+			return;
+		}
+		stage.module = shaderModule;
+	} else {
+		stage.module = VK_NULL_HANDLE;
+	}
 }
 
 Program::UniformDef::Type ShaderCompiler::convertType(const glslang::TType& type){

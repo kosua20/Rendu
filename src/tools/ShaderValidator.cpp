@@ -100,15 +100,7 @@ int main(int argc, char ** argv) {
 	}
 	Resources::manager().addResources(std::string(argv[1]));
 	
-	RenderingConfig config({ "ShaderValidator", "wxh", "100", "100"});
-	Window window("Validation", config, false, true);
-
-	// Query the renderer identifier, and the supported GPU API version.
-	std::string vendor, renderer, version, shaderVersion;
-	GPU::deviceInfos(vendor, renderer, version, shaderVersion);
-	Log::Info() << Log::GPU << "Vendor: " << vendor << "." << std::endl;
-	Log::Info() << Log::GPU << "Internal renderer: " << renderer << "." << std::endl;
-	Log::Info() << Log::GPU << "Versions: Driver: " << version << ", API: " << shaderVersion << "." << std::endl;
+	ShaderCompiler::init();
 
 	// We will need all glsl files for include support.
 	std::vector<Resources::FileInfos> includeFiles;
@@ -138,7 +130,7 @@ int main(int argc, char ** argv) {
 			const std::string shader = Resources::manager().getStringWithIncludes(fullName, names);
 			// Compile the shader.
 			Program::Stage stage;
-			ShaderCompiler::compile(shader, type.first, stage, compilationLog);
+			ShaderCompiler::compile(shader, type.first, stage, false, compilationLog);
 
 			// Replace the include names by the full paths.
 			for(size_t nid = 1; nid < names.size(); ++nid) {
@@ -172,6 +164,8 @@ int main(int argc, char ** argv) {
 			ShaderCompiler::clean(stage);
 		}
 	}
+
+	ShaderCompiler::cleanup();
 
 	// Has any of the shaders encountered a compilation issue?
 	return encounteredIssues ? 1 : 0;

@@ -22,9 +22,10 @@ public:
 	 \param prog the content of the shader
 	 \param type the type of shader (vertex, fragment,...)
 	 \param stage will be filled with reflection information: the samplers/buffers present in the shader and their user-defined locations, along with the compiled results
+	 \param generateModule shoud a Vulkan module be generated from the SPIR-V code
 	 \param finalLog will contain the compilation log of the shader
 	 */
-	static void compile(const std::string & prog, ShaderType type, Program::Stage & stage, std::string & finalLog);
+	static void compile(const std::string & prog, ShaderType type, Program::Stage & stage, bool generateModule, std::string & finalLog);
 
 	/** Initialize the compiler library.
 	 * \return the success status

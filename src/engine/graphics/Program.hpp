@@ -346,11 +346,7 @@ public:
 		VkShaderModule module = VK_NULL_HANDLE; ///< Native shader data.
 
 		/// Reset the stage state.
-		void reset(){
-			samplers.clear();
-			buffers.clear();
-			module = VK_NULL_HANDLE;
-		}
+		void reset();
 	};
 
 	/** Query shader information for a stage.

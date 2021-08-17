@@ -497,18 +497,6 @@ void Program::uniform(const std::string & name, float t) {
 	}
 }
 
-/*void Program::uniform(const std::string & name, size_t count, const float * t) {
-	// The name (including "[0]") should be present in the list.
-	auto uni = _uniforms.find(name);
-	if(uni != _uniforms.end()) {
-		for(const UniformDef::Location& loc : uni->second.locations){
-			char* dst = retrieveUniformNonConst(loc);
-			std::memcpy(dst, t, sizeof(float) * count);
-		}
-		updateUniformMetric();
-	}
-}*/
-
 void Program::uniform(const std::string & name, const glm::vec2 & t) {
 	auto uni = _uniforms.find(name);
 	if(uni != _uniforms.end()) {
@@ -693,6 +681,12 @@ void Program::getUniform(const std::string & name, glm::mat4 & t) const {
 		const UniformDef::Location& loc = uni->second.locations[0];
 		t = *reinterpret_cast<const glm::mat4*>(retrieveUniform(loc));
 	}
+}
+
+void Program::Stage::reset(){
+	samplers.clear();
+	buffers.clear();
+	module = VK_NULL_HANDLE;
 }
 
 void Program::updateUniformMetric() const {
