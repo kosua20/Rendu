@@ -252,7 +252,7 @@ void DeferredRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 
 	}
 }
 
-void DeferredRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_t layer) {
+void DeferredRenderer::draw(const Camera & camera, Framebuffer & framebuffer, uint layer) {
 
 	const glm::mat4 & view = camera.view();
 	const glm::mat4 & proj = camera.projection();
@@ -309,7 +309,7 @@ void DeferredRenderer::draw(const Camera & camera, Framebuffer & framebuffer, si
 
 }
 
-void DeferredRenderer::resize(unsigned int width, unsigned int height) {
+void DeferredRenderer::resize(uint width, uint height) {
 	// Resize the framebuffers.
 	const glm::vec2 nSize(width, height);
 	_gbuffer->resize(nSize);

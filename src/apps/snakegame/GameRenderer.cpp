@@ -119,7 +119,7 @@ void GameRenderer::drawScene(const Player & player) const {
 	}
 }
 
-void GameRenderer::resize(unsigned int width, unsigned int height) {
+void GameRenderer::resize(uint width, uint height) {
 	const glm::vec2 res(width, height);
 	_playerCamera.ratio(res[0]/res[1]);
 	_sceneFramebuffer->resize(res);

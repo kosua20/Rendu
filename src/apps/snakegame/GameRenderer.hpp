@@ -27,7 +27,7 @@ public:
 	 \param width new width
 	 \param height new height
 	 */
-	void resize(unsigned int width, unsigned int height) override;
+	void resize(uint width, uint height) override;
 	
 private:
 	/** Draw the scene to the current bound framebuffer.

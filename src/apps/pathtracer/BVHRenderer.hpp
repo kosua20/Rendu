@@ -28,7 +28,7 @@ public:
 	void setScene(const std::shared_ptr<Scene> & scene, const Raycaster & raycaster);
 
 	/** \copydoc Renderer::draw */
-	void draw(const Camera & camera, Framebuffer & framebuffer, size_t layer = 0) override;
+	void draw(const Camera & camera, Framebuffer & framebuffer, uint layer = 0) override;
 
 	/** Destructor. */
 	~BVHRenderer() override;

@@ -25,7 +25,7 @@ void EditorRenderer::setScene(const std::shared_ptr<Scene> & scene) {
 	_scene = scene;
 }
 
-void EditorRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_t layer) {
+void EditorRenderer::draw(const Camera & camera, Framebuffer & framebuffer, uint layer) {
 
 	const glm::mat4 & view = camera.view();
 	const glm::mat4 & proj = camera.projection();

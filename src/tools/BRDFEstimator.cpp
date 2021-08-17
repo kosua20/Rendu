@@ -98,7 +98,7 @@ void computeCubemapConvolution(const Texture & cubemapInfos, int levelsCount, in
 		Framebuffer resultFramebuffer(TextureShape::Cube, w, w, 6, 1, {resDesc}, false, "Conv. result");
 
 		// Iterate over faces.
-		for(size_t i = 0; i < 6; ++i) {
+		for(uint i = 0; i < 6; ++i) {
 			Log::Info() << "." << std::flush;
 
 			resultFramebuffer.bind(i, 0, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), 1.0f, Framebuffer::Operation::DONTCARE);

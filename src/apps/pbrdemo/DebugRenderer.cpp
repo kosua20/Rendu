@@ -86,7 +86,7 @@ void DebugRenderer::setScene(const std::shared_ptr<Scene> & scene) {
 	updateSceneMesh();
 }
 
-void DebugRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_t layer) {
+void DebugRenderer::draw(const Camera & camera, Framebuffer & framebuffer, uint layer) {
 
 	if(!_scene){
 		return;

@@ -48,7 +48,7 @@ public:
 	 \param framebuffer the destination framebuffer
 	 \param layer the layer of the destination to write to
 	 */
-	void process(const Texture * texture, const glm::mat4 & proj, const Texture * depth, Framebuffer & framebuffer, size_t layer = 0);
+	void process(const Texture * texture, const glm::mat4 & proj, const Texture * depth, Framebuffer & framebuffer, uint layer = 0);
 
 	/** \copydoc Renderer::interface
 	 */
@@ -56,7 +56,7 @@ public:
 
 	/** \copydoc Renderer::resize
 	 */
-	void resize(unsigned int width, unsigned int height) override;
+	void resize(uint width, uint height) override;
 
 	/** Get the stack settings.
 	 \return a reference to the settings.

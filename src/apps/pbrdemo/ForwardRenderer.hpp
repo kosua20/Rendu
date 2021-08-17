@@ -38,11 +38,11 @@ public:
 	void setScene(const std::shared_ptr<Scene> & scene);
 
 	/** \copydoc Renderer::draw */
-	void draw(const Camera & camera, Framebuffer & framebuffer, size_t layer = 0) override;
+	void draw(const Camera & camera, Framebuffer & framebuffer, uint layer = 0) override;
 
 	/** \copydoc Renderer::resize
 	 */
-	void resize(unsigned int width, unsigned int height) override;
+	void resize(uint width, uint height) override;
 
 	/** \copydoc Renderer::interface */
 	void interface() override;

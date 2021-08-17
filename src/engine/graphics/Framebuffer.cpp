@@ -166,7 +166,7 @@ Framebuffer::Framebuffer(TextureShape shape, uint width, uint height, uint depth
 }
 
 void Framebuffer::populateRenderPasses(bool isBackbuffer){
-	const uint operationCount(_renderPasses.size());
+	const uint operationCount = uint(_renderPasses.size());
 	for(uint cid = 0; cid < operationCount; ++cid){
 		for(uint did = 0; did < operationCount; ++did){
 			for(uint sid = 0; sid < operationCount; ++sid){

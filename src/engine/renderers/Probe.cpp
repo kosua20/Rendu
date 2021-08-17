@@ -32,7 +32,7 @@ void Probe::draw() {
 	}
 }
 
-void Probe::convolveRadiance(float clamp, size_t first, size_t count) {
+void Probe::convolveRadiance(float clamp, uint first, uint count) {
 
 	GPU::setDepthState(false);
 	GPU::setBlendState(false);
@@ -41,19 +41,19 @@ void Probe::convolveRadiance(float clamp, size_t first, size_t count) {
 	_integration->use();
 	_integration->uniform("clampMax", clamp);
 
-	const size_t lb = glm::clamp<size_t>(first, 1, size_t(_framebuffer->texture()->levels - 1));
-	const size_t ub = std::min(first + count, size_t(_framebuffer->texture()->levels));
+	const uint lb = glm::clamp<uint>(first, 1, _framebuffer->texture()->levels - 1u);
+	const uint ub = std::min(first + count, _framebuffer->texture()->levels);
 
-	for(size_t mid = lb; mid < ub; ++mid) {
+	for(uint mid = lb; mid < ub; ++mid) {
 		const uint wh		   = _framebuffer->texture()->width / (1 << mid);
-		const float roughness  = float(mid) / float((_framebuffer->texture()->levels) - 1);
+		const float roughness  = float(mid) / float(_framebuffer->texture()->levels - 1u);
 		const int samplesCount = (mid == 1 ? 64 : 128);
 
 		GPU::setViewport(0, 0, int(wh), int(wh));
 		_integration->uniform("mipmapRoughness", roughness);
 		_integration->uniform("samplesCount", samplesCount);
 
-		for(size_t lid = 0; lid < 6; ++lid) {
+		for(uint lid = 0; lid < 6; ++lid) {
 			_framebuffer->bind(lid, mid, Framebuffer::Operation::DONTCARE);
 			_integration->uniform("mvp", Library::boxVPs[lid]);
 			// Here we need the previous level.

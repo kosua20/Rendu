@@ -116,7 +116,7 @@ void PBRDemo::updateProbes(){
 		} else if(_frameID % _frameCount == 1){
 
 			_inteTime.begin();
-			probe->convolveRadiance(1.2f, 1, 1);
+			probe->convolveRadiance(1.2f, 1u, 1u);
 			_inteTime.end();
 
 			_copyTimeCPU.begin();
@@ -127,7 +127,7 @@ void PBRDemo::updateProbes(){
 
 		} else {
 			_inteTime.begin();
-			probe->convolveRadiance(1.2f, 2, 4);
+			probe->convolveRadiance(1.2f, 2u, 4u);
 			_inteTime.end();
 
 		}

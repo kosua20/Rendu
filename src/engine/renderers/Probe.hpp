@@ -38,7 +38,7 @@ public:
 	 \param first first layer to process (in 1, mip count - 1)
 	 \param count the number of layers to process
 	 */
-	void convolveRadiance(float clamp, size_t first, size_t count);
+	void convolveRadiance(float clamp, uint first, uint count);
 
 	/** Estimate the SH representation of the cubemap irradiance. The estimation is done on the CPU,
 	 and relies on downlaoding a (downscaled) copy of the cubemap content. For synchronization reasons,

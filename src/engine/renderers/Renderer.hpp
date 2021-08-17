@@ -22,13 +22,13 @@ public:
 	 \param framebuffer the destination target
 	 \param layer the layer to write to in the target
 	 */
-	virtual void draw(const Camera & camera, Framebuffer & framebuffer, size_t layer = 0);
+	virtual void draw(const Camera & camera, Framebuffer & framebuffer, uint layer = 0);
 	
 	/** Handle a window resize event.
 	 \param width the new width
 	 \param height the new height
 	 */
-	virtual void resize(unsigned int width, unsigned int height);
+	virtual void resize(uint width, uint height);
 
 	/** Display GUI exposing renderer options.
 	 \note The renderer can assume that a GUI window is currently open.

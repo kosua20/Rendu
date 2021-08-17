@@ -30,7 +30,7 @@ void StenciledRenderer::setScene(const std::shared_ptr<Scene> & scene) {
 }
 
 
-void StenciledRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_t layer) {
+void StenciledRenderer::draw(const Camera & camera, Framebuffer & framebuffer, uint layer) {
 
 	const glm::mat4 & view = camera.view();
 	const glm::mat4 & proj = camera.projection();
@@ -92,7 +92,7 @@ void StenciledRenderer::draw(const Camera & camera, Framebuffer & framebuffer, s
 	GPU::blit(*_sceneFramebuffer, framebuffer, 0, layer, Filter::LINEAR);
 }
 
-void StenciledRenderer::resize(unsigned int width, unsigned int height) {
+void StenciledRenderer::resize(uint width, uint height) {
 	// Resize the framebuffers.
 	_sceneFramebuffer->resize(glm::vec2(width, height));
 }

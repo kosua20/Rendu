@@ -286,7 +286,7 @@ void ForwardRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 &
 
 }
 
-void ForwardRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_t layer) {
+void ForwardRenderer::draw(const Camera & camera, Framebuffer & framebuffer, uint layer) {
 
 	const glm::mat4 & view = camera.view();
 	const glm::mat4 & proj = camera.projection();
@@ -359,7 +359,7 @@ void ForwardRenderer::draw(const Camera & camera, Framebuffer & framebuffer, siz
 	GPU::blit(*_sceneFramebuffer, framebuffer, 0, layer, Filter::LINEAR);
 }
 
-void ForwardRenderer::resize(unsigned int width, unsigned int height) {
+void ForwardRenderer::resize(uint width, uint height) {
 	// Resize the framebuffers.
 	_ssaoPass->resize(width / 2, height / 2);
 	_sceneFramebuffer->resize(glm::vec2(width, height));

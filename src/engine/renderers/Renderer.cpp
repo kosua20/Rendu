@@ -4,7 +4,7 @@ Renderer::Renderer(const std::string & name) : _name(name) {
 
 }
 
-void Renderer::draw(const Camera &, Framebuffer &, size_t){
+void Renderer::draw(const Camera &, Framebuffer &, uint){
 	Log::Error() << "Renderer: Unimplemented draw function." << std::endl;
 	assert(false);
 }
@@ -14,7 +14,7 @@ void Renderer::interface(){
 	assert(false);
 }
 
-void Renderer::resize(unsigned int, unsigned int){
+void Renderer::resize(uint, uint){
 }
 
 std::unique_ptr<Framebuffer> Renderer::createOutput(uint width, uint height, const std::string & name) const {

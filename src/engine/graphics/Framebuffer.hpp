@@ -154,7 +154,7 @@ public:
 	 \param i the color attachment index (or 0 by default)
 	 \return the texture
 	 */
-	const Texture * texture(unsigned int i = 0) const {
+	const Texture * texture(uint i = 0) const {
 		// _colors will never be modified after initialization, so this can be done.
 		return &_colors[i];
 	}
@@ -164,7 +164,7 @@ public:
 	 \param i the color attachment index (or 0 by default)
 	 \return the texture
 	 */
-	Texture * texture(unsigned int i = 0) {
+	Texture * texture(uint i = 0) {
 		// _colors will never be modified after initialization, so this can be done.
 		return &_colors[i];
 	}
@@ -173,7 +173,7 @@ public:
 	 \param i the color attachment index (or 0 by default)
 	 \return the descriptor
 	*/
-	const Descriptor & descriptor(unsigned int i = 0) const;
+	const Descriptor & descriptor(uint i = 0) const;
 
 	/** Query the shape of the framebuffer.
 	 \return the texture shape used for all attachments.

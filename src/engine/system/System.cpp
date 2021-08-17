@@ -7,6 +7,7 @@
 #ifndef _WIN32
 #	include <sys/stat.h>
 #else
+# 	undef APIENTRY
 #	include <Windows.h>
 #endif
 

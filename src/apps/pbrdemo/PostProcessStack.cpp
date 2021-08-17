@@ -32,7 +32,7 @@ PostProcessStack::PostProcessStack(const glm::vec2 & resolution) : Renderer("Pos
 	_dofCompositeProgram = Resources::manager().getProgram2D("dof-composite");
 }
 
-void PostProcessStack::process(const Texture * texture, const glm::mat4 & proj, const Texture * depth, Framebuffer & framebuffer, size_t layer) {
+void PostProcessStack::process(const Texture * texture, const glm::mat4 & proj, const Texture * depth, Framebuffer & framebuffer, uint layer) {
 
 	const glm::vec2 invRenderSize = 1.0f / glm::vec2(framebuffer.width(), framebuffer.height());
 
@@ -126,7 +126,7 @@ void PostProcessStack::updateBlurPass(){
 	_blur.reset(new GaussianBlur(_settings.bloomRadius, 2, "Bloom"));
 }
 
-void PostProcessStack::resize(unsigned int width, unsigned int height) {
+void PostProcessStack::resize(uint width, uint height) {
 	const glm::ivec2 renderRes(width, height);
 	_toneMapBuffer->resize(renderRes);
 	_bloomBuffer->resize(renderRes);

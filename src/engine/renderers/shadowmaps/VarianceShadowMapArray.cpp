@@ -23,7 +23,7 @@ void VarianceShadowMap2DArray::draw(const Scene & scene) {
 	_program->use();
 	_program->defaultTexture(0);
 
-	for(size_t lid = 0; lid < _lights.size(); ++lid){
+	for(uint lid = 0; lid < uint(_lights.size()); ++lid){
 		const auto & light = _lights[lid];
 		if(!light->castsShadow()){
 			continue;
@@ -76,7 +76,7 @@ void VarianceShadowMapCubeArray::draw(const Scene & scene) {
 	_program->use();
 	_program->defaultTexture(0);
 
-	for(size_t lid = 0; lid < _lights.size(); ++lid){
+	for(uint lid = 0; lid < uint(_lights.size()); ++lid){
 		const auto & light = _lights[lid];
 		if(!light->castsShadow()){
 			continue;
@@ -87,7 +87,7 @@ void VarianceShadowMapCubeArray::draw(const Scene & scene) {
 		// Pass the world space light position, and the projection matrix far plane.
 		_program->uniform("lightPositionWorld", light->position());
 		_program->uniform("lightFarPlane", light->farPlane());
-		for(int i = 0; i < 6; ++i){
+		for(uint i = 0; i < 6; ++i){
 			// We render each face sequentially, culling objects that are not visible.
 			_map->bind(lid * 6 + i, 0, glm::vec4(1.0f), 1.0f);
 			const Frustum lightFrustum(faces[i]);

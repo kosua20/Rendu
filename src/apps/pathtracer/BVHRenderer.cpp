@@ -27,7 +27,7 @@ void BVHRenderer::setScene(const std::shared_ptr<Scene> & scene, const Raycaster
 	_bvhRange = glm::vec2(0, 0);
 }
 
-void BVHRenderer::draw(const Camera & camera, Framebuffer & framebuffer, size_t layer) {
+void BVHRenderer::draw(const Camera & camera, Framebuffer & framebuffer, uint layer) {
 
 	// Draw the scene.
 	GPU::setDepthState(true, TestFunction::LESS, true);
