@@ -129,7 +129,9 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: shader-validator-${{matrix.os}}
-          path: ${{ github.workspace }}/build/ShaderValidator/Release/ShaderValidator.*
+          path: |
+            ${{ github.workspace }}/build/ShaderValidator/Release/ShaderValidator.exe
+            ${{ github.workspace }}/build/ShaderValidator/Release/ShaderValidator
           retention-days: 1
 
 
@@ -163,4 +165,5 @@ jobs:
         working-directory: ${{github.workspace}}
         shell: bash
         run: |
-          ./shader-validator-${{matrix.os}} ./resources/
+          chmod +x ShaderValidator
+          ./ShaderValidator ./resources/
