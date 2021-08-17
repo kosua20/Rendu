@@ -123,4 +123,43 @@ jobs:
           set VULKAN_SDK=%cd%\vulkansdk
           cd build
           "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe" .\Rendu.sln -t:Meta\ALL -nologo -v:minimal -p:Configuration=Release -p:Platform=x64
-  
+
+      - name: Upload shader validator
+        if: ${{ success() }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: shader-validator-${{matrix.os}}
+          path: ${{ github.workspace }}/build/ShaderValidator/Release/ShaderValidator.*
+          retention-days: 1
+
+
+  validate_shaders:
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            premake-opts: gmake2
+          - os: windows-latest
+            premake-opts: vs2019
+          - os: macos-10.15
+            premake-opts: gmake2
+    
+    runs-on: ${{ matrix.os }}
+    
+    steps:
+
+      - name: Clone code repository
+        uses: actions/checkout@v2
+
+      - name: Download shader validator
+        uses: actions/download-artifact@v2
+        with:
+          name: shader-validator-${{matrix.os}}
+
+      - name: Compile all shaders
+        working-directory: ${{github.workspace}}
+        shell: bash
+        run: |
+          ./shader-validator-${{matrix.os}} ./resources/
