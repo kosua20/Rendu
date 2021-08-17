@@ -134,6 +134,7 @@ jobs:
 
 
   validate_shaders:
+    needs: build
 
     strategy:
       fail-fast: false
