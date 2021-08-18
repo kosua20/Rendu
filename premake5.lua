@@ -114,10 +114,9 @@ function ExecutableSetup()
 		links({"glslang", "MachineIndependent", "GenericCodeGen", "OGLCompiler", "SPIRV", "SPIRV-Tools-opt", "SPIRV-Tools","OSDependent" })
 	
 	filter({"system:windows", "configurations:Dev"})
-		links({"glslangd", "OSDependentd", "MachineIndependentd", "GenericCodeGend", "OGLCompilerd", "SPIRVd", "SPIRV-Toolsd", "SPIRV-Tools-optd" })
-	
+		links({"glslangd", "OGLCompilerd", "SPIRVd", "OSDependentd", "MachineIndependentd", "GenericCodeGend", "SPIRV-Tools-optd", "SPIRV-Toolsd"})
 	filter({"system:windows", "configurations:Release" })
-		links({"glslang", "OSDependent", "MachineIndependent", "GenericCodeGen", "OGLCompiler", "SPIRV", "SPIRV-Tools", "SPIRV-Tools-opt" })
+		links({"glslang", "OGLCompiler", "SPIRV", "OSDependent", "MachineIndependent", "GenericCodeGen", "SPIRV-Tools-opt", "SPIRV-Tools"})
 
 	filter({})
 
