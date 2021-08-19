@@ -71,23 +71,23 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 	}
 
 	// Look for a presentation mode.
-	// Supported modes.
-	std::vector<VkPresentModeKHR> presentModes;
-	uint32_t presentModeCount;
-	VK_RET(vkGetPhysicalDeviceSurfacePresentModesKHR(_context->physicalDevice, _context->surface, &presentModeCount, nullptr));
-	presentModes.resize(presentModeCount);
-	VK_RET(vkGetPhysicalDeviceSurfacePresentModesKHR(_context->physicalDevice, _context->surface, &presentModeCount, presentModes.data()));
-
 	// By default only FIFO (~V-sync mode) is always available.
 	VkPresentModeKHR presentMode = VK_PRESENT_MODE_FIFO_KHR;
-	for(const auto& availableMode : presentModes) {
-		// If available, we directly pick triple buffering.
-		if(availableMode == VK_PRESENT_MODE_MAILBOX_KHR) {
-			presentMode = availableMode;
-		}
-		if((availableMode == VK_PRESENT_MODE_IMMEDIATE_KHR) && !_vsync) {
-			// Uncapped framerate.
-			presentMode = availableMode;
+	// If we want an uncapped framerate mode, check if available.
+	if(!_vsync){
+		// Supported modes.
+		std::vector<VkPresentModeKHR> presentModes;
+		uint32_t presentModeCount;
+		VK_RET(vkGetPhysicalDeviceSurfacePresentModesKHR(_context->physicalDevice, _context->surface, &presentModeCount, nullptr));
+		presentModes.resize(presentModeCount);
+		VK_RET(vkGetPhysicalDeviceSurfacePresentModesKHR(_context->physicalDevice, _context->surface, &presentModeCount, presentModes.data()));
+
+		for(const auto& availableMode : presentModes) {
+			if(availableMode == VK_PRESENT_MODE_IMMEDIATE_KHR) {
+				// Uncapped framerate.
+				presentMode = availableMode;
+				break;
+			}
 		}
 	}
 

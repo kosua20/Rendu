@@ -61,7 +61,7 @@ _config(config), _allowEscape(escapeQuit) {
 	glfwSetScrollCallback(_window, scroll_callback);					  // Scrolling
 	glfwSetJoystickCallback(joystick_callback);						  // Joystick
 	glfwSetWindowIconifyCallback(_window, iconify_callback);			  // Window minimization
-	//glfwSwapInterval(_config.vsync ? (_config.rate == 30 ? 2 : 1) : 0); // 60 FPS V-sync
+	glfwSwapInterval(_config.vsync ? (_config.rate == 30 ? 2 : 1) : 0); // 60 FPS V-sync
 
 	// Check the window position and size (if we are on a screen smaller than the initial size).
 	glfwGetWindowPos(_window, &_config.windowFrame[0], &_config.windowFrame[1]);
