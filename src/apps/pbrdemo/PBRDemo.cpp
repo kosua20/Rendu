@@ -137,7 +137,7 @@ void PBRDemo::updateProbes(){
 
 void PBRDemo::draw() {
 
-	_frameID = (_frameID + 1)%_frameCount;
+	++_frameID;
 
 	if(!_scenes[_currentScene]) {
 		Framebuffer::backbuffer()->bind(glm::vec4(0.2f, 0.2f, 0.2f, 1.0f), 1.0f, Framebuffer::Operation::DONTCARE);
