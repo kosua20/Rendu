@@ -27,23 +27,36 @@ class GPU {
 	friend class Framebuffer; ///< Access to deletion notifier for cached state update.
 	friend class Program; ///< Access to metrics.
 	friend class Swapchain; ///< Access to framebuffer cleanup.
+	friend class PipelineCache; ///< Access to metrics.
 
 public:
 
 	/** Internal operation metrics. */
 	struct Metrics {
-		unsigned long drawCalls = 0; ///< Mesh draw call.
-		unsigned long quadCalls = 0; ///< Full screen quad.
-		unsigned long stateChanges = 0; ///< State changes.
-		unsigned long textureBindings = 0; ///< Number of texture bindings.
-		unsigned long framebufferBindings = 0; ///< Number of framebuffer bindings.
-		unsigned long bufferBindings = 0; ///< Number of data buffer bindings.
-		unsigned long vertexBindings = 0; ///< Number of vertex array bindings.
-		unsigned long programBindings = 0; ///< Number of shade program bindings.
-		unsigned long clearAndBlits = 0; ///< Framebuffer clearing and blitting operations.
-		unsigned long uploads = 0; ///< Data upload to the GPU.
-		unsigned long downloads = 0; ///< Data download from the GPU.
-		unsigned long uniforms = 0; ///< Uniform update.
+		// Global statistics.
+		unsigned long long uploads = 0; ///< Data upload to the GPU.
+		unsigned long long downloads = 0; ///< Data download from the GPU.
+		unsigned long long textures = 0; ///< Textures created.
+		unsigned long long buffers = 0; ///< Buffers created.
+		unsigned long long programs = 0; ///< Programs created.
+		unsigned long long pipelines = 0; ///< Pipelines created.
+
+		// Per-frame statistics.
+		unsigned long long drawCalls = 0; ///< Mesh draw call.
+		unsigned long long quadCalls = 0; ///< Full screen quad.
+		unsigned long long pipelineBindings = 0; ///< Number of pipeline set operations.
+		unsigned long long renderPasses = 0; ///< Number of render passes.
+		unsigned long long meshBindings = 0; ///< Number of mesh bindings.
+		unsigned long long blitCount = 0; ///< Framebuffer blitting operations.
+
+		void resetPerFrameMetrics(){
+			drawCalls = 0;
+			quadCalls = 0;
+			pipelineBindings = 0;
+			renderPasses = 0;
+			meshBindings = 0;
+			blitCount = 0;
+		}
 	};
 	
 	/** Setup the GPU device in its initial state.

@@ -266,18 +266,22 @@ void DebugViewer::interface() {
 void DebugViewer::displayMetrics(){
 	const GPU::Metrics & metrics = GPU::getMetrics();
 	if(ImGui::Begin("Metrics##DEBUGVIEWER")){
-		ImGui::Text("State changes: %lu", metrics.stateChanges);
-		ImGui::Text("Clear & blits: %lu", metrics.clearAndBlits);
-		ImGui::Text("Screen quads: %lu", metrics.quadCalls);
-		ImGui::Text("Draw calls: %lu", metrics.drawCalls);
-		ImGui::Text("VAO bindings: %lu", metrics.textureBindings);
-		ImGui::Text("Texture bindings: %lu", metrics.textureBindings);
-		ImGui::Text("Framebuffer bindings: %lu", metrics.framebufferBindings);
-		ImGui::Text("Data buffer bindings: %lu", metrics.bufferBindings);
-		ImGui::Text("Program bindings: %lu", metrics.programBindings);
-		ImGui::Text("Uniforms: %lu", metrics.uniforms);
-		ImGui::Text("Uploads: %lu", metrics.uploads);
-		ImGui::Text("Downloads: %lu", metrics.downloads);
+		if(ImGui::CollapsingHeader("Global", ImGuiTreeNodeFlags_DefaultOpen)){
+			ImGui::Text("Uploads: %llu", metrics.uploads);
+			ImGui::Text("Downloads: %llu", metrics.downloads);
+			ImGui::Text("Textures: %llu", metrics.textures);
+			ImGui::Text("Buffers: %llu", metrics.buffers);
+			ImGui::Text("Programs: %llu", metrics.programs);
+			ImGui::Text("Pipelines: %llu", metrics.pipelines);
+		}
+		if(ImGui::CollapsingHeader("Per-frame", ImGuiTreeNodeFlags_DefaultOpen)){
+			ImGui::Text("Blits: %llu", metrics.blitCount);
+			ImGui::Text("Render passes: %llu", metrics.renderPasses);
+			ImGui::Text("Pipeline bindings: %llu", metrics.pipelineBindings);
+			ImGui::Text("Mesh bindings: %llu", metrics.meshBindings);
+			ImGui::Text("Screen quads: %llu", metrics.quadCalls);
+			ImGui::Text("Draw calls: %llu", metrics.drawCalls);
+		}
 	}
 	ImGui::End();
 }

@@ -98,6 +98,8 @@ void PipelineCache::freeOutdatedPipelines(){
 		}
 		vkDestroyPipeline(context->device, pip.pipeline, nullptr);
 		_pipelinesToDelete.pop_front();
+		
+		--GPU::_metrics.pipelines;
 	}
 }
 
@@ -119,6 +121,7 @@ void PipelineCache::clean(){
 	for(auto& programPipelines : _pipelines){
 		for(auto& pipeline : programPipelines.second){
 			vkDestroyPipeline(context->device, pipeline.second.pipeline, nullptr);
+			--GPU::_metrics.pipelines;
 		}
 	}
 
@@ -132,6 +135,8 @@ VkPipeline PipelineCache::createNewPipeline(const GPUState& state, const uint64_
 	entry.program = state.program;
 	entry.mesh = state.mesh->state;
 	entry.framebuffer = state.pass.framebuffer->getState();
+
+	++GPU::_metrics.pipelines;
 
 	auto it = _pipelines[state.program].insert(std::make_pair(hash, entry));
 	return it->second.pipeline;

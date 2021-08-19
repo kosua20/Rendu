@@ -329,6 +329,7 @@ void GPU::createProgram(Program& program, const std::string & vertexContent, con
 						 << compilationLog << std::endl;
 		}
 	}
+	++_metrics.programs;
 }
 
 void GPU::bindProgram(const Program & program){
@@ -464,6 +465,8 @@ void GPU::setupTexture(Texture & texture, const Descriptor & descriptor, bool dr
 	}
 
 	setupSampler(*texture.gpu);
+
+	++_metrics.textures;
 }
 
 void GPU::setupSampler(GPUTexture & texture) {
@@ -610,7 +613,7 @@ void GPU::uploadTexture(const Texture & texture) {
 	VkUtils::blitTexture(commandBuffer, transferTexture, texture, 0, 0, texture.levels, 0, 0, layers, glm::uvec2(0), srcSize, glm::uvec2(0), dstSize, Filter::NEAREST);
 
 	VkUtils::endOneTimeCommandBuffer(commandBuffer, _context);
-
+	++_metrics.uploads;
 }
 
 
@@ -664,6 +667,8 @@ void GPU::downloadTexture(Texture & texture, int level) {
 		std::memcpy(img.pixels.data(), dstBuffer->gpu->mapped + currentOffset, imgSize);
 		currentOffset += imgSize;
 	}
+
+	++_metrics.downloads;
 
 }
 
@@ -834,7 +839,8 @@ void GPU::setupBuffer(BufferBase & buffer) {
 	} else {
 		buffer.gpu->mapped = nullptr;
 	}
-	
+
+	++_metrics.buffers;
 }
 
 void GPU::uploadBuffer(const BufferBase & buffer, size_t size, uchar * data, size_t offset) {
@@ -859,6 +865,7 @@ void GPU::uploadBuffer(const BufferBase & buffer, size_t size, uchar * data, siz
 		}
 		std::memcpy(buffer.gpu->mapped + offset, data, size);
 		flushBuffer(buffer, size, offset);
+		++_metrics.uploads;
 		return;
 	}
 
@@ -894,6 +901,7 @@ void GPU::downloadBuffer(const BufferBase & buffer, size_t size, uchar * data, s
 		}
 		vmaInvalidateAllocation(_allocator, buffer.gpu->data, offset, size);
 		std::memcpy(data, buffer.gpu->mapped + offset, size);
+		++_metrics.downloads;
 		return;
 	}
 
@@ -909,7 +917,7 @@ void GPU::downloadBuffer(const BufferBase & buffer, size_t size, uchar * data, s
 	vkCmdCopyBuffer(commandBuffer, buffer.gpu->buffer, transferBuffer.gpu->buffer, 1, &copyRegion);
 	VkUtils::endOneTimeCommandBuffer(commandBuffer, _context);
 	transferBuffer.download(size, data, 0);
-	
+
 }
 
 void GPU::flushBuffer(const BufferBase & buffer, size_t size, size_t offset){
@@ -1027,6 +1035,7 @@ void GPU::bindPipelineIfNeeded(){
 
 	if(shouldBindPipeline){
 		vkCmdBindPipeline(_context.getCurrentCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, _context.pipeline);
+		++_metrics.pipelineBindings;
 	}
 }
 
@@ -1038,7 +1047,10 @@ void GPU::drawMesh(const Mesh & mesh) {
 
 	vkCmdBindVertexBuffers(_context.getCurrentCommandBuffer(), 0, uint32_t(mesh.gpu->state.offsets.size()), mesh.gpu->state.buffers.data(), mesh.gpu->state.offsets.data());
 	vkCmdBindIndexBuffer(_context.getCurrentCommandBuffer(), mesh.gpu->indexBuffer->buffer, 0, VK_INDEX_TYPE_UINT32);
+	++_metrics.meshBindings;
+
 	vkCmdDrawIndexed(_context.getCurrentCommandBuffer(), static_cast<uint32_t>(mesh.gpu->count), 1, 0, 0, 0);
+	++_metrics.drawCalls;
 }
 
 void GPU::drawTesselatedMesh(const Mesh & mesh, uint patchSize){
@@ -1057,6 +1069,7 @@ void GPU::drawQuad(){
 	VkDeviceSize offset = 0;
 	vkCmdBindVertexBuffers(_context.getCurrentCommandBuffer(), 0, 1, &(_quad.gpu->vertexBuffer->buffer), &offset);
 	vkCmdDraw(_context.getCurrentCommandBuffer(), 3, 1, 0, 0);
+	++_metrics.quadCalls;
 }
 
 void GPU::sync(){
@@ -1073,7 +1086,7 @@ void GPU::nextFrame(){
 
 	// Save and reset stats.
 	_metricsPrevious = _metrics;
-	_metrics = Metrics();
+	_metrics.resetPerFrameMetrics();
 }
 
 void GPU::deviceInfos(std::string & vendor, std::string & renderer, std::string & version, std::string & shaderVersion) {
@@ -1225,7 +1238,7 @@ void GPU::blitDepth(const Framebuffer & src, const Framebuffer & dst) {
 	const glm::uvec2 dstSize(dstTex.width, dstTex.height);
 	VkUtils::blitTexture(commandBuffer, srcTex, dstTex, 0, 0, srcTex.levels, 0, 0, layerCount, glm::uvec2(0), srcSize, glm::uvec2(0), dstSize, Filter::NEAREST);
 
-//	_metrics.clearAndBlits += 1;
+	++_metrics.blitCount;
 }
 
 void GPU::blit(const Framebuffer & src, const Framebuffer & dst, Filter filter) {
@@ -1243,6 +1256,7 @@ void GPU::blit(const Framebuffer & src, const Framebuffer & dst, Filter filter) 
 		const uint layerCount = srcTex.shape == TextureShape::D3 ? 1 : srcTex.depth;
 		VkUtils::blitTexture(commandBuffer, srcTex, dstTex, 0, 0, srcTex.levels, 0, 0, layerCount, glm::uvec2(0), srcSize, glm::uvec2(0), dstSize, filter);
 	}
+	_metrics.blitCount += count;
 }
 
 void GPU::blit(const Framebuffer & src, const Framebuffer & dst, size_t lSrc, size_t lDst, Filter filter) {
@@ -1263,6 +1277,7 @@ void GPU::blit(const Framebuffer & src, const Framebuffer & dst, size_t lSrc, si
 		const Texture& dstTex = *dst.texture(cid);
 		VkUtils::blitTexture(commandBuffer, srcTex, dstTex, uint(mipSrc), uint(mipDst), 1, uint(lSrc), uint(lDst), 1, glm::uvec2(0), srcSize, glm::uvec2(0), dstSize, filter);
 	}
+	_metrics.blitCount += count;
 }
 
 void GPU::blit(const Texture & src, Texture & dst, Filter filter) {
@@ -1286,7 +1301,7 @@ void GPU::blit(const Texture & src, Texture & dst, Filter filter) {
 	const glm::uvec2 dstSize(dst.width, dst.height);
 
 	VkUtils::blitTexture(_context.getCurrentCommandBuffer(), src, dst, 0, 0, src.levels, 0, 0, layerCount, glm::uvec2(0), srcSize, glm::uvec2(0), dstSize, filter);
-
+	++_metrics.blitCount;
 }
 
 void GPU::blit(const Texture & src, Framebuffer & dst, Filter filter) {
@@ -1302,7 +1317,7 @@ void GPU::blit(const Texture & src, Framebuffer & dst, Filter filter) {
 	const glm::uvec2 srcSize(src.width, src.height);
 	const glm::uvec2 dstSize(dst.width(), dst.height());
 	VkUtils::blitTexture(_context.getCurrentCommandBuffer(), src, *dst.texture(), 0, 0, src.levels, 0, 0, layerCount, glm::uvec2(0), srcSize, glm::uvec2(0), dstSize, filter);
-
+	++_metrics.blitCount;
 }
 
 
@@ -1312,6 +1327,7 @@ void GPU::unbindFramebufferIfNeeded(){
 	}
 	VkCommandBuffer& commandBuffer = _context.getCurrentCommandBuffer();
 	vkCmdEndRenderPass(commandBuffer);
+	++_metrics.renderPasses;
 
 	const Framebuffer& fb = *_state.pass.framebuffer;
 
@@ -1383,7 +1399,7 @@ void GPU::clean(GPUTexture & tex){
 		rsc.name = tex.name;
 	}
 	tex.levelViews.clear();
-
+	--_metrics.textures;
 }
 
 void GPU::clean(Framebuffer & framebuffer, bool deleteRenderPasses){
@@ -1439,6 +1455,7 @@ void GPU::clean(GPUBuffer & buffer){
 	rsc.buffer = buffer.buffer;
 	rsc.data = buffer.data;
 	rsc.frame = _context.frameIndex;
+	--_metrics.buffers;
 }
 
 void GPU::clean(Program & program){
@@ -1523,8 +1540,8 @@ void GPU::processAsyncTasks(){
 
 		// User-defined callback.
 		tsk.callback(*tsk.dstTexture);
-
 		_context.textureTasks.pop_front();
+		++_metrics.downloads;
 	}
 }
 
