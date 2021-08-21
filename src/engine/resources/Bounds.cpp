@@ -142,3 +142,12 @@ glm::mat4 Frustum::perspective(float fov, float ratio, float near, float far){
 	projection[3][1] *= -1.0f;
 	return projection;
 }
+
+glm::mat4 Frustum::ortho(float left, float right, float bottom, float top, float near, float far){
+	glm::mat4 projection = glm::ortho(left, right, bottom, top, near, far);
+	projection[0][1] *= -1.0f;
+	projection[1][1] *= -1.0f;
+	projection[2][1] *= -1.0f;
+	projection[3][1] *= -1.0f;
+	return projection;
+}

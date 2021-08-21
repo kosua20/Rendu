@@ -32,7 +32,7 @@ void DirectionalLight::setScene(const BoundingBox & sceneBox) {
 	const float near				= std::min(absz1, absz2);
 	const float far					= std::max(absz1, absz2);
 	const float scaleMargin			= 1.5f;
-	_projectionMatrix				= glm::ortho(scaleMargin * lightSpacebox.minis[0], scaleMargin * lightSpacebox.maxis[0], scaleMargin * lightSpacebox.minis[1], scaleMargin * lightSpacebox.maxis[1], (1.0f / scaleMargin) * near, scaleMargin * far);
+	_projectionMatrix				= Frustum::ortho(scaleMargin * lightSpacebox.minis[0], scaleMargin * lightSpacebox.maxis[0], scaleMargin * lightSpacebox.minis[1], scaleMargin * lightSpacebox.maxis[1], (1.0f / scaleMargin) * near, scaleMargin * far);
 	_vp = _projectionMatrix * _viewMatrix;
 	_model = glm::inverse(_viewMatrix) * glm::scale(glm::mat4(1.0f), glm::vec3(0.2f));
 }

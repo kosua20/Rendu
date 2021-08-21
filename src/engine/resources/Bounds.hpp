@@ -117,7 +117,7 @@ public:
 	*/
 	bool intersects(const BoundingBox & box) const;
 
-	/** Generate a perspective matrix, correctly oriented for the rendering API.
+	/** Generate a perspective projection matrix, correctly oriented for the rendering API.
 	 \param fov vertical field of view in radians
 	 \param ratio aspect ratio
 	 \param near the near plane distance
@@ -125,6 +125,17 @@ public:
 	 \return the projection matrix
 	 */
 	static glm::mat4 perspective(float fov, float ratio, float near, float far);
+
+	/** Generate an orthographic projection matrix, correctly oriented for the rendering API.
+	 \param left left plane distance from the center
+	 \param right right plane distance from the center
+	 \param bottom bottom plane distance from the center
+	 \param top top plane distance from the center
+	 \param near the near plane distance
+	 \param far the far plane distance
+	 \return the projection matrix
+	 */
+	static glm::mat4 ortho(float left, float right, float bottom, float top, float near, float far);
 
 private:
 
