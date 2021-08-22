@@ -26,7 +26,8 @@ vec2 parallax(vec2 uv, vec3 vTangentDir, sampler2D depth, out vec2 positionShift
 	// Step vector: in tangent space, we walk on the surface, in the (X,Y) plane.
 	vec2 shift = PARALLAX_SCALE * vTangentDir.xy;
 	// This shift corresponds to a UV shift, scaled depending on the height of a layer and the vertical coordinate of the view direction.
-	vec2 shiftUV = shift / vTangentDir.z * layerHeight;
+	// We have to take into account that our UVs are flipped vertically.
+	vec2 shiftUV = shift / vTangentDir.z * layerHeight * vec2(1.0,-1.0);
 	vec2 newUV = uv;
 	
 	// While the current layer is above the surface (ie smaller than depth), we march.
@@ -48,7 +49,8 @@ vec2 parallax(vec2 uv, vec3 vTangentDir, sampler2D depth, out vec2 positionShift
 	
 	// Interpolate between the two local depths to obtain the correct UV shift.
 	vec2 finalUV = mix(newUV, previousNewUV, currentLocalDepth / (currentLocalDepth - previousLocalDepth));
-	positionShift = (uv - finalUV) * vTangentDir.z / layerHeight;
+	// Ouptut position shift, taking UV flip into account.
+	positionShift = (uv - finalUV) * vTangentDir.z / layerHeight * vec2(1.0, -1.0);
 	return finalUV;
 }
 
@@ -77,7 +79,7 @@ vec3 updateFragmentPosition(vec2 localUV, vec2 positionShift, vec3 viewPos, mat4
 	vec4 clipPos = proj * vec4(newViewSpacePosition, 1.0);
 	// Perspective division.
 	float newDepth = clipPos.z / clipPos.w;
-	// Update the fragment depth, taking into account the depth range parameters.
+	// Update the fragment depth.
 	gl_FragDepth = newDepth;
 	return newViewSpacePosition;
 }
