@@ -146,12 +146,19 @@ void ControllableCamera::updateUsingJoystick(double frameTime) {
 void ControllableCamera::updateUsingKeyboard(double frameTime) {
 	// We need the direction of the camera, normalized.
 	glm::vec3 look = normalize(_center - _eye);
+
+	// Speed adjustment for fast motion mode.
+	float localSpeed = _speed;
+	if(Input::manager().pressed(Input::Key::LeftShift)) {
+		localSpeed *= 5.0f;
+	}
+
 	// One step forward or backward.
-	const glm::vec3 deltaLook = _speed * float(frameTime) * look;
+	const glm::vec3 deltaLook = localSpeed * float(frameTime) * look;
 	// One step laterally horizontal.
-	const glm::vec3 deltaLateral = _speed * float(frameTime) * _right;
+	const glm::vec3 deltaLateral = localSpeed * float(frameTime) * _right;
 	// One step laterally vertical.
-	const glm::vec3 deltaVertical = _speed * float(frameTime) * _up;
+	const glm::vec3 deltaVertical = localSpeed * float(frameTime) * _up;
 
 	if(Input::manager().pressed(Input::Key::W)) { // Forward
 		_eye += deltaLook;
@@ -194,12 +201,19 @@ void ControllableCamera::updateUsingKeyboard(double frameTime) {
 void ControllableCamera::updateUsingTurnTable(double frameTime) {
 	// We need the direction of the camera, normalized.
 	const glm::vec3 look = normalize(_center - _eye);
+
+	// Speed adjustment for fast motion mode.
+	float localSpeed = _speed;
+	if(Input::manager().pressed(Input::Key::LeftShift)) {
+		localSpeed *= 5.0f;
+	}
+
 	// One step forward or backward.
-	const glm::vec3 deltaLook = _speed * float(frameTime) * look;
+	const glm::vec3 deltaLook = localSpeed * float(frameTime) * look;
 	// One step laterally horizontal.
-	const glm::vec3 deltaLateral = _speed * float(frameTime) * _right;
+	const glm::vec3 deltaLateral = localSpeed * float(frameTime) * _right;
 	// One step laterally vertical.
-	const glm::vec3 deltaVertical = _speed * float(frameTime) * _up;
+	const glm::vec3 deltaVertical = localSpeed * float(frameTime) * _up;
 
 	if(Input::manager().pressed(Input::Key::W)) { // Forward
 		_center += deltaLook;
