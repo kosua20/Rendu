@@ -1,6 +1,7 @@
 #pragma once
 
 #include "scene/Object.hpp"
+#include "scene/Material.hpp"
 #include "scene/LightProbe.hpp"
 #include "lights/Light.hpp"
 
@@ -62,6 +63,7 @@ public:
 	bool transparent() const { return _transparent; }
 
 	std::vector<Object> objects;				///< The objects in the scene.
+	std::vector<Material> materials;			///< The materials in the scene.
 	std::vector<std::shared_ptr<Light>> lights; ///< Lights present in the scene.
 
 	/** \brief The background mode to use for a scene. */
@@ -73,7 +75,7 @@ public:
 	};
 	Background backgroundMode = Background::COLOR; ///< The background mode (see enum).
 	glm::vec3 backgroundColor = glm::vec3(0.0f);   ///< Color to use if the background mode is COLOR.
-	std::unique_ptr<Object> background;			   ///< Background object, containing the geometry and optional textures to use.
+	std::unique_ptr<Object> background;			   ///< Background object, containing the geometry  to use.
 	LightProbe environment;						   ///< Reflection probe.
 	
 	/** Copy constructor.*/
@@ -98,6 +100,12 @@ private:
 	 \param options data loading and storage options
 	 */
 	void loadObject(const KeyValues & params, Storage options);
+
+	/** Load a material in the scene from its serialized representation.
+	 \param params the material parameters
+	 \param options data loading and storage options
+	 */
+	void loadMaterial(const KeyValues & params, Storage options);
 
 	/** Load a point light in the scene from its serialized representation.
 	 \param params the point light parameters
@@ -135,11 +143,12 @@ private:
 	 */
 	BoundingBox computeBoundingBox(bool onlyShadowCasters = false);
 
+	Material _backgroundMaterial;  			 ///< Background material, containing the optional textures to use.
 	Camera _camera;							 ///< The initial viewpoint on the scene.
 	BoundingBox _bbox;						 ///< The scene bounding box.
 	glm::mat4 _sceneModel = glm::mat4(1.0f); ///< The scene global transformation.
 	std::string _name;						 ///< The scene file name.
 	bool _loaded = false;					 ///< Has the scene already been loaded from disk.
 	bool _animated = false;					 ///< Is the scene using animations.
-	bool _transparent = false;					 ///< Is the scene containing transparent objects.
+	bool _transparent = false;				 ///< Is the scene containing transparent objects.
 };

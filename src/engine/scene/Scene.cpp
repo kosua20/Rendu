@@ -38,7 +38,7 @@ bool Scene::init(Storage options) {
 	
 	// Define loaders for each keyword.
 	std::unordered_map<std::string, void (Scene::*)(const KeyValues &, Storage)> loaders = {
-		{"scene", &Scene::loadScene}, {"object", &Scene::loadObject}, {"point", &Scene::loadLight}, {"directional", &Scene::loadLight}, {"spot", &Scene::loadLight}, {"camera", &Scene::loadCamera}, {"background", &Scene::loadBackground}, {"probe", &Scene::loadProbe}};
+		{"scene", &Scene::loadScene}, {"object", &Scene::loadObject}, {"material", &Scene::loadMaterial}, {"point", &Scene::loadLight}, {"directional", &Scene::loadLight}, {"spot", &Scene::loadLight}, {"camera", &Scene::loadCamera}, {"background", &Scene::loadBackground}, {"probe", &Scene::loadProbe}};
 
 	// Parse the file.
 	const std::string sceneFile			   = Resources::manager().getString(_name);
@@ -55,10 +55,20 @@ bool Scene::init(Storage options) {
 	}
 
 	// Update all objects poses.
-	for(auto & object : objects) {
+	for(Object & object : objects) {
 		const glm::mat4 newModel = _sceneModel * object.model();
 		object.set(newModel);
 	}
+	// Update all objects materials.
+	for(Object& object : objects){
+		for(const Material& material : materials){
+			if(material.name() == object.materialName()){
+				object.setMaterial(&material);
+				break;
+			}
+		}
+	}
+	
 	// The scene model matrix has been applied to all objects, we can reset it.
 	_sceneModel = glm::mat4(1.0f);
 	// Update all lights bounding box infos.
@@ -76,7 +86,7 @@ bool Scene::init(Storage options) {
 
 	// Sort objects by material.
 	std::sort(objects.begin(), objects.end(), [](const Object & a, const Object & b){
-		return int(a.type()) < int(b.type());
+		return int(a.material().type()) < int(b.material().type());
 	});
 
 	// Check if the scene is static.
@@ -84,11 +94,16 @@ bool Scene::init(Storage options) {
 		if(obj.animated()){
 			_animated = true;
 		}
-		if(obj.type() == Object::Transparent){
-			_transparent = true;
-		}
 
 	}
+	// Check if there is a material transparent in the scene.
+	for(const auto& material : materials){
+		if(material.type() == Material::Type::Transparent){
+			_transparent = true;
+			break;
+		}
+	}
+
 	for(const auto & light : lights){
 		if(light->animated()){
 			_animated = true;
@@ -106,6 +121,11 @@ void Scene::loadObject(const KeyValues & params, Storage options) {
 	objects.back().decode(params, options);
 }
 
+void Scene::loadMaterial(const KeyValues & params, Storage options) {
+	materials.emplace_back();
+	materials.back().decode(params, options);
+}
+
 void Scene::loadLight(const KeyValues & params, Storage) {
 	const auto light = Light::decode(params);
 	if(light) {
@@ -118,7 +138,8 @@ void Scene::loadCamera(const KeyValues & params, Storage) {
 }
 
 void Scene::loadBackground(const KeyValues & params, Storage options) {
-	background = std::unique_ptr<Object>(new Object(Object::Type::None, Resources::manager().getMesh("plane", options), false));
+	background = std::unique_ptr<Object>(new Object(Resources::manager().getMesh("plane", options), false));
+	_backgroundMaterial = Material(Material::Type::None);
 
 	for(const auto & param : params.elements) {
 		if(param.key == "color") {
@@ -131,17 +152,17 @@ void Scene::loadBackground(const KeyValues & params, Storage options) {
 			// Load image described as sub-element.
 			const auto texInfos = Codable::decodeTexture(param.elements[0]);
 			const Texture * tex = Resources::manager().getTexture(texInfos.first, texInfos.second, options);
-			background->addTexture(tex);
+			_backgroundMaterial.addTexture(tex);
 
 		} else if(param.key == "cube" && !param.elements.empty()) {
 			backgroundMode = Background::SKYBOX;
 			// Object is a textured skybox.
-			background = std::unique_ptr<Object>(new Object(Object::Type::None, Resources::manager().getMesh("skybox", options), false));
+			background = std::unique_ptr<Object>(new Object(Resources::manager().getMesh("skybox", options), false));
 			background->decode(params, options);
 			// Load cubemap described as subelement.
 			const auto texInfos = Codable::decodeTexture(param.elements[0]);
 			const Texture * tex = Resources::manager().getTexture(texInfos.first, texInfos.second, options);
-			background->addTexture(tex);
+			_backgroundMaterial.addTexture(tex);
 
 		} else if(param.key == "sun") {
 			// In that case the background is a sky object.
@@ -150,9 +171,10 @@ void Scene::loadBackground(const KeyValues & params, Storage options) {
 			background->decode(params, options);
 			// Load the scattering table.
 			const Texture * tex = Resources::manager().getTexture("scattering-precomputed", {Layout::RGBA16F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, options);
-			background->addTexture(tex);
+			_backgroundMaterial.addTexture(tex);
 		}
 	}
+	background->setMaterial(&_backgroundMaterial);
 }
 
 void Scene::loadProbe(const KeyValues & params, Storage options) {
@@ -167,16 +189,20 @@ void Scene::loadScene(const KeyValues & params, Storage) {
 std::vector<KeyValues> Scene::encode() const {
 	std::vector<KeyValues> tokens;
 	
-	// Encode the scene
-	tokens.emplace_back("scene");
-	auto & scnNode = tokens.back();
-	scnNode.elements.push_back(environment.encode());
-	
 	// Encode the scene transformation.
-	const auto modelKeys = Codable::encode(_sceneModel);
-	for(const auto & key : modelKeys){
-		scnNode.elements.push_back(key);
+	if(_sceneModel != glm::mat4(1.0f)){
+		tokens.emplace_back("scene");
+		auto & scnNode = tokens.back();
+
+		// Encode the scene transformation.
+		const auto modelKeys = Codable::encode(_sceneModel);
+		for(const auto & key : modelKeys){
+			scnNode.elements.push_back(key);
+		}
 	}
+
+	// Encode the environment probe.
+	tokens.push_back(environment.encode());
 	
 	// Encode the background.
 	KeyValues bgNode("background");
@@ -188,11 +214,11 @@ std::vector<KeyValues> Scene::encode() const {
 			break;
 		case Background::IMAGE:
 			bgNode.elements.emplace_back("image");
-			bgNode.elements.back().elements = { Codable::encode(background->textures()[0]) };
+			bgNode.elements.back().elements = { Codable::encode(background->material().textures()[0]) };
 			break;
 		case Background::SKYBOX:
 			bgNode.elements.emplace_back("cube");
-			bgNode.elements.back().elements = { Codable::encode(background->textures()[0]) };
+			bgNode.elements.back().elements = { Codable::encode(background->material().textures()[0]) };
 		break;
 		case Background::ATMOSPHERE:
 			bgNode = background->encode();
@@ -205,6 +231,10 @@ std::vector<KeyValues> Scene::encode() const {
 	// Encode the objects
 	for(const auto & obj : objects){
 		tokens.push_back(obj.encode());
+	}
+	// Encode the materials
+	for(const auto & mat : materials){
+		tokens.push_back(mat.encode());
 	}
 	// Encode the lights
 	for(const auto & light : lights){
