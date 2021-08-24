@@ -63,8 +63,9 @@ void DeferredRenderer::renderOpaque(const Culler::List & visibles, const glm::ma
 			break;
 		}
 		const Object & object = _scene->objects[objectId];
+		const Material& material = object.material();
 		// Skip transparent objects.
-		if(object.type() == Object::Transparent){
+		if(material.type() == Material::Transparent){
 			continue;
 		}
 		
@@ -77,8 +78,8 @@ void DeferredRenderer::renderOpaque(const Culler::List & visibles, const glm::ma
 		Program* program = nullptr;
 
 		// Select the program (and shaders).
-		switch(object.type()) {
-			case Object::Parallax:
+		switch(material.type()) {
+			case Material::Parallax:
 				_parallaxProgram->use();
 				program = _parallaxProgram;
 				// Upload the MVP matrix.
@@ -90,7 +91,7 @@ void DeferredRenderer::renderOpaque(const Culler::List & visibles, const glm::ma
 				// Upload the normal matrix.
 				_parallaxProgram->uniform("normalMatrix", glm::mat4(normalMatrix));
 				break;
-			case Object::Regular:
+			case Material::Regular:
 				_objectProgram->use();
 				program = _objectProgram;
 				// Upload the MVP matrix.
@@ -99,7 +100,7 @@ void DeferredRenderer::renderOpaque(const Culler::List & visibles, const glm::ma
 				_objectProgram->uniform("normalMatrix", glm::mat4(normalMatrix));
 				_objectProgram->uniform("hasUV", object.useTexCoords());
 				break;
-			case Object::Emissive:
+			case Material::Emissive:
 				_emissiveProgram->use();
 				program = _emissiveProgram;
 				// Upload the MVP matrix.
@@ -112,10 +113,10 @@ void DeferredRenderer::renderOpaque(const Culler::List & visibles, const glm::ma
 		}
 
 		// Backface culling state.
-		GPU::setCullState(!object.twoSided(), Faces::BACK);
+		GPU::setCullState(!material.twoSided(), Faces::BACK);
 
 		// Bind the textures.
-		program->textures(object.textures());
+		program->textures(material.textures());
 		GPU::drawMesh(*object.mesh());
 	}
 
@@ -159,8 +160,9 @@ void DeferredRenderer::renderTransparent(const Culler::List & visibles, const gl
 		}
 
 		const auto & object = _scene->objects[objectId];
+		const Material & material = object.material();
 		// Skip non transparent objects.
-		if(object.type() != Object::Type::Transparent){
+		if(material.type() != Material::Type::Transparent){
 			continue;
 		}
 
@@ -180,7 +182,7 @@ void DeferredRenderer::renderTransparent(const Culler::List & visibles, const gl
 		_transparentProgram->buffer(*_scene->environment.shCoeffs(), 1);
 		
 		// Bind the textures.
-		_transparentProgram->textures(object.textures());
+		_transparentProgram->textures(material.textures());
 		_transparentProgram->texture(_textureBrdf, 4);
 		_transparentProgram->texture(_scene->environment.map(), 5);
 		// Bind available shadow maps.
@@ -194,7 +196,7 @@ void DeferredRenderer::renderTransparent(const Culler::List & visibles, const gl
 
 		// To approximately handle two sided objects properly, draw the back faces first, then the front faces.
 		// This won't solve all issues in case of concavities.
-		if(object.twoSided()) {
+		if(material.twoSided()) {
 			GPU::setCullState(true, Faces::FRONT);
 			GPU::drawMesh(*object.mesh());
 			GPU::setCullState(true, Faces::BACK);
@@ -212,6 +214,7 @@ void DeferredRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 
 	GPU::setCullState(false, Faces::BACK);
 
 	const Object * background	= _scene->background.get();
+	const Material& material = background->material();
 	const Scene::Background mode = _scene->backgroundMode;
 	
 	if(mode == Scene::Background::SKYBOX) {
@@ -221,7 +224,7 @@ void DeferredRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 
 		_skyboxProgram->use();
 		// Upload the MVP matrix.
 		_skyboxProgram->uniform("mvp", backgroundMVP);
-		_skyboxProgram->textures(background->textures());
+		_skyboxProgram->textures(material.textures());
 		GPU::drawMesh(*background->mesh());
 		
 	} else if(mode == Scene::Background::ATMOSPHERE) {
@@ -235,7 +238,7 @@ void DeferredRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 
 		_atmoProgram->uniform("clipToWorld", clipToWorldNoT);
 		_atmoProgram->uniform("viewPos", pos);
 		_atmoProgram->uniform("lightDirection", sunDir);
-		_atmoProgram->textures(background->textures());
+		_atmoProgram->textures(material.textures());
 		GPU::drawMesh(*background->mesh());
 		
 	} else {
@@ -243,7 +246,7 @@ void DeferredRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 
 		_bgProgram->use();
 		if(mode == Scene::Background::IMAGE) {
 			_bgProgram->uniform("useTexture", true);
-			_bgProgram->textures(background->textures());
+			_bgProgram->textures(material.textures());
 		} else {
 			_bgProgram->uniform("useTexture", false);
 			_bgProgram->uniform("bgColor", _scene->backgroundColor);

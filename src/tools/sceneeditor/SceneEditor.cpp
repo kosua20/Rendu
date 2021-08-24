@@ -129,7 +129,7 @@ void SceneEditor::update() {
 			ImGui::Text("Geometry: %s", obj.mesh()->name().c_str());
 			
 			ImGui::Text("Textures:");
-			for(const auto tex : obj.textures()){
+			for(const auto tex : obj.material().textures()){
 				ImGui::Text("%s", tex->name().c_str());
 			}
 		} else {

@@ -48,8 +48,8 @@ void EditorRenderer::draw(const Camera & camera, Framebuffer & framebuffer, uint
 		_objectProgram->uniform("normalMatrix", glm::mat4(normalMatrix));
 		
 		const Texture * tex = Resources::manager().getTexture("debug-grid");
-		if(!object.textures().empty()){
-			tex = object.textures()[0];
+		if(!object.material().textures().empty()){
+			tex = object.material().textures()[0];
 		}
 		_objectProgram->texture(tex, 0);
 		GPU::drawMesh(*object.mesh());
@@ -85,7 +85,7 @@ void EditorRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 & 
 		_skyboxProgram->use();
 		// Upload the MVP matrix.
 		_skyboxProgram->uniform("mvp", backgroundMVP);
-		_skyboxProgram->textures(background->textures());
+		_skyboxProgram->textures(background->material().textures());
 		GPU::drawMesh(*background->mesh());
 		
 	} else if(mode == Scene::Background::ATMOSPHERE) {
@@ -107,7 +107,7 @@ void EditorRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 & 
 		_bgProgram->use();
 		if(mode == Scene::Background::IMAGE) {
 			_bgProgram->uniform("useTexture", 1);
-			_bgProgram->textures(background->textures());
+			_bgProgram->textures(background->material().textures());
 		} else {
 			_bgProgram->uniform("useTexture", 0);
 			_bgProgram->uniform("bgColor", _scene->backgroundColor);

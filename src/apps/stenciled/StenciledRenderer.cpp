@@ -68,7 +68,7 @@ void StenciledRenderer::draw(const Camera & camera, Framebuffer & framebuffer, u
 		_objectProgram->uniform("mvp", MVP);
 		
 		// Backface culling state.
-		GPU::setCullState(!object.twoSided(), Faces::BACK);
+		GPU::setCullState(!object.material().twoSided(), Faces::BACK);
 		GPU::drawMesh(*object.mesh());
 	}
 
