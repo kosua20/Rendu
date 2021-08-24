@@ -125,7 +125,18 @@ std::vector<KeyValues> Codable::encode(const glm::mat4 & transfo) {
 	const glm::vec3 axis = glm::axis(orient);
 	const float angle = glm::angle(orient);
 	orientation.values = encode(glm::vec4(axis, angle));
-	return {scaling, translation, orientation};
+
+	std::vector<KeyValues> result;
+	if(scale[0] != 1.0f){
+		result.push_back(scaling);
+	}
+	if(trans != glm::vec3(0.0f)){
+		result.push_back(translation);
+	}
+	if(angle != 0.0f){
+		result.push_back(orientation);
+	}
+	return result;
 	
 }
 
