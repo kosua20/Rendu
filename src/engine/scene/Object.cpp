@@ -1,29 +1,8 @@
 #include "scene/Object.hpp"
+#include "scene/Material.hpp"
 
-#define REGISTER_STRTYPE(type) \
-	{ #type, Object::Type::type }
-#define REGISTER_TYPESTR(type) \
-{ Object::Type::type, #type }
-
-
-static const std::unordered_map<Object::Type, std::string> typesToStr = {
-	REGISTER_TYPESTR(None),
-	REGISTER_TYPESTR(Regular),
-	REGISTER_TYPESTR(Parallax),
-	REGISTER_TYPESTR(Emissive),
-	REGISTER_TYPESTR(Transparent),
-};
-
-static const std::unordered_map<std::string, Object::Type> strToTypes = {
-	REGISTER_STRTYPE(None),
-	REGISTER_STRTYPE(Regular),
-	REGISTER_STRTYPE(Parallax),
-	REGISTER_STRTYPE(Emissive),
-	REGISTER_STRTYPE(Transparent),
-};
-
-Object::Object(const Type type, const Mesh * mesh, bool castShadows) :
-	_mesh(mesh), _material(type), _castShadow(castShadows) {
+Object::Object(const Mesh * mesh, bool castShadows) :
+	_mesh(mesh), _castShadow(castShadows) {
 	// Skip UVs if not available.
 	_skipUVs = !_mesh->hadTexcoords();
 }
@@ -34,32 +13,18 @@ void Object::decode(const KeyValues & params, Storage options) {
 	_model.reset(Codable::decodeTransformation(params.elements));
 	
 	for(const auto & param : params.elements) {
-		if(param.key == "type" && !param.values.empty()) {
-			const std::string typeString = param.values[0];
-			if(strToTypes.count(typeString) > 0) {
-				_material = strToTypes.at(typeString);
-			}
-
-		} else if(param.key == "mesh" && !param.values.empty()) {
+		if(param.key == "mesh" && !param.values.empty()) {
 			const std::string meshString = param.values[0];
 			_mesh						 = Resources::manager().getMesh(meshString, options);
+
+		} else if(param.key == "material" && !param.values.empty()) {
+			_materialName = param.values[0];
 
 		} else if(param.key == "shadows") {
 			_castShadow = Codable::decodeBool(param);
 
-		} else if(param.key == "textures") {
-			for(const auto & paramTex : param.elements) {
-				const auto texInfos = Codable::decodeTexture(paramTex);
-				const Texture * tex = Resources::manager().getTexture(texInfos.first, texInfos.second, options);
-				addTexture(tex);
-			}
-
 		} else if(param.key == "animations") {
 			_animations = Animation::decode(param.elements);
-		} else if(param.key == "twosided") {
-			_twoSided = Codable::decodeBool(param);
-		} else if(param.key == "masked") {
-			_masked = Codable::decodeBool(param);
 		} else if(param.key == "skipuvs") {
 			_skipUVs = Codable::decodeBool(param);
 		}
@@ -72,15 +37,11 @@ void Object::decode(const KeyValues & params, Storage options) {
 KeyValues Object::encode() const {
 	KeyValues obj("object");
 
-	obj.elements.emplace_back("type");
-	obj.elements.back().values = {typesToStr.at(_material)};
-	
+	obj.elements.emplace_back("material");
+	obj.elements.back().values = {_material ? _material->name() : _materialName};
+
 	obj.elements.emplace_back("shadows");
 	obj.elements.back().values = {Codable::encode(_castShadow)};
-	obj.elements.emplace_back("twosided");
-	obj.elements.back().values = {Codable::encode(_twoSided)};
-	obj.elements.emplace_back("masked");
-	obj.elements.back().values = {Codable::encode(_masked)};
 	obj.elements.emplace_back("skipuvs");
 	obj.elements.back().values = {Codable::encode(_skipUVs)};
 	
@@ -94,16 +55,6 @@ KeyValues Object::encode() const {
 		obj.elements.back().elements = Animation::encode(_animations);
 	}
 	
-	if(!_textures.empty()){
-		obj.elements.emplace_back("textures");
-		for(const auto texture : _textures){
-			if(!texture){
-				continue;
-			}
-			obj.elements.back().elements.push_back(Codable::encode(texture));
-		}
-	}
-	
 	const auto transfo = Codable::encode(_model.initial());
 	for(const auto & param : transfo){
 		obj.elements.push_back(param);
@@ -111,14 +62,14 @@ KeyValues Object::encode() const {
 	return obj;
 }
 
-void Object::addTexture(const Texture * infos) {
-	_textures.push_back(infos);
+void Object::setMaterial(const Material* material){
+	_material = material;
+	_materialName = material->name();
 }
 
 void Object::addAnimation(const std::shared_ptr<Animation> & anim) {
 	_animations.push_back(anim);
 }
-
 
 void Object::set(const glm::mat4 & model){
 	_model.reset(model);

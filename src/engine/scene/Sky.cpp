@@ -1,14 +1,14 @@
 #include "scene/Sky.hpp"
 
 Sky::Sky(Storage options) :
-	Object(Object::Type::None, Resources::manager().getMesh("plane", options), false) {
+	Object(Resources::manager().getMesh("plane", options), false) {
 }
 
 void Sky::decode(const KeyValues & params, Storage options) {
 	Object::decode(params, options);
 	for(const auto & param : params.elements) {
 		if(param.key == "sun") {
-			_sunDirection = glm::normalize(Codable::decodeVec3(param));
+			_sunDirection.reset(glm::normalize(Codable::decodeVec3(param)));
 		}
 	}
 }
