@@ -1,5 +1,6 @@
 #include "renderers/Culler.hpp"
 #include "resources/Bounds.hpp"
+#include "scene/Material.hpp"
 
 Culler::Culler(const std::vector<Object> & objects) : _objects(objects), _frustum(glm::mat4(1.0f)) {
 	_order.resize(objects.size(), -1);
@@ -53,19 +54,19 @@ const Culler::List & Culler::cullAndSort(const glm::mat4 & view, const glm::mat4
 	}
 
 	// Predefined sorting order.
-	static const std::unordered_map<Object::Type, Ordering> orders = {
-		{ Object::None, 		Ordering::FRONT_TO_BACK },
-		{ Object::Regular, 		Ordering::FRONT_TO_BACK },
-		{ Object::Parallax, 	Ordering::FRONT_TO_BACK },
-		{ Object::Emissive, 	Ordering::FRONT_TO_BACK },
-		{ Object::Transparent, 	Ordering::BACK_TO_FRONT },
+	static const std::unordered_map<Material::Type, Ordering> orders = {
+		{ Material::None, 			Ordering::FRONT_TO_BACK },
+		{ Material::Regular, 		Ordering::FRONT_TO_BACK },
+		{ Material::Parallax, 		Ordering::FRONT_TO_BACK },
+		{ Material::Emissive, 		Ordering::FRONT_TO_BACK },
+		{ Material::Transparent, 	Ordering::BACK_TO_FRONT },
 	};
-	static const std::unordered_map<Object::Type, long> sets = {
-		{ Object::None, 		0 },
-		{ Object::Regular, 		1 },
-		{ Object::Parallax, 	1 },
-		{ Object::Emissive, 	1 },
-		{ Object::Transparent, 	2 },
+	static const std::unordered_map<Material::Type, long> sets = {
+		{ Material::None, 			0 },
+		{ Material::Regular, 		1 },
+		{ Material::Parallax, 		1 },
+		{ Material::Emissive, 		1 },
+		{ Material::Transparent, 	2 },
 	};
 
 	// Culling and distance computation.
@@ -76,7 +77,7 @@ const Culler::List & Culler::cullAndSort(const glm::mat4 & view, const glm::mat4
 		if(_frustum.intersects(bbox)){
 			_distances[cid].id = long(oid);
 
-			const Object::Type & type = _objects[oid].type();
+			const Material::Type & type = _objects[oid].material().type();
 			const double sign = orders.at(type) == Ordering::FRONT_TO_BACK ? 1.0 : -1.0;
 			const glm::vec3 dist = pos - bbox.getCentroid();
 

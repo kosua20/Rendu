@@ -36,10 +36,11 @@ void VarianceShadowMap2D::draw(const Scene & scene) {
 		if(!lightFrustum.intersects(object.boundingBox())){
 			continue;
 		}
-		GPU::setCullState(!object.twoSided(), Faces::BACK);
-		_program->uniform("hasMask", object.masked());
-		if(object.masked()) {
-			_program->texture(object.textures()[0], 0);
+		const Material& mat = object.material();
+		GPU::setCullState(!mat.twoSided(), Faces::BACK);
+		_program->uniform("hasMask", mat.masked());
+		if(mat.masked()) {
+			_program->texture(mat.textures()[0], 0);
 		}
 		const glm::mat4 lightMVP = _light->vp() * object.model();
 		_program->uniform("mvp", lightMVP);
@@ -92,13 +93,14 @@ void VarianceShadowMapCube::draw(const Scene & scene) {
 			if(!lightFrustum.intersects(object.boundingBox())){
 				continue;
 			}
-			GPU::setCullState(!object.twoSided(), Faces::BACK);
+			const Material& mat = object.material();
+			GPU::setCullState(!mat.twoSided(), Faces::BACK);
 			const glm::mat4 mvp = faces[i] * object.model();
 			_program->uniform("mvp", mvp);
 			_program->uniform("m", object.model());
-			_program->uniform("hasMask", object.masked());
-			if(object.masked()) {
-				_program->texture(object.textures()[0], 0);
+			_program->uniform("hasMask", mat.masked());
+			if(mat.masked()) {
+				_program->texture(mat.textures()[0], 0);
 			}
 			GPU::drawMesh(*(object.mesh()));
 		}
