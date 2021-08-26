@@ -24,13 +24,15 @@ glm::vec3 PathTracer::evalBackground(const glm::vec3 & rayDir, const glm::vec3 &
 	const Scene::Background mode = _scene->backgroundMode;
 
 	glm::vec3 color(0.0f);
+	const Material& material = _scene->background->material();
+
 	// If direct background hit, produce the correct color without attenuation.
 	if(directHit) {
 		if(mode == Scene::Background::IMAGE) {
-			const Image & image = _scene->background->textures()[0]->images[0];
+			const Image & image = material.textures()[0]->images[0];
 			color = image.rgbl(ndcPos.x, ndcPos.y);
 		} else if(mode == Scene::Background::SKYBOX) {
-			const Texture * tex = _scene->background->textures()[0];
+			const Texture * tex = material.textures()[0];
 			color = tex->sampleCubemap(glm::normalize(rayDir));
 		} else if(mode == Scene::Background::ATMOSPHERE) {
 			const glm::vec3 & sunDir = dynamic_cast<const Sky *>(_scene->background.get())->direction();
@@ -43,7 +45,7 @@ glm::vec3 PathTracer::evalBackground(const glm::vec3 & rayDir, const glm::vec3 &
 
 	// Else, only environment maps and atmospheric simulations contribute to indirect illumination.
 	if(mode == Scene::Background::SKYBOX) {
-		const Texture * tex = _scene->background->textures()[0];
+		const Texture * tex = material.textures()[0];
 		color = tex->sampleCubemap(glm::normalize(rayDir));
 	} else if(mode == Scene::Background::ATMOSPHERE) {
 		const glm::vec3 & sunDir = dynamic_cast<const Sky *>(_scene->background.get())->direction();
@@ -103,8 +105,9 @@ glm::mat3 PathTracer::buildLocalFrame(const Object & obj, const Raycaster::Hit &
 	}
 
 	// If we have a normal map, perturb the local normal and udpate the frame.
-	if(obj.useTexCoords() && obj.type() != Object::Type::Emissive){
-		const glm::vec3 imgNormal = glm::vec3(obj.textures()[1]->images[0].rgbal(uv.x, uv.y));
+	if(obj.useTexCoords() && obj.material().type() != Material::Type::Emissive){
+		const Material& mat = obj.material();
+		const glm::vec3 imgNormal = glm::vec3(mat.textures()[1]->images[0].rgbal(uv.x, uv.y));
 		const glm::vec3 localNormal = glm::normalize(2.0f * imgNormal - 1.0f);
 		// Convert local normal to world.
 		const glm::vec3 nn = glm::normalize(tbn * localNormal);
@@ -126,7 +129,8 @@ bool PathTracer::checkVisibility(const glm::vec3 & startPos, const glm::vec3 & r
 		}
 		// If we hit, two cases.
 		const auto & lobj = _scene->objects[lhit.meshId];
-		if(!lobj.masked() || !lobj.useTexCoords()){
+		const Material& lmat = lobj.material();
+		if(!lmat.masked() || !lobj.useTexCoords()){
 			// If the object has no mask or no uvs, geometric occlusion is always valid.
 			return false;
 		} else {
@@ -134,7 +138,7 @@ bool PathTracer::checkVisibility(const glm::vec3 & startPos, const glm::vec3 & r
 			// For this we compute the UVs and check the texture.
 			const auto & lmesh = *lobj.mesh();
 			const glm::vec2 luv = Raycaster::interpolateAttribute(lhit, lmesh, lmesh.texcoords);
-			const float alpha = lobj.textures()[0]->images[0].rgbal(luv.x, luv.y).a;
+			const float alpha = lmat.textures()[0]->images[0].rgbal(luv.x, luv.y).a;
 			if(alpha < 0.01f){
 				// Transparent: shift, update the distance and keep casting.
 				maxDist = maxDist - lhit.dist;
@@ -208,16 +212,17 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 					// Fetch material texel information.
 					const bool noUVs = !obj.useTexCoords();
 					const glm::vec2 uv = noUVs ? glm::vec2(0.5f, 0.5f) :  Raycaster::interpolateAttribute(hit, mesh, mesh.texcoords);
-					const Image & image  = obj.textures()[0]->images[0];
+					const Material& mat = obj.material();
+					const Image & image  = mat.textures()[0]->images[0];
 					const glm::vec4 bCol = image.rgbal(uv.x, uv.y);
 					// In case of alpha cut-out, just update the position to the intersection and keep casting.
 					// The 'mini' margin will ensures that we don't reintersect the same surface.
-					if(obj.masked() && bCol.a < 0.01f) {
+					if(mat.masked() && bCol.a < 0.01f) {
 						rayPos = p;
 						continue;
 					}
 					// For emissive we don't apply any BRDF or re-cast rays, we just receive emitted light.
-					if(obj.type() == Object::Type::Emissive){
+					if(mat.type() == Material::Type::Emissive){
 						// Should we gamma-correct emissive textures?
 						sampleColor += attenuation * glm::vec3(bCol);
 						// No need to continue further.
@@ -231,7 +236,7 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 					const glm::vec3 wo = glm::normalize(itbn * (-rayDir));
 					const glm::vec3 baseColor = glm::pow(glm::vec3(bCol), glm::vec3(2.2f));
 					// Check other material attributes.
-					const Image & imageRMAO  = obj.textures()[2]->images[0];
+					const Image & imageRMAO  = mat.textures()[2]->images[0];
 					const glm::vec4 rmao = imageRMAO.rgbal(uv.x, uv.y);
 
 					// Direct light sampling.
