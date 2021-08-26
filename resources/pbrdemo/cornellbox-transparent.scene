@@ -1,101 +1,137 @@
+
 * probe: 
-	position: 0.0,1.0,0.5
-	center: -10.0,1.0,10.0
-	extent: 11.0,1.0,11.0
-	rotation: 0.0
+	position: 0.000000 1.000000 0.500000 
+	extent: 11.000000 1.000000 11.000000 
+	center: -10.000000 1.000000 10.000000 
+	rotation: 0.000000 
 
-* background:
-	cube: rgb32cube: kiara_dawn
+* background: 
+	cube: rgb32cube: kiara_dawn 
 
-* camera:
-	position: 0.0,1.0,2.5
-	center: 0.0,1.0,1.0
-	up: 0.0,1.0,0.0
-	fov: 1.3
-	planes: 0.01,20.0
+* object: 
+	shadows: true 
+	skipuvs: false 
+	mesh: cornellbox_floor_0 
+	material: wood 
 
-* point:
-	intensity: 9.0,8.4,6.0
-	shadows: true
-	position: -0.03,1.75,0.0
-	radius: 3.0
-	
-* object:
-	mesh: cornellbox_floor_0
-	shadows: true
-	twosided: true
-	type: Regular
-	textures:
-		- srgb: wood_floor_color
-		- rgb: wood_floor_normal
-		- rgb: wood_floor_rough_met_ao
+* object: 
+	shadows: true 
+	skipuvs: true 
+	mesh: cornellbox_ceiling_6 
+	material: brushed_metal 
 
-* object:
-	mesh: cornellbox_ceiling_6
-	shadows: true
-	twosided: true
-	type: Regular
-	skipuvs: true
-	textures:
-		- srgb: 0.7,0.7,0.7
-		- rgb: default_normal
-		- rgb: 0.4,1.0,1.0
+* object: 
+	shadows: true 
+	skipuvs: true 
+	mesh: cornellbox_light_90 
+	material: white_material 
 
-* object:
-	mesh: cornellbox_backWall_12
-	shadows: true
-	twosided: true
-	type: Transparent
-	textures:
-		- srgb: vitrail_color
-		- rgb: vitrail_normal
-		- rgb: vitrail_rough_met_ao
+* object: 
+	shadows: true 
+	skipuvs: true 
+	mesh: cornellbox_rightWall_18 
+	material: grey_material 
 
-* object:
-	mesh: cornellbox_rightWall_18
-	shadows: true
-	twosided: true
-	type: Regular
-	skipuvs: true
-	textures:
-		- srgb: 0.8,0.8,0.8
-		- rgb: default_normal
-		- rgb: cornellbox_rough_met_ao
+* object: 
+	shadows: true 
+	skipuvs: false 
+	mesh: cornellbox_smallBox_30 
+	material: red_glass 
 
+* object: 
+	shadows: true 
+	skipuvs: false 
+	mesh: cornellbox_backWall_12 
+	material: vitrail 
 
+* object: 
+	shadows: true 
+	skipuvs: false 
+	mesh: sphere 
+	scaling: 0.500000 
+	translation: -0.350000 1.000000 -0.250000 
+	material: cyan_glass 
 
-* object:
-	mesh: cornellbox_smallBox_30
-	shadows: true
-	twosided: true
-	type: Transparent      
-	textures:
-		- srgb: 1.0,0.0,0.0,0.5
-		- rgb: 0.5,0.5,1.0
-		- rgb: squares_rough_met_ao
+* point: 
+	intensity: 9.000000 8.400000 6.000000 
+	shadows: true 
+	position: -0.030000 1.750000 0.000000 
+	radius: 3.000000 
 
+* camera: 
+	position: 0.000000 1.000000 2.500000 
+	center: 0.000000 1.000000 1.000000 
+	up: 0.000000 1.000000 0.000000 
+	fov: 1.300000 
+	planes: 0.010000 20.000000 
 
+* material: 
+	textures: 
+		- srgb: wood_floor_color 
+		- rgb: wood_floor_normal 
+		- rgb: wood_floor_rough_met_ao 
+	masked: false 
+	twosided: true 
+	type: Regular 
+	name: wood 
 
-* object:
-	mesh: cornellbox_light_90
-	shadows: true
-	twosided: true
-	type: Regular
-	skipuvs: true
-	textures:
-		- srgb: cornellbox_white
-		- rgb: default_normal
-		- rgb: cornellbox_rough_met_ao
+* material: 
+	textures: 
+		- srgb: 0.7,0.7,0.7 
+		- rgb: default_normal 
+		- rgb: 0.4,1.0,1.0 
+	masked: false 
+	twosided: true 
+	type: Regular 
+	name: brushed_metal 
 
-* object:
-	mesh: sphere
-	shadows: true
-	type: Transparent
-	twosided: true
-	textures:
-		- srgb: 0.0,0.8,0.8,0.0
-		- rgb: 0.5,0.5,1.0
-		- rgb: 0.0,0.0,1.0
-	translation: -0.35,1.0,-0.25
-	scaling: 0.5
-	
+* material: 
+	textures: 
+		- srgb: cornellbox_white 
+		- rgb: default_normal 
+		- rgb: cornellbox_rough_met_ao 
+	masked: false 
+	twosided: true 
+	type: Regular 
+	name: white_material 
+
+* material: 
+	textures: 
+		- srgb: 0.8,0.8,0.8 
+		- rgb: default_normal 
+		- rgb: cornellbox_rough_met_ao 
+	masked: false 
+	twosided: true 
+	type: Regular 
+	name: grey_material 
+
+* material: 
+	textures: 
+		- srgb: 1.0,0.0,0.0,0.5 
+		- rgb: 0.5,0.5,1.0 
+		- rgb: squares_rough_met_ao 
+	masked: false 
+	twosided: true 
+	type: Transparent 
+	name: red_glass 
+
+* material: 
+	textures: 
+		- srgb: vitrail_color 
+		- rgb: vitrail_normal 
+		- rgb: vitrail_rough_met_ao 
+	masked: false 
+	twosided: true 
+	type: Transparent 
+	name: vitrail 
+
+* material: 
+	textures: 
+		- srgb: 0.0,0.8,0.8,0.0 
+		- rgb: 0.5,0.5,1.0 
+		- rgb: 0.0,0.0,1.0 
+	masked: false 
+	twosided: true 
+	type: Transparent 
+	name: cyan_glass 
+

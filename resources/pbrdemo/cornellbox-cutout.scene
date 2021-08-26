@@ -1,110 +1,126 @@
 * probe: 
-	position: 0.0,1.0,-0.5
-	center: 0.0,1.0,10.0
-	extent: 1.0,1.0,11.0
-	rotation: 0.0
+	position: 0.000000 1.000000 -0.500000 
+	extent: 1.000000 1.000000 11.000000 
+	center: 0.000000 1.000000 10.000000 
+	rotation: 0.000000 
 
-* background:
-	color: 0.0,0.0,0.0
+* background: 
+	color: 0.000000 0.000000 0.000000 
 
-* camera:
-	position: 0.0,1.0,2.5
-	center: 0.0,1.0,1.0
-	up: 0.0,1.0,0.0
-	fov: 1.3
-	planes: 0.01,20.0
+* object: 
+	shadows: true 
+	skipuvs: true 
+	mesh: cornellbox_floor_0 
+	material: cornellbox_grey 
 
-* spot:
-	intensity: 6.0,5.4,3.0
-	shadows: true
-	direction: 1.0,-1.0,-1.0
-	position: -1.0,1.8,1.1
-	cone: 1.0 1.2
-	radius: 5.0
+* object: 
+	shadows: true 
+	skipuvs: true 
+	mesh: cornellbox_ceiling_6 
+	material: cornellbox_grey 
 
-* spot:
-	intensity: 3.0,5.4,6.0
-	shadows: true
-	direction: -0.8,-1.0,-0.8
-	position: 1.0,1.2,1.0
-	cone: 0.7 0.8
-	radius: 5.0
-	animations:
-		- backandforth: 1.0 world 0.0,1.0,0.0 0.75
-	
-* object:
-	mesh: cornellbox_floor_0
-	shadows: true
-	twosided: true
-	type: Regular
-	skipuvs: true
-	textures:
-		- srgb: cornellbox_grey
-		- rgb: default_normal
-		- rgb: cornellbox_rough_met_ao
+* object: 
+	shadows: true 
+	skipuvs: true 
+	mesh: cornellbox_backWall_12 
+	material: cornellbox_grey 
 
-* object:
-	mesh: cornellbox_ceiling_6
-	shadows: true
-	twosided: true
-	type: Regular
-	skipuvs: true
-	textures:
-		- srgb: cornellbox_grey
-		- rgb: default_normal
-		- rgb: cornellbox_rough_met_ao
+* object: 
+	shadows: true 
+	skipuvs: true 
+	mesh: cornellbox_rightWall_18 
+	material: cornellbox_purple 
 
-* object:
-	mesh: cornellbox_backWall_12
-	shadows: true
-	twosided: true
-	type: Regular
-	skipuvs: true
-	textures:
-		- srgb: cornellbox_grey
-		- rgb: default_normal
-		- rgb: cornellbox_rough_met_ao
+* object: 
+	shadows: true 
+	skipuvs: true 
+	mesh: cornellbox_leftWall_24 
+	material: cornellbox_cyan 
 
-* object:
-	mesh: cornellbox_rightWall_18
-	shadows: true
-	twosided: true
-	type: Regular
-	skipuvs: true
-	textures:
-		- srgb: 0.3,0.2,0.8
-		- rgb: default_normal
-		- rgb: cornellbox_rough_met_ao
+* object: 
+	shadows: true 
+	skipuvs: false 
+	mesh: cornellbox_vase 
+	material: plastic 
 
-* object:
-	mesh: cornellbox_leftWall_24
-	shadows: true
-	twosided: true
-	type: Regular
-	skipuvs: true
-	textures:
-		- srgb: 0.2,0.5,0.7
-		- rgb: default_normal
-		- rgb: cornellbox_rough_met_ao
+* object: 
+	shadows: true 
+	skipuvs: false 
+	mesh: cornellbox_leaves 
+	material: leaves 
 
-* object:
-	mesh: cornellbox_vase
-	shadows: true
-	type: Regular
-	textures:
-		- srgb: plastic_color
-		- rgb: plastic_normal
-		- rgb: plastic_rough_met_ao
+* spot: 
+	intensity: 6.000000 5.400000 3.000000 
+	shadows: true 
+	position: -1.000000 1.800000 1.100000 
+	direction: 0.577350 -0.577350 -0.577350 
+	radius: 5.000000 
+	cone: 1.000000 1.200000 
 
-* object:
-	mesh: cornellbox_leaves
-	shadows: true
-	type: Regular
-	twosided: true
-	masked: true
-	textures:
-		- srgb: leaves_color
-		- rgb: leaves_normal
-		- rgb: leaves_rough_met_ao
+* spot: 
+	intensity: 3.000000 5.400000 6.000000 
+	shadows: true 
+	animations: 
+		- backandforth: 1.000000 world 0.000000 1.000000 0.000000 0.750000 
+	position: 1.000000 1.200000 1.000000 
+	direction: -0.529813 -0.662266 -0.529813 
+	radius: 5.000000 
+	cone: 0.700000 0.800000 
 
+* camera: 
+	position: 0.000000 1.000000 2.500000 
+	center: 0.000000 1.000000 1.000000 
+	up: 0.000000 1.000000 0.000000 
+	fov: 1.300000 
+	planes: 0.010000 20.000000 
+
+* material: 
+	textures: 
+		- srgb: cornellbox_grey 
+		- rgb: default_normal 
+		- rgb: cornellbox_rough_met_ao 
+	masked: false 
+	twosided: true 
+	type: Regular 
+	name: cornellbox_grey 
+
+* material: 
+	textures: 
+		- srgb: 0.3,0.2,0.8 
+		- rgb: default_normal 
+		- rgb: cornellbox_rough_met_ao 
+	masked: false 
+	twosided: true 
+	type: Regular 
+	name: cornellbox_purple 
+
+* material: 
+	textures: 
+		- srgb: 0.2,0.5,0.7 
+		- rgb: default_normal 
+		- rgb: cornellbox_rough_met_ao 
+	masked: false 
+	twosided: true 
+	type: Regular 
+	name: cornellbox_cyan 
+
+* material: 
+	textures: 
+		- srgb: plastic_color 
+		- rgb: plastic_normal 
+		- rgb: plastic_rough_met_ao 
+	masked: false 
+	twosided: false 
+	type: Regular 
+	name: plastic 
+
+* material: 
+	textures: 
+		- srgb: leaves_color 
+		- rgb: leaves_normal 
+		- rgb: leaves_rough_met_ao 
+	masked: true 
+	twosided: true 
+	type: Regular 
+	name: leaves 
 

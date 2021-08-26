@@ -1,106 +1,118 @@
+
 * probe: 
-	radiance: rgbcube: default_cube
-	irradiance: default_shcoeffs
+	radiance: rgbcube: default_cube 
+	irradiance: default_shcoeffs 
 
-* background:
-	color: 0.0,0.0,0.0
+* background: 
+	color: 0.000000 0.000000 0.000000 
 
-* camera:
-	position: 0.0,1.0,2.5
-	center: 0.0,1.0,1.0
-	up: 0.0,1.0,0.0
-	fov: 1.3
-	planes: 0.01,20.0
+* object: 
+	shadows: true 
+	skipuvs: true 
+	mesh: cornellbox_floor_0 
+	material: white_paint 
 
-* point:
-	intensity: 9.0,8.4,6.0
-	shadows: true
-	position: -0.03,1.75,0.0
-	radius: 3.0
-	
-* object:
-	mesh: cornellbox_floor_0
-	shadows: true
-	twosided: true
-	type: Regular
-	skipuvs: true
-	textures:
-		- srgb: cornellbox_grey
-		- rgb: default_normal
-		- rgb: cornellbox_rough_met_ao
+* object: 
+	shadows: true 
+	skipuvs: true 
+	mesh: cornellbox_ceiling_6 
+	material: white_paint 
 
-* object:
-	mesh: cornellbox_ceiling_6
-	shadows: true
-	twosided: true
-	type: Regular
-	skipuvs: true
-	textures:
-		- srgb: cornellbox_grey
-		- rgb: default_normal
-		- rgb: cornellbox_rough_met_ao
+* object: 
+	shadows: true 
+	skipuvs: true 
+	mesh: cornellbox_backWall_12 
+	material: white_paint 
 
-* object:
-	mesh: cornellbox_backWall_12
-	shadows: true
-	twosided: true
-	type: Regular
-	skipuvs: true
-	textures:
-		- srgb: cornellbox_grey
-		- rgb: default_normal
-		- rgb: cornellbox_rough_met_ao
+* object: 
+	shadows: true 
+	skipuvs: true 
+	mesh: cornellbox_rightWall_18 
+	material: red_paint 
 
-* object:
-	mesh: cornellbox_rightWall_18
-	shadows: true
-	twosided: true
-	type: Regular
-	skipuvs: true
-	textures:
-		- srgb: cornellbox_red
-		- rgb: default_normal
-		- rgb: cornellbox_rough_met_ao
+* object: 
+	shadows: true 
+	skipuvs: true 
+	mesh: cornellbox_leftWall_24 
+	material: green_paint 
 
-* object:
-	mesh: cornellbox_leftWall_24
-	shadows: true
-	twosided: true
-	type: Regular
-	skipuvs: true
-	textures:
-		- srgb: cornellbox_green
-		- rgb: default_normal
-		- rgb: cornellbox_rough_met_ao
+* object: 
+	shadows: true 
+	skipuvs: true 
+	mesh: cornellbox_smallBox_30 
+	material: grey_paint_onesided 
 
-* object:
-	mesh: cornellbox_smallBox_30
-	shadows: true
-	type: Regular
-	skipuvs: true
-	textures:
-		- srgb: cornellbox_grey
-		- rgb: default_normal
-		- rgb: cornellbox_rough_met_ao
+* object: 
+	shadows: true 
+	skipuvs: true 
+	mesh: cornellbox_largeBox_60 
+	material: grey_paint_onesided 
 
-* object:
-	mesh: cornellbox_largeBox_60
-	shadows: true
-	type: Regular
-	skipuvs: true
-	textures:
-		- srgb: cornellbox_grey
-		- rgb: default_normal
-		- rgb: cornellbox_rough_met_ao
+* object: 
+	shadows: true 
+	skipuvs: true 
+	mesh: cornellbox_light_90 
+	material: light_mat 
 
-* object:
-	mesh: cornellbox_light_90
-	shadows: true
-	twosided: true
-	type: Regular
-	skipuvs: true
-	textures:
-		- srgb: cornellbox_white
-		- rgb: default_normal
-		- rgb: cornellbox_rough_met_ao
+* point: 
+	intensity: 9.000000 8.400000 6.000000 
+	shadows: true 
+	position: -0.030000 1.750000 0.000000 
+	radius: 3.000000 
 
+* camera: 
+	position: 0.000000 1.000000 2.500000 
+	center: 0.000000 1.000000 1.000000 
+	up: 0.000000 1.000000 0.000000 
+	fov: 1.300000 
+	planes: 0.010000 20.000000 
+
+* material: 
+	textures: 
+		- srgb: cornellbox_grey 
+		- rgb: default_normal 
+		- rgb: cornellbox_rough_met_ao 
+	masked: false 
+	twosided: true 
+	type: Regular 
+	name: white_paint 
+
+* material: 
+	textures: 
+		- srgb: cornellbox_red 
+		- rgb: default_normal 
+		- rgb: cornellbox_rough_met_ao 
+	masked: false 
+	twosided: true 
+	type: Regular 
+	name: red_paint 
+
+* material: 
+	textures: 
+		- srgb: cornellbox_green 
+		- rgb: default_normal 
+		- rgb: cornellbox_rough_met_ao 
+	masked: false 
+	twosided: true 
+	type: Regular 
+	name: green_paint 
+
+* material: 
+	textures: 
+		- srgb: cornellbox_grey 
+		- rgb: default_normal 
+		- rgb: cornellbox_rough_met_ao 
+	masked: false 
+	twosided: false 
+	type: Regular 
+	name: grey_paint_onesided 
+
+* material: 
+	textures: 
+		- srgb: cornellbox_white 
+		- rgb: default_normal 
+		- rgb: cornellbox_rough_met_ao 
+	masked: false 
+	twosided: true 
+	type: Regular 
+	name: light_mat 

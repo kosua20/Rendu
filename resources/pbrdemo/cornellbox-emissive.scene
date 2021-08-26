@@ -1,83 +1,111 @@
+
 * probe: 
-	position: 0.0,1.5,0.0
-	center: 0.0,1.0,10.0
-	extent: 1.0,1.0,11.0
-	rotation: 0.0
+	position: 0.000000 1.500000 0.000000 
+	extent: 1.000000 1.000000 11.000000 
+	center: 0.000000 1.000000 10.000000 
+	rotation: 0.000000 
 
-* background:
-	color: 0.0,0.0,0.0
+* background: 
+	color: 0.000000 0.000000 0.000000 
 
-* camera:
-	position: 0.0,1.0,2.5
-	center: 0.0,1.0,1.0
-	up: 0.0,1.0,0.0
-	fov: 1.3
-	planes: 0.01,20.0
-	
-* object:
-	mesh: cornellbox_floor_0
-	shadows: true
-	twosided: true
-	type: Regular
-	skipuvs: true
-	textures:
-		- srgb: cornellbox_grey
-		- rgb: default_normal
-		- rgb: cornellbox_rough_met_ao
+* object: 
+	shadows: true 
+	skipuvs: true 
+	mesh: cornellbox_floor_0 
+	material: grey_material 
 
-* object:
-	mesh: cornellbox_ceiling_6
-	shadows: true
-	twosided: true
-	type: Regular
-	skipuvs: true
-	textures:
-		- srgb: cornellbox_grey
-		- rgb: default_normal
-		- rgb: cornellbox_rough_met_ao
+* object: 
+	shadows: true 
+	skipuvs: true 
+	mesh: cornellbox_ceiling_6 
+	material: grey_material 
 
-* object:
-	mesh: cornellbox_backWall_12
-	shadows: true
-	twosided: true
-	type: Emissive
-	skipuvs: true
-	textures:
-		- rgb32: 0.0,1.25,0.0
+* object: 
+	shadows: true 
+	skipuvs: true 
+	mesh: cornellbox_largeBox_60 
+	material: white_material 
 
-* object:
-	mesh: cornellbox_rightWall_18
-	shadows: true
-	twosided: true
-	type: Emissive
-	skipuvs: true
-	textures:
-		- rgb32: 0.0,0.0,1.25
+* object: 
+	shadows: true 
+	skipuvs: true 
+	mesh: cornellbox_backWall_12 
+	material: green_emissive 
 
-* object:
-	mesh: cornellbox_leftWall_24
-	shadows: true
-	twosided: true
-	type: Emissive
-	skipuvs: true
-	textures:
-		- rgb32: 1.25,0.0,0.0
+* object: 
+	shadows: true 
+	skipuvs: true 
+	mesh: cornellbox_leftWall_24 
+	material: red_emissive 
 
-* object:
-	mesh: cornellbox_smallBox_30
-	shadows: true
-	type: Emissive
-	textures:
-		- rgb32: light_grid
+* object: 
+	shadows: true 
+	skipuvs: false 
+	mesh: cornellbox_smallBox_30 
+	material: grid_emissive 
 
-* object:
-	mesh: cornellbox_largeBox_60
-	shadows: true
-	type: Regular
-	skipuvs: true
-	textures:
-		- srgb: 1.0,1.0,1.0
-		- rgb: 0.5,0.5,1.0
-		- rgb: 1.0,0.0,1.0
+* object: 
+	shadows: true 
+	skipuvs: true 
+	mesh: cornellbox_rightWall_18 
+	material: blue_emissive 
 
+* camera: 
+	position: 0.000000 1.000000 2.500000 
+	center: 0.000000 1.000000 1.000000 
+	up: 0.000000 1.000000 0.000000 
+	fov: 1.300000 
+	planes: 0.010000 20.000000 
+
+* material: 
+	textures: 
+		- srgb: cornellbox_grey 
+		- rgb: default_normal 
+		- rgb: cornellbox_rough_met_ao 
+	masked: false 
+	twosided: true 
+	type: Regular 
+	name: grey_material 
+
+* material: 
+	textures: 
+		- srgb: 1.0,1.0,1.0 
+		- rgb: 0.5,0.5,1.0 
+		- rgb: 1.0,0.0,1.0 
+	masked: false 
+	twosided: false 
+	type: Regular 
+	name: white_material 
+
+* material: 
+	textures: 
+		- rgb32: 0.0,1.25,0.0 
+	masked: false 
+	twosided: true 
+	type: Emissive 
+	name: green_emissive 
+
+* material: 
+	textures: 
+		- rgb32: 1.25,0.0,0.0 
+	masked: false 
+	twosided: true 
+	type: Emissive 
+	name: red_emissive 
+
+* material: 
+	textures: 
+		- rgb32: light_grid 
+	masked: false 
+	twosided: false 
+	type: Emissive 
+	name: grid_emissive 
+
+* material: 
+	textures: 
+		- rgb32: 0.0,0.0,1.25 
+	masked: false 
+	twosided: true 
+	type: Emissive 
+	name: blue_emissive 
 

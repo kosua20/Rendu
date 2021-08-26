@@ -3,12 +3,13 @@
 # The sphere should reflect all the incoming light, thus becoming invisible.
 # Disable SSAO, Bloom and Tonemapping for an accurate result.
 
-* probe: 
-	radiance: rgb32cube: grey_cube
-	irradiance: grey_cube_shcoeffs
 
-* background:
-	cube: rgb32cube: grey_cube
+* probe: 
+	radiance: rgb32cube: grey_cube 
+	irradiance: grey_cube_shcoeffs 
+
+* background: 
+	cube: rgb32cube: grey_cube 
 
 * camera: 
 	position: 23.2,0.0,0.0 
@@ -17,123 +18,11 @@
 	fov: 0.57
 	planes: 0.1,100.0
 
-
 # Dielectrics
 # Roughness from 0.0 to 1.0, step of 0.1
 # From left to right, top to bottom.
 #		0.0 0.1 0.2 0.3 0.4	
 #	  0.5 0.6 0.7 0.8 0.9 1.0
-
-* object:
-	mesh: sphere
-	type: Regular
-	skipuvs: true
-	translation: 0.0,4.5,6.0
-	textures:
-		- rgb: 1.0,1.0,1.0
-		- rgb: default_normal
-		- rgb: 0.0,0.0,1.0
-
-* object:
-	mesh: sphere
-	type: Regular
-	skipuvs: true
-	translation: 0.0,4.5,3.0
-	textures:
-		- rgb: 1.0,1.0,1.0
-		- rgb: default_normal
-		- rgb: 0.1,0.0,1.0
-
-* object:
-	mesh: sphere
-	type: Regular
-	skipuvs: true
-	translation: 0.0,4.5,0.0
-	textures:
-		- rgb: 1.0,1.0,1.0
-		- rgb: default_normal
-		- rgb: 0.2,0.0,1.0
-
-* object:
-	mesh: sphere
-	type: Regular
-	skipuvs: true
-	translation: 0.0,4.5,-3.0
-	textures:
-		- rgb: 1.0,1.0,1.0
-		- rgb: default_normal
-		- rgb: 0.3,0.0,1.0
-
-* object:
-	mesh: sphere
-	type: Regular
-	skipuvs: true
-	translation: 0.0,4.5,-6.0
-	textures:
-		- rgb: 1.0,1.0,1.0
-		- rgb: default_normal
-		- rgb: 0.4,0.0,1.0
-
-* object:
-	mesh: sphere
-	type: Regular
-	skipuvs: true
-	translation: 0.0,1.5,7.5
-	textures:
-		- rgb: 1.0,1.0,1.0
-		- rgb: default_normal
-		- rgb: 0.5,0.0,1.0
-
-* object:
-	mesh: sphere
-	type: Regular
-	skipuvs: true
-	translation: 0.0,1.5,4.5
-	textures:
-		- rgb: 1.0,1.0,1.0
-		- rgb: default_normal
-		- rgb: 0.6,0.0,1.0
-
-* object:
-	mesh: sphere
-	type: Regular
-	skipuvs: true
-	translation: 0.0,1.5,1.5
-	textures:
-		- rgb: 1.0,1.0,1.0
-		- rgb: default_normal
-		- rgb: 0.7,0.0,1.0
-
-* object:
-	mesh: sphere
-	type: Regular
-	skipuvs: true
-	translation: 0.0,1.5,-1.5
-	textures:
-		- rgb: 1.0,1.0,1.0
-		- rgb: default_normal
-		- rgb: 0.8,0.0,1.0
-
-* object:
-	mesh: sphere
-	type: Regular
-	skipuvs: true
-	translation: 0.0,1.5,-4.5
-	textures:
-		- rgb: 1.0,1.0,1.0
-		- rgb: default_normal
-		- rgb: 0.9,0.0,1.0
-
-* object:
-	mesh: sphere
-	type: Regular
-	skipuvs: true
-	translation: 0.0,1.5,-7.5
-	textures:
-		- rgb: 1.0,1.0,1.0
-		- rgb: default_normal
-		- rgb: 1.0,0.0,1.0
-
 
 # Metals
 # Roughness from 0.0 to 1.0, step of 0.1
@@ -141,112 +30,376 @@
 #		0.0 0.1 0.2 0.3 0.4	
 #	  0.5 0.6 0.7 0.8 0.9 1.0
 
-* object:
-	mesh: sphere
-	type: Regular
-	skipuvs: true
-	translation: 0.0,-1.5,6.0
-	textures:
-		- rgb: 1.0,1.0,1.0
-		- rgb: default_normal
-		- rgb: 0.0,1.0,1.0
+* object: 
+	shadows: true 
+	skipuvs: true 
+	mesh: sphere 
+	translation: 0.000000 4.500000 6.000000 
+	material: diel_rough00 
 
-* object:
-	mesh: sphere
-	type: Regular
-	skipuvs: true
-	translation: 0.0,-1.5,3.0
-	textures:
-		- rgb: 1.0,1.0,1.0
-		- rgb: default_normal
-		- rgb: 0.1,1.0,1.0
+* object: 
+	shadows: true 
+	skipuvs: true 
+	mesh: sphere 
+	translation: 0.000000 4.500000 3.000000 
+	material: diel_rough01 
 
-* object:
-	mesh: sphere
-	type: Regular
-	skipuvs: true
-	translation: 0.0,-1.5,0.0
-	textures:
-		- rgb: 1.0,1.0,1.0
-		- rgb: default_normal
-		- rgb: 0.2,1.0,1.0
+* object: 
+	shadows: true 
+	skipuvs: true 
+	mesh: sphere 
+	translation: 0.000000 4.500000 0.000000 
+	material: diel_rough02 
 
-* object:
-	mesh: sphere
-	type: Regular
-	skipuvs: true
-	translation: 0.0,-1.5,-3.0
-	textures:
-		- rgb: 1.0,1.0,1.0
-		- rgb: default_normal
-		- rgb: 0.3,1.0,1.0
+* object: 
+	shadows: true 
+	skipuvs: true 
+	mesh: sphere 
+	translation: 0.000000 4.500000 -3.000000 
+	material: diel_rough03 
 
-* object:
-	mesh: sphere
-	type: Regular
-	skipuvs: true
-	translation: 0.0,-1.5,-6.0
-	textures:
-		- rgb: 1.0,1.0,1.0
-		- rgb: default_normal
-		- rgb: 0.4,1.0,1.0
+* object: 
+	shadows: true 
+	skipuvs: true 
+	mesh: sphere 
+	translation: 0.000000 4.500000 -6.000000 
+	material: diel_rough04 
 
-* object:
-	mesh: sphere
-	type: Regular
-	skipuvs: true
-	translation: 0.0,-4.5,7.5
-	textures:
-		- rgb: 1.0,1.0,1.0
-		- rgb: default_normal
-		- rgb: 0.5,1.0,1.0
+* object: 
+	shadows: true 
+	skipuvs: true 
+	mesh: sphere 
+	translation: 0.000000 1.500000 7.500000 
+	material: diel_rough05 
 
-* object:
-	mesh: sphere
-	type: Regular
-	skipuvs: true
-	translation: 0.0,-4.5,4.5
-	textures:
-		- rgb: 1.0,1.0,1.0
-		- rgb: default_normal
-		- rgb: 0.6,1.0,1.0
+* object: 
+	shadows: true 
+	skipuvs: true 
+	mesh: sphere 
+	translation: 0.000000 1.500000 4.500000 
+	material: diel_rough06 
 
-* object:
-	mesh: sphere
-	type: Regular
-	skipuvs: true
-	translation: 0.0,-4.5,1.5
-	textures:
-		- rgb: 1.0,1.0,1.0
-		- rgb: default_normal
-		- rgb: 0.7,1.0,1.0
+* object: 
+	shadows: true 
+	skipuvs: true 
+	mesh: sphere 
+	translation: 0.000000 1.500000 1.500000 
+	material: diel_rough07 
 
-* object:
-	mesh: sphere
-	type: Regular
-	skipuvs: true
-	translation: 0.0,-4.5,-1.5
-	textures:
-		- rgb: 1.0,1.0,1.0
-		- rgb: default_normal
-		- rgb: 0.8,1.0,1.0
+* object: 
+	shadows: true 
+	skipuvs: true 
+	mesh: sphere 
+	translation: 0.000000 1.500000 -1.500000 
+	material: diel_rough08 
 
-* object:
-	mesh: sphere
-	type: Regular
-	skipuvs: true
-	translation: 0.0,-4.5,-4.5
-	textures:
-		- rgb: 1.0,1.0,1.0
-		- rgb: default_normal
-		- rgb: 0.9,1.0,1.0
+* object: 
+	shadows: true 
+	skipuvs: true 
+	mesh: sphere 
+	translation: 0.000000 1.500000 -4.500000 
+	material: diel_rough09 
 
-* object:
-	mesh: sphere
-	type: Regular
-	skipuvs: true
-	translation: 0.0,-4.5,-7.5
-	textures:
-		- rgb: 1.0,1.0,1.0
-		- rgb: default_normal
-		- rgb: 1.0,1.0,1.0
+* object: 
+	shadows: true 
+	skipuvs: true 
+	mesh: sphere 
+	translation: 0.000000 1.500000 -7.500000 
+	material: diel_rough10 
+
+* object: 
+	shadows: true 
+	skipuvs: true 
+	mesh: sphere 
+	translation: 0.000000 -1.500000 6.000000 
+	material: metal_rough00 
+
+* object: 
+	shadows: true 
+	skipuvs: true 
+	mesh: sphere 
+	translation: 0.000000 -1.500000 3.000000 
+	material: metal_rough01 
+
+* object: 
+	shadows: true 
+	skipuvs: true 
+	mesh: sphere 
+	translation: 0.000000 -1.500000 0.000000 
+	material: metal_rough02 
+
+* object: 
+	shadows: true 
+	skipuvs: true 
+	mesh: sphere 
+	translation: 0.000000 -1.500000 -3.000000 
+	material: metal_rough03 
+
+* object: 
+	shadows: true 
+	skipuvs: true 
+	mesh: sphere 
+	translation: 0.000000 -1.500000 -6.000000 
+	material: metal_rough04 
+
+* object: 
+	shadows: true 
+	skipuvs: true 
+	mesh: sphere 
+	translation: 0.000000 -4.500000 7.500000 
+	material: metal_rough05 
+
+* object: 
+	shadows: true 
+	skipuvs: true 
+	mesh: sphere 
+	translation: 0.000000 -4.500000 4.500000 
+	material: metal_rough06 
+
+* object: 
+	shadows: true 
+	skipuvs: true 
+	mesh: sphere 
+	translation: 0.000000 -4.500000 1.500000 
+	material: metal_rough07 
+
+* object: 
+	shadows: true 
+	skipuvs: true 
+	mesh: sphere 
+	translation: 0.000000 -4.500000 -1.500000 
+	material: metal_rough08 
+
+* object: 
+	shadows: true 
+	skipuvs: true 
+	mesh: sphere 
+	translation: 0.000000 -4.500000 -4.500000 
+	material: metal_rough09 
+
+* object: 
+	shadows: true 
+	skipuvs: true 
+	mesh: sphere 
+	translation: 0.000000 -4.500000 -7.500000 
+	material: metal_rough10 
+
+* material: 
+	textures: 
+		- rgb: 1.0,1.0,1.0 
+		- rgb: default_normal 
+		- rgb: 0.0,0.0,1.0 
+	masked: false 
+	twosided: false 
+	type: Regular 
+	name: diel_rough00 
+
+* material: 
+	textures: 
+		- rgb: 1.0,1.0,1.0 
+		- rgb: default_normal 
+		- rgb: 0.1,0.0,1.0 
+	masked: false 
+	twosided: false 
+	type: Regular 
+	name: diel_rough01 
+
+* material: 
+	textures: 
+		- rgb: 1.0,1.0,1.0 
+		- rgb: default_normal 
+		- rgb: 1.0,0.0,1.0 
+	masked: false 
+	twosided: false 
+	type: Regular 
+	name: diel_rough10 
+
+* material: 
+	textures: 
+		- rgb: 1.0,1.0,1.0 
+		- rgb: default_normal 
+		- rgb: 0.0,1.0,1.0 
+	masked: false 
+	twosided: false 
+	type: Regular 
+	name: metal_rough00 
+
+* material: 
+	textures: 
+		- rgb: 1.0,1.0,1.0 
+		- rgb: default_normal 
+		- rgb: 0.1,1.0,1.0 
+	masked: false 
+	twosided: false 
+	type: Regular 
+	name: metal_rough01 
+
+* material: 
+	textures: 
+		- rgb: 1.0,1.0,1.0 
+		- rgb: default_normal 
+		- rgb: 0.2,1.0,1.0 
+	masked: false 
+	twosided: false 
+	type: Regular 
+	name: metal_rough02 
+
+* material: 
+	textures: 
+		- rgb: 1.0,1.0,1.0 
+		- rgb: default_normal 
+		- rgb: 0.3,1.0,1.0 
+	masked: false 
+	twosided: false 
+	type: Regular 
+	name: metal_rough03 
+
+* material: 
+	textures: 
+		- rgb: 1.0,1.0,1.0 
+		- rgb: default_normal 
+		- rgb: 0.4,1.0,1.0 
+	masked: false 
+	twosided: false 
+	type: Regular 
+	name: metal_rough04 
+
+* material: 
+	textures: 
+		- rgb: 1.0,1.0,1.0 
+		- rgb: default_normal 
+		- rgb: 0.5,1.0,1.0 
+	masked: false 
+	twosided: false 
+	type: Regular 
+	name: metal_rough05 
+
+* material: 
+	textures: 
+		- rgb: 1.0,1.0,1.0 
+		- rgb: default_normal 
+		- rgb: 0.6,1.0,1.0 
+	masked: false 
+	twosided: false 
+	type: Regular 
+	name: metal_rough06 
+
+* material: 
+	textures: 
+		- rgb: 1.0,1.0,1.0 
+		- rgb: default_normal 
+		- rgb: 0.7,1.0,1.0 
+	masked: false 
+	twosided: false 
+	type: Regular 
+	name: metal_rough07 
+
+* material: 
+	textures: 
+		- rgb: 1.0,1.0,1.0 
+		- rgb: default_normal 
+		- rgb: 0.8,1.0,1.0 
+	masked: false 
+	twosided: false 
+	type: Regular 
+	name: metal_rough08 
+
+* material: 
+	textures: 
+		- rgb: 1.0,1.0,1.0 
+		- rgb: default_normal 
+		- rgb: 0.2,0.0,1.0 
+	masked: false 
+	twosided: false 
+	type: Regular 
+	name: diel_rough02 
+
+* material: 
+	textures: 
+		- rgb: 1.0,1.0,1.0 
+		- rgb: default_normal 
+		- rgb: 0.9,1.0,1.0 
+	masked: false 
+	twosided: false 
+	type: Regular 
+	name: metal_rough09 
+
+* material: 
+	textures: 
+		- rgb: 1.0,1.0,1.0 
+		- rgb: default_normal 
+		- rgb: 1.0,1.0,1.0 
+	masked: false 
+	twosided: false 
+	type: Regular 
+	name: metal_rough10 
+
+* material: 
+	textures: 
+		- rgb: 1.0,1.0,1.0 
+		- rgb: default_normal 
+		- rgb: 0.3,0.0,1.0 
+	masked: false 
+	twosided: false 
+	type: Regular 
+	name: diel_rough03 
+
+* material: 
+	textures: 
+		- rgb: 1.0,1.0,1.0 
+		- rgb: default_normal 
+		- rgb: 0.4,0.0,1.0 
+	masked: false 
+	twosided: false 
+	type: Regular 
+	name: diel_rough04 
+
+* material: 
+	textures: 
+		- rgb: 1.0,1.0,1.0 
+		- rgb: default_normal 
+		- rgb: 0.5,0.0,1.0 
+	masked: false 
+	twosided: false 
+	type: Regular 
+	name: diel_rough05 
+
+* material: 
+	textures: 
+		- rgb: 1.0,1.0,1.0 
+		- rgb: default_normal 
+		- rgb: 0.6,0.0,1.0 
+	masked: false 
+	twosided: false 
+	type: Regular 
+	name: diel_rough06 
+
+* material: 
+	textures: 
+		- rgb: 1.0,1.0,1.0 
+		- rgb: default_normal 
+		- rgb: 0.7,0.0,1.0 
+	masked: false 
+	twosided: false 
+	type: Regular 
+	name: diel_rough07 
+
+* material: 
+	textures: 
+		- rgb: 1.0,1.0,1.0 
+		- rgb: default_normal 
+		- rgb: 0.8,0.0,1.0 
+	masked: false 
+	twosided: false 
+	type: Regular 
+	name: diel_rough08 
+
+* material: 
+	textures: 
+		- rgb: 1.0,1.0,1.0 
+		- rgb: default_normal 
+		- rgb: 0.9,0.0,1.0 
+	masked: false 
+	twosided: false 
+	type: Regular 
+	name: diel_rough09 

@@ -1,58 +1,79 @@
+
 * probe: 
-	position: 0.0,0.8,0.0
-	center: 0.0,1.0,10.0
-	extent: 20.0,1.0,11.0
-	rotation: 0.0
+	position: 0.000000 0.800000 0.000000 
+	extent: 20.000000 1.000000 11.000000 
+	center: 0.000000 1.000000 10.000000 
+	rotation: 0.000000 
 
-* background:
-	color: 0.039,0.039,0.039
+* background: 
+	color: 0.039000 0.039000 0.039000 
 
-* camera:
-	position: 0.0,1.0,2.5
-	center: 0.0,1.0,1.0
-	up: 0.0,1.0,0.0
-	fov: 1.3
-	planes: 0.01,20.0
+* object: 
+	shadows: true 
+	skipuvs: true 
+	mesh: cornellbox_backWall_12 
+	material: grey_material 
 
-* spot:
-	intensity: 10.0,8.0,5.0
-	shadows: true
-	direction: -1.0,-1.0,-1.0
-	position: 1.0,1.5,1.0
-	radius: 5.0
-	cone: 0.5 1.0
+* object: 
+	shadows: false 
+	skipuvs: false 
+	mesh: cornellbox_floor_0 
+	translation: 0.000000 0.100000 0.000000 
+	material: ground 
 
-* object:
-	mesh: cornellbox_backWall_12
-	shadows: true
-	twosided: true
-	type: Regular
-	skipuvs: true
-	textures:
-		- srgb: cornellbox_grey
-		- rgb: default_normal
-		- rgb: cornellbox_rough_met_ao
+* object: 
+	shadows: true 
+	skipuvs: false 
+	mesh: cornellbox_sphere 
+	scaling: 0.400000 
+	orientation: 0.000000 -1.000000 0.000000 1.570000 
+	translation: 0.000000 0.750000 0.000000 
+	material: leather 
 
-* object:
-	mesh: cornellbox_floor_0
-	shadows: false
-	type: Parallax
-	textures:
-		- srgb: ground_leaves_color
-		- rgb: ground_leaves_normal
-		- rgb: ground_leaves_rough_met_ao
-		- rgb: ground_leaves_depth
-	translation: 0.0,0.1,0.0
+* spot: 
+	intensity: 10.000000 8.000000 5.000000 
+	shadows: true 
+	position: 1.000000 1.500000 1.000000 
+	direction: -0.577350 -0.577350 -0.577350 
+	radius: 5.000000 
+	cone: 0.500000 1.000000 
 
-* object:
-	mesh: cornellbox_sphere
-	shadows: true
-	type: Parallax
-	textures:
-		- srgb: leather_color
-		- rgb:  leather_normal
-		- rgb:  leather_rough_met_ao
-		- rgb:  leather_depth
-	translation: 0.0,0.75,0.0
-	scaling: 0.4
-	orientation: 0.0,1.0,0.0 -1.57
+* camera: 
+	position: 0.000000 1.000000 2.500000 
+	center: 0.000000 1.000000 1.000000 
+	up: 0.000000 1.000000 0.000000 
+	fov: 1.300000 
+	planes: 0.010000 20.000000 
+
+* material: 
+	textures: 
+		- srgb: cornellbox_grey 
+		- rgb: default_normal 
+		- rgb: cornellbox_rough_met_ao 
+	masked: false 
+	twosided: true 
+	type: Regular 
+	name: grey_material 
+
+* material: 
+	textures: 
+		- srgb: ground_leaves_color 
+		- rgb: ground_leaves_normal 
+		- rgb: ground_leaves_rough_met_ao 
+		- rgb: ground_leaves_depth 
+	masked: false 
+	twosided: false 
+	type: Parallax 
+	name: ground 
+
+* material: 
+	textures: 
+		- srgb: leather_color 
+		- rgb: leather_normal 
+		- rgb: leather_rough_met_ao 
+		- rgb: leather_depth 
+	masked: false 
+	twosided: false 
+	type: Parallax 
+	name: leather 
+
