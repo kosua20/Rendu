@@ -326,13 +326,15 @@ void ShaderCompiler::reflect(glslang::TProgram & program, Program::Stage & stage
 			const std::string::size_type lastOpeningBracket = uniform.name.find_last_of('[');
 			const std::string finalName = uniform.name.substr(0, lastOpeningBracket);
 			// We need a non-array version of the type.
-			glslang::TType* typeWithoutArray = type.clone();
-			typeWithoutArray->clearArraySizes();
-			const Program::UniformDef::Type elemType = convertType(*typeWithoutArray);
+			glslang::TType typeWithoutArray;
+			// A deep clone is causing linking issues on Windows. Fortunately we only
+			// modify shallow data below, so we can do a shallow copy.
+			typeWithoutArray.shallowCopy(type);
+			typeWithoutArray.clearArraySizes();
+			const Program::UniformDef::Type elemType = convertType(typeWithoutArray);
 			// This works because this only happens for basic types.
 			// Minimal alignment is 16 bytes.
-			const uint elemOffset = std::max(typeWithoutArray->computeNumComponents() * 4, 16);
-			delete typeWithoutArray;
+			const uint elemOffset = std::max(typeWithoutArray.computeNumComponents() * 4, 16);
 
 			for(uint iid = 0; iid < size; ++iid){
 				containingBuffer.members.emplace_back();

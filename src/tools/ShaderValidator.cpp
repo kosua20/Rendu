@@ -8,8 +8,6 @@
 
 #include "system/TextUtilities.hpp"
 
-#include <glslang/Public/ShaderLang.h>
-
 /**
  \defgroup ShaderValidator Shader Validation
  \brief Validate shaders compilation on the GPU and output IDE-compliant error messages.
@@ -132,7 +130,6 @@ int main(int argc, char ** argv) {
 			const std::string shader = Resources::manager().getStringWithIncludes(fullName, names);
 			// Compile the shader.
 			Program::Stage stage;
-			glslang::TShader shaderr(EShLangVertex);
 
 			ShaderCompiler::compile(shader, type.first, stage, false, compilationLog);
 			
