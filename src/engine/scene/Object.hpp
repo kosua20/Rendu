@@ -73,15 +73,20 @@ public:
 	 */
 	bool animated() const { return !_animations.empty(); }
 
+	/** Set the material to use for this object
+	 \param material the new material to use
+	 */
 	void setMaterial(const Material* material);
 
+	/** \return the material associated to this object */
 	const Material& material() const { return *_material; }
 
+	/** \return the name of the material associated to this object */
 	const std::string& materialName() const { return _materialName; }
 
 	/** Setup an object parameters from a list of key-value tuples. The following keywords will be searched for:
 	 \verbatim
-	 material: material name
+	 material: material_name
 	 mesh: meshname
 	 translation: X,Y,Z
 	 scaling: scale
@@ -123,7 +128,6 @@ public:
 
 protected:
 	const Mesh * _mesh = nullptr;						 ///< Geometry of the object.
-	// Material information.
 	std::string _materialName;							///< Material name.
 	const Material * _material = nullptr;				///< Material.
 	std::vector<std::shared_ptr<Animation>> _animations; ///< Animations list (applied in order).

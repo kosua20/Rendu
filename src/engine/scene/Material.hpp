@@ -5,7 +5,7 @@
 #include "Common.hpp"
 
 /**
- \brief Represent a surface material.
+ \brief Represent a surface material, including textures describing the surface parameters.
  \ingroup Scene
  */
 class Material {
@@ -33,27 +33,38 @@ public:
 	 */
 	void addTexture(const Texture * infos);
 
+	/** Register a new parameter.
+	 \param param the values to add
+	 */
+	void addParameter(const glm::vec4& param);
+
 	/** Textures array getter.
-	 \return a vector containing the infos of the textures associated to the material
+	 \return a vector containing the textures associated to the material
 	 */
 	const std::vector<const Texture *> & textures() const { return _textures; }
 
+	/** Parameters array getter.
+	 \return a vector containing the parameters associated to the material
+	 */
+	const std::vector<glm::vec4> & parameters() const { return _parameters; }
+
 	/** Type getter.
-	 \return the type of the object
+	 \return the type of material
 	 \note This can be used in different way by different applications.
 	 */
 	const Type & type() const { return _material; }
 
-	/** Are the object faces visible from both sides.
-	 \return a boolean denoting if the faces have two sides
+	/** Is the surface from both sides.
+	 \return a boolean denoting if the surface has two sides
 	 */
 	bool twoSided() const { return _twoSided; }
 
-	/** Should an alpha clip mask be applied when rendering the object (for leaves or chains for instance).
+	/** Should an alpha clip mask be applied when rendering the surface (for leaves or chains for instance).
 	 \return a boolean denoting if masking should be applied
 	 */
 	bool masked() const { return _masked; }
 
+	/** \return the name of the material */
 	const std::string& name() const { return _name; }
 
 	/** Setup a material parameters from a list of key-value tuples. The following keywords will be searched for:
@@ -64,6 +75,9 @@ public:
 	 textures:
 	 	- texturetype: ...
 	 	- ...
+	 parameters:
+		- R,G,B,A
+		- ...
 	 \endverbatim
 	 \param params the parameters tuple
 	 \param options data loading and storage options
@@ -82,7 +96,7 @@ public:
 	Material(const Material &) = delete;
 
 	/** Copy assignment.
-	 \return a reference to the object assigned to
+	 \return a reference to the material assigned to
 	 */
 	Material & operator=(const Material &) = delete;
 
@@ -90,13 +104,14 @@ public:
 	Material(Material &&) = default;
 
 	/** Move assignment.
-	 \return a reference to the object assigned to
+	 \return a reference to the material assigned to
 	 */
 	Material & operator=(Material &&) = default;
 
 protected:
 
-	std::vector<const Texture *> _textures;				 ///< Textures used by the material.
+	std::vector<const Texture *> _textures;	///< Textures used by the material.
+	std::vector<glm::vec4> _parameters;	 ///< Parameters used by the material.
 	std::string _name;					 ///< The material name.
 	Type _material   = Type::None;		 ///< The material type.
 	bool _twoSided   = false;			 ///< Should faces of objects be visible from the two sides.

@@ -42,6 +42,11 @@ void Material::decode(const KeyValues & params, Storage options) {
 				addTexture(tex);
 			}
 
+		}  else if(param.key == "parameters") {
+			for(const auto & paramVec : param.elements) {
+				addParameter(Codable::decodeVec4(paramVec));
+			}
+
 		} else if(param.key == "twosided") {
 			_twoSided = Codable::decodeBool(param);
 		} else if(param.key == "masked") {
@@ -76,9 +81,25 @@ KeyValues Material::encode() const {
 		}
 	}
 
+	if(!_parameters.empty()){
+		obj.elements.emplace_back("parameters");
+		KeyValues& params = obj.elements.back();
+		uint pid = 0;
+		for(const auto& param : _parameters){
+			params.elements.emplace_back("p" + std::to_string(pid));
+			params.elements.back().values = Codable::encode(param);
+			++pid;
+		}
+	}
+
 	return obj;
 }
 
 void Material::addTexture(const Texture * infos) {
 	_textures.push_back(infos);
+}
+
+
+void Material::addParameter(const glm::vec4 & param) {
+	_parameters.push_back(param);
 }

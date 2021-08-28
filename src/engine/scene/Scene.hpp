@@ -74,7 +74,6 @@ public:
 		ATMOSPHERE ///< Use a realtime atmospheric scattering simulation.
 	};
 	Background backgroundMode = Background::COLOR; ///< The background mode (see enum).
-	glm::vec3 backgroundColor = glm::vec3(0.0f);   ///< Color to use if the background mode is COLOR.
 	std::unique_ptr<Object> background;			   ///< Background object, containing the geometry  to use.
 	LightProbe environment;						   ///< Reflection probe.
 	

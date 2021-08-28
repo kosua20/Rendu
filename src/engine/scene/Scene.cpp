@@ -145,7 +145,8 @@ void Scene::loadBackground(const KeyValues & params, Storage options) {
 		if(param.key == "color") {
 			backgroundMode = Background::COLOR;
 			// Background is a plane, store the color.
-			backgroundColor = Codable::decodeVec3(param);
+			const glm::vec3 color = Codable::decodeVec3(param);
+			_backgroundMaterial.addParameter(glm::vec4(color, 1.0f));
 
 		} else if(param.key == "image" && !param.elements.empty()) {
 			backgroundMode = Background::IMAGE;
@@ -209,9 +210,12 @@ std::vector<KeyValues> Scene::encode() const {
 	
 	switch (backgroundMode) {
 		case Background::COLOR:
+		{
 			bgNode.elements.emplace_back("color");
-			bgNode.elements.back().values = Codable::encode(backgroundColor);
+			const glm::vec4 color = background->material().parameters()[0];
+			bgNode.elements.back().values = Codable::encode(glm::vec3(color));
 			break;
+		}
 		case Background::IMAGE:
 			bgNode.elements.emplace_back("image");
 			bgNode.elements.back().elements = { Codable::encode(background->material().textures()[0]) };

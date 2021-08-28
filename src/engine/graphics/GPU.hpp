@@ -49,6 +49,7 @@ public:
 		unsigned long long meshBindings = 0; ///< Number of mesh bindings.
 		unsigned long long blitCount = 0; ///< Framebuffer blitting operations.
 
+		/// Reset metrics that are measured over one frame.
 		void resetPerFrameMetrics(){
 			drawCalls = 0;
 			quadCalls = 0;
