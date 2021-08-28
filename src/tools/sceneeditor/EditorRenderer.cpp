@@ -110,7 +110,8 @@ void EditorRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 & 
 			_bgProgram->textures(background->material().textures());
 		} else {
 			_bgProgram->uniform("useTexture", 0);
-			_bgProgram->uniform("bgColor", _scene->backgroundColor);
+			const glm::vec4 & color = background->material().parameters()[0];
+			_bgProgram->uniform("bgColor", glm::vec3(color));
 		}
 		GPU::drawMesh(*background->mesh());
 	}

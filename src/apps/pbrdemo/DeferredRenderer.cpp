@@ -249,7 +249,8 @@ void DeferredRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 
 			_bgProgram->textures(material.textures());
 		} else {
 			_bgProgram->uniform("useTexture", false);
-			_bgProgram->uniform("bgColor", _scene->backgroundColor);
+			const glm::vec4& color = material.parameters()[0];
+			_bgProgram->uniform("bgColor", glm::vec3(color));
 		}
 		GPU::drawMesh(*background->mesh());
 	}

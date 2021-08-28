@@ -278,7 +278,6 @@ void PBRDemo::update() {
 
 		ImGui::Checkbox("Pause animation", &_paused);
 		ImGui::PopItemWidth();
-		ImGui::ColorEdit3("Background", &(_scenes[_currentScene]->backgroundColor[0]), ImGuiColorEditFlags_Float);
 	}
 	ImGui::End();
 

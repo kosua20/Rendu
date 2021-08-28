@@ -38,7 +38,7 @@ glm::vec3 PathTracer::evalBackground(const glm::vec3 & rayDir, const glm::vec3 &
 			const glm::vec3 & sunDir = dynamic_cast<const Sky *>(_scene->background.get())->direction();
 			color = MaterialSky::eval(rayPos, glm::normalize(rayDir), sunDir);
 		} else {
-			color = _scene->backgroundColor;
+			color = material.parameters()[0];
 		}
 		return color;
 	}

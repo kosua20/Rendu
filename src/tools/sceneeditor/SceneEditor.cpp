@@ -117,7 +117,6 @@ void SceneEditor::update() {
 			_userCamera.ratio(_config.screenResolution[0] / _config.screenResolution[1]);
 		}
 		ImGui::Separator();
-		ImGui::ColorEdit3("Background", &scene->backgroundColor[0]);
 		
 	}
 	ImGui::End();
