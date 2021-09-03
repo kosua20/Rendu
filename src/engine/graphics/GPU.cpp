@@ -1072,9 +1072,29 @@ void GPU::drawQuad(){
 	++_metrics.quadCalls;
 }
 
-void GPU::sync(){
-	// \todo: Submit current command buffer and wait idle before reopening it?
-	VK_RET(vkDeviceWaitIdle(_context.device));
+void GPU::flush(){
+	GPU::unbindFramebufferIfNeeded();
+	VkCommandBuffer& commandBuffer = _context.getCurrentCommandBuffer();
+	VK_RET(vkEndCommandBuffer(commandBuffer));
+
+	// Submit it.
+	VkSubmitInfo submitInfo = {};
+	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+	submitInfo.commandBufferCount = 1;
+	submitInfo.pCommandBuffers = &commandBuffer;
+	VK_RET(vkQueueSubmit(_context.graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE));
+	VK_RET(vkQueueWaitIdle(_context.graphicsQueue));
+
+	// Perform copies and destructions.
+	processAsyncTasks(true);
+	processDestructionRequests();
+
+	// Re-open command buffer.
+	VkCommandBufferBeginInfo beginInfo = {};
+	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
+
+	VK_RET(vkBeginCommandBuffer(commandBuffer, &beginInfo));
 }
 
 void GPU::nextFrame(){
@@ -1353,7 +1373,7 @@ const GPU::Metrics & GPU::getMetrics(){
 }
 
 void GPU::cleanup(){
-	GPU::sync();
+	VK_RET(vkDeviceWaitIdle(_context.device));
 
 	// Clean all remaining resources.
 	_quad.clean();
@@ -1506,17 +1526,17 @@ void GPU::processDestructionRequests(){
 	}
 }
 
-void GPU::processAsyncTasks(){
+void GPU::processAsyncTasks(bool forceAll){
 	const uint64_t currentFrame = _context.frameIndex;
 
-	if(_context.textureTasks.empty() || (currentFrame < 2)){
+	if(_context.textureTasks.empty() || (!forceAll && (currentFrame < 2))){
 		return;
 	}
 
 	while(!_context.textureTasks.empty()){
 		AsyncTextureTask& tsk = _context.textureTasks.front();
 		// If the following requests are too recent, they might not have completed yet.
-		if(tsk.frame >= currentFrame - 2){
+		if(!forceAll && (tsk.frame + 2 >= currentFrame)){
 			break;
 		}
 

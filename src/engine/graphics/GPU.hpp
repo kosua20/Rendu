@@ -203,10 +203,9 @@ public:
 	/** Draw a fullscreen quad.*/
 	static void drawQuad();
 
-	/** Flush the GPU command queue and wait for all processing to be done.
-	 * \note This won't submit command buffers that are currently being filled.
+	/** Flush current GPU commands and wait for all processing to be done.
 	 */
-	static void sync();
+	static void flush();
 
 	/** Prepare GPU for next frame.
 	 */
@@ -401,8 +400,10 @@ private:
 	/** Process destruction requests for which we are sure that the resources are not used anymore. */
 	static void processDestructionRequests();
 
-	/** Process async download tasks for frames that are complete. */
-	static void processAsyncTasks();
+	/** Process async download tasks for frames that are complete.
+	 \param forceAll process all pending requests, including for the current frame.
+	 \warning When forcing all requests to be processed, you have to guarantee that all commands have been completed on the GPU. */
+	static void processAsyncTasks(bool forceAll = false);
 
 	static GPUState _state; ///< Current GPU state.
 	static GPUState _lastState; ///< Previous draw call GPU state for caching.

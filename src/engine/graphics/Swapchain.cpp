@@ -442,7 +442,8 @@ Swapchain::~Swapchain(){
 }
 
 void Swapchain::clean() {
-	GPU::sync();
+	// Wait for all queues to be idle.
+	VK_RET(vkDeviceWaitIdle(_context->device));
 
 	// We have to manually delete the framebuffers, because they don't own their color images (system created) nor their depth texture (shared).
 	for(size_t i = 0; i < _imageCount; ++i) {

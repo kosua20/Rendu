@@ -332,7 +332,7 @@ void Program::update(){
 		uint tid = 0;
 		for(const auto& buffer : _staticBuffers){
 			infos[tid] = {};
-			// \todo Should we use the real buffer current offset here, if an update happened under the hood ?
+			// \todo Should we use the real buffer current offset here, if an update happened under the hood more than once per frame?
 			infos[tid].buffer = buffer.second.buffer;
 			infos[tid].offset = buffer.second.offset;
 			infos[tid].range = buffer.second.size;

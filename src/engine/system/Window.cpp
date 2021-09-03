@@ -196,9 +196,6 @@ bool Window::nextFrame() {
 	ImGui::NewFrame();
 	_frameStarted = true;
 	const bool shouldClose = glfwWindowShouldClose(_window);
-	if(shouldClose){
-		GPU::sync();
-	}
 	return !shouldClose;
 }
 
