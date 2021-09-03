@@ -102,9 +102,23 @@ void PBRDemo::setScene(const std::shared_ptr<Scene> & scene) {
 		map->draw(*_scenes[_currentScene]);
 	}
 
+	for(int i = 0; i < 3; ++i) {
+		for(auto & probe : _probes) {
+			probe->draw();
+			probe->convolveRadiance(1.2f, 1, 5);
+			probe->estimateIrradiance(5.0f);
+			GPU::flush();
+		}
+	}
 }
 
-void PBRDemo::updateProbes(){
+void PBRDemo::updateMaps(){
+	// Light shadows pass.
+	_shadowTime.begin();
+	for(const auto & map : _shadowMaps) {
+		map->draw(*_scenes[_currentScene]);
+	}
+	_shadowTime.end();
 
 	// Probes pass.
 	for(auto & probe : _probes) {
@@ -145,18 +159,9 @@ void PBRDemo::draw() {
 	}
 
 	_totalTime.begin();
+	
 	if((_scenes[_currentScene]->animated() && !_paused)){
-		// Light shadows pass.
-		_shadowTime.begin();
-		for(const auto & map : _shadowMaps) {
-			map->draw(*_scenes[_currentScene]);
-		}
-		_shadowTime.end();
-
-		updateProbes();
-	} else if(_frameID < 4 * _frameCount){
-		// Initialize static probes at lauch.
-		updateProbes();
+		updateMaps();
 	}
 
 	// Renderer and postproc passes.

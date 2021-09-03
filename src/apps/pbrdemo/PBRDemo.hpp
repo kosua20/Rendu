@@ -51,8 +51,8 @@ private:
 	 */
 	void setScene(const std::shared_ptr<Scene> & scene);
 
-	/** Update the real-time probes. */
-	void updateProbes();
+	/** Update the real-time shadow maps and probes. */
+	void updateMaps();
 
 	std::vector<std::unique_ptr<ShadowMap>> _shadowMaps; ///< The lights shadow maps.
 	std::vector<std::unique_ptr<Probe>> _probes; ///< The environment probes.
