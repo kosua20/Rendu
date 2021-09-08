@@ -582,9 +582,9 @@ void VkUtils::blitTexture(VkCommandBuffer& commandBuffer, const Texture& src, co
 	const uint mipEffectiveCount = std::min(std::min(src.levels, dst.levels), mipCount);
 	const uint layerEffectiveCount = std::min(std::min(srcLayers, dstLayers), layerCount);
 	const uint srcEffectiveWidth = std::min(srcBaseSize[0], src.width - srcBaseOffset[0]);
-	const uint srcEffectiveHeight = std::min(srcBaseSize[1], src.width - srcBaseOffset[1]);
+	const uint srcEffectiveHeight = std::min(srcBaseSize[1], src.height - srcBaseOffset[1]);
 	const uint dstEffectiveWidth = std::min(dstBaseSize[0], dst.width - dstBaseOffset[0]);
-	const uint dstEffectiveHeight = std::min(dstBaseSize[1], dst.width - dstBaseOffset[1]);
+	const uint dstEffectiveHeight = std::min(dstBaseSize[1], dst.height - dstBaseOffset[1]);
 
 	VkUtils::imageLayoutBarrier(commandBuffer, *src.gpu, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, mipStartSrc, mipEffectiveCount, layerStartSrc, layerEffectiveCount);
 	VkUtils::imageLayoutBarrier(commandBuffer, *dst.gpu, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, mipStartDst, mipEffectiveCount, layerStartDst, layerEffectiveCount);
