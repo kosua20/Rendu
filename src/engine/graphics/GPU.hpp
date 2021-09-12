@@ -125,7 +125,7 @@ public:
 	 \warning The CPU images of the texture will be overwritten.
 	 \note The download will be performed when this function is called, so the data might be coming from a previous frame.
 	 */
-	static void downloadTexture(Texture & texture);
+	static void downloadTextureSync(Texture & texture);
 
 	/** Download a texture images current data from the GPU.
 	 \param texture the texture to download
@@ -133,7 +133,7 @@ public:
 	 \warning The CPU images of the texture will be overwritten.
 	 \note The download will be performed when this function is called, so the data might be coming from a previous frame.
 	 */
-	static void downloadTexture(Texture & texture, int level);
+	static void downloadTextureSync(Texture & texture, int level);
 
 	/** Copy a texture GPU data at this point of the frame command buffer, and download the copied data once the frame is complete.
 	 * \param texture the texture to download
@@ -174,7 +174,7 @@ public:
 	 \param data pointer to the storage destination
 	 \param offset optional offset in the buffer store
 	 */
-	static void downloadBuffer(const BufferBase & buffer, size_t size, uchar * data, size_t offset = 0);
+	static void downloadBufferSync(const BufferBase & buffer, size_t size, uchar * data, size_t offset = 0);
 
 	/** Ensure that a buffer region is visible from the CPU and up-to-date.
 	 * \param buffer the buffer to flush

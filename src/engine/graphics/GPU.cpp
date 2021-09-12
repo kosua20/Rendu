@@ -617,7 +617,7 @@ void GPU::uploadTexture(const Texture & texture) {
 }
 
 
-void GPU::downloadTexture(Texture & texture, int level) {
+void GPU::downloadTextureSync(Texture & texture, int level) {
 	if(!texture.gpu) {
 		Log::Error() << Log::GPU << "Uninitialized GPU texture." << std::endl;
 		return;
@@ -706,8 +706,8 @@ void GPU::cancelAsyncOperation(const GPUAsyncTask& id){
 	}
 }
 
-void GPU::downloadTexture(Texture & texture) {
-	downloadTexture(texture, -1);
+void GPU::downloadTextureSync(Texture & texture) {
+	downloadTextureSync(texture, -1);
 }
 
 void GPU::generateMipMaps(const Texture & texture) {
@@ -883,7 +883,7 @@ void GPU::uploadBuffer(const BufferBase & buffer, size_t size, uchar * data, siz
 
 }
 
-void GPU::downloadBuffer(const BufferBase & buffer, size_t size, uchar * data, size_t offset) {
+void GPU::downloadBufferSync(const BufferBase & buffer, size_t size, uchar * data, size_t offset) {
 	if(!buffer.gpu) {
 		Log::Error() << Log::GPU << "Uninitialized GPU buffer." << std::endl;
 		return;

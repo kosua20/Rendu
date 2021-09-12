@@ -141,7 +141,7 @@ void computeCubemapConvolution(const Texture & cubemapInfos, int levelsCount, in
 void exportCubemapConvolution(std::vector<Texture> & cubeLevels, const std::string & outputPath) {
 	for(int level = 0; level < int(cubeLevels.size()); ++level) {
 		Texture & texture = cubeLevels[level];
-		GPU::downloadTexture(texture);
+		GPU::downloadTextureSync(texture);
 
 		const std::string levelPath = outputPath + "_" + std::to_string(level);
 		for(int i = 0; i < 6; ++i) {

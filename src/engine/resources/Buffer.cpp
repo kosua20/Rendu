@@ -54,7 +54,7 @@ void TransferBuffer::download(size_t sizeInBytes, unsigned char * data, size_t o
 		Log::Warning() << "No GPU data to download for the buffer." << std::endl;
 		return;
 	}
-	GPU::downloadBuffer(*this, sizeInBytes, data, offset);
+	GPU::downloadBufferSync(*this, sizeInBytes, data, offset);
 }
 
 UniformBufferBase::UniformBufferBase(size_t sizeInBytes, DataUse use) : BufferBase(sizeInBytes, BufferType::UNIFORM, use), _baseSize(sizeInBytes)
