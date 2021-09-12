@@ -191,16 +191,16 @@ namespace VkUtils {
 	void typesFromShape(const TextureShape & shape, VkImageType & imgType, VkImageViewType & viewType);
 
 	/** Start a one-shot command buffer.
-	 * \param context the GPU internal context
-	 * \return the newly created command buffer
-	 */
-	VkCommandBuffer startOneTimeCommandBuffer(GPUContext & context);
+	* \param context the GPU internal context
+	* \return the newly created command buffer
+	*/
+	VkCommandBuffer beginSyncOperations(GPUContext & context);
 
 	/** Finish and submit a one-shot command buffer, waiting for queue completion.
 	 * \param commandBuffer the command buffer to complete
 	 * \param context the GPU internal context
 	 */
-	void endOneTimeCommandBuffer(VkCommandBuffer & commandBuffer, GPUContext & context);
+	void endSyncOperations(VkCommandBuffer & commandBuffer, GPUContext & context);
 
 	/** Apply a layout transition barrier to a texture region.
 	 * \param commandBuffer the command buffer to record the operation on

@@ -206,7 +206,7 @@ void VkUtils::typesFromShape(const TextureShape & shape, VkImageType & imgType, 
 	viewType = viewTypes.at(shape);
 }
 
-VkCommandBuffer VkUtils::startOneTimeCommandBuffer(GPUContext & context){
+VkCommandBuffer VkUtils::beginSyncOperations(GPUContext & context){
 	// Create short-lived command buffer.
 	VkCommandBufferAllocateInfo allocInfo = {};
 	allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -225,7 +225,7 @@ VkCommandBuffer VkUtils::startOneTimeCommandBuffer(GPUContext & context){
 	return commandBuffer;
 }
 
-void VkUtils::endOneTimeCommandBuffer(VkCommandBuffer & commandBuffer, GPUContext & context){
+void VkUtils::endSyncOperations(VkCommandBuffer & commandBuffer, GPUContext & context){
 	VK_RET(vkEndCommandBuffer(commandBuffer));
 	// Submit it.
 	VkSubmitInfo submitInfo = {};
@@ -233,10 +233,7 @@ void VkUtils::endOneTimeCommandBuffer(VkCommandBuffer & commandBuffer, GPUContex
 	submitInfo.commandBufferCount = 1;
 	submitInfo.pCommandBuffers = &commandBuffer;
 	VK_RET(vkQueueSubmit(context.graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE));
-	// \todo Instead of waiting for the queue to complete before submitting the next one, we could insert an event to
-	// get a commandBuffer -> main command buffer dependency.
-	// If we also insert a main command buffer -> command buffer dependency at the beginning, this will implicitely order auxiliary command buffers between them.
-	// We could also submit to the main command buffer if it exists.
+	// This is a synced operation, wait for the graphics queue to complete.
 	VK_RET(vkQueueWaitIdle(context.graphicsQueue));
 	vkFreeCommandBuffers(context.device, context.commandPool, 1, &commandBuffer);
 	commandBuffer = VK_NULL_HANDLE;

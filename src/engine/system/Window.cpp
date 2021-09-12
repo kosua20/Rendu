@@ -258,9 +258,9 @@ void Window::setupImGui() {
 	ImGui_ImplVulkan_Init(_imgui, _swapchain->getRenderPass());
 
 	// Upload font.
-	VkCommandBuffer uploadCommandBuffer = VkUtils::startOneTimeCommandBuffer(*context);
-	ImGui_ImplVulkan_CreateFontsTexture(uploadCommandBuffer);
-	VkUtils::endOneTimeCommandBuffer(uploadCommandBuffer, *context);
+	VkCommandBuffer commandBuffer = VkUtils::beginSyncOperations(*context);
+	ImGui_ImplVulkan_CreateFontsTexture(commandBuffer);
+	VkUtils::endSyncOperations(commandBuffer, *context);
 	ImGui_ImplVulkan_DestroyFontUploadObjects();
 	
 	// Customize the style.

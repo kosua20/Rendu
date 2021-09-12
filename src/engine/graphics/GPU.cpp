@@ -645,13 +645,13 @@ void GPU::downloadTextureSync(Texture & texture, int level) {
 		}
 	}
 
-	VkCommandBuffer commandBuffer = VkUtils::startOneTimeCommandBuffer(_context);
+	VkCommandBuffer commandBuffer = VkUtils::beginSyncOperations(_context);
 	const uint layersCount = texture.shape == TextureShape::D3? 1 : texture.depth;
 	const glm::uvec2 size(texture.width, texture.height);
 	
 	std::shared_ptr<TransferBuffer> dstBuffer;
 	const glm::uvec2 imgRange = VkUtils::copyTextureRegionToBuffer(commandBuffer, texture, dstBuffer, firstLevel, levelCount, 0, layersCount, glm::uvec2(0), size);
-	VkUtils::endOneTimeCommandBuffer(commandBuffer, _context);
+	VkUtils::endSyncOperations(commandBuffer, _context);
 	GPU::flushBuffer(*dstBuffer, dstBuffer->sizeMax, 0);
 
 	// Prepare images.
@@ -903,13 +903,13 @@ void GPU::downloadBufferSync(const BufferBase & buffer, size_t size, uchar * dat
 	TransferBuffer transferBuffer(size, BufferType::GPUTOCPU);
 
 	// Copy operation.
-	VkCommandBuffer commandBuffer = VkUtils::startOneTimeCommandBuffer(_context);
+	VkCommandBuffer commandBuffer = VkUtils::beginSyncOperations(_context);
 	VkBufferCopy copyRegion = {};
 	copyRegion.srcOffset = offset;
 	copyRegion.dstOffset = 0;
 	copyRegion.size = size;
 	vkCmdCopyBuffer(commandBuffer, buffer.gpu->buffer, transferBuffer.gpu->buffer, 1, &copyRegion);
-	VkUtils::endOneTimeCommandBuffer(commandBuffer, _context);
+	VkUtils::endSyncOperations(commandBuffer, _context);
 	transferBuffer.download(size, data, 0);
 
 }
