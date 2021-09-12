@@ -193,9 +193,7 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 	GPU::setupTexture(_depth, desc, true);
 	_depth.gpu->defaultLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
-	VkCommandBuffer commandBuffer = VkUtils::startOneTimeCommandBuffer(*_context);
-	VkUtils::imageLayoutBarrier(commandBuffer, *_depth.gpu, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, 0, _depth.levels, 0, _depth.depth);
-	VkUtils::endOneTimeCommandBuffer(commandBuffer, *_context);
+	VkUtils::imageLayoutBarrier(_context->getUploadCommandBuffer(), *_depth.gpu, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, 0, _depth.levels, 0, _depth.depth);
 
 	// Retrieve image count in the swap chain.
 	std::vector<VkImage> colorImages;

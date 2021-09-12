@@ -23,7 +23,7 @@
 #include <GLFW/glfw3.h>
 #include <set>
 
-const std::vector<const char*> validationLayers = { "VK_LAYER_KHRONOS_validation" };
+const std::vector<const char*> validationLayers = { "VK_LAYER_KHRONOS_validation" /*, "VK_LAYER_LUNARG_api_dump"*/ };
 const std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
 GPUContext _context;
@@ -270,6 +270,13 @@ bool GPU::setupWindow(Window * window){
 	_context.queryAllocators[GPUQuery::Type::ANY_DRAWN].init(GPUQuery::Type::ANY_DRAWN, 1024);
 	_context.queryAllocators[GPUQuery::Type::SAMPLES_DRAWN].init(GPUQuery::Type::SAMPLES_DRAWN, 1024);
 
+	// Finally setup the swapchain.
+	window->_swapchain.reset(new Swapchain(_context, window->_config));
+	
+	// Create a pipeline cache.
+	_context.pipelineCache.init();
+
+	_context.descriptorAllocator.init(&_context, 1024);
 
 	// Create basic vertex array for screenquad.
 	{
@@ -281,14 +288,6 @@ bool GPU::setupWindow(Window * window){
 		_quad.indices = {0, 1, 2};
 		_quad.upload();
 	}
-
-	// Finally setup the swapchain.
-	window->_swapchain.reset(new Swapchain(_context, window->_config));
-	
-	// Create a pipeline cache.
-	_context.pipelineCache.init();
-
-	_context.descriptorAllocator.init(&_context, 1024);
 	return true;
 }
 
@@ -565,7 +564,7 @@ void GPU::uploadTexture(const Texture & texture) {
 	// Useful to avoid a useless transition at the very end.
 	transferTexture.gpu->defaultLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
 
-	VkCommandBuffer commandBuffer = VkUtils::startOneTimeCommandBuffer(_context);
+	VkCommandBuffer commandBuffer = _context.getUploadCommandBuffer();
 
 	VkUtils::textureLayoutBarrier(commandBuffer, transferTexture, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 
@@ -612,7 +611,6 @@ void GPU::uploadTexture(const Texture & texture) {
 	const glm::uvec2 dstSize(texture.width, texture.height);
 	VkUtils::blitTexture(commandBuffer, transferTexture, texture, 0, 0, texture.levels, 0, 0, layers, glm::uvec2(0), srcSize, glm::uvec2(0), dstSize, Filter::NEAREST);
 
-	VkUtils::endOneTimeCommandBuffer(commandBuffer, _context);
 	++_metrics.uploads;
 }
 
@@ -731,7 +729,7 @@ void GPU::generateMipMaps(const Texture & texture) {
 	const uint baseDepth = texture.shape == TextureShape::D3 ? texture.depth : 1u;
 
 	// Blit the texture to each mip level.
-	VkCommandBuffer commandBuffer = VkUtils::startOneTimeCommandBuffer(_context);
+	VkCommandBuffer commandBuffer = _context.getUploadCommandBuffer();
 
 	VkUtils::textureLayoutBarrier(commandBuffer, texture, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 
@@ -791,8 +789,6 @@ void GPU::generateMipMaps(const Texture & texture) {
 	// Transition to shader read.
 	VkUtils::textureLayoutBarrier(commandBuffer, texture, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
-	// Submit the commands.
-	VkUtils::endOneTimeCommandBuffer(commandBuffer, _context);
 }
 
 void GPU::setupBuffer(BufferBase & buffer) {
@@ -873,13 +869,11 @@ void GPU::uploadBuffer(const BufferBase & buffer, size_t size, uchar * data, siz
 	TransferBuffer transferBuffer(size, BufferType::CPUTOGPU);
 	transferBuffer.upload(size, data, 0);
 	// Copy operation.
-	VkCommandBuffer commandBuffer = VkUtils::startOneTimeCommandBuffer(_context);
 	VkBufferCopy copyRegion = {};
 	copyRegion.srcOffset = 0;
 	copyRegion.dstOffset = offset;
 	copyRegion.size = size;
-	vkCmdCopyBuffer(commandBuffer, transferBuffer.gpu->buffer, buffer.gpu->buffer, 1, &copyRegion);
-	VkUtils::endOneTimeCommandBuffer(commandBuffer, _context);
+	vkCmdCopyBuffer(_context.getUploadCommandBuffer(), transferBuffer.gpu->buffer, buffer.gpu->buffer, 1, &copyRegion);
 
 }
 

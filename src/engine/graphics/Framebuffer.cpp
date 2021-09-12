@@ -191,14 +191,13 @@ void Framebuffer::finalizeFramebuffer(){
 	// Finalize the texture layouts.
 	
 	GPUContext* context = GPU::getInternal();
-	VkCommandBuffer commandBuffer = VkUtils::startOneTimeCommandBuffer(*context);
+	VkCommandBuffer commandBuffer = context->getUploadCommandBuffer();
 	for(size_t cid = 0; cid < _colors.size(); ++cid){
 		VkUtils::textureLayoutBarrier(commandBuffer, _colors[cid], _colors[cid].gpu->defaultLayout);
 	}
 	if(_hasDepth){
 		VkUtils::textureLayoutBarrier(commandBuffer, _depth, _depth.gpu->defaultLayout);
 	}
-	VkUtils::endOneTimeCommandBuffer(commandBuffer, *context);
 
 	const uint attachCount = uint(_colors.size()) + (_hasDepth ? 1 : 0);
 
