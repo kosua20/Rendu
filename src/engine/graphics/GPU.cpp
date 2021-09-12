@@ -6,6 +6,7 @@
 #include "resources/Image.hpp"
 #include "system/TextUtilities.hpp"
 #include "system/Window.hpp"
+#include "system/System.hpp"
 #include "graphics/GPUInternal.hpp"
 
 #define VMA_STATIC_VULKAN_FUNCTIONS 0
@@ -518,55 +519,67 @@ void GPU::uploadTexture(const Texture & texture) {
 		return;
 	}
 
-	// Compute total texture size on the CPU.
-	size_t totalSize = 0;
+	// Determine if we can do the transfer without an intermediate texture.
+	const Layout format = texture.gpu->descriptor().typedFormat();
+	const bool is8UB = format == Layout::R8 || format == Layout::RG8 || format == Layout::RGBA8 || format == Layout::BGRA8 || format == Layout::SRGB8_ALPHA8 || format == Layout::SBGR8_ALPHA8;
+	const bool is32F = format == Layout::R32F || format == Layout::RG32F || format == Layout::RGBA32F;
+
+	// Compute total texture size.
+	size_t totalComponentCount = 0;
 	for(const auto & img: texture.images) {
-		const size_t imgSize = img.pixels.size() * sizeof(float);
-		totalSize += imgSize;
+		const size_t imgSize = img.pixels.size();
+		totalComponentCount += imgSize;
 	}
 
-	// Transfer the complete CPU image data to a staging buffer.
-	TransferBuffer transferBuffer(totalSize, BufferType::CPUTOGPU);
-	size_t currentOffset = 0;
-	for(const auto & img: texture.images) {
-		const size_t imgSize = img.pixels.size() * sizeof(float);
-		std::memcpy(transferBuffer.gpu->mapped + currentOffset, img.pixels.data(), imgSize);
-		currentOffset += imgSize;
-	}
-
-
-	if(texture.gpu->descriptor().isSRGB()){
-		// \todo Avoid conversions when possible:
-		// * target format is 32F: nothing to do
-		// * target format is 8 + sRGB: convert to uchar, pow, upload directly
-		// * same for 8 ?
-		// Look at timings when loading a scene.
-		for(size_t cid = 0; cid < currentOffset; cid += sizeof(float)) {
-			// Dont convert alpha if present.
-			if(destChannels == 4 && (cid % 16 == 12)){
-				continue;
-			}
-			float* v = reinterpret_cast<float*>(transferBuffer.gpu->mapped + cid);
-			*v = std::pow(*v, 2.2f);
-		}
-	}
-
+	const size_t compSize = is8UB ? sizeof(unsigned char) : sizeof(float);
+	const size_t totalSize = totalComponentCount * compSize;
 
 	Texture transferTexture("tmpTexture");
-	transferTexture.width = texture.width;
-	transferTexture.height = texture.height;
-	transferTexture.depth = texture.depth;
-	transferTexture.levels = texture.levels;
-	transferTexture.shape = texture.shape;
-	
-	Layout floatFormats[5] = {Layout(0), Layout::R32F, Layout::RG32F, Layout::RGBA32F /* no 3 channels format */, Layout::RGBA32F};
-	GPU::setupTexture(transferTexture, {floatFormats[destChannels], Filter::LINEAR, Wrap::CLAMP}, false);
-	// Useful to avoid a useless transition at the very end.
-	transferTexture.gpu->defaultLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+	const Texture* dstTexture = &texture;
+	size_t currentOffset = 0;
 
+	// Transfer the complete CPU image data to a staging buffer, handling conversion..
+	TransferBuffer transferBuffer(totalSize, BufferType::CPUTOGPU);
+
+	if(is8UB){
+		// Convert to uchar on the CPU.
+		for(const auto & img: texture.images) {
+			// Number of floats in the image.
+			const size_t compCount = img.pixels.size();
+			// Ideally parallelism should be moved higher up.
+			System::forParallel(0, compCount, [&img, currentOffset, &transferBuffer](size_t cid){
+				*(transferBuffer.gpu->mapped + currentOffset + cid) = (unsigned char)(img.pixels[cid] * 255.0f);
+			});
+			currentOffset += compCount;
+		}
+	} else {
+		// Copy float arrays.
+		size_t currentOffset = 0;
+		for(const auto & img: texture.images) {
+			const size_t compCount = img.pixels.size() * compSize;
+			std::memcpy(transferBuffer.gpu->mapped + currentOffset, img.pixels.data(), compCount);
+			currentOffset += compCount;
+		}
+		// If destination is not 32F, we need to use an intermediate 32F texture and convert
+		// to destination format using blit.
+		if(!is32F){
+			// Prepare the intermediate texture.
+			transferTexture.width = texture.width;
+			transferTexture.height = texture.height;
+			transferTexture.depth = texture.depth;
+			transferTexture.levels = texture.levels;
+			transferTexture.shape = texture.shape;
+			const Layout floatFormats[5] = {Layout(0), Layout::R32F, Layout::RG32F, Layout::RGBA32F /* no 3 channels format */, Layout::RGBA32F};
+			GPU::setupTexture(transferTexture, {floatFormats[destChannels], Filter::LINEAR, Wrap::CLAMP}, false);
+			// Useful to avoid a useless transition at the very end.
+			transferTexture.gpu->defaultLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+			// Change floatcopy destination.
+			dstTexture = &transferTexture;
+		}
+	}
+	// Prepare copy destination.
 	VkCommandBuffer commandBuffer = _context.getUploadCommandBuffer();
-
-	VkUtils::textureLayoutBarrier(commandBuffer, transferTexture, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+	VkUtils::textureLayoutBarrier(commandBuffer, *dstTexture, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 
 	// How many images in the mip level (for arrays and cubes)
 	const uint layers = texture.shape == TextureShape::D3 ? 1u : texture.depth;
@@ -594,10 +607,11 @@ void GPU::uploadTexture(const Texture & texture) {
 		region.imageExtent = { (uint32_t)w, (uint32_t)h, (uint32_t)d};
 
 		// Copy to the intermediate texture.
-		vkCmdCopyBufferToImage(commandBuffer, transferBuffer.gpu->buffer, transferTexture.gpu->image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
+		vkCmdCopyBufferToImage(commandBuffer, transferBuffer.gpu->buffer, dstTexture->gpu->image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
 
 		const uint imageCount = texture.shape == TextureShape::D3 ? d : layers;
-		currentOffset += imageCount * w * h * destChannels * sizeof(float);
+		// Support both 8-bits and 32-bits cases.
+		currentOffset += imageCount * w * h * destChannels * compSize;
 		currentImg += imageCount;
 		// We might have more levels allocated on the GPU than we had available on the CPU.
 		// Stop, these will be generated automatically.
@@ -606,10 +620,14 @@ void GPU::uploadTexture(const Texture & texture) {
 		}
 
 	}
-
-	const glm::uvec2 srcSize(transferTexture.width, transferTexture.height);
-	const glm::uvec2 dstSize(texture.width, texture.height);
-	VkUtils::blitTexture(commandBuffer, transferTexture, texture, 0, 0, texture.levels, 0, 0, layers, glm::uvec2(0), srcSize, glm::uvec2(0), dstSize, Filter::NEAREST);
+	// If we used an intermediate texture, blit from it to the destination. This will handle format conversion.
+	if(dstTexture != &texture){
+		const glm::uvec2 size(texture.width, texture.height);
+		VkUtils::blitTexture(commandBuffer, *dstTexture, texture, 0, 0, texture.levels, 0, 0, layers, glm::uvec2(0), size, glm::uvec2(0), size, Filter::NEAREST);
+	} else {
+		// Else we just have to transition the destination to its default layout.
+		VkUtils::imageLayoutBarrier(commandBuffer, *(texture.gpu), texture.gpu->defaultLayout, 0, texture.levels, 0, layers);
+	}
 
 	++_metrics.uploads;
 }
