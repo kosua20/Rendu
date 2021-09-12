@@ -363,13 +363,21 @@ public:
 	/** Clean all created GPU structures. */
 	static void cleanup();
 
-	/** End the current render pass if one is started. */
-	static void unbindFramebufferIfNeeded();
-
 private:
 	
 	/** If the GPU state has changed, retrieve and bind the pipeline corresponding to the new state. */
 	static void bindPipelineIfNeeded();
+
+	/** End the current render pass if one is started. */
+	static void unbindFramebufferIfNeeded();
+
+	/** Begin render and upload command buffers for this frame */
+	static void beginFrameCommandBuffers();
+
+	/** End and submit upload and render command buffers for this frame, guaranteeing sequential execution.
+	 \note This will wait for all queue work to be complete before returning.
+	 */
+	static void submitFrameCommandBuffers();
 
 	/** Clean a texture GPU object. 
 	 * \param tex the object to delete

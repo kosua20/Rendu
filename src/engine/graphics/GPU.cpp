@@ -1072,29 +1072,48 @@ void GPU::drawQuad(){
 	++_metrics.quadCalls;
 }
 
-void GPU::flush(){
-	GPU::unbindFramebufferIfNeeded();
-	VkCommandBuffer& commandBuffer = _context.getCurrentCommandBuffer();
-	VK_RET(vkEndCommandBuffer(commandBuffer));
+void GPU::beginFrameCommandBuffers() {
+	VkCommandBufferBeginInfo beginInfo = {};
+	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
+	VkCommandBuffer& commandBuffer = _context.getRenderCommandBuffer();
+	VkCommandBuffer& commandBufferUpload = _context.getUploadCommandBuffer();
+	VK_RET(vkBeginCommandBuffer(commandBuffer, &beginInfo));
+	VK_RET(vkBeginCommandBuffer(commandBufferUpload, &beginInfo));
+}
 
-	// Submit it.
+void GPU::submitFrameCommandBuffers() {
+	VkCommandBuffer& commandBuffer = _context.getRenderCommandBuffer();
+	VkCommandBuffer& commandBufferUpload = _context.getUploadCommandBuffer();
+	VK_RET(vkEndCommandBuffer(commandBuffer));
+	VK_RET(vkEndCommandBuffer(commandBufferUpload));
+
+	// Submit them.
 	VkSubmitInfo submitInfo = {};
 	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 	submitInfo.commandBufferCount = 1;
+	// Start with the uploads.
+	submitInfo.pCommandBuffers = &commandBufferUpload;
+	VK_RET(vkQueueSubmit(_context.graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE));
+	VK_RET(vkQueueWaitIdle(_context.graphicsQueue));
+	// Then the rendering (as it might use uploaded data).
 	submitInfo.pCommandBuffers = &commandBuffer;
 	VK_RET(vkQueueSubmit(_context.graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE));
 	VK_RET(vkQueueWaitIdle(_context.graphicsQueue));
+}
+
+void GPU::flush(){
+	GPU::unbindFramebufferIfNeeded();
+
+	// End both command buffers.
+	GPU::submitFrameCommandBuffers();
 
 	// Perform copies and destructions.
 	processAsyncTasks(true);
 	processDestructionRequests();
 
-	// Re-open command buffer.
-	VkCommandBufferBeginInfo beginInfo = {};
-	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
-
-	VK_RET(vkBeginCommandBuffer(commandBuffer, &beginInfo));
+	// Re-open command buffers.
+	GPU::beginFrameCommandBuffers();
 }
 
 void GPU::nextFrame(){

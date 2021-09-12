@@ -360,6 +360,13 @@ void VkUtils::createCommandBuffers(GPUContext & context, uint count){
 		return;
 	}
 
+	context.uploadCommandBuffers.resize(count);
+	VkCommandBufferAllocateInfo allocInfo2 = {};
+	allocInfo2.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+	allocInfo2.commandPool = context.commandPool;
+	allocInfo2.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+	allocInfo2.commandBufferCount = static_cast<uint32_t>(count);
+	if(vkAllocateCommandBuffers(context.device, &allocInfo2, context.uploadCommandBuffers.data()) != VK_SUCCESS) {
 		Log::Error() << Log::GPU  << "Unable to create command buffers." << std::endl;
 		return;
 	}

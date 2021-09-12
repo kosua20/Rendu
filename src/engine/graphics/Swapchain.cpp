@@ -124,10 +124,16 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 		return;
 	}
 
-	// Find a proper depth format.
+	// Create command buffers.
+	VkUtils::createCommandBuffers(*_context, _context->frameCount);
+	// Immediatly open the first set of command buffers, as it will also
+	// be used for swapchain images transitions and data uploads.
+	GPU::beginFrameCommandBuffers();
+
+	// Find a proper depth format for the swapchain.
 	const VkFormat depthFormat = VkUtils::findSupportedFormat(_context->physicalDevice,  {VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT}, VK_IMAGE_TILING_OPTIMAL, VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
 
-
+	// \todo Move to vkutils
 	static const std::map<VkFormat, Layout> formatInfos = {
 		{ VK_FORMAT_R8_UNORM, Layout::R8 },
 		{ VK_FORMAT_R8G8_UNORM, Layout::RG8 },
@@ -295,7 +301,6 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 		}
 	}
 
-	VkUtils::createCommandBuffers(*_context, _context->frameCount);
 
 	// Semaphores and fences.
 	_imagesAvailable.resize(_context->frameCount);
@@ -338,13 +343,25 @@ bool Swapchain::finishFrame(){
 
 	GPU::unbindFramebufferIfNeeded();
 
+	// If we have upload operations to perform, ensure they are all complete before
+	// we start executing the render command buffer.
+	//if(_context->uploadsPending){
+	vkCmdPipelineBarrier(_context->getUploadCommandBuffer(), VK_PIPELINE_STAGE_TRANSFER_BIT,
+						VK_PIPELINE_STAGE_TRANSFER_BIT | VK_PIPELINE_STAGE_VERTEX_SHADER_BIT,
+						0, 0, nullptr, 0, nullptr, 0, nullptr);
+	//}
+	//_context->uploadsPending = false;
+
 	// Make sure that the backbuffer is presentable.
-	VkUtils::imageLayoutBarrier(_context->getCurrentCommandBuffer(), *(Framebuffer::backbuffer()->texture(0)->gpu), VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, 0, 1, 0, 1);
+	VkUtils::imageLayoutBarrier(_context->getRenderCommandBuffer(), *(Framebuffer::backbuffer()->texture(0)->gpu), VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, 0, 1, 0, 1);
 
-	// Finish the frame command buffer.
-	VK_RET(vkEndCommandBuffer(_context->getCurrentCommandBuffer()));
+	// Finish the command buffers for this frame.
+	VK_RET(vkEndCommandBuffer(_context->getRenderCommandBuffer()));
+	VK_RET(vkEndCommandBuffer(_context->getUploadCommandBuffer()));
 
-	// Submit the last command buffer.
+	const VkCommandBuffer commandBuffers[] = {_context->getUploadCommandBuffer(), _context->getRenderCommandBuffer()};
+
+	// Submit both command buffers.
 	const uint swapIndex = _context->swapIndex;
 	// Maybe use VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT instead ?
 	VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
@@ -353,8 +370,8 @@ bool Swapchain::finishFrame(){
 	submitInfo.waitSemaphoreCount = 1;
 	submitInfo.pWaitSemaphores = &_imagesAvailable[swapIndex];
 	submitInfo.pWaitDstStageMask = waitStages;
-	submitInfo.commandBufferCount = 1;
-	submitInfo.pCommandBuffers = &_context->getCurrentCommandBuffer();
+	submitInfo.commandBufferCount = 2;
+	submitInfo.pCommandBuffers = &commandBuffers[0];
 	// Semaphore for when the command buffer is done, so that we can present the image.
 	submitInfo.signalSemaphoreCount = 1;
 	submitInfo.pSignalSemaphores = &_framesFinished[swapIndex];
@@ -394,6 +411,10 @@ bool Swapchain::nextFrame(){
 		if(!valid){
 			return false;
 		}
+	}  else {
+		// Before the first frame, we might still have performed upload operations (loading debug data for instance).
+		// End the command buffers, submit and wait on queue.
+		GPU::submitFrameCommandBuffers();
 	}
 
 	// Wait for the current commands buffer to be done.
@@ -414,12 +435,9 @@ bool Swapchain::nextFrame(){
 		return false;
 	}
 
-	// Prepare command buffer.
-	VkCommandBufferBeginInfo beginInfo = {};
-	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
-
-	VK_RET(vkBeginCommandBuffer(_context->getCurrentCommandBuffer(), &beginInfo));
+	// Prepare command buffers for this frame.
+	GPU::beginFrameCommandBuffers();
+	
 	_frameStarted = true;
 	Framebuffer::_backbuffer = _framebuffers[_imageIndex].get();
 
@@ -457,6 +475,7 @@ void Swapchain::clean() {
 	_depth.clean();
 
 	vkFreeCommandBuffers(_context->device, _context->commandPool, uint32_t(_context->renderCommandBuffers.size()), _context->renderCommandBuffers.data());
+	vkFreeCommandBuffers(_context->device, _context->commandPool, uint32_t(_context->uploadCommandBuffers.size()), _context->uploadCommandBuffers.data());
 	vkDestroySwapchainKHR(_context->device, _swapchain, nullptr);
 
 	for(size_t i = 0; i < _framesFinished.size(); ++i) {
