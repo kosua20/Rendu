@@ -131,55 +131,7 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 	GPU::beginFrameCommandBuffers();
 
 	// Find a proper depth format for the swapchain.
-	const VkFormat depthFormat = VkUtils::findSupportedFormat(_context->physicalDevice,  {VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT}, VK_IMAGE_TILING_OPTIMAL, VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
-
-	// \todo Move to vkutils
-	static const std::map<VkFormat, Layout> formatInfos = {
-		{ VK_FORMAT_R8_UNORM, Layout::R8 },
-		{ VK_FORMAT_R8G8_UNORM, Layout::RG8 },
-		{ VK_FORMAT_R8G8B8A8_UNORM, Layout::RGBA8 },
-		{ VK_FORMAT_B8G8R8A8_UNORM, Layout::BGRA8 },
-		{ VK_FORMAT_R8G8B8A8_SRGB, Layout::SRGB8_ALPHA8 },
-		{ VK_FORMAT_B8G8R8A8_SRGB, Layout::SBGR8_ALPHA8 },
-		{ VK_FORMAT_R16_UNORM, Layout::R16 },
-		{ VK_FORMAT_R16G16_UNORM, Layout::RG16 },
-		{ VK_FORMAT_R16G16B16A16_UNORM, Layout::RGBA16 },
-		{ VK_FORMAT_R8_SNORM, Layout::R8_SNORM },
-		{ VK_FORMAT_R8G8_SNORM, Layout::RG8_SNORM },
-		{ VK_FORMAT_R8G8B8A8_SNORM, Layout::RGBA8_SNORM },
-		{ VK_FORMAT_R16_SNORM, Layout::R16_SNORM },
-		{ VK_FORMAT_R16G16_SNORM, Layout::RG16_SNORM },
-		{ VK_FORMAT_R16_SFLOAT, Layout::R16F },
-		{ VK_FORMAT_R16G16_SFLOAT, Layout::RG16F },
-		{ VK_FORMAT_R16G16B16A16_SFLOAT, Layout::RGBA16F },
-		{ VK_FORMAT_R32_SFLOAT, Layout::R32F },
-		{ VK_FORMAT_R32G32_SFLOAT, Layout::RG32F },
-		{ VK_FORMAT_R32G32B32A32_SFLOAT, Layout::RGBA32F },
-		{ VK_FORMAT_R5G5B5A1_UNORM_PACK16, Layout::RGB5_A1 },
-		{ VK_FORMAT_A2R10G10B10_UNORM_PACK32, Layout::A2_RGB10 },
-		{ VK_FORMAT_A2B10G10R10_UNORM_PACK32, Layout::A2_BGR10 },
-		{ VK_FORMAT_D16_UNORM, Layout::DEPTH_COMPONENT16 },
-		{ VK_FORMAT_D32_SFLOAT, Layout::DEPTH_COMPONENT32F },
-		{ VK_FORMAT_D24_UNORM_S8_UINT, Layout::DEPTH24_STENCIL8 },
-		{ VK_FORMAT_D32_SFLOAT_S8_UINT, Layout::DEPTH32F_STENCIL8 },
-		{ VK_FORMAT_R8_UINT, Layout::R8UI },
-		{ VK_FORMAT_R16_SINT, Layout::R16I },
-		{ VK_FORMAT_R16_UINT, Layout::R16UI },
-		{ VK_FORMAT_R32_SINT, Layout::R32I },
-		{ VK_FORMAT_R32_UINT, Layout::R32UI },
-		{ VK_FORMAT_R8G8_SINT, Layout::RG8I },
-		{ VK_FORMAT_R8G8_UINT, Layout::RG8UI },
-		{ VK_FORMAT_R16G16_SINT, Layout::RG16I },
-		{ VK_FORMAT_R16G16_UINT, Layout::RG16UI },
-		{ VK_FORMAT_R32G32_SINT, Layout::RG32I },
-		{ VK_FORMAT_R32G32_UINT, Layout::RG32UI },
-		{ VK_FORMAT_R8G8B8A8_SINT, Layout::RGBA8I },
-		{ VK_FORMAT_R8G8B8A8_UINT, Layout::RGBA8UI },
-		{ VK_FORMAT_R16G16B16A16_SINT, Layout::RGBA16I },
-		{ VK_FORMAT_R16G16B16A16_UINT, Layout::RGBA16UI },
-		{ VK_FORMAT_R32G32B32A32_SINT, Layout::RGBA32I },
-		{ VK_FORMAT_R32G32B32A32_UINT, Layout::RGBA32UI }
-	};
+	const Layout depthLayout = VkUtils::findSupportedFormat(_context->physicalDevice,  {VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT}, VK_IMAGE_TILING_OPTIMAL, VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
 
 	// Create shared depth buffer.
 	_depth.width  = extent.width;
@@ -188,8 +140,7 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 	_depth.levels = 1;
 	_depth.shape  = TextureShape::D2;
 
-
-	Descriptor desc(formatInfos.at(depthFormat), Filter::LINEAR, Wrap::CLAMP);
+	Descriptor desc(depthLayout, Filter::LINEAR, Wrap::CLAMP);
 	GPU::setupTexture(_depth, desc, true);
 	_depth.gpu->defaultLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
@@ -203,7 +154,7 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 	// Retrieve the images themselves.
 	VK_RET(vkGetSwapchainImagesKHR(_context->device, _swapchain, &_imageCount, colorImages.data()));
 
-	Descriptor colorDesc(formatInfos.at(surfaceParams.format), Filter::LINEAR, Wrap::CLAMP);
+	Descriptor colorDesc(VkUtils::convertFormat(surfaceParams.format), Filter::LINEAR, Wrap::CLAMP);
 
 	_framebuffers.resize(_imageCount);
 

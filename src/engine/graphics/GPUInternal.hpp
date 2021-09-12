@@ -174,6 +174,12 @@ namespace VkUtils {
 	 */
 	bool getQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface, int & graphicsFamily, int & presentFamily);
 
+	/** Convert Vulkan format to Rendu format
+	 * \param format Vulkan format
+	 * \return the Rendu format
+	 */
+	Layout convertFormat(const VkFormat& format);
+
 	/** Find the optimal image format from a list based on tiling and feature constraints
 	 * \param physicalDevice the physical device handle
 	 * \param candidates list of possible formats to select from
@@ -181,7 +187,7 @@ namespace VkUtils {
 	 * \param features feature flags to support
 	 * \return the selected format
 	 */
-	VkFormat findSupportedFormat(const VkPhysicalDevice & physicalDevice, const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
+	Layout findSupportedFormat(const VkPhysicalDevice & physicalDevice, const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
 
 	/** Convert a Rendu texture shape to an image and image view types.
 	 * \param shape the texture shape

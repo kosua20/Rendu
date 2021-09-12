@@ -75,7 +75,7 @@ public:
 	std::vector<std::vector<VkImageLayout>> layouts; ///< Per-mip per-layer image layout.
 	VkImageLayout defaultLayout; ///< Default layout to restore to in some cases.
 
-	std::string name; ///< Debug name. \todo Cleanup
+	std::string name; ///< Debug name.
 	bool owned = true; ///< Do we own our Vulkan data (not the case for swapchain images).
 
 private:
