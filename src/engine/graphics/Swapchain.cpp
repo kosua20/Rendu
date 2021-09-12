@@ -343,12 +343,8 @@ bool Swapchain::finishFrame(){
 
 	// If we have upload operations to perform, ensure they are all complete before
 	// we start executing the render command buffer.
-	//if(_context->uploadsPending){
 	vkCmdPipelineBarrier(_context->getUploadCommandBuffer(), VK_PIPELINE_STAGE_TRANSFER_BIT,
-						VK_PIPELINE_STAGE_TRANSFER_BIT | VK_PIPELINE_STAGE_VERTEX_SHADER_BIT,
-						0, 0, nullptr, 0, nullptr, 0, nullptr);
-	//}
-	//_context->uploadsPending = false;
+		VK_PIPELINE_STAGE_TRANSFER_BIT | VK_PIPELINE_STAGE_VERTEX_SHADER_BIT, 0, 0, nullptr, 0, nullptr, 0, nullptr);
 
 	// Make sure that the backbuffer is presentable.
 	VkUtils::imageLayoutBarrier(_context->getRenderCommandBuffer(), *(Framebuffer::backbuffer()->texture(0)->gpu), VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, 0, 1, 0, 1);
