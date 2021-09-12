@@ -156,12 +156,11 @@ bool Window::nextFrame() {
 
 		// Draw ImGui.
 		Framebuffer::backbuffer()->bind(Framebuffer::Operation::LOAD, Framebuffer::Operation::LOAD, Framebuffer::Operation::LOAD);
-		ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), GPU::getInternal()->getCurrentCommandBuffer());
+		ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), GPU::getInternal()->getRenderCommandBuffer());
 		
 	}
 
 	// Notify GPU for book-keeping.
-	// GPU::nextFrame();
 	bool validSwapchain = _swapchain->nextFrame();
 
 	do {

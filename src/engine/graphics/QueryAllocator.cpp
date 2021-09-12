@@ -52,7 +52,7 @@ void QueryAllocator::clean(){
 
 void QueryAllocator::resetWritePool(){
 	GPUContext* context = GPU::getInternal();
-	vkCmdResetQueryPool(context->getCurrentCommandBuffer(), _pools[context->swapIndex], 0, _totalCount);
+	vkCmdResetQueryPool(context->getRenderCommandBuffer(), _pools[context->swapIndex], 0, _totalCount);
 }
 
 VkQueryPool& QueryAllocator::getWritePool(){

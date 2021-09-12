@@ -286,7 +286,7 @@ void Framebuffer::bind(uint layer, uint mip, const LoadOperation& colorOp, const
 	GPU::bindFramebuffer(*this, layer, mip);
 
 	GPUContext* context = GPU::getInternal();
-	VkCommandBuffer& commandBuffer = context->getCurrentCommandBuffer();
+	VkCommandBuffer& commandBuffer = context->getRenderCommandBuffer();
 
 	// Retrieve clear colors and transition the regions of the resources we need.
 	const uint attachCount = uint(_colors.size()) + (_hasDepth ? 1 : 0);
@@ -362,7 +362,7 @@ void Framebuffer::clear(const glm::vec4 & color, float depth){
 	GPU::unbindFramebufferIfNeeded();
 
 	GPUContext* context = GPU::getInternal();
-	VkCommandBuffer& commandBuffer = context->getCurrentCommandBuffer();
+	VkCommandBuffer& commandBuffer = context->getRenderCommandBuffer();
 
 	VkClearColorValue clearCol = {};
 	clearCol.float32[0] = color[0];

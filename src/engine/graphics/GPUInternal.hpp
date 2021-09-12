@@ -79,7 +79,7 @@ struct GPUContext {
 	VkDevice device = VK_NULL_HANDLE; ///< Native logical device handle.
 	VkSurfaceKHR surface = VK_NULL_HANDLE; ///< Native surface handle.
 	VkCommandPool commandPool = VK_NULL_HANDLE; ///< Command pool for all frames.
-	std::vector<VkCommandBuffer> commandBuffers; ///< Per-frame command buffers.
+	std::vector<VkCommandBuffer> renderCommandBuffers; ///< Per-frame command buffers.
 	VkQueue graphicsQueue= VK_NULL_HANDLE; ///< Graphics submission queue.
 	VkQueue presentQueue= VK_NULL_HANDLE; ///< Presentation submission queue.
 	DescriptorAllocator descriptorAllocator; ///< Descriptor sets common allocator.
@@ -112,8 +112,9 @@ struct GPUContext {
 	}
 
 	/// \return the command buffer for the current frame.
-	VkCommandBuffer& getCurrentCommandBuffer(){
-		return commandBuffers[swapIndex];
+	VkCommandBuffer& getRenderCommandBuffer(){
+		return renderCommandBuffers[swapIndex];
+	}
 	}
 
 };

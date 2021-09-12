@@ -456,7 +456,7 @@ void Swapchain::clean() {
 	// We own the shared depth, clean it.
 	_depth.clean();
 
-	vkFreeCommandBuffers(_context->device, _context->commandPool, uint32_t(_context->commandBuffers.size()), _context->commandBuffers.data());
+	vkFreeCommandBuffers(_context->device, _context->commandPool, uint32_t(_context->renderCommandBuffers.size()), _context->renderCommandBuffers.data());
 	vkDestroySwapchainKHR(_context->device, _swapchain, nullptr);
 
 	for(size_t i = 0; i < _framesFinished.size(); ++i) {

@@ -356,12 +356,12 @@ void Program::update(){
 	// Bind the descriptor sets.
 	
 	// Set 0 needs updated offsets.
-	vkCmdBindDescriptorSets(context->getCurrentCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, _state.layout, 0, 1, &_currentSets[0].handle, uint32_t(_currentOffsets.size()), _currentOffsets.data());
+	vkCmdBindDescriptorSets(context->getRenderCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, _state.layout, 0, 1, &_currentSets[0].handle, uint32_t(_currentOffsets.size()), _currentOffsets.data());
 
 	// Other sets are bound if present.
 	for(uint sid = 1; sid < _currentSets.size(); ++sid){
 		if(_currentSets[sid].handle != VK_NULL_HANDLE){
-			vkCmdBindDescriptorSets(context->getCurrentCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, _state.layout, sid, 1, &_currentSets[sid].handle, 0, nullptr);
+			vkCmdBindDescriptorSets(context->getRenderCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, _state.layout, sid, 1, &_currentSets[sid].handle, 0, nullptr);
 		}
 	}
 }

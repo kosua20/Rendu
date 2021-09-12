@@ -683,7 +683,7 @@ GPUAsyncTask GPU::downloadTextureAsync(const Texture& texture, const glm::uvec2&
 
 	AsyncTextureTask& request = _context.textureTasks.back();
 	request.frame = _context.frameIndex;
-	request.dstImageRange = VkUtils::copyTextureRegionToBuffer(_context.getCurrentCommandBuffer(), texture, request.dstBuffer, 0, 1, 0, effectiveLayerCount, offset, size);
+	request.dstImageRange = VkUtils::copyTextureRegionToBuffer(_context.getRenderCommandBuffer(), texture, request.dstBuffer, 0, 1, 0, effectiveLayerCount, offset, size);
 	request.dstImageRange[0] = 0;
 	request.dstTexture.reset(new Texture("DstTexture"));
 	request.dstTexture->width = size[0];
@@ -1034,7 +1034,7 @@ void GPU::bindPipelineIfNeeded(){
 	}
 
 	if(shouldBindPipeline){
-		vkCmdBindPipeline(_context.getCurrentCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, _context.pipeline);
+		vkCmdBindPipeline(_context.getRenderCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, _context.pipeline);
 		++_metrics.pipelineBindings;
 	}
 }
@@ -1045,11 +1045,11 @@ void GPU::drawMesh(const Mesh & mesh) {
 	bindPipelineIfNeeded();
 	_state.program->update();
 
-	vkCmdBindVertexBuffers(_context.getCurrentCommandBuffer(), 0, uint32_t(mesh.gpu->state.offsets.size()), mesh.gpu->state.buffers.data(), mesh.gpu->state.offsets.data());
-	vkCmdBindIndexBuffer(_context.getCurrentCommandBuffer(), mesh.gpu->indexBuffer->buffer, 0, VK_INDEX_TYPE_UINT32);
+	vkCmdBindVertexBuffers(_context.getRenderCommandBuffer(), 0, uint32_t(mesh.gpu->state.offsets.size()), mesh.gpu->state.buffers.data(), mesh.gpu->state.offsets.data());
+	vkCmdBindIndexBuffer(_context.getRenderCommandBuffer(), mesh.gpu->indexBuffer->buffer, 0, VK_INDEX_TYPE_UINT32);
 	++_metrics.meshBindings;
 
-	vkCmdDrawIndexed(_context.getCurrentCommandBuffer(), static_cast<uint32_t>(mesh.gpu->count), 1, 0, 0, 0);
+	vkCmdDrawIndexed(_context.getRenderCommandBuffer(), static_cast<uint32_t>(mesh.gpu->count), 1, 0, 0, 0);
 	++_metrics.drawCalls;
 }
 
@@ -1067,8 +1067,8 @@ void GPU::drawQuad(){
 	_state.program->update();
 
 	VkDeviceSize offset = 0;
-	vkCmdBindVertexBuffers(_context.getCurrentCommandBuffer(), 0, 1, &(_quad.gpu->vertexBuffer->buffer), &offset);
-	vkCmdDraw(_context.getCurrentCommandBuffer(), 3, 1, 0, 0);
+	vkCmdBindVertexBuffers(_context.getRenderCommandBuffer(), 0, 1, &(_quad.gpu->vertexBuffer->buffer), &offset);
+	vkCmdDraw(_context.getRenderCommandBuffer(), 3, 1, 0, 0);
 	++_metrics.quadCalls;
 }
 
@@ -1175,13 +1175,13 @@ void GPU::setViewport(int x, int y, int w, int h) {
 	vp.height = float(h);
 	vp.minDepth = 0.0f;
 	vp.maxDepth = 1.0f;
-	vkCmdSetViewport(_context.getCurrentCommandBuffer(), 0, 1, &vp);
+	vkCmdSetViewport(_context.getRenderCommandBuffer(), 0, 1, &vp);
 	VkRect2D scissor;
 	scissor.offset.x = int32_t(x);
 	scissor.offset.y = int32_t(y);
 	scissor.extent.width = uint32_t(w);
 	scissor.extent.height = uint32_t(h);
-	vkCmdSetScissor(_context.getCurrentCommandBuffer(), 0, 1, &scissor);
+	vkCmdSetScissor(_context.getRenderCommandBuffer(), 0, 1, &scissor);
 }
 
 void GPU::setDepthState(bool test) {
@@ -1243,7 +1243,7 @@ void GPU::setColorState(bool writeRed, bool writeGreen, bool writeBlue, bool wri
 void GPU::blitDepth(const Framebuffer & src, const Framebuffer & dst) {
 	GPU::unbindFramebufferIfNeeded();
 
-	VkCommandBuffer& commandBuffer = _context.getCurrentCommandBuffer();
+	VkCommandBuffer& commandBuffer = _context.getRenderCommandBuffer();
 
 	if(!src.depthBuffer() || !dst.depthBuffer()){
 		Log::Warning() << Log::GPU << "No depth buffer to blit." << std::endl;
@@ -1264,7 +1264,7 @@ void GPU::blitDepth(const Framebuffer & src, const Framebuffer & dst) {
 void GPU::blit(const Framebuffer & src, const Framebuffer & dst, Filter filter) {
 	GPU::unbindFramebufferIfNeeded();
 
-	VkCommandBuffer& commandBuffer = _context.getCurrentCommandBuffer();
+	VkCommandBuffer& commandBuffer = _context.getRenderCommandBuffer();
 	const uint count = std::min(src.attachments(), dst.attachments());
 
 	const glm::uvec2 srcSize(src.width(), src.height());
@@ -1286,7 +1286,7 @@ void GPU::blit(const Framebuffer & src, const Framebuffer & dst, size_t lSrc, si
 void GPU::blit(const Framebuffer & src, const Framebuffer & dst, size_t lSrc, size_t lDst, size_t mipSrc, size_t mipDst, Filter filter) {
 
 	GPU::unbindFramebufferIfNeeded();
-	VkCommandBuffer& commandBuffer = _context.getCurrentCommandBuffer();
+	VkCommandBuffer& commandBuffer = _context.getRenderCommandBuffer();
 	const uint count = uint(std::min(src.attachments(), dst.attachments()));
 
 	const glm::uvec2 srcSize(src.width(), src.height());
@@ -1320,7 +1320,7 @@ void GPU::blit(const Texture & src, Texture & dst, Filter filter) {
 	const glm::uvec2 srcSize(src.width, src.height);
 	const glm::uvec2 dstSize(dst.width, dst.height);
 
-	VkUtils::blitTexture(_context.getCurrentCommandBuffer(), src, dst, 0, 0, src.levels, 0, 0, layerCount, glm::uvec2(0), srcSize, glm::uvec2(0), dstSize, filter);
+	VkUtils::blitTexture(_context.getRenderCommandBuffer(), src, dst, 0, 0, src.levels, 0, 0, layerCount, glm::uvec2(0), srcSize, glm::uvec2(0), dstSize, filter);
 	++_metrics.blitCount;
 }
 
@@ -1336,7 +1336,7 @@ void GPU::blit(const Texture & src, Framebuffer & dst, Filter filter) {
 
 	const glm::uvec2 srcSize(src.width, src.height);
 	const glm::uvec2 dstSize(dst.width(), dst.height());
-	VkUtils::blitTexture(_context.getCurrentCommandBuffer(), src, *dst.texture(), 0, 0, src.levels, 0, 0, layerCount, glm::uvec2(0), srcSize, glm::uvec2(0), dstSize, filter);
+	VkUtils::blitTexture(_context.getRenderCommandBuffer(), src, *dst.texture(), 0, 0, src.levels, 0, 0, layerCount, glm::uvec2(0), srcSize, glm::uvec2(0), dstSize, filter);
 	++_metrics.blitCount;
 }
 
@@ -1345,7 +1345,7 @@ void GPU::unbindFramebufferIfNeeded(){
 	if(_state.pass.framebuffer == nullptr){
 		return;
 	}
-	VkCommandBuffer& commandBuffer = _context.getCurrentCommandBuffer();
+	VkCommandBuffer& commandBuffer = _context.getRenderCommandBuffer();
 	vkCmdEndRenderPass(commandBuffer);
 	++_metrics.renderPasses;
 

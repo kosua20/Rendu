@@ -349,13 +349,17 @@ void VkUtils::textureLayoutBarrier(VkCommandBuffer& commandBuffer, const Texture
 
 void VkUtils::createCommandBuffers(GPUContext & context, uint count){
 	// See if we can move their creation and deletion outside of the swapchain
-	context.commandBuffers.resize(count);
+	context.renderCommandBuffers.resize(count);
 	VkCommandBufferAllocateInfo allocInfo = {};
 	allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 	allocInfo.commandPool = context.commandPool;
 	allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 	allocInfo.commandBufferCount = static_cast<uint32_t>(count);
-	if(vkAllocateCommandBuffers(context.device, &allocInfo, context.commandBuffers.data()) != VK_SUCCESS) {
+	if(vkAllocateCommandBuffers(context.device, &allocInfo, context.renderCommandBuffers.data()) != VK_SUCCESS) {
+		Log::Error() << Log::GPU  << "Unable to create command buffers." << std::endl;
+		return;
+	}
+
 		Log::Error() << Log::GPU  << "Unable to create command buffers." << std::endl;
 		return;
 	}

@@ -150,9 +150,9 @@ void GPUQuery::begin(){
 	GPUContext* context = GPU::getInternal();
 	VkQueryPool& pool = context->queryAllocators.at(_type).getWritePool();
 	if(_type == GPUQuery::Type::TIME_ELAPSED){
-		vkCmdWriteTimestamp(context->getCurrentCommandBuffer(), VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, pool, _offset);
+		vkCmdWriteTimestamp(context->getRenderCommandBuffer(), VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, pool, _offset);
 	} else {
-		vkCmdBeginQuery(context->getCurrentCommandBuffer(), pool, _offset, 0);
+		vkCmdBeginQuery(context->getRenderCommandBuffer(), pool, _offset, 0);
 	}
 	_running = true;
 	_ranThisFrame = true;
@@ -167,9 +167,9 @@ void GPUQuery::end(){
 	GPUContext* context = GPU::getInternal();
 	VkQueryPool& pool = context->queryAllocators.at(_type).getWritePool();
 	if(_type == GPUQuery::Type::TIME_ELAPSED){
-		vkCmdWriteTimestamp(context->getCurrentCommandBuffer(), VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, pool, _offset + 1u);
+		vkCmdWriteTimestamp(context->getRenderCommandBuffer(), VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, pool, _offset + 1u);
 	} else {
-		vkCmdEndQuery(context->getCurrentCommandBuffer(), pool, _offset);
+		vkCmdEndQuery(context->getRenderCommandBuffer(), pool, _offset);
 	}
 
 	_running = false;
