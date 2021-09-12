@@ -119,7 +119,7 @@ ShaderEditor::ShaderEditor(RenderingConfig & config) : CameraApp(config), _noise
 	}
 
 	{
-		_perlin3D.width = _perlin3D.height = _perlin3D.depth = 256;
+		_perlin3D.width = _perlin3D.height = _perlin3D.depth = 128;
 		_perlin3D.levels = 1;
 		_perlin3D.shape = TextureShape::D3;
 		PerlinNoise perlinGen;
