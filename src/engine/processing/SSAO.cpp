@@ -8,9 +8,8 @@
 SSAO::SSAO(uint width, uint height, uint downscale, float radius, const std::string & name) : _highBlur(name + " SSAO"), _mediumBlur(true, name + " SSAO"),
 	_samples(16, DataUse::STATIC), _radius(radius), _downscale(downscale) {
 
-	const Descriptor desc = Descriptor(Layout::R8, Filter::LINEAR_NEAREST, Wrap::CLAMP);
-	_ssaoFramebuffer.reset(new Framebuffer(width/_downscale, height/_downscale, desc, false, name + " SSAO"));
-	_finalFramebuffer.reset(new Framebuffer(width, height, desc, false, name + " SSAO final"));
+	_ssaoFramebuffer.reset(new Framebuffer(width/_downscale, height/_downscale, Layout::R8, name + " SSAO"));
+	_finalFramebuffer.reset(new Framebuffer(width, height, Layout::R8, name + " SSAO final"));
 	_programSSAO = Resources::manager().getProgram2D("ssao");
 
 	// Generate samples.
@@ -54,7 +53,7 @@ SSAO::SSAO(uint width, uint height, uint downscale, float radius, const std::str
 	}
 
 	// Send the texture to the GPU.
-	_noisetexture.upload({Layout::RGBA32F, Filter::NEAREST, Wrap::REPEAT}, false);
+	_noisetexture.upload(Layout::RGBA32F, false);
 
 }
 

@@ -16,29 +16,18 @@ VK_DEFINE_HANDLE(VmaAllocation);
  */
 class GPUTexture {
 public:
-	/** Constructor from a layout description and a texture shape.
-	 \param texDescriptor the layout descriptor
+	/** Constructor from a layout format.
+	 \param layoutFormat the layout format
 	 */
-	GPUTexture(const Descriptor & texDescriptor);
+	GPUTexture(const Layout & layoutFormat);
 
 	/** Clean internal GPU buffer. */
 	void clean();
 
-	/** Compare the texture layout to another one.
-	 \param other the descriptor to compare to
-	 \return true if the texture has a similar descriptor
+	/** Query the texture format.
+	 \return the format used
 	 */
-	bool hasSameLayoutAs(const Descriptor & other) const;
-
-	/** Set the texture filtering.
-	 \param filtering the new filtering mode
-	 */
-	void setFiltering(Filter filtering);
-
-	/** Query the texture descriptor.
-	 \return the descriptor used
-	 */
-	const Descriptor & descriptor() const { return _descriptor; }
+	const Layout & typedFormat() const { return _typedFormat; }
 	
 	/** Copy assignment operator (disabled).
 	 \return a reference to the object assigned to
@@ -55,6 +44,18 @@ public:
 	
 	/** Move constructor. */
 	GPUTexture(GPUTexture &&) = delete;
+
+	/** Retrieve the number of channels of a texture format.
+	 \param format the texture format
+	 \return the number of channels
+	 */
+	static unsigned int getChannelsCount(const Layout& format);
+
+	/** Check if a format represents sRGB colors.
+	 \param format the texture format
+	 \return true if sRGB
+	 */
+	static bool isSRGB(const Layout& format);
 
 	VkFormat format; ///< Texture native format.
 	VkImageAspectFlags aspect; ///< Texture aspects.
@@ -75,7 +76,7 @@ public:
 	bool owned = true; ///< Do we own our Vulkan data (not the case for swapchain images).
 
 private:
-	Descriptor _descriptor; ///< Layout used.
+	Layout _typedFormat; ///< Layout used.
 };
 
 

@@ -6,10 +6,9 @@ FloodFiller::FloodFiller(unsigned int width, unsigned int height) {
 
 	_iterations = int(std::ceil(std::log2(std::max(width, height))));
 
-	const Descriptor desc = {Layout::RG16UI, Filter::NEAREST_NEAREST, Wrap::REPEAT};
-	_ping				  = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, desc, false, "Flood fill ping"));
-	_pong				  = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, desc, false, "Flood fill pong"));
-	_final				  = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, {Layout::RGBA8, Filter::NEAREST_NEAREST, Wrap::CLAMP}, false, "Flood fill final"));
+	_ping				  = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, Layout::RG16UI, "Flood fill ping"));
+	_pong				  = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, Layout::RG16UI, "Flood fill pong"));
+	_final				  = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, Layout::RGBA8, "Flood fill final"));
 
 	_extract		= Resources::manager().getProgram2D("extract-seeds");
 	_floodfill		= Resources::manager().getProgram2D("flood-fill");

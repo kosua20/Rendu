@@ -3,14 +3,13 @@
 #include "graphics/GPUInternal.hpp"
 #include "graphics/Framebuffer.hpp"
 
-GPUTexture::GPUTexture(const Descriptor & texDescriptor) :
-	_descriptor(texDescriptor) {
+GPUTexture::GPUTexture(const Layout & layoutFormat) :
+_typedFormat(layoutFormat) {
 
-	channels = VkUtils::getGPULayout(texDescriptor.typedFormat(), format);
+	channels = VkUtils::getGPULayout(layoutFormat, format);
 
-	const Layout layout = texDescriptor.typedFormat();
-	const bool isDepth = layout == Layout::DEPTH_COMPONENT16 || layout == Layout::DEPTH_COMPONENT24 || layout == Layout::DEPTH_COMPONENT32F || layout == Layout::DEPTH24_STENCIL8 || layout == Layout::DEPTH32F_STENCIL8;
-	const bool isStencil = layout == Layout::DEPTH24_STENCIL8 || layout == Layout::DEPTH32F_STENCIL8;
+	const bool isDepth = layoutFormat == Layout::DEPTH_COMPONENT16 || layoutFormat == Layout::DEPTH_COMPONENT24 || layoutFormat == Layout::DEPTH_COMPONENT32F || layoutFormat == Layout::DEPTH24_STENCIL8 || layoutFormat == Layout::DEPTH32F_STENCIL8;
+	const bool isStencil = layoutFormat == Layout::DEPTH24_STENCIL8 || layoutFormat == Layout::DEPTH32F_STENCIL8;
 
 	aspect = isDepth ? VK_IMAGE_ASPECT_DEPTH_BIT : VK_IMAGE_ASPECT_COLOR_BIT;
 	if(isStencil){
@@ -24,12 +23,13 @@ void GPUTexture::clean() {
 	}
 }
 
-bool GPUTexture::hasSameLayoutAs(const Descriptor & other) const {
-	return _descriptor == other;
+unsigned int GPUTexture::getChannelsCount(const Layout& format){
+	VkFormat formatDummy;
+	return VkUtils::getGPULayout(format, formatDummy);
 }
 
-void GPUTexture::setFiltering(Filter filtering) {
-	(void)filtering;
+bool GPUTexture::isSRGB(const Layout& format){
+	return format == Layout::SRGB8_ALPHA8 || format == Layout::SBGR8_ALPHA8;
 }
 
 GPUBuffer::GPUBuffer(BufferType atype){

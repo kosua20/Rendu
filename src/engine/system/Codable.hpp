@@ -90,9 +90,9 @@ public:
 	 \endverbatim
 	 (where texturetype can be one of 'rgb', 'srgb', 'rgb32', 'rgbcube', 'srgbcube', 'rgb32cube' depending on the desired format).
 	 \param param the parameters tuple
-	 \return the name of the texture and its descriptor.
+	 \return the name of the texture and its format.
 	 */
-	static std::pair<std::string, Descriptor> decodeTexture(const KeyValues & param);
+	static std::pair<std::string, Layout> decodeTexture(const KeyValues & param);
 	
 	/** Encode a texture into a Codable-compliant tuple.
 	 \param texture the texture to encode

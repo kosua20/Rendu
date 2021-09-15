@@ -64,20 +64,18 @@ public:
 	/** Setup the framebuffer (attachments, renderbuffer, depth buffer, textures IDs,...)
 	 \param width the width of the framebuffer
 	 \param height the height of the framebuffer
-	 \param descriptor the color attachment texture descriptor (format, filtering,...)
-	 \param depthBuffer should the framebuffer contain a depth buffer to properly handle 3D geometry
+	 \param format the color attachment texture format
 	 \param name the framebuffer debug name
 	 */
-	Framebuffer(uint width, uint height, const Descriptor & descriptor, bool depthBuffer, const std::string & name);
+	Framebuffer(uint width, uint height, const Layout & format, const std::string & name);
 
 	/** Setup the framebuffer (attachments, renderbuffer, depth buffer, textures IDs,...)
 	 \param width the width of the framebuffer
 	 \param height the height of the framebuffer
-	 \param descriptors the color attachments texture descriptors (format, filtering,...)
-	 \param depthBuffer should the framebuffer contain a depth buffer to properly handle 3D geometry
+	 \param formats the color attachments texture formats
 	 \param name the framebuffer debug name
 	 */
-	Framebuffer(uint width, uint height, const std::vector<Descriptor> & descriptors, bool depthBuffer, const std::string & name);
+	Framebuffer(uint width, uint height, const std::vector<Layout> & formats, const std::string & name);
 
 	/** Setup the framebuffer (attachments, renderbuffer, depth buffer, textures IDs,...)
 	 \param shape the texture shape (2D, cubemap, array,...)
@@ -85,11 +83,10 @@ public:
 	 \param height the height of the framebuffer
 	 \param depth the number of layers of the framebuffer
 	 \param mips the number of mip levels of the framebuffer
-	 \param descriptors the color attachments texture descriptors (format, filtering,...)
-	 \param depthBuffer should the framebuffer contain a depth buffer to properly handle 3D geometry
+	 \param formats the color attachments texture formats
 	 \param name the framebuffer debug name
 	 */
-	Framebuffer(TextureShape shape, uint width, uint height, uint depth, uint mips, const std::vector<Descriptor> & descriptors, bool depthBuffer, const std::string & name);
+	Framebuffer(TextureShape shape, uint width, uint height, uint depth, uint mips, const std::vector<Layout> & formats, const std::string & name);
 
 
 	/**
@@ -169,11 +166,11 @@ public:
 		return &_colors[i];
 	}
 
-	/** Query the descriptor of one of the color attachments.
+	/** Query the format of one of the color attachments.
 	 \param i the color attachment index (or 0 by default)
-	 \return the descriptor
+	 \return the texture format
 	*/
-	const Descriptor & descriptor(uint i = 0) const;
+	const Layout & format(uint i = 0) const;
 
 	/** Query the shape of the framebuffer.
 	 \return the texture shape used for all attachments.

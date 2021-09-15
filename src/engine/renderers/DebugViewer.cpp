@@ -156,14 +156,67 @@ void DebugViewer::trackState(const std::string & name){
 void DebugViewer::registerTexture(const std::string& name, const Texture* tex, TextureInfos & infos) {
 	infos.name  = name;
 	infos.tex   = tex;
-	infos.gamma = tex->gpu->descriptor().isSRGB();
+
+	const Layout format = tex->gpu->typedFormat();
+	infos.gamma = GPUTexture::isSRGB(format);
 
 	// Setup display framebuffer.
-	const Descriptor desc = {Layout::RGBA8, Filter::NEAREST, Wrap::CLAMP};
-	infos.display.reset(new Framebuffer(TextureShape::D2, tex->width, tex->height, 1, 1, {desc}, false, debugSkipName));
+	infos.display.reset(new Framebuffer(TextureShape::D2, tex->width, tex->height, 1, 1, {Layout::RGBA8}, debugSkipName));
+
+	// GPU format strings
+	#define STRENUM(X) { Layout::X, #X}
+
+	static const std::unordered_map<Layout, std::string> strFormats = {
+		STRENUM(R8),
+		STRENUM(RG8),
+		STRENUM(RGBA8),
+		STRENUM(SRGB8_ALPHA8),
+		STRENUM(BGRA8),
+		STRENUM(SBGR8_ALPHA8),
+		STRENUM(R16),
+		STRENUM(RG16),
+		STRENUM(RGBA16),
+		STRENUM(R8_SNORM),
+		STRENUM(RG8_SNORM),
+		STRENUM(RGBA8_SNORM),
+		STRENUM(R16_SNORM),
+		STRENUM(RG16_SNORM),
+		STRENUM(R16F),
+		STRENUM(RG16F),
+		STRENUM(RGBA16F),
+		STRENUM(R32F),
+		STRENUM(RG32F),
+		STRENUM(RGBA32F),
+		STRENUM(RGB5_A1),
+		STRENUM(A2_BGR10),
+		STRENUM(A2_RGB10),
+		STRENUM(DEPTH_COMPONENT32F),
+		STRENUM(DEPTH24_STENCIL8),
+		STRENUM(DEPTH_COMPONENT16),
+		STRENUM(DEPTH32F_STENCIL8),
+		STRENUM(R8UI),
+		STRENUM(R16I),
+		STRENUM(R16UI),
+		STRENUM(R32I),
+		STRENUM(R32UI),
+		STRENUM(RG8I),
+		STRENUM(RG8UI),
+		STRENUM(RG16I),
+		STRENUM(RG16UI),
+		STRENUM(RG32I),
+		STRENUM(RG32UI),
+		STRENUM(RGBA8I),
+		STRENUM(RGBA8UI),
+		STRENUM(RGBA16I),
+		STRENUM(RGBA16UI),
+		STRENUM(RGBA32I),
+		STRENUM(RGBA32UI)
+	};
+
+	#undef STRENUM
 
 	// Build display full name with details.
-	const std::string details = shapeNames.at(tex->shape) + " (" + tex->gpu->descriptor().string() + ")";
+	const std::string details = shapeNames.at(tex->shape) + " (" + strFormats.at(format) + ")";
 	infos.displayName		  = " - " + std::to_string(tex->width) + "x" + std::to_string(tex->height) + " - " + details + "##" + std::to_string(_winId++);
 }
 

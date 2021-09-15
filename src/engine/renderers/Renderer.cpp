@@ -22,6 +22,6 @@ std::unique_ptr<Framebuffer> Renderer::createOutput(uint width, uint height, con
 }
 
 std::unique_ptr<Framebuffer> Renderer::createOutput(TextureShape shape, uint width, uint height, uint depth, uint mips, const std::string & name) const {
-	return std::unique_ptr<Framebuffer>(new Framebuffer(shape, width, height, depth, mips, _preferredFormat, _needsDepth, name));
+	return std::unique_ptr<Framebuffer>(new Framebuffer(shape, width, height, depth, mips, _preferredFormat, name));
 }
 

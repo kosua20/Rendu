@@ -5,12 +5,69 @@
 #include "renderers/DebugViewer.hpp"
 
 
-Framebuffer::Framebuffer(uint width, uint height, const Descriptor & descriptor, bool depthBuffer, const std::string & name) :
-	Framebuffer(TextureShape::D2, width, height, 1, 1, std::vector<Descriptor>(1, descriptor), depthBuffer, name) {
+Framebuffer::Framebuffer(uint width, uint height, const Layout & format, const std::string & name) :
+	Framebuffer(TextureShape::D2, width, height, 1, 1, std::vector<Layout>(1, format), name) {
 }
 
-Framebuffer::Framebuffer(uint width, uint height, const std::vector<Descriptor> & descriptors, bool depthBuffer, const std::string & name) :
-	Framebuffer(TextureShape::D2, width, height, 1, 1, descriptors, depthBuffer, name) {
+Framebuffer::Framebuffer(uint width, uint height, const std::vector<Layout> & formats, const std::string & name) :
+	Framebuffer(TextureShape::D2, width, height, 1, 1, formats, name) {
+}
+
+Framebuffer::Framebuffer(TextureShape shape, uint width, uint height, uint depth, uint mips, const std::vector<Layout> & formats, const std::string & name) : _depth("Depth ## " + name), _name(name),
+	_width(width), _height(height), _mips(mips) {
+
+	// Check that the shape is supported.
+	_shape = shape;
+	if(_shape != TextureShape::D2 && _shape != TextureShape::Array2D && _shape != TextureShape::Cube && _shape != TextureShape::ArrayCube){
+		Log::Error() << Log::GPU << "Unsupported framebuffer shape." << std::endl;
+		return;
+	}
+	if(shape == TextureShape::D2){
+		_layers = 1;
+	} else if(shape == TextureShape::Cube){
+		_layers = 6;
+	} else if(shape == TextureShape::ArrayCube){
+		_layers = 6 * depth;
+	} else {
+		_layers = depth;
+	}
+
+	uint cid = 0;
+	for(const Layout & format : formats) {
+		// Create the color texture to store the result.
+		const bool isDepthComp		  = format == Layout::DEPTH_COMPONENT16 || format == Layout::DEPTH_COMPONENT24 || format == Layout::DEPTH_COMPONENT32F;
+		const bool hasStencil = format == Layout::DEPTH24_STENCIL8 || format == Layout::DEPTH32F_STENCIL8;
+
+		if(isDepthComp || hasStencil) {
+			_hasDepth	  = true;
+			_depth.width  = _width;
+			_depth.height = _height;
+			_depth.depth  = _layers;
+			_depth.levels = _mips;
+			_depth.shape  = shape;
+			GPU::setupTexture(_depth, format, true);
+
+		} else {
+			_colors.emplace_back("Color " + std::to_string(cid++) + " ## " + _name);
+			Texture & tex = _colors.back();
+			tex.width     = _width;
+			tex.height	  = _height;
+			tex.depth	  = _layers;
+			tex.levels	  = _mips;
+			tex.shape	  = shape;
+			GPU::setupTexture(tex, format, true);
+
+		}
+	}
+
+	// Populate all render passes. If this is too wasteful (27 render passes), we could create them on request and cache them.
+	populateRenderPasses(false);
+	populateLayoutState();
+
+	// Create the framebuffer.
+	finalizeFramebuffer();
+
+	DebugViewer::trackDefault(this);
 }
 
 VkRenderPass Framebuffer::createRenderpass(Operation colorOp, Operation depthOp, Operation stencilOp, bool presentable){
@@ -96,75 +153,6 @@ VkRenderPass Framebuffer::createRenderpass(Operation colorOp, Operation depthOp,
 	return pass;
 }
 
-
-Framebuffer::Framebuffer(TextureShape shape, uint width, uint height, uint depth, uint mips, const std::vector<Descriptor> & descriptors, bool depthBuffer, const std::string & name) : _depth("Depth ## " + name), _name(name),
-	_width(width), _height(height), _mips(mips) {
-
-	// Check that the shape is supported.
-	_shape = shape;
-	if(_shape != TextureShape::D2 && _shape != TextureShape::Array2D && _shape != TextureShape::Cube && _shape != TextureShape::ArrayCube){
-		Log::Error() << Log::GPU << "Unsupported framebuffer shape." << std::endl;
-		return;
-	}
-	if(shape == TextureShape::D2){
-		_layers = 1;
-	} else if(shape == TextureShape::Cube){
-		_layers = 6;
-	} else if(shape == TextureShape::ArrayCube){
-		_layers = 6 * depth;
-	} else {
-		_layers = depth;
-	}
-
-	uint cid = 0;
-	for(const auto & descriptor : descriptors) {
-		// Create the color texture to store the result.
-		const Layout & format		  = descriptor.typedFormat();
-		const bool isDepthComp		  = format == Layout::DEPTH_COMPONENT16 || format == Layout::DEPTH_COMPONENT24 || format == Layout::DEPTH_COMPONENT32F;
-		const bool hasStencil = format == Layout::DEPTH24_STENCIL8 || format == Layout::DEPTH32F_STENCIL8;
-
-		if(isDepthComp || hasStencil) {
-			_hasDepth	  = true;
-			_depth.width  = _width;
-			_depth.height = _height;
-			_depth.depth  = _layers;
-			_depth.levels = _mips;
-			_depth.shape  = shape;
-			GPU::setupTexture(_depth, descriptor, true);
-
-		} else {
-			_colors.emplace_back("Color " + std::to_string(cid++) + " ## " + _name);
-			Texture & tex = _colors.back();
-			tex.width     = _width;
-			tex.height	  = _height;
-			tex.depth	  = _layers;
-			tex.levels	  = _mips;
-			tex.shape	  = shape;
-			GPU::setupTexture(tex, descriptor, true);
-
-		}
-	}
-
-	if(!_hasDepth && depthBuffer) {
-		_depth.width  = _width;
-		_depth.height = _height;
-		_depth.levels = _mips;
-		_depth.depth  = _layers;
-		_depth.shape  = shape;
-		GPU::setupTexture(_depth, {Layout::DEPTH_COMPONENT32F, Filter::NEAREST, Wrap::CLAMP}, true);
-		_hasDepth = true;
-	}
-
-	// Populate all render passes. If this is too wasteful (27 render passes), we could create them on request and cache them.
-	populateRenderPasses(false);
-	populateLayoutState();
-
-	// Create the framebuffer.
-	finalizeFramebuffer();
-
-	DebugViewer::trackDefault(this);
-}
-
 void Framebuffer::populateRenderPasses(bool isBackbuffer){
 	const uint operationCount = uint(_renderPasses.size());
 	for(uint cid = 0; cid < operationCount; ++cid){
@@ -178,11 +166,11 @@ void Framebuffer::populateRenderPasses(bool isBackbuffer){
 
 void Framebuffer::populateLayoutState(){
 	for(uint cid = 0; cid < _colors.size(); ++cid){
-		_state.colors.push_back(_colors[cid].gpu->descriptor().typedFormat());
+		_state.colors.push_back(_colors[cid].gpu->typedFormat());
 	}
 	if(_hasDepth){
 		_state.hasDepth = true;
-		_state.depth = _depth.gpu->descriptor().typedFormat();
+		_state.depth = _depth.gpu->typedFormat();
 	}
 }
 
@@ -336,14 +324,14 @@ void Framebuffer::resize(uint width, uint height) {
 	if(_hasDepth) {
 		_depth.width  = _width;
 		_depth.height = _height;
-		GPU::setupTexture(_depth, _depth.gpu->descriptor(), true);
+		GPU::setupTexture(_depth, _depth.gpu->typedFormat(), true);
 	}
 
 	// Resize the textures.
 	for(Texture & color : _colors) {
 		color.width  = _width;
 		color.height = _height;
-		GPU::setupTexture(color, color.gpu->descriptor(), true);
+		GPU::setupTexture(color, color.gpu->typedFormat(), true);
 	}
 
 	finalizeFramebuffer();
@@ -430,8 +418,8 @@ glm::vec4 Framebuffer::read(const glm::uvec2 & pos) {
 	return _readColor;
 }
 
-const Descriptor & Framebuffer::descriptor(unsigned int i) const {
-   return _colors[i].gpu->descriptor();
+const Layout & Framebuffer::format(unsigned int i) const {
+   return _colors[i].gpu->typedFormat();
 }
 
 uint Framebuffer::attachments() const {

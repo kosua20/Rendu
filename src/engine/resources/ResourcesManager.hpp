@@ -154,7 +154,7 @@ public:
 
 	/** Get a texture resource. Automatically handle custom mipmaps if present.
 	 \param name the texture base name
-	 \param descriptor the texture layout to use
+	 \param format the texture format to use
 	 \param options data loading and storage options
 	 \param refName the name to use for the texture in future calls
 	 \return the texture informations
@@ -162,7 +162,7 @@ public:
 	 \note Cubemaps will be automatically detected using suffixes _nx, _ny, _nz, _px, _py, _pz.
 	 \note 2D arrays will be automatically detected using suffix _sX where X=0,1..., 3D textures using suffix _zX where X=0,1...
 	 */
-	const Texture * getTexture(const std::string & name, const Descriptor & descriptor, Storage options, const std::string & refName = "");
+	const Texture * getTexture(const std::string & name, const Layout & format, Storage options, const std::string & refName = "");
 
 	/** Get an existing texture resource.
 	 \param name the texture base name

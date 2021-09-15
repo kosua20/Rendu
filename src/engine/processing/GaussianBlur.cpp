@@ -24,9 +24,9 @@ void GaussianBlur::process(const Texture * texture, Framebuffer & framebuffer) {
 
 	const uint width = framebuffer.width() / _downscale;
 	const uint height = framebuffer.height() / _downscale;
-	if(!_frameBuffers[0] || _frameBuffers[0]->descriptor() != framebuffer.descriptor()){
+	if(!_frameBuffers[0] || _frameBuffers[0]->format() != framebuffer.format()){
 		for(size_t i = 0; i < _frameBuffers.size(); ++i) {
-			_frameBuffers[i] = std::unique_ptr<Framebuffer>(new Framebuffer(uint(width / std::pow(2, i)), uint(height / std::pow(2, i)), framebuffer.descriptor(), false, _name + " Gaussian blur level " + std::to_string(i)));
+			_frameBuffers[i] = std::unique_ptr<Framebuffer>(new Framebuffer(uint(width / std::pow(2, i)), uint(height / std::pow(2, i)), framebuffer.format(), _name + " Gaussian blur level " + std::to_string(i)));
 		}
 	}
 	if(_frameBuffers[0]->width() != width || _frameBuffers[0]->height() != height){

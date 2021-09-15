@@ -140,8 +140,7 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 	_depth.levels = 1;
 	_depth.shape  = TextureShape::D2;
 
-	Descriptor desc(depthLayout, Filter::LINEAR, Wrap::CLAMP);
-	GPU::setupTexture(_depth, desc, true);
+	GPU::setupTexture(_depth, depthLayout, true);
 	_depth.gpu->defaultLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
 	VkUtils::imageLayoutBarrier(_context->getUploadCommandBuffer(), *_depth.gpu, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, 0, _depth.levels, 0, _depth.depth);
@@ -154,7 +153,7 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 	// Retrieve the images themselves.
 	VK_RET(vkGetSwapchainImagesKHR(_context->device, _swapchain, &_imageCount, colorImages.data()));
 
-	Descriptor colorDesc(VkUtils::convertFormat(surfaceParams.format), Filter::LINEAR, Wrap::CLAMP);
+	Layout colorFormat = VkUtils::convertFormat(surfaceParams.format);
 
 	_framebuffers.resize(_imageCount);
 
@@ -178,7 +177,7 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 		fb._depth.depth = 1;
 		fb._depth.levels = 1;
 		fb._depth.shape = TextureShape::D2;
-		fb._depth.gpu.reset(new GPUTexture(_depth.gpu->descriptor()));
+		fb._depth.gpu.reset(new GPUTexture(_depth.gpu->typedFormat()));
 		fb._depth.gpu->name = fb._depth.name();
 		fb._depth.gpu->owned = false;
 		fb._depth.gpu->image = _depth.gpu->image;
@@ -186,7 +185,6 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 		fb._depth.gpu->view = _depth.gpu->view;
 		fb._depth.gpu->levelViews = _depth.gpu->levelViews;
 		fb._depth.gpu->layouts = _depth.gpu->layouts;
-		fb._depth.gpu->sampler = _depth.gpu->sampler;
 		fb._depth.gpu->defaultLayout = _depth.gpu->defaultLayout;
 
 		fb._colors.clear();
@@ -196,12 +194,11 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 		fb._colors[0].depth = 1;
 		fb._colors[0].levels = 1;
 		fb._colors[0].shape = TextureShape::D2;
-		fb._colors[0].gpu.reset(new GPUTexture(colorDesc));
+		fb._colors[0].gpu.reset(new GPUTexture(colorFormat));
 		fb._colors[0].gpu->name = fb._colors[0].name();
 		fb._colors[0].gpu->owned = false;
 		fb._colors[0].gpu->image = colorImages[i];
 		fb._colors[0].gpu->layouts.resize(1, std::vector<VkImageLayout>(1, VK_IMAGE_LAYOUT_UNDEFINED));
-		fb._colors[0].gpu->sampler = VK_NULL_HANDLE;
 		fb._colors[0].gpu->defaultLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
 		VkImageViewCreateInfo viewInfo = {};

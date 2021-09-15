@@ -22,8 +22,8 @@ void BoxBlur::process(const Texture * texture, Framebuffer & framebuffer) {
 	GPU::setCullState(true, Faces::BACK);
 	
 	// Detect changes of descriptor.
-	if(!_intermediate || _intermediate->descriptor() != framebuffer.descriptor()){
-		_intermediate.reset(new Framebuffer(framebuffer.width(), framebuffer.height(), framebuffer.descriptor(), false, _name + " Box blur"));
+	if(!_intermediate || _intermediate->format() != framebuffer.format()){
+		_intermediate.reset(new Framebuffer(framebuffer.width(), framebuffer.height(), framebuffer.format(), _name + " Box blur"));
 	}
 	// Detect changes of size.
 	if(_intermediate->width() != framebuffer.width() || _intermediate->height() != framebuffer.height()){

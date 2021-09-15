@@ -140,43 +140,43 @@ std::vector<KeyValues> Codable::encode(const glm::mat4 & transfo) {
 	
 }
 
-std::pair<std::string, Descriptor> Codable::decodeTexture(const KeyValues & param) {
-	// Subset of descriptors supported by the scene serialization model.
+std::pair<std::string, Layout> Codable::decodeTexture(const KeyValues & param) {
+	// Subset of layouts supported by the scene serialization model.
 	// \todo Rename rgb32 to rgbf.
-	const std::unordered_map<std::string, Descriptor> descriptors = {
-		{"srgb", {Layout::SRGB8_ALPHA8, Filter::LINEAR_LINEAR, Wrap::REPEAT}},
-		{"rgb", {Layout::RGBA8, Filter::LINEAR_LINEAR, Wrap::REPEAT}},
-		{"rgb32", {Layout::RGBA16F, Filter::LINEAR_LINEAR, Wrap::REPEAT}},
+	const std::unordered_map<std::string, Layout> layouts = {
+		{"srgb", Layout::SRGB8_ALPHA8},
+		{"rgb", Layout::RGBA8},
+		{"rgb32", Layout::RGBA16F},
 
-		{"srgbcube", {Layout::SRGB8_ALPHA8, Filter::LINEAR_LINEAR, Wrap::CLAMP}},
-		{"rgbcube", {Layout::RGBA8, Filter::LINEAR_LINEAR, Wrap::CLAMP}},
-		{"rgb32cube", {Layout::RGBA16F, Filter::LINEAR_LINEAR, Wrap::CLAMP}},
+		{"srgbcube", Layout::SRGB8_ALPHA8},
+		{"rgbcube", Layout::RGBA8},
+		{"rgb32cube", Layout::RGBA16F},
 	};
 	// Check if the required format exists.
-	if(descriptors.count(param.key) == 0 || param.values.empty()) {
-		return {"", Descriptor()};
+	if(layouts.count(param.key) == 0 || param.values.empty()) {
+		return {"", Layout::RGBA8};
 	}
 	// This is indeed a texture, join all tokens together in case of a custom-value specification.
 	const std::string textureString = TextUtilities::join(param.values, ",");
-	return {textureString, descriptors.at(param.key)};
+	return {textureString, layouts.at(param.key)};
 }
 
 
 KeyValues Codable::encode(const Texture * texture){
-	const std::vector<std::pair<std::string, Descriptor>> descriptors = {
-		{"srgb", {Layout::SRGB8_ALPHA8, Filter::LINEAR_LINEAR, Wrap::REPEAT}},
-		{"rgb", {Layout::RGBA8, Filter::LINEAR_LINEAR, Wrap::REPEAT}},
-		{"rgb32", {Layout::RGBA16F, Filter::LINEAR_LINEAR, Wrap::REPEAT}},
+	const std::vector<std::pair<std::string, Layout>> formats = {
+		{"srgb", Layout::SRGB8_ALPHA8},
+		{"rgb", Layout::RGBA8},
+		{"rgb32", Layout::RGBA16F},
 
-		{"srgbcube", {Layout::SRGB8_ALPHA8, Filter::LINEAR_LINEAR, Wrap::CLAMP}},
-		{"rgbcube", {Layout::RGBA8, Filter::LINEAR_LINEAR, Wrap::CLAMP}},
-		{"rgb32cube", {Layout::RGBA16F, Filter::LINEAR_LINEAR, Wrap::CLAMP}},
+		{"srgbcube", Layout::SRGB8_ALPHA8},
+		{"rgbcube", Layout::RGBA8},
+		{"rgb32cube", Layout::RGBA16F},
 	};
 	KeyValues token("rgb");
 	if(texture->gpu){
-		for(const auto & desc : descriptors){
-			if(texture->gpu->descriptor() == desc.second){
-				token.key = desc.first;
+		for(const auto & format : formats){
+			if(texture->gpu->typedFormat() == format.second){
+				token.key = format.first;
 				break;
 			}
 		}

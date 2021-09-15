@@ -21,7 +21,7 @@ public:
 	 \param layout the data layout and type to use for the texture
 	 \param updateMipmaps generate the mipmaps automatically
 	 */
-	void upload(const Descriptor & layout, bool updateMipmaps);
+	void upload(const Layout & layout, bool updateMipmaps);
 
 	/** Clear CPU images data. */
 	void clearImages();

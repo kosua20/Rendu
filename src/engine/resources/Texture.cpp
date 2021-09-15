@@ -9,7 +9,7 @@
 Texture::Texture(const std::string & name) : _name(name) {
 }
 
-void Texture::upload(const Descriptor & layout, bool updateMipmaps) {
+void Texture::upload(const Layout & layout, bool updateMipmaps) {
 
 	// Compute the last mip level if needed.
 	if(updateMipmaps) {

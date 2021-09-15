@@ -22,7 +22,7 @@ Font::Font(std::istream & in) {
 		Log::Error() << Log::Resources << "Unable to parse font." << std::endl;
 		return;
 	}
-	_atlas = Resources::manager().getTexture(lines[0], {Layout::R8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
+	_atlas = Resources::manager().getTexture(lines[0], Layout::R8, Storage::GPU);
 	const glm::vec2 textureSize(_atlas->width, _atlas->height);
 
 	_firstCodepoint = int(lines[1][0]);

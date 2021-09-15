@@ -349,7 +349,7 @@ const Texture * Resources::getTexture(const std::string & name) {
 	return nullptr;
 }
 
-const Texture * Resources::getTexture(const std::string & name, const Descriptor & descriptor, Storage options, const std::string & refName) {
+const Texture * Resources::getTexture(const std::string & name, const Layout & format, Storage options, const std::string & refName) {
 	const std::string & keyName = refName.empty() ? name : refName;
 
 	// If texture already loaded, return it.
@@ -359,13 +359,13 @@ const Texture * Resources::getTexture(const std::string & name, const Descriptor
 			// If we want to store the texture on the GPU...
 			if(texture.gpu) {
 				// If the texture is already on the GPU, check that the layout is the same, else raise a warning.
-				if(!texture.gpu->hasSameLayoutAs(descriptor)) {
+				if(texture.gpu->typedFormat() != format) {
 					Log::Warning() << Log::Resources << "Texture \"" << keyName
 								   << "\" already exist with a different descriptor." << std::endl;
 				}
 			} else {
 				// Else upload to the GPU.
-				texture.upload(descriptor, texture.levels == 1);
+				texture.upload(format, texture.levels == 1);
 			}
 		}
 		// If we require CPU data but the images are empty, the texture CPU data was cleared...
@@ -481,7 +481,7 @@ const Texture * Resources::getTexture(const std::string & name, const Descriptor
 	}
 
 	// Format and orientation.
-	const uint channels = descriptor.getChannelsCount();
+	const uint channels = GPUTexture::getChannelsCount(format);
 	// We know the texture is not in the list, we insert.
 	_textures.insert(std::make_pair<>(keyName, Texture(keyName)));
 	Texture & texture  = _textures.at(keyName);
@@ -530,7 +530,7 @@ const Texture * Resources::getTexture(const std::string & name, const Descriptor
 	// If GPU mode, send them to the GPU.
 	if(options & Storage::GPU) {
 		// If only one level was given, generate the mipmaps.
-		texture.upload(descriptor, texture.levels == 1);
+		texture.upload(format, texture.levels == 1);
 	}
 	// If GPU only, clear the CPU data.
 	if(!(options & Storage::CPU)) {
@@ -577,7 +577,7 @@ const Texture * Resources::getDefaultTexture(TextureShape shape){
 
 	// Assume the texture is used on both the CPU and GPU.
 	// Use a default descriptor.
-	texture.upload({Layout::R8, Filter::NEAREST, Wrap::CLAMP}, false);
+	texture.upload(Layout::R8, false);
 	return &(_textures.at(name));
 }
 

@@ -4,8 +4,7 @@
 
 VarianceShadowMap2D::VarianceShadowMap2D(const std::shared_ptr<Light> & light, const glm::vec2 & resolution){
 	_light = light;
-	const Descriptor descriptor = {Layout::RG32F, Filter::LINEAR, Wrap::CLAMP};
-	_map = std::unique_ptr<Framebuffer>(new Framebuffer(uint(resolution.x), uint(resolution.y), descriptor, true, "Shadow map 2D"));
+	_map = std::unique_ptr<Framebuffer>(new Framebuffer(uint(resolution.x), uint(resolution.y), {Layout::RG32F, Layout::DEPTH_COMPONENT32F}, "Shadow map 2D"));
 	_blur = std::unique_ptr<BoxBlur>(new BoxBlur(false, "Shadow maps 2D"));
 	_program = Resources::manager().getProgram("object_depth", "object_basic_texture", "light_shadow_variance");
 	_light->registerShadowMap(_map->texture());
@@ -53,8 +52,7 @@ void VarianceShadowMap2D::draw(const Scene & scene) {
 
 VarianceShadowMapCube::VarianceShadowMapCube(const std::shared_ptr<PointLight> & light, int side){
 	_light = light;
-	const Descriptor descriptor = {Layout::RG16F, Filter::LINEAR, Wrap::CLAMP};
-	_map = std::unique_ptr<Framebuffer>(new Framebuffer( TextureShape::Cube, side, side, 6, 1, {descriptor}, true, "Shadow map cube"));
+	_map = std::unique_ptr<Framebuffer>(new Framebuffer( TextureShape::Cube, side, side, 6, 1, {Layout::RG16F, Layout::DEPTH_COMPONENT32F}, "Shadow map cube"));
 	_blur = std::unique_ptr<BoxBlur>(new BoxBlur(true, "Shadow maps cube"));
 	_program = Resources::manager().getProgram("object_cube_depth", "object_basic_texture_worldpos", "light_shadow_linear_variance");
 	_light->registerShadowMap(_map->texture());

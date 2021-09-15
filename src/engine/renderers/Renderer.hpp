@@ -78,6 +78,5 @@ public:
 protected:
 
 	std::string _name; ///< Debug name.
-	std::vector<Descriptor> _preferredFormat; ///< The preferred output format for a given renderer.
-	bool _needsDepth = false; ///< Does the output needs a depth buffer or not.
+	std::vector<Layout> _preferredFormat; ///< The preferred output format for a given renderer.
 };

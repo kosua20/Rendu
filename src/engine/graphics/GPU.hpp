@@ -105,15 +105,10 @@ public:
 
 	/** Create a GPU texture with a given layout and allocate it.
 	 \param texture the texture to setup on the GPU
-	 \param descriptor type and format information
+	 \param format format information
 	 \param drawable will the texture be used as an attachment
 	 */
-	static void setupTexture(Texture & texture, const Descriptor & descriptor, bool drawable);
-
-	/** Create a sampler based on the texture descriptor sampling parameters.
-	 * \param texture the texture to setup a sampler for
-	 */
-	static void setupSampler(GPUTexture & texture);
+	static void setupTexture(Texture & texture, const Layout & format, bool drawable);
 
 	/** Upload a texture images data to the GPU.
 	 \param texture the texture to upload

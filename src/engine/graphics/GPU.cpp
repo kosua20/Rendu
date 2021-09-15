@@ -358,7 +358,7 @@ void GPU::saveFramebuffer(Framebuffer & framebuffer, const std::string & path, I
 	GPU::unbindFramebufferIfNeeded();
 
 	const Texture& tex = *framebuffer.texture();
-	const bool isHDR = std::find(hdrLayouts.begin(), hdrLayouts.end(), tex.gpu->descriptor().typedFormat()) != hdrLayouts.end();
+	const bool isHDR = std::find(hdrLayouts.begin(), hdrLayouts.end(), tex.gpu->typedFormat()) != hdrLayouts.end();
 
 	GPU::downloadTextureAsync(tex, glm::uvec2(0), glm::uvec2(tex.width, tex.height), 1, [isHDR, path, options](const Texture& result){
 		// Save the image to the disk.
@@ -374,13 +374,13 @@ void GPU::saveFramebuffer(Framebuffer & framebuffer, const std::string & path, I
 
 }
 
-void GPU::setupTexture(Texture & texture, const Descriptor & descriptor, bool drawable) {
+void GPU::setupTexture(Texture & texture, const Layout & format, bool drawable) {
 
 	if(texture.gpu) {
 		texture.gpu->clean();
 	}
 
-	texture.gpu.reset(new GPUTexture(descriptor));
+	texture.gpu.reset(new GPUTexture(format));
 	texture.gpu->name = texture.name();
 
 	const bool is3D = texture.shape & TextureShape::D3;
@@ -489,7 +489,7 @@ void GPU::uploadTexture(const Texture & texture) {
 	}
 
 	// Determine if we can do the transfer without an intermediate texture.
-	const Layout format = texture.gpu->descriptor().typedFormat();
+	const Layout format = texture.gpu->typedFormat();
 	const bool is8UB = format == Layout::R8 || format == Layout::RG8 || format == Layout::RGBA8 || format == Layout::BGRA8 || format == Layout::SRGB8_ALPHA8 || format == Layout::SBGR8_ALPHA8;
 	const bool is32F = format == Layout::R32F || format == Layout::RG32F || format == Layout::RGBA32F;
 
@@ -539,7 +539,7 @@ void GPU::uploadTexture(const Texture & texture) {
 			transferTexture.levels = texture.levels;
 			transferTexture.shape = texture.shape;
 			const Layout floatFormats[5] = {Layout(0), Layout::R32F, Layout::RG32F, Layout::RGBA32F /* no 3 channels format */, Layout::RGBA32F};
-			GPU::setupTexture(transferTexture, {floatFormats[destChannels], Filter::LINEAR, Wrap::CLAMP}, false);
+			GPU::setupTexture(transferTexture, floatFormats[destChannels], false);
 			// Useful to avoid a useless transition at the very end.
 			transferTexture.gpu->defaultLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
 			// Change floatcopy destination.
@@ -1314,7 +1314,7 @@ void GPU::blit(const Texture & src, Texture & dst, Filter filter) {
 	}
 	GPU::unbindFramebufferIfNeeded();
 
-	GPU::setupTexture(dst, src.gpu->descriptor(), false);
+	GPU::setupTexture(dst, src.gpu->typedFormat(), false);
 
 	const uint layerCount = src.shape == TextureShape::D3 ? 1 : src.depth;
 	const glm::uvec2 srcSize(src.width, src.height);

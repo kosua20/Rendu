@@ -10,10 +10,8 @@ LaplacianIntegrator::LaplacianIntegrator(unsigned int width, unsigned int height
 	_prepare   = Resources::manager().getProgram2D("laplacian");
 	_composite = Resources::manager().getProgram2D("passthrough");
 
-	const Descriptor descPrep = {Layout::RGBA32F, Filter::NEAREST_NEAREST, Wrap::CLAMP};
-	const Descriptor descCompo = {Layout::RGBA8, Filter::LINEAR_NEAREST, Wrap::CLAMP};
-	_preproc				   = std::unique_ptr<Framebuffer>(new Framebuffer(_pyramid.width(), _pyramid.height(), descPrep, false, "Laplacian preproc."));
-	_compo				  = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, descCompo, false, "Laplacian compo"));
+	_preproc = std::unique_ptr<Framebuffer>(new Framebuffer(_pyramid.width(), _pyramid.height(), Layout::RGBA32F, "Laplacian preproc."));
+	_compo   = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, Layout::RGBA8, "Laplacian compo"));
 
 	const float h1[5] = {0.15f, 0.5f, 0.7f, 0.5f, 0.15f};
 	const float h2	= 1.0f;

@@ -15,8 +15,8 @@ void BilateralBlur::process(const glm::mat4 & projection, const Texture * textur
 	GPU::setBlendState(false);
 	GPU::setCullState(true, Faces::BACK);
 
-	if(!_intermediate || _intermediate->descriptor() != framebuffer.descriptor()){
-		_intermediate.reset(new Framebuffer(framebuffer.width(), framebuffer.height(), framebuffer.descriptor(), false, _name + " Bilateral blur"));
+	if(!_intermediate || _intermediate->format() != framebuffer.format()){
+		_intermediate.reset(new Framebuffer(framebuffer.width(), framebuffer.height(), framebuffer.format(), _name + " Bilateral blur"));
 	}
 
 	if(framebuffer.width() != _intermediate->width() || framebuffer.height() != _intermediate->height()){
