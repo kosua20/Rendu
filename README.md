@@ -4,7 +4,7 @@
 [![GitHub license](https://img.shields.io/github/license/kosua20/Rendu)](https://github.com/kosua20/Rendu/blob/master/LICENSE)
 [![GitHub repo size](https://img.shields.io/github/repo-size/kosua20/Rendu)](https://github.com/kosua20/Rendu)
 
-> ⚠️ Rendu has recently been moved from OpenGL to Vulkan. This is a work in progress: all apps should be running properly albeit at subpar performances. Improvements, documentation and CI support will be delivered in the near future. The legacy version can be found on the `opengl` branch.
+> ⚠️ Rendu has recently been moved from OpenGL to Vulkan. This is a work in progress: all apps should be running properly albeit at subpar performances. Improvements will be added in the near future. The legacy version can be found on the `opengl` branch.
 
 ![Example of included demos](docs/img/header.png)
 
@@ -93,5 +93,4 @@ I would like to add some additional features to Rendu in the near future, mainly
 
 On a more down-to-earth level, some engineering tasks could also help improve the engine.
 
-- Cleanup the way materials are handled right now.
 - Add a specialized SceneApp, abstract frustum culling with draw lists?
