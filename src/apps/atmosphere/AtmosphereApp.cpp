@@ -17,7 +17,7 @@ AtmosphereApp::AtmosphereApp(RenderingConfig & config) : CameraApp(config), _sca
 	_userCamera.projection(config.screenResolution[0] / config.screenResolution[1], 1.34f, 0.1f, 100.0f);
 	// Framebuffer to store the rendered atmosphere result before tonemapping and upscaling to the window size.
 	const glm::vec2 renderRes = _config.renderingResolution();
-	_atmosphereBuffer.reset(new Framebuffer(uint(renderRes[0]), uint(renderRes[1]), {Layout::RGBA16F, Filter::LINEAR_NEAREST, Wrap::CLAMP}, false, "Atmosphere"));
+	_atmosphereBuffer.reset(new Framebuffer(uint(renderRes[0]), uint(renderRes[1]), Layout::RGBA16F, "Atmosphere"));
 	// Atmosphere screen quad.
 	_atmosphere = Resources::manager().getProgram2D("atmosphere_params");
 	// Final tonemapping screen quad.
@@ -201,7 +201,7 @@ void AtmosphereApp::updateSky() {
 	// Update the lookup table.
 	precomputeTable(_atmoParams, uint(_tableSamples), _scattering.images[0]);
 
-	_scattering.upload({Layout::RGBA16F, Filter::LINEAR, Wrap::CLAMP}, false);
+	_scattering.upload(Layout::RGBA16F, false);
 
 	Log::Info() << " done." << std::endl;
 }

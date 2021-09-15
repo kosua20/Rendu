@@ -8,20 +8,17 @@
 PostProcessStack::PostProcessStack(const glm::vec2 & resolution) : Renderer("Post process stack"){
 	const int renderWidth	= int(resolution[0]);
 	const int renderHeight	= int(resolution[1]);
-	const Descriptor desc = {Layout::RGBA16F, Filter::LINEAR_NEAREST, Wrap::CLAMP};
-	_bloomBuffer	= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, desc, false, "Bloom"));
-	_toneMapBuffer 	= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, desc, false, "Tonemap"));
-	_resultFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, desc, false, "Postproc. result"));
+	_bloomBuffer	= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, Layout::RGBA16F, "Bloom"));
+	_toneMapBuffer 	= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, Layout::RGBA16F, "Tonemap"));
+	_resultFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, Layout::RGBA16F, "Postproc. result"));
 
 	// Depth of field is performed at half resolution.
-	const Descriptor dofCocDesc = {Layout::RG16F, Filter::NEAREST, Wrap::CLAMP};
-	const Descriptor dofGatherDesc = {Layout::RGBA16F, Filter::LINEAR_NEAREST, Wrap::CLAMP};
-	_dofCocBuffer 	= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth/2, renderHeight/2, {desc, dofCocDesc}, false, "DoF CoC"));
-	_dofGatherBuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth/2, renderHeight/2, dofGatherDesc, false, "DoF gather"));
+	_dofCocBuffer 	= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth/2, renderHeight/2, {Layout::RGBA16F, Layout::RG16F}, "DoF CoC"));
+	_dofGatherBuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth/2, renderHeight/2, Layout::RGBA16F, "DoF gather"));
 
 	_blur		= std::unique_ptr<GaussianBlur>(new GaussianBlur(_settings.bloomRadius, 2, "Bloom"));
-	_preferredFormat.push_back(desc);
-	_needsDepth = false;
+	_preferredFormat.push_back(Layout::RGBA16F);
+	
 	_bloomProgram		= Resources::manager().getProgram2D("bloom");
 	_bloomComposite 	= Resources::manager().getProgram2D("scale-texture");
 	_toneMappingProgram	= Resources::manager().getProgram2D("tonemap");

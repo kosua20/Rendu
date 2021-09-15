@@ -9,15 +9,15 @@
 EditorRenderer::EditorRenderer() :
 	Renderer("Editor"), _lightsDebug("object_basic_uniform") {
 
-	_preferredFormat.push_back({Layout::RGBA8, Filter::LINEAR_NEAREST, Wrap::CLAMP});
-	_needsDepth = true;
+	_preferredFormat.push_back(Layout::RGBA8);
+	_preferredFormat.push_back(Layout::DEPTH_COMPONENT32F);
 		
 	_objectProgram	  = Resources::manager().getProgram("object_basic_lit_texture");
 	_skyboxProgram	  = Resources::manager().getProgram("skybox_editor", "skybox_infinity", "skybox_basic");
 	_bgProgram		  = Resources::manager().getProgram("background_infinity");
 	_atmoProgram	  = Resources::manager().getProgram("atmosphere_editor", "background_infinity", "atmosphere_debug");
 		
-	Resources::manager().getTexture("debug-grid", { Layout::RGBA8, Filter::LINEAR_LINEAR, Wrap::REPEAT}, Storage::GPU);
+	Resources::manager().getTexture("debug-grid", Layout::RGBA8, Storage::GPU);
 	
 }
 

@@ -8,8 +8,8 @@
 PaintingTool::PaintingTool(unsigned int width, unsigned int height) {
 
 	_brushShader = Resources::manager().getProgram("brush_color");
-	_canvas		 = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, {Layout::RGBA8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, false, "Canvas"));
-	_visu		 = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, {Layout::RGBA8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, false, "Canvas & brush"));
+	_canvas		 = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, Layout::RGBA8, "Canvas"));
+	_visu		 = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, Layout::RGBA8, "Canvas & brush"));
 
 	// Generate a disk mesh.
 	_brushes.emplace_back("disk");
@@ -153,7 +153,7 @@ void PaintingTool::resize(unsigned int width, unsigned int height) const {
 	// We first copy the canvas to a temp framebuffer.
 	const unsigned int w = _canvas->width();
 	const unsigned int h = _canvas->height();
-	Framebuffer tempCanvas(w, h, {Layout::RGBA8, Filter::NEAREST_NEAREST, Wrap::CLAMP}, false, "Canvas copy");
+	Framebuffer tempCanvas(w, h, Layout::RGBA8, "Canvas copy");
 
 	GPU::blit(*_canvas, tempCanvas, Filter::NEAREST);
 

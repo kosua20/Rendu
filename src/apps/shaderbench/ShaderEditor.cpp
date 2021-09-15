@@ -27,10 +27,9 @@ ShaderEditor::ShaderEditor(RenderingConfig & config) : CameraApp(config), _noise
 	// Setup render buffer.
 	const glm::uvec2 res(_config.renderingResolution());
 
-	const Descriptor desc = {Layout::RGBA16F, Filter::LINEAR, Wrap::CLAMP};
-	_currFrame.reset(new Framebuffer(TextureShape::D2, res[0], res[1], 1, 1, {desc}, false, "Current frame"));
+	_currFrame.reset(new Framebuffer(TextureShape::D2, res[0], res[1], 1, 1, {Layout::RGBA16F}, "Current frame"));
 
-	_prevFrame.reset(new Framebuffer(TextureShape::D2, res[0], res[1], 1, 1, {desc}, false, "Previous frame"));
+	_prevFrame.reset(new Framebuffer(TextureShape::D2, res[0], res[1], 1, 1, {Layout::RGBA16F}, "Previous frame"));
 
 	// We don't want the resources manager to alter the program.
 	const std::string vShader = Resources::manager().getStringWithIncludes("shaderbench.vert");
@@ -44,7 +43,7 @@ ShaderEditor::ShaderEditor(RenderingConfig & config) : CameraApp(config), _noise
 	_userCamera.ratio(config.screenResolution[0] / config.screenResolution[1]);
 	_startTime = System::time();
 
-	_fallbackTex = Resources::manager().getTexture("non-2d-texture", {Layout::RGBA8, Filter::NEAREST, Wrap::CLAMP}, Storage::GPU);
+	_fallbackTex = Resources::manager().getTexture("non-2d-texture", Layout::RGBA8, Storage::GPU);
 
 	// Noise texture.
 	{
@@ -58,7 +57,7 @@ ShaderEditor::ShaderEditor(RenderingConfig & config) : CameraApp(config), _noise
 				noiseImg.rgba(int(x), int(y)) = glm::vec4(Random::Float(), Random::Float(), Random::Float(), Random::Float());
 			}
 		});
-		_noise.upload({Layout::RGBA32F, Filter::LINEAR, Wrap::REPEAT}, false);
+		_noise.upload(Layout::RGBA32F, false);
 	}
 	// Perlin noise texture.
 	{
@@ -84,7 +83,7 @@ ShaderEditor::ShaderEditor(RenderingConfig & config) : CameraApp(config), _noise
 				img.rgba(int(x), int(y)) = 0.5f * img.rgba(int(x), int(y)) + 0.5f;
 			}
 		});
-		_perlin.upload({Layout::RGBA32F, Filter::LINEAR, Wrap::REPEAT}, false);
+		_perlin.upload(Layout::RGBA32F, false);
 	}
 
 	// Random directions texture.
@@ -99,7 +98,7 @@ ShaderEditor::ShaderEditor(RenderingConfig & config) : CameraApp(config), _noise
 				dirImg.rgb(int(x), int(y)) = glm::normalize(Random::sampleSphere());
 			}
 		});
-		_directions.upload({Layout::RGBA32F, Filter::NEAREST, Wrap::REPEAT}, false);
+		_directions.upload(Layout::RGBA32F, false);
 	}
 	{
 		_noise3D.width = _noise3D.height = _noise3D.depth = 256;
@@ -115,7 +114,7 @@ ShaderEditor::ShaderEditor(RenderingConfig & config) : CameraApp(config), _noise
 				}
 			});
 		}
-		_noise3D.upload({Layout::RGBA32F, Filter::LINEAR, Wrap::REPEAT}, false);
+		_noise3D.upload(Layout::RGBA32F, false);
 	}
 
 	{
@@ -146,13 +145,13 @@ ShaderEditor::ShaderEditor(RenderingConfig & config) : CameraApp(config), _noise
 			});
 
 		}
-		_perlin3D.upload({Layout::RGBA32F, Filter::LINEAR, Wrap::REPEAT}, false);
+		_perlin3D.upload(Layout::RGBA32F, false);
 	}
 
 	// Reference textures.
 	_textures.push_back(_prevFrame->texture());
-	_textures.push_back(Resources::manager().getTexture("shadertoy-font", {Layout::RGBA8, Filter::LINEAR, Wrap::CLAMP}, Storage::GPU));
-	_textures.push_back(Resources::manager().getTexture("debug-grid", {Layout::SRGB8_ALPHA8, Filter::LINEAR, Wrap::REPEAT}, Storage::GPU));
+	_textures.push_back(Resources::manager().getTexture("shadertoy-font", Layout::RGBA8, Storage::GPU));
+	_textures.push_back(Resources::manager().getTexture("debug-grid", Layout::SRGB8_ALPHA8, Storage::GPU));
 	_textures.push_back(&_noise);
 	_textures.push_back(&_perlin);
 	_textures.push_back(&_directions);
@@ -392,7 +391,7 @@ void ShaderEditor::update() {
 			if(System::showPicker(System::Picker::Save, "", outPath, "png") && !outPath.empty()){
 				TextUtilities::splitExtension(outPath);
 				// Create a RGB8 framebuffer to save as png.
-				Framebuffer tmp(_currFrame->width(), _currFrame->height(), {Layout::RGBA8, Filter::NEAREST, Wrap::CLAMP}, false, "Temp");
+				Framebuffer tmp(_currFrame->width(), _currFrame->height(), Layout::RGBA8, "Temp");
 				GPU::blit(*_currFrame, tmp, Filter::NEAREST);
 				GPU::saveFramebuffer(tmp, outPath, Image::Save::IGNORE_ALPHA);
 			}

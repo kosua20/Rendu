@@ -149,7 +149,7 @@ int main(int argc, char ** argv) {
 			encounteredIssues = encounteredIssues || newIssues;
 
 			// Extra validation.
-			for(const auto& image : stage.samplers){
+			for(const auto& image : stage.images){
 				if(image.set != 1){
 					outputError(names[0], 0, "Sampled image should always be in set 1.");
 				}

@@ -7,7 +7,7 @@ StenciledApp::StenciledApp(RenderingConfig & config) :
 
 	const glm::vec2 renderRes = _config.renderingResolution();
 	_renderer.reset(new StenciledRenderer(renderRes));
-	_finalRender.reset(new Framebuffer(uint(renderRes[0]), uint(renderRes[1]), {Layout::RGBA8, Filter::LINEAR_NEAREST, Wrap::CLAMP}, false, "Final render"));
+	_finalRender.reset(new Framebuffer(uint(renderRes[0]), uint(renderRes[1]), Layout::RGBA8, "Final render"));
 
 	// Load all existing scenes, with associated names.
 	std::vector<Resources::FileInfos> sceneInfos;

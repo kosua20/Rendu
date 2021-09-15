@@ -12,15 +12,16 @@ IslandApp::IslandApp(RenderingConfig & config) : CameraApp(config),
 	
 	// Framebuffer to store the rendered atmosphere result before tonemapping and upscaling to the window size.
 	const glm::vec2 renderRes = _config.renderingResolution();
-	const std::vector<Descriptor> descriptors = {{Layout::RGBA32F, Filter::LINEAR_NEAREST, Wrap::CLAMP}, {Layout::RGBA32F, Filter::LINEAR_NEAREST, Wrap::CLAMP}};
-	_sceneBuffer.reset(new Framebuffer(uint(renderRes[0]), uint(renderRes[1]), descriptors, true, "Scene"));
-	_waterPos.reset(new Framebuffer(uint(renderRes[0]), uint(renderRes[1]), {descriptors[1]}, false, "Water position"));
-	_waterEffectsHalf.reset(new Framebuffer(uint(renderRes[0])/2, uint(renderRes[1])/2, {descriptors[0]}, false, "Water effect half"));
-	_waterEffectsBlur.reset(new Framebuffer(uint(renderRes[0])/2, uint(renderRes[1])/2, {descriptors[0]}, false, "Water effect blur"));
-	_environment.reset(new Framebuffer(TextureShape::Cube, 512, 512, 6, 1, {{Layout::RGBA16F, Filter::LINEAR_NEAREST, Wrap::CLAMP}}, false, "Environment"));
+	const std::vector<Layout> formats = {Layout::RGBA32F, Layout::RGBA32F};
+	const std::vector<Layout> formatsAndDepth = {Layout::RGBA32F, Layout::RGBA32F, Layout::DEPTH_COMPONENT32F};
+	_sceneBuffer.reset(new Framebuffer(uint(renderRes[0]), uint(renderRes[1]), formatsAndDepth, "Scene"));
+	_waterPos.reset(new Framebuffer(uint(renderRes[0]), uint(renderRes[1]), formats[1], "Water position"));
+	_waterEffectsHalf.reset(new Framebuffer(uint(renderRes[0])/2, uint(renderRes[1])/2, formats[0], "Water effect half"));
+	_waterEffectsBlur.reset(new Framebuffer(uint(renderRes[0])/2, uint(renderRes[1])/2, formats[0], "Water effect blur"));
+	_environment.reset(new Framebuffer(TextureShape::Cube, 512, 512, 6, 1, {Layout::RGBA16F}, "Environment"));
 
 	// Lookup table.
-	_precomputedScattering = Resources::manager().getTexture("scattering-precomputed", {Layout::RGBA16F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
+	_precomputedScattering = Resources::manager().getTexture("scattering-precomputed", Layout::RGBA16F, Storage::GPU);
 	// Atmosphere screen quad.
 	_skyProgram = Resources::manager().getProgram("atmosphere_island", "background_infinity", "atmosphere_island");
 	_groundProgram = Resources::manager().getProgram("ground_island");
@@ -39,8 +40,8 @@ IslandApp::IslandApp(RenderingConfig & config) : CameraApp(config),
 	_terrain.reset(new Terrain(1024, 4567));
 
 	// Sand normal maps.
-	_sandMapSteep = Resources::manager().getTexture("sand_normal_steep", {Layout::RGBA8, Filter::LINEAR_LINEAR, Wrap::REPEAT}, Storage::GPU);
-	_sandMapFlat = Resources::manager().getTexture("sand_normal_flat", {Layout::RGBA8, Filter::LINEAR_LINEAR, Wrap::REPEAT}, Storage::GPU);
+	_sandMapSteep = Resources::manager().getTexture("sand_normal_steep", Layout::RGBA8, Storage::GPU);
+	_sandMapFlat = Resources::manager().getTexture("sand_normal_flat", Layout::RGBA8, Storage::GPU);
 
 	// High detail noise.
 	_surfaceNoise.width = _surfaceNoise.height = 512;
@@ -55,7 +56,7 @@ IslandApp::IslandApp(RenderingConfig & config) : CameraApp(config),
 			_surfaceNoise.images[0].rgba(x,y) = glm::vec4(dir, wd);
 		}
 	}
-	_surfaceNoise.upload({Layout::RGBA32F, Filter::LINEAR_LINEAR, Wrap::REPEAT}, true);
+	_surfaceNoise.upload(Layout::RGBA32F, true);
 	// Additional glitter noise with custom mipmaps.
 	_glitterNoise.width = _glitterNoise.height = 512;
 	_glitterNoise.depth = 1;
@@ -78,18 +79,18 @@ IslandApp::IslandApp(RenderingConfig & config) : CameraApp(config),
 			}
 		}
 	}
-	_glitterNoise.upload({Layout::RGBA32F, Filter::LINEAR_LINEAR, Wrap::REPEAT}, false);
+	_glitterNoise.upload(Layout::RGBA32F, false);
 
 	// Ocean.
 	_oceanMesh = Library::generateGrid(_gridOceanRes, 1.0f);
 	_oceanMesh.upload();
 	_farOceanMesh = Library::generateCylinder(64, 128.0f, 256.0f);
 	_farOceanMesh.upload();
-	_absorbScatterOcean = Resources::manager().getTexture("absorbscatterwater", {Layout::SRGB8_ALPHA8, Filter::LINEAR, Wrap::CLAMP}, Storage::GPU);
-	_caustics = Resources::manager().getTexture("caustics", {Layout::R8, Filter::LINEAR_LINEAR, Wrap::REPEAT}, Storage::GPU);
-	_waveNormals = Resources::manager().getTexture("wave_normals", {Layout::RGBA8, Filter::LINEAR_LINEAR, Wrap::REPEAT}, Storage::GPU);
-	_foam = Resources::manager().getTexture("foam", {Layout::SRGB8_ALPHA8, Filter::LINEAR_LINEAR, Wrap::REPEAT}, Storage::GPU);
-	_brdfLUT = Resources::manager().getTexture("brdf-precomputed", {Layout::RG16F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
+	_absorbScatterOcean = Resources::manager().getTexture("absorbscatterwater", Layout::SRGB8_ALPHA8, Storage::GPU);
+	_caustics = Resources::manager().getTexture("caustics", Layout::R8, Storage::GPU);
+	_waveNormals = Resources::manager().getTexture("wave_normals", Layout::RGBA8, Storage::GPU);
+	_foam = Resources::manager().getTexture("foam", Layout::SRGB8_ALPHA8, Storage::GPU);
+	_brdfLUT = Resources::manager().getTexture("brdf-precomputed", Layout::RG16F, Storage::GPU);
 
 	// Tesselation options.
 	const float pSize = 128.0f;

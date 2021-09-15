@@ -8,8 +8,8 @@
 
 BVHRenderer::BVHRenderer() : Renderer("BVH renderer") {
 	// GL setup
-	_preferredFormat.push_back({Layout::RGBA8, Filter::LINEAR_NEAREST, Wrap::CLAMP});
-	_needsDepth = true;
+	_preferredFormat.push_back(Layout::RGBA8);
+	_preferredFormat.push_back(Layout::DEPTH_COMPONENT32F);
 	_objectProgram = Resources::manager().getProgram("object_basic_lit");
 	_bvhProgram = Resources::manager().getProgram("object_basic_color");
 }

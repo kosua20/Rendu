@@ -11,18 +11,17 @@ DeferredRenderer::DeferredRenderer(const glm::vec2 & resolution, ShadowMode mode
 	const uint renderHeight	  = uint(resolution[1]);
 
 	// G-buffer setup.
-	const Descriptor albedoDesc			= {Layout::RGBA16F, Filter::NEAREST_NEAREST, Wrap::CLAMP};
-	const Descriptor normalDesc			= {Layout::RGBA16F, Filter::NEAREST_NEAREST, Wrap::CLAMP};
-	const Descriptor effectsDesc		= {Layout::RGBA8, Filter::NEAREST_NEAREST, Wrap::CLAMP};
-	const Descriptor depthDesc			= {Layout::DEPTH_COMPONENT32F, Filter::NEAREST_NEAREST, Wrap::CLAMP};
-	const Descriptor lightDesc = {Layout::RGBA16F, Filter::LINEAR_LINEAR, Wrap::CLAMP};
+	const Layout albedoDesc			= Layout::RGBA16F;
+	const Layout normalDesc			= Layout::RGBA16F;
+	const Layout effectsDesc		= Layout::RGBA8;
+	const Layout depthDesc			= Layout::DEPTH_COMPONENT32F;
+	const Layout lightDesc 			= Layout::RGBA16F;
 
-	const std::vector<Descriptor> descs = {albedoDesc, normalDesc, effectsDesc, depthDesc};
-	_gbuffer							= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, descs, false, _name + " G-buffer "));
+	const std::vector<Layout> descs = {albedoDesc, normalDesc, effectsDesc, depthDesc};
+	_gbuffer							= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, descs, _name + " G-buffer "));
 	_ssaoPass							= std::unique_ptr<SSAO>(new SSAO(renderWidth, renderHeight, 2, 0.5f, _name));
-	_lightBuffer						= std::unique_ptr<Framebuffer>(new Framebuffer(TextureShape::D2, renderWidth, renderHeight, 1, 1, {lightDesc, depthDesc}, false, _name + " Lighting"));
+	_lightBuffer						= std::unique_ptr<Framebuffer>(new Framebuffer(TextureShape::D2, renderWidth, renderHeight, 1, 1, {lightDesc, depthDesc}, _name + " Lighting"));
 	_preferredFormat.push_back(lightDesc);
-	_needsDepth = false;
 
 	_skyboxProgram		= Resources::manager().getProgram("skybox_gbuffer", "skybox_infinity", "skybox_gbuffer");
 	_bgProgram			= Resources::manager().getProgram("background_gbuffer", "background_infinity", "background_gbuffer");
@@ -37,7 +36,7 @@ DeferredRenderer::DeferredRenderer(const glm::vec2 & resolution, ShadowMode mode
 		_gbuffer->texture(2), _gbuffer->depthBuffer(), _ssaoPass->texture()));
 	_lightRenderer = std::unique_ptr<DeferredLight>(new DeferredLight(_gbuffer->texture(0), _gbuffer->texture(1), _gbuffer->depthBuffer(), _gbuffer->texture(2)));
 
-	_textureBrdf = Resources::manager().getTexture("brdf-precomputed", {Layout::RG16F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
+	_textureBrdf = Resources::manager().getTexture("brdf-precomputed", Layout::RG16F, Storage::GPU);
 }
 
 void DeferredRenderer::setScene(const std::shared_ptr<Scene> & scene) {

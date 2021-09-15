@@ -11,10 +11,8 @@ StenciledRenderer::StenciledRenderer(const glm::vec2 & resolution) : Renderer("S
 	const uint renderHeight	   = uint(resolution[1]);
 
 	// Framebuffer.
-	const Descriptor descColor = {Layout::RGBA8, Filter::LINEAR_LINEAR, Wrap::CLAMP};
-	const Descriptor descDepth = {Layout::DEPTH32F_STENCIL8, Filter::NEAREST_NEAREST, Wrap::CLAMP};
-	const std::vector<Descriptor> descs = { descColor, descDepth};
-	_sceneFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, descs, true, _name + " rendering"));
+	const std::vector<Layout> formats = { Layout::RGBA8, Layout::DEPTH32F_STENCIL8, Layout::DEPTH_COMPONENT32F};
+	_sceneFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, formats, _name + " rendering"));
 
 	_objectProgram	= Resources::manager().getProgram("object_basic_uniform", "object_basic", "object_basic_uniform");
 	_fillProgram 	= Resources::manager().getProgram2D("fill-color");

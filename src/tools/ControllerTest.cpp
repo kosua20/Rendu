@@ -210,7 +210,7 @@ int main(int argc, char ** argv) {
 	std::vector<int> buttonsMapping(uint(Controller::InputCount), -1);
 	std::vector<int> axesMapping(uint(Controller::InputCount), -1);
 	// Controller texture.
-	const Texture * controllerTex = Resources::manager().getTexture("ControllerLayout", {Layout::RGBA8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
+	const Texture * controllerTex = Resources::manager().getTexture("ControllerLayout", Layout::RGBA8, Storage::GPU);
 
 	bool firstFrame			   = true;
 	const ImU32 highlightColor = IM_COL32(172, 172, 172, 255);

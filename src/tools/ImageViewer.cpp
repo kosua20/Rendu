@@ -107,6 +107,7 @@ int main(int argc, char ** argv) {
 			program->uniform("isHDR", isFloat);
 			program->uniform("exposure", exposure);
 			program->uniform("gammaOutput", applyGamma);
+			program->uniform("filtering", imageInterp == Filter::LINEAR);
 			const glm::vec4 chanFilts(channelsFilter);
 			const glm::vec2 flips(flipAxis);
 			const glm::vec2 angles(std::cos(float(currentAngle) * glm::half_pi<float>()), std::sin(float(currentAngle) * glm::half_pi<float>()));
@@ -170,7 +171,7 @@ int main(int argc, char ** argv) {
 					}
 					imageInfos.width  = img.width;
 					imageInfos.height = img.height;
-					imageInfos.upload({typedFormat, imageInterp, Wrap::CLAMP}, false);
+					imageInfos.upload(typedFormat, false);
 					imageInfos.clearImages();
 
 					// Reset display settings.
@@ -204,9 +205,7 @@ int main(int argc, char ** argv) {
 			ImGui::Checkbox("A", &channelsFilter[3]);
 
 			// Filtering.
-			if(ImGui::Combo("Filtering", reinterpret_cast<int *>(&imageInterp), "Nearest\0Linear\0\0")) {
-				imageInfos.gpu->setFiltering(imageInterp);
-			}
+			ImGui::Combo("Filtering", reinterpret_cast<int *>(&imageInterp), "Nearest\0Linear\0\0");
 
 			// Image modifications.
 			// Rotation.
@@ -250,11 +249,11 @@ int main(int argc, char ** argv) {
 				// Export either in LDR or HDR.
 				bool res = System::showPicker(System::Picker::Save, "../../../resources", destinationPath, "png;exr");
 				if(res && !destinationPath.empty()) {
-					const Descriptor typedDesc = {Image::isFloat(destinationPath) ? Layout::RGBA32F : Layout::RGBA8, Filter::LINEAR_NEAREST, Wrap::CLAMP};
+					const Layout format = Image::isFloat(destinationPath) ? Layout::RGBA32F : Layout::RGBA8;
 					// Create a framebuffer at the right size and format, and render in it.
 					const unsigned int outputWidth  = isHorizontal ? imageInfos.height : imageInfos.width;
 					const unsigned int outputHeight = isHorizontal ? imageInfos.width : imageInfos.height;
-					Framebuffer framebuffer(outputWidth, outputHeight, typedDesc, false, "Save output");
+					Framebuffer framebuffer(outputWidth, outputHeight, format, "Save output");
 					framebuffer.bind(glm::vec4(0.0f,0.0f,0.0f,1.0f), Framebuffer::Operation::DONTCARE, Framebuffer::Operation::DONTCARE);
 					framebuffer.setViewport();
 

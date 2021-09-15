@@ -12,13 +12,10 @@ ForwardRenderer::ForwardRenderer(const glm::vec2 & resolution, ShadowMode mode, 
 	const uint renderHeight	   = uint(resolution[1]);
 
 	// Framebuffers.
-	const Descriptor desc = {Layout::RGBA16F, Filter::LINEAR_NEAREST, Wrap::CLAMP};
-	const Descriptor descDepth = {Layout::DEPTH_COMPONENT32F, Filter::NEAREST_NEAREST, Wrap::CLAMP};
-	const std::vector<Descriptor> descs = { desc, descDepth};
-	_sceneFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, descs, true, _name + " Lighting "));
+	const std::vector<Layout> formats = { Layout::RGBA16F, Layout::DEPTH_COMPONENT32F};
+	_sceneFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, formats, _name + " Lighting "));
 	_ssaoPass		  = std::unique_ptr<SSAO>(new SSAO(renderWidth, renderHeight, 2, 0.5f, _name));
-	_preferredFormat.push_back({Layout::RGBA16F, Filter::LINEAR_LINEAR, Wrap::CLAMP});
-	_needsDepth = false;
+	_preferredFormat.push_back(Layout::RGBA16F);
 
 	_depthPrepass 		= Resources::manager().getProgram("object_prepass_forward");
 	_objectProgram		= Resources::manager().getProgram("object_forward");
@@ -30,7 +27,7 @@ ForwardRenderer::ForwardRenderer(const glm::vec2 & resolution, ShadowMode mode, 
 	_bgProgram	   = Resources::manager().getProgram("background_forward", "background_infinity", "background_forward");
 	_atmoProgram   = Resources::manager().getProgram("atmosphere_forward", "background_infinity", "atmosphere_forward");
 
-	_textureBrdf = Resources::manager().getTexture("brdf-precomputed", {Layout::RG16F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
+	_textureBrdf = Resources::manager().getTexture("brdf-precomputed", Layout::RG16F, Storage::GPU);
 
 }
 

@@ -19,7 +19,7 @@ PathTracerApp::PathTracerApp(RenderingConfig & config, const std::shared_ptr<Sce
 	_renderTex.depth  = 1;
 	_renderTex.width  = int(renderRes[0]);
 	_renderTex.height = int(renderRes[1]);
-	GPU::setupTexture(_renderTex, {Layout::RGBA8, Filter::LINEAR, Wrap::CLAMP}, false);
+	GPU::setupTexture(_renderTex, Layout::RGBA8, false);
 	
 	_scene = scene;
 	if(!scene) {
@@ -56,7 +56,7 @@ void PathTracerApp::draw() {
 		Image & render = _renderTex.images.back();
 		_pathTracer->render(_userCamera, _samples, _depth, render);
 		// Upload to the GPU.
-		_renderTex.upload({Layout::RGBA8, Filter::LINEAR, Wrap::CLAMP}, false);
+		_renderTex.upload(Layout::RGBA8, false);
 		_showRender = true;
 	}
 	
@@ -120,7 +120,7 @@ void PathTracerApp::update() {
 			Image & render = _renderTex.images.back();
 			_pathTracer->render(_userCamera, _samples, _depth, render);
 			// Upload to the GPU.
-			_renderTex.upload({Layout::RGBA8, Filter::LINEAR, Wrap::CLAMP}, false);
+			_renderTex.upload(Layout::RGBA8, false);
 			_showRender = true;
 		}
 		ImGui::SameLine();

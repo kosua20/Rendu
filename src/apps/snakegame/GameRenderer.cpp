@@ -17,10 +17,9 @@ GameRenderer::GameRenderer(const glm::vec2 & resolution) : Renderer("Game") {
 
 	const int renderWidth  = int(resolution[0]);
 	const int renderHeight = int(resolution[1]);
-	_sceneFramebuffer	  = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, {{Layout::RGBA16F, Filter::NEAREST_NEAREST, Wrap::CLAMP}, {Layout::R8, Filter::NEAREST_NEAREST, Wrap::CLAMP}, {Layout::DEPTH_COMPONENT32F, Filter::NEAREST_NEAREST, Wrap::CLAMP}},
-		 true, "G-buffer"));
-	_lightingFramebuffer   = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, {Layout::RGBA8, Filter::LINEAR_NEAREST, Wrap::CLAMP}, false, "Lighting"));
-	_preferredFormat.push_back({Layout::RGBA8,Filter::LINEAR_NEAREST, Wrap::CLAMP});
+	_sceneFramebuffer	  = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, {Layout::RGBA16F, Layout::R8, Layout::DEPTH_COMPONENT32F}, "G-buffer"));
+	_lightingFramebuffer   = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, Layout::RGBA8, "Lighting"));
+	_preferredFormat.push_back(Layout::RGBA8);
 	
 
 	_fxaaProgram		= Resources::manager().getProgram2D("fxaa");
@@ -33,7 +32,7 @@ GameRenderer::GameRenderer(const glm::vec2 & resolution) : Renderer("Game") {
 	_ground			= Resources::manager().getMesh("ground", Storage::GPU);
 	_head			= Resources::manager().getMesh("head", Storage::GPU);
 	_bodyElement	= Resources::manager().getMesh("body", Storage::GPU);
-	_cubemap		= Resources::manager().getTexture("env", {Layout::RGBA8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
+	_cubemap		= Resources::manager().getTexture("env", Layout::RGBA8, Storage::GPU);
 
 }
 

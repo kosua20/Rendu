@@ -6,9 +6,8 @@
 
 DebugRenderer::DebugRenderer() : Renderer("Debug renderer"), _lightDebugRenderer("object_basic_uniform"), _sceneBoxes("Debug scene box"), _frame("Debug frame"), _cubeLines("Debug cube") {
 
-	const Descriptor desc = {Layout::RGBA8, Filter::LINEAR_LINEAR, Wrap::CLAMP};
-	_preferredFormat.push_back(desc);
-	_needsDepth = true;
+	_preferredFormat.push_back(Layout::RGBA8);
+	_preferredFormat.push_back(Layout::DEPTH_COMPONENT32F);
 
 	_sphere = Resources::manager().getMesh("sphere", Storage::GPU);
 	_probeProgram = Resources::manager().getProgram("probe_debug");

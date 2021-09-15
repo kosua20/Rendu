@@ -7,7 +7,7 @@ glm::vec3 MaterialSky::eval(const glm::vec3 & rayOrigin, const glm::vec3 & rayDi
 
 	// We move to the planet model space, where its center is in (0,0,0).
 	const glm::vec3 planetPos = rayOrigin + glm::vec3(0.0f, sky.groundRadius, 0.0f) + glm::vec3(0.0f, 1.0f, 0.0f);
-	static const Texture * scatterTable = Resources::manager().getTexture("scattering-precomputed", {Layout::RGBA32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::CPU);
+	static const Texture * scatterTable = Resources::manager().getTexture("scattering-precomputed", Layout::RGBA32F, Storage::CPU);
 
 	// Check intersection with atmosphere.
 	glm::vec2 interTop(0.0f);

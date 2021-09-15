@@ -62,7 +62,7 @@ void loadCubemap(const std::string & inputPath, Texture & cubemapInfos) {
 	}
 	cubemapInfos.width  = cubemapInfos.images[0].width;
 	cubemapInfos.height = cubemapInfos.images[0].height;
-	cubemapInfos.upload({Layout::RGBA32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, false);
+	cubemapInfos.upload(Layout::RGBA32F, false);
 }
 
 /**
@@ -94,8 +94,7 @@ void computeCubemapConvolution(const Texture & cubemapInfos, int levelsCount, in
 		Log::Info() << Log::Utilities << "Level " << level << " (size=" << w << ", r=" << roughness << "): " << std::flush;
 
 		// Create local framebuffer.
-		const Descriptor resDesc = {Layout::RGBA32F, Filter::LINEAR_LINEAR, Wrap::CLAMP};
-		Framebuffer resultFramebuffer(TextureShape::Cube, w, w, 6, 1, {resDesc}, false, "Conv. result");
+		Framebuffer resultFramebuffer(TextureShape::Cube, w, w, 6, 1, {Layout::RGBA32F}, "Conv. result");
 
 		// Iterate over faces.
 		for(uint i = 0; i < 6; ++i) {
@@ -161,8 +160,7 @@ void exportCubemapConvolution(std::vector<Texture> & cubeLevels, const std::stri
  */
 void computeAndExportLookupTable(const int outputSide, const std::string & outputPath) {
 	// Render the lookup table.
-	const Descriptor desc = {Layout::RG32F, Filter::LINEAR_NEAREST, Wrap::CLAMP};
-	const auto bakingFramebuffer = std::make_shared<Framebuffer>(outputSide, outputSide, desc, false, "LUT");
+	const auto bakingFramebuffer = std::make_shared<Framebuffer>(outputSide, outputSide, Layout::RG32F, "LUT");
 	const auto brdfProgram		 = Resources::manager().getProgram2D("brdf_sampler");
 	bakingFramebuffer->bind(glm::vec4(0.0f));
 	GPU::setViewport(0, 0, outputSide, outputSide);
@@ -202,7 +200,7 @@ int main(int argc, char ** argv) {
 	const auto program					= Resources::manager().getProgram("skybox_basic");
 	const auto programSH				= Resources::manager().getProgram("skybox_shcoeffs", "skybox_basic", "skybox_shcoeffs");
 	const auto mesh						= Resources::manager().getMesh("skybox", Storage::GPU);
-	const Texture * cubemapInfosDefault = Resources::manager().getTexture("debug-cube", {Layout::RGBA8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, Storage::GPU);
+	const Texture * cubemapInfosDefault = Resources::manager().getTexture("debug-cube", Layout::RGBA8, Storage::GPU);
 
 	Texture cubemapInfos("cubemap");
 	UniformBuffer<glm::vec4> sCoeffs(9, DataUse::STATIC);

@@ -9,7 +9,7 @@ Terrain::Cell::Cell(uint l, uint x, uint z) : mesh("Cell (" + std::to_string(l) 
 Terrain::Terrain(uint resolution, uint seed) : _gaussBlur(2, 1, "Terrain"), _resolution(resolution), _seed(seed) {
 	generateMesh();
 	generateMap();
-	_shadowBuffer.reset(new Framebuffer(resolution, resolution, {Layout::RG8, Filter::LINEAR_LINEAR, Wrap::CLAMP}, false, "Terrain shadow"));
+	_shadowBuffer.reset(new Framebuffer(resolution, resolution, Layout::RG8, "Terrain shadow"));
 }
 
 void Terrain::generateMesh(){
@@ -378,7 +378,7 @@ void Terrain::transferAndUpdateMap(Image & heightMap){
 	}
 	
 	// Send to the GPU.
-	_map.upload({Layout::RGBA32F, Filter::LINEAR_LINEAR, Wrap::CLAMP}, false);
+	_map.upload(Layout::RGBA32F, false);
 
 	// Build low res version, with conservative depth estimation.
 	_mapLowRes.width = _mapLowRes.height = _resolution/2;
@@ -398,7 +398,7 @@ void Terrain::transferAndUpdateMap(Image & heightMap){
 			_mapLowRes.images[0].r(x,y) = std::max(std::max(h00, h01), std::max(h10, h11));
 		}
 	}
-	_mapLowRes.upload({Layout::R32F, Filter::LINEAR_NEAREST, Wrap::CLAMP}, false);
+	_mapLowRes.upload(Layout::R32F, false);
 }
 
 
