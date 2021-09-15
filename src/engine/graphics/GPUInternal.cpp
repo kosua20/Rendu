@@ -482,7 +482,7 @@ VkSamplerAddressMode VkUtils::getGPUWrapping(Wrap mode) {
 	return wraps.at(mode);
 }
 
-void VkUtils::getGPUFilter(Filter filtering, VkFilter & imgFiltering, VkSamplerMipmapMode & mipFiltering) {
+void VkUtils::getGPUFilters(Filter filtering, VkFilter & imgFiltering, VkSamplerMipmapMode & mipFiltering) {
 	struct Filters {
 		VkFilter img;
 		VkSamplerMipmapMode mip;
@@ -498,7 +498,6 @@ void VkUtils::getGPUFilter(Filter filtering, VkFilter & imgFiltering, VkSamplerM
 	imgFiltering = infos.img;
 	mipFiltering = infos.mip;
 }
-
 
 unsigned int VkUtils::getGPULayout(Layout typedFormat, VkFormat & format) {
 

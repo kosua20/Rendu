@@ -5,6 +5,7 @@
 #include "graphics/DescriptorAllocator.hpp"
 #include "graphics/QueryAllocator.hpp"
 #include "graphics/PipelineCache.hpp"
+#include "graphics/SamplerLibrary.hpp"
 #include "resources/Buffer.hpp"
 
 #include <deque>
@@ -86,6 +87,7 @@ struct GPUContext {
 	DescriptorAllocator descriptorAllocator; ///< Descriptor sets common allocator.
 	std::unordered_map<GPUQuery::Type, QueryAllocator> queryAllocators; ///< Per-type query buffered allocators.
 	PipelineCache pipelineCache; ///< Pipeline cache and creation.
+	SamplerLibrary samplerLibrary; ///< List of static samplers shared by all programs.
 
 	std::deque<ResourceToDelete> resourcesToDelete; ///< List of resources waiting for deletion.
 	std::deque<AsyncTextureTask> textureTasks; ///< List of async tasks waiting for completion.
@@ -243,12 +245,12 @@ namespace VkUtils {
 	 */
 	VkSamplerAddressMode getGPUWrapping(Wrap mode);
 
-	/** Convert a Rendu texture filter to an interpolation and mipmap Vulkan filterings.
+	/** Convert a Rendu texture filter to an interpolation and mip map Vulkan filterings.
 	 * \param filtering the texture filtering
 	 * \param imgFiltering will contain the corresponding Vulkan image filtering
 	 * \param mipFiltering will contain the corresponding Vulkan mipmap mode
 	 */
-	void getGPUFilter(Filter filtering, VkFilter & imgFiltering, VkSamplerMipmapMode & mipFiltering);
+	void getGPUFilters(Filter filtering, VkFilter & imgFiltering, VkSamplerMipmapMode & mipFiltering);
 
 	/** Convert a Rendu texture layout to a format and channel count.
 	 * \param typedFormat the texture layout
