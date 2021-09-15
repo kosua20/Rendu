@@ -11,7 +11,7 @@ StenciledRenderer::StenciledRenderer(const glm::vec2 & resolution) : Renderer("S
 	const uint renderHeight	   = uint(resolution[1]);
 
 	// Framebuffer.
-	const std::vector<Layout> formats = { Layout::RGBA8, Layout::DEPTH32F_STENCIL8, Layout::DEPTH_COMPONENT32F};
+	const std::vector<Layout> formats = { Layout::RGBA8, Layout::DEPTH32F_STENCIL8};
 	_sceneFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, formats, _name + " rendering"));
 
 	_objectProgram	= Resources::manager().getProgram("object_basic_uniform", "object_basic", "object_basic_uniform");
