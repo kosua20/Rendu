@@ -1,4 +1,5 @@
 #include "utils.glsl"
+#include "samplers.glsl"
 #include "gerstner_waves.glsl"
 
 layout(location = 0) in vec3 ifPos; ///< World space position.
@@ -20,15 +21,15 @@ layout(set = 0, binding = 0) uniform UniformBlock {
 	bool useTerrain; ///< Is the terrain currently renderer (for shadows)
 };
 
-layout(set = 1, binding = 0) uniform sampler2D foamMap; ///< Foam effects map.
-layout(set = 1, binding = 1) uniform sampler2D terrainColor; ///< Shaded terrain with effects.
-layout(set = 1, binding = 2) uniform sampler2D terrainPos; ///< Terrain world position map.
-layout(set = 1, binding = 3) uniform sampler2D terrainColorBlur; ///< Blurred shaded terrain.
-layout(set = 1, binding = 4) uniform sampler2D absorpScatterLUT; ///< Ocean absorption/scattering look-up table.
-layout(set = 1, binding = 5) uniform sampler2D waveNormals; ///< Waves normal map.
-layout(set = 1, binding = 6) uniform samplerCube envmap; ///< Environment map.
-layout(set = 1, binding = 7) uniform sampler2D brdfCoeffs; ///< Linearized BRDF look-up table.
-layout(set = 1, binding = 8) uniform sampler2D shadowMap; ///< Terrain shadow map (ocean level in the G channel).
+layout(set = 1, binding = 0) uniform texture2D foamMap; ///< Foam effects map.
+layout(set = 1, binding = 1) uniform texture2D terrainColor; ///< Shaded terrain with effects.
+layout(set = 1, binding = 2) uniform texture2D terrainPos; ///< Terrain world position map.
+layout(set = 1, binding = 3) uniform texture2D terrainColorBlur; ///< Blurred shaded terrain.
+layout(set = 1, binding = 4) uniform texture2D absorpScatterLUT; ///< Ocean absorption/scattering look-up table.
+layout(set = 1, binding = 5) uniform texture2D waveNormals; ///< Waves normal map.
+layout(set = 1, binding = 6) uniform textureCube envmap; ///< Environment map.
+layout(set = 1, binding = 7) uniform texture2D brdfCoeffs; ///< Linearized BRDF look-up table.
+layout(set = 1, binding = 8) uniform texture2D shadowMap; ///< Terrain shadow map (ocean level in the G channel).
 
 /** Gerstner waves parameters. */
 layout(std140, set = 2, binding = 0) uniform Waves {
@@ -71,7 +72,7 @@ void main(){
 			discard;
 		}
 		// Skip for all points above see level.
-		oceanFloorPosEarly = texelFetch(terrainPos, ivec2(gl_FragCoord.xy), 0).xyz;
+		oceanFloorPosEarly = texelFetch(sampler2D(terrainPos, sClampNear), ivec2(gl_FragCoord.xy), 0).xyz;
 		if(oceanFloorPosEarly.y > 0.0){
 			discard;
 		}
@@ -122,25 +123,25 @@ void main(){
 	vec2 warpUV = 2.0*srcPos.xz;
 	float lodN =  log2(dist2*5.0);
 	float fadeWarpN = smoothstep(9.5, 9.8, lodN);
-	vec3 warpN = textureLod(waveNormals, warpUV, lodN).xyz * 2.0 - 1.0;
+	vec3 warpN = textureLod(sampler2D(waveNormals, sRepeatLinearLinear), warpUV, lodN).xyz * 2.0 - 1.0;
 	vec3 n = normalize(mix(normalize(tbn * warpN), nn, fadeWarpN));
 
 	bool aroundIsland = all(lessThan(abs(worldPos.xz), vec2(groundGridHalf)));
 	if(!distantProxy){
 		// Perturb ocean floor UVs based on normal and water depth.
-		vec3 oceanFloorPosInit = texelFetch(terrainPos, ivec2(gl_FragCoord.xy), 0).xyz;
+		vec3 oceanFloorPosInit = texelFetch(sampler2D(terrainPos, sClampNear), ivec2(gl_FragCoord.xy), 0).xyz;
 		float distPosInit = distance(oceanFloorPosInit, worldPos);
 		screenUV += 0.05 * n.xz * min(1.0, 0.1+distPosInit);
 		// Compute length of the ray underwater.
-		vec3 oceanFloorPos = textureLod(terrainPos, screenUV, 0.0).xyz;
+		vec3 oceanFloorPos = textureLod(sampler2D(terrainPos, sClampLinear), screenUV, 0.0).xyz;
 		float distPos = distance(oceanFloorPos, worldPos);
 		// Put the floor at 1.0 unit below approx.
 		float scalingDist = 1.0/2.0;
 		distUnderWater = underwater ? 0.05 : clamp(distPos * scalingDist, 0.0, 1.0);
 
 		// Blend blurred version of the floor in deeper regions.
-		vec3 oceanFloor = textureLod(terrainColor, screenUV, 0.0).rgb;
-		vec3 oceanFloorBlur = underwater ? oceanFloor : textureLod(terrainColorBlur, screenUV, 0.0).rgb;
+		vec3 oceanFloor = textureLod(sampler2D(terrainColor, sClampLinear), screenUV, 0.0).rgb;
+		vec3 oceanFloorBlur = underwater ? oceanFloor : textureLod(sampler2D(terrainColorBlur, sClampLinear), screenUV, 0.0).rgb;
 		floorColor = mix(oceanFloor, oceanFloorBlur, distUnderWater);
 
 	} else if(aroundIsland){
@@ -148,13 +149,13 @@ void main(){
 		vec3 oceanFloorPosInit = oceanFloorPosEarly;
 		float distPosInit = distance(oceanFloorPosInit, worldPos);
 		distUnderWater = clamp(distPosInit * scalingDist, 0.0, 1.0);
-		vec3 oceanFloorBlur = textureLod(terrainColor, screenUV, 0.0).rgb;
+		vec3 oceanFloorBlur = textureLod(sampler2D(terrainColor, sClampLinear), screenUV, 0.0).rgb;
 		floorColor = oceanFloorBlur;
 	}
 
 	// Lookup absorption and scattering values for the given distance under water.
-	vec3 absorp = textureLod(absorpScatterLUT, vec2(distUnderWater, 0.25), 0.0).rgb;
-	vec3 scatter = textureLod(absorpScatterLUT, vec2(distUnderWater, 0.75), 0.0).rgb;
+	vec3 absorp = textureLod(sampler2D(absorpScatterLUT, sClampLinear), vec2(distUnderWater, 0.25), 0.0).rgb;
+	vec3 scatter = textureLod(sampler2D(absorpScatterLUT, sClampLinear), vec2(distUnderWater, 0.75), 0.0).rgb;
 	vec3 baseColor = absorp * mix(floorColor, scatter, distUnderWater);
 
 	// Add underwater bubbles, using the same foam texture but at a lower LOD to blur (see CREST presentation).
@@ -167,7 +168,7 @@ void main(){
 		// Compute heightmap UV and read shadow map.
 		// The second channel contains shadowing computed for an initial height of 0.0, the ocean plane.
 		vec2 uvGround = ((worldPos.xz * invTexelSize) + 0.5) * invMapSize;
-		float shadow = useTerrain ? textureLod(shadowMap, uvGround + 0.5, 0.0).g : 1.0;
+		float shadow = useTerrain ? textureLod(sampler2D(shadowMap, sClampLinear), uvGround + 0.5, 0.0).g : 1.0;
 		// Attenuate on edges.
 		float attenShadow = smoothstep(0.05, 0.25, (dot(uvGround, uvGround)));
 		specularShadow = mix(shadow, 1.0, attenShadow);
@@ -178,7 +179,7 @@ void main(){
 	if(!distantProxy){
 		vec2 bubblesUV = mix(srcPos.xz, worldPos.xz, 0.7) + 0.05 * time * vec2(0.5, 0.8) + 0.02 * n.xz;
 		bubblesUV += 0.1 * vdir.xz / NdotV;
-		vec4 bubbles = texture(foamMap, 0.5*bubblesUV, 2.0);
+		vec4 bubbles = texture(sampler2D(foamMap, sRepeatLinearLinear), 0.5*bubblesUV, 2.0);
 		baseColor += diffuseShadow * bubbles.a * bubbles.rgb / max(1.0, dist2);
 	}
 
@@ -187,10 +188,10 @@ void main(){
 	ldir.y = max(0.0, ldir.y);
 	// Fetch from envmap for now.
 	// Clamp to avoid fireflies.
-	vec3 reflection = min(texture(envmap, toCube(ldir)).rgb, 5.0);
+	vec3 reflection = min(texture(samplerCube(envmap, sClampLinearLinear), toCube(ldir)).rgb, 5.0);
 	// Combine specular and fresnel.
 	float Fs = fresnelWater(NdotV);
-	vec2 brdfParams = texture(brdfCoeffs, vec2(NdotV, 0.1)).rg;
+	vec2 brdfParams = texture(sampler2D(brdfCoeffs, sClampLinear), vec2(NdotV, 0.1)).rg;
 	float specular = (brdfParams.x * Fs + brdfParams.y);
 
 	vec3 color = baseColor + specularShadow * specular * reflection;
@@ -200,7 +201,7 @@ void main(){
 		foamAtten += (1.0-abs(n.y))/max(1.0, viewDist/2.0);
 		foamAtten = sqrt(min(foamAtten, 1.0));
 		vec2 foamUV = 1.5 * srcPos.xz + 0.02 * time;
-		vec3 foam = texture(foamMap, foamUV).rgb;
+		vec3 foam = texture(sampler2D(foamMap, sRepeatLinearLinear), foamUV).rgb;
 		color += diffuseShadow * foamAtten * foam;
 	}
 	// At edges, mix with the shore color to ensure soft transitions.

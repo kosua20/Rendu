@@ -1,3 +1,4 @@
+#include "samplers.glsl"
 
 layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
@@ -9,7 +10,7 @@ layout(set = 0, binding = 0) uniform UniformBlock {
 	float texelSize; ///< Size of a texel in world space.
 };
 
-layout(set = 1, binding = 0) uniform sampler2D heightMap; ///< Height map.
+layout(set = 1, binding = 0) uniform texture2D heightMap; ///< Height map.
 
 layout(location = 0) out vec2 shadow; ///< Shadowing factors.
 
@@ -27,7 +28,7 @@ void main(){
 	}
 
 	vec2 wh = textureSize(heightMap, 0).xy;
-	float hStart = textureLod(heightMap, In.uv, 0.0).r;
+	float hStart = textureLod(sampler2D(heightMap, sClampLinear), In.uv, 0.0).r;
 
 	// Compute ray height.
 	bool occGround = false;
@@ -45,7 +46,7 @@ void main(){
 			break;
 		}
 		// Read corresponding height and compare, for both the ground and water height.
-		float hRef = textureLod(heightMap, grPos, 0.0).r;
+		float hRef = textureLod(sampler2D(heightMap, sClampLinear), grPos, 0.0).r;
 		if(pos.y < hRef){
 			occGround = true;
 		}

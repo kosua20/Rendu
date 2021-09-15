@@ -6,13 +6,13 @@ layout(location = 0) in INTERFACE {
 	vec2 uv; ///< Texture coordinates.
 } In ;
 
-layout(set = 1, binding = 0) uniform sampler2D albedoTexture; ///< The albedo texture.
-layout(set = 1, binding = 1) uniform sampler2D normalTexture; ///< The normal texture.
-layout(set = 1, binding = 2) uniform sampler2D effectsTexture; ///< The effects texture.
-layout(set = 1, binding = 3) uniform sampler2D depthTexture; ///< The depth texture.
-layout(set = 1, binding = 4) uniform sampler2D ssaoTexture; ///< The SSAO texture.
-layout(set = 1, binding = 5) uniform sampler2D brdfPrecalc; ///< Preintegrated BRDF lookup table.
-layout(set = 1, binding = 6) uniform samplerCube textureCubeMap; ///< Background environment cubemap (with preconvoluted versions of increasing roughness in mipmap levels).
+layout(set = 1, binding = 0) uniform texture2D albedoTexture; ///< The albedo texture.
+layout(set = 1, binding = 1) uniform texture2D normalTexture; ///< The normal texture.
+layout(set = 1, binding = 2) uniform texture2D effectsTexture; ///< The effects texture.
+layout(set = 1, binding = 3) uniform texture2D depthTexture; ///< The depth texture.
+layout(set = 1, binding = 4) uniform texture2D ssaoTexture; ///< The SSAO texture.
+layout(set = 1, binding = 5) uniform texture2D brdfPrecalc; ///< Preintegrated BRDF lookup table.
+layout(set = 1, binding = 6) uniform textureCube textureCubeMap; ///< Background environment cubemap (with preconvoluted versions of increasing roughness in mipmap levels).
 
 /// SH approximation of the environment irradiance (UBO).
 layout(std140, set = 2, binding = 0) uniform SHCoeffs {
@@ -35,7 +35,7 @@ layout(location = 0) out vec4 fragColor; ///< Color.
 void main(){
 	fragColor.a = 1.0;
 
-	vec4 albedoInfo = texture(albedoTexture,In.uv);
+	vec4 albedoInfo = texture(sampler2D(albedoTexture, sClampNear),In.uv);
 	
 	if(albedoInfo.a == 0){
 		// If emissive (skybox or object), use directly the albedo color.
@@ -44,17 +44,17 @@ void main(){
 	}
 	
 	vec3 baseColor = albedoInfo.rgb;
-	vec3 infos = texture(effectsTexture,In.uv).rgb;
+	vec3 infos = texture(sampler2D(effectsTexture, sClampNear),In.uv).rgb;
 	float roughness = max(0.045, infos.r);
-	float depth = texture(depthTexture,In.uv).r;
+	float depth = texture(sampler2D(depthTexture, sClampNear),In.uv).r;
 	vec3 position = positionFromDepth(depth, In.uv, projectionMatrix);
-	vec3 n = normalize(2.0 * texture(normalTexture,In.uv).rgb - 1.0);
+	vec3 n = normalize(2.0 * texture(sampler2D(normalTexture, sClampLinear),In.uv).rgb - 1.0);
 	vec3 v = normalize(-position);
 	float NdotV = max(0.0, dot(v, n));
 
 	// Compute AO.
 	float precomputedAO = infos.b;
-	float realtimeAO = textureLod(ssaoTexture, In.uv, 0).r;
+	float realtimeAO = textureLod(sampler2D(ssaoTexture, sClampLinear), In.uv, 0).r;
 	float aoDiffuse = min(realtimeAO, precomputedAO);
 	float aoSpecular = approximateSpecularAO(aoDiffuse, NdotV, roughness);
 

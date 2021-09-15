@@ -6,7 +6,7 @@ layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In ;
 
-layout(set = 1, binding = 0) uniform sampler2D emissiveTexture; ///< Emissive.
+layout(set = 1, binding = 0) uniform texture2D emissiveTexture; ///< Emissive.
 
 // Emissive objects don't receive any light.
 
@@ -15,7 +15,7 @@ layout (location = 0) out vec4 fragColor; ///< Ambient contribution.
 /** Shade the object, applying lighting. */
 void main(){
 	
-	vec4 emissiveColor = texture(emissiveTexture, In.uv);
+	vec4 emissiveColor = texture(sampler2D(emissiveTexture, sRepeatLinearLinear), In.uv);
 	if(emissiveColor.a <= 0.01){
 		discard;
 	}

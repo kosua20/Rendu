@@ -6,7 +6,7 @@ layout(location = 0) in INTERFACE {
 	vec3 pos;  ///< World position.
 } In ;
 
-layout(set = 1, binding = 0) uniform samplerCube texture0; ///< Input cubemap to process.
+layout(set = 1, binding = 0) uniform textureCube texture0; ///< Input cubemap to process.
 
 layout(set = 0, binding = 0) uniform UniformBlock {
 	float mipmapRoughness; ///< The roughness to use for the convolution lobe.
@@ -52,7 +52,7 @@ vec3 convo(vec3 r, float roughness){
 
 		float NdotL = max(dot(n,l), 0.000);
 		if(NdotL > 0.0){
-			sum += NdotL * clamp(textureLod(texture0, toCube(l), 0.0).rgb, 0.0, clampMax);
+			sum += NdotL * clamp(textureLod(samplerCube(texture0, sClampLinear), toCube(l), 0.0).rgb, 0.0, clampMax);
 			denom += NdotL;
 		}
 	}

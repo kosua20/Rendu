@@ -1,11 +1,11 @@
-
+#include "samplers.glsl"
 
 layout(location = 0) in INTERFACE {
     vec4 n; ///< Normal direction.
     vec2 uv; ///< Texture coordinates.
 } In ;
 
-layout(set = 1, binding = 0) uniform sampler2D mask;  ///< RGBA texture.
+layout(set = 1, binding = 0) uniform texture2D mask;  ///< RGBA texture.
 
 layout(set = 0, binding = 0) uniform UniformBlock {
 	bool hasMask; ///< Alpha masking applied.
@@ -18,7 +18,7 @@ void main(){
 	
 	// Mask cutout.
 	if(hasMask){
-		float a = texture(mask, In.uv).a;
+		float a = texture(sampler2D(mask, sRepeatLinearLinear), In.uv).a;
 		if(a <= 0.01){
 			discard;
 		}

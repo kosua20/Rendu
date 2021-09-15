@@ -13,7 +13,7 @@ layout(set = 0, binding = 0) uniform UniformBlock {
 	vec3 lightDirection; ///< The light direction in world space.
 };
 
-layout(set = 1, binding = 0) uniform sampler2D precomputedScattering; ///< Secondary scattering lookup table.
+layout(set = 1, binding = 0) uniform texture2D precomputedScattering; ///< Secondary scattering lookup table.
 
 layout (location = 0) out vec4 fragColor; ///< Color.
 layout (location = 1) out vec3 fragNormal; ///< View space normal.

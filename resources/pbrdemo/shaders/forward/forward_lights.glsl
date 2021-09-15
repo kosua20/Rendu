@@ -27,7 +27,7 @@ struct GPULight {
  \param shadowing will contain the shadowing factor
  \return true if the light contributes to the point shading
  */
-bool applyLight(GPULight light, vec3 viewSpacePos, samplerCubeArray smapCube, sampler2DArray smap2D, out vec3 l, out float shadowing){
+bool applyLight(GPULight light, vec3 viewSpacePos, textureCubeArray smapCube, texture2DArray smap2D, out vec3 l, out float shadowing){
 
 	shadowing = 1.0;
 

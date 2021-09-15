@@ -43,8 +43,13 @@ layout(set = 0, binding = 0) uniform UniformBlock {
 	bool showGrid;// = true;
 };
 
-layout(set = 1, binding = 0) uniform sampler2D previousFrame;
-layout(set = 1, binding = 1) uniform sampler2D sdfFont;
+layout(set = 1, binding = 0) uniform texture2D previousFrame;
+layout(set = 1, binding = 1) uniform texture2D sdfFont;
+
+layout(set = 3, binding =  0) uniform sampler sClampNear;
+layout(set = 3, binding =  1) uniform sampler sRepeatNear;
+layout(set = 3, binding =  2) uniform sampler sClampLinear;
+layout(set = 3, binding =  3) uniform sampler sRepeatLinear;
 
 layout(location = 0) out vec4 fragColor; ///< Color.
 
@@ -135,7 +140,7 @@ float getLetter(int lid, vec2 uv){
 	for(int i = -1; i < 2; ++i){
 		for(int j = -1; j < 2; ++j){
 			vec2 offset = vec2(i,j)/1024.0;
-			accum += texture(sdfFont, fontUV+offset, 0.0).a;
+			accum += textureLod(sampler2D(sdfFont, sRepeatLinear), fontUV+offset, 0.0).a;
 		}
 	}
 	return accum/9.0;

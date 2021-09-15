@@ -4,11 +4,11 @@
 #include "utils.glsl"
 
 // Uniforms
-layout(set = 1, binding = 0) uniform sampler2D albedoTexture; ///< Albedo.
-layout(set = 1, binding = 1) uniform sampler2D normalTexture; ///< Normal.
-layout(set = 1, binding = 2) uniform sampler2D depthTexture; ///< Depth.
-layout(set = 1, binding = 3) uniform sampler2D effectsTexture; ///< Effects.
-layout(set = 1, binding = 4) uniform sampler2DArray shadowMap; ///< Shadow map.
+layout(set = 1, binding = 0) uniform texture2D albedoTexture; ///< Albedo.
+layout(set = 1, binding = 1) uniform texture2D normalTexture; ///< Normal.
+layout(set = 1, binding = 2) uniform texture2D depthTexture; ///< Depth.
+layout(set = 1, binding = 3) uniform texture2D effectsTexture; ///< Effects.
+layout(set = 1, binding = 4) uniform texture2DArray shadowMap; ///< Shadow map.
 
 layout(set = 0, binding = 0) uniform UniformBlock {
 	mat4 viewToLight; ///< View to light space matrix.
@@ -31,7 +31,7 @@ void main(){
 	
 	vec2 uv = gl_FragCoord.xy/textureSize(albedoTexture, 0).xy;
 	
-	vec4 albedoInfo = textureLod(albedoTexture,uv, 0.0);
+	vec4 albedoInfo = textureLod(sampler2D(albedoTexture, sClampNear),uv, 0.0);
 	// If emissive (skybox or object), don't shade.
 	if(albedoInfo.a == 0.0){
 		discard;
@@ -39,10 +39,10 @@ void main(){
 	
 	// Get all informations from textures.
 	vec3 baseColor = albedoInfo.rgb;
-	float depth = textureLod(depthTexture,uv, 0.0).r;
+	float depth = textureLod(sampler2D(depthTexture, sClampNear),uv, 0.0).r;
 	vec3 position = positionFromDepth(depth, uv, projectionMatrix);
 	
-	vec3 n = normalize(2.0 * textureLod(normalTexture,uv, 0.0).rgb - 1.0);
+	vec3 n = normalize(2.0 * textureLod(sampler2D(normalTexture, sClampNear),uv, 0.0).rgb - 1.0);
 	vec3 v = normalize(-position);
 	vec3 deltaPosition = lightPosition - position;
 	vec3 l = normalize(deltaPosition);
@@ -77,7 +77,7 @@ void main(){
 	float attenuation = angleAttenuation * attenNum * attenNum;
 	
 	// Read effects infos.
-	vec3 infos = texture(effectsTexture,uv).rgb;
+	vec3 infos = texture(sampler2D(effectsTexture, sClampNear), uv).rgb;
 	float roughness = max(0.0001, infos.r);
 	float metallic = infos.g;
 	

@@ -1,3 +1,4 @@
+#include "samplers.glsl"
 
 #define MATERIAL_ID 1 ///< The material ID.
 
@@ -6,9 +7,9 @@ layout(location = 0) in INTERFACE {
 	vec4 uv; ///< UV coordinates.
 } In ;
 
-layout(set = 1, binding = 0) uniform sampler2D texture0; ///< Albedo.
-layout(set = 1, binding = 1) uniform sampler2D texture1; ///< Normal map.
-layout(set = 1, binding = 2) uniform sampler2D texture2; ///< Effects map.
+layout(set = 1, binding = 0) uniform texture2D texture0; ///< Albedo.
+layout(set = 1, binding = 1) uniform texture2D texture1; ///< Normal map.
+layout(set = 1, binding = 2) uniform texture2D texture2; ///< Effects map.
 
 layout (location = 0) out vec4 fragColor; ///< Color.
 layout (location = 1) out vec3 fragNormal; ///< View space normal.
@@ -22,7 +23,7 @@ layout(set = 0, binding = 0) uniform UniformBlock {
 	(combining geometry normal and normal map) in view space. */
 void main(){
 	
-	vec4 color = texture(texture0, In.uv.xy);
+	vec4 color = texture(sampler2D(texture0, sRepeatLinearLinear), In.uv.xy);
 	if(color.a <= 0.01){
 		discard;
 	}
@@ -33,7 +34,7 @@ void main(){
 	// Compute the normal at the fragment using the tangent space matrix and the normal read in the normal map.
 	vec3 n;
 	if(hasUV){
-		n = texture(texture1, In.uv.xy).rgb;
+		n = texture(sampler2D(texture1, sRepeatLinearLinear), In.uv.xy).rgb;
 		n = normalize(n * 2.0 - 1.0);
 		n = normalize(tbn * n);
 	} else {
@@ -45,6 +46,6 @@ void main(){
 	fragColor.a = float(MATERIAL_ID)/255.0;
 	
 	fragNormal.rgb = n * 0.5 + 0.5;
-	fragEffects.rgb = texture(texture2, In.uv.xy).rgb;
+	fragEffects.rgb = texture(sampler2D(texture2, sRepeatLinearLinear), In.uv.xy).rgb;
 	
 }

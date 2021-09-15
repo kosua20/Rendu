@@ -1,17 +1,18 @@
+#include "samplers.glsl"
 
 layout(location = 0) in INTERFACE {
 	vec4 dir; ///< View world direction.
 	vec2 uv; ///< Texture coordinates.
 } In ;
 
-layout(set = 1, binding = 0) uniform sampler2D previousFrame; ///< Previous frame.
-layout(set = 1, binding = 1) uniform sampler2D sdfFont; ///< Font SDF texture.
-layout(set = 1, binding = 2) uniform sampler2D gridMap; ///< Debug grid texture.
-layout(set = 1, binding = 3) uniform sampler2D noise2DMap; ///< RGBA uniform noise in [0,1], uncorrelated.
-layout(set = 1, binding = 4) uniform sampler2D perlin2DMap; ///< RGBA tiling perlin noise in [0,1], four different scales and offsets.
-layout(set = 1, binding = 5) uniform sampler2D directionsMap; ///< Random 3D directions on the unit sphere.
-layout(set = 1, binding = 6) uniform sampler3D noise3DMap; ///< RGBA 3D uniform noise in [0,1], uncorrelated.
-layout(set = 1, binding = 7) uniform sampler3D perlin3DMap; ///< RGBA 3D tiling perlin noise in [0,1], four different scales and offsets.
+layout(set = 1, binding = 0) uniform texture2D previousFrame; ///< Previous frame.
+layout(set = 1, binding = 1) uniform texture2D sdfFont; ///< Font SDF texture.
+layout(set = 1, binding = 2) uniform texture2D gridMap; ///< Debug grid texture.
+layout(set = 1, binding = 3) uniform texture2D noise2DMap; ///< RGBA uniform noise in [0,1], uncorrelated.
+layout(set = 1, binding = 4) uniform texture2D perlin2DMap; ///< RGBA tiling perlin noise in [0,1], four different scales and offsets.
+layout(set = 1, binding = 5) uniform texture2D directionsMap; ///< Random 3D directions on the unit sphere.
+layout(set = 1, binding = 6) uniform texture3D noise3DMap; ///< RGBA 3D uniform noise in [0,1], uncorrelated.
+layout(set = 1, binding = 7) uniform texture3D perlin3DMap; ///< RGBA 3D tiling perlin noise in [0,1], four different scales and offsets.
 
 layout(set = 0, binding = 0) uniform UniformBlock {
 	float iTime; ///< Time since beginning of playback.
@@ -138,7 +139,7 @@ void main(){
 			specular = pow(specular, specExponent);
 		} else if(res.y < 2.5){
 			vec2 movingUV = hit.xz + vec2(0.5*iTime, 0.0);
-			float noise = texture(noise2DMap, 0.005*movingUV).r;
+			float noise = texture(sampler2D(noise2DMap, sRepeatLinear), 0.005*movingUV).r;
 			// Smooth transition.
 			float intensity = smoothstep(0.45, 0.55, noise);
 			// Mix two colors, diffuse material.

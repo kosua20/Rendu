@@ -10,14 +10,14 @@ layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In ;
 
-layout(set = 1, binding = 0) uniform sampler2D albedoTexture; ///< Albedo.
-layout(set = 1, binding = 1) uniform sampler2D normalTexture; ///< Normal map.
-layout(set = 1, binding = 2) uniform sampler2D effectsTexture; ///< Effects map.
-layout(set = 1, binding = 3) uniform sampler2D depthTexture; ///< Effects map.
-layout(set = 1, binding = 4) uniform sampler2D brdfPrecalc; ///< Preintegrated BRDF lookup table.
-layout(set = 1, binding = 5) uniform samplerCube textureCubeMap; ///< Background environment cubemap (with preconvoluted versions of increasing roughness in mipmap levels).
-layout(set = 1, binding = 6) uniform sampler2DArray shadowMaps2D; ///< Shadow maps array.
-layout(set = 1, binding = 7) uniform samplerCubeArray shadowMapsCube; ///< Shadow cubemaps array.
+layout(set = 1, binding = 0) uniform texture2D albedoTexture; ///< Albedo.
+layout(set = 1, binding = 1) uniform texture2D normalTexture; ///< Normal map.
+layout(set = 1, binding = 2) uniform texture2D effectsTexture; ///< Effects map.
+layout(set = 1, binding = 3) uniform texture2D depthTexture; ///< Effects map.
+layout(set = 1, binding = 4) uniform texture2D brdfPrecalc; ///< Preintegrated BRDF lookup table.
+layout(set = 1, binding = 5) uniform textureCube textureCubeMap; ///< Background environment cubemap (with preconvoluted versions of increasing roughness in mipmap levels).
+layout(set = 1, binding = 6) uniform texture2DArray shadowMaps2D; ///< Shadow maps array.
+layout(set = 1, binding = 7) uniform textureCubeArray shadowMapsCube; ///< Shadow cubemaps array.
 
 /// SH approximation of the environment irradiance (UBO).
 layout(std140, set = 2, binding = 1) uniform SHCoeffs {
@@ -57,7 +57,7 @@ void main(){
 		discard;
 	}
 
-	vec4 albedoInfos = texture(albedoTexture, localUV);
+	vec4 albedoInfos = texture(sampler2D(albedoTexture, sRepeatLinearLinear), localUV);
 	if(albedoInfos.a <= 0.01){
 		discard;
 	}
@@ -67,13 +67,13 @@ void main(){
 	mat3 tbn = mat3(In.tbn);
 	tbn[2] *= (gl_FrontFacing ? 1.0 : -1.0);
 	// Compute the normal at the fragment using the tangent space matrix and the normal read in the normal map.
-	vec3 n = texture(normalTexture, localUV).rgb ;
+	vec3 n = texture(sampler2D(normalTexture, sRepeatLinearLinear), localUV).rgb ;
 	n = normalize(n * 2.0 - 1.0);
 	n = normalize(tbn * n);
 
 	vec3 newViewSpacePosition = updateFragmentPosition(localUV, positionShift, In.viewSpacePosition.xyz, p, tbn, depthTexture);
 
-	vec3 infos = texture(effectsTexture, localUV).rgb;
+	vec3 infos = texture(sampler2D(effectsTexture, sRepeatLinearLinear), localUV).rgb;
 	float roughness = max(0.045, infos.r);
 	vec3 v = normalize(-newViewSpacePosition);
 	float NdotV = max(0.0, dot(v, n));

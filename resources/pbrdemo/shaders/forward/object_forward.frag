@@ -8,14 +8,14 @@ layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In ;
 
-layout(set = 1, binding = 0) uniform sampler2D albedoTexture; ///< Albedo.
-layout(set = 1, binding = 1) uniform sampler2D normalTexture; ///< Normal map.
-layout(set = 1, binding = 2) uniform sampler2D effectsTexture; ///< Effects map.
-layout(set = 1, binding = 4) uniform sampler2D brdfPrecalc; ///< Preintegrated BRDF lookup table.
-layout(set = 1, binding = 5) uniform samplerCube textureCubeMap; ///< Background environment cubemap (with preconvoluted versions of increasing roughness in mipmap levels).
-layout(set = 1, binding = 6) uniform sampler2DArray shadowMaps2D; ///< Shadow maps array.
-layout(set = 1, binding = 7) uniform samplerCubeArray shadowMapsCube; ///< Shadow cubemaps array.
-layout(set = 1, binding = 8) uniform sampler2D ssaoTexture; ///< Ambient occlusion.
+layout(set = 1, binding = 0) uniform texture2D albedoTexture; ///< Albedo.
+layout(set = 1, binding = 1) uniform texture2D normalTexture; ///< Normal map.
+layout(set = 1, binding = 2) uniform texture2D effectsTexture; ///< Effects map.
+layout(set = 1, binding = 4) uniform texture2D brdfPrecalc; ///< Preintegrated BRDF lookup table.
+layout(set = 1, binding = 5) uniform textureCube textureCubeMap; ///< Background environment cubemap (with preconvoluted versions of increasing roughness in mipmap levels).
+layout(set = 1, binding = 6) uniform texture2DArray shadowMaps2D; ///< Shadow maps array.
+layout(set = 1, binding = 7) uniform textureCubeArray shadowMapsCube; ///< Shadow cubemaps array.
+layout(set = 1, binding = 8) uniform texture2D ssaoTexture; ///< Ambient occlusion.
 
 
 /** SH approximation of the environment irradiance (UBO). */
@@ -45,7 +45,7 @@ layout (location = 0) out vec4 fragColor; ///< Shading result.
 /** Shade the object, applying lighting. */
 void main(){
 	
-	vec4 albedoInfos = texture(albedoTexture, In.uv);
+	vec4 albedoInfos = texture(sampler2D(albedoTexture, sRepeatLinearLinear), In.uv);
 	if(albedoInfos.a <= 0.01){
 		discard;
 	}
@@ -58,14 +58,14 @@ void main(){
 	// If we dont have UV, use the geometric normal.
 	vec3 n;
 	if(hasUV){
-		n = texture(normalTexture, In.uv).rgb ;
+		n = texture(sampler2D(normalTexture, sRepeatLinearLinear), In.uv).rgb ;
 		n = normalize(n * 2.0 - 1.0);
 		n = normalize(tbn * n);
 	} else {
 		n = normalize(tbn[2]);
 	}
 
-	vec3 infos = texture(effectsTexture, In.uv).rgb;
+	vec3 infos = texture(sampler2D(effectsTexture, sRepeatLinearLinear), In.uv).rgb;
 	float roughness = max(0.045, infos.r);
 	vec3 v = normalize(-In.viewSpacePosition.xyz);
 	float NdotV = max(0.0, dot(v, n));
@@ -84,7 +84,7 @@ void main(){
 	ambientBrdf(baseColor, metallic, roughness, NdotV, brdfPrecalc, diffuse, specular);
 
 	vec2 screenUV = gl_FragCoord.xy * invScreenSize;
-	float realtimeAO = textureLod(ssaoTexture, screenUV, 0).r;
+	float realtimeAO = textureLod(sampler2D(ssaoTexture, sClampLinear), screenUV, 0).r;
 	float precomputedAO = infos.b;
 	float aoDiffuse = min(realtimeAO, precomputedAO);
 	float aoSpecular = approximateSpecularAO(aoDiffuse, NdotV, roughness);

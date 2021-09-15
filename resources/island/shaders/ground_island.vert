@@ -1,3 +1,4 @@
+#include "samplers.glsl"
 
 // Attributes
 layout(location = 0) in vec3 v; ///< Position.
@@ -10,7 +11,7 @@ layout(set = 0, binding = 1) uniform UniformBlock {
 	float invGridSize; ///< Grid mesh inverse size.
 };
 
-layout(set = 1, binding = 0) uniform sampler2D heightMap; ///< Terrain height map, height in R, normals in GBA.
+layout(set = 1, binding = 0) uniform texture2D heightMap; ///< Terrain height map, height in R, normals in GBA.
 
 layout(location = 0) out INTERFACE {
 	vec4 pos; ///< World position.
@@ -41,8 +42,8 @@ void main(){
 	vec2 baseCoords = (uv + halfTexBase) * invMapSize + 0.5;
 	vec2 nextCoords = (uv + halfTexNext) * invMapSize + 0.5;
 	// Custom trilinear 
-	float lowHeight = textureLod(heightMap, baseCoords, baseLod).r;
-	float nextHeight = textureLod(heightMap, nextCoords, nextLod).r;
+	float lowHeight  = textureLod(sampler2D(heightMap, sClampLinearLinear), baseCoords, baseLod).r;
+	float nextHeight = textureLod(sampler2D(heightMap, sClampLinearLinear), nextCoords, nextLod).r;
 	// Final height and projected position.
 	worldPos.y = mix(lowHeight, nextHeight, fracLod);
     gl_Position = mvp * vec4(worldPos, 1.0);

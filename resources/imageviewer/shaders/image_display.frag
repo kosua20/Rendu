@@ -1,13 +1,16 @@
+#include "samplers.glsl"
+
 layout(location = 0) in INTERFACE {
 	vec2 uv; ///< Texture coordinates.
 } In ;
 
-layout(set = 1, binding = 0) uniform sampler2D screenTexture; ///< Image to output.
+layout(set = 1, binding = 0) uniform texture2D screenTexture; ///< Image to output.
 
 layout(set = 0, binding = 0) uniform UniformBlock {
 	vec4 channelsFilter; ///< Which channels should be displayed.
 	float exposure; ///< User selected exposure.
 	bool gammaOutput; ///< Should gamma correction be applied.
+	bool filtering; ///< Should linear interpolation be applied.
 	bool isHDR; ///< Is the image an HDR one.
 };
 
@@ -39,7 +42,8 @@ void main(){
 		discard;
 	}
 	
-	fragColor = textureLod(screenTexture, uv, 0.0);
+	fragColor = filtering 	? textureLod(sampler2D(screenTexture, sClampLinear), uv, 0.0)
+							: textureLod(sampler2D(screenTexture, sClampNear), uv, 0.0);
 	
 	if(isHDR){
 		vec3 exposedColor = simpleExposure(fragColor.rgb, exposure);

@@ -4,9 +4,9 @@ layout(location = 0) in INTERFACE {
 	vec2 uv; ///< Texture coordinates.
 } In ;
 
-layout(set = 1, binding = 3) uniform sampler2D noiseMap; ///< RGBA uniform noise in [0,1], uncorrelated.
-layout(set = 1, binding = 5) uniform sampler2D directionsMap; ///< Random 3D directions on the unit sphere.
-layout(set = 1, binding = 6) uniform sampler3D noise3DMap; ///< Random 3D directions on the unit sphere.
+layout(set = 1, binding = 3) uniform texture2D noiseMap; ///< RGBA uniform noise in [0,1], uncorrelated.
+layout(set = 1, binding = 5) uniform texture2D directionsMap; ///< Random 3D directions on the unit sphere.
+layout(set = 1, binding = 6) uniform texture3D noise3DMap; ///< Random 3D directions on the unit sphere.
 
 layout(set = 0, binding = 0) uniform UniformBlock {
 	float iTime;
@@ -18,6 +18,11 @@ layout(set = 0, binding = 0) uniform UniformBlock {
 	float weightDecay;// = 0.5;
 };
 
+layout(set = 3, binding =  0) uniform sampler sClampNear;
+layout(set = 3, binding =  1) uniform sampler sRepeatNear;
+layout(set = 3, binding =  2) uniform sampler sClampLinear;
+layout(set = 3, binding =  3) uniform sampler sRepeatLinear;
+
 layout(location = 0) out vec4 fragColor; ///< Output color.
 
 
@@ -26,7 +31,7 @@ const int hashes[512] = int[](224, 169, 176, 19, 114, 187, 23, 16, 27, 252, 181,
 
 float dotGrad(ivec3 ip, vec3 dp){
 	int id = hashes[hashes[hashes[ip.x] + ip.y] + ip.z];
-	vec3 grad = texelFetch(directionsMap, ivec2(id/64, id%64), 0).rgb;
+	vec3 grad = texelFetch(sampler2D(directionsMap, sClampNear), ivec2(id/64, id%64), 0).rgb;
 	return dot((grad), dp);
 }
 
@@ -63,7 +68,7 @@ float worley(vec3 p){
 	ivec3 pp = ip+1;
 	ivec3 mp = ip-1;
 
-	ivec3 clCoords = ivec3(floor(log2(textureSize(noise3DMap, 0).xyz)));
+	ivec3 clCoords = ivec3(floor(log2(textureSize(sampler3D(noise3DMap, sRepeatNear), 0).xyz)));
 	ivec3 tp = ivec3(1) << clCoords;
 	
 	ivec3 wip[3];
@@ -76,7 +81,7 @@ float worley(vec3 p){
 		for(int dy = -1; dy <= 1; ++dy){
 			for(int dx = -1; dx <= 1; ++dx){
 				ivec3 pcoord = ivec3(wip[dx+1].x, wip[dy+1].y, wip[dz+1].z);
-				vec3 rnd = texelFetch(noise3DMap, pcoord, 0).rgb;
+				vec3 rnd = texelFetch(sampler3D(noise3DMap, sRepeatNear), pcoord, 0).rgb;
 				// Use the [0,1] random numbers as shift from the cell corner.
 				vec3 loc = vec3(dx, dy, dz) + rnd;
 				float dist = distance(loc, dp);
