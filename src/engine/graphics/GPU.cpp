@@ -517,7 +517,8 @@ void GPU::uploadTexture(const Texture & texture) {
 			const size_t compCount = img.pixels.size();
 			// Ideally parallelism should be moved higher up.
 			System::forParallel(0, compCount, [&img, currentOffset, &transferBuffer](size_t cid){
-				*(transferBuffer.gpu->mapped + currentOffset + cid) = (unsigned char)(img.pixels[cid] * 255.0f);
+				const float val = glm::clamp(img.pixels[cid], 0.0f, 1.0f);
+				*(transferBuffer.gpu->mapped + currentOffset + cid) = (unsigned char)(255.0f * val);
 			});
 			currentOffset += compCount;
 		}
