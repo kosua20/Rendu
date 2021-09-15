@@ -1,11 +1,12 @@
 #include "utils.glsl"
+#include "samplers.glsl"
 
 layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In ;
 
-layout(set = 1, binding = 0) uniform sampler2D colorScene; ///< Scene color.
-layout(set = 1, binding = 1) uniform sampler2D depthScene; ///< Scene depth.
+layout(set = 1, binding = 0) uniform texture2D colorScene; ///< Scene color.
+layout(set = 1, binding = 1) uniform texture2D depthScene; ///< Scene depth.
 
 layout(set = 0, binding = 0) uniform UniformBlock {
 	vec2 projParams; ///< Projection depth-related coefficients.
@@ -20,9 +21,9 @@ layout(location = 1) out vec2 cocDepth; ///< Circle of confusion and depth.
 /** Compute view-space depth and a circle of confusion radius, for depth of field. */
 void main(){
 	// Compute view space depth and circle of confusion.
-	float depth = abs(linearizeDepth(textureLod(depthScene, In.uv, 0.0).r, projParams));
+	float depth = abs(linearizeDepth(textureLod(sampler2D(depthScene, sClampLinear), In.uv, 0.0).r, projParams));
 	float coc = focusScale * abs(1.0 / focusDist - 1.0 / depth);
 	cocDepth = vec2(coc, depth);
 	// Downscale color.
-	downscaledColor = textureLod(colorScene, In.uv, 0.0).rgb;
+	downscaledColor = textureLod(sampler2D(colorScene, sClampLinear), In.uv, 0.0).rgb;
 }

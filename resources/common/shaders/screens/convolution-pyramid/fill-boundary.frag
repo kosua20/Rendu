@@ -1,9 +1,10 @@
+#include "samplers.glsl"
 
 layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In ;
 
-layout(set = 1, binding = 0) uniform sampler2D screenTexture; ///< Image to process.
+layout(set = 1, binding = 0) uniform texture2D screenTexture; ///< Image to process.
 
 layout(location = 0) out vec4 fragColor; ///< Color.
 
@@ -21,15 +22,15 @@ void main(){
 
 	fragColor = vec4(0.0);
 
-	vec3 fullColor = textureLod(screenTexture, In.uv, 0.0).rgb;
+	vec3 fullColor = textureLod(sampler2D(screenTexture, sClampLinear), In.uv, 0.0).rgb;
 	
 	float isInMask = float(all(equal(fullColor, vec3(0.0))));
 	float maskLaplacian = -4.0*isInMask;
 
-	vec3 col110 = textureLodOffset(screenTexture, In.uv, 0.0, ivec2( 1, 0)).rgb;
-	vec3 col101 = textureLodOffset(screenTexture, In.uv, 0.0, ivec2( 0, 1)).rgb;
-	vec3 col010 = textureLodOffset(screenTexture, In.uv, 0.0, ivec2(-1, 0)).rgb;
-	vec3 col001 = textureLodOffset(screenTexture, In.uv, 0.0, ivec2( 0,-1)).rgb;
+	vec3 col110 = textureLodOffset(sampler2D(screenTexture, sClampLinear), In.uv, 0.0, ivec2( 1, 0)).rgb;
+	vec3 col101 = textureLodOffset(sampler2D(screenTexture, sClampLinear), In.uv, 0.0, ivec2( 0, 1)).rgb;
+	vec3 col010 = textureLodOffset(sampler2D(screenTexture, sClampLinear), In.uv, 0.0, ivec2(-1, 0)).rgb;
+	vec3 col001 = textureLodOffset(sampler2D(screenTexture, sClampLinear), In.uv, 0.0, ivec2( 0,-1)).rgb;
 	maskLaplacian += float(all(equal(col110, vec3(0.0))));
 	maskLaplacian += float(all(equal(col101, vec3(0.0))));
 	maskLaplacian += float(all(equal(col010, vec3(0.0))));

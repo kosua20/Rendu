@@ -1,5 +1,6 @@
 #include "constants.glsl"
 #include "geometry.glsl"
+#include "samplers.glsl"
 
 /** Atmosphere parameters. */
 struct AtmosphereParameters {
@@ -50,7 +51,7 @@ float miePhase(float cosAngle, float gMie){
 	\param params atmosphere physics parameters
 	\return the estimated radiance
 */
-vec3 computeAtmosphereRadiance(vec3 rayOrigin, vec3 rayDir, vec3 sunDir, sampler2D scatterTable, AtmosphereParameters params) {
+vec3 computeAtmosphereRadiance(vec3 rayOrigin, vec3 rayDir, vec3 sunDir, texture2D scatterTable, AtmosphereParameters params) {
 	// Set the planet center to the origin.
 	rayOrigin += vec3(0.0, params.groundRadius, 0.0);
 	// Check intersection with atmosphere.
@@ -102,7 +103,7 @@ vec3 computeAtmosphereRadiance(vec3 rayOrigin, vec3 rayDir, vec3 sunDir, sampler
 		float relativeCosAngle = -0.5 * sunDir.y + 0.5;
 		// Compute UVs, scaled to read at the center of pixels.
 		vec2 attenuationUVs = (1.0-1.0/512.0)*vec2(relativeHeight, relativeCosAngle)+0.5/512.0;
-		vec3 secondaryAttenuation = texture(scatterTable, attenuationUVs).rgb;
+		vec3 secondaryAttenuation = textureLod(sampler2D(scatterTable, sClampLinearNear), attenuationUVs, 0.0).rgb;
 		
 		// Final attenuation.
 		vec3 attenuation = directAttenuation * secondaryAttenuation;

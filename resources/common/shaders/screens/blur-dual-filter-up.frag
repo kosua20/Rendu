@@ -1,9 +1,10 @@
+#include "samplers.glsl"
 
 layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In ;
 
-layout(set = 1, binding = 0) uniform sampler2D screenTexture; ///< Image to blur.
+layout(set = 1, binding = 0) uniform texture2D screenTexture; ///< Image to blur.
 
 layout(location = 0) out vec3 fragColor; ///< Blurred color.
 
@@ -19,15 +20,15 @@ void main(){
 
 	// Color fetches following the described pattern.
 	vec3 col;
-	col  = textureLod(screenTexture, In.uv - shiftX, 0.0).rgb / 12.0;
-	col += textureLod(screenTexture, In.uv + shiftX, 0.0).rgb / 12.0;
-	col += textureLod(screenTexture, In.uv - shiftY, 0.0).rgb / 12.0;
-	col += textureLod(screenTexture, In.uv + shiftY, 0.0).rgb / 12.0;
+	col  = textureLod(sampler2D(screenTexture, sClampLinear), In.uv - shiftX, 0.0).rgb / 12.0;
+	col += textureLod(sampler2D(screenTexture, sClampLinear), In.uv + shiftX, 0.0).rgb / 12.0;
+	col += textureLod(sampler2D(screenTexture, sClampLinear), In.uv - shiftY, 0.0).rgb / 12.0;
+	col += textureLod(sampler2D(screenTexture, sClampLinear), In.uv + shiftY, 0.0).rgb / 12.0;
 
-	col += textureLod(screenTexture, In.uv - shift , 0.0).rgb / 6.0;
-	col += textureLod(screenTexture, In.uv + shift , 0.0).rgb / 6.0;
-	col += textureLod(screenTexture, In.uv - sshift, 0.0).rgb / 6.0;
-	col += textureLod(screenTexture, In.uv + sshift, 0.0).rgb / 6.0;
+	col += textureLod(sampler2D(screenTexture, sClampLinear), In.uv - shift , 0.0).rgb / 6.0;
+	col += textureLod(sampler2D(screenTexture, sClampLinear), In.uv + shift , 0.0).rgb / 6.0;
+	col += textureLod(sampler2D(screenTexture, sClampLinear), In.uv - sshift, 0.0).rgb / 6.0;
+	col += textureLod(sampler2D(screenTexture, sClampLinear), In.uv + sshift, 0.0).rgb / 6.0;
 
 	fragColor = col;
 }

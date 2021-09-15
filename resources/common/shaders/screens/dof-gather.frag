@@ -1,11 +1,12 @@
 #include "constants.glsl"
+#include "samplers.glsl"
 
 layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In ;
 
-layout(set = 1, binding = 0) uniform sampler2D sceneColor; ///< Texture to overlay.
-layout(set = 1, binding = 1) uniform sampler2D cocDepth; ///< Texture to overlay.
+layout(set = 1, binding = 0) uniform texture2D sceneColor; ///< Texture to overlay.
+layout(set = 1, binding = 1) uniform texture2D cocDepth; ///< Texture to overlay.
 
 layout(set = 0, binding = 0) uniform UniformBlock {
 	vec2 invSize; ///< Pixel shift.
@@ -24,10 +25,10 @@ layout(location = 0) out vec4 fragColor; ///< Scene color.
  */
 void main(){
 	// Read center info.
-	vec2 centerCoc = textureLod(cocDepth, In.uv, 0.0).rg;
+	vec2 centerCoc = textureLod(sampler2D(cocDepth, sClampNear), In.uv, 0.0).rg;
 	centerCoc.x = clamp(centerCoc.x, 0.0, RADIUS);
 	
-	vec3 color = textureLod(sceneColor, In.uv, 0.0).rgb;
+	vec3 color = textureLod(sampler2D(sceneColor, sClampLinear), In.uv, 0.0).rgb;
 	int sum = 1;
 	float size = centerCoc.x;
 
@@ -35,8 +36,8 @@ void main(){
 	for(float angle = 0.0; radius < RADIUS; angle += GOLDEN_ANGLE){
 		// Compute UV following a spiral.
 		vec2 newUV = In.uv + vec2(cos(angle), sin(angle)) * invSize * radius;
-		vec2 newCoc = textureLod(cocDepth, newUV, 0.0).rg;
-		vec3 newColor = textureLod(sceneColor, newUV, 0.0).rgb;
+		vec2 newCoc = textureLod(sampler2D(cocDepth, sClampNear), newUV, 0.0).rg;
+		vec3 newColor = textureLod(sampler2D(sceneColor, sClampLinear), newUV, 0.0).rgb;
 		// If the CoC disagrees to much, we are at a background depth discontinuity.
 		if(newCoc.y > centerCoc.y){
 			newCoc.x = clamp(newCoc.x, 0.0, 2.0 * centerCoc.x);

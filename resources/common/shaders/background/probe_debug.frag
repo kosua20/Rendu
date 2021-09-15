@@ -9,7 +9,7 @@ layout(location = 0) in INTERFACE {
     vec4 nor; ///< Normal in world space.
 } In ;
 
-layout(set = 1, binding = 0) uniform samplerCube texture0; ///< Cubemap color.
+layout(set = 1, binding = 0) uniform textureCube texture0; ///< Cubemap color.
 
 /// SH approximation of the environment irradiance.
 layout(std140, set = 2, binding = 0) uniform SHCoeffs {
@@ -32,7 +32,7 @@ void main(){
 	} else {
 		vec3 v = normalize(In.pos.xyz - camPos);
 		vec3 r = reflect(v, n);
-		fragColor = textureLod(texture0, toCube(r), lod);
+		fragColor = textureLod(samplerCube(texture0, sClampLinear), toCube(r), lod);
 	}
 
 }

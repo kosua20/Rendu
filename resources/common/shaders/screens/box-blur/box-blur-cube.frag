@@ -1,10 +1,11 @@
 #include "utils.glsl"
+#include "samplers.glsl"
 
 layout(location = 0) in INTERFACE {
 	vec3 pos; ///< Position.
 } In;
 
-layout(set = 1, binding = 0) uniform samplerCube screenTexture; ///< Image to blur.
+layout(set = 1, binding = 0) uniform textureCube screenTexture; ///< Image to blur.
 
 layout(set = 0, binding = 0) uniform UniformBlock {
 	vec3 up; 			///< Face vertical vector.
@@ -22,32 +23,32 @@ void main(){
 	// We shift the fetch direction by moving on the face plane, which is at distance invHalfSize.
 	// To do this we use the right and up vectors of the face as displacement directions.
 	vec4 color;
-	color  = textureLod(screenTexture, toCube( In.pos + invHalfSize * (-2 * right + -2 * up) ), 0.0);
-	color += textureLod(screenTexture, toCube( In.pos + invHalfSize * (-2 * right          ) ), 0.0);
-	color += textureLod(screenTexture, toCube( In.pos + invHalfSize * (-2 * right +  2 * up) ), 0.0);
-	color += textureLod(screenTexture, toCube( In.pos + invHalfSize * (-1 * right + -1 * up) ), 0.0);
-	color += textureLod(screenTexture, toCube( In.pos + invHalfSize * (-1 * right +  1 * up) ), 0.0);
-	color += textureLod(screenTexture, toCube( In.pos + invHalfSize * (             -2 * up) ), 0.0);
-	color += textureLod(screenTexture, toCube( In.pos                                        ), 0.0);
-	color += textureLod(screenTexture, toCube( In.pos + invHalfSize * (              2 * up) ), 0.0);
-	color += textureLod(screenTexture, toCube( In.pos + invHalfSize * ( 1 * right + -1 * up) ), 0.0);
-	color += textureLod(screenTexture, toCube( In.pos + invHalfSize * ( 1 * right +  1 * up) ), 0.0);
-	color += textureLod(screenTexture, toCube( In.pos + invHalfSize * ( 2 * right + -2 * up) ), 0.0);
-	color += textureLod(screenTexture, toCube( In.pos + invHalfSize * ( 2 * right          ) ), 0.0);
-	color += textureLod(screenTexture, toCube( In.pos + invHalfSize * ( 2 * right +  2 * up) ), 0.0);
+	color  = textureLod(samplerCube(screenTexture, sClampLinear), toCube( In.pos + invHalfSize * (-2 * right + -2 * up) ), 0.0);
+	color += textureLod(samplerCube(screenTexture, sClampLinear), toCube( In.pos + invHalfSize * (-2 * right          ) ), 0.0);
+	color += textureLod(samplerCube(screenTexture, sClampLinear), toCube( In.pos + invHalfSize * (-2 * right +  2 * up) ), 0.0);
+	color += textureLod(samplerCube(screenTexture, sClampLinear), toCube( In.pos + invHalfSize * (-1 * right + -1 * up) ), 0.0);
+	color += textureLod(samplerCube(screenTexture, sClampLinear), toCube( In.pos + invHalfSize * (-1 * right +  1 * up) ), 0.0);
+	color += textureLod(samplerCube(screenTexture, sClampLinear), toCube( In.pos + invHalfSize * (             -2 * up) ), 0.0);
+	color += textureLod(samplerCube(screenTexture, sClampLinear), toCube( In.pos                                        ), 0.0);
+	color += textureLod(samplerCube(screenTexture, sClampLinear), toCube( In.pos + invHalfSize * (              2 * up) ), 0.0);
+	color += textureLod(samplerCube(screenTexture, sClampLinear), toCube( In.pos + invHalfSize * ( 1 * right + -1 * up) ), 0.0);
+	color += textureLod(samplerCube(screenTexture, sClampLinear), toCube( In.pos + invHalfSize * ( 1 * right +  1 * up) ), 0.0);
+	color += textureLod(samplerCube(screenTexture, sClampLinear), toCube( In.pos + invHalfSize * ( 2 * right + -2 * up) ), 0.0);
+	color += textureLod(samplerCube(screenTexture, sClampLinear), toCube( In.pos + invHalfSize * ( 2 * right          ) ), 0.0);
+	color += textureLod(samplerCube(screenTexture, sClampLinear), toCube( In.pos + invHalfSize * ( 2 * right +  2 * up) ), 0.0);
 	
-	color += textureLod(screenTexture, toCube( In.pos + invHalfSize * (-2 * right + -1 * up) ), 0.0);
-	color += textureLod(screenTexture, toCube( In.pos + invHalfSize * (-2 * right +  1 * up) ), 0.0);
-	color += textureLod(screenTexture, toCube( In.pos + invHalfSize * (-1 * right + -2 * up) ), 0.0);
-	color += textureLod(screenTexture, toCube( In.pos + invHalfSize * (-1 * right +  0 * up) ), 0.0);
-	color += textureLod(screenTexture, toCube( In.pos + invHalfSize * (-1 * right +  2 * up) ), 0.0);
-	color += textureLod(screenTexture, toCube( In.pos + invHalfSize * (             -1 * up) ), 0.0);
-	color += textureLod(screenTexture, toCube( In.pos + invHalfSize * (              1 * up) ), 0.0);
-	color += textureLod(screenTexture, toCube( In.pos + invHalfSize * ( 1 * right + -2 * up) ), 0.0);
-	color += textureLod(screenTexture, toCube( In.pos + invHalfSize * ( 1 * right +  0 * up) ), 0.0);
-	color += textureLod(screenTexture, toCube( In.pos + invHalfSize * ( 1 * right +  2 * up) ), 0.0);
-	color += textureLod(screenTexture, toCube( In.pos + invHalfSize * ( 2 * right + -1 * up) ), 0.0);
-	color += textureLod(screenTexture, toCube( In.pos + invHalfSize * ( 2 * right +  1 * up) ), 0.0);
+	color += textureLod(samplerCube(screenTexture, sClampLinear), toCube( In.pos + invHalfSize * (-2 * right + -1 * up) ), 0.0);
+	color += textureLod(samplerCube(screenTexture, sClampLinear), toCube( In.pos + invHalfSize * (-2 * right +  1 * up) ), 0.0);
+	color += textureLod(samplerCube(screenTexture, sClampLinear), toCube( In.pos + invHalfSize * (-1 * right + -2 * up) ), 0.0);
+	color += textureLod(samplerCube(screenTexture, sClampLinear), toCube( In.pos + invHalfSize * (-1 * right +  0 * up) ), 0.0);
+	color += textureLod(samplerCube(screenTexture, sClampLinear), toCube( In.pos + invHalfSize * (-1 * right +  2 * up) ), 0.0);
+	color += textureLod(samplerCube(screenTexture, sClampLinear), toCube( In.pos + invHalfSize * (             -1 * up) ), 0.0);
+	color += textureLod(samplerCube(screenTexture, sClampLinear), toCube( In.pos + invHalfSize * (              1 * up) ), 0.0);
+	color += textureLod(samplerCube(screenTexture, sClampLinear), toCube( In.pos + invHalfSize * ( 1 * right + -2 * up) ), 0.0);
+	color += textureLod(samplerCube(screenTexture, sClampLinear), toCube( In.pos + invHalfSize * ( 1 * right +  0 * up) ), 0.0);
+	color += textureLod(samplerCube(screenTexture, sClampLinear), toCube( In.pos + invHalfSize * ( 1 * right +  2 * up) ), 0.0);
+	color += textureLod(samplerCube(screenTexture, sClampLinear), toCube( In.pos + invHalfSize * ( 2 * right + -1 * up) ), 0.0);
+	color += textureLod(samplerCube(screenTexture, sClampLinear), toCube( In.pos + invHalfSize * ( 2 * right +  1 * up) ), 0.0);
 
 	fragColor = color / 25.0;
 }

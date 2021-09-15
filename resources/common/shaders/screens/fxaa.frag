@@ -1,11 +1,11 @@
-
 #include "colors.glsl"
+#include "samplers.glsl"
 
 layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In ;
 
-layout(set = 1, binding = 0) uniform sampler2D screenTexture; ///< Image to filter.
+layout(set = 1, binding = 0) uniform texture2D screenTexture; ///< Image to filter.
 
 layout(set = 0, binding = 0) uniform UniformBlock {
 	vec2 inverseScreenSize; ///< Size of one-pixel in UV space.
@@ -24,36 +24,36 @@ layout(location = 0) out vec3 fragColor; ///< Color.
 /** Performs FXAA post-process anti-aliasing as described in the Nvidia FXAA white paper and the associated shader code.
 */
 void main(){
-	
-	vec3 colorCenter = texture(screenTexture,In.uv).rgb;
+
+	vec3 colorCenter = texture(sampler2D(screenTexture, sClampLinear), In.uv).rgb;
 	
 	// Luma at the current fragment
 	float lumaCenter = rgb2luma(colorCenter);
 	
 	// Luma at the four direct neighbours of the current fragment.
-	float lumaDown 	= rgb2luma(textureLodOffset(screenTexture,In.uv, 0.0,ivec2( 0,-1)).rgb);
-	float lumaUp 	= rgb2luma(textureLodOffset(screenTexture,In.uv, 0.0,ivec2( 0, 1)).rgb);
-	float lumaLeft 	= rgb2luma(textureLodOffset(screenTexture,In.uv, 0.0,ivec2(-1, 0)).rgb);
-	float lumaRight = rgb2luma(textureLodOffset(screenTexture,In.uv, 0.0,ivec2( 1, 0)).rgb);
+	float lumaDown 	= rgb2luma(textureLodOffset(sampler2D(screenTexture, sClampLinear), In.uv, 0.0,ivec2( 0,-1)).rgb);
+	float lumaUp 	= rgb2luma(textureLodOffset(sampler2D(screenTexture, sClampLinear), In.uv, 0.0,ivec2( 0, 1)).rgb);
+	float lumaLeft 	= rgb2luma(textureLodOffset(sampler2D(screenTexture, sClampLinear), In.uv, 0.0,ivec2(-1, 0)).rgb);
+	float lumaRight = rgb2luma(textureLodOffset(sampler2D(screenTexture, sClampLinear), In.uv, 0.0,ivec2( 1, 0)).rgb);
 	
 	// Find the maximum and minimum luma around the current fragment.
-	float lumaMin = min(lumaCenter,min(min(lumaDown,lumaUp),min(lumaLeft,lumaRight)));
-	float lumaMax = max(lumaCenter,max(max(lumaDown,lumaUp),max(lumaLeft,lumaRight)));
+	float lumaMin = min(lumaCenter, min(min(lumaDown, lumaUp), min(lumaLeft, lumaRight)));
+	float lumaMax = max(lumaCenter, max(max(lumaDown, lumaUp), max(lumaLeft, lumaRight)));
 	
 	// Compute the delta.
 	float lumaRange = lumaMax - lumaMin;
 	
 	// If the luma variation is lower that a threshold (or if we are in a really dark area), we are not on an edge, don't perform any AA.
-	if(lumaRange < max(EDGE_THRESHOLD_MIN,lumaMax*EDGE_THRESHOLD_MAX)){
+	if(lumaRange < max(EDGE_THRESHOLD_MIN, lumaMax * EDGE_THRESHOLD_MAX)){
 		fragColor = colorCenter;
 		return;
 	}
 	
 	// Query the 4 remaining corners lumas.
-	float lumaDownLeft 	= rgb2luma(textureLodOffset(screenTexture,In.uv, 0.0,ivec2(-1,-1)).rgb);
-	float lumaUpRight 	= rgb2luma(textureLodOffset(screenTexture,In.uv, 0.0,ivec2( 1, 1)).rgb);
-	float lumaUpLeft 	= rgb2luma(textureLodOffset(screenTexture,In.uv, 0.0,ivec2(-1, 1)).rgb);
-	float lumaDownRight = rgb2luma(textureLodOffset(screenTexture,In.uv, 0.0,ivec2( 1,-1)).rgb);
+	float lumaDownLeft 	= rgb2luma(textureLodOffset(sampler2D(screenTexture, sClampLinear), In.uv, 0.0,ivec2(-1,-1)).rgb);
+	float lumaUpRight 	= rgb2luma(textureLodOffset(sampler2D(screenTexture, sClampLinear), In.uv, 0.0,ivec2( 1, 1)).rgb);
+	float lumaUpLeft 	= rgb2luma(textureLodOffset(sampler2D(screenTexture, sClampLinear), In.uv, 0.0,ivec2(-1, 1)).rgb);
+	float lumaDownRight = rgb2luma(textureLodOffset(sampler2D(screenTexture, sClampLinear), In.uv, 0.0,ivec2( 1,-1)).rgb);
 	
 	// Combine the four edges lumas (using intermediary variables for future computations with the same values).
 	float lumaDownUp = lumaDown + lumaUp;
@@ -113,8 +113,8 @@ void main(){
 	vec2 uv2 = currentUv + offset * QUALITY(0);
 	
 	// Read the lumas at both current extremities of the exploration segment, and compute the delta wrt to the local average luma.
-	float lumaEnd1 = rgb2luma(textureLod(screenTexture,uv1, 0.0).rgb);
-	float lumaEnd2 = rgb2luma(textureLod(screenTexture,uv2, 0.0).rgb);
+	float lumaEnd1 = rgb2luma(textureLod(sampler2D(screenTexture, sClampLinear), uv1, 0.0).rgb);
+	float lumaEnd2 = rgb2luma(textureLod(sampler2D(screenTexture, sClampLinear), uv2, 0.0).rgb);
 	lumaEnd1 -= lumaLocalAverage;
 	lumaEnd2 -= lumaLocalAverage;
 	
@@ -137,12 +137,12 @@ void main(){
 		for(int i = 2; i < ITERATIONS; i++){
 			// If needed, read luma in 1st direction, compute delta.
 			if(!reached1){
-				lumaEnd1 = rgb2luma(textureLod(screenTexture, uv1, 0.0).rgb);
+				lumaEnd1 = rgb2luma(textureLod(sampler2D(screenTexture, sClampLinear), uv1, 0.0).rgb);
 				lumaEnd1 = lumaEnd1 - lumaLocalAverage;
 			}
 			// If needed, read luma in opposite direction, compute delta.
 			if(!reached2){
-				lumaEnd2 = rgb2luma(textureLod(screenTexture, uv2, 0.0).rgb);
+				lumaEnd2 = rgb2luma(textureLod(sampler2D(screenTexture, sClampLinear), uv2, 0.0).rgb);
 				lumaEnd2 = lumaEnd2 - lumaLocalAverage;
 			}
 			// If the luma deltas at the current extremities is larger than the local gradient, we have reached the side of the edge.
@@ -212,7 +212,7 @@ void main(){
 	}
 	
 	// Read the color at the new UV coordinates, and use it.
-	vec3 finalColor = textureLod(screenTexture,finalUv, 0.0).rgb;
+	vec3 finalColor = textureLod(sampler2D(screenTexture, sClampLinear), finalUv, 0.0).rgb;
 	fragColor = finalColor;
 	
 }

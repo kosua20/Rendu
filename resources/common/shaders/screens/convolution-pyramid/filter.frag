@@ -1,9 +1,10 @@
+#include "samplers.glsl"
 
 layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In;
 
-layout(set = 1, binding = 0) uniform sampler2D screenTexture; ///< Level to filter.
+layout(set = 1, binding = 0) uniform texture2D screenTexture; ///< Level to filter.
 
 layout(location = 0) out vec4 fragColor; ///< Color.
 
@@ -31,7 +32,7 @@ void main(){
 			if(isOutside(newPix, size)){
 				continue;
 			}
-			accum += g[dx+1] * g[dy+1] * texelFetch(screenTexture, newPix,0);
+			accum += g[dx+1] * g[dy+1] * texelFetch(sampler2D(screenTexture, sClampNear), newPix,0);
 		}
 	}
 	fragColor = accum;

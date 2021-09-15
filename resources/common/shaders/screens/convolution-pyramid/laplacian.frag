@@ -1,9 +1,10 @@
+#include "samplers.glsl"
 
 layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In ;
 
-layout(set = 1, binding = 0) uniform sampler2D screenTexture; ///< Image to process.
+layout(set = 1, binding = 0) uniform texture2D screenTexture; ///< Image to process.
 
 layout(set = 0, binding = 0) uniform UniformBlock {
 	int scale; ///< The downscaling applied to the input image.
@@ -32,28 +33,28 @@ void main(){
 	
 	vec2 uvs = In.uv*(vec2(padSize)*pixelShift.xy) - pixelShift.xy;
 	if(!isOutside(uvs)){
-		vec3 col = textureLod(screenTexture, uvs, 0.0).rgb;
+		vec3 col = textureLod(sampler2D(screenTexture, sClampLinear), uvs, 0.0).rgb;
 		div = 4.0 * col;
 	}
 	
 	vec2 uvs110 = uvs + pixelShift.xz;
 	if(!isOutside(uvs110)){
-		vec3 col110 = textureLod(screenTexture, uvs110, 0.0).rgb;
+		vec3 col110 = textureLod(sampler2D(screenTexture, sClampLinear), uvs110, 0.0).rgb;
 		div -= col110;
 	}
 	vec2 uvs101 = uvs + pixelShift.zy;
 	if(!isOutside(uvs101)){
-		vec3 col110 = textureLod(screenTexture, uvs101, 0.0).rgb;
+		vec3 col110 = textureLod(sampler2D(screenTexture, sClampLinear), uvs101, 0.0).rgb;
 		div -= col110;
 	}
 	vec2 uvs010 = uvs - pixelShift.xz;
 	if(!isOutside(uvs010)){
-		vec3 col110 = textureLod(screenTexture, uvs010, 0.0).rgb;
+		vec3 col110 = textureLod(sampler2D(screenTexture, sClampLinear), uvs010, 0.0).rgb;
 		div -= col110;
 	}
 	vec2 uvs001 = uvs - pixelShift.zy;
 	if(!isOutside(uvs001)){
-		vec3 col110 = textureLod(screenTexture, uvs001, 0.0).rgb;
+		vec3 col110 = textureLod(sampler2D(screenTexture, sClampLinear), uvs001, 0.0).rgb;
 		div -= col110;
 	}
 	

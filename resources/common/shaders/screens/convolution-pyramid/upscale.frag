@@ -1,10 +1,11 @@
+#include "samplers.glsl"
 
 layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In ;
 
-layout(set = 1, binding = 0) uniform sampler2D unfilteredCurrent; ///< Current h1 filtered level.
-layout(set = 1, binding = 1) uniform sampler2D filteredSmaller; ///< Previous h1+g filtered level.
+layout(set = 1, binding = 0) uniform texture2D unfilteredCurrent; ///< Current h1 filtered level.
+layout(set = 1, binding = 1) uniform texture2D filteredSmaller; ///< Previous h1+g filtered level.
 
 layout(set = 0, binding = 0) uniform UniformBlock {
 	float h1[5]; ///< h1 filter parameters.
@@ -36,7 +37,7 @@ void main(){
 			if(isOutside(newPix, size)){
 				continue;
 			}
-			accum += g[dx+1] * g[dy+1] * texelFetch(unfilteredCurrent, newPix,0);
+			accum += g[dx+1] * g[dy+1] * texelFetch(sampler2D(unfilteredCurrent, sClampNear), newPix,0);
 		}
 	}
 	
@@ -54,7 +55,7 @@ void main(){
 			if(isOutside(newPix, sizeSmall)){
 				continue;
 			}
-			accum += h2 * h1[dx+2] * h1[dy+2] * texelFetch(filteredSmaller, newPix, 0);
+			accum += h2 * h1[dx+2] * h1[dy+2] * texelFetch(sampler2D(filteredSmaller, sClampNear), newPix, 0);
 		}
 	}
 	

@@ -1,10 +1,11 @@
+#include "samplers.glsl"
 
 layout(location = 0) in INTERFACE {
 	vec4 worldPos; ///< World space position.
 	vec2 uv; ///< Texture coordinates.
 } In ;
 
-layout(set = 1, binding = 0) uniform sampler2D mask;  ///< RGBA texture.
+layout(set = 1, binding = 0) uniform texture2D mask;  ///< RGBA texture.
 
 layout(set = 0, binding = 0) uniform UniformBlock {
 	vec3 lightPositionWorld; ///< The world space position of the light.
@@ -18,7 +19,7 @@ layout(location = 0) out vec2 fragColor; ///< World space depth and depth square
 void main(){
 	// Mask cutout.
 	if(hasMask){
-		float a = texture(mask, In.uv).a;
+		float a = texture(sampler2D(mask, sRepeatLinearLinear), In.uv).a;
 		if(a <= 0.01){
 			discard;
 		}

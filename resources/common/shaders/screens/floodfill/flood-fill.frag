@@ -1,9 +1,10 @@
+#include "samplers.glsl"
 
 layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In ;
 
-layout(set = 1, binding = 0) uniform usampler2D screenTexture; ///< Current seed map.
+layout(set = 1, binding = 0) uniform utexture2D screenTexture; ///< Current seed map.
 
 layout(set = 0, binding = 0) uniform UniformBlock {
 	int stepDist; ///< The distance between samples.
@@ -28,7 +29,7 @@ void main(){
 	ivec2 size = ivec2(textureSize(screenTexture, 0));
 	
 	// Fetch the current seed for the pixel.
-	uvec2 bestSeed = texelFetch(screenTexture, baseCoords, 0).xy;
+	uvec2 bestSeed = texelFetch(usampler2D(screenTexture, sRepeatNear), baseCoords, 0).xy;
 	float bestDist = length(vec2(bestSeed) - currentPixel);
 	
 	// Fetch the 8 neighbours, at a distance stepDist, and find the closest one.
@@ -41,7 +42,7 @@ void main(){
 		if(isOutside(coords, size)){
 			continue;
 		}
-		uvec2 seed = texelFetch(screenTexture, coords, 0).xy;
+		uvec2 seed = texelFetch(usampler2D(screenTexture, sRepeatNear), coords, 0).xy;
 		float dist = length(vec2(seed) - currentPixel);
 		if(dist <= bestDist){
 			bestDist = dist;

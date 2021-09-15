@@ -1,4 +1,5 @@
 #include "utils.glsl"
+#include "samplers.glsl"
 
 #define SHADOW_NONE 0
 #define SHADOW_BASIC 1
@@ -11,13 +12,13 @@
 	\param bias the bias to apply
 	\return the lighting factor (0.0 = in shadow)
 */
-float shadowBasic(vec3 lightSpacePosition, sampler2DArray smap, int layer, float bias){
+float shadowBasic(vec3 lightSpacePosition, texture2DArray smap, int layer, float bias){
 	// Avoid shadows when falling outside the shadow map.
 	if(any(greaterThan(abs(lightSpacePosition.xy-0.5), vec2(0.5)))){
 		return 1.0;
 	}
 	// Read first and second moment from shadow map.
-	float depth = textureLod(smap, vec3(lightSpacePosition.xy, layer), 0.0).r;
+	float depth = textureLod(sampler2DArray(smap, sClampLinear), vec3(lightSpacePosition.xy, layer), 0.0).r;
 	if(depth >= 1.0){
 		// No information in the depthmap: no occluder.
 		return 1.0;
@@ -35,9 +36,9 @@ float shadowBasic(vec3 lightSpacePosition, sampler2DArray smap, int layer, float
 	\param bias the bias to apply
 	\return the lighting factor (0.0 = in shadow)
 */
-float shadowBasicCube(vec3 lightToPosDir, samplerCubeArray smap, int layer, float farPlane, float bias){
+float shadowBasicCube(vec3 lightToPosDir, textureCubeArray smap, int layer, float farPlane, float bias){
 	// Read first and second moment from shadow map.
-	float depth = textureLod(smap, toCube(lightToPosDir, layer), 0.0).r;
+	float depth = textureLod(samplerCubeArray(smap, sClampLinear), toCube(lightToPosDir, layer), 0.0).r;
 	if(depth >= 1.0){
 		// No information in the depthmap: no occluder.
 		return 1.0;
@@ -54,14 +55,14 @@ float shadowBasicCube(vec3 lightToPosDir, samplerCubeArray smap, int layer, floa
 	\param layer the texture layer to read from
 	\return the lighting factor (0.0 = in shadow)
 */
-float shadowVSM(vec3 lightSpacePosition, sampler2DArray smap, int layer){
+float shadowVSM(vec3 lightSpacePosition, texture2DArray smap, int layer){
 	// Avoid shadows when falling outside the shadow map.
 	if(any(greaterThan(abs(lightSpacePosition.xy-0.5), vec2(0.5)))){
 		return 1.0;
 	}
 	float probabilityMax = 1.0;
 	// Read first and second moment from shadow map.
-	vec2 moments = textureLod(smap, vec3(lightSpacePosition.xy, layer), 0.0).rg;
+	vec2 moments = textureLod(sampler2DArray(smap, sClampLinear), vec3(lightSpacePosition.xy, layer), 0.0).rg;
 	if(moments.x >= 1.0){
 		// No information in the depthmap: no occluder.
 		return 1.0;
@@ -88,10 +89,10 @@ float shadowVSM(vec3 lightSpacePosition, sampler2DArray smap, int layer){
 	\param farPlane distance to the light projection far plane
 	\return the lighting factor (0.0 = in shadow)
 */
-float shadowVSMCube(vec3 lightToPosDir, samplerCubeArray smap, int layer, float farPlane){
+float shadowVSMCube(vec3 lightToPosDir, textureCubeArray smap, int layer, float farPlane){
 	float probabilityMax = 1.0;
 	// Read first and second moment from shadow map.
-	vec2 moments = textureLod(smap, toCube(lightToPosDir, layer), 0.0).rg;
+	vec2 moments = textureLod(samplerCubeArray(smap, sClampLinear), toCube(lightToPosDir, layer), 0.0).rg;
 	if(moments.x >= 1.0){
 		// No information in the depthmap: no occluder.
 		return 1.0;
@@ -122,7 +123,7 @@ float shadowVSMCube(vec3 lightToPosDir, samplerCubeArray smap, int layer, float 
 	\param bias the bias to apply
 	\return the lighting factor (0.0 = in shadow)
 */
-float shadow(int mode, vec3 lightSpacePosition, sampler2DArray smap, int layer, float bias){
+float shadow(int mode, vec3 lightSpacePosition, texture2DArray smap, int layer, float bias){
 	if(mode == SHADOW_BASIC){
 		return shadowBasic(lightSpacePosition, smap, layer, bias);
 	}
@@ -142,7 +143,7 @@ float shadow(int mode, vec3 lightSpacePosition, sampler2DArray smap, int layer, 
 	\param bias the bias to apply
 	\return the lighting factor (0.0 = in shadow)
 */
-float shadowCube(int mode, vec3 lightToPosDir, samplerCubeArray smap, int layer, float farPlane, float bias){
+float shadowCube(int mode, vec3 lightToPosDir, textureCubeArray smap, int layer, float farPlane, float bias){
 	if(mode == SHADOW_BASIC) {
 		return shadowBasicCube(lightToPosDir, smap, layer, farPlane, bias);
 	}

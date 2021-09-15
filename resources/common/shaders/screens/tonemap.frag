@@ -1,9 +1,10 @@
+#include "samplers.glsl"
 
 layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In ;
 
-layout(set = 1, binding = 0) uniform sampler2D screenTexture; ///< Image to tonemap.
+layout(set = 1, binding = 0) uniform texture2D screenTexture; ///< Image to tonemap.
 
 layout(set = 0, binding = 0) uniform UniformBlock {
 	float customExposure; ///< Exposure
@@ -59,7 +60,7 @@ vec3 uncharted2(vec3 hdrColor){
 /** Apply a tonemapping operator to bring a HDR image to LDR. */
 void main(){
 	
-	vec3 finalColor = textureLod(screenTexture,In.uv, 0.0).rgb;
+	vec3 finalColor = textureLod(sampler2D(screenTexture, sClampLinear),In.uv, 0.0).rgb;
 	fragColor = apply ? simpleExposure(finalColor, customExposure) : clamp(finalColor, 0.0, 1.0);
 	
 	// Test if any component is still > 1, for debug purposes.

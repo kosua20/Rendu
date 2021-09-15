@@ -1,9 +1,10 @@
+#include "samplers.glsl"
 
 layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In ;
 
-layout(set = 1, binding = 0) uniform sampler2D screenTexture; ///< Image to output.
+layout(set = 1, binding = 0) uniform texture2D screenTexture; ///< Image to output.
 
 layout(location = 0) out vec3 fragColor; ///< Color.
 
@@ -23,6 +24,6 @@ void main(){
 		fragColor = vec3(0.0);
 		return;
 	}
-	fragColor = texelFetch(screenTexture, coords, 0).rgb;
+	fragColor = texelFetch(sampler2D(screenTexture, sClampNear), coords, 0).rgb;
 
 }

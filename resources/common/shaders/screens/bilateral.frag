@@ -1,13 +1,14 @@
 
 #include "utils.glsl"
+#include "samplers.glsl"
 
 layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In ;
 
-layout(set = 1, binding = 0) uniform sampler2D source; ///< Image to blur.
-layout(set = 1, binding = 1) uniform sampler2D depth; ///< Depth information.
-layout(set = 1, binding = 2) uniform sampler2D normal; ///< Normal information.
+layout(set = 1, binding = 0) uniform texture2D source; ///< Image to blur.
+layout(set = 1, binding = 1) uniform texture2D depth; ///< Depth information.
+layout(set = 1, binding = 2) uniform texture2D normal; ///< Normal information.
 
 layout(set = 0, binding = 0) uniform UniformBlock {
 	vec2 invDstSize; ///< Inverse of the target resolution.
@@ -52,15 +53,15 @@ float computeWeight(vec3 n, float z, vec3 nNeigh, float zNeigh){
  \return the weighted color sample
  */
 vec4 weightedColor(vec2 uvNeigh, vec3 n, float z, float blurWeight, inout float minWeight, inout float sum){
-	vec3 nNeigh = normalize(2.0 * textureLod(normal, uvNeigh, 0.0).rgb - 1.0);
-	float zNeigh = linearizeDepth(textureLod(depth, uvNeigh, 0.0).r, projParams);
+	vec3 nNeigh = normalize(2.0 * textureLod(sampler2D(normal, sClampLinear), uvNeigh, 0.0).rgb - 1.0);
+	float zNeigh = linearizeDepth(textureLod(sampler2D(depth, sClampLinear), uvNeigh, 0.0).r, projParams);
 	// Compute weight, keep them decreasing.
 	float weight = computeWeight(n, z, nNeigh, zNeigh);
 	minWeight = min(minWeight, weight);
 	// Blend with Gaussian weight.
 	float totalWeight = blurWeight * minWeight;
 	sum += totalWeight;
-	vec4 colNeigh = textureLod(source, uvNeigh, 0.0);
+	vec4 colNeigh = textureLod(sampler2D(source, sClampLinear), uvNeigh, 0.0);
 	return totalWeight * colNeigh;
 }
 
@@ -69,12 +70,12 @@ vec4 weightedColor(vec2 uvNeigh, vec3 n, float z, float blurWeight, inout float 
 void main(){
 
 	// Center always contribute.
-	vec4 col = textureLod(source, In.uv, 0.0);
+	vec4 col = textureLod(sampler2D(source, sClampLinear), In.uv, 0.0);
 	float sum = weights[0];
 	vec4 accum = sum * col;
 	// Get reference geoemtric info.
-	vec3 n = normalize(2.0 * textureLod(normal, In.uv, 0.0).rgb - 1.0);
-	float z = linearizeDepth(textureLod(depth, In.uv, 0.0).r, projParams);
+	vec3 n = normalize(2.0 * textureLod(sampler2D(normal, sClampLinear), In.uv, 0.0).rgb - 1.0);
+	float z = linearizeDepth(textureLod(sampler2D(depth, sClampLinear), In.uv, 0.0).r, projParams);
 
 	// Delta is a one pixel shift of the target resolution.
 	vec2 delta = axis == 0 ? vec2(shift * invDstSize.x, 0.0) : vec2(0.0, shift * invDstSize.y);

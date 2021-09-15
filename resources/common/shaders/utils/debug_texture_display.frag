@@ -1,17 +1,18 @@
 #include "constants.glsl"
 #include "utils.glsl"
+#include "samplers.glsl"
 
 layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In ;
 
-layout(set = 1, binding = 0) uniform sampler1D tex1D; ///< Image to output.
-layout(set = 1, binding = 1) uniform sampler1DArray tex1DArray; ///< Image to output.
-layout(set = 1, binding = 2) uniform sampler2D tex2D; ///< Image to output.
-layout(set = 1, binding = 3) uniform sampler2DArray tex2DArray; ///< Image to output.
-layout(set = 1, binding = 4) uniform samplerCube texCube; ///< Image to output.
-layout(set = 1, binding = 5) uniform samplerCubeArray texCubeArray; ///< Image to output.
-layout(set = 1, binding = 6) uniform sampler3D tex3D; ///< Image to output.
+layout(set = 1, binding = 0) uniform texture1D tex1D; ///< Image to output.
+layout(set = 1, binding = 1) uniform texture1DArray tex1DArray; ///< Image to output.
+layout(set = 1, binding = 2) uniform texture2D tex2D; ///< Image to output.
+layout(set = 1, binding = 3) uniform texture2DArray tex2DArray; ///< Image to output.
+layout(set = 1, binding = 4) uniform textureCube texCube; ///< Image to output.
+layout(set = 1, binding = 5) uniform textureCubeArray texCubeArray; ///< Image to output.
+layout(set = 1, binding = 6) uniform texture3D tex3D; ///< Image to output.
 
 layout(set = 0, binding = 0) uniform UniformBlock {
 	ivec4 channels; ///< Channels to display.
@@ -39,16 +40,16 @@ void main(){
 	vec4 color = vec4(1.0,0.5,0.0,0.5);
 
 	if(shape == TextureShapeD1){
-		color = textureLod(tex1D, In.uv.x, level);
+		color = textureLod(sampler1D(tex1D, sClampLinearLinear), In.uv.x, level);
 	} else if(shape == TextureShapeArray1D){
-		color = textureLod(tex1DArray, vec2(In.uv.x, layer), level);
+		color = textureLod(sampler1DArray(tex1DArray, sClampLinearLinear), vec2(In.uv.x, layer), level);
 	} else if(shape == TextureShapeD2){
-		color = textureLod(tex2D, In.uv, level);
+		color = textureLod(sampler2D(tex2D, sClampLinearLinear), In.uv, level);
 	} else if(shape == TextureShapeArray2D){
-		color = textureLod(tex2DArray, vec3(In.uv, layer), level);
+		color = textureLod(sampler2DArray(tex2DArray, sClampLinearLinear), vec3(In.uv, layer), level);
 	} else if(shape == TextureShapeD3){
 		float depth = textureSize(tex3D, 0).z;
-		color = textureLod(tex3D, vec3(In.uv, float(layer)/depth), level);
+		color = textureLod(sampler3D(tex3D, sClampLinearLinear), vec3(In.uv, float(layer)/depth), level);
 	} else if(shape == TextureShapeCube || shape == TextureShapeArrayCube){
 		// For now, equirectangular.
 		vec2 angles = M_PI * vec2(2.0, -1.0) * (In.uv - vec2(0.0, 0.5));
@@ -56,9 +57,9 @@ void main(){
 		vec2 sines = sin(angles);
 		vec3 dir = vec3(cosines.y * cosines.x, sines.y, cosines.y * sines.x);
 		if(shape == TextureShapeCube){
-			color = textureLod(texCube, toCube(dir), level);
+			color = textureLod(samplerCube(texCube, sClampLinearLinear), toCube(dir), level);
 		} else {
-			color = textureLod(texCubeArray, toCube(dir, layer/6), level);
+			color = textureLod(samplerCubeArray(texCubeArray, sClampLinearLinear), toCube(dir, layer/6), level);
 		}
 		// Highlight edges.
 		vec3 adir = abs(dir);

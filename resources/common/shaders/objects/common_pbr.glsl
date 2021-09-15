@@ -1,6 +1,7 @@
 #include "utils.glsl"
 #include "constants.glsl"
 #include "geometry.glsl"
+#include "samplers.glsl"
 
 /** Fresnel approximation.
 	\param F0 fresnel based coefficient
@@ -84,7 +85,7 @@ vec3 ggx(vec3 n, vec3 v, vec3 l, vec3 F0, float roughness){
 	\param upLod the maximal mip level to fetch
 	\return the radiance value
 	*/
-vec3 radiance(vec3 n, vec3 v, vec3 p, float roughness, samplerCube cubeMap, vec3 cubePos, vec3 cubeCenter, vec3 cubeExtent, vec2 cubeRotCosSin, float upLod){
+vec3 radiance(vec3 n, vec3 v, vec3 p, float roughness, textureCube cubeMap, vec3 cubePos, vec3 cubeCenter, vec3 cubeExtent, vec2 cubeRotCosSin, float upLod){
 	// Reflect the ray
 	vec3 r = -reflect(v,n);
 
@@ -99,7 +100,7 @@ vec3 radiance(vec3 n, vec3 v, vec3 p, float roughness, samplerCube cubeMap, vec3
 		vec3 hitPos = p + dist * r;
 		r = (hitPos - cubePos);
 	}
-	vec3 specularColor = textureLod(cubeMap, toCube(r), upLod * roughness).rgb;
+	vec3 specularColor = textureLod(samplerCube(cubeMap, sClampLinearLinear), toCube(r), upLod * roughness).rgb;
 	return specularColor;
 }
 
@@ -135,7 +136,7 @@ float approximateSpecularAO(float diffuseAO, float NdotV, float roughness){
  \param diffuse will contain the diffuse ambient contribution
  \param specular will contain the specular ambient contribution
  */
-void ambientBrdf(vec3 baseColor, float metallic, float roughness, float NdotV, sampler2D brdfCoeffs, out vec3 diffuse, out vec3 specular){
+void ambientBrdf(vec3 baseColor, float metallic, float roughness, float NdotV, texture2D brdfCoeffs, out vec3 diffuse, out vec3 specular){
 
 	// BRDF contributions.
 	// Compute F0 (fresnel coeff).
@@ -145,7 +146,7 @@ void ambientBrdf(vec3 baseColor, float metallic, float roughness, float NdotV, s
 	vec3 Fr = max(vec3(1.0 - roughness), F0) - F0;
     vec3 Fs = F0 + Fr * pow(1.0 - NdotV, 5.0);
 	// Specular single scattering contribution (preintegrated).
-	vec2 brdfParams = texture(brdfCoeffs, vec2(NdotV, roughness)).rg;
+	vec2 brdfParams = texture(sampler2D(brdfCoeffs, sClampLinear), vec2(NdotV, roughness)).rg;
 	specular = (brdfParams.x * Fs + brdfParams.y);
 
 	// Account for multiple scattering.

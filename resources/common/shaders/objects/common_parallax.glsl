@@ -1,3 +1,4 @@
+#include "samplers.glsl"
 
 #define PARALLAX_MIN 8
 #define PARALLAX_MAX 64
@@ -11,7 +12,7 @@
 	\param positionShift will contain the final position shift
 	\return the final texture coordinates to use to query the material maps
 */
-vec2 parallax(vec2 uv, vec3 vTangentDir, sampler2D depth, out vec2 positionShift){
+vec2 parallax(vec2 uv, vec3 vTangentDir, texture2D depth, out vec2 positionShift){
 	
 	// We can adapt the layer count based on the view direction. If we are straight above the surface, we don't need many layers.
 	float layersCount = mix(PARALLAX_MAX, PARALLAX_MIN, abs(vTangentDir.z));
@@ -21,7 +22,7 @@ vec2 parallax(vec2 uv, vec3 vTangentDir, sampler2D depth, out vec2 positionShift
 	// Apply a slight rescaling to the UVs to avoid issue at boundaries.
 	uv = uv * 0.998 + 0.001;
 	// Initial depth at the given position.
-	float currentDepth = texture(depth, uv).r;
+	float currentDepth = texture(sampler2D(depth, sRepeatLinearLinear), uv).r;
 	
 	// Step vector: in tangent space, we walk on the surface, in the (X,Y) plane.
 	vec2 shift = PARALLAX_SCALE * vTangentDir.xy;
@@ -35,7 +36,7 @@ vec2 parallax(vec2 uv, vec3 vTangentDir, sampler2D depth, out vec2 positionShift
 		// We update the UV, going further away from the viewer.
 		newUV -= shiftUV;
 		// Update current depth.
-		currentDepth = texture(depth, newUV).r;
+		currentDepth = texture(sampler2D(depth, sRepeatLinearLinear), newUV).r;
 		// Update current layer.
 		currentLayer += layerHeight;
 	}
@@ -44,7 +45,7 @@ vec2 parallax(vec2 uv, vec3 vTangentDir, sampler2D depth, out vec2 positionShift
 	vec2 previousNewUV = newUV + shiftUV;
 	// The local depth is the gap between the current depth and the current depth layer.
 	float currentLocalDepth = currentDepth - currentLayer;
-	float previousLocalDepth = texture(depth, previousNewUV).r - (currentLayer - layerHeight);
+	float previousLocalDepth = texture(sampler2D(depth, sRepeatLinearLinear), previousNewUV).r - (currentLayer - layerHeight);
 	
 	
 	// Interpolate between the two local depths to obtain the correct UV shift.
@@ -63,13 +64,13 @@ vec2 parallax(vec2 uv, vec3 vTangentDir, sampler2D depth, out vec2 positionShift
  \param depth the heightmap used for parallax mapping
  \return the updated position
  */
-vec3 updateFragmentPosition(vec2 localUV, vec2 positionShift, vec3 viewPos, mat4 proj, mat3 tbn, sampler2D depth){
+vec3 updateFragmentPosition(vec2 localUV, vec2 positionShift, vec3 viewPos, mat4 proj, mat3 tbn, texture2D depth){
 	// For parallax mapping we have to update the depth of the fragment with the new found depth.
 	// Store depth manually (see below).
 	gl_FragDepth = gl_FragCoord.z;
 	// Update the depth using the heightmap and the displacement applied.
 	// Read the depth.
-	float localDepth = texture(depth, localUV).r;
+	float localDepth = texture(sampler2D(depth, sRepeatLinearLinear), localUV).r;
 	// Convert the 3D shift applied from tangent space to view space.
 	vec3 shift = tbn * vec3(positionShift, -PARALLAX_SCALE * localDepth);
 	// Update the depth in view space.
