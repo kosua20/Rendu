@@ -294,15 +294,19 @@ void ShaderCompiler::reflect(glslang::TProgram & program, Program::Stage & stage
 		const int binding = uniform.getBinding();
 		// If the variable is freely bound, it's a texture.
 		if(binding >= 0){
-			// This is a sampler.
+			// This is a sampler or image.
 			const glslang::TSampler& sampler = uniform.getType()->getSampler();
+			// Skip samplers.
+			if(sampler.type == glslang::EbtVoid){
+				continue;
+			}
 			if(texShapes.count(sampler.dim) == 0){
 				Log::Error() << "Unsupported texture shape in shader." << std::endl;
 				continue;
 			}
 
-			stage.samplers.emplace_back();
-			Program::SamplerDef& def = stage.samplers.back();
+			stage.images.emplace_back();
+			Program::ImageDef& def = stage.images.back();
 			def.name = uniform.name;
 			def.binding = binding;
 			def.set = getSetFromType(type);

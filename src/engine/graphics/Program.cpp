@@ -111,7 +111,7 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 			}
 		}
 
-		for(const auto& image : stage.samplers){
+		for(const auto& image : stage.images){
 			const uint set = image.set;
 
 			if(set != 1){
@@ -121,7 +121,7 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 
 			if(_textures.count(image.binding) != 0){
 				if(_textures.at(image.binding).name != image.name){
-					Log::Warning() << Log::GPU << "Program " << name() << ": Sampler image already created, collision between stages for set " << image.set << " at binding " << image.binding << "." << std::endl;
+					Log::Warning() << Log::GPU << "Program " << name() << ": Sampled image already created, collision between stages for set " << image.set << " at binding " << image.binding << "." << std::endl;
 					continue;
 				}
 			}
@@ -144,7 +144,8 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 	if(!_textures.empty()){
 		_dirtySets[1] = true;
 	}
-	_state.setLayouts.resize(_dirtySets.size());
+	// One extra set, the static samplers.
+	_state.setLayouts.resize(_currentSets.size() + 1);
 
 	// Basic uniforms buffer descriptors will use a dynamic offset.
 	uint maxDescriptorCount = 0;
@@ -171,13 +172,13 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 		}
 	}
 
-	// Texture and samplers.
+	// Textures.
 	{
 		std::vector<VkDescriptorSetLayoutBinding> bindingLayouts;
 		for(const auto& image : _textures){
 			VkDescriptorSetLayoutBinding imageBinding{};
 			imageBinding.binding = image.first;
-			imageBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+			imageBinding.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
 			imageBinding.descriptorCount = 1;
 			imageBinding.stageFlags = VK_SHADER_STAGE_ALL;
 			bindingLayouts.emplace_back(imageBinding);
@@ -215,6 +216,11 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 		if(vkCreateDescriptorSetLayout(context->device, &setInfo, nullptr, &_state.setLayouts[2]) != VK_SUCCESS){
 			Log::Error() << Log::GPU << "Unable to create set layout." << std::endl;
 		}
+	}
+
+	// Samplers
+	{
+		_state.setLayouts[3] = context->samplerLibrary.getLayout();
 	}
 
 	VkPipelineLayoutCreateInfo layoutInfo{};
@@ -311,7 +317,7 @@ void Program::update(){
 			write.dstBinding = image.first;
 			write.dstArrayElement = 0;
 			write.descriptorCount = 1;
-			write.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+			write.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
 			write.pImageInfo = &imageInfos[tid];
 			writes.push_back(write);
 			++tid;
@@ -364,6 +370,10 @@ void Program::update(){
 			vkCmdBindDescriptorSets(context->getRenderCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, _state.layout, sid, 1, &_currentSets[sid].handle, 0, nullptr);
 		}
 	}
+
+	// Bind static samplers dummy set.
+	const VkDescriptorSet samplersHandle = context->samplerLibrary.getSetHandle();
+	vkCmdBindDescriptorSets(context->getRenderCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, _state.layout, 3, 1, &samplersHandle, 0, nullptr);
 }
 
 bool Program::reloaded() const {
@@ -684,7 +694,7 @@ void Program::getUniform(const std::string & name, glm::mat4 & t) const {
 }
 
 void Program::Stage::reset(){
-	samplers.clear();
+	images.clear();
 	buffers.clear();
 	module = VK_NULL_HANDLE;
 }

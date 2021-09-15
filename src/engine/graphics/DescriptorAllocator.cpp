@@ -8,8 +8,8 @@ void DescriptorAllocator::init(GPUContext* context, uint poolCount){
 	_currentPoolCount = 0;
 	_maxPoolCount = poolCount;
 	
-	_pools.push_back(createPool(DEFAULT_SET_COUNT));
-	_imguiPool = createPool(DEFAULT_SET_COUNT);
+	_pools.push_back(createPool(DEFAULT_SET_COUNT, false));
+	_imguiPool = createPool(DEFAULT_SET_COUNT, true);
 
 }
 
@@ -48,7 +48,7 @@ DescriptorSet DescriptorAllocator::allocateSet(VkDescriptorSetLayout& setLayout)
 	}
 	// Finally, if all pools are in use, create a new one.
 	if(!found){
-		DescriptorPool newPool = createPool(DEFAULT_SET_COUNT);
+		DescriptorPool newPool = createPool(DEFAULT_SET_COUNT, false);
 		_pools.push_back(newPool);
 	}
 
@@ -98,17 +98,14 @@ void DescriptorAllocator::clean(){
 }
 
 
-DescriptorAllocator::DescriptorPool DescriptorAllocator::createPool(uint count){
+DescriptorAllocator::DescriptorPool DescriptorAllocator::createPool(uint count, bool combined){
 	if(_currentPoolCount > _maxPoolCount){
 		return DescriptorPool();
 	}
 	++_currentPoolCount;
 
-	VkDescriptorPoolSize poolSizes[] =
+	std::vector<VkDescriptorPoolSize> poolSizes =
 	{
-	//	{ VK_DESCRIPTOR_TYPE_SAMPLER, 1000 },
-		{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, count },
-		{ VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, count },
 		{ VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, count },
 	//	{ VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, count },
 	//	{ VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER, count },
@@ -119,6 +116,19 @@ DescriptorAllocator::DescriptorPool DescriptorAllocator::createPool(uint count){
 	//	{ VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, count }
 	};
 
+	if(combined){
+		poolSizes.emplace_back();
+		poolSizes.back().type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		poolSizes.back().descriptorCount = count;
+	} else {
+		poolSizes.emplace_back();
+		poolSizes.back().type = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+		poolSizes.back().descriptorCount = count;
+		poolSizes.emplace_back();
+		poolSizes.back().type = VK_DESCRIPTOR_TYPE_SAMPLER;
+		poolSizes.back().descriptorCount = count;
+	}
+
 	DescriptorPool pool;
 	pool.id = _currentPoolCount - 1;
 	pool.allocated = 0;
@@ -127,9 +137,9 @@ DescriptorAllocator::DescriptorPool DescriptorAllocator::createPool(uint count){
 	VkDescriptorPoolCreateInfo poolInfo = {};
 	poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 	poolInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
-	poolInfo.maxSets = count * IM_ARRAYSIZE(poolSizes);
-	poolInfo.poolSizeCount = (uint32_t)IM_ARRAYSIZE(poolSizes);
-	poolInfo.pPoolSizes = poolSizes;
+	poolInfo.maxSets = count * poolSizes.size();
+	poolInfo.poolSizeCount = (uint32_t)poolSizes.size();
+	poolInfo.pPoolSizes = poolSizes.data();
 
 	if(vkCreateDescriptorPool(_context->device, &poolInfo, nullptr, &pool.handle) != VK_SUCCESS){
 		return DescriptorPool();

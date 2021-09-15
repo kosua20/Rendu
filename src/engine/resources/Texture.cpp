@@ -1,6 +1,8 @@
 #include "resources/Texture.hpp"
 #include "graphics/GPUObjects.hpp"
 #include "graphics/GPU.hpp"
+#include "graphics/GPUInternal.hpp"
+#include "graphics/SamplerLibrary.hpp"
 #include "renderers/DebugViewer.hpp"
 #include <imgui/imgui_impl_vulkan.h>
 
@@ -151,14 +153,16 @@ const std::string & Texture::name() const {
 
 void ImGui::Image(const Texture & texture, const ImVec2& size, const ImVec2& uv0, const ImVec2& uv1, const ImVec4& tint_col, const ImVec4& border_col){
 	if(texture.gpu->imgui == VK_NULL_HANDLE){
-		texture.gpu->imgui = ImGui_ImplVulkan_AddTexture(texture.gpu->sampler, texture.gpu->view, texture.gpu->defaultLayout);
+		GPUContext* context = GPU::getInternal();
+		texture.gpu->imgui = ImGui_ImplVulkan_AddTexture(context->samplerLibrary.getDefaultSampler(), texture.gpu->view, texture.gpu->defaultLayout);
 	}
 	ImGui::Image((ImTextureID)texture.gpu->imgui, size, uv0, uv1, tint_col, border_col);
 }
 
 bool ImGui::ImageButton(const Texture & texture, const ImVec2& size, const ImVec2& uv0,  const ImVec2& uv1, int frame_padding, const ImVec4& bg_col, const ImVec4& tint_col){
 	if(texture.gpu->imgui == VK_NULL_HANDLE){
-		texture.gpu->imgui = ImGui_ImplVulkan_AddTexture(texture.gpu->sampler, texture.gpu->view, texture.gpu->defaultLayout);
+		GPUContext* context = GPU::getInternal();
+		texture.gpu->imgui = ImGui_ImplVulkan_AddTexture(context->samplerLibrary.getDefaultSampler(), texture.gpu->view, texture.gpu->defaultLayout);
 	}
 	return ImGui::ImageButton((ImTextureID)texture.gpu->imgui, size, uv0, uv1, frame_padding, bg_col, tint_col);
 }

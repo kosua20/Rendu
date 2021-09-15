@@ -49,9 +49,10 @@ private:
 
 	/** Create a descriptor pool containing count descriptors.
 	 \param count the maximmum number of descriptors of each type to store in the poll
+	 \param combined should images and samplers be represented by combined descriptors or separate sampled image/sampler descriptors.
 	 \return descriptor pool info
 	 */
-	DescriptorPool createPool(uint count);
+	DescriptorPool createPool(uint count, bool combined);
 
 	GPUContext* _context = nullptr; ///< The GPU context.
 	std::deque<DescriptorPool> _pools; ///< Available pools.

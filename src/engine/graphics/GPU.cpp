@@ -2,6 +2,7 @@
 #include "graphics/ShaderCompiler.hpp"
 #include "graphics/Framebuffer.hpp"
 #include "graphics/Swapchain.hpp"
+#include "graphics/SamplerLibrary.hpp"
 #include "resources/Texture.hpp"
 #include "resources/Image.hpp"
 #include "system/TextUtilities.hpp"
@@ -278,6 +279,9 @@ bool GPU::setupWindow(Window * window){
 	_context.pipelineCache.init();
 
 	_context.descriptorAllocator.init(&_context, 1024);
+
+	// Create static samplers.
+	_context.samplerLibrary.init();
 
 	// Create basic vertex array for screenquad.
 	{
@@ -1420,6 +1424,7 @@ void GPU::cleanup(){
 	
 	_context.pipelineCache.clean();
 	_context.descriptorAllocator.clean();
+	_context.samplerLibrary.clean();
 
 	assert(_context.resourcesToDelete.empty());
 
@@ -1514,6 +1519,13 @@ void GPU::clean(Program & program){
 	vkDestroyPipelineLayout(_context.device, program._state.layout, nullptr);
 	for(VkDescriptorSetLayout& setLayout : program._state.setLayouts){
 		vkDestroyDescriptorSetLayout(_context.device, setLayout, nullptr);
+	// Skip the static samplers.
+	const size_t layoutCount = program._state.setLayouts.size();
+	if(layoutCount > 0){
+		for(size_t lid = 0; lid < layoutCount-1; ++lid){
+			VkDescriptorSetLayout& setLayout = program._state.setLayouts[lid];
+			vkDestroyDescriptorSetLayout(_context.device, setLayout, nullptr);
+		}
 	}
 	for(Program::Stage& stage : program._stages){
 		vkDestroyShaderModule(_context.device, stage.module, nullptr);

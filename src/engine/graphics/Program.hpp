@@ -55,7 +55,7 @@ public:
 
 	/** \brief Image-sampler reflection information.
 	 */
-	struct SamplerDef {
+	struct ImageDef {
 		std::string name; ///< Image name.
 		TextureShape shape; ///< Image shape.
 		uint binding; ///< Image-sampler binding location.
@@ -341,7 +341,7 @@ public:
 
 	/// \brief Per-stage reflection information.
 	struct Stage {
-		std::vector<SamplerDef> samplers; ///< Image-samplers definitions.
+		std::vector<ImageDef> images; ///< Image definitions.
 		std::vector<BufferDef> buffers; ///< Buffers definitions.
 		VkShaderModule module = VK_NULL_HANDLE; ///< Native shader data.
 
