@@ -175,7 +175,7 @@ KeyValues Codable::encode(const Texture * texture){
 	KeyValues token("rgb");
 	if(texture->gpu){
 		for(const auto & format : formats){
-			if(texture->gpu->typedFormat() == format.second){
+			if(texture->gpu->typedFormat == format.second){
 				token.key = format.first;
 				break;
 			}

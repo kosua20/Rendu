@@ -359,7 +359,7 @@ const Texture * Resources::getTexture(const std::string & name, const Layout & f
 			// If we want to store the texture on the GPU...
 			if(texture.gpu) {
 				// If the texture is already on the GPU, check that the layout is the same, else raise a warning.
-				if(texture.gpu->typedFormat() != format) {
+				if(texture.gpu->typedFormat != format) {
 					Log::Warning() << Log::Resources << "Texture \"" << keyName
 								   << "\" already exist with a different descriptor." << std::endl;
 				}

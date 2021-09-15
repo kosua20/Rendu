@@ -23,11 +23,6 @@ public:
 
 	/** Clean internal GPU buffer. */
 	void clean();
-
-	/** Query the texture format.
-	 \return the format used
-	 */
-	const Layout & typedFormat() const { return _typedFormat; }
 	
 	/** Copy assignment operator (disabled).
 	 \return a reference to the object assigned to
@@ -75,8 +70,7 @@ public:
 	std::string name; ///< Debug name.
 	bool owned = true; ///< Do we own our Vulkan data (not the case for swapchain images).
 
-private:
-	Layout _typedFormat; ///< Layout used.
+	const Layout typedFormat; ///< Layout used.
 };
 
 

@@ -166,11 +166,11 @@ void Framebuffer::populateRenderPasses(bool isBackbuffer){
 
 void Framebuffer::populateLayoutState(){
 	for(uint cid = 0; cid < _colors.size(); ++cid){
-		_state.colors.push_back(_colors[cid].gpu->typedFormat());
+		_state.colors.push_back(_colors[cid].gpu->typedFormat);
 	}
 	if(_hasDepth){
 		_state.hasDepth = true;
-		_state.depth = _depth.gpu->typedFormat();
+		_state.depth = _depth.gpu->typedFormat;
 	}
 }
 
@@ -324,14 +324,14 @@ void Framebuffer::resize(uint width, uint height) {
 	if(_hasDepth) {
 		_depth.width  = _width;
 		_depth.height = _height;
-		GPU::setupTexture(_depth, _depth.gpu->typedFormat(), true);
+		GPU::setupTexture(_depth, _depth.gpu->typedFormat, true);
 	}
 
 	// Resize the textures.
 	for(Texture & color : _colors) {
 		color.width  = _width;
 		color.height = _height;
-		GPU::setupTexture(color, color.gpu->typedFormat(), true);
+		GPU::setupTexture(color, color.gpu->typedFormat, true);
 	}
 
 	finalizeFramebuffer();
@@ -419,7 +419,7 @@ glm::vec4 Framebuffer::read(const glm::uvec2 & pos) {
 }
 
 const Layout & Framebuffer::format(unsigned int i) const {
-   return _colors[i].gpu->typedFormat();
+   return _colors[i].gpu->typedFormat;
 }
 
 uint Framebuffer::attachments() const {

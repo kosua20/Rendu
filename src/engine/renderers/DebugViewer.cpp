@@ -157,7 +157,7 @@ void DebugViewer::registerTexture(const std::string& name, const Texture* tex, T
 	infos.name  = name;
 	infos.tex   = tex;
 
-	const Layout format = tex->gpu->typedFormat();
+	const Layout format = tex->gpu->typedFormat;
 	infos.gamma = GPUTexture::isSRGB(format);
 
 	// Setup display framebuffer.

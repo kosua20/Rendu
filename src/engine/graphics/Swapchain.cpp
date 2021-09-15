@@ -177,7 +177,7 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 		fb._depth.depth = 1;
 		fb._depth.levels = 1;
 		fb._depth.shape = TextureShape::D2;
-		fb._depth.gpu.reset(new GPUTexture(_depth.gpu->typedFormat()));
+		fb._depth.gpu.reset(new GPUTexture(_depth.gpu->typedFormat));
 		fb._depth.gpu->name = fb._depth.name();
 		fb._depth.gpu->owned = false;
 		fb._depth.gpu->image = _depth.gpu->image;

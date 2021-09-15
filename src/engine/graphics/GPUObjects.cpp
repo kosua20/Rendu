@@ -4,7 +4,7 @@
 #include "graphics/Framebuffer.hpp"
 
 GPUTexture::GPUTexture(const Layout & layoutFormat) :
-_typedFormat(layoutFormat) {
+	typedFormat(layoutFormat) {
 
 	channels = VkUtils::getGPULayout(layoutFormat, format);
 
