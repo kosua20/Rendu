@@ -468,42 +468,7 @@ void GPU::setupTexture(Texture & texture, const Descriptor & descriptor, bool dr
 		}
 	}
 
-	setupSampler(*texture.gpu);
-
 	++_metrics.textures;
-}
-
-void GPU::setupSampler(GPUTexture & texture) {
-
-	if(texture.sampler != VK_NULL_HANDLE){
-		_context.resourcesToDelete.emplace_back();
-		ResourceToDelete& rsc = _context.resourcesToDelete.back();
-		rsc.sampler = texture.sampler;
-		rsc.frame = _context.frameIndex;
-		rsc.name = texture.name;
-	}
-
-	// Create associated sampler.
-	VkSamplerCreateInfo samplerInfo = {};
-	samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
-	samplerInfo.magFilter = texture.imgFiltering;
-	samplerInfo.minFilter = texture.imgFiltering;
-	samplerInfo.addressModeU = texture.wrapping;
-	samplerInfo.addressModeV = texture.wrapping;
-	samplerInfo.addressModeW = texture.wrapping;
-	samplerInfo.anisotropyEnable = VK_TRUE;
-	samplerInfo.maxAnisotropy = 16;
-	samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
-	samplerInfo.unnormalizedCoordinates = VK_FALSE;
-	samplerInfo.compareEnable = VK_FALSE;
-	samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;
-	samplerInfo.mipmapMode = texture.mipFiltering;
-	samplerInfo.mipLodBias = 0.0f;
-	samplerInfo.minLod = 0.0f;
-	samplerInfo.maxLod = VK_LOD_CLAMP_NONE;
-	if(vkCreateSampler(_context.device, &samplerInfo, nullptr, &(texture.sampler)) != VK_SUCCESS) {
-		Log::Error() << Log::GPU << "Unable to create a sampler." << std::endl;
-	}
 }
 
 void GPU::uploadTexture(const Texture & texture) {
@@ -1440,7 +1405,6 @@ void GPU::clean(GPUTexture & tex){
 	_context.resourcesToDelete.emplace_back();
 	ResourceToDelete& rsc = _context.resourcesToDelete.back();
 	rsc.view = tex.view;
-	rsc.sampler = tex.sampler;
 	rsc.image = tex.image;
 	rsc.data = tex.data;
 	rsc.frame = _context.frameIndex;
@@ -1517,8 +1481,6 @@ void GPU::clean(GPUBuffer & buffer){
 void GPU::clean(Program & program){
 	
 	vkDestroyPipelineLayout(_context.device, program._state.layout, nullptr);
-	for(VkDescriptorSetLayout& setLayout : program._state.setLayouts){
-		vkDestroyDescriptorSetLayout(_context.device, setLayout, nullptr);
 	// Skip the static samplers.
 	const size_t layoutCount = program._state.setLayouts.size();
 	if(layoutCount > 0){

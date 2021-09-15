@@ -130,7 +130,6 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 			_textures[image.binding] = TextureState();
 			_textures[image.binding].name = image.name;
 			_textures[image.binding].view = defaultTex->gpu->view;
-			_textures[image.binding].sampler = defaultTex->gpu->sampler;
 			_textures[image.binding].shape = image.shape;
 		}
 	}
@@ -309,7 +308,6 @@ void Program::update(){
 		for(const auto& image : _textures){
 			imageInfos[tid] = {};
 			imageInfos[tid].imageView = image.second.view;
-			imageInfos[tid].sampler = image.second.sampler;
 			imageInfos[tid].imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 			VkWriteDescriptorSet write{};
 			write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -434,9 +432,8 @@ void Program::texture(const Texture& texture, uint slot, uint mip){
 		assert(mip == 0xFFFF || mip < texture.gpu->levelViews.size());
 		VkImageView& view = mip == 0xFFFF ? texture.gpu->view : texture.gpu->levelViews[mip];
 
-		if((refTex.view != view) || (refTex.sampler != texture.gpu->sampler)){
+		if(refTex.view != view){
 			_textures[slot].view = view;
-			_textures[slot].sampler = texture.gpu->sampler;
 			_dirtySets[1] = true;
 		}
 	}

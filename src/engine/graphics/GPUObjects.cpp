@@ -7,8 +7,6 @@ GPUTexture::GPUTexture(const Descriptor & texDescriptor) :
 	_descriptor(texDescriptor) {
 
 	channels = VkUtils::getGPULayout(texDescriptor.typedFormat(), format);
-	wrapping = VkUtils::getGPUWrapping(texDescriptor.wrapping());
-	VkUtils::getGPUFilter(texDescriptor.filtering(), imgFiltering, mipFiltering);
 
 	const Layout layout = texDescriptor.typedFormat();
 	const bool isDepth = layout == Layout::DEPTH_COMPONENT16 || layout == Layout::DEPTH_COMPONENT24 || layout == Layout::DEPTH_COMPONENT32F || layout == Layout::DEPTH24_STENCIL8 || layout == Layout::DEPTH32F_STENCIL8;
@@ -32,12 +30,6 @@ bool GPUTexture::hasSameLayoutAs(const Descriptor & other) const {
 
 void GPUTexture::setFiltering(Filter filtering) {
 	(void)filtering;
-	_descriptor  = Descriptor(_descriptor.typedFormat(), filtering, _descriptor.wrapping());
-	// Update sampler parameters.
-	wrapping = VkUtils::getGPUWrapping(_descriptor.wrapping());
-	VkUtils::getGPUFilter(_descriptor.filtering(), imgFiltering, mipFiltering);
-	// Recreate sampler.
-	GPU::setupSampler(*this);
 }
 
 GPUBuffer::GPUBuffer(BufferType atype){

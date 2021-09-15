@@ -393,7 +393,6 @@ private:
 	struct TextureState {
 		std::string name; ///< Name.
 		VkImageView view = VK_NULL_HANDLE; ///< Texture view.
-		VkSampler sampler = VK_NULL_HANDLE; ///< Texture sampler.
 		TextureShape shape = TextureShape::D2; ///< Texture shape.
 	};
 

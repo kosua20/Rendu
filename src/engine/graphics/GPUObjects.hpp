@@ -57,9 +57,6 @@ public:
 	GPUTexture(GPUTexture &&) = delete;
 
 	VkFormat format; ///< Texture native format.
-	VkSamplerAddressMode wrapping; ///< Sampler native wrapping.
-	VkFilter imgFiltering; ///< Sampler native filtering.
-	VkSamplerMipmapMode mipFiltering; ///< Sampler native mip filtering.
 	VkImageAspectFlags aspect; ///< Texture aspects.
 	
 	uint channels; ///< Number of channels.
@@ -69,7 +66,6 @@ public:
 	std::vector<VkImageView> levelViews;  ///< Per-mip image views.
 
 	VmaAllocation data = VK_NULL_HANDLE; ///< Internal allocation.
-	VkSampler sampler = VK_NULL_HANDLE; ///< Native sampler handle.
 	ImTextureID imgui = (ImTextureID)VK_NULL_HANDLE; ///< ImGui compatible handle (internally a descriptor set).
 
 	std::vector<std::vector<VkImageLayout>> layouts; ///< Per-mip per-layer image layout.
