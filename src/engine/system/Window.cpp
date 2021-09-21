@@ -279,7 +279,7 @@ void Window::setupImGui() {
 	colors[ImGuiCol_PopupBg]                = ImVec4(0.01f, 0.01f, 0.01f, 1.00f);
 	colors[ImGuiCol_Border]                 = ImVec4(0.00f, 0.00f, 0.00f, 0.50f);
 	colors[ImGuiCol_BorderShadow]           = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
-	colors[ImGuiCol_FrameBg]                = ImVec4(0.01f, 0.01f, 0.01f, 1.00f);
+	colors[ImGuiCol_FrameBg]                = ImVec4(0.025f, 0.025f, 0.025f, 1.00f);
 	colors[ImGuiCol_FrameBgHovered]         = ImVec4(0.02f, 0.02f, 0.02f, 1.00f);
 	colors[ImGuiCol_FrameBgActive]          = ImVec4(0.05f, 0.05f, 0.05f, 1.00f);
 	colors[ImGuiCol_TitleBgActive]          = ImVec4(0.02f, 0.02f, 0.02f, 1.00f);
