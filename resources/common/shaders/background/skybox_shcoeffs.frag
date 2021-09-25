@@ -6,7 +6,7 @@ layout(location = 0) in INTERFACE {
 } In ;
 
 /// SH approximation of the environment irradiance (UBO).
-layout(std140, set = 2, binding = 0) uniform SHCoeffs {
+layout(std140, set = 3, binding = 0) uniform SHCoeffs {
 	vec4 shCoeffs[9];
 };
 

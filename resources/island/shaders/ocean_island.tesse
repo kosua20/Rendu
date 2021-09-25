@@ -9,7 +9,7 @@ layout(set = 0, binding = 3) uniform UniformBlock {
 };
 
 /** Gerstner waves parameters buffer. */
-layout(std140, set = 2, binding = 0) uniform Waves {
+layout(std140, set = 3, binding = 0) uniform Waves {
 	Wave waves[8]; ///< Waves parameters.
 };
 

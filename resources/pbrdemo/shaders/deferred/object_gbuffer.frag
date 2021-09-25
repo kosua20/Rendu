@@ -7,9 +7,9 @@ layout(location = 0) in INTERFACE {
 	vec4 uv; ///< UV coordinates.
 } In ;
 
-layout(set = 1, binding = 0) uniform texture2D texture0; ///< Albedo.
-layout(set = 1, binding = 1) uniform texture2D texture1; ///< Normal map.
-layout(set = 1, binding = 2) uniform texture2D texture2; ///< Effects map.
+layout(set = 2, binding = 0) uniform texture2D texture0; ///< Albedo.
+layout(set = 2, binding = 1) uniform texture2D texture1; ///< Normal map.
+layout(set = 2, binding = 2) uniform texture2D texture2; ///< Effects map.
 
 layout (location = 0) out vec4 fragColor; ///< Color.
 layout (location = 1) out vec3 fragNormal; ///< View space normal.

@@ -10,7 +10,7 @@ layout(set = 0, binding = 0) uniform UniformBlock {
 	float edgeWidth;  ///< The outer edge width
 };
 
-layout(set = 1, binding = 0) uniform texture2D fontSdfTexture; ///< The font signed-distance-function atlas.
+layout(set = 2, binding = 0) uniform texture2D fontSdfTexture; ///< The font signed-distance-function atlas.
 layout(location = 0) out vec4 fragColor; ///< Color.
 
 /** Find the isolines of the corresponding glyph to display it on screen. */

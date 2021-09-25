@@ -4,7 +4,7 @@ layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In ;
 
-layout(set = 1, binding = 0) uniform texture2D screenTexture; ///< The input image.
+layout(set = 2, binding = 0) uniform texture2D screenTexture; ///< The input image.
 
 layout(location = 0) out vec3 fragColor; ///< Final color.
 

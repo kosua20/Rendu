@@ -11,7 +11,7 @@ layout(set = 0, binding = 1) uniform UniformBlock {
 	float invGridSize; ///< Grid mesh inverse size.
 };
 
-layout(set = 1, binding = 0) uniform texture2D heightMap; ///< Terrain height map, height in R, normals in GBA.
+layout(set = 2, binding = 0) uniform texture2D heightMap; ///< Terrain height map, height in R, normals in GBA.
 
 layout(location = 0) out INTERFACE {
 	vec4 pos; ///< World position.

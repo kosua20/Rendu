@@ -4,9 +4,9 @@ layout(location = 0) in INTERFACE {
 	vec2 uv; ///< Texture coordinates.
 } In ;
 
-layout(set = 1, binding = 3) uniform texture2D noiseMap; ///< RGBA uniform noise in [0,1], uncorrelated.
-layout(set = 1, binding = 5) uniform texture2D directionsMap; ///< Random 3D directions on the unit sphere.
-layout(set = 1, binding = 6) uniform texture3D noise3DMap; ///< Random 3D directions on the unit sphere.
+layout(set = 2, binding = 3) uniform texture2D noiseMap; ///< RGBA uniform noise in [0,1], uncorrelated.
+layout(set = 2, binding = 5) uniform texture2D directionsMap; ///< Random 3D directions on the unit sphere.
+layout(set = 2, binding = 6) uniform texture3D noise3DMap; ///< Random 3D directions on the unit sphere.
 
 layout(set = 0, binding = 0) uniform UniformBlock {
 	float iTime;
@@ -18,10 +18,10 @@ layout(set = 0, binding = 0) uniform UniformBlock {
 	float weightDecay;// = 0.5;
 };
 
-layout(set = 3, binding =  0) uniform sampler sClampNear;
-layout(set = 3, binding =  1) uniform sampler sRepeatNear;
-layout(set = 3, binding =  2) uniform sampler sClampLinear;
-layout(set = 3, binding =  3) uniform sampler sRepeatLinear;
+layout(set = 1, binding =  0) uniform sampler sClampNear;
+layout(set = 1, binding =  1) uniform sampler sRepeatNear;
+layout(set = 1, binding =  2) uniform sampler sClampLinear;
+layout(set = 1, binding =  3) uniform sampler sRepeatLinear;
 
 layout(location = 0) out vec4 fragColor; ///< Output color.
 

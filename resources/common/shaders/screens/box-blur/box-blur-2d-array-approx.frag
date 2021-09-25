@@ -4,7 +4,7 @@ layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In;
 
-layout(set = 1, binding = 0) uniform texture2DArray screenTexture; ///< Image to blur.
+layout(set = 2, binding = 0) uniform texture2DArray screenTexture; ///< Image to blur.
 
 layout(set = 0, binding = 0) uniform UniformBlock {
 	int layer; ///< The array layer to sample.

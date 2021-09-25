@@ -8,10 +8,10 @@ layout(set = 0, binding = 0) uniform UniformBlock {
 	float time; ///< Current time.
 };
 
-layout(set = 1, binding = 0) uniform texture2D colorTexture; ///< Color backgroudn input.
-layout(set = 1, binding = 1) uniform texture2D posTexture; ///< Position map.
-layout(set = 1, binding = 2) uniform texture2D caustics; ///< Caustics map.
-layout(set = 1, binding = 3) uniform texture2D normalMap; ///< Water normal map.
+layout(set = 2, binding = 0) uniform texture2D colorTexture; ///< Color backgroudn input.
+layout(set = 2, binding = 1) uniform texture2D posTexture; ///< Position map.
+layout(set = 2, binding = 2) uniform texture2D caustics; ///< Caustics map.
+layout(set = 2, binding = 3) uniform texture2D normalMap; ///< Water normal map.
 
 layout(location = 0) out vec4 fragColor; ///< Color.
 

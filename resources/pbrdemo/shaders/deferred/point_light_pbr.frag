@@ -4,11 +4,11 @@
 #include "utils.glsl"
 
 // Uniforms
-layout(set = 1, binding = 0) uniform texture2D albedoTexture; ///< Albedo.
-layout(set = 1, binding = 1) uniform texture2D normalTexture; ///< Normal.
-layout(set = 1, binding = 2) uniform texture2D depthTexture; ///< Depth.
-layout(set = 1, binding = 3) uniform texture2D effectsTexture;///< Effects.
-layout(set = 1, binding = 4) uniform textureCubeArray shadowMap; ///< Shadow map.
+layout(set = 2, binding = 0) uniform texture2D albedoTexture; ///< Albedo.
+layout(set = 2, binding = 1) uniform texture2D normalTexture; ///< Normal.
+layout(set = 2, binding = 2) uniform texture2D depthTexture; ///< Depth.
+layout(set = 2, binding = 3) uniform texture2D effectsTexture;///< Effects.
+layout(set = 2, binding = 4) uniform textureCubeArray shadowMap; ///< Shadow map.
 
 layout(set = 0, binding = 0) uniform UniformBlock {
 	mat4 viewToLight; ///< Light direction in view space.

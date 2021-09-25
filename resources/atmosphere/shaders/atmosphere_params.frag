@@ -13,7 +13,7 @@ layout(set = 0, binding = 0) uniform UniformBlock {
 	float altitude; ///< height above the planet surface.
 };
 
-layout(set = 1, binding = 0) uniform texture2D precomputedScattering; ///< Secondary scattering lookup table.
+layout(set = 2, binding = 0) uniform texture2D precomputedScattering; ///< Secondary scattering lookup table.
 
 layout(location = 0) out vec3 fragColor; ///< Atmosphere color.
 

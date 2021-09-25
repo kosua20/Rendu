@@ -6,13 +6,13 @@ layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In ;
 
-layout(set = 1, binding = 0) uniform texture1D tex1D; ///< Image to output.
-layout(set = 1, binding = 1) uniform texture1DArray tex1DArray; ///< Image to output.
-layout(set = 1, binding = 2) uniform texture2D tex2D; ///< Image to output.
-layout(set = 1, binding = 3) uniform texture2DArray tex2DArray; ///< Image to output.
-layout(set = 1, binding = 4) uniform textureCube texCube; ///< Image to output.
-layout(set = 1, binding = 5) uniform textureCubeArray texCubeArray; ///< Image to output.
-layout(set = 1, binding = 6) uniform texture3D tex3D; ///< Image to output.
+layout(set = 2, binding = 0) uniform texture1D tex1D; ///< Image to output.
+layout(set = 2, binding = 1) uniform texture1DArray tex1DArray; ///< Image to output.
+layout(set = 2, binding = 2) uniform texture2D tex2D; ///< Image to output.
+layout(set = 2, binding = 3) uniform texture2DArray tex2DArray; ///< Image to output.
+layout(set = 2, binding = 4) uniform textureCube texCube; ///< Image to output.
+layout(set = 2, binding = 5) uniform textureCubeArray texCubeArray; ///< Image to output.
+layout(set = 2, binding = 6) uniform texture3D tex3D; ///< Image to output.
 
 layout(set = 0, binding = 0) uniform UniformBlock {
 	ivec4 channels; ///< Channels to display.

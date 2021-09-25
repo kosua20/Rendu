@@ -6,7 +6,7 @@ layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In ;
 
-layout(set = 1, binding = 0) uniform texture2D texture0; ///< Emissive.
+layout(set = 2, binding = 0) uniform texture2D texture0; ///< Emissive.
 
 layout (location = 0) out vec4 fragColor; ///< Color.
 layout (location = 1) out vec3 fragNormal; ///< View space normal.

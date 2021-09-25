@@ -21,18 +21,18 @@ layout(set = 0, binding = 0) uniform UniformBlock {
 	bool useTerrain; ///< Is the terrain currently renderer (for shadows)
 };
 
-layout(set = 1, binding = 0) uniform texture2D foamMap; ///< Foam effects map.
-layout(set = 1, binding = 1) uniform texture2D terrainColor; ///< Shaded terrain with effects.
-layout(set = 1, binding = 2) uniform texture2D terrainPos; ///< Terrain world position map.
-layout(set = 1, binding = 3) uniform texture2D terrainColorBlur; ///< Blurred shaded terrain.
-layout(set = 1, binding = 4) uniform texture2D absorpScatterLUT; ///< Ocean absorption/scattering look-up table.
-layout(set = 1, binding = 5) uniform texture2D waveNormals; ///< Waves normal map.
-layout(set = 1, binding = 6) uniform textureCube envmap; ///< Environment map.
-layout(set = 1, binding = 7) uniform texture2D brdfCoeffs; ///< Linearized BRDF look-up table.
-layout(set = 1, binding = 8) uniform texture2D shadowMap; ///< Terrain shadow map (ocean level in the G channel).
+layout(set = 2, binding = 0) uniform texture2D foamMap; ///< Foam effects map.
+layout(set = 2, binding = 1) uniform texture2D terrainColor; ///< Shaded terrain with effects.
+layout(set = 2, binding = 2) uniform texture2D terrainPos; ///< Terrain world position map.
+layout(set = 2, binding = 3) uniform texture2D terrainColorBlur; ///< Blurred shaded terrain.
+layout(set = 2, binding = 4) uniform texture2D absorpScatterLUT; ///< Ocean absorption/scattering look-up table.
+layout(set = 2, binding = 5) uniform texture2D waveNormals; ///< Waves normal map.
+layout(set = 2, binding = 6) uniform textureCube envmap; ///< Environment map.
+layout(set = 2, binding = 7) uniform texture2D brdfCoeffs; ///< Linearized BRDF look-up table.
+layout(set = 2, binding = 8) uniform texture2D shadowMap; ///< Terrain shadow map (ocean level in the G channel).
 
 /** Gerstner waves parameters. */
-layout(std140, set = 2, binding = 0) uniform Waves {
+layout(std140, set = 3, binding = 0) uniform Waves {
 	Wave waves[8]; ///< Gerstner waves.
 };
 

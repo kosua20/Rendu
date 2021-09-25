@@ -5,10 +5,10 @@ layout(location = 0) in INTERFACE {
 	vec2 uv; ///< Texture coordinates.
 } In ;
 
-layout(set = 1, binding = 0) uniform texture2D normalMap; ///< Normal map.
-layout(set = 1, binding = 1) uniform texture2D materialMap; ///< Material index.
-layout(set = 1, binding = 2) uniform texture2D ssaoMap; ///< SSAO result.
-layout(set = 1, binding = 3) uniform textureCube envMap; ///< Environment map.
+layout(set = 2, binding = 0) uniform texture2D normalMap; ///< Normal map.
+layout(set = 2, binding = 1) uniform texture2D materialMap; ///< Material index.
+layout(set = 2, binding = 2) uniform texture2D ssaoMap; ///< SSAO result.
+layout(set = 2, binding = 3) uniform textureCube envMap; ///< Environment map.
 
 layout(location = 0) out vec4 fragColor; ///< Color.
 

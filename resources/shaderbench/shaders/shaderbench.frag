@@ -5,14 +5,14 @@ layout(location = 0) in INTERFACE {
 	vec2 uv; ///< Texture coordinates.
 } In ;
 
-layout(set = 1, binding = 0) uniform texture2D previousFrame; ///< Previous frame.
-layout(set = 1, binding = 1) uniform texture2D sdfFont; ///< Font SDF texture.
-layout(set = 1, binding = 2) uniform texture2D gridMap; ///< Debug grid texture.
-layout(set = 1, binding = 3) uniform texture2D noise2DMap; ///< RGBA uniform noise in [0,1], uncorrelated.
-layout(set = 1, binding = 4) uniform texture2D perlin2DMap; ///< RGBA tiling perlin noise in [0,1], four different scales and offsets.
-layout(set = 1, binding = 5) uniform texture2D directionsMap; ///< Random 3D directions on the unit sphere.
-layout(set = 1, binding = 6) uniform texture3D noise3DMap; ///< RGBA 3D uniform noise in [0,1], uncorrelated.
-layout(set = 1, binding = 7) uniform texture3D perlin3DMap; ///< RGBA 3D tiling perlin noise in [0,1], four different scales and offsets.
+layout(set = 2, binding = 0) uniform texture2D previousFrame; ///< Previous frame.
+layout(set = 2, binding = 1) uniform texture2D sdfFont; ///< Font SDF texture.
+layout(set = 2, binding = 2) uniform texture2D gridMap; ///< Debug grid texture.
+layout(set = 2, binding = 3) uniform texture2D noise2DMap; ///< RGBA uniform noise in [0,1], uncorrelated.
+layout(set = 2, binding = 4) uniform texture2D perlin2DMap; ///< RGBA tiling perlin noise in [0,1], four different scales and offsets.
+layout(set = 2, binding = 5) uniform texture2D directionsMap; ///< Random 3D directions on the unit sphere.
+layout(set = 2, binding = 6) uniform texture3D noise3DMap; ///< RGBA 3D uniform noise in [0,1], uncorrelated.
+layout(set = 2, binding = 7) uniform texture3D perlin3DMap; ///< RGBA 3D tiling perlin noise in [0,1], four different scales and offsets.
 
 layout(set = 0, binding = 0) uniform UniformBlock {
 	float iTime; ///< Time since beginning of playback.

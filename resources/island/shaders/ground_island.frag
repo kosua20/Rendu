@@ -11,12 +11,12 @@ layout(set = 0, binding = 0) uniform UniformBlock {
 	vec3 camPos; ///< Camera world position.
 };
 
-layout(set = 1, binding = 0) uniform texture2D heightMap; ///< Terrain height map, height in R, normals in GBA.
-layout(set = 1, binding = 1) uniform texture2D shadowMap; ///<Terrain shadowing factor, ground level in R, water level in G.
-layout(set = 1, binding = 2) uniform texture2D surfaceNoise; ///< Noise surface normal map.
-layout(set = 1, binding = 3) uniform texture2D glitterNoise; ///< Noise specular map.
-layout(set = 1, binding = 4) uniform texture2D sandMapSteep; ///< Normal map for steep dunes.
-layout(set = 1, binding = 5) uniform texture2D sandMapFlat; ///< Normal map for flat regions.
+layout(set = 2, binding = 0) uniform texture2D heightMap; ///< Terrain height map, height in R, normals in GBA.
+layout(set = 2, binding = 1) uniform texture2D shadowMap; ///<Terrain shadowing factor, ground level in R, water level in G.
+layout(set = 2, binding = 2) uniform texture2D surfaceNoise; ///< Noise surface normal map.
+layout(set = 2, binding = 3) uniform texture2D glitterNoise; ///< Noise specular map.
+layout(set = 2, binding = 4) uniform texture2D sandMapSteep; ///< Normal map for steep dunes.
+layout(set = 2, binding = 5) uniform texture2D sandMapFlat; ///< Normal map for flat regions.
 
 layout (location = 0) out vec4 fragColor; ///< Terrain appearance.
 layout (location = 1) out vec4 fragWorldPos; ///< Terrain world position.

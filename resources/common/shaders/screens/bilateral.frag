@@ -6,9 +6,9 @@ layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In ;
 
-layout(set = 1, binding = 0) uniform texture2D source; ///< Image to blur.
-layout(set = 1, binding = 1) uniform texture2D depth; ///< Depth information.
-layout(set = 1, binding = 2) uniform texture2D normal; ///< Normal information.
+layout(set = 2, binding = 0) uniform texture2D source; ///< Image to blur.
+layout(set = 2, binding = 1) uniform texture2D depth; ///< Depth information.
+layout(set = 2, binding = 2) uniform texture2D normal; ///< Normal information.
 
 layout(set = 0, binding = 0) uniform UniformBlock {
 	vec2 invDstSize; ///< Inverse of the target resolution.

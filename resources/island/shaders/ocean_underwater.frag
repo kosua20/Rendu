@@ -9,10 +9,10 @@ layout(set = 0, binding = 0) uniform UniformBlock {
 	vec2 invTargetSize; ///< Inverse framebuffer size.
 };
 
-layout(set = 1, binding = 1) uniform texture2D terrainColor; ///< Shaded terrain (with caustics)
-layout(set = 1, binding = 2) uniform texture2D terrainPos; ///< Terrain world position map.
-layout(set = 1, binding = 3) uniform texture2D terrainColorBlur; ///< Blurred shaded terrain.
-layout(set = 1, binding = 4) uniform texture2D absorpScatterLUT; ///< Absorption/scattering look-up table.
+layout(set = 2, binding = 1) uniform texture2D terrainColor; ///< Shaded terrain (with caustics)
+layout(set = 2, binding = 2) uniform texture2D terrainPos; ///< Terrain world position map.
+layout(set = 2, binding = 3) uniform texture2D terrainColorBlur; ///< Blurred shaded terrain.
+layout(set = 2, binding = 4) uniform texture2D absorpScatterLUT; ///< Absorption/scattering look-up table.
 
 layout (location = 0) out vec4 fragColor; ///< Underwater appearance.
 layout (location = 1) out vec4 fragPosUnused; ///< Position (unused).

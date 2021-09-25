@@ -43,13 +43,13 @@ layout(set = 0, binding = 0) uniform UniformBlock {
 	bool showGrid;// = true;
 };
 
-layout(set = 1, binding = 0) uniform texture2D previousFrame;
-layout(set = 1, binding = 1) uniform texture2D sdfFont;
+layout(set = 2, binding = 0) uniform texture2D previousFrame;
+layout(set = 2, binding = 1) uniform texture2D sdfFont;
 
-layout(set = 3, binding =  0) uniform sampler sClampNear;
-layout(set = 3, binding =  1) uniform sampler sRepeatNear;
-layout(set = 3, binding =  2) uniform sampler sClampLinear;
-layout(set = 3, binding =  3) uniform sampler sRepeatLinear;
+layout(set = 1, binding =  0) uniform sampler sClampNear;
+layout(set = 1, binding =  1) uniform sampler sRepeatNear;
+layout(set = 1, binding =  2) uniform sampler sClampLinear;
+layout(set = 1, binding =  3) uniform sampler sRepeatLinear;
 
 layout(location = 0) out vec4 fragColor; ///< Color.
 

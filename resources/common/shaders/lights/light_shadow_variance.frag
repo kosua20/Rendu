@@ -4,7 +4,7 @@ layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In ;
 
-layout(set = 1, binding = 0) uniform texture2D mask; ///< RGBA texture.
+layout(set = 2, binding = 0) uniform texture2D mask; ///< RGBA texture.
 
 layout(set = 0, binding = 0) uniform UniformBlock {
 	bool hasMask; ///< Should the object alpha mask be applied.

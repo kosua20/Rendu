@@ -5,9 +5,9 @@ layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In ;
 
-layout(set = 1, binding = 0) uniform texture2D depthTexture; ///< Depth texture.
-layout(set = 1, binding = 1) uniform texture2D normalTexture; ///< Normal texture, in [0,1].
-layout(set = 1, binding = 2) uniform texture2D noiseTexture; ///< 5x5 3-components noise texture with float precision.
+layout(set = 2, binding = 0) uniform texture2D depthTexture; ///< Depth texture.
+layout(set = 2, binding = 1) uniform texture2D normalTexture; ///< Normal texture, in [0,1].
+layout(set = 2, binding = 2) uniform texture2D noiseTexture; ///< 5x5 3-components noise texture with float precision.
 
 layout(set = 0, binding = 0) uniform UniformBlock {
 	mat4 projectionMatrix; ///< The camera projection parameters.
@@ -15,7 +15,7 @@ layout(set = 0, binding = 0) uniform UniformBlock {
 };
 
 /// Unique sample directions on a sphere.
-layout(std140, set = 2, binding = 0) uniform Samples {
+layout(std140, set = 3, binding = 0) uniform Samples {
 	vec4 samples[16];
 };
 

@@ -6,7 +6,7 @@ layout(location = 0) in INTERFACE {
 	vec3 pos;  ///< World position.
 } In ;
 
-layout(set = 1, binding = 0) uniform textureCube texture0; ///< Input cubemap to process.
+layout(set = 2, binding = 0) uniform textureCube texture0; ///< Input cubemap to process.
 
 layout(set = 0, binding = 0) uniform UniformBlock {
 	float mipmapRoughness; ///< The roughness to use for the convolution lobe.

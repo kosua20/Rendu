@@ -5,7 +5,7 @@ layout(location = 0) in INTERFACE {
 	vec3 pos; ///< Position.
 } In;
 
-layout(set = 1, binding = 0) uniform textureCubeArray screenTexture; ///< Image to blur.
+layout(set = 2, binding = 0) uniform textureCubeArray screenTexture; ///< Image to blur.
 
 layout(set = 0, binding = 0) uniform UniformBlock {
 	vec3 up; 			///< Face vertical vector.

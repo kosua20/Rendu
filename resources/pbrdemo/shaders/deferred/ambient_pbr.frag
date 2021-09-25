@@ -6,16 +6,16 @@ layout(location = 0) in INTERFACE {
 	vec2 uv; ///< Texture coordinates.
 } In ;
 
-layout(set = 1, binding = 0) uniform texture2D albedoTexture; ///< The albedo texture.
-layout(set = 1, binding = 1) uniform texture2D normalTexture; ///< The normal texture.
-layout(set = 1, binding = 2) uniform texture2D effectsTexture; ///< The effects texture.
-layout(set = 1, binding = 3) uniform texture2D depthTexture; ///< The depth texture.
-layout(set = 1, binding = 4) uniform texture2D ssaoTexture; ///< The SSAO texture.
-layout(set = 1, binding = 5) uniform texture2D brdfPrecalc; ///< Preintegrated BRDF lookup table.
-layout(set = 1, binding = 6) uniform textureCube textureCubeMap; ///< Background environment cubemap (with preconvoluted versions of increasing roughness in mipmap levels).
+layout(set = 2, binding = 0) uniform texture2D albedoTexture; ///< The albedo texture.
+layout(set = 2, binding = 1) uniform texture2D normalTexture; ///< The normal texture.
+layout(set = 2, binding = 2) uniform texture2D effectsTexture; ///< The effects texture.
+layout(set = 2, binding = 3) uniform texture2D depthTexture; ///< The depth texture.
+layout(set = 2, binding = 4) uniform texture2D ssaoTexture; ///< The SSAO texture.
+layout(set = 2, binding = 5) uniform texture2D brdfPrecalc; ///< Preintegrated BRDF lookup table.
+layout(set = 2, binding = 6) uniform textureCube textureCubeMap; ///< Background environment cubemap (with preconvoluted versions of increasing roughness in mipmap levels).
 
 /// SH approximation of the environment irradiance (UBO).
-layout(std140, set = 2, binding = 0) uniform SHCoeffs {
+layout(std140, set = 3, binding = 0) uniform SHCoeffs {
 	vec4 shCoeffs[9];
 };
 

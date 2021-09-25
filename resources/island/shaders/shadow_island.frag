@@ -10,7 +10,7 @@ layout(set = 0, binding = 0) uniform UniformBlock {
 	float texelSize; ///< Size of a texel in world space.
 };
 
-layout(set = 1, binding = 0) uniform texture2D heightMap; ///< Height map.
+layout(set = 2, binding = 0) uniform texture2D heightMap; ///< Height map.
 
 layout(location = 0) out vec2 shadow; ///< Shadowing factors.
 

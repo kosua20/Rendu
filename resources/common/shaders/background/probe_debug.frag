@@ -9,10 +9,10 @@ layout(location = 0) in INTERFACE {
     vec4 nor; ///< Normal in world space.
 } In ;
 
-layout(set = 1, binding = 0) uniform textureCube texture0; ///< Cubemap color.
+layout(set = 2, binding = 0) uniform textureCube texture0; ///< Cubemap color.
 
 /// SH approximation of the environment irradiance.
-layout(std140, set = 2, binding = 0) uniform SHCoeffs {
+layout(std140, set = 3, binding = 0) uniform SHCoeffs {
 	vec4 shCoeffs[9];
 };
 
