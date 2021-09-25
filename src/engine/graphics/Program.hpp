@@ -17,6 +17,11 @@ VK_DEFINE_HANDLE(VkShaderModule)
 VK_DEFINE_HANDLE(VkPipelineLayout)
 VK_DEFINE_HANDLE(VkDescriptorSetLayout)
 
+#define UNIFORMS_SET 0
+#define SAMPLERS_SET 1
+#define IMAGES_SET 2
+#define BUFFERS_SET 3
+
 /**
  \brief Represents a group of shaders used for rendering.
  \details Internally responsible for handling uniforms locations, shaders reloading and values caching.
@@ -26,6 +31,7 @@ VK_DEFINE_HANDLE(VkDescriptorSetLayout)
 class Program {
 public:
 
+	static uint ALL_MIPS;
 	/** \brief Uniform reflection information.
 	 */
 	struct UniformDef {
@@ -133,14 +139,14 @@ public:
 	 * \param slot the location to bind to
 	 * \param mip the mip of the texture to bind (or all mips if left at its default value)
 	 */
-	void texture(const Texture* texture, uint slot, uint mip = 0xFFFF);
+	void texture(const Texture* texture, uint slot, uint mip = Program::ALL_MIPS);
 
 	/** Bind a texture to a given location.
 	 * \param texture the texture to bind
 	 * \param slot the location to bind to
 	 * \param mip the mip of the texture to bind (or all mips if left at its default value)
 	 */
-	void texture(const Texture& texture, uint slot, uint mip = 0xFFFF);
+	void texture(const Texture& texture, uint slot, uint mip = Program::ALL_MIPS);
 
 	/** Bind a set of textures to successive locations.
 	 * \param textures the textures to bind
@@ -415,8 +421,8 @@ private:
 	std::unordered_map<int, TextureState> _textures; ///< Dynamic image-sampler definitions (set 1).
 	std::unordered_map<int, StaticBufferState> _staticBuffers; ///< Static uniform buffer definitions (set 2).
 
-	std::array<bool, 3> _dirtySets; ///< Marks which descriptor sets are dirty.
-	std::array<DescriptorSet, 3> _currentSets; ///< Descriptor sets.
+	std::array<bool, 4> _dirtySets; ///< Marks which descriptor sets are dirty.
+	std::array<DescriptorSet, 4> _currentSets; ///< Descriptor sets.
 	std::vector<uint32_t> _currentOffsets; ///< Offsets in the descriptor set for dynamic uniform buffers.
 
 	bool _reloaded = false; ///< Has the program been reloaded.

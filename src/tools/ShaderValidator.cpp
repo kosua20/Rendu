@@ -150,15 +150,18 @@ int main(int argc, char ** argv) {
 
 			// Extra validation.
 			for(const auto& image : stage.images){
-				if(image.set != 1){
-					outputError(names[0], 0, "Sampled image should always be in set 1.");
+				if(image.set != IMAGES_SET){
+					const std::string message = "Images should always be in set " + std::to_string(IMAGES_SET) + ".";
+					outputError(names[0], 0, message);
 				}
 			}
 			for(const auto& buffer : stage.buffers){
 				const uint set = buffer.set;
-				// We only internally manage dynamic UBOs, in set 0. And static buffers are in set 2.
-				if(set != 0 && set != 2){
-					outputError(names[0], 0, "Uniform buffer should always be in set 0 (dynamic) or 2 (static)");
+				// We only internally manage dynamic UBOs, in set UNIFORMS_SET. And static buffers are in set BUFFERS_SET.
+				if(set != UNIFORMS_SET && set != BUFFERS_SET){
+					const std::string dynID = std::to_string(UNIFORMS_SET);
+					const std::string statID = std::to_string(BUFFERS_SET);
+					outputError(names[0], 0, "Uniform buffer should always be in set " + dynID + " (dynamic) or " + statID + " (static)");
 				}
 			}
 

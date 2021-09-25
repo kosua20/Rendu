@@ -1485,7 +1485,11 @@ void GPU::clean(Program & program){
 	// Skip the static samplers.
 	const size_t layoutCount = program._state.setLayouts.size();
 	if(layoutCount > 0){
-		for(size_t lid = 0; lid < layoutCount-1; ++lid){
+		// Skip the static samplers.
+		for(size_t lid = 0; lid < layoutCount; ++lid){
+			if(lid == SAMPLERS_SET){
+				continue;
+			}
 			VkDescriptorSetLayout& setLayout = program._state.setLayouts[lid];
 			vkDestroyDescriptorSetLayout(_context.device, setLayout, nullptr);
 		}

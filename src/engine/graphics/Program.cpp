@@ -3,6 +3,8 @@
 #include "graphics/GPUInternal.hpp"
 #include "resources/ResourcesManager.hpp"
 #include <set>
+uint Program::ALL_MIPS = 0xFFFF;
+
 #include <cstring>
 
 Program::Program(const std::string & name, const std::string & vertexContent, const std::string & fragmentContent, const std::string & tessControlContent, const std::string & tessEvalContent) : _name(name) {
@@ -72,11 +74,11 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 		for(const auto& buffer : stage.buffers){
 			const uint set = buffer.set;
 
-			// We only internally manage dynamic UBOs, in set 0.
-			if(set != 0){
-				// Other sets are just initialized.
-				if(set != 2){
-					Log::Error() << "Low frequency UBOs should be in set 2, skipping." << std::endl;
+			// We only internally manage dynamic UBOs, in set UNIFORMS_SET.
+			if(set != UNIFORMS_SET){
+				// The other buffer set is just initialized.
+				if(set != BUFFERS_SET){
+					Log::Error() << "Low frequency UBOs should be in set " << BUFFERS_SET << ", skipping." << std::endl;
 					continue;
 				}
 				if(_staticBuffers.count(buffer.binding) != 0){
@@ -114,14 +116,14 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 		for(const auto& image : stage.images){
 			const uint set = image.set;
 
-			if(set != 1){
-				Log::Error() << "Program " << name() << ": Sampler image should be in set 1 only, ignoring." << std::endl;
+			if(set != IMAGES_SET){
+				Log::Error() << "Program " << name() << ": Image should be in set " << IMAGES_SET << " only, ignoring." << std::endl;
 				continue;
 			}
 
 			if(_textures.count(image.binding) != 0){
 				if(_textures.at(image.binding).name != image.name){
-					Log::Warning() << Log::GPU << "Program " << name() << ": Sampled image already created, collision between stages for set " << image.set << " at binding " << image.binding << "." << std::endl;
+					Log::Warning() << Log::GPU << "Program " << name() << ": Image already created, collision between stages for set " << image.set << " at binding " << image.binding << "." << std::endl;
 					continue;
 				}
 			}
@@ -138,13 +140,13 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 
 	_dirtySets.fill(false);
 	if(!_dynamicBuffers.empty()){
-		_dirtySets[0] = true;
+		_dirtySets[UNIFORMS_SET] = true;
 	}
 	if(!_textures.empty()){
-		_dirtySets[1] = true;
+		_dirtySets[IMAGES_SET] = true;
 	}
-	// One extra set, the static samplers.
-	_state.setLayouts.resize(_currentSets.size() + 1);
+
+	_state.setLayouts.resize(_currentSets.size());
 
 	// Basic uniforms buffer descriptors will use a dynamic offset.
 	uint maxDescriptorCount = 0;
@@ -166,7 +168,7 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 		setInfo.pBindings = bindingLayouts.data();
 		setInfo.bindingCount = uint32_t(bindingLayouts.size());
 
-		if(vkCreateDescriptorSetLayout(context->device, &setInfo, nullptr, &_state.setLayouts[0]) != VK_SUCCESS){
+		if(vkCreateDescriptorSetLayout(context->device, &setInfo, nullptr, &_state.setLayouts[UNIFORMS_SET]) != VK_SUCCESS){
 			Log::Error() << Log::GPU << "Unable to create set layout." << std::endl;
 		}
 	}
@@ -189,7 +191,7 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 		setInfo.pBindings = bindingLayouts.data();
 		setInfo.bindingCount = uint32_t(bindingLayouts.size());
 
-		if(vkCreateDescriptorSetLayout(context->device, &setInfo, nullptr, &_state.setLayouts[1]) != VK_SUCCESS){
+		if(vkCreateDescriptorSetLayout(context->device, &setInfo, nullptr, &_state.setLayouts[IMAGES_SET]) != VK_SUCCESS){
 			Log::Error() << Log::GPU << "Unable to create set layout." << std::endl;
 		}
 	}
@@ -212,14 +214,14 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 		setInfo.pBindings = bindingLayouts.data();
 		setInfo.bindingCount = uint32_t(bindingLayouts.size());
 
-		if(vkCreateDescriptorSetLayout(context->device, &setInfo, nullptr, &_state.setLayouts[2]) != VK_SUCCESS){
+		if(vkCreateDescriptorSetLayout(context->device, &setInfo, nullptr, &_state.setLayouts[BUFFERS_SET]) != VK_SUCCESS){
 			Log::Error() << Log::GPU << "Unable to create set layout." << std::endl;
 		}
 	}
 
 	// Samplers
 	{
-		_state.setLayouts[3] = context->samplerLibrary.getLayout();
+		_state.setLayouts[SAMPLERS_SET] = context->samplerLibrary.getLayout();
 	}
 
 	VkPipelineLayoutCreateInfo layoutInfo{};
@@ -244,9 +246,9 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 		desc->second.descriptorIndex = currentIndex;
 		++currentIndex;
 	}
-
-	context->descriptorAllocator.freeSet(_currentSets[0]);
-	_currentSets[0] = context->descriptorAllocator.allocateSet(_state.setLayouts[0]);
+	// Dynamic uniforms are allocated only once.
+	context->descriptorAllocator.freeSet(_currentSets[UNIFORMS_SET]);
+	_currentSets[UNIFORMS_SET] = context->descriptorAllocator.allocateSet(_state.setLayouts[UNIFORMS_SET]);
 
 	std::vector<VkDescriptorBufferInfo> infos(_dynamicBuffers.size());
 	std::vector<VkWriteDescriptorSet> writes;
@@ -259,7 +261,7 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 
 		VkWriteDescriptorSet write{};
 		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		write.dstSet = _currentSets[0].handle;
+		write.dstSet = _currentSets[UNIFORMS_SET].handle;
 		write.dstBinding = buffer.first;
 		write.dstArrayElement = 0;
 		write.descriptorCount = 1;
@@ -285,22 +287,22 @@ void Program::update(){
 	GPUContext* context = GPU::getInternal();
 
 	// Upload all dirty uniform buffers, and the offsets.
-	if(_dirtySets[0]){
+	if(_dirtySets[UNIFORMS_SET]){
 		for(const auto& buffer : _dynamicBuffers){
 			if(buffer.second.dirty){
 				buffer.second.buffer->upload();
 			}
 			_currentOffsets[buffer.second.descriptorIndex] = uint32_t(buffer.second.buffer->currentOffset());
 		}
-		_dirtySets[0] = false;
+		_dirtySets[UNIFORMS_SET] = false;
 	}
 
 	// Update the texture descriptors
-	if(_dirtySets[1]){
+	if(_dirtySets[IMAGES_SET]){
 
 		// We can't just update the current descriptor set as it might be in use.
-		context->descriptorAllocator.freeSet(_currentSets[1]);
-		_currentSets[1] = context->descriptorAllocator.allocateSet(_state.setLayouts[1]);
+		context->descriptorAllocator.freeSet(_currentSets[IMAGES_SET]);
+		_currentSets[IMAGES_SET] = context->descriptorAllocator.allocateSet(_state.setLayouts[IMAGES_SET]);
 
 		std::vector< VkDescriptorImageInfo> imageInfos(_textures.size());
 		std::vector< VkWriteDescriptorSet> writes;
@@ -311,7 +313,7 @@ void Program::update(){
 			imageInfos[tid].imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 			VkWriteDescriptorSet write{};
 			write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-			write.dstSet = _currentSets[1].handle;
+			write.dstSet = _currentSets[IMAGES_SET].handle;
 			write.dstBinding = image.first;
 			write.dstArrayElement = 0;
 			write.descriptorCount = 1;
@@ -322,14 +324,14 @@ void Program::update(){
 		}
 
 		vkUpdateDescriptorSets(context->device, uint32_t(writes.size()), writes.data(), 0, nullptr);
-		_dirtySets[1] = false;
+		_dirtySets[IMAGES_SET] = false;
 	}
 
 	// Update static buffer descriptors.
-	if(_dirtySets[2]){
+	if(_dirtySets[BUFFERS_SET]){
 		// We can't just update the current descriptor set as it might be in use.
-		context->descriptorAllocator.freeSet(_currentSets[2]);
-		_currentSets[2] = context->descriptorAllocator.allocateSet(_state.setLayouts[2]);
+		context->descriptorAllocator.freeSet(_currentSets[BUFFERS_SET]);
+		_currentSets[BUFFERS_SET] = context->descriptorAllocator.allocateSet(_state.setLayouts[BUFFERS_SET]);
 
 		std::vector<VkDescriptorBufferInfo> infos(_staticBuffers.size());
 		std::vector<VkWriteDescriptorSet> writes;
@@ -343,7 +345,7 @@ void Program::update(){
 			
 			VkWriteDescriptorSet write{};
 			write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-			write.dstSet = _currentSets[2].handle;
+			write.dstSet = _currentSets[BUFFERS_SET].handle;
 			write.dstBinding = buffer.first;
 			write.dstArrayElement = 0;
 			write.descriptorCount = 1;
@@ -354,24 +356,28 @@ void Program::update(){
 		}
 
 		vkUpdateDescriptorSets(context->device, uint32_t(writes.size()), writes.data(), 0, nullptr);
-		_dirtySets[2] = false;
+		_dirtySets[BUFFERS_SET] = false;
 	}
 
 	// Bind the descriptor sets.
-	
-	// Set 0 needs updated offsets.
-	vkCmdBindDescriptorSets(context->getRenderCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, _state.layout, 0, 1, &_currentSets[0].handle, uint32_t(_currentOffsets.size()), _currentOffsets.data());
+	const VkPipelineBindPoint bindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+	VkCommandBuffer& commandBuffer = context->getRenderCommandBuffer();
+
+	// Set UNIFORMS_SET needs updated offsets.
+	vkCmdBindDescriptorSets(commandBuffer, bindPoint, _state.layout, UNIFORMS_SET, 1, &_currentSets[UNIFORMS_SET].handle, uint32_t(_currentOffsets.size()), _currentOffsets.data());
+
+	// Bind static samplers dummy set SAMPLERS_SET.
+	const VkDescriptorSet samplersHandle = context->samplerLibrary.getSetHandle();
+	vkCmdBindDescriptorSets(commandBuffer, bindPoint, _state.layout, SAMPLERS_SET, 1, &samplersHandle, 0, nullptr);
 
 	// Other sets are bound if present.
-	for(uint sid = 1; sid < _currentSets.size(); ++sid){
-		if(_currentSets[sid].handle != VK_NULL_HANDLE){
-			vkCmdBindDescriptorSets(context->getRenderCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, _state.layout, sid, 1, &_currentSets[sid].handle, 0, nullptr);
-		}
+	if(_currentSets[IMAGES_SET].handle != VK_NULL_HANDLE){
+		vkCmdBindDescriptorSets(commandBuffer, bindPoint, _state.layout, IMAGES_SET, 1, &_currentSets[IMAGES_SET].handle, 0, nullptr);
+	}
+	if(_currentSets[BUFFERS_SET].handle != VK_NULL_HANDLE){
+		vkCmdBindDescriptorSets(commandBuffer, bindPoint, _state.layout, BUFFERS_SET, 1, &_currentSets[BUFFERS_SET].handle, 0, nullptr);
 	}
 
-	// Bind static samplers dummy set.
-	const VkDescriptorSet samplersHandle = context->samplerLibrary.getSetHandle();
-	vkCmdBindDescriptorSets(context->getRenderCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, _state.layout, 3, 1, &samplersHandle, 0, nullptr);
 }
 
 bool Program::reloaded() const {
@@ -403,6 +409,10 @@ void Program::clean() {
 	_dirtySets.fill(false);
 
 	for(uint i = 0; i < _currentSets.size(); ++i){
+		// Skip the shared static samplers set.
+		if(i == SAMPLERS_SET){
+			continue;
+		}
 		GPU::getInternal()->descriptorAllocator.freeSet(_currentSets[i]);
 		_currentSets[i].handle = VK_NULL_HANDLE;
 		_currentSets[i].pool = 0;
@@ -418,7 +428,7 @@ void Program::buffer(const UniformBufferBase& buffer, uint slot){
 			_staticBuffers[slot].buffer = buffer.gpu->buffer;
 			_staticBuffers[slot].offset = uint(buffer.currentOffset());
 			_staticBuffers[slot].size = uint(buffer.baseSize());
-			_dirtySets[2] = true;
+			_dirtySets[BUFFERS_SET] = true;
 		}
 	}
 }
@@ -428,13 +438,14 @@ void Program::texture(const Texture& texture, uint slot, uint mip){
 	auto existingTex = _textures.find(slot);
 	if(existingTex != _textures.end()) {
 		const TextureState & refTex = existingTex->second;
+
 		// Find the view we need.
-		assert(mip == 0xFFFF || mip < texture.gpu->levelViews.size());
-		VkImageView& view = mip == 0xFFFF ? texture.gpu->view : texture.gpu->levelViews[mip];
+		assert(mip == Program::ALL_MIPS || mip < texture.gpu->levelViews.size());
+		VkImageView& view = mip == Program::ALL_MIPS ? texture.gpu->view : texture.gpu->levelViews[mip];
 
 		if(refTex.view != view){
 			_textures[slot].view = view;
-			_dirtySets[1] = true;
+			_dirtySets[IMAGES_SET] = true;
 		}
 	}
 }
