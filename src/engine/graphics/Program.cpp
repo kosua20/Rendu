@@ -7,20 +7,44 @@ uint Program::ALL_MIPS = 0xFFFF;
 
 #include <cstring>
 
-Program::Program(const std::string & name, const std::string & vertexContent, const std::string & fragmentContent, const std::string & tessControlContent, const std::string & tessEvalContent) : _name(name) {
+
+Program::Program(const std::string & name, const std::string & vertexContent, const std::string & fragmentContent, const std::string & tessControlContent, const std::string & tessEvalContent) :
+	_name(name), _type(Type::GRAPHICS) {
 	reload(vertexContent, fragmentContent, tessControlContent, tessEvalContent);
 }
 
+Program::Program(const std::string & name, const std::string & computeContent) :
+	_name(name), _type(Type::COMPUTE) {
+	reload(computeContent);
+}
+
 void Program::reload(const std::string & vertexContent, const std::string & fragmentContent, const std::string & tessControlContent, const std::string & tessEvalContent) {
+	if(_type != Type::GRAPHICS){
+		Log::Error() << Log::GPU << _name << " is not a graphics program." << std::endl;
+		return;
+	}
 
 	clean();
 	_reloaded = true;
 	
 	const std::string debugName = _name;
-	GPU::createProgram(*this, vertexContent, fragmentContent, tessControlContent, tessEvalContent, debugName);
+	GPU::createGraphicsProgram(*this, vertexContent, fragmentContent, tessControlContent, tessEvalContent, debugName);
 	reflect();
 }
 
+void Program::reload(const std::string & computeContent) {
+	if(_type != Type::COMPUTE){
+		Log::Error() << Log::GPU << _name << " is not a compute program." << std::endl;
+		return;
+	}
+	clean();
+	_reloaded = true;
+
+	const std::string debugName = _name;
+	GPU::createComputeProgram(*this, computeContent, debugName);
+	reflect();
+
+}
 
 void Program::reflect(){
 	// Reflection information has been populated. Merge uniform infos, build descriptor layout, prepare descriptors.
@@ -363,7 +387,7 @@ void Program::update(){
 	}
 
 	// Bind the descriptor sets.
-	const VkPipelineBindPoint bindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+	const VkPipelineBindPoint bindPoint = _type == Type::COMPUTE ? VK_PIPELINE_BIND_POINT_COMPUTE : VK_PIPELINE_BIND_POINT_GRAPHICS;
 	VkCommandBuffer& commandBuffer = context->getRenderCommandBuffer();
 
 	// Set UNIFORMS_SET needs updated offsets.

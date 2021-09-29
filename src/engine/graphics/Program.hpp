@@ -33,6 +33,13 @@ public:
 
 	/** Bind all mip levels of a texture */
 	static uint ALL_MIPS;
+
+	/** Type of program */
+	enum class Type {
+		GRAPHICS, ///< Graphics program for draw calls.
+		COMPUTE ///< Compute program for dispatch calls.
+	};
+
 	/** \brief Uniform reflection information.
 	 */
 	struct UniformDef {
@@ -84,7 +91,7 @@ public:
 	using Uniforms = std::unordered_map<std::string, UniformDef>; ///< List of named uniforms.
 
 	/**
-	 Load, compile and link shaders into a GPU program.
+	 Load, compile and link shaders into a GPU graphics program.
 	 \param name the program name for logging
 	 \param vertexContent the content of the vertex shader
 	 \param fragmentContent the content of the fragment shader
@@ -92,6 +99,13 @@ public:
 	 \param tessEvalContent the content of the tessellation evaluation shader (can be empty)
 	 */
 	Program(const std::string & name, const std::string & vertexContent, const std::string & fragmentContent, const std::string & tessControlContent = "", const std::string & tessEvalContent = "");
+
+	/**
+	 Load, compile and link shaders into a GPU compute program.
+	 \param name the program name for logging
+	 \param computeContent the content of the compute shader
+	 */
+	Program(const std::string & name, const std::string & computeContent);
 
 	/**
 	 Load the program, compiling the shader and updating all uniform locations.
@@ -103,11 +117,10 @@ public:
 	void reload(const std::string & vertexContent, const std::string & fragmentContent, const std::string & tessControlContent = "", const std::string & tessEvalContent = "");
 
 	/**
-	 Save the program to a compiled set of instructions on disk.
-	 \param outputPath the output path
-	 \warning The export to binary is not supported by all GPUs and will silently fail.
+	 Load the program, compiling the shader and updating all uniform locations.
+	 \param computeContent the content of the compute shader
 	 */
-	void saveBinary(const std::string & outputPath) const;
+	void reload(const std::string & computeContent);
 
 	/** \return true if the program has been recently reloaded. */
 	bool reloaded() const;
@@ -163,8 +176,8 @@ public:
 	 * \param slot the location to bind the texture to
 	 */
 	void defaultTexture(uint slot);
-	
-	/** Update internal data (descriptors,...) before a draw. */
+
+	/** Update internal data (descriptors,...) and bind them before a draw/dispatch. */
 	void update();
 
 	/** Set a given uniform value.
@@ -322,6 +335,11 @@ public:
 		return _name;
 	}
 
+	/** \return whether this is a graphics or compute program */
+	Program::Type type() const {
+		return _type;
+	}
+
 	/** Copy assignment operator (disabled).
 	 \return a reference to the object assigned to
 	 */
@@ -438,6 +456,7 @@ private:
 	std::vector<uint32_t> _currentOffsets; ///< Offsets in the descriptor set for dynamic uniform buffers.
 
 	bool _reloaded = false; ///< Has the program been reloaded.
+	const Type _type; ///< Is this a compute shader.
 
 	friend class GPU; ///< Utilities will need to access GPU handle.
 };

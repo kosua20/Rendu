@@ -20,6 +20,7 @@ enum class ShaderType : uint {
 	FRAGMENT, ///< Fragment shader.
 	TESSCONTROL, ///< Tesselation control shader.
 	TESSEVAL, ///< Tesselation evaluation shader.
+	COMPUTE, ///< Compute shader.
 	COUNT
 };
 
@@ -294,11 +295,17 @@ public:
 	/// Constructor.
 	GPUState() = default;
 
-	/** Test if this state is equivalent (in a Vulkan pipeline state sense) to another.
+	/** Test if this state is equivalent (in a Vulkan graphics pipeline state sense) to another.
 	 \param other the state to compare to
 	 \return true if they are compatible
 	 */
-	bool isEquivalent(const GPUState& other) const;
+	bool isGraphicsEquivalent(const GPUState& other) const;
+
+	/** Test if this state is equivalent (in a Vulkan compute pipeline state sense) to another.
+	 \param other the state to compare to
+	 \return true if they are compatible
+	 */
+	bool isComputeEquivalent(const GPUState& other) const;
 
 	// Blend state.
 	glm::vec4 blendColor {0.0f}; ///< Blend color for constant blend mode.
@@ -335,11 +342,13 @@ public:
 	bool blend = false; ///< Blending enabled or not.
 	bool sentinel = false; ///< Used to delimit the parameters that can be directly compared in memory.
 
-
-	// Binding state.
-	Program* program = nullptr; ///< The current program.
+	// Graphics binding state.
+	Program* graphicsProgram = nullptr; ///< The current graphics program.
 	const GPUMesh* mesh = nullptr; ///< The current mesh.
 	FramebufferInfos pass; ///< The current framebuffer.
+
+	// Compute binding state.
+	Program* computeProgram = nullptr; ///< The current compute program.
 };
 
 /** \brief Represent a GPU query, automatically buffered and retrieved.

@@ -26,16 +26,16 @@ void PipelineCache::init(){
 	free(pipelineData);
 }
 
-VkPipeline PipelineCache::getPipeline(const GPUState & state){
+VkPipeline PipelineCache::getGraphicsPipeline(const GPUState & state){
 	// Compute the hash (used in all cases).
 	const uint64_t hash = XXH3_64bits(&state, offsetof(GPUState, sentinel));
 
 	// First check if we already have pipelines for the current program.
-	auto sameProgramPipelinesIt = _pipelines.find(state.program);
+	auto sameProgramPipelinesIt = _graphicPipelines.find(state.graphicsProgram);
 
-	const bool programReloaded = state.program->reloaded(true);
+	const bool programReloaded = state.graphicsProgram->reloaded(true);
 	// We have to invalidate program pipelines after a reload, as the layout might change.
-	if(sameProgramPipelinesIt != _pipelines.end() && programReloaded){
+	if(sameProgramPipelinesIt != _graphicPipelines.end() && programReloaded){
 		// Delete the pipelines corresponding to this program.
 		// If we immediatly destroy a pipeline that was in use earlier in the frame, we might get a crash.
 		// So instead schedule the deletion and remove the records.
@@ -45,14 +45,14 @@ VkPipeline PipelineCache::getPipeline(const GPUState & state){
 			_pipelinesToDelete.back().frame = GPU::getInternal()->frameIndex;
 		}
 		sameProgramPipelinesIt->second.clear();
-		_pipelines.erase(state.program);
-		sameProgramPipelinesIt = _pipelines.end();
+		_graphicPipelines.erase(state.graphicsProgram);
+		sameProgramPipelinesIt = _graphicPipelines.end();
 	}
 
 
 	// If not found, create new program cache and generate pipeline.
-	if(sameProgramPipelinesIt == _pipelines.end()){
-		_pipelines[state.program] = ProgramPipelines();
+	if(sameProgramPipelinesIt == _graphicPipelines.end()){
+		_graphicPipelines[state.graphicsProgram] = ProgramPipelines();
 		return createNewPipeline(state, hash);
 	}
 
@@ -79,6 +79,35 @@ VkPipeline PipelineCache::getPipeline(const GPUState & state){
 
 	// Else we have to create the pipeline
 	return createNewPipeline(state, hash);
+}
+
+
+VkPipeline PipelineCache::getComputePipeline(const GPUState & state){
+
+	// First check if we already have pipelines for the current program.
+	auto sameProgramPipelinesIt = _computePipelines.find(state.computeProgram);
+
+	const bool programReloaded = state.computeProgram->reloaded(true);
+	// We have to invalidate program pipelines after a reload, as the layout might change.
+	if(sameProgramPipelinesIt != _computePipelines.end() && programReloaded){
+		// Delete the pipeline corresponding to this program.
+		// If we immediatly destroy a pipeline that was in use earlier in the frame, we might get a crash.
+		// So instead schedule the deletion and remove the records.
+		VkPipeline pipelineInfo = sameProgramPipelinesIt->second;
+		_pipelinesToDelete.emplace_back();
+		_pipelinesToDelete.back().pipeline = pipelineInfo;
+		_pipelinesToDelete.back().frame = GPU::getInternal()->frameIndex;
+		_computePipelines.erase(state.computeProgram);
+		sameProgramPipelinesIt = _computePipelines.end();
+	}
+
+	// If not found, create new program cache and generate pipeline.
+	if(sameProgramPipelinesIt == _computePipelines.end()){
+		_computePipelines[state.computeProgram] = buildComputePipeline(*state.computeProgram);
+		return _computePipelines[state.computeProgram];
+	}
+
+	return sameProgramPipelinesIt->second;
 }
 
 void PipelineCache::freeOutdatedPipelines(){
@@ -118,11 +147,16 @@ void PipelineCache::clean(){
 		Resources::saveRawDataToExternalFile(PIPELINE_CACHE_FILE, pipelineData, pipelineSize);
 	}
 
-	for(auto& programPipelines : _pipelines){
+	for(auto& programPipelines : _graphicPipelines){
 		for(auto& pipeline : programPipelines.second){
 			vkDestroyPipeline(context->device, pipeline.second.pipeline, nullptr);
 			--GPU::_metrics.pipelines;
 		}
+	}
+
+	for(auto& programPipeline : _computePipelines){
+		vkDestroyPipeline(context->device, programPipeline.second, nullptr);
+		--GPU::_metrics.pipelines;
 	}
 
 	vkDestroyPipelineCache(context->device, _vulkanCache, nullptr);
@@ -131,29 +165,26 @@ void PipelineCache::clean(){
 
 VkPipeline PipelineCache::createNewPipeline(const GPUState& state, const uint64_t hash){
 	Entry entry;
-	entry.pipeline = buildPipeline(state);
-	entry.program = state.program;
+	entry.pipeline = buildGraphicsPipeline(state);
 	entry.mesh = state.mesh->state;
 	entry.framebuffer = state.pass.framebuffer->getState();
 
-	++GPU::_metrics.pipelines;
-
-	auto it = _pipelines[state.program].insert(std::make_pair(hash, entry));
+	auto it = _graphicPipelines[state.graphicsProgram].insert(std::make_pair(hash, entry));
 	return it->second.pipeline;
 }
 
-VkPipeline PipelineCache::buildPipeline(const GPUState& state){
+VkPipeline PipelineCache::buildGraphicsPipeline(const GPUState& state){
 	GPUContext* context = GPU::getInternal();
 
 	VkGraphicsPipelineCreateInfo pipelineInfo{};
 	pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 	// Assert no null data.
-	assert(state.program); assert(state.mesh); assert(state.pass.framebuffer);
+	assert(state.graphicsProgram); assert(state.mesh); assert(state.pass.framebuffer);
 
 	std::vector<VkPipelineShaderStageCreateInfo> stages;
 	// Program
 	{
-		const Program::State& programState = state.program->getState();
+		const Program::State& programState = state.graphicsProgram->getState();
 		// Build state for the pipeline state objects.
 		static const std::unordered_map<ShaderType, VkShaderStageFlagBits> stageBits = {
 			{ShaderType::VERTEX, VK_SHADER_STAGE_VERTEX_BIT},
@@ -161,9 +192,9 @@ VkPipeline PipelineCache::buildPipeline(const GPUState& state){
 			{ShaderType::TESSCONTROL, VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT},
 			{ShaderType::TESSEVAL, VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT},
 		};
-		for(uint sid = 0; sid < uint(ShaderType::COUNT); ++sid){
+		for(uint sid = 0; sid <= uint(ShaderType::FRAGMENT); ++sid){
 			const ShaderType type = ShaderType(sid);
-			const VkShaderModule& module = state.program->stage(type).module;
+			const VkShaderModule& module = state.graphicsProgram->stage(type).module;
 			if(module == VK_NULL_HANDLE){
 				continue;
 			}
@@ -192,7 +223,7 @@ VkPipeline PipelineCache::buildPipeline(const GPUState& state){
 	}
 	// Tesselation
 	VkPipelineTessellationStateCreateInfo tessellationState{};
-	const bool hasTessellation = state.program->stage(ShaderType::TESSEVAL).module != VK_NULL_HANDLE;
+	const bool hasTessellation = state.graphicsProgram->stage(ShaderType::TESSEVAL).module != VK_NULL_HANDLE;
 	if(hasTessellation){
 		tessellationState.sType = VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO;
 		tessellationState.flags = 0;
@@ -385,5 +416,32 @@ VkPipeline PipelineCache::buildPipeline(const GPUState& state){
 	if(vkCreateGraphicsPipelines(context->device, _vulkanCache, 1, &pipelineInfo, nullptr, &pipeline) != VK_SUCCESS){
 		Log::Error() << Log::GPU << "Unable to create pipeline." << std::endl;
 	}
+	++GPU::_metrics.pipelines;
+	return pipeline;
+}
+
+VkPipeline PipelineCache::buildComputePipeline(Program& program){
+	GPUContext* context = GPU::getInternal();
+
+	VkComputePipelineCreateInfo pipelineInfo{};
+	pipelineInfo.sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
+	pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
+	pipelineInfo.basePipelineIndex = -1;
+
+	// Program
+	const Program::State& programState = program.getState();
+	const VkShaderModule module = program.stage(ShaderType::COMPUTE).module;
+	pipelineInfo.stage = {};
+	pipelineInfo.stage.stage = VK_SHADER_STAGE_COMPUTE_BIT;
+	pipelineInfo.stage.module = module;
+	pipelineInfo.stage.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+	pipelineInfo.stage.pName = "main";
+	pipelineInfo.layout = programState.layout;
+
+	VkPipeline pipeline;
+	if(vkCreateComputePipelines(context->device, _vulkanCache, 1, &pipelineInfo, nullptr, &pipeline) != VK_SUCCESS){
+		Log::Error() << Log::GPU << "Unable to create pipeline." << std::endl;
+	}
+	++GPU::_metrics.pipelines;
 	return pipeline;
 }

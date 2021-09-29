@@ -296,7 +296,7 @@ bool GPU::setupWindow(Window * window){
 	return true;
 }
 
-void GPU::createProgram(Program& program, const std::string & vertexContent, const std::string & fragmentContent, const std::string & tessControlContent, const std::string & tessEvalContent, const std::string & debugInfos) {
+void GPU::createGraphicsProgram(Program& program, const std::string & vertexContent, const std::string & fragmentContent, const std::string & tessControlContent, const std::string & tessEvalContent, const std::string & debugInfos) {
 
 	Log::Verbose() << Log::GPU << "Compiling " << debugInfos << "." << std::endl;
 	
@@ -336,8 +336,28 @@ void GPU::createProgram(Program& program, const std::string & vertexContent, con
 	++_metrics.programs;
 }
 
+void GPU::createComputeProgram(Program& program, const std::string & computeContent, const std::string & debugInfos) {
+
+	Log::Verbose() << Log::GPU << "Compiling " << debugInfos << "." << std::endl;
+
+	std::string compilationLog;
+	// If compute program code is given, compile it.
+	if(!computeContent.empty()) {
+		ShaderCompiler::compile(computeContent, ShaderType::COMPUTE, program.stage(ShaderType::COMPUTE), true, compilationLog);
+		if(!compilationLog.empty()) {
+			Log::Error() << Log::GPU << "Compute shader (for " << program.name() << ") failed to compile:" << std::endl
+						 << compilationLog << std::endl;
+		}
+	}
+	++_metrics.programs;
+}
+
 void GPU::bindProgram(const Program & program){
-	_state.program = (Program*)&program;
+	if(program.type() == Program::Type::COMPUTE){
+		_state.computeProgram = (Program*)&program;
+	} else {
+		_state.graphicsProgram = (Program*)&program;
+	}
 }
 
 void GPU::bindFramebuffer(const Framebuffer & framebuffer, uint layer, uint mip){
@@ -1007,8 +1027,8 @@ void GPU::setupMesh(Mesh & mesh) {
 }
 
 
-void GPU::bindPipelineIfNeeded(){
-	if(!_state.pass.framebuffer){
+void GPU::bindGraphicsPipelineIfNeeded(){
+	if(_state.pass.framebuffer == nullptr){
 		Log::Error() << Log::GPU << "We are not in a render pass." << std::endl;
 		return;
 	}
@@ -1017,14 +1037,43 @@ void GPU::bindPipelineIfNeeded(){
 	bool shouldBindPipeline = _context.newRenderPass;
 	_context.newRenderPass = false;
 	// * state is outdated, create/retrieve new pipeline
-	if(!_state.isEquivalent(_lastState)){
-		_context.pipeline = _context.pipelineCache.getPipeline(_state);
+	if(!_state.isGraphicsEquivalent(_lastState)){
+		_context.graphicsPipeline = _context.pipelineCache.getGraphicsPipeline(_state);
+		// Preserve the current compute program.
+		Program* lastComputeUsed = _lastState.computeProgram;
 		_lastState = _state;
+		_lastState.computeProgram = lastComputeUsed;
 		shouldBindPipeline = true;
 	}
 
 	if(shouldBindPipeline){
-		vkCmdBindPipeline(_context.getRenderCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, _context.pipeline);
+		vkCmdBindPipeline(_context.getRenderCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, _context.graphicsPipeline);
+		++_metrics.pipelineBindings;
+	}
+}
+
+
+void GPU::bindComputePipelineIfNeeded(){
+	if(_state.pass.framebuffer != nullptr){
+		Log::Error() << Log::GPU << "We are in a render pass." << std::endl;
+		return;
+	}
+
+	// Possibilities:
+	// * we have just finished a render pass
+	bool shouldBindPipeline = _context.hadRenderPass;
+	_context.hadRenderPass = false;
+
+	// * state is outdated, create/retrieve new pipeline
+	if(!_state.isComputeEquivalent(_lastState)){
+		_context.computePipeline = _context.pipelineCache.getComputePipeline(_state);
+		// Save the current compute program.
+		_lastState.computeProgram = _state.computeProgram;
+		shouldBindPipeline = true;
+	}
+
+	if(shouldBindPipeline){
+		vkCmdBindPipeline(_context.getRenderCommandBuffer(), VK_PIPELINE_BIND_POINT_COMPUTE, _context.computePipeline);
 		++_metrics.pipelineBindings;
 	}
 }
@@ -1032,8 +1081,8 @@ void GPU::bindPipelineIfNeeded(){
 void GPU::drawMesh(const Mesh & mesh) {
 	_state.mesh = mesh.gpu.get();
 
-	bindPipelineIfNeeded();
-	_state.program->update();
+	bindGraphicsPipelineIfNeeded();
+	_state.graphicsProgram->update();
 
 	vkCmdBindVertexBuffers(_context.getRenderCommandBuffer(), 0, uint32_t(mesh.gpu->state.offsets.size()), mesh.gpu->state.buffers.data(), mesh.gpu->state.offsets.data());
 	vkCmdBindIndexBuffer(_context.getRenderCommandBuffer(), mesh.gpu->indexBuffer->gpu->buffer, 0, VK_INDEX_TYPE_UINT32);
@@ -1052,9 +1101,9 @@ void GPU::drawTesselatedMesh(const Mesh & mesh, uint patchSize){
 void GPU::drawQuad(){
 	_state.mesh = _quad.gpu.get();
 
-	bindPipelineIfNeeded();
+	bindGraphicsPipelineIfNeeded();
 
-	_state.program->update();
+	_state.graphicsProgram->update();
 
 	VkDeviceSize offset = 0;
 	vkCmdBindVertexBuffers(_context.getRenderCommandBuffer(), 0, 1, &(_quad.gpu->vertexBuffer->gpu->buffer), &offset);
@@ -1357,6 +1406,7 @@ void GPU::unbindFramebufferIfNeeded(){
 	VkCommandBuffer& commandBuffer = _context.getRenderCommandBuffer();
 	vkCmdEndRenderPass(commandBuffer);
 	++_metrics.renderPasses;
+	_context.hadRenderPass = true;
 
 	const Framebuffer& fb = *_state.pass.framebuffer;
 

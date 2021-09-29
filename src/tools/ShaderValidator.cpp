@@ -111,7 +111,8 @@ int main(int argc, char ** argv) {
 		{ShaderType::VERTEX, "vert" },
 		{ShaderType::FRAGMENT, "frag" },
 		{ShaderType::TESSCONTROL, "tessc" },
-		{ShaderType::TESSEVAL, "tesse" }
+		{ShaderType::TESSEVAL, "tesse" },
+		{ShaderType::COMPUTE, "comp" }
 	};
 	bool encounteredIssues = false;
 	

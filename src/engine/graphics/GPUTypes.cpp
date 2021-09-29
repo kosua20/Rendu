@@ -4,13 +4,13 @@
 #include "graphics/Framebuffer.hpp"
 #include <cstring>
 
-bool GPUState::isEquivalent(const GPUState& other) const {
+bool GPUState::isGraphicsEquivalent(const GPUState& other) const {
 	// Program: pure comparison.
-	if(program != other.program){
+	if(graphicsProgram != other.graphicsProgram){
 		return false;
 	}
 	// If program just reloaded, pipeline layout might have been invalidated.
-	if(program->reloaded()){
+	if(graphicsProgram->reloaded()){
 		return false;
 	}
 
@@ -33,6 +33,18 @@ bool GPUState::isEquivalent(const GPUState& other) const {
 
 	// Mesh: same bindings, same attributes. Offsets and buffers are dynamic.
 	if(!(mesh->isEquivalent(*other.mesh))){
+		return false;
+	}
+	return true;
+}
+
+bool GPUState::isComputeEquivalent(const GPUState& other) const {
+	// Program: pure comparison.
+	if(computeProgram != other.computeProgram){
+		return false;
+	}
+	// If program just reloaded, pipeline layout might have been invalidated.
+	if(computeProgram->reloaded()){
 		return false;
 	}
 	return true;

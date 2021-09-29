@@ -143,7 +143,8 @@ void ShaderCompiler::compile(const std::string & prog, ShaderType type, Program:
 		{ShaderType::VERTEX, EShLangVertex},
 		{ShaderType::FRAGMENT, EShLangFragment},
 		{ShaderType::TESSCONTROL, EShLangTessControl},
-		{ShaderType::TESSEVAL, EShLangTessEvaluation}
+		{ShaderType::TESSEVAL, EShLangTessEvaluation},
+		{ShaderType::COMPUTE, EShLangCompute}
 	};
 	const char* progStr = outputProg.c_str();
 	const EShLanguage stageDest = types.at(type);

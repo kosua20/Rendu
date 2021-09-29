@@ -7,7 +7,7 @@
 #include <unordered_map>
 #include <deque>
 
-/** \brief Create and reuse GPU pipelines based on a given state. 
+/** \brief Create and reuse GPU pipelines based on a given state. This supports both graphics and compute pipelines.
  * \details We use a two-levels cache, first sorting by Program because each program only has one instance 
  * (and thus one pointer adress) that we can use directly to retrieve pipelines. Then we use a hash of the GPU state 
  * parameters to retrieve compatible pipelines, and compare mesh and framebuffer layouts manually as duplicates will be quite rare.
@@ -22,11 +22,17 @@ public:
 	/** Initialize the cache. */
 	void init();
 
-	/** Retrieve a pipeline for a given GPU state, or create it if needed.
+	/** Retrieve a pipeline for a given GPU graphics state, or create it if needed.
 	 * \param state the state to represent
 	 * \return the corresponding native pipeline
 	 */
-	VkPipeline getPipeline(const GPUState & state);
+	VkPipeline getGraphicsPipeline(const GPUState & state);
+
+	/** Retrieve a pipeline for a given GPU compute state, or create it if needed.
+	 * \param state the state to represent
+	 * \return the corresponding native pipeline
+	 */
+	VkPipeline getComputePipeline(const GPUState & state);
 
 	/// Destroy pipelines that are referencing outdated state and are not used anymore. 
 	void freeOutdatedPipelines();
@@ -42,7 +48,6 @@ private:
 		VkPipeline pipeline; ///< The native handle.
 		GPUMesh::State mesh; ///< The mesh layout.
 		Framebuffer::State framebuffer; ///< The framebuffer layout.
-		const Program* program; ///< The program used.
 	};
 
 	/** Create a new pipeline based on a given state and store it in the cache for future use.
@@ -52,16 +57,24 @@ private:
 	 */
 	VkPipeline createNewPipeline(const GPUState& state, const uint64_t hash);
 
-	/** Build a pipeline from a given state.
+	/** Build a graphics pipeline from a given graphics state.
 	 * \param state the state to use
 	 * \return the newly created pipeline
 	 */
-	VkPipeline buildPipeline(const GPUState& state);
+	VkPipeline buildGraphicsPipeline(const GPUState& state);
+
+	/** Build a compute pipeline from a given compute program.
+	 * \param program the program to use
+	 * \return the newly created pipeline
+	 */
+	VkPipeline buildComputePipeline(Program& program);
 
 	using ProgramPipelines = std::unordered_multimap<uint64_t, Entry>; ///< Per program pipeline type.
-	using Cache = std::unordered_map<const Program*, ProgramPipelines>; ///< Complete cache type.
+	using GraphicCache = std::unordered_map<const Program*, ProgramPipelines>; ///< Complete cache type.
+	using ComputeCache = std::unordered_map<const Program*, VkPipeline>; ///< Complete cache type.
 
-	Cache _pipelines; ///< Pipeline cache.
+	GraphicCache _graphicPipelines; ///< Graphics pipeline cache.
+	ComputeCache _computePipelines; ///< Compute pipeline cache.
 	VkPipelineCache _vulkanCache = VK_NULL_HANDLE; ///< Vulkan pipeline cache.
 
 	/** \brief Information for buffered pipeline deletion. */

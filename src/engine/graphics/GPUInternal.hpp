@@ -93,7 +93,8 @@ struct GPUContext {
 	std::deque<AsyncTextureTask> textureTasks; ///< List of async tasks waiting for completion.
 	uint64_t tasksCount = 0; ///< Number of async tasks created.
 	
-	VkPipeline pipeline = VK_NULL_HANDLE; ///< Current pipeline.
+	VkPipeline graphicsPipeline = VK_NULL_HANDLE; ///< Current graphics pipeline.
+	VkPipeline computePipeline = VK_NULL_HANDLE; ///< Current compute pipeline.
 
 	uint32_t graphicsId = 0; ///< Graphics queue index.
 	uint32_t presentId = 0; ///< Present queue index.
@@ -106,7 +107,7 @@ struct GPUContext {
 	bool portability = false; ///< If the portability extension is present, we have to enable it.
 	const uint frameCount = 2; ///< Number of buffered frames (should be lower or equal to the swapchain image count).
 	bool newRenderPass = true; ///< Has a render pass just started (pipeline needs to be re-bound).
-	bool inRenderPass = false; ///< Are we currently in a render pass. 
+	bool hadRenderPass = false; ///< Has a render pass just ended.
 	
 	/// Move to the next frame.
 	void nextFrame(){

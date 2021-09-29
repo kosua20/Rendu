@@ -72,15 +72,22 @@ public:
 	 */
 	static bool setupWindow(Window * window);
 
-	/** Create and link a shader program using the shader code contained in the given strings.
-	 \param program the program to populate
+	/** Create and link a graphics program using the shader code contained in the given strings.
+	 \param program the program to compile
 	 \param vertexContent the vertex shader string
 	 \param fragmentContent the fragment shader string
 	 \param tessControlContent the optional tesselation control shader string
 	 \param tessEvalContent the optional tesselation evaluation shader string
 	 \param debugInfos the name of the program, or any custom debug infos that will be logged.
 	 */
-	static void createProgram(Program & program, const std::string & vertexContent, const std::string & fragmentContent, const std::string & tessControlContent, const std::string & tessEvalContent,const std::string & debugInfos);
+	static void createGraphicsProgram(Program & program, const std::string & vertexContent, const std::string & fragmentContent, const std::string & tessControlContent, const std::string & tessEvalContent, const std::string & debugInfos);
+
+	/** Create and link a compute program using the shader code contained in the given strings.
+	 \param program the program to compile
+	 \param computeContent the compute shader string
+	 \param debugInfos the name of the program, or any custom debug infos that will be logged.
+	 */
+	static void createComputeProgram(Program & program, const std::string & computeContent, const std::string & debugInfos);
 
 	/** Bind a program to use for rendering
 	 \param program the program to use
@@ -360,8 +367,11 @@ public:
 
 private:
 	
-	/** If the GPU state has changed, retrieve and bind the pipeline corresponding to the new state. */
-	static void bindPipelineIfNeeded();
+	/** If the GPU graphics state has changed, retrieve and bind the pipeline corresponding to the new state. */
+	static void bindGraphicsPipelineIfNeeded();
+
+	/** If the GPU compute state has changed, retrieve and bind the pipeline corresponding to the new state. */
+	static void bindComputePipelineIfNeeded();
 
 	/** End the current render pass if one is started. */
 	static void unbindFramebufferIfNeeded();

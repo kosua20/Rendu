@@ -591,10 +591,18 @@ Resources::ProgramInfos::ProgramInfos(const std::string & vertex, const std::str
 	tessEvalName = tessEval;
 }
 
+Resources::ProgramInfos::ProgramInfos(const std::string & compute){
+	computeName = compute;
+}
+
 Program * Resources::getProgram(const std::string & name, const std::string & vertexName, const std::string & fragmentName, const std::string & tessControlName, const std::string & tessEvalName) {
 	
 	if(_programs.count(name) > 0) {
-		return &_programs.at(name);
+		Program * program = &_programs.at(name);
+		if(program->type() != Program::Type::GRAPHICS){
+			Log::Error() << Log::Resources << "Program " << name << " is not a graphics program." << std::endl;
+		}
+		return program;
 	}
 	
 	const std::string vName = vertexName.empty() ? name : vertexName;
@@ -617,14 +625,37 @@ Program * Resources::getProgram2D(const std::string & name) {
 	return getProgram(name, "passthrough", name);
 }
 
+Program * Resources::getProgramCompute(const std::string & name) {
+	if(_programs.count(name) > 0) {
+		Program * program = &_programs.at(name);
+		if(program->type() != Program::Type::COMPUTE){
+			Log::Error() << Log::Resources << "Program " << name << " is not a compute program." << std::endl;
+		}
+		return program;
+	}
+
+	const std::string cContent = getStringWithIncludes(name + ".comp");
+
+	_programs.emplace(std::make_pair(name, Program(name, cContent)));
+	_progInfos.emplace(std::make_pair(name, ProgramInfos(name)));
+	return &_programs.at(name);
+}
+
 void Resources::reload() {
 	for(auto & prog : _programs) {
 		const ProgramInfos & infos = _progInfos.at(prog.first);
-		const std::string vContent = getStringWithIncludes(infos.vertexName + ".vert");
-		const std::string fContent = getStringWithIncludes(infos.fragmentName + ".frag");
-		const std::string tcContent = infos.tessContName.empty() ? "" : getStringWithIncludes(infos.tessContName + ".tessc");
-		const std::string teContent = infos.tessEvalName.empty() ? "" : getStringWithIncludes(infos.tessEvalName + ".tesse");
-		prog.second.reload(vContent, fContent, tcContent, teContent);
+		if(prog.second.type() == Program::Type::COMPUTE){
+			// Compute program.
+			const std::string cContent = getStringWithIncludes(infos.computeName + ".comp");
+			prog.second.reload(cContent);
+		} else {
+			// Graphics program.
+			const std::string vContent = getStringWithIncludes(infos.vertexName + ".vert");
+			const std::string fContent = getStringWithIncludes(infos.fragmentName + ".frag");
+			const std::string tcContent = infos.tessContName.empty() ? "" : getStringWithIncludes(infos.tessContName + ".tessc");
+			const std::string teContent = infos.tessEvalName.empty() ? "" : getStringWithIncludes(infos.tessEvalName + ".tesse");
+			prog.second.reload(vContent, fContent, tcContent, teContent);
+		}
 	}
 	Log::Info() << Log::Resources << "Shader programs reloaded." << std::endl;
 }

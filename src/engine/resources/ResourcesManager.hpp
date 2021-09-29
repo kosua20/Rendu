@@ -193,6 +193,13 @@ public:
 	 */
 	Program * getProgram2D(const std::string & name);
 
+	/** Get a GPU program resource for compute.
+	 \param name the name of the compute shader
+	 \return the program informations
+	 \see GPU::Vert::Passthrough
+	 */
+	Program * getProgramCompute(const std::string & name);
+
 	/** Load a font metadata and texture atlas from the resources.
 	 \param name the font base name
 	 \return the font data
@@ -273,10 +280,16 @@ private:
 		 */
 		ProgramInfos(const std::string & vertex, const std::string & fragment, const std::string & tessControl, const std::string & tessEval);
 
+		/** Basic constructor.
+		 \param compute compute shader name
+		 */
+		ProgramInfos(const std::string & compute);
+
 		std::string vertexName; ///< Vertex shader filename.
 		std::string fragmentName; ///< Fragment shader filename.
 		std::string tessContName; ///< Tessellation control shader filename.
 		std::string tessEvalName; ///< Tessellation evaluation shader filename.
+		std::string computeName; ///< Compute shader filename.
 	};
 
 	std::unordered_map<std::string, std::string> _files; ///< Listing of available files and their paths.
