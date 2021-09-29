@@ -18,7 +18,11 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 	
 	const std::string debugName = _name;
 	GPU::createProgram(*this, vertexContent, fragmentContent, tessControlContent, tessEvalContent, debugName);
+	reflect();
+}
 
+
+void Program::reflect(){
 	// Reflection information has been populated. Merge uniform infos, build descriptor layout, prepare descriptors.
 
 #ifdef LOG_REFLECTION
@@ -90,6 +94,7 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 
 				_staticBuffers[buffer.binding] = StaticBufferState();
 				_staticBuffers[buffer.binding].name = buffer.name;
+				_staticBuffers[buffer.binding].storage = buffer.storage;
 				continue;
 			}
 
@@ -99,7 +104,7 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 				continue;
 			}
 
-			_dynamicBuffers[buffer.binding].buffer.reset(new UniformBuffer<char>(buffer.size, DataUse::DYNAMIC));
+			_dynamicBuffers[buffer.binding].buffer.reset(new UniformBuffer<char>(buffer.size, UniformFrequency::DYNAMIC));
 			_dynamicBuffers[buffer.binding].dirty = true;
 			
 			// Add uniforms to look-up table.
@@ -133,6 +138,9 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 			_textures[image.binding].name = image.name;
 			_textures[image.binding].view = defaultTex->gpu->view;
 			_textures[image.binding].shape = image.shape;
+			_textures[image.binding].storage = image.storage;
+			_textures[image.binding].texture = defaultTex;
+			_textures[image.binding].mip = Program::ALL_MIPS;
 		}
 	}
 
@@ -179,7 +187,7 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 		for(const auto& image : _textures){
 			VkDescriptorSetLayoutBinding imageBinding{};
 			imageBinding.binding = image.first;
-			imageBinding.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+			imageBinding.descriptorType = image.second.storage ? VK_DESCRIPTOR_TYPE_STORAGE_IMAGE : VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
 			imageBinding.descriptorCount = 1;
 			imageBinding.stageFlags = VK_SHADER_STAGE_ALL;
 			bindingLayouts.emplace_back(imageBinding);
@@ -202,7 +210,7 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 		for(const auto& buffer : _staticBuffers){
 			VkDescriptorSetLayoutBinding bufferBinding{};
 			bufferBinding.binding = buffer.first;
-			bufferBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+			bufferBinding.descriptorType = buffer.second.storage ? VK_DESCRIPTOR_TYPE_STORAGE_BUFFER : VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 			bufferBinding.descriptorCount = 1;
 			bufferBinding.stageFlags = VK_SHADER_STAGE_ALL;
 			bindingLayouts.emplace_back(bufferBinding);
@@ -275,12 +283,7 @@ void Program::reload(const std::string & vertexContent, const std::string & frag
 }
 
 
-void Program::validate() const {
 
-}
-
-void Program::saveBinary(const std::string & ) const {
-	//Resources::saveRawDataToExternalFile(outputPath + "_" + _name + "_" + std::to_string(uint(format)) + ".bin", &binary[0], binary.size());
 }
 
 void Program::update(){
@@ -310,14 +313,14 @@ void Program::update(){
 		for(const auto& image : _textures){
 			imageInfos[tid] = {};
 			imageInfos[tid].imageView = image.second.view;
-			imageInfos[tid].imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+			imageInfos[tid].imageLayout = image.second.storage ? VK_IMAGE_LAYOUT_GENERAL : VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 			VkWriteDescriptorSet write{};
 			write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 			write.dstSet = _currentSets[IMAGES_SET].handle;
 			write.dstBinding = image.first;
 			write.dstArrayElement = 0;
 			write.descriptorCount = 1;
-			write.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+			write.descriptorType = image.second.storage ? VK_DESCRIPTOR_TYPE_STORAGE_IMAGE : VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
 			write.pImageInfo = &imageInfos[tid];
 			writes.push_back(write);
 			++tid;
@@ -349,7 +352,7 @@ void Program::update(){
 			write.dstBinding = buffer.first;
 			write.dstArrayElement = 0;
 			write.descriptorCount = 1;
-			write.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+			write.descriptorType = buffer.second.storage ? VK_DESCRIPTOR_TYPE_STORAGE_BUFFER : VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 			write.pBufferInfo = &infos[tid];
 			writes.push_back(write);
 			++tid;
@@ -433,6 +436,18 @@ void Program::buffer(const UniformBufferBase& buffer, uint slot){
 	}
 }
 
+void Program::buffer(const Buffer& buffer, uint slot){
+	auto existingBuff = _staticBuffers.find(slot);
+	if(existingBuff != _staticBuffers.end()) {
+		const StaticBufferState& refBuff = existingBuff->second;
+		if((refBuff.buffer != buffer.gpu->buffer) || (refBuff.size != buffer.size)){
+			_staticBuffers[slot].buffer = buffer.gpu->buffer;
+			_staticBuffers[slot].offset = 0;
+			_staticBuffers[slot].size = uint(buffer.size);
+			_dirtySets[BUFFERS_SET] = true;
+		}
+	}
+}
 
 void Program::texture(const Texture& texture, uint slot, uint mip){
 	auto existingTex = _textures.find(slot);
@@ -444,7 +459,9 @@ void Program::texture(const Texture& texture, uint slot, uint mip){
 		VkImageView& view = mip == Program::ALL_MIPS ? texture.gpu->view : texture.gpu->levelViews[mip];
 
 		if(refTex.view != view){
+			_textures[slot].texture = &texture;
 			_textures[slot].view = view;
+			_textures[slot].mip = mip;
 			_dirtySets[IMAGES_SET] = true;
 		}
 	}

@@ -34,7 +34,8 @@ enum class BufferType : uint {
 	INDEX, ///< Element indices.
 	UNIFORM, ///< Uniform data.
 	CPUTOGPU, ///< Transfer.
-	GPUTOCPU ///< Transfer.
+	GPUTOCPU, ///< Transfer.
+	STORAGE ///< Compute storage.
 };
 
 STD_HASH(BufferType);

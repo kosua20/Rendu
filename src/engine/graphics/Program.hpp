@@ -31,6 +31,7 @@ VK_DEFINE_HANDLE(VkDescriptorSetLayout)
 class Program {
 public:
 
+	/** Bind all mip levels of a texture */
 	static uint ALL_MIPS;
 	/** \brief Uniform reflection information.
 	 */
@@ -64,18 +65,20 @@ public:
 	struct ImageDef {
 		std::string name; ///< Image name.
 		TextureShape shape; ///< Image shape.
-		uint binding; ///< Image-sampler binding location.
-		uint set; ///< Image-sampler binding set.
+		uint binding; ///< Image binding location.
+		uint set; ///< Image binding set.
+		bool storage; ///< Is this a storage image.
 	};
 
 	/** \brief Buffer reflection information.
 	 */
 	struct BufferDef {
+		std::vector<UniformDef> members; ///< Uniforms in buffer.
 		std::string name; ///< Buffer name.
 		uint binding; ///< Buffer binding location.
 		uint size; ///< Buffer size.
 		uint set; ///< Buffer binding set.
-		std::vector<UniformDef> members; ///< Uniforms in buffer.
+		bool storage; ///< Is this a storage buffer.
 	};
 
 	using Uniforms = std::unordered_map<std::string, UniformDef>; ///< List of named uniforms.
@@ -98,11 +101,6 @@ public:
 	 \param tessEvalContent the content of the tessellation evaluation shader (can be empty)
 	 */
 	void reload(const std::string & vertexContent, const std::string & fragmentContent, const std::string & tessControlContent = "", const std::string & tessEvalContent = "");
-
-	/** Perform full program validation and log the results.
-	 \note Depending on the driver and GPU, some performance hints can be output.
-	 */
-	void validate() const;
 
 	/**
 	 Save the program to a compiled set of instructions on disk.
@@ -133,6 +131,12 @@ public:
 	 * \param slot the location to bind to
 	 */
 	void buffer(const UniformBufferBase& buffer, uint slot);
+
+	/** Bind a buffer to a given location.
+	 * \param buffer the buffer to bind
+	 * \param slot the location to bind to
+	 */
+	void buffer(const Buffer& buffer, uint slot);
 
 	/** Bind a texture to a given location.
 	 * \param texture the texture to bind
@@ -329,7 +333,7 @@ public:
 	/** Move assignment operator.
 	 \return a reference to the object assigned to
 	 */
-	Program & operator=(Program &&) = default;
+	Program & operator=(Program &&) = delete;
 	
 	/** Move constructor. */
 	Program(Program &&) = default;
@@ -365,6 +369,10 @@ public:
 
 private:
 
+	/// Reflect all uniforms/textures/storage buffers and images based on the shader content.
+	void reflect();
+
+
 	/// Update internal metrics.
 	void updateUniformMetric() const;
 
@@ -398,8 +406,11 @@ private:
 	/// \brief Internal state for an image-sampler.
 	struct TextureState {
 		std::string name; ///< Name.
-		VkImageView view = VK_NULL_HANDLE; ///< Texture view.
 		TextureShape shape = TextureShape::D2; ///< Texture shape.
+		const Texture* texture; ///< The source texture.
+		VkImageView view = VK_NULL_HANDLE; ///< Texture view.
+		uint mip = 0xFFFF; ///< The corresponding mip.
+		bool storage = false; ///< Is the image used as storage.
 	};
 
 	/// \brief Internal state for a static (external) uniform buffer.
@@ -408,6 +419,7 @@ private:
 		VkBuffer buffer = VK_NULL_HANDLE; ///< Native buffer handle.
 		uint offset = 0; ///< Start offset in the buffer.
 		uint size = 0; ///< Region size in the buffer.
+		bool storage = false; ///< Is the buffer used as storage.
 	};
 
 
@@ -418,8 +430,8 @@ private:
 	std::unordered_map<std::string, UniformDef> _uniforms; ///< All dynamic uniform definitions.
 
 	std::unordered_map<int, DynamicBufferState> _dynamicBuffers; ///< Dynamic uniform buffer definitions (set 0).
-	std::unordered_map<int, TextureState> _textures; ///< Dynamic image-sampler definitions (set 1).
-	std::unordered_map<int, StaticBufferState> _staticBuffers; ///< Static uniform buffer definitions (set 2).
+	std::unordered_map<int, TextureState> _textures; ///< Dynamic image-sampler definitions (set 2).
+	std::unordered_map<int, StaticBufferState> _staticBuffers; ///< Static uniform buffer definitions (set 3).
 
 	std::array<bool, 4> _dirtySets; ///< Marks which descriptor sets are dirty.
 	std::array<DescriptorSet, 4> _currentSets; ///< Descriptor sets.

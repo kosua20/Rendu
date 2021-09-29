@@ -392,6 +392,12 @@ void GPU::setupTexture(Texture & texture, const Layout & format, bool drawable) 
 	if(drawable){
 		usage |= isDepth ? VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT : VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 	}
+	// Check feature support for compute access
+	VkFormatProperties formatProperties;
+	vkGetPhysicalDeviceFormatProperties(_context.physicalDevice, texture.gpu->format, &formatProperties);
+	if((formatProperties.optimalTilingFeatures & VK_FORMAT_FEATURE_STORAGE_IMAGE_BIT) != 0) {
+		usage |= VK_IMAGE_USAGE_STORAGE_BIT;
+	}
 
 	const uint layers = (isCube || isArray) ? texture.depth : 1;
 
@@ -787,11 +793,13 @@ void GPU::setupBuffer(Buffer & buffer) {
 	buffer.gpu.reset(new GPUBuffer(buffer.type));
 
 	static const std::unordered_map<BufferType, VkBufferUsageFlags> types = {
-		{ BufferType::VERTEX, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT },
-		{ BufferType::INDEX, VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT },
+		{ BufferType::VERTEX, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT},
+		{ BufferType::INDEX, VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT},
 		{ BufferType::UNIFORM, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT },
 		{ BufferType::CPUTOGPU, VK_BUFFER_USAGE_TRANSFER_SRC_BIT },
-		{ BufferType::GPUTOCPU, VK_BUFFER_USAGE_TRANSFER_DST_BIT }};
+		{ BufferType::GPUTOCPU, VK_BUFFER_USAGE_TRANSFER_DST_BIT },
+		{ BufferType::STORAGE, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT}
+	};
 	const VkBufferUsageFlags type = types.at(buffer.type);
 
 	static const std::unordered_map<BufferType, VmaMemoryUsage> usages = {
@@ -799,7 +807,9 @@ void GPU::setupBuffer(Buffer & buffer) {
 		{ BufferType::INDEX, VMA_MEMORY_USAGE_GPU_ONLY },
 		{ BufferType::UNIFORM, VMA_MEMORY_USAGE_CPU_TO_GPU  },
 		{ BufferType::CPUTOGPU, VMA_MEMORY_USAGE_CPU_ONLY },
-		{ BufferType::GPUTOCPU, VMA_MEMORY_USAGE_GPU_TO_CPU }};
+		{ BufferType::GPUTOCPU, VMA_MEMORY_USAGE_GPU_TO_CPU },
+		{ BufferType::STORAGE, VMA_MEMORY_USAGE_GPU_ONLY }
+	};
 
 	const VmaMemoryUsage usage = usages.at(buffer.type);
 

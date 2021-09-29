@@ -273,6 +273,7 @@ void ShaderCompiler::reflect(glslang::TProgram & program, Program::Stage & stage
 		def.binding = ubo.getBinding();
 		def.name = ubo.name;
 		def.size = ubo.size;
+		def.storage = ubo.getType()->getQualifier().getBlockStorage() == glslang::EbsStorageBuffer;
 		// Retrieve set index stored on type.
 		def.set = getSetFromType(*ubo.getType());
 
@@ -294,7 +295,7 @@ void ShaderCompiler::reflect(glslang::TProgram & program, Program::Stage & stage
 		const int binding = uniform.getBinding();
 		// If the variable is freely bound, it's a texture.
 		if(binding >= 0){
-			// This is a sampler or image.
+			// This is a sampler, texture or image.
 			const glslang::TSampler& sampler = uniform.getType()->getSampler();
 			// Skip samplers.
 			if(sampler.type == glslang::EbtVoid){
@@ -311,15 +312,20 @@ void ShaderCompiler::reflect(glslang::TProgram & program, Program::Stage & stage
 			def.binding = binding;
 			def.set = getSetFromType(type);
 			def.shape = texShapes.at(sampler.dim);
+			def.storage = sampler.image;
 			if(sampler.isArrayed()){
 				def.shape = def.shape | TextureShape::Array;
 			}
 			continue;
 		}
 		
-		// Else, uniform in buffer
+		// Else, buffer.
+		// If we are in a storage buffer, we won't be accessed on the CPU individually.
 		Program::BufferDef& containingBuffer = stage.buffers[uniform.index];
-
+		if(containingBuffer.storage){
+			continue;
+		}
+		// Else, uniform buffer.
 		// Arrays containing basic types are not expanded automatically.
 		if(type.isArray()){
 			if(type.isUnsizedArray() || type.getArraySizes()->getNumDims() > 1){
