@@ -264,6 +264,11 @@ void ShaderCompiler::reflect(glslang::TProgram & program, Program::Stage & stage
 
 	program.buildReflection(EShReflectionStrictArraySuffix | EShReflectionBasicArraySuffix);
 
+	// Retrieve group size.
+	for(uint i = 0; i < 3; ++i){
+		stage.size[i] = program.getLocalSize(i);
+	}
+	
 	// Retrieve UBOs infos.
 	const size_t uboCount = program.getNumUniformBlocks();
 	stage.buffers.resize(uboCount);

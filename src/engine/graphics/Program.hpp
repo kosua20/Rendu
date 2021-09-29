@@ -346,6 +346,9 @@ public:
 		return _type;
 	}
 
+	/** \return the local group size for compute programs */
+	const glm::uvec3 & size() const;
+
 	/** Copy assignment operator (disabled).
 	 \return a reference to the object assigned to
 	 */
@@ -378,7 +381,7 @@ public:
 		std::vector<ImageDef> images; ///< Image definitions.
 		std::vector<BufferDef> buffers; ///< Buffers definitions.
 		VkShaderModule module = VK_NULL_HANDLE; ///< Native shader data.
-
+		glm::uvec3 size = glm::uvec3(0); ///< Local group size.
 		/// Reset the stage state.
 		void reset();
 	};

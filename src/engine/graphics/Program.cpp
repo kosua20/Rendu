@@ -795,6 +795,10 @@ void Program::getUniform(const std::string & name, glm::mat4 & t) const {
 	}
 }
 
+const glm::uvec3 & Program::size() const {
+	return _stages[uint(ShaderType::COMPUTE)].size;
+}
+
 void Program::Stage::reset(){
 	images.clear();
 	buffers.clear();

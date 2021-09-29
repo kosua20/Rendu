@@ -205,12 +205,13 @@ public:
 	/** Draw a fullscreen quad.*/
 	static void drawQuad();
 
-	/** Run a compute program by spawning computation groups.
-	 \param groupX the number of groups to spawn on the X axis
-	 \param groupY the number of groups to spawn on the Y axis
-	 \param groupZ the number of groups to spawn on the Z axis
+	/** Run a compute program by spawning computation threads.
+	 \param width the number of threads to spawn on the X axis
+	 \param height the number of threads to spawn on the Y axis
+	 \param depth the number of threads to spawn on the Z axis
+	 \note The work group count will automatically be computed based on the program local size.
 	 */
-	static void dispatch(uint groupX, uint groupY, uint groupZ);
+	static void dispatch(uint width, uint height, uint depth);
 
 	/** Flush current GPU commands and wait for all processing to be done.
 	 */

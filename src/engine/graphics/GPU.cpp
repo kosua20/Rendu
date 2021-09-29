@@ -1111,7 +1111,7 @@ void GPU::drawQuad(){
 	++_metrics.quadCalls;
 }
 
-void GPU::dispatch(uint groupX, uint groupY, uint groupZ){
+void GPU::dispatch(uint width, uint height, uint depth){
 
 	unbindFramebufferIfNeeded();
 	bindComputePipelineIfNeeded();
@@ -1121,7 +1121,10 @@ void GPU::dispatch(uint groupX, uint groupY, uint groupZ){
 	// Update and bind descriptors (after layout transitions)
 	_state.computeProgram->update();
 	// Dispatch.
-	vkCmdDispatch(_context.getRenderCommandBuffer(), groupX, groupY, groupZ);
+	const glm::uvec3& localSize = _state.computeProgram->size();
+	const glm::uvec3 paddedSize = glm::uvec3(width, height, depth) + localSize - glm::uvec3(1u);
+	const glm::uvec3 groupSize = paddedSize / localSize;
+	vkCmdDispatch(_context.getRenderCommandBuffer(), groupSize[0], groupSize[1], groupSize[2]);
 
 	// Restore all resources to their graphic state.
 	// This is quite wasteful if resources are then used by another compute shader.
