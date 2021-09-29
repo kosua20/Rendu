@@ -222,6 +222,14 @@ namespace VkUtils {
 	 */
 	void imageLayoutBarrier(VkCommandBuffer& commandBuffer, GPUTexture& texture, VkImageLayout newLayout, uint mipStart, uint mipCount, uint layerStart, uint layerCount);
 
+	/** Apply a layout transition barrier to a whole mip level.
+	 * \param commandBuffer the command buffer to record the operation on
+	 * \param texture the texture to transition
+	 * \param newLayout the new layout to apply
+	 * \param mip the mip level to transition
+	 */
+	void mipLayoutBarrier(VkCommandBuffer& commandBuffer, const Texture& texture, VkImageLayout newLayout, uint mip);
+
 	/** Apply a layout transition barrier to a whole texture.
 	 * \param commandBuffer the command buffer to record the operation on
 	 * \param texture the texture to transition

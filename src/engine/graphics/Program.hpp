@@ -177,6 +177,12 @@ public:
 	 */
 	void defaultTexture(uint slot);
 
+	/** Ensure all currently set resources are in the proper layout/state and are synchronized
+	 for a given type of use (graphics or compute).
+	 \param type the type of use to prepare resources for
+	 */
+	void transitionResourcesTo(Program::Type type);
+
 	/** Update internal data (descriptors,...) and bind them before a draw/dispatch. */
 	void update();
 

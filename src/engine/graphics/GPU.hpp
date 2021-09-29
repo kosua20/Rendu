@@ -205,6 +205,13 @@ public:
 	/** Draw a fullscreen quad.*/
 	static void drawQuad();
 
+	/** Run a compute program by spawning computation groups.
+	 \param groupX the number of groups to spawn on the X axis
+	 \param groupY the number of groups to spawn on the Y axis
+	 \param groupZ the number of groups to spawn on the Z axis
+	 */
+	static void dispatch(uint groupX, uint groupY, uint groupZ);
+
 	/** Flush current GPU commands and wait for all processing to be done.
 	 */
 	static void flush();

@@ -1111,6 +1111,27 @@ void GPU::drawQuad(){
 	++_metrics.quadCalls;
 }
 
+void GPU::dispatch(uint groupX, uint groupY, uint groupZ){
+
+	unbindFramebufferIfNeeded();
+	bindComputePipelineIfNeeded();
+	// Ensure all resources are in the proper state for compute use (including
+	// synchronization with a previous compute shader).
+	_state.computeProgram->transitionResourcesTo(Program::Type::COMPUTE);
+	// Update and bind descriptors (after layout transitions)
+	_state.computeProgram->update();
+	// Dispatch.
+	vkCmdDispatch(_context.getRenderCommandBuffer(), groupX, groupY, groupZ);
+
+	// Restore all resources to their graphic state.
+	// This is quite wasteful if resources are then used by another compute shader.
+	// But we can't restore resources just before a draw call because we can't have
+	// arbitrary layout barriers in a render pass...
+	// A solution would be to keep track of unrestored resources on the context
+	// and transition them before starting the next render pass.
+	_state.computeProgram->transitionResourcesTo(Program::Type::GRAPHICS);
+}
+
 void GPU::beginFrameCommandBuffers() {
 	VkCommandBufferBeginInfo beginInfo = {};
 	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;

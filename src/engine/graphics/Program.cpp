@@ -306,7 +306,60 @@ void Program::reflect(){
 
 }
 
+void Program::transitionResourcesTo(Program::Type type){
+	VkCommandBuffer& commandBuffer = GPU::getInternal()->getRenderCommandBuffer();
 
+	if(type == Type::GRAPHICS){
+		// We need to ensure all images are in the shader read only optimal layout,
+		// and that all writes to buffers are complete, whether we will use them
+		// as index/verte/uniform/storage buffers.
+		
+		VkMemoryBarrier memoryBarrier = {};
+		memoryBarrier.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
+		memoryBarrier.srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
+		memoryBarrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_INDEX_READ_BIT | VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT | VK_ACCESS_UNIFORM_READ_BIT | VK_ACCESS_INDIRECT_COMMAND_READ_BIT | VK_ACCESS_TRANSFER_READ_BIT;
+		const VkPipelineStageFlags dstStage = VK_PIPELINE_STAGE_TRANSFER_BIT | VK_PIPELINE_STAGE_VERTEX_INPUT_BIT | VK_PIPELINE_STAGE_VERTEX_SHADER_BIT | VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT;
+		vkCmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, dstStage, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr );
+
+		// Move all textures to shader read only optimal.
+		for(const auto& texInfos : _textures){
+			// Transition proper subresource.
+			const Texture& tex = *texInfos.second.texture;
+			const uint mip = texInfos.second.mip;
+			const VkImageLayout tgtLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+			if(mip == Program::ALL_MIPS){
+				VkUtils::textureLayoutBarrier(commandBuffer, tex, tgtLayout);
+			} else {
+				VkUtils::mipLayoutBarrier(commandBuffer, tex, tgtLayout, mip);
+			}
+		}
+	} else if(type == Type::COMPUTE){
+
+		// For buffers, two possible cases.
+		// Either it was last used in a graphics program, and can't have been modified.
+		// Or it was used in a previous compute pass, and a memory barrier should be enough.
+		VkMemoryBarrier memoryBarrier = {};
+		memoryBarrier.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
+		memoryBarrier.srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
+		memoryBarrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT ;
+		const VkPipelineStageFlags dstStage = VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
+		vkCmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, dstStage, 0, 1, &memoryBarrier, 0, nullptr, 0, nullptr );
+
+		// Move sampled textures to shader read only optimal, and storage to general layout.
+		// \warning We might be missing some masks in the layout barrier when moving from a compute to a compute, investigate.
+		for(const auto& texInfos : _textures){
+			// Transition proper subresource.
+			const Texture& tex = *texInfos.second.texture;
+			const uint mip = texInfos.second.mip;
+			const VkImageLayout tgtLayout = texInfos.second.storage ? VK_IMAGE_LAYOUT_GENERAL : VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+			if(mip == Program::ALL_MIPS){
+				VkUtils::textureLayoutBarrier(commandBuffer, tex, tgtLayout);
+			} else {
+				VkUtils::mipLayoutBarrier(commandBuffer, tex, tgtLayout, mip);
+			}
+		}
+
+	}
 
 }
 
