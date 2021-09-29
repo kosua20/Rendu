@@ -212,6 +212,16 @@ void Mesh::clean() {
 	updateMetrics();
 }
 
+Buffer& Mesh::vertexBuffer(){
+	assert(gpu != nullptr);
+	return *gpu->vertexBuffer;
+}
+
+Buffer& Mesh::indexBuffer(){
+	assert(gpu != nullptr);
+	return *gpu->indexBuffer;
+}
+
 BoundingBox Mesh::computeBoundingBox() {
 	bbox = BoundingBox();
 	if(positions.empty()) {

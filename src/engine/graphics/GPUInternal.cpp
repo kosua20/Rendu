@@ -563,7 +563,7 @@ unsigned int VkUtils::getGPULayout(Layout typedFormat, VkFormat & format) {
 	return 0;
 }
 
-glm::uvec2 VkUtils::copyTextureRegionToBuffer(VkCommandBuffer& commandBuffer, const Texture & srcTexture, std::shared_ptr<TransferBuffer> & dstBuffer, uint mipStart, uint mipCount, uint layerStart, uint layerCount, const glm::uvec2& offset, const glm::uvec2& size){
+glm::uvec2 VkUtils::copyTextureRegionToBuffer(VkCommandBuffer& commandBuffer, const Texture & srcTexture, std::shared_ptr<Buffer> & dstBuffer, uint mipStart, uint mipCount, uint layerStart, uint layerCount, const glm::uvec2& offset, const glm::uvec2& size){
 
 	const Layout floatFormats[5] = {Layout(0), Layout::R32F, Layout::RG32F, Layout::RGBA32F /* no 3 channels format */, Layout::RGBA32F};
 
@@ -621,7 +621,7 @@ glm::uvec2 VkUtils::copyTextureRegionToBuffer(VkCommandBuffer& commandBuffer, co
 		currentCount += imageCount;
 	}
 
-	dstBuffer.reset(new TransferBuffer(currentSize, BufferType::GPUTOCPU));
+	dstBuffer.reset(new Buffer(currentSize, BufferType::GPUTOCPU));
 
 	// Copy from the intermediate texture.
 	vkCmdCopyImageToBuffer(commandBuffer, transferTexture.gpu->image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, dstBuffer->gpu->buffer, uint32_t(blitRegions.size()), blitRegions.data());

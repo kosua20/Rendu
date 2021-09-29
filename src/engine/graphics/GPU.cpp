@@ -508,7 +508,7 @@ void GPU::uploadTexture(const Texture & texture) {
 	size_t currentOffset = 0;
 
 	// Transfer the complete CPU image data to a staging buffer, handling conversion..
-	TransferBuffer transferBuffer(totalSize, BufferType::CPUTOGPU);
+	Buffer transferBuffer(totalSize, BufferType::CPUTOGPU);
 
 	if(is8UB){
 		// Convert to uchar on the CPU.
@@ -637,10 +637,10 @@ void GPU::downloadTextureSync(Texture & texture, int level) {
 	const uint layersCount = texture.shape == TextureShape::D3? 1 : texture.depth;
 	const glm::uvec2 size(texture.width, texture.height);
 	
-	std::shared_ptr<TransferBuffer> dstBuffer;
+	std::shared_ptr<Buffer> dstBuffer;
 	const glm::uvec2 imgRange = VkUtils::copyTextureRegionToBuffer(commandBuffer, texture, dstBuffer, firstLevel, levelCount, 0, layersCount, glm::uvec2(0), size);
 	VkUtils::endSyncOperations(commandBuffer, _context);
-	GPU::flushBuffer(*dstBuffer, dstBuffer->sizeMax, 0);
+	GPU::flushBuffer(*dstBuffer, dstBuffer->size, 0);
 
 	// Prepare images.
 	texture.allocateImages(texture.gpu->channels, firstLevel, levelCount);
@@ -779,7 +779,7 @@ void GPU::generateMipMaps(const Texture & texture) {
 
 }
 
-void GPU::setupBuffer(BufferBase & buffer) {
+void GPU::setupBuffer(Buffer & buffer) {
 	if(buffer.gpu) {
 		buffer.gpu->clean();
 	}
@@ -805,7 +805,7 @@ void GPU::setupBuffer(BufferBase & buffer) {
 
 	VkBufferCreateInfo bufferInfo = {};
 	bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-	bufferInfo.size = buffer.sizeMax;
+	bufferInfo.size = buffer.size;
 	bufferInfo.usage = type;
 	bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
@@ -827,7 +827,7 @@ void GPU::setupBuffer(BufferBase & buffer) {
 	++_metrics.buffers;
 }
 
-void GPU::uploadBuffer(const BufferBase & buffer, size_t size, uchar * data, size_t offset) {
+void GPU::uploadBuffer(const Buffer & buffer, size_t size, uchar * data, size_t offset) {
 	if(!buffer.gpu) {
 		Log::Error() << Log::GPU << "Uninitialized GPU buffer." << std::endl;
 		return;
@@ -837,7 +837,7 @@ void GPU::uploadBuffer(const BufferBase & buffer, size_t size, uchar * data, siz
 		Log::Warning() << Log::GPU << "No data to upload." << std::endl;
 		return;
 	}
-	if(offset + size > buffer.sizeMax) {
+	if(offset + size > buffer.size) {
 		Log::Warning() << Log::GPU << "Not enough allocated space to upload." << std::endl;
 		return;
 	}
@@ -854,7 +854,7 @@ void GPU::uploadBuffer(const BufferBase & buffer, size_t size, uchar * data, siz
 	}
 
 	// Otherwise, create a transfer buffer.
-	TransferBuffer transferBuffer(size, BufferType::CPUTOGPU);
+	Buffer transferBuffer(size, BufferType::CPUTOGPU);
 	transferBuffer.upload(size, data, 0);
 	// Copy operation.
 	VkBufferCopy copyRegion = {};
@@ -865,12 +865,12 @@ void GPU::uploadBuffer(const BufferBase & buffer, size_t size, uchar * data, siz
 
 }
 
-void GPU::downloadBufferSync(const BufferBase & buffer, size_t size, uchar * data, size_t offset) {
+void GPU::downloadBufferSync(const Buffer & buffer, size_t size, uchar * data, size_t offset) {
 	if(!buffer.gpu) {
 		Log::Error() << Log::GPU << "Uninitialized GPU buffer." << std::endl;
 		return;
 	}
-	if(offset + size > buffer.sizeMax) {
+	if(offset + size > buffer.size) {
 		Log::Warning() << Log::GPU << "Not enough available data to download." << std::endl;
 		return;
 	}
@@ -888,7 +888,7 @@ void GPU::downloadBufferSync(const BufferBase & buffer, size_t size, uchar * dat
 	}
 
 	// Otherwise, create a transfer buffer.
-	TransferBuffer transferBuffer(size, BufferType::GPUTOCPU);
+	Buffer transferBuffer(size, BufferType::GPUTOCPU);
 
 	// Copy operation.
 	VkCommandBuffer commandBuffer = VkUtils::beginSyncOperations(_context);
@@ -902,7 +902,7 @@ void GPU::downloadBufferSync(const BufferBase & buffer, size_t size, uchar * dat
 
 }
 
-void GPU::flushBuffer(const BufferBase & buffer, size_t size, size_t offset){
+void GPU::flushBuffer(const Buffer & buffer, size_t size, size_t offset){
 	if(buffer.gpu->mapped == nullptr){
 		Log::Error() << Log::GPU << "Buffer is not mapped." << std::endl;
 		return;
@@ -984,18 +984,16 @@ void GPU::setupMesh(Mesh & mesh) {
 	const size_t inSize = sizeof(unsigned int) * mesh.indices.size();
 
 	// Upload data to the buffers. Staging will be handled internally.
-	TransferBuffer vertexBuffer(totalSize, BufferType::VERTEX);
-	TransferBuffer indexBuffer(inSize, BufferType::INDEX);
+	mesh.gpu->count = mesh.indices.size();
+	mesh.gpu->vertexBuffer.reset(new Buffer(totalSize, BufferType::VERTEX));
+	mesh.gpu->indexBuffer.reset(new Buffer(inSize, BufferType::INDEX));
 
-	vertexBuffer.upload(totalSize, vertexBufferData.data(), 0);
-	indexBuffer.upload(inSize, reinterpret_cast<unsigned char *>(mesh.indices.data()), 0);
+	mesh.gpu->vertexBuffer->upload(totalSize, vertexBufferData.data(), 0);
+	mesh.gpu->indexBuffer->upload(inSize, reinterpret_cast<unsigned char *>(mesh.indices.data()), 0);
 
 	// Replicate the buffer as many times as needed for each attribute.
-	state.buffers.resize(state.offsets.size(), vertexBuffer.gpu->buffer);
+	state.buffers.resize(state.offsets.size(), mesh.gpu->vertexBuffer->gpu->buffer);
 
-	mesh.gpu->count		   = mesh.indices.size();
-	mesh.gpu->indexBuffer  = std::move(indexBuffer.gpu);
-	mesh.gpu->vertexBuffer = std::move(vertexBuffer.gpu);
 }
 
 
@@ -1028,7 +1026,7 @@ void GPU::drawMesh(const Mesh & mesh) {
 	_state.program->update();
 
 	vkCmdBindVertexBuffers(_context.getRenderCommandBuffer(), 0, uint32_t(mesh.gpu->state.offsets.size()), mesh.gpu->state.buffers.data(), mesh.gpu->state.offsets.data());
-	vkCmdBindIndexBuffer(_context.getRenderCommandBuffer(), mesh.gpu->indexBuffer->buffer, 0, VK_INDEX_TYPE_UINT32);
+	vkCmdBindIndexBuffer(_context.getRenderCommandBuffer(), mesh.gpu->indexBuffer->gpu->buffer, 0, VK_INDEX_TYPE_UINT32);
 	++_metrics.meshBindings;
 
 	vkCmdDrawIndexed(_context.getRenderCommandBuffer(), static_cast<uint32_t>(mesh.gpu->count), 1, 0, 0, 0);
@@ -1049,7 +1047,7 @@ void GPU::drawQuad(){
 	_state.program->update();
 
 	VkDeviceSize offset = 0;
-	vkCmdBindVertexBuffers(_context.getRenderCommandBuffer(), 0, 1, &(_quad.gpu->vertexBuffer->buffer), &offset);
+	vkCmdBindVertexBuffers(_context.getRenderCommandBuffer(), 0, 1, &(_quad.gpu->vertexBuffer->gpu->buffer), &offset);
 	vkCmdDraw(_context.getRenderCommandBuffer(), 3, 1, 0, 0);
 	++_metrics.quadCalls;
 }
@@ -1551,7 +1549,7 @@ void GPU::processAsyncTasks(bool forceAll){
 		}
 
 		// Make sure the buffer is flushed.
-		GPU::flushBuffer(*tsk.dstBuffer, tsk.dstBuffer->sizeMax, 0);
+		GPU::flushBuffer(*tsk.dstBuffer, tsk.dstBuffer->size, 0);
 
 		// Copy from the buffer to each image of the destination.
 		size_t currentOffset = 0;

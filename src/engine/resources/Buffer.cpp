@@ -5,25 +5,17 @@
 
 #include <cstring>
 
-BufferBase::BufferBase(size_t sizeInBytes, BufferType atype, DataUse ausage) : type(atype), usage(ausage) {
-	// Size depends on the usage.
-	int multipler = 1;
-	if(usage == DataUse::FRAME){
-		multipler = 2;
-	} else if(usage == DataUse::DYNAMIC){
-		multipler = 1024;
-	}
-	// Assume an alignment of 256.
-	const uint alignedSize = (sizeInBytes + 256 - 1) & ~(256 - 1);
-	if(multipler > 1){
-		sizeMax = multipler * alignedSize;
-	} else {
-		sizeMax = sizeInBytes;
-	}
 
+
+Buffer::Buffer(size_t sizeInBytes, BufferType atype) : type(atype), size(sizeInBytes) {
+	GPU::setupBuffer(*this);
 }
 
-void BufferBase::clean() {
+Buffer::Buffer(BufferType atype) : type(atype), size(0u) {
+	// Don't set it up immeditaly.
+}
+
+void Buffer::clean() {
 	if(gpu) {
 		gpu->clean();
 		gpu.reset();
@@ -31,16 +23,11 @@ void BufferBase::clean() {
 	gpu = nullptr;
 }
 
-BufferBase::~BufferBase() {
+Buffer::~Buffer() {
 	clean();
 }
 
-TransferBuffer::TransferBuffer(size_t sizeInBytes, BufferType atype) :
-	BufferBase(sizeInBytes, atype, DataUse::STATIC) {
-		GPU::setupBuffer(*this);
-}
-
-void TransferBuffer::upload(size_t sizeInBytes, unsigned char * data, size_t offset){
+void Buffer::upload(size_t sizeInBytes, unsigned char * data, size_t offset){
 	// If the GPU object is not allocated, do it first.
 	if(!gpu){
 		GPU::setupBuffer(*this);
@@ -49,7 +36,7 @@ void TransferBuffer::upload(size_t sizeInBytes, unsigned char * data, size_t off
 	GPU::uploadBuffer(*this, sizeInBytes, data, offset);
 }
 
-void TransferBuffer::download(size_t sizeInBytes, unsigned char * data, size_t offset){
+void Buffer::download(size_t sizeInBytes, unsigned char * data, size_t offset){
 	if(!gpu){
 		Log::Warning() << "No GPU data to download for the buffer." << std::endl;
 		return;
@@ -57,21 +44,39 @@ void TransferBuffer::download(size_t sizeInBytes, unsigned char * data, size_t o
 	GPU::downloadBufferSync(*this, sizeInBytes, data, offset);
 }
 
-UniformBufferBase::UniformBufferBase(size_t sizeInBytes, DataUse use) : BufferBase(sizeInBytes, BufferType::UNIFORM, use), _baseSize(sizeInBytes)
+
+UniformBufferBase::UniformBufferBase(size_t sizeInBytes, UniformFrequency use) : Buffer(BufferType::UNIFORM), _baseSize(sizeInBytes)
 {
+	// Number of instances of the buffer stored internally, based on usage.
+	int multipler = 1;
+	if(use == UniformFrequency::FRAME){
+		multipler = 2;
+	} else if(use == UniformFrequency::DYNAMIC){
+		multipler = 1024;
+	}
+
+	// Compute expected alignment.
+	GPUContext* context = GPU::getInternal();
+	_alignment = (sizeInBytes + context->uniformAlignment - 1) & ~(context->uniformAlignment - 1);
+
+	// Total size.
+	if(multipler > 1){
+		size = multipler * _alignment;
+	} else {
+		size = sizeInBytes;
+	}
+
 	// Immediatly setup and allocate the GPU buffer.
 	GPU::setupBuffer(*this);
-	// Then map permanently the buffer.
-	GPUContext* context = GPU::getInternal();
-	
-	_alignment = (sizeInBytes + context->uniformAlignment - 1) & ~(context->uniformAlignment - 1);
-	_offset = sizeMax;
+
+	// Place ourselves at the end, to artificially end up at the beginning at the first upload.
+	_offset = size;
 }
 
 void UniformBufferBase::upload(unsigned char * data){
 	// Move to the next copy in the buffer, warpping around.
 	_offset += _alignment;
-	if(_offset + _baseSize >= sizeMax){
+	if(_offset + _baseSize >= size){
 		_offset = 0;
 	}
 
@@ -83,7 +88,7 @@ void UniformBufferBase::upload(unsigned char * data){
 }
 
 void UniformBufferBase::clean(){
-	BufferBase::clean();
+	Buffer::clean();
 }
 
 UniformBufferBase::~UniformBufferBase(){

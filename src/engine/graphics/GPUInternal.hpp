@@ -61,7 +61,7 @@ struct ResourceToDelete {
  \ingroup Graphics
  */
 struct AsyncTextureTask {
-	std::shared_ptr<TransferBuffer> dstBuffer; ///< Transfer buffer containing the texture data (mappable).
+	std::shared_ptr<Buffer> dstBuffer; ///< Transfer buffer containing the texture data (mappable).
 	std::unique_ptr<Texture> dstTexture; ///< Destination texture whose images have to be populated.
 	std::function<void(const Texture&)> callback; ///< Callback to execute once the images creation is complete.
 	glm::uvec2 dstImageRange{0u,0u}; ///< First index and number of images to populate (some mips/layers can be skipped). 
@@ -272,7 +272,7 @@ namespace VkUtils {
 	 * \note Offsets and sizes are expressed at mip 0 in all cases.
 	 * \return the image index range in the source texture corresponding to the requested mip levels and layers.
 	 */
-	glm::uvec2 copyTextureRegionToBuffer(VkCommandBuffer& commandBuffer, const Texture & srcTexture, std::shared_ptr<TransferBuffer> & dstBuffer, uint mipStart, uint mipCount, uint layerStart, uint layerCount, const glm::uvec2& offset, const glm::uvec2& size);
+	glm::uvec2 copyTextureRegionToBuffer(VkCommandBuffer& commandBuffer, const Texture & srcTexture, std::shared_ptr<Buffer> & dstBuffer, uint mipStart, uint mipCount, uint layerStart, uint layerCount, const glm::uvec2& offset, const glm::uvec2& size);
 
 	/** Blit a texture region to another texture region.
 	 * \param commandBuffer the command buffer to record the operation on

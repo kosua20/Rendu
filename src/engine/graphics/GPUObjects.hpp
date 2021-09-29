@@ -7,8 +7,9 @@
 #undef VK_DEFINE_HANDLE
 #include <volk/volk.h>
 
-// Forward declaration.
+// Forward declarations.
 VK_DEFINE_HANDLE(VmaAllocation);
+class Buffer;
 
 /**
  \brief Store a texture data on the GPU.
@@ -120,8 +121,8 @@ public:
 class GPUMesh {
 public:
 	
-	std::unique_ptr<GPUBuffer> vertexBuffer; ///< Vertex data buffer.
-	std::unique_ptr<GPUBuffer> indexBuffer; ///< Index element buffer.
+	std::unique_ptr<Buffer> vertexBuffer; ///< Vertex data buffer.
+	std::unique_ptr<Buffer> indexBuffer; ///< Index element buffer.
 
 	size_t count = 0; ///< The number of vertices (cached).
 	

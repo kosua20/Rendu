@@ -1,5 +1,6 @@
 #pragma once
 #include "resources/Bounds.hpp"
+#include "resources/Buffer.hpp"
 #include "graphics/GPUTypes.hpp"
 #include "Common.hpp"
 
@@ -114,7 +115,13 @@ public:
 	/** Move constructor. */
 	Mesh(Mesh &&);
 
+	/** Destructor */
 	~Mesh();
+
+	/** \return a reference to the GPU vertex buffer if it exists */
+	Buffer& vertexBuffer();
+	/** \return a reference to the GPU vertex buffer if it exists */
+	Buffer& indexBuffer();
 	
 	std::vector<glm::vec3> positions;  ///< The 3D positions.
 	std::vector<glm::vec3> normals;	///< The surface normals.

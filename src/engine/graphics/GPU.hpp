@@ -153,7 +153,7 @@ public:
 	/** Create and allocate a GPU buffer.
 	 \param buffer the buffer to setup on the GPU
 	 */
-	static void setupBuffer(BufferBase & buffer);
+	static void setupBuffer(Buffer & buffer);
 
 	/** Upload data to a buffer on the GPU. It's possible to upload a subrange of the buffer data store.
 	 \param buffer the buffer to upload to
@@ -161,7 +161,7 @@ public:
 	 \param data pointer to the data to upload
 	 \param offset optional offset in the buffer store
 	 */
-	static void uploadBuffer(const BufferBase & buffer, size_t size, uchar * data, size_t offset = 0);
+	static void uploadBuffer(const Buffer & buffer, size_t size, uchar * data, size_t offset = 0);
 
 	/** Download data from a buffer on the GPU. It's possible to download a subrange of the buffer data store.
 	 \param buffer the buffer to download from
@@ -169,14 +169,14 @@ public:
 	 \param data pointer to the storage destination
 	 \param offset optional offset in the buffer store
 	 */
-	static void downloadBufferSync(const BufferBase & buffer, size_t size, uchar * data, size_t offset = 0);
+	static void downloadBufferSync(const Buffer & buffer, size_t size, uchar * data, size_t offset = 0);
 
 	/** Ensure that a buffer region is visible from the CPU and up-to-date.
 	 * \param buffer the buffer to flush
 	 * \param size size of the region to flush
 	 * \param offset start of the region in the buffer
 	 */
-	static void flushBuffer(const BufferBase & buffer, size_t size, size_t offset);
+	static void flushBuffer(const Buffer & buffer, size_t size, size_t offset);
 
 	/** Mesh loading: send a mesh data to the GPU and set the input mesh GPU infos accordingly.
 	 \param mesh the mesh to upload

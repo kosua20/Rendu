@@ -40,10 +40,10 @@ enum class BufferType : uint {
 STD_HASH(BufferType);
 
 /**
-\brief The frequency at which a resources might be updated.
+\brief The frequency at which a uniform buffer might be updated.
 \ingroup Resources
 */
-enum class DataUse : uint {
+enum class UniformFrequency : uint {
 	STATIC, ///< Data won't be updated after upload.
 	FRAME,  ///< Data will be updated at most once per frame
 	DYNAMIC ///< Data will be updated many times per frame.

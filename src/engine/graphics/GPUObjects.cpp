@@ -2,6 +2,7 @@
 #include "graphics/GPU.hpp"
 #include "graphics/GPUInternal.hpp"
 #include "graphics/Framebuffer.hpp"
+#include "resources/Buffer.hpp"
 
 GPUTexture::GPUTexture(const Layout & layoutFormat) :
 	typedFormat(layoutFormat) {
