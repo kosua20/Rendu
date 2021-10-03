@@ -13,11 +13,9 @@ Probe::Probe(const glm::vec3 & position, std::shared_ptr<Renderer> renderer, uin
 	// Texture used to compute irradiance spherical harmonics.
 	_copy = _renderer->createOutput(TextureShape::Cube, 16, 16, 6, 1, "Probe copy");
 
-	_shCoeffs.reset(new UniformBuffer<glm::vec4>(9, UniformFrequency::FRAME));
-	for(int i = 0; i < 9; ++i) {
-		_shCoeffs->at(i) = glm::vec4(i == 0 ? 0.1f : 0.0f);
-	}
-	_shCoeffs->upload();
+	_shCoeffs.reset(new Buffer(9 * sizeof(glm::vec4), BufferType::STORAGE));
+	std::vector<glm::vec4> coeffs(9, glm::vec4(0.0f));
+	_shCoeffs->upload(coeffs);
 
 	// Compute the camera for each face.
 	for(uint i = 0; i < 6; ++i) {

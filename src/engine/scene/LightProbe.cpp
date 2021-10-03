@@ -3,6 +3,7 @@
 void LightProbe::decode(const KeyValues & params, Storage options) {
 	// Assume a static probe initially.
 	_type = LightProbe::Type::STATIC;
+	std::vector<glm::vec4> coeffs(9, glm::vec4(0.0f));
 
 	bool setCenter = false;
 	for(const auto & param : params.elements){
@@ -23,14 +24,13 @@ void LightProbe::decode(const KeyValues & params, Storage options) {
 			_rotCosSin = glm::vec2(std::cos(_rotation), std::sin(_rotation));
 
 		} else if(param.key == "irradiance" && !param.values.empty()){
-			_shCoeffs.reset(new UniformBuffer<glm::vec4>(9, UniformFrequency::STATIC));
 			// Load the SH coefficients from the corresponding text file.
 			const std::string coeffsRaw = Resources::manager().getString(param.values[0]);
 			std::stringstream coeffsStream(coeffsRaw);
 			float x = 0.0f; float y = 0.0f; float z = 0.0f;
 			for(int i = 0; i < 9; ++i) {
 				coeffsStream >> x >> y >> z;
-				_shCoeffs->at(i) = glm::vec4(x, y, z, 1.0f);
+				coeffs[i] = glm::vec4(x, y, z, 1.0f);
 			}
 		} else if(param.key == "radiance" && !param.elements.empty()){
 			// Load cubemap described as sub-element.
@@ -48,14 +48,10 @@ void LightProbe::decode(const KeyValues & params, Storage options) {
 		if(!_envmap){
 			_envmap = Resources::manager().getTexture("default_cube", Layout::RGBA8, options);
 		}
-		if(!_shCoeffs){
-			_shCoeffs.reset(new UniformBuffer<glm::vec4>(9, UniformFrequency::STATIC));
-			for(int i = 0; i < 9; ++i){
-				_shCoeffs->at(i) = glm::vec4(0.0f);
-			}
-		}
+
 		if(options & Storage::GPU){
-			_shCoeffs->upload();
+			_shCoeffs.reset(new Buffer(9 * sizeof(glm::vec4), BufferType::STORAGE));
+			_shCoeffs->upload(coeffs);
 		}
 	}
 }
@@ -81,7 +77,7 @@ KeyValues LightProbe::encode() const {
 	return probe;
 }
 
-void LightProbe::registerEnvironment(const Texture * envmap, const std::shared_ptr<UniformBuffer<glm::vec4>> & shCoeffs){
+void LightProbe::registerEnvironment(const Texture * envmap, const std::shared_ptr<Buffer> & shCoeffs){
 	_envmap = envmap;
 	_shCoeffs = shCoeffs;
 }

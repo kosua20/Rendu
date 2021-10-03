@@ -55,7 +55,7 @@ public:
 	 \param envmap the new map to use
 	 \param shCoeffs the new irradiance coefficients
 	 */
-	void registerEnvironment(const Texture * envmap, const std::shared_ptr<UniformBuffer<glm::vec4>> & shCoeffs);
+	void registerEnvironment(const Texture * envmap, const std::shared_ptr<Buffer> & shCoeffs);
 
 	/** \return the type of probe
 	 */
@@ -87,12 +87,12 @@ public:
 	const Texture * map() const { return _envmap; }
 
 	/** \return the irradiance coefficients buffer */
-	const std::shared_ptr<UniformBuffer<glm::vec4>> & shCoeffs() const { return _shCoeffs; }
+	const std::shared_ptr<Buffer> & shCoeffs() const { return _shCoeffs; }
 
 private:
 
 	const Texture * _envmap = nullptr; ///< The environment map.
-	std::shared_ptr<UniformBuffer<glm::vec4>> _shCoeffs; ///< The irradiance representation.
+	std::shared_ptr<Buffer> _shCoeffs; ///< The irradiance representation.
 	
 	Type _type = Type::DEFAULT; ///< The type of probe.
 	glm::vec3 _position = glm::vec3(0.0f); ///< The probe location.
