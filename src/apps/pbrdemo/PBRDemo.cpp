@@ -11,11 +11,11 @@ PBRDemo::PBRDemo(RenderingConfig & config) :
 	_forRenderer.reset(new ForwardRenderer(renderRes, ShadowMode::VARIANCE, true, "Forward"));
 	_postprocess.reset(new PostProcessStack(renderRes));
 	_debugRenderer.reset(new DebugRenderer());
-		_finalRender.reset(new Framebuffer(uint(renderRes[0]), uint(renderRes[1]), {Layout::RGBA16F, Layout::DEPTH_COMPONENT32F}, "Final render"));
+	_finalRender.reset(new Framebuffer(uint(renderRes[0]), uint(renderRes[1]), {Layout::RGBA16F, Layout::DEPTH_COMPONENT32F}, "Final render"));
 
 	_finalProgram = Resources::manager().getProgram2D("sharpening");
 	
-	_probesRenderer.reset(new DeferredRenderer(glm::vec2(256,256), ShadowMode::BASIC, false, "Probes"));
+	_probesRenderer.reset(new DeferredRenderer(glm::vec2(128,128), ShadowMode::BASIC, false, "Probes"));
 
 	// Load all existing scenes, with associated names.
 	std::vector<Resources::FileInfos> sceneInfos;
@@ -93,7 +93,7 @@ void PBRDemo::setScene(const std::shared_ptr<Scene> & scene) {
 	_probes.clear();
 	// Allocate probes.
 	if(scene->environment.type() == LightProbe::Type::DYNAMIC){
-		_probes.emplace_back(new Probe(scene->environment.position(), _probesRenderer, 256, 6, glm::vec2(0.01f, 1000.0f)));
+		_probes.emplace_back(new Probe(scene->environment.position(), _probesRenderer, 128, 6, glm::vec2(0.01f, 1000.0f)));
 		scene->environment.registerEnvironment(_probes[0]->texture(), _probes[0]->shCoeffs());
 	}
 	// Trigger one-shot data update.
@@ -130,21 +130,18 @@ void PBRDemo::updateMaps(){
 		} else if(_frameID % _frameCount == 1){
 
 			_inteTime.begin();
-			probe->convolveRadiance(1.2f, 1u, 1u);
+			probe->convolveRadiance(1.2f, 1u, 2u);
 			_inteTime.end();
-
-			_copyTimeCPU.begin();
-			_copyTime.begin();
-			probe->estimateIrradiance(5.0f);
-			_copyTime.end();
-			_copyTimeCPU.end();
-
 		} else {
 			_inteTime.begin();
-			probe->convolveRadiance(1.2f, 2u, 4u);
+			probe->convolveRadiance(1.2f, 3u, 3u);
 			_inteTime.end();
+			_copyTime.begin();
+			probe->estimateIrradiance(5.0f);
 
+			_copyTime.end();
 		}
+
 	}
 
 }

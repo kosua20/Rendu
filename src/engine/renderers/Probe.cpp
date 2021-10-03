@@ -46,7 +46,7 @@ void Probe::convolveRadiance(float clamp, uint first, uint count) {
 	for(uint mid = lb; mid < ub; ++mid) {
 		const uint wh		   = _framebuffer->texture()->width / (1 << mid);
 		const float roughness  = float(mid) / float(_framebuffer->texture()->levels - 1u);
-		const int samplesCount = (mid == 1 ? 64 : 128);
+		const int samplesCount = 64;
 
 		GPU::setViewport(0, 0, int(wh), int(wh));
 		_radianceIntegration->uniform("mipmapRoughness", roughness);
