@@ -32,7 +32,7 @@ void main(){
 	} else {
 		vec3 v = normalize(In.pos.xyz - camPos);
 		vec3 r = reflect(v, n);
-		fragColor = textureLod(samplerCube(texture0, sClampLinear), toCube(r), lod);
+		fragColor = textureLod(samplerCube(texture0, sClampLinearLinear), toCube(r), lod);
 	}
 
 }
