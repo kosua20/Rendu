@@ -11,8 +11,7 @@
  \brief A probe can be used to capture the appareance of a scene at a given location as a 360° cubemap.
  \details This is often used to render realistic real-time reflections and global illumination effects. It is
  recommended to split the rendering, radiance precomputation for GGX shading and irradiance SH decomposition
- over multiple frames as those steps are costly. Additional synchronization constraints are described
- for each function below.
+ over multiple frames as those steps are costly.
  \ingroup Renderers
  */
 class Probe {
@@ -33,18 +32,13 @@ public:
 	void draw();
 
 	/** Perform BRDF pre-integration of the probe radiance for increasing roughness and store them in the mip levels.
-	 This also copies a downscaled version of the radiance for future SH computations.
 	 \param clamp maximum intensity value, useful to avoid ringing artifacts
 	 \param first first layer to process (in 1, mip count - 1)
 	 \param count the number of layers to process
 	 */
 	void convolveRadiance(float clamp, uint first, uint count);
 
-	/** Estimate the SH representation of the cubemap irradiance. The estimation is done on the CPU,
-	 and relies on downlaoding a (downscaled) copy of the cubemap content. For synchronization reasons,
-	 it is recommended to only update irradiance every other frame, and to trigger the copy
-	 (performed by prepareIrradiance) after the coeffs update. This will introduce a latency but
-	 will avoid any stalls.
+	/** Estimate the SH representation of the cubemap irradiance. The estimation is done on the GPU.
 	 \param clamp maximum intensity value, useful to avoid temporal instabilities
 	 */
 	void estimateIrradiance(float clamp);
@@ -85,7 +79,8 @@ public:
 	/** Move constructor (disabled). */
 	Probe(Probe &&) = delete;
 
-	~Probe();
+	/** Destructor */
+	~Probe() = default;
 
 	/**
 	\brief Decompose an existing cubemap irradiance onto the nine first elements of the spherical harmonic basis.
@@ -107,7 +102,7 @@ private:
 
 	std::array<Camera, 6> _cameras; ///< Camera for each face.
 	glm::vec3 _position; ///< The probe location.
-	Program * _integration; ///< Radiance preconvolution shader.
-	GPUAsyncTask _downloadTask = 0; ///< Current probe download task (for SH computations on the CPU).
+	Program * _radianceIntegration; ///< Radiance preconvolution shader.
+	Program* _irradianceCompute; ///< Irradiance SH projection shader.
 	const Mesh * _cube; ///< Skybox cube.
 };

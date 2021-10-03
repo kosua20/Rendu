@@ -8,10 +8,11 @@ Probe::Probe(const glm::vec3 & position, std::shared_ptr<Renderer> renderer, uin
 	_framebuffer = renderer->createOutput(TextureShape::Cube, size, size, 6, mips, "Probe");
 	_framebuffer->clear(glm::vec4(0.0f), 1.0f);
 	_position	 = position;
-	_integration = Resources::manager().getProgram("cubemap_convo", "skybox_basic", "cubemap_convo");
+	_radianceIntegration = Resources::manager().getProgram("cubemap_convo", "skybox_basic", "cubemap_convo");
 	_cube		 = Resources::manager().getMesh("skybox", Storage::GPU);
 	// Texture used to compute irradiance spherical harmonics.
 	_copy = _renderer->createOutput(TextureShape::Cube, 16, 16, 6, 1, "Probe copy");
+	_irradianceCompute = Resources::manager().getProgramCompute("irradiance_compute");
 
 	_shCoeffs.reset(new Buffer(9 * sizeof(glm::vec4), BufferType::STORAGE));
 	std::vector<glm::vec4> coeffs(9, glm::vec4(0.0f));
@@ -36,8 +37,8 @@ void Probe::convolveRadiance(float clamp, uint first, uint count) {
 	GPU::setBlendState(false);
 	GPU::setCullState(true, Faces::BACK);
 
-	_integration->use();
-	_integration->uniform("clampMax", clamp);
+	_radianceIntegration->use();
+	_radianceIntegration->uniform("clampMax", clamp);
 
 	const uint lb = glm::clamp<uint>(first, 1, _framebuffer->texture()->levels - 1u);
 	const uint ub = std::min(first + count, _framebuffer->texture()->levels);
@@ -48,47 +49,32 @@ void Probe::convolveRadiance(float clamp, uint first, uint count) {
 		const int samplesCount = (mid == 1 ? 64 : 128);
 
 		GPU::setViewport(0, 0, int(wh), int(wh));
-		_integration->uniform("mipmapRoughness", roughness);
-		_integration->uniform("samplesCount", samplesCount);
+		_radianceIntegration->uniform("mipmapRoughness", roughness);
+		_radianceIntegration->uniform("samplesCount", samplesCount);
 
 		for(uint lid = 0; lid < 6; ++lid) {
 			_framebuffer->bind(lid, mid, Framebuffer::Operation::DONTCARE);
-			_integration->uniform("mvp", Library::boxVPs[lid]);
+			_radianceIntegration->uniform("mvp", Library::boxVPs[lid]);
 			// Here we need the previous level.
-			_integration->texture(_framebuffer->texture(), 0, uint(mid)-1u);
+			_radianceIntegration->texture(_framebuffer->texture(), 0, uint(mid)-1u);
 			GPU::drawMesh(*_cube);
 		}
 	}
 }
 
 void Probe::estimateIrradiance(float clamp) {
-	// Downscale radiance to a smaller texture, to be copied on the CPU for SH decomposition.
+	// Downscale radiance to a smaller texture.
 	for(uint lid = 0; lid < 6; ++lid) {
 		GPU::blit(*_framebuffer, *_copy, lid, lid, 0, 0, Filter::LINEAR);
 	}
+	// Dispatch pr-face coefficients accumulation and reduction/SH projection.
+	_irradianceCompute->use();
+	_irradianceCompute->texture(*_copy->texture(), 0);
+	_irradianceCompute->buffer(*_shCoeffs, 0);
+	_irradianceCompute->uniform("clamp", clamp);
+	_irradianceCompute->uniform("side", _copy->width());
+	GPU::dispatch(1, 1, 1);
 
-	// Download the texture to the CPU.
-	Texture & tex = *_copy->texture();
-
-	_downloadTask = GPU::downloadTextureAsync(tex, glm::uvec2(0,0), glm::uvec2(tex.width, tex.height), 6, [clamp, this](const Texture& result){
-
-		// Compute SH coeffs.
-		std::vector<glm::vec3> coeffs(9);
-		extractIrradianceSHCoeffs(result, clamp, coeffs);
-		for(int i = 0; i < 9; ++i) {
-			_shCoeffs->at(i)[0] = coeffs[i][0];
-			_shCoeffs->at(i)[1] = coeffs[i][1];
-			_shCoeffs->at(i)[2] = coeffs[i][2];
-			_shCoeffs->at(i)[3] = 1.0f;
-		}
-		_shCoeffs->upload();
-	});
-	 
-
-}
-
-Probe::~Probe(){
-	GPU::cancelAsyncOperation(_downloadTask);
 }
 
 void Probe::extractIrradianceSHCoeffs(const Texture & cubemap, float clamp, std::vector<glm::vec3> & shCoeffs) {

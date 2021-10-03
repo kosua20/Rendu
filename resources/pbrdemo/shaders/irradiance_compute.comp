@@ -1,0 +1,134 @@
+
+#include "common_pbr.glsl"
+#include "utils.glsl"
+
+/// One per face.
+layout(local_size_x=1, local_size_y=1, local_size_z=6) in;
+
+layout(set = 0, binding = 0) uniform UniformBlock {
+	uint side; ///< Size of the cubemap.
+	float clamp; ///< Clamp value to avoid banding.
+};
+
+layout(set = 2, binding = 0, rgba16f) uniform readonly imageCube texture0; ///< Input cubemap to process.
+
+/// Output SH approximation of the environment irradiance.
+layout(std140, set = 3, binding = 0) buffer writeonly SHCoeffs {
+	vec4 shCoeffs[9];
+};
+
+/// Local storage.
+shared vec3 LCoeffs[9][6];
+shared float denom[6];
+
+void main(){
+
+	uint faceId = gl_GlobalInvocationID.z;
+
+	// Indices conversions from cubemap UVs to direction.
+	const int axisIndices[]  = {0, 0, 1, 1, 2, 2};
+	const float axisMul[]	 = {1.0, -1.0, -1.0, 1.0, 1.0, -1.0};
+	const int horizIndices[] = {2, 2, 0, 0, 0, 0};
+	const float horizMul[]   = {-1.0, 1.0, 1.0, 1.0, 1.0, -1.0};
+	const int vertIndices[]  = {1, 1, 2, 2, 1, 1};
+	const float vertMul	[]   = {1.0, 1.0, 1.0, -1.0, 1.0, 1.0};
+
+	 
+	// Prepare storage for this thread.
+	denom[faceId] = 0.0;
+	for(uint i = 0; i < 9; ++i){
+		LCoeffs[i][faceId] = vec3(0.0);
+	}
+
+	// Accumulate texel contributions.
+	for(uint y = 0; y < side; ++y){
+		for(uint x = 0; x < side; ++x){
+
+			// Convert to direction to compute the contribution weight.	
+			vec2 uv = -1.0 + (2.0 * vec2(x, y) + 1.0) / float(side);
+			vec3 pos = vec3(0.0);
+			pos[axisIndices[faceId]]	= axisMul[faceId];
+			pos[horizIndices[faceId]] 	= horizMul[faceId] * uv.x;
+			pos[vertIndices[faceId]]	= vertMul[faceId] * uv.y;
+			pos = normalize(pos);
+			
+			// Normalization factor.
+			float fTmp   = 1.0 + dot(uv, uv);
+			float weight = 4.0 / (sqrt(fTmp) * fTmp);
+			denom[faceId] += weight;
+			// HDR color.
+			vec3 rgb = imageLoad(texture0, ivec3(x, y, faceId)).rgb;
+			vec3 hdr = weight * min(rgb, clamp);
+			
+			LCoeffs[0][faceId] += hdr;
+			// Y1,-1 = 0.488603 y
+			LCoeffs[1][faceId] += hdr * (pos[1]);
+			// Y1,0  = 0.488603 z
+			LCoeffs[2][faceId] += hdr * (pos[2]);
+			// Y1,1  = 0.488603 x
+			LCoeffs[3][faceId] += hdr * (pos[0]);
+			// Y2,-2 = 1.092548 x
+			LCoeffs[4][faceId] += hdr * (pos[0] * pos[1]);
+			// Y2,-1 = 1.092548 y
+			LCoeffs[5][faceId] += hdr * (pos[1] * pos[2]);
+			// Y2,0  = 0.315392 (3z^2 - 1)
+			LCoeffs[6][faceId] += hdr * (3.0 * pos[2] * pos[2] - 1.0);
+			// Y2,1  = 1.092548 xz
+			LCoeffs[7][faceId] += hdr * (pos[0] * pos[2]);
+			// Y2,2  = 0.546274 (x^2 - y^2)
+			LCoeffs[8][faceId] += hdr * (pos[0] * pos[0] - pos[1] * pos[1]);
+		}
+	}
+	
+	// Force exection and shared memory synchronization in the group.
+	barrier();
+	groupMemoryBarrier();
+	
+	// Final processing is mono-thread.
+	if(faceId == 0){
+
+		// Accumulate all faces contributions.
+		for(uint fid = 1; fid < 6; ++fid){
+			denom[0] += denom[fid];
+			for(uint i = 0; i < 9; ++i){
+				LCoeffs[i][0] += LCoeffs[i][fid];
+			}
+		}
+
+		// Normalization.
+		const float y0 = 0.282095;
+		const float y1 = 0.488603;
+		const float y2 = 1.092548;
+		const float y3 = 0.315392;
+		const float y4 = 0.546274;	
+		LCoeffs[0][0] *= 4.0 * y0 / denom[0];
+		LCoeffs[1][0] *= 4.0 * y1 / denom[0];
+		LCoeffs[2][0] *= 4.0 * y1 / denom[0];
+		LCoeffs[3][0] *= 4.0 * y1 / denom[0];
+		LCoeffs[4][0] *= 4.0 * y2 / denom[0];
+		LCoeffs[5][0] *= 4.0 * y2 / denom[0];
+		LCoeffs[6][0] *= 4.0 * y3 / denom[0];
+		LCoeffs[7][0] *= 4.0 * y2 / denom[0];
+		LCoeffs[8][0] *= 4.0 * y4 / denom[0];
+
+		// To go from radiance to irradiance, we need to apply a cosine lobe convolution on the sphere in spatial domain.
+		// This can be expressed as a product in frequency (on the SH basis) domain, with constant pre-computed coefficients.
+		// See:	Ramamoorthi, Ravi, and Pat Hanrahan. "An efficient representation for irradiance environment maps."
+		//		Proceedings of the 28th annual conference on Computer graphics and interactive techniques. ACM, 2001.
+		const float c1 = 0.429043;
+		const float c2 = 0.511664;
+		const float c3 = 0.743125;
+		const float c4 = 0.886227;
+		const float c5 = 0.247708;
+		// Write to output storage.
+		shCoeffs[0].xyz	   = c4 * LCoeffs[0][0] - c5 * LCoeffs[6][0] ;
+		shCoeffs[1].xyz	   = 2.0 * c2 * LCoeffs[1][0];
+		shCoeffs[2].xyz	   = 2.0 * c2 * LCoeffs[2][0];
+		shCoeffs[3].xyz	   = 2.0 * c2 * LCoeffs[3][0];
+		shCoeffs[4].xyz	   = 2.0 * c1 * LCoeffs[4][0];
+		shCoeffs[5].xyz	   = 2.0 * c1 * LCoeffs[5][0];
+		shCoeffs[6].xyz	   = c3 * LCoeffs[6][0];
+		shCoeffs[7].xyz	   = 2.0 * c1 * LCoeffs[7][0];
+		shCoeffs[8].xyz	   = c1 * LCoeffs[8][0];
+	}
+}
