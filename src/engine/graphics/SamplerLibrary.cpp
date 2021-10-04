@@ -35,7 +35,7 @@ void SamplerLibrary::init(){
 	std::vector<VkDescriptorSetLayoutBinding> bindings(samplerCount);
 	for(size_t sid = 0; sid < samplerCount; ++sid){
 		bindings[sid] = {};
-		bindings[sid].binding = sid;
+		bindings[sid].binding = uint32_t(sid);
 		bindings[sid].descriptorType = VK_DESCRIPTOR_TYPE_SAMPLER;
 		bindings[sid].descriptorCount = 1;
 		bindings[sid].stageFlags = VK_SHADER_STAGE_ALL;

@@ -137,8 +137,8 @@ DescriptorAllocator::DescriptorPool DescriptorAllocator::createPool(uint count, 
 	VkDescriptorPoolCreateInfo poolInfo = {};
 	poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 	poolInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
-	poolInfo.maxSets = count * poolSizes.size();
-	poolInfo.poolSizeCount = (uint32_t)poolSizes.size();
+	poolInfo.maxSets = uint32_t(count * poolSizes.size());
+	poolInfo.poolSizeCount = uint32_t(poolSizes.size());
 	poolInfo.pPoolSizes = poolSizes.data();
 
 	if(vkCreateDescriptorPool(_context->device, &poolInfo, nullptr, &pool.handle) != VK_SUCCESS){
