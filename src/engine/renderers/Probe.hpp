@@ -28,20 +28,13 @@ public:
 	 */
 	Probe(const glm::vec3 & position, std::shared_ptr<Renderer> renderer, uint size, uint mips, const glm::vec2 & clippingPlanes);
 
-	/** Update the content of the cubemap. */
-	void draw();
+	/** Update the content of the probe and the corresponding radiance and irradiance.
+	 \param budget the number of internal update steps to perform
+	 Each internal step (drawing a part of the environment, generating the convolved radiance, integrating the irradiance) has a given budget. Depending on the allocated budget, the probe will entirely update more or less fast. */
+	void update(uint budget);
 
-	/** Perform BRDF pre-integration of the probe radiance for increasing roughness and store them in the mip levels.
-	 \param clamp maximum intensity value, useful to avoid ringing artifacts
-	 \param first first layer to process (in 1, mip count - 1)
-	 \param count the number of layers to process
-	 */
-	void convolveRadiance(float clamp, uint first, uint count);
-
-	/** Estimate the SH representation of the cubemap irradiance. The estimation is done on the GPU.
-	 \param clamp maximum intensity value, useful to avoid temporal instabilities
-	 */
-	void estimateIrradiance(float clamp);
+	/** \return the total number of steps to completely update the probe data */
+	uint totalBudget() const;
 
 	/** The cubemap containing the rendering. Its mip levels will store the preconvolved radiance
 	 if convolveRadiance has been called
@@ -95,6 +88,17 @@ public:
 	
 private:
 
+	/** Perform BRDF pre-integration of the probe radiance for increasing roughness and store them in the mip levels.
+	 \param clamp maximum intensity value, useful to avoid ringing artifacts
+	 \param layer first layer to process (in 1, mip count - 1)
+	 */
+	void convolveRadiance(float clamp, uint layer);
+
+	/** Estimate the SH representation of the cubemap irradiance. The estimation is done on the GPU.
+	 \param clamp maximum intensity value, useful to avoid temporal instabilities
+	 */
+	void estimateIrradiance(float clamp);
+
 	std::unique_ptr<Framebuffer> _framebuffer; ///< The cubemap content.
 	std::shared_ptr<Renderer> _renderer; ///< The renderer to use.
 	std::unique_ptr<Framebuffer> _copy; ///< Downscaled copy of the cubemap content.
@@ -105,4 +109,15 @@ private:
 	Program * _radianceIntegration; ///< Radiance preconvolution shader.
 	Program* _irradianceCompute; ///< Irradiance SH projection shader.
 	const Mesh * _cube; ///< Skybox cube.
+
+	/// \brief Probe update state machine.
+	enum class ProbeState {
+		DRAW_FACES, ///< Drawing a cubemap face with the environment.
+		CONVOLVE_RADIANCE, ///< Convolving the cubemap to generate radiance for a given roughness level.
+		GENERATE_IRRADIANCE ///< Integrate irradiance in a compute shader.
+	};
+	// Initial state machine status.
+	ProbeState _currentState = ProbeState::DRAW_FACES; ///< Current update state.
+	uint _substepDraw = 0; ///< If drawing, current face.
+	uint _substepRadiance = 1; ///< If convolving radiance, current level.
 };

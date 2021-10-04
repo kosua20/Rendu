@@ -12,7 +12,7 @@ Buffer::Buffer(size_t sizeInBytes, BufferType atype) : type(atype), size(sizeInB
 }
 
 Buffer::Buffer(BufferType atype) : type(atype), size(0u) {
-	// Don't set it up immeditaly.
+	// Don't set it up immediately.
 }
 
 void Buffer::clean() {

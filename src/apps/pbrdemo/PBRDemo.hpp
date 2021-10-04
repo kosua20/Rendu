@@ -78,7 +78,7 @@ private:
 
 	RendererMode _mode	 = RendererMode::DEFERRED; ///< Active renderer.
 	size_t _currentScene = 0; ///< Currently selected scene.
-	const int _frameCount = 3;	 ///< Number of frames to count before looping.
+	const int _frameCount = 2;	 ///< Number of frames to update a probe over.
 	int _frameID		= 0; 	 ///< Current frame count (will loop)
 
 	bool _paused		= false; ///< Pause animations.

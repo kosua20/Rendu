@@ -25,13 +25,50 @@ Probe::Probe(const glm::vec3 & position, std::shared_ptr<Renderer> renderer, uin
 	}
 }
 
-void Probe::draw() {
-	for(uint i = 0; i < 6; ++i) {
-		_renderer->draw(_cameras[i], *_framebuffer, i);
+void Probe::update(uint budget){
+	// Simple state machine:
+	// (draw a face) ^ 6 -> ((convolve a face) ^ 6) ^ (mip count)) -> (dispatch irradiance compute)
+
+	// Follow steps while we have budget.
+	while(budget > 0){
+		switch (_currentState) {
+			case ProbeState::DRAW_FACES:
+				// Draw the current face.
+				_renderer->draw(_cameras[_substepDraw], *_framebuffer, _substepDraw);
+				++_substepDraw;
+				// If all faces done, reset and move to radiance estimation.
+				if(_substepDraw >= 6){
+					_substepDraw = 0;
+					_currentState = ProbeState::CONVOLVE_RADIANCE;
+				}
+				break;
+
+			case ProbeState::CONVOLVE_RADIANCE:
+				// Generate a level of the radiance.
+				convolveRadiance(1.2f, _substepRadiance);
+				++_substepRadiance;
+				// If all levels done, reset and move to irradiance integration.
+				if(_substepRadiance >= _framebuffer->texture()->levels){
+					// No need to filter level 0.
+					_substepRadiance = 1;
+					_currentState = ProbeState::GENERATE_IRRADIANCE;
+				}
+				break;
+
+			case ProbeState::GENERATE_IRRADIANCE:
+				// Generate irradiance.
+				estimateIrradiance(5.0f);
+				_currentState = ProbeState::DRAW_FACES;
+				break;
+
+			default:
+				break;
+		}
+		--budget;
 	}
 }
 
-void Probe::convolveRadiance(float clamp, uint first, uint count) {
+void Probe::convolveRadiance(float clamp, uint level) {
 
 	GPU::setDepthState(false);
 	GPU::setBlendState(false);
@@ -40,25 +77,20 @@ void Probe::convolveRadiance(float clamp, uint first, uint count) {
 	_radianceIntegration->use();
 	_radianceIntegration->uniform("clampMax", clamp);
 
-	const uint lb = glm::clamp<uint>(first, 1, _framebuffer->texture()->levels - 1u);
-	const uint ub = std::min(first + count, _framebuffer->texture()->levels);
+	const uint wh		   = _framebuffer->texture()->width / (1 << level);
+	const float roughness  = float(level) / float(_framebuffer->texture()->levels - 1u);
+	const int samplesCount = 64;
 
-	for(uint mid = lb; mid < ub; ++mid) {
-		const uint wh		   = _framebuffer->texture()->width / (1 << mid);
-		const float roughness  = float(mid) / float(_framebuffer->texture()->levels - 1u);
-		const int samplesCount = 64;
+	GPU::setViewport(0, 0, int(wh), int(wh));
+	_radianceIntegration->uniform("mipmapRoughness", roughness);
+	_radianceIntegration->uniform("samplesCount", samplesCount);
 
-		GPU::setViewport(0, 0, int(wh), int(wh));
-		_radianceIntegration->uniform("mipmapRoughness", roughness);
-		_radianceIntegration->uniform("samplesCount", samplesCount);
-
-		for(uint lid = 0; lid < 6; ++lid) {
-			_framebuffer->bind(lid, mid, Framebuffer::Operation::DONTCARE);
-			_radianceIntegration->uniform("mvp", Library::boxVPs[lid]);
-			// Here we need the previous level.
-			_radianceIntegration->texture(_framebuffer->texture(), 0, uint(mid)-1u);
-			GPU::drawMesh(*_cube);
-		}
+	for(uint lid = 0; lid < 6; ++lid) {
+		_framebuffer->bind(lid, level, Framebuffer::Operation::DONTCARE);
+		_radianceIntegration->uniform("mvp", Library::boxVPs[lid]);
+		// Here we need the previous level.
+		_radianceIntegration->texture(_framebuffer->texture(), 0, uint(level)-1u);
+		GPU::drawMesh(*_cube);
 	}
 }
 
@@ -161,4 +193,9 @@ void Probe::extractIrradianceSHCoeffs(const Texture & cubemap, float clamp, std:
 	shCoeffs[6]	   = c3 * LCoeffs[6];
 	shCoeffs[7]	   = 2.0f * c1 * LCoeffs[7];
 	shCoeffs[8]	   = c1 * LCoeffs[8];
+}
+
+uint Probe::totalBudget() const {
+	/* draw faces + convolve each level + generate irradiance */
+	return 6 + _framebuffer->texture()->levels + 1;
 }

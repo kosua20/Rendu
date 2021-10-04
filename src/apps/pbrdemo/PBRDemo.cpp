@@ -101,12 +101,10 @@ void PBRDemo::setScene(const std::shared_ptr<Scene> & scene) {
 	for(const auto & map : _shadowMaps) {
 		map->draw(*_scenes[_currentScene]);
 	}
-
-	for(int i = 0; i < 3; ++i) {
+	// Update each probe fully 3 times to capture multi-bounce effects.
+	for(uint i = 0; i < 3; ++i){
 		for(auto & probe : _probes) {
-			probe->draw();
-			probe->convolveRadiance(1.2f, 1, 5);
-			probe->estimateIrradiance(5.0f);
+			probe->update(probe->totalBudget());
 			GPU::flush();
 		}
 	}
@@ -121,28 +119,13 @@ void PBRDemo::updateMaps(){
 	_shadowTime.end();
 
 	// Probes pass.
+	_probesTime.begin();
 	for(auto & probe : _probes) {
-		if(_frameID % _frameCount == 0){
-			_probesTime.begin();
-			probe->draw();
-			_probesTime.end();
-
-		} else if(_frameID % _frameCount == 1){
-
-			_inteTime.begin();
-			probe->convolveRadiance(1.2f, 1u, 2u);
-			_inteTime.end();
-		} else {
-			_inteTime.begin();
-			probe->convolveRadiance(1.2f, 3u, 3u);
-			_inteTime.end();
-			_copyTime.begin();
-			probe->estimateIrradiance(5.0f);
-
-			_copyTime.end();
-		}
-
+		// For now, ensure each dynamic probe is entirely updated over frameCount frames.
+		const uint budget = probe->totalBudget() / _frameCount;
+		probe->update(budget);
 	}
+	_probesTime.end();
 
 }
 
