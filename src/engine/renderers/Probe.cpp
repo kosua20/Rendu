@@ -5,10 +5,10 @@
 
 Probe::Probe(const glm::vec3 & position, std::shared_ptr<Renderer> renderer, uint size, uint mips, const glm::vec2 & clippingPlanes) {
 	_renderer	 = renderer;
-	_framebuffer = renderer->createOutput(TextureShape::Cube, size, size, 6, mips, "Probe");
+	_framebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(TextureShape::Cube, size, size, 6, mips, {Layout::RGBA16F}, "Probe"));
 	_framebuffer->clear(glm::vec4(0.0f), 1.0f);
 	_position	 = position;
-	_radianceIntegration = Resources::manager().getProgram("cubemap_convo", "skybox_basic", "cubemap_convo");
+	_radianceCompute = Resources::manager().getProgramCompute("radiance_convo");
 	_cube		 = Resources::manager().getMesh("skybox", Storage::GPU);
 	// Texture used to compute irradiance spherical harmonics.
 	_copy = _renderer->createOutput(TextureShape::Cube, 16, 16, 6, 1, "Probe copy");
@@ -74,24 +74,19 @@ void Probe::convolveRadiance(float clamp, uint level) {
 	GPU::setBlendState(false);
 	GPU::setCullState(true, Faces::BACK);
 
-	_radianceIntegration->use();
-	_radianceIntegration->uniform("clampMax", clamp);
+	_radianceCompute->use();
+	_radianceCompute->uniform("clampMax", clamp);
 
 	const uint wh		   = _framebuffer->texture()->width / (1 << level);
 	const float roughness  = float(level) / float(_framebuffer->texture()->levels - 1u);
 	const int samplesCount = 64;
 
-	GPU::setViewport(0, 0, int(wh), int(wh));
-	_radianceIntegration->uniform("mipmapRoughness", roughness);
-	_radianceIntegration->uniform("samplesCount", samplesCount);
+	_radianceCompute->uniform("mipmapRoughness", roughness);
+	_radianceCompute->uniform("samplesCount", samplesCount);
+	_radianceCompute->texture(_framebuffer->texture(), 0, uint(level)-1u);
+	_radianceCompute->texture(_framebuffer->texture(), 1, uint(level));
+	GPU::dispatch(wh, wh, 6);
 
-	for(uint lid = 0; lid < 6; ++lid) {
-		_framebuffer->bind(lid, level, Framebuffer::Operation::DONTCARE);
-		_radianceIntegration->uniform("mvp", Library::boxVPs[lid]);
-		// Here we need the previous level.
-		_radianceIntegration->texture(_framebuffer->texture(), 0, uint(level)-1u);
-		GPU::drawMesh(*_cube);
-	}
 }
 
 void Probe::estimateIrradiance(float clamp) {

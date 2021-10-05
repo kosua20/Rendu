@@ -106,7 +106,7 @@ private:
 
 	std::array<Camera, 6> _cameras; ///< Camera for each face.
 	glm::vec3 _position; ///< The probe location.
-	Program * _radianceIntegration; ///< Radiance preconvolution shader.
+	Program* _radianceCompute; ///< Radiance preconvolution shader.
 	Program* _irradianceCompute; ///< Irradiance SH projection shader.
 	const Mesh * _cube; ///< Skybox cube.
 
