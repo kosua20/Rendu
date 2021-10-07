@@ -77,10 +77,11 @@ bool Scene::init(Storage options) {
 		light->setScene(_bbox);
 	}
 
-	// Check if the environment has been setup.
-	if(environment.type() == LightProbe::Type::DEFAULT){
+	// Check if the environment probes has been setup.
+	if(probes.empty()){
+		probes.emplace_back();
 		KeyValues defaultKv("probe");
-		environment.decode(defaultKv, options);
+		probes.back().decode(defaultKv, options);
 	}
 	_loaded = true;
 
@@ -179,7 +180,8 @@ void Scene::loadBackground(const KeyValues & params, Storage options) {
 }
 
 void Scene::loadProbe(const KeyValues & params, Storage options) {
-	environment.decode(params, options);
+	probes.emplace_back();
+	probes.back().decode(params, options);
 }
 
 void Scene::loadScene(const KeyValues & params, Storage) {
@@ -202,8 +204,10 @@ std::vector<KeyValues> Scene::encode() const {
 		}
 	}
 
-	// Encode the environment probe.
-	tokens.push_back(environment.encode());
+	// Encode the environment probes.
+	for(const LightProbe& probe : probes){
+		tokens.push_back(probe.encode());
+	}
 	
 	// Encode the background.
 	KeyValues bgNode("background");

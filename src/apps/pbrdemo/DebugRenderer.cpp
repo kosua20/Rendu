@@ -131,42 +131,43 @@ void DebugRenderer::draw(const Camera & camera, Framebuffer & framebuffer, uint 
 
 	// Render probe.
 	if(_showProbe){
-		const LightProbe & probe = _scene->environment;
-		// Render the extent box if parallax corrected.
-		if(probe.extent()[0] > 0.0f){
-			// Wireframe
-			GPU::setPolygonState(PolygonMode::LINE);
-			GPU::setCullState(false);
-			const glm::mat4 baseModel = glm::rotate(glm::translate(glm::mat4(1.0f), probe.center()), probe.rotation(), glm::vec3(0.0f, 1.0f, 0.0f));
-			const glm::mat4 mvpBox = vp * glm::scale(baseModel, 2.0f * probe.extent());
-			const glm::mat4 mvpCenter = vp * glm::scale(baseModel, glm::vec3(0.05f));
+		for(const LightProbe& probe : _scene->probes){
+			// Render the extent box if parallax corrected.
+			if(probe.extent()[0] > 0.0f){
+				// Wireframe
+				GPU::setPolygonState(PolygonMode::LINE);
+				GPU::setCullState(false);
+				const glm::mat4 baseModel = glm::rotate(glm::translate(glm::mat4(1.0f), probe.center()), probe.rotation(), glm::vec3(0.0f, 1.0f, 0.0f));
+				const glm::mat4 mvpBox = vp * glm::scale(baseModel, 2.0f * probe.extent());
+				const glm::mat4 mvpCenter = vp * glm::scale(baseModel, glm::vec3(0.05f));
 
-			_boxesProgram->use();
-			_boxesProgram->uniform("color", glm::vec4(0.2f, 0.9f, 1.0f, 1.0f));
+				_boxesProgram->use();
+				_boxesProgram->uniform("color", glm::vec4(0.2f, 0.9f, 1.0f, 1.0f));
 
-			_boxesProgram->uniform("mvp", mvpBox);
-			GPU::drawMesh(_cubeLines);
+				_boxesProgram->uniform("mvp", mvpBox);
+				GPU::drawMesh(_cubeLines);
 
-			_boxesProgram->uniform("mvp", mvpCenter);
+				_boxesProgram->uniform("mvp", mvpCenter);
+				GPU::drawMesh(*_sphere);
+			}
+
+			GPU::setPolygonState(PolygonMode::FILL);
+			GPU::setCullState(true, Faces::BACK);
+			// Combine the three matrices.
+			const glm::mat4 model = glm::scale(glm::translate(glm::mat4(1.0f), probe.position()), glm::vec3(0.15f));
+			const glm::mat4 MVP = vp * model;
+			const glm::mat3 normalMat(glm::inverse(glm::transpose(model)));
+			_probeProgram->use();
+			_probeProgram->uniform("mvp", MVP);
+			_probeProgram->uniform("m", model);
+			_probeProgram->uniform("normalMatrix", glm::mat4(normalMat));
+			_probeProgram->uniform("camPos", camera.position());
+			_probeProgram->uniform("lod", _probeRoughness * probe.map()->levels);
+			_probeProgram->uniform("mode", int(_probeMode));
+			_probeProgram->texture(probe.map(), 0);
+			_probeProgram->buffer(*probe.shCoeffs(), 0);
 			GPU::drawMesh(*_sphere);
 		}
-
-		GPU::setPolygonState(PolygonMode::FILL);
-		GPU::setCullState(true, Faces::BACK);
-		// Combine the three matrices.
-		const glm::mat4 model = glm::scale(glm::translate(glm::mat4(1.0f), probe.position()), glm::vec3(0.15f));
-		const glm::mat4 MVP = vp * model;
-		const glm::mat3 normalMat(glm::inverse(glm::transpose(model)));
-		_probeProgram->use();
-		_probeProgram->uniform("mvp", MVP);
-		_probeProgram->uniform("m", model);
-		_probeProgram->uniform("normalMatrix", glm::mat4(normalMat));
-		_probeProgram->uniform("camPos", camera.position());
-		_probeProgram->uniform("lod", _probeRoughness * probe.map()->levels);
-		_probeProgram->uniform("mode", int(_probeMode));
-		_probeProgram->texture(probe.map(), 0);
-		_probeProgram->buffer(*probe.shCoeffs(), 0);
-		GPU::drawMesh(*_sphere);
 	}
 
 }

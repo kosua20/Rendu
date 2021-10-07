@@ -132,7 +132,7 @@ void DeferredRenderer::renderTransparent(const Culler::List & visibles, const gl
 	_transparentProgram->use();
 
 	// Update all shaders shared parameters.
-	const LightProbe & environment = _scene->environment;
+	const LightProbe & environment = _scene->probes[0]; // \todo Loop
 	const float cubeLod		= float(environment.map()->levels - 1);
 	const glm::mat4 invView = glm::inverse(view);
 	const glm::vec2 invScreenSize = 1.0f / glm::vec2(_lightBuffer->width(), _lightBuffer->height());
@@ -178,12 +178,12 @@ void DeferredRenderer::renderTransparent(const Culler::List & visibles, const gl
 
 		// Bind the lights.
 		_transparentProgram->buffer(_fwdLightsGPU->data(), 0);
-		_transparentProgram->buffer(*_scene->environment.shCoeffs(), 1);
+		_transparentProgram->buffer(*environment.shCoeffs(), 1);
 		
 		// Bind the textures.
 		_transparentProgram->textures(material.textures());
 		_transparentProgram->texture(_textureBrdf, 4);
-		_transparentProgram->texture(_scene->environment.map(), 5);
+		_transparentProgram->texture(environment.map(), 5);
 		// Bind available shadow maps.
 		if(shadowMaps[0]){
 			_transparentProgram->texture(shadowMaps[0], 6);
@@ -284,7 +284,7 @@ void DeferredRenderer::draw(const Camera & camera, Framebuffer & framebuffer, ui
 	_lightRenderer->updateShadowMapInfos(_shadowMode, 0.002f);
 	_lightBuffer->bind(Framebuffer::Operation::DONTCARE);
 	_lightBuffer->setViewport();
-	_ambientScreen->draw(view, proj, _scene->environment);
+	_ambientScreen->draw(view, proj, _scene->probes[0]); // \todo Loop
 
 	for(auto & light : _scene->lights) {
 		light->draw(*_lightRenderer);

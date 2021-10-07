@@ -14,7 +14,6 @@ class LightProbe {
 public:
 	/** The type of probe. */
 	enum class Type : uint {
-		DEFAULT, ///< Empty probe.
 		STATIC, ///< Loaded from disk, never updated.
 		DYNAMIC ///< Generated in engine.
 	};
@@ -94,7 +93,7 @@ private:
 	const Texture * _envmap = nullptr; ///< The environment map.
 	std::shared_ptr<Buffer> _shCoeffs; ///< The irradiance representation.
 	
-	Type _type = Type::DEFAULT; ///< The type of probe.
+	Type _type = Type::DYNAMIC; ///< The type of probe.
 	glm::vec3 _position = glm::vec3(0.0f); ///< The probe location.
 	glm::vec3 _extent = glm::vec3(-1.0f); ///< The probe parallax proxy extent.
 	glm::vec3 _center = glm::vec3(0.0f); ///< The probe parallax proxy center.

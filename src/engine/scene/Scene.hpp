@@ -73,9 +73,9 @@ public:
 		SKYBOX,	///< Use a skybox/cubemap as background.
 		ATMOSPHERE ///< Use a realtime atmospheric scattering simulation.
 	};
-	Background backgroundMode = Background::COLOR; ///< The background mode (see enum).
-	std::unique_ptr<Object> background;			   ///< Background object, containing the geometry  to use.
-	LightProbe environment;						   ///< Reflection probe.
+	Background backgroundMode = Background::COLOR;  ///< The background mode (see enum).
+	std::unique_ptr<Object> background;			    ///< Background object, containing the geometry  to use.
+	std::vector<LightProbe> probes; 				///< Reflection probes.
 	
 	/** Copy constructor.*/
 	Scene(const Scene &) = delete;

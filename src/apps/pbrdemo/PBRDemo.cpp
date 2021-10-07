@@ -92,10 +92,14 @@ void PBRDemo::setScene(const std::shared_ptr<Scene> & scene) {
 	}
 	_probes.clear();
 	// Allocate probes.
-	if(scene->environment.type() == LightProbe::Type::DYNAMIC){
-		_probes.emplace_back(new Probe(scene->environment.position(), _probesRenderer, 128, 6, glm::vec2(0.01f, 1000.0f)));
-		scene->environment.registerEnvironment(_probes[0]->texture(), _probes[0]->shCoeffs());
+	for(LightProbe& probe : scene->probes){
+		if(probe.type() != LightProbe::Type::DYNAMIC){
+			continue;
+		}
+		_probes.emplace_back(new Probe(probe.position(), _probesRenderer, 128, 6, glm::vec2(0.01f, 1000.0f)));
+		probe.registerEnvironment(_probes.back()->texture(), _probes.back()->shCoeffs());
 	}
+
 	// Trigger one-shot data update.
 	// Shadow pass.
 	for(const auto & map : _shadowMaps) {

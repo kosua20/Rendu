@@ -97,6 +97,7 @@ void ForwardRenderer::renderOpaque(const Culler::List & visibles, const glm::mat
 	GPU::setBlendState(false);
 
 	const auto & shadowMaps = _lightsGPU->shadowMaps();
+	const LightProbe& environment = _scene->probes[0]; // \todo Loop
 
 	// Scene objects.
 	for(const long & objectId : visibles) {
@@ -159,11 +160,11 @@ void ForwardRenderer::renderOpaque(const Culler::List & visibles, const glm::mat
 		GPU::setCullState(!material.twoSided(), Faces::BACK);
 		// Bind the lights.
 		currentProgram->buffer(_lightsGPU->data(), 0);
-		currentProgram->buffer(*_scene->environment.shCoeffs(), 1);
+		currentProgram->buffer(*environment.shCoeffs(), 1);
 		// Bind the textures.
 		currentProgram->textures(material.textures());
 		currentProgram->texture(_textureBrdf, 4);
-		currentProgram->texture(_scene->environment.map(), 5);
+		currentProgram->texture(environment.map(), 5);
 		// Bind available shadow maps.
 		if(shadowMaps[0]){
 			currentProgram->texture(shadowMaps[0], 6);
@@ -180,6 +181,7 @@ void ForwardRenderer::renderOpaque(const Culler::List & visibles, const glm::mat
 void ForwardRenderer::renderTransparent(const Culler::List & visibles, const glm::mat4 & view, const glm::mat4 & proj){
 
 	const auto & shadowMaps = _lightsGPU->shadowMaps();
+	const LightProbe& environment = _scene->probes[0]; // \todo Loop
 
 	GPU::setBlendState(true, BlendEquation::ADD, BlendFunction::ONE, BlendFunction::ONE_MINUS_SRC_ALPHA);
 	GPU::setDepthState(true, TestFunction::LEQUAL, true);
@@ -212,11 +214,11 @@ void ForwardRenderer::renderTransparent(const Culler::List & visibles, const glm
 
 		// Bind the lights.
 		_transparentProgram->buffer(_lightsGPU->data(), 0);
-		_transparentProgram->buffer(*_scene->environment.shCoeffs(), 1);
+		_transparentProgram->buffer(*environment.shCoeffs(), 1);
 		// Bind the textures.
 		_transparentProgram->textures(material.textures());
 		_transparentProgram->texture(_textureBrdf, 4);
-		_transparentProgram->texture(_scene->environment.map(), 5);
+		_transparentProgram->texture(environment.map(), 5);
 		// Bind available shadow maps.
 		if(shadowMaps[0]){
 			_transparentProgram->texture(shadowMaps[0], 6);
@@ -315,7 +317,7 @@ void ForwardRenderer::draw(const Camera & camera, Framebuffer & framebuffer, uin
 
 	// Update all shaders shared parameters.
 	{
-		const LightProbe & environment = _scene->environment;
+		const LightProbe & environment = _scene->probes[0]; // \todo Loop
 		const float cubeLod		= float(environment.map()->levels - 1);
 		const glm::mat4 invView = glm::inverse(view);
 		const glm::vec2 invScreenSize = 1.0f / glm::vec2(_sceneFramebuffer->width(), _sceneFramebuffer->height());
