@@ -12,6 +12,12 @@ void LightProbe::decode(const KeyValues & params, Storage options) {
 			_type = LightProbe::Type::DYNAMIC;
 			_position = Codable::decodeVec3(param);
 
+		} else if(param.key == "size"){
+			_size = Codable::decodeVec3(param);
+
+		}  else if(param.key == "fade"){
+			_fade = std::stof(param.values[0]);
+
 		} else if(param.key == "center"){
 			_center = Codable::decodeVec3(param);
 			setCenter = true;
@@ -61,6 +67,10 @@ KeyValues LightProbe::encode() const {
 	if(_type == Type::DYNAMIC){
 		probe.elements.emplace_back("position");
 		probe.elements.back().values = Codable::encode(_position);
+		probe.elements.emplace_back("size");
+		probe.elements.back().values = Codable::encode(_size);
+		probe.elements.emplace_back("fade");
+		probe.elements.back().values.push_back(std::to_string(_fade));
 		probe.elements.emplace_back("extent");
 		probe.elements.back().values = Codable::encode(_extent);
 		probe.elements.emplace_back("center");

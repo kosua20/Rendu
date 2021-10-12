@@ -33,6 +33,8 @@ public:
 	 \verbatim
 	 * probe:
 		position: X,Y,Z
+		size: W,H,D
+		fade: distance
 		center: X,Y,Z
 		extent: W,H,D
 		rotation: angle
@@ -40,6 +42,7 @@ public:
 	 for a probe renderered on the fly at the given location.
 	 center, extent and rotation are used to define an oriented box used as a local scene proxy. If extent is negative,
 	 the environment is assumed to be at infinity.
+	 position, size, fade and rotation are used to define a box-shaped area of effect with soft edges.
 	 \param params the parameters tuple
 	 \param options data loading and storage options
 	 */
@@ -65,6 +68,14 @@ public:
 	/** \return the probe position (or the origin for static probes)
 	 */
 	const glm::vec3 & position() const { return _position; }
+
+	/** \return the probe area of effect
+	 */
+	const glm::vec3 & size() const { return _size; }
+
+	/** \return the probe fading zone size, at the edges of its area of effect
+	 */
+	float fade() const { return _fade; }
 
 	/** \return the probe parallax proxy extent (or -1 for probes at infinity)
 	 */
@@ -95,8 +106,10 @@ private:
 	
 	Type _type = Type::DYNAMIC; ///< The type of probe.
 	glm::vec3 _position = glm::vec3(0.0f); ///< The probe location.
+	glm::vec3 _size = glm::vec3(1e10f); ///< The probe area of effect.
 	glm::vec3 _extent = glm::vec3(-1.0f); ///< The probe parallax proxy extent.
 	glm::vec3 _center = glm::vec3(0.0f); ///< The probe parallax proxy center.
 	glm::vec2 _rotCosSin = glm::vec2(1.0f, 0.0f); ///< Probe orientation trigonometric cached values.
+	float _fade = 1e-8f; ///< The probe effect fading margin around its area of effect.
 	float _rotation = 0.0f; ///< The probe orientation around a vertical axis,
 };
