@@ -87,7 +87,8 @@ private:
 	std::unique_ptr<Framebuffer> _sceneFramebuffer; ///< Scene framebuffer
 	std::unique_ptr<SSAO> _ssaoPass;				///< SSAO processing.
 	std::unique_ptr<ForwardLight> _lightsGPU;	///< The lights renderer.
-	
+	std::unique_ptr<ForwardProbe> _probesGPU;	///< The probes renderer.
+
 	Program * _objectProgram;		 ///< Basic PBR program
 	Program * _parallaxProgram;	 ///< Parallax mapping PBR program
 	Program * _emissiveProgram;	 ///< Parallax mapping PBR program

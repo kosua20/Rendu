@@ -103,3 +103,39 @@ void ForwardLight::draw(const DirectionalLight * light) {
 		_shadowMaps[0] = light->shadowMap().map;
 	}
 }
+
+
+const size_t ForwardProbe::_maxProbeCount = 4;
+
+ForwardProbe::ForwardProbe(size_t count) :
+	_probesData(_maxProbeCount, UniformFrequency::FRAME) {
+	_currentCount = count;
+	if(_currentCount > _maxProbeCount){
+		Log::Warning() << "Forward probe renderer can only handle the first " << _maxProbeCount << " probes (requested " << _currentCount << ")." << std::endl;
+	}
+
+	// Initial buffers creation and allocation.
+	_probesData.upload();
+	_probesMaps.resize(count, nullptr);
+	_probesCoeffs.resize(count, nullptr);
+}
+
+void ForwardProbe::draw(const LightProbe & probe) {
+	const size_t selectedId = _currentId;
+	_currentId				= (_currentId + 1) % _currentCount;
+	// Skip update if extraneous probe.
+	if(selectedId >= _maxProbeCount) {
+		return;
+	}
+
+	GPUProbe & currentProbe = _probesData[selectedId];
+	const float cubeLod = float(probe.map()->levels - 1);
+	const glm::vec2& rotCosSin = probe.rotationCosSin();
+	currentProbe.positionAndMip = glm::vec4(probe.position(), cubeLod);
+	currentProbe.sizeAndFade	= glm::vec4(probe.size(), probe.fade());
+	currentProbe.centerAndCos = glm::vec4(probe.center(), rotCosSin.x);
+	currentProbe.extentAndSin = glm::vec4(probe.extent(), rotCosSin.y);
+
+	_probesMaps[selectedId] = probe.map();
+	_probesCoeffs[selectedId] = probe.shCoeffs().get();
+}

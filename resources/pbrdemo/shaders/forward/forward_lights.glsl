@@ -7,6 +7,7 @@
 #define SPOT 2
 
 #define MAX_LIGHTS_COUNT 50
+#define MAX_PROBES_COUNT 4
 
 /** \brief Represent a light in the forward renderer. */
 struct GPULight {
@@ -16,6 +17,14 @@ struct GPULight {
 	vec4 directionAndPlane; ///< Light direction and far plane distance.
 	vec4 typeModeLayer; ///< Light type, shadow mode and shadow map layer.
 	vec4 angles; ///< Cone inner and outer angles.
+};
+
+/** \brief Represent an environment probe in the forward renderer. */
+struct GPUProbe {
+	vec4 positionAndMip; ///< The cubemap location and the mip count.
+	vec4 sizeAndFade;	 ///< The cubemap box effect size, and the size of its fading region on edges.
+	vec4 centerAndCos; ///< The cubemap parallax box center, and the cubemap parallax box orientation (precomputed cos).
+	vec4 extentAndSin; ///< The cubemap parallax box half size, and the cubemap parallax box orientation (precomputed sin).
 };
 
 /** Compute a light contribution for a given point in forward shading.
@@ -97,4 +106,28 @@ bool applyLight(GPULight light, vec3 viewSpacePos, textureCubeArray smapCube, te
 		}
 	}
 	return true;
+}
+
+/** Compute an environment probe contribution for a given point in forward shading.
+ \param probe the probe information
+ \param n the surface normal (world space)
+ \param v the view direction (world space)
+ \param p the surface position (world space)
+ \param roughness the surface roughness
+ \param cubeMap the environment map texture
+ \return the retrieved radiance weighted by the probe contribution (the weight is also stored in the w component)
+ */
+vec4 applyProbe(GPUProbe probe, vec3 n, vec3 v, vec3 p, float roughness, textureCube cubeMap){
+	float lod = probe.positionAndMip.w;
+	vec2 cosSinOrientation = vec2(probe.centerAndCos.w, probe.extentAndSin.w);
+	vec3 probePosition = probe.positionAndMip.xyz;
+	vec3 rad = radiance(n, v, p, roughness, cubeMap, probePosition, probe.centerAndCos.xyz, probe.extentAndSin.xyz, cosSinOrientation, lod);
+	
+	// Compute distance to effect box (signed).
+	vec3 pBox = rotateY(p - probePosition, cosSinOrientation);
+	vec3 q = abs(pBox) - probe.sizeAndFade.xyz;
+ 	float dist = length(max(q, 0.0)) + min(max(q.x, max(q.y, q.z)), 0.0);
+ 	float weight = 1.0 - clamp(dist / probe.sizeAndFade.w, 0.0, 1.0);
+
+	return weight * vec4(rad, 1.0);
 }

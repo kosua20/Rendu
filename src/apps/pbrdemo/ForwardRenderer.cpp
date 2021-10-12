@@ -39,6 +39,7 @@ void ForwardRenderer::setScene(const std::shared_ptr<Scene> & scene) {
 	_scene = scene;
 	_culler.reset(new Culler(_scene->objects));
 	_lightsGPU.reset(new ForwardLight(_scene->lights.size()));
+	_probesGPU.reset(new ForwardProbe(_scene->probes.size()));
 }
 
 void ForwardRenderer::renderDepth(const Culler::List & visibles, const glm::mat4 & view, const glm::mat4 & proj){
@@ -97,7 +98,6 @@ void ForwardRenderer::renderOpaque(const Culler::List & visibles, const glm::mat
 	GPU::setBlendState(false);
 
 	const auto & shadowMaps = _lightsGPU->shadowMaps();
-	const LightProbe& environment = _scene->probes[0]; // \todo Loop
 
 	// Scene objects.
 	for(const long & objectId : visibles) {
@@ -160,11 +160,12 @@ void ForwardRenderer::renderOpaque(const Culler::List & visibles, const glm::mat
 		GPU::setCullState(!material.twoSided(), Faces::BACK);
 		// Bind the lights.
 		currentProgram->buffer(_lightsGPU->data(), 0);
-		currentProgram->buffer(*environment.shCoeffs(), 1);
+		currentProgram->buffer(_probesGPU->data(), 1);
+		currentProgram->bufferArray(_probesGPU->shCoeffs(), 2);
 		// Bind the textures.
 		currentProgram->textures(material.textures());
 		currentProgram->texture(_textureBrdf, 4);
-		currentProgram->texture(environment.map(), 5);
+		currentProgram->textureArray(_probesGPU->envmaps(), 5);
 		// Bind available shadow maps.
 		if(shadowMaps[0]){
 			currentProgram->texture(shadowMaps[0], 6);
@@ -181,7 +182,6 @@ void ForwardRenderer::renderOpaque(const Culler::List & visibles, const glm::mat
 void ForwardRenderer::renderTransparent(const Culler::List & visibles, const glm::mat4 & view, const glm::mat4 & proj){
 
 	const auto & shadowMaps = _lightsGPU->shadowMaps();
-	const LightProbe& environment = _scene->probes[0]; // \todo Loop
 
 	GPU::setBlendState(true, BlendEquation::ADD, BlendFunction::ONE, BlendFunction::ONE_MINUS_SRC_ALPHA);
 	GPU::setDepthState(true, TestFunction::LEQUAL, true);
@@ -212,13 +212,14 @@ void ForwardRenderer::renderTransparent(const Culler::List & visibles, const glm
 		_transparentProgram->uniform("mv", MV);
 		_transparentProgram->uniform("normalMatrix", glm::mat4(normalMatrix));
 
-		// Bind the lights.
+		// Bind the lights and probes.
 		_transparentProgram->buffer(_lightsGPU->data(), 0);
-		_transparentProgram->buffer(*environment.shCoeffs(), 1);
+		_transparentProgram->buffer(_probesGPU->data(), 1);
+		_transparentProgram->bufferArray(_probesGPU->shCoeffs(), 2);
 		// Bind the textures.
 		_transparentProgram->textures(material.textures());
 		_transparentProgram->texture(_textureBrdf, 4);
-		_transparentProgram->texture(environment.map(), 5);
+		_transparentProgram->textureArray(_probesGPU->envmaps(), 5);
 		// Bind available shadow maps.
 		if(shadowMaps[0]){
 			_transparentProgram->texture(shadowMaps[0], 6);
@@ -302,6 +303,12 @@ void ForwardRenderer::draw(const Camera & camera, Framebuffer & framebuffer, uin
 	}
 	_lightsGPU->data().upload();
 
+	// --- Update probes data
+	for(const auto& probe : _scene->probes){
+		_probesGPU->draw(probe);
+	}
+	_probesGPU->data().upload();
+
 	// Select visible objects.
 	const auto & visibles = _culler->cullAndSort(view, proj, pos);
 
@@ -317,8 +324,7 @@ void ForwardRenderer::draw(const Camera & camera, Framebuffer & framebuffer, uin
 
 	// Update all shaders shared parameters.
 	{
-		const LightProbe & environment = _scene->probes[0]; // \todo Loop
-		const float cubeLod		= float(environment.map()->levels - 1);
+
 		const glm::mat4 invView = glm::inverse(view);
 		const glm::vec2 invScreenSize = 1.0f / glm::vec2(_sceneFramebuffer->width(), _sceneFramebuffer->height());
 		// Update shared data for the three programs.
@@ -326,11 +332,7 @@ void ForwardRenderer::draw(const Camera & camera, Framebuffer & framebuffer, uin
 		for(Program * prog : programs){
 			prog->use();
 			prog->uniform("inverseV", invView);
-			prog->uniform("maxLod", cubeLod);
-			prog->uniform("cubemapPos", environment.position());
-			prog->uniform("cubemapCenter", environment.center());
-			prog->uniform("cubemapExtent", environment.extent());
-			prog->uniform("cubemapCosSin", environment.rotationCosSin());
+			prog->uniform("probesCount", int(_probesGPU->count()));
 			prog->uniform("lightsCount", int(_lightsGPU->count()));
 			prog->uniform("invScreenSize", invScreenSize);
 		}
@@ -342,8 +344,10 @@ void ForwardRenderer::draw(const Camera & camera, Framebuffer & framebuffer, uin
 		// \todo Currently there is no mechanism to "unregister" a texture for each shader using it, when deleting the texture.
 		// The texture could keep a record of all programs it has been used in. Or we could look at all programs when deleting.
 		// Or in PBRDemo we reset the textures when setting a scene.
+		_objectProgram->defaultTexture(5);
 		_objectProgram->defaultTexture(6);
 		_objectProgram->defaultTexture(7);
+		_parallaxProgram->defaultTexture(5);
 		_parallaxProgram->defaultTexture(6);
 		_parallaxProgram->defaultTexture(7);
 	}

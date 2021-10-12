@@ -48,17 +48,17 @@ public:
 	 */
 	void updateShadowMapInfos(ShadowMode mode, float bias);
 
-	/** Apply a spot lighting using a supporting cone.
+	/** Record spot light information for rendering.
 	 \param light the light to compute the contribution of
 	 */
 	void draw(const SpotLight * light) override;
 	
-	/** Apply a point lighting using a supporting sphere.
+	/** Record point light information for rendering.
 	 \param light the light to compute the contribution of
 	 */
 	void draw(const PointLight * light) override;
 	
-	/** Apply a directional lighting using a supporting quad.
+	/** Record directional light information for rendering.
 	 \param light the light to compute the contribution of
 	 */
 	void draw(const DirectionalLight * light) override;
@@ -73,7 +73,7 @@ public:
 		return _shadowMaps;
 	}
 
-	/** \return the GPU lights buffer */
+	/** \return the GPU lights recorded buffer */
 	UniformBuffer<GPULight> & data(){
 		return _lightsData;
 	}
@@ -92,4 +92,62 @@ private:
 	ShadowMode _shadowMode = ShadowMode::BASIC; ///< Shadow mapping techique.
 	float _shadowBias = 0.0f; ///< Shadow depth bias.
 	std::vector<const Texture *> _shadowMaps; ///< Shadow maps list.
+};
+
+
+/**
+ \brief Store environment probes data for forward rendering in a GPU buffer.
+ \ingroup PBRDemo
+ */
+class ForwardProbe  {
+
+public:
+
+	/** \brief Represent a probe on the GPU for the forward renderer. */
+	struct GPUProbe {
+		glm::vec4 positionAndMip{0.0f}; ///< The cubemap location and the mip
+		glm::vec4 sizeAndFade{0.0f}; 	///< The cubemap box effect size, and the size of its fading region on edges.
+		glm::vec4 centerAndCos{0.0f}; ///< The cubemap parallax box center, and the cubemap parallax box orientation (precomputed cos).
+		glm::vec4 extentAndSin{0.0f}; ///< The cubemap parallax box half size, and the cubemap parallax box orientation (precomputed sin).
+	};
+
+	/** Constructor.
+	 \param count number of probes that will be submitted
+	 */
+	explicit ForwardProbe(size_t count);
+
+	/** Record a light probe information for rendering.
+	 \param probe the probe to retrieve the info of
+	 */
+	void draw(const LightProbe & probe);
+
+	/** \return the current number of probes */
+	size_t count() const {
+		return _currentCount;
+	}
+
+	/** \return the cubemaps used by the recorded probes */
+	const std::vector<const Texture *> & envmaps() const {
+		return _probesMaps;
+	}
+
+	/** \return the SH irradiance coefficients used by the recorded probes */
+	const std::vector<const Buffer *> & shCoeffs() const {
+		return _probesCoeffs;
+	}
+
+	/** \return the GPU probes recorded buffer */
+	UniformBuffer<GPUProbe> & data(){
+		return _probesData;
+	}
+
+private:
+
+	size_t _currentId = 0; ///< Current insertion location.
+	size_t _currentCount = 0; ///< Number of probes to store.
+	const static size_t _maxProbeCount; ///< Maximum allowed number of probes (see forward_lights.glsl).
+	UniformBuffer<GPUProbe> _probesData; ///< GPU buffer.
+
+	std::vector<const Texture *> _probesMaps; ///< Environment maps list.
+	std::vector<const Buffer *> _probesCoeffs; ///< Environment SH coeffs list.
 };
