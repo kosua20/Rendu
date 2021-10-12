@@ -71,10 +71,11 @@ bool Scene::init(Storage options) {
 	
 	// The scene model matrix has been applied to all objects, we can reset it.
 	_sceneModel = glm::mat4(1.0f);
+	BoundingBox bboxCasters;
+	computeBoundingBoxes(_bbox, bboxCasters);
 	// Update all lights bounding box infos.
-	_bbox = computeBoundingBox(true);
 	for(auto & light : lights) {
-		light->setScene(_bbox);
+		light->setScene(bboxCasters);
 	}
 
 	// Check if the environment probes has been setup.
@@ -252,22 +253,26 @@ std::vector<KeyValues> Scene::encode() const {
 	return tokens;
 }
 
-BoundingBox Scene::computeBoundingBox(bool onlyShadowCasters) {
-	BoundingBox bbox;
+void Scene::computeBoundingBoxes(BoundingBox & globalBox, BoundingBox & casterBox) {
+	globalBox = BoundingBox();
+	casterBox = BoundingBox();
+
 	if(objects.empty()) {
-		return bbox;
+		return;
 	}
 
 	for(Object & obj : objects) {
-		if(onlyShadowCasters && !obj.castsShadow()) {
-			continue;
+		const BoundingBox & objBox = obj.boundingBox();
+		globalBox.merge(objBox);
+
+		if(obj.castsShadow()) {
+			casterBox.merge(objBox);
 		}
-		bbox.merge(obj.boundingBox());
 	}
+
 	Log::Info() << Log::Resources << "Scene bounding box:" << std::endl
-				<< "\t\tmini: " << bbox.minis << std::endl
-				<< "\t\tmaxi: " << bbox.maxis << "." << std::endl;
-	return bbox;
+				<< "\t\tmini: " << globalBox.minis << std::endl
+				<< "\t\tmaxi: " << globalBox.maxis << "." << std::endl;
 }
 
 void Scene::update(double fullTime, double frameTime) {

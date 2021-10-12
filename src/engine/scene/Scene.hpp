@@ -136,11 +136,12 @@ private:
 	 */
 	void loadScene(const KeyValues & params, Storage options);
 
-	/** Compute the bounding box of the scene, optionaly excluding objects that do not cast shadows.
-	 \param onlyShadowCasters denote if only objects that are allowed to cast shadows should be taken into account
-	 \return the scene bounding box
+	/** Compute the bounding box of the scene, including and excluding objects that do not cast shadows.
+	 \param globalBox the bounding box encompassing all objects in the scene
+	 \param casterBox the bounding box encompassing shadow casting objects only
+	 \return
 	 */
-	BoundingBox computeBoundingBox(bool onlyShadowCasters = false);
+	void computeBoundingBoxes(BoundingBox & globalBox, BoundingBox & casterBox);
 
 	Material _backgroundMaterial;  			 ///< Background material, containing the optional textures to use.
 	Camera _camera;							 ///< The initial viewpoint on the scene.
