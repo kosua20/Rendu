@@ -1,0 +1,72 @@
+* probe: 
+	position: -1.32 0.5 0.0
+	size: 1.4 0.6 1.1 
+	fade: 0.05
+	extent: 1.25 0.5 1.0
+	center: -1.36 0.5 0.0 
+
+* probe: 
+	position: 1.32 0.5 0.0
+	size: 1.4 0.6 1.1 
+	fade: 0.05
+	extent: 1.25 0.5 1.0
+	center: 1.36 0.5 0.0 
+
+* background:
+	cube: rgb32cube: grey_cube  
+
+* camera: 
+	position: 1.860544 0.649028 -0.217161 
+	center: 0.908200 0.367418 -0.099957 
+	up: -0.279501 0.959529 0.034398 
+	fov: 1.300000 
+	planes: 0.057398 28.699148 
+
+
+* object: 
+	shadows: false 
+	skipuvs: true 
+	mesh: tworooms
+	material: diel_rough00 
+
+* object: 
+	shadows: false 
+	skipuvs: true 
+	mesh: sphere 
+	translation: -1.75 0.5 0.0
+	scaling: 0.1
+	material: emissive_01 
+
+* object: 
+	shadows: false 
+	skipuvs: true 
+	mesh: sphere 
+	translation: 1.75 0.5 0.0
+	scaling: 0.1
+	material: emissive_02 
+
+* material: 
+	textures: 
+		- rgb: 1.0,1.0,1.0 
+		- rgb: default_normal 
+		- rgb: 0.25,0.0,1.0 
+	masked: false 
+	twosided: true 
+	type: Regular 
+	name: diel_rough00 
+
+* material: 
+	textures: 
+		- rgb: 1.0,0.0,0.0 
+	masked: false 
+	twosided: false 
+	type: Emissive 
+	name: emissive_01
+
+* material: 
+	textures: 
+		- rgb: 0.0,1.0,0.0 
+	masked: false 
+	twosided: false 
+	type: Emissive 
+	name: emissive_02
