@@ -119,6 +119,9 @@ void Program::reflect(){
 				_staticBuffers[buffer.binding] = StaticBufferState();
 				_staticBuffers[buffer.binding].name = buffer.name;
 				_staticBuffers[buffer.binding].storage = buffer.storage;
+				_staticBuffers[buffer.binding].count = buffer.count;
+				_staticBuffers[buffer.binding].buffers.resize(buffer.count, VK_NULL_HANDLE);
+				_staticBuffers[buffer.binding].offsets.resize(buffer.count, 0);
 				continue;
 			}
 
@@ -160,10 +163,15 @@ void Program::reflect(){
 
 			_textures[image.binding] = TextureState();
 			_textures[image.binding].name = image.name;
-			_textures[image.binding].view = defaultTex->gpu->view;
+			_textures[image.binding].count = image.count;
 			_textures[image.binding].shape = image.shape;
 			_textures[image.binding].storage = image.storage;
-			_textures[image.binding].texture = defaultTex;
+			_textures[image.binding].textures.resize(image.count);
+			_textures[image.binding].views.resize(image.count);
+			for(uint tid = 0; tid < image.count; ++tid){
+				_textures[image.binding].textures[tid] = defaultTex;
+				_textures[image.binding].views[tid] = _textures[image.binding].textures[tid]->gpu->view;
+			}
 			_textures[image.binding].mip = Program::ALL_MIPS;
 		}
 	}
@@ -212,7 +220,7 @@ void Program::reflect(){
 			VkDescriptorSetLayoutBinding imageBinding{};
 			imageBinding.binding = image.first;
 			imageBinding.descriptorType = image.second.storage ? VK_DESCRIPTOR_TYPE_STORAGE_IMAGE : VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
-			imageBinding.descriptorCount = 1;
+			imageBinding.descriptorCount = image.second.count;
 			imageBinding.stageFlags = VK_SHADER_STAGE_ALL;
 			bindingLayouts.emplace_back(imageBinding);
 		}
@@ -235,7 +243,7 @@ void Program::reflect(){
 			VkDescriptorSetLayoutBinding bufferBinding{};
 			bufferBinding.binding = buffer.first;
 			bufferBinding.descriptorType = buffer.second.storage ? VK_DESCRIPTOR_TYPE_STORAGE_BUFFER : VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-			bufferBinding.descriptorCount = 1;
+			bufferBinding.descriptorCount = buffer.second.count;
 			bufferBinding.stageFlags = VK_SHADER_STAGE_ALL;
 			bindingLayouts.emplace_back(bufferBinding);
 		}
@@ -324,13 +332,14 @@ void Program::transitionResourcesTo(Program::Type type){
 		// Move all textures to shader read only optimal.
 		for(const auto& texInfos : _textures){
 			// Transition proper subresource.
-			const Texture& tex = *texInfos.second.texture;
 			const uint mip = texInfos.second.mip;
 			const VkImageLayout tgtLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-			if(mip == Program::ALL_MIPS){
-				VkUtils::textureLayoutBarrier(commandBuffer, tex, tgtLayout);
-			} else {
-				VkUtils::mipLayoutBarrier(commandBuffer, tex, tgtLayout, mip);
+			for(const Texture* tex : texInfos.second.textures){
+				if(mip == Program::ALL_MIPS){
+					VkUtils::textureLayoutBarrier(commandBuffer, *tex, tgtLayout);
+				} else {
+					VkUtils::mipLayoutBarrier(commandBuffer, *tex, tgtLayout, mip);
+				}
 			}
 		}
 	} else if(type == Type::COMPUTE){
@@ -349,13 +358,15 @@ void Program::transitionResourcesTo(Program::Type type){
 		// \warning We might be missing some masks in the layout barrier when moving from a compute to a compute, investigate.
 		for(const auto& texInfos : _textures){
 			// Transition proper subresource.
-			const Texture& tex = *texInfos.second.texture;
 			const uint mip = texInfos.second.mip;
 			const VkImageLayout tgtLayout = texInfos.second.storage ? VK_IMAGE_LAYOUT_GENERAL : VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-			if(mip == Program::ALL_MIPS){
-				VkUtils::textureLayoutBarrier(commandBuffer, tex, tgtLayout);
-			} else {
-				VkUtils::mipLayoutBarrier(commandBuffer, tex, tgtLayout, mip);
+
+			for(const Texture* tex : texInfos.second.textures){
+				if(mip == Program::ALL_MIPS){
+					VkUtils::textureLayoutBarrier(commandBuffer, *tex, tgtLayout);
+				} else {
+					VkUtils::mipLayoutBarrier(commandBuffer, *tex, tgtLayout, mip);
+				}
 			}
 		}
 
@@ -384,21 +395,26 @@ void Program::update(){
 		context->descriptorAllocator.freeSet(_currentSets[IMAGES_SET]);
 		_currentSets[IMAGES_SET] = context->descriptorAllocator.allocateSet(_state.setLayouts[IMAGES_SET]);
 
-		std::vector< VkDescriptorImageInfo> imageInfos(_textures.size());
-		std::vector< VkWriteDescriptorSet> writes;
+		std::vector<std::vector<VkDescriptorImageInfo>> imageInfos(_textures.size());
+		std::vector<VkWriteDescriptorSet> writes;
 		uint tid = 0;
 		for(const auto& image : _textures){
-			imageInfos[tid] = {};
-			imageInfos[tid].imageView = image.second.view;
-			imageInfos[tid].imageLayout = image.second.storage ? VK_IMAGE_LAYOUT_GENERAL : VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+			imageInfos[tid].resize(image.second.count);
+			const VkImageLayout tgtLayout = image.second.storage ? VK_IMAGE_LAYOUT_GENERAL : VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+
+			for(uint did = 0; did < image.second.count; ++did){
+				imageInfos[tid][did].imageView = image.second.views[did];
+				imageInfos[tid][did].imageLayout = tgtLayout;
+			}
+
 			VkWriteDescriptorSet write{};
 			write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 			write.dstSet = _currentSets[IMAGES_SET].handle;
 			write.dstBinding = image.first;
 			write.dstArrayElement = 0;
-			write.descriptorCount = 1;
+			write.descriptorCount = image.second.count;
 			write.descriptorType = image.second.storage ? VK_DESCRIPTOR_TYPE_STORAGE_IMAGE : VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
-			write.pImageInfo = &imageInfos[tid];
+			write.pImageInfo = &imageInfos[tid][0];
 			writes.push_back(write);
 			++tid;
 		}
@@ -413,24 +429,33 @@ void Program::update(){
 		context->descriptorAllocator.freeSet(_currentSets[BUFFERS_SET]);
 		_currentSets[BUFFERS_SET] = context->descriptorAllocator.allocateSet(_state.setLayouts[BUFFERS_SET]);
 
-		std::vector<VkDescriptorBufferInfo> infos(_staticBuffers.size());
+		std::vector<std::vector<VkDescriptorBufferInfo>> infos(_staticBuffers.size());
 		std::vector<VkWriteDescriptorSet> writes;
 		uint tid = 0;
 		for(const auto& buffer : _staticBuffers){
-			infos[tid] = {};
+			infos[tid].resize(buffer.second.count);
 			// \todo Should we use the real buffer current offset here, if an update happened under the hood more than once per frame?
-			infos[tid].buffer = buffer.second.buffer;
-			infos[tid].offset = buffer.second.offset;
-			infos[tid].range = buffer.second.size;
+			for(uint did = 0; did < buffer.second.count; ++did){
+				VkBuffer rawBuffer = buffer.second.buffers[did];
+				if(rawBuffer != VK_NULL_HANDLE){
+					infos[tid][did].buffer = rawBuffer;
+					infos[tid][did].offset = buffer.second.offsets[did];
+				} else {
+					infos[tid][did].buffer = buffer.second.buffers[buffer.second.lastSet];
+					infos[tid][did].offset = buffer.second.offsets[buffer.second.lastSet];
+				}
+
+				infos[tid][did].range = buffer.second.size;
+			}
 			
 			VkWriteDescriptorSet write{};
 			write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 			write.dstSet = _currentSets[BUFFERS_SET].handle;
 			write.dstBinding = buffer.first;
 			write.dstArrayElement = 0;
-			write.descriptorCount = 1;
+			write.descriptorCount = buffer.second.count;
 			write.descriptorType = buffer.second.storage ? VK_DESCRIPTOR_TYPE_STORAGE_BUFFER : VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-			write.pBufferInfo = &infos[tid];
+			write.pBufferInfo = &infos[tid][0];
 			writes.push_back(write);
 			++tid;
 		}
@@ -503,11 +528,12 @@ void Program::clean() {
 void Program::buffer(const UniformBufferBase& buffer, uint slot){
 	auto existingBuff = _staticBuffers.find(slot);
 	if(existingBuff != _staticBuffers.end()) {
-		const StaticBufferState& refBuff = existingBuff->second;
-		if((refBuff.buffer != buffer.gpu->buffer) || (refBuff.offset != buffer.currentOffset()) || (refBuff.size != buffer.baseSize())){
-			_staticBuffers[slot].buffer = buffer.gpu->buffer;
-			_staticBuffers[slot].offset = uint(buffer.currentOffset());
-			_staticBuffers[slot].size = uint(buffer.baseSize());
+		StaticBufferState& refBuff = existingBuff->second;
+		assert(refBuff.count == 1);
+		if((refBuff.buffers[0] != buffer.gpu->buffer) || (refBuff.offsets[0] != buffer.currentOffset()) || (refBuff.size != buffer.baseSize())){
+			refBuff.buffers[0] = buffer.gpu->buffer;
+			refBuff.offsets[0] = uint(buffer.currentOffset());
+			refBuff.size = uint(buffer.baseSize());
 			_dirtySets[BUFFERS_SET] = true;
 		}
 	}
@@ -516,12 +542,33 @@ void Program::buffer(const UniformBufferBase& buffer, uint slot){
 void Program::buffer(const Buffer& buffer, uint slot){
 	auto existingBuff = _staticBuffers.find(slot);
 	if(existingBuff != _staticBuffers.end()) {
-		const StaticBufferState& refBuff = existingBuff->second;
-		if((refBuff.buffer != buffer.gpu->buffer) || (refBuff.size != buffer.size)){
-			_staticBuffers[slot].buffer = buffer.gpu->buffer;
-			_staticBuffers[slot].offset = 0;
-			_staticBuffers[slot].size = uint(buffer.size);
+		StaticBufferState& refBuff = existingBuff->second;
+		assert(refBuff.count == 1);
+		if((refBuff.buffers[0] != buffer.gpu->buffer) || (refBuff.size != buffer.size)){
+			refBuff.buffers[0] = buffer.gpu->buffer;
+			refBuff.offsets[0] = 0;
+			refBuff.size = uint(buffer.size);
 			_dirtySets[BUFFERS_SET] = true;
+		}
+	}
+}
+
+void Program::bufferArray(const std::vector<const Buffer * >& buffers, uint slot){
+	auto existingBuff = _staticBuffers.find(slot);
+	if(existingBuff != _staticBuffers.end()) {
+		StaticBufferState& refBuff = existingBuff->second;
+		const uint buffCount = buffers.size();
+		assert(buffCount <= refBuff.count);
+
+		for(uint did = 0; did < buffCount; ++did){
+			const Buffer& buffer = *buffers[did];
+			if((refBuff.buffers[did] != buffer.gpu->buffer) || (refBuff.size != buffer.size)){
+				refBuff.buffers[did] = buffer.gpu->buffer;
+				refBuff.offsets[did] = 0;
+				refBuff.size = uint(buffer.size);
+				refBuff.lastSet = did;
+				_dirtySets[BUFFERS_SET] = true;
+			}
 		}
 	}
 }
@@ -529,17 +576,39 @@ void Program::buffer(const Buffer& buffer, uint slot){
 void Program::texture(const Texture& texture, uint slot, uint mip){
 	auto existingTex = _textures.find(slot);
 	if(existingTex != _textures.end()) {
-		const TextureState & refTex = existingTex->second;
-
+		TextureState & refTex = existingTex->second;
+		assert(refTex.count == 1);
 		// Find the view we need.
 		assert(mip == Program::ALL_MIPS || mip < texture.gpu->levelViews.size());
 		VkImageView& view = mip == Program::ALL_MIPS ? texture.gpu->view : texture.gpu->levelViews[mip];
 
-		if(refTex.view != view){
-			_textures[slot].texture = &texture;
-			_textures[slot].view = view;
-			_textures[slot].mip = mip;
+		if(refTex.views[0] != view){
+			refTex.textures[0] = &texture;
+			refTex.views[0] = view;
+			refTex.mip = mip;
 			_dirtySets[IMAGES_SET] = true;
+		}
+	}
+}
+
+void Program::textureArray(const std::vector<const Texture *> & textures, uint slot, uint mip){
+	auto existingTex = _textures.find(slot);
+	if(existingTex != _textures.end()) {
+		TextureState & refTex = existingTex->second;
+		const uint texCount = textures.size();
+		assert(texCount <= refTex.count);
+
+		for(uint did = 0; did < texCount; ++did){
+			// Find the view we need.
+			assert(mip == Program::ALL_MIPS || mip < textures[did]->gpu->levelViews.size());
+
+			VkImageView& view = mip == Program::ALL_MIPS ? textures[did]->gpu->view : textures[did]->gpu->levelViews[mip];
+			if(refTex.views[did] != view){
+				refTex.textures[did] = textures[did];
+				refTex.views[did] = view;
+				refTex.mip = mip;
+				_dirtySets[IMAGES_SET] = true;
+			}
 		}
 	}
 }
@@ -552,7 +621,13 @@ void Program::defaultTexture(uint slot){
 	auto existingTex = _textures.find(slot);
 	if(existingTex != _textures.end()) {
 		// Reset the texture by binding the default one with the appropriate shape.
-		texture(Resources::manager().getDefaultTexture(existingTex->second.shape), slot);
+		const Texture * defaultTex = Resources::manager().getDefaultTexture(existingTex->second.shape);
+		if(existingTex->second.count == 1){
+			texture(defaultTex, slot);
+		} else {
+			std::vector<const Texture *> texs(existingTex->second.count, defaultTex);
+			textureArray(texs, slot);
+		}
 	}
 }
 

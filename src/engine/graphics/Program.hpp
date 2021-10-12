@@ -74,6 +74,7 @@ public:
 		TextureShape shape; ///< Image shape.
 		uint binding; ///< Image binding location.
 		uint set; ///< Image binding set.
+		uint count; ///< Number of similar images for this binding point.
 		bool storage; ///< Is this a storage image.
 	};
 
@@ -85,6 +86,7 @@ public:
 		uint binding; ///< Buffer binding location.
 		uint size; ///< Buffer size.
 		uint set; ///< Buffer binding set.
+		uint count; ///< Number of similar buffers for this binding point.
 		bool storage; ///< Is this a storage buffer.
 	};
 
@@ -151,6 +153,12 @@ public:
 	 */
 	void buffer(const Buffer& buffer, uint slot);
 
+	/** Bind a set of buffers to a given location.
+	 * \param buffers the buffers to bind
+	 * \param slot the location to bind to
+	 */
+	void bufferArray(const std::vector<const Buffer *> & buffers, uint slot);
+
 	/** Bind a texture to a given location.
 	 * \param texture the texture to bind
 	 * \param slot the location to bind to
@@ -164,6 +172,13 @@ public:
 	 * \param mip the mip of the texture to bind (or all mips if left at its default value)
 	 */
 	void texture(const Texture& texture, uint slot, uint mip = Program::ALL_MIPS);
+
+	/** Bind a set of textures to a given location.
+	 * \param textures the textures to bind
+	 * \param slot the location to bind to
+	 * \param mip the mip of the textures to bind (or all mips if left at its default value)
+	 */
+	void textureArray(const std::vector<const Texture *> & textures, uint slot, uint mip = Program::ALL_MIPS);
 
 	/** Bind a set of textures to successive locations.
 	 * \param textures the textures to bind
@@ -430,12 +445,13 @@ private:
 		bool dirty = true; ///< Is the buffer dirty since last draw.
 	};
 
-	/// \brief Internal state for an image-sampler.
+	/// \brief Internal state for an image.
 	struct TextureState {
 		std::string name; ///< Name.
 		TextureShape shape = TextureShape::D2; ///< Texture shape.
-		const Texture* texture; ///< The source texture.
-		VkImageView view = VK_NULL_HANDLE; ///< Texture view.
+		std::vector<const Texture*> textures = { nullptr }; ///< The source texture.
+		std::vector<VkImageView> views = { VK_NULL_HANDLE }; ///< Texture view.
+		uint count = 1; ///< Number of images bound at this slot..
 		uint mip = 0xFFFF; ///< The corresponding mip.
 		bool storage = false; ///< Is the image used as storage.
 	};
@@ -443,9 +459,11 @@ private:
 	/// \brief Internal state for a static (external) uniform buffer.
 	struct StaticBufferState {
 		std::string name; ///< Name.
-		VkBuffer buffer = VK_NULL_HANDLE; ///< Native buffer handle.
-		uint offset = 0; ///< Start offset in the buffer.
+		std::vector<VkBuffer> buffers = { VK_NULL_HANDLE}; ///< Native buffer handle.
+		std::vector<uint> offsets = {0}; ///< Start offset in the buffer.
 		uint size = 0; ///< Region size in the buffer.
+		uint count = 1; ///< Number of buffers bound at this slot.
+		uint lastSet = 0; ///< Keep track of one of the buffers that has been set (and is thus valid).
 		bool storage = false; ///< Is the buffer used as storage.
 	};
 

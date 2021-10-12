@@ -282,7 +282,7 @@ void ShaderCompiler::reflect(glslang::TProgram & program, Program::Stage & stage
 		def.storage = ubo.getType()->getQualifier().getBlockStorage() == glslang::EbsStorageBuffer;
 		// Retrieve set index stored on type.
 		def.set = getSetFromType(*ubo.getType());
-
+		def.count = 1;
 	}
 
 	static const std::map<glslang::TSamplerDim, TextureShape> texShapes = {
@@ -318,20 +318,32 @@ void ShaderCompiler::reflect(glslang::TProgram & program, Program::Stage & stage
 			def.binding = binding;
 			def.set = getSetFromType(type);
 			def.shape = texShapes.at(sampler.dim);
+			def.count = 1;
 			def.storage = sampler.image;
 			if(sampler.isArrayed()){
 				def.shape = def.shape | TextureShape::Array;
+			}
+			if(type.isArray()){
+				if(type.isUnsizedArray() || type.getArraySizes()->getNumDims() > 1){
+					Log::Warning() << Log::GPU << "Unsupported unsized/multi-level array of textures in shader." << std::endl;
+					continue;
+				}
+				def.count = static_cast<uint>(type.getArraySizes()->getDimSize(0));
+				// Remove brackets from the name.
+				const std::string::size_type lastOpeningBracket = def.name.find_last_of('[');
+				const std::string finalName = def.name.substr(0, lastOpeningBracket);
+				def.name = finalName;
 			}
 			continue;
 		}
 		
 		// Else, buffer.
-		// If we are in a storage buffer, we won't be accessed on the CPU individually.
+		// If we are in a storage buffer or generic UBO, we won't be accessed on the CPU individually.
 		Program::BufferDef& containingBuffer = stage.buffers[uniform.index];
-		if(containingBuffer.storage){
+		if(containingBuffer.set != UNIFORMS_SET){
 			continue;
 		}
-		// Else, uniform buffer.
+		// Else, uniform buffer containing custom uniforms that we want to set individually from the GPU.
 		// Arrays containing basic types are not expanded automatically.
 		if(type.isArray()){
 			if(type.isUnsizedArray() || type.getArraySizes()->getNumDims() > 1){
@@ -376,4 +388,35 @@ void ShaderCompiler::reflect(glslang::TProgram & program, Program::Stage & stage
 
 	}
 
+	// We need to merge buffers that are at the same binding point (arrays of UBOs/SBOs).
+	std::vector<Program::BufferDef> allBuffers(stage.buffers);
+	stage.buffers.clear();
+	for(const Program::BufferDef& def : allBuffers){
+		// Check if this is not part of an array.
+		if(def.name.find("[") == std::string::npos){
+			stage.buffers.emplace_back(def);
+			stage.buffers.back().count = 1;
+			continue;
+		}
+		// Else, only consider the first element.
+		const std::string::size_type pos = def.name.find("[0]");
+		if(pos == std::string::npos){
+			continue;
+		}
+		const std::string baseName = def.name.substr(0, pos);
+		const std::string baseNameArray = baseName + "[";
+		const size_t baseNameArrayLen = baseNameArray.size();
+		size_t maxIndex = 0;
+		// Look at all elements, count how many have the same name.
+		for(const Program::BufferDef& odef : allBuffers){
+			if(odef.name.substr(0, baseNameArrayLen) == baseNameArray){
+				const std::string indexStr = odef.name.substr(baseNameArrayLen, odef.name.find_first_of("]", baseNameArrayLen));
+				const size_t index = std::stoul(indexStr);
+				maxIndex = std::max(maxIndex, index);
+			}
+		}
+		stage.buffers.emplace_back(def);
+		stage.buffers.back().name = baseName;
+		stage.buffers.back().count = maxIndex+1;
+	}
 }
