@@ -4,7 +4,7 @@
 const size_t ForwardLight::_maxLightCount = 50;
 
 ForwardLight::ForwardLight(size_t count) :
-	_lightsData(_maxLightCount, UniformFrequency::FRAME) {
+	_lightsData(_maxLightCount, UniformFrequency::VIEW) {
 	_currentCount = count;
 	if(_currentCount > _maxLightCount){
 		Log::Warning() << "Forward light renderer can only handle the first " << _maxLightCount << " lights (requested " << _currentCount << ")." << std::endl;

@@ -47,7 +47,8 @@ STD_HASH(BufferType);
 */
 enum class UniformFrequency : uint {
 	STATIC, ///< Data won't be updated after upload.
-	FRAME,  ///< Data will be updated at most once per frame
+	FRAME,  ///< Data will be updated at most once per frame.
+	VIEW,  ///< Data will be updated a few times per frame.
 	DYNAMIC ///< Data will be updated many times per frame.
 };
 

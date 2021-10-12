@@ -51,6 +51,8 @@ UniformBufferBase::UniformBufferBase(size_t sizeInBytes, UniformFrequency use) :
 	int multipler = 1;
 	if(use == UniformFrequency::FRAME){
 		multipler = 2;
+	} else if(use == UniformFrequency::VIEW){
+		multipler = 64;
 	} else if(use == UniformFrequency::DYNAMIC){
 		multipler = 1024;
 	}
