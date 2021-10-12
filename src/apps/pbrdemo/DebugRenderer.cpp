@@ -132,7 +132,24 @@ void DebugRenderer::draw(const Camera & camera, Framebuffer & framebuffer, uint 
 	// Render probe.
 	if(_showProbe){
 		for(const LightProbe& probe : _scene->probes){
-			// Render the extent box if parallax corrected.
+			// Render the effect box.
+			{
+				GPU::setPolygonState(PolygonMode::LINE);
+				GPU::setCullState(false);
+				const glm::mat4 baseModel = glm::rotate(glm::translate(glm::mat4(1.0f), probe.position()), probe.rotation(), glm::vec3(0.0f, 1.0f, 0.0f));
+				const glm::mat4 mvpBox = vp * glm::scale(baseModel, 2.0f * probe.size());
+				const glm::mat4 mvpCenter = vp * glm::scale(baseModel, glm::vec3(0.05f));
+
+				_boxesProgram->use();
+				_boxesProgram->uniform("color", glm::vec4(0.5f, 1.0f, 0.5f, 1.0f));
+
+				_boxesProgram->uniform("mvp", mvpBox);
+				GPU::drawMesh(_cubeLines);
+
+				_boxesProgram->uniform("mvp", mvpCenter);
+				GPU::drawMesh(*_sphere);
+			}
+
 			if(probe.extent()[0] > 0.0f){
 				// Wireframe
 				GPU::setPolygonState(PolygonMode::LINE);
