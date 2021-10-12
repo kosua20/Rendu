@@ -42,7 +42,8 @@ void PoissonFiller::process(const Texture * texture) {
 	_compo->bind(Framebuffer::Operation::DONTCARE, Framebuffer::Operation::DONTCARE, Framebuffer::Operation::DONTCARE);
 	_compo->setViewport();
 	_composite->use();
-	_composite->textures({_pyramid.texture(), texture});
+	_composite->texture(_pyramid.texture(), 0);
+	_composite->texture(texture, 1);
 	ScreenQuad::draw();
 }
 

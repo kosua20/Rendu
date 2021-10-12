@@ -70,7 +70,9 @@ void SSAO::process(const glm::mat4 & projection, const Texture * depthTex, const
 	_programSSAO->uniform("projectionMatrix", projection);
 	_programSSAO->uniform("radius", _radius);
 	_programSSAO->buffer(_samples, 0);
-	_programSSAO->textures({depthTex, normalTex, &_noisetexture});
+	_programSSAO->texture(depthTex, 0);
+	_programSSAO->texture(normalTex, 1);
+	_programSSAO->texture(_noisetexture, 2);
 	ScreenQuad::draw();
 
 	// Blurring pass
