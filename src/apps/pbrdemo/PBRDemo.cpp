@@ -96,8 +96,7 @@ void PBRDemo::setScene(const std::shared_ptr<Scene> & scene) {
 		if(probe.type() != LightProbe::Type::DYNAMIC){
 			continue;
 		}
-		_probes.emplace_back(new Probe(probe.position(), _probesRenderer, 128, 6, glm::vec2(0.01f, 1000.0f)));
-		probe.registerEnvironment(_probes.back()->texture(), _probes.back()->shCoeffs());
+		_probes.emplace_back(new Probe(probe, _probesRenderer, 128, 6, glm::vec2(0.01f, 1000.0f)));
 	}
 
 	// Trigger one-shot data update.

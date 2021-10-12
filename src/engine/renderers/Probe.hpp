@@ -7,6 +7,8 @@
 #include "input/Camera.hpp"
 #include "Common.hpp"
 
+class LightProbe;
+
 /**
  \brief A probe can be used to capture the appareance of a scene at a given location as a 360° cubemap.
  \details This is often used to render realistic real-time reflections and global illumination effects. It is
@@ -19,14 +21,14 @@ class Probe {
 public:
 
 	/** Constructor
-	 \param position the probe position in the scene
+	 \param probe the probe in the scene
 	 \param renderer the renderer to use to fill the cubemap
 	 \param size the dimensions of the cubemap
 	 \param mips the number of mip levels of the cubemap
 	 \param clippingPlanes the near/far planes to use when rendering each face
 	 \warning If the renderer is using the output of the probe, be careful to not use the probe content in the last rendering step.
 	 */
-	Probe(const glm::vec3 & position, std::shared_ptr<Renderer> renderer, uint size, uint mips, const glm::vec2 & clippingPlanes);
+	Probe(LightProbe & probe, std::shared_ptr<Renderer> renderer, uint size, uint mips, const glm::vec2 & clippingPlanes);
 
 	/** Update the content of the probe and the corresponding radiance and irradiance.
 	 \param budget the number of internal update steps to perform
@@ -35,26 +37,6 @@ public:
 
 	/** \return the total number of steps to completely update the probe data */
 	uint totalBudget() const;
-
-	/** The cubemap containing the rendering. Its mip levels will store the preconvolved radiance
-	 if convolveRadiance has been called
-	 \return the cubemap texture
-	 */
-	Texture * texture() const {
-		return _framebuffer->texture();
-	}
-
-	/** The cubemap irradiance SH representation, if estimateIrradiance has been called.
-	 \return the irradiance SH coefficients
-	 */
-	const std::shared_ptr<Buffer> & shCoeffs() const {
-		return _shCoeffs;
-	}
-	
-	/** \return the probe position */
-	const glm::vec3 & position() const {
-		return _position;
-	}
 
 	/** Copy assignment operator (disabled).
 	 \return a reference to the object assigned to
@@ -108,7 +90,6 @@ private:
 	glm::vec3 _position; ///< The probe location.
 	Program* _radianceCompute; ///< Radiance preconvolution shader.
 	Program* _irradianceCompute; ///< Irradiance SH projection shader.
-	const Mesh * _cube; ///< Skybox cube.
 
 	/// \brief Probe update state machine.
 	enum class ProbeState {

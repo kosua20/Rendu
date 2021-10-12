@@ -2,14 +2,14 @@
 #include "graphics/GPUTypes.hpp"
 #include "graphics/GPU.hpp"
 #include "resources/Library.hpp"
+#include "scene/LightProbe.hpp"
 
-Probe::Probe(const glm::vec3 & position, std::shared_ptr<Renderer> renderer, uint size, uint mips, const glm::vec2 & clippingPlanes) {
+Probe::Probe(LightProbe & probe, std::shared_ptr<Renderer> renderer, uint size, uint mips, const glm::vec2 & clippingPlanes) {
 	_renderer	 = renderer;
 	_framebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(TextureShape::Cube, size, size, 6, mips, {Layout::RGBA16F}, "Probe"));
 	_framebuffer->clear(glm::vec4(0.0f), 1.0f);
-	_position	 = position;
+	_position	 = probe.position();
 	_radianceCompute = Resources::manager().getProgramCompute("radiance_convo");
-	_cube		 = Resources::manager().getMesh("skybox", Storage::GPU);
 	// Texture used to compute irradiance spherical harmonics.
 	_copy = _renderer->createOutput(TextureShape::Cube, 16, 16, 6, 1, "Probe copy");
 	_irradianceCompute = Resources::manager().getProgramCompute("irradiance_compute");
@@ -20,9 +20,11 @@ Probe::Probe(const glm::vec3 & position, std::shared_ptr<Renderer> renderer, uin
 
 	// Compute the camera for each face.
 	for(uint i = 0; i < 6; ++i) {
-		_cameras[i].pose(position, position + Library::boxCenters[i], Library::boxUps[i]);
+		_cameras[i].pose(_position, _position + Library::boxCenters[i], Library::boxUps[i]);
 		_cameras[i].projection(1.0f, glm::half_pi<float>(), clippingPlanes[0], clippingPlanes[1]);
 	}
+
+	probe.registerEnvironment(_framebuffer->texture(), _shCoeffs);
 }
 
 void Probe::update(uint budget){
