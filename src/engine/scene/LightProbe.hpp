@@ -43,6 +43,7 @@ public:
 	 center, extent and rotation are used to define an oriented box used as a local scene proxy. If extent is negative,
 	 the environment is assumed to be at infinity.
 	 position, size, fade and rotation are used to define a box-shaped area of effect with soft edges.
+	 Both size and extent are half-sizes.
 	 \param params the parameters tuple
 	 \param options data loading and storage options
 	 */
@@ -59,6 +60,11 @@ public:
 	 */
 	void registerEnvironment(const Texture * envmap, const std::shared_ptr<Buffer> & shCoeffs);
 
+	/** Update the area of effect of the probe to ensure it's not bigger than the specified bounding box
+	 \param _bbox the maximum size of the probe box
+	 */
+	void updateSize(const BoundingBox& _bbox);
+
 	/** \return the type of probe
 	 */
 	Type type() const {
@@ -69,15 +75,15 @@ public:
 	 */
 	const glm::vec3 & position() const { return _position; }
 
-	/** \return the probe area of effect
+	/** \return the half size of the probe area of effect
 	 */
 	const glm::vec3 & size() const { return _size; }
 
-	/** \return the probe fading zone size, at the edges of its area of effect
+	/** \return the probe fading band width, at the edges of its area of effect
 	 */
 	float fade() const { return _fade; }
 
-	/** \return the probe parallax proxy extent (or -1 for probes at infinity)
+	/** \return the probe parallax proxy extent half size (or -1 for probes at infinity)
 	 */
 	const glm::vec3 & extent() const { return _extent; }
 

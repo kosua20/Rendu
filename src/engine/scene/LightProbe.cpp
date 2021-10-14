@@ -91,3 +91,14 @@ void LightProbe::registerEnvironment(const Texture * envmap, const std::shared_p
 	_envmap = envmap;
 	_shCoeffs = shCoeffs;
 }
+
+void LightProbe::updateSize(const BoundingBox& _bbox){
+	const std::vector<glm::vec3> bboxCorners = _bbox.getCorners();
+	// Distance from the center of the probe to each corner, per-axis.
+	glm::vec3 maxDist(0.0f);
+	for(uint i = 0; i < 8; ++i){
+		maxDist = glm::max(maxDist, glm::abs(bboxCorners[i] - _position));
+	}
+	// Use the max distance to a corner as half size, and pad a bit.
+	_size = glm::min(_size, maxDist + 0.1f);
+}

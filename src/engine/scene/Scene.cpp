@@ -84,8 +84,11 @@ bool Scene::init(Storage options) {
 		KeyValues defaultKv("probe");
 		probes.back().decode(defaultKv, options);
 	}
-	_loaded = true;
-
+	// Assign a size to probes with no specified size, ensuring they cover the whole scene.
+	for(LightProbe& probe : probes){
+		probe.updateSize(_bbox);
+	}
+	
 	// Sort objects by material.
 	std::sort(objects.begin(), objects.end(), [](const Object & a, const Object & b){
 		return int(a.material().type()) < int(b.material().type());
@@ -114,6 +117,7 @@ bool Scene::init(Storage options) {
 	}
 
 	timer.end();
+	_loaded = true;
 	Log::Info() << Log::Resources << "Loading took " << (float(timer.value())/1000000.0f) << "ms." << std::endl;
 	return true;
 }
