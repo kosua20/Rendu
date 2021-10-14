@@ -1,9 +1,11 @@
 
 * probe: 
 	position: 0.000000 1.000000 0.000000 
+	size: 1.0 1.0 1.0
+	fade: 0.1
 	extent: 1.000000 1.000000 11.000000 
 	center: 0.000000 1.000000 10.000000 
-	rotation: 0.000000 
+	rotation: 0.00000 
 
 * background: 
 	cube: 
