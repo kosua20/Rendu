@@ -69,7 +69,8 @@ On a more detailed level, here are the main features you will find in Rendu.
 - Input management with controllers support.
 - 3D rendering, including per-fragment shading, normal maps, parallax mapping.
 - Lights: omni/spots/directional lights, batched variance shadow mapping for all lights.
-- Environment lighting, using cubemaps updated in real-time with optional parallax correction, preconvolved irradiance maps and spherical harmonics (also updated on the fly).
+- Environment maps updated in real-time, preconvolved radiance maps and spherical harmonics irradiance decompositions (also updated on the fly).
+- Local environment probes with optional local box parallax correction, area of effect and soft transitions.
 - Linear lighting pipeline, with HDR, bloom, tonemapping and gamma correction.
 - Depth of field with controllable focal plane and in-focus band.
 - Screen space techniques: antialiasing (FXAA), ambient occlusion.
@@ -85,7 +86,6 @@ On a more detailed level, here are the main features you will find in Rendu.
 I would like to add some additional features to Rendu in the near future, mainly to get a better grasp of some techniques and allow for more experimentations.
 
 - Screen-space reflections and shadows (raymarching against the depth buffer).
-- Local light probes with regions.
 - Temporal Antialiasing with reprojection and clamping.
 - Particle effects (updated on the GPU).
 - Volumetric effects, such as godrays and lit fog.
