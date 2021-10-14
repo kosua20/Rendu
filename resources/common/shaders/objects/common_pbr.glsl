@@ -104,6 +104,23 @@ vec3 radiance(vec3 n, vec3 v, vec3 p, float roughness, textureCube cubeMap, vec3
 	return specularColor;
 }
 
+/** Compute the contribution of a probe to a given point in the scene, based on the probe effect box size, position and fading settings.
+ \param p the position in the scene (world space)
+ \param cubePos the world space position of the probe
+ \param cubeSize the half size of the probe effect box
+ \param cubeRotCosSin precomputed cos/sin of the effect box orientation
+ \param cubeFade the width of the fading zone around the effect box
+ \return the contribution weight in [0,1]
+ */
+float probeWeight(vec3 p, vec3 cubePos, vec3 cubeSize, vec2 cubeRotCosSin, float cubeFade){
+	// Compute distance to effect box (signed).
+	vec3 pBox = rotateY(p - cubePos, cubeRotCosSin);
+	vec3 q = abs(pBox) - cubeSize;
+	float dist = length(max(q, 0.0)) + min(max(q.x, max(q.y, q.z)), 0.0);
+	float weight = 1.0 - clamp(dist / cubeFade, 0.0, 1.0);
+	return weight;
+}
+
 /** Evaluate the ambient irradiance (as SH coefficients) in a given direction.
 	\param wn the direction (normalized)
 	\param coeffs the SH coefficients

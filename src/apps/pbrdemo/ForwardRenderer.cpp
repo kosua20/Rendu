@@ -350,6 +350,9 @@ void ForwardRenderer::draw(const Camera & camera, Framebuffer & framebuffer, uin
 		_parallaxProgram->defaultTexture(5);
 		_parallaxProgram->defaultTexture(6);
 		_parallaxProgram->defaultTexture(7);
+		_transparentProgram->defaultTexture(5);
+		_transparentProgram->defaultTexture(6);
+		_transparentProgram->defaultTexture(7);
 	}
 
 	// Objects rendering.

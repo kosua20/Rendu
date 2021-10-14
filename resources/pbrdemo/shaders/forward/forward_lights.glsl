@@ -122,12 +122,6 @@ vec4 applyProbe(GPUProbe probe, vec3 n, vec3 v, vec3 p, float roughness, texture
 	vec2 cosSinOrientation = vec2(probe.centerAndCos.w, probe.extentAndSin.w);
 	vec3 probePosition = probe.positionAndMip.xyz;
 	vec3 rad = radiance(n, v, p, roughness, cubeMap, probePosition, probe.centerAndCos.xyz, probe.extentAndSin.xyz, cosSinOrientation, lod);
-	
-	// Compute distance to effect box (signed).
-	vec3 pBox = rotateY(p - probePosition, cosSinOrientation);
-	vec3 q = abs(pBox) - probe.sizeAndFade.xyz;
- 	float dist = length(max(q, 0.0)) + min(max(q.x, max(q.y, q.z)), 0.0);
- 	float weight = 1.0 - clamp(dist / probe.sizeAndFade.w, 0.0, 1.0);
-
+	float weight = probeWeight(p, probePosition, probe.sizeAndFade.xyz, cosSinOrientation, probe.sizeAndFade.w);
 	return weight * vec4(rad, 1.0);
 }

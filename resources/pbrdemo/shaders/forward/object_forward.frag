@@ -90,9 +90,9 @@ void main(){
 		irradiance += radianceAndWeight.w * applySH(worldN, probesSH[pid].coeffs);
 	}
 	// Normalize weighted sum of probes contributions.
-	if(radiance.w != 0.0){
-		radiance /= radiance.w;
-		irradiance /= radiance.w;
+	if(radiance.a != 0.0){
+		radiance.rgb /= radiance.a;
+		irradiance /= radiance.a;
 	}
 
 	// BRDF contributions.
