@@ -2,6 +2,7 @@
 #include "renderers/shadowmaps/VarianceShadowMapArray.hpp"
 #include "graphics/GPU.hpp"
 #include "input/Input.hpp"
+#include "graphics/ScreenQuad.hpp"
 
 PBRDemo::PBRDemo(RenderingConfig & config) :
 	CameraApp(config) {

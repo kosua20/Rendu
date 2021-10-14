@@ -141,7 +141,7 @@ void DebugRenderer::draw(const Camera & camera, Framebuffer & framebuffer, uint 
 				const glm::mat4 mvpCenter = vp * glm::scale(baseModel, glm::vec3(0.05f));
 
 				_boxesProgram->use();
-				_boxesProgram->uniform("color", glm::vec4(0.5f, 1.0f, 0.5f, 1.0f));
+				_boxesProgram->uniform("color", glm::vec4(1.0f, 0.5f, 1.0f, 1.0f));
 
 				_boxesProgram->uniform("mvp", mvpBox);
 				GPU::drawMesh(_cubeLines);
