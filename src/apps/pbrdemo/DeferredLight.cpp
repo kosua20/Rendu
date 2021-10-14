@@ -128,3 +128,60 @@ void DeferredLight::draw(const DirectionalLight * light) {
 	ScreenQuad::draw();
 	
 }
+
+DeferredProbe::DeferredProbe(const Texture * texAlbedo, const Texture * texNormals, const Texture * texEffects, const Texture * texDepth, const Texture * texSSAO){
+
+	_box  = Resources::manager().getMesh("cube", Storage::GPU);
+	_program = Resources::manager().getProgram("probe_pbr", "object_basic", "probe_pbr");
+
+	// Load texture.
+	const Texture * textureBrdf = Resources::manager().getTexture("brdf-precomputed", Layout::RG16F, Storage::GPU);
+
+	// Ambient pass: needs the albedo, the normals, the depth, the effects, the AO result, the BRDF table and the  envmap.
+	_textures.resize(6);
+	_textures[0] = texAlbedo;
+	_textures[1] = texNormals;
+	_textures[2] = texEffects;
+	_textures[3] = texDepth;
+	_textures[4] = texSSAO;
+	_textures[5] = textureBrdf;
+}
+
+void DeferredProbe::updateCameraInfos(const glm::mat4 & viewMatrix, const glm::mat4 & projMatrix){
+	_viewProj = projMatrix * viewMatrix;
+	_invView = glm::inverse(viewMatrix);
+	// Store the four variable coefficients of the projection matrix.
+	_projectionVector = glm::vec4(projMatrix[0][0], projMatrix[1][1], projMatrix[2][2], projMatrix[3][2]);
+}
+
+void DeferredProbe::draw(const LightProbe & probe) {
+	// Place the probe.
+	glm::mat4 model = glm::rotate(glm::translate(glm::mat4(1.0f), probe.position()), probe.rotation(), glm::vec3(0.0f, 1.0f, 0.0f));
+	model = glm::scale(model, probe.size() + probe.fade());
+	const glm::mat4 mvp = _viewProj * model;
+
+	GPU::setDepthState(false);
+	GPU::setBlendState(true, BlendEquation::ADD, BlendFunction::ONE, BlendFunction::ONE);
+	GPU::setCullState(true, Faces::FRONT);
+
+	const Texture* envmap = probe.map();
+
+	_program->use();
+	_program->uniform("mvp", mvp);
+	_program->uniform("inverseV", _invView);
+	_program->uniform("projectionMatrix", _projectionVector);
+	_program->uniform("maxLod", float(envmap->levels-1));
+	_program->uniform("cubemapPos", probe.position());
+	_program->uniform("cubemapCenter", probe.center());
+	_program->uniform("cubemapExtent", probe.extent());
+	_program->uniform("cubemapSize", probe.size());
+	_program->uniform("cubemapFade", probe.fade());
+	_program->uniform("cubemapCosSin", probe.rotationCosSin());
+	
+	_program->buffer(*probe.shCoeffs(), 0);
+
+	_program->textures(_textures);
+	_program->texture(*envmap, _textures.size());
+
+	GPU::drawMesh(*_box);
+}

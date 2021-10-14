@@ -3,6 +3,7 @@
 #include "scene/Sky.hpp"
 #include "system/System.hpp"
 #include "graphics/GPU.hpp"
+#include "graphics/ScreenQuad.hpp"
 
 DeferredRenderer::DeferredRenderer(const glm::vec2 & resolution, ShadowMode mode, bool ssao, const std::string & name) :
 	Renderer(name), _applySSAO(ssao), _shadowMode(mode) {
@@ -20,6 +21,7 @@ DeferredRenderer::DeferredRenderer(const glm::vec2 & resolution, ShadowMode mode
 	const std::vector<Layout> descs = {albedoDesc, normalDesc, effectsDesc, depthDesc};
 	_gbuffer							= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, descs, _name + " G-buffer "));
 	_ssaoPass							= std::unique_ptr<SSAO>(new SSAO(renderWidth, renderHeight, 2, 0.5f, _name));
+	_indirectLightingBuffer 			= std::unique_ptr<Framebuffer>(new Framebuffer(TextureShape::D2, renderWidth, renderHeight, 1, 1, {lightDesc}, _name + " Indirect Lighting"));
 	_lightBuffer						= std::unique_ptr<Framebuffer>(new Framebuffer(TextureShape::D2, renderWidth, renderHeight, 1, 1, {lightDesc, depthDesc}, _name + " Lighting"));
 	_preferredFormat.push_back(lightDesc);
 
@@ -32,9 +34,9 @@ DeferredRenderer::DeferredRenderer(const glm::vec2 & resolution, ShadowMode mode
 	_transparentProgram = Resources::manager().getProgram("object_transparent_forward", "object_forward", "object_transparent_forward");
 
 	// Lighting passes.
-	_ambientScreen = std::unique_ptr<AmbientQuad>(new AmbientQuad(_gbuffer->texture(0), _gbuffer->texture(1),
-		_gbuffer->texture(2), _gbuffer->depthBuffer(), _ssaoPass->texture()));
 	_lightRenderer = std::unique_ptr<DeferredLight>(new DeferredLight(_gbuffer->texture(0), _gbuffer->texture(1), _gbuffer->depthBuffer(), _gbuffer->texture(2)));
+	_probeRenderer = std::unique_ptr<DeferredProbe>(new DeferredProbe(_gbuffer->texture(0), _gbuffer->texture(1), _gbuffer->texture(2), _gbuffer->depthBuffer(), _ssaoPass->texture()));
+	_probeNormalization = Resources::manager().getProgram2D("probe_normalization");
 
 	_textureBrdf = Resources::manager().getTexture("brdf-precomputed", Layout::RG16F, Storage::GPU);
 }
@@ -47,6 +49,7 @@ void DeferredRenderer::setScene(const std::shared_ptr<Scene> & scene) {
 	_scene = scene;
 	_culler.reset(new Culler(_scene->objects));
 	_fwdLightsGPU.reset(new ForwardLight(_scene->lights.size()));
+	_fwdProbesGPU.reset(new ForwardProbe(_scene->probes.size()));
 }
 
 void DeferredRenderer::renderOpaque(const Culler::List & visibles, const glm::mat4 & view, const glm::mat4 & proj) {
@@ -132,22 +135,17 @@ void DeferredRenderer::renderTransparent(const Culler::List & visibles, const gl
 	_transparentProgram->use();
 
 	// Update all shaders shared parameters.
-	const LightProbe & environment = _scene->probes[0]; // \todo Loop
-	const float cubeLod		= float(environment.map()->levels - 1);
 	const glm::mat4 invView = glm::inverse(view);
 	const glm::vec2 invScreenSize = 1.0f / glm::vec2(_lightBuffer->width(), _lightBuffer->height());
 	// Update shared data.
 	_transparentProgram->uniform("inverseV", invView);
-	_transparentProgram->uniform("maxLod", cubeLod);
-	_transparentProgram->uniform("cubemapPos", environment.position());
-	_transparentProgram->uniform("cubemapCenter", environment.center());
-	_transparentProgram->uniform("cubemapExtent", environment.extent());
-	_transparentProgram->uniform("cubemapCosSin", environment.rotationCosSin());
 	_transparentProgram->uniform("lightsCount", int(_fwdLightsGPU->count()));
+	_transparentProgram->uniform("probesCount", int(_fwdProbesGPU->count()));
 	_transparentProgram->uniform("invScreenSize", invScreenSize);
 
 	// This is because after a change of scene shadow maps are reset, but the conditional setup of textures on
 	// the program means that descriptors can still reference the deleted textures.
+	_transparentProgram->defaultTexture(5);
 	_transparentProgram->defaultTexture(6);
 	_transparentProgram->defaultTexture(7);
 
@@ -178,12 +176,13 @@ void DeferredRenderer::renderTransparent(const Culler::List & visibles, const gl
 
 		// Bind the lights.
 		_transparentProgram->buffer(_fwdLightsGPU->data(), 0);
-		_transparentProgram->buffer(*environment.shCoeffs(), 1);
+		_transparentProgram->buffer(_fwdProbesGPU->data(), 1);
+		_transparentProgram->bufferArray(_fwdProbesGPU->shCoeffs(), 2);
 		
 		// Bind the textures.
 		_transparentProgram->textures(material.textures());
 		_transparentProgram->texture(_textureBrdf, 4);
-		_transparentProgram->texture(environment.map(), 5);
+		_transparentProgram->textureArray(_fwdProbesGPU->envmaps(), 5);
 		// Bind available shadow maps.
 		if(shadowMaps[0]){
 			_transparentProgram->texture(shadowMaps[0], 6);
@@ -280,18 +279,37 @@ void DeferredRenderer::draw(const Camera & camera, Framebuffer & framebuffer, ui
 	}
 
 	// Gbuffer lighting pass
+	_probeRenderer->updateCameraInfos(view, proj);
 	_lightRenderer->updateCameraInfos(view, proj);
 	_lightRenderer->updateShadowMapInfos(_shadowMode, 0.002f);
-	_lightBuffer->bind(Framebuffer::Operation::DONTCARE);
-	_lightBuffer->setViewport();
-	_ambientScreen->draw(view, proj, _scene->probes[0]); // \todo Loop
+	// Accumulate probe contributions.
+	_indirectLightingBuffer->bind(glm::vec4(0.0f));
+	_indirectLightingBuffer->setViewport();
+	for(const LightProbe& probe : _scene->probes){
+		_probeRenderer->draw(probe);
+	}
 
+	// Copy depth.
+	GPU::blitDepth(*_gbuffer, *_lightBuffer);
+
+	// Main lighting accumulation.
+	_lightBuffer->bind(Framebuffer::Operation::DONTCARE, Framebuffer::Operation::LOAD);
+	_lightBuffer->setViewport();
+
+	// Merge probes contributions and background.
+	GPU::setDepthState(false);
+	GPU::setBlendState(false);
+	GPU::setCullState(true, Faces::BACK);
+	_probeNormalization->use();
+	_probeNormalization->texture(_gbuffer->texture(0), 0);
+	_probeNormalization->texture(_indirectLightingBuffer->texture(), 1);
+	ScreenQuad::draw();
+
+	// Light contributions.
 	for(auto & light : _scene->lights) {
 		light->draw(*_lightRenderer);
 	}
-	// Blit the depth.
-	GPU::blitDepth(*_gbuffer, *_lightBuffer);
-	
+
 	// If transparent objects are present, prepare the forward pass.
 	if(_scene->transparent()){
 		// Update forward light data.
@@ -301,6 +319,11 @@ void DeferredRenderer::draw(const Camera & camera, Framebuffer & framebuffer, ui
 			light->draw(*_fwdLightsGPU);
 		}
 		_fwdLightsGPU->data().upload();
+		// Update forward probes data.
+		for(const auto & probe : _scene->probes) {
+			_fwdProbesGPU->draw(probe);
+		}
+		_fwdProbesGPU->data().upload();
 		// Now render transparent effects in a forward fashion.
 		_lightBuffer->bind(Framebuffer::Operation::LOAD, Framebuffer::Operation::LOAD);
 		_lightBuffer->setViewport();
@@ -317,6 +340,7 @@ void DeferredRenderer::resize(uint width, uint height) {
 	const glm::vec2 nSize(width, height);
 	_gbuffer->resize(nSize);
 	_lightBuffer->resize(nSize);
+	_indirectLightingBuffer->resize(nSize);
 	_ssaoPass->resize(width, height);
 	
 }

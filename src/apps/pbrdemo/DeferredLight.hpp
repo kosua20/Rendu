@@ -70,3 +70,43 @@ private:
 	ShadowMode _shadowMode = ShadowMode::BASIC; ///< Shadow mapping techique.
 	float _shadowBias = 0.0f; ///< Shadow depth bias.
 };
+
+
+/**
+ \brief Apply a probe onto the lighting buffer.
+ \ingroup PBRDemo
+ */
+class DeferredProbe {
+
+public:
+
+	/** Constructor.
+	 \param texAlbedo the texture containing the albedo
+	 \param texNormals the texture containing the surface normals
+	 \param texEffects the texture containing the material properties
+	 \param texDepth the texture containing the depth	 
+	 \param texSSAO the texture containing the SSAO result
+	 */
+	explicit DeferredProbe(const Texture * texAlbedo, const Texture * texNormals, const Texture * texEffects, const Texture * texDepth, const Texture * texSSAO);
+
+	/** Set the current user view and projection matrices.
+	 \param viewMatrix the camera view matrix
+	 \param projMatrix the camera projection matrix
+	 */
+	void updateCameraInfos(const glm::mat4 & viewMatrix, const glm::mat4 & projMatrix);
+
+	/** Apply a probe in the current framebuffer
+	 \param probe the probe to compute the contribution of
+	 */
+	void draw(const LightProbe & probe);
+
+private:
+
+	std::vector<const Texture *> _textures; ///< G-buffer input textures.
+	const Mesh * _box; ///< Probe supporting geometry.
+	Program * _program; ///< Probe application shader.
+
+	glm::mat4 _viewProj = glm::mat4(1.0f); ///< Cached camera view projection matrix.
+	glm::mat4 _invView = glm::mat4(1.0f); ///< Cached camera inverse view matrix.
+	glm::vec4 _projectionVector = glm::vec4(0.0f); ///< Cached camera projection parameters.
+};

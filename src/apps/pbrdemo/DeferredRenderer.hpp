@@ -5,7 +5,6 @@
 
 #include "renderers/DebugLightRenderer.hpp"
 
-#include "AmbientQuad.hpp"
 #include "scene/Scene.hpp"
 #include "renderers/Renderer.hpp"
 #include "renderers/Culler.hpp"
@@ -90,15 +89,18 @@ private:
 
 	std::unique_ptr<Framebuffer> _gbuffer;			///< G-buffer.
 	std::unique_ptr<Framebuffer> _lightBuffer;		///< Lighting accumulation.
+	std::unique_ptr<Framebuffer> _indirectLightingBuffer;	///< Indirect lighting accumulation.
 	std::unique_ptr<SSAO> _ssaoPass;				///< SSAO processing.
-	std::unique_ptr<AmbientQuad> _ambientScreen;	///< Ambient lighting contribution rendering.
 	std::unique_ptr<DeferredLight> _lightRenderer;	///< The lights renderer.
+	std::unique_ptr<DeferredProbe> _probeRenderer;	///< The probes renderer.
 	std::unique_ptr<ForwardLight> _fwdLightsGPU;	///< The lights forward renderer for transparent objects.
-	
+	std::unique_ptr<ForwardProbe> _fwdProbesGPU;	///< The probes forward renderer for transparent objects.
+
 	Program * _objectProgram;		 ///< Basic PBR program
 	Program * _parallaxProgram;	 ///< Parallax mapping PBR program
 	Program * _emissiveProgram;	 ///< Emissive program
 	Program * _transparentProgram; ///< Transparent PBR program
+	Program * _probeNormalization; ///< Indirect lighting normalization program.
 
 	Program * _skyboxProgram; ///< Skybox program.
 	Program * _bgProgram;		///< Planar background program.
