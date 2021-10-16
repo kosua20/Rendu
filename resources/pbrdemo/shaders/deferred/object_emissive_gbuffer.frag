@@ -1,6 +1,6 @@
 #include "samplers.glsl"
-
-#define MATERIAL_ID 0 ///< The material ID.
+#include "materials.glsl"
+#include "utils.glsl"
 
 layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
@@ -9,8 +9,8 @@ layout(location = 0) in INTERFACE {
 layout(set = 2, binding = 0) uniform texture2D texture0; ///< Emissive.
 
 layout (location = 0) out vec4 fragColor; ///< Color.
-layout (location = 1) out vec3 fragNormal; ///< View space normal.
-layout (location = 2) out vec3 fragEffects; ///< Effects.
+layout (location = 1) out vec4 fragNormal; ///< View space normal.
+layout (location = 2) out vec4 fragEffects; ///< Effects.
 
 /** Transfer emissive. */
 void main(){
@@ -21,8 +21,11 @@ void main(){
 	}
 	
 	// Store values.
-	fragColor.rgb = color.rgb;
-	fragColor.a = float(MATERIAL_ID)/255.0;
-	fragNormal = vec3(0.5);
-	fragEffects = vec3(0.0);
+	// Normalize emissive color, store intensity in effects texture.
+	float m = max(max(color.r, 0.001), max(color.g, color.b));
+	fragColor.rgb = color.rgb / m;
+	fragColor.a = encodeMaterial(MATERIAL_EMISSIVE);
+	fragNormal.rgb = vec3(0.5);
+	fragNormal.a = 0.0;
+	fragEffects = floatToVec4(m);
 }

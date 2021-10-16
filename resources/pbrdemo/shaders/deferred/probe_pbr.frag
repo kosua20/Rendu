@@ -34,7 +34,7 @@ void main(){
 
 	vec2 uv = gl_FragCoord.xy/textureSize(depthTexture, 0).xy;
 
-	float depth = texture(sampler2D(depthTexture, sClampNear), uv).r;
+	float depth = textureLod(sampler2D(depthTexture, sClampNear), uv, 0.0).r;
 	vec3 position = positionFromDepth(depth, uv, projectionMatrix);
 	vec3 worldP = vec3(inverseV * vec4(position, 1.0));
 
@@ -44,11 +44,11 @@ void main(){
 		discard;
 	}
 	
-	vec3 baseColor = texture(sampler2D(albedoTexture, sClampNear), uv).rgb;
-	vec3 infos = texture(sampler2D(effectsTexture, sClampNear), uv).rgb;
+	vec3 baseColor = textureLod(sampler2D(albedoTexture, sClampNear), uv, 0.0).rgb;
+	vec3 infos = textureLod(sampler2D(effectsTexture, sClampNear), uv, 0.0).rgb;
 	float roughness = max(0.045, infos.r);
 	
-	vec3 n = normalize(2.0 * texture(sampler2D(normalTexture, sClampLinear), uv).rgb - 1.0);
+	vec3 n = normalize(2.0 * textureLod(sampler2D(normalTexture, sClampLinear), uv, 0.0).rgb - 1.0);
 	vec3 v = normalize(-position);
 	float NdotV = max(0.0, dot(v, n));
 

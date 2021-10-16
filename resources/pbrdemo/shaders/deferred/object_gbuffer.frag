@@ -1,6 +1,5 @@
 #include "samplers.glsl"
-
-#define MATERIAL_ID 1 ///< The material ID.
+#include "materials.glsl"
 
 layout(location = 0) in INTERFACE {
     mat4 tbn; ///< Normal to view matrix.
@@ -43,7 +42,7 @@ void main(){
 	
 	// Store values.
 	fragColor.rgb = color.rgb;
-	fragColor.a = float(MATERIAL_ID)/255.0;
+	fragColor.a = encodeMaterial(MATERIAL_STANDARD);
 	
 	fragNormal.rgb = n * 0.5 + 0.5;
 	fragEffects.rgb = texture(sampler2D(texture2, sRepeatLinearLinear), In.uv.xy).rgb;

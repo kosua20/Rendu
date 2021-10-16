@@ -32,7 +32,8 @@ void main(){
 	vec2 uv = In.uv;
 	vec4 albedoInfo = textureLod(sampler2D(albedoTexture, sClampNear),uv, 0.0);
 	// If emissive (skybox or object), don't shade.
-	if(albedoInfo.a == 0.0){
+	uint material = decodeMaterial(albedoInfo.a);
+	if(material == MATERIAL_EMISSIVE){
 		discard;
 	}
 	

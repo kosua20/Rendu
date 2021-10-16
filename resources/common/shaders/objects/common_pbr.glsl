@@ -2,6 +2,7 @@
 #include "constants.glsl"
 #include "geometry.glsl"
 #include "samplers.glsl"
+#include "materials.glsl"
 
 /** Fresnel approximation.
 	\param F0 fresnel based coefficient

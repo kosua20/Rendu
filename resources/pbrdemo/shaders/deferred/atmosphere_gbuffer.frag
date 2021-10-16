@@ -1,7 +1,6 @@
-
+#include "materials.glsl"
 #include "atmosphere.glsl"
-
-#define MATERIAL_ID 0 ///< The material ID.
+#include "utils.glsl"
 
 layout(location = 0) in INTERFACE {
 	vec2 uv;  ///< Texture coordinates.
@@ -16,8 +15,8 @@ layout(set = 0, binding = 0) uniform UniformBlock {
 layout(set = 2, binding = 0) uniform texture2D precomputedScattering; ///< Secondary scattering lookup table.
 
 layout (location = 0) out vec4 fragColor; ///< Color.
-layout (location = 1) out vec3 fragNormal; ///< View space normal.
-layout (location = 2) out vec3 fragEffects; ///< Effects.
+layout (location = 1) out vec4 fragNormal; ///< View space normal.
+layout (location = 2) out vec4 fragEffects; ///< Effects.
 
 /** Simulate sky color based on an atmospheric scattering approximate model. */
 void main(){
@@ -28,10 +27,12 @@ void main(){
 	// We then move to the ground model space, where the ground is at y=0.
 	vec3 groundSpaceViewPos = viewPos + vec3(0.0, 1.0, 0.0);
 	vec3 atmosphereColor = computeAtmosphereRadiance(groundSpaceViewPos, viewRay, lightDirection, precomputedScattering, defaultAtmosphere);
-
-	fragColor.rgb = atmosphereColor;
-	fragColor.a = MATERIAL_ID;
-	fragNormal = vec3(0.5);
-	fragEffects = vec3(0.0);
+	// Normalize emissive color, store intensity in effects texture.
+	float m = max(max(atmosphereColor.r, 0.001), max(atmosphereColor.g, atmosphereColor.b));
+	fragColor.rgb = atmosphereColor/m;
+	fragColor.a = encodeMaterial(MATERIAL_EMISSIVE);
+	fragNormal.rgb = vec3(0.5);
+	fragNormal.a = 0.0;
+	fragEffects = floatToVec4(m);
 }
 

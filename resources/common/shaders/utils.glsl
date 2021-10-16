@@ -55,3 +55,30 @@ vec3 toCube(vec3 v){
 vec4 toCube(vec3 v, int layer){
 	return vec4(v.x, -v.y, v.z, float(layer));
 }
+
+/** Store a 32bits float in a 4x8bits vector of normalized values.
+\param f the float to store
+\return the vec4 representation of the float
+ */
+vec4 floatToVec4(float f){
+	uint raw = floatBitsToUint(f);
+	vec4 res;
+	res[0] = float((raw >>  0) & 0xFF) / 255.0;
+	res[1] = float((raw >>  8) & 0xFF) / 255.0;
+	res[2] = float((raw >> 16) & 0xFF) / 255.0;
+	res[3] = float((raw >> 24) & 0xFF) / 255.0;
+	return res;
+}
+
+/** Load a 32bits float from a 4x8bits vector of normalized values.
+\param v the vec4 representation of the float
+\return the loaded float
+ */
+float vec4ToFloat(vec4 v){
+	uint res = 0;
+	res |= (uint(v[0]*255.0) & 0xFF) << 0;
+	res |= (uint(v[1]*255.0) & 0xFF) << 8;
+	res |= (uint(v[2]*255.0) & 0xFF) << 16;
+	res |= (uint(v[3]*255.0) & 0xFF) << 24;
+	return uintBitsToFloat(res);
+}

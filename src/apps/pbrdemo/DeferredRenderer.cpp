@@ -12,8 +12,8 @@ DeferredRenderer::DeferredRenderer(const glm::vec2 & resolution, ShadowMode mode
 	const uint renderHeight	  = uint(resolution[1]);
 
 	// G-buffer setup.
-	const Layout albedoDesc			= Layout::RGBA16F;
 	const Layout normalDesc			= Layout::RGBA16F;
+	const Layout albedoDesc			= Layout::RGBA8;
 	const Layout effectsDesc		= Layout::RGBA8;
 	const Layout depthDesc			= Layout::DEPTH_COMPONENT32F;
 	const Layout lightDesc 			= Layout::RGBA16F;
@@ -302,7 +302,8 @@ void DeferredRenderer::draw(const Camera & camera, Framebuffer & framebuffer, ui
 	GPU::setCullState(true, Faces::BACK);
 	_probeNormalization->use();
 	_probeNormalization->texture(_gbuffer->texture(0), 0);
-	_probeNormalization->texture(_indirectLightingBuffer->texture(), 1);
+	_probeNormalization->texture(_gbuffer->texture(2), 1);
+	_probeNormalization->texture(_indirectLightingBuffer->texture(), 2);
 	ScreenQuad::draw();
 
 	// Light contributions.
