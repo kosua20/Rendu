@@ -1,4 +1,5 @@
 #include "samplers.glsl"
+#include "utils.glsl"
 
 layout(location = 0) in INTERFACE {
     vec4 n; ///< Normal direction.
@@ -27,6 +28,6 @@ void main(){
 	// Flip the up of the local frame for back facing fragments.
 	vec3 n = In.n.xyz;
 	n *= (gl_FrontFacing ? 1.0 : -1.0);
-	fragNormal= vec4(normalize(n) * 0.5 + 0.5, 1.0);
+	fragNormal= vec4(encodeNormal(normalize(n)), 0.0, 1.0);
 
 }

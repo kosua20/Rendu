@@ -1,6 +1,7 @@
 #include "samplers.glsl"
 #include "common_parallax.glsl"
 #include "materials.glsl"
+#include "utils.glsl"
 
 layout(location = 0) in INTERFACE {
     mat4 tbn; ///< Normal to view matrix.
@@ -20,8 +21,8 @@ layout(set = 0, binding = 0) uniform UniformBlock {
 
 // Output: the fragment color
 layout (location = 0) out vec4 fragColor; ///< Color.
-layout (location = 1) out vec3 fragNormal; ///< View space normal.
-layout (location = 2) out vec3 fragEffects; ///< Effects.
+layout (location = 1) out vec4 fragNormal; ///< View space normal.
+layout (location = 2) out vec4 fragEffects; ///< Effects.
 
 /** Transfer albedo and effects along with the material ID, and output the final normal 
 	(combining geometry normal and normal map) in view space. Apply parallax mapping effect. */
@@ -54,8 +55,10 @@ void main(){
 	
 	fragColor.rgb = color.rgb;
 	fragColor.a = encodeMaterial(MATERIAL_STANDARD);
-	fragNormal.rgb = n * 0.5 + 0.5;
+	fragNormal.rg = encodeNormal(n);
+	fragNormal.ba = vec2(0.0);
 	fragEffects.rgb = texture(sampler2D(texture2, sRepeatLinearLinear), localUV).rgb;
+	fragEffects.a = 0.0;
 	
 	updateFragmentPosition(localUV, positionShift, In.viewSpacePosition.xyz, p, tbn, texture3);
 	

@@ -42,8 +42,9 @@ void main(){
 	vec3 baseColor = albedoInfo.rgb;
 	float depth = textureLod(sampler2D(depthTexture, sClampNear),uv, 0.0).r;
 	vec3 position = positionFromDepth(depth, uv, projectionMatrix);
-	
-	vec3 n = normalize(2.0 * textureLod(sampler2D(normalTexture, sClampNear),uv, 0.0).rgb - 1.0);
+
+
+	vec3 n = decodeNormal(textureLod(sampler2D(normalTexture, sClampNear), uv, 0.0).rg);
 	vec3 v = normalize(-position);
 	vec3 deltaPosition = lightPosition - position;
 	vec3 l = normalize(deltaPosition);

@@ -12,8 +12,8 @@ DeferredRenderer::DeferredRenderer(const glm::vec2 & resolution, ShadowMode mode
 	const uint renderHeight	  = uint(resolution[1]);
 
 	// G-buffer setup.
-	const Layout normalDesc			= Layout::RGBA16F;
 	const Layout albedoDesc			= Layout::RGBA8;
+	const Layout normalDesc			= Layout::A2_RGB10;
 	const Layout effectsDesc		= Layout::RGBA8;
 	const Layout depthDesc			= Layout::DEPTH_COMPONENT32F;
 	const Layout lightDesc 			= Layout::RGBA16F;

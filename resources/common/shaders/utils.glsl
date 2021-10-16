@@ -82,3 +82,54 @@ float vec4ToFloat(vec4 v){
 	res |= (uint(v[3]*255.0) & 0xFF) << 24;
 	return uintBitsToFloat(res);
 }
+
+/** Wrap a projected direction in the octahedral parametrization of the unit sphere
+ \param d the projected direction in 2D
+ \return the corresponding coordinates in the parameterization
+ */
+vec2 octahedralWrap(vec2 d){
+	return (1.0 - abs(d.yx)) * vec2(d.x >= 0.0 ? 1.0 : -1.0, d.y >= 0.0 ? 1.0 : -1.0);
+}
+
+/** Encode a normalized direction into an octahedral representation, as described in
+	Octahedron normal vector encoding, Krzysztof Narkowicz, 2014
+	(https://knarkowicz.wordpress.com/2014/04/16/octahedron-normal-vector-encoding/)
+ \param d the normalized direction
+ \return the encoded representation
+ */
+vec2 encodeOctahedralDirection(vec3 d){
+	d /= (abs(d.x) + abs(d.y) + abs(d.z));
+	d.xy = d.z >= 0.0 ? d.xy : octahedralWrap(d.xy);
+	return d.xy * 0.5 + 0.5;
+}
+
+/** Decode a normalized direction from an octahedral representation.
+ \param e the representation parameters
+ \return the decoded direction
+ */
+vec3 decodeOctahedralDirection(vec2 e){
+	e = 2.0 * e - 1.0;
+	vec3 d = vec3(e.xy, 1.0 - abs(e.x) - abs(e.y));
+	float t = min(max(-d.z, 0.0), 1.0);
+	vec2 dd = vec2(d.x >= 0.0 ? -t : t, d.y >= 0.0 ? -t : t);
+	d.xy += dd;
+	return normalize(d);
+}
+
+/** Encode a normal into a compact representation for storage in a framebuffer.
+ \param n the normal to encode
+ \return the encoded representation
+ */
+vec2 encodeNormal(vec3 n){
+	// Octahedral encoding.
+	return encodeOctahedralDirection(n);
+}
+
+/** Decode a normal from its storage-efficient representation.
+ \param e the normal representation
+ \return the decoded normal
+ */
+vec3 decodeNormal(vec2 e){
+	return decodeOctahedralDirection(e);
+}
+

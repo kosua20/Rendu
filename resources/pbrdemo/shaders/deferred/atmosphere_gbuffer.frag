@@ -31,8 +31,8 @@ void main(){
 	float m = max(max(atmosphereColor.r, 0.001), max(atmosphereColor.g, atmosphereColor.b));
 	fragColor.rgb = atmosphereColor/m;
 	fragColor.a = encodeMaterial(MATERIAL_EMISSIVE);
-	fragNormal.rgb = vec3(0.5);
-	fragNormal.a = 0.0;
+	fragNormal.rg = encodeNormal(vec3(0.0));
+	fragNormal.ba = vec2(0.0);
 	fragEffects = floatToVec4(m);
 }
 

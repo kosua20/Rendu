@@ -1,5 +1,6 @@
 #include "samplers.glsl"
 #include "materials.glsl"
+#include "utils.glsl"
 
 layout(location = 0) in INTERFACE {
     mat4 tbn; ///< Normal to view matrix.
@@ -11,8 +12,8 @@ layout(set = 2, binding = 1) uniform texture2D texture1; ///< Normal map.
 layout(set = 2, binding = 2) uniform texture2D texture2; ///< Effects map.
 
 layout (location = 0) out vec4 fragColor; ///< Color.
-layout (location = 1) out vec3 fragNormal; ///< View space normal.
-layout (location = 2) out vec3 fragEffects; ///< Effects.
+layout (location = 1) out vec4 fragNormal; ///< View space normal.
+layout (location = 2) out vec4 fragEffects; ///< Effects.
 
 layout(set = 0, binding = 0) uniform UniformBlock {
 	bool hasUV; ///< Does the mesh have texture coordinates.
@@ -43,8 +44,8 @@ void main(){
 	// Store values.
 	fragColor.rgb = color.rgb;
 	fragColor.a = encodeMaterial(MATERIAL_STANDARD);
-	
-	fragNormal.rgb = n * 0.5 + 0.5;
+	fragNormal.rg = encodeNormal(n);
+	fragNormal.ba = vec2(0.0);
 	fragEffects.rgb = texture(sampler2D(texture2, sRepeatLinearLinear), In.uv.xy).rgb;
-	
+	fragEffects.a = 0.0;
 }

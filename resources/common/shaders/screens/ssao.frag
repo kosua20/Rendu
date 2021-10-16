@@ -24,7 +24,7 @@ layout(location = 0) out float fragColor; ///< SSAO.
 /** Estimate the screen space ambient occlusion in the scene. */
 void main(){
 	
-	vec3 n = normalize(2.0 * texture(sampler2D(normalTexture, sClampLinear),In.uv).rgb - 1.0);
+	vec3 n = decodeNormal(textureLod(sampler2D(normalTexture, sClampNear), In.uv, 0.0).rg);
 	
 	// If normal is null, this is an emissive object (or background), no AO
 	// (avoid reading the albedo texture just for the id.)
@@ -34,7 +34,7 @@ void main(){
 	}
 	
 	// Read the random local shift, uvs based on pixel coordinates (wrapping enabled).
-	vec3 randomOrientation = texture(sampler2D(noiseTexture, sRepeatLinear), gl_FragCoord.xy/5.0).rgb;
+	vec3 randomOrientation = textureLod(sampler2D(noiseTexture, sRepeatLinear), gl_FragCoord.xy/5.0, 0.0).rgb;
 	
 	// Create tangent space to view space matrix by computing tangent and bitangent.
 	vec3 t = normalize(randomOrientation - n * dot(randomOrientation, n));
@@ -43,7 +43,7 @@ void main(){
 
 	// Compute the x and y components in view space.
 	vec4 projParams = vec4(projectionMatrix[0][0], projectionMatrix[1][1], projectionMatrix[2][2], projectionMatrix[3][2]);
-	vec3 position = positionFromDepth(texture(sampler2D(depthTexture, sClampLinear), In.uv).r, In.uv, projParams);
+	vec3 position = positionFromDepth(textureLod(sampler2D(depthTexture, sClampNear), In.uv, 0.0).r, In.uv, projParams);
 
 	
 	// Occlusion accumulation.
@@ -55,7 +55,7 @@ void main(){
 		vec4 sampleClipSpace = projectionMatrix * vec4(randomSample, 1.0);
 		vec2 sampleUV = (sampleClipSpace.xy / sampleClipSpace.w) * 0.5 + 0.5;
 		// Read scene depth at the corresponding UV.
-		float sampleDepth = linearizeDepth(texture(sampler2D(depthTexture, sClampLinear), sampleUV).r, projParams.zw);
+		float sampleDepth = linearizeDepth(textureLod(sampler2D(depthTexture, sClampNear), sampleUV, 0.0).r, projParams.zw);
 
 		// Check : if the depth are too different, don't take result into account.
 		float isValid = abs(position.z - sampleDepth) < radius ? 1.0 : 0.0;

@@ -48,7 +48,7 @@ void main(){
 	vec3 infos = textureLod(sampler2D(effectsTexture, sClampNear), uv, 0.0).rgb;
 	float roughness = max(0.045, infos.r);
 	
-	vec3 n = normalize(2.0 * textureLod(sampler2D(normalTexture, sClampLinear), uv, 0.0).rgb - 1.0);
+	vec3 n = decodeNormal(textureLod(sampler2D(normalTexture, sClampNear), uv, 0.0).rg);
 	vec3 v = normalize(-position);
 	float NdotV = max(0.0, dot(v, n));
 
