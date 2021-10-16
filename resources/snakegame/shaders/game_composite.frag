@@ -17,7 +17,7 @@ void main(){
 	
 	float matId  = texelFetch(sampler2D(materialMap, sClampNear), ivec2(gl_FragCoord.xy), 0).x * 255.0;
 	// Normal in world space.
-	vec3 n = normalize(2.0f * texelFetch(sampler2D(normalMap, sClampNear), ivec2(gl_FragCoord.xy), 0).rgb - 1.0f);
+	vec3 n = decodeNormal(texelFetch(sampler2D(normalMap, sClampNear), ivec2(gl_FragCoord.xy), 0).rg);
 	
 	// Ground is white.
 	vec3 baseColor = vec3(1.0);

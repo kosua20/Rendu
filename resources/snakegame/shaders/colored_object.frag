@@ -1,3 +1,4 @@
+#include "utils.glsl"
 
 layout(location = 0) in INTERFACE {
 	vec3 n; ///< The world-space normal.
@@ -12,7 +13,7 @@ layout(location = 1) out float fragId; ///< Material ID.
 
 /** Outputs the object world-space normal and the material index. */
 void main(){
-	fragNormal.rgb = normalize(In.n)*0.5+0.5;
-	fragNormal.a = 1.0;
+	fragNormal.rg = encodeNormal(normalize(In.n));
+	fragNormal.ba = vec2(1.0);
 	fragId = float(matID)/255.0;
 }
