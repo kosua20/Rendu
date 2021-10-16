@@ -100,5 +100,5 @@ void LightProbe::updateSize(const BoundingBox& _bbox){
 		maxDist = glm::max(maxDist, glm::abs(bboxCorners[i] - _position));
 	}
 	// Use the max distance to a corner as half size, and pad a bit.
-	_size = glm::min(_size, maxDist + 0.1f);
+	_size = glm::min(_size, maxDist + 0.5f);
 }
