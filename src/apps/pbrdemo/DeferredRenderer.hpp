@@ -61,9 +61,6 @@ public:
 	/** \return the framebuffer containing the scene depth information */
 	const Framebuffer * sceneDepth() const;
 
-	/** \return the texture containing the scene normal information */
-	const Texture * sceneNormal() const;
-
 private:
 
 	/** Render the scene opaque objects.

@@ -364,7 +364,3 @@ void DeferredRenderer::interface(){
 const Framebuffer * DeferredRenderer::sceneDepth() const {
 	return _lightBuffer.get();
 }
-
-const Texture * DeferredRenderer::sceneNormal() const {
-	return _gbuffer->texture(1);
-}

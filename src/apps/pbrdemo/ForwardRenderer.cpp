@@ -392,7 +392,3 @@ void ForwardRenderer::interface(){
 const Framebuffer * ForwardRenderer::sceneDepth() const {
 	return _sceneFramebuffer.get();
 }
-
-const Texture * ForwardRenderer::sceneNormal() const {
-	return _sceneFramebuffer->texture(2);
-}
