@@ -30,21 +30,17 @@ layout(location = 0) out vec3 fragColor; ///< Color.
 void main(){
 	
 	vec2 uv = gl_FragCoord.xy/textureSize(albedoTexture, 0).xy;
-	
-	vec4 albedoInfo = textureLod(sampler2D(albedoTexture, sClampNear),uv, 0.0);
+	Material material = decodeMaterialFromGbuffer(uv, albedoTexture, normalTexture, effectsTexture);
+
 	// If emissive (skybox or object), don't shade.
-	uint material = decodeMaterial(albedoInfo.a);
-	if(material == MATERIAL_EMISSIVE){
+	if(material.id == MATERIAL_EMISSIVE){
 		discard;
 	}
 	
-	// Get all informations from textures.
-	vec3 baseColor = albedoInfo.rgb;
+	// Recompite view space position.
 	float depth = textureLod(sampler2D(depthTexture, sClampNear),uv, 0.0).r;
 	vec3 position = positionFromDepth(depth, uv, projectionMatrix);
 
-
-	vec3 n = decodeNormal(textureLod(sampler2D(normalTexture, sClampNear), uv, 0.0).rg);
 	vec3 v = normalize(-position);
 	vec3 deltaPosition = lightPosition - position;
 	vec3 l = normalize(deltaPosition);
@@ -61,9 +57,7 @@ void main(){
 	}
 	// Compute the spotlight attenuation factor based on our angle compared to the inner and outer spotlight angles.
 	float angleAttenuation = clamp((currentAngleCos - intOutAnglesCos.y)/(intOutAnglesCos.x - intOutAnglesCos.y), 0.0, 1.0);
-	
-	// Orientation: basic diffuse shadowing.
-	float orientation = max(0.0, dot(l,n));
+
 	// Shadowing
 	float shadowing = 1.0;
 	if(shadowMode != SHADOW_NONE){
@@ -78,22 +72,12 @@ void main(){
 	float attenNum = clamp(1.0 - radiusRatio2, 0.0, 1.0);
 	float attenuation = angleAttenuation * attenNum * attenNum;
 	
-	// Read effects infos.
-	vec3 infos = texture(sampler2D(effectsTexture, sClampNear), uv).rgb;
-	float roughness = max(0.0001, infos.r);
-	float metallic = infos.g;
-	
-	// BRDF contributions.
-	// Compute F0 (fresnel coeff).
-	// Dielectrics have a constant low coeff, metals use the baseColor (ie reflections are tinted).
-	vec3 F0 = mix(vec3(0.04), baseColor, metallic);
-	
-	// Normalized diffuse contribution. Metallic materials have no diffuse contribution.
-	vec3 diffuse = INV_M_PI * (1.0 - metallic) * baseColor * (1.0 - F0);
-	
-	vec3 specular = ggx(n, v, l, F0, roughness);
-	
-	fragColor.rgb = shadowing * attenuation * orientation * (diffuse + specular) * lightColor;
+	// Evaluate BRDF.
+	vec3 diffuse, specular;
+	directBrdf(material, material.normal, v, l, diffuse, specular);
+
+	// Combine everything.
+	fragColor.rgb = shadowing * attenuation * (diffuse + specular) * lightColor;
 	
 }
 

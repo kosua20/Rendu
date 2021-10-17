@@ -62,7 +62,9 @@ void main(){
 	if(albedoInfos.a <= 0.01){
 		discard;
 	}
-	vec3 baseColor = albedoInfos.rgb;
+	Material material = initMaterial();
+	material.id = MATERIAL_STANDARD;
+	material.reflectance = albedoInfos.rgb;
 	
 	// Flip the up of the local frame for back facing fragments.
 	mat3 tbn = mat3(In.tbn);
@@ -71,17 +73,18 @@ void main(){
 	vec3 n = texture(sampler2D(normalTexture, sRepeatLinearLinear), localUV).rgb ;
 	n = normalize(n * 2.0 - 1.0);
 	n = normalize(tbn * n);
+	material.normal = n;
 
 	vec3 newViewSpacePosition = updateFragmentPosition(localUV, positionShift, In.viewSpacePosition.xyz, p, tbn, depthTexture);
+	vec3 v = normalize(-newViewSpacePosition);
 
 	vec3 infos = texture(sampler2D(effectsTexture, sRepeatLinearLinear), localUV).rgb;
-	float roughness = max(0.045, infos.r);
-	vec3 v = normalize(-newViewSpacePosition);
-	float NdotV = max(0.0, dot(v, n));
-	float metallic = infos.g;
+	material.roughness = max(0.045, infos.r);
+	material.ao = infos.b;
+	material.metalness = infos.g;
 
 	// Sample illumination envmap using world space normal and SH pre-computed coefficients.
-	vec3 worldN = normalize(vec3(inverseV * vec4(n,0.0)));
+	vec3 worldN = normalize(vec3(inverseV * vec4(material.normal, 0.0)));
 	vec3 worldP = vec3(inverseV * vec4(newViewSpacePosition, 1.0));
 	vec3 worldV = normalize(inverseV[3].xyz - worldP);
 	
@@ -93,7 +96,7 @@ void main(){
 			break;
 		}
 		// Sample radiance in world space too.
-		vec4 radianceAndWeight = applyProbe(probes[pid], worldN, worldV, worldP, roughness, textureProbes[pid]);
+		vec4 radianceAndWeight = applyProbe(probes[pid], worldN, worldV, worldP, material.roughness, textureProbes[pid]);
 		radiance += radianceAndWeight;
 		irradiance += radianceAndWeight.w * applySH(worldN, probesSH[pid].coeffs);
 	}
@@ -102,20 +105,14 @@ void main(){
 		irradiance /= radiance.w;
 	}
 
+	float NdotV = max(0.0, dot(v, n));
 	// BRDF contributions.
 	vec3 diffuse, specular;
-	ambientBrdf(baseColor, metallic, roughness, NdotV, brdfPrecalc, diffuse, specular);
+	ambientBrdf(material, NdotV, brdfPrecalc, diffuse, specular);
 	// Parallax objects are not rendered in the prepass to avoid double parallax computation.
-	float precomputedAO = infos.b;
-	float aoDiffuse = precomputedAO;
-	float aoSpecular = approximateSpecularAO(aoDiffuse, NdotV, roughness);
+	float aoDiffuse = material.ao;
+	float aoSpecular = approximateSpecularAO(aoDiffuse, NdotV, material.roughness);
 	fragColor = vec4(aoDiffuse * diffuse * irradiance + aoSpecular * specular * radiance.rgb, 1.0);
-
-	// Compute F0 (fresnel coeff).
-	// Dielectrics have a constant low coeff, metals use the baseColor (ie reflections are tinted).
-	vec3 F0 = mix(vec3(0.04), baseColor, metallic);
-	// Normalized diffuse contribution. Metallic materials have no diffuse contribution.
-	vec3 diffuseL = INV_M_PI * (1.0 - metallic) * baseColor * (1.0 - F0);
 
 	for(int lid = 0; lid < MAX_LIGHTS_COUNT; ++lid){
 		if(lid >= lightsCount){
@@ -127,8 +124,8 @@ void main(){
 			continue;
 		}
 		// Orientation: basic diffuse shadowing.
-		float orientation = max(0.0, dot(l,n));
-		vec3 specularL = ggx(n, v, l, F0, roughness);
-		fragColor.rgb += shadowing * orientation * (diffuseL + specularL) * lights[lid].colorAndBias.rgb;
+		vec3 diffuseL, specularL;
+		directBrdf(material, material.normal, v, l, diffuseL, specularL);
+		fragColor.rgb += shadowing * (diffuseL + specularL) * lights[lid].colorAndBias.rgb;
 	}
 }

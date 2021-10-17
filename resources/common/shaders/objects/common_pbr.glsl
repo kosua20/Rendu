@@ -145,16 +145,17 @@ float approximateSpecularAO(float diffuseAO, float NdotV, float roughness){
 	return clamp(specAO - 1.0 + diffuseAO, 0.0, 1.0);
 }
 
-/** Evaluate the global lighting contirbution from the ambient environment. Implements a multi-scattering compensation step, as described in A Multiple-Scattering Microfacet Model for Real-Time Image-based Lighting, C. J. Fdez-Agüera, JCGT, 2019.
- \param baseColor the surface color/Fresnel coefficient for metals
- \param metallic is the surface a metal or a dielectric
- \param roughness the linear material roughness
+/** Evaluate the global lighting contribution from the ambient environment. Implements a multi-scattering compensation step, as described in A Multiple-Scattering Microfacet Model for Real-Time Image-based Lighting, C. J. Fdez-Agüera, JCGT, 2019.
+ \param material the surface point material parameters
  \param NdotV visibility/normal angle
  \param brdfCoeffs precomputed BRDF linearized coefficients lookup table
  \param diffuse will contain the diffuse ambient contribution
  \param specular will contain the specular ambient contribution
  */
-void ambientBrdf(vec3 baseColor, float metallic, float roughness, float NdotV, texture2D brdfCoeffs, out vec3 diffuse, out vec3 specular){
+void ambientBrdf(Material material, float NdotV, texture2D brdfCoeffs, out vec3 diffuse, out vec3 specular){
+	vec3 baseColor = material.reflectance;
+	float metallic = material.metalness;
+	float roughness = material.roughness;
 
 	// BRDF contributions.
 	// Compute F0 (fresnel coeff).
@@ -176,3 +177,29 @@ void ambientBrdf(vec3 baseColor, float metallic, float roughness, float NdotV, t
 	diffuse = single * (1.0 - specular - multi) + multi;
 }
 
+/** Evaluate the lighting contribution from an analytic light source.
+ \param material the surface point material parameters
+ \param n the surface normal (in view space)
+ \param v the outgoing view direction (in view space)
+ \param l the incoming light direction (in view space)
+ \param diffuse will contain the diffuse direct contribution
+ \param specular will contain the specular direct contribution
+ */
+void directBrdf(Material material, vec3 n, vec3 v, vec3 l, out vec3 diffuse, out vec3 specular){
+
+	// BRDF contributions.
+	float metallic = material.metalness;
+	vec3 baseColor = material.reflectance;
+
+	// Compute F0 (fresnel coeff).
+	// Dielectrics have a constant low coeff, metals use the baseColor (ie reflections are tinted).
+	vec3 F0 = mix(vec3(0.04), baseColor, metallic);
+
+	// Orientation: basic diffuse shadowing.
+	float orientation = max(0.0, dot(l,n));
+
+	// Normalized diffuse contribution. Metallic materials have no diffuse contribution.
+	diffuse = orientation * INV_M_PI * (1.0 - metallic) * baseColor * (1.0 - F0);
+	// Specular GGX contribution.
+	specular = orientation * ggx(n, v, l, F0, material.roughness);
+}

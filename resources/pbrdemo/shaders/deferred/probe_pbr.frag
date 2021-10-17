@@ -33,6 +33,8 @@ layout(location = 0) out vec4 fragColor; ///< Color.
 void main(){
 
 	vec2 uv = gl_FragCoord.xy/textureSize(depthTexture, 0).xy;
+	Material material = decodeMaterialFromGbuffer(uv, albedoTexture, normalTexture, effectsTexture);
+	// Retrieve world space position.
 
 	float depth = textureLod(sampler2D(depthTexture, sClampNear), uv, 0.0).r;
 	vec3 position = positionFromDepth(depth, uv, projectionMatrix);
@@ -43,32 +45,26 @@ void main(){
 	if(weight <= 0.0f){
 		discard;
 	}
-	
-	vec3 baseColor = textureLod(sampler2D(albedoTexture, sClampNear), uv, 0.0).rgb;
-	vec3 infos = textureLod(sampler2D(effectsTexture, sClampNear), uv, 0.0).rgb;
-	float roughness = max(0.045, infos.r);
-	
-	vec3 n = decodeNormal(textureLod(sampler2D(normalTexture, sClampNear), uv, 0.0).rg);
 	vec3 v = normalize(-position);
-	float NdotV = max(0.0, dot(v, n));
-
-	// Compute AO.
-	float precomputedAO = infos.b;
-	float realtimeAO = textureLod(sampler2D(ssaoTexture, sClampLinear), uv, 0).r;
-	float aoDiffuse = min(realtimeAO, precomputedAO);
-	float aoSpecular = approximateSpecularAO(aoDiffuse, NdotV, roughness);
 
 	// Sample illumination envmap using world space normal and SH pre-computed coefficients.
-	vec3 worldN = normalize(vec3(inverseV * vec4(n,0.0)));
+	vec3 worldN = normalize(vec3(inverseV * vec4(material.normal, 0.0)));
 	vec3 worldV = normalize(inverseV[3].xyz - worldP);
 	
-	vec3 radiance = radiance(worldN, worldV, worldP, roughness, textureCubeMap, cubemapPos, cubemapCenter, cubemapExtent, cubemapCosSin, maxLod);
+	vec3 radiance = radiance(worldN, worldV, worldP, material.roughness, textureCubeMap, cubemapPos, cubemapCenter, cubemapExtent, cubemapCosSin, maxLod);
 	vec3 irradiance = applySH(worldN, shCoeffs);
 
+	float NdotV = max(0.0, dot(v, material.normal));
 	// BRDF contributions.
 	vec3 diffuse, specular;
-	ambientBrdf(baseColor, infos.g, roughness, NdotV, brdfPrecalc, diffuse, specular);
-	
+	ambientBrdf(material, NdotV, brdfPrecalc, diffuse, specular);
+
+	// Ambient occlusion.
+	float precomputedAO = material.ao;
+	float realtimeAO = textureLod(sampler2D(ssaoTexture, sClampLinear), uv, 0).r;
+	float aoDiffuse = min(realtimeAO, precomputedAO);
+	float aoSpecular = approximateSpecularAO(aoDiffuse, NdotV, material.roughness);
+
 	fragColor.rgb = weight * (aoDiffuse * diffuse * irradiance + aoSpecular * specular * radiance);
 	
 	// Apply weighting.
