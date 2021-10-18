@@ -69,7 +69,7 @@ void main(){
 
 	// Evaluate BRDF and combine it with environment data.
 	vec3 diffuse, specular;
-	ambientLighting(material, worldP, worldN, worldV, worldR, NdotV, probe, textureCubeMap, brdfPrecalc, shCoeffs, diffuse, specular);
+	ambientLighting(material, worldP, worldN, worldV, worldR, NdotV, probe, textureCubeMap, shCoeffs, brdfPrecalc, diffuse, specular);
 
 	fragColor.rgb = weight * (diffuse + specular);
 
