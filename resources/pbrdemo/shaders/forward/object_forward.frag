@@ -27,12 +27,12 @@ layout(set = 0, binding = 0) uniform UniformBlock {
 
 /// Store the lights in a continuous buffer (UBO).
 layout(std140, set = 3, binding = 0) uniform Lights {
-	GPULight lights[MAX_LIGHTS_COUNT];
+	GPUPackedLight lights[MAX_LIGHTS_COUNT];
 };
 
 /// Store the probes in a continuous buffer (UBO).
 layout(std140, set = 3, binding = 1) uniform Probes {
-	GPUProbe probes[MAX_PROBES_COUNT];
+	GPUPackedProbe probes[MAX_PROBES_COUNT];
 };
 
 ///SH approximations of the environment irradiance (UBO). 
@@ -74,44 +74,39 @@ void main(){
 	material.ao = infos.b;
 	material.metalness = infos.g;
 
-	vec3 v = normalize(-In.viewSpacePosition.xyz);
+	// Ambient occlusion.
+	vec2 screenUV = gl_FragCoord.xy * invScreenSize;
+	float realtimeAO = textureLod(sampler2D(ssaoTexture, sClampLinear), screenUV, 0).r;
+	material.ao = min(realtimeAO, material.ao);
 
-	// Sample illumination envmaps using world space normal and SH pre-computed coefficients.
-	vec3 worldN = normalize(vec3(inverseV * vec4(material.normal, 0.0)));
+	// Geometric data.
+	vec3 v = normalize(-In.viewSpacePosition.xyz);
+	float NdotV = max(0.0, dot(v, material.normal));
 	vec3 worldP = vec3(inverseV * vec4(In.viewSpacePosition.xyz, 1.0));
+	vec3 worldN = normalize(vec3(inverseV * vec4(material.normal, 0.0)));
 	vec3 worldV = normalize(inverseV[3].xyz - worldP);
+	vec3 worldR = -reflect(worldV, worldN);
 
 	// Accumulate envmaps contributions.
-	vec3 irradiance = vec3(0.0);
-	vec4 radiance = vec4(0.0);
+	fragColor = vec4(0.0);
 	for(int pid = 0; pid < MAX_PROBES_COUNT; ++pid){
 		if(pid >= probesCount){
 			break;
 		}
-		vec4 radianceAndWeight = applyProbe(probes[pid], worldN, worldV, worldP, material.roughness, textureProbes[pid]);
-		// Weight based on proximity to probe.
-		radiance += radianceAndWeight;
-		irradiance += radianceAndWeight.w * applySH(worldN, probesSH[pid].coeffs);
+		Probe probe = unpackProbe(probes[pid]);
+		float weight = probeWeight(worldP, probe);
+
+		vec3 diffuse, specular;
+		ambientLighting(material, worldP, worldN, worldV, worldR, NdotV, probe, textureProbes[pid], probesSH[pid].coeffs, brdfPrecalc, diffuse, specular);
+		
+		fragColor += weight * vec4(diffuse + specular, 1.0);
 	}
 	// Normalize weighted sum of probes contributions.
-	if(radiance.a != 0.0){
-		radiance.rgb /= radiance.a;
-		irradiance /= radiance.a;
+	if(fragColor.a != 0.0){
+		fragColor /= fragColor.a;
 	}
 
-	float NdotV = max(0.0, dot(v, material.normal));
-	// BRDF contributions.
-	vec3 diffuse, specular;
-	ambientBrdf(material, NdotV, brdfPrecalc, diffuse, specular);
-
-	vec2 screenUV = gl_FragCoord.xy * invScreenSize;
-	float realtimeAO = textureLod(sampler2D(ssaoTexture, sClampLinear), screenUV, 0).r;
-	float precomputedAO = material.ao;
-	float aoDiffuse = min(realtimeAO, precomputedAO);
-	float aoSpecular = approximateSpecularAO(aoDiffuse, NdotV, material.roughness);
-
-	fragColor = vec4(aoDiffuse * diffuse * irradiance + aoSpecular * specular * radiance.rgb, 1.0);
-
+	// Accumulate direct lighting contributions.
 	for(int lid = 0; lid < MAX_LIGHTS_COUNT; ++lid){
 		if(lid >= lightsCount){
 			break;

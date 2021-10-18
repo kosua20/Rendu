@@ -29,12 +29,12 @@ layout(set = 0, binding = 0) uniform UniformBlock {
 
 /// Store the lights in a continuous buffer (UBO).
 layout(std140, set = 3, binding = 0) uniform Lights {
-	GPULight lights[MAX_LIGHTS_COUNT];
+	GPUPackedLight lights[MAX_LIGHTS_COUNT];
 };
 
 /// Store the probes in a continuous buffer (UBO).
 layout(std140, set = 3, binding = 1) uniform Probes {
-	GPUProbe probes[MAX_PROBES_COUNT];
+	GPUPackedProbe probes[MAX_PROBES_COUNT];
 };
 
 ///SH approximations of the environment probes irradiance (UBO). 
@@ -76,44 +76,41 @@ void main(){
 	material.normal = n;
 
 	vec3 newViewSpacePosition = updateFragmentPosition(localUV, positionShift, In.viewSpacePosition.xyz, p, tbn, depthTexture);
-	vec3 v = normalize(-newViewSpacePosition);
 
 	vec3 infos = texture(sampler2D(effectsTexture, sRepeatLinearLinear), localUV).rgb;
 	material.roughness = max(0.045, infos.r);
 	material.ao = infos.b;
 	material.metalness = infos.g;
+	// Parallax objects are not rendered in the prepass to avoid double parallax computation, so they won't be in the SSAO.
 
-	// Sample illumination envmap using world space normal and SH pre-computed coefficients.
+	// Geometric data.
+	vec3 v = normalize(-newViewSpacePosition);
+	float NdotV = max(0.0, dot(v, material.normal));
 	vec3 worldN = normalize(vec3(inverseV * vec4(material.normal, 0.0)));
 	vec3 worldP = vec3(inverseV * vec4(newViewSpacePosition, 1.0));
 	vec3 worldV = normalize(inverseV[3].xyz - worldP);
-	
+	vec3 worldR = -reflect(worldV, worldN);
+
 	// Accumulate envmaps contributions.
-	vec3 irradiance = vec3(0.0);
-	vec4 radiance = vec4(0.0);
+	fragColor = vec4(0.0);
 	for(int pid = 0; pid < MAX_PROBES_COUNT; ++pid){
 		if(pid >= probesCount){
 			break;
 		}
-		// Sample radiance in world space too.
-		vec4 radianceAndWeight = applyProbe(probes[pid], worldN, worldV, worldP, material.roughness, textureProbes[pid]);
-		radiance += radianceAndWeight;
-		irradiance += radianceAndWeight.w * applySH(worldN, probesSH[pid].coeffs);
+		Probe probe = unpackProbe(probes[pid]);
+		float weight = probeWeight(worldP, probe);
+
+		vec3 diffuse, specular;
+		ambientLighting(material, worldP, worldN, worldV, worldR, NdotV, probe, textureProbes[pid], probesSH[pid].coeffs, brdfPrecalc, diffuse, specular);
+
+		fragColor += weight * vec4(diffuse + specular, 1.0);
 	}
-	if(radiance.w != 0.0){
-		radiance /= radiance.w;
-		irradiance /= radiance.w;
+	// Normalize weighted sum of probes contributions.
+	if(fragColor.a != 0.0){
+		fragColor /= fragColor.a;
 	}
 
-	float NdotV = max(0.0, dot(v, n));
-	// BRDF contributions.
-	vec3 diffuse, specular;
-	ambientBrdf(material, NdotV, brdfPrecalc, diffuse, specular);
-	// Parallax objects are not rendered in the prepass to avoid double parallax computation.
-	float aoDiffuse = material.ao;
-	float aoSpecular = approximateSpecularAO(aoDiffuse, NdotV, material.roughness);
-	fragColor = vec4(aoDiffuse * diffuse * irradiance + aoSpecular * specular * radiance.rgb, 1.0);
-
+	// Accumulate direct lighting contributions.
 	for(int lid = 0; lid < MAX_LIGHTS_COUNT; ++lid){
 		if(lid >= lightsCount){
 			break;

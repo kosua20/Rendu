@@ -39,33 +39,33 @@ void main(){
 	float depth = textureLod(sampler2D(depthTexture, sClampNear),uv, 0.0).r;
 	vec3 position = positionFromDepth(depth, uv, projectionMatrix);
 
-	vec3 v = normalize(-position);
-	vec3 deltaPosition = lightPosition - position;
-	vec3 l = normalize(deltaPosition);
-	// Early exit if we are outside the sphere of influence.
-	if(length(deltaPosition) > lightRadius){
+	// Populate the light infos.
+	Light light;
+	light.type = POINT;
+	light.position = lightPosition;
+	light.radius = lightRadius,
+	light.shadowMode = shadowMode;
+	light.viewToLight = viewToLight;
+	light.layer = shadowLayer;
+	light.farPlane = lightFarPlane;
+	light.bias = shadowBias;
+	light.color = lightColor;
+
+	// Shadowing and light direction.
+	float shadowing;
+	vec3 l;
+	if(!applyPointLight(light, position, shadowMap, l, shadowing)){
+		// outside the area of effect of the light.
 		discard;
-	}
-	// Attenuation with increasing distance to the light.
-	float localRadius2 = dot(deltaPosition, deltaPosition);
-	float radiusRatio2 = localRadius2/(lightRadius*lightRadius);
-	float attenNum = clamp(1.0 - radiusRatio2, 0.0, 1.0);
-	float attenuation = attenNum*attenNum;
-	
-	// Compute the light to surface vector in light centered space.
-	// We only care about the direction, so we don't need the translation.
-	float shadowing = 1.0;
-	if(shadowMode != SHADOW_NONE){
-		vec3 deltaPositionWorld = -mat3(viewToLight) * deltaPosition;
-		shadowing = shadowCube(shadowMode, deltaPositionWorld, shadowMap, shadowLayer, lightFarPlane, shadowBias);
 	}
 
 	// Evaluate BRDF.
+	vec3 v = normalize(-position);
 	vec3 diffuse, specular;
 	directBrdf(material, material.normal, v, l, diffuse, specular);
 
 	// Combine everything.
-	fragColor.rgb = shadowing * attenuation * (diffuse + specular) * lightColor;
+	fragColor.rgb = shadowing * (diffuse + specular) * light.color;
 	
 }
 

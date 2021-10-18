@@ -52,7 +52,7 @@ vec3 toCube(vec3 v){
  \param layer the array layer index
  \return the direction to use to sample in the cubemap
  */
-vec4 toCube(vec3 v, int layer){
+vec4 toCube(vec3 v, uint layer){
 	return vec4(v.x, -v.y, v.z, float(layer));
 }
 

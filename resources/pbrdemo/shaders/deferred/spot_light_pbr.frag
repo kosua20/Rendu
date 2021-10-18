@@ -37,47 +37,38 @@ void main(){
 		discard;
 	}
 	
-	// Recompite view space position.
+	// Recompute view space position.
 	float depth = textureLod(sampler2D(depthTexture, sClampNear),uv, 0.0).r;
 	vec3 position = positionFromDepth(depth, uv, projectionMatrix);
 
-	vec3 v = normalize(-position);
-	vec3 deltaPosition = lightPosition - position;
-	vec3 l = normalize(deltaPosition);
-	
-	// Early exit if we are outside the sphere of influence.
-	if(length(deltaPosition) > lightRadius){
-		discard;
-	}
-	// Compute the angle between the light direction and the (light, surface point) vector.
-	float currentAngleCos = dot(-l, normalize(lightDirection));
-	// If we are outside the spotlight cone, no lighting.
-	if(currentAngleCos < intOutAnglesCos.y){
-		discard;
-	}
-	// Compute the spotlight attenuation factor based on our angle compared to the inner and outer spotlight angles.
-	float angleAttenuation = clamp((currentAngleCos - intOutAnglesCos.y)/(intOutAnglesCos.x - intOutAnglesCos.y), 0.0, 1.0);
+	// Populate light infos.
+	Light light;
+	light.type = SPOT;
+	light.viewToLight = viewToLight;
+	light.direction = lightDirection;
+	light.position = lightPosition;
+	light.radius = lightRadius;
+	light.color = lightColor;
+	light.angles = intOutAnglesCos;
+	light.shadowMode = shadowMode;
+	light.layer = shadowLayer;
+	light.bias = shadowBias;
 
-	// Shadowing
-	float shadowing = 1.0;
-	if(shadowMode != SHADOW_NONE){
-		vec4 lightSpacePosition = viewToLight * vec4(position,1.0);
-		lightSpacePosition /= lightSpacePosition.w;
-		lightSpacePosition.xy = 0.5 * lightSpacePosition.xy + 0.5;
-		shadowing = shadow(shadowMode, lightSpacePosition.xyz, shadowMap, shadowLayer, shadowBias);
+	// Light shadowing and attenuation.
+	vec3 l;
+	float shadowing;
+	if(!applySpotLight(light, position, shadowMap, l, shadowing)){
+		// Outside the area of effect.
+		discard;
 	}
-	// Attenuation with increasing distance to the light.
-	float localRadius2 = dot(deltaPosition, deltaPosition);
-	float radiusRatio2 = localRadius2/(lightRadius*lightRadius);
-	float attenNum = clamp(1.0 - radiusRatio2, 0.0, 1.0);
-	float attenuation = angleAttenuation * attenNum * attenNum;
-	
+
 	// Evaluate BRDF.
+	vec3 v = normalize(-position);
 	vec3 diffuse, specular;
 	directBrdf(material, material.normal, v, l, diffuse, specular);
 
 	// Combine everything.
-	fragColor.rgb = shadowing * attenuation * (diffuse + specular) * lightColor;
+	fragColor.rgb = shadowing * (diffuse + specular) * light.color;
 	
 }
 

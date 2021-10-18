@@ -41,22 +41,30 @@ void main(){
 	float depth = textureLod(sampler2D(depthTexture, sClampNear),uv, 0.0).r;
 	vec3 position = positionFromDepth(depth, uv, projectionMatrix);
 
-	vec3 v = normalize(-position);
-	vec3 l = normalize(-lightDirection);
+	// Populate light info.
+	Light light;
+	light.type = DIRECTIONAL;
+	light.viewToLight = viewToLight;
+	light.direction = lightDirection;
+	light.color = lightColor;
+	light.shadowMode = shadowMode;
+	light.layer = shadowLayer;
+	light.bias = shadowBias;
 
-	// Shadowing
-	float shadowing = 1.0;
-	if(shadowMode != SHADOW_NONE){
-		vec3 lightSpacePosition = (viewToLight * vec4(position,1.0)).xyz;
-		lightSpacePosition.xy = 0.5 * lightSpacePosition.xy + 0.5;
-		shadowing = shadow(shadowMode, lightSpacePosition, shadowMap, shadowLayer, shadowBias);
+	// Light shadowing and attenuation.
+	vec3 l;
+	float shadowing;
+	if(!applyDirectionalLight(light, position, shadowMap, l, shadowing)){
+		// Outside the area of effect.
+		discard;
 	}
 
 	// Evaluate BRDF.
+	vec3 v = normalize(-position);
 	vec3 diffuse, specular;
 	directBrdf(material, material.normal, v, l, diffuse, specular);
 
 	// Combine everything.
-	fragColor.rgb = shadowing * (diffuse + specular) * lightColor;
+	fragColor.rgb = shadowing * (diffuse + specular) * light.color;
 }
 

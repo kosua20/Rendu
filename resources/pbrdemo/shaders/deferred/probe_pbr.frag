@@ -34,39 +34,45 @@ void main(){
 
 	vec2 uv = gl_FragCoord.xy/textureSize(depthTexture, 0).xy;
 	Material material = decodeMaterialFromGbuffer(uv, albedoTexture, normalTexture, effectsTexture);
+	
 	// Retrieve world space position.
-
 	float depth = textureLod(sampler2D(depthTexture, sClampNear), uv, 0.0).r;
 	vec3 position = positionFromDepth(depth, uv, projectionMatrix);
 	vec3 worldP = vec3(inverseV * vec4(position, 1.0));
 
+	// Probe data.
+	Probe probe;
+	probe.position = cubemapPos;
+	probe.center = cubemapCenter;
+	probe.extent = cubemapExtent;
+	probe.size = cubemapSize;
+	probe.orientationCosSin = cubemapCosSin;
+	probe.fade = cubemapFade;
+	probe.maxLod = maxLod;
 	// Test if we are inside the effect box or the fade region.
-	float weight = probeWeight(worldP, cubemapPos, cubemapSize, cubemapCosSin, cubemapFade);
+	float weight = probeWeight(worldP, probe);
 	if(weight <= 0.0f){
 		discard;
 	}
-	vec3 v = normalize(-position);
-
-	// Sample illumination envmap using world space normal and SH pre-computed coefficients.
-	vec3 worldN = normalize(vec3(inverseV * vec4(material.normal, 0.0)));
-	vec3 worldV = normalize(inverseV[3].xyz - worldP);
-	
-	vec3 radiance = radiance(worldN, worldV, worldP, material.roughness, textureCubeMap, cubemapPos, cubemapCenter, cubemapExtent, cubemapCosSin, maxLod);
-	vec3 irradiance = applySH(worldN, shCoeffs);
-
-	float NdotV = max(0.0, dot(v, material.normal));
-	// BRDF contributions.
-	vec3 diffuse, specular;
-	ambientBrdf(material, NdotV, brdfPrecalc, diffuse, specular);
 
 	// Ambient occlusion.
-	float precomputedAO = material.ao;
 	float realtimeAO = textureLod(sampler2D(ssaoTexture, sClampLinear), uv, 0).r;
-	float aoDiffuse = min(realtimeAO, precomputedAO);
-	float aoSpecular = approximateSpecularAO(aoDiffuse, NdotV, material.roughness);
+	material.ao = min(realtimeAO, material.ao);
 
-	fragColor.rgb = weight * (aoDiffuse * diffuse * irradiance + aoSpecular * specular * radiance);
-	
+	// Geometric data.
+	vec3 v = normalize(-position);
+	float NdotV = max(0.0, dot(v, material.normal));
+	vec3 worldN = normalize(vec3(inverseV * vec4(material.normal, 0.0)));
+	vec3 worldV = normalize(inverseV[3].xyz - worldP);
+	// Reflect the ray
+	vec3 worldR = -reflect(worldV, worldN);
+
+	// Evaluate BRDF and combine it with environment data.
+	vec3 diffuse, specular;
+	ambientLighting(material, worldP, worldN, worldV, worldR, NdotV, probe, textureCubeMap, brdfPrecalc, shCoeffs, diffuse, specular);
+
+	fragColor.rgb = weight * (diffuse + specular);
+
 	// Apply weighting.
 	fragColor.a = weight;
 }

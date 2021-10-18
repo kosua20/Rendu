@@ -12,7 +12,7 @@
 	\param bias the bias to apply
 	\return the lighting factor (0.0 = in shadow)
 */
-float shadowBasic(vec3 lightSpacePosition, texture2DArray smap, int layer, float bias){
+float shadowBasic(vec3 lightSpacePosition, texture2DArray smap, uint layer, float bias){
 	// Avoid shadows when falling outside the shadow map.
 	if(any(greaterThan(abs(lightSpacePosition.xy-0.5), vec2(0.5)))){
 		return 1.0;
@@ -36,7 +36,7 @@ float shadowBasic(vec3 lightSpacePosition, texture2DArray smap, int layer, float
 	\param bias the bias to apply
 	\return the lighting factor (0.0 = in shadow)
 */
-float shadowBasicCube(vec3 lightToPosDir, textureCubeArray smap, int layer, float farPlane, float bias){
+float shadowBasicCube(vec3 lightToPosDir, textureCubeArray smap, uint layer, float farPlane, float bias){
 	// Read first and second moment from shadow map.
 	float depth = textureLod(samplerCubeArray(smap, sClampLinear), toCube(lightToPosDir, layer), 0.0).r;
 	if(depth >= 1.0){
@@ -55,7 +55,7 @@ float shadowBasicCube(vec3 lightToPosDir, textureCubeArray smap, int layer, floa
 	\param layer the texture layer to read from
 	\return the lighting factor (0.0 = in shadow)
 */
-float shadowVSM(vec3 lightSpacePosition, texture2DArray smap, int layer){
+float shadowVSM(vec3 lightSpacePosition, texture2DArray smap, uint layer){
 	// Avoid shadows when falling outside the shadow map.
 	if(any(greaterThan(abs(lightSpacePosition.xy-0.5), vec2(0.5)))){
 		return 1.0;
@@ -89,7 +89,7 @@ float shadowVSM(vec3 lightSpacePosition, texture2DArray smap, int layer){
 	\param farPlane distance to the light projection far plane
 	\return the lighting factor (0.0 = in shadow)
 */
-float shadowVSMCube(vec3 lightToPosDir, textureCubeArray smap, int layer, float farPlane){
+float shadowVSMCube(vec3 lightToPosDir, textureCubeArray smap, uint layer, float farPlane){
 	float probabilityMax = 1.0;
 	// Read first and second moment from shadow map.
 	vec2 moments = textureLod(samplerCubeArray(smap, sClampLinear), toCube(lightToPosDir, layer), 0.0).rg;
@@ -123,7 +123,7 @@ float shadowVSMCube(vec3 lightToPosDir, textureCubeArray smap, int layer, float 
 	\param bias the bias to apply
 	\return the lighting factor (0.0 = in shadow)
 */
-float shadow(int mode, vec3 lightSpacePosition, texture2DArray smap, int layer, float bias){
+float shadow(uint mode, vec3 lightSpacePosition, texture2DArray smap, uint layer, float bias){
 	if(mode == SHADOW_BASIC){
 		return shadowBasic(lightSpacePosition, smap, layer, bias);
 	}
@@ -143,7 +143,7 @@ float shadow(int mode, vec3 lightSpacePosition, texture2DArray smap, int layer, 
 	\param bias the bias to apply
 	\return the lighting factor (0.0 = in shadow)
 */
-float shadowCube(int mode, vec3 lightToPosDir, textureCubeArray smap, int layer, float farPlane, float bias){
+float shadowCube(uint mode, vec3 lightToPosDir, textureCubeArray smap, uint layer, float farPlane, float bias){
 	if(mode == SHADOW_BASIC) {
 		return shadowBasicCube(lightToPosDir, smap, layer, farPlane, bias);
 	}
