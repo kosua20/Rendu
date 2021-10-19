@@ -95,6 +95,7 @@ private:
 
 	Program * _objectProgram;		 ///< Basic PBR program
 	Program * _parallaxProgram;	 ///< Parallax mapping PBR program
+	Program * _clearCoatProgram;	 ///< Basic PBR program with an additional clear coat specular layer.
 	Program * _emissiveProgram;	 ///< Emissive program
 	Program * _transparentProgram; ///< Transparent PBR program
 	Program * _probeNormalization; ///< Indirect lighting normalization program.

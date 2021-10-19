@@ -10,6 +10,7 @@ layout(location = 0) in INTERFACE {
 layout(set = 2, binding = 0) uniform texture2D texture0; ///< Albedo.
 layout(set = 2, binding = 1) uniform texture2D texture1; ///< Normal map.
 layout(set = 2, binding = 2) uniform texture2D texture2; ///< Effects map.
+layout(set = 2, binding = 3) uniform texture2D texture3; ///< Clear coat map.
 
 layout (location = 0) out vec4 fragColor; ///< Color.
 layout (location = 1) out vec4 fragNormal; ///< View space normal.
@@ -43,11 +44,15 @@ void main(){
 	
 	// Store values.
 	fragColor.rgb = color.rgb;
-	fragColor.a = encodeMaterial(MATERIAL_STANDARD);
+	fragColor.a = encodeMaterial(MATERIAL_CLEARCOAT);
 	fragNormal.rg = encodeNormal(n);
 	fragNormal.ba = vec2(0.0);
 	vec3 infos = texture(sampler2D(texture2, sRepeatLinearLinear), In.uv.xy).rgb;
+	vec2 clearCoat = texture(sampler2D(texture3, sRepeatLinearLinear), In.uv.xy).rg;
+	// Roughness and AO.
 	fragEffects.rb = infos.rb;
-	fragEffects.g = encodeMetalnessAndParameter(infos.g, 0.0);
-	fragEffects.a = 0.0;
+	// Pack metalness and clear coat factor.
+	fragEffects.g = encodeMetalnessAndParameter(infos.g, clearCoat.r);
+	// Clear coat roughness.
+	fragEffects.a = clearCoat.g;
 }

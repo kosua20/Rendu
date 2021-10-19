@@ -22,6 +22,7 @@ ForwardRenderer::ForwardRenderer(const glm::vec2 & resolution, ShadowMode mode, 
 	_parallaxProgram	= Resources::manager().getProgram("object_parallax_forward");
 	_emissiveProgram	= Resources::manager().getProgram("object_emissive_forward");
 	_transparentProgram = Resources::manager().getProgram("object_transparent_forward", "object_forward", "object_transparent_forward");
+	_clearCoatProgram 	= Resources::manager().getProgram("object_clearcoat_forward", "object_forward", "object_clearcoat_forward");
 
 	_skyboxProgram = Resources::manager().getProgram("skybox_forward", "skybox_infinity", "skybox_forward");
 	_bgProgram	   = Resources::manager().getProgram("background_forward", "background_infinity", "background_forward");
@@ -140,6 +141,9 @@ void ForwardRenderer::renderOpaque(const Culler::List & visibles, const glm::mat
 				break;
 			case Material::Regular:
 				currentProgram = _objectProgram;
+				break;
+			case Material::Clearcoat:
+				currentProgram = _clearCoatProgram;
 				break;
 			default:
 				Log::Error() << "Unsupported material type." << std::endl;
@@ -328,31 +332,24 @@ void ForwardRenderer::draw(const Camera & camera, Framebuffer & framebuffer, uin
 		const glm::mat4 invView = glm::inverse(view);
 		const glm::vec2 invScreenSize = 1.0f / glm::vec2(_sceneFramebuffer->width(), _sceneFramebuffer->height());
 		// Update shared data for the three programs.
-		Program * programs[] = {_parallaxProgram, _objectProgram, _transparentProgram };
+		Program * programs[] = {_parallaxProgram, _objectProgram, _clearCoatProgram, _transparentProgram };
 		for(Program * prog : programs){
 			prog->use();
 			prog->uniform("inverseV", invView);
 			prog->uniform("probesCount", int(_probesGPU->count()));
 			prog->uniform("lightsCount", int(_lightsGPU->count()));
 			prog->uniform("invScreenSize", invScreenSize);
+			// This is because after a change of scene shadow maps are reset, but the conditional setup of textures on
+			// the program means that descriptors can still reference the deleted textures.
+			// \todo Currently there is no mechanism to "unregister" a texture for each shader using it, when deleting the texture.
+			// The texture could keep a record of all programs it has been used in. Or we could look at all programs when deleting.
+			// Or in PBRDemo we reset the textures when setting a scene.
+			prog->defaultTexture(5);
+			prog->defaultTexture(6);
+			prog->defaultTexture(7);
 		}
 		_parallaxProgram->use();
 		_parallaxProgram->uniform("p", proj);
-
-		// This is because after a change of scene shadow maps are reset, but the conditional setup of textures on
-		// the program means that descriptors can still reference the deleted textures.
-		// \todo Currently there is no mechanism to "unregister" a texture for each shader using it, when deleting the texture.
-		// The texture could keep a record of all programs it has been used in. Or we could look at all programs when deleting.
-		// Or in PBRDemo we reset the textures when setting a scene.
-		_objectProgram->defaultTexture(5);
-		_objectProgram->defaultTexture(6);
-		_objectProgram->defaultTexture(7);
-		_parallaxProgram->defaultTexture(5);
-		_parallaxProgram->defaultTexture(6);
-		_parallaxProgram->defaultTexture(7);
-		_transparentProgram->defaultTexture(5);
-		_transparentProgram->defaultTexture(6);
-		_transparentProgram->defaultTexture(7);
 	}
 
 	// Objects rendering.

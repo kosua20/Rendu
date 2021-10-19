@@ -58,6 +58,7 @@ const Culler::List & Culler::cullAndSort(const glm::mat4 & view, const glm::mat4
 		{ Material::None, 			Ordering::FRONT_TO_BACK },
 		{ Material::Regular, 		Ordering::FRONT_TO_BACK },
 		{ Material::Parallax, 		Ordering::FRONT_TO_BACK },
+		{ Material::Clearcoat, 		Ordering::FRONT_TO_BACK },
 		{ Material::Emissive, 		Ordering::FRONT_TO_BACK },
 		{ Material::Transparent, 	Ordering::BACK_TO_FRONT },
 	};
@@ -65,6 +66,7 @@ const Culler::List & Culler::cullAndSort(const glm::mat4 & view, const glm::mat4
 		{ Material::None, 			0 },
 		{ Material::Regular, 		1 },
 		{ Material::Parallax, 		1 },
+		{ Material::Clearcoat, 		1 },
 		{ Material::Emissive, 		1 },
 		{ Material::Transparent, 	2 },
 	};

@@ -90,6 +90,7 @@ private:
 	Program * _parallaxProgram;	 ///< Parallax mapping PBR program
 	Program * _emissiveProgram;	 ///< Parallax mapping PBR program
 	Program * _transparentProgram;	 ///< Transparent PBR program
+	Program * _clearCoatProgram; ///< Basic PBR program with an additional clear coat specular layer.
 	Program * _depthPrepass; ///< Depth prepass program.
 
 	Program * _skyboxProgram; ///< Skybox program.

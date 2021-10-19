@@ -81,6 +81,14 @@ float Vfast(float NdotL, float NdotV, float alpha){
 	return 0.5 / max(0.0001, visV + visL);
 }
 
+/** Simplified visibility term described in A Microfacet Based Coupled Specular-Matte BRDF Model with Importance Sampling, Kelemen, 2001
+ \param LdotH dot product of the light direction and the half vector
+ \return the value of V
+ */
+float VKelemen(float LdotH){
+	return clamp(0.25 / max(0.0001, LdotH * LdotH), 0.0, 1.0);
+}
+
 /** Evaluate the GGX BRDF for a given normal, view direction and
 	material parameters.
 	\param n the surface normal
@@ -100,6 +108,44 @@ vec3 ggx(vec3 n, vec3 v, vec3 l, vec3 h, vec3 F0, float roughness){
 	float alpha = max(0.0001, roughness*roughness);
 
 	return D(NdotH, alpha) * Vfast(NdotL, NdotV, alpha) * F(F0, VdotH);
+}
+
+/** Evaluate a simplified GGX BRDF for a given normal, view direction and
+	material parameters.
+	\param n the surface normal
+	\param v the view direction
+	\param l the light direction
+	\param h the half vector between the view and light
+	\param roughness the surface roughness
+	\param clearCoatFresnel will contain the value of the Fresnel coefficient
+	\return the BRDF value
+*/
+float ggxClearCoat(vec3 n, vec3 v, vec3 l, vec3 h, float roughness, out float clearCoatFresnel){
+	// Compute all needed dot products.
+	float NdotH = clamp(dot(n,h), 0.0, 1.0);
+	float LdotH = clamp(dot(l,h), 0.0, 1.0);
+	float alpha = max(0.0001, roughness*roughness);
+	clearCoatFresnel = F(vec3(0.04), LdotH).x;
+	return D(NdotH, alpha) * VKelemen(LdotH) * clearCoatFresnel;
+}
+
+/** Estimate the Fresnel coefficient at an interface based on the internal and external medium IOR.
+ * \param internalIOR the internal IOR
+ * \param externalIOR the external IOR
+ * \return the corresponding Fresnel coefficient
+ */
+vec3 iorToFresnel(vec3 internalIOR, vec3 externalIOR) {
+	vec3 sqrtF0 = (internalIOR - externalIOR) / (internalIOR + externalIOR);
+	return sqrtF0 * sqrtF0;
+}
+
+/** Convert a Fresnel coefficient to an internal IOR, assuming the external medium is air (IOR 1.0)
+ * \param F0 the Fresnel coefficient
+ * \return the IOR
+ */
+vec3 fresnelToIor(vec3 F0) {
+	vec3 sqrtF0 = sqrt(F0);
+	return (1.0 + sqrtF0) / max(vec3(0.0001), 1.0 - sqrtF0);
 }
 
 /** Return the (pre-convolved) radiance for a given direction (in world space) and
@@ -167,20 +213,18 @@ float approximateSpecularAO(float diffuseAO, float NdotV, float roughness){
 
 /** Evaluate the global lighting contribution from the ambient environment. Implements a multi-scattering compensation step, as described in A Multiple-Scattering Microfacet Model for Real-Time Image-based Lighting, C. J. Fdez-Agüera, JCGT, 2019.
  \param material the surface point material parameters
+ \param F0 the Fresnel coefficient at grazing incidence.
  \param NdotV visibility/normal angle
  \param brdfCoeffs precomputed BRDF linearized coefficients lookup table
  \param diffuse will contain the diffuse ambient contribution
  \param specular will contain the specular ambient contribution
  */
-void ambientBrdf(Material material, float NdotV, texture2D brdfCoeffs, out vec3 diffuse, out vec3 specular){
+void ambientBrdf(Material material, vec3 F0, float NdotV, texture2D brdfCoeffs, out vec3 diffuse, out vec3 specular){
 	vec3 baseColor = material.reflectance;
 	float metallic = material.metalness;
 	float roughness = material.roughness;
 
 	// BRDF contributions.
-	// Compute F0 (fresnel coeff).
-	// Dielectrics have a constant low coeff, metals use the baseColor (ie reflections are tinted).
-	vec3 F0 = mix(vec3(0.04), baseColor, metallic);
 	// Adjust Fresnel based on roughness.
 	vec3 Fr = max(vec3(1.0 - roughness), F0) - F0;
     vec3 Fs = F0 + Fr * pow(1.0 - NdotV, 5.0);
@@ -213,18 +257,42 @@ void ambientBrdf(Material material, float NdotV, texture2D brdfCoeffs, out vec3 
  */
 void ambientLighting(Material material, vec3 p, vec3 n, vec3 v, vec3 r, float NdotV, Probe probe, textureCube envmap, vec4 envSH[9], texture2D brdfLUT, out vec3 diffuse, out vec3 specular){
 	
-	vec3 radiance = radiance(r, p, material.roughness, envmap, probe);
+	vec3 radianceL = radiance(r, p, material.roughness, envmap, probe);
 
-	vec3 irradiance = applySH(n, envSH);
+	vec3 irradianceL = applySH(n, envSH);
 
 	// BRDF contributions.
-	ambientBrdf(material, NdotV, brdfLUT, diffuse, specular);
+	// Compute F0 (fresnel coeff).
+	// Dielectrics have a constant low coeff, metals use the baseColor (ie reflections are tinted).
+	vec3 F0 = mix(vec3(0.04), material.reflectance, material.metalness);
+	if(material.id == MATERIAL_CLEARCOAT){
+		F0 = mix(F0, iorToFresnel(fresnelToIor(F0), vec3(1.5)), material.clearCoat);
+	}
+
+	ambientBrdf(material, F0, NdotV, brdfLUT, diffuse, specular);
 
 	// Specular AO.
 	float aoSpecular = approximateSpecularAO(material.ao, NdotV, material.roughness);
 	// Combine BRDF, incoming (ir)radiance and occlusion.
-	diffuse = material.ao * diffuse * irradiance;
-	specular = aoSpecular * specular * radiance;
+	diffuse = material.ao * diffuse * irradianceL;
+	specular = aoSpecular * specular * radianceL;
+
+	if(material.id == MATERIAL_CLEARCOAT){
+		// Second specular lobe with its own roughness.
+		float aoSpecularClearCoat = approximateSpecularAO(material.ao, NdotV, material.clearCoatRoughness);
+		vec3 clearCoatRadiance = radiance(r, p, material.clearCoatRoughness, envmap, probe);
+		// To remain energy preserving, modulate base layer contribution using the Fresnel of the clear coat layer.
+		// Note: to be as correct as possible, we should probably take this into account in
+		// the multi-bounce correction we already applied on the base layer.
+		float clearCoatFresnel = F(vec3(0.04), NdotV).x;
+		float energyCorrection = 1.0 - material.clearCoat * clearCoatFresnel;
+		// Modulate base layer.
+		diffuse *= energyCorrection;
+		specular *= energyCorrection * energyCorrection;
+		// Add clear coat contribution to specular.
+		specular += material.clearCoat * aoSpecularClearCoat * clearCoatFresnel * clearCoatRadiance;
+	}
+	
 }
 
 /** Evaluate the lighting contribution from an analytic light source.
@@ -245,6 +313,12 @@ void directBrdf(Material material, vec3 n, vec3 v, vec3 l, out vec3 diffuse, out
 	// Dielectrics have a constant low coeff, metals use the baseColor (ie reflections are tinted).
 	vec3 F0 = mix(vec3(0.04), baseColor, metallic);
 
+	// If clear coat is present, we have to update the base layer Fresnel coefficient to take into account that
+	// it is at the interface with a veneer (IOR 1.5) and not the air (IOR 1) anymore.
+	if(material.id == MATERIAL_CLEARCOAT){
+		F0 = mix(F0, iorToFresnel(fresnelToIor(F0), vec3(1.505)), material.clearCoat);
+	}
+
 	// Orientation: basic diffuse shadowing.
 	float orientation = max(0.0, dot(l,n));
 	// Compute half-vector.
@@ -254,6 +328,19 @@ void directBrdf(Material material, vec3 n, vec3 v, vec3 l, out vec3 diffuse, out
 	diffuse = orientation * INV_M_PI * (1.0 - metallic) * baseColor * (1.0 - F0);
 	// Specular GGX contribution.
 	specular = orientation * ggx(n, v, l, h, F0, material.roughness);
+	
+	// Apply clear coat lobe if available
+	if(material.id == MATERIAL_CLEARCOAT){
+		float clearCoatFresnel;
+		float clearCoatLobe = ggxClearCoat(n, v, l, h, material.clearCoatRoughness, clearCoatFresnel);
+		// To remain energy preserving, modulate base layer contribution using the Fresnel of the clear coat layer.
+		float energyCorrection = 1.0 - material.clearCoat * clearCoatFresnel;
+		// Modulate base layer.
+		diffuse *= energyCorrection;
+		specular *= energyCorrection * energyCorrection;
+		// Add clear coat contribution to specular.
+		specular += material.clearCoat * clearCoatLobe;
+	}
 
 }
 

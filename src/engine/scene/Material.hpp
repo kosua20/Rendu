@@ -16,6 +16,7 @@ public:
 		None = 0,  ///< Any type of shading.
 		Regular,  ///< PBR shading. \see GPU::Vert::Object_gbuffer, GPU::Frag::Object_gbuffer
 		Parallax, ///< PBR with parallax mapping. \see GPU::Vert::Object_parallax_gbuffer, GPU::Frag::Object_parallax_gbuffer
+		Clearcoat,  ///< PBR shading with an additional clear coat specular layer.
 		Emissive,  	 ///< Emissive objects (no shading, pure emitter)
 		Transparent, ///< Transparent object
 	};

@@ -57,7 +57,9 @@ void main(){
 	fragColor.a = encodeMaterial(MATERIAL_STANDARD);
 	fragNormal.rg = encodeNormal(n);
 	fragNormal.ba = vec2(0.0);
-	fragEffects.rgb = texture(sampler2D(texture2, sRepeatLinearLinear), localUV).rgb;
+	vec3 infos = texture(sampler2D(texture2, sRepeatLinearLinear), localUV).rgb;
+	fragEffects.rb = infos.rb;
+	fragEffects.g = encodeMetalnessAndParameter(infos.g, 0.0);
 	fragEffects.a = 0.0;
 	
 	updateFragmentPosition(localUV, positionShift, In.viewSpacePosition.xyz, p, tbn, texture3);
