@@ -1,0 +1,238 @@
+
+
+* probe: 
+	radiance: rgb32cube: kiara_dawn
+	irradiance: kiara_dawn_shcoeffs
+
+* background:
+	cube: rgb32cube: kiara_dawn
+
+* directional: 
+	intensity: 5,5,5
+	shadows: true 
+	direction: -0.57,-0.57,-0.57
+	#position: 5.0,5.0,5.0
+	#radius: 20.0
+
+* camera: 
+	position: 0.906498 6.854966 21.935211 
+	center: 0.335479 0.865528 -0.471047 
+	up: -0.006577 0.966101 -0.258082 
+	fov: 0.570000 
+	planes: 0.283549 141.774475 
+
+
+* object:
+	shadows: false
+	mesh: groundplane 
+	scaling: 20.000000
+	translation: 0.0,-1.5,0.0
+	material: ground_diffuse
+
+# Emissive
+
+* object: 
+	shadows: true 
+	mesh: sphere 
+	translation: 0.0,0.0,0.0
+	material: emissive
+
+# Default materials
+
+* object: 
+	shadows: true 
+	mesh: sphere 
+	translation: -7.5,0.0,0.0
+	material: regular_diel_r10 
+
+* object: 
+	shadows: true 
+	mesh: sphere 
+	translation: -5.0,0.0,0.0
+	material: regular_diel_r05 
+
+* object: 
+	shadows: true 
+	mesh: sphere 
+	translation: -2.5,0.0,0.0
+	material: regular_diel_r00
+
+* object: 
+	shadows: true 
+	mesh: sphere 
+	translation: 2.5,0.0,0.0
+	material: regular_metal_r00 
+
+* object: 
+	shadows: true 
+	mesh: sphere 
+	translation: 5.0,0.0,0.0
+	material: regular_metal_r05
+
+
+* object: 
+	shadows: true 
+	mesh: sphere 
+	translation: 7.5,0.0,0.0
+	material: regular_metal_r10
+
+
+# Clearcoat materials
+
+* object: 
+	shadows: true 
+	mesh: sphere 
+	translation: -7.5,0.0,2.5
+	material: clearcoat_diel_r10 
+
+* object: 
+	shadows: true 
+	mesh: sphere 
+	translation: -5.0,0.0,2.5
+	material: clearcoat_diel_r05 
+
+* object: 
+	shadows: true 
+	mesh: sphere 
+	translation: -2.5,0.0,2.5
+	material: clearcoat_diel_r00
+
+
+* object: 
+	shadows: true 
+	mesh: sphere 
+	translation: 2.5,0.0,2.5
+	material: clearcoat_metal_r00 
+
+* object: 
+	shadows: true 
+	mesh: sphere 
+	translation: 5.0,0.0,2.5
+	material: clearcoat_metal_r05
+
+* object: 
+	shadows: true 
+	mesh: sphere 
+	translation: 7.5,0.0,2.5
+	material: clearcoat_metal_r10 
+
+
+# Materials
+
+* material: 
+	textures: 
+		- rgb: debug-grid
+		- rgb: default_normal 
+		- rgb: 1.0,0.0,1.0 
+	type: Regular 
+	name: ground_diffuse
+
+* material: 
+	textures: 
+		- rgb32: 2.0,2.0,2.0
+	type: Emissive 
+	name: emissive
+
+* material: 
+	textures: 
+		- rgb: 1.0,0.0,0.0 
+		- rgb: default_normal 
+		- rgb: 1.0,0.0,1.0 
+	type: Regular 
+	name: regular_diel_r10
+
+* material: 
+	textures: 
+		- rgb: 1.0,0.0,0.0 
+		- rgb: default_normal 
+		- rgb: 0.5,0.0,1.0 
+	type: Regular 
+	name: regular_diel_r05
+
+* material: 
+	textures: 
+		- rgb: 1.0,0.0,0.0 
+		- rgb: default_normal 
+		- rgb: 0.0,0.0,1.0 
+	type: Regular 
+	name: regular_diel_r00
+
+
+* material: 
+	textures: 
+		- rgb: 1.0,0.0,0.0 
+		- rgb: default_normal 
+		- rgb: 1.0,1.0,1.0 
+	type: Regular 
+	name: regular_metal_r10
+
+* material: 
+	textures: 
+		- rgb: 1.0,0.0,0.0  
+		- rgb: default_normal 
+		- rgb: 0.5,1.0,1.0 
+	type: Regular 
+	name: regular_metal_r05
+
+* material: 
+	textures: 
+		- rgb: 1.0,0.0,0.0 
+		- rgb: default_normal 
+		- rgb: 0.0,1.0,1.0 
+	type: Regular 
+	name: regular_metal_r00
+
+* material: 
+	textures: 
+		- rgb: 1.0,0.0,0.0 
+		- rgb: default_normal 
+		- rgb: 1.0,0.0,1.0 
+		- rgb: 1.0,0.05
+	type: Clearcoat 
+	name: clearcoat_diel_r10
+
+* material: 
+	textures: 
+		- rgb: 1.0,0.0,0.0 
+		- rgb: default_normal 
+		- rgb: 0.5,0.0,1.0 
+		- rgb: 1.0,0.05
+	type: Clearcoat 
+	name: clearcoat_diel_r05
+
+* material: 
+	textures: 
+		- rgb: 1.0,0.0,0.0 
+		- rgb: default_normal 
+		- rgb: 0.0,0.0,1.0 
+		- rgb: 1.0,0.05
+	type: Clearcoat 
+	name: clearcoat_diel_r00
+
+
+* material: 
+	textures: 
+		- rgb: 1.0,0.0,0.0 
+		- rgb: default_normal 
+		- rgb: 1.0,1.0,1.0 
+		- rgb: 1.0,0.05
+	type: Clearcoat 
+	name: clearcoat_metal_r10
+
+* material: 
+	textures: 
+		- rgb: 1.0,0.0,0.0  
+		- rgb: default_normal 
+		- rgb: 0.5,1.0,1.0 
+		- rgb: 1.0,0.05
+	type: Clearcoat 
+	name: clearcoat_metal_r05
+
+* material: 
+	textures: 
+		- rgb: 1.0,0.0,0.0 
+		- rgb: default_normal 
+		- rgb: 0.0,1.0,1.0 
+		- rgb: 1.0,0.05
+	type: Clearcoat 
+	name: clearcoat_metal_r00
