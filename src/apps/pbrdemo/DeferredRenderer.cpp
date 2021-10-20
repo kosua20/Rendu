@@ -31,7 +31,7 @@ DeferredRenderer::DeferredRenderer(const glm::vec2 & resolution, ShadowMode mode
 	_parallaxProgram	= Resources::manager().getProgram("object_parallax_gbuffer");
 	_objectProgram		= Resources::manager().getProgram("object_gbuffer");
 	_clearCoatProgram	= Resources::manager().getProgram("object_clearcoat_gbuffer", "object_gbuffer", "object_clearcoat_gbuffer");
-	_emissiveProgram	= Resources::manager().getProgram("object_emissive_gbuffer");
+	_emissiveProgram	= Resources::manager().getProgram("object_emissive_gbuffer", "object_gbuffer", "object_emissive_gbuffer");
 	_transparentProgram = Resources::manager().getProgram("object_transparent_forward", "object_forward", "object_transparent_forward");
 
 	// Lighting passes.
@@ -117,6 +117,7 @@ void DeferredRenderer::renderOpaque(const Culler::List & visibles, const glm::ma
 				program = _emissiveProgram;
 				// Upload the MVP matrix.
 				_emissiveProgram->uniform("mvp", MVP);
+				_emissiveProgram->uniform("normalMatrix", glm::mat4(normalMatrix));
 				// Are UV available.
 				_emissiveProgram->uniform("hasUV", object.useTexCoords());
 				break;

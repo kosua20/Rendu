@@ -35,6 +35,11 @@ void main(){
 	vec2 uv = gl_FragCoord.xy/textureSize(depthTexture, 0).xy;
 	Material material = decodeMaterialFromGbuffer(uv, albedoTexture, normalTexture, effectsTexture);
 	
+	// Skip unlit.
+	if(material.id == MATERIAL_UNLIT){
+		discard;
+	}
+
 	// Retrieve world space position.
 	float depth = textureLod(sampler2D(depthTexture, sClampNear), uv, 0.0).r;
 	vec3 position = positionFromDepth(depth, uv, projectionMatrix);

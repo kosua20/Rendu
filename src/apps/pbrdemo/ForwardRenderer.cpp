@@ -20,7 +20,7 @@ ForwardRenderer::ForwardRenderer(const glm::vec2 & resolution, ShadowMode mode, 
 	_depthPrepass 		= Resources::manager().getProgram("object_prepass_forward");
 	_objectProgram		= Resources::manager().getProgram("object_forward");
 	_parallaxProgram	= Resources::manager().getProgram("object_parallax_forward");
-	_emissiveProgram	= Resources::manager().getProgram("object_emissive_forward");
+	_emissiveProgram	= Resources::manager().getProgram("object_emissive_forward", "object_forward", "object_emissive_forward");
 	_transparentProgram = Resources::manager().getProgram("object_transparent_forward", "object_forward", "object_transparent_forward");
 	_clearCoatProgram 	= Resources::manager().getProgram("object_clearcoat_forward", "object_forward", "object_clearcoat_forward");
 
@@ -118,21 +118,6 @@ void ForwardRenderer::renderOpaque(const Culler::List & visibles, const glm::mat
 		const glm::mat4 MV	= view * object.model();
 		const glm::mat4 MVP = proj * MV;
 
-		// Shortcut for emissive objects as their shader is quite different from other PBR shaders.
-		if(material.type() == Material::Type::Emissive){
-			_emissiveProgram->use();
-			_emissiveProgram->uniform("mvp", MVP);
-			_emissiveProgram->uniform("hasUV", object.useTexCoords());
-			if(material.twoSided()) {
-				GPU::setCullState(false);
-			}
-			// Bind the textures.
-			_emissiveProgram->textures(material.textures());
-			GPU::drawMesh(*object.mesh());
-			GPU::setCullState(true, Faces::BACK);
-			continue;
-		}
-
 		// Select the program (and shaders).
 		Program * currentProgram = nullptr;
 		switch(material.type()) {
@@ -144,6 +129,9 @@ void ForwardRenderer::renderOpaque(const Culler::List & visibles, const glm::mat
 				break;
 			case Material::Clearcoat:
 				currentProgram = _clearCoatProgram;
+				break;
+			case Material::Emissive:
+				currentProgram = _emissiveProgram;
 				break;
 			default:
 				Log::Error() << "Unsupported material type." << std::endl;
@@ -332,7 +320,7 @@ void ForwardRenderer::draw(const Camera & camera, Framebuffer & framebuffer, uin
 		const glm::mat4 invView = glm::inverse(view);
 		const glm::vec2 invScreenSize = 1.0f / glm::vec2(_sceneFramebuffer->width(), _sceneFramebuffer->height());
 		// Update shared data for the three programs.
-		Program * programs[] = {_parallaxProgram, _objectProgram, _clearCoatProgram, _transparentProgram };
+		Program * programs[] = {_parallaxProgram, _objectProgram, _clearCoatProgram, _transparentProgram, _emissiveProgram };
 		for(Program * prog : programs){
 			prog->use();
 			prog->uniform("inverseV", invView);

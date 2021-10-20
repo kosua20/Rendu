@@ -30,7 +30,7 @@ void main(){
 	// Normalize emissive color, store intensity in effects texture.
 	float m = max(max(atmosphereColor.r, 0.001), max(atmosphereColor.g, atmosphereColor.b));
 	fragColor.rgb = atmosphereColor/m;
-	fragColor.a = encodeMaterial(MATERIAL_EMISSIVE);
+	fragColor.a = encodeMaterial(MATERIAL_UNLIT);
 	fragNormal.rg = encodeNormal(vec3(0.0));
 	fragNormal.ba = vec2(0.0);
 	fragEffects = floatToVec4(m);

@@ -31,12 +31,12 @@ void main(){
 	
 	vec2 uv = gl_FragCoord.xy/textureSize(albedoTexture, 0).xy;
 	Material material = decodeMaterialFromGbuffer(uv, albedoTexture, normalTexture, effectsTexture);
-
-	// If emissive (skybox or object), don't shade.
-	if(material.id == MATERIAL_EMISSIVE){
+	
+	// Skip unlit.
+	if(material.id == MATERIAL_UNLIT){
 		discard;
 	}
-	
+
 	// Recompute view space position.
 	float depth = textureLod(sampler2D(depthTexture, sClampNear),uv, 0.0).r;
 	vec3 position = positionFromDepth(depth, uv, projectionMatrix);

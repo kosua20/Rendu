@@ -31,9 +31,9 @@ layout(location = 0) out vec3 fragColor; ///< Color.
 void main(){
 	vec2 uv = In.uv;
 	Material material = decodeMaterialFromGbuffer(uv, albedoTexture, normalTexture, effectsTexture);
-
-	// If emissive (skybox or object), don't shade.
-	if(material.id == MATERIAL_EMISSIVE){
+	
+	// Skip unlit.
+	if(material.id == MATERIAL_UNLIT){
 		discard;
 	}
 	

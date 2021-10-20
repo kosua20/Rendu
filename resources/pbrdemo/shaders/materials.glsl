@@ -1,9 +1,10 @@
 #include "samplers.glsl"
 #include "utils.glsl"
 
-#define MATERIAL_EMISSIVE 0 ///< Emissive, non shaded material.
+#define MATERIAL_UNLIT 0 ///< Passthrough, non shaded material.
 #define MATERIAL_STANDARD 1 ///< Basic PBR material (dielectric or metal).
 #define MATERIAL_CLEARCOAT 2 ///< Clear coat & standard PBR material.
+#define MATERIAL_EMISSIVE 3 ///< Emissive material with a specular dielectric layer.
 
 /** Encode a material ID for storage in the G-buffer.
  \param material the identifier to encode
@@ -62,6 +63,21 @@ struct Material {
 	// Clear coat
 	float clearCoat; ///< Clear coat intensity.
 	float clearCoatRoughness; ///< Clear coat roughness.
+
+	// Anisotropy
+	//float anisotropy;
+	//float anisotropyDirection;
+	// Irridescence.
+	//float indexOfRefraction;
+	//float membraneThickness;
+	// Sheen
+	//float sheen;
+	//vec3 sheenColor;
+	//float sheenRoughness;
+	// Subsurface
+	//vec3 subsurfaceColor;
+	//float thickness;
+	//float subsurfaceRoughness;
 };
 
 /** Fill a material with default parameters.
@@ -92,18 +108,34 @@ Material decodeMaterialFromGbuffer(vec2 uv, texture2D gbuffer0, texture2D gbuffe
 	Material material = initMaterial();
 
 	vec4 albedoInfo = textureLod(sampler2D(gbuffer0, sClampNear),uv, 0.0);
-	material.id = decodeMaterial(albedoInfo.a);
-	material.reflectance = albedoInfo.rgb;
-
 	vec4 normalInfo = textureLod(sampler2D(gbuffer1, sClampNear), uv, 0.0);
+	vec4 effectInfo = textureLod(sampler2D(gbuffer2, sClampNear), uv, 0.0);
+
+	material.id = decodeMaterial(albedoInfo.a);
 	material.normal = decodeNormal(normalInfo.rg);
 
-	vec4 effectInfo = textureLod(sampler2D(gbuffer2, sClampNear), uv, 0.0);
+	// Early exit for unlit.
+	if(material.id == MATERIAL_UNLIT){
+		return material;
+	}
+
+	material.reflectance = albedoInfo.rgb;
+
 	material.roughness = max(0.045, effectInfo.r);
 	material.ao = effectInfo.b;
 	// Metalness is packed with something else.
 	float parameter;
 	decodeMetalnessAndParameter(effectInfo.g, material.metalness, parameter);
+
+	// Emissive assumes a black diffuse, no AO and no metalness.
+	if(material.id == MATERIAL_EMISSIVE){
+		material.reflectance = vec3(0.0,0.0,0.0);
+		material.metalness = 0.0;
+		material.ao = 1.0;
+		// Retrieve roughness from second texture.
+		material.roughness = max(0.045, normalInfo.b);
+		return material;
+	}
 
 	// Decode clear coat if present.
 	if(material.id == MATERIAL_CLEARCOAT){
@@ -111,5 +143,6 @@ Material decodeMaterialFromGbuffer(vec2 uv, texture2D gbuffer0, texture2D gbuffe
 		material.clearCoatRoughness = effectInfo.a;
 	}
 
+	
 	return material;
 }
