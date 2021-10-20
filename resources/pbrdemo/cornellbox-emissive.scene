@@ -80,6 +80,8 @@
 * material: 
 	textures: 
 		- rgb32: 0.0,1.25,0.0 
+		- rgb: default_normal
+		- rgb: 1.0,0.0,1.0
 	masked: false 
 	twosided: true 
 	type: Emissive 
@@ -88,6 +90,8 @@
 * material: 
 	textures: 
 		- rgb32: 1.25,0.0,0.0 
+		- rgb: default_normal
+		- rgb: 1.0,0.0,1.0
 	masked: false 
 	twosided: true 
 	type: Emissive 
@@ -96,6 +100,8 @@
 * material: 
 	textures: 
 		- rgb32: light_grid 
+		- rgb: default_normal
+		- rgb: 0.18,0.0,1.0
 	masked: false 
 	twosided: false 
 	type: Emissive 
@@ -104,6 +110,8 @@
 * material: 
 	textures: 
 		- rgb32: 0.0,0.0,1.25 
+		- rgb: default_normal
+		- rgb: 1.0,0.0,1.0
 	masked: false 
 	twosided: true 
 	type: Emissive 
