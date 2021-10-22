@@ -952,7 +952,7 @@ void GPU::setupMesh(Mesh & mesh) {
 	totalSize += 3 * mesh.normals.size();
 	totalSize += 2 * mesh.texcoords.size();
 	totalSize += 3 * mesh.tangents.size();
-	totalSize += 3 * mesh.binormals.size();
+	totalSize += 3 * mesh.bitangents.size();
 	totalSize += 3 * mesh.colors.size();
 	totalSize *= sizeof(float);
 
@@ -977,7 +977,7 @@ void GPU::setupMesh(Mesh & mesh) {
 		{ reinterpret_cast<uchar*>(mesh.normals.data()), mesh.normals.size(), 3},
 		{ reinterpret_cast<uchar*>(mesh.texcoords.data()), mesh.texcoords.size(), 2},
 		{ reinterpret_cast<uchar*>(mesh.tangents.data()), mesh.tangents.size(), 3},
-		{ reinterpret_cast<uchar*>(mesh.binormals.data()), mesh.binormals.size(), 3},
+		{ reinterpret_cast<uchar*>(mesh.bitangents.data()), mesh.bitangents.size(), 3},
 		{ reinterpret_cast<uchar*>(mesh.colors.data()), mesh.colors.size(), 3},
 	};
 

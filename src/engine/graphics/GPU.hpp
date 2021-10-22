@@ -187,7 +187,7 @@ public:
 
 	/** Mesh loading: send a mesh data to the GPU and set the input mesh GPU infos accordingly.
 	 \param mesh the mesh to upload
-	 \note The order of attribute locations is: position, normal, uvs, tangents, binormals.
+	 \note The order of attribute locations is: position, normal, uvs, tangents, bitangents.
 	 */
 	static void setupMesh(Mesh & mesh);
 

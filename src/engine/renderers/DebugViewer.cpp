@@ -463,7 +463,7 @@ void DebugViewer::displayMesh(MeshInfos & mesh) {
 		ImGui::NextColumn();
 		ImGui::Text("Tangents: %lu", metrics.tangents);
 		ImGui::NextColumn();
-		ImGui::Text("Binormals: %lu", metrics.binormals);
+		ImGui::Text("Bitangents: %lu", metrics.bitangents);
 		ImGui::NextColumn();
 		ImGui::Text("Colors: %lu", metrics.colors);
 		ImGui::NextColumn();

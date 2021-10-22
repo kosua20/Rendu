@@ -4,9 +4,56 @@
 #include "graphics/GPU.hpp"
 #include "system/TextUtilities.hpp"
 
+#include <mikktspace/mikktspace.h>
 #include <sstream>
 #include <fstream>
 #include <cstddef>
+
+// MikkTSpace helpers.
+
+struct MikktspaceWrapper {
+	Mesh * mesh;
+	int faceCount;
+	std::vector<glm::vec4> tangents;
+};
+
+int mtsGetNumFaces(const SMikkTSpaceContext * context){
+	const MikktspaceWrapper * meshWrap = reinterpret_cast<MikktspaceWrapper *>(context->m_pUserData);
+	return meshWrap->faceCount;
+}
+
+int mtsGetNumVerticesOfFace(const SMikkTSpaceContext *, const int){
+	return 3;
+}
+
+void mtsGetPosition(const SMikkTSpaceContext * context, float posOut[], const int iFace, const int iVert){
+	Mesh& mesh = *(reinterpret_cast<MikktspaceWrapper *>(context->m_pUserData)->mesh);
+	const glm::vec3 & position = mesh.positions[mesh.indices[3 * iFace + iVert]];
+	posOut[0] = position[0];
+	posOut[1] = position[1];
+	posOut[2] = position[2];
+}
+
+void mtsGetNormal(const SMikkTSpaceContext * context, float normOut[], const int iFace, const int iVert){
+	Mesh& mesh = *(reinterpret_cast<MikktspaceWrapper *>(context->m_pUserData)->mesh);
+	const glm::vec3& normal = mesh.normals[mesh.indices[3 * iFace + iVert]];
+	normOut[0] = normal[0];
+	normOut[1] = normal[1];
+	normOut[2] = normal[2];
+}
+void mtsGetTexCoord(const SMikkTSpaceContext * context, float texcOut[], const int iFace, const int iVert){
+	Mesh& mesh = *(reinterpret_cast<MikktspaceWrapper *>(context->m_pUserData)->mesh);
+	const glm::vec2 & texcoord = mesh.texcoords[mesh.indices[3 * iFace + iVert]];
+	texcOut[0] = texcoord[0];
+	texcOut[1] = texcoord[1];
+}
+
+void mtsSetTSpaceBasic(const SMikkTSpaceContext * context, const float tangent[], const float sign, const int iFace, const int iVert){
+	std::vector<glm::vec4> & tangents = reinterpret_cast<MikktspaceWrapper *>(context->m_pUserData)->tangents;
+	tangents[iFace * 3 + iVert] = glm::vec4(tangent[0], tangent[1], tangent[2], sign);
+}
+
+// Mesh implementation.
 
 Mesh::Mesh(const std::string & name) : _name(name) {
 
@@ -195,7 +242,7 @@ void Mesh::clearGeometry() {
 	positions.clear();
 	normals.clear();
 	tangents.clear();
-	binormals.clear();
+	bitangents.clear();
 	texcoords.clear();
 	indices.clear();
 	// Don't update the metrics automatically
@@ -268,89 +315,150 @@ void Mesh::computeNormals() {
 	updateMetrics();
 }
 
-void Mesh::computeTangentsAndBinormals(bool force) {
+void Mesh::computeTangentsAndBitangents(bool force) {
 	const bool uvAvailable = !texcoords.empty();
 	if(positions.empty() || normals.empty() || (!uvAvailable && !force)) {
 		// No available info.
 		return;
 	}
-
-	// Start by filling everything with 0 (as we want to accumulate tangents and binormals coming from different faces for each vertex).
-	for(size_t pid = 0; pid < positions.size(); ++pid) {
-		tangents.emplace_back(0.0f);
-		binormals.emplace_back(0.0f);
+	
+	// \todo See if this is enough.
+	if(!uvAvailable && force){
+		texcoords.resize(positions.size(), glm::vec2(0.5f));
 	}
-	// Then, compute both vectors for each face and accumulate them.
-	for(size_t fid = 0; fid < indices.size(); fid += 3) {
 
-		const unsigned int i0 = indices[fid + 0];
-		const unsigned int i1 = indices[fid + 1];
-		const unsigned int i2 = indices[fid + 2];
+	// Prepare interface.
+	SMikkTSpaceInterface interface;
+	interface.m_getNumFaces = &mtsGetNumFaces;
+	interface.m_getNumVerticesOfFace = &mtsGetNumVerticesOfFace;
+	interface.m_getPosition = &mtsGetPosition;
+	interface.m_getNormal = &mtsGetNormal;
+	interface.m_getTexCoord = &mtsGetTexCoord;
+	interface.m_setTSpaceBasic = &mtsSetTSpaceBasic;
+	interface.m_setTSpace = nullptr;
 
-		// Get the vertices of the face.
-		const glm::vec3 & v0 = positions[i0];
-		const glm::vec3 & v1 = positions[i1];
-		const glm::vec3 & v2 = positions[i2];
-		const glm::vec3 deltaPosition1 = v1 - v0;
-		const glm::vec3 deltaPosition2 = v2 - v0;
+	// Wrap our data.
+	const uint indexCount = indices.size();
+	MikktspaceWrapper meshWrapper;
+	meshWrapper.mesh = this;
+	meshWrapper.faceCount = indexCount / 3;
+	meshWrapper.tangents.resize(indexCount);
 
-		bool done = false;
-		glm::vec3 tangent  = glm::vec3(0.0f);
-		glm::vec3 binormal = glm::vec3(0.0f);
+	// Run.
+	SMikkTSpaceContext context;
+	context.m_pInterface = &interface;
+	context.m_pUserData = &meshWrapper;
+	if(!genTangSpaceDefault(&context)){
+		Log::Error() << Log::Resources << "Unable to generate tangent frame for " << _name << "." << std::endl;
+		tangents.resize(positions.size(), glm::vec3(1.0f,0.0f,0.0f));
+		bitangents.resize(positions.size(), glm::vec3(0.0f,1.0f,0.0f));
+		return;
+	}
 
-		// Get the uvs of the face if available.
-		if(uvAvailable){
-			const glm::vec2 & uv0 = texcoords[i0];
-			const glm::vec2 & uv1 = texcoords[i1];
-			const glm::vec2 & uv2 = texcoords[i2];
-			// Note: our UVs are flipped to accomodate Vulkan texture orientation.
-			const glm::vec2 deltaUv1(uv1[0] - uv0[0], -uv1[1] + uv0[1]);
-			const glm::vec2 deltaUv2(uv2[0] - uv0[0], -uv2[1] + uv0[1]);
-			// Compute tangent and binormal for the face.
-			const float denom  = deltaUv1.x * deltaUv2.y - deltaUv1.y * deltaUv2.x;
-			if(std::abs(denom) >= 0.001f) {
-				const float det = (1.0f / denom);
-				tangent			= det * (deltaPosition1 * deltaUv2.y - deltaPosition2 * deltaUv1.y);
-				binormal		= det * (deltaPosition2 * deltaUv1.x - deltaPosition1 * deltaUv2.x);
-				done = true;
+	// Vertices can have a different tangent attributed for each face they belong to.
+	// We need to duplicate these vertices.
+	const size_t posCount = positions.size();
+	struct RemapInfo {
+		uint initialIndex = 0;
+		uint remapIndex = 0;
+		int refOffset = -1;
+	};
+	// Build a list of remapping infos for each vertex (as many as there are faces it belongs to).
+	std::vector<std::vector<RemapInfo>> perVertexRemaps(posCount);
+	for(uint iid = 0; iid < indexCount; ++iid){
+		const uint vid = indices[iid];
+		perVertexRemaps[vid].emplace_back();
+		perVertexRemaps[vid].back().initialIndex = iid;
+	}
+	// Count how many collisions we have, and determine if instances of each vertex share the same tangent.
+	uint collisions = 0;
+
+	std::vector<bool> collidedVertices(posCount, false);
+	for(uint vid = 0; vid < posCount; ++vid){
+		auto & remaps = perVertexRemaps[vid];
+		const uint remapCount = remaps.size();
+		// FIrst instance always map to itself.
+		remaps[0].remapIndex = remaps[0].initialIndex;
+
+		// For other instances, map them to the earliest instance with the same tangent value.
+		for(uint rid = 1; rid < remapCount; ++rid){
+			bool found = false;
+			const glm::vec4 & newTangent = meshWrapper.tangents[remaps[rid].initialIndex];
+
+			for(uint orid = rid - 1; orid < rid; ++orid){
+				// Same tangent detected on an earlier instance.
+				if(newTangent == meshWrapper.tangents[remaps[orid].initialIndex]){
+					found = true;
+					remaps[rid].remapIndex = remaps[orid].initialIndex;
+					break;
+				}
+			}
+			// If not found, insert the instance at the end of the position list.
+			if(!found){
+				collidedVertices[vid] = true;
+				remaps[rid].remapIndex = remaps[rid].initialIndex;
+				remaps[rid].refOffset = collisions;
+				++collisions;
 			}
 		}
-		// Fallback to basic frame.
-		if(!done){
-			const glm::vec3 normal = glm::normalize(glm::cross(deltaPosition1, deltaPosition2));
-			tangent				   = std::abs(normal.z) > 0.8f ? glm::vec3(1.0f, 0.0f, 0.0f) : glm::vec3(0.0f, 0.0f, 1.0f);
-			binormal			   = glm::normalize(glm::cross(normal, tangent));
-			tangent				   = glm::normalize(glm::cross(binormal, normal));
-		}
-		// Accumulate them. We don't normalize to get a free weighting based on the size of the face.
-		tangents[i0] += tangent;
-		tangents[i1] += tangent;
-		tangents[i2] += tangent;
-
-		binormals[i0] += binormal;
-		binormals[i1] += binormal;
-		binormals[i2] += binormal;
 	}
-	// Finally, enforce orthogonality and good orientation of the basis.
-	for(size_t tid = 0; tid < tangents.size(); ++tid) {
 
-		// Detect tangent cancellations and orthogonality.
-		if(glm::all(glm::equal(glm::cross(tangents[tid], normals[tid]), glm::vec3(0.0f)))){
-			// Assume normal is never zero.
-			tangents[tid] = glm::cross(glm::normalize(binormals[tid]), normals[tid]);
-		}
-		// Re-update tangent.
-		tangents[tid] = glm::normalize(tangents[tid] - normals[tid] * glm::dot(normals[tid], tangents[tid]));
-		if(glm::dot(glm::cross(normals[tid], tangents[tid]), binormals[tid]) < 0.0f) {
-			tangents[tid] *= -1.0f;
-		}
-		// Detect binormal cancellations.
-		if(glm::length(binormals[tid]) < 0.1f){
-			binormals[tid] = glm::cross(normals[tid], tangents[tid]);
-		}
-		binormals[tid] = glm::normalize(binormals[tid]);
+	// Resize all mesh storages.
+	const size_t newPosCount = posCount + collisions;
+	positions.resize(newPosCount);
+	normals.resize(newPosCount);
+	texcoords.resize(newPosCount);
+	tangents.resize(newPosCount);
+	bitangents.resize(newPosCount);
+	const bool hasColor = !colors.empty();
+	if(hasColor){
+		colors.resize(newPosCount);
 	}
-	Log::Verbose() << Log::Resources << "Mesh: " << tangents.size() << " tangents and binormals computed." << std::endl;
+
+	// Compute tangents and bitangents, add new attribute copies and update faces with remapped indices.
+	auto storeTangent = [&meshWrapper, this](uint tid, uint vid){
+		const glm::vec4& tgt = meshWrapper.tangents[tid];
+		tangents[vid] = glm::vec3(tgt);
+		// Bitangent is recomputed from tangent and sign.
+		// Flip the frame.
+		bitangents[vid] = -tgt.w * glm::cross(normals[vid], tangents[vid]);
+		// Re-normalize.
+		tangents[vid] = glm::normalize(tangents[vid]);
+		bitangents[vid] = glm::normalize(bitangents[vid]);
+	};
+
+	for(uint vid = 0; vid < posCount; ++vid){
+		const auto & remaps = perVertexRemaps[vid];
+		// Initial instance is copied in place.
+		storeTangent(remaps[0].initialIndex, vid);
+		// Skip if no collisions detected.
+		if(!collidedVertices[vid]){
+			continue;
+		}
+		// Remapping.
+		const uint remapCount = remaps.size();
+		for(uint i = 1; i < remapCount; ++i){
+			// If no offset has been stored, we just have to update the vertex index in the corresponding face
+			// to point to an earlier instance with the same tangent.
+			if(remaps[i].refOffset < 0){
+				indices[remaps[i].initialIndex] = indices[remaps[i].remapIndex];
+				continue;
+			}
+			// Append to the end of the positions/...
+			const uint finalIndex = posCount + remaps[i].refOffset;
+			indices[remaps[i].initialIndex] = finalIndex;
+			// Copy other attributes as-is.
+			positions[finalIndex] = positions[vid];
+			normals[finalIndex] = normals[vid];
+			texcoords[finalIndex] = texcoords[vid];
+			if(hasColor){
+				colors[finalIndex] = colors[vid];
+			}
+			// Store tangent and compute bitangent from normal.
+			storeTangent(remaps[i].initialIndex, finalIndex);
+		}
+	}
+	Log::Info() << Log::Resources << "Treated " << collisions << " for " << name() << std::endl;
 
 	updateMetrics();
 }
@@ -423,7 +531,7 @@ void Mesh::updateMetrics(){
 	_metrics.vertices = positions.size();
 	_metrics.normals = normals.size();
 	_metrics.tangents = tangents.size();
-	_metrics.binormals = binormals.size();
+	_metrics.bitangents = bitangents.size();
 	_metrics.colors = colors.size();
 	_metrics.texcoords = texcoords.size();
 	_metrics.indices = indices.size();

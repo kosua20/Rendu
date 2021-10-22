@@ -4,7 +4,7 @@ layout(location = 0) in vec3 v; ///< Position.
 layout(location = 1) in vec3 n; ///< Normal.
 layout(location = 2) in vec2 uv; ///< Texture coordinates.
 layout(location = 3) in vec3 tang; ///< Tangent.
-layout(location = 4) in vec3 binor; ///< Binormal.
+layout(location = 4) in vec3 bitan; ///< Bitangent.
 
 layout(set = 0, binding = 1) uniform UniformBlock {
 	mat4 mvp; ///< MVP transformation matrix.
@@ -31,9 +31,9 @@ void main(){
 
 	mat3 nMat = mat3(normalMatrix);
 	// Compute the TBN matrix (from tangent space to view space).
-	vec3 T = normalize(nMat * tang);
-	vec3 B = normalize(nMat * binor);
-	vec3 N = normalize(nMat * n);
+	vec3 T = (nMat * tang);
+	vec3 B = (nMat * bitan);
+	vec3 N = (nMat * n);
 	mat3 tbn = mat3(T, B, N);
 	Out.tbn = mat4(tbn);
 	

@@ -27,7 +27,7 @@ public:
 		size_t vertices = 0; ///< Vertex count.
 		size_t normals = 0; ///< Normal count.
 		size_t tangents = 0; ///< Tangent count.
-		size_t binormals = 0; ///< Binormal count.
+		size_t bitangents = 0; ///< Bitangent count.
 		size_t colors = 0; ///< Color count.
 		size_t texcoords = 0; ///< UV count.
 		size_t indices = 0; ///< Index count.
@@ -64,10 +64,10 @@ public:
 	 */
 	void computeNormals();
 
-	/** Compute the tangent and binormal vectors for each vertex of a mesh.
+	/** Compute the tangent and bitangents vectors for each vertex of a mesh.
 	 \param force Compute local tangent frame even if texture coordinates are not available.
 	 */
-	void computeTangentsAndBinormals(bool force);
+	void computeTangentsAndBitangents(bool force);
 
 	/** Save an OBJ mesh on disk.
 	 \param path the path to the mesh
@@ -126,7 +126,7 @@ public:
 	std::vector<glm::vec3> positions;  ///< The 3D positions.
 	std::vector<glm::vec3> normals;	///< The surface normals.
 	std::vector<glm::vec3> tangents;   ///< The surface tangents.
-	std::vector<glm::vec3> binormals;  ///< The surface binormals.
+	std::vector<glm::vec3> bitangents;  ///< The surface bitangents.
 	std::vector<glm::vec3> colors;	 ///< The vertex colors.
 	std::vector<glm::vec2> texcoords;  ///< The texture coordinates.
 	std::vector<unsigned int> indices; ///< The triangular faces indices.

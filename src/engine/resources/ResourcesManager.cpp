@@ -322,8 +322,8 @@ const Mesh * Resources::getMesh(const std::string & name, Storage options) {
 	if(forceFrame && mesh.normals.empty()){
 		mesh.computeNormals();
 	}
-	// If uv or positions are missing, tangent/binormals won't be computed.
-	mesh.computeTangentsAndBinormals(forceFrame);
+	// If uv or positions are missing, tangent/bitangents won't be computed.
+	mesh.computeTangentsAndBitangents(forceFrame);
 	// Compute bounding box.
 	mesh.computeBoundingBox();
 

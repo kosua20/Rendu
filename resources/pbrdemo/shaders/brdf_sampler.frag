@@ -23,7 +23,7 @@ vec2 ggx(float NdotV, float roughness){
 	// Compute local frame.
 	vec3 temp = abs(n.z) < 0.999 ? vec3(0.0,0.0,1.0) : vec3(1.0,0.0,0.0);
 	vec3 tangent = normalize(cross(temp, n));
-	vec3 binormal = cross(n, tangent);
+	vec3 bitangent = cross(n, tangent);
 	
 	float alpha = max(0.0001, roughness*roughness);
 
@@ -40,7 +40,7 @@ vec2 ggx(float NdotV, float roughness){
 		
 		float angle = 2.0*M_PI*sampleVec.x;
 		// Local half vector and light direction.
-		vec3 h = normalize(sinT*cos(angle) * tangent + sinT*sin(angle) * binormal + cosT * n);
+		vec3 h = normalize(sinT*cos(angle) * tangent + sinT*sin(angle) * bitangent + cosT * n);
 		vec3 l = -reflect(v,h);
 		
 		float NdotL = max(l.z, 0.000);

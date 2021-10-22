@@ -5,6 +5,7 @@ Dependencies are stored in `src/libs`.  All dependencies are built along with th
 * **glfw**: download source from https://github.com/glfw/glfw/releases, copy `src` and `include` to local `glfw` directory (`premake` file is provided).
 * **glm**: download source from https://github.com/g-truc/glm/releases, copy content of `src` to local `glm` directory.
 * **imgui**: download source from https://github.com/ocornut/imgui/releases, copy all `*.{h, cpp}` files from the root *except* `imconfig.h` to local `imgui` directory, along with `backends/imgui_impl_{vulkan, glfw}.{h, cpp}`. Apply `imgui/vulkan_patch.diff`.
+* *mikktspace**: download source from https://github.com/mmikk/MikkTSpace, copy `mikktspace.{h,c}` to local `mikktspace` directory.
 * **miniz**: download source from https://github.com/richgel999/miniz/releases, copy `miniz.{h,c}` to local `miniz` directory.
 * **nfd**: download source from https://github.com/mlabbe/nativefiledialog, copy content of `src` and `src/include` to local `nfd` directory (`premake` file is provided).
 * **stb_image**: download source from https://github.com/nothings/stb, copy `stb_image.h` and `stb_image_write.h` to local `stb_image` directory.
