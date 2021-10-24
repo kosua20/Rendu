@@ -73,11 +73,7 @@ void main(){
 
 	// Geometric data.
 	vec3 v = normalize(-In.viewSpacePosition.xyz);
-	float NdotV = max(0.0, dot(v, material.normal));
-	vec3 worldN = normalize(vec3(inverseV * vec4(material.normal, 0.0)));
 	vec3 worldP = vec3(inverseV * vec4(In.viewSpacePosition.xyz, 1.0));
-	vec3 worldV = normalize(inverseV[3].xyz - worldP);
-	vec3 worldR = -reflect(worldV, worldN);
 
 	// Accumulate envmaps contributions.
 	fragColor = vec4(0.0);
@@ -89,8 +85,8 @@ void main(){
 		float weight = probeWeight(worldP, probe);
 
 		vec3 diffuse, specular;
-		ambientLighting(material, worldP, worldN, worldV, worldR, NdotV, probe, textureProbes[pid], probesSH[pid].coeffs, brdfPrecalc, diffuse, specular);
-
+		ambientLighting(material, worldP, v, inverseV, probe, textureProbes[pid], probesSH[pid].coeffs, brdfPrecalc, diffuse, specular);
+		
 		// Apply transparency on the diffuse.
 		fragColor += weight * vec4(albedoInfos.a * diffuse + specular, 1.0);
 	}

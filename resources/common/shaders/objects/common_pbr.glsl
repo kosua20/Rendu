@@ -189,7 +189,7 @@ float probeWeight(vec3 p, Probe probe){
 }
 
 /** Evaluate the ambient irradiance (as SH coefficients) in a given direction.
-	\param wn the direction (normalized)
+	\param wn the direction (normalized) in world space
 	\param coeffs the SH coefficients
 	\return the ambient irradiance
 	*/
@@ -243,11 +243,9 @@ void ambientBrdf(Material material, vec3 F0, float NdotV, texture2D brdfCoeffs, 
 
 /** Evaluate the lighting contribution from an analytic light source.
  \param material the surface point material parameters
- \param p the surface position (in world space)
- \param n the surface normal (in world space)
- \param v the outgoing view direction (in world space)
- \param r the reflected direction (in world space)
- \param NdotV the dot product of the view and normal directions
+ \param worldP the surface position (in world space)
+ \param viewV the outgoing view direction (in view space)
+ \param inverseV the transformation matrix from view to world space
  \param probe the environment probe parameters
  \param envmap the environment probe texture
  \param envSH the environment probe irradiance coefficients
@@ -255,11 +253,21 @@ void ambientBrdf(Material material, vec3 F0, float NdotV, texture2D brdfCoeffs, 
  \param diffuse will contain the diffuse ambient contribution
  \param specular will contain the specular ambient contribution
  */
-void ambientLighting(Material material, vec3 p, vec3 n, vec3 v, vec3 r, float NdotV, Probe probe, textureCube envmap, vec4 envSH[9], texture2D brdfLUT, out vec3 diffuse, out vec3 specular){
-	
-	vec3 radianceL = radiance(r, p, material.roughness, envmap, probe);
+void ambientLighting(Material material, vec3 worldP, vec3 viewV, mat4 inverseV, Probe probe, textureCube envmap, vec4 envSH[9], texture2D brdfLUT, out vec3 diffuse, out vec3 specular){
+	// Attenuation factor.
+	float NdotV = max(0.0, dot(viewV, material.normal));
 
-	vec3 irradianceL = applySH(n, envSH);
+	vec3 tweakedN = material.normal;
+	
+	// Reflect the ray along the (adjusted) normal, and convert to world space.
+	vec3 r = reflect(-viewV, tweakedN);
+	vec3 worldR = normalize(vec3(inverseV * vec4(r, 0.0)));
+	// Sample cubemap for the current roughness and reflected direction, applying the proxy correction if needed.
+	vec3 radianceL = radiance(worldR, worldP, material.roughness, envmap, probe);
+
+	// Irradiance is sampled in world space, along the surface direction.
+	vec3 worldN = normalize(vec3(inverseV * vec4(material.normal, 0.0)));
+	vec3 irradianceL = applySH(worldN, envSH);
 
 	// BRDF contributions.
 	// Compute F0 (fresnel coeff).
@@ -280,7 +288,7 @@ void ambientLighting(Material material, vec3 p, vec3 n, vec3 v, vec3 r, float Nd
 	if(material.id == MATERIAL_CLEARCOAT){
 		// Second specular lobe with its own roughness.
 		float aoSpecularClearCoat = approximateSpecularAO(material.ao, NdotV, material.clearCoatRoughness);
-		vec3 clearCoatRadiance = radiance(r, p, material.clearCoatRoughness, envmap, probe);
+		vec3 clearCoatRadiance = radiance(worldR, worldP, material.clearCoatRoughness, envmap, probe);
 		// To remain energy preserving, modulate base layer contribution using the Fresnel of the clear coat layer.
 		// Note: to be as correct as possible, we should probably take this into account in
 		// the multi-bounce correction we already applied on the base layer.
@@ -367,7 +375,7 @@ bool applyPointLight(Light light, vec3 viewSpacePos, textureCubeArray shadowMap,
 	float localRadius2 = dot(deltaPosition, deltaPosition);
 	float radiusRatio2 = localRadius2 / (light.radius * light.radius);
 	float attenNum = clamp(1.0 - radiusRatio2, 0.0, 1.0);
-	shadowing = attenNum*attenNum;
+	shadowing = attenNum * attenNum;
 
 	// Shadowing.
 	if(light.shadowMode != SHADOW_NONE){

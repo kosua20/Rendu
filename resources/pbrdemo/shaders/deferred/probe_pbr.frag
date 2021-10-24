@@ -66,15 +66,10 @@ void main(){
 
 	// Geometric data.
 	vec3 v = normalize(-position);
-	float NdotV = max(0.0, dot(v, material.normal));
-	vec3 worldN = normalize(vec3(inverseV * vec4(material.normal, 0.0)));
-	vec3 worldV = normalize(inverseV[3].xyz - worldP);
-	// Reflect the ray
-	vec3 worldR = -reflect(worldV, worldN);
-
+	
 	// Evaluate BRDF and combine it with environment data.
 	vec3 diffuse, specular;
-	ambientLighting(material, worldP, worldN, worldV, worldR, NdotV, probe, textureCubeMap, shCoeffs, brdfPrecalc, diffuse, specular);
+	ambientLighting(material, worldP, v, inverseV, probe, textureCubeMap, shCoeffs, brdfPrecalc, diffuse, specular);
 
 	fragColor.rgb = weight * (diffuse + specular);
 

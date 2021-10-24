@@ -63,21 +63,7 @@ struct Material {
 	// Clear coat
 	float clearCoat; ///< Clear coat intensity.
 	float clearCoatRoughness; ///< Clear coat roughness.
-
 	// Anisotropy
-	//float anisotropy;
-	//float anisotropyDirection;
-	// Irridescence.
-	//float indexOfRefraction;
-	//float membraneThickness;
-	// Sheen
-	//float sheen;
-	//vec3 sheenColor;
-	//float sheenRoughness;
-	// Subsurface
-	//vec3 subsurfaceColor;
-	//float thickness;
-	//float subsurfaceRoughness;
 };
 
 /** Fill a material with default parameters.
