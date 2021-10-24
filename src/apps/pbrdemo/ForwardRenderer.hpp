@@ -86,12 +86,13 @@ private:
 	std::unique_ptr<ForwardLight> _lightsGPU;	///< The lights renderer.
 	std::unique_ptr<ForwardProbe> _probesGPU;	///< The probes renderer.
 
-	Program * _objectProgram;		 ///< Basic PBR program
-	Program * _parallaxProgram;	 ///< Parallax mapping PBR program
-	Program * _emissiveProgram;	 ///< Parallax mapping PBR program
-	Program * _transparentProgram;	 ///< Transparent PBR program
-	Program * _clearCoatProgram; ///< Basic PBR program with an additional clear coat specular layer.
-	Program * _depthPrepass; ///< Depth prepass program.
+	Program * _objectProgram;		///< Basic PBR program
+	Program * _parallaxProgram;	 	///< Parallax mapping PBR program
+	Program * _emissiveProgram;	 	///< Parallax mapping PBR program
+	Program * _transparentProgram;	///< Transparent PBR program
+	Program * _clearCoatProgram; 	///< Basic PBR program with an additional clear coat specular layer.
+	Program * _anisotropicProgram; 	///< Basic PBR with anisotropic roughness.
+	Program * _depthPrepass; 		///< Depth prepass program.
 
 	Program * _skyboxProgram; ///< Skybox program.
 	Program * _bgProgram;		///< Planar background program.

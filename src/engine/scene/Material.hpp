@@ -17,7 +17,8 @@ public:
 		Regular,  ///< PBR shading. \see GPU::Vert::Object_gbuffer, GPU::Frag::Object_gbuffer
 		Parallax, ///< PBR with parallax mapping. \see GPU::Vert::Object_parallax_gbuffer, GPU::Frag::Object_parallax_gbuffer
 		Clearcoat,  ///< PBR shading with an additional clear coat specular layer.
-		Emissive,  	 ///< Emissive objects (no shading, pure emitter)
+		Anisotropic, ///< PBR shading with an anisotropic BRDF.
+		Emissive,  	 ///< Emissive objects (no diffuse shading).
 		Transparent, ///< Transparent object
 	};
 

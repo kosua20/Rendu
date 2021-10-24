@@ -93,12 +93,13 @@ private:
 	std::unique_ptr<ForwardLight> _fwdLightsGPU;	///< The lights forward renderer for transparent objects.
 	std::unique_ptr<ForwardProbe> _fwdProbesGPU;	///< The probes forward renderer for transparent objects.
 
-	Program * _objectProgram;		 ///< Basic PBR program
-	Program * _parallaxProgram;	 ///< Parallax mapping PBR program
-	Program * _clearCoatProgram;	 ///< Basic PBR program with an additional clear coat specular layer.
-	Program * _emissiveProgram;	 ///< Emissive program
-	Program * _transparentProgram; ///< Transparent PBR program
-	Program * _probeNormalization; ///< Indirect lighting normalization program.
+	Program * _objectProgram;		///< Basic PBR program
+	Program * _parallaxProgram;		///< Parallax mapping PBR program
+	Program * _clearCoatProgram;	///< Basic PBR program with an additional clear coat specular layer.
+	Program * _anisotropicProgram;	///< Basic PBR with anisotropic roughness.
+	Program * _emissiveProgram;	 	///< Emissive program
+	Program * _transparentProgram;	///< Transparent PBR program
+	Program * _probeNormalization;	///< Indirect lighting normalization program.
 
 	Program * _skyboxProgram; ///< Skybox program.
 	Program * _bgProgram;		///< Planar background program.

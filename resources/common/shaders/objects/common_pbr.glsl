@@ -55,6 +55,22 @@ float D(float NdotH, float alpha){
 	return halfTerm * halfTerm * INV_M_PI;
 }
 
+/** Anisotropic GGX distribution term.
+	\param NdotH angle between the half and normal directions
+	\param TdotH angle between the half and tangent directions
+	\param BdotH angle between the half and bitangent directions
+	\param alphaT the roughness squared in the tangent direction
+	\param alphaB the roughness squared in the bitangent direction
+	\return the distribution term
+*/
+float DAnisotropic(float NdotH, float TdotH, float BdotH, float alphaT, float alphaB){
+	float alpha2 = alphaT * alphaB;
+	vec3 d = vec3(alphaB * TdotH, alphaT * BdotH, alpha2 * NdotH);
+	float d2 = dot(d, d);
+	float halfTerm = alpha2 / max(d2, 0.0001);
+	return alpha2 * halfTerm * halfTerm * INV_M_PI;
+}
+
 /** Visibility term of GGX BRDF, V=G/(n.v)(n.l)
 \param NdotL dot product of the light direction with the surface normal
 \param NdotV dot product of the view direction with the surface normal
@@ -79,6 +95,23 @@ float Vfast(float NdotL, float NdotV, float alpha){
     float visV = NdotL * (NdotV * (1.0 - alpha) + alpha);
     float visL = NdotV * (NdotL * (1.0 - alpha) + alpha);
 	return 0.5 / max(0.0001, visV + visL);
+}
+
+/** Visibility term of the anisotropic GGX BRDF.
+\param NdotL dot product of the light direction with the surface normal
+\param NdotV dot product of the view direction with the surface normal
+\param TdotV dot product of the tangent direction with the view direction
+\param BdotV dot product of the bitangent direction with the view direction
+\param TdotL dot product of the tangent direction with the light direction
+\param BdotL dot product of the bitangent direction with the light direction
+\param alphaT squared roughness in the tangent direction
+\param alphaB squared roughness in the bitangent direction
+\return the value of V
+*/
+float VAnisotropic(float NdotL, float NdotV, float TdotV, float BdotV, float TdotL, float BdotL, float alphaT, float alphaB){
+	float visL = NdotV * length(vec3(alphaT * TdotL, alphaB * BdotL, NdotL));
+	float visV = NdotL * length(vec3(alphaT * TdotV, alphaB * BdotV, NdotV));
+	return clamp(0.5 / max(0.0001, visV + visL), 0.0, 1.0);
 }
 
 /** Simplified visibility term described in A Microfacet Based Coupled Specular-Matte BRDF Model with Importance Sampling, Kelemen, 2001
@@ -127,6 +160,41 @@ float ggxClearCoat(vec3 n, vec3 v, vec3 l, vec3 h, float roughness, out float cl
 	float alpha = max(0.0001, roughness*roughness);
 	clearCoatFresnel = F(vec3(0.04), LdotH).x;
 	return D(NdotH, alpha) * VKelemen(LdotH) * clearCoatFresnel;
+}
+
+/** Evaluate the anisotropic GGX BRDF for a given normal, view direction, frame and
+	material parameters.
+	\param n the surface normal
+	\param v the view direction
+	\param l the light direction
+	\param h the half vector between the view and light
+	\param F0 the Fresnel coefficient
+	\param material the surface parameters
+	\return the BRDF value
+*/
+vec3 ggxAnisotropic(vec3 n, vec3 v, vec3 l, vec3 h, vec3 F0, Material material){
+	// Compute all needed dot products.
+	float NdotL = clamp(dot(n,l), 0.0, 1.0);
+	float NdotV = clamp(dot(n,v), 0.0, 1.0);
+	float NdotH = clamp(dot(n,h), 0.0, 1.0);
+	float VdotH = clamp(dot(v,h), 0.0, 1.0);
+	float TdotL = dot(material.tangent, l);
+	float BdotL = dot(material.bitangent, l);
+	float TdotV = dot(material.tangent, v);
+	float BdotV = dot(material.bitangent, v);
+	float TdotH = dot(material.tangent, h);
+	float BdotH = dot(material.bitangent, h);
+
+	// Anisotropic roughnesses.
+	// Parameterization described by C. Kulla and A. Conty in "Revisiting Physically Based Shading at Imageworks", 2017
+	// (http://www.aconty.com/pdf/s2017_pbs_imageworks_slides.pdf)
+	float alpha = max(0.0001, material.roughness * material.roughness);
+	float alphaT = clamp(alpha * (1.0 + material.anisotropy), 0.0001, 1.0);
+	float alphaB = clamp(alpha * (1.0 - material.anisotropy), 0.0001, 1.0);
+
+	float Da = DAnisotropic(NdotH, TdotH, BdotH, alphaT, alphaB);
+	float Va = VAnisotropic(NdotL, NdotV, TdotV, BdotV, TdotL, BdotL, alphaT, alphaB);
+	return Da * Va * F(F0, VdotH);
 }
 
 /** Estimate the Fresnel coefficient at an interface based on the internal and external medium IOR.
@@ -258,6 +326,17 @@ void ambientLighting(Material material, vec3 worldP, vec3 viewV, mat4 inverseV, 
 	float NdotV = max(0.0, dot(viewV, material.normal));
 
 	vec3 tweakedN = material.normal;
+
+	if(material.id == MATERIAL_ANISOTROPIC){
+		// Bent reflection vector to emulate anisotropic probes, as described by S. McAuley in "Rendering the World of Far Cry 4", 2015
+		// (https://www.gdcvault.com/play/1022235/Rendering-the-World-of-Far)
+		vec3 anisoDirection = material.anisotropy >= 0.0 ? material.bitangent : material.tangent;
+		vec3 anisoTangent = normalize(cross(anisoDirection, viewV));
+		vec3 anisoNormal = normalize(cross(anisoTangent, anisoDirection));
+		// Distort the normal torward the anisotropic pseudo-normal computed for the current view direction.
+		float sheer = abs(material.anisotropy) * clamp(1.5 * sqrt(material.roughness), 0.0, 1.0);
+		tweakedN = normalize(mix(material.normal, anisoNormal, sheer));
+	}
 	
 	// Reflect the ray along the (adjusted) normal, and convert to world space.
 	vec3 r = reflect(-viewV, tweakedN);
@@ -334,9 +413,14 @@ void directBrdf(Material material, vec3 n, vec3 v, vec3 l, out vec3 diffuse, out
 
 	// Normalized diffuse contribution. Metallic materials have no diffuse contribution.
 	diffuse = orientation * INV_M_PI * (1.0 - metallic) * baseColor * (1.0 - F0);
-	// Specular GGX contribution.
-	specular = orientation * ggx(n, v, l, h, F0, material.roughness);
-	
+
+	// Specular GGX contribution (anisotropic if needed).
+	if(material.id == MATERIAL_ANISOTROPIC){
+		specular = orientation * ggxAnisotropic(n, v, l, h, F0, material);
+	} else {
+		specular = orientation * ggx(n, v, l, h, F0, material.roughness);
+	}
+
 	// Apply clear coat lobe if available
 	if(material.id == MATERIAL_CLEARCOAT){
 		float clearCoatFresnel;

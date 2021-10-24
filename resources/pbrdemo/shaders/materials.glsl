@@ -5,6 +5,7 @@
 #define MATERIAL_STANDARD 1 ///< Basic PBR material (dielectric or metal).
 #define MATERIAL_CLEARCOAT 2 ///< Clear coat & standard PBR material.
 #define MATERIAL_EMISSIVE 3 ///< Emissive material with a specular dielectric layer.
+#define MATERIAL_ANISOTROPIC 4 ///< Anisotropic GGX material.
 
 /** Encode a material ID for storage in the G-buffer.
  \param material the identifier to encode
@@ -64,6 +65,10 @@ struct Material {
 	float clearCoat; ///< Clear coat intensity.
 	float clearCoatRoughness; ///< Clear coat roughness.
 	// Anisotropy
+	float anisotropy; ///< Anisotropy intensity, from 1 (max in the tangent direction) to -1 (max in the bitangent direction), and 0 (none).
+	vec3 tangent; ///< Tangent used for anisotropy, in view space.
+	vec3 bitangent; ///< Bitangent used for anisotropy, in view space.
+
 };
 
 /** Fill a material with default parameters.
@@ -79,6 +84,9 @@ Material initMaterial(){
 	params.ao = 1.0;
 	params.clearCoat = 0.0;
 	params.clearCoatRoughness = 0.03;
+	params.anisotropy = 0.0;
+	params.tangent = vec3(1.0,0.0,0.0);
+	params.bitangent = vec3(0.0,1.0,0.0);
 	return params;
 }
 
