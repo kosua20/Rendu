@@ -11,46 +11,84 @@
 
 // MikkTSpace helpers.
 
+/** Data that will be needed in the MikkTSpace callbacks. */
 struct MikktspaceWrapper {
-	Mesh * mesh;
-	int faceCount;
-	std::vector<glm::vec4> tangents;
+	Mesh * mesh; ///< The mesh being processed.
+	int faceCount; ///< Number of faces (cached).
+	std::vector<glm::vec4> tangents; ///< Will store the tangents for each index of each face.
 };
 
+/** Query the number of faces in the mesh.
+	\param context our internal data
+	\return the number of faces in the mesh
+ */
 int mtsGetNumFaces(const SMikkTSpaceContext * context){
 	const MikktspaceWrapper * meshWrap = reinterpret_cast<MikktspaceWrapper *>(context->m_pUserData);
 	return meshWrap->faceCount;
 }
 
-int mtsGetNumVerticesOfFace(const SMikkTSpaceContext *, const int){
+/** Query the number of vertices in a given face of the mesh.
+	\param context our internal data
+	\param faceId the face index
+	\return the number of vertices in the face
+ */
+int mtsGetNumVerticesOfFace(const SMikkTSpaceContext * context, const int faceId){
+	(void)context;
+	(void)faceId;
 	return 3;
 }
 
-void mtsGetPosition(const SMikkTSpaceContext * context, float posOut[], const int iFace, const int iVert){
+/** Query the position of a given vertex of a given face
+	\param context our internal data
+	\param posOut will be populated with the position
+	\param faceId the face index
+	\param vertId the vertex index in the face
+ */
+void mtsGetPosition(const SMikkTSpaceContext * context, float posOut[], const int faceId, const int vertId){
 	Mesh& mesh = *(reinterpret_cast<MikktspaceWrapper *>(context->m_pUserData)->mesh);
-	const glm::vec3 & position = mesh.positions[mesh.indices[3 * iFace + iVert]];
+	const glm::vec3 & position = mesh.positions[mesh.indices[3 * faceId + vertId]];
 	posOut[0] = position[0];
 	posOut[1] = position[1];
 	posOut[2] = position[2];
 }
 
-void mtsGetNormal(const SMikkTSpaceContext * context, float normOut[], const int iFace, const int iVert){
+/** Query the normal of a given vertex of a given face
+	\param context our internal data
+	\param normOut will be populated with the normal
+	\param faceId the face index
+	\param vertId the vertex index in the face
+ */
+void mtsGetNormal(const SMikkTSpaceContext * context, float normOut[], const int faceId, const int vertId){
 	Mesh& mesh = *(reinterpret_cast<MikktspaceWrapper *>(context->m_pUserData)->mesh);
-	const glm::vec3& normal = mesh.normals[mesh.indices[3 * iFace + iVert]];
+	const glm::vec3& normal = mesh.normals[mesh.indices[3 * faceId + vertId]];
 	normOut[0] = normal[0];
 	normOut[1] = normal[1];
 	normOut[2] = normal[2];
 }
-void mtsGetTexCoord(const SMikkTSpaceContext * context, float texcOut[], const int iFace, const int iVert){
+
+/** Query the texture coordinates of a given vertex of a given face
+	\param context our internal data
+	\param texcOut will be populated with the texture coordinates
+	\param faceId the face index
+	\param vertId the vertex index in the face
+ */
+void mtsGetTexCoord(const SMikkTSpaceContext * context, float texcOut[], const int faceId, const int vertId){
 	Mesh& mesh = *(reinterpret_cast<MikktspaceWrapper *>(context->m_pUserData)->mesh);
-	const glm::vec2 & texcoord = mesh.texcoords[mesh.indices[3 * iFace + iVert]];
+	const glm::vec2 & texcoord = mesh.texcoords[mesh.indices[3 * faceId + vertId]];
 	texcOut[0] = texcoord[0];
 	texcOut[1] = texcoord[1];
 }
 
-void mtsSetTSpaceBasic(const SMikkTSpaceContext * context, const float tangent[], const float sign, const int iFace, const int iVert){
+/** Store the computed tangent of a given vertex of a given face
+	\param context our internal data
+	\param tangent the computed tangent
+	\param sign the orientation of the bitangent with respect to a standard frame
+	\param faceId the face index
+	\param vertId the vertex index in the face
+ */
+void mtsSetTSpaceBasic(const SMikkTSpaceContext * context, const float tangent[], const float sign, const int faceId, const int vertId){
 	std::vector<glm::vec4> & tangents = reinterpret_cast<MikktspaceWrapper *>(context->m_pUserData)->tangents;
-	tangents[iFace * 3 + iVert] = glm::vec4(tangent[0], tangent[1], tangent[2], sign);
+	tangents[faceId * 3 + vertId] = glm::vec4(tangent[0], tangent[1], tangent[2], sign);
 }
 
 // Mesh implementation.
@@ -458,7 +496,7 @@ void Mesh::computeTangentsAndBitangents(bool force) {
 			storeTangent(remaps[i].initialIndex, finalIndex);
 		}
 	}
-	Log::Info() << Log::Resources << "Treated " << collisions << " for " << name() << std::endl;
+	Log::Verbose() << Log::Resources << "Tangets: Treated " << collisions << " for " << name() << std::endl;
 
 	updateMetrics();
 }
