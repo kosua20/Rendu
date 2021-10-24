@@ -116,6 +116,82 @@
 	translation: 7.5,0.0,2.5
 	material: clearcoat_metal_r10 
 
+# Anisotropic materials
+
+* object: 
+	shadows: true 
+	mesh: sphere 
+	translation: -7.5,0.0,5.0
+	material: anisotropic_h_diel_r10 
+
+* object: 
+	shadows: true 
+	mesh: sphere 
+	translation: -5.0,0.0,5.0
+	material: anisotropic_h_diel_r05 
+
+* object: 
+	shadows: true 
+	mesh: sphere 
+	translation: -2.5,0.0,5.0
+	material: anisotropic_h_diel_r00
+
+
+* object: 
+	shadows: true 
+	mesh: sphere 
+	translation: 2.5,0.0,5.0
+	material: anisotropic_h_metal_r00 
+
+* object: 
+	shadows: true 
+	mesh: sphere 
+	translation: 5.0,0.0,5.0
+	material: anisotropic_h_metal_r05
+
+* object: 
+	shadows: true 
+	mesh: sphere 
+	translation: 7.5,0.0,5.0
+	material: anisotropic_h_metal_r10 
+
+
+* object: 
+	shadows: true 
+	mesh: sphere 
+	translation: -7.5,0.0,7.5
+	material: anisotropic_v_diel_r10 
+
+* object: 
+	shadows: true 
+	mesh: sphere 
+	translation: -5.0,0.0,7.5
+	material: anisotropic_v_diel_r05 
+
+* object: 
+	shadows: true 
+	mesh: sphere 
+	translation: -2.5,0.0,7.5
+	material: anisotropic_v_diel_r00
+
+
+* object: 
+	shadows: true 
+	mesh: sphere 
+	translation: 2.5,0.0,7.5
+	material: anisotropic_v_metal_r00 
+
+* object: 
+	shadows: true 
+	mesh: sphere 
+	translation: 5.0,0.0,7.5
+	material: anisotropic_v_metal_r05
+
+* object: 
+	shadows: true 
+	mesh: sphere 
+	translation: 7.5,0.0,7.5
+	material: anisotropic_v_metal_r10 
 
 # Materials
 
@@ -131,7 +207,7 @@
 	textures: 
 		- rgb32: 10.0,0.0,0.0
 		- rgb: default_normal
-		- rgb: 0.0,0.0,1.0
+		- rgb: 0.1,0.0,1.0
 	type: Emissive 
 	name: emissive
 
@@ -155,7 +231,7 @@
 	textures: 
 		- rgb: 1.0,0.0,0.0 
 		- rgb: default_normal 
-		- rgb: 0.0,0.0,1.0 
+		- rgb: 0.1,0.0,1.0 
 	type: Regular 
 	name: regular_diel_r00
 
@@ -180,7 +256,7 @@
 	textures: 
 		- rgb: 1.0,0.0,0.0 
 		- rgb: default_normal 
-		- rgb: 0.0,1.0,1.0 
+		- rgb: 0.1,1.0,1.0 
 	type: Regular 
 	name: regular_metal_r00
 
@@ -206,7 +282,7 @@
 	textures: 
 		- rgb: 1.0,0.0,0.0 
 		- rgb: default_normal 
-		- rgb: 0.0,0.0,1.0 
+		- rgb: 0.1,0.0,1.0 
 		- rgb: 1.0,0.05
 	type: Clearcoat 
 	name: clearcoat_diel_r00
@@ -234,7 +310,118 @@
 	textures: 
 		- rgb: 1.0,0.0,0.0 
 		- rgb: default_normal 
-		- rgb: 0.0,1.0,1.0 
+		- rgb: 0.1,1.0,1.0 
 		- rgb: 1.0,0.05
 	type: Clearcoat 
 	name: clearcoat_metal_r00
+
+
+* material: 
+	textures: 
+		- rgb: 1.0,0.0,0.0 
+		- rgb: default_normal 
+		- rgb: 1.0,0.0,1.0 
+		- rgb: 1.0,0.5,0.9
+	type: Anisotropic 
+	name: anisotropic_h_diel_r10
+
+* material: 
+	textures: 
+		- rgb: 1.0,0.0,0.0 
+		- rgb: default_normal 
+		- rgb: 0.5,0.0,1.0 
+		- rgb: 1.0,0.5,0.9
+	type: Anisotropic 
+	name: anisotropic_h_diel_r05
+
+* material: 
+	textures: 
+		- rgb: 1.0,0.0,0.0 
+		- rgb: default_normal 
+		- rgb: 0.1,0.0,1.0 
+		- rgb: 1.0,0.5,0.9
+	type: Anisotropic 
+	name: anisotropic_h_diel_r00
+
+
+* material: 
+	textures: 
+		- rgb: 1.0,0.0,0.0 
+		- rgb: default_normal 
+		- rgb: 1.0,1.0,1.0 
+		- rgb: 1.0,0.5,0.9
+	type: Anisotropic 
+	name: anisotropic_h_metal_r10
+
+* material: 
+	textures: 
+		- rgb: 1.0,0.0,0.0  
+		- rgb: default_normal 
+		- rgb: 0.5,1.0,1.0 
+		- rgb: 1.0,0.5,0.9
+	type: Anisotropic 
+	name: anisotropic_h_metal_r05
+
+* material: 
+	textures: 
+		- rgb: 1.0,0.0,0.0 
+		- rgb: default_normal 
+		- rgb: 0.1,1.0,1.0 
+		- rgb: 1.0,0.5,0.9
+	type: Anisotropic 
+	name: anisotropic_h_metal_r00
+
+* material: 
+	textures: 
+		- rgb: 1.0,0.0,0.0 
+		- rgb: default_normal 
+		- rgb: 1.0,0.0,1.0 
+		- rgb: 0.5,1.0,0.9
+	type: Anisotropic 
+	name: anisotropic_v_diel_r10
+
+* material: 
+	textures: 
+		- rgb: 1.0,0.0,0.0 
+		- rgb: default_normal 
+		- rgb: 0.5,0.0,1.0 
+		- rgb: 0.5,1.0,0.9
+	type: Anisotropic 
+	name: anisotropic_v_diel_r05
+
+* material: 
+	textures: 
+		- rgb: 1.0,0.0,0.0 
+		- rgb: default_normal 
+		- rgb: 0.1,0.0,1.0 
+		- rgb: 0.5,1.0,0.9
+	type: Anisotropic 
+	name: anisotropic_v_diel_r00
+
+
+* material: 
+	textures: 
+		- rgb: 1.0,0.0,0.0 
+		- rgb: default_normal 
+		- rgb: 1.0,1.0,1.0 
+		- rgb: 0.5,1.0,0.9
+	type: Anisotropic 
+	name: anisotropic_v_metal_r10
+
+* material: 
+	textures: 
+		- rgb: 1.0,0.0,0.0  
+		- rgb: default_normal 
+		- rgb: 0.5,1.0,1.0 
+		- rgb: 0.5,1.0,0.9
+	type: Anisotropic 
+	name: anisotropic_v_metal_r05
+
+* material: 
+	textures: 
+		- rgb: 1.0,0.0,0.0 
+		- rgb: default_normal 
+		- rgb: 0.1,1.0,1.0 
+		- rgb: 0.5,1.0,0.9
+	type: Anisotropic 
+	name: anisotropic_v_metal_r00
