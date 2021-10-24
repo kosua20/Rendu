@@ -133,3 +133,17 @@ vec3 decodeNormal(vec2 e){
 	return decodeOctahedralDirection(e);
 }
 
+/** Build a reference orthonormal frame from a given up vector.
+ * \param up the normalized up vector to use
+ * \param right will contain the normalized right vector
+ * \param front will contain the normalized front vector
+ */
+void buildFrame(vec3 up, out vec3 right, out vec3 front){
+	right = vec3(1.0,0.0,0.0);
+	if(abs(up.x) > 0.99){
+		right = vec3(0.0,1.0,0.0);
+	}
+	front = normalize(cross(up, right));
+	right = normalize(cross(front, up));
+}
+

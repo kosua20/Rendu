@@ -137,6 +137,36 @@ Material decodeMaterialFromGbuffer(vec2 uv, texture2D gbuffer0, texture2D gbuffe
 		material.clearCoatRoughness = effectInfo.a;
 	}
 
+	// Decode anisotropic parameters if present.
+	// Based on the method described by S. Lagarde and E. Golubev in 
+	// "The Road toward Unified Rendering with Unity’s High Definition Render Pipeline", 2015,
+	// (http://advances.realtimerendering.com/s2018/index.htm#_9hypxp9ajqi)
+	if(material.id == MATERIAL_ANISOTROPIC){
+		// Signed anisotropy.
+		material.anisotropy = (2.0 * effectInfo.a - 1.0)*0.7/0.8;
+		
+		// Retrieve orientation.
+		float orientationRaw = 2.0 * normalInfo.b - 1.0;
+		// The sign denotes if we stored the sine or cosine.
+		bool usedSine = (orientationRaw >= 0.0);
+		// Denormalize value, assign to trigonometric parameters.
+		float orientation = abs(orientationRaw) / sqrt(2.0);
+		float otherOrientation = sqrt(1.0 - orientation * orientation);
+		float sinFrame = usedSine ? orientation : otherOrientation;
+		float cosFrame = usedSine ? otherOrientation : orientation;
+		// Retrieve signs.
+		uint signs = uint(3.0 * normalInfo.a);
+		sinFrame *= ((signs & 1) != 0) ? -1.0 : 1.0;
+		cosFrame *= ((signs & 2) != 0) ? -1.0 : 1.0;
+
+		// Build default tangent frame from normal.
+		vec3 defaultTangent, defaultBitangent;
+		buildFrame(material.normal, defaultTangent, defaultBitangent);
+		// Re-build current tangent frame from reference frame.
+		material.tangent = normalize(cosFrame * defaultTangent + sinFrame * defaultBitangent);
+		material.bitangent = normalize(cross(material.normal, material.tangent));
+	}
+
 	
 	return material;
 }
