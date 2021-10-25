@@ -145,6 +145,22 @@ Material decodeMaterialFromGbuffer(vec2 uv, texture2D gbuffer0, texture2D gbuffe
 		material.clearCoatRoughness = effectInfo.a;
 	}
 
+	// Decode sheen if present.
+	if(material.id == MATERIAL_SHEEN){
+		// Rebuild 12 bits color stored in 10 and 2 bits channels.
+		uint sheenPacked2 = uint(normalInfo.a * float((1 << 2) - 1));
+		uint sheenPacked10 = uint(normalInfo.b * float((1 << 10) - 1));
+		uint sheenPacked = sheenPacked2 | (sheenPacked10 << 2);
+		uvec3 sheenColor = uvec3(sheenPacked & 0xF, (sheenPacked >> 4) & 0xF, (sheenPacked >> 8) & 0xF);
+		vec3 sheenFinal = vec3(sheenColor << 4) / 255.0;
+		material.sheenColor = sheenFinal;
+		// Sheen roughness.
+		material.sheenRoughness = max(0.045, effectInfo.a);
+		// We replaced the metalness by the sheen factor.
+		material.sheeness = material.metalness;
+		material.metalness = 0.0;
+	}
+
 	// Decode anisotropic parameters if present.
 	// Based on the method described by S. Lagarde and E. Golubev in 
 	// "The Road toward Unified Rendering with Unity’s High Definition Render Pipeline", 2015,
