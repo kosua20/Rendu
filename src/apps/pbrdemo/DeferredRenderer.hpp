@@ -97,6 +97,7 @@ private:
 	Program * _parallaxProgram;		///< Parallax mapping PBR program
 	Program * _clearCoatProgram;	///< Basic PBR program with an additional clear coat specular layer.
 	Program * _anisotropicProgram;	///< Basic PBR with anisotropic roughness.
+	Program * _sheenProgram;		///< PBR with sheen BRDF.
 	Program * _emissiveProgram;	 	///< Emissive program
 	Program * _transparentProgram;	///< Transparent PBR program
 	Program * _probeNormalization;	///< Indirect lighting normalization program.

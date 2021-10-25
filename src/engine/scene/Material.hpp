@@ -13,11 +13,12 @@ class Material {
 public:
 	/// \brief Type of shading/effects.
 	enum Type : int {
-		None = 0,  ///< Any type of shading.
-		Regular,  ///< PBR shading. \see GPU::Vert::Object_gbuffer, GPU::Frag::Object_gbuffer
-		Parallax, ///< PBR with parallax mapping. \see GPU::Vert::Object_parallax_gbuffer, GPU::Frag::Object_parallax_gbuffer
-		Clearcoat,  ///< PBR shading with an additional clear coat specular layer.
+		None = 0,  	 ///< Any type of shading.
+		Regular,  	 ///< PBR shading. \see GPU::Vert::Object_gbuffer, GPU::Frag::Object_gbuffer
+		Parallax, 	 ///< PBR with parallax mapping. \see GPU::Vert::Object_parallax_gbuffer, GPU::Frag::Object_parallax_gbuffer
+		Clearcoat,   ///< PBR shading with an additional clear coat specular layer.
 		Anisotropic, ///< PBR shading with an anisotropic BRDF.
+		Sheen, 		 ///< PBR shading with a sheen BRDF.
 		Emissive,  	 ///< Emissive objects (no diffuse shading).
 		Transparent, ///< Transparent object
 	};

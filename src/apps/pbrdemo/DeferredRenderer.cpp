@@ -32,6 +32,7 @@ DeferredRenderer::DeferredRenderer(const glm::vec2 & resolution, ShadowMode mode
 	_objectProgram		= Resources::manager().getProgram("object_gbuffer");
 	_clearCoatProgram	= Resources::manager().getProgram("object_clearcoat_gbuffer", "object_gbuffer", "object_clearcoat_gbuffer");
 	_anisotropicProgram	= Resources::manager().getProgram("object_anisotropic_gbuffer", "object_gbuffer", "object_anisotropic_gbuffer");
+	_sheenProgram		= Resources::manager().getProgram("object_sheen_gbuffer", "object_gbuffer", "object_sheen_gbuffer");
 	_emissiveProgram	= Resources::manager().getProgram("object_emissive_gbuffer", "object_gbuffer", "object_emissive_gbuffer");
 	_transparentProgram = Resources::manager().getProgram("object_transparent_forward", "object_forward", "object_transparent_forward");
 
@@ -121,6 +122,15 @@ void DeferredRenderer::renderOpaque(const Culler::List & visibles, const glm::ma
 				// Upload the normal matrix.
 				_anisotropicProgram->uniform("normalMatrix", glm::mat4(normalMatrix));
 				_anisotropicProgram->uniform("hasUV", object.useTexCoords());
+				break;
+			case Material::Sheen:
+				_sheenProgram->use();
+				program = _sheenProgram;
+				// Upload the MVP matrix.
+				_sheenProgram->uniform("mvp", MVP);
+				// Upload the normal matrix.
+				_sheenProgram->uniform("normalMatrix", glm::mat4(normalMatrix));
+				_sheenProgram->uniform("hasUV", object.useTexCoords());
 				break;
 			case Material::Emissive:
 				_emissiveProgram->use();

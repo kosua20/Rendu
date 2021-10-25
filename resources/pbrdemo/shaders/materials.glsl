@@ -6,6 +6,7 @@
 #define MATERIAL_CLEARCOAT 2 ///< Clear coat & standard PBR material.
 #define MATERIAL_EMISSIVE 3 ///< Emissive material with a specular dielectric layer.
 #define MATERIAL_ANISOTROPIC 4 ///< Anisotropic GGX material.
+#define MATERIAL_SHEEN 5 ///< Sheen material.
 
 /** Encode a material ID for storage in the G-buffer.
  \param material the identifier to encode
@@ -68,7 +69,11 @@ struct Material {
 	float anisotropy; ///< Anisotropy intensity, from 1 (max in the tangent direction) to -1 (max in the bitangent direction), and 0 (none).
 	vec3 tangent; ///< Tangent used for anisotropy, in view space.
 	vec3 bitangent; ///< Bitangent used for anisotropy, in view space.
-
+	// Sheen
+	float sheeness; ///< Sheen mixing factor.
+	vec3 sheenColor; ///< Sheen tint color.
+	float sheenRoughness; ///< Roughness of the sheen lobe.
+	
 };
 
 /** Fill a material with default parameters.
@@ -87,6 +92,9 @@ Material initMaterial(){
 	params.anisotropy = 0.0;
 	params.tangent = vec3(1.0,0.0,0.0);
 	params.bitangent = vec3(0.0,1.0,0.0);
+	params.sheeness = 0.0;
+	params.sheenColor = vec3(0.0);
+	params.sheenRoughness = 0.0;
 	return params;
 }
 

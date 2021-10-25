@@ -24,6 +24,7 @@ ForwardRenderer::ForwardRenderer(const glm::vec2 & resolution, ShadowMode mode, 
 	_transparentProgram = Resources::manager().getProgram("object_transparent_forward", "object_forward", "object_transparent_forward");
 	_clearCoatProgram 	= Resources::manager().getProgram("object_clearcoat_forward", "object_forward", "object_clearcoat_forward");
 	_anisotropicProgram = Resources::manager().getProgram("object_anisotropic_forward", "object_forward", "object_anisotropic_forward");
+	_sheenProgram  = Resources::manager().getProgram("object_sheen_forward", "object_forward", "object_sheen_forward");
 	_skyboxProgram = Resources::manager().getProgram("skybox_forward", "skybox_infinity", "skybox_forward");
 	_bgProgram	   = Resources::manager().getProgram("background_forward", "background_infinity", "background_forward");
 	_atmoProgram   = Resources::manager().getProgram("atmosphere_forward", "background_infinity", "atmosphere_forward");
@@ -132,6 +133,9 @@ void ForwardRenderer::renderOpaque(const Culler::List & visibles, const glm::mat
 				break;
 			case Material::Anisotropic:
 				currentProgram = _anisotropicProgram;
+				break;
+			case Material::Sheen:
+				currentProgram = _sheenProgram;
 				break;
 			case Material::Emissive:
 				currentProgram = _emissiveProgram;
@@ -323,7 +327,7 @@ void ForwardRenderer::draw(const Camera & camera, Framebuffer & framebuffer, uin
 		const glm::mat4 invView = glm::inverse(view);
 		const glm::vec2 invScreenSize = 1.0f / glm::vec2(_sceneFramebuffer->width(), _sceneFramebuffer->height());
 		// Update shared data for the three programs.
-		Program * programs[] = {_parallaxProgram, _objectProgram, _clearCoatProgram, _transparentProgram, _emissiveProgram, _anisotropicProgram };
+		Program * programs[] = {_parallaxProgram, _objectProgram, _clearCoatProgram, _transparentProgram, _emissiveProgram, _anisotropicProgram, _sheenProgram };
 		for(Program * prog : programs){
 			prog->use();
 			prog->uniform("inverseV", invView);

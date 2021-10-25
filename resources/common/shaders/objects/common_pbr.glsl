@@ -55,7 +55,8 @@ float D(float NdotH, float alpha){
 	return halfTerm * halfTerm * INV_M_PI;
 }
 
-/** Anisotropic GGX distribution term.
+/** Anisotropic GGX distribution term. Described by B. Burley in "Physically-Based Shading at Disney", 2012,
+    (https://www.disneyanimation.com/publications/physically-based-shading-at-disney/)
 	\param NdotH angle between the half and normal directions
 	\param TdotH angle between the half and tangent directions
 	\param BdotH angle between the half and bitangent directions
@@ -69,6 +70,18 @@ float DAnisotropic(float NdotH, float TdotH, float BdotH, float alphaT, float al
 	float d2 = dot(d, d);
 	float halfTerm = alpha2 / max(d2, 0.0001);
 	return alpha2 * halfTerm * halfTerm * INV_M_PI;
+}
+
+/** Sheen-specific "Charlie" distribution. Described by A.-C. Estevez and C. Kulla in "Production Friendly 
+	Microfacet Sheen BRDF", 2017, (http://www.aconty.com/pdf/s2017_pbs_imageworks_sheen.pdf)
+	\param NdotH angle between the half and normal directions
+	\param alpha the roughness squared
+	\return the distribution term
+*/
+float DCharlie(float NdotH, float alpha){
+	float invAlpha = 1.0 / max(0.0001, alpha);
+	float sinTheta2 = max(1.0 -  NdotH * NdotH, 0.0001);
+	return (2.0 + invAlpha) * pow(sinTheta2, 0.5 * invAlpha) * 0.5 * INV_M_PI;
 }
 
 /** Visibility term of GGX BRDF, V=G/(n.v)(n.l)
@@ -97,7 +110,8 @@ float Vfast(float NdotL, float NdotV, float alpha){
 	return 0.5 / max(0.0001, visV + visL);
 }
 
-/** Visibility term of the anisotropic GGX BRDF.
+/** Visibility term of the anisotropic GGX BRDF. Described by B. Burley in "Physically-Based Shading at Disney", 2012,
+   (https://www.disneyanimation.com/publications/physically-based-shading-at-disney/)
 \param NdotL dot product of the light direction with the surface normal
 \param NdotV dot product of the view direction with the surface normal
 \param TdotV dot product of the tangent direction with the view direction
@@ -114,12 +128,23 @@ float VAnisotropic(float NdotL, float NdotV, float TdotV, float BdotV, float Tdo
 	return clamp(0.5 / max(0.0001, visV + visL), 0.0, 1.0);
 }
 
-/** Simplified visibility term described in A Microfacet Based Coupled Specular-Matte BRDF Model with Importance Sampling, Kelemen, 2001
+/** Simplified visibility term described by Kelemen in "A Microfacet Based Coupled Specular-Matte BRDF Model with Importance Sampling", 2001
  \param LdotH dot product of the light direction and the half vector
  \return the value of V
  */
 float VKelemen(float LdotH){
 	return clamp(0.25 / max(0.0001, LdotH * LdotH), 0.0, 1.0);
+}
+
+/** Sheen-specific visibility term. Described by D. Neubelt and M. Pettineo in "Crafting a Next-Gen 
+	Material Pipeline for The Order: 1886", 2014, (https://www.gdcvault.com/play/1020162/Crafting-a-Next-Gen-Material)	
+	\param NdotL dot product of the light direction with the surface normal
+	\param NdotV dot product of the view direction with the surface normal
+	\return the value of V
+*/
+float VNeubelt(float NdotL, float NdotV){
+	float denom = max(0.0001, NdotL + NdotV - NdotL * NdotV);
+	return clamp(0.25 / denom, 0.0, 1.0);
 }
 
 /** Evaluate the GGX BRDF for a given normal, view direction and
@@ -195,6 +220,24 @@ vec3 ggxAnisotropic(vec3 n, vec3 v, vec3 l, vec3 h, vec3 F0, Material material){
 	float Da = DAnisotropic(NdotH, TdotH, BdotH, alphaT, alphaB);
 	float Va = VAnisotropic(NdotL, NdotV, TdotV, BdotV, TdotL, BdotL, alphaT, alphaB);
 	return Da * Va * F(F0, VdotH);
+}
+
+/** Sheen specific BRDF, with a constant Fresnel coefficient.
+	\param n the surface normal
+	\param v the view direction
+	\param l the light direction
+	\param h the half vector between the view and light
+	\param material the surface parameters
+	\return the BRDF value
+*/
+vec3 ggxSheen(vec3 n, vec3 v, vec3 l, vec3 h, Material material){
+	// Compute all needed dot products.
+	float NdotL = clamp(dot(n,l), 0.0, 1.0);
+	float NdotV = clamp(dot(n,v), 0.0, 1.0);
+	float NdotH = clamp(dot(n,h), 0.0, 1.0);
+	float alpha = max(0.0001, material.sheenRoughness * material.sheenRoughness);
+
+	return DCharlie(NdotH, alpha) * VNeubelt(NdotL, NdotV) * material.sheenColor;
 }
 
 /** Estimate the Fresnel coefficient at an interface based on the internal and external medium IOR.
@@ -279,36 +322,6 @@ float approximateSpecularAO(float diffuseAO, float NdotV, float roughness){
 	return clamp(specAO - 1.0 + diffuseAO, 0.0, 1.0);
 }
 
-/** Evaluate the global lighting contribution from the ambient environment. Implements a multi-scattering compensation step, as described in A Multiple-Scattering Microfacet Model for Real-Time Image-based Lighting, C. J. Fdez-Agüera, JCGT, 2019.
- \param material the surface point material parameters
- \param F0 the Fresnel coefficient at grazing incidence.
- \param NdotV visibility/normal angle
- \param brdfCoeffs precomputed BRDF linearized coefficients lookup table
- \param diffuse will contain the diffuse ambient contribution
- \param specular will contain the specular ambient contribution
- */
-void ambientBrdf(Material material, vec3 F0, float NdotV, texture2D brdfCoeffs, out vec3 diffuse, out vec3 specular){
-	vec3 baseColor = material.reflectance;
-	float metallic = material.metalness;
-	float roughness = material.roughness;
-
-	// BRDF contributions.
-	// Adjust Fresnel based on roughness.
-	vec3 Fr = max(vec3(1.0 - roughness), F0) - F0;
-    vec3 Fs = F0 + Fr * pow(1.0 - NdotV, 5.0);
-	// Specular single scattering contribution (preintegrated).
-	vec2 brdfParams = texture(sampler2D(brdfCoeffs, sClampLinear), vec2(NdotV, roughness)).rg;
-	specular = (brdfParams.x * Fs + brdfParams.y);
-
-	// Account for multiple scattering.
-    float scatter = (1.0 - (brdfParams.x + brdfParams.y));
-    vec3 Favg = F0 + (1.0 - F0) / 21.0;
-    vec3 multi = scatter * specular * Favg / (1.0 - Favg * scatter);
-	// Diffuse contribution. Metallic materials have no diffuse contribution.
-	vec3 single = (1.0 - metallic) * baseColor * (1.0 - F0);
-	diffuse = single * (1.0 - specular - multi) + multi;
-}
-
 /** Evaluate the lighting contribution from an analytic light source.
  \param material the surface point material parameters
  \param worldP the surface position (in world space)
@@ -356,14 +369,37 @@ void ambientLighting(Material material, vec3 worldP, vec3 viewV, mat4 inverseV, 
 		F0 = mix(F0, iorToFresnel(fresnelToIor(F0), vec3(1.5)), material.clearCoat);
 	}
 
-	ambientBrdf(material, F0, NdotV, brdfLUT, diffuse, specular);
-
+	// BRDF contributions.
+	// Adjust Fresnel based on roughness.
+	vec3 Fr = max(vec3(1.0 - material.roughness), F0) - F0;
+    vec3 Fs = F0 + Fr * pow(1.0 - NdotV, 5.0);
+	// Specular single scattering contribution (preintegrated).
+	vec3 brdfParams = texture(sampler2D(brdfLUT, sClampLinear), vec2(NdotV, material.roughness)).xyz;
+	specular = (brdfParams.x * Fs + brdfParams.y);
 	// Specular AO.
 	float aoSpecular = approximateSpecularAO(material.ao, NdotV, material.roughness);
-	// Combine BRDF, incoming (ir)radiance and occlusion.
-	diffuse = material.ao * diffuse * irradianceL;
-	specular = aoSpecular * specular * radianceL;
+	specular *= aoSpecular * radianceL;
 
+	// Account for multiple scattering.
+    float scatter = (1.0 - (brdfParams.x + brdfParams.y));
+    vec3 Favg = F0 + (1.0 - F0) / 21.0;
+    vec3 multi = scatter * specular * Favg / (1.0 - Favg * scatter);
+	// Diffuse contribution. Metallic materials have no diffuse contribution.
+	vec3 single = (1.0 - material.metalness) * material.reflectance * (1.0 - F0);
+	diffuse = single * (1.0 - specular - multi) + multi;
+	// Combine BRDF, incoming (ir)radiance and occlusion.
+	diffuse *= material.ao * irradianceL;
+
+	// Sheen component.
+	if(material.id == MATERIAL_SHEEN){
+		float aoSpecularSheen = approximateSpecularAO(material.ao, NdotV, material.sheenRoughness);
+		vec3 sheenRadiance = radiance(worldR, worldP, material.sheenRoughness, envmap, probe);
+		vec3 sheenF = brdfParams.z * material.sheenColor;
+		vec3 sheenSpecular = aoSpecularSheen * sheenF * sheenRadiance;
+		specular = mix(specular, sheenSpecular, material.sheeness);
+	}
+
+	// Clear coat component.
 	if(material.id == MATERIAL_CLEARCOAT){
 		// Second specular lobe with its own roughness.
 		float aoSpecularClearCoat = approximateSpecularAO(material.ao, NdotV, material.clearCoatRoughness);
@@ -419,6 +455,12 @@ void directBrdf(Material material, vec3 n, vec3 v, vec3 l, out vec3 diffuse, out
 		specular = orientation * ggxAnisotropic(n, v, l, h, F0, material);
 	} else {
 		specular = orientation * ggx(n, v, l, h, F0, material.roughness);
+	}
+
+	// Apply sheen if needed.
+	if(material.id == MATERIAL_SHEEN){
+		vec3 sheen = orientation * ggxSheen(n, v, l, h, material);
+		specular = mix(specular, sheen, material.sheeness);
 	}
 
 	// Apply clear coat lobe if available
