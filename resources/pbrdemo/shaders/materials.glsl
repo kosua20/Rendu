@@ -143,7 +143,7 @@ Material decodeMaterialFromGbuffer(vec2 uv, texture2D gbuffer0, texture2D gbuffe
 	// (http://advances.realtimerendering.com/s2018/index.htm#_9hypxp9ajqi)
 	if(material.id == MATERIAL_ANISOTROPIC){
 		// Signed anisotropy.
-		material.anisotropy = (2.0 * effectInfo.a - 1.0)*0.7/0.8;
+		material.anisotropy = (2.0 * effectInfo.a - 1.0);
 		
 		// Retrieve orientation.
 		float orientationRaw = 2.0 * normalInfo.b - 1.0;
