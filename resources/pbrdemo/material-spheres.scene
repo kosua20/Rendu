@@ -193,6 +193,45 @@
 	translation: 7.5,0.0,7.5
 	material: anisotropic_v_metal_r10 
 
+# Sheen
+
+* object: 
+	shadows: true 
+	mesh: sphere 
+	translation: -2.5,0.0,10.0
+	material: sheen_r00_fabric 
+
+* object: 
+	shadows: true 
+	mesh: sphere 
+	translation: -5.0,0.0,10.0
+	material: sheen_r05_fabric
+
+* object: 
+	shadows: true 
+	mesh: sphere 
+	translation: -7.5,0.0,10.0
+	material: sheen_r10_fabric 
+
+* object: 
+	shadows: true 
+	mesh: sphere 
+	translation: 2.5,0.0,10.0
+	material: sheen_r00_silk
+
+* object: 
+	shadows: true 
+	mesh: sphere 
+	translation: 5.0,0.0,10.0
+	material: sheen_r05_silk 
+
+* object: 
+	shadows: true 
+	mesh: sphere 
+	translation: 7.5,0.0,10.0
+	material: sheen_r10_silk
+
+
 # Materials
 
 * material: 
@@ -425,3 +464,61 @@
 		- rgb: 0.5,1.0,0.9
 	type: Anisotropic 
 	name: anisotropic_v_metal_r00
+
+# Sheen
+
+* material: 
+	textures: 
+		- rgb: 1.0,0.0,0.0 
+		- rgb: default_normal 
+		- rgb: 1.0,1.0,1.0 
+		- rgb: 1.0,1.0,1.0,1.0
+	type: Sheen 
+	name: sheen_r10_fabric
+
+* material: 
+	textures: 
+		- rgb: 1.0,0.0,0.0 
+		- rgb: default_normal 
+		- rgb: 1.0,1.0,1.0 
+		- rgb: 1.0,1.0,1.0,0.6
+	type: Sheen 
+	name: sheen_r05_fabric
+
+* material: 
+	textures: 
+		- rgb: 1.0,0.0,0.0 
+		- rgb: default_normal 
+		- rgb: 1.0,1.0,1.0 
+		- rgb: 1.0,1.0,1.0,0.3
+	type: Sheen 
+	name: sheen_r00_fabric
+
+* material: 
+	textures: 
+		- rgb: 0.0,0.0,0.0 
+		- rgb: default_normal 
+		- rgb: 1.0,1.0,1.0 
+		- rgb: 1.0,0.0,0.0,1.0
+	type: Sheen 
+	name: sheen_r10_silk
+
+* material: 
+	textures: 
+		- rgb: 0.0,0.0,0.0 
+		- rgb: default_normal 
+		- rgb: 1.0,1.0,1.0 
+		- rgb: 1.0,0.0,0.0,0.6
+	type: Sheen 
+	name: sheen_r05_silk
+
+* material: 
+	textures: 
+		- rgb: 0.0,0.0,0.0 
+		- rgb: default_normal 
+		- rgb: 1.0,1.0,1.0 
+		- rgb: 1.0,0.0,0.0,0.3
+	type: Sheen 
+	name: sheen_r00_silk
+
+
