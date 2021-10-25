@@ -160,7 +160,7 @@ void exportCubemapConvolution(std::vector<Texture> & cubeLevels, const std::stri
  */
 void computeAndExportLookupTable(const int outputSide, const std::string & outputPath) {
 	// Render the lookup table.
-	const auto bakingFramebuffer = std::make_shared<Framebuffer>(outputSide, outputSide, Layout::RG32F, "LUT");
+	const auto bakingFramebuffer = std::make_shared<Framebuffer>(outputSide, outputSide, Layout::RGBA32F, "LUT");
 	const auto brdfProgram		 = Resources::manager().getProgram2D("brdf_sampler");
 	bakingFramebuffer->bind(glm::vec4(0.0f));
 	GPU::setViewport(0, 0, outputSide, outputSide);

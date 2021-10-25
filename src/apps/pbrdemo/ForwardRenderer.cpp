@@ -28,7 +28,7 @@ ForwardRenderer::ForwardRenderer(const glm::vec2 & resolution, ShadowMode mode, 
 	_bgProgram	   = Resources::manager().getProgram("background_forward", "background_infinity", "background_forward");
 	_atmoProgram   = Resources::manager().getProgram("atmosphere_forward", "background_infinity", "atmosphere_forward");
 
-	_textureBrdf = Resources::manager().getTexture("brdf-precomputed", Layout::RG16F, Storage::GPU);
+	_textureBrdf = Resources::manager().getTexture("brdf-precomputed", Layout::RGBA16F, Storage::GPU);
 
 }
 

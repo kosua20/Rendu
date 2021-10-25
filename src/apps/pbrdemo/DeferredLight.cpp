@@ -135,7 +135,7 @@ DeferredProbe::DeferredProbe(const Texture * texAlbedo, const Texture * texNorma
 	_program = Resources::manager().getProgram("probe_pbr", "object_basic", "probe_pbr");
 
 	// Load texture.
-	const Texture * textureBrdf = Resources::manager().getTexture("brdf-precomputed", Layout::RG16F, Storage::GPU);
+	const Texture * textureBrdf = Resources::manager().getTexture("brdf-precomputed", Layout::RGBA16F, Storage::GPU);
 
 	// Ambient pass: needs the albedo, the normals, the depth, the effects, the AO result, the BRDF table and the  envmap.
 	_textures.resize(6);

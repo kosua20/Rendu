@@ -40,7 +40,7 @@ DeferredRenderer::DeferredRenderer(const glm::vec2 & resolution, ShadowMode mode
 	_probeRenderer = std::unique_ptr<DeferredProbe>(new DeferredProbe(_gbuffer->texture(0), _gbuffer->texture(1), _gbuffer->texture(2), _gbuffer->depthBuffer(), _ssaoPass->texture()));
 	_probeNormalization = Resources::manager().getProgram2D("probe_normalization");
 
-	_textureBrdf = Resources::manager().getTexture("brdf-precomputed", Layout::RG16F, Storage::GPU);
+	_textureBrdf = Resources::manager().getTexture("brdf-precomputed", Layout::RGBA16F, Storage::GPU);
 }
 
 void DeferredRenderer::setScene(const std::shared_ptr<Scene> & scene) {
