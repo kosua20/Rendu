@@ -7,6 +7,7 @@ layout(location = 0) in INTERFACE {
 } In ;
 
 #define SAMPLE_COUNT 1024u
+#define SAMPLE_COUNT_SHEEN 4096u
 
 layout(location = 0) out vec4 fragColor; ///< BRDF linear coefficients.
 
@@ -26,6 +27,7 @@ vec3 ggx(float NdotV, float roughness){
 	vec3 bitangent = cross(n, tangent);
 	
 	float alpha = max(0.0001, roughness*roughness);
+	float invAlpha = 1.0 / alpha;
 
 	vec3 sum = vec3(0.0);
 
@@ -57,6 +59,35 @@ vec3 ggx(float NdotV, float roughness){
 
 	}
 	sum.xy /= float(SAMPLE_COUNT);
+
+	// Uniform sampling of sheen BRDF, as described by R. Guy and M. Agopian in "Physically Based Rendering
+	// in Filament", 2021, (https://google.github.io/filament/Filament.md.html#lighting/imagebasedlights/cloth)	
+	for(uint i = 0u; i < SAMPLE_COUNT_SHEEN; ++i){
+		// Draw a sample using Van der Corput sequence.
+		vec2 sampleVec = hammersleySample(i, int(SAMPLE_COUNT_SHEEN));
+		float angle = 2.0 * M_PI * sampleVec.x;
+
+		// Compute corresponding angles.
+		float cosT = 1.0 - sampleVec.y;
+		float sinT = sqrt(1.0 - cosT * cosT);
+
+		// Local half vector and light direction.
+		vec3 h = normalize(sinT*cos(angle) * tangent + sinT*sin(angle) * bitangent + cosT * n);
+		vec3 l = -reflect(v, h);
+
+		float NdotL = max(l.z, 0.000);
+		if(NdotL > 0.0){
+
+			float VdotH = max(dot(v, h), 0.000);
+			float NdotH = max(h.z, 0.000);
+			float sinH2 = max(1.0 - NdotH * NdotH, 0.0001);
+
+			float Vterm = 1.0 / (4.0 * (NdotL + NdotV - NdotL * NdotV));
+			float Dterm = (2.0 + invAlpha) * pow(sinH2, 0.5 * invAlpha) * 0.5 * INV_M_PI;
+			sum.z += Vterm * Dterm * NdotL * VdotH;
+		}
+	}
+	sum.z *= 4.0 * 2.0 * M_PI / float(SAMPLE_COUNT_SHEEN);
 
 	return sum; 
 }
