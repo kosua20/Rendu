@@ -103,6 +103,14 @@ vec3 hsvToRgb(vec3 hsv){
 
 }
 
+/** Convert a XYZ value (CIE 1931 RGB color space with neutral E illuminant) to a RGB value
+ * \param xyz the XYZ color to convert
+ * \return the RGB triplet
+ */
+vec3 xyzToRgb(vec3 xyz){
+	return mat3(2.3706743, -0.5138850, 0.0052982, -0.9000405, 1.4253036, -0.0146949, -0.4706338, 0.0885814, 1.0093968) * xyz;
+}
+
 /** Evalute the luma value in perceptual space for a given RGB color in linear space.
 \param rgb the input RGB color
 \return the perceptual luma

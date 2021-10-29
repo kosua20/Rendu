@@ -9,6 +9,8 @@
 #define DIRECTIONAL 1
 #define SPOT 2
 
+#define F0_DIFFUSE 0.04
+
 /** \brief Environment probe data. */
 struct Probe {
 	vec3 position; ///< Probe location.
@@ -44,6 +46,25 @@ vec3 F(vec3 F0, float VdotH){
 	return F0 + pow(1.0 - VdotH, 5) * (1.0 - F0);
 }
 
+/** Estimate the Fresnel coefficient at an interface based on the internal and external media IORs.
+ * \param internalIOR the internal IOR
+ * \param externalIOR the external IOR
+ * \return the corresponding Fresnel coefficient
+ */
+vec3 iorToFresnel(vec3 internalIOR, vec3 externalIOR) {
+	vec3 sqrtF0 = (internalIOR - externalIOR) / (internalIOR + externalIOR);
+	return sqrtF0 * sqrtF0;
+}
+
+
+/** Convert a Fresnel coefficient to an internal IOR, assuming the external medium is air (IOR 1.0)
+ * \param F0 the Fresnel coefficient
+ * \return the IOR
+ */
+vec3 fresnelToIor(vec3 F0) {
+	vec3 sqrtF0 = sqrt(F0);
+	return (1.0 + sqrtF0) / max(vec3(0.0001), 1.0 - sqrtF0);
+}
 /** GGX Distribution term.
 	\param NdotH angle between the half and normal directions
 	\param alpha the roughness squared
@@ -183,7 +204,7 @@ float ggxClearCoat(vec3 n, vec3 v, vec3 l, vec3 h, float roughness, out float cl
 	float NdotH = clamp(dot(n,h), 0.0, 1.0);
 	float LdotH = clamp(dot(l,h), 0.0, 1.0);
 	float alpha = max(0.0001, roughness*roughness);
-	clearCoatFresnel = F(vec3(0.04), LdotH).x;
+	clearCoatFresnel = F(vec3(F0_DIFFUSE), LdotH).x;
 	return D(NdotH, alpha) * VKelemen(LdotH) * clearCoatFresnel;
 }
 
@@ -238,25 +259,6 @@ vec3 ggxSheen(vec3 n, vec3 v, vec3 l, vec3 h, Material material){
 	float alpha = max(0.0001, material.sheenRoughness * material.sheenRoughness);
 
 	return DCharlie(NdotH, alpha) * VNeubelt(NdotL, NdotV) * material.sheenColor;
-}
-
-/** Estimate the Fresnel coefficient at an interface based on the internal and external medium IOR.
- * \param internalIOR the internal IOR
- * \param externalIOR the external IOR
- * \return the corresponding Fresnel coefficient
- */
-vec3 iorToFresnel(vec3 internalIOR, vec3 externalIOR) {
-	vec3 sqrtF0 = (internalIOR - externalIOR) / (internalIOR + externalIOR);
-	return sqrtF0 * sqrtF0;
-}
-
-/** Convert a Fresnel coefficient to an internal IOR, assuming the external medium is air (IOR 1.0)
- * \param F0 the Fresnel coefficient
- * \return the IOR
- */
-vec3 fresnelToIor(vec3 F0) {
-	vec3 sqrtF0 = sqrt(F0);
-	return (1.0 + sqrtF0) / max(vec3(0.0001), 1.0 - sqrtF0);
 }
 
 /** Return the (pre-convolved) radiance for a given direction (in world space) and
@@ -364,7 +366,8 @@ void ambientLighting(Material material, vec3 worldP, vec3 viewV, mat4 inverseV, 
 	// BRDF contributions.
 	// Compute F0 (fresnel coeff).
 	// Dielectrics have a constant low coeff, metals use the baseColor (ie reflections are tinted).
-	vec3 F0 = mix(vec3(0.04), material.reflectance, material.metalness);
+	vec3 F0 = mix(vec3(F0_DIFFUSE), material.reflectance, material.metalness);
+	// Update for clear coat, the interface is not air anymore.
 	if(material.id == MATERIAL_CLEARCOAT){
 		F0 = mix(F0, iorToFresnel(fresnelToIor(F0), vec3(1.5)), material.clearCoat);
 	}
@@ -407,7 +410,7 @@ void ambientLighting(Material material, vec3 worldP, vec3 viewV, mat4 inverseV, 
 		// To remain energy preserving, modulate base layer contribution using the Fresnel of the clear coat layer.
 		// Note: to be as correct as possible, we should probably take this into account in
 		// the multi-bounce correction we already applied on the base layer.
-		float clearCoatFresnel = F(vec3(0.04), NdotV).x;
+		float clearCoatFresnel = F(vec3(F0_DIFFUSE), NdotV).x;
 		float energyCorrection = 1.0 - material.clearCoat * clearCoatFresnel;
 		// Modulate base layer.
 		diffuse *= energyCorrection;
@@ -434,12 +437,12 @@ void directBrdf(Material material, vec3 n, vec3 v, vec3 l, out vec3 diffuse, out
 
 	// Compute F0 (fresnel coeff).
 	// Dielectrics have a constant low coeff, metals use the baseColor (ie reflections are tinted).
-	vec3 F0 = mix(vec3(0.04), baseColor, metallic);
+	vec3 F0 = mix(vec3(F0_DIFFUSE), baseColor, metallic);
 
 	// If clear coat is present, we have to update the base layer Fresnel coefficient to take into account that
 	// it is at the interface with a veneer (IOR 1.5) and not the air (IOR 1) anymore.
 	if(material.id == MATERIAL_CLEARCOAT){
-		F0 = mix(F0, iorToFresnel(fresnelToIor(F0), vec3(1.505)), material.clearCoat);
+		F0 = mix(F0, iorToFresnel(fresnelToIor(F0), vec3(1.5)), material.clearCoat);
 	}
 
 	// Orientation: basic diffuse shadowing.
