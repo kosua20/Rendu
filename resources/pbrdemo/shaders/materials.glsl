@@ -7,6 +7,7 @@
 #define MATERIAL_EMISSIVE 3 ///< Emissive material with a specular dielectric layer.
 #define MATERIAL_ANISOTROPIC 4 ///< Anisotropic GGX material.
 #define MATERIAL_SHEEN 5 ///< Sheen material.
+#define MATERIAL_IRIDESCENT 6 ///< Material with a thin layer creating interferences.
 
 /** Encode a material ID for storage in the G-buffer.
  \param material the identifier to encode
@@ -73,7 +74,9 @@ struct Material {
 	float sheeness; ///< Sheen mixing factor.
 	vec3 sheenColor; ///< Sheen tint color.
 	float sheenRoughness; ///< Roughness of the sheen lobe.
-	
+	// Iridescence
+	float filmIndex; ///< The thin film index of refraction.
+	float filmThickness; ///< The thin film thickness in nanometers.
 };
 
 /** Fill a material with default parameters.
@@ -95,6 +98,8 @@ Material initMaterial(){
 	params.sheeness = 0.0;
 	params.sheenColor = vec3(0.0);
 	params.sheenRoughness = 0.0;
+	params.filmIndex = 1.5;
+	params.filmThickness = 0.0;
 	return params;
 }
 

@@ -19,6 +19,7 @@ public:
 		Clearcoat,   ///< PBR shading with an additional clear coat specular layer.
 		Anisotropic, ///< PBR shading with an anisotropic BRDF.
 		Sheen, 		 ///< PBR shading with a sheen BRDF.
+		Iridescent,  ///< PBR shading with iridescent Fresnel.
 		Emissive,  	 ///< Emissive objects (no diffuse shading).
 		Transparent, ///< Transparent object
 	};
