@@ -93,6 +93,7 @@ private:
 	Program * _clearCoatProgram; 	///< Basic PBR program with an additional clear coat specular layer.
 	Program * _anisotropicProgram; 	///< Basic PBR with anisotropic roughness.
 	Program * _sheenProgram; 		///< PBR with sheen BRDF.
+	Program * _iridescentProgram; 	///< PBR with iridescent Fresnel.
 	Program * _depthPrepass; 		///< Depth prepass program.
 
 	Program * _skyboxProgram; ///< Skybox program.
