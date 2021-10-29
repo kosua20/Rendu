@@ -52,6 +52,16 @@ void decodeMetalnessAndParameter(float raw, out float metalness, out float param
 	parameter = float(param) / float((1 << 3) - 1);
 }
 
+/**
+ Convert the iridescence normalized values to the physical quantities.
+ \param ior the normalized index of refraction
+ \param thickness the normalized thickness
+ \return a vector containing a refraction index in [1.2, 2.4] and a thickness in [300nm, 800nm]
+ */
+vec2 decodeIridescence(float ior, float thickness){
+	return vec2(1.2 + ior * 1.2, 300.0 + 500.0 * thickness);
+}
+
 /** Store a surface point material parameters.
  */
 struct Material {
@@ -194,6 +204,13 @@ Material decodeMaterialFromGbuffer(vec2 uv, texture2D gbuffer0, texture2D gbuffe
 		// Re-build current tangent frame from reference frame.
 		material.tangent = normalize(cosFrame * defaultTangent + sinFrame * defaultBitangent);
 		material.bitangent = normalize(cross(material.normal, material.tangent));
+	}
+
+	// Iridescent parameters.
+	if(material.id == MATERIAL_IRIDESCENT){
+		vec2 decodedIridescence = decodeIridescence(normalInfo.b, effectInfo.a);
+		material.filmIndex = decodedIridescence.x;
+		material.filmThickness = decodedIridescence.y;
 	}
 
 	
