@@ -26,6 +26,7 @@ ForwardRenderer::ForwardRenderer(const glm::vec2 & resolution, ShadowMode mode, 
 	_anisotropicProgram = Resources::manager().getProgram("object_anisotropic_forward", "object_forward", "object_anisotropic_forward");
 	_sheenProgram  		= Resources::manager().getProgram("object_sheen_forward", "object_forward", "object_sheen_forward");
 	_iridescentProgram  = Resources::manager().getProgram("object_iridescent_forward", "object_forward", "object_iridescent_forward");
+	_subsurfaceProgram  = Resources::manager().getProgram("object_subsurface_forward", "object_forward", "object_subsurface_forward");
 	_skyboxProgram = Resources::manager().getProgram("skybox_forward", "skybox_infinity", "skybox_forward");
 	_bgProgram	   = Resources::manager().getProgram("background_forward", "background_infinity", "background_forward");
 	_atmoProgram   = Resources::manager().getProgram("atmosphere_forward", "background_infinity", "atmosphere_forward");
@@ -140,6 +141,9 @@ void ForwardRenderer::renderOpaque(const Culler::List & visibles, const glm::mat
 				break;
 			case Material::Iridescent:
 				currentProgram = _iridescentProgram;
+				break;
+			case Material::Subsurface:
+				currentProgram = _subsurfaceProgram;
 				break;
 			case Material::Emissive:
 				currentProgram = _emissiveProgram;
@@ -334,7 +338,7 @@ void ForwardRenderer::draw(const Camera & camera, Framebuffer & framebuffer, uin
 		const glm::mat4 invView = glm::inverse(view);
 		const glm::vec2 invScreenSize = 1.0f / glm::vec2(_sceneFramebuffer->width(), _sceneFramebuffer->height());
 		// Update shared data for the three programs.
-		Program * programs[] = {_parallaxProgram, _objectProgram, _clearCoatProgram, _transparentProgram, _emissiveProgram, _anisotropicProgram, _sheenProgram, _iridescentProgram };
+		Program * programs[] = {_parallaxProgram, _objectProgram, _clearCoatProgram, _transparentProgram, _emissiveProgram, _anisotropicProgram, _sheenProgram, _iridescentProgram, _subsurfaceProgram };
 		for(Program * prog : programs){
 			prog->use();
 			prog->uniform("inverseV", invView);

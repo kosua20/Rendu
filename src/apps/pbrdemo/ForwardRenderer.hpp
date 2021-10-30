@@ -94,6 +94,7 @@ private:
 	Program * _anisotropicProgram; 	///< Basic PBR with anisotropic roughness.
 	Program * _sheenProgram; 		///< PBR with sheen BRDF.
 	Program * _iridescentProgram; 	///< PBR with iridescent Fresnel.
+	Program * _subsurfaceProgram;	///< PBR with subsurface scattering.
 	Program * _depthPrepass; 		///< Depth prepass program.
 
 	Program * _skyboxProgram; ///< Skybox program.
