@@ -184,11 +184,11 @@ void DeferredRenderer::renderTransparent(const Culler::List & visibles, const gl
 	_transparentProgram->uniform("probesCount", int(_fwdProbesGPU->count()));
 	_transparentProgram->uniform("invScreenSize", invScreenSize);
 
-	// This is because after a change of scene shadow maps are reset, but the conditional setup of textures on
+	// This is because after a change of scene shadow maps and probes are reset, but the conditional setup of textures on
 	// the program means that descriptors can still reference the deleted textures.
-	_transparentProgram->defaultTexture(5);
-	_transparentProgram->defaultTexture(6);
-	_transparentProgram->defaultTexture(7);
+	_transparentProgram->defaultTexture(1);
+	_transparentProgram->defaultTexture(2);
+	_transparentProgram->defaultTexture(3);
 
 
 	for(const long & objectId : visibles) {
@@ -221,17 +221,20 @@ void DeferredRenderer::renderTransparent(const Culler::List & visibles, const gl
 		_transparentProgram->bufferArray(_fwdProbesGPU->shCoeffs(), 2);
 		
 		// Bind the textures.
-		_transparentProgram->textures(material.textures());
-		_transparentProgram->texture(_textureBrdf, 4);
-		_transparentProgram->textureArray(_fwdProbesGPU->envmaps(), 5);
+		_transparentProgram->texture(_textureBrdf, 0);
+		_transparentProgram->textureArray(_fwdProbesGPU->envmaps(), 1);
 		// Bind available shadow maps.
 		if(shadowMaps[0]){
-			_transparentProgram->texture(shadowMaps[0], 6);
+			_transparentProgram->texture(shadowMaps[0], 2);
 		}
 		if(shadowMaps[1]){
-			_transparentProgram->texture(shadowMaps[1], 7);
+			_transparentProgram->texture(shadowMaps[1], 3);
 		}
 		// No SSAO as the objects are not rendered in it.
+
+		// Objects textures.
+		_transparentProgram->textures(material.textures(), 5);
+
 
 		// To approximately handle two sided objects properly, draw the back faces first, then the front faces.
 		// This won't solve all issues in case of concavities.

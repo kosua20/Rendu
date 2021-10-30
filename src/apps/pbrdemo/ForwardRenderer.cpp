@@ -166,17 +166,18 @@ void ForwardRenderer::renderOpaque(const Culler::List & visibles, const glm::mat
 		currentProgram->buffer(_probesGPU->data(), 1);
 		currentProgram->bufferArray(_probesGPU->shCoeffs(), 2);
 		// Bind the textures.
-		currentProgram->textures(material.textures());
-		currentProgram->texture(_textureBrdf, 4);
-		currentProgram->textureArray(_probesGPU->envmaps(), 5);
+		currentProgram->texture(_textureBrdf, 0);
+		currentProgram->textureArray(_probesGPU->envmaps(), 1);
 		// Bind available shadow maps.
 		if(shadowMaps[0]){
-			currentProgram->texture(shadowMaps[0], 6);
+			currentProgram->texture(shadowMaps[0], 2);
 		}
 		if(shadowMaps[1]){
-			currentProgram->texture(shadowMaps[1], 7);
+			currentProgram->texture(shadowMaps[1], 3);
 		}
-		currentProgram->texture(_ssaoPass->texture(), 8);
+		currentProgram->texture(_ssaoPass->texture(), 4);
+		currentProgram->textures(material.textures(), 5);
+		
 		GPU::drawMesh(*object.mesh());
 	}
 
@@ -220,17 +221,19 @@ void ForwardRenderer::renderTransparent(const Culler::List & visibles, const glm
 		_transparentProgram->buffer(_probesGPU->data(), 1);
 		_transparentProgram->bufferArray(_probesGPU->shCoeffs(), 2);
 		// Bind the textures.
-		_transparentProgram->textures(material.textures());
-		_transparentProgram->texture(_textureBrdf, 4);
-		_transparentProgram->textureArray(_probesGPU->envmaps(), 5);
+		_transparentProgram->texture(_textureBrdf, 0);
+		_transparentProgram->textureArray(_probesGPU->envmaps(), 1);
 		// Bind available shadow maps.
 		if(shadowMaps[0]){
-			_transparentProgram->texture(shadowMaps[0], 6);
+			_transparentProgram->texture(shadowMaps[0], 2);
 		}
 		if(shadowMaps[1]){
-			_transparentProgram->texture(shadowMaps[1], 7);
+			_transparentProgram->texture(shadowMaps[1], 3);
 		}
 		// No SSAO as the objects are not rendered in it.
+
+		// Material textures.
+		_transparentProgram->textures(material.textures(), 5);
 
 		// To approximately handle two sided objects properly, draw the back faces first, then the front faces.
 		// This won't solve all issues in case of concavities.
@@ -338,14 +341,14 @@ void ForwardRenderer::draw(const Camera & camera, Framebuffer & framebuffer, uin
 			prog->uniform("probesCount", int(_probesGPU->count()));
 			prog->uniform("lightsCount", int(_lightsGPU->count()));
 			prog->uniform("invScreenSize", invScreenSize);
-			// This is because after a change of scene shadow maps are reset, but the conditional setup of textures on
+			// This is because after a change of scene shadow maps and probes are reset, but the conditional setup of textures on
 			// the program means that descriptors can still reference the deleted textures.
 			// \todo Currently there is no mechanism to "unregister" a texture for each shader using it, when deleting the texture.
 			// The texture could keep a record of all programs it has been used in. Or we could look at all programs when deleting.
 			// Or in PBRDemo we reset the textures when setting a scene.
-			prog->defaultTexture(5);
-			prog->defaultTexture(6);
-			prog->defaultTexture(7);
+			prog->defaultTexture(1);
+			prog->defaultTexture(2);
+			prog->defaultTexture(3);
 		}
 		_parallaxProgram->use();
 		_parallaxProgram->uniform("p", proj);

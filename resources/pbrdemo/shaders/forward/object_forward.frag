@@ -8,14 +8,15 @@ layout(location = 0) in INTERFACE {
 	vec2 uv; ///< UV coordinates.
 } In ;
 
-layout(set = 2, binding = 0) uniform texture2D albedoTexture; ///< Albedo.
-layout(set = 2, binding = 1) uniform texture2D normalTexture; ///< Normal map.
-layout(set = 2, binding = 2) uniform texture2D effectsTexture; ///< Effects map.
-layout(set = 2, binding = 4) uniform texture2D brdfPrecalc; ///< Preintegrated BRDF lookup table.
-layout(set = 2, binding = 5) uniform textureCube textureProbes[MAX_PROBES_COUNT]; ///< Background environment cubemaps (with preconvoluted versions of increasing roughness in mipmap levels).
-layout(set = 2, binding = 6) uniform texture2DArray shadowMaps2D; ///< Shadow maps array.
-layout(set = 2, binding = 7) uniform textureCubeArray shadowMapsCube; ///< Shadow cubemaps array.
-layout(set = 2, binding = 8) uniform texture2D ssaoTexture; ///< Ambient occlusion.
+layout(set = 2, binding = 0) uniform texture2D brdfPrecalc; ///< Preintegrated BRDF lookup table.
+layout(set = 2, binding = 1) uniform textureCube textureProbes[MAX_PROBES_COUNT]; ///< Background environment cubemaps (with preconvoluted versions of increasing roughness in mipmap levels).
+layout(set = 2, binding = 2) uniform texture2DArray shadowMaps2D; ///< Shadow maps array.
+layout(set = 2, binding = 3) uniform textureCubeArray shadowMapsCube; ///< Shadow cubemaps array.
+layout(set = 2, binding = 4) uniform texture2D ssaoTexture; ///< Ambient occlusion.
+
+layout(set = 2, binding = 5) uniform texture2D albedoTexture; ///< Albedo.
+layout(set = 2, binding = 6) uniform texture2D normalTexture; ///< Normal map.
+layout(set = 2, binding = 7) uniform texture2D effectsTexture; ///< Effects map.
 
 layout(set = 0, binding = 0) uniform UniformBlock {
 	mat4 inverseV; ///< The view to world transformation matrix.
