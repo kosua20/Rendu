@@ -62,6 +62,7 @@ const Culler::List & Culler::cullAndSort(const glm::mat4 & view, const glm::mat4
 		{ Material::Anisotropic, 	Ordering::FRONT_TO_BACK },
 		{ Material::Sheen, 			Ordering::FRONT_TO_BACK },
 		{ Material::Iridescent, 	Ordering::FRONT_TO_BACK },
+		{ Material::Subsurface, 	Ordering::FRONT_TO_BACK },
 		{ Material::Emissive, 		Ordering::FRONT_TO_BACK },
 		{ Material::Transparent, 	Ordering::BACK_TO_FRONT },
 	};
@@ -73,6 +74,7 @@ const Culler::List & Culler::cullAndSort(const glm::mat4 & view, const glm::mat4
 		{ Material::Anisotropic, 	1 },
 		{ Material::Sheen, 			1 },
 		{ Material::Iridescent, 	1 },
+		{ Material::Subsurface, 	1 },
 		{ Material::Emissive, 		1 },
 		{ Material::Transparent, 	2 },
 	};

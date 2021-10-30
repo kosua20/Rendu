@@ -20,6 +20,7 @@ public:
 		Anisotropic, ///< PBR shading with an anisotropic BRDF.
 		Sheen, 		 ///< PBR shading with a sheen BRDF.
 		Iridescent,  ///< PBR shading with iridescent Fresnel.
+		Subsurface,  ///< PBR shading with subsurface scattering.
 		Emissive,  	 ///< Emissive objects (no diffuse shading).
 		Transparent, ///< Transparent object
 	};

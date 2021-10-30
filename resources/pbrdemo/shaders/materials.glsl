@@ -8,6 +8,7 @@
 #define MATERIAL_ANISOTROPIC 4 ///< Anisotropic GGX material.
 #define MATERIAL_SHEEN 5 ///< Sheen material.
 #define MATERIAL_IRIDESCENT 6 ///< Material with a thin layer creating interferences.
+#define MATERIAL_SUBSURFACE 7 ///< Material with a thin layer creating interferences.
 
 /** Encode a material ID for storage in the G-buffer.
  \param material the identifier to encode
@@ -116,6 +117,10 @@ struct Material {
 	// Iridescence
 	float filmIndex; ///< The thin film index of refraction.
 	float filmThickness; ///< The thin film thickness in nanometers.
+	// Subsurface scattering.
+	vec3 subsurfaceTint; ///< The tint of the subsurface
+	float subsurfaceThickness; ///< The thickness to use for the subsurface.
+	float subsurfaceRoughness; ///< The roughness used for the lobe emulating the subsurface.
 };
 
 /** Fill a material with default parameters.
@@ -139,6 +144,9 @@ Material initMaterial(){
 	params.sheenRoughness = 0.0;
 	params.filmIndex = 1.5;
 	params.filmThickness = 0.0;
+	params.subsurfaceTint = vec3(0.0);
+	params.subsurfaceThickness = 1.0;
+	params.subsurfaceRoughness = 1.0;
 	return params;
 }
 

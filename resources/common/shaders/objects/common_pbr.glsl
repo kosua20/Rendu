@@ -498,6 +498,18 @@ void ambientLighting(Material material, vec3 worldP, vec3 viewV, mat4 inverseV, 
 		specular = mix(specular, sheenSpecular, material.sheeness);
 	}
 
+	// Subsurface component. 
+	// This is a hack, we use the irradiance in the direction opposite to the normal
+	// to estimate transmitted light. We then mix with the current ambient diffuse based on the thickness.
+	if(material.id == MATERIAL_SUBSURFACE){
+		// Sampler irradiance in the opposite direction ("other side" of the object if it is thin)
+		vec3 subsurfaceIrradiance = applySH(-worldN, envSH);
+		// Heuristic blend based on thickness.
+		float subsurfaceBlend = 0.5 * (1.0 - material.subsurfaceThickness);
+		vec3 subsurfaceDiffuse = material.ao * subsurfaceIrradiance * material.subsurfaceTint * material.reflectance;
+		diffuse = mix(diffuse, subsurfaceDiffuse, subsurfaceBlend);
+	}
+
 	// Clear coat component.
 	if(material.id == MATERIAL_CLEARCOAT){
 		// Second specular lobe with its own roughness.
@@ -572,6 +584,25 @@ void directBrdf(Material material, vec3 n, vec3 v, vec3 l, out vec3 diffuse, out
 	// Apply orientation.
 	diffuse *= orientation;
 	specular *= orientation;
+
+	// Apply subsurface scattering.
+	if(material.id == MATERIAL_SUBSURFACE){
+		// Extra lobe in the opposite direction, inspired from the approach described by C. Barré-Brisebois 
+		// in "Approximating Translucency for a Fast, Cheap and Convincing Subsurface-Scattering Look", 2011, 
+		// (https://colinbarrebrisebois.com/2011/03/07/gdc-2011-approximating-translucency-for-a-fast-cheap-and-convincing-subsurface-scattering-look/)
+		float nLdotV = clamp(-dot(l, v), 0.0, 1.0);
+		float subsurfaceAlpha = max(0.0001, material.subsurfaceRoughness * material.subsurfaceRoughness);
+		float subsurfaceLobe = D(nLdotV, subsurfaceAlpha);
+		// Wrap orientation.
+		const float diffuseWrap = 0.5;
+		const float diffuseWrapDenom = diffuseWrap + 1.0;
+		float wrappedNdotL = (NdotL + diffuseWrap)/(diffuseWrapDenom * diffuseWrapDenom);
+		float subsurfaceOrientation = clamp(wrappedNdotL, 0.0, 1.0);
+		// Subsurface is only valid for dielectrics, the baseColor is the albedo.
+		diffuse += subsurfaceOrientation * (1.0 - material.subsurfaceThickness) * subsurfaceLobe * material.subsurfaceTint * baseColor;
+	}
+
+	// Apply clear coat lobe if available, last.
 	if(material.id == MATERIAL_CLEARCOAT){
 		float clearCoatFresnel;
 		float clearCoatLobe = ggxClearCoat(n, v, l, h, material.clearCoatRoughness, clearCoatFresnel);
