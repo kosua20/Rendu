@@ -245,6 +245,15 @@ Material decodeMaterialFromGbuffer(vec2 uv, texture2D gbuffer0, texture2D gbuffe
 		material.filmThickness = decodedIridescence.y;
 	}
 
+	// Subsurface parameters.
+	if(material.id == MATERIAL_SUBSURFACE){
+		// Rebuild 12 bits color stored in 10 and 2 bits channels.
+		material.subsurfaceTint = decodeRgbFrom10Plus2Bits(normalInfo.ba);
+		material.subsurfaceRoughness = max(0.045, material.metalness);
+		material.subsurfaceThickness = effectInfo.a;
+		material.metalness = 0.0;
+	}
+
 	
 	return material;
 }

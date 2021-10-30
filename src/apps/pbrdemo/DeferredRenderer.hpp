@@ -99,6 +99,7 @@ private:
 	Program * _anisotropicProgram;	///< Basic PBR with anisotropic roughness.
 	Program * _sheenProgram;		///< PBR with sheen BRDF.
 	Program * _iridescentProgram;	///< PBR with iridescent Fresnel.
+	Program * _subsurfaceProgram;	///< PBR with subsurface scattering.
 	Program * _emissiveProgram;	 	///< Emissive program
 	Program * _transparentProgram;	///< Transparent PBR program
 	Program * _probeNormalization;	///< Indirect lighting normalization program.

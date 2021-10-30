@@ -34,6 +34,7 @@ DeferredRenderer::DeferredRenderer(const glm::vec2 & resolution, ShadowMode mode
 	_anisotropicProgram	= Resources::manager().getProgram("object_anisotropic_gbuffer", "object_gbuffer", "object_anisotropic_gbuffer");
 	_sheenProgram		= Resources::manager().getProgram("object_sheen_gbuffer", "object_gbuffer", "object_sheen_gbuffer");
 	_iridescentProgram	= Resources::manager().getProgram("object_iridescent_gbuffer", "object_gbuffer", "object_iridescent_gbuffer");
+	_subsurfaceProgram	= Resources::manager().getProgram("object_subsurface_gbuffer", "object_gbuffer", "object_subsurface_gbuffer");
 	_emissiveProgram	= Resources::manager().getProgram("object_emissive_gbuffer", "object_gbuffer", "object_emissive_gbuffer");
 	_transparentProgram = Resources::manager().getProgram("object_transparent_forward", "object_forward", "object_transparent_forward");
 
@@ -141,6 +142,15 @@ void DeferredRenderer::renderOpaque(const Culler::List & visibles, const glm::ma
 				// Upload the normal matrix.
 				_iridescentProgram->uniform("normalMatrix", glm::mat4(normalMatrix));
 				_iridescentProgram->uniform("hasUV", object.useTexCoords());
+				break;
+			case Material::Subsurface:
+				_subsurfaceProgram->use();
+				program = _subsurfaceProgram;
+				// Upload the MVP matrix.
+				_subsurfaceProgram->uniform("mvp", MVP);
+				// Upload the normal matrix.
+				_subsurfaceProgram->uniform("normalMatrix", glm::mat4(normalMatrix));
+				_subsurfaceProgram->uniform("hasUV", object.useTexCoords());
 				break;
 			case Material::Emissive:
 				_emissiveProgram->use();
