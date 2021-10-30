@@ -53,15 +53,8 @@ void main(){
 	fragEffects.rb = infos.rb;
 
 	// Sheen parameters.
-	// Encode color on 12 bits.
-	uvec3 sheenColor = uvec3(sheenInfos.rgb * 255.0);
-	sheenColor = (sheenColor & 0xF0) >> 4;
-	uint sheenPacked = sheenColor.r | (sheenColor.g << 4) | (sheenColor.b << 8);
-	// Split it into 10 and 2 bits for storage along with the normal.
-	float sheenPacked10 = float((sheenPacked & 0xFFFFFC) >> 2) / float((1 << 10) - 1);
-	float sheenPacked2 = float((sheenPacked & 0x03)) / float((1<<2)-1);
-	fragNormal.b = sheenPacked10;
-	fragNormal.a = sheenPacked2;
+	// Encode color on 12 bits, split into 10 and 2 bits for storage along with the normal.
+	fragNormal.ba = encodeRgbOn10Plus2Bits(sheenInfos.rgb);
 	
 	// No metalness, replace it by sheeness.
 	fragEffects.g = encodeMetalnessAndParameter(infos.g, 0.0f);

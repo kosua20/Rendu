@@ -62,6 +62,35 @@ vec2 decodeIridescence(float ior, float thickness){
 	return vec2(1.2 + ior * 1.2, 300.0 + 500.0 * thickness);
 }
 
+/** Store a RGB color on 12 bits, split into 10 and 2 bits for storage in the Gbuffer.
+ \param rgb the color to pack
+ \return the 10 and 2 bits normalized values encoding the color
+ */
+vec2 encodeRgbOn10Plus2Bits(vec3 rgb){
+	uvec3 rgbColor = uvec3(rgb * 255.0);
+	// Keep only the 4 highest bits.
+	rgbColor = (rgbColor & 0xF0) >> 4;
+	uint rgbPacked = rgbColor.r | (rgbColor.g << 4) | (rgbColor.b << 8);
+	// Split it into 10 and 2 bits for storage along with the normal.
+	float rgbPacked10 = float((rgbPacked & 0xFFFFFC) >> 2) / float((1 << 10) - 1);
+	float rgbPacked2 = float((rgbPacked & 0x03)) / float((1<<2)-1);
+	return vec2(rgbPacked10, rgbPacked2);
+}
+
+/** Decode a RGB color from a 10 and a 2 bits normalized values
+ \param packed the packed values
+ \return the decoded color
+ */
+vec3 decodeRgbFrom10Plus2Bits(vec2 packed){
+	// Rebuild 12 bits color stored in 10 and 2 bits channels.
+	uint rgbPacked10 = uint(packed.x * float((1 << 10) - 1));
+	uint rgbPacked2 = uint(packed.y * float((1 << 2) - 1));
+	uint rgbPacked = rgbPacked2 | (rgbPacked10 << 2);
+	uvec3 rgbColor = uvec3(rgbPacked & 0xF, (rgbPacked >> 4) & 0xF, (rgbPacked >> 8) & 0xF);
+	vec3 rgbFinal = vec3(rgbColor << 4) / 255.0;
+	return rgbFinal;
+}
+
 /** Store a surface point material parameters.
  */
 struct Material {
@@ -163,12 +192,7 @@ Material decodeMaterialFromGbuffer(vec2 uv, texture2D gbuffer0, texture2D gbuffe
 	// Decode sheen if present.
 	if(material.id == MATERIAL_SHEEN){
 		// Rebuild 12 bits color stored in 10 and 2 bits channels.
-		uint sheenPacked2 = uint(normalInfo.a * float((1 << 2) - 1));
-		uint sheenPacked10 = uint(normalInfo.b * float((1 << 10) - 1));
-		uint sheenPacked = sheenPacked2 | (sheenPacked10 << 2);
-		uvec3 sheenColor = uvec3(sheenPacked & 0xF, (sheenPacked >> 4) & 0xF, (sheenPacked >> 8) & 0xF);
-		vec3 sheenFinal = vec3(sheenColor << 4) / 255.0;
-		material.sheenColor = sheenFinal;
+		material.sheenColor = decodeRgbFrom10Plus2Bits(normalInfo.ba);
 		// Sheen roughness.
 		material.sheenRoughness = max(0.045, effectInfo.a);
 		// We replaced the metalness by the sheen factor.

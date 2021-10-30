@@ -486,7 +486,7 @@ void ambientLighting(Material material, vec3 worldP, vec3 viewV, mat4 inverseV, 
 	// Diffuse contribution. Metallic materials have no diffuse contribution.
 	vec3 single = (1.0 - material.metalness) * material.reflectance * (1.0 - F0);
 	diffuse = single * (1.0 - specular - multi) + multi;
-	// Combine BRDF, incoming (ir)radiance and occlusion.
+	// Apply irradiance and occlusion.
 	diffuse *= material.ao * irradianceL;
 
 	// Sheen component.
@@ -550,25 +550,28 @@ void directBrdf(Material material, vec3 n, vec3 v, vec3 l, out vec3 diffuse, out
 	}
 
 	// Orientation: basic diffuse shadowing.
-	float orientation = max(0.0, dot(l,n));
+	float NdotL = dot(l, n);
+	float orientation = max(0.0, NdotL);
 	
 	// Normalized diffuse contribution. Metallic materials have no diffuse contribution.
-	diffuse = orientation * INV_M_PI * (1.0 - metallic) * baseColor * (1.0 - F0);
+	diffuse = INV_M_PI * (1.0 - metallic) * baseColor * (1.0 - F0);
 
 	// Specular GGX contribution (anisotropic if needed).
 	if(material.id == MATERIAL_ANISOTROPIC){
-		specular = orientation * ggxAnisotropic(n, v, l, h, F0, material);
+		specular = ggxAnisotropic(n, v, l, h, F0, material);
 	} else {
-		specular = orientation * ggx(n, v, l, h, F0, material.roughness);
+		specular = ggx(n, v, l, h, F0, material.roughness);
 	}
 
 	// Apply sheen if needed.
 	if(material.id == MATERIAL_SHEEN){
-		vec3 sheen = orientation * ggxSheen(n, v, l, h, material);
+		vec3 sheen = ggxSheen(n, v, l, h, material);
 		specular = mix(specular, sheen, material.sheeness);
 	}
 
-	// Apply clear coat lobe if available
+	// Apply orientation.
+	diffuse *= orientation;
+	specular *= orientation;
 	if(material.id == MATERIAL_CLEARCOAT){
 		float clearCoatFresnel;
 		float clearCoatLobe = ggxClearCoat(n, v, l, h, material.clearCoatRoughness, clearCoatFresnel);
