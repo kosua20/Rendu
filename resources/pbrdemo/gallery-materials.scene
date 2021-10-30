@@ -266,6 +266,44 @@
 	translation: 7.5,0.0,12.5
 	material: irid_ior22_th550
 
+# Subsurface (at the back so we can check the light through them)
+
+* object: 
+	shadows: true 
+	mesh: testknob 
+	translation: -2.5,0.0,-2.5
+	material: subsurf_th10
+
+* object: 
+	shadows: true 
+	mesh: testknob 
+	translation: -5.0,0.0,-2.5
+	material: subsurf_th05
+
+* object: 
+	shadows: true 
+	mesh: testknob 
+	translation: -7.5,0.0,-2.5
+	material: subsurf_th00
+
+* object: 
+	shadows: true 
+	mesh: testknob 
+	translation: 2.5,0.0,-2.5
+	material: subsurf_r03
+
+* object: 
+	shadows: true 
+	mesh: testknob 
+	translation: 5.0,0.0,-2.5
+	material: subsurf_r06
+
+* object: 
+	shadows: true 
+	mesh: testknob 
+	translation: 7.5,0.0,-2.5
+	material: subsurf_r10
+
 
 # Materials
 
@@ -611,3 +649,58 @@
 		- rgb: 1.0,0.5
 	type: Iridescent 
 	name: irid_ior22_th550
+
+# Subsurface 
+* material: 
+	textures: 
+		- rgb: 1.0,1.0,1.0
+		- rgb: default_normal 
+		- rgb: 0.4,0.0,1.0,0.0
+		- rgb: 1.0,0.0,0.0,0.5
+	type: Subsurface 
+	name: subsurf_th00
+
+* material: 
+	textures: 
+		- rgb: 1.0,1.0,1.0
+		- rgb: default_normal 
+		- rgb: 0.4,0.0,1.0,0.5
+		- rgb: 1.0,0.0,0.0,0.5
+	type: Subsurface 
+	name: subsurf_th05
+
+* material: 
+	textures: 
+		- rgb: 1.0,1.0,1.0
+		- rgb: default_normal 
+		- rgb: 0.4,0.0,1.0,1.0
+		- rgb: 1.0,0.0,0.0,0.5
+	type: Subsurface 
+	name: subsurf_th10
+
+* material: 
+	textures: 
+		- rgb: 1.0,1.0,1.0
+		- rgb: default_normal 
+		- rgb: 0.4,0.0,1.0,0.1
+		- rgb: 1.0,0.0,0.0,0.3
+	type: Subsurface 
+	name: subsurf_r03
+
+* material: 
+	textures: 
+		- rgb: 1.0,1.0,1.0
+		- rgb: default_normal 
+		- rgb: 0.4,0.0,1.0,0.1
+		- rgb: 1.0,0.0,0.0,0.6
+	type: Subsurface 
+	name: subsurf_r06
+
+* material: 
+	textures: 
+		- rgb: 1.0,1.0,1.0
+		- rgb: default_normal 
+		- rgb: 0.4,0.0,1.0,0.1
+		- rgb: 1.0,0.0,0.0,1.0
+	type: Subsurface 
+	name: subsurf_r10
