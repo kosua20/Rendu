@@ -1,5 +1,3 @@
-
-
 * probe: 
 	radiance: rgb32cube: kiara_dawn
 	irradiance: kiara_dawn_shcoeffs
@@ -15,25 +13,24 @@
 	#radius: 20.0
 
 * camera: 
-	position: 0.906498 6.854966 21.935211 
-	center: 0.335479 0.865528 -0.471047 
-	up: -0.006577 0.966101 -0.258082 
+	position: 0.210524 21.327364 28.644413 
+	center: 0.248456 4.665341 12.500829 
+	up: 0.001688 0.695846 -0.718189 
 	fov: 0.570000 
-	planes: 0.283549 141.774475 
-
+	planes: 0.566186 283.093109 
 
 * object:
 	shadows: false
 	mesh: groundplane 
 	scaling: 20.000000
-	translation: 0.0,-1.5,0.0
+	translation: 0.0,-1.5,5.0
 	material: ground_diffuse
 
 # Emissive
 
 * object: 
 	shadows: true 
-	mesh: sphere 
+	mesh: testknob 
 	translation: 0.0,0.0,0.0
 	material: emissive
 
@@ -41,38 +38,38 @@
 
 * object: 
 	shadows: true 
-	mesh: sphere 
+	mesh: testknob 
 	translation: -7.5,0.0,0.0
 	material: regular_diel_r10 
 
 * object: 
 	shadows: true 
-	mesh: sphere 
+	mesh: testknob 
 	translation: -5.0,0.0,0.0
 	material: regular_diel_r05 
 
 * object: 
 	shadows: true 
-	mesh: sphere 
+	mesh: testknob 
 	translation: -2.5,0.0,0.0
 	material: regular_diel_r00
 
 * object: 
 	shadows: true 
-	mesh: sphere 
+	mesh: testknob 
 	translation: 2.5,0.0,0.0
 	material: regular_metal_r00 
 
 * object: 
 	shadows: true 
-	mesh: sphere 
+	mesh: testknob 
 	translation: 5.0,0.0,0.0
 	material: regular_metal_r05
 
 
 * object: 
 	shadows: true 
-	mesh: sphere 
+	mesh: testknob 
 	translation: 7.5,0.0,0.0
 	material: regular_metal_r10
 
@@ -81,38 +78,38 @@
 
 * object: 
 	shadows: true 
-	mesh: sphere 
+	mesh: testknob 
 	translation: -7.5,0.0,2.5
 	material: clearcoat_diel_r10 
 
 * object: 
 	shadows: true 
-	mesh: sphere 
+	mesh: testknob 
 	translation: -5.0,0.0,2.5
 	material: clearcoat_diel_r05 
 
 * object: 
 	shadows: true 
-	mesh: sphere 
+	mesh: testknob 
 	translation: -2.5,0.0,2.5
 	material: clearcoat_diel_r00
 
 
 * object: 
 	shadows: true 
-	mesh: sphere 
+	mesh: testknob 
 	translation: 2.5,0.0,2.5
 	material: clearcoat_metal_r00 
 
 * object: 
 	shadows: true 
-	mesh: sphere 
+	mesh: testknob 
 	translation: 5.0,0.0,2.5
 	material: clearcoat_metal_r05
 
 * object: 
 	shadows: true 
-	mesh: sphere 
+	mesh: testknob 
 	translation: 7.5,0.0,2.5
 	material: clearcoat_metal_r10 
 
@@ -120,76 +117,76 @@
 
 * object: 
 	shadows: true 
-	mesh: sphere 
+	mesh: testknob 
 	translation: -7.5,0.0,5.0
 	material: anisotropic_h_diel_r10 
 
 * object: 
 	shadows: true 
-	mesh: sphere 
+	mesh: testknob 
 	translation: -5.0,0.0,5.0
 	material: anisotropic_h_diel_r05 
 
 * object: 
 	shadows: true 
-	mesh: sphere 
+	mesh: testknob 
 	translation: -2.5,0.0,5.0
 	material: anisotropic_h_diel_r00
 
 
 * object: 
 	shadows: true 
-	mesh: sphere 
+	mesh: testknob 
 	translation: 2.5,0.0,5.0
 	material: anisotropic_h_metal_r00 
 
 * object: 
 	shadows: true 
-	mesh: sphere 
+	mesh: testknob 
 	translation: 5.0,0.0,5.0
 	material: anisotropic_h_metal_r05
 
 * object: 
 	shadows: true 
-	mesh: sphere 
+	mesh: testknob 
 	translation: 7.5,0.0,5.0
 	material: anisotropic_h_metal_r10 
 
 
 * object: 
 	shadows: true 
-	mesh: sphere 
+	mesh: testknob 
 	translation: -7.5,0.0,7.5
 	material: anisotropic_v_diel_r10 
 
 * object: 
 	shadows: true 
-	mesh: sphere 
+	mesh: testknob 
 	translation: -5.0,0.0,7.5
 	material: anisotropic_v_diel_r05 
 
 * object: 
 	shadows: true 
-	mesh: sphere 
+	mesh: testknob 
 	translation: -2.5,0.0,7.5
 	material: anisotropic_v_diel_r00
 
 
 * object: 
 	shadows: true 
-	mesh: sphere 
+	mesh: testknob 
 	translation: 2.5,0.0,7.5
 	material: anisotropic_v_metal_r00 
 
 * object: 
 	shadows: true 
-	mesh: sphere 
+	mesh: testknob 
 	translation: 5.0,0.0,7.5
 	material: anisotropic_v_metal_r05
 
 * object: 
 	shadows: true 
-	mesh: sphere 
+	mesh: testknob 
 	translation: 7.5,0.0,7.5
 	material: anisotropic_v_metal_r10 
 
@@ -197,39 +194,77 @@
 
 * object: 
 	shadows: true 
-	mesh: sphere 
+	mesh: testknob 
 	translation: -2.5,0.0,10.0
 	material: sheen_r00_fabric 
 
 * object: 
 	shadows: true 
-	mesh: sphere 
+	mesh: testknob 
 	translation: -5.0,0.0,10.0
 	material: sheen_r05_fabric
 
 * object: 
 	shadows: true 
-	mesh: sphere 
+	mesh: testknob 
 	translation: -7.5,0.0,10.0
 	material: sheen_r10_fabric 
 
 * object: 
 	shadows: true 
-	mesh: sphere 
+	mesh: testknob 
 	translation: 2.5,0.0,10.0
 	material: sheen_r00_silk
 
 * object: 
 	shadows: true 
-	mesh: sphere 
+	mesh: testknob 
 	translation: 5.0,0.0,10.0
 	material: sheen_r05_silk 
 
 * object: 
 	shadows: true 
-	mesh: sphere 
+	mesh: testknob 
 	translation: 7.5,0.0,10.0
 	material: sheen_r10_silk
+
+# Iridescence
+
+* object: 
+	shadows: true 
+	mesh: testknob 
+	translation: -2.5,0.0,12.5
+	material: irid_ior18_th800 
+
+* object: 
+	shadows: true 
+	mesh: testknob 
+	translation: -5.0,0.0,12.5
+	material: irid_ior18_th550
+
+* object: 
+	shadows: true 
+	mesh: testknob 
+	translation: -7.5,0.0,12.5
+	material: irid_ior18_th300 
+
+* object: 
+	shadows: true 
+	mesh: testknob 
+	translation: 2.5,0.0,12.5
+	material: irid_ior12_th550
+
+* object: 
+	shadows: true 
+	mesh: testknob 
+	translation: 5.0,0.0,12.5
+	material: irid_ior18_th550
+
+* object: 
+	shadows: true 
+	mesh: testknob 
+	translation: 7.5,0.0,12.5
+	material: irid_ior22_th550
 
 
 # Materials
@@ -522,3 +557,57 @@
 	name: sheen_r00_silk
 
 
+# Iridescent 
+* material: 
+	textures: 
+		- rgb: 0.0,0.0,0.0 
+		- rgb: default_normal 
+		- rgb: 0.2,0.0,1.0
+		- rgb: 0.5,0.0
+	type: Iridescent 
+	name: irid_ior18_th300
+
+* material: 
+	textures: 
+		- rgb: 0.0,0.0,0.0 
+		- rgb: default_normal 
+		- rgb: 0.2,0.0,1.0 
+		- rgb: 0.5,0.5
+	type: Iridescent 
+	name: irid_ior18_th550
+
+* material: 
+	textures: 
+		- rgb: 0.0,0.0,0.0 
+		- rgb: default_normal 
+		- rgb: 0.2,0.0,1.0 
+		- rgb: 0.5,1.0
+	type: Iridescent 
+	name: irid_ior18_th800
+
+* material: 
+	textures: 
+		- rgb: 0.0,0.0,0.0 
+		- rgb: default_normal 
+		- rgb: 0.2,0.0,1.0 
+		- rgb: 0.0,0.5
+	type: Iridescent 
+	name: irid_ior12_th550
+
+* material: 
+	textures: 
+		- rgb: 0.0,0.0,0.0 
+		- rgb: default_normal 
+		- rgb: 0.2,0.0,1.0 
+		- rgb: 0.5,0.5
+	type: Iridescent 
+	name: irid_ior18_th550
+
+* material: 
+	textures: 
+		- rgb: 0.0,0.0,0.0 
+		- rgb: default_normal 
+		- rgb: 0.2,0.0,1.0 
+		- rgb: 1.0,0.5
+	type: Iridescent 
+	name: irid_ior22_th550
