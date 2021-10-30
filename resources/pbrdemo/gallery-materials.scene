@@ -34,6 +34,14 @@
 	translation: 0.0,0.0,0.0
 	material: emissive
 
+# Parallax
+
+* object: 
+	shadows: true 
+	mesh: testknob 
+	translation: 0.0,0.0,5.0
+	material: parallax
+
 # Default materials
 
 * object: 
@@ -322,6 +330,15 @@
 		- rgb: 0.1,0.0,1.0
 	type: Emissive 
 	name: emissive
+
+* material: 
+	textures: 
+		- rgb: 1.0,0.0,0.0 
+		- rgb: leather_normal 
+		- rgb: leather_rough_met_ao 
+		- rgb: leather_depth 
+	type: Parallax 
+	name: parallax
 
 * material: 
 	textures: 
