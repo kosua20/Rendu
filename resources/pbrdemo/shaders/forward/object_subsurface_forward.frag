@@ -79,9 +79,10 @@ void main(){
 
 	// Subsurface parameters.
 	vec4 subsurfaceInfos = texture(sampler2D(subsurfaceTexture, sRepeatLinearLinear), In.uv);
-	material.subsurfaceRoughness = max(subsurfaceInfos.a, 0.045);
+	material.subsurfaceRoughness = max(convertToPrecision(subsurfaceInfos.a, 5), 0.045);
 	material.subsurfaceThickness = infos.a;
-	material.subsurfaceTint = subsurfaceInfos.rgb;
+	// Use same precision as the deferred version (4bits).
+	material.subsurfaceTint = convertToPrecision(subsurfaceInfos.rgb, 4);
 
 	// Ambient occlusion.
 	vec2 screenUV = gl_FragCoord.xy * invScreenSize;

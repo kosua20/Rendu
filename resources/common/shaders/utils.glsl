@@ -83,6 +83,26 @@ float vec4ToFloat(vec4 v){
 	return uintBitsToFloat(res);
 }
 
+/** Convert a normalized float value to a given bit precision.
+ * \param value the normalized value to quantize
+ * \param size the number of bits to use
+ * \return the quantized normalized value
+ */
+float convertToPrecision(float value, uint size){
+	float mask = float((1 << size) - 1);
+	return round(value * mask)/mask;
+}
+
+/** Convert a vector of normalized float values to a given bit precision.
+ * \param value the normalized values to quantize
+ * \param size the number of bits to use
+ * \return the quantized normalized values
+ */
+vec3 convertToPrecision(vec3 value, uint size){
+	float mask = float((1 << size) - 1);
+	return floor(value * mask)/mask;
+}
+
 /** Wrap a projected direction in the octahedral parametrization of the unit sphere
  \param d the projected direction in 2D
  \return the corresponding coordinates in the parameterization

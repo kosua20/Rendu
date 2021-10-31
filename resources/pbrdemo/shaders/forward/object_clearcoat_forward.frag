@@ -74,10 +74,12 @@ void main(){
 	vec3 infos = texture(sampler2D(effectsTexture, sRepeatLinearLinear), In.uv).rgb;
 	material.roughness = max(0.045, infos.r);
 	material.ao = infos.b;
-	material.metalness = infos.g;
+	// Store metalness, using the same precision as the deferred version.
+	material.metalness = convertToPrecision(infos.g, 5);
 
 	vec2 clearCoatInfos = texture(sampler2D(clearCoatTexture, sRepeatLinearLinear), In.uv).rg;
-	material.clearCoat = clearCoatInfos.r;
+	// Store clearcoat, using the same precision as the deferred version.
+	material.clearCoat = convertToPrecision(clearCoatInfos.r, 3);
 	material.clearCoatRoughness = clearCoatInfos.g;
 
 	// Ambient occlusion.

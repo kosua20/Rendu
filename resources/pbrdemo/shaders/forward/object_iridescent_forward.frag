@@ -74,7 +74,8 @@ void main(){
 	vec3 infos = texture(sampler2D(effectsTexture, sRepeatLinearLinear), In.uv).rgb;
 	material.roughness = max(0.045, infos.r);
 	material.ao = infos.b;
-	material.metalness = infos.g;
+	// Store metalness, using the same precision as the deferred version.
+	material.metalness = convertToPrecision(infos.g, 5);
 
 	vec2 iridescenceInfo = texture(sampler2D(iridescenceTexture, sRepeatLinearLinear), In.uv).rg;
 	// Convert normalized iridescence quantities to their physical counterparts.

@@ -81,7 +81,8 @@ void main(){
 	vec3 infos = texture(sampler2D(effectsTexture, sRepeatLinearLinear), localUV).rgb;
 	material.roughness = max(0.045, infos.r);
 	material.ao = infos.b;
-	material.metalness = infos.g;
+	// Store metalness, using the same precision as the deferred version.
+	material.metalness = convertToPrecision(infos.g, 5);
 	// Parallax objects are not rendered in the prepass to avoid double parallax computation, so they won't be in the SSAO.
 
 	// Geometric data.

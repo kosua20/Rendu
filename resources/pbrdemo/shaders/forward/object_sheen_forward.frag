@@ -90,9 +90,10 @@ void main(){
 
 	// Sheen parameters are directly transferred.
 	vec4 sheenInfo = texture(sampler2D(sheenTexture, sRepeatLinearLinear), In.uv);
-	material.sheenColor = sheenInfo.rgb;
+	// Apply the same precision as for the deferred version (4 bits per component).
+	material.sheenColor = convertToPrecision(sheenInfo.rgb, 4);
 	material.sheenRoughness = max(0.045, sheenInfo.a);
-	material.sheeness = infos.g;
+	material.sheeness = convertToPrecision(infos.g, 5);
 
 	// Accumulate envmaps contributions.
 	fragColor = vec4(0.0);

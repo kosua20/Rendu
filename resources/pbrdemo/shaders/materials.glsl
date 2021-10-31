@@ -68,9 +68,8 @@ vec2 decodeIridescence(float ior, float thickness){
  \return the 10 and 2 bits normalized values encoding the color
  */
 vec2 encodeRgbOn10Plus2Bits(vec3 rgb){
-	uvec3 rgbColor = uvec3(rgb * 255.0);
-	// Keep only the 4 highest bits.
-	rgbColor = (rgbColor & 0xF0) >> 4;
+	// Convert to 4 bits and pack.
+	uvec3 rgbColor = uvec3(rgb * float((1 << 4) - 1));
 	uint rgbPacked = rgbColor.r | (rgbColor.g << 4) | (rgbColor.b << 8);
 	// Split it into 10 and 2 bits for storage along with the normal.
 	float rgbPacked10 = float((rgbPacked & 0xFFFFFC) >> 2) / float((1 << 10) - 1);
@@ -88,7 +87,7 @@ vec3 decodeRgbFrom10Plus2Bits(vec2 packed){
 	uint rgbPacked2 = uint(packed.y * float((1 << 2) - 1));
 	uint rgbPacked = rgbPacked2 | (rgbPacked10 << 2);
 	uvec3 rgbColor = uvec3(rgbPacked & 0xF, (rgbPacked >> 4) & 0xF, (rgbPacked >> 8) & 0xF);
-	vec3 rgbFinal = vec3(rgbColor << 4) / 255.0;
+	vec3 rgbFinal = vec3(rgbColor) / float((1 << 4) - 1);
 	return rgbFinal;
 }
 
@@ -200,6 +199,7 @@ Material decodeMaterialFromGbuffer(vec2 uv, texture2D gbuffer0, texture2D gbuffe
 	// Decode sheen if present.
 	if(material.id == MATERIAL_SHEEN){
 		// Rebuild 12 bits color stored in 10 and 2 bits channels.
+		// \todo There is a precision issue when decoding from the Gbuffer instead of an inline value.
 		material.sheenColor = decodeRgbFrom10Plus2Bits(normalInfo.ba);
 		// Sheen roughness.
 		material.sheenRoughness = max(0.045, effectInfo.a);
@@ -248,6 +248,7 @@ Material decodeMaterialFromGbuffer(vec2 uv, texture2D gbuffer0, texture2D gbuffe
 	// Subsurface parameters.
 	if(material.id == MATERIAL_SUBSURFACE){
 		// Rebuild 12 bits color stored in 10 and 2 bits channels.
+		// \todo There is a precision issue when decoding from the Gbuffer instead of an inline value.
 		material.subsurfaceTint = decodeRgbFrom10Plus2Bits(normalInfo.ba);
 		material.subsurfaceRoughness = max(0.045, material.metalness);
 		material.subsurfaceThickness = effectInfo.a;

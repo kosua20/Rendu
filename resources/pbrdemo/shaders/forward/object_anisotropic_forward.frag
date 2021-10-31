@@ -77,7 +77,8 @@ void main(){
 	vec3 infos = texture(sampler2D(effectsTexture, sRepeatLinearLinear), In.uv).rgb;
 	material.roughness = max(0.045, infos.r);
 	material.ao = infos.b;
-	material.metalness = infos.g;
+	// Store metalness, using the same precision as the deferred version.
+	material.metalness = convertToPrecision(infos.g, 5);
 
 	// Ambient occlusion.
 	vec2 screenUV = gl_FragCoord.xy * invScreenSize;

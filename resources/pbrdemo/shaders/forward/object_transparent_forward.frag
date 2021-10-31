@@ -70,7 +70,7 @@ void main(){
 	vec3 infos = texture(sampler2D(effectsTexture, sRepeatLinearLinear), In.uv).rgb;
 	material.roughness = max(0.045, infos.r);
 	material.ao = infos.b;
-	material.metalness = infos.g;
+	material.metalness = 0.0;
 	// Transparent objects are not rendered in the prepass, so they won't be in the SSAO.
 
 	// Geometric data.
