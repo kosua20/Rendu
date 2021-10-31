@@ -23,7 +23,7 @@
 	shadows: false
 	mesh: groundplane 
 	scaling: 20.000000
-	translation: 0.0,-1.5,5.0
+	translation: 0.0,-1.51,5.0
 	material: ground_diffuse
 
 # Emissive
@@ -312,6 +312,43 @@
 	translation: 7.5,0.0,-2.5
 	material: subsurf_r10
 
+# Transparent
+
+* object: 
+	shadows: true 
+	mesh: testknob 
+	translation: -2.5,0.0,15.0
+	material: transparent_10
+
+* object: 
+	shadows: true 
+	mesh: testknob 
+	translation: -5.0,0.0,15.0
+	material: transparent_05
+
+* object: 
+	shadows: true 
+	mesh: testknob 
+	translation: -7.5,0.0,15.0
+	material: transparent_00
+
+* object: 
+	shadows: true 
+	mesh: testknob 
+	translation: 2.5,0.0,15.0
+	material: transparent_r
+
+* object: 
+	shadows: true 
+	mesh: testknob 
+	translation: 5.0,0.0,15.0
+	material: transparent_g
+
+* object: 
+	shadows: true 
+	mesh: testknob 
+	translation: 7.5,0.0,15.0
+	material: transparent_b
 
 # Materials
 
@@ -721,3 +758,58 @@
 		- rgb: 1.0,0.0,0.0,1.0
 	type: Subsurface 
 	name: subsurf_r10
+
+# Transparent 
+* material: 
+	textures: 
+		- rgb: 0.0,0.0,0.0,0.1
+		- rgb: default_normal 
+		- rgb: 0.0,0.0,1.0 
+	twosided: true
+	type: Transparent 
+	name: transparent_00
+
+* material: 
+	textures: 
+		- rgb: 0.0,0.0,0.0,0.1
+		- rgb: default_normal 
+		- rgb: 0.5,0.0,1.0 
+	twosided: true
+	type: Transparent 
+	name: transparent_05
+
+* material: 
+	textures: 
+		- rgb: 0.0,0.0,0.0,0.1
+		- rgb: default_normal 
+		- rgb: 1.0,0.0,1.0 
+	twosided: true
+	type: Transparent 
+	name: transparent_10
+
+* material: 
+	textures: 
+		- rgb: 1.0,0.0,0.0,0.1
+		- rgb: default_normal 
+		- rgb: 0.1,0.0,1.0 
+	twosided: true
+	type: Transparent 
+	name: transparent_r
+
+* material: 
+	textures: 
+		- rgb: 1.0,0.0,0.0,0.5
+		- rgb: default_normal 
+		- rgb: 0.1,0.0,1.0 
+	twosided: true
+	type: Transparent 
+	name: transparent_g
+
+* material: 
+	textures: 
+		- rgb: 1.0,0.0,0.0,0.9
+		- rgb: default_normal 
+		- rgb: 0.1,0.0,1.0 
+	twosided: true
+	type: Transparent 
+	name: transparent_b
