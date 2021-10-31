@@ -1,4 +1,4 @@
-
+#define ENABLE_ALL_MATERIALS
 #include "common_pbr.glsl"
 #include "shadow_maps.glsl"
 #include "utils.glsl"

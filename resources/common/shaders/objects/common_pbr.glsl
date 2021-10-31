@@ -12,6 +12,14 @@
 
 #define F0_DIFFUSE 0.04
 
+#ifdef ENABLE_ALL_MATERIALS
+#define ENABLE_CLEARCOAT
+#define ENABLE_SHEEN
+#define ENABLE_IRIDESCENT
+#define ENABLE_ANISOTROPIC
+#define ENABLE_SUBSURFACE
+#endif
+
 /** \brief Environment probe data. */
 struct Probe {
 	vec3 position; ///< Probe location.
@@ -433,6 +441,7 @@ void ambientLighting(Material material, vec3 worldP, vec3 viewV, mat4 inverseV, 
 
 	vec3 tweakedN = material.normal;
 
+#ifdef ENABLE_ANISOTROPIC
 	if(material.id == MATERIAL_ANISOTROPIC){
 		// Bent reflection vector to emulate anisotropic probes, as described by S. McAuley in "Rendering the World of Far Cry 4", 2015
 		// (https://www.gdcvault.com/play/1022235/Rendering-the-World-of-Far)
@@ -443,6 +452,7 @@ void ambientLighting(Material material, vec3 worldP, vec3 viewV, mat4 inverseV, 
 		float sheer = abs(material.anisotropy) * clamp(1.5 * sqrt(material.roughness), 0.0, 1.0);
 		tweakedN = normalize(mix(material.normal, anisoNormal, sheer));
 	}
+#endif
 	
 	// Reflect the ray along the (adjusted) normal, and convert to world space.
 	vec3 r = reflect(-viewV, tweakedN);
@@ -458,16 +468,21 @@ void ambientLighting(Material material, vec3 worldP, vec3 viewV, mat4 inverseV, 
 	// Compute F0 (fresnel coeff).
 	// Dielectrics have a constant low coeff, metals use the baseColor (ie reflections are tinted).
 	vec3 F0 = mix(vec3(F0_DIFFUSE), material.reflectance, material.metalness);
+
+#ifdef ENABLE_CLEARCOAT
 	// Update for clear coat, the interface is not air anymore.
 	if(material.id == MATERIAL_CLEARCOAT){
 		F0 = mix(F0, iorToFresnel(fresnelToIor(F0), vec3(1.5)), material.clearCoat);
 	}
+#endif
 
+#ifdef ENABLE_IRIDESCENT
 	// Iridescence will modify the Fresnel coefficient.
 	if(material.id == MATERIAL_IRIDESCENT){
 		F0 = iridescenceF0(F0, NdotV, material.filmIndex, material.filmThickness, 1.0);
 	}
-	
+#endif
+
 	// BRDF contributions.
 	// Adjust Fresnel based on roughness.
 	vec3 Fr = max(vec3(1.0 - material.roughness), F0) - F0;
@@ -489,6 +504,7 @@ void ambientLighting(Material material, vec3 worldP, vec3 viewV, mat4 inverseV, 
 	// Apply irradiance and occlusion.
 	diffuse *= material.ao * irradianceL;
 
+#ifdef ENABLE_SHEEN
 	// Sheen component.
 	if(material.id == MATERIAL_SHEEN){
 		float aoSpecularSheen = approximateSpecularAO(material.ao, NdotV, material.sheenRoughness);
@@ -497,7 +513,9 @@ void ambientLighting(Material material, vec3 worldP, vec3 viewV, mat4 inverseV, 
 		vec3 sheenSpecular = aoSpecularSheen * sheenF * sheenRadiance;
 		specular = mix(specular, sheenSpecular, material.sheeness);
 	}
+#endif
 
+#ifdef ENABLE_SUBSURFACE
 	// Subsurface component. 
 	// This is a hack, we use the irradiance in the direction opposite to the normal
 	// to estimate transmitted light. We then mix with the current ambient diffuse based on the thickness.
@@ -509,7 +527,9 @@ void ambientLighting(Material material, vec3 worldP, vec3 viewV, mat4 inverseV, 
 		vec3 subsurfaceDiffuse = material.ao * subsurfaceIrradiance * material.subsurfaceTint * material.reflectance;
 		diffuse = mix(diffuse, subsurfaceDiffuse, subsurfaceBlend);
 	}
+#endif
 
+#ifdef ENABLE_CLEARCOAT
 	// Clear coat component.
 	if(material.id == MATERIAL_CLEARCOAT){
 		// Second specular lobe with its own roughness.
@@ -526,6 +546,7 @@ void ambientLighting(Material material, vec3 worldP, vec3 viewV, mat4 inverseV, 
 		// Add clear coat contribution to specular.
 		specular += material.clearCoat * aoSpecularClearCoat * clearCoatFresnel * clearCoatRadiance;
 	}
+#endif
 	
 }
 
@@ -547,19 +568,23 @@ void directBrdf(Material material, vec3 n, vec3 v, vec3 l, out vec3 diffuse, out
 	// Dielectrics have a constant low coeff, metals use the baseColor (ie reflections are tinted).
 	vec3 F0 = mix(vec3(F0_DIFFUSE), baseColor, metallic);
 
+#ifdef ENABLE_CLEARCOAT
 	// If clear coat is present, we have to update the base layer Fresnel coefficient to take into account that
 	// it is at the interface with a veneer (IOR 1.5) and not the air (IOR 1) anymore.
 	if(material.id == MATERIAL_CLEARCOAT){
 		F0 = mix(F0, iorToFresnel(fresnelToIor(F0), vec3(1.5)), material.clearCoat);
 	}
+#endif
 
 	// Compute half-vector.
 	vec3 h = normalize(v+l);
 
+#ifdef ENABLE_IRIDESCENT
 	// Iridescence will modify the Fresnel coefficient.
 	if(material.id == MATERIAL_IRIDESCENT){
 		F0 = iridescenceF0(F0, dot(h,l), material.filmIndex, material.filmThickness, 1.0);
 	}
+#endif
 
 	// Orientation: basic diffuse shadowing.
 	float NdotL = dot(l, n);
@@ -568,23 +593,29 @@ void directBrdf(Material material, vec3 n, vec3 v, vec3 l, out vec3 diffuse, out
 	// Normalized diffuse contribution. Metallic materials have no diffuse contribution.
 	diffuse = INV_M_PI * (1.0 - metallic) * baseColor * (1.0 - F0);
 
+#ifdef ENABLE_ANISOTROPIC
 	// Specular GGX contribution (anisotropic if needed).
 	if(material.id == MATERIAL_ANISOTROPIC){
 		specular = ggxAnisotropic(n, v, l, h, F0, material);
-	} else {
+	} else 
+#endif
+	{
 		specular = ggx(n, v, l, h, F0, material.roughness);
 	}
 
+#ifdef ENABLE_SHEEN
 	// Apply sheen if needed.
 	if(material.id == MATERIAL_SHEEN){
 		vec3 sheen = ggxSheen(n, v, l, h, material);
 		specular = mix(specular, sheen, material.sheeness);
 	}
+#endif
 
 	// Apply orientation.
 	diffuse *= orientation;
 	specular *= orientation;
 
+#ifdef ENABLE_SUBSURFACE
 	// Apply subsurface scattering.
 	if(material.id == MATERIAL_SUBSURFACE){
 		// Extra lobe in the opposite direction, inspired from the approach described by C. Barré-Brisebois 
@@ -601,7 +632,9 @@ void directBrdf(Material material, vec3 n, vec3 v, vec3 l, out vec3 diffuse, out
 		// Subsurface is only valid for dielectrics, the baseColor is the albedo.
 		diffuse += subsurfaceOrientation * (1.0 - material.subsurfaceThickness) * subsurfaceLobe * material.subsurfaceTint * baseColor;
 	}
+#endif
 
+#ifdef ENABLE_CLEARCOAT
 	// Apply clear coat lobe if available, last.
 	if(material.id == MATERIAL_CLEARCOAT){
 		float clearCoatFresnel;
@@ -614,6 +647,7 @@ void directBrdf(Material material, vec3 n, vec3 v, vec3 l, out vec3 diffuse, out
 		// Add clear coat contribution to specular.
 		specular += material.clearCoat * clearCoatLobe;
 	}
+#endif
 
 }
 

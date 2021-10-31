@@ -1,4 +1,4 @@
-
+#define ENABLE_CLEARCOAT
 #include "common_pbr.glsl"
 #include "forward_lights.glsl"
 

@@ -1,4 +1,4 @@
-
+// No special material.
 #include "common_pbr.glsl"
 #include "forward_lights.glsl"
 
