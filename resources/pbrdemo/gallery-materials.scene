@@ -31,7 +31,7 @@
 * object: 
 	shadows: true 
 	mesh: testknob 
-	translation: 0.0,0.0,0.0
+	translation: 0.0,0.0,2.5
 	material: emissive
 
 # Parallax
@@ -39,8 +39,16 @@
 * object: 
 	shadows: true 
 	mesh: testknob 
-	translation: 0.0,0.0,5.0
+	translation: 0.0,0.0,7.5
 	material: parallax
+
+# Transparent iridescent
+
+* object: 
+	shadows: true 
+	mesh: testknob 
+	translation: 0.0,0.0,12.5
+	material: transparent_irid
 
 # Default materials
 
@@ -318,37 +326,37 @@
 	shadows: true 
 	mesh: testknob 
 	translation: -2.5,0.0,15.0
-	material: transparent_10
+	material: transparent_r10
 
 * object: 
 	shadows: true 
 	mesh: testknob 
 	translation: -5.0,0.0,15.0
-	material: transparent_05
+	material: transparent_r05
 
 * object: 
 	shadows: true 
 	mesh: testknob 
 	translation: -7.5,0.0,15.0
-	material: transparent_00
+	material: transparent_r00
 
 * object: 
 	shadows: true 
 	mesh: testknob 
 	translation: 2.5,0.0,15.0
-	material: transparent_r
+	material: transparent_a01
 
 * object: 
 	shadows: true 
 	mesh: testknob 
 	translation: 5.0,0.0,15.0
-	material: transparent_g
+	material: transparent_a05
 
 * object: 
 	shadows: true 
 	mesh: testknob 
 	translation: 7.5,0.0,15.0
-	material: transparent_b
+	material: transparent_a09
 
 # Materials
 
@@ -766,8 +774,8 @@
 		- rgb: default_normal 
 		- rgb: 0.0,0.0,1.0 
 	twosided: true
-	type: Transparent 
-	name: transparent_00
+	type: Transparent
+	name: transparent_r00
 
 * material: 
 	textures: 
@@ -776,7 +784,7 @@
 		- rgb: 0.5,0.0,1.0 
 	twosided: true
 	type: Transparent 
-	name: transparent_05
+	name: transparent_r05
 
 * material: 
 	textures: 
@@ -785,7 +793,7 @@
 		- rgb: 1.0,0.0,1.0 
 	twosided: true
 	type: Transparent 
-	name: transparent_10
+	name: transparent_r10
 
 * material: 
 	textures: 
@@ -794,7 +802,7 @@
 		- rgb: 0.1,0.0,1.0 
 	twosided: true
 	type: Transparent 
-	name: transparent_r
+	name: transparent_a01
 
 * material: 
 	textures: 
@@ -803,7 +811,7 @@
 		- rgb: 0.1,0.0,1.0 
 	twosided: true
 	type: Transparent 
-	name: transparent_g
+	name: transparent_a05
 
 * material: 
 	textures: 
@@ -812,4 +820,14 @@
 		- rgb: 0.1,0.0,1.0 
 	twosided: true
 	type: Transparent 
-	name: transparent_b
+	name: transparent_a09
+
+* material: 
+	textures: 
+		- rgb: 1.0,1.0,1.0,0.05
+		- rgb: default_normal 
+		- rgb: 0.0,0.0,1.0 
+		- rgb: 0.5,0.5
+	twosided: true
+	type: TransparentIrid
+	name: transparent_irid
