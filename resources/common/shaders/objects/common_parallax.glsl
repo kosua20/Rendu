@@ -1,7 +1,7 @@
 #include "samplers.glsl"
 
 #define PARALLAX_MIN 8
-#define PARALLAX_MAX 64
+#define PARALLAX_MAX 96
 #define PARALLAX_SCALE 0.03
 
 /**
@@ -45,9 +45,11 @@ vec2 parallax(vec2 uv, vec3 vTangentDir, texture2D depth, out vec2 positionShift
 	vec2 previousNewUV = newUV + shiftUV;
 	// The local depth is the gap between the current depth and the current depth layer.
 	float currentLocalDepth = currentDepth - currentLayer;
+	// Gap between the previous depth and the previous depth layer.
 	float previousLocalDepth = texture(sampler2D(depth, sRepeatLinearLinear), previousNewUV).r - (currentLayer - layerHeight);
-	
-	
+	// Both of these allow use to estimate the slope of the depth between the two samples, and thus approximate the true intersection
+	// which lies somewhere between the last two UV sets tested.
+
 	// Interpolate between the two local depths to obtain the correct UV shift.
 	vec2 finalUV = mix(newUV, previousNewUV, currentLocalDepth / (currentLocalDepth - previousLocalDepth));
 	// Ouptut position shift, taking UV flip into account.
@@ -82,5 +84,6 @@ vec3 updateFragmentPosition(vec2 localUV, vec2 positionShift, vec3 viewPos, mat4
 	float newDepth = clipPos.z / clipPos.w;
 	// Update the fragment depth.
 	gl_FragDepth = newDepth;
+	// \todo Depth output is sometimes incorrect.
 	return newViewSpacePosition;
 }
