@@ -65,6 +65,7 @@ const Culler::List & Culler::cullAndSort(const glm::mat4 & view, const glm::mat4
 		{ Material::Subsurface, 	Ordering::FRONT_TO_BACK },
 		{ Material::Emissive, 		Ordering::FRONT_TO_BACK },
 		{ Material::Transparent, 	Ordering::BACK_TO_FRONT },
+		{ Material::TransparentIrid,Ordering::BACK_TO_FRONT },
 	};
 	static const std::unordered_map<Material::Type, long> sets = {
 		{ Material::None, 			0 },
@@ -77,6 +78,7 @@ const Culler::List & Culler::cullAndSort(const glm::mat4 & view, const glm::mat4
 		{ Material::Subsurface, 	1 },
 		{ Material::Emissive, 		1 },
 		{ Material::Transparent, 	2 },
+		{ Material::TransparentIrid, 	2 },
 	};
 
 	// Culling and distance computation.

@@ -103,7 +103,7 @@ bool Scene::init(Storage options) {
 	}
 	// Check if there is a material transparent in the scene.
 	for(const auto& material : materials){
-		if(material.type() == Material::Type::Transparent){
+		if((material.type() == Material::Type::Transparent) || (material.type() == Material::Type::TransparentIrid)){
 			_transparent = true;
 			break;
 		}

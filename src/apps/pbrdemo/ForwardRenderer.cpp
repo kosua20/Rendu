@@ -22,6 +22,7 @@ ForwardRenderer::ForwardRenderer(const glm::vec2 & resolution, ShadowMode mode, 
 	_parallaxProgram	= Resources::manager().getProgram("object_parallax_forward");
 	_emissiveProgram	= Resources::manager().getProgram("object_emissive_forward", "object_forward", "object_emissive_forward");
 	_transparentProgram = Resources::manager().getProgram("object_transparent_forward", "object_forward", "object_transparent_forward");
+	_transpIridProgram  = Resources::manager().getProgram("object_transparent_irid_forward", "object_forward", "object_transparent_irid_forward");
 	_clearCoatProgram 	= Resources::manager().getProgram("object_clearcoat_forward", "object_forward", "object_clearcoat_forward");
 	_anisotropicProgram = Resources::manager().getProgram("object_anisotropic_forward", "object_forward", "object_anisotropic_forward");
 	_sheenProgram  		= Resources::manager().getProgram("object_sheen_forward", "object_forward", "object_sheen_forward");
@@ -71,7 +72,7 @@ void ForwardRenderer::renderDepth(const Culler::List & visibles, const glm::mat4
 		// Render using prepass shader.
 		// We skip parallax mapped objects as their depth is going to change.
 		// We also skip all transparent/refractive objects
-		if(material.type() == Material::Parallax || material.type() == Material::Transparent){
+		if(material.type() == Material::Parallax || material.type() == Material::Transparent || material.type() == Material::Type::TransparentIrid){
 			continue;
 		}
 
@@ -113,7 +114,7 @@ void ForwardRenderer::renderOpaque(const Culler::List & visibles, const glm::mat
 		const auto & object = _scene->objects[objectId];
 		const Material & material = object.material();
 		// Skip transparent objects.
-		if(material.type() == Material::Type::Transparent){
+		if((material.type() == Material::Type::Transparent) || (material.type() == Material::Type::TransparentIrid)){
 			continue;
 		}
 
@@ -195,7 +196,7 @@ void ForwardRenderer::renderTransparent(const Culler::List & visibles, const glm
 	GPU::setDepthState(true, TestFunction::LEQUAL, true);
 	GPU::setCullState(true, Faces::BACK);
 
-	_transparentProgram->use();
+
 	for(const long & objectId : visibles) {
 		// Once we get a -1, there is no other object to render.
 		if(objectId == -1){
@@ -205,8 +206,20 @@ void ForwardRenderer::renderTransparent(const Culler::List & visibles, const glm
 		const auto & object = _scene->objects[objectId];
 		const Material& material = object.material();
 		// Skip non transparent objects.
-		if(material.type() != Material::Type::Transparent){
+		if((material.type() != Material::Type::Transparent) && (material.type() != Material::Type::TransparentIrid)){
 			continue;
+		}
+
+		Program * currentProgram = nullptr;
+		switch (material.type()) {
+			case Material::Type::Transparent:
+				currentProgram = _transparentProgram;
+				break;
+			case Material::Type::TransparentIrid:
+				currentProgram = _transpIridProgram;
+				break;
+			default:
+				break;
 		}
 
 		// Combine the three matrices.
@@ -215,30 +228,31 @@ void ForwardRenderer::renderTransparent(const Culler::List & visibles, const glm
 		const glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(MV)));
 
 		// Upload the matrices.
-		_transparentProgram->uniform("hasUV", object.useTexCoords());
-		_transparentProgram->uniform("mvp", MVP);
-		_transparentProgram->uniform("mv", MV);
-		_transparentProgram->uniform("normalMatrix", glm::mat4(normalMatrix));
+		currentProgram->uniform("hasUV", object.useTexCoords());
+		currentProgram->uniform("mvp", MVP);
+		currentProgram->uniform("mv", MV);
+		currentProgram->uniform("normalMatrix", glm::mat4(normalMatrix));
 
 		// Bind the lights and probes.
-		_transparentProgram->buffer(_lightsGPU->data(), 0);
-		_transparentProgram->buffer(_probesGPU->data(), 1);
-		_transparentProgram->bufferArray(_probesGPU->shCoeffs(), 2);
+		currentProgram->buffer(_lightsGPU->data(), 0);
+		currentProgram->buffer(_probesGPU->data(), 1);
+		currentProgram->bufferArray(_probesGPU->shCoeffs(), 2);
 		// Bind the textures.
-		_transparentProgram->texture(_textureBrdf, 0);
-		_transparentProgram->textureArray(_probesGPU->envmaps(), 1);
+		currentProgram->texture(_textureBrdf, 0);
+		currentProgram->textureArray(_probesGPU->envmaps(), 1);
 		// Bind available shadow maps.
 		if(shadowMaps[0]){
-			_transparentProgram->texture(shadowMaps[0], 2);
+			currentProgram->texture(shadowMaps[0], 2);
 		}
 		if(shadowMaps[1]){
-			_transparentProgram->texture(shadowMaps[1], 3);
+			currentProgram->texture(shadowMaps[1], 3);
 		}
 		// No SSAO as the objects are not rendered in it.
 
 		// Material textures.
-		_transparentProgram->textures(material.textures(), 5);
+		currentProgram->textures(material.textures(), 5);
 
+		currentProgram->use();
 		// To approximately handle two sided objects properly, draw the back faces first, then the front faces.
 		// This won't solve all issues in case of concavities.
 		if(material.twoSided()) {
@@ -338,7 +352,7 @@ void ForwardRenderer::draw(const Camera & camera, Framebuffer & framebuffer, uin
 		const glm::mat4 invView = glm::inverse(view);
 		const glm::vec2 invScreenSize = 1.0f / glm::vec2(_sceneFramebuffer->width(), _sceneFramebuffer->height());
 		// Update shared data for the three programs.
-		Program * programs[] = {_parallaxProgram, _objectProgram, _clearCoatProgram, _transparentProgram, _emissiveProgram, _anisotropicProgram, _sheenProgram, _iridescentProgram, _subsurfaceProgram };
+		Program * programs[] = {_parallaxProgram, _objectProgram, _clearCoatProgram, _transparentProgram, _transpIridProgram, _emissiveProgram, _anisotropicProgram, _sheenProgram, _iridescentProgram, _subsurfaceProgram };
 		for(Program * prog : programs){
 			prog->use();
 			prog->uniform("inverseV", invView);

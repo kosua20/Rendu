@@ -22,7 +22,8 @@ public:
 		Iridescent,  ///< PBR shading with iridescent Fresnel.
 		Subsurface,  ///< PBR shading with subsurface scattering.
 		Emissive,  	 ///< Emissive objects (no diffuse shading).
-		Transparent, ///< Transparent object
+		Transparent, ///< Transparent object.
+		TransparentIrid, ///< Transparent object with iridescent Fresnel.
 	};
 
 	/** Constructor */

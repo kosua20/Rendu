@@ -17,6 +17,7 @@ static const std::unordered_map<Material::Type, std::string> typesToStr = {
 	REGISTER_TYPESTR(Subsurface),
 	REGISTER_TYPESTR(Emissive),
 	REGISTER_TYPESTR(Transparent),
+	REGISTER_TYPESTR(TransparentIrid),
 };
 
 static const std::unordered_map<std::string, Material::Type> strToTypes = {
@@ -30,6 +31,7 @@ static const std::unordered_map<std::string, Material::Type> strToTypes = {
 	REGISTER_STRTYPE(Subsurface),
 	REGISTER_STRTYPE(Emissive),
 	REGISTER_STRTYPE(Transparent),
+	REGISTER_STRTYPE(TransparentIrid),
 };
 
 Material::Material(const Type type) :
