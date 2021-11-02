@@ -49,10 +49,10 @@ layout (location = 0) out vec4 fragColor; ///< Ambient contribution.
 void main(){
 	
 	vec2 localUV = In.uv;
-	vec2 positionShift;
+	float positionShift;
 	
 	// Compute the new uvs, and use them for the remaining steps.
-	vec3 vTangentDir = normalize(- In.tangentSpacePosition.xyz);
+	vec3 vTangentDir = normalize(-In.tangentSpacePosition.xyz);
 	localUV = parallax(localUV, vTangentDir, depthTexture, positionShift);
 	// If UV are outside the texture ([0,1]), we discard the fragment.
 	if(localUV.x > 1.0 || localUV.y  > 1.0 || localUV.x < 0.0 || localUV.y < 0.0){
@@ -76,7 +76,7 @@ void main(){
 	n = normalize(tbn * n);
 	material.normal = n;
 
-	vec3 newViewSpacePosition = updateFragmentPosition(localUV, positionShift, In.viewSpacePosition.xyz, p, tbn, depthTexture);
+	vec3 newViewSpacePosition = updateFragmentPosition(positionShift, In.viewSpacePosition.xyz, p);
 
 	vec3 infos = texture(sampler2D(effectsTexture, sRepeatLinearLinear), localUV).rgb;
 	material.roughness = max(0.045, infos.r);

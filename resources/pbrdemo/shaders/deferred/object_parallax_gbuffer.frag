@@ -29,11 +29,12 @@ layout (location = 2) out vec4 fragEffects; ///< Effects.
 void main(){
 	
 	vec2 localUV = In.uv;
-	vec2 positionShift;
+	float positionShift;
 	
 	// Compute the new uvs, and use them for the remaining steps.
-	vec3 vTangentDir = normalize(- In.tangentSpacePosition.xyz);
+	vec3 vTangentDir = normalize(-In.tangentSpacePosition.xyz);
 	localUV = parallax(localUV, vTangentDir, texture3, positionShift);
+	
 	// If UV are outside the texture ([0,1]), we discard the fragment.
 	if(localUV.x > 1.0 || localUV.y  > 1.0 || localUV.x < 0.0 || localUV.y < 0.0){
 		discard;
@@ -62,6 +63,6 @@ void main(){
 	fragEffects.g = encodeMetalnessAndParameter(infos.g, 0.0);
 	fragEffects.a = 0.0;
 	
-	updateFragmentPosition(localUV, positionShift, In.viewSpacePosition.xyz, p, tbn, texture3);
+	updateFragmentPosition(positionShift, In.viewSpacePosition.xyz, p);	
 	
 }
