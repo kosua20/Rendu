@@ -20,7 +20,7 @@ Basic resources to run each project are included in this repository, but you can
 
 | Name  | Description |
 | ------------- | ------------- |
-| [Physically based rendering](http://kosua20.github.io/Rendu-documentation/group___p_b_r_demo.html) | ![PBR demo preview](docs/img/pbrdemo.png) Real-time rendering of a scene with 'physically-based' materials (GGX BRDF introduced in *Microfacet Models for Refraction through Rough Surfaces*, Walter et al., 2007), using deferred or forward rendering, real-time lighting environment and shadows update, and an HDR pipeline with bloom, depth of field and ambient occlusion. |
+| [Physically based rendering](http://kosua20.github.io/Rendu-documentation/group___p_b_r_demo.html) | ![PBR demo preview](docs/img/pbrdemo.png) Real-time rendering of a scene with 'physically-based' materials (GGX BRDF introduced in *Microfacet Models for Refraction through Rough Surfaces*, Walter et al., 2007, with support for anisotropy, clearcoat, subsurface...), using deferred or forward rendering, real-time lighting environment and shadows update, and an HDR pipeline with bloom, depth of field and ambient occlusion. |
 | [Path Tracer](http://kosua20.github.io/Rendu-documentation/group___pathtracer_demo.html) | ![Path tracer preview](docs/img/pathtracer.png) Offline unidirectional path tracing for textured materials using Lambert+GGX BRDF with importance sampling. Supports stratified sampling, jittering, next event estimation, environment lighting contribution, emissive objects. Relies on a raycaster with a BVH for fast intersection queries against triangular meshes. Comes with an interactive viewer where the BVH levels can be displayed, and the camera placed for rendering. |
 | [Island and ocean rendering](http://kosua20.github.io/Rendu-documentation/group___island.html) | ![Island and ocean preview](docs/img/island.png) Real-time rendering of an ocean and island, using tesselation, Gerstner waves, custom sand and water shading. Underwater rendering is achieved using absorption/scattering tables, depth based blur and caustics mapping. Sand rendering is performed using high-frequency detail data and triplanar mapping.  |
 | [Image Filtering](http://kosua20.github.io/Rendu-documentation/group___image_filtering.html) | ![Image filtering preview](docs/img/imagefiltering.png) Apply filters to an image, such as gaussian blur, box-blur, approximate flood-fill (*Jump Flooding in GPU with Applications to Voronoi Diagram and Distance Transform*, Rong et al., 2006) and poisson filling (*Convolution Pyramids*, Farbman et al., 2011), etc. |
@@ -67,7 +67,8 @@ On a more detailed level, here are the main features you will find in Rendu.
 - Resources handling and packing.
 - Shader validation at compilation time, with automatic location handling.
 - Input management with controllers support.
-- 3D rendering, including per-fragment shading, normal maps, parallax mapping.
+- 3D rendering, including per-fragment shading, normal maps, parallax occlusion mapping.
+- Complex materials based on the GGX BRDF, with support for anisotropy, clear coat, sheen, subsurface scattering, transparency, iridescence, emissive surfaces
 - Lights: omni/spots/directional lights, batched variance shadow mapping for all lights.
 - Environment maps updated in real-time, preconvolved radiance maps and spherical harmonics irradiance decompositions (also updated on the fly).
 - Local environment probes with optional local box parallax correction, area of effect and soft transitions.
