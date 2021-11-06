@@ -19,6 +19,13 @@
 /**
  \brief A renderer that shade each object as it is drawn in the scene directly.
  \sa ForwardLight
+
+ Lights and probes information is stored in large data buffers that each object shader iterates over, summing their lighting contribution and outputing the final result.
+ \see GPUShaders::Frag::Object_forward, GPUShaders::Frag::Object_parallax_forward, GPUShaders::Frag::Object_clearcoat_forward, GPUShaders::Frag::Object_anisotropic_forward, GPUShaders::Frag::Object_sheen_forward, GPUShaders::Frag::Object_iridescent_forward,  GPUShaders::Frag::Object_subsurface_forward, GPUShaders::Frag::Object_emissive_forward, GPUShaders::Frag::Object_transparent_forward, GPUShaders::Frag::Object_transparent_irid_forward
+
+ A depth prepass is used to avoid wasting lighting computations on surfaces that are occluded by other objects drawn later in the frame.
+ \see GPUShaders::Frag::Object_prepass_forward
+
  \ingroup PBRDemo
  */
 class ForwardRenderer final : public Renderer {

@@ -7,6 +7,67 @@
 /**
  \brief Represent a surface material, including textures describing the surface parameters.
  \ingroup Scene
+ \details Different predefined materials can be used, with predefined parameters stored in ordered textures.
+
+ __Regular:__ GGX material, dielectric or conductor.
+	- Texture 0: Albedo, alpha cutout (RGBA8)
+	- Texture 1: Normal map (RGB8)
+	- Texture 2: Roughness, metalness, ambient occlusion (RGB8)
+
+ __Parallax:__ GGX material with parallax occlusion mapping.
+	- Texture 0: Albedo, alpha cutout (RGBA8)
+	- Texture 1: Normal map (RGB8)
+	- Texture 2: Roughness, metalness, ambient occlusion (RGB8)
+	- Texture 3: Depth (R8)
+
+ __Clearcoat:__ GGX material with an additional dielectric transparent layer overlayed top.
+	- Texture 0: Albedo, alpha cutout (RGBA8)
+	- Texture 1: Normal map (RGB8)
+	- Texture 2: Roughness, metalness, ambient occlusion (RGB8)
+	- Texture 3: Clear coat strength, clear coat roughness (RG8)
+
+ __Anisotropic:__ GGX material with anisotropic specular behavior.
+	- Texture 0: Albedo, alpha cutout (RGBA8)
+	- Texture 1: Normal map (RGB8)
+	- Texture 2: Roughness, metalness, ambient occlusion (RGB8)
+	- Texture 3: Anisotropy direction (2D unit vector), anisotropy strength (scaled to [-1,1] parameterization) (RGB8)
+
+ __Sheen:__ Cloth-like material, assumed to be a dielectric.
+	- Texture 0: Albedo, alpha cutout (RGBA8)
+	- Texture 1: Normal map (RGB8)
+	- Texture 2: Roughness, sheen strength, ambient occlusion (RGB8)
+	- Texture 3: Sheen color, sheen roughness (RGBA8)
+
+ __Iridescent:__ GGX material with thin-film interferences on the surface.
+	- Texture 0: Albedo, alpha cutout (RGBA8)
+	- Texture 1: Normal map (RGB8)
+	- Texture 2: Roughness, metalness, ambient occlusion (RGB8)
+	- Texture 3: Thin film refraction index (scaled to [1.2,2.4]), thin film thickness (scaled to [300nm,800nm]) (RG8)
+
+ __Subsurface:__ Dieletric GGX material with subsurface scattering/transmission.
+	- Texture 0: Albedo, alpha cutout (RGBA8)
+	- Texture 1: Normal map (RGB8)
+	- Texture 2: Roughness, metalness, ambient occlusion, thickness (RGBA8)
+	- Texture 3: Subsurface color, subsurface roughness (RGBA8)
+
+ __Emissive:__ light emitting material, assume to be optionally covered by a transparent dielectric
+	- Texture 0: Emissive color, alpha cutout (RGBA32)
+	- Texture 1: Normal map (RGB8)
+	- Texture 2: Roughness (R8)
+
+ __Transparent:__ transparent object with a dieletric surface
+	- Texture 0: Albedo, opacity (RGBA8)
+	- Texture 1: Normal map (RGB8)
+	- Texture 2: Roughness, unused, ambient occlusion (RGB8)
+
+ __TransparentIrid:__ transparent object with a dieletric surface and thin film interferences
+	- Texture 0: Albedo, opacity (RGBA8)
+	- Texture 1: Normal map (RGB8)
+	- Texture 2: Roughness, unused, ambient occlusion (RGB8)
+	- Texture 3: Thin film refraction index (scaled to [1.2,2.4]), thin film thickness (scaled to [300nm,800nm]) (RG8)
+
+ __None:__ any parameters can be specified depending on the shader used in the renderer code.
+
  */
 class Material {
 
@@ -14,8 +75,8 @@ public:
 	/// \brief Type of shading/effects.
 	enum Type : int {
 		None = 0,  	 ///< Any type of shading.
-		Regular,  	 ///< PBR shading. \see GPU::Vert::Object_gbuffer, GPU::Frag::Object_gbuffer
-		Parallax, 	 ///< PBR with parallax mapping. \see GPU::Vert::Object_parallax_gbuffer, GPU::Frag::Object_parallax_gbuffer
+		Regular,  	 ///< PBR shading.
+		Parallax, 	 ///< PBR with parallax mapping.
 		Clearcoat,   ///< PBR shading with an additional clear coat specular layer.
 		Anisotropic, ///< PBR shading with an anisotropic BRDF.
 		Sheen, 		 ///< PBR shading with a sheen BRDF.

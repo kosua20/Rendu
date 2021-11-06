@@ -66,11 +66,14 @@ h1.glow, h2.glow, h3.glow, h4.glow, h5.glow, h6.glow {
 }
 
 dt {
-	font-weight: bold;
+	font-weight: normal;
+	font-style: italic;
 }
 
 div.memdoc dt {
 	margin-bottom: 8px;
+	font-weight: bold;
+	font-style: normal;
 }
 
 div.multicol {
@@ -661,6 +664,7 @@ table.memberdecls {
 	padding: 0px;
 	color: black;
 	font-weight: bold;
+	font-style: normal;
 	text-shadow: none;
 	background-image: none;
 	background-color: #fafafa;
@@ -1277,6 +1281,7 @@ dl.citelist dt {
 	font-weight:bold;
 	margin-right:10px;
 	padding:5px;
+	font-style: normal;
 }
 
 dl.citelist dd {

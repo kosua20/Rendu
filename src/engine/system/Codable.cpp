@@ -142,7 +142,6 @@ std::vector<KeyValues> Codable::encode(const glm::mat4 & transfo) {
 
 std::pair<std::string, Layout> Codable::decodeTexture(const KeyValues & param) {
 	// Subset of layouts supported by the scene serialization model.
-	// \todo Rename rgb32 to rgbf.
 	const std::unordered_map<std::string, Layout> layouts = {
 		{"srgb", Layout::SRGB8_ALPHA8},
 		{"rgb", Layout::RGBA8},

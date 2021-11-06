@@ -360,7 +360,7 @@ void Mesh::computeTangentsAndBitangents(bool force) {
 		return;
 	}
 	
-	// \todo See if this is enough.
+	// Use dummy constant UVs.
 	if(!uvAvailable && force){
 		texcoords.resize(positions.size(), glm::vec2(0.5f));
 	}

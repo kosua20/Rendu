@@ -359,11 +359,11 @@ void ForwardRenderer::draw(const Camera & camera, Framebuffer & framebuffer, uin
 			prog->uniform("probesCount", int(_probesGPU->count()));
 			prog->uniform("lightsCount", int(_lightsGPU->count()));
 			prog->uniform("invScreenSize", invScreenSize);
-			// This is because after a change of scene shadow maps and probes are reset, but the conditional setup of textures on
-			// the program means that descriptors can still reference the deleted textures.
-			// \todo Currently there is no mechanism to "unregister" a texture for each shader using it, when deleting the texture.
-			// The texture could keep a record of all programs it has been used in. Or we could look at all programs when deleting.
-			// Or in PBRDemo we reset the textures when setting a scene.
+			/// This is because after a change of scene shadow maps and probes are reset, but the conditional setup of textures on
+			/// the program means that descriptors can still reference the deleted textures.
+			/// \todo Currently there is no mechanism to "unregister" a texture for each shader using it, when deleting the texture.
+			/// The texture could keep a record of all programs it has been used in. Or we could look at all programs when deleting.
+			/// Or in PBRDemo we reset the textures when setting a scene.
 			prog->defaultTexture(1);
 			prog->defaultTexture(2);
 			prog->defaultTexture(3);

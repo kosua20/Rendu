@@ -29,7 +29,73 @@ enum class TextureType {
 
 /**
  \brief Performs deferred rendering of a scene.
- \sa DeferredLight
+ \sa DeferredLight, DeferredProbe, Material, GPUShaders::Common::Common_pbr
+ \details
+ Objects material information is renderer in a framebuffer, packing the various parameters as efficiently as
+ possible in a fixed number of texture channels. As many components as possible are reused between materials,
+ and the precision of some parameters is lowered. See the Material class documentation for all parameter details.
+
+ __Shared section:__
+ |            | _______Red‏‏‎_______ | ______Green______ | _______Blue______ | ______Alpha______ |
+ | :--------- | :---------------: | :---------------: | :---------------: | :---------------: |
+ | 0: RGBA8   |             Albedo/reflectance/emissive color           |||    Material ID    |
+ | 1: RGB10A2 |          Normal octahedral XY        ||                                      ||
+ | 2: RGBA8   |                                                                            ||||
+
+ __Standard (& Parallax):__
+ |            | _______Red‏‏‎_______ | ______Green______ | _______Blue______ | ______Alpha______ |
+ | :--------- | :---------------: | :---------------: | :---------------: | :---------------: |
+ | 1: RGB10A2 |                                      ||                                      ||
+ | 2: RGBA8   |     Roughness     |   Metalness(5)    | Ambient occlusion |                   |
+ \see GPUShaders::Frag::Object_gbuffer, GPUShaders::Frag::Object_parallax_gbuffer
+
+ __Clearcoat:__
+ |            | _______Red‏‏‎_______ | ______Green______ | _______Blue______ | ______Alpha______ |
+ | :--------- | :---------------: | :---------------: | :---------------: | :---------------: |
+ | 1: RGB10A2 |                                      ||                                      ||
+ | 2: RGBA8   |     Roughness     | Metal(5) Coating(3) | Ambient occlusion | Coat roughness  |
+ \see GPUShaders::Frag::Object_clearcoat_gbuffer
+
+ __Anisotropic:__
+ |            | _______Red‏‏‎_______ | ______Green______ | _______Blue______ | ______Alpha______ |
+ | :--------- | :---------------: | :---------------: | :---------------: | :---------------: |
+ | 1: RGB10A2 |                                      || Anisotropy angle  | Anisotropy signs  |
+ | 2: RGBA8   |     Roughness     |   Metalness(5)    | Ambient occlusion |     Anisotropy    |
+ \see GPUShaders::Frag::Object_anisotropic_gbuffer
+
+ __Sheen:__
+ |            | _______Red‏‏‎_______ | ______Green______ | _______Blue______ | ______Alpha______ |
+ | :--------- | :---------------: | :---------------: | :---------------: | :---------------: |
+ | 1: RGB10A2 |                                      ||           Sheen color (3*4)          ||
+ | 2: RGBA8   |     Roughness     |   Sheeness(5)     | Ambient occlusion |  Sheen roughness  |
+ \see GPUShaders::Frag::Object_sheen_gbuffer
+
+ __Iridescent:__
+ |            | _______Red‏‏‎_______ | ______Green______ | _______Blue______ | ______Alpha______ |
+ | :--------- | :---------------: | :---------------: | :---------------: | :---------------: |
+ | 1: RGB10A2 |                                      || Index of refraction |                 |
+ | 2: RGBA8   |     Roughness     |   Metalness(5)    | Ambient occlusion |     Thickness     |
+ \see GPUShaders::Frag::Object_iridescent_gbuffer
+
+ __Subsurface:__
+ |            | _______Red‏‏‎_______ | ______Green______ | _______Blue______ | ______Alpha______ |
+ | :--------- | :---------------: | :---------------: | :---------------: | :---------------: |
+ | 1: RGB10A2 |                                      ||         Subsurface color (3*4)       ||
+ | 2: RGBA8   |     Roughness     | Subsurf rough(5)  | Ambient occlusion |     Thickness     |
+ \see GPUShaders::Frag::Object_subsurface_gbuffer
+
+ __Emissive:__
+ |            | _______Red‏‏‎_______ | ______Green______ | _______Blue______ | ______Alpha______ |
+ | :--------- | :---------------: | :---------------: | :---------------: | :---------------: |
+ | 1: RGB10A2 |                                      ||     Roughness     |                   |
+ | 2: RGBA8   |                            Emissive intensity                              ||||
+ \see GPUShaders::Frag::Object_emissive_gbuffer
+
+ The G-buffer is then read by each light, rendered as a geometric proxy onto the scene depth buffer and writing its lighting contribution to a lighting buffer. Ambient probes are processed similarly. Direct and ambient lighting are finally merged to generate the final image.
+
+ Transparent objects are rendered in a forward pass.
+ \see GPUShaders::Frag::Object_transparent_forward, GPUShaders::Frag::Object_transparent_irid_forward
+
  \ingroup PBRDemo
  */
 class DeferredRenderer final : public Renderer {

@@ -13,7 +13,8 @@
 
 
 /**
- \brief Apply a light onto the lighting buffer. By processing all lights, the final lighting is accumulated in the buffer.
+ \brief Apply a light onto the lighting buffer using a geometric proxy (cone, sphere, screenquad). By processing all lights, the final lighting is accumulated in the buffer.
+ \sa GPUShaders::Frag::Spot_light_pbr, GPUShaders::Frag::Point_light_pbr, GPUShaders::Frag::Directional_light_pbr
  \ingroup PBRDemo
  */
 class DeferredLight final : public LightRenderer {
@@ -73,7 +74,8 @@ private:
 
 
 /**
- \brief Apply a probe onto the lighting buffer.
+ \brief Apply a probe onto the lighting buffer by rendering a box. The probe contribution weight is accumulated in the alpha channel.
+ \sa GPUShaders::Frag::Probe_pbr, GPUShaders::Frag::Probe_normalization
  \ingroup PBRDemo
  */
 class DeferredProbe {

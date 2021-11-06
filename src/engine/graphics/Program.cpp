@@ -434,7 +434,7 @@ void Program::update(){
 		uint tid = 0;
 		for(const auto& buffer : _staticBuffers){
 			infos[tid].resize(buffer.second.count);
-			// \todo Should we use the real buffer current offset here, if an update happened under the hood more than once per frame?
+			/// \todo Should we use the real buffer current offset here, if an update happened under the hood more than once per frame?
 			for(uint did = 0; did < buffer.second.count; ++did){
 				VkBuffer rawBuffer = buffer.second.buffers[did];
 				if(rawBuffer != VK_NULL_HANDLE){
