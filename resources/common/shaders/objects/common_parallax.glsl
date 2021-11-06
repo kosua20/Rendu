@@ -32,7 +32,6 @@ vec2 parallax(vec2 uv, vec3 vTangentDir, texture2D depth, out float shiftDistanc
 	vec2 newUV = uv;
 	
 	// While the current layer is above the surface (ie smaller than depth), we march.
-	float currentLayerId = 0.0;
 	while (currentLayer < currentDepth) {
 		// We update the UV, going further away from the viewer.
 		newUV -= shiftUV;
@@ -40,7 +39,6 @@ vec2 parallax(vec2 uv, vec3 vTangentDir, texture2D depth, out float shiftDistanc
 		currentDepth = texture(sampler2D(depth, sRepeatLinearLinear), newUV).r;
 		// Update current layer.
 		currentLayer += layerHeight;
-		currentLayerId += 1.0;
 	}
 	
 	// Perform interpolation between the current depth layer and the previous one to refine the UV shift.
@@ -58,8 +56,7 @@ vec2 parallax(vec2 uv, vec3 vTangentDir, texture2D depth, out float shiftDistanc
 	float finalDepth = mix(currentDepth, previousDepth, mixRatio);
 
 	// Ouptut distance covered along the view direction.
-	float finalDist = PARALLAX_SCALE * (currentLayerId - mixRatio) / (layersCount - 1.0); 
-	shiftDistance = finalDist;
+	shiftDistance = PARALLAX_SCALE * length( vec3((finalUV - uv) / layerHeight, finalDepth));
 	return finalUV;
 }
 
