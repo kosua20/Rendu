@@ -458,6 +458,12 @@ void Mesh::computeTangentsAndBitangents(bool force) {
 		const glm::vec4& tgt = meshWrapper.tangents[tid];
 		tangents[vid] = glm::vec3(tgt);
 		// Bitangent is recomputed from tangent and sign.
+		const float delta = glm::length(glm::cross(normals[vid], tangents[vid]));
+		// Fix for degenerate case where all UVs are equal.
+		if(delta < 0.01f){
+			tangents[vid] = std::abs(normals[vid].z) > 0.01f ? glm::vec3(1.0f, 0.0f, 0.0f) : glm::vec3(0.0f, 0.0f, 1.0f);
+		}
+
 		// Flip the frame.
 		bitangents[vid] = -tgt.w * glm::cross(normals[vid], tangents[vid]);
 		// Re-normalize.
