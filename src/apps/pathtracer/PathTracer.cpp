@@ -86,17 +86,17 @@ glm::vec2 PathTracer::getSamplePosition(size_t sid, const glm::ivec2 & cellCount
 glm::mat3 PathTracer::buildLocalFrame(const Object & obj, const Raycaster::Hit & hit, const glm::vec3 & rayDir, const glm::vec2 & uv){
 	const auto & mesh = *obj.mesh();
 	const glm::vec3 n = glm::normalize(Raycaster::interpolateAttribute(hit, mesh, mesh.normals));
-	glm::vec3 t = glm::normalize(Raycaster::interpolateAttribute(hit, mesh, mesh.tangents));
-	// Ensure that the resulting frame is orthogonal.
-	const glm::vec3 b = glm::normalize(glm::cross(n, t));
-	t = glm::normalize(glm::cross(b, n));
+	// Forced frame computation at loading.
+	const glm::vec3 t = glm::normalize(Raycaster::interpolateAttribute(hit, mesh, mesh.tangents));
+	const glm::vec3 b = glm::normalize(Raycaster::interpolateAttribute(hit, mesh, mesh.bitangents));
+
 	// Convert to world frame.
 	const glm::mat3 invtp = glm::inverse(glm::transpose(glm::mat3(obj.model())));
 	// From tangent space to world space.
 	glm::mat3 tbn;
-	tbn[0] = glm::normalize(glm::vec3(invtp * glm::vec4(t, 0.0f)));
-	tbn[1] = glm::normalize(glm::vec3(invtp * glm::vec4(b, 0.0f)));
-	tbn[2] = glm::normalize(glm::vec3(invtp * glm::vec4(n, 0.0f)));
+	tbn[0] = invtp * t;
+	tbn[1] = invtp * b;
+	tbn[2] = invtp * n;
 
 	// Flip normal if needed (all objects are double sided).
 	const bool frontFacing = glm::dot(tbn[2], rayDir) < 0.0f;
@@ -110,11 +110,14 @@ glm::mat3 PathTracer::buildLocalFrame(const Object & obj, const Raycaster::Hit &
 		const glm::vec3 imgNormal = glm::vec3(mat.textures()[1]->images[0].rgbal(uv.x, uv.y));
 		const glm::vec3 localNormal = glm::normalize(2.0f * imgNormal - 1.0f);
 		// Convert local normal to world.
-		const glm::vec3 nn = glm::normalize(tbn * localNormal);
-		const glm::vec3 bn = glm::normalize(glm::cross(nn, tbn[0]));
-		const glm::vec3 tn = glm::normalize(glm::cross(bn, nn));
-		tbn = glm::mat3(tn, bn, nn);
+		const glm::vec3 nn = tbn * localNormal;
+		tbn[2] = nn;
 	}
+	tbn[2] = glm::normalize(tbn[2]);
+	// Ensure orthogonality.
+	tbn[1] = glm::normalize(glm::cross(tbn[2], glm::normalize(tbn[0])));
+	tbn[0] = glm::normalize(glm::cross(tbn[1], tbn[2]));
+
 	return tbn;
 }
 
@@ -226,8 +229,10 @@ void PathTracer::render(const Camera & camera, size_t samples, size_t depth, Ima
 						// Should we gamma-correct emissive textures?
 						sampleColor += attenuation * glm::vec3(bCol);
 						// No need to continue further.
+						/// \todo Support dieletric specular on top.
 						break;
 					}
+					/// \todo Support all materials from the PBR demo.
 
 					// Compute local tangent frame.
 					const glm::mat3 tbn = buildLocalFrame(obj, hit, rayDir, uv);

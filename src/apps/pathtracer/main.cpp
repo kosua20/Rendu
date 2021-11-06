@@ -83,7 +83,7 @@ public:
  \ingroup PathtracerDemo
  */
 void renderOneShot(const PathTracerConfig & config) {
-
+	Resources::manager().addResources("../../../resources/common");
 	// Load geometry and create raycaster.
 	std::shared_ptr<Scene> scene(new Scene(config.scene));
 	// For offline renders we only need the CPU data.
