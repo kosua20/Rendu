@@ -50,6 +50,7 @@ private:
 
 	int _samples		 = 8;		///< Samples count.
 	int _depth			 = 5;		///< Depth of each ray.
+	float _exposure		 = 1.f;		///< Exposure of the displayed result.
 	bool _showRender	 = false;	///< Should the result be displayed.
 	bool _lockLevel		 = true;	///< Lock the range of the BVH visualisation.
 	bool _liveRender	 = false;	///< Display the result in real-time.

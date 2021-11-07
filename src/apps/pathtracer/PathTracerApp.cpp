@@ -11,7 +11,7 @@ PathTracerApp::PathTracerApp(RenderingConfig & config, const std::shared_ptr<Sce
 	_bvhRenderer.reset(new BVHRenderer());
 	const glm::vec2 renderRes = _config.renderingResolution();
 	_sceneFramebuffer = _bvhRenderer->createOutput(uint(renderRes[0]), uint(renderRes[1]), "Visualization");
-	_passthrough = Resources::manager().getProgram2D("passthrough");
+	_passthrough = Resources::manager().getProgram2D("tonemap");
 	
 	// Initial setup for rendering image.
 	_renderTex.shape  = TextureShape::D2;
@@ -68,6 +68,8 @@ void PathTracerApp::draw() {
 		Framebuffer::backbuffer()->bind(Framebuffer::Operation::DONTCARE);
 		GPU::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 		_passthrough->use();
+		_passthrough->uniform("apply", true);
+		_passthrough->uniform("customExposure", _exposure);
 		_passthrough->texture(_renderTex, 0);
 		ScreenQuad::draw();
 		return;
@@ -82,6 +84,7 @@ void PathTracerApp::draw() {
 	Framebuffer::backbuffer()->bind(Framebuffer::Operation::DONTCARE);
 	GPU::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 	_passthrough->use();
+	_passthrough->uniform("apply", false);
 	_passthrough->texture(_sceneFramebuffer->texture(), 0);
 	ScreenQuad::draw();
 }
@@ -129,12 +132,27 @@ void PathTracerApp::update() {
 		if(hasImage && ImGui::Button("Save...")) {
 			std::string outPath;
 			if(System::showPicker(System::Picker::Save, "", outPath) && !outPath.empty()) {
+				// Tonemap the image if needed.
+				if(!Image::isFloat(outPath)){
+					Image& renderImg = _renderTex.images[0];
+					const float exposure = _exposure;
+					System::forParallel(0, renderImg.height, [&renderImg, &exposure](size_t y){
+						for(uint x = 0; x < renderImg.width; ++x){
+							const glm::vec3 & color = renderImg.rgb(int(x), int(y));
+							renderImg.rgb(int(x), int(y)) = glm::vec3(1.0f) - glm::exp(-exposure * color);
+						}
+					});
+				}
 				_renderTex.images[0].save(outPath, Image::Save::SRGB_LDR | Image::Save::IGNORE_ALPHA);
 			}
 		}
 		
 		ImGui::Checkbox("Show render", &_showRender); ImGui::SameLine();
 		ImGui::Checkbox("Live render", &_liveRender);
+		if(_showRender){
+			ImGui::SliderFloat("Exposure", &_exposure, 0.1f, 10.0f);
+		}
+		
 		if(!_showRender) {
 			// Mesh and BVH display.
 			ImGui::Separator();

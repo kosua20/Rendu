@@ -105,6 +105,16 @@ void renderOneShot(const PathTracerConfig & config) {
 
 	// Save image.
 	Log::Info() << "[PathTracer] Saving to " << config.outputPath << "." << std::endl;
+	// Tonemap the image if needed.
+	if(!Image::isFloat(config.outputPath)){
+		System::forParallel(0, render.height, [&render](size_t y){
+			for(uint x = 0; x < render.width; ++x){
+				const glm::vec3 & color = render.rgb(int(x), int(y));
+				render.rgb(int(x), int(y)) = glm::vec3(1.0f) - glm::exp(-color * 1.f);
+			}
+		});
+	}
+
 	// Convert to sRGB if saving in PNG.
 	render.save(config.outputPath, Image::Save::SRGB_LDR | Image::Save::IGNORE_ALPHA);
 
