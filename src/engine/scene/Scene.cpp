@@ -35,9 +35,9 @@ bool Scene::init(Storage options) {
 
 	Query timer;
 	timer.begin();
-	
+
 	// Define loaders for each keyword.
-	std::unordered_map<std::string, void (Scene::*)(const KeyValues &, Storage)> loaders = {
+	std::unordered_map<std::string, bool (Scene::*)(const KeyValues &, Storage)> loaders = {
 		{"scene", &Scene::loadScene}, {"object", &Scene::loadObject}, {"material", &Scene::loadMaterial}, {"point", &Scene::loadLight}, {"directional", &Scene::loadLight}, {"spot", &Scene::loadLight}, {"camera", &Scene::loadCamera}, {"background", &Scene::loadBackground}, {"probe", &Scene::loadProbe}};
 
 	// Parse the file.
@@ -45,13 +45,16 @@ bool Scene::init(Storage options) {
 	if(sceneFile.empty()) {
 		return false;
 	}
+
+	bool success = true;
 	const std::vector<KeyValues> allParams = Codable::decode(sceneFile);
 
 	// Process each group of keyvalues.
 	for(const auto & element : allParams) {
 		const std::string key = element.key;
 		// By construction (see above), all keys should have a loader.
-		(this->*loaders[key])(element, options);
+		const bool elemSuccess = (this->*loaders[key])(element, options);
+		success = success && elemSuccess;
 	}
 
 	// Update all objects poses.
@@ -61,11 +64,17 @@ bool Scene::init(Storage options) {
 	}
 	// Update all objects materials.
 	for(Object& object : objects){
+		bool foundMaterial = false;
 		for(const Material& material : materials){
 			if(material.name() == object.materialName()){
 				object.setMaterial(&material);
+				foundMaterial = true;
 				break;
 			}
+		}
+		if(!foundMaterial){
+			Log::Error() << Log::Resources << "Missing material " << object.materialName() << "." << std::endl;
+			return false;
 		}
 	}
 	
@@ -99,7 +108,6 @@ bool Scene::init(Storage options) {
 		if(obj.animated()){
 			_animated = true;
 		}
-
 	}
 	// Check if there is a material transparent in the scene.
 	for(const auto& material : materials){
@@ -117,81 +125,100 @@ bool Scene::init(Storage options) {
 	}
 
 	timer.end();
-	_loaded = true;
-	Log::Info() << Log::Resources << "Loading took " << (float(timer.value())/1000000.0f) << "ms." << std::endl;
-	return true;
+	_loaded = success;
+	Log::Info() << Log::Resources << (_loaded ? "Loading took " : "Loading failed after ") << (float(timer.value())/1000000.0f) << "ms." << std::endl;
+	return _loaded;
 }
 
-void Scene::loadObject(const KeyValues & params, Storage options) {
+bool Scene::loadObject(const KeyValues & params, Storage options) {
 	objects.emplace_back();
-	objects.back().decode(params, options);
+	return objects.back().decode(params, options);
 }
 
-void Scene::loadMaterial(const KeyValues & params, Storage options) {
+bool Scene::loadMaterial(const KeyValues & params, Storage options) {
 	materials.emplace_back();
-	materials.back().decode(params, options);
+	return materials.back().decode(params, options);
 }
 
-void Scene::loadLight(const KeyValues & params, Storage) {
-	const auto light = Light::decode(params);
-	if(light) {
+bool Scene::loadLight(const KeyValues & params, Storage) {
+	const std::shared_ptr<Light> light = Light::decode(params);
+	if(light != nullptr) {
 		lights.push_back(light);
+		return true;
 	}
+	return false;
 }
 
-void Scene::loadCamera(const KeyValues & params, Storage) {
-	_camera.decode(params);
+bool Scene::loadCamera(const KeyValues & params, Storage) {
+	return _camera.decode(params);
 }
 
-void Scene::loadBackground(const KeyValues & params, Storage options) {
+bool Scene::loadBackground(const KeyValues & params, Storage options) {
 	background = std::unique_ptr<Object>(new Object(Resources::manager().getMesh("plane", options), false));
 	_backgroundMaterial = Material(Material::Type::None);
 
+	bool success = true;
 	for(const auto & param : params.elements) {
 		if(param.key == "color") {
-			backgroundMode = Background::COLOR;
 			// Background is a plane, store the color.
+			backgroundMode = Background::COLOR;
 			const glm::vec3 color = Codable::decodeVec3(param);
 			_backgroundMaterial.addParameter(glm::vec4(color, 1.0f));
 
 		} else if(param.key == "image" && !param.elements.empty()) {
-			backgroundMode = Background::IMAGE;
 			// Load image described as sub-element.
 			const auto texInfos = Codable::decodeTexture(param.elements[0]);
 			const Texture * tex = Resources::manager().getTexture(texInfos.first, texInfos.second, options);
-			_backgroundMaterial.addTexture(tex);
+			success = tex != nullptr;
+			if(success){
+				backgroundMode = Background::IMAGE;
+				_backgroundMaterial.addTexture(tex);
+			}
 
 		} else if(param.key == "cube" && !param.elements.empty()) {
-			backgroundMode = Background::SKYBOX;
 			// Object is a textured skybox.
-			background = std::unique_ptr<Object>(new Object(Resources::manager().getMesh("skybox", options), false));
-			background->decode(params, options);
 			// Load cubemap described as subelement.
 			const auto texInfos = Codable::decodeTexture(param.elements[0]);
 			const Texture * tex = Resources::manager().getTexture(texInfos.first, texInfos.second, options);
-			_backgroundMaterial.addTexture(tex);
+			success = tex != nullptr;
+			if(success){
+				_backgroundMaterial.addTexture(tex);
+				backgroundMode = Background::SKYBOX;
+				background = std::unique_ptr<Object>(new Object(Resources::manager().getMesh("skybox", options), false));
+				success = background->decode(params, options);
+			}
 
 		} else if(param.key == "sun") {
 			// In that case the background is a sky object.
-			backgroundMode = Background::ATMOSPHERE;
-			background	 = std::unique_ptr<Sky>(new Sky(options));
-			background->decode(params, options);
 			// Load the scattering table.
 			const Texture * tex = Resources::manager().getTexture("scattering-precomputed", Layout::RGBA16F, options);
-			_backgroundMaterial.addTexture(tex);
+			success = tex != nullptr;
+			if(success){
+				_backgroundMaterial.addTexture(tex);
+				backgroundMode = Background::ATMOSPHERE;
+				background	 = std::unique_ptr<Sky>(new Sky(options));
+				success = background->decode(params, options);
+			}
+
 		}
 	}
+	if(!success){
+		Log::Error() << Log::Resources << "Unable to load background." << std::endl;
+	}
+
 	background->setMaterial(&_backgroundMaterial);
+	return success;
 }
 
-void Scene::loadProbe(const KeyValues & params, Storage options) {
+bool Scene::loadProbe(const KeyValues & params, Storage options) {
 	probes.emplace_back();
-	probes.back().decode(params, options);
+	return probes.back().decode(params, options);
 }
 
-void Scene::loadScene(const KeyValues & params, Storage) {
+bool Scene::loadScene(const KeyValues & params, Storage) {
 	// Update matrix, there is at most one transformation in the scene object.
 	_sceneModel = Codable::decodeTransformation(params.elements);
+	return true;
 }
 
 std::vector<KeyValues> Scene::encode() const {

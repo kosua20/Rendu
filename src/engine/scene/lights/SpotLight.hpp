@@ -60,8 +60,9 @@ public:
 	 	- ...
 	 \endverbatim
 	 \param params the parameters tuple
+	 \return decoding status
 	 */
-	void decode(const KeyValues & params);
+	bool decode(const KeyValues & params);
 	
 	/**
 	 \copydoc Light::encode

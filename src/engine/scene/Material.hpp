@@ -148,8 +148,9 @@ public:
 	 \endverbatim
 	 \param params the parameters tuple
 	 \param options data loading and storage options
+	 \return decoding status	 
 	 */
-	virtual void decode(const KeyValues & params, Storage options);
+	bool decode(const KeyValues & params, Storage options);
 
 	/** Generate a key-values representation of the material. See decode for the keywords and layout.
 	\return a tuple representing the material.

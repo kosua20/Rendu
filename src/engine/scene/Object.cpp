@@ -7,7 +7,7 @@ Object::Object(const Mesh * mesh, bool castShadows) :
 	_skipUVs = !_mesh->hadTexcoords();
 }
 
-void Object::decode(const KeyValues & params, Storage options) {
+bool Object::decode(const KeyValues & params, Storage options) {
 
 	// We expect there is only one transformation in the parameters set.
 	_model.reset(Codable::decodeTransformation(params.elements));
@@ -25,13 +25,22 @@ void Object::decode(const KeyValues & params, Storage options) {
 
 		} else if(param.key == "animations") {
 			_animations = Animation::decode(param.elements);
+			
 		} else if(param.key == "skipuvs") {
 			_skipUVs = Codable::decodeBool(param);
+			
 		}
+	}
+
+	if(_mesh == nullptr){
+		Log::Error() << Log::Resources << "Unable to load object (no mesh)." << std::endl;
+		_mesh = Resources::manager().getMesh("cube", options);
+		return false;
 	}
 
 	// If the mesh doesn't have texture coordinates, skip UVs.
 	_skipUVs = _skipUVs || (!_mesh->hadTexcoords());
+	return true;
 }
 
 KeyValues Object::encode() const {

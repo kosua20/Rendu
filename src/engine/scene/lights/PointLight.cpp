@@ -86,8 +86,8 @@ glm::vec3 PointLight::sample(const glm::vec3 & position, float & dist, float & a
 	return direction;
 }
 
-void PointLight::decode(const KeyValues & params) {
-	Light::decodeBase(params);
+bool PointLight::decode(const KeyValues & params) {
+	bool success = Light::decodeBase(params);
 	for(const auto & param : params.elements) {
 		if(param.key == "position") {
 			_lightPosition.reset(Codable::decodeVec3(param));
@@ -95,6 +95,7 @@ void PointLight::decode(const KeyValues & params) {
 			_radius = std::stof(param.values[0]);
 		}
 	}
+	return success;
 }
 
 KeyValues PointLight::encode() const {

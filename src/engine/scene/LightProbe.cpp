@@ -1,11 +1,13 @@
 #include "scene/LightProbe.hpp"
+#include "system/TextUtilities.hpp"
 
-void LightProbe::decode(const KeyValues & params, Storage options) {
+bool LightProbe::decode(const KeyValues & params, Storage options) {
 	// Assume a static probe initially.
 	_type = LightProbe::Type::STATIC;
 	std::vector<glm::vec4> coeffs(9, glm::vec4(0.0f));
 
 	bool setCenter = false;
+	bool success = true;
 	for(const auto & param : params.elements){
 
 		if(param.key == "position"){
@@ -31,17 +33,25 @@ void LightProbe::decode(const KeyValues & params, Storage options) {
 
 		} else if(param.key == "irradiance" && !param.values.empty()){
 			// Load the SH coefficients from the corresponding text file.
-			const std::string coeffsRaw = Resources::manager().getString(param.values[0]);
-			std::stringstream coeffsStream(coeffsRaw);
-			float x = 0.0f; float y = 0.0f; float z = 0.0f;
-			for(int i = 0; i < 9; ++i) {
-				coeffsStream >> x >> y >> z;
-				coeffs[i] = glm::vec4(x, y, z, 1.0f);
+			std::string coeffsRaw = Resources::manager().getString(param.values[0]);
+			TextUtilities::replace(coeffsRaw, "\n\r", ' ');
+			const std::vector<std::string> coeffsTokens = TextUtilities::split(coeffsRaw, " ", true);
+			if(coeffsTokens.size() >= 3 * 9){
+				for(int i = 0; i < 9; ++i){
+					for(int c = 0; c < 3; ++c){
+						coeffs[i][c] = std::stof(coeffsTokens[3 * i + c]);
+					}
+					coeffs[i][3] = 1.f;
+				}
+			} else {
+				success = false;
 			}
 		} else if(param.key == "radiance" && !param.elements.empty()){
 			// Load cubemap described as sub-element.
 			const auto texInfos = Codable::decodeTexture(param.elements[0]);
 			_envmap = Resources::manager().getTexture(texInfos.first, texInfos.second, options);
+		} else {
+			Codable::unknown(param);
 		}
 	}
 
@@ -51,8 +61,10 @@ void LightProbe::decode(const KeyValues & params, Storage options) {
 
 	// for the static case, check that everything has been provided.
 	if(_type == LightProbe::Type::STATIC){
-		if(!_envmap){
+		if(_envmap == nullptr){
+			Log::Error() << Log::Resources << "Unable to find envmap for static probe." << std::endl;
 			_envmap = Resources::manager().getTexture("default_cube", Layout::RGBA8, options);
+			return false;
 		}
 
 		if(options & Storage::GPU){
@@ -60,6 +72,7 @@ void LightProbe::decode(const KeyValues & params, Storage options) {
 			_shCoeffs->upload(coeffs);
 		}
 	}
+	return success;
 }
 
 KeyValues LightProbe::encode() const {

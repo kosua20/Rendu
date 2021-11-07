@@ -117,12 +117,17 @@ public:
 	 */
 	static std::string encode(const std::vector<KeyValues> & params);
 
-	/** Generate a Codable-compatible text representation from a (key,values) tuple. The following rules are applied:
-	\param params a (key, value) token
+	/** Generate a Codable-compatible text representation from a (key,values) tuple.
+	 \param params a (key, value) token
 	 \return a string containing the text representation
 	 */
 	static std::string encode(const KeyValues & params);
-	
+
+	/** Log an unknown parameter set
+	 \param params the token to log
+	 */
+	static void unknown(const KeyValues & params);
+
 private:
 	
 	/** \brief Prefix type/ */

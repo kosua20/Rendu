@@ -318,3 +318,7 @@ std::string Codable::encode(const KeyValues & params) {
 	return encode({ params }, Prefix::ROOT, 0);
 }
 
+
+void Codable::unknown(const KeyValues & params){
+	Log::Warning() << Log::Resources << "Unknown parameter: " << params.key << "." << std::endl;
+}

@@ -283,8 +283,8 @@ void ControllableCamera::interface(){
 	if(ImGui::Button("Paste camera", ImVec2(104, 0))) {
 		const std::string camDesc(ImGui::GetClipboardText());
 		const auto cameraCode = Codable::decode(camDesc);
-		if(!cameraCode.empty()) {
-			decode(cameraCode[0]);
+		// Decode if possible, else the camera won't be modified.
+		if(!cameraCode.empty() && decode(cameraCode[0])){
 			_guiFOV = _fov * 180.0f / glm::pi<float>();
 		}
 	}

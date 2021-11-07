@@ -16,7 +16,7 @@ void Light::addAnimation(const std::shared_ptr<Animation> & anim) {
 	_animations.push_back(anim);
 }
 
-void Light::decodeBase(const KeyValues & params) {
+bool Light::decodeBase(const KeyValues & params) {
 	for(const auto & param : params.elements) {
 		if(param.key == "intensity") {
 			_color = Codable::decodeVec3(param);
@@ -28,6 +28,7 @@ void Light::decodeBase(const KeyValues & params) {
 			_animations = Animation::decode(param.elements);
 		}
 	}
+	return true;
 }
 
 KeyValues Light::encode() const {
@@ -46,18 +47,21 @@ std::shared_ptr<Light> Light::decode(const KeyValues & params) {
 	const std::string typeKey = params.key;
 	if(typeKey == "point") {
 		auto light = std::shared_ptr<PointLight>(new PointLight());
-		light->decode(params);
-		return light;
+		if(light->decode(params)){
+			return light;
+		}
 	}
 	if(typeKey == "spot") {
 		auto light = std::shared_ptr<SpotLight>(new SpotLight());
-		light->decode(params);
-		return light;
+		if(light->decode(params)){
+			return light;
+		}
 	}
 	if(typeKey == "directional") {
 		auto light = std::shared_ptr<DirectionalLight>(new DirectionalLight());
-		light->decode(params);
-		return light;
+		if(light->decode(params)){
+			return light;
+		}
 	}
-	return std::shared_ptr<Light>();
+	return nullptr;
 }

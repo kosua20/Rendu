@@ -83,8 +83,9 @@ protected:
 	 \endverbatim
 	 (where frame is one of 'world' or 'model').
 	 \param params the parameters tuple
+	 \return decoding status
 	 */
-	void decodeBase(const KeyValues & params);
+	bool decodeBase(const KeyValues & params);
 	
 	Frame _frame = Frame::WORLD; ///< The frame of transformation.
 	float _speed = 0.0f;		 ///< Speed of the animation.
@@ -127,8 +128,9 @@ public:
 	 \endverbatim
 	 (where frame is one of 'world' or 'model').
 	 \param params the parameters tuple
+	 \return decoding status
 	 */
-	void decode(const KeyValues & params);
+	bool decode(const KeyValues & params);
 
 	/** Generate a key-values representation of the animation. See decode for the keywords and layout.
 	\return a tuple representing the animation.
@@ -178,8 +180,9 @@ public:
 	 \endverbatim
 	 (where frame is one of 'world' or 'model').
 	 \param params the parameters tuple
+	 \return decoding status	 
 	 */
-	void decode(const KeyValues & params);
+	bool decode(const KeyValues & params);
 
 	/** Generate a key-values representation of the animation. See decode for the keywords and layout.
 	\return a tuple representing the animation.

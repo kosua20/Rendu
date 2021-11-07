@@ -97,44 +97,51 @@ private:
 	/** Load an object in the scene from its serialized representation.
 	 \param params the object parameters
 	 \param options data loading and storage options
+	 \return the loading status
 	 */
-	void loadObject(const KeyValues & params, Storage options);
+	bool loadObject(const KeyValues & params, Storage options);
 
 	/** Load a material in the scene from its serialized representation.
 	 \param params the material parameters
 	 \param options data loading and storage options
+	 \return the loading status
 	 */
-	void loadMaterial(const KeyValues & params, Storage options);
+	bool loadMaterial(const KeyValues & params, Storage options);
 
 	/** Load a point light in the scene from its serialized representation.
 	 \param params the point light parameters
 	 \param options data loading and storage options (unused)
+	 \return the loading status
 	 */
-	void loadLight(const KeyValues & params, Storage options);
+	bool loadLight(const KeyValues & params, Storage options);
 
 	/** Load the scene camera informations from its serialized representation.
 	 \param params the camera parameters
-	\param options data loading and storage options (unused)
+	 \param options data loading and storage options (unused)
+	 \return the loading status
 	 */
-	void loadCamera(const KeyValues & params, Storage options);
+	bool loadCamera(const KeyValues & params, Storage options);
 
 	/** Load the scene background informations from its serialized representation.
 	 \param params the background parameters
 	 \param options data loading and storage options
+	 \return the loading status	 
 	 */
-	void loadBackground(const KeyValues & params, Storage options);
+	bool loadBackground(const KeyValues & params, Storage options);
 
 	/** Load the scene environment informations from its serialized representation.
 	 \param params the probe parameters
 	 \param options data loading and storage options
+	 \return the loading status
 	 */
-	void loadProbe(const KeyValues & params, Storage options);
+	bool loadProbe(const KeyValues & params, Storage options);
 
 	/** Load the scene informations from its serialized representation.
 	 \param params the scene parameters
 	 \param options data loading and storage options
+	 \return the loading status
 	 */
-	void loadScene(const KeyValues & params, Storage options);
+	bool loadScene(const KeyValues & params, Storage options);
 
 	/** Compute the bounding box of the scene, including and excluding objects that do not cast shadows.
 	 \param globalBox the bounding box encompassing all objects in the scene

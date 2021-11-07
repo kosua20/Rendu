@@ -123,8 +123,9 @@ public:
 	 \endverbatim
 	 where the field of view is given in radians.
 	 \param params the parameters tuples list
+	 \return decoding status
 	 */
-	void decode(const KeyValues & params);
+	bool decode(const KeyValues & params);
 
 	/** Encode a camera as a key-values representation.
 	 \return the encoded camera parameters

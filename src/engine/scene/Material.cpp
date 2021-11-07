@@ -38,20 +38,28 @@ Material::Material(const Type type) :
 	_material(type) {
 }
 
-void Material::decode(const KeyValues & params, Storage options) {
+bool Material::decode(const KeyValues & params, Storage options) {
+	bool success = true;
 
 	for(const auto & param : params.elements) {
 		if(param.key == "type" && !param.values.empty()) {
 			const std::string typeString = param.values[0];
 			if(strToTypes.count(typeString) > 0) {
 				_material = strToTypes.at(typeString);
+			} else {
+				Log::Error() << "Unknown material type: " << typeString << std::endl;
+				success = false;
 			}
 
 		} else if(param.key == "textures") {
 			for(const auto & paramTex : param.elements) {
 				const auto texInfos = Codable::decodeTexture(paramTex);
 				const Texture * tex = Resources::manager().getTexture(texInfos.first, texInfos.second, options);
-				addTexture(tex);
+				if(tex != nullptr){
+					addTexture(tex);
+				} else {
+					success = false;
+				}
 			}
 
 		}  else if(param.key == "parameters") {
@@ -65,8 +73,16 @@ void Material::decode(const KeyValues & params, Storage options) {
 			_masked = Codable::decodeBool(param);
 		} else if(param.key == "name" && !param.values.empty()) {
 			_name = param.values[0];
+		} else {
+			Codable::unknown(param);
 		}
 	}
+
+	if(_name.empty()){
+		Log::Error() << "Material has no name." << std::endl;
+		success = false;
+	}
+	return success;
 }
 
 KeyValues Material::encode() const {

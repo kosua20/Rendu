@@ -34,8 +34,9 @@ public:
 	 \endverbatim
 	 \param params the parameters tuple
 	 \param options data loading and storage options
+	 \return decoding status
 	 */
-	void decode(const KeyValues & params, Storage options) override;
+	bool decode(const KeyValues & params, Storage options) override;
 	
 	/** Generate a key-values representation of the object. See decode for the keywords and layout.
 	\return a tuple representing the object.

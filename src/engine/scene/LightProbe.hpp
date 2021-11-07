@@ -46,8 +46,9 @@ public:
 	 Both size and extent are half-sizes.
 	 \param params the parameters tuple
 	 \param options data loading and storage options
+	 \return decoding status	 
 	 */
-	void decode(const KeyValues & params, Storage options);
+	bool decode(const KeyValues & params, Storage options);
 	
 	/** Generate a key-values representation of the probe. See decode for the keywords and layout.
 	\return a tuple representing the probe.

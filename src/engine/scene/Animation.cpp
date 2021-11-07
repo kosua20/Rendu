@@ -10,13 +10,21 @@ std::vector<std::shared_ptr<Animation>> Animation::decode(const std::vector<KeyV
 	for(const auto & param : params) {
 		if(param.key == "rotation") {
 			auto anim = std::shared_ptr<Rotation>(new Rotation());
-			anim->decode(param);
-			animations.push_back(anim);
+			if(anim->decode(param)){
+				animations.push_back(anim);
+			} else {
+				Log::Warning() << "Failed to load " << param.key << " animation." << std::endl;
+			}
 
 		} else if(param.key == "backandforth") {
 			auto anim = std::shared_ptr<BackAndForth>(new BackAndForth());
-			anim->decode(param);
-			animations.push_back(anim);
+			if(anim->decode(param)){
+				animations.push_back(anim);
+			} else {
+				Log::Warning() << "Failed to load " << param.key << " animation." << std::endl;
+			}
+		} else {
+			Codable::unknown(param);
 		}
 	}
 	return animations;
@@ -30,13 +38,14 @@ std::vector<KeyValues> Animation::encode(const std::vector<std::shared_ptr<Anima
 	return res;
 }
 
-void Animation::decodeBase(const KeyValues & params) {
+bool Animation::decodeBase(const KeyValues & params) {
 	if(params.values.size() >= 2) {
 		const float speed			 = std::stof(params.values[0]);
 		const Animation::Frame frame = (params.values[1] == "model" ? Animation::Frame::MODEL : Animation::Frame::WORLD);
 		_speed						 = speed;
 		_frame						 = frame;
 	}
+	return true;
 }
 
 KeyValues Animation::encode() const {
@@ -61,10 +70,15 @@ glm::vec4 Rotation::apply(const glm::vec4 & v, double, double frameTime) {
 	return r * v;
 }
 
-void Rotation::decode(const KeyValues & params) {
-	Animation::decodeBase(params);
-	_axis = Codable::decodeVec3(params, 2);
-	_axis = glm::normalize(_axis);
+bool Rotation::decode(const KeyValues & params) {
+	bool success = Animation::decodeBase(params);
+	// Load axis and validate.
+	const glm::vec3 newAxis = Codable::decodeVec3(params, 2);
+	if(newAxis == glm::vec3(0.0f)){
+		return false;
+	}
+	_axis = glm::normalize(newAxis);
+	return success;
 }
 
 KeyValues Rotation::encode() const {
@@ -99,13 +113,19 @@ glm::vec4 BackAndForth::apply(const glm::vec4 & v, double fullTime, double) {
 	return v + glm::vec4(trans, 0.0f);
 }
 
-void BackAndForth::decode(const KeyValues & params) {
-	Animation::decodeBase(params);
-	_axis = Codable::decodeVec3(params, 2);
-	_axis = glm::normalize(_axis);
+bool BackAndForth::decode(const KeyValues & params) {
+	bool success = Animation::decodeBase(params);
+	// Decode axis.
+	const glm::vec3 newAxis = Codable::decodeVec3(params, 2);
+	if(newAxis == glm::vec3(0.0f)){
+		return false;
+	}
+	_axis = glm::normalize(newAxis);
+	// Other parameters.
 	if(params.values.size() >= 6) {
 		_amplitude = std::stof(params.values[5]);
 	}
+	return success;
 }
 
 KeyValues BackAndForth::encode() const {

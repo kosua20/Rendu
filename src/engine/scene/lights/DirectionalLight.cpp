@@ -43,13 +43,19 @@ glm::vec3 DirectionalLight::sample(const glm::vec3 & , float & dist, float & att
 	return -_lightDirection.get();
 }
 
-void DirectionalLight::decode(const KeyValues & params) {
-	Light::decodeBase(params);
+bool DirectionalLight::decode(const KeyValues & params) {
+	bool success = Light::decodeBase(params);
 	for(const auto & param : params.elements) {
 		if(param.key == "direction") {
-			_lightDirection.reset(glm::normalize(Codable::decodeVec3(param)));
+			const glm::vec3 newDir = Codable::decodeVec3(param);
+			if(newDir == glm::vec3(0.0f)){
+				Log::Error() << "Invalid light direction." << std::endl;
+				return false;
+			}
+			_lightDirection.reset(glm::normalize(newDir));
 		}
 	}
+	return success;
 }
 
 KeyValues DirectionalLight::encode() const {

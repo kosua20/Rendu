@@ -80,12 +80,17 @@ glm::vec3 SpotLight::sample(const glm::vec3 & position, float & dist, float & at
 	return direction;
 }
 
-void SpotLight::decode(const KeyValues & params) {
-	Light::decodeBase(params);
+bool SpotLight::decode(const KeyValues & params) {
+	bool success = Light::decodeBase(params);
 	for(const auto & param : params.elements) {
 		if(param.key == "direction") {
-			_lightDirection.reset(glm::normalize(Codable::decodeVec3(param)));
-
+			const glm::vec3 newDir = Codable::decodeVec3(param);
+			if(newDir == glm::vec3(0.0f)){
+				Log::Error() << "Invalid light direction." << std::endl;
+				return false;
+			}
+			_lightDirection.reset(glm::normalize(newDir));
+			
 		} else if(param.key == "position") {
 			_lightPosition.reset(Codable::decodeVec3(param));
 
@@ -98,6 +103,7 @@ void SpotLight::decode(const KeyValues & params) {
 			_radius = std::stof(param.values[0]);
 		}
 	}
+	return success;
 }
 
 KeyValues SpotLight::encode() const {

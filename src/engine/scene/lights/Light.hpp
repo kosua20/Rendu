@@ -153,8 +153,9 @@ protected:
 	 ...
 	 \endverbatim
 	 \param params the parameters tuple list
+	 \return decoding status
 	 */
-	void decodeBase(const KeyValues & params);
+	bool decodeBase(const KeyValues & params);
 
 
 	std::vector<std::shared_ptr<Animation>> _animations; ///< Animations list (will be applied in order).

@@ -4,13 +4,20 @@ Sky::Sky(Storage options) :
 	Object(Resources::manager().getMesh("plane", options), false) {
 }
 
-void Sky::decode(const KeyValues & params, Storage options) {
-	Object::decode(params, options);
+bool Sky::decode(const KeyValues & params, Storage options) {
+	bool success = Object::decode(params, options);
 	for(const auto & param : params.elements) {
 		if(param.key == "sun") {
-			_sunDirection.reset(glm::normalize(Codable::decodeVec3(param)));
+			const glm::vec3 newDir = Codable::decodeVec3(param);
+			if(newDir == glm::vec3(0.0f)){
+				Log::Info() << "Invalid null sun direction." << std::endl;
+				return false;
+			}
+			_sunDirection.reset(glm::normalize(newDir));
+			
 		}
 	}
+	return success;
 }
 
 KeyValues Sky::encode() const {
