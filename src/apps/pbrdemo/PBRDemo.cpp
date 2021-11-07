@@ -44,7 +44,12 @@ void PBRDemo::setScene(const std::shared_ptr<Scene> & scene) {
 
 	freezeCamera(false);
 
-	scene->init(Storage::GPU);
+	if(!scene->init(Storage::GPU)){
+		// If unable to load, fallback to the default scene.
+		_currentScene = 0;
+		setScene(_scenes[_currentScene]);
+		return;
+	}
 
 	_userCamera.apply(scene->viewpoint());
 	_userCamera.ratio(_config.screenResolution[0] / _config.screenResolution[1]);

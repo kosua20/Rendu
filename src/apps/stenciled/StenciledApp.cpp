@@ -32,7 +32,11 @@ void StenciledApp::setScene(const std::shared_ptr<Scene> & scene) {
 	}
 	freezeCamera(false);
 
-	scene->init(Storage::GPU);
+	if(!scene->init(Storage::GPU)){
+		_currentScene = 0;
+		setScene(_scenes[_currentScene]);
+		return;
+	}
 
 	_userCamera.apply(scene->viewpoint());
 	_userCamera.ratio(_config.screenResolution[0] / _config.screenResolution[1]);

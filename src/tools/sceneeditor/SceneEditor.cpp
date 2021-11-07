@@ -29,7 +29,11 @@ void SceneEditor::setScene(const std::shared_ptr<Scene> & scene) {
 		return;
 	}
 	
-	scene->init(Storage::GPU);
+	if(!scene->init(Storage::GPU)){
+		_currentScene = 0;
+		setScene(_scenes[_currentScene]);
+		return;
+	}
 	
 	// Camera setup.
 	_userCamera.apply(scene->viewpoint());
