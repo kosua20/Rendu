@@ -33,11 +33,10 @@ class ForwardRenderer final : public Renderer {
 public:
 	/** Constructor.
 	 \param resolution the initial rendering resolution
-	 \param mode the shadow rendering algorithm
 	 \param ssao should screen space ambient occlusion be computed
 	 \param name the debug name
 	 */
-	explicit ForwardRenderer(const glm::vec2 & resolution, ShadowMode mode, bool ssao, const std::string & name);
+	explicit ForwardRenderer(const glm::vec2 & resolution, bool ssao, const std::string & name);
 
 	/** Set the scene to render.
 	 \param scene the new scene
@@ -56,7 +55,7 @@ public:
 
 	/** \return the framebuffer containing the scene depth information */
 	const Framebuffer * sceneDepth() const;
-	
+
 private:
 
 	/** Render the scene object depth (prepass).
@@ -115,7 +114,6 @@ private:
 	std::unique_ptr<Culler> _culler; ///<Objects culler.
 
 	bool _applySSAO			 = true;  ///< Screen space ambient occlusion.
-	ShadowMode  _shadowMode	 = ShadowMode::VARIANCE;  ///< Shadow mapping technique to use.
 
 
 };

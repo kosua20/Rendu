@@ -21,11 +21,6 @@ void ForwardLight::updateCameraInfos(const glm::mat4 & viewMatrix, const glm::ma
 	_invView = glm::inverse(_view);
 }
 
-void ForwardLight::updateShadowMapInfos(ShadowMode mode, float bias) {
-	_shadowBias = bias;
-	_shadowMode = mode;
-}
-
 void ForwardLight::draw(const SpotLight * light) {
 	const size_t selectedId = _currentId;
 	_currentId				= (_currentId + 1) % _currentCount;
@@ -33,25 +28,26 @@ void ForwardLight::draw(const SpotLight * light) {
 	if(selectedId >= _maxLightCount) {
 		return;
 	}
+	const auto& mapInfos = light->shadowMap();
 
 	GPULight & currentLight					= _lightsData[selectedId];
 	const glm::vec3 lightPositionViewSpace	= glm::vec3(_view * glm::vec4(light->position(), 1.0f));
 	const glm::vec3 lightDirectionViewSpace = glm::vec3(_view * glm::vec4(light->direction(), 0.0f));
 
 	currentLight.viewToLight	   = light->vp() * _invView;
-	currentLight.colorAndBias	   = glm::vec4(light->intensity(), _shadowBias);
+	currentLight.colorAndBias	   = glm::vec4(light->intensity(), mapInfos.bias);
 	currentLight.positionAndRadius = glm::vec4(lightPositionViewSpace, light->radius());
 	currentLight.directionAndPlane = glm::vec4(lightDirectionViewSpace, 0.0f);
 
 	currentLight.typeModeLayer[0] = float(LightType::SPOT);
-	currentLight.typeModeLayer[1] = float(light->castsShadow() ? _shadowMode : ShadowMode::NONE);
-	currentLight.typeModeLayer[2] = float(light->shadowMap().layer);
+	currentLight.typeModeLayer[1] = float(light->castsShadow() ? mapInfos.mode : ShadowMode::NONE);
+	currentLight.typeModeLayer[2] = float(mapInfos.layer);
 
 	currentLight.angles[0] = glm::cos(light->angles()[0]);
 	currentLight.angles[1] = glm::cos(light->angles()[1]);
 
-	if(light->castsShadow()){
-		_shadowMaps[0] = light->shadowMap().map;
+	if(light->castsShadow() && (mapInfos.map != nullptr)){
+		_shadowMaps[0] = mapInfos.map;
 	}
 }
 
@@ -62,21 +58,22 @@ void ForwardLight::draw(const PointLight * light) {
 	if(selectedId >= _maxLightCount) {
 		return;
 	}
+	const auto& mapInfos = light->shadowMap();
 
 	GPULight & currentLight				   = _lightsData[selectedId];
 	const glm::vec3 lightPositionViewSpace = glm::vec3(_view * glm::vec4(light->position(), 1.0f));
 
 	currentLight.viewToLight		  = _invView;
-	currentLight.colorAndBias		  = glm::vec4(light->intensity(), _shadowBias);
+	currentLight.colorAndBias		  = glm::vec4(light->intensity(), mapInfos.bias);
 	currentLight.directionAndPlane[3] = light->farPlane();
 	currentLight.positionAndRadius	  = glm::vec4(lightPositionViewSpace, light->radius());
 
 	currentLight.typeModeLayer[0] = float(LightType::POINT);
-	currentLight.typeModeLayer[1] = float(light->castsShadow() ? _shadowMode : ShadowMode::NONE);
-	currentLight.typeModeLayer[2] = float(light->shadowMap().layer);
+	currentLight.typeModeLayer[1] = float(light->castsShadow() ? mapInfos.mode : ShadowMode::NONE);
+	currentLight.typeModeLayer[2] = float(mapInfos.layer);
 
-	if(light->castsShadow()){
-		_shadowMaps[1] = light->shadowMap().map;
+	if(light->castsShadow() && (mapInfos.map != nullptr)){
+		_shadowMaps[1] = mapInfos.map;
 	}
 }
 
@@ -87,20 +84,21 @@ void ForwardLight::draw(const DirectionalLight * light) {
 	if(selectedId >= _maxLightCount) {
 		return;
 	}
+	const auto& mapInfos = light->shadowMap();
 
 	GPULight & currentLight					= _lightsData[selectedId];
 	const glm::vec3 lightDirectionViewSpace = glm::vec3(_view * glm::vec4(light->direction(), 0.0));
 
 	currentLight.viewToLight	   = light->vp() * _invView;
-	currentLight.colorAndBias	   = glm::vec4(light->intensity(), _shadowBias);
+	currentLight.colorAndBias	   = glm::vec4(light->intensity(), mapInfos.bias);
 	currentLight.directionAndPlane = glm::vec4(lightDirectionViewSpace, 0.0f);
 
 	currentLight.typeModeLayer[0] = float(LightType::DIRECTIONAL);
-	currentLight.typeModeLayer[1] = float(light->castsShadow() ? _shadowMode : ShadowMode::NONE);
-	currentLight.typeModeLayer[2] = float(light->shadowMap().layer);
+	currentLight.typeModeLayer[1] = float(light->castsShadow() ? mapInfos.mode : ShadowMode::NONE);
+	currentLight.typeModeLayer[2] = float(mapInfos.layer);
 
-	if(light->castsShadow()){
-		_shadowMaps[0] = light->shadowMap().map;
+	if(light->castsShadow() && (mapInfos.map != nullptr)){
+		_shadowMaps[0] = mapInfos.map;
 	}
 }
 

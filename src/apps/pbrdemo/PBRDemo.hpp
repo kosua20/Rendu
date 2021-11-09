@@ -51,6 +51,11 @@ private:
 	 */
 	void setScene(const std::shared_ptr<Scene> & scene);
 
+	/** Create shadow maps for the current scene, for a given mode.
+	 \param mode the shadow type to prepare for when creating the shadow maps
+	 */
+	void createShadowMaps(ShadowMode mode);
+
 	/** Update the real-time shadow maps and probes. */
 	void updateMaps();
 
@@ -77,6 +82,7 @@ private:
 	Query _totalTime;	       ///< CPU timing for one full frame
 
 	RendererMode _mode	 = RendererMode::DEFERRED; ///< Active renderer.
+	ShadowMode _shadowMode = ShadowMode::VARIANCE; ///< The shadow rendering technique.
 	size_t _currentScene = 0; ///< Currently selected scene.
 	const int _frameCount = 2;	 ///< Number of frames to update a probe over.
 	int _frameID		= 0; 	 ///< Current frame count (will loop)

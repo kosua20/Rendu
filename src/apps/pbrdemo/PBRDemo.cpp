@@ -1,5 +1,6 @@
 #include "PBRDemo.hpp"
-#include "renderers/shadowmaps/VarianceShadowMapArray.hpp"
+#include "renderers/shadowmaps/VarianceShadowMap.hpp"
+#include "renderers/shadowmaps/BasicShadowMap.hpp"
 #include "graphics/GPU.hpp"
 #include "input/Input.hpp"
 #include "graphics/ScreenQuad.hpp"
@@ -8,15 +9,15 @@ PBRDemo::PBRDemo(RenderingConfig & config) :
 	CameraApp(config) {
 
 	const glm::vec2 renderRes = _config.renderingResolution();
-	_defRenderer.reset(new DeferredRenderer(renderRes, ShadowMode::VARIANCE, true, "Deferred"));
-	_forRenderer.reset(new ForwardRenderer(renderRes, ShadowMode::VARIANCE, true, "Forward"));
+	_defRenderer.reset(new DeferredRenderer(renderRes, true, "Deferred"));
+	_forRenderer.reset(new ForwardRenderer(renderRes, true, "Forward"));
 	_postprocess.reset(new PostProcessStack(renderRes));
 	_debugRenderer.reset(new DebugRenderer());
 	_finalRender.reset(new Framebuffer(uint(renderRes[0]), uint(renderRes[1]), {Layout::RGBA16F, Layout::DEPTH_COMPONENT32F}, "Final render"));
 
 	_finalProgram = Resources::manager().getProgram2D("sharpening");
 	
-	_probesRenderer.reset(new DeferredRenderer(glm::vec2(128,128), ShadowMode::BASIC, false, "Probes"));
+	_probesRenderer.reset(new DeferredRenderer(glm::vec2(128,128), false, "Probes"));
 
 	// Load all existing scenes, with associated names.
 	std::vector<Resources::FileInfos> sceneInfos;
@@ -65,31 +66,7 @@ void PBRDemo::setScene(const std::shared_ptr<Scene> & scene) {
 	_debugRenderer->setScene(scene);
 
 	// Recreate the shadow maps.
-	// Delete existing shadow maps.
-	for(auto & map : _shadowMaps) {
-		map.reset();
-	}
-	_shadowMaps.clear();
-	// Allocate shadow maps.
-	// For now all techniques require at most a VSM (depth,depth^2) map so we use this in all cases.
-	std::vector<std::shared_ptr<Light>> lights2D;
-	std::vector<std::shared_ptr<PointLight>> lightsCube;
-	for(auto & light : scene->lights) {
-		if(!light->castsShadow()) {
-			continue;
-		}
-		if(auto pLight = std::dynamic_pointer_cast<PointLight>(light)) {
-			lightsCube.push_back(pLight);
-		} else {
-			lights2D.push_back(light);
-		}
-	}
-	if(!lights2D.empty()){
-		_shadowMaps.emplace_back(new VarianceShadowMap2DArray(lights2D, glm::vec2(512)));
-	}
-	if(!lightsCube.empty()){
-		_shadowMaps.emplace_back(new VarianceShadowMapCubeArray(lightsCube, 512));
-	}
+	createShadowMaps(_shadowMode);
 
 	// Recreate probes
 	// Delete existing probes.
@@ -106,10 +83,6 @@ void PBRDemo::setScene(const std::shared_ptr<Scene> & scene) {
 	}
 
 	// Trigger one-shot data update.
-	// Shadow pass.
-	for(const auto & map : _shadowMaps) {
-		map->draw(*_scenes[_currentScene]);
-	}
 	// Update each probe fully 3 times to capture multi-bounce effects.
 	for(uint i = 0; i < 3; ++i){
 		for(auto & probe : _probes) {
@@ -255,6 +228,10 @@ void PBRDemo::update() {
 		}
 
 		if(ImGui::CollapsingHeader("Renderer##options")){
+			if(ImGui::Combo("Shadow technique", reinterpret_cast<int*>(&_shadowMode), "None\0Basic\0Variance\0\0")){
+				createShadowMaps(_shadowMode);
+			}
+			
 			if(_mode == RendererMode::DEFERRED){
 				_defRenderer->interface();
 			} else {
@@ -292,4 +269,56 @@ void PBRDemo::resize() {
 	_forRenderer->resize(rw, rh);
 	_postprocess->resize(rw, rh);
 	_finalRender->resize(renderRes);
+}
+
+void PBRDemo::createShadowMaps(ShadowMode mode){
+	// Delete existing shadow maps.
+	for(auto & map : _shadowMaps) {
+		map.reset();
+	}
+
+	_shadowMaps.clear();
+	const std::shared_ptr<Scene> & scene = _scenes[_currentScene];
+	// Allocate shadow maps.
+	// For now all techniques require at most a VSM (depth,depth^2) map so we use this in all cases.
+	std::vector<std::shared_ptr<Light>> lights2D;
+	std::vector<std::shared_ptr<PointLight>> lightsCube;
+	for(auto & light : scene->lights) {
+		if(!light->castsShadow()) {
+			continue;
+		}
+		if(auto pLight = std::dynamic_pointer_cast<PointLight>(light)) {
+			lightsCube.push_back(pLight);
+		} else {
+			lights2D.push_back(light);
+		}
+	}
+
+	if(mode == ShadowMode::VARIANCE){
+		if(!lights2D.empty()){
+			_shadowMaps.emplace_back(new VarianceShadowMap2DArray(lights2D, glm::vec2(512)));
+		}
+		if(!lightsCube.empty()){
+			_shadowMaps.emplace_back(new VarianceShadowMapCubeArray(lightsCube, 512));
+		}
+	} else if(mode == ShadowMode::BASIC){
+		if(!lights2D.empty()){
+			_shadowMaps.emplace_back(new BasicShadowMap2DArray(lights2D, glm::vec2(512)));
+		}
+		if(!lightsCube.empty()){
+			_shadowMaps.emplace_back(new BasicShadowMapCubeArray(lightsCube, 512));
+		}
+	} else {
+		if(!lights2D.empty()){
+			_shadowMaps.emplace_back(new EmptyShadowMap2DArray(lights2D));
+		}
+		if(!lightsCube.empty()){
+			_shadowMaps.emplace_back(new EmptyShadowMapCubeArray(lightsCube));
+		}
+	}
+
+	// Shadow pass.
+	for(const auto & map : _shadowMaps) {
+		map->draw(*_scenes[_currentScene]);
+	}
 }

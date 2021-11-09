@@ -33,12 +33,6 @@ public:
 	 \param projMatrix the camera projection matrix
 	 */
 	void updateCameraInfos(const glm::mat4 & viewMatrix, const glm::mat4 & projMatrix);
-
-	/** Set the current shadowmap settings.
-	 \param mode the technique to use
-	 \param bias shadow map depth bias
-	 */
-	void updateShadowMapInfos(ShadowMode mode, float bias);
 	
 	/** Apply a spot lighting using a supporting cone.
 	 \param light the light to compute the contribution of
@@ -68,8 +62,6 @@ private:
 	glm::mat4 _view = glm::mat4(1.0f); ///< Cached camera view matrix.
 	glm::mat4 _proj = glm::mat4(1.0f); ///< Cached camera projection matrix.
 
-	ShadowMode _shadowMode = ShadowMode::BASIC; ///< Shadow mapping techique.
-	float _shadowBias = 0.0f; ///< Shadow depth bias.
 };
 
 

@@ -5,8 +5,8 @@
 #include "graphics/GPU.hpp"
 #include "graphics/ScreenQuad.hpp"
 
-ForwardRenderer::ForwardRenderer(const glm::vec2 & resolution, ShadowMode mode, bool ssao, const std::string & name) :
-	Renderer(name), _applySSAO(ssao), _shadowMode(mode) {
+ForwardRenderer::ForwardRenderer(const glm::vec2 & resolution, bool ssao, const std::string & name) :
+	Renderer(name), _applySSAO(ssao) {
 
 	const uint renderWidth	   = uint(resolution[0]);
 	const uint renderHeight	   = uint(resolution[1]);
@@ -321,7 +321,7 @@ void ForwardRenderer::draw(const Camera & camera, Framebuffer & framebuffer, uin
 	const glm::vec3 & pos  = camera.position();
 	// --- Update lights data ----
 	_lightsGPU->updateCameraInfos(view, proj);
-	_lightsGPU->updateShadowMapInfos(_shadowMode, 0.002f);
+
 	for(const auto & light : _scene->lights) {
 		light->draw(*_lightsGPU);
 	}
@@ -394,7 +394,6 @@ void ForwardRenderer::resize(uint width, uint height) {
 
 void ForwardRenderer::interface(){
 
-	ImGui::Combo("Shadow technique", reinterpret_cast<int*>(&_shadowMode), "None\0Basic\0Variance\0\0");
 	ImGui::Checkbox("SSAO", &_applySSAO);
 	if(_applySSAO) {
 		ImGui::SameLine();

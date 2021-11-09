@@ -199,7 +199,7 @@ Material decodeMaterialFromGbuffer(vec2 uv, texture2D gbuffer0, texture2D gbuffe
 	// Decode sheen if present.
 	if(material.id == MATERIAL_SHEEN){
 		// Rebuild 12 bits color stored in 10 and 2 bits channels.
-		/// \todo There is a precision issue when decoding from the Gbuffer instead of an inline value.
+		/// \bug There is a precision issue when decoding from the Gbuffer instead of an inline value.
 		material.sheenColor = decodeRgbFrom10Plus2Bits(normalInfo.ba);
 		// Sheen roughness.
 		material.sheenRoughness = max(0.045, effectInfo.a);

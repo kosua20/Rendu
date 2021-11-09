@@ -79,6 +79,6 @@ vec3 updateFragmentPosition(float shiftDistance, vec3 viewPos, mat4 proj){
 	float newDepth = clipPos.z / clipPos.w;
 	// Update the fragment depth.
 	gl_FragDepth = newDepth;
-	/// \todo Depth output is sometimes incorrect.
+	/// \bug Depth output is sometimes incorrect, leading to floating effects on the surface of the object.
 	return newViewSpacePosition;
 }

@@ -17,11 +17,6 @@ void DeferredLight::updateCameraInfos(const glm::mat4 & viewMatrix, const glm::m
 	_proj = projMatrix;
 }
 
-void DeferredLight::updateShadowMapInfos(ShadowMode mode, float bias){
-	_shadowBias = bias;
-	_shadowMode = mode;
-}
-
 void DeferredLight::draw(const SpotLight * light) {
 	
 	// Projection parameter for position reconstruction.
@@ -47,12 +42,13 @@ void DeferredLight::draw(const SpotLight * light) {
 	
 	// Active screen texture.
 	_spotProgram->textures(_textures);
-	if(light->castsShadow()) {
-		const auto & shadowInfos = light->shadowMap();
+
+	const auto & shadowInfos = light->shadowMap();
+	if(light->castsShadow() && (shadowInfos.map != nullptr)) {
 		_spotProgram->texture(shadowInfos.map, uint(_textures.size()));
 		_spotProgram->uniform("shadowLayer", int(shadowInfos.layer));
-		_spotProgram->uniform("shadowBias", _shadowBias);
-		_spotProgram->uniform("shadowMode", int(_shadowMode));
+		_spotProgram->uniform("shadowBias", shadowInfos.bias);
+		_spotProgram->uniform("shadowMode", int(shadowInfos.mode));
 	} else {
 		_spotProgram->defaultTexture(uint(_textures.size()));
 		_spotProgram->uniform("shadowMode", int(ShadowMode::NONE));
@@ -84,12 +80,13 @@ void DeferredLight::draw(const PointLight * light) {
 	
 	 // Active screen texture.
 	_pointProgram->textures(_textures);
-	if(light->castsShadow()) {
-		const auto & shadowInfos = light->shadowMap();
+
+	const auto & shadowInfos = light->shadowMap();
+	if(light->castsShadow() && (shadowInfos.map != nullptr)) {
 		_pointProgram->texture(shadowInfos.map, uint(_textures.size()));
 		_pointProgram->uniform("shadowLayer", int(shadowInfos.layer));
-		_pointProgram->uniform("shadowBias", _shadowBias);
-		_pointProgram->uniform("shadowMode", int(_shadowMode));
+		_pointProgram->uniform("shadowBias", shadowInfos.bias);
+		_pointProgram->uniform("shadowMode", int(shadowInfos.mode));
 	} else {
 		_pointProgram->defaultTexture(uint(_textures.size()));
 		_pointProgram->uniform("shadowMode", int(ShadowMode::NONE));
@@ -115,12 +112,13 @@ void DeferredLight::draw(const DirectionalLight * light) {
 	_dirProgram->uniform("viewToLight", viewToLight);
 
 	_dirProgram->textures(_textures);
-	if(light->castsShadow()) {
-		const auto & shadowInfos = light->shadowMap();
+
+	const auto & shadowInfos = light->shadowMap();
+	if(light->castsShadow() && (shadowInfos.map != nullptr)) {
 		_dirProgram->texture(shadowInfos.map, uint(_textures.size()));
 		_dirProgram->uniform("shadowLayer", int(shadowInfos.layer));
-		_dirProgram->uniform("shadowBias", _shadowBias);
-		_dirProgram->uniform("shadowMode", int(_shadowMode));
+		_dirProgram->uniform("shadowBias", shadowInfos.bias);
+		_dirProgram->uniform("shadowMode", int(shadowInfos.mode));
 	} else {
 		_dirProgram->defaultTexture(uint(_textures.size()));
 		_dirProgram->uniform("shadowMode", int(ShadowMode::NONE));

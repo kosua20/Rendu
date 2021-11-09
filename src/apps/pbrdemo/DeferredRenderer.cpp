@@ -5,8 +5,8 @@
 #include "graphics/GPU.hpp"
 #include "graphics/ScreenQuad.hpp"
 
-DeferredRenderer::DeferredRenderer(const glm::vec2 & resolution, ShadowMode mode, bool ssao, const std::string & name) :
-	Renderer(name), _applySSAO(ssao), _shadowMode(mode) {
+DeferredRenderer::DeferredRenderer(const glm::vec2 & resolution, bool ssao, const std::string & name) :
+	Renderer(name), _applySSAO(ssao) {
 
 	const uint renderWidth	  = uint(resolution[0]);
 	const uint renderHeight	  = uint(resolution[1]);
@@ -349,7 +349,7 @@ void DeferredRenderer::draw(const Camera & camera, Framebuffer & framebuffer, ui
 	// Gbuffer lighting pass
 	_probeRenderer->updateCameraInfos(view, proj);
 	_lightRenderer->updateCameraInfos(view, proj);
-	_lightRenderer->updateShadowMapInfos(_shadowMode, 0.002f);
+
 	// Accumulate probe contributions.
 	_indirectLightingBuffer->bind(glm::vec4(0.0f));
 	_indirectLightingBuffer->setViewport();
@@ -383,7 +383,7 @@ void DeferredRenderer::draw(const Camera & camera, Framebuffer & framebuffer, ui
 	if(_scene->transparent()){
 		// Update forward light data.
 		_fwdLightsGPU->updateCameraInfos(view, proj);
-		_fwdLightsGPU->updateShadowMapInfos(_shadowMode, 0.002f);
+		
 		for(const auto & light : _scene->lights) {
 			light->draw(*_fwdLightsGPU);
 		}
@@ -416,7 +416,6 @@ void DeferredRenderer::resize(uint width, uint height) {
 
 void DeferredRenderer::interface(){
 
-	ImGui::Combo("Shadow technique", reinterpret_cast<int*>(&_shadowMode), "None\0Basic\0Variance\0\0");
 	ImGui::Checkbox("SSAO", &_applySSAO);
 	if(_applySSAO) {
 		ImGui::SameLine();
