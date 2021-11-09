@@ -99,13 +99,15 @@ public:
 
 	/** Set the light shadow map (either 2D or cube depending on the light type).
 	 \param map the shadow map texture
+	 \param mode the type of shadow map
 	 \param layer the texture layer containing the map
 	 \param minUV bottom-left corner of map region in the texture
 	 \param maxUV upper-right corner of map region in the texture
 	 \warning No check on texture type is performed.
 	 */
-	void registerShadowMap(const Texture * map, size_t layer = 0, const glm::vec2 & minUV = glm::vec2(0.0f), const glm::vec2 & maxUV = glm::vec2(1.0f)) {
+	void registerShadowMap(const Texture * map, ShadowMode mode, size_t layer = 0, const glm::vec2 & minUV = glm::vec2(0.0f), const glm::vec2 & maxUV = glm::vec2(1.0f)) {
 		_shadowMapInfos.map = map;
+		_shadowMapInfos.mode = mode;
 		_shadowMapInfos.minUV = minUV;
 		_shadowMapInfos.maxUV = maxUV;
 		_shadowMapInfos.layer = layer;

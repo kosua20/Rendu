@@ -53,9 +53,11 @@ public:
 	/** Define a region in a 2D or array texture, containing a shadow map content. */
 	struct Region {
 		const Texture * map = nullptr; ///< The texture reference.
+		ShadowMode mode = ShadowMode::NONE; ///< The shadow mode to use.
 		glm::vec2 minUV = glm::vec2(0.0f); ///< The bottom-left corner of the texture region.
 		glm::vec2 maxUV = glm::vec2(0.0f); ///< The upper-right corner of the texture region.
 		size_t layer = 0; ///< The layer containing the shadow map.
+		float bias = 0.002f; ///< The depth bias to use.
 	};
 
 };

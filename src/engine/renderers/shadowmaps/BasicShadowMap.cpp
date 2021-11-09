@@ -1,18 +1,18 @@
-#include "VarianceShadowMapArray.hpp"
+#include "BasicShadowMap.hpp"
 #include "scene/Scene.hpp"
 #include "graphics/GPU.hpp"
 
-VarianceShadowMap2DArray::VarianceShadowMap2DArray(const std::vector<std::shared_ptr<Light>> & lights, const glm::vec2 & resolution){
+BasicShadowMap2DArray::BasicShadowMap2DArray(const std::vector<std::shared_ptr<Light>> & lights, const glm::vec2 & resolution){
 	_lights = lights;
-	_map = std::unique_ptr<Framebuffer>(new Framebuffer(TextureShape::Array2D, uint(resolution.x), uint(resolution.y), uint(lights.size()), 1, {Layout::RG32F, Layout::DEPTH_COMPONENT32F}, "Shadow map 2D array"));
-	_blur = std::unique_ptr<BoxBlur>(new BoxBlur(false, "Shadow maps 2D"));
-	_program = Resources::manager().getProgram("object_depth_array", "light_shadow_vertex", "light_shadow_variance");
+	/// \bug The depth buffer will contain extra garbage data and can't be used as an input to the light pass currently.
+	_map = std::unique_ptr<Framebuffer>(new Framebuffer(TextureShape::Array2D, uint(resolution.x), uint(resolution.y), uint(lights.size()), 1, {Layout::R16F, Layout::DEPTH_COMPONENT32F}, "Shadow map 2D array"));
+	_program = Resources::manager().getProgram("object_depth_array", "light_shadow_vertex", "light_shadow_basic");
 	for(size_t lid = 0; lid < _lights.size(); ++lid){
-		_lights[lid]->registerShadowMap(_map->texture(), lid);
+		_lights[lid]->registerShadowMap(_map->texture(), ShadowMode::BASIC, lid);
 	}
 }
 
-void VarianceShadowMap2DArray::draw(const Scene & scene) {
+void BasicShadowMap2DArray::draw(const Scene & scene) {
 
 	GPU::setDepthState(true, TestFunction::LESS, true);
 	GPU::setBlendState(false);
@@ -28,7 +28,6 @@ void VarianceShadowMap2DArray::draw(const Scene & scene) {
 			continue;
 		}
 		_map->bind(lid, 0, glm::vec4(1.0f), 1.0f);
-
 		const Frustum lightFrustum(light->vp());
 
 		for(auto & object : scene.objects) {
@@ -51,22 +50,19 @@ void VarianceShadowMap2DArray::draw(const Scene & scene) {
 			GPU::drawMesh(*(object.mesh()));
 		}
 	}
-	
-	// Apply box blur.
-	_blur->process(_map->texture(), *_map);
+
 }
 
-VarianceShadowMapCubeArray::VarianceShadowMapCubeArray(const std::vector<std::shared_ptr<PointLight>> & lights, int side){
+BasicShadowMapCubeArray::BasicShadowMapCubeArray(const std::vector<std::shared_ptr<PointLight>> & lights, int side){
 	_lights = lights;
-	_map = std::unique_ptr<Framebuffer>(new Framebuffer( TextureShape::ArrayCube, side, side, uint(lights.size()), 1,  {Layout::RG16F, Layout::DEPTH_COMPONENT32F}, "Shadow map cube array"));
-	_blur = std::unique_ptr<BoxBlur>(new BoxBlur(true, "Shadow maps cube"));
-	_program = Resources::manager().getProgram("object_cube_depth_array", "light_shadow_linear_vertex", "light_shadow_linear_variance");
+	_map = std::unique_ptr<Framebuffer>(new Framebuffer( TextureShape::ArrayCube, side, side, uint(lights.size()), 1,  {Layout::R16F, Layout::DEPTH_COMPONENT32F}, "Shadow map cube array"));
+	_program = Resources::manager().getProgram("object_cube_depth_array", "light_shadow_linear_vertex", "light_shadow_linear_basic");
 	for(size_t lid = 0; lid < _lights.size(); ++lid){
-		_lights[lid]->registerShadowMap(_map->texture(), lid);
+		_lights[lid]->registerShadowMap(_map->texture(), ShadowMode::BASIC, lid);
 	}
 }
 
-void VarianceShadowMapCubeArray::draw(const Scene & scene) {
+void BasicShadowMapCubeArray::draw(const Scene & scene) {
 
 	GPU::setDepthState(true, TestFunction::LESS, true);
 	GPU::setCullState(true, Faces::BACK);
@@ -112,6 +108,22 @@ void VarianceShadowMapCubeArray::draw(const Scene & scene) {
 			}
 		}
 	}
-	// Apply box blur.
-	_blur->process(_map->texture(), *_map);
+}
+
+EmptyShadowMap2DArray::EmptyShadowMap2DArray(const std::vector<std::shared_ptr<Light>> & lights){
+	for(size_t lid = 0; lid < lights.size(); ++lid){
+		lights[lid]->registerShadowMap(nullptr, ShadowMode::NONE, 0);
+	}
+}
+
+void EmptyShadowMap2DArray::draw(const Scene & ) {
+}
+
+EmptyShadowMapCubeArray::EmptyShadowMapCubeArray(const std::vector<std::shared_ptr<PointLight>> & lights){
+	for(size_t lid = 0; lid < lights.size(); ++lid){
+		lights[lid]->registerShadowMap(nullptr, ShadowMode::NONE, 0);
+	}
+}
+
+void EmptyShadowMapCubeArray::draw(const Scene & ) {
 }
