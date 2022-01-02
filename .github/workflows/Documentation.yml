@@ -26,7 +26,7 @@ jobs:
         working-directory: ${{github.workspace}}/rendu
         run: |
           sudo apt-get update -y && sudo apt-get install -yq libclang1-9 libclang-cpp9
-          wget -O doxygen.tar.gz https://doxygen.nl/files/doxygen-1.9.1.linux.bin.tar.gz
+          wget -O doxygen.tar.gz https://doxygen.nl/files/doxygen-1.9.3.linux.bin.tar.gz
           mkdir doxygen && tar -xf doxygen.tar.gz -C doxygen --strip-components=1
           doxygen/bin/doxygen docs/Doxyfile
           
