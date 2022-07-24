@@ -71,6 +71,8 @@ bool GPU::setup(const std::string & appName) {
 	}
 	instanceInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
 	instanceInfo.ppEnabledExtensionNames = extensions.data();
+	// Allow portability drivers enumeration to support MoltenVK.
+	instanceInfo.flags = VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
 
 	// Validation layers.
 	instanceInfo.enabledLayerCount = 0;
