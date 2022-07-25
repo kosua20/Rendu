@@ -319,7 +319,7 @@ void GPU::createGraphicsProgram(Program& program, const std::string & vertexCont
 						 << compilationLog << std::endl;
 		}
 	}
-	// If tesselation control program code is given, compile it.
+	// If tessellation control program code is given, compile it.
 	if(!tessControlContent.empty()) {
 		ShaderCompiler::compile(tessControlContent, ShaderType::TESSCONTROL, program.stage(ShaderType::TESSCONTROL), true, compilationLog);
 		if(!compilationLog.empty()) {

@@ -76,8 +76,8 @@ public:
 	 \param program the program to compile
 	 \param vertexContent the vertex shader string
 	 \param fragmentContent the fragment shader string
-	 \param tessControlContent the optional tesselation control shader string
-	 \param tessEvalContent the optional tesselation evaluation shader string
+	 \param tessControlContent the optional tessellation control shader string
+	 \param tessEvalContent the optional tessellation evaluation shader string
 	 \param debugInfos the name of the program, or any custom debug infos that will be logged.
 	 */
 	static void createGraphicsProgram(Program & program, const std::string & vertexContent, const std::string & fragmentContent, const std::string & tessControlContent, const std::string & tessEvalContent, const std::string & debugInfos);

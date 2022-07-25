@@ -92,7 +92,7 @@ IslandApp::IslandApp(RenderingConfig & config) : CameraApp(config),
 	_foam = Resources::manager().getTexture("foam", Layout::SRGB8_ALPHA8, Storage::GPU);
 	_brdfLUT = Resources::manager().getTexture("brdf-precomputed", Layout::RGBA16F, Storage::GPU);
 
-	// Tesselation options.
+	// Tessellation options.
 	const float pSize = 128.0f;
 	_maxLevelX = std::log2(pSize);
 	_maxLevelY = pSize;

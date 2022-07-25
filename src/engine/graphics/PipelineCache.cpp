@@ -221,7 +221,7 @@ VkPipeline PipelineCache::buildGraphicsPipeline(const GPUState& state){
 		vertexState.pVertexAttributeDescriptions = meshState.attributes.data();
 		pipelineInfo.pVertexInputState = &vertexState;
 	}
-	// Tesselation
+	// Tessellation
 	VkPipelineTessellationStateCreateInfo tessellationState{};
 	const bool hasTessellation = state.graphicsProgram->stage(ShaderType::TESSEVAL).module != VK_NULL_HANDLE;
 	if(hasTessellation){

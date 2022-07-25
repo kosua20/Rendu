@@ -160,9 +160,9 @@
  \brief Contains all geometry shaders.
 
  \namespace GPUShaders::TessControl
- \brief Contains all tesselation control shaders.
+ \brief Contains all tessellation control shaders.
 
  \namespace GPUShaders::TessEval
- \brief Contains all tesselation evaluation shaders.
+ \brief Contains all tessellation evaluation shaders.
 
  */
