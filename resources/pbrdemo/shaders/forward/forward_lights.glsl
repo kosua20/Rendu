@@ -63,22 +63,23 @@ Light unpackLight(GPUPackedLight srcLight){
 /** Compute a light contribution for a given point in forward shading.
  \param gpuLight the light packed information
  \param viewSpacePos the point position in view space
+ \param viewSpaceN the surface normal in view space
  \param smapCube the cube shadow maps
  \param smap2D the 2D shadow maps
  \param l will contain the light direction for the point
  \param shadowing will contain the shadowing factor
  \return true if the light contributes to the point shading
  */
-bool applyLight(GPUPackedLight gpuLight, vec3 viewSpacePos, textureCubeArray smapCube, texture2DArray smap2D, out vec3 l, out float shadowing){
+bool applyLight(GPUPackedLight gpuLight, vec3 viewSpacePos, vec3 viewSpaceN, textureCubeArray smapCube, texture2DArray smap2D, out vec3 l, out float shadowing){
 
 	Light light = unpackLight(gpuLight);
 
 	if(light.type == POINT){
-		return applyPointLight(light, viewSpacePos, smapCube, l, shadowing);
+		return applyPointLight(light, viewSpacePos, viewSpaceN, smapCube, l, shadowing);
 	} else if(light.type == DIRECTIONAL){
-		return applyDirectionalLight(light, viewSpacePos, smap2D, l, shadowing);
+		return applyDirectionalLight(light, viewSpacePos, viewSpaceN, smap2D, l, shadowing);
 	} else if(light.type == SPOT){
-		return applySpotLight(light, viewSpacePos, smap2D, l, shadowing);
+		return applySpotLight(light, viewSpacePos, viewSpaceN, smap2D, l, shadowing);
 	}
 	return true;
 }

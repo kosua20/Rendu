@@ -55,7 +55,7 @@ void main(){
 	// Light shadowing and attenuation.
 	vec3 l;
 	float shadowing;
-	if(!applyDirectionalLight(light, position, shadowMap, l, shadowing)){
+	if(!applyDirectionalLight(light, position, material.normal, shadowMap, l, shadowing)){
 		// Outside the area of effect.
 		discard;
 	}

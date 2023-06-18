@@ -113,7 +113,7 @@ void main(){
 		}
 		float shadowing;
 		vec3 l;
-		if(!applyLight(lights[lid], In.viewSpacePosition.xyz, shadowMapsCube, shadowMaps2D, l, shadowing)){
+		if(!applyLight(lights[lid], In.viewSpacePosition.xyz, material.normal, shadowMapsCube, shadowMaps2D, l, shadowing)){
 			continue;
 		}
 		// Orientation: basic diffuse shadowing.

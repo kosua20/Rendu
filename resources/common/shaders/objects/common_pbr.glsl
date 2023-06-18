@@ -659,7 +659,7 @@ void directBrdf(Material material, vec3 n, vec3 v, vec3 l, out vec3 diffuse, out
  \param shadowing will contain the shadowing factor
  \return true if the light contributes to the point shading
  */
-bool applyPointLight(Light light, vec3 viewSpacePos, textureCubeArray shadowMap, out vec3 l, out float shadowing){
+bool applyPointLight(Light light, vec3 viewSpacePos, vec3 viewSpaceN, textureCubeArray shadowMap, out vec3 l, out float shadowing){
 
 	shadowing = 1.0;
 
@@ -681,7 +681,10 @@ bool applyPointLight(Light light, vec3 viewSpacePos, textureCubeArray shadowMap,
 		// Compute the light to surface vector in light centered space.
 		// We only care about the direction, so we don't need the translation.
 		vec3 deltaPositionWorld = -mat3(light.viewToLight) * deltaPosition;
-		shadowing *= shadowCube(light.shadowMode, deltaPositionWorld, shadowMap, light.layer, light.farPlane, light.bias);
+		// Bias
+		float f = max(0.0, dot(l, viewSpaceN));
+		float bias = light.bias * mix(2.0, 1.0, f);
+		shadowing *= shadowCube(light.shadowMode, deltaPositionWorld, shadowMap, light.layer, light.farPlane, bias);
 	}
 	return true;
 }
@@ -694,7 +697,7 @@ bool applyPointLight(Light light, vec3 viewSpacePos, textureCubeArray shadowMap,
  \param shadowing will contain the shadowing factor
  \return true if the light contributes to the point shading
  */
-bool applyDirectionalLight(Light light, vec3 viewSpacePos, texture2DArray shadowMap, out vec3 l, out float shadowing){
+bool applyDirectionalLight(Light light, vec3 viewSpacePos, vec3 viewSpaceN, texture2DArray shadowMap, out vec3 l, out float shadowing){
 
 	shadowing = 1.0;
 	l = normalize(-light.direction);
@@ -702,7 +705,10 @@ bool applyDirectionalLight(Light light, vec3 viewSpacePos, texture2DArray shadow
 	if(light.shadowMode != SHADOW_NONE){
 		vec3 lightSpacePosition = (light.viewToLight * vec4(viewSpacePos, 1.0)).xyz;
 		lightSpacePosition.xy = 0.5 * lightSpacePosition.xy + 0.5;
-		shadowing *= shadow(light.shadowMode, lightSpacePosition, shadowMap, light.layer, light.bias);
+		// Bias
+		float f = max(0.0, dot(l, viewSpaceN));
+		float bias = light.bias * mix(5.0, 1.0, f);
+		shadowing *= shadow(light.shadowMode, lightSpacePosition, shadowMap, light.layer, bias);
 	}
 
 	return true;
@@ -716,7 +722,7 @@ bool applyDirectionalLight(Light light, vec3 viewSpacePos, texture2DArray shadow
  \param shadowing will contain the shadowing factor
  \return true if the light contributes to the point shading
  */
-bool applySpotLight(Light light, vec3 viewSpacePos, texture2DArray shadowMap, out vec3 l, out float shadowing){
+bool applySpotLight(Light light, vec3 viewSpacePos, vec3 viewSpaceN, texture2DArray shadowMap, out vec3 l, out float shadowing){
 
 	shadowing = 1.0;
 
@@ -746,7 +752,10 @@ bool applySpotLight(Light light, vec3 viewSpacePos, texture2DArray shadowMap, ou
 		vec4 lightSpacePosition = (light.viewToLight) * vec4(viewSpacePos,1.0);
 		lightSpacePosition /= lightSpacePosition.w;
 		lightSpacePosition.xy = 0.5 * lightSpacePosition.xy + 0.5;
-		shadowing *= shadow(light.shadowMode, lightSpacePosition.xyz, shadowMap, light.layer, light.bias);
+		// Bias
+		float f = max(0.0, dot(l, viewSpaceN));
+		float bias = light.bias * mix(2.0, 1.0, f);
+		shadowing *= shadow(light.shadowMode, lightSpacePosition.xyz, shadowMap, light.layer, bias);		
 	}
 	return true;
 }

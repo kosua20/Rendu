@@ -54,7 +54,7 @@ void main(){
 	// Shadowing and light direction.
 	float shadowing;
 	vec3 l;
-	if(!applyPointLight(light, position, shadowMap, l, shadowing)){
+	if(!applyPointLight(light, position, material.normal, shadowMap, l, shadowing)){
 		// outside the area of effect of the light.
 		discard;
 	}
