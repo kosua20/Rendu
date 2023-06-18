@@ -328,8 +328,8 @@ void ShaderEditor::update() {
 			const ImVec2 winSize = ImGui::GetContentRegionAvail();
 			ImGui::ImageButton(*_currFrame->texture(), ImVec2(winSize.x, winSize.y), ImVec2(0.0,0.0), ImVec2(1.0,1.0), 0);
 			if (ImGui::IsItemHovered()) {
-				ImGui::CaptureMouseFromApp(false);
-				ImGui::CaptureKeyboardFromApp(false);
+				ImGui::SetNextFrameWantCaptureMouse(false);
+				ImGui::SetNextFrameWantCaptureKeyboard(false);
 			}
 
 			// If the aspect ratio changed, trigger a resize.

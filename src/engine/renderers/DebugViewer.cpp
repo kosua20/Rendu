@@ -530,8 +530,8 @@ void DebugViewer::displayTexture(const std::string & prefix, TextureInfos & tex)
 		const ImVec2 winSize = ImGui::GetContentRegionAvail();
 		ImGui::ImageButton(*tex.display->texture(), ImVec2(winSize.x, winSize.y), ImVec2(0.0, 0.0), ImVec2(1.0, 1.0), 0);
 		if(ImGui::IsItemHovered()) {
-			ImGui::CaptureMouseFromApp(false);
-			ImGui::CaptureKeyboardFromApp(false);
+			ImGui::SetNextFrameWantCaptureKeyboard(false);
+			ImGui::SetNextFrameWantCaptureMouse(false);
 		}
 	}
 	ImGui::End();
