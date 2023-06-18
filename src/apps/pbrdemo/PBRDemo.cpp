@@ -228,7 +228,7 @@ void PBRDemo::update() {
 		}
 
 		if(ImGui::CollapsingHeader("Renderer##options")){
-			if(ImGui::Combo("Shadow technique", reinterpret_cast<int*>(&_shadowMode), "None\0Basic\0Variance\0\0")){
+			if(ImGui::Combo("Shadow technique", reinterpret_cast<int*>(&_shadowMode), "None\0Basic\0PCF\0Variance\0\0")){
 				createShadowMaps(_shadowMode);
 			}
 			
@@ -301,12 +301,12 @@ void PBRDemo::createShadowMaps(ShadowMode mode){
 		if(!lightsCube.empty()){
 			_shadowMaps.emplace_back(new VarianceShadowMapCubeArray(lightsCube, 512));
 		}
-	} else if(mode == ShadowMode::BASIC){
+	} else if(mode == ShadowMode::BASIC || mode == ShadowMode::PCF){
 		if(!lights2D.empty()){
-			_shadowMaps.emplace_back(new BasicShadowMap2DArray(lights2D, glm::vec2(512)));
+			_shadowMaps.emplace_back(new BasicShadowMap2DArray(lights2D, glm::vec2(512), mode));
 		}
 		if(!lightsCube.empty()){
-			_shadowMaps.emplace_back(new BasicShadowMapCubeArray(lightsCube, 512));
+			_shadowMaps.emplace_back(new BasicShadowMapCubeArray(lightsCube, 512, mode));
 		}
 	} else {
 		if(!lights2D.empty()){

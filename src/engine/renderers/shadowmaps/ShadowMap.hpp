@@ -14,7 +14,8 @@ class Scene;
 enum class ShadowMode : int {
 	NONE	 = 0, ///< No shadows.
 	BASIC	 = 1, ///< Basic depth test mode
-	VARIANCE = 2  ///< Variance shadow map.
+	PCF	 	 = 2, ///< Basic depth test mode
+	VARIANCE = 3  ///< Variance shadow map.
 };
 
 /**

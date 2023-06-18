@@ -2,13 +2,13 @@
 #include "scene/Scene.hpp"
 #include "graphics/GPU.hpp"
 
-BasicShadowMap2DArray::BasicShadowMap2DArray(const std::vector<std::shared_ptr<Light>> & lights, const glm::vec2 & resolution){
+BasicShadowMap2DArray::BasicShadowMap2DArray(const std::vector<std::shared_ptr<Light>> & lights, const glm::vec2 & resolution, ShadowMode mode){
 	_lights = lights;
 	/// \bug The depth buffer will contain extra garbage data and can't be used as an input to the light pass currently.
 	_map = std::unique_ptr<Framebuffer>(new Framebuffer(TextureShape::Array2D, uint(resolution.x), uint(resolution.y), uint(lights.size()), 1, {Layout::R16F, Layout::DEPTH_COMPONENT32F}, "Shadow map 2D array"));
 	_program = Resources::manager().getProgram("object_depth_array", "light_shadow_vertex", "light_shadow_basic");
 	for(size_t lid = 0; lid < _lights.size(); ++lid){
-		_lights[lid]->registerShadowMap(_map->texture(), ShadowMode::BASIC, lid);
+		_lights[lid]->registerShadowMap(_map->texture(), mode, lid);
 	}
 }
 
@@ -53,12 +53,12 @@ void BasicShadowMap2DArray::draw(const Scene & scene) {
 
 }
 
-BasicShadowMapCubeArray::BasicShadowMapCubeArray(const std::vector<std::shared_ptr<PointLight>> & lights, int side){
+BasicShadowMapCubeArray::BasicShadowMapCubeArray(const std::vector<std::shared_ptr<PointLight>> & lights, int side, ShadowMode mode){
 	_lights = lights;
 	_map = std::unique_ptr<Framebuffer>(new Framebuffer( TextureShape::ArrayCube, side, side, uint(lights.size()), 1,  {Layout::R16F, Layout::DEPTH_COMPONENT32F}, "Shadow map cube array"));
 	_program = Resources::manager().getProgram("object_cube_depth_array", "light_shadow_linear_vertex", "light_shadow_linear_basic");
 	for(size_t lid = 0; lid < _lights.size(); ++lid){
-		_lights[lid]->registerShadowMap(_map->texture(), ShadowMode::BASIC, lid);
+		_lights[lid]->registerShadowMap(_map->texture(), mode, lid);
 	}
 }
 

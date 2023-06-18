@@ -15,7 +15,7 @@ public:
 	 \param lights the lights to generate the associated shadow maps for
 	 \param resolution the shadow map resolution
 	 */
-	explicit BasicShadowMap2DArray(const std::vector<std::shared_ptr<Light>> & lights, const glm::vec2 & resolution);
+	explicit BasicShadowMap2DArray(const std::vector<std::shared_ptr<Light>> & lights, const glm::vec2 & resolution, ShadowMode mode);
 	
 	/** \copydoc ShadowMap::draw  */
 	void draw(const Scene & scene) override;
@@ -38,7 +38,7 @@ public:
 	 \param lights the lights to generate the associated shadow maps for
 	 \param side the shadow map resolution
 	 */
-	explicit BasicShadowMapCubeArray(const std::vector<std::shared_ptr<PointLight>> & lights, int side);
+	explicit BasicShadowMapCubeArray(const std::vector<std::shared_ptr<PointLight>> & lights, int side, ShadowMode mode);
 	
 	/** \copydoc ShadowMap::draw  */
 	void draw(const Scene & scene) override;
