@@ -71,7 +71,7 @@ VkPipeline PipelineCache::getGraphicsPipeline(const GPUState & state){
 		if(!entry.mesh.isEquivalent(state.mesh->state)){
 			continue;
 		}
-		if(!entry.framebuffer.isEquivalent(state.pass.framebuffer->getState())){
+		if(!entry.pass.isEquivalent(state.pass)){
 			continue;
 		}
 		return entry.pipeline;
@@ -145,6 +145,7 @@ void PipelineCache::clean(){
 		char* pipelineData = new char[pipelineSize];
 		VK_RET(vkGetPipelineCacheData(context->device, _vulkanCache, &pipelineSize, pipelineData));
 		Resources::saveRawDataToExternalFile(PIPELINE_CACHE_FILE, pipelineData, pipelineSize);
+		delete[] pipelineData;
 	}
 
 	for(auto& programPipelines : _graphicPipelines){
@@ -167,7 +168,7 @@ VkPipeline PipelineCache::createNewPipeline(const GPUState& state, const uint64_
 	Entry entry;
 	entry.pipeline = buildGraphicsPipeline(state);
 	entry.mesh = state.mesh->state;
-	entry.framebuffer = state.pass.framebuffer->getState();
+	entry.pass = state.pass;
 
 	auto it = _graphicPipelines[state.graphicsProgram].insert(std::make_pair(hash, entry));
 	return it->second.pipeline;
@@ -179,7 +180,7 @@ VkPipeline PipelineCache::buildGraphicsPipeline(const GPUState& state){
 	VkGraphicsPipelineCreateInfo pipelineInfo{};
 	pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 	// Assert no null data.
-	assert(state.graphicsProgram); assert(state.mesh); assert(state.pass.framebuffer);
+	assert(state.graphicsProgram); assert(state.mesh);
 
 	std::vector<VkPipelineShaderStageCreateInfo> stages;
 	// Program
@@ -342,7 +343,7 @@ VkPipeline PipelineCache::buildGraphicsPipeline(const GPUState& state){
 	}
 	// Color blending
 	VkPipelineColorBlendStateCreateInfo colorState{};
-	const uint attachmentCount = state.pass.framebuffer->attachments();
+	const uint attachmentCount = state.pass.colors.size();
 	std::vector<VkPipelineColorBlendAttachmentState> attachmentStates(attachmentCount);
 	{
 		static const std::unordered_map<BlendEquation, VkBlendOp> eqs = {
@@ -402,10 +403,35 @@ VkPipeline PipelineCache::buildGraphicsPipeline(const GPUState& state){
 	}
 
 	// Render pass
+	// Render pass
+	VkPipelineRenderingCreateInfoKHR renderingInfo{};
+	std::vector<VkFormat> colorFormats(attachmentCount);
 	{
-		pipelineInfo.renderPass = state.pass.framebuffer->getRenderPass();
-		pipelineInfo.subpass = 0;
+		for(uint aid = 0; aid < attachmentCount; ++aid){
+			colorFormats[aid] = state.pass.colors[aid]->gpu->format;
+		}
+
+		renderingInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO_KHR;
+		renderingInfo.colorAttachmentCount = colorState.attachmentCount;
+		renderingInfo.pColorAttachmentFormats = colorFormats.data();
+		renderingInfo.viewMask = 0u;
+
+		renderingInfo.depthAttachmentFormat = VK_FORMAT_UNDEFINED;
+		renderingInfo.stencilAttachmentFormat = VK_FORMAT_UNDEFINED;
+
+		if(state.pass.depthStencil){
+			const GPUTexture* depth = state.pass.depthStencil->gpu.get();
+			renderingInfo.depthAttachmentFormat = depth->format;
+			if(depth->typedFormat == Layout::DEPTH24_STENCIL8 || depth->typedFormat == Layout::DEPTH32F_STENCIL8){
+				renderingInfo.stencilAttachmentFormat = depth->format;
+			}
+		}
+
+		pipelineInfo.pNext = &renderingInfo;
+		pipelineInfo.renderPass = VK_NULL_HANDLE;
+		pipelineInfo.subpass = 0u;
 	}
+
 	// No inheritance
 	{
 		pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;

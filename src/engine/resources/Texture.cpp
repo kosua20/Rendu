@@ -95,6 +95,33 @@ Texture::~Texture(){
 	clean();
 }
 
+void Texture::setupAsFramebuffer(Texture& texture, Layout format,uint width, uint height, uint mips, TextureShape shape, uint depth){
+
+	// Check that the shape is supported.
+	if(shape != TextureShape::D2 && shape != TextureShape::Array2D && shape != TextureShape::Cube && shape != TextureShape::ArrayCube){
+		Log::Error() << "GPU: Unsupported render texture shape." << std::endl;
+		return;
+	}
+
+	// Number of layers based on shape.
+	uint layers = 1;
+	if(shape == TextureShape::Array2D){
+		layers = depth;
+	} else if(shape == TextureShape::Cube){
+		layers = 6;
+	} else if(shape == TextureShape::ArrayCube){
+		layers = 6 * depth;
+	}
+
+	texture.width  = width;
+	texture.height = height;
+	texture.depth  = layers;
+	texture.levels = mips;
+	texture.shape  = shape;
+
+	GPU::setupTexture(texture, format, true);
+}
+
 glm::vec3 Texture::sampleCubemap(const glm::vec3 & dir) const {
 	// Images are stored in the following order:
 	// px, nx, py, ny, pz, nz

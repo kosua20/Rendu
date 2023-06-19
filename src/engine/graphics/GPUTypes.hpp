@@ -272,8 +272,47 @@ enum class Layout : uint {
 
 STD_HASH(Layout);
 
+
+/// \brief Detailed operation to perform when binding a texture (starting a renderpass).
+struct Load {
+
+	/** \brief Type of operation to perform when binding a texture (starting a renderpass).
+	  */
+	 enum class Operation : uint {
+		 LOAD, ///< Load existing data
+		 CLEAR, ///< Clear existing data
+		 DONTCARE ///< Anything can be done, usually because we will overwrite data everywhere.
+	 };
+
+	/// Default operation.
+	Load() {};
+
+	/** Specific operation
+	 * \param mod the operation to perform
+	 */
+	Load(Operation mod) : mode(mod) {};
+
+	/** Clear color operation.
+	 * \param val the color to clear with
+	 */
+	Load(const glm::vec4& val) : value(val), mode(Operation::CLEAR) {};
+
+	/** Clear depth operation.
+	 * \param val the depth to clear with
+	 */
+	Load(float val) : value(val), mode(Operation::CLEAR) {};
+
+	/** Clear stencil operation.
+	 * \param val the stencil value to clear with
+	 */
+	Load(uchar val) : value(float(val)), mode(Operation::CLEAR) {};
+
+	glm::vec4 value{1.0f}; ///< Clear value.
+	Operation mode = Operation::LOAD; ///< Operation.
+};
+
 class Program;
-class Framebuffer;
+class Texture;
 class GPUMesh;
 
 /**
@@ -286,7 +325,18 @@ public:
 
 	/// \brief Current framebuffer information.
 	struct FramebufferInfos {
-		const Framebuffer* framebuffer = nullptr; ///< The current framebuffer.
+
+		/// Constructor
+		FramebufferInfos();
+
+		/** Test if this attachment info is equivalent to another.
+		 \param other the info to compare to
+		 \return true if they are equivalent
+		 */
+		bool isEquivalent(const FramebufferInfos& other) const;
+
+		std::vector<const Texture*> colors; 	///< The color textures \todo Use GPUTexture?
+		const Texture* depthStencil = nullptr; ///< The depth stencil texture if it exists.
 		uint mipStart = 0; ///< First mip to be used in the current render pass.
 		uint mipCount = 1; ///< Number of mips used in the current render pass.
 		uint layerStart = 0; ///< First layer to be used in the current render pass.

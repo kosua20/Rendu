@@ -43,6 +43,10 @@ public:
 	 \return the sampled color.
 	 */
 	glm::vec3 sampleCubemap(const glm::vec3 & dir) const;
+
+	/** \todo DOC
+	 */
+	static void setupAsFramebuffer(Texture& texture, Layout format,uint width, uint height, uint mips, TextureShape shape, uint depth);
 	
 	/** Get the resource name.
 		\return the name.
