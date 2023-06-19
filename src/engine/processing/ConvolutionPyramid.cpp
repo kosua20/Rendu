@@ -42,7 +42,7 @@ void ConvolutionPyramid::process(const Texture * texture) {
 	GPU::setCullState(true, Faces::BACK);
 	
 	// Pad by the size of the filter.
-	_levelsIn[0]->bind(glm::vec4(0.0f), Framebuffer::Operation::DONTCARE, Framebuffer::Operation::DONTCARE);
+	_levelsIn[0]->bind(glm::vec4(0.0f), Load::Operation::DONTCARE, Load::Operation::DONTCARE);
 	// Shift the viewport and fill the padded region with 0s.
 	GPU::setViewport(_size, _size, int(_levelsIn[0]->width()) - 2 * _size, int(_levelsIn[0]->height()) - 2 * _size);
 	// Transfer the boundary content.
@@ -63,7 +63,7 @@ void ConvolutionPyramid::process(const Texture * texture) {
 
 	// Do: l[i] = downscale(filter(l[i-1], h1))
 	for(size_t i = 1; i < _levelsIn.size(); ++i) {
-		_levelsIn[i]->bind(glm::vec4(0.0f), Framebuffer::Operation::DONTCARE, Framebuffer::Operation::DONTCARE);
+		_levelsIn[i]->bind(glm::vec4(0.0f), Load::Operation::DONTCARE, Load::Operation::DONTCARE);
 		// Shift the viewport and fill the padded region with 0s.
 		GPU::setViewport(_size, _size, int(_levelsIn[i]->width()) - 2 * _size, int(_levelsIn[i]->height()) - 2 * _size);
 		// Filter and downscale.
@@ -80,7 +80,7 @@ void ConvolutionPyramid::process(const Texture * texture) {
 
 	// Do:  f[end] = filter(l[end], g)
 	const auto & lastLevel = _levelsOut.back();
-	lastLevel->bind(Framebuffer::Operation::DONTCARE);
+	lastLevel->bind(Load::Operation::DONTCARE);
 	lastLevel->setViewport();
 	_filter->texture(_levelsIn.back()->texture(), 0);
 	ScreenQuad::draw();
@@ -99,7 +99,7 @@ void ConvolutionPyramid::process(const Texture * texture) {
 
 	// Do: f[i] = filter(l[i], g) + filter(upscale(f[i+1], h2)
 	for(int i = int(_levelsOut.size() - 2); i >= 0; --i) {
-		_levelsOut[i]->bind(Framebuffer::Operation::DONTCARE);
+		_levelsOut[i]->bind(Load::Operation::DONTCARE);
 		_levelsOut[i]->setViewport();
 		// Upscale with zeros, filter and combine.
 		_upscale->texture(_levelsIn[i]->texture(), 0);
@@ -108,7 +108,7 @@ void ConvolutionPyramid::process(const Texture * texture) {
 	}
 
 	// Compensate the initial padding.
-	_shifted->bind(Framebuffer::Operation::DONTCARE);
+	_shifted->bind(Load::Operation::DONTCARE);
 	_shifted->setViewport();
 	_padder->use();
 	// Need to also compensate for the potential extra padding.

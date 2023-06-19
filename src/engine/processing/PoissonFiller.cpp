@@ -25,7 +25,7 @@ void PoissonFiller::process(const Texture * texture) {
 	GPU::setBlendState(false);
 	GPU::setCullState(true, Faces::BACK);
 
-	_preproc->bind(glm::vec4(0.0f), Framebuffer::Operation::DONTCARE, Framebuffer::Operation::DONTCARE);
+	_preproc->bind(glm::vec4(0.0f), Load::Operation::DONTCARE, Load::Operation::DONTCARE);
 	_preproc->setViewport();
 	_prepare->use();
 	_prepare->texture(texture, 0);
@@ -39,7 +39,7 @@ void PoissonFiller::process(const Texture * texture) {
 	GPU::setBlendState(false);
 	GPU::setCullState(true, Faces::BACK);
 
-	_compo->bind(Framebuffer::Operation::DONTCARE, Framebuffer::Operation::DONTCARE, Framebuffer::Operation::DONTCARE);
+	_compo->bind(Load::Operation::DONTCARE, Load::Operation::DONTCARE, Load::Operation::DONTCARE);
 	_compo->setViewport();
 	_composite->use();
 	_composite->texture(_pyramid.texture(), 0);

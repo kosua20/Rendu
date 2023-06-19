@@ -155,7 +155,7 @@ bool Window::nextFrame() {
 		ImGui::Render();
 
 		// Draw ImGui.
-		Framebuffer::backbuffer()->bind(Framebuffer::Operation::LOAD, Framebuffer::Operation::LOAD, Framebuffer::Operation::LOAD);
+		bind(Load::Operation::LOAD, Load::Operation::LOAD, Load::Operation::LOAD);
 		ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), GPU::getInternal()->getRenderCommandBuffer());
 		
 	}
@@ -196,6 +196,10 @@ bool Window::nextFrame() {
 	_frameStarted = true;
 	const bool shouldClose = glfwWindowShouldClose(_window);
 	return !shouldClose;
+}
+
+void Window::bind(const Load::Operation& colorOp, const Load::Operation& depthOp, const Load::Operation& stencilOp){
+	GPU::bindFramebuffer(0, 0, depthOp, stencilOp, colorOp, &_swapchain->depth(), &_swapchain->color(), nullptr, nullptr, nullptr);
 }
 
 Window::~Window() {
@@ -254,8 +258,9 @@ void Window::setupImGui() {
 	_imgui->MSAASamples = VK_SAMPLE_COUNT_1_BIT;
 	_imgui->Allocator = nullptr;
 	_imgui->CheckVkResultFn = &VkUtils::checkResult;
+	_swapchain->getFormats(_imgui->ColorFormat, _imgui->DepthFormat, _imgui->StencilFormat);
 
-	ImGui_ImplVulkan_Init(_imgui, _swapchain->getRenderPass());
+	ImGui_ImplVulkan_Init(_imgui, VK_NULL_HANDLE);
 
 	// Upload font.
 	VkCommandBuffer commandBuffer = VkUtils::beginSyncOperations(*context);

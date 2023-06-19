@@ -1,7 +1,7 @@
 #include "Application.hpp"
 #include "input/Input.hpp"
 #include "graphics/GPU.hpp"
-#include "graphics/Framebuffer.hpp"
+#include "graphics/Swapchain.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "system/System.hpp"
 
@@ -65,7 +65,7 @@ void Application::finish() {
 	// Perform screenshot capture in the current working directory.
 	if(Input::manager().triggered(Input::Key::O) || (Input::manager().controllerAvailable() && Input::manager().controller()->triggered(Controller::ButtonView))) {
 		const std::string filename = System::timestamp();
-		GPU::saveFramebuffer(*Framebuffer::backbuffer(), "./" + filename, Image::Save::IGNORE_ALPHA);
+		GPU::saveTexture(*Swapchain::backbuffer(), "./" + filename, Image::Save::IGNORE_ALPHA);
 	}
 
 	// Display debug informations.

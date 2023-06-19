@@ -64,7 +64,7 @@ void SSAO::process(const glm::mat4 & projection, const Texture * depthTex, const
 	GPU::setBlendState(false);
 	GPU::setCullState(true, Faces::BACK);
 
-	_ssaoFramebuffer->bind(Framebuffer::Operation::DONTCARE, Framebuffer::Operation::DONTCARE, Framebuffer::Operation::DONTCARE);
+	_ssaoFramebuffer->bind(Load::Operation::DONTCARE, Load::Operation::DONTCARE, Load::Operation::DONTCARE);
 	_ssaoFramebuffer->setViewport();
 	_programSSAO->use();
 	_programSSAO->uniform("projectionMatrix", projection);

@@ -528,7 +528,7 @@ void DebugViewer::displayTexture(const std::string & prefix, TextureInfos & tex)
 
 		// Display.
 		const ImVec2 winSize = ImGui::GetContentRegionAvail();
-		ImGui::ImageButton(*tex.display->texture(), ImVec2(winSize.x, winSize.y), ImVec2(0.0, 0.0), ImVec2(1.0, 1.0), 0);
+		ImGui::ImageButton("#Tex", *tex.display->texture(), ImVec2(winSize.x, winSize.y), ImVec2(0.0, 0.0), ImVec2(1.0, 1.0));
 		if(ImGui::IsItemHovered()) {
 			ImGui::SetNextFrameWantCaptureKeyboard(false);
 			ImGui::SetNextFrameWantCaptureMouse(false);
@@ -548,7 +548,7 @@ void DebugViewer::updateDisplay(const TextureInfos & tex) {
 		{TextureShape::ArrayCube, 5},
 		{TextureShape::D3, 6}};
 
-	tex.display->bind(Framebuffer::Operation::DONTCARE,Framebuffer::Operation::DONTCARE, Framebuffer::Operation::DONTCARE);
+	tex.display->bind(Load::Operation::DONTCARE,Load::Operation::DONTCARE, Load::Operation::DONTCARE);
 	tex.display->setViewport();
 
 	_texDisplay->use();
