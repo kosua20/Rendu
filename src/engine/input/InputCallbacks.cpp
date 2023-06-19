@@ -21,16 +21,18 @@ void char_callback(GLFWwindow * window, unsigned int codepoint) {
 	ImGui_ImplGlfw_CharCallback(window, codepoint);
 }
 
-void mouse_button_callback(GLFWwindow *, int button, int action, int) {
+void mouse_button_callback(GLFWwindow * window, int button, int action, int mods) {
 	if(!ImGui::GetIO().WantCaptureMouse) {
 		Input::manager().mousePressedEvent(button, action);
 	}
+	ImGui_ImplGlfw_MouseButtonCallback(window, button, action, mods);
 }
 
-void cursor_pos_callback(GLFWwindow *, double xpos, double ypos) {
+void cursor_pos_callback(GLFWwindow * window, double xpos, double ypos) {
 	if(!ImGui::GetIO().WantCaptureMouse) {
 		Input::manager().mouseMovedEvent(xpos, ypos);
 	}
+	ImGui_ImplGlfw_CursorPosCallback(window, xpos, ypos);
 }
 
 void scroll_callback(GLFWwindow * window, double xoffset, double yoffset) {

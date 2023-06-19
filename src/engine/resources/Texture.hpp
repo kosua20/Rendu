@@ -101,15 +101,15 @@ namespace ImGui {
 	void Image(const Texture & texture, const ImVec2& size, const ImVec2& uv0 = ImVec2(0,0), const ImVec2& uv1 = ImVec2(1,1), const ImVec4& tint_col = ImVec4(1,1,1,1), const ImVec4& border_col = ImVec4(0,0,0,0));
 
 	/** Display a texture as an ImGui button.
+	\param id the button identifier
 	\param texture the texture to display
 	\param size the image display size
 	\param uv0 coordinates of the top left corner
 	\param uv1 coordinates of the bottom right corner
-	\param frame_padding padding between the image and the button edges
 	\param bg_col the button background color
 	\param tint_col the optional image tint color
 	\return true if pressed
 	*/
-	bool ImageButton(const Texture & texture, const ImVec2& size, const ImVec2& uv0 = ImVec2(0,0), const ImVec2& uv1 = ImVec2(1,1), int frame_padding = -1, const ImVec4& bg_col = ImVec4(0,0,0,0), const ImVec4& tint_col = ImVec4(1,1,1,1));
+	bool ImageButton(const char* id, const Texture & texture, const ImVec2& size, const ImVec2& uv0 = ImVec2(0,0), const ImVec2& uv1 = ImVec2(1,1), const ImVec4& bg_col = ImVec4(0,0,0,0), const ImVec4& tint_col = ImVec4(1,1,1,1));
 
 }

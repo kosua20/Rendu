@@ -159,10 +159,10 @@ void ImGui::Image(const Texture & texture, const ImVec2& size, const ImVec2& uv0
 	ImGui::Image((ImTextureID)texture.gpu->imgui, size, uv0, uv1, tint_col, border_col);
 }
 
-bool ImGui::ImageButton(const Texture & texture, const ImVec2& size, const ImVec2& uv0,  const ImVec2& uv1, int frame_padding, const ImVec4& bg_col, const ImVec4& tint_col){
+bool ImGui::ImageButton(const char* id, const Texture & texture, const ImVec2& size, const ImVec2& uv0, const ImVec2& uv1, const ImVec4& bg_col, const ImVec4& tint_col){
 	if(texture.gpu->imgui == VK_NULL_HANDLE){
 		GPUContext* context = GPU::getInternal();
 		texture.gpu->imgui = ImGui_ImplVulkan_AddTexture(context->samplerLibrary.getDefaultSampler(), texture.gpu->view, texture.gpu->defaultLayout);
 	}
-	return ImGui::ImageButton((ImTextureID)texture.gpu->imgui, size, uv0, uv1, frame_padding, bg_col, tint_col);
+	return ImGui::ImageButton(id, (ImTextureID)texture.gpu->imgui, size, uv0, uv1, bg_col, tint_col);
 }
