@@ -77,7 +77,7 @@ int main(int argc, char ** argv) {
 		}
 
 		// Render the background.
-		Framebuffer::backbuffer()->bind(glm::vec4(bgColor, 1.0f), 1.0f);
+		Swapchain::backbuffer()->bind(glm::vec4(bgColor, 1.0f), 1.0f);
 		const glm::ivec2 screenSize = Input::manager().size();
 		GPU::setViewport(0, 0, screenSize[0], screenSize[1]);
 
@@ -124,11 +124,11 @@ int main(int argc, char ** argv) {
 			// Read back color under cursor when right-clicking.
 			if(Input::manager().pressed(Input::Mouse::Right)) {
 				const glm::vec2 pos = Input::manager().mouse();
-				const uint w = Framebuffer::backbuffer()->width();
-				const uint h = Framebuffer::backbuffer()->height();
+				const uint w = Swapchain::backbuffer()->width();
+				const uint h = Swapchain::backbuffer()->height();
 				glm::vec2 mousePosition = glm::floor(glm::vec2(pos.x * float(w), pos.y * float(h)));
 				mousePosition		  = glm::clamp(mousePosition, glm::vec2(0.0f), glm::vec2(w, h));
-				fgColor = Framebuffer::backbuffer()->read(glm::uvec2(mousePosition));
+				fgColor = Swapchain::backbuffer()->read(glm::uvec2(mousePosition));
 			}
 		}
 
@@ -254,7 +254,7 @@ int main(int argc, char ** argv) {
 					const unsigned int outputWidth  = isHorizontal ? imageInfos.height : imageInfos.width;
 					const unsigned int outputHeight = isHorizontal ? imageInfos.width : imageInfos.height;
 					Framebuffer framebuffer(outputWidth, outputHeight, format, "Save output");
-					framebuffer.bind(glm::vec4(0.0f,0.0f,0.0f,1.0f), Framebuffer::Operation::DONTCARE, Framebuffer::Operation::DONTCARE);
+					framebuffer.bind(glm::vec4(0.0f,0.0f,0.0f,1.0f), Load::Operation::DONTCARE, Load::Operation::DONTCARE);
 					framebuffer.setViewport();
 
 					// Render the image in it.

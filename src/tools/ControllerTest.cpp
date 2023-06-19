@@ -266,7 +266,7 @@ int main(int argc, char ** argv) {
 
 		// Render nothing.
 		const glm::ivec2 screenSize = Input::manager().size();
-		Framebuffer::backbuffer()->bind(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), Framebuffer::Operation::DONTCARE, Framebuffer::Operation::DONTCARE);
+		Swapchain::backbuffer()->bind(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), Load::Operation::DONTCARE, Load::Operation::DONTCARE);
 		GPU::setViewport(0, 0, screenSize[0], screenSize[1]);
 		
 		

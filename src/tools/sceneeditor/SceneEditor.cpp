@@ -51,14 +51,14 @@ void SceneEditor::draw() {
 
 	// If no scene, just clear.
 	if(!_scenes[_currentScene]) {
-		Framebuffer::backbuffer()->bind(glm::vec4(0.2f, 0.2f, 0.2f, 1.0f), 1.0f, Framebuffer::Operation::DONTCARE);
+		Swapchain::backbuffer()->bind(glm::vec4(0.2f, 0.2f, 0.2f, 1.0f), 1.0f, Load::Operation::DONTCARE);
 		return;
 	}
 
 	_renderer.draw(_userCamera, *_sceneFramebuffer);
 
 	// We now render a full screen quad in the default framebuffer, using sRGB space.
-	Framebuffer::backbuffer()->bind(Framebuffer::Operation::DONTCARE, Framebuffer::Operation::DONTCARE, Framebuffer::Operation::DONTCARE);
+	Swapchain::backbuffer()->bind(Load::Operation::DONTCARE, Load::Operation::DONTCARE, Load::Operation::DONTCARE);
 	GPU::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 	_passthrough->use();
 	_passthrough->texture(_sceneFramebuffer->texture(), 0);
