@@ -45,8 +45,18 @@ public:
 	/** Destructor. */
 	~Swapchain();
 
-	/** \return a renderpass compatible with the swapchain backbuffer. */
-	VkRenderPass getRenderPass();
+	Texture& color(){ return *_backbuffer; }
+	Texture& depth(){ return _depth; }
+
+	/** Query the formats used by the swapchain backbuffer
+	 \param color will contain the color format
+	 \param depth will contain the depth format
+	 \param stencil will contain the stencil format
+	 */
+	void getFormats(VkFormat& color, VkFormat& depth, VkFormat& stencil);
+
+	// Temporary
+	static Texture* backbuffer() { return _backbufferStatic; }
 
 private:
 
@@ -67,9 +77,10 @@ private:
 	GPUContext* _context = nullptr; ///< The GPU internal context.
 	VkSwapchainKHR _swapchain = VK_NULL_HANDLE; ///< Native handle.
 
-	std::vector<std::shared_ptr<Framebuffer>> _framebuffers; ///< Backbuffers.
+	std::vector<Texture> _colors; ///< Backbuffers.
 	Texture _depth; ///< The shared depth texture.
-
+	Texture* _backbuffer = nullptr; ///< The current backbuffer.
+	static Texture* _backbufferStatic;
 	std::vector<VkSemaphore> _imagesAvailable; ///< Semaphores signaling when swapchain images are available for a new frame.
 	std::vector<VkSemaphore> _framesFinished; ///< Semaphores signaling when a frame has been completed.
 	std::vector<VkFence> _framesInFlight; ///< Fences ensuring that frames are properly ordered.

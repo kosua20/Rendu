@@ -49,8 +49,6 @@ struct ResourceToDelete {
 	VkSampler sampler = VK_NULL_HANDLE; ///< Sampler to delete.
 	VkImage image = VK_NULL_HANDLE; ///< Image to delete.
 	VkBuffer buffer = VK_NULL_HANDLE; ///< Buffer to delete.
-	VkFramebuffer framebuffer = VK_NULL_HANDLE; ///< Framebuffer to delete.
-	VkRenderPass renderPass = VK_NULL_HANDLE; ///< Renderpass to delete.
 	VmaAllocation data = VK_NULL_HANDLE; ///< Internal allocation to free.
 	uint64_t frame = 0; ///< Frame where the deletion was requested.
 };
