@@ -164,7 +164,7 @@ void IslandApp::draw() {
 		_skyProgram->texture(_precomputedScattering, 0);
 
 		for(uint lid = 0; lid < 6; ++lid){
-			_environment->bind(lid, 0, Framebuffer::Operation::DONTCARE, Framebuffer::Operation::DONTCARE, Framebuffer::Operation::DONTCARE);
+			_environment->bind(lid, 0, Load::Operation::DONTCARE, Load::Operation::DONTCARE, Load::Operation::DONTCARE);
 			const glm::mat4 clipToWorldFace  = glm::inverse(Library::boxVPs[lid]);
 			_skyProgram->uniform("clipToWorld", clipToWorldFace);
 			GPU::drawMesh(*_skyMesh);
@@ -268,7 +268,7 @@ void IslandApp::draw() {
 			GPU::setCullState(true, Faces::BACK);
 			GPU::setBlendState(false);
 
-			_waterEffectsHalf->bind(Framebuffer::Operation::DONTCARE);
+			_waterEffectsHalf->bind(Load::Operation::DONTCARE);
 			_waterEffectsHalf->setViewport();
 			_waterCopy->use();
 			_waterCopy->texture(_sceneBuffer->texture(0), 0);
@@ -282,7 +282,7 @@ void IslandApp::draw() {
 		}
 
 		// Render the ocean waves.
-		_sceneBuffer->bind(Framebuffer::Operation::LOAD, Framebuffer::Operation::LOAD, Framebuffer::Operation::DONTCARE);
+		_sceneBuffer->bind(Load::Operation::LOAD, Load::Operation::LOAD, Load::Operation::DONTCARE);
 		_sceneBuffer->setViewport();
 		GPU::setDepthState(true, TestFunction::LESS, true);
 		GPU::setBlendState(false);
@@ -333,7 +333,7 @@ void IslandApp::draw() {
 			GPU::setDepthState(false);
 			GPU::setBlendState(false);
 
-			_waterEffectsHalf->bind(Framebuffer::Operation::LOAD);
+			_waterEffectsHalf->bind(Load::Operation::LOAD);
 			_waterEffectsHalf->setViewport();
 			_waterCopy->use();
 			_waterCopy->texture(_sceneBuffer->texture(0), 0);
@@ -349,7 +349,7 @@ void IslandApp::draw() {
 			GPU::blit(*_sceneBuffer->texture(1), *_waterPos, Filter::NEAREST);
 
 			// Render full screen effect.
-			_sceneBuffer->bind(Framebuffer::Operation::LOAD);
+			_sceneBuffer->bind(Load::Operation::LOAD);
 			_sceneBuffer->setViewport();
 			GPU::setCullState(true, Faces::BACK);
 			GPU::setDepthState(false);
@@ -423,7 +423,7 @@ void IslandApp::draw() {
 	GPU::setCullState(true, Faces::BACK);
 	
 	GPU::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
-	Framebuffer::backbuffer()->bind(Framebuffer::Operation::DONTCARE, Framebuffer::Operation::DONTCARE, Framebuffer::Operation::DONTCARE);
+	Swapchain::backbuffer()->bind(Load::Operation::DONTCARE, Load::Operation::DONTCARE, Load::Operation::DONTCARE);
 	_tonemap->use();
 	_tonemap->uniform("customExposure", 1.0f);
 	_tonemap->uniform("apply", true);

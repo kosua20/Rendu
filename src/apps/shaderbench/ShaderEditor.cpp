@@ -275,7 +275,7 @@ void ShaderEditor::draw() {
 	ScreenQuad::draw();
 	_timer.end();
 
-	Framebuffer::backbuffer()->bind(glm::vec4(0.3f,0.3f,0.3f, 1.0f));
+	Swapchain::backbuffer()->bind(glm::vec4(0.3f,0.3f,0.3f, 1.0f));
 	GPU::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 
 	// If not in window mode, directly blit to the screne.
@@ -326,7 +326,7 @@ void ShaderEditor::update() {
 		if(ImGui::Begin("Render", nullptr, ImGuiWindowFlags_NoBringToFrontOnFocus)){
 			// Adjust the texture display to the window size.
 			const ImVec2 winSize = ImGui::GetContentRegionAvail();
-			ImGui::ImageButton(*_currFrame->texture(), ImVec2(winSize.x, winSize.y), ImVec2(0.0,0.0), ImVec2(1.0,1.0), 0);
+			ImGui::ImageButton("#Tex", *_currFrame->texture(), ImVec2(winSize.x, winSize.y), ImVec2(0.0,0.0), ImVec2(1.0,1.0));
 			if (ImGui::IsItemHovered()) {
 				ImGui::SetNextFrameWantCaptureMouse(false);
 				ImGui::SetNextFrameWantCaptureKeyboard(false);

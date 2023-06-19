@@ -53,7 +53,7 @@ void ForwardRenderer::renderDepth(const Culler::List & visibles, const glm::mat4
 	GPU::setCullState(true, Faces::BACK);
 	GPU::setBlendState(false);
 
-	_sceneFramebuffer->bind(glm::vec4(0.5f,0.5f,0.5f,1.0f), 1.0f, Framebuffer::Operation::DONTCARE);
+	_sceneFramebuffer->bind(glm::vec4(0.5f,0.5f,0.5f,1.0f), 1.0f, Load::Operation::DONTCARE);
 	_sceneFramebuffer->setViewport();
 	// We use the depth prepass to store packed normals in the color target.
 	// We initialize using null normal.

@@ -52,12 +52,12 @@ void StenciledApp::setScene(const std::shared_ptr<Scene> & scene) {
 
 void StenciledApp::draw() {
 	if(!_scenes[_currentScene]) {
-		Framebuffer::backbuffer()->bind(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 1.0f, Framebuffer::Operation::DONTCARE);
+		Swapchain::backbuffer()->bind(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 1.0f, Load::Operation::DONTCARE);
 		return;
 	}
 	_renderer->draw(_userCamera, *_finalRender);
 	
-	GPU::blit(*_finalRender, *Framebuffer::backbuffer(), Filter::LINEAR);
+	GPU::blit(*_finalRender, *Swapchain::backbuffer(), Filter::LINEAR);
 
 }
 

@@ -333,7 +333,7 @@ void DeferredRenderer::draw(const Camera & camera, Framebuffer & framebuffer, ui
 
 	// Render opaque objects and the background to the Gbuffer.
 	// Clear the depth buffer (we know we will draw everywhere, no need to clear color).
-	_gbuffer->bind(Framebuffer::Operation::DONTCARE, 1.0f);
+	_gbuffer->bind(Load::Operation::DONTCARE, 1.0f);
 	_gbuffer->setViewport();
 
 	renderOpaque(visibles, view, proj);
@@ -361,7 +361,7 @@ void DeferredRenderer::draw(const Camera & camera, Framebuffer & framebuffer, ui
 	GPU::blitDepth(*_gbuffer, *_lightBuffer);
 
 	// Main lighting accumulation.
-	_lightBuffer->bind(Framebuffer::Operation::DONTCARE, Framebuffer::Operation::LOAD);
+	_lightBuffer->bind(Load::Operation::DONTCARE, Load::Operation::LOAD);
 	_lightBuffer->setViewport();
 
 	// Merge probes contributions and background.
@@ -394,7 +394,7 @@ void DeferredRenderer::draw(const Camera & camera, Framebuffer & framebuffer, ui
 		}
 		_fwdProbesGPU->data().upload();
 		// Now render transparent effects in a forward fashion.
-		_lightBuffer->bind(Framebuffer::Operation::LOAD, Framebuffer::Operation::LOAD);
+		_lightBuffer->bind(Load::Operation::LOAD, Load::Operation::LOAD);
 		_lightBuffer->setViewport();
 		renderTransparent(visibles, view, proj);
 	}

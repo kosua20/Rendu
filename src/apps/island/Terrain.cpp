@@ -413,7 +413,7 @@ void Terrain::generateShadowMap(const glm::vec3 & lightDir){
 	// Make sure light direction is normalized.
 	const glm::vec3 lDir = glm::normalize(lightDir);
 
-	_shadowBuffer->bind(glm::vec4(0.0f), Framebuffer::Operation::DONTCARE, Framebuffer::Operation::DONTCARE);
+	_shadowBuffer->bind(glm::vec4(0.0f), Load::Operation::DONTCARE, Load::Operation::DONTCARE);
 	_shadowBuffer->setViewport();
 	GPU::setDepthState(false);
 	GPU::setBlendState(false);

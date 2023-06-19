@@ -39,7 +39,7 @@ void AtmosphereApp::draw() {
 	GPU::setBlendState(false);
 	GPU::setCullState(false);
 	
-	_atmosphereBuffer->bind(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), Framebuffer::Operation::DONTCARE, Framebuffer::Operation::DONTCARE);
+	_atmosphereBuffer->bind(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), Load::Operation::DONTCARE, Load::Operation::DONTCARE);
 	_atmosphereBuffer->setViewport();
 
 	_atmosphere->use();
@@ -66,7 +66,7 @@ void AtmosphereApp::draw() {
 
 	// Tonemapping and final screen.
 	GPU::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
-	Framebuffer::backbuffer()->bind(Framebuffer::Operation::DONTCARE, Framebuffer::Operation::DONTCARE);
+	Swapchain::backbuffer()->bind(Load::Operation::DONTCARE, Load::Operation::DONTCARE);
 	_tonemap->use();
 	_tonemap->uniform("customExposure", 1.0f);
 	_tonemap->uniform("apply", true);

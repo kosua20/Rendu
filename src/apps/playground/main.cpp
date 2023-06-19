@@ -118,8 +118,8 @@ int main(int argc, char ** argv) {
 
 		// Render.
 		const glm::mat4 MVP = camera.projection() * camera.view();
-		Framebuffer::backbuffer()->bind(glm::vec4(0.04f, 0.09f, 0.07f, 1.0f), 1.0f, Framebuffer::Operation::DONTCARE);
-		Framebuffer::backbuffer()->setViewport();
+		Swapchain::backbuffer()->bind(glm::vec4(0.04f, 0.09f, 0.07f, 1.0f), 1.0f, Load::Operation::DONTCARE);
+		Swapchain::backbuffer()->setViewport();
 		program->use();
 		program->uniform("mvp", MVP);
 		GPU::drawMesh(*mesh);

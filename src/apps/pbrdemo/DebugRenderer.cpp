@@ -97,7 +97,7 @@ void DebugRenderer::draw(const Camera & camera, Framebuffer & framebuffer, uint 
 
 	_lightDebugRenderer.updateCameraInfos(view, proj);
 
-	framebuffer.bind(layer, 0, Framebuffer::Operation::LOAD, Framebuffer::Operation::LOAD, Framebuffer::Operation::LOAD);
+	framebuffer.bind(layer, 0, Load::Operation::LOAD, Load::Operation::LOAD, Load::Operation::LOAD);
 	GPU::setDepthState(true, TestFunction::LEQUAL, true);
 	GPU::setBlendState(false);
 	GPU::setCullState(false);

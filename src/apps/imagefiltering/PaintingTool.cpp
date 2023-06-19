@@ -59,8 +59,8 @@ void PaintingTool::draw() {
 	GPU::setCullState(true, Faces::BACK);
 
 	// Clear if needed.
-	Framebuffer::LoadOperation colorOp(glm::vec4(_bgColor, 1.0f));
-	_canvas->bind(_shouldClear ? colorOp : Framebuffer::Operation::LOAD, Framebuffer::Operation::DONTCARE, Framebuffer::Operation::DONTCARE);
+	Framebuffer::Load::Operation colorOp(glm::vec4(_bgColor, 1.0f));
+	_canvas->bind(_shouldClear ? colorOp : Load::Operation::LOAD, Load::Operation::DONTCARE, Load::Operation::DONTCARE);
 	_canvas->setViewport();
 	_shouldClear = false;
 
@@ -84,7 +84,7 @@ void PaintingTool::draw() {
 	GPU::blit(*_canvas, *_visu, Filter::NEAREST);
 
 	// Draw the brush outline.
-	_visu->bind(Framebuffer::Operation::LOAD);
+	_visu->bind(Load::Operation::LOAD);
 	_visu->setViewport();
 	_brushShader->use();
 

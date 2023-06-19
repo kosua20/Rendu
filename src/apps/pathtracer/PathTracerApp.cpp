@@ -44,7 +44,7 @@ void PathTracerApp::draw() {
 
 	// If no scene, just clear.
 	if(!_scene) {
-		Framebuffer::backbuffer()->bind(glm::vec4(0.2f, 0.2f, 0.2f, 1.0f), 1.0f, Framebuffer::Operation::DONTCARE);
+		Swapchain::backbuffer()->bind(glm::vec4(0.2f, 0.2f, 0.2f, 1.0f), 1.0f, Load::Operation::DONTCARE);
 		return;
 	}
 	
@@ -65,7 +65,7 @@ void PathTracerApp::draw() {
 		GPU::setBlendState(false);
 		GPU::setDepthState(false);
 		GPU::setCullState(true, Faces::BACK);
-		Framebuffer::backbuffer()->bind(Framebuffer::Operation::DONTCARE);
+		Swapchain::backbuffer()->bind(Load::Operation::DONTCARE);
 		GPU::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 		_passthrough->use();
 		_passthrough->uniform("apply", true);
@@ -81,7 +81,7 @@ void PathTracerApp::draw() {
 	GPU::setBlendState(false);
 	GPU::setDepthState(false);
 	GPU::setCullState(true, Faces::BACK);
-	Framebuffer::backbuffer()->bind(Framebuffer::Operation::DONTCARE);
+	Swapchain::backbuffer()->bind(Load::Operation::DONTCARE);
 	GPU::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 	_passthrough->use();
 	_passthrough->uniform("apply", false);
