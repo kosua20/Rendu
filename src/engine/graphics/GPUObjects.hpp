@@ -60,7 +60,12 @@ public:
 
 	VkImage image = VK_NULL_HANDLE; ///< Native image handle.
 	VkImageView view = VK_NULL_HANDLE; ///< Native main image view (all mips).
-	std::vector<VkImageView> levelViews;  ///< Per-mip image views.
+
+	struct MipViews {
+		std::vector<VkImageView> views;
+		VkImageView mipView;
+	};
+	std::vector<MipViews> views;  ///< Per-mip image views.
 
 	VmaAllocation data = VK_NULL_HANDLE; ///< Internal allocation.
 	ImTextureID imgui = (ImTextureID)VK_NULL_HANDLE; ///< ImGui compatible handle (internally a descriptor set).

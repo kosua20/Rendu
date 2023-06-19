@@ -579,8 +579,8 @@ void Program::texture(const Texture& texture, uint slot, uint mip){
 		TextureState & refTex = existingTex->second;
 		assert(refTex.count == 1);
 		// Find the view we need.
-		assert(mip == Program::ALL_MIPS || mip < texture.gpu->levelViews.size());
-		VkImageView& view = mip == Program::ALL_MIPS ? texture.gpu->view : texture.gpu->levelViews[mip];
+		assert(mip == Program::ALL_MIPS || mip < texture.gpu->views.size());
+		VkImageView& view = mip == Program::ALL_MIPS ? texture.gpu->view : texture.gpu->views[mip].mipView;
 
 		if(refTex.views[0] != view){
 			refTex.textures[0] = &texture;
@@ -600,9 +600,9 @@ void Program::textureArray(const std::vector<const Texture *> & textures, uint s
 
 		for(uint did = 0; did < texCount; ++did){
 			// Find the view we need.
-			assert(mip == Program::ALL_MIPS || mip < textures[did]->gpu->levelViews.size());
+			assert(mip == Program::ALL_MIPS || mip < textures[did]->gpu->views.size());
 
-			VkImageView& view = mip == Program::ALL_MIPS ? textures[did]->gpu->view : textures[did]->gpu->levelViews[mip];
+			VkImageView& view = mip == Program::ALL_MIPS ? textures[did]->gpu->view : textures[did]->gpu->views[mip].mipView;
 			if(refTex.views[did] != view){
 				refTex.textures[did] = textures[did];
 				refTex.views[did] = view;
