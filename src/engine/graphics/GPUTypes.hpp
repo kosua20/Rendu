@@ -267,7 +267,8 @@ enum class Layout : uint {
 	RGBA16I,
 	RGBA16UI,
 	RGBA32I,
-	RGBA32UI
+	RGBA32UI,
+	NONE
 };
 
 STD_HASH(Layout);
@@ -324,19 +325,19 @@ class GPUState {
 public:
 
 	/// \brief Current framebuffer information.
-	struct FramebufferInfos {
+	struct RenderPass {
 
 		/// Constructor
-		FramebufferInfos();
+		RenderPass() {};
 
 		/** Test if this attachment info is equivalent to another.
 		 \param other the info to compare to
 		 \return true if they are equivalent
 		 */
-		bool isEquivalent(const FramebufferInfos& other) const;
+		bool isEquivalent(const RenderPass& other) const;
 
-		std::vector<const Texture*> colors; 	///< The color textures \todo Use GPUTexture?
-		const Texture* depthStencil = nullptr; ///< The depth stencil texture if it exists.
+		std::array<Layout, 4> colors = {Layout::NONE, Layout::NONE, Layout::NONE, Layout::NONE}; ///< The color textures (could go up to 8) \todo Use GPUTexture?
+		Layout depthStencil			 = Layout::NONE; ///< The depth stencil texture if it exists.
 		uint mipStart = 0; ///< First mip to be used in the current render pass.
 		uint mipCount = 1; ///< Number of mips used in the current render pass.
 		uint layerStart = 0; ///< First layer to be used in the current render pass.
@@ -396,7 +397,9 @@ public:
 	// Graphics binding state.
 	Program* graphicsProgram = nullptr; ///< The current graphics program.
 	const GPUMesh* mesh = nullptr; ///< The current mesh.
-	FramebufferInfos pass; ///< The current framebuffer.
+	RenderPass pass; ///< The current framebuffer.
+	std::array<const Texture *, 4> colors = {nullptr, nullptr, nullptr, nullptr};
+	const Texture * depthStencil {nullptr};
 
 	// Compute binding state.
 	Program* computeProgram = nullptr; ///< The current compute program.

@@ -343,7 +343,14 @@ VkPipeline PipelineCache::buildGraphicsPipeline(const GPUState& state){
 	}
 	// Color blending
 	VkPipelineColorBlendStateCreateInfo colorState{};
-	const uint attachmentCount = state.pass.colors.size();
+
+	uint attachmentCount = 0;
+	for(; attachmentCount < state.pass.colors.size(); ++attachmentCount) {
+		if(state.pass.colors[attachmentCount] == Layout::NONE) {
+			break;
+		}
+	}
+
 	std::vector<VkPipelineColorBlendAttachmentState> attachmentStates(attachmentCount);
 	{
 		static const std::unordered_map<BlendEquation, VkBlendOp> eqs = {
@@ -408,7 +415,7 @@ VkPipeline PipelineCache::buildGraphicsPipeline(const GPUState& state){
 	std::vector<VkFormat> colorFormats(attachmentCount);
 	{
 		for(uint aid = 0; aid < attachmentCount; ++aid){
-			colorFormats[aid] = state.pass.colors[aid]->gpu->format;
+			VkUtils::getGPULayout(state.pass.colors[aid], colorFormats[aid]);
 		}
 
 		renderingInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO_KHR;
@@ -419,11 +426,10 @@ VkPipeline PipelineCache::buildGraphicsPipeline(const GPUState& state){
 		renderingInfo.depthAttachmentFormat = VK_FORMAT_UNDEFINED;
 		renderingInfo.stencilAttachmentFormat = VK_FORMAT_UNDEFINED;
 
-		if(state.pass.depthStencil){
-			const GPUTexture* depth = state.pass.depthStencil->gpu.get();
-			renderingInfo.depthAttachmentFormat = depth->format;
-			if(depth->typedFormat == Layout::DEPTH24_STENCIL8 || depth->typedFormat == Layout::DEPTH32F_STENCIL8){
-				renderingInfo.stencilAttachmentFormat = depth->format;
+		if(state.pass.depthStencil!= Layout::NONE){
+			VkUtils::getGPULayout(state.pass.depthStencil, renderingInfo.depthAttachmentFormat);
+			if(state.pass.depthStencil == Layout::DEPTH24_STENCIL8 || state.pass.depthStencil == Layout::DEPTH32F_STENCIL8) {
+				renderingInfo.stencilAttachmentFormat = renderingInfo.depthAttachmentFormat;
 			}
 		}
 

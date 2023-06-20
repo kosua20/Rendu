@@ -19,6 +19,7 @@
 #include <vector>
 #include <algorithm>
 #include <memory>
+#include <array>
 
 typedef unsigned char uchar;
 typedef unsigned int  uint;

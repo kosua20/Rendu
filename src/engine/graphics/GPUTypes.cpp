@@ -4,38 +4,17 @@
 #include "graphics/Framebuffer.hpp"
 #include <cstring>
 
-GPUState::FramebufferInfos::FramebufferInfos(){
-	colors.reserve(4); // Could go up to 8.
-}
+bool GPUState::RenderPass::isEquivalent(const RenderPass& other) const {
 
-bool GPUState::FramebufferInfos::isEquivalent(const FramebufferInfos& other) const {
-	if(other.colors.size() != colors.size()){
-		return false;
-	}
-
-	if((depthStencil && !other.depthStencil) || (!depthStencil && other.depthStencil) ){
-		return false;
-	}
-	
 	// Two attachment references are compatible if they have matching format and sample count.
 	// We can ignore: resolve, image layouts, load/store operations.
-	if(depthStencil && depthStencil->gpu){
-		if(!other.depthStencil->gpu){
-			return false;
-		}
-
-		// We can safely compare depths.
-		if(depthStencil->gpu->format != other.depthStencil->gpu->format){
-			return false;
-		}
+	if( depthStencil != other.depthStencil ){
+		return false;
 	}
 
 	// We can safely compare color attachments.
 	for(uint cid = 0; cid < colors.size(); ++cid){
-		if(!colors[cid]->gpu || !other.colors[cid]->gpu ){
-			return false;
-		}
-		if(colors[cid]->gpu->format != other.colors[cid]->gpu->format){
+		if(colors[cid] != other.colors[cid]){
 			return false;
 		}
 	}
@@ -61,12 +40,12 @@ bool GPUState::isGraphicsEquivalent(const GPUState& other) const {
 	}
 
 	// No texture outputs.
-	if(!pass.depthStencil && pass.colors.empty()){
+	if(pass.depthStencil == Layout::NONE && pass.colors[0] == Layout::NONE){
 		return false;
 	}
 
 	// No texture outputs.
-	if(!other.pass.depthStencil && other.pass.colors.empty()){
+	if(other.pass.depthStencil == Layout::NONE && other.pass.colors[0] == Layout::NONE) {
 		return false;
 	}
 
