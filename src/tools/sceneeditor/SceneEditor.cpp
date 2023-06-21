@@ -1,8 +1,9 @@
 #include "SceneEditor.hpp"
 #include "graphics/GPU.hpp"
 #include "graphics/ScreenQuad.hpp"
+#include "system/Window.hpp"
 
-SceneEditor::SceneEditor(RenderingConfig & config) : CameraApp(config) {
+SceneEditor::SceneEditor(RenderingConfig & config, Window & window) : CameraApp(config, window) {
 	_passthrough = Resources::manager().getProgram2D("passthrough");
 
 	_sceneFramebuffer = _renderer.createOutput(uint(config.renderingResolution()[0]), uint(config.renderingResolution()[1]), "Scene render");
@@ -51,15 +52,15 @@ void SceneEditor::draw() {
 
 	// If no scene, just clear.
 	if(!_scenes[_currentScene]) {
-		Swapchain::backbuffer()->bind(glm::vec4(0.2f, 0.2f, 0.2f, 1.0f), 1.0f, Load::Operation::DONTCARE);
+		window().bind(glm::vec4(0.2f, 0.2f, 0.2f, 1.0f), 1.0f, Load::Operation::DONTCARE);
 		return;
 	}
 
 	_renderer.draw(_userCamera, *_sceneFramebuffer);
 
 	// We now render a full screen quad in the default framebuffer, using sRGB space.
-	Swapchain::backbuffer()->bind(Load::Operation::DONTCARE, Load::Operation::DONTCARE, Load::Operation::DONTCARE);
-	GPU::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
+	window().bind(Load::Operation::DONTCARE, Load::Operation::DONTCARE, Load::Operation::DONTCARE);
+	window().setViewport();
 	_passthrough->use();
 	_passthrough->texture(_sceneFramebuffer->texture(), 0);
 	ScreenQuad::draw();

@@ -265,11 +265,9 @@ int main(int argc, char ** argv) {
 		}
 
 		// Render nothing.
-		const glm::ivec2 screenSize = Input::manager().size();
-		Swapchain::backbuffer()->bind(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), Load::Operation::DONTCARE, Load::Operation::DONTCARE);
-		GPU::setViewport(0, 0, screenSize[0], screenSize[1]);
-		
-		
+		window.bind(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), Load::Operation::DONTCARE, Load::Operation::DONTCARE);
+		window.setViewport();
+
 		// Set a fullscreen fixed window.
 		ImGui::SetNextWindowPos(ImVec2(0, 0));
 		ImGui::SetNextWindowBgAlpha(1.0f);

@@ -38,7 +38,7 @@ int main(int argc, char ** argv) {
 	Random::seed();
 	
 	// Create the renderer.
-	SceneEditor app(config);
+	SceneEditor app(config, window);
 	
 	
 	// Start the display/interaction loop.

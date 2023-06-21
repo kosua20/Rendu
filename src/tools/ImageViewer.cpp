@@ -77,9 +77,10 @@ int main(int argc, char ** argv) {
 		}
 
 		// Render the background.
-		Swapchain::backbuffer()->bind(glm::vec4(bgColor, 1.0f), 1.0f);
+		window.bind(glm::vec4(bgColor, 1.0f), 1.0f);
+		window.setViewport();
+
 		const glm::ivec2 screenSize = Input::manager().size();
-		GPU::setViewport(0, 0, screenSize[0], screenSize[1]);
 
 		// Render the image if non empty.
 		bool hasImage			= imageInfos.width > 0 && imageInfos.height > 0;
@@ -124,11 +125,12 @@ int main(int argc, char ** argv) {
 			// Read back color under cursor when right-clicking.
 			if(Input::manager().pressed(Input::Mouse::Right)) {
 				const glm::vec2 pos = Input::manager().mouse();
-				const uint w = Swapchain::backbuffer()->width();
-				const uint h = Swapchain::backbuffer()->height();
+				const uint w = window.color().width;
+				const uint h = window.color().height;
 				glm::vec2 mousePosition = glm::floor(glm::vec2(pos.x * float(w), pos.y * float(h)));
 				mousePosition		  = glm::clamp(mousePosition, glm::vec2(0.0f), glm::vec2(w, h));
-				fgColor = Swapchain::backbuffer()->read(glm::uvec2(mousePosition));
+				// \todo read from texture instead.
+				//fgColor = Swapchain::backbuffer()->read(glm::uvec2(mousePosition));
 			}
 		}
 
@@ -274,7 +276,7 @@ int main(int argc, char ** argv) {
 					ScreenQuad::draw();
 
 					// Then save it to the given path.
-					GPU::saveFramebuffer(framebuffer, destinationPath.substr(0, destinationPath.size() - 4), Image::Save::NONE);
+					GPU::saveTexture(*framebuffer.texture(0), destinationPath.substr(0, destinationPath.size() - 4), Image::Save::NONE);
 
 				}
 			}

@@ -125,7 +125,7 @@ void computeCubemapConvolution(const Texture & cubemapInfos, int levelsCount, in
 		// Thus we perform a copy to our final texture.
 		cubeLevels.emplace_back("cube" + std::to_string(level));
 		Texture & levelInfos = cubeLevels.back();
-		GPU::blit(*resultFramebuffer.texture(), levelInfos, Filter::NEAREST);
+		GPU::blitResize(*resultFramebuffer.texture(), levelInfos, Filter::NEAREST);
 		
 		Log::Info() << std::endl;
 	}
@@ -169,7 +169,7 @@ void computeAndExportLookupTable(const int outputSide, const std::string & outpu
 	GPU::setCullState(false);
 	brdfProgram->use();
 	ScreenQuad::draw();
-	GPU::saveFramebuffer(*bakingFramebuffer, outputPath, Image::Save::NONE);
+	GPU::saveTexture(*bakingFramebuffer->texture(0), outputPath, Image::Save::NONE);
 }
 
 /**
@@ -342,8 +342,8 @@ int main(int argc, char ** argv) {
 		const glm::ivec2 screenSize = Input::manager().size();
 		const glm::mat4 mvp		   = camera.projection() * camera.view();
 
-		Swapchain::backbuffer()->bind(glm::vec4(0.25f, 0.25f, 0.25f, 1.0f), 1.0f, Load::Operation::DONTCARE);
-		GPU::setViewport(0, 0, screenSize[0], screenSize[1]);
+		window.bind(glm::vec4(0.25f, 0.25f, 0.25f, 1.0f), 1.0f, Load::Operation::DONTCARE);
+		window.setViewport();
 
 		GPU::setDepthState(true, TestFunction::LESS, true);
 		GPU::setBlendState(false);
@@ -369,7 +369,7 @@ int main(int argc, char ** argv) {
 		}
 
 		// Render reference cubemap in the bottom right corner.
-		Swapchain::backbuffer()->bind(Load::Operation::LOAD, 1.0f, Load::Operation::DONTCARE);
+		window.bind(Load::Operation::LOAD, 1.0f, Load::Operation::DONTCARE);
 		const float gizmoScale	   = 0.2f;
 		const glm::ivec2 gizmoSize = glm::ivec2(gizmoScale * glm::vec2(screenSize));
 		GPU::setViewport(0, screenSize[1] - gizmoSize[1], gizmoSize[0], gizmoSize[1]);

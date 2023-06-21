@@ -15,7 +15,7 @@ public:
 	/** Constructor.
 	 \param config the configuration to apply
 	 */
-	explicit SceneEditor(RenderingConfig & config);
+	explicit SceneEditor(RenderingConfig & config, Window & window);
 
 	/** Draw the scene and effects */
 	void draw() override;
