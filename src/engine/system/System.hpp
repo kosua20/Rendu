@@ -65,7 +65,8 @@ public:
 		}
 		// Prepare the threads pool.
 		// Always leave one thread free.
-		const size_t count = size_t(std::max(int(std::thread::hardware_concurrency())-1, 1));
+		const size_t availableThreadsCount = std::max(int(std::thread::hardware_concurrency())-1, 1);
+		const size_t count = std::min(size_t(availableThreadsCount), high - low);
 		std::vector<std::thread> threads;
 		threads.reserve(count);
 
