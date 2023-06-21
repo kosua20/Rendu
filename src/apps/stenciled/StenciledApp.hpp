@@ -19,7 +19,7 @@ public:
 	/** Constructor.
 	 \param config the configuration to apply when setting up
 	 */
-	explicit StenciledApp(RenderingConfig & config);
+	explicit StenciledApp(RenderingConfig & config, Window & window);
 
 	/** \copydoc CameraApp::draw */
 	void draw() override;

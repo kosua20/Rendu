@@ -25,7 +25,7 @@ public:
 	/** Constructor.
 	 \param config the configuration to apply when setting up
 	 */
-	explicit PBRDemo(RenderingConfig & config);
+	explicit PBRDemo(RenderingConfig & config, Window & window);
 
 	/** \copydoc CameraApp::draw */
 	void draw() override;

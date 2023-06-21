@@ -28,7 +28,7 @@ public:
 	/** Constructor.
 	 \param config the configuration to apply when setting up
 	 */
-	explicit FilteringApp(RenderingConfig & config);
+	explicit FilteringApp(RenderingConfig & config, Window & window);
 
 	/** \copydoc CameraApp::draw */
 	void draw() override;

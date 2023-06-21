@@ -4,9 +4,10 @@
 #include "graphics/GPU.hpp"
 #include "graphics/ScreenQuad.hpp"
 #include "resources/Texture.hpp"
+#include "system/Window.hpp"
 
-PathTracerApp::PathTracerApp(RenderingConfig & config, const std::shared_ptr<Scene> & scene) :
-	CameraApp(config), _renderTex ("render") {
+PathTracerApp::PathTracerApp(RenderingConfig & config, Window & window, const std::shared_ptr<Scene> & scene) :
+	CameraApp(config, window), _renderTex ("render") {
 
 	_bvhRenderer.reset(new BVHRenderer());
 	const glm::vec2 renderRes = _config.renderingResolution();
@@ -44,7 +45,7 @@ void PathTracerApp::draw() {
 
 	// If no scene, just clear.
 	if(!_scene) {
-		Swapchain::backbuffer()->bind(glm::vec4(0.2f, 0.2f, 0.2f, 1.0f), 1.0f, Load::Operation::DONTCARE);
+		window().bind(glm::vec4(0.2f, 0.2f, 0.2f, 1.0f), 1.0f);
 		return;
 	}
 	
@@ -65,7 +66,8 @@ void PathTracerApp::draw() {
 		GPU::setBlendState(false);
 		GPU::setDepthState(false);
 		GPU::setCullState(true, Faces::BACK);
-		Swapchain::backbuffer()->bind(Load::Operation::DONTCARE);
+		window().bind(Load::Operation::DONTCARE);
+		window().setViewport();
 		GPU::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 		_passthrough->use();
 		_passthrough->uniform("apply", true);
@@ -81,8 +83,8 @@ void PathTracerApp::draw() {
 	GPU::setBlendState(false);
 	GPU::setDepthState(false);
 	GPU::setCullState(true, Faces::BACK);
-	Swapchain::backbuffer()->bind(Load::Operation::DONTCARE);
-	GPU::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
+	window().bind(Load::Operation::DONTCARE);
+	window().setViewport();
 	_passthrough->use();
 	_passthrough->uniform("apply", false);
 	_passthrough->texture(_sceneFramebuffer->texture(), 0);

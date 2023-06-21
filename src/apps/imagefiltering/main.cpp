@@ -36,7 +36,7 @@ int main(int argc, char ** argv) {
 	// Seed random generator.
 	Random::seed();
 	
-	FilteringApp app(config);
+	FilteringApp app(config, window);
 
 	// Start the display/interaction loop.
 	while(window.nextFrame()) {

@@ -1,8 +1,9 @@
 #include "IslandApp.hpp"
 
 #include "resources/Library.hpp"
+#include "system/Window.hpp"
 
-IslandApp::IslandApp(RenderingConfig & config) : CameraApp(config),
+IslandApp::IslandApp(RenderingConfig & config, Window & window) : CameraApp(config, window),
 	_oceanMesh("Ocean"), _farOceanMesh("Far ocean"),
 	_surfaceNoise("surface noise"), _glitterNoise("glitter noise"),
 	 _waves(8, UniformFrequency::FRAME)
@@ -257,11 +258,11 @@ void IslandApp::draw() {
 
 		// Start by copying the visible terrain info.
 		// Blit full res position map.
-		GPU::blit(*_sceneBuffer->texture(1), *_waterPos, Filter::NEAREST);
+		GPU::blit(*_sceneBuffer, *_waterPos, Filter::NEAREST);
 
 		if(isUnderwater){
 			// Blit color as-is if underwater (blur will happen later)
-			GPU::blit(*_sceneBuffer->texture(0), *_waterEffectsHalf, Filter::LINEAR);
+			GPU::blit(*_sceneBuffer, *_waterEffectsHalf, Filter::LINEAR);
 		} else {
 			// Else copy, downscale, apply caustics and blur.
 			GPU::setDepthState(false);
@@ -344,9 +345,9 @@ void IslandApp::draw() {
 			ScreenQuad::draw();
 
 			_blur.process(_waterEffectsHalf->texture(0), *_waterEffectsBlur);
-
+			// \todo Issue with under water rendering
 			// Blit full res position map.
-			GPU::blit(*_sceneBuffer->texture(1), *_waterPos, Filter::NEAREST);
+			GPU::blit(*_sceneBuffer, *_waterPos, Filter::NEAREST);
 
 			// Render full screen effect.
 			_sceneBuffer->bind(Load::Operation::LOAD);
@@ -421,9 +422,10 @@ void IslandApp::draw() {
 	GPU::setDepthState(false, TestFunction::LESS, true);
 	GPU::setBlendState(false);
 	GPU::setCullState(true, Faces::BACK);
+
+	window().bind(Load::Operation::DONTCARE, Load::Operation::DONTCARE, Load::Operation::DONTCARE);
+	window().setViewport();
 	
-	GPU::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
-	Swapchain::backbuffer()->bind(Load::Operation::DONTCARE, Load::Operation::DONTCARE, Load::Operation::DONTCARE);
 	_tonemap->use();
 	_tonemap->uniform("customExposure", 1.0f);
 	_tonemap->uniform("apply", true);

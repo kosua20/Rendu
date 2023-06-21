@@ -4,10 +4,10 @@
 #include "graphics/GPU.hpp"
 #include "input/Input.hpp"
 #include "graphics/ScreenQuad.hpp"
-#include "graphics/Swapchain.hpp" //tmp
+#include "system/Window.hpp"
 
-PBRDemo::PBRDemo(RenderingConfig & config) :
-	CameraApp(config) {
+PBRDemo::PBRDemo(RenderingConfig & config, Window & window) :
+	CameraApp(config, window) {
 
 	const glm::vec2 renderRes = _config.renderingResolution();
 	_defRenderer.reset(new DeferredRenderer(renderRes, true, "Deferred"));
@@ -117,7 +117,7 @@ void PBRDemo::draw() {
 	++_frameID;
 
 	if(!_scenes[_currentScene]) {
-		GPU::bindFramebuffer(0, 0, 1.0f, Load::Operation::DONTCARE, glm::vec4(0.2f, 0.2f, 0.2f, 1.0f), nullptr, Swapchain::backbuffer(), nullptr, nullptr, nullptr);
+		window().bind(glm::vec4(0.2f, 0.2f, 0.2f, 1.0f), 1.0f, Load::Operation::DONTCARE );
 		return;
 	}
 
@@ -153,7 +153,7 @@ void PBRDemo::draw() {
 	GPU::setCullState(true, Faces::BACK);
 	GPU::setBlendState(false);
 
-	GPU::bindFramebuffer(0, 0, Load::Operation::DONTCARE, Load::Operation::DONTCARE, Load::Operation::DONTCARE, nullptr, Swapchain::backbuffer(), nullptr, nullptr, nullptr);
+	window().bind(Load::Operation::DONTCARE, Load::Operation::DONTCARE, Load::Operation::DONTCARE);
 	
 	GPU::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 	_finalProgram->use();

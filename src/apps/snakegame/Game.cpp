@@ -99,23 +99,26 @@ Game::Game(GameConfig & config) :
 	resize(uint(_config.screenResolution[0]), uint(_config.screenResolution[1]));
 }
 
-void Game::draw() {
+void Game::draw(Window& window) {
 	// If ingame, render the game.
 	if(_status == Status::INGAME) {
 		// Before drawing, prepare the model matrices.
 		_player->updateModels();
 		_inGameRenderer.drawPlayer(*_player, *_gameFramebuffer);
-		
-		GPU::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
-		Swapchain::backbuffer()->bind(Load::Operation::DONTCARE);
+
+		window.bind(Load::Operation::DONTCARE, Load::Operation::DONTCARE, Load::Operation::DONTCARE);
+		window.setViewport();
 		_finalProgram->use();
 		_finalProgram->texture(_gameFramebuffer->texture(), 0);
 		ScreenQuad::draw();
 		
 	}
 
+	// \todo Issue on the settings screen causing minimization
+	// Make sure we are rendering directly in the window.
+	window.bind(Load::Operation::LOAD, 1.0f);
 	const float renderRatio = float(_gameFramebuffer->height()) / float(_gameFramebuffer->width());
-	_menuRenderer.drawMenu(_menus[_status], _config.screenResolution, renderRatio);
+	_menuRenderer.drawMenu( _menus[_status], _config.screenResolution, renderRatio);
 
 }
 

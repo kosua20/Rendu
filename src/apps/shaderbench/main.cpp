@@ -69,7 +69,7 @@ int main(int argc, char ** argv) {
 	// Seed random generator in a reproducible fashion.
 	Random::seed(0x0decafe);
 	
-	ShaderEditor app(config);
+	ShaderEditor app(config, window);
 
 	// Load shader if specified.
 	if(!config.shaderPath.empty()){

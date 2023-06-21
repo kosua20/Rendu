@@ -40,7 +40,7 @@ int main(int argc, char ** argv) {
 	Random::seed();
 
 	// Create the renderer.
-	StenciledApp app(config);
+	StenciledApp app(config, window);
 
 	// Start the display/interaction loop.
 	while(window.nextFrame()) {

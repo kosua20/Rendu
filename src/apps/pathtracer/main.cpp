@@ -164,7 +164,7 @@ int main(int argc, char ** argv) {
 		return 1;
 	}
 
-	PathTracerApp app(config, scene);
+	PathTracerApp app(config, window, scene);
 
 	// Start the display/interaction loop.
 	while(window.nextFrame()) {

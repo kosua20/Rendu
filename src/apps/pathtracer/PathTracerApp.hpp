@@ -21,7 +21,7 @@ public:
 	 \param config the configuration to apply
 	 \param scene the scene to render
 	 */
-	explicit PathTracerApp(RenderingConfig & config, const std::shared_ptr<Scene> & scene);
+	explicit PathTracerApp(RenderingConfig & config, Window & window, const std::shared_ptr<Scene> & scene);
 
 	/** \copydoc CameraApp::draw */
 	void draw() override;

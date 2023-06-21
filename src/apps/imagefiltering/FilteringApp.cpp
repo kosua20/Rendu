@@ -2,10 +2,11 @@
 
 #include "input/Input.hpp"
 #include "system/System.hpp"
+#include "system/Window.hpp"
 #include "graphics/GPU.hpp"
 
-FilteringApp::FilteringApp(RenderingConfig & config) :
-	CameraApp(config) {
+FilteringApp::FilteringApp(RenderingConfig & config, Window & window) :
+	CameraApp(config, window) {
 	
 	const glm::vec2 renderResolution = _config.renderingResolution();
 	// Setup camera parameters.
@@ -50,7 +51,7 @@ void FilteringApp::draw() {
 		GPU::setDepthState(false);
 		GPU::setBlendState(false);
 		GPU::setCullState(true, Faces::BACK);
-		Framebuffer::Load::Operation colorOp(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+		Load colorOp(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 		_sceneBuffer->bind(_image.width > 0 ? colorOp : Load::Operation::DONTCARE, Load::Operation::DONTCARE, Load::Operation::DONTCARE);
 		_sceneBuffer->setViewport();
 		_passthrough->use();
@@ -99,9 +100,8 @@ void FilteringApp::draw() {
 	GPU::setBlendState(false);
 	GPU::setCullState(true, Faces::BACK);
 	
-	Swapchain::backbuffer()->bind(Load::Operation::DONTCARE);
-	const glm::ivec2 screenSize = Input::manager().size();
-	GPU::setViewport(0, 0, screenSize[0], screenSize[1]);
+	window().bind(Load::Operation::DONTCARE);
+	window().setViewport();
 	_passthrough->use();
 	_passthrough->texture(finalTexID, 0);
 	ScreenQuad::draw();

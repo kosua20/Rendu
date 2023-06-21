@@ -15,7 +15,7 @@ public:
 	/** Constructor
 	 \param config rendering config
 	 */
-	AtmosphereApp(RenderingConfig & config);
+	AtmosphereApp(RenderingConfig & config, Window & window);
 	
 	/** \copydoc CameraApp::draw */
 	void draw() override;

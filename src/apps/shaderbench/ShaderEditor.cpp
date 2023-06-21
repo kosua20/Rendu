@@ -7,6 +7,7 @@
 #include "generation/Random.hpp"
 #include "generation/PerlinNoise.hpp"
 #include "system/TextUtilities.hpp"
+#include "system/Window.hpp"
 #include "resources/Texture.hpp"
 #include "resources/ResourcesManager.hpp"
 
@@ -23,7 +24,7 @@ const std::string kVecName = "vect";
 const std::string kColorName = "col";
 const std::string kHelpMessage = "Reload: Enter or Ctrl/Cmd+B\nReload and reset values: Shift+Enter or Ctrl/Cmd+Shift+B\nPlay/pause: Space\nShow panel: Tab\nCtrl/Cmd+1: horizontal layout\nCtrl/Cmd+2: vertical layout\nCtrl/Cmd+3: freeform layout\nCtrl/Cmd+F: display render in sub-window";
 
-ShaderEditor::ShaderEditor(RenderingConfig & config) : CameraApp(config), _noise("Uniform 2D"), _perlin("Perlin 2D"), _directions("Directions"), _noise3D("Uniform 3D"), _perlin3D("Perlin 3D") {
+ShaderEditor::ShaderEditor(RenderingConfig & config, Window & window) : CameraApp(config, window), _noise("Uniform 2D"), _perlin("Perlin 2D"), _directions("Directions"), _noise3D("Uniform 3D"), _perlin3D("Perlin 3D") {
 	// Setup render buffer.
 	const glm::uvec2 res(_config.renderingResolution());
 
@@ -275,7 +276,7 @@ void ShaderEditor::draw() {
 	ScreenQuad::draw();
 	_timer.end();
 
-	Swapchain::backbuffer()->bind(glm::vec4(0.3f,0.3f,0.3f, 1.0f));
+	window().bind(glm::vec4(0.3f,0.3f,0.3f, 1.0f));
 	GPU::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 
 	// If not in window mode, directly blit to the screne.
@@ -393,7 +394,7 @@ void ShaderEditor::update() {
 				// Create a RGB8 framebuffer to save as png.
 				Framebuffer tmp(_currFrame->width(), _currFrame->height(), Layout::RGBA8, "Temp");
 				GPU::blit(*_currFrame, tmp, Filter::NEAREST);
-				GPU::saveFramebuffer(tmp, outPath, Image::Save::IGNORE_ALPHA);
+				GPU::saveTexture(*tmp.texture(0), outPath, Image::Save::IGNORE_ALPHA);
 			}
 		}
 		ImGui::SameLine();

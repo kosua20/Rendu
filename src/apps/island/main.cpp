@@ -39,7 +39,7 @@ int main(int argc, char ** argv) {
 	// Seed random generator.
 	Random::seed(8429);
 
-	IslandApp app(config);
+	IslandApp app(config, window);
 	
 	// Start the display/interaction loop.
 	while(window.nextFrame()) {

@@ -43,8 +43,10 @@ public:
 	 */
 	explicit Game(GameConfig & config);
 
-	/// Draw the game.
-	void draw();
+	/** Draw the game.
+	 \param window the destination window
+	 */
+	void draw(Window & window);
 
 	/** Perform once-per-frame update (button clicks, key presses).
 	 \return If any, the action the windowing system should perform.

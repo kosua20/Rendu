@@ -59,7 +59,7 @@ void PaintingTool::draw() {
 	GPU::setCullState(true, Faces::BACK);
 
 	// Clear if needed.
-	Framebuffer::Load::Operation colorOp(glm::vec4(_bgColor, 1.0f));
+	Load colorOp(glm::vec4(_bgColor, 1.0f));
 	_canvas->bind(_shouldClear ? colorOp : Load::Operation::LOAD, Load::Operation::DONTCARE, Load::Operation::DONTCARE);
 	_canvas->setViewport();
 	_shouldClear = false;

@@ -1,9 +1,10 @@
 #include "StenciledApp.hpp"
 #include "graphics/GPU.hpp"
 #include "input/Input.hpp"
+#include "system/Window.hpp"
 
-StenciledApp::StenciledApp(RenderingConfig & config) :
-	CameraApp(config) {
+StenciledApp::StenciledApp(RenderingConfig & config, Window & window) :
+	CameraApp(config, window) {
 
 	const glm::vec2 renderRes = _config.renderingResolution();
 	_renderer.reset(new StenciledRenderer(renderRes));
@@ -52,12 +53,13 @@ void StenciledApp::setScene(const std::shared_ptr<Scene> & scene) {
 
 void StenciledApp::draw() {
 	if(!_scenes[_currentScene]) {
-		Swapchain::backbuffer()->bind(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 1.0f, Load::Operation::DONTCARE);
+		window().bind(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 1.0f, Load::Operation::DONTCARE);
 		return;
 	}
 	_renderer->draw(_userCamera, *_finalRender);
-	
-	GPU::blit(*_finalRender, *Swapchain::backbuffer(), Filter::LINEAR);
+
+	// \todo Crash when blitting? wrong size somewhere. can't blit resize to the backbuffer (we don't own the texture)
+	GPU::blitResize(*_finalRender->texture(0), window().color(), Filter::LINEAR);
 
 }
 

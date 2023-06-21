@@ -86,7 +86,7 @@ int main() {
 		}
 
 		// Update the content of the window.
-		game.draw();
+		game.draw(window);
 		
 	}
 

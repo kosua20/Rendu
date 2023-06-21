@@ -41,7 +41,7 @@ int main(int argc, char ** argv) {
 	Random::seed();
 
 	// Create the renderer.
-	PBRDemo app(config);
+	PBRDemo app(config, window);
 
 	// Start the display/interaction loop.
 	while(window.nextFrame()) {

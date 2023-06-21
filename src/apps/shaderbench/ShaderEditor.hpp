@@ -16,7 +16,7 @@ public:
 	/** Constructor.
 	 \param config the configuration to apply
 	 */
-	explicit ShaderEditor(RenderingConfig & config);
+	explicit ShaderEditor(RenderingConfig & config, Window & window);
 
 	/** \copydoc CameraApp::draw */
 	void draw() override;

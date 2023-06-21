@@ -13,7 +13,7 @@
 
 #include "AtmosphereApp.hpp"
 
-AtmosphereApp::AtmosphereApp(RenderingConfig & config) : CameraApp(config), _scattering("Scattering LUT") {
+AtmosphereApp::AtmosphereApp(RenderingConfig & config, Window & window) : CameraApp(config, window), _scattering("Scattering LUT") {
 	_userCamera.projection(config.screenResolution[0] / config.screenResolution[1], 1.34f, 0.1f, 100.0f);
 	// Framebuffer to store the rendered atmosphere result before tonemapping and upscaling to the window size.
 	const glm::vec2 renderRes = _config.renderingResolution();
@@ -65,8 +65,8 @@ void AtmosphereApp::draw() {
 	ScreenQuad::draw();
 
 	// Tonemapping and final screen.
-	GPU::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
-	Swapchain::backbuffer()->bind(Load::Operation::DONTCARE, Load::Operation::DONTCARE);
+	window().bind(Load::Operation::DONTCARE, Load::Operation::DONTCARE, Load::Operation::DONTCARE);
+	window().setViewport();
 	_tonemap->use();
 	_tonemap->uniform("customExposure", 1.0f);
 	_tonemap->uniform("apply", true);

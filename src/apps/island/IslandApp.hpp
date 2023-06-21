@@ -29,7 +29,7 @@ public:
 	/** Constructor
 	 \param config rendering config
 	 */
-	IslandApp(RenderingConfig & config);
+	IslandApp(RenderingConfig & config, Window & window);
 
 	/** \copydoc CameraApp::draw */
 	void draw() override;
