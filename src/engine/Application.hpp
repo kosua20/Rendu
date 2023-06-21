@@ -3,6 +3,8 @@
 #include "input/ControllableCamera.hpp"
 #include "renderers/DebugViewer.hpp"
 
+class Window;
+
 /**
  \brief Base structure of an application.
  \ingroup Engine
@@ -13,7 +15,7 @@ public:
 	/** Constructor.
 	 \param config the configuration to apply when setting up
 	 */
-	explicit Application(RenderingConfig & config);
+	explicit Application(RenderingConfig & config, Window & window);
 
 	/** Draw call. */
 	virtual void draw() = 0;
@@ -35,6 +37,9 @@ public:
 
 	/// \return the frame rate, smoothed over the last 30 frames.
 	double frameRate();
+
+	/// \return the application main window
+	Window & window();
 
 	/** Destructor */
 	virtual ~Application();
@@ -63,6 +68,8 @@ protected:
 
 private:
 
+	Window & _window;
+	
 	double _timer = 0.0; 		///< Absolute timer.
 	double _startTime = 0.0; 	///< TImer value at app start.
 	double _frameTime = 0.0; 	///< Last frame duration.
@@ -84,7 +91,7 @@ public:
 	/** Constructor.
 	 \param config the rendering configuration
 	 */
-	explicit CameraApp(RenderingConfig & config);
+	explicit CameraApp(RenderingConfig & config, Window & window);
 	
 	/** Per-frame update. */
 	virtual void update() override;

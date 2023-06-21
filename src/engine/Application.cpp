@@ -3,10 +3,11 @@
 #include "graphics/GPU.hpp"
 #include "graphics/Swapchain.hpp"
 #include "resources/ResourcesManager.hpp"
+#include "system/Window.hpp"
 #include "system/System.hpp"
 
-Application::Application(RenderingConfig & config) :
-	_config(config) {
+Application::Application(RenderingConfig & config, Window & window) :
+	_config(config), _window(window) {
 	_startTime = System::time();
 	_timer = _startTime;
 	for(uint fid = 0; fid < _frameTimes.size(); ++fid){
@@ -65,7 +66,7 @@ void Application::finish() {
 	// Perform screenshot capture in the current working directory.
 	if(Input::manager().triggered(Input::Key::O) || (Input::manager().controllerAvailable() && Input::manager().controller()->triggered(Controller::ButtonView))) {
 		const std::string filename = System::timestamp();
-		GPU::saveTexture(*Swapchain::backbuffer(), "./" + filename, Image::Save::IGNORE_ALPHA);
+		GPU::saveTexture(_window.color(), "./" + filename, Image::Save::IGNORE_ALPHA);
 	}
 
 	// Display debug informations.
@@ -86,7 +87,11 @@ double Application::frameRate(){
 	return double(_framesCount) / _smoothTime;
 }
 
-CameraApp::CameraApp(RenderingConfig & config) : Application(config) {
+Window & Application::window() {
+	return _window;
+}
+
+CameraApp::CameraApp(RenderingConfig & config, Window & window) : Application(config, window) {
 	_userCamera.ratio(config.screenResolution[0] / config.screenResolution[1]);
 }
 
