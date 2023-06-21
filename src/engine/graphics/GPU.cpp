@@ -623,8 +623,8 @@ void GPU::setupTexture(Texture & texture, const Layout & format, bool drawable) 
 			viewInfoMip.image = texture.gpu->image;
 			viewInfoMip.viewType = viewTypeSlice;
 			viewInfoMip.format = texture.gpu->format;
-			// Remove the stencil bit when reading from the texture via the view.
-			viewInfoMip.subresourceRange.aspectMask = texture.gpu->aspect;// \todo ?(texture.gpu->aspect & ~VK_IMAGE_ASPECT_STENCIL_BIT);
+			// This will mainly be used as an attachment, so don't remove the stencil aspect.
+			viewInfoMip.subresourceRange.aspectMask = texture.gpu->aspect;
 			viewInfoMip.subresourceRange.baseMipLevel = mid;
 			viewInfoMip.subresourceRange.levelCount = 1;
 			viewInfoMip.subresourceRange.baseArrayLayer = lid;

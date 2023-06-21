@@ -4,8 +4,6 @@
 
 #include <map>
 
-Texture* Swapchain::_backbufferStatic = nullptr;
-
 Swapchain::Swapchain(GPUContext & context, const RenderingConfig & config) : _depth("Shared depth") {
 	_imageIndex = 0;
 	_context = &context;
@@ -342,7 +340,6 @@ bool Swapchain::nextFrame(){
 	
 	_frameStarted = true;
 	_backbuffer = &_colors[_imageIndex];
-	_backbufferStatic = _backbuffer;
 
 	// Reset queries for the current frame (we need the command buffer to be active).
 	for(auto& alloc : _context->queryAllocators){

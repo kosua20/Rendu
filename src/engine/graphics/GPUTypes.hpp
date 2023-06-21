@@ -336,7 +336,7 @@ public:
 		 */
 		bool isEquivalent(const RenderPass& other) const;
 
-		std::array<Layout, 4> colors = {Layout::NONE, Layout::NONE, Layout::NONE, Layout::NONE}; ///< The color textures (could go up to 8) \todo Use GPUTexture?
+		std::array<Layout, 4> colors = {Layout::NONE, Layout::NONE, Layout::NONE, Layout::NONE}; ///< The color textures (could go up to 8)
 		Layout depthStencil			 = Layout::NONE; ///< The depth stencil texture if it exists.
 		uint mipStart = 0; ///< First mip to be used in the current render pass.
 		uint mipCount = 1; ///< Number of mips used in the current render pass.

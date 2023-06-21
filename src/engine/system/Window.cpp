@@ -198,8 +198,17 @@ bool Window::nextFrame() {
 	return !shouldClose;
 }
 
-void Window::bind(const Load::Operation& colorOp, const Load::Operation& depthOp, const Load::Operation& stencilOp){
+void Window::bind(const Load& colorOp, const Load& depthOp, const Load& stencilOp){
 	GPU::bindFramebuffer(0, 0, depthOp, stencilOp, colorOp, &_swapchain->depth(), &_swapchain->color(), nullptr, nullptr, nullptr);
+}
+
+void Window::setViewport(){
+	const Texture& tex = _swapchain->color();
+	GPU::setViewport(0, 0, tex.width, tex.height);
+}
+
+Texture& Window::color(){
+	return _swapchain->color();
 }
 
 Window::~Window() {

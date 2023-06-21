@@ -42,9 +42,20 @@ public:
 	 \note If the frame is invalid, the window should be cleaned and closed.
 	 */
 	bool nextFrame();
-
-	void bind(const Load::Operation& colorOp, const Load::Operation& depthOp, const Load::Operation& stencilOp);
 	
+	/** Bind the backbuffer attachments
+	 \param colorOp the operation for the color backbuffer
+	 \param depthOp the operation for the depth backbuffer (if it exists)
+	 \param stencilOp the operation for the stencil backbuffer (if it exists)
+	 */
+	void bind(const Load& colorOp, const Load& depthOp = Load::Operation::DONTCARE, const Load& stencilOp = Load::Operation::DONTCARE);
+
+	/** Set the viewport to the window dimensions */
+	void setViewport();
+
+	/// \return the backbuffer color texture
+	Texture& color();
+
 	/** Copy constructor.*/
 	Window(const Window &) = delete;
 	

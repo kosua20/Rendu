@@ -55,9 +55,6 @@ public:
 	 */
 	void getFormats(VkFormat& color, VkFormat& depth, VkFormat& stencil);
 
-	// Temporary
-	static Texture* backbuffer() { return _backbufferStatic; }
-
 private:
 
 	/** Setup the swapchain for a given size
@@ -80,7 +77,7 @@ private:
 	std::vector<Texture> _colors; ///< Backbuffers.
 	Texture _depth; ///< The shared depth texture.
 	Texture* _backbuffer = nullptr; ///< The current backbuffer.
-	static Texture* _backbufferStatic;
+
 	std::vector<VkSemaphore> _imagesAvailable; ///< Semaphores signaling when swapchain images are available for a new frame.
 	std::vector<VkSemaphore> _framesFinished; ///< Semaphores signaling when a frame has been completed.
 	std::vector<VkFence> _framesInFlight; ///< Fences ensuring that frames are properly ordered.

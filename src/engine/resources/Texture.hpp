@@ -44,7 +44,14 @@ public:
 	 */
 	glm::vec3 sampleCubemap(const glm::vec3 & dir) const;
 
-	/** \todo DOC
+	/** \todo
+	 \param texture
+	 \param format
+	 \param width
+	 \param height
+	 \param mips
+	 \param shape
+	 \param depth
 	 */
 	static void setupAsFramebuffer(Texture& texture, Layout format,uint width, uint height, uint mips, TextureShape shape, uint depth);
 	
