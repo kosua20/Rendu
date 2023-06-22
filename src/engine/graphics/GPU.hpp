@@ -331,9 +331,12 @@ public:
 	 */
 	static void blitDepth(const Texture & src, const Texture & dst);
 
-	static void blitDepth(const Framebuffer & src, const Framebuffer & dst){
-		blitDepth(*src.depthBuffer(), *dst.depthBuffer());
-	}
+	/** Blit the content of a texture into another one, resizing the content accordingly.
+	 \param src the source texture
+	 \param dst the destination texture
+	 \param filter the filtering to use for resizing
+	 */
+	static void blit(const Texture & src, const Texture & dst, Filter filter);
 
 	/** Blit the content of a texture into another one, resizing the content accordingly.
 	 \param src the source texture
@@ -343,10 +346,6 @@ public:
 	 \param filter the filtering to use for resizing
 	 */
 	static void blit(const Texture & src, const Texture & dst, size_t lSrc, size_t lDst, Filter filter);
-
-	static void blit(const Framebuffer & src, const Framebuffer & dst, size_t lSrc, size_t lDst, Filter filter){
-		GPU::blit(*src.texture(0), *dst.texture(0), lSrc, lDst, filter);
-	}
 
 	/** Blit the content of a texture into another one, resizing the content accordingly.
 	 \param src the source texture
@@ -358,22 +357,6 @@ public:
 	 \param filter the filtering to use for resizing
 	 */
 	static void blit(const Texture & src, const Texture & dst, size_t lSrc, size_t lDst, size_t mipSrc, size_t mipDst, Filter filter);
-
-
-	static void blit(const Framebuffer & src, const Framebuffer & dst, size_t lSrc, size_t lDst, size_t mipSrc, size_t mipDst, Filter filter){
-		blit(*src.texture(0), *dst.texture(0), lSrc, lDst, mipSrc, mipDst, filter);
-	}
-	
-	/** Blit the content of a texture into another one, resizing the content accordingly.
-	 \param src the source texture
-	 \param dst the destination texture
-	 \param filter the filtering to use for resizing
-	 */
-	static void blitResize(const Texture & src, Texture & dst, Filter filter);
-
-	static void blit(const Framebuffer & src, Framebuffer & dst, Filter filter){
-		blit(src, dst, 0, 0, 0, 0, filter);
-	}
 
 	/** \return the opaque internal GPU context. */
 	static GPUContext* getInternal();

@@ -1544,25 +1544,38 @@ void GPU::setColorState(bool writeRed, bool writeGreen, bool writeBlue, bool wri
 }
 
 void GPU::blitDepth(const Texture & src, const Texture & dst) {
+	blit(src, dst, Filter::NEAREST);
+}
+
+void GPU::blit(const Texture & src, const Texture & dst, Filter filter) {
 	GPU::unbindFramebufferIfNeeded();
-
 	VkCommandBuffer& commandBuffer = _context.getRenderCommandBuffer();
-
-	const uint layerCount = src.shape == TextureShape::D3 ? 1 : src.depth;
 
 	const glm::uvec2 srcSize(src.width, src.height);
 	const glm::uvec2 dstSize(dst.width, dst.height);
-	VkUtils::blitTexture(commandBuffer, src, dst, 0, 0, src.levels, 0, 0, layerCount, glm::uvec2(0), srcSize, glm::uvec2(0), dstSize, Filter::NEAREST);
+	const uint mipCount = src.levels;
+	const uint layerCount = src.shape == TextureShape::D3 ? 1 : src.depth;
+	assert(mipCount == dst.levels);
+	assert(layerCount == (dst.shape == TextureShape::D3 ? 1 : dst.depth));
 
-	++_metrics.blitCount;
+	VkUtils::blitTexture(commandBuffer, src, dst, 0, 0, mipCount, 0, 0, layerCount, glm::uvec2(0), srcSize, glm::uvec2(0), dstSize, filter);
+	_metrics.blitCount += 1;
 }
 
 void GPU::blit(const Texture & src, const Texture & dst, size_t lSrc, size_t lDst, Filter filter) {
-	GPU::blit(src, dst, lSrc, lDst, 0, 0, filter);
+	GPU::unbindFramebufferIfNeeded();
+	VkCommandBuffer& commandBuffer = _context.getRenderCommandBuffer();
+
+	const glm::uvec2 srcSize(src.width, src.height);
+	const glm::uvec2 dstSize(dst.width, dst.height);
+	const uint mipCount = src.levels;
+	assert(mipCount == dst.levels);
+
+	VkUtils::blitTexture(commandBuffer, src, dst, 0, 0, mipCount, uint(lSrc), uint(lDst), 1, glm::uvec2(0), srcSize, glm::uvec2(0), dstSize, filter);
+	_metrics.blitCount += 1;
 }
 
 void GPU::blit(const Texture & src, const Texture & dst, size_t lSrc, size_t lDst, size_t mipSrc, size_t mipDst, Filter filter) {
-
 	GPU::unbindFramebufferIfNeeded();
 	VkCommandBuffer& commandBuffer = _context.getRenderCommandBuffer();
 
@@ -1571,30 +1584,6 @@ void GPU::blit(const Texture & src, const Texture & dst, size_t lSrc, size_t lDs
 
 	VkUtils::blitTexture(commandBuffer, src, dst, uint(mipSrc), uint(mipDst), 1, uint(lSrc), uint(lDst), 1, glm::uvec2(0), srcSize, glm::uvec2(0), dstSize, filter);
 	_metrics.blitCount += 1;
-}
-
-void GPU::blitResize(const Texture & src, Texture & dst, Filter filter) {
-
-	// Prepare the destination.
-	dst.width  = src.width;
-	dst.height = src.height;
-	dst.depth  = src.depth;
-	dst.levels = src.levels;
-	dst.shape  = src.shape;
-
-	if(!src.images.empty()) {
-		Log::Warning() << Log::GPU << "CPU data won't be copied." << std::endl;
-	}
-	GPU::unbindFramebufferIfNeeded();
-
-	GPU::setupTexture(dst, src.gpu->typedFormat, false);
-
-	const uint layerCount = src.shape == TextureShape::D3 ? 1 : src.depth;
-	const glm::uvec2 srcSize(src.width, src.height);
-	const glm::uvec2 dstSize(dst.width, dst.height);
-
-	VkUtils::blitTexture(_context.getRenderCommandBuffer(), src, dst, 0, 0, src.levels, 0, 0, layerCount, glm::uvec2(0), srcSize, glm::uvec2(0), dstSize, filter);
-	++_metrics.blitCount;
 }
 
 void GPU::unbindFramebufferIfNeeded(){
