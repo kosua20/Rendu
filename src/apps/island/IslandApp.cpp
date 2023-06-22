@@ -262,7 +262,7 @@ void IslandApp::draw() {
 
 		if(isUnderwater){
 			// Blit color as-is if underwater (blur will happen later)
-			GPU::blit(*_sceneBuffer, *_waterEffectsHalf, Filter::LINEAR);
+			GPU::blit(*_sceneBuffer->texture(0), *_waterEffectsHalf->texture(0), Filter::LINEAR);
 		} else {
 			// Else copy, downscale, apply caustics and blur.
 			GPU::setDepthState(false);

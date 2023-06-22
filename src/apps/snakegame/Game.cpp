@@ -114,7 +114,6 @@ void Game::draw(Window& window) {
 		
 	}
 
-	// \todo Issue on the settings screen causing minimization
 	// Make sure we are rendering directly in the window.
 	window.bind(Load::Operation::LOAD, 1.0f);
 	const float renderRatio = float(_gameFramebuffer->height()) / float(_gameFramebuffer->width());

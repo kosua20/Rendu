@@ -58,8 +58,7 @@ void StenciledApp::draw() {
 	}
 	_renderer->draw(_userCamera, *_finalRender);
 
-	// \todo Crash when blitting? wrong size somewhere. can't blit resize to the backbuffer (we don't own the texture)
-	GPU::blitResize(*_finalRender->texture(0), window().color(), Filter::LINEAR);
+	GPU::blit(*_finalRender->texture(0), window().color(), Filter::LINEAR);
 
 }
 

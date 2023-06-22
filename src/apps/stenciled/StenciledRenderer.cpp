@@ -87,7 +87,7 @@ void StenciledRenderer::draw(const Camera & camera, Framebuffer & framebuffer, u
 	DebugViewer::trackStateDefault("Off stencil");
 
 	// Output result.
-	GPU::blit(*_sceneFramebuffer, framebuffer, 0, layer, Filter::LINEAR);
+	GPU::blit(*_sceneFramebuffer->texture(0), *framebuffer.texture(0), 0, layer, Filter::LINEAR);
 }
 
 void StenciledRenderer::resize(uint width, uint height) {

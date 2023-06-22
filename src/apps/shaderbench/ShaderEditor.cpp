@@ -393,7 +393,7 @@ void ShaderEditor::update() {
 				TextUtilities::splitExtension(outPath);
 				// Create a RGB8 framebuffer to save as png.
 				Framebuffer tmp(_currFrame->width(), _currFrame->height(), Layout::RGBA8, "Temp");
-				GPU::blit(*_currFrame, tmp, Filter::NEAREST);
+				GPU::blit(*_currFrame->texture(0), *tmp.texture(0), Filter::NEAREST);
 				GPU::saveTexture(*tmp.texture(0), outPath, Image::Save::IGNORE_ALPHA);
 			}
 		}

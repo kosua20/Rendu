@@ -81,7 +81,7 @@ void PaintingTool::draw() {
 	}
 
 	// Copy the canvas to the visualisation framebuffer.
-	GPU::blit(*_canvas, *_visu, Filter::NEAREST);
+	GPU::blit(*_canvas->texture(0), *_visu->texture(0), Filter::NEAREST);
 
 	// Draw the brush outline.
 	_visu->bind(Load::Operation::LOAD);
@@ -157,7 +157,7 @@ void PaintingTool::resize(unsigned int width, unsigned int height) const {
 	const unsigned int h = _canvas->height();
 	Framebuffer tempCanvas(w, h, Layout::RGBA8, "Canvas copy");
 
-	GPU::blit(*_canvas, tempCanvas, Filter::NEAREST);
+	GPU::blit(*_canvas->texture(0), *tempCanvas.texture(0), Filter::NEAREST);
 
 	// We can then resize the canvas.
 	_canvas->resize(width, height);
@@ -165,7 +165,7 @@ void PaintingTool::resize(unsigned int width, unsigned int height) const {
 	_canvas->clear(glm::vec4(_bgColor, 1.0f), 1.0f);
 	
 	// Copy back the drawing.
-	GPU::blit(tempCanvas, *_canvas, Filter::NEAREST);
+	GPU::blit(*tempCanvas.texture(0), *_canvas->texture(0), Filter::NEAREST);
 	
 	// The content of the visualisation buffer will be cleaned at the next frame canvas copy.
 	_visu->resize(width, height);

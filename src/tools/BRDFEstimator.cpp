@@ -125,7 +125,15 @@ void computeCubemapConvolution(const Texture & cubemapInfos, int levelsCount, in
 		// Thus we perform a copy to our final texture.
 		cubeLevels.emplace_back("cube" + std::to_string(level));
 		Texture & levelInfos = cubeLevels.back();
-		GPU::blitResize(*resultFramebuffer.texture(), levelInfos, Filter::NEAREST);
+		const Texture& src = *resultFramebuffer.texture();
+		// Prepare the destination.
+		levelInfos.width  = src.width;
+		levelInfos.height = src.height;
+		levelInfos.depth  = src.depth;
+		levelInfos.levels = src.levels;
+		levelInfos.shape  = src.shape;
+		GPU::setupTexture(levelInfos, Layout::RGBA32F, false);
+		GPU::blit(src, levelInfos, Filter::NEAREST);
 		
 		Log::Info() << std::endl;
 	}
