@@ -110,7 +110,9 @@ void PaintingTool::update() {
 		glm::vec2 mousePositionGL = glm::floor(glm::vec2(pos.x * float(w), pos.y * float(h)));
 		mousePositionGL			  = glm::clamp(mousePositionGL, glm::vec2(0.0f), glm::vec2(w, h));
 		// Read back from the framebuffer.
-		_fgColor = _canvas->read(glm::ivec2(mousePositionGL));
+		_readbackTask = GPU::downloadTextureAsync( *_canvas->texture(), mousePositionGL, glm::uvec2(2), 1, [this](const Texture& result){
+			_fgColor = result.images[0].rgba(0, 0);
+		});
 	}
 
 	// If left-pressing, draw to the canvas.
@@ -174,4 +176,6 @@ PaintingTool::~PaintingTool(){
 	for(Mesh& brush : _brushes){
 		brush.clean();
 	}
+
+	GPU::cancelAsyncOperation(_readbackTask);
 }

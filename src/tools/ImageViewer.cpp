@@ -58,6 +58,7 @@ int main(int argc, char ** argv) {
 	glm::vec2 mouseShift = glm::vec2(0.0f, 0.0f);
 	glm::vec2 mousePrev  = glm::vec2(0.0f, 0.0f);
 	glm::vec3 fgColor(0.6f);
+	GPUAsyncTask readbackTask = 0;
 
 	// Start the display/interaction loop.
 	while(window.nextFrame()) {
@@ -129,8 +130,10 @@ int main(int argc, char ** argv) {
 				const uint h = window.color().height;
 				glm::vec2 mousePosition = glm::floor(glm::vec2(pos.x * float(w), pos.y * float(h)));
 				mousePosition		  = glm::clamp(mousePosition, glm::vec2(0.0f), glm::vec2(w, h));
-				// \todo read from texture instead.
-				//fgColor = Swapchain::backbuffer()->read(glm::uvec2(mousePosition));
+
+				readbackTask = GPU::downloadTextureAsync( window.color(), mousePosition, glm::uvec2(2), 1, [&fgColor](const Texture& result){
+					fgColor = result.images[0].rgba(0, 0);
+				});
 			}
 		}
 
@@ -284,5 +287,7 @@ int main(int argc, char ** argv) {
 		ImGui::End();
 
 	}
+
+	GPU::cancelAsyncOperation(readbackTask);
 	return 0;
 }

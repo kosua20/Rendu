@@ -87,12 +87,6 @@ public:
 	 */
 	void clear(const glm::vec4 & color, float depth);
 
-	/** Read back the value at a given pixel in the first layer and first level of the first color attachment.
-	 \param pos the position in pixels
-	 \return a float RGBA color.
-	 */
-	glm::vec4 read(const glm::uvec2 & pos);
-
 	/**
 	 Query the 2D texture backing one of the color attachments.
 	 \param i the color attachment index (or 0 by default)
@@ -190,7 +184,6 @@ private:
 	Texture _depth = Texture("Depth"); ///< The depth texture.
 
 	glm::vec4 _readColor = glm::vec4(0.0f); ///< Buffered read-back pixel color.
-	GPUAsyncTask _readTask = 0; ///< Read-back async task.
 
 	std::string _name; ///< Framebuffer debug name.
 	TextureShape _shape = TextureShape::D2;	///< The texture shape.

@@ -72,4 +72,6 @@ private:
 	Shape _shape	   = Shape::CIRCLE;   ///< Current brush shape.
 	bool _shouldClear   = true;			  ///< Clear the canvas at the next frame.
 	bool _shouldDraw   = false;			  ///< Apply the brush to the canvas at the next frame.
+
+	GPUAsyncTask _readbackTask = 0;		  ///< Handle for color picker task.
 };
