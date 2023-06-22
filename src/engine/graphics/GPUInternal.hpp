@@ -154,9 +154,10 @@ namespace VkUtils {
 
 	/** Query the instance extensions required by the system (swapchain, debug layers,...)
 	 * \param enableValidationLayers should validation layer extensions be included 
+	 * \param enablePortability should portability extension be included 
 	 * \return a list of extension names
 	 */
-	std::vector<const char*> getRequiredInstanceExtensions(const bool enableValidationLayers);
+	std::vector<const char *> getRequiredInstanceExtensions(bool enableValidationLayers, bool enablePortability);
 
 	/** Check if the Vulkan device supports some extensions and/or portability.
 	 * \param device the physical device handle

@@ -52,6 +52,10 @@ bool GPU::setup(const std::string & appName) {
 	// Only enable if the layers are supported.
 	debugEnabled = VkUtils::checkLayersSupport(validationLayers) && VkUtils::checkExtensionsSupport({ VK_EXT_DEBUG_UTILS_EXTENSION_NAME });
 #endif
+	bool wantsPortability = false;
+#if defined(__APPLE__) || defined(FORCE_PORTABILITY)
+	wantsPortability = true;
+#endif
 
 	VkApplicationInfo appInfo = {};
 	appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
@@ -64,9 +68,9 @@ bool GPU::setup(const std::string & appName) {
 	VkInstanceCreateInfo instanceInfo = {};
 	instanceInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 	instanceInfo.pApplicationInfo = &appInfo;
-
+	
 	// We have to tell Vulkan the extensions we need.
-	const std::vector<const char*> extensions = VkUtils::getRequiredInstanceExtensions(debugEnabled);
+	const std::vector<const char *> extensions = VkUtils::getRequiredInstanceExtensions(debugEnabled, wantsPortability);
 	if(!VkUtils::checkExtensionsSupport(extensions)){
 		Log::Error() << Log::GPU << "Unsupported extensions." << std::endl;
 		return false;
@@ -74,7 +78,9 @@ bool GPU::setup(const std::string & appName) {
 	instanceInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
 	instanceInfo.ppEnabledExtensionNames = extensions.data();
 	// Allow portability drivers enumeration to support MoltenVK.
-	instanceInfo.flags = VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
+	if(wantsPortability) {
+		instanceInfo.flags = VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
+	}
 
 	// Validation layers.
 	instanceInfo.enabledLayerCount = 0;

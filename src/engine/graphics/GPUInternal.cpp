@@ -42,19 +42,22 @@ bool VkUtils::checkExtensionsSupport(const std::vector<const char*> & requestedE
 			}
 		}
 		if(!extensionFound){
+			Log::Error() << Log::GPU << "Could not find instance extension " << extensionName << std::endl;
 			return false;
 		}
 	}
 	return true;
 }
 
-std::vector<const char*> VkUtils::getRequiredInstanceExtensions(const bool enableValidationLayers){
+std::vector<const char*> VkUtils::getRequiredInstanceExtensions(bool enableValidationLayers, bool enablePortability){
 	// Default Vulkan has no notion of surface/window. GLFW provide an implementation of the corresponding KHR extensions.
 	uint32_t glfwExtensionCount = 0;
 	const char** glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
 	std::vector<const char*> extensions(glfwExtensions, glfwExtensions + glfwExtensionCount);
 	// MoltenVK is a non conforming driver, we need to enable enumeration of portability drivers.
-	extensions.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
+	if(enablePortability){
+		extensions.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
+	}
 	// If the validation layers are enabled, add associated extensions.
 	if(enableValidationLayers) {
 		extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
@@ -87,7 +90,8 @@ bool VkUtils::checkDeviceExtensionsSupport(VkPhysicalDevice device, const std::v
 				break;
 			}
 		}
-		if(!extensionFound){
+		if(!extensionFound) {
+			Log::Error() << Log::GPU << "Could not find device extension " << extensionName << std::endl;
 			return false;
 		}
 	}
