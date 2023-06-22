@@ -28,6 +28,7 @@ _config(config), _allowEscape(escapeQuit) {
 	glfwWindowHint(GLFW_VISIBLE, hidden ? GLFW_FALSE : GLFW_TRUE);
 	glfwWindowHint(GLFW_FOCUSED, hidden ? GLFW_FALSE : GLFW_TRUE);
 	glfwWindowHint(GLFW_SRGB_CAPABLE, GLFW_TRUE);
+	glfwWindowHint(GLFW_AUTO_ICONIFY, GL_FALSE); // Avoid random minification in fullscreen on macOS.
 
 	if(config.fullscreen) {
 		const GLFWvidmode * mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
