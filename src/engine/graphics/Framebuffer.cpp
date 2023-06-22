@@ -41,13 +41,13 @@ Framebuffer::Framebuffer(TextureShape shape, uint width, uint height, uint depth
 
 		if(isDepthComp || hasStencil) {
 			_hasDepth	  = true;
-			Texture::setupAsFramebuffer(_depth, format, _width, _height, _mips, shape, depth);
+			Texture::setupAsDrawable(_depth, format, _width, _height, _mips, shape, depth);
 
 
 		} else {
 			_colors.emplace_back("Color " + std::to_string(cid++) + " ## " + _name);
 			Texture & tex = _colors.back();
-			Texture::setupAsFramebuffer(tex, format, _width, _height, _mips, shape, depth);
+			Texture::setupAsDrawable(tex, format, _width, _height, _mips, shape, depth);
 		}
 	}
 	DebugViewer::trackDefault(this);
@@ -102,19 +102,6 @@ void Framebuffer::clear(const glm::vec4 & color, float depth){
 
 }
 
-glm::vec4 Framebuffer::read(const glm::uvec2 & pos) {
-	if(_colors.empty()){
-		return _readColor;
-	}
-
-	_readTask = GPU::downloadTextureAsync( _colors[0], pos, glm::uvec2(2), 1, [this](const Texture& result){
-		_readColor = result.images[0].rgba(0, 0);
-	});
-
-	// Return the value from the previous frame.
-	return _readColor;
-}
-
 const Layout & Framebuffer::format(unsigned int i) const {
    return _colors[i].gpu->typedFormat;
 }
@@ -125,7 +112,6 @@ uint Framebuffer::attachments() const {
 
 
 Framebuffer::~Framebuffer() {
-	GPU::cancelAsyncOperation(_readTask);
 	DebugViewer::untrackDefault(this);
 }
 

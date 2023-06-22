@@ -44,16 +44,16 @@ public:
 	 */
 	glm::vec3 sampleCubemap(const glm::vec3 & dir) const;
 
-	/** \todo
-	 \param texture
-	 \param format
-	 \param width
-	 \param height
-	 \param mips
-	 \param shape
-	 \param depth
+	/** Configure and allocate a texture to be used as a rendering attachment.
+	 \param texture the texture to populate
+	 \param format the pixel format to use
+	 \param width the texture width
+	 \param height the texture height
+	 \param mips the number of mips
+	 \param shape the shape of the texture
+	 \param depth the number of layers for array and 3D textures
 	 */
-	static void setupAsFramebuffer(Texture& texture, Layout format,uint width, uint height, uint mips, TextureShape shape, uint depth);
+	static void setupAsDrawable(Texture& texture, Layout format,uint width, uint height, uint mips = 1, TextureShape shape = TextureShape::D2, uint depth = 1);
 	
 	/** Get the resource name.
 		\return the name.

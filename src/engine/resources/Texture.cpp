@@ -95,7 +95,7 @@ Texture::~Texture(){
 	clean();
 }
 
-void Texture::setupAsFramebuffer(Texture& texture, Layout format,uint width, uint height, uint mips, TextureShape shape, uint depth){
+void Texture::setupAsDrawable(Texture& texture, Layout format,uint width, uint height, uint mips, TextureShape shape, uint depth){
 
 	// Check that the shape is supported.
 	if(shape != TextureShape::D2 && shape != TextureShape::Array2D && shape != TextureShape::Cube && shape != TextureShape::ArrayCube){
