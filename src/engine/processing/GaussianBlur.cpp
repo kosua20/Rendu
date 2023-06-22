@@ -58,7 +58,7 @@ void GaussianBlur::process(const Texture * texture, Framebuffer & framebuffer) {
 		ScreenQuad::draw();
 	}
 	// Copy from the last framebuffer used to the destination.
-	GPU::blit(*_frameBuffers[0], framebuffer, Filter::LINEAR);
+	GPU::blit(*_frameBuffers[0]->texture(0), *framebuffer.texture(0), Filter::LINEAR);
 }
 
 void GaussianBlur::resize(unsigned int width, unsigned int height) {

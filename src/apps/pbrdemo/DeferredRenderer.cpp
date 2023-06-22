@@ -358,7 +358,7 @@ void DeferredRenderer::draw(const Camera & camera, Framebuffer & framebuffer, ui
 	}
 
 	// Copy depth.
-	GPU::blitDepth(*_gbuffer, *_lightBuffer);
+	GPU::blitDepth(*_gbuffer->depthBuffer(), *_lightBuffer->depthBuffer());
 
 	// Main lighting accumulation.
 	_lightBuffer->bind(Load::Operation::DONTCARE, Load::Operation::LOAD);
@@ -400,7 +400,7 @@ void DeferredRenderer::draw(const Camera & camera, Framebuffer & framebuffer, ui
 	}
 
 	// Copy to the final framebuffer.
-	GPU::blit(*_lightBuffer, framebuffer, 0, layer, Filter::NEAREST);
+	GPU::blit(*_lightBuffer->texture(0), *framebuffer.texture(0), 0, layer, 0, 0, Filter::NEAREST);
 
 }
 

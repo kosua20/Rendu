@@ -37,7 +37,7 @@ void BoxBlur::process(const Texture * texture, Framebuffer & framebuffer) {
 		_intermediate->bind(Load::Operation::DONTCARE);
 		_blur2D->texture(texture, 0);
 		ScreenQuad::draw();
-		GPU::blit(*_intermediate, framebuffer, Filter::NEAREST);
+		GPU::blit(*_intermediate->texture(0), *framebuffer.texture(0), Filter::NEAREST);
 
 	} else if(tgtShape == TextureShape::Array2D){
 		_blurArray->use();
@@ -46,7 +46,7 @@ void BoxBlur::process(const Texture * texture, Framebuffer & framebuffer) {
 			_blurArray->uniform("layer", int(lid));
 			_blurArray->texture(texture, 0);
 			ScreenQuad::draw();
-			GPU::blit(*_intermediate, framebuffer, 0, lid, Filter::NEAREST);
+			GPU::blit(*_intermediate->texture(0), *framebuffer.texture(0), 0, lid, Filter::NEAREST);
 		}
 	} else if(tgtShape == TextureShape::Cube){
 		_blurCube->use();
@@ -58,7 +58,7 @@ void BoxBlur::process(const Texture * texture, Framebuffer & framebuffer) {
 			_blurCube->uniform("center", Library::boxCenters[fid]);
 			_blurCube->texture(texture, 0);
 			ScreenQuad::draw();
-			GPU::blit(*_intermediate, framebuffer, 0, fid, Filter::NEAREST);
+			GPU::blit(*_intermediate->texture(0), *framebuffer.texture(0), 0, fid, Filter::NEAREST);
 		}
 	} else if(tgtShape == TextureShape::ArrayCube){
 		_blurCubeArray->use();
@@ -72,7 +72,7 @@ void BoxBlur::process(const Texture * texture, Framebuffer & framebuffer) {
 			_blurCubeArray->uniform("center", Library::boxCenters[fid]);
 			_blurCubeArray->texture(texture, 0);
 			ScreenQuad::draw();
-			GPU::blit(*_intermediate, framebuffer, 0, lid, Filter::NEAREST);
+			GPU::blit(*_intermediate->texture(0), *framebuffer.texture(0), 0, lid, Filter::NEAREST);
 		}
 	} else {
 		Log::Error() << "Unsupported shape." << std::endl;

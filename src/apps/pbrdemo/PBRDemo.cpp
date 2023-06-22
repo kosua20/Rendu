@@ -143,7 +143,7 @@ void PBRDemo::draw() {
 	_postprocessTime.end();
 
 	if(_showDebug){
-		GPU::blitDepth(*depthSrc, *_finalRender);
+		GPU::blitDepth(*depthSrc->depthBuffer(), *_finalRender->depthBuffer());
 		_debugRenderer->draw(_userCamera, *_finalRender);
 	}
 

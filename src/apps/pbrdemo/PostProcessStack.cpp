@@ -114,7 +114,7 @@ void PostProcessStack::process(const Texture * texture, const glm::mat4 & proj, 
 		_fxaaProgram->texture(_toneMapBuffer->texture(), 0);
 		ScreenQuad::draw();
 	} else {
-		GPU::blit(*_toneMapBuffer, framebuffer, 0, layer, Filter::LINEAR);
+		GPU::blit(*_toneMapBuffer->texture(0), *framebuffer.texture(0), 0, layer, Filter::LINEAR);
 	}
 
 }

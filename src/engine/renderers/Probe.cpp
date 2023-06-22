@@ -94,7 +94,7 @@ void Probe::convolveRadiance(float clamp, uint level) {
 void Probe::estimateIrradiance(float clamp) {
 	// Downscale radiance to a smaller texture.
 	for(uint lid = 0; lid < 6; ++lid) {
-		GPU::blit(*_framebuffer, *_copy, lid, lid, 0, 0, Filter::LINEAR);
+		GPU::blit(*_framebuffer->texture(0), *_copy->texture(0), lid, lid, 0, 0, Filter::LINEAR);
 	}
 	// Dispatch pr-face coefficients accumulation and reduction/SH projection.
 	_irradianceCompute->use();

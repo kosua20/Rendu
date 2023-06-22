@@ -81,9 +81,9 @@ void SSAO::process(const glm::mat4 & projection, const Texture * depthTex, const
 	} else if(_quality == Quality::MEDIUM){
 		// Render at potentially low res.
 		_mediumBlur.process(_ssaoFramebuffer->texture(), *_ssaoFramebuffer);
-		GPU::blit(*_ssaoFramebuffer, *_finalFramebuffer, Filter::LINEAR);
+		GPU::blit(*_ssaoFramebuffer->texture(0), *_finalFramebuffer->texture(0), Filter::LINEAR);
 	} else {
-		GPU::blit(*_ssaoFramebuffer, *_finalFramebuffer, Filter::LINEAR);
+		GPU::blit(*_ssaoFramebuffer->texture(0), *_finalFramebuffer->texture(0), Filter::LINEAR);
 	}
 }
 
