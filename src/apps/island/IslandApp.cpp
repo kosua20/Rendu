@@ -258,7 +258,7 @@ void IslandApp::draw() {
 
 		// Start by copying the visible terrain info.
 		// Blit full res position map.
-		GPU::blit(*_sceneBuffer, *_waterPos, Filter::NEAREST);
+		GPU::blit(*_sceneBuffer->texture(1), *_waterPos->texture(0), 0, 0, Filter::NEAREST);
 
 		if(isUnderwater){
 			// Blit color as-is if underwater (blur will happen later)
@@ -345,9 +345,8 @@ void IslandApp::draw() {
 			ScreenQuad::draw();
 
 			_blur.process(_waterEffectsHalf->texture(0), *_waterEffectsBlur);
-			// \todo Issue with under water rendering
 			// Blit full res position map.
-			GPU::blit(*_sceneBuffer, *_waterPos, Filter::NEAREST);
+			GPU::blit(*_sceneBuffer->texture(1), *_waterPos->texture(0), 0, 0, Filter::NEAREST);
 
 			// Render full screen effect.
 			_sceneBuffer->bind(Load::Operation::LOAD);
