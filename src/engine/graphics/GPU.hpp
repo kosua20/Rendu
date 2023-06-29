@@ -5,13 +5,11 @@
 #include "resources/Buffer.hpp"
 #include "graphics/GPUTypes.hpp"
 #include "graphics/Program.hpp"
-#include "graphics/Framebuffer.hpp"
 #include "Common.hpp"
 
 #include <functional>
 
 // Forward declarations.
-class ScreenQuad;
 class Window;
 struct GPUContext;
 
@@ -25,7 +23,7 @@ class GPU {
 	friend class GPUBuffer; ///< Access to deletion notifier for cached state update.
 	friend class GPUMesh; ///< Access to deletion notifier for cached state update.
 	friend class Program; ///< Access to metrics.
-	friend class Swapchain; ///< Access to framebuffer cleanup.
+	friend class Swapchain; ///< Access to command buffers.
 	friend class PipelineCache; ///< Access to metrics.
 
 public:
@@ -93,9 +91,29 @@ public:
 	 */
 	static void bindProgram(const Program & program);
 
-	/** Bind textures as a draw destination.
+	/*
+	 \param layer the texture layer to bind
+	 \param mip the mip level to bind
+	 \param colorOp the operation to perform on the color attachments
+	 \param depthOp the operation to perform on the depth attachment
+	 \param stencilOp the operation to perform on the stencil attachment
+	 \param depthStencil the depth/stencil attachment
+	 \param color0 the first color attachment
+	 \param color1 the second color attachment
+	 \param color2 the third color attachment
+	 \param color3 the fourth color attachment
 	 */
-	static void bindFramebuffer(uint layer, uint mip, const Load& depthOp, const Load& stencilOp, const Load& colorOp, const Texture* depthStencil, const Texture* color0, const Texture* color1, const Texture* color2, const Texture* color3);
+	static void bind(const Load& colorOp, const Load& depthOp, const Load& stencilOp, const Texture* depthStencil, const Texture* color0 = nullptr, const Texture* color1 = nullptr, const Texture* color2 = nullptr, const Texture* color3 = nullptr);
+
+	static void bind(const Load& colorOp, const Texture* color0, const Texture* color1 = nullptr, const Texture* color2 = nullptr, const Texture* color3 = nullptr);
+
+	static void bind(const Load& depthOp, const Load& stencilOp, const Texture* depthStencil);
+
+	static void bind(uint layer, uint mip, const Load& colorOp, const Load& depthOp, const Load& stencilOp, const Texture* depthStencil, const Texture* color0 = nullptr, const Texture* color1 = nullptr, const Texture* color2 = nullptr, const Texture* color3 = nullptr);
+
+	static void bind(uint layer, uint mip, const Load& colorOp, const Texture* color0, const Texture* color1 = nullptr, const Texture* color2 = nullptr, const Texture* color3 = nullptr);
+
+	static void bind(uint layer, uint mip, const Load& depthOp, const Load& stencilOp, const Texture* depthStencil);
 
 	/** Save a given texture content to the disk.
 	 \param texture the texture to save
@@ -108,10 +126,8 @@ public:
 
 	/** Create a GPU texture with a given layout and allocate it.
 	 \param texture the texture to setup on the GPU
-	 \param format format information
-	 \param drawable will the texture be used as an attachment
 	 */
-	static void setupTexture(Texture & texture, const Layout & format, bool drawable);
+	static void setupTexture(Texture & texture);
 
 	/** Upload a texture images data to the GPU.
 	 \param texture the texture to upload
@@ -210,7 +226,23 @@ public:
 	 */
 	static void drawTesselatedMesh(const Mesh & mesh, uint patchSize);
 
-	/** Draw a fullscreen quad.*/
+	/** Helper used to draw a fullscreen quad for texture processing.
+	 \details Instead of story two-triangles geometry, it uses a single triangle covering the whole screen. For instance:
+	 \verbatim
+	  2: (-1,3),(0,2)
+		  *
+		  | \
+		  |   \
+		  |     \
+		  |       \
+		  |         \
+		  *-----------*  1: (3,-1), (2,0)
+	  0: (-1,-1), (0,0)
+	  \endverbatim
+
+	  \see GPU::Vert::Passthrough
+	  \see GPU::Frag::Passthrough, GPU::Frag::Passthrough_pixelperfect
+	*/
 	static void drawQuad();
 
 	/** Run a compute program by spawning computation threads.
@@ -249,6 +281,11 @@ public:
 	 \param h height
 	 */
 	static void setViewport(int x, int y, int w, int h);
+
+	/** Set the current viewport based on a texture dimensions.
+	 \param tex the texture to use the dimensions
+	 */
+	static void setViewport(const Texture& tex);
 
 	/** Enable or disable the depth test.
 	 \param test should depth test be performed
@@ -365,6 +402,20 @@ public:
 	static void cleanup();
 
 private:
+
+	/** Bind textures as a draw destination.
+	  \param layer the texture layer to bind
+	  \param mip the mip level to bind
+	  \param colorOp the operation to perform on the color attachments
+	  \param depthOp the operation to perform on the depth attachment
+	  \param stencilOp the operation to perform on the stencil attachment
+	  \param depthStencil the depth/stencil attachment
+	  \param color0 the first color attachment
+	  \param color1 the second color attachment
+	  \param color2 the third color attachment
+	  \param color3 the fourth color attachment
+	  */
+	static void bindAttachments(uint layer, uint mip, const Load& colorOp, const Load& depthOp, const Load& stencilOp, const Texture* depthStencil, const Texture* color0, const Texture* color1, const Texture* color2, const Texture* color3);
 	
 	/** If the GPU graphics state has changed, retrieve and bind the pipeline corresponding to the new state. */
 	static void bindGraphicsPipelineIfNeeded();
@@ -373,7 +424,7 @@ private:
 	static void bindComputePipelineIfNeeded();
 
 	/** End the current render pass if one is started. */
-	static void unbindFramebufferIfNeeded();
+	static void endRenderingIfNeeded();
 
 	/** Begin render and upload command buffers for this frame */
 	static void beginFrameCommandBuffers();

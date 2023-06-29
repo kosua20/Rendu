@@ -1,6 +1,5 @@
 #include "graphics/GPU.hpp"
 #include "graphics/ShaderCompiler.hpp"
-#include "graphics/Framebuffer.hpp"
 #include "graphics/Swapchain.hpp"
 #include "graphics/SamplerLibrary.hpp"
 #include "resources/Texture.hpp"
@@ -378,9 +377,34 @@ void GPU::bindProgram(const Program & program){
 	}
 }
 
-void GPU::bindFramebuffer(uint layer, uint mip, const Load& depthOp, const Load& stencilOp, const Load& colorOp, const Texture* depthStencil, const Texture* color0, const Texture* color1, const Texture* color2, const Texture* color3){
+void GPU::bind(const Load& colorOp, const Load& depthOp, const Load& stencilOp, const Texture* depthStencil, const Texture* color0, const Texture* color1, const Texture* color2, const Texture* color3){
+	GPU::bindAttachments(0, 0, colorOp, depthOp, stencilOp, depthStencil, color0, color1, color2, color3);
+}
 
-	GPU::unbindFramebufferIfNeeded();
+void GPU::bind(const Load& colorOp, const Texture* color0, const Texture* color1, const Texture* color2, const Texture* color3){
+	GPU::bindAttachments(0, 0, colorOp, Load::Operation::DONTCARE, Load::Operation::DONTCARE, nullptr, color0, color1, color2, color3);
+}
+
+void GPU::bind(const Load& depthOp, const Load& stencilOp, const Texture* depthStencil){
+	GPU::bindAttachments(0, 0, Load::Operation::DONTCARE, depthOp, stencilOp, depthStencil, nullptr, nullptr, nullptr, nullptr);
+}
+
+void GPU::bind(uint layer, uint mip, const Load& colorOp, const Load& depthOp, const Load& stencilOp, const Texture* depthStencil, const Texture* color0, const Texture* color1, const Texture* color2, const Texture* color3){
+	GPU::bindAttachments(layer, mip, colorOp, depthOp, stencilOp, depthStencil, color0, color1, color2, color3);
+}
+
+void GPU::bind(uint layer, uint mip, const Load& colorOp, const Texture* color0, const Texture* color1, const Texture* color2, const Texture* color3){
+	GPU::bindAttachments(layer, mip, colorOp, Load::Operation::DONTCARE, Load::Operation::DONTCARE, nullptr, color0, color1, color2, color3);
+	
+}
+
+void GPU::bind(uint layer, uint mip, const Load& depthOp, const Load& stencilOp, const Texture* depthStencil){
+	GPU::bindAttachments(layer, mip, Load::Operation::DONTCARE, depthOp, stencilOp, depthStencil, nullptr, nullptr, nullptr, nullptr);
+}
+
+void GPU::bindAttachments(uint layer, uint mip, const Load& colorOp, const Load& depthOp, const Load& stencilOp, const Texture* depthStencil, const Texture* color0, const Texture* color1, const Texture* color2, const Texture* color3){
+
+	GPU::endRenderingIfNeeded();
 
 	_state.depthStencil = nullptr;
 	_state.colors.fill(nullptr);
@@ -388,32 +412,32 @@ void GPU::bindFramebuffer(uint layer, uint mip, const Load& depthOp, const Load&
 
 	assert(depthStencil != nullptr || color0 != nullptr);
 	if(depthStencil) {
-		_state.pass.depthStencil = depthStencil->gpu->typedFormat;
+		_state.pass.depthStencil = depthStencil->format;
 		_state.depthStencil		 = depthStencil;
 	}
 
 	uint colorsCount = 0;
 	if(color0){
-		_state.pass.colors[0] = color0->gpu->typedFormat;
+		_state.pass.colors[0] = color0->format;
 		_state.colors[0]	  = color0;
 		++colorsCount;
 	}
 
 	if(color1){
 		assert(color0 != nullptr);
-		_state.pass.colors[1] = color1->gpu->typedFormat;
+		_state.pass.colors[1] = color1->format;
 		_state.colors[1]	  = color1;
 		++colorsCount;
 	}
 	if(color2){
 		assert(color1 != nullptr);
-		_state.pass.colors[2] = color2->gpu->typedFormat;
+		_state.pass.colors[2] = color2->format;
 		_state.colors[2]	  = color2;
 		++colorsCount;
 	}
 	if(color3){
 		assert(color2 != nullptr);
-		_state.pass.colors[3] = color3->gpu->typedFormat;
+		_state.pass.colors[3] = color3->format;
 		_state.colors[3]	  = color3;
 		++colorsCount;
 	}
@@ -487,7 +511,7 @@ void GPU::bindFramebuffer(uint layer, uint mip, const Load& depthOp, const Load&
 		depthInfo.storeOp = depthStore;
 		depthInfo.resolveMode = VK_RESOLVE_MODE_NONE;
 
-		if(depthStencil->gpu->typedFormat == Layout::DEPTH24_STENCIL8 || depthStencil->gpu->typedFormat == Layout::DEPTH32F_STENCIL8) {
+		if(depthStencil->format == Layout::DEPTH24_STENCIL8 || depthStencil->format == Layout::DEPTH32F_STENCIL8) {
 			info.pStencilAttachment = &stencilInfo;
 			stencilInfo.imageView = depthInfo.imageView;
 			stencilInfo.sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO_KHR;
@@ -512,9 +536,9 @@ void GPU::saveTexture(Texture & texture, const std::string & path, Image::Save o
 		Layout::DEPTH_COMPONENT32F, Layout::DEPTH24_STENCIL8, Layout::DEPTH_COMPONENT16, Layout::DEPTH_COMPONENT24, Layout::DEPTH32F_STENCIL8,
 	};
 
-	GPU::unbindFramebufferIfNeeded();
+	GPU::endRenderingIfNeeded();
 
-	const bool isHDR = std::find(hdrLayouts.begin(), hdrLayouts.end(), texture.gpu->typedFormat) != hdrLayouts.end();
+	const bool isHDR = std::find(hdrLayouts.begin(), hdrLayouts.end(), texture.format) != hdrLayouts.end();
 
 	GPU::downloadTextureAsync(texture, glm::uvec2(0), glm::uvec2(texture.width, texture.height), 1, [isHDR, path, options](const Texture& result){
 		// Save the image to the disk.
@@ -530,13 +554,13 @@ void GPU::saveTexture(Texture & texture, const std::string & path, Image::Save o
 
 }
 
-void GPU::setupTexture(Texture & texture, const Layout & format, bool drawable) {
+void GPU::setupTexture(Texture & texture) {
 
 	if(texture.gpu) {
 		texture.gpu->clean();
 	}
 
-	texture.gpu.reset(new GPUTexture(format));
+	texture.gpu.reset(new GPUTexture(texture.format));
 	texture.gpu->name = texture.name();
 
 	const bool is3D = texture.shape & TextureShape::D3;
@@ -545,7 +569,7 @@ void GPU::setupTexture(Texture & texture, const Layout & format, bool drawable) 
 	const bool isDepth = texture.gpu->aspect & VK_IMAGE_ASPECT_DEPTH_BIT;
 
 	VkImageUsageFlags usage = VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
-	if(drawable){
+	if(texture.drawable){
 		usage |= isDepth ? VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT : VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 	}
 	// Check feature support for compute access
@@ -617,7 +641,7 @@ void GPU::setupTexture(Texture & texture, const Layout & format, bool drawable) 
 		viewTypeSlice = VK_IMAGE_VIEW_TYPE_1D;
 	}
 
-	// Create per mip view.
+	// Create per mip view. \todo Create only for writable/drawable?
 	texture.gpu->views.resize(texture.levels);
 	for(uint mid = 0; mid < texture.levels; ++mid){
 
@@ -683,7 +707,7 @@ void GPU::uploadTexture(const Texture & texture) {
 	}
 
 	// Determine if we can do the transfer without an intermediate texture.
-	const Layout format = texture.gpu->typedFormat;
+	const Layout format = texture.format;
 	const bool is8UB = format == Layout::R8 || format == Layout::RG8 || format == Layout::RGBA8 || format == Layout::BGRA8 || format == Layout::SRGB8_ALPHA8 || format == Layout::SBGR8_ALPHA8;
 	const bool is32F = format == Layout::R32F || format == Layout::RG32F || format == Layout::RGBA32F;
 
@@ -734,7 +758,8 @@ void GPU::uploadTexture(const Texture & texture) {
 			transferTexture.levels = texture.levels;
 			transferTexture.shape = texture.shape;
 			const Layout floatFormats[5] = {Layout(0), Layout::R32F, Layout::RG32F, Layout::RGBA32F /* no 3 channels format */, Layout::RGBA32F};
-			GPU::setupTexture(transferTexture, floatFormats[destChannels], false);
+			transferTexture.format = floatFormats[destChannels];
+			GPU::setupTexture(transferTexture);
 			// Useful to avoid a useless transition at the very end.
 			transferTexture.gpu->defaultLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
 			// Change floatcopy destination.
@@ -853,7 +878,7 @@ void GPU::downloadTextureSync(Texture & texture, int level) {
 }
 
 GPUAsyncTask GPU::downloadTextureAsync(const Texture& texture, const glm::uvec2& offset, const glm::uvec2& size, uint layerCount, std::function<void(const Texture&)> callback){
-	GPU::unbindFramebufferIfNeeded();
+	GPU::endRenderingIfNeeded();
 	
 	const uint texLayerCount = texture.shape == TextureShape::D3 ? 1 : texture.depth;
 	const uint effectiveLayerCount = layerCount == 0 ? texLayerCount : std::min(texLayerCount, layerCount);
@@ -977,7 +1002,7 @@ void GPU::clearTexture(const Texture & texture, const glm::vec4& color){
 	// See https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/vkspec.html#clears
 	// for possibilities.
 	// End current render pass.
-	GPU::unbindFramebufferIfNeeded();
+	GPU::endRenderingIfNeeded();
 
 	GPUContext* context = GPU::getInternal();
 	VkCommandBuffer& commandBuffer = context->getRenderCommandBuffer();
@@ -1004,7 +1029,7 @@ void GPU::clearDepth(const Texture & texture, float depth){
 	// See https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/vkspec.html#clears
 	// for possibilities.
 	// End current render pass.
-	GPU::unbindFramebufferIfNeeded();
+	GPU::endRenderingIfNeeded();
 
 	GPUContext* context = GPU::getInternal();
 	VkCommandBuffer& commandBuffer = context->getRenderCommandBuffer();
@@ -1334,7 +1359,7 @@ void GPU::drawQuad(){
 
 void GPU::dispatch(uint width, uint height, uint depth){
 
-	unbindFramebufferIfNeeded();
+	endRenderingIfNeeded();
 	bindComputePipelineIfNeeded();
 	// Ensure all resources are in the proper state for compute use (including
 	// synchronization with a previous compute shader).
@@ -1387,7 +1412,7 @@ void GPU::submitFrameCommandBuffers() {
 }
 
 void GPU::flush(){
-	GPU::unbindFramebufferIfNeeded();
+	GPU::endRenderingIfNeeded();
 
 	// End both command buffers.
 	GPU::submitFrameCommandBuffers();
@@ -1487,6 +1512,10 @@ void GPU::setViewport(int x, int y, int w, int h) {
 	vkCmdSetScissor(_context.getRenderCommandBuffer(), 0, 1, &scissor);
 }
 
+void GPU::setViewport(const Texture& tex) {
+	GPU::setViewport(0, 0, tex.width, tex.height);
+}
+
 void GPU::setDepthState(bool test) {
 	_state.depthTest = test;
 }
@@ -1548,7 +1577,7 @@ void GPU::blitDepth(const Texture & src, const Texture & dst) {
 }
 
 void GPU::blit(const Texture & src, const Texture & dst, Filter filter) {
-	GPU::unbindFramebufferIfNeeded();
+	GPU::endRenderingIfNeeded();
 	VkCommandBuffer& commandBuffer = _context.getRenderCommandBuffer();
 
 	const glm::uvec2 srcSize(src.width, src.height);
@@ -1563,7 +1592,7 @@ void GPU::blit(const Texture & src, const Texture & dst, Filter filter) {
 }
 
 void GPU::blit(const Texture & src, const Texture & dst, size_t lSrc, size_t lDst, Filter filter) {
-	GPU::unbindFramebufferIfNeeded();
+	GPU::endRenderingIfNeeded();
 	VkCommandBuffer& commandBuffer = _context.getRenderCommandBuffer();
 
 	const glm::uvec2 srcSize(src.width, src.height);
@@ -1576,7 +1605,7 @@ void GPU::blit(const Texture & src, const Texture & dst, size_t lSrc, size_t lDs
 }
 
 void GPU::blit(const Texture & src, const Texture & dst, size_t lSrc, size_t lDst, size_t mipSrc, size_t mipDst, Filter filter) {
-	GPU::unbindFramebufferIfNeeded();
+	GPU::endRenderingIfNeeded();
 	VkCommandBuffer& commandBuffer = _context.getRenderCommandBuffer();
 
 	const glm::uvec2 srcSize(src.width, src.height);
@@ -1586,7 +1615,7 @@ void GPU::blit(const Texture & src, const Texture & dst, size_t lSrc, size_t lDs
 	_metrics.blitCount += 1;
 }
 
-void GPU::unbindFramebufferIfNeeded(){
+void GPU::endRenderingIfNeeded(){
 	// No active attachments.
 	if(_state.pass.depthStencil == Layout::NONE && _state.pass.colors[0] == Layout::NONE){
 		return;

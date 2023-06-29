@@ -139,8 +139,9 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 	_depth.depth  = 1;
 	_depth.levels = 1;
 	_depth.shape  = TextureShape::D2;
-
-	GPU::setupTexture(_depth, depthLayout, true);
+	_depth.format = depthLayout;
+	_depth.drawable = true;
+	GPU::setupTexture(_depth);
 	_depth.gpu->defaultLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
 	VkUtils::imageLayoutBarrier(_context->getUploadCommandBuffer(), *_depth.gpu, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, 0, _depth.levels, 0, _depth.depth);
@@ -164,7 +165,9 @@ void Swapchain::setup(uint32_t width, uint32_t height){
 		color.depth = 1;
 		color.levels = 1;
 		color.shape = TextureShape::D2;
-		color.gpu.reset(new GPUTexture(colorFormat));
+		color.drawable = true;
+		color.format = colorFormat;
+		color.gpu.reset(new GPUTexture(color.format));
 		color.gpu->name = color.name();
 		color.gpu->owned = false;
 		color.gpu->image = colorImages[i];
@@ -236,7 +239,7 @@ void Swapchain::resize(uint width, uint height){
 void Swapchain::getFormats(VkFormat& color, VkFormat& depth, VkFormat& stencil){
 	color = _colors[0].gpu->format;
 	depth = _depth.gpu->format;
-	if(_depth.gpu->typedFormat == Layout::DEPTH24_STENCIL8 || _depth.gpu->typedFormat == Layout::DEPTH32F_STENCIL8){
+	if(_depth.format == Layout::DEPTH24_STENCIL8 || _depth.format == Layout::DEPTH32F_STENCIL8){
 		stencil = depth;
 	} else {
 		stencil = VK_FORMAT_UNDEFINED;
@@ -245,7 +248,7 @@ void Swapchain::getFormats(VkFormat& color, VkFormat& depth, VkFormat& stencil){
 
 bool Swapchain::finishFrame(){
 
-	GPU::unbindFramebufferIfNeeded();
+	GPU::endRenderingIfNeeded();
 
 	// If we have upload operations to perform, ensure they are all complete before
 	// we start executing the render command buffer.
@@ -363,7 +366,7 @@ void Swapchain::clean() {
 	// Wait for all queues to be idle.
 	VK_RET(vkDeviceWaitIdle(_context->device));
 
-	// We have to manually delete the framebuffers, because they don't own their color images (system created) nor their depth texture (shared).
+	// We have to manually delete the views, because they don't own their color images (system created) nor their depth texture (shared).
 	for(size_t i = 0; i < _imageCount; ++i) {
 		// Destroy the view but not the image, as we don't own it (and there is no sampler).
 		vkDestroyImageView(_context->device, _colors[i].gpu->view, nullptr);

@@ -45,15 +45,25 @@ public:
 	glm::vec3 sampleCubemap(const glm::vec3 & dir) const;
 
 	/** Configure and allocate a texture to be used as a rendering attachment.
-	 \param texture the texture to populate
-	 \param format the pixel format to use
+	 \param layout the pixel format to use
 	 \param width the texture width
 	 \param height the texture height
+	 \param shape the shape of the texture	 
 	 \param mips the number of mips
-	 \param shape the shape of the texture
 	 \param depth the number of layers for array and 3D textures
 	 */
-	static void setupAsDrawable(Texture& texture, Layout format,uint width, uint height, uint mips = 1, TextureShape shape = TextureShape::D2, uint depth = 1);
+	void setupAsDrawable(const Layout& layout, uint width, uint height, TextureShape shape = TextureShape::D2, uint mips = 1, uint depth = 1);
+
+	/** Resize the GPU texture
+	 \param resolution the new texture size
+	 */
+	void resize(const glm::vec2& resolution);
+
+	/** Resize the GPU texture
+	 \param w the new texture width
+	 \param h the new texture height
+	 */
+	void resize(uint w, uint h);
 	
 	/** Get the resource name.
 		\return the name.
@@ -92,9 +102,12 @@ public:
 	uint levels = 1; ///< The mipmap count.
 	
 	TextureShape shape = TextureShape::D2; ///< Texure type.
-	
+
+	Layout format = Layout::NONE; ///< Layout used.
+	bool drawable = false;
+
 private:
-		
+
 	std::string _name; ///< Resource name.
 	
 };

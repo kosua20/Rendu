@@ -205,8 +205,7 @@ public:
 
 	/**
 	 Query the current mouse position.
-	 \param inFramebuffer should the position be expressed in a GPU compatible fashion
-	 \return the current mouse position in unit coordinates , from the bottom left corner.
+	 \return the current mouse position in unit coordinates, from the bottom left corner.
 	 */
 	glm::vec2 mouse() const;
 

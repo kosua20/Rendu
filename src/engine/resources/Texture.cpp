@@ -15,9 +15,11 @@ void Texture::upload(const Layout & layout, bool updateMipmaps) {
 	if(updateMipmaps) {
 		levels = getMaxMipLevel()+1;
 	}
+	format = layout;
+	drawable = false;
 
 	// Create texture.
-	GPU::setupTexture(*this, layout, false);
+	GPU::setupTexture(*this);
 	GPU::uploadTexture(*this);
 
 	// Generate mipmaps pyramid automatically.
@@ -95,31 +97,45 @@ Texture::~Texture(){
 	clean();
 }
 
-void Texture::setupAsDrawable(Texture& texture, Layout format,uint width, uint height, uint mips, TextureShape shape, uint depth){
+void Texture::setupAsDrawable(const Layout& layout, uint awidth, uint aheight, TextureShape ashape, uint amips, uint adepth){
 
 	// Check that the shape is supported.
-	if(shape != TextureShape::D2 && shape != TextureShape::Array2D && shape != TextureShape::Cube && shape != TextureShape::ArrayCube){
+	if(ashape != TextureShape::D2 && ashape != TextureShape::Array2D && ashape != TextureShape::Cube && ashape != TextureShape::ArrayCube){
 		Log::Error() << "GPU: Unsupported render texture shape." << std::endl;
 		return;
 	}
 
 	// Number of layers based on shape.
 	uint layers = 1;
-	if(shape == TextureShape::Array2D){
-		layers = depth;
-	} else if(shape == TextureShape::Cube){
+	if(ashape == TextureShape::Array2D){
+		layers = adepth;
+	} else if(ashape == TextureShape::Cube){
 		layers = 6;
-	} else if(shape == TextureShape::ArrayCube){
-		layers = 6 * depth;
+	} else if(ashape == TextureShape::ArrayCube){
+		layers = 6 * adepth;
 	}
 
-	texture.width  = width;
-	texture.height = height;
-	texture.depth  = layers;
-	texture.levels = mips;
-	texture.shape  = shape;
+	width  = awidth;
+	height = aheight;
+	depth  = layers;
+	levels = amips;
+	shape  = ashape;
+	format = layout;
+	drawable = true;
 
-	GPU::setupTexture(texture, format, true);
+	GPU::setupTexture(*this);
+
+	// Track in debug mode.
+	DebugViewer::trackDefault(this);
+}
+
+void Texture::resize(const glm::vec2& resolution){
+	resize(uint(resolution[0]), uint(resolution[1]));
+}
+void Texture::resize(uint w, uint h){
+	width = w;
+	height = h;
+	GPU::setupTexture(*this);
 }
 
 glm::vec3 Texture::sampleCubemap(const glm::vec3 & dir) const {

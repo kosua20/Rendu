@@ -1,11 +1,10 @@
 #include "graphics/GPUObjects.hpp"
 #include "graphics/GPU.hpp"
 #include "graphics/GPUInternal.hpp"
-#include "graphics/Framebuffer.hpp"
 #include "resources/Buffer.hpp"
+#include "resources/Texture.hpp"
 
-GPUTexture::GPUTexture(const Layout & layoutFormat) :
-	typedFormat(layoutFormat) {
+GPUTexture::GPUTexture(const Layout & layoutFormat){
 
 	channels = VkUtils::getGPULayout(layoutFormat, format);
 

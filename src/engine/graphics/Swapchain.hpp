@@ -1,10 +1,8 @@
 #pragma once
 
 #include "Common.hpp"
-#include "graphics/Framebuffer.hpp"
 #include "graphics/GPUObjects.hpp"
 #include "system/Config.hpp"
-
 #include "resources/Texture.hpp"
 
 // Forward declarations.

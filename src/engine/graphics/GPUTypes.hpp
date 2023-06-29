@@ -324,7 +324,7 @@ class GPUMesh;
 class GPUState {
 public:
 
-	/// \brief Current framebuffer information.
+	/// \brief Current rendering pass information.
 	struct RenderPass {
 
 		/// Constructor
@@ -397,7 +397,7 @@ public:
 	// Graphics binding state.
 	Program* graphicsProgram = nullptr; ///< The current graphics program.
 	const GPUMesh* mesh = nullptr; ///< The current mesh.
-	RenderPass pass; ///< The current framebuffer.
+	RenderPass pass; ///< The current attachments.
 	std::array<const Texture *, 4> colors = {nullptr, nullptr, nullptr, nullptr};
 	const Texture * depthStencil {nullptr};
 

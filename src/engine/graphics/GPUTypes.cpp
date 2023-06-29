@@ -1,7 +1,6 @@
 #include "graphics/GPUTypes.hpp"
 #include "graphics/GPU.hpp"
 #include "graphics/GPUInternal.hpp"
-#include "graphics/Framebuffer.hpp"
 #include <cstring>
 
 bool GPUState::RenderPass::isEquivalent(const RenderPass& other) const {
@@ -49,7 +48,7 @@ bool GPUState::isGraphicsEquivalent(const GPUState& other) const {
 		return false;
 	}
 
-	// Framebuffer: same attachment count, same layouts (== compatible render passes: format, sample count,...)
+	// Attachments: same count, same layouts (== compatible render passes: format, sample count,...)
 	if(!(pass.isEquivalent(other.pass))){
 		return false;
 	}

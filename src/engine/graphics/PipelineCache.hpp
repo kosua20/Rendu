@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Common.hpp"
-#include "graphics/Framebuffer.hpp"
 #include "graphics/GPUObjects.hpp"
 
 #include <unordered_map>
@@ -10,8 +9,8 @@
 /** \brief Create and reuse GPU pipelines based on a given state. This supports both graphics and compute pipelines.
  * \details We use a two-levels cache, first sorting by Program because each program only has one instance 
  * (and thus one pointer adress) that we can use directly to retrieve pipelines. Then we use a hash of the GPU state 
- * parameters to retrieve compatible pipelines, and compare mesh and framebuffer layouts manually as duplicates will be quite rare.
- * (usually a program is used with a specific set of meshes and a fixed framebuffer). 
+ * parameters to retrieve compatible pipelines, and compare mesh and attachments layouts manually as duplicates will be quite rare.
+ * (usually a program is used with a specific set of meshes and a fixed set of attachments).
  * We could compare program layouts to share pipelines between similar programs, but it would be more complex.
  * A Vulkan cache is also used internally, saved on disk and restored at loading.
  * \ingroup Graphics
@@ -47,7 +46,7 @@ private:
 	struct Entry {
 		VkPipeline pipeline; ///< The native handle.
 		GPUMesh::State mesh; ///< The mesh layout.
-		GPUState::RenderPass pass; ///< The framebuffer layout.
+		GPUState::RenderPass pass; ///< The attachments layout.
 	};
 
 	/** Create a new pipeline based on a given state and store it in the cache for future use.

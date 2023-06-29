@@ -9,7 +9,7 @@
  
  \defgroup Graphics Graphics
  \brief Contain items and functions interacting with the graphics API.
- \details This module provides wrapper around GPU primitives, such as framebuffers, textures, meshes and shader programs. Utilities are also provided to render screen quads, alter the rendering state and populate/save GPU data. The interface is currently based on the Vulkan API.
+ \details This module provides wrapper around GPU primitives, such as textures, meshes and shader programs. Utilities are also provided to render screen quads, alter the rendering state and populate/save GPU data. The interface is currently based on the Vulkan API.
 
  \defgroup Generation Generation
  \brief Generation of randomness, noise and other procedural content.

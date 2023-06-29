@@ -76,7 +76,6 @@ public:
 	std::string name; ///< Debug name.
 	bool owned = true; ///< Do we own our Vulkan data (not the case for swapchain images).
 
-	const Layout typedFormat; ///< Layout used.
 };
 
 

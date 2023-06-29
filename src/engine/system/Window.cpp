@@ -3,7 +3,7 @@
 #include "input/InputCallbacks.hpp"
 #include "input/Input.hpp"
 #include "graphics/GPU.hpp"
-#include "graphics/Framebuffer.hpp"
+#include "resources/Texture.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "graphics/GPUInternal.hpp"
 #include "graphics/Swapchain.hpp"
@@ -200,12 +200,11 @@ bool Window::nextFrame() {
 }
 
 void Window::bind(const Load& colorOp, const Load& depthOp, const Load& stencilOp){
-	GPU::bindFramebuffer(0, 0, depthOp, stencilOp, colorOp, &_swapchain->depth(), &_swapchain->color(), nullptr, nullptr, nullptr);
+	GPU::bind(0, 0, colorOp, depthOp, stencilOp, &_swapchain->depth(), &_swapchain->color(), nullptr, nullptr, nullptr);
 }
 
 void Window::setViewport(){
-	const Texture& tex = _swapchain->color();
-	GPU::setViewport(0, 0, tex.width, tex.height);
+	GPU::setViewport(_swapchain->color());
 }
 
 Texture& Window::color(){

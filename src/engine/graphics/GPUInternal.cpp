@@ -598,8 +598,8 @@ glm::uvec2 VkUtils::copyTextureRegionToBuffer(VkCommandBuffer& commandBuffer, co
 	transferTexture.depth = srcTexture.shape == TextureShape::D3 ? dBase : layers;
 	transferTexture.levels = mipCount;
 	transferTexture.shape = srcTexture.shape;
-
-	GPU::setupTexture(transferTexture, floatFormats[channels], false);
+	transferTexture.format = floatFormats[channels];
+	GPU::setupTexture(transferTexture);
 	// Final usage of the transfer texture after the blit.
 	transferTexture.gpu->defaultLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
 	// This will reset the input texture to its default state.
