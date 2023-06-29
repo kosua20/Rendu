@@ -3,10 +3,10 @@
 #include "scene/Sky.hpp"
 #include "system/System.hpp"
 #include "graphics/GPU.hpp"
-#include "graphics/ScreenQuad.hpp"
+
 
 DeferredRenderer::DeferredRenderer(const glm::vec2 & resolution, bool ssao, const std::string & name) :
-	Renderer(name), _applySSAO(ssao) {
+	Renderer(name), _sceneAlbedo(_name + " albedo"), _sceneNormal(_name + " normals"), _sceneEffects(_name + " effects"), _sceneDepth(name + " depth"), _lighting(name +" lighting"), _indirectLighting(name + " indirect Lighting"), _depthCopy(name + " depth copy"), _applySSAO(ssao) {
 
 	const uint renderWidth	  = uint(resolution[0]);
 	const uint renderHeight	  = uint(resolution[1]);
@@ -17,13 +17,18 @@ DeferredRenderer::DeferredRenderer(const glm::vec2 & resolution, bool ssao, cons
 	const Layout effectsDesc		= Layout::RGBA8;
 	const Layout depthDesc			= Layout::DEPTH_COMPONENT32F;
 	const Layout lightDesc 			= Layout::RGBA16F;
+	_colorFormat = lightDesc;
 
-	const std::vector<Layout> descs = {albedoDesc, normalDesc, effectsDesc, depthDesc};
-	_gbuffer							= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, descs, _name + " G-buffer "));
-	_ssaoPass							= std::unique_ptr<SSAO>(new SSAO(renderWidth, renderHeight, 2, 0.5f, _name));
-	_indirectLightingBuffer 			= std::unique_ptr<Framebuffer>(new Framebuffer(TextureShape::D2, renderWidth, renderHeight, 1, 1, {lightDesc}, _name + " Indirect Lighting"));
-	_lightBuffer						= std::unique_ptr<Framebuffer>(new Framebuffer(TextureShape::D2, renderWidth, renderHeight, 1, 1, {lightDesc, depthDesc}, _name + " Lighting"));
-	_preferredFormat.push_back(lightDesc);
+	// Setup Gbuffer and lighting attachments.
+	_sceneAlbedo.setupAsDrawable(albedoDesc, renderWidth, renderHeight);
+	_sceneNormal.setupAsDrawable(normalDesc, renderWidth, renderHeight);
+	_sceneEffects.setupAsDrawable(effectsDesc, renderWidth, renderHeight);
+	_sceneDepth.setupAsDrawable(depthDesc, renderWidth, renderHeight);
+	_lighting.setupAsDrawable(lightDesc, renderWidth, renderHeight);
+	_indirectLighting.setupAsDrawable(lightDesc, renderWidth, renderHeight);
+	_depthCopy.setupAsDrawable(depthDesc, renderWidth, renderHeight);
+
+	_ssaoPass			= std::unique_ptr<SSAO>(new SSAO(renderWidth, renderHeight, 2, 0.5f, _name));
 
 	_skyboxProgram		= Resources::manager().getProgram("skybox_gbuffer", "skybox_infinity", "skybox_gbuffer");
 	_bgProgram			= Resources::manager().getProgram("background_gbuffer", "background_infinity", "background_gbuffer");
@@ -40,8 +45,8 @@ DeferredRenderer::DeferredRenderer(const glm::vec2 & resolution, bool ssao, cons
 	_transpIridProgram  = Resources::manager().getProgram("object_transparent_irid_forward", "object_forward", "object_transparent_irid_forward");
 
 	// Lighting passes.
-	_lightRenderer = std::unique_ptr<DeferredLight>(new DeferredLight(_gbuffer->texture(0), _gbuffer->texture(1), _gbuffer->depthBuffer(), _gbuffer->texture(2)));
-	_probeRenderer = std::unique_ptr<DeferredProbe>(new DeferredProbe(_gbuffer->texture(0), _gbuffer->texture(1), _gbuffer->texture(2), _gbuffer->depthBuffer(), _ssaoPass->texture()));
+	_lightRenderer = std::unique_ptr<DeferredLight>(new DeferredLight(&_sceneAlbedo, &_sceneNormal, &_sceneDepth, &_sceneEffects));
+	_probeRenderer = std::unique_ptr<DeferredProbe>(new DeferredProbe(&_sceneAlbedo, &_sceneNormal, &_sceneEffects, &_sceneDepth, _ssaoPass->texture()));
 	_probeNormalization = Resources::manager().getProgram2D("probe_normalization");
 
 	_textureBrdf = Resources::manager().getTexture("brdf-precomputed", Layout::RGBA16F, Storage::GPU);
@@ -187,7 +192,7 @@ void DeferredRenderer::renderTransparent(const Culler::List & visibles, const gl
 
 	// Update all shaders shared parameters.
 	const glm::mat4 invView = glm::inverse(view);
-	const glm::vec2 invScreenSize = 1.0f / glm::vec2(_lightBuffer->width(), _lightBuffer->height());
+	const glm::vec2 invScreenSize = 1.0f / glm::vec2(_lighting.width, _lighting.height);
 	// Update shared data.
 	Program* programs[] = {_transparentProgram, _transpIridProgram};
 	for(Program* program : programs){
@@ -322,7 +327,9 @@ void DeferredRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 
 	}
 }
 
-void DeferredRenderer::draw(const Camera & camera, Framebuffer & framebuffer, uint layer) {
+void DeferredRenderer::draw(const Camera & camera, Texture* dstColor, Texture* dstDepth, uint layer) {
+	assert(dstColor);
+	assert(dstDepth == nullptr);
 
 	const glm::mat4 & view = camera.view();
 	const glm::mat4 & proj = camera.projection();
@@ -333,46 +340,45 @@ void DeferredRenderer::draw(const Camera & camera, Framebuffer & framebuffer, ui
 
 	// Render opaque objects and the background to the Gbuffer.
 	// Clear the depth buffer (we know we will draw everywhere, no need to clear color).
-	_gbuffer->bind(Load::Operation::DONTCARE, 1.0f);
-	_gbuffer->setViewport();
+	GPU::bind(Load::Operation::DONTCARE, 1.0f, Load::Operation::DONTCARE, &_sceneDepth, &_sceneAlbedo, &_sceneNormal, &_sceneEffects);
+	GPU::setViewport(_sceneDepth);
 
 	renderOpaque(visibles, view, proj);
 	renderBackground(view, proj, pos);
 
 	// SSAO pass
 	if(_applySSAO) {
-		_ssaoPass->process(proj, _gbuffer->depthBuffer(), _gbuffer->texture(int(TextureType::Normal)));
+		_ssaoPass->process(proj, _sceneDepth, _sceneNormal);
 	} else {
 		_ssaoPass->clear();
 	}
+
+	GPU::blitDepth(_sceneDepth, _depthCopy);
 
 	// Gbuffer lighting pass
 	_probeRenderer->updateCameraInfos(view, proj);
 	_lightRenderer->updateCameraInfos(view, proj);
 
 	// Accumulate probe contributions.
-	_indirectLightingBuffer->bind(glm::vec4(0.0f));
-	_indirectLightingBuffer->setViewport();
+	GPU::bind(glm::vec4(0.0f), &_indirectLighting);
+	GPU::setViewport(_indirectLighting);
 	for(const LightProbe& probe : _scene->probes){
 		_probeRenderer->draw(probe);
 	}
 
-	// Copy depth.
-	GPU::blitDepth(*_gbuffer->depthBuffer(), *_lightBuffer->depthBuffer());
-
 	// Main lighting accumulation.
-	_lightBuffer->bind(Load::Operation::DONTCARE, Load::Operation::LOAD);
-	_lightBuffer->setViewport();
+	GPU::bind(Load::Operation::DONTCARE, Load::Operation::LOAD, Load::Operation::DONTCARE, &_depthCopy, &_lighting);
+	GPU::setViewport(_lighting);
 
 	// Merge probes contributions and background.
 	GPU::setDepthState(false);
 	GPU::setBlendState(false);
 	GPU::setCullState(true, Faces::BACK);
 	_probeNormalization->use();
-	_probeNormalization->texture(_gbuffer->texture(0), 0);
-	_probeNormalization->texture(_gbuffer->texture(2), 1);
-	_probeNormalization->texture(_indirectLightingBuffer->texture(), 2);
-	ScreenQuad::draw();
+	_probeNormalization->texture(_sceneAlbedo, 0);
+	_probeNormalization->texture(_sceneEffects, 1);
+	_probeNormalization->texture(_indirectLighting, 2);
+	GPU::drawQuad();
 
 	// Light contributions.
 	for(auto & light : _scene->lights) {
@@ -394,22 +400,26 @@ void DeferredRenderer::draw(const Camera & camera, Framebuffer & framebuffer, ui
 		}
 		_fwdProbesGPU->data().upload();
 		// Now render transparent effects in a forward fashion.
-		_lightBuffer->bind(Load::Operation::LOAD, Load::Operation::LOAD);
-		_lightBuffer->setViewport();
+		GPU::bind(Load::Operation::LOAD, Load::Operation::LOAD, Load::Operation::DONTCARE, &_depthCopy, &_lighting);
+		GPU::setViewport(_lighting);
 		renderTransparent(visibles, view, proj);
 	}
 
-	// Copy to the final framebuffer.
-	GPU::blit(*_lightBuffer->texture(0), *framebuffer.texture(0), 0, layer, 0, 0, Filter::NEAREST);
+	// Copy to the final texture.
+	GPU::blit(_lighting, *dstColor, 0, layer, 0, 0, Filter::NEAREST);
 
 }
 
 void DeferredRenderer::resize(uint width, uint height) {
-	// Resize the framebuffers.
+	// Resize the textures.
 	const glm::vec2 nSize(width, height);
-	_gbuffer->resize(nSize);
-	_lightBuffer->resize(nSize);
-	_indirectLightingBuffer->resize(nSize);
+	_sceneAlbedo.resize(nSize);
+	_sceneNormal.resize(nSize);
+	_sceneEffects.resize(nSize);
+	_sceneDepth.resize(nSize);
+	_lighting.resize(nSize);
+	_indirectLighting.resize(nSize);
+	_depthCopy.resize(nSize);
 	_ssaoPass->resize(width, height);
 	
 }
@@ -428,6 +438,6 @@ void DeferredRenderer::interface(){
 	
 }
 
-const Framebuffer * DeferredRenderer::sceneDepth() const {
-	return _lightBuffer.get();
+Texture& DeferredRenderer::sceneDepth() {
+	return _sceneDepth;
 }

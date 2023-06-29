@@ -6,8 +6,8 @@
 
 DebugRenderer::DebugRenderer() : Renderer("Debug renderer"), _lightDebugRenderer("object_basic_uniform"), _sceneBoxes("Debug scene box"), _frame("Debug frame"), _cubeLines("Debug cube") {
 
-	_preferredFormat.push_back(Layout::RGBA8);
-	_preferredFormat.push_back(Layout::DEPTH_COMPONENT32F);
+	_colorFormat = Layout::RGBA8;
+	_depthFormat = Layout::DEPTH_COMPONENT32F;
 
 	_sphere = Resources::manager().getMesh("sphere", Storage::GPU);
 	_probeProgram = Resources::manager().getProgram("probe_debug");
@@ -85,11 +85,14 @@ void DebugRenderer::setScene(const std::shared_ptr<Scene> & scene) {
 	updateSceneMesh();
 }
 
-void DebugRenderer::draw(const Camera & camera, Framebuffer & framebuffer, uint layer) {
+void DebugRenderer::draw(const Camera & camera, Texture* dstColor, Texture* dstDepth, uint layer) {
 
 	if(!_scene){
 		return;
 	}
+
+	assert(dstColor);
+	assert(dstDepth);
 
 	const glm::mat4 & view = camera.view();
 	const glm::mat4 & proj = camera.projection();
@@ -97,7 +100,9 @@ void DebugRenderer::draw(const Camera & camera, Framebuffer & framebuffer, uint 
 
 	_lightDebugRenderer.updateCameraInfos(view, proj);
 
-	framebuffer.bind(layer, 0, Load::Operation::LOAD, Load::Operation::LOAD, Load::Operation::LOAD);
+	GPU::bind(layer, 0, Load::Operation::LOAD, Load::Operation::LOAD, Load::Operation::LOAD, dstDepth, dstColor);
+	GPU::setViewport(*dstColor);
+	
 	GPU::setDepthState(true, TestFunction::LEQUAL, true);
 	GPU::setBlendState(false);
 	GPU::setCullState(false);

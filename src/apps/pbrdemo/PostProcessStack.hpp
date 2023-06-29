@@ -4,7 +4,7 @@
 #include "renderers/Renderer.hpp"
 #include "renderers/Renderer.hpp"
 
-#include "graphics/Framebuffer.hpp"
+#include "resources/Texture.hpp"
 #include "processing/GaussianBlur.hpp"
 
 #include "Common.hpp"
@@ -42,13 +42,13 @@ public:
 	
 	/** Apply post processing to the scene.
 	 You can assume that there will be at least one operation applied so the same texture can be used as input and output.
-	 \param texture the texture to process
+	 \param src the texture to process
 	 \param proj the projection matrix (for DoF)
 	 \param depth the scene depth buffer (for DoF)
-	 \param framebuffer the destination framebuffer
+	 \param dst the destination texture
 	 \param layer the layer of the destination to write to
 	 */
-	void process(const Texture * texture, const glm::mat4 & proj, const Texture * depth, Framebuffer & framebuffer, uint layer = 0);
+	void process(const Texture& src, const glm::mat4 & proj, const Texture& depth, Texture& dst, uint layer = 0);
 
 	/** \copydoc Renderer::interface
 	 */
@@ -68,20 +68,21 @@ private:
 	/** Update the bloom pass depth based on the current set radius. */
 	void updateBlurPass();
 
-	std::unique_ptr<Framebuffer> _bloomBuffer; 	 ///< Bloom framebuffer
-	std::unique_ptr<Framebuffer> _toneMapBuffer; ///< Tonemapping framebuffer
-	std::unique_ptr<Framebuffer> _dofCocBuffer; 	 ///< DoF CoC framebuffer
-	std::unique_ptr<Framebuffer> _dofGatherBuffer; 	 ///< DoF gathering framebuffer
-	std::unique_ptr<Framebuffer> _resultFramebuffer; ///< In-progress result of the stack.
-	std::unique_ptr<GaussianBlur> _blur;	 ///< Bloom blur processing.
+	Texture _bloomBuffer; 	 				///< Bloom texture
+	Texture _toneMapBuffer; 				///< Tonemapping texture
+	Texture _dofDownscaledColor; 	 		///< DoF downscaled scene color texture
+	Texture _dofCocAndDepth; 	 			///< DoF CoC texture
+	Texture _dofGatherBuffer; 	 			///< DoF gathering texture
+	Texture _resultTexture; 				///< In-progress result of the stack.
+	std::unique_ptr<GaussianBlur> _blur;	///< Bloom blur processing.
 	
 	Program * _bloomProgram;			///< Bloom program
-	Program * _bloomComposite; 		///< Bloom compositing program.
-	Program * _toneMappingProgram; 	///< Tonemapping program
-	Program * _dofCocProgram; 		///< CoC computation.
+	Program * _bloomComposite; 			///< Bloom compositing program.
+	Program * _toneMappingProgram; 		///< Tonemapping program
+	Program * _dofCocProgram; 			///< CoC computation.
 	Program * _dofGatherProgram; 		///< DoF gathering step.
 	Program * _dofCompositeProgram; 	///< Composite DoF and input.
-	Program * _fxaaProgram;		 	///< FXAA program
+	Program * _fxaaProgram;		 		///< FXAA program
 	
 	Settings _settings; ///< The processing settings.
 	

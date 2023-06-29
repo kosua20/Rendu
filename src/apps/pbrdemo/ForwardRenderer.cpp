@@ -3,19 +3,19 @@
 #include "scene/Sky.hpp"
 #include "system/System.hpp"
 #include "graphics/GPU.hpp"
-#include "graphics/ScreenQuad.hpp"
+
 
 ForwardRenderer::ForwardRenderer(const glm::vec2 & resolution, bool ssao, const std::string & name) :
-	Renderer(name), _applySSAO(ssao) {
+	Renderer(name), _sceneColor(name + "Lighting"), _sceneDepth(name + "Depth"), _applySSAO(ssao) {
 
 	const uint renderWidth	   = uint(resolution[0]);
 	const uint renderHeight	   = uint(resolution[1]);
 
-	// Framebuffers.
-	const std::vector<Layout> formats = { Layout::RGBA16F, Layout::DEPTH_COMPONENT32F};
-	_sceneFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, formats, _name + " Lighting "));
+	// Attachments.
+	_sceneColor.setupAsDrawable(Layout::RGBA16F, renderWidth, renderHeight);
+	_sceneDepth.setupAsDrawable(Layout::DEPTH_COMPONENT32F, renderWidth, renderHeight);
 	_ssaoPass		  = std::unique_ptr<SSAO>(new SSAO(renderWidth, renderHeight, 2, 0.5f, _name));
-	_preferredFormat.push_back(Layout::RGBA16F);
+	_colorFormat 	  = Layout::RGBA16F;
 
 	_depthPrepass 		= Resources::manager().getProgram("object_prepass_forward");
 	_objectProgram		= Resources::manager().getProgram("object_forward");
@@ -53,8 +53,9 @@ void ForwardRenderer::renderDepth(const Culler::List & visibles, const glm::mat4
 	GPU::setCullState(true, Faces::BACK);
 	GPU::setBlendState(false);
 
-	_sceneFramebuffer->bind(glm::vec4(0.5f,0.5f,0.5f,1.0f), 1.0f, Load::Operation::DONTCARE);
-	_sceneFramebuffer->setViewport();
+	GPU::bind(glm::vec4(0.5f,0.5f,0.5f,1.0f), 1.0f, Load::Operation::DONTCARE, &_sceneDepth, &_sceneColor);
+	GPU::setViewport(_sceneColor);
+
 	// We use the depth prepass to store packed normals in the color target.
 	// We initialize using null normal.
 
@@ -314,7 +315,9 @@ void ForwardRenderer::renderBackground(const glm::mat4 & view, const glm::mat4 &
 
 }
 
-void ForwardRenderer::draw(const Camera & camera, Framebuffer & framebuffer, uint layer) {
+void ForwardRenderer::draw(const Camera & camera, Texture* dstColor, Texture* dstDepth, uint layer) {
+	assert(dstColor);
+	assert(dstDepth == nullptr);
 
 	const glm::mat4 & view = camera.view();
 	const glm::mat4 & proj = camera.projection();
@@ -341,7 +344,7 @@ void ForwardRenderer::draw(const Camera & camera, Framebuffer & framebuffer, uin
 
 	// SSAO pass
 	if(_applySSAO) {
-		_ssaoPass->process(proj, _sceneFramebuffer->depthBuffer(), _sceneFramebuffer->texture());
+		_ssaoPass->process(proj, _sceneDepth, _sceneColor);
 	} else {
 		_ssaoPass->clear();
 	}
@@ -350,7 +353,7 @@ void ForwardRenderer::draw(const Camera & camera, Framebuffer & framebuffer, uin
 	{
 
 		const glm::mat4 invView = glm::inverse(view);
-		const glm::vec2 invScreenSize = 1.0f / glm::vec2(_sceneFramebuffer->width(), _sceneFramebuffer->height());
+		const glm::vec2 invScreenSize = 1.0f / glm::vec2(_sceneColor.width, _sceneColor.height);
 		// Update shared data for the three programs.
 		Program * programs[] = {_parallaxProgram, _objectProgram, _clearCoatProgram, _transparentProgram, _transpIridProgram, _emissiveProgram, _anisotropicProgram, _sheenProgram, _iridescentProgram, _subsurfaceProgram };
 		for(Program * prog : programs){
@@ -373,8 +376,8 @@ void ForwardRenderer::draw(const Camera & camera, Framebuffer & framebuffer, uin
 	}
 
 	// Objects rendering.
-	_sceneFramebuffer->bind(glm::vec4(0.0f), 1.0f);
-	_sceneFramebuffer->setViewport();
+	GPU::bind(glm::vec4(0.0f), 1.0f, Load::Operation::DONTCARE, &_sceneDepth, &_sceneColor);
+	GPU::setViewport(_sceneColor);
 	// Render opaque objects.
 	renderOpaque(visibles, view, proj);
 	// Render the backgound.
@@ -383,13 +386,14 @@ void ForwardRenderer::draw(const Camera & camera, Framebuffer & framebuffer, uin
 	renderTransparent(visibles, view, proj);
 
 	// Final composite pass
-	GPU::blit(*_sceneFramebuffer->texture(0), *framebuffer.texture(0), 0, layer, Filter::LINEAR);
+	GPU::blit(_sceneColor, *dstColor, 0, layer, Filter::LINEAR);
 }
 
 void ForwardRenderer::resize(uint width, uint height) {
-	// Resize the framebuffers.
+	// Resize the textures.
 	_ssaoPass->resize(width / 2, height / 2);
-	_sceneFramebuffer->resize(glm::vec2(width, height));
+	_sceneColor.resize(width, height);
+	_sceneDepth.resize(width, height);
 }
 
 void ForwardRenderer::interface(){
@@ -405,6 +409,6 @@ void ForwardRenderer::interface(){
 	}
 }
 
-const Framebuffer * ForwardRenderer::sceneDepth() const {
-	return _sceneFramebuffer.get();
+Texture& ForwardRenderer::sceneDepth() {
+	return _sceneDepth;
 }

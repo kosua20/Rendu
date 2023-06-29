@@ -9,7 +9,7 @@
 #include "renderers/Renderer.hpp"
 #include "renderers/Culler.hpp"
 
-#include "graphics/Framebuffer.hpp"
+#include "resources/Texture.hpp"
 #include "input/ControllableCamera.hpp"
 
 #include "processing/SSAO.hpp"
@@ -17,21 +17,10 @@
 #include "Common.hpp"
 
 /**
- \brief Available G-buffer layers.
- \ingroup PBRDemo
- */
-enum class TextureType {
-	Albedo  = 0, ///< (or base color)
-	Normal  = 1,
-	Effects = 2, ///< Roughness, metallicness, ambient occlusion factor, ID.
-	Depth   = 3
-};
-
-/**
  \brief Performs deferred rendering of a scene.
  \sa DeferredLight, DeferredProbe, Material, GPUShaders::Common::Common_pbr
  \details
- Objects material information is renderer in a framebuffer, packing the various parameters as efficiently as
+ Objects material information is renderer in a G-buffer, packing the various parameters as efficiently as
  possible in a fixed number of texture channels. As many components as possible are reused between materials,
  and the precision of some parameters is lowered. See the Material class documentation for all parameter details.
 
@@ -114,7 +103,7 @@ public:
 	void setScene(const std::shared_ptr<Scene> & scene);
 
 	/** \copydoc Renderer::draw */
-	void draw(const Camera & camera, Framebuffer & framebuffer, uint layer = 0) override;
+	void draw(const Camera & camera, Texture* dstColor, Texture* dstDepth, uint layer = 0) override;
 
 	/** \copydoc Renderer::resize
 	 */
@@ -123,8 +112,8 @@ public:
 	/** \copydoc Renderer::interface */
 	void interface() override;
 
-	/** \return the framebuffer containing the scene depth information */
-	const Framebuffer * sceneDepth() const;
+	/** \return the texture containing the scene depth information */
+	Texture& sceneDepth();
 
 private:
 
@@ -149,9 +138,13 @@ private:
 	 */
 	void renderBackground(const glm::mat4 & view, const glm::mat4 & proj, const glm::vec3 & pos);
 
-	std::unique_ptr<Framebuffer> _gbuffer;			///< G-buffer.
-	std::unique_ptr<Framebuffer> _lightBuffer;		///< Lighting accumulation.
-	std::unique_ptr<Framebuffer> _indirectLightingBuffer;	///< Indirect lighting accumulation.
+	Texture _sceneAlbedo;							///< Scene albedo.
+	Texture _sceneNormal;							///< Scene normals.
+	Texture _sceneEffects;							///< Scene material parameters.
+	Texture _sceneDepth;							///< Scene depth.
+	Texture _lighting;								///< Lighting accumulation.
+	Texture _indirectLighting;						///< Indirect lighting accumulation.
+	Texture _depthCopy;								///< Lighting detph copy.
 	std::unique_ptr<SSAO> _ssaoPass;				///< SSAO processing.
 	std::unique_ptr<DeferredLight> _lightRenderer;	///< The lights renderer.
 	std::unique_ptr<DeferredProbe> _probeRenderer;	///< The probes renderer.

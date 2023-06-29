@@ -89,7 +89,7 @@ public:
 	 */
 	void updateCameraInfos(const glm::mat4 & viewMatrix, const glm::mat4 & projMatrix);
 
-	/** Apply a probe in the current framebuffer
+	/** Apply a probe in the current render destination
 	 \param probe the probe to compute the contribution of
 	 */
 	void draw(const LightProbe & probe);

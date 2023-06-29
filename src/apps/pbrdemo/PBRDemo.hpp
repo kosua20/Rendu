@@ -66,7 +66,7 @@ private:
 	std::unique_ptr<PostProcessStack> _postprocess; ///< Post-process renderer.
 	std::shared_ptr<DeferredRenderer> _probesRenderer; ///< Renderer for the light probes.
 	std::unique_ptr<DebugRenderer> _debugRenderer;	 ///< Forward PBR renderer.
-	std::unique_ptr<Framebuffer> _finalRender; ///< Final framebuffer.
+	Texture _finalRender; 	 ///< Final texture.
 	Program * _finalProgram; ///< Final display program.
 	
 	std::vector<std::shared_ptr<Scene>> _scenes; ///< The existing scenes.

@@ -3,18 +3,17 @@
 #include "renderers/shadowmaps/BasicShadowMap.hpp"
 #include "graphics/GPU.hpp"
 #include "input/Input.hpp"
-#include "graphics/ScreenQuad.hpp"
 #include "system/Window.hpp"
 
 PBRDemo::PBRDemo(RenderingConfig & config, Window & window) :
-	CameraApp(config, window) {
+	CameraApp(config, window), _finalRender("Final render") {
 
 	const glm::vec2 renderRes = _config.renderingResolution();
 	_defRenderer.reset(new DeferredRenderer(renderRes, true, "Deferred"));
 	_forRenderer.reset(new ForwardRenderer(renderRes, true, "Forward"));
 	_postprocess.reset(new PostProcessStack(renderRes));
 	_debugRenderer.reset(new DebugRenderer());
-	_finalRender.reset(new Framebuffer(uint(renderRes[0]), uint(renderRes[1]), {Layout::RGBA16F, Layout::DEPTH_COMPONENT32F}, "Final render"));
+	_finalRender.setupAsDrawable(Layout::RGBA16F, int(renderRes[0]), uint(renderRes[1]));
 
 	_finalProgram = Resources::manager().getProgram2D("sharpening");
 	
@@ -130,24 +129,23 @@ void PBRDemo::draw() {
 	// Renderer and postproc passes.
 	_rendererTime.begin();
 	if(_mode == RendererMode::DEFERRED) {
-		_defRenderer->draw(_userCamera, *_finalRender);
+		_defRenderer->draw(_userCamera, &_finalRender, nullptr);
 	} else if(_mode == RendererMode::FORWARD) {
-		_forRenderer->draw(_userCamera, *_finalRender);
+		_forRenderer->draw(_userCamera, &_finalRender, nullptr);
 	}
 	_rendererTime.end();
 
-	const Framebuffer * depthSrc = _mode == RendererMode::FORWARD ? _forRenderer->sceneDepth() : _defRenderer->sceneDepth();
+	Texture& depthSrc = _mode == RendererMode::FORWARD ? _forRenderer->sceneDepth() : _defRenderer->sceneDepth();
 
 	_postprocessTime.begin();
-	_postprocess->process(_finalRender->texture(), _userCamera.projection(), depthSrc->depthBuffer(), *_finalRender);
+	_postprocess->process(_finalRender, _userCamera.projection(), depthSrc, _finalRender);
 	_postprocessTime.end();
 
 	if(_showDebug){
-		GPU::blitDepth(*depthSrc->depthBuffer(), *_finalRender->depthBuffer());
-		_debugRenderer->draw(_userCamera, *_finalRender);
+		_debugRenderer->draw(_userCamera, &_finalRender, &depthSrc);
 	}
 
-	// We now render a full screen quad in the default framebuffer.
+	// We now render a full screen quad in the default backbuffer.
 
 	GPU::setDepthState(false);
 	GPU::setCullState(true, Faces::BACK);
@@ -157,8 +155,8 @@ void PBRDemo::draw() {
 	
 	GPU::setViewport(0, 0, int(_config.screenResolution[0]), int(_config.screenResolution[1]));
 	_finalProgram->use();
-	_finalProgram->texture(_finalRender->texture(), 0);
-	ScreenQuad::draw();
+	_finalProgram->texture(_finalRender, 0);
+	GPU::drawQuad();
 
 	_totalTime.end();
 }
@@ -270,7 +268,7 @@ void PBRDemo::resize() {
 	_defRenderer->resize(rw, rh);
 	_forRenderer->resize(rw, rh);
 	_postprocess->resize(rw, rh);
-	_finalRender->resize(renderRes);
+	_finalRender.resize(rw, rh);
 }
 
 void PBRDemo::createShadowMaps(ShadowMode mode){

@@ -1,6 +1,6 @@
 #include "DeferredLight.hpp"
 #include "graphics/GPU.hpp"
-#include "graphics/ScreenQuad.hpp"
+
 
 DeferredLight::DeferredLight(const Texture * texAlbedo, const Texture * texNormals, const Texture * texDepth, const Texture * texEffects){
 	_textures = {texAlbedo, texNormals, texDepth, texEffects};
@@ -123,7 +123,7 @@ void DeferredLight::draw(const DirectionalLight * light) {
 		_dirProgram->defaultTexture(uint(_textures.size()));
 		_dirProgram->uniform("shadowMode", int(ShadowMode::NONE));
 	}
-	ScreenQuad::draw();
+	GPU::drawQuad();
 	
 }
 

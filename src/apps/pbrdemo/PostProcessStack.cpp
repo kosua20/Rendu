@@ -3,21 +3,25 @@
 #include "scene/Sky.hpp"
 #include "system/System.hpp"
 #include "graphics/GPU.hpp"
-#include "graphics/ScreenQuad.hpp"
 
-PostProcessStack::PostProcessStack(const glm::vec2 & resolution) : Renderer("Post process stack"){
-	const int renderWidth	= int(resolution[0]);
-	const int renderHeight	= int(resolution[1]);
-	_bloomBuffer	= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, Layout::RGBA16F, "Bloom"));
-	_toneMapBuffer 	= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, Layout::RGBA16F, "Tonemap"));
-	_resultFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, Layout::RGBA16F, "Postproc. result"));
 
+PostProcessStack::PostProcessStack(const glm::vec2 & resolution) : Renderer("Post process stack"), _bloomBuffer("Bloom"), _toneMapBuffer("Tonemap"), _dofDownscaledColor("DoF Downscale"), _dofCocAndDepth("DoF CoC"), _dofGatherBuffer("DoF gather"), _resultTexture("Postproc. result") {
+
+	const uint renderWidth	= uint(resolution[0]);
+	const uint renderHeight	= uint(resolution[1]);
+	_bloomBuffer.setupAsDrawable(Layout::RGBA16F, renderWidth, renderHeight);
+	_toneMapBuffer.setupAsDrawable(Layout::RGBA16F, renderWidth, renderHeight);
+	_resultTexture.setupAsDrawable(Layout::RGBA16F, renderWidth, renderHeight);
+
+	const uint halfRenderWidth = renderWidth/2;
+	const uint halfRenderHeight = renderHeight/2;
 	// Depth of field is performed at half resolution.
-	_dofCocBuffer 	= std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth/2, renderHeight/2, {Layout::RGBA16F, Layout::RG16F}, "DoF CoC"));
-	_dofGatherBuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth/2, renderHeight/2, Layout::RGBA16F, "DoF gather"));
+	_dofDownscaledColor.setupAsDrawable(Layout::RGBA16F, halfRenderWidth, halfRenderHeight);
+	_dofCocAndDepth.setupAsDrawable(Layout::RG16F, halfRenderWidth, halfRenderHeight);
+	_dofGatherBuffer.setupAsDrawable(Layout::RGBA16F, halfRenderWidth, halfRenderHeight);
 
 	_blur		= std::unique_ptr<GaussianBlur>(new GaussianBlur(_settings.bloomRadius, 2, "Bloom"));
-	_preferredFormat.push_back(Layout::RGBA16F);
+	_colorFormat = Layout::RGBA16F;
 	
 	_bloomProgram		= Resources::manager().getProgram2D("bloom");
 	_bloomComposite 	= Resources::manager().getProgram2D("scale-texture");
@@ -29,9 +33,9 @@ PostProcessStack::PostProcessStack(const glm::vec2 & resolution) : Renderer("Pos
 	_dofCompositeProgram = Resources::manager().getProgram2D("dof-composite");
 }
 
-void PostProcessStack::process(const Texture * texture, const glm::mat4 & proj, const Texture * depth, Framebuffer & framebuffer, uint layer) {
+void PostProcessStack::process(const Texture& src, const glm::mat4 & proj, const Texture& depth, Texture& dst, uint layer) {
 
-	const glm::vec2 invRenderSize = 1.0f / glm::vec2(framebuffer.width(), framebuffer.height());
+	const glm::vec2 invRenderSize = 1.0f / glm::vec2(dst.width, dst.height);
 
 	GPU::setDepthState(false);
 	GPU::setBlendState(false);
@@ -40,81 +44,81 @@ void PostProcessStack::process(const Texture * texture, const glm::mat4 & proj, 
 	if(_settings.dof){
 		// --- DoF pass ------
 		// Compute circle of confidence along with the depth and downscaled color.
-		_dofCocBuffer->bind(Load::Operation::DONTCARE);
-		_dofCocBuffer->setViewport();
+		GPU::bind(Load::Operation::DONTCARE, &_dofDownscaledColor, &_dofCocAndDepth);
+		GPU::setViewport(_dofDownscaledColor);
 		_dofCocProgram->use();
 		_dofCocProgram->uniform("projParams", glm::vec2(proj[2][2], proj[3][2]));
 		_dofCocProgram->uniform("focusDist", _settings.focusDist);
 		_dofCocProgram->uniform("focusScale", _settings.focusScale);
-		_dofCocProgram->texture(texture, 0);
+		_dofCocProgram->texture(src, 0);
 		_dofCocProgram->texture(depth, 1);
-		ScreenQuad::draw();
+		GPU::drawQuad();
 		// Gather from neighbor samples.
-		_dofGatherBuffer->bind(Load::Operation::DONTCARE);
-		_dofGatherBuffer->setViewport();
+		GPU::bind(Load::Operation::DONTCARE, &_dofGatherBuffer);
+		GPU::setViewport(_dofGatherBuffer);
 		_dofGatherProgram->use();
-		_dofGatherProgram->uniform("invSize", 1.0f/glm::vec2(_dofCocBuffer->width(), _dofCocBuffer->height()));
-		_dofGatherProgram->texture(_dofCocBuffer->texture(0), 0);
-		_dofGatherProgram->texture(_dofCocBuffer->texture(1), 1);
-		ScreenQuad::draw();
+		_dofGatherProgram->uniform("invSize", 1.0f/glm::vec2(_dofCocAndDepth.width, _dofCocAndDepth.height));
+		_dofGatherProgram->texture(_dofDownscaledColor, 0);
+		_dofGatherProgram->texture(_dofCocAndDepth, 1);
+		GPU::drawQuad();
 		// Finally composite back with full res image.
-		_resultFramebuffer->bind(Load::Operation::DONTCARE);
-		_resultFramebuffer->setViewport();
+		GPU::bind(Load::Operation::DONTCARE, &_resultTexture);
+		GPU::setViewport(_resultTexture);
 		_dofCompositeProgram->use();
-		_dofCompositeProgram->texture(texture, 0);
-		_dofCompositeProgram->texture(_dofGatherBuffer->texture(), 1);
-		ScreenQuad::draw();
+		_dofCompositeProgram->texture(src, 0);
+		_dofCompositeProgram->texture(_dofGatherBuffer, 1);
+		GPU::drawQuad();
 	} else {
 		// Else just copy the input texture to our internal result.
-		_resultFramebuffer->bind(Load::Operation::DONTCARE);
-		_resultFramebuffer->setViewport();
+		GPU::bind(Load::Operation::DONTCARE, &_resultTexture);
+		GPU::setViewport(_resultTexture);
 		Resources::manager().getProgram2D("passthrough-pixelperfect")->use();
-		Resources::manager().getProgram2D("passthrough-pixelperfect")->texture(texture, 0);
-		ScreenQuad::draw();
+		Resources::manager().getProgram2D("passthrough-pixelperfect")->texture(src, 0);
+		GPU::drawQuad();
 	}
 
 	if(_settings.bloom) {
 		// --- Bloom selection pass ------
-		_bloomBuffer->bind(Load::Operation::DONTCARE);
-		_bloomBuffer->setViewport();
+		GPU::bind(Load::Operation::DONTCARE, &_bloomBuffer);
+		GPU::setViewport(_bloomBuffer);
 		_bloomProgram->use();
 		_bloomProgram->uniform("luminanceTh", _settings.bloomTh);
-		_bloomProgram->texture(_resultFramebuffer->texture(), 0);
-		ScreenQuad::draw();
+		_bloomProgram->texture(_resultTexture, 0);
+		GPU::drawQuad();
 		
 		// --- Bloom blur pass ------
-		_blur->process(_bloomBuffer->texture(), *_bloomBuffer);
+		_blur->process(_bloomBuffer, _bloomBuffer);
 		
 		// Add back the scene content.
-		_resultFramebuffer->bind(Load::Operation::LOAD);
-		_resultFramebuffer->setViewport();
+		GPU::bind(Load::Operation::LOAD, &_resultTexture);
+		GPU::setViewport(_resultTexture);
 		GPU::setBlendState(true, BlendEquation::ADD, BlendFunction::ONE, BlendFunction::ONE);
 		_bloomComposite->use();
 		_bloomComposite->uniform("scale", _settings.bloomMix);
-		_bloomComposite->texture(_bloomBuffer->texture(), 0);
-		ScreenQuad::draw();
+		_bloomComposite->texture(_bloomBuffer, 0);
+		GPU::drawQuad();
 		GPU::setBlendState(false);
 		// Steps below ensures that we will always have an intermediate target.
 	}
 
 	// --- Tonemapping pass ------
-	_toneMapBuffer->bind(Load::Operation::DONTCARE);
-	_toneMapBuffer->setViewport();
+	GPU::bind(Load::Operation::DONTCARE, &_toneMapBuffer);
+	GPU::setViewport(_toneMapBuffer);
 	_toneMappingProgram->use();
 	_toneMappingProgram->uniform("customExposure", _settings.exposure);
 	_toneMappingProgram->uniform("apply", _settings.tonemap);
-	_toneMappingProgram->texture(_resultFramebuffer->texture(), 0);
-	ScreenQuad::draw();
+	_toneMappingProgram->texture(_resultTexture, 0);
+	GPU::drawQuad();
 
 	if(_settings.fxaa) {
-		framebuffer.bind(layer, 0, Load::Operation::LOAD);
-		framebuffer.setViewport();
+		GPU::bind(layer, 0, Load::Operation::LOAD, &dst);
+		GPU::setViewport(dst);
 		_fxaaProgram->use();
 		_fxaaProgram->uniform("inverseScreenSize", invRenderSize);
-		_fxaaProgram->texture(_toneMapBuffer->texture(), 0);
-		ScreenQuad::draw();
+		_fxaaProgram->texture(_toneMapBuffer, 0);
+		GPU::drawQuad();
 	} else {
-		GPU::blit(*_toneMapBuffer->texture(0), *framebuffer.texture(0), 0, layer, Filter::LINEAR);
+		GPU::blit(_toneMapBuffer, dst, 0, layer, Filter::LINEAR);
 	}
 
 }
@@ -125,11 +129,12 @@ void PostProcessStack::updateBlurPass(){
 
 void PostProcessStack::resize(uint width, uint height) {
 	const glm::ivec2 renderRes(width, height);
-	_toneMapBuffer->resize(renderRes);
-	_bloomBuffer->resize(renderRes);
-	_resultFramebuffer->resize(renderRes);
-	_dofGatherBuffer->resize(renderRes/4);
-	_dofCocBuffer->resize(renderRes/4);
+	_toneMapBuffer.resize(renderRes);
+	_bloomBuffer.resize(renderRes);
+	_resultTexture.resize(renderRes);
+	_dofGatherBuffer.resize(renderRes/2);
+	_dofDownscaledColor.resize(renderRes/2);
+	_dofCocAndDepth.resize(renderRes/2);
 }
 
 void PostProcessStack::interface(){

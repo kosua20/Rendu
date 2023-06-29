@@ -8,7 +8,7 @@
 #include "renderers/Renderer.hpp"
 #include "renderers/Culler.hpp"
 
-#include "graphics/Framebuffer.hpp"
+#include "resources/Texture.hpp"
 #include "input/ControllableCamera.hpp"
 
 #include "processing/SSAO.hpp"
@@ -44,7 +44,7 @@ public:
 	void setScene(const std::shared_ptr<Scene> & scene);
 
 	/** \copydoc Renderer::draw */
-	void draw(const Camera & camera, Framebuffer & framebuffer, uint layer = 0) override;
+	void draw(const Camera & camera, Texture* dstColor, Texture* dstDepth, uint layer = 0) override;
 
 	/** \copydoc Renderer::resize
 	 */
@@ -53,8 +53,8 @@ public:
 	/** \copydoc Renderer::interface */
 	void interface() override;
 
-	/** \return the framebuffer containing the scene depth information */
-	const Framebuffer * sceneDepth() const;
+	/** \return the texture containing the scene depth information */
+	Texture& sceneDepth();
 
 private:
 
@@ -87,7 +87,8 @@ private:
 	 */
 	void renderBackground(const glm::mat4 & view, const glm::mat4 & proj, const glm::vec3 & pos);
 
-	std::unique_ptr<Framebuffer> _sceneFramebuffer; ///< Scene framebuffer
+	Texture _sceneColor;	 ///< Scene color texture
+	Texture _sceneDepth;	 ///< Scene depth texture
 	std::unique_ptr<SSAO> _ssaoPass;				///< SSAO processing.
 	std::unique_ptr<ForwardLight> _lightsGPU;	///< The lights renderer.
 	std::unique_ptr<ForwardProbe> _probesGPU;	///< The probes renderer.
