@@ -2,13 +2,12 @@
 #include "graphics/Program.hpp"
 #include "graphics/GPUTypes.hpp"
 
-class Framebuffer;
 class Texture;
 class Mesh;
 
 /**
- \brief Provide helper GUI to display the content of texture and framebuffer attachments.
- This can be useful to validate the content rendered to a specific texture zhen debugging.
+ \brief Provide helper GUI to display the content of textures and mesh infos.
+ This can be useful to validate the content rendered to a specific texture when debugging.
  \ingroup Renderers
  */
 class DebugViewer {
@@ -25,11 +24,6 @@ public:
 	*/
 	void track(const Texture * tex);
 
-	/** Register a framebuffer for debug. All attachment textures will be visible.
-	\param buffer the framebuffer to monitor
-	*/
-	void track(const Framebuffer * buffer);
-
 	/** Register a mesh for debug.
 	\param mesh the mesh to monitor
 	*/
@@ -44,11 +38,6 @@ public:
 	\param tex the texture to stop tracking
 	*/
 	void untrack(const Texture * tex);
-
-	/** Stop monitoring a framebuffer.
-	\param buffer the framebuffer to stop tracking
-	*/
-	void untrack(const Framebuffer * buffer);
 
 	/** Stop monitoring a mesh.
 	\param mesh the mesh to stop tracking
@@ -88,11 +77,6 @@ public:
 	*/
 	static void trackDefault(const Texture * tex);
 
-	/** Register a framebuffer for debug. All attachment textures will be visible.
-	\param buffer the framebuffer to monitor
-	*/
-	static void trackDefault(const Framebuffer * buffer);
-
 	/** Register a mesh for debug.
 	\param mesh the mesh to monitor
 	*/
@@ -107,11 +91,6 @@ public:
 	\param tex the texture to stop tracking
 	*/
 	static void untrackDefault(const Texture * tex);
-
-	/** Stop monitoring a framebuffer.
-	\param buffer the framebuffer to stop tracking
-	*/
-	static void untrackDefault(const Framebuffer * buffer);
 
 	/** Stop monitoring a mesh.
 	\param mesh the mesh to stop tracking
@@ -129,7 +108,7 @@ private:
 	struct TextureInfos {
 		const Texture * tex = nullptr; ///< The texture to display.
 		std::string name; ///< Texture name.
-		std::unique_ptr<Framebuffer> display; ///< Framebuffer used for visualization.
+		std::unique_ptr<Texture> display; ///< Texture used for visualization.
 		std::string displayName; ///< Texture name with extra information about the layout,...
 		glm::vec2 range = glm::vec2(0.0f, 1.0f); ///< Range of values to display normalized.
 		glm::bvec4 channels = glm::bvec4(true, true, true, false); ///< Channels that should be displayed.
@@ -137,13 +116,6 @@ private:
 		int layer = 0; ///< Layer to display for arrays and 3D textures.
 		bool gamma = false; ///< Should gamma correction be applied.
 		bool visible = false; ///< Is the texture window visible.
-	};
-
-	/** Framebuffer display information */
-	struct FramebufferInfos {
-		const Framebuffer * buffer = nullptr; ///< The framebuffer to track.
-		std::string name; ///< The framebuffer name.
-		std::vector<TextureInfos> attachments; ///< Color and depth attachment infos.
 	};
 
 	/** Mesh information. */
@@ -194,13 +166,13 @@ private:
 	void updateDisplay(const TextureInfos & tex);
 
 	std::vector<TextureInfos> _textures; ///< The registered textures.
-	std::vector<FramebufferInfos> _framebuffers; ///< The registered framebuffers.
+	std::vector<TextureInfos> _drawables; ///< The registered drawable textures.
 	std::vector<MeshInfos> _meshes; ///< The registered meshes.
 	std::unordered_map<std::string, StateInfos> _states; ///< GPU states currently tracked.
 
 	Program * _texDisplay; ///< Texture display shader.
 	uint _textureId = 0; ///< Default texture name counter.
-	uint _bufferId	= 0; ///< Default framebuffer name counter.
+	uint _drawableId = 0; ///< Default drawable name counter.
 	uint _meshId    = 0; ///< Default mesh name counter.
 	uint _winId		= 0; ///< Internal window counter.
 };

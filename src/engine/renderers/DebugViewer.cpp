@@ -1,10 +1,8 @@
 #include "DebugViewer.hpp"
 #include "graphics/GPU.hpp"
 #include "graphics/GPUObjects.hpp"
-#include "graphics/Framebuffer.hpp"
 #include "resources/Texture.hpp"
 #include "resources/Mesh.hpp"
-#include "graphics/ScreenQuad.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "system/System.hpp"
 #include "system/TextUtilities.hpp"
@@ -37,73 +35,31 @@ void DebugViewer::track(const Texture * tex) {
 	// Generate default name if empty.
 	std::string finalName = tex->name();
 	if(finalName.empty()) {
-		finalName = "Texture " + TextUtilities::padInt(_textureId++, 3);
+		if(tex->drawable){
+			finalName = "Drawable " + TextUtilities::padInt(_drawableId++, 3);
+		} else {
+			finalName = "Texture " + TextUtilities::padInt(_textureId++, 3);
+		}
 	}
 
+	std::vector<TextureInfos>& texturesList = tex->drawable ? _drawables : _textures;
 	// Check if this specific object already is registered, in that case just update the name.
-	for(TextureInfos & infos : _textures) {
+	for(TextureInfos & infos : texturesList) {
 		if(infos.tex == tex) {
 			infos.name = finalName;
-			// Sort framebuffers list.
-			std::sort(_textures.begin(), _textures.end(), [](const TextureInfos & a, const TextureInfos & b) {
+			// Sort texture list.
+			std::sort(texturesList.begin(), texturesList.end(), [](const TextureInfos & a, const TextureInfos & b) {
 				return a.name < b.name;
 			});
 			return;
 		}
 	}
 	// Else create a new texture infos element.
-	_textures.emplace_back();
-	registerTexture(finalName, tex, _textures.back());
+	texturesList.emplace_back();
+	registerTexture(finalName, tex, texturesList.back());
 
 	// Sort textures list.
-	std::sort(_textures.begin(), _textures.end(), [](const TextureInfos & a, const TextureInfos & b) {
-		return a.name < b.name;
-	});
-}
-
-void DebugViewer::track(const Framebuffer * buffer) {
-	if(buffer->name() == debugSkipName) {
-		return;
-	}
-	
-	// Generate default name if empty.
-	std::string finalName = buffer->name();
-	if(finalName.empty()) {
-		finalName = "Framebuffer " + TextUtilities::padInt(_bufferId++, 3);
-	}
-	finalName.append(" (" + shapeNames.at(buffer->shape()) + ")");
-
-	// Check if this specific object already is registered, in that case just update the name.
-	for(FramebufferInfos & infos : _framebuffers) {
-		if(infos.buffer == buffer) {
-			infos.name = finalName;
-			// Sort framebuffers list.
-			std::sort(_framebuffers.begin(), _framebuffers.end(), [](const FramebufferInfos & a, const FramebufferInfos & b) {
-				return a.name < b.name;
-			});
-			return;
-		}
-	}
-	// Else create a new framebuffer infos element.
-	_framebuffers.emplace_back();
-	FramebufferInfos & infos = _framebuffers.back();
-	infos.buffer			 = buffer;
-	infos.name				 = finalName;
-
-	// Register color attachments.
-	for(uint cid = 0; cid < buffer->attachments(); ++cid) {
-		const std::string nameAttach = "Color " + std::to_string(cid); 
-		infos.attachments.emplace_back();
-		registerTexture(nameAttach, buffer->texture(cid), infos.attachments.back());
-	}
-	// Register depth attachment if it's a texture.
-	const Texture * depthAttach = buffer->depthBuffer();
-	if(depthAttach) {
-		infos.attachments.emplace_back();
-		registerTexture("Depth", depthAttach, infos.attachments.back());
-	}
-	// Sort framebuffers list.
-	std::sort(_framebuffers.begin(), _framebuffers.end(), [](const FramebufferInfos & a, const FramebufferInfos & b) {
+	std::sort(texturesList.begin(), texturesList.end(), [](const TextureInfos & a, const TextureInfos & b) {
 		return a.name < b.name;
 	});
 }
@@ -157,11 +113,12 @@ void DebugViewer::registerTexture(const std::string& name, const Texture* tex, T
 	infos.name  = name;
 	infos.tex   = tex;
 
-	const Layout format = tex->gpu->typedFormat;
+	const Layout format = tex->format;
 	infos.gamma = GPUTexture::isSRGB(format);
 
-	// Setup display framebuffer.
-	infos.display.reset(new Framebuffer(TextureShape::D2, tex->width, tex->height, 1, 1, {Layout::RGBA8}, debugSkipName));
+	// Setup display texture.
+	infos.display.reset(new Texture(debugSkipName));
+	infos.display->setupAsDrawable(Layout::RGBA8, tex->width, tex->height, TextureShape::D2, 1, 1);
 
 	// GPU format strings
 	#define STRENUM(X) { Layout::X, #X}
@@ -222,17 +179,11 @@ void DebugViewer::registerTexture(const std::string& name, const Texture* tex, T
 
 
 void DebugViewer::untrack(const Texture * tex) {
-	auto end = std::remove_if(_textures.begin(), _textures.end(), [tex](const TextureInfos & infos) {
+	std::vector<TextureInfos>& textureList = tex->drawable ? _drawables : _textures;
+	auto end = std::remove_if(textureList.begin(), textureList.end(), [tex](const TextureInfos & infos) {
 		return infos.tex == tex;
 	});
-	_textures.erase(end, _textures.end());
-}
-
-void DebugViewer::untrack(const Framebuffer * buffer) {
-	auto end = std::remove_if(_framebuffers.begin(), _framebuffers.end(), [buffer](const FramebufferInfos & infos) {
-		return infos.buffer == buffer;
-	});
-	_framebuffers.erase(end, _framebuffers.end());
+	textureList.erase(end, textureList.end());
 }
 
 void DebugViewer::untrack(const Mesh * mesh) {
@@ -254,15 +205,10 @@ void DebugViewer::interface() {
 			}
 			ImGui::EndMenu();
 		}
-		if(ImGui::BeginMenu("Framebuffers")) {
-			for(FramebufferInfos & buffer : _framebuffers) {
-				ImGui::PushID(buffer.buffer);
-				if(ImGui::BeginMenu(buffer.name.c_str())) {
-					for(TextureInfos & tex : buffer.attachments) {
-						ImGui::MenuItem(tex.name.c_str(), nullptr, &tex.visible);
-					}
-					ImGui::EndMenu();
-				}
+		if(ImGui::BeginMenu("Drawables")) {
+			for(TextureInfos & tex : _drawables) {
+				ImGui::PushID(tex.tex);
+				ImGui::MenuItem(tex.name.c_str(), nullptr, &tex.visible);
 				ImGui::PopID();
 			}
 			ImGui::EndMenu();
@@ -291,14 +237,13 @@ void DebugViewer::interface() {
 		}
 		displayTexture("", tex);
 	}
-	for(FramebufferInfos & buffer : _framebuffers) {
-		for(TextureInfos & tex : buffer.attachments) {
-			if(!tex.visible) {
-				continue;
-			}
-			displayTexture(buffer.name + " - ", tex);
+	for(TextureInfos & tex : _drawables) {
+		if(!tex.visible) {
+			continue;
 		}
+		displayTexture("", tex);
 	}
+
 	for(MeshInfos & mesh : _meshes) {
 		if(!mesh.visible) {
 			continue;
@@ -423,7 +368,7 @@ void DebugViewer::displayState(const std::string & name, StateInfos & infos){
 			std::stringstream str;
 			//str << "Color clear: " << st.colorClearValue << "\n";
 			str << "Color write: " << bools.at(st.colorWriteMask[0]) << ", " << bools.at(st.colorWriteMask[1]) << ", " << bools.at(st.colorWriteMask[2]) << ", " << bools.at(st.colorWriteMask[3]) << "\n";
-			//str << "Framebuffer sRGB: " << bools.at(st.framebufferSRGB) << "\n";
+			//str << "Support sRGB: " << bools.at(st.supportsRGB) << "\n";
 			const std::string strRes = str.str();
 			ImGui::Text("%s", strRes.c_str());
 		}
@@ -523,12 +468,12 @@ void DebugViewer::displayTexture(const std::string & prefix, TextureInfos & tex)
 		ImGui::Checkbox("Gamma", &tex.gamma);
 		ImGui::Columns(1);
 
-		// Prepare the framebuffer content based on the texture type.
+		// Prepare the display content based on the texture type.
 		updateDisplay(tex);
 
 		// Display.
 		const ImVec2 winSize = ImGui::GetContentRegionAvail();
-		ImGui::ImageButton("#Tex", *tex.display->texture(), ImVec2(winSize.x, winSize.y), ImVec2(0.0, 0.0), ImVec2(1.0, 1.0));
+		ImGui::ImageButton("#Tex", *tex.display, ImVec2(winSize.x, winSize.y), ImVec2(0.0, 0.0), ImVec2(1.0, 1.0));
 		if(ImGui::IsItemHovered()) {
 			ImGui::SetNextFrameWantCaptureKeyboard(false);
 			ImGui::SetNextFrameWantCaptureMouse(false);
@@ -548,8 +493,8 @@ void DebugViewer::updateDisplay(const TextureInfos & tex) {
 		{TextureShape::ArrayCube, 5},
 		{TextureShape::D3, 6}};
 
-	tex.display->bind(Load::Operation::DONTCARE,Load::Operation::DONTCARE, Load::Operation::DONTCARE);
-	tex.display->setViewport();
+	GPU::bind(Load::Operation::DONTCARE, tex.display.get());
+	GPU::setViewport(*tex.display);
 
 	_texDisplay->use();
 	_texDisplay->uniform("layer", tex.layer);
@@ -567,7 +512,7 @@ void DebugViewer::updateDisplay(const TextureInfos & tex) {
 		}
 	}
 
-	ScreenQuad::draw();
+	GPU::drawQuad();
 }
 
 void DebugViewer::setDefault(DebugViewer * viewer) {
@@ -579,13 +524,6 @@ void DebugViewer::trackDefault(const Texture * tex) {
 		return;
 	}
 	_shared->track(tex);
-}
-
-void DebugViewer::trackDefault(const Framebuffer * buffer) {
-	if(!_shared) {
-		return;
-	}
-	_shared->track(buffer);
 }
 
 void DebugViewer::trackDefault(const Mesh * mesh) {
@@ -607,13 +545,6 @@ void DebugViewer::untrackDefault(const Texture * tex) {
 		return;
 	}
 	_shared->untrack(tex);
-}
-
-void DebugViewer::untrackDefault(const Framebuffer * buffer) {
-	if(!_shared) {
-		return;
-	}
-	_shared->untrack(buffer);
 }
 
 void DebugViewer::untrackDefault(const Mesh * mesh) {
