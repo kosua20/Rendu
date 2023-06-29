@@ -2,16 +2,18 @@
 #include "input/Input.hpp"
 #include "system/System.hpp"
 #include "graphics/GPU.hpp"
-#include "graphics/ScreenQuad.hpp"
 #include "resources/Texture.hpp"
 #include "system/Window.hpp"
 
 PathTracerApp::PathTracerApp(RenderingConfig & config, Window & window, const std::shared_ptr<Scene> & scene) :
-	CameraApp(config, window), _renderTex ("render") {
+	CameraApp(config, window), _renderTex ("render"), _sceneColor("Visualisation color"), _sceneDepth("Visualisation depth") {
 
 	_bvhRenderer.reset(new BVHRenderer());
 	const glm::vec2 renderRes = _config.renderingResolution();
-	_sceneFramebuffer = _bvhRenderer->createOutput(uint(renderRes[0]), uint(renderRes[1]), "Visualization");
+	const uint w = uint(renderRes[0]);
+	const uint h = uint(renderRes[1]);
+	_sceneColor.setupAsDrawable(_bvhRenderer->outputColorFormat(), w, h);
+	_sceneDepth.setupAsDrawable(_bvhRenderer->outputDepthFormat(), w, h);
 	_passthrough = Resources::manager().getProgram2D("tonemap");
 	
 	// Initial setup for rendering image.
@@ -20,7 +22,8 @@ PathTracerApp::PathTracerApp(RenderingConfig & config, Window & window, const st
 	_renderTex.depth  = 1;
 	_renderTex.width  = int(renderRes[0]);
 	_renderTex.height = int(renderRes[1]);
-	GPU::setupTexture(_renderTex, Layout::RGBA8, false);
+	_renderTex.format = Layout::RGBA8;
+	GPU::setupTexture(_renderTex);
 	
 	_scene = scene;
 	if(!scene) {
@@ -73,12 +76,12 @@ void PathTracerApp::draw() {
 		_passthrough->uniform("apply", true);
 		_passthrough->uniform("customExposure", _exposure);
 		_passthrough->texture(_renderTex, 0);
-		ScreenQuad::draw();
+		GPU::drawQuad();
 		return;
 	}
 	
 	// Draw the real time visualization.
-	_bvhRenderer->draw(_userCamera, *_sceneFramebuffer);
+	_bvhRenderer->draw(_userCamera, &_sceneColor, &_sceneDepth);
 	// We now render a full screen quad in the default framebuffer.
 	GPU::setBlendState(false);
 	GPU::setDepthState(false);
@@ -87,8 +90,8 @@ void PathTracerApp::draw() {
 	window().setViewport();
 	_passthrough->use();
 	_passthrough->uniform("apply", false);
-	_passthrough->texture(_sceneFramebuffer->texture(), 0);
-	ScreenQuad::draw();
+	_passthrough->texture(_sceneColor, 0);
+	GPU::drawQuad();
 }
 
 void PathTracerApp::update() {
@@ -220,7 +223,8 @@ void PathTracerApp::physics(double, double) {
 void PathTracerApp::resize() {
 	// Same aspect ratio as the display resolution
 	const glm::vec2 renderRes = _config.renderingResolution();
-	_sceneFramebuffer->resize(renderRes);
+	_sceneColor.resize(renderRes);
+	_sceneDepth.resize(renderRes);
 	// Udpate the image resolution, using the new aspect ratio.
 	_renderTex.width = uint(std::round(_config.screenResolution[0] / _config.screenResolution[1] * float(_renderTex.height)));
 }

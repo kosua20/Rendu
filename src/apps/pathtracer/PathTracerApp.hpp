@@ -4,7 +4,7 @@
 
 #include "Application.hpp"
 #include "scene/Scene.hpp"
-#include "graphics/Framebuffer.hpp"
+#include "resources/Texture.hpp"
 #include "input/ControllableCamera.hpp"
 
 #include "Common.hpp"
@@ -46,7 +46,8 @@ private:
 	std::shared_ptr<Scene> _scene;				///< The scene to render.
 	std::unique_ptr<PathTracer> _pathTracer;	///< The scene specific path tracer.
 	std::unique_ptr<BVHRenderer> _bvhRenderer;	///< The scene debug viewer.
-	std::unique_ptr<Framebuffer> _sceneFramebuffer; ///< Scene buffer.
+	Texture _sceneColor; 						///< Scene color texture.
+	Texture _sceneDepth; 						///< Scene depth texture.
 
 	int _samples		 = 8;		///< Samples count.
 	int _depth			 = 5;		///< Depth of each ray.
