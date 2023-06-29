@@ -4,8 +4,7 @@
 #include "input/Input.hpp"
 #include "processing/BoxBlur.hpp"
 #include "resources/ResourcesManager.hpp"
-#include "graphics/ScreenQuad.hpp"
-#include "graphics/Framebuffer.hpp"
+#include "resources/Texture.hpp"
 #include "graphics/GPU.hpp"
 #include "generation/PerlinNoise.hpp"
 #include "generation/Random.hpp"
@@ -55,11 +54,13 @@ private:
 	void generateWaves();
 
 	// Buffers.
-	std::unique_ptr<Framebuffer> _sceneBuffer; ///< Scene framebuffer.
-	std::unique_ptr<Framebuffer> _waterEffectsHalf; ///< Underwater terrain with caustics.
-	std::unique_ptr<Framebuffer> _waterPos; ///< Underwater terrain world positions.
-	std::unique_ptr<Framebuffer> _waterEffectsBlur; ///< Blurred underwater terrain.
-	std::unique_ptr<Framebuffer> _environment; ///< Environment cubemap.
+	Texture _sceneColor; 		///< Scene lighting.
+	Texture _scenePosition; 	///< Scene positions.
+	Texture _sceneDepth; 		///< Scene depth.
+	Texture _waterEffectsHalf; 	///< Underwater terrain with caustics.
+	Texture _waterPos; 			///< Underwater terrain world positions.
+	Texture _waterEffectsBlur; 	///< Blurred underwater terrain.
+	Texture _environment; 		///< Environment cubemap.
 	BoxBlur _blur = BoxBlur(true, "Water"); ///< Underwater terrain blurring.
 
 	// Geometry.

@@ -3,7 +3,6 @@
 #include "resources/Texture.hpp"
 #include "resources/Mesh.hpp"
 #include "processing/GaussianBlur.hpp"
-#include "graphics/Framebuffer.hpp"
 #include "generation/PerlinNoise.hpp"
 #include "generation/Random.hpp"
 #include "Common.hpp"
@@ -74,8 +73,8 @@ public:
 	}
 
 	/** \return the terrain shadow map, with self shadowing in the R channel and ocean plane shadowing in the G channel. */
-	const Texture * shadowMap() const {
-		return _shadowBuffer->texture(0);
+	const Texture & shadowMap() const {
+		return _shadowMap;
 	}
 
 	/** \return the grid mesh cells. */
@@ -131,7 +130,7 @@ private:
 	std::vector<Cell> _cells; ///< Grid mesh cells.
 	Texture _map = Texture("Terrain"); ///< Terrain map, height in R channel, normals in GBA channels.
 	Texture _mapLowRes = Texture("Terrain low-res");///< Low resolution min-height terrain map.
-	std::unique_ptr<Framebuffer> _shadowBuffer; ///< Shadow map generation framebuffer.
+	Texture _shadowMap; ///< Shadow map generation texture.
 	GaussianBlur _gaussBlur; ///< Gaussian blur.
 
 	GenerationSettings _genOpts; ///< Terrain generations settings.

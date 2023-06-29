@@ -4,7 +4,9 @@
 #include "system/Window.hpp"
 
 IslandApp::IslandApp(RenderingConfig & config, Window & window) : CameraApp(config, window),
-	_oceanMesh("Ocean"), _farOceanMesh("Far ocean"),
+	_sceneColor("Scene color"), _scenePosition("Scene positions") ,_sceneDepth("Scene depth"),
+	_waterEffectsHalf("Water position"), _waterPos("Water effect half"), _waterEffectsBlur("Water effect blur"),
+	_environment("Environment"), _oceanMesh("Ocean"), _farOceanMesh("Far ocean"),
 	_surfaceNoise("surface noise"), _glitterNoise("glitter noise"),
 	 _waves(8, UniformFrequency::FRAME)
 {
@@ -15,11 +17,17 @@ IslandApp::IslandApp(RenderingConfig & config, Window & window) : CameraApp(conf
 	const glm::vec2 renderRes = _config.renderingResolution();
 	const std::vector<Layout> formats = {Layout::RGBA32F, Layout::RGBA32F};
 	const std::vector<Layout> formatsAndDepth = {Layout::RGBA32F, Layout::RGBA32F, Layout::DEPTH_COMPONENT32F};
-	_sceneBuffer.reset(new Framebuffer(uint(renderRes[0]), uint(renderRes[1]), formatsAndDepth, "Scene"));
-	_waterPos.reset(new Framebuffer(uint(renderRes[0]), uint(renderRes[1]), formats[1], "Water position"));
-	_waterEffectsHalf.reset(new Framebuffer(uint(renderRes[0])/2, uint(renderRes[1])/2, formats[0], "Water effect half"));
-	_waterEffectsBlur.reset(new Framebuffer(uint(renderRes[0])/2, uint(renderRes[1])/2, formats[0], "Water effect blur"));
-	_environment.reset(new Framebuffer(TextureShape::Cube, 512, 512, 6, 1, {Layout::RGBA16F}, "Environment"));
+
+	const uint renderWidth = uint(renderRes[0]);
+	const uint renderHeight = uint(renderRes[1]);
+
+	_sceneColor.setupAsDrawable(Layout::RGBA32F, renderWidth, renderHeight);
+	_scenePosition.setupAsDrawable(Layout::RGBA32F, renderWidth, renderHeight);
+	_sceneDepth.setupAsDrawable(Layout::DEPTH_COMPONENT32F, renderWidth, renderHeight);
+	_waterPos.setupAsDrawable(Layout::RGBA32F, renderWidth, renderHeight);
+	_waterEffectsHalf.setupAsDrawable(Layout::RGBA32F, renderWidth/2, renderHeight/2);
+	_waterEffectsBlur.setupAsDrawable(Layout::RGBA32F, renderWidth/2, renderHeight/2);
+	_environment.setupAsDrawable(Layout::RGBA16F, 512, 512, TextureShape::Cube, 1);
 
 	// Lookup table.
 	_precomputedScattering = Resources::manager().getTexture("scattering-precomputed", Layout::RGBA16F, Storage::GPU);
@@ -97,7 +105,7 @@ IslandApp::IslandApp(RenderingConfig & config, Window & window) : CameraApp(conf
 	const float pSize = 128.0f;
 	_maxLevelX = std::log2(pSize);
 	_maxLevelY = pSize;
-	_distanceScale = 1.0f / (float(_sceneBuffer->width()) / 1920.0f) * 6.0f;
+	_distanceScale = 1.0f / (float(_sceneColor.width) / 1920.0f) * 6.0f;
 
 	generateWaves();
 
@@ -150,14 +158,14 @@ void IslandApp::draw() {
 	const glm::mat4 mvp = _userCamera.projection() * _userCamera.view();
 	const glm::vec3 camDir = _userCamera.direction();
 	const glm::vec3 & camPos = _userCamera.position();
-	const glm::vec2 invRenderSize = 1.0f / glm::vec2(_sceneBuffer->width(), _sceneBuffer->height());
+	const glm::vec2 invRenderSize = 1.0f / glm::vec2(_sceneColor.width, _sceneColor.height);
 	const float time = _stopTime ? 0.1f : float(timeElapsed());
 	// If needed, update the skybox.
 	if(_shouldUpdateSky){
 		GPU::setDepthState(false);
 		GPU::setBlendState(false);
 		GPU::setCullState(false, Faces::BACK);
-		_environment->setViewport();
+		GPU::setViewport(_environment);
 
 		_skyProgram->use();
 		_skyProgram->uniform("viewPos", glm::vec3(0.0f));
@@ -165,7 +173,7 @@ void IslandApp::draw() {
 		_skyProgram->texture(_precomputedScattering, 0);
 
 		for(uint lid = 0; lid < 6; ++lid){
-			_environment->bind(lid, 0, Load::Operation::DONTCARE, Load::Operation::DONTCARE, Load::Operation::DONTCARE);
+			GPU::bind(lid, 0, Load::Operation::DONTCARE, &_environment);
 			const glm::mat4 clipToWorldFace  = glm::inverse(Library::boxVPs[lid]);
 			_skyProgram->uniform("clipToWorld", clipToWorldFace);
 			GPU::drawMesh(*_skyMesh);
@@ -175,8 +183,8 @@ void IslandApp::draw() {
 		_shouldUpdateSky = false;
 	}
 
-	_sceneBuffer->bind(glm::vec4(0.0f), 1.0f);
-	_sceneBuffer->setViewport();
+	GPU::bind(glm::vec4(0.0f), 1.0f, Load::Operation::DONTCARE, &_sceneDepth, &_sceneColor, &_scenePosition);
+	GPU::setViewport(_sceneColor);
 	
 	GPU::setDepthState(true, TestFunction::LESS, true);
 	GPU::setCullState(true, Faces::BACK);
@@ -258,33 +266,34 @@ void IslandApp::draw() {
 
 		// Start by copying the visible terrain info.
 		// Blit full res position map.
-		GPU::blit(*_sceneBuffer->texture(1), *_waterPos->texture(0), 0, 0, Filter::NEAREST);
+		GPU::blit(_scenePosition, _waterPos, Filter::NEAREST);
 
 		if(isUnderwater){
 			// Blit color as-is if underwater (blur will happen later)
-			GPU::blit(*_sceneBuffer->texture(0), *_waterEffectsHalf->texture(0), Filter::LINEAR);
+			GPU::blit(_sceneColor, _waterEffectsHalf, Filter::LINEAR);
 		} else {
 			// Else copy, downscale, apply caustics and blur.
 			GPU::setDepthState(false);
 			GPU::setCullState(true, Faces::BACK);
 			GPU::setBlendState(false);
 
-			_waterEffectsHalf->bind(Load::Operation::DONTCARE);
-			_waterEffectsHalf->setViewport();
+			GPU::bind(Load::Operation::DONTCARE, &_waterEffectsHalf);
+			GPU::setViewport(_waterEffectsHalf);
+
 			_waterCopy->use();
-			_waterCopy->texture(_sceneBuffer->texture(0), 0);
-			_waterCopy->texture(_sceneBuffer->texture(1), 1);
+			_waterCopy->texture(_sceneColor, 0);
+			_waterCopy->texture(_scenePosition, 1);
 			_waterCopy->texture(_caustics, 2);
 			_waterCopy->texture(_waveNormals, 3);
 			_waterCopy->uniform("time", time);
-			ScreenQuad::draw();
+			GPU::drawQuad();
 
-			_blur.process(_waterEffectsHalf->texture(0), *_waterEffectsBlur);
+			_blur.process(_waterEffectsHalf, _waterEffectsBlur);
 		}
 
 		// Render the ocean waves.
-		_sceneBuffer->bind(Load::Operation::LOAD, Load::Operation::LOAD, Load::Operation::DONTCARE);
-		_sceneBuffer->setViewport();
+		GPU::bind(Load::Operation::LOAD, Load::Operation::LOAD, Load::Operation::DONTCARE, &_sceneDepth, &_sceneColor, &_scenePosition);
+		GPU::setViewport(_sceneColor);
 		GPU::setDepthState(true, TestFunction::LESS, true);
 		GPU::setBlendState(false);
 		GPU::setCullState(true, isUnderwater ? Faces::FRONT : Faces::BACK);
@@ -308,12 +317,12 @@ void IslandApp::draw() {
 
 		_oceanProgram->buffer(_waves, 0);
 		_oceanProgram->texture(_foam, 0);
-		_oceanProgram->texture(_waterEffectsHalf->texture(0), 1);
-		_oceanProgram->texture(_waterPos->texture(0), 2);
-		_oceanProgram->texture(_waterEffectsBlur->texture(0), 3);
+		_oceanProgram->texture(_waterEffectsHalf, 1);
+		_oceanProgram->texture(_waterPos, 2);
+		_oceanProgram->texture(_waterEffectsBlur, 3);
 		_oceanProgram->texture(_absorbScatterOcean, 4);
 		_oceanProgram->texture(_waveNormals, 5);
-		_oceanProgram->texture(_environment->texture(), 6);
+		_oceanProgram->texture(_environment, 6);
 		_oceanProgram->texture(_brdfLUT, 7);
 		_oceanProgram->texture(_terrain->shadowMap(), 8);
 		GPU::drawTesselatedMesh(_oceanMesh, 4);
@@ -334,23 +343,24 @@ void IslandApp::draw() {
 			GPU::setDepthState(false);
 			GPU::setBlendState(false);
 
-			_waterEffectsHalf->bind(Load::Operation::LOAD);
-			_waterEffectsHalf->setViewport();
+			GPU::bind(Load::Operation::LOAD, &_waterEffectsHalf);
+			GPU::setViewport(_waterEffectsHalf);
+
 			_waterCopy->use();
-			_waterCopy->texture(_sceneBuffer->texture(0), 0);
-			_waterCopy->texture(_sceneBuffer->texture(1), 1);
+			_waterCopy->texture(_sceneColor, 0);
+			_waterCopy->texture(_scenePosition, 1);
 			_waterCopy->texture(_caustics, 2);
 			_waterCopy->texture(_waveNormals, 3);
 			_waterCopy->uniform("time", time);
-			ScreenQuad::draw();
+			GPU::drawQuad();
 
-			_blur.process(_waterEffectsHalf->texture(0), *_waterEffectsBlur);
+			_blur.process(_waterEffectsHalf, _waterEffectsBlur);
 			// Blit full res position map.
-			GPU::blit(*_sceneBuffer->texture(1), *_waterPos->texture(0), 0, 0, Filter::NEAREST);
+			GPU::blit(_scenePosition, _waterPos, 0, 0, Filter::NEAREST);
 
 			// Render full screen effect.
-			_sceneBuffer->bind(Load::Operation::LOAD);
-			_sceneBuffer->setViewport();
+			GPU::bind(Load::Operation::LOAD, &_sceneColor);
+			GPU::setViewport(_sceneColor);
 			GPU::setCullState(true, Faces::BACK);
 			GPU::setDepthState(false);
 			GPU::setBlendState(false);
@@ -364,13 +374,13 @@ void IslandApp::draw() {
 
 			_underwaterProgram->buffer(_waves, 0);
 			_underwaterProgram->texture(_foam, 0);
-			_underwaterProgram->texture(_waterEffectsHalf->texture(0), 1);
-			_underwaterProgram->texture(_waterPos->texture(0), 2);
-			_underwaterProgram->texture(_waterEffectsBlur->texture(0), 3);
+			_underwaterProgram->texture(_waterEffectsHalf, 1);
+			_underwaterProgram->texture(_waterPos, 2);
+			_underwaterProgram->texture(_waterEffectsBlur, 3);
 			_underwaterProgram->texture(_absorbScatterOcean, 4);
 			_underwaterProgram->texture(_waveNormals, 5);
-			_underwaterProgram->texture(_environment->texture(), 6);
-			ScreenQuad::draw();
+			_underwaterProgram->texture(_environment, 6);
+			GPU::drawQuad();
 			GPU::setDepthState(true, TestFunction::LESS, true);
 
 		} else {
@@ -395,12 +405,12 @@ void IslandApp::draw() {
 
 			_farOceanProgram->buffer(_waves, 0);
 			_farOceanProgram->texture(_foam, 0);
-			_farOceanProgram->texture(_waterEffectsHalf->texture(0), 1);
-			_farOceanProgram->texture(_waterPos->texture(0), 2);
-			_farOceanProgram->texture(_waterEffectsBlur->texture(0), 3);
+			_farOceanProgram->texture(_waterEffectsHalf, 1);
+			_farOceanProgram->texture(_waterPos, 2);
+			_farOceanProgram->texture(_waterEffectsBlur, 3);
 			_farOceanProgram->texture(_absorbScatterOcean, 4);
 			_farOceanProgram->texture(_waveNormals, 5);
-			_farOceanProgram->texture(_environment->texture(), 6);
+			_farOceanProgram->texture(_environment, 6);
 			_farOceanProgram->texture(_brdfLUT, 7);
 			_farOceanProgram->texture(_terrain->shadowMap(), 8);
 			GPU::drawMesh(_farOceanMesh);
@@ -428,8 +438,8 @@ void IslandApp::draw() {
 	_tonemap->use();
 	_tonemap->uniform("customExposure", 1.0f);
 	_tonemap->uniform("apply", true);
-	_tonemap->texture(_sceneBuffer->texture(), 0);
-	ScreenQuad::draw();
+	_tonemap->texture(_sceneColor, 0);
+	GPU::drawQuad();
 }
 
 void IslandApp::update() {
@@ -437,7 +447,7 @@ void IslandApp::update() {
 
 	if(ImGui::Begin("Island")){
 		ImGui::Text("%.1f ms, %.1f fps", frameTime() * 1000.0f, frameRate());
-		ImGui::Text("Rendering res.: %ux%u", _sceneBuffer->width(), _sceneBuffer->height());
+		ImGui::Text("Rendering res.: %ux%u", _sceneColor.width, _sceneColor.height);
 
 		// Light parameters.
 		ImGui::PushItemWidth(120);
@@ -521,10 +531,14 @@ void IslandApp::update() {
 }
 
 void IslandApp::resize() {
-	_sceneBuffer->resize(_config.renderingResolution());
-	_waterPos->resize(_config.renderingResolution());
-	_waterEffectsHalf->resize(_config.renderingResolution()/2.0f);
-	_waterEffectsBlur->resize(_config.renderingResolution()/2.0f);
+	const glm::ivec2 renderingRes = _config.renderingResolution();
+	_sceneColor.resize(renderingRes);
+	_sceneDepth.resize(renderingRes);
+	_scenePosition.resize(renderingRes);
+	_waterPos.resize(renderingRes);
+	const glm::ivec2 halfRenderingRes = _config.renderingResolution()/2.0f;
+	_waterEffectsHalf.resize(halfRenderingRes);
+	_waterEffectsBlur.resize(halfRenderingRes);
 }
 
 IslandApp::~IslandApp() {

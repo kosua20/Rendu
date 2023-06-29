@@ -1,15 +1,15 @@
 #include "Terrain.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "graphics/GPU.hpp"
-#include "graphics/ScreenQuad.hpp"
+
 
 Terrain::Cell::Cell(uint l, uint x, uint z) : mesh("Cell (" + std::to_string(l) + "," + std::to_string(x) + "," + std::to_string(z) + ")"), level(l) {
 }
 
-Terrain::Terrain(uint resolution, uint seed) : _gaussBlur(2, 1, "Terrain"), _resolution(resolution), _seed(seed) {
+Terrain::Terrain(uint resolution, uint seed) : _shadowMap("Terrain shadow"), _gaussBlur(2, 1, "Terrain"), _resolution(resolution), _seed(seed) {
 	generateMesh();
 	generateMap();
-	_shadowBuffer.reset(new Framebuffer(resolution, resolution, Layout::RG8, "Terrain shadow"));
+	_shadowMap.setupAsDrawable(Layout::RG8, resolution, resolution);
 }
 
 void Terrain::generateMesh(){
@@ -413,8 +413,8 @@ void Terrain::generateShadowMap(const glm::vec3 & lightDir){
 	// Make sure light direction is normalized.
 	const glm::vec3 lDir = glm::normalize(lightDir);
 
-	_shadowBuffer->bind(glm::vec4(0.0f), Load::Operation::DONTCARE, Load::Operation::DONTCARE);
-	_shadowBuffer->setViewport();
+	GPU::bind(glm::vec4(0.0f), &_shadowMap);
+	GPU::setViewport(_shadowMap);
 	GPU::setDepthState(false);
 	GPU::setBlendState(false);
 	GPU::setCullState(true, Faces::BACK);
@@ -424,10 +424,10 @@ void Terrain::generateShadowMap(const glm::vec3 & lightDir){
 	prog->uniform("texelSize", texelSize);
 
 	prog->texture(map, 0);
-	ScreenQuad::draw();
+	GPU::drawQuad();
 
 	// Post process shadow map.
-	_gaussBlur.process(_shadowBuffer->texture(0), *_shadowBuffer);
+	_gaussBlur.process(_shadowMap, _shadowMap);
 }
 
 bool Terrain::interface(){
