@@ -1,7 +1,6 @@
 #pragma once
 
-#include "graphics/Framebuffer.hpp"
-#include "graphics/ScreenQuad.hpp"
+#include "resources/Texture.hpp"
 #include "resources/Mesh.hpp"
 
 #include "Common.hpp"
@@ -29,19 +28,19 @@ public:
 	 \param width the new width
 	 \param height the new height
 	 */
-	void resize(unsigned int width, unsigned int height) const;
+	void resize(uint width, uint height);
 
 	~PaintingTool();
 	
 	/** Canvas content texture.
 	 \return the canvas ID
 	 */
-	const Texture * texture() const { return _canvas->texture(); }
+	const Texture * texture() const { return &_canvas; }
 
 	/** Texture containing the canvas and the brush shape outline, for visualisation.
 	 \return the texture ID
 	 */
-	const Texture * visuId() const { return _visu->texture(); }
+	const Texture * visuId() const { return &_visu; }
 
 private:
 	/** \brief The effect of a brush stroke. */
@@ -58,8 +57,8 @@ private:
 		COUNT
 	};
 
-	std::unique_ptr<Framebuffer> _canvas; ///< Scene rendering buffer.
-	std::unique_ptr<Framebuffer> _visu;   ///< Scene rendering buffer.
+	Texture _canvas; ///< Scene rendering buffer.
+	Texture _visu;   ///< Scene rendering buffer.
 
 	Program * _brushShader; ///< Program for the brush and its outline.
 	std::vector<Mesh> _brushes;   ///< Brush shape geometries.

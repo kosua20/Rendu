@@ -6,7 +6,7 @@
 #include "graphics/GPU.hpp"
 
 FilteringApp::FilteringApp(RenderingConfig & config, Window & window) :
-	CameraApp(config, window) {
+	CameraApp(config, window), _sceneColor("Scene color"), _sceneDepth("Scene depth") {
 	
 	const glm::vec2 renderResolution = _config.renderingResolution();
 	// Setup camera parameters.
@@ -19,7 +19,8 @@ FilteringApp::FilteringApp(RenderingConfig & config, Window & window) :
 	_sceneShader = Resources::manager().getProgram("object", "object_basic_random", "object_basic_color");
 	_mesh		 = Resources::manager().getMesh("light_sphere", Storage::GPU);
 
-	_sceneBuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, {Layout::RGBA8, Layout::DEPTH_COMPONENT32F}, "Scene"));
+	_sceneColor.setupAsDrawable(Layout::RGBA8, renderWidth, renderHeight);
+	_sceneDepth.setupAsDrawable(Layout::DEPTH_COMPONENT32F, renderWidth, renderHeight);
 
 	// Create the Poisson filling and Laplacian integration pyramids, with a lowered internal resolution to speed things up.
 	_pyramidFiller	 = std::unique_ptr<PoissonFiller>(new PoissonFiller(renderWidth, renderHeight, _fillDownscale));
@@ -34,14 +35,15 @@ FilteringApp::FilteringApp(RenderingConfig & config, Window & window) :
 
 void FilteringApp::draw() {
 
-	const Texture * srcTexID = _sceneBuffer->texture();
+	const Texture * srcTexID = &_sceneColor;
 	// Render the scene.
 	if(_viewMode == View::SCENE) {
 		GPU::setDepthState(true, TestFunction::LESS, true);
 		GPU::setBlendState(false);
 		GPU::setCullState(true, Faces::BACK);
-		_sceneBuffer->bind(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), 1.0f, Load::Operation::DONTCARE);
-		_sceneBuffer->setViewport();
+		GPU::bind(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), 1.0f, Load::Operation::DONTCARE, &_sceneDepth, &_sceneColor);
+		GPU::setViewport(_sceneColor);
+
 		const glm::mat4 MVP = _userCamera.projection() * _userCamera.view();
 		_sceneShader->use();
 		_sceneShader->uniform("mvp", MVP);
@@ -52,12 +54,12 @@ void FilteringApp::draw() {
 		GPU::setBlendState(false);
 		GPU::setCullState(true, Faces::BACK);
 		Load colorOp(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
-		_sceneBuffer->bind(_image.width > 0 ? colorOp : Load::Operation::DONTCARE, Load::Operation::DONTCARE, Load::Operation::DONTCARE);
-		_sceneBuffer->setViewport();
+		GPU::bind(_image.width > 0 ? colorOp : Load::Operation::DONTCARE, &_sceneColor);
+		GPU::setViewport(_sceneColor);
 		_passthrough->use();
 		if(_image.width > 0) {
 			_passthrough->texture(_image, 0);
-			ScreenQuad::draw();
+			GPU::drawQuad();
 		}
 
 	} else {
@@ -71,23 +73,23 @@ void FilteringApp::draw() {
 
 	switch(_mode) {
 		case Processing::FILL:
-			_pyramidFiller->process(srcTexID);
+			_pyramidFiller->process(*srcTexID);
 			finalTexID = _showProcInput ? _pyramidFiller->preprocId() : _pyramidFiller->texture();
 			break;
 		case Processing::INTEGRATE:
-			_pyramidIntegrator->process(srcTexID);
+			_pyramidIntegrator->process(*srcTexID);
 			finalTexID = _showProcInput ? _pyramidIntegrator->preprocId() : _pyramidIntegrator->texture();
 			break;
 		case Processing::GAUSSBLUR:
-			_gaussianBlur->process(srcTexID, *_sceneBuffer);
-			finalTexID = _sceneBuffer->texture();
+			_gaussianBlur->process(*srcTexID, _sceneColor);
+			finalTexID = &_sceneColor;
 			break;
 		case Processing::BOXBLUR:
-			_boxBlur->process(srcTexID, *_sceneBuffer);
-			finalTexID = _sceneBuffer->texture();
+			_boxBlur->process(*srcTexID, _sceneColor);
+			finalTexID = &_sceneColor;
 			break;
 		case Processing::FLOODFILL:
-			_floodFill->process(srcTexID, _showProcInput ? FloodFiller::Output::DISTANCE : FloodFiller::Output::COLOR);
+			_floodFill->process(*srcTexID, _showProcInput ? FloodFiller::Output::DISTANCE : FloodFiller::Output::COLOR);
 			finalTexID = _floodFill->texture();
 			break;
 		default:
@@ -104,7 +106,7 @@ void FilteringApp::draw() {
 	window().setViewport();
 	_passthrough->use();
 	_passthrough->texture(finalTexID, 0);
-	ScreenQuad::draw();
+	GPU::drawQuad();
 }
 
 void FilteringApp::update() {
@@ -114,7 +116,7 @@ void FilteringApp::update() {
 	if(ImGui::Begin("Filtering")) {
 		// Infos.
 		ImGui::Text("%.1f ms, %.1f fps", frameTime() * 1000.0f, frameRate());
-		ImGui::Text("Input resolution: %ix%i", _sceneBuffer->width(), _sceneBuffer->height());
+		ImGui::Text("Input resolution: %ix%i", _sceneColor.width, _sceneColor.height);
 		ImGui::Separator();
 
 		// View settings.
@@ -216,9 +218,10 @@ void FilteringApp::physics(double, double) {
 void FilteringApp::resize() {
 	const glm::vec2 renderResolution = _config.renderingResolution();
 	// Resize the framebuffers.
-	_sceneBuffer->resize(renderResolution);
 	const uint lwidth  = uint(renderResolution[0]);
 	const uint lheight = uint(renderResolution[1]);
+	_sceneColor.resize(lwidth, lheight);
+	_sceneDepth.resize(lwidth, lheight);
 	_pyramidFiller->resize(lwidth, lheight);
 	_pyramidIntegrator->resize(lwidth, lheight);
 	_floodFill->resize(lwidth, lheight);

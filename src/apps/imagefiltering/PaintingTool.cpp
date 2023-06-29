@@ -5,11 +5,11 @@
 #include "graphics/GPU.hpp"
 #include "resources/ResourcesManager.hpp"
 
-PaintingTool::PaintingTool(unsigned int width, unsigned int height) {
+PaintingTool::PaintingTool(unsigned int width, unsigned int height) : _canvas("Canvas"), _visu("Canvas & brush") {
 
 	_brushShader = Resources::manager().getProgram("brush_color");
-	_canvas		 = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, Layout::RGBA8, "Canvas"));
-	_visu		 = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, Layout::RGBA8, "Canvas & brush"));
+	_canvas.setupAsDrawable(Layout::RGBA8, width, height);
+	_visu.setupAsDrawable(Layout::RGBA8, width, height);
 
 	// Generate a disk mesh.
 	_brushes.emplace_back("disk");
@@ -60,8 +60,8 @@ void PaintingTool::draw() {
 
 	// Clear if needed.
 	Load colorOp(glm::vec4(_bgColor, 1.0f));
-	_canvas->bind(_shouldClear ? colorOp : Load::Operation::LOAD, Load::Operation::DONTCARE, Load::Operation::DONTCARE);
-	_canvas->setViewport();
+	GPU::bind(_shouldClear ? colorOp : Load::Operation::LOAD, &_canvas);
+	GPU::setViewport(_canvas);
 	_shouldClear = false;
 
 
@@ -70,7 +70,7 @@ void PaintingTool::draw() {
 	if(_shouldDraw) {
 		_shouldDraw			  = false;
 		const glm::vec3 color = _mode == Mode::DRAW ? _fgColor : _bgColor;
-		const glm::vec2 radii(radiusF / float(_canvas->width()), radiusF / float(_canvas->height()));
+		const glm::vec2 radii(radiusF / float(_canvas.width), radiusF / float(_canvas.height));
 
 		_brushShader->use();
 		_brushShader->uniform("position", _drawPos);
@@ -81,14 +81,14 @@ void PaintingTool::draw() {
 	}
 
 	// Copy the canvas to the visualisation framebuffer.
-	GPU::blit(*_canvas->texture(0), *_visu->texture(0), Filter::NEAREST);
+	GPU::blit(_canvas, _visu, Filter::NEAREST);
 
 	// Draw the brush outline.
-	_visu->bind(Load::Operation::LOAD);
-	_visu->setViewport();
+	GPU::bind(Load::Operation::LOAD, &_visu);
+	GPU::setViewport(_visu);
 	_brushShader->use();
 
-	const glm::vec2 radii(radiusF / float(_canvas->width()), radiusF / float(_canvas->height()));
+	const glm::vec2 radii(radiusF / float(_canvas.width), radiusF / float(_canvas.height));
 	const glm::vec3 white(1.0f);
 
 	_brushShader->uniform("position", _drawPos);
@@ -104,13 +104,13 @@ void PaintingTool::update() {
 	// If right-pressing, read back the color under the cursor.
 	if(Input::manager().pressed(Input::Mouse::Right)) {
 		// Pixel position in the framebuffer.
-		const unsigned int w	  = _canvas->width();
-		const unsigned int h	  = _canvas->height();
+		const unsigned int w	  = _canvas.width;
+		const unsigned int h	  = _canvas.height;
 		const glm::vec2 pos		  = Input::manager().mouse();
 		glm::vec2 mousePositionGL = glm::floor(glm::vec2(pos.x * float(w), pos.y * float(h)));
 		mousePositionGL			  = glm::clamp(mousePositionGL, glm::vec2(0.0f), glm::vec2(w, h));
 		// Read back from the framebuffer.
-		_readbackTask = GPU::downloadTextureAsync( *_canvas->texture(), mousePositionGL, glm::uvec2(2), 1, [this](const Texture& result){
+		_readbackTask = GPU::downloadTextureAsync( _canvas, mousePositionGL, glm::uvec2(2), 1, [this](const Texture& result){
 			_fgColor = result.images[0].rgba(0, 0);
 		});
 	}
@@ -151,24 +151,24 @@ void PaintingTool::update() {
 	ImGui::End();
 }
 
-void PaintingTool::resize(unsigned int width, unsigned int height) const {
+void PaintingTool::resize(uint width, uint height) {
 	// We first copy the canvas to a temp framebuffer.
-	const unsigned int w = _canvas->width();
-	const unsigned int h = _canvas->height();
-	Framebuffer tempCanvas(w, h, Layout::RGBA8, "Canvas copy");
-
-	GPU::blit(*_canvas->texture(0), *tempCanvas.texture(0), Filter::NEAREST);
+	const unsigned int w = _canvas.width;
+	const unsigned int h = _canvas.height;
+	Texture tempCanvas("Canvas copy");
+	tempCanvas.setupAsDrawable(Layout::RGBA8, w, h);
+	GPU::blit(_canvas, tempCanvas, Filter::NEAREST);
 
 	// We can then resize the canvas.
-	_canvas->resize(width, height);
+	_canvas.resize(width, height);
 	// Clean up the canvas.
-	_canvas->clear(glm::vec4(_bgColor, 1.0f), 1.0f);
+	GPU::clearTexture(_canvas, glm::vec4(_bgColor, 1.0f));
 	
 	// Copy back the drawing.
-	GPU::blit(*tempCanvas.texture(0), *_canvas->texture(0), Filter::NEAREST);
+	GPU::blit(tempCanvas, _canvas, Filter::NEAREST);
 	
 	// The content of the visualisation buffer will be cleaned at the next frame canvas copy.
-	_visu->resize(width, height);
+	_visu.resize(width, height);
 
 }
 

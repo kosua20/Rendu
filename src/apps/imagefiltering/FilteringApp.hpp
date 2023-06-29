@@ -8,7 +8,7 @@
 #include "processing/BoxBlur.hpp"
 #include "processing/FloodFiller.hpp"
 
-#include "graphics/Framebuffer.hpp"
+#include "resources/Texture.hpp"
 #include "input/ControllableCamera.hpp"
 #include "system/Config.hpp"
 
@@ -63,7 +63,8 @@ private:
 	/** Display mode-specific GUI options. */
 	void showModeOptions();
 
-	std::unique_ptr<Framebuffer> _sceneBuffer; ///< Scene rendering buffer.
+	Texture _sceneColor; ///< Scene rendering color texture.
+	Texture _sceneDepth; ///< Scene rendering depth texture.
 
 	std::unique_ptr<PoissonFiller> _pyramidFiller;			 ///< Poisson filling.
 	std::unique_ptr<LaplacianIntegrator> _pyramidIntegrator; ///< Laplacian integration.
