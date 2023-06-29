@@ -36,9 +36,10 @@ private:
 	 */
 	void setScene(const std::shared_ptr<Scene> & scene);
 	
-	EditorRenderer _renderer; ///< Scene renderer.
-	std::unique_ptr<Framebuffer> _sceneFramebuffer; ///< Scene buffer.
-	Program * _passthrough;   ///< Passthrough program.
+	EditorRenderer _renderer; 	///< Scene renderer.
+	Texture _sceneColor; 		///< Scene texture.
+	Texture _sceneDepth; 		///< Scene depth texture.
+	Program * _passthrough;  	 ///< Passthrough program.
 	
 	std::vector<std::shared_ptr<Scene>> _scenes; ///< The existing scenes.
 	std::vector<std::string> _sceneNames; ///< The associated scene names.

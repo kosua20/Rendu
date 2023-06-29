@@ -2,15 +2,14 @@
 #include "input/Input.hpp"
 #include "system/System.hpp"
 #include "graphics/GPU.hpp"
-#include "graphics/ScreenQuad.hpp"
 #include "resources/Texture.hpp"
 #include "scene/Sky.hpp"
 
 EditorRenderer::EditorRenderer() :
 	Renderer("Editor"), _lightsDebug("object_basic_uniform") {
 
-	_preferredFormat.push_back(Layout::RGBA8);
-	_preferredFormat.push_back(Layout::DEPTH_COMPONENT32F);
+	_colorFormat = Layout::RGBA8;
+	_depthFormat = Layout::DEPTH_COMPONENT32F;
 		
 	_objectProgram	  = Resources::manager().getProgram("object_basic_lit_texture");
 	_skyboxProgram	  = Resources::manager().getProgram("skybox_editor", "skybox_infinity", "skybox_basic");
@@ -25,7 +24,9 @@ void EditorRenderer::setScene(const std::shared_ptr<Scene> & scene) {
 	_scene = scene;
 }
 
-void EditorRenderer::draw(const Camera & camera, Framebuffer & framebuffer, uint layer) {
+void EditorRenderer::draw(const Camera & camera, Texture* dstColor, Texture* dstDepth, uint layer) {
+	assert(dstColor);
+	assert(dstDepth);
 
 	const glm::mat4 & view = camera.view();
 	const glm::mat4 & proj = camera.projection();
@@ -34,8 +35,8 @@ void EditorRenderer::draw(const Camera & camera, Framebuffer & framebuffer, uint
 	// Draw the scene.
 	GPU::setDepthState(true, TestFunction::LESS, true);
 	GPU::setCullState(false);
-	framebuffer.bind(layer, 0, glm::vec4(0.0f), 1.0f);
-	framebuffer.setViewport();
+	GPU::bind(layer, 0, glm::vec4(0.0f), 1.0f, Load::Operation::DONTCARE, dstDepth, dstColor);
+	GPU::setViewport(*dstColor);
 	
 	// Render all objects.
 	_objectProgram->use();

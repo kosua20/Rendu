@@ -2,8 +2,7 @@
 #include "resources/ResourcesManager.hpp"
 #include "resources/Library.hpp"
 #include "renderers/Probe.hpp"
-#include "graphics/Framebuffer.hpp"
-#include "graphics/ScreenQuad.hpp"
+#include "resources/Texture.hpp"
 #include "graphics/GPU.hpp"
 #include "input/Input.hpp"
 #include "input/ControllableCamera.hpp"
@@ -93,14 +92,15 @@ void computeCubemapConvolution(const Texture & cubemapInfos, int levelsCount, in
 
 		Log::Info() << Log::Utilities << "Level " << level << " (size=" << w << ", r=" << roughness << "): " << std::flush;
 
-		// Create local framebuffer.
-		Framebuffer resultFramebuffer(TextureShape::Cube, w, w, 6, 1, {Layout::RGBA32F}, "Conv. result");
+		// Create local drawable texture.
+		Texture resultTexture("Convolution result");
+		resultTexture.setupAsDrawable(Layout::RGBA32F, w, w, TextureShape::Cube, 1);
 
 		// Iterate over faces.
 		for(uint i = 0; i < 6; ++i) {
 			Log::Info() << "." << std::flush;
 
-			resultFramebuffer.bind(i, 0, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), 1.0f, Load::Operation::DONTCARE);
+			GPU::bind(i, 0, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), &resultTexture);
 			// Clear texture slice.
 			GPU::setViewport(0, 0, int(w), int(h));
 
@@ -121,19 +121,19 @@ void computeCubemapConvolution(const Texture & cubemapInfos, int levelsCount, in
 
 		}
 
-		// Now resultFramebuffer contain the texture data. But its lifetime is limited to this scope.
+		// Now ; contain the texture data. But its lifetime is limited to this scope.
 		// Thus we perform a copy to our final texture.
 		cubeLevels.emplace_back("cube" + std::to_string(level));
 		Texture & levelInfos = cubeLevels.back();
-		const Texture& src = *resultFramebuffer.texture();
 		// Prepare the destination.
-		levelInfos.width  = src.width;
-		levelInfos.height = src.height;
-		levelInfos.depth  = src.depth;
-		levelInfos.levels = src.levels;
-		levelInfos.shape  = src.shape;
-		GPU::setupTexture(levelInfos, Layout::RGBA32F, false);
-		GPU::blit(src, levelInfos, Filter::NEAREST);
+		levelInfos.width  = resultTexture.width;
+		levelInfos.height = resultTexture.height;
+		levelInfos.depth  = resultTexture.depth;
+		levelInfos.levels = resultTexture.levels;
+		levelInfos.shape  = resultTexture.shape;
+		levelInfos.format = Layout::RGBA32F;
+		GPU::setupTexture(levelInfos);
+		GPU::blit(resultTexture, levelInfos, Filter::NEAREST);
 		
 		Log::Info() << std::endl;
 	}
@@ -168,16 +168,17 @@ void exportCubemapConvolution(std::vector<Texture> & cubeLevels, const std::stri
  */
 void computeAndExportLookupTable(const int outputSide, const std::string & outputPath) {
 	// Render the lookup table.
-	const auto bakingFramebuffer = std::make_shared<Framebuffer>(outputSide, outputSide, Layout::RGBA32F, "LUT");
+	Texture bakingTexture("LUT");
+	bakingTexture.setupAsDrawable(Layout::RGBA32F, outputSide, outputSide);
 	const auto brdfProgram		 = Resources::manager().getProgram2D("brdf_sampler");
-	bakingFramebuffer->bind(glm::vec4(0.0f));
-	GPU::setViewport(0, 0, outputSide, outputSide);
+	GPU::bind(glm::vec4(0.0f), &bakingTexture);
+	GPU::setViewport(bakingTexture);
 	GPU::setDepthState(false);
 	GPU::setBlendState(false);
 	GPU::setCullState(false);
 	brdfProgram->use();
-	ScreenQuad::draw();
-	GPU::saveTexture(*bakingFramebuffer->texture(0), outputPath, Image::Save::NONE);
+	GPU::drawQuad();
+	GPU::saveTexture(bakingTexture, outputPath, Image::Save::NONE);
 }
 
 /**

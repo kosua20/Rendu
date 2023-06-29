@@ -1,11 +1,9 @@
 #include "input/Input.hpp"
 #include "system/System.hpp"
 #include "resources/ResourcesManager.hpp"
-#include "graphics/ScreenQuad.hpp"
 #include "graphics/GPU.hpp"
 #include "graphics/GPUObjects.hpp"
 #include "resources/Image.hpp"
-#include "graphics/Framebuffer.hpp"
 #include "system/Config.hpp"
 #include "system/Window.hpp"
 #include "Common.hpp"
@@ -121,7 +119,7 @@ int main(int argc, char ** argv) {
 			program->uniform("mouseShift", mouseShift);
 			program->texture(imageInfos, 0);
 			// Draw.
-			ScreenQuad::draw();
+			GPU::drawQuad();
 
 			// Read back color under cursor when right-clicking.
 			if(Input::manager().pressed(Input::Mouse::Right)) {
@@ -255,12 +253,13 @@ int main(int argc, char ** argv) {
 				bool res = System::showPicker(System::Picker::Save, "../../../resources", destinationPath, "png;exr");
 				if(res && !destinationPath.empty()) {
 					const Layout format = Image::isFloat(destinationPath) ? Layout::RGBA32F : Layout::RGBA8;
-					// Create a framebuffer at the right size and format, and render in it.
+					// Create a texture at the right size and format, and render in it.
 					const unsigned int outputWidth  = isHorizontal ? imageInfos.height : imageInfos.width;
 					const unsigned int outputHeight = isHorizontal ? imageInfos.width : imageInfos.height;
-					Framebuffer framebuffer(outputWidth, outputHeight, format, "Save output");
-					framebuffer.bind(glm::vec4(0.0f,0.0f,0.0f,1.0f), Load::Operation::DONTCARE, Load::Operation::DONTCARE);
-					framebuffer.setViewport();
+					Texture outputTexture("Save output");
+					outputTexture.setupAsDrawable(format, outputWidth, outputHeight);
+					GPU::bind(glm::vec4(0.0f,0.0f,0.0f,1.0f), &outputTexture);
+					GPU::setViewport(outputTexture);
 
 					// Render the image in it.
 					GPU::setBlendState(true, BlendEquation::ADD, BlendFunction::SRC_ALPHA, BlendFunction::ONE_MINUS_SRC_ALPHA);
@@ -276,10 +275,10 @@ int main(int argc, char ** argv) {
 					program->uniform("pixelScale", 1.0f);
 					program->uniform("mouseShift", zeros);
 					program->texture(imageInfos, 0);
-					ScreenQuad::draw();
+					GPU::drawQuad();
 
 					// Then save it to the given path.
-					GPU::saveTexture(*framebuffer.texture(0), destinationPath.substr(0, destinationPath.size() - 4), Image::Save::NONE);
+					GPU::saveTexture(outputTexture, destinationPath.substr(0, destinationPath.size() - 4), Image::Save::NONE);
 
 				}
 			}

@@ -4,7 +4,7 @@
 #include "system/Window.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "input/controller/RawController.hpp"
-#include "graphics/Framebuffer.hpp"
+#include "resources/Texture.hpp"
 #include "graphics/GPU.hpp"
 #include "Common.hpp"
 

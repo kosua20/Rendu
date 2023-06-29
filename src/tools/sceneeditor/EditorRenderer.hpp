@@ -3,7 +3,7 @@
 
 #include "scene/Scene.hpp"
 #include "renderers/Renderer.hpp"
-#include "graphics/Framebuffer.hpp"
+#include "resources/Texture.hpp"
 #include "input/ControllableCamera.hpp"
 
 #include "Common.hpp"
@@ -25,7 +25,7 @@ public:
 	void setScene(const std::shared_ptr<Scene> & scene);
 
 	/** \copydoc Renderer::draw */
-	void draw(const Camera & camera, Framebuffer & framebuffer, uint layer = 0) override;
+	void draw(const Camera & camera, Texture* dstColor, Texture* dstDepth, uint layer = 0) override;
 
 private:
 	

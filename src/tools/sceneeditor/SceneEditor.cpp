@@ -1,13 +1,15 @@
 #include "SceneEditor.hpp"
 #include "graphics/GPU.hpp"
-#include "graphics/ScreenQuad.hpp"
 #include "system/Window.hpp"
 
-SceneEditor::SceneEditor(RenderingConfig & config, Window & window) : CameraApp(config, window) {
+SceneEditor::SceneEditor(RenderingConfig & config, Window & window) : CameraApp(config, window), _sceneColor("Scene color"), _sceneDepth("Scene depth") {
 	_passthrough = Resources::manager().getProgram2D("passthrough");
 
-	_sceneFramebuffer = _renderer.createOutput(uint(config.renderingResolution()[0]), uint(config.renderingResolution()[1]), "Scene render");
-		 
+	const uint renderWidth = config.renderingResolution()[0];
+	const uint renderHeight = config.renderingResolution()[1];
+	_sceneColor.setupAsDrawable(_renderer.outputColorFormat(), renderWidth, renderHeight);
+	_sceneDepth.setupAsDrawable(_renderer.outputDepthFormat(), renderWidth, renderHeight);
+
 	// Query existing scenes.
 	std::vector<Resources::FileInfos> sceneInfos;
 	Resources::manager().getFiles("scene", sceneInfos);
@@ -56,14 +58,14 @@ void SceneEditor::draw() {
 		return;
 	}
 
-	_renderer.draw(_userCamera, *_sceneFramebuffer);
+	_renderer.draw(_userCamera, &_sceneColor, &_sceneDepth);
 
-	// We now render a full screen quad in the default framebuffer, using sRGB space.
+	// We now render a full screen quad in the default backbuffer, using sRGB space.
 	window().bind(Load::Operation::DONTCARE, Load::Operation::DONTCARE, Load::Operation::DONTCARE);
 	window().setViewport();
 	_passthrough->use();
-	_passthrough->texture(_sceneFramebuffer->texture(), 0);
-	ScreenQuad::draw();
+	_passthrough->texture(_sceneColor, 0);
+	GPU::drawQuad();
 }
 
 void SceneEditor::update() {
@@ -208,5 +210,7 @@ void SceneEditor::physics(double fullTime, double frameTime) {
 }
 
 void SceneEditor::resize() {
-	_sceneFramebuffer->resize(_config.renderingResolution());
+	const glm::ivec2 renderingRes = _config.renderingResolution();
+	_sceneColor.resize(renderingRes);
+	_sceneDepth.resize(renderingRes);
 }
