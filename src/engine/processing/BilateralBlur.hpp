@@ -1,6 +1,6 @@
 #pragma once
 
-#include "graphics/Framebuffer.hpp"
+#include "resources/Texture.hpp"
 #include "graphics/Program.hpp"
 #include "Common.hpp"
 
@@ -20,15 +20,15 @@ public:
 	BilateralBlur(const std::string & name);
 
 	/**
-	 Apply the bilateral blur to a texture and write the result in a framebuffer.
+	 Apply the bilateral blur to a texture and write the result in a texture.
 	 \note It is possible to use the same texture as input and output.
 	 \param projection the camera projection matrix
-	 \param texture the texture to blur/upscale
+	 \param src the texture to blur/upscale
 	 \param depthTex the depth texture
 	 \param normalTex the view-space normal texture
-	 \param framebuffer the destination framebuffer
+	 \param dst the destination texture
 	 */
-	void process(const glm::mat4 & projection, const Texture * texture, const Texture * depthTex, const Texture * normalTex, Framebuffer & framebuffer);
+	void process(const glm::mat4 & projection, const Texture& src, const Texture& depthTex, const Texture& normalTex, Texture & dst);
 
 private:
 
@@ -36,9 +36,8 @@ private:
 	 \param width the new resolution width
 	 \param height the new resolution height
 	 */
-	void resize(unsigned int width, unsigned int height) const;
+	void resize(uint width, uint height);
 
-	std::unique_ptr<Framebuffer> _intermediate; ///< Intermediate framebuffer.
+	Texture _intermediate; ///< Intermediate texture.
 	Program * _filter; ///< Bilateral hader.
-	std::string _name; ///< Debug name.
 };

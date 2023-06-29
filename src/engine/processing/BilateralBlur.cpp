@@ -1,45 +1,45 @@
 #include "processing/BilateralBlur.hpp"
 #include "graphics/GPUTypes.hpp"
 #include "graphics/GPU.hpp"
-#include "graphics/ScreenQuad.hpp"
 #include "resources/ResourcesManager.hpp"
 
-BilateralBlur::BilateralBlur(const std::string & name) : _name(name) {
+BilateralBlur::BilateralBlur(const std::string & name) : _intermediate(name + "Bilateral blur") {
 	_filter	 = Resources::manager().getProgram2D("bilateral");
 }
 
 // Draw function
-void BilateralBlur::process(const glm::mat4 & projection, const Texture * texture, const Texture * depthTex, const Texture * normalTex, Framebuffer & framebuffer) {
+void BilateralBlur::process(const glm::mat4 & projection, const Texture& src, const Texture& depthTex, const Texture& normalTex, Texture & dst) {
 
 	GPU::setDepthState(false);
 	GPU::setBlendState(false);
 	GPU::setCullState(true, Faces::BACK);
 
-	if(!_intermediate || _intermediate->format() != framebuffer.format()){
-		_intermediate.reset(new Framebuffer(framebuffer.width(), framebuffer.height(), framebuffer.format(), _name + " Bilateral blur"));
+	if(!_intermediate.gpu || _intermediate.format != dst.format){
+		_intermediate.setupAsDrawable(dst.format, dst.width, dst.height);
 	}
 
-	if(framebuffer.width() != _intermediate->width() || framebuffer.height() != _intermediate->height()){
-		resize(framebuffer.width(), framebuffer.height());
+	if(dst.width != _intermediate.width || dst.height != _intermediate.height){
+		resize(dst.width, dst.height);
 	}
 	_filter->use();
 	_filter->texture(depthTex, 1);
 	_filter->texture(normalTex, 2);
-	_filter->uniform("invDstSize", 1.0f/glm::vec2(framebuffer.width(), framebuffer.height()));
+	_filter->uniform("invDstSize", 1.0f/glm::vec2(dst.width, dst.height));
 	_filter->uniform("projParams", glm::vec2( projection[2][2], projection[3][2]));
-	framebuffer.setViewport();
 
-	_intermediate->bind(Load::Operation::DONTCARE);
+	GPU::setViewport(_intermediate);
+	GPU::bind(Load::Operation::DONTCARE, &_intermediate);
 	_filter->uniform("axis", 0);
-	_filter->texture(texture, 0);
-	ScreenQuad::draw();
+	_filter->texture(src, 0);
+	GPU::drawQuad();
 
-	framebuffer.bind(Load::Operation::DONTCARE);
+	GPU::bind(Load::Operation::DONTCARE, &dst);
+
 	_filter->uniform("axis", 1);
-	_filter->texture(_intermediate->texture(), 0);
-	ScreenQuad::draw();
+	_filter->texture(_intermediate, 0);
+	GPU::drawQuad();
 }
 
-void BilateralBlur::resize(unsigned int width, unsigned int height) const {
-	_intermediate->resize(width, height);
+void BilateralBlur::resize(uint width, uint height) {
+	_intermediate.resize(width, height);
 }

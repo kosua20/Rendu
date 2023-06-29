@@ -1,14 +1,14 @@
 #include "processing/FloodFiller.hpp"
-#include "graphics/ScreenQuad.hpp"
 #include "graphics/GPU.hpp"
 
-FloodFiller::FloodFiller(unsigned int width, unsigned int height) {
+FloodFiller::FloodFiller(uint width, uint height)
+	: _ping("Flood fill ping"), _pong( "Flood fill pong"), _final("Flood fill final") {
 
 	_iterations = int(std::ceil(std::log2(std::max(width, height))));
 
-	_ping				  = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, Layout::RG16UI, "Flood fill ping"));
-	_pong				  = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, Layout::RG16UI, "Flood fill pong"));
-	_final				  = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, Layout::RGBA8, "Flood fill final"));
+	_ping.setupAsDrawable(Layout::RG16UI, width, height);
+	_pong.setupAsDrawable(Layout::RG16UI, width, height);
+	_final.setupAsDrawable(Layout::RGBA8, width, height);
 
 	_extract		= Resources::manager().getProgram2D("extract-seeds");
 	_floodfill		= Resources::manager().getProgram2D("flood-fill");
@@ -16,58 +16,63 @@ FloodFiller::FloodFiller(unsigned int width, unsigned int height) {
 	_compositeColor = Resources::manager().getProgram2D("color-seeds");
 }
 
-void FloodFiller::process(const Texture * texture, Output mode) {
+void FloodFiller::process(const Texture& texture, Output mode) {
 
-	extractAndPropagate(texture);
+	Texture* result = extractAndPropagate(texture);
 
 	GPU::setDepthState(false);
 	GPU::setBlendState(false);
 	GPU::setCullState(true, Faces::BACK);
 
-	_final->bind(Load::Operation::DONTCARE, Load::Operation::DONTCARE, Load::Operation::DONTCARE);
-	_final->setViewport();
+	GPU::bind(Load::Operation::DONTCARE, &_final);
+	GPU::setViewport(_final);
 
 	if(mode == Output::COLOR) {
 		_compositeColor->use();
-		_compositeColor->texture(_ping->texture(), 0);
-		_compositeColor->texture(texture, 1);
-		ScreenQuad::draw();
+		_compositeColor->texture(_ping, 0);
+		_compositeColor->texture(*result, 1);
+		GPU::drawQuad();
 	} else if(mode == Output::DISTANCE) {
 		_compositeDist->use();
-		_compositeDist->texture(_ping->texture(), 0);
-		ScreenQuad::draw();
+		_compositeDist->texture(*result, 0);
+		GPU::drawQuad();
 	}
 
 }
 
-void FloodFiller::extractAndPropagate(const Texture * texture) {
-	// Render seed positions in a 2 channels framebuffer (each non-black pixel is a seed).
+Texture* FloodFiller::extractAndPropagate(const Texture& texture) {
+	// Render seed positions in a 2 channels texture (each non-black pixel is a seed).
 	GPU::setDepthState(false);
 	GPU::setBlendState(false);
 	GPU::setCullState(true, Faces::BACK);
 
-	_ping->bind(Load::Operation::DONTCARE, Load::Operation::DONTCARE, Load::Operation::DONTCARE);
-	_ping->setViewport();
+	GPU::bind(Load::Operation::DONTCARE, &_ping);
+	GPU::setViewport(_ping);
 	_extract->use();
 	_extract->texture(texture, 0);
-	ScreenQuad::draw();
+	GPU::drawQuad();
 
+	Texture* result = &_ping;
 	// Propagate closest seeds with decreasing step size.
 	_floodfill->use();
 	for(int i = 0; i < _iterations; ++i) {
 		const int step = int(std::pow(2, std::max(0, _iterations - i - 1)));
-		_pong->bind(Load::Operation::DONTCARE, Load::Operation::DONTCARE, Load::Operation::DONTCARE);
-		_pong->setViewport();
+
+		Texture* src = (i%2 == 0) ? &_ping : &_pong;
+		Texture* dst = (i%2 == 0) ? &_pong : &_ping;
+		GPU::bind(Load::Operation::DONTCARE, dst);
+		GPU::setViewport(*dst);
 		_floodfill->uniform("stepDist", step);
-		_floodfill->texture(_ping->texture(), 0);
-		ScreenQuad::draw();
-		std::swap(_ping, _pong);
+		_floodfill->texture(*src, 0);
+		GPU::drawQuad();
+		result = dst;
 	}
+	return result;
 }
 
-void FloodFiller::resize(unsigned int width, unsigned int height) {
+void FloodFiller::resize(uint width, uint height) {
 	_iterations = int(std::ceil(std::log2(std::max(width, height))));
-	_ping->resize(width, height);
-	_pong->resize(width, height);
-	_final->resize(width, height);
+	_ping.resize(width, height);
+	_pong.resize(width, height);
+	_final.resize(width, height);
 }

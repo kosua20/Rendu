@@ -1,6 +1,6 @@
 #pragma once
 
-#include "graphics/Framebuffer.hpp"
+#include "resources/Texture.hpp"
 #include "graphics/Program.hpp"
 #include "Common.hpp"
 
@@ -20,7 +20,7 @@ public:
 	/**
 	 Constructor. The depth of the gaussian pyramid will determine the strength of the blur, and the computational cost.
 	 \param radius the number of levels in the downscaling pyramid
-	 \param downscale work at a lower resolution than the target framebuffer
+	 \param downscale work at a lower resolution than the target texture
 	 \param name debug name for internal buffers
 	 */
 	GaussianBlur(uint radius, uint downscale, const std::string & name);
@@ -28,10 +28,10 @@ public:
 	/**
 	 Apply the blurring process to a given texture.
 	 \note It is possible to use the same texture as input and output.
-	 \param texture the ID of the texture to process
-	 \param framebuffer the destination framebuffer
+	 \param src the ID of the texture to process
+	 \param dst the destination texture
 	 */
-	void process(const Texture * texture, Framebuffer & framebuffer);
+	void process(const Texture& src, Texture & dst);
 
 private:
 
@@ -40,12 +40,11 @@ private:
 	 \param width the new width to use
 	 \param height the new height to use
 	 */
-	void resize(unsigned int width, unsigned int height);
+	void resize(uint width, uint height);
 
-	Program * _blurProgramDown;						 ///< The downscaling filter.
-	Program * _blurProgramUp;							 ///< The upscaling filter.
-	Program * _passthrough;							 ///< The copy program.
-	std::vector<std::unique_ptr<Framebuffer>> _frameBuffers; ///< Downscaled pyramid framebuffers.
-	const std::string _name;								 ///< Debug name
-	uint _downscale = 1;									 ///< Initial downscaling factor.
+	Program * _blurProgramDown;						///< The downscaling filter.
+	Program * _blurProgramUp;						///< The upscaling filter.
+	Program * _passthrough;							///< The copy program.
+	std::vector<Texture> _levels; 					///< Downscaled pyramid textures.
+	uint _downscale = 1;							///< Initial downscaling factor.
 };

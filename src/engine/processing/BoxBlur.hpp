@@ -1,6 +1,6 @@
 #pragma once
 
-#include "graphics/Framebuffer.hpp"
+#include "resources/Texture.hpp"
 #include "graphics/Program.hpp"
 #include "Common.hpp"
 
@@ -22,10 +22,10 @@ public:
 	/**
 	 Apply the blurring process to a given texture. 2D, cubemap and their array versions are supported.
 	 \note It is possible to use the same texture as input and output.
-	 \param texture the ID of the texture to process
-	 \param framebuffer the destination framebuffer
+	 \param src the ID of the texture to process
+	 \param dst the destination texture
 	 */
-	void process(const Texture * texture, Framebuffer & framebuffer);
+	void process(const Texture & src, Texture & dst);
 
 private:
 
@@ -34,12 +34,11 @@ private:
 	 \param width the new width to use
 	 \param height the new height to use
 	 */
-	void resize(unsigned int width, unsigned int height) const;
+	void resize(uint width, uint height);
 
-	Program * _blur2D;					///< Box blur program
+	Program * _blur2D;						///< Box blur program
 	Program * _blurArray;					///< Box blur program
 	Program * _blurCube;					///< Box blur program
 	Program * _blurCubeArray;				///< Box blur program
-	std::unique_ptr<Framebuffer> _intermediate; ///< Intermediate target.
-	const std::string _name;					///< Debug name
+	Texture _intermediate; 					///< Intermediate texture.
 };

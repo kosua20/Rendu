@@ -1,5 +1,5 @@
 #pragma once
-#include "graphics/Framebuffer.hpp"
+#include "resources/Texture.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "Common.hpp"
 
@@ -19,7 +19,7 @@ public:
 	 \param inoutPadding additional padding applied everywhere except on the final result texture
 	 \note This is mainly used for the gradient integration task.
 	 */
-	ConvolutionPyramid(unsigned int width, unsigned int height, unsigned int inoutPadding);
+	ConvolutionPyramid(uint width, uint height, uint inoutPadding);
 
 	/** Setup the filters parameters for a given task.
 	 \param h1 the 5 coefficients of h1
@@ -32,18 +32,18 @@ public:
 	/** Filter a given input texture.
 	 \param texture the GPU ID of the texture
 	 */
-	void process(const Texture * texture);
+	void process(const Texture& texture);
 
 	/** Resize the internal buffers.
 	 \param width the new width
 	 \param height the new height
 	 */
-	void resize(unsigned int width, unsigned int height);
+	void resize(uint width, uint height);
 
 	/** The GPU ID of the filter result.
 	 \return the ID of the result texture
 	 */
-	const Texture * texture() const { return _shifted->texture(); }
+	const Texture * texture() const { return &_shifted; }
 
 	/** Returns the width expected for the input texture.
 	 \return the width expected
@@ -61,9 +61,9 @@ private:
 	Program * _filter;	///< Filtering shader for the last pyramid level.
 	Program * _padder;	///< Padding helper shader.
 
-	std::unique_ptr<Framebuffer> _shifted;				  ///< Contains the input data padded to the right size.
-	std::vector<std::unique_ptr<Framebuffer>> _levelsIn;  ///< The initial levels of the pyramid.
-	std::vector<std::unique_ptr<Framebuffer>> _levelsOut; ///< The filtered levels of the pyramid.
+	Texture _shifted;				  ///< Contains the input data padded to the right size.
+	std::vector<Texture> _levelsIn;  ///< The initial levels of the pyramid.
+	std::vector<Texture> _levelsOut; ///< The filtered levels of the pyramid.
 
 	float _h1[5] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f}; ///< h1 filter coefficients.
 	float _h2	= 0.0f;						   ///< h2 filter multiplier.

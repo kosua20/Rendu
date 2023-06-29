@@ -2,7 +2,7 @@
 
 #include "processing/BilateralBlur.hpp"
 #include "processing/BoxBlur.hpp"
-#include "graphics/Framebuffer.hpp"
+#include "resources/Texture.hpp"
 #include "resources/Buffer.hpp"
 #include "Common.hpp"
 
@@ -38,17 +38,17 @@ public:
 	 \param depthTex the depth texture
 	 \param normalTex the view-space normal texture
 	 */
-	void process(const glm::mat4 & projection, const Texture * depthTex, const Texture * normalTex);
+	void process(const glm::mat4 & projection, const Texture& depthTex, const Texture& normalTex);
 
 	/**
 	 Resize the internal buffers.
 	 \param width the new width
 	 \param height the new height
 	 */
-	void resize(uint width, uint height) const;
+	void resize(uint width, uint height);
 
 	/**
-	 Clear the final framebuffer texture.
+	 Clear the final texture.
 	 */
 	void clear() const;
 
@@ -69,8 +69,8 @@ public:
 	Quality & quality();
 
 private:
-	std::unique_ptr<Framebuffer> _ssaoFramebuffer;  ///< SSAO framebuffer
-	std::unique_ptr<Framebuffer> _finalFramebuffer; ///< SSAO framebuffer
+	Texture _ssaoTexture;  							///< SSAO texture.
+	Texture _finalTexture; 							///< SSAO texture.
 	BilateralBlur _highBlur;	  					///< High quality blur.
 	BoxBlur _mediumBlur;							///< Medium quality blur.
 	Program * _programSSAO;						    ///< The SSAO program.

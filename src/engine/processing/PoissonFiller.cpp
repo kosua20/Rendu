@@ -1,16 +1,15 @@
 #include "processing/PoissonFiller.hpp"
-#include "graphics/ScreenQuad.hpp"
 #include "graphics/GPU.hpp"
 
-PoissonFiller::PoissonFiller(unsigned int width, unsigned int height, unsigned int downscaling) :
-	_pyramid(width / downscaling, height / downscaling, 0),
+PoissonFiller::PoissonFiller(uint width, uint height, uint downscaling) :
+	_pyramid(width / downscaling, height / downscaling, 0), _preproc("Poisson preproc"), _compo("Poisson compo"),
 	_scale(int(downscaling)) {
 
 	_prepare   = Resources::manager().getProgram2D("fill-boundary");
 	_composite = Resources::manager().getProgram2D("fill-combine");
 
-	_preproc = std::unique_ptr<Framebuffer>(new Framebuffer(_pyramid.width(), _pyramid.height(), Layout::RGBA32F, "Poisson preproc"));
-	_compo   = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, Layout::RGBA8, "Poisson compo"));
+	_preproc.setupAsDrawable(Layout::RGBA32F, _pyramid.width(), _pyramid.height());
+		_compo.setupAsDrawable(Layout::RGBA8, width, height);
 
 	const float h1[5] = {0.1507f, 0.6836f, 1.0334f, 0.6836f, 0.1507f};
 	const float h2	= 0.0270f;
@@ -19,36 +18,36 @@ PoissonFiller::PoissonFiller(unsigned int width, unsigned int height, unsigned i
 
 }
 
-void PoissonFiller::process(const Texture * texture) {
+void PoissonFiller::process(const Texture& texture) {
 	// Compute the color boundary of the mask..
 	GPU::setDepthState(false);
 	GPU::setBlendState(false);
 	GPU::setCullState(true, Faces::BACK);
 
-	_preproc->bind(glm::vec4(0.0f), Load::Operation::DONTCARE, Load::Operation::DONTCARE);
-	_preproc->setViewport();
+	GPU::bind(glm::vec4(0.0f), &_preproc);
+	GPU::setViewport(_preproc);
 	_prepare->use();
 	_prepare->texture(texture, 0);
-	ScreenQuad::draw();
+	GPU::drawQuad();
 
 	// Run the convolutional pyramid filter.
-	_pyramid.process(_preproc->texture());
+	_pyramid.process(_preproc);
 
 	// Composite the filled-in texture with the initial image at full resolution.
 	GPU::setDepthState(false);
 	GPU::setBlendState(false);
 	GPU::setCullState(true, Faces::BACK);
 
-	_compo->bind(Load::Operation::DONTCARE, Load::Operation::DONTCARE, Load::Operation::DONTCARE);
-	_compo->setViewport();
+	GPU::bind(Load::Operation::DONTCARE, &_compo);
+	GPU::setViewport(_compo);
 	_composite->use();
 	_composite->texture(_pyramid.texture(), 0);
 	_composite->texture(texture, 1);
-	ScreenQuad::draw();
+	GPU::drawQuad();
 }
 
-void PoissonFiller::resize(unsigned int width, unsigned int height) {
+void PoissonFiller::resize(uint width, uint height) {
 	_pyramid.resize(width / _scale, height / _scale);
-	_preproc->resize(_pyramid.width(), _pyramid.height());
-	_compo->resize(width, height);
+	_preproc.resize(_pyramid.width(), _pyramid.height());
+	_compo.resize(width, height);
 }

@@ -2,14 +2,15 @@
 #include "generation/Random.hpp"
 #include "graphics/GPUTypes.hpp"
 #include "graphics/GPU.hpp"
-#include "graphics/ScreenQuad.hpp"
 #include "resources/ResourcesManager.hpp"
 
-SSAO::SSAO(uint width, uint height, uint downscale, float radius, const std::string & name) : _highBlur(name + " SSAO"), _mediumBlur(true, name + " SSAO"),
+SSAO::SSAO(uint width, uint height, uint downscale, float radius, const std::string & name) :
+	_ssaoTexture(name + " SSAO"), _finalTexture(name + " SSAO final"), _highBlur(name + " SSAO"), _mediumBlur(true, name + " SSAO"),
 	_samples(16, UniformFrequency::STATIC), _radius(radius), _downscale(downscale) {
 
-	_ssaoFramebuffer.reset(new Framebuffer(width/_downscale, height/_downscale, Layout::R8, name + " SSAO"));
-	_finalFramebuffer.reset(new Framebuffer(width, height, Layout::R8, name + " SSAO final"));
+	_ssaoTexture.setupAsDrawable(Layout::R8, width/_downscale, height/_downscale);
+	_finalTexture.setupAsDrawable(Layout::R8, width, height);
+
 	_programSSAO = Resources::manager().getProgram2D("ssao");
 
 	// Generate samples.
@@ -58,14 +59,15 @@ SSAO::SSAO(uint width, uint height, uint downscale, float radius, const std::str
 }
 
 // Draw function
-void SSAO::process(const glm::mat4 & projection, const Texture * depthTex, const Texture * normalTex) {
+void SSAO::process(const glm::mat4 & projection, const Texture& depthTex, const Texture& normalTex) {
 
 	GPU::setDepthState(false);
 	GPU::setBlendState(false);
 	GPU::setCullState(true, Faces::BACK);
 
-	_ssaoFramebuffer->bind(Load::Operation::DONTCARE, Load::Operation::DONTCARE, Load::Operation::DONTCARE);
-	_ssaoFramebuffer->setViewport();
+	GPU::bind(Load::Operation::DONTCARE, &_ssaoTexture);
+	GPU::setViewport(_ssaoTexture);
+
 	_programSSAO->use();
 	_programSSAO->uniform("projectionMatrix", projection);
 	_programSSAO->uniform("radius", _radius);
@@ -73,33 +75,33 @@ void SSAO::process(const glm::mat4 & projection, const Texture * depthTex, const
 	_programSSAO->texture(depthTex, 0);
 	_programSSAO->texture(normalTex, 1);
 	_programSSAO->texture(_noisetexture, 2);
-	ScreenQuad::draw();
+	GPU::drawQuad();
 
 	// Blurring pass
 	if(_quality == Quality::HIGH){
-		_highBlur.process(projection, _ssaoFramebuffer->texture(), depthTex, normalTex, *_finalFramebuffer);
+		_highBlur.process(projection, _ssaoTexture, depthTex, normalTex, _finalTexture);
 	} else if(_quality == Quality::MEDIUM){
 		// Render at potentially low res.
-		_mediumBlur.process(_ssaoFramebuffer->texture(), *_ssaoFramebuffer);
-		GPU::blit(*_ssaoFramebuffer->texture(0), *_finalFramebuffer->texture(0), Filter::LINEAR);
+		_mediumBlur.process(_ssaoTexture, _ssaoTexture);
+		GPU::blit(_ssaoTexture, _finalTexture, Filter::LINEAR);
 	} else {
-		GPU::blit(*_ssaoFramebuffer->texture(0), *_finalFramebuffer->texture(0), Filter::LINEAR);
+		GPU::blit(_ssaoTexture, _finalTexture, Filter::LINEAR);
 	}
 }
 
 void SSAO::clear() const {
-	_finalFramebuffer->clear(glm::vec4(1.0f), 1.0f);
+	GPU::clearTexture(_finalTexture, glm::vec4(1.0f));
 }
 
 // Handle screen resizing
-void SSAO::resize(uint width, uint height) const {
-	_ssaoFramebuffer->resize(width/_downscale, height/_downscale);
-	_finalFramebuffer->resize(width, height);
+void SSAO::resize(uint width, uint height) {
+	_ssaoTexture.resize(width/_downscale, height/_downscale);
+	_finalTexture.resize(width, height);
 	// The blurs resize automatically.
 }
 
 const Texture * SSAO::texture() const {
-	return _finalFramebuffer->texture();
+	return &_finalTexture;
 }
 
 float & SSAO::radius() {

@@ -1,9 +1,8 @@
 #include "processing/ConvolutionPyramid.hpp"
-#include "graphics/ScreenQuad.hpp"
 #include "graphics/GPU.hpp"
 
-ConvolutionPyramid::ConvolutionPyramid(unsigned int width, unsigned int height, unsigned int inoutPadding) :
-	_padding(int(inoutPadding)) {
+ConvolutionPyramid::ConvolutionPyramid(uint width, uint height, uint inoutPadding) :
+	_shifted("Conv. pyramid shift"), _padding(int(inoutPadding)) {
 
 	// Convolution pyramids filters and scaling operations.
 	_downscale = Resources::manager().getProgram2D("downscale");
@@ -11,23 +10,27 @@ ConvolutionPyramid::ConvolutionPyramid(unsigned int width, unsigned int height, 
 	_filter	= Resources::manager().getProgram2D("filter");
 	_padder	= Resources::manager().getProgram2D("passthrough-shift");
 
-	// Pre and post process framebuffers.
-	// Output is as the basic required size.
-	_shifted = std::unique_ptr<Framebuffer>(new Framebuffer(width, height, Layout::RGBA32F, "Conv. pyramid shift"));
+	// Pre and post process texture.
+	// Output is at the basic required size.
+	_shifted.setupAsDrawable(Layout::RGBA32F, width, height);
+
 	// Resolution of the pyramid takes into account the filter padding.
 	_resolution = glm::ivec2(width + 2 * _padding, height + 2 * _padding);
 
-	// Create a series of framebuffers smaller and smaller.
+	// Create a series of textures smaller and smaller.
 	const int depth = int(std::ceil(std::log2(std::min(_resolution[0], _resolution[1]))));
-	_levelsIn		= std::vector<std::unique_ptr<Framebuffer>>(depth);
-	_levelsOut		= std::vector<std::unique_ptr<Framebuffer>>(depth);
+	_levelsIn.reserve(depth);
+	_levelsOut.reserve(depth);
 	// Initial padded size.
 	int levelWidth  = _resolution[0] + 2 * _size;
 	int levelHeight = _resolution[1] + 2 * _size;
-	// Generate framebuffer pyramids.
+	// Generate textures pyramids.
 	for(size_t i = 0; i < size_t(depth); ++i) {
-		_levelsIn[i]  = std::unique_ptr<Framebuffer>(new Framebuffer(levelWidth, levelHeight, Layout::RGBA32F, "Conv. pyramid in " + std::to_string(i)));
-		_levelsOut[i] = std::unique_ptr<Framebuffer>(new Framebuffer(levelWidth, levelHeight, Layout::RGBA32F, "Conv. pyramid out " + std::to_string(i)));
+		_levelsIn.emplace_back("Conv. pyramid in " + std::to_string(i));
+		_levelsIn.back().setupAsDrawable(Layout::RGBA32F, levelWidth, levelHeight);
+
+		_levelsOut.emplace_back("Conv. pyramid out " + std::to_string(i));
+		_levelsOut.back().setupAsDrawable(Layout::RGBA32F, levelWidth, levelHeight);
 		// Downscaling and padding.
 		levelWidth /= 2;
 		levelHeight /= 2;
@@ -36,22 +39,22 @@ ConvolutionPyramid::ConvolutionPyramid(unsigned int width, unsigned int height, 
 	}
 }
 
-void ConvolutionPyramid::process(const Texture * texture) {
+void ConvolutionPyramid::process(const Texture& texture) {
 	GPU::setDepthState(false);
 	GPU::setBlendState(false);
 	GPU::setCullState(true, Faces::BACK);
 	
 	// Pad by the size of the filter.
-	_levelsIn[0]->bind(glm::vec4(0.0f), Load::Operation::DONTCARE, Load::Operation::DONTCARE);
+	GPU::bind(glm::vec4(0.0f), &_levelsIn[0]);
 	// Shift the viewport and fill the padded region with 0s.
-	GPU::setViewport(_size, _size, int(_levelsIn[0]->width()) - 2 * _size, int(_levelsIn[0]->height()) - 2 * _size);
+	GPU::setViewport(_size, _size, int(_levelsIn[0].width) - 2 * _size, int(_levelsIn[0].height) - 2 * _size);
 	// Transfer the boundary content.
 	_padder->use();
 	_padder->uniform("padding", _size);
 	_padder->texture(texture, 0);
-	ScreenQuad::draw();
+	GPU::drawQuad();
 
-	// Then iterate over all framebuffers, cascading down the filtered results.
+	// Then iterate over all levels, cascading down the filtered results.
 	/// \note Those filters are separable, and could be applied in two passes (vertical and horizontal) to reduce the texture fetches count.
 	// Send parameters.
 	_downscale->use();
@@ -63,12 +66,12 @@ void ConvolutionPyramid::process(const Texture * texture) {
 
 	// Do: l[i] = downscale(filter(l[i-1], h1))
 	for(size_t i = 1; i < _levelsIn.size(); ++i) {
-		_levelsIn[i]->bind(glm::vec4(0.0f), Load::Operation::DONTCARE, Load::Operation::DONTCARE);
+		GPU::bind(glm::vec4(0.0f), &_levelsIn[i]);
 		// Shift the viewport and fill the padded region with 0s.
-		GPU::setViewport(_size, _size, int(_levelsIn[i]->width()) - 2 * _size, int(_levelsIn[i]->height()) - 2 * _size);
+		GPU::setViewport(_size, _size, int(_levelsIn[i].width) - 2 * _size, int(_levelsIn[i].height) - 2 * _size);
 		// Filter and downscale.
-		_downscale->texture(_levelsIn[i - 1]->texture(), 0);
-		ScreenQuad::draw();
+		_downscale->texture(_levelsIn[i - 1], 0);
+		GPU::drawQuad();
 	}
 
 	// Filter the last level with g.
@@ -80,10 +83,10 @@ void ConvolutionPyramid::process(const Texture * texture) {
 
 	// Do:  f[end] = filter(l[end], g)
 	const auto & lastLevel = _levelsOut.back();
-	lastLevel->bind(Load::Operation::DONTCARE);
-	lastLevel->setViewport();
-	_filter->texture(_levelsIn.back()->texture(), 0);
-	ScreenQuad::draw();
+	GPU::bind(Load::Operation::DONTCARE, &lastLevel);
+	GPU::setViewport(lastLevel);
+	_filter->texture(_levelsIn.back(), 0);
+	GPU::drawQuad();
 
 	// Flatten the pyramid from the bottom, combining the filtered current result and the next level.
 	_upscale->use();
@@ -99,22 +102,22 @@ void ConvolutionPyramid::process(const Texture * texture) {
 
 	// Do: f[i] = filter(l[i], g) + filter(upscale(f[i+1], h2)
 	for(int i = int(_levelsOut.size() - 2); i >= 0; --i) {
-		_levelsOut[i]->bind(Load::Operation::DONTCARE);
-		_levelsOut[i]->setViewport();
+		GPU::bind(Load::Operation::DONTCARE, &_levelsOut[i]);
+		GPU::setViewport(_levelsOut[i]);
 		// Upscale with zeros, filter and combine.
-		_upscale->texture(_levelsIn[i]->texture(), 0);
-		_upscale->texture(_levelsOut[i + 1]->texture(), 1);
-		ScreenQuad::draw();
+		_upscale->texture(_levelsIn[i], 0);
+		_upscale->texture(_levelsOut[i + 1], 1);
+		GPU::drawQuad();
 	}
 
 	// Compensate the initial padding.
-	_shifted->bind(Load::Operation::DONTCARE);
-	_shifted->setViewport();
+	GPU::bind(Load::Operation::DONTCARE, &_shifted);
+	GPU::setViewport(_shifted);
 	_padder->use();
 	// Need to also compensate for the potential extra padding.
 	_padder->uniform("padding", -_size - _padding);
-	_padder->texture(_levelsOut[0]->texture(), 0);
-	ScreenQuad::draw();
+	_padder->texture(_levelsOut[0], 0);
+	GPU::drawQuad();
 }
 
 void ConvolutionPyramid::setFilters(const float h1[5], float h2, const float g[3]) {
@@ -129,30 +132,26 @@ void ConvolutionPyramid::setFilters(const float h1[5], float h2, const float g[3
 	_g[2]  = g[2];
 }
 
-void ConvolutionPyramid::resize(unsigned int width, unsigned int height) {
-	_shifted->resize(width, height);
+void ConvolutionPyramid::resize(uint width, uint height) {
+	_shifted.resize(width, height);
 	// Resolution of the pyramid takes into account the filter padding.
 	_resolution = glm::ivec2(width + 2 * _padding, height + 2 * _padding);
 
-	const int currentDepth = int(_levelsIn.size());
-
 	const int newDepth = std::max(int(std::ceil(std::log2(std::min(_resolution[0], _resolution[1])))), 1);
-	// Create a series of framebuffers smaller and smaller.
-	_levelsIn.resize(newDepth);
-	_levelsOut.resize(newDepth);
+	// Create a series of textures smaller and smaller.
+	_levelsIn.clear(); _levelsIn.reserve(newDepth);
+	_levelsOut.clear(); _levelsOut.reserve(newDepth);
 	// Initial padded size.
 	int levelWidth  = _resolution[0] + 2 * _size;
 	int levelHeight = _resolution[1] + 2 * _size;
 
-	// Generate framebuffer pyramids.
+	// Generate texture pyramids.
 	for(int i = 0; i < newDepth; ++i) {
-		if(i < currentDepth) {
-			_levelsIn[i]->resize(levelWidth, levelHeight);
-			_levelsOut[i]->resize(levelWidth, levelHeight);
-		} else {
-			_levelsIn[i]  = std::unique_ptr<Framebuffer>(new Framebuffer(levelWidth, levelHeight, Layout::RGBA32F, "Conv. pyramid in " + std::to_string(i)));
-			_levelsOut[i] = std::unique_ptr<Framebuffer>(new Framebuffer(levelWidth, levelHeight, Layout::RGBA32F, "Conv. pyramid out " + std::to_string(i)));
-		}
+		_levelsIn.emplace_back("Conv. pyramid in " + std::to_string(i));
+		_levelsIn.back().setupAsDrawable(Layout::RGBA32F, levelWidth, levelHeight);
+		_levelsOut.emplace_back("Conv. pyramid out " + std::to_string(i));
+		_levelsOut.back().setupAsDrawable(Layout::RGBA32F, levelWidth, levelHeight);
+
 		// Downscaling and padding.
 		levelWidth /= 2;
 		levelHeight /= 2;
