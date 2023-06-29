@@ -1,7 +1,7 @@
 #pragma once
 #include "Application.hpp"
 #include "scene/Sky.hpp"
-#include "graphics/Framebuffer.hpp"
+#include "resources/Texture.hpp"
 #include "system/Config.hpp"
 #include "Common.hpp"
 
@@ -39,7 +39,7 @@ private:
 	/** Update the lookup table based on internal atmosphere parameters.*/
 	void updateSky();
 
-	std::unique_ptr<Framebuffer> _atmosphereBuffer; ///< Scene framebuffer.
+	Texture _atmosphereBuffer; ///< Scene texture.
 	Program * _atmosphere; ///< Atmospheric scattering shader.
 	Program * _tonemap; ///< Tonemapping shader.
 	Texture _scattering; ///< Scattering lookup table.

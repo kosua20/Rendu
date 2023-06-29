@@ -2,7 +2,6 @@
 #include "input/Input.hpp"
 #include "system/System.hpp"
 #include "graphics/GPU.hpp"
-#include "graphics/ScreenQuad.hpp"
 #include "graphics/ShaderCompiler.hpp"
 #include "generation/Random.hpp"
 #include "generation/PerlinNoise.hpp"
@@ -24,13 +23,14 @@ const std::string kVecName = "vect";
 const std::string kColorName = "col";
 const std::string kHelpMessage = "Reload: Enter or Ctrl/Cmd+B\nReload and reset values: Shift+Enter or Ctrl/Cmd+Shift+B\nPlay/pause: Space\nShow panel: Tab\nCtrl/Cmd+1: horizontal layout\nCtrl/Cmd+2: vertical layout\nCtrl/Cmd+3: freeform layout\nCtrl/Cmd+F: display render in sub-window";
 
-ShaderEditor::ShaderEditor(RenderingConfig & config, Window & window) : CameraApp(config, window), _noise("Uniform 2D"), _perlin("Perlin 2D"), _directions("Directions"), _noise3D("Uniform 3D"), _perlin3D("Perlin 3D") {
+ShaderEditor::ShaderEditor(RenderingConfig & config, Window & window) : CameraApp(config, window), _frame0( "Frame 0"), _frame1("Frame 1"), _noise("Uniform 2D"), _perlin("Perlin 2D"), _directions("Directions"), _noise3D("Uniform 3D"), _perlin3D("Perlin 3D") {
 	// Setup render buffer.
 	const glm::uvec2 res(_config.renderingResolution());
 
-	_currFrame.reset(new Framebuffer(TextureShape::D2, res[0], res[1], 1, 1, {Layout::RGBA16F}, "Current frame"));
-
-	_prevFrame.reset(new Framebuffer(TextureShape::D2, res[0], res[1], 1, 1, {Layout::RGBA16F}, "Previous frame"));
+	_frame0.setupAsDrawable(Layout::RGBA16F, res[0], res[1]);
+	_frame1.setupAsDrawable(Layout::RGBA16F, res[0], res[1]);
+	_currFrame = &_frame0;
+	_prevFrame = &_frame1;
 
 	// We don't want the resources manager to alter the program.
 	const std::string vShader = Resources::manager().getStringWithIncludes("shaderbench.vert");
@@ -150,7 +150,7 @@ ShaderEditor::ShaderEditor(RenderingConfig & config, Window & window) : CameraAp
 	}
 
 	// Reference textures.
-	_textures.push_back(_prevFrame->texture());
+	_textures.push_back(_prevFrame);
 	_textures.push_back(Resources::manager().getTexture("shadertoy-font", Layout::RGBA8, Storage::GPU));
 	_textures.push_back(Resources::manager().getTexture("debug-grid", Layout::SRGB8_ALPHA8, Storage::GPU));
 	_textures.push_back(&_noise);
@@ -195,7 +195,7 @@ void ShaderEditor::draw() {
 	const glm::vec3 & camUp = _userCamera.up();
 	const glm::vec3 & camCenter = _userCamera.center();
 	const float fov = _userCamera.fov();
-	const glm::vec3 screenSize(_currFrame->width(), _currFrame->height(), 0.0f);
+	const glm::vec3 screenSize(_currFrame->width, _currFrame->height, 0.0f);
 
 	// Update timing.
 	float deltaTime = 0.0f;
@@ -222,8 +222,8 @@ void ShaderEditor::draw() {
 	GPU::setBlendState(false);
 	GPU::setCullState(true, Faces::BACK);
 
-	_currFrame->bind(glm::vec4(0.0f), 1.0f);
-	_currFrame->setViewport();
+	GPU::bind(glm::vec4(0.0f), _currFrame);
+	GPU::setViewport(*_currFrame);
 	_currProgram->use();
 
 	// Predefined uniforms.
@@ -266,14 +266,14 @@ void ShaderEditor::draw() {
 	}
 
 	// First texture is the prevous frame.
-	_currProgram->texture(_prevFrame->texture(), 0);
+	_currProgram->texture(_prevFrame, 0);
 	for(size_t i = 1; i < _textures.size(); ++i){
 		_currProgram->texture(_textures[i], uint(i));
 	}
 
 	// Render user shader and time it.
 	_timer.begin();
-	ScreenQuad::draw();
+	GPU::drawQuad();
 	_timer.end();
 
 	window().bind(glm::vec4(0.3f,0.3f,0.3f, 1.0f));
@@ -282,12 +282,12 @@ void ShaderEditor::draw() {
 	// If not in window mode, directly blit to the screne.
 	if(!_windowed){
 		_passthrough->use();
-		_passthrough->texture(_currFrame->texture(), 0);
-		ScreenQuad::draw();
+		_passthrough->texture(*_currFrame, 0);
+		GPU::drawQuad();
 	}
 
 	std::swap(_currFrame, _prevFrame);
-	_textures[0] = _prevFrame->texture();
+	_textures[0] = _prevFrame;
 }
 
 void ShaderEditor::update() {
@@ -327,20 +327,20 @@ void ShaderEditor::update() {
 		if(ImGui::Begin("Render", nullptr, ImGuiWindowFlags_NoBringToFrontOnFocus)){
 			// Adjust the texture display to the window size.
 			const ImVec2 winSize = ImGui::GetContentRegionAvail();
-			ImGui::ImageButton("#Tex", *_currFrame->texture(), ImVec2(winSize.x, winSize.y), ImVec2(0.0,0.0), ImVec2(1.0,1.0));
+			ImGui::ImageButton("#Tex", *_currFrame, ImVec2(winSize.x, winSize.y), ImVec2(0.0,0.0), ImVec2(1.0,1.0));
 			if (ImGui::IsItemHovered()) {
 				ImGui::SetNextFrameWantCaptureMouse(false);
 				ImGui::SetNextFrameWantCaptureKeyboard(false);
 			}
 
 			// If the aspect ratio changed, trigger a resize.
-			const float ratioCurr = float(_currFrame->width()) / float(_currFrame->height());
+			const float ratioCurr = float(_currFrame->width) / float(_currFrame->height);
 			const float ratioWin = winSize.x / winSize.y;
 			// \todo Derive a more robust threshold.
 			if(std::abs(ratioWin - ratioCurr) > 0.01f){
 				const glm::vec2 renderRes = float(_config.internalVerticalResolution) / float(winSize.y) * glm::vec2(winSize.x, winSize.y);
-				_currFrame->resize(renderRes);
-				_prevFrame->resize(renderRes);
+				_frame0.resize(renderRes);
+				_frame1.resize(renderRes);
 				_userCamera.ratio(renderRes[0]/renderRes[1]);
 			}
 		}
@@ -392,9 +392,10 @@ void ShaderEditor::update() {
 			if(System::showPicker(System::Picker::Save, "", outPath, "png") && !outPath.empty()){
 				TextUtilities::splitExtension(outPath);
 				// Create a RGB8 framebuffer to save as png.
-				Framebuffer tmp(_currFrame->width(), _currFrame->height(), Layout::RGBA8, "Temp");
-				GPU::blit(*_currFrame->texture(0), *tmp.texture(0), Filter::NEAREST);
-				GPU::saveTexture(*tmp.texture(0), outPath, Image::Save::IGNORE_ALPHA);
+				Texture tmp("Temp");
+				tmp.setupAsDrawable(Layout::RGBA8, _currFrame->width, _currFrame->height);
+				GPU::blit(*_currFrame, tmp, Filter::NEAREST);
+				GPU::saveTexture(tmp, outPath, Image::Save::IGNORE_ALPHA);
 			}
 		}
 		ImGui::SameLine();
@@ -423,7 +424,7 @@ void ShaderEditor::update() {
 			}
 
 			// Rendering info.
-			ImGui::Text("Frame time: %5.3fms, resolution: %dx%d", float(frameTime)/1000000.0f, _currFrame->width(), _currFrame->height());
+			ImGui::Text("Frame time: %5.3fms, resolution: %dx%d", float(frameTime)/1000000.0f, _currFrame->width, _currFrame->height);
 
 			// Play/pause/reset options and timing info.
 			if(ImGui::Button("Pause##time")){
@@ -693,8 +694,8 @@ void ShaderEditor::resize() {
 	const glm::vec2 renderRes = _config.renderingResolution();
 	// Only resize if we are not in window mode (else handled when displaying the window).
 	if(!_windowed){
-		_currFrame->resize(renderRes);
-		_prevFrame->resize(renderRes);
+		_frame0.resize(renderRes);
+		_frame1.resize(renderRes);
 	}
 }
 

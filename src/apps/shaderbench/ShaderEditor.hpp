@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Application.hpp"
-#include "graphics/Framebuffer.hpp"
+#include "resources/Texture.hpp"
 #include "graphics/Program.hpp"
 
 #include "Common.hpp"
@@ -104,8 +104,10 @@ private:
 		FREEFORM ///< Panels can be freely moved around.
 	};
 
-	std::unique_ptr<Framebuffer> _currFrame; ///< Content buffer.
-	std::unique_ptr<Framebuffer> _prevFrame; ///< Content buffer.
+	Texture _frame0; ///< Content texture.
+	Texture _frame1; ///< Content texture.
+	Texture* _currFrame; ///< Content texture indirection.
+	Texture* _prevFrame; ///< Content texture indirection.
 
 	std::string _shaderPath; ///< Path of the current shader on disk.
 	std::string _shaderName; ///< Name of the current shader (for display).

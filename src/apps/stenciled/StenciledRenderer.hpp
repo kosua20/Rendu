@@ -3,7 +3,7 @@
 #include "scene/Scene.hpp"
 #include "renderers/Renderer.hpp"
 
-#include "graphics/Framebuffer.hpp"
+#include "resources/Texture.hpp"
 #include "input/ControllableCamera.hpp"
 
 #include "Common.hpp"
@@ -26,7 +26,7 @@ public:
 	void setScene(const std::shared_ptr<Scene> & scene);
 
 	/** \copydoc Renderer::draw */
-	void draw(const Camera & camera, Framebuffer & framebuffer, uint layer = 0) override;
+	void draw(const Camera & camera, Texture* dstColor, Texture* dstDepth, uint layer = 0) override;
 
 	/** \copydoc Renderer::resize
 	 */
@@ -34,7 +34,8 @@ public:
 	
 private:
 
-	std::unique_ptr<Framebuffer> _sceneFramebuffer; ///< Scene framebuffer
+	Texture _sceneColor; ///< Scene color texture.
+	Texture _sceneDepth; ///< Scene depth texture.
 	std::shared_ptr<Scene> _scene; ///< The scene to render
 	
 	Program * _objectProgram; ///< Basic stencil program

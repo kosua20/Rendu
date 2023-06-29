@@ -2,9 +2,8 @@
 #include "input/Input.hpp"
 #include "raycaster/Intersection.hpp"
 #include "resources/ResourcesManager.hpp"
-#include "graphics/ScreenQuad.hpp"
-#include "graphics/Framebuffer.hpp"
 #include "graphics/GPU.hpp"
+#include "resources/Texture.hpp"
 #include "system/Window.hpp"
 #include "system/System.hpp"
 #include "generation/Random.hpp"
@@ -13,11 +12,11 @@
 
 #include "AtmosphereApp.hpp"
 
-AtmosphereApp::AtmosphereApp(RenderingConfig & config, Window & window) : CameraApp(config, window), _scattering("Scattering LUT") {
+AtmosphereApp::AtmosphereApp(RenderingConfig & config, Window & window) : CameraApp(config, window), _atmosphereBuffer("Atmosphere"), _scattering("Scattering LUT") {
 	_userCamera.projection(config.screenResolution[0] / config.screenResolution[1], 1.34f, 0.1f, 100.0f);
-	// Framebuffer to store the rendered atmosphere result before tonemapping and upscaling to the window size.
+	// Texture to store the rendered atmosphere result before tonemapping and upscaling to the window size.
 	const glm::vec2 renderRes = _config.renderingResolution();
-	_atmosphereBuffer.reset(new Framebuffer(uint(renderRes[0]), uint(renderRes[1]), Layout::RGBA16F, "Atmosphere"));
+	_atmosphereBuffer.setupAsDrawable(Layout::RGBA16F, uint(renderRes[0]), uint(renderRes[1]));
 	// Atmosphere screen quad.
 	_atmosphere = Resources::manager().getProgram2D("atmosphere_params");
 	// Final tonemapping screen quad.
@@ -38,9 +37,9 @@ void AtmosphereApp::draw() {
 	GPU::setDepthState(false);
 	GPU::setBlendState(false);
 	GPU::setCullState(false);
-	
-	_atmosphereBuffer->bind(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), Load::Operation::DONTCARE, Load::Operation::DONTCARE);
-	_atmosphereBuffer->setViewport();
+
+	GPU::bind(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), &_atmosphereBuffer);
+	GPU::setViewport(_atmosphereBuffer);
 
 	_atmosphere->use();
 	const glm::mat4 camToWorldNoT = glm::mat4(glm::mat3(camToWorld));
@@ -62,7 +61,7 @@ void AtmosphereApp::draw() {
 	_atmosphere->uniform("atmoParams.sunAngularRadius", _atmoParams.sunRadius);
 	_atmosphere->uniform("atmoParams.sunAngularRadiusCos", _atmoParams.sunRadiusCos);
 	_atmosphere->texture(_scattering, 0);
-	ScreenQuad::draw();
+	GPU::drawQuad();
 
 	// Tonemapping and final screen.
 	window().bind(Load::Operation::DONTCARE, Load::Operation::DONTCARE, Load::Operation::DONTCARE);
@@ -70,8 +69,8 @@ void AtmosphereApp::draw() {
 	_tonemap->use();
 	_tonemap->uniform("customExposure", 1.0f);
 	_tonemap->uniform("apply", true);
-	_tonemap->texture(_atmosphereBuffer->texture(), 0);
-	ScreenQuad::draw();
+	_tonemap->texture(_atmosphereBuffer, 0);
+	GPU::drawQuad();
 }
 
 void AtmosphereApp::update() {
@@ -138,7 +137,7 @@ void AtmosphereApp::update() {
 }
 
 void AtmosphereApp::resize() {
-	_atmosphereBuffer->resize(_config.renderingResolution());
+	_atmosphereBuffer.resize(_config.renderingResolution());
 }
 
 void AtmosphereApp::precomputeTable(const Sky::AtmosphereParameters & params, uint samples, Image & table) {

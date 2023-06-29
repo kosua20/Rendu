@@ -4,11 +4,11 @@
 #include "system/Window.hpp"
 
 StenciledApp::StenciledApp(RenderingConfig & config, Window & window) :
-	CameraApp(config, window) {
+	CameraApp(config, window), _finalRender("Final render") {
 
 	const glm::vec2 renderRes = _config.renderingResolution();
 	_renderer.reset(new StenciledRenderer(renderRes));
-	_finalRender.reset(new Framebuffer(uint(renderRes[0]), uint(renderRes[1]), Layout::RGBA8, "Final render"));
+	_finalRender.setupAsDrawable(Layout::RGBA8, uint(renderRes[0]), uint(renderRes[1]));
 
 	// Load all existing scenes, with associated names.
 	std::vector<Resources::FileInfos> sceneInfos;
@@ -56,9 +56,9 @@ void StenciledApp::draw() {
 		window().bind(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 1.0f, Load::Operation::DONTCARE);
 		return;
 	}
-	_renderer->draw(_userCamera, *_finalRender);
+	_renderer->draw(_userCamera, &_finalRender, nullptr);
 
-	GPU::blit(*_finalRender->texture(0), window().color(), Filter::LINEAR);
+	GPU::blit(_finalRender, window().color(), Filter::LINEAR);
 
 }
 
@@ -105,5 +105,5 @@ void StenciledApp::resize() {
 	const uint rw = uint(renderRes[0]);
 	const uint rh = uint(renderRes[1]);
 	_renderer->resize(rw, rh);
-	_finalRender->resize(rw, rh);
+	_finalRender.resize(rw, rh);
 }

@@ -1,18 +1,17 @@
 #include "StenciledRenderer.hpp"
 #include "system/System.hpp"
 #include "graphics/GPU.hpp"
-#include "graphics/ScreenQuad.hpp"
 #include "renderers/DebugViewer.hpp"
 
 
-StenciledRenderer::StenciledRenderer(const glm::vec2 & resolution) : Renderer("Stenciled"){
+StenciledRenderer::StenciledRenderer(const glm::vec2 & resolution) : Renderer("Stenciled"), _sceneColor("Stenciled color"), _sceneDepth("Stenciled depth") {
 
 	const uint renderWidth	   = uint(resolution[0]);
 	const uint renderHeight	   = uint(resolution[1]);
 
-	// Framebuffer.
-	const std::vector<Layout> formats = { Layout::RGBA8, Layout::DEPTH32F_STENCIL8};
-	_sceneFramebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, formats, _name + " rendering"));
+	// Attahcments.
+	_sceneColor.setupAsDrawable(Layout::RGBA8, renderWidth, renderHeight);
+	_sceneDepth.setupAsDrawable(Layout::DEPTH32F_STENCIL8, renderWidth, renderHeight);
 
 	_objectProgram	= Resources::manager().getProgram("object_basic_uniform", "object_basic", "object_basic_uniform");
 	_fillProgram 	= Resources::manager().getProgram2D("fill-color");
@@ -28,7 +27,9 @@ void StenciledRenderer::setScene(const std::shared_ptr<Scene> & scene) {
 }
 
 
-void StenciledRenderer::draw(const Camera & camera, Framebuffer & framebuffer, uint layer) {
+void StenciledRenderer::draw(const Camera & camera, Texture* dstColor, Texture* dstDepth, uint layer) {
+	assert(dstColor);
+	assert(dstDepth == nullptr);
 
 	const glm::mat4 & view = camera.view();
 	const glm::mat4 & proj = camera.projection();
@@ -37,8 +38,8 @@ void StenciledRenderer::draw(const Camera & camera, Framebuffer & framebuffer, u
 	GPU::setCullState(true, Faces::BACK);
 	GPU::setBlendState(false);
 
-	_sceneFramebuffer->bind(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 1.0f, (uchar)0x0);
-	_sceneFramebuffer->setViewport();
+	GPU::bind(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 1.0f, (uchar)0x0, &_sceneDepth, &_sceneColor);
+	GPU::setViewport(_sceneDepth);
 
 	// Clear colorbuffer to white, don't write to it for now.
 	GPU::setColorState(false, false, false, false);
@@ -79,7 +80,7 @@ void StenciledRenderer::draw(const Camera & camera, Framebuffer & framebuffer, u
 
 	_fillProgram->use();
 	_fillProgram->uniform("color", glm::vec4(0.0f));
-	ScreenQuad::draw();
+	GPU::drawQuad();
 
 	// Restore stencil state.
 	GPU::setStencilState(false, false);
@@ -87,10 +88,11 @@ void StenciledRenderer::draw(const Camera & camera, Framebuffer & framebuffer, u
 	DebugViewer::trackStateDefault("Off stencil");
 
 	// Output result.
-	GPU::blit(*_sceneFramebuffer->texture(0), *framebuffer.texture(0), 0, layer, Filter::LINEAR);
+	GPU::blit(_sceneColor, *dstColor, 0, layer, Filter::LINEAR);
 }
 
 void StenciledRenderer::resize(uint width, uint height) {
-	// Resize the framebuffers.
-	_sceneFramebuffer->resize(glm::vec2(width, height));
+	// Resize the textures.
+	_sceneColor.resize(width, height);
+	_sceneDepth.resize(width, height);
 }

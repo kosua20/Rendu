@@ -41,7 +41,7 @@ private:
 	void setScene(const std::shared_ptr<Scene> & scene);
 
 	std::unique_ptr<StenciledRenderer> _renderer; ///< Stenciled renderer.
-	std::unique_ptr<Framebuffer> _finalRender; ///< The final render.
+	Texture _finalRender; ///< The final render.
 	
 	std::vector<std::shared_ptr<Scene>> _scenes; ///< The existing scenes.
 	std::vector<std::string> _sceneNames; ///< The associated scene names.
