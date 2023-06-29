@@ -1,11 +1,10 @@
 
 #include "GameRenderer.hpp"
 #include "graphics/GPU.hpp"
-#include "graphics/ScreenQuad.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "Common.hpp"
 
-GameRenderer::GameRenderer(const glm::vec2 & resolution) : Renderer("Game") {
+GameRenderer::GameRenderer(const glm::vec2 & resolution) : Renderer("Game"), _sceneNormal("G-buffer normal"), _sceneMaterial("G-buffer material"), _sceneDepth("G-buffer depth"), _lighting("Lighting") {
 	_playerCamera.pose(glm::vec3(0.0f, -5.0f, 24.0f), glm::vec3(0.0f, 0.5f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	_playerCamera.projection(resolution[0] / resolution[1], 0.6f, 1.0f, 30.0f);
 
@@ -17,10 +16,11 @@ GameRenderer::GameRenderer(const glm::vec2 & resolution) : Renderer("Game") {
 
 	const int renderWidth  = int(resolution[0]);
 	const int renderHeight = int(resolution[1]);
-	_sceneFramebuffer	  = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, {Layout::RGBA16F, Layout::R8, Layout::DEPTH_COMPONENT32F}, "G-buffer"));
-	_lightingFramebuffer   = std::unique_ptr<Framebuffer>(new Framebuffer(renderWidth, renderHeight, Layout::RGBA8, "Lighting"));
-	_preferredFormat.push_back(Layout::RGBA8);
-	
+	_sceneNormal.setupAsDrawable(Layout::RGBA16F, renderWidth, renderHeight);
+	_sceneMaterial.setupAsDrawable(Layout::R8, renderWidth, renderHeight);
+	_sceneDepth.setupAsDrawable(Layout::DEPTH_COMPONENT32F, renderWidth, renderHeight);
+	_lighting.setupAsDrawable(Layout::RGBA8, renderWidth, renderHeight);
+	_colorFormat = Layout::RGBA8;
 
 	_fxaaProgram		= Resources::manager().getProgram2D("fxaa");
 	_compositingProgram = Resources::manager().getProgram2D("game_composite");
@@ -36,37 +36,37 @@ GameRenderer::GameRenderer(const glm::vec2 & resolution) : Renderer("Game") {
 
 }
 
-void GameRenderer::drawPlayer(const Player & player, Framebuffer & framebuffer) const {
+void GameRenderer::drawPlayer(const Player & player, Texture& dst) const {
 
-	const glm::vec2 invRenderSize = 1.0f / glm::vec2(framebuffer.width(), framebuffer.height());
+	const glm::vec2 invRenderSize = 1.0f / glm::vec2(dst.width, dst.height);
 
 	// --- Scene pass ------
-	_sceneFramebuffer->bind(glm::vec4(0.0f), 1.0f);
-	_sceneFramebuffer->setViewport();
+	GPU::bind(glm::vec4(0.0f), 1.0f, Load::Operation::DONTCARE, &_sceneDepth, &_sceneNormal, &_sceneMaterial);
+	GPU::setViewport(_sceneDepth);
 
 	drawScene(player);
 
 	// --- SSAO pass ------
-	_ssaoPass->process(_playerCamera.projection(), _sceneFramebuffer->depthBuffer(), _sceneFramebuffer->texture(0));
+	_ssaoPass->process(_playerCamera.projection(), _sceneDepth, _sceneNormal);
 
 	GPU::setCullState(true, Faces::BACK);
 	GPU::setBlendState(false);
 	GPU::setDepthState(false);
 
 	// --- Lighting pass ------
-	_lightingFramebuffer->bind(Load::Operation::LOAD);
-	_lightingFramebuffer->setViewport();
+	GPU::bind(Load::Operation::LOAD, &_lighting);
+	GPU::setViewport(_lighting);
 	_compositingProgram->use();
-	_compositingProgram->textures({_sceneFramebuffer->texture(0), _sceneFramebuffer->texture(1), _ssaoPass->texture(), _cubemap});
-	ScreenQuad::draw();
+	_compositingProgram->textures({&_sceneNormal, &_sceneMaterial, _ssaoPass->texture(), _cubemap});
+	GPU::drawQuad();
 
 	// --- FXAA pass -------
-	framebuffer.bind(Load::Operation::LOAD);
-	framebuffer.setViewport();
+	GPU::bind(Load::Operation::LOAD, &dst);
+	GPU::setViewport(dst);
 	_fxaaProgram->use();
 	_fxaaProgram->uniform("inverseScreenSize", invRenderSize);
-	_fxaaProgram->texture(_lightingFramebuffer->texture(), 0);
-	ScreenQuad::draw();
+	_fxaaProgram->texture(_lighting, 0);
+	GPU::drawQuad();
 
 }
 
@@ -121,7 +121,9 @@ void GameRenderer::drawScene(const Player & player) const {
 void GameRenderer::resize(uint width, uint height) {
 	const glm::vec2 res(width, height);
 	_playerCamera.ratio(res[0]/res[1]);
-	_sceneFramebuffer->resize(res);
-	_lightingFramebuffer->resize(res);
+	_sceneNormal.resize(res);
+	_sceneMaterial.resize(res);
+	_sceneDepth.resize(res);
+	_lighting.resize(res);
 	_ssaoPass->resize(width/2, height/2);
 }

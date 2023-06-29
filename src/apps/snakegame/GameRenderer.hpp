@@ -19,9 +19,9 @@ public:
 
 	/** Draw the game scene
 	 \param player the state of the game and player
-	 \param framebuffer the destination framebuffer
+	 \param dst the destination texture
 	 */
-	void drawPlayer(const Player & player, Framebuffer & framebuffer) const;
+	void drawPlayer(const Player & player, Texture & dst) const;
 
 	/** Resize internal buffers based on new window size.
 	 \param width new width
@@ -35,9 +35,11 @@ private:
 	 */
 	void drawScene(const Player & player) const;
 
-	std::unique_ptr<Framebuffer> _sceneFramebuffer;	///< Scene framebuffer.
-	std::unique_ptr<Framebuffer> _lightingFramebuffer; ///< Framebuffer containing the lit result.
-	std::unique_ptr<SSAO> _ssaoPass;				   ///< Screen space ambient occlusion pass.
+	Texture _sceneNormal;						///< Scene normal texture.
+	Texture _sceneMaterial;							///< Scene material texture.
+	Texture _sceneDepth;						///< Scene depth texture.
+	Texture _lighting;							///< Texture containing the lit result.
+	std::unique_ptr<SSAO> _ssaoPass;			///< Screen space ambient occlusion pass.
 
 	Program * _fxaaProgram;		 ///< Antialiasing program.
 	Program * _coloredProgram;	 ///< Base scene rendering program.

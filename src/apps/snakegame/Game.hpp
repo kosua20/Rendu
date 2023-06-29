@@ -100,12 +100,12 @@ private:
 	GameConfig & _config;		 ///< Reference to the shared game configuration.
 	std::unique_ptr<Player> _player; ///< The player state.
 
-	GameRenderer _inGameRenderer;		   ///< In-game renderer.
-	GameMenuRenderer _menuRenderer;		   ///< Menus renderer.
-	std::unique_ptr<GaussianBlur> _bgBlur; ///< Blurring pass for the paused/dead menus background.
-	std::unique_ptr<Framebuffer> _gameFramebuffer; ///< Game scene framebuffer.
-	std::unique_ptr<Framebuffer> _bgBlurBuffer; ///< Game scene framebuffer.
-	Program * _finalProgram;		   ///< Final upscaling program.
+	GameRenderer _inGameRenderer;		   	///< In-game renderer.
+	GameMenuRenderer _menuRenderer;		   	///< Menus renderer.
+	std::unique_ptr<GaussianBlur> _bgBlur; 	///< Blurring pass for the paused/dead menus background.
+	Texture _gameResult; 					///< Game scene texture.
+	Texture _bgBlurTexture; 				///< Blurred game scene texture.
+	Program * _finalProgram;		   		///< Final upscaling program.
 
 	Status _status = Status::MAINMENU; ///< Current game sattus (specific menu or in-game)
 	std::map<Status, GameMenu> _menus; ///< Menus for each game status.

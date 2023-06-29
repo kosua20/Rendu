@@ -1,9 +1,8 @@
 
 #include "GameMenuRenderer.hpp"
 #include "resources/ResourcesManager.hpp"
-#include "graphics/ScreenQuad.hpp"
 #include "graphics/GPU.hpp"
-#include "graphics/Framebuffer.hpp"
+#include "resources/Texture.hpp"
 #include "Common.hpp"
 
 GameMenuRenderer::GameMenuRenderer() : Renderer("Menu") {
@@ -40,7 +39,7 @@ void GameMenuRenderer::drawMenu(const GameMenu & menu, const glm::vec2 & finalRe
 	if(menu.backgroundImage) {
 		_backgroundProgram->use();
 		_backgroundProgram->texture(menu.backgroundImage, 0);
-		ScreenQuad::draw();
+		GPU::drawQuad();
 	}
 
 	GPU::setDepthState(true, TestFunction::LESS, true);

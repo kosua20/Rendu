@@ -1,8 +1,6 @@
-
 #include "Game.hpp"
 #include "input/Input.hpp"
 #include "graphics/GPU.hpp"
-#include "graphics/ScreenQuad.hpp"
 #include "resources/ResourcesManager.hpp"
 #include "Common.hpp"
 
@@ -28,12 +26,15 @@ void GameConfig::save(){
 }
 
 Game::Game(GameConfig & config) :
-	_config(config), _inGameRenderer(_config.screenResolution) {
+	_config(config), _inGameRenderer(_config.screenResolution), _gameResult("Game scene"), _bgBlurTexture("Background blur")  {
 
 	_bgBlur = std::unique_ptr<GaussianBlur>(new GaussianBlur(3, 1, "Background"));
-	_bgBlurBuffer = _inGameRenderer.createOutput(uint(_config.screenResolution[0]), uint(_config.screenResolution[1]), "BG blur");
+	const uint renderWidth = uint(_config.screenResolution[0]);
+	const uint renderHeight = uint(_config.screenResolution[1]);
+	const Layout tgtFormat = _inGameRenderer.outputColorFormat();
+	_bgBlurTexture.setupAsDrawable(tgtFormat, renderWidth, renderHeight);
+	_gameResult.setupAsDrawable(tgtFormat, renderWidth, renderHeight);
 	_finalProgram = Resources::manager().getProgram2D("sharpening");
-	_gameFramebuffer = _inGameRenderer.createOutput(uint(_config.screenResolution[0]), uint(_config.screenResolution[1]), "Game scene");
 
 	// Create menus.
 	const glm::vec2 meshSize = _menuRenderer.getButtonSize();
@@ -53,7 +54,7 @@ Game::Game(GameConfig & config) :
 	_menus[Status::MAINMENU].images.emplace_back(glm::vec2(0.0f, -0.47f), 0.5f,
 		Resources::manager().getTexture("title", format, Storage::GPU));
 
-	_menus[Status::PAUSED].backgroundImage = _bgBlurBuffer->texture();
+	_menus[Status::PAUSED].backgroundImage = &_bgBlurTexture;
 	_menus[Status::PAUSED].buttons.emplace_back(glm::vec2(0.0f, -0.10f), meshSize, displayScale, RESUME,
 		Resources::manager().getTexture("button-resume", format, Storage::GPU));
 	_menus[Status::PAUSED].buttons.emplace_back(glm::vec2(0.0f, 0.25f), meshSize, displayScale, BACKTOMENU,
@@ -78,7 +79,7 @@ Game::Game(GameConfig & config) :
 	_menus[Status::OPTIONS].images.emplace_back(glm::vec2(0.0f, -0.55f), 0.5f,
 		Resources::manager().getTexture("title-options", format, Storage::GPU));
 
-	_menus[Status::DEAD].backgroundImage = _bgBlurBuffer->texture();
+	_menus[Status::DEAD].backgroundImage = &_bgBlurTexture;
 	_menus[Status::DEAD].buttons.emplace_back(glm::vec2(0.0f, 0.20f), meshSize, displayScale, NEWGAME,
 		Resources::manager().getTexture("button-newgame"));
 	_menus[Status::DEAD].buttons.emplace_back(glm::vec2(0.0f, 0.55f), meshSize, displayScale, BACKTOMENU,
@@ -104,19 +105,19 @@ void Game::draw(Window& window) {
 	if(_status == Status::INGAME) {
 		// Before drawing, prepare the model matrices.
 		_player->updateModels();
-		_inGameRenderer.drawPlayer(*_player, *_gameFramebuffer);
+		_inGameRenderer.drawPlayer(*_player, _gameResult);
 
 		window.bind(Load::Operation::DONTCARE, Load::Operation::DONTCARE, Load::Operation::DONTCARE);
 		window.setViewport();
 		_finalProgram->use();
-		_finalProgram->texture(_gameFramebuffer->texture(), 0);
-		ScreenQuad::draw();
+		_finalProgram->texture(_gameResult, 0);
+		GPU::drawQuad();
 		
 	}
 
 	// Make sure we are rendering directly in the window.
 	window.bind(Load::Operation::LOAD, 1.0f);
-	const float renderRatio = float(_gameFramebuffer->height()) / float(_gameFramebuffer->width());
+	const float renderRatio = float(_gameResult.height) / float(_gameResult.width);
 	_menuRenderer.drawMenu( _menus[_status], _config.screenResolution, renderRatio);
 
 }
@@ -153,8 +154,8 @@ Window::Action Game::update() {
 		if(!_player->alive()) {
 			_status = Status::DEAD;
 			// Make sure the blur effect buffer is the right size.
-			_bgBlurBuffer->resize(_gameFramebuffer->width(), _gameFramebuffer->height());
-			_bgBlur->process(_gameFramebuffer->texture(), *_bgBlurBuffer);
+			_bgBlurTexture.resize(_gameResult.width, _gameResult.height);
+			_bgBlur->process(_gameResult, _bgBlurTexture);
 			_menus[Status::DEAD].labels[0].update(std::to_string(_player->score()));
 
 			// Save the final score.
@@ -217,8 +218,8 @@ Window::Action Game::handleButton(ButtonAction tag) {
 			_status = Status::OPTIONS;
 			break;
 		case PAUSE: {
-			_bgBlurBuffer->resize(_gameFramebuffer->width(), _gameFramebuffer->height());
-			_bgBlur->process(_gameFramebuffer->texture(), *_bgBlurBuffer);
+			_bgBlurTexture.resize(_gameResult.width, _gameResult.height);
+			_bgBlur->process(_gameResult, _bgBlurTexture);
 			_status = Status::PAUSED;
 			break;
 		}
@@ -263,7 +264,7 @@ void Game::resize(unsigned int width, unsigned int height) {
 	const glm::vec2 renderRes = _config.renderingResolution();
 	const uint w = uint(renderRes[0]);
 	const uint h = uint(renderRes[1]);
-	_gameFramebuffer->resize(w,h);
+	_gameResult.resize(w,h);
 	_inGameRenderer.resize(w, h);
 	// Update each menu buttons sizes.
 	const float initialRatio = float(_config.initialWidth) / float(_config.initialHeight);
