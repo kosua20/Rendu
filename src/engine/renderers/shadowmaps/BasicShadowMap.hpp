@@ -1,7 +1,6 @@
 #pragma once
 
 #include "renderers/shadowmaps/ShadowMap.hpp"
-#include "graphics/Framebuffer.hpp"
 #include "scene/lights/Light.hpp"
 #include "scene/lights/PointLight.hpp"
 
@@ -24,7 +23,7 @@ private:
 	
 	std::vector<std::shared_ptr<Light>> _lights; ///< The associated light.
 	Program * _program;			///< Shadow program.
-	std::unique_ptr<Framebuffer> _map;	///< Shadow map result.
+	Texture _map;	///< Shadow map result.
 	
 };
 
@@ -47,7 +46,7 @@ private:
 	
 	std::vector<std::shared_ptr<PointLight>> _lights; ///< The associated lights.
 	Program * _program;			///< Shadow program.
-	std::unique_ptr<Framebuffer> _map;	///< Shadow map result.
+	Texture _map;	///< Shadow map result.
 	
 };
 

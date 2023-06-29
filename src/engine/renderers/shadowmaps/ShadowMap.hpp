@@ -1,7 +1,7 @@
 #pragma once
 
-#include "graphics/Framebuffer.hpp"
 #include "processing/BoxBlur.hpp"
+#include "resources/Texture.hpp"
 
 #include "Common.hpp"
 

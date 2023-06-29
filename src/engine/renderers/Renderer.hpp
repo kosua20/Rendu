@@ -2,7 +2,6 @@
 #include "system/Config.hpp"
 #include "input/Camera.hpp"
 #include "resources/Texture.hpp"
-#include "graphics/Framebuffer.hpp"
 
 /**
  \brief Base structure of a renderer.
@@ -19,10 +18,10 @@ public:
 	
 	/** Draw from a given viewpoint.
 	 \param camera the rendering viewpoint
-	 \param framebuffer the destination target
+	 \param dst the destination textures
 	 \param layer the layer to write to in the target
 	 */
-	virtual void draw(const Camera & camera, Framebuffer & framebuffer, uint layer = 0);
+	virtual void draw(const Camera & camera, Texture* dstColor, Texture* dstDepth, uint layer = 0);
 	
 	/** Handle a window resize event.
 	 \param width the new width
@@ -34,27 +33,6 @@ public:
 	 \note The renderer can assume that a GUI window is currently open.
 	 */
 	virtual void interface();
-
-	/** Create a 2D framebuffer with the recommended settings for it to be used as
-	 the output of this renderer when calling process/draw.
-	 \param width the framebuffer width
-	 \param height the framebuffer height
-	 \param name the framebuffer name
-	 \return the allocated framebuffer
-	 */
-	std::unique_ptr<Framebuffer> createOutput(uint width, uint height, const std::string & name) const;
-
-	/** Create a framebuffer with the recommended settings for it to be used as
-	the output of this renderer when calling process/draw.
-	\param shape the framebuffer texture shape
-	\param width the framebuffer width
-	\param height the framebuffer height
-	\param depth the framebuffer depth
-	\param mips the number of mip levels for the framebuffer
-	\param name the framebuffer name
-	\return the allocated framebuffer
-	*/
-	std::unique_ptr<Framebuffer> createOutput(TextureShape shape, uint width, uint height, uint depth, uint mips, const std::string & name) const;
 
 	/** Destructor */
 	virtual ~Renderer() = default;
@@ -75,8 +53,13 @@ public:
 	 */
 	Renderer & operator=(Renderer &&) = delete;
 
+	Layout outputColorFormat() const { return _colorFormat; }
+
+	Layout outputDepthFormat() const { return _depthFormat; }
+
 protected:
 
 	std::string _name; ///< Debug name.
-	std::vector<Layout> _preferredFormat; ///< The preferred output format for a given renderer.
+	Layout _colorFormat = Layout::NONE; ///< The preferred output format for a given renderer.
+	Layout _depthFormat = Layout::NONE; ///< The preferred output format for a given renderer.
 };

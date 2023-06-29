@@ -2,7 +2,7 @@
 
 #include "resources/Buffer.hpp"
 #include "resources/ResourcesManager.hpp"
-#include "graphics/Framebuffer.hpp"
+#include "resources/Texture.hpp"
 #include "renderers/Renderer.hpp"
 #include "input/Camera.hpp"
 #include "Common.hpp"
@@ -81,9 +81,9 @@ private:
 	 */
 	void estimateIrradiance(float clamp);
 
-	std::unique_ptr<Framebuffer> _framebuffer; ///< The cubemap content.
 	std::shared_ptr<Renderer> _renderer; ///< The renderer to use.
-	std::unique_ptr<Framebuffer> _copy; ///< Downscaled copy of the cubemap content.
+	Texture _result; ///< The cubemap content.
+	Texture _copy; ///< Downscaled copy of the cubemap content.
 	std::shared_ptr<Buffer> _shCoeffs; ///< SH representation of the cubemap irradiance.
 
 	std::array<Camera, 6> _cameras; ///< Camera for each face.

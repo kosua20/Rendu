@@ -4,14 +4,15 @@
 #include "resources/Library.hpp"
 #include "scene/LightProbe.hpp"
 
-Probe::Probe(LightProbe & probe, std::shared_ptr<Renderer> renderer, uint size, uint mips, const glm::vec2 & clippingPlanes) {
+Probe::Probe(LightProbe & probe, std::shared_ptr<Renderer> renderer, uint size, uint mips, const glm::vec2 & clippingPlanes) :
+	_result("Probe"), _copy("Probe copy") {
 	_renderer	 = renderer;
-	_framebuffer = std::unique_ptr<Framebuffer>(new Framebuffer(TextureShape::Cube, size, size, 6, mips, {Layout::RGBA16F}, "Probe"));
-	_framebuffer->clear(glm::vec4(0.0f), 1.0f);
+	_result.setupAsDrawable(Layout::RGBA16F, size, size, TextureShape::Cube, mips);
+	GPU::clearTexture(_result, glm::vec4(0.0f));
 	_position	 = probe.position();
 	_radianceCompute = Resources::manager().getProgramCompute("radiance_convo");
 	// Texture used to compute irradiance spherical harmonics.
-	_copy = _renderer->createOutput(TextureShape::Cube, 16, 16, 6, 1, "Probe copy");
+	_copy.setupAsDrawable(_renderer->outputColorFormat(), 16, 16, TextureShape::Cube, 1);
 	_irradianceCompute = Resources::manager().getProgramCompute("irradiance_compute");
 
 	_shCoeffs.reset(new Buffer(9 * sizeof(glm::vec4), BufferType::STORAGE));
@@ -24,7 +25,7 @@ Probe::Probe(LightProbe & probe, std::shared_ptr<Renderer> renderer, uint size, 
 		_cameras[i].projection(1.0f, glm::half_pi<float>(), clippingPlanes[0], clippingPlanes[1]);
 	}
 
-	probe.registerEnvironment(_framebuffer->texture(), _shCoeffs);
+	probe.registerEnvironment(&_result, _shCoeffs);
 }
 
 void Probe::update(uint budget){
@@ -36,7 +37,7 @@ void Probe::update(uint budget){
 		switch (_currentState) {
 			case ProbeState::DRAW_FACES:
 				// Draw the current face.
-				_renderer->draw(_cameras[_substepDraw], *_framebuffer, _substepDraw);
+				_renderer->draw(_cameras[_substepDraw], &_result, nullptr, _substepDraw);
 				++_substepDraw;
 				// If all faces done, reset and move to radiance estimation.
 				if(_substepDraw >= 6){
@@ -50,7 +51,7 @@ void Probe::update(uint budget){
 				convolveRadiance(1.2f, _substepRadiance);
 				++_substepRadiance;
 				// If all levels done, reset and move to irradiance integration.
-				if(_substepRadiance >= _framebuffer->texture()->levels){
+				if(_substepRadiance >= _result.levels){
 					// No need to filter level 0.
 					_substepRadiance = 1;
 					_currentState = ProbeState::GENERATE_IRRADIANCE;
@@ -79,14 +80,14 @@ void Probe::convolveRadiance(float clamp, uint level) {
 	_radianceCompute->use();
 	_radianceCompute->uniform("clampMax", clamp);
 
-	const uint wh		   = _framebuffer->texture()->width / (1 << level);
-	const float roughness  = float(level) / float(_framebuffer->texture()->levels - 1u);
+	const uint wh		   = _result.width / (1 << level);
+	const float roughness  = float(level) / float(_result.levels - 1u);
 	const int samplesCount = 64;
 
 	_radianceCompute->uniform("mipmapRoughness", roughness);
 	_radianceCompute->uniform("samplesCount", samplesCount);
-	_radianceCompute->texture(_framebuffer->texture(), 0, uint(level)-1u);
-	_radianceCompute->texture(_framebuffer->texture(), 1, uint(level));
+	_radianceCompute->texture(_result, 0, uint(level)-1u);
+	_radianceCompute->texture(_result, 1, uint(level));
 	GPU::dispatch(wh, wh, 6);
 
 }
@@ -94,14 +95,14 @@ void Probe::convolveRadiance(float clamp, uint level) {
 void Probe::estimateIrradiance(float clamp) {
 	// Downscale radiance to a smaller texture.
 	for(uint lid = 0; lid < 6; ++lid) {
-		GPU::blit(*_framebuffer->texture(0), *_copy->texture(0), lid, lid, 0, 0, Filter::LINEAR);
+		GPU::blit(_result, _copy, lid, lid, 0, 0, Filter::LINEAR);
 	}
 	// Dispatch pr-face coefficients accumulation and reduction/SH projection.
 	_irradianceCompute->use();
-	_irradianceCompute->texture(*_copy->texture(), 0);
+	_irradianceCompute->texture(_copy, 0);
 	_irradianceCompute->buffer(*_shCoeffs, 0);
 	_irradianceCompute->uniform("clamp", clamp);
-	_irradianceCompute->uniform("side", _copy->width());
+	_irradianceCompute->uniform("side", _copy.width);
 	GPU::dispatch(1, 1, 1);
 
 }
@@ -194,5 +195,5 @@ void Probe::extractIrradianceSHCoeffs(const Texture & cubemap, float clamp, std:
 
 uint Probe::totalBudget() const {
 	/* draw faces + convolve each level + generate irradiance */
-	return 6 + _framebuffer->texture()->levels + 1;
+	return 6 + _result.levels + 1;
 }

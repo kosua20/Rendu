@@ -2,13 +2,17 @@
 #include "scene/Scene.hpp"
 #include "graphics/GPU.hpp"
 
-VarianceShadowMap2DArray::VarianceShadowMap2DArray(const std::vector<std::shared_ptr<Light>> & lights, const glm::vec2 & resolution){
+VarianceShadowMap2DArray::VarianceShadowMap2DArray(const std::vector<std::shared_ptr<Light>> & lights, const glm::vec2 & resolution)
+	: _map("Shadow map 2D Variance array"), _mapDepth("Shadow map 2D Depth array") {
 	_lights = lights;
-	_map = std::unique_ptr<Framebuffer>(new Framebuffer(TextureShape::Array2D, uint(resolution.x), uint(resolution.y), uint(lights.size()), 1, {Layout::RG32F, Layout::DEPTH_COMPONENT32F}, "Shadow map 2D array"));
+
+	_map.setupAsDrawable(Layout::RG32F, uint(resolution.x), uint(resolution.y), TextureShape::Array2D, 1, uint(lights.size()));
+	_mapDepth.setupAsDrawable(Layout::DEPTH_COMPONENT32F, uint(resolution.x), uint(resolution.y), TextureShape::Array2D, 1, uint(lights.size()));
+
 	_blur = std::unique_ptr<BoxBlur>(new BoxBlur(false, "Shadow maps 2D"));
 	_program = Resources::manager().getProgram("object_depth_array_variance", "light_shadow_vertex", "light_shadow_variance");
 	for(size_t lid = 0; lid < _lights.size(); ++lid){
-		_lights[lid]->registerShadowMap(_map->texture(), ShadowMode::VARIANCE, lid);
+		_lights[lid]->registerShadowMap(&_map, ShadowMode::VARIANCE, lid);
 	}
 }
 
@@ -18,7 +22,7 @@ void VarianceShadowMap2DArray::draw(const Scene & scene) {
 	GPU::setBlendState(false);
 	GPU::setCullState(true, Faces::BACK);
 
-	_map->setViewport();
+	GPU::setViewport(_map);
 	_program->use();
 	_program->defaultTexture(0);
 
@@ -27,7 +31,8 @@ void VarianceShadowMap2DArray::draw(const Scene & scene) {
 		if(!light->castsShadow()){
 			continue;
 		}
-		_map->bind(lid, 0, glm::vec4(1.0f), 1.0f);
+
+		GPU::bind(lid , 0, glm::vec4(1.0f), 1.0f, Load::Operation::DONTCARE, &_mapDepth, &_map);
 
 		const Frustum lightFrustum(light->vp());
 
@@ -53,16 +58,20 @@ void VarianceShadowMap2DArray::draw(const Scene & scene) {
 	}
 	
 	// Apply box blur.
-	_blur->process(_map->texture(), *_map);
+	_blur->process(_map, _map);
 }
 
-VarianceShadowMapCubeArray::VarianceShadowMapCubeArray(const std::vector<std::shared_ptr<PointLight>> & lights, int side){
+VarianceShadowMapCubeArray::VarianceShadowMapCubeArray(const std::vector<std::shared_ptr<PointLight>> & lights, int side)
+	: _map("Shadow map cube Variance array"), _mapDepth("Shadow map cube Depth array"){
 	_lights = lights;
-	_map = std::unique_ptr<Framebuffer>(new Framebuffer( TextureShape::ArrayCube, side, side, uint(lights.size()), 1,  {Layout::RG16F, Layout::DEPTH_COMPONENT32F}, "Shadow map cube array"));
+
+	_map.setupAsDrawable(Layout::RG16F, side, side, TextureShape::ArrayCube, 1, uint(lights.size()));
+	_mapDepth.setupAsDrawable(Layout::DEPTH_COMPONENT32F,side, side, TextureShape::ArrayCube, 1, uint(lights.size()));
+
 	_blur = std::unique_ptr<BoxBlur>(new BoxBlur(true, "Shadow maps cube"));
 	_program = Resources::manager().getProgram("object_cube_depth_array_variance", "light_shadow_linear_vertex", "light_shadow_linear_variance");
 	for(size_t lid = 0; lid < _lights.size(); ++lid){
-		_lights[lid]->registerShadowMap(_map->texture(), ShadowMode::VARIANCE, lid);
+		_lights[lid]->registerShadowMap(&_map, ShadowMode::VARIANCE, lid);
 	}
 }
 
@@ -71,7 +80,7 @@ void VarianceShadowMapCubeArray::draw(const Scene & scene) {
 	GPU::setDepthState(true, TestFunction::LESS, true);
 	GPU::setCullState(true, Faces::BACK);
 	GPU::setBlendState(false);
-	_map->setViewport();
+	GPU::setViewport(_map);
 	_program->use();
 	_program->defaultTexture(0);
 
@@ -88,7 +97,7 @@ void VarianceShadowMapCubeArray::draw(const Scene & scene) {
 		_program->uniform("lightFarPlane", light->farPlane());
 		for(uint i = 0; i < 6; ++i){
 			// We render each face sequentially, culling objects that are not visible.
-			_map->bind(lid * 6 + i, 0, glm::vec4(1.0f), 1.0f);
+			GPU::bind(lid * 6 + i, 0, glm::vec4(1.0f), 1.0f, Load::Operation::DONTCARE, &_mapDepth, &_map);
 			const Frustum lightFrustum(faces[i]);
 
 			for(auto & object : scene.objects) {
@@ -113,5 +122,5 @@ void VarianceShadowMapCubeArray::draw(const Scene & scene) {
 		}
 	}
 	// Apply box blur.
-	_blur->process(_map->texture(), *_map);
+	_blur->process(_map, _map);
 }

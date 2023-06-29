@@ -3,7 +3,6 @@
 #include "scene/lights/Light.hpp"
 #include "scene/Animated.hpp"
 #include "scene/Object.hpp"
-#include "graphics/Framebuffer.hpp"
 
 /**
  \brief A directional light, where all light rays have the same direction.
