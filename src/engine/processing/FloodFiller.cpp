@@ -29,8 +29,8 @@ void FloodFiller::process(const Texture& texture, Output mode) {
 
 	if(mode == Output::COLOR) {
 		_compositeColor->use();
-		_compositeColor->texture(_ping, 0);
-		_compositeColor->texture(*result, 1);
+		_compositeColor->texture(*result, 0);
+		_compositeColor->texture(texture, 1);
 		GPU::drawQuad();
 	} else if(mode == Output::DISTANCE) {
 		_compositeDist->use();
