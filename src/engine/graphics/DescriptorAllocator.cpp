@@ -144,5 +144,7 @@ DescriptorAllocator::DescriptorPool DescriptorAllocator::createPool(uint count, 
 	if(vkCreateDescriptorPool(_context->device, &poolInfo, nullptr, &pool.handle) != VK_SUCCESS){
 		return DescriptorPool();
 	}
+
+	VkUtils::setDebugName(*_context, VK_OBJECT_TYPE_DESCRIPTOR_POOL, uint64_t(pool.handle), "Descriptor pool %u", pool.id);
 	return pool;
 }

@@ -29,6 +29,8 @@ void QueryAllocator::init(GPUQuery::Type type, uint count){
 		if(vkCreateQueryPool(context->device, &poolInfo, nullptr, &_pools[fid]) != VK_SUCCESS){
 			Log::Error() << Log::GPU << "Unable to create query pool." << std::endl;
 		}
+
+		VkUtils::setDebugName(*context, VK_OBJECT_TYPE_QUERY_POOL, uint64_t(_pools[fid]), "Query pool %u - type %u", fid, uint(type));
 	}
 }
 

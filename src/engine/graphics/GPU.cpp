@@ -47,9 +47,12 @@ bool GPU::setup(const std::string & appName) {
 	}
 
 	bool debugEnabled = false;
+	bool wantsMarkers = false;
 #if defined(DEBUG) || defined(FORCE_DEBUG_VULKAN)
 	// Only enable if the layers are supported.
-	debugEnabled = VkUtils::checkLayersSupport(validationLayers) && VkUtils::checkExtensionsSupport({ VK_EXT_DEBUG_UTILS_EXTENSION_NAME });
+	debugEnabled = VkUtils::checkLayersSupport(validationLayers);
+	wantsMarkers = VkUtils::checkExtensionsSupport({ VK_EXT_DEBUG_UTILS_EXTENSION_NAME });
+	debugEnabled &= wantsMarkers;
 #endif
 	bool wantsPortability = false;
 #if defined(__APPLE__) || defined(FORCE_PORTABILITY)
@@ -69,7 +72,7 @@ bool GPU::setup(const std::string & appName) {
 	instanceInfo.pApplicationInfo = &appInfo;
 	
 	// We have to tell Vulkan the extensions we need.
-	const std::vector<const char *> extensions = VkUtils::getRequiredInstanceExtensions(debugEnabled, wantsPortability);
+	const std::vector<const char *> extensions = VkUtils::getRequiredInstanceExtensions(wantsMarkers, wantsPortability);
 	if(!VkUtils::checkExtensionsSupport(extensions)){
 		Log::Error() << Log::GPU << "Unsupported extensions." << std::endl;
 		return false;
@@ -157,6 +160,7 @@ bool GPU::setup(const std::string & appName) {
 	_context.timestep = double(properties.limits.timestampPeriod);
 	_context.uniformAlignment = properties.limits.minUniformBufferOffsetAlignment;
 	// minImageTransferGranularity is guaranteed to be (1,1,1) on graphics/compute queues
+	_context.markersEnabled = wantsMarkers;
 
 	if(!ShaderCompiler::init()){
 		Log::Error() << Log::GPU << "Unable to initialize shader compiler." << std::endl;
@@ -232,6 +236,9 @@ bool GPU::setupWindow(Window * window){
 	vkGetDeviceQueue(_context.device, _context.graphicsId, 0, &_context.graphicsQueue);
 	vkGetDeviceQueue(_context.device, _context.presentId, 0, &_context.presentQueue);
 
+	VkUtils::setDebugName(_context, VK_OBJECT_TYPE_QUEUE, uint64_t(_context.graphicsQueue), "Graphics queue");
+	VkUtils::setDebugName(_context, VK_OBJECT_TYPE_QUEUE, uint64_t(_context.presentQueue), "Present queue");
+
 	// Setup allocator.
 	VmaAllocatorCreateInfo allocatorInfo = {};
 	allocatorInfo.vulkanApiVersion = VK_API_VERSION_1_3;
@@ -283,6 +290,7 @@ bool GPU::setupWindow(Window * window){
 		return false;
 	}
 
+	VkUtils::setDebugName(_context, VK_OBJECT_TYPE_COMMAND_POOL, uint64_t(_context.commandPool), "Main command pool");
 
 	// Create query pools.
 	_context.queryAllocators[GPUQuery::Type::TIME_ELAPSED].init(GPUQuery::Type::TIME_ELAPSED, 1024);
@@ -615,6 +623,8 @@ void GPU::setupTexture(Texture & texture) {
 	allocInfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
 	VK_RET(vmaCreateImage(_allocator, &imageInfo, &allocInfo, &(texture.gpu->image), &(texture.gpu->data), nullptr));
 
+	VkUtils::setDebugName(_context, VK_OBJECT_TYPE_IMAGE, uint64_t(texture.gpu->image), "%s", texture.gpu->name.c_str());
+
 	// Create view.
 	VkImageViewCreateInfo viewInfo = {};
 	viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
@@ -632,6 +642,8 @@ void GPU::setupTexture(Texture & texture) {
 		Log::Error() << Log::GPU << "Unable to create image view." << std::endl;
 		return;
 	}
+
+	VkUtils::setDebugName(_context, VK_OBJECT_TYPE_IMAGE_VIEW, uint64_t(texture.gpu->view), "%s-view", texture.gpu->name.c_str());
 
 	// Slice format
 	VkImageViewType viewTypeSlice = VK_IMAGE_VIEW_TYPE_2D;
@@ -664,6 +676,8 @@ void GPU::setupTexture(Texture & texture) {
 				Log::Error() << "GPU: Unable to create image view." << std::endl;
 				return;
 			}
+
+			VkUtils::setDebugName(_context, VK_OBJECT_TYPE_IMAGE_VIEW, uint64_t(texture.gpu->views[mid].views[lid]), "%s-view-m%u-l%u", texture.gpu->name.c_str(), mid, lid);
 		}
 
 		// Create global mip view.
@@ -683,6 +697,8 @@ void GPU::setupTexture(Texture & texture) {
 			Log::Error() << Log::GPU << "Unable to create image view." << std::endl;
 			return;
 		}
+
+		VkUtils::setDebugName(_context, VK_OBJECT_TYPE_IMAGE_VIEW, uint64_t(texture.gpu->views[mid].mipView), "%s-view-m%u", texture.gpu->name.c_str(), mid);
 
 	}
 
@@ -1093,6 +1109,9 @@ void GPU::setupBuffer(Buffer & buffer) {
 	VmaAllocationInfo resultInfos = {};
 
 	VK_RET(vmaCreateBuffer(_allocator, &bufferInfo, &allocInfo, &(buffer.gpu->buffer), &(buffer.gpu->data), &resultInfos));
+
+	// \todo Set debug name on buffer
+	VkUtils::setDebugName(_context, VK_OBJECT_TYPE_BUFFER, uint64_t(buffer.gpu->buffer), "Buffer");
 
 	if(buffer.gpu->mappable){
 		buffer.gpu->mapped = (char*)resultInfos.pMappedData;
