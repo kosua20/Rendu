@@ -27,6 +27,7 @@ class FilteringApp final : public CameraApp {
 public:
 	/** Constructor.
 	 \param config the configuration to apply when setting up
+	 \param window the window to render to	 
 	 */
 	explicit FilteringApp(RenderingConfig & config, Window & window);
 

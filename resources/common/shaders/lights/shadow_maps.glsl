@@ -95,6 +95,12 @@ float shadowPCF(vec3 lightSpacePosition, texture2DArray smap, uint layer, float 
     return totalOcclusion;
 }
 
+/** Convert a unit direction to a cubemap face and local UVs
+ \param dir the direction to sample
+ \param uDir will contain the axis corresponding to the U coordinate
+ \param vDir will contain the axis corresponding to the V coordinate
+ \return the face index and the UV coordinates
+ */
 vec3 cubemapToFaceIdAndUV(vec3 dir, out vec3 uDir, out vec3 vDir){
 	vec3 absDir = abs(dir);
 	int side = 0;

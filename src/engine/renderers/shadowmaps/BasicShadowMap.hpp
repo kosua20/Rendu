@@ -13,6 +13,7 @@ public:
 	/** Constructor.
 	 \param lights the lights to generate the associated shadow maps for
 	 \param resolution the shadow map resolution
+	 \param mode the type of shadow map technique used
 	 */
 	explicit BasicShadowMap2DArray(const std::vector<std::shared_ptr<Light>> & lights, const glm::vec2 & resolution, ShadowMode mode);
 	
@@ -36,6 +37,7 @@ public:
 	/** Constructor.
 	 \param lights the lights to generate the associated shadow maps for
 	 \param side the shadow map resolution
+	 \param mode the type of shadow map technique used
 	 */
 	explicit BasicShadowMapCubeArray(const std::vector<std::shared_ptr<PointLight>> & lights, int side, ShadowMode mode);
 	
@@ -59,7 +61,6 @@ class EmptyShadowMap2DArray : public ShadowMap {
 public:
 	/** Constructor.
 	 \param lights the lights to generate the associated shadow maps for
-	 \param resolution the shadow map resolution
 	 */
 	explicit EmptyShadowMap2DArray(const std::vector<std::shared_ptr<Light>> & lights);
 
@@ -78,7 +79,6 @@ class EmptyShadowMapCubeArray : public ShadowMap {
 public:
 	/** Constructor.
 	 \param lights the lights to generate the associated shadow maps for
-	 \param side the shadow map resolution
 	 */
 	explicit EmptyShadowMapCubeArray(const std::vector<std::shared_ptr<PointLight>> & lights);
 

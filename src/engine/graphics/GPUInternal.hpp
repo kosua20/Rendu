@@ -86,7 +86,7 @@ struct GPUContext {
 	std::unordered_map<GPUQuery::Type, QueryAllocator> queryAllocators; ///< Per-type query buffered allocators.
 	PipelineCache pipelineCache; ///< Pipeline cache and creation.
 	SamplerLibrary samplerLibrary; ///< List of static samplers shared by all programs.
-
+	
 	std::deque<ResourceToDelete> resourcesToDelete; ///< List of resources waiting for deletion.
 	std::deque<AsyncTextureTask> textureTasks; ///< List of async tasks waiting for completion.
 	uint64_t tasksCount = 0; ///< Number of async tasks created.

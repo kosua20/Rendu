@@ -43,7 +43,10 @@ public:
 	/** Destructor. */
 	~Swapchain();
 
+	/// \return the swapchain color texture
 	Texture& color(){ return *_backbuffer; }
+
+	/// \return the swapchain depth texture
 	Texture& depth(){ return _depth; }
 
 	/** Query the formats used by the swapchain backbuffer

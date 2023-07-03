@@ -146,7 +146,6 @@ private:
 	/** Compute the bounding box of the scene, including and excluding objects that do not cast shadows.
 	 \param globalBox the bounding box encompassing all objects in the scene
 	 \param casterBox the bounding box encompassing shadow casting objects only
-	 \return
 	 */
 	void computeBoundingBoxes(BoundingBox & globalBox, BoundingBox & casterBox);
 

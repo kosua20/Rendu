@@ -27,6 +27,7 @@ public:
 
 	/** Constructor
 	 \param config rendering config
+	 \param window the window to render to
 	 */
 	IslandApp(RenderingConfig & config, Window & window);
 

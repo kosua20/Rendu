@@ -18,7 +18,8 @@ public:
 	
 	/** Draw from a given viewpoint.
 	 \param camera the rendering viewpoint
-	 \param dst the destination textures
+	 \param dstColor the destination color texture (optional, see outputColorFormat)
+	 \param dstDepth the destination depth texture (optional, see outputDepthFormat)
 	 \param layer the layer to write to in the target
 	 */
 	virtual void draw(const Camera & camera, Texture* dstColor, Texture* dstDepth, uint layer = 0);
@@ -53,8 +54,10 @@ public:
 	 */
 	Renderer & operator=(Renderer &&) = delete;
 
+	/// \return the preferred format for the destination color rendertarget
 	Layout outputColorFormat() const { return _colorFormat; }
 
+	/// \return the preferred format for the destination depth rendertarget
 	Layout outputDepthFormat() const { return _depthFormat; }
 
 protected:

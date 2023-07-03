@@ -14,6 +14,7 @@ public:
 	
 	/** Constructor
 	 \param config rendering config
+	 \param window the window to render to
 	 */
 	AtmosphereApp(RenderingConfig & config, Window & window);
 	

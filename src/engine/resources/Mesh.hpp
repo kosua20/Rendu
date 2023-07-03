@@ -43,7 +43,7 @@ public:
 	 \param mode the preprocessing mode
 	 \param name the mesh identifier
 	 */
-	Mesh(std::istream & in, Load mode, const std::string & name);
+	Mesh(std::istream & in, Mesh::Load mode, const std::string & name);
 
 	/** Send to the GPU. */
 	void upload();

@@ -15,6 +15,7 @@ class ShaderEditor final : public CameraApp {
 public:
 	/** Constructor.
 	 \param config the configuration to apply
+	 \param window the window to render to
 	 */
 	explicit ShaderEditor(RenderingConfig & config, Window & window);
 

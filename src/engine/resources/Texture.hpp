@@ -104,7 +104,7 @@ public:
 	TextureShape shape = TextureShape::D2; ///< Texure type.
 
 	Layout format = Layout::NONE; ///< Layout used.
-	bool drawable = false;
+	bool drawable = false; ///< Can the texture be rendered to.
 
 private:
 

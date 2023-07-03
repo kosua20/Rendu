@@ -14,6 +14,7 @@ class Application {
 public:
 	/** Constructor.
 	 \param config the configuration to apply when setting up
+	 \param window the window to render to
 	 */
 	explicit Application(RenderingConfig & config, Window & window);
 
@@ -68,7 +69,7 @@ protected:
 
 private:
 
-	Window & _window;
+	Window & _window;			///< The application main window
 	
 	double _timer = 0.0; 		///< Absolute timer.
 	double _startTime = 0.0; 	///< TImer value at app start.
@@ -90,6 +91,7 @@ public:
 	
 	/** Constructor.
 	 \param config the rendering configuration
+	 \param window the window to render to
 	 */
 	explicit CameraApp(RenderingConfig & config, Window & window);
 	

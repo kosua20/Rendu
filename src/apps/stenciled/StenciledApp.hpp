@@ -18,6 +18,7 @@ class StenciledApp final : public CameraApp {
 public:
 	/** Constructor.
 	 \param config the configuration to apply when setting up
+	 \param window the window to render to
 	 */
 	explicit StenciledApp(RenderingConfig & config, Window & window);
 

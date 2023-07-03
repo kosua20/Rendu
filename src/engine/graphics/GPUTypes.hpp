@@ -397,9 +397,9 @@ public:
 	// Graphics binding state.
 	Program* graphicsProgram = nullptr; ///< The current graphics program.
 	const GPUMesh* mesh = nullptr; ///< The current mesh.
-	RenderPass pass; ///< The current attachments.
-	std::array<const Texture *, 4> colors = {nullptr, nullptr, nullptr, nullptr};
-	const Texture * depthStencil {nullptr};
+	RenderPass pass; ///< The current attachments formats.
+	std::array<const Texture *, 4> colors = {nullptr, nullptr, nullptr, nullptr}; ///< The current attached color textures.
+	const Texture * depthStencil {nullptr}; ///< The current attached depth texture.
 
 	// Compute binding state.
 	Program* computeProgram = nullptr; ///< The current compute program.

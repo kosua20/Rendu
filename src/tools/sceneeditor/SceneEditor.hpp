@@ -14,6 +14,7 @@ class SceneEditor final : public CameraApp {
 public:
 	/** Constructor.
 	 \param config the configuration to apply
+	 \param window the window to render to
 	 */
 	explicit SceneEditor(RenderingConfig & config, Window & window);
 

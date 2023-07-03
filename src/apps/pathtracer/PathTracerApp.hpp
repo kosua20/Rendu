@@ -19,6 +19,7 @@ class PathTracerApp final : public CameraApp {
 public:
 	/** Constructor.
 	 \param config the configuration to apply
+	 \param window the window to render to
 	 \param scene the scene to render
 	 */
 	explicit PathTracerApp(RenderingConfig & config, Window & window, const std::shared_ptr<Scene> & scene);

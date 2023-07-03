@@ -61,9 +61,10 @@ public:
 	VkImage image = VK_NULL_HANDLE; ///< Native image handle.
 	VkImageView view = VK_NULL_HANDLE; ///< Native main image view (all mips).
 
+	/// \brief Aggregate views for each view
 	struct MipViews {
-		std::vector<VkImageView> views;
-		VkImageView mipView;
+		std::vector<VkImageView> views; ///< Views covering each layer of the mip, separately
+		VkImageView mipView; ///< View covering all layers of the mip
 	};
 	std::vector<MipViews> views;  ///< Per-mip image views.
 

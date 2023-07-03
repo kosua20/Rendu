@@ -32,7 +32,6 @@ vec3 gerstner(Wave gw, vec2 p, float t){
  \param bn will contain accumulated bitangent information
  \param nn will contain accumulated normal information
  \param distWeight wave attenuation factor
- \return the shifted 3D wave position
 */
 void gerstnerFrame(Wave gw, vec3 pos, float t, inout vec3 tn, inout vec3 bn, inout vec3 nn, float distWeight){
 	vec2 Di = gw.DiAngleActive.xy;

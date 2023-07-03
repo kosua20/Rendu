@@ -15,7 +15,6 @@ class DebugViewer {
 public:
 
 	/** Constructor.
-	\param silent if true, don't register or display anything.
 	 */
 	explicit DebugViewer();
 

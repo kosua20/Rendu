@@ -654,6 +654,7 @@ void directBrdf(Material material, vec3 n, vec3 v, vec3 l, out vec3 diffuse, out
 /** Compute a point light contribution for a given scene point.
  \param light the light information
  \param viewSpacePos the point position in view space
+ \param viewSpaceN the normal in view space
  \param shadowMap the cube shadow maps
  \param l will contain the light direction for the point
  \param shadowing will contain the shadowing factor
@@ -692,6 +693,7 @@ bool applyPointLight(Light light, vec3 viewSpacePos, vec3 viewSpaceN, textureCub
 /** Compute a directional light contribution for a given scene point.
  \param light the light information
  \param viewSpacePos the point position in view space
+ \param viewSpaceN the normal in view space
  \param shadowMap the 2D shadow maps
  \param l will contain the light direction for the point
  \param shadowing will contain the shadowing factor
@@ -717,6 +719,7 @@ bool applyDirectionalLight(Light light, vec3 viewSpacePos, vec3 viewSpaceN, text
 /** Compute a spot light contribution for a given scene point.
  \param light the light information
  \param viewSpacePos the point position in view space
+ \param viewSpaceN the normal in view space
  \param shadowMap the 2D shadow maps
  \param l will contain the light direction for the point
  \param shadowing will contain the shadowing factor
