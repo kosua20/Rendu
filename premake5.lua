@@ -41,6 +41,10 @@ workspace("Rendu")
 	architecture("x64")
 	systemversion("latest")
 
+	filter("system:macosx")
+		systemversion("10.12:latest")
+	filter({})
+
 	-- Configuration specific settings.
 	filter("configurations:Release")
 		defines({ "NDEBUG" })
@@ -71,18 +75,18 @@ function CommonSetup()
 	filter({})
 	-- Common include dirs
 	-- System headers are used to support angled brackets in Xcode.
-	sysincludedirs({ "src/libs/", "src/libs/glfw/include/"})
+	externalincludedirs({ "src/libs/", "src/libs/glfw/include/"})
 
 	if _OPTIONS["env_vulkan_sdk"] then
-		sysincludedirs({ "$(VULKAN_SDK)/include" })
+		externalincludedirs({ "$(VULKAN_SDK)/include" })
 		libdirs({ "$(VULKAN_SDK)/lib" })
 	else
 		filter("system:windows")
-			sysincludedirs({ "$(VULKAN_SDK)/include" })
+			externalincludedirs({ "$(VULKAN_SDK)/include" })
 			libdirs({ "$(VULKAN_SDK)/lib" })
 
 		filter("system:macosx or linux")
-			sysincludedirs({ "/usr/local/include/" })
+			externalincludedirs({ "/usr/local/include/" })
 			libdirs({ "/usr/local/lib" })
 	end
 	filter({})
