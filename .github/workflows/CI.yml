@@ -86,8 +86,8 @@ jobs:
         run: |
           wget -O vulkansdk.dmg ${VULKAN_URL}/${VULKAN_VERSION}/mac/vulkansdk-macos-${VULKAN_VERSION}.dmg
           hdiutil attach vulkansdk.dmg
-          /Volumes/vulkansdk-macos-${VULKAN_VERSION}/InstallVulkan.app/Contents/MacOS/InstallVulkan --root `pwd`/vulkansdk/ --accept-licenses --default-answer --confirm-command install copy_only=1
-          hdiutil detach /Volumes/vulkansdk-macos-${VULKAN_VERSION}
+          /Volumes/VulkanSDK/InstallVulkan.app/Contents/MacOS/InstallVulkan --root `pwd`/vulkansdk/ --accept-licenses --default-answer --confirm-command install copy_only=1
+          hdiutil detach /Volumes/VulkanSDK
           mv vulkansdk/macOS vulkansdk/x86_64
 
       - name: Vulkan for Windows
